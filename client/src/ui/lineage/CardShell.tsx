@@ -54,15 +54,22 @@ export interface CardShellProps {
   disabled?: boolean;
   /** Tooltip — normally the reason the tile is refusing. */
   title?: string;
+  /**
+   * The guided tutorial's handle on this tile, when a beat points at it. The
+   * shell carries it because the director finds a card by its anchor, and the
+   * extraction (W1-D) moved the markup the anchor used to sit on (W1-E).
+   */
+  tutorialAnchor?: string;
   onClick?: () => void;
 }
 
 export function LineageCardShell({
-  laneColor, name, description, state, tie, cost, note, disabled, title, onClick,
+  laneColor, name, description, state, tie, cost, note, disabled, title, tutorialAnchor, onClick,
 }: CardShellProps) {
   return (
     <button
       type="button"
+      data-tutorial-anchor={tutorialAnchor}
       className={`lin-card lin-card--${state}`}
       style={{ '--lane-color': laneColor } as React.CSSProperties}
       disabled={disabled}

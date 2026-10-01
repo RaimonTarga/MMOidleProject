@@ -2,6 +2,7 @@ import { atom, getDefaultStore } from 'jotai';
 import {
   ABILITY_RECIPE_DATABASE,
   ITEM_DATABASE,
+  LINEAGE_DATABASE,
   RECIPE_DATABASE,
   RUNE_RECIPE_DATABASE,
   ABILITY_DATABASE,
@@ -11,6 +12,7 @@ import {
   abilityLoadoutFor,
   attunedAbilityIds,
   composeRuneEdit,
+  evaluateTutorialCondition,
   referenceAbilityRule,
   tutorialRuleKey,
   bossClearKey,
@@ -34,6 +36,7 @@ import {
   craftTabAtom,
   deathOverlayAtom,
   dungeonAtom,
+  lineageTreeSlotAtom,
   localPlayerViewAtom,
 } from '../hud/atoms';
 import { closePrimaryOverlays, openPrimaryOverlay } from '../input/overlayStack';
@@ -342,6 +345,78 @@ async function upgrade(
   store.set(tutorialHighlightAtom, null);
 }
 
+/**
+ * Open a slot's lineage tree the way a player does: Inventory → the equipped
+ * slot → the tree, which replaces the Inventory dialog rather than stacking on
+ * it (`lineageTreeSlotAtom`).
+ */
+async function openLineageTree(
+  lineageId: string,
+  beat: TutorialBeat,
+  signal: AbortSignal,
+): Promise<void> {
+  const lineage = LINEAGE_DATABASE.get(lineageId);
+  if (!lineage) throw new TutorialStop(`Unknown lineage ${lineageId}.`, 'error');
+  if (store.get(lineageTreeSlotAtom) === lineage.slot) return;
+  report(beat, 'working');
+  closePrimaryOverlays();
+  await point(TUTORIAL_ANCHORS.menuInventory, signal);
+  openPrimaryOverlay('inventory');
+  await point(TUTORIAL_ANCHORS.equipmentSlot(lineage.slot), signal);
+  await pressPointed(signal);
+  closePrimaryOverlays();
+  store.set(lineageTreeSlotAtom, lineage.slot);
+}
+
+async function unlockCard(
+  step: Extract<TutorialStep, { type: 'unlockCard' }>,
+  beat: TutorialBeat,
+  signal: AbortSignal,
+): Promise<void> {
+  const owned = (v: PlayerView) => v.lineages[step.lineageId]?.ownedCards.includes(step.cardId) ?? false;
+  if (owned(requireView())) return;
+  await openLineageTree(step.lineageId, beat, signal);
+  await point(TUTORIAL_ANCHORS.lineageCard(step.cardId), signal);
+  await pressPointed(signal);
+  hudBus.requestLineageUnlockCard(step.lineageId, step.cardId);
+  const bought = await waitAlive(owned, signal, ACTION_TIMEOUT_MS);
+  if (!bought) throw new TutorialStop('The card was not bought. Press Next to try again.', 'error');
+  // Buying into an empty row activates it server-side; the button now reads
+  // "active", so the ring must not stay on it.
+  store.set(tutorialHighlightAtom, null);
+}
+
+async function unlockForm(
+  step: Extract<TutorialStep, { type: 'unlockForm' }>,
+  beat: TutorialBeat,
+  signal: AbortSignal,
+): Promise<void> {
+  const owned = (v: PlayerView) => v.lineages[step.lineageId]?.ownedForms.includes(step.recipeId) ?? false;
+  if (owned(requireView())) return;
+  await openLineageTree(step.lineageId, beat, signal);
+  await point(TUTORIAL_ANCHORS.lineageForm(step.recipeId), signal);
+  await pressPointed(signal);
+  hudBus.requestLineageUnlockForm(step.lineageId, step.recipeId);
+  const paid = await waitAlive(owned, signal, ACTION_TIMEOUT_MS);
+  if (!paid) throw new TutorialStop('The gate did not take. Press Next to try again.', 'error');
+}
+
+async function wearForm(
+  step: Extract<TutorialStep, { type: 'wearForm' }>,
+  beat: TutorialBeat,
+  signal: AbortSignal,
+): Promise<void> {
+  const worn = (v: PlayerView) => v.lineages[step.lineageId]?.wornForm === step.recipeId;
+  if (worn(requireView())) return;
+  await openLineageTree(step.lineageId, beat, signal);
+  await point(TUTORIAL_ANCHORS.lineageForm(step.recipeId), signal);
+  await pressPointed(signal);
+  hudBus.requestLineageWearForm(step.lineageId, step.recipeId);
+  const on = await waitAlive(worn, signal, ACTION_TIMEOUT_MS);
+  if (!on) throw new TutorialStop('The form was not worn. Press Next to try again.', 'error');
+  store.set(tutorialHighlightAtom, null);
+}
+
 async function openBuildTab(tab: 'abilities' | 'runes', anchor: string, signal: AbortSignal): Promise<void> {
   if (store.get(buildOpenAtom) && store.get(buildPanelTabAtom) === tab) return;
   closePrimaryOverlays();
@@ -537,13 +612,20 @@ async function configureRunes(
   await buildRunesOnBoard(wiredRunes(step.rules, requireView().attunedAbilities), beat, signal);
 }
 
-async function attemptBoss(
+/**
+ * One trip to a boss: rest, travel, clear the guard, wake it, fight.
+ *
+ * `cleared` is the trip's own finish line, which is not always "this boss is
+ * cleared": the gate beat fights the same boss several times for its capstone
+ * drops, so after the first win the clear flag is already set and the trip has
+ * to end on something else (see `attemptBoss`).
+ */
+async function bossRound(
   step: Extract<TutorialStep, { type: 'attemptBoss' }>,
   beat: TutorialBeat,
   signal: AbortSignal,
+  cleared: (view: PlayerView) => boolean,
 ): Promise<void> {
-  const key = bossClearKey(step.biomeGroup, step.tier);
-  const cleared = (v: PlayerView) => v.bossesCleared.includes(key);
   if (cleared(requireView())) return;
   const dungeonNode = resolveNode({ kind: 'dungeon', biomeGroup: step.biomeGroup, tier: step.tier });
 
@@ -614,6 +696,44 @@ async function attemptBoss(
   if (!won) throw new TutorialStop('That fight dragged on. Press Next to go again.', 'stopped');
 }
 
+/** How many trips one `attemptBoss` step with an `until` will make. */
+const BOSS_ROUNDS = 6;
+
+async function attemptBoss(
+  step: Extract<TutorialStep, { type: 'attemptBoss' }>,
+  beat: TutorialBeat,
+  signal: AbortSignal,
+): Promise<void> {
+  const key = bossClearKey(step.biomeGroup, step.tier);
+  const { until } = step;
+  if (!until) {
+    await bossRound(step, beat, signal, (v) => v.bossesCleared.includes(key));
+    return;
+  }
+
+  // "Keep fighting this boss until": the clear flag only lands once, so a trip
+  // after the first ends when the altar goes on cooldown — the boss is down and
+  // its drop is in the wallet.
+  const node = resolveNode({ kind: 'dungeon', biomeGroup: step.biomeGroup, tier: step.tier });
+  const onCooldown = () => {
+    const dungeon = store.get(dungeonAtom);
+    return !!dungeon && dungeon.nodeId === node && dungeon.status === 'cooldown';
+  };
+  const done = (v: PlayerView) => evaluateTutorialCondition(until, v);
+  for (let round = 0; round < BOSS_ROUNDS && !done(requireView()); round += 1) {
+    // The altar this beat just emptied has to reform before it can be woken.
+    if (onCooldown()) {
+      report(beat, 'waiting', 'The altar is reforming. Waiting for the next one.');
+      await waitAlive((v) => done(v) || !onCooldown(), signal, GUARD_TIMEOUT_MS);
+      if (done(requireView())) return;
+    }
+    await bossRound(step, beat, signal, (v) => done(v) || onCooldown());
+  }
+  if (!done(requireView())) {
+    throw new TutorialStop('A few more of those. Press Next to go again.', 'stopped');
+  }
+}
+
 async function performStep(
   script: TutorialScript,
   beat: TutorialBeat,
@@ -641,6 +761,12 @@ async function performStep(
       return learnAbility(step, beat, signal);
     case 'setAbilities':
       return applyAbilities(abilityLoadoutFor(step, requireView()), beat, signal);
+    case 'unlockCard':
+      return unlockCard(step, beat, signal);
+    case 'unlockForm':
+      return unlockForm(step, beat, signal);
+    case 'wearForm':
+      return wearForm(step, beat, signal);
     case 'attemptBoss':
       return attemptBoss(step, beat, signal);
   }
@@ -650,6 +776,9 @@ function clearPointers(): void {
   store.set(tutorialHighlightAtom, null);
   store.set(tutorialFocusAtom, null);
   store.set(tutorialRuneDraftAtom, null);
+  // The lineage tree is its own top-level dialog, so `closePrimaryOverlays`
+  // does not reach it.
+  store.set(lineageTreeSlotAtom, null);
 }
 
 /**

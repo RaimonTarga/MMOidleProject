@@ -4,7 +4,14 @@ import { ITEM_DATABASE } from '../itemDatabase';
 import type { EquippedRule } from '../runeDatabase';
 import { attunedAbilityIds } from '../runicPoints';
 import { bossClearKey } from '../systems/biomeProgress';
-import { evaluateTutorialCondition, viewHasItem, type TutorialView } from './conditions';
+import {
+  evaluateTutorialCondition,
+  viewHasItem,
+  viewOwnsLineageCard,
+  viewOwnsLineageForm,
+  viewWearsLineageForm,
+  type TutorialView,
+} from './conditions';
 import type { TutorialBeat, TutorialScript, TutorialStep } from './types';
 
 /**
@@ -119,7 +126,11 @@ export function stepSatisfied(step: TutorialStep, view: TutorialView, later: Lat
         if (!slot) return false;
         const worn = view.equipment[slot];
         if (worn === id) return true;
-        return !!worn && later.some((next) => next.type === 'equip' && next.definitionIds.includes(worn));
+        // A later step took the slot: an ordinary equip, or a gated form the
+        // guide goes on to wear (the Gale Needle over the Chaotic Axe).
+        return !!worn && later.some((next) =>
+          (next.type === 'equip' && next.definitionIds.includes(worn))
+          || (next.type === 'wearForm' && next.recipeId === worn));
       });
     case 'upgrade':
       return viewHasItem(view, step.definitionId)
@@ -136,8 +147,16 @@ export function stepSatisfied(step: TutorialStep, view: TutorialView, later: Lat
       return later.some((next) =>
         (next.type === 'learnAbility' || next.type === 'setAbilities') && abilityLoadoutMatches(next, view));
     }
+    case 'unlockCard':
+      return viewOwnsLineageCard(view, step.lineageId, step.cardId);
+    case 'unlockForm':
+      return viewOwnsLineageForm(view, step.lineageId, step.recipeId);
+    case 'wearForm':
+      return viewWearsLineageForm(view, step.lineageId, step.recipeId);
     case 'attemptBoss':
-      return view.bossesCleared.includes(bossClearKey(step.biomeGroup, step.tier));
+      return step.until
+        ? evaluateTutorialCondition(step.until, view)
+        : view.bossesCleared.includes(bossClearKey(step.biomeGroup, step.tier));
   }
 }
 

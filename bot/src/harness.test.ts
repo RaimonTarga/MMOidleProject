@@ -7,11 +7,13 @@ import {
   ABILITY_RECIPE_DATABASE, ABILITY_DATABASE, STANCE_DATABASE, RITE_DATABASE, STANCE_RECIPE_DATABASE, RITE_RECIPE_DATABASE,
   type PlayerView,
   CLEARING_NODE_ID,
+  LINEAGE_DATABASE,
   RECIPE_DATABASE,
   RUNE_RECIPE_DATABASE,
   STARTER_RUNE_IDS,
   bossClearKey,
   globalMastery,
+  lineageGateCost,
   isRuneRecipeAvailableForArchetype,
   isRuneRuleCompatibleForArchetype,
   runeBudgetForGlobalMastery,
@@ -643,6 +645,33 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
               `${route.id}: rune recipe exists (${step.recipeId})`,
             );
             break;
+          // Lineage steps name cards and forms that must still exist. Prices and
+          // unlock levels come from the magnitude table at runtime, so there is
+          // nothing numeric to check here -- only identity.
+          case "unlockCard":
+          case "setActive": {
+            const lineage = LINEAGE_DATABASE.get(step.lineageId);
+            assert(lineage, `${route.id}: lineage exists (${step.lineageId})`);
+            const cardId = step.type === "unlockCard" ? step.cardId : step.cardId;
+            if (cardId === null) break;
+            const card = lineage!.cards.find((c) => c.id === cardId);
+            assert(card, `${route.id}: lineage card exists (${cardId})`);
+            if (step.type === "setActive") {
+              assert(
+                card!.row === step.row,
+                `${route.id}: ${cardId} is a ${card!.row} card, activated as ${step.row}`,
+              );
+            }
+            break;
+          }
+          case "unlockForm":
+          case "wearForm": {
+            const lineage = LINEAGE_DATABASE.get(step.lineageId);
+            assert(lineage, `${route.id}: lineage exists (${step.lineageId})`);
+            const form = lineage!.forms.find((f) => f.recipeId === step.recipeId);
+            assert(form, `${route.id}: lineage form exists (${step.recipeId})`);
+            break;
+          }
           case "configureRunes":
             for (const rule of step.rules) {
               // A rule whose fragments the run never obtains would be silently
@@ -759,12 +788,64 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
     const archetype = ARCHETYPE_FOR_ROOT[route.classRoot];
     assert(archetype, `${route.id}: class root maps to a combat archetype`);
 
+    // Lineage ordering: a band opens by HOLDING a form of that tier (the gate is
+    // the band's key), and a gate is paid in the form biome boss's capstone --
+    // which only that boss drops. Both are statically checkable, and both are
+    // the kind of mistake that would otherwise burn a whole live run.
+    const bestFormTier = new Map<string, number>();
+    const bossesFought = new Set<string>();
+    const noteForm = (lineageId: string, tier: number): void => {
+      bestFormTier.set(lineageId, Math.max(bestFormTier.get(lineageId) ?? 0, tier));
+    };
+    for (const lineage of LINEAGE_DATABASE.values()) {
+      for (const form of lineage.forms) {
+        if (form.tier === 1 && craftedItems.has(form.recipeId)) noteForm(lineage.id, 1);
+      }
+    }
+
     const walkInOrder = (steps: RouteStep[]): void => {
       for (const step of steps) {
         if (step.type === "farm") {
           checkRecipeConditions(route.id, step.until);
         } else if (step.type === "craft") {
-          for (const recipeId of step.recipeIds) craftedItems.add(recipeId);
+          for (const recipeId of step.recipeIds) {
+            craftedItems.add(recipeId);
+            for (const lineage of LINEAGE_DATABASE.values()) {
+              const form = lineage.forms.find((f) => f.recipeId === recipeId);
+              if (form?.tier === 1) noteForm(lineage.id, 1);
+            }
+          }
+        } else if (step.type === "attemptBoss") {
+          bossesFought.add(step.biomeGroup);
+        } else if (step.type === "unlockCard") {
+          const lineage = LINEAGE_DATABASE.get(step.lineageId)!;
+          const card = lineage.cards.find((c) => c.id === step.cardId)!;
+          assert(
+            (bestFormTier.get(lineage.id) ?? 0) >= card.tier,
+            `${route.id}: ${step.cardId} is a tier-${card.tier} card but the route never holds a tier-${card.tier} ${lineage.id} form`,
+          );
+        } else if (step.type === "unlockForm") {
+          const lineage = LINEAGE_DATABASE.get(step.lineageId)!;
+          const form = lineage.forms.find((f) => f.recipeId === step.recipeId)!;
+          assert(
+            (bestFormTier.get(lineage.id) ?? 0) >= form.tier - 1,
+            `${route.id}: the ${step.recipeId} gate needs a tier-${form.tier - 1} ${lineage.id} form first`,
+          );
+          const capstone = lineageGateCost(form, lineage).capstone;
+          assert(
+            bossesFought.has(capstone.biome),
+            `${route.id}: the ${step.recipeId} gate is paid in ${capstone.biome} capstones, which only that boss drops,`
+            + " and the route never fights it",
+          );
+          noteForm(lineage.id, form.tier);
+          craftedItems.add(step.recipeId);
+        } else if (step.type === "wearForm") {
+          const lineage = LINEAGE_DATABASE.get(step.lineageId)!;
+          const form = lineage.forms.find((f) => f.recipeId === step.recipeId)!;
+          assert(
+            (bestFormTier.get(lineage.id) ?? 0) >= form.tier,
+            `${route.id}: ${step.recipeId} is worn before the route obtains it`,
+          );
         } else if (step.type === "evolveItem") {
           // Evolution and reconstruction both END with the evolved item in the
           // bag, so both count as obtaining it. The `evolve` path additionally

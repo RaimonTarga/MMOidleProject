@@ -77,6 +77,16 @@ export function evaluate(condition: Condition, ctx: ConditionContext): boolean {
       return obs.canUpgrade(condition.definitionId).ok;
     case "globalMasteryAtLeast":
       return (obs.self?.globalMastery ?? 0) >= condition.value;
+    case "shardAtLeast":
+      return (obs.self?.shards[condition.packet] ?? 0) >= condition.amount;
+    case "capstoneAtLeast":
+      return (obs.self?.capstones[condition.biome] ?? 0) >= condition.amount;
+    case "lineageCardOwned":
+      return obs.self?.lineages[condition.lineageId]?.ownedCards.includes(condition.cardId) ?? false;
+    case "lineageFormOwned":
+      return obs.self?.lineages[condition.lineageId]?.ownedForms.includes(condition.recipeId) ?? false;
+    case "lineageFormWorn":
+      return obs.self?.lineages[condition.lineageId]?.wornForm === condition.recipeId;
     case "classSelected":
       return (obs.self?.selectedClass ?? null) !== null;
     case "runeRecipeCrafted":
@@ -133,6 +143,16 @@ export function describe(condition: Condition): string {
       return `can upgrade ${condition.definitionId}`;
     case "globalMasteryAtLeast":
       return `global mastery >= ${condition.value}`;
+    case "shardAtLeast":
+      return `${condition.packet} shards >= ${condition.amount}`;
+    case "capstoneAtLeast":
+      return `${condition.biome} capstones >= ${condition.amount}`;
+    case "lineageCardOwned":
+      return `${condition.lineageId} card ${condition.cardId} owned`;
+    case "lineageFormOwned":
+      return `${condition.lineageId} form ${condition.recipeId} owned`;
+    case "lineageFormWorn":
+      return `${condition.lineageId} form ${condition.recipeId} worn`;
     case "classSelected":
       return "a class selected";
     case "runeRecipeCrafted":
@@ -166,6 +186,16 @@ export function shortfall(condition: Condition, obs: Observation): Record<string
       case "biomeLevelAtLeast": {
         const missing = c.level - obs.biomeLevel(c.biomeGroup);
         if (missing > 0) out[`biomeLevel.${c.biomeGroup}`] = missing;
+        break;
+      }
+      case "shardAtLeast": {
+        const missing = c.amount - (obs.self?.shards[c.packet] ?? 0);
+        if (missing > 0) out[`shard.${c.packet}`] = missing;
+        break;
+      }
+      case "capstoneAtLeast": {
+        const missing = c.amount - (obs.self?.capstones[c.biome] ?? 0);
+        if (missing > 0) out[`capstone.${c.biome}`] = missing;
         break;
       }
       case "canAffordUpgrades": {

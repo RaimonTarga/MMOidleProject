@@ -1,4 +1,4 @@
-import type { EquipmentSlot, EquippedRule, EssenceType, EvolveMode, RowKind, TierCheckpointKind, TutorialUpgradeTarget } from "@mmo-idle/shared";
+import type { EquipmentSlot, EquippedRule, EssenceType, EvolveMode, PacketId, RowKind, TierCheckpointKind, TutorialUpgradeTarget } from "@mmo-idle/shared";
 import type { DesiredBuild } from "../loadout/loadout";
 
 /**
@@ -37,6 +37,12 @@ export type Condition =
   | { type: "canReconstruct"; recipeId: string }
   | { type: "canUpgrade"; definitionId: string }
   | { type: "globalMasteryAtLeast"; value: number }
+  // Lineage trees: the two kill-driven wallets, and what they have already bought.
+  | { type: "shardAtLeast"; packet: PacketId; amount: number }
+  | { type: "capstoneAtLeast"; biome: string; amount: number }
+  | { type: "lineageCardOwned"; lineageId: string; cardId: string }
+  | { type: "lineageFormOwned"; lineageId: string; recipeId: string }
+  | { type: "lineageFormWorn"; lineageId: string; recipeId: string }
   // Guided-tutorial vocabulary (shared/src/tutorial/types.ts), so tutorial scripts run as routes.
   | { type: "classSelected" }
   | { type: "runeRecipeCrafted"; recipeId: string }
@@ -154,6 +160,16 @@ export type StepBody =
    * route uses to state "own three, run one".
    */
   | { type: "setActive"; lineageId: string; row: RowKind; cardId: string | null }
+  /**
+   * Pay a band's gate, farming `farmAt` while the wallet falls short. The gate
+   * costs essence, the crowned lane's shard and the biome boss's capstone — and
+   * the capstone only drops from that boss, so a route that pays a gate must
+   * have cleared it enough times first (the executor raises a named stall
+   * rather than farming a node that can never mint one).
+   */
+  | { type: "unlockForm"; lineageId: string; recipeId: string; farmAt?: NodeRef }
+  /** Wear an owned form. Free and instant, like swapping gear. */
+  | { type: "wearForm"; lineageId: string; recipeId: string }
   | { type: "attemptBoss"; biomeGroup: string; tier: number; maxAttempts?: number }
   | { type: "repeatUntil"; steps: RouteStep[]; until: Condition; maxIterations?: number }
   /**

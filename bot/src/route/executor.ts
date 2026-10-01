@@ -18,7 +18,11 @@ import {
   FAMILY_DATABASE,
   biomeDefensiveLaneAPackets,
   LINEAGE_DATABASE,
+  capstoneMaterialName,
+  formGateBiomeLevel,
+  formGateMastery,
   lineageCardPrice,
+  lineageGateCost,
   resolveLineageCard,
   NODE_BIOMES,
   biomeLevelCap,
@@ -386,6 +390,10 @@ export class RouteExecutor {
         return this.doUnlockCard(step);
       case "setActive":
         return this.doSetActive(step);
+      case "unlockForm":
+        return this.doUnlockForm(step);
+      case "wearForm":
+        return this.doWearForm(step);
       case "attemptBoss":
         return this.doAttemptBoss(step);
       case "repeatUntil":
@@ -1498,6 +1506,117 @@ export class RouteExecutor {
   }
 
   /**
+   * Pay a band's gate, farming for the essence and shard shortfall as
+   * `unlockCard` does.
+   *
+   * The capstone is the one cost farming cannot answer: it drops from the form's
+   * biome boss and nowhere else (design §12), so a shortfall there is a route
+   * authoring problem — the route needs that boss cleared `amount` times first —
+   * and it raises a named stall instead of farming a node forever.
+   */
+  private async doUnlockForm(
+    step: Extract<RouteStep, { type: "unlockForm" }>,
+  ): Promise<void> {
+    const { obs, intents, recorder } = this.deps;
+    const lineage = LINEAGE_DATABASE.get(step.lineageId);
+    if (!lineage) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown lineage in route", { step });
+    const form = lineage.forms.find((f) => f.recipeId === step.recipeId);
+    if (!form) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown lineage form in route", { step });
+    if (obs.self?.lineages[step.lineageId]?.ownedForms.includes(step.recipeId)) return;
+
+    const cost = lineageGateCost(form, lineage);
+    const missing = (): Record<string, number> => {
+      const out: Record<string, number> = {};
+      const self = obs.self;
+      for (const [type, amount] of Object.entries(cost.essence)) {
+        const short = (amount ?? 0) - obs.essence(type as EssenceType);
+        if (short > 0) out[`essence.${type}`] = short;
+      }
+      for (const [packet, amount] of Object.entries(cost.shards)) {
+        const short = (amount ?? 0) - (self?.shards[packet as PacketId] ?? 0);
+        if (short > 0) out[`shard.${packet}`] = short;
+      }
+      const levelShort = formGateBiomeLevel(form) - obs.biomeLevel(form.biome);
+      if (levelShort > 0) out[`biomeLevel.${form.biome}`] = levelShort;
+      const gmShort = formGateMastery(form) - (self?.globalMastery ?? 0);
+      if (gmShort > 0) out.globalMasteryNeeded = gmShort;
+      return out;
+    };
+    const capstoneShort = (): number =>
+      cost.capstone.amount - (obs.self?.capstones[cost.capstone.biome] ?? 0);
+
+    if (capstoneShort() > 0) {
+      throw new StallError(
+        `the ${form.recipeId} gate needs ${cost.capstone.amount} ${capstoneMaterialName(cost.capstone.biome)}`
+        + ` and the wallet is ${capstoneShort()} short: only the ${cost.capstone.biome} boss drops it,`
+        + " so this route needs that many cleared boss kills before the gate",
+        { step, missing: { [`capstone.${cost.capstone.biome}`]: capstoneShort() } },
+      );
+    }
+
+    if (Object.keys(missing()).length > 0) {
+      const farmNode = this.lineageFarmNode(step.farmAt, form.biome, form.capstone?.lane ?? lineage.lanes[0]);
+      if (!farmNode) {
+        throw new StallError(`no reachable node pays the ${form.recipeId} gate`, { step, missing: missing() });
+      }
+      await this.farmBlocked(
+        farmNode,
+        `gate:${step.recipeId}`,
+        () => Object.keys(missing()).length === 0,
+        () => missingToReasons(missing(), obs),
+        true,
+      );
+    }
+
+    const result = await this.mutate(() => intents.unlockLineageForm(step.lineageId, step.recipeId));
+    if (!result.success) {
+      throw new StallError(`lineage gate rejected: ${result.reason ?? "unknown"}`, { step });
+    }
+    await this.waitUntil(
+      () => obs.self?.lineages[step.lineageId]?.ownedForms.includes(step.recipeId) ?? false,
+      { timeoutMs: 30_000, what: `${step.recipeId} owned` },
+    );
+
+    recorder.emit({
+      kind: "build-change",
+      atMs: recorder.now(),
+      system: "lineage-gate",
+      detail: { lineageId: step.lineageId, recipeId: step.recipeId, tier: form.tier },
+    });
+  }
+
+  /**
+   * Wear an owned form. Free, so a refusal here is always an authoring error
+   * (an unowned form, or one that belongs to another lineage).
+   */
+  private async doWearForm(
+    step: Extract<RouteStep, { type: "wearForm" }>,
+  ): Promise<void> {
+    const { obs, intents, recorder } = this.deps;
+    if (!LINEAGE_DATABASE.has(step.lineageId)) {
+      throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown lineage in route", { step });
+    }
+    const worn = (): string | null => obs.self?.lineages[step.lineageId]?.wornForm ?? null;
+    if (worn() === step.recipeId) return;
+
+    const result = await this.mutate(() => intents.wearLineageForm(step.lineageId, step.recipeId));
+    if (!result.success) {
+      throw new StallError(`lineage form rejected: ${result.reason ?? "unknown"}`, { step });
+    }
+    await this.waitUntil(() => worn() === step.recipeId, {
+      timeoutMs: 30_000,
+      what: `${step.recipeId} worn`,
+    });
+
+    recorder.emit({
+      kind: "build-change",
+      atMs: recorder.now(),
+      system: "lineage-form",
+      detail: { lineageId: step.lineageId, recipeId: step.recipeId },
+    });
+  }
+
+  /**
    * Kill every guardian while the dungeon is still idle, so the boss is fought
    * alone.
    *
@@ -2601,6 +2720,10 @@ function defaultLabel(step: RouteStep): string {
       return `buy card ${step.cardId}`;
     case "setActive":
       return `activate ${step.lineageId} ${step.row} = ${step.cardId ?? "none"}`;
+    case "unlockForm":
+      return `pay gate ${step.lineageId} -> ${step.recipeId}`;
+    case "wearForm":
+      return `wear form ${step.recipeId}`;
     case "attemptBoss":
       return `boss ${step.biomeGroup} T${step.tier}`;
     case "ifPossible":

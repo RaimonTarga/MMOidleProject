@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import {
+  TUTORIAL_FAREWELL,
   resolveBeatIndex,
   tutorialProgress,
   tutorialScriptFor,
@@ -175,17 +176,19 @@ export function TutorialPanel() {
 
   if (!playerId || !view) return null;
 
-  if (view.playerTier >= 2) {
+  // The farewell waits for the SCRIPT to run out, not merely for Tier 2: the
+  // gate chapter plays after the seals, because the weapon's tier-1 gate asks
+  // for full Tier-1 mastery and a third boss before the seals would itself be
+  // one (`sealsHeldAtTier` counts any two biome bosses).
+  const scriptDone = !script || index >= script.beats.length;
+  if (view.playerTier >= 2 && scriptDone) {
     if (choice !== 'on') return null;
     return (
       <HudPanel className="sidebar-panel tutorial-panel tutorial-panel--farewell">
         <div className="panel-title">Guide</div>
-        <p className="tutorial-panel__line">
-          Two seals, Tier 2. That is the guided part done.
-        </p>
-        <p className="tutorial-panel__line">
-          Keep going forward: new zones are open, and your next skill point is waiting in the Passive Tree.
-        </p>
+        {TUTORIAL_FAREWELL.map((line) => (
+          <p key={line} className="tutorial-panel__line">{line}</p>
+        ))}
         <div className="tutorial-panel__actions">
           <button type="button" className="tutorial-button tutorial-button--primary" onClick={() => setChoice('done')}>
             Thanks!
@@ -303,6 +306,14 @@ export function TutorialPanel() {
               >
                 Next
               </button>
+              {/* Tier 1 is already behind them: the gate chapter is a last
+                  optional lesson, so there has to be a way to the farewell
+                  that is not "Stop the guide". */}
+              {view.playerTier >= 2 && (
+                <button type="button" className="tutorial-button" onClick={() => setChoice('done')}>
+                  I'm done
+                </button>
+              )}
             </div>
           )}
         </>

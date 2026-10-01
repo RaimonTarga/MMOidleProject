@@ -20,6 +20,7 @@ import {
   ITEM_DATABASE,
   ROW_KINDS,
   TEST_ROOM_NODE_ID,
+  TUTORIAL_ANCHORS,
   absorbedStatCards,
   bandContents,
   capstoneMaterialName,
@@ -222,6 +223,7 @@ function CardTile({
       tie={tie}
       cost={!owned ? <CostChips cost={cost} wallet={wallet} /> : undefined}
       note={!owned && discounted ? 'switch discount applied' : undefined}
+      tutorialAnchor={TUTORIAL_ANCHORS.lineageCard(card.id)}
       disabled={masteryLocked || (!owned && !check.ok) || (owned && !active && activateCheck !== null && !activateCheck.ok)}
       title={blockedReason}
       onClick={handleClick}
@@ -325,6 +327,7 @@ function GateSection({
             <button
               key={form.recipeId}
               type="button"
+              data-tutorial-anchor={TUTORIAL_ANCHORS.lineageForm(form.recipeId)}
               className={`lin-form${worn ? ' lin-form--worn' : ''}`}
               disabled={!worn && ((!owned && !check.ok) || (owned && wearCheck !== null && !wearCheck.ok))}
               title={blockedReason}
