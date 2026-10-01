@@ -927,8 +927,16 @@ re-homes the brief notes.
 
 - The **client has no handler for `frame-charge`**: the protocol member, the server
   emissions and the HUD tiles are in, but `client/src/render/combatFx.ts` draws
-  nothing for it yet. The stack counters and window clocks DO render, through the
-  existing buff sync.
+  nothing for it yet (the dispatch is a chain of `if`s with no unknown-kind warning,
+  so an unhandled kind is silently ignored). The stack counters and window clocks DO
+  render, through the existing buff sync.
+- **`frame-charge` is one event per bank change, broadcast to the node**, and the
+  Artillerist ramp changes on every shot — so an Artillerist adds one small event per
+  swing alongside its `player-hit`. The counts themselves are already on the wire via
+  the buff tiles' `stacks`; the event exists because a 5 Hz buff sample cannot tell a
+  change from a resend, which is what a one-shot pulse needs. If the client ends up
+  drawing a continuous glow rather than a pulse, derive it from the tile and drop the
+  per-shot emission.
 - **No authored art** for the five new buff ids; each aliases the authored tile of
   the mechanic it is (`reload-frame-ramp` → `reload-hair-trigger`,
   `energy-frame-overcharge` → `energy-overcharge`, `energy-frame-surge` →

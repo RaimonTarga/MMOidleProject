@@ -89,12 +89,17 @@ export function reloadFramePositionMult(
 function clearRamp(world: World, player: PlayerEntity): void {
   const reload = player.usesReload;
   if (!reload) return;
+  // A reload with nothing on the ramp (a manual reload on a fresh clip, a tactical
+  // reload out of combat) is not a change, and `frame-charge` is a per-change beat
+  // broadcast to the whole node — it does not get to fire for a no-op.
+  const hadRamp = reload.clipSpeedStacks > 0;
   reload.clipSpeedStacks = 0;
   if (reload.clipBaseAttackCooldownMs > 0) {
     player.performsAttack.attackCooldown = reload.clipBaseAttackCooldownMs;
     markSliceDirty(world, player, 'performsAttack');
   }
   markSliceDirty(world, player, 'usesReload');
+  if (!hadRamp) return;
   world.pushEvent(player.hasPosition.nodeId, {
     kind: 'frame-charge',
     playerId: player.isPlayer.id,
