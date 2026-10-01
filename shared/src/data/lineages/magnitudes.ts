@@ -431,6 +431,53 @@ export function gateCapstoneAmount(tier: number): number {
   return GATE_CAPSTONE_AMOUNT[clampTier(tier)] ?? 1;
 }
 
+/**
+ * Units the runtime needs that are not a payoff's magnitude: cadences, reaches and
+ * counts (design §18.4).
+ *
+ * These lived as named constants in `lineageCards.ts` because no T1 card used the
+ * trigger that wanted them. That made them invisible to the designer and
+ * un-tunable without a code change, which is exactly what the magnitude table
+ * exists to prevent. One authored home, here, with the rest of the numbers.
+ *
+ * They are flat: a `standing` window is a window whatever tier it is bought at, so
+ * none of these takes a tier scalar.
+ */
+export interface LineageUnits {
+  /** How long a player holds still in combat before a `standing` card pays. */
+  standingMs: number;
+  /** Cadence of a `pulse` card while in combat. */
+  pulseMs: number;
+  /** Quiet spell that ends an engagement, so `first-hit` re-arms on a fresh pull. */
+  engagementIdleMs: number;
+  /** Tick cadence of a lineage bleed. */
+  bleedTickMs: number;
+  /** How far a `contagion` payoff reaches for a neighbour, in world units. */
+  contagionRadius: number;
+  /** Neighbours one `contagion` application infects. */
+  contagionTargets: number;
+  /** Debuffs one `cleanse` payoff strips. */
+  cleanseDebuffs: number;
+  /** Stacks taken off each debuff a `cleanse` strips. */
+  cleanseStacks: number;
+}
+
+export const LINEAGE_UNITS: LineageUnits = {
+  standingMs: 1_500,
+  pulseMs: 4_000,
+  engagementIdleMs: 4_000,
+  bleedTickMs: 1_000,
+  contagionRadius: 120,
+  contagionTargets: 1,
+  cleanseDebuffs: 1,
+  cleanseStacks: 1,
+};
+
+/** One authored unit. The runtime reads these and never its own constant. */
+export function lineageUnit<K extends keyof LineageUnits>(key: K): LineageUnits[K] {
+  return LINEAGE_UNITS[key];
+}
+
 /** `hit-nth` interval for a lane. */
 export function triggerNForLane(lane: PacketId): number {
   return TRIGGER_N_BY_LANE[lane] ?? 1;

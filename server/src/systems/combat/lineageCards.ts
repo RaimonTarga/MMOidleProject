@@ -46,6 +46,7 @@ import {
   lineageStatusEffectId,
   resolveActiveLineages,
   resolveDotClassProfile,
+  lineageUnit,
   setCooldown,
   setCounter,
   setFlag,
@@ -82,32 +83,21 @@ import { copyPlayerDotOnto } from '../player/abilities/abilityAffliction';
 import { cleansePlayerAfflictions } from './status/cleanse';
 import { defineBuff } from './buffs/descriptor';
 
-// ── Runtime constants ────────────────────────────────────────────────────────
+// ── Authored units ───────────────────────────────────────────────────────────
 //
-// These are the numbers a lineage payoff needs that the magnitude table does not
-// author, because no T1 card uses the trigger or payoff that wants them. They are
-// named here rather than inlined so the designer can find them; when a card in a
-// later band actually needs one, it belongs in `magnitudes.ts` with the rest.
+// Cadences, reaches and counts come from `LINEAGE_UNITS` in `magnitudes.ts`
+// (design §18.4). They used to be named constants here, which put them out of
+// the designer's reach; the runtime now reads the authored table and keeps no
+// numbers of its own.
 
-/** How long a player must hold still in combat before a `standing` card pays. */
-const STANDING_MS = 1_500;
-/** Cadence of a `pulse` card while the player is in combat. */
-const PULSE_MS = 4_000;
-/** How far a `contagion` payoff reaches for a neighbour, in world units. */
-const CONTAGION_RADIUS = 120;
-/** Neighbours one `contagion` application infects. */
-const CONTAGION_TARGETS = 1;
-/** Tick cadence of a lineage bleed, matching the cadence root's Hemorrhage. */
-const BLEED_TICK_MS = 1_000;
-/** Debuffs one `cleanse` payoff strips, and stacks off each. */
-const CLEANSE_DEBUFFS = 1;
-const CLEANSE_STACKS = 1;
-/**
- * A quiet spell that ends an engagement, for `first-hit`. Deliberately the same
- * shape as `stationaryDr`'s incoming-pressure window: an engagement is "hits are
- * still landing", and a fresh pull gets a fresh opening.
- */
-const ENGAGEMENT_IDLE_MS = 4_000;
+const STANDING_MS = lineageUnit('standingMs');
+const PULSE_MS = lineageUnit('pulseMs');
+const CONTAGION_RADIUS = lineageUnit('contagionRadius');
+const CONTAGION_TARGETS = lineageUnit('contagionTargets');
+const BLEED_TICK_MS = lineageUnit('bleedTickMs');
+const CLEANSE_DEBUFFS = lineageUnit('cleanseDebuffs');
+const CLEANSE_STACKS = lineageUnit('cleanseStacks');
+const ENGAGEMENT_IDLE_MS = lineageUnit('engagementIdleMs');
 
 // ── TracksCombat keys ────────────────────────────────────────────────────────
 
