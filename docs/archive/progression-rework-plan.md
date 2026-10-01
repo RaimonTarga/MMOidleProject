@@ -2200,3 +2200,58 @@ says squishy biomes (plains/forest) carry NO plating by design, while the family
 needs Plains Herd's and Forest Grove's bodies to have plating in order to punish Tempo at
 all. The biome-mitigation lesson and the family punishment contract want opposite things
 from the same stat on the same mobs.
+
+re-derivation) were implemented the same day, and Phase 0 call four (the per-tier pool
+factor) on 2026-10-01 at the design's seed values and flagged PROVISIONAL — the bench found
+that NEITHER half of its acceptance criterion discriminates between the candidate factors.
+Live-bot confirmation and the human playtest are still open — see the progress notes under
+Phase 0. Phases 1–5 are not implemented.
+### Phase 0 call four — the player pool raise (2026-10-01, PROVISIONAL)
+
+**Shipped.** `GAME_CONFIG.PLAYER_POOL_FACTOR_BY_TIER` and `poolFactorForTier`, applied in
+ONE place: `shared/src/systems/stats.ts` step 3c-bis, where the flat pool is complete and
+nothing has multiplied it yet. Base HP (step 1), the armor's `maxHp` and its upgrade steps
+(step 3) and the flat half of a defensive lineage's HP row (step 3c, which that step itself
+calls item power) are the only flat sources in the game — no skill node, stance or core
+authors a flat `maxHp`, they all author `maxHpPct` — so one multiplication there is exactly
+"base max HP and armor maxHp", and the percentage layers below it (class affinities 3d, the
+stance 3e, `core.maxhp-mult`) keep multiplying the finished pool as before.
+
+`RECOVERY_REFERENCE_POOL_BY_TIER` is untouched and its comment now says why. Proof is
+`server/test/playerPoolFactor.test.ts`: doubling the factor doubles the pool while
+`hasHealth.recovery`, `recoveryPerSecond` and `baseRecoveryForTier` do not move. Out of
+combat the rate still follows max HP by design (§15: downtime stays a constant 10 s at
+every tier). Summoner minions are unaffected either way, because `computeMinionMaxHp` is a
+share of the owner's pool, so the `minionMaxHp / ownerMaxHp` ratio `minionRecoveryFor` uses
+is invariant under the factor.
+
+**Values, PROVISIONAL at the design's seeds: 1.25 / 1.30 / 1.35 / 1.40.** Benched by
+`server/bench/poolRaise.ts` — fifteen pure weapon lanes per tier against the lineage
+biome's boss, with normal-node fight-end HP as the sanity column, 386 fights, no economy
+refusals. Table and findings: `reports/progression-phase0/pool-raise-run3.md`.
+
+| tier | factor | TTD/kill | lanes TTD>kill | node fight-end HP |
+|---:|---:|---:|---:|---:|
+| T1 | 1.00 / **1.25** / 1.50 / 1.75 / 2.00 | 0.80 / **1.04** / 1.25 / 1.46 / 1.67 | 3 / **7** / 9 / 10 / 11 of 15 | 0.89 / **0.92** / 0.93 / 0.94 / 0.95 |
+| T2 | 1.00 / **1.30** / 1.50 | 3.01 / **4.97** / 8.08 | 9 / **9** / 9 of 15 | 1.00 |
+| T3 | 1.00 / **1.35** / 1.50 | 3.38 / **5.25** / 6.16 | 9 / **9** / 9 of 15 | 1.00 |
+| T4 | 1.00 / **1.40** / 1.50 | 3.70 / **3.74** / 3.74 | 13 / **15** / 15 of 15 | 1.00 |
+
+T1's 1.25 is the criterion's own pick: it is the lowest factor whose median boss
+time-to-death exceeds median kill time. At T2–T4 the median lane already out-lasts its boss
+at 1.00, so the clause admits every candidate and says only "do not lower the pool"; the
+seeds are kept rather than collapsed to 1.00, which would discard §20's ladder for nothing
+(they cost 0.00 on the sanity column there, and T4's seed is the first factor at which all
+fifteen lanes win individually).
+
+**The 0.80 fight-end ceiling was already breached before the raise** — 0.89 at T1 and 1.00
+at T2–T4 at factor 1.00 — so that half of the criterion cannot brake anything. The raise
+adds +0.03 at T1 and nothing above it. The cause is most likely the band: this lane bot is
+the Phase 0 survey bot plus the whole T1..TN lineage band, and the 0b bench read 0.41–0.58
+on the same kind of node without one. Carried to Phase 4's monster pass with two more
+findings: T2–T4 bosses do not threaten a +3 pure lane at any factor (so the upper tiers
+want boss damage, not pool), and the T1 Gnarled Greatbear kills the Rapier lanes at the
+same 31–34 s however large the pool is, which is a burst or max-HP-scaling mechanic the
+pool does not answer.
+
+Still open for this call: the human playtest.
