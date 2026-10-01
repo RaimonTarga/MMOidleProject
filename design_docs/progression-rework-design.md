@@ -429,10 +429,20 @@ Shards: Tempo (Forest Pack, Plains Swarm), Affliction (Forest Canopy), Engagemen
 hemorrhage spreads on kill; First Blood also fires on each new target. Third form door at
 T2 gate: Venomthorn (Jungle).
 
-**T3** keystone: Tempo's echo chains until it misses; Affliction stacks stop expiring while
-hitting; Engagement's opening window becomes a stun. Handoff to the Striker T3 paths.
+The *rows* are shared by both T2 forms; the *biome they are earned in* is not. Per §21 the
+band gates on the worn form's door: L2/L3/L5 of the Forest's T2 content behind the Gale
+Needle (Forest levels 8/9/11), the same three steps of the Jungle's T2 content behind the
+Stinger (Jungle levels 2/3/5, because the Jungle debuts in T2 and counts its own levels
+from 1). Swapping between two owned forms re-resolves the band and costs nothing.
 
-**T4** cross-lane: borrow one other lane's payoff at 50%. Deathfang form.
+**T3 band (Jungle)** keystone: Tempo's echo chains until it misses; Affliction stacks stop
+expiring while hitting; Engagement's opening window becomes a stun. Venomthorn is the only
+T3 rapier, so the band is Jungle work — Jungle levels 8/9/10/11, not the Forest 14–17 a
+home-biome gate would have asked of a Forest that stops at 12. Handoff to the Striker T3
+paths.
+
+**T4 band (Jungle)** cross-lane: borrow one other lane's payoff at 50%. Deathfang form,
+Jungle levels 13–17.
 
 ---
 
@@ -630,3 +640,15 @@ form worn at that tier. T1 and T2 are unchanged in practice; T3 and T4 become re
 on every lineage because their forms come from biomes that are alive at those tiers. The
 Global Mastery band keeps its meaning (§4). Switching between two owned forms of one tier
 from different biomes re-resolves the band against the worn one.
+
+"Unchanged in practice" is exact about what does and does not move. A row's unlock is a
+position *within* its tier's six levels, and that position is a property of the row, never
+of the door: the T2 stat row is the second level of the tier whether the tier is spent in
+the Plains (level 8 of 12) or the Desert (level 2 of 6). The door decides **where** the
+levels are earned; it never decides how far in. So the number on a card changes for a door
+whose biome debuts above T1 — because that biome counts its own levels from 1 — while the
+amount of play behind it does not. The gate at the bottom of a band reads in the biome of
+the form it opens, the same way, which has one consequence worth stating: a door into a
+biome that debuts at the *new* tier (Jungle at T2, Tundra at T3, Graveyard at T4) has no
+level requirement to speak of, because that biome has no content at the tier below. The
+boss capstone is the whole gate there, which is §5's intent anyway.

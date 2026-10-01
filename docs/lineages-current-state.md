@@ -6,7 +6,7 @@ re-homed forms, T2 amplifiers, band collapse). Supersedes the weapon-only versio
 page from Phase 1.
 
 **Design authority:** [`design_docs/progression-rework-design.md`](../design_docs/progression-rework-design.md)
-§2–9, §18, §19. **History:** [`archive/progression-rework-plan.md`](archive/progression-rework-plan.md)
+§2–9, §18, §19, §21. **History:** [`archive/progression-rework-plan.md`](archive/progression-rework-plan.md)
 §1–§5 and their progress notes are the detailed build log, including every divergence from
 the original sketch; read the code where this page and that history disagree.
 
@@ -101,6 +101,49 @@ buyable (to change which lane absorbs) but is no longer selectable
 ("T1: Keen Edge, Rend"), expandable to reslot the payoff row underneath it, which stays
 buyable and selectable. The panel always shows one lit band and a dashed "Nothing beyond
 this band yet" placeholder where the next tier's cards don't exist yet.
+
+**Which biome a band gates on — the door biome (design §21, 2026-10-01).** A band of
+tier N asks for levels in the biome of the form worn at tier N, its **door biome**, never
+in the lineage's `homeBiome`. The home biome is only ever the T1 door, so gating every band
+on it made the upper bands unbuyable rather than expensive: the Rapier's T3 rows wanted
+Forest 14–17 against a Forest that stops at 12, and the Axe's T4 rows wanted Cave 19–23
+against a Cave that stops at 18.
+
+- `lineageBandBiome(lineage, progress, tier)` is the policy: the worn form if it is of that
+  tier, else an owned form of that tier (a collapsed band is still a wardrobe to buy from),
+  else the first authored one as a display default — which at T1 is the crafted base form,
+  i.e. the home biome, so **T1 is unchanged**.
+- `resolveLineageCardFor(lineage, progress, card)` is how any caller holding the tree
+  resolves a card. `resolveLineageCard` with no `bandBiome` still falls back to the home
+  biome, which is correct only at T1 and for an unreached band's silhouette.
+- `bandBiomeLevel(tier, row, biome)` is the arithmetic. `rowBiomeLevel` is an **absolute**
+  reference level (what a biome debuting in T1 would call it); a biome that debuts later
+  numbers its own levels from 1 and `biomeLevelCap` is in those same local numbers, so the
+  door's `biomeLevelOffset` comes off. A T3 Jungle door asks for Jungle 8, not Jungle 14.
+- The resolved card carries `requiredBiomeGroup` alongside `requiredBiomeLevel`, so
+  `checkUnlockCard`, its refusal message and the tree panel all name the same biome.
+- **Global Mastery is untouched**: it is a tier-wide band (design §4), so the door never
+  moves it. A row's position *within* its tier is also identical whichever door you came
+  through — the Broadsword's T2 stat row is the second level of the tier whether that tier
+  is spent in the Plains (8 of 12) or the Desert (2 of 6). That invariant is what "T1 and T2
+  are unchanged in practice" means, and `reachability.test.ts` pins it.
+- Where a lineage holds two forms of one tier from different biomes (the Rapier's T2 Gale
+  Needle/Forest and Stinger/Jungle; the Broadsword's T2 Plains/Desert; the Hammer's and
+  Dagger's T3/T4 Mountain-or-Tundra and Tundra-or-Volcanic pairs; the Axe's T4
+  Graveyard-or-Trench), the band gates on the **worn** one and swapping — free, as always —
+  re-resolves the whole band.
+- `formGateBiomeLevel` had the identical offset defect in the gate it already read off the
+  *form's* biome, which left six lineages' upper doors unpayable at any tier (the Axe's T4
+  Graveyard door needed Graveyard 18 against a cap of 6); it takes the same shift. One
+  consequence worth naming: for a door into a biome that **debuts at the new tier**
+  (Jungle/Desert at T2, Tundra/Volcanic at T3, Graveyard/Trench at T4) the level
+  requirement collapses to 1, because that biome has no content at the tier below. There is
+  nothing to have mastered there, so the **boss capstone is the real gate** for those doors,
+  which is what design §5 says it should be.
+
+No magnitude moved for any of this: `magnitudes.ts` is untouched, and
+`shared/src/data/lineages/reachability.test.ts` walks every lineage × tier × form with no
+allowlist to assert each band is finishable behind its own door, at that band's own tier.
 
 ## 4. Keystones (design §4, amended 2026-10-01)
 
@@ -244,13 +287,17 @@ Pure functions the server applies and the client gates buttons with, mirroring
 `checkUpgrade`/`checkEvolve`:
 
 - `checkUnlockCard` — gate requirements (worn-form tier ≥ card tier, any `modifies`
-  target owned), then (unless `wallet.isTestRoom`) home-biome level, Global Mastery,
+  target owned), then (unless `wallet.isTestRoom`) **door-biome** level (§3: the biome of
+  the form worn at that tier, read off `resolved.requiredBiomeGroup`), Global Mastery,
   essence and shard affordability.
+- `lineageBandBiome` / `resolveLineageCardFor` — which door a band gates on, and the only
+  way a caller holding the player's tree should resolve a card (design §21, §3 above).
 - `checkSetActive` — swapping which owned card is active for a row. Free and instant,
   refuses only ownership/row mismatch and a collapsed band's stat card. **"Owned is
   forever, active is a choice"** is the governing invariant.
 - `checkUnlockForm` / `checkWearForm` — paying a gate (essence + the crowned lane's shard
-  + the home biome's boss capstone), and swapping worn form among owned ones (free).
+  + **the new form's own** biome's boss capstone, plus that biome's level per
+  `formGateBiomeLevel`), and swapping worn form among owned ones (free).
 - `lineageSwitchDiscount` — a card is half price if the player already owns the same
   tier+row on another lineage of the same slot. Gates are never discounted.
 - `statRowIsCollapsed` / `absorbedStatCards` / `lineageCardTie` — the Phase 5 band-collapse
