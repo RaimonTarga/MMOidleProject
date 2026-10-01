@@ -6,8 +6,9 @@
  * failure mode is silent — a node that advertises one family and fields another
  * looks fine and teaches the player the wrong thing. Two things are pinned:
  *
- *  1. Every T1 normal node's shares sum to 1 and name only families of its own
- *     biome. (Node COUNT is pinned by `validateWorldMap`, which this also runs.)
+ *  1. Every T1/T2 normal node's shares sum to 1 and name only families of its
+ *     own biome. (Node COUNT is pinned by `validateWorldMap`, which this also
+ *     runs.)
  *  2. Spawning cycles the blend instead of rolling it, so the composition is a
  *     fact about ten spawns rather than a hope about a thousand.
  *
@@ -31,7 +32,6 @@ import {
   blendShareTotal,
   blendSpawnCycle,
   blendSpawnPick,
-  familiesForBiome,
   familyForMonster,
   nodeSpawnBlend,
   validateWorldMap,
@@ -56,73 +56,93 @@ function countFamilies(families: readonly FamilyId[]): Map<FamilyId, number> {
 }
 
 // ─── Authoring: shares sum to 1, families belong to the biome ─────────────────
+//
+// T1 and T2 both carry blends now (W1-E adds T2's). The "every family leads a
+// node" rule is checked per tier against the families that tier's OWN blends
+// actually name, not every family of the biome: Desert's Stalker family is
+// T3+ only by design (no T2 member — see families/index.ts), so a T2 check
+// against `familiesForBiome` would wrongly demand a Stalker-led T2 node.
 
-const t1Normals = WORLD_NODE_LIST.filter(
-  (node) => node.kind === 'normal' && node.biomeTier === 1,
-);
-assert(t1Normals.length === 27, `fixture: expected 27 T1 normal nodes, found ${t1Normals.length}`);
-
-const countByBiome = new Map<string, number>();
-for (const node of t1Normals) {
-  countByBiome.set(node.biomeGroup, (countByBiome.get(node.biomeGroup) ?? 0) + 1);
-
-  const blend = node.blend;
-  check(!!blend, `${node.id}: T1 normal node has no blend`);
-  if (!blend) continue;
-
-  const total = blendShareTotal(blend);
-  check(
-    Math.abs(total - 1) < 1e-6,
-    `${node.id}: shares sum to ${total}, not 1`,
+function checkTierBlends(tier: number, expectedCount: number) {
+  const normals = WORLD_NODE_LIST.filter(
+    (node) => node.kind === 'normal' && node.biomeTier === tier,
   );
-  const entries = blendEntries(blend);
-  check(entries.length > 0, `${node.id}: every share is zero`);
-  for (const key of Object.keys(blend) as FamilyId[]) {
-    const family = FAMILY_DATABASE.get(key);
-    check(!!family, `${node.id}: unknown family '${key}'`);
+  assert(
+    normals.length === expectedCount,
+    `fixture: expected ${expectedCount} T${tier} normal nodes, found ${normals.length}`,
+  );
+
+  const countByBiome = new Map<string, number>();
+  const familiesNamedByBiome = new Map<string, Set<FamilyId>>();
+  for (const node of normals) {
+    countByBiome.set(node.biomeGroup, (countByBiome.get(node.biomeGroup) ?? 0) + 1);
+
+    const blend = node.blend;
+    check(!!blend, `${node.id}: T${tier} normal node has no blend`);
+    if (!blend) continue;
+
+    const total = blendShareTotal(blend);
     check(
-      family === undefined || family.biome === node.biomeGroup,
-      `${node.id}: '${key}' is a ${family?.biome} family`,
+      Math.abs(total - 1) < 1e-6,
+      `${node.id}: shares sum to ${total}, not 1`,
     );
-    check((blend[key] ?? 0) > 0, `${node.id}: '${key}' has a non-positive share`);
+    const entries = blendEntries(blend);
+    check(entries.length > 0, `${node.id}: every share is zero`);
+    const named = familiesNamedByBiome.get(node.biomeGroup) ?? new Set<FamilyId>();
+    for (const key of Object.keys(blend) as FamilyId[]) {
+      const family = FAMILY_DATABASE.get(key);
+      check(!!family, `${node.id}: unknown family '${key}'`);
+      check(
+        family === undefined || family.biome === node.biomeGroup,
+        `${node.id}: '${key}' is a ${family?.biome} family`,
+      );
+      check((blend[key] ?? 0) > 0, `${node.id}: '${key}' has a non-positive share`);
+      named.add(key);
+    }
+    familiesNamedByBiome.set(node.biomeGroup, named);
+    check(
+      Object.keys(NODE_BLENDS).includes(node.id),
+      `${node.id}: authored a blend but is missing from NODE_BLENDS`,
+    );
   }
-  check(
-    Object.keys(NODE_BLENDS).includes(node.id),
-    `${node.id}: authored a blend but is missing from NODE_BLENDS`,
-  );
+
+  // The blend list is the node count source at this tier, so the two must agree.
+  for (const [biomeGroup, count] of countByBiome) {
+    const blended = normals.filter(
+      (node) => node.biomeGroup === biomeGroup && node.blend,
+    ).length;
+    check(
+      blended === count,
+      `T${tier} ${biomeGroup}: ${count} normal nodes but ${blended} blends`,
+    );
+    // Every family this tier's blends name for the biome leads at least one
+    // node, so no shard this tier claims to source is actually unreachable.
+    for (const familyId of familiesNamedByBiome.get(biomeGroup) ?? []) {
+      const leads = normals.some(
+        (node) =>
+          node.biomeGroup === biomeGroup &&
+          node.blend &&
+          blendEntries(node.blend)[0]?.family === familyId,
+      );
+      check(leads, `T${tier} ${biomeGroup}: no node is dominated by '${familyId}'`);
+    }
+  }
+  return normals;
 }
 
-// The blend list is the node count source for T1, so the two must agree.
-for (const [biomeGroup, count] of countByBiome) {
-  const blended = t1Normals.filter(
-    (node) => node.biomeGroup === biomeGroup && node.blend,
-  ).length;
-  check(
-    blended === count,
-    `T1 ${biomeGroup}: ${count} normal nodes but ${blended} blends`,
-  );
-  // Every family of the biome leads at least one node, so no shard is unreachable.
-  for (const family of familiesForBiome(biomeGroup)) {
-    const leads = t1Normals.some(
-      (node) =>
-        node.biomeGroup === biomeGroup &&
-        node.blend &&
-        blendEntries(node.blend)[0]?.family === family.id,
-    );
-    check(leads, `T1 ${biomeGroup}: no node is dominated by ${family.name}`);
-  }
-}
+const t1Normals = checkTierBlends(1, 27);
+const t2Normals = checkTierBlends(2, 37);
 
-// T2-T4 carry no blend yet (their family tables are not authored). This asserts
-// the CURRENT deliberate state; Phase 4/5 authoring is what flips it.
+// T3-T4 carry no blend yet (their family tables are not authored). This asserts
+// the CURRENT deliberate state; later waves are what flip it.
 for (const node of WORLD_NODE_LIST) {
-  if (node.kind === 'normal' && node.biomeTier === 1) continue;
-  check(!node.blend, `${node.id}: only T1 normal nodes carry a blend today`);
+  if (node.kind === 'normal' && (node.biomeTier === 1 || node.biomeTier === 2)) continue;
+  check(!node.blend, `${node.id}: only T1/T2 normal nodes carry a blend today`);
 }
 
 check(
-  Object.keys(NODE_BLENDS).length === 27,
-  `NODE_BLENDS holds ${Object.keys(NODE_BLENDS).length} nodes, expected 27`,
+  Object.keys(NODE_BLENDS).length === 27 + 37,
+  `NODE_BLENDS holds ${Object.keys(NODE_BLENDS).length} nodes, expected ${27 + 37}`,
 );
 problems.push(...validateWorldMap());
 assert(problems.length === 0, `blend authoring failures:\n  ${problems.join('\n  ')}`);
@@ -300,13 +320,13 @@ assert(problems.length === 0, `blend resolution failures:\n  ${problems.join('\n
 }
 
 // A node with no blend still spawns, from the flat biome pool. This is the
-// T2-T4 path, and it must not have been broken by the blended one.
+// T3-T4 path, and it must not have been broken by the blended one.
 {
   const unblended = WORLD_NODE_LIST.find(
-    (node) => node.kind === 'normal' && node.biomeTier === 2,
+    (node) => node.kind === 'normal' && node.biomeTier === 3,
   );
-  assert(!!unblended, 'fixture: a T2 normal node');
-  assert(!nodeSpawnBlend(unblended.id), `${unblended.id}: T2 nodes carry no blend yet`);
+  assert(!!unblended, 'fixture: a T3 normal node');
+  assert(!nodeSpawnBlend(unblended.id), `${unblended.id}: T3 nodes carry no blend yet`);
   const world = new World();
   let placed = 0;
   for (let i = 0; i < 10; i += 1) if (spawnMonster(world, unblended.id)) placed += 1;
