@@ -19,8 +19,13 @@ import type { MonsterDefinition } from './types';
 //
 // CHARGE = closes the gap for SLOW big-hitters (anti-kite for the ponderous).
 // HIGH BASE SPEED = the fast-ambusher identity. RANGED = anti-kite from afar.
-// Squishy biomes (plains/forest) carry NO plating/DR (fast weapons shred them —
-// intended); CAVE elites carry DR/plating (where slow/piercing weapons earn keep).
+// PLATING RULE SUPERSEDED (progression rework, 2026-10-01, PROVISIONAL): plains and
+// forest used to carry NO plating/DR at all ("fast weapons shred them — intended").
+// A family's `punishes` field is now a contract, and flat `plating` is the only stat
+// that punishes Tempo (`packets.ts`: "weak against fortified plating"), so Plains Herd
+// and Forest Grove — both Tempo-punishing — must carry some. They still carry NO %DR,
+// so fast weapons still shred them; see monster-proposals-run3.md §1/§4.
+// CAVE elites carry DR/plating (where slow/piercing weapons earn keep).
 //
 // Rewards / ai wander+leash / colors / ids kept as-is. A few NAMES no longer
 // match their refactored shape (flagged inline) — rename in the cosmetic pass.
