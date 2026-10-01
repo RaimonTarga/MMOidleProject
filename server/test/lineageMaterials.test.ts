@@ -12,10 +12,14 @@
  * thing work: a non-boss monster of a T1 biome that belongs to no family is a
  * kill that silently pays nothing.
  *
- * It also pins the Phase 4 shard-sourcing STOPGAP (design §17): a boss kill also
- * drops shards of its biome's non-weapon Lane-A packets, deduplicated per
- * packet, because three packets (Engagement, Bulwark, Barrier tempo) have no T1
- * mob family at all.
+ * It also pins the shard-sourcing STOPGAP (design §18.6): a boss kill also drops
+ * shards of each Lane-A packet of the lineages homed in its biome, deduplicated per
+ * packet, because Bulwark and Barrier tempo have no T1 mob family at all and
+ * Technique (design §22) has only one.
+ *
+ * And it pins §12's COVERAGE RULE — "every packet has >= 2 sources per tier, so no
+ * shard has a single source" — counting the stopgap, computed from the pools and the
+ * family table rather than asserted by hand.
  *
  * Deliberately NOT asserted: drop amounts. Those are one row in the magnitude
  * table; everything here is relative or structural.
@@ -23,6 +27,7 @@
  * Run: node --conditions=development --import tsx test/lineageMaterials.test.ts
  */
 import {
+  BIOME_DATABASE,
   CAPSTONE_MATERIALS,
   FAMILY_BIOMES,
   FAMILY_DATABASE,
@@ -312,5 +317,86 @@ function farm(id: string, nodeId: string, monsterTypeId: string, kills: number) 
   const base = farm('m-base', 'node-t1-forest-01', 'wolf', 1).shards.tempo ?? 0;
   assert(boosted > base, `the dev multiplier must reach shards (${boosted} vs ${base})`);
 }
+
+// ── Every packet has at least two T1 shard sources (design §12) ──────────────
+//
+// Computed from the tier-1 pools and the family table, plus the §18.6 boss
+// stopgap, so neither half can quietly become the only source. A family whose mobs
+// all live in a later tier's pool drops nothing at tier 1 however a blend names it,
+// which is why this reads the POOL and not the blends.
+
+const T1_BIOMES = ['plains', 'forest', 'mountain', 'cave', 'swamp'] as const;
+
+{
+  const fieldableAtT1 = new Set<string>(
+    T1_BIOMES.flatMap((biome) => BIOME_DATABASE.get(biome)?.monsterPoolByTier[1] ?? []),
+  );
+  const sources = new Map<PacketId, string[]>(PACKET_IDS.map((p) => [p, []]));
+  for (const family of FAMILY_DATABASE.values()) {
+    if (!T1_BIOMES.includes(family.biome as typeof T1_BIOMES[number])) continue;
+    if (!family.monsterIds.some((id) => fieldableAtT1.has(id))) continue;
+    sources.get(family.drops)!.push(`${family.biome}/${family.name}`);
+  }
+  for (const biome of T1_BIOMES) {
+    for (const packet of biomeLaneAPackets(biome)) sources.get(packet)!.push(`${biome} boss`);
+  }
+  for (const packet of PACKET_IDS) {
+    const from = sources.get(packet)!;
+    check(
+      from.length >= 2,
+      `coverage (design §12): '${packet}' has ${from.length} T1 source(s) — ${from.join(', ') || 'none'}`,
+    );
+  }
+
+  // The ninth packet specifically (design §22), because it is the thin one: the
+  // Plains Swarm's trash plus the Plains boss's Lane-A stopgap, and nothing else.
+  // If either half moves, Technique drops to one source and this says so by name.
+  const technique = sources.get('technique')!;
+  check(
+    technique.includes('plains/Swarm') && technique.includes('plains boss'),
+    `Technique's two T1 sources are the Plains Swarm and the Plains boss, got ${technique.join(', ')}`,
+  );
+}
+
+// ── Plains' three families partition the biome and pay three DIFFERENT shards ──
+//
+// Design §22 moved the Swarm from Tempo to Technique. The partition is what makes
+// a kill pay at all, and three distinct shards is what makes a Plains node's blend
+// worth reading.
+
+{
+  const plains = [...FAMILY_DATABASE.values()].filter((f) => f.biome === 'plains');
+  check(plains.length === 3, `Plains fields three families, got ${plains.length}`);
+  const drops = plains.map((f) => f.drops);
+  check(
+    new Set(drops).size === drops.length,
+    `two Plains families must not drop the same shard, got ${drops.join('/')}`,
+  );
+  const swarm = plains.find((f) => f.name === 'Swarm');
+  check(!!swarm, 'Plains fields a Swarm');
+  check(
+    swarm?.drops === 'technique',
+    `the Swarm drops the Technique shard (design §22), got ${swarm?.drops}`,
+  );
+  // Each of its mobs is in exactly one family, and it is this one.
+  for (const id of swarm?.monsterIds ?? []) {
+    check(
+      familyForMonster(id)?.id === swarm?.id,
+      `${id} must belong to the Swarm and nothing else`,
+    );
+  }
+  // And a Swarm kill really pays Technique shards through the live reward seam.
+  const kill = farm('m-swarm', 'node-t1-plains-01', swarm!.monsterIds[0]!, 1);
+  check((kill.shards.technique ?? 0) > 0, 'a Swarm kill pays Technique shards');
+  check(
+    Object.keys(kill.shards).length === 1,
+    `and only its own family's shard, got ${Object.keys(kill.shards).join(', ')}`,
+  );
+}
+
+// The `check` collector is drained once above for the authoring pass; the two
+// blocks since then use it too, so drain it again rather than letting a coverage
+// gap be collected and never read.
+assert(problems.length === 0, `shard coverage / family failures:\n  ${problems.join('\n  ')}`);
 
 console.log('lineageMaterials.test.ts: ok');

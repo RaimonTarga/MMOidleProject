@@ -615,6 +615,92 @@ for (const packet of PACKET_IDS) {
   );
 }
 
+// ─── 5d. The Broadsword after design §22 ─────────────────────────────────────
+//
+// The generic loops above would catch a Broadsword with a missing row, but they
+// would say "a lineage" where a reader needs "the Broadsword". §22 changed its
+// lanes and its capstones and nothing else, so what is pinned here is both halves:
+// the Technique lane is fully authored, and REACHABILITY is untouched — the same
+// seven forms, the same recipe ids, the same tiers and biomes, the same one crafted
+// base form and six gated ones. A lane swap must not quietly move a door.
+
+{
+  const broadsword = LINEAGE_DATABASE.get('broadsword');
+  check(!!broadsword, 'the Broadsword is still in the database');
+
+  if (broadsword) {
+    check(
+      broadsword.lanes.join('/') === 'technique/kill-chain/empowered',
+      `the Broadsword carries Technique / Kill chain / Empowered (design §22), got ${broadsword.lanes.join('/')}`,
+    );
+    // Lane A is what §18.6's boss stopgap pays, which is half of Technique's two
+    // T1 shard sources (`server/test/lineageMaterials.test.ts` pins the other half).
+    check(
+      broadsword.lanes[0] === 'technique',
+      `Technique must be Lane A so the Plains boss pays its shard, got '${broadsword.lanes[0]}'`,
+    );
+
+    // Reachability: the forms are the doors, and §22 touched none of them.
+    const forms = [...broadsword.forms]
+      .map((f) => `${f.recipeId}@T${f.tier}/${f.biome}`)
+      .sort();
+    check(
+      forms.join(' ') === [
+        'desert-pilgrim-quarterstaff@T3/desert',
+        'desert-solar-cross@T3/desert',
+        'desert-sunmonk-warstaff@T4/desert',
+        'desert-sunsteel-cross@T2/desert',
+        'desert-zenith-cross@T4/desert',
+        'iron-broadsword@T1/plains',
+        'knight-steelsword@T2/plains',
+      ].sort().join(' '),
+      `the Broadsword's doors are unchanged by the lane swap, got ${forms.join(' ')}`,
+    );
+
+    // Every row of every tier the Broadsword authors, on the Technique lane.
+    for (const tier of [1, 2]) {
+      for (const row of rowsForTier(tier)) {
+        check(
+          broadsword.cards.some((c) => c.tier === tier && c.row === row && c.lane === 'technique'),
+          `the Broadsword's Technique lane has no T${tier} '${row}' card`,
+        );
+      }
+    }
+    check(
+      broadsword.cards.some((c) => c.tier === 3 && c.row === 'keystone' && c.lane === 'technique'),
+      "the Broadsword's Technique lane has no T3 keystone card",
+    );
+    check(
+      broadsword.cards.some((c) => c.tier === 4 && c.row === 'cross' && c.lane === 'technique'),
+      "the Broadsword's Technique lane has no T4 cross card",
+    );
+    // Tempo is GONE from it — that is the swap, and a leftover Tempo card would be
+    // a row the player can buy on a lane the lineage does not carry.
+    check(
+      !broadsword.cards.some((c) => c.lane === 'tempo'),
+      'no Tempo card may survive on the Broadsword',
+    );
+
+    // The Desert line crowns Technique; the Plains door keeps Kill chain.
+    for (const form of broadsword.forms) {
+      if (!form.capstone) continue;
+      const expected = form.biome === 'desert' ? 'technique' : 'kill-chain';
+      check(
+        form.capstone.lane === expected,
+        `${form.recipeId}: a ${form.biome} Broadsword form crowns '${expected}' (design §22), got '${form.capstone.lane}'`,
+      );
+    }
+  }
+
+  // And Tempo still meets the coverage rule without it, on the two lineages that
+  // carry it as Lane A. Named, because §22's own sentence promises exactly this.
+  const tempoWeapons = lineagesWithLane('weapon', 'tempo').map((l) => l.id).sort();
+  check(
+    tempoWeapons.join('/') === 'axe/rapier',
+    `Tempo's weapon coverage is the Axe and the Rapier, got ${tempoWeapons.join('/') || 'none'}`,
+  );
+}
+
 // ─── 6. Capstone materials ───────────────────────────────────────────────────
 
 for (const material of CAPSTONE_MATERIALS.values()) {
