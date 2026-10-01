@@ -29,6 +29,16 @@ export const STONE_LINEAGE: LineageDefinition = {
         trigger: 'kill', payoff: 'recovery-window',
       },
     },
+  {
+    recipeId: 'desert-charm-t2', tier: 2, biome: 'desert',
+    capstone: {
+      id: 'stone-capstone-oasis-guard', name: 'Oasis Guard',
+      description: 'A guard raised in the mirage-haze starts the fight already half-cleansed.',
+      fx: 'engagement.sidestep-blur', lane: 'engagement',
+      trigger: 'guard-cast', payoff: 'cleanse',
+    },
+  },
+
   ],
 
   cards: [

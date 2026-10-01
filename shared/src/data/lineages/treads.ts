@@ -28,6 +28,16 @@ export const TREADS_LINEAGE: LineageDefinition = {
         trigger: 'first-hit', payoff: 'engagement-dr',
       },
     },
+  {
+    recipeId: 'tundra-boots-t3', tier: 3, biome: 'tundra',
+    capstone: {
+      id: 'treads-capstone-icebreaker', name: 'Icebreaker Stride',
+      description: 'Every third stride plants enough ice to root whatever you pass.',
+      fx: 'control.chill-blur', lane: 'control',
+      trigger: 'hit-nth', payoff: 'stun',
+    },
+  },
+
   ],
 
   cards: [

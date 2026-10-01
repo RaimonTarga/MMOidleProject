@@ -30,6 +30,16 @@ export const HEARTROOT_LINEAGE: LineageDefinition = {
         trigger: 'barrier-break', payoff: 'ward',
       },
     },
+  {
+    recipeId: 'jungle-charm-t2', tier: 2, biome: 'jungle',
+    capstone: {
+      id: 'heartroot-capstone-deep-root', name: 'Deep Root',
+      description: 'The longer the fight runs, the more ward the root has already grown.',
+      fx: 'barrier-tempo.ward-shell', lane: 'barrier-tempo',
+      trigger: 'pulse', payoff: 'ward',
+    },
+  },
+
   ],
 
   cards: [

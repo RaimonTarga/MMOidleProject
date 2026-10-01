@@ -28,6 +28,16 @@ export const MARSH_LINEAGE: LineageDefinition = {
         trigger: 'standing', payoff: 'stun',
       },
     },
+  {
+    recipeId: 'trench-boots-t4-treaders', tier: 4, biome: 'trench',
+    capstone: {
+      id: 'marsh-capstone-deep-ballast', name: 'Deep Ballast',
+      description: 'Every hit taken settles the ballast a little deeper, until it holds like plate.',
+      fx: 'bulwark.plating-chip', lane: 'bulwark',
+      trigger: 'hit-taken', payoff: 'plating-stack',
+    },
+  },
+
   ],
 
   cards: [

@@ -28,6 +28,16 @@ export const PLATE_LINEAGE: LineageDefinition = {
         trigger: 'standing', payoff: 'plating-stack',
       },
     },
+  {
+    recipeId: 'tundra-vest-t3', tier: 3, biome: 'tundra',
+    capstone: {
+      id: 'plate-capstone-glacial-ground', name: 'Glacial Ground',
+      description: 'Holding position under fire leaves the ground around you frozen for anything that closes.',
+      fx: 'control.chill-blur', lane: 'control',
+      trigger: 'standing', payoff: 'stun',
+    },
+  },
+
   ],
 
   cards: [
