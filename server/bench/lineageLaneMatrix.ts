@@ -220,6 +220,13 @@ function laneNodes(): LaneNode[] {
   return [...byKey.values()];
 }
 
+/**
+ * The resolved share at which a node counts as a family's OWN: the 70/20/10 and 70/30
+ * shapes, never a 45/45/10 or a 34/33/33 where two families share the encounter.
+ * Module scope because `LANE_OWN_NODES` filters on it before the node set is built.
+ */
+const OWN_NODE_SHARE = 0.6;
+
 const short = (family: FamilyId): string => FAMILY_DATABASE.get(family)?.name ?? family;
 const pct = (share: number): string => `${Math.round(share * 100)}%`;
 /** `node-t2-jungle-03` as `t2-jungle-03`: short enough for a column heading. */
@@ -470,10 +477,24 @@ async function main(): Promise<void> {
   }
 
   const tierFilter = process.env.LANE_TIERS?.split(',').map(Number);
+  /**
+   * `LANE_OWN_NODES=1` — keep only nodes a single family DOMINATES (resolved share at
+   * or above `OWN_NODE_SHARE`), which is the 70/20/10 and 70/30 shapes and nothing else.
+   *
+   * This is not an arbitrary sample: it is exactly the node set both §18.9 criteria
+   * read. The lane budget is measured on each lane's favoured node (the node its own
+   * family dominates hardest) and the encounter check on each family's own node (the
+   * same 60% floor). The 45/45/10 and 34/33/33 blends only ever fed the secondary
+   * "uplift over every node" table, and at run 4's size — two bands instead of one —
+   * paying for them would have cost hours for a column nothing is decided on. Run 4
+   * uses it; `lane-matrix-run4.md` says so in its header.
+   */
+  const ownNodesOnly = process.env.LANE_OWN_NODES === '1';
   const nodes = laneNodes()
     .filter((n) => !biomeFilter || biomeFilter.includes(n.biome))
     .filter((n) => !tierFilter || tierFilter.includes(n.tier))
-    .filter((n) => !nodeFilter || nodeFilter.includes(n.nodeId));
+    .filter((n) => !nodeFilter || nodeFilter.includes(n.nodeId))
+    .filter((n) => !ownNodesOnly || n.dominantShare >= OWN_NODE_SHARE);
   const bandFilter = process.env.LANE_BANDS?.split(',').map(Number);
   const references = ALL_LANE_REFERENCES
     .filter((r) => !filter || r.profileId.includes(filter))
@@ -859,7 +880,6 @@ async function main(): Promise<void> {
    * and only when that share is a clear majority (the 70/20/10 and 70/30 shapes,
    * never a 45/45/10 or a 34/33/33 where two families share the encounter).
    */
-  const OWN_NODE_SHARE = 0.6;
   const ownNodeOf = (family: FamilyId, tier: number): LaneNode | undefined => {
     const candidates = nodes
       .filter((n) => n.dominant === family && n.tier === tier && n.dominantShare >= OWN_NODE_SHARE)
