@@ -36,6 +36,7 @@ import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { registerCombatListener } from '../engine/combatPipeline';
 import { playerDotsOnMonster } from '../damage/dotInventory';
+import { evadeBlocksDebuffs } from '../../defense/mitigation/evasion';
 import { defineKeystone, keystoneActive, pushKeystoneFx } from './registry';
 
 const LANE: PacketId = 'affliction';
@@ -61,6 +62,10 @@ export const FESTERING_KEYSTONE = defineKeystone({
       if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
       const player = ctx.attacker;
       if (!keystoneActive(player, LANE)) return;
+      // A hit the monster dodged did not apply the player's affliction pressure,
+      // so it does not hold it either — the same early return every on-target
+      // applier in the runtime makes.
+      if (evadeBlocksDebuffs(ctx)) return;
       const monster = ctx.defender;
       const key = festerWindow(player.isPlayer.id);
       const wasHeld = getCooldown(monster.tracksCombat, key) > 0;
