@@ -20,6 +20,29 @@ HP/recovery pass) and Phase 4 (defensive lanes); it is not a separate track any 
 
 ---
 
+## Ability nodes keyed to packets (2026-10-01, parked)
+
+Designer's note: abilities are numerically strong but generic and lowkey; the strongest are
+Second Wind, Brace, Endure. Idea: an ability tree that specialises each ability toward the
+player's archetype. Direction agreed in discussion, not scheduled; belongs after Phase 5 of
+the progression rework.
+
+- **Generic tree keyed to packets, not per-class trees.** Per-class is 22 abilities x 6
+  roots of authoring that mostly restates what the frame loop and the   trigger already give for free.
+- **One node per tier, three options**, the same row shape as item lineage cards, so the
+  tree panel, the closed trigger/payoff vocabulary and the coverage test are reused.
+  T1 picks the lane, T2 amplifies, T3 is the one bespoke keystone verb, T4 borrows cross-lane.
+- **Techniques take offensive packets only; Guards take the defensive faces only**
+  (Avoid / Sustain / Endure), so defence never scales with offence (ability design axioms).
+  Second Wind choosing a face is how the reset button becomes a decision.
+- **Cheap first version is data only:** a node means "this ability also fires the chosen
+  packet's payoff at a share", resolved through the lineage payoff runtime. Bespoke
+  keystones come later, on the dozen abilities that deserve them.
+- Runes keep deciding *when* an ability fires; nodes decide *what* it does.
+- Depends on the frame loops (Phase 3) for Light-window interactions.
+
+---
+
 ## Player defense redesign — proposal (2026-09-25)
 
 **Proposed, not approved or implemented.** The [deep defense proposal](../reports/player-defense-study-2026-09-25/REDESIGN-PROPOSAL.md) reviews all 30 armors, all 12 cores, class bonuses, mitigation ordering and biome threat profiles. Preserve recognizable armor families and give them useful cross-biome applications; narrow plating, bring Jungle evade strength forward, make Desert an opening-protection candidate, and constrain Tundra/Volcano stacking. Remove negative-HP ranged core costs in the candidate and establish ordinary forced-contact survival before tuning monster damage. Numerical seeds need staged validation; no gameplay changes or new bot campaign were performed. See the linked inventory and initial study for source and historical-evidence boundaries.
