@@ -525,9 +525,25 @@ export function registerLineageCards(): void {
   registerFirstHit();
   registerKill();
   registerEvade();
+  registerWindowReaders();
+}
+
+/**
+ * The triggers that read what the DEFENSE stack did to an incoming hit, so they
+ * must register AFTER `initDefenseSystems()` — see the ordering list in
+ * `combatBootstrap.ts`.
+ *
+ * `hit-taken` needs `ctx.damage` to be what actually landed: registered with the
+ * rest, it read the pre-mitigation figure and fired on hits that were fully
+ * dodged or fully absorbed. `barrier-break` needs the `barrierEmptied` /
+ * `wardBrokenMax` metadata that `defense/barrier/barrier.ts` sets from its own
+ * `onDamageTaken` listener, so registered first it could never see a break at
+ * all. (`evade` stays in the main pass: the engine sets `metadata.evaded` in
+ * `combat.ts` before any listener runs.)
+ */
+export function registerLineageIncomingCards(): void {
   registerHitTaken();
   registerBarrierBreak();
-  registerWindowReaders();
 }
 
 /** `hit-nth` — every nth landed hit, counted per card. */
