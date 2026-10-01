@@ -194,6 +194,16 @@ const authored = (nodeId: string, key: string): number => {
     `a hit inside the window should scale by the window, got ${inWindow.damage}`,
   );
 
+  // The HUD contract: the window IS a status effect with that id, carrying the
+  // full duration its clock needs (a remaining fraction cannot be turned back
+  // into seconds).
+  const wired = getStatusEffect(player.tracksCombat, 'frame.cadence.window');
+  assert(wired, 'the window must be a `frame.<root>.window` status effect');
+  assert(
+    wired!.data['totalMs'] === authored('cadence-light', 'cadence.frame-window-ms'),
+    `the window must carry totalMs for the buff clock, got ${wired!.data['totalMs']}`,
+  );
+
   const effect = frameWindowEffect(player, 'cadence')!;
   effect.remainingMs = 0;
   const outOfWindow = hit(player, target);
@@ -211,6 +221,7 @@ const authored = (nodeId: string, key: string): number => {
   const perStack = authored('cadence-heavy', 'cadence.frame-charge-per-stack');
   const staggerMs = authored('cadence-heavy', 'cadence.frame-stagger-ms');
 
+  world.takeNodeEvents(NODE); // start from a clean slate for the glow events below
   let highest = 0;
   let finishers = 0;
   let spentFrom = 0;
@@ -240,6 +251,23 @@ const authored = (nodeId: string, key: string): number => {
     `the bank should reach exactly threshold−1, peaked at ${highest}`,
   );
   assert(spentFrom > 0, 'a finisher should have had charge to spend');
+
+  // The weapon glow's beat. One event per real change — never per hit — carrying
+  // the cap authoritatively, and a `stacks: 0` as the finisher spends the bank.
+  const charges = world.takeNodeEvents(NODE).filter((event) => event.kind === 'frame-charge');
+  assert(charges.length > 0, 'banking charge must tell the node about it');
+  assert(
+    charges.every((event) =>
+      event.kind === 'frame-charge' &&
+      event.playerId === 'fl-breaker' &&
+      event.max === player.usesCadence!.threshold - 1 &&
+      event.stacks <= event.max),
+    'every frame-charge must carry this player, the real cap, and a bank inside it',
+  );
+  assert(
+    charges.some((event) => event.kind === 'frame-charge' && event.stacks === 0),
+    'the spend must be announced too, or the glow never goes out',
+  );
 
   // The rider. Through `applyStun`, so the stun-immunity window applies to it like
   // any other control — which is why only the FIRST finisher staggers.
