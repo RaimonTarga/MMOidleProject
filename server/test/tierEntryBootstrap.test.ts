@@ -227,7 +227,7 @@ const earnedProfile = tierEntryProfileFromT1Snapshot({ schemaVersion: 1,
 const earnedResult = applyTierEntryProfile(world, player, earnedProfile);
 assert(earnedResult.success, earnedResult.reason ?? "actual V1d state imports");
 // Rebuilt from the V1d gear under the current armor data (164 before the 2026-09-25 defense rebudget).
-// The pin is the pool the GEAR buys. The per-tier pool raise (design ง20) lands on
+// The pin is the pool the GEAR buys. The per-tier pool raise (design ยง20) lands on
 // top of it at recalc, so it is read from the config rather than baked in again; the
 // tolerance is the second rounding the class affinity fold applies after the raise.
 const EARNED_UNRAISED_MAX_HP = 166;

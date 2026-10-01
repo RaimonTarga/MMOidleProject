@@ -46,13 +46,13 @@ export const GAME_CONFIG = {
   PLAYER_MAX_HP: 100,
   /**
    * Per-player-tier multiplier on the authored max-HP pool (progression rework
-   * Phase 0 call four, design bible ง20). Indexed by
+   * Phase 0 call four, design bible ยง20). Indexed by
    * `tracksProgression.playerTier` (0 = fresh character in the Clearing, 1-4 =
    * T1-T4). It scales the flat pool once at recalc - the base above plus the
    * armor's `maxHp` - so a boss has to chew through more of it per fight.
    *
    * `RECOVERY_REFERENCE_POOL_BY_TIER` deliberately does NOT follow it. Under the
-   * flat model (ง15) the pool is a budget and the recovery rate is a choice;
+   * flat model (ยง15) the pool is a budget and the recovery rate is a choice;
    * re-coupling the rate to the pool is exactly what turned the 0a pool sweep
    * into a wash. Raising the pool has to raise attrition, not healing.
    *
@@ -256,7 +256,7 @@ export function baseRecoveryForTier(playerTier: number | undefined): number {
 }
 
 /**
- * Multiplier on the authored max-HP pool for a player tier (design bible ง20).
+ * Multiplier on the authored max-HP pool for a player tier (design bible ยง20).
  * Tiers past the table hold at the last entry, and an absent tier is a fresh
  * character (factor 1).
  *

@@ -355,20 +355,20 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   finalizePulse(pulseAcc, p.usesSkills.passives);
 
   // 3c-bis. THE PLAYER POOL RAISE (progression rework Phase 0 call four, design
-  // bible §20) — the ONE place the per-tier pool factor is applied.
+  // bible Â§20) â€” the ONE place the per-tier pool factor is applied.
   //
   // It sits here because the flat pool is now complete and nothing has multiplied
   // it yet: `GAME_CONFIG.PLAYER_MAX_HP` from step 1, the armor's `maxHp` and its
   // upgrade steps from step 3, and the flat half of a defensive lineage's HP row
-  // from step 3c (which §3c itself calls item power) are the only flat sources in
-  // the game — no skill node or stance authors a flat `maxHp`, they all author
+  // from step 3c (which Â§3c itself calls item power) are the only flat sources in
+  // the game â€” no skill node or stance authors a flat `maxHp`, they all author
   // `maxHpPct`. So one multiplication here IS "base max HP and armor maxHp", and
   // every percentage layer below (class affinities 3d, the stance 3e, the core's
   // `core.maxhp-mult`) keeps multiplying the finished pool exactly as before.
   //
   // Recovery is NOT touched: `hasHealth.recovery` was seeded in step 1 from the
   // tier's REFERENCE pool and is a flat HP/s, so a bigger pool buys attrition
-  // rather than healing. That separation is the whole point of §15.
+  // rather than healing. That separation is the whole point of Â§15.
   const poolFactor = poolFactorForTier(p.playerTier);
   if (poolFactor !== 1) {
     p.hasHealth.maxHp = Math.max(1, Math.round(p.hasHealth.maxHp * poolFactor));

@@ -257,13 +257,13 @@ function laneCells(tiers: number[], nodeLanes: number): LaneCell[] {
 interface Prepared { bot: PlayerEntity; refusals: string[]; activeCards: number; grantedBiomeLevel: number | null }
 
 /**
- * The reference PACKAGE — abilities, stance and behaviour rules — exactly as
+ * The reference PACKAGE â€” abilities, stance and behaviour rules â€” exactly as
  * `resolveSurveyPackage` resolves it for a tier.
  *
  * Restated here rather than inherited from `materializeBot`, because the factory
  * deliberately equips NO behaviour rules: which rules a bot runs is a design
  * statement, so it leaves them out and every bench that measures survival puts
- * them back. On a survival metric the difference is not cosmetic — without
+ * them back. On a survival metric the difference is not cosmetic â€” without
  * `step-back` the bot stands in telegraphs, without `avoid-hazards` it stands in
  * pools, and a ranged root never orbits. Every Phase 0 recovery and TTD number
  * was taken with this package; a pool reading taken without it would not be
@@ -342,7 +342,7 @@ function prepareLaneBot(world: World, cell: LaneCell, target: ContentTarget, plu
       continue;
     }
     const progressNow = bot.holdsInventory.lineages![cell.lineageId]!;
-    // A stat row of an earlier band is ABSORBED into the worn form (design §4),
+    // A stat row of an earlier band is ABSORBED into the worn form (design Â§4),
     // so activating it is refused by design and the card is still in play as the
     // form's base stats. That is not a finding; buy it and move on.
     if (statRowIsCollapsed(lineage, progressNow, card)) continue;
@@ -417,8 +417,12 @@ interface BossRow {
   elapsedS: number; bossHpFrac: number;
   /** Seconds to remove the boss's whole bar; extrapolated when it survived. */
   killS: number;
-  /** Seconds for the boss to remove the player's whole pool; Infinity when it cannot. */
-  ttdS: number;
+  /**
+   * Seconds for the boss to remove the player's whole pool; Infinity when it
+   * cannot, which `JSON.stringify` writes as `null` and the replay path reads
+   * back as the clamp.
+   */
+  ttdS: number | null;
   killMeasured: boolean; ttdMeasured: boolean;
   grossLost: number; healed: number;
   refusals: string[]; grantedBiomeLevel: number | null;
@@ -562,12 +566,21 @@ const med = (xs: number[]): number => {
   return finite.length % 2 ? finite[(finite.length - 1) / 2] : (finite[finite.length / 2 - 1] + finite[finite.length / 2]) / 2;
 };
 /**
- * `inf` means the boss never out-paced the build at all (net drain zero or
- * negative over the whole fight), which is a different statement from `>N`: that
- * one is a finite extrapolation past the readable range.
+ * Time-to-death is CLAMPED at four times the fight cap before it is medianed or
+ * ratioed.
+ *
+ * Past that it is not a measurement. A build the boss grazes for a net fraction
+ * of an HP over a five-minute fight extrapolates to a pool lasting centuries,
+ * and one such lane drags the median into scientific notation while saying
+ * nothing the clamp does not already say: the boss cannot kill this build. The
+ * raw value stays in `boss.jsonl` for anyone who wants it.
  */
+const ttdCapS = (capS: number): number => capS * 4;
+/** Clamped TTD for the medians. `null` is how JSON wrote an Infinity. */
+const ttdOf = (ttdS: number | null, capS: number): number =>
+  ttdS === null || !isFinite(ttdS) ? ttdCapS(capS) : Math.min(ttdS, ttdCapS(capS));
 const fmtS = (x: number, capS: number): string =>
-  !isFinite(x) ? 'inf' : x > capS * 4 ? `>${capS * 4}` : x.toFixed(1);
+  !isFinite(x) || x >= ttdCapS(capS) ? `>=${ttdCapS(capS)}` : x.toFixed(1);
 const fmt2 = (x: number | null): string => (x === null || isNaN(x) ? 'â€”' : x.toFixed(2));
 
 async function main() {
@@ -583,6 +596,31 @@ async function main() {
   const factorsFor = (tier: number): number[] => [
     ...new Set(factorSpec.map((f) => (f === 'seed' ? SEED_FACTOR_BY_TIER[tier] ?? 1 : Number(f)))),
   ];
+
+  // Re-render an existing run's report from its rows, without measuring again.
+  // The gate table's reading rules changed once mid-run (the time-to-death clamp),
+  // and re-deriving the table from the rows is how a reading rule gets corrected
+  // without spending another hour of simulation or, worse, hand-editing a table.
+  if (process.env.PR_REPLAY) {
+    const dir = resolve(process.env.PR_REPLAY);
+    const read = <T>(name: string): T[] => {
+      const file = resolve(dir, name);
+      if (!existsSync(file)) return [];
+      return readFileSync(file, 'utf8').split(/\r?\n/).filter((l) => l.trim()).map((l) => JSON.parse(l) as T);
+    };
+    const man = JSON.parse(readFileSync(resolve(dir, 'manifest.json'), 'utf8')) as Record<string, number | number[] | string[]>;
+    writeReport(dir, read<BossRow>('boss.jsonl'), read<NodeRow>('node.jsonl'), {
+      tiers: (man.tiers as number[]) ?? tiers,
+      bossCapMs: (man.bossCapMs as number) ?? bossCapMs,
+      nodeCapMs: (man.nodeCapMs as number) ?? nodeCapMs,
+      seeds: (man.seeds as number[]) ?? seeds,
+      plus: (man.plus as number) ?? plus,
+      factorSpec: (man.factorSpec as string[]) ?? factorSpec,
+      nodeLanes: (man.nodeLanes as number) ?? nodeLanes,
+    });
+    console.log(`re-rendered ${dir}`);
+    return;
+  }
 
   mkdirSync(out, { recursive: true });
   const artifact = resolve('../reports/progression-phase0/hitboxes.json');
@@ -619,7 +657,7 @@ async function main() {
     done++;
     console.log(
       `${row.cell.padEnd(26)} x${factor.toFixed(2)} boss=${row.bossId.padEnd(22)} hp=${String(row.maxHp).padStart(5)} ` +
-      `${row.outcome.padEnd(12)} kill=${fmtS(row.killS, bossCapMs / 1000).padStart(7)}s ttd=${fmtS(row.ttdS, bossCapMs / 1000).padStart(7)}s ` +
+      `${row.outcome.padEnd(12)} kill=${fmtS(row.killS, bossCapMs / 1000).padStart(7)}s ttd=${fmtS(ttdOf(row.ttdS, bossCapMs / 1000), bossCapMs / 1000).padStart(8)}s ` +
       `[${done}/${totalBoss} ${((Date.now() - started) / 1000).toFixed(0)}s]${row.refusals.length ? ` REFUSED:${row.refusals.length}` : ''}`,
     );
     if (cell.normalNode) {
@@ -669,7 +707,7 @@ function writeReport(out: string, boss: BossRow[], node: NodeRow[], o: ReportOpt
     const laneTtd: number[] = [], laneKill: number[] = [];
     let won = 0;
     for (const laneRows of byLane.values()) {
-      const t = med(laneRows.map((r) => r.ttdS));
+      const t = med(laneRows.map((r) => ttdOf(r.ttdS, capS)));
       const kk = med(laneRows.map((r) => r.killS));
       laneTtd.push(t); laneKill.push(kk);
       if (t > kk) won++;
@@ -678,8 +716,8 @@ function writeReport(out: string, boss: BossRow[], node: NodeRow[], o: ReportOpt
     const nodeRows = node.filter((r) => r.tier === tier && r.factor === factor);
     const mEnd = nodeRows.length ? med(nodeRows.map((r) => r.medianEndHp ?? NaN).filter((x) => !isNaN(x))) : NaN;
     const rec = {
-      tier, factor, lanes: byLane.size, medianTtdS: isFinite(mTtd) ? mTtd : null, medianKillS: mKill,
-      ratio: isFinite(mTtd) && mKill > 0 ? mTtd / mKill : null,
+      tier, factor, lanes: byLane.size, medianTtdS: mTtd, medianKillS: mKill,
+      ratio: mKill > 0 ? mTtd / mKill : null,
       lanesTtdOverKill: won, medianNodeEndHp: isNaN(mEnd) ? null : mEnd,
       nodeDeaths: nodeRows.reduce((a, r) => a + r.deaths, 0),
       measuredTtd: rows.filter((r) => r.ttdMeasured).length,
@@ -698,7 +736,7 @@ function writeReport(out: string, boss: BossRow[], node: NodeRow[], o: ReportOpt
     '| cell | factor | boss | maxHp | outcome | kill (s) | TTD (s) | TTD/kill | cards | refusals |',
     '|---|---:|---|---:|---|---:|---:|---:|---:|---|',
     ...boss.map((r) => `| ${r.cell} | ${r.factor.toFixed(2)} | ${r.bossId} | ${r.maxHp} | ${r.outcome} | ` +
-      `${fmtS(r.killS, capS)} | ${fmtS(r.ttdS, capS)} | ${isFinite(r.ttdS) ? (r.ttdS / r.killS).toFixed(2) : 'inf'} | ` +
+      `${fmtS(r.killS, capS)} | ${fmtS(ttdOf(r.ttdS, capS), capS)} | ${(ttdOf(r.ttdS, capS) / r.killS).toFixed(2)} | ` +
       `${r.activeCards} | ${r.refusals.join('; ') || ''} |`),
   ];
   const perNode = [
@@ -714,8 +752,9 @@ function writeReport(out: string, boss: BossRow[], node: NodeRow[], o: ReportOpt
     `boss cap ${capS} s; normal-node cap ${o.nodeCapMs / 1000} s on ${o.nodeLanes} lane(s) per lineage; gear +${o.plus}; seeds ${o.seeds.join(', ')}.`, '',
     'Criterion (Phase 0 call four): the lowest factor whose median boss time-to-death',
     'exceeds median kill time for the pure lanes, without median normal-node fight-end',
-    'HP above 0.80. `>N` means the metric was not reached inside the cap (for TTD, that',
-    'the boss could not out-pace the build at all).', '',
+    `HP above 0.80. Time-to-death is clamped at ${ttdCapS(capS)} s, which reads as "the boss`,
+    'cannot kill this build"; kill time is extrapolated from the share of the bar removed',
+    'whenever the boss survived, which is optimistic for a boss that gets harder late.', '',
     '## Gate table', '', ...lines, '',
     '## Per lane, boss', '', ...perLane, '',
     '## Per lane, normal node', '', ...perNode, '',
