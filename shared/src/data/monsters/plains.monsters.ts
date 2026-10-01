@@ -90,9 +90,18 @@ export const plainsMonsterEntries = [
     // family's shard is Engagement: the opening exchange is what this creature IS.
     // PLACEHOLDER numbers seeded from the T1 Plains band (boar 100/18); designer
     // hand-edits before the lane bench.
-    stats: { hp: 90, attack: 16, plating: 0, damageReduction: 0, speed: 100, attackRange: 12, attackCooldown: 2200, pullRange: 380 },
+    // PROGRESSION REWORK, 2026-10-01, PROVISIONAL: attack 16 -> 13, attackCooldown
+    // 2200 -> 1500. "The Sky body joins the biome's cadence." A *pressure* row only —
+    // the Sky lane contract already holds at the slow bench cap, so nothing about the
+    // kite's pull/leash geometry changes.
+    stats: { hp: 90, attack: 13, plating: 0, damageReduction: 0, speed: 100, attackRange: 12, attackCooldown: 1500, pullRange: 380 },
     behavior: 'melee', attackStyle: 'talons', biome: 'plains',
     rewards: { essence: 3, essenceType: 'yellow', level: 1, biomeXp: 18 },
+    // Sky declares `punishes: 'affliction'` and had no mechanism for it. `dotResistance`
+    // is that mechanism. 0.15 is the gentlest value in the pass: Sky's contract already
+    // measures as holding, so this makes the declared punishment real rather than
+    // correcting an inversion (progression rework, 2026-10-01, PROVISIONAL).
+    dotResistance: 0.15,
     flies: true,
     ai: { wanderRadius: 320, leashRange: 1000, idleMinMs: 250, idleMaxMs: 900 },
     engageSequence: {
