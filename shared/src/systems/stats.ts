@@ -272,6 +272,16 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   // Only a lineage whose worn form is the item actually equipped in its slot
   // contributes, and only the active card of each row — owning a card is not
   // playing it.
+  //
+  // BAND COLLAPSE (design §4, Phase 5). `statEffects` also carries the stat row
+  // of every band the worn form has collapsed: "the stat row's value folds into
+  // the next form's base stats at the gate". Those absorbed rows arrive in the
+  // SAME bag as the active one and so land through these two existing sites —
+  // the percentage half here, the flat half in step 3c — which is what makes an
+  // absorbed row contribute exactly once however many times recalc runs. There
+  // is deliberately no third application site; `resolveActiveLineages` also
+  // drops a slotted stat card its band has collapsed, so the two sets are
+  // disjoint by construction.
   const lineageEffects = resolveActiveLineages(
     p.holdsInventory,
     defensiveFaceForSubVariant(p.usesSkills.selectedSubVariant),
@@ -329,9 +339,11 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
       if (Object.keys(meFx).length > 0) mergePassives(p.usesSkills.passives, meFx, pulseAcc);
     }
   }
-  // 3c. The flat half of the lineage stat rows, folded with equipment so class
-  // affinities multiply it. Percentages and evasion already landed in step 2b;
-  // damage reduction joins the ITEM bucket, because a card is item power.
+  // 3c. The flat half of the lineage stat rows — the slotted one plus the
+  // absorbed ones (step 2b) — folded with equipment so class affinities multiply
+  // it. Percentages and evasion already landed in step 2b; damage reduction joins
+  // the ITEM bucket, because a card is item power. An absorbed row is base stats
+  // of the worn form, so it belongs in exactly this bucket too.
   for (const [stat, value] of Object.entries(lineageEffects.statEffects)) {
     if (stat === 'attackSpeedPct' || stat === 'attackPct' || stat === 'evasion') continue;
     if (stat === 'damageReduction') { itemDr += value; continue; }

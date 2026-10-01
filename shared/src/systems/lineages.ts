@@ -263,7 +263,8 @@ export function checkUnlockCard(params: {
 
 /**
  * Can the player make this owned card the active one for its row? Free, instant,
- * and the only failure modes are "you do not own it" and "wrong row".
+ * and the only failure modes are "you do not own it", "wrong row", and "that stat
+ * row is already inside your form" (band collapse — see {@link statRowIsCollapsed}).
  */
 export function checkSetActive(params: {
   lineage: LineageDefinition;
@@ -278,6 +279,13 @@ export function checkSetActive(params: {
   if (!card) return { ok: false, reason: 'Unknown card.' };
   if (card.row !== row) return { ok: false, reason: `That card is a ${card.row} card, not a ${row} card.` };
   if (!progress.ownedCards.includes(cardId)) return { ok: false, reason: 'You do not own that card.' };
+  // The visible stat row is always the current tier's (design §4): a collapsed
+  // band's stat row has folded into the worn form's base stats and is permanent,
+  // so it can never be slotted a second time. Every OTHER row of a collapsed
+  // band stays selectable — the band is a wardrobe to reslot from.
+  if (statRowIsCollapsed(lineage, progress, card)) {
+    return { ok: false, reason: 'That stat row is already part of your form.' };
+  }
   return OK;
 }
 
@@ -369,7 +377,75 @@ export function resolveLineageCards(
   for (const cardId of Object.values(progress.active)) {
     if (!cardId || !progress.ownedCards.includes(cardId)) continue;
     const card = lineage.cards.find((c) => c.id === cardId);
-    if (card) out.push(resolveLineageCard(card, lineage, { frameFace }));
+    if (!card) continue;
+    // A stat row the form has absorbed is paid out by `absorbedStatCards`, not
+    // here. Skipping it is what makes the fold land EXACTLY ONCE even when a
+    // save still points `active.stat` at the card the gate collapsed.
+    if (statRowIsCollapsed(lineage, progress, card)) continue;
+    out.push(resolveLineageCard(card, lineage, { frameFace }));
+  }
+  return out;
+}
+
+// ─── Band collapse: the stat row the worn form absorbed (design §4) ──────────
+
+/**
+ * Has this card's band collapsed under the worn form, taking its stat row with
+ * it? True only for a `stat` card of a tier BELOW the worn form's.
+ *
+ * Design §4: "The stat row's value folds into the next form's base stats at the
+ * gate, so the visible stat row is always the current tier's." Every other row of
+ * a collapsed band is untouched — the payoff row of T1 stays buyable, owned, and
+ * selectable, because the collapsed band is a wardrobe to reslot from.
+ */
+export function statRowIsCollapsed(
+  lineage: LineageDefinition,
+  progress: LineageProgress,
+  card: Pick<LineageCard, 'row' | 'tier'>,
+): boolean {
+  return card.row === 'stat' && card.tier < wornFormTier(lineage, progress);
+}
+
+/**
+ * The stat cards the worn form has absorbed into its base stats: at most ONE per
+ * collapsed band, never a stack.
+ *
+ * One per band because `active` is one card per row across the whole tree (plan
+ * §1.2 decision 1) — the player only ever played one stat row per band, so owning
+ * all three lanes' T1 stat cards buys a wardrobe, not three absorptions. WHICH one
+ * follows the lane of the stat row the player is on now, so the lane identity
+ * carries up through the gate and the player still controls the choice by picking
+ * their current tier's stat row; failing that (they own no stat card of that band
+ * in that lane) it is the lineage's own lane order, which is its matrix order.
+ *
+ * Non-weapon lineages have no stat row at all (design §4, §17), so they author no
+ * `stat` cards and this returns nothing for them: absorption is a no-op rather
+ * than a special case.
+ */
+export function absorbedStatCards(
+  lineage: LineageDefinition,
+  progress: LineageProgress,
+): LineageCard[] {
+  const wornTier = wornFormTier(lineage, progress);
+  if (wornTier < 2) return [];
+
+  const activeStatId = progress.active.stat;
+  const activeLane = activeStatId
+    ? lineage.cards.find((c) => c.id === activeStatId)?.lane
+    : undefined;
+  const laneRank = (card: LineageCard): number => {
+    const index = lineage.lanes.indexOf(card.lane);
+    return index < 0 ? lineage.lanes.length : index;
+  };
+
+  const out: LineageCard[] = [];
+  for (let tier = 1; tier < wornTier; tier++) {
+    const owned = lineage.cards.filter(
+      (c) => c.row === 'stat' && c.tier === tier && progress.ownedCards.includes(c.id),
+    );
+    if (owned.length === 0) continue;
+    const onLane = activeLane ? owned.find((c) => c.lane === activeLane) : undefined;
+    out.push(onLane ?? [...owned].sort((a, b) => laneRank(a) - laneRank(b))[0]!);
   }
   return out;
 }
@@ -387,8 +463,18 @@ export function resolveWornCapstone(
 export interface ActiveLineageEffects {
   cards: ResolvedLineageCard[];
   capstones: ResolvedLineageCapstone[];
-  /** Summed stat rows, ready to fold into the stat rebuild. */
+  /**
+   * Summed stat rows, ready to fold into the stat rebuild: the active stat row of
+   * the lit band PLUS every stat row a collapsed band folded into the worn form
+   * (see {@link absorbedStatCards}). One bag, so a value cannot land twice.
+   */
   statEffects: LineageStatEffects;
+  /**
+   * The collapsed bands' absorbed stat rows, already summed into `statEffects`.
+   * Reported separately for the tree panel's "in your form" readout — a caller
+   * that applies these on top of `statEffects` would double them.
+   */
+  absorbed: ResolvedLineageCard[];
 }
 
 /**
@@ -404,8 +490,14 @@ export function resolveActiveLineages(
 ): ActiveLineageEffects {
   const cards: ResolvedLineageCard[] = [];
   const capstones: ResolvedLineageCapstone[] = [];
+  const absorbed: ResolvedLineageCard[] = [];
   const statEffects: LineageStatEffects = {};
-  if (!inventory) return { cards, capstones, statEffects };
+  const addStats = (resolved: ResolvedLineageCard): void => {
+    for (const [key, value] of Object.entries(resolved.statEffects ?? {}) as [keyof LineageStatEffects, number][]) {
+      statEffects[key] = (statEffects[key] ?? 0) + value;
+    }
+  };
+  if (!inventory) return { cards, capstones, statEffects, absorbed };
 
   for (const [lineageId, progress] of Object.entries(inventory.lineages ?? {})) {
     const lineage = LINEAGE_DATABASE.get(lineageId);
@@ -414,14 +506,21 @@ export function resolveActiveLineages(
 
     for (const resolved of resolveLineageCards(lineage, progress, frameFace)) {
       cards.push(resolved);
-      for (const [key, value] of Object.entries(resolved.statEffects ?? {}) as [keyof LineageStatEffects, number][]) {
-        statEffects[key] = (statEffects[key] ?? 0) + value;
-      }
+      addStats(resolved);
+    }
+    // Band collapse (design §4): a collapsed band's stat row is part of the worn
+    // form now, so it pays out whether or not it is the slotted one — and only
+    // from here, because `resolveLineageCards` skips it. It is NOT pushed to
+    // `cards`: an absorbed row is base stats, not a card the runtime fires.
+    for (const card of absorbedStatCards(lineage, progress)) {
+      const resolved = resolveLineageCard(card, lineage, { frameFace });
+      absorbed.push(resolved);
+      addStats(resolved);
     }
     const capstone = resolveWornCapstone(lineage, progress, frameFace);
     if (capstone) capstones.push(capstone);
   }
-  return { cards, capstones, statEffects };
+  return { cards, capstones, statEffects, absorbed };
 }
 
 /**
