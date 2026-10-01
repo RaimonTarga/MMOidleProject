@@ -37,14 +37,25 @@ export const plainsMonsterEntries = [
   ['plains-slime', {
     id: 'plains-slime', name: 'Field Hare', color: 0xddee55,
     // Swarm filler. Tiny hits that plating eats to nothing; dangerous only in numbers.
-    stats: { hp: 50, attack: 12, plating: 0, damageReduction: 0, speed: 46, attackRange: 12, attackCooldown: 2000, pullRange: 190 },
+    // SWARM FAMILY (progression rework, 2026-10-01, PROVISIONAL): attack 12 -> 9 and
+    // attackCooldown 2000 -> 1100. "The swarm body should be the fastest, smallest hit
+    // in the game; it is currently among the slowest." Per-hit down as cadence goes up:
+    // against plating 4 a 9-damage hit is cut 44% and a 12-damage hit only 33%, so the
+    // player's own plating becomes visible for the first time. `hp` is untouched, so
+    // the economy and the XP curve do not move.
+    stats: { hp: 50, attack: 9, plating: 0, damageReduction: 0, speed: 46, attackRange: 12, attackCooldown: 1100, pullRange: 190 },
     behavior: 'melee', attackStyle: 'hind-kick', biome: 'plains',
     rewards: { essence: 2, essenceType: 'yellow', level: 1, biomeXp: 10 },
     ai: { wanderRadius: 250, leashRange: 640, idleMinMs: 1200, idleMaxMs: 4000 },
     // Plains swarm: while chasing, slimes converge as a group (gentle cohesion) and
     // fan out rather than stacking on one pixel (separation). Many-body pressure.
     // Placeholder tuning — user balance pass.
-    swarm: { recruitRange: 260, maxMembers: 4, cohesion: 0.1, separation: 40 },
+    // maxMembers 4 -> 6 (progression rework, 2026-10-01, PROVISIONAL). This is the
+    // Swarm family's Empowered punishment as well as a Plains pressure row: Empowered
+    // is weak to swarms AS A COUNT — a mechanic that fires on one body while five
+    // others chew you is the punishment. On-theme and cheaper than evasion for the
+    // biome whose whole identity is volume.
+    swarm: { recruitRange: 260, maxMembers: 6, cohesion: 0.1, separation: 40 },
     // Also the swarm body a Prairie Wolf "caller" rallies: as a pack follower it
     // joins the call-allies net (roams + swarms solo when not in a caller's pack).
     pack: { role: 'follower' },
