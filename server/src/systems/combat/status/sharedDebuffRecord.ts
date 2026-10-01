@@ -72,15 +72,24 @@ export function applySharedDebuffMaxWins(
   // only the prior side read a new permanent application as the smallest number in
   // the comparison and clamped it down to the window that happened to be running,
   // so a card's four-second strip could un-permanent the finisher's brand simply by
-  // landing first.
-  effect.remainingMs = (priorMs < 0 || effect.remainingMs < 0)
+  // landing first. Read from the CONFIG and not from the record, because
+  // `applyStatusEffect` writes the new window onto an existing entry only when the
+  // config is refreshable — a permanent strip that is not would never reach the
+  // comparison at all.
+  const minePermanent = (scaled.remainingMs ?? -1) < 0;
+  effect.remainingMs = (priorMs < 0 || minePermanent)
     ? -1
     : Math.max(effect.remainingMs, priorMs);
   effect.stacks = Math.max(effect.stacks, priorStacks);
-  if (priorMaxStacks !== undefined) {
-    effect.maxStacks = (priorMaxStacks === 0 || effect.maxStacks === 0)
-      ? 0
-      : Math.max(priorMaxStacks, effect.maxStacks);
+  // The CAP is part of "never reduce the stack count". `applyStatusEffect` never
+  // raises an existing record's `maxStacks`, so whoever created the record pinned
+  // it: a timed single-stack card landing first left the cadence finisher's
+  // multi-stack brand reading as capped at one stack. The widest cap wins, and 0
+  // means uncapped, so 0 wins outright.
+  const caps = [priorMaxStacks, effect.maxStacks, scaled.maxStacks]
+    .filter((cap): cap is number => cap !== undefined);
+  if (caps.length > 0) {
+    effect.maxStacks = caps.some((cap) => cap === 0) ? 0 : Math.max(...caps);
   }
   return effect;
 }

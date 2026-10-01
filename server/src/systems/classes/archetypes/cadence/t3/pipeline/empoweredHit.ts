@@ -1,6 +1,7 @@
 import { removeStatusEffect } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
 import { applyPlayerDebuff } from '../../../../shared/applyPlayerDebuff';
+import { applySharedDebuffMaxWins } from '../../../../../combat/status/sharedDebuffRecord';
 import { playerMechanicBuffMagnitude } from '../../../../shared/applyPlayerMechanicBuff';
 import { attachMarker } from '../../../../../../ecs/markerHelpers';
 import { evadeBlocksDebuffs } from '../../../../../defense/mitigation/evasion';
@@ -132,29 +133,38 @@ export function registerCadenceEmpoweredHit(): void {
       const monsterState = ctx.defender.tracksCombat;
       // A brand pressed INTO the target; the plating strip is permanent.
       pushClientEffect(ctx, CADENCE_CURSED_FINALE_FX);
+      // BOTH of these records are shared with the lineage cards and the range
+      // nodes, so both go through the §18.1 max-wins applier. `applyStatusEffect`
+      // never updates `data` on an existing entry and only refreshes the window when
+      // the NEW config says refreshable, so a card that landed first — weaker,
+      // timed, single-stack — owned the brand: the finisher's multiplier never
+      // reached the record and its PERMANENT strip came out as the card's four
+      // seconds at one stack. `applySharedDebuffMaxWins` was written for exactly
+      // this and the finisher was simply never migrated onto it.
       if (vulnPct > 0) {
-        applyPlayerDebuff(player, monsterState, {
+        applySharedDebuffMaxWins(player, monsterState, {
           id: 'vulnerability',
           instanced: false,
+          maxStacks: 1,
           refreshable: true,
           remainingMs: vulnMs,
           sourceId: player.isPlayer.id,
-          data: { damageMultiplier: 1 + vulnPct / 100 },
-        }, { origin: 'mechanic' });
+          data: { totalMs: vulnMs, damageMultiplier: 1 + vulnPct / 100 },
+        }, ['damageMultiplier', 'totalMs'], { origin: 'mechanic' });
       }
       if (platingShred > 0) {
         // Total shred = stacks × platingReduction; cap by clamping the stack count.
         // The cap is computed from the UNSCALED shred so a Controller core raises
         // per-stack strip without also raising the ceiling it was capped at.
         const maxStacks = shredCap > 0 ? Math.max(1, Math.floor(shredCap / platingShred)) : 0;
-        applyPlayerDebuff(player, monsterState, {
+        applySharedDebuffMaxWins(player, monsterState, {
           id: 'plating-shred',
           instanced: false,
           maxStacks,
           remainingMs: -1,
           sourceId: player.isPlayer.id,
           data: { platingReduction: platingShred },
-        }, { origin: 'mechanic' });
+        }, ['platingReduction'], { origin: 'mechanic' });
       }
     }
 
