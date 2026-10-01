@@ -35,8 +35,6 @@ const profile: TierEntryProfile = {
   economyPolicy: "synthetic-combat-progression",
   wallet: {
     essences: { ...emptyEssences, yellow: 123 },
-    catalysts: { alacrity: 7 },
-    catalystProgress: { alacrity: 2 },
   },
   level: 4,
   skillPoints: 0,
@@ -77,8 +75,8 @@ function makePlayerSlices(): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { ...emptyEssences },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {},
+      capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -141,7 +139,6 @@ assert(world.countPlayersInNode(CLEARING_NODE_ID) === 0, "old node is vacated");
 assert(player.tracksProgression.playerTier === 2, "player tier is authoritative profile tier");
 assert(player.tracksProgression.biomeLevel.plains === 6, "T1 biome state is applied");
 assert(player.tracksProgression.essences.yellow === 123, "essence wallet is applied exactly");
-assert(player.tracksProgression.catalysts.alacrity === 7, "catalyst wallet is applied exactly");
 assert(player.usesSkills.selectedClass === profile.classRoot, "root class is selected");
 assert(
   player.usesSkills.selectedSubVariant === SKILL_TREE.get(profile.frameId)?.subVariantId,
@@ -178,19 +175,20 @@ assert(!insufficientResources.success, "evolution rejects insufficient essence w
 player.holdsInventory.inventory = [];
 
 // Reconstruction is a distinct path: it does not require an owned predecessor.
-player.tracksProgression.unlockedRecipes.push("knight-steelsword");
-player.tracksProgression.essences.yellow = 180;
-const reconstruction = evolveItem(world, player, "knight-steelsword", "reconstruct");
+// Weapons are off this ladder entirely (Phase 2b, Override A: lineage tree
+// instead), so this uses an armor recipe — cave-vest-t2 reconstructs for 189 red.
+player.tracksProgression.unlockedRecipes.push("cave-vest-t2");
+player.tracksProgression.essences.red = 189;
+const reconstruction = evolveItem(world, player, "cave-vest-t2", "reconstruct");
 assert(reconstruction.success, reconstruction.reason ?? "supported reconstruction should succeed");
-assert(player.holdsInventory.inventory.includes("knight-steelsword"), "reconstruction grants the child item");
-assert(player.tracksProgression.essences.yellow === 0, "reconstruction deducts its authored essence cost");
+assert(player.holdsInventory.inventory.includes("cave-vest-t2"), "reconstruction grants the child item");
+assert(player.tracksProgression.essences.red === 0, "reconstruction deducts its authored essence cost");
 
 // Stance craft and default assignment are the player-facing build operations;
 // no bot-only active-stance mutation is involved.
 const stanceRecipe = STANCE_RECIPE_DATABASE.get("stance-recipe-offensive")!;
 player.tracksProgression.biomeLevel.plains = 7;
 player.tracksProgression.essences.yellow = stanceRecipe.cost.yellow ?? 0;
-player.tracksProgression.catalysts.alacrity = 1;
 const stance = craftStanceRecipe(world, player, stanceRecipe.id);
 assert(stance.success, stance.reason ?? "stance craft should succeed");
 assert(player.tracksProgression.knownStances.includes("offensive-stance"), "stance craft learns the stance");

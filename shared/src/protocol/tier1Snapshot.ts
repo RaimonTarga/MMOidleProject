@@ -6,6 +6,8 @@ import { runeIdsFromCraftedRecipes } from "../runeRecipes";
 import { globalMastery, maxGlobalMasteryAtTier } from "../config/gameConfig";
 import { sealsHeldAtTier, sealsRequiredForTier } from "../systems/tierAdvancement";
 import { SKILL_TREE } from "../skillTree";
+import { ITEM_DATABASE } from "../itemDatabase";
+import { getMaxUpgrade } from "../systems/itemUpgrades";
 
 /** Versioned JSON contract written by a canonical T1 route at A/B boundaries. */
 export const T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION = 1 as const;
@@ -283,8 +285,19 @@ export function tierEntryProfileFromT1Snapshot(
       (id): id is string => typeof id === "string",
     ),
   );
+  // Clamp to each item's own ladder ceiling, not just raw ownership. Weapons
+  // (Phase 2b) are off the +N ladder entirely (`getMaxUpgrade` is 0), so an
+  // older save's weapon plus is dropped rather than declared and then silently
+  // re-clamped downstream — the profile and the live apply must agree.
   const importableItemUpgrades = Object.fromEntries(
-    Object.entries(state.itemUpgrades).filter(([id]) => ownedItemIds.has(id)),
+    Object.entries(state.itemUpgrades)
+      .filter(([id]) => ownedItemIds.has(id))
+      .map(([id, plus]): [string, number] => {
+        const item = ITEM_DATABASE.get(id);
+        const max = item ? getMaxUpgrade(item) : 0;
+        return [id, Math.min(plus, max)];
+      })
+      .filter(([, plus]) => plus > 0),
   );
 
   return {
