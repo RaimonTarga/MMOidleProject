@@ -28,7 +28,7 @@ import {
   LINEAGE_DATABASE, cardsForTier, formsAtGate, lineageForCardId, lineageForRecipeId,
   lineagesForSlot, lineagesWithLane,
 } from './index';
-import { PACKET_DEFINITIONS, packetScalingStat } from './packets';
+import { PACKET_DEFINITIONS, packetDefaultFace, packetScalingStat } from './packets';
 import {
   GATE_LOCAL_LEVEL, MAX_LINEAGE_TIER, rowBiomeLevel, rowsForTier, tierHasRow,
 } from './magnitudes';
@@ -149,10 +149,13 @@ for (const [key, lineage] of LINEAGE_DATABASE) {
   }
 
   // Every lane the lineage carries must be playable at every tier it authors.
+  // Non-weapon slots run one row fewer per tier: no stat row, base stats come
+  // from the form (design §4, §17).
   const tiers = new Set(lineage.cards.map((c) => c.tier));
   for (const tier of tiers) {
+    const rows = rowsForTier(tier).filter((row) => lineage.slot === 'weapon' || row !== 'stat');
     for (const lane of lineage.lanes) {
-      for (const row of rowsForTier(tier)) {
+      for (const row of rows) {
         const has = lineage.cards.some((c) => c.tier === tier && c.lane === lane && c.row === row);
         check(has, `${lineage.id} T${tier}: lane '${lane}' has no '${row}' card — the row is a choice between three`);
       }
@@ -160,17 +163,34 @@ for (const [key, lineage] of LINEAGE_DATABASE) {
   }
 }
 
-// ─── 2. Coverage (design §9) ─────────────────────────────────────────────────
+// ─── 2. Coverage (design §9, §17) ────────────────────────────────────────────
+//
+// Weapons: every packet on >= 2 lineages of the (single) weapon slot (design
+// §9). Non-weapon: design §17's explicit override — "every packet completes on
+// at least two non-weapon lineages across the three slots (45 lane slots for
+// eight packets), not two per slot" — because "any slot may complete a packet"
+// (design §7) is what makes borrowing a sibling slot legal.
 
 const SLOTS_AUTHORED = [...new Set([...LINEAGE_DATABASE.values()].map((l) => l.slot))];
+const NON_WEAPON_SLOTS_AUTHORED = SLOTS_AUTHORED.filter((slot) => slot !== 'weapon');
 
-for (const slot of SLOTS_AUTHORED) {
-  const eligible = slot === 'weapon' ? WEAPON_PACKET_IDS : PACKET_IDS;
-  for (const packet of eligible) {
-    const carriers = lineagesWithLane(slot, packet);
+if (SLOTS_AUTHORED.includes('weapon')) {
+  for (const packet of WEAPON_PACKET_IDS) {
+    const carriers = lineagesWithLane('weapon', packet);
     check(
       carriers.length >= 2,
-      `coverage: packet '${packet}' is on ${carriers.length} ${slot} lineage(s); the rule is at least two`,
+      `coverage: packet '${packet}' is on ${carriers.length} weapon lineage(s); the rule is at least two`,
+    );
+  }
+}
+
+if (NON_WEAPON_SLOTS_AUTHORED.length > 0) {
+  for (const packet of PACKET_IDS) {
+    const carriers = NON_WEAPON_SLOTS_AUTHORED.flatMap((slot) => lineagesWithLane(slot, packet));
+    check(
+      carriers.length >= 2,
+      `coverage: packet '${packet}' is on ${carriers.length} non-weapon lineage(s) across ` +
+      `${NON_WEAPON_SLOTS_AUTHORED.join('/')}; the rule is at least two across the three slots (design §17)`,
     );
   }
 }
@@ -178,16 +198,17 @@ for (const slot of SLOTS_AUTHORED) {
 /**
  * Lanes with no form crowning them yet.
  *
- * `engagement` is carried only by the Rapier and the Hammer, and both of their
- * T1 gates already spend their form doors elsewhere (Gale Needle crowns Tempo,
- * Stinger crowns Affliction, Quake Hammer crowns Empowered). Crowning it needs a
- * second door, which needs the re-homing table for later-biome debut roots —
- * bible open decision 4, due before Phase 5.
+ * Phase 1 left `engagement` uncrowned (both weapon doors that carried it spent
+ * their capstone on another lane). Phase 4's defensive capstones crown their
+ * lineage's Lane A (design §17), and Engagement is Lane A for four of the
+ * fifteen non-weapon lineages (Bindings, Wraps, Treads, Wing) — so it is
+ * crowned now and the entry is gone. Bulwark and Barrier tempo, which had NO
+ * capstone at all before Phase 4, are crowned the same way.
  *
  * Adding an entry here is choosing to ship an uncrowned lane. The loop below
  * fails if a listed lane HAS been crowned, so a fixed entry cannot linger.
  */
-const UNCROWNED_LANES = new Set<PacketId>(['engagement']);
+const UNCROWNED_LANES = new Set<PacketId>([]);
 
 const crownedLanes = new Set<PacketId>();
 for (const lineage of LINEAGE_DATABASE.values()) {
@@ -195,7 +216,7 @@ for (const lineage of LINEAGE_DATABASE.values()) {
     if (form.capstone) crownedLanes.add(form.capstone.lane);
   }
 }
-for (const packet of WEAPON_PACKET_IDS) {
+for (const packet of PACKET_IDS) {
   if (UNCROWNED_LANES.has(packet)) {
     check(
       !crownedLanes.has(packet),
@@ -309,12 +330,40 @@ for (const lineage of LINEAGE_DATABASE.values()) {
     check(lineageForRecipeId(form.recipeId)?.id === lineage.id, `lineageForRecipeId('${form.recipeId}') missed`);
   }
 }
-check(lineagesForSlot('weapon').length === LINEAGE_DATABASE.size, 'Phase 1 authors weapons only');
+check(lineagesForSlot('weapon').length === 5, 'five weapon lineages, one per T1 biome (design §2)');
+check(
+  lineagesForSlot('armor').length === 5 && lineagesForSlot('recovery').length === 5
+  && lineagesForSlot('mobility').length === 5,
+  'Phase 4 authors five lineages per non-weapon slot (design §17)',
+);
 check(
   cardsForTier(LINEAGE_DATABASE.get('rapier')!, 1).length === 6,
   'the rapier T1 band is three stat rows and three payoff rows (design §13)',
 );
+check(
+  cardsForTier(LINEAGE_DATABASE.get('robe')!, 1).length === 3,
+  'a non-weapon T1 band is three payoff rows and no stat row (design §4, §17)',
+);
 check(GATE_LOCAL_LEVEL > 0 && MAX_LINEAGE_TIER >= 4, 'magnitude table bounds are wrong');
+
+// ─── 5b. Defensive faces (design §3.1, §17) ──────────────────────────────────
+//
+// A card's `face` is DERIVED from its lane, never hand-picked: every non-weapon
+// card must carry exactly the face `packetDefaultFace` says its lane has, and a
+// weapon card (offensive, frame-neutral) must carry none at all.
+
+for (const lineage of LINEAGE_DATABASE.values()) {
+  for (const card of lineage.cards) {
+    if (lineage.slot === 'weapon') {
+      check(card.face === undefined, `${card.id}: a weapon card is frame-neutral and must carry no face`);
+    } else {
+      check(
+        card.face === packetDefaultFace(card.lane),
+        `${card.id}: face '${card.face}' does not match lane '${card.lane}''s derived face '${packetDefaultFace(card.lane)}' (design §17)`,
+      );
+    }
+  }
+}
 
 // ─── 6. Capstone materials ───────────────────────────────────────────────────
 

@@ -166,7 +166,16 @@ export type LineageFxKey =
   | 'affliction.stinger-echo'
   | 'empowered.quake-ring'
   | 'control.mire-grasp'
-  | 'kill-chain.steel-vigil';
+  | 'kill-chain.steel-vigil'
+  // Defensive signatures (Phase 4, armor/recovery/mobility): one per packet,
+  // grammar from design §8's face list — Avoid = blur/sidestep, Sustain =
+  // pulses and ward shells, Endure = plating chips and a stance pose. Reused
+  // by both a lane's T1 payoff card and the capstone that crowns it, so the
+  // client switch stays small (design §8's "lasting aura" is the same
+  // signature drawn bigger, not a second effect).
+  | 'tempo.evasive-blur' | 'engagement.sidestep-blur' | 'control.chill-blur'
+  | 'kill-chain.recovery-pulse' | 'barrier-tempo.ward-shell' | 'affliction.toxic-pulse'
+  | 'bulwark.plating-chip' | 'empowered.guard-spark';
 
 export const LINEAGE_FX_KEYS: readonly LineageFxKey[] = [
   'tempo.trail', 'empowered.trail', 'affliction.trail',
@@ -182,6 +191,9 @@ export const LINEAGE_FX_KEYS: readonly LineageFxKey[] = [
   'empowered.quake-ring',
   'control.mire-grasp',
   'kill-chain.steel-vigil',
+  'tempo.evasive-blur', 'engagement.sidestep-blur', 'control.chill-blur',
+  'kill-chain.recovery-pulse', 'barrier-tempo.ward-shell', 'affliction.toxic-pulse',
+  'bulwark.plating-chip', 'empowered.guard-spark',
 ] as const;
 
 // ─── Authored shapes (NO numbers — see the header) ───────────────────────────

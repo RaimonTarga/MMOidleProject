@@ -12,6 +12,11 @@
  * thing work: a non-boss monster of a T1 biome that belongs to no family is a
  * kill that silently pays nothing.
  *
+ * It also pins the Phase 4 shard-sourcing STOPGAP (design §17): a boss kill also
+ * drops shards of its biome's non-weapon Lane-A packets, deduplicated per
+ * packet, because three packets (Engagement, Bulwark, Barrier tempo) have no T1
+ * mob family at all.
+ *
  * Deliberately NOT asserted: drop amounts. Those are one row in the magnitude
  * table; everything here is relative or structural.
  *
@@ -26,6 +31,7 @@ import {
   PACKET_IDS,
   WORLD_NODE_LIST,
   baseRecoveryForTier,
+  biomeDefensiveLaneAPackets,
   blendEntries,
   emptyEquipment,
   familyForMonster,
@@ -198,7 +204,8 @@ function farm(id: string, nodeId: string, monsterTypeId: string, kills: number) 
   assert((golem.shards[pack as PacketId] ?? 0) === 0, 'and not the Pack\'s');
 }
 
-// The boss drops its biome's capstone, every kill, and no shard.
+// The boss drops its biome's capstone, every kill, plus the Phase 4
+// shard-sourcing stopgap's Lane-A shards (design §17) — and nothing else.
 {
   const boss = [...MONSTER_DATABASE.values()].find((m) => m.isBoss && m.biome === 'forest');
   assert(!!boss, 'fixture: a Forest boss');
@@ -211,7 +218,43 @@ function farm(id: string, nodeId: string, monsterTypeId: string, kills: number) 
     (three.capstones.forest ?? 0) === (one.capstones.forest ?? 0) * 3,
     'capstones are deterministic too — no pity timer',
   );
-  assert(Object.keys(one.shards).length === 0, 'a boss drops a capstone, not a shard');
+
+  const forestLaneA = biomeDefensiveLaneAPackets('forest');
+  assert(forestLaneA.length > 0, 'fixture: Forest has non-weapon lineages with a Lane A');
+  assert(
+    Object.keys(one.shards).length === forestLaneA.length,
+    `a boss drops exactly its biome's Lane-A shards (${forestLaneA.join(', ')}), got ${Object.keys(one.shards).join(', ')}`,
+  );
+  for (const packet of forestLaneA) {
+    assert((one.shards[packet] ?? 0) > 0, `a boss kill drops its biome's '${packet}' Lane-A shard`);
+    assert(
+      (three.shards[packet] ?? 0) === (one.shards[packet] ?? 0) * 3,
+      `the Lane-A stopgap is deterministic too, for '${packet}'`,
+    );
+  }
+}
+
+// The stopgap is deduplicated per packet, not per lineage that names it: a
+// biome whose armor and mobility Lane A are the same packet (Plains' Kill
+// chain) pays it once per boss kill, not twice.
+{
+  const plainsLaneA = biomeDefensiveLaneAPackets('plains');
+  assert(
+    plainsLaneA.includes('kill-chain') && plainsLaneA.includes('bulwark'),
+    `fixture: Plains' Lane A should include kill-chain and bulwark, got ${plainsLaneA.join(', ')}`,
+  );
+  assert(
+    new Set(plainsLaneA).size === plainsLaneA.length,
+    'biomeDefensiveLaneAPackets must already be deduplicated',
+  );
+
+  const boss = [...MONSTER_DATABASE.values()].find((m) => m.isBoss && m.biome === 'plains');
+  assert(!!boss, 'fixture: a Plains boss');
+  const one = farm('m-boss-plains', 'node-t1-plains-01', boss!.id, 1);
+  assert(
+    Object.keys(one.shards).length === plainsLaneA.length,
+    `a Plains boss kill pays each Lane-A packet once, got ${Object.keys(one.shards).join(', ')}`,
+  );
 }
 
 // A monster outside the family biomes pays no shard and does not crash. This is

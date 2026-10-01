@@ -478,6 +478,8 @@ const LANE_FX_COLOR: Record<string, number> = {
   control: 0x9fd8ff,     // ice
   "kill-chain": 0xd9b25c, // gold
   engagement: 0xffffff,  // white
+  bulwark: 0xb8b8a0,        // stone grey
+  "barrier-tempo": 0x7fd8c8, // teal
 };
 
 function laneFxColor(fx: LineageFxKey): number {
@@ -650,6 +652,35 @@ function fxLineageCard(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }):
       return;
     case "kill-chain.steel-vigil":
       fxAoeRing(scene, ev.pos, 30, color);
+      fxCardFlash(scene, pos, color);
+      return;
+    // Defensive signatures (Phase 4: armor/recovery/mobility, design §17).
+    // Reused by BOTH a lane's T1 payoff card and the capstone that crowns it
+    // (same signature, permanent instead of one-off) — no separate capstone
+    // cases needed, which is what keeps this switch small. Face grammar
+    // (design §8): Avoid = blur/sidestep, Sustain = pulses and ward shells,
+    // Endure = plating chips and a stance pose. All six reuse the primitives
+    // above; nothing new to draw.
+    case "tempo.evasive-blur":
+    case "engagement.sidestep-blur":
+    case "control.chill-blur":
+      // Avoid: a dodge-blur, drawn on the wearer like the existing brace/opening
+      // cards rather than on the (possibly absent) target.
+      fxCardGhostStrike(scene, pos, color);
+      return;
+    case "kill-chain.recovery-pulse":
+      fxAoeRing(scene, ev.pos, 24, color);
+      return;
+    case "barrier-tempo.ward-shell":
+      fxAoeRing(scene, ev.pos, 20, color);
+      return;
+    case "affliction.toxic-pulse":
+      fxCardPips(scene, pos, color, ev.stacks ?? 3);
+      return;
+    case "bulwark.plating-chip":
+      fxCardPlatingCrack(scene, pos, color);
+      return;
+    case "empowered.guard-spark":
       fxCardFlash(scene, pos, color);
       return;
     // Stat rows — a persistent weapon-trail cosmetic, never an event.
