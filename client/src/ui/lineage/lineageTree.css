@@ -103,6 +103,9 @@
 
 .lin-band--dim { opacity: 0.55; }
 
+/* The next tier exists in the design but is not authored yet: a head, no cards. */
+.lin-band--absent { border-style: dashed; }
+
 .lin-band--collapsed { padding: 0; border-color: var(--hud-edge-divider); }
 .lin-band--collapsed > summary {
   display: flex;
@@ -116,6 +119,15 @@
 }
 .lin-band--collapsed > summary::-webkit-details-marker { display: none; }
 .lin-band--collapsed > summary span { color: var(--hud-text-dim); font-size: 10px; }
+/* The stat row this band folded into the worn form (design §4). */
+.lin-band--collapsed > summary .lin-band__absorbed {
+  margin-left: auto;
+  padding-left: 8px;
+  border-left: 2px solid var(--hud-primary-strong, #d9b25c);
+  color: var(--hud-text-muted);
+  font-style: italic;
+  text-align: right;
+}
 .lin-band--collapsed[open] { padding: 0 0 10px; }
 .lin-band--collapsed[open] > summary { border-bottom: 1px solid var(--hud-edge-divider); margin-bottom: 8px; }
 .lin-band--collapsed > *:not(summary) { padding-left: 10px; padding-right: 10px; }
@@ -188,6 +200,47 @@
   opacity: 0.6;
 }
 .lin-card--silhouette .lin-card__desc { color: var(--hud-text-dim); font-style: italic; }
+
+/* Absorbed: a collapsed band's stat row, now part of the worn form's base stats
+   (design §4). Lane-lit like an active card but flat and inert — it is a readout,
+   so it is a div with no hover and no cursor. */
+.lin-card--absorbed {
+  border-color: color-mix(in srgb, var(--lane-color) 45%, var(--hud-edge-light));
+  background: color-mix(in srgb, var(--lane-color) 6%, var(--hud-material-inset));
+  cursor: default;
+}
+.lin-card--absorbed .lin-card__desc { font-style: italic; }
+
+/* The amplifier's connector: a short tick from this card up to the card it
+   modifies, which the lane grid puts directly above it. `--lane-color` is already
+   on the tile, so the tie is always the lane's colour. */
+.lin-card__tie {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 2px;
+  height: 9px;
+  margin-left: -1px;
+  background: var(--lane-color);
+  opacity: 0.8;
+}
+.lin-card__tie::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  bottom: 0;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-top: 4px solid var(--lane-color);
+}
+/* Fallback when the modified card is not the tile directly above: name it instead
+   of drawing a tick that points at the wrong column. */
+.lin-card__modifies {
+  font-size: 8px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--lane-color);
+}
 
 .lin-card--empty { visibility: hidden; }
 
@@ -296,6 +349,7 @@
 .lin-build__line { display: grid; grid-template-columns: 56px 1fr; gap: 8px; align-items: baseline; }
 .lin-build__k { font-size: 9px; letter-spacing: 0.6px; text-transform: uppercase; color: var(--hud-text-dim); }
 .lin-build__v { color: var(--hud-text); }
+.lin-build__v--dim { color: var(--hud-text-muted); font-style: italic; }
 .lin-build__empty { color: var(--hud-text-dim); font-style: italic; font-size: 10px; }
 
 .lin-readout {

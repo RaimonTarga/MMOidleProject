@@ -488,21 +488,38 @@ function laneFxColor(fx: LineageFxKey): number {
   return Number.isNaN(parsed) ? 0xffffff : parsed;
 }
 
+/**
+ * How much bigger an AMPLIFIED application draws (design §8: "the event gets
+ * bigger or spreads"). The signal is the `stacks` the server already sends — there
+ * is no new fx key and no new handler for an amplifier, because an amplifier
+ * reuses its lane's payoff key by design, and a second target arrives as a second
+ * `card-fx` with its own `targetId`.
+ */
+function ampScale(stacks: number | undefined): number {
+  if (!stacks || stacks <= 1) return 1;
+  return Math.min(1.8, 1 + 0.18 * (stacks - 1));
+}
+
 /** A short duplicate streak implying the triggering hit struck a second time. */
-function fxCardGhostStrike(scene: GameScene, at: { x: number; y: number }, color: number): void {
+function fxCardGhostStrike(
+  scene: GameScene,
+  at: { x: number; y: number },
+  color: number,
+  scale = 1,
+): void {
   const angle = Math.random() * Math.PI * 2;
   const dx = Math.cos(angle);
   const dy = Math.sin(angle);
   const g = scene.add.graphics({ x: at.x, y: at.y }).setDepth(DEPTH.FX);
-  g.lineStyle(2.5, color, 0.85);
+  g.lineStyle(2.5 * scale, color, 0.85);
   g.beginPath();
-  g.moveTo(-dx * 14, -dy * 14);
-  g.lineTo(dx * 14, dy * 14);
+  g.moveTo(-dx * 14 * scale, -dy * 14 * scale);
+  g.lineTo(dx * 14 * scale, dy * 14 * scale);
   g.strokePath();
   scene.tweens.add({
     targets: g,
-    x: at.x + dx * 12,
-    y: at.y + dy * 12,
+    x: at.x + dx * 12 * scale,
+    y: at.y + dy * 12 * scale,
     alpha: 0,
     duration: 260,
     ease: "Cubic.Out",
@@ -511,7 +528,12 @@ function fxCardGhostStrike(scene: GameScene, at: { x: number; y: number }, color
 }
 
 /** A jagged crack over the target — plating giving way. */
-function fxCardPlatingCrack(scene: GameScene, at: { x: number; y: number }, color: number): void {
+function fxCardPlatingCrack(
+  scene: GameScene,
+  at: { x: number; y: number },
+  color: number,
+  scale = 1,
+): void {
   const g = scene.add.graphics({ x: at.x, y: at.y }).setDepth(DEPTH.FX);
   g.lineStyle(2, color, 0.9);
   g.beginPath();
@@ -520,6 +542,7 @@ function fxCardPlatingCrack(scene: GameScene, at: { x: number; y: number }, colo
   g.lineTo(-7, 3);
   g.lineTo(2, 13);
   g.strokePath();
+  if (scale !== 1) g.setScale(scale);
   scene.tweens.add({
     targets: g,
     alpha: 0,
@@ -551,11 +574,17 @@ function fxCardPips(scene: GameScene, at: { x: number; y: number }, color: numbe
 }
 
 /** A short arc/tendril from the source to the target — a drag, a grasp, a spread. */
-function fxCardArc(scene: GameScene, from: { x: number; y: number }, to: { x: number; y: number }, color: number): void {
+function fxCardArc(
+  scene: GameScene,
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+  color: number,
+  scale = 1,
+): void {
   const g = scene.add.graphics().setDepth(DEPTH.FX);
   const mx = (from.x + to.x) / 2;
-  const my = (from.y + to.y) / 2 - 18;
-  g.lineStyle(2, color, 0.75);
+  const my = (from.y + to.y) / 2 - 18 * scale;
+  g.lineStyle(2 * scale, color, 0.75);
   g.beginPath();
   g.moveTo(from.x, from.y);
   g.lineTo(mx, my);
@@ -571,14 +600,19 @@ function fxCardArc(scene: GameScene, from: { x: number; y: number }, to: { x: nu
 }
 
 /** A quick radial flash — an opening window, a weak point marked. */
-function fxCardFlash(scene: GameScene, at: { x: number; y: number }, color: number): void {
+function fxCardFlash(
+  scene: GameScene,
+  at: { x: number; y: number },
+  color: number,
+  scale = 1,
+): void {
   const g = scene.add.graphics({ x: at.x, y: at.y }).setDepth(DEPTH.FX);
   g.fillStyle(color, 0.9);
   g.fillCircle(0, 0, 5);
   scene.tweens.add({
     targets: g,
-    scaleX: 3.2,
-    scaleY: 3.2,
+    scaleX: 3.2 * scale,
+    scaleY: 3.2 * scale,
     alpha: 0,
     duration: 240,
     ease: "Cubic.Out",
@@ -594,66 +628,80 @@ const warnedUnknownFx = new Set<string>();
  * the stat row is a persistent cosmetic derived client-side from the active
  * stat card (see `playLineageTrail` below), never a `card-fx` event (Phase 1c
  * contract). Unknown keys draw nothing.
+ *
+ * AMPLIFIERS ADD NO KEYS. Design §8 gives the amplifier row "the event gets
+ * bigger or spreads", and an authored amplifier deliberately reuses its lane's
+ * payoff key — so an amplified application arrives here as the SAME key with more
+ * `stacks`, or as a second event on a second `targetId`. Both are handled by the
+ * handler that already existed: {@link ampScale} grows the draw, and the target is
+ * resolved per event. There is nothing to add to this switch for an amplifier.
  */
 function fxLineageCard(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }): void {
   const pos = nodeToScene(ev.pos.x, ev.pos.y);
-  const target = ev.targetPos ? nodeToScene(ev.targetPos.x, ev.targetPos.y) : pos;
+  // `targetId` first: a payoff that spread to a second target names that monster,
+  // and its live sprite is where the player is looking. `targetPos` is the
+  // position at push time, the player's own position the last resort.
+  const live = ev.targetId ? spritePos(scene.state, ev.targetId) : null;
+  const target = live ?? (ev.targetPos ? nodeToScene(ev.targetPos.x, ev.targetPos.y) : pos);
   const color = laneFxColor(ev.fx);
+  const amp = ampScale(ev.stacks);
 
   switch (ev.fx) {
     // Payoff rows — a new on-screen event (design §8).
     case "tempo.ghost-strike":
-      fxCardGhostStrike(scene, target, color);
+      fxCardGhostStrike(scene, target, color, amp);
       return;
     case "empowered.plating-crack":
-      fxCardPlatingCrack(scene, target, color);
+      fxCardPlatingCrack(scene, target, color, amp);
       return;
     case "empowered.weak-point":
-      fxCardFlash(scene, target, color);
+      fxCardFlash(scene, target, color, amp);
       return;
     case "affliction.bleed-pips":
     case "affliction.venom-pips":
+      // The pips ARE the stack count, so they spread rather than swell: scaling
+      // them as well would read the same number twice.
       fxCardPips(scene, target, color, ev.stacks ?? 3);
       return;
     case "control.frost-drag":
-      fxCardArc(scene, pos, target, color);
+      fxCardArc(scene, pos, target, color, amp);
       return;
     case "kill-chain.kill-pulse":
-      fxAoeRing(scene, ev.pos, 24, color);
+      fxAoeRing(scene, ev.pos, 24 * amp, color);
       return;
     case "kill-chain.spread-arc":
-      fxCardArc(scene, pos, target, color);
+      fxCardArc(scene, pos, target, color, amp);
       return;
     case "engagement.opening-flash":
-      fxCardFlash(scene, pos, color);
+      fxCardFlash(scene, pos, color, amp);
       return;
     case "engagement.brace-sparks":
-      fxCardPips(scene, pos, color, 4);
+      fxCardPips(scene, pos, color, ev.stacks ?? 4);
       return;
     // Capstones — the form's lasting verb (design §8: "form art changes, plus
     // a lasting aura"), drawn as a bigger pass of the same primitives.
     case "tempo.gale-wake":
-      fxAoeRing(scene, ev.pos, 34, color);
-      fxCardGhostStrike(scene, pos, color);
+      fxAoeRing(scene, ev.pos, 34 * amp, color);
+      fxCardGhostStrike(scene, pos, color, amp);
       return;
     case "tempo.ruin-afterimage":
-      fxCardGhostStrike(scene, target, color);
-      fxCardGhostStrike(scene, target, color);
+      fxCardGhostStrike(scene, target, color, amp);
+      fxCardGhostStrike(scene, target, color, amp);
       return;
     case "affliction.stinger-echo":
-      fxCardArc(scene, pos, target, color);
+      fxCardArc(scene, pos, target, color, amp);
       fxCardPips(scene, target, color, 2);
       return;
     case "empowered.quake-ring":
-      fxAoeRing(scene, ev.targetPos ?? ev.pos, 40, color);
+      fxAoeRing(scene, ev.targetPos ?? ev.pos, 40 * amp, color);
       return;
     case "control.mire-grasp":
-      fxCardArc(scene, pos, target, color);
+      fxCardArc(scene, pos, target, color, amp);
       fxCardPips(scene, target, color, 2);
       return;
     case "kill-chain.steel-vigil":
-      fxAoeRing(scene, ev.pos, 30, color);
-      fxCardFlash(scene, pos, color);
+      fxAoeRing(scene, ev.pos, 30 * amp, color);
+      fxCardFlash(scene, pos, color, amp);
       return;
     // Defensive signatures (Phase 4: armor/recovery/mobility, design §17).
     // Reused by BOTH a lane's T1 payoff card and the capstone that crowns it
@@ -667,22 +715,22 @@ function fxLineageCard(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }):
     case "control.chill-blur":
       // Avoid: a dodge-blur, drawn on the wearer like the existing brace/opening
       // cards rather than on the (possibly absent) target.
-      fxCardGhostStrike(scene, pos, color);
+      fxCardGhostStrike(scene, pos, color, amp);
       return;
     case "kill-chain.recovery-pulse":
-      fxAoeRing(scene, ev.pos, 24, color);
+      fxAoeRing(scene, ev.pos, 24 * amp, color);
       return;
     case "barrier-tempo.ward-shell":
-      fxAoeRing(scene, ev.pos, 20, color);
+      fxAoeRing(scene, ev.pos, 20 * amp, color);
       return;
     case "affliction.toxic-pulse":
       fxCardPips(scene, pos, color, ev.stacks ?? 3);
       return;
     case "bulwark.plating-chip":
-      fxCardPlatingCrack(scene, pos, color);
+      fxCardPlatingCrack(scene, pos, color, amp);
       return;
     case "empowered.guard-spark":
-      fxCardFlash(scene, pos, color);
+      fxCardFlash(scene, pos, color, amp);
       return;
     // Stat rows — a persistent weapon-trail cosmetic, never an event.
     case "tempo.trail":

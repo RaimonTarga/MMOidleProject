@@ -1240,6 +1240,76 @@ combat once equipped, not just structurally validated.
 - T2 families for Jungle and Desert. The eight-shard wallet is checked for legibility with T2 costs live.
 - Tutorial: the tier-up beat shows the gate transformation.
 
+**Built 2026-10-01 (Phase 5, band collapse only, `feat/band-collapse` off
+`feat/lineage-data-model`).** The first bullet's *collapse* half: stat absorption,
+the collapsed/lit/silhouette panel, amplifier rendering, and the amplifier's FX
+budget. The T2 magnitude row, the T2 card authoring, form re-homing, T2 families and
+the tutorial beat are NOT in this slice. `npx tsc` clean on `shared`, `server` and
+`client`; `lineageEconomy` plus the shared `lineages` / `coverage` / `normalisation`
+suites and the `lineageAuthoring` / `lineageCards.wiring` / `lineagePersistence` /
+`lineageMaterials` / `lineageTelemetry` / `lineageListenerOrder` /
+`inventoryStatSheet` files pass.
+
+- `shared/src/systems/lineages.ts` — `statRowIsCollapsed`, `absorbedStatCards`,
+  `lineageCardTie`. `resolveActiveLineages` sums an absorbed row into the SAME
+  `statEffects` bag as the slotted one and reports it separately as `absorbed` for
+  the readout; `resolveLineageCards` drops a slotted stat card whose band has
+  collapsed, so the two sets are disjoint and the fold cannot land twice.
+  `checkSetActive` refuses a collapsed band's stat card and nothing else.
+- `shared/src/systems/stats.ts` — **no new application site.** The absorbed rows ride
+  the existing step 2b (percentages, evasion) and step 3c (flats, DR into the item
+  bucket); both comments now say so, because "where does this land" is the question a
+  reader of a 500-line recalc actually has.
+- `client/src/ui/lineage/LineageTreePanel.tsx` + `lineageTree.css` — the collapsed
+  summary names what the band OWNS ("T1: Keen Edge, Rend") and the row the form
+  absorbed; a fifth card state `--absorbed` (inert, "in form", checked before
+  `active`); the amplifier tick / named chip; the build readout names an amplifier
+  with what it modifies and lists absorbed rows under "In form".
+- `client/src/render/combatFx.ts` — `ampScale(stacks)` grows the existing primitive,
+  and `targetId` resolves to the live sprite before falling back to `targetPos`. No
+  new `LineageFxKey`, no new handler.
+- Tests: `server/test/lineageEconomy.test.ts` — the fold is worth exactly its
+  resolved value against a twin wearing the same form, survives clearing the row,
+  survives a double recalc, is absent while the T2 form is only owned, and reverses
+  when the T1 form is worn back; the collapsed band's payoff row stays buyable AND
+  selectable; a non-weapon lineage (plate, through its own T1→T2 gate) absorbs
+  nothing and moves no stat. The connector is pinned on synthetic cards, since the
+  T2 cards are authored on branches this one cannot see.
+
+**Divergences, recorded because the code wins:**
+
+1. **Absorption is derived at recalc, not mutated at the gate.** §4 says the value
+   folds "at the gate"; here paying the gate buys the form and nothing else, and the
+   fold follows the WORN form. So it is reversible by wearing the old form back (the
+   row becomes an ordinary slotted row again) and no save migration is needed. This
+   is what keeps recalc pure and "owned is forever, active is a choice" intact.
+2. **Which stat card folds when the player owns several was undefined.** §4 says "the
+   stat row's value", singular, and §1.2 decision 1 means only one was ever played.
+   The code absorbs exactly one per collapsed band: the one on the lane of the
+   player's current stat row (so the lane identity carries up and the player still
+   chooses), else the lineage's own lane order. Owning all three T1 lanes buys a
+   wardrobe, not three absorptions. **Designer should confirm the tiebreak.**
+3. **`active.stat` is not cleared when a band collapses.** The card stays slotted as a
+   record of the lane — it still drives the weapon-trail cosmetic, which would
+   otherwise go dark at the reward moment — while resolution ignores it and the panel
+   shows it as "in form" rather than "active". Buying the current tier's stat row
+   treats such a slot as empty and takes it.
+4. **A collapsed band's stat card is still buyable, just never slottable.** That is
+   the only way to move which lane the form absorbed, and it is the wardrobe rule
+   applied to the one permanent row. Only `checkSetActive` refuses it.
+5. **"One row fewer per tier" for non-weapon slots is derived, not authored.**
+   `rowsForTier` is tier-only, so the panel renders exactly the rows the band has
+   cards for: non-weapon lineages author no `stat` card, so their stat row does not
+   appear — and neither does an amplifier row on a tier whose amplifier cards are not
+   authored yet, which is the transitional state until the T2 cards land.
+6. **The absent silhouette is now a dashed empty band head** ("Nothing beyond this
+   band yet") instead of nothing at all (overnight report item 3), so the panel always
+   shows one lit band and one frame below it without promising rows that do not exist.
+7. **An amplifier adds no fx key.** §8 gives the amplifier row "bigger or spreads";
+   the authoring agents reuse each lane's payoff key, so amplification arrives as more
+   `stacks` on the same key or as a second event on another `targetId`. Pips keep
+   their count unscaled — they already read the stack number.
+
 **Exit.** Playtest: players describe the gate as the reward moment. Bench: T2 lane
 budgets hold; the T1→T2 floor rule (weapon ladder) still cascades.
 

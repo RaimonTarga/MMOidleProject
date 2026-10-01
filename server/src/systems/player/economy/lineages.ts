@@ -20,8 +20,12 @@ import {
   globalMastery,
   lineageCardPrice,
   lineageGateCost,
+  statRowIsCollapsed,
 } from '@mmo-idle/shared';
-import type { EssenceType, LineageCost, LineageWallet, PacketId, RowKind } from '@mmo-idle/shared';
+import type {
+  EssenceType, LineageCard, LineageCost, LineageDefinition, LineageProgress,
+  LineageWallet, PacketId, RowKind,
+} from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
 import type { PlayerEntity } from '../../../ecs/entity';
 import { recalculatePlayerEntityStats } from '../../../ecs/playerEntityFormulas';
@@ -68,6 +72,16 @@ function costTotals(cost: LineageCost, capstone?: { biome: string; amount: numbe
     shardsSpent: sum(Object.values(cost.shards)),
     capstonesSpent: capstone?.amount ?? 0,
   };
+}
+
+/** The card currently slotted in a row, or undefined when the row is empty. */
+function slottedCard(
+  lineage: LineageDefinition,
+  progress: LineageProgress,
+  row: RowKind,
+): LineageCard | undefined {
+  const id = progress.active[row];
+  return id ? lineage.cards.find((c) => c.id === id) : undefined;
 }
 
 /** Spend a resolved cost. Only ever called after the matching check passed. */
@@ -118,7 +132,17 @@ export function unlockLineageCard(
     const ownedCards = [...current.ownedCards, cardId];
     // A row the player has nothing in yet activates the card they just bought;
     // a row already filled is left alone, because swapping is their choice.
-    const active = current.active[card.row] === undefined
+    //
+    // A stat row still pointing at a card the gate collapsed counts as EMPTY:
+    // that card is base stats now (design §4) and can never be slotted again, so
+    // leaving it there would make the first T2 stat card look like it did
+    // nothing. `checkSetActive` is the authority on whether the new card may sit
+    // in the row at all — buying a collapsed band's stat row is a reslot of what
+    // the form absorbed, not a slot change.
+    const slotted = slottedCard(lineage, current, card.row);
+    const rowOpen = !slotted || statRowIsCollapsed(lineage, current, slotted);
+    const active = rowOpen
+      && checkSetActive({ lineage, progress: { ...current, ownedCards }, row: card.row, cardId }).ok
       ? { ...current.active, [card.row]: cardId }
       : current.active;
     inv.lineages = { ...inv.lineages, [lineageId]: { ...current, ownedCards, active } };
