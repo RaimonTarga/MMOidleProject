@@ -1,5 +1,5 @@
 import { captureProgressionCheckpoint, restoreProgressionCheckpoint } from '../admin/progressionCheckpoint';
-import { runicLoadoutFromProgression, runicPointEditAllowed, attunedAbilityIds, ROW_KINDS } from "@mmo-idle/shared";
+import { runicLoadoutFromProgression, runicPointEditAllowed, attunedAbilityIds, ABILITY_NODE_ROWS, ROW_KINDS } from "@mmo-idle/shared";
 import type { Socket } from "socket.io";
 import {
   DEFAULT_AUTOCOMBAT_CONFIG,
@@ -59,6 +59,11 @@ import {
   wearLineageForm,
   type LineageAction,
 } from "../systems/player/economy/lineages";
+import {
+  setAbilityNode,
+  unlockAbilityNode,
+  type AbilityNodeAction,
+} from "../systems/player/economy/abilityNodes";
 import {
   handlePartyDisconnect,
   joinParty,
@@ -647,6 +652,28 @@ export function registerPlayerHandlers(
     const result = wearLineageForm(world, p, payload.lineageId, payload.recipeId);
     world.gameplay?.decision(p, "lineage-form", payload.recipeId, telemetryBefore, result.success);
     socket.emit("lineage:result", result);
+  });
+
+  // ── Ability nodes (design §19) ─────────────────────────────────────────────
+  // Both answer on one event, for the same reason the four lineage actions do.
+  const nodeReject = (abilityId: string, action: AbilityNodeAction): void => {
+    socket.emit("ability:nodeResult", { success: false, reason: NOT_LIVE_REASON, abilityId, action });
+  };
+
+  socket.on("ability:unlockNode", (payload) => {
+    const p = liveSelf();
+    if (!payload || typeof payload.abilityId !== "string" || typeof payload.optionId !== "string") return;
+    if (!p) return nodeReject(payload.abilityId, "unlockNode");
+    socket.emit("ability:nodeResult", unlockAbilityNode(world, p, payload.abilityId, payload.optionId));
+  });
+
+  socket.on("ability:setNode", (payload) => {
+    const p = liveSelf();
+    if (!payload || typeof payload.abilityId !== "string") return;
+    if (payload.optionId !== null && typeof payload.optionId !== "string") return;
+    if (!ABILITY_NODE_ROWS.includes(payload.row)) return;
+    if (!p) return nodeReject(payload.abilityId, "setNode");
+    socket.emit("ability:nodeResult", setAbilityNode(world, p, payload.abilityId, payload.row, payload.optionId));
   });
 
   socket.on("party:join", (targetPlayerId: string) => {

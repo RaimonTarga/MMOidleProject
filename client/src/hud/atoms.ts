@@ -11,6 +11,7 @@ import type {
   EquippedRule,
   EssenceType,
   LineageProgressMap,
+  AbilityNodeProgressMap,
   PacketId,
   PartyMember,
   PassiveMap,
@@ -233,6 +234,8 @@ export const shardsAtom = atom<Partial<Record<PacketId, number>>>({});
 export const capstonesAtom = atom<Record<string, number>>({});
 /** Lineage trees, keyed by lineage id. */
 export const lineagesAtom = atom<LineageProgressMap>({});
+/** Ability nodes, keyed by ability id (design §19). */
+export const abilityNodesAtom = atom<AbilityNodeProgressMap>({});
 
 export const activeBuffsAtom = atom<PlayerBuff[]>([]);
 export const autoPathAtom = atom<string[] | null>(null);
@@ -888,6 +891,7 @@ function resetPlayerAtoms(): void {
   setIfShallowObjectEqual(shardsAtom, {});
   setIfShallowObjectEqual(capstonesAtom, {});
   setIfShallowObjectEqual(lineagesAtom, {});
+  setIfShallowObjectEqual(abilityNodesAtom, {});
   setAutoPath(null);
   setParty(null);
   setZonePlayers([]);
@@ -1012,6 +1016,7 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfShallowObjectEqual(shardsAtom, player.shards);
   setIfShallowObjectEqual(capstonesAtom, player.capstones);
   setIfShallowObjectEqual(lineagesAtom, player.lineages);
+  setIfShallowObjectEqual(abilityNodesAtom, player.abilityNodes);
 
   setParty(
     player.partyLeaderId

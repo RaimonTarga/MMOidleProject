@@ -3,6 +3,7 @@ import type { AttunedAbilities } from "../abilities";
 import type { StanceSlot } from "../stances";
 import type { EvolveMode } from "../systems/evolution";
 import type { RowKind } from "../data/lineages/types";
+import type { AbilityNodeRow } from "../data/abilityNodes/types";
 import type { AutocombatConfig } from "../components/core/networkedSlices";
 import type { EquippedRule } from "../runeDatabase";
 import type { BossFelledMarker } from "./bossFelled";
@@ -159,6 +160,18 @@ export interface ServerToClientEvents {
     /** Which action this answers, so the panel knows what to re-render. */
     action: "unlockCard" | "setActive" | "unlockForm" | "wearForm";
   }) => void;
+  /**
+   * Immediate result of an ability-node action (design §19). Same shape as
+   * `lineage:result`, keyed by ability instead of lineage, and for the same
+   * reason: the client's reaction to either action is to refresh the rows and,
+   * on failure, show the reason the shared check gave.
+   */
+  "ability:nodeResult": (result: {
+    success: boolean;
+    reason?: string;
+    abilityId: string;
+    action: "unlockNode" | "setNode";
+  }) => void;
   /** Sent when a player's HP reaches zero — corpse stays at death site until ack. */
   "player:died": (payload: PlayerDeathPayload) => void;
   /** Sent when a player unlocks a skill and advances to the next tier. */
@@ -290,6 +303,15 @@ export interface ClientToServerEvents {
   "lineage:unlockForm": (payload: { lineageId: string; recipeId: string }) => void;
   /** Wear an owned form. Free; mirrors into `equipment[slot]`. */
   "lineage:wearForm": (payload: { lineageId: string; recipeId: string }) => void;
+  // ── Ability nodes (design §19) ─────────────────────────────────────────────
+  /** Buy an ability node. Permanent; costs essence and the packet's own shard. */
+  "ability:unlockNode": (payload: { abilityId: string; optionId: string }) => void;
+  /** Make an owned node the active one for its row. Free; null clears the row. */
+  "ability:setNode": (payload: {
+    abilityId: string;
+    row: AbilityNodeRow;
+    optionId: string | null;
+  }) => void;
   /** Join the party of the target player (the target's leader becomes your leader). */
   "party:join": (targetPlayerId: string) => void;
   /** Leave your current party (disbands it if you are the leader). */

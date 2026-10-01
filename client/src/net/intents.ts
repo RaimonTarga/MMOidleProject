@@ -8,6 +8,7 @@ import type {
   PlayerMoveResult,
   CombatControlResult,
   RowKind,
+  AbilityNodeRow,
   StanceSlot,
   Vec2,
 } from '@mmo-idle/shared';
@@ -187,6 +188,22 @@ export function sendLineageWearForm(
   payload: { lineageId: string; recipeId: string },
 ): void {
   socket.emit('lineage:wearForm', payload);
+}
+
+// ── Ability nodes (design §19) ──────────────────────────────────────────────
+
+export function sendAbilityUnlockNode(
+  socket: GameSocket,
+  payload: { abilityId: string; optionId: string },
+): void {
+  socket.emit('ability:unlockNode', payload);
+}
+
+export function sendAbilitySetNode(
+  socket: GameSocket,
+  payload: { abilityId: string; row: AbilityNodeRow; optionId: string | null },
+): void {
+  socket.emit('ability:setNode', payload);
 }
 
 export function sendJoinParty(socket: GameSocket, targetPlayerId: string): void {
