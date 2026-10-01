@@ -2630,3 +2630,52 @@ false positive.
 `server/test/boss3Cleanse.test.ts` fails (`swamp-response: boss hp drift`) on this
 branch, but it is on `run-tests.mjs`'s `ARCHIVED_SERVER_TESTS` list and so never runs
 in the suite; nothing here touches boss HP. Not investigated.
+
+---
+
+## Monster pass progress note — run-3 proposals applied, PROVISIONAL (2026-10-01, W1-B)
+
+Branch `feat/monster-pass-run3` off `feat/lineage-data-model`. Applies
+`reports/progression-phase1/monster-proposals-run3.md` to the monster definitions,
+one commit per family so the designer can revert any family alone. No magnitude,
+ability rank, card number or pool factor moved; `drops`/`punishes` are untouched.
+
+**What the pass is for.** §1 of the proposal table found that **two of the three stats
+that implement "punishes" are unused across the whole bestiary** — zero monsters set
+`dotResistance`, two set `evasion` (both T3+) — so fourteen of eighteen T1/T2 family
+contracts declared a punishment with no mechanism behind it. That is read off the data
+files, not measured, which is why it is the only part of the run-3 table strong enough
+to act on: §2 shows the ordinal lane ranks are below the bench's own resolution on
+every family but one. Design §18.7 makes `drops` the definition of "favours", so the
+mobs are what must move.
+
+### Divergences from the table, for review
+
+1. **The squishy-biome no-plating rule was overturned, not worked around.** The
+   `MONSTER REFACTOR` banner's "Squishy biomes (plains/forest) carry NO plating/DR
+   (fast weapons shred them — intended)" is replaced in all seven copies with a note
+   saying the family contract wins and %DR still does not apply to plains/forest.
+   §4 had explicitly BLOCKED the Forest Grove plating row on this conflict; the run-4
+   brief lifts the block. Own commit, independently revertable.
+2. **Every Tempo-punishing family got a plating, but the table authored only one
+   value** (forest-slime 4). `boar` 3, `stampede-bull` 5, `brood-spiderling` 2,
+   `fen-hexer` 2, `jungle-ape` 5 and `stone-basilisk` 4 are chosen by analogy — the
+   T1 values stay inside the existing authored T1 band (max 3, rockback-ram) and the
+   T2 values sit at the same fraction of the T2 median player hit, under the T2 anchor
+   swamp-hydra's 6. `grass-kite`'s `dotResistance` 0.15 is likewise mine.
+3. **Swamp Coven's row contradicts §4's own "two families need nothing".** That
+   sentence argues from the ranks, which §2 disqualifies; §1's stat census does not
+   need them. Resolved in favour of §1 per the brief. Revert that one commit to
+   restore §4's reading.
+4. **Plains Swarm's Empowered punishment is `swarm.maxMembers` 4 → 6, not an
+   evasion.** The table weighed the two for this family and chose the count; an
+   evasion there would also lengthen Plains TTK, which §5 deliberately protects. This
+   is the one stat the run-4 brief asked for that the pass does not add.
+5. One commit per family means a family's **§5 Plains pressure rows travel with its
+   contract row** (`boar` with the Herd, `plains-slime` with the Swarm, `grass-kite`
+   with the Sky), since the pressure rows partition by family anyway.
+
+`server/test/packCoordination.test.ts` had `plains-slime`'s old `maxMembers: 4`
+written into both its fixture and its assertion; it now reads the cap from
+`MONSTER_DATABASE`, because the guarded invariant is "the swarm stops at its cap",
+not the cap's value.

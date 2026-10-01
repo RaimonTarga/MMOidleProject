@@ -19,8 +19,13 @@ import type { MonsterDefinition } from './types';
 //
 // CHARGE = closes the gap for SLOW big-hitters (anti-kite for the ponderous).
 // HIGH BASE SPEED = the fast-ambusher identity. RANGED = anti-kite from afar.
-// Squishy biomes (plains/forest) carry NO plating/DR (fast weapons shred them —
-// intended); CAVE elites carry DR/plating (where slow/piercing weapons earn keep).
+// PLATING RULE SUPERSEDED (progression rework, 2026-10-01, PROVISIONAL): plains and
+// forest used to carry NO plating/DR at all ("fast weapons shred them — intended").
+// A family's `punishes` field is now a contract, and flat `plating` is the only stat
+// that punishes Tempo (`packets.ts`: "weak against fortified plating"), so Plains Herd
+// and Forest Grove — both Tempo-punishing — must carry some. They still carry NO %DR,
+// so fast weapons still shred them; see monster-proposals-run3.md §1/§4.
+// CAVE elites carry DR/plating (where slow/piercing weapons earn keep).
 //
 // Rewards / ai wander+leash / colors / ids kept as-is. A few NAMES no longer
 // match their refactored shape (flagged inline) — rename in the cosmetic pass.
@@ -34,7 +39,11 @@ export const forestMonsterEntries = [
     // Attacks faster than its plains cousin — frequency over force.
     // Deliberately a plain stat block: T1 is the introductory tier and Forest's
     // texture comes from the wolf pack, so the filler stays readable and simple.
-    stats: { hp: 160, attack: 17, plating: 0, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1400, pullRange: 600 },
+    // GROVE FAMILY (progression rework, 2026-10-01, PROVISIONAL): plating 0 -> 4.
+    // Grove declares `punishes: 'tempo'` and flat plating is the only stat that
+    // punishes Tempo; the Grove is the only Forest family whose shape is "stand and
+    // absorb". The superseded squishy-biome no-plating rule is in the file banner.
+    stats: { hp: 160, attack: 17, plating: 4, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1400, pullRange: 600 },
     behavior: 'melee', attackStyle: 'gnaw', biome: 'forest',
     rewards: { essence: 3, essenceType: 'green', level: 1, biomeXp: 18 },
     ai: { wanderRadius: 230, leashRange: 1200, idleMinMs: 1200, idleMaxMs: 4000 },
@@ -46,6 +55,12 @@ export const forestMonsterEntries = [
     stats: { hp: 130, attack: 20, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1100, pullRange: 476 },
     behavior: 'melee', attackStyle: 'bite', biome: 'forest',
     rewards: { essence: 4, essenceType: 'green', level: 1, biomeXp: 25 },
+    // PACK FAMILY (progression rework, 2026-10-01, PROVISIONAL): evasion unset -> 0.12.
+    // Pack declares `punishes: 'empowered'` and evasion is the one stat that punishes
+    // it — a multiplied hit that misses is the entire punishment. A wolf dodging one
+    // swing in eight is the Pack's own fiction, and 0.12 is the gentlest evasion in
+    // the game (mire-stalker 0.20, bog-lurker 0.25), well under the 0.25 ceiling.
+    evasion: 0.12,
     ai: { wanderRadius: 290, leashRange: 1360, idleMinMs: 700, idleMaxMs: 2800 },
     // Forest predator-pack ALPHA: a roaming adult wolf spawns with two young wolves
     // and calls them onto anything it engages.

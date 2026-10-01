@@ -27,8 +27,13 @@ const GORILLA_CHESTBEAT = {
 //
 // CHARGE = closes the gap for SLOW big-hitters (anti-kite for the ponderous).
 // HIGH BASE SPEED = the fast-ambusher identity. RANGED = anti-kite from afar.
-// Squishy biomes (plains/forest) carry NO plating/DR (fast weapons shred them —
-// intended); CAVE elites carry DR/plating (where slow/piercing weapons earn keep).
+// PLATING RULE SUPERSEDED (progression rework, 2026-10-01, PROVISIONAL): plains and
+// forest used to carry NO plating/DR at all ("fast weapons shred them — intended").
+// A family's `punishes` field is now a contract, and flat `plating` is the only stat
+// that punishes Tempo (`packets.ts`: "weak against fortified plating"), so Plains Herd
+// and Forest Grove — both Tempo-punishing — must carry some. They still carry NO %DR,
+// so fast weapons still shred them; see monster-proposals-run3.md §1/§4.
+// CAVE elites carry DR/plating (where slow/piercing weapons earn keep).
 //
 // Rewards / ai wander+leash / colors / ids kept as-is. A few NAMES no longer
 // match their refactored shape (flagged inline) — rename in the cosmetic pass.
@@ -92,7 +97,13 @@ export const jungleMonsterEntries = [
     // to hasten nearby monsters and call a small number of unengaged creatures
     // onto its target. The old invisible attack ramp is removed; the casted
     // window gives the player a clear moment to interrupt or focus the Ape.
-    stats: { hp: 1200, attack: 33, plating: 0, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 240 },
+    // APE FAMILY (progression rework, 2026-10-01, PROVISIONAL): plating 0 -> 5. Ape
+    // declares `punishes: 'tempo'` and flat plating is the only stat that punishes
+    // Tempo; without it the contract had no mechanism. 5 of the ~23 T2 median player
+    // hit is the same fraction boar's 3 is of T1's ~12, and under swamp-hydra's 6,
+    // the T2 anchor's value. The Jungle rows in this pass come from the CONTRACT,
+    // not from the lane bench: Jungle is unmeasured at T1 band (gear-gap artefact).
+    stats: { hp: 1200, attack: 33, plating: 5, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 240 },
     behavior: 'melee', attackStyle: 'ape-fist', biome: 'jungle', elite: true,
     rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 44 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3800 },
@@ -127,6 +138,12 @@ export const jungleMonsterEntries = [
     // with a pounce. Poison is DE-EMPHASIZED here (removed, locked) — venom is the
     // Snake's early-tier note, speed is this one's.
     stats: { hp: 1250, attack: 55, plating: 0, damageReduction: 0, speed: 78, attackRange: 12, attackCooldown: 1000, pullRange: 270 },
+    // STALKER FAMILY (progression rework, 2026-10-01, PROVISIONAL): dotResistance
+    // unset -> 0.25. Stalker declares `punishes: 'affliction'` and had no mechanism
+    // for it. Proposed purely from the CONTRACT — Jungle is unmeasured at the T1 band,
+    // so no Jungle row can be justified from the lane bench. Its removed-poison lock
+    // is about what the Stalker INFLICTS; this is what it resists.
+    dotResistance: 0.25,
     behavior: 'melee', attackStyle: 'claws-light', biome: 'jungle',
     rewards: { essence: 25, essenceType: 'green', level: 2, biomeXp: 150 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 600, idleMaxMs: 2600 },

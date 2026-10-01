@@ -19,8 +19,13 @@ import type { MonsterDefinition } from './types';
 //
 // CHARGE = closes the gap for SLOW big-hitters (anti-kite for the ponderous).
 // HIGH BASE SPEED = the fast-ambusher identity. RANGED = anti-kite from afar.
-// Squishy biomes (plains/forest) carry NO plating/DR (fast weapons shred them —
-// intended); CAVE elites carry DR/plating (where slow/piercing weapons earn keep).
+// PLATING RULE SUPERSEDED (progression rework, 2026-10-01, PROVISIONAL): plains and
+// forest used to carry NO plating/DR at all ("fast weapons shred them — intended").
+// A family's `punishes` field is now a contract, and flat `plating` is the only stat
+// that punishes Tempo (`packets.ts`: "weak against fortified plating"), so Plains Herd
+// and Forest Grove — both Tempo-punishing — must carry some. They still carry NO %DR,
+// so fast weapons still shred them; see monster-proposals-run3.md §1/§4.
+// CAVE elites carry DR/plating (where slow/piercing weapons earn keep).
 //
 // Rewards / ai wander+leash / colors / ids kept as-is. A few NAMES no longer
 // match their refactored shape (flagged inline) — rename in the cosmetic pass.
@@ -112,7 +117,14 @@ export const desertMonsterEntries = [
     // player's maxHP) as an ordinary hit, no less dangerous than the intended
     // Petrifying Gaze payload. 55 actually reads as a weak poke, letting the Gaze
     // stay "the entire weapon" as written.
-    stats: { hp: 1365, attack: 55, plating: 0, damageReduction: 0.15, speed: 26, attackRange: 12, attackCooldown: 2800, pullRange: 190 },
+    // BASILISK FAMILY (progression rework, 2026-10-01, PROVISIONAL): plating 0 -> 4.
+    // Basilisk declares `punishes: 'tempo'` and FLAT plating is the only stat that
+    // punishes Tempo — the 0.15 DR below does not, because %DR scales with the hit and
+    // so never singles out a fast light weapon. 4 rather than the 5 used for the other
+    // T2 bodies in this pass precisely because this is the only one already carrying a
+    // second mitigation axis; the line's T4 apex dune-basilisk is already at 10.
+    // From the CONTRACT, not the bench: Desert is unmeasured at the T1 band.
+    stats: { hp: 1365, attack: 55, plating: 4, damageReduction: 0.15, speed: 26, attackRange: 12, attackCooldown: 2800, pullRange: 190 },
     behavior: 'melee', attackStyle: 'reptile-tail', biome: 'desert',
     rewards: { essence: 8, essenceType: 'yellow', level: 1, biomeXp: 46 },
     ai: { wanderRadius: 180, leashRange: 560, idleMinMs: 2000, idleMaxMs: 5500 },

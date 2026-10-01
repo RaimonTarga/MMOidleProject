@@ -1,4 +1,4 @@
-import { distanceSq, makeTracksCombat } from '@mmo-idle/shared';
+import { distanceSq, makeTracksCombat, MONSTER_DATABASE } from '@mmo-idle/shared';
 import { World } from '../src/world/World';
 import { spawnPack } from '../src/systems/world/spawning';
 import { updatePacks } from '../src/systems/combat/ai/packs';
@@ -104,16 +104,21 @@ initCombatSystems();
 }
 
 // Local Plains recruits are bounded, stable, and cannot recruit another wave.
+// The bound is the mob's OWN authored `swarm.maxMembers`, read from the database
+// rather than hard-coded: the number is a balance dial (it moved 4 -> 6 in the
+// 2026-10-01 progression pass), the invariant is that the swarm stops there.
 {
   const world = new World();
   const node = 'node-5-4';
-  const mobs = Array.from({ length: 7 }, (_, i) => world.createMonster(node, 'plains-slime', { x: 600 + i * 25, y: 600 })!);
+  const cap = MONSTER_DATABASE.get('plains-slime')?.swarm?.maxMembers;
+  assert(typeof cap === 'number' && cap >= 2, 'plains-slime authors a swarm cap');
+  const mobs = Array.from({ length: cap + 3 }, (_, i) => world.createMonster(node, 'plains-slime', { x: 600 + i * 25, y: 600 })!);
   const player = world.attachPlayerEntity(packTestPlayerSlices('swarm-target', node, 1000, 600), 'swarm-target');
   for (const m of mobs) m.hasAwareness.pullRange = 0;
   setAggroTarget(world, mobs[0]!, { id: player.isPlayer.id, kind: 'player' }, 1000);
   updatePacks(world, 1000);
   const group = mobs.filter(m => m.inPack);
-  assert(group.length === 4, 'local swarm recruits at most four total bodies');
+  assert(group.length === cap, `local swarm recruits at most ${cap} total bodies`);
   const ids = group.map(m => m.isMonster.id).sort().join(',');
   updatePacks(world, 1100);
   assert(mobs.filter(m => m.inPack).map(m => m.isMonster.id).sort().join(',') === ids, 'recruits do not chain or reshuffle');

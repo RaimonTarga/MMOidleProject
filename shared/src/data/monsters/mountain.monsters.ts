@@ -19,8 +19,13 @@ import type { MonsterDefinition } from './types';
 //
 // CHARGE = closes the gap for SLOW big-hitters (anti-kite for the ponderous).
 // HIGH BASE SPEED = the fast-ambusher identity. RANGED = anti-kite from afar.
-// Squishy biomes (plains/forest) carry NO plating/DR (fast weapons shred them —
-// intended); CAVE elites carry DR/plating (where slow/piercing weapons earn keep).
+// PLATING RULE SUPERSEDED (progression rework, 2026-10-01, PROVISIONAL): plains and
+// forest used to carry NO plating/DR at all ("fast weapons shred them — intended").
+// A family's `punishes` field is now a contract, and flat `plating` is the only stat
+// that punishes Tempo (`packets.ts`: "weak against fortified plating"), so Plains Herd
+// and Forest Grove — both Tempo-punishing — must carry some. They still carry NO %DR,
+// so fast weapons still shred them; see monster-proposals-run3.md §1/§4.
+// CAVE elites carry DR/plating (where slow/piercing weapons earn keep).
 //
 // Rewards / ai wander+leash / colors / ids kept as-is. A few NAMES no longer
 // match their refactored shape (flagged inline) — rename in the cosmetic pass.
@@ -51,6 +56,12 @@ export const mountainMonsterEntries = [
     // Strong Kick's multiplier is unchanged at 1.9 and derives from this attack,
     // so its damage moves with the base cut. That is intended.
     stats: { hp: 190, attack: 40, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 3000, pullRange: 420 },
+    // HOPPER FAMILY (progression rework, 2026-10-01, PROVISIONAL): evasion unset -> 0.15.
+    // Hopper declares `punishes: 'empowered'` and evasion is the one stat that punishes
+    // it — a multiplied hit that misses is the entire punishment. A leaping goat is the
+    // most natural evader in the bestiary, and Hopper is the only Mountain family with
+    // no plating to fall back on. 0.15 is inside the ≤ 0.25 authoring ceiling.
+    evasion: 0.15,
     behavior: 'melee', attackStyle: 'hind-kick', biome: 'mountain',
     rewards: { essence: 6, essenceType: 'blue', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 200, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -101,6 +112,12 @@ export const mountainMonsterEntries = [
     // PLACEHOLDER numbers seeded from the T1 Mountain band (hopper 190/40);
     // designer hand-edits before the lane bench.
     stats: { hp: 260, attack: 34, plating: 3, damageReduction: 0, speed: 24, attackRange: 12, attackCooldown: 3200, pullRange: 300 },
+    // PROGRESSION REWORK, 2026-10-01, PROVISIONAL: dotResistance unset -> 0.25, the
+    // FIRST use of the stat anywhere in the game. Crag declares `punishes: 'affliction'`
+    // and had no mechanism for it. A stone-plated ram shrugging off poison is the
+    // cheapest possible fiction, and Crag is the one family whose favoured side
+    // (Empowered) its shape already supports — slow, plated, big single bites.
+    dotResistance: 0.25,
     behavior: 'melee', attackStyle: 'gore', biome: 'mountain',
     rewards: { essence: 7, essenceType: 'blue', level: 1, biomeXp: 48 },
     ai: { wanderRadius: 150, leashRange: 520, idleMinMs: 2500, idleMaxMs: 6500 },
