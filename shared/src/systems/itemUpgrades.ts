@@ -75,14 +75,18 @@ const COST_PER_LEVEL = 20;
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Per-item max upgrade level — upgrades[].length or MAX_UPGRADE for generic items.
- *  Cores (Step 9) are off the +N track entirely — they rank up via the evolution chain. */
+ *  Cores (Step 9) are off the +N track entirely — they rank up via the evolution chain.
+ *  Weapons (Phase 2b) are off it too — a weapon's power track is its lineage tree
+ *  (`shared/src/systems/lineages.ts`), not this ladder; see `checkUpgrade`'s matching
+ *  rejection. */
 export function getMaxUpgrade(item: ItemDefinition): number {
-  if (item.slot === 'core' || item.slot === 'relic') return 0;
+  if (item.slot === 'core' || item.slot === 'relic' || item.slot === 'weapon') return 0;
   return item.upgrades ? item.upgrades.length : MAX_UPGRADE;
 }
 
 /** Biome level required to push an item to `targetPlus`. */
 export function requiredBiomeLevelForUpgrade(item: ItemDefinition, targetPlus: number): number {
+  if (item.slot === 'weapon') return 999;
   if (item.upgrades) {
     return item.upgrades[targetPlus - 1]?.requiredBiomeLevel ?? 999;
   }
