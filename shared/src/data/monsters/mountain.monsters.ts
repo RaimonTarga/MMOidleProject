@@ -106,6 +106,12 @@ export const mountainMonsterEntries = [
     // PLACEHOLDER numbers seeded from the T1 Mountain band (hopper 190/40);
     // designer hand-edits before the lane bench.
     stats: { hp: 260, attack: 34, plating: 3, damageReduction: 0, speed: 24, attackRange: 12, attackCooldown: 3200, pullRange: 300 },
+    // PROGRESSION REWORK, 2026-10-01, PROVISIONAL: dotResistance unset -> 0.25, the
+    // FIRST use of the stat anywhere in the game. Crag declares `punishes: 'affliction'`
+    // and had no mechanism for it. A stone-plated ram shrugging off poison is the
+    // cheapest possible fiction, and Crag is the one family whose favoured side
+    // (Empowered) its shape already supports — slow, plated, big single bites.
+    dotResistance: 0.25,
     behavior: 'melee', attackStyle: 'gore', biome: 'mountain',
     rewards: { essence: 7, essenceType: 'blue', level: 1, biomeXp: 48 },
     ai: { wanderRadius: 150, leashRange: 520, idleMinMs: 2500, idleMaxMs: 6500 },
