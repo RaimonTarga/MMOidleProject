@@ -165,5 +165,40 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
       fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'echo-hit', modifies: 'broadsword-t2-tempo-payoff',
       amplifies: 'magnitude',
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'broadsword-t3-kill-chain-keystone', lineageId: 'broadsword', tier: 3, row: 'keystone', lane: 'kill-chain',
+      name: "Warpath's End", description: 'A kill pays the whole swing back — the mechanic is ready again, right there.',
+      fx: 'kill-chain.keystone', trigger: 'kill', payoff: 'recovery-window',
+    },
+    {
+      id: 'broadsword-t3-empowered-keystone', lineageId: 'broadsword', tier: 3, row: 'keystone', lane: 'empowered',
+      name: 'Full Weight', description: 'What the mechanic hits, the ground around it answers for too.',
+      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'damage-window',
+    },
+    {
+      id: 'broadsword-t3-tempo-keystone', lineageId: 'broadsword', tier: 3, row: 'keystone', lane: 'tempo',
+      name: 'Drilled to the Last', description: "The echo keeps answering. It doesn't stop until something dodges it or nothing fresh is standing.",
+      fx: 'tempo.keystone', trigger: 'hit-nth', payoff: 'echo-hit',
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'broadsword-t4-kill-chain-cross', lineageId: 'broadsword', tier: 4, row: 'cross', lane: 'kill-chain',
+      name: "Momentum's Opening", description: 'The swing that hurries you also leaves what it hit easier to hurt.',
+      fx: 'kill-chain.kill-pulse', trigger: 'mechanic-fired', payoff: 'vulnerability', borrowsLane: 'empowered',
+    },
+    {
+      id: 'broadsword-t4-empowered-cross', lineageId: 'broadsword', tier: 4, row: 'cross', lane: 'empowered',
+      name: 'Weighted Follow-Through', description: 'The heavy swing still carries a lighter one behind it, every third hit.',
+      fx: 'empowered.weak-point', trigger: 'hit-nth', payoff: 'echo-hit', borrowsLane: 'tempo',
+    },
+    {
+      id: 'broadsword-t4-tempo-cross', lineageId: 'broadsword', tier: 4, row: 'cross', lane: 'tempo',
+      name: 'Drilled Momentum', description: 'Ten thousand repetitions remember what a kill feels like, and borrow the hurry.',
+      fx: 'tempo.ghost-strike', trigger: 'kill', payoff: 'speed-window', borrowsLane: 'kill-chain',
+    },
   ],
 };

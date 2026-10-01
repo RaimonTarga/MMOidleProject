@@ -102,5 +102,46 @@ export const BARRIER_LINEAGE: LineageDefinition = {
       amplifies: 'trigger',
       face: packetDefaultFace('empowered'),
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'barrier-t3-barrier-tempo-keystone', lineageId: 'barrier', tier: 3, row: 'keystone', lane: 'barrier-tempo',
+      name: 'Granite Unbroken', description: 'Above half health, nothing you take stops the shell from mending.',
+      fx: 'barrier-tempo.keystone', trigger: 'hit-taken', payoff: 'ward',
+      face: packetDefaultFace('barrier-tempo'),
+    },
+    {
+      id: 'barrier-t3-bulwark-keystone', lineageId: 'barrier', tier: 3, row: 'keystone', lane: 'bulwark',
+      name: 'Cairn Immovable', description: "Stationary DR and plate stacks hold for two seconds after you've already moved on.",
+      fx: 'bulwark.keystone', trigger: 'standing', payoff: 'plating-stack',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'barrier-t3-empowered-keystone', lineageId: 'barrier', tier: 3, row: 'keystone', lane: 'empowered',
+      name: 'Full Pressure', description: 'What the mechanic marks, the ground around it marks too.',
+      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'damage-window',
+      face: packetDefaultFace('empowered'),
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'barrier-t4-barrier-tempo-cross', lineageId: 'barrier', tier: 4, row: 'cross', lane: 'barrier-tempo',
+      name: 'Granite Cairn', description: 'Raising a guard sends the same refill the mountain does when the barrier cracks.',
+      fx: 'barrier-tempo.ward-shell', trigger: 'guard-cast', payoff: 'plating-stack', borrowsLane: 'bulwark',
+      face: packetDefaultFace('barrier-tempo'),
+    },
+    {
+      id: 'barrier-t4-bulwark-cross', lineageId: 'barrier', tier: 4, row: 'cross', lane: 'bulwark',
+      name: 'Pressured Cairn', description: "The crystal's hum finds the weak spot between guards too.",
+      fx: 'bulwark.plating-chip', trigger: 'pulse', payoff: 'vulnerability', borrowsLane: 'empowered',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'barrier-t4-empowered-cross', lineageId: 'barrier', tier: 4, row: 'cross', lane: 'empowered',
+      name: 'Pressured Refill', description: 'When the barrier gives, the hum finds the weak spot right along with it.',
+      fx: 'empowered.guard-spark', trigger: 'barrier-break', payoff: 'ward', borrowsLane: 'barrier-tempo',
+      face: packetDefaultFace('empowered'),
+    },
   ],
 };

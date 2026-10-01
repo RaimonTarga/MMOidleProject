@@ -92,5 +92,46 @@ export const HIDE_LINEAGE: LineageDefinition = {
       amplifies: 'trigger',
       face: packetDefaultFace('engagement'),
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'hide-t3-bulwark-keystone', lineageId: 'hide', tier: 3, row: 'keystone', lane: 'bulwark',
+      name: 'Dire Ground', description: "Stationary DR and plate stacks hold for two seconds after you've already moved on.",
+      fx: 'bulwark.keystone', trigger: 'standing', payoff: 'plating-stack',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'hide-t3-kill-chain-keystone', lineageId: 'hide', tier: 3, row: 'keystone', lane: 'kill-chain',
+      name: 'Clean Recovery', description: 'A kill pays the mechanic back in full, right there.',
+      fx: 'kill-chain.keystone', trigger: 'kill', payoff: 'recovery-window',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'hide-t3-engagement-keystone', lineageId: 'hide', tier: 3, row: 'keystone', lane: 'engagement',
+      name: 'Every First Scar', description: 'Every new target meets the same weathered ground the first one did.',
+      fx: 'engagement.keystone', trigger: 'first-hit', payoff: 'damage-window',
+      face: packetDefaultFace('engagement'),
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'hide-t4-bulwark-cross', lineageId: 'hide', tier: 4, row: 'cross', lane: 'bulwark',
+      name: 'Tough Breath', description: 'A clean dodge toughens the hide and buys the breath both.',
+      fx: 'bulwark.plating-chip', trigger: 'evade', payoff: 'recovery-window', borrowsLane: 'kill-chain',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'hide-t4-kill-chain-cross', lineageId: 'hide', tier: 4, row: 'cross', lane: 'kill-chain',
+      name: 'Winded Ground', description: "The breath a dodge buys reaches as far as ground that's taken worse.",
+      fx: 'kill-chain.recovery-pulse', trigger: 'hit-taken', payoff: 'engagement-dr', borrowsLane: 'engagement',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'hide-t4-engagement-cross', lineageId: 'hide', tier: 4, row: 'cross', lane: 'engagement',
+      name: 'Scarred Stand', description: "Holding still toughens the ground the opening hit lands on.",
+      fx: 'engagement.sidestep-blur', trigger: 'standing', payoff: 'plating-stack', borrowsLane: 'bulwark',
+      face: packetDefaultFace('engagement'),
+    },
   ],
 };

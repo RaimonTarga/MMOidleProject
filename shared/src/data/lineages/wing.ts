@@ -103,5 +103,46 @@ export const WING_LINEAGE: LineageDefinition = {
       amplifies: 'trigger',
       face: packetDefaultFace('control'),
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'wing-t3-engagement-keystone', lineageId: 'wing', tier: 3, row: 'keystone', lane: 'engagement',
+      name: 'Every Silent Drop', description: 'Every new target meets the same soft landing the first one did.',
+      fx: 'engagement.keystone', trigger: 'first-hit', payoff: 'damage-window',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'wing-t3-kill-chain-keystone', lineageId: 'wing', tier: 3, row: 'keystone', lane: 'kill-chain',
+      name: "Wingbeat's Due", description: 'A kill pays the mechanic back in full, right there.',
+      fx: 'kill-chain.keystone', trigger: 'kill', payoff: 'recovery-window',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'wing-t3-control-keystone', lineageId: 'wing', tier: 3, row: 'keystone', lane: 'control',
+      name: 'Perch Ladder', description: 'Hit something already slowed and it roots; hit something rooted and it stuns — once per step, per target.',
+      fx: 'control.keystone', trigger: 'hit-nth', payoff: 'stun',
+      face: packetDefaultFace('control'),
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'wing-t4-engagement-cross', lineageId: 'wing', tier: 4, row: 'cross', lane: 'engagement',
+      name: 'Airborne Drop', description: 'A kill carries you airborne the same way the drop out of the dark does.',
+      fx: 'engagement.sidestep-blur', trigger: 'kill', payoff: 'recovery-window', borrowsLane: 'kill-chain',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'wing-t4-kill-chain-cross', lineageId: 'wing', tier: 4, row: 'cross', lane: 'kill-chain',
+      name: 'Waiting Wingbeat', description: 'Holding still in the dark stuns on contact the same way the patient pounce does.',
+      fx: 'kill-chain.recovery-pulse', trigger: 'standing', payoff: 'stun', borrowsLane: 'control',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'wing-t4-control-cross', lineageId: 'wing', tier: 4, row: 'cross', lane: 'control',
+      name: 'Perched Opening', description: 'The first hit out of the dark lands as soft as the ambush does.',
+      fx: 'control.chill-blur', trigger: 'first-hit', payoff: 'engagement-dr', borrowsLane: 'engagement',
+      face: packetDefaultFace('control'),
+    },
   ],
 };

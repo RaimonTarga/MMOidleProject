@@ -93,5 +93,46 @@ export const WRAPPINGS_LINEAGE: LineageDefinition = {
       amplifies: 'trigger',
       face: packetDefaultFace('barrier-tempo'),
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'wrappings-t3-affliction-keystone', lineageId: 'wrappings', tier: 3, row: 'keystone', lane: 'affliction',
+      name: 'Never Fading Weave', description: 'Hit it again before the dose fades and the clock never gets the chance to run out.',
+      fx: 'affliction.keystone', trigger: 'hit-nth', payoff: 'poison-stack',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'wrappings-t3-control-keystone', lineageId: 'wrappings', tier: 3, row: 'keystone', lane: 'control',
+      name: 'Mire to Stone', description: 'Hit something already slowed and it roots; hit something rooted and it stuns — once per step, per target.',
+      fx: 'control.keystone', trigger: 'hit-nth', payoff: 'stun',
+      face: packetDefaultFace('control'),
+    },
+    {
+      id: 'wrappings-t3-barrier-tempo-keystone', lineageId: 'wrappings', tier: 3, row: 'keystone', lane: 'barrier-tempo',
+      name: 'Debt Unbroken', description: 'Above half health, nothing you take stops the shell from mending.',
+      fx: 'barrier-tempo.keystone', trigger: 'hit-taken', payoff: 'ward',
+      face: packetDefaultFace('barrier-tempo'),
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'wrappings-t4-affliction-cross', lineageId: 'wrappings', tier: 4, row: 'cross', lane: 'affliction',
+      name: 'Caustic Mire', description: 'The dose that seeds while you stand still snaps shut the same way the mire does.',
+      fx: 'affliction.toxic-pulse', trigger: 'evade', payoff: 'stun', borrowsLane: 'control',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'wrappings-t4-control-cross', lineageId: 'wrappings', tier: 4, row: 'cross', lane: 'control',
+      name: 'Shelled Mire', description: 'The ground that will not let go pays back a shell for the trouble.',
+      fx: 'control.chill-blur', trigger: 'hit-taken', payoff: 'ward', borrowsLane: 'barrier-tempo',
+      face: packetDefaultFace('control'),
+    },
+    {
+      id: 'wrappings-t4-barrier-tempo-cross', lineageId: 'wrappings', tier: 4, row: 'cross', lane: 'barrier-tempo',
+      name: 'Debt in the Weave', description: 'Holding your ground seeds the same dose that standing on the weave would.',
+      fx: 'barrier-tempo.ward-shell', trigger: 'standing', payoff: 'poison-stack', borrowsLane: 'affliction',
+      face: packetDefaultFace('barrier-tempo'),
+    },
   ],
 };

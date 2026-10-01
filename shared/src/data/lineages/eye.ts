@@ -94,5 +94,46 @@ export const EYE_LINEAGE: LineageDefinition = {
       amplifies: 'trigger',
       face: packetDefaultFace('kill-chain'),
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'eye-t3-affliction-keystone', lineageId: 'eye', tier: 3, row: 'keystone', lane: 'affliction',
+      name: 'Weeping Never Fades', description: 'Hit it again before the dose fades and the clock never gets the chance to run out.',
+      fx: 'affliction.keystone', trigger: 'hit-nth', payoff: 'poison-stack',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'eye-t3-control-keystone', lineageId: 'eye', tier: 3, row: 'keystone', lane: 'control',
+      name: 'Stare Ladder', description: 'Hit something already slowed and it roots; hit something rooted and it stuns — once per step, per target.',
+      fx: 'control.keystone', trigger: 'hit-nth', payoff: 'stun',
+      face: packetDefaultFace('control'),
+    },
+    {
+      id: 'eye-t3-kill-chain-keystone', lineageId: 'eye', tier: 3, row: 'keystone', lane: 'kill-chain',
+      name: 'Clean Green', description: 'A kill pays the mechanic back in full, right there.',
+      fx: 'kill-chain.keystone', trigger: 'kill', payoff: 'recovery-window',
+      face: packetDefaultFace('kill-chain'),
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'eye-t4-affliction-cross', lineageId: 'eye', tier: 4, row: 'cross', lane: 'affliction',
+      name: 'Weeping Stare', description: 'The barrier breaking makes whatever broke it flinch, same as the weeping light does.',
+      fx: 'affliction.toxic-pulse', trigger: 'barrier-break', payoff: 'stun', borrowsLane: 'control',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'eye-t4-control-cross', lineageId: 'eye', tier: 4, row: 'cross', lane: 'control',
+      name: 'Stared Green', description: 'A kill turns the stare toward healing as surely as it turns the glow.',
+      fx: 'control.chill-blur', trigger: 'kill', payoff: 'recovery-window', borrowsLane: 'kill-chain',
+      face: packetDefaultFace('control'),
+    },
+    {
+      id: 'eye-t4-kill-chain-cross', lineageId: 'eye', tier: 4, row: 'cross', lane: 'kill-chain',
+      name: 'Green Weep', description: 'The eye\'s pulse leaves the air caustic on the same beat it heals.',
+      fx: 'kill-chain.recovery-pulse', trigger: 'pulse', payoff: 'poison-stack', borrowsLane: 'affliction',
+      face: packetDefaultFace('kill-chain'),
+    },
   ],
 };

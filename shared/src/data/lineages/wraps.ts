@@ -93,5 +93,46 @@ export const WRAPS_LINEAGE: LineageDefinition = {
       amplifies: 'trigger',
       face: packetDefaultFace('affliction'),
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'wraps-t3-engagement-keystone', lineageId: 'wraps', tier: 3, row: 'keystone', lane: 'engagement',
+      name: 'Every Quiet Approach', description: 'Every new target meets the same quiet discount the first one did.',
+      fx: 'engagement.keystone', trigger: 'first-hit', payoff: 'damage-window',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'wraps-t3-tempo-keystone', lineageId: 'wraps', tier: 3, row: 'keystone', lane: 'tempo',
+      name: 'Wraps Never Settle', description: "The echo keeps answering. It doesn't stop until a hit misses or no fresh target is close.",
+      fx: 'tempo.keystone', trigger: 'hit-nth', payoff: 'echo-hit',
+      face: packetDefaultFace('tempo'),
+    },
+    {
+      id: 'wraps-t3-affliction-keystone', lineageId: 'wraps', tier: 3, row: 'keystone', lane: 'affliction',
+      name: 'Spores Never Fade', description: 'Hit it again before the dose fades and the clock never gets the chance to run out.',
+      fx: 'affliction.keystone', trigger: 'hit-nth', payoff: 'poison-stack',
+      face: packetDefaultFace('affliction'),
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'wraps-t4-engagement-cross', lineageId: 'wraps', tier: 4, row: 'cross', lane: 'engagement',
+      name: 'Ready Approach', description: 'Held loose before the approach, they let go the same way they would standing still.',
+      fx: 'engagement.sidestep-blur', trigger: 'standing', payoff: 'speed-window', borrowsLane: 'tempo',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'wraps-t4-tempo-cross', lineageId: 'wraps', tier: 4, row: 'cross', lane: 'tempo',
+      name: 'Spored Wraps', description: 'A kill lets the wraps go and seeds the trail both.',
+      fx: 'tempo.evasive-blur', trigger: 'kill', payoff: 'poison-stack', borrowsLane: 'affliction',
+      face: packetDefaultFace('tempo'),
+    },
+    {
+      id: 'wraps-t4-affliction-cross', lineageId: 'wraps', tier: 4, row: 'cross', lane: 'affliction',
+      name: 'Trailing Approach', description: 'The ground the first hit lands on is already working on the next one.',
+      fx: 'affliction.toxic-pulse', trigger: 'first-hit', payoff: 'engagement-dr', borrowsLane: 'engagement',
+      face: packetDefaultFace('affliction'),
+    },
   ],
 };

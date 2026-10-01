@@ -104,5 +104,46 @@ export const BINDINGS_LINEAGE: LineageDefinition = {
       amplifies: 'trigger',
       face: packetDefaultFace('affliction'),
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'bindings-t3-engagement-keystone', lineageId: 'bindings', tier: 3, row: 'keystone', lane: 'engagement',
+      name: 'Every Exchange', description: 'Every new opponent the fight turns to gets the same discount the first one did.',
+      fx: 'engagement.keystone', trigger: 'first-hit', payoff: 'damage-window',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'bindings-t3-tempo-keystone', lineageId: 'bindings', tier: 3, row: 'keystone', lane: 'tempo',
+      name: 'Never Quite Gone', description: "The dodge-step keeps answering. It doesn't stop until a hit lands clean or nothing fresh is close.",
+      fx: 'tempo.keystone', trigger: 'hit-nth', payoff: 'echo-hit',
+      face: packetDefaultFace('tempo'),
+    },
+    {
+      id: 'bindings-t3-affliction-keystone', lineageId: 'bindings', tier: 3, row: 'keystone', lane: 'affliction',
+      name: 'Never Lets Go', description: 'Hold the grip on before the dose fades and the clock never gets the chance to run out.',
+      fx: 'affliction.keystone', trigger: 'hit-nth', payoff: 'poison-stack',
+      face: packetDefaultFace('affliction'),
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'bindings-t4-engagement-cross', lineageId: 'bindings', tier: 4, row: 'cross', lane: 'engagement',
+      name: 'Phantom Step', description: 'The discounted opening still clears space the way a dodge would.',
+      fx: 'engagement.sidestep-blur', trigger: 'evade', payoff: 'speed-window', borrowsLane: 'tempo',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'bindings-t4-tempo-cross', lineageId: 'bindings', tier: 4, row: 'cross', lane: 'tempo',
+      name: 'Weeping Step', description: 'Holding still after the dodge leaves the same grip the weave does.',
+      fx: 'tempo.evasive-blur', trigger: 'standing', payoff: 'poison-stack', borrowsLane: 'affliction',
+      face: packetDefaultFace('tempo'),
+    },
+    {
+      id: 'bindings-t4-affliction-cross', lineageId: 'bindings', tier: 4, row: 'cross', lane: 'affliction',
+      name: 'Guarded Weave', description: 'What grips you in the opening exchange costs you less for the privilege.',
+      fx: 'affliction.toxic-pulse', trigger: 'hit-taken', payoff: 'engagement-dr', borrowsLane: 'engagement',
+      face: packetDefaultFace('affliction'),
+    },
   ],
 };

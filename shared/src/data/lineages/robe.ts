@@ -102,5 +102,46 @@ export const ROBE_LINEAGE: LineageDefinition = {
       amplifies: 'trigger',
       face: packetDefaultFace('tempo'),
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'robe-t3-bulwark-keystone', lineageId: 'robe', tier: 3, row: 'keystone', lane: 'bulwark',
+      name: 'Rooted Plating', description: "Stationary DR and plate stacks hold for two seconds after you've already moved on.",
+      fx: 'bulwark.keystone', trigger: 'standing', payoff: 'plating-stack',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'robe-t3-empowered-keystone', lineageId: 'robe', tier: 3, row: 'keystone', lane: 'empowered',
+      name: 'Answered in Full', description: 'What the mechanic marks, the ground around it marks too.',
+      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'damage-window',
+      face: packetDefaultFace('empowered'),
+    },
+    {
+      id: 'robe-t3-tempo-keystone', lineageId: 'robe', tier: 3, row: 'keystone', lane: 'tempo',
+      name: 'Never Quite Still', description: "The dodge-step keeps answering. It doesn't stop until a hit lands clean or nothing fresh is close.",
+      fx: 'tempo.keystone', trigger: 'hit-nth', payoff: 'echo-hit',
+      face: packetDefaultFace('tempo'),
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'robe-t4-bulwark-cross', lineageId: 'robe', tier: 4, row: 'cross', lane: 'bulwark',
+      name: 'Plated Retaliation', description: "What hits you while you're braced regrets it a beat later, same as any other blow.",
+      fx: 'bulwark.plating-chip', trigger: 'hit-taken', payoff: 'vulnerability', borrowsLane: 'empowered',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'robe-t4-empowered-cross', lineageId: 'robe', tier: 4, row: 'cross', lane: 'empowered',
+      name: 'Marked and Gone', description: 'The clean dodge still carries the mark it would have taken standing still.',
+      fx: 'empowered.guard-spark', trigger: 'evade', payoff: 'speed-window', borrowsLane: 'tempo',
+      face: packetDefaultFace('empowered'),
+    },
+    {
+      id: 'robe-t4-tempo-cross', lineageId: 'robe', tier: 4, row: 'cross', lane: 'tempo',
+      name: 'Grounded Step', description: 'Holding your ground settles the plates the same way the dodge used to.',
+      fx: 'tempo.evasive-blur', trigger: 'standing', payoff: 'plating-stack', borrowsLane: 'bulwark',
+      face: packetDefaultFace('tempo'),
+    },
   ],
 };

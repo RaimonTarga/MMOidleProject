@@ -159,5 +159,40 @@ export const RAPIER_LINEAGE: LineageDefinition = {
       fx: 'engagement.opening-flash', trigger: 'first-hit', payoff: 'damage-window', modifies: 'rapier-t2-engagement-payoff',
       amplifies: 'trigger',
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'rapier-t3-tempo-keystone', lineageId: 'rapier', tier: 3, row: 'keystone', lane: 'tempo',
+      name: 'Unbroken Riposte', description: "The echo keeps answering. It doesn't stop until a hit misses or no fresh blade-reach is left.",
+      fx: 'tempo.keystone', trigger: 'hit-nth', payoff: 'echo-hit',
+    },
+    {
+      id: 'rapier-t3-affliction-keystone', lineageId: 'rapier', tier: 3, row: 'keystone', lane: 'affliction',
+      name: 'Brewed to Last', description: 'Cut it again before the dose fades and the clock never gets the chance to run out.',
+      fx: 'affliction.keystone', trigger: 'hit-nth', payoff: 'poison-stack',
+    },
+    {
+      id: 'rapier-t3-engagement-keystone', lineageId: 'rapier', tier: 3, row: 'keystone', lane: 'engagement',
+      name: 'Every Opening', description: "Every new body the duel turns to gets the opening hit's full attention.",
+      fx: 'engagement.keystone', trigger: 'first-hit', payoff: 'damage-window',
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'rapier-t4-tempo-cross', lineageId: 'rapier', tier: 4, row: 'cross', lane: 'tempo',
+      name: 'Bleeding Riposte', description: 'The blade that never stops moving leaves the wound open too.',
+      fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'hemorrhage', borrowsLane: 'affliction',
+    },
+    {
+      id: 'rapier-t4-affliction-cross', lineageId: 'rapier', tier: 4, row: 'cross', lane: 'affliction',
+      name: 'Opening Dose', description: 'The first thrust of a fight opens a window as wide as it opens the wound.',
+      fx: 'affliction.bleed-pips', trigger: 'first-hit', payoff: 'damage-window', borrowsLane: 'engagement',
+    },
+    {
+      id: 'rapier-t4-engagement-cross', lineageId: 'rapier', tier: 4, row: 'cross', lane: 'engagement',
+      name: 'Keen Return', description: 'The decided thrust comes back on itself, every third time.',
+      fx: 'engagement.opening-flash', trigger: 'hit-nth', payoff: 'echo-hit', borrowsLane: 'tempo',
+    },
   ],
 };

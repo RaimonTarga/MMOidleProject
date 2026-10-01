@@ -102,5 +102,46 @@ export const MARSH_LINEAGE: LineageDefinition = {
       amplifies: 'trigger',
       face: packetDefaultFace('bulwark'),
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'marsh-t3-control-keystone', lineageId: 'marsh', tier: 3, row: 'keystone', lane: 'control',
+      name: 'Mire Ladder', description: 'Hit something already slowed and it roots; hit something rooted and it stuns — once per step, per target.',
+      fx: 'control.keystone', trigger: 'hit-nth', payoff: 'stun',
+      face: packetDefaultFace('control'),
+    },
+    {
+      id: 'marsh-t3-affliction-keystone', lineageId: 'marsh', tier: 3, row: 'keystone', lane: 'affliction',
+      name: 'Gas Never Clears', description: 'Hit it again before the dose fades and the clock never gets the chance to run out.',
+      fx: 'affliction.keystone', trigger: 'hit-nth', payoff: 'poison-stack',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'marsh-t3-bulwark-keystone', lineageId: 'marsh', tier: 3, row: 'keystone', lane: 'bulwark',
+      name: 'Footing Immovable', description: "Stationary DR and plate stacks hold for two seconds after you've already moved on.",
+      fx: 'bulwark.keystone', trigger: 'standing', payoff: 'plating-stack',
+      face: packetDefaultFace('bulwark'),
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'marsh-t4-control-cross', lineageId: 'marsh', tier: 4, row: 'cross', lane: 'control',
+      name: 'Gassy Ground', description: 'A kill stirs the marsh floor the same way holding your footing locks it.',
+      fx: 'control.chill-blur', trigger: 'kill', payoff: 'poison-stack', borrowsLane: 'affliction',
+      face: packetDefaultFace('control'),
+    },
+    {
+      id: 'marsh-t4-affliction-cross', lineageId: 'marsh', tier: 4, row: 'cross', lane: 'affliction',
+      name: 'Braced Gas', description: 'The opening hit finds ground already working on the next step.',
+      fx: 'affliction.toxic-pulse', trigger: 'first-hit', payoff: 'plating-stack', borrowsLane: 'bulwark',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'marsh-t4-bulwark-cross', lineageId: 'marsh', tier: 4, row: 'cross', lane: 'bulwark',
+      name: 'Sure Mire', description: 'Holding your footing locks the ground the same way standing in the mire does.',
+      fx: 'bulwark.plating-chip', trigger: 'standing', payoff: 'stun', borrowsLane: 'control',
+      face: packetDefaultFace('bulwark'),
+    },
   ],
 };

@@ -166,5 +166,40 @@ export const HAMMER_LINEAGE: LineageDefinition = {
       fx: 'engagement.brace-sparks', trigger: 'first-hit', payoff: 'engagement-dr', modifies: 'hammer-t2-engagement-payoff',
       amplifies: 'duration',
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'hammer-t3-empowered-keystone', lineageId: 'hammer', tier: 3, row: 'keystone', lane: 'empowered',
+      name: 'Full Overhead Crash', description: 'What the mechanic lands on, the ground around it answers for too.',
+      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'damage-window',
+    },
+    {
+      id: 'hammer-t3-control-keystone', lineageId: 'hammer', tier: 3, row: 'keystone', lane: 'control',
+      name: 'Grinding Halt', description: 'Hit something already dragging and it roots; hit something rooted and it stops dead — once per step, per target.',
+      fx: 'control.keystone', trigger: 'hit-nth', payoff: 'stun',
+    },
+    {
+      id: 'hammer-t3-engagement-keystone', lineageId: 'hammer', tier: 3, row: 'keystone', lane: 'engagement',
+      name: 'Braced for Each', description: 'Every new target meets the same braced opening the first one did.',
+      fx: 'engagement.keystone', trigger: 'first-hit', payoff: 'damage-window',
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'hammer-t4-empowered-cross', lineageId: 'hammer', tier: 4, row: 'cross', lane: 'empowered',
+      name: 'Sundered Stride', description: 'The caved-in plating drags on the legs besides.',
+      fx: 'empowered.plating-crack', trigger: 'hit-nth', payoff: 'slow', borrowsLane: 'control',
+    },
+    {
+      id: 'hammer-t4-control-cross', lineageId: 'hammer', tier: 4, row: 'cross', lane: 'control',
+      name: 'Hobbled Opening', description: 'The dragging target turns aside less of the next exchange.',
+      fx: 'control.frost-drag', trigger: 'first-hit', payoff: 'engagement-dr', borrowsLane: 'engagement',
+    },
+    {
+      id: 'hammer-t4-engagement-cross', lineageId: 'hammer', tier: 4, row: 'cross', lane: 'engagement',
+      name: 'Braced Sunder', description: 'The braced stance still finds a seam in the plating to open.',
+      fx: 'engagement.brace-sparks', trigger: 'mechanic-fired', payoff: 'plating-shred', borrowsLane: 'empowered',
+    },
   ],
 };
