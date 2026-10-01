@@ -33,6 +33,7 @@ import type { MonsterEntity, PlayerEntity } from '../../ecs/entity';
 import type { World } from '../../world/World';
 import type { CombatContext } from './engine/combatPipeline';
 import { onAbilityNodeTechniqueLanded } from './abilityNodes';
+import { signatureOnTechniqueResolved } from './keystones';
 import { consumeTechniqueWindow, onLineageTechniqueCast } from './lineageCards';
 
 /**
@@ -49,6 +50,11 @@ import { consumeTechniqueWindow, onLineageTechniqueCast } from './lineageCards';
  *  3. **The `technique-cast` lineage cards** (design §22). After the window is
  *     spent, so a card that OPENS a window does not have it eaten by the same
  *     cast that opened it.
+ *  4. **The Signature keystone** (design §22) — this Technique counts as the class
+ *     mechanic firing. Last, because `mechanic-fired` is a louder event than any
+ *     one lane: it fires every `mechanic-fired` card the player owns, on any
+ *     lineage, and it must see the Technique's own payoffs already applied rather
+ *     than racing them.
  */
 export function onTechniqueResolved(
   world: World,
@@ -60,4 +66,5 @@ export function onTechniqueResolved(
   if (site.ctx) consumeTechniqueWindow(player, site.ctx);
   onAbilityNodeTechniqueLanded(world, player, ability, site);
   onLineageTechniqueCast(world, player, site);
+  signatureOnTechniqueResolved(world, player, site);
 }
