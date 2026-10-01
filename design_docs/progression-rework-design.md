@@ -449,7 +449,10 @@ is retired. The cap is now whatever the tier's authored HP/s adds up to.
    shards. Needed before Phase 4.
 3. Where Bulwark and Barrier tempo shards drop at T1 (defensive families or boss secondary
    drop). Needed before Phase 4.
-4. Re-homing table for later-biome debut roots into forms. Needed before Phase 5.
+4. ~~Re-homing table for later-biome debut roots into forms.~~ **Approved 2026-10-01**: the
+   fourteen-row table in `docs/briefs/day-run-progression-2026-10-01.md`. T2 families for
+   Jungle (Ape, Undergrowth, Stalker) and Desert (Basilisk, Scorpion, Stalker from T3)
+   approved the same day.
 
 Decided 2026-09-30 during the proposal review: row thresholds, defensive faces, the T1
 weapon lane matrix, Plains and Forest families, shards by packet (every kill, essence-
