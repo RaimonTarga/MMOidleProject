@@ -48,7 +48,8 @@ export const SUMMONER_FRAME_WINDOW_EFFECT = 'frame.summoner.window';
 /** Effigy's bank, a resource on `TracksCombat` so the buff sync can read it. */
 export const SUMMONER_FRAME_LINK_RESOURCE = 'frame.summoner.link-charge';
 /**
- * Effigy's pairing record, held on the TARGET.
+ * Effigy's pairing record, held on the TARGET. The id BASE — the record itself is
+ * per owner, see {@link summonerFrameLinkEffectId}.
  *
  * `data.slotMask` is a bitmask of the formation slots that have struck this target
  * inside the window — `data` is `Record<string, number>` only, so a mask is how a set
@@ -57,6 +58,22 @@ export const SUMMONER_FRAME_LINK_RESOURCE = 'frame.summoner.link-charge';
  * no bookkeeping of its own.
  */
 export const SUMMONER_FRAME_LINK_EFFECT = 'frame.summoner.link';
+
+/**
+ * One pairing record PER OWNER on a body two Conduits are working.
+ *
+ * The record lives on the monster and the slot mask is indexed by formation slot, so
+ * a single shared id made two Conduits one formation: each read the other's slot bits
+ * as its own (closing a "pair" one body assembled alone), the slam's
+ * `removeStatusEffect` wiped the other's progress, and `applyStatusEffect` moves
+ * `sourceId` to the latest applier, so the slam's kill credit went to whoever banked
+ * last. Keyed by owner, none of that crosses. Same reason the `first-hit` card's
+ * per-body latch is keyed by player, and it costs nothing to clean up: node
+ * freeze/thaw takes the monster and its effects with it.
+ */
+export function summonerFrameLinkEffectId(ownerId: string): string {
+  return `${SUMMONER_FRAME_LINK_EFFECT}.${ownerId}`;
+}
 
 // ── Splinter: the frenzy window ──────────────────────────────────────────────
 
@@ -150,8 +167,9 @@ function bankAndMaybeSlam(
   );
   syncLinkBank(world, owner, banked);
 
+  const linkId = summonerFrameLinkEffectId(owner.isPlayer.id);
   const link = applyStatusEffect(target.tracksCombat, {
-    id:          SUMMONER_FRAME_LINK_EFFECT,
+    id:          linkId,
     maxStacks:   1,
     remainingMs: windowMs,
     refreshable: true,
@@ -170,7 +188,7 @@ function bankAndMaybeSlam(
 
   const slamMult = passives['summoner.frame-link-slam-mult'] ?? 0;
   const slam = Math.floor(owner.dealsDamage.attack * banked * slamMult);
-  removeStatusEffect(target.tracksCombat, SUMMONER_FRAME_LINK_EFFECT);
+  removeStatusEffect(target.tracksCombat, linkId);
   syncLinkBank(world, owner, 0);
   if (slam > 0) {
     applyPlayerProcDamage(world, owner, target, slam, {
