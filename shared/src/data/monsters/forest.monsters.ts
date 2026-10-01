@@ -39,7 +39,11 @@ export const forestMonsterEntries = [
     // Attacks faster than its plains cousin — frequency over force.
     // Deliberately a plain stat block: T1 is the introductory tier and Forest's
     // texture comes from the wolf pack, so the filler stays readable and simple.
-    stats: { hp: 160, attack: 17, plating: 0, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1400, pullRange: 600 },
+    // GROVE FAMILY (progression rework, 2026-10-01, PROVISIONAL): plating 0 -> 4.
+    // Grove declares `punishes: 'tempo'` and flat plating is the only stat that
+    // punishes Tempo; the Grove is the only Forest family whose shape is "stand and
+    // absorb". The superseded squishy-biome no-plating rule is in the file banner.
+    stats: { hp: 160, attack: 17, plating: 4, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1400, pullRange: 600 },
     behavior: 'melee', attackStyle: 'gnaw', biome: 'forest',
     rewards: { essence: 3, essenceType: 'green', level: 1, biomeXp: 18 },
     ai: { wanderRadius: 230, leashRange: 1200, idleMinMs: 1200, idleMaxMs: 4000 },
