@@ -964,6 +964,92 @@ budgets hold; the T1→T2 floor rule (weapon ladder) still cascades.
 
 ---
 
+### Phase 5 progress note — W1-E, re-homing / T2 families / T2 blends (2026-10-01)
+
+**Built.** On `feat/rehoming-t2-families` off `feat/lineage-data-model`. `npx tsc -p
+shared/tsconfig.json --noEmit` and `npx tsc -p server/tsconfig.json --noEmit` both
+clean; `coverage.test.ts`, `weaponReachability.test.ts`, the new
+`itemReachability.test.ts`, `lineageMaterials.test.ts`, `variantBlend.test.ts`,
+`shared/src/world/map/validation.test.ts`, and `bestiaryZone.test.ts` all green.
+
+- **Fourteen re-homed forms** — one `LineageForm` plus one capstone per root in the
+  approved re-homing table, added to broadsword/hammer/dagger (weapon) and
+  bindings/robe/plate/heartroot/stone/barrier/pulse/treads/wing/marsh/fleet
+  (non-weapon). No new `LineageFxKey`s were needed — every lane already had a non-stat
+  fx verb to reuse. `gravewalker-boots → fleet` (Plains) is mechanically a clean fit
+  (Gravewalker's `kill-stack-speed-pct` maps directly onto Fleet's native kill-chain
+  lane, trigger `kill`/payoff `speed-window` — the same shape the item already has),
+  so the "weakest fit" is thematic/flavor only: a Graveyard death-and-decay boot
+  crowning sunlit Plains farmland, not a mechanical mismatch.
+- **`server/test/itemReachability.test.ts`** — the armor/recovery/mobility sibling of
+  `weaponReachability.test.ts`. Passes with an empty allowlist. Verified against the
+  live recipe data rather than assumed: the 43 non-weapon recipes with `evolvesFrom`
+  outside a tree (16 armor, 16 recovery, 11 mobility) **all already carry a
+  `reconstructCost`** today, so the recursive evolve-chain walk the test implements
+  never actually has to fire to pass right now — it is still the honest definition
+  (mirrors `checkEvolve`/`checkReconstruct` in `shared/src/systems/evolution.ts`
+  exactly), and it is the tripwire for the day Phase 4's exit retires that ladder.
+  Separately: the eleven new door roots this wave adds all carry no `evolvesFrom`
+  themselves, so the plain-craft leg alone already made them reachable before they
+  were ever added to a tree — the `LineageForm` entry is for the gate/capstone
+  economy, not reachability per se.
+- **T2 families** — Jungle (Ape/Undergrowth/Stalker) and Desert (Basilisk/Scorpion/
+  Stalker, the last T3+ only) in `shared/src/data/families/index.ts`. Jungle's ten
+  non-boss mobs partition exactly. Desert's approved table only named seven of ten;
+  the leftover scarab "Dealer" line (`dust-djinn`, `sandweaver`,
+  `sandspitter-cobra`) is assigned by kind, per the file's own existing policy for
+  mobs §12.1 does not name — **flagged for designer review**: `dust-djinn` (T2) joins
+  Scorpion (it pairs 1:1 with both T2 controllers equally, so pairing alone does not
+  decide it; placed there for family-size balance against Basilisk's three members
+  across all tiers, and because it must not join Stalker, which is T3+-only and would
+  otherwise field a T2 body with no T2 blend home); `sandweaver` (T3) and
+  `sandspitter-cobra` (T4) join Stalker (kill-chain fits the dealer line's
+  high-direct-damage, fast-kill shape better than either controller family, and both
+  are T3+ so Stalker's shape is unchanged). Reasoning is commented inline in the file.
+- **T2 blends** — every T2 normal node in `shared/src/world/map/regionT2.ts` (forest 5,
+  plains 5, mountain 5, cave 6, swamp 6, jungle 5, desert 5 — 37 total, matching the
+  live node count exactly). Starter biomes reuse their T1 family table; Desert's
+  blends are two-way (Basilisk/Scorpion only — Stalker fields no T2 member).
+  `variantBlend.test.ts`'s authoring checks are generalized to run per-tier (T1 27,
+  T2 37) instead of T1-only, with "every family leads a node" scoped to the families
+  each tier's own blends actually name (not `familiesForBiome`), so Desert's absent
+  T2 Stalker does not false-fail. `lineageMaterials.test.ts` gains a documented
+  `UNSOURCED_FAMILIES` exemption for `desert-stalker` (same pattern as
+  `coverage.test.ts`'s `UNCROWNED_LANES`) — its shard has no farm location until a
+  future T3 blend pass names it.
+
+**Divergences recorded per the brief's own instruction.**
+
+1. **The brief's `shared/src/data/families/` wording (plural, implying one file per
+   family) predates the actual layout** — all families, T1 and now T2, live in the
+   single `shared/src/data/families/index.ts`. Followed the file, not the brief.
+2. **Jungle's T2 monster pool (`biomeDatabase.ts`) fields only `jungle-ape` and
+   `jungle-snake`/`jungle-blowdarter` at T2** — none of Jungle Stalker's three named
+   members (`jungle-stalker`, `canopy-harrier`, `hunting-panther`) exist in the T2
+   pool; they are all T3/T4. The authored T2 blend still names Stalker as a node's
+   dominant family (consistent with the pre-existing "KNOWN GAP" pattern
+   `regionT1.ts` already documents and accepts for several T1 families), but
+   `resolveNodeBlend` will drop it as unavailable and re-scale onto Ape/Undergrowth
+   at runtime until Jungle's T2 pool grows a Stalker-family mob. Not fixed here —
+   monster pool membership is a balance/authoring call outside this wave's scope
+   (no monster numbers were touched), flagged for the designer alongside the Desert
+   family-partition item above.
+3. **Desert's T2 monster pool (`biomeDatabase.ts`) deliberately excludes the scarab
+   "Dealer" line entirely** (`dust-djinn` et al. spawn only as `pack.followers` of a
+   controller, never as a direct blend pick — see that file's own header comment).
+   This is pre-existing design, not a divergence, but it means the Scorpion family's
+   T2 blend share resolves to `sand-scorpion` alone at the pool level even though
+   `dust-djinn` is now a Scorpion member for shard-drop purposes — worth the
+   designer knowing when reading `resolveNodeBlend`'s output for a Desert node.
+4. **T2 node spawn composition changes** as a direct result of authoring blends for
+   the first time at this tier (blend replaces the flat per-biome pool). Every
+   pre-existing T2 balance baseline measured against the old flat pool is void —
+   the same class of change as the T1 Mountain de-duplication noted in the
+   2026-10-01 overnight report. No monster numbers were touched; only which family
+   a node favours and how often.
+
+---
+
 ## Cross-cutting rules
 
 - **Server authority.** Card, form, and material state are mutated only by the server
