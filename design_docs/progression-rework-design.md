@@ -441,8 +441,10 @@ is retired. The cap is now whatever the tier's authored HP/s adds up to.
 
 ## 16. Open decisions (in the order the plan needs them)
 
-1. Frame loop containers and the Mid-range mechanic, **per root**, reviewed class by class
-   with the designer. Needed before Phase 3.
+1. ~~Frame loop containers and the Mid-range mechanic, per root.~~ **Decided 2026-10-01**, see
+   `docs/briefs/frame-loops-2026-10-01.md`. Still OPEN inside it: the Consort (balanced
+   Conduit) loop. The T3 class paths it displaces (Pyromancer, Warmonger) are reviewed as a
+   whole after the rework.
 2. Mountain, Cave and Swamp family tables (§12.1), plus a second T1 source for Engagement
    shards. Needed before Phase 4.
 3. Where Bulwark and Barrier tempo shards drop at T1 (defensive families or boss secondary

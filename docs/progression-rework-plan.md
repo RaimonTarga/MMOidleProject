@@ -819,6 +819,9 @@ clears.
 
 ## Phase 3 — Frame loops and range nodes (class-by-class review first)
 
+- **Review session DONE 2026-10-01** → `docs/briefs/frame-loops-2026-10-01.md` is the
+  authoring input (all six roots, all range rows; Consort loop still open; T3 re-homes
+  deferred to a T3 review after the rework).
 - **Review session before any authoring.** Walk the six roots with the designer and write
   a one-table brief per root: the loop container for each frame (timed window, stack
   bank, or the root's own analogue), the Heavy rider, and the Mid-range mechanic for that
