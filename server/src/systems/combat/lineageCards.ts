@@ -875,10 +875,17 @@ export function fireLineagePayoffs(
 export function updateLineageCards(world: World, dt: number): void {
   for (const player of world.livePlayers) {
     if (!hasLineageRuntime(player)) continue;
+    const standing = firingsFor(player, 'standing');
+    const pulse = firingsFor(player, 'pulse');
+    // Nothing clock-driven, nothing to do. Checked BEFORE the engagement read
+    // because `isPlayerActivelyInCombat` scans every aggroed monster in the world
+    // for a player with no live attack target — the one genuinely non-constant cost
+    // in this pass, and one most players (no `standing`, no `pulse`) were paying
+    // every tick for a loop body that then did nothing.
+    if (standing.length === 0 && pulse.length === 0) continue;
     const cs = player.tracksCombat;
     const inCombat = isPlayerActivelyInCombat(world, player);
 
-    const standing = firingsFor(player, 'standing');
     if (standing.length > 0) {
       const moving = player.isMoving !== undefined;
       if (moving || !inCombat) {
@@ -898,9 +905,7 @@ export function updateLineageCards(world: World, dt: number): void {
       }
     }
 
-    if (!inCombat) continue;
-    const pulse = firingsFor(player, 'pulse');
-    if (pulse.length === 0) continue;
+    if (!inCombat || pulse.length === 0) continue;
     const due = pulse.filter((f) => !isCooldownActive(cs, pulseCd(f.key)));
     if (due.length === 0) continue;
     for (const firing of due) setCooldown(cs, pulseCd(firing.key), PULSE_MS);
