@@ -33736,6 +33736,171 @@
       "candidateFiles": [
         "candidate-5.png"
       ]
+    },
+    {
+      "at": "2026-10-01T09:43:06.560Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "grass-kite",
+      "requestHash": "c7efdf49e6e92c7d95a38ad2",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-01T09:43:34.693Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "grass-kite",
+      "requestHash": "c7efdf49e6e92c7d95a38ad2",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-01T09:43:52.162Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "grass-kite",
+      "requestHash": "c7efdf49e6e92c7d95a38ad2",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-01T09:44:25.757Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "bramble-pod",
+      "requestHash": "cd59c840ec834fb0390b8d04",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-01T09:44:43.686Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "bramble-pod",
+      "requestHash": "cd59c840ec834fb0390b8d04",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-01T09:45:01.699Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "bramble-pod",
+      "requestHash": "cd59c840ec834fb0390b8d04",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-01T09:45:37.081Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "rockback-ram",
+      "requestHash": "58a2e9827999fbdb675caf0b",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-01T09:45:54.217Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "rockback-ram",
+      "requestHash": "58a2e9827999fbdb675caf0b",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-01T09:46:10.242Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "rockback-ram",
+      "requestHash": "58a2e9827999fbdb675caf0b",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-01T09:46:30.775Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "brood-spiderling",
+      "requestHash": "8f36fb69aa64390e5abbe924",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-01T09:46:50.414Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "brood-spiderling",
+      "requestHash": "8f36fb69aa64390e5abbe924",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-01T09:47:09.492Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "brood-spiderling",
+      "requestHash": "8f36fb69aa64390e5abbe924",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-01T09:47:45.322Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "fen-hexer",
+      "requestHash": "94976cca906f4f23a6fa9408",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-01T09:48:06.647Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "fen-hexer",
+      "requestHash": "94976cca906f4f23a6fa9408",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-01T09:48:27.657Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "fen-hexer",
+      "requestHash": "94976cca906f4f23a6fa9408",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
     }
   ]
 }
