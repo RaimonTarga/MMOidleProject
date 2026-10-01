@@ -118,6 +118,53 @@ export const PAYOFF_KINDS: readonly PayoffKind[] = [
   'ward', 'cleanse', 'plating-stack', 'engagement-dr', 'contagion',
 ] as const;
 
+/**
+ * The payoffs that land ON A MONSTER rather than on the player.
+ *
+ * Shared rather than server-local because two rules key off it: the runtime's
+ * "every on-target applier early-returns on a blocking evade", and the authoring
+ * check that only an on-target payoff can be amplified along the `targets` axis —
+ * a second body is meaningless for a window that opens on yourself.
+ */
+export const ON_TARGET_PAYOFF_KINDS: ReadonlySet<PayoffKind> = new Set<PayoffKind>([
+  'vulnerability', 'plating-shred', 'echo-hit', 'hemorrhage', 'poison-stack',
+  'slow', 'stun', 'contagion',
+]);
+
+/** Whether this payoff lands on a monster. See {@link ON_TARGET_PAYOFF_KINDS}. */
+export function payoffLandsOnTarget(kind: PayoffKind): boolean {
+  return ON_TARGET_PAYOFF_KINDS.has(kind);
+}
+
+// ─── What an amplifier row moves (design §4) ─────────────────────────────────
+
+/**
+ * The axis of the modified payoff an `amplifier` card moves — the mechanical form
+ * of design §4's own sentence, "modifies the owned payoff: duration, second
+ * target, extra trigger".
+ *
+ * An amplifier does NOT fire a payoff of its own. It names a payoff card of its
+ * lane and tier in `modifies` and one axis here, and `composeAmplifiers` adjusts
+ * THAT card's resolved numbers before the runtime ever sees them. This is what
+ * keeps "one multiplier per hit" (design §6) true of an amplified build: the
+ * payoff's own magnitude moves rather than a second layer landing on top of it.
+ *
+ *  - `duration`  the window / debuff holds longer.
+ *  - `magnitude` the payoff itself is bigger.
+ *  - `targets`   it also lands on a second body (on-target payoffs only).
+ *  - `trigger`   the SAME payoff also fires on this card's trigger, so the player
+ *                procs it from two moments instead of one. The one axis that does
+ *                produce a firing — of the modified payoff, never of its own.
+ *
+ * Closed, like every other vocabulary here: a card that wants a fifth axis is a
+ * design decision, not an authoring one.
+ */
+export type AmplifiedAxis = 'duration' | 'magnitude' | 'targets' | 'trigger';
+
+export const AMPLIFIED_AXES: readonly AmplifiedAxis[] = [
+  'duration', 'magnitude', 'targets', 'trigger',
+] as const;
+
 // ─── Stats a stat row can scale ──────────────────────────────────────────────
 
 /**
@@ -225,6 +272,12 @@ export interface LineageCard {
    * Owning the modified card is a prerequisite (see `checkUnlockCard`).
    */
   modifies?: string;
+  /**
+   * `amplifier` rows only, and REQUIRED on them: which axis of the modified
+   * payoff this card moves (design §4). An amplifier does not fire a payoff of
+   * its own — see {@link AmplifiedAxis} and `composeAmplifiers`.
+   */
+  amplifies?: AmplifiedAxis;
   /** `cross` rows only: the lane borrowed from, paid at the cross row scalar. */
   borrowsLane?: PacketId;
   /**
@@ -297,6 +350,11 @@ export interface LineagePayoff {
   /** Meaning is per payoff kind — see `PAYOFF_UNIT` in `magnitudes.ts`. */
   magnitude: number;
   durationMs?: number;
+  /**
+   * Extra bodies an on-target payoff also lands on, from an active amplifier on
+   * the `targets` axis. Absent on an unamplified payoff; never authored.
+   */
+  extraTargets?: number;
 }
 
 export interface LineageCost {
@@ -320,6 +378,13 @@ export interface ResolvedLineageCard {
   statEffects?: LineageStatEffects;
   trigger?: LineageTrigger;
   payoff?: LineagePayoff;
+  /**
+   * Further moments this card's payoff also fires on, from an active amplifier on
+   * the `trigger` axis. The runtime treats each exactly like `trigger` — the SAME
+   * payoff, the same fx — so the player procs one effect from two moments rather
+   * than owning two effects. Absent on an unamplified card; never authored.
+   */
+  extraTriggers?: LineageTrigger[];
 }
 
 /** A worn form's capstone with its numbers filled in. Granted, never bought. */

@@ -36,9 +36,19 @@ import {
   lineageGateCost, resolveLineageCapstone, resolveLineageCard,
 } from './resolve';
 import {
-  LINEAGE_FX_KEYS, PACKET_IDS, PAYOFF_KINDS, ROW_KINDS, TRIGGER_KINDS,
-  WEAPON_PACKET_IDS,
+  AMPLIFIED_AXES, LINEAGE_FX_KEYS, PACKET_IDS, PAYOFF_KINDS, ROW_KINDS,
+  TRIGGER_KINDS, WEAPON_PACKET_IDS, payoffLandsOnTarget,
 } from './types';
+
+/**
+ * The payoff kinds that hold for a time, so a `duration` amplifier has a window to
+ * lengthen. The stacking and instant ones do not: "amplifying" their duration would
+ * be a card that charges a price and changes nothing.
+ */
+const PAYOFF_IS_TIMED: ReadonlySet<string> = new Set([
+  'vulnerability', 'plating-shred', 'hemorrhage', 'poison-stack', 'slow', 'stun',
+  'damage-window', 'speed-window', 'recovery-window', 'engagement-dr', 'ward',
+]);
 import type { LineageFxKey, PacketId } from './types';
 
 function assert(cond: boolean, msg: string): void {
@@ -155,6 +165,37 @@ for (const [key, lineage] of LINEAGE_DATABASE) {
         check(target.lane === card.lane, `${card.id}: amplifier modifies '${target.id}' on lane '${target.lane}', not its own lane '${card.lane}'`);
         check(target.tier === card.tier, `${card.id}: amplifier (T${card.tier}) modifies '${target.id}' (T${target.tier}) — an amplifier modifies its OWN tier's payoff`);
       }
+      // WHICH axis it moves. Without this an amplifier is indistinguishable from a
+      // second payoff on the same lane, which is exactly what the row shipped as.
+      check(
+        !!card.amplifies && AMPLIFIED_AXES.includes(card.amplifies),
+        `${card.id}: an amplifier must declare which axis it moves (${AMPLIFIED_AXES.join(' | ')})`,
+      );
+      if (target?.payoff) {
+        // A second body is meaningless for a payoff that lands on the player.
+        check(
+          card.amplifies !== 'targets' || payoffLandsOnTarget(target.payoff),
+          `${card.id}: amplifies 'targets', but '${target.id}' pays with '${target.payoff}', which lands on the player`,
+        );
+        // A duration amplifier needs a window to lengthen.
+        check(
+          card.amplifies !== 'duration' || PAYOFF_IS_TIMED.has(target.payoff),
+          `${card.id}: amplifies 'duration', but '${target.id}' pays with '${target.payoff}', which has no window`,
+        );
+      }
+      // The `trigger` axis IS the amplifier's own trigger. Naming the one the
+      // payoff already fires on adds nothing — a dead card with a price.
+      if (target) {
+        check(
+          card.amplifies !== 'trigger' || card.trigger !== target.trigger,
+          `${card.id}: amplifies 'trigger' with '${card.trigger}', the trigger '${target.id}' already fires on`,
+        );
+      }
+    } else {
+      check(
+        card.amplifies === undefined,
+        `${card.id}: only an 'amplifier' row declares an amplified axis, not a '${card.row}' row`,
+      );
     }
   }
 

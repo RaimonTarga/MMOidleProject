@@ -151,16 +151,19 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
       id: 'broadsword-t2-kill-chain-amplifier', lineageId: 'broadsword', tier: 2, row: 'amplifier', lane: 'kill-chain',
       name: 'Chained Momentum', description: 'A second kill before the window closes starts it again at full length.',
       fx: 'kill-chain.kill-pulse', trigger: 'kill', payoff: 'speed-window', modifies: 'broadsword-t2-kill-chain-payoff',
+      amplifies: 'duration',
     },
     {
       id: 'broadsword-t2-empowered-amplifier', lineageId: 'broadsword', tier: 2, row: 'amplifier', lane: 'empowered',
       name: 'Shared Gap', description: 'Whatever stands next to the opening is open too.',
       fx: 'empowered.weak-point', trigger: 'mechanic-fired', payoff: 'vulnerability', modifies: 'broadsword-t2-empowered-payoff',
+      amplifies: 'targets',
     },
     {
       id: 'broadsword-t2-tempo-amplifier', lineageId: 'broadsword', tier: 2, row: 'amplifier', lane: 'tempo',
       name: 'Second Follow Through', description: 'The carried second hit has enough left in it to carry a third.',
       fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'echo-hit', modifies: 'broadsword-t2-tempo-payoff',
+      amplifies: 'magnitude',
     },
   ],
 };

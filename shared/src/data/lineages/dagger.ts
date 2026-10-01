@@ -152,16 +152,19 @@ export const DAGGER_LINEAGE: LineageDefinition = {
       id: 'dagger-t2-affliction-amplifier', lineageId: 'dagger', tier: 2, row: 'amplifier', lane: 'affliction',
       name: 'Overflowing Dose', description: 'A stack above the cap spills onto whatever stands closest.',
       fx: 'affliction.venom-pips', trigger: 'hit-nth', payoff: 'poison-stack', modifies: 'dagger-t2-affliction-payoff',
+      amplifies: 'targets',
     },
     {
       id: 'dagger-t2-control-amplifier', lineageId: 'dagger', tier: 2, row: 'amplifier', lane: 'control',
       name: 'Slow to Heal', description: 'The cut keeps the legs long after the wound would have closed.',
       fx: 'control.frost-drag', trigger: 'hit-nth', payoff: 'slow', modifies: 'dagger-t2-control-payoff',
+      amplifies: 'duration',
     },
     {
       id: 'dagger-t2-kill-chain-amplifier', lineageId: 'dagger', tier: 2, row: 'amplifier', lane: 'kill-chain',
       name: 'Wider Plague', description: 'The plague now finds a second neighbour instead of just the one.',
       fx: 'kill-chain.spread-arc', trigger: 'kill', payoff: 'contagion', modifies: 'dagger-t2-kill-chain-payoff',
+      amplifies: 'targets',
     },
   ],
 };
