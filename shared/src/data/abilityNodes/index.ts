@@ -18,6 +18,7 @@
  */
 import { ABILITY_DATABASE } from '../../abilities';
 import type { AbilityDef } from '../../abilities';
+import { PAYOFF_UNIT } from '../lineages/magnitudes';
 import { packetDefinition } from '../lineages/packets';
 import type { AmplifiedAxis, LineageFxKey, PacketId, PayoffKind } from '../lineages/types';
 import { payoffLandsOnTarget } from '../lineages/types';
@@ -45,6 +46,7 @@ export const ABILITY_NODE_FX: Map<string, LineageFxKey> = new Map<string, Lineag
   ['control/slow', 'control.frost-drag'],
   ['kill-chain/speed-window', 'kill-chain.kill-pulse'],
   ['engagement/damage-window', 'engagement.opening-flash'],
+  ['technique/technique-refund', 'technique.cast-flare'],
   // Defensive faces — what a Guard node draws. One per packet, from design §8's
   // face list: Avoid = a blur, Sustain = a pulse or a ward shell, Endure = chips.
   ['tempo/engagement-dr', 'tempo.evasive-blur'],
@@ -64,13 +66,17 @@ export function abilityNodeFx(lane: PacketId, payoff: PayoffKind): LineageFxKey 
  * The axis an ability amplifier moves, per payoff kind.
  *
  * Derived rather than authored so the row can never carry an inert option: an
- * on-target payoff gains a second body, a timed self payoff holds longer. Those
- * are the two axes that are always meaningful for the payoffs ability nodes use,
- * and `duration` on an untimed payoff or `targets` on a self window would be a
- * card charging a price and changing nothing.
+ * on-target payoff gains a second body, a timed self payoff holds longer, and an
+ * untimed self payoff gets bigger. `duration` on an untimed payoff or `targets` on
+ * a self window would be a card charging a price and changing nothing.
  */
 export function nodePayoffAxis(payoff: PayoffKind): AmplifiedAxis {
-  return payoffLandsOnTarget(payoff) ? 'targets' : 'duration';
+  if (payoffLandsOnTarget(payoff)) return 'targets';
+  // A self payoff with no window has no duration to lengthen, so `duration`
+  // would be an amplifier charging a price and changing nothing — exactly what
+  // `applyAmplifiedAxis` silently does with it. `technique-refund` is the first
+  // such payoff the node table uses, and its magnitude is its whole content.
+  return PAYOFF_UNIT.get(payoff)?.durationMs ? 'duration' : 'magnitude';
 }
 
 /**
@@ -92,6 +98,8 @@ const PAYOFF_BLURB: Record<string, string> = {
   'recovery-window': 'also switches on a slice of your Recovery.',
   'ward': 'also raises a ward that absorbs damage.',
   'plating-stack': 'also banks a stack of plating.',
+  'technique-refund': 'also pays part of its own cooldown back.',
+  'technique-window': 'also loads the next Technique.',
 };
 
 /** The blurb for a payoff, or a plain fallback if a new kind arrives unnamed. */

@@ -275,7 +275,10 @@ function wallet(overrides: Partial<AbilityNodeWallet> = {}): AbilityNodeWallet {
 
 const SWEEP_TEMPO = abilityNodeId('sweep', 'packet', 'tempo');
 const SWEEP_TEMPO_AMP = abilityNodeId('sweep', 'amplifier', 'tempo');
-const SWEEP_KILL_CHAIN = abilityNodeId('sweep', 'packet', 'kill-chain');
+// Sweep's third offer is Technique since design §22 (it was Kill chain): a wide
+// swing you can take twice as often is the swarm answer, which is why the Plains
+// Swarm drops the Technique shard. Used here as "a lane the player is NOT running".
+const SWEEP_OTHER_LANE = abilityNodeId('sweep', 'packet', 'technique');
 const BRACE_WARD = abilityNodeId('brace', 'packet', 'barrier-tempo');
 const sweepTree = ABILITY_NODE_DATABASE.get('sweep')!;
 const braceTree = ABILITY_NODE_DATABASE.get('brace')!;
@@ -366,7 +369,7 @@ const braceWard = braceTree.options.find((o) => o.id === BRACE_WARD)!;
     'an owned node can be slotted in its row',
   );
   assert(
-    !checkSetAbilityNode({ abilityId: 'sweep', progress: owned, row: 'packet', optionId: SWEEP_KILL_CHAIN }).ok,
+    !checkSetAbilityNode({ abilityId: 'sweep', progress: owned, row: 'packet', optionId: SWEEP_OTHER_LANE }).ok,
     'an unowned node cannot be slotted',
   );
   assert(
@@ -408,7 +411,7 @@ const braceWard = braceTree.options.find((o) => o.id === BRACE_WARD)!;
   const twice = unlockAbilityNode(world, player, 'sweep', SWEEP_TEMPO);
   assert(!twice.success, 'a node cannot be bought twice');
 
-  const slotUnowned = setAbilityNode(world, player, 'sweep', 'packet', SWEEP_KILL_CHAIN);
+  const slotUnowned = setAbilityNode(world, player, 'sweep', 'packet', SWEEP_OTHER_LANE);
   assert(!slotUnowned.success, 'you cannot slot what you do not own');
 
   const cleared = setAbilityNode(world, player, 'sweep', 'packet', null);
@@ -544,8 +547,8 @@ const braceWard = braceTree.options.find((o) => o.id === BRACE_WARD)!;
   // An amplifier slotted against a packet the player is not running is inert —
   // a legal, useless loadout, exactly like a lineage amplifier.
   const mismatched = resolveAbilityNodeFiring('sweep', {
-    owned: [SWEEP_KILL_CHAIN, SWEEP_TEMPO_AMP],
-    active: { packet: SWEEP_KILL_CHAIN, amplifier: SWEEP_TEMPO_AMP },
+    owned: [SWEEP_OTHER_LANE, SWEEP_TEMPO_AMP],
+    active: { packet: SWEEP_OTHER_LANE, amplifier: SWEEP_TEMPO_AMP },
   })!;
   assert(mismatched.amplifier === undefined, "an amplifier on another lane's packet does nothing");
 
