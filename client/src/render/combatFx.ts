@@ -262,6 +262,7 @@ import { applyLunge } from "./interpolation";
 import { nodeToScene } from "./sceneCoords";
 import type { RenderState } from "./state";
 import { DEPTH } from "./depth";
+import { recordFrameCharge } from "../fx/frameChargeGlow";
 // Deliberately NOT `import.meta.env.DEV`: `remotePlayerAttack.test.ts` transpiles
 // this whole file to CommonJS and runs it in a vm, where `import.meta` is a
 // syntax error. Keep this file free of it.
@@ -1297,6 +1298,17 @@ export function dispatchCombatEvent(
   }
   if (ev.kind === "stance-switch") {
     if (ev.playerId === scene.myId) notifyStanceCooldownStarted();
+    return;
+  }
+  if (ev.kind === "frame-charge") {
+    // Node-wide, like every other combat event: an ally's weapon glow is
+    // information too. Pure bookkeeping (see frameChargeGlow.ts) — the actual
+    // draw happens every frame in updateFrameChargeGlows, driven by whatever
+    // is latest rather than animating this one event, so the Artillerist's
+    // one-event-per-shot ramp cannot queue or stutter. `shouldRunClientFx()`
+    // gates only the one-shot release burst (never queued while hidden); the
+    // stacks/max bookkeeping itself is always kept current.
+    recordFrameCharge(state, ev.playerId, ev.stacks, ev.max, shouldRunClientFx());
     return;
   }
   if (ev.kind === "card-fx") {

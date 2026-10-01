@@ -6,6 +6,7 @@ import type { DetonateWindupState } from '../fx/detonateWindup';
 import type { AllyAoeFootprintState } from '../fx/allyAoeFootprint';
 import type { CombatPlaybackItem } from './combatPlayback';
 import type { AmbientStackFlash } from './ambientStackFlash';
+import type { FrameChargeGlowState } from '../fx/frameChargeGlow';
 import type {
   NetworkedEntity,
   NodeGateEntity,
@@ -193,6 +194,8 @@ export interface RenderState {
   };
   /** Per-player transformation aura glow graphics (see client/src/fx/aura.ts). */
   auras: Map<string, Phaser.GameObjects.Graphics>;
+  /** Per-player frame-charge weapon glow (see client/src/fx/frameChargeGlow.ts). */
+  frameChargeGlow: Map<NetworkId, FrameChargeGlowState>;
   /** Per-player identity accent overlays (see client/src/fx/identityAccent.ts). */
   identityAccents: Map<string, Phaser.GameObjects.Image>;
   movementEffectNextAt: Map<string, number>;
@@ -278,6 +281,7 @@ export function createRenderState(): RenderState {
       graphics: null,
     },
     auras: new Map(),
+    frameChargeGlow: new Map(),
     identityAccents: new Map(),
     movementEffectNextAt: new Map(),
     ledgeHopNextAt: new Map(),

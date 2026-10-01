@@ -63,6 +63,7 @@ import { stepInterpolation, getOwnBase } from "../../render/interpolation";
 import { stepCombatPlayback } from '../../render/combatPlayback';
 import { updateEssenceMotes } from '../../fx/essenceMotes';
 import { updateAmbientStackFlashes } from '../../render/players';
+import { updateFrameChargeGlows } from '../../fx/frameChargeGlow';
 import { CORPSE_REMAINS_ART } from "../../render/corpseRemains";
 import { drawShadows } from "../../render/shadows";
 import { drawTargetIndicator } from "../../render/targetIndicator";
@@ -594,6 +595,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     updateHolyBeam(scene.state, scene);
     updateCannonCharge(scene.state, scene);
     updatePlayerAuras(scene.state, scene);
+    updateFrameChargeGlows(scene.state, scene, dt);
     updateIdentityAccents(scene.state, scene);
     updateAltarGlow(scene, dt);
     updateAltarPrompt(scene);

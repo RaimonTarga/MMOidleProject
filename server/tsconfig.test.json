@@ -50,6 +50,7 @@
     "test/equippedEvolutionAbilityTags.test.ts",
     "test/essenceMoteProfile.test.ts",
     "test/evolutionPreview.test.ts",
+    "test/frameChargeGlow.test.ts",
     "test/hudStatusTooltips.test.ts",
     "test/inventoryStatSheet.test.ts",
     "test/manualCombatControls.test.ts",
