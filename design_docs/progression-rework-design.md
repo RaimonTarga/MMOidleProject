@@ -462,6 +462,14 @@ is retired. The cap is now whatever the tier's authored HP/s adds up to.
    shards. Needed before Phase 4.
 3. Where Bulwark and Barrier tempo shards drop at T1 (defensive families or boss secondary
    drop). Needed before Phase 4.
+3b. **Drops versus favours, per family (from the 2026-10-01 bench).** Eight of nine encounter
+   failures were a family's own 70/20/10 node: the declared lane loses on the purest sample.
+   Per family, Phase 4 decides between *the monsters do not express the shape yet* (likely Deep,
+   Brute: slow bodies that should reward big hits) and *the shard was assigned by theme, not by
+   what beats the family* (likely Brood: three short-lived bodies are Tempo's best case and
+   Affliction's worst). The rule stands — a family drops the shard of the lane that beats it —
+   so where the bench is clear the drop moves to the earned lane and the theme stays flavour.
+   Decide after the frames column exists.
 4. ~~Re-homing table for later-biome debut roots into forms.~~ **Approved 2026-10-01**: the
    fourteen-row table in `docs/briefs/day-run-progression-2026-10-01.md`. T2 families for
    Jungle (Ape, Undergrowth, Stalker) and Desert (Basilisk, Scorpion, Stalker from T3)
