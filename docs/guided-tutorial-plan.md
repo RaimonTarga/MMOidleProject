@@ -15,8 +15,10 @@ it presses. The player only ever clicks Next.
 
 It starts in the Clearing (tier-0 quest), takes the character through **every T1
 zone to Global Mastery 30**, then kills the **Plains and Mountain bosses**. The
-second seal promotes the player to Tier 2; the guide says goodbye ("keep going
-forward"), points at the Passive Tree for the frame choice, and disappears.
+second seal promotes the player to Tier 2, after which one last optional chapter
+teaches the weapon lineage's **gate** (see "The tree lessons" below); then the guide
+says goodbye ("keep going forward"), points at the Passive Tree for the frame
+choice, and disappears.
 
 ## Locked decisions (2026-09-29)
 
@@ -153,7 +155,40 @@ configs (Striker/Squire durable melee, Slinger, Spirit/Conduit, Apprentice), wit
   the Rune budget at GM 30. `flee` is dropped at the Step Back stage for the same
   reason (ranged builds would not fit even at GM 30).
 - **Slinger** skips the bot's Mountain vest (only worn against the later bosses).
-- Beat counts: Striker 83, Slinger 80, Conduit 86.
+- Beat counts (2026-10-01, after the weapon `+N` ladder's removal and the tree
+  lessons): Striker 78, Squire 78, Spirit 81, Conduit 81, Apprentice 83, Slinger 85.
+
+### The tree lessons (2026-10-01, `feat/tutorial-tree`)
+
+The weapon `+N` ladder the script used to teach is gone (the lineage rework, commit
+`03783104`). Five beats teach the tree that replaced it, authored from
+`shared/src/data/lineages/` so no price or unlock level is restated:
+
+| Beat | Where | What it does |
+|---|---|---|
+| `shards:rapier-t1-tempo-stat` | Forest leg, once the Flash Rapier is worn | farms until the first card is affordable; the line names the Pack, the Forest's wolves, as the Tempo Shard source |
+| `card:rapier-t1-tempo-stat` | same | buys Quick Wrist — "owned is forever, active is a choice" |
+| `farm:gate:gale-needle` | new last chapter, "The Gate" | the gate's Forest essence and Tempo Shards |
+| `capstone:gale-needle` | same | the Forest boss, repeatedly, for its three Warden's Hearts |
+| `gate:gale-needle` | same | pays the gate and wears the Gale Needle, which opens the T2 band |
+
+Three things this needed:
+
+- **The gate chapter runs after the seals.** The T1 gate asks for Global Mastery 30
+  and Forest 6, which only arrive at the end of the Cave leg, and any two distinct
+  biome bosses promote to Tier 2 — so a third boss before the seals would itself be
+  a seal. The panel's farewell therefore waits for the script to run out rather than
+  for `playerTier >= 2`, and a Tier-2 player with beats left gets an "I'm done"
+  button so the farewell is never out of reach.
+- **`attemptBoss` takes an optional `until`.** A gate costs three capstone drops,
+  i.e. three kills; the bot adapter turns that into `repeatUntil` over one attempt.
+- **The route completion includes the gate**, because `runSteps` returns the moment
+  completion holds and "two seals" would have cut the run short of the new chapter.
+
+⚠ The Greatbear wall in Findings below applies here: the gate chapter asks every
+class for three Forest boss kills, and a GM-30 Striker and Apprentice could not
+manage one in September. It is after Tier 2, so it blocks no progression, but the
+live 1x runs will show it as a stalled route if the wall still stands.
 
 `tutorial.test.ts` simulates every class's playthrough (each step made true the way
 the server would) and asserts the guide only ever moves forward, reaches GM 30,

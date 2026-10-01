@@ -20,6 +20,7 @@ import {
   ITEM_DATABASE,
   ROW_KINDS,
   TEST_ROOM_NODE_ID,
+  TUTORIAL_ANCHORS,
   absorbedStatCards,
   bandContents,
   capstoneMaterialName,
@@ -233,6 +234,7 @@ function CardTile({
   return (
     <button
       type="button"
+      data-tutorial-anchor={TUTORIAL_ANCHORS.lineageCard(card.id)}
       className={`lin-card lin-card--${state}`}
       style={{ '--lane-color': laneColor } as React.CSSProperties}
       disabled={masteryLocked || (!owned && !check.ok) || (owned && !active && activateCheck !== null && !activateCheck.ok)}
@@ -359,6 +361,7 @@ function GateSection({
             <button
               key={form.recipeId}
               type="button"
+              data-tutorial-anchor={TUTORIAL_ANCHORS.lineageForm(form.recipeId)}
               className={`lin-form${worn ? ' lin-form--worn' : ''}`}
               disabled={!worn && ((!owned && !check.ok) || (owned && wearCheck !== null && !wearCheck.ok))}
               title={blockedReason}

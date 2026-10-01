@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
-import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, coreEligibilityLabel, coreIsActive, isRestrictedCore, lineageForRecipeId, relicIsUnlocked } from '@mmo-idle/shared';
+import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS, coreEligibilityLabel, coreIsActive, isRestrictedCore, lineageForRecipeId, relicIsUnlocked } from '@mmo-idle/shared';
 import { equipmentAtom, itemUpgradesAtom, lineagesAtom, playerNodeIdAtom, playerTierAtom, selectedRangeAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
 import { lineageDisplayName } from '../lineage/lineageDisplayName';
@@ -48,6 +48,7 @@ export function EquipmentSlots({ compare, onOpenLineage }: Props) {
             <button
               type="button"
               key={slot}
+              data-tutorial-anchor={TUTORIAL_ANCHORS.equipmentSlot(slot)}
               className={[
                 'inv-equip-slot',
                 filled ? 'inv-equip-slot--filled' : 'inv-equip-slot--empty',

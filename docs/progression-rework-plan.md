@@ -1299,6 +1299,54 @@ suites and the `lineageAuthoring` / `lineageCards.wiring` / `lineagePersistence`
 `lineageMaterials` / `lineageTelemetry` / `lineageListenerOrder` /
 `inventoryStatSheet` files pass.
 
+**Built 2026-10-01 (Phase 5, the tutorial's tree lessons, `feat/tutorial-tree` off
+`feat/lineage-data-model`, task W1-E).** The last bullet above ("the tier-up beat
+shows the gate transformation") plus the first-card and shards beats the weapon `+N`
+ladder's removal (commit `03783104`) took out of the guided T1 script. Five new beats
+per class script and one new farewell line, in `shared/src/tutorial/`:
+
+- **The Forest leg** (`shards:rapier-t1-tempo-stat`, `card:rapier-t1-tempo-stat`),
+  right after the Flash Rapier is worn — holding the base form is what opens the
+  tree. The farm beat names where the lane's shard drops; the card beat buys Quick
+  Wrist. Both costs/levels come from `resolveLineageCard`, never restated.
+- **A new last chapter, "The Gate"** (`farm:gate:gale-needle`,
+  `capstone:gale-needle`, `gate:gale-needle`): the gate's essence and shards, then
+  the Forest boss for its three Warden's Hearts, then `unlockForm` + `wearForm`.
+- **The frames line** is the third line of `TUTORIAL_FAREWELL`
+  (`shared/src/tutorial/scripts/farewell.ts`), pointing at the frame choice and the
+  frame-charge weapon glow (commit `ec3a9d65`).
+
+Divergences from the brief sketch, and why:
+
+1. **The gate chapter runs AFTER the two seals, not at the Forest boss mid-arc.**
+   The T1 gate asks for Global Mastery 30 (`lineageMasteryLevelForGate(1)`) and
+   Forest 6, which the script only reaches at the end of the Cave leg; and any two
+   distinct biome bosses promote to Tier 2 (`sealsHeldAtTier`), so a third boss
+   before the seals would itself be a seal and strand the Mountain beat. After the
+   seals is the only placement that does not overturn the designer's 2026-09-29
+   Plains + Mountain seal choice.
+2. **`TutorialPanel`'s farewell now waits for the script to run out**, not merely
+   for `playerTier >= 2`, or the gate chapter would be unreachable. A Tier-2
+   character with beats left gets an extra "I'm done" button so the farewell is
+   never a trap.
+3. **`attemptBoss` gained an optional `until`** — the gate needs three capstone
+   drops, i.e. three kills (`GATE_CAPSTONE_AMOUNT[1] === 3`), the one place the
+   guide repeats a fight. The bot adapter lowers it to `repeatUntil` over one
+   attempt, with a small per-round attempt budget so a class that cannot beat that
+   boss costs a handful of fights and a named stall, not dozens.
+4. **The tutorial routes' `completion` now includes the gate** (`lineageFormWorn`).
+   It had to: `runSteps` returns as soon as completion holds, so "two seals" would
+   have short-circuited the run before the gate chapter ever ran.
+
+**Open risk, for the designer.** The gate chapter makes every tutorial route fight
+the Forest Greatbear three times, and `docs/guided-tutorial-plan.md`'s Findings
+record that boss walling a GM-30 Striker (0/12) and Apprentice (0/10) in September.
+Nothing in this slice changes a monster number. If the live 1x runs confirm the wall,
+the cheapest fixes are (a) move the capstone source by re-homing the gate's form to
+another biome's door, or (b) take the boss numbers pass that the lineage redesign
+left open. The failure is contained to an optional epilogue — Tier 2 is already won
+by then — but it will show up as a stalled bot route.
+
 - `shared/src/systems/lineages.ts` — `statRowIsCollapsed`, `absorbedStatCards`,
   `lineageCardTie`. `resolveActiveLineages` sums an absorbed row into the SAME
   `statEffects` bag as the slotted one and reports it separately as `absorbed` for

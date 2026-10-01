@@ -1,3 +1,5 @@
+import { capstoneMaterialName } from '../data/lineages/capstones';
+import { shardName } from '../data/lineages/packets';
 import { RECIPE_DATABASE } from '../data/recipes';
 import { ITEM_DATABASE } from '../itemDatabase';
 import { ESSENCE_LABELS, type EssenceType } from '../items';
@@ -35,11 +37,39 @@ export type TutorialView = Pick<
   | 'attunedAbilities'
   | 'bossesCleared'
   | 'clearedNodes'
+  | 'lineages'
+  | 'shards'
+  | 'capstones'
 >;
 
 export function viewHasItem(view: Pick<TutorialView, 'inventory' | 'equipment'>, definitionId: string): boolean {
   return view.inventory.includes(definitionId)
     || Object.values(view.equipment).some((id) => id === definitionId);
+}
+
+/** "Owned is forever": a bought card never un-buys, so this is monotone. */
+export function viewOwnsLineageCard(
+  view: Pick<TutorialView, 'lineages'>,
+  lineageId: string,
+  cardId: string,
+): boolean {
+  return view.lineages[lineageId]?.ownedCards.includes(cardId) ?? false;
+}
+
+export function viewOwnsLineageForm(
+  view: Pick<TutorialView, 'lineages'>,
+  lineageId: string,
+  recipeId: string,
+): boolean {
+  return view.lineages[lineageId]?.ownedForms.includes(recipeId) ?? false;
+}
+
+export function viewWearsLineageForm(
+  view: Pick<TutorialView, 'lineages'>,
+  lineageId: string,
+  recipeId: string,
+): boolean {
+  return view.lineages[lineageId]?.wornForm === recipeId;
 }
 
 export function viewCanAffordRecipe(view: TutorialView, recipeId: string): boolean {
@@ -129,6 +159,16 @@ export function evaluateTutorialCondition(condition: TutorialCondition, view: Tu
       return view.runeRecipesCrafted.includes(condition.recipeId);
     case 'bossCleared':
       return view.bossesCleared.includes(bossClearKey(condition.biomeGroup, condition.tier));
+    case 'shardAtLeast':
+      return (view.shards[condition.packet] ?? 0) >= condition.amount;
+    case 'capstoneAtLeast':
+      return (view.capstones[condition.biome] ?? 0) >= condition.amount;
+    case 'lineageCardOwned':
+      return viewOwnsLineageCard(view, condition.lineageId, condition.cardId);
+    case 'lineageFormOwned':
+      return viewOwnsLineageForm(view, condition.lineageId, condition.recipeId);
+    case 'lineageFormWorn':
+      return viewWearsLineageForm(view, condition.lineageId, condition.recipeId);
     case 'canAffordUpgrades':
       return viewCanAffordUpgrades(view, condition.items);
     case 'allOf':
@@ -180,6 +220,18 @@ export function tutorialProgress(ref: TutorialProgressRef, view: TutorialView): 
     }
     case 'essence':
       return [essenceProgress(view, ref.essence, ref.amount)];
+    case 'shard':
+      return [{
+        current: Math.min(view.shards[ref.packet] ?? 0, ref.amount),
+        target: ref.amount,
+        label: shardName(ref.packet),
+      }];
+    case 'capstone':
+      return [{
+        current: Math.min(view.capstones[ref.biome] ?? 0, ref.amount),
+        target: ref.amount,
+        label: capstoneMaterialName(ref.biome),
+      }];
     case 'upgradeCost': {
       const remaining = remainingUpgradeCost(view, ref.items);
       return Object.entries(remaining.essence)

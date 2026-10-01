@@ -209,6 +209,18 @@ export class Intents {
       15_000, p => p.lineageId === lineageId && p.action === "setActive");
   }
 
+  unlockLineageForm(lineageId: string, recipeId: string): Promise<LineageResult> {
+    return this.conn.request<LineageResult>("lineage:result",
+      () => this.conn.raw.emit("lineage:unlockForm", { lineageId, recipeId }),
+      15_000, p => p.lineageId === lineageId && p.action === "unlockForm");
+  }
+
+  wearLineageForm(lineageId: string, recipeId: string): Promise<LineageResult> {
+    return this.conn.request<LineageResult>("lineage:result",
+      () => this.conn.raw.emit("lineage:wearForm", { lineageId, recipeId }),
+      15_000, p => p.lineageId === lineageId && p.action === "wearForm");
+  }
+
   craftRiteRecipe(recipeId: string): Promise<CraftOutcome> {
     return this.conn.request("rite:craftResult", () => this.conn.raw.emit("rite:craftRecipe", recipeId));
   }
