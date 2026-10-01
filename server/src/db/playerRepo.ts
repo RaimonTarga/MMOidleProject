@@ -310,7 +310,9 @@ export async function loadCharacter(
     ))
     .returning();
 
-  return rows[0] ? hydratePlayerSlices(rows[0]) : null;
+  // The one path that hands the slices to a live entity, so the one path that may
+  // run the retired-upgrade refund: whatever it grants is saved with the character.
+  return rows[0] ? hydratePlayerSlices(rows[0], { grantRetiredRefunds: true }) : null;
 }
 
 export async function softDeleteCharacter(
@@ -588,7 +590,22 @@ export function migrateLegacyRecipeIds(ids: readonly string[] | undefined): stri
   return migrateItemIdList(ids ?? []);
 }
 
-function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
+/**
+ * Read a stored row into slices.
+ *
+ * Every transform in here is a pure, idempotent read EXCEPT the retired
+ * weapon-upgrade refund, which GRANTS essence and logs that it did — and this
+ * function also backs two read-only listings (`listAccountCharacters` for the lobby
+ * and `listCharacters` for the admin tab), which throw the slices away. Run there,
+ * the refund logged a grant on every lobby load and persisted nothing, and the admin
+ * tab reported essence the character had not been given. So it is opt-in, and the
+ * only caller that opts in is `loadCharacter` — the one path that hands the slices to
+ * a live entity, which saves them.
+ */
+function hydratePlayerSlices(
+  row: CharacterRow,
+  options: { grantRetiredRefunds?: boolean } = {},
+): PersistedPlayerSlices {
   const holdsInventory = parseSlice<HoldsInventory>(row.holdsInventory);
   holdsInventory.equipment = normalizeEquipment(holdsInventory.equipment);
   holdsInventory.itemUpgrades = holdsInventory.itemUpgrades ?? {};
@@ -610,8 +627,11 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
   delete (tracksProgression as { catalystProgress?: unknown }).catalystProgress;
   // Progression rework Phase 2b: refund and drop any weapon-slot itemUpgrades
   // entry the old +N ladder left behind. Mutates holdsInventory.itemUpgrades and
-  // tracksProgression.essences in place; see weaponUpgradeRefund.ts.
-  refundWeaponUpgradeEssence(row.id, holdsInventory, tracksProgression.essences);
+  // tracksProgression.essences in place; see weaponUpgradeRefund.ts. A GRANT, so
+  // only for the load path that keeps it — see this function's docblock.
+  if (options.grantRetiredRefunds) {
+    refundWeaponUpgradeEssence(row.id, holdsInventory, tracksProgression.essences);
+  }
   tracksProgression.unlockedRecipes = migrateLegacyRecipeIds(tracksProgression.unlockedRecipes);
   const hasPosition = parseSlice<HasPosition>(row.hasPosition);
   if (!WORLD_NODES.has(hasPosition.nodeId)) {
