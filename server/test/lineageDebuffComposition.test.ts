@@ -39,6 +39,7 @@ import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { emitCombatEvent } from '../src/systems/combat/engine/combatPipeline';
 import { emitMechanicFired } from '../src/systems/combat/engine/mechanicFired';
 import { effectivePlatingAfterShred } from '../src/systems/combat/damage/effectivePlating';
+import { applySharedDebuffMaxWins } from '../src/systems/combat/status/sharedDebuffRecord';
 
 const NODE = 'node-5-5';
 let nextId = 0;
@@ -305,6 +306,39 @@ function cardFxCount(): number {
     100 - 36,
     "a 5-point card must not lower the brand's 3 × 12 strip",
   );
+}
+
+// ── the shared record: a NEW permanent application beats a finite window ──────
+//
+// The helper's own contract is "`-1` is permanent and beats every finite window",
+// but it tested only the PRIOR side of the comparison: `Math.max(remainingMs, priorMs)`
+// reads a fresh `-1` as the smallest number there is and clamped it down to whatever
+// window was already running. Asserted on the helper directly because only a class
+// mechanic writes a permanent strip, and a card never does.
+{
+  const player = spawn('comp-permanent', []);
+  const target = monster(840);
+
+  applyStatusEffect(target.tracksCombat, {
+    id: 'plating-shred',
+    instanced: false,
+    refreshable: true,
+    remainingMs: 4_000,
+    sourceId: player.isPlayer.id,
+    data: { platingReduction: 5, totalMs: 4_000 },
+  });
+
+  const effect = applySharedDebuffMaxWins(player, target.tracksCombat, {
+    id: 'plating-shred',
+    maxStacks: 3,
+    refreshable: true,
+    remainingMs: -1,
+    sourceId: player.isPlayer.id,
+    data: { platingReduction: 9 },
+  }, ['platingReduction', 'totalMs']);
+
+  assert.equal(effect.remainingMs, -1, 'a new permanent application must not be clamped to a live window');
+  assert.equal(effect.data.platingReduction, 9, 'and the stronger per-stack strip still lands');
 }
 
 console.log('lineageDebuffComposition: ok');

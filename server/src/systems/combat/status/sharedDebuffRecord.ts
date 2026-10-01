@@ -68,7 +68,14 @@ export function applySharedDebuffMaxWins(
       if (!(key in effect.data) && typeof value === 'number') effect.data[key] = value;
     }
   }
-  effect.remainingMs = priorMs < 0 ? -1 : Math.max(effect.remainingMs, priorMs);
+  // `-1` is permanent and beats every finite window — in BOTH directions. Testing
+  // only the prior side read a new permanent application as the smallest number in
+  // the comparison and clamped it down to the window that happened to be running,
+  // so a card's four-second strip could un-permanent the finisher's brand simply by
+  // landing first.
+  effect.remainingMs = (priorMs < 0 || effect.remainingMs < 0)
+    ? -1
+    : Math.max(effect.remainingMs, priorMs);
   effect.stacks = Math.max(effect.stacks, priorStacks);
   if (priorMaxStacks !== undefined) {
     effect.maxStacks = (priorMaxStacks === 0 || effect.maxStacks === 0)
