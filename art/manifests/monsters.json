@@ -3697,7 +3697,7 @@
       },
       "prompt": "a small lean grassland kite, a young raptor smaller and slighter than a hawk, narrow pointed wings spread wide in a low swooping glide, forked tail, small hooked beak, talons tucked, airborne with nothing beneath it, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dusty tan and warm grey-brown plumage with cream barring on the underwing",
       "negative": "large, bulky, eagle, owl, perched, folded wings, wings closed, standing on ground, grass, wheat, standing upright, bipedal, on hind legs, rearing up, bright green, vivid yellow, cool hues, pure white, glowing, magical glow, slime, weapon, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "grass-kite"
       ],
@@ -3721,7 +3721,7 @@
       },
       "prompt": "a small young bramble creature, a tight knot of twisted dark bark and thorny vine with a single hollow seed-pod snout aimed forward, squat and low on stubby root nubs, fewer and smaller thorns than a grown bramble beast, crouched and planted, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark bark-brown and umber body with matte berry-red thorn tips",
       "negative": "fairy, pixie, wings, flower, blossom, leafy bright green body, moss green, glowing, magical glow, humanoid, face, eyes, tall, large, slime, standing upright, bipedal, on hind legs, rearing up, plains tan, sandy, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "bramble-pod"
       ],
@@ -3745,7 +3745,7 @@
       },
       "prompt": "a stocky mountain ram on all four legs, head lowered in a braced charging stance, thick curled ivory horns, a heavy back plated with slabs of lichen-dusted dark stone grown into its hide like armor, short powerful legs planted, compact and low, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, warm buff and tan hide with ivory horns and dark basalt-grey stone plates dusted pale with lichen",
       "negative": "standing upright, bipedal, on hind legs, rearing up, walking, mid-stride, raised hoof, goat kid, slender, antlers, mossy, green, mid-grey body, blue-grey body, robot, mechanical, metal armor, saddle, rider, glowing, magical glow, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "rockback-ram"
       ],
@@ -3769,7 +3769,7 @@
       },
       "prompt": "a small cave spiderling, a young spider with a compact round body on eight slim jointed legs, soft pale chitin not yet hardened, a small cluster of pale eyes, fangs lowered, quick skittering crouch, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale chitin-grey and dun-brown body with bone-pale leg joints and a colorless pale glint in the eyes",
       "negative": "purple, violet, green, blue, red, colorful, glowing, magical glow, neon, black body, pitch dark, bright white, web, hanging from thread, large, bulky, heavy plating, many spiders, swarm, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "brood-spiderling"
       ],
@@ -3793,7 +3793,7 @@
       },
       "prompt": "a small hunched swamp hexer vessel, a faceless figure wrapped in sodden reeds and moss-stained rags, a plain cracked wooden mask where a face would be, thin crooked frame shorter and slighter than a bog witch, one gnarled hand raised holding a bundle of reeds trailing a dim wisp of poison-chartreuse witch-light, planted stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark bog-brown and olive-black rags with pallid bone-cream trinkets, no visible skin",
       "negative": "human face, eyes, mouth, human skin, flesh tone, pretty, young woman, pointed witch hat, broomstick, staff, bright glow, large glow, dry, dusty, bright blue, clean white, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "fen-hexer"
       ],

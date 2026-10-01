@@ -123,8 +123,13 @@ Negatives are accumulated ban-blocks, concatenated:
 
 ## 4. Techniques Beyond Plain Prompting
 
-- **img2img (`params.initImage` + `initImageStrength: 250`)** — use when
-  the *shape* is right and the surface must change:
+- **img2img (`params.initImage` + `initImageStrength`)** — pick the strength by
+  intent, and err LOW. 250 is for *preserving* a sprite (same creature, cleaner).
+  For **kin / variants / tier chains** use **~65** (the item-icon plan calibrated
+  this: a batch at 200 came back "too similar" 10 of 12; the 2026-10-01 T1
+  third-family mobs at 250 were accepted but the designer called them samey —
+  lower it next time). The prompt must drive shape; the seed is a silhouette nudge.
+  Use when the *shape* is right and the surface must change:
   - preserving a beloved existing sprite (the Gemini frog);
   - in-family anchoring from an **accepted** sprite of the same species
     (T2 boss anchored on the accepted T3 fixed a humanoid drift);
@@ -156,7 +161,9 @@ Negatives are accumulated ban-blocks, concatenated:
 4. `--category=monsters` on every run (stray pending entries from other
    categories ride the queue otherwise). Flags use `=` syntax. Cap with
    `--budget`.
-5. Costs for planning: ~$0.007/call, 3 candidates/entry → a full biome
+5. Costs for planning: the subscription includes ~2000 generations/month, so
+   quota, not the API balance, is the real budget; the balance only matters past
+   it. For the ledger: ~$0.007/call, 3 candidates/entry → a full biome
    (9–16 entries) runs $0.20–$0.40; regen rounds are cents.
 
 ## 6. Review Discipline
