@@ -371,8 +371,8 @@ Node modifiers are removed. In their place, each biome has **three mob families*
 blend list *is* the node list for that biome (it replaces the modifier list as the source
 of node count; see the authoring trap in `map/authoring.ts`).
 
-**Key materials are shards, keyed by packet, not by biome.** Eight shards for the whole
-game (Tempo shard, Empowered shard, …). Each family drops the shard of the packet it
+**Key materials are shards, keyed by packet, not by biome.** One shard per packet for the
+whole game — nine since §22 added Technique (Tempo shard, Empowered shard, …). Each family drops the shard of the packet it
 favours, so the material's name says what it buys and the map says where it drops. Biome
 identity lives on the lineage, the form art, and the capstone material, not on the shard.
 
@@ -387,7 +387,7 @@ identity lives on the lineage, the form art, and the capstone material, not on t
   up. One capstone material per biome.
 - Wallet on `TracksProgression`: `shards: Record<PacketId, number>` and
   `capstones: Record<biome, number>` (replacing `catalysts`/`catalystProgress`). On
-  screen at T1: five essences, eight shards, the capstones you have touched.
+  screen at T1: five essences, the nine shards, the capstones you have touched.
 - Coverage: every packet has ≥2 families across biomes per tier, so no shard has a single
   source.
 
