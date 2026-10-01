@@ -1,5 +1,6 @@
 /**
- * The eight keystones — one per packet (design §4, as amended 2026-10-01).
+ * The keystones — one per packet (design §4, as amended 2026-10-01; nine of them
+ * since the Technique packet joined in run 4, design §22).
  *
  * WHAT A KEYSTONE IS. Every other row is data over a closed vocabulary: a
  * trigger, a payoff, a number from `magnitudes.ts`. The keystone row is the one
@@ -35,7 +36,8 @@ export type KeystoneId =
   | 'refund'
   | 'always-first'
   | 'immovable'
-  | 'unbroken';
+  | 'unbroken'
+  | 'signature';
 
 export interface KeystoneDefinition {
   id: KeystoneId;
@@ -104,6 +106,16 @@ const keystoneEntries: [PacketId, KeystoneDefinition][] = [
     id: 'unbroken', lane: 'barrier-tempo', name: 'Unbroken',
     rule: 'Your barrier keeps recharging through hits while you are above half health.',
     fx: keystoneFxKey('barrier-tempo'),
+  }],
+  // The Technique keystone (design §22). No `payoff`: like the other six rules
+  // that are not a share of a hit, Signature changes what a Technique COUNTS AS
+  // rather than paying out, so its card's authored payoff is only there because
+  // `coverage.test.ts` requires every non-stat row to do something the moment it
+  // is bought.
+  ['technique', {
+    id: 'signature', lane: 'technique', name: 'Signature',
+    rule: 'A Technique that lands counts as your class mechanic firing.',
+    fx: keystoneFxKey('technique'),
   }],
 ];
 

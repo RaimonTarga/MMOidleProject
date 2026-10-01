@@ -16,7 +16,7 @@ import {
   ITEM_DATABASE,
   BIOME_DATABASE,
   FAMILY_DATABASE,
-  biomeDefensiveLaneAPackets,
+  biomeLaneAPackets,
   LINEAGE_DATABASE,
   capstoneMaterialName,
   formGateBiomeLevel,
@@ -2697,14 +2697,14 @@ const LINEAGE_SHARD_BIOMES = ['plains', 'forest', 'mountain', 'cave', 'swamp'] a
  * so it drops nothing at tier 1 no matter what a node's blend claims.
  */
 /**
- * The tier-1 biomes whose BOSS drops `lane`, via the design-§17 stopgap: a boss
- * kill pays shards of each of its biome's non-weapon Lane-A packets. Engagement,
+ * The tier-1 biomes whose BOSS drops `lane`, via the design-§18.6 stopgap: a boss
+ * kill pays shards of each Lane-A packet of the lineages homed in its biome.
  * Bulwark and Barrier tempo have no tier-1 family source at all, so for those a
  * boss is the ONLY source and no amount of farming trash will do.
  */
 function bossBiomesDroppingShardAtTier1(lane: PacketId): string[] {
   return LINEAGE_SHARD_BIOMES.filter((biomeGroup) =>
-    biomeDefensiveLaneAPackets(biomeGroup).includes(lane));
+    biomeLaneAPackets(biomeGroup).includes(lane));
 }
 
 function biomeDropsShardAtTier1(biomeGroup: string, lane: PacketId): boolean {

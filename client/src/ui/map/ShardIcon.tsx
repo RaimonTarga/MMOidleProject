@@ -17,6 +17,7 @@ const SHARD_ABBREVIATIONS: Record<PacketId, string> = {
   engagement: 'EN',
   bulwark: 'BW',
   'barrier-tempo': 'BT',
+  technique: 'TQ', // not 'TE': Tempo already owns that pair
 };
 
 interface ShardIconProps {

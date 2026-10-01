@@ -10,8 +10,12 @@
  *
  * THE TWO RULES THE TABLE OBEYS.
  *
- *  - **A Technique offers three of the six offensive packets**, fitted to what
- *    the ability already does, paying that packet's offensive payoff.
+ *  - **A Technique offers three of the offensive packets**, fitted to what the
+ *    ability already does, paying that packet's offensive payoff. Six abilities
+ *    offer Technique (design §22): Sweep, Slam, Snipe, Stunning Strike, Binding
+ *    Strike and Detonate, each trading away its least characteristic route. On a
+ *    Technique that node means "landing this ability refunds part of its own
+ *    cooldown", which is why it fits the shapes whose whole cost IS the cooldown.
  *  - **A Guard offers the three defensive faces** — one `avoid`, one `sustain`,
  *    one `endure` — paying that face's defensive payoff, so defence never scales
  *    with offence. The avoid-face packets are Tempo, Engagement and Control; the
@@ -39,11 +43,13 @@ const offerEntries: [string, AbilityPacketOffers][] = [
   // ── Techniques: three of the six offensive packets ────────────────────────
 
   // Sweep is the breadth tool — the swarm answer. Breadth pays in volume, in
-  // attrition across the bodies it touched, or in the momentum of cutting through.
+  // attrition across the bodies it touched, or in coming round again sooner: a
+  // wide swing you can take twice as often is the Plains Swarm's own answer, which
+  // is why the Swarm drops the Technique shard (design §22, §12.1).
   ['sweep', [
     ['tempo', 'echo-hit'],
     ['affliction', 'hemorrhage'],
-    ['kill-chain', 'speed-window'],
+    ['technique', 'technique-refund'],
   ]],
 
   // Power Strike is the committed single-target blow. A burst wants the brand it
@@ -87,18 +93,22 @@ const offerEntries: [string, AbilityPacketOffers][] = [
     ['kill-chain', 'speed-window'],
   ]],
 
-  // Slam is the heavy area blow: it cracks armour, it staggers, it opens wounds.
+  // Slam is the heavy area blow: it cracks armour, it staggers, or it comes back
+  // round. The bleed went to make room — a blunt drop is the roster's least
+  // characteristic way to open a wound, and Slam is the ability a Technique build
+  // most wants off cooldown.
   ['slam', [
     ['empowered', 'plating-shred'],
     ['control', 'slow'],
-    ['affliction', 'hemorrhage'],
+    ['technique', 'technique-refund'],
   ]],
 
-  // Binding Strike is pure setup. The node is what you do with a pinned target.
+  // Binding Strike is pure setup. The node is what you do with a pinned target —
+  // or, on the Technique route, how soon you can pin the next one.
   ['binding-strike', [
     ['control', 'slow'],
     ['empowered', 'vulnerability'],
-    ['engagement', 'damage-window'],
+    ['technique', 'technique-refund'],
   ]],
 
   // Frenzy is a tempo window. It pays in extra swings, in more pace, or in a
@@ -117,12 +127,14 @@ const offerEntries: [string, AbilityPacketOffers][] = [
     ['affliction', 'hemorrhage'],
   ]],
 
-  // Detonate is design §19's "burst one": Empowered, Kill chain, Affliction. The
-  // bleed re-opens the wound the detonation just spent.
+  // Detonate spends everything the target was carrying, so its three routes are
+  // what you get for spending it: the bleed re-opens the wound, the brand makes
+  // the next one worse, or the detonation pays its own long cooldown back — the
+  // one ability in the roster where a refund is the obvious want.
   ['detonate', [
     ['affliction', 'hemorrhage'],
     ['empowered', 'vulnerability'],
-    ['kill-chain', 'speed-window'],
+    ['technique', 'technique-refund'],
   ]],
 
   // Disengage is a re-opening: breaking contact resets the fight's first beat,
@@ -134,19 +146,21 @@ const offerEntries: [string, AbilityPacketOffers][] = [
   ]],
 
   // Snipe is one deliberate shot from outside reach: the brand, the opening, or
-  // the leg it takes out.
+  // the second shot — a marksman's route is to be ready again before the target
+  // has closed.
   ['snipe', [
     ['empowered', 'vulnerability'],
     ['engagement', 'damage-window'],
-    ['control', 'slow'],
+    ['technique', 'technique-refund'],
   ]],
 
-  // Stunning Strike is the roster's hardest control. Control deepens it; Empowered
-  // and Tempo are the two ways to cash a target that is on the floor.
+  // Stunning Strike is the roster's hardest control. Control deepens it, Empowered
+  // cashes a target that is on the floor, and Technique is the lock-down route:
+  // the shorter the cooldown, the less of the fight is spent standing up.
   ['stunning-strike', [
     ['control', 'slow'],
     ['empowered', 'plating-shred'],
-    ['tempo', 'echo-hit'],
+    ['technique', 'technique-refund'],
   ]],
 
   // Imbue Lightning is a charge window, so it carries the per-hit lanes: a second

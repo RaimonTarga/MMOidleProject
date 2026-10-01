@@ -13,20 +13,14 @@
  * when the Guard CASTS. "Lands" is deliberately not "activates": an armed
  * Technique activates when it arms, which can be a swing before it touches
  * anything, and a node that paid out on arming would pay out on a charge the
- * fight never consumed. So the hook sits at each shape's own resolution:
+ * fight never consumed.
  *
- *   armed / charge / formation   `applyTechniqueRider`  (rides the landed hit)
- *   cast                         `resolveCastPayload`   (the payload resolved)
- *   self-cast                    `resolveSelfCastPayload`
- *   instant                      `applyInstantTechnique`
- *   reposition                   the reposition branch of `maybeFireTechnique`
- *   every Guard                  `onGuardFired`         (the one Guard seam)
- *
- * ONCE PER LANDING. Each of those is called once per resolution, so the node
- * fires once per resolution. The one shape that could double is `armed`, whose
- * rider and whose formation delivery are separate branches of one `onHit` —
- * both of which end in `applyTechniqueRider`, which is why the hook is there and
- * not in the listener around it.
+ * Neither hook is wired from here any more. Each sits behind the one seam its
+ * side already has — `combat/techniqueResolved.ts` for a Technique (which knows
+ * all five shapes' resolutions) and `onGuardFired` for a Guard — so "once per
+ * landing" and "once per cast" are stated in one place each instead of in every
+ * consumer. See `techniqueResolved.ts` for the shape table and for why the armed
+ * family hooks `applyTechniqueRider` rather than the listener around it.
  */
 import {
   getAbilityNodeRuntime,
@@ -78,6 +72,8 @@ function payoffFor(player: PlayerEntity, abilityId: string): ExternalLineagePayo
 /**
  * A Technique resolved. Fires its node's payoff, on the exchange when there was
  * one so the payoff's share is taken off the hit that carried it.
+ *
+ * Called from `onTechniqueResolved`, never directly.
  */
 export function onAbilityNodeTechniqueLanded(
   world: World,

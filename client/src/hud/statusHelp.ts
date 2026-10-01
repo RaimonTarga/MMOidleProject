@@ -171,6 +171,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'lineage-guard': b('Brace', 'A lineage card opened a damage-reduction window — opening protection, earned by how the card fires rather than by gear.'),
   'lineage-ward': b('Shell', 'A lineage card granted a temporary absorb pool, spent before your barrier and your health.'),
   'lineage-plate': b('Plate', 'A lineage card is adding plating to each reactive-plating stack you are holding. The stacks themselves still build from hits taken and fade one at a time.'),
+  'lineage-technique': b('Form', 'A Technique lineage card opened a window: the next Technique that lands does so empowered, and the window closes when it spends. It uses the same one-multiplier-per-hit slot an empowered attack does, so a Technique rider adds to it rather than multiplying with it.'),
 
   // -- Frame loops -------------------------------------------------------------
   // Two tiles for all six classes: a frame is either a window or a bank (or, on a

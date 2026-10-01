@@ -1,8 +1,14 @@
 /**
- * The Broadsword — Plains weapon lineage, the generalist floor (design §3.2).
+ * The Broadsword — Plains weapon lineage, the generalist floor (design §3.2, §22).
  *
- * Lanes: Kill chain / Empowered / Tempo. Derived from the Plains being the swarm
- * biome and from the technique CDR/power the sword already leans on.
+ * Lanes: Technique / Kill chain / Empowered. Technique replaced Tempo in run 4
+ * (design §22): the technique CDR and technique power this sword and its Desert
+ * staff/cross line already leaned on are a packet now, so the lane it was always
+ * described BY is the lane it carries. Technique is Lane A, which is also what
+ * makes the Plains boss pay Technique shards through §18.6's stopgap.
+ *
+ * Tempo keeps its coverage on the Rapier (Lane A) and the Axe (Lane A), which
+ * author its whole band between them.
  *
  * No numbers here — see `types.ts`.
  */
@@ -12,7 +18,7 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
   id: 'broadsword',
   slot: 'weapon',
   homeBiome: 'plains',
-  lanes: ['kill-chain', 'empowered', 'tempo'],
+  lanes: ['technique', 'kill-chain', 'empowered'],
 
   forms: [
     { recipeId: 'iron-broadsword', tier: 1, biome: 'plains' },
@@ -30,9 +36,9 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
     recipeId: 'desert-sunsteel-cross', tier: 2, biome: 'desert',
     capstone: {
       id: 'broadsword-capstone-sunsteel', name: 'Noon Strike',
-      description: "The opening blow still carries the whole day's heat, and leaves what it hit lit for the follow-through.",
-      fx: 'empowered.weak-point', lane: 'empowered',
-      trigger: 'first-hit', payoff: 'damage-window',
+      description: "The cross gathers the whole day's heat between forms, and the next one spends it.",
+      fx: 'technique.cast-flare', lane: 'technique',
+      trigger: 'technique-cast', payoff: 'technique-window',
     },
   },
 
@@ -46,36 +52,36 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
     recipeId: 'desert-pilgrim-quarterstaff', tier: 3, biome: 'desert',
     capstone: {
       id: 'broadsword-capstone-pilgrim', name: 'Pilgrim\'s Pace',
-      description: 'A walking rhythm that does not break, however long the road.',
-      fx: 'tempo.ghost-strike', lane: 'tempo',
-      trigger: 'mechanic-fired', payoff: 'speed-window',
+      description: 'A walking rhythm that does not break: each form comes round sooner than the road says it should.',
+      fx: 'technique.cast-flare', lane: 'technique',
+      trigger: 'technique-cast', payoff: 'technique-refund',
     },
   },
   {
     recipeId: 'desert-solar-cross', tier: 3, biome: 'desert',
     capstone: {
       id: 'broadsword-capstone-solar', name: 'Solar Weight',
-      description: 'Held up, it gathers the noon; brought down, it spends it.',
-      fx: 'empowered.weak-point', lane: 'empowered',
-      trigger: 'mechanic-fired', payoff: 'damage-window',
+      description: 'Held up it gathers the noon; brought down, it leaves what it struck open.',
+      fx: 'technique.cast-flare', lane: 'technique',
+      trigger: 'technique-cast', payoff: 'vulnerability',
     },
   },
   {
     recipeId: 'desert-sunmonk-warstaff', tier: 4, biome: 'desert',
     capstone: {
       id: 'broadsword-capstone-sunmonk', name: 'Sunmonk\'s Mercy',
-      description: 'Every body it puts down pays a little of the bearer back.',
-      fx: 'kill-chain.recovery-pulse', lane: 'kill-chain',
-      trigger: 'kill', payoff: 'recovery-window',
+      description: 'Every form the monk completes pays a little of the bearer back.',
+      fx: 'technique.cast-flare', lane: 'technique',
+      trigger: 'technique-cast', payoff: 'recovery-window',
     },
   },
   {
     recipeId: 'desert-zenith-cross', tier: 4, biome: 'desert',
     capstone: {
       id: 'broadsword-capstone-zenith', name: 'Zenith',
-      description: 'The first blow of a fight arrives with the whole day behind it.',
-      fx: 'empowered.guard-spark', lane: 'empowered',
-      trigger: 'first-hit', payoff: 'damage-window',
+      description: 'At the top of the arc there is no waiting, only the next form.',
+      fx: 'technique.cast-flare', lane: 'technique',
+      trigger: 'technique-cast', payoff: 'technique-refund',
     },
   },
   ],
@@ -92,9 +98,9 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
       fx: 'empowered.trail',
     },
     {
-      id: 'broadsword-t1-tempo-stat', lineageId: 'broadsword', tier: 1, row: 'stat', lane: 'tempo',
+      id: 'broadsword-t1-technique-stat', lineageId: 'broadsword', tier: 1, row: 'stat', lane: 'technique',
       name: 'Drilled Form', description: 'Ten thousand repetitions, no wasted motion.',
-      fx: 'tempo.trail',
+      fx: 'technique.trail',
     },
 
     {
@@ -108,9 +114,9 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
       fx: 'empowered.weak-point', trigger: 'mechanic-fired', payoff: 'vulnerability',
     },
     {
-      id: 'broadsword-t1-tempo-payoff', lineageId: 'broadsword', tier: 1, row: 'payoff', lane: 'tempo',
-      name: 'Follow Through', description: 'Every third hit carries into a second.',
-      fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'echo-hit',
+      id: 'broadsword-t1-technique-payoff', lineageId: 'broadsword', tier: 1, row: 'payoff', lane: 'technique',
+      name: 'Set and Reset', description: 'A form that lands comes round again sooner.',
+      fx: 'technique.cast-flare', trigger: 'technique-cast', payoff: 'technique-refund',
     },
 
     // ── T2 band (design §4): stat (L2), payoff (L3), amplifier (L5) ──────────
@@ -125,9 +131,9 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
       fx: 'empowered.trail',
     },
     {
-      id: 'broadsword-t2-tempo-stat', lineageId: 'broadsword', tier: 2, row: 'stat', lane: 'tempo',
+      id: 'broadsword-t2-technique-stat', lineageId: 'broadsword', tier: 2, row: 'stat', lane: 'technique',
       name: 'Drilled Further', description: 'The repetitions kept going after the Plains.',
-      fx: 'tempo.trail',
+      fx: 'technique.trail',
     },
 
     {
@@ -141,9 +147,9 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
       fx: 'empowered.weak-point', trigger: 'mechanic-fired', payoff: 'vulnerability',
     },
     {
-      id: 'broadsword-t2-tempo-payoff', lineageId: 'broadsword', tier: 2, row: 'payoff', lane: 'tempo',
-      name: 'Harder Follow Through', description: 'Every third hit carries into a stronger second.',
-      fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'echo-hit',
+      id: 'broadsword-t2-technique-payoff', lineageId: 'broadsword', tier: 2, row: 'payoff', lane: 'technique',
+      name: 'Opening Form', description: 'A form that lands leaves the next one loaded.',
+      fx: 'technique.cast-flare', trigger: 'technique-cast', payoff: 'technique-window',
     },
 
     // Amplifiers modify this tier's own payoff card, not the T1 one (design §4).
@@ -160,9 +166,9 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
       amplifies: 'targets',
     },
     {
-      id: 'broadsword-t2-tempo-amplifier', lineageId: 'broadsword', tier: 2, row: 'amplifier', lane: 'tempo',
-      name: 'Second Follow Through', description: 'The carried second hit has enough left in it to carry a third.',
-      fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'echo-hit', modifies: 'broadsword-t2-tempo-payoff',
+      id: 'broadsword-t2-technique-amplifier', lineageId: 'broadsword', tier: 2, row: 'amplifier', lane: 'technique',
+      name: 'Loaded Form', description: 'The window loads the next form heavier than it used to.',
+      fx: 'technique.cast-flare', trigger: 'technique-cast', payoff: 'technique-window', modifies: 'broadsword-t2-technique-payoff',
       amplifies: 'magnitude',
     },
 
@@ -179,9 +185,9 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
       fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'echo-hit',
     },
     {
-      id: 'broadsword-t3-tempo-keystone', lineageId: 'broadsword', tier: 3, row: 'keystone', lane: 'tempo',
-      name: 'Drilled to the Last', description: "The echo keeps answering. It doesn't stop until something dodges it or nothing fresh is standing.",
-      fx: 'tempo.keystone', trigger: 'hit-nth', payoff: 'echo-hit',
+      id: 'broadsword-t3-technique-keystone', lineageId: 'broadsword', tier: 3, row: 'keystone', lane: 'technique',
+      name: 'Signature Form', description: 'A form that lands IS your mechanic. Everything that waits on the mechanic answers it.',
+      fx: 'technique.keystone', trigger: 'technique-cast', payoff: 'technique-window',
     },
 
     // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
@@ -192,13 +198,13 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
     },
     {
       id: 'broadsword-t4-empowered-cross', lineageId: 'broadsword', tier: 4, row: 'cross', lane: 'empowered',
-      name: 'Weighted Follow-Through', description: 'The heavy swing still carries a lighter one behind it, every third hit.',
-      fx: 'empowered.weak-point', trigger: 'hit-nth', payoff: 'echo-hit', borrowsLane: 'tempo',
+      name: 'Weighted Form', description: 'The heavy swing is heavy enough to pay part of a form back with it.',
+      fx: 'empowered.weak-point', trigger: 'technique-cast', payoff: 'technique-refund', borrowsLane: 'technique',
     },
     {
-      id: 'broadsword-t4-tempo-cross', lineageId: 'broadsword', tier: 4, row: 'cross', lane: 'tempo',
+      id: 'broadsword-t4-technique-cross', lineageId: 'broadsword', tier: 4, row: 'cross', lane: 'technique',
       name: 'Drilled Momentum', description: 'Ten thousand repetitions remember what a kill feels like, and borrow the hurry.',
-      fx: 'tempo.ghost-strike', trigger: 'kill', payoff: 'speed-window', borrowsLane: 'kill-chain',
+      fx: 'technique.cast-flare', trigger: 'kill', payoff: 'speed-window', borrowsLane: 'kill-chain',
     },
   ],
 };

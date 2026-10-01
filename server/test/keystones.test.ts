@@ -1,6 +1,6 @@
 /**
- * The eight packet keystones, wired (progression rework, design §4 as amended
- * 2026-10-01).
+ * The packet keystones, wired (progression rework, design §4 as amended
+ * 2026-10-01; nine of them since §22's Technique packet).
  *
  * WHAT THIS PINS. Not balance — every magnitude here is fabricated, because the
  * real ones come from the magnitude table and move with every tuning pass. What
@@ -15,6 +15,7 @@
  *   Always First one emission per body, and never the empowered flag
  *   Immovable   refuses a knockback while a bulwark stance is standing
  *   Unbroken    keeps the recharge delay from restarting above half health
+ *   Signature   one emission per landed Technique, never for a Guard, never the flag
  *
  * Keystone cards are seeded straight onto the runtime cache rather than bought:
  * the T3 band's cards are authored by a separate task, and the rules are owed
@@ -24,6 +25,7 @@
  * Run: node --conditions=development --import tsx test/keystones.test.ts
  */
 import {
+  ABILITY_DATABASE,
   ABILITY_ROOT_EFFECT_ID,
   GAME_CONFIG,
   KEYSTONE_DEFINITIONS,
@@ -61,6 +63,7 @@ import { pushPlayer } from '../src/systems/combat/damage/forcedMovement';
 import {
   KEYSTONE_MODULES, keystoneModule, refundedDotFillPending,
 } from '../src/systems/combat/keystones';
+import { onTechniqueResolved } from '../src/systems/combat/techniqueResolved';
 import { DOT_EFFECT_ID } from '../src/systems/classes/archetypes/dot/t3/core/constants';
 import { applyClassDotStack } from '../src/systems/classes/archetypes/dot/dotPrototype';
 import {
@@ -747,6 +750,70 @@ function withBarrier(id: string, cards: ResolvedLineageCard[]): PlayerEntity {
   );
   assert(getFlag(target.tracksCombat, `keystone.ladder.root.${mine.isPlayer.id}`) === false,
     'and spends no rung doing nothing');
+}
+
+// ── TECHNIQUE / Signature (design §22) ───────────────────────────────────────
+//
+// The rule is a RE-LABELLING, not an effect: a landed Technique counts as the
+// class mechanic firing. So what is pinned is the emission (once per cast), what
+// it must never do (arm the empowered flag, fire for a Guard), and the latch.
+
+const SWEEP = ABILITY_DATABASE.get('sweep')!;
+const SECOND_WIND = ABILITY_DATABASE.get('second-wind')!;
+assert(SWEEP?.slot === 'technique', 'fixture: Sweep is a Technique');
+assert(SECOND_WIND?.slot === 'guard', 'fixture: Second Wind is a Guard');
+
+{
+  const player = spawn('ks-signature', [keystoneCard('technique')]);
+  const target = monster(26_000, 26_000);
+  _mechanicFires.length = 0;
+
+  onTechniqueResolved(world, player, SWEEP, { target });
+  assert(_mechanicFires.length === 1, `a landed Technique counts as the mechanic firing — got ${_mechanicFires.length}`);
+  assert(player.hasEmpoweredAttack === undefined, 'and must NOT arm the empowered flag');
+  assert(keystoneFx('technique').length === 1, 'one cast, one effect');
+
+  // Once per cast, not once per pull: a second Technique is a second moment.
+  onTechniqueResolved(world, player, SWEEP, { target });
+  assert(_mechanicFires.length === 2, 'each cast that resolves is its own moment');
+  assert(keystoneFx('technique').length === 1, 'and draws once for it');
+}
+
+{
+  // NEVER for a Guard. A Guard has `guard-cast`; an offensive lane firing off a
+  // defensive cast would be defence scaling offence (design-bible §1).
+  const player = spawn('ks-signature-guard', [keystoneCard('technique')]);
+  _mechanicFires.length = 0;
+  onTechniqueResolved(world, player, SECOND_WIND);
+  assert(_mechanicFires.length === 0, 'a Guard never fires the Technique keystone');
+  assert(keystoneFx('technique').length === 0, 'and draws nothing');
+}
+
+{
+  // Without the keystone, a Technique is just a Technique.
+  const player = spawn('ks-signature-none');
+  _mechanicFires.length = 0;
+  onTechniqueResolved(world, player, SWEEP);
+  assert(_mechanicFires.length === 0, 'no keystone, no re-labelling');
+  assert(keystoneFx('technique').length === 0, 'and no effect');
+}
+
+{
+  // A Technique landing on the very hit that spent the root's own mechanic
+  // announces it once, not twice — and the keystone draws nothing, because the
+  // moment had already happened.
+  const player = spawn('ks-signature-latch', [keystoneCard('technique')]);
+  const target = monster(27_000, 27_000);
+  const ctx = {
+    attacker: player, attackerType: 'player',
+    defender: target, defenderType: 'monster',
+    damage: 200, platingMult: 1, drPierce: 0, cancelled: false,
+    metadata: { mechanicFired: true } as Record<string, unknown>,
+  } as unknown as CombatContext;
+  _mechanicFires.length = 0;
+  onTechniqueResolved(world, player, SWEEP, { ctx, target });
+  assert(_mechanicFires.length === 0, 'the moment had already been announced on this exchange');
+  assert(keystoneFx('technique').length === 0, 'so the keystone draws nothing');
 }
 
 console.log('keystones.test.ts: ok');

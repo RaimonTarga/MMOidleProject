@@ -44,6 +44,14 @@ export const ABILITY_NODE_ROWS: readonly AbilityNodeRow[] = ['packet', 'amplifie
 export const OFFENSIVE_NODE_PAYOFFS: ReadonlySet<PayoffKind> = new Set<PayoffKind>([
   'echo-hit', 'vulnerability', 'plating-shred', 'hemorrhage', 'poison-stack',
   'slow', 'contagion', 'damage-window', 'speed-window',
+  // The Technique lane's refund (design §22). Offensive, and on a Technique node
+  // it reads as "landing this ability refunds part of its own cooldown" — the
+  // cooldown that is running when the node fires IS the ability's own. Its
+  // sibling `technique-window` is deliberately NOT here: a window that empowers
+  // the next Technique, hung off a Technique, would mean the node's whole payoff
+  // was "do this again harder", which is the louder-number shape the file's
+  // header rules out.
+  'technique-refund',
 ]);
 
 /** The payoffs a Guard node may pay with: all of them act on the player. */

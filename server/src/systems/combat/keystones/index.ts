@@ -1,5 +1,5 @@
 /**
- * The eight keystones (design §4, amended 2026-10-01).
+ * The keystones (design §4, amended 2026-10-01; nine since §22's Technique packet).
  *
  * Importing this module is what populates {@link KEYSTONE_MODULES}: each file
  * calls `defineKeystone` at module scope, so the registry is complete as soon as
@@ -18,6 +18,7 @@
  * | engagement | Always First | `emitMechanicFired`, once per new body |
  * | bulwark | Immovable | the stationary-DR grace, the plating fade, `applyForcedMovement` |
  * | barrier-tempo | Unbroken | the refusal inside `stampBarrierDamage` |
+ * | technique | Signature | `emitMechanicFired` from the Technique resolution seam |
  */
 export * from './registry';
 export { CHAIN_KEYSTONE, runChain } from './chain';
@@ -36,3 +37,4 @@ export {
   pushImmovableRefusal,
 } from './immovable';
 export { UNBROKEN_KEYSTONE, unbrokenHoldsRecharge } from './unbroken';
+export { SIGNATURE_KEYSTONE, signatureOnTechniqueResolved } from './signature';

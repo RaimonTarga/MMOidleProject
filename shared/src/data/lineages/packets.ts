@@ -94,6 +94,20 @@ const packetEntries: [PacketId, PacketDefinition][] = [
     weakAgainst: 'sustained chip damage',
     color: '#7fd8c8', weaponEligible: false,
   }],
+  // The ninth packet (design §22, run 4). Its colour is a rose-magenta because
+  // 316° is the midpoint of the only gap left in the eight hues above — Kill
+  // chain's violet sits at 272° and Engagement's salmon at 360°, and everything
+  // else is between 33° and 218°. A lane's colour has ONE owner (design §18.2),
+  // so the tree accent, the shard glyph, the buff clock and the combat flare all
+  // read this line and move together.
+  ['technique', {
+    id: 'technique', name: 'Technique', scalingStat: 'techniquePowerPct',
+    wants: 'Technique power, Technique cooldown reduction',
+    firesOn: 'a Technique landing',
+    paysWith: 'cooldown refunds, a window that empowers the next Technique',
+    weakAgainst: 'fights shorter than a cooldown, hard control on the wind-up',
+    color: '#ff7fd4', weaponEligible: true,
+  }],
 ];
 
 export const PACKET_DEFINITIONS: Map<PacketId, PacketDefinition> =
@@ -125,6 +139,13 @@ const PACKET_FACE: Record<PacketId, DefensiveFace> = {
   'affliction': 'sustain',
   'bulwark': 'endure',
   'empowered': 'endure',
+  // PROVISIONAL and currently unread: no non-weapon lineage carries the
+  // Technique lane yet (design §22 moves exactly one WEAPON lineage onto it), so
+  // nothing resolves a Technique card's face. Avoid is the reading that fits the
+  // lane — a Technique is timing and positioning, and the Light frame's
+  // quickness is what a build around one wants — and the ability pass (§22.1)
+  // revisits it when it authors Technique a defensive home.
+  'technique': 'avoid',
 };
 
 /** The defensive face a lane expresses (design §17). */

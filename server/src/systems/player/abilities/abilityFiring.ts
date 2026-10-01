@@ -52,7 +52,7 @@ import { syncPlayerControlLockout } from "../../combat/status/playerControlLocko
 import { cleansePlayerAfflictions, type RemovedEffect } from "../../combat/status/cleanse";
 import { activateRecovery } from "../../defense/regen/recovery";
 import { onGuardFired } from "../../defense/charmHooks";
-import { onAbilityNodeTechniqueLanded } from "../../combat/abilityNodes";
+import { onTechniqueResolved } from "../../combat/techniqueResolved";
 import { repositionPlayer } from "../../combat/damage/knockback";
 import { abilityCooldownKey, guardCooldownMs, startTechniqueCooldown } from "./abilityCooldowns";
 import { beginAbilityCast } from "./abilityCasting";
@@ -341,7 +341,7 @@ function maybeFireTechnique(
     if (!options.manual && !autoFireGateOpen(world, player, ability)) return DECLINED_TECHNIQUE;
     applyInstantTechnique(world, player, ability);
     // An instant Technique resolves the moment it fires, so firing IS landing.
-    onAbilityNodeTechniqueLanded(world, player, ability);
+    onTechniqueResolved(world, player, ability);
     recordAbilityActivation(world, player, abilityId, 'technique');
     startTechniqueCooldown(world, player, ability);
     // Carry the window length so the client can sustain an in-world cue for the
@@ -436,8 +436,8 @@ function maybeFireTechnique(
     } else {
       // A reposition with no strike rider has nothing further to land, so the
       // move itself is the landing. One that DOES arm pays out from the armed
-      // rider instead, so the node never fires twice for one cooldown.
-      onAbilityNodeTechniqueLanded(world, player, ability);
+      // rider instead, so nothing fires twice for one cooldown.
+      onTechniqueResolved(world, player, ability);
     }
     return { activated: true, claimed: true };
   }

@@ -20,13 +20,16 @@
  * Run: node --conditions=development --import tsx test/lineageCards.wiring.test.ts
  */
 import {
+  ABILITY_DATABASE,
   ABILITY_SLOW_EFFECT_ID,
   GAME_CONFIG,
   applyStatusEffect,
   baseRecoveryForTier,
   emptyEquipment,
+  getCooldown,
   getStatusEffect,
   lineageStatusEffectId,
+  setCooldown,
   setLineageRuntime,
   type CombatEvent,
   type LineageFxKey,
@@ -48,6 +51,8 @@ import { LINEAGE_BLEED_ID, LINEAGE_POISON_ID } from '../src/systems/combat/damag
 import {
   lineagePlatingStackFraction, onLineageGuardCast, updateLineageCards,
 } from '../src/systems/combat/lineageCards';
+import { onTechniqueResolved } from '../src/systems/combat/techniqueResolved';
+import { abilityCooldownKey } from '../src/systems/player/abilities/abilityCooldowns';
 import { attackHasteBonus } from '../src/systems/combat/engine/attackCadence';
 import { activeRecoveryFraction } from '../src/systems/defense/regen/recovery';
 import { setAttackTarget } from '../src/systems/combat/ai/targeting';
@@ -461,6 +466,169 @@ function cardFx(): Array<Extract<CombatEvent, { kind: 'card-fx' }>> {
   assert(
     getStatusEffect(player.tracksCombat, lineageStatusEffectId('recovery-window')) !== undefined,
     'the window also carries its own clock',
+  );
+}
+
+// ── technique-cast: the two Technique payoffs (design §22) ───────────────────
+//
+// The trigger is not a listener — it is a call the one Technique resolution seam
+// makes — so what is pinned here is that the seam reaches the cards, exactly once
+// per cast, never from a Guard, and that each payoff lands on the hook it claims.
+
+const SWEEP = ABILITY_DATABASE.get('sweep')!;
+const SECOND_WIND = ABILITY_DATABASE.get('second-wind')!;
+assert(SWEEP?.slot === 'technique', 'fixture: Sweep is a Technique');
+assert(SECOND_WIND?.slot === 'guard', 'fixture: Second Wind is a Guard');
+
+/** A player with Sweep attuned and its cooldown part-run. */
+function withSweepOnCooldown(
+  id: string,
+  cards: ResolvedLineageCard[],
+  remainingMs = 4000,
+): PlayerEntity {
+  const player = spawn(id, cards);
+  player.tracksProgression.attunedAbilities.techniques = ['sweep'];
+  setCooldown(player.tracksCombat, abilityCooldownKey('sweep'), remainingMs);
+  return player;
+}
+
+{
+  // `technique-refund` takes its share off what is LEFT of each attuned
+  // Technique's cooldown — the lane pays in readiness, not in damage.
+  const player = withSweepOnCooldown('lc-tech-refund', [seededCard({
+    trigger: { kind: 'technique-cast' },
+    payoff: { kind: 'technique-refund', magnitude: 0.25 },
+    fx: 'technique.cast-flare', lane: 'technique',
+  })]);
+
+  onTechniqueResolved(world, player, SWEEP);
+  assert(cardFx().length === 1, 'a resolved Technique should fire once');
+  const left = getCooldown(player.tracksCombat, abilityCooldownKey('sweep'));
+  assert(
+    Math.abs(left - 3000) < 1,
+    `a quarter should come off what is left of 4000ms, got ${left}`,
+  );
+
+  // Once per cast, not once per pull.
+  onTechniqueResolved(world, player, SWEEP);
+  assert(cardFx().length === 1, 'each cast that resolves fires again');
+  assert(
+    Math.abs(getCooldown(player.tracksCombat, abilityCooldownKey('sweep')) - 2250) < 1,
+    'and takes its share off the new remainder',
+  );
+}
+
+{
+  // Nothing on cooldown is nothing refunded, so the card draws no effect saying
+  // it did something.
+  const player = withSweepOnCooldown('lc-tech-refund-ready', [seededCard({
+    trigger: { kind: 'technique-cast' },
+    payoff: { kind: 'technique-refund', magnitude: 0.25 },
+    fx: 'technique.cast-flare', lane: 'technique',
+  })], 0);
+  onTechniqueResolved(world, player, SWEEP);
+  assert(cardFx().length === 0, 'a refund with nothing to refund draws nothing');
+}
+
+{
+  // NEVER from a Guard. A Guard has `guard-cast`; firing an offensive lane off a
+  // defensive cast would be defence scaling offence (design-bible §1).
+  const player = withSweepOnCooldown('lc-tech-guard', [seededCard({
+    trigger: { kind: 'technique-cast' },
+    payoff: { kind: 'technique-refund', magnitude: 0.25 },
+    fx: 'technique.cast-flare', lane: 'technique',
+  })]);
+  onTechniqueResolved(world, player, SECOND_WIND);
+  assert(cardFx().length === 0, 'a Guard never fires technique-cast');
+  assert(
+    getCooldown(player.tracksCombat, abilityCooldownKey('sweep')) === 4000,
+    'and refunds nothing',
+  );
+  // The Guard's own seam still works, and still does not reach this trigger.
+  onLineageGuardCast(world, player);
+  assert(cardFx().length === 0, 'and guard-cast does not reach a technique-cast card');
+}
+
+{
+  // `technique-window` from a `technique-cast` card: the trigger reaches the
+  // payoff and the window carries its own clock, which is the HUD tile's feed.
+  const player = withSweepOnCooldown('lc-tech-window', [seededCard({
+    trigger: { kind: 'technique-cast' },
+    payoff: { kind: 'technique-window', magnitude: 0.5, durationMs: 4000 },
+    fx: 'technique.cast-flare', lane: 'technique',
+  })]);
+  onTechniqueResolved(world, player, SWEEP);
+  assert(cardFx().length === 1, 'the window opens once per cast');
+  const opened = getStatusEffect(player.tracksCombat, lineageStatusEffectId('technique-window'));
+  assert(opened !== undefined && opened.remainingMs > 0, 'the window carries its own clock');
+  assert((opened?.data.magnitude ?? 0) === 0.5, 'and the magnitude the reader multiplies by');
+}
+
+/**
+ * A window OPENED by a Guard, so the Technique resolution that spends it has no
+ * card of its own to re-open it. Isolating the two halves is the only way to see
+ * the spend: a `technique-cast` window card closes and immediately re-opens its own
+ * window on the same cast, which is correct and unobservable.
+ */
+function withWindowFromGuard(id: string): PlayerEntity {
+  const player = withSweepOnCooldown(id, [seededCard({
+    trigger: { kind: 'guard-cast' },
+    payoff: { kind: 'technique-window', magnitude: 0.5, durationMs: 4000 },
+    fx: 'technique.cast-flare', lane: 'technique',
+  })]);
+  onLineageGuardCast(world, player);
+  cardFx();
+  return player;
+}
+
+{
+  // The next Technique to ride an exchange spends it, folded into
+  // `empoweredMultiplier` — one multiplier per hit (design §6), never a second
+  // multiplicative layer and never a second metadata key.
+  const player = withWindowFromGuard('lc-tech-window-spend');
+  const target = monster(720);
+
+  const ctx = hit(player, target, {}, 200);
+  // A plain hit neither opens nor spends it: only a resolution does.
+  cardFx();
+  assert(ctx.metadata['empoweredMultiplier'] === undefined, 'a plain hit does not spend the window');
+  const before = ctx.damage;
+
+  onTechniqueResolved(world, player, SWEEP, { ctx, target });
+  assert(
+    ctx.damage === Math.floor(before * 1.5),
+    `the window should scale the landing Technique's hit, ${before} -> ${ctx.damage}`,
+  );
+  assert(
+    Number(ctx.metadata['empoweredMultiplier'] ?? 1) === 1.5,
+    'through empoweredMultiplier, which is the ONE multiplier slot',
+  );
+  const spent = getStatusEffect(player.tracksCombat, lineageStatusEffectId('technique-window'));
+  assert(
+    spent === undefined || spent.remainingMs === 0,
+    'and the window closes — it empowers the NEXT Technique, once',
+  );
+
+  // A second Technique gets nothing: the window was spent, not merely read.
+  const second = hit(player, target, {}, 200);
+  cardFx();
+  const secondBefore = second.damage;
+  onTechniqueResolved(world, player, SWEEP, { ctx: second, target });
+  assert(
+    second.damage === secondBefore,
+    'a spent window empowers nothing',
+  );
+}
+
+{
+  // A resolution with no exchange has no hit to empower, so the window waits
+  // rather than being silently eaten.
+  const player = withWindowFromGuard('lc-tech-window-nohit');
+  onTechniqueResolved(world, player, SWEEP);
+  const held = getStatusEffect(player.tracksCombat, lineageStatusEffectId('technique-window'));
+  assert(
+    held !== undefined && held.remainingMs > 0,
+    'a self-facing resolution leaves the window standing for a hit that can use it',
   );
 }
 

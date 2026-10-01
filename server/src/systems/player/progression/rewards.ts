@@ -1,4 +1,4 @@
-import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, GAME_CONFIG, familyForMonster, CAPSTONE_MATERIALS, SHARD_BASE_PER_KILL, SHARD_TIER_MULT, biomeDefensiveLaneAPackets } from '@mmo-idle/shared';
+import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, GAME_CONFIG, familyForMonster, CAPSTONE_MATERIALS, SHARD_BASE_PER_KILL, SHARD_TIER_MULT, biomeLaneAPackets } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -19,15 +19,12 @@ const FALLBACK_REWARDS: KillRewards = { essence: 1, essenceType: 'green', level:
 const DEFAULT_BOSS_RESPAWN_MS = 30_000;
 
 /**
- * Design §17's shard-sourcing stopgap: at T1 every node fields only
- * `monsterPoolByTier[1]` (two mobs per biome), so three packets — Engagement,
- * Bulwark, Barrier tempo — have NO T1 family at all and are otherwise
- * unreachable before a biome's third family debuts at tier 2. Until Phase 4
- * reviews the families, a biome boss kill also drops this many shards of EACH
- * distinct Lane-A packet across its three non-weapon lineages (armor, recovery,
- * mobility) — deduplicated per packet, so a biome whose armor and mobility
- * lineages share a Lane A (e.g. Plains' Kill chain) pays that packet once per
- * kill, not once per lineage that names it.
+ * Design §18.6's shard-sourcing stopgap: Bulwark and Barrier tempo have NO T1 mob
+ * family at all and would otherwise be unreachable, and Technique (design §22) has
+ * only one. So a biome boss kill also drops this many shards of EACH distinct
+ * Lane-A packet across the lineages homed in that biome — deduplicated per packet,
+ * so a biome whose armor and mobility lineages share a Lane A (e.g. Plains' Kill
+ * chain) pays that packet once per kill, not once per lineage that names it.
  *
  * FOUR, so a boss-only lane buys a payoff card in two kills (design §18.6): a
  * payoff row costs eight shards at T1, and at two per kill those lanes were four
@@ -98,10 +95,10 @@ function grantLineageMaterials(
     touched = true;
   }
 
-  // Shard-sourcing stopgap (design §17) — see BOSS_LANE_A_SHARD_AMOUNT's comment.
+  // Shard-sourcing stopgap (design §18.6) — see BOSS_LANE_A_SHARD_AMOUNT's comment.
   // Same "not multiplier-scaled by node identity" treatment as the capstone above.
   if (monster.isMonster.isBoss && params.biomeGroup) {
-    for (const packet of biomeDefensiveLaneAPackets(params.biomeGroup)) {
+    for (const packet of biomeLaneAPackets(params.biomeGroup)) {
       prog.shards[packet] =
         (prog.shards[packet] ?? 0) + Math.max(1, Math.round(BOSS_LANE_A_SHARD_AMOUNT * params.debugMult));
       touched = true;

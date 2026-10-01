@@ -687,6 +687,14 @@ function fxLineageCard(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }):
     case "engagement.brace-sparks":
       fxCardPips(scene, pos, color, ev.stacks ?? 4);
       return;
+    case "technique.cast-flare":
+      // Technique (design §22): the flourish of the form itself — a flash on the
+      // wearer because the lane pays THEM (readiness, a window), plus a ghost of
+      // the strike on whatever it landed on. Both are the existing primitives in
+      // the lane's own colour, so there is no new visual language to learn.
+      fxCardFlash(scene, pos, color, amp);
+      fxCardGhostStrike(scene, target, color, amp);
+      return;
     // Capstones — the form's lasting verb (design §8: "form art changes, plus
     // a lasting aura"), drawn as a bigger pass of the same primitives.
     case "tempo.gale-wake":
@@ -788,6 +796,13 @@ function fxLineageCard(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }):
       // Unbroken: the ward shell, held rather than broken.
       fxAoeRing(scene, ev.pos, 34, color);
       return;
+    case "technique.keystone":
+      // Signature: the cast flare at keystone scale, ringed — the Technique just
+      // counted as the class mechanic, so it reads like the mechanic's own moment.
+      fxAoeRing(scene, ev.pos, 40, color);
+      fxCardFlash(scene, pos, color, KEYSTONE_SCALE);
+      fxCardGhostStrike(scene, target, color, KEYSTONE_SCALE * amp);
+      return;
     // Defensive CAPSTONE signatures (gap closed 2026-10-01): every OTHER
     // defensive lineage crowning a lane already covered above gets its own
     // combination of the same six primitives, so two lineages' capstones on
@@ -865,6 +880,7 @@ function fxLineageCard(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }):
     case "control.trail":
     case "kill-chain.trail":
     case "engagement.trail":
+    case "technique.trail":
       return;
     default:
       // Unknown key: draw nothing (contract), and say so once per key in dev.

@@ -3,8 +3,9 @@
  *
  * A keystone is the single bespoke row in the tree (design §4): every other card
  * is data over the closed vocabulary, and a keystone changes a RULE instead of
- * adding an effect. So each of the eight is a small named module in this folder,
- * and they all need the same three services from here:
+ * adding an effect. So each one is a small named module in this folder (nine of
+ * them since §22's Technique packet), and they all need the same three services
+ * from here:
  *
  *  1. **Is it live?** {@link keystoneActive} — true when the player's active
  *     `keystone` row card of that lane is owned-and-active in ANY lineage. The
@@ -14,9 +15,9 @@
  *     at recalc, so it costs one array scan and never a database read.
  *
  *  2. **How big?** {@link keystoneShare} — the card's own resolved magnitude,
- *     straight off the magnitude table at `ROW_SCALAR.keystone`. Two of the eight
- *     pay out a share of a hit; the other six are timings and refusals whose
- *     numbers live in `LINEAGE_UNITS`.
+ *     straight off the magnitude table at `ROW_SCALAR.keystone`. Two of the nine
+ *     pay out a share of a hit; the rest are timings, refusals and re-labellings
+ *     whose numbers, where they have any, live in `LINEAGE_UNITS`.
  *
  *  3. **What does the player see?** {@link pushKeystoneFx} — one `card-fx` per
  *     application with the lane's `<lane>.keystone` key, which is the same
@@ -26,7 +27,8 @@
  * WHY A REGISTRY AND NOT EIGHT IMPORTS. The modules hook heterogeneous seams —
  * three register combat listeners, three are predicates the defense tick calls,
  * one pre-pass runs before the status decay, one is consumed inside the DoT stack
- * applier. {@link registerKeystones} is the single call `registerLineageCards`
+ * applier, one is a call the Technique resolution seam makes.
+ * {@link registerKeystones} is the single call `registerLineageCards`
  * makes so the live server and the bench see an identical set, and
  * {@link KEYSTONE_MODULES} is what an authoring test asserts against to prove
  * every authored keystone card has a rule behind it.

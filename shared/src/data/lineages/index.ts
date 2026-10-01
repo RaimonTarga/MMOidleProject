@@ -103,16 +103,26 @@ export function lineagesWithLane(slot: EquipmentSlot, lane: PacketId): LineageDe
 }
 
 /**
- * The distinct Lane-A packets of a biome's three non-weapon lineages (design
- * §17's shard-sourcing stopgap): Engagement, Bulwark and Barrier tempo have no
- * T1 mob family at all, so a biome boss kill also drops shards of these —
- * derived from the registered lineages rather than a second hand-kept table.
- * See `server/src/systems/player/progression/rewards.ts`.
+ * The distinct Lane-A packets of every lineage homed in a biome — the input to
+ * design §18.6's boss shard stopgap: "the boss pays four shards of the lineage's
+ * Lane A packet plus the capstone, so a boss-only lane buys a payoff card in two
+ * kills". Derived from the registered lineages rather than a second hand-kept
+ * table. See `server/src/systems/player/progression/rewards.ts`.
+ *
+ * WHY EVERY LINEAGE AND NOT JUST THE DEFENSIVE ONES. This read the three
+ * non-weapon lineages only, because when §17 wrote the stopgap every WEAPON Lane A
+ * already had a mob family dropping its shard. §22's Technique packet broke that
+ * assumption: it is the Broadsword's Lane A, and with Plains Swarm its only
+ * family source it would otherwise have ONE T1 source where §12's coverage rule
+ * asks for two. §18.6's sentence says "the lineage's Lane A packet" without
+ * qualification, so the rule is now what it says. The four other weapon Lane As
+ * (Rapier and Axe Tempo, Hammer Empowered, Dagger Affliction) already had family
+ * sources, so for them this is a small boss-kill bonus rather than access.
  */
-export function biomeDefensiveLaneAPackets(biome: string): PacketId[] {
+export function biomeLaneAPackets(biome: string): PacketId[] {
   const packets = new Set<PacketId>();
   for (const lineage of LINEAGE_DATABASE.values()) {
-    if (lineage.slot === 'weapon' || lineage.homeBiome !== biome) continue;
+    if (lineage.homeBiome !== biome) continue;
     packets.add(lineage.lanes[0]);
   }
   return [...packets];

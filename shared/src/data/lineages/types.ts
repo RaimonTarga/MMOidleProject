@@ -34,16 +34,27 @@ export type PacketId =
   | 'kill-chain'
   | 'engagement'
   | 'bulwark'
-  | 'barrier-tempo';
+  | 'barrier-tempo'
+  // The ninth packet (design §22, run 4). It wants Technique cooldown reduction
+  // and Technique power — the stats the Plains Broadsword and the Desert
+  // staff/cross line already lean on — fires on `technique-cast`, and pays with
+  // a cooldown refund or a window that empowers the next Technique.
+  | 'technique';
 
 export const PACKET_IDS: readonly PacketId[] = [
   'tempo', 'empowered', 'affliction', 'control',
   'kill-chain', 'engagement', 'bulwark', 'barrier-tempo',
+  'technique',
 ] as const;
 
-/** The six packets weapons draw from (design §3). The last two are defensive-only. */
+/**
+ * The packets weapons draw from (design §3, §22). The two defensive-only ones
+ * (`bulwark`, `barrier-tempo`) are excluded; `technique` joined in run 4, which
+ * is why the list is seven rather than design §3's original six.
+ */
 export const WEAPON_PACKET_IDS: readonly PacketId[] = [
   'tempo', 'empowered', 'affliction', 'control', 'kill-chain', 'engagement',
+  'technique',
 ] as const;
 
 /**
@@ -82,11 +93,20 @@ export type TriggerKind =
   | 'guard-cast'
   | 'standing'
   | 'pulse'
-  | 'barrier-break';
+  | 'barrier-break'
+  /**
+   * A Technique resolved — the Technique packet's own moment (design §22, run
+   * 4). Fired from the one Technique resolution seam
+   * (`server/src/systems/combat/techniqueResolved.ts`), once per cast that
+   * lands or resolves, and NEVER from a Guard: a Guard has `guard-cast`, and
+   * defence must not fire an offensive lane.
+   */
+  | 'technique-cast';
 
 export const TRIGGER_KINDS: readonly TriggerKind[] = [
   'hit-nth', 'mechanic-fired', 'first-hit', 'kill', 'evade',
   'hit-taken', 'guard-cast', 'standing', 'pulse', 'barrier-break',
+  'technique-cast',
 ] as const;
 
 /**
@@ -110,12 +130,28 @@ export type PayoffKind =
   | 'cleanse'
   | 'plating-stack'
   | 'engagement-dr'
-  | 'contagion';
+  | 'contagion'
+  /**
+   * The Technique packet's two payoffs (design §22, run 4).
+   *
+   *  - `technique-refund` takes the magnitude share off the REMAINING cooldown
+   *    of each of the player's Techniques, so the lane pays in readiness rather
+   *    than in damage. On an ability node (design §19) that reads as "landing
+   *    this ability refunds part of its own cooldown", because the cooldown that
+   *    is running when the node fires is the ability's own.
+   *  - `technique-window` opens a window in which the next Technique lands
+   *    empowered, folded into `ctx.metadata.empoweredMultiplier` exactly as
+   *    `damage-window` is — one multiplier per hit (design §6), never a second
+   *    multiplicative layer.
+   */
+  | 'technique-refund'
+  | 'technique-window';
 
 export const PAYOFF_KINDS: readonly PayoffKind[] = [
   'vulnerability', 'plating-shred', 'echo-hit', 'hemorrhage', 'poison-stack',
   'slow', 'stun', 'damage-window', 'speed-window', 'recovery-window',
   'ward', 'cleanse', 'plating-stack', 'engagement-dr', 'contagion',
+  'technique-refund', 'technique-window',
 ] as const;
 
 /**
@@ -175,16 +211,30 @@ export const AMPLIFIED_AXES: readonly AmplifiedAxis[] = [
 export type LineageStatKey =
   | 'attack' | 'onHitDamage' | 'plating' | 'damageReduction' | 'evasion'
   | 'maxHp' | 'recovery' | 'speed'
-  | 'attackPct' | 'attackSpeedPct';
+  | 'attackPct' | 'attackSpeedPct'
+  /**
+   * Technique power (design §22). NOT an `ItemStats` field and not a skill-tree
+   * `StatEffects` one: it is the existing `technique.power-pct` PASSIVE, the one
+   * `techniquePowerPctFor` already reads and `abilities.ts` already applies to
+   * `ability.slot === 'technique'`. The Technique lane scales that rather than
+   * inventing a parallel stat, so a lineage stat row and a Desert recipe's
+   * `technique.power-pct` are the same number to the ability code.
+   */
+  | 'techniquePowerPct';
 
 /**
  * What a resolved stat row contributes. Folds into passives at recalc through the
  * same seam `itemMechanicEffectsAt` uses (Phase 1b), so the `*Pct` members keep
  * their sum-additively-then-apply-once semantics.
+ *
+ * `techniquePowerPct` is declared here rather than borrowed from `StatEffects`
+ * because it is a passive key, not a skill-tree stat — widening `StatEffects`
+ * would hand every skill node a stat the tree has no authored home for.
  */
 export type LineageStatEffects =
   Partial<Pick<ItemStats, 'attack' | 'onHitDamage' | 'plating' | 'damageReduction' | 'evasion' | 'maxHp' | 'recovery' | 'speed'>>
-  & Partial<Pick<StatEffects, 'attackPct' | 'attackSpeedPct'>>;
+  & Partial<Pick<StatEffects, 'attackPct' | 'attackSpeedPct'>>
+  & { techniquePowerPct?: number };
 
 // ─── Visual signatures (design §8) ───────────────────────────────────────────
 
@@ -201,6 +251,10 @@ export type LineageFxKey =
   // Stat rows — weapon trail colour / intensity in the lane colour.
   | 'tempo.trail' | 'empowered.trail' | 'affliction.trail'
   | 'control.trail' | 'kill-chain.trail' | 'engagement.trail'
+  | 'technique.trail'
+  // Technique (design §22): the cast flare its payoff rows and its Desert
+  // capstones draw — the lane's grammar is the flourish of the form itself.
+  | 'technique.cast-flare'
   // Payoff rows — a new on-screen event.
   | 'tempo.ghost-strike'
   | 'empowered.plating-crack' | 'empowered.weak-point'
@@ -231,7 +285,7 @@ export type LineageFxKey =
   // starts playing differently.
   | 'tempo.keystone' | 'empowered.keystone' | 'affliction.keystone'
   | 'control.keystone' | 'kill-chain.keystone' | 'engagement.keystone'
-  | 'bulwark.keystone' | 'barrier-tempo.keystone'
+  | 'bulwark.keystone' | 'barrier-tempo.keystone' | 'technique.keystone'
   // Defensive CAPSTONE signatures (gap closed 2026-10-01): the packet-keyed
   // defensive signature above is shared by every lineage that carries the
   // lane, so two lineages crowning the same lane (e.g. the Robe's and the
@@ -252,6 +306,7 @@ export type LineageFxKey =
 export const LINEAGE_FX_KEYS: readonly LineageFxKey[] = [
   'tempo.trail', 'empowered.trail', 'affliction.trail',
   'control.trail', 'kill-chain.trail', 'engagement.trail',
+  'technique.trail', 'technique.cast-flare',
   'tempo.ghost-strike',
   'empowered.plating-crack', 'empowered.weak-point',
   'affliction.bleed-pips', 'affliction.venom-pips',
@@ -268,7 +323,7 @@ export const LINEAGE_FX_KEYS: readonly LineageFxKey[] = [
   'bulwark.plating-chip', 'empowered.guard-spark',
   'tempo.keystone', 'empowered.keystone', 'affliction.keystone',
   'control.keystone', 'kill-chain.keystone', 'engagement.keystone',
-  'bulwark.keystone', 'barrier-tempo.keystone',
+  'bulwark.keystone', 'barrier-tempo.keystone', 'technique.keystone',
   'bulwark.rampart-seal', 'bulwark.hide-ward', 'bulwark.frostline-plate',
   'bulwark.resonant-plate', 'bulwark.ballast-plate',
   'control.deep-shock', 'control.icebreaker', 'control.wetland-anchor',

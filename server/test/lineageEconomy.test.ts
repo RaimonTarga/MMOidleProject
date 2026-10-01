@@ -217,7 +217,7 @@ const walletTotal = (p: PlayerEntity): number =>
   player.holdsInventory.lineages = {
     ...player.holdsInventory.lineages,
     broadsword: {
-      ownedCards: ['broadsword-t1-tempo-stat'], active: {},
+      ownedCards: ['broadsword-t1-technique-stat'], active: {},
       ownedForms: ['iron-broadsword'], wornForm: 'iron-broadsword',
     },
   };

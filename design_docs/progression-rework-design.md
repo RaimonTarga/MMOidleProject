@@ -117,10 +117,15 @@ lineage carries three packets as its three **lanes**, drawn from this list:
 | Engagement | approach, first hit | fight start | engagement DR, opening burst, barrier refill | long attrition fights |
 | Bulwark | plating, stationary DR | standing still / hit taken | plating stacks, absorb ramp, ward | mobility-demanding fights |
 | Barrier tempo | barrier %, recharge | barrier breaks | break heal, refill on max hit | sustained chip |
+| Technique | technique power, technique CDR | a Technique lands | cooldown refund, a window empowering the next Technique | fights shorter than a cooldown |
 
-Weapons draw from the first six. Armor, charm, and boots draw from all eight but express
-offensive packets through their **defensive face** (§3.1). Coverage rule (§9): every
-packet must appear on at least two lineages per slot per tier.
+Weapons draw from the seven offensive packets (the first six plus Technique, §22);
+Bulwark and Barrier tempo are defensive-only. Armor, charm, and boots draw from all of
+them but express offensive packets through their **defensive face** (§3.1). Coverage rule
+(§9): every packet must appear on at least two lineages per slot per tier.
+
+*Technique shipped in run 4 at one weapon lineage and no non-weapon one, with a
+self-cleaning exemption in `coverage.test.ts`; the ability pass (§22) closes both.*
 
 ### 3.1 Frames name the defensive faces (locked)
 
@@ -141,14 +146,15 @@ they were one stat.
 
 | Lineage | Lane A | Lane B | Lane C | Derived from |
 |---|---|---|---|---|
-| Plains Broadsword | Kill chain | Empowered | Tempo | technique CDR/power, swarm biome, generalist floor |
+| Plains Broadsword | **Technique** | Kill chain | Empowered | technique CDR/power made a lane (§22), swarm biome, generalist floor |
 | Forest Rapier | Tempo | Affliction | Engagement | 1.50 aps, Jungle on-hit successor, duelist |
 | Mountain Hammer | Empowered | Control | Engagement | empowered-mult bonus, stagger fantasy, approach boots |
 | Cave Axe | Tempo | Kill chain | Empowered | dead-swing chaos, 1.10 aps, premium biome |
 | Swamp Dagger | Affliction | Control | Kill chain | reservoir DoT, chill/slow, contagion on kill |
 
-Coverage at T1: Tempo 3, Empowered 3, Kill chain 3, Affliction 2, Control 2,
-Engagement 2. Every packet on at least two lineages.
+Coverage at T1 after §22: Tempo 2 (Rapier, Axe), Empowered 3, Kill chain 3, Affliction 2,
+Control 2, Engagement 2, Technique 1 (Broadsword). Every packet but Technique on at least
+two lineages; Technique's second carrier is the ability pass's.
 
 Armor/charm/boots matrices are authored in Phase 4 of the plan using the same rule, with
 each biome's existing mechanic as Lane A.
@@ -174,16 +180,17 @@ Row semantics:
 - **Payoff** — a trigger *and* its effect in one card. There is no standalone trigger
   row: a card must do something the moment it is bought.
 - **Amplifier** — modifies the owned payoff: duration, second target, extra trigger.
-- **Keystone** — changes a rule. **Amended 2026-10-01: one keystone per packet, eight in
-  all, shared by every lineage that carries the lane in any slot** (not one per lane per
-  slot). Tempo *Chain*: the echo keeps re-triggering until a miss or no fresh target.
+- **Keystone** — changes a rule. **Amended 2026-10-01: one keystone per packet — eight,
+  then nine once §22 added Technique — shared by every lineage that carries the lane in
+  any slot** (not one per lane per slot). Tempo *Chain*: the echo keeps re-triggering until a miss or no fresh target.
   Empowered *Shockwave*: the mechanic's hit becomes an area hit. Affliction *Festering*:
   stacks do not expire while you keep hitting. Control *Ladder*: slow, then root, then stun
   on hit, once per step per target. Kill chain *Refund*: a kill readies the mechanic.
   Engagement *Always First*: every new target's first hit counts as the mechanic firing.
   Bulwark *Immovable*: stationary DR and plating stacks persist 2 s after moving; no
   displacement. Barrier tempo *Unbroken*: the barrier keeps recharging through hits above
-  half HP. These are the "this changes how my character plays" moments. The T3 class paths
+  half HP. Technique *Signature* (§22): a landed Technique counts as the class mechanic
+  firing. These are the "this changes how my character plays" moments. The T3 class paths
   are tagged with a packet so the item keystone and the class path name the same lane; the
   paths themselves are reviewed after the rework.
 - **Cross-lane** — take a second lane's payoff at ~50%. Hybrids appear late, when the
@@ -230,18 +237,21 @@ jump to the next tier's form, next band lights up. It is the reward moment.
 
 Cards are data. Adding a card adds no code and no test.
 
-**Trigger kinds** (≤10): `hit-nth`, `mechanic-fired`, `first-hit`, `kill`, `evade`,
-`hit-taken`, `guard-cast`, `standing`, `pulse`, `barrier-break`.
+**Trigger kinds** (≤12): `hit-nth`, `mechanic-fired`, `first-hit`, `kill`, `evade`,
+`hit-taken`, `guard-cast`, `standing`, `pulse`, `barrier-break`, `technique-cast`
+(added 2026-10-01 with §22's Technique packet; fired from the one Technique resolution
+seam, never from a Guard).
 
 `mechanic-fired` is the one seam that does not exist yet: a class-agnostic "your mechanic
 fired" event covering finisher, execution, full stacks, reload, energy burst, and a
 summon command. The `empoweredMultiplier` metadata and `hasEmpoweredAttack` marker are
 most of the way there.
 
-**Payoff kinds** (≤15): `vulnerability`, `plating-shred`, `echo-hit`, `hemorrhage`,
+**Payoff kinds** (≤18): `vulnerability`, `plating-shred`, `echo-hit`, `hemorrhage`,
 `poison-stack`, `slow`, `stun`, `damage-window`, `speed-window`, `recovery-window`,
 `ward`, `cleanse`, `plating-stack`, `engagement-dr`, `contagion`, `evasion-window`
-(added 2026-10-01 so the avoid face has a real effect).
+(added 2026-10-01 so the avoid face has a real effect), `technique-refund`,
+`technique-window` (added 2026-10-01 with §22's Technique packet).
 
 Every payoff maps onto an existing server hook (cadence aftershock/hemorrhage/rampage,
 cooldown rupture/overdrive, dot conflagration/chill, defense hit-plating/engagement-dr/
@@ -389,7 +399,7 @@ and reviewed before Phase 4.
 | Biome | Family | Existing mobs | Drops (shard) | Punishes |
 |---|---|---|---|---|
 | Plains | Herd | boar, stampede-bull | Empowered | Tempo |
-| Plains | Swarm | plains-slime, prairie-wolf | Tempo | Empowered |
+| Plains | Swarm | plains-slime, prairie-wolf | **Technique** (§22) | Empowered |
 | Plains | Sky | savanna-hawk | Engagement | Affliction |
 | Forest | Pack | wolf, ancient-wolf | Tempo | Empowered |
 | Forest | Grove | ironwood-golem, forest-slime | Empowered | Tempo |
@@ -404,9 +414,11 @@ and reviewed before Phase 4.
 | Swamp | Coven | bog-witch, hydra | Control | Tempo |
 | Swamp | Stalker | mire-stalker | Kill chain | Bulwark |
 
-Shard sources at T1 with the whole table: Tempo 3, Empowered 4, Affliction 3, Control 2,
-Kill chain 2, Engagement 1 (Plains Sky only, so Engagement needs a second T1 source when
-Mountain is reviewed; Ridge is the candidate). Bulwark and Barrier tempo have no T1
+Shard sources at T1 with the whole table (after §22 moved the Swarm): Tempo 2, Empowered 4,
+Affliction 3, Control 2, Kill chain 2, Technique 1, Engagement 1 (Plains Sky only, so
+Engagement needs a second T1 source when Mountain is reviewed; Ridge is the candidate).
+Technique's second source is the Plains boss, via §18.6's Lane-A stopgap, which run 4
+widened to cover weapon lineages for exactly that reason. Bulwark and Barrier tempo have no T1
 family source and are sourced from Phase 4's defensive families or, if none fits, from
 the boss capstone as a secondary drop (open).
 
@@ -654,6 +666,9 @@ level requirement to speak of, because that biome has no content at the tier bel
 boss capstone is the whole gate there, which is §5's intent anyway.
 
 ## 22. Ability pass and the Technique packet (decided 2026-10-01; Technique pulled into run 4, the pass after the playtest)
+
+*SHIPPED 2026-10-01 (run 4, W1-G) except the ability pass below; see the progress note in
+`docs/archive/progression-rework-plan.md`.*
 
 **Technique becomes the ninth packet.** It wants technique cooldown reduction and technique
 power (the stat the Plains Broadsword and the Desert staff/cross line already carry), fires
