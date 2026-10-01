@@ -56,6 +56,12 @@ export const mountainMonsterEntries = [
     // Strong Kick's multiplier is unchanged at 1.9 and derives from this attack,
     // so its damage moves with the base cut. That is intended.
     stats: { hp: 190, attack: 40, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 3000, pullRange: 420 },
+    // HOPPER FAMILY (progression rework, 2026-10-01, PROVISIONAL): evasion unset -> 0.15.
+    // Hopper declares `punishes: 'empowered'` and evasion is the one stat that punishes
+    // it — a multiplied hit that misses is the entire punishment. A leaping goat is the
+    // most natural evader in the bestiary, and Hopper is the only Mountain family with
+    // no plating to fall back on. 0.15 is inside the ≤ 0.25 authoring ceiling.
+    evasion: 0.15,
     behavior: 'melee', attackStyle: 'hind-kick', biome: 'mountain',
     rewards: { essence: 6, essenceType: 'blue', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 200, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
