@@ -48,9 +48,24 @@ export const swampMonsterEntries = [
     id: 'bog-slime', name: 'Mire Ooze', color: 0x558833,
     // BASELINE POISON ENEMY. Weak direct attack; the stacking poison is the whole
     // threat. No extra mechanic, deliberately.
-    stats: { hp: 140, attack: 10, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 2000, pullRange: 165 },
+    // MIRE FAMILY (progression rework, 2026-10-01, PROVISIONAL) — the one MEASURED
+    // family inversion in the game: Affliction, the lane Mire DROPS, ranked last of six
+    // on its own node in both seeds at both bench caps, and the margin against its
+    // declared victim widened as sampling improved (-12.0pp at 90 s, -18.7pp at 270 s).
+    //  - hp 140 -> 300: Affliction fires on stacks reaching cap. At 140 HP a Mire body
+    //    died in three to five hits, so the stack ladder never reached its payoff on the
+    //    one node that is seven-tenths Mire. The family's own T3 body bog-lurker is
+    //    already 490, so this also removes an internal inconsistency.
+    //  - attack stays 10 ON PURPOSE: Mire is the low-direct-damage DoT body by design;
+    //    more HP must not become more pressure by accident.
+    stats: { hp: 300, attack: 10, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 2000, pullRange: 165 },
     behavior: 'melee', attackStyle: 'ooze-engulf', biome: 'swamp',
     rewards: { essence: 5, essenceType: 'purple', level: 1, biomeXp: 35 },
+    // evasion unset -> 0.15 (same pass): Mire declares `punishes: 'empowered'` and had
+    // no mechanism to do it — a multiplied hit that misses is the entire punishment.
+    // Inside the ≤ 0.25 ceiling and below bog-lurker's 0.25, so the line still
+    // escalates by tier.
+    evasion: 0.15,
     ai: { wanderRadius: 160, leashRange: 530, idleMinMs: 2000, idleMaxMs: 5500 },
     // Fewer, heavier, faster-ticking stacks than before. The old 4-stack/1500ms poison
     // needed ~6.6s of uninterrupted hits to reach cap, which is longer than the mob
