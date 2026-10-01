@@ -2040,6 +2040,50 @@ its own node at the lowest tier it has one — the reference build is a Tier-1 b
 Tier 1 is the tier that band is tuned for — with the higher tier reported as
 corroboration.
 
+**3. No `drops` remap was clear, and a 270 s addendum run says why.** Design §18 3b's
+test was met by no family on the 90 s run. Two came within one rank in one seed (Forest
+Canopy and Swamp Mire, both last pooled, both with Engagement first in both seeds), so a
+targeted re-run of the nine decisive own-nodes at a **270 s** cap followed —
+`reports/progression-phase1/lane-matrix-run3-slow.md`, 360 runs, 26.7 min — because Cave
+and Mountain give only 8–10 kills per seed at 90 s and Cave Brute's node had produced no
+rankable lane at all.
+
+It was worth the 27 minutes, and it is the single most consequential thing W2-A found:
+
+- Cave Brute and Cave Deep become rankable, both with their favoured lane LAST.
+- **Plains Sky inverts.** Engagement was last of six and −11.3pp at 90 s; at 270 s it is
+  **first of six and +3.8pp**. The overnight report's Sky finding and the main run's are
+  both under-sampling artefacts, and Sky's contract holds.
+- Cave Brood and Mountain Crag flip sign between caps; Forest Canopy softens from −3.8pp
+  to −0.7pp.
+- **Seven of nine families still rank differently in the two seeds at 21–57 kills per
+  seed** (Brute 1st and 6th, Deep 1st and 6th, Brood 2nd and 6th, Crag 5th and 1st).
+  Only Swamp Mire agrees — 6/6 in both seeds at both caps, with the margin WIDENING as
+  sampling improves, −12.0pp to −18.7pp.
+
+**So the ordinal encounter check and the ±3pp band are both below the instrument's
+resolution at Tier 1 today, on every family but one.** That is a finding about §18.9's
+measurability, not about the families, and Phase 4 should not act on a rank from a
+two-seed run. The recommendation in the proposal file: stop ranking six lanes against
+each other on one node and compare **one lane against one lane** on its own favoured
+node, pooled over the three lineages that carry it, with enough seeds to put an interval
+on that single difference. More seeds alone will not do it — the 270 s run already
+tripled the samples per seed.
+
+**4. The proposal table applies nothing** and no row in it rests on a rank alone. Its
+spine is a fact read off the data files rather than measured: **`dotResistance` is set on
+zero monsters in the entire game and `evasion` on two**, so fourteen of the eighteen
+family contracts declare a punishment with no stat behind it. The one measured inversion
+is Swamp Mire; Plains under-pressure rests on a death count of zero across 118 cells in
+four of the five T1 biomes. The file also withdraws its own earlier `grass-kite` rows,
+in the file, with the reason — the addendum reversed the reading they rested on.
+
+One conflict the table is blocked on and cannot resolve: `plains.monsters.ts`'s header
+says squishy biomes (plains/forest) carry NO plating by design, while the family contract
+needs Plains Herd's and Forest Grove's bodies to have plating in order to punish Tempo at
+all. The biome-mitigation lesson and the family punishment contract want opposite things
+from the same stat on the same mobs.
+
 ---
 
 ## Cross-cutting rules
