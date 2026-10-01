@@ -24,7 +24,7 @@ export const PLATE_LINEAGE: LineageDefinition = {
       capstone: {
         id: 'plate-capstone-crusader', name: "Crusader's Ground",
         description: 'Holding ground now keeps building plate long after the usual limit.',
-        fx: 'bulwark.plating-chip', lane: 'bulwark',
+        fx: 'bulwark.rampart-seal', lane: 'bulwark',
         trigger: 'standing', payoff: 'plating-stack',
       },
     },

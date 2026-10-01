@@ -25,7 +25,7 @@ export const WING_LINEAGE: LineageDefinition = {
       capstone: {
         id: 'wing-capstone-cavern', name: 'Cavern Sprint',
         description: 'The opening exchange keeps costing less, wherever the dark takes you next.',
-        fx: 'engagement.sidestep-blur', lane: 'engagement',
+        fx: 'engagement.cavern-sprint', lane: 'engagement',
         trigger: 'first-hit', payoff: 'engagement-dr',
       },
     },
@@ -34,7 +34,7 @@ export const WING_LINEAGE: LineageDefinition = {
     capstone: {
       id: 'wing-capstone-ember-spark', name: 'Ember Spark',
       description: 'A kill restores the spark a solid hit just knocked loose.',
-      fx: 'kill-chain.kill-pulse', lane: 'kill-chain',
+      fx: 'kill-chain.ember-spark', lane: 'kill-chain',
       trigger: 'kill', payoff: 'speed-window',
     },
   },

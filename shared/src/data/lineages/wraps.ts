@@ -25,7 +25,7 @@ export const WRAPS_LINEAGE: LineageDefinition = {
       capstone: {
         id: 'wraps-capstone-windstep', name: 'Windstep',
         description: 'The opening exchange now costs even less, every fight, not just the first.',
-        fx: 'engagement.sidestep-blur', lane: 'engagement',
+        fx: 'engagement.windstep', lane: 'engagement',
         trigger: 'first-hit', payoff: 'engagement-dr',
       },
     },

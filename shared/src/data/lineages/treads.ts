@@ -24,7 +24,7 @@ export const TREADS_LINEAGE: LineageDefinition = {
       capstone: {
         id: 'treads-capstone-stride', name: 'Mountain Stride',
         description: 'Every opening exchange now lands as light as the first, all fight long.',
-        fx: 'engagement.sidestep-blur', lane: 'engagement',
+        fx: 'engagement.mountain-stride', lane: 'engagement',
         trigger: 'first-hit', payoff: 'engagement-dr',
       },
     },
@@ -33,7 +33,7 @@ export const TREADS_LINEAGE: LineageDefinition = {
     capstone: {
       id: 'treads-capstone-icebreaker', name: 'Icebreaker Stride',
       description: 'Every third stride plants enough ice to root whatever you pass.',
-      fx: 'control.chill-blur', lane: 'control',
+      fx: 'control.icebreaker', lane: 'control',
       trigger: 'hit-nth', payoff: 'stun',
     },
   },

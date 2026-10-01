@@ -24,7 +24,7 @@ export const HIDE_LINEAGE: LineageDefinition = {
       capstone: {
         id: 'hide-capstone-dire', name: 'Dire Resolve',
         description: 'Every hit you hold through keeps the hide toughening, not just the first.',
-        fx: 'bulwark.plating-chip', lane: 'bulwark',
+        fx: 'bulwark.hide-ward', lane: 'bulwark',
         trigger: 'standing', payoff: 'plating-stack',
       },
     },

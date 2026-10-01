@@ -222,7 +222,23 @@ export type LineageFxKey =
   // signature drawn bigger, not a second effect).
   | 'tempo.evasive-blur' | 'engagement.sidestep-blur' | 'control.chill-blur'
   | 'kill-chain.recovery-pulse' | 'barrier-tempo.ward-shell' | 'affliction.toxic-pulse'
-  | 'bulwark.plating-chip' | 'empowered.guard-spark';
+  | 'bulwark.plating-chip' | 'empowered.guard-spark'
+  // Defensive CAPSTONE signatures (gap closed 2026-10-01): the packet-keyed
+  // defensive signature above is shared by every lineage that carries the
+  // lane, so two lineages crowning the same lane (e.g. the Robe's and the
+  // Plate's bulwark capstone) were visually identical. One lineage per lane
+  // keeps the original shared key (the lane's "default" flavour); every other
+  // lineage crowning that lane gets its own key here, reused across that
+  // lineage's own doors into the band (same convention as the weapon
+  // lineages' `tempo.gale-wake` / `tempo.ruin-afterimage` already follow).
+  | 'bulwark.rampart-seal' | 'bulwark.hide-ward' | 'bulwark.frostline-plate'
+  | 'bulwark.resonant-plate' | 'bulwark.ballast-plate'
+  | 'control.deep-shock' | 'control.icebreaker' | 'control.wetland-anchor'
+  | 'engagement.oasis-guard' | 'engagement.windstep' | 'engagement.mountain-stride'
+  | 'engagement.cavern-sprint'
+  | 'affliction.spore-veil' | 'affliction.bog-eye'
+  | 'kill-chain.wind-chaser' | 'kill-chain.ember-spark'
+  | 'barrier-tempo.bulwark-heart';
 
 export const LINEAGE_FX_KEYS: readonly LineageFxKey[] = [
   'tempo.trail', 'empowered.trail', 'affliction.trail',
@@ -241,6 +257,14 @@ export const LINEAGE_FX_KEYS: readonly LineageFxKey[] = [
   'tempo.evasive-blur', 'engagement.sidestep-blur', 'control.chill-blur',
   'kill-chain.recovery-pulse', 'barrier-tempo.ward-shell', 'affliction.toxic-pulse',
   'bulwark.plating-chip', 'empowered.guard-spark',
+  'bulwark.rampart-seal', 'bulwark.hide-ward', 'bulwark.frostline-plate',
+  'bulwark.resonant-plate', 'bulwark.ballast-plate',
+  'control.deep-shock', 'control.icebreaker', 'control.wetland-anchor',
+  'engagement.oasis-guard', 'engagement.windstep', 'engagement.mountain-stride',
+  'engagement.cavern-sprint',
+  'affliction.spore-veil', 'affliction.bog-eye',
+  'kill-chain.wind-chaser', 'kill-chain.ember-spark',
+  'barrier-tempo.bulwark-heart',
 ] as const;
 
 // ─── Authored shapes (NO numbers — see the header) ───────────────────────────

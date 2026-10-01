@@ -24,7 +24,7 @@ export const MARSH_LINEAGE: LineageDefinition = {
       capstone: {
         id: 'marsh-capstone-wetland', name: 'Wetland Anchor',
         description: 'Holding still now keeps the ground treacherous instead of settling.',
-        fx: 'control.chill-blur', lane: 'control',
+        fx: 'control.wetland-anchor', lane: 'control',
         trigger: 'standing', payoff: 'stun',
       },
     },
@@ -33,7 +33,7 @@ export const MARSH_LINEAGE: LineageDefinition = {
     capstone: {
       id: 'marsh-capstone-deep-ballast', name: 'Deep Ballast',
       description: 'Every hit taken settles the ballast a little deeper, until it holds like plate.',
-      fx: 'bulwark.plating-chip', lane: 'bulwark',
+      fx: 'bulwark.ballast-plate', lane: 'bulwark',
       trigger: 'hit-taken', payoff: 'plating-stack',
     },
   },

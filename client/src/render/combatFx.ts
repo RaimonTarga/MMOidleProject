@@ -705,9 +705,9 @@ function fxLineageCard(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }):
       fxCardFlash(scene, pos, color, amp);
       return;
     // Defensive signatures (Phase 4: armor/recovery/mobility, design §17).
-    // Reused by BOTH a lane's T1 payoff card and the capstone that crowns it
-    // (same signature, permanent instead of one-off) — no separate capstone
-    // cases needed, which is what keeps this switch small. Face grammar
+    // The lane-keyed default below is reused by a lane's T1 payoff card AND
+    // by whichever ONE defensive lineage keeps the shared key for its
+    // capstone (same signature, permanent instead of one-off). Face grammar
     // (design §8): Avoid = blur/sidestep, Sustain = pulses and ward shells,
     // Endure = plating chips and a stance pose. All six reuse the primitives
     // above; nothing new to draw.
@@ -732,6 +732,76 @@ function fxLineageCard(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }):
       return;
     case "empowered.guard-spark":
       fxCardFlash(scene, pos, color, amp);
+      return;
+    // Defensive CAPSTONE signatures (gap closed 2026-10-01): every OTHER
+    // defensive lineage crowning a lane already covered above gets its own
+    // combination of the same six primitives, so two lineages' capstones on
+    // the same lane read differently even though both stay inside the
+    // lane's grammar. Still no new visual language — only new pairings.
+    case "bulwark.rampart-seal": // Plate
+      fxCardPlatingCrack(scene, pos, color, amp);
+      fxAoeRing(scene, ev.pos, 16 * amp, color);
+      return;
+    case "bulwark.hide-ward": // Hide
+      fxCardPlatingCrack(scene, pos, color, amp);
+      fxCardPips(scene, pos, color, 2);
+      return;
+    case "bulwark.frostline-plate": // Barrier (Mountain recovery)
+      fxCardPlatingCrack(scene, pos, color, amp);
+      fxCardFlash(scene, pos, color, 0.6 * amp);
+      return;
+    case "bulwark.resonant-plate": // Pulse
+      fxCardPlatingCrack(scene, pos, color, amp);
+      fxAoeRing(scene, ev.pos, 22 * amp, color);
+      return;
+    case "bulwark.ballast-plate": // Marsh
+      fxCardPlatingCrack(scene, pos, color, 1.4 * amp);
+      return;
+    case "control.deep-shock": // Pulse
+      fxCardArc(scene, pos, target, color, amp);
+      fxAoeRing(scene, ev.pos, 20 * amp, color);
+      return;
+    case "control.icebreaker": // Treads
+      fxCardArc(scene, pos, target, color, amp);
+      fxCardPips(scene, target, color, 2);
+      return;
+    case "control.wetland-anchor": // Marsh
+      fxCardArc(scene, pos, target, color, amp);
+      fxCardFlash(scene, pos, color, 0.6 * amp);
+      return;
+    case "engagement.oasis-guard": // Stone
+      fxCardFlash(scene, pos, color, amp);
+      fxCardPips(scene, pos, color, 2);
+      return;
+    case "engagement.windstep": // Wraps
+      fxCardFlash(scene, pos, color, amp);
+      fxCardGhostStrike(scene, pos, color, amp);
+      return;
+    case "engagement.mountain-stride": // Treads
+      fxCardFlash(scene, pos, color, 1.3 * amp);
+      return;
+    case "engagement.cavern-sprint": // Wing
+      fxCardFlash(scene, pos, color, amp);
+      fxAoeRing(scene, ev.pos, 14 * amp, color);
+      return;
+    case "affliction.spore-veil": // Bindings
+      fxCardPips(scene, pos, color, ev.stacks ?? 3);
+      fxCardGhostStrike(scene, pos, color, amp);
+      return;
+    case "affliction.bog-eye": // Eye
+      fxCardPips(scene, pos, color, (ev.stacks ?? 3) + 1);
+      return;
+    case "kill-chain.wind-chaser": // Fleet
+      fxAoeRing(scene, ev.pos, 24 * amp, color);
+      fxCardGhostStrike(scene, pos, color, amp);
+      return;
+    case "kill-chain.ember-spark": // Wing
+      fxAoeRing(scene, ev.pos, 24 * amp, color);
+      fxCardFlash(scene, pos, color, 0.6 * amp);
+      return;
+    case "barrier-tempo.bulwark-heart": // Barrier (Mountain recovery)
+      fxAoeRing(scene, ev.pos, 24 * amp, color);
+      fxCardPlatingCrack(scene, pos, color, amp);
       return;
     // Stat rows — a persistent weapon-trail cosmetic, never an event.
     case "tempo.trail":

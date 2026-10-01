@@ -35,7 +35,7 @@ export const BINDINGS_LINEAGE: LineageDefinition = {
     capstone: {
       id: 'bindings-capstone-spore-veil', name: 'Spore Veil',
       description: 'Slip the hit clean, and the air you left behind does the rest.',
-      fx: 'affliction.venom-pips', lane: 'affliction',
+      fx: 'affliction.spore-veil', lane: 'affliction',
       trigger: 'evade', payoff: 'poison-stack',
     },
   },
