@@ -313,6 +313,17 @@ function applyPayoff(site: PayoffSite, firing: LineageFiring): CardFxDraft | nul
       applyTimedSelf(player.tracksCombat, kind, magnitude, durationMs, sourceId);
       return { fx: firing.fx };
 
+    case 'evasion-window':
+      // Applied through the evasion stat the way `speed-window` touches attack
+      // speed: read by `registerEvasion`'s onAttack listener in
+      // `defense/mitigation/evasion.ts`, which rolls it as a SECOND, independent
+      // deterministic dodge accumulator rather than folding it into
+      // `evadesHits.charge` — so an avoid-faced card does something even for a
+      // player who has not also stacked the `evasion` stat (design §6, added
+      // 2026-10-01: "so the avoid face has a real effect").
+      applyTimedSelf(player.tracksCombat, kind, magnitude, durationMs, sourceId);
+      return { fx: firing.fx };
+
     case 'recovery-window':
       // Recovery is one rate with many switches: a card ACTIVATES a fraction of
       // it for a window, it never invents a heal of its own.
@@ -1064,7 +1075,11 @@ const WINDOW_LANE: Partial<Record<PayoffKind, PacketId>> = {
   'engagement-dr': 'engagement',
   'ward': 'bulwark',
   'plating-stack': 'bulwark',
+<<<<<<< HEAD
   'technique-window': 'technique',
+=======
+  'evasion-window': 'engagement',
+>>>>>>> feat/evasion-window
 };
 
 function windowColor(kind: PayoffKind): string {
@@ -1116,5 +1131,9 @@ export const LINEAGE_BUFFS = [
   defineWindowBuff('engagement-dr', 'lineage-guard', 'Brace', 'Damage reduction'),
   defineWindowBuff('ward', 'lineage-ward', 'Shell', 'Absorb'),
   defineWindowBuff('plating-stack', 'lineage-plate', 'Plate', 'Plating per stack'),
+<<<<<<< HEAD
   defineWindowBuff('technique-window', 'lineage-technique', 'Form', 'Next Technique'),
+=======
+  defineWindowBuff('evasion-window', 'lineage-evasion', 'Slip', 'Evade chance'),
+>>>>>>> feat/evasion-window
 ] as const;

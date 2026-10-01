@@ -24,6 +24,13 @@
  *    therefore drawn one from each of those groups, and `abilityNodes.test.ts`
  *    checks it.
  *
+ *    The avoid face pays `engagement-dr` or `evasion-window` (added 2026-10-01,
+ *    design §6) — never `speed-window`, which the brief's own parenthetical
+ *    suggested and `types.ts` explains why not. Here the Engagement lane's avoid
+ *    offer pays `evasion-window` so avoid has a genuinely different effect from
+ *    endure's plating stack, rather than differing only in lane, shard and fx;
+ *    Tempo and Control keep `engagement-dr`.
+ *
  * A payoff a node fires NEVER duplicates the ability's own job: Expose Weakness
  * already brands, so its Empowered option strips plating instead; Contagion
  * already spreads, so its Affliction option seeds a fresh stack. A node that
@@ -182,9 +189,11 @@ const offerEntries: [string, AbilityPacketOffers][] = [
   ]],
 
   // Cleanse strips what is eating you; the Sustain face leaves a shell behind so
-  // the next application has further to go.
+  // the next application has further to go. Its Avoid face reads as the
+  // nothing-landed-at-all version of "cost you less": a dodge window instead of
+  // a softened hit.
   ['cleanse', [
-    ['engagement', 'engagement-dr'],
+    ['engagement', 'evasion-window'],
     ['barrier-tempo', 'ward'],
     ['bulwark', 'plating-stack'],
   ]],
@@ -206,9 +215,10 @@ const offerEntries: [string, AbilityPacketOffers][] = [
   ]],
 
   // Endure is the long hold. A long hold mends; it also wants the plating stack
-  // that a long hold is built to carry.
+  // that a long hold is built to carry. Its Avoid face is the dodge window a
+  // held stance earns, not a repeat of the plating it already buys on Endure.
   ['endure', [
-    ['engagement', 'engagement-dr'],
+    ['engagement', 'evasion-window'],
     ['kill-chain', 'recovery-window'],
     ['bulwark', 'plating-stack'],
   ]],

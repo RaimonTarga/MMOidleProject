@@ -1874,6 +1874,78 @@ the T1/T2 magnitude values moved; the one new numeric surface is
   the node handlers emit nothing, because there is no node event on the gameplay
   recorder and adding one is a schema change this task did not own.
 
+### W1-D follow-up — `evasion-window` closes divergence 1 (2026-10-01)
+
+Branch `feat/evasion-window` off `feat/lineage-data-model`, run 4. Divergence 1
+above ("the payoff vocabulary has no evasion payoff, so there is no second
+avoid-face effect to offer") is now closed: design §6 was amended the same day to
+add `evasion-window` — "a timed window that adds a flat evasion fraction to the
+player", resolved from `PAYOFF_UNIT` like `speed-window`/`engagement-dr`, status
+`lineage.evasion-window` with `{ totalMs, magnitude }`.
+
+- **Vocabulary.** Added to `PayoffKind` (`lineages/types.ts`), NOT to
+  `ON_TARGET_PAYOFF_KINDS` (it lands on the player). `PAYOFF_UNIT` entry:
+  `{ magnitude: 0.15, durationMs: 2500, fractional: true }` — sized against its
+  two nearest siblings (engagement-dr's magnitude, speed-window's duration)
+  since it has no bench history of its own; PROVISIONAL like the rest of the
+  table.
+- **Runtime.** `lineageCards.ts`'s `applyPayoff` gained a `case 'evasion-window'`
+  next to `speed-window`, using the same `applyTimedSelf`. The READ side could
+  not reuse `lineageSpeedWindowBonus`'s pattern directly: `speed-window` folds
+  into `attackHasteBonus` regardless of a player's base attack speed, but a
+  player's base dodge rate is a COMPONENT (`evadesHits`), attached only above
+  zero — attaching it from a combat-tick payoff read would fight recalc, which
+  is the only place that component's presence is decided. Instead
+  `defense/mitigation/evasion.ts`'s `registerEvasion` reads the window directly
+  (a local `evasionWindowBonus`, not imported from `lineageCards.ts`, which
+  already imports `evadeBlocksDebuffs` FROM this module — the other way would be
+  a cycle) and rolls it as a SECOND, independent deterministic accumulator
+  (`rollEvadeWindowAccumulator`, same stepping rule as `rollMonsterDodge`) kept in
+  `tracksCombat` scratch rather than folded into the networked `evadesHits.charge`
+  slice. Two consequences worth flagging for whoever benches this: (1) the
+  window-only roll has no gear `evadeMitigation` to report, so it falls back to
+  `GAME_CONFIG.EVADE_MITIGATION_BASE` (0.5, a graze) rather than a full dodge —
+  a card that wants a guaranteed hard dodge would need its own mitigation
+  channel, which does not exist yet; (2) the HUD's dodge-ring instrument (fed by
+  `evadesHits.charge`) does not reflect the window's own charge building, only
+  its clock on the buff tile (`lineage-evasion`/"Slip").
+- **Ability nodes.** `DEFENSIVE_NODE_PAYOFFS` gained `evasion-window`. Rather
+  than reach for it everywhere, only the Engagement avoid-face offer switched
+  (Cleanse, Endure — `offers.ts`) from `engagement-dr` to `evasion-window`; Tempo
+  and Control avoid-face offers kept `engagement-dr`. That was a judgement call,
+  not a rule: it keeps the fx-key-matches-lane convention clean
+  (`engagement/evasion-window` → `engagement.brace-sparks`, an existing
+  Engagement-prefixed key with a client case already, reused per the brief) and
+  gives the avoid face two genuinely different mechanics across the roster
+  without touching every Guard.
+- **Lineage cards.** Seventeen avoid-faced cards across five non-weapon
+  lineages — `bindings.ts` (4), `fleet.ts` (3), `robe.ts` (3), `stone.ts` (3),
+  `wraps.ts` (4) — paid `speed-window` on an avoid lane (Tempo, or Engagement
+  borrowing Tempo at T4), which was exactly divergence 1's "defence scaling
+  offence" on the card side, not just the node side; all seventeen switched to
+  `evasion-window` and had their description text re-worded off "speed/stride"
+  language. Left alone: `robe-t4-empowered-cross` and `stone-t4-kill-chain-cross`
+  (Endure/Sustain faces borrowing Tempo's `speed-window` — correct, not a
+  violation) and `wing.ts`'s capstone (lane `kill-chain`, Sustain). Also left
+  alone: every WEAPON lineage's `speed-window` card (axe/broadsword/rapier —
+  weapons carry no `face` at all, frame-neutral by design).
+- **Coverage.** `server/test/lineageCards.wiring.test.ts` gained a dedicated
+  `guard-cast` block (mirrors the existing `speed-window`/`kill` block) plus a
+  generic closing check: every `PayoffKind` must have a `case '<kind>':` in one
+  of `lineageCards.ts`'s two dispatch switches (source-scanned, same technique
+  `monsterStyleCoverage.test.ts` already uses on `combatFx.ts`) AND must be named
+  by at least one authored lineage card, capstone, or ability-node option — the
+  closed-vocabulary-must-be-reachable rule `coverage.test.ts` already enforces
+  for fx keys, extended to payoff kinds. Running the full existing suite turned
+  up one thing the brief's own file list missed: `client/src/ui/conceptIcons.ts`'s
+  `BUFF_IDS` set (icon resolver) and `client/src/hud/statusHelp.ts` (tooltip
+  copy) are BOTH exhaustively checked against the shared `BuffId` union by
+  `server/test/hudStatusTooltips.test.ts` ("every wire-visible BuffId needs an
+  icon resolver") — `lineage-evasion` had to be added to both, same as its five
+  `lineage-*` siblings, none of which have real art either (no PNG exists for
+  any of them yet; the resolver just returns a path descriptor, and `GameIcon`
+  degrades to a plain coloured tile until art lands).
+
 ### Phase 5 progress note — W1-C, T3/T4 families and blends (2026-10-01)
 
 **Built.** On `feat/t3-t4-families` off `feat/lineage-data-model`. `pnpm typecheck`

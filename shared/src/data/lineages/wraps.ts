@@ -40,8 +40,8 @@ export const WRAPS_LINEAGE: LineageDefinition = {
     },
     {
       id: 'wraps-t1-tempo-payoff', lineageId: 'wraps', tier: 1, row: 'payoff', lane: 'tempo',
-      name: 'Ready Wraps', description: 'Held loose and ready, they let go all at once.',
-      fx: 'tempo.evasive-blur', trigger: 'standing', payoff: 'speed-window',
+      name: 'Ready Wraps', description: 'Held loose and ready, they slip whatever reaches for you first.',
+      fx: 'tempo.evasive-blur', trigger: 'standing', payoff: 'evasion-window',
       face: packetDefaultFace('tempo'),
     },
     {
@@ -60,8 +60,8 @@ export const WRAPS_LINEAGE: LineageDefinition = {
     },
     {
       id: 'wraps-t2-tempo-payoff', lineageId: 'wraps', tier: 2, row: 'payoff', lane: 'tempo',
-      name: 'Loaded Wraps', description: 'Held ready even longer, they let go with that much more behind them.',
-      fx: 'tempo.evasive-blur', trigger: 'standing', payoff: 'speed-window',
+      name: 'Loaded Wraps', description: 'Held ready even longer, they slip that much more than before.',
+      fx: 'tempo.evasive-blur', trigger: 'standing', payoff: 'evasion-window',
       face: packetDefaultFace('tempo'),
     },
     {
@@ -82,7 +82,7 @@ export const WRAPS_LINEAGE: LineageDefinition = {
     {
       id: 'wraps-t2-tempo-amplifier', lineageId: 'wraps', tier: 2, row: 'amplifier', lane: 'tempo',
       name: 'Released Wraps', description: 'A kill lets the wraps go just as well as holding still winds them.',
-      fx: 'tempo.evasive-blur', trigger: 'kill', payoff: 'speed-window', modifies: 'wraps-t2-tempo-payoff',
+      fx: 'tempo.evasive-blur', trigger: 'kill', payoff: 'evasion-window', modifies: 'wraps-t2-tempo-payoff',
       amplifies: 'trigger',
       face: packetDefaultFace('tempo'),
     },
@@ -118,8 +118,8 @@ export const WRAPS_LINEAGE: LineageDefinition = {
     // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
     {
       id: 'wraps-t4-engagement-cross', lineageId: 'wraps', tier: 4, row: 'cross', lane: 'engagement',
-      name: 'Ready Approach', description: 'Held loose before the approach, they let go the same way they would standing still.',
-      fx: 'engagement.sidestep-blur', trigger: 'standing', payoff: 'speed-window', borrowsLane: 'tempo',
+      name: 'Ready Approach', description: 'Held loose before the approach, they slip the first contact the same way they would standing still.',
+      fx: 'engagement.sidestep-blur', trigger: 'standing', payoff: 'evasion-window', borrowsLane: 'tempo',
       face: packetDefaultFace('engagement'),
     },
     {

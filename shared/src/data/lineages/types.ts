@@ -145,13 +145,15 @@ export type PayoffKind =
    *    multiplicative layer.
    */
   | 'technique-refund'
-  | 'technique-window';
+  | 'technique-window'
+  | 'evasion-window';
 
 export const PAYOFF_KINDS: readonly PayoffKind[] = [
   'vulnerability', 'plating-shred', 'echo-hit', 'hemorrhage', 'poison-stack',
   'slow', 'stun', 'damage-window', 'speed-window', 'recovery-window',
   'ward', 'cleanse', 'plating-stack', 'engagement-dr', 'contagion',
   'technique-refund', 'technique-window',
+  'evasion-window',
 ] as const;
 
 /**

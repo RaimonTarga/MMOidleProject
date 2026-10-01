@@ -49,8 +49,8 @@ export const FLEET_LINEAGE: LineageDefinition = {
     },
     {
       id: 'fleet-t1-tempo-payoff', lineageId: 'fleet', tier: 1, row: 'payoff', lane: 'tempo',
-      name: 'Coiled Stance', description: 'The instant before the sprint is the one that counts.',
-      fx: 'tempo.evasive-blur', trigger: 'standing', payoff: 'speed-window',
+      name: 'Coiled Stance', description: 'Holding ready a beat before you move is what makes the first hit miss.',
+      fx: 'tempo.evasive-blur', trigger: 'standing', payoff: 'evasion-window',
       face: packetDefaultFace('tempo'),
     },
     {
@@ -69,8 +69,8 @@ export const FLEET_LINEAGE: LineageDefinition = {
     },
     {
       id: 'fleet-t2-tempo-payoff', lineageId: 'fleet', tier: 2, row: 'payoff', lane: 'tempo',
-      name: 'Held Coil', description: 'The instant before the sprint now carries further once it lets go.',
-      fx: 'tempo.evasive-blur', trigger: 'standing', payoff: 'speed-window',
+      name: 'Held Coil', description: 'The longer you hold the coil, the harder the first hit is to land.',
+      fx: 'tempo.evasive-blur', trigger: 'standing', payoff: 'evasion-window',
       face: packetDefaultFace('tempo'),
     },
     {
@@ -91,7 +91,7 @@ export const FLEET_LINEAGE: LineageDefinition = {
     {
       id: 'fleet-t2-tempo-amplifier', lineageId: 'fleet', tier: 2, row: 'amplifier', lane: 'tempo',
       name: 'Killing Coil', description: 'A kill releases the coil just as well as standing still winds it.',
-      fx: 'tempo.evasive-blur', trigger: 'kill', payoff: 'speed-window', modifies: 'fleet-t2-tempo-payoff',
+      fx: 'tempo.evasive-blur', trigger: 'kill', payoff: 'evasion-window', modifies: 'fleet-t2-tempo-payoff',
       amplifies: 'trigger',
       face: packetDefaultFace('tempo'),
     },

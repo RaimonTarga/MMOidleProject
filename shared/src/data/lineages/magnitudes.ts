@@ -191,6 +191,7 @@ export interface PayoffUnit {
  *   contagion       share of the source's stacks copied to a nearby target
  *   technique-refund fraction taken off the REMAINING cooldown of each Technique
  *   technique-window fraction the next Technique's hit is empowered by
+ *   evasion-window  flat evade (dodge) chance added to the player for the window
  */
 const payoffUnitEntries: [PayoffKind, PayoffUnit][] = [
   ['vulnerability',   { magnitude: 0.12, durationMs: 4000, fractional: true }],
@@ -223,6 +224,13 @@ const payoffUnitEntries: [PayoffKind, PayoffUnit][] = [
   // fraction of the value at the same price.
   ['technique-refund', { magnitude: 0.35, fractional: true }],
   ['technique-window', { magnitude: 0.30, durationMs: 4000, fractional: true }],
+  // Added 2026-10-01 (design §6) so the avoid face has a real effect distinct
+  // from engagement-dr: a chance to not be hit at all, rather than a flat
+  // reduction of a hit that lands. Unit and window sized against its nearest
+  // siblings — engagement-dr's magnitude (both are "avoid-flavoured" windows)
+  // and speed-window's duration (both are proc-triggered, short windows) —
+  // since the payoff has no bench history of its own yet.
+  ['evasion-window',  { magnitude: 0.15, durationMs: 2500, fractional: true }],
 ];
 
 export const PAYOFF_UNIT: Map<PayoffKind, PayoffUnit> = new Map<PayoffKind, PayoffUnit>(payoffUnitEntries);

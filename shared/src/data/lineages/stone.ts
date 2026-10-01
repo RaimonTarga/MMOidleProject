@@ -50,8 +50,8 @@ export const STONE_LINEAGE: LineageDefinition = {
     },
     {
       id: 'stone-t1-tempo-payoff', lineageId: 'stone', tier: 1, row: 'payoff', lane: 'tempo',
-      name: 'Steady Hum', description: "The stone's pulse quickens your step along with your heart.",
-      fx: 'tempo.evasive-blur', trigger: 'pulse', payoff: 'speed-window',
+      name: 'Steady Hum', description: "The stone's pulse sharpens your reflexes along with your heart.",
+      fx: 'tempo.evasive-blur', trigger: 'pulse', payoff: 'evasion-window',
       face: packetDefaultFace('tempo'),
     },
     {
@@ -70,8 +70,8 @@ export const STONE_LINEAGE: LineageDefinition = {
     },
     {
       id: 'stone-t2-tempo-payoff', lineageId: 'stone', tier: 2, row: 'payoff', lane: 'tempo',
-      name: 'Resonant Hum', description: "The stone's pulse now carries your stride long after it fades.",
-      fx: 'tempo.evasive-blur', trigger: 'pulse', payoff: 'speed-window',
+      name: 'Resonant Hum', description: "The stone's pulse now keeps your reflexes sharp long after it fades.",
+      fx: 'tempo.evasive-blur', trigger: 'pulse', payoff: 'evasion-window',
       face: packetDefaultFace('tempo'),
     },
     {
@@ -91,8 +91,8 @@ export const STONE_LINEAGE: LineageDefinition = {
     },
     {
       id: 'stone-t2-tempo-amplifier', lineageId: 'stone', tier: 2, row: 'amplifier', lane: 'tempo',
-      name: 'Broken Rhythm', description: "The barrier giving way also kicks the stone's hum into your stride.",
-      fx: 'tempo.evasive-blur', trigger: 'barrier-break', payoff: 'speed-window', modifies: 'stone-t2-tempo-payoff',
+      name: 'Broken Rhythm', description: "The barrier giving way also kicks the stone's hum into your reflexes.",
+      fx: 'tempo.evasive-blur', trigger: 'barrier-break', payoff: 'evasion-window', modifies: 'stone-t2-tempo-payoff',
       amplifies: 'trigger',
       face: packetDefaultFace('tempo'),
     },

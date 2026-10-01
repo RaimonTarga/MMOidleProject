@@ -52,6 +52,9 @@ export const ABILITY_NODE_FX: Map<string, LineageFxKey> = new Map<string, Lineag
   ['tempo/engagement-dr', 'tempo.evasive-blur'],
   ['engagement/engagement-dr', 'engagement.sidestep-blur'],
   ['control/engagement-dr', 'control.chill-blur'],
+  // Avoid-face evasion-window (design §6, added 2026-10-01). Engagement's own
+  // key, reused rather than new art — `brace-sparks` already has a client case.
+  ['engagement/evasion-window', 'engagement.brace-sparks'],
   ['kill-chain/recovery-window', 'kill-chain.recovery-pulse'],
   ['barrier-tempo/ward', 'barrier-tempo.ward-shell'],
   ['bulwark/plating-stack', 'bulwark.plating-chip'],
@@ -100,6 +103,7 @@ const PAYOFF_BLURB: Record<string, string> = {
   'plating-stack': 'also banks a stack of plating.',
   'technique-refund': 'also pays part of its own cooldown back.',
   'technique-window': 'also loads the next Technique.',
+  'evasion-window': 'also opens a window where you are more likely to dodge outright.',
 };
 
 /** The blurb for a payoff, or a plain fallback if a new kind arrives unnamed. */
