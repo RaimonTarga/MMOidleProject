@@ -120,6 +120,7 @@ export function biomeDefensiveLaneAPackets(biome: string): PacketId[] {
 
 export * from './types';
 export * from './packets';
+export * from './keystones';
 export * from './magnitudes';
 export * from './resolve';
 export * from './capstones';

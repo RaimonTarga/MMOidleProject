@@ -528,6 +528,40 @@ export interface LineageUnits {
   cleanseDebuffs: number;
   /** Stacks taken off each debuff a `cleanse` strips. */
   cleanseStacks: number;
+
+  // ── Keystone units (design §4, the eight rule changes) ──────────────────
+  //
+  // A keystone changes a rule, so its numbers are timings, reaches and counts
+  // rather than payoff magnitudes — and they belong here for the same reason the
+  // rest do (design §18.4: no constants in the runtime). Chain's and Shockwave's
+  // SHARE of a hit is not here: that is a magnitude, resolved from
+  // `KEYSTONE_DEFINITIONS[lane].payoff` at `ROW_SCALAR.keystone`.
+
+  /**
+   * How many links one Chain may run before it stops regardless. The rule's own
+   * bounds — a miss, or no fresh body in reach — already terminate it, since each
+   * link consumes a target; this is the authored ceiling so a dense pack cannot
+   * turn one echo into a node-wide clear.
+   */
+  chainMaxLinks: number;
+  /**
+   * The footprint of Shockwave's area hit, in world units. Deliberately Sweep's
+   * own radius: "the hit cleaves" is one idea, and two different answers to how
+   * far would read as a bug on screen.
+   */
+  shockwaveRadius: number;
+  /** The root the Ladder's second rung applies. Binding Strike's own length. */
+  ladderRootMs: number;
+  /**
+   * The stun the Ladder's top rung applies. The `stun` payoff's authored duration
+   * rather than Stunning Strike's, so an item's hard control never out-stuns the
+   * ability whose whole cost is that it stuns.
+   */
+  ladderStunMs: number;
+  /** How long Immovable holds a bulwark stance after the player moves. */
+  immovableGraceMs: number;
+  /** The health fraction above which Unbroken ignores a hit's recharge reset. */
+  unbrokenHpFraction: number;
 }
 
 export const LINEAGE_UNITS: LineageUnits = {
@@ -539,6 +573,12 @@ export const LINEAGE_UNITS: LineageUnits = {
   contagionTargets: 1,
   cleanseDebuffs: 1,
   cleanseStacks: 1,
+  chainMaxLinks: 4,
+  shockwaveRadius: 90,
+  ladderRootMs: 1_500,
+  ladderStunMs: 750,
+  immovableGraceMs: 2_000,
+  unbrokenHpFraction: 0.5,
 };
 
 /** One authored unit. The runtime reads these and never its own constant. */
