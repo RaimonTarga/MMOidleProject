@@ -88,9 +88,10 @@ assert.equal(
 
 // ── A shard no family of this biome drops ────────────────────────────────────
 //
-// Plains fields Herd / Swarm / Sky, which drop empowered / tempo / engagement
-// (design §12.1). A Control card bought while standing in Plains therefore farms
-// forever for a packet the node pays none of.
+// Plains fields Herd / Swarm / Sky, which drop empowered / technique / engagement
+// (design §12.1, as amended by §22: Plains Swarm moved off tempo onto Technique).
+// A Control card bought while standing in Plains therefore farms forever for a
+// packet the node pays none of — and since §22, so does a Tempo one.
 {
   const obs = obsWith(2, 30, { plains: 3 });
   const reason = unsatisfiableByFarming({ "shard.control": 4 }, PLAINS_NODE, obs);
@@ -98,10 +99,16 @@ assert.equal(
   assert.match(reason, /needs 4 more control shards/);
   assert.match(reason, /no tier-1 plains family drops them/);
 
+  // Tempo left Plains with the Technique packet (design §22), so a tempo
+  // shortfall in Plains is now the same unfarmable stall control always was.
+  const tempoReason = unsatisfiableByFarming({ "shard.tempo": 4 }, PLAINS_NODE, obs);
+  assert(tempoReason, "since design §22 no tier-1 Plains family drops tempo either");
+  assert.match(tempoReason, /no tier-1 plains family drops them/);
+
   assert.equal(
-    unsatisfiableByFarming({ "shard.tempo": 4 }, PLAINS_NODE, obs),
+    unsatisfiableByFarming({ "shard.technique": 4 }, PLAINS_NODE, obs),
     undefined,
-    "Plains Swarm drops tempo, so a tempo shortfall is an ordinary wait",
+    "Plains Swarm drops technique, so a technique shortfall is an ordinary wait",
   );
 }
 
