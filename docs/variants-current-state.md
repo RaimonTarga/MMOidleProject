@@ -136,13 +136,27 @@ own purest node, **the mobs are what must move** (a Phase 4 monster-shape findin
 a reason to add a second field or to retune a card's magnitude per node.
 
 **Do not treat any family's current `drops`/`punishes` pairing as a settled read of what
-beats it.** A concurrent bench pass in this same run (`reports/progression-phase1/
-lane-matrix-run3.md`, design §18.9's criterion: median uplift ±3 percentage points,
-ordinal encounter check) is remapping `drops` for any family where the bench is clear —
-favoured lane ranks last on the family's own 70/20/10 node with both seeds agreeing, and
-one other lane ranks first with both seeds agreeing. Read that report for which families
-actually moved; this page intentionally does not restate per-family verdicts that a
-sibling task may still be changing.
+beats it.** Read `reports/progression-phase1/family-contracts-run4.md` for the per-family
+verdict; this page deliberately does not restate them, because they move with the bestiary.
+
+**The arbiter is the family-contract instrument, not the lane matrix** (run 4,
+`server/bench/familyContracts.ts`). Run 3 tried to settle the question from the matrix's
+ordinal ranking of six lanes on a blended node and could not: that ranking failed to
+reproduce between two seeds for seven of nine families, and its margins moved 7–15pp
+between a 90 s and a 270 s cap — more than the ±3pp band design §18.9 judges in. The
+instrument that replaced it compares ONE lane against ONE lane on a node forced to 100%
+the family under test, to a fixed kill count, pooled across every weapon lineage carrying
+the lane, with five guards (reached-N, carriers, seed agreement, a spread that excludes
+zero, and agreement between the control-normalised margin and the raw time-to-kill-N
+ratio). Only a verdict with all five guards passing may move a `drops` field.
+
+**A decisive inversion does not by itself say where `drops` should go.** With two lanes the
+lane that beat the favoured one is, by construction, the lane the family PUNISHES, and
+`drops === punishes` is refused by `server/test/lineageMaterials.test.ts` and incoherent
+besides. The instrument's `FAM_ALL_LANES=1` pass ranks every weapon lane on the same
+synthetic node, and that is what names the lane. Where the winner of the wider pass is the
+punished lane itself, nothing moves and the row stays a monster-shape finding, which is
+what design §18.7 says it is.
 
 ## 7. Tests
 
