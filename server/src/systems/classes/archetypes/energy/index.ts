@@ -7,6 +7,7 @@ import {
   updateEnergyT3,
   ENERGY_T3_BUFFS,
 } from './t3';
+import { ENERGY_FRAME_BUFFS } from './frameLoop';
 
 const energyModule = defineMechanic({
   id: 'energy',
@@ -17,7 +18,7 @@ const energyModule = defineMechanic({
     updateEnergyT3(world, dt);
     updateEnergyArchetype(world);
   },
-  buffs: ENERGY_T3_BUFFS,
+  buffs: [...ENERGY_FRAME_BUFFS, ...ENERGY_T3_BUFFS],
 });
 
 export default energyModule;
