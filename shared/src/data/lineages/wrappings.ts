@@ -50,5 +50,45 @@ export const WRAPPINGS_LINEAGE: LineageDefinition = {
       fx: 'barrier-tempo.ward-shell', trigger: 'hit-taken', payoff: 'ward',
       face: packetDefaultFace('barrier-tempo'),
     },
+
+    // ── T2 payoff row (L3): the T1 payoff, grown up ─────────────────────────
+    {
+      id: 'wrappings-t2-affliction-payoff', lineageId: 'wrappings', tier: 2, row: 'payoff', lane: 'affliction',
+      name: 'Caustic Bloom', description: 'Stand long enough and the weave turns from a nuisance into a dose.',
+      fx: 'affliction.toxic-pulse', trigger: 'standing', payoff: 'poison-stack',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'wrappings-t2-control-payoff', lineageId: 'wrappings', tier: 2, row: 'payoff', lane: 'control',
+      name: 'Mire Snap', description: 'The ground that lets you go does not let go of whatever follows.',
+      fx: 'control.chill-blur', trigger: 'evade', payoff: 'stun',
+      face: packetDefaultFace('control'),
+    },
+    {
+      id: 'wrappings-t2-barrier-tempo-payoff', lineageId: 'wrappings', tier: 2, row: 'payoff', lane: 'barrier-tempo',
+      name: 'Compounding Debt', description: 'Every hit taken now pays back more shell than it cost in the first place.',
+      fx: 'barrier-tempo.ward-shell', trigger: 'hit-taken', payoff: 'ward',
+      face: packetDefaultFace('barrier-tempo'),
+    },
+
+    // ── T2 amplifier row (L5): an extra trigger kind for the same payoff ────
+    {
+      id: 'wrappings-t2-affliction-amplifier', lineageId: 'wrappings', tier: 2, row: 'amplifier', lane: 'affliction',
+      name: 'Reflexive Dose', description: 'A clean dodge seeds the same dose that standing still would.',
+      fx: 'affliction.toxic-pulse', trigger: 'evade', payoff: 'poison-stack', modifies: 'wrappings-t2-affliction-payoff',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'wrappings-t2-control-amplifier', lineageId: 'wrappings', tier: 2, row: 'amplifier', lane: 'control',
+      name: 'Punished Miss', description: 'Eating a hit snaps the mire shut just as hard as a dodge would.',
+      fx: 'control.chill-blur', trigger: 'hit-taken', payoff: 'stun', modifies: 'wrappings-t2-control-payoff',
+      face: packetDefaultFace('control'),
+    },
+    {
+      id: 'wrappings-t2-barrier-tempo-amplifier', lineageId: 'wrappings', tier: 2, row: 'amplifier', lane: 'barrier-tempo',
+      name: 'Standing Debt', description: 'Holding your ground pays the same shell a hit taken would.',
+      fx: 'barrier-tempo.ward-shell', trigger: 'standing', payoff: 'ward', modifies: 'wrappings-t2-barrier-tempo-payoff',
+      face: packetDefaultFace('barrier-tempo'),
+    },
   ],
 };

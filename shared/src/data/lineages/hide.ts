@@ -49,5 +49,45 @@ export const HIDE_LINEAGE: LineageDefinition = {
       fx: 'engagement.sidestep-blur', trigger: 'hit-taken', payoff: 'engagement-dr',
       face: packetDefaultFace('engagement'),
     },
+
+    // ── T2 payoff row (L3): the T1 payoff, grown up ─────────────────────────
+    {
+      id: 'hide-t2-bulwark-payoff', lineageId: 'hide', tier: 2, row: 'payoff', lane: 'bulwark',
+      name: 'Calloused Hide', description: 'Scar tissue this deep keeps toughening long after the first stand.',
+      fx: 'bulwark.plating-chip', trigger: 'standing', payoff: 'plating-stack',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'hide-t2-kill-chain-payoff', lineageId: 'hide', tier: 2, row: 'payoff', lane: 'kill-chain',
+      name: 'Deep Breath', description: 'The breath a clean dodge buys you now reaches further than the moment.',
+      fx: 'kill-chain.recovery-pulse', trigger: 'evade', payoff: 'recovery-window',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'hide-t2-engagement-payoff', lineageId: 'hide', tier: 2, row: 'payoff', lane: 'engagement',
+      name: 'Old Scar', description: 'Ground this weathered barely notices what lands on it first.',
+      fx: 'engagement.sidestep-blur', trigger: 'hit-taken', payoff: 'engagement-dr',
+      face: packetDefaultFace('engagement'),
+    },
+
+    // ── T2 amplifier row (L5): an extra trigger kind for the same payoff ────
+    {
+      id: 'hide-t2-bulwark-amplifier', lineageId: 'hide', tier: 2, row: 'amplifier', lane: 'bulwark',
+      name: 'Reflex Callous', description: 'A clean dodge toughens the hide exactly like holding still does.',
+      fx: 'bulwark.plating-chip', trigger: 'evade', payoff: 'plating-stack', modifies: 'hide-t2-bulwark-payoff',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'hide-t2-kill-chain-amplifier', lineageId: 'hide', tier: 2, row: 'amplifier', lane: 'kill-chain',
+      name: 'Second Wind, Twice', description: 'Taking a hit now buys the same breath a dodge does.',
+      fx: 'kill-chain.recovery-pulse', trigger: 'hit-taken', payoff: 'recovery-window', modifies: 'hide-t2-kill-chain-payoff',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'hide-t2-engagement-amplifier', lineageId: 'hide', tier: 2, row: 'amplifier', lane: 'engagement',
+      name: 'Set Ground', description: 'Planting your feet before the opener keeps the discount live without a dodge.',
+      fx: 'engagement.sidestep-blur', trigger: 'standing', payoff: 'engagement-dr', modifies: 'hide-t2-engagement-payoff',
+      face: packetDefaultFace('engagement'),
+    },
   ],
 };
