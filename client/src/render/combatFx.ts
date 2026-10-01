@@ -21,7 +21,9 @@ import {
   DOT_MAXSTACK_BURST_FX,
   DOT_RIMESHATTER_FX,
   lineageForRecipeId,
+  packetDefinition,
   type CombatArchetype,
+  type PacketId,
   type CombatEvent,
   type DamageElement,
   type LineageFxKey,
@@ -464,27 +466,26 @@ function fxAoeRing(
 // One handler per `LineageFxKey`, keyed by the lane grammar (design §8: Tempo
 // = afterimages, Empowered = glow/crash/cracks, Affliction = pips/arcs,
 // Control = drag/grasp, Kill chain = pulses, Engagement = opening flashes).
-// Colours are the brief's own palette for combat FX — distinct from the tree
-// panel's `packetDefinition().color`, which is the UI's own accent and reads
-// fine on a dark panel but washes out badly over busy terrain (cyan Tempo and
-// pink Engagement in particular). Six small, reusable primitives (ghost
+// Colours come from `packetDefinition().color`, the one owner of a lane's colour
+// (design §18.2), so a card's tree accent and its combat effect always agree.
+// If a lane reads badly over busy terrain, change it there and both move. Six
+// small, reusable primitives (ghost
 // strike, plating crack, pips, arc, flash, ring) cover every key; capstones
 // reuse the same primitives at a larger scale rather than inventing new ones.
 
-const LANE_FX_COLOR: Record<string, number> = {
-  tempo: 0xe0a23a,       // amber
-  empowered: 0xd1453f,   // crimson
-  affliction: 0x6fb35a,  // green
-  control: 0x9fd8ff,     // ice
-  "kill-chain": 0xd9b25c, // gold
-  engagement: 0xffffff,  // white
-  bulwark: 0xb8b8a0,        // stone grey
-  "barrier-tempo": 0x7fd8c8, // teal
-};
-
+/**
+ * A lane's colour has ONE owner: `packetDefinition().color` (design §18.2). The FX
+ * palette that used to live here was a second source of truth for the same idea,
+ * so a card's tree accent and its combat effect disagreed on screen.
+ *
+ * The lane is the fx key's prefix, which is a `PacketId` by construction.
+ */
 function laneFxColor(fx: LineageFxKey): number {
-  const lane = fx.slice(0, fx.indexOf("."));
-  return LANE_FX_COLOR[lane] ?? 0xffffff;
+  const lane = fx.slice(0, fx.indexOf(".")) as PacketId;
+  const css = packetDefinition(lane)?.color;
+  if (!css) return 0xffffff;
+  const parsed = Number.parseInt(css.replace("#", ""), 16);
+  return Number.isNaN(parsed) ? 0xffffff : parsed;
 }
 
 /** A short duplicate streak implying the triggering hit struck a second time. */
