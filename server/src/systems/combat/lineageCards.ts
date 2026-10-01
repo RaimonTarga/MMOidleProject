@@ -34,6 +34,7 @@
 import {
   applyStatusEffect,
   type StatusEffect,
+  type StatusEffectConfig,
   defensiveFaceForSubVariant,
   getCooldown,
   getCounter,
@@ -66,14 +67,14 @@ import type { World } from '../../world/World';
 import { attachMarker } from '../../ecs/markerHelpers';
 import { registerCombatListener, type CombatContext } from './engine/combatPipeline';
 import { registerMechanicFiredListener } from './engine/mechanicFired';
-import { applyPlayerDebuff } from '../classes/shared/applyPlayerDebuff';
+import { applyPlayerDebuff, playerDebuffConfig } from '../classes/shared/applyPlayerDebuff';
 import { LINEAGE_BLEED_ID, LINEAGE_POISON_ID } from './damage/bleedIds';
 import { applyPlayerProcDamage } from './damage/procDamage';
 import { applyMonsterSlow } from './status/monsterControl';
 import { applySharedDebuffMaxWins } from './status/sharedDebuffRecord';
 import { applyStun } from './status/stun';
 import { monsterIgnoresControl } from './status/controlImmunity';
-import { evadeBlocksDebuffs } from '../defense/mitigation/evasion';
+import { evadeBlocksDebuffs, evadeFullyAvoided } from '../defense/mitigation/evasion';
 import { applyWardPercent } from '../defense/barrier/wards';
 import { activateRecovery } from '../defense/regen/recovery';
 import { isPlayerActivelyInCombat } from './ai/engagement';
@@ -429,14 +430,35 @@ function applyOnTarget(
       // Shared record, max-wins (design §18.1). The cadence finisher's strip is
       // PERMANENT and multi-stack; a timed single-stack card must not shorten it
       // to its own window or drop its stack count.
-      applySharedDebuffMaxWins(player, target.tracksCombat, {
+      //
+      // AND THE RECORD IS READ AS stacks × platingReduction (`effectivePlatingAfterShred`
+      // subtracts that product, and the target-frame tile prints it), so the card's
+      // fraction — which resolves to the WHOLE strip it promises — is divided across
+      // the stacks the shared record carries. Written straight in, it was multiplied
+      // by the finisher's three-stack brand and stripped three times what it
+      // authored. Max-wins is therefore settled in TOTALS here: comparing a total
+      // against a per-stack value is not a comparison.
+      const config: StatusEffectConfig = {
         id: 'plating-shred',
         maxStacks: 1,
         refreshable: true,
         remainingMs: durationMs ?? 0,
         sourceId,
         data: { totalMs: durationMs ?? 0, platingReduction: reduction },
-      }, ['platingReduction', 'totalMs']);
+      };
+      const prior = getStatusEffect(target.tracksCombat, 'plating-shred');
+      const priorPerStack = prior?.data['platingReduction'] ?? 0;
+      const priorTotal = (prior?.stacks ?? 0) * priorPerStack;
+      // The core-scaled total the card promises. `playerDebuffConfig` is the same
+      // scaling step the applier runs internally; read here because the comparison
+      // needs the scaled figure and the applier only returns the merged one.
+      const cardTotal = Number(
+        playerDebuffConfig(player, config).data?.['platingReduction'] ?? reduction,
+      );
+      const effect = applySharedDebuffMaxWins(player, target.tracksCombat, config, ['totalMs']);
+      effect.data['platingReduction'] = cardTotal > priorTotal
+        ? cardTotal / Math.max(1, effect.stacks)
+        : priorPerStack;
       return landed;
     }
 
@@ -715,8 +737,10 @@ export function registerLineageCards(): void {
  * dodged or fully absorbed. `barrier-break` needs the `barrierEmptied` /
  * `wardBrokenMax` metadata that `defense/barrier/barrier.ts` sets from its own
  * `onDamageTaken` listener, so registered first it could never see a break at
- * all. (`evade` stays in the main pass: the engine sets `metadata.evaded` in
- * `combat.ts` before any listener runs.)
+ * all. (`evade` stays in the main pass: the evade clock decides in `onAttack` and
+ * records both `metadata.evaded` and `metadata.evadeMitigation` there, so a full
+ * avoid is already readable before any `onDamageTaken` listener runs — which is why
+ * it tests the mitigation and not `evadeFull`, written later in the same phase.)
  */
 export function registerLineageIncomingCards(): void {
   registerHitTaken();
@@ -825,11 +849,18 @@ function registerKill(): void {
   });
 }
 
-/** `evade` — the player avoided an incoming hit. */
+/**
+ * `evade` — the player AVOIDED an incoming hit.
+ *
+ * A full avoid, not a graze. `metadata.evaded` is set for both, so gating on it alone
+ * fired this card on hits that landed and had it pay out alongside `hit-taken` — the
+ * rest of the defense stack reads an avoid as `evadeMitigation >= 1` (the same test
+ * `evadeFull` and `evadeBlocksDebuffs` are derived from), and so does this.
+ */
 function registerEvade(): void {
   registerCombatListener('onDamageTaken', (ctx, world) => {
     if (ctx.defenderType !== 'player') return;
-    if (ctx.metadata['evaded'] !== true) return;
+    if (!evadeFullyAvoided(ctx)) return;
     const player = ctx.defender;
     if (!hasLineageRuntime(player)) return;
     const firings = firingsFor(player, 'evade');
@@ -969,10 +1000,17 @@ export function fireLineagePayoffs(
 export function updateLineageCards(world: World, dt: number): void {
   for (const player of world.livePlayers) {
     if (!hasLineageRuntime(player)) continue;
+    const standing = firingsFor(player, 'standing');
+    const pulse = firingsFor(player, 'pulse');
+    // Nothing clock-driven, nothing to do. Checked BEFORE the engagement read
+    // because `isPlayerActivelyInCombat` scans every aggroed monster in the world
+    // for a player with no live attack target — the one genuinely non-constant cost
+    // in this pass, and one most players (no `standing`, no `pulse`) were paying
+    // every tick for a loop body that then did nothing.
+    if (standing.length === 0 && pulse.length === 0) continue;
     const cs = player.tracksCombat;
     const inCombat = isPlayerActivelyInCombat(world, player);
 
-    const standing = firingsFor(player, 'standing');
     if (standing.length > 0) {
       const moving = player.isMoving !== undefined;
       if (moving || !inCombat) {
@@ -992,9 +1030,7 @@ export function updateLineageCards(world: World, dt: number): void {
       }
     }
 
-    if (!inCombat) continue;
-    const pulse = firingsFor(player, 'pulse');
-    if (pulse.length === 0) continue;
+    if (!inCombat || pulse.length === 0) continue;
     const due = pulse.filter((f) => !isCooldownActive(cs, pulseCd(f.key)));
     if (due.length === 0) continue;
     for (const firing of due) setCooldown(cs, pulseCd(firing.key), PULSE_MS);

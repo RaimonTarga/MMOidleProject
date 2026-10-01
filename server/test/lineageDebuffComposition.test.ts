@@ -35,9 +35,12 @@ import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import type { MonsterEntity, PlayerEntity } from '../src/ecs/entity';
 import type { CombatContext } from '../src/systems/combat/engine/combatPipeline';
 import { World } from '../src/world/World';
+import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { emitCombatEvent } from '../src/systems/combat/engine/combatPipeline';
 import { emitMechanicFired } from '../src/systems/combat/engine/mechanicFired';
+import { effectivePlatingAfterShred } from '../src/systems/combat/damage/effectivePlating';
+import { applySharedDebuffMaxWins } from '../src/systems/combat/status/sharedDebuffRecord';
 
 const NODE = 'node-5-5';
 let nextId = 0;
@@ -107,11 +110,15 @@ function monster(x: number): MonsterEntity {
   return m;
 }
 
-function hit(player: PlayerEntity, defender: MonsterEntity): CombatContext {
+function hit(
+  player: PlayerEntity,
+  defender: MonsterEntity,
+  metadata: Record<string, unknown> = {},
+): CombatContext {
   const ctx = {
     attacker: player, attackerType: 'player',
     defender, defenderType: 'monster',
-    damage: 200, platingMult: 1, drPierce: 0, cancelled: false, metadata: {},
+    damage: 200, platingMult: 1, drPierce: 0, cancelled: false, metadata,
   } as unknown as CombatContext;
   emitCombatEvent('onHit', ctx, world);
   return ctx;
@@ -234,6 +241,172 @@ function cardFxCount(): number {
     'the card should resolve a real plating reduction of its own',
   );
   assert.notEqual(shred?.remainingMs, -1, "the card's own application is timed, not permanent");
+}
+
+// ── plating-shred: the card's TOTAL is not multiplied by the record's stacks ──
+//
+// `effectivePlatingAfterShred` reads the shared record as stacks × platingReduction.
+// A card's fraction resolves to the whole strip it promises, so writing that total
+// into `platingReduction` made the cadence finisher's three-stack brand strip three
+// times what the card authored — the record's stack count silently amplifying a
+// number that was never per-stack.
+{
+  const player = spawn('comp-shred-total', [seededCard({
+    trigger: { kind: 'mechanic-fired' },
+    payoff: { kind: 'plating-shred', magnitude: 0.3, durationMs: 4_000 },
+    fx: 'empowered.plating-crack',
+  })]);
+  const target = monster(760); // 100 plating
+
+  // A three-stack brand that strips little per stack, so the CARD is the stronger
+  // source here and its own total is what has to land.
+  const brand = applyStatusEffect(target.tracksCombat, {
+    id: 'plating-shred',
+    instanced: false,
+    maxStacks: 4,
+    remainingMs: -1,
+    sourceId: player.isPlayer.id,
+    data: { platingReduction: 2 },
+  });
+  brand.stacks = 3;
+
+  world.takeNodeEvents(NODE);
+  const ctx = hit(player, target);
+  emitMechanicFired(world, player, ctx);
+  assert.equal(cardFxCount(), 1, 'the card must actually fire, or this case proves nothing');
+
+  assert.equal(
+    effectivePlatingAfterShred(target.mitigatesDamage.plating, target.tracksCombat),
+    70,
+    '30% of 100 plating is a 30-point strip however many stacks the shared record carries',
+  );
+}
+
+// ── and a card weaker than the whole brand leaves the brand's total alone ─────
+{
+  const player = spawn('comp-shred-weak', [seededCard({
+    trigger: { kind: 'mechanic-fired' },
+    payoff: { kind: 'plating-shred', magnitude: 0.05, durationMs: 4_000 },
+    fx: 'empowered.plating-crack',
+  })]);
+  const target = monster(800); // 100 plating
+
+  const brand = applyStatusEffect(target.tracksCombat, {
+    id: 'plating-shred',
+    instanced: false,
+    maxStacks: 4,
+    remainingMs: -1,
+    sourceId: player.isPlayer.id,
+    data: { platingReduction: 12 },
+  });
+  brand.stacks = 3;
+
+  world.takeNodeEvents(NODE);
+  const ctx = hit(player, target);
+  emitMechanicFired(world, player, ctx);
+  assert.equal(cardFxCount(), 1, 'the card must actually fire');
+
+  assert.equal(
+    effectivePlatingAfterShred(target.mitigatesDamage.plating, target.tracksCombat),
+    100 - 36,
+    "a 5-point card must not lower the brand's 3 × 12 strip",
+  );
+}
+
+// ── the shared record: a NEW permanent application beats a finite window ──────
+//
+// The helper's own contract is "`-1` is permanent and beats every finite window",
+// but it tested only the PRIOR side of the comparison: `Math.max(remainingMs, priorMs)`
+// reads a fresh `-1` as the smallest number there is and clamped it down to whatever
+// window was already running. Asserted on the helper directly because only a class
+// mechanic writes a permanent strip, and a card never does.
+{
+  const player = spawn('comp-permanent', []);
+  const target = monster(840);
+
+  applyStatusEffect(target.tracksCombat, {
+    id: 'plating-shred',
+    instanced: false,
+    refreshable: true,
+    remainingMs: 4_000,
+    sourceId: player.isPlayer.id,
+    data: { platingReduction: 5, totalMs: 4_000 },
+  });
+
+  const effect = applySharedDebuffMaxWins(player, target.tracksCombat, {
+    id: 'plating-shred',
+    maxStacks: 3,
+    refreshable: true,
+    remainingMs: -1,
+    sourceId: player.isPlayer.id,
+    data: { platingReduction: 9 },
+  }, ['platingReduction', 'totalMs']);
+
+  assert.equal(effect.remainingMs, -1, 'a new permanent application must not be clamped to a live window');
+  assert.equal(effect.data.platingReduction, 9, 'and the stronger per-stack strip still lands');
+}
+
+// ── THE OTHER ORDERING: the card lands FIRST and the Cursed Finale follows ────
+//
+// Every case above seeds the class brand by hand and then fires the card, which
+// only ever exercised card-after-mechanic. In play the ordinary ordering is the
+// other one — a regular hit's card lands, and the NEXT finisher brands a record the
+// card already owns. The finisher wrote its two debuffs with `applyPlayerDebuff`,
+// which never updates `data` on an existing entry and only refreshes the window
+// when its own config says refreshable, so the card's weaker timed single-stack
+// values survived: the finisher's multiplier never reached the record and its
+// PERMANENT plating strip came out as the card's four seconds, one stack.
+{
+  const player = spawn('comp-finale-second', [
+    seededCard({
+      trigger: { kind: 'hit-nth', n: 1 },
+      payoff: { kind: 'vulnerability', magnitude: 0.12, durationMs: 4_000 },
+    }),
+    seededCard({
+      trigger: { kind: 'hit-nth', n: 1 },
+      payoff: { kind: 'plating-shred', magnitude: 0.05, durationMs: 4_000 },
+      fx: 'empowered.plating-crack',
+    }),
+  ]);
+  player.usesSkills.combatArchetype = 'cadence';
+  syncArchetypeSlices(world, player);
+  assert(player.usesCadence !== undefined, 'the cadence slice must be attached');
+  // The Cursed Finale, seeded rather than unlocked so the authored numbers can move
+  // without making this case lie. A 27-point cap at 9 per stack is a 3-stack brand.
+  player.usesSkills.passives['cadence.debuff-vuln-pct'] = 30;
+  player.usesSkills.passives['cadence.debuff-vuln-ms'] = 8_000;
+  player.usesSkills.passives['cadence.debuff-plating-shred'] = 9;
+  player.usesSkills.passives['cadence.debuff-shred-cap'] = 27;
+
+  const target = monster(880);
+
+  world.takeNodeEvents(NODE);
+  hit(player, target);
+  assert.equal(cardFxCount(), 2, 'both cards must land first, or this case proves nothing');
+
+  hit(player, target, { empoweredAttack: true });
+  assert.equal(cardFxCount(), 2, 'and both fire again on the finisher');
+
+  const vuln = getStatusEffect(target.tracksCombat, 'vulnerability');
+  assert.equal(
+    vuln?.data.damageMultiplier,
+    1.3,
+    `the finisher's +30% must reach a record the card already owns, got ${vuln?.data.damageMultiplier}`,
+  );
+  assert(
+    (vuln?.remainingMs ?? 0) >= 8_000,
+    `the finisher's longer window must stand, got ${vuln?.remainingMs}`,
+  );
+
+  const shred = getStatusEffect(target.tracksCombat, 'plating-shred');
+  assert.equal(shred?.remainingMs, -1, "a card landing first must not un-permanent the finisher's strip");
+  assert.equal(
+    shred?.data.platingReduction,
+    9,
+    `the finisher's stronger per-stack strip must land, got ${shred?.data.platingReduction}`,
+  );
+  assert.equal(shred?.maxStacks, 3, `the finisher's 3-stack cap must stand, got ${shred?.maxStacks}`);
+  assert((shred?.stacks ?? 0) >= 2, `the brand must be able to climb, got ${shred?.stacks}`);
 }
 
 console.log('lineageDebuffComposition: ok');

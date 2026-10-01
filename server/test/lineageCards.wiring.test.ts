@@ -62,7 +62,7 @@ import { abilityCooldownKey } from '../src/systems/player/abilities/abilityCoold
 import { attackHasteBonus } from '../src/systems/combat/engine/attackCadence';
 import { runMonsterAttack } from '../src/systems/combat/engine/combat';
 import { activeRecoveryFraction } from '../src/systems/defense/regen/recovery';
-import { setAttackTarget } from '../src/systems/combat/ai/targeting';
+import { setAggroTarget, setAttackTarget } from '../src/systems/combat/ai/targeting';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -464,8 +464,18 @@ function cardFx(): Array<Extract<CombatEvent, { kind: 'card-fx' }>> {
   taken(player, attacker, {});
   assert(cardFx().length === 0, 'an ordinary hit taken is not an evade');
 
-  taken(player, attacker, { evaded: true });
-  assert(cardFx().length === 1, 'an evade should fire once');
+  // A GRAZE sets `evaded` too — it lands reduced damage, keeps the monster's
+  // ailments and raises its own "GRAZE" floater. An avoid card that reads `evaded`
+  // alone paid out on hits that landed, and alongside `hit-taken`.
+  taken(player, attacker, { evaded: true, evadeMitigation: 0.5 });
+  assert(cardFx().length === 0, 'a graze is a hit that landed, not an evade');
+  assert(
+    getStatusEffect(attacker.tracksCombat, ABILITY_SLOW_EFFECT_ID) === undefined,
+    'and so it must not have paid out its payoff either',
+  );
+
+  taken(player, attacker, { evaded: true, evadeMitigation: 1 });
+  assert(cardFx().length === 1, 'a full avoid should fire once');
   const slow = getStatusEffect(attacker.tracksCombat, ABILITY_SLOW_EFFECT_ID);
   assert(slow !== undefined, 'slow should reach the monster control ladder');
   assert((slow?.data.totalMs ?? 0) > 0, 'a slow must store totalMs for the buff clock');
@@ -964,6 +974,61 @@ function withWindowFromGuard(id: string): PlayerEntity {
     }
   }
   assert(problems.length === 0, `payoff coverage failures:\n  ${problems.join('\n  ')}`);
+
+
+// ── the clock pass costs nothing for a player with no clock card ──────────────
+//
+// `updateLineageCards` runs for every live player every tick, and
+// `isPlayerActivelyInCombat` scans every aggroed monster in the world for a player
+// with no live attack target. Reading it before checking for a `standing` / `pulse`
+// card made every lineage-carrying player pay that scan for a loop body that then
+// did nothing. Counted through the query the scan reads, because the cost IS the
+// scan: there is no other observable difference.
+{
+  const player = spawn('lc-clock-cost', [seededCard({
+    trigger: { kind: 'hit-nth', n: 1 },
+    payoff: { kind: 'echo-hit', magnitude: 0.5 },
+  })]);
+  // Aggroed ON the player and no attack target of its own, which is the shape that
+  // reaches the scan rather than the early return.
+  const attacker = monster(730);
+  setAggroTarget(world, attacker, { id: player.isPlayer.id, kind: 'player' }, 1_000);
+
+  const query = world.aggroedMonsters;
+  let scans = 0;
+  Object.defineProperty(world, 'aggroedMonsters', {
+    configurable: true,
+    get: () => { scans += 1; return query; },
+  });
+
+  cardFx();
+  scans = 0;
+  updateLineageCards(world, 100);
+  const withoutClockCard = scans;
+
+  setLineageRuntime(player.tracksCombat, {
+    cards: [seededCard({
+      trigger: { kind: 'pulse' },
+      payoff: { kind: 'ward', magnitude: 0.2, durationMs: 4_000 },
+      fx: 'engagement.brace-sparks', lane: 'engagement',
+    })],
+    capstones: [],
+  });
+
+  cardFx();
+  scans = 0;
+  updateLineageCards(world, 100);
+  const withClockCard = scans;
+
+  assert(
+    withClockCard === withoutClockCard + 1,
+    `the engagement scan belongs to the clock card alone: ${withoutClockCard} scans without it, ${withClockCard} with`,
+  );
+  assert(cardFx().length === 1, 'and the pulse still pays out, or this case proves nothing');
+
+  Object.defineProperty(world, 'aggroedMonsters', {
+    configurable: true, enumerable: true, writable: true, value: query,
+  });
 }
 
 console.log('lineageCards.wiring: ok');

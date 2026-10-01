@@ -2580,3 +2580,53 @@ or from the lineage database.
   biome fields a Technique family.
 - The §22 ability pass itself (roster audit, reauthored offers, bespoke per-ability
   keystones, T3 path re-homing) is untouched: it is a design session plus its own run.
+
+## Review-findings progress note — the seven pre-existing-code findings (2026-10-01, W1-E)
+
+Branch `feat/review-findings`, cut from `feat/lineage-data-model` at `e48e4f02` (the
+run-4 brief names `22302bbf`; the lineage branch had moved on by three commits, and the
+tip is what was taken). One commit per finding, each with a test that fails without it:
+`f30f53d4`, `bfb2726f`, `fdf6f18f`, `a07466a3`, `08de4b65`, `77cfa1db`, `2677c23e`.
+All seven findings from `docs/briefs/run3-report-2026-10-01.md` reproduced; none was a
+false positive.
+
+### Decisions a reader of the code should know about
+
+- **A card's `plating-shred` is divided across the record's CURRENT stack count.**
+  `effectivePlatingAfterShred` reads the shared record as stacks × `platingReduction`,
+  and a card's fraction resolves to a TOTAL, so §18.1's max-wins is settled in totals
+  for that one field and the winner is written back per stack. RESIDUAL: the record
+  still holds the strongest of each field independently, so if the cadence brand ADDS a
+  stack after a stronger card wrote the per-stack value, the composed total exceeds the
+  card's authored strip. Representing "the max of two totals" when the two sources
+  disagree about stack count needs per-source contributions, which the record does not
+  have; left alone deliberately.
+- **`applySharedDebuffMaxWins`'s permanence is read from the CONFIG, not the record.**
+  `applyStatusEffect` writes the new window onto an existing entry only when the config
+  is refreshable, so the Cursed Finale's non-refreshable permanent strip never reached
+  the window comparison at all. The same function now also merges `maxStacks` (widest
+  wins, 0 = uncapped wins outright), because the cap is part of "never reduce the stack
+  count" and whoever created the record used to pin it forever.
+- **The Cursed Finale's `vulnerability` gained `maxStacks: 1` and `data.totalMs`**, to
+  match the card and the range node writing the same record. No damage changes:
+  `applyMonsterDamageTakenDebuffs` reads only `damageMultiplier`. It stops the stack
+  counter climbing on a record whose stacks nothing reads, and gives the HUD clock a
+  denominator.
+- **The `evade` trigger tests `evadeMitigation >= 1`, not `evadeFull`.** Same standard,
+  read earlier: the clock decides in `onAttack`, while `evadeFull` is written inside
+  `onDamageTaken` by a listener registered after the card runtime's main pass. Named
+  once as `evadeFullyAvoided` / `evadeMitigationOf` in `defense/mitigation/evasion.ts`.
+- **Effigy's pairing record id carries the owner** (`frame.summoner.link.<playerId>`).
+  `SUMMONER_FRAME_LINK_EFFECT` is now the id BASE; read it through
+  `summonerFrameLinkEffectId(ownerId)`.
+- **The retired weapon-upgrade refund is opt-in on `hydratePlayerSlices`** and only
+  `loadCharacter` opts in. Consequence to expect: the lobby listing and the admin
+  characters tab report the essence the save HOLDS, so a character with a pre-Phase-2b
+  weapon upgrade shows its refund only after being loaded once — which is also the
+  first moment the grant is real.
+
+### Not covered
+
+`server/test/boss3Cleanse.test.ts` fails (`swamp-response: boss hp drift`) on this
+branch, but it is on `run-tests.mjs`'s `ARCHIVED_SERVER_TESTS` list and so never runs
+in the suite; nothing here touches boss HP. Not investigated.

@@ -47,7 +47,7 @@ import {
 import { reloadFrameRampCap } from '../src/systems/classes/archetypes/reload/frameLoop';
 import { updateReloadArchetype } from '../src/systems/classes/archetypes/reload/reloadPrototype';
 import {
-  SUMMONER_FRAME_LINK_EFFECT,
+  summonerFrameLinkEffectId,
   SUMMONER_FRAME_LINK_RESOURCE,
   SUMMONER_FRAME_WINDOW_EFFECT,
 } from '../src/systems/classes/archetypes/summoner/frameLoop';
@@ -668,7 +668,7 @@ function fireShot(player: PlayerEntity, target: MonsterEntity): CombatContext {
     'the first body should bank its charge',
   );
   assert(
-    getStatusEffect(victim.tracksCombat, SUMMONER_FRAME_LINK_EFFECT) !== undefined,
+    getStatusEffect(victim.tracksCombat, summonerFrameLinkEffectId(player.isPlayer.id)) !== undefined,
     'the pairing record should be held on the target, so it expires with the window',
   );
   assert(
@@ -693,7 +693,7 @@ function fireShot(player: PlayerEntity, target: MonsterEntity): CombatContext {
     'the slam spends the whole bank',
   );
   assert(
-    getStatusEffect(victim.tracksCombat, SUMMONER_FRAME_LINK_EFFECT) === undefined,
+    getStatusEffect(victim.tracksCombat, summonerFrameLinkEffectId(player.isPlayer.id)) === undefined,
     'the pairing record is consumed with the slam, so the next pair starts clean',
   );
   const expectedSlam = Math.floor(player.dealsDamage.attack * 2 * slamMult);
@@ -790,6 +790,68 @@ function fireShot(player: PlayerEntity, target: MonsterEntity): CombatContext {
   assert(
     restored.length === 1 && restored[0]!.kind === 'frame-charge' && restored[0]!.stacks === slots,
     'the restore should beat frame-charge at full',
+
+// ── Effigy: two Conduits on one body are two pairs, not one ──────────────────
+//
+// The pairing record lives on the TARGET and its mask is indexed by formation slot,
+// so one shared id made two Conduits a single formation: each read the other's slot
+// bits as its own and "closed" a pair one body had assembled alone, the slam's
+// cleanup wiped the other's progress, and `applyStatusEffect` moves `sourceId` to
+// the latest applier, handing the slam's kill credit to whoever banked last.
+{
+  const a = frame('fl-effigy-a', 'summoner', 'summoner-root', 'heavy');
+  const b = frame('fl-effigy-b', 'summoner', 'summoner-root', 'heavy');
+  updateSummonerArchetype(world, 0, 3_000);
+
+  const bodiesOf = (owner: PlayerEntity) => owner.summonsMinions!.minionIds
+    .map((id) => (id ? world.getMinionEntity(id) : undefined))
+    .filter((m): m is NonNullable<typeof m> => m !== undefined);
+  const bodiesA = bodiesOf(a);
+  const bodiesB = bodiesOf(b);
+  assert(
+    bodiesA.length === 2 && bodiesB.length === 2,
+    `both Conduits should field two bodies, got ${bodiesA.length} and ${bodiesB.length}`,
+  );
+
+  const victim = punchbag(900, 4_200);
+
+  // A's slot 0 banks, then B's slot 1 strikes the same body. Neither owner has a
+  // pair: one shared record would hand B the slot-0 bit A set and slam anyway.
+  runFormationAttack(world, a, bodiesA[0]!, victim, 4_000);
+  runFormationAttack(world, b, bodiesB[1]!, victim, 4_050);
+  assert(
+    !hasStatusEffect(victim.tracksCombat, STUN_EFFECT),
+    "one body each is a pair for neither owner, however many Conduits share the body",
+  );
+
+  const linkA = getStatusEffect(victim.tracksCombat, summonerFrameLinkEffectId(a.isPlayer.id));
+  const linkB = getStatusEffect(victim.tracksCombat, summonerFrameLinkEffectId(b.isPlayer.id));
+  assert(linkA !== undefined && linkB !== undefined, 'each owner holds its own pairing record');
+  assert(linkA!.sourceId === a.isPlayer.id, "A's record keeps A's kill credit");
+  assert(linkB!.sourceId === b.isPlayer.id, "B's record keeps B's kill credit");
+  assert(
+    getResource(a.tracksCombat, SUMMONER_FRAME_LINK_RESOURCE) > 0,
+    "A's bank is not spent by another Conduit's hit",
+  );
+
+  // B's OWN second body closes B's pair — and only B's.
+  runFormationAttack(world, b, bodiesB[0]!, victim, 4_100);
+  assert(
+    hasStatusEffect(victim.tracksCombat, STUN_EFFECT),
+    "B's own two bodies still close a pair on a shared body",
+  );
+  close(
+    getResource(b.tracksCombat, SUMMONER_FRAME_LINK_RESOURCE),
+    0,
+    'B spends its own bank',
+  );
+  assert(
+    getResource(a.tracksCombat, SUMMONER_FRAME_LINK_RESOURCE) > 0,
+    "B's slam must not spend A's bank",
+  );
+  assert(
+    getStatusEffect(victim.tracksCombat, summonerFrameLinkEffectId(a.isPlayer.id)) !== undefined,
+    "B's slam must not wipe A's pairing record",
   );
 }
 

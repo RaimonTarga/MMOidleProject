@@ -85,9 +85,7 @@ export function registerEvasion(): void {
   registerCombatListener('onDamageTaken', (ctx, _world) => {
     if (ctx.defenderType !== 'player') return;
     if (!ctx.metadata['evaded']) return;
-    const mit = typeof ctx.metadata['evadeMitigation'] === 'number'
-      ? (ctx.metadata['evadeMitigation'] as number)
-      : GAME_CONFIG.EVADE_MITIGATION_BASE;
+    const mit = evadeMitigationOf(ctx);
     // Full mitigation fully avoids the hit (→ "DODGE" floater client-side); a
     // partial evade restyles the reduced damage number and raises its own
     // "GRAZE" floater. Flag which one for the monster-attack path to translate
@@ -95,6 +93,31 @@ export function registerEvasion(): void {
     ctx.metadata['evadeFull'] = mit >= 1;
     ctx.damage = Math.max(0, Math.round(ctx.damage * (1 - mit)));
   });
+}
+
+/**
+ * The avoided FRACTION of an incoming hit the evade clock has already decided
+ * (`metadata.evaded`). The decision is recorded in `onAttack`, so this reads the same
+ * on either side of the defense stack — unlike `metadata.evadeFull`, which the
+ * mitigation listener above only writes once `onDamageTaken` reaches it.
+ */
+export function evadeMitigationOf(ctx: CombatContext): number {
+  return typeof ctx.metadata['evadeMitigation'] === 'number'
+    ? (ctx.metadata['evadeMitigation'] as number)
+    : GAME_CONFIG.EVADE_MITIGATION_BASE;
+}
+
+/**
+ * True when the player AVOIDED the hit outright — `metadata.evaded` plus full
+ * mitigation.
+ *
+ * `metadata.evaded` alone is NOT that: it is set for a graze too, which lands
+ * reduced damage, keeps the monster's ailments and raises its own "GRAZE" floater.
+ * Anything that answers an avoid rather than a softened hit tests this, or it fires
+ * on hits that landed and alongside the hit-taken path.
+ */
+export function evadeFullyAvoided(ctx: CombatContext): boolean {
+  return ctx.metadata['evaded'] === true && evadeMitigationOf(ctx) >= 1;
 }
 
 /**

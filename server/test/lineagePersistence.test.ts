@@ -16,7 +16,16 @@
 import { GAME_CONFIG, baseRecoveryForTier, emptyEquipment } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { World } from '../src/world/World';
-import { sanitizeCapstoneWallet, sanitizeShardWallet } from '../src/db/playerRepo';
+import {
+  listAccountCharacters,
+  listCharacters,
+  loadCharacter,
+  refundWeaponUpgradeEssence,
+  sanitizeCapstoneWallet,
+  sanitizeShardWallet,
+  type DB,
+} from '../src/db/playerRepo';
+import { subscribeAdminLogs } from '../src/log';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -147,4 +156,115 @@ function legacySave(id: string): PersistedPlayerSlices {
   assert(forms.length === new Set(forms).size, `relogging duplicated forms: ${forms.join()}`);
 }
 
-console.log('lineagePersistence.test.ts: ok');
+
+// ─── A GRANT inside hydration, on paths that throw the slices away ───────────
+//
+// `refundWeaponUpgradeEssence` is the one hydration transform that is not a pure
+// read: it hands back the essence the retired weapon +N ladder cost and logs that it
+// did. It ran inside `hydratePlayerSlices`, which also backs two READ-ONLY listings
+// — the lobby's `listAccountCharacters` and the admin tab's `listCharacters` — so the
+// grant was logged on every lobby load and then discarded, and the admin tab
+// reported essence the character had never been given. Only `loadCharacter` hands
+// the slices to a live entity that saves them.
+//
+// Driven through a stub query builder rather than Postgres: CI provisions none.
+
+/** A drizzle builder that answers with fixed rows however it is chained. */
+function stubDb(rows: readonly unknown[]): DB {
+  const self: Record<string, unknown> = {
+    then: (resolve: (value: readonly unknown[]) => unknown) => Promise.resolve(rows).then(resolve),
+  };
+  for (const step of ['from', 'where', 'orderBy', 'leftJoin', 'set', 'returning']) {
+    self[step] = () => self;
+  }
+  return { select: () => self, update: () => self } as unknown as DB;
+}
+
+/** The legacy save as the `characters` row it would have been written as. */
+function storedRow(id: string): Record<string, unknown> {
+  const save = legacySave(id);
+  return {
+    id,
+    accountId: 'acct-refund',
+    isPlayer: JSON.stringify(save.isPlayer),
+    hasPosition: JSON.stringify(save.hasPosition),
+    hasHealth: JSON.stringify(save.hasHealth),
+    tracksProgression: JSON.stringify(save.tracksProgression),
+    holdsInventory: JSON.stringify(save.holdsInventory),
+    usesSkills: JSON.stringify(save.usesSkills),
+    summonerState: null,
+    deletedAt: null,
+    lastPlayedAt: 1,
+    updatedAt: 1,
+  };
+}
+
+const totalEssence = (essences: Record<string, number>): number =>
+  Object.values(essences).reduce((sum, n) => sum + n, 0);
+
+async function refundStaysOnTheLoadPath(): Promise<void> {
+  // The fixture must really be refundable, or none of this proves anything: the
+  // legacy save carries flash-rapier+3, which the frozen table prices at 150 green.
+  const probe = legacySave('p-refund-probe');
+  const held = totalEssence(probe.tracksProgression.essences);
+  refundWeaponUpgradeEssence('p-refund-probe', probe.holdsInventory, probe.tracksProgression.essences);
+  assert(
+    totalEssence(probe.tracksProgression.essences) > held,
+    'the fixture must hold a refundable weapon upgrade',
+  );
+  assert(
+    probe.holdsInventory.itemUpgrades['flash-rapier'] === undefined,
+    'and the refund must drop the entry it paid out',
+  );
+
+  const refundLogs: string[] = [];
+  const unsubscribe = subscribeAdminLogs((entry) => {
+    if (entry.message.includes('refunded weapon upgrade essence')) refundLogs.push(entry.message);
+  });
+
+  const lobby = await listAccountCharacters(stubDb([storedRow('p-refund-lobby')]), 'acct-refund');
+  assert(lobby.length === 1, 'the lobby listing should answer with the one character');
+  assert(
+    refundLogs.length === 0,
+    `a lobby listing must not grant anything, got ${refundLogs.length} refund log(s)`,
+  );
+
+  const admin = await listCharacters(stubDb([{
+    character: storedRow('p-refund-admin'),
+    accountDisplayName: 'Tester',
+    accountDiscordId: null,
+  }]));
+  assert(admin.length === 1, 'the admin listing should answer with the one character');
+  assert(
+    totalEssence(admin[0]!.essences) === held,
+    `the admin tab must report the essence the save holds, got ${totalEssence(admin[0]!.essences)} against ${held}`,
+  );
+  assert(refundLogs.length === 0, 'and it must not log a grant either');
+
+  // The load path is where the refund belongs: these slices are handed to a live
+  // entity and saved, so what it grants survives.
+  const loaded = await loadCharacter(
+    stubDb([storedRow('p-refund-load')]),
+    'acct-refund',
+    'p-refund-load',
+  );
+  assert(loaded !== null, 'the load path should answer with the character');
+  assert(
+    totalEssence(loaded!.tracksProgression.essences) > held,
+    'loading a character still refunds the retired weapon upgrade',
+  );
+  assert(
+    loaded!.holdsInventory.itemUpgrades['flash-rapier'] === undefined,
+    'and drops the entry it paid out',
+  );
+  assert(
+    refundLogs.length === 1,
+    `the refund is logged exactly once, where it is kept, got ${refundLogs.length}`,
+  );
+
+  unsubscribe();
+}
+
+void refundStaysOnTheLoadPath()
+  .then(() => { console.log('lineagePersistence.test.ts: ok'); })
+  .catch((err: unknown) => { console.error(err); process.exitCode = 1; });
