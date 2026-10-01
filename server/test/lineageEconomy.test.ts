@@ -18,8 +18,10 @@ import {
   GAME_CONFIG,
   LINEAGE_DATABASE,
   absorbedStatCards,
+  bandBiomeLevel,
   baseRecoveryForTier,
   emptyEquipment,
+  lineageBandBiome,
   lineageCardPrice,
   lineageCardTie,
   lineageGateCost,
@@ -259,6 +261,84 @@ const walletTotal = (p: PlayerEntity): number =>
   assert(
     player.holdsInventory.lineages!.rapier!.ownedForms.includes('gale-needle'),
     'the unworn form is still owned',
+  );
+}
+
+// ─── A band gates on the biome of the form worn at that tier (design §21) ────
+//
+// The home biome is only ever the T1 door. The Rapier's T2 band is Forest work
+// behind the Gale Needle and Jungle work behind the Stinger, and switching
+// between two owned forms of one tier re-resolves the band under the player for
+// free. What is pinned here is the SERVER's refusal — the client's button state is
+// the same function, so it cannot disagree.
+
+const t2Stat = rapier.cards.find((c) => c.id === 'rapier-t2-tempo-stat')!;
+const stinger = rapier.forms.find((f) => f.recipeId === 'jungle-stinger-rapier')!;
+assert(
+  galeNeedle.biome === 'forest' && stinger.biome === 'jungle',
+  'fixture: the two tier-2 rapier forms come from different biomes',
+);
+
+{
+  const { world, player } = spawn('p-door');
+  for (const form of ['gale-needle', 'jungle-stinger-rapier']) {
+    const paid = unlockLineageForm(world, player, 'rapier', form);
+    assert(paid.success, `fixture: the ${form} gate should open (${paid.reason})`);
+  }
+  assert(wearLineageForm(world, player, 'rapier', 'gale-needle').success, 'fixture: wear the Forest form');
+
+  const tree = () => player.holdsInventory.lineages!.rapier!;
+  assert(lineageBandBiome(rapier, tree(), 2) === 'forest', 'the Gale Needle makes the T2 band Forest work');
+  // The collapsed T1 band keeps its own door, which is the crafted base form's.
+  assert(lineageBandBiome(rapier, tree(), 1) === 'forest', 'the T1 door is the crafted form, i.e. the home biome');
+
+  const forestDoor = bandBiomeLevel(2, 'stat', 'forest');
+  const jungleDoor = bandBiomeLevel(2, 'stat', 'jungle');
+  assert(
+    jungleDoor < forestDoor,
+    'fixture: the Jungle debuts in T2 and counts from 1, so its door reads below the Forest door',
+  );
+
+  // Behind the Forest form the band is Forest work, and a stocked Jungle does not help.
+  player.tracksProgression.biomeLevel.forest = forestDoor - 1;
+  player.tracksProgression.biomeLevel.jungle = 99;
+  const early = unlockLineageCard(world, player, 'rapier', t2Stat.id);
+  assert(
+    !early.success && /forest level/i.test(early.reason ?? ''),
+    `a Forest door must refuse on forest: ${early.reason}`,
+  );
+
+  // Swapping to the other owned tier-2 form re-resolves the band, free of charge.
+  const before = walletTotal(player);
+  assert(wearLineageForm(world, player, 'rapier', 'jungle-stinger-rapier').success, 'switching forms works');
+  assert(walletTotal(player) === before, 'switching forms costs nothing');
+  assert(lineageBandBiome(rapier, tree(), 2) === 'jungle', 'and the band is Jungle work now');
+
+  player.tracksProgression.biomeLevel.jungle = jungleDoor - 1;
+  const earlyJungle = unlockLineageCard(world, player, 'rapier', t2Stat.id);
+  assert(
+    !earlyJungle.success && /jungle level/i.test(earlyJungle.reason ?? ''),
+    `a Jungle door must refuse on jungle: ${earlyJungle.reason}`,
+  );
+
+  // The Jungle's own level is enough with the home biome at ZERO: the band left
+  // the Forest when the form did. Global Mastery is tier-wide (design §4), so it
+  // is banked across the other biomes rather than in the door.
+  player.tracksProgression.biomeLevel.forest = 0;
+  player.tracksProgression.biomeLevel.jungle = jungleDoor;
+  for (const biome of ['plains', 'mountain', 'cave', 'swamp', 'desert']) {
+    player.tracksProgression.biomeLevel[biome] = 99;
+  }
+  const bought = unlockLineageCard(world, player, 'rapier', t2Stat.id);
+  assert(bought.success, `the door biome's own level must be enough: ${bought.reason}`);
+  assert(tree().ownedCards.includes(t2Stat.id), 'and the card is owned');
+
+  // The collapsed T1 band still gates on ITS door, which is still the Forest — so
+  // the band below is refused at forest 0 while the band above just succeeded.
+  const t1Late = unlockLineageCard(world, player, 'rapier', payoffCard.id);
+  assert(
+    !t1Late.success && /forest level/i.test(t1Late.reason ?? ''),
+    `the collapsed T1 band keeps the Forest door: ${t1Late.reason}`,
   );
 }
 

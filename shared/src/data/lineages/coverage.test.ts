@@ -21,6 +21,7 @@
  * It also resolves every card and asserts the numbers come out finite and sane,
  * which is the only place the magnitude table is exercised end to end.
  */
+import { biomeLevelOffset } from '../../config/gameConfig';
 import { RECIPE_DATABASE } from '../recipes';
 import { MONSTER_DATABASE } from '../../monsterDatabase';
 import { CAPSTONE_MATERIALS } from './capstones';
@@ -33,7 +34,7 @@ import {
   GATE_LOCAL_LEVEL, MAX_LINEAGE_TIER, rowBiomeLevel, rowsForTier, tierHasRow,
 } from './magnitudes';
 import {
-  lineageGateCost, resolveLineageCapstone, resolveLineageCard,
+  bandBiomeLevel, lineageGateCost, resolveLineageCapstone, resolveLineageCard,
 } from './resolve';
 import {
   AMPLIFIED_AXES, LINEAGE_FX_KEYS, PACKET_IDS, PAYOFF_KINDS, ROW_KINDS,
@@ -368,9 +369,23 @@ for (const lineage of LINEAGE_DATABASE.values()) {
   for (const card of lineage.cards) {
     const resolved = resolveLineageCard(card, lineage);
 
+    // With no door biome passed, a card resolves against its lineage's HOME
+    // biome (design §21's T1 case, and the UI's default for a band with no door
+    // chosen yet). Every home biome debuts in T1, so its offset is zero and the
+    // level is the table's own absolute number. The door-biome bands — where the
+    // offset is NOT zero — are walked by `reachability.test.ts`.
     check(
-      resolved.requiredBiomeLevel === rowBiomeLevel(card.tier, card.row),
+      resolved.requiredBiomeGroup === lineage.homeBiome,
+      `${card.id}: resolved with no door biome should fall back to the home biome`,
+    );
+    check(
+      resolved.requiredBiomeLevel === bandBiomeLevel(card.tier, card.row, lineage.homeBiome),
       `${card.id}: unlock level does not match the table`,
+    );
+    check(
+      biomeLevelOffset(lineage.homeBiome) === 0
+        && resolved.requiredBiomeLevel === rowBiomeLevel(card.tier, card.row),
+      `${card.id}: a home biome debuts in T1, so its band level is the table's absolute one`,
     );
     check(resolved.requiredBiomeLevel > 0, `${card.id}: non-positive unlock level`);
     check(resolved.requiredGlobalMastery > 0, `${card.id}: non-positive Global Mastery gate`);

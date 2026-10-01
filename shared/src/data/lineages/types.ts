@@ -411,7 +411,15 @@ export interface LineageGateCost extends LineageCost {
 /** A card with its numbers filled in. This is what the runtime and the UI read. */
 export interface ResolvedLineageCard {
   card: LineageCard;
-  /** Absolute level in the gating biome (not level-within-the-tier). */
+  /**
+   * The biome the band gates on: the DOOR biome of the form worn at this card's
+   * tier (design §21), not the lineage's home biome. Carried on the resolved card
+   * so the purchase check, the lock message and the UI all name the same biome the
+   * level was computed in, and so switching to a form from another biome
+   * re-resolves the pair together.
+   */
+  requiredBiomeGroup: string;
+  /** Level in {@link requiredBiomeGroup}'s own numbering (not level-within-the-tier). */
   requiredBiomeLevel: number;
   /** Global Mastery required, from the same per-tier band the +1..+5 ladder used. */
   requiredGlobalMastery: number;

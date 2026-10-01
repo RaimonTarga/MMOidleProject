@@ -108,6 +108,7 @@ function seededCard(opts: {
       fx: opts.fx ?? 'tempo.ghost-strike',
       trigger: opts.trigger.kind, payoff: opts.payoff.kind,
     },
+    requiredBiomeGroup: 'forest',
     requiredBiomeLevel: 1,
     requiredGlobalMastery: 0,
     cost: { essence: {}, shards: {} },
