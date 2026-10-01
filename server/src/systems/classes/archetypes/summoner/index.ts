@@ -3,6 +3,7 @@ import { initSummonerArchetype, updateSummonerArchetype } from './summonerProtot
 import { registerSummonerSpecializationHooks } from './specs';
 import { SUMMONER_T4_BUFFS } from './specs/buffs';
 import { SUMMONER_FRAME_BUFFS } from './frameLoop';
+import { SUMMONER_LINE_BUFFS } from './lineHolds';
 
 const summonerModule = defineMechanic({
   id: 'summoner',
@@ -13,7 +14,7 @@ const summonerModule = defineMechanic({
   tick: (world, dt, now) => {
     updateSummonerArchetype(world, dt, now);
   },
-  buffs: [...SUMMONER_FRAME_BUFFS, ...SUMMONER_T4_BUFFS],
+  buffs: [...SUMMONER_FRAME_BUFFS, ...SUMMONER_LINE_BUFFS, ...SUMMONER_T4_BUFFS],
 });
 
 export { registerSummonerDamageSponge } from './damageSponge';

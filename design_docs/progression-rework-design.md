@@ -479,8 +479,9 @@ is retired. The cap is now whatever the tier's authored HP/s adds up to.
 ## 16. Open decisions (in the order the plan needs them)
 
 1. ~~Frame loop containers and the Mid-range mechanic, per root.~~ **Decided 2026-10-01**, see
-   `docs/briefs/frame-loops-2026-10-01.md`. Still OPEN inside it: the Consort (balanced
-   Conduit) loop. The T3 class paths it displaces (Pyromancer, Warmonger) are reviewed as a
+   `docs/briefs/frame-loops-2026-10-01.md`; the one row still open inside it, the Consort
+   (balanced Conduit) loop, was closed later the same day (amendment 13). The T3 class
+   paths it displaces (Pyromancer, Warmonger) are reviewed as a
    whole after the rework.
 2. ~~Mountain, Cave and Swamp family tables.~~ **Approved as authored 2026-10-01.** Engagement
    has family sources since the T1 third mobs.

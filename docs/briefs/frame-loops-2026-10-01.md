@@ -71,12 +71,12 @@ T3 review.
 | Wraith (balanced) | **loop** | the discharge opens a window where hits generate energy faster |
 | Phantasm (heavy) | **overcharge** | energy above the cap banks into the discharge multiplier; the discharge staggers |
 
-### Conduit (summoner) — Splinter and Effigy locked, Consort OPEN
+### Conduit (summoner) — locked (Consort decided later the same day)
 
 | Frame | Trigger | Effect |
 |---|---|---|
 | Splinter (light, 6 small) | a completed formation cycle on one target | frenzy window: summon attack speed and the on-hit multiplier up |
-| Consort (balanced, 5) | **OPEN** | rejected: a heal pulse on reconstruction. Candidates: "the line holds" (plating/DR while all five live, broken by a death, restored by reconstruction); an owner window per cycle. Designer wants to keep thinking. |
+| Consort (balanced, 5) | every one of the five slots alive | **"the line holds"** (adopted 2026-10-01, bible amendment 13): the formation carries bonus plating and DR while all five live; a death breaks it; a completed reconstruction restores it. Rejected: a heal pulse on reconstruction — it pays the player for losing a body. Also considered and not taken: an owner window per cycle. |
 | Effigy (heavy, 2 large) | both bodies hit the same target inside a window | banked charge per hit is spent as a linked slam with a stagger |
 
 Parked for later: Splinter bodies exploding on death (Iconoclast already does this at T3;
@@ -120,4 +120,6 @@ untouched.
   rises with attack speed; Artillerist ramp has no cap below the clip length),
   `rangeMechanics.test.ts` per class (at-bay slow applies only in the band; Far payoff only
   from max reach), `mechanicFired` extended for the summoner cycle.
-- Consort ships with no loop until decided; the frame keeps its stat skew.
+- Consort's line is a STANDING condition, so it has neither a window to clamp nor a bank
+  to cap: its test cases are intact grants / a death breaks it on the same pass / a
+  completed reconstruction restores it (`frameLoopsRanged.test.ts`).

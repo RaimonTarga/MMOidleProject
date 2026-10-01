@@ -98,12 +98,12 @@ discharge and resets to 0 on the very next hit, so nothing above-cap can ever ac
 under the existing energy model. It is implemented as a raised threshold instead: fewer,
 bigger discharges, which is the same Heavy skew by a different mechanism.
 
-### Conduit (summoner) — Splinter and Effigy locked, Consort OPEN
+### Conduit (summoner) — locked (Consort decided 2026-10-01)
 
 | Frame | Trigger | Effect |
 |---|---|---|
 | Splinter (light, 6 small bodies) | a completed formation cycle on one target | `summoner.frame-frenzy-window-ms` 900: summon attack speed (+`frenzy-aps-pct` 0.2) and on-hit multiplier (`frenzy-onhit-mult` 1.25) up |
-| Consort (balanced, 5) | **none — OPEN** | ships with its stat skew only; the loop container is still undecided with the designer (candidates on the table: "the line holds" plating/DR while all five summons live, or an owner window per cycle) |
+| Consort (balanced, 5) | **a standing condition**: every formation slot alive | "the line holds" — while all five bodies stand, each carries `summoner.frame-line-plating-pct` 0.15 of the owner's plating again and `summoner.frame-line-dr` 0.15 more damage reduction. Any death breaks it on the summoner pass that observes the death; a completed reconstruction restores it |
 | Effigy (heavy, 2 large bodies) | both bodies hit the same target inside a window | `summoner.frame-link-window-ms` 2500, charge per hit up to `frame-link-max-charge` 5: a linked slam (`frame-link-slam-mult` 0.3) with `frame-link-stagger-ms` 750 stagger |
 
 **`mechanic-fired` for the summoner moved.** It used to fire on a command intent (a
@@ -190,8 +190,12 @@ sharedDebuffRecord.ts` because Sentinel's vulnerability window is its second con
   targets; Far extends the Light window") is not implemented** — only each range's own
   standalone mechanic (§4) shipped. The frame loop and the range mechanic exist side by
   side today, not yet cross-wired.
-- **Consort has no loop** (§2) — ships with its stat skew only until the designer decides
-  the container.
+- **Consort's line is unbenched** (§2) — the container is decided and implemented, but 0.15
+  plating share / 0.15 DR are magnitude-table units taken raw (`plating-stack` and
+  `engagement-dr`), with no tier or row scaling, exactly as Effigy's stagger took the
+  `stun` unit. A standing condition's "uptime" is the share of the fight the formation is
+  whole — the monsters set it, not the player — so it needs the bench more than a window
+  does.
 - **Pyromancer/Ember Mage and Warmonger/Artillerist overlaps** (§2) are explicitly left
   for the T3 class review, together with Venomslinger's and Winter Warden's planned
   re-homes.

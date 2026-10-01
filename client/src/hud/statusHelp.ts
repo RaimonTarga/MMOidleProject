@@ -142,6 +142,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'summoner-twin-covenant': m('Twin covenant', 'Two complementary twins. If one falls the survivor keeps a bounded fallback rather than the full pairing.'),
   'summoner-frame-frenzy': m('Frenzy', 'Splinter’s frame loop. Every living body has now struck the same target, completing a formation cycle, and the swarm answers with a short burst of extra attack speed and on-hit damage. The window is shorter than one swing, so keeping the cycle turning is the whole skill.'),
   'summoner-frame-link': m('Link', 'Effigy’s frame loop. Each body banks a charge every time it hits. When both bodies have struck the same target inside the window, the pair spends the whole bank as one linked slam that also staggers the target. Losing a body means there is no pair and nothing to spend.'),
+  'summoner-frame-line': m('Line', 'Consort’s frame loop. While every slot of your formation is standing, the line holds: each body carries a share of your plating again and extra damage reduction. One death breaks it immediately — the tile stays, counting the bodies you still have — and finishing the reconstruction restores it. The reward is an unbroken line, so reconstruction speed is what you scale.'),
 
   // -- Weapons ---------------------------------------------------------------
   flurry: b('Flurry', 'A weapon proc raising your attack speed while its stacks hold.'),
