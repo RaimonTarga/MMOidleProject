@@ -1778,6 +1778,89 @@ the T1/T2 magnitude values moved; the one new numeric surface is
   the node handlers emit nothing, because there is no node event on the gameplay
   recorder and adding one is a schema change this task did not own.
 
+### Phase 5 progress note — W1-C, T3/T4 families and blends (2026-10-01)
+
+**Built.** On `feat/t3-t4-families` off `feat/lineage-data-model`. `pnpm typecheck`
+clean; related tests green: `lineageMaterials.test.ts`, `variantBlend.test.ts`,
+`shared/src/world/map/validation.test.ts`, `areaInformation.test.ts`,
+`craftingRailAndMapFog.test.ts`, `tundraChill.test.ts`, the `shared/src/collision/*`
+suite, `gameConfig.test.ts`, `durability29.test.ts`, `mobAdoptionIntegration.test.ts`,
+and the full `lineage`/`variant`/`blend`/`world` substring sweep (17 files).
+
+- **Starter biomes + Jungle/Desert join their EXISTING families** —
+  Mountain/Cave/Swamp (already fully T1-T4 partitioned from Phase 1b onward — their
+  T3/T4 mobs were already in `FAMILY_DATABASE` before this wave) plus Jungle/Desert
+  (T2-authored by W1-E, same pools cover T3/T4) needed only blends, no new
+  `FamilyId`s. One correctness fix along the way: `avalanche-tyrant` (Mountain's
+  Caprine-line apex per `mountain.monsters.ts`'s own lineage banner,
+  cliff-hopper -> avalanche-ram -> avalanche-tyrant) had been filed under
+  `mountain-crag` instead of `mountain-hopper` since the Phase 1b commit that first
+  populated the table — moved, no other change.
+- **Four biomes debut fresh families, all PROVISIONAL** (header comment in
+  `shared/src/data/families/index.ts` marks the whole T3/T4 pass, not per-entry):
+  Tundra (2: Glacial / Rime — the roster's banner names only two legible roles),
+  Volcanic (3: Swarm / Anchor / Ashfall), Graveyard a.k.a. Wasteland (3: Crawler /
+  Plague / Choir — `charnel-brute` folded into Plague even though
+  `monsterPoolByTier` never spawns it, because the partition test claims every
+  non-boss `MONSTER_DATABASE` entry of a family biome regardless of pool
+  membership), Trench (3, one mob each, reusing the biome's own THE HUNTER / THE
+  KITER / THE ANCHOR labels verbatim as family names).
+- **`drops`/`punishes` derivation** — rather than re-deriving the heuristic from
+  scratch per family, picked each pair against `packetDefinition().weakAgainst` in
+  `shared/src/data/lineages/packets.ts` where it names the shape directly (Tempo:
+  "weak against fortified plating, a single big target" → every slow/heavy/shielded
+  family punishes Tempo; Affliction: "weak against... short fights" → Hadal
+  Stalker, explicitly the lowest-HP of Trench's three elites, punishes it). Where
+  the text didn't speak directly, matched the nearest existing precedent pair
+  (Control always punishes Kill-chain; Engagement always punishes Affliction).
+- **Blends** — every T3 normal node (tundra 5, mountain 5, cave 6, jungle 5, desert
+  5, volcanic 6, swamp 6 = 38) and every T4 normal node (mountain 5, tundra 5,
+  jungle 5, desert 5, volcanic 6, graveyard 6, trench 6 = 38), same
+  70/20/10-permutation + 45/45/10 + 34/33/33 (+55/30/15 for the six-node biomes)
+  pattern as T1/T2, two-way for Tundra. Desert's T3/T4 blends are its first
+  THREE-way split (Stalker's T3+ members finally field a node, so
+  `lineageMaterials.test.ts`'s `UNSOURCED_FAMILIES` entry for `desert-stalker` is
+  now empty).
+- **Tests** — `lineageMaterials.test.ts` needed only the `UNSOURCED_FAMILIES`
+  removal (its partition sweep already generalizes to any `FAMILY_BIOMES` entry).
+  `variantBlend.test.ts` gained `checkTierBlends(3, 38)` /
+  `checkTierBlends(4, 38)`, the `NODE_BLENDS` count moved to `27+37+38+38`, the old
+  blanket "T3/T4 carry no blend" loop became "no non-normal node carries a blend",
+  the per-node resolved-blend cycle loop now also runs `t3Normals`/`t4Normals`, and
+  the final "unblended fallback still spawns" fixture moved from a T3 normal node
+  (none left unblended) to a T3 dungeon node (dungeons stay blend-free by design at
+  every tier, so the fallback path is still exercised).
+
+**Divergences recorded per the brief's own instruction.**
+
+1. **"Commit per biome" was not followed literally.** `shared/src/data/families/
+   index.ts` holds every biome's table in one file (same layout note as W1-E
+   above), and `variantBlend.test.ts`'s `checkTierBlends(3, 38)` /
+   `checkTierBlends(4, 38)` assertions require ALL seven biomes of a tier present
+   simultaneously to pass — an intermediate "Mountain only" commit would fail the
+   old test's "no T3/T4 node carries a blend" assertion without yet satisfying the
+   new exact-count one. Committed instead by concern: (1) the family table (all
+   eleven biome entries + the Mountain fix), (2) `regionT3.ts`, (3) `regionT4.ts`,
+   (4) the two test files, each biome's specifics called out in that commit's body
+   and in this note above.
+2. **`avalanche-tyrant`'s move is a pre-existing-data fix, not new T3/T4 authoring**
+   — it was already assigned (to the wrong family) before this wave; left every
+   other starter-biome assignment as found, including one similar-shaped
+   ambiguity in Swamp (`swamp-hydra`/`plague-hydra`, a Shell/Anchor pair, sit in
+   the `swamp-coven` control-caster family alongside `fen-hexer`/`bog-witch`) that
+   was NOT touched: unlike avalanche-tyrant, Swamp's existing table has no
+   internal lineage-banner contradiction to point at, so moving it would be a new
+   design opinion, not a correctness fix, and is flagged for the designer instead.
+3. **`graveyard-plague`'s `punishes: 'engagement'` is shared with `trench-hunter`
+   and `volcanic-ashfall`, and `desert-stalker` already punishes `bulwark`** — no
+   rule requires distinct `punishes` values across biomes (the existing table
+   already reuses `tempo`/`empowered` pairs five times over), only within one
+   biome's own three families, which every biome here still satisfies.
+4. **T3/T4 node spawn composition changes** for every biome that gained a blend
+   this wave, same class of change W1-E flagged for T2: any balance baseline
+   measured against the old flat per-tier pool is void. No monster numbers were
+   touched.
+
 ---
 
 ## Cross-cutting rules

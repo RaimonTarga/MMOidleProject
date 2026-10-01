@@ -35,6 +35,33 @@
  * line is assigned by kind, same policy as above, with the reasoning inline on
  * each entry below; that assignment is this wave's own authoring/review item,
  * flagged in the implementation report, not a locked design call.
+ *
+ * **T3/T4 pass (W1-C, 2026-10-01) — every assignment below is PROVISIONAL.**
+ * Plains/Forest/Mountain/Cave/Swamp/Jungle/Desert's T3/T4 members join their
+ * EXISTING T1/T2 families where the role matches (no new families for those
+ * seven — their rosters already partition cleanly; see each biome's own
+ * comment above). `mountain-crag`/`mountain-hopper` had one existing
+ * misfile fixed in this pass: `avalanche-tyrant` is the Hopper lineage's own
+ * apex (cliff-hopper -> avalanche-ram -> avalanche-tyrant, per
+ * `mountain.monsters.ts`'s own lineage banner) and had been filed under Crag;
+ * moved to Hopper, no other change.
+ *
+ * Four biomes debut here with NO T1/T2 presence, so they get fresh families
+ * partitioned by role per `shared/src/data/monsters/*.ts`'s own banners
+ * (ecology doc role grids agree): Tundra (2: Glacial bruiser line / Rime
+ * caster line — only two legible roles in a deliberately low-density, elite-
+ * focused roster), Volcanic (3: Swarm fodder+catcher packs / Anchor armored
+ * herds+elite / Ashfall ranged DoT gunners), Graveyard a.k.a. Wasteland (3:
+ * Crawler fast corpse-fodder / Plague DoT+death-rider bodies / Choir ranged
+ * support+necromancer backline), Trench (3, one mob each — the biome's own
+ * banner already names them THE HUNTER / THE KITER / THE ANCHOR, reused
+ * verbatim as family names). `drops`/`punishes` pairs below are chosen against
+ * each packet's own `weakAgainst` text in `data/lineages/packets.ts` where it
+ * speaks directly to the shape (e.g. Tempo is "weak against fortified
+ * plating, a single big target", so every slow/heavy/shielded family here
+ * punishes Tempo; Affliction is "weak against... short fights", so the
+ * low-HP/fast-dying Hadal Stalker punishes it) — not re-derived from scratch
+ * per family. None of this is reviewed with the designer yet.
  */
 import type { PacketId } from '../lineages/types';
 
@@ -52,7 +79,15 @@ export type FamilyId =
   // Jungle (T2 — W1-E)
   | 'jungle-ape' | 'jungle-undergrowth' | 'jungle-stalker'
   // Desert (T2 — W1-E)
-  | 'desert-basilisk' | 'desert-scorpion' | 'desert-stalker';
+  | 'desert-basilisk' | 'desert-scorpion' | 'desert-stalker'
+  // Tundra (T3/T4 — W1-C, provisional)
+  | 'tundra-glacial' | 'tundra-rime'
+  // Volcanic (T3/T4 — W1-C, provisional)
+  | 'volcanic-swarm' | 'volcanic-anchor' | 'volcanic-ashfall'
+  // Graveyard / Wasteland (T4 — W1-C, provisional)
+  | 'graveyard-crawler' | 'graveyard-plague' | 'graveyard-choir'
+  // Trench (T4 — W1-C, provisional)
+  | 'trench-hunter' | 'trench-kiter' | 'trench-anchor';
 
 export interface FamilyDefinition {
   id: FamilyId;
@@ -105,7 +140,7 @@ const familyEntries: [FamilyId, FamilyDefinition][] = [
   // ── Mountain (proposed — reviewed before Phase 4) ──────────────────────────
   ['mountain-crag', {
     id: 'mountain-crag', name: 'Crag', biome: 'mountain',
-    monsterIds: ['rockback-ram', 'granite-titan', 'mountain-colossus', 'granite-mammoth', 'cragback-rhino', 'avalanche-tyrant'],
+    monsterIds: ['rockback-ram', 'granite-titan', 'mountain-colossus', 'granite-mammoth', 'cragback-rhino'],
     drops: 'empowered', punishes: 'affliction',
   }],
   ['mountain-ridge', {
@@ -115,7 +150,10 @@ const familyEntries: [FamilyId, FamilyDefinition][] = [
   }],
   ['mountain-hopper', {
     id: 'mountain-hopper', name: 'Hopper', biome: 'mountain',
-    monsterIds: ['cliff-hopper', 'stone-eagle', 'avalanche-ram', 'cliffside-roc'],
+    // avalanche-tyrant (T4-W1-C fix): the Caprine lineage's own apex
+    // (cliff-hopper -> avalanche-ram -> avalanche-tyrant, mountain.monsters.ts's
+    // lineage banner) — was filed under Crag, moved here to match the role.
+    monsterIds: ['cliff-hopper', 'stone-eagle', 'avalanche-ram', 'cliffside-roc', 'avalanche-tyrant'],
     drops: 'tempo', punishes: 'empowered',
   }],
 
@@ -221,6 +259,136 @@ const familyEntries: [FamilyId, FamilyDefinition][] = [
     // Kill-chain/Bulwark mirrors Swamp Stalker (same family name, same pairing).
     drops: 'kill-chain', punishes: 'bulwark',
   }],
+
+  // ── Tundra (T3/T4 — W1-C, provisional) ─────────────────────────────────────
+  // Low-to-mid density, elite-focused roster (tundra.monsters.ts's own banner):
+  // only two legible roles, not three — a committed melee line and a ranged
+  // control-caster line. No swarm/opener shape exists here to justify a third
+  // family.
+  ['tundra-glacial', {
+    id: 'tundra-glacial', name: 'Glacial', biome: 'tundra',
+    // The committed-melee line (frost-lurker -> rime-tusk-mastodon) plus the
+    // defensive-window elites (glacier-bear/glacial-direbear's Ice Armor +
+    // Shatter) and the apex (permafrost-behemoth): slow, heavy, and in the
+    // shield-bearers' case explicitly built to waste chip/DoT against the
+    // shell and reward a burst. Same shape as Mountain Crag/Cave Brute.
+    monsterIds: ['frost-lurker', 'glacier-bear', 'rime-tusk-mastodon', 'glacial-direbear', 'permafrost-behemoth'],
+    // Empowered/Tempo mirrors every other slow-heavy family (Mountain Crag,
+    // Cave Brute, Jungle Ape, Desert Basilisk, Volcano Anchor): Tempo's own
+    // `weakAgainst` is literally "fortified plating, a single big target".
+    drops: 'empowered', punishes: 'tempo',
+  }],
+  ['tundra-rime', {
+    id: 'tundra-rime', name: 'Rime', biome: 'tundra',
+    // Ranged control casters: Frostbind/Deep Freeze are root-on-a-gate spells.
+    monsterIds: ['rime-caster', 'hoarfrost-yeti'],
+    // Control/Kill-chain mirrors Mountain Ridge, Desert Scorpion.
+    drops: 'control', punishes: 'kill-chain',
+  }],
+
+  // ── Volcanic (T3/T4 — W1-C, provisional) ────────────────────────────────────
+  // volcano.monsters.ts's own banner names three shapes: catcher+fodder packs,
+  // the anchor herd (armored, holds the fight open so Heat keeps climbing), and
+  // the stationary ranged Burn gunners.
+  ['volcanic-swarm', {
+    id: 'volcanic-swarm', name: 'Swarm', biome: 'volcanic',
+    // Pack alphas (cinder-hound/infernal-direhound, fast anti-kite catchers)
+    // plus their fodder (ember-scuttler/ember-skink): many fast, short-lived
+    // bodies, the same shape as Forest Pack / Plains Swarm / Mountain Hopper.
+    monsterIds: ['ember-scuttler', 'cinder-hound', 'ember-skink', 'infernal-direhound'],
+    drops: 'tempo', punishes: 'empowered',
+  }],
+  ['volcanic-anchor', {
+    id: 'volcanic-anchor', name: 'Anchor', biome: 'volcanic',
+    // The anchor herds (magma-brute/obsidian-tortoise) plus the elite
+    // defensive-window magma-salamander (Obsidian Shell rewards burst over
+    // chip, folded in the same way Mountain folds cragback-rhino into Crag):
+    // slow, heavy, armored.
+    monsterIds: ['magma-brute', 'obsidian-tortoise', 'magma-salamander'],
+    // Empowered/Tempo: Tempo's `weakAgainst` names exactly this shape.
+    drops: 'empowered', punishes: 'tempo',
+  }],
+  ['volcanic-ashfall', {
+    id: 'volcanic-ashfall', name: 'Ashfall', biome: 'volcanic',
+    // Stationary ranged Burn gunners (ash-slinger/ashspitter-salamander):
+    // DoT-heavy, same shape as Forest Canopy/Swamp Mire/Cave Brood.
+    monsterIds: ['ash-slinger', 'ashspitter-salamander'],
+    // Affliction answers DoT-heavy (design brief), not the lane it punishes.
+    // Engagement's own `weakAgainst` is "long attrition fights", which a
+    // standing Burn stack is built to cause.
+    drops: 'affliction', punishes: 'engagement',
+  }],
+
+  // ── Graveyard / Wasteland (T4 — W1-C, provisional) ──────────────────────────
+  // graveyard.monsters.ts's own banner: corpse-fodder bodies, the one
+  // dedicated plague creature plus the deferred (unspawned, T5) armored
+  // anchor, and the ranged necromancer+support backline. `charnel-brute` is
+  // never spawned (monsterPoolByTier has no T4 entry for it) but still lives
+  // in MONSTER_DATABASE, so the partition still needs to claim it.
+  ['graveyard-crawler', {
+    id: 'graveyard-crawler', name: 'Crawler', biome: 'graveyard',
+    // Fast, numerous, ability-free corpse fodder — the Gravewright's ammunition.
+    monsterIds: ['bone-crawler', 'plague-rat'],
+    drops: 'tempo', punishes: 'empowered',
+  }],
+  ['graveyard-plague', {
+    id: 'graveyard-plague', name: 'Plague', biome: 'graveyard',
+    // plague-hound is the biome's one dedicated DoT+death-rider body;
+    // charnel-brute (deferred/unspawned) is folded in here rather than given
+    // its own never-fielded family, same policy as Mountain's standalone elite.
+    monsterIds: ['plague-hound', 'charnel-brute'],
+    // Affliction answers DoT-heavy (design brief). Engagement's `weakAgainst`
+    // is "long attrition fights", which a plague/death-rider body is built
+    // to cause.
+    drops: 'affliction', punishes: 'engagement',
+  }],
+  ['graveyard-choir', {
+    id: 'graveyard-choir', name: 'Choir', biome: 'graveyard',
+    // Ranged backline: the necromancer that raises your kills and the
+    // vulture that hastens everything else. Both are squishy priority targets
+    // ("dies fast once you commit", per gravewright's own comment) — the same
+    // "kill it first" shape as Plains Sky/Jungle Stalker/Trench's Kiter.
+    monsterIds: ['carrion-vulture', 'gravewright'],
+    // Engagement/Affliction mirrors every other ranged-priority-target family.
+    // Affliction's own `weakAgainst` names "short fights", which a focused
+    // backline kill is.
+    drops: 'engagement', punishes: 'affliction',
+  }],
+
+  // ── Trench (T4 — W1-C, provisional) ─────────────────────────────────────────
+  // EXTREME low density, three single-target problems, one mob each — the
+  // biome's own banner already names them THE HUNTER / THE KITER / THE
+  // ANCHOR, reused verbatim.
+  ['trench-hunter', {
+    id: 'trench-hunter', name: 'Hunter', biome: 'trench',
+    // abyssal-serpent: relentless melee pursuit, huge HP/DR, a periodic
+    // anti-heal Wound bite. The textbook "long attrition fight".
+    monsterIds: ['abyssal-serpent'],
+    // Affliction answers its own debuff-dealer shape (design brief), same
+    // policy as every DoT/debuff family. Engagement's `weakAgainst` is "long
+    // attrition fights", exactly what the Hunter's sustained chase + Wound
+    // forces.
+    drops: 'affliction', punishes: 'engagement',
+  }],
+  ['trench-kiter', {
+    id: 'trench-kiter', name: 'Kiter', biome: 'trench',
+    // hadal-stalker: armored ranged skirmisher, lowest HP of the three elites.
+    monsterIds: ['hadal-stalker'],
+    // Engagement mirrors every other ranged-skirmisher family. Affliction's
+    // `weakAgainst` names "short fights" — the Stalker is explicitly the
+    // lowest-HP of the trio, i.e. the shortest fight.
+    drops: 'engagement', punishes: 'affliction',
+  }],
+  ['trench-anchor', {
+    id: 'trench-anchor', name: 'Anchor', biome: 'trench',
+    // elder-leviathan: enormous HP, plating 22 + DR 0.40, very slow, a
+    // periodic Carapace shell.
+    monsterIds: ['elder-leviathan'],
+    // Empowered mirrors every other slow-heavy-armored family. Tempo's own
+    // `weakAgainst` text ("fortified plating, a single big target") is this
+    // monster's stat line verbatim.
+    drops: 'empowered', punishes: 'tempo',
+  }],
 ];
 
 export const FAMILY_DATABASE: Map<FamilyId, FamilyDefinition> =
@@ -229,6 +397,7 @@ export const FAMILY_DATABASE: Map<FamilyId, FamilyDefinition> =
 /** Biomes whose pool the family table covers. A kill outside these drops no shard. */
 export const FAMILY_BIOMES: readonly string[] = [
   'plains', 'forest', 'mountain', 'cave', 'swamp', 'jungle', 'desert',
+  'tundra', 'volcanic', 'graveyard', 'trench',
 ];
 
 /** monsterId → family, built once. The reward seam's only lookup. */
