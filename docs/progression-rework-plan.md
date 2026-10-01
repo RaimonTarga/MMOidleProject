@@ -1961,6 +1961,85 @@ Five carried gaps from the overnight/day-run reports, on `feat/gaps` off
 Related tests + `pnpm -r exec tsc --noEmit` all pass; see the five commits on
 `feat/gaps` for the per-gap diffs.
 
+### W2-A progress note — harness follow-ups and the run-3 lane bench (2026-10-01)
+
+On `feat/bench-followups` off `feat/lineage-data-model`.
+
+**1a. Eighteen frame reference profiles.** `LINEAGE_FRAME_REFERENCES` in
+`bot/src/tierEntry/profiles.ts`: six class roots x Light / Balanced / Heavy, each a
+lane-less T2-entry manifest with the frame and the weapon overridden. Lane-less on
+purpose — design §10 gives each frame its own feedback loop, so a card on top of it
+would be a second variable.
+
+Two authoring calls, both flagged rather than hidden:
+- **The weapon is the root's lane-matrix weapon wherever it has one**, so the row on
+  the frame a root's canonical T1 route wears is byte-identical to that lineage's
+  lane-less control and the frames column and the lane matrix can be read together.
+- **`summoner-root` anchors no weapon lineage** (`LINEAGE_REFERENCE_CLASS` pairs the
+  five weapon lineages with the other five roots), so it wears the Chaotic Axe its own
+  canonical route finishes T1 on. That is the Axe lineage's base form but the DOT
+  root's matrix, so the Conduit's frame rows share a weapon with the Axe matrix and
+  nothing else. `laneProfiles.test.ts` therefore compares a canonical frame row to a
+  lane control only for the five PAIRED roots.
+
+**1b. The two-card row swap.** `lineageSwapReference` / `lineageSwapRouteSteps`, and
+the live route `striker-lineage-swap-forest-t1`. Every existing route unlocks into an
+EMPTY row, and `unlockLineageCard` activates a card into an empty row as a side effect
+of the purchase — so every `setActive` step shipped so far returns early in
+`doSetActive` and the row-SWAP half of `lineage:setActive` had never run anywhere. The
+new route buys the Rapier's Tempo stat card, buys its Affliction stat card, then flips
+the stat row to Affliction and back. The stat row rather than the payoff row because a
+stat card's whole effect is a recalculated stat, so a swap that failed to take is
+visible; an owned-but-inert payoff card looks like one whose trigger has not come round.
+The second purchase deliberately carries **no `farmAt`**, so `doUnlockCard` has to
+resolve a biome that actually drops the other lane's shard through `lineageFarmNode`.
+
+**1c. `farmBlocked` raises a named stall.** `unsatisfiableByFarming` in
+`bot/src/route/conditions.ts` answers "why can farming this node never pay this?" for
+three provably-unpayable shapes — a Global Mastery shortfall larger than the farm
+biome's remaining headroom (or than the whole player tier can hold), another biome's
+level (or a level above this tier's cap for it), and a shard no family of the node's
+biome drops. `farmBlocked` raises it as a named `StallError` before the span opens and
+again on every poll. **Divergence from the plan sketch:** `farmUntil` already had a
+capped-biome guard, but the lineage steps pass `ignoreBiomeCap: true` (correctly — their
+essence does keep arriving), which switched it off, so an unpayable card farmed to the
+30-minute step timeout rather than the 12-minute no-progress one. The new check fires
+even under `ignoreBiomeCap`, because that flag means "a capped biome is fine", not
+"this goal is payable here". Essence is exempt: every node pays essence, and that wait
+is what the span exists to measure.
+
+**2. The lane bench (`server/bench/lineageLaneMatrix.ts`).** Tier 2 added to the node
+set (62 distinct encounters, keyed by biome+tier+cycle), the frames column on one node
+per (biome, tier), and §9's criteria replaced by §18.9's: the band is the median uplift
+±3 percentage points absolute, per tier, and the encounter check is ordinal with the
+margin reported and the per-seed ranks beside it.
+
+**Two divergences the measurement forced.**
+
+1. **A sample-size floor the plan did not anticipate.** A cell and its control each
+   need 8 kills per seed before their ratio may be RANKED, and four of the six weapon
+   packets must be rankable before a last place counts as evidence. Scoping found that
+   a Tier-1 band on Tier-2 **Desert** scores **0 kills and 8–9 deaths per 90 s**, and on
+   Tier-2 Jungle 1–3 kills; a control that killed one body and a lane that killed two
+   read as +100% uplift, which would have manufactured remap evidence out of noise.
+   Thin cells are still reported in full in the per-node tables — they are the Tier-2
+   entry finding, and they feed W2-C's pool raise — they simply cannot decide a `drops`
+   move.
+2. **The frames column runs on a narrower node set than the lane matrix.** Design
+   §18.10 budgeted "roughly triples a 35-minute run"; eighteen more profiles over all
+   62 blends would have been ~110 minutes for a reading nobody asked for at that
+   resolution. One node per (biome, tier) — the biome's leading family's own 70/20/10
+   node — answers "what is Light/Balanced/Heavy worth per root" at a twelfth of the
+   cost. `LANE_FRAME_NODES` overrides it.
+
+Also, **a family's own node is now per TIER.** The encounter check iterates
+(family, tier) pairs, because a family present at both tiers (every T1 biome's are)
+would otherwise have its T2 own node shadowed by its T1 one and the T2 blends would
+have been measured and then never reported. A family's DECIDING node for a remap is
+its own node at the lowest tier it has one — the reference build is a Tier-1 band and
+Tier 1 is the tier that band is tuned for — with the higher tier reported as
+corroboration.
+
 ---
 
 ## Cross-cutting rules
