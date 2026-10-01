@@ -274,10 +274,13 @@ assert(problems.length === 0, `blend resolution failures:\n  ${problems.join('\n
       `${nodeId}: ${family} spawned ${actual} of ${spawns}, wanted ${expected.toFixed(1)}`,
     );
   }
-  // 70/20/10 with Sky absent at T1 resolves to ~78/22, which is 8/2 per cycle.
+  // 70/20/10 with all three Plains families fielded at T1 (Sky's Grass Kite landed
+  // 2026-10-01) is exactly 7/2/1 per cycle: 21 Herd / 6 Swarm / 3 Sky over 30.
   assert(
-    (byFamily.get('plains-herd') ?? 0) === 24 && (byFamily.get('plains-swarm') ?? 0) === 6,
-    `expected 24 Herd / 6 Swarm, got ${[...byFamily.entries()].map(([f, c]) => `${f}=${c}`).join(' ')}`,
+    (byFamily.get('plains-herd') ?? 0) === 21
+      && (byFamily.get('plains-swarm') ?? 0) === 6
+      && (byFamily.get('plains-sky') ?? 0) === 3,
+    `expected 21 Herd / 6 Swarm / 3 Sky, got ${[...byFamily.entries()].map(([f, c]) => `${f}=${c}`).join(' ')}`,
   );
 }
 
