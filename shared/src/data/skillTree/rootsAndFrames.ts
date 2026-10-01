@@ -416,7 +416,8 @@ export const rootsAndFramesEntries = [
   //
   //   Close → gives up distance as defense, so it takes the largest raw
   //           defensive compensation PLUS a class-specific defensive payoff.
-  //   Mid   → the safe default: even all-around growth.
+  //   Mid   → the standard range, plus a control layer: holding an enemy AT BAY
+  //           (inside your reach, outside its own) is what Mid converts into.
   //   Far   → minimal raw combat stats. Range, first-hit advantage and move
   //           speed are ALREADY forms of defense; the kiting payoff is the value.
   //
@@ -426,6 +427,16 @@ export const rootsAndFramesEntries = [
   // only +10%, because Squire already fights in melee. Compensation restores
   // FUNCTION, never identity: a melee Spirit survives on HP, speed and its
   // barrier, and must not converge on a Squire.
+  //
+  // MID AND FAR MECHANICS (progression rework Phase 3, brief §2). Players
+  // defaulted to Mid because Mid had no mechanic at all — it was "even growth"
+  // against two real payoffs. Every Mid and Far node below (except the Conduit's
+  // three, which already carry formation geometry) now authors `<root>.range-*`
+  // keys, consumed in ONE module, `server/src/systems/combat/rangeMechanics.ts`.
+  // Close keeps exactly the payoffs it had. Range stays a LEAF (design §11):
+  // nothing downstream reads it, and `isRangedCombatant` above is untouched.
+  // Numbers are first-pass placeholders seeded off the magnitude table's T1 row
+  // (slow 20%, stagger 750 ms, vulnerability +15%/4 s) and are meant to be benched.
 
   ['cadence-range-close', {
     id: 'cadence-range-close', name: 'In-Fighter', tier: 2,
@@ -439,20 +450,18 @@ export const rootsAndFramesEntries = [
     id: 'cadence-range-mid', name: 'Lancer', tier: 2,
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Increase your reach to the standard fighting distance. Solid all-around growth with no commitment to either extreme.',
+    description: 'Increase your reach to the standard fighting distance. Solid all-around growth, and every hit on an enemy you are holding at bay — inside your reach, outside its own — slows it by 20% for 1.2s.',
     cost: 1, statEffects: {"attackRange": 60, "attackPct": 0.06, "maxHpPct": 0.08, "attackSpeedPct": 0.04, "moveSpeedPct": 0.02},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"cadence.range-mid-at-bay-slow-pct": 0.2, "cadence.range-mid-at-bay-slow-ms": 1200},
+  }],
   ['cadence-range-far', {
     id: 'cadence-range-far', name: 'Phantom-Blade', tier: 2,
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed let you land hits before the enemy ever closes — distance as armor.',
+    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed let you land hits before the enemy ever closes — distance as armor. Your first hit on a fresh enemy, landed from the outer quarter of your reach, is an opening strike for +50% damage.',
     cost: 1, statEffects: {"attackRange": 120, "attackPct": 0.03, "maxHpPct": 0.03, "attackSpeedPct": 0.02, "moveSpeedPct": 0.08},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"cadence.range-far-max-reach-pct": 0.75, "cadence.range-far-opener-pct": 0.5},
+  }],
 
   ['cooldown-range-close', {
     id: 'cooldown-range-close', name: 'Vanguard', tier: 2,
@@ -468,20 +477,18 @@ mechanicEffects: {},
     id: 'cooldown-range-mid', name: 'Phalanx', tier: 2,
     classId: 'cooldown-root', subVariantId: null,
     parent: null, children: [],
-    description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
+    description: 'The standard fighting distance. Solid all-around growth, every hit on an enemy you are holding at bay — inside your reach, outside its own — slows it by 20% for 1.2s, and an execution landed on an enemy at bay staggers it for 750ms.',
     cost: 1, statEffects: {"attackRange": 60, "attackPct": 0.06, "maxHpPct": 0.08, "attackSpeedPct": 0.03},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"cooldown.range-mid-at-bay-slow-pct": 0.2, "cooldown.range-mid-at-bay-slow-ms": 1200, "cooldown.range-mid-execution-stagger-ms": 750},
+  }],
   ['cooldown-range-far', {
     id: 'cooldown-range-far', name: 'Sentinel', tier: 2,
     classId: 'cooldown-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed let a slow tank punish from afar — distance as armor.',
+    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed let a slow tank punish from afar — distance as armor. An execution landed from the outer quarter of your reach leaves the target taking +15% damage for 4s.',
     cost: 1, statEffects: {"attackRange": 120, "attackPct": 0.03, "maxHpPct": 0.03, "attackSpeedPct": 0.02, "moveSpeedPct": 0.06},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"cooldown.range-far-max-reach-pct": 0.75, "cooldown.range-far-vuln-pct": 0.15, "cooldown.range-far-vuln-ms": 4000},
+  }],
 
   ['dot-range-close', {
     id: 'dot-range-close', name: 'Hexblade', tier: 2,
@@ -498,20 +505,18 @@ mechanicEffects: {},
     id: 'dot-range-mid', name: 'Warlock', tier: 2,
     classId: 'dot-root', subVariantId: null,
     parent: null, children: [],
-    description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
+    description: 'The standard fighting distance. Solid all-around growth, and a stack you land on an enemy you are holding at bay — inside your reach, outside its own — also lands 1 stack on its nearest neighbour within 140px.',
     cost: 1, statEffects: {"attackPct": 0.06, "maxHpPct": 0.08, "attackSpeedPct": 0.04, "moveSpeedPct": 0.02},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"dot.range-mid-spread-stacks": 1, "dot.range-mid-spread-radius": 140},
+  }],
   ['dot-range-far', {
     id: 'dot-range-far', name: 'Harbinger', tier: 2,
     classId: 'dot-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed let you apply stacks and retreat — distance as armor.',
+    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed let you apply stacks and retreat — distance as armor. Your affliction holds 1 extra stack and each application lasts 35% longer on a single target, and it never spreads.',
     cost: 1, statEffects: {"attackRange": 100, "attackPct": 0.03, "maxHpPct": 0.03, "attackSpeedPct": 0.02, "moveSpeedPct": 0.1},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"dot.range-far-stack-cap-bonus": 1, "dot.range-far-duration-pct": 0.35},
+  }],
 
   ['reload-range-close', {
     id: 'reload-range-close', name: 'Breacher', tier: 2,
@@ -527,20 +532,18 @@ mechanicEffects: {},
     id: 'reload-range-mid', name: 'Enforcer', tier: 2,
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
-    description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
+    description: 'The standard fighting distance. Solid all-around growth, and every shot that lands on an enemy you are holding at bay — inside your reach, outside its own — pins it, slowing it by 20% for 1.2s.',
     cost: 1, statEffects: {"attackPct": 0.06, "maxHpPct": 0.08, "attackSpeedPct": 0.04, "moveSpeedPct": 0.04},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"reload.range-mid-at-bay-slow-pct": 0.2, "reload.range-mid-at-bay-slow-ms": 1200},
+  }],
   ['reload-range-far', {
     id: 'reload-range-far', name: 'Deadeye', tier: 2,
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed maximize your kiting buffer — distance as armor.',
+    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed maximize your kiting buffer — distance as armor. Shots landed from the outer quarter of your range hit for +20% damage.',
     cost: 1, statEffects: {"attackRange": 80, "attackPct": 0.03, "maxHpPct": 0.03, "attackSpeedPct": 0.02, "moveSpeedPct": 0.12},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"reload.range-far-max-reach-pct": 0.75, "reload.range-far-damage-pct": 0.2},
+  }],
 
   ['energy-range-close', {
     id: 'energy-range-close', name: 'Haunt', tier: 2,
@@ -557,20 +560,18 @@ mechanicEffects: {},
     id: 'energy-range-mid', name: 'Shade', tier: 2,
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
-    description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
+    description: 'The standard fighting distance. Solid all-around growth, and your discharge staggers an enemy you are holding at bay — inside your reach, outside its own — for 750ms.',
     cost: 1, statEffects: {"attackPct": 0.06, "maxHpPct": 0.08, "attackSpeedPct": 0.04, "moveSpeedPct": 0.04},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"energy.range-mid-discharge-stagger-ms": 750},
+  }],
   ['energy-range-far', {
     id: 'energy-range-far', name: 'Wisp', tier: 2,
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed buy the untouched seconds your barrier needs to recharge — distance as armor.',
+    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed buy the untouched seconds your barrier needs to recharge — distance as armor. Your discharge no longer chains: the whole of it lands on one target.',
     cost: 1, statEffects: {"attackRange": 80, "attackPct": 0.03, "maxHpPct": 0.03, "attackSpeedPct": 0.02, "moveSpeedPct": 0.12},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"energy.range-far-single-target": 1},
+  }],
 
   // Summoner INVERTS the normal range logic. Close summons intercept and
   // protect the Conduit, so the Conduit itself keeps the smallest defensive

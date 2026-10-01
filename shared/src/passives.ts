@@ -165,6 +165,16 @@ export const CADENCE_KEYS = [
   // Breaker's rider: the finisher staggers. Authored at the shortest rung of the
   // existing stun ladder; `applyStun` owns resistance and the immunity window.
   'cadence.frame-stagger-ms',
+  // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
+  // Lancer (mid): every hit on a target held AT BAY — inside the player's reach
+  // and outside the target's own — applies a short movement slow.
+  'cadence.range-mid-at-bay-slow-pct',
+  'cadence.range-mid-at-bay-slow-ms',
+  // Phantom-Blade (far): the first hit on a fresh body landed from the outer
+  // `-max-reach-pct` band of the player's reach is an opening strike worth
+  // `-opener-pct` more, folded into `empoweredMultiplier` (one multiplier per hit).
+  'cadence.range-far-max-reach-pct',
+  'cadence.range-far-opener-pct',
 ] as const;
 
 export const COOLDOWN_KEYS = [
@@ -233,6 +243,18 @@ export const COOLDOWN_KEYS = [
   // through the shared `plating-shred` record under the §18.1 max-wins rule.
   'cooldown.frame-shred-pct',
   'cooldown.frame-shred-duration-ms',
+  // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
+  // Phalanx (mid): the at-bay slow, plus a stagger when the EXECUTION lands on a
+  // target held at bay (the stun ladder's shortest rung).
+  'cooldown.range-mid-at-bay-slow-pct',
+  'cooldown.range-mid-at-bay-slow-ms',
+  'cooldown.range-mid-execution-stagger-ms',
+  // Sentinel (far): an execution from the outer `-max-reach-pct` band of reach
+  // opens a vulnerability window on the target. Shared `vulnerability` record,
+  // max-wins (design §18.1).
+  'cooldown.range-far-max-reach-pct',
+  'cooldown.range-far-vuln-pct',
+  'cooldown.range-far-vuln-ms',
 ] as const;
 
 export const RELOAD_KEYS = [
@@ -318,6 +340,14 @@ export const RELOAD_KEYS = [
   // ramp, ×`frame-ramp-top-mult` at the top). Both reset on reload.
   'reload.frame-ramp-pct-per-shot',
   'reload.frame-ramp-top-mult',
+  // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
+  // Enforcer (mid): the at-bay slow — the Slinger's "pin".
+  'reload.range-mid-at-bay-slow-pct',
+  'reload.range-mid-at-bay-slow-ms',
+  // Deadeye (far): shots landed from the outer `-max-reach-pct` band of reach
+  // deal `-damage-pct` more, folded into `empoweredMultiplier`.
+  'reload.range-far-max-reach-pct',
+  'reload.range-far-damage-pct',
 ] as const;
 
 export const ENERGY_KEYS = [
@@ -404,6 +434,14 @@ export const ENERGY_KEYS = [
   'energy.frame-overcharge-max',
   'energy.frame-overcharge-mult-per-stack',
   'energy.frame-stagger-ms',
+  // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
+  // Shade (mid): the discharge staggers a target held at bay.
+  'energy.range-mid-discharge-stagger-ms',
+  // Wisp (far): 1 = the discharge does not chain; the whole of it lands on one
+  // target. AUTHORED HERE, CONSUMED BY THE ENERGY FRAME LOOP (Phase 3, W1-B):
+  // the chain-count resolution reads this key and, when it is 1, chains to zero
+  // targets and folds the chained share onto the primary.
+  'energy.range-far-single-target',
 ] as const;
 
 export const DOT_KEYS = [
@@ -463,6 +501,18 @@ export const DOT_KEYS = [
   'dot.frame-max-stack-mult',
   // Rime-Bound chills through the EXISTING `dot.chill-*` keys above, at frame
   // magnitudes — Winter Warden then deepens the same record rather than owning it.
+  // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
+  // Warlock (mid): a class stack landed on a target held at bay also lands
+  // `-spread-stacks` on its nearest neighbour inside `-spread-radius`.
+  'dot.range-mid-spread-stacks',
+  'dot.range-mid-spread-radius',
+  // Harbinger (far): the class DoT's DELIVERY cap rises by `-stack-cap-bonus` and
+  // each application lasts `-duration-pct` longer. Deliberately NOT the damage
+  // reference (`computeDotClassDamagePerStack` still divides by the frame's own
+  // max stacks), so the extra stack is extra damage rather than a thinner one.
+  // Suppresses Warlock's spread.
+  'dot.range-far-stack-cap-bonus',
+  'dot.range-far-duration-pct',
 ] as const;
 
 export const SHARED_KEYS = [

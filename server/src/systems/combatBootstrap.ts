@@ -18,6 +18,7 @@ import { initPlayerAmplifiers } from "./combat/damage/playerAmplifiers";
 import { initStanceCombatEffects } from "./player/stances/stanceSwitch";
 import { initBossPatternCombat } from "./combat/engine/patternCombat";
 import { registerLineageCards, registerLineageIncomingCards } from "./combat/lineageCards";
+import { initRangeMechanics } from "./combat/rangeMechanics";
 
 let initialized = false;
 
@@ -64,6 +65,15 @@ export function initCombatSystems(): void {
   // `empoweredMultiplier` by the time a card reads the hit it is scaling off —
   // one multiplier per hit depends on that order.
   withCombatRegistrationLabel('registerLineageCards', registerLineageCards);
+  // Range-node mechanics (progression rework Phase 3): the at-bay control layer on
+  // Mid and the kiting payoffs on Far. AFTER the class mechanics for two reasons —
+  // `empoweredAttack` must already be set by the archetype that consumed its charge
+  // (Phalanx, Shade and Sentinel all ride the execution/discharge), and the class
+  // DoT stack this hit applied must already be on the target (Warlock's spread and
+  // Harbinger's deepening both read that record). BEFORE defense, so the two damage
+  // payoffs land ahead of evasion / damage-cap / shields like every other
+  // outgoing multiplier.
+  withCombatRegistrationLabel('initRangeMechanics', initRangeMechanics);
   // Player damage amplifiers (P3): must register BEFORE defense so the incoming
   // multiplier lands ahead of evasion / damage-cap / shields.
   withCombatRegistrationLabel('initPlayerAmplifiers', initPlayerAmplifiers);

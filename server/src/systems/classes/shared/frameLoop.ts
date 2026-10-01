@@ -40,7 +40,7 @@ import {
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import type { CombatContext } from '../../combat/engine/combatPipeline';
-import { applySharedDebuffMaxWins } from '../../combat/lineageCards';
+import { applySharedDebuffMaxWins } from '../../combat/status/sharedDebuffRecord';
 
 /** The six class roots. A frame belongs to exactly one of them. */
 export type FrameRootId =
