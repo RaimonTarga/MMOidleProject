@@ -484,7 +484,7 @@ function Band({
     return (
       <details className="lin-band lin-band--collapsed">
         <summary>
-          <b>T{tier}</b>
+          <b>T{tier}:</b>
           <span>{ownedNames.length > 0 ? ownedNames.join(', ') : 'nothing bought'}</span>
           {absorbedName && <span className="lin-band__absorbed">{absorbedName} in your form</span>}
         </summary>
