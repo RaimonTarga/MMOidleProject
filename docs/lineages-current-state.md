@@ -319,11 +319,16 @@ active card per owned row plus the worn form's capstone.
 
 ## 12. Known limitations
 
-- T2 amplifier cards are data-complete but their `modifies` field is **mechanically inert
-  beyond bookkeeping** — nothing yet reads it to extend the modified payoff's duration,
-  add a target, or add a stack; an amplifier resolves as an ordinary payoff row off its
-  own (different) trigger. Wiring "duration/second-target/stacks" semantics is a runtime
-  decision still open.
+- The T2 amplifier row **is** wired, and its numbers are the open question rather than
+  its mechanics. `composeAmplifiers` (`shared/src/systems/lineages.ts`) removes each
+  amplifier from the resolved set and moves one axis of the card it `modifies`, in place,
+  by `ROW_SCALAR.amplifier`: `duration` lengthens a timed window (and only a timed one),
+  `magnitude` scales the payoff, `targets` adds a body through `extraTargets`, and
+  `trigger` adds a MOMENT the same payoff also fires on — or, where it names the trigger
+  the card already has, re-scopes a `first-hit` from once per engagement to once per body.
+  So an amplifier never resolves as a payoff row of its own, which is what keeps "one
+  multiplier per hit" true of an amplified build. `applyAmplifiedAxis` is shared with the
+  ability-node amplifier (§19) so there is one copy of the arithmetic.
 - All fifteen defensive lineages are PROVISIONAL — design §17 is itself unapproved.
 - All T3/T4 family and blend data behind the shard economy is PROVISIONAL — see
   [`variants-current-state.md`](variants-current-state.md).
