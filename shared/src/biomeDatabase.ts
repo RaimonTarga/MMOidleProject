@@ -64,7 +64,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     id: 'forest', name: 'Forest',
     backgroundColor: 0x0a1a0a,
     monsterPoolByTier: {
-      1: ['forest-slime', 'wolf'],
+      1: ['forest-slime', 'wolf', 'bramble-pod'],
       2: ['ancient-wolf', 'ironwood-golem', 'canopy-sprite'],
       // ⚠ T4 trash not yet authored — forest T4 ring nodes spawn nothing.
     },
@@ -82,7 +82,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     id: 'mountain', name: 'Mountain',
     backgroundColor: 0x141418,
     monsterPoolByTier: {
-      1: ['cliff-hopper', 'cliff-hopper', 'ridge-archer'],
+      1: ['cliff-hopper', 'cliff-hopper', 'ridge-archer', 'rockback-ram'],
       2: ['granite-titan', 'stone-eagle', 'peak-archer'],
       3: ['mountain-colossus', 'avalanche-ram', 'crag-mortar'],
       4: ['granite-mammoth', 'avalanche-tyrant', 'cliffside-roc', 'cragback-rhino'],
@@ -103,7 +103,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     id: 'plains', name: 'Plains',
     backgroundColor: 0x141a08,
     monsterPoolByTier: {
-      1: ['plains-slime', 'boar'],
+      1: ['plains-slime', 'boar', 'grass-kite'],
       2: ['stampede-bull', 'prairie-wolf', 'savanna-hawk'],
       // ⚠ T4 trash not yet authored — plains T4 ring nodes spawn nothing.
     },
@@ -121,7 +121,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     id: 'swamp', name: 'Swamp',
     backgroundColor: 0x0c1708,
     monsterPoolByTier: {
-      1: ['bog-slime', 'mud-toad'],
+      1: ['bog-slime', 'mud-toad', 'fen-hexer'],
       2: ['swamp-hydra', 'bog-witch', 'mire-stalker'],
       3: ['plague-hydra', 'mire-hex-spitter', 'bog-lurker'],
     },
@@ -141,7 +141,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     id: 'cave', name: 'Caverns',
     backgroundColor: 0x0c0c0f,
     monsterPoolByTier: {
-      1: ['cave-lurker', 'cave-brute'],
+      1: ['cave-lurker', 'cave-brute', 'brood-spiderling'],
       2: ['giant-spider', 'cave-troll', 'cave-gargoyle'],
       3: ['deep-spider', 'cavern-troll', 'crystal-gargoyle'],
     },

@@ -68,7 +68,7 @@ const familyEntries: [FamilyId, FamilyDefinition][] = [
   }],
   ['plains-sky', {
     id: 'plains-sky', name: 'Sky', biome: 'plains',
-    monsterIds: ['savanna-hawk'],
+    monsterIds: ['grass-kite', 'savanna-hawk'],
     drops: 'engagement', punishes: 'affliction',
   }],
 
@@ -85,14 +85,14 @@ const familyEntries: [FamilyId, FamilyDefinition][] = [
   }],
   ['forest-canopy', {
     id: 'forest-canopy', name: 'Canopy', biome: 'forest',
-    monsterIds: ['canopy-sprite'],
+    monsterIds: ['bramble-pod', 'canopy-sprite'],
     drops: 'affliction', punishes: 'control',
   }],
 
   // ── Mountain (proposed — reviewed before Phase 4) ──────────────────────────
   ['mountain-crag', {
     id: 'mountain-crag', name: 'Crag', biome: 'mountain',
-    monsterIds: ['granite-titan', 'mountain-colossus', 'granite-mammoth', 'cragback-rhino', 'avalanche-tyrant'],
+    monsterIds: ['rockback-ram', 'granite-titan', 'mountain-colossus', 'granite-mammoth', 'cragback-rhino', 'avalanche-tyrant'],
     drops: 'empowered', punishes: 'affliction',
   }],
   ['mountain-ridge', {
@@ -109,7 +109,7 @@ const familyEntries: [FamilyId, FamilyDefinition][] = [
   // ── Cave (proposed) ────────────────────────────────────────────────────────
   ['cave-brood', {
     id: 'cave-brood', name: 'Brood', biome: 'cave',
-    monsterIds: ['giant-spider', 'deep-spider'],
+    monsterIds: ['brood-spiderling', 'giant-spider', 'deep-spider'],
     drops: 'affliction', punishes: 'tempo',
   }],
   ['cave-brute', {
@@ -126,17 +126,17 @@ const familyEntries: [FamilyId, FamilyDefinition][] = [
   // ── Swamp (proposed) ───────────────────────────────────────────────────────
   ['swamp-mire', {
     id: 'swamp-mire', name: 'Mire', biome: 'swamp',
-    monsterIds: ['bog-slime', 'mud-toad', 'bog-lurker'],
+    monsterIds: ['bog-slime', 'bog-lurker'],
     drops: 'affliction', punishes: 'empowered',
   }],
   ['swamp-coven', {
     id: 'swamp-coven', name: 'Coven', biome: 'swamp',
-    monsterIds: ['bog-witch', 'swamp-hydra', 'plague-hydra', 'mire-hex-spitter'],
+    monsterIds: ['fen-hexer', 'bog-witch', 'swamp-hydra', 'plague-hydra', 'mire-hex-spitter'],
     drops: 'control', punishes: 'tempo',
   }],
   ['swamp-stalker', {
     id: 'swamp-stalker', name: 'Stalker', biome: 'swamp',
-    monsterIds: ['mire-stalker'],
+    monsterIds: ['mud-toad', 'mire-stalker'],
     drops: 'kill-chain', punishes: 'bulwark',
   }],
 ];

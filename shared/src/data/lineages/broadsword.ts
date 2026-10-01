@@ -25,6 +25,49 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
         trigger: 'kill', payoff: 'recovery-window',
       },
     },
+
+  // ── T3 forms (design §18.5) ─────────────────────────────────────────────
+  //
+  // Authored from the existing `evolvesFrom` graph so no weapon dead-ends:
+  // removing the +N ladder left every T3/T4 weapon craftable by nothing and
+  // evolvable by nothing. The band above T2 carries FORMS ONLY — its cards are
+  // Phase 5's, with the amplifier row and the T2+ magnitude columns.
+  {
+    recipeId: 'desert-pilgrim-quarterstaff', tier: 3, biome: 'desert',
+    capstone: {
+      id: 'broadsword-capstone-pilgrim', name: 'Pilgrim\'s Pace',
+      description: 'A walking rhythm that does not break, however long the road.',
+      fx: 'tempo.ghost-strike', lane: 'tempo',
+      trigger: 'mechanic-fired', payoff: 'speed-window',
+    },
+  },
+  {
+    recipeId: 'desert-solar-cross', tier: 3, biome: 'desert',
+    capstone: {
+      id: 'broadsword-capstone-solar', name: 'Solar Weight',
+      description: 'Held up, it gathers the noon; brought down, it spends it.',
+      fx: 'empowered.weak-point', lane: 'empowered',
+      trigger: 'mechanic-fired', payoff: 'damage-window',
+    },
+  },
+  {
+    recipeId: 'desert-sunmonk-warstaff', tier: 4, biome: 'desert',
+    capstone: {
+      id: 'broadsword-capstone-sunmonk', name: 'Sunmonk\'s Mercy',
+      description: 'Every body it puts down pays a little of the bearer back.',
+      fx: 'kill-chain.recovery-pulse', lane: 'kill-chain',
+      trigger: 'kill', payoff: 'recovery-window',
+    },
+  },
+  {
+    recipeId: 'desert-zenith-cross', tier: 4, biome: 'desert',
+    capstone: {
+      id: 'broadsword-capstone-zenith', name: 'Zenith',
+      description: 'The first blow of a fight arrives with the whole day behind it.',
+      fx: 'empowered.guard-spark', lane: 'empowered',
+      trigger: 'first-hit', payoff: 'damage-window',
+    },
+  },
   ],
 
   cards: [

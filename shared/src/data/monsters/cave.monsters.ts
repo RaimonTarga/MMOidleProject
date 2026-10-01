@@ -80,6 +80,23 @@ export const caveMonsterEntries = [
     },
   }],
 
+  ['brood-spiderling', {
+    id: 'brood-spiderling', name: 'Brood Spiderling', color: 0xb8ad9a,
+    // BROOD FAMILY, T1 (progression rework, 2026-10-01). The Giant Spider's
+    // spawn: small, fast, in threes, with a weak venom that stacks. Many bodies
+    // plus a DoT is what the Affliction lane answers (spread, cleave), which is
+    // why Brood drops Affliction shards.
+    // PLACEHOLDER numbers seeded from the T1 Cave band (lurker 225/31); designer
+    // hand-edits before the lane bench.
+    stats: { hp: 70, attack: 12, plating: 0, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1500, pullRange: 200 },
+    behavior: 'melee', attackStyle: 'spider-fang', biome: 'cave', elite: false,
+    rewards: { essence: 4, essenceType: 'red', level: 1, biomeXp: 26 },
+    ai: { wanderRadius: 300, leashRange: 600, idleMinMs: 500, idleMaxMs: 1800 },
+    dotEffect: { debuffId: 'spiderling-venom', label: 'Venom', damagePerStack: 3, maxStacks: 3, tickIntervalMs: 1000, durationMs: 2500 },
+    // Brood: spiderlings converge as a clutch of three rather than single file.
+    swarm: { recruitRange: 240, maxMembers: 3, cohesion: 0.1, separation: 36 },
+  }],
+
   // ── CAVE T2 — three distinct ELITE shapes: fast/dodgy, bruiser, ranged ──
   ['giant-spider', {
     id: 'giant-spider', name: 'Giant Spider', color: 0x992266,

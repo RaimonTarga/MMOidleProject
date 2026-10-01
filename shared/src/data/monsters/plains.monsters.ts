@@ -58,6 +58,25 @@ export const plainsMonsterEntries = [
   }],
 
 
+  ['grass-kite', {
+    id: 'grass-kite', name: 'Grass Kite', color: 0xc9b27a,
+    // SKY FAMILY, T1 (progression rework, 2026-10-01). The Savanna Hawk's smaller
+    // kin: an aerial opener. It is airborne, so the fight starts before you reach
+    // it — one telegraphed Stoop into talon range, then it stays and fights. The
+    // family's shard is Engagement: the opening exchange is what this creature IS.
+    // PLACEHOLDER numbers seeded from the T1 Plains band (boar 100/18); designer
+    // hand-edits before the lane bench.
+    stats: { hp: 90, attack: 16, plating: 0, damageReduction: 0, speed: 100, attackRange: 12, attackCooldown: 2200, pullRange: 380 },
+    behavior: 'melee', attackStyle: 'talons', biome: 'plains',
+    rewards: { essence: 3, essenceType: 'yellow', level: 1, biomeXp: 18 },
+    flies: true,
+    ai: { wanderRadius: 320, leashRange: 1000, idleMinMs: 250, idleMaxMs: 900 },
+    engageSequence: {
+      kind: 'cast-charge-root', name: 'Stoop', castMs: 900,
+      speedMult: 3.0, maxChargeMs: 2500, rootMs: 1500, fx: 'dive-bomb',
+    },
+  }],
+
   // ── PLAINS T2 — bigger swarm: a pack runner, a charger, a ranged poke ──
   ['prairie-yearling', {
     id: 'prairie-yearling', name: 'Prairie Yearling', color: 0xeebb77,

@@ -92,6 +92,21 @@ export const mountainMonsterEntries = [
     chargedAttack: { name: 'Power Shot', castMs: 2000, cooldownMs: 8000, initialCooldownMs: 3500, multiplier: 2.2, fx: 'power-shot' },
   }],
 
+  ['rockback-ram', {
+    id: 'rockback-ram', name: 'Rockback Ram', color: 0xb09a7a,
+    // CRAG FAMILY, T1 (progression rework, 2026-10-01). A plated charging ram, the
+    // Granite Titan's small kin by role (slow anchor, big single bites) and the
+    // Cliff Hopper's by species (caprine line). Real flat plating at T1 so light
+    // hits are eaten and big hits are rewarded — the family's shard is Empowered.
+    // PLACEHOLDER numbers seeded from the T1 Mountain band (hopper 190/40);
+    // designer hand-edits before the lane bench.
+    stats: { hp: 260, attack: 34, plating: 3, damageReduction: 0, speed: 24, attackRange: 12, attackCooldown: 3200, pullRange: 300 },
+    behavior: 'melee', attackStyle: 'gore', biome: 'mountain',
+    rewards: { essence: 7, essenceType: 'blue', level: 1, biomeXp: 48 },
+    ai: { wanderRadius: 150, leashRange: 520, idleMinMs: 2500, idleMaxMs: 6500 },
+    chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
+  }],
+
   // ── MOUNTAIN T2 — everything hits like a truck and trips the cap ──
   ['granite-titan', {
     id: 'granite-titan', name: 'Granite Titan', color: 0x99aabb,

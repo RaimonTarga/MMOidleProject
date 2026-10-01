@@ -133,23 +133,28 @@ export const MONSTER_FRAMES: Record<string, string> = {
   // ── T1: Plains ──────────────────────────────────────────────────────────────
   'plains-slime': 'sprites/monsters/field-hare.png', // display: Field Hare
   'boar':         'sprites/monsters/boar.png',
+  'grass-kite':   'sprites/monsters/grass-kite.png',   // Sky family T1 (hawk kin)
 
   // ── T1: Forest ──────────────────────────────────────────────────────────────
   'forest-slime': 'sprites/monsters/moss-rat.png', // display: Moss Rat
   'wolf':         'sprites/monsters/wolf.png',
   'young-wolf':   'sprites/monsters/young-wolf.png',
+  'bramble-pod':  'sprites/monsters/bramble-pod.png',  // Canopy family T1 (spitter kin)
 
   // ── T1: Mountain ────────────────────────────────────────────────────────────
   'cliff-hopper': 'sprites/monsters/cliff-hopper.png',   // mountain goat (caprine line)
   'ridge-archer': 'sprites/monsters/ridge-ambusher.png', // display: Ridge Ambusher
+  'rockback-ram': 'sprites/monsters/rockback-ram.png',   // Crag family T1 (caprine line)
 
   // ── T1: Swamp ────────────────────────────────────────────────────────────────
   'bog-slime':    'sprites/monsters/swampslime.png',
   'mud-toad':     'sprites/monsters/frog.png',
+  'fen-hexer':    'sprites/monsters/fen-hexer.png',    // Coven family T1 (witch kin)
 
   // ── T1: Cave ─────────────────────────────────────────────────────────────────
   'cave-lurker':  'sprites/monsters/crawler.png',
   'cave-brute':   'sprites/monsters/brute.png',
+  'brood-spiderling': 'sprites/monsters/brood-spiderling.png', // Brood family T1 (spider spawn)
 
   // ── T1 bosses ────────────────────────────────────────────────────────────────
   'tusked-razorback':    'sprites/bosses/boss-plains-t1.png',
@@ -404,6 +409,9 @@ export function resolveMonsterBurrowFrame(monsterTypeId: string): string | null 
  * Omitted types draw at 1.
  */
 export const MONSTER_DISPLAY_SCALE: Record<string, number> = {
+  // ── Small (48px): spawn and fledglings ─────────────────────────────────────
+  'brood-spiderling':      0.75,
+  'grass-kite':            0.85,
   // ── Large (80px): heavy beasts a head above the common mob ─────────────────
   'stampede-bull':         1.25,
   'ancient-wolf':          1.25, // Dire Wolf

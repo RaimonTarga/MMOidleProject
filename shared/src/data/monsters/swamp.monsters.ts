@@ -70,6 +70,25 @@ export const swampMonsterEntries = [
     slowEffect: { speedMult: 0.6, durationMs: 2000 },
   }],
 
+  ['fen-hexer', {
+    id: 'fen-hexer', name: 'Fen Hexer', color: 0x6f6a3a,
+    // COVEN FAMILY, T1 (progression rework, 2026-10-01). The Bog Witch's lesser
+    // kin: a faceless reed-wrapped vessel that plants and casts MIRE HEX, a
+    // telegraphed slow. Weak normal attacks on purpose; the hex is the kit. The
+    // family's shard is Control — control answers control.
+    // PLACEHOLDER numbers seeded from the T1 Swamp band (toad 120/13); designer
+    // hand-edits before the lane bench.
+    stats: { hp: 110, attack: 15, plating: 0, damageReduction: 0, speed: 32, attackRange: 170, attackCooldown: 2400, pullRange: 210 },
+    behavior: 'ranged', attackStyle: 'hex', biome: 'swamp',
+    rewards: { essence: 5, essenceType: 'purple', level: 1, biomeXp: 32 },
+    chargedAttack: {
+      name: 'Mire Hex', castMs: 1300, cooldownMs: 7000, initialCooldownMs: 1500,
+      multiplier: 1.0, fx: 'wither',
+      appliesSlow: { speedMult: 0.55, durationMs: 3000 },
+    },
+    ai: { wanderRadius: 180, leashRange: 540, idleMinMs: 1500, idleMaxMs: 4500 },
+  }],
+
   // ── SWAMP T2 — DoT engines; trivial direct hits, brutal stacking poison ──
   ['swamp-hydra', {
     id: 'swamp-hydra', name: 'Moss-Shell Snapper', color: 0x335533,

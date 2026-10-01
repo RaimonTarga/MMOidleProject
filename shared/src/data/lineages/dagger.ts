@@ -26,6 +26,49 @@ export const DAGGER_LINEAGE: LineageDefinition = {
         trigger: 'hit-nth', payoff: 'stun',
       },
     },
+
+  // ── T3 forms (design §18.5) ─────────────────────────────────────────────
+  //
+  // Authored from the existing `evolvesFrom` graph so no weapon dead-ends:
+  // removing the +N ladder left every T3/T4 weapon craftable by nothing and
+  // evolvable by nothing. The band above T2 carries FORMS ONLY — its cards are
+  // Phase 5's, with the amplifier row and the T2+ magnitude columns.
+  {
+    recipeId: 'swamp-blightbrand', tier: 3, biome: 'swamp',
+    capstone: {
+      id: 'dagger-capstone-blightbrand', name: 'Plague Fang',
+      description: 'A shallow cut that keeps opening on its own account.',
+      fx: 'affliction.bleed-pips', lane: 'affliction',
+      trigger: 'hit-nth', payoff: 'hemorrhage',
+    },
+  },
+  {
+    recipeId: 'tundra-glacial-rimebrand', tier: 4, biome: 'tundra',
+    capstone: {
+      id: 'dagger-capstone-rimebrand', name: 'Rime',
+      description: 'Everything it touches finds its own joints have opinions.',
+      fx: 'control.chill-blur', lane: 'control',
+      trigger: 'hit-nth', payoff: 'slow',
+    },
+  },
+  {
+    recipeId: 'volcanic-blightbrand', tier: 4, biome: 'volcanic',
+    capstone: {
+      id: 'dagger-capstone-cinderbrand', name: 'Cinderbrand',
+      description: 'The edge is still cooling, and it shares the heat with the wound.',
+      fx: 'affliction.toxic-pulse', lane: 'affliction',
+      trigger: 'hit-nth', payoff: 'poison-stack',
+    },
+  },
+  {
+    recipeId: 'volcanic-eruption-lash', tier: 4, biome: 'volcanic',
+    capstone: {
+      id: 'dagger-capstone-eruption', name: 'Eruption',
+      description: 'A kill is a vent opening, and the bearer stands in the updraught.',
+      fx: 'kill-chain.kill-pulse', lane: 'kill-chain',
+      trigger: 'kill', payoff: 'recovery-window',
+    },
+  },
   ],
 
   cards: [

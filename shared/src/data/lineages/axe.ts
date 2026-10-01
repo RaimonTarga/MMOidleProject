@@ -26,6 +26,40 @@ export const AXE_LINEAGE: LineageDefinition = {
         trigger: 'hit-nth', payoff: 'echo-hit',
       },
     },
+
+  // ── T3 forms (design §18.5) ─────────────────────────────────────────────
+  //
+  // Authored from the existing `evolvesFrom` graph so no weapon dead-ends:
+  // removing the +N ladder left every T3/T4 weapon craftable by nothing and
+  // evolvable by nothing. The band above T2 carries FORMS ONLY — its cards are
+  // Phase 5's, with the amplifier row and the T2+ magnitude columns.
+  {
+    recipeId: 'cave-cataclysm-axe', tier: 3, biome: 'cave',
+    capstone: {
+      id: 'axe-capstone-cataclysm', name: 'Cataclysm',
+      description: 'The swing lands twice over, and the second one is the ground answering.',
+      fx: 'empowered.quake-ring', lane: 'empowered',
+      trigger: 'mechanic-fired', payoff: 'plating-shred',
+    },
+  },
+  {
+    recipeId: 'graveyard-plague-axe', tier: 4, biome: 'graveyard',
+    capstone: {
+      id: 'axe-capstone-plague', name: 'Plaguebearer\'s Due',
+      description: 'What dies on this edge hands its rot to whatever stood too close.',
+      fx: 'kill-chain.spread-arc', lane: 'kill-chain',
+      trigger: 'kill', payoff: 'contagion',
+    },
+  },
+  {
+    recipeId: 'trench-abyssal-axe', tier: 4, biome: 'trench',
+    capstone: {
+      id: 'axe-capstone-abyssal', name: 'Abyssal Echo',
+      description: 'Each swing drags a second one up out of the dark behind it.',
+      fx: 'tempo.ruin-afterimage', lane: 'tempo',
+      trigger: 'hit-nth', payoff: 'echo-hit',
+    },
+  },
   ],
 
   cards: [

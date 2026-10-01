@@ -45,6 +45,31 @@ export const RAPIER_LINEAGE: LineageDefinition = {
         trigger: 'hit-nth', payoff: 'echo-hit',
       },
     },
+
+  // ── T3 forms (design §18.5) ─────────────────────────────────────────────
+  //
+  // Authored from the existing `evolvesFrom` graph so no weapon dead-ends:
+  // removing the +N ladder left every T3/T4 weapon craftable by nothing and
+  // evolvable by nothing. The band above T2 carries FORMS ONLY — its cards are
+  // Phase 5's, with the amplifier row and the T2+ magnitude columns.
+  {
+    recipeId: 'jungle-venomthorn-rapier', tier: 3, biome: 'jungle',
+    capstone: {
+      id: 'rapier-capstone-venomthorn', name: 'Venomthorn',
+      description: 'The point leaves more behind than the wound accounts for.',
+      fx: 'affliction.venom-pips', lane: 'affliction',
+      trigger: 'hit-nth', payoff: 'poison-stack',
+    },
+  },
+  {
+    recipeId: 'jungle-deathfang-rapier', tier: 4, biome: 'jungle',
+    capstone: {
+      id: 'rapier-capstone-deathfang', name: 'Deathfang',
+      description: 'What it finishes carries the dose to the next thing standing.',
+      fx: 'affliction.stinger-echo', lane: 'affliction',
+      trigger: 'kill', payoff: 'contagion',
+    },
+  },
   ],
 
   cards: [

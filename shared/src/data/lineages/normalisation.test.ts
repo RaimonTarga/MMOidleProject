@@ -90,7 +90,7 @@ function assert(condition: boolean, message: string): void {
   for (const [lineageId, lineage] of LINEAGE_DATABASE) {
     for (const card of lineage.cards) {
       if (card.row === 'stat' || !card.payoff) continue;
-      const resolved = resolveLineageCard(card, { tier: card.tier });
+      const resolved = resolveLineageCard(card, lineage);
       const magnitude = resolved.payoff?.magnitude ?? 0;
       assert(
         magnitude > 0,

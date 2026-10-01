@@ -55,6 +55,7 @@ const CORPSE_PRESENTATION: Record<string, CorpsePresentation> = {
   'prairie-wolf':     { family: 'beast',       size: 'medium' },
   'stampede-bull':    { family: 'large-beast', size: 'large' },
   'savanna-hawk':     { family: 'avian',       size: 'medium' },
+  'grass-kite':       { family: 'avian',       size: 'small' },
 
   // ── Forest ───────────────────────────────────────────────────────────────
   'forest-slime':   { family: 'small-beast', size: 'small' },  // display "Moss Rat"
@@ -67,9 +68,11 @@ const CORPSE_PRESENTATION: Record<string, CorpsePresentation> = {
   // Not clearly plant or reptile — generic quadruped skeleton is the closest
   // fit until a dedicated family exists (user call, 2026-09-07).
   'canopy-sprite':  { family: 'beast',       size: 'medium' },  // display "Thorn Spitter"
+  'bramble-pod':    { family: 'beast',       size: 'small' },
 
   // ── Mountain ─────────────────────────────────────────────────────────────
   'cliff-hopper':      { family: 'beast',       size: 'medium' },  // mountain goat
+  'rockback-ram':      { family: 'beast',       size: 'medium' },
   'stone-eagle':       { family: 'avian',       size: 'medium' },
   'avalanche-ram':     { family: 'beast',       size: 'large' },
   // Its sprite is a literal mammoth despite the "granite" name.
@@ -86,6 +89,7 @@ const CORPSE_PRESENTATION: Record<string, CorpsePresentation> = {
   // ── Cave ─────────────────────────────────────────────────────────────────
   'cave-lurker': { family: 'arthropod', size: 'medium' },  // sprite is an isopod/woodlouse
   'giant-spider': { family: 'arthropod', size: 'medium' },
+  'brood-spiderling': { family: 'arthropod', size: 'small' },
   'deep-spider':  { family: 'arthropod', size: 'large' },
   'cave-brute':      { family: 'humanoid',         size: 'medium' },
   'cave-troll':      { family: 'humanoid',         size: 'large' },
@@ -151,6 +155,7 @@ const CORPSE_PRESENTATION: Record<string, CorpsePresentation> = {
   'swamp-hydra':     { family: 'shelled-carapace', size: 'medium' },  // display "Moss-Shell Snapper"
   'plague-hydra':    { family: 'shelled-carapace', size: 'large' },   // display "Plague-Shell Snapper"
   'bog-witch':       { family: 'humanoid',         size: 'medium' },
+  'fen-hexer':       { family: 'humanoid',         size: 'small' },
   'mire-hex-spitter':{ family: 'humanoid',         size: 'medium' },  // display "Mire Hexer"
   'mire-stalker':    { family: 'serpent',          size: 'small' },
   'bog-lurker':      { family: 'reptile-lizard',   size: 'medium' },  // swamp crocodile

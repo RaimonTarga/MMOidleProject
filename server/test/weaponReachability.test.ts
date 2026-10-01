@@ -24,26 +24,14 @@
 import assert from 'node:assert/strict';
 import { LINEAGE_DATABASE, RECIPE_DATABASE } from '@mmo-idle/shared';
 
-/** Weapons with no path in today. Shrinks as T3/T4 forms are authored. */
-const KNOWN_UNREACHABLE: readonly string[] = [
-  'cave-cataclysm-axe', // T3
-  'desert-pilgrim-quarterstaff', // T3
-  'desert-solar-cross', // T3
-  'jungle-venomthorn-rapier', // T3
-  'mountain-avalanche-maul', // T3
-  'swamp-blightbrand', // T3
-  'desert-sunmonk-warstaff', // T4
-  'desert-zenith-cross', // T4
-  'graveyard-plague-axe', // T4
-  'jungle-deathfang-rapier', // T4
-  'mountain-earthsunder-maul', // T4
-  'mountain-warmaul', // T4
-  'trench-abyssal-axe', // T4
-  'tundra-glacial-rimebrand', // T4
-  'tundra-glacial-tyrant-maul', // T4
-  'volcanic-blightbrand', // T4
-  'volcanic-eruption-lash', // T4
-];
+/**
+ * Weapons with no path in. EMPTY, and it stays empty: the T3/T4 forms were authored
+ * in design §18.5, so every weapon recipe is either craftable or sold by a tree.
+ *
+ * An entry appearing here again means a player can earn a dead end. Author the form
+ * instead of widening the list.
+ */
+const KNOWN_UNREACHABLE: readonly string[] = [];
 
 const formRecipeIds = new Set<string>();
 for (const [, lineage] of LINEAGE_DATABASE) {

@@ -26,6 +26,49 @@ export const HAMMER_LINEAGE: LineageDefinition = {
         trigger: 'mechanic-fired', payoff: 'stun',
       },
     },
+
+  // ── T3 forms (design §18.5) ─────────────────────────────────────────────
+  //
+  // Authored from the existing `evolvesFrom` graph so no weapon dead-ends:
+  // removing the +N ladder left every T3/T4 weapon craftable by nothing and
+  // evolvable by nothing. The band above T2 carries FORMS ONLY — its cards are
+  // Phase 5's, with the amplifier row and the T2+ magnitude columns.
+  {
+    recipeId: 'mountain-avalanche-maul', tier: 3, biome: 'mountain',
+    capstone: {
+      id: 'hammer-capstone-avalanche', name: 'Avalanche',
+      description: 'The plate goes first, and it goes all at once.',
+      fx: 'empowered.plating-crack', lane: 'empowered',
+      trigger: 'mechanic-fired', payoff: 'plating-shred',
+    },
+  },
+  {
+    recipeId: 'mountain-earthsunder-maul', tier: 4, biome: 'mountain',
+    capstone: {
+      id: 'hammer-capstone-earthsunder', name: 'Earthsunder',
+      description: 'What it lands on stops, and stays stopped long enough to notice.',
+      fx: 'control.mire-grasp', lane: 'control',
+      trigger: 'mechanic-fired', payoff: 'stun',
+    },
+  },
+  {
+    recipeId: 'mountain-warmaul', tier: 4, biome: 'mountain',
+    capstone: {
+      id: 'hammer-capstone-warmaul', name: 'Braced for It',
+      description: 'The opening exchange is the one the bearer has already decided to survive.',
+      fx: 'engagement.brace-sparks', lane: 'engagement',
+      trigger: 'first-hit', payoff: 'engagement-dr',
+    },
+  },
+  {
+    recipeId: 'tundra-glacial-tyrant-maul', tier: 4, biome: 'tundra',
+    capstone: {
+      id: 'hammer-capstone-glacial-tyrant', name: 'Tyrant\'s Weight',
+      description: 'Cold enough that the swing arrives before the sound of it.',
+      fx: 'empowered.quake-ring', lane: 'empowered',
+      trigger: 'mechanic-fired', payoff: 'damage-window',
+    },
+  },
   ],
 
   cards: [
