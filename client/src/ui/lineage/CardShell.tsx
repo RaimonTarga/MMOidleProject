@@ -57,19 +57,21 @@ export interface CardShellProps {
   /**
    * The guided tutorial's handle on this tile, when a beat points at it. The
    * shell carries it because the director finds a card by its anchor, and the
-   * extraction (W1-D) moved the markup the anchor used to sit on (W1-E).
+   * extraction (W1-D) moved the markup the anchor used to sit on (W1-E). Named
+   * `anchor` like `MenuButtons`' own forwarded anchor, which is the spelling
+   * `tutorialAnchors.test.ts` looks for on a component that passes one down.
    */
-  tutorialAnchor?: string;
+  anchor?: string;
   onClick?: () => void;
 }
 
 export function LineageCardShell({
-  laneColor, name, description, state, tie, cost, note, disabled, title, tutorialAnchor, onClick,
+  laneColor, name, description, state, tie, cost, note, disabled, title, anchor, onClick,
 }: CardShellProps) {
   return (
     <button
       type="button"
-      data-tutorial-anchor={tutorialAnchor}
+      data-tutorial-anchor={anchor}
       className={`lin-card lin-card--${state}`}
       style={{ '--lane-color': laneColor } as React.CSSProperties}
       disabled={disabled}

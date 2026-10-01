@@ -223,7 +223,7 @@ function CardTile({
       tie={tie}
       cost={!owned ? <CostChips cost={cost} wallet={wallet} /> : undefined}
       note={!owned && discounted ? 'switch discount applied' : undefined}
-      tutorialAnchor={TUTORIAL_ANCHORS.lineageCard(card.id)}
+      anchor={TUTORIAL_ANCHORS.lineageCard(card.id)}
       disabled={masteryLocked || (!owned && !check.ok) || (owned && !active && activateCheck !== null && !activateCheck.ok)}
       title={blockedReason}
       onClick={handleClick}
