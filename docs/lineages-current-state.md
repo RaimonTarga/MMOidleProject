@@ -169,3 +169,59 @@ owned row plus the worn form's capstone.
   with no `lineages`, so the stat sheet and swap preview ignore cards.
 - Armor/charm/boots have no lineage yet (Phase 4) and still run the `+N` ladder.
 - See §3 above: T3/T4 weapon forms do not exist yet.
+
+## 8. Card telemetry — the first LIVE run (2026-10-01)
+
+`lineage:unlockCard` and `lineage:setActive` had existed since Phase 1c and had **never
+run against a server**. Their only producer was `LINEAGE_LANE_PROFILES`, which the lane
+bench drives in-process, and no authored route spliced them, so the socket path was wired
+and unobserved. Route `striker-lineage-forest-t1` (added for this) is the first that buys
+cards live.
+
+Run: cadence-root / cadence-balanced, Forest, **25× reward multiplier**, **955.9 s**,
+ended by the operator's timeout. **Non-canonical for economy** — the harness says so
+itself (`NON_CANONICAL_REWARD_MULTIPLIER`). Treat every pacing number as a smoke test.
+
+| metric | value | source |
+|---|---:|---|
+| time to first card | **215.9 s** (3 m 36 s) | `lineage.card-unlocked.sessionElapsedMs` |
+| `unlockCard` round trip | **508 ms** | bot `route-step-end` |
+| `setActive` round trip | **0 ms** | bot `route-step-end` |
+| swaps per session | **0** | no second owned card in any row |
+| gate paid | **0** | `capstones` empty; the route has no boss step |
+| kills / deaths | 112 / 0 | bot `kill` events |
+
+**The seam works.** The stat card was bought and slotted, the server persisted it
+(`ownedCards: ["rapier-t1-tempo-stat"]`, `active.stat` set), and the gameplay telemetry
+recorded `lineage.card-unlocked` with `shardsSpent 3`, `essenceSpent 30`,
+`firstOfSession true`.
+
+**`setActive` completing in 0 ms is correct, not a failure.** `unlockCard` into an EMPTY
+row already activates the card server-side, which `lineageRouteSteps`' own docstring
+predicts; the route emits the step anyway so it states its active set. It follows that
+**swaps-per-session cannot be measured by a pure-lane route at all** — a swap needs two
+owned cards competing for one row, and a pure lane buys one card per row by construction.
+That metric needs a route authored to buy a second card in a row and flip between them.
+
+### The payoff card was never reached, and the reason is a finding
+
+The run then spent **~12 minutes farming for `rapier-t1-tempo-payoff` and never bought
+it**, with 13,736 green essence (cost: 90) and 2,122 Tempo shards (cost: 8) in the wallet.
+It was blocked on **Global Mastery 18**, and Global Mastery is the sum of biome levels
+excluding the clearing: Plains 6 + Forest 6 = **12**. Forest was already at its tier cap,
+so no amount of farming in Forest could ever satisfy it.
+
+Two separate things fall out:
+
+1. **A pacing observation for the designer.** At T1 the payoff row — the row that does
+   something in combat — sits at GM 18, which is **three biomes at level 6**. A player who
+   has maxed the weapon's own biome and one other still cannot buy it, however much
+   currency they hold. The stat row (GM 6) is reachable from one biome; the payoff is not.
+2. **A harness defect.** `doUnlockCard`'s `farmBlocked` raises a named `StallError` only
+   for the "this packet has no tier-1 shard source" case. A Global-Mastery shortfall that
+   the farm node *cannot* fix — because its biome is already at cap — farms silently
+   forever instead. It should detect an unsatisfiable requirement and stall with a message
+   naming it.
+
+Neither is caused by the card runtime, and the route's own truncation (it stops at the
+Flash Rapier and skips the later biomes) is what put it in that position.

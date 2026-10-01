@@ -154,6 +154,39 @@ will fill, the same way `defense.barrier-recharge-pct` does.
 
 ## 8. Deliberately left for the balance / item pass
 
+### Live-bot fights, 2026-10-01 — the first live run, and still NOT the phase gate
+
+The Phase 0 note below says the live-bot `combat.fights` column is "the real phase gate"
+and unmeasured because Docker was down. Docker was up on 2026-10-01 and a live run
+happened, so here is what it actually produced — and why it still does not close that gate.
+
+Route `striker-lineage-forest-t1` (cadence-root / cadence-balanced, Forest), **25× reward
+multiplier**, one session of **955.9 s (15 m 56 s)**, ended by the operator's timeout.
+The harness labelled the run `NON_CANONICAL_REWARD_MULTIPLIER` itself.
+
+| | |
+|---|---:|
+| kills | **112** |
+| deaths | **0** |
+| session length | 955.9 s |
+
+**Why this is not the gate.** Two reasons, both disqualifying:
+
+1. **25× makes it an economy pipeline test, not an evaluation** — the harness says so in
+   its own banner. Kill pacing, essence and shard income are all compressed.
+2. **`combat.fights` in the Phase 0 sense was never emitted.** That metric is the
+   per-fight HP series from `bot/src/telemetry/fightHp.ts` (end-of-fight HP fraction, time
+   inside the 20–80% band), and it is written when the session writes its report. This
+   session was killed by `timeout`, so it flushed `events.jsonl` but no report. The 112
+   above are raw `kill` events, which is a kill count and not a survivability series.
+
+**Zero deaths over 112 kills** is still worth one line: at +0 gear with a 25× economy the
+T1 Forest/Plains ladder applied no lethal pressure to a Skirmisher at any point, which is
+consistent with the in-process bench's finding that T1 survival is unmeasurable (every
+reference build holds 93–99% mean HP).
+
+The gate needs a canonical run: multiplier 1, long enough to write its report.
+
 ### Progression rework Phase 0 (2026-09-30) — provisional pending progression rework
 
 The coarse HP/recovery pass from `progression-rework-plan.md` Phase 0. One change:
