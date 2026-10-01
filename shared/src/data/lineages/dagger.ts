@@ -27,6 +27,16 @@ export const DAGGER_LINEAGE: LineageDefinition = {
       },
     },
 
+  {
+    recipeId: 'tundra-rimebrand', tier: 3, biome: 'tundra',
+    capstone: {
+      id: 'dagger-capstone-numbing', name: 'Numbing Dose',
+      description: 'Each cut banks another degree of cold, stacking toward something worse.',
+      fx: 'affliction.toxic-pulse', lane: 'affliction',
+      trigger: 'hit-nth', payoff: 'poison-stack',
+    },
+  },
+
   // ── T3 forms (design §18.5) ─────────────────────────────────────────────
   //
   // Authored from the existing `evolvesFrom` graph so no weapon dead-ends:

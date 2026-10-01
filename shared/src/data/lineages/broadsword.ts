@@ -26,6 +26,16 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
       },
     },
 
+  {
+    recipeId: 'desert-sunsteel-cross', tier: 2, biome: 'desert',
+    capstone: {
+      id: 'broadsword-capstone-sunsteel', name: 'Noon Strike',
+      description: "The opening blow still carries the whole day's heat, and leaves what it hit lit for the follow-through.",
+      fx: 'empowered.weak-point', lane: 'empowered',
+      trigger: 'first-hit', payoff: 'damage-window',
+    },
+  },
+
   // ── T3 forms (design §18.5) ─────────────────────────────────────────────
   //
   // Authored from the existing `evolvesFrom` graph so no weapon dead-ends:

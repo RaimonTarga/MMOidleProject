@@ -28,6 +28,16 @@ export const FLEET_LINEAGE: LineageDefinition = {
         trigger: 'kill', payoff: 'recovery-window',
       },
     },
+  {
+    recipeId: 'graveyard-boots-t4', tier: 4, biome: 'graveyard',
+    capstone: {
+      id: 'fleet-capstone-grave-momentum', name: 'Grave Momentum',
+      description: 'Every kill you leave behind lends its leftover hurry to your next stride.',
+      fx: 'kill-chain.kill-pulse', lane: 'kill-chain',
+      trigger: 'kill', payoff: 'speed-window',
+    },
+  },
+
   ],
 
   cards: [

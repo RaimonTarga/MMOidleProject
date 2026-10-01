@@ -95,6 +95,17 @@ assert(swept === claimed.size, `the partition sweep saw ${swept} monsters but th
 // is a shard with no place to farm it -- both silent. `variantBlend.test.ts` owns
 // the shares and the spawn cycle; this owns the join.
 
+/**
+ * Families with no blend yet. Desert Stalker is T3+ only by design (W1-E's
+ * families pass — its two named members, dune-stalker/dune-tyrant, debut at
+ * T3/T4, so Desert fields only Basilisk+Scorpion at T2; see
+ * `shared/src/data/families/index.ts` and `shared/src/world/map/regionT2.ts`).
+ * Its shard has no source until the T3 blend pass authors it — an entry here
+ * is that known, temporary gap, not a silent one. Remove the entry the day a
+ * node names it.
+ */
+const UNSOURCED_FAMILIES = new Set<string>(['desert-stalker']);
+
 const namedByNodes = new Set<string>();
 for (const node of WORLD_NODE_LIST) {
   if (!node.blend) continue;
@@ -110,6 +121,13 @@ for (const node of WORLD_NODE_LIST) {
   }
 }
 for (const family of FAMILY_DATABASE.values()) {
+  if (UNSOURCED_FAMILIES.has(family.id)) {
+    check(
+      !namedByNodes.has(family.id),
+      `${family.id}: now named by a node — remove it from UNSOURCED_FAMILIES`,
+    );
+    continue;
+  }
   check(
     namedByNodes.has(family.id),
     `${family.id}: no node fields it, so its ${family.drops} shard has no source`,
@@ -117,8 +135,10 @@ for (const family of FAMILY_DATABASE.values()) {
 }
 // Guard the guard: a join that reads no blends passes vacuously forever.
 assert(
-  namedByNodes.size === FAMILY_DATABASE.size,
-  `the blend join saw ${namedByNodes.size} families of ${FAMILY_DATABASE.size}`,
+  namedByNodes.size === FAMILY_DATABASE.size - UNSOURCED_FAMILIES.size,
+  `the blend join saw ${namedByNodes.size} families of ` +
+    `${FAMILY_DATABASE.size - UNSOURCED_FAMILIES.size} expected (${FAMILY_DATABASE.size} total, ` +
+    `${UNSOURCED_FAMILIES.size} unsourced)`,
 );
 
 // Every biome that a lineage gates a form behind needs a capstone material, and

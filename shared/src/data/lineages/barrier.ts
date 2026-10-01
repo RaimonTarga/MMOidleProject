@@ -28,6 +28,16 @@ export const BARRIER_LINEAGE: LineageDefinition = {
         trigger: 'barrier-break', payoff: 'ward',
       },
     },
+  {
+    recipeId: 'tundra-charm-t3', tier: 3, biome: 'tundra',
+    capstone: {
+      id: 'barrier-capstone-frozen-ground', name: 'Frozen Ground',
+      description: "Frostward's chill keeps the plate restacking instead of resetting, the longer you hold your ground.",
+      fx: 'bulwark.plating-chip', lane: 'bulwark',
+      trigger: 'standing', payoff: 'plating-stack',
+    },
+  },
+
   ],
 
   cards: [

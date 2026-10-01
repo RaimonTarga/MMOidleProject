@@ -27,6 +27,16 @@ export const HAMMER_LINEAGE: LineageDefinition = {
       },
     },
 
+  {
+    recipeId: 'tundra-permafrost-maul', tier: 3, biome: 'tundra',
+    capstone: {
+      id: 'hammer-capstone-permafrost', name: 'Brittle Ground',
+      description: 'Cracked plating holds the cold, and the cold holds the mover down.',
+      fx: 'control.frost-drag', lane: 'control',
+      trigger: 'hit-nth', payoff: 'slow',
+    },
+  },
+
   // ── T3 forms (design §18.5) ─────────────────────────────────────────────
   //
   // Authored from the existing `evolvesFrom` graph so no weapon dead-ends:

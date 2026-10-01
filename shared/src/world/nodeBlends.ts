@@ -89,8 +89,9 @@ const resolvedByNode = new Map<string, ResolvedNodeBlend | undefined>();
 
 /**
  * The resolved blend for a node, memoized. Undefined for every node with no
- * authored blend (dungeons, sanctuaries, the Clearing, and all of T2–T4) — those
- * spawn from the flat biome pool exactly as before.
+ * authored blend (dungeons, sanctuaries, the Clearing, and all of T3–T4; T1
+ * and T2 normal nodes both carry one as of W1-E) — those spawn from the flat
+ * biome pool exactly as before.
  */
 export function nodeSpawnBlend(nodeId: string): ResolvedNodeBlend | undefined {
   if (resolvedByNode.has(nodeId)) return resolvedByNode.get(nodeId);

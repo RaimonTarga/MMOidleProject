@@ -29,6 +29,16 @@ export const WING_LINEAGE: LineageDefinition = {
         trigger: 'first-hit', payoff: 'engagement-dr',
       },
     },
+  {
+    recipeId: 'volcanic-boots-t3', tier: 3, biome: 'volcanic',
+    capstone: {
+      id: 'wing-capstone-ember-spark', name: 'Ember Spark',
+      description: 'A kill restores the spark a solid hit just knocked loose.',
+      fx: 'kill-chain.kill-pulse', lane: 'kill-chain',
+      trigger: 'kill', payoff: 'speed-window',
+    },
+  },
+
   ],
 
   cards: [

@@ -28,6 +28,16 @@ export const ROBE_LINEAGE: LineageDefinition = {
         trigger: 'standing', payoff: 'plating-stack',
       },
     },
+  {
+    recipeId: 'desert-vest-t2', tier: 2, biome: 'desert',
+    capstone: {
+      id: 'robe-capstone-last-stand', name: 'Last Stand',
+      description: 'The first hit absorbed becomes plate for the rest of the fight.',
+      fx: 'bulwark.plating-chip', lane: 'bulwark',
+      trigger: 'hit-taken', payoff: 'plating-stack',
+    },
+  },
+
   ],
 
   cards: [

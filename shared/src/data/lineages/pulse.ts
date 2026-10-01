@@ -29,6 +29,16 @@ export const PULSE_LINEAGE: LineageDefinition = {
         trigger: 'guard-cast', payoff: 'plating-stack',
       },
     },
+  {
+    recipeId: 'trench-charm-t4', tier: 4, biome: 'trench',
+    capstone: {
+      id: 'pulse-capstone-deep-shock', name: 'Deep Shock',
+      description: "The ward's break rings all the way to the hull, and staggers anything close enough to feel it.",
+      fx: 'control.chill-blur', lane: 'control',
+      trigger: 'barrier-break', payoff: 'stun',
+    },
+  },
+
   ],
 
   cards: [
