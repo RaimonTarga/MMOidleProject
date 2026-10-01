@@ -103,5 +103,55 @@ export const DAGGER_LINEAGE: LineageDefinition = {
       name: 'Plaguebearer', description: 'What killed one carries to whatever stood near it.',
       fx: 'kill-chain.spread-arc', trigger: 'kill', payoff: 'contagion',
     },
+
+    // ── T2 band (design §4): stat (L2), payoff (L3), amplifier (L5) ──────────
+    {
+      id: 'dagger-t2-affliction-stat', lineageId: 'dagger', tier: 2, row: 'stat', lane: 'affliction',
+      name: 'Twice-Coated', description: 'Re-dipped more often, in something stronger.',
+      fx: 'affliction.trail',
+    },
+    {
+      id: 'dagger-t2-control-stat', lineageId: 'dagger', tier: 2, row: 'stat', lane: 'control',
+      name: 'Deeper Tendon Cut', description: 'You are still not aiming for the vitals, but it matters less now.',
+      fx: 'control.trail',
+    },
+    {
+      id: 'dagger-t2-kill-chain-stat', lineageId: 'dagger', tier: 2, row: 'stat', lane: 'kill-chain',
+      name: 'Quieter Step', description: 'Gone before the body knows it has started falling.',
+      fx: 'kill-chain.trail',
+    },
+
+    {
+      id: 'dagger-t2-affliction-payoff', lineageId: 'dagger', tier: 2, row: 'payoff', lane: 'affliction',
+      name: 'Deeper Envenom', description: 'Each hit leaves a stronger dose in the wound.',
+      fx: 'affliction.venom-pips', trigger: 'hit-nth', payoff: 'poison-stack',
+    },
+    {
+      id: 'dagger-t2-control-payoff', lineageId: 'dagger', tier: 2, row: 'payoff', lane: 'control',
+      name: 'Deeper Hamstring', description: 'Every third hit takes the legs out further.',
+      fx: 'control.frost-drag', trigger: 'hit-nth', payoff: 'slow',
+    },
+    {
+      id: 'dagger-t2-kill-chain-payoff', lineageId: 'dagger', tier: 2, row: 'payoff', lane: 'kill-chain',
+      name: 'Greater Plaguebearer', description: 'What killed one carries further, to whatever stood near it.',
+      fx: 'kill-chain.spread-arc', trigger: 'kill', payoff: 'contagion',
+    },
+
+    // Amplifiers modify this tier's own payoff card, not the T1 one (design §4).
+    {
+      id: 'dagger-t2-affliction-amplifier', lineageId: 'dagger', tier: 2, row: 'amplifier', lane: 'affliction',
+      name: 'Overflowing Dose', description: 'A stack above the cap spills onto whatever stands closest.',
+      fx: 'affliction.venom-pips', trigger: 'hit-nth', payoff: 'poison-stack', modifies: 'dagger-t2-affliction-payoff',
+    },
+    {
+      id: 'dagger-t2-control-amplifier', lineageId: 'dagger', tier: 2, row: 'amplifier', lane: 'control',
+      name: 'Slow to Heal', description: 'The cut keeps the legs long after the wound would have closed.',
+      fx: 'control.frost-drag', trigger: 'hit-nth', payoff: 'slow', modifies: 'dagger-t2-control-payoff',
+    },
+    {
+      id: 'dagger-t2-kill-chain-amplifier', lineageId: 'dagger', tier: 2, row: 'amplifier', lane: 'kill-chain',
+      name: 'Wider Plague', description: 'The plague now finds a second neighbour instead of just the one.',
+      fx: 'kill-chain.spread-arc', trigger: 'kill', payoff: 'contagion', modifies: 'dagger-t2-kill-chain-payoff',
+    },
   ],
 };
