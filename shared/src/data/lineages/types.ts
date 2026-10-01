@@ -222,7 +222,14 @@ export type LineageFxKey =
   // signature drawn bigger, not a second effect).
   | 'tempo.evasive-blur' | 'engagement.sidestep-blur' | 'control.chill-blur'
   | 'kill-chain.recovery-pulse' | 'barrier-tempo.ward-shell' | 'affliction.toxic-pulse'
-  | 'bulwark.plating-chip' | 'empowered.guard-spark';
+  | 'bulwark.plating-chip' | 'empowered.guard-spark'
+  // Keystone signatures (design §4, amended 2026-10-01; run 3 W1-B): one per
+  // packet, shared by every lineage that carries the lane — "the event changes
+  // shape" (design §8), drawn bigger than the lane's ordinary payoff fx. W1-A
+  // (feat/keystones) adds the same eight keys and a client handler each; this is
+  // the data-authoring side, reconciled by the conductor at merge.
+  | 'tempo.keystone' | 'empowered.keystone' | 'affliction.keystone' | 'control.keystone'
+  | 'kill-chain.keystone' | 'engagement.keystone' | 'bulwark.keystone' | 'barrier-tempo.keystone';
 
 export const LINEAGE_FX_KEYS: readonly LineageFxKey[] = [
   'tempo.trail', 'empowered.trail', 'affliction.trail',
@@ -241,6 +248,8 @@ export const LINEAGE_FX_KEYS: readonly LineageFxKey[] = [
   'tempo.evasive-blur', 'engagement.sidestep-blur', 'control.chill-blur',
   'kill-chain.recovery-pulse', 'barrier-tempo.ward-shell', 'affliction.toxic-pulse',
   'bulwark.plating-chip', 'empowered.guard-spark',
+  'tempo.keystone', 'empowered.keystone', 'affliction.keystone', 'control.keystone',
+  'kill-chain.keystone', 'engagement.keystone', 'bulwark.keystone', 'barrier-tempo.keystone',
 ] as const;
 
 // ─── Authored shapes (NO numbers — see the header) ───────────────────────────
