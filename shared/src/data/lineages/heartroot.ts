@@ -51,5 +51,45 @@ export const HEARTROOT_LINEAGE: LineageDefinition = {
       fx: 'engagement.sidestep-blur', trigger: 'guard-cast', payoff: 'engagement-dr',
       face: packetDefaultFace('engagement'),
     },
+
+    // ── T2 payoff row (L3): the T1 payoff, grown up ─────────────────────────
+    {
+      id: 'heartroot-t2-barrier-tempo-payoff', lineageId: 'heartroot', tier: 2, row: 'payoff', lane: 'barrier-tempo',
+      name: 'Deep Root', description: 'What breaks on the surface now finds a thicker root underneath.',
+      fx: 'barrier-tempo.ward-shell', trigger: 'barrier-break', payoff: 'ward',
+      face: packetDefaultFace('barrier-tempo'),
+    },
+    {
+      id: 'heartroot-t2-affliction-payoff', lineageId: 'heartroot', tier: 2, row: 'payoff', lane: 'affliction',
+      name: 'Steady Bloom', description: 'The root works on everything nearby now, not just whatever lingers.',
+      fx: 'affliction.toxic-pulse', trigger: 'pulse', payoff: 'poison-stack',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'heartroot-t2-engagement-payoff', lineageId: 'heartroot', tier: 2, row: 'payoff', lane: 'engagement',
+      name: 'Second Breath', description: "The guard raised at a fight's start now roots deeper than the first exchange alone.",
+      fx: 'engagement.sidestep-blur', trigger: 'guard-cast', payoff: 'engagement-dr',
+      face: packetDefaultFace('engagement'),
+    },
+
+    // ── T2 amplifier row (L5): an extra trigger kind for the same payoff ────
+    {
+      id: 'heartroot-t2-barrier-tempo-amplifier', lineageId: 'heartroot', tier: 2, row: 'amplifier', lane: 'barrier-tempo',
+      name: 'Rooted Kill', description: 'A kill feeds the root the same way a broken barrier does.',
+      fx: 'barrier-tempo.ward-shell', trigger: 'kill', payoff: 'ward', modifies: 'heartroot-t2-barrier-tempo-payoff',
+      face: packetDefaultFace('barrier-tempo'),
+    },
+    {
+      id: 'heartroot-t2-affliction-amplifier', lineageId: 'heartroot', tier: 2, row: 'amplifier', lane: 'affliction',
+      name: 'Snapped Bloom', description: 'The barrier giving way also seeds the bloom the pulse alone would take longer to grow.',
+      fx: 'affliction.toxic-pulse', trigger: 'barrier-break', payoff: 'poison-stack', modifies: 'heartroot-t2-affliction-payoff',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'heartroot-t2-engagement-amplifier', lineageId: 'heartroot', tier: 2, row: 'amplifier', lane: 'engagement',
+      name: 'Lingering Breath', description: "The root's own cadence keeps the opening discount alive between guards.",
+      fx: 'engagement.sidestep-blur', trigger: 'pulse', payoff: 'engagement-dr', modifies: 'heartroot-t2-engagement-payoff',
+      face: packetDefaultFace('engagement'),
+    },
   ],
 };

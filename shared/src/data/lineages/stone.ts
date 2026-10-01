@@ -50,5 +50,45 @@ export const STONE_LINEAGE: LineageDefinition = {
       fx: 'engagement.sidestep-blur', trigger: 'guard-cast', payoff: 'engagement-dr',
       face: packetDefaultFace('engagement'),
     },
+
+    // ── T2 payoff row (L3): the T1 payoff, grown up ─────────────────────────
+    {
+      id: 'stone-t2-kill-chain-payoff', lineageId: 'stone', tier: 2, row: 'payoff', lane: 'kill-chain',
+      name: 'Banked Warmth', description: 'Every kill now banks more warmth than the last one spent.',
+      fx: 'kill-chain.recovery-pulse', trigger: 'kill', payoff: 'recovery-window',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'stone-t2-tempo-payoff', lineageId: 'stone', tier: 2, row: 'payoff', lane: 'tempo',
+      name: 'Resonant Hum', description: "The stone's pulse now carries your stride long after it fades.",
+      fx: 'tempo.evasive-blur', trigger: 'pulse', payoff: 'speed-window',
+      face: packetDefaultFace('tempo'),
+    },
+    {
+      id: 'stone-t2-engagement-payoff', lineageId: 'stone', tier: 2, row: 'payoff', lane: 'engagement',
+      name: 'First Light', description: 'Raising a guard now softens the whole opening exchange, not just the first hit.',
+      fx: 'engagement.sidestep-blur', trigger: 'guard-cast', payoff: 'engagement-dr',
+      face: packetDefaultFace('engagement'),
+    },
+
+    // ── T2 amplifier row (L5): an extra trigger kind for the same payoff ────
+    {
+      id: 'stone-t2-kill-chain-amplifier', lineageId: 'stone', tier: 2, row: 'amplifier', lane: 'kill-chain',
+      name: 'Guarded Warmth', description: 'Raising a guard banks the same warmth a kill would.',
+      fx: 'kill-chain.recovery-pulse', trigger: 'guard-cast', payoff: 'recovery-window', modifies: 'stone-t2-kill-chain-payoff',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'stone-t2-tempo-amplifier', lineageId: 'stone', tier: 2, row: 'amplifier', lane: 'tempo',
+      name: 'Broken Rhythm', description: "The barrier giving way also kicks the stone's hum into your stride.",
+      fx: 'tempo.evasive-blur', trigger: 'barrier-break', payoff: 'speed-window', modifies: 'stone-t2-tempo-payoff',
+      face: packetDefaultFace('tempo'),
+    },
+    {
+      id: 'stone-t2-engagement-amplifier', lineageId: 'stone', tier: 2, row: 'amplifier', lane: 'engagement',
+      name: 'Standing Light', description: "The stone's own cadence keeps the opening discount topped up between guards.",
+      fx: 'engagement.sidestep-blur', trigger: 'pulse', payoff: 'engagement-dr', modifies: 'stone-t2-engagement-payoff',
+      face: packetDefaultFace('engagement'),
+    },
   ],
 };
