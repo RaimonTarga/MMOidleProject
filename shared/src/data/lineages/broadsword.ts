@@ -176,7 +176,7 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
     {
       id: 'broadsword-t3-empowered-keystone', lineageId: 'broadsword', tier: 3, row: 'keystone', lane: 'empowered',
       name: 'Full Weight', description: 'What the mechanic hits, the ground around it answers for too.',
-      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'damage-window',
+      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'echo-hit',
     },
     {
       id: 'broadsword-t3-tempo-keystone', lineageId: 'broadsword', tier: 3, row: 'keystone', lane: 'tempo',

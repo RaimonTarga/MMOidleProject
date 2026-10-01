@@ -114,7 +114,7 @@ export const ROBE_LINEAGE: LineageDefinition = {
     {
       id: 'robe-t3-empowered-keystone', lineageId: 'robe', tier: 3, row: 'keystone', lane: 'empowered',
       name: 'Answered in Full', description: 'What the mechanic marks, the ground around it marks too.',
-      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'damage-window',
+      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'echo-hit',
       face: packetDefaultFace('empowered'),
     },
     {

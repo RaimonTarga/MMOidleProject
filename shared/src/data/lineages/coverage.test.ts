@@ -327,6 +327,17 @@ for (const lineage of LINEAGE_DATABASE.values()) {
         keystoneDefinition(card.lane) !== undefined,
         `${card.id}: lane '${card.lane}' has no keystone in KEYSTONE_DEFINITIONS`,
       );
+      // The two keystones that pay out a share of a hit name the payoff kind
+      // their share is resolved from, so twenty flavours of one rule pay the
+      // same thing. Authoring another kind makes the card's own magnitude
+      // unreadable to the rule and silently falls back to the canonical share.
+      const laneKeystone = keystoneDefinition(card.lane);
+      if (laneKeystone?.payoff) {
+        check(
+          card.payoff === laneKeystone.payoff,
+          `${card.id}: keystone '${laneKeystone.id}' resolves its share from '${laneKeystone.payoff}', so the card must be authored with that payoff, not '${card.payoff}'`,
+        );
+      }
     }
   }
   for (const form of lineage.forms) {
@@ -534,9 +545,12 @@ for (const lineage of LINEAGE_DATABASE.values()) {
   }
 }
 
-// Every packet with a T3 keystone card has a runtime module — the fallback
-// check (W1-A's registry not visible on this branch): every one of the eight
-// packet ids must have at least one lineage carrying a T3 keystone of that lane.
+// Both halves of the handoff, reconciled at the run-3 wave-1 merge (W1-A's
+// registry is now on the same branch as W1-B's cards): every packet is carried
+// by a T3 keystone card somewhere, and every lane a keystone card names has a
+// row in `KEYSTONE_DEFINITIONS`. `shared/` may not import the server's module
+// map (package boundary), so the module-per-lane half stays pinned by
+// `server/test/keystones.test.ts`, which asserts its ids against this same table.
 const keystonedLanes = new Set<PacketId>();
 for (const lineage of LINEAGE_DATABASE.values()) {
   for (const card of lineage.cards) {
@@ -546,7 +560,12 @@ for (const lineage of LINEAGE_DATABASE.values()) {
 for (const packet of PACKET_IDS) {
   check(
     keystonedLanes.has(packet),
-    `keystone coverage: packet '${packet}' has no T3 keystone card on any lineage, so its runtime module (W1-A) would be unreachable`,
+    `keystone coverage: packet '${packet}' has no T3 keystone card on any lineage, so its keystone (W1-A) would be unreachable`,
+  );
+  const keystone = keystoneDefinition(packet);
+  check(
+    keystone !== undefined && keystone.lane === packet,
+    `keystone coverage: packet '${packet}' is carried by a T3 card but has no row in KEYSTONE_DEFINITIONS`,
   );
 }
 

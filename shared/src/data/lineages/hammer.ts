@@ -172,7 +172,7 @@ export const HAMMER_LINEAGE: LineageDefinition = {
     {
       id: 'hammer-t3-empowered-keystone', lineageId: 'hammer', tier: 3, row: 'keystone', lane: 'empowered',
       name: 'Full Overhead Crash', description: 'What the mechanic lands on, the ground around it answers for too.',
-      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'damage-window',
+      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'echo-hit',
     },
     {
       id: 'hammer-t3-control-keystone', lineageId: 'hammer', tier: 3, row: 'keystone', lane: 'control',

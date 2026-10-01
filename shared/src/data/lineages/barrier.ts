@@ -120,7 +120,7 @@ export const BARRIER_LINEAGE: LineageDefinition = {
     {
       id: 'barrier-t3-empowered-keystone', lineageId: 'barrier', tier: 3, row: 'keystone', lane: 'empowered',
       name: 'Full Pressure', description: 'What the mechanic marks, the ground around it marks too.',
-      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'damage-window',
+      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'echo-hit',
       face: packetDefaultFace('empowered'),
     },
 

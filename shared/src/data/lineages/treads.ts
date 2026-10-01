@@ -114,7 +114,7 @@ export const TREADS_LINEAGE: LineageDefinition = {
     {
       id: 'treads-t3-empowered-keystone', lineageId: 'treads', tier: 3, row: 'keystone', lane: 'empowered',
       name: 'Rooted in Full', description: 'What the mechanic marks, the ground around it marks too.',
-      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'damage-window',
+      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'echo-hit',
       face: packetDefaultFace('empowered'),
     },
     {

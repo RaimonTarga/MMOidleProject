@@ -163,7 +163,7 @@ export const AXE_LINEAGE: LineageDefinition = {
     {
       id: 'axe-t3-empowered-keystone', lineageId: 'axe', tier: 3, row: 'keystone', lane: 'empowered',
       name: 'Wide Hewing', description: "What the arc's mechanic hits, the swing around it hits too.",
-      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'damage-window',
+      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'echo-hit',
     },
 
     // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
