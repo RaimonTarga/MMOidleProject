@@ -32,7 +32,7 @@ const EXPECTED_ACTIVE_BIOMES: Record<number, readonly string[]> = {
 };
 
 const EXPECTED_KIND_COUNTS: Record<string, number> = {
-  normal: 140,
+  normal: 138,
   dungeon: 26,
   sanctuary: 3,
   tutorial: 1,
@@ -40,7 +40,7 @@ const EXPECTED_KIND_COUNTS: Record<string, number> = {
 };
 
 const EXPECTED_NORMAL_COUNTS: Record<number, number> = {
-  1: 27,
+  1: 25,
   2: 37,
   3: 38,
   4: 38,
@@ -112,7 +112,11 @@ function validateKindsAndContent(violations: string[]): void {
     }
 
     if (node.kind === 'normal') {
-      if (!node.modifier) violations.push(`${node.id}: normal node has no modifier`);
+      // A blend-authored node (T1, Phase 2b) carries no `modifier` at all --
+      // the blend IS its identity. Every other normal node still needs one.
+      if (!node.modifier && !node.blend) {
+        violations.push(`${node.id}: normal node has no modifier or blend`);
+      }
       if (node.blend) validateBlendShape(node, violations);
       const pool = biome.monsterPoolByTier[node.biomeTier] ?? [];
       if (pool.length === 0) {
@@ -229,26 +233,38 @@ function validateBiomeCoverage(violations: string[]): void {
       const biomeNormals = normals.filter(
         (node) => node.biomeGroup === biomeGroup,
       );
-      const allowed = NODE_MODIFIER_FAMILIES.filter(
-        (modifier) => !(MODIFIER_BANS[biomeGroup] ?? []).includes(modifier),
-      );
-      const modifierCounts = new Map<NodeModifierFamily, number>();
-      for (const node of biomeNormals) {
-        if (node.modifier) {
-          modifierCounts.set(
-            node.modifier,
-            (modifierCounts.get(node.modifier) ?? 0) + 1,
-          );
+      // A blend-authored biome that has dropped `modifier` outright (T1,
+      // Phase 2b) gets its node count checked by `validateBlendCoverage`
+      // (every family reachable) and the per-tier total in
+      // `validateCountSnapshot` instead of a per-modifier tally here. A
+      // DUAL-authored blended biome (T2, both fields still present) keeps
+      // the modifier tally below same as any other biome.
+      const modifierDropped =
+        biomeNormals.length > 0 &&
+        biomeNormals.every((node) => node.blend && !node.modifier);
+      if (!modifierDropped) {
+        const allowed = NODE_MODIFIER_FAMILIES.filter(
+          (modifier) => !(MODIFIER_BANS[biomeGroup] ?? []).includes(modifier),
+        );
+        const modifierCounts = new Map<NodeModifierFamily, number>();
+        for (const node of biomeNormals) {
+          if (node.modifier) {
+            modifierCounts.set(
+              node.modifier,
+              (modifierCounts.get(node.modifier) ?? 0) + 1,
+            );
+          }
         }
-      }
-      // One node per allowed modifier, two for the biome's native — this is also
-      // what fixes the biome's node count against its hand-cut region mask.
-      for (const modifier of allowed) {
-        const expected = NATIVE_MODIFIER[biomeGroup] === modifier ? 2 : 1;
-        if ((modifierCounts.get(modifier) ?? 0) !== expected) {
-          violations.push(
-            `T${tier} ${biomeGroup}: expected ${expected} '${modifier}' nodes`,
-          );
+        // One node per allowed modifier, two for the biome's native — this is
+        // also what fixes the biome's node count against its hand-cut region
+        // mask.
+        for (const modifier of allowed) {
+          const expected = NATIVE_MODIFIER[biomeGroup] === modifier ? 2 : 1;
+          if ((modifierCounts.get(modifier) ?? 0) !== expected) {
+            violations.push(
+              `T${tier} ${biomeGroup}: expected ${expected} '${modifier}' nodes`,
+            );
+          }
         }
       }
 
@@ -445,8 +461,8 @@ function validateBiomeShape(violations: string[]): void {
 }
 
 function validateCountSnapshot(violations: string[]): void {
-  if (WORLD_NODE_LIST.length !== 170) {
-    violations.push(`expected 170 nodes, found ${WORLD_NODE_LIST.length}`);
+  if (WORLD_NODE_LIST.length !== 168) {
+    violations.push(`expected 168 nodes, found ${WORLD_NODE_LIST.length}`);
   }
   for (const [kind, expected] of Object.entries(EXPECTED_KIND_COUNTS)) {
     const actual = WORLD_NODE_LIST.filter((node) => node.kind === kind).length;

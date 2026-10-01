@@ -26,7 +26,7 @@ export const EYE_LINEAGE: LineageDefinition = {
       capstone: {
         id: 'eye-capstone-bog', name: 'Bog Eye',
         description: "The pulse now keeps deepening what's already lingering nearby instead of fading.",
-        fx: 'affliction.toxic-pulse', lane: 'affliction',
+        fx: 'affliction.bog-eye', lane: 'affliction',
         trigger: 'pulse', payoff: 'poison-stack',
       },
     },

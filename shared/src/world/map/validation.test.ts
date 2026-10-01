@@ -23,7 +23,11 @@ assert(
   violations.length === 0,
   `canonical world is invalid:\n- ${violations.join('\n- ')}`,
 );
-assert(WORLD_NODE_LIST.length === 170, 'world count snapshot');
+// 168, not 170: Phase 2b re-cut the hand-cut T1 mask from 27 to 25 normal
+// cells (the `modifier` field's node-count job moved entirely to the blend
+// lists, so Cave and Swamp's sixth node -- the native modifier's extra
+// occurrence -- went with it).
+assert(WORLD_NODE_LIST.length === 168, 'world count snapshot');
 assert(
   new Set(WORLD_NODE_LIST.map(node => node.displayName)).size === WORLD_NODE_LIST.length,
   'canonical node display names are unique',

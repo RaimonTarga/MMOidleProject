@@ -2,7 +2,7 @@ import type { NodeBlend } from '../../data/families';
 import { buildRegionNodes } from './authoring';
 
 /**
- * T1 node blends (design §12, Phase 2a).
+ * T1 node blends (design §12, Phase 2a; re-cut in Phase 2b, 2026-10-01).
  *
  * Each normal node is a share vector over its biome's three families, and the
  * LIST IS THE NODE COUNT for that biome — it took that job from the modifier
@@ -10,9 +10,12 @@ import { buildRegionNodes } from './authoring';
  * on `RegionAuthoringInput.blends`.
  *
  * Three families per biome give three shapes that each read as one dominant
- * family, plus a two-family node and an even one. Cave and Swamp carry a sixth
- * because their native modifier used to earn them a sixth node; Phase 2b, which
- * deletes modifiers, is where the mask may be re-cut to an even five per biome.
+ * family, plus a two-family node and an even one, for an even five per biome.
+ * Cave and Swamp used to carry a sixth node because their native modifier
+ * earned them an extra one; Phase 2b deleted the `modifier` field from every
+ * T1 node (cosmetic only — shard granting is family-keyed, not modifier-keyed)
+ * and re-cut the mask from 27 to 25 normal cells to match, trimming both
+ * blend lists to five entries (dropped each one's sixth/most-skewed entry).
  *
  * Shares are authored so the dominant family is unambiguous, except in the
  * deliberate 45/45 pair where the tie breaks in family-table order.
@@ -54,7 +57,6 @@ const CAVE_BLENDS: readonly NodeBlend[] = [
   { 'cave-deep': 0.70, 'cave-brood': 0.20, 'cave-brute': 0.10 },
   { 'cave-brood': 0.45, 'cave-brute': 0.45, 'cave-deep': 0.10 },
   { 'cave-brood': 0.34, 'cave-brute': 0.33, 'cave-deep': 0.33 },
-  { 'cave-brute': 0.55, 'cave-deep': 0.30, 'cave-brood': 0.15 },
 ];
 
 const SWAMP_BLENDS: readonly NodeBlend[] = [
@@ -63,7 +65,6 @@ const SWAMP_BLENDS: readonly NodeBlend[] = [
   { 'swamp-stalker': 0.70, 'swamp-mire': 0.20, 'swamp-coven': 0.10 },
   { 'swamp-mire': 0.45, 'swamp-coven': 0.45, 'swamp-stalker': 0.10 },
   { 'swamp-mire': 0.34, 'swamp-coven': 0.33, 'swamp-stalker': 0.33 },
-  { 'swamp-coven': 0.55, 'swamp-stalker': 0.30, 'swamp-mire': 0.15 },
 ];
 
 export const REGION_T1_NODES = buildRegionNodes({
@@ -73,9 +74,9 @@ export const REGION_T1_NODES = buildRegionNodes({
   mask: [
     '.####.',
     '######',
+    '####.#',
     '######',
-    '######',
-    '#####.',
+    '####..',
     '.####.',
     '.##...',
   ],
@@ -87,6 +88,10 @@ export const REGION_T1_NODES = buildRegionNodes({
     plains: PLAINS_BLENDS,
     swamp: SWAMP_BLENDS,
   },
+  // Phase 2b (2026-10-01): T1 is the one region whose blended nodes drop the
+  // vestigial `modifier` field outright. T2's own blends (regionT2.ts) stay
+  // dual-authored for now -- see `RegionAuthoringInput.dropsModifier`.
+  dropsModifier: true,
   dungeonCells: [
     { row: 2, col: 3 },
     { row: 2, col: 6 },

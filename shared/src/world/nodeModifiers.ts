@@ -76,9 +76,13 @@ export const MODIFIER_COLORS: Record<NodeModifierFamily, string> = {
 
 /**
  * Nodes excluded from the modifier system entirely: the Clearing, the dev test
- * room, non-combat nodes (`mobDensity: 0`, currently sanctuaries), and ALL
+ * room, non-combat nodes (`mobDensity: 0`, currently sanctuaries), ALL
  * dungeon nodes — dungeons are static hand-designed exams and never carry one
- * (user decision 2026-07-24).
+ * (user decision 2026-07-24) — and a blend-authored node whose `modifier`
+ * field was deleted outright (Phase 2b, 2026-10-01, T1 only: `info.blend &&
+ * !info.modifier` is the live signal, since T2's own blends stay
+ * dual-authored with BOTH fields for now — see `authoring.ts`'s
+ * `dropsModifier`).
  */
 export function isModifierExcludedNode(nodeId: string): boolean {
   if (nodeId === TEST_ROOM_NODE_ID) return true;
@@ -87,6 +91,7 @@ export function isModifierExcludedNode(nodeId: string): boolean {
   if (info.biomeGroup === 'clearing') return true;
   if (info.mobDensity === 0) return true; // sanctuary or another non-combat node
   if (info.isDungeon) return true; // static exam — no modifier
+  if (info.blend && !info.modifier) return true; // blend replaced modifier (Phase 2b, T1)
   return false;
 }
 

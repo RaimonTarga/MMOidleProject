@@ -30,7 +30,7 @@ import {
   playerNodeIdAtom,
   combatArchetypeAtom,
   passivesAtom, playerTierAtom, activeStanceAtom, equippedRitesAtom, hpAtom, maxHpAtom,
-  selectedSubVariantAtom, selectedRangeAtom, shardsAtom, unlockedSkillsAtom,
+  selectedSubVariantAtom, selectedRangeAtom, shardsAtom, unlockedSkillsAtom, lineagesAtom,
 } from '../../hud/atoms';
 import { BrowserPane, CategoryRail, RailLayout } from '../../hud/primitives';
 import { SLOT_ABBR, biomeName, tierColor } from './common';
@@ -679,6 +679,7 @@ function MakeDetail({
   const equippedRites = useAtomValue(equippedRitesAtom);
   const hp = useAtomValue(hpAtom);
   const maxHp = useAtomValue(maxHpAtom);
+  const lineages = useAtomValue(lineagesAtom);
   const affordable = entryAffordable(entry, essences);
   const recipe = entry.gear;
   // Weapon tier-2+ forms are the lineage tree's gate now (LineageTreePanel, open
@@ -709,14 +710,14 @@ function MakeDetail({
             selectedClass: combatArchetype ? `${combatArchetype}-root` : null,
             selectedSubVariant, selectedRange, combatArchetype,
           },
-          playerTier, activeStance, equippedRites,
+          playerTier, activeStance, equippedRites, lineages,
           hpFraction: maxHp > 0 ? hp / maxHp : 1,
         },
       })
       : null),
     [recipe, evolved, inventory, equipment, itemUpgrades, unlockedSkills, passives,
       combatArchetype, selectedSubVariant, selectedRange, playerTier, activeStance,
-      equippedRites, hp, maxHp],
+      equippedRites, lineages, hp, maxHp],
   );
 
   const statList = recipe

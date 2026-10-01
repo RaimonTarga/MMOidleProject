@@ -231,7 +231,23 @@ export type LineageFxKey =
   // starts playing differently.
   | 'tempo.keystone' | 'empowered.keystone' | 'affliction.keystone'
   | 'control.keystone' | 'kill-chain.keystone' | 'engagement.keystone'
-  | 'bulwark.keystone' | 'barrier-tempo.keystone';
+  | 'bulwark.keystone' | 'barrier-tempo.keystone'
+  // Defensive CAPSTONE signatures (gap closed 2026-10-01): the packet-keyed
+  // defensive signature above is shared by every lineage that carries the
+  // lane, so two lineages crowning the same lane (e.g. the Robe's and the
+  // Plate's bulwark capstone) were visually identical. One lineage per lane
+  // keeps the original shared key (the lane's "default" flavour); every other
+  // lineage crowning that lane gets its own key here, reused across that
+  // lineage's own doors into the band (same convention as the weapon
+  // lineages' `tempo.gale-wake` / `tempo.ruin-afterimage` already follow).
+  | 'bulwark.rampart-seal' | 'bulwark.hide-ward' | 'bulwark.frostline-plate'
+  | 'bulwark.resonant-plate' | 'bulwark.ballast-plate'
+  | 'control.deep-shock' | 'control.icebreaker' | 'control.wetland-anchor'
+  | 'engagement.oasis-guard' | 'engagement.windstep' | 'engagement.mountain-stride'
+  | 'engagement.cavern-sprint'
+  | 'affliction.spore-veil' | 'affliction.bog-eye'
+  | 'kill-chain.wind-chaser' | 'kill-chain.ember-spark'
+  | 'barrier-tempo.bulwark-heart';
 
 export const LINEAGE_FX_KEYS: readonly LineageFxKey[] = [
   'tempo.trail', 'empowered.trail', 'affliction.trail',
@@ -253,6 +269,14 @@ export const LINEAGE_FX_KEYS: readonly LineageFxKey[] = [
   'tempo.keystone', 'empowered.keystone', 'affliction.keystone',
   'control.keystone', 'kill-chain.keystone', 'engagement.keystone',
   'bulwark.keystone', 'barrier-tempo.keystone',
+  'bulwark.rampart-seal', 'bulwark.hide-ward', 'bulwark.frostline-plate',
+  'bulwark.resonant-plate', 'bulwark.ballast-plate',
+  'control.deep-shock', 'control.icebreaker', 'control.wetland-anchor',
+  'engagement.oasis-guard', 'engagement.windstep', 'engagement.mountain-stride',
+  'engagement.cavern-sprint',
+  'affliction.spore-veil', 'affliction.bog-eye',
+  'kill-chain.wind-chaser', 'kill-chain.ember-spark',
+  'barrier-tempo.bulwark-heart',
 ] as const;
 
 /** The keystone fx key of a lane. One per packet (design §4). */

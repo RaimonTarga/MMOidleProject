@@ -25,7 +25,7 @@ export const PULSE_LINEAGE: LineageDefinition = {
       capstone: {
         id: 'pulse-capstone-resonant', name: 'Resonant Core',
         description: 'Raising a guard now keeps the pulse stacking plate instead of resetting it.',
-        fx: 'bulwark.plating-chip', lane: 'bulwark',
+        fx: 'bulwark.resonant-plate', lane: 'bulwark',
         trigger: 'guard-cast', payoff: 'plating-stack',
       },
     },
@@ -34,7 +34,7 @@ export const PULSE_LINEAGE: LineageDefinition = {
     capstone: {
       id: 'pulse-capstone-deep-shock', name: 'Deep Shock',
       description: "The ward's break rings all the way to the hull, and staggers anything close enough to feel it.",
-      fx: 'control.chill-blur', lane: 'control',
+      fx: 'control.deep-shock', lane: 'control',
       trigger: 'barrier-break', payoff: 'stun',
     },
   },

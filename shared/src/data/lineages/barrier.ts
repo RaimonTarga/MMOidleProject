@@ -24,7 +24,7 @@ export const BARRIER_LINEAGE: LineageDefinition = {
       capstone: {
         id: 'barrier-capstone-bulwark', name: 'Bulwark Heart',
         description: 'A broken barrier now refills and keeps the ward from fading right away.',
-        fx: 'barrier-tempo.ward-shell', lane: 'barrier-tempo',
+        fx: 'barrier-tempo.bulwark-heart', lane: 'barrier-tempo',
         trigger: 'barrier-break', payoff: 'ward',
       },
     },
@@ -33,7 +33,7 @@ export const BARRIER_LINEAGE: LineageDefinition = {
     capstone: {
       id: 'barrier-capstone-frozen-ground', name: 'Frozen Ground',
       description: "Frostward's chill keeps the plate restacking instead of resetting, the longer you hold your ground.",
-      fx: 'bulwark.plating-chip', lane: 'bulwark',
+      fx: 'bulwark.frostline-plate', lane: 'bulwark',
       trigger: 'standing', payoff: 'plating-stack',
     },
   },

@@ -34,7 +34,7 @@ export const STONE_LINEAGE: LineageDefinition = {
     capstone: {
       id: 'stone-capstone-oasis-guard', name: 'Oasis Guard',
       description: 'A guard raised in the mirage-haze starts the fight already half-cleansed.',
-      fx: 'engagement.sidestep-blur', lane: 'engagement',
+      fx: 'engagement.oasis-guard', lane: 'engagement',
       trigger: 'guard-cast', payoff: 'cleanse',
     },
   },

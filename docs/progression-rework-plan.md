@@ -1911,6 +1911,58 @@ and the full `lineage`/`variant`/`blend`/`world` substring sweep (17 files).
 
 ---
 
+### W1-F progress note — known gaps closed (2026-10-01)
+
+Five carried gaps from the overnight/day-run reports, on `feat/gaps` off
+`feat/lineage-data-model`.
+
+1. **`previewEquipmentStats` and the stat sheet ignored lineage cards.** The
+   preview built a synthetic `holdsInventory` with no `lineages`, so
+   `resolveActiveLineages` always saw an empty map. Fixed: `EquipmentPreviewInput`
+   now carries `lineages`, threaded into `holdsInventory`; `StatSheet.tsx` and
+   `MakeTab.tsx`'s evolution DPS row now pass the live `lineagesAtom`. Test:
+   an active Quick Wrist (rapier Tempo stat row) now moves `attacksPerSecond`
+   in both the raw preview and the built sheet.
+2. **Defensive capstone FX keys all reused the lane's shared payoff key**, so
+   two of the fifteen defensive lineages crowning the same lane (e.g. Robe and
+   Plate both on Bulwark) were visually identical. One lineage per lane keeps
+   the shared key; the other 17 capstone slots got their own `LineageFxKey`
+   plus a `combatFx.ts` handler (a distinct pairing of the existing six
+   primitives, never a new visual language). Full list in the commit message.
+3. **T1's vestigial `modifier` field, mask re-cut to 25, Cave/Swamp blends
+   trimmed to five.** Done as the brief described; see the commit message for
+   the authoring mechanics (`dropsModifier`, naming-sequence prefix) and the
+   mask cells chosen (avoided the two T1 nodes carrying a real T1<->T4
+   frontier edge).
+4. **and 5. Shard icons in the materials panel / map node info, and the
+   materials panel grouping + hiding zero rows — ALREADY DONE on this branch,
+   no code changed.** Both were real gaps when the overnight report named them,
+   but later work in the same day/overnight run (variants map pass `aa44d84c`,
+   catalyst-wallet removal `c5cf7436`) shipped exactly what this gap asked for
+   before W1-F started:
+   - `client/src/ui/MaterialChip.tsx` + `client/src/ui/economyIcons.ts`:
+     every shard/capstone chip renders through `GameIcon` with a lane-coloured
+     glyph source (`shardIconSource`/`capstoneIconSource` -- a letter in a
+     lane-tinted box/circle, since no atlas frame exists for them yet), never
+     a bare text glyph in markup. `shardName`/`capstoneMaterialName` calls that
+     remain are the chip's accompanying NAME label, not a replacement for the
+     icon.
+   - `client/src/ui/map/NodeInfo.tsx` (map node info) already renders
+     `<ShardIcon packet={...} />` for every family row via the same glyph
+     component (`client/src/ui/map/ShardIcon.tsx`).
+   - `client/src/hud/MaterialsPanel.tsx` (the HUD materials panel) and
+     `client/src/ui/crafting/shared.tsx`'s `WalletSummary` (the crafting tab's
+     wallet strip) both already group essences / shards / capstones with a
+     divider and filter `ownedShards`/`ownedCapstones` to amount > 0, hiding
+     untouched rows.
+   Divergence recorded per the brief's own instruction: code on the branch
+   wins over the (stale) gap list. No new component was written for 4/5.
+
+Related tests + `pnpm -r exec tsc --noEmit` all pass; see the five commits on
+`feat/gaps` for the per-gap diffs.
+
+---
+
 ## Cross-cutting rules
 
 - **Server authority.** Card, form, and material state are mutated only by the server

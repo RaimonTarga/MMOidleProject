@@ -24,7 +24,7 @@ export const FLEET_LINEAGE: LineageDefinition = {
       capstone: {
         id: 'fleet-capstone-gale', name: 'Gale Boots',
         description: 'A kill now keeps the recovery window open instead of letting it lapse.',
-        fx: 'kill-chain.recovery-pulse', lane: 'kill-chain',
+        fx: 'kill-chain.wind-chaser', lane: 'kill-chain',
         trigger: 'kill', payoff: 'recovery-window',
       },
     },
@@ -33,7 +33,7 @@ export const FLEET_LINEAGE: LineageDefinition = {
     capstone: {
       id: 'fleet-capstone-grave-momentum', name: 'Grave Momentum',
       description: 'Every kill you leave behind lends its leftover hurry to your next stride.',
-      fx: 'kill-chain.kill-pulse', lane: 'kill-chain',
+      fx: 'kill-chain.wind-chaser', lane: 'kill-chain',
       trigger: 'kill', payoff: 'speed-window',
     },
   },
