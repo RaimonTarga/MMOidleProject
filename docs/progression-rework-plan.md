@@ -962,6 +962,52 @@ combat once equipped, not just structurally validated.
 **Exit.** Playtest: players describe the gate as the reward moment. Bench: T2 lane
 budgets hold; the T1→T2 floor rule (weapon ladder) still cascades.
 
+### Phase 5 progress note — T2 weapon band authored (2026-10-01)
+
+W1-D1 authored the full T2 band (stat L2 / payoff L3 / amplifier L5) for all five
+weapon lineages — Rapier, Broadsword, Hammer, Axe, Dagger — 45 cards, on
+`feat/t2-band-weapon`. The fifteen non-weapon lineages are a sibling task and
+untouched here. Divergences from the brief, for the designer:
+
+- **T2 payoff, not just amplifier.** `coverage.test.ts` requires every row of a tier's
+  band to exist for all three lanes the moment a lineage authors anything at that tier
+  (`ROW_LOCAL_LEVEL[2]` is stat/payoff/amplifier). An amplifier-only T2 would fail that
+  check on every lineage, so each lane got its own T2 payoff card (same trigger/payoff
+  kind as its T1 card, read as that payoff grown up) for the amplifier to modify. This
+  matches design §4's own T2 row list, so it is a scope correction, not a rule change.
+- **No new fx keys.** The T2 payoff and its amplifier reuse the lane's existing
+  `LineageFxKey` (the same key the T1 payoff card uses) rather than minting one. This
+  departs from design §8's table ("Payoff = a new on-screen event") and from the Phase 1
+  weapon precedent of one key per card; it follows the Phase 4 defensive precedent
+  instead ("the client switch stays small... drawn bigger, not a second effect"),
+  keeping `combatFx.ts` untouched. W1-F (client) owns drawing the amplifier bigger / on
+  a second target.
+- **`magnitudes.ts` untouched.** `TIER_SCALAR[2]`, `ROW_SCALAR.amplifier` (0.6),
+  `ESSENCE_BASE.amplifier`, and `ROW_LOCAL_LEVEL[2]` already existed and resolved every
+  one of the 45 cards (`coverage.test.ts`'s resolution loop, section 4) without a single
+  added unit or number.
+- **Amplifier trigger/payoff choice.** 14 of the 15 amplifiers keep the SAME
+  trigger/payoff kind as the T2 payoff card they modify — read as the same event at
+  `ROW_SCALAR.amplifier` magnitude, with "second target / longer hold / overflow stack"
+  carried in flavour text rather than a mechanical change (none is wired yet; Phase 1b
+  owns the runtime). The one exception, Rapier's Affliction lane
+  (`rapier-t2-affliction-amplifier`), uses `trigger: 'kill'` against the payoff card's
+  `hit-nth`, directly reusing design §13's own worked example ("hemorrhage spreads on
+  kill") and exercising the "extra trigger kind" option design §4 lists for this row.
+  No lane needed a trigger or payoff kind outside `TRIGGER_KINDS`/`PAYOFF_KINDS` — every
+  weapon lane amplifies cleanly inside the closed vocabulary.
+- **`coverage.test.ts` gained two rules** (lives in this file; the sibling non-weapon
+  task does not touch it): an amplifier's `modifies` must name a `payoff`-row card of
+  its OWN lineage, OWN lane, and OWN tier (previously only "same lineage" was checked,
+  which would have let an amplifier silently point at the T1 payoff); and a lane that
+  authors a tier's amplifier row authors **exactly one** amplifier card for it, not a
+  shopping list.
+
+Tests run: `coverage.test.ts`, `normalisation.test.ts`,
+`server/test/lineageAuthoring.test.ts`, `server/test/lineageEconomy.test.ts`, plus
+`server/test/weaponReachability.test.ts` as a spot check — all green, alongside
+`npx tsc -p shared/tsconfig.json --noEmit`.
+
 ---
 
 ## Cross-cutting rules
