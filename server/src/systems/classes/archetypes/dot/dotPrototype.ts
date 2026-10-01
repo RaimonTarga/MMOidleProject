@@ -50,6 +50,7 @@ import {
 } from "../../../combat/damage/dotTickEvent";
 import { emitPlayerMonsterOnKill } from "../../../combat/damage/killHooks";
 import { emitMechanicFired } from "../../../combat/engine/mechanicFired";
+import { consumeRefundedDotFill } from "../../../combat/keystones/refund";
 import { buildKillerFromSourceId } from "../../../world/deathCause";
 import {
   buildSimpleBreakdown,
@@ -145,6 +146,14 @@ export function applyClassDotStack(
   effect.data.tickIntervalMs = application.tickIntervalMs;
   effect.data.tickOnExpire = 1;
   attachMarker(world, defender, "hasDot");
+
+  // REFUND (design §4, the Kill-chain keystone) readies the dot root's mechanic
+  // by making the NEXT application a full fill. Consumed here, between the stack
+  // landing and the max-stack check below, because that check is the root's own
+  // moment and the whole point of the refund is to reach it in one hit.
+  if (application.maxStacks > 0 && consumeRefundedDotFill(attacker.tracksCombat)) {
+    effect.stacks = application.maxStacks;
+  }
 
   // `mechanic-fired` (progression rework 1c): a full stack is the DoT root's
   // moment. ONCE PER TARGET PER FILL — the latch lives on the effect's own data,
