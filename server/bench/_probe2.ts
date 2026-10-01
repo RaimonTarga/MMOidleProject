@@ -1,0 +1,11 @@
+import { LINEAGE_DATABASE, rowsForTier, bandBiomeLevel, lineageMasteryLevelForRow } from '@mmo-idle/shared';
+for (const t of [1,2,3,4]) console.log('rowsForTier', t, rowsForTier(t));
+const l = LINEAGE_DATABASE.get('rapier')!;
+console.log('\n--- rapier forms');
+for (const f of l.forms) console.log(JSON.stringify(f));
+console.log('\n--- rapier cards tier<=2');
+for (const c of l.cards.filter(c=>c.tier<=2)) console.log(`t${c.tier} ${c.row.padEnd(10)} ${String(c.lane).padEnd(12)} ${c.id}`);
+console.log('\n--- all weapon lineage forms by tier');
+for (const lin of LINEAGE_DATABASE.values()) if (lin.slot==='weapon') console.log(lin.id.padEnd(12), lin.forms.map(f=>`T${f.tier}:${f.recipeId}`).join(' '));
+console.log('\n--- non-weapon lineages');
+for (const lin of LINEAGE_DATABASE.values()) if (lin.slot!=='weapon') console.log(lin.id.padEnd(16), lin.slot.padEnd(8), lin.homeBiome.padEnd(10), lin.lanes.join(','), '|', lin.forms.map(f=>`T${f.tier}:${f.recipeId}`).join(' '));
