@@ -51,6 +51,12 @@ export const forestMonsterEntries = [
     stats: { hp: 130, attack: 20, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1100, pullRange: 476 },
     behavior: 'melee', attackStyle: 'bite', biome: 'forest',
     rewards: { essence: 4, essenceType: 'green', level: 1, biomeXp: 25 },
+    // PACK FAMILY (progression rework, 2026-10-01, PROVISIONAL): evasion unset -> 0.12.
+    // Pack declares `punishes: 'empowered'` and evasion is the one stat that punishes
+    // it — a multiplied hit that misses is the entire punishment. A wolf dodging one
+    // swing in eight is the Pack's own fiction, and 0.12 is the gentlest evasion in
+    // the game (mire-stalker 0.20, bog-lurker 0.25), well under the 0.25 ceiling.
+    evasion: 0.12,
     ai: { wanderRadius: 290, leashRange: 1360, idleMinMs: 700, idleMaxMs: 2800 },
     // Forest predator-pack ALPHA: a roaming adult wolf spawns with two young wolves
     // and calls them onto anything it engages.
