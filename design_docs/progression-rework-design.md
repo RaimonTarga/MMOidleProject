@@ -1,3 +1,16 @@
+9. **Bench criterion, replacing §9's bands (from the 2026-10-01 day-run bench).** "±10% of the
+   median" shrinks as lanes weaken (+3.9% to +4.7% at a +4.3% median) and "favoured lane
+   wins by ~30%" was never met. New reading: **lane budget** = every packet's mean uplift
+   over its lane-less control lies within **±3 percentage points** of the median uplift at
+   T1 (the band is authored per tier in the magnitude table, next to TIER_SCALAR).
+   **Encounter check** = on a family's own node the favoured lane ranks **first** of the
+   lanes measured there and the punished lane ranks **last**; the margin is reported, not
+   required. A family whose favoured lane is *negative* on its own node (Cave Deep −17.6%,
+   Plains Herd −7.5% on 2026-10-01) is a **monster-shape** finding for the Phase 4 monster
+   pass, never a reason to tune that lane's cards per node.
+10. **Frames column.** The bench needs three reference profiles per root (one per frame,
+   18 rows) to show Light / Balanced / Heavy uplift. Approved as its own follow-up task;
+   it roughly triples the run.
 # Progression Rework — Design Bible
 
 **Status:** design authority, drafted 2026-09-30 from the post-v0.6.2 playtest review.
