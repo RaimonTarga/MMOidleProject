@@ -145,6 +145,16 @@ for (const [key, lineage] of LINEAGE_DATABASE) {
     }
     if (card.row === 'amplifier') {
       check(!!card.modifies, `${card.id}: an amplifier modifies an owned payoff (design §4)`);
+      // An amplifier modifies a PAYOFF card of its OWN lineage, OWN lane, and OWN
+      // tier — not the T1 payoff, and not a payoff the lineage never authored at
+      // this tier. "The T2 band now has its own payoff row for it to modify."
+      const target = lineage.cards.find((c) => c.id === card.modifies);
+      check(!!target, `${card.id}: amplifier modifies '${card.modifies}', which does not exist`);
+      if (target) {
+        check(target.row === 'payoff', `${card.id}: amplifier modifies '${target.id}', which is a '${target.row}' row, not a payoff`);
+        check(target.lane === card.lane, `${card.id}: amplifier modifies '${target.id}' on lane '${target.lane}', not its own lane '${card.lane}'`);
+        check(target.tier === card.tier, `${card.id}: amplifier (T${card.tier}) modifies '${target.id}' (T${target.tier}) — an amplifier modifies its OWN tier's payoff`);
+      }
     }
   }
 
@@ -158,6 +168,15 @@ for (const [key, lineage] of LINEAGE_DATABASE) {
       for (const row of rows) {
         const has = lineage.cards.some((c) => c.tier === tier && c.lane === lane && c.row === row);
         check(has, `${lineage.id} T${tier}: lane '${lane}' has no '${row}' card — the row is a choice between three`);
+        // An amplifier is one card modifying one payoff, not a shopping list: a
+        // lane that authors a tier's amplifier row authors exactly one.
+        if (row === 'amplifier') {
+          const amplifiers = lineage.cards.filter((c) => c.tier === tier && c.lane === lane && c.row === 'amplifier');
+          check(
+            amplifiers.length === 1,
+            `${lineage.id} T${tier}: lane '${lane}' has ${amplifiers.length} amplifier cards, expected exactly one`,
+          );
+        }
       }
     }
   }
