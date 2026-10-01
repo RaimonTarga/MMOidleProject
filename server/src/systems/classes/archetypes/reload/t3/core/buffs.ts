@@ -22,6 +22,10 @@ export const RELOAD_T3_BUFFS = [
 
   defineBuff('reload-hair-trigger', ({ player }) => {
     if ((player.usesSkills.passives['reload.hair-trigger'] ?? 0) <= 0) return null;
+    // The Artillerist frame owns the ramp (Phase 3) and its own tile reports it.
+    // Two tiles over one `clipSpeedStacks` count would quote two different
+    // percentages for the same stacks.
+    if ((player.usesSkills.passives['reload.frame-ramp-pct-per-shot'] ?? 0) > 0) return null;
     const stacks = player.usesReload?.clipSpeedStacks ?? 0;
     if (stacks <= 0) return null;
     const pct = playerMechanicBuffMagnitude(

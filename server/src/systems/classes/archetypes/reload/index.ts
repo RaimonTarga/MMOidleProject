@@ -7,6 +7,7 @@ import {
   updateReloadT3,
   RELOAD_T3_BUFFS,
 } from './t3';
+import { RELOAD_FRAME_BUFFS } from './frameLoop';
 
 const reloadModule = defineMechanic({
   id: 'reload',
@@ -17,7 +18,7 @@ const reloadModule = defineMechanic({
     updateReloadT3(world, dt, now);
     updateReloadArchetype(world, dt);
   },
-  buffs: RELOAD_T3_BUFFS,
+  buffs: [...RELOAD_FRAME_BUFFS, ...RELOAD_T3_BUFFS],
 });
 
 export default reloadModule;
