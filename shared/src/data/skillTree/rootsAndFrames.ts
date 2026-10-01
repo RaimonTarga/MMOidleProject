@@ -188,12 +188,15 @@ export const rootsAndFramesEntries = [
     id: 'summoner-balanced', name: 'Consort', tier: 1,
     classId: 'summoner-root', subVariantId: 'balanced',
     parent: 'summoner-root', children: ['summoner-balanced-t3-a', 'summoner-balanced-t3-b', 'summoner-balanced-t3-c'],
-    description: 'Formation mechanic — maximum summons before relic expansion: 5 (+1 from Conduit\'s 4). Five medium bodies form the reference ensemble: ×1.00 formation offense, 100% total summon-HP budget, baseline movement and size, and 2.5s reconstruction with a 1.5s floor. Damage, durability, and reconstruction pressure stay moderate.',
+    description: 'Formation mechanic — maximum summons before relic expansion: 5 (+1 from Conduit\'s 4). Five medium bodies form the reference ensemble: ×1.00 formation offense, 100% total summon-HP budget, baseline movement and size, and 2.5s reconstruction with a 1.5s floor. Damage, durability, and reconstruction pressure stay moderate. Frame loop — the line holds: while every slot is alive, each body carries 15% of your plating again and 15% more damage reduction. A single loss breaks the line at once; completing the reconstruction restores it.',
     cost: 1, statEffects: {"maxHpPct": 0.08, "platingPct": 0, "moveSpeedPct": 0.02},
-    // Consort deliberately ships with NO frame loop: its container is the one
-    // still open with the designer (brief §1, bible open decision 1). The frame
-    // keeps its stat skew alone until that call lands — do not improvise one.
-    mechanicEffects: {},
+    // Frame loop (Phase 3; decided 2026-10-01, bible amendment 13 — "the line
+    // holds"). Consort's container is neither a window nor a bank but a STANDING
+    // condition, which is the Balanced skew read on the FORMATION instead of on one
+    // hit: it pays for keeping five bodies alive, the one thing the reference
+    // ensemble is shaped to do. Any death breaks it, a completed reconstruction
+    // restores it, so the lever is reconstruction uptime rather than a cadence.
+    mechanicEffects: {"summoner.frame-line-plating-pct": 0.15, "summoner.frame-line-dr": 0.15},
   }],
 
   ['summoner-heavy', {

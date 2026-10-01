@@ -585,10 +585,10 @@ export const SUMMONER_KEYS = [
   'summoner.damage-sponge-pct',
   'summoner.leash-mult',
   // ── Frame loops (progression rework Phase 3) ───────────────────────────────
-  // The Conduit's loop hangs off the FORMATION CYCLE — every living summon has
-  // hit the same target since the last fire (docs/briefs/frame-loops-2026-10-01.md
-  // §1). Consort (`summoner-balanced`) deliberately has NO loop: that container is
-  // still open with the designer, and the frame keeps its stat skew alone.
+  // Splinter's and Effigy's loops hang off the FORMATION CYCLE — every living
+  // summon has hit the same target since the last fire
+  // (docs/briefs/frame-loops-2026-10-01.md §1). Consort's does not: its container
+  // is a STANDING condition on the formation's integrity, decided 2026-10-01.
   //
   // Splinter — a completed cycle on one target opens a frenzy window (shorter
   // than one summon swing) where the swarm attacks faster and delivers more
@@ -604,6 +604,12 @@ export const SUMMONER_KEYS = [
   'summoner.frame-link-max-charge',
   'summoner.frame-link-slam-mult',
   'summoner.frame-link-stagger-ms',
+  // Consort — "the line holds". While EVERY formation slot is alive, each body
+  // carries `frame-line-plating-pct` of the owner's plating again and
+  // `frame-line-dr` more damage reduction. A death breaks it on the same summoner
+  // pass that observes the death; a completed reconstruction restores it.
+  'summoner.frame-line-plating-pct',
+  'summoner.frame-line-dr',
 ] as const;
 
 // Mobility / boot mechanics. Strictly on the speed + positioning axis — these

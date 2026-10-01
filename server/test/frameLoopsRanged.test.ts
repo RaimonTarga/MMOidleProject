@@ -30,7 +30,7 @@ import {
   hasStatusEffect,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
-import type { MonsterEntity, PlayerEntity } from '../src/ecs/entity';
+import type { MinionEntity, MonsterEntity, PlayerEntity } from '../src/ecs/entity';
 import { World } from '../src/world/World';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
@@ -51,8 +51,10 @@ import {
   SUMMONER_FRAME_LINK_RESOURCE,
   SUMMONER_FRAME_WINDOW_EFFECT,
 } from '../src/systems/classes/archetypes/summoner/frameLoop';
+import { SUMMONER_FRAME_LINE_EFFECT } from '../src/systems/classes/archetypes/summoner/lineHolds';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
 import { runFormationAttack } from '../src/systems/classes/archetypes/summoner/formationAttack';
+import { summonerProfileFor } from '../src/systems/classes/archetypes/summoner/profile';
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -698,6 +700,96 @@ function fireShot(player: PlayerEntity, target: MonsterEntity): CombatContext {
   assert(
     hpBefore - victim.hasHealth.hp > expectedSlam,
     'the slam lands on top of the swing that completed the pair',
+  );
+}
+
+// ── Consort: the line holds ───────────────────────────────
+//
+// The only frame container that is a STANDING condition rather than a window or a
+// bank, so what breaks here is different in kind: the bonus surviving a death, the
+// bonus never coming back after a reconstruction, or the two halves (the bodies'
+// mitigation and the owner's HUD record) disagreeing because they were derived from
+// two different readings of the formation.
+
+{
+  const player = frame('fl-consort', 'summoner', 'summoner-root', 'balanced');
+  const passives = player.usesSkills.passives;
+  const platingPct = passives['summoner.frame-line-plating-pct'] ?? 0;
+  const drAdd = passives['summoner.frame-line-dr'] ?? 0;
+
+  assert(platingPct > 0, 'Consort should author the plating share of the line');
+  assert(drAdd > 0, 'Consort should author the damage reduction of the line');
+
+  // Scaffolding, not balance: the plating half is a FRACTION of the owner's own
+  // plating, and a naked test character has none for it to be a fraction of.
+  player.mitigatesDamage.plating = 40;
+  player.mitigatesDamage.damageReduction = 0.1;
+  const basePlating = player.mitigatesDamage.plating;
+  const baseDr = player.mitigatesDamage.damageReduction;
+
+  const bodiesOf = (): MinionEntity[] => player.summonsMinions!.minionIds
+    .map((id) => (id ? world.getMinionEntity(id) : undefined))
+    .filter((m): m is MinionEntity => m !== undefined && m.hasHealth.hp > 0);
+
+  const lineRecord = () => getStatusEffect(player.tracksCombat, SUMMONER_FRAME_LINE_EFFECT);
+  const lineBeats = () => world.takeNodeEvents(NODE)
+    .filter((ev) => ev.kind === 'frame-charge' && ev.playerId === player.isPlayer.id);
+
+  world.takeNodeEvents(NODE);
+  updateSummonerArchetype(world, 0, 10_000);
+  const slots = player.summonsMinions!.targetCount;
+  assert(slots === 5, `Consort should field five slots, got ${slots}`);
+  assert(bodiesOf().length === slots, 'the whole formation should be standing after the first tick');
+
+  // 1. Intact grants.
+  const wholePlating = basePlating + Math.round(basePlating * platingPct);
+  for (const body of bodiesOf()) {
+    close(body.mitigatesDamage.plating, wholePlating, 'a held line plates every body');
+    close(body.mitigatesDamage.damageReduction, baseDr + drAdd, 'a held line hardens every body');
+  }
+  close(lineRecord()?.data['intact'] ?? -1, 1, 'the HUD record should say the line is intact');
+  const opened = lineBeats();
+  assert(
+    opened.length === 1 && opened[0]!.kind === 'frame-charge' && opened[0]!.stacks === slots,
+    'the line closing should beat frame-charge at full',
+  );
+  updateSummonerArchetype(world, 0, 10_100);
+  assert(lineBeats().length === 0, 'an unbroken line must not re-beat every tick');
+
+  // 2. A death breaks it on the pass that observes the death.
+  const fallen = bodiesOf()[0]!;
+  fallen.hasHealth.hp = 0;
+  updateSummonerArchetype(world, 0, 10_200);
+  const survivors = bodiesOf();
+  assert(survivors.length === slots - 1, `one loss should leave ${slots - 1} bodies, got ${survivors.length}`);
+  for (const body of survivors) {
+    close(body.mitigatesDamage.plating, basePlating, 'a broken line gives the plating back at once');
+    close(body.mitigatesDamage.damageReduction, baseDr, 'a broken line gives the DR back at once');
+  }
+  close(lineRecord()?.data['intact'] ?? -1, 0, 'the HUD record should say the line is broken');
+  const broke = lineBeats();
+  assert(
+    broke.length === 1 && broke[0]!.kind === 'frame-charge' && broke[0]!.stacks === 0,
+    'the break should beat frame-charge at zero, the client release burst',
+  );
+
+  // 3. A completed reconstruction restores it.
+  //
+  // One tick with enough dt to run the queue head out, which is how the frame's
+  // real lever reads: the player scales reconstruction, not a cadence.
+  const reconstructionMs = summonerProfileFor(player).reconstructionIntervalMs;
+  assert(reconstructionMs > 0, 'Consort should author a reconstruction interval');
+  updateSummonerArchetype(world, reconstructionMs, 20_000);
+  assert(bodiesOf().length === slots, 'the reconstruction should refill the slot');
+  for (const body of bodiesOf()) {
+    close(body.mitigatesDamage.plating, wholePlating, 'a restored line plates every body again');
+    close(body.mitigatesDamage.damageReduction, baseDr + drAdd, 'a restored line hardens every body again');
+  }
+  close(lineRecord()?.data['intact'] ?? -1, 1, 'the HUD record should say the line holds again');
+  const restored = lineBeats();
+  assert(
+    restored.length === 1 && restored[0]!.kind === 'frame-charge' && restored[0]!.stacks === slots,
+    'the restore should beat frame-charge at full',
   );
 }
 

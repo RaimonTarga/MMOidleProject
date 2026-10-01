@@ -27,6 +27,7 @@ import { syncSummonerFormationTarget } from './formationTarget';
 import { isPlayerInCombat } from '../../../combat/ai/engagement';
 import { pruneFormationTechnique } from './formationTechnique';
 import { registerSummonerFrameLoop, summonerFrenzyApsPct } from './frameLoop';
+import { summonerLineBonus, syncSummonerLine } from './lineHolds';
 
 type SummonerPlayerEntity = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
@@ -81,6 +82,10 @@ function reconcileMinionSlots(world: World, owner: SummonerPlayerEntity): void {
 function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): void {
   const profile = summonerProfileFor(owner);
   const desiredSpeed = computeMinionSpeed(owner);
+  // Consort's frame loop (`lineHolds.ts`). Resolved ONCE per pass: it is a
+  // property of the whole formation, so re-deriving it per body would read the
+  // same slots n times and could not usefully disagree with itself.
+  const lineBonus = summonerLineBonus(world, owner);
   for (let index = 0; index < owner.summonsMinions.minionIds.length; index++) {
     const id = owner.summonsMinions.minionIds[index];
     const minion = id ? world.getMinionEntity(id) : undefined;
@@ -111,7 +116,7 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
       markSliceDirty(world, minion, 'isMinion');
     }
     syncMinionMaxHp(world, minion, computeMinionMaxHp(owner, index));
-    syncMinionMitigation(world, minion, owner);
+    syncMinionMitigation(world, minion, owner, lineBonus);
     const desiredHpRegen = minionRecoveryFor(owner, minion.hasHealth.maxHp);
     if (minion.hasHealth.recovery !== desiredHpRegen) {
       minion.hasHealth.recovery = desiredHpRegen;
@@ -238,6 +243,11 @@ export function updateSummonerArchetype(world: World, dt: number, now: number): 
     pruneFormationTechnique(world, summoner);
     spawnFreshSlots(world, summoner);
     tickSummonReconstruction(world, summoner, dt, now);
+    // AFTER `collectDeaths` and `tickSummonReconstruction`, so a death breaks
+    // Consort's line and a completed reconstruction restores it on the same pass
+    // that observed either, and BEFORE the resync, so the HUD record and the
+    // bodies' mitigation are decided from one reading of the formation.
+    syncSummonerLine(world, summoner);
     syncLiveMinionFrameStats(world, summoner);
     validateSummonerCommand(world, summoner, now);
 

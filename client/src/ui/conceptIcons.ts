@@ -197,6 +197,7 @@ const BUFF_IDS = new Set([
   'summoner-coordinated-hunt',
   'summoner-endless-swarm',
   'summoner-frame-frenzy',
+  'summoner-frame-line',
   'summoner-frame-link',
   'summoner-grand-ritual',
   'summoner-harrier-brood',
@@ -330,12 +331,14 @@ const BUFF_ICON_ALIASES: Record<string, string> = {
   // mechanic they ARE, rather than shipping five 404s until the art pass reaches
   // them: Artillerist's ramp is the Hair Trigger ramp re-homed onto the frame,
   // Phantasm's bank is overcharge, Wraith's window is energy accruing faster,
-  // Splinter's frenzy is the formation cycle paying off, and Effigy's pair spends
-  // its bank as a linked strike.
+  // Splinter's frenzy is the formation cycle paying off, Effigy's pair spends its
+  // bank as a linked strike, and Consort's held line is the formation standing as
+  // one durable body.
   'reload-frame-ramp': 'reload-hair-trigger',
   'energy-frame-overcharge': 'energy-overcharge',
   'energy-frame-surge': 'energy-ac-charge',
   'summoner-frame-frenzy': 'summoner-coordinated-hunt',
+  'summoner-frame-line': 'summoner-colossus',
   'summoner-frame-link': 'summoner-battle-bond',
 };
 

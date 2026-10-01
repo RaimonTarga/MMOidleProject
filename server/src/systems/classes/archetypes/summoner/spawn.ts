@@ -29,6 +29,11 @@ import { setAttackTarget } from '../../../combat/ai/targeting';
 import { stopEntity } from '../../../world/movement';
 import { summonerProfileFor } from './profile';
 import { emitSummonObservation } from './observation';
+import {
+  applySummonerLineBonus,
+  summonerLineBonus,
+  type SummonerLineBonus,
+} from './lineHolds';
 
 /**
  * A minion's flat out-of-combat Recovery (HP/s): the owner's flat rate scaled
@@ -98,16 +103,30 @@ export function computeMinionMaxHp(owner: PlayerEntity, slot = 0): number {
  * plating and DR in full (a copy, not a split). Plains/Forest swarm hits are
  * tuned to be eaten by plating, so unarmored summons took every hit at full
  * strength while every other class shrugged them off.
+ *
+ * `lineBonus` is Consort's frame loop on top of that (`lineHolds.ts`): the whole
+ * formation's share while every slot still stands. It is a REQUIRED argument rather
+ * than a default so a future call site cannot silently drop it — this function and
+ * the per-tick resync disagreeing is the exact trap `summoner.minion-damage-pct`
+ * already fell into once (see `syncLiveMinionFrameStats`).
  */
-export function computeMinionMitigation(owner: PlayerEntity): { plating: number; damageReduction: number } {
-  return {
+export function computeMinionMitigation(
+  owner: PlayerEntity,
+  lineBonus: SummonerLineBonus,
+): { plating: number; damageReduction: number } {
+  return applySummonerLineBonus({
     plating: owner.mitigatesDamage.plating,
     damageReduction: owner.mitigatesDamage.damageReduction,
-  };
+  }, lineBonus);
 }
 
-export function syncMinionMitigation(world: World, minion: MinionEntity, owner: PlayerEntity): void {
-  const desired = computeMinionMitigation(owner);
+export function syncMinionMitigation(
+  world: World,
+  minion: MinionEntity,
+  owner: PlayerEntity,
+  lineBonus: SummonerLineBonus,
+): void {
+  const desired = computeMinionMitigation(owner, lineBonus);
   if (minion.mitigatesDamage.plating === desired.plating
     && minion.mitigatesDamage.damageReduction === desired.damageReduction) return;
   minion.mitigatesDamage.plating = desired.plating;
@@ -255,7 +274,11 @@ export function spawnMinionForOwner(
       attackCooldown,
       lastAttackAt: 0,
     },
-    mitigatesDamage: computeMinionMitigation(owner),
+    // The line bonus is read HERE too, not just in the resync: a body that
+    // completes the formation sees it one call later in the same summoner pass
+    // anyway, and sharing the one function is what keeps spawn and resync from
+    // drifting apart.
+    mitigatesDamage: computeMinionMitigation(owner, summonerLineBonus(world, owner)),
     tracksCombat: makeTracksCombat(),
     hasStatus: {},
   };

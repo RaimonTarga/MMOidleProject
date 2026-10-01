@@ -967,7 +967,7 @@ prototype; every damage change folds into `ctx.metadata.empoweredMultiplier`.
 | `energy-balanced` | Wraith | `energy.frame-gain-window-ms` 2000, `energy.frame-gain-mult` 1.6 |
 | `energy-heavy` | Phantasm | `energy.frame-overcharge-max` 4, `energy.frame-overcharge-mult-per-stack` 0.15, `energy.frame-stagger-ms` 750 |
 | `summoner-light` | Splinter | `summoner.frame-frenzy-window-ms` 900, `summoner.frame-frenzy-aps-pct` 0.2, `summoner.frame-frenzy-onhit-mult` 1.25 |
-| `summoner-balanced` | Consort | **none** — the loop is still open with the designer |
+| `summoner-balanced` | Consort | `summoner.frame-line-plating-pct` 0.15, `summoner.frame-line-dr` 0.15 (added 2026-10-01 — see "Consort's line" below) |
 | `summoner-heavy` | Effigy | `summoner.frame-link-window-ms` 2500, `summoner.frame-link-charge-per-hit` 1, `summoner.frame-link-max-charge` 5, `summoner.frame-link-slam-mult` 0.3, `summoner.frame-link-stagger-ms` 750 |
 
 New runtime files: `server/src/systems/classes/archetypes/{reload,energy,summoner}/frameLoop.ts`.
@@ -1030,8 +1030,43 @@ re-homes the brief notes.
    clip in one beat, so `beforeAttack` tags only ordinary shots with
    `reloadClipIndex` and the Slinger loop skips volley pellets entirely. Without
    this, Marksman's last-round multiplier would have fired on every pellet.
-6. **Consort ships with no loop**, as the brief requires, and the node carries a
-   comment saying the container is still open so nobody improvises one.
+6. ~~**Consort ships with no loop**~~ — superseded 2026-10-01. The designer closed the
+   row (bible amendment 13: "the line holds"), and it is implemented; see "Consort's
+   line" below.
+
+#### Consort's line (added 2026-10-01, run 4)
+
+**"The line holds."** While every formation slot is alive, each body carries
+`summoner.frame-line-plating-pct` (0.15) of the owner's plating again and
+`summoner.frame-line-dr` (0.15) more damage reduction. A death breaks it, a completed
+reconstruction restores it. Runtime:
+`server/src/systems/classes/archetypes/summoner/lineHolds.ts`, consumed by
+`computeMinionMitigation` in `spawn.ts` (both the spawn and the per-tick resync, so the
+two cannot drift). HUD: `frame.summoner.line` on the owner with `data.intact` 1|0, the
+`summoner-frame-line` buff tile, and a `frame-charge` beat on each flip.
+
+Divergences from the brief's sketch, for the designer:
+
+- **The container is a standing condition, not a window or a bank.** §10's "a window
+  must be shorter than one cycle" is about windows a mechanic opens; this one has no
+  duration at all, and its uptime is the share of the fight the formation is whole — set
+  by the monsters, not by the player's cadence. At full health it IS a flat stat, which
+  is the intended reward for an unbroken line.
+- **The bonus lands on the summons, not on the owner.** The brief says "the formation
+  carries" it, and the summons already wear the Conduit's armor in full, so the line is
+  that armor again in part. The owner gets only the HUD record.
+- **"Immediately" means the summoner pass that observes the death.** Minion deaths are
+  deliberately outside the combat pipeline (`runMonsterAttackOnMinion`: "death is
+  observed by the summoner tick on its next pass"), and `collectDeaths` runs before the
+  mitigation resync inside one `updateSummonerArchetype` call — so the break and the
+  restore both land on the pass that observed them, with no tick of stale bonus. There is
+  no earlier hook to take without making minions full combatants.
+- **The HUD tile stays on the bar while the line is broken** (`data.intact` 0), because
+  the broken state is the only one the player can act on. Behaviour is gated by the
+  derived predicate, never by that flag.
+- **The beat is binary:** `stacks = slots` on a restore, `stacks = 0` on a break, which
+  is the client's existing release burst. Nothing is pushed on a tick where the line did
+  not flip, so an unbroken formation costs no bandwidth.
 
 #### Still open / not reached
 
