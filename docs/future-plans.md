@@ -28,7 +28,7 @@ player's archetype. Direction agreed in discussion, not scheduled; belongs after
 the progression rework.
 
 - **Generic tree keyed to packets, not per-class trees.** Per-class is 22 abilities x 6
-  roots of authoring that mostly restates what the frame loop and the   trigger already give for free.
+  roots of authoring that mostly restates what the frame loop and the mechanic-fired trigger already give for free.
 - **One node per tier, three options**, the same row shape as item lineage cards, so the
   tree panel, the closed trigger/payoff vocabulary and the coverage test are reused.
   T1 picks the lane, T2 amplifies, T3 is the one bespoke keystone verb, T4 borrows cross-lane.
