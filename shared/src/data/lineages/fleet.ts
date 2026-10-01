@@ -102,5 +102,46 @@ export const FLEET_LINEAGE: LineageDefinition = {
       amplifies: 'trigger',
       face: packetDefaultFace('empowered'),
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'fleet-t3-kill-chain-keystone', lineageId: 'fleet', tier: 3, row: 'keystone', lane: 'kill-chain',
+      name: 'Spring Fully Loaded', description: 'A kill pays the mechanic back in full, right there.',
+      fx: 'kill-chain.keystone', trigger: 'kill', payoff: 'recovery-window',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'fleet-t3-tempo-keystone', lineageId: 'fleet', tier: 3, row: 'keystone', lane: 'tempo',
+      name: 'Coil Never Slack', description: "The echo keeps answering. It doesn't stop until a hit misses or no fresh target is close.",
+      fx: 'tempo.keystone', trigger: 'hit-nth', payoff: 'echo-hit',
+      face: packetDefaultFace('tempo'),
+    },
+    {
+      id: 'fleet-t3-empowered-keystone', lineageId: 'fleet', tier: 3, row: 'keystone', lane: 'empowered',
+      name: 'Full Charge Ahead', description: 'What the mechanic marks, the ground around it marks too.',
+      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'damage-window',
+      face: packetDefaultFace('empowered'),
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'fleet-t4-kill-chain-cross', lineageId: 'fleet', tier: 4, row: 'cross', lane: 'kill-chain',
+      name: 'Coiled Stride', description: 'The stillness before the sprint banks the same spring a kill does.',
+      fx: 'kill-chain.recovery-pulse', trigger: 'standing', payoff: 'speed-window', borrowsLane: 'tempo',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'fleet-t4-tempo-cross', lineageId: 'fleet', tier: 4, row: 'cross', lane: 'tempo',
+      name: 'Charging Coil', description: 'The instant before the sprint still lands with a full head of speed behind it.',
+      fx: 'tempo.evasive-blur', trigger: 'first-hit', payoff: 'vulnerability', borrowsLane: 'empowered',
+      face: packetDefaultFace('tempo'),
+    },
+    {
+      id: 'fleet-t4-empowered-cross', lineageId: 'fleet', tier: 4, row: 'cross', lane: 'empowered',
+      name: 'Charged Spring', description: 'A kill puts the same spring back as the charge the opening hit carried.',
+      fx: 'empowered.guard-spark', trigger: 'kill', payoff: 'recovery-window', borrowsLane: 'kill-chain',
+      face: packetDefaultFace('empowered'),
+    },
   ],
 };

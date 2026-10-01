@@ -102,5 +102,46 @@ export const TREADS_LINEAGE: LineageDefinition = {
       amplifies: 'trigger',
       face: packetDefaultFace('control'),
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'treads-t3-engagement-keystone', lineageId: 'treads', tier: 3, row: 'keystone', lane: 'engagement',
+      name: 'Every Closing Ground', description: 'Every new target meets the same discounted approach the first one did.',
+      fx: 'engagement.keystone', trigger: 'first-hit', payoff: 'damage-window',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'treads-t3-empowered-keystone', lineageId: 'treads', tier: 3, row: 'keystone', lane: 'empowered',
+      name: 'Rooted in Full', description: 'What the mechanic marks, the ground around it marks too.',
+      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'damage-window',
+      face: packetDefaultFace('empowered'),
+    },
+    {
+      id: 'treads-t3-control-keystone', lineageId: 'treads', tier: 3, row: 'keystone', lane: 'control',
+      name: 'Aftershock Ladder', description: 'Hit something already slowed and it roots; hit something rooted and it stuns — once per step, per target.',
+      fx: 'control.keystone', trigger: 'hit-nth', payoff: 'stun',
+      face: packetDefaultFace('control'),
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'treads-t4-engagement-cross', lineageId: 'treads', tier: 4, row: 'cross', lane: 'engagement',
+      name: 'Anchored Approach', description: 'Anchoring before the approach leaves the same opening standing still would.',
+      fx: 'engagement.sidestep-blur', trigger: 'standing', payoff: 'vulnerability', borrowsLane: 'empowered',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'treads-t4-empowered-cross', lineageId: 'treads', tier: 4, row: 'cross', lane: 'empowered',
+      name: 'Rooted Aftershock', description: 'The anchor leaves the ground as unsteady as a kill would.',
+      fx: 'empowered.guard-spark', trigger: 'kill', payoff: 'stun', borrowsLane: 'control',
+      face: packetDefaultFace('empowered'),
+    },
+    {
+      id: 'treads-t4-control-cross', lineageId: 'treads', tier: 4, row: 'cross', lane: 'control',
+      name: 'Shocked Opening', description: 'The first hit of the fight lands on ground still unsteady from the last kill.',
+      fx: 'control.chill-blur', trigger: 'first-hit', payoff: 'engagement-dr', borrowsLane: 'engagement',
+      face: packetDefaultFace('control'),
+    },
   ],
 };

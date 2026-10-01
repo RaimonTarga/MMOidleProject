@@ -103,5 +103,46 @@ export const PULSE_LINEAGE: LineageDefinition = {
       amplifies: 'trigger',
       face: packetDefaultFace('control'),
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'pulse-t3-bulwark-keystone', lineageId: 'pulse', tier: 3, row: 'keystone', lane: 'bulwark',
+      name: 'Steady Immovable', description: "Stationary DR and plate stacks hold for two seconds after you've already moved on.",
+      fx: 'bulwark.keystone', trigger: 'standing', payoff: 'plating-stack',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'pulse-t3-affliction-keystone', lineageId: 'pulse', tier: 3, row: 'keystone', lane: 'affliction',
+      name: 'Ache Never Fades', description: 'Hit it again before the dose fades and the clock never gets the chance to run out.',
+      fx: 'affliction.keystone', trigger: 'hit-nth', payoff: 'poison-stack',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'pulse-t3-control-keystone', lineageId: 'pulse', tier: 3, row: 'keystone', lane: 'control',
+      name: 'Chiming Ladder', description: 'Hit something already slowed and it roots; hit something rooted and it stuns — once per step, per target.',
+      fx: 'control.keystone', trigger: 'hit-nth', payoff: 'stun',
+      face: packetDefaultFace('control'),
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'pulse-t4-bulwark-cross', lineageId: 'pulse', tier: 4, row: 'cross', lane: 'bulwark',
+      name: 'Aching Plate', description: 'Each beat of the crystal leaves something lingering in the plate too.',
+      fx: 'bulwark.plating-chip', trigger: 'pulse', payoff: 'poison-stack', borrowsLane: 'affliction',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'pulse-t4-affliction-cross', lineageId: 'pulse', tier: 4, row: 'cross', lane: 'affliction',
+      name: 'Chiming Ache', description: 'The barrier breaking rings loud enough to leave something lingering, not just stagger.',
+      fx: 'affliction.toxic-pulse', trigger: 'barrier-break', payoff: 'stun', borrowsLane: 'control',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'pulse-t4-control-cross', lineageId: 'pulse', tier: 4, row: 'cross', lane: 'control',
+      name: 'Guarded Chime', description: "Raising a guard rings the chime's plate the same way the beat does.",
+      fx: 'control.chill-blur', trigger: 'guard-cast', payoff: 'plating-stack', borrowsLane: 'bulwark',
+      face: packetDefaultFace('control'),
+    },
   ],
 };

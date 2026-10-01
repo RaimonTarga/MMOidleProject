@@ -103,5 +103,46 @@ export const STONE_LINEAGE: LineageDefinition = {
       amplifies: 'trigger',
       face: packetDefaultFace('engagement'),
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'stone-t3-kill-chain-keystone', lineageId: 'stone', tier: 3, row: 'keystone', lane: 'kill-chain',
+      name: "Heartbeat's Due", description: 'A kill pays the mechanic back in full, right there.',
+      fx: 'kill-chain.keystone', trigger: 'kill', payoff: 'recovery-window',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'stone-t3-tempo-keystone', lineageId: 'stone', tier: 3, row: 'keystone', lane: 'tempo',
+      name: 'Never Cooling Hum', description: "The echo keeps answering. It doesn't stop until a hit misses or no fresh target is close.",
+      fx: 'tempo.keystone', trigger: 'hit-nth', payoff: 'echo-hit',
+      face: packetDefaultFace('tempo'),
+    },
+    {
+      id: 'stone-t3-engagement-keystone', lineageId: 'stone', tier: 3, row: 'keystone', lane: 'engagement',
+      name: 'Every Sunrise', description: 'Every new target meets the same discounted opening the first one did.',
+      fx: 'engagement.keystone', trigger: 'first-hit', payoff: 'damage-window',
+      face: packetDefaultFace('engagement'),
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'stone-t4-kill-chain-cross', lineageId: 'stone', tier: 4, row: 'cross', lane: 'kill-chain',
+      name: 'Humming Warmth', description: "The stone glowing after a kill quickens the step the same way its own pulse does.",
+      fx: 'kill-chain.recovery-pulse', trigger: 'pulse', payoff: 'speed-window', borrowsLane: 'tempo',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'stone-t4-tempo-cross', lineageId: 'stone', tier: 4, row: 'cross', lane: 'tempo',
+      name: 'Guarded Hum', description: "Raising a guard sets the stone's pulse going without waiting on the beat.",
+      fx: 'tempo.evasive-blur', trigger: 'guard-cast', payoff: 'engagement-dr', borrowsLane: 'engagement',
+      face: packetDefaultFace('tempo'),
+    },
+    {
+      id: 'stone-t4-engagement-cross', lineageId: 'stone', tier: 4, row: 'cross', lane: 'engagement',
+      name: 'First Warmth', description: 'Raising a guard at the start of a fight banks the same warmth a kill would.',
+      fx: 'engagement.sidestep-blur', trigger: 'kill', payoff: 'recovery-window', borrowsLane: 'kill-chain',
+      face: packetDefaultFace('engagement'),
+    },
   ],
 };

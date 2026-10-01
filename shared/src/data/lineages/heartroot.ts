@@ -104,5 +104,46 @@ export const HEARTROOT_LINEAGE: LineageDefinition = {
       amplifies: 'trigger',
       face: packetDefaultFace('engagement'),
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'heartroot-t3-barrier-tempo-keystone', lineageId: 'heartroot', tier: 3, row: 'keystone', lane: 'barrier-tempo',
+      name: 'Root Unbroken', description: 'Above half health, nothing you take stops the shell from mending.',
+      fx: 'barrier-tempo.keystone', trigger: 'hit-taken', payoff: 'ward',
+      face: packetDefaultFace('barrier-tempo'),
+    },
+    {
+      id: 'heartroot-t3-affliction-keystone', lineageId: 'heartroot', tier: 3, row: 'keystone', lane: 'affliction',
+      name: 'Bloom Never Fades', description: 'Hit it again before the dose fades and the clock never gets the chance to run out.',
+      fx: 'affliction.keystone', trigger: 'hit-nth', payoff: 'poison-stack',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'heartroot-t3-engagement-keystone', lineageId: 'heartroot', tier: 3, row: 'keystone', lane: 'engagement',
+      name: 'Every First Root', description: 'Every new target meets the same deep-rooted guard the first one did.',
+      fx: 'engagement.keystone', trigger: 'first-hit', payoff: 'damage-window',
+      face: packetDefaultFace('engagement'),
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'heartroot-t4-barrier-tempo-cross', lineageId: 'heartroot', tier: 4, row: 'cross', lane: 'barrier-tempo',
+      name: 'Blooming Root', description: 'The root works on everything nearby the same way the barrier does when it breaks.',
+      fx: 'barrier-tempo.ward-shell', trigger: 'pulse', payoff: 'poison-stack', borrowsLane: 'affliction',
+      face: packetDefaultFace('barrier-tempo'),
+    },
+    {
+      id: 'heartroot-t4-affliction-cross', lineageId: 'heartroot', tier: 4, row: 'cross', lane: 'affliction',
+      name: 'Rooted Opening', description: 'A guard raised at the start of a fight roots as deep as the bloom does.',
+      fx: 'affliction.toxic-pulse', trigger: 'guard-cast', payoff: 'engagement-dr', borrowsLane: 'engagement',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'heartroot-t4-engagement-cross', lineageId: 'heartroot', tier: 4, row: 'cross', lane: 'engagement',
+      name: 'Guarded Root', description: 'A broken barrier leaves the same ward the opening guard does.',
+      fx: 'engagement.sidestep-blur', trigger: 'barrier-break', payoff: 'ward', borrowsLane: 'barrier-tempo',
+      face: packetDefaultFace('engagement'),
+    },
   ],
 };

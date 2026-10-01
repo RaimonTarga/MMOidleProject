@@ -207,9 +207,17 @@ for (const [key, lineage] of LINEAGE_DATABASE) {
   // Every lane the lineage carries must be playable at every tier it authors.
   // Non-weapon slots run one row fewer per tier: no stat row, base stats come
   // from the form (design §4, §17).
+  //
+  // T3 and T4 are PARTIAL bands as of run 3 (design §18.5: "empty bands above T2
+  // until Phase 5"): W1-B ships only the T3 keystone row and the T4 cross row,
+  // ahead of Phase 5's stat/payoff/amplifier rows at those tiers. So the full
+  // "every row this tier has" rule applies at T1/T2 only; T3/T4 are checked for
+  // just the row this phase actually authors.
   const tiers = new Set(lineage.cards.map((c) => c.tier));
   for (const tier of tiers) {
-    const rows = rowsForTier(tier).filter((row) => lineage.slot === 'weapon' || row !== 'stat');
+    const rows = tier <= 2
+      ? rowsForTier(tier).filter((row) => lineage.slot === 'weapon' || row !== 'stat')
+      : tier === 3 ? ['keystone' as const] : ['cross' as const];
     for (const lane of lineage.lanes) {
       for (const row of rows) {
         const has = lineage.cards.some((c) => c.tier === tier && c.lane === lane && c.row === row);
@@ -428,6 +436,69 @@ for (const lineage of LINEAGE_DATABASE.values()) {
       );
     }
   }
+}
+
+// ─── 5c. Keystone (T3) and cross (T4) coverage, run 3 (design §4 amended) ───
+//
+// One keystone card per lane at T3, one cross card per lane at T4, on every one
+// of the twenty lineages (five weapon, fifteen defensive). The keystone card's
+// fx is always `<lane>.keystone`, and every lane the keystone fires on needs a
+// runtime module — W1-A (feat/keystones) registers one per packet in
+// `server/src/systems/combat/keystones/`, which `shared/` cannot import (package
+// boundary), so this asserts against the closed `PACKET_IDS` list instead; the
+// conductor reconciles with W1-A's actual registry at merge.
+
+for (const lineage of LINEAGE_DATABASE.values()) {
+  const keystoneCards = lineage.cards.filter((c) => c.tier === 3 && c.row === 'keystone');
+  const crossCards = lineage.cards.filter((c) => c.tier === 4 && c.row === 'cross');
+
+  for (const lane of lineage.lanes) {
+    const keystonesForLane = keystoneCards.filter((c) => c.lane === lane);
+    check(
+      keystonesForLane.length === 1,
+      `${lineage.id}: lane '${lane}' has ${keystonesForLane.length} T3 keystone cards, expected exactly one`,
+    );
+    for (const card of keystonesForLane) {
+      check(
+        card.fx === `${lane}.keystone`,
+        `${card.id}: keystone fx is '${card.fx}', expected '${lane}.keystone' (design §4, run 3 W1-B)`,
+      );
+    }
+
+    const crossForLane = crossCards.filter((c) => c.lane === lane);
+    check(
+      crossForLane.length === 1,
+      `${lineage.id}: lane '${lane}' has ${crossForLane.length} T4 cross cards, expected exactly one`,
+    );
+  }
+
+  // Three cross cards, each borrowing a DIFFERENT other lane — not just "not its
+  // own lane" per card, but a derangement across the three, so the lineage's
+  // three lanes are each borrowed exactly once (two cross cards per lane slot,
+  // or the same lane borrowed twice, is the shape the brief calls out as wrong).
+  if (crossCards.length === 3) {
+    const borrowed = crossCards.map((c) => c.borrowsLane).filter((l): l is PacketId => !!l);
+    check(
+      new Set(borrowed).size === 3,
+      `${lineage.id}: T4 cross cards borrow ${borrowed.join('/')} — each of the lineage's three lanes should be borrowed exactly once`,
+    );
+  }
+}
+
+// Every packet with a T3 keystone card has a runtime module — the fallback
+// check (W1-A's registry not visible on this branch): every one of the eight
+// packet ids must have at least one lineage carrying a T3 keystone of that lane.
+const keystonedLanes = new Set<PacketId>();
+for (const lineage of LINEAGE_DATABASE.values()) {
+  for (const card of lineage.cards) {
+    if (card.tier === 3 && card.row === 'keystone') keystonedLanes.add(card.lane);
+  }
+}
+for (const packet of PACKET_IDS) {
+  check(
+    keystonedLanes.has(packet),
+    `keystone coverage: packet '${packet}' has no T3 keystone card on any lineage, so its runtime module (W1-A) would be unreachable`,
+  );
 }
 
 // ─── 6. Capstone materials ───────────────────────────────────────────────────

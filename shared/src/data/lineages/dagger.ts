@@ -166,5 +166,40 @@ export const DAGGER_LINEAGE: LineageDefinition = {
       fx: 'kill-chain.spread-arc', trigger: 'kill', payoff: 'contagion', modifies: 'dagger-t2-kill-chain-payoff',
       amplifies: 'targets',
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'dagger-t3-affliction-keystone', lineageId: 'dagger', tier: 3, row: 'keystone', lane: 'affliction',
+      name: 'Never Fading Dose', description: 'Cut it again before the dose fades and the clock never gets the chance to run out.',
+      fx: 'affliction.keystone', trigger: 'hit-nth', payoff: 'poison-stack',
+    },
+    {
+      id: 'dagger-t3-control-keystone', lineageId: 'dagger', tier: 3, row: 'keystone', lane: 'control',
+      name: 'Tendon to Bone', description: 'Hit something already dragging and it roots; hit something rooted and it stops dead — once per step, per target.',
+      fx: 'control.keystone', trigger: 'hit-nth', payoff: 'stun',
+    },
+    {
+      id: 'dagger-t3-kill-chain-keystone', lineageId: 'dagger', tier: 3, row: 'keystone', lane: 'kill-chain',
+      name: 'Clean Kill', description: 'A kill pays the mechanic back in full, right there.',
+      fx: 'kill-chain.keystone', trigger: 'kill', payoff: 'recovery-window',
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'dagger-t4-affliction-cross', lineageId: 'dagger', tier: 4, row: 'cross', lane: 'affliction',
+      name: 'Envenomed Hamstring', description: 'Every dose left in the wound drags on the legs besides.',
+      fx: 'affliction.venom-pips', trigger: 'hit-nth', payoff: 'slow', borrowsLane: 'control',
+    },
+    {
+      id: 'dagger-t4-control-cross', lineageId: 'dagger', tier: 4, row: 'cross', lane: 'control',
+      name: 'Hamstrung Plague', description: 'What the cut takes the legs from still carries, on a kill, to whatever stood near it.',
+      fx: 'control.frost-drag', trigger: 'kill', payoff: 'contagion', borrowsLane: 'kill-chain',
+    },
+    {
+      id: 'dagger-t4-kill-chain-cross', lineageId: 'dagger', tier: 4, row: 'cross', lane: 'kill-chain',
+      name: 'Plague Dose', description: 'What killed one leaves a dose behind for the next thing that stands near it.',
+      fx: 'kill-chain.spread-arc', trigger: 'hit-nth', payoff: 'poison-stack', borrowsLane: 'affliction',
+    },
   ],
 };

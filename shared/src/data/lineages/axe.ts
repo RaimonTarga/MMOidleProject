@@ -147,5 +147,40 @@ export const AXE_LINEAGE: LineageDefinition = {
       fx: 'empowered.weak-point', trigger: 'mechanic-fired', payoff: 'vulnerability', modifies: 'axe-t2-empowered-payoff',
       amplifies: 'targets',
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'axe-t3-tempo-keystone', lineageId: 'axe', tier: 3, row: 'keystone', lane: 'tempo',
+      name: 'Never Loose Enough', description: "The dead swing keeps answering. It doesn't stop until something dodges it or nothing fresh stands close.",
+      fx: 'tempo.keystone', trigger: 'hit-nth', payoff: 'echo-hit',
+    },
+    {
+      id: 'axe-t3-kill-chain-keystone', lineageId: 'axe', tier: 3, row: 'keystone', lane: 'kill-chain',
+      name: 'Fresh Scent', description: 'A kill puts the frenzy back at the start, right there.',
+      fx: 'kill-chain.keystone', trigger: 'kill', payoff: 'recovery-window',
+    },
+    {
+      id: 'axe-t3-empowered-keystone', lineageId: 'axe', tier: 3, row: 'keystone', lane: 'empowered',
+      name: 'Wide Hewing', description: "What the arc's mechanic hits, the swing around it hits too.",
+      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'damage-window',
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'axe-t4-tempo-cross', lineageId: 'axe', tier: 4, row: 'cross', lane: 'tempo',
+      name: 'Scented Bite', description: 'Every third bite remembers what a kill feels like, and borrows the hurry.',
+      fx: 'tempo.ghost-strike', trigger: 'kill', payoff: 'speed-window', borrowsLane: 'kill-chain',
+    },
+    {
+      id: 'axe-t4-kill-chain-cross', lineageId: 'axe', tier: 4, row: 'cross', lane: 'kill-chain',
+      name: 'Frenzied Gap', description: 'The faster clock still finds the seam the mechanic was looking for.',
+      fx: 'kill-chain.kill-pulse', trigger: 'mechanic-fired', payoff: 'vulnerability', borrowsLane: 'empowered',
+    },
+    {
+      id: 'axe-t4-empowered-cross', lineageId: 'axe', tier: 4, row: 'cross', lane: 'empowered',
+      name: 'Split and Bite Again', description: 'The wide-open guard still gets bitten twice, every third swing.',
+      fx: 'empowered.weak-point', trigger: 'hit-nth', payoff: 'echo-hit', borrowsLane: 'tempo',
+    },
   ],
 };

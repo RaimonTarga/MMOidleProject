@@ -102,5 +102,46 @@ export const PLATE_LINEAGE: LineageDefinition = {
       amplifies: 'trigger',
       face: packetDefaultFace('control'),
     },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'plate-t3-bulwark-keystone', lineageId: 'plate', tier: 3, row: 'keystone', lane: 'bulwark',
+      name: "Crusader's Stand", description: "Stationary DR and plate stacks hold for two seconds after you've already moved on.",
+      fx: 'bulwark.keystone', trigger: 'standing', payoff: 'plating-stack',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'plate-t3-barrier-tempo-keystone', lineageId: 'plate', tier: 3, row: 'keystone', lane: 'barrier-tempo',
+      name: 'Granite Never Cracks', description: 'Above half health, nothing you take stops the shell from mending.',
+      fx: 'barrier-tempo.keystone', trigger: 'hit-taken', payoff: 'ward',
+      face: packetDefaultFace('barrier-tempo'),
+    },
+    {
+      id: 'plate-t3-control-keystone', lineageId: 'plate', tier: 3, row: 'keystone', lane: 'control',
+      name: 'Granite Ladder', description: 'Hit something already slowed and it roots; hit something rooted and it stuns — once per step, per target.',
+      fx: 'control.keystone', trigger: 'hit-nth', payoff: 'stun',
+      face: packetDefaultFace('control'),
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'plate-t4-bulwark-cross', lineageId: 'plate', tier: 4, row: 'cross', lane: 'bulwark',
+      name: 'Granite Plating', description: 'A hit taken while braced cracks the barrier open instead of you, same as it always does.',
+      fx: 'bulwark.plating-chip', trigger: 'hit-taken', payoff: 'ward', borrowsLane: 'barrier-tempo',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'plate-t4-barrier-tempo-cross', lineageId: 'plate', tier: 4, row: 'cross', lane: 'barrier-tempo',
+      name: 'Staggering Shell', description: 'Stepping clear while the shell is up staggers them for the miss.',
+      fx: 'barrier-tempo.ward-shell', trigger: 'evade', payoff: 'stun', borrowsLane: 'control',
+      face: packetDefaultFace('barrier-tempo'),
+    },
+    {
+      id: 'plate-t4-control-cross', lineageId: 'plate', tier: 4, row: 'cross', lane: 'control',
+      name: 'Checked Footing', description: 'Planting your feet after the check settles the plate just as well as holding the line.',
+      fx: 'control.chill-blur', trigger: 'standing', payoff: 'plating-stack', borrowsLane: 'bulwark',
+      face: packetDefaultFace('control'),
+    },
   ],
 };
