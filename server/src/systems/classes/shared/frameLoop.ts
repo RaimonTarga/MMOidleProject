@@ -214,5 +214,5 @@ export function applyFramePlatingShred(
     remainingMs: durationMs,
     sourceId:    player.isPlayer.id,
     data:        { totalMs: durationMs, platingReduction: reduction },
-  }, ['platingReduction', 'totalMs']);
+  }, ['platingReduction', 'totalMs'], { origin: 'mechanic' });
 }
