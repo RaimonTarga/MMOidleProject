@@ -406,3 +406,194 @@ export function lineageRouteSteps(reference: LineageLaneReference): RouteStep[] 
     { type: "setActive" as const, lineageId: reference.lineageId, row: T1_LANE_ROWS[index], cardId },
   ]);
 }
+
+// ── The two-card swap (progression rework run 3, W2-A step 1) ────────────────
+//
+// `lineageRouteSteps` buys a band and slots it, which exercises `unlockCard`
+// into an EMPTY row — and an unlock into an empty row activates the card
+// server-side on its own, so the `setActive` steps that follow it return early
+// in `doSetActive`. The row-SWAP seam — "I own two cards for this row, show me
+// the other one" — had therefore never run on any route: none has ever owned two
+// cards of one row.
+//
+// That swap is what design §6 means by a row being a question you may re-answer,
+// and it is the only path on which `setLineageActive` does real work: it takes
+// the live card out and puts the other one in, recalculating stats and
+// re-registering listeners both times.
+
+export interface LineageSwapReference {
+  /** The lane reference whose band the swap is built on. */
+  base: LineageLaneReference;
+  /** The row both cards answer. */
+  row: RowKind;
+  /** The lane's own card — bought first, and live again at the end. */
+  firstCardId: string;
+  /** The SECOND card of the same row, from another lane of the same lineage. */
+  secondCardId: string;
+  secondLane: PacketId;
+}
+
+/**
+ * The swap reference for a lane: its own `stat` card plus the `stat` card of the
+ * lineage's next lane, so the two are genuinely rival answers to one row rather
+ * than the same card twice.
+ *
+ * The stat row rather than the payoff row on purpose: a stat card's whole effect
+ * is a recalculated stat, so a swap that failed to take shows up in the stat
+ * sheet, whereas a payoff card that is owned-but-inert looks exactly like one
+ * whose trigger has not come round yet.
+ */
+export function lineageSwapReference(base: LineageLaneReference): LineageSwapReference | null {
+  if (!base.lane) return null;
+  const lineage = LINEAGE_DATABASE.get(base.lineageId);
+  if (!lineage) throw new Error(`unknown lineage ${base.lineageId}`);
+  const secondLane = lineage.lanes.find((lane) => lane !== base.lane);
+  if (!secondLane) return null;
+  const row: RowKind = "stat";
+  const cardFor = (lane: PacketId): string => {
+    const card = lineage.cards.find((c) => c.tier === 1 && c.row === row && c.lane === lane);
+    if (!card) throw new Error(`${lineage.id}: no T1 ${row} card on lane ${lane}`);
+    return card.id;
+  };
+  return {
+    base,
+    row,
+    firstCardId: cardFor(base.lane),
+    secondCardId: cardFor(secondLane),
+    secondLane,
+  };
+}
+
+/**
+ * Buy the lane's own stat card, buy a SECOND stat card, then flip the row twice:
+ * to the second card and back to the first.
+ *
+ * The second purchase carries NO `farmAt`. Its lane is a different packet, so its
+ * shard usually drops in a different biome than the lineage's home —
+ * `doUnlockCard` resolves that itself through `lineageFarmNode`, which walks to a
+ * biome that can actually pay and raises a named stall when none can. Pinning
+ * `farmAt` to the home biome here would farm the wrong node forever for most of
+ * the lineages, which is the stall this wave's step 1c reports instead.
+ */
+export function lineageSwapRouteSteps(swap: LineageSwapReference): RouteStep[] {
+  const home = { kind: "biome" as const, biomeGroup: swap.base.homeBiome, tier: 1 };
+  const { lineageId } = swap.base;
+  return [
+    { type: "unlockCard", lineageId, cardId: swap.firstCardId, farmAt: home },
+    { type: "setActive", lineageId, row: swap.row, cardId: swap.firstCardId },
+    { type: "unlockCard", lineageId, cardId: swap.secondCardId },
+    // Flip 1: the rival card takes the row off a card that is already live.
+    { type: "setActive", lineageId, row: swap.row, cardId: swap.secondCardId },
+    // Flip 2: back again, the half a one-way swap cannot prove.
+    { type: "setActive", lineageId, row: swap.row, cardId: swap.firstCardId },
+  ];
+}
+
+// ── Frame reference profiles (design §18.10) ─────────────────────────────────
+//
+// "Light / Balanced / Heavy uplift per root is not a column the lane matrix can
+// grow: `LINEAGE_LANE_REFERENCES` does not vary frame, so it needs three new
+// reference profiles per root (18 rows in `bot/src/tierEntry/profiles.ts`)."
+//
+// These are the eighteen. A frame reference is LANE-LESS on purpose: design §10
+// gives each frame a feedback loop of its own and the column answers what the
+// FRAME is worth, so a card on top of it would be a second variable. Within a
+// root the three rows differ in exactly one field, `frameId`.
+//
+// The weapon is the root's lane-matrix weapon wherever it has one, so the row on
+// the frame that root's canonical route wears is the SAME build as that lineage's
+// lane-less control in the lane matrix and the two readings can be laid side by
+// side. `summoner-root` anchors no weapon lineage, so it wears the weapon its own
+// canonical route finishes T1 on.
+
+export const FRAME_SHAPES = ["light", "balanced", "heavy"] as const;
+export type FrameShape = (typeof FRAME_SHAPES)[number];
+
+/** The six class roots, in `T1_BASELINE_ROUTES` order. */
+export const FRAME_REFERENCE_ROOTS: readonly string[] =
+  T1_BASELINE_ROUTES.map((route) => route.classRoot);
+
+export interface LineageFrameReference {
+  profileId: string;
+  classRoot: string;
+  frameShape: FrameShape;
+  frameId: string;
+  /** The weapon every frame of this root wears, so the frame is the only variable. */
+  baseForm: string;
+  /** The weapon lineage that base form belongs to, or null when it anchors none. */
+  lineageId: string | null;
+  /**
+   * True on the frame the root's canonical T1 route actually ends on — the cell
+   * the lane matrix's own control already measures, and therefore the natural
+   * denominator for the other two.
+   */
+  canonical: boolean;
+}
+
+function frameWeaponFor(classRoot: string): { baseForm: string; lineageId: string | null } {
+  const paired = Object.entries(LINEAGE_REFERENCE_CLASS)
+    .find(([, ref]) => ref.classRoot === classRoot);
+  if (paired) return { baseForm: paired[1].baseForm, lineageId: paired[0] };
+  const route = T1_BASELINE_ROUTES.find((r) => r.classRoot === classRoot);
+  if (!route) throw new Error(`no canonical T1 baseline route for ${classRoot}`);
+  const weapon = finalEquipment(allSteps(route)).weapon;
+  if (!weapon) throw new Error(`${classRoot}: canonical route finishes T1 with no weapon`);
+  const lineage = [...LINEAGE_DATABASE.values()]
+    .find((l) => l.slot === "weapon" && l.forms.some((f) => f.recipeId === weapon));
+  return { baseForm: weapon, lineageId: lineage?.id ?? null };
+}
+
+/** Eighteen rows: six class roots x Light / Balanced / Heavy. */
+export const LINEAGE_FRAME_REFERENCES: readonly LineageFrameReference[] =
+  FRAME_REFERENCE_ROOTS.flatMap((classRoot) => {
+    const { baseForm, lineageId } = frameWeaponFor(classRoot);
+    const canonicalFrame = T1_BASELINE_ROUTES.find((r) => r.classRoot === classRoot)?.frameId
+      ?? FRAME_BY_ROOT[classRoot];
+    const root = classRoot.replace("-root", "");
+    return FRAME_SHAPES.map((frameShape) => {
+      const frameId = `${root}-${frameShape}`;
+      return {
+        profileId: `frame-${root}-${frameShape}`,
+        classRoot,
+        frameShape,
+        frameId,
+        baseForm,
+        lineageId,
+        canonical: frameId === canonicalFrame,
+      };
+    });
+  });
+
+/**
+ * The frame reference as a tier-entry profile: the root's canonical T2-entry
+ * manifest with the frame and the weapon overridden and no lineage cards.
+ */
+function frameReferenceProfile(reference: LineageFrameReference): TierEntryProfile {
+  const route = T1_BASELINE_ROUTES.find((r) => r.classRoot === reference.classRoot);
+  if (!route) throw new Error(`no canonical T1 baseline route for ${reference.classRoot}`);
+  const base = buildProfile(route, "clean");
+  const displaced = base.equipment.weapon;
+  const equipment: EquipmentMap = { ...base.equipment, weapon: reference.baseForm };
+  return {
+    ...base,
+    id: reference.profileId,
+    frameId: reference.frameId,
+    lane: undefined,
+    equipment,
+    inventory: [...new Set([
+      ...base.inventory.filter((id) => id !== reference.baseForm),
+      ...(displaced && displaced !== reference.baseForm ? [displaced] : []),
+    ])],
+    itemUpgrades: { ...base.itemUpgrades, [reference.baseForm]: 0 },
+  };
+}
+
+export const LINEAGE_FRAME_PROFILES = new Map<string, TierEntryProfile>(
+  LINEAGE_FRAME_REFERENCES.map((reference) => [reference.profileId, frameReferenceProfile(reference)]),
+);
+
+export function frameReferenceFor(profileId: string): LineageFrameReference {
+  const reference = LINEAGE_FRAME_REFERENCES.find((r) => r.profileId === profileId);
+  if (!reference) throw new Error(`unknown frame reference "${profileId}"`);
+  return reference;
+}
