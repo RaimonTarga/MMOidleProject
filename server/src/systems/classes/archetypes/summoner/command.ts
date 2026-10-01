@@ -22,7 +22,6 @@ import type { MinionEntity, MonsterEntity, PlayerEntity } from '../../../../ecs/
 import { attachComponent, detachComponent } from '../../../../ecs/markerHelpers';
 import { getFollowOffset } from './spawn';
 import { RUNE_RECALL_SUMMONS_FLAG } from '../../../combat/ai/runeConfig';
-import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
 
 const LEASH_MARGIN = 4;
 const ARRIVE_TOL = 10;
@@ -119,11 +118,11 @@ export function applySummonerCommand(world: World, owner: PlayerEntity, pos: Vec
     });
   }
 
-  // `mechanic-fired` (progression rework 1c): commanding the formation IS the
-  // summoner's moment — the one thing the root asks the player to do by hand.
-  // Focus and move are the same intent pointed at different things, so they share
-  // the emission; the early return became an else so there is only ever one.
-  emitMechanicFired(world, owner);
+  // NO `mechanic-fired` HERE. 1c hung the summoner's moment on this command, but a
+  // command is a CLICK: it never fires unattended, so a card keyed to it would never
+  // pay out for an idle player — and idle play is the game. Phase 3 moved the moment
+  // to the FORMATION CYCLE (`frameLoop.ts`), which is the root's loop completing and
+  // happens whether or not anybody is at the keyboard.
 }
 
 export function applySummonerRecall(world: World, owner: PlayerEntity, now: number): void {
