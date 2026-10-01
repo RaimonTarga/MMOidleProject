@@ -20,6 +20,10 @@ export const BESTIARY_TEXT: Readonly<Record<string, BestiaryText>> = {
   },
 
   // Cave
+  'brood-spiderling': {
+    profile: 'Swarming venom spawn',
+    description: 'Brood Spiderlings arrive as a clutch rather than a creature, converging out of the dark in threes. No single bite is worth respecting, but each one layers Venom, so the threat is arithmetic: whatever you leave standing keeps adding to the total.',
+  },
   'cave-lurker': {
     profile: 'Fast melee skirmisher',
     description: 'Cave Lurkers close quickly and keep their pressure simple: sharp claws, short windows, and no warning beyond the scrape of stone. They are often the first shape to emerge from a tunnel you thought was empty.',
@@ -66,6 +70,10 @@ export const BESTIARY_TEXT: Readonly<Record<string, BestiaryText>> = {
   },
 
   // Forest
+  'bramble-pod': {
+    profile: 'Rooted stacking lobber',
+    description: 'A Bramble Pod never chases. It sits where it grew and lobs sap-thorns, and every one that lands adds Bramble Sap, so a slow approach costs more than a direct one. Alone it is barely a threat; in a thicket of them the stacks are the whole fight.',
+  },
   'forest-slime': {
     profile: 'Small forest nuisance',
     description: 'Moss Rats are quick to scatter and quicker to return when the path looks safe. They have no elaborate cast, but their numbers make every careless pull feel louder than it should.',
@@ -104,6 +112,10 @@ export const BESTIARY_TEXT: Readonly<Record<string, BestiaryText>> = {
   },
 
   // Plains
+  'grass-kite': {
+    profile: 'Airborne opening striker',
+    description: 'Grass Kites hunt from the air, so the fight begins before you are anywhere near them. Stoop is a read-it-and-move wind-up that ends in talons and a short root; once the kite is down it stays and brawls, which is the whole difference between it and the hawk it grows into.',
+  },
   'plains-slime': {
     profile: 'Swarm follower',
     description: 'Field Hares are small, skittish, and rarely found alone for long. They fan out around a shared target, turning open grassland into a surprisingly crowded battlefield.',
@@ -138,6 +150,10 @@ export const BESTIARY_TEXT: Readonly<Record<string, BestiaryText>> = {
   },
 
   // Swamp
+  'fen-hexer': {
+    profile: 'Planted slowing caster',
+    description: 'The Fen Hexer roots itself in the reeds and lets Mire Hex do the work: a long, readable cast that leaves you wading. Its ordinary attacks are an afterthought, so the fight is simply whether you can close the gap faster than it can widen it.',
+  },
   'bog-slime': {
     profile: 'Poison attrition mob',
     description: 'Mire Oozes look slow because the swamp is doing half their work for them. Every hit leaves Poison behind, and the damage keeps asking the same question after the ooze has been defeated.',
@@ -184,6 +200,10 @@ export const BESTIARY_TEXT: Readonly<Record<string, BestiaryText>> = {
   },
 
   // Mountain
+  'rockback-ram': {
+    profile: 'Plated charging anchor',
+    description: 'The Rockback Ram opens by closing the distance, then settles into slow, heavy gores. Its plated back eats small hits outright, so chipping away is the one approach that does not work — the ram is the mountain teaching you to hit hard rather than often.',
+  },
   'cliff-hopper': {
     profile: 'Ledge-vaulting charger',
     description: 'Cliff Hoppers treat mountain ledges as steps rather than walls. Strong Kick arrives after a visible wind-up and can throw you backward, while the opening charge makes the first exchange happen on the hopper\'s terms.',
