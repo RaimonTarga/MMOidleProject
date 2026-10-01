@@ -12,14 +12,18 @@
  *
  * Three things about this instrument the reader has to know before trusting a row.
  *
- * 1. NODES ARE GROUPED BY THEIR RESOLVED BLEND, NOT THEIR AUTHORED ONE. Every T1
- *    node fields only `monsterPoolByTier[1]`, which is two mobs per biome, and
- *    every biome's third family debuts at biome tier 2. `resolveNodeBlend`
- *    therefore drops the unfieldable family and rescales, so the twenty-seven
- *    authored T1 nodes collapse to far fewer distinct encounters — and all six
- *    Swamp nodes collapse to ONE, because both of its T1 mobs are Mire. The
- *    matrix reports the resolved composition beside the authored one and names
- *    the nodes that share each row.
+ * 1. NODES ARE GROUPED BY THEIR RESOLVED BLEND, NOT THEIR AUTHORED ONE. A T1 node
+ *    fields only `monsterPoolByTier[1]`, so a family with no T1 member is dropped
+ *    by `resolveNodeBlend` and its share rescaled onto the rest, which used to
+ *    collapse the twenty-seven authored nodes into far fewer distinct encounters —
+ *    all six Swamp nodes into ONE, because both of its T1 mobs were Mire.
+ *
+ *    AS OF 2026-10-01 THAT GAP IS CLOSED: design §18.8's third T1 mob per biome
+ *    landed (grass-kite, bramble-pod, rockback-ram, brood-spiderling, fen-hexer,
+ *    plus Mud Toad re-familied to Stalker), so every biome fields all three of its
+ *    families and all 27 authored blends now resolve exactly as authored, one
+ *    distinct encounter each. The grouping stays, because it is what makes a future
+ *    unfieldable family visible instead of silent.
  *
  * 2. THE LANE IS THE DIFFERENCE FROM THE CONTROL, NOT THE ABSOLUTE NUMBER. Each
  *    lineage runs a lane-less control on the same class, frame, weapon and gear.
@@ -27,11 +31,13 @@
  *    the uplift over the control is the lane. Both readings are reported, and the
  *    spread among the five controls says how much of §9-as-written is class noise.
  *
- * 3. ENGAGEMENT'S SHARDS ARE GRANTED, NOT EARNED. No T1 family drops them (its
- *    only family, Plains Sky, is unfieldable at T1), so the harness credits the
- *    wallet and says so per row. Every other cost is paid through the real
- *    economy handler, so a card that the mastery gate refuses is reported as
- *    refused rather than silently faked.
+ * 3. EVERY COST IS NOW PAID THROUGH THE REAL ECONOMY HANDLER. Engagement's shards
+ *    used to be credited to the wallet, because its only family (Plains Sky) could
+ *    not be fielded at T1 and no other family dropped them; the harness labelled
+ *    every affected row. With `grass-kite` making Plains Sky fieldable that credit
+ *    is gone and no row carries the label. The mechanism stays for the next packet
+ *    that has no source: a card the mastery gate or the wallet refuses is reported
+ *    as refused rather than silently faked.
  *
  * Usage, from `server/`:
  *
@@ -834,10 +840,11 @@ async function main(): Promise<void> {
     '',
     '## What the Tier-1 map actually offers',
     '',
-    'Every T1 node fields only `monsterPoolByTier[1]`, and every biome’s third family',
-    'debuts at biome tier 2, so `resolveNodeBlend` drops the unfieldable family and',
-    'rescales. The authored blends are the design target; the resolved ones are the',
-    'encounters that exist today.',
+    'A T1 node fields only `monsterPoolByTier[1]`, so `resolveNodeBlend` drops any',
+    'family with no T1 member and rescales its share onto the rest. The authored',
+    'blends are the design target; the resolved ones are the encounters that exist',
+    'today. Since design §18.8 added a third T1 mob per biome they should be the',
+    'same — a row where they differ is a family the map cannot field.',
     '',
     ...matrix,
     '',
