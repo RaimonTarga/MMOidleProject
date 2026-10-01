@@ -79,10 +79,18 @@ import {
   LINEAGE_DATABASE,
   MONSTER_DATABASE,
   NODE_BIOMES,
+  RUNE_RECIPE_DATABASE,
+  composePlayerView,
   gateBiomeLevel,
+  isRuneRecipeUnlocked,
+  statRowIsCollapsed,
+  withReferenceAbilityWiring,
+  type AttunedAbilities,
+  type EquippedRule,
   type PacketId,
 } from '@mmo-idle/shared';
 import { LINEAGE_REFERENCE_CLASS } from '../../bot/src/tierEntry/profiles';
+import { validateBuild } from '../../bot/src/loadout/loadout';
 import { BOT_SPAWN, setupArena, teardownArena } from './balance/arena';
 import { BENCH_BOT_ID, materializeBot } from './balance/botFactory';
 import { createBalanceWorld, createFarmWorld } from './balance/worldFactory';
@@ -92,6 +100,7 @@ import { hydrateHitboxCacheFromArtifact, writeHitboxArtifact } from '../src/hitb
 import { ensureDungeon } from '../src/systems/world/dungeons/dungeon';
 import { isPlayerActivelyInCombat } from '../src/systems/combat/ai/engagement';
 import { setLineageActive, unlockLineageCard } from '../src/systems/player/economy/lineages';
+import { setAbilityLoadout } from '../src/systems/player/economy/abilityCrafting';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { refillBarrier } from '../src/systems/defense/barrier/barrier';
@@ -247,6 +256,34 @@ function laneCells(tiers: number[], nodeLanes: number): LaneCell[] {
 
 interface Prepared { bot: PlayerEntity; refusals: string[]; activeCards: number; grantedBiomeLevel: number | null }
 
+/**
+ * The reference PACKAGE — abilities, stance and behaviour rules — exactly as
+ * `resolveSurveyPackage` resolves it for a tier.
+ *
+ * Restated here rather than inherited from `materializeBot`, because the factory
+ * deliberately equips NO behaviour rules: which rules a bot runs is a design
+ * statement, so it leaves them out and every bench that measures survival puts
+ * them back. On a survival metric the difference is not cosmetic — without
+ * `step-back` the bot stands in telegraphs, without `avoid-hazards` it stands in
+ * pools, and a ranged root never orbits. Every Phase 0 recovery and TTD number
+ * was taken with this package; a pool reading taken without it would not be
+ * comparable to any of them.
+ */
+function referencePackage(tier: number, melee: boolean): { abilities: AttunedAbilities; stance: string | null; rules: EquippedRule[] } {
+  const abilities: AttunedAbilities = {
+    techniques: [...(tier >= 3 ? ['frenzy'] : []), 'sweep'],
+    guards: tier === 1 ? ['second-wind'] : ['second-wind', 'cleanse'],
+  };
+  const rules = withReferenceAbilityWiring([
+    { conditionId: 'always', actionId: 'auto-path-enemy' },
+    { conditionId: 'inside-telegraph', actionId: 'step-back' },
+    ...(melee ? [] : [{ conditionId: 'in-combat', actionId: 'orbit' }]),
+    { conditionId: 'always', actionId: 'avoid-hazards' },
+    { conditionId: 'always', actionId: 'wait-for-regen' },
+  ], abilities);
+  return { abilities, stance: tier >= 2 ? 'offensive-stance' : null, rules };
+}
+
 function prepareLaneBot(world: World, cell: LaneCell, target: ContentTarget, plus: number): Prepared {
   const build: BuildSpec = {
     id: cell.id,
@@ -259,6 +296,27 @@ function prepareLaneBot(world: World, cell: LaneCell, target: ContentTarget, plu
   };
   const bot = materializeBot(world, build, target, BOT_SPAWN, BENCH_BOT_ID, plus);
   const p = bot.tracksProgression;
+
+  // The reference package, before the band is bought: card magnitudes are read
+  // off the finished stat line, so the loadout has to be settled first.
+  const melee = cell.classRoot === 'cadence-root' || cell.classRoot === 'cooldown-root';
+  const pkg = referencePackage(cell.tier, melee);
+  p.skillPoints = 0;
+  p.equippedRites = [];
+  p.attunedAbilities = { techniques: [], guards: [] };
+  p.attunedStances = pkg.stance ? [pkg.stance] : [];
+  for (const id of p.attunedStances) assert(p.knownStances.includes(id), `${cell.id}: unlearned stance ${id}`);
+  p.equippedStances = { default: pkg.stance };
+  p.activeStance = pkg.stance;
+  for (const recipe of RUNE_RECIPE_DATABASE.values()) {
+    if (recipe.deprecated || !recipe.runeId) continue;
+    if (p.runesOwned.includes(recipe.runeId)) continue;
+    if (!pkg.rules.some((rule) => rule.actionId === recipe.runeId)) continue;
+    assert(isRuneRecipeUnlocked(recipe, p), `${cell.id}: unreachable rune ${recipe.id}`);
+    p.runesOwned.push(recipe.runeId);
+  }
+  p.runesEquipped = pkg.rules;
+  assert(setAbilityLoadout(world, bot, pkg.abilities).success, `${cell.id}: illegal ability budget`);
 
   // Harness grant 1: the home biome's gate level. A lineage whose home biome
   // ends at T2 (Plains, Forest) cannot reach its own T3/T4 rows there at any
@@ -283,11 +341,15 @@ function prepareLaneBot(world: World, cell: LaneCell, target: ContentTarget, plu
       refusals.push(`unlockCard ${cardId}: ${bought.reason}`);
       continue;
     }
+    const progressNow = bot.holdsInventory.lineages![cell.lineageId]!;
+    // A stat row of an earlier band is ABSORBED into the worn form (design §4),
+    // so activating it is refused by design and the card is still in play as the
+    // form's base stats. That is not a finding; buy it and move on.
+    if (statRowIsCollapsed(lineage, progressNow, card)) continue;
     const activated = setLineageActive(world, bot, cell.lineageId, card.row, cardId);
-    // A row the purchase already filled refuses a redundant re-activation; only
-    // a card that ends up in NO row is a finding.
-    const progress = bot.holdsInventory.lineages?.[cell.lineageId];
-    if (!activated.success && progress?.active[card.row] !== cardId) {
+    // The purchase already fills an empty row, so a refusal only matters when the
+    // card ends up in NO row.
+    if (!activated.success && bot.holdsInventory.lineages?.[cell.lineageId]?.active[card.row] !== cardId) {
       refusals.push(`setActive ${cardId}: ${activated.reason}`);
     }
   }
@@ -298,6 +360,16 @@ function prepareLaneBot(world: World, cell: LaneCell, target: ContentTarget, plu
   syncArchetypeSlices(world, bot);
   bot.hasHealth.hp = bot.hasHealth.maxHp;
   refillBarrier(world, bot);
+
+  const view = composePlayerView(bot)!;
+  assert.deepEqual(
+    validateBuild(
+      { abilities: pkg.abilities, runeRules: pkg.rules, stances: { attuned: p.attunedStances, default: pkg.stance }, rites: [] },
+      view,
+    ),
+    [],
+    cell.id,
+  );
 
   const progress = bot.holdsInventory.lineages?.[cell.lineageId];
   assert(progress, `${cell.id}: the worn form opened no tree`);
@@ -489,8 +561,13 @@ const med = (xs: number[]): number => {
   if (finite.length === 0) return NaN;
   return finite.length % 2 ? finite[(finite.length - 1) / 2] : (finite[finite.length / 2 - 1] + finite[finite.length / 2]) / 2;
 };
+/**
+ * `inf` means the boss never out-paced the build at all (net drain zero or
+ * negative over the whole fight), which is a different statement from `>N`: that
+ * one is a finite extrapolation past the readable range.
+ */
 const fmtS = (x: number, capS: number): string =>
-  !isFinite(x) ? `>${capS}` : x > capS * 4 ? `>${capS * 4}` : x.toFixed(1);
+  !isFinite(x) ? 'inf' : x > capS * 4 ? `>${capS * 4}` : x.toFixed(1);
 const fmt2 = (x: number | null): string => (x === null || isNaN(x) ? 'â€”' : x.toFixed(2));
 
 async function main() {
@@ -612,7 +689,7 @@ function writeReport(out: string, boss: BossRow[], node: NodeRow[], o: ReportOpt
     summary.push(rec);
     lines.push(
       `| T${tier} | ${factor.toFixed(2)} | ${rec.lanes} | ${fmtS(mTtd, capS)} | ${fmtS(mKill, capS)} | ` +
-      `${rec.ratio === null ? 'âˆž' : rec.ratio.toFixed(2)} | ${won}/${rec.lanes} | ${fmt2(rec.medianNodeEndHp)} | ` +
+      `${rec.ratio === null ? 'inf' : rec.ratio.toFixed(2)} | ${won}/${rec.lanes} | ${fmt2(rec.medianNodeEndHp)} | ` +
       `${rec.nodeDeaths} | ${rec.measuredTtd}/${rec.fights} | ${rec.measuredKill}/${rec.fights} |`,
     );
   }
@@ -621,7 +698,7 @@ function writeReport(out: string, boss: BossRow[], node: NodeRow[], o: ReportOpt
     '| cell | factor | boss | maxHp | outcome | kill (s) | TTD (s) | TTD/kill | cards | refusals |',
     '|---|---:|---|---:|---|---:|---:|---:|---:|---|',
     ...boss.map((r) => `| ${r.cell} | ${r.factor.toFixed(2)} | ${r.bossId} | ${r.maxHp} | ${r.outcome} | ` +
-      `${fmtS(r.killS, capS)} | ${fmtS(r.ttdS, capS)} | ${isFinite(r.ttdS) ? (r.ttdS / r.killS).toFixed(2) : 'âˆž'} | ` +
+      `${fmtS(r.killS, capS)} | ${fmtS(r.ttdS, capS)} | ${isFinite(r.ttdS) ? (r.ttdS / r.killS).toFixed(2) : 'inf'} | ` +
       `${r.activeCards} | ${r.refusals.join('; ') || ''} |`),
   ];
   const perNode = [
