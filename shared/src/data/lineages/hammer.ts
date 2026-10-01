@@ -103,5 +103,55 @@ export const HAMMER_LINEAGE: LineageDefinition = {
       name: 'Set Feet', description: 'Opening a fight braced turns the first exchange aside.',
       fx: 'engagement.brace-sparks', trigger: 'first-hit', payoff: 'engagement-dr',
     },
+
+    // ── T2 band (design §4): stat (L2), payoff (L3), amplifier (L5) ──────────
+    {
+      id: 'hammer-t2-empowered-stat', lineageId: 'hammer', tier: 2, row: 'stat', lane: 'empowered',
+      name: 'Full Overhead', description: 'Everything above you, and the roof besides.',
+      fx: 'empowered.trail',
+    },
+    {
+      id: 'hammer-t2-control-stat', lineageId: 'hammer', tier: 2, row: 'stat', lane: 'control',
+      name: 'Heavier Still', description: 'Being hit by this changes plans a lot further out than before.',
+      fx: 'control.trail',
+    },
+    {
+      id: 'hammer-t2-engagement-stat', lineageId: 'hammer', tier: 2, row: 'stat', lane: 'engagement',
+      name: 'Harder Stride', description: 'The last steps before the mountain were already loud.',
+      fx: 'engagement.trail',
+    },
+
+    {
+      id: 'hammer-t2-empowered-payoff', lineageId: 'hammer', tier: 2, row: 'payoff', lane: 'empowered',
+      name: 'Deeper Sunder', description: 'Your mechanic caves the plating in further than it used to.',
+      fx: 'empowered.plating-crack', trigger: 'mechanic-fired', payoff: 'plating-shred',
+    },
+    {
+      id: 'hammer-t2-control-payoff', lineageId: 'hammer', tier: 2, row: 'payoff', lane: 'control',
+      name: 'Worse Hobble', description: 'Every third hit leaves the target dragging harder.',
+      fx: 'control.frost-drag', trigger: 'hit-nth', payoff: 'slow',
+    },
+    {
+      id: 'hammer-t2-engagement-payoff', lineageId: 'hammer', tier: 2, row: 'payoff', lane: 'engagement',
+      name: 'Firmer Feet', description: 'Opening a fight braced turns aside more of the first exchange.',
+      fx: 'engagement.brace-sparks', trigger: 'first-hit', payoff: 'engagement-dr',
+    },
+
+    // Amplifiers modify this tier's own payoff card, not the T1 one (design §4).
+    {
+      id: 'hammer-t2-empowered-amplifier', lineageId: 'hammer', tier: 2, row: 'amplifier', lane: 'empowered',
+      name: 'Shattering Crack', description: 'The crack reaches whatever stands beside the target too.',
+      fx: 'empowered.plating-crack', trigger: 'mechanic-fired', payoff: 'plating-shred', modifies: 'hammer-t2-empowered-payoff',
+    },
+    {
+      id: 'hammer-t2-control-amplifier', lineageId: 'hammer', tier: 2, row: 'amplifier', lane: 'control',
+      name: 'Lingering Drag', description: 'The dragging legs do not catch up before the next blow lands.',
+      fx: 'control.frost-drag', trigger: 'hit-nth', payoff: 'slow', modifies: 'hammer-t2-control-payoff',
+    },
+    {
+      id: 'hammer-t2-engagement-amplifier', lineageId: 'hammer', tier: 2, row: 'amplifier', lane: 'engagement',
+      name: 'Held Ground', description: 'The braced stance holds through more than just the opening blow.',
+      fx: 'engagement.brace-sparks', trigger: 'first-hit', payoff: 'engagement-dr', modifies: 'hammer-t2-engagement-payoff',
+    },
   ],
 };
