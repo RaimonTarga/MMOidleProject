@@ -15,6 +15,14 @@ export interface EquipmentPreviewInput {
   hpFraction?: number;
   activeStance?: string | null;
   equippedRites?: readonly string[];
+  /**
+   * The player's lineage progress (progression rework Phase 1). Only a lineage
+   * whose worn form is equipped in its slot, and only its active card per row,
+   * contributes — see `resolveActiveLineages`. Omitted previews (bare tests,
+   * callers that have not wired it) simply see no lineage contribution, same
+   * as an empty map.
+   */
+  lineages?: HoldsInventory['lineages'];
   /** Leave these mechanic-effect keys of one equipped item out (see `PlayerStatsTarget`). */
   omitItemEffects?: { defId: string; keys: ReadonlySet<string> };
 }
@@ -29,7 +37,10 @@ export function previewEquipmentStats(input: EquipmentPreviewInput) {
     hasHealth: { hp: input.hpFraction ?? 1, maxHp: 1, recovery: 0 },
     hasPosition: { nodeId: '', current: { x: 0, y: 0 }, speed: 0 },
     usesSkills: { ...input.usesSkills, unlockedSkills: [...input.usesSkills.unlockedSkills], passives: {} },
-    holdsInventory: { equipment: { ...input.equipment }, inventory: [], itemUpgrades: { ...input.itemUpgrades } },
+    holdsInventory: {
+      equipment: { ...input.equipment }, inventory: [], itemUpgrades: { ...input.itemUpgrades },
+      lineages: input.lineages,
+    },
     playerTier: input.playerTier, activeStance: input.activeStance, equippedRites: input.equippedRites,
     previewOmitItemEffects: input.omitItemEffects,
   };

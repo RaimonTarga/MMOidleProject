@@ -57,6 +57,38 @@ const omitted = previewEquipmentStats({
 });
 assert.ok(omitted.stats.dps < plain.stats.dps, 'omitting the core final-damage key lowers DPS');
 
+// An active lineage card contributes to the preview and the stat sheet (gap:
+// previewEquipmentStats used to build a synthetic inventory with no `lineages`,
+// so the sheet silently ignored every lineage card).
+{
+  const withLineage: StatSheetBuild = {
+    ...build({ weapon: 'flash-rapier' }),
+    lineages: {
+      rapier: {
+        ownedCards: ['rapier-t1-tempo-stat'],
+        active: { stat: 'rapier-t1-tempo-stat' },
+        ownedForms: ['flash-rapier'],
+        wornForm: 'flash-rapier',
+      },
+    },
+  };
+  const withoutLineage: StatSheetBuild = { ...withLineage, lineages: {} };
+  const withPreview = previewEquipmentStats(withLineage);
+  const withoutPreview = previewEquipmentStats(withoutLineage);
+  assert.ok(
+    withPreview.stats.attacksPerSecond > withoutPreview.stats.attacksPerSecond,
+    'the active Quick Wrist card raises attack speed',
+  );
+
+  const lineageSheet = buildStatSheet(withLineage, null);
+  const noLineageSheet = buildStatSheet(withoutLineage, null);
+  assert.notEqual(
+    lineageSheet.rows.find((row) => row.def.key === 'attacksPerSecond')?.after,
+    noLineageSheet.rows.find((row) => row.def.key === 'attacksPerSecond')?.after,
+    'the stat sheet reads the active lineage card',
+  );
+}
+
 // Keyed entries render exactly the text the old formatter did.
 for (const item of ITEM_DATABASE.values()) {
   assert.deepEqual(
