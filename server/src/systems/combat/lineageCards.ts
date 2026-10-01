@@ -784,6 +784,48 @@ export function onLineageGuardCast(world: World, player: PlayerEntity): void {
   fire({ world, player, target: targetFor(world, player) }, firings);
 }
 
+// ── The dispatcher, for payoff sources that are not lineage cards ────────────
+
+/**
+ * One payoff fired by something that is not a card: an ability node (design
+ * §19), which hangs a lane's payoff off an ability rather than off a trigger.
+ *
+ * Exported so there is exactly ONE implementation of "apply a payoff and draw
+ * one card-fx for it". Everything the card runtime guarantees comes with it for
+ * free — the evade early-return on every on-target payoff, the max-wins shared
+ * debuff records, `hitBasis`'s one-multiplier-per-hit rule, the amplified
+ * `extraTargets` spread, and no effect drawn for a payoff that refused.
+ */
+export interface ExternalLineagePayoff {
+  /** Per-source counter/flag key and proc tag. An option id, for a node. */
+  key: string;
+  fx: LineageFxKey;
+  payoff: LineagePayoff;
+}
+
+/** Apply external payoffs. Returns how many actually did something. */
+export function fireLineagePayoffs(
+  world: World,
+  player: PlayerEntity,
+  payoffs: readonly ExternalLineagePayoff[],
+  site: { ctx?: CombatContext; target?: MonsterEntity } = {},
+): number {
+  if (payoffs.length === 0) return 0;
+  const target = site.target ?? targetFor(world, player, site.ctx);
+  return fire(
+    { world, player, ctx: site.ctx, target },
+    payoffs.map((p) => ({
+      key: p.key,
+      fx: p.fx,
+      // A `fire` dispatch never reads the trigger — only `registerHitNth` does,
+      // and it builds its own. The kind that is true of an ability node is the
+      // one the magnitude table already prices it at (see `resolve.ts`).
+      trigger: { kind: 'guard-cast' as const },
+      payoff: p.payoff,
+    })),
+  );
+}
+
 // ── The two clock-driven triggers ────────────────────────────────────────────
 
 /**

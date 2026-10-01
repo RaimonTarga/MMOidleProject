@@ -32,9 +32,9 @@ import {
   resolveLineageCapstone, resolveLineageCard,
 } from '../data/lineages/resolve';
 import type {
-  DefensiveFace, LineageCard, LineageDefinition, LineageForm, LineageProgress,
-  LineageProgressMap, LineageStatEffects, PacketId, PayoffKind,
-  ResolvedLineageCapstone, ResolvedLineageCard, RowKind,
+  AmplifiedAxis, DefensiveFace, LineageCard, LineageDefinition, LineageForm,
+  LineagePayoff, LineageProgress, LineageProgressMap, LineageStatEffects,
+  PacketId, PayoffKind, ResolvedLineageCapstone, ResolvedLineageCard, RowKind,
 } from '../data/lineages/types';
 
 export interface LineageCheck {
@@ -428,12 +428,21 @@ function composeAmplifiers(cards: ResolvedLineageCard[]): ResolvedLineageCard[] 
   return kept;
 }
 
-/** Move one axis of `target`'s payoff by the amplifier row's scalar. */
-function applyAmplification(target: ResolvedLineageCard, amp: ResolvedLineageCard): void {
-  const payoff = target.payoff;
-  if (!payoff) return;
-  const boost = ROW_SCALAR.amplifier;
-  switch (amp.card.amplifies) {
+/**
+ * Move one axis of a resolved payoff, in place, by `boost`.
+ *
+ * The three axes that live entirely inside the payoff, split out of
+ * {@link applyAmplification} so the ability-node amplifier (design §19) moves an
+ * axis by exactly the same arithmetic rather than owning a second copy of it.
+ * The `trigger` axis stays in the card-level function below: it adds a MOMENT,
+ * which is a property of the card, not of its payoff.
+ */
+export function applyAmplifiedAxis(
+  payoff: LineagePayoff,
+  axis: AmplifiedAxis,
+  boost: number,
+): void {
+  switch (axis) {
     case 'duration':
       // Only a timed payoff has a window to lengthen. A stacking one does not,
       // and silently "amplifying" nothing would be a dead card wearing a number.
@@ -448,6 +457,22 @@ function applyAmplification(target: ResolvedLineageCard, amp: ResolvedLineageCar
       // Guarded by `coverage.test.ts` to on-target payoffs: a second body is
       // meaningless for a window that opens on the player.
       payoff.extraTargets = (payoff.extraTargets ?? 0) + 1;
+      break;
+    default:
+      break;
+  }
+}
+
+/** Move one axis of `target`'s payoff by the amplifier row's scalar. */
+function applyAmplification(target: ResolvedLineageCard, amp: ResolvedLineageCard): void {
+  const payoff = target.payoff;
+  if (!payoff) return;
+  const boost = ROW_SCALAR.amplifier;
+  switch (amp.card.amplifies) {
+    case 'duration':
+    case 'magnitude':
+    case 'targets':
+      applyAmplifiedAxis(payoff, amp.card.amplifies, boost);
       break;
     case 'trigger':
       // The modified payoff also fires on the amplifier's moment. The amplifier's

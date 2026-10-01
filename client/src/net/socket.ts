@@ -59,6 +59,12 @@ export interface SocketHandlers {
     lineageId: string;
     action: 'unlockCard' | 'setActive' | 'unlockForm' | 'wearForm';
   }): void;
+  onAbilityNodeResult(result: {
+    success: boolean;
+    reason?: string;
+    abilityId: string;
+    action: 'unlockNode' | 'setNode';
+  }): void;
   onPlayerDied(payload: PlayerDeathPayload): void;
   onPlayerAscended(tier: number): void;
   onBossFelled(markers: BossFelledMarker[]): void;
@@ -100,6 +106,7 @@ export function wireSocketHandlers(
   socket.on('build:loadoutResult', (r) => h.onBuildLoadoutResult(r));
   socket.on('inventory:upgradeResult', (r) => h.onUpgradeResult(r));
   socket.on('lineage:result', (r) => h.onLineageResult(r));
+  socket.on('ability:nodeResult', (r) => h.onAbilityNodeResult(r));
   socket.on('player:died', (p) => h.onPlayerDied(p));
   socket.on('player:ascended', (t) => h.onPlayerAscended(t));
   socket.on('world:bossFelled', (m) => h.onBossFelled(m));

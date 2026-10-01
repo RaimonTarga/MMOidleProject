@@ -13,6 +13,7 @@ import { resetReactivePlating } from '../systems/defense/mitigation/reactivePlat
 import { resetBramblePlating } from '../systems/player/abilities/abilityBramble';
 import { syncBarrier } from '../systems/defense/barrier/barrier';
 import { refreshLineageRuntime } from '../systems/combat/lineageCards';
+import { refreshAbilityNodeRuntime } from '../systems/combat/abilityNodes';
 
 export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity): void {
   resetStationaryDr(entity);
@@ -24,6 +25,10 @@ export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity)
   // never resolve lazily on a hit: two sites answering the same question is how a
   // cache and its source drift.
   refreshLineageRuntime(entity);
+  // Ability nodes resolve on the same beat and for the same reason (design §19):
+  // the cache is a recalc product, and resolving it on an ability's landing would
+  // make two sites responsible for one answer.
+  refreshAbilityNodeRuntime(entity);
   const evadesHits = entity.evadesHits
     ? { ...entity.evadesHits }
     : { dodgeRate: 0, evadeMitigation: 0, charge: 0 };

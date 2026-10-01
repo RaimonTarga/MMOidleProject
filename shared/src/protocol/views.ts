@@ -4,6 +4,7 @@ import type { EquipmentMap, EssenceType } from "../items";
 import type { HasAutoIntent, HasEmote, HasStatus, PartyMember, TargetStatusView } from "../components";
 import type { PassiveMap } from "../passives";
 import type { LineageProgressMap, PacketId } from "../data/lineages/types";
+import type { AbilityNodeProgressMap } from "../data/abilityNodes/types";
 import { isRangedCombatant, type SubVariant } from "../skillTree";
 import type { MonsterBehavior } from "../data/monsters/behavior";
 import { resolveUpkeepConfig, upkeepStacks, upkeepStage } from "../systems/energyUpkeep";
@@ -170,6 +171,8 @@ export interface PlayerView {
   knownAbilities: string[];
   /** Attuned abilities by semantic family; ordered for default arbitration. */
   attunedAbilities: AttunedAbilities;
+  /** Ability nodes, keyed by ability id (design §19). Empty until one is bought. */
+  abilityNodes: AbilityNodeProgressMap;
   /** Stances learned (crafted) — the slottable pool (system rework Step 10). */
   knownStances: string[];
   attunedStances: string[];
@@ -474,6 +477,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     runesEquipped: progression.runesEquipped ?? [],
     knownAbilities: progression.knownAbilities ?? [],
     attunedAbilities: normalizeAttunedAbilities(progression.attunedAbilities),
+    abilityNodes: progression.abilityNodes ?? {},
     knownStances: progression.knownStances ?? [],
     attunedStances: progression.attunedStances ?? [],
     equippedStances: progression.equippedStances ?? emptyEquippedStances(),

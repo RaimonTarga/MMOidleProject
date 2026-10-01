@@ -19,6 +19,7 @@ import type { AttunedAbilities } from '../../abilities';
 import type { EquippedStances } from '../../stances';
 import type { EquippedRites } from '../../rites';
 import type { LineageProgressMap, PacketId } from '../../data/lineages/types';
+import type { AbilityNodeProgressMap } from '../../data/abilityNodes/types';
 
 export type { HasHitbox };
 
@@ -394,6 +395,17 @@ export interface TracksProgression {
    * RP is the only capacity limit.
    */
   attunedAbilities: AttunedAbilities;
+  /**
+   * Ability nodes, keyed by ability id (design §19). A node means "this ability
+   * also fires the chosen packet's payoff at a share when it lands (Technique)
+   * or casts (Guard)" — runes decide WHEN an ability fires, nodes decide WHAT
+   * it does.
+   *
+   * Stored here with the rest of the ability build data, and optional because
+   * every save written before design §19 shipped has none: hydration normalizes
+   * an absent map to an empty one, so there is no migration.
+   */
+  abilityNodes?: AbilityNodeProgressMap;
   /**
    * Stances the player has learned (crafted) — the slottable pool
    * (system rework Step 10). Stored here like runes/abilities (build/loadout data).

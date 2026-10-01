@@ -61,6 +61,7 @@ import {
   essenceMaterial,
   shardMaterial,
 } from '../MaterialChip';
+import { CostChips, LineageCardShell, type CardShellState } from './CardShell';
 import { lineageDisplayName } from './lineageDisplayName';
 import '../skillTree.css';
 import './lineageTree.css';
@@ -112,24 +113,6 @@ function formatPayoff(payoff: LineagePayoff): string {
 
 function describeCardEffect(resolved: ResolvedLineageCard): string | null {
   return formatStatEffect(resolved) ?? (resolved.payoff ? formatPayoff(resolved.payoff) : null);
-}
-
-// ── Cost chips ─────────────────────────────────────────────────────────────
-
-function CostChips({ cost, wallet }: {
-  cost: { essence: Partial<Record<string, number>>; shards: Partial<Record<PacketId, number>> };
-  wallet: LineageWallet;
-}) {
-  return (
-    <span className="lin-card__cost material-chip-strip">
-      {(Object.entries(cost.essence) as [EssenceType, number][]).map(([type, amount]) => (
-        <MaterialChip key={type} material={essenceMaterial(type)} required={amount} held={wallet.essences[type] ?? 0} size={14} />
-      ))}
-      {(Object.entries(cost.shards) as [PacketId, number][]).map(([packet, amount]) => (
-        <MaterialChip key={packet} material={shardMaterial(packet)} required={amount} held={wallet.shards?.[packet] ?? 0} size={14} />
-      ))}
-    </span>
-  );
 }
 
 // ── Lane header ──────────────────────────────────────────────────────────────
@@ -214,7 +197,7 @@ function CardTile({
     : null;
   const { cost, discounted } = lineageCardPrice({ lineage, card, lineages });
 
-  const state = active ? 'active' : owned ? 'owned' : masteryLocked ? 'locked' : 'available';
+  const state: CardShellState = active ? 'active' : owned ? 'owned' : masteryLocked ? 'locked' : 'available';
   const blockedReason = masteryLocked
     ? `Requires ${biomeName(lineage.homeBiome)} level ${resolved.requiredBiomeLevel}.`
     : (!owned && !check.ok) ? check.reason
@@ -231,35 +214,18 @@ function CardTile({
   }
 
   return (
-    <button
-      type="button"
-      className={`lin-card lin-card--${state}`}
-      style={{ '--lane-color': laneColor } as React.CSSProperties}
+    <LineageCardShell
+      laneColor={laneColor}
+      name={card.name}
+      description={`${card.description} ${describeCardEffect(resolved) ?? ''}`}
+      state={state}
+      tie={tie}
+      cost={!owned ? <CostChips cost={cost} wallet={wallet} /> : undefined}
+      note={!owned && discounted ? 'switch discount applied' : undefined}
       disabled={masteryLocked || (!owned && !check.ok) || (owned && !active && activateCheck !== null && !activateCheck.ok)}
       title={blockedReason}
       onClick={handleClick}
-    >
-      {/* The amplifier's connector: a short tick up to the card it modifies when
-          that card is directly above in the same lane, else a named chip, because
-          a tick pointing at the wrong column would be a lie. */}
-      {tie && (tie.adjacent
-        ? <span className="lin-card__tie" aria-hidden="true" />
-        : <span className="lin-card__modifies">modifies {tie.name}</span>)}
-      <span className="lin-card__top">
-        <span className="lin-card__name">{card.name}</span>
-        {active && <span className="lin-card__state">active</span>}
-        {owned && !active && <span className="lin-card__state lin-card__state--dim">owned</span>}
-      </span>
-      <span className="lin-card__desc">
-        {card.description} {describeCardEffect(resolved)}
-      </span>
-      {!owned && (
-        <>
-          <CostChips cost={cost} wallet={wallet} />
-          {discounted && <span className="lin-card__discount">switch discount applied</span>}
-        </>
-      )}
-    </button>
+    />
   );
 }
 

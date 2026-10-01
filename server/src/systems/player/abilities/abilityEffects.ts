@@ -63,6 +63,7 @@ import type {
 import type { World } from "../../../world/World";
 import type { WorldLogActor } from "@mmo-idle/shared";
 import { techniquePowerPctFor } from "./abilityKata";
+import { onAbilityNodeTechniqueLanded } from "../../combat/abilityNodes";
 
 /** Reporting-only: Technique/Sweep adapter contribution for combat-run diagnostics. */
 function recordTechniqueAdapter(
@@ -390,6 +391,15 @@ function applyTechniqueRider(
 ): void {
   // Riders act on enemy-facing hits only.
   if (ctx.attackerType !== "player" || ctx.defenderType !== "monster") return;
+
+  // The ability node (design §19) fires HERE rather than in the listener above,
+  // because this is the one place every armed shape — a plain rider, a Conduit
+  // formation delivery, a Charge's landing blow — actually lands. An armed
+  // charge the fight never consumed pays nothing, which is the point of "lands".
+  onAbilityNodeTechniqueLanded(world, ctx.attacker, ability, {
+    ctx,
+    target: ctx.defender,
+  });
 
   const effect = techniqueEffect(ctx.attacker, ability);
   const formationBasis = formationDelivery
