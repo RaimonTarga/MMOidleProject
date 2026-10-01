@@ -57,6 +57,19 @@ function walletFor(entity: PlayerEntity): LineageWallet {
   };
 }
 
+/** Totals of a resolved cost, for the telemetry row. Never used to spend. */
+function costTotals(cost: LineageCost, capstone?: { biome: string; amount: number }): {
+  essenceSpent: number; shardsSpent: number; capstonesSpent: number;
+} {
+  const sum = (values: (number | undefined)[]): number =>
+    values.reduce<number>((total, value) => total + (value ?? 0), 0);
+  return {
+    essenceSpent: sum(Object.values(cost.essence)),
+    shardsSpent: sum(Object.values(cost.shards)),
+    capstonesSpent: capstone?.amount ?? 0,
+  };
+}
+
 /** Spend a resolved cost. Only ever called after the matching check passed. */
 function spend(world: World, entity: PlayerEntity, cost: LineageCost, capstone?: { biome: string; amount: number }): void {
   const prog = entity.tracksProgression;
@@ -93,8 +106,10 @@ export function unlockLineageCard(
   });
   if (!check.ok) return fail(lineageId, 'unlockCard', check.reason ?? 'Cannot buy that card.');
 
+  let paid = { essenceSpent: 0, shardsSpent: 0, capstonesSpent: 0 };
   if (!wallet.isTestRoom) {
     const { cost } = lineageCardPrice({ lineage, card, lineages: entity.holdsInventory.lineages });
+    paid = costTotals(cost);
     spend(world, entity, cost);
   }
 
@@ -109,6 +124,10 @@ export function unlockLineageCard(
     inv.lineages = { ...inv.lineages, [lineageId]: { ...current, ownedCards, active } };
   });
   recalculatePlayerEntityStats(world, entity);
+  world.gameplay?.lineage(entity, 'lineage.card-unlocked', {
+    lineageId, lane: card.lane, row: card.row, cardId, ...paid,
+    ownedCards: entity.holdsInventory.lineages?.[lineageId]?.ownedCards.length ?? 0,
+  });
   return { success: true, lineageId, action: 'unlockCard' };
 }
 
@@ -127,6 +146,7 @@ export function setLineageActive(
   const check = checkSetActive({ lineage, progress, row, cardId });
   if (!check.ok) return fail(lineageId, 'setActive', check.reason ?? 'Cannot activate that card.');
 
+  const replacedCardId = progress.active[row] ?? null;
   mutateSlice(world, entity, 'holdsInventory', (inv) => {
     const current = inv.lineages![lineageId]!;
     const active = { ...current.active };
@@ -135,6 +155,15 @@ export function setLineageActive(
     inv.lineages = { ...inv.lineages, [lineageId]: { ...current, active } };
   });
   recalculatePlayerEntityStats(world, entity);
+  // Only a REPLACEMENT is a swap. Activating into an empty row is the tail of a
+  // purchase, and counting it would double every first card in "swaps per session".
+  if (replacedCardId !== null && replacedCardId !== cardId) {
+    world.gameplay?.lineage(entity, 'lineage.card-swapped', {
+      lineageId, row, cardId, replacedCardId,
+      lane: lineage.cards.find((c) => c.id === (cardId ?? replacedCardId))?.lane ?? null,
+      ownedCards: entity.holdsInventory.lineages?.[lineageId]?.ownedCards.length ?? 0,
+    });
+  }
   return { success: true, lineageId, action: 'setActive' };
 }
 
@@ -160,8 +189,10 @@ export function unlockLineageForm(
   const check = checkUnlockForm({ lineage, form, progress, wallet });
   if (!check.ok) return fail(lineageId, 'unlockForm', check.reason ?? 'Cannot pay that gate.');
 
+  let paid = { essenceSpent: 0, shardsSpent: 0, capstonesSpent: 0 };
   if (!wallet.isTestRoom) {
     const cost = lineageGateCost(form, lineage);
+    paid = costTotals(cost, cost.capstone);
     spend(world, entity, cost, cost.capstone);
   }
 
@@ -173,6 +204,10 @@ export function unlockLineageForm(
     };
   });
   recalculatePlayerEntityStats(world, entity);
+  world.gameplay?.lineage(entity, 'lineage.gate-paid', {
+    lineageId, formRecipeId: recipeId, lane: form.capstone?.lane ?? null, ...paid,
+    ownedCards: entity.holdsInventory.lineages?.[lineageId]?.ownedCards.length ?? 0,
+  });
   return { success: true, lineageId, action: 'unlockForm' };
 }
 

@@ -14,6 +14,11 @@ import {
   isStanceRecipeUnlocked,
   NO_STANCE_ID,
   ITEM_DATABASE,
+  BIOME_DATABASE,
+  FAMILY_DATABASE,
+  LINEAGE_DATABASE,
+  lineageCardPrice,
+  resolveLineageCard,
   NODE_BIOMES,
   biomeLevelCap,
   RECIPE_DATABASE,
@@ -25,6 +30,7 @@ import {
   type EquippedRule,
   type EssenceType,
   type EquipmentSlot,
+  type PacketId,
   withReferenceAbilityWiring,
 } from "@mmo-idle/shared";
 import type { Intents } from "../net/intents";
@@ -375,6 +381,10 @@ export class RouteExecutor {
         return this.doSetAbilities(step);
       case "craftRune":
         return this.doCraftRune(step);
+      case "unlockCard":
+        return this.doUnlockCard(step);
+      case "setActive":
+        return this.doSetActive(step);
       case "attemptBoss":
         return this.doAttemptBoss(step);
       case "repeatUntil":
@@ -1374,6 +1384,115 @@ export class RouteExecutor {
   }
 
   /**
+   * Buy one lineage card, farming for the shortfall exactly as `craft` does.
+   *
+   * Prices are read from the magnitude table at runtime (`lineageCardPrice`), so
+   * a route never restates one and a tuning pass cannot silently invalidate a
+   * route. The tree itself is opened by HOLDING the base form, so this throws a
+   * route-logic failure rather than stalling if the slot is empty — that is an
+   * authoring mistake, not a wallet problem.
+   */
+  private async doUnlockCard(
+    step: Extract<RouteStep, { type: "unlockCard" }>,
+  ): Promise<void> {
+    const { obs, intents, recorder } = this.deps;
+    const lineage = LINEAGE_DATABASE.get(step.lineageId);
+    if (!lineage) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown lineage in route", { step });
+    const card = lineage.cards.find((c) => c.id === step.cardId);
+    if (!card) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown lineage card in route", { step });
+    if (obs.self?.lineages[step.lineageId]?.ownedCards.includes(step.cardId)) return;
+
+    const farmNode = this.lineageFarmNode(step.farmAt, lineage.homeBiome, card.lane);
+
+    const missing = (): Record<string, number> => {
+      const out: Record<string, number> = {};
+      const self = obs.self;
+      const { cost } = lineageCardPrice({ lineage, card, lineages: self?.lineages });
+      for (const [type, amount] of Object.entries(cost.essence)) {
+        const short = (amount ?? 0) - obs.essence(type as EssenceType);
+        if (short > 0) out[`essence.${type}`] = short;
+      }
+      for (const [packet, amount] of Object.entries(cost.shards)) {
+        const short = (amount ?? 0) - (self?.shards[packet as PacketId] ?? 0);
+        if (short > 0) out[`shard.${packet}`] = short;
+      }
+      // The band's own gates. Both are biome mastery, which is why one farm loop
+      // answers them: the row's level in the home biome, and the account-wide GM
+      // band the +1..+5 ladder already uses.
+      const resolved = resolveLineageCard(card, lineage);
+      const levelShort = resolved.requiredBiomeLevel - obs.biomeLevel(lineage.homeBiome);
+      if (levelShort > 0) out[`biomeLevel.${lineage.homeBiome}`] = levelShort;
+      const gmShort = resolved.requiredGlobalMastery - (self?.globalMastery ?? 0);
+      if (gmShort > 0) out.globalMasteryNeeded = gmShort;
+      return out;
+    };
+
+    if (Object.keys(missing()).length > 0) {
+      if (!farmNode) {
+        throw new StallError(
+          `no tier-1 biome drops the ${card.lane} shard this card costs`,
+          { step, missing: missing() },
+        );
+      }
+      await this.farmBlocked(
+        farmNode,
+        `card:${step.cardId}`,
+        () => Object.keys(missing()).length === 0,
+        () => missingToReasons(missing(), obs),
+        true,
+      );
+    }
+
+    const result = await this.mutate(() => intents.unlockLineageCard(step.lineageId, step.cardId));
+    if (!result.success) {
+      throw new StallError(`lineage card rejected: ${result.reason ?? "unknown"}`, { step });
+    }
+    await this.waitUntil(
+      () => obs.self?.lineages[step.lineageId]?.ownedCards.includes(step.cardId) ?? false,
+      { timeoutMs: 30_000, what: `${step.cardId} owned` },
+    );
+
+    recorder.emit({
+      kind: "build-change",
+      atMs: recorder.now(),
+      system: "lineage-card",
+      detail: { lineageId: step.lineageId, cardId: step.cardId, lane: card.lane, row: card.row },
+    });
+  }
+
+  /**
+   * Choose which owned card is active for a row. Free, so there is nothing to
+   * farm for and nothing to be short of — a refusal here is always an authoring
+   * error (an unowned card, or a row the tier does not have).
+   */
+  private async doSetActive(
+    step: Extract<RouteStep, { type: "setActive" }>,
+  ): Promise<void> {
+    const { obs, intents, recorder } = this.deps;
+    if (!LINEAGE_DATABASE.has(step.lineageId)) {
+      throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown lineage in route", { step });
+    }
+    const active = (): string | null => obs.self?.lineages[step.lineageId]?.active[step.row] ?? null;
+    if (active() === step.cardId) return;
+
+    const result = await this.mutate(() => intents.setLineageActive(step.lineageId, step.row, step.cardId));
+    if (!result.success) {
+      throw new StallError(`lineage activation rejected: ${result.reason ?? "unknown"}`, { step });
+    }
+    await this.waitUntil(() => active() === step.cardId, {
+      timeoutMs: 30_000,
+      what: `${step.row} active = ${step.cardId ?? "none"}`,
+    });
+
+    recorder.emit({
+      kind: "build-change",
+      atMs: recorder.now(),
+      system: "lineage-active",
+      detail: { lineageId: step.lineageId, row: step.row, cardId: step.cardId },
+    });
+  }
+
+  /**
    * Kill every guardian while the dungeon is still idle, so the boss is fought
    * alone.
    *
@@ -2170,6 +2289,33 @@ export class RouteExecutor {
     );
   }
 
+  /**
+   * Where to farm for a lineage card. Shards are keyed by PACKET, not by biome
+   * (design §12), so the home biome is often the wrong place: the Rapier lives in
+   * Forest, but Forest's Tier-1 pool fields only Pack and Grove, which drop tempo
+   * and empowered — an affliction card bought there would farm forever for a
+   * shard the node cannot pay.
+   *
+   * So an authored `farmAt` stays authoritative, and otherwise the home biome is
+   * used only when it can actually field a family that drops the lane's shard;
+   * failing that, the first Tier-1 biome that can. Null when NO biome of the
+   * tier can, which `doUnlockCard` turns into a stall with a reason rather than
+   * an endless farm.
+   */
+  private lineageFarmNode(
+    ref: NodeRef | undefined,
+    homeBiome: string,
+    lane: PacketId,
+  ): string | null {
+    if (ref) return resolveNode(ref, this.deps.obs, this.rotation);
+    for (const biomeGroup of [homeBiome, ...LINEAGE_SHARD_BIOMES]) {
+      if (!biomeDropsShardAtTier1(biomeGroup, lane)) continue;
+      const node = this.defaultFarmNodeFor(biomeGroup);
+      if (node) return node;
+    }
+    return null;
+  }
+
   /** Resolve an authored farm location, falling back to the default node for
    * the biome when the route leaves it unspecified. */
   private resolveFarmNode(ref: NodeRef | undefined, biomeGroup: string): string | null {
@@ -2360,6 +2506,39 @@ function progressSignal(obs: Observation): string {
   return `${essence}|${xp}|${self.playerTier}|${self.bossesCleared.length}`;
 }
 
+/** Drop `undefined` holes so an optional cost record becomes a plain tally. */
+function definedNumbers(record: Partial<Record<string, number>>): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const [key, value] of Object.entries(record)) {
+    if (typeof value === "number") out[key] = value;
+  }
+  return out;
+}
+
+/**
+ * The Tier-1 biomes a shard can be farmed in, in map order. Local rather than in
+ * `shared/src/data/families`, so this stays a BOT policy: the family table says
+ * which family drops what, and this says where the bot goes looking.
+ */
+const LINEAGE_SHARD_BIOMES = ['plains', 'forest', 'mountain', 'cave', 'swamp'] as const;
+
+/**
+ * Whether `biomeGroup` can field, at biome tier 1, any family that drops `lane`.
+ *
+ * Reads the pool rather than the authored blends, because a family whose mobs all
+ * live in a later tier's pool is dropped from every blend by `resolveNodeBlend` —
+ * so it drops nothing at tier 1 no matter what a node's blend claims.
+ */
+function biomeDropsShardAtTier1(biomeGroup: string, lane: PacketId): boolean {
+  const pool = BIOME_DATABASE.get(biomeGroup)?.monsterPoolByTier[1] ?? [];
+  if (pool.length === 0) return false;
+  for (const family of FAMILY_DATABASE.values()) {
+    if (family.biome !== biomeGroup || family.drops !== lane) continue;
+    if (family.monsterIds.some((id) => pool.includes(id))) return true;
+  }
+  return false;
+}
+
 function defaultLabel(step: RouteStep): string {
   switch (step.type) {
     case "moveWithinNode": return `move:${step.nodeId}:${step.position.x},${step.position.y}`;
@@ -2402,6 +2581,10 @@ function defaultLabel(step: RouteStep): string {
       return `abilities T[${step.techniques.join(",")}] G[${step.guards.join(",")}]`;
     case "craftRune":
       return `craft rune ${step.recipeId}`;
+    case "unlockCard":
+      return `buy card ${step.cardId}`;
+    case "setActive":
+      return `activate ${step.lineageId} ${step.row} = ${step.cardId ?? "none"}`;
     case "attemptBoss":
       return `boss ${step.biomeGroup} T${step.tier}`;
     case "ifPossible":

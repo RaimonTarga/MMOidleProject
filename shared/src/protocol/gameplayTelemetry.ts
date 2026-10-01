@@ -31,6 +31,20 @@ export interface GameplayDamage {
   damageType: string;
   hpDamage: number;
 }
+/**
+ * The three lineage-tree facts the Phase 1 playtest has to answer (progression
+ * rework plan §1.5): time-to-first-card, swaps per session, and gates paid.
+ *
+ * They are their OWN payload kind rather than `decision` rows, because a
+ * `decision` is dropped unless the projected build changed and `GameplayBuild`
+ * projects no lineage state at all — so buying a payoff card, which changes no
+ * projected stat, recorded nothing.
+ */
+export type LineageTelemetryEvent =
+  | 'lineage.card-unlocked'
+  | 'lineage.card-swapped'
+  | 'lineage.gate-paid';
+
 export type GameplayPayload =
   | { kind: 'session-start'; build: GameplayBuild }
   | { kind: 'session-end'; durationMs: number; reason: 'disconnect' | 'interrupted' }
@@ -40,7 +54,33 @@ export type GameplayPayload =
   | { kind: 'encounter-end'; attemptId: string; bossType: string; build: GameplayBuild; partySize: number; outcome: EncounterOutcome; previouslyCleared: boolean; durationMs: number; bossHpFraction: number; damageDealt: number; damageTaken: number }
   | { kind: 'death'; build: GameplayBuild; x: number; y: number; cause: string; ability: string | null; killerType: string | null; damage: number; statuses: Array<{ effectId: string; stacks: number }>; recentDamage: GameplayDamage[] }
   | { kind: 'progression'; milestone: string; value: number; sessionElapsedMs: number }
-  | { kind: 'resource'; resource: string; earned: number; spent: number };
+  | { kind: 'resource'; resource: string; earned: number; spent: number }
+  /**
+   * One accepted lineage-tree action. Lane and row are plain strings on purpose:
+   * a telemetry row outlives the vocabulary it was written against, and a renamed
+   * packet must not make a stored row un-typable.
+   */
+  | {
+      kind: 'lineage';
+      event: LineageTelemetryEvent;
+      lineageId: string;
+      /** The lane the card belongs to, or the lane a paid gate's form crowns. */
+      lane: string | null;
+      row: string | null;
+      cardId: string | null;
+      /** The card this swap displaced, so a swap is readable as a choice. */
+      replacedCardId: string | null;
+      /** `lineage.gate-paid` only: the form the gate bought. */
+      formRecipeId: string | null;
+      essenceSpent: number;
+      shardsSpent: number;
+      capstonesSpent: number;
+      /** Cards owned in this lineage AFTER the action. */
+      ownedCards: number;
+      /** True on the session's first card purchase — time-to-first-card. */
+      firstOfSession: boolean;
+      sessionElapsedMs: number;
+    };
 export interface GameplayEvent {
   id: string;
   schemaVersion: 1;

@@ -1,5 +1,6 @@
 import type { DesiredBuild } from "../loadout/loadout";
 import {
+  LINEAGE_DATABASE,
   NODE_BIOMES,
   STANCE_RECIPE_DATABASE, RITE_RECIPE_DATABASE,
   RECIPE_DATABASE,
@@ -7,6 +8,9 @@ import {
   emptyEquipment,
   emptyAttunedAbilities,
   type EquipmentMap,
+  type LineageDefinition,
+  type PacketId,
+  type RowKind,
   type TierEntryProfile,
 } from "@mmo-idle/shared";
 import { T1_BASELINE_ROUTES } from "../routes/t1Baselines";
@@ -205,4 +209,194 @@ export function requireTierEntryProfile(id: string): TierEntryProfile {
     );
   }
   return profile;
+}
+
+// ── Lineage lane reference profiles (progression rework plan §1.5) ───────────
+//
+// Design §9: "pure lanes are the reference builds. Three per frame, run by the
+// bot harness against every variant." A lane profile is an ordinary T2-entry
+// manifest — the character who has just finished Tier 1, so it holds full T1
+// mastery and can legally own the whole T1 lineage band — plus two declarations
+// the matrix needs: which LANE it is pure in, and which cards it bought.
+//
+// Each lineage also gets a lane-less CONTROL with the same class, frame and
+// weapon and no cards at all. Without it a lane number is unreadable: the
+// absolute throughput of `rapier/tempo` is mostly Striker-with-a-rapier, and
+// only the difference from the control is the lane. The budget check in §9
+// therefore runs on the control-relative uplift, not on absolute TTK.
+
+/**
+ * Which class root and T1 frame each weapon lineage's reference build wears.
+ *
+ * Four of the five are the pairing the SHIPPED canonical T1 route already ends
+ * on (`SURVEY_CLASSES` in `server/bench/balance/ttkSurveySpec.ts` names the same
+ * weapons): the Flash Rapier is the Striker's, the Heavy Hammer the Squire's,
+ * the Chaotic Axe the Apprentice's, the Poison Dagger the Slinger's.
+ *
+ * The Iron Broadsword has NO shipped pairing — every melee route crafts it as
+ * the Plains starter and then replaces it, which is exactly design §3.2's
+ * "generalist floor". It is paired here with the energy root, the only root
+ * whose canonical route does not already anchor a lineage (the summoner root is
+ * the other, and its minions put damage the lane did not do into every TTK).
+ * That is a BENCH AUTHORING CHOICE, not a design decision — flagged for the
+ * designer in the lane-matrix report.
+ */
+export interface LineageReferenceClass {
+  classRoot: string;
+  frameId: string;
+  /** The lineage's tier-1 base form; holding it is what opens the tree. */
+  baseForm: string;
+}
+
+export const LINEAGE_REFERENCE_CLASS: Record<string, LineageReferenceClass> = {
+  rapier: { classRoot: "cadence-root", frameId: "cadence-balanced", baseForm: "flash-rapier" },
+  hammer: { classRoot: "cooldown-root", frameId: "cooldown-heavy", baseForm: "heavy-hammer" },
+  axe: { classRoot: "dot-root", frameId: "dot-balanced", baseForm: "chaotic-axe" },
+  dagger: { classRoot: "reload-root", frameId: "reload-heavy", baseForm: "ashbrand-blade" },
+  broadsword: { classRoot: "energy-root", frameId: "energy-heavy", baseForm: "iron-broadsword" },
+};
+
+/** The T1 band's rows, in the order a player buys them (`rowsForTier(1)`). */
+const T1_LANE_ROWS: readonly RowKind[] = ["stat", "payoff"];
+
+export interface LineageLaneReference {
+  profileId: string;
+  lineageId: string;
+  /** Null on the control: same build, no cards. */
+  lane: PacketId | null;
+  classRoot: string;
+  frameId: string;
+  baseForm: string;
+  homeBiome: string;
+  /** The T1 stat and payoff cards of this lane, in row order. */
+  cardIds: string[];
+  /**
+   * True when NO Tier-1 mob family drops this lane's shard, so the cards cannot
+   * be bought from T1 kills at all. Engagement is the case: its only T1 family
+   * is Plains Sky, whose one mob (savanna-hawk) debuts in the Tier-2 pool, so
+   * `resolveNodeBlend` drops the family from every T1 node. A harness that runs
+   * this profile has to grant the shards outright and SAY SO.
+   */
+  shardsUnobtainableAtT1: boolean;
+}
+
+/** Lanes whose shard has no Tier-1 source (see `shardsUnobtainableAtT1`). */
+export const LANES_WITHOUT_T1_SHARD_SOURCE: readonly PacketId[] = ["engagement"];
+
+function laneCardIds(lineage: LineageDefinition, lane: PacketId): string[] {
+  return T1_LANE_ROWS.map((row) => {
+    const card = lineage.cards.find((c) => c.tier === 1 && c.row === row && c.lane === lane);
+    if (!card) throw new Error(`${lineage.id}: no T1 ${row} card on lane ${lane}`);
+    return card.id;
+  });
+}
+
+/**
+ * One reference per (weapon lineage x lane), plus one lane-less control each.
+ * Twenty rows: five lineages x (three lanes + control).
+ */
+export const LINEAGE_LANE_REFERENCES: readonly LineageLaneReference[] =
+  [...LINEAGE_DATABASE.values()]
+    .filter((lineage) => lineage.slot === "weapon")
+    .flatMap((lineage) => {
+      const ref = LINEAGE_REFERENCE_CLASS[lineage.id];
+      if (!ref) throw new Error(`no reference class for weapon lineage ${lineage.id}`);
+      const lanes: (PacketId | null)[] = [...lineage.lanes, null];
+      return lanes.map((lane) => ({
+        // NOT "control": `control` is itself a packet name, so the lane-less
+        // profile of the Hammer would have collided with its Control lane.
+        profileId: `lineage-${lineage.id}-${lane ?? "baseline"}`,
+        lineageId: lineage.id,
+        lane,
+        classRoot: ref.classRoot,
+        frameId: ref.frameId,
+        baseForm: ref.baseForm,
+        homeBiome: lineage.homeBiome,
+        cardIds: lane ? laneCardIds(lineage, lane) : [],
+        shardsUnobtainableAtT1: lane !== null && LANES_WITHOUT_T1_SHARD_SOURCE.includes(lane),
+      }));
+    });
+
+/**
+ * The lane reference as a tier-entry profile.
+ *
+ * Built from the canonical route of its class root so the permanent progression
+ * (mastery, recipes, runes, abilities) is the SAME manifest every other template
+ * uses, then overridden in exactly three places: the weapon is the lineage's
+ * base form, `lane` names the lane, and `lineages` declares the cards. The
+ * wallet is `clean`, because a lane comparison must not also be a wallet
+ * comparison.
+ */
+function laneReferenceProfile(reference: LineageLaneReference): TierEntryProfile {
+  const route = T1_BASELINE_ROUTES.find((r) => r.classRoot === reference.classRoot);
+  if (!route) throw new Error(`no canonical T1 baseline route for ${reference.classRoot}`);
+  const base = buildProfile(route, "clean");
+
+  // The reference wears the lineage's own base form. Whatever weapon the route
+  // finished T1 on stays in the bag: a character who crafted it still owns it,
+  // and dropping it would make the manifest claim essence was never spent.
+  const displaced = base.equipment.weapon;
+  const equipment: EquipmentMap = { ...base.equipment, weapon: reference.baseForm };
+  const inventory = [...new Set([
+    ...base.inventory.filter((id) => id !== reference.baseForm),
+    ...(displaced && displaced !== reference.baseForm ? [displaced] : []),
+  ])];
+
+  // The base form is carried at +0. Every lane profile of a lineage then differs
+  // ONLY in its cards, and the card's magnitude is not competing with an upgrade
+  // ladder that Phase 2 deletes for weapons anyway.
+  const itemUpgrades = { ...base.itemUpgrades, [reference.baseForm]: 0 };
+
+  return {
+    ...base,
+    id: reference.profileId,
+    lane: reference.lane ?? undefined,
+    equipment,
+    inventory,
+    itemUpgrades,
+    lineages: {
+      [reference.lineageId]: {
+        ownedCards: [...reference.cardIds],
+        active: Object.fromEntries(
+          reference.cardIds.map((cardId, index) => [T1_LANE_ROWS[index], cardId]),
+        ) as Partial<Record<RowKind, string>>,
+        ownedForms: [reference.baseForm],
+        wornForm: reference.baseForm,
+      },
+    },
+  };
+}
+
+/**
+ * Keyed by `LineageLaneReference.profileId`. Deliberately a SEPARATE map from
+ * `TIER_ENTRY_PROFILES`: that one is the T2-entry catalogue and its test asserts
+ * its exact size (one per canonical route x economy mode), a contract these
+ * profiles are not part of.
+ */
+export const LINEAGE_LANE_PROFILES = new Map<string, TierEntryProfile>(
+  LINEAGE_LANE_REFERENCES.map((reference) => [reference.profileId, laneReferenceProfile(reference)]),
+);
+
+export function laneReferenceFor(profileId: string): LineageLaneReference {
+  const reference = LINEAGE_LANE_REFERENCES.find((r) => r.profileId === profileId);
+  if (!reference) throw new Error(`unknown lane reference "${profileId}"`);
+  return reference;
+}
+
+/**
+ * The route steps a lane reference buys its band with, spliced into a live T1
+ * route after the step that crafts and equips the base form.
+ *
+ * `unlockCard` into an empty row already activates the card server-side, so the
+ * `setActive` steps are redundant for a pure lane — they are emitted anyway
+ * because they are the swap the playtest metric counts, and a route that states
+ * its active set cannot drift from the profile that declares it.
+ */
+export function lineageRouteSteps(reference: LineageLaneReference): RouteStep[] {
+  if (!reference.lane) return [];
+  const at = { kind: "biome" as const, biomeGroup: reference.homeBiome, tier: 1 };
+  return reference.cardIds.flatMap((cardId, index) => [
+    { type: "unlockCard" as const, lineageId: reference.lineageId, cardId, farmAt: at },
+    { type: "setActive" as const, lineageId: reference.lineageId, row: T1_LANE_ROWS[index], cardId },
+  ]);
 }

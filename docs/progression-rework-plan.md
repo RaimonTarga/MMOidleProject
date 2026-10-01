@@ -490,6 +490,108 @@ beyond the `mechanic-fired` seam the contract authorises.
 limitation is open). The client half — the tree panel, the `card-fx` handlers per
 `LineageFxKey`, and the stat-row trail — is the client session's.
 
+### Phase 1.5 progress note — bot profiles, the lane matrix, and lineage telemetry (2026-10-01)
+
+**Built.** All four deliverables. `pnpm typecheck` clean; the lineage suite (9/9, including
+two new files) plus the bot route / tier-entry / gameplay-telemetry / admin subsets pass.
+**No magnitude in `magnitudes.ts` was touched** — `shared/src/data/lineages/` is
+byte-identical to the Wave 1 merge, as §1.5 asks.
+
+- `bot/src/tierEntry/profiles.ts` — `LINEAGE_LANE_REFERENCES`, twenty rows: five weapon
+  lineages x (three lanes + one lane-less control). `TierEntryProfile` gained `lane` and
+  `lineages`; `applyTierEntryProfile` merges the declared cards onto the trees the held
+  forms open; `validateProfile` now pays the same gates a purchase pays. They are a
+  SEPARATE map from `TIER_ENTRY_PROFILES`, whose test asserts that catalogue's exact size.
+- `bot/src/route/types.ts` / `executor.ts` / `net/intents.ts` — `unlockCard` and
+  `setActive` steps. Prices come from the magnitude table at runtime, and the farm target
+  is the first T1 biome that can actually field a family dropping the card's lane, not the
+  lineage's home biome (finding 2 below). Never exercised against a live server — no
+  Docker in this session.
+- `server/bench/lineageLaneMatrix.ts` — the matrix. 20 profiles x 18 blends x 2 seeds,
+  90 s of sim per cell per seed, 45 min wall clock. `reports/progression-phase1/lane-matrix.md`.
+  `LANE_REPLAY=<lane-matrix.json>` rebuilds every table without re-measuring.
+- Telemetry — `lineage.card-unlocked` / `.card-swapped` / `.gate-paid` as their own
+  `GameplayPayload` kind, emitted from the four economy handlers.
+
+**Headline: no packet is inside the ±10% budget band, and Tempo is thirteen times
+Empowered.** Mean lane uplift over the lane-less control, averaged over all eighteen
+blends and over the lineages carrying the packet:
+
+| packet | lineages | mean uplift | x median | payoff fx fired | favouring T1 node |
+|---|---:|---:|---:|---:|---|
+| tempo | 3 | +16.7% | 2.03x | 1921 | `node-t1-mountain-03` |
+| engagement | 2 | +9.5% | 1.15x | 452 | **none** |
+| affliction | 2 | +9.2% | 1.11x | 4563 | `node-t1-swamp-01` |
+| control | 2 | +7.3% | 0.89x | 1016 | `node-t1-mountain-02` |
+| kill-chain | 3 | +4.5% | 0.55x | 838 | `node-t1-cave-03` |
+| empowered | 3 | +1.3% | 0.16x | 535 | `node-t1-forest-02` |
+
+Median +8.2%; band +7.4% to +9.1%. The `fx fired` column explains most of the ordering:
+Affliction's `poison-stack`/`hemorrhage` fire on EVERY hit, Tempo's echo every third,
+Empowered's once per class-mechanic firing, Engagement's once per pull. `PACKET_BUDGET` is
+a flat 1.0 for all eight, so it is currently paying a per-hit payoff and a per-pull payoff
+the same scalar. Tuning it is one column in one table; the numbers above are what to tune
+against.
+
+**Four findings the code forced, which the plan's sketch and §1.5's brief both assumed away.**
+
+1. **There are not five distinct encounter compositions per T1 biome.** `biomeTier:
+   input.tier` in `authoring.ts` means every T1 node fields only `monsterPoolByTier[1]` —
+   two mobs per biome — and every biome's third family debuts at biome tier 2, so
+   `resolveNodeBlend` drops it and rescales. The twenty-seven authored T1 nodes collapse to
+   **eighteen** distinct spawn cycles: 4 Plains, 4 Forest, 4 Mountain, 5 Cave, **1 Swamp**
+   (all six Swamp nodes are 100% Mire). Three authored blends per biome resolve to the same
+   two-family vector as another. A lane-versus-family contrast that needs the third family
+   does not exist yet and is reported unmeasurable, not filled in.
+2. **No T1 family drops the Engagement shard**, so the Rapier's and the Hammer's Lane C
+   cannot be bought from T1 kills at all — Plains Sky is its only family and its one mob
+   (savanna-hawk) debuts in the T2 pool. The harness credits those shards and says so per
+   row. `LANES_WITHOUT_T1_SHARD_SOURCE` is recomputed from the pools and the family table
+   by `laneProfiles.test.ts`, so the entry cannot outlive the gap.
+3. **`FamilyDefinition` has no `favours` field.** §9 asks every family to name the lane it
+   favours and the lane it punishes; the shipped table carries `drops` and `punishes`. The
+   matrix reads `drops` as favoured and says so. Either §9 or the family table has to move.
+4. **`kill` + `contagion` can never fire.** `lineageCards.ts`'s `kill` listener passes the
+   corpse as the target, with a comment saying contagion needs it; `applyPayoff`'s
+   `ON_TARGET` guard then rejects any target with `hp <= 0`. The Dagger's whole Kill-chain
+   payoff row (`dagger-t1-kill-chain-payoff`, Plaguebearer) fired **0 times in 36 cells**.
+   Left unfixed on purpose — it is a combat-runtime change in Wave 1's module — but it is
+   the first thing to fix after the merge.
+
+**Two instrument decisions, because §9 as written is not measurable on this reference set.**
+
+- The five lineages wear five different class roots, so absolute throughput is mostly the
+  class: the five lane-less controls span +20.9% to -13.5% of their own median before any
+  card is bought. Every reading is therefore given twice, absolute and control-relative.
+  Worse, §9's "±10% of the tier median on that lane's intended variant" compares rows
+  measured on DIFFERENT nodes, and the favoured nodes differ in mob HP by more than 2x
+  (forest-02's slimes give 14 kills/min where cave-03's lurkers give 6), so the absolute
+  band cannot be met by construction. The uplift reading is the usable one.
+- "Does the punished lane still clear?" uses §9's own ~70% floor rather than a death count:
+  the harness revives in place exactly as auto-combat does. Every punished lane cleared on
+  all eighteen blends.
+
+**Other things the bench found.** The Axe's Empowered lane pays exactly nothing on Plains
+and Swamp (fx 0, TTK byte-identical to its control) because `mechanic-fired` on the dot
+root needs the class DoT stack to reach max, and low-HP swarm mobs die first. Mountain's T1
+pool is now 50-80% ridge-archer on four of its five nodes after the family de-duplication,
+and every class's TTK there is 2-4x its Plains TTK. The T1 band is 120 essence and 11
+family kills per lane, against a farm rate of 15-60 kills per 90 s, so shards do not gate
+the T1 tree at all — except Engagement's, which gate it absolutely.
+
+**Where the numbers live.** `reports/progression-phase1/lane-matrix.md` (throughput and the
+two checks, all eighteen blends) and `lane-survival.md` (the same bench on five nodes, one
+per fieldable family, with the survival columns). Both carry their `.json` so
+`LANE_REPLAY` can rebuild the tables without re-measuring. At T1 with +N gear every build
+holds 93-99% mean HP while engaged, so survival has no headroom to discriminate: the only
+measurable defensive effect is Engagement's opening DR at -7% damage taken. The defensive
+lanes therefore cannot be validated at T1 on these reference builds; that is Phase 4's job
+with armor, charm and boots trees in hand.
+
+**Still open for §1.5.** The `unlockCard`/`setActive` route steps have never run against a
+live server, so the playtest metrics (time-to-first-card, swaps per session) are wired but
+unobserved. No `pnpm bench:balance` entry was added; the matrix is its own entry point.
+
 ---
 
 ## Phase 2 — Variants, shards, and removal of the old economy

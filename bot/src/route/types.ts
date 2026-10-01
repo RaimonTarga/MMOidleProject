@@ -1,4 +1,4 @@
-import type { EquipmentSlot, EquippedRule, EssenceType, EvolveMode, TierCheckpointKind, TutorialUpgradeTarget } from "@mmo-idle/shared";
+import type { EquipmentSlot, EquippedRule, EssenceType, EvolveMode, RowKind, TierCheckpointKind, TutorialUpgradeTarget } from "@mmo-idle/shared";
 import type { DesiredBuild } from "../loadout/loadout";
 
 /**
@@ -136,6 +136,24 @@ export type StepBody =
   | { type: "setAbilities"; techniques: string[]; guards: string[] }
   /** Craft a Rune forge recipe, which is how new rune FRAGMENTS are unlocked. */
   | { type: "craftRune"; recipeId: string; farmAt?: NodeRef }
+  /**
+   * Buy one lineage card, farming `farmAt` while the wallet falls short.
+   *
+   * Costs (essence AND the lane's shard) come from the magnitude table at
+   * runtime, exactly as `craft` reads `RECIPE_DATABASE` — a route never restates
+   * a price. The tree itself is opened by HOLDING the lineage's base form, so an
+   * `unlockCard` step is only legal after the `craft`/`equip` that took the slot.
+   *
+   * Buying a card into an EMPTY row also activates it (the server does that), so
+   * a route that only ever owns one card per row needs no `setActive` at all.
+   */
+  | { type: "unlockCard"; lineageId: string; cardId: string; farmAt?: NodeRef }
+  /**
+   * Choose which owned card is active for a row, or clear the row with `null`.
+   * Free and instant — this is the swap the lane matrix measures, and the step a
+   * route uses to state "own three, run one".
+   */
+  | { type: "setActive"; lineageId: string; row: RowKind; cardId: string | null }
   | { type: "attemptBoss"; biomeGroup: string; tier: number; maxAttempts?: number }
   | { type: "repeatUntil"; steps: RouteStep[]; until: Condition; maxIterations?: number }
   /**
