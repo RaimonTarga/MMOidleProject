@@ -268,6 +268,13 @@ function applyPayoff(site: PayoffSite, firing: LineageFiring): CardFxDraft | nul
     // on-target payoff needs something alive to land on.
     if (kind !== 'contagion' && target.hasHealth.hp <= 0) return null;
     const drawn = applyOnTarget(site, firing, target);
+    // CHAIN (design §4, the Tempo keystone): the echo keeps re-triggering until a
+    // hit misses or no fresh body is in reach. Once per APPLICATION and from the
+    // primary body only — the amplified neighbours below are the same payoff
+    // landing wider, not several echoes each entitled to their own chain. It
+    // takes the same pre-empowered basis the echo did, so one multiplier per hit
+    // still holds. Each link pushes its own `card-fx`.
+    if (drawn && kind === 'echo-hit') runChain(world, player, target, hitBasis(player, ctx));
     // An amplifier on the `targets` axis lands the SAME payoff on nearby bodies
     // (`composeAmplifiers`). Only once the primary actually landed: a payoff the
     // target refused must not quietly succeed on its neighbour instead.
@@ -408,13 +415,11 @@ function applyOnTarget(
         tags: ['lineage', firing.key],
       });
       if (outcome === 'skipped') return null;
-      // CHAIN (design §4, the Tempo keystone): the echo keeps re-triggering until
-      // a hit misses or no fresh body is in reach. Hung off the payoff rather than
-      // off a listener because the rule changes what THIS echo does, and it takes
-      // the same pre-empowered `basis` so one multiplier per hit still holds.
-      // Each link pushes its own `card-fx`; this application still pushes exactly
-      // one of its own, below.
-      runChain(world, player, target, basis);
+      // CHAIN is NOT started here. This function runs once per body an amplified
+      // payoff touches, so chaining from it gave a `targets`-amplified echo one
+      // full chain PER body — several times the authored ceiling, with each
+      // chain's own `struck` set letting them re-hit each other's targets.
+      // `applyPayoff` starts the one chain, on the primary body.
       return landed;
     }
 

@@ -32,6 +32,7 @@ import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import {
   getStationaryDrBonus,
+  stationaryIsMoving,
   stationaryMovementMs,
 } from '../../defense/mitigation/stationaryDr';
 import { getReactivePlatingStacks } from '../../defense/mitigation/reactivePlating';
@@ -66,8 +67,9 @@ export function immovableMovementGraceMs(player: PlayerEntity, base: number): nu
  */
 export function immovableHoldsPlating(player: PlayerEntity): boolean {
   if (!keystoneActive(player, LANE)) return false;
-  const moving = stationaryMovementMs(player.tracksCombat);
-  return moving > 0 && moving <= lineageUnit('immovableGraceMs');
+  const cs = player.tracksCombat;
+  if (!stationaryIsMoving(cs)) return false;
+  return stationaryMovementMs(cs) <= lineageUnit('immovableGraceMs');
 }
 
 /**

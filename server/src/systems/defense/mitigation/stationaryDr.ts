@@ -24,6 +24,10 @@ const PRESSURE_MS = 2000;
 // {@link stationaryMovementMs} because the Bulwark keystone's own grace reads the
 // same clock rather than keeping a second one.
 const MOVEMENT_MS_KEY = 'stationaryMovementMs';
+// Whether the player moved on the last tick, kept beside the clock so a reader
+// never has to infer it from `movementMs > 0` (which is false on the first tick
+// of movement when `dt` is 0).
+const MOVING_KEY = 'stationaryMoving';
 /**
  * Grace before a moving player starts shedding the stance: a step out of a boss
  * telegraph should not cost the whole ramp. The Bulwark keystone (Immovable)
@@ -44,6 +48,37 @@ export function registerStationaryDr(): void {
  */
 export function stationaryMovementMs(cs: TracksCombat): number {
   return getResource(cs, MOVEMENT_MS_KEY);
+}
+
+/** Whether this player moved on the last tick. See {@link MOVING_KEY}. */
+export function stationaryIsMoving(cs: TracksCombat): boolean {
+  return getResource(cs, MOVING_KEY) > 0;
+}
+
+/**
+ * Advance the movement clock. Runs for EVERY live player, every tick, whatever
+ * they are wearing.
+ *
+ * Deliberately not part of `runStationaryDr`: that step returns early when the
+ * player has no stationary-DR item, and the Bulwark keystone (Immovable) reads
+ * this same clock to hold plating stacks. While the clock lived inside the
+ * ramp, a build with no stationary-DR passive never advanced it — so Immovable's
+ * plating half did nothing — and a player who lost the passive mid-movement
+ * froze it inside the grace window, which held their plating stacks against the
+ * fade permanently.
+ */
+export function trackStationaryMovement(player: PlayerEntity, dt: number): void {
+  const cs = player.tracksCombat;
+  const x = player.hasPosition.current.x, y = player.hasPosition.current.y;
+  // Actual position changes also catch movement caused by knockback or pulls.
+  const displaced = getResource(cs, 'stationaryPositionKnown') > 0
+    && (x !== getResource(cs, 'stationaryLastX') || y !== getResource(cs, 'stationaryLastY'));
+  setResource(cs, 'stationaryPositionKnown', 1);
+  setResource(cs, 'stationaryLastX', x);
+  setResource(cs, 'stationaryLastY', y);
+  const moving = player.isMoving !== undefined || displaced;
+  setResource(cs, MOVING_KEY, moving ? 1 : 0);
+  setResource(cs, MOVEMENT_MS_KEY, moving ? getResource(cs, MOVEMENT_MS_KEY) + dt : 0);
 }
 
 /**
@@ -87,14 +122,11 @@ export function runStationaryDr(world: World, player: PlayerEntity, dt: number):
   const cs = player.tracksCombat;
   const prevRamp = getResource(cs, RAMP_KEY);
 
-  // Actual position changes also catch movement caused by knockback or pulls.
   const active = isPlayerActivelyInCombat(world, player) && isCooldownActive(cs, PRESSURE_CD);
-  const x=player.hasPosition.current.x,y=player.hasPosition.current.y;
-  const displaced=getResource(cs,'stationaryPositionKnown')>0 && (x!==getResource(cs,'stationaryLastX')||y!==getResource(cs,'stationaryLastY'));
-  setResource(cs,'stationaryPositionKnown',1);setResource(cs,'stationaryLastX',x);setResource(cs,'stationaryLastY',y);
-  const moving=player.isMoving!==undefined||displaced;
-  const movementMs=moving?getResource(cs,MOVEMENT_MS_KEY)+dt:0;
-  setResource(cs,MOVEMENT_MS_KEY,movementMs);
+  // The clock itself is advanced by `trackStationaryMovement`, which the defense
+  // tick runs for every player before this step.
+  const moving = stationaryIsMoving(cs);
+  const movementMs = stationaryMovementMs(cs);
   // Immovable (design §4) widens this grace, which is the whole of "stationary DR
   // persists 2 s after the player moves": inside it the ramp is held, not shed.
   const grace = immovableMovementGraceMs(player, MOVEMENT_GRACE_MS);

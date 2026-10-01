@@ -234,14 +234,31 @@ function validateBiomeCoverage(violations: string[]): void {
         (node) => node.biomeGroup === biomeGroup,
       );
       // A blend-authored biome that has dropped `modifier` outright (T1,
-      // Phase 2b) gets its node count checked by `validateBlendCoverage`
-      // (every family reachable) and the per-tier total in
-      // `validateCountSnapshot` instead of a per-modifier tally here. A
-      // DUAL-authored blended biome (T2, both fields still present) keeps
-      // the modifier tally below same as any other biome.
+      // Phase 2b) cannot be tallied per modifier. `validateBlendCoverage`
+      // still checks that every family is reachable, but node COUNT was what
+      // the modifier tally pinned against the hand-cut region mask, and the
+      // per-tier total in `validateCountSnapshot` cannot see a cell moved from
+      // one biome to another — the two errors cancel. So the count is pinned
+      // here instead, per biome. A DUAL-authored blended biome (T2, both fields
+      // still present) keeps the modifier tally below like any other biome.
       const modifierDropped =
         biomeNormals.length > 0 &&
         biomeNormals.every((node) => node.blend && !node.modifier);
+      if (modifierDropped) {
+        const tierTotal = EXPECTED_NORMAL_COUNTS[tier];
+        const perBiome = tierTotal === undefined ? undefined : tierTotal / expectedBiomes.length;
+        if (perBiome === undefined || !Number.isInteger(perBiome)) {
+          // Not a silent pass: a tier whose blend-authored biomes are not all
+          // the same size needs an authored per-biome expectation here.
+          violations.push(
+            `T${tier} ${biomeGroup}: dropped 'modifier' but T${tier}'s ${tierTotal ?? '?'} normal nodes do not divide evenly across ${expectedBiomes.length} biomes — add an explicit per-biome count`,
+          );
+        } else if (biomeNormals.length !== perBiome) {
+          violations.push(
+            `T${tier} ${biomeGroup}: expected ${perBiome} normal nodes, found ${biomeNormals.length} (the region mask over- or under-allocated this biome)`,
+          );
+        }
+      }
       if (!modifierDropped) {
         const allowed = NODE_MODIFIER_FAMILIES.filter(
           (modifier) => !(MODIFIER_BANS[biomeGroup] ?? []).includes(modifier),

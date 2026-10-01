@@ -67,20 +67,6 @@ function spend(world: World, entity: PlayerEntity, cost: LineageCost): void {
   markSliceDirty(world, entity, 'tracksProgression');
 }
 
-/** The player's nodes for an ability, materialised so a mutate can edit them. */
-function ensureProgress(
-  world: World,
-  entity: PlayerEntity,
-  abilityId: string,
-): AbilityNodeProgress {
-  const existing = entity.tracksProgression.abilityNodes?.[abilityId];
-  if (existing) return existing;
-  mutateSlice(world, entity, 'tracksProgression', (prog) => {
-    prog.abilityNodes = { ...prog.abilityNodes, [abilityId]: { owned: [], active: {} } };
-  });
-  return entity.tracksProgression.abilityNodes![abilityId]!;
-}
-
 /** Buy a node. Permanent, and the only one of the two that costs materials. */
 export function unlockAbilityNode(
   world: World,
@@ -93,7 +79,7 @@ export function unlockAbilityNode(
   const option = tree.options.find((o) => o.id === optionId);
   if (!option) return fail(abilityId, 'unlockNode', 'Unknown node.');
 
-  const progress = ensureProgress(world, entity, abilityId);
+  const progress = abilityNodeProgressFor(entity.tracksProgression.abilityNodes, abilityId);
   const wallet = walletFor(entity);
   const check = checkUnlockAbilityNode({ option, progress, wallet });
   if (!check.ok) return fail(abilityId, 'unlockNode', check.reason ?? 'Cannot buy that node.');
@@ -101,7 +87,9 @@ export function unlockAbilityNode(
   if (!wallet.isTestRoom) spend(world, entity, resolveAbilityNodeOption(option).cost);
 
   mutateSlice(world, entity, 'tracksProgression', (prog) => {
-    const current = prog.abilityNodes![abilityId]!;
+    // Materialised here and nowhere earlier: a refused purchase must not leave a
+    // progress entry behind, because the slice is broadcast and persisted.
+    const current = abilityNodeProgressFor(prog.abilityNodes, abilityId);
     const owned = [...current.owned, optionId];
     // A row the player has nothing in yet activates what they just bought; a row
     // already filled is left alone, because swapping is their choice.

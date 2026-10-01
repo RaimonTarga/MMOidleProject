@@ -37,6 +37,16 @@ function recordConduitAdapter(
 export interface FormationTechniqueDelivery {
   state: HasFormationTechnique;
   magnitudeWeight: number;
+  /**
+   * True on the claim that empties the snapshot, i.e. the one that completes the
+   * formation's single armed Technique.
+   *
+   * One armed Technique becomes one delivery per living summon, and the rider's
+   * damage is divided by `magnitudeWeight` across them. Anything that must
+   * happen ONCE per Technique — an ability node's packet payoff (design §19) —
+   * keys off this instead, or it would pay out once per summon at full value.
+   */
+  isFinalDelivery: boolean;
 }
 
 /**
@@ -115,12 +125,14 @@ export function consumeFormationTechniqueDelivery(
   if (index < 0) return null;
 
   state.pendingEntityIds.splice(index, 1);
+  const isFinalDelivery = state.pendingEntityIds.length === 0;
   const delivery = {
     state,
     magnitudeWeight: state.weightByEntityId[formation.physicalEntityId] ?? 0,
+    isFinalDelivery,
   };
   recordConduitAdapter(world, owner, 'conduit-delivery');
-  if (state.pendingEntityIds.length === 0) {
+  if (isFinalDelivery) {
     detachComponent(world, owner, 'hasFormationTechnique');
   }
   return delivery;

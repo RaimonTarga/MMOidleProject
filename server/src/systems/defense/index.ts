@@ -10,7 +10,7 @@ import { registerHitToDot, runDebtDrain } from "./mitigation/hitToDot";
 import { registerDamageAbsorb, runAbsorbDrain } from "./regen/damageAbsorb";
 import { registerRecoveryOnKill } from "./regen/recoveryOnKill";
 import { runRecovery, resetRecoveryRamp } from "./regen/recovery";
-import { registerStationaryDr, runStationaryDr } from "./mitigation/stationaryDr";
+import { registerStationaryDr, runStationaryDr, trackStationaryMovement } from "./mitigation/stationaryDr";
 import { registerReactivePlating, runReactivePlating } from "./mitigation/reactivePlating";
 import {
   registerBrambleReflect,
@@ -92,6 +92,9 @@ export function updateDefensiveSystems(
     // all activate a fraction of the same rate, so they must not be applied
     // separately (that is what made them independent %-maxHp heals before).
     runRecovery(world, player, dt, inCombat, isPlayerInHazardousNodeFeature(world, player));
+    // Before the ramp, and unconditionally: the Bulwark keystone reads this clock
+    // too, and the ramp itself returns early for a player wearing no stance item.
+    trackStationaryMovement(player, dt);
     runStationaryDr(world, player, dt);
     runReactivePlating(world, player, dt);
     runBramblePlating(world, player);

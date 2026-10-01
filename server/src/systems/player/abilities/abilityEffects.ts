@@ -396,10 +396,18 @@ function applyTechniqueRider(
   // because this is the one place every armed shape — a plain rider, a Conduit
   // formation delivery, a Charge's landing blow — actually lands. An armed
   // charge the fight never consumed pays nothing, which is the point of "lands".
-  onAbilityNodeTechniqueLanded(world, ctx.attacker, ability, {
-    ctx,
-    target: ctx.defender,
-  });
+  //
+  // A formation Technique reaches this function once per living summon, each
+  // carrying a share of one armed payload, so the node keys off the claim that
+  // completes it. Firing per delivery paid the packet payoff N times at full
+  // magnitude while the rider's own damage was weight-divided, against the
+  // "ONCE PER LANDING" contract in `combat/abilityNodes.ts`.
+  if (!formationDelivery || formationDelivery.isFinalDelivery) {
+    onAbilityNodeTechniqueLanded(world, ctx.attacker, ability, {
+      ctx,
+      target: ctx.defender,
+    });
+  }
 
   const effect = techniqueEffect(ctx.attacker, ability);
   const formationBasis = formationDelivery
