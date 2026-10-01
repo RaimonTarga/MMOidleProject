@@ -35,7 +35,7 @@ import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import { isHardControlled } from "../../combat/status/playerHardControl";
 import { setEntityMotion, stopEntity } from "../../world/movement";
 import { startTechniqueCooldown } from "./abilityCooldowns";
-import { onAbilityNodeTechniqueLanded } from "../../combat/abilityNodes";
+import { onTechniqueResolved } from "../../combat/techniqueResolved";
 import {
   castFootprintRadius,
   resolveCastPayload,
@@ -211,9 +211,9 @@ export function updateAbilityCasts(world: World, now: number): void {
       if (now < casting.endsAt) continue;
       detachComponent(world, player, "isCastingAbility");
       resolveSelfCastPayload(world, player, ability);
-      // The ability node fires on the RESOLVE, never on the begin: an aborted
-      // wind-up costs the player nothing, so it must pay them nothing either.
-      onAbilityNodeTechniqueLanded(world, player, ability);
+      // Everything hung off a Technique fires on the RESOLVE, never on the begin:
+      // an aborted wind-up costs the player nothing, so it pays them nothing.
+      onTechniqueResolved(world, player, ability);
       startTechniqueCooldown(world, player, ability);
       world.pushEvent(player.hasPosition.nodeId, {
         kind: "player-cast-end",
@@ -258,7 +258,7 @@ export function updateAbilityCasts(world: World, now: number): void {
       }
     } else {
       resolveCastPayload(world, player, ability, target);
-      onAbilityNodeTechniqueLanded(world, player, ability, { target });
+      onTechniqueResolved(world, player, ability, { target });
     }
     startTechniqueCooldown(world, player, ability);
     world.pushEvent(player.hasPosition.nodeId, {

@@ -4,12 +4,12 @@
  * Plan: `docs/progression-rework-plan.md` §1.3 and the "Phase 1c contract"
  * section. Design authority: `design_docs/progression-rework-design.md` §6–§8.
  *
- * WHAT THIS IS. A lineage card is data over a closed vocabulary: ten trigger
- * kinds and fifteen payoff kinds (design §6). This file is the whole of that
- * vocabulary's implementation — ONE listener per trigger kind, ONE dispatch per
- * payoff kind, every payoff routed to a hook that already existed. Adding a card
- * adds no code here, and a card that would need code is a design bug the card
- * changes to answer.
+ * WHAT THIS IS. A lineage card is data over a closed vocabulary: eleven trigger
+ * kinds and seventeen payoff kinds (design §6, widened by §22's Technique
+ * packet). This file is the whole of that vocabulary's implementation — ONE
+ * listener per trigger kind, ONE dispatch per payoff kind, every payoff routed to
+ * a hook that already existed. Adding a card adds no code here, and a card that
+ * would need code is a design bug the card changes to answer.
  *
  * THE THREE RULES IT ENFORCES.
  *
@@ -83,6 +83,7 @@ import { copyPlayerDotOnto } from '../player/abilities/abilityAffliction';
 import { cleansePlayerAfflictions } from './status/cleanse';
 import { defineBuff } from './buffs/descriptor';
 import { registerKeystones, runChain } from './keystones';
+import { abilityCooldownKey } from '../player/abilities/abilityCooldowns';
 
 // ── Authored units ───────────────────────────────────────────────────────────
 //
@@ -350,6 +351,29 @@ function applyPayoff(site: PayoffSite, firing: LineageFiring): CardFxDraft | nul
       return { fx: firing.fx };
     }
 
+    case 'technique-refund': {
+      // The lane pays in READINESS, not in damage (design §22). A share off what
+      // is LEFT of each Technique's cooldown rather than off its full length: it
+      // is self-limiting (a nearly-ready Technique gains almost nothing, so the
+      // payoff cannot bank value), it needs no ability lookup, and it is the one
+      // reading under which an ability node's "landing this ability refunds part
+      // of its own cooldown" is true — the cooldown that is running when the node
+      // fires IS the ability's own.
+      //
+      // Nothing to refund means nothing happened, so no effect is drawn.
+      const refunded = refundTechniqueCooldowns(player, magnitude);
+      return refunded ? { fx: firing.fx } : null;
+    }
+
+    case 'technique-window':
+      // The window itself is the status effect, exactly as `damage-window`'s is,
+      // so the HUD clock and the mechanic can never disagree about how long it
+      // has left. It is SPENT by the next Technique that resolves on an exchange
+      // — see `consumeTechniqueWindow` — and folds into
+      // `ctx.metadata.empoweredMultiplier` there, never as a second layer.
+      applyTimedSelf(player.tracksCombat, kind, magnitude, durationMs, sourceId);
+      return { fx: firing.fx };
+
     default:
       return null;
   }
@@ -551,6 +575,69 @@ function applyTimedSelf(
   return effect;
 }
 
+// ── The Technique lane's two payoffs (design §22) ────────────────────────────
+
+/**
+ * Take `share` off what is LEFT of every attuned Technique's cooldown. Returns
+ * true when at least one cooldown actually moved, so a payoff that found nothing
+ * running draws no effect claiming it did.
+ *
+ * Attuned rather than "every Technique the player knows": a cooldown that no
+ * loadout can fire is not readiness, and the attuned pair is what the Rune board
+ * is actually firing. The Tempo floor key (`abilityTempoFloorKey`) is deliberately
+ * untouched — it answers "how far down may Tempo push the cooldown", which is a
+ * different question from "how long until ready", and refunding it would let the
+ * lane drive an ability past its own minimum cycle.
+ */
+function refundTechniqueCooldowns(player: PlayerEntity, share: number): boolean {
+  const fraction = Math.min(1, Math.max(0, share));
+  if (fraction <= 0) return false;
+  const cs = player.tracksCombat;
+  let refunded = false;
+  for (const abilityId of player.tracksProgression.attunedAbilities.techniques) {
+    const key = abilityCooldownKey(abilityId);
+    const remaining = getCooldown(cs, key);
+    if (remaining <= 0) continue;
+    setCooldown(cs, key, remaining * (1 - fraction));
+    refunded = true;
+  }
+  return refunded;
+}
+
+/**
+ * Spend a live `technique-window` on the Technique that is landing, folding it
+ * into `ctx.metadata.empoweredMultiplier`.
+ *
+ * ONE MULTIPLIER PER HIT (design §6). This is the same fold `damage-window`'s
+ * reader does, and for the same reason: a Technique rider recovers its
+ * pre-multiplier basis by DIVIDING by `empoweredMultiplier`
+ * (`abilityEffects.addEmpoweredDamage`), so writing the window there is what
+ * makes the window and the rider ADD instead of compounding. A second metadata
+ * key, or a bare `ctx.damage` scale, would compound.
+ *
+ * Consumed rather than held: design §22 says the window empowers "the next
+ * Technique", so it closes on the first one that uses it. A Technique with no
+ * exchange to ride (a self-cast, a cast payload) leaves the window standing —
+ * there is no hit for it to empower, and silently eating it would be the worst
+ * of both.
+ *
+ * Called from the one Technique resolution seam, `techniqueResolved.ts`.
+ */
+export function consumeTechniqueWindow(player: PlayerEntity, ctx: CombatContext): number {
+  const cs = player.tracksCombat;
+  const bonus = windowMagnitude(cs, 'technique-window');
+  if (bonus <= 0) return 0;
+  const effect = getStatusEffect(cs, lineageStatusEffectId('technique-window'));
+  if (effect) {
+    effect.remainingMs = 0;
+    effect.data.magnitude = 0;
+  }
+  ctx.damage = Math.floor(ctx.damage * (1 + bonus));
+  ctx.metadata['empoweredMultiplier'] =
+    Number(ctx.metadata['empoweredMultiplier'] ?? 1) * (1 + bonus);
+  return bonus;
+}
+
 // ── One card-fx per application ──────────────────────────────────────────────
 
 interface CardFxDraft {
@@ -586,8 +673,12 @@ function fire(site: PayoffSite, firings: readonly LineageFiring[]): number {
 // ── Registration: one listener per trigger kind ──────────────────────────────
 
 /**
- * Register the ten trigger listeners. Called from `initCombatSystems()`, so the
- * live server and the balance bench see an identical card runtime.
+ * Register the event-driven trigger listeners. Called from `initCombatSystems()`,
+ * so the live server and the balance bench see an identical card runtime.
+ *
+ * Three trigger kinds are NOT listeners and so are not here: `guard-cast` and
+ * `technique-cast` are called from their abilities' own resolution seams, and
+ * `standing`/`pulse` answer to the clock in `updateLineageCards`.
  */
 export function registerLineageCards(): void {
   registerHitNth();
@@ -596,10 +687,10 @@ export function registerLineageCards(): void {
   registerKill();
   registerEvade();
   registerWindowReaders();
-  // The eight keystones (design §4). Registered from here, with the rows they
-  // belong to, so the live server and the balance bench can never see a different
-  // set of rules — the same reason every other combat listener lives behind one
-  // bootstrap call.
+  // The keystones (design §4, nine of them since §22's Technique packet).
+  // Registered from here, with the rows they belong to, so the live server and the
+  // balance bench can never see a different set of rules — the same reason every
+  // other combat listener lives behind one bootstrap call.
   registerKeystones();
 }
 
@@ -789,6 +880,29 @@ export function onLineageGuardCast(world: World, player: PlayerEntity): void {
   fire({ world, player, target: targetFor(world, player) }, firings);
 }
 
+/**
+ * `technique-cast` — a Technique resolved (design §22).
+ *
+ * Called from `onTechniqueResolved` in `combat/techniqueResolved.ts`, the one
+ * seam every Technique shape's resolution passes through, rather than from a
+ * listener: an armed Technique rides an `onHit`, a cast resolves on a timer and a
+ * reposition resolves the moment it fires, so there is no single combat event to
+ * listen for. That seam is also what keeps this to ONE firing per cast and to
+ * Techniques alone — a Guard has `guard-cast`, and an offensive lane must never
+ * fire off a defensive one.
+ */
+export function onLineageTechniqueCast(
+  world: World,
+  player: PlayerEntity,
+  site: { ctx?: CombatContext; target?: MonsterEntity } = {},
+): void {
+  if (!hasLineageRuntime(player)) return;
+  const firings = firingsFor(player, 'technique-cast');
+  if (firings.length === 0) return;
+  const target = site.target ?? targetFor(world, player, site.ctx);
+  fire({ world, player, ctx: site.ctx, target }, firings);
+}
+
 // ── The dispatcher, for payoff sources that are not lineage cards ────────────
 
 /**
@@ -950,6 +1064,7 @@ const WINDOW_LANE: Partial<Record<PayoffKind, PacketId>> = {
   'engagement-dr': 'engagement',
   'ward': 'bulwark',
   'plating-stack': 'bulwark',
+  'technique-window': 'technique',
 };
 
 function windowColor(kind: PayoffKind): string {
@@ -1001,4 +1116,5 @@ export const LINEAGE_BUFFS = [
   defineWindowBuff('engagement-dr', 'lineage-guard', 'Brace', 'Damage reduction'),
   defineWindowBuff('ward', 'lineage-ward', 'Shell', 'Absorb'),
   defineWindowBuff('plating-stack', 'lineage-plate', 'Plate', 'Plating per stack'),
+  defineWindowBuff('technique-window', 'lineage-technique', 'Form', 'Next Technique'),
 ] as const;

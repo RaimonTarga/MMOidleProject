@@ -63,7 +63,7 @@ import type {
 import type { World } from "../../../world/World";
 import type { WorldLogActor } from "@mmo-idle/shared";
 import { techniquePowerPctFor } from "./abilityKata";
-import { onAbilityNodeTechniqueLanded } from "../../combat/abilityNodes";
+import { onTechniqueResolved } from "../../combat/techniqueResolved";
 
 /** Reporting-only: Technique/Sweep adapter contribution for combat-run diagnostics. */
 function recordTechniqueAdapter(
@@ -392,18 +392,22 @@ function applyTechniqueRider(
   // Riders act on enemy-facing hits only.
   if (ctx.attackerType !== "player" || ctx.defenderType !== "monster") return;
 
-  // The ability node (design §19) fires HERE rather than in the listener above,
-  // because this is the one place every armed shape — a plain rider, a Conduit
-  // formation delivery, a Charge's landing blow — actually lands. An armed
-  // charge the fight never consumed pays nothing, which is the point of "lands".
+  // The Technique resolution seam (`combat/techniqueResolved.ts`) fires HERE
+  // rather than in the listener above, because this is the one place every armed
+  // shape — a plain rider, a Conduit formation delivery, a Charge's landing blow —
+  // actually lands. An armed charge the fight never consumed pays nothing, which
+  // is the point of "lands". It runs BEFORE `formationBasis` is read below, so a
+  // `technique-window` it spends is already folded into `empoweredMultiplier` when
+  // `addEmpoweredDamage` divides by it — which is what keeps the window and the
+  // rider additive instead of compounding.
   //
   // A formation Technique reaches this function once per living summon, each
-  // carrying a share of one armed payload, so the node keys off the claim that
+  // carrying a share of one armed payload, so it keys off the claim that
   // completes it. Firing per delivery paid the packet payoff N times at full
   // magnitude while the rider's own damage was weight-divided, against the
-  // "ONCE PER LANDING" contract in `combat/abilityNodes.ts`.
+  // "ONCE PER LANDING" contract in `combat/techniqueResolved.ts`.
   if (!formationDelivery || formationDelivery.isFinalDelivery) {
-    onAbilityNodeTechniqueLanded(world, ctx.attacker, ability, {
+    onTechniqueResolved(world, ctx.attacker, ability, {
       ctx,
       target: ctx.defender,
     });

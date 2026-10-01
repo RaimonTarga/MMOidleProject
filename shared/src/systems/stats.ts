@@ -347,6 +347,16 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   for (const [stat, value] of Object.entries(lineageEffects.statEffects)) {
     if (stat === 'attackSpeedPct' || stat === 'attackPct' || stat === 'evasion') continue;
     if (stat === 'damageReduction') { itemDr += value; continue; }
+    // Technique power is the existing `technique.power-pct` PASSIVE, not an
+    // `ItemStats` field (design §22): the Technique lane scales the same number
+    // the Desert recipes author and `techniquePowerPctFor` reads, so a stat row
+    // ADDS into that passive rather than inventing a parallel stat for the
+    // ability code to miss. Additive and applied once, like every other `*Pct`.
+    if (stat === 'techniquePowerPct') {
+      p.usesSkills.passives['technique.power-pct'] =
+        (p.usesSkills.passives['technique.power-pct'] ?? 0) + value;
+      continue;
+    }
     applyStatModToTarget(p, stat, value);
   }
 

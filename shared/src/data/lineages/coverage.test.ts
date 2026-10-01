@@ -49,6 +49,7 @@ import { KEYSTONE_DEFINITIONS, keystoneDefinition } from './keystones';
 const PAYOFF_IS_TIMED: ReadonlySet<string> = new Set([
   'vulnerability', 'plating-shred', 'hemorrhage', 'poison-stack', 'slow', 'stun',
   'damage-window', 'speed-window', 'recovery-window', 'engagement-dr', 'ward',
+  'technique-window',
 ]);
 import type { LineageFxKey, PacketId } from './types';
 
@@ -248,9 +249,46 @@ for (const [key, lineage] of LINEAGE_DATABASE) {
 const SLOTS_AUTHORED = [...new Set([...LINEAGE_DATABASE.values()].map((l) => l.slot))];
 const NON_WEAPON_SLOTS_AUTHORED = SLOTS_AUTHORED.filter((slot) => slot !== 'weapon');
 
+/**
+ * Packets that do not meet the two-lineages rule yet, and the gap each one is.
+ *
+ * `technique` is the ninth packet (design §22), pulled into run 4 so the playtest
+ * sees the real wallet. §22 moves exactly ONE lineage onto it — the Plains
+ * Broadsword, whose Desert forms crown it — so it is on one weapon lineage and
+ * no non-weapon one, and neither gap is this task's to fill:
+ *
+ *  - a second WEAPON carrier means taking a lane off a lineage whose own coverage
+ *    is already at the floor (after §22, Tempo, Affliction, Control and
+ *    Engagement are each on exactly two), i.e. a new design call, not an
+ *    authoring one;
+ *  - a NON-WEAPON carrier means answering "what does Technique look like on the
+ *    defensive face", which is the ability pass's roster audit (§22.1) — the
+ *    same pass that decides whether the lane keeps `packetDefaultFace`'s
+ *    provisional `avoid`.
+ *
+ * The loops below FAIL when a listed packet HAS met the rule, so an entry can
+ * never outlive its gap — the same self-cleaning shape as `UNCROWNED_LANES`.
+ */
+const WEAPON_COVERAGE_BELOW_TWO = new Set<PacketId>(['technique']);
+const NON_WEAPON_COVERAGE_BELOW_TWO = new Set<PacketId>(['technique']);
+
 if (SLOTS_AUTHORED.includes('weapon')) {
   for (const packet of WEAPON_PACKET_IDS) {
     const carriers = lineagesWithLane('weapon', packet);
+    if (WEAPON_COVERAGE_BELOW_TWO.has(packet)) {
+      check(
+        carriers.length < 2,
+        `WEAPON_COVERAGE_BELOW_TWO lists '${packet}', which is now on ${carriers.length} weapon ` +
+        'lineages — remove the entry',
+      );
+      // A weapon packet with no carrier at all is unreachable, which is a
+      // different and worse bug than a thin one.
+      check(
+        carriers.length >= 1,
+        `coverage: weapon packet '${packet}' is on no weapon lineage at all`,
+      );
+      continue;
+    }
     check(
       carriers.length >= 2,
       `coverage: packet '${packet}' is on ${carriers.length} weapon lineage(s); the rule is at least two`,
@@ -261,6 +299,14 @@ if (SLOTS_AUTHORED.includes('weapon')) {
 if (NON_WEAPON_SLOTS_AUTHORED.length > 0) {
   for (const packet of PACKET_IDS) {
     const carriers = NON_WEAPON_SLOTS_AUTHORED.flatMap((slot) => lineagesWithLane(slot, packet));
+    if (NON_WEAPON_COVERAGE_BELOW_TWO.has(packet)) {
+      check(
+        carriers.length < 2,
+        `NON_WEAPON_COVERAGE_BELOW_TWO lists '${packet}', which is now on ${carriers.length} ` +
+        'non-weapon lineages — remove the entry',
+      );
+      continue;
+    }
     check(
       carriers.length >= 2,
       `coverage: packet '${packet}' is on ${carriers.length} non-weapon lineage(s) across ` +

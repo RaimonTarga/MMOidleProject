@@ -87,8 +87,11 @@ const STAT_LABEL: Record<LineageStatKey, string> = {
   attack: 'Attack', onHitDamage: 'On-hit damage', plating: 'Plating',
   damageReduction: 'Damage reduction', evasion: 'Evasion', maxHp: 'Max HP',
   recovery: 'Recovery', speed: 'Move speed', attackPct: 'Attack', attackSpeedPct: 'Attack speed',
+  techniquePowerPct: 'Technique power',
 };
-const PCT_STAT_KEYS = new Set<LineageStatKey>(['damageReduction', 'evasion', 'attackPct', 'attackSpeedPct']);
+const PCT_STAT_KEYS = new Set<LineageStatKey>([
+  'damageReduction', 'evasion', 'attackPct', 'attackSpeedPct', 'techniquePowerPct',
+]);
 const BINARY_PAYOFF_KINDS = new Set<string>(['stun', 'cleanse']);
 
 function round1(n: number): number {

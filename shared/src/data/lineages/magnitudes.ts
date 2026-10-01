@@ -107,6 +107,9 @@ export const PACKET_BUDGET: Record<PacketId, number> = {
   'engagement': 1,
   'bulwark': 1,
   'barrier-tempo': 1,
+  // The ninth packet enters at parity like every other one (design §22 ships it,
+  // §9 decides what it is worth, and only the bench may move this number).
+  'technique': 1,
 };
 
 /**
@@ -136,11 +139,17 @@ export const STAT_UNIT: Record<LineageStatKey, number> = {
   speed: 4,
   attackPct: 0.05,
   attackSpeedPct: 0.06,
+  // Technique power multiplies the Technique's own damage and nothing else
+  // (`abilities.ts` applies `technique.power-pct` only when
+  // `ability.slot === 'technique'`), so one row of it buys less of the player's
+  // total output than a row of `attackPct` does — which is why the unit is twice
+  // as large and not the same number. PROVISIONAL, like every other unit here.
+  techniquePowerPct: 0.1,
 };
 
 /** Stats that are fractions and keep three decimals; everything else is an integer. */
 const FRACTIONAL_STATS: ReadonlySet<LineageStatKey> = new Set<LineageStatKey>([
-  'damageReduction', 'evasion', 'attackPct', 'attackSpeedPct',
+  'damageReduction', 'evasion', 'attackPct', 'attackSpeedPct', 'techniquePowerPct',
 ]);
 
 export function quantizeStat(key: LineageStatKey, value: number): number {
@@ -180,6 +189,8 @@ export interface PayoffUnit {
  *   plating-stack   fraction of base plating gained per stack
  *   engagement-dr   fraction of damage reduced during the opening
  *   contagion       share of the source's stacks copied to a nearby target
+ *   technique-refund fraction taken off the REMAINING cooldown of each Technique
+ *   technique-window fraction the next Technique's hit is empowered by
  */
 const payoffUnitEntries: [PayoffKind, PayoffUnit][] = [
   ['vulnerability',   { magnitude: 0.12, durationMs: 4000, fractional: true }],
@@ -197,6 +208,21 @@ const payoffUnitEntries: [PayoffKind, PayoffUnit][] = [
   ['plating-stack',   { magnitude: 0.15, durationMs: 4000, fractional: true }],
   ['engagement-dr',   { magnitude: 0.15, durationMs: 3000, fractional: true }],
   ['contagion',       { magnitude: 0.30, durationMs: 4000, fractional: true }],
+  // The Technique packet (design §22). Both units are PER-PULL totals like every
+  // other row here, so they are divided by `TRIGGER_FIRES_PER_PULL`'s
+  // `technique-cast` figure before a card sees them.
+  //
+  // `technique-refund` is pitched at the echo's per-pull unit: across one pull a
+  // Technique build hands itself back about a third of a Technique cooldown. It
+  // carries NO duration — a refund happens and is over, and the amplifier axis
+  // `nodePayoffAxis` picks for it is `magnitude` for exactly that reason.
+  //
+  // `technique-window` is twice `damage-window`'s per-pull unit on purpose. A
+  // `damage-window` empowers EVERY hit that lands inside it; this one empowers
+  // the next Technique and then closes, so the same per-pull total would be a
+  // fraction of the value at the same price.
+  ['technique-refund', { magnitude: 0.35, fractional: true }],
+  ['technique-window', { magnitude: 0.30, durationMs: 4000, fractional: true }],
 ];
 
 export const PAYOFF_UNIT: Map<PayoffKind, PayoffUnit> = new Map<PayoffKind, PayoffUnit>(payoffUnitEntries);
@@ -215,6 +241,7 @@ export const TRIGGER_N_BY_LANE: Record<PacketId, number> = {
   'engagement': 1,
   'bulwark': 1,
   'barrier-tempo': 1,
+  'technique': 1,
 };
 
 /**
@@ -264,6 +291,18 @@ export const TRIGGER_FIRES_PER_PULL: Record<TriggerKind, number> = {
   'standing': 4,
   'pulse': 3,
   'barrier-break': 1,
+  // `technique-cast` (design §22), from the average Technique cooldown at
+  // REFERENCE WIRING rather than from a guess. The reference wiring fires every
+  // attuned Technique off cooldown while in combat (`abilityWiring.ts`), a T1
+  // reference loadout carries one Technique slot, and the profile the lane matrix
+  // measures the Broadsword with attunes Sweep — 6000 ms at its T1 rank. A
+  // {@link REFERENCE_PULL} is 12 s, so 12000 / 6000 = 2.
+  //
+  // The whole T1 Technique roster averages ~9.7 s, which would read as 1.2; the
+  // reference loadout's own pick is what the bench actually measures, so that is
+  // the figure authored. Revisit when the lane matrix gains a second Technique
+  // slot (design §18.10's frames column is the same kind of gap).
+  'technique-cast': 2,
 };
 
 /** Expected fires per pull for one resolved trigger. Never below 1. */
