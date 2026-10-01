@@ -1,4 +1,4 @@
-import { baseRecoveryForTier } from '@mmo-idle/shared';
+import { baseRecoveryForTier, poolFactorForTier } from '@mmo-idle/shared';
 import {
   tierEntryProfileFromT1Snapshot,
   type T1CharacterSnapshot,
@@ -227,8 +227,15 @@ const earnedProfile = tierEntryProfileFromT1Snapshot({ schemaVersion: 1,
 const earnedResult = applyTierEntryProfile(world, player, earnedProfile);
 assert(earnedResult.success, earnedResult.reason ?? "actual V1d state imports");
 // Rebuilt from the V1d gear under the current armor data (164 before the 2026-09-25 defense rebudget).
-const EARNED_MAX_HP = 166;
-assert(player.hasHealth.maxHp === EARNED_MAX_HP, "actual prepared defensive stats reconstruct without a frame");
+// The pin is the pool the GEAR buys. The per-tier pool raise (design §20) lands on
+// top of it at recalc, so it is read from the config rather than baked in again; the
+// tolerance is the second rounding the class affinity fold applies after the raise.
+const EARNED_UNRAISED_MAX_HP = 166;
+const EARNED_MAX_HP = player.hasHealth.maxHp;
+assert(
+  Math.abs(EARNED_MAX_HP - EARNED_UNRAISED_MAX_HP * poolFactorForTier(1)) <= 1,
+  `actual prepared defensive stats reconstruct without a frame (got ${EARNED_MAX_HP})`,
+);
 assert(JSON.stringify(player.holdsInventory.equipment) === JSON.stringify(earnedProfile.equipment), "earned equipment survives import");
 assert(JSON.stringify(player.tracksProgression.runesEquipped) === JSON.stringify(earnedProfile.runesEquipped), "earned ordered rules survive import");
 assert(JSON.stringify(player.tracksProgression.essences) === JSON.stringify(earnedProfile.wallet.essences), "earned wallet survives import");
