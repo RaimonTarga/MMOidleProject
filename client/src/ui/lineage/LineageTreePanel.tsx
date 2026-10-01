@@ -19,6 +19,7 @@ import {
   ITEM_DATABASE,
   ROW_KINDS,
   TEST_ROOM_NODE_ID,
+  absorbedStatCards,
   bandContents,
   capstoneMaterialName,
   checkSetActive,
@@ -34,6 +35,7 @@ import {
   resolveLineageCapstone,
   resolveLineageCard,
   rowsForTier,
+  statRowIsCollapsed,
   wornFormTier,
   type LineageWallet,
 } from '@mmo-idle/shared';
@@ -149,7 +151,7 @@ function LaneHeader({ lineage }: { lineage: LineageDefinition }) {
 // ── One card tile ─────────────────────────────────────────────────────────────
 
 function CardTile({
-  lineage, card, progress, wallet, lineages, silhouette,
+  lineage, card, progress, wallet, lineages, silhouette, absorbed, tie,
   onUnlockCard, onSetActive,
 }: {
   lineage: LineageDefinition;
@@ -159,6 +161,10 @@ function CardTile({
   lineages: LineageProgressMap;
   /** Future band preview: no numbers resolved against mastery, not interactive. */
   silhouette?: boolean;
+  /** This collapsed band's stat row, now part of the worn form's base stats. */
+  absorbed?: boolean;
+  /** The card this one modifies, for the amplifier connector (design §4). */
+  tie?: CardTie;
   onUnlockCard: (card: LineageCard) => void;
   onSetActive: (row: RowKind, cardId: string) => void;
 }) {
@@ -168,6 +174,23 @@ function CardTile({
       <div className="lin-card lin-card--silhouette" style={{ '--lane-color': laneColor } as React.CSSProperties}>
         <span className="lin-card__name">{card.name}</span>
         <span className="lin-card__desc">Revealed at tier {card.tier}.</span>
+      </div>
+    );
+  }
+
+  // A collapsed band's stat row is permanent (design §4), so it is a readout and
+  // not a control: nothing left to buy, nothing to slot, and it must never read
+  // as "active" when the tree still has it slotted from before the gate.
+  if (absorbed) {
+    return (
+      <div className="lin-card lin-card--absorbed" style={{ '--lane-color': laneColor } as React.CSSProperties}>
+        <span className="lin-card__top">
+          <span className="lin-card__name">{card.name}</span>
+          <span className="lin-card__state">in form</span>
+        </span>
+        <span className="lin-card__desc">
+          Folded into your form&apos;s base stats. {describeCardEffect(resolveLineageCard(card, lineage))}
+        </span>
       </div>
     );
   }
@@ -214,6 +237,12 @@ function CardTile({
       title={blockedReason}
       onClick={handleClick}
     >
+      {/* The amplifier's connector: a short tick up to the card it modifies when
+          that card is directly above in the same lane, else a named chip, because
+          a tick pointing at the wrong column would be a lie. */}
+      {tie && (tie.adjacent
+        ? <span className="lin-card__tie" aria-hidden="true" />
+        : <span className="lin-card__modifies">modifies {tie.name}</span>)}
       <span className="lin-card__top">
         <span className="lin-card__name">{card.name}</span>
         {active && <span className="lin-card__state">active</span>}
@@ -234,17 +263,30 @@ function CardTile({
 
 // ── One row (three cards, one per lane) ───────────────────────────────────────
 
+/** What an amplifier/keystone/cross card modifies, and whether a tick can reach it. */
+interface CardTie {
+  name: string;
+  /** The modified card sits in the row directly above, in the same lane. */
+  adjacent: boolean;
+}
+
 function RowSection({
-  lineage, row, cards, progress, wallet, lineages, silhouette,
+  lineage, row, rows, cards, bandCards, progress, wallet, lineages, silhouette, absorbedIds,
   onUnlockCard, onSetActive,
 }: {
   lineage: LineageDefinition;
   row: RowKind;
+  /** The band's rows in render order, so a connector knows what is above. */
+  rows: readonly RowKind[];
   cards: LineageCard[];
+  /** Every card in the band, for resolving a `modifies` target to its row. */
+  bandCards: LineageCard[];
   progress: LineageProgress;
   wallet: LineageWallet;
   lineages: LineageProgressMap;
   silhouette?: boolean;
+  /** Stat cards this collapsed band folded into the worn form. */
+  absorbedIds?: ReadonlySet<string>;
   onUnlockCard: (card: LineageCard) => void;
   onSetActive: (row: RowKind, cardId: string) => void;
 }) {
@@ -252,6 +294,22 @@ function RowSection({
   const resolvedFirst = first ? resolveLineageCard(first, lineage) : null;
   const haveLevel = wallet.biomeLevels[lineage.homeBiome] ?? 0;
   const rowLocked = !silhouette && !wallet.isTestRoom && !!resolvedFirst && haveLevel < resolvedFirst.requiredBiomeLevel;
+  const collapsedStatRow = row === 'stat' && !!absorbedIds?.size;
+
+  /**
+   * An amplifier names the card it modifies (`LineageCard.modifies`), which is the
+   * whole contract — this reads the types, never authored ids, so it is correct
+   * with no amplifier cards authored and with a full band of them.
+   */
+  function tieFor(card: LineageCard): CardTie | undefined {
+    if (!card.modifies) return undefined;
+    const target = bandCards.find((c) => c.id === card.modifies)
+      ?? lineage.cards.find((c) => c.id === card.modifies);
+    if (!target) return undefined;
+    const above = rows.indexOf(target.row);
+    const adjacent = above >= 0 && rows.indexOf(card.row) - above === 1 && target.lane === card.lane;
+    return { name: target.name, adjacent };
+  }
 
   return (
     <div className="lin-row">
@@ -260,9 +318,11 @@ function RowSection({
         <span>
           {silhouette
             ? undefined
-            : rowLocked
-              ? `opens at ${biomeName(lineage.homeBiome)} level ${resolvedFirst?.requiredBiomeLevel}`
-              : ROW_HINT[row]}
+            : collapsedStatRow
+              ? 'folded into your form'
+              : rowLocked
+                ? `opens at ${biomeName(lineage.homeBiome)} level ${resolvedFirst?.requiredBiomeLevel}`
+                : ROW_HINT[row]}
         </span>
       </div>
       {lineage.lanes.map((lane) => {
@@ -277,6 +337,8 @@ function RowSection({
               wallet={wallet}
               lineages={lineages}
               silhouette={silhouette}
+              absorbed={absorbedIds?.has(card.id)}
+              tie={tieFor(card)}
               onUnlockCard={onUnlockCard}
               onSetActive={onSetActive}
             />
@@ -380,8 +442,17 @@ function Band({
   onWearForm: (form: LineageForm) => void;
 }) {
   const { cards, gateForms } = bandContents(lineage, tier);
-  const rows = rowsForTier(tier);
+  // A row the band has no cards for is not rendered at all. That is how a
+  // non-weapon lineage "runs one row fewer per tier" (design §4: no stat row,
+  // base stats come from the form) without a second rows table, and it is also
+  // what a tier whose amplifier row is not authored yet looks like.
+  const rows = rowsForTier(tier).filter((row) => cards.some((c) => c.row === row));
   const silhouette = mode === 'silhouette';
+  // Which of this band's stat cards the worn form has absorbed — at most one, and
+  // only ever in a band BELOW the worn form's (so never in the lit band).
+  const absorbedIds = new Set(
+    absorbedStatCards(lineage, progress).filter((c) => c.tier === tier).map((c) => c.id),
+  );
 
   const body = (
     <>
@@ -391,11 +462,14 @@ function Band({
           key={row}
           lineage={lineage}
           row={row}
+          rows={rows}
           cards={cards.filter((c) => c.row === row)}
+          bandCards={cards}
           progress={progress}
           wallet={wallet}
           lineages={lineages}
           silhouette={silhouette}
+          absorbedIds={absorbedIds}
           onUnlockCard={onUnlockCard}
           onSetActive={onSetActive}
         />
@@ -423,18 +497,19 @@ function Band({
   }
 
   if (mode === 'collapsed') {
-    const activeNames = (ROW_KINDS as readonly RowKind[])
-      .map((row) => {
-        const id = progress.active[row];
-        const card = id ? cards.find((c) => c.id === id) : undefined;
-        return card?.name;
-      })
-      .filter((name): name is string => !!name);
+    // Design §4: "Paying a gate folds the previous band into a summary line
+    // ('T1: Keen Edge, Rend'), expandable to reslot." The line names what the
+    // player OWNS here, not what is slotted: `active` is one card per row across
+    // the whole tree, so a collapsed band usually has nothing slotted at all —
+    // it is a wardrobe, and the summary is its label.
+    const ownedNames = cards.filter((c) => progress.ownedCards.includes(c.id)).map((c) => c.name);
+    const absorbedName = cards.find((c) => absorbedIds.has(c.id))?.name;
     return (
       <details className="lin-band lin-band--collapsed">
         <summary>
-          <b>Tier {tier}</b>
-          <span>{activeNames.length > 0 ? activeNames.join(', ') : 'nothing active'}</span>
+          <b>T{tier}</b>
+          <span>{ownedNames.length > 0 ? ownedNames.join(', ') : 'nothing bought'}</span>
+          {absorbedName && <span className="lin-band__absorbed">{absorbedName} in your form</span>}
         </summary>
         {body}
       </details>
@@ -519,10 +594,21 @@ function BuildSection({ lineage, progress }: { lineage: LineageDefinition; progr
     .map((row) => {
       const id = progress.active[row];
       const card = id ? lineage.cards.find((c) => c.id === id) : undefined;
-      if (card) laneCounts[card.lane] = (laneCounts[card.lane] ?? 0) + 1;
-      return { row, name: card?.name };
+      // A stat row the gate absorbed is listed as part of the form below, not as
+      // a slotted row — the slot is the current tier's whether or not a save
+      // still points at the old card.
+      if (!card || statRowIsCollapsed(lineage, progress, card)) return { row, name: undefined };
+      laneCounts[card.lane] = (laneCounts[card.lane] ?? 0) + 1;
+      // An amplifier (and a keystone, and a cross row) is only legible next to
+      // what it modifies, so the readout names both: "Lingering Wake → Echo Strike".
+      const modified = card.modifies ? lineage.cards.find((c) => c.id === card.modifies) : undefined;
+      return { row, name: modified ? `${card.name} → ${modified.name}` : card.name };
     })
     .filter(({ name }) => !!name);
+
+  // Everything the worn form absorbed from the bands below it (design §4).
+  const absorbed = absorbedStatCards(lineage, progress)
+    .map((card) => resolveLineageCard(card, lineage));
 
   const top = (Object.entries(laneCounts) as [PacketId, number][]).sort((a, b) => b[1] - a[1])[0];
   const total = Object.values(laneCounts).reduce((sum, n) => sum + (n ?? 0), 0);
@@ -543,6 +629,14 @@ function BuildSection({ lineage, progress }: { lineage: LineageDefinition; progr
               <span className="lin-build__v">{name}</span>
             </div>
           ))}
+        {absorbed.map((resolved) => (
+          <div key={resolved.card.id} className="lin-build__line">
+            <span className="lin-build__k">In form</span>
+            <span className="lin-build__v lin-build__v--dim">
+              {resolved.card.name} · {describeCardEffect(resolved)}
+            </span>
+          </div>
+        ))}
       </div>
       {top && (
         <p className="lin-readout">
@@ -663,7 +757,10 @@ export function LineageTreePanel({ slot, onClose }: Props) {
             onUnlockForm={onUnlockForm}
             onWearForm={onWearForm}
           />
-          {hasNextTierCards && (
+          {/* One lit band and one silhouette (design §4). When the next tier has
+              no cards it is not authored yet, and saying so is honest — a faked
+              silhouette would promise rows that do not exist. */}
+          {hasNextTierCards ? (
             <Band
               lineage={lineage}
               tier={nextTier}
@@ -676,6 +773,13 @@ export function LineageTreePanel({ slot, onClose }: Props) {
               onUnlockForm={onUnlockForm}
               onWearForm={onWearForm}
             />
+          ) : (
+            <div className="lin-band lin-band--dim lin-band--absent">
+              <div className="lin-band__head">
+                <h3>Tier {nextTier}</h3>
+                <span>Nothing beyond this band yet.</span>
+              </div>
+            </div>
           )}
         </div>
         <div className="lin-side-column">
