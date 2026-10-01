@@ -99,7 +99,14 @@ export const caveMonsterEntries = [
     // why Brood drops Affliction shards.
     // PLACEHOLDER numbers seeded from the T1 Cave band (lurker 225/31); designer
     // hand-edits before the lane bench.
-    stats: { hp: 70, attack: 12, plating: 0, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1500, pullRange: 200 },
+    // BROOD FAMILY (progression rework, 2026-10-01, PROVISIONAL): plating 0 -> 2.
+    // Brood declares `punishes: 'tempo'` and flat plating is the only stat that
+    // punishes Tempo. 2 and not 4: cave-lurker's own note records that plating 4 at
+    // T1 "did enormous effective-HP work against light hits, which is what made
+    // Caverns a slog", and this is a 70 HP body — 2 is one step above the biome's
+    // existing T1 plating (lurker 1, brute 1) and matches mud-toad, the other T1
+    // fodder-scale body that carries any.
+    stats: { hp: 70, attack: 12, plating: 2, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1500, pullRange: 200 },
     behavior: 'melee', attackStyle: 'spider-fang', biome: 'cave', elite: false,
     rewards: { essence: 4, essenceType: 'red', level: 1, biomeXp: 26 },
     ai: { wanderRadius: 300, leashRange: 600, idleMinMs: 500, idleMaxMs: 1800 },
