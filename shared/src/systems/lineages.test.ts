@@ -16,8 +16,8 @@ import { emptyEquipment } from '../items';
 import type { EquipmentMap } from '../items';
 import {
   baseFormRecipeId, checkSetActive, checkUnlockCard, checkUnlockForm, checkWearForm,
-  emptyLineageProgress, lineageProgressFor, lineageSwitchDiscount,
-  normalizeLineageProgressMap, resolveActiveLineages, wornFormTier,
+  emptyLineageProgress, lineageBandBiome, lineageProgressFor, lineageSwitchDiscount,
+  normalizeLineageProgressMap, resolveActiveLineages, resolveLineageCardFor, wornFormTier,
 } from './lineages';
 import type { LineageWallet } from './lineages';
 
@@ -258,6 +258,63 @@ function richWallet(overrides: Partial<LineageWallet> = {}): LineageWallet {
   assert(crowned.capstones[0]!.payoff.magnitude > 0, 'the capstone resolved no magnitude');
 
   assert(resolveActiveLineages(undefined).cards.length === 0, 'no inventory resolves to nothing');
+}
+
+// ─── Which door a band gates on (design §21) ───────────────────────────
+
+{
+  const base = { ownedCards: [], active: {} };
+  const t1 = { ...base, ownedForms: ['flash-rapier'], wornForm: 'flash-rapier' };
+
+  // The worn form's own tier: its biome, which at T1 is the home biome.
+  assert(lineageBandBiome(rapier, t1, 1) === 'forest', 'the T1 band gates on the crafted form’s biome');
+
+  // A band the player has not reached shows the first authored door of that tier,
+  // and nothing there is buyable anyway — the worn tier refuses first.
+  assert(lineageBandBiome(rapier, t1, 3) === 'jungle', 'an unreached band names the authored door');
+  const refused = checkUnlockCard({
+    lineage: rapier,
+    card: rapier.cards.find((c) => c.tier === 3)!,
+    progress: t1,
+    wallet: richWallet(),
+  });
+  assert(!refused.ok && /tier-3 form/.test(refused.reason ?? ''), 'an unreached band refuses on the form, not the biome');
+
+  // Wearing one of two same-tier doors picks that one; the other stays owned.
+  const bothT2 = {
+    ...base,
+    ownedForms: ['flash-rapier', 'gale-needle', 'jungle-stinger-rapier'],
+    wornForm: 'jungle-stinger-rapier',
+  };
+  assert(lineageBandBiome(rapier, bothT2, 2) === 'jungle', 'the WORN door of the tier wins');
+  assert(
+    lineageBandBiome(rapier, { ...bothT2, wornForm: 'gale-needle' }, 2) === 'forest',
+    'and swapping the worn form moves the band with it',
+  );
+
+  // A collapsed band keeps a door the player actually walked through.
+  const t3Worn = {
+    ...base,
+    ownedForms: ['flash-rapier', 'jungle-stinger-rapier', 'jungle-venomthorn-rapier'],
+    wornForm: 'jungle-venomthorn-rapier',
+  };
+  assert(lineageBandBiome(rapier, t3Worn, 2) === 'jungle', 'the collapsed T2 band keeps the owned Jungle door');
+  assert(lineageBandBiome(rapier, t3Worn, 1) === 'forest', 'and the T1 band keeps the crafted one');
+
+  // The level a card asks for follows the door, in that biome's own numbering.
+  const t2Stat = rapier.cards.find((c) => c.tier === 2 && c.row === 'stat')!;
+  const behindForest = resolveLineageCardFor(rapier, { ...bothT2, wornForm: 'gale-needle' }, t2Stat);
+  const behindJungle = resolveLineageCardFor(rapier, bothT2, t2Stat);
+  assert(behindForest.requiredBiomeGroup === 'forest', 'the resolved card names its door');
+  assert(behindJungle.requiredBiomeGroup === 'jungle', 'and the other door when that form is worn');
+  assert(
+    behindJungle.requiredBiomeLevel < behindForest.requiredBiomeLevel,
+    'the Jungle debuts in T2, so its T2 band sits lower in its own numbering',
+  );
+  assert(
+    behindForest.requiredGlobalMastery === behindJungle.requiredGlobalMastery,
+    'the Global Mastery band is tier-wide, so the door never moves it (design §4)',
+  );
 }
 
 console.log('lineages.test.ts: ok');
