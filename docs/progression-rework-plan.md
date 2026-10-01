@@ -839,6 +839,111 @@ clears.
 - Tests: `frameLoops.test` (window shorter than cycle; stacks capped at threshold−1;
   uptime rises with attack speed), `rangeMechanics.test` per root.
 
+### Phase 3 progress note — Slinger, Spirit and Conduit frame loops (2026-10-01)
+
+Implemented from `docs/briefs/frame-loops-2026-10-01.md` §1 for the three RANGED
+roots. The melee roots (cadence, cooldown, dot) and the range nodes are separate
+tasks. Containers are `mechanicEffects` on the frame nodes, consumed in each root's
+prototype; every damage change folds into `ctx.metadata.empoweredMultiplier`.
+
+**Keys authored**, per frame node in `shared/src/data/skillTree/rootsAndFrames.ts`:
+
+| Node | Frame | Keys |
+|---|---|---|
+| `reload-light` | Scout | `reload.frame-opener-rounds` 2, `reload.frame-opener-mult` 1.3 |
+| `reload-balanced` | Marksman | `reload.frame-last-round-mult` 2.2 |
+| `reload-heavy` | Artillerist | `reload.frame-ramp-pct-per-shot` 0.02, `reload.frame-ramp-top-mult` 1.3 |
+| `energy-light` | Spark | `energy.frame-chain-targets` 2, `energy.frame-chain-radius` 160, `energy.frame-chain-share` 0.35 |
+| `energy-balanced` | Wraith | `energy.frame-gain-window-ms` 2000, `energy.frame-gain-mult` 1.6 |
+| `energy-heavy` | Phantasm | `energy.frame-overcharge-max` 4, `energy.frame-overcharge-mult-per-stack` 0.15, `energy.frame-stagger-ms` 750 |
+| `summoner-light` | Splinter | `summoner.frame-frenzy-window-ms` 900, `summoner.frame-frenzy-aps-pct` 0.2, `summoner.frame-frenzy-onhit-mult` 1.25 |
+| `summoner-balanced` | Consort | **none** — the loop is still open with the designer |
+| `summoner-heavy` | Effigy | `summoner.frame-link-window-ms` 2500, `summoner.frame-link-charge-per-hit` 1, `summoner.frame-link-max-charge` 5, `summoner.frame-link-slam-mult` 0.3, `summoner.frame-link-stagger-ms` 750 |
+
+New runtime files: `server/src/systems/classes/archetypes/{reload,energy,summoner}/frameLoop.ts`.
+HUD: `reload-frame-ramp`, `energy-frame-surge`, `energy-frame-overcharge`,
+`summoner-frame-frenzy`, `summoner-frame-link`, plus the `frame-charge` combat event
+for the charge glow (added immediately after `card-fx`; W1-A adds a byte-identical
+block for the melee roots). Tests: `server/test/frameLoopsRanged.test.ts` and the
+summoner case in `server/test/mechanicFired.test.ts`.
+
+#### `mechanic-fired` for the summoner moved
+
+The 1c call site (`summoner/command.ts`, `applySummonerCommand`) is **gone**. A
+command is a click, and a card keyed to a click never fires for an idle player. The
+moment is now the FORMATION CYCLE, emitted from an `onHit` listener in the summoner
+`frameLoop.ts` on `ctx.formation.cycleCompleted` with the `ctx` as the latch. That
+state already existed and was already authoritative (`prepareCycle` / `commitCycle`
+in `formationAttack.ts`); a full dodge and a cancelled swing both return before
+`onHit`, which is exactly where `commitCycle` declines to commit, so one completed
+cycle is one emission. The `mechanic-fired` module header table is updated to match.
+
+#### Warmonger
+
+`reload-heavy-t3-b` keeps its authored ramp data (`reload.hair-trigger*`, 15 stacks
+on a 40-round clip). Its RUNTIME defers: the handler in
+`reload/t3/pipeline/lightPaths.ts` early-returns while
+`reload.frame-ramp-pct-per-shot` is present, and its buff tile hides, because both
+ramps write `clipSpeedStacks` and the attack cooldown and two writers per shot would
+double the stacks. The frame wins. The agreed re-home — **half the ramp carries
+through a reload**, turning a per-clip climb into a sustained one — is NOT designed
+here; it belongs to the T3 review of the whole class, together with the other
+re-homes the brief notes.
+
+#### Divergences from the brief, for the designer
+
+1. **Phantasm's "energy above the cap" needed a different container than the words
+   suggest.** There is no sustained above-cap state in the energy model: the pool
+   arms the discharge and resets to 0, and the armed discharge is consumed by the
+   very next hit (`registerEmpoweredMultiplier` consumes on any `onHit`), so a bank
+   fed by "hits while full" would be 0 in every real fight. Implemented instead as a
+   **raised arming threshold**: the pool keeps taking energy past the cap for
+   `frame-overcharge-max` more hits, and each hit's worth above the cap is a banked
+   stack on the discharge. Fewer discharges, bigger ones — the Heavy skew — and the
+   bank visibly fills on the HUD. It is deterministic rather than a decision, which
+   is true of every energy loop, since the root has no manual discharge.
+2. **Artillerist's "the top of the ramp adds damage" is proportional, not a band.**
+   The damage multiplier is `1 + (top − 1) × stacks / cap`, so it is ×1 on a fresh
+   clip and ×top at the top. A fixed "last N rounds" band would have duplicated
+   Marksman's shape, and the brief's word for Artillerist is ACROSS.
+3. **The Splinter frenzy's on-hit half is not an `empoweredMultiplier` fold.** It
+   scales `ctx.formation.onHitMagnitudeWeight`, which `playerOnHitDamage` reads after
+   the `onHit` phase. On-hit damage is a separate source added to `ctx.damage`, not a
+   multiplier on it, so the one-multiplier-per-hit rule does not reach it; the
+   frenzy's attack-speed half rides the per-tick minion resync, the single writer.
+4. **The Artillerist ramp's bank is the existing `usesReload.clipSpeedStacks` slice
+   field, not a `TracksCombat` resource.** The HUD contract says banks live as
+   resources, but that field is already the authoritative ramp count and already
+   networked; a parallel resource would be a second source of truth. The energy and
+   summoner banks do use `TracksCombat` resources as specified.
+5. **A Blunderbuss volley has no clip position.** `reload.blunderbuss` empties the
+   clip in one beat, so `beforeAttack` tags only ordinary shots with
+   `reloadClipIndex` and the Slinger loop skips volley pellets entirely. Without
+   this, Marksman's last-round multiplier would have fired on every pellet.
+6. **Consort ships with no loop**, as the brief requires, and the node carries a
+   comment saying the container is still open so nobody improvises one.
+
+#### Still open / not reached
+
+- The **client has no handler for `frame-charge`**: the protocol member, the server
+  emissions and the HUD tiles are in, but `client/src/render/combatFx.ts` draws
+  nothing for it yet. The stack counters and window clocks DO render, through the
+  existing buff sync.
+- **No authored art** for the five new buff ids; each aliases the authored tile of
+  the mechanic it is (`reload-frame-ramp` → `reload-hair-trigger`,
+  `energy-frame-overcharge` → `energy-overcharge`, `energy-frame-surge` →
+  `energy-ac-charge`, `summoner-frame-frenzy` → `summoner-coordinated-hunt`,
+  `summoner-frame-link` → `summoner-battle-bond`) in `conceptIcons.ts`.
+- **Scout and Marksman have no HUD tile**: their payoff is a clip position, and the
+  ammo readout already shows it. If playtest says the empowered round needs its own
+  cue, that is a damage-number style, not a buff tile.
+- The **`energy.range-far-single-target` key is not authored here** (it is W1-C's
+  node). The chain's lookup is by string through a widened view of the passive map,
+  so it is correct with the key absent and with it set to 1.
+- Magnitudes are placeholders from the magnitude table's shapes (the two staggers are
+  its `stun` payoff unit, 750 ms, the ladder's shortest rung). The designer
+  hand-edits after the bench.
+
 ---
 
 ## Phase 4 — Armor, charm, boots trees; remaining T1 families
@@ -1044,11 +1149,12 @@ One helper, `emitMechanicFired(world, player, ctx?)`, in
 | dot | when a target reaches max stacks (once per target per fill) |
 | reload | when a reload completes |
 | energy | when the burst fires |
-| summoner | when a command intent is applied |
+| summoner | ~~when a command intent is applied~~ — **superseded in Phase 3**: when a formation cycle completes (every living summon has hit the same target since the last fire). A command is a click and never fires unattended. |
 
 It dispatches the `mechanic-fired` lineage listeners and nothing else. Test:
 `server/test/mechanicFired.test.ts` asserts exactly one emission per event and never two
-on one hit for cadence and cooldown, and one per fill for dot.
+on one hit for cadence and cooldown, one per fill for dot, and one per full formation
+cycle for the summoner (with a command intent firing nothing).
 
 ### Listener registration
 
