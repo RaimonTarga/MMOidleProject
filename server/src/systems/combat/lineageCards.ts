@@ -74,7 +74,7 @@ import { applyMonsterSlow } from './status/monsterControl';
 import { applySharedDebuffMaxWins } from './status/sharedDebuffRecord';
 import { applyStun } from './status/stun';
 import { monsterIgnoresControl } from './status/controlImmunity';
-import { evadeBlocksDebuffs } from '../defense/mitigation/evasion';
+import { evadeBlocksDebuffs, evadeFullyAvoided } from '../defense/mitigation/evasion';
 import { applyWardPercent } from '../defense/barrier/wards';
 import { activateRecovery } from '../defense/regen/recovery';
 import { isPlayerActivelyInCombat } from './ai/engagement';
@@ -635,8 +635,10 @@ export function registerLineageCards(): void {
  * dodged or fully absorbed. `barrier-break` needs the `barrierEmptied` /
  * `wardBrokenMax` metadata that `defense/barrier/barrier.ts` sets from its own
  * `onDamageTaken` listener, so registered first it could never see a break at
- * all. (`evade` stays in the main pass: the engine sets `metadata.evaded` in
- * `combat.ts` before any listener runs.)
+ * all. (`evade` stays in the main pass: the evade clock decides in `onAttack` and
+ * records both `metadata.evaded` and `metadata.evadeMitigation` there, so a full
+ * avoid is already readable before any `onDamageTaken` listener runs — which is why
+ * it tests the mitigation and not `evadeFull`, written later in the same phase.)
  */
 export function registerLineageIncomingCards(): void {
   registerHitTaken();
@@ -745,11 +747,18 @@ function registerKill(): void {
   });
 }
 
-/** `evade` — the player avoided an incoming hit. */
+/**
+ * `evade` — the player AVOIDED an incoming hit.
+ *
+ * A full avoid, not a graze. `metadata.evaded` is set for both, so gating on it alone
+ * fired this card on hits that landed and had it pay out alongside `hit-taken` — the
+ * rest of the defense stack reads an avoid as `evadeMitigation >= 1` (the same test
+ * `evadeFull` and `evadeBlocksDebuffs` are derived from), and so does this.
+ */
 function registerEvade(): void {
   registerCombatListener('onDamageTaken', (ctx, world) => {
     if (ctx.defenderType !== 'player') return;
-    if (ctx.metadata['evaded'] !== true) return;
+    if (!evadeFullyAvoided(ctx)) return;
     const player = ctx.defender;
     if (!hasLineageRuntime(player)) return;
     const firings = firingsFor(player, 'evade');

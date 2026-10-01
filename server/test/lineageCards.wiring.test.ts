@@ -413,8 +413,18 @@ function cardFx(): Array<Extract<CombatEvent, { kind: 'card-fx' }>> {
   taken(player, attacker, {});
   assert(cardFx().length === 0, 'an ordinary hit taken is not an evade');
 
-  taken(player, attacker, { evaded: true });
-  assert(cardFx().length === 1, 'an evade should fire once');
+  // A GRAZE sets `evaded` too — it lands reduced damage, keeps the monster's
+  // ailments and raises its own "GRAZE" floater. An avoid card that reads `evaded`
+  // alone paid out on hits that landed, and alongside `hit-taken`.
+  taken(player, attacker, { evaded: true, evadeMitigation: 0.5 });
+  assert(cardFx().length === 0, 'a graze is a hit that landed, not an evade');
+  assert(
+    getStatusEffect(attacker.tracksCombat, ABILITY_SLOW_EFFECT_ID) === undefined,
+    'and so it must not have paid out its payoff either',
+  );
+
+  taken(player, attacker, { evaded: true, evadeMitigation: 1 });
+  assert(cardFx().length === 1, 'a full avoid should fire once');
   const slow = getStatusEffect(attacker.tracksCombat, ABILITY_SLOW_EFFECT_ID);
   assert(slow !== undefined, 'slow should reach the monster control ladder');
   assert((slow?.data.totalMs ?? 0) > 0, 'a slow must store totalMs for the buff clock');
