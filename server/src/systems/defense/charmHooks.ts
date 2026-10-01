@@ -4,6 +4,7 @@ import type { World } from '../../world/World';
 import { restoreBarrierFraction } from './barrier/barrier';
 import { advanceRecoveryRamp, triggerRecoveryPulse } from './regen/recovery';
 import { onLineageGuardCast } from '../combat/lineageCards';
+import { onAbilityNodeGuardCast } from '../combat/abilityNodes';
 
 /**
  * Charm Guard hooks (2026-09-26). Charms own the Recovery side of abilities: each
@@ -38,4 +39,7 @@ export function onGuardFired(world: World, player: PlayerEntity, ability: Abilit
   // and has no combat context to ride, so the card runtime hangs off the one hook
   // every Guard already passes through rather than inventing a second one.
   onLineageGuardCast(world, player);
+
+  // This Guard's own node (design §19), for the same reason and on the same hook.
+  onAbilityNodeGuardCast(world, player, ability);
 }
