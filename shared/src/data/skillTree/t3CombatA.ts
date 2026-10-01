@@ -13,6 +13,7 @@ export const t3CombatEntriesA = [
     classId: 'cadence-root', subVariantId: 'light',
     parent: 'cadence-light', children: [],
     description: 'After your finisher, your next 3 regular attacks fire their on-hit damage twice. Gain extra scaling on-hit damage.',
+    packet: 'tempo', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     // 'cadence.aftershock-onhit-per-tier': flat on-hit = this × tiers-since-unlock (1× at unlock).
     // 2026-09-28 T4 outlier pass: 25 -> 75 (slowest Striker spec on live T4 bosses, 0.75x the median).
@@ -23,6 +24,7 @@ export const t3CombatEntriesA = [
     classId: 'cadence-root', subVariantId: 'light',
     parent: 'cadence-light', children: [],
     description: 'Your finisher curses the target: +25% damage taken for 5 seconds, and permanently reduces their flat plating by 5 (capped at 20 total per target). The triggering finisher benefits from the vulnerability.',
+    packet: 'empowered', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     mechanicEffects: {
       'cadence.debuff-vuln-pct': 25,
@@ -36,6 +38,7 @@ export const t3CombatEntriesA = [
     classId: 'cadence-root', subVariantId: 'light',
     parent: 'cadence-light', children: [],
     description: 'Your finisher strikes twice. The second hit deals 70% of the finalized first-hit damage. Neither hit counts toward the next combo.',
+    packet: 'tempo', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     mechanicEffects: { 'cadence.trigger-count': 2, 'cadence.extra-trigger-damage-mult': 0.70 },
   }],
@@ -47,6 +50,7 @@ export const t3CombatEntriesA = [
     classId: 'cadence-root', subVariantId: 'balanced',
     parent: 'cadence-balanced', children: [],
     description: 'Each regular attack in the buildup adds flat attack damage to every subsequent attack in that cycle, including the finisher. Stacks reset after each finisher.',
+    packet: 'tempo', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     mechanicEffects: { 'cadence.metronome': 1, 'cadence.metronome-flat': 12 },
   }],
@@ -55,6 +59,7 @@ export const t3CombatEntriesA = [
     classId: 'cadence-root', subVariantId: 'balanced',
     parent: 'cadence-balanced', children: [],
     description: 'Each attack building toward the finisher amplifies it by 15%. After a finisher, your next 3 attacks deal 50% bonus damage.',
+    packet: 'empowered', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     mechanicEffects: { 'cadence.momentum-buildup': 0.15, 'cadence.momentum-echo': 3, 'cadence.momentum-echo-bonus': 0.50 },
   }],
@@ -63,6 +68,7 @@ export const t3CombatEntriesA = [
     classId: 'cadence-root', subVariantId: 'balanced',
     parent: 'cadence-balanced', children: [],
     description: 'Each finisher banks 30% of its damage into a Verdict — a stored pool of execution power that persists across targets. When a target\'s remaining health is at or below your Verdict, your finisher executes it instantly and spends the pool.',
+    packet: 'affliction', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     mechanicEffects: { 'cadence.detonation': 1, 'cadence.verdict-bank-pct': 0.30 },
   }],
@@ -74,6 +80,7 @@ export const t3CombatEntriesA = [
     classId: 'cadence-root', subVariantId: 'heavy',
     parent: 'cadence-heavy', children: [],
     description: 'Each finisher grants a Rampage stack (up to 10): −1 combo threshold (floor 2), faster attacks, weaker regular hits, and a stronger finisher multiplier. At 10 stacks the next finisher overloads and resets Rampage to 0. Stacks decay slowly out of combat. At this tier your finisher multiplier is 1 lower (4× → 3×).',
+    packet: 'tempo', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     mechanicEffects: {
       'cadence.rampage': 1,
@@ -91,6 +98,7 @@ export const t3CombatEntriesA = [
     classId: 'cadence-root', subVariantId: 'heavy',
     parent: 'cadence-heavy', children: [],
     description: 'Your finisher deals no direct damage — instead it converts into a bleeding wound (non-stacking) dealing 150% of the finisher damage over 4 seconds. Re-triggering refreshes the wound. At this tier your finisher multiplier is 1 lower (4× → 3×).',
+    packet: 'affliction', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     mechanicEffects: { 'cadence.hemorrhage': 1, 'cadence.hemorrhage-mult': 1.5, 'cadence.hemorrhage-ticks': 4, 'cadence.hemorrhage-tick-ms': 1000, 'cadence.empowered-mult': -1 },
   }],
@@ -99,6 +107,7 @@ export const t3CombatEntriesA = [
     classId: 'cadence-root', subVariantId: 'heavy',
     parent: 'cadence-heavy', children: [],
     description: 'Time in active combat ramps a Crescendo bonus that multiplies your finisher. The first several seconds give most of the bonus; it keeps climbing forever, with logarithmic growth beyond +100%. Resets instantly when you leave combat. Does not affect regular attacks. At this tier your finisher multiplier is 1 lower (4× → 3×).',
+    packet: 'empowered', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     mechanicEffects: { 'cadence.crescendo': 1, 'cadence.crescendo-ramp-seconds': 15, 'cadence.crescendo-ramp-mult': 0.45, 'cadence.crescendo-tail-per-sec': 0.01, 'cadence.empowered-mult': -1 },
   }],
@@ -112,6 +121,7 @@ export const t3CombatEntriesA = [
     classId: 'cooldown-root', subVariantId: 'light',
     parent: 'cooldown-light', children: [],
     description: 'Your execution deals its normal damage and triggers a 2.5s burst of increased attack speed (~half-uptime at the 5s cooldown). The timer keeps ticking through the burst. +20% attack speed.',
+    packet: 'tempo', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: { attackSpeedPct: 0.2 },
     mechanicEffects: {
       'cooldown.overdrive': 1,
@@ -124,6 +134,7 @@ export const t3CombatEntriesA = [
     classId: 'cooldown-root', subVariantId: 'light',
     parent: 'cooldown-light', children: [],
     description: 'Each attack banks a stack, and every attack deals bonus flat damage per banked stack — so your hits ramp the longer you go (stacks fall off after 10s idle). The execution adds the full stacked bonus on top, then clears the stacks. +20% attack speed.',
+    packet: 'tempo', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: { attackSpeedPct: 0.2 },
     // CD stays at the light frame's 5000ms (no override) — the old +5000ms that
     // pushed it to "10s" was a bug; description corrected to 5s.
@@ -135,6 +146,7 @@ export const t3CombatEntriesA = [
     classId: 'cooldown-root', subVariantId: 'light',
     parent: 'cooldown-light', children: [],
     description: 'Your execution bypasses 100% of the target\'s plating. For 2 seconds afterward, your regular attacks bypass 50% of plating and ignore 10% of the target\'s damage reduction. +20% attack speed.',
+    packet: 'empowered', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: { attackSpeedPct: 0.2 },
     mechanicEffects: { 'cooldown.rupture': 1, 'cooldown.rupture-dr-pierce': 0.10, 'cooldown.rupture-window-ms': 2000, 'cooldown.rupture-window-plating-mult': 0.50 },
   }],
@@ -146,6 +158,7 @@ export const t3CombatEntriesA = [
     classId: 'cooldown-root', subVariantId: 'balanced',
     parent: 'cooldown-balanced', children: [],
     description: 'The attacks you land during one cooldown window charge your NEXT execution: each attack adds bonus damage to the following execution (the current one fires normally). The charge resets each execution.',
+    packet: 'empowered', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     mechanicEffects: { 'cooldown.reverb': 1, 'cooldown.reverb-bonus-per-attack': 0.05 },
   }],
@@ -154,6 +167,7 @@ export const t3CombatEntriesA = [
     classId: 'cooldown-root', subVariantId: 'balanced',
     parent: 'cooldown-balanced', children: [],
     description: 'Every second your execution cooldown ticks down, you gain a stack of accumulated power. Each stack adds 32 flat damage to regular attacks and your execution; the execution then spends all stacks.',
+    packet: 'empowered', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     mechanicEffects: {
       'cooldown.battery': 1,
@@ -166,6 +180,7 @@ export const t3CombatEntriesA = [
     classId: 'cooldown-root', subVariantId: 'balanced',
     parent: 'cooldown-balanced', children: [],
     description: 'The longer your execution cooldown runs uninterrupted, the more damage you deal, ramping over 7 seconds to +15% regular-attack damage and +25% execution damage. Triggering early yields a proportionally smaller payoff.',
+    packet: 'empowered', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     // 2026-09-28 T4 outlier pass: ramp +35%/+55% -> +15%/+25% (1.35-1.44x the median spec on live T4
     // bosses, 1.27x its damage ceiling; the balanced frame alone is already 1.12x).
@@ -184,6 +199,7 @@ export const t3CombatEntriesA = [
     classId: 'cooldown-root', subVariantId: 'heavy',
     parent: 'cooldown-heavy', children: [],
     description: 'Your execution deals bonus damage equal to a portion of all damage you have taken since your last execution (with a minimum floor so it never feels dead). The heavy frame\'s fixed 8s window makes the payoff predictable. At this tier your execution multiplier is 1 lower (3.5× → 2.5×).',
+    packet: 'empowered', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     // 2026-09-28 T4 outlier pass: vengeance 1.5 -> 0.5. It banks RAW boss damage, so it grew with the
     // resized T4 boss offense: 1.42-1.49x the median spec's kill speed (0.96x on a dummy).
@@ -194,6 +210,7 @@ export const t3CombatEntriesA = [
     classId: 'cooldown-root', subVariantId: 'heavy',
     parent: 'cooldown-heavy', children: [],
     description: 'Normal attacks deal no damage. Your execution fires on a greatly shortened cooldown (5s) and hits harder (3× instead of the tier\'s 2.5×). On-hit gear and charm triggers still fire on regular attacks. Out of combat, your execution stays primed — the first strike on a new target is an execution.',
+    packet: 'engagement', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     // Heavy frame is 8000ms / 3.5×; deltas land it at 5000ms / 3.0× (3.5 − 0.5).
     // 2026-09-28 T4 outlier pass: cooldown 4000 -> 5000 ms (1.39x the median spec on live T4 bosses).
@@ -204,6 +221,7 @@ export const t3CombatEntriesA = [
     classId: 'cooldown-root', subVariantId: 'heavy',
     parent: 'cooldown-heavy', children: [],
     description: 'Your execution becomes a 3-second holy channel: you stand still and fire a continuous beam at your target, and every beam tick applies your on-hit effects (gear, charms, on-hit damage) — built for high on-hit over attack speed. If the target dies mid-channel, you briefly reacquire before the beam ends. At this tier your execution multiplier is 1 lower (3.5× → 2.5×).',
+    packet: 'tempo', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     mechanicEffects: { 'cooldown.channeled-beam': 1, 'cooldown.channeled-beam-mult': 1.0, 'cooldown.beam-duration-ms': 3000, 'cooldown.beam-tick-ms': 500, 'cooldown.empowered-mult': -1 },
   }],
@@ -215,6 +233,7 @@ export const t3CombatEntriesA = [
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-light', children: [],
     description: 'The last bullet of every clip fires as an empowered shot (3.5×) with a splash — and like all empowered attacks, it scales with empowered-damage gear and passives.',
+    packet: 'empowered', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     mechanicEffects: { 'reload.exploding-clip': 1, 'reload.empowered-mult': 3.5, 'reload.max-ammo': +1 },
   }],
@@ -223,6 +242,7 @@ export const t3CombatEntriesA = [
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-light', children: [],
     description: 'Each reload completion grants a Momentum stack (up to 5): +6% attack speed and −10% reload time per stack (reaching ~1s reload at max). Stacks persist through combat and decay slowly out of combat. Rewards continuous, uninterrupted fighting.',
+    packet: 'tempo', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     mechanicEffects: {
       'reload.momentum': 1,
@@ -238,6 +258,7 @@ export const t3CombatEntriesA = [
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-light', children: [],
     description: 'Loads only 3 heavy shells and fires at a hard-set 0.5 APS, ignoring weapon attack speed entirely. Your bonus attack-speed stat is converted into per-shot damage instead, and shots deal 2× damage against targets at or above 95% health. Fast 1.2s reload.',
+    packet: 'engagement', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {
       attackRange: 100,
     },
@@ -259,6 +280,7 @@ export const t3CombatEntriesA = [
     classId: 'reload-root', subVariantId: 'balanced',
     parent: 'reload-balanced', children: [],
     description: 'Each attack applies a Death Mark stack to the target (up to 10). Reloading detonates all stacks on the current target for attack × stacks × 0.30 bonus damage.',
+    packet: 'affliction', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     mechanicEffects: { 'reload.death-mark': 1, 'reload.death-mark-detonate-mult': 0.3, 'reload.death-mark-max': 10 },
   }],
@@ -267,6 +289,7 @@ export const t3CombatEntriesA = [
     classId: 'reload-root', subVariantId: 'balanced',
     parent: 'reload-balanced', children: [],
     description: 'Fires all 10 rounds at once as a point-blank volley, then reloads (2s). Close range mandatory — the reach penalty is preserved. Each pellet deals 22% of normal attack damage; the burst shoves enemies back.',
+    packet: 'control', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: { attackRange: -100 },
     mechanicEffects: {
       'reload.blunderbuss': 1,
@@ -282,6 +305,7 @@ export const t3CombatEntriesA = [
     classId: 'reload-root', subVariantId: 'balanced',
     parent: 'reload-balanced', children: [],
     description: 'Even shots deal 2× attack damage with no on-hit damage; odd shots deal 2× on-hit damage with no attack damage. On-hit TRIGGERS (DoT, procs) still fire on every shot. Also grants scaling on-hit damage. Rewards a genuinely balanced attack/on-hit gear split.',
+    packet: 'tempo', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     // 'reload.alternating-onhit-per-tier': flat on-hit = this × tiers-since-unlock (1× at unlock).
     mechanicEffects: { 'reload.alternating-cadence': 1, 'reload.alternating-onhit-per-tier': 30, 'reload.alternating-attack-mult': 2, 'reload.alternating-onhit-mult': 2 },
@@ -297,6 +321,7 @@ export const t3CombatEntriesA = [
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-heavy', children: [],
     description: 'Replaces your magazine with a continuous laser. It fires continuously while a target is in range, building Heat from 0% to 100%. At 100% Heat it overheats and cannot fire again until fully cooled.',
+    packet: 'tempo', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     mechanicEffects: {
       'reload.laser': 1,
@@ -310,6 +335,7 @@ export const t3CombatEntriesA = [
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-heavy', children: [],
     description: 'Attack speed ramps up with every shot fired through the high-capacity clip, resetting on reload.',
+    packet: 'tempo', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     mechanicEffects: {
       'reload.hair-trigger': 1,
@@ -323,6 +349,7 @@ export const t3CombatEntriesA = [
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-heavy', children: [],
     description: 'Every shot banks damage into your Cannon. When you reload, the cannon charges for half the reload, then fires the entire stored pool at your target as one massive burst — then the pool resets. Reward: empty big clips, then unload the cannon.',
+    packet: 'empowered', // PROVISIONAL (run 3 W1-B, design §4)
     cost: 1, statEffects: {},
     mechanicEffects: { 'reload.cannon': 1, 'reload.cannon-damage-per-shot': 0.45, 'reload.cannon-charge-fraction': 0.5 },
   }],
