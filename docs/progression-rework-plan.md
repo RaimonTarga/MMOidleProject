@@ -1563,6 +1563,87 @@ clean; `coverage.test.ts`, `weaponReachability.test.ts`, the new
 
 ---
 
+### Keystone runtime progress note — the eight packet rules (2026-10-01, W1-A)
+
+Design §4 as amended 2026-10-01: **one keystone per packet, eight in all**, shared by
+every lineage that carries the lane in any slot. All eight RULES are implemented and
+tested; the T3 cards that buy them are a separate task (W1-B), and the rules are inert
+until one is owned and active.
+
+**Shape.** The identity of a keystone (lane, name, rule text, fx key, and the payoff kind
+its share resolves from) is data in `shared/src/data/lineages/keystones.ts`
+(`KEYSTONE_DEFINITIONS`, keyed by `PacketId`, eight rows). The behaviour is a small named
+module per lane under `server/src/systems/combat/keystones/`, declared through
+`defineKeystone` at module scope and reachable as `KEYSTONE_MODULES`
+(`ReadonlyMap<PacketId, KeystoneModule>`, `{ id, lane, seam, register? }`).
+`registerKeystones()` is called from `registerLineageCards()`, so the live server and the
+bench see one set. `keystoneActive(player, lane)` reads the resolved-card cache for an
+active `keystone` row of that lane in ANY lineage — which is owned, active and worn by
+construction.
+
+**Seam per keystone.**
+
+| Packet | Keystone | Seam |
+|---|---|---|
+| tempo | Chain | the `echo-hit` payoff case in `applyOnTarget`, extended link by link |
+| empowered | Shockwave | an `onHit` listener on `metadata.empoweredAttack`, paid through `applyPlayerAoe` |
+| affliction | Festering | a per-hit window on the monster, refunded in `updateCombatState` before the status decay |
+| control | Ladder | an `onHit` listener climbing `applyMonsterRoot` then `applyStun`, latched per target on the monster |
+| kill-chain | Refund | an `onKill` listener writing each root's own readiness state (+ a flag consumed in `applyClassDotStack`) |
+| engagement | Always First | an `onHit` listener calling `emitMechanicFired`, latched per body on the monster |
+| bulwark | Immovable | predicates asked by `runStationaryDr`, `runReactivePlating`, `applyForcedMovement` and `beginLairDrag` |
+| barrier-tempo | Unbroken | a refusal inside `stampBarrierDamage`, the one entry point both damage paths call |
+
+**Divergences and decisions worth knowing.**
+
+1. **A keystone row does NOT fire as a payoff.** `firingsFor` skips `row === 'keystone'`.
+   The authored trigger/payoff pair is still required (`coverage.test.ts`: every non-stat
+   row must do something the moment it is bought), and what it supplies is the rule's
+   SHARE — `keystoneShare` reads the card's own resolved magnitude, so the tier column and
+   the defensive frame-face bias apply to a keystone exactly as to a payoff row and the
+   runtime resolves no number of its own. `KEYSTONE_DEFINITIONS[lane].payoff` names the
+   payoff kind a card must be authored with (`echo-hit` for Chain and Shockwave; the other
+   six have no magnitude, only authored durations and reaches). Firing it both ways would
+   pay the lane twice for one card.
+2. **The eight `<lane>.keystone` fx keys exist before any card uses them**, because they
+   are owned by the registry rather than by an authoring choice. `coverage.test.ts`'s
+   "every declared key is used by a card" check skips them, and gains two checks in
+   exchange: every packet has a keystone whose fx is its lane's key, and any keystone-row
+   card must draw that key.
+3. **Six new authored units** in `LINEAGE_UNITS` (design §18.4, no constants in the
+   runtime): `chainMaxLinks` 4, `shockwaveRadius` 90 (deliberately Sweep's own footprint),
+   `ladderRootMs` 1500 (Binding Strike's length), `ladderStunMs` 750 (the `stun` payoff's,
+   so an item never out-stuns the ability whose whole cost is that it stuns),
+   `immovableGraceMs` 2000, `unbrokenHpFraction` 0.5. Chain's reach is `contagionRadius`,
+   reusing the existing "how far a lineage payoff reaches to a neighbour" lever rather than
+   adding a second.
+4. **The monster dodge clock now has one owner.** `rollMonsterDodge` / `monsterDodgeChance`
+   moved into `defense/mitigation/evasion.ts` and `combat.ts`'s inline accumulator calls
+   them, because a Chain link is a hit to the player and must spend the same clock. Pure
+   extraction — same arithmetic, same counter (`evadeAcc`).
+5. **Festering holds, it does not refund.** The hold adds this tick's `dt` back BEFORE
+   `tickStatusEffectDurations` takes it, from the top of `updateCombatState`. A refund
+   after the decay cannot work: the decay prunes at zero, so the effect would already be
+   gone. Only the duration is held; `nextTickIn` is untouched, so the DoT keeps ticking on
+   its own cadence. The window is the player's own resolved DoT tick interval.
+6. **Immovable's "while either is live" is read literally.** The displacement refusal
+   requires a stance actually standing — stationary DR applied, or a reactive-plating stack
+   held. One card does not buy blanket displacement immunity; it protects what the lane
+   earned. The 2 s persistence is expressed by widening `runStationaryDr`'s existing
+   250 ms movement grace and by holding the plating fade inside the same window, both read
+   off the one movement clock (`stationaryMovementMs`).
+7. **Always First never arms the empowered flag.** It emits `mechanic-fired` and nothing
+   else, so everything hung off the seam answers while the root's own counter stays
+   honest. `emitMechanicFired`'s exchange latch means a hit that genuinely fired the root's
+   mechanic emits once, not twice — and the per-body latch is still spent in that case.
+8. **Nothing could not be expressed.** All eight rules landed on existing seams; the only
+   new primitive is the duration hold in (5), and the only refactor is (4).
+
+Tests: `server/test/keystones.test.ts`, one block per keystone plus its bound, a registry
+block, a "keystone row never double-fires" block and a per-player ownership block.
+
+---
+
 ## Cross-cutting rules
 
 - **Server authority.** Card, form, and material state are mutated only by the server

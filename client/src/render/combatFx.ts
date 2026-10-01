@@ -501,6 +501,14 @@ function ampScale(stacks: number | undefined): number {
   return Math.min(1.8, 1 + 0.18 * (stacks - 1));
 }
 
+/**
+ * How much bigger a KEYSTONE draws than the payoff row of the same lane
+ * (design §8). One number, because a keystone is one idea — "this is the rule
+ * changing" — and eight independently chosen sizes would read as eight unrelated
+ * effects instead of one tier of them.
+ */
+const KEYSTONE_SCALE = 1.6;
+
 /** A short duplicate streak implying the triggering hit struck a second time. */
 function fxCardGhostStrike(
   scene: GameScene,
@@ -732,6 +740,53 @@ function fxLineageCard(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }):
       return;
     case "empowered.guard-spark":
       fxCardFlash(scene, pos, color, amp);
+      return;
+    // Keystones — the lane's own grammar, drawn LARGER (design §8: a keystone is
+    // the moment the character starts playing differently, so it reads as the
+    // lane's existing signature at keystone scale rather than as a new verb the
+    // player has to learn). `stacks` carries the rule's own count where it has
+    // one — a chain's link index, a ladder's rung — so a long chain grows as it
+    // goes.
+    case "tempo.keystone":
+      // Chain: the lane's afterimage, twice, on the body the link jumped to.
+      fxCardGhostStrike(scene, target, color, KEYSTONE_SCALE * amp);
+      fxCardGhostStrike(scene, target, color, KEYSTONE_SCALE * amp);
+      return;
+    case "empowered.keystone":
+      // Shockwave: the quake ring at the area hit's own footprint.
+      fxAoeRing(scene, ev.targetPos ?? ev.pos, 56 * amp, color);
+      fxCardPlatingCrack(scene, target, color, KEYSTONE_SCALE);
+      return;
+    case "affliction.keystone":
+      // Festering: a full spread of pips, and the arc that says they are held.
+      fxCardPips(scene, target, color, 5);
+      fxCardArc(scene, pos, target, color, KEYSTONE_SCALE);
+      return;
+    case "control.keystone":
+      // Ladder: the grasp, plus a flash per rung climbed.
+      fxCardArc(scene, pos, target, color, KEYSTONE_SCALE);
+      fxCardFlash(scene, target, color, KEYSTONE_SCALE * amp);
+      return;
+    case "kill-chain.keystone":
+      // Refund: the kill pulse at keystone size, on the player — the mechanic is
+      // back in THEIR hand, not on the corpse.
+      fxAoeRing(scene, ev.pos, 44, color);
+      fxCardFlash(scene, pos, color, KEYSTONE_SCALE);
+      return;
+    case "engagement.keystone":
+      // Always First: the opening flash, thrown at the new body as well as the
+      // wearer, because the opener is what just happened to that target.
+      fxCardFlash(scene, pos, color, KEYSTONE_SCALE);
+      fxCardFlash(scene, target, color, KEYSTONE_SCALE);
+      return;
+    case "bulwark.keystone":
+      // Immovable: chips off the stance, ringed — the push that did not move you.
+      fxAoeRing(scene, ev.pos, 30, color);
+      fxCardPlatingCrack(scene, pos, color, KEYSTONE_SCALE);
+      return;
+    case "barrier-tempo.keystone":
+      // Unbroken: the ward shell, held rather than broken.
+      fxAoeRing(scene, ev.pos, 34, color);
       return;
     // Stat rows — a persistent weapon-trail cosmetic, never an event.
     case "tempo.trail":

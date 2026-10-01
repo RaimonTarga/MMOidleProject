@@ -1,5 +1,5 @@
-import { GAME_CONFIG, MONSTER_DATABASE } from '@mmo-idle/shared';
-import type { PlayerEntity } from '../../../ecs/entity';
+import { GAME_CONFIG, MONSTER_DATABASE, getCounter, setCounter } from '@mmo-idle/shared';
+import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import { mutateSlice } from '../../../ecs/dirtyHelpers';
 import type { World } from '../../../world/World';
 import { registerCombatListener } from '../../combat/engine/combatPipeline';
@@ -79,6 +79,43 @@ export function registerEvasion(): void {
  */
 export function evadeBlocksDebuffs(ctx: CombatContext): boolean {
   return ctx.metadata['evadeBlocksDebuffs'] === true;
+}
+
+/**
+ * The monster-side dodge clock: ONE accumulator per monster, in `tracksCombat`.
+ *
+ * `MONSTER_EVADE_ACC` is read and written by two callers — the ordinary attack
+ * path in `combat.ts`, and the Tempo keystone's chain links, which are hits in
+ * every sense the player can see and so must spend the same clock. Keeping it in
+ * one function is what makes "a monster dodges one hit in five" true of the
+ * sequence the player actually delivers rather than of each delivery system
+ * separately.
+ */
+export const MONSTER_EVADE_ACC = 'evadeAcc';
+
+/**
+ * Advance a monster's deterministic dodge accumulator by `chance` and report
+ * whether this hit is the one it dodges. No RNG: given the same hit sequence the
+ * outcome is always identical and fully replayable.
+ */
+export function rollMonsterDodge(target: MonsterEntity, chance: number): boolean {
+  if (!(chance > 0)) return false;
+  const acc = getCounter(target.tracksCombat, MONSTER_EVADE_ACC) + chance;
+  if (acc >= 1) {
+    setCounter(target.tracksCombat, MONSTER_EVADE_ACC, acc - 1);
+    return true;
+  }
+  setCounter(target.tracksCombat, MONSTER_EVADE_ACC, acc);
+  return false;
+}
+
+/**
+ * A monster's per-hit dodge fraction: its authored `evasion`, or the override a
+ * boss `stat-buff` action installed (0 is a valid override, so `??` not `||`).
+ */
+export function monsterDodgeChance(target: MonsterEntity): number {
+  const def = MONSTER_DATABASE.get(target.isMonster.monsterTypeId);
+  return target.scriptsBoss?.evasionOverride ?? def?.evasion ?? 0;
 }
 
 /**

@@ -222,7 +222,16 @@ export type LineageFxKey =
   // signature drawn bigger, not a second effect).
   | 'tempo.evasive-blur' | 'engagement.sidestep-blur' | 'control.chill-blur'
   | 'kill-chain.recovery-pulse' | 'barrier-tempo.ward-shell' | 'affliction.toxic-pulse'
-  | 'bulwark.plating-chip' | 'empowered.guard-spark';
+  | 'bulwark.plating-chip' | 'empowered.guard-spark'
+  // Keystones — ONE per packet (design §4 as amended 2026-10-01), shared by every
+  // lineage that carries the lane in any slot. The key is per LANE rather than per
+  // lineage for the same reason the rule is: two lineages crowning Tempo play the
+  // same Chain, so they draw the same thing — the lane's own grammar, one size
+  // larger than its payoff row, because a keystone is the moment the character
+  // starts playing differently.
+  | 'tempo.keystone' | 'empowered.keystone' | 'affliction.keystone'
+  | 'control.keystone' | 'kill-chain.keystone' | 'engagement.keystone'
+  | 'bulwark.keystone' | 'barrier-tempo.keystone';
 
 export const LINEAGE_FX_KEYS: readonly LineageFxKey[] = [
   'tempo.trail', 'empowered.trail', 'affliction.trail',
@@ -241,7 +250,15 @@ export const LINEAGE_FX_KEYS: readonly LineageFxKey[] = [
   'tempo.evasive-blur', 'engagement.sidestep-blur', 'control.chill-blur',
   'kill-chain.recovery-pulse', 'barrier-tempo.ward-shell', 'affliction.toxic-pulse',
   'bulwark.plating-chip', 'empowered.guard-spark',
+  'tempo.keystone', 'empowered.keystone', 'affliction.keystone',
+  'control.keystone', 'kill-chain.keystone', 'engagement.keystone',
+  'bulwark.keystone', 'barrier-tempo.keystone',
 ] as const;
+
+/** The keystone fx key of a lane. One per packet (design §4). */
+export function keystoneFxKey(lane: PacketId): LineageFxKey {
+  return `${lane}.keystone` as LineageFxKey;
+}
 
 // ─── Authored shapes (NO numbers — see the header) ───────────────────────────
 

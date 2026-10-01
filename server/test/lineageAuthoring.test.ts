@@ -23,7 +23,8 @@ const LINEAGE_DIR = join(__dirname, '../../shared/src/data/lineages');
 
 /** Everything in the directory that is not infrastructure is a card file. */
 const INFRASTRUCTURE = new Set([
-  'types.ts', 'packets.ts', 'magnitudes.ts', 'resolve.ts', 'index.ts', 'capstones.ts',
+  'types.ts', 'packets.ts', 'keystones.ts', 'magnitudes.ts', 'resolve.ts',
+  'index.ts', 'capstones.ts',
 ]);
 
 const cardFiles = readdirSync(LINEAGE_DIR).filter(

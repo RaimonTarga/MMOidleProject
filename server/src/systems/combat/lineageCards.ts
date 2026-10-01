@@ -82,6 +82,7 @@ import { playerAoeTargets } from './damage/aoeDamage';
 import { copyPlayerDotOnto } from '../player/abilities/abilityAffliction';
 import { cleansePlayerAfflictions } from './status/cleanse';
 import { defineBuff } from './buffs/descriptor';
+import { registerKeystones, runChain } from './keystones';
 
 // ── Authored units ───────────────────────────────────────────────────────────
 //
@@ -158,6 +159,13 @@ function firingsFor(player: PlayerEntity, kind: TriggerKind): LineageFiring[] {
   const out: LineageFiring[] = [];
   for (const resolved of runtime.cards) {
     if (!resolved.trigger || !resolved.payoff) continue; // a stat row fires on nothing
+    // A KEYSTONE ROW IS NOT A PAYOFF (design §4: it changes a rule). Its authored
+    // trigger/payoff pair exists because `coverage.test.ts` requires every
+    // non-stat row to do something the moment it is bought, and what a keystone
+    // does is handed to `systems/combat/keystones/` instead — which reads the
+    // card's resolved magnitude as the rule's share. Firing it here as well would
+    // pay the lane twice for one card.
+    if (resolved.card.row === 'keystone') continue;
     // An amplifier on the `trigger` axis adds further moments the SAME payoff
     // fires on (`composeAmplifiers`). Matching any one of them — never more than
     // one per dispatch, since a dispatch is a single trigger kind — is what makes
@@ -394,11 +402,20 @@ function applyOnTarget(
       // A second, non-empowered hit through the proc seam, which owns
       // invulnerability, the world log, kill credit and rewards. Procs skip
       // plating and pay half DR by design (`mitigatePlayerTickOnMonster`).
-      const damage = Math.max(1, Math.round(hitBasis(player, ctx) * magnitude));
+      const basis = hitBasis(player, ctx);
+      const damage = Math.max(1, Math.round(basis * magnitude));
       const outcome = applyPlayerProcDamage(world, player, target, damage, {
         tags: ['lineage', firing.key],
       });
-      return outcome === 'skipped' ? null : landed;
+      if (outcome === 'skipped') return null;
+      // CHAIN (design §4, the Tempo keystone): the echo keeps re-triggering until
+      // a hit misses or no fresh body is in reach. Hung off the payoff rather than
+      // off a listener because the rule changes what THIS echo does, and it takes
+      // the same pre-empowered `basis` so one multiplier per hit still holds.
+      // Each link pushes its own `card-fx`; this application still pushes exactly
+      // one of its own, below.
+      runChain(world, player, target, basis);
+      return landed;
     }
 
     case 'hemorrhage': {
@@ -574,6 +591,11 @@ export function registerLineageCards(): void {
   registerKill();
   registerEvade();
   registerWindowReaders();
+  // The eight keystones (design §4). Registered from here, with the rows they
+  // belong to, so the live server and the balance bench can never see a different
+  // set of rules — the same reason every other combat listener lives behind one
+  // bootstrap call.
+  registerKeystones();
 }
 
 /**

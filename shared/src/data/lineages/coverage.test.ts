@@ -37,8 +37,9 @@ import {
 } from './resolve';
 import {
   AMPLIFIED_AXES, LINEAGE_FX_KEYS, PACKET_IDS, PAYOFF_KINDS, ROW_KINDS,
-  TRIGGER_KINDS, WEAPON_PACKET_IDS, payoffLandsOnTarget,
+  TRIGGER_KINDS, WEAPON_PACKET_IDS, keystoneFxKey, payoffLandsOnTarget,
 } from './types';
+import { KEYSTONE_DEFINITIONS, keystoneDefinition } from './keystones';
 
 /**
  * The payoff kinds that hold for a time, so a `duration` amplifier has a window to
@@ -306,6 +307,19 @@ for (const lineage of LINEAGE_DATABASE.values()) {
       card.fx.startsWith(`${card.lane}.`),
       `${card.id}: fx '${card.fx}' does not speak its lane's grammar (expected '${card.lane}.*')`,
     );
+    // One keystone per packet (design §4): a keystone row draws its LANE's
+    // keystone signature, because every lineage carrying the lane plays the same
+    // rule and two different effects for one rule would be a lie on screen.
+    if (card.row === 'keystone') {
+      check(
+        card.fx === keystoneFxKey(card.lane),
+        `${card.id}: a keystone row draws '${keystoneFxKey(card.lane)}', not '${card.fx}' (design §4)`,
+      );
+      check(
+        keystoneDefinition(card.lane) !== undefined,
+        `${card.id}: lane '${card.lane}' has no keystone in KEYSTONE_DEFINITIONS`,
+      );
+    }
   }
   for (const form of lineage.forms) {
     if (!form.capstone) continue;
@@ -314,6 +328,12 @@ for (const lineage of LINEAGE_DATABASE.values()) {
   }
 }
 for (const key of declaredFx) {
+  // A `<lane>.keystone` key is owned by the keystone REGISTRY, not by a card's
+  // authoring choice: design §4 (amended 2026-10-01) gives each packet exactly one
+  // keystone, so all eight keys exist and have client handlers from the moment the
+  // rules do, whether or not a band has authored its flavour of them yet. The
+  // check below pins the other half — a keystone card must use its lane's key.
+  if (key.endsWith('.keystone')) continue;
   check(usedFx.has(key), `LINEAGE_FX_KEYS declares '${key}', which no card uses — the client would never draw it`);
 }
 
@@ -410,6 +430,35 @@ check(
   'a non-weapon T1 band is three payoff rows and no stat row (design §4, §17)',
 );
 check(GATE_LOCAL_LEVEL > 0 && MAX_LINEAGE_TIER >= 4, 'magnitude table bounds are wrong');
+
+// ─── 5a. One keystone per packet (design §4, amended 2026-10-01) ─────────────
+//
+// Eight rules, shared by every lineage that carries the lane in any slot. The
+// runtime half (a named module per lane) is pinned by `server/test/keystones.test.ts`;
+// this is the data half.
+
+check(
+  KEYSTONE_DEFINITIONS.size === PACKET_IDS.length,
+  `${KEYSTONE_DEFINITIONS.size} keystones for ${PACKET_IDS.length} packets — design §4 wants exactly one each`,
+);
+for (const lane of PACKET_IDS) {
+  const keystone = keystoneDefinition(lane);
+  check(!!keystone, `packet '${lane}' has no keystone`);
+  if (!keystone) continue;
+  check(keystone.lane === lane, `keystone '${keystone.id}' is keyed under '${lane}' but names lane '${keystone.lane}'`);
+  check(keystone.fx === keystoneFxKey(lane), `keystone '${keystone.id}': fx must be '${keystoneFxKey(lane)}'`);
+  check(
+    LINEAGE_FX_KEYS.includes(keystone.fx),
+    `keystone '${keystone.id}': fx '${keystone.fx}' is not in LINEAGE_FX_KEYS`,
+  );
+  check(keystone.name.length > 0 && keystone.rule.length > 0, `keystone '${keystone.id}': needs a name and a rule`);
+  if (keystone.payoff) {
+    check(
+      PAYOFF_KINDS.includes(keystone.payoff),
+      `keystone '${keystone.id}': unknown payoff kind '${keystone.payoff}'`,
+    );
+  }
+}
 
 // ─── 5b. Defensive faces (design §3.1, §17) ──────────────────────────────────
 //
