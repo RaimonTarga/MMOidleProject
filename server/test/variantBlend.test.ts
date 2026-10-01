@@ -130,7 +130,7 @@ function checkTierBlends(tier: number, expectedCount: number) {
   return normals;
 }
 
-const t1Normals = checkTierBlends(1, 27);
+const t1Normals = checkTierBlends(1, 25);
 const t2Normals = checkTierBlends(2, 37);
 
 // T3-T4 carry no blend yet (their family tables are not authored). This asserts
@@ -141,8 +141,8 @@ for (const node of WORLD_NODE_LIST) {
 }
 
 check(
-  Object.keys(NODE_BLENDS).length === 27 + 37,
-  `NODE_BLENDS holds ${Object.keys(NODE_BLENDS).length} nodes, expected ${27 + 37}`,
+  Object.keys(NODE_BLENDS).length === 25 + 37,
+  `NODE_BLENDS holds ${Object.keys(NODE_BLENDS).length} nodes, expected ${25 + 37}`,
 );
 problems.push(...validateWorldMap());
 assert(problems.length === 0, `blend authoring failures:\n  ${problems.join('\n  ')}`);
