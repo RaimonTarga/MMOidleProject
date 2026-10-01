@@ -106,5 +106,55 @@ export const RAPIER_LINEAGE: LineageDefinition = {
       name: 'First Blood', description: 'The opening hit of a fight opens a damage window.',
       fx: 'engagement.opening-flash', trigger: 'first-hit', payoff: 'damage-window',
     },
+
+    // ── T2 band (design §13): stat (L2), payoff (L3), amplifier (L5) ─────────
+    {
+      id: 'rapier-t2-tempo-stat', lineageId: 'rapier', tier: 2, row: 'stat', lane: 'tempo',
+      name: 'Fencer\'s Cadence', description: 'The wrist that never stopped moving now never tires.',
+      fx: 'tempo.trail',
+    },
+    {
+      id: 'rapier-t2-affliction-stat', lineageId: 'rapier', tier: 2, row: 'stat', lane: 'affliction',
+      name: 'Deeper Brew', description: 'A stronger draught, cut for a longer fight.',
+      fx: 'affliction.trail',
+    },
+    {
+      id: 'rapier-t2-engagement-stat', lineageId: 'rapier', tier: 2, row: 'stat', lane: 'engagement',
+      name: 'Honed Further', description: 'The duelist has had more practice since the forest.',
+      fx: 'engagement.trail',
+    },
+
+    {
+      id: 'rapier-t2-tempo-payoff', lineageId: 'rapier', tier: 2, row: 'payoff', lane: 'tempo',
+      name: 'Running Riposte', description: 'Every third hit still lands twice, harder than it used to.',
+      fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'echo-hit',
+    },
+    {
+      id: 'rapier-t2-affliction-payoff', lineageId: 'rapier', tier: 2, row: 'payoff', lane: 'affliction',
+      name: 'Deep Bloodletting', description: 'A larger share of each hit keeps bleeding after it.',
+      fx: 'affliction.bleed-pips', trigger: 'hit-nth', payoff: 'hemorrhage',
+    },
+    {
+      id: 'rapier-t2-engagement-payoff', lineageId: 'rapier', tier: 2, row: 'payoff', lane: 'engagement',
+      name: 'Opening Gambit', description: 'The opening hit of a fight opens a wider damage window.',
+      fx: 'engagement.opening-flash', trigger: 'first-hit', payoff: 'damage-window',
+    },
+
+    // Amplifiers modify this tier's own payoff card, not the T1 one (design §4).
+    {
+      id: 'rapier-t2-tempo-amplifier', lineageId: 'rapier', tier: 2, row: 'amplifier', lane: 'tempo',
+      name: 'Carried Wake', description: 'The echo no longer stops at the one body it found.',
+      fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'echo-hit', modifies: 'rapier-t2-tempo-payoff',
+    },
+    {
+      id: 'rapier-t2-affliction-amplifier', lineageId: 'rapier', tier: 2, row: 'amplifier', lane: 'affliction',
+      name: 'Spreading Rot', description: 'What a kill was bleeding does not stay with the body that fell.',
+      fx: 'affliction.bleed-pips', trigger: 'kill', payoff: 'hemorrhage', modifies: 'rapier-t2-affliction-payoff',
+    },
+    {
+      id: 'rapier-t2-engagement-amplifier', lineageId: 'rapier', tier: 2, row: 'amplifier', lane: 'engagement',
+      name: 'Fresh Opening', description: 'Every new body the duel turns to counts as a fresh opening hit.',
+      fx: 'engagement.opening-flash', trigger: 'first-hit', payoff: 'damage-window', modifies: 'rapier-t2-engagement-payoff',
+    },
   ],
 };
