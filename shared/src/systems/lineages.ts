@@ -531,6 +531,44 @@ export function lineageForEquippedItem(recipeId: string | null | undefined): Lin
   return recipeId ? lineageForRecipeId(recipeId) : undefined;
 }
 
+// ─── Amplifier connectors (design §4, §8) ────────────────────────────────────
+
+/** What a card modifies, and whether a connector can be a straight tick to it. */
+export interface LineageCardTie {
+  targetId: string;
+  name: string;
+  /**
+   * The modified card is the tile DIRECTLY ABOVE this one: same band, same lane,
+   * the row immediately before it. Only then can the tree draw a vertical tick —
+   * anywhere else it names the card instead, because a tick pointing at the wrong
+   * column would be a lie.
+   */
+  adjacent: boolean;
+}
+
+/**
+ * The card an `amplifier` / `keystone` / `cross` row modifies, resolved for the
+ * tree's connector. Reads `modifies` off the card — the authored contract — so it
+ * is correct for a band with no amplifier cards at all and for a full one, without
+ * knowing a single card id.
+ */
+export function lineageCardTie(
+  lineage: LineageDefinition,
+  card: LineageCard,
+  /** The band's rows in render order, i.e. `rowsForTier(card.tier)` as drawn. */
+  bandRows: readonly RowKind[],
+): LineageCardTie | undefined {
+  if (!card.modifies) return undefined;
+  const target = lineage.cards.find((c) => c.id === card.modifies);
+  if (!target) return undefined;
+  const above = bandRows.indexOf(target.row);
+  const adjacent = above >= 0
+    && bandRows.indexOf(card.row) - above === 1
+    && target.lane === card.lane
+    && target.tier === card.tier;
+  return { targetId: target.id, name: target.name, adjacent };
+}
+
 /** The cards and forms a band shows: one lit band, plus the doors below it. */
 export function bandContents(lineage: LineageDefinition, tier: number): {
   cards: LineageCard[];

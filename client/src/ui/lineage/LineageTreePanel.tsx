@@ -4,6 +4,7 @@ import type {
   EquipmentSlot,
   EssenceType,
   LineageCard,
+  LineageCardTie,
   LineageDefinition,
   LineageForm,
   LineagePayoff,
@@ -28,6 +29,7 @@ import {
   checkWearForm,
   emptyLineageProgress,
   lineageCardPrice,
+  lineageCardTie,
   lineageEssenceType,
   lineageForRecipeId,
   lineageGateCost,
@@ -164,7 +166,7 @@ function CardTile({
   /** This collapsed band's stat row, now part of the worn form's base stats. */
   absorbed?: boolean;
   /** The card this one modifies, for the amplifier connector (design §4). */
-  tie?: CardTie;
+  tie?: LineageCardTie;
   onUnlockCard: (card: LineageCard) => void;
   onSetActive: (row: RowKind, cardId: string) => void;
 }) {
@@ -263,15 +265,8 @@ function CardTile({
 
 // ── One row (three cards, one per lane) ───────────────────────────────────────
 
-/** What an amplifier/keystone/cross card modifies, and whether a tick can reach it. */
-interface CardTie {
-  name: string;
-  /** The modified card sits in the row directly above, in the same lane. */
-  adjacent: boolean;
-}
-
 function RowSection({
-  lineage, row, rows, cards, bandCards, progress, wallet, lineages, silhouette, absorbedIds,
+  lineage, row, rows, cards, progress, wallet, lineages, silhouette, absorbedIds,
   onUnlockCard, onSetActive,
 }: {
   lineage: LineageDefinition;
@@ -279,8 +274,6 @@ function RowSection({
   /** The band's rows in render order, so a connector knows what is above. */
   rows: readonly RowKind[];
   cards: LineageCard[];
-  /** Every card in the band, for resolving a `modifies` target to its row. */
-  bandCards: LineageCard[];
   progress: LineageProgress;
   wallet: LineageWallet;
   lineages: LineageProgressMap;
@@ -295,21 +288,6 @@ function RowSection({
   const haveLevel = wallet.biomeLevels[lineage.homeBiome] ?? 0;
   const rowLocked = !silhouette && !wallet.isTestRoom && !!resolvedFirst && haveLevel < resolvedFirst.requiredBiomeLevel;
   const collapsedStatRow = row === 'stat' && !!absorbedIds?.size;
-
-  /**
-   * An amplifier names the card it modifies (`LineageCard.modifies`), which is the
-   * whole contract — this reads the types, never authored ids, so it is correct
-   * with no amplifier cards authored and with a full band of them.
-   */
-  function tieFor(card: LineageCard): CardTie | undefined {
-    if (!card.modifies) return undefined;
-    const target = bandCards.find((c) => c.id === card.modifies)
-      ?? lineage.cards.find((c) => c.id === card.modifies);
-    if (!target) return undefined;
-    const above = rows.indexOf(target.row);
-    const adjacent = above >= 0 && rows.indexOf(card.row) - above === 1 && target.lane === card.lane;
-    return { name: target.name, adjacent };
-  }
 
   return (
     <div className="lin-row">
@@ -338,7 +316,7 @@ function RowSection({
               lineages={lineages}
               silhouette={silhouette}
               absorbed={absorbedIds?.has(card.id)}
-              tie={tieFor(card)}
+              tie={lineageCardTie(lineage, card, rows)}
               onUnlockCard={onUnlockCard}
               onSetActive={onSetActive}
             />
@@ -464,7 +442,6 @@ function Band({
           row={row}
           rows={rows}
           cards={cards.filter((c) => c.row === row)}
-          bandCards={cards}
           progress={progress}
           wallet={wallet}
           lineages={lineages}

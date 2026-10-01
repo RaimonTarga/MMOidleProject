@@ -21,12 +21,14 @@ import {
   baseRecoveryForTier,
   emptyEquipment,
   lineageCardPrice,
+  lineageCardTie,
   lineageGateCost,
   resolveLineageCard,
   rowBiomeLevel,
+  rowsForTier,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
-import type { EssenceType, PacketId } from '@mmo-idle/shared';
+import type { EssenceType, LineageCard, PacketId } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../src/ecs/entity';
 import { World } from '../src/world/World';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
@@ -446,6 +448,60 @@ function wearT2(id: string, opts: { withStatCard: boolean }): { world: World; pl
   recalculatePlayerEntityStats(world, player);
   assert(player.hasHealth.maxHp === hp, 'recalc must not move maxHp for a lineage with nothing to absorb');
   assert(player.mitigatesDamage.plating === plating, 'nor plating');
+}
+
+// ─── The amplifier connector reads the types, not authored data ──────────────
+//
+// The tree draws a tick from an amplifier to the card its `modifies` names. The
+// T2 cards are authored elsewhere, so this is pinned against SYNTHETIC cards: the
+// contract is `row === 'amplifier'` plus `modifies`, and it has to hold for a band
+// with no amplifier cards at all and for a full one.
+
+{
+  const synth = (over: Partial<LineageCard> & Pick<LineageCard, 'id' | 'row' | 'lane'>): LineageCard => ({
+    lineageId: 'synthetic', tier: 2, name: over.id, description: '', fx: 'tempo.trail',
+    ...over,
+  } as LineageCard);
+
+  const t2Stat = synth({ id: 's-stat', row: 'stat', lane: 'tempo' });
+  const t2Payoff = synth({ id: 's-payoff', row: 'payoff', lane: 'tempo' });
+  const t2Amp = synth({ id: 's-amp', row: 'amplifier', lane: 'tempo', modifies: 's-payoff' });
+  const offLaneAmp = synth({ id: 's-amp-off', row: 'amplifier', lane: 'affliction', modifies: 's-payoff' });
+  const deepAmp = synth({ id: 's-amp-deep', row: 'amplifier', lane: 'tempo', modifies: 's-stat' });
+  const lowerTier = synth({ id: 's-payoff-t1', row: 'payoff', lane: 'tempo', tier: 1 });
+  const crossTierAmp = synth({ id: 's-amp-t1', row: 'amplifier', lane: 'tempo', modifies: 's-payoff-t1' });
+  const danglingAmp = synth({ id: 's-amp-dangling', row: 'amplifier', lane: 'tempo', modifies: 'no-such-card' });
+
+  const lineage = {
+    ...rapier,
+    id: 'synthetic',
+    cards: [t2Stat, t2Payoff, t2Amp, offLaneAmp, deepAmp, lowerTier, crossTierAmp, danglingAmp],
+  };
+  const rows = rowsForTier(2);
+  assert(rows.includes('amplifier'), 'fixture: the tier-2 band has an amplifier row');
+
+  assert(!lineageCardTie(lineage, t2Payoff, rows), 'a payoff row modifies nothing, so it ties to nothing');
+  assert(!lineageCardTie(lineage, danglingAmp, rows), 'an unknown `modifies` ties to nothing rather than throwing');
+
+  const tie = lineageCardTie(lineage, t2Amp, rows)!;
+  assert(tie.targetId === t2Payoff.id && tie.name === t2Payoff.name, 'the tie names the modified card');
+  assert(tie.adjacent, 'the payoff row directly above in the same lane takes a straight tick');
+
+  assert(lineageCardTie(lineage, offLaneAmp, rows)!.adjacent === false, 'a different lane is a different column');
+  assert(lineageCardTie(lineage, deepAmp, rows)!.adjacent === false, 'two rows up is not a short tick');
+  assert(lineageCardTie(lineage, crossTierAmp, rows)!.adjacent === false, 'a card in another band is not above it');
+
+  // The zero-amplifier case: today's authored lineages have no amplifier row, and
+  // nothing may tie, throw, or claim adjacency.
+  for (const authored of LINEAGE_DATABASE.values()) {
+    for (const card of authored.cards) {
+      const authoredTie = lineageCardTie(authored, card, rowsForTier(card.tier));
+      assert(
+        card.modifies ? !!authoredTie : authoredTie === undefined,
+        `${card.id}: a card ties exactly when it modifies something`,
+      );
+    }
+  }
 }
 
 // ─── Unknown ids are refused, not crashed on ─────────────────────────────────
