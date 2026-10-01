@@ -634,6 +634,51 @@ function cardFx(): Array<Extract<CombatEvent, { kind: 'card-fx' }>> {
   );
 }
 
+// `trigger` naming the trigger it already fires on: `first-hit` re-scopes from
+// once per ENGAGEMENT to once per BODY (Rapier's Fresh Opening).
+{
+  const control = seededCard({
+    trigger: { kind: 'first-hit' },
+    payoff: { kind: 'damage-window', magnitude: 0.2, durationMs: 2000 },
+    fx: 'engagement.opening-flash',
+    lane: 'engagement',
+  });
+  const plain = spawn('lc-amp-opener-control', [control]);
+  const a = monster(720);
+  const b = monster(760);
+  hit(plain, a);
+  assert(cardFx().length === 1, 'the opener fires on the first body of an engagement');
+  hit(plain, b);
+  assert(
+    cardFx().length === 0,
+    'and NOT again on a second body — the latch is per engagement, which is the baseline this amplifier changes',
+  );
+
+  const amped = seededCard({
+    trigger: { kind: 'first-hit' },
+    payoff: { kind: 'damage-window', magnitude: 0.2, durationMs: 2000 },
+    fx: 'engagement.opening-flash',
+    lane: 'engagement',
+  });
+  // What `composeAmplifiers` leaves when the amplifier names `first-hit` itself.
+  amped.perTargetTrigger = true;
+  const duellist = spawn('lc-amp-opener', [amped]);
+  const c = monster(800);
+  const d = monster(840);
+  hit(duellist, c);
+  assert(cardFx().length === 1, 'the per-body opener still fires on the first body');
+  hit(duellist, d);
+  assert(
+    cardFx().length === 1,
+    'every new body counts as a fresh opening hit — the whole content of Fresh Opening',
+  );
+  hit(duellist, c);
+  assert(
+    cardFx().length === 0,
+    'but a body already opened on does not re-open, or it would be an every-hit card',
+  );
+}
+
 // `targets`: an on-target payoff also lands on a nearby body.
 {
   const card = seededCard({

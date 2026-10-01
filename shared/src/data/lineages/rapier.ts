@@ -157,7 +157,7 @@ export const RAPIER_LINEAGE: LineageDefinition = {
       id: 'rapier-t2-engagement-amplifier', lineageId: 'rapier', tier: 2, row: 'amplifier', lane: 'engagement',
       name: 'Fresh Opening', description: 'Every new body the duel turns to counts as a fresh opening hit.',
       fx: 'engagement.opening-flash', trigger: 'first-hit', payoff: 'damage-window', modifies: 'rapier-t2-engagement-payoff',
-      amplifies: 'duration',
+      amplifies: 'trigger',
     },
   ],
 };

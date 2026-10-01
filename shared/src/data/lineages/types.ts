@@ -385,6 +385,17 @@ export interface ResolvedLineageCard {
    * than owning two effects. Absent on an unamplified card; never authored.
    */
   extraTriggers?: LineageTrigger[];
+  /**
+   * Set by a `trigger`-axis amplifier that names the SAME trigger its target
+   * already fires on. That is not a second moment — it re-scopes the one it has,
+   * from once per engagement to once per BODY, which is what "the opening hit
+   * fires again on each new target" means.
+   *
+   * Only meaningful for `first-hit`, the one trigger that latches per engagement
+   * rather than per hit, kill or clock tick; `coverage.test.ts` refuses the
+   * same-trigger form on any other kind, where it would be inert. Never authored.
+   */
+  perTargetTrigger?: boolean;
 }
 
 /** A worn form's capstone with its numbers filled in. Granted, never bought. */

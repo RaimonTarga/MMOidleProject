@@ -544,3 +544,26 @@ Answers to the report's open design questions. Locked unless marked otherwise.
    `savanna-hawk` (Sky), Forest `canopy-sprite` (Canopy), Mountain `granite-titan` (Crag,
    as a slow anchor), Cave `giant-spider` (Brood), Swamp `bog-witch` (Coven) and
    `mire-stalker` (Stalker).
+   *Shipped 2026-10-01* as `grass-kite`, `bramble-pod`, `rockback-ram`,
+   `brood-spiderling`, `fen-hexer`, plus Mud Toad re-familied Mire → Stalker. All 27
+   authored T1 blends now resolve exactly as authored, and Engagement's shards are
+   earned rather than credited in-harness.
+
+9. **The bench criterion is ±3 PERCENTAGE POINTS, and the encounter check is ordinal.**
+   Replaces §9's "±10% of the tier median", which was unreadable twice over: it is a
+   proportion OF a number that is itself small, so the band narrows as lanes weaken
+   (at a +4.3% median it reads +3.9% to +4.7%, tighter than the measurement noise),
+   and no lane could ever sit inside it by construction. The band is now the median
+   uplift ±3pp, absolute.
+
+   The encounter check drops "~30%" for a ranking: **does the favoured lane out-uplift
+   the punished lane on that family's own node, and by what margin?** The margin is
+   reported, never thresholded. A family whose favoured lane ranks BELOW its punished
+   lane is a monster-shape finding for Phase 4 (§18.7 — `drops` stays the definition of
+   "favours", so the mobs are what must move), not a magnitude to tune.
+
+10. **The frames column is its own task.** Light / Balanced / Heavy uplift per root is
+    not a column the lane matrix can grow: `LINEAGE_LANE_REFERENCES` does not vary frame,
+    so it needs three new reference profiles per root (18 rows in
+    `bot/src/tierEntry/profiles.ts`) and roughly triples a 35-minute run. Deliberately
+    deferred out of the 2026-10-01 day run rather than approximated.

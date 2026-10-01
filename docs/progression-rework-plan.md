@@ -918,16 +918,24 @@ Every number above is a placeholder for the designer's hand-edit after the bench
    list would have said "+20% damage", which is false on a ×4 finisher. The node
    descriptions carry the real sentence instead; `client/src/ui/describe/passiveText.ts`
    is untouched.
-8. **OPEN, cross-cutting: a Technique rider compounds with a frame window.**
-   `addEmpoweredDamage` (`abilityEffects.ts`) divides the hit by
-   `empoweredMultiplier` only when `empoweredAttack` is also set. A frame window —
+8. ~~**OPEN, cross-cutting: a Technique rider compounds with a frame window.**~~
+   **CLOSED 2026-10-01 in `5d02eb2f`, endorsed by the designer as the
+   one-multiplier rule.** `addEmpoweredDamage` (`abilityEffects.ts`) divided the hit
+   by `empoweredMultiplier` only when `empoweredAttack` was also set. A frame window —
    like a lineage `damage-window`, which has had this shape since Phase 1c — records
    the multiplier WITHOUT claiming the mechanic fired, because setting
-   `empoweredAttack` would restart cooldowns and fire every `mechanic-fired` card. So
-   a rider landing inside a window scales off the boosted hit. Reading the divisor
-   unconditionally is a one-line change and is probably the correct reading of the
-   one-multiplier rule, but it moves lineage-card numbers as well as frame numbers,
-   so it belongs to whoever owns the card windows rather than to this task.
+   `empoweredAttack` would restart cooldowns and fire every `mechanic-fired` card, so
+   a rider landing inside a window scaled off the boosted hit. The divisor is now read
+   unconditionally: `empoweredMultiplier`, not the marker, is the source of truth, which
+   is what both CLAUDE.md's axiom and `lineageCards.ts`'s own docstring already said
+   ("a Technique rider reading `empoweredMultiplier` sees one honest number").
+
+   It does move lineage-card numbers as well as frame numbers, which is why it was
+   raised rather than patched inside the task — and why it was fixed BEFORE the lane
+   bench reran, so the bench did not measure the defect and get tuned against it. The
+   regression case is in `abilityTechniqueRune.test.ts`, on Quick Strike rather than
+   Expose Weakness: Expose Weakness pays its 15% as a damage-taken debuff and never
+   reaches this code at all.
 ### Phase 3 progress note — Slinger, Spirit and Conduit frame loops (2026-10-01)
 
 Implemented from `docs/briefs/frame-loops-2026-10-01.md` §1 for the three RANGED
@@ -1136,6 +1144,47 @@ read it, and the test pins only that the node authors it.
 - The Phase 0 list of burst-lethal encounters is reviewed here against the new defensive
   cards; reshape encounters only where a face has no answer.
 - Tests: extend `coverage.test` to all slots; wiring tests for the defensive trigger kinds.
+
+### Phase 4 input — the monster-shape findings from the 2026-10-01 lane bench
+
+Read against bible §18.9 (median uplift ±3pp; the encounter check is ordinal, with the
+margin reported). Per §18.7 `drops` stays the definition of "favours", so where a family
+does not reward its declared lane **the mobs are what must move**, not the magnitude.
+
+Ordinal verdict over the 27 T1 encounters: **11 rank above, 9 below, 6 tie, 1 n/a**
+(Swamp Stalker punishes Bulwark, which no weapon lane carries). The nine where the
+favoured lane ranks BELOW the punished one, worst first:
+
+| family | node | margin | authored blend |
+|---|---|---:|---|
+| Brood | `node-t1-cave-05` | −13.7pp | 34/33/33 |
+| Brute | `node-t1-cave-02` | −12.1pp | 70/20/10 |
+| Sky | `node-t1-plains-03` | −11.3pp | 70/20/10 |
+| Deep | `node-t1-cave-03` | −9.4pp | 70/20/10 |
+| Mire | `node-t1-swamp-01` | −7.7pp | 70/20/10 |
+| Canopy | `node-t1-forest-03` | −3.8pp | 70/20/10 |
+| Crag | `node-t1-mountain-01` | −3.5pp | 70/20/10 |
+| Grove | `node-t1-forest-02` | −3.2pp | 70/20/10 |
+| Pack | `node-t1-forest-04` | −2.8pp | 45/45/10 |
+
+**Eight of the nine are the family's own 70/20/10 node** — a node seven-tenths made of
+that family, where its declared lane still loses. That is as clean a statement of "the
+mobs do not express the family's shape" as the bench can produce.
+
+Two corrections to the brief's framing, both from using the §18.9 reading rather than the
+absolute one:
+
+- **Deep is confirmed** (−9.4pp on cave-03), but **three families are worse**: Brood,
+  Brute and Sky. Deep is fourth, not first.
+- **Herd is NOT a failure.** It ranks ABOVE on plains-01 (+2.9pp) and ties on plains-04
+  and plains-05. It reads negative only in the absolute column (−7.5%, −6.5%, −4.4%),
+  which is exactly the reading §18.3 and §18.9 retire — absolute throughput on a Herd
+  node is mostly "a Broadsword against boars". The overnight report's "Plains Herd
+  punishes nothing and rewards its declared victim" was that same absolute artefact.
+
+Herd is worth one look anyway, because a tie on two of three nodes is a family with no
+measurable shape in either direction; but it is not evidence of an inverted answer and
+should not be prioritised over the three above Deep.
 
 **Exit.** A pure-lane build completes its packet across three slots and the bench shows
 the cross-slot completion as a measurable step (not a stat drift).

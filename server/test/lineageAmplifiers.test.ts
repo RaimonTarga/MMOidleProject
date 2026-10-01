@@ -141,6 +141,40 @@ assert(BOOST > 0, 'the amplifier row scalar is what an amplifier is worth; it mu
   }
 }
 
+// ── 2b. `trigger` naming the trigger the payoff already fires on re-scopes it ─
+{
+  // Rapier's Fresh Opening: "every new body the duel turns to counts as a fresh
+  // opening hit". Same trigger kind as its target, so it adds no moment — it
+  // re-scopes `first-hit`'s latch from per-engagement to per-body. Adding an extra
+  // trigger of a kind the card already fires on would instead be a no-op.
+  const sameKind: Array<{ lineageId: string; amp: LineageCard }> = [];
+  for (const [id, def] of LINEAGE_DATABASE) {
+    for (const amp of def.cards) {
+      if (amp.row !== 'amplifier' || amp.amplifies !== 'trigger') continue;
+      const target = def.cards.find((c) => c.id === amp.modifies);
+      if (target && target.trigger === amp.trigger) sameKind.push({ lineageId: id, amp });
+    }
+  }
+  assert(sameKind.length > 0, 'at least one amplifier should re-scope its own trigger');
+
+  for (const { lineageId, amp } of sameKind) {
+    assert.equal(
+      amp.trigger, 'first-hit',
+      `${amp.id}: only 'first-hit' has a per-engagement latch worth re-scoping`,
+    );
+    const target = cardOf(lineageId, amp.modifies!);
+    const amped = activeCards(lineageId, [target, amp]).find((c) => c.card.id === target.id);
+    assert.equal(
+      amped!.perTargetTrigger, true,
+      `${amp.id}: naming its own trigger must re-scope the latch to per-body`,
+    );
+    assert.equal(
+      amped!.extraTriggers, undefined,
+      `${amp.id}: it must NOT add a duplicate moment, which the runtime would ignore`,
+    );
+  }
+}
+
 // ── 3. An amplifier whose target is not ACTIVE contributes nothing ───────────
 {
   // `modifies` gates on OWNING the target, not slotting it, and one active card

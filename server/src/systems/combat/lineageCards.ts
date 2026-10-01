@@ -139,6 +139,11 @@ interface LineageFiring {
   fx: LineageFxKey;
   trigger: LineageTrigger;
   payoff: LineagePayoff;
+  /**
+   * `first-hit` only: latch this per BODY instead of per engagement, from a
+   * `trigger`-axis amplifier naming the trigger its payoff already fires on.
+   */
+  perTarget?: boolean;
 }
 
 /**
@@ -166,6 +171,7 @@ function firingsFor(player: PlayerEntity, kind: TriggerKind): LineageFiring[] {
       fx: resolved.card.fx,
       trigger: moment,
       payoff: resolved.payoff,
+      perTarget: resolved.perTargetTrigger,
     });
   }
   for (const worn of runtime.capstones) {
@@ -644,11 +650,34 @@ function registerFirstHit(): void {
 
     const firings = firingsFor(player, 'first-hit');
     if (firings.length === 0) return;
-    if (fresh) for (const firing of firings) setFlag(cs, firstHitFlag(firing.key), false);
+    if (fresh) {
+      for (const firing of firings) {
+        if (!firing.perTarget) setFlag(cs, firstHitFlag(firing.key), false);
+      }
+    }
 
-    const due = firings.filter((firing) => !getFlag(cs, firstHitFlag(firing.key)));
+    // A per-BODY firing latches on the MONSTER, not the player: that is what makes
+    // "every new body counts as a fresh opening" true without an engagement reset,
+    // and it costs nothing to clean up — node freeze/thaw takes the monster and its
+    // flag with it, and nothing about a monster's combat state is persisted. Keyed
+    // by player too, so two players' openers on one body are independent.
+    const openerLatch = (firing: LineageFiring): { cs: TracksCombat; flag: string } =>
+      firing.perTarget
+        ? {
+          cs: ctx.defender.tracksCombat,
+          flag: firstHitFlag(`${firing.key}.${player.isPlayer.id}`),
+        }
+        : { cs, flag: firstHitFlag(firing.key) };
+
+    const due = firings.filter((firing) => {
+      const latch = openerLatch(firing);
+      return !getFlag(latch.cs, latch.flag);
+    });
     if (due.length === 0) return;
-    for (const firing of due) setFlag(cs, firstHitFlag(firing.key), true);
+    for (const firing of due) {
+      const latch = openerLatch(firing);
+      setFlag(latch.cs, latch.flag, true);
+    }
     fire({ world, player, ctx, target: ctx.defender }, due);
   });
 }

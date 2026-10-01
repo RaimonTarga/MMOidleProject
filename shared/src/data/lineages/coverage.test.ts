@@ -183,12 +183,17 @@ for (const [key, lineage] of LINEAGE_DATABASE) {
           `${card.id}: amplifies 'duration', but '${target.id}' pays with '${target.payoff}', which has no window`,
         );
       }
-      // The `trigger` axis IS the amplifier's own trigger. Naming the one the
-      // payoff already fires on adds nothing — a dead card with a price.
+      // The `trigger` axis normally ADDS a moment, so naming the one the payoff
+      // already fires on would be a dead card with a price — EXCEPT for
+      // `first-hit`, the one trigger that latches per engagement rather than per
+      // hit, kill or clock tick. There, naming it again re-scopes the latch to per
+      // BODY ("every new body counts as a fresh opening"), which is a real effect.
       if (target) {
         check(
-          card.amplifies !== 'trigger' || card.trigger !== target.trigger,
-          `${card.id}: amplifies 'trigger' with '${card.trigger}', the trigger '${target.id}' already fires on`,
+          card.amplifies !== 'trigger'
+            || card.trigger !== target.trigger
+            || card.trigger === 'first-hit',
+          `${card.id}: amplifies 'trigger' with '${card.trigger}', the trigger '${target.id}' already fires on — only 'first-hit' has a per-engagement latch to re-scope`,
         );
       }
     } else {

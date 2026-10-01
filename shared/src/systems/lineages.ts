@@ -451,9 +451,16 @@ function applyAmplification(target: ResolvedLineageCard, amp: ResolvedLineageCar
       break;
     case 'trigger':
       // The modified payoff also fires on the amplifier's moment. The amplifier's
-      // own trigger is the whole content of this axis, so a card that names the
-      // same trigger as its target would add nothing — also a coverage rule.
-      if (amp.trigger) {
+      // own trigger is the whole content of this axis.
+      if (!amp.trigger) break;
+      if (amp.trigger.kind === target.card.trigger) {
+        // Naming the trigger the payoff ALREADY fires on does not add a moment —
+        // it re-scopes the one it has, from once per engagement to once per body.
+        // Rapier's Fresh Opening is the case: "every new body the duel turns to
+        // counts as a fresh opening hit". `coverage.test.ts` allows this only for
+        // `first-hit`, the one trigger that latches per engagement.
+        target.perTargetTrigger = true;
+      } else {
         target.extraTriggers = [...(target.extraTriggers ?? []), amp.trigger];
       }
       break;
