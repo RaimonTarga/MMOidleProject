@@ -1961,6 +1961,129 @@ Five carried gaps from the overnight/day-run reports, on `feat/gaps` off
 Related tests + `pnpm -r exec tsc --noEmit` all pass; see the five commits on
 `feat/gaps` for the per-gap diffs.
 
+### W2-A progress note — harness follow-ups and the run-3 lane bench (2026-10-01)
+
+On `feat/bench-followups` off `feat/lineage-data-model`.
+
+**1a. Eighteen frame reference profiles.** `LINEAGE_FRAME_REFERENCES` in
+`bot/src/tierEntry/profiles.ts`: six class roots x Light / Balanced / Heavy, each a
+lane-less T2-entry manifest with the frame and the weapon overridden. Lane-less on
+purpose — design §10 gives each frame its own feedback loop, so a card on top of it
+would be a second variable.
+
+Two authoring calls, both flagged rather than hidden:
+- **The weapon is the root's lane-matrix weapon wherever it has one**, so the row on
+  the frame a root's canonical T1 route wears is byte-identical to that lineage's
+  lane-less control and the frames column and the lane matrix can be read together.
+- **`summoner-root` anchors no weapon lineage** (`LINEAGE_REFERENCE_CLASS` pairs the
+  five weapon lineages with the other five roots), so it wears the Chaotic Axe its own
+  canonical route finishes T1 on. That is the Axe lineage's base form but the DOT
+  root's matrix, so the Conduit's frame rows share a weapon with the Axe matrix and
+  nothing else. `laneProfiles.test.ts` therefore compares a canonical frame row to a
+  lane control only for the five PAIRED roots.
+
+**1b. The two-card row swap.** `lineageSwapReference` / `lineageSwapRouteSteps`, and
+the live route `striker-lineage-swap-forest-t1`. Every existing route unlocks into an
+EMPTY row, and `unlockLineageCard` activates a card into an empty row as a side effect
+of the purchase — so every `setActive` step shipped so far returns early in
+`doSetActive` and the row-SWAP half of `lineage:setActive` had never run anywhere. The
+new route buys the Rapier's Tempo stat card, buys its Affliction stat card, then flips
+the stat row to Affliction and back. The stat row rather than the payoff row because a
+stat card's whole effect is a recalculated stat, so a swap that failed to take is
+visible; an owned-but-inert payoff card looks like one whose trigger has not come round.
+The second purchase deliberately carries **no `farmAt`**, so `doUnlockCard` has to
+resolve a biome that actually drops the other lane's shard through `lineageFarmNode`.
+
+**1c. `farmBlocked` raises a named stall.** `unsatisfiableByFarming` in
+`bot/src/route/conditions.ts` answers "why can farming this node never pay this?" for
+three provably-unpayable shapes — a Global Mastery shortfall larger than the farm
+biome's remaining headroom (or than the whole player tier can hold), another biome's
+level (or a level above this tier's cap for it), and a shard no family of the node's
+biome drops. `farmBlocked` raises it as a named `StallError` before the span opens and
+again on every poll. **Divergence from the plan sketch:** `farmUntil` already had a
+capped-biome guard, but the lineage steps pass `ignoreBiomeCap: true` (correctly — their
+essence does keep arriving), which switched it off, so an unpayable card farmed to the
+30-minute step timeout rather than the 12-minute no-progress one. The new check fires
+even under `ignoreBiomeCap`, because that flag means "a capped biome is fine", not
+"this goal is payable here". Essence is exempt: every node pays essence, and that wait
+is what the span exists to measure.
+
+**2. The lane bench (`server/bench/lineageLaneMatrix.ts`).** Tier 2 added to the node
+set (62 distinct encounters, keyed by biome+tier+cycle), the frames column on one node
+per (biome, tier), and §9's criteria replaced by §18.9's: the band is the median uplift
+±3 percentage points absolute, per tier, and the encounter check is ordinal with the
+margin reported and the per-seed ranks beside it.
+
+**Two divergences the measurement forced.**
+
+1. **A sample-size floor the plan did not anticipate.** A cell and its control each
+   need 8 kills per seed before their ratio may be RANKED, and four of the six weapon
+   packets must be rankable before a last place counts as evidence. Scoping found that
+   a Tier-1 band on Tier-2 **Desert** scores **0 kills and 8–9 deaths per 90 s**, and on
+   Tier-2 Jungle 1–3 kills; a control that killed one body and a lane that killed two
+   read as +100% uplift, which would have manufactured remap evidence out of noise.
+   Thin cells are still reported in full in the per-node tables — they are the Tier-2
+   entry finding, and they feed W2-C's pool raise — they simply cannot decide a `drops`
+   move.
+2. **The frames column runs on a narrower node set than the lane matrix.** Design
+   §18.10 budgeted "roughly triples a 35-minute run"; eighteen more profiles over all
+   62 blends would have been ~110 minutes for a reading nobody asked for at that
+   resolution. One node per (biome, tier) — the biome's leading family's own 70/20/10
+   node — answers "what is Light/Balanced/Heavy worth per root" at a twelfth of the
+   cost. `LANE_FRAME_NODES` overrides it.
+
+Also, **a family's own node is now per TIER.** The encounter check iterates
+(family, tier) pairs, because a family present at both tiers (every T1 biome's are)
+would otherwise have its T2 own node shadowed by its T1 one and the T2 blends would
+have been measured and then never reported. A family's DECIDING node for a remap is
+its own node at the lowest tier it has one — the reference build is a Tier-1 band and
+Tier 1 is the tier that band is tuned for — with the higher tier reported as
+corroboration.
+
+**3. No `drops` remap was clear, and a 270 s addendum run says why.** Design §18 3b's
+test was met by no family on the 90 s run. Two came within one rank in one seed (Forest
+Canopy and Swamp Mire, both last pooled, both with Engagement first in both seeds), so a
+targeted re-run of the nine decisive own-nodes at a **270 s** cap followed —
+`reports/progression-phase1/lane-matrix-run3-slow.md`, 360 runs, 26.7 min — because Cave
+and Mountain give only 8–10 kills per seed at 90 s and Cave Brute's node had produced no
+rankable lane at all.
+
+It was worth the 27 minutes, and it is the single most consequential thing W2-A found:
+
+- Cave Brute and Cave Deep become rankable, both with their favoured lane LAST.
+- **Plains Sky inverts.** Engagement was last of six and −11.3pp at 90 s; at 270 s it is
+  **first of six and +3.8pp**. The overnight report's Sky finding and the main run's are
+  both under-sampling artefacts, and Sky's contract holds.
+- Cave Brood and Mountain Crag flip sign between caps; Forest Canopy softens from −3.8pp
+  to −0.7pp.
+- **Seven of nine families still rank differently in the two seeds at 21–57 kills per
+  seed** (Brute 1st and 6th, Deep 1st and 6th, Brood 2nd and 6th, Crag 5th and 1st).
+  Only Swamp Mire agrees — 6/6 in both seeds at both caps, with the margin WIDENING as
+  sampling improves, −12.0pp to −18.7pp.
+
+**So the ordinal encounter check and the ±3pp band are both below the instrument's
+resolution at Tier 1 today, on every family but one.** That is a finding about §18.9's
+measurability, not about the families, and Phase 4 should not act on a rank from a
+two-seed run. The recommendation in the proposal file: stop ranking six lanes against
+each other on one node and compare **one lane against one lane** on its own favoured
+node, pooled over the three lineages that carry it, with enough seeds to put an interval
+on that single difference. More seeds alone will not do it — the 270 s run already
+tripled the samples per seed.
+
+**4. The proposal table applies nothing** and no row in it rests on a rank alone. Its
+spine is a fact read off the data files rather than measured: **`dotResistance` is set on
+zero monsters in the entire game and `evasion` on two**, so fourteen of the eighteen
+family contracts declare a punishment with no stat behind it. The one measured inversion
+is Swamp Mire; Plains under-pressure rests on a death count of zero across 118 cells in
+four of the five T1 biomes. The file also withdraws its own earlier `grass-kite` rows,
+in the file, with the reason — the addendum reversed the reading they rested on.
+
+One conflict the table is blocked on and cannot resolve: `plains.monsters.ts`'s header
+says squishy biomes (plains/forest) carry NO plating by design, while the family contract
+needs Plains Herd's and Forest Grove's bodies to have plating in order to punish Tempo at
+all. The biome-mitigation lesson and the family punishment contract want opposite things
+from the same stat on the same mobs.
+
 ---
 
 ## Cross-cutting rules

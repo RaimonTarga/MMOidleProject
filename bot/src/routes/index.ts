@@ -42,6 +42,7 @@ import { SQUIRE_BRACE_TANK_T1 } from "./squireBraceTankT1";
 import { SQUIRE_T1 } from "./squireT1";
 import { SQUIRE_V2_T1 } from "./squireV2T1";
 import { STRIKER_LINEAGE_FOREST_T1 } from "./strikerLineageForestT1";
+import { STRIKER_LINEAGE_SWAP_FOREST_T1 } from "./strikerLineageSwapForestT1";
 import { STRIKER_T1 } from "./strikerT1";
 import { STRIKER_BRACE_TANK_T1 } from "./strikerBraceTankT1";
 import { STRIKER_V2_T1 } from "./strikerV2T1";
@@ -128,6 +129,7 @@ export const ROUTES = new Map<string, Route>(
     CAMPAIGN_T3_V1P_TUNDRA,
     STRIKER_T1,
     STRIKER_LINEAGE_FOREST_T1,
+    STRIKER_LINEAGE_SWAP_FOREST_T1,
     STRIKER_DECISIONS_T1,
     SQUIRE_T1,
     ...T1_CANONICAL_FRAME_HANDOFF_ROUTES,

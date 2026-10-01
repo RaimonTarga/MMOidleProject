@@ -39,14 +39,45 @@
  *    that has no source: a card the mastery gate or the wallet refuses is reported
  *    as refused rather than silently faked.
  *
+ * 4. RUN 3 (2026-10-01) ADDS TWO READINGS AND RETIRES ONE CRITERION.
+ *
+ *    TIER 2. The node set is every blended normal node of biome tier 1 AND 2, so
+ *    Jungle's and Desert's families are measured rather than assumed. The
+ *    references are unchanged — a T1 band on a T2 encounter is the character who
+ *    has just walked into Tier 2, which is the build the gate hands over — so the
+ *    T2 rows read as "what does a T1 lane still buy you here", and their death
+ *    counts are part of the answer.
+ *
+ *    THE FRAMES COLUMN (design §18.10). Eighteen lane-less frame references,
+ *    three per class root, measured on one node per biome. `LINEAGE_LANE_REFERENCES`
+ *    does not vary frame, so this is a separate reference set rather than a column
+ *    the lane matrix could grow, and it is deliberately a NARROWER node set: the
+ *    question is what Light/Balanced/Heavy is worth per root, not how each frame
+ *    reads on all 62 blends, and the full cross would have trebled the run.
+ *
+ *    THE CRITERION IS §18.9, NOT §9. The lane budget band is the median uplift
+ *    ±3 PERCENTAGE POINTS, absolute — §9's "±10% of the tier median" is a
+ *    proportion of a number that is itself small, so the band narrows as lanes
+ *    weaken and no lane could sit inside it by construction. The encounter check
+ *    drops "~30%" for a RANKING: does the favoured lane out-uplift the punished
+ *    lane on that family's own node, and by what margin? The margin is reported,
+ *    never thresholded, and the per-seed ranks are reported with it, because a
+ *    remap (§18 3b) is only taken when both seeds agree.
+ *
  * Usage, from `server/`:
  *
  *   node --conditions=development --import tsx bench/lineageLaneMatrix.ts [out-dir]
  *
  *   LANE_CAP_MS=90000        sim time per cell per seed
  *   LANE_SEEDS=101009,101033 two seeds by default
- *   LANE_FILTER=rapier       substring filter on the cell id
+ *   LANE_FILTER=rapier       substring filter on the cell id (lane AND frame rows)
  *   LANE_NODES=plains,forest limit to these biomes
+ *   LANE_TIERS=1,2           limit to these biome tiers
+ *   LANE_ONLY=node-a,node-b  limit to these node ids
+ *   LANE_FRAMES=0            skip the frames column
+ *   LANE_FRAME_NODES=a,b     the frames column's node set (default: one per biome)
+ *   LANE_REPORT=lane-matrix  output basename (`.md` and `.json`)
+ *   LANE_REPLAY=path.json    rebuild the report from a previous run's rows
  */
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
@@ -72,8 +103,12 @@ import {
   type TierEntryProfile,
 } from '@mmo-idle/shared';
 import {
+  FRAME_SHAPES,
+  LINEAGE_FRAME_PROFILES,
+  LINEAGE_FRAME_REFERENCES,
   LINEAGE_LANE_PROFILES,
   LINEAGE_LANE_REFERENCES,
+  type LineageFrameReference,
   type LineageLaneReference,
 } from '../../bot/src/tierEntry/profiles';
 import { validateBuild } from '../../bot/src/loadout/loadout';
@@ -97,7 +132,15 @@ import { setLineageActive, unlockLineageCard } from '../src/systems/player/econo
 import type { PlayerEntity } from '../src/ecs/entity';
 import type { World } from '../src/world/World';
 
-const T1_BIOMES = ['plains', 'forest', 'mountain', 'cave', 'swamp'] as const;
+/**
+ * Every biome with authored family blends, in map order: the five T1 biomes and
+ * the two the T2 region adds. A biome absent from this list has no families yet,
+ * so a node of it would resolve to an empty blend.
+ */
+const BENCH_BIOMES = [
+  'plains', 'forest', 'mountain', 'cave', 'swamp', 'jungle', 'desert',
+] as const;
+const BENCH_TIERS = [1, 2] as const;
 
 /**
  * Wallet credited before the cards are bought. Generous on purpose: the matrix
@@ -114,6 +157,8 @@ interface LaneNode {
   /** Representative node id — the first authored node with this composition. */
   nodeId: string;
   biome: string;
+  /** The node's own biome tier, which decides which monster pool it fields. */
+  tier: number;
   /** Every authored node that resolves to the same spawn cycle. */
   aliases: string[];
   authored: string;
@@ -121,6 +166,8 @@ interface LaneNode {
   /** Monster ids in the repeating cycle, with how many of the ten slots each takes. */
   mobs: Array<{ monsterTypeId: string; family: FamilyId; slots: number }>;
   dominant: FamilyId;
+  /** The dominant family's resolved share — what "its own node" means. */
+  dominantShare: number;
   dropsLane: PacketId;
   punishesLane: PacketId;
   unavailable: FamilyId[];
@@ -129,15 +176,18 @@ interface LaneNode {
 function laneNodes(): LaneNode[] {
   const byKey = new Map<string, LaneNode>();
   for (const node of WORLD_NODE_LIST) {
-    if (node.biomeTier !== 1 || NODE_BIOMES[node.id]?.kind !== 'normal') continue;
-    if (!T1_BIOMES.includes(node.biomeGroup as (typeof T1_BIOMES)[number])) continue;
+    if (!BENCH_TIERS.includes(node.biomeTier as (typeof BENCH_TIERS)[number])) continue;
+    if (NODE_BIOMES[node.id]?.kind !== 'normal') continue;
+    if (!BENCH_BIOMES.includes(node.biomeGroup as (typeof BENCH_BIOMES)[number])) continue;
     const blend = node.blend;
     const resolved = nodeSpawnBlend(node.id);
     if (!blend || !resolved) continue;
 
     // Two nodes are the same ENCOUNTER when their resolved spawn cycles agree
-    // slot for slot, which is what the spawner actually walks.
-    const cycleKey = `${node.biomeGroup}|${resolved.cycle.join(',')}`;
+    // slot for slot, which is what the spawner actually walks. Keyed by tier as
+    // well: the same biome's T1 and T2 nodes can share a cycle shape while
+    // fielding entirely different mobs.
+    const cycleKey = `${node.biomeGroup}|${node.biomeTier}|${resolved.cycle.join(',')}`;
     const existing = byKey.get(cycleKey);
     if (existing) {
       existing.aliases.push(node.id);
@@ -156,16 +206,19 @@ function laneNodes(): LaneNode[] {
       row.slots += 1;
       slots.set(key, row);
     }
-    const dominant = blendEntries(resolved.shares)[0].family;
+    const dominantEntry = blendEntries(resolved.shares)[0];
+    const dominant = dominantEntry.family;
     const family = FAMILY_DATABASE.get(dominant)!;
     byKey.set(cycleKey, {
       nodeId: node.id,
       biome: node.biomeGroup,
+      tier: node.biomeTier,
       aliases: [node.id],
       authored: blendEntries(blend).map((e) => `${short(e.family)} ${pct(e.share)}`).join(' / '),
       resolved: blendEntries(resolved.shares).map((e) => `${short(e.family)} ${pct(e.share)}`).join(' / '),
       mobs: [...slots.values()].sort((a, b) => b.slots - a.slots),
       dominant,
+      dominantShare: dominantEntry.share,
       dropsLane: family.drops,
       punishesLane: family.punishes,
       unavailable: [...resolved.unavailable],
@@ -176,6 +229,8 @@ function laneNodes(): LaneNode[] {
 
 const short = (family: FamilyId): string => FAMILY_DATABASE.get(family)?.name ?? family;
 const pct = (share: number): string => `${Math.round(share * 100)}%`;
+/** `node-t2-jungle-03` as `t2-jungle-03`: short enough for a column heading. */
+const shortNode = (nodeId: string): string => nodeId.replace('node-', '');
 
 // ── Bot preparation ──────────────────────────────────────────────────────────
 
@@ -191,7 +246,8 @@ const pct = (share: number): string => `${Math.round(share * 100)}%`;
 function prepareLaneBot(
   world: World,
   profile: TierEntryProfile,
-  reference: LineageLaneReference,
+  /** Null for a frame reference: same preparation, no lineage band to buy. */
+  reference: LineageLaneReference | null,
   nodeId: string,
 ): { bot: PlayerEntity; refusals: string[]; grantedShards: boolean } {
   const biome = NODE_BIOMES[nodeId].biomeGroup;
@@ -254,20 +310,22 @@ function prepareLaneBot(
 
   // Buy the band through the real economy handler, so a refusal is a finding.
   for (const type of ESSENCE_TYPES) p.essences[type] = BENCH_ESSENCE;
-  const lane = reference.lane;
-  const grantedShards = reference.shardsUnobtainableAtT1;
+  const lane = reference?.lane ?? null;
+  const grantedShards = reference?.shardsUnobtainableAtT1 ?? false;
   if (lane) p.shards[lane] = BENCH_SHARDS;
   const refusals: string[] = [];
-  const lineage = LINEAGE_DATABASE.get(reference.lineageId)!;
-  for (const cardId of reference.cardIds) {
-    const card = lineage.cards.find((c) => c.id === cardId)!;
-    const bought = unlockLineageCard(world, bot, reference.lineageId, cardId);
-    if (!bought.success) {
-      refusals.push(`unlockCard ${cardId}: ${bought.reason}`);
-      continue;
+  if (reference) {
+    const lineage = LINEAGE_DATABASE.get(reference.lineageId)!;
+    for (const cardId of reference.cardIds) {
+      const card = lineage.cards.find((c) => c.id === cardId)!;
+      const bought = unlockLineageCard(world, bot, reference.lineageId, cardId);
+      if (!bought.success) {
+        refusals.push(`unlockCard ${cardId}: ${bought.reason}`);
+        continue;
+      }
+      const activated = setLineageActive(world, bot, reference.lineageId, card.row, cardId);
+      if (!activated.success) refusals.push(`setActive ${cardId}: ${activated.reason}`);
     }
-    const activated = setLineageActive(world, bot, reference.lineageId, card.row, cardId);
-    if (!activated.success) refusals.push(`setActive ${cardId}: ${activated.reason}`);
   }
   // Zero the credited wallet again: a reference build does not walk into a node
   // holding five thousand of every essence, and nothing in combat reads it.
@@ -284,9 +342,16 @@ function prepareLaneBot(
     [],
     profile.id,
   );
-  const tree = view.lineages[reference.lineageId];
-  assert(tree, `${profile.id}: the worn base form opened no tree`);
-  assert(tree.wornForm === reference.baseForm, `${profile.id}: worn form is the base form`);
+  if (reference) {
+    const tree = view.lineages[reference.lineageId];
+    assert(tree, `${profile.id}: the worn base form opened no tree`);
+    assert(tree.wornForm === reference.baseForm, `${profile.id}: worn form is the base form`);
+  } else {
+    // A frame reference buys nothing, so the only claim to check is that it is
+    // still carrying the weapon the whole root shares.
+    assert(bot.holdsInventory.equipment.weapon === profile.equipment.weapon,
+      `${profile.id}: wears the root's reference weapon`);
+  }
   return { bot, refusals, grantedShards };
 }
 
@@ -295,9 +360,13 @@ function prepareLaneBot(
 interface Row {
   cellId: string;
   profileId: string;
-  lineageId: string;
+  /** Null on a frame reference, which belongs to a root rather than a lineage. */
+  lineageId: string | null;
   lane: PacketId | null;
   classRoot: string;
+  /** Set on a frame reference only: the frame under test and its shape. */
+  frameId?: string;
+  frameShape?: string;
   nodeId: string;
   biome: string;
   seed: number;
@@ -340,7 +409,8 @@ function seededRandom(seed: number): () => number {
 
 function measure(
   profile: TierEntryProfile,
-  reference: LineageLaneReference,
+  reference: LineageLaneReference | null,
+  frame: LineageFrameReference | null,
   node: LaneNode,
   seed: number,
   capMs: number,
@@ -371,7 +441,7 @@ function measure(
   registerCombatListener('onDamageTaken', onDealt);
   try {
     const mobCount = setupArena(world, {
-      nodeId: node.nodeId, biomeGroup: node.biome, contentTier: 1, isDungeon: false,
+      nodeId: node.nodeId, biomeGroup: node.biome, contentTier: node.tier, isDungeon: false,
     });
     const { bot, refusals, grantedShards } = prepareLaneBot(world, profile, reference, node.nodeId);
     for (; now < capMs;) {
@@ -396,9 +466,10 @@ function measure(
     return {
       cellId: `${profile.id}@${node.nodeId}`,
       profileId: profile.id,
-      lineageId: reference.lineageId,
-      lane: reference.lane,
-      classRoot: reference.classRoot,
+      lineageId: reference?.lineageId ?? null,
+      lane: reference?.lane ?? null,
+      classRoot: (reference ?? frame!).classRoot,
+      ...(frame ? { frameId: frame.frameId, frameShape: frame.frameShape } : {}),
       nodeId: node.nodeId,
       biome: node.biome,
       seed, kills, deaths, engagedMs, capMs, damageDealt, refusals, grantedShards, mobCount, fx,
@@ -417,9 +488,11 @@ function measure(
 
 interface Cell {
   profileId: string;
-  lineageId: string;
+  lineageId: string | null;
   lane: PacketId | null;
   classRoot: string;
+  frameId?: string;
+  frameShape?: string;
   nodeId: string;
   kills: number;
   deaths: number;
@@ -439,12 +512,19 @@ interface Cell {
   meanHpFraction: number | null;
 }
 
-function aggregate(rows: Row[]): Map<string, Cell> {
+/**
+ * Pool rows into cells. `bySeed` groups by (cell, seed) instead of pooling the
+ * seeds, which is what design §18.9's remap rule needs: a `drops` move is taken
+ * only when BOTH seeds rank the lanes the same way, and a pooled cell cannot say
+ * whether they did.
+ */
+function aggregate(rows: Row[], bySeed = false): Map<string, Cell> {
   const byCell = new Map<string, Row[]>();
   for (const row of rows) {
-    const list = byCell.get(row.cellId) ?? [];
+    const key = bySeed ? `${row.cellId}#${row.seed}` : row.cellId;
+    const list = byCell.get(key) ?? [];
     list.push(row);
-    byCell.set(row.cellId, list);
+    byCell.set(key, list);
   }
   const out = new Map<string, Cell>();
   for (const [cellId, group] of byCell) {
@@ -456,6 +536,8 @@ function aggregate(rows: Row[]): Map<string, Cell> {
       lineageId: group[0].lineageId,
       lane: group[0].lane,
       classRoot: group[0].classRoot,
+      frameId: group[0].frameId,
+      frameShape: group[0].frameShape,
       nodeId: group[0].nodeId,
       kills,
       deaths: group.reduce((a, r) => a + r.deaths, 0),
@@ -510,11 +592,38 @@ async function main(): Promise<void> {
     assert(hydrateHitboxCacheFromArtifact(artifact) > 0, 'hitbox cache is empty');
   }
 
+  const tierFilter = process.env.LANE_TIERS?.split(',').map(Number);
   const nodes = laneNodes()
     .filter((n) => !biomeFilter || biomeFilter.includes(n.biome))
+    .filter((n) => !tierFilter || tierFilter.includes(n.tier))
     .filter((n) => !nodeFilter || nodeFilter.includes(n.nodeId));
   const references = LINEAGE_LANE_REFERENCES.filter((r) => !filter || r.profileId.includes(filter));
   assert(nodes.length > 0 && references.length > 0, 'nothing selected');
+
+  // ── The frames column's node set (design §18.10) ──────────────────────────
+  //
+  // Deliberately narrower than the lane matrix's. The column answers what
+  // Light/Balanced/Heavy is worth PER ROOT, which one encounter per biome
+  // already says; running eighteen more profiles over all 62 blends would have
+  // trebled the run for a reading nobody asked for. One node per (biome, tier):
+  // the biome's first blend, which is its first family's own 70% node.
+  const frameNodeIds = process.env.LANE_FRAME_NODES?.split(',');
+  const frameNodes = frameNodeIds
+    ? nodes.filter((n) => frameNodeIds.includes(n.nodeId))
+    : (() => {
+      // FIRST per (biome, tier), not last: that is the biome's leading family's
+      // own 70/20/10 node, a real encounter rather than the 34/33/33 blur the
+      // list ends on.
+      const byBiome = new Map<string, LaneNode>();
+      for (const node of nodes) {
+        const key = `${node.biome}|${node.tier}`;
+        if (!byBiome.has(key)) byBiome.set(key, node);
+      }
+      return [...byBiome.values()];
+    })();
+  const frameReferences = process.env.LANE_FRAMES === '0'
+    ? []
+    : LINEAGE_FRAME_REFERENCES.filter((r) => !filter || r.profileId.includes(filter));
 
   // Regenerating the report is a report change, not a measurement, so it must not
   // cost another three quarters of an hour: `LANE_REPLAY` reads a previous run's
@@ -528,69 +637,129 @@ async function main(): Promise<void> {
     rows.push(...stored.rows);
     console.log(`replaying ${rows.length} measured rows from ${replay}`);
   }
-  for (const reference of replay ? [] : references) {
-    const profile = LINEAGE_LANE_PROFILES.get(reference.profileId)!;
-    for (const node of nodes) {
-      for (const seed of seeds) {
-        rows.push(measure(profile, reference, node, seed, capMs));
+  const sweep = (
+    jobs: Array<{ profileId: string; profile: TierEntryProfile; lane: LineageLaneReference | null; frame: LineageFrameReference | null; nodes: LaneNode[] }>,
+  ): void => {
+    for (const job of jobs) {
+      for (const node of job.nodes) {
+        for (const seed of seeds) {
+          rows.push(measure(job.profile, job.lane, job.frame, node, seed, capMs));
+        }
+        const cell = rows.slice(-seeds.length);
+        const kills = cell.reduce((a, r) => a + r.kills, 0);
+        const engaged = cell.reduce((a, r) => a + r.engagedMs, 0);
+        console.log(
+          `${job.profileId.padEnd(30)} ${node.nodeId.padEnd(22)} kills=${String(kills).padStart(3)}` +
+          ` ttk=${kills ? Math.round(engaged / kills) : '—'}ms deaths=${cell.reduce((a, r) => a + r.deaths, 0)}` +
+          ` fx=${cell.reduce((a, r) => a + Object.values(r.fx).reduce((x, y) => x + y, 0), 0)}` +
+          (cell[0].refusals.length ? ` REFUSED ${cell[0].refusals.join('; ')}` : ''),
+        );
       }
-      const cell = rows.slice(-seeds.length);
-      const kills = cell.reduce((a, r) => a + r.kills, 0);
-      const engaged = cell.reduce((a, r) => a + r.engagedMs, 0);
-      console.log(
-        `${reference.profileId.padEnd(30)} ${node.nodeId.padEnd(20)} kills=${String(kills).padStart(3)}` +
-        ` ttk=${kills ? Math.round(engaged / kills) : '—'}ms deaths=${cell.reduce((a, r) => a + r.deaths, 0)}` +
-        ` fx=${cell.reduce((a, r) => a + Object.values(r.fx).reduce((x, y) => x + y, 0), 0)}` +
-        (cell[0].refusals.length ? ` REFUSED ${cell[0].refusals.join('; ')}` : ''),
-      );
     }
+  };
+  if (!replay) {
+    sweep(references.map((reference) => ({
+      profileId: reference.profileId,
+      profile: LINEAGE_LANE_PROFILES.get(reference.profileId)!,
+      lane: reference,
+      frame: null,
+      nodes,
+    })));
+    sweep(frameReferences.map((reference) => ({
+      profileId: reference.profileId,
+      profile: LINEAGE_FRAME_PROFILES.get(reference.profileId)!,
+      lane: null,
+      frame: reference,
+      nodes: frameNodes,
+    })));
   }
   const elapsedMs = replay ? 0 : Date.now() - startedAt;
 
   const cells = aggregate(rows);
+  const seedCells = aggregate(rows, true);
   const cellFor = (profileId: string, nodeId: string): Cell | undefined =>
     cells.get(`${profileId}@${nodeId}`);
+  const seedCellFor = (profileId: string, nodeId: string, seed: number): Cell | undefined =>
+    seedCells.get(`${profileId}@${nodeId}#${seed}`);
   const baselineId = (lineageId: string): string => `lineage-${lineageId}-baseline`;
 
   /** Uplift of a lane cell over its own lineage's control on the same node. */
   const uplift = (cell: Cell): number | null => {
-    if (!cell.lane) return null;
+    if (!cell.lane || !cell.lineageId) return null;
     const control = cellFor(baselineId(cell.lineageId), cell.nodeId);
     if (!control || control.killsPerMin <= 0) return null;
     return cell.killsPerMin / control.killsPerMin - 1;
+  };
+  /** The same uplift inside ONE seed — the reading the remap rule needs. */
+  const seedUplift = (reference: LineageLaneReference, nodeId: string, seed: number): number | null => {
+    if (!reference.lane) return null;
+    const cell = seedCellFor(reference.profileId, nodeId, seed);
+    const control = seedCellFor(baselineId(reference.lineageId), nodeId, seed);
+    if (!cell || !control || control.killsPerMin <= 0) return null;
+    return cell.killsPerMin / control.killsPerMin - 1;
+  };
+
+  /**
+   * Kills a cell AND its control each need before their ratio may be RANKED.
+   *
+   * A ratio of small counts is not a measurement: a control that killed one mob
+   * and a lane that killed two read as +100% uplift, and on the Tier-2 nodes a
+   * Tier-1 band routinely kills nought to three in ninety seconds while dying
+   * eight times. Those cells are a real finding about Tier-2 entry — they are
+   * reported in full in the per-node tables — but they must not be allowed to
+   * decide a ranking, least of all a `drops` remap. Eight per seed is well below
+   * every Tier-1 cell (15 to 30) and well above every Desert one (0).
+   */
+  const MIN_KILLS_PER_SEED_FOR_RANK = 8;
+  const rankable = (profileId: string, lineageId: string, nodeId: string, seed?: number): boolean => {
+    const min = MIN_KILLS_PER_SEED_FOR_RANK * (seed === undefined ? seeds.length : 1);
+    const cell = seed === undefined ? cellFor(profileId, nodeId) : seedCellFor(profileId, nodeId, seed);
+    const control = seed === undefined
+      ? cellFor(baselineId(lineageId), nodeId)
+      : seedCellFor(baselineId(lineageId), nodeId, seed);
+    return !!cell && !!control && cell.kills >= min && control.kills >= min;
   };
 
   // ── The matrix ─────────────────────────────────────────────────────────────
   const laneRefs = references.filter((r) => r.lane);
   const matrix: string[] = [
-    '| node | biome | authored blend | resolved blend | shares this row | mobs (of 10 slots) |',
-    '|---|---|---|---|---|---|',
-    ...nodes.map((n) => `| \`${n.nodeId}\` | ${n.biome} | ${n.authored} | ${n.resolved} | ${n.aliases.length} node(s): ${n.aliases.map((a) => a.replace('node-t1-', '')).join(', ')} | ${n.mobs.map((m) => `${m.monsterTypeId} x${m.slots}`).join(', ')} |`),
+    '| node | tier | biome | authored blend | resolved blend | shares this row | mobs (of 10 slots) |',
+    '|---|---:|---|---|---|---|---|',
+    ...nodes.map((n) => `| \`${n.nodeId}\` | ${n.tier} | ${n.biome} | ${n.authored} | ${n.resolved} | ${n.aliases.length} node(s): ${n.aliases.map(shortNode).join(', ')} | ${n.mobs.map((m) => `${m.monsterTypeId} x${m.slots}`).join(', ')} |`),
   ];
 
-  // ── TTK per lane per node, in one table (the brief's own ask) ─────────────
-  const pivotHeader = `| profile | lane | class | ${nodes.map((n) => n.nodeId.replace('node-t1-', '')).join(' | ')} |`;
-  const pivot: string[] = [
-    pivotHeader,
-    `|---|---|---|${nodes.map(() => '---:').join('|')}|`,
-    ...references.map((reference) => {
-      const cellsForRef = nodes.map((n) => cellFor(reference.profileId, n.nodeId));
-      return `| \`${reference.profileId}\` | ${reference.lane ?? '_control_'} | ${reference.classRoot.replace('-root', '')} | ${cellsForRef.map((c) => (c?.ttkMs == null ? '—' : String(c.ttkMs))).join(' | ')} |`;
-    }),
-  ];
-  const upliftPivot: string[] = [
-    pivotHeader,
-    `|---|---|---|${nodes.map(() => '---:').join('|')}|`,
-    ...laneRefs.map((reference) => {
-      const cellsForRef = nodes.map((n) => cellFor(reference.profileId, n.nodeId));
-      return `| \`${reference.profileId}\` | ${reference.lane} | ${reference.classRoot.replace('-root', '')} | ${cellsForRef.map((c) => (c ? signedPct(uplift(c)) : '—')).join(' | ')} |`;
-    }),
-  ];
+  // ── TTK per lane per node ────────────────────────────────────────────────
+  //
+  // One table per TIER. Sixty-two columns in a single table is not a table
+  // anyone can read, and the T1 and T2 rows are different questions anyway.
+  const pivotFor = (
+    tier: number,
+    refs: readonly LineageLaneReference[],
+    render: (cell: Cell | undefined) => string,
+  ): string[] => {
+    const tierNodes = nodes.filter((n) => n.tier === tier);
+    if (tierNodes.length === 0) return [];
+    return [
+      `| profile | lane | class | ${tierNodes.map((n) => shortNode(n.nodeId)).join(' | ')} |`,
+      `|---|---|---|${tierNodes.map(() => '---:').join('|')}|`,
+      ...refs.map((reference) => `| \`${reference.profileId}\` | ${reference.lane ?? '_control_'} | ${reference.classRoot.replace('-root', '')} | ${tierNodes.map((n) => render(cellFor(reference.profileId, n.nodeId))).join(' | ')} |`),
+    ];
+  };
+  const ttkCell = (cell: Cell | undefined): string => (cell?.ttkMs == null ? '—' : String(cell.ttkMs));
+  const upliftCell = (cell: Cell | undefined): string => (cell ? signedPct(uplift(cell)) : '—');
+  const pivot = BENCH_TIERS.flatMap((tier) => {
+    const table = pivotFor(tier, references, ttkCell);
+    return table.length ? [`**Tier ${tier}**`, '', ...table, ''] : [];
+  });
+  const upliftPivot = BENCH_TIERS.flatMap((tier) => {
+    const table = pivotFor(tier, laneRefs, upliftCell);
+    return table.length ? [`**Tier ${tier}**`, '', ...table, ''] : [];
+  });
 
   const perNode: string[] = [];
   for (const node of nodes) {
-    perNode.push('', `### \`${node.nodeId}\` — ${node.resolved} (${node.biome}; shared by ${node.aliases.length} authored node${node.aliases.length === 1 ? '' : 's'})`, '');
-    perNode.push(`Dominant family **${short(node.dominant)}** drops \`${node.dropsLane}\`, punishes \`${node.punishesLane}\`. Authored ${node.authored}; unfieldable at T1: ${node.unavailable.map(short).join(', ') || 'none'}.`, '');
+    perNode.push('', `### \`${node.nodeId}\` — ${node.resolved} (${node.biome} T${node.tier}; shared by ${node.aliases.length} authored node${node.aliases.length === 1 ? '' : 's'})`, '');
+    perNode.push(`Dominant family **${short(node.dominant)}** drops \`${node.dropsLane}\`, punishes \`${node.punishesLane}\`. Authored ${node.authored}; unfieldable at T${node.tier}: ${node.unavailable.map(short).join(', ') || 'none'}.`, '');
     perNode.push('| profile | lane | class | kills | TTK (ms engaged/kill) | kills/min | uplift vs control | deaths | card-fx fired |', '|---|---|---|---:|---:|---:|---:|---:|---|');
     for (const reference of references) {
       const cell = cellFor(reference.profileId, node.nodeId);
@@ -600,22 +769,35 @@ async function main(): Promise<void> {
         (cell.refusals.length ? ` <!-- ${cell.refusals.join('; ')} -->` : ''),
       );
     }
+    for (const reference of frameReferences) {
+      const cell = cellFor(reference.profileId, node.nodeId);
+      if (!cell) continue;
+      perNode.push(
+        `| \`${reference.profileId}\` | _frame ${reference.frameShape}_ | ${reference.classRoot.replace('-root', '')} | ${cell.kills} | ${fmt(cell.ttkMs, 0)} | ${fmt(cell.killsPerMin)} | — | ${cell.deaths} | ${Object.entries(cell.fx).map(([k, v]) => `${k} x${v}`).join(', ') || '—'} |`,
+      );
+    }
   }
 
-  // ── §9 lane budget, on the lane's favoured node ────────────────────────────
+  // ── §18.9 lane budget, on the lane's favoured node ────────────────────────
   //
-  // "Favoured" is read off `FamilyDefinition.drops`, because the shipped family
-  // table has no `favours` field — design §9 asks for one and §12's table does
-  // not carry it. Recorded as a divergence, not papered over.
-  const favouredNodeFor = (lane: PacketId): LaneNode | undefined => {
-    const candidates = nodes.filter((n) => n.dropsLane === lane);
+  // "Favoured" is read off `FamilyDefinition.drops`, which design §18.7 confirms
+  // IS the definition of favours — the family table carries no second `favours`
+  // field and is not getting one.
+  //
+  // The band is design §18.9's, not §9's: the median uplift ±3 PERCENTAGE
+  // POINTS, absolute. §9's "±10% of the tier median" is a proportion of a number
+  // that is itself small, so at a +4.3% median it reads +3.9% to +4.7% — tighter
+  // than the measurement noise, and unsatisfiable by construction. The absolute
+  // ±10% column is kept beside it only to show what the retired criterion said.
+  const BAND_PP = 0.03;
+  const favouredNodeFor = (lane: PacketId, tier?: number): LaneNode | undefined => {
+    const candidates = nodes
+      .filter((n) => n.dropsLane === lane)
+      .filter((n) => tier === undefined || n.tier === tier);
     if (candidates.length === 0) return undefined;
-    // The node this family dominates hardest, so the contrast is as strong as T1 allows.
-    return candidates.sort((a, b) => {
-      const sa = blendEntries(nodeSpawnBlend(a.nodeId)!.shares)[0].share;
-      const sb = blendEntries(nodeSpawnBlend(b.nodeId)!.shares)[0].share;
-      return sb - sa;
-    })[0];
+    // The node this family dominates hardest, so the contrast is as strong as
+    // the map allows.
+    return candidates.sort((a, b) => b.dominantShare - a.dominantShare)[0];
   };
 
   interface BudgetRow {
@@ -624,39 +806,50 @@ async function main(): Promise<void> {
     absolute: number | null;
     upliftValue: number | null;
   }
-  const budgetRows: BudgetRow[] = laneRefs.map((reference) => {
-    const node = favouredNodeFor(reference.lane!) ?? null;
-    const cell = node ? cellFor(reference.profileId, node.nodeId) : undefined;
-    return {
-      reference,
-      node,
-      absolute: cell ? cell.killsPerMin : null,
-      upliftValue: cell ? uplift(cell) : null,
-    };
-  });
+  const budgetTableFor = (tier: number): { rows: BudgetRow[]; upMedian: number; lines: string[] } => {
+    const rowsForTier: BudgetRow[] = laneRefs.map((reference) => {
+      const node = favouredNodeFor(reference.lane!, tier) ?? null;
+      const cell = node ? cellFor(reference.profileId, node.nodeId) : undefined;
+      return {
+        reference,
+        node,
+        absolute: cell ? cell.killsPerMin : null,
+        upliftValue: cell ? uplift(cell) : null,
+      };
+    });
+    const absMedianTier = median(rowsForTier.flatMap((r) => (r.absolute === null ? [] : [r.absolute])));
+    const upMedianTier = median(rowsForTier.flatMap((r) => (r.upliftValue === null ? [] : [r.upliftValue])));
+    const lines = [
+      `**Tier ${tier}.** Median lane uplift on the favoured node: **${signedPct(upMedianTier)}**.`
+      + ` The §18.9 band is ${signedPct(upMedianTier - BAND_PP)} to ${signedPct(upMedianTier + BAND_PP)}`
+      + ` (median ±3 pp). Median absolute throughput there: ${fmt(absMedianTier)} kills/min.`,
+      '',
+      '| lane | profile | favoured node | uplift | uplift − median | in ±3 pp (§18.9) | kills/min | in ±10% abs (§9, retired) | shards |',
+      '|---|---|---|---:|---:|:--:|---:|:--:|---|',
+      ...rowsForTier.map((r) => {
+        const deviation = r.absolute === null || absMedianTier === 0 ? null : r.absolute / absMedianTier - 1;
+        const delta = r.upliftValue === null ? null : r.upliftValue - upMedianTier;
+        return `| ${r.reference.lane} | \`${r.reference.profileId}\` | ${r.node ? `\`${r.node.nodeId}\`` : `**no T${tier} node favours this lane**`} | ${signedPct(r.upliftValue)} | ${delta === null ? '—' : signedPct(delta)} | ${delta === null ? 'n/a' : (Math.abs(delta) <= BAND_PP ? 'yes' : 'NO')} | ${fmt(r.absolute)} | ${deviation === null ? 'n/a' : (Math.abs(deviation) <= 0.10 ? 'yes' : 'NO')} | ${r.reference.shardsUnobtainableAtT1 ? 'granted (no T1 source)' : 'earned'} |`;
+      }),
+      '',
+    ];
+    return { rows: rowsForTier, upMedian: upMedianTier, lines };
+  };
+  const budgetByTier = BENCH_TIERS
+    .filter((tier) => nodes.some((n) => n.tier === tier))
+    .map((tier) => ({ tier, ...budgetTableFor(tier) }));
+  const budget = budgetByTier.flatMap((b) => b.lines);
+  const budgetRows = budgetByTier[0]?.rows ?? [];
+  const upMedian = budgetByTier[0]?.upMedian ?? 0;
   const absMedian = median(budgetRows.flatMap((r) => (r.absolute === null ? [] : [r.absolute])));
-  const upMedian = median(budgetRows.flatMap((r) => (r.upliftValue === null ? [] : [r.upliftValue])));
 
-  const budget: string[] = [
-    `Median absolute throughput on the favoured node: **${fmt(absMedian)} kills/min**.` +
-    ` Median lane uplift over the matching control: **${signedPct(upMedian)}**.`,
-    '',
-    '| lane | profile | favoured node | kills/min | vs abs median | uplift | uplift − median | in ±10% (abs) | shards |',
-    '|---|---|---|---:|---:|---:|---:|:--:|---|',
-    ...budgetRows.map((r) => {
-      const deviation = r.absolute === null || absMedian === 0 ? null : r.absolute / absMedian - 1;
-      const inBand = deviation !== null && Math.abs(deviation) <= 0.10;
-      return `| ${r.reference.lane} | \`${r.reference.profileId}\` | ${r.node ? `\`${r.node.nodeId}\`` : '**no T1 node favours this lane**'} | ${fmt(r.absolute)} | ${signedPct(deviation)} | ${signedPct(r.upliftValue)} | ${r.upliftValue === null ? '—' : signedPct(r.upliftValue - upMedian)} | ${r.node ? (inBand ? 'yes' : 'NO') : 'n/a'} | ${r.reference.shardsUnobtainableAtT1 ? 'granted (no T1 source)' : 'earned'} |`;
-    }),
-  ];
-
-  // ── §9 lane budget at the PACKET level ────────────────────────────────────
+  // ── §18.9 lane budget at the PACKET level ─────────────────────────────────
   //
-  // §9's unit is the lane (the packet), not the (lineage, lane) pair: three
-  // lineages carry Tempo and they must not each be judged alone. So a packet's
-  // reading is the mean of its references' mean uplift over every node, and the
-  // band is ±10% of the median PACKET. This is the table the designer tunes
-  // `PACKET_BUDGET` from.
+  // The budget's unit is the lane (the packet), not the (lineage, lane) pair:
+  // three lineages carry Tempo and they must not each be judged alone. So a
+  // packet's reading is the mean of its references' mean uplift over every node,
+  // and the band is the median PACKET ±3 pp. This is the table the designer
+  // tunes `PACKET_BUDGET` from.
   const packetRows = [...new Set(laneRefs.map((r) => r.lane!))].map((lane) => {
     const refs = laneRefs.filter((r) => r.lane === lane);
     const means = refs.flatMap((reference) => {
@@ -682,78 +875,177 @@ async function main(): Promise<void> {
   }).sort((a, b) => (b.mean ?? -1) - (a.mean ?? -1));
   const packetMedian = median(packetRows.flatMap((r) => (r.mean === null ? [] : [r.mean])));
   const packetBudget: string[] = [
-    `Median packet uplift: **${signedPct(packetMedian)}**. The ±10% band is` +
-    ` ${signedPct(packetMedian * 0.9)} to ${signedPct(packetMedian * 1.1)}.`,
+    `Median packet uplift: **${signedPct(packetMedian)}**. The §18.9 band is` +
+    ` ${signedPct(packetMedian - BAND_PP)} to ${signedPct(packetMedian + BAND_PP)} (median ±3 pp).`,
     '',
-    '| packet | lineages carrying it | mean uplift | x median | in ±10% | payoff fx fired | has a favouring T1 node |',
+    '| packet | lineages carrying it | mean uplift | − median | in ±3 pp | payoff fx fired | hardest favouring node |',
     '|---|---:|---:|---:|:--:|---:|---|',
     ...packetRows.map((r) => {
-      const ratio = r.mean === null || packetMedian === 0 ? null : r.mean / packetMedian;
-      return `| ${r.lane} | ${r.lineages} | ${signedPct(r.mean)} | ${ratio === null ? '—' : `${ratio.toFixed(2)}x`} | ${ratio !== null && Math.abs(ratio - 1) <= 0.10 ? 'yes' : 'NO'} | ${r.fxTotal} | ${r.favoured ? `\`${r.favoured.nodeId}\`` : '**none**'} |`;
+      const delta = r.mean === null ? null : r.mean - packetMedian;
+      return `| ${r.lane} | ${r.lineages} | ${signedPct(r.mean)} | ${delta === null ? '—' : signedPct(delta)} | ${delta !== null && Math.abs(delta) <= BAND_PP ? 'yes' : 'NO'} | ${r.fxTotal} | ${r.favoured ? `\`${r.favoured.nodeId}\`` : '**none**'} |`;
     }),
   ];
 
-  // ── §9 encounter check, per fieldable family ──────────────────────────────
+  // ── §18.9 encounter check: an ORDINAL reading, per fieldable family ───────
   //
-  // Two readings per side, because §9-as-written is not class-free:
-  //   ABSOLUTE   the lane's median throughput against the node's median lane
-  //              throughput. This is literally what §9 says, and it is
-  //              contaminated by which class each lineage's reference wears.
-  //   UPLIFT     the lane's median control-relative uplift against the node's
-  //              median lane uplift. Class and weapon cancel; only the card is
-  //              left. When the two disagree, the uplift column is the lane.
+  // §18.9 replaces §9's "does the favoured lane win by ~30%?" with a ranking:
+  // does the favoured lane out-uplift the punished lane on that family's own
+  // node, and by what margin? The margin is REPORTED, never thresholded. A
+  // family whose favoured lane ranks below its punished lane is a monster-shape
+  // finding for Phase 4 (§18.7: `drops` stays the definition of favours, so the
+  // mobs are what must move), not a magnitude to tune.
   //
-  // "Still clears" is design §9's own floor: off-lane on an unfavourable variant
-  // may fall to ~70%. Deaths are reported but do not decide it — the harness
-  // revives in place and a revived bot keeps farming, exactly as auto-combat does.
+  // Uplift, not absolute throughput, is the ranked quantity: the absolute column
+  // is mostly which class each lineage's reference wears, and the five controls
+  // themselves span more than 30%. A lane's reading on a node is the MEDIAN
+  // uplift of the references carrying it.
+  //
+  // The per-seed ranks are reported beside the pooled one, because design
+  // §18 3b's remap is only taken when both seeds agree: "favoured ranks last
+  // with both seeds, and one other lane ranks first with both seeds".
+  interface LaneRank {
+    lane: PacketId;
+    up: number;
+    rank: number;
+    refs: number;
+  }
+  const ranksOn = (nodeId: string, seed?: number): LaneRank[] => {
+    const byLane = new Map<PacketId, number[]>();
+    for (const reference of laneRefs) {
+      if (!rankable(reference.profileId, reference.lineageId, nodeId, seed)) continue;
+      const value = seed === undefined
+        ? (() => {
+          const cell = cellFor(reference.profileId, nodeId);
+          return cell ? uplift(cell) : null;
+        })()
+        : seedUplift(reference, nodeId, seed);
+      if (value === null) continue;
+      const list = byLane.get(reference.lane!) ?? [];
+      list.push(value);
+      byLane.set(reference.lane!, list);
+    }
+    const scored = [...byLane.entries()]
+      .map(([lane, values]) => ({ lane, up: median(values), refs: values.length }))
+      .sort((a, b) => b.up - a.up);
+    return scored.map((entry, index) => ({ ...entry, rank: index + 1 }));
+  };
+  const rankOf = (list: LaneRank[], lane: PacketId): LaneRank | undefined =>
+    list.find((r) => r.lane === lane);
+
+  /**
+   * A family's OWN node: the one where it reaches its highest resolved share,
+   * and only when that share is a clear majority (the 70/20/10 and 70/30 shapes,
+   * never a 45/45/10 or a 34/33/33 where two families share the encounter).
+   */
+  const OWN_NODE_SHARE = 0.6;
+  const ownNodeOf = (family: FamilyId, tier: number): LaneNode | undefined => {
+    const candidates = nodes
+      .filter((n) => n.dominant === family && n.tier === tier && n.dominantShare >= OWN_NODE_SHARE)
+      .sort((a, b) => b.dominantShare - a.dominantShare);
+    return candidates[0];
+  };
+
+  interface EncounterRow {
+    family: FamilyId;
+    node: LaneNode;
+    favoured: PacketId;
+    punished: PacketId;
+    favRank: LaneRank | undefined;
+    punRank: LaneRank | undefined;
+    lanesRanked: number;
+    marginPp: number | null;
+    perSeed: Array<{ seed: number; favRank: number | null; topLane: PacketId | null; lanes: number }>;
+    /** The §18 3b remap test: favoured last and one other lane first, both seeds. */
+    clearRemap: { favouredLast: boolean; topLane: PacketId | null };
+  }
+  const encounterRows: EncounterRow[] = [];
   const encounter: string[] = [
-    '| family | node | favoured | punished | fav abs Δ | fav uplift Δ | pun abs Δ | pun uplift Δ | pun ≥70% | pun deaths | verdict (abs) |',
-    '|---|---|---|---|---:|---:|---:|---:|:--:|---:|---|',
+    '| family | own node | tier | favoured | rank | punished | rank | margin (fav − pun) | lanes | per-seed fav rank | per-seed top lane | fav deaths | pun deaths |',
+    '|---|---|---:|---|---:|---|---:|---:|---:|---|---|---:|---:|',
   ];
-  for (const node of nodes) {
-    const nodeCells = laneRefs
-      .map((r) => cellFor(r.profileId, node.nodeId))
-      .filter((c): c is Cell => !!c);
-    if (nodeCells.length === 0) continue;
-    const nodeAbsMedian = median(nodeCells.map((c) => c.killsPerMin));
-    const nodeUpMedian = median(nodeCells.flatMap((c) => {
-      const u = uplift(c);
-      return u === null ? [] : [u];
-    }));
-    const forLane = (lane: PacketId) => {
-      const group = nodeCells.filter((c) => c.lane === lane);
-      if (group.length === 0) return null;
+  const familyTiers = [...new Set(nodes.map((n) => `${n.dominant}|${n.tier}`))]
+    .map((key) => {
+      const [family, tier] = key.split('|');
+      return { family: family as FamilyId, tier: Number(tier) };
+    })
+    .sort((a, b) => (a.family === b.family ? a.tier - b.tier : a.family.localeCompare(b.family)));
+  for (const { family, tier } of familyTiers) {
+    const node = ownNodeOf(family, tier);
+    if (!node) continue;
+    const pooled = ranksOn(node.nodeId);
+    if (pooled.length === 0) continue;
+    const favRank = rankOf(pooled, node.dropsLane);
+    const punRank = rankOf(pooled, node.punishesLane);
+    const perSeed = seeds.map((seed) => {
+      const list = ranksOn(node.nodeId, seed);
       return {
-        count: group.length,
-        abs: median(group.map((c) => c.killsPerMin)),
-        up: median(group.flatMap((c) => {
-          const u = uplift(c);
-          return u === null ? [] : [u];
-        })),
-        kills: group.reduce((a, c) => a + c.kills, 0),
-        deaths: group.reduce((a, c) => a + c.deaths, 0),
+        seed,
+        favRank: rankOf(list, node.dropsLane)?.rank ?? null,
+        topLane: list[0]?.lane ?? null,
+        lanes: list.length,
       };
-    };
-    const favoured = forLane(node.dropsLane);
-    const punished = forLane(node.punishesLane);
-    const absDelta = (side: ReturnType<typeof forLane>): number | null =>
-      side && nodeAbsMedian > 0 ? side.abs / nodeAbsMedian - 1 : null;
-    const upDelta = (side: ReturnType<typeof forLane>): number | null =>
-      side ? side.up - nodeUpMedian : null;
-    const favAbs = absDelta(favoured);
-    const punAbs = absDelta(punished);
-    const clears = punished
-      ? punished.kills > 0 && nodeAbsMedian > 0 && punished.abs / nodeAbsMedian >= 0.70
+    });
+    // "Last" only means something against a field. Four of the six weapon
+    // packets have to be rankable on the node, in every seed, before a last
+    // place is evidence of anything.
+    const MIN_LANES_FOR_REMAP = 4;
+    const wideEnough = pooled.length >= MIN_LANES_FOR_REMAP
+      && perSeed.every((s) => s.lanes >= MIN_LANES_FOR_REMAP);
+    const favouredLast = wideEnough
+      && perSeed.length > 0
+      && perSeed.every((s) => s.favRank !== null && s.favRank === s.lanes);
+    const topLanes = new Set(perSeed.map((s) => s.topLane));
+    const topLane = wideEnough && topLanes.size === 1 && perSeed[0].topLane !== node.dropsLane
+      ? perSeed[0].topLane
       : null;
-    const verdict = favoured === null
-      ? 'UNMEASURABLE — no lane reference carries the favoured lane'
-      : favAbs !== null && favAbs >= 0.25
-        ? 'favoured lane wins'
-        : 'favoured lane does NOT win by ~30%';
+    const deathsFor = (lane: PacketId): number => laneRefs
+      .filter((r) => r.lane === lane)
+      .reduce((a, r) => a + (cellFor(r.profileId, node.nodeId)?.deaths ?? 0), 0);
+    const row: EncounterRow = {
+      family,
+      node,
+      favoured: node.dropsLane,
+      punished: node.punishesLane,
+      favRank,
+      punRank,
+      lanesRanked: pooled.length,
+      marginPp: favRank && punRank ? favRank.up - punRank.up : null,
+      perSeed,
+      clearRemap: { favouredLast, topLane },
+    };
+    encounterRows.push(row);
     encounter.push(
-      `| ${short(node.dominant)} | \`${node.nodeId}\` | ${node.dropsLane}${favoured ? ` (n=${favoured.count})` : ' (none)'} | ${node.punishesLane}${punished ? ` (n=${punished.count})` : ' (none)'} | ${signedPct(favAbs)} | ${signedPct(upDelta(favoured))} | ${signedPct(punAbs)} | ${signedPct(upDelta(punished))} | ${clears === null ? 'n/a' : clears ? 'yes' : 'NO'} | ${punished?.deaths ?? 0} | ${verdict} |`,
+      `| ${short(family)} | \`${node.nodeId}\` | ${node.tier} | ${node.dropsLane}`
+      + ` | ${favRank ? `${favRank.rank}/${pooled.length}` : 'no reference'}`
+      + ` | ${node.punishesLane} | ${punRank ? `${punRank.rank}/${pooled.length}` : 'no reference'}`
+      + ` | ${signedPct(row.marginPp)} | ${pooled.length}`
+      + ` | ${perSeed.map((s) => (s.favRank === null ? '—' : `${s.favRank}/${s.lanes}`)).join(' / ')}`
+      + ` | ${perSeed.map((s) => s.topLane ?? '—').join(' / ')}`
+      + ` | ${deathsFor(node.dropsLane)} | ${deathsFor(node.punishesLane)} |`,
     );
   }
+
+  // The remap shortlist: exactly design §18 3b's test, computed rather than eyeballed.
+  //
+  // A family's DECIDING node is its own node at the LOWEST tier it has one, because
+  // the reference build is a Tier-1 band and Tier 1 is the tier that band is tuned
+  // for; a higher tier's own node is reported beside it as corroboration. A
+  // T2-only family (Jungle, Desert) has only the T2 reading and is decided on it.
+  const decidingRows = [...new Map(encounterRows.map((r) => [r.family, r] as const)).values()];
+  const remapCandidates = decidingRows.filter((r) => r.clearRemap.favouredLast && r.clearRemap.topLane);
+  const remap: string[] = remapCandidates.length === 0
+    ? ['No family meets the test: no `drops` move is CLEAR on this run.']
+    : [
+      '| family | deciding node | drops today | ranks | the lane that beats it | both seeds agree | higher tier agrees | move to |',
+      '|---|---|---|---:|---|:--:|:--:|---|',
+      ...remapCandidates.map((r) => {
+        const others = encounterRows.filter((o) => o.family === r.family && o !== r);
+        const agree = others.length === 0
+          ? 'n/a (one tier)'
+          : others.every((o) => o.clearRemap.favouredLast) ? 'yes' : 'NO';
+        return `| ${short(r.family)} | \`${r.node.nodeId}\` | \`${r.favoured}\` | last of ${r.lanesRanked} | \`${r.clearRemap.topLane}\` | yes | ${agree} | \`${r.clearRemap.topLane}\` |`;
+      }),
+    ];
 
   // ── Per-lane summary over ALL nodes: the most robust lane signal ───────────
   const laneSummary: string[] = [
@@ -770,10 +1062,10 @@ async function main(): Promise<void> {
     if (perNodeUplift.length === 0) continue;
     const mean = perNodeUplift.reduce((a, b) => a + b.u, 0) / perNodeUplift.length;
     const sorted = [...perNodeUplift].sort((a, b) => a.u - b.u);
-    const favNode = favouredNodeFor(reference.lane!);
+    const favNode = favouredNodeFor(reference.lane!, 1) ?? favouredNodeFor(reference.lane!);
     const favCell = favNode ? cellFor(reference.profileId, favNode.nodeId) : undefined;
     laneSummary.push(
-      `| ${reference.lane} | \`${reference.profileId}\` | ${signedPct(mean)} | ${favCell ? signedPct(uplift(favCell)) : '—'} | ${sorted[0].nodeId.replace('node-t1-', '')} ${signedPct(sorted[0].u)} | ${sorted.at(-1)!.nodeId.replace('node-t1-', '')} ${signedPct(sorted.at(-1)!.u)} | ${nodes.reduce((total, n) => total + Object.values(cellFor(reference.profileId, n.nodeId)?.fx ?? {}).reduce((a, b) => a + b, 0), 0)} |`,
+      `| ${reference.lane} | \`${reference.profileId}\` | ${signedPct(mean)} | ${favCell ? signedPct(uplift(favCell)) : '—'} | ${shortNode(sorted[0].nodeId)} ${signedPct(sorted[0].u)} | ${shortNode(sorted.at(-1)!.nodeId)} ${signedPct(sorted.at(-1)!.u)} | ${nodes.reduce((total, n) => total + Object.values(cellFor(reference.profileId, n.nodeId)?.fx ?? {}).reduce((a, b) => a + b, 0), 0)} |`,
     );
   }
 
@@ -825,47 +1117,130 @@ async function main(): Promise<void> {
     );
   }
 
+  // ── The frames column (design §18.10) ─────────────────────────────────────
+  //
+  // Per root, the three frames' throughput on the frame node set, and each
+  // frame's delta against the frame that root's own canonical T1 route wears.
+  // That frame is the denominator because it is the build every other bench in
+  // the repo measures, and because `LINEAGE_LANE_REFERENCES` uses it too — so a
+  // root's canonical frame cell and its lane-matrix control are the same build
+  // and the two readings can be read together.
+  //
+  // There is no control-relative uplift here and there must not be: a frame is
+  // not optional. Every T1 character has bought one, so "the same build without
+  // a frame" is not a character and a frame has nothing to be an uplift over.
+  // The reading is frame-against-frame inside one root.
+  const frameRows = frameReferences.map((reference) => {
+    const cellsForRef = frameNodes.flatMap((n) => {
+      const cell = cellFor(reference.profileId, n.nodeId);
+      return cell ? [{ node: n, cell }] : [];
+    });
+    const throughput = cellsForRef.length
+      ? cellsForRef.reduce((a, c) => a + c.cell.killsPerMin, 0) / cellsForRef.length
+      : null;
+    const ttk = cellsForRef.flatMap((c) => (c.cell.ttkMs === null ? [] : [c.cell.ttkMs]));
+    return {
+      reference,
+      throughput,
+      ttk: ttk.length ? median(ttk) : null,
+      deaths: cellsForRef.reduce((a, c) => a + c.cell.deaths, 0),
+      hp: (() => {
+        const withHp = cellsForRef.filter((c) => c.cell.meanHpFraction !== null);
+        return withHp.length
+          ? withHp.reduce((a, c) => a + (c.cell.meanHpFraction ?? 0), 0) / withHp.length
+          : null;
+      })(),
+      measured: cellsForRef.length,
+    };
+  });
+  const frameDelta = (row: (typeof frameRows)[number]): number | null => {
+    const canonical = frameRows.find(
+      (r) => r.reference.classRoot === row.reference.classRoot && r.reference.canonical,
+    );
+    if (!canonical || !canonical.throughput || row.throughput === null) return null;
+    return row.throughput / canonical.throughput - 1;
+  };
+  const frameColumn: string[] = frameRows.length === 0
+    ? ['Not measured on this run (`LANE_FRAMES=0`).']
+    : [
+      `Eighteen lane-less frame references over ${frameNodes.length} node`
+      + `${frameNodes.length === 1 ? '' : 's'}`
+      + ` (${frameNodes.map((n) => shortNode(n.nodeId)).join(', ')}).`,
+      '',
+      "| root | frame | shape | weapon | kills/min | vs the root's canonical frame | median TTK (ms) | mean HP engaged | deaths |",
+      '|---|---|---|---|---:|---:|---:|---:|---:|',
+      ...frameRows.map((row) => `| ${row.reference.classRoot.replace('-root', '')} | \`${row.reference.frameId}\` | ${row.reference.frameShape}${row.reference.canonical ? ' **(canonical)**' : ''} | ${row.reference.baseForm} | ${fmt(row.throughput)} | ${row.reference.canonical ? '_denominator_' : signedPct(frameDelta(row))} | ${fmt(row.ttk, 0)} | ${fmt(row.hp)} | ${row.deaths} |`),
+      '',
+      '### The same reading per frame SHAPE, across all six roots',
+      '',
+      '| shape | mean kills/min | mean delta vs each root\'s canonical frame | roots where it is fastest |',
+      '|---|---:|---:|---:|',
+      ...FRAME_SHAPES.map((shape) => {
+        const group = frameRows.filter((r) => r.reference.frameShape === shape);
+        const values = group.flatMap((r) => (r.throughput === null ? [] : [r.throughput]));
+        const deltas = group.flatMap((r) => {
+          const delta = frameDelta(r);
+          return delta === null ? [] : [delta];
+        });
+        const fastest = new Set(frameRows.map((r) => r.reference.classRoot)).size === 0 ? 0
+          : [...new Set(frameRows.map((r) => r.reference.classRoot))].filter((root) => {
+            const inRoot = frameRows.filter((r) => r.reference.classRoot === root);
+            const best = inRoot.reduce((a, b) => ((b.throughput ?? -1) > (a.throughput ?? -1) ? b : a));
+            return best.reference.frameShape === shape;
+          }).length;
+        return `| ${shape} | ${values.length ? fmt(values.reduce((a, b) => a + b, 0) / values.length) : '—'} | ${deltas.length ? signedPct(deltas.reduce((a, b) => a + b, 0) / deltas.length) : '—'} | ${fastest} of 6 |`;
+      }),
+    ];
+
   const refusalList = [...cells.values()].filter((c) => c.refusals.length > 0);
 
+  const tiersRun = BENCH_TIERS.filter((tier) => nodes.some((n) => n.tier === tier));
   const md = [
-    '# Lineage lane matrix — Tier 1',
+    `# Lineage lane matrix — Tier ${tiersRun.join(' and ')}`,
     '',
     `Generated ${new Date().toISOString()} from \`${execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()}\`.`,
-    `${references.length} reference profiles x ${nodes.length} distinct T1 node blends x ${seeds.length} seeds (${seeds.join(', ')}), ${capMs / 1000} s of sim per cell per seed; wall clock ${(elapsedMs / 60_000).toFixed(1)} min.`,
+    `${references.length} lane reference profiles x ${nodes.length} distinct node blends`
+    + `${frameReferences.length ? `, plus ${frameReferences.length} frame references x ${frameNodes.length} nodes` : ''}`
+    + `, x ${seeds.length} seeds (${seeds.join(', ')}), ${capMs / 1000} s of sim per cell per seed;`
+    + ` ${rows.length} measured runs; wall clock ${(elapsedMs / 60_000).toFixed(1)} min.`,
     '',
     'Throughput is kills per minute of SIM time with repopulation on; TTK is engaged',
     'milliseconds per kill, which divides out the walk between mobs. Uplift is the',
     'cell against the SAME lineage’s lane-less control on the SAME node — the only',
     'reading in which the lane, and not the class or the weapon, is the variable.',
     '',
-    '## What the Tier-1 map actually offers',
+    'The criteria are design §18.9\'s, which replaced §9\'s: the lane budget band is the',
+    'median uplift **±3 percentage points, absolute**, and the encounter check is an',
+    '**ordinal** reading — does the favoured lane out-uplift the punished lane on that',
+    'family\'s own node, and by what margin? The margin is reported, never thresholded.',
     '',
-    'A T1 node fields only `monsterPoolByTier[1]`, so `resolveNodeBlend` drops any',
-    'family with no T1 member and rescales its share onto the rest. The authored',
-    'blends are the design target; the resolved ones are the encounters that exist',
-    'today. Since design §18.8 added a third T1 mob per biome they should be the',
-    'same — a row where they differ is a family the map cannot field.',
+    'The references are unchanged by the addition of Tier 2: a Tier-1 band on a Tier-2',
+    'encounter is the character the gate hands over, so the T2 rows read as "what does',
+    'a T1 lane still buy here" and their death counts are part of the answer.',
+    '',
+    '## What the map actually offers',
+    '',
+    'A node fields only `monsterPoolByTier[its tier]`, so `resolveNodeBlend` drops any',
+    'family with no member in that pool and rescales its share onto the rest. The',
+    'authored blends are the design target; the resolved ones are the encounters that',
+    'exist today. A row where they differ is a family the map cannot field at that tier.',
     '',
     ...matrix,
     '',
     '## TTK per lane per node',
     '',
     'Milliseconds of ENGAGED time per kill, pooled over both seeds. Lower is faster.',
-    'Columns are the eighteen distinct blends in the table above.',
     '',
     ...pivot,
-    '',
     '### The same table as uplift over each lineage’s own control',
     '',
     ...upliftPivot,
+    '## Lane budget (design §18.9)',
     '',
-    '## Lane budget (design §9)',
-    '',
-    '“At full rows for a tier, each lane’s measured throughput lands within ±10% of the',
-    'tier median on that lane’s intended variant.”',
+    '“The band is the median uplift ±3pp, absolute.” Measured on each lane’s favoured',
+    'node — the node its own family dominates hardest — per tier.',
     '',
     ...budget,
-    '',
     '### How much of the absolute column is class, not lane',
     '',
     ...controlSpread,
@@ -882,6 +1257,17 @@ async function main(): Promise<void> {
     '',
     ...laneSummary,
     '',
+    '## Frames (design §18.10)',
+    '',
+    'Light / Balanced / Heavy per class root. Lane-less on purpose: design §10 gives',
+    'each frame its own feedback loop, so a card on top would be a second variable.',
+    'There is no control-relative uplift here and there must not be — every T1',
+    'character has bought a frame, so a frame has nothing to be an uplift OVER. The',
+    'reading is frame-against-frame inside one root, against the frame that root’s own',
+    'canonical T1 route wears.',
+    '',
+    ...frameColumn,
+    '',
     ...(survival.length > 2
       ? ['## Survival — what the non-damage lanes buy instead', '',
          'Control’s slow and Engagement’s opening DR buy time, not throughput, so the',
@@ -890,13 +1276,24 @@ async function main(): Promise<void> {
          'each against the same lineage’s lane-less control.',
          '', ...survival, '']
       : []),
-    '## Encounter check (design §9)',
+    '## Encounter check (design §18.9) — ordinal',
     '',
-    '“Does the intended lane win by ~30%? Does the punished lane still clear?” The',
-    'favoured lane is read off `FamilyDefinition.drops`; the shipped family table has',
-    'no `favours` field.',
+    'One row per family that has an OWN node: a node where it reaches at least 60% of',
+    'the resolved blend, so the encounter really is that family rather than two sharing',
+    'it. Lanes are ranked by median uplift; rank 1 is the strongest. The favoured lane',
+    'is read off `FamilyDefinition.drops`, which design §18.7 confirms IS the definition',
+    'of favours. A family whose favoured lane ranks below its punished lane is a',
+    'monster-shape finding for Phase 4, not a magnitude to tune.',
     '',
     ...encounter,
+    '',
+    '### Clear `drops` remaps (design §18 3b)',
+    '',
+    'The test, computed rather than eyeballed: the favoured lane ranks LAST on the',
+    'family’s own node with BOTH seeds agreeing, and one other lane ranks FIRST with',
+    'both seeds. Anything short of that is left alone.',
+    '',
+    ...remap,
     '',
     ...(refusalList.length
       ? ['## Refused purchases', '',
@@ -907,16 +1304,55 @@ async function main(): Promise<void> {
     '',
   ].join('\n');
 
-  writeFileSync(resolve(out, 'lane-matrix.md'), `${md}\n`);
-  writeFileSync(resolve(out, 'lane-matrix.json'), `${JSON.stringify({
-    schema: 1,
+  const base = process.env.LANE_REPORT ?? 'lane-matrix';
+  writeFileSync(resolve(out, `${base}.md`), `${md}\n`);
+  writeFileSync(resolve(out, `${base}.json`), `${JSON.stringify({
+    schema: 2,
     capMs, seeds,
     nodes: nodes.map((n) => ({ ...n })),
+    frameNodeIds: frameNodes.map((n) => n.nodeId),
     rows,
     cells: [...cells.values()],
-    budget: { absoluteMedian: absMedian, upliftMedian: upMedian, rows: budgetRows.map((r) => ({ lane: r.reference.lane, profileId: r.reference.profileId, nodeId: r.node?.nodeId ?? null, absolute: r.absolute, uplift: r.upliftValue })) },
+    budget: {
+      bandPp: BAND_PP,
+      absoluteMedian: absMedian,
+      upliftMedian: upMedian,
+      byTier: budgetByTier.map((b) => ({
+        tier: b.tier,
+        upliftMedian: b.upMedian,
+        rows: b.rows.map((r) => ({ lane: r.reference.lane, profileId: r.reference.profileId, nodeId: r.node?.nodeId ?? null, absolute: r.absolute, uplift: r.upliftValue })),
+      })),
+    },
+    encounter: encounterRows.map((r) => ({
+      family: r.family,
+      nodeId: r.node.nodeId,
+      tier: r.node.tier,
+      dominantShare: r.node.dominantShare,
+      favoured: r.favoured,
+      punished: r.punished,
+      favouredRank: r.favRank?.rank ?? null,
+      punishedRank: r.punRank?.rank ?? null,
+      lanesRanked: r.lanesRanked,
+      marginPp: r.marginPp,
+      perSeed: r.perSeed,
+      clearRemap: r.clearRemap,
+    })),
+    frames: frameRows.map((r) => ({
+      profileId: r.reference.profileId,
+      classRoot: r.reference.classRoot,
+      frameId: r.reference.frameId,
+      frameShape: r.reference.frameShape,
+      canonical: r.reference.canonical,
+      baseForm: r.reference.baseForm,
+      killsPerMin: r.throughput,
+      vsCanonical: frameDelta(r),
+      ttkMs: r.ttk,
+      meanHpFraction: r.hp,
+      deaths: r.deaths,
+      nodesMeasured: r.measured,
+    })),
   }, null, 2)}\n`);
-  console.log(`\nwrote ${resolve(out, 'lane-matrix.md')}`);
+  console.log(`\nwrote ${resolve(out, `${base}.md`)}`);
 }
 
 main().catch((error) => {

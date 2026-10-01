@@ -62,6 +62,7 @@ import {
   resolveNearCandidates,
   resolveNodeCandidates,
   shortfall,
+  unsatisfiableByFarming,
   upgradeBlockReasons,
 } from "./conditions";
 import type { BlockReason } from "../telemetry/events";
@@ -810,6 +811,14 @@ export class RouteExecutor {
       /** Set when the goal genuinely is essence-only, so a capped biome is fine. */
       ignoreBiomeCap?: boolean;
       /**
+       * A sentence saying why farming this node can never satisfy the goal, or
+       * undefined while it still can. Checked every poll and raised as a NAMED
+       * stall — it fires even under `ignoreBiomeCap`, because that flag means
+       * "essence keeps coming, so a capped biome is fine", not "this goal is
+       * payable here".
+       */
+      unsatisfiable?: () => string | undefined;
+      /**
        * Activity to attribute this farming to. `farmBlocked` passes "blocked" so
        * economy waiting is not silently re-labelled as ordinary farming — the
        * whole point of the span is to measure how long the economy stalls a run.
@@ -876,6 +885,15 @@ export class RouteExecutor {
           if (signal !== lastSignal) {
             lastSignal = signal;
             lastProgressAt = Date.now();
+          }
+
+          const unpayable = opts.unsatisfiable?.();
+          if (unpayable) {
+            throw new StallError(`${opts.what} cannot be farmed at ${nodeId}: it ${unpayable}`, {
+              nodeId,
+              goal: opts.what,
+              missing: opts.onStall(),
+            });
           }
 
           // Farming node X can only ever raise biome(X)'s level. Once that biome
@@ -2365,6 +2383,27 @@ export class RouteExecutor {
     const { recorder, obs } = this.deps;
     const startedAt = Date.now();
     const missing = (): Record<string, number> => reasonsToMissing(reasons());
+
+    // A wait this node can never end is not a wait, it is a stall — and it was
+    // being reported as a twelve-minute "no progress" timeout, or for the
+    // lineage steps (which pass `ignoreBiomeCap`, so `farmUntil`'s own capped-
+    // biome guard is off) as the thirty-minute step timeout. The requirement,
+    // the node and the reason are known HERE, before a single kill, so say them.
+    // `unsatisfiableByFarming` only fires on provably unpayable shortfalls, so
+    // this never fails a run that would otherwise have finished — it fails the
+    // same run sooner and with the sentence the operator needs.
+    const unsatisfiable = (): string | undefined =>
+      unsatisfiableByFarming(missing(), nodeId, obs);
+    const blocked = unsatisfiable();
+    if (blocked) {
+      throw new StallError(`${forWhat} cannot be farmed at ${nodeId}: it ${blocked}`, {
+        nodeId,
+        goal: forWhat,
+        missing: missing(),
+        blockReasons: reasons(),
+      });
+    }
+
     recorder.emit({
       kind: "blocked-on-resource",
       atMs: recorder.now(),
@@ -2385,6 +2424,10 @@ export class RouteExecutor {
         onStall: missing,
         ignoreBiomeCap,
         activity: "blocked",
+        // Re-checked while farming too: a requirement can BECOME unpayable here
+        // (the biome reaches its cap with Global Mastery still short), and that
+        // moment is the named stall rather than the start of a long timeout.
+        unsatisfiable,
       });
     } finally {
       recorder.emit({
