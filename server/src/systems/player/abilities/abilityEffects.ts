@@ -654,10 +654,21 @@ function addEmpoweredDamage(
     ));
     return;
   }
-  // One multiplier per hit: a rider landing on the class's empowered hit scales
-  // the hit as it was before the empowered multiplier, so the two add instead of
+  // One multiplier per hit: a rider landing on an already-multiplied hit scales
+  // the hit as it was BEFORE that multiplier, so the two add instead of
   // compounding (Charge wired to Empowered Ready was a x2 outlier).
-  const empoweredMult = ctx.metadata["empoweredAttack"] ? Number(ctx.metadata["empoweredMultiplier"] ?? 1) : 1;
+  //
+  // The divisor is `empoweredMultiplier` alone, never gated on the
+  // `empoweredAttack` marker. The marker means "the class mechanic fired this
+  // hit", which is strictly narrower than "this hit already carries a
+  // multiplier": a lineage `damage-window` card and a Light/Balanced frame window
+  // both fold themselves into `empoweredMultiplier` WITHOUT setting the marker,
+  // because setting it would restart cooldowns and fire every `mechanic-fired`
+  // card. Gating on the marker therefore skipped the division for exactly those
+  // sources and let a rider compound with the window — which is what
+  // `lineageCards.ts` already promises does not happen ("a Technique rider
+  // reading `empoweredMultiplier` sees one honest number").
+  const empoweredMult = Number(ctx.metadata["empoweredMultiplier"] ?? 1);
   const basis = empoweredMult > 1 ? formationBasis / empoweredMult : formationBasis;
   ctx.damage = Math.max(0, Math.round(
     ctx.damage + basis * Math.max(0, mult - 1),
