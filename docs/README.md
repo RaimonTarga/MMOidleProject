@@ -1,6 +1,6 @@
 # Documentation Index
 
-**Last audited:** 2026-09-28
+**Last audited:** 2026-10-01
 
 This is the navigation page for documentation that is useful in the current
 repository. It is deliberately not a dump of every dated report. Source code
@@ -53,7 +53,7 @@ because it is detailed.
 | Monster behavior | [monster-behavior-current-state.md](monster-behavior-current-state.md) |
 | Monster combat rework | [monster-combat-rework-current-state.md](monster-combat-rework-current-state.md) |
 | Monster targeting | [monster-targeting-current-state.md](monster-targeting-current-state.md) |
-| Node modifiers | [node-modifiers-current-state.md](node-modifiers-current-state.md) |
+| Node variants (family blends) | [variants-current-state.md](variants-current-state.md) |
 | Area banners and danger previews | [area-information-current-state.md](area-information-current-state.md) |
 | Map, Crafting, Upgrade, Inventory and Passive Tree panels | [map-crafting-panels-current-state.md](map-crafting-panels-current-state.md) |
 | Player movement | [player-movement-current-state.md](player-movement-current-state.md) |
@@ -63,11 +63,10 @@ because it is detailed.
 
 | System | Current-state record |
 | --- | --- |
-| Aspects and catalysts | [aspects-catalysts-current-state.md](aspects-catalysts-current-state.md) |
+| Weapon lineage trees | [lineages-current-state.md](lineages-current-state.md) |
 | Charms | [charms-current-state.md](charms-current-state.md) |
 | Cores | [cores-current-state.md](cores-current-state.md) |
 | Global Mastery | [global-mastery-current-state.md](global-mastery-current-state.md) |
-| Gear evolution | [gear-evolution-current-state.md](gear-evolution-current-state.md) |
 | Relics | [relics-current-state.md](relics-current-state.md) |
 | Rites | [rites-current-state.md](rites-current-state.md) |
 | Runes | [rune-system-current-state.md](rune-system-current-state.md) |
@@ -107,11 +106,13 @@ read the linked current-state page before using it to describe shipped
 behavior.
 
 - [Future plans](future-plans.md) — backlog and deliberately deferred ideas.
-- [Progression rework plan](progression-rework-plan.md) — ACTIVE 2026-09-30: phased
-  plan for item lineage trees, biome variants and materials, frame loops, and the
-  removal of catalysts, node modifiers, and the +1..+5 ladder. Design authority is
+- [Progression rework plan](progression-rework-plan.md) — ACTIVE: Phases 0–1 shipped
+  (recovery pass, weapon lineage trees); **Phase 2 shipped 2026-10-01** (Plains/Forest
+  family blends, shards/capstones, and the old economy — catalysts, node-modifier
+  math, the weapon +1..+5 ladder — removed). Live state: [lineages-current-state.md](lineages-current-state.md),
+  [variants-current-state.md](variants-current-state.md). Phases 3–5 not started.
+  Design authority is
   [`design_docs/progression-rework-design.md`](../design_docs/progression-rework-design.md).
-  Nothing implemented yet.
 - [Guided T1 tutorial plan](guided-tutorial-plan.md) — optional desktop guide that plays Tier 1 beat by beat from bot-validated scripts; Phase 1 in progress.
 - [Release v0.6 record](briefs/release-v0.6-2026-09-28.md) — what shipped in v0.6, merged branches, save policy, bandwidth changes, validation and the deploy check.
 - [T4 power curve review](archive/briefs/t4-power-curve-review-2026-09-27.md) — ARCHIVED 2026-09-27: done; report in `reports/t4-power-curve-2026-09-27/REVIEW.md`, live state in [tier-balance-current-state.md](tier-balance-current-state.md) §6–7.
@@ -120,8 +121,9 @@ behavior.
   — the remaining cleanup/tuning handoff after the shipped phases.
 - [Core rework design/balance handoff](core-rework-design-balance-handoff.md) —
   approved direction for a future Core pass; implementation is not implied.
-- [Map variety design](map-variety-plan.md) — locked node-modifier and region
-  design vocabulary.
+- [Map variety design](map-variety-plan.md) — locked region design vocabulary;
+  its node-modifier vocabulary is superseded for T1 by family blends, see
+  [variants-current-state.md](variants-current-state.md).
 - [Terrain variance plan](terrain-variance-plan.md) — parked terrain work.
 - [UI redesign plan](ui-redesign-plan.md) — presentation work and review
   history; verify implementation against client code.

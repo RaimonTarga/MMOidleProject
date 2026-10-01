@@ -14,6 +14,17 @@ the pre-regions grid) SHIPPED 2026-07-24 (`feat/map-variety-stage-a`); Stage B s
 and modifier-family assignment are the current implementation authority; balance numbers
 remain PLACEHOLDER (user-owned tuning).
 
+**Superseded 2026-10-01 (progression rework Phase 2b):** the modifier *mechanics*
+this doc designs — stat scalars, population scaling, reward premiums, and the
+catalyst wallet they minted — are deleted. Node modifiers survive only as T2–T4
+node authoring identity (node count, display names, region masks); T1 Plains and
+Forest moved to family blends instead (a different vocabulary — see
+[`variants-current-state.md`](variants-current-state.md)), with Mountain/Cave/Swamp
+expected to follow in a later phase. Read this doc for the REGION layout and mask
+vocabulary, which is still current; read `variants-current-state.md` and the
+archived [`node-modifiers-current-state.md`](archive/node-modifiers-current-state.md)
+for what a modifier actually does today.
+
 **Scope: game design only.** Numbers (modifier percentages, mint thresholds, costs) are
 balance-pass territory, not fixed here.
 

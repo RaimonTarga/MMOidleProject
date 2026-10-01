@@ -1,13 +1,25 @@
+> **ARCHIVED (2026-10-01) — HISTORICAL.** Every mechanic below this line — the stat
+> scalars, population scaling, reward premiums, and the catalyst key — was deleted
+> in the progression rework (Phase 2b, `docs/progression-rework-plan.md` §2.3,
+> Override B). Node modifiers survive only as **T2–T4 node authoring identity**:
+> node count source, display names, and region-mask shape, with zero combat or
+> reward effect. T1 uses family blends instead (`docs/variants-current-state.md`).
+> The surviving vocabulary lives in `shared/src/world/nodeModifiers.ts` (kept:
+> `MODIFIER_LABELS`, `MODIFIER_COLORS`, `MODIFIER_SUMMARIES`, `isModifierExcludedNode`,
+> `validateNodeModifiers`) and `shared/src/world/nodeModifierTypes.ts`/
+> `nodeModifierMap.ts`; `shared/src/world/nodeModifiers.test.ts` covers the surviving
+> invariants. Kept for historical rationale — do not treat the math below as current.
+
 # Node Modifiers — Current State (audited 2026-09-27)
 
 **Living truth for what node modifiers do today.** Design authority for the map as a
-whole is [map-variety-plan.md](map-variety-plan.md), but that doc's §1.2 (five *pace*
+whole is [map-variety-plan.md](../map-variety-plan.md), but that doc's §1.2 (five *pace*
 families) and §1.6 (a separate density overlay) were superseded on 2026-08-21 — read
 this doc and the code for modifier behavior.
 
-Code: [`shared/src/world/nodeModifiers.ts`](../shared/src/world/nodeModifiers.ts)
-(all math), [`nodeModifierTypes.ts`](../shared/src/world/nodeModifierTypes.ts)
-(vocabulary, bans, natives), [`nodeModifierMap.ts`](../shared/src/world/nodeModifierMap.ts)
+Code: [`shared/src/world/nodeModifiers.ts`](../../shared/src/world/nodeModifiers.ts)
+(all math), [`nodeModifierTypes.ts`](../../shared/src/world/nodeModifierTypes.ts)
+(vocabulary, bans, natives), [`nodeModifierMap.ts`](../../shared/src/world/nodeModifierMap.ts)
 (the authored per-node assignment).
 
 > All magnitudes are PLACEHOLDER pending a balance/playtest pass. They live in one

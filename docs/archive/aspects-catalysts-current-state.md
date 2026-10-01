@@ -1,9 +1,18 @@
+> **ARCHIVED (2026-10-01) — HISTORICAL.** The catalyst wallet, node-modifier reward
+> premiums, and family-keyed catalyst costs described below were deleted outright
+> in the progression rework (Phase 2b, `docs/progression-rework-plan.md` §2.3) —
+> there is no catalyst-shaped successor. The replacement kill-driven material
+> system is lineage shards and boss capstones: see
+> `docs/lineages-current-state.md` and `docs/variants-current-state.md`. Essence
+> is unaffected and still works as described here. Kept for historical rationale
+> — do not treat anything below as current.
+
 # Aspects and Catalysts — Current State
 
 **Audited:** 2026-09-27
 **Source authority:** shared item/progression data and the authoritative reward
 and crafting paths. The historical implementation plan is
-[archived](archive/aspects-catalysts-plan.md).
+[archived](aspects-catalysts-plan.md).
 
 This page replaces the former pre-implementation snapshot. Essence labels,
 catalyst wallets, progress accumulation, family-keyed costs, client views, and

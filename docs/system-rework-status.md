@@ -11,10 +11,10 @@ does not replace the individual current-state records; it points to them.
 
 | Workstream | Status | Current source of detail |
 | --- | --- | --- |
-| Essence and node-modifier catalysts | Shipped; current keys are modifier families | [aspects-catalysts-current-state.md](aspects-catalysts-current-state.md) |
+| Essence and lineage shards | Shipped; catalysts REMOVED 2026-10-01, replaced by family-keyed shards + boss capstones | [lineages-current-state.md](lineages-current-state.md), [variants-current-state.md](variants-current-state.md) |
 | Biome Mastery and Global Mastery | Shipped; six normal levels per tier segment, derived GM | [global-mastery-current-state.md](global-mastery-current-state.md) |
 | Rune sourcing and attunement | Shipped; capacity comes from Global Mastery | [rune-system-current-state.md](rune-system-current-state.md), [runic-attunement-current-state.md](runic-attunement-current-state.md) |
-| Gear evolution and reconstruction | Shipped; ordinary evolution gate is +3 | [gear-evolution-current-state.md](gear-evolution-current-state.md) |
+| Gear evolution and reconstruction | Armor/charm/boots shipped, ordinary evolution gate is +3; weapon evolution/upgrade REMOVED 2026-10-01, replaced by the lineage tree | [archive/gear-evolution-current-state.md](archive/gear-evolution-current-state.md) (historical values still live for non-weapon slots), [lineages-current-state.md](lineages-current-state.md) |
 | Abilities | Shipped for the authored T1–T4 ability data | [abilities-current-state.md](abilities-current-state.md) |
 | Charms and recovery | Machinery shipped; item identities and numbers continue to evolve | [charms-current-state.md](charms-current-state.md), [recovery-current-state.md](recovery-current-state.md) |
 | Cores and Relics | Shipped slots and systems; balance candidates remain explicitly scoped | [cores-current-state.md](cores-current-state.md), [relics-current-state.md](relics-current-state.md) |
@@ -22,7 +22,7 @@ does not replace the individual current-state records; it points to them.
 | Biome ecology | T1–T4 ecology primitives and authored identities shipped | [biome-ecology-current-state.md](biome-ecology-current-state.md) |
 | Monster combat | T1–T4 combat identity/rework shipped; numerical tuning is separate | [monster-combat-rework-current-state.md](monster-combat-rework-current-state.md) |
 | Boss encounters and dungeons | T1–T4 structure shipped; cleanup/tuning remains bounded work | [boss-encounter-rework-current-state.md](boss-encounter-rework-current-state.md), [dungeon-current-state.md](dungeon-current-state.md) |
-| Sparse regions and node modifiers | T1–T4 registry and modifier-family map shipped | [node-modifiers-current-state.md](node-modifiers-current-state.md), [map-variety-plan.md](map-variety-plan.md) |
+| Sparse regions and node modifiers | T1–T4 registry shipped; modifier gameplay math REMOVED 2026-10-01, survives only as T2–T4 node authoring identity; T1 Plains/Forest use family blends instead | [variants-current-state.md](variants-current-state.md), [archive/node-modifiers-current-state.md](archive/node-modifiers-current-state.md), [map-variety-plan.md](map-variety-plan.md) |
 | Authentication and characters | Guest, Discord linking, character roster, and admin token boundary shipped | [auth-and-characters-current-state.md](auth-and-characters-current-state.md) |
 | Bot and telemetry instrumentation | Available; evidence semantics remain part of every experiment | [bot-experience-command-center.md](bot-experience-command-center.md), [gameplay-telemetry-current-state.md](gameplay-telemetry-current-state.md) |
 

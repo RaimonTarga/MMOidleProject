@@ -617,6 +617,98 @@ coverage folded into `validateWorldMap` so dev boot catches a malformed blend.
   `system-rework-status.md`, `economy-philosophy.md` §2 (shards, not catalysts), and
   `map-variety-plan.md` (modifier vocabulary superseded).
 
+**Built 2026-10-01 (Phase 2b, `feat/remove-old-economy` off `feat/lineage-data-model`,
+after Wave 1).** The old economy is gone: catalyst wallet, node-modifier gameplay
+math, and the weapon `+N` ladder. Four conductor scope overrides reshaped this
+pass from the sketch above (overrides win where they conflict with it):
+
+- **Override A** — the `+N` ladder survives for armor, charm (recovery), and
+  boots (mobility); only the **weapon** slot's ladder, evolution, and
+  reconstruction are gone (`checkUpgrade`/`checkEvolve`/`checkReconstruct` reject
+  `slot === 'weapon'` outright; `getMaxUpgrade` is 0 for weapons). `Recipe.upgrades`,
+  `UpgradeTab`, `EvolutionPreview`, `inventory:upgradeItem`, and
+  `crafting:evolveItem` all survive for the three non-weapon slots — the sketch's
+  "keep `Recipe.upgrades` only if a non-weapon slot still reads it" is exactly
+  what happened.
+- **Override B** — node modifiers were NOT deleted, degrading instead to T2–T4
+  node authoring identity only (node count source, display names, region masks),
+  with every gameplay effect (stat scalars, population scaling, reward premiums)
+  removed. `nodeModifiers.ts`/`nodeModifierMap.ts`/`NODE_MODIFIER_FAMILIES`
+  survive in reduced form — see `variants-current-state.md` §1-2 and the archived
+  `node-modifiers-current-state.md`'s header for the exact surviving surface.
+- **Override C** — the migration (`0009_progression_rework.sql` + a
+  `refundWeaponUpgradeEssence` hydration step in `playerRepo.ts`) wipes the
+  catalyst wallet outright and refunds **only weapon-slot** `itemUpgrades`
+  entries, as essence, from a frozen historical cost table
+  (`server/src/db/weaponUpgradeRefund.ts`, captured from the recipe data right
+  before weapon `upgrades` arrays were deleted). Non-weapon `itemUpgrades`
+  entries are untouched — their ladder survives, so there is nothing to refund.
+- **Override D** — tutorial weapon-upgrade beats and catalyst dialogue are gone
+  from `shared/src/tutorial/scripts/`; armor/charm/boots upgrade beats and the
+  arc shape are untouched. `bot/src/routes/t1GearPlans.ts` needed the identical
+  treatment (it is the data `plans.ts` was ported from, and is independently
+  consumed by the bot's own T1 route tests).
+
+**Divergences from the sketch, and open items for the designer:**
+
+1. **⚠ T3/T4 weapons are currently unreachable — the most important open item.**
+   The weapon lineage tree (Phase 1a/1b) only wires T1→T2 forms for all five
+   lineages. No lineage has a T3 or T4 `LineageForm`. Every T3/T4 weapon recipe
+   still has `evolvesFrom` set, so it was already blocked from plain-crafting
+   (pre-existing rule) and is now also blocked from evolve/reconstruct (Override
+   A) — with no lineage form to unlock instead. This is a sequencing gap between
+   "retire the old weapon ladder now" and "the new one only reaches T2 so far,"
+   not a mistake in either phase alone, but it needs a decision before T3/T4 is
+   played: an interim exception, fast-tracked T3/T4 lineage-form + capstone
+   authoring (content design, out of scope here), or an accepted gap. Full
+   detail in `lineages-current-state.md` §3 and the archived
+   `gear-evolution-current-state.md`'s header.
+2. **T1's vestigial `modifier` field was left in place, not removed.** The sketch
+   and the Phase 2a note both flagged "Phase 2b deletes the field [from
+   `WorldNodeAuthoring`] with the machinery" and "re-cut the mask to 25, drop the
+   two extra blends, update `EXPECTED_NORMAL_COUNTS`." That is a real, coupled
+   authoring change (T1 mask resize, blend-list trim on Cave/Swamp, display-name
+   re-plumbing for blended biomes) that Override B's literal text does not
+   require (it only commits to what T2–T4 keeps) and this pass's deliverables
+   did not name. Deferred rather than attempted under this pass's remaining
+   budget — every T1 node today still carries both a blend and an inert
+   `modifier` field, and `buildRegionNodes` still throws if the two lists'
+   lengths disagree, exactly as Phase 2a left it. See `variants-current-state.md`
+   §2.
+3. **`shardDrop.test` was not added** — `server/test/lineageMaterials.test.ts`
+   (Phase 1b) already pins deterministic shard/capstone drops end to end
+   (per-kill amount, family partition, boss-pays-capstone), so a second test
+   would have duplicated it rather than covered a gap.
+4. **Test disposition vs. the sketch:** `catalystRekey` and `nodeModifiers.wiring`
+   were retired exactly as planned (nothing survives for either to test).
+   `evolutionPreview` was **adapted, not retired** — Override A means
+   `EvolutionPreview` is still live for armor/charm/boots, so the test narrowed
+   to those three slots and gained a case asserting the server rejects weapon
+   evolve/reconstruct. `rewardMultiplier` was rewritten for shards/capstones as
+   planned. Fixing the full regression surface also required rewriting
+   catalyst-schedule assertions out of `t2ProgressionEconomy.test.ts`,
+   `t3ProgressionEconomy.test.ts`, and `t4ProgressionEconomy.test.ts` (large
+   pre-existing frozen-cost audits with entire sections devoted to the deleted
+   catalyst schedule and family assignment), plus smaller weapon-ladder fixes in
+   `mobilityBoots`, `equippedEvolutionAbilityTags`, `tierEntryBootstrap`,
+   `resetProgress`, `farmLoop`, and two bot route tests
+   (`t1EconomyCompatibility`, `campaignBoss`) that assumed weapons still reached
+   a `+5` boss loadout.
+5. **Docs were archived exactly as the sketch names them**, including
+   `gear-evolution-current-state.md`, even though most of its content (armor
+   niches, charm roles, the historical weapon-ladder-normalization rationale)
+   remains true for the surviving non-weapon slots. Its archive header says so
+   explicitly and points back to it as the live reference for those slots'
+   historical values — there is deliberately no new `gear-upgrades-current-state.md`
+   fork, to avoid two documents drifting apart over one still-live mechanism.
+6. Historical/variant bot route files (`*V2T1.ts`, `*MurkEyeOnlyT1.ts`,
+   `squireHeavyHammerT1.ts`, `apprenticeLetDotsFinishT1.ts`, etc.) still contain
+   inline weapon-upgrade steps and were left untouched: they are outside
+   `T1_CONTROLLED_ROUTE_IDS`, excluded from `t1Routes.semantic.test.ts`'s
+   validation by name pattern, and never executed by `pnpm test` (they require a
+   live server). Frozen historical artifacts, consistent with repo convention —
+   not fixed, not validated, not run.
+
 **Exit.** Playtest: players say where they went to farm and why, and name the shard they
 were after. Bench: the favoured lane wins each family by ~30% and the punished lane still
 clears.
