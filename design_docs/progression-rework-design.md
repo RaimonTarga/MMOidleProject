@@ -178,9 +178,14 @@ Non-weapon slots run one row fewer per tier (no stat row; base stats come from t
 one silhouette. The stat row's value folds into the next form's base stats at the gate,
 so the visible stat row is always the current tier's.
 
-**Global Mastery keeps its role.** Rows unlock on the same per-tier mastery band that
-+1..+5 use today, with the gate where +5 sits (full mastery of the tier). Mastery gates
-*when* you can buy, materials gate *whether*, the boss gates the *transformation*.
+**Global Mastery keeps its role (re-confirmed 2026-10-01).** Rows unlock on the same per-tier
+Global Mastery band that +1..+5 used, with the gate where +5 sat: full mastery of the tier.
+At T1 that means the payoff row needs roughly three biomes mastered and the gate all five.
+The tree is a **tier-wide** reward, not a biome one: a Forest rapier's working row is earned
+across the tier, and a bot or player who farms only the home biome stalls by design (the
+2026-10-01 live-bot run did, holding 13k essence). Harnesses must name that stall, not farm
+silently. Mastery gates *when* you can buy, shards gate *whether*, the boss gates the
+*transformation*.
 
 ---
 
