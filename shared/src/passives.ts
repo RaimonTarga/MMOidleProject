@@ -153,6 +153,18 @@ export const CADENCE_KEYS = [
   'cadence.crescendo-ramp-seconds',
   'cadence.crescendo-ramp-mult',
   'cadence.crescendo-tail-per-sec',
+  // ── Striker frame loops (progression rework Phase 3) ────────────────────────
+  // Flurry/Skirmisher: the finisher opens a damage window. The duration is
+  // clamped to a share of the live cycle at runtime (design §10), so this is the
+  // authored ceiling, not a promise.
+  'cadence.frame-window-ms',
+  'cadence.frame-window-mult',
+  // Breaker/Skirmisher: multiplier points the finisher gains per banked charge.
+  // The bank itself is capped at threshold−1 by the mechanic, never authored.
+  'cadence.frame-charge-per-stack',
+  // Breaker's rider: the finisher staggers. Authored at the shortest rung of the
+  // existing stun ladder; `applyStun` owns resistance and the immunity window.
+  'cadence.frame-stagger-ms',
 ] as const;
 
 export const COOLDOWN_KEYS = [
@@ -206,6 +218,21 @@ export const COOLDOWN_KEYS = [
   // Devout Priest: holy-beam channel duration and per-tick interval (ms).
   'cooldown.beam-duration-ms',
   'cooldown.beam-tick-ms',
+  // ── Squire frame loops (progression rework Phase 3) ─────────────────────────
+  // Warrior/Knight: the execution opens a window, and regular hits landed inside
+  // it shave `frame-refund-ms` off the next recharge. The window is clamped to a
+  // share of the live recharge at runtime (design §10); the refund can never take
+  // the recharge into its last quarter, so an execution is never made instant.
+  'cooldown.frame-window-ms',
+  'cooldown.frame-refund-ms',
+  // Bulwark/Knight: the bank. A time-based mechanic has no hit threshold to derive
+  // a cap from, so unlike the Striker's this one IS authored.
+  'cooldown.frame-charge-cap',
+  'cooldown.frame-charge-per-stack',
+  // Bulwark's rider: the execution strips a fraction of the target's plating,
+  // through the shared `plating-shred` record under the §18.1 max-wins rule.
+  'cooldown.frame-shred-pct',
+  'cooldown.frame-shred-duration-ms',
 ] as const;
 
 export const RELOAD_KEYS = [
@@ -389,6 +416,15 @@ export const DOT_KEYS = [
   'dot.ignition',       // fire: front-load all stacks on a fresh target
   'dot.rimeshatter',    // frost: at max stacks, full direct + DR debuff
   'dot.wind-spirit',    // frost: max-stack hits apply Frostbite DoT vulnerability
+  // ── Apprentice frame loops (progression rework Phase 3) ─────────────────────
+  // The Apprentice's frames are a VERB each, by element, not a window and a bank:
+  // poison OPENS HARD, fire INTENSIFIES, frost CHILLS (brief §1).
+  // Venom vessel: total stacks the first hit on an unpoisoned target lands.
+  'dot.frame-opener-stacks',
+  // Ember mage: multiplier on a hit into a target already at max burn.
+  'dot.frame-max-stack-mult',
+  // Rime-Bound chills through the EXISTING `dot.chill-*` keys above, at frame
+  // magnitudes — Winter Warden then deepens the same record rather than owning it.
 ] as const;
 
 export const SHARED_KEYS = [

@@ -209,6 +209,12 @@ const BUFF_IDS = new Set([
   'lineage-guard',
   'lineage-ward',
   'lineage-plate',
+  // Frame loops (progression rework Phase 3). Two tiles for all six roots: the
+  // window the mechanic opened, and the bank counting toward its cap. Art is
+  // authored through the normal pipeline; until it lands these resolve the same
+  // way the lineage tiles above do.
+  'frame-window',
+  'frame-charge',
 ]);
 
 const DEBUFF_IDS = new Set([

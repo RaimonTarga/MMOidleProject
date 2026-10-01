@@ -3,6 +3,7 @@ import {
   initCooldownArchetype,
   updateCooldownArchetype,
 } from './cooldownPrototype';
+import { COOLDOWN_FRAME_BUFFS } from './frameLoop';
 import {
   updateCooldownT3,
   COOLDOWN_T3_BUFFS,
@@ -17,7 +18,7 @@ const cooldownModule = defineMechanic({
     updateCooldownT3(world, dt, now);
     updateCooldownArchetype(world, dt);
   },
-  buffs: COOLDOWN_T3_BUFFS,
+  buffs: [...COOLDOWN_FRAME_BUFFS, ...COOLDOWN_T3_BUFFS],
 });
 
 export default cooldownModule;

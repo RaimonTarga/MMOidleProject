@@ -22,6 +22,7 @@ import {
   removeStatusEffect,
 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../../player/progression/rewards";
+import { initDotFrameLoop } from "./frameLoop";
 import {
   initDotT3,
   computeEternalDoomDamage,
@@ -464,6 +465,11 @@ export function initDotArchetype(): void {
         typeof ctx.metadata["abilityName"] === "string" ? ctx.metadata["abilityName"] : undefined);
     }
   });
+
+  // The frame loops (progression rework Phase 3) register LAST, so the opener
+  // tops up a bar the root has already applied this hit's stack to, and the chill
+  // mirrors the stack count as it stands after the hit.
+  initDotFrameLoop();
 }
 
 function detachMarkerIfNoMonsterDot(

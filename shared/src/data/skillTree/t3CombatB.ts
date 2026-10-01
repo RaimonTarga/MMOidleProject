@@ -258,12 +258,18 @@ export const t3CombatEntriesB = [
     parent: 'dot-heavy', children: [],
     description: 'Each hit also applies a Chill stack (up to 9), each reducing the target\'s movement and attack speed by 5%. At 9 Chill stacks the target is Frozen for 2 seconds — a severe slow (not full CC) that also makes it take 35% bonus damage from all sources — then the chill resets. At this tier your frost deals 20% less damage.',
     cost: 1, statEffects: {},
+    // The Rime-Bound FRAME now authors the base chill (3 stacks, 2% each, 4s), so
+    // these three are DELTAS on top of it — passives sum. Resolved values are
+    // unchanged from before the frame loop landed, and the description above still
+    // states them: 9 stacks, 5% per stack, 6s. The frame's own chill application
+    // stands down entirely while this path is taken; Winter Warden keeps owning the
+    // freeze (progression rework Phase 3).
     mechanicEffects: {
       'dot.freezing-cold': 1,
-      'dot.chill-max-stacks': 9,
-      'dot.chill-move-slow-per-stack': 0.05,
-      'dot.chill-attack-slow-per-stack': 0.05,
-      'dot.chill-duration-ms': 6_000,
+      'dot.chill-max-stacks': 6,
+      'dot.chill-move-slow-per-stack': 0.03,
+      'dot.chill-attack-slow-per-stack': 0.03,
+      'dot.chill-duration-ms': 2_000,
       'dot.freeze-duration-ms': 2_000,
       'dot.freeze-damage-taken-pct': 0.35,
       'dot.freeze-move-slow-pct': 0.80,

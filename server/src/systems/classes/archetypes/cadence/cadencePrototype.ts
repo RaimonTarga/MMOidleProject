@@ -2,6 +2,7 @@ import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { registerEmpoweredMultiplier, setEmpoweredAttack, isEmpoweredAttack } from '../../../combat/engine/empoweredAttacks';
 import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
 import type { World } from '../../../../world/World';
+import { initCadenceFrameLoop } from './frameLoop';
 import { initCadenceT3 } from './t3';
 import { relicRatingsFromPassives, resolveCadenceRelicProfile } from '@mmo-idle/shared';
 
@@ -67,6 +68,11 @@ export function initCadenceArchetype(): void {
       cadence.count = 0;
     }
   });
+
+  // The frame loop (progression rework Phase 3) registers LAST: its finisher
+  // branch folds the Breaker bank into the multiplier the handler above resolved,
+  // and its window clamp reads the threshold the counting handler just settled.
+  initCadenceFrameLoop();
 }
 
 export function updateCadenceArchetype(_world: World, _dt: number): void {

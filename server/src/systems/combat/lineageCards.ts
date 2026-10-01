@@ -244,13 +244,21 @@ const ON_TARGET: ReadonlySet<PayoffKind> = new Set<PayoffKind>([
  * is what makes the comparison honest — reading them back off the effect would
  * compare the prior source's value with itself.
  */
-function applySharedDebuffMaxWins(
+export function applySharedDebuffMaxWins(
   player: PlayerEntity,
   targetState: TracksCombat,
   config: StatusEffectConfig,
   dataKeys: readonly string[],
+  /**
+   * `{ origin: 'mechanic' }` when the applier is a CLASS mechanic rather than a
+   * card, so the Relic's mechanic scaling lands on it too — a frame's Heavy rider
+   * shares this record with the cadence finisher and must not be the one source
+   * the player's Relic cannot improve. Cards pass nothing: their magnitude is
+   * already resolved from the table.
+   */
+  options: { origin?: 'mechanic' } = {},
 ): StatusEffect {
-  const scaled = playerDebuffConfig(player, config);
+  const scaled = playerDebuffConfig(player, config, options);
   const prior = getStatusEffect(targetState, config.id);
   const priorData = prior ? { ...prior.data } : null;
   const priorMs = prior?.remainingMs ?? 0;

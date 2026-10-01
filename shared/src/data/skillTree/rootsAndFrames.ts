@@ -205,27 +205,38 @@ export const rootsAndFramesEntries = [
     id: 'cadence-light', name: 'Flurry', tier: 1,
     classId: 'cadence-root', subVariantId: 'light',
     parent: 'cadence-root', children: [],
-    description: 'Cadence change — a 4-hit finisher cycle at ×1.5 empowered damage. Swift and agile, this frame trades bulk for a blistering attack pace: frequency over raw power.',
+    description: 'Cadence change — a 4-hit finisher cycle at ×1.5 empowered damage. Swift and agile, this frame trades bulk for a blistering attack pace: frequency over raw power. Frame loop — the finisher opens a 1.6s flurry: ×1.3 damage on every regular hit inside it. The window is shorter than one cycle, so attack speed pays twice.',
     cost: 1, statEffects: {"attackPct": 0.06, "maxHpPct": 0.04, "attackSpeedPct": 0.12, "moveSpeedPct": 0.1, "platingPct": 0},
-    mechanicEffects: {"cadence.empowered-threshold": 4, "cadence.empowered-mult": 1.5},
+    mechanicEffects: {
+      "cadence.empowered-threshold": 4, "cadence.empowered-mult": 1.5,
+      "cadence.frame-window-ms": 1600, "cadence.frame-window-mult": 1.3,
+    },
   }],
 
   ['cadence-balanced', {
     id: 'cadence-balanced', name: 'Skirmisher', tier: 1,
     classId: 'cadence-root', subVariantId: 'balanced',
     parent: 'cadence-root', children: [],
-    description: 'Cadence change — a 5-hit finisher cycle at ×2 empowered damage. A measured approach with modest gains across the board and no commitment to either extreme.',
+    description: 'Cadence change — a 5-hit finisher cycle at ×2 empowered damage. A measured approach with modest gains across the board and no commitment to either extreme. Frame loop — both halves at half strength: regular hits bank charge worth +0.1× to the finisher each, and the finisher opens a 0.8s ×1.15 window.',
     cost: 1, statEffects: {"attackPct": 0.07, "maxHpPct": 0.1, "platingPct": 0.05, "attackSpeedPct": 0.04, "moveSpeedPct": 0.03},
-    mechanicEffects: {"cadence.empowered-threshold": 5, "cadence.empowered-mult": 2},
+    mechanicEffects: {
+      "cadence.empowered-threshold": 5, "cadence.empowered-mult": 2,
+      "cadence.frame-window-ms": 800, "cadence.frame-window-mult": 1.15,
+      "cadence.frame-charge-per-stack": 0.1,
+    },
   }],
 
   ['cadence-heavy', {
     id: 'cadence-heavy', name: 'Breaker', tier: 1,
     classId: 'cadence-root', subVariantId: 'heavy',
     parent: 'cadence-root', children: [],
-    description: 'Cadence change — a 6-hit finisher cycle at ×4 empowered damage. Endurance over speed: significant bulk and armor, paid for in attack pace and footwork; patience is rewarded with one enormous blow.',
+    description: 'Cadence change — a 6-hit finisher cycle at ×4 empowered damage. Endurance over speed: significant bulk and armor, paid for in attack pace and footwork; patience is rewarded with one enormous blow. Frame loop — every regular hit banks a charge (up to 5, one short of the cycle), and the finisher spends the whole bank at +0.2× each, then staggers what it hits.',
     cost: 1, statEffects: {"attackPct": 0.05, "maxHpPct": 0.18, "platingPct": 0.1, "attackSpeedPct": -0.1, "moveSpeedPct": -0.1, "damageReduction": 0.02},
-    mechanicEffects: {"cadence.empowered-threshold": 6, "cadence.empowered-mult": 4},
+    mechanicEffects: {
+      "cadence.empowered-threshold": 6, "cadence.empowered-mult": 4,
+      "cadence.frame-charge-per-stack": 0.2,
+      "cadence.frame-stagger-ms": 750,
+    },
   }],
 
 
@@ -233,18 +244,25 @@ export const rootsAndFramesEntries = [
     id: 'cooldown-light', name: 'Warrior', tier: 1,
     classId: 'cooldown-root', subVariantId: 'light',
     parent: 'cooldown-root', children: [],
-    description: 'Execution change — 5s recharge at ×1.5 damage. The aggressive tank keeps its armored core but trades patience for a fast, hungry tempo.',
+    description: 'Execution change — 5s recharge at ×1.5 damage. The aggressive tank keeps its armored core but trades patience for a fast, hungry tempo. Frame loop — the execution opens a 2s window, and every regular hit landed inside it cuts 300ms off the next recharge.',
     cost: 1, statEffects: {"attackPct": 0.07, "maxHpPct": 0.05, "platingPct": 0, "attackSpeedPct": 0.12, "moveSpeedPct": 0.1},
-    mechanicEffects: {"cooldown.empowered-cd-ms": 5000, "cooldown.empowered-mult": 1.5},
+    mechanicEffects: {
+      "cooldown.empowered-cd-ms": 5000, "cooldown.empowered-mult": 1.5,
+      "cooldown.frame-window-ms": 2000, "cooldown.frame-refund-ms": 300,
+    },
   }],
 
   ['cooldown-balanced', {
     id: 'cooldown-balanced', name: 'Knight', tier: 1,
     classId: 'cooldown-root', subVariantId: 'balanced',
     parent: 'cooldown-root', children: [],
-    description: 'Execution change — 7s recharge at ×2 damage. A sturdy foundation: substantial HP and armor amplify the class\'s defensive identity without tipping into immobility.',
+    description: 'Execution change — 7s recharge at ×2 damage. A sturdy foundation: substantial HP and armor amplify the class\'s defensive identity without tipping into immobility. Frame loop — both halves at half strength: regular hits bank charge (up to 4) worth +0.1× to the execution each, and the execution opens a 1s window where hits cut 150ms off the next recharge.',
     cost: 1, statEffects: {"attackPct": 0.08, "maxHpPct": 0.12, "platingPct": 0.05, "attackSpeedPct": 0.03, "moveSpeedPct": -0.02, "damageReduction": 0.02},
-    mechanicEffects: {"cooldown.empowered-cd-ms": 7000, "cooldown.empowered-mult": 2},
+    mechanicEffects: {
+      "cooldown.empowered-cd-ms": 7000, "cooldown.empowered-mult": 2,
+      "cooldown.frame-window-ms": 1000, "cooldown.frame-refund-ms": 150,
+      "cooldown.frame-charge-cap": 4, "cooldown.frame-charge-per-stack": 0.1,
+    },
   }],
 
   ['cooldown-heavy', {
@@ -254,9 +272,13 @@ export const rootsAndFramesEntries = [
     // Bulwark keeps real ATTACK affinity on purpose: the fantasy is enormous
     // individual hits, not merely maximum defense. Its sustained throughput is
     // constrained by the attack-speed penalty, not by a weak attack stat.
-    description: 'Execution change — 8s recharge at ×3.5 damage. Fortress of patience: maximum bulk makes you a wall, and every blow lands like one — but you move like a boulder and swing even slower.',
+    description: 'Execution change — 8s recharge at ×3.5 damage. Fortress of patience: maximum bulk makes you a wall, and every blow lands like one — but you move like a boulder and swing even slower. Frame loop — every regular hit banks a charge (up to 8), and the execution spends the whole bank at +0.2× each, then strips 15% of the target\'s armor for 6s.',
     cost: 1, statEffects: {"attackPct": 0.1, "maxHpPct": 0.22, "platingPct": 0.1, "attackSpeedPct": -0.12, "moveSpeedPct": -0.12, "damageReduction": 0.03},
-    mechanicEffects: {"cooldown.empowered-cd-ms": 8000, "cooldown.empowered-mult": 3.5},
+    mechanicEffects: {
+      "cooldown.empowered-cd-ms": 8000, "cooldown.empowered-mult": 3.5,
+      "cooldown.frame-charge-cap": 8, "cooldown.frame-charge-per-stack": 0.2,
+      "cooldown.frame-shred-pct": 0.15, "cooldown.frame-shred-duration-ms": 6000,
+    },
   }],
 
 
@@ -264,27 +286,43 @@ export const rootsAndFramesEntries = [
     id: 'dot-light', name: 'Venom vessel', tier: 1,
     classId: 'dot-root', subVariantId: 'light',
     parent: 'dot-root', children: [],
-    description: 'DoT change — up to 8 poison stacks; each hit converts 30% of your attack into poison. Ticks every 1s for 5s at ×1.25 DoT output. Apply wounds quickly and stay mobile.',
+    description: 'DoT change — up to 8 poison stacks; each hit converts 30% of your attack into poison. Ticks every 1s for 5s at ×1.25 DoT output. Apply wounds quickly and stay mobile. Frame loop — you open hard: the first hit on a target carrying no poison lands 4 stacks at once, so switching targets costs you almost nothing.',
     cost: 1, statEffects: {"attackPct": 0.06, "maxHpPct": 0.04, "attackSpeedPct": 0.1, "moveSpeedPct": 0.1, "platingPct": 0},
-    mechanicEffects: {"dot.max-stacks": 8, "dot.conversion-pct": 0.3, "dot.tick-interval-ms": 1000, "dot.duration-ms": 5000, "dot.mechanic-mult": 1.25},
+    mechanicEffects: {
+      "dot.max-stacks": 8, "dot.conversion-pct": 0.3, "dot.tick-interval-ms": 1000, "dot.duration-ms": 5000, "dot.mechanic-mult": 1.25,
+      "dot.frame-opener-stacks": 4,
+    },
   }],
 
   ['dot-balanced', {
     id: 'dot-balanced', name: 'Ember mage', tier: 1,
     classId: 'dot-root', subVariantId: 'balanced',
     parent: 'dot-root', children: [],
-    description: 'DoT change — up to 6 burn stacks; each hit converts 50% of your attack into burn. Ticks every 1.5s for 5.5s at ×1.20 DoT output. A deliberate fighter who rewards measured pressure.',
+    description: 'DoT change — up to 6 burn stacks; each hit converts 50% of your attack into burn. Ticks every 1.5s for 5.5s at ×1.20 DoT output. A deliberate fighter who rewards measured pressure. Frame loop — you intensify: once a target is already at max burn, your hits into it strike at ×1.4, so the reward is holding the fire at its ceiling.',
     cost: 1, statEffects: {"attackPct": 0.07, "maxHpPct": 0.1, "platingPct": 0, "attackSpeedPct": 0.03},
-    mechanicEffects: {"dot.max-stacks": 6, "dot.conversion-pct": 0.5, "dot.tick-interval-ms": 1500, "dot.duration-ms": 5500, "dot.mechanic-mult": 1.2},
+    mechanicEffects: {
+      "dot.max-stacks": 6, "dot.conversion-pct": 0.5, "dot.tick-interval-ms": 1500, "dot.duration-ms": 5500, "dot.mechanic-mult": 1.2,
+      "dot.frame-max-stack-mult": 1.4,
+    },
   }],
 
   ['dot-heavy', {
     id: 'dot-heavy', name: 'Rime-Bound', tier: 1,
     classId: 'dot-root', subVariantId: 'heavy',
     parent: 'dot-root', children: [],
-    description: 'DoT change — up to 3 frost stacks; each hit converts 70% of your attack into frost. Ticks every 2s for 6.5s at ×1.15 DoT output. A slow war of attrition built around deep, lingering wounds.',
+    description: 'DoT change — up to 3 frost stacks; each hit converts 70% of your attack into frost. Ticks every 2s for 6.5s at ×1.15 DoT output. A slow war of attrition built around deep, lingering wounds. Frame loop — you chill: every frost stack on a target slows its movement and attacks by 2% for 4s, so the longer you stay on one target the less it can do about it.',
     cost: 1, statEffects: {"attackPct": 0.08, "maxHpPct": 0.18, "platingPct": 0.05, "attackSpeedPct": -0.1, "moveSpeedPct": -0.1, "damageReduction": 0.03},
-    mechanicEffects: {"dot.max-stacks": 3, "dot.conversion-pct": 0.7, "dot.tick-interval-ms": 2000, "dot.duration-ms": 6500, "dot.mechanic-mult": 1.15},
+    // Chill is authored through the EXISTING `dot.chill-*` keys, at frame
+    // magnitudes, so Winter Warden (dot-heavy-t3-b) DEEPENS this record rather
+    // than owning a second one: passives sum, and its node now authors the delta
+    // up to its 9 stacks / 5% per stack / 6s. Nothing else about its freeze moves.
+    mechanicEffects: {
+      "dot.max-stacks": 3, "dot.conversion-pct": 0.7, "dot.tick-interval-ms": 2000, "dot.duration-ms": 6500, "dot.mechanic-mult": 1.15,
+      "dot.chill-max-stacks": 3,
+      "dot.chill-move-slow-per-stack": 0.02,
+      "dot.chill-attack-slow-per-stack": 0.02,
+      "dot.chill-duration-ms": 4000,
+    },
   }],
 
 
