@@ -839,6 +839,86 @@ clears.
 - Tests: `frameLoops.test` (window shorter than cycle; stacks capped at threshold−1;
   uptime rises with attack speed), `rangeMechanics.test` per root.
 
+### Phase 3 progress note — range mechanics and the at-bay layer (2026-10-01, W1-C)
+
+Brief §2 is implemented. Everything is authored as `mechanicEffects` on the range
+nodes in `rootsAndFrames.ts` and consumed in ONE new module,
+`server/src/systems/combat/rangeMechanics.ts`, registered from `initCombatSystems()`
+as `initRangeMechanics` — after `initAllMechanics()`, before `initPlayerAmplifiers`
+and defense. Tests: `server/test/rangeMechanics.test.ts`.
+
+**The at-bay band.** `isAtBay(player, target)` is
+`hitboxGap(player, target) <= player.performsAttack.attackRange` **and**
+`> target.performsAttack.attackRange`, edge-to-edge — deliberately the same measure
+`inAttackRange` / `collision.canReach` / the attack gate in `combat.ts` use, so
+"inside your reach" means one thing everywhere. Strict `>` on the target's side is
+what makes it a band: a monster settled at its own standoff can hit back and is not
+at bay; one still walking in, one being kited, or anything a long-reach build simply
+outranges, is. Degenerate reaches: a player reach that is non-finite or `<= 0` makes
+the band empty; a target `attackRange` that is absent, zero or non-finite is read as
+`0`, so such a body is at bay at any gap above contact and never while the hitboxes
+touch. "From max reach" is the outer band, `reach × frac <= gap <= reach`, with
+`frac` authored per node (`<root>.range-far-max-reach-pct`, 0.75).
+
+**Keys added** (`<root>.range-mid-*` / `<root>.range-far-*`, all in
+`shared/src/passives.ts`): Lancer `cadence.range-mid-at-bay-slow-pct|-ms`; Phalanx
+`cooldown.range-mid-at-bay-slow-pct|-ms` + `cooldown.range-mid-execution-stagger-ms`;
+Enforcer `reload.range-mid-at-bay-slow-pct|-ms`; Shade
+`energy.range-mid-discharge-stagger-ms`; Warlock `dot.range-mid-spread-stacks`,
+`dot.range-mid-spread-radius`; Phantom-Blade `cadence.range-far-max-reach-pct`,
+`cadence.range-far-opener-pct`; Sentinel `cooldown.range-far-max-reach-pct`,
+`cooldown.range-far-vuln-pct|-ms`; Harbinger `dot.range-far-stack-cap-bonus`,
+`dot.range-far-duration-pct`; Deadeye `reload.range-far-max-reach-pct`,
+`reload.range-far-damage-pct`; Wisp `energy.range-far-single-target`. Close nodes and
+the Conduit's three range nodes are untouched, and a test asserts it.
+
+**Cross-task seam.** `energy.range-far-single-target: 1` is authored on
+`energy-range-far` here; the CONSUMER lands with the energy frame loops (W1-B), whose
+chain-count resolution reads the key and, when it is 1, chains to zero targets and
+folds the chained share onto the primary. `rangeMechanics.ts` deliberately does not
+read it, and the test pins only that the node authors it.
+
+**Divergences from the brief, and decisions the code forced.**
+- *Brief:* "the at-bay check is one helper on the player hit seam (distance to target
+  vs `target.performsAttack.attackRange`)". *Code:* the helper compares the
+  **edge-to-edge hitbox gap**, not centre distance, because centre distance is not
+  what any reach test in this codebase means — a 56px-wide slime would read as
+  "at bay" while standing on the player.
+- *Brief and task:* `isAtBay(player, target)`. *Code:* same signature, no `world`,
+  because `hitboxGap` + `posHitboxFromEntity` are pure shared functions; `canReach`
+  would have forced the collision index through the seam for no gain.
+- *Brief:* Mid's extra effects fire "at reach". *Code:* read as the at-bay band for
+  the whole Mid row (Phalanx's execution, Shade's discharge, Warlock's spread), since
+  that is the only band Mid authors and the brief's own locked layer defines it.
+- *Brief:* Harbinger is "+1 max stack". *Code:* the **delivery** cap on the applied
+  `dot` record, not `dot.max-stacks`, which is also the divisor in
+  `computeDotClassDamagePerStack` — raising that key would have made the ninth stack
+  pay for itself by thinning the other eight. `resolveDotStackCap` already documents
+  that split. The cap is bumped once per effect record (latched in the record's own
+  `data`) and the longer duration is written as an absolute floor rather than a
+  multiply, because a refresh resets `remainingMs` and a multiply would ratchet.
+- *Brief:* "stagger uses the existing stun ladder at its shortest duration". *Code:*
+  750 ms, authored on each node rather than read from the magnitude table (design
+  §18.4: no constants in the runtime; the table's T1 values are untouched). The
+  stagger refuses a control-immune or plate-shielded boss via
+  `monsterIgnoresControl`, like every other stun; the at-bay slow does not check it,
+  matching the `slow` payoff in `lineageCards.ts`.
+- *Not in the brief:* the §18.1 max-wins helper moved out of `lineageCards.ts` into
+  `combat/status/sharedDebuffRecord.ts` verbatim, because Sentinel is its second
+  consumer.
+- *Not in the brief:* Phantom-Blade's "new target" is latched per **monster body**
+  (`tracksCombat` flag), the same shape `weapon.first-strike-mult` already uses — so
+  node freeze/respawn resets it for free and nothing is persisted. It is spent only
+  by a hit that actually lands: a blocking evade returns before the latch.
+- **Still open / not reached:** no HUD or client work (the opener reuses the existing
+  `first-strike` client effect; the at-bay slow, stagger and vulnerability show
+  through the existing debuff UI; Deadeye's long shot has no tell of its own). No
+  bench pass — every number is a first-pass placeholder seeded off the magnitude
+  table's T1 row (slow 20%, stagger 750 ms, vulnerability +15%/4 s) for the designer
+  to hand-edit. The brief's other Phase 3 half, the frame loops and their
+  Close/Far loop interactions (design §11: "Close builds charge faster on adjacent
+  targets; Far extends the Light window"), is not in this task and is not implemented.
+
 ---
 
 ## Phase 4 — Armor, charm, boots trees; remaining T1 families
