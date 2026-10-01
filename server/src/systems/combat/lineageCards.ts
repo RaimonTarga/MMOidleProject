@@ -67,8 +67,8 @@ import { attachMarker } from '../../ecs/markerHelpers';
 import { registerCombatListener, type CombatContext } from './engine/combatPipeline';
 import { registerMechanicFiredListener } from './engine/mechanicFired';
 import { applyPlayerDebuff, playerDebuffConfig } from '../classes/shared/applyPlayerDebuff';
+import { LINEAGE_BLEED_ID, LINEAGE_POISON_ID } from './damage/bleedIds';
 import { applyPlayerProcDamage } from './damage/procDamage';
-import { applyClassDotStack } from '../classes/archetypes/dot/dotPrototype';
 import { applyMonsterSlow } from './status/monsterControl';
 import { applyStun } from './status/stun';
 import { monsterIgnoresControl } from './status/controlImmunity';
@@ -80,7 +80,6 @@ import { playerDotsOnMonster } from './damage/dotInventory';
 import { playerAoeTargets } from './damage/aoeDamage';
 import { copyPlayerDotOnto } from '../player/abilities/abilityAffliction';
 import { cleansePlayerAfflictions } from './status/cleanse';
-import { DOT_EFFECT_ID } from '../classes/archetypes/dot/t3/core/constants';
 import { defineBuff } from './buffs/descriptor';
 
 // ── Runtime constants ────────────────────────────────────────────────────────
@@ -433,48 +432,65 @@ function applyOnTarget(
     }
 
     case 'hemorrhage': {
-      // The bleed the cadence root already drives (`updateHemorrhages`, which
-      // ticks every hemorrhaged monster regardless of who bled it). Refreshed by
-      // taking the BETTER of the two axes rather than overwriting: a per-hit
-      // lineage bleed must never shrink a finisher's.
-      const ticks = Math.max(1, Math.round((durationMs ?? BLEED_TICK_MS) / BLEED_TICK_MS));
+      // Its OWN id (design §18.1), ticked by the same bleed driver as the cadence
+      // root's. Sharing `cadence-hemorrhage` meant the first source owned the
+      // per-tick damage, and the "take the better of both" guard against that was
+      // a ratchet: one big hit's bleed maintained forever by chip hits. Ordinary
+      // refresh — this application's numbers win, the window restarts.
+      const tickMs = BLEED_TICK_MS;
+      const ticks = Math.max(1, Math.round((durationMs ?? tickMs) / tickMs));
       const perTick = Math.max(1, Math.round(hitBasis(player, ctx) * magnitude / ticks));
       const bleed = applyPlayerDebuff(player, target.tracksCombat, {
-        id: 'cadence-hemorrhage',
+        id: LINEAGE_BLEED_ID,
         instanced: false,
         remainingMs: -1,
         sourceId,
-        data: { damagePerTick: perTick, nextTickIn: BLEED_TICK_MS, tickIntervalMs: BLEED_TICK_MS },
+        data: {
+          damagePerTick: perTick, nextTickIn: tickMs, tickIntervalMs: tickMs,
+          bleedMode: 0,
+        },
       });
-      bleed.data.damagePerTick = Math.max(bleed.data.damagePerTick ?? 0, perTick);
-      bleed.data.tickIntervalMs = BLEED_TICK_MS;
-      if (!(bleed.data.nextTickIn > 0)) bleed.data.nextTickIn = BLEED_TICK_MS;
-      bleed.stacks = Math.max(bleed.stacks, ticks);
+      bleed.data.damagePerTick = perTick;
+      bleed.data.tickIntervalMs = tickMs;
+      bleed.data.bleedMode = 0;
+      if (!(bleed.data.nextTickIn > 0)) bleed.data.nextTickIn = tickMs;
+      bleed.stacks = ticks;
       attachMarker(world, target, 'hasHemorrhage');
       return landed;
     }
 
     case 'poison-stack': {
-      // The class DoT stack, through its own authoritative applier, so the
-      // existing tick driver, the DoT inventory, Contagion and Detonate all see
-      // it. Only the per-stack damage is the card's: the cap and the tick
-      // interval come from the player's own DoT profile.
+      // Its OWN id (design §18.1) rather than a stack on the player's class DoT,
+      // whose `damagePerStack` the first writer owned. Stacks are INTENSITY here —
+      // they multiply the tick and expire with the timer — so repeated hits make
+      // the poison harder, not merely longer. The cap and tick interval still come
+      // from the player's own DoT profile, so a class that ticks faster poisons
+      // faster.
       const profile = resolveDotClassProfile(
         player.usesSkills.passives,
         player.usesSkills.selectedSubVariant,
       );
       const damagePerStack = Math.max(1, Math.round(hitBasis(player, ctx) * magnitude));
-      applyClassDotStack(world, player, target, {
-        // The card's share is already taken out of the payoff magnitude; it does
-        // not additionally convert the direct hit the way the root does.
-        conversionPct: 0,
-        durationMs: durationMs ?? profile.durationMs,
+      const poison = applyPlayerDebuff(player, target.tracksCombat, {
+        id: LINEAGE_POISON_ID,
+        instanced: false,
         maxStacks: profile.maxStacks,
-        tickIntervalMs: profile.tickIntervalMs,
-        damagePerStack,
+        refreshable: true,
+        remainingMs: durationMs ?? profile.durationMs,
+        sourceId,
+        data: {
+          damagePerTick: damagePerStack,
+          nextTickIn: profile.tickIntervalMs,
+          tickIntervalMs: profile.tickIntervalMs,
+          bleedMode: 1,
+        },
       });
-      const stacks = getStatusEffect(target.tracksCombat, DOT_EFFECT_ID)?.stacks;
-      return { ...landed, ...(stacks !== undefined ? { stacks } : {}) };
+      poison.data.damagePerTick = damagePerStack;
+      poison.data.tickIntervalMs = profile.tickIntervalMs;
+      poison.data.bleedMode = 1;
+      if (!(poison.data.nextTickIn > 0)) poison.data.nextTickIn = profile.tickIntervalMs;
+      attachMarker(world, target, 'hasHemorrhage');
+      return { ...landed, stacks: poison.stacks };
     }
 
     case 'slow':

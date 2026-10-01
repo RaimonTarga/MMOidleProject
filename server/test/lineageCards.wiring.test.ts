@@ -44,6 +44,7 @@ import {
   emitCombatEvent, type CombatContext,
 } from '../src/systems/combat/engine/combatPipeline';
 import { emitMechanicFired } from '../src/systems/combat/engine/mechanicFired';
+import { LINEAGE_BLEED_ID, LINEAGE_POISON_ID } from '../src/systems/combat/damage/bleedIds';
 import {
   lineagePlatingStackFraction, onLineageGuardCast, updateLineageCards,
 } from '../src/systems/combat/lineageCards';
@@ -288,8 +289,13 @@ function cardFx(): Array<Extract<CombatEvent, { kind: 'card-fx' }>> {
     getStatusEffect(target.tracksCombat, 'vulnerability') !== undefined,
     'vulnerability should reach the monster debuff seam',
   );
-  const bleed = getStatusEffect(target.tracksCombat, 'cadence-hemorrhage');
-  assert(bleed !== undefined, 'hemorrhage should reach the bleed the cadence root drives');
+  // Its own id (design §18.1), ticked by the same driver as the cadence root's.
+  const bleed = getStatusEffect(target.tracksCombat, LINEAGE_BLEED_ID);
+  assert(bleed !== undefined, 'hemorrhage should apply the lineage bleed');
+  assert(
+    getStatusEffect(target.tracksCombat, 'cadence-hemorrhage') === undefined,
+    "a card bleed must not write the cadence root's record",
+  );
   assert((bleed?.data.damagePerTick ?? 0) > 0, 'a bleed with no per-tick damage is not a bleed');
   assert(target.hasHemorrhage !== undefined, 'the bleed marker drives the tick loop');
   assert(cardFx().length === 2, 'two cards firing is two effects, one per application');
@@ -542,9 +548,13 @@ function cardFx(): Array<Extract<CombatEvent, { kind: 'card-fx' }>> {
   const target = monster(680);
 
   hit(player, target);
-  const stack = getStatusEffect(target.tracksCombat, 'dot');
-  assert(stack !== undefined, 'poison-stack should reach the class DoT applier');
-  assert((stack?.data.damagePerStack ?? 0) > 0, 'a stack with no damage is not a stack');
+  const stack = getStatusEffect(target.tracksCombat, LINEAGE_POISON_ID);
+  assert(stack !== undefined, 'poison-stack should apply the lineage poison');
+  assert(
+    getStatusEffect(target.tracksCombat, 'dot') === undefined,
+    "a card poison must not write the player's class DoT record",
+  );
+  assert((stack?.data.damagePerTick ?? 0) > 0, 'a stack with no damage is not a stack');
   const events = cardFx();
   assert(events.length === 1, 'one stack applied is one effect');
   assert(events[0].stacks === stack?.stacks, 'a counting payoff reports its stack count');
@@ -573,7 +583,7 @@ function cardFx(): Array<Extract<CombatEvent, { kind: 'card-fx' }>> {
     damage: 1, platingMult: 1, drPierce: 0, cancelled: false, metadata: {},
   } as unknown as CombatContext, world);
   assert(
-    getStatusEffect(neighbour!.tracksCombat, 'dot') !== undefined,
+    getStatusEffect(neighbour!.tracksCombat, LINEAGE_POISON_ID) !== undefined,
     'contagion should copy the affliction onto a neighbour',
   );
   const spread = cardFx();

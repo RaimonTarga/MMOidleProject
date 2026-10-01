@@ -40,6 +40,7 @@ import {
 } from "../../classes/archetypes/dot/t3/core/selectors";
 import { applyMonsterDamageTakenDebuffs } from "../../classes/shared/debuffs";
 import { dotElementForSource } from "./dotTickEvent";
+import { LINEAGE_BLEED_ID, LINEAGE_POISON_ID } from "./bleedIds";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 
@@ -51,7 +52,11 @@ import type { World } from "../../../world/World";
  * still names `hasAshbrandBurn` / `hasVoidCorruption`; those markers do not
  * exist in `entity.ts` and the doc is stale.
  */
-export type DotMarkerKey = "hasDot" | "hasConflagration" | "hasWeaponDot";
+export type DotMarkerKey =
+  | "hasDot"
+  | "hasConflagration"
+  | "hasWeaponDot"
+  | "hasHemorrhage";
 
 /** What one live DoT effect is, mechanically, to a tool that wants to act on it. */
 export interface DotInventoryEntry {
@@ -318,9 +323,43 @@ const WEAPON_RESERVOIR_FAMILY: DotFamily = {
  * first. Both also test `t3Perm`, so the order is belt-and-braces rather than
  * load-bearing — keep it anyway.
  */
+/**
+ * A lineage card's own damage-over-time payoffs (design §18.1). Separate ids from
+ * the cadence root's bleed, ticked by the same driver, and described here so
+ * Contagion, Detonate and the stack-count rune condition see them like any other
+ * DoT and sum the sources.
+ *
+ * Two shapes behind one family, told apart by `bleedMode`: a `hemorrhage` spends
+ * one stack per tick and is permanent until spent, so its stack count IS its
+ * remaining ticks; a `poison-stack` multiplies the tick by its stacks and ends
+ * with its timer.
+ */
+const LINEAGE_BLEED_FAMILY: DotFamily = {
+  id: "lineage-bleed",
+  owns: (effect) => effect.id === LINEAGE_BLEED_ID || effect.id === LINEAGE_POISON_ID,
+  describe({ world, monster, effect }) {
+    if (effect.stacks <= 0) return null;
+    const intensity = effect.data["bleedMode"] === 1;
+    const perTick = (effect.data["damagePerTick"] ?? 0)
+      * (intensity ? Math.max(1, effect.stacks) : 1);
+    if (perTick <= 0) return null;
+    // A spent-stack bleed carries no timer, so `ticksRemaining` cannot read it.
+    const ticks = intensity ? ticksRemaining(effect) : Math.max(1, effect.stacks);
+    return {
+      element: dotElementForSource(world, effect.sourceId),
+      remainingDamage: withVulnerability(monster, perTick) * ticks,
+      spreadable: true,
+      detonatable: true,
+      stackCap: intensity ? effect.maxStacks : 0,
+      marker: "hasHemorrhage",
+    };
+  },
+};
+
 export function initDotInventory(): void {
   registerDotFamily(PERMAFROST_FAMILY);
   registerDotFamily(CLASS_DOT_FAMILY);
   registerDotFamily(CONFLAGRATION_FAMILY);
   registerDotFamily(WEAPON_RESERVOIR_FAMILY);
+  registerDotFamily(LINEAGE_BLEED_FAMILY);
 }
