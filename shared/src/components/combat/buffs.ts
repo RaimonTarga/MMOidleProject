@@ -129,6 +129,8 @@ export const BUFF_IDS = [
   'lineage-guard',
   'lineage-ward',
   'lineage-plate',
+  // Added 2026-10-01 with the `evasion-window` payoff (design §6).
+  'lineage-evasion',
   // Frame loops (progression rework Phase 3). TWO ids for all six roots, not two
   // per root: a player wears exactly one frame, so the clock and the counter are
   // the same two tiles whatever root is under them, and each root's descriptor

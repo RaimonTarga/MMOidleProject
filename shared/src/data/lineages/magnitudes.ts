@@ -180,6 +180,7 @@ export interface PayoffUnit {
  *   plating-stack   fraction of base plating gained per stack
  *   engagement-dr   fraction of damage reduced during the opening
  *   contagion       share of the source's stacks copied to a nearby target
+ *   evasion-window  flat evade (dodge) chance added to the player for the window
  */
 const payoffUnitEntries: [PayoffKind, PayoffUnit][] = [
   ['vulnerability',   { magnitude: 0.12, durationMs: 4000, fractional: true }],
@@ -197,6 +198,13 @@ const payoffUnitEntries: [PayoffKind, PayoffUnit][] = [
   ['plating-stack',   { magnitude: 0.15, durationMs: 4000, fractional: true }],
   ['engagement-dr',   { magnitude: 0.15, durationMs: 3000, fractional: true }],
   ['contagion',       { magnitude: 0.30, durationMs: 4000, fractional: true }],
+  // Added 2026-10-01 (design §6) so the avoid face has a real effect distinct
+  // from engagement-dr: a chance to not be hit at all, rather than a flat
+  // reduction of a hit that lands. Unit and window sized against its nearest
+  // siblings — engagement-dr's magnitude (both are "avoid-flavoured" windows)
+  // and speed-window's duration (both are proc-triggered, short windows) —
+  // since the payoff has no bench history of its own yet.
+  ['evasion-window',  { magnitude: 0.15, durationMs: 2500, fractional: true }],
 ];
 
 export const PAYOFF_UNIT: Map<PayoffKind, PayoffUnit> = new Map<PayoffKind, PayoffUnit>(payoffUnitEntries);

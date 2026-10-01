@@ -1,4 +1,7 @@
-import { GAME_CONFIG, MONSTER_DATABASE, getCounter, setCounter } from '@mmo-idle/shared';
+import {
+  GAME_CONFIG, MONSTER_DATABASE, getCounter, setCounter,
+  getStatusEffect, lineageStatusEffectId, type TracksCombat,
+} from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import { mutateSlice } from '../../../ecs/dirtyHelpers';
 import type { World } from '../../../world/World';
@@ -30,28 +33,51 @@ export function registerEvasion(): void {
   registerCombatListener('onAttack', (ctx, world) => {
     if (ctx.defenderType !== 'player' || ctx.attackerType !== 'monster') return;
     const player = ctx.defender;
-    if (!player.evadesHits || player.evadesHits.dodgeRate <= 0) return;
+    const hasBaseDodge = !!player.evadesHits && player.evadesHits.dodgeRate > 0;
+    const windowDodge = evasionWindowBonus(player.tracksCombat);
+    if (!hasBaseDodge && windowDodge <= 0) return;
     // An unevadable hit (Volcanic final strike) neither dodges nor spends the
     // charge: the next ordinary hit still gets the dodge it built toward.
     if (ctx.metadata['unevadable'] === true) return;
 
-    const acc = player.evadesHits.charge + player.evadesHits.dodgeRate;
-    if (acc >= 1) {
-      mutateSlice(world, player, 'evadesHits', (slice) => { slice.charge = acc - 1; });
-      ctx.metadata['evaded'] = true;
-      ctx.metadata['evadeMitigation'] = player.evadesHits.evadeMitigation;
-      // Only a FULL dodge (evade mitigation >= 1) suppresses the attacking monster's
-      // debuffs/DoT; a graze still lets them land. Partial evasion used to block
-      // them too, which made evasion armor the answer to every ailment-driven
-      // fight (Swamp poison, Cave plating shred) as a side effect of softening
-      // hits. Full-dodge ailment immunity is the late-game payoff for stacking
-      // evade mitigation. A monster that pierces evade applies through either.
-      const def = MONSTER_DATABASE.get(ctx.attacker.isMonster.monsterTypeId);
-      if (player.evadesHits.evadeMitigation >= 1 && !def?.appliesThroughEvade) {
-        ctx.metadata['evadeBlocksDebuffs'] = true;
+    let evaded = false;
+    if (hasBaseDodge) {
+      const acc = player.evadesHits!.charge + player.evadesHits!.dodgeRate;
+      if (acc >= 1) {
+        mutateSlice(world, player, 'evadesHits', (slice) => { slice.charge = acc - 1; });
+        evaded = true;
+      } else {
+        mutateSlice(world, player, 'evadesHits', (slice) => { slice.charge = acc; });
       }
-    } else {
-      mutateSlice(world, player, 'evadesHits', (slice) => { slice.charge = acc; });
+    }
+    // A live `evasion-window` lineage/ability-node payoff (design §6, added
+    // 2026-10-01) is a SECOND, independent deterministic roll — see
+    // `rollEvadeWindowAccumulator` — rather than being folded into
+    // `evadesHits.charge`. That keeps the networked charge exactly what
+    // `evasion.test.ts` pins it as (the gear-derived accumulator, untouched
+    // while the component is absent) and still lets an avoid-faced card do
+    // something for a player who has not also stacked the `evasion` stat.
+    if (!evaded && windowDodge > 0) {
+      evaded = rollEvadeWindowAccumulator(player.tracksCombat, windowDodge);
+    }
+    if (!evaded) return;
+
+    ctx.metadata['evaded'] = true;
+    // A window-only dodge (no base `evadesHits`) has no gear `evadeMitigation`
+    // to report, so it falls back to the same base the damage-side listener
+    // already falls back to for a missing value — full-dodge-or-nothing is the
+    // reasonable default for a pure avoid-face proc.
+    const mitigation = player.evadesHits?.evadeMitigation ?? GAME_CONFIG.EVADE_MITIGATION_BASE;
+    ctx.metadata['evadeMitigation'] = mitigation;
+    // Only a FULL dodge (evade mitigation >= 1) suppresses the attacking monster's
+    // debuffs/DoT; a graze still lets them land. Partial evasion used to block
+    // them too, which made evasion armor the answer to every ailment-driven
+    // fight (Swamp poison, Cave plating shred) as a side effect of softening
+    // hits. Full-dodge ailment immunity is the late-game payoff for stacking
+    // evade mitigation. A monster that pierces evade applies through either.
+    const def = MONSTER_DATABASE.get(ctx.attacker.isMonster.monsterTypeId);
+    if (mitigation >= 1 && !def?.appliesThroughEvade) {
+      ctx.metadata['evadeBlocksDebuffs'] = true;
     }
   });
 
@@ -106,6 +132,39 @@ export function rollMonsterDodge(target: MonsterEntity, chance: number): boolean
     return true;
   }
   setCounter(target.tracksCombat, MONSTER_EVADE_ACC, acc);
+  return false;
+}
+
+const EVADE_WINDOW_ACC = 'evadeWindowAcc';
+
+/**
+ * The live magnitude of an active `evasion-window` payoff, or 0 when none is
+ * active. Reads the `lineage.evasion-window` status effect directly rather than
+ * importing a reader from `lineageCards.ts`, which already imports THIS module
+ * (`evadeBlocksDebuffs`) — a second edge the other way would be a cycle.
+ */
+function evasionWindowBonus(cs: TracksCombat): number {
+  const effect = getStatusEffect(cs, lineageStatusEffectId('evasion-window'));
+  if (!effect || effect.remainingMs <= 0) return 0;
+  return Math.max(0, effect.data.magnitude ?? 0);
+}
+
+/**
+ * A second, independent deterministic (no RNG) dodge accumulator for a live
+ * `evasion-window` payoff, kept in `tracksCombat` scratch rather than in the
+ * networked `evadesHits.charge` slice: the slice is the gear-derived dodge rate
+ * only (see `evasion.test.ts`'s "a player with no evadesHits component must
+ * never touch the accumulator"), and the window's own clock already drives the
+ * HUD tile through its status effect, so it needs no charge bar of its own.
+ * Same stepping rule as `rollMonsterDodge` below.
+ */
+function rollEvadeWindowAccumulator(cs: TracksCombat, chance: number): boolean {
+  const acc = getCounter(cs, EVADE_WINDOW_ACC) + chance;
+  if (acc >= 1) {
+    setCounter(cs, EVADE_WINDOW_ACC, acc - 1);
+    return true;
+  }
+  setCounter(cs, EVADE_WINDOW_ACC, acc);
   return false;
 }
 

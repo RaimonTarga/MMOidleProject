@@ -110,12 +110,14 @@ export type PayoffKind =
   | 'cleanse'
   | 'plating-stack'
   | 'engagement-dr'
-  | 'contagion';
+  | 'contagion'
+  | 'evasion-window';
 
 export const PAYOFF_KINDS: readonly PayoffKind[] = [
   'vulnerability', 'plating-shred', 'echo-hit', 'hemorrhage', 'poison-stack',
   'slow', 'stun', 'damage-window', 'speed-window', 'recovery-window',
   'ward', 'cleanse', 'plating-stack', 'engagement-dr', 'contagion',
+  'evasion-window',
 ] as const;
 
 /**

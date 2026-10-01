@@ -171,6 +171,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'lineage-guard': b('Brace', 'A lineage card opened a damage-reduction window — opening protection, earned by how the card fires rather than by gear.'),
   'lineage-ward': b('Shell', 'A lineage card granted a temporary absorb pool, spent before your barrier and your health.'),
   'lineage-plate': b('Plate', 'A lineage card is adding plating to each reactive-plating stack you are holding. The stacks themselves still build from hits taken and fade one at a time.'),
+  'lineage-evasion': b('Slip', 'A lineage card opened an evasion window: a flat chance to dodge outright for its duration, on top of whatever your gear already gives you.'),
 
   // -- Frame loops -------------------------------------------------------------
   // Two tiles for all six classes: a frame is either a window or a bank (or, on a

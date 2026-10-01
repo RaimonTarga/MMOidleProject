@@ -49,6 +49,7 @@ import { KEYSTONE_DEFINITIONS, keystoneDefinition } from './keystones';
 const PAYOFF_IS_TIMED: ReadonlySet<string> = new Set([
   'vulnerability', 'plating-shred', 'hemorrhage', 'poison-stack', 'slow', 'stun',
   'damage-window', 'speed-window', 'recovery-window', 'engagement-dr', 'ward',
+  'evasion-window',
 ]);
 import type { LineageFxKey, PacketId } from './types';
 

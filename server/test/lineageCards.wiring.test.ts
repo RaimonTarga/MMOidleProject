@@ -19,9 +19,14 @@
  *
  * Run: node --conditions=development --import tsx test/lineageCards.wiring.test.ts
  */
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import {
+  ABILITY_NODE_DATABASE,
   ABILITY_SLOW_EFFECT_ID,
   GAME_CONFIG,
+  LINEAGE_DATABASE,
+  PAYOFF_KINDS,
   applyStatusEffect,
   baseRecoveryForTier,
   emptyEquipment,
@@ -33,6 +38,7 @@ import {
   type LineagePayoff,
   type LineageTrigger,
   type PacketId,
+  type PayoffKind,
   type ResolvedLineageCapstone,
   type ResolvedLineageCard,
 } from '@mmo-idle/shared';
@@ -49,6 +55,7 @@ import {
   lineagePlatingStackFraction, onLineageGuardCast, updateLineageCards,
 } from '../src/systems/combat/lineageCards';
 import { attackHasteBonus } from '../src/systems/combat/engine/attackCadence';
+import { runMonsterAttack } from '../src/systems/combat/engine/combat';
 import { activeRecoveryFraction } from '../src/systems/defense/regen/recovery';
 import { setAttackTarget } from '../src/systems/combat/ai/targeting';
 
@@ -400,6 +407,44 @@ function cardFx(): Array<Extract<CombatEvent, { kind: 'card-fx' }>> {
   );
 }
 
+// ── guard-cast: evasion-window reaches the player evade seam ────────────────
+// Design §6 (added 2026-10-01): "applied through the evasion stat the way
+// speed-window touches speed." The fixture carries no base `evadesHits`
+// component at all, so a dodge here can only have come from the window's own
+// accumulator (`defense/mitigation/evasion.ts`'s `rollEvadeWindowAccumulator`),
+// not the gear-derived one `evasion.test.ts` already pins.
+
+{
+  const player = spawn('lc-evasion-window', [seededCard({
+    trigger: { kind: 'guard-cast' },
+    payoff: { kind: 'evasion-window', magnitude: 1, durationMs: 3000 },
+    fx: 'engagement.brace-sparks', lane: 'engagement',
+  })]);
+  const attacker = monster(700);
+  assert(player.evadesHits === undefined, 'the fixture carries no base evasion');
+
+  const baselineBefore = player.hasHealth.hp;
+  runMonsterAttack(world, attacker, player, 1_000);
+  const baselineDamage = baselineBefore - player.hasHealth.hp;
+  assert(baselineDamage > 0, 'an unguarded hit should land in full');
+  cardFx();
+
+  onLineageGuardCast(world, player);
+  assert(cardFx().length === 1, 'a Guard cast should fire once');
+  const window = getStatusEffect(player.tracksCombat, lineageStatusEffectId('evasion-window'));
+  assert(window !== undefined, 'a timed payoff is carried as its own status effect');
+  assert(window?.data.totalMs === 3000, 'the clock needs totalMs');
+  assert(window?.data.magnitude === 1, 'the reader needs the magnitude');
+
+  const windowedBefore = player.hasHealth.hp;
+  runMonsterAttack(world, attacker, player, 2_000);
+  const windowedDamage = windowedBefore - player.hasHealth.hp;
+  assert(
+    windowedDamage < baselineDamage,
+    `a magnitude-1 evasion window should mitigate the next hit, got ${windowedDamage} vs unguarded ${baselineDamage}`,
+  );
+}
+
 // ── evade: the trigger, and slow reaching the control ladder ─────────────────
 
 {
@@ -704,6 +749,52 @@ function cardFx(): Array<Extract<CombatEvent, { kind: 'card-fx' }>> {
     cardFx().length === 1,
     'an amplified payoff is ONE effect on more bodies, not two effects',
   );
+}
+
+// ── Coverage: every PayoffKind has a runtime dispatcher and a client fx ───────
+//
+// The per-kind blocks above prove each payoff reaches its hook by NAME, which
+// only guards the kinds someone remembered to write a block for. This guards
+// the vocabulary itself (`shared/src/data/lineages/types.ts`'s `PayoffKind`
+// union): a kind added there with no case in either of `lineageCards.ts`'s two
+// switches (`applyPayoff`'s self-window one, `applyOnTarget`'s on-monster one)
+// would silently return null forever, and a kind never authored on any card,
+// capstone or ability-node option would have no fx anyone could ever see
+// (`shared/` cannot import `client/`, so the fx half is proven by proxy: every
+// authored card's fx is already pinned to an existing `LINEAGE_FX_KEYS` entry
+// with a real client case by `coverage.test.ts` and `abilityNodes.test.ts`).
+
+{
+  const source = readFileSync(
+    join(__dirname, '../src/systems/combat/lineageCards.ts'),
+    'utf8',
+  );
+  const usedByCard = new Set<PayoffKind>();
+  for (const lineage of LINEAGE_DATABASE.values()) {
+    for (const card of lineage.cards) {
+      if (card.payoff) usedByCard.add(card.payoff);
+    }
+    for (const form of lineage.forms) {
+      if (form.capstone) usedByCard.add(form.capstone.payoff);
+    }
+  }
+  const usedByAbilityNode = new Set<PayoffKind>();
+  for (const tree of ABILITY_NODE_DATABASE.values()) {
+    for (const option of tree.options) {
+      if (option.row === 'packet') usedByAbilityNode.add(option.payoff);
+    }
+  }
+
+  const problems: string[] = [];
+  for (const kind of PAYOFF_KINDS) {
+    if (!source.includes(`case '${kind}':`)) {
+      problems.push(`'${kind}': no case in lineageCards.ts's dispatch switches`);
+    }
+    if (!usedByCard.has(kind) && !usedByAbilityNode.has(kind)) {
+      problems.push(`'${kind}': authored on no lineage card, capstone or ability-node option — it has no visible fx anywhere`);
+    }
+  }
+  assert(problems.length === 0, `payoff coverage failures:\n  ${problems.join('\n  ')}`);
 }
 
 console.log('lineageCards.wiring: ok');

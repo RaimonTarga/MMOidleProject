@@ -51,8 +51,8 @@ export const BINDINGS_LINEAGE: LineageDefinition = {
     },
     {
       id: 'bindings-t1-tempo-payoff', lineageId: 'bindings', tier: 1, row: 'payoff', lane: 'tempo',
-      name: 'Slip and Go', description: 'A dodge that clears space also covers it.',
-      fx: 'tempo.evasive-blur', trigger: 'evade', payoff: 'speed-window',
+      name: 'Slip and Go', description: 'A clean dodge buys you a beat where the next one comes easier.',
+      fx: 'tempo.evasive-blur', trigger: 'evade', payoff: 'evasion-window',
       face: packetDefaultFace('tempo'),
     },
     {
@@ -71,8 +71,8 @@ export const BINDINGS_LINEAGE: LineageDefinition = {
     },
     {
       id: 'bindings-t2-tempo-payoff', lineageId: 'bindings', tier: 2, row: 'payoff', lane: 'tempo',
-      name: 'Vanishing Step', description: 'The dodge that used to just clear space now launches you past it.',
-      fx: 'tempo.evasive-blur', trigger: 'evade', payoff: 'speed-window',
+      name: 'Vanishing Step', description: 'The dodge that used to just clear space now leaves you hard to pin down for a beat after.',
+      fx: 'tempo.evasive-blur', trigger: 'evade', payoff: 'evasion-window',
       face: packetDefaultFace('tempo'),
     },
     {
@@ -92,8 +92,8 @@ export const BINDINGS_LINEAGE: LineageDefinition = {
     },
     {
       id: 'bindings-t2-tempo-amplifier', lineageId: 'bindings', tier: 2, row: 'amplifier', lane: 'tempo',
-      name: 'Uninterrupted', description: 'Eating a hit does not break the step a dodge would have started.',
-      fx: 'tempo.evasive-blur', trigger: 'hit-taken', payoff: 'speed-window', modifies: 'bindings-t2-tempo-payoff',
+      name: 'Uninterrupted', description: 'Eating a hit does not cost you the edge a dodge would have given you.',
+      fx: 'tempo.evasive-blur', trigger: 'hit-taken', payoff: 'evasion-window', modifies: 'bindings-t2-tempo-payoff',
       amplifies: 'trigger',
       face: packetDefaultFace('tempo'),
     },
@@ -129,8 +129,8 @@ export const BINDINGS_LINEAGE: LineageDefinition = {
     // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
     {
       id: 'bindings-t4-engagement-cross', lineageId: 'bindings', tier: 4, row: 'cross', lane: 'engagement',
-      name: 'Phantom Step', description: 'The discounted opening still clears space the way a dodge would.',
-      fx: 'engagement.sidestep-blur', trigger: 'evade', payoff: 'speed-window', borrowsLane: 'tempo',
+      name: 'Phantom Step', description: 'The discounted opening leaves you just as hard to pin down as a clean dodge would.',
+      fx: 'engagement.sidestep-blur', trigger: 'evade', payoff: 'evasion-window', borrowsLane: 'tempo',
       face: packetDefaultFace('engagement'),
     },
     {

@@ -39,7 +39,9 @@ export const ABILITY_NODE_ROWS: readonly AbilityNodeRow[] = ['packet', 'amplifie
  * `speed-window` is here and NOT on the Guard list, which is the one place this
  * file knowingly departs from the brief's parenthetical ("avoid → engagement-dr /
  * speed-window"): an attack-speed window on a Guard would be defence scaling
- * offence, the exact axiom the same sentence cites. Avoid pays `engagement-dr`.
+ * offence, the exact axiom the same sentence cites. Avoid pays `engagement-dr`
+ * or `evasion-window` (added 2026-10-01, design §6) — a flat dodge chance for
+ * the window, never attack speed.
  */
 export const OFFENSIVE_NODE_PAYOFFS: ReadonlySet<PayoffKind> = new Set<PayoffKind>([
   'echo-hit', 'vulnerability', 'plating-shred', 'hemorrhage', 'poison-stack',
@@ -48,7 +50,7 @@ export const OFFENSIVE_NODE_PAYOFFS: ReadonlySet<PayoffKind> = new Set<PayoffKin
 
 /** The payoffs a Guard node may pay with: all of them act on the player. */
 export const DEFENSIVE_NODE_PAYOFFS: ReadonlySet<PayoffKind> = new Set<PayoffKind>([
-  'engagement-dr', 'recovery-window', 'ward', 'plating-stack',
+  'engagement-dr', 'recovery-window', 'ward', 'plating-stack', 'evasion-window',
 ]);
 
 /**

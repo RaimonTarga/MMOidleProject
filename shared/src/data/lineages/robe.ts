@@ -55,8 +55,8 @@ export const ROBE_LINEAGE: LineageDefinition = {
     },
     {
       id: 'robe-t1-tempo-payoff', lineageId: 'robe', tier: 1, row: 'payoff', lane: 'tempo',
-      name: 'Light on Your Feet', description: 'A clean dodge carries straight into the next step.',
-      fx: 'tempo.evasive-blur', trigger: 'evade', payoff: 'speed-window',
+      name: 'Light on Your Feet', description: 'A clean dodge carries straight into the next one.',
+      fx: 'tempo.evasive-blur', trigger: 'evade', payoff: 'evasion-window',
       face: packetDefaultFace('tempo'),
     },
 
@@ -75,8 +75,8 @@ export const ROBE_LINEAGE: LineageDefinition = {
     },
     {
       id: 'robe-t2-tempo-payoff', lineageId: 'robe', tier: 2, row: 'payoff', lane: 'tempo',
-      name: 'Clean Break', description: 'A dodge this practiced carries you well past the next step.',
-      fx: 'tempo.evasive-blur', trigger: 'evade', payoff: 'speed-window',
+      name: 'Clean Break', description: 'A dodge this practiced leaves you hard to pin down for a beat after.',
+      fx: 'tempo.evasive-blur', trigger: 'evade', payoff: 'evasion-window',
       face: packetDefaultFace('tempo'),
     },
 
@@ -97,8 +97,8 @@ export const ROBE_LINEAGE: LineageDefinition = {
     },
     {
       id: 'robe-t2-tempo-amplifier', lineageId: 'robe', tier: 2, row: 'amplifier', lane: 'tempo',
-      name: 'Undeterred Step', description: 'Taking a hit does not cost you the rhythm a dodge started.',
-      fx: 'tempo.evasive-blur', trigger: 'hit-taken', payoff: 'speed-window', modifies: 'robe-t2-tempo-payoff',
+      name: 'Undeterred Step', description: 'Taking a hit does not cost you the edge a dodge started.',
+      fx: 'tempo.evasive-blur', trigger: 'hit-taken', payoff: 'evasion-window', modifies: 'robe-t2-tempo-payoff',
       amplifies: 'trigger',
       face: packetDefaultFace('tempo'),
     },
