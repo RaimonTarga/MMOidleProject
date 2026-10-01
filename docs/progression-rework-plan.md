@@ -1563,6 +1563,89 @@ clean; `coverage.test.ts`, `weaponReachability.test.ts`, the new
 
 ---
 
+## Ability nodes progress note — design §19 shipped data-only (2026-10-01, W1-D)
+
+Branch `feat/ability-nodes`. Design §19's T1 packet node and T2 amplifier node for
+all 22 abilities, plus the state, protocol, runtime, client rows and
+`server/test/abilityNodes.test.ts`. Nothing in the roster, in monster data or in
+the T1/T2 magnitude values moved; the one new numeric surface is
+`ABILITY_NODE_SHARE`.
+
+### What was built
+
+- **`shared/src/data/abilityNodes/`.** `offers.ts` is the only authored table:
+  three `(lane, payoff)` pairs per ability and a sentence saying why. Everything
+  else is derived in `index.ts` — the amplifier row is GENERATED one option per
+  packet option, the fx comes from `ABILITY_NODE_FX` (every key an existing
+  `LineageFxKey` with an existing client handler), the option name is the
+  packet's own name and the blurb the payoff's sentence. Design §19 asks for "a
+  generic tree keyed to packets"; 66 hand-written option names would have been
+  the opposite.
+- **Numbers.** `ABILITY_NODE_SHARE` in `lineages/magnitudes.ts`, one entry per
+  node row: `packet` 0.5 (the fraction of a full payoff row the node pays) and
+  `amplifier` 0.6 (the axis boost, seeded at `ROW_SCALAR.amplifier`'s value so
+  the two read alike until a bench separates them). Cost and unlock reuse the
+  lineage `payoff` / `amplifier` rows, so no cost table grew.
+- **Runtime.** `fireLineagePayoffs` is split out of `combat/lineageCards.ts` as
+  the one implementation of "apply a payoff, draw one card-fx". The node runtime
+  is dispatch only and inherits the evade early-return, the max-wins debuff
+  records, `hitBasis`, the amplified `extraTargets` spread and the no-fx-for-a-
+  refused-payoff rule without restating any of them. `applyAmplifiedAxis` is
+  likewise split out of the lineage amplifier.
+
+### Divergences from the brief, and why
+
+1. **`speed-window` is NOT offered on a Guard's avoid face.** The brief's
+   parenthetical ("avoid → engagement-dr / speed-window") would have given a
+   Guard an attack-speed window, which is defence scaling offence — the exact
+   axiom the same sentence cites (design-bible §1, separated budgets). Avoid pays
+   `engagement-dr`; `speed-window` stays on the Technique side. A consequence:
+   a Guard's three options differ in payoff only between the sustain pair
+   (`recovery-window` vs `ward`), and in lane/shard/fx elsewhere. The payoff
+   vocabulary has no evasion payoff, so there is no second avoid-face effect to
+   offer; if that row should have a real second choice, the vocabulary needs one.
+2. **The node rows are gated on the ABILITY's bands, not on T1/T2 absolutely.**
+   The packet row sits in the ability's home-tier band and the amplifier one band
+   above (`abilityNodeRowTier`), clamped at T4. §19 says both "the T1 packet node
+   and the T2 amplifier node" and "unlock on the ability's home tier band"; the
+   relative reading is the only one under which a T4 ability's node is reachable.
+   For a T4 ability both rows land in the T4 band, the amplifier one plus-slot
+   higher inside it.
+3. **The state lives on `TracksProgression`, not "`UsesSkills`-adjacent".**
+   `knownAbilities` and `attunedAbilities` are on `TracksProgression`; ability
+   state is build/loadout data and that is where the rest of it already is. The
+   field is optional and normalized at hydration like `visitedNodes`, so there is
+   no migration.
+4. **Three amplifier options, one per packet option** (`modifies` + the axis that
+   payoff can move), not three axes for the chosen packet. That is the brief's
+   literal "one per chosen packet's amplifier axis", and it reuses the lineage
+   amplifier's own semantics: an amplifier slotted against a packet you are not
+   running is a legal, inert loadout rather than an error. It also means no option
+   can ever be a dead axis — `duration` on an untimed payoff or `targets` on a
+   self window never gets authored.
+5. **No binary payoff is offered.** `stun` and `cleanse` cannot take a share —
+   "half a stun" is no stun — so the table never uses one and
+   `abilityNodePayoff` refuses rather than quietly paying full strength.
+6. **A node fires on the ability's resolution, not its activation.** "Lands" is
+   enforced per shape: `applyTechniqueRider` (every armed shape, including a
+   Conduit formation delivery and a Charge's landing blow), the cast and
+   self-cast resolves in `updateAbilityCasts`, `applyInstantTechnique`, and the
+   reposition branch only when it arms nothing. An armed charge the fight never
+   consumed pays nothing.
+
+### Not done
+
+- **No keystone or cross row for abilities** — §19 defers those to after the T3
+  class review, and the brief scoped this to the two rows.
+- **Nothing benched.** `ABILITY_NODE_SHARE` is provisional, like the rest of the
+  magnitude table. A Guard node is a free extra defensive window on a cooldown
+  the player already pays for, which is the first thing a bench should look at.
+- **No telemetry row.** The lineage handlers emit `world.gameplay?.lineage(...)`;
+  the node handlers emit nothing, because there is no node event on the gameplay
+  recorder and adding one is a schema change this task did not own.
+
+---
+
 ## Cross-cutting rules
 
 - **Server authority.** Card, form, and material state are mutated only by the server
