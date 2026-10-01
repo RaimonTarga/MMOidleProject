@@ -164,10 +164,18 @@ Row semantics:
 - **Payoff** — a trigger *and* its effect in one card. There is no standalone trigger
   row: a card must do something the moment it is bought.
 - **Amplifier** — modifies the owned payoff: duration, second target, extra trigger.
-- **Keystone** — changes a rule. Empowered's finisher becomes an area hit; Tempo's echo
-  chains until it misses; Affliction stacks stop expiring while you keep hitting. This
-  row hands off to the existing 45 T3 class paths: the item keystone and the class path
-  name the same lane and complete each other. They do not duplicate.
+- **Keystone** — changes a rule. **Amended 2026-10-01: one keystone per packet, eight in
+  all, shared by every lineage that carries the lane in any slot** (not one per lane per
+  slot). Tempo *Chain*: the echo keeps re-triggering until a miss or no fresh target.
+  Empowered *Shockwave*: the mechanic's hit becomes an area hit. Affliction *Festering*:
+  stacks do not expire while you keep hitting. Control *Ladder*: slow, then root, then stun
+  on hit, once per step per target. Kill chain *Refund*: a kill readies the mechanic.
+  Engagement *Always First*: every new target's first hit counts as the mechanic firing.
+  Bulwark *Immovable*: stationary DR and plating stacks persist 2 s after moving; no
+  displacement. Barrier tempo *Unbroken*: the barrier keeps recharging through hits above
+  half HP. These are the "this changes how my character plays" moments. The T3 class paths
+  are tagged with a packet so the item keystone and the class path name the same lane; the
+  paths themselves are reviewed after the rework.
 - **Cross-lane** — take a second lane's payoff at ~50%. Hybrids appear late, when the
   player has earned the vocabulary. Never before T4.
 
@@ -580,3 +588,26 @@ Answers to the report's open design questions. Locked unless marked otherwise.
     so it needs three new reference profiles per root (18 rows in
     `bot/src/tierEntry/profiles.ts`) and roughly triples a 35-minute run. Deliberately
     deferred out of the 2026-10-01 day run rather than approximated.
+
+---
+
+## 19. Ability nodes keyed to packets (locked 2026-10-01, promoted from future-plans)
+
+A generic tree keyed to packets, not per-class trees. One node per tier per ability, three
+options each, the same row shape as lineage cards. **Shipping now: the T1 packet node and
+the T2 amplifier node** for all 22 abilities, data-only: a node means "this ability also
+fires the chosen packet's payoff at a share when it lands (Technique) or casts (Guard)",
+resolved through the lineage payoff runtime; the amplifier applies an axis. Techniques
+offer three of the six offensive packets fitted to the ability; Guards offer the three
+defensive faces, so defence never scales with offence. Keystone and cross rows for
+abilities come after the T3 class review. Runes decide *when* an ability fires; nodes
+decide *what* it does. Unlock on the ability's home tier band with Global Mastery, like
+lineage rows; cost essence plus the packet's shard.
+
+## 20. Player pool raise (locked 2026-10-01)
+
+Phase 0 call four is executed as `PLAYER_POOL_FACTOR_BY_TIER` on base max HP and armor
+max HP, seeded 1.25 / 1.30 / 1.35 / 1.40 for T1 to T4, benched at three factors per tier
+against bosses (time-to-death versus kill time per lane) and committed **provisional** at
+the bench's pick so the playtest includes it. The recovery reference pools do not scale
+with it; that separation is the point of §15.
