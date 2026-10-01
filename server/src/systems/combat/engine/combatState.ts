@@ -6,6 +6,7 @@ import {
   tickStatusEffectDurations,
 } from "@mmo-idle/shared";
 import { updatePlayerControlLockouts } from "../status/playerControlLockout";
+import { holdFesteringDots } from "../keystones/festering";
 
 function pruneEndedEncounterCorrosion(world: World): void {
   for (const player of world.livePlayers) {
@@ -28,6 +29,12 @@ function pruneEndedEncounterCorrosion(world: World): void {
  * decremented before any combat or AI system reads them.
  */
 export function updateCombatState(world: World, dt: number): void {
+  // FESTERING (design §4, the Affliction keystone) gives this tick's `dt` back to
+  // the DoTs it holds, BEFORE the decay below takes it — the only honest way to
+  // say "the duration does not tick down", since the decay is one loop over a
+  // bare `TracksCombat` and prunes at zero, so a refund afterwards would arrive
+  // to find the effect gone.
+  holdFesteringDots(world, dt);
   for (const e of world.livePlayers) {
     tickCooldowns(e.tracksCombat, dt);
     tickStatusEffectDurations(e.tracksCombat, dt);
