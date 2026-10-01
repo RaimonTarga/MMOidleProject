@@ -481,3 +481,44 @@ Shard sourcing gaps this exposes (open decision 3): Bulwark and Barrier tempo ca
 shards no T1 family drops. Until Phase 4 reviews the families, the boss capstone of each
 biome also drops **two shards of its lineage's Lane A packet** on every kill, so a Mountain
 player can buy Bulwark cards from Behemoth kills. Provisional; remove when a family covers it.
+
+---
+
+## 18. Decisions from the overnight report (2026-10-01)
+
+Answers to the report's open design questions. Locked unless marked otherwise.
+
+1. **Card debuffs never compose with a class mechanic's debuff of the same kind.**
+   Multiplier-type payoffs (`vulnerability`, `plating-shred`) share the class record and
+   obey "never lower the multiplier, never shorten the duration, never reduce the stack
+   count": the stronger source wins and the longer window stands. This is the same max-
+   wins rule `activateRecovery` uses, and it keeps the bible's single multiplicative layer
+   (§7) where it is. Stacking a card on top of a finisher is not a second layer.
+   DoT-type payoffs (`hemorrhage`, `poison-stack`) get their **own ids** (`lineage.*`) and
+   ordinary per-stack refresh semantics through the DoT inventory, which already sums
+   sources. The ratchet (a chip hit maintaining a finisher's bleed forever) goes.
+2. **One lane colour, owned by `packetDefinition().color`.** Combat FX read it; the
+   brief's palette is retired.
+3. **Magnitudes are normalised by trigger rate.** The table gains a per-trigger expected
+   fires-per-pull column (`hit-nth` at n, `first-hit` once, `kill` per body, `standing`
+   and `pulse` by their cadence), and a payoff's resolved magnitude is divided by it, so
+   `PACKET_BUDGET` compares per-pull value and starts at parity for real. The bench
+   metric in §9 changes to match: **uplift over the lineage's own lane-less control on
+   the lane's favoured node**, since the ±10%-of-median band compares rows measured on
+   different nodes and cannot be read.
+4. **`standing`, `pulse`, contagion reach, bleed tick, cleanse counts, engagement idle**
+   get authored homes as units in the magnitude table. No constants in the runtime.
+5. **Weapon reachability: author the T3 and T4 forms now**, from the existing
+   `evolvesFrom` graph, one capstone each, with empty bands above T2 until Phase 5. No
+   interim evolve exception.
+6. **Boss shard stopgap price:** the boss pays **four** shards of the lineage's Lane A
+   packet plus the capstone, so a boss-only lane buys a payoff card in two kills.
+   Provisional until every biome fields three T1 families.
+7. **`drops` stays the definition of "favours".** Plains Herd measurably rewarding Tempo
+   is the mobs not yet expressing the family's shape, which is the monster pass in
+   Phase 4, not a reason for a second field.
+8. **The T1 map needs a third mob per biome.** Designer's authoring. Candidates, each the
+   biome's T2 member of the missing family pulled down with T1 numbers: Plains
+   `savanna-hawk` (Sky), Forest `canopy-sprite` (Canopy), Mountain `granite-titan` (Crag,
+   as a slow anchor), Cave `giant-spider` (Brood), Swamp `bog-witch` (Coven) and
+   `mire-stalker` (Stalker).
