@@ -469,8 +469,8 @@ Endure = Bulwark, Empowered.
 | recovery | Kill chain, Tempo, Engagement | Barrier tempo, Affliction, Engagement | Barrier tempo, Bulwark, Empowered | Bulwark, Affliction, Control | Affliction, Control, Kill chain |
 | mobility | Kill chain, Tempo, Empowered | Engagement, Tempo, Affliction | Engagement, Empowered, Control | Engagement, Kill chain, Control | Control, Affliction, Bulwark |
 
-Completion count across the three slots: Tempo 5, Empowered 4, Affliction 6, Control 7,
-Kill chain 5, Engagement 6, Bulwark 6, Barrier tempo 4. Every packet ≥ 2.
+Completion count across the three slots: Tempo 5, Empowered 4, Affliction 7, Control 7,
+Kill chain 5, Engagement 7, Bulwark 6, Barrier tempo 4 = 45. Every packet ≥ 2.
 
 Non-weapon bands have no stat row (§4): T1 is one payoff row (L4) and the gate (L6); T2
 adds the amplifier. Payoff vocabulary per slot: armor fires on `evade`, `hit-taken`,
