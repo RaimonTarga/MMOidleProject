@@ -1,8 +1,13 @@
 import {
+  BIOME_DATABASE,
+  FAMILY_DATABASE,
   ITEM_DATABASE,
+  NODE_BIOMES,
   RECIPE_DATABASE,
   SKILL_TREE,
+  biomeLevelCap,
   globalMasteryRequiredForUpgrade,
+  maxGlobalMasteryAtTier,
   requiredBiomeLevelForUpgrade,
   upgradeCeilingFromGlobalMastery,
   upgradeCostFor,
@@ -407,6 +412,111 @@ export function missingToReasons(
     }
   }
   return out;
+}
+
+/**
+ * Why farming `nodeId` can NEVER satisfy `missing` — a sentence naming the
+ * requirement, the node and the reason — or undefined when more kills here could
+ * still answer it.
+ *
+ * `farmBlocked` exists to measure how long the economy makes a player wait, and
+ * its contract is that the wait ENDS. Three shortfalls break that contract, and
+ * all three used to end as a generic twelve-minute "no progress" timeout (or, for
+ * the lineage steps, not even that: they pass `ignoreBiomeCap`, which switches off
+ * `farmUntil`'s own capped-biome guard because their essence does keep trickling
+ * in, so the farm ran to the thirty-minute step timeout):
+ *
+ *   GLOBAL MASTERY   is the SUM of every biome's level, so one node can only ever
+ *                    contribute its own biome's remaining headroom. A card asking
+ *                    for more GM than `cap - level` here needs breadth, not time —
+ *                    and if the whole tier's headroom is short, a tier-up.
+ *   ANOTHER BIOME'S  level cannot be raised by farming this biome at all, and a
+ *                    level above this player tier's cap for that biome cannot be
+ *                    raised by anyone without a tier-up.
+ *   A SHARD          drops from the families of the node's own biome (design §12).
+ *                    If none of them drops this packet, the node pays zero of it
+ *                    however long the bot stands there.
+ *
+ * Essence is deliberately absent: every node pays essence, so an essence
+ * shortfall is always satisfiable by waiting and is the one thing the span is
+ * genuinely measuring.
+ */
+export function unsatisfiableByFarming(
+  missing: Record<string, number>,
+  nodeId: string,
+  obs: Observation,
+): string | undefined {
+  const info = NODE_BIOMES[nodeId];
+  if (!info) return undefined;
+  const farmedBiome = info.biomeGroup;
+  const tier = info.biomeTier;
+  const self = obs.self;
+  // Before the first snapshot names us there is no tier and no mastery to reason
+  // from, and defaulting would read every requirement as needing a tier-up.
+  if (!self) return undefined;
+  const playerTier = self.playerTier;
+
+  for (const [key, short] of Object.entries(missing)) {
+    if (short <= 0) continue;
+    const [head, ...rest] = key.split(".");
+    const name = rest.join(".");
+
+    if (key === "globalMasteryNeeded") {
+      const gm = self.globalMastery;
+      const tierHeadroom = maxGlobalMasteryAtTier(playerTier) - gm;
+      if (tierHeadroom < short) {
+        return `needs ${short} more Global Mastery than the ${gm} it has, but player tier `
+          + `${playerTier} caps Global Mastery at ${maxGlobalMasteryAtTier(playerTier)}`
+          + ` — no amount of farming at this tier can pay it, only a tier-up`;
+      }
+      const headroom = Math.max(0, biomeLevelCap(playerTier, farmedBiome) - obs.biomeLevel(farmedBiome));
+      if (headroom < short) {
+        return `needs ${short} more Global Mastery and ${farmedBiome} has only ${headroom} level`
+          + `${headroom === 1 ? "" : "s"} of headroom left (cap ${biomeLevelCap(playerTier, farmedBiome)})`
+          + ` — Global Mastery is the sum of every biome's level, so farming ${nodeId} cannot pay it`;
+      }
+      continue;
+    }
+
+    if (head === "biomeLevel") {
+      const cap = biomeLevelCap(playerTier, name);
+      const required = obs.biomeLevel(name) + short;
+      if (required > cap) {
+        return `needs ${name} level ${required} and ${name} caps at ${cap} for player tier `
+          + `${playerTier} — this needs a tier-up, not more farming`;
+      }
+      if (name !== farmedBiome) {
+        return `needs ${short} more ${name} level${short === 1 ? "" : "s"} and ${nodeId} is in `
+          + `${farmedBiome} — farming here raises ${farmedBiome}'s level and nothing else`;
+      }
+      continue;
+    }
+
+    if (head === "shard") {
+      if (!biomeDropsShardAtTier(farmedBiome, name, tier)) {
+        return `needs ${short} more ${name} shard${short === 1 ? "" : "s"} and no tier-${tier} `
+          + `${farmedBiome} family drops them — farming ${nodeId} pays none of this packet`;
+      }
+      continue;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Whether `biomeGroup` can field, at biome tier `tier`, any family that drops
+ * `lane`. Reads the POOL rather than the authored blends: a family whose mobs all
+ * live in a later tier is dropped from every blend by `resolveNodeBlend`, so it
+ * drops nothing at this tier no matter what a node's blend claims.
+ */
+function biomeDropsShardAtTier(biomeGroup: string, lane: string, tier: number): boolean {
+  const pool = BIOME_DATABASE.get(biomeGroup)?.monsterPoolByTier[tier] ?? [];
+  if (pool.length === 0) return false;
+  for (const family of FAMILY_DATABASE.values()) {
+    if (family.biome !== biomeGroup || family.drops !== lane) continue;
+    if (family.monsterIds.some((id) => pool.includes(id))) return true;
+  }
+  return false;
 }
 
 /** `blockReasons` collapsed to the flat `missing` map the dashboards read. */
