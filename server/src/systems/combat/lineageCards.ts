@@ -153,11 +153,18 @@ function firingsFor(player: PlayerEntity, kind: TriggerKind): LineageFiring[] {
   const out: LineageFiring[] = [];
   for (const resolved of runtime.cards) {
     if (!resolved.trigger || !resolved.payoff) continue; // a stat row fires on nothing
-    if (resolved.trigger.kind !== kind) continue;
+    // An amplifier on the `trigger` axis adds further moments the SAME payoff
+    // fires on (`composeAmplifiers`). Matching any one of them — never more than
+    // one per dispatch, since a dispatch is a single trigger kind — is what makes
+    // the player proc ONE effect from two moments rather than own two effects.
+    const moment = resolved.trigger.kind === kind
+      ? resolved.trigger
+      : resolved.extraTriggers?.find((t) => t.kind === kind);
+    if (!moment) continue;
     out.push({
       key: resolved.card.id,
       fx: resolved.card.fx,
-      trigger: resolved.trigger,
+      trigger: moment,
       payoff: resolved.payoff,
     });
   }
@@ -246,7 +253,27 @@ function applyPayoff(site: PayoffSite, firing: LineageFiring): CardFxDraft | nul
     // kill-triggered spread is the whole point of the payoff. Every other
     // on-target payoff needs something alive to land on.
     if (kind !== 'contagion' && target.hasHealth.hp <= 0) return null;
-    return applyOnTarget(site, firing, target);
+    const drawn = applyOnTarget(site, firing, target);
+    // An amplifier on the `targets` axis lands the SAME payoff on nearby bodies
+    // (`composeAmplifiers`). Only once the primary actually landed: a payoff the
+    // target refused must not quietly succeed on its neighbour instead.
+    //
+    // `contagion` is excluded because it already chooses its own victims from what
+    // the primary carries, so letting this spread it too would double-spread it.
+    //
+    // The reach is CONTAGION_RADIUS, deliberately the same authored unit rather
+    // than a second one: "how far a lineage payoff reaches to a neighbour" is one
+    // lever, and design §18.4 wants it to have exactly one home.
+    const extra = Math.max(0, Math.round(firing.payoff.extraTargets ?? 0));
+    if (drawn && extra > 0 && kind !== 'contagion') {
+      const neighbours = playerAoeTargets(
+        world, player, target.hasPosition.current, CONTAGION_RADIUS, target.isMonster.id,
+      )
+        .filter((monster) => monster.hasHealth.hp > 0)
+        .slice(0, extra);
+      for (const neighbour of neighbours) applyOnTarget(site, firing, neighbour);
+    }
+    return drawn;
   }
 
   switch (kind) {

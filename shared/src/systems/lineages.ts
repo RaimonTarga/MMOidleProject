@@ -25,7 +25,7 @@ import {
 } from '../data/lineages';
 import { capstoneMaterialName } from '../data/lineages/capstones';
 import {
-  lineageMasteryLevelForRow, rowsForTier, tierHasRow,
+  ROW_SCALAR, lineageMasteryLevelForRow, rowsForTier, tierHasRow,
 } from '../data/lineages/magnitudes';
 import {
   formGateBiomeLevel, formGateMastery, lineageCardCost, lineageGateCost,
@@ -384,7 +384,82 @@ export function resolveLineageCards(
     if (statRowIsCollapsed(lineage, progress, card)) continue;
     out.push(resolveLineageCard(card, lineage, { frameFace }));
   }
-  return out;
+  return composeAmplifiers(out);
+}
+
+// ─── The amplifier row modifies a payoff; it does not add one (design §4) ────
+
+/**
+ * Fold every active amplifier into the payoff it names, and drop it from the list.
+ *
+ * Design §4: "Amplifier — modifies the owned payoff: duration, second target,
+ * extra trigger." Before this, nothing read `card.modifies` except the purchase
+ * gate, so an active amplifier was emitted as an ordinary card and the runtime
+ * fired its payoff as a SECOND effect. That was wrong in three different ways at
+ * once, depending on the payoff kind: on `vulnerability` and `plating-shred` the
+ * §18.1 max-wins rule swallowed the duplicate whole, so the card was dead; on
+ * `echo-hit` it echoed twice; on the DoTs it stacked. None of those is "the owned
+ * payoff, amplified".
+ *
+ * Composing HERE, at resolve time, is what keeps the combat runtime unchanged and
+ * keeps design §6's "one multiplier per hit" true of an amplified build: the
+ * payoff's own numbers move, so nothing lands a second multiplicative layer.
+ *
+ * The strength of the move is `ROW_SCALAR.amplifier` — the amplifier row's own
+ * entry in the magnitude table, already the authored home for "what an amplifier
+ * is worth". No new number enters the table.
+ *
+ * An amplifier whose target is owned but NOT the active card of its row
+ * contributes nothing, and says so by simply not being in the returned list. One
+ * active card per row (design §1) means a player can slot an amplifier against a
+ * payoff they are not currently running; that is a legal, useless loadout, not an
+ * error, and the tree's build readout is where it should read as inert.
+ */
+function composeAmplifiers(cards: ResolvedLineageCard[]): ResolvedLineageCard[] {
+  const amplifiers = cards.filter((c) => c.card.row === 'amplifier');
+  if (amplifiers.length === 0) return cards;
+
+  const kept = cards.filter((c) => c.card.row !== 'amplifier');
+  for (const amp of amplifiers) {
+    const target = kept.find((c) => c.card.id === amp.card.modifies);
+    if (!target?.payoff) continue;
+    applyAmplification(target, amp);
+  }
+  return kept;
+}
+
+/** Move one axis of `target`'s payoff by the amplifier row's scalar. */
+function applyAmplification(target: ResolvedLineageCard, amp: ResolvedLineageCard): void {
+  const payoff = target.payoff;
+  if (!payoff) return;
+  const boost = ROW_SCALAR.amplifier;
+  switch (amp.card.amplifies) {
+    case 'duration':
+      // Only a timed payoff has a window to lengthen. A stacking one does not,
+      // and silently "amplifying" nothing would be a dead card wearing a number.
+      if (payoff.durationMs !== undefined && payoff.durationMs > 0) {
+        payoff.durationMs = Math.round(payoff.durationMs * (1 + boost));
+      }
+      break;
+    case 'magnitude':
+      payoff.magnitude = payoff.magnitude * (1 + boost);
+      break;
+    case 'targets':
+      // Guarded by `coverage.test.ts` to on-target payoffs: a second body is
+      // meaningless for a window that opens on the player.
+      payoff.extraTargets = (payoff.extraTargets ?? 0) + 1;
+      break;
+    case 'trigger':
+      // The modified payoff also fires on the amplifier's moment. The amplifier's
+      // own trigger is the whole content of this axis, so a card that names the
+      // same trigger as its target would add nothing — also a coverage rule.
+      if (amp.trigger) {
+        target.extraTriggers = [...(target.extraTriggers ?? []), amp.trigger];
+      }
+      break;
+    default:
+      break;
+  }
 }
 
 // ─── Band collapse: the stat row the worn form absorbed (design §4) ──────────

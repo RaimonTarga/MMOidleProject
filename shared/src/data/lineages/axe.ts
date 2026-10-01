@@ -133,16 +133,19 @@ export const AXE_LINEAGE: LineageDefinition = {
       id: 'axe-t2-tempo-amplifier', lineageId: 'axe', tier: 2, row: 'amplifier', lane: 'tempo',
       name: 'Wasted Swing Returns', description: 'The dead swing finds a second body to not be wasted on.',
       fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'echo-hit', modifies: 'axe-t2-tempo-payoff',
+      amplifies: 'targets',
     },
     {
       id: 'axe-t2-kill-chain-amplifier', lineageId: 'axe', tier: 2, row: 'amplifier', lane: 'kill-chain',
       name: 'Running Tally', description: 'A second kill inside the window resets it to full length.',
       fx: 'kill-chain.kill-pulse', trigger: 'kill', payoff: 'speed-window', modifies: 'axe-t2-kill-chain-payoff',
+      amplifies: 'duration',
     },
     {
       id: 'axe-t2-empowered-amplifier', lineageId: 'axe', tier: 2, row: 'amplifier', lane: 'empowered',
       name: 'Guard Split Wide', description: 'The opening reaches whatever stands beside the target too.',
       fx: 'empowered.weak-point', trigger: 'mechanic-fired', payoff: 'vulnerability', modifies: 'axe-t2-empowered-payoff',
+      amplifies: 'targets',
     },
   ],
 };

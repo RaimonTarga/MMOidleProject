@@ -145,16 +145,19 @@ export const RAPIER_LINEAGE: LineageDefinition = {
       id: 'rapier-t2-tempo-amplifier', lineageId: 'rapier', tier: 2, row: 'amplifier', lane: 'tempo',
       name: 'Carried Wake', description: 'The echo no longer stops at the one body it found.',
       fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'echo-hit', modifies: 'rapier-t2-tempo-payoff',
+      amplifies: 'targets',
     },
     {
       id: 'rapier-t2-affliction-amplifier', lineageId: 'rapier', tier: 2, row: 'amplifier', lane: 'affliction',
       name: 'Spreading Rot', description: 'What a kill was bleeding does not stay with the body that fell.',
       fx: 'affliction.bleed-pips', trigger: 'kill', payoff: 'hemorrhage', modifies: 'rapier-t2-affliction-payoff',
+      amplifies: 'trigger',
     },
     {
       id: 'rapier-t2-engagement-amplifier', lineageId: 'rapier', tier: 2, row: 'amplifier', lane: 'engagement',
       name: 'Fresh Opening', description: 'Every new body the duel turns to counts as a fresh opening hit.',
       fx: 'engagement.opening-flash', trigger: 'first-hit', payoff: 'damage-window', modifies: 'rapier-t2-engagement-payoff',
+      amplifies: 'duration',
     },
   ],
 };

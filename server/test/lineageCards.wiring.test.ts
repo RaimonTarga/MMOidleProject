@@ -592,4 +592,73 @@ function cardFx(): Array<Extract<CombatEvent, { kind: 'card-fx' }>> {
   assert(spread[0].targetId === neighbour!.isMonster.id, 'the spread names where it landed');
 }
 
+// ── What an amplifier's fold leaves for the runtime to honour ────────────────
+//
+// `composeAmplifiers` (shared) never emits an amplifier as a card of its own; it
+// moves the modified payoff's numbers, and on two of its four axes it leaves
+// something the RUNTIME has to act on. `lineageAmplifiers.test.ts` proves the fold
+// itself; these two prove the runtime does not ignore what it produced, which is
+// the half that decides whether 53 of the 60 shipped amplifiers do anything.
+
+// `trigger`: the SAME payoff fires on the amplifier's moment as well as its own.
+{
+  const base = seededCard({
+    trigger: { kind: 'hit-taken' },
+    payoff: { kind: 'speed-window', magnitude: 0.2, durationMs: 2000 },
+  });
+  const control = spawn('lc-amp-trigger-control', [base]);
+  const victim = monster(560);
+  taken(control, victim);
+  assert(cardFx().length === 1, 'the control fires on its own trigger');
+  hit(control, victim);
+  assert(
+    cardFx().length === 0,
+    'and NOT on another kind — otherwise the next assertion proves nothing',
+  );
+
+  const amped = seededCard({
+    trigger: { kind: 'hit-taken' },
+    payoff: { kind: 'speed-window', magnitude: 0.2, durationMs: 2000 },
+  });
+  // Exactly what an active `trigger`-axis amplifier leaves behind.
+  amped.extraTriggers = [{ kind: 'hit-nth', n: 1 }];
+  const player = spawn('lc-amp-trigger', [amped]);
+  const target = monster(600);
+
+  taken(player, target);
+  assert(cardFx().length === 1, 'the base trigger must still fire');
+  hit(player, target);
+  assert(
+    cardFx().length === 1,
+    'the added moment must fire the SAME payoff, or a `trigger` amplifier does nothing',
+  );
+}
+
+// `targets`: an on-target payoff also lands on a nearby body.
+{
+  const card = seededCard({
+    trigger: { kind: 'hit-nth', n: 1 },
+    payoff: { kind: 'poison-stack', magnitude: 0.3, durationMs: 4000, extraTargets: 1 },
+    fx: 'affliction.bleed-pips',
+    lane: 'affliction',
+  });
+  const player = spawn('lc-amp-targets', [card]);
+  const target = monster(660);
+  const neighbour = monster(690);
+
+  hit(player, target);
+  assert(
+    getStatusEffect(target.tracksCombat, LINEAGE_POISON_ID) !== undefined,
+    'the primary must still take the payoff',
+  );
+  assert(
+    getStatusEffect(neighbour.tracksCombat, LINEAGE_POISON_ID) !== undefined,
+    'an extra target must take the SAME payoff on a neighbour',
+  );
+  assert(
+    cardFx().length === 1,
+    'an amplified payoff is ONE effect on more bodies, not two effects',
+  );
+}
+
 console.log('lineageCards.wiring: ok');

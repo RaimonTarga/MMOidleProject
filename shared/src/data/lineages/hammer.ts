@@ -152,16 +152,19 @@ export const HAMMER_LINEAGE: LineageDefinition = {
       id: 'hammer-t2-empowered-amplifier', lineageId: 'hammer', tier: 2, row: 'amplifier', lane: 'empowered',
       name: 'Shattering Crack', description: 'The crack reaches whatever stands beside the target too.',
       fx: 'empowered.plating-crack', trigger: 'mechanic-fired', payoff: 'plating-shred', modifies: 'hammer-t2-empowered-payoff',
+      amplifies: 'targets',
     },
     {
       id: 'hammer-t2-control-amplifier', lineageId: 'hammer', tier: 2, row: 'amplifier', lane: 'control',
       name: 'Lingering Drag', description: 'The dragging legs do not catch up before the next blow lands.',
       fx: 'control.frost-drag', trigger: 'hit-nth', payoff: 'slow', modifies: 'hammer-t2-control-payoff',
+      amplifies: 'duration',
     },
     {
       id: 'hammer-t2-engagement-amplifier', lineageId: 'hammer', tier: 2, row: 'amplifier', lane: 'engagement',
       name: 'Held Ground', description: 'The braced stance holds through more than just the opening blow.',
       fx: 'engagement.brace-sparks', trigger: 'first-hit', payoff: 'engagement-dr', modifies: 'hammer-t2-engagement-payoff',
+      amplifies: 'duration',
     },
   ],
 };
