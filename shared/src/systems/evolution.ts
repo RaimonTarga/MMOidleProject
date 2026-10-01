@@ -68,18 +68,6 @@ function affordEssence(
   return { ok: true };
 }
 
-function affordCatalysts(
-  cost: Partial<Record<string, number>> | undefined,
-  catalysts: Record<string, number> | undefined,
-): EvolveCheck {
-  for (const [group, amount] of Object.entries(cost ?? {})) {
-    if ((catalysts?.[group] ?? 0) < (amount ?? 0)) {
-      return { ok: false, reason: `Not enough ${group} catalysts (need ${amount}).` };
-    }
-  }
-  return { ok: true };
-}
-
 /** Whether the player can EVOLVE into `recipe` (consume the +3 predecessor). */
 export function checkEvolve(params: {
   recipe: Recipe;
@@ -89,12 +77,16 @@ export function checkEvolve(params: {
   /** Per-item-id upgrade levels. */
   itemUpgrades: Record<string, number>;
   essences: Record<EssenceType, number>;
-  catalysts?: Record<string, number>;
   /** Test room skips ownership + cost gates. */
   isTestRoom?: boolean;
 }): EvolveCheck {
-  const { recipe, inventory, equipment, itemUpgrades, essences, catalysts, isTestRoom } = params;
+  const { recipe, inventory, equipment, itemUpgrades, essences, isTestRoom } = params;
   if (!recipe.evolvesFrom) return { ok: false, reason: 'This recipe is not an evolution.' };
+  // The lineage tree owns weapon forms now; the old evolve/reconstruct path
+  // never applies to weapons (progression rework Phase 2b).
+  if (recipe.slot === 'weapon') {
+    return { ok: false, reason: 'Weapon forms are unlocked from its lineage tree.' };
+  }
   if (isTestRoom) return { ok: true };
 
   const predId = recipe.evolvesFrom;
@@ -106,26 +98,24 @@ export function checkEvolve(params: {
     return { ok: false, reason: `Predecessor must be +${reqPlus} to evolve.` };
   }
 
-  const essCheck = affordEssence(recipe.cost, essences);
-  if (!essCheck.ok) return essCheck;
-  return affordCatalysts(recipe.catalystCost, catalysts);
+  return affordEssence(recipe.cost, essences);
 }
 
 /** Whether the player can RECONSTRUCT `recipe` directly (no predecessor). */
 export function checkReconstruct(params: {
   recipe: Recipe;
   essences: Record<EssenceType, number>;
-  catalysts?: Record<string, number>;
   isTestRoom?: boolean;
 }): EvolveCheck {
-  const { recipe, essences, catalysts, isTestRoom } = params;
+  const { recipe, essences, isTestRoom } = params;
   if (!recipe.evolvesFrom) return { ok: false, reason: 'This recipe is not an evolution.' };
+  if (recipe.slot === 'weapon') {
+    return { ok: false, reason: 'Weapon forms are unlocked from its lineage tree.' };
+  }
   if (!recipe.reconstructCost) {
     return { ok: false, reason: 'This lineage cannot be reconstructed directly.' };
   }
   if (isTestRoom) return { ok: true };
 
-  const essCheck = affordEssence(recipe.reconstructCost, essences);
-  if (!essCheck.ok) return essCheck;
-  return affordCatalysts(recipe.reconstructCatalystCost, catalysts);
+  return affordEssence(recipe.reconstructCost, essences);
 }

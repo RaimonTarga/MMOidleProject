@@ -1,8 +1,6 @@
 import { getDefaultStore } from 'jotai';
 import {
   activeStanceAtom,
-  catalystProgressAtom,
-  catalystsAtom,
   essencesAtom,
   passivesAtom,
   skillPointsAtom,
@@ -99,8 +97,6 @@ export function installUiUnlockSync(): () => void {
       knownRites: store.get(knownRitesAtom),
       equippedRites: store.get(equippedRitesAtom),
       essences: store.get(essencesAtom),
-      catalysts: store.get(catalystsAtom),
-      catalystProgress: store.get(catalystProgressAtom),
       unlockedRecipes: store.get(unlockedRecipesAtom),
       runeRecipesCrafted: store.get(runeRecipesCraftedAtom),
       skillPoints: store.get(skillPointsAtom),
@@ -213,8 +209,6 @@ export function installUiUnlockSync(): () => void {
     knownRitesAtom,
     equippedRitesAtom,
     essencesAtom,
-    catalystsAtom,
-    catalystProgressAtom,
     unlockedRecipesAtom,
     runeRecipesCraftedAtom,
     skillPointsAtom,

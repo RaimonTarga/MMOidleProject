@@ -3,7 +3,7 @@ import { runicLoadoutFromProgression, runicPointEditAllowed, attunedAbilityIds, 
  * Ability crafting + loadout (system rework Step 7).
  *
  * Crafting an ability recipe LEARNS the ability (adds it to
- * `TracksProgression.knownAbilities`), spending essence + catalysts and gating on
+ * `TracksProgression.knownAbilities`), spending essence and gating on
  * Biome Mastery — mirroring rune crafting. Attunement reserves authored RP from the same pool as Rune logic, stances and Rites.
  */
 import type { EssenceType } from "@mmo-idle/shared";
@@ -14,7 +14,6 @@ import {
   ESSENCE_TYPES,
   ESSENCE_LABELS,
   TEST_ROOM_NODE_ID,
-  catalystLabel,
   attunedForFamily,
   isAbilityRecipeUnlocked,
   type AttunedAbilities,
@@ -49,9 +48,6 @@ export function craftAbilityRecipe(
   const isTestRoom = entity.hasPosition.nodeId === TEST_ROOM_NODE_ID;
   if (isTestRoom) {
     for (const type of ESSENCE_TYPES) prog.essences[type] = TEST_ROOM_ESSENCE_AMOUNT;
-    for (const group of Object.keys(recipe.catalystCost ?? {})) {
-      prog.catalysts[group] = TEST_ROOM_ESSENCE_AMOUNT;
-    }
     markSliceDirty(world, entity, "tracksProgression");
   } else if (
     !isAbilityRecipeUnlocked(recipe, {
@@ -77,22 +73,7 @@ export function craftAbilityRecipe(
     }
   }
 
-  const catalystEntries = Object.entries(recipe.catalystCost ?? {}) as [string, number][];
-  for (const [group, amount] of catalystEntries) {
-    const held = prog.catalysts[group] ?? 0;
-    if (held < amount) {
-      return {
-        recipeId,
-        success: false,
-        reason: `Not enough ${catalystLabel(group)}. Need ${amount}, have ${held}.`,
-      };
-    }
-  }
-
   for (const [type, amount] of costEntries) prog.essences[type] -= amount;
-  for (const [group, amount] of catalystEntries) {
-    prog.catalysts[group] = (prog.catalysts[group] ?? 0) - amount;
-  }
 
   prog.knownAbilities = [...known, recipe.abilityId];
   markSliceDirty(world, entity, "tracksProgression");

@@ -272,7 +272,7 @@ function EncounterInspector({ encounter }: { encounter: BalanceLabEncounterRow |
           ['HP', format(encounter.hp)], ['Attack', format(encounter.attack)], ['APS', format(encounter.attacksPerSecond)], ['Raw DPS', format(encounter.rawDps)], ['DoT DPS', format(encounter.dotDps)], ['Spike multiplier', `${format(encounter.spikeMultiplier)}×`], ['Plating', format(encounter.plating)], ['Damage reduction', percent(encounter.damageReduction)], ['Speed', format(encounter.speed)], ['Range', format(encounter.range)],
         ]} /></section>
         <section><h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-red-200/40">Rewards</h4><DefinitionGrid rows={[
-          ['Essence', format(encounter.essence)], ['Biome XP', format(encounter.biomeXp)], ['Catalyst weight', format(encounter.catalystWeight)], ['Pool weight', String(encounter.poolWeight)],
+          ['Essence', format(encounter.essence)], ['Biome XP', format(encounter.biomeXp)], ['Pool weight', String(encounter.poolWeight)],
         ]} /></section>
         <section><h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-red-200/40">Mechanics</h4><div className="flex flex-wrap gap-2">{encounter.specials.length > 0 ? encounter.specials.map((special) => <Badge key={special} variant="secondary">{special}</Badge>) : <span className="text-sm text-red-100/40">No special mechanics.</span>}</div></section>
       </CardContent>

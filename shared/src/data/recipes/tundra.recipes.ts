@@ -25,13 +25,6 @@ export const tundraRecipeEntries = [
     icon: 'items/weapons/permafrost-maul.png',
     element: 'frost',   // cosmetic attack tint only
     description: 'Each blow leaves a deep frost-crack; armor that takes enough of them simply gives.',
-    upgrades: [
-      { stats: { attack: 13 }, cost: { blue: 93 },  requiredBiomeLevel: 2 },
-      { stats: { attack: 13 }, cost: { blue: 233 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 13 }, cost: { blue: 372 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 13 }, cost: { blue: 605 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 12 }, cost: { blue: 1023 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // Frost DoT weapon — relocated from Swamp (was `swamp-rimebrand`). The slow,
@@ -45,13 +38,6 @@ export const tundraRecipeEntries = [
     weaponDot: { effectId: 'tundra-rimebrand-burn', convPct: 0.70, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'frost' },
     icon: 'items/weapons/rimebrand.png',
     description: 'The first true frost-brand — slow and heavy, planting a cold in the wound that goes on biting after the blade is gone.',
-    upgrades: [
-      { stats: { attack: 10 }, cost: { blue: 93 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 10 }, cost: { blue: 232 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 10 }, cost: { blue: 372 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 9 }, cost: { blue: 604 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 9 }, cost: { blue: 1023 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   ['tundra-vest-t3', {
@@ -66,8 +52,8 @@ export const tundraRecipeEntries = [
       {"cost": {"blue": 66, "red": 17}, "requiredBiomeLevel": 3, "stats": {"maxHp": 18, "plating": 0}},
       {"cost": {"blue": 166, "red": 42}, "requiredBiomeLevel": 4, "stats": {"maxHp": 18, "plating": 0}},
       {"cost": {"blue": 266, "red": 66}, "requiredBiomeLevel": 4, "stats": {"maxHp": 18, "plating": 1}},
-      {"cost": {"blue": 432, "red": 108}, "catalystCost": {"heavy": 2}, "requiredBiomeLevel": 4, "stats": {"maxHp": 18, "plating": 0}},
-      {"cost": {"blue": 730, "red": 182}, "catalystCost": {"heavy": 3}, "requiredBiomeLevel": 4, "stats": {"maxHp": 18, "plating": 0}}
+      {"cost": {"blue": 432, "red": 108}, "requiredBiomeLevel": 4, "stats": {"maxHp": 18, "plating": 0}},
+      {"cost": {"blue": 730, "red": 182}, "requiredBiomeLevel": 4, "stats": {"maxHp": 18, "plating": 0}}
     ],
   }],
 
@@ -89,7 +75,7 @@ export const tundraRecipeEntries = [
       { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.barrier-pct': 0.02 }, cost: { blue: 71, purple: 24 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.barrier-pct': 0.02 }, cost: { blue: 114, purple: 38 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 2.2 }, mechanicEffects: { 'defense.barrier-pct': 0.02 }, cost: { blue: 185, purple: 62 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 2.2 }, mechanicEffects: { 'defense.barrier-pct': 0.02 }, cost: { blue: 314, purple: 104 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 2.2 }, mechanicEffects: { 'defense.barrier-pct': 0.02 }, cost: { blue: 314, purple: 104 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -106,7 +92,7 @@ export const tundraRecipeEntries = [
       { stats: { speed: 3 }, cost: { blue: 59 },  requiredBiomeLevel: 4 },
       { stats: { speed: 5 }, cost: { blue: 94 }, requiredBiomeLevel: 4 },
       { stats: { speed: 5 }, cost: { blue: 153 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 5 }, cost: { blue: 260 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 5 }, cost: { blue: 260 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -123,7 +109,7 @@ export const tundraRecipeEntries = [
     evolvesFrom: 'tundra-permafrost-maul',
     // 2026-09-26 T2-T4 weapon normalization: Attack 200->204 (+5: 450->378).
     cost: { blue: 273 }, stats: { attack: 204 }, attacksPerSecond: 0.50, tier: 4, // family-tag: capstone heavy maul → Heavy
-    reconstructCost: { blue: 956 }, reconstructCatalystCost: { heavy: 4 },
+    reconstructCost: { blue: 956 },
     // † brittle-shatter-threshold: at max brittle stacks (8), strip the target's
     //   DR for 2s (brittle-shatter-dr-strip-ms). (new key)
     mechanicEffects: {
@@ -133,13 +119,6 @@ export const tundraRecipeEntries = [
     icon: 'items/weapons/glacial-tyrant-maul.png',
     element: 'frost',   // cosmetic attack tint only
     description: 'Every blow leaves a deeper frost-crack; the eighth simply ends the argument about whether armor holds.',
-    upgrades: [
-      { stats: { attack: 35 }, cost: { blue: 185 },  requiredBiomeLevel: 8 },
-      { stats: { attack: 35 }, cost: { blue: 463 },  requiredBiomeLevel: 9 },
-      { stats: { attack: 35 }, cost: { blue: 740 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 35 }, cost: { blue: 1203 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 34 }, cost: { blue: 2036 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   ['tundra-glacial-rimebrand', {
@@ -151,19 +130,12 @@ export const tundraRecipeEntries = [
     // identity (`weaponDot`, convPct 0.70) are carried forward from the T3 item.
     // 2026-09-26 T2-T4 weapon normalization: Attack 155->165 (+5: 330->310).
     cost: { blue: 258 }, stats: { attack: 165 }, attacksPerSecond: 0.60, tier: 4, // family-tag: frost DoT-conversion weapon → Fortified
-    reconstructCost: { blue: 903 }, reconstructCatalystCost: { fortified: 4 },
+    reconstructCost: { blue: 903 },
     // 2026-09-28 T4 outlier pass: convPct 0.70 -> 0.60. It was the best T4 weapon for most specs (its
     // plating-free conversion) and, with Detonate, every class's damage ceiling (1.2-1.38x).
     weaponDot: { effectId: 'rimebrand-burn', convPct: 0.60, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'frost' },
     icon: 'items/weapons/glacial-rimebrand.png',
     description: 'It does not cut so much as plant a cold that goes on spreading after the blade is gone.',
-    upgrades: [
-      { stats: { attack: 29 }, cost: { blue: 185 },  requiredBiomeLevel: 8 },
-      { stats: { attack: 29 }, cost: { blue: 463 },  requiredBiomeLevel: 9 },
-      { stats: { attack: 29 }, cost: { blue: 741 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 29 }, cost: { blue: 1204 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 29 }, cost: { blue: 2037 }, catalystCost: { fortified: 4 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   ['tundra-vest-t4', {
@@ -171,7 +143,7 @@ export const tundraRecipeEntries = [
     recipeGroup: 'tundra', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'tundra-vest-t3',
     cost: { blue: 256, red: 64 }, stats: {"maxHp": 346, "plating": 3, "damageReduction": 0.18}, // family-tag: stationary DR armor → Heavy
-    reconstructCost: { blue: 896, red: 224 }, reconstructCatalystCost: { heavy: 4 },
+    reconstructCost: { blue: 896, red: 224 },
     mechanicEffects: {"defense.stationary-dr-pct": 0.16, "defense.stationary-dr-ramptime-ms": 4000},
     tier: 4,
     icon: 'items/armor/permafrost-sovereign.png',
@@ -180,8 +152,8 @@ export const tundraRecipeEntries = [
       {"cost": {"blue": 130, "red": 33}, "requiredBiomeLevel": 9, "stats": {"maxHp": 35, "plating": 0}},
       {"cost": {"blue": 326, "red": 82}, "requiredBiomeLevel": 10, "stats": {"maxHp": 34, "plating": 1}},
       {"cost": {"blue": 522, "red": 131}, "requiredBiomeLevel": 10, "stats": {"maxHp": 35, "plating": 0}},
-      {"cost": {"blue": 849, "red": 212}, "catalystCost": {"heavy": 3}, "requiredBiomeLevel": 10, "stats": {"maxHp": 34, "plating": 1}},
-      {"cost": {"blue": 1436, "red": 359}, "catalystCost": {"heavy": 4}, "requiredBiomeLevel": 10, "stats": {"maxHp": 35, "plating": 0}}
+      {"cost": {"blue": 849, "red": 212}, "requiredBiomeLevel": 10, "stats": {"maxHp": 34, "plating": 1}},
+      {"cost": {"blue": 1436, "red": 359}, "requiredBiomeLevel": 10, "stats": {"maxHp": 35, "plating": 0}}
     ],
   }],
 
@@ -190,7 +162,7 @@ export const tundraRecipeEntries = [
     recipeGroup: 'tundra', requiredBiomeLevel: 9, slot: 'recovery',
     evolvesFrom: 'tundra-charm-t3',
     cost: { blue: 220, purple: 30 }, stats: { recovery: 115.4 }, // family-tag: barrier charm (anti-spike) → Heavy
-    reconstructCost: { blue: 770, purple: 105 }, reconstructCatalystCost: { heavy: 4 },
+    reconstructCost: { blue: 770, purple: 105 },
     mechanicEffects: {
       'defense.barrier-pct': 0.22,
       'defense.barrier-stationary-recharge-pct': 0.025,
@@ -204,7 +176,7 @@ export const tundraRecipeEntries = [
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.barrier-pct': 0.03 }, cost: { blue: 163, purple: 22 }, requiredBiomeLevel: 10 },
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.barrier-pct': 0.03 }, cost: { blue: 260, purple: 36 }, requiredBiomeLevel: 10 },
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.barrier-pct': 0.03 }, cost: { blue: 423, purple: 58 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.barrier-pct': 0.03 }, cost: { blue: 716, purple: 98 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.barrier-pct': 0.03 }, cost: { blue: 716, purple: 98 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -213,7 +185,7 @@ export const tundraRecipeEntries = [
     recipeGroup: 'tundra', requiredBiomeLevel: 9, slot: 'recovery',
     evolvesFrom: 'tundra-charm-t3',
     cost: { blue: 220, purple: 30 }, stats: { recovery: 115.4 }, // family-tag: ramping absorb ward → Heavy
-    reconstructCost: { blue: 770, purple: 105 }, reconstructCatalystCost: { heavy: 4 },
+    reconstructCost: { blue: 770, purple: 105 },
     // † absorb-ramp: absorb starts at 0.04 and climbs to 0.18 over 12s in combat
     //   (weaker early, stronger in long fights). (new keys)
     mechanicEffects: {
@@ -227,7 +199,7 @@ export const tundraRecipeEntries = [
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 163, purple: 22 }, requiredBiomeLevel: 10 },
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 260, purple: 36 }, requiredBiomeLevel: 10 },
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 423, purple: 58 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 716, purple: 98 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 716, purple: 98 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -238,7 +210,7 @@ export const tundraRecipeEntries = [
     evolvesFrom: 'tundra-boots-t3',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 42->97 (+5: 120->118).
     cost: { blue: 176 }, stats: { speed: 97 }, tier: 4, // family-tag: tundra momentum mobility → Heavy
-    reconstructCost: { blue: 616 }, reconstructCatalystCost: { heavy: 4 },
+    reconstructCost: { blue: 616 },
     mechanicEffects: { 'mobility.ramp-speed-pct': 0.75, 'mobility.ramp-rate': 0.35 },
     icon: 'items/boots/avalanche-striders.png',
     description: 'Slow to start and impossible to stop — by the far end of the ice you are a thing that simply happens to whatever is in the way.',
@@ -247,7 +219,7 @@ export const tundraRecipeEntries = [
       { stats: { speed: 4 }, cost: { blue: 116 }, requiredBiomeLevel: 10 },
       { stats: { speed: 5 }, cost: { blue: 186 }, requiredBiomeLevel: 10 },
       { stats: { speed: 5 }, cost: { blue: 303 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 5 }, cost: { blue: 512 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { blue: 512 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -262,7 +234,7 @@ export const tundraRecipeEntries = [
     id: 'core-scout', name: 'Scout Core',
     recipeGroup: 'tundra', requiredBiomeLevel: 6, slot: 'core', coreEligibility: 'ranged',
     lineageId: 'core-scout',
-    cost: { blue: 1200 }, catalystCost: { heavy: 5 }, // Alacrity is BANNED in Tundra; its native family is Heavy
+    cost: { blue: 1200 }, // Alacrity is BANNED in Tundra; its native family is Heavy
     stats: {}, tier: 3,
     // The cooldown clause is INERT without an ability tagged `mobility` (today:
     // Charge); the damage and movement halves are always on.
@@ -275,7 +247,7 @@ export const tundraRecipeEntries = [
     id: 'relic-glacial-bell', name: 'Glacial Bell',
     recipeGroup: 'tundra', requiredBiomeLevel: 12, slot: 'relic',
     lineageId: 'relic-glacial-bell',
-    cost: { blue: 3200 }, catalystCost: { heavy: 9 },
+    cost: { blue: 3200 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': -0.20,

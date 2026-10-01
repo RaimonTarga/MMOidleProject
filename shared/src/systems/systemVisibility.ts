@@ -17,8 +17,6 @@ export interface SystemVisibilityInput {
   knownRites: readonly string[];
   equippedRites: readonly string[];
   essences?: Partial<Record<EssenceType, number>>;
-  catalysts?: Record<string, number>;
-  catalystProgress?: Record<string, number>;
   unlockedRecipes?: readonly string[];
   runeRecipesCrafted?: readonly string[];
   skillPoints?: number;
@@ -85,8 +83,6 @@ export function resolveSystemVisibility(
 
   const materials =
     anyPositive(input.essences as Record<string, number> | undefined) ||
-    anyPositive(input.catalysts) ||
-    anyPositive(input.catalystProgress) ||
     (input.unlockedRecipes?.length ?? 0) > 0 ||
     input.globalMastery > 0 ||
     input.playerTier >= 1;

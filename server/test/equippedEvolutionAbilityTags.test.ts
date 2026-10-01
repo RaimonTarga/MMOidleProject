@@ -34,8 +34,8 @@ function makePlayerSlices(): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {},
+      capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -96,7 +96,10 @@ for (const recipe of RECIPE_DATABASE.values()) {
   if (!recipe.evolvesFrom) continue;
   assert.equal(ITEM_DATABASE.get(recipe.evolvesFrom)?.slot, recipe.slot, recipe.id);
 }
-for (const slot of ['weapon', 'armor', 'recovery', 'mobility'] as const) {
+// Weapon evolution/reconstruction is rejected server-side (Phase 2b, Override A):
+// a weapon's power track is its lineage tree, not this ladder. armor/recovery/
+// mobility keep it.
+for (const slot of ['armor', 'recovery', 'mobility'] as const) {
   const recipe = [...RECIPE_DATABASE.values()].find(r => r.slot === slot && r.evolvesFrom);
   assert(recipe, `evolution for ${slot}`);
   const pred = recipe.evolvesFrom!;
@@ -110,35 +113,46 @@ for (const slot of ['weapon', 'armor', 'recovery', 'mobility'] as const) {
   assert.equal(evolveItem(world, p, recipe.id, 'evolve').success, false);
   assert.equal(JSON.stringify(p.holdsInventory), before);
   for (const [k,v] of Object.entries(recipe.cost)) p.tracksProgression.essences[k as keyof typeof p.tracksProgression.essences] = v!;
-  p.tracksProgression.catalysts = { ...recipe.catalystCost } as Record<string, number>;
   assert(evolveItem(world, p, recipe.id, 'evolve').success, recipe.id);
   assert.equal(p.holdsInventory.equipment[slot], recipe.id);
   assert.deepEqual(p.holdsInventory.inventory, [pred], 'spare copy remains in bag');
   assert.equal(p.holdsInventory.itemUpgrades[recipe.id] ?? 0, 0, 'predecessor upgrades do not transfer');
   for (const k of Object.keys(recipe.cost)) assert.equal(p.tracksProgression.essences[k as keyof typeof p.tracksProgression.essences], 0);
-  for (const k of Object.keys(recipe.catalystCost ?? {})) assert.equal(p.tracksProgression.catalysts[k], 0);
   const equivalent = player();
   equivalent.holdsInventory.inventory.push(recipe.id);
   assert(equipItem(world, equivalent, recipe.id));
   assert.deepEqual(p.usesSkills.passives, equivalent.usesSkills.passives, 'evolution immediately rebuilds item effects');
   assert.equal(p.hasHealth.maxHp, equivalent.hasHealth.maxHp);
 }
+{
+  const weaponRecipe = [...RECIPE_DATABASE.values()].find(r => r.slot === 'weapon' && r.evolvesFrom)!;
+  const p = player();
+  p.tracksProgression.unlockedRecipes.push(weaponRecipe.id);
+  p.holdsInventory.inventory.push(weaponRecipe.evolvesFrom!);
+  assert(equipItem(world, p, weaponRecipe.evolvesFrom!));
+  p.holdsInventory.itemUpgrades[weaponRecipe.evolvesFrom!] = requiredPlusFor(weaponRecipe);
+  for (const k of Object.keys(p.tracksProgression.essences)) p.tracksProgression.essences[k as keyof typeof p.tracksProgression.essences] = 1000000;
+  assert.equal(evolveItem(world, p, weaponRecipe.id, 'evolve').success, false, 'weapon evolve is rejected even fully funded and at +3');
+  if (weaponRecipe.reconstructCost) {
+    assert.equal(evolveItem(world, p, weaponRecipe.id, 'reconstruct').success, false, 'weapon reconstruct is rejected even fully funded');
+  }
+  assert.equal(p.holdsInventory.equipment.weapon, weaponRecipe.evolvesFrom, 'the predecessor stays equipped');
+}
 // A sole equipped predecessor needs no temporary unequip. Reconstruction leaves it alone.
 {
-  const recipe = [...RECIPE_DATABASE.values()].find(r => r.slot === 'weapon' && r.evolvesFrom)!;
+  const recipe = [...RECIPE_DATABASE.values()].find(r => r.slot === 'armor' && r.evolvesFrom && r.reconstructCost)!;
   const p = player();
   p.tracksProgression.unlockedRecipes.push(recipe.id);
   p.holdsInventory.inventory.push(recipe.evolvesFrom!);
   assert(equipItem(world, p, recipe.evolvesFrom!));
   for (const k of Object.keys(p.tracksProgression.essences)) p.tracksProgression.essences[k as keyof typeof p.tracksProgression.essences] = 1000000;
-  for (const k of Object.keys({ ...recipe.catalystCost, ...recipe.reconstructCatalystCost })) p.tracksProgression.catalysts[k] = 1000000;
   assert.equal(evolveItem(world, p, recipe.id, 'evolve').success, false, 'equipped gear still needs +3');
   assert(evolveItem(world, p, recipe.id, 'reconstruct').success);
-  assert.equal(p.holdsInventory.equipment.weapon, recipe.evolvesFrom);
+  assert.equal(p.holdsInventory.equipment.armor, recipe.evolvesFrom);
   assert.deepEqual(p.holdsInventory.inventory, [recipe.id]);
   p.holdsInventory.itemUpgrades[recipe.evolvesFrom!] = requiredPlusFor(recipe);
   assert(evolveItem(world, p, recipe.id, 'evolve').success);
-  assert.equal(p.holdsInventory.equipment.weapon, recipe.id);
+  assert.equal(p.holdsInventory.equipment.armor, recipe.id);
   assert.deepEqual(p.holdsInventory.inventory, [recipe.id]);
 }
 // Tags classify all current abilities, with family and Armed derived from execution.

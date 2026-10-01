@@ -72,8 +72,11 @@ function testCeilingIsTierScoped(): void {
 }
 
 function testCheckUpgradeGatesByItemTier(): void {
+  // Weapons are off the +N ladder entirely (Phase 2b: lineage tree instead), so
+  // the GM-gate fixture must be a slot that still rides it.
   const tierTwo = [...ITEM_DATABASE.values()].find(
-    (item) => item.tier === 2 && item.biomeGroup !== undefined && item.slot !== 'core',
+    (item) => item.tier === 2 && item.biomeGroup !== undefined
+      && item.slot !== 'core' && item.slot !== 'weapon',
   );
   assert(tierTwo !== undefined, 'database has an upgradeable tier 2 item');
   if (!tierTwo) return;

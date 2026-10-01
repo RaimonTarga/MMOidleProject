@@ -1,7 +1,5 @@
 import {
-  RECIPE_DATABASE,
   SKILL_TREE,
-  STANCE_RECIPE_DATABASE,
   maxGlobalMasteryAtTier,
 } from "@mmo-idle/shared";
 import type { TierCheckpointKind, TierEntryProfile } from "@mmo-idle/shared";
@@ -9,9 +7,7 @@ import type { Condition, Route, RouteStep } from "../route/types";
 import { routeWithClassRecovery } from "./classRecovery";
 import {
   T2_PROGRESSION_ORDER,
-  soleCatalystFamily,
   t2,
-  t2FarmFor,
   t2Runes,
   t2MaxLevel,
   type T2BiomeGroup,
@@ -157,24 +153,15 @@ function learnAbilitySteps(group: T2BiomeGroup, plan: T2ClassPlan): RouteStep[] 
  * afford and keeps going.
  */
 function opportunisticUpgrades(worn: readonly string[], group: T2BiomeGroup): RouteStep[] {
-  return worn.map((definitionId) => {
-    // Deep upgrade steps cost catalysts too (the ruinous-axe +4/+5 steps want 1
-    // and 2 swarming), so the same modifier rule applies to the upgrade farm as
-    // to the acquisition farm.
-    const item = RECIPE_DATABASE.get(definitionId);
-    const family = soleCatalystFamily(
-      ...(item?.upgrades ?? []).map((step) => step.catalystCost),
-    );
-    return {
-      type: "upgrade" as const,
-      definitionId,
-      toPlus: 5,
-      farmAt: t2FarmFor(group, family),
-      opportunistic: true,
-      farmForMissingResources: true,
-      label: `upgrade ${definitionId} as far as Global Mastery allows`,
-    };
-  });
+  return worn.map((definitionId) => ({
+    type: "upgrade" as const,
+    definitionId,
+    toPlus: 5,
+    farmAt: t2(group),
+    opportunistic: true,
+    farmForMissingResources: true,
+    label: `upgrade ${definitionId} as far as Global Mastery allows`,
+  }));
 }
 
 /**
@@ -278,7 +265,7 @@ function buildStanceAcquisitionSteps(group: T2BiomeGroup): RouteStep[] {
     steps.push({
       type: "craftStance",
       recipeId,
-      farmAt: t2FarmFor(group, soleCatalystFamily(STANCE_RECIPE_DATABASE.get(recipeId)?.catalystCost)),
+      farmAt: t2(group),
       label: `learn ${stanceId}`,
     });
   }
@@ -302,7 +289,6 @@ function buildCoreAcquisitionSteps(group: T2BiomeGroup, skipCoreIds: readonly st
   const steps: RouteStep[] = [];
   for (const [coreId, leg] of Object.entries(CORE_CRAFT_LEG)) {
     if (leg !== group || skipCoreIds.includes(coreId)) continue;
-    const recipe = RECIPE_DATABASE.get(coreId)!;
     steps.push(
       {
         type: "farm",
@@ -313,7 +299,7 @@ function buildCoreAcquisitionSteps(group: T2BiomeGroup, skipCoreIds: readonly st
       {
         type: "craft",
         recipeIds: [coreId],
-        farmAt: t2FarmFor(group, soleCatalystFamily(recipe.catalystCost)),
+        farmAt: t2(group),
       },
     );
   }

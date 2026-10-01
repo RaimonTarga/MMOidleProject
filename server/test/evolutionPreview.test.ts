@@ -26,7 +26,7 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 4, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
@@ -50,18 +50,21 @@ function player() {
   return world.attachPlayerEntity(slices, slices.isPlayer.id);
 }
 
-/** Enough of both wallets for either path, so the test never fails on economy. */
-function fund(p: ReturnType<typeof player>, recipe: Recipe) {
+/** Enough essence for either path, so the test never fails on economy. */
+function fund(p: ReturnType<typeof player>, _recipe: Recipe) {
   for (const k of Object.keys(p.tracksProgression.essences)) {
     p.tracksProgression.essences[k as EssenceType] = 1_000_000;
   }
-  for (const k of Object.keys({ ...recipe.catalystCost, ...recipe.reconstructCatalystCost })) {
-    p.tracksProgression.catalysts[k] = 1_000_000;
-  }
 }
 
-/** One evolution per slot, so a non-weapon lineage is covered as well as a weapon. */
-const lineages = (['weapon', 'armor', 'recovery', 'mobility'] as const).map((slot) => {
+/**
+ * One evolution per non-weapon slot. Weapon tier-2+ forms are bought from the
+ * lineage tree now (progression rework Phase 2b) — `checkEvolve`/`checkReconstruct`
+ * reject weapon-slot recipes outright, so the old evolve/reconstruct suite below
+ * (which asserts `evolveItem(...).success`) no longer applies to weapons. See the
+ * dedicated "weapon evolution is rejected" block below for that behavior instead.
+ */
+const lineages = (['armor', 'recovery', 'mobility'] as const).map((slot) => {
   const recipe = [...RECIPE_DATABASE.values()].find(r => r.slot === slot && r.evolvesFrom);
   assert(recipe, `an evolution exists for ${slot}`);
   return recipe;
@@ -188,10 +191,44 @@ for (const recipe of lineages) {
   }
 }
 
-// Every evolved recipe must be describable: a preview that silently renders
-// nothing is worse than the sentence it replaced.
+// ── Weapon evolution/reconstruction is rejected server-side ──────────────────
+// The lineage tree owns weapon tier-2+ forms now (progression rework Phase 2b),
+// so the old evolve/reconstruct path must refuse a weapon recipe outright rather
+// than silently granting one — the client's MakeTab already hides the button
+// (`isWeaponLineageForm`), but the server is the authority and must agree.
+{
+  const weaponRecipe = [...RECIPE_DATABASE.values()].find(r => r.slot === 'weapon' && r.evolvesFrom);
+  assert(weaponRecipe, 'a weapon evolution recipe exists to test against');
+  const pred = weaponRecipe.evolvesFrom!;
+  const required = requiredPlusFor(weaponRecipe);
+
+  const p = player();
+  p.tracksProgression.unlockedRecipes.push(weaponRecipe.id);
+  p.holdsInventory.inventory.push(pred);
+  p.holdsInventory.itemUpgrades[pred] = required;
+  fund(p, weaponRecipe);
+
+  assert.equal(
+    evolveItem(world, p, weaponRecipe.id, 'evolve').success, false,
+    `${weaponRecipe.id}: evolve is rejected for a weapon-slot recipe`,
+  );
+  if (weaponRecipe.reconstructCost) {
+    assert.equal(
+      evolveItem(world, p, weaponRecipe.id, 'reconstruct').success, false,
+      `${weaponRecipe.id}: reconstruct is rejected for a weapon-slot recipe`,
+    );
+  }
+  // Nothing was spent or consumed by the refused attempts.
+  assert.deepEqual(p.holdsInventory.inventory, [pred], 'the predecessor is untouched');
+  assert.equal(p.holdsInventory.itemUpgrades[weaponRecipe.id] ?? 0, 0, 'no result was granted');
+}
+
+// Every evolved NON-WEAPON recipe must be describable: a preview that silently
+// renders nothing is worse than the sentence it replaced. Weapon recipes are
+// excluded -- the client never renders EvolutionPreview for them
+// (`isWeaponLineageForm` in MakeTab.tsx), so their describability is moot.
 for (const recipe of RECIPE_DATABASE.values()) {
-  if (!recipe.evolvesFrom) continue;
+  if (!recipe.evolvesFrom || recipe.slot === 'weapon') continue;
   const preview = evolutionPlan({
     recipe, inventory: [], equipment: emptyEquipment(), itemUpgrades: {},
   });

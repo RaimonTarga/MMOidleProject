@@ -62,13 +62,16 @@ assert(
   "farm sweep produced more than one node for some (biome x tier) pair",
 );
 
-// Non-excluded farm nodes carry a modifier — that is the catalyst key, and a
-// node without one mints nothing.
+// Modifiers are node authoring identity only now (Phase 2b), with no combat
+// effect. T2-T4 non-excluded nodes always carry one; T1 is biome-dependent —
+// Plains and Forest moved to family blends (locked), while Mountain/Cave/Swamp
+// still generate modifier-tagged nodes pending their own blend pass (Phase 4),
+// so T1 presence is not asserted either way here.
 for (const target of targets) {
-  if (target.nodeId === CLEARING_NODE_ID) continue;
+  if (target.nodeId === CLEARING_NODE_ID || target.contentTier <= 1) continue;
   assert(
     target.modifier !== undefined,
-    `farm target ${target.nodeId} has no modifier — it would mint no catalysts`,
+    `farm target ${target.nodeId} has no modifier — T2+ nodes should still carry node identity`,
   );
 }
 
@@ -87,26 +90,19 @@ assert(rejected, `farmTargetForNode accepted dungeon node ${dungeonId}`);
 {
   const before = {
     essences: { red: 0, blue: 0, green: 10, yellow: 0, purple: 0 },
-    catalysts: { alacrity: 1 },
-    catalystProgress: { alacrity: 0 },
     biomeXP: { plains: 0 },
     biomeLevel: { plains: 0 },
     unlockedRecipes: 2,
   };
   const after = {
     essences: { red: 0, blue: 0, green: 40, yellow: 0, purple: 0 },
-    catalysts: { alacrity: 3 },
-    catalystProgress: { alacrity: 25 },
     biomeXP: { plains: 120 },
     biomeLevel: { plains: 2 },
     unlockedRecipes: 5,
   };
-  const delta = diffLedger(before, after, 50);
+  const delta = diffLedger(before, after);
   assert(delta.essences.green === 30, "essence diff wrong");
   assert(delta.essenceTotal === 30, "essence total wrong");
-  // 2 minted + 25/50 of a third banked.
-  assert(delta.catalysts.alacrity === 2.5, "catalyst diff must count partial progress");
-  assert(delta.catalystsMinted.alacrity === 2, "minted catalysts wrong");
   assert(delta.biomeXpTotal === 120, "biome xp diff wrong");
   assert(delta.biomeLevels.plains === 2, "biome level diff wrong");
   assert(delta.recipesUnlocked === 3, "recipe unlock diff wrong");
@@ -168,27 +164,21 @@ assert(
   result.biomeLevelStart === 0,
   "the farmed biome must start at level 0 or applyBiomeXP early-returns at cap",
 );
-if (target!.modifier) {
-  assert(
-    (result.catalystTotal[target!.modifier] ?? 0) > 0,
-    `no ${target!.modifier} catalyst progress on a ${target!.modifier} node`,
-  );
-}
+// Catalysts are gone (Phase 2b); the ledger measures essence/XP income only —
+// lineage shards are gating materials, not a farm-rate metric.
 
 // Snapshots are independent copies, not live references into the entity.
 {
   const snap = snapshotLedger({
     tracksProgression: {
       essences: { red: 1, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: { alacrity: 1 },
-      catalystProgress: {},
-      biomeXP: {},
+      biomeXP: { plains: 5 },
       biomeLevel: {},
       unlockedRecipes: [],
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any);
-  snap.catalysts.alacrity = 99;
+  snap.biomeXP.plains = 99;
   assert(snap.essences.red === 1, "snapshot lost a value");
 }
 

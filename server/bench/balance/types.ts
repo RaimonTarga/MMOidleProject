@@ -75,7 +75,7 @@ export interface FarmRunResult {
   biomeGroup: string;
   contentTier: number;
   nodeId: string;
-  /** The node's modifier — its catalyst key. Absent on excluded nodes. */
+  /** The node's modifier — T2-T4 authoring identity only, no combat effect. Absent on excluded nodes. */
   modifier?: string;
   /** Target monster population the node repopulates back to. */
   mobDensity: number;
@@ -92,12 +92,6 @@ export interface FarmRunResult {
   essencePerHour: Record<EssenceType, number>;
   essenceSum: number;
   essenceSumPerHour: number;
-
-  /** Catalysts by node modifier, counting banked partial progress fractionally. */
-  catalystTotal: Record<string, number>;
-  catalystPerHour: Record<string, number>;
-  catalystSum: number;
-  catalystSumPerHour: number;
 
   /**
    * Biome XP for the farmed biome. `biomeXpPerHour` is measured over the window

@@ -38,22 +38,6 @@ export interface Recipe {
   slot: EquipmentSlot;
   /** Essence costs keyed by type. Only types with non-zero amounts are listed. */
   cost: Partial<Record<EssenceType, number>>;
-  /**
-   * Optional catalyst costs keyed by NODE MODIFIER
-   * (alacrity/heavy/swarming/dominion/fortified), not by biome group.
-   * Parallel axis to `cost` — crafting checks and spends both. Only listed when
-   * the recipe demands catalysts; absent means essence-only.
-   *
-   * The key reflects what the ITEM does, not where it is farmed, which is why a
-   * biome's recipes do not all demand that biome's native catalyst.
-   *
-   * TODO (Map Variety, deferred): the neutral Broadsword exception (design §2.3)
-   * needs a `catalystCostFlexible?: number` — a total payable with any combination
-   * of the five family wallets (greedy spend from the largest balance). No recipe
-   * uses it yet; wire it into crafting/upgrade affordability + the client cost
-   * display when a Broadsword milestone first needs it.
-   */
-  catalystCost?: Partial<Record<string, number>>;
   stats: Partial<ItemStats>;
   tier: number;
   /**
@@ -98,7 +82,7 @@ export interface Recipe {
   /**
    * Predecessor recipe id this evolves from. Present ⇒ this is an EVOLVED recipe:
    * craftable by consuming the predecessor at +{@link EVOLUTION_REQUIRED_PLUS}
-   * (paying `cost`/`catalystCost`), or by reconstruction (paying `reconstructCost`).
+   * (paying `cost`), or by reconstruction (paying `reconstructCost`).
    * Sibling recipes sharing an `evolvesFrom` are alternate branches.
    */
   evolvesFrom?: string;
@@ -107,8 +91,6 @@ export interface Recipe {
    * needs no predecessor. Only meaningful on evolved recipes. Absent ⇒ no reconstruct path.
    */
   reconstructCost?: Partial<Record<EssenceType, number>>;
-  /** Reconstruction catalyst cost, parallel to `reconstructCost`. */
-  reconstructCatalystCost?: Partial<Record<string, number>>;
   // ── Cores (system rework Step 9) ────────────────────────────────────────────
   /**
    * REQUIRED on `slot: 'core'` recipes, and must be absent on every other slot.

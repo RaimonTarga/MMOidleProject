@@ -56,13 +56,6 @@ export const plainsRecipeEntries = [
     // as before — reshaped, not inflated. No catalyst: stays neutral like its
     // own T2 successor (knight-steelsword), an intentional "flexible payment"
     // identity noted on plains-boots-t2's family-tag comment.
-    upgrades: [
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.02, 'technique.power-pct': 0.05 }, cost: { yellow: 10 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.05 }, cost: { yellow: 25 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.02, 'technique.power-pct': 0.05 }, cost: { yellow: 35 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.05 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.02, 'technique.power-pct': 0.05 }, cost: { yellow: 75 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // Plating / swarm defence. Deliberately extreme against small Plains hits —
@@ -81,7 +74,7 @@ export const plainsRecipeEntries = [
       {"cost": {"yellow": 45}, "requiredBiomeLevel": 4, "stats": {"maxHp": 2, "plating": 0}},
       {"cost": {"yellow": 70}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "plating": 1}},
       {"cost": {"yellow": 115}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "plating": 0}},
-      {"cost": {"yellow": 150}, "catalystCost": {"alacrity": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "plating": 0}}
+      {"cost": {"yellow": 150}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "plating": 0}}
     ],
 
 mechanicEffects: {},
@@ -153,13 +146,6 @@ mechanicEffects: {},
     // Arcanist Core (+20% CDR / +20% power).
     mechanicEffects: { 'technique.cooldown-reduction-pct': 0.13, 'technique.power-pct': 0.25 },
     description: 'A knight sidearm kept keen by habit and pride — plain, proven, never flashy.',
-    upgrades: [
-      { stats: { attack: 6 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.04 }, cost: { yellow: 27 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 6 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.04 }, cost: { yellow: 68 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 5 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.04 }, cost: { yellow: 108 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 5 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.04 }, cost: { yellow: 176 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 4 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.04 }, cost: { yellow: 296 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // T2 economy pass (2026-08-29): now an EVOLUTION of plains-vest-t1 at +5.
@@ -168,15 +154,15 @@ mechanicEffects: {},
     recipeGroup: 'plains', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'plains-vest-t1',
     cost: { yellow: 60 }, stats: {"maxHp": 50, "plating": 5, "damageReduction": 0.08}, tier: 2, // family-tag: plating answers frequent light hits → Alacrity
-    reconstructCost: { yellow: 210 }, reconstructCatalystCost: { alacrity: 2 },
+    reconstructCost: { yellow: 210 },
     icon: 'items/armor/enduring-robe.png',
     description: "Flat plating specializes in frequent small direct hits.",
     upgrades: [
       {"cost": {"yellow": 36}, "requiredBiomeLevel": 9, "stats": {"maxHp": 5, "plating": 1}},
       {"cost": {"yellow": 90}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "plating": 0}},
       {"cost": {"yellow": 144}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "plating": 1}},
-      {"cost": {"yellow": 234}, "catalystCost": {"alacrity": 1}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "plating": 0}},
-      {"cost": {"yellow": 396}, "catalystCost": {"alacrity": 2}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "plating": 1}}
+      {"cost": {"yellow": 234}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "plating": 0}},
+      {"cost": {"yellow": 396}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "plating": 1}}
     ],
 
 mechanicEffects: {},
@@ -189,7 +175,7 @@ mechanicEffects: {},
     recipeGroup: 'plains', requiredBiomeLevel: 9, slot: 'recovery',
     evolvesFrom: 'plains-charm-t1',
     cost: { yellow: 50 }, stats: { recovery: 6.4 }, // family-tag: on-kill Recovery answers swarm attrition → Alacrity
-    reconstructCost: { yellow: 175 }, reconstructCatalystCost: { alacrity: 2 },
+    reconstructCost: { yellow: 175 },
     mechanicEffects: { 'defense.recovery-on-kill-pct': 0.32, 'defense.recovery-on-kill-ms': 4000 },
     tier: 2,
     icon: 'items/charms/stalwart-heart.png',
@@ -199,7 +185,7 @@ mechanicEffects: {},
       { stats: { recovery: 1.2 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 45 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 72 }, requiredBiomeLevel: 10 },
       { stats: { recovery: 1.2 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 117 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 198 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 198 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -209,7 +195,7 @@ mechanicEffects: {},
     recipeGroup: 'plains', requiredBiomeLevel: 10, slot: 'mobility',
     evolvesFrom: 'plains-boots-t1',
     cost: { yellow: 40 }, stats: { speed: 32 }, tier: 2, // family-tag: plains speed → Alacrity
-    reconstructCost: { yellow: 140 }, reconstructCatalystCost: { alacrity: 2 },
+    reconstructCost: { yellow: 140 },
     mechanicEffects: { 'mobility.kill-speed-pct': 0.45, 'mobility.kill-speed-ms': 3000 },
     icon: 'items/boots/gale-boots.png',
     description: 'Wind-cured leather that seems to lean into every stride.',
@@ -218,7 +204,7 @@ mechanicEffects: {},
       { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 30 }, requiredBiomeLevel: 10 },
       { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 48 }, requiredBiomeLevel: 10 },
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 78 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 132 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 132 }, requiredBiomeLevel: 10 },
     ],
   }],
 

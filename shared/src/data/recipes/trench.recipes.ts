@@ -23,7 +23,7 @@ export const trenchRecipeEntries = [
     // INVARIANT: dead swing must NOT consume class mechanic resources.
     // 2026-09-26 T2-T4 weapon normalization: Attack 120->140 (+5: 240->257).
     cost: { green: 270 }, stats: { attack: 140 }, attacksPerSecond: 1.15, tier: 4, // family-tag: dead-swing/execute axe → Swarming
-    reconstructCost: { green: 945 }, reconstructCatalystCost: { swarming: 4 },
+    reconstructCost: { green: 945 },
     // † execute-threshold-pct / execute-dmg-mult: vs targets below 20% HP, ×2.5.
     mechanicEffects: {
       'weapon.dead-swing-interval': 4,
@@ -31,13 +31,6 @@ export const trenchRecipeEntries = [
     },
     icon: 'items/weapons/abyssal-axe.png',
     description: 'Patient through the long fight, merciless at the end of it: when the abyss-thing finally weakens, it disappears.',
-    upgrades: [
-      { stats: { attack: 24 }, cost: { green: 175 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 24 }, cost: { green: 439 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 23 }, cost: { green: 702 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 23 }, cost: { green: 1140 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 23 }, cost: { green: 1930 }, catalystCost: { swarming: 4 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   ['trench-vest-t4', {
@@ -49,7 +42,7 @@ export const trenchRecipeEntries = [
     // Swamp/Wasteland line). Tundra stays the best stand-and-trade vest when debuffs
     // don't matter; this is the one for elites that shred, slow and mark you.
     cost: { green: 220 }, stats: {"maxHp": 330, "damageReduction": 0.26}, // family-tag: elite (raw stats + debuff resist) armor → Swarming
-    reconstructCost: { green: 770 }, reconstructCatalystCost: { swarming: 4 },
+    reconstructCost: { green: 770 },
     mechanicEffects: {"defense.debuff-resistance": 0.3},
     tier: 4,
     icon: 'items/armor/deep-sea-carapace.png',
@@ -58,8 +51,8 @@ export const trenchRecipeEntries = [
       {"cost": {"green": 185}, "requiredBiomeLevel": 3, "stats": {"maxHp": 29, "damageReduction": 0.008}, "mechanicEffects": {"defense.debuff-resistance": 0.02}},
       {"cost": {"green": 462}, "requiredBiomeLevel": 4, "stats": {"maxHp": 29, "damageReduction": 0.008}, "mechanicEffects": {"defense.debuff-resistance": 0.02}},
       {"cost": {"green": 739}, "requiredBiomeLevel": 4, "stats": {"maxHp": 29, "damageReduction": 0.008}, "mechanicEffects": {"defense.debuff-resistance": 0.02}},
-      {"cost": {"green": 1200}, "catalystCost": {"swarming": 3}, "requiredBiomeLevel": 4, "stats": {"maxHp": 29, "damageReduction": 0.008}, "mechanicEffects": {"defense.debuff-resistance": 0.02}},
-      {"cost": {"green": 2030}, "catalystCost": {"swarming": 4}, "requiredBiomeLevel": 4, "stats": {"maxHp": 29, "damageReduction": 0.008}, "mechanicEffects": {"defense.debuff-resistance": 0.02}}
+      {"cost": {"green": 1200}, "requiredBiomeLevel": 4, "stats": {"maxHp": 29, "damageReduction": 0.008}, "mechanicEffects": {"defense.debuff-resistance": 0.02}},
+      {"cost": {"green": 2030}, "requiredBiomeLevel": 4, "stats": {"maxHp": 29, "damageReduction": 0.008}, "mechanicEffects": {"defense.debuff-resistance": 0.02}}
     ],
   }],
 
@@ -83,7 +76,7 @@ export const trenchRecipeEntries = [
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.02, 'recovery.cooldown-reduction-pct': 0.02 }, cost: { green: 183 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.02, 'recovery.cooldown-reduction-pct': 0.02 }, cost: { green: 292 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.02, 'recovery.cooldown-reduction-pct': 0.02 }, cost: { green: 475 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.02, 'recovery.cooldown-reduction-pct': 0.02 }, cost: { green: 803 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.02, 'recovery.cooldown-reduction-pct': 0.02 }, cost: { green: 803 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -94,7 +87,7 @@ export const trenchRecipeEntries = [
     // Cave stealth-boot inheritor — soft stealth: reduces enemy detection radius.
     // 2026-09-26 T2-T4 boots curve normalization: Speed 52->92 (+5: 82->118).
     cost: { green: 80 }, stats: { speed: 92 }, tier: 4, // family-tag: stealth mobility (Cave inheritance) → Swarming
-    reconstructCost: { green: 280 }, reconstructCatalystCost: { swarming: 4 },
+    reconstructCost: { green: 280 },
     mechanicEffects: { 'mobility.stealth-pct': 0.72 },
     icon: 'items/boots/abyssal-stalkers.png',
     description: 'They take you past the great blind hunters unseen — and lend the first strike, when it comes, a killing edge.',
@@ -103,7 +96,7 @@ export const trenchRecipeEntries = [
       { stats: { speed: 5 }, cost: { green: 125 },  requiredBiomeLevel: 4 },
       { stats: { speed: 5 }, cost: { green: 200 }, requiredBiomeLevel: 4 },
       { stats: { speed: 5 }, cost: { green: 326 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 5 }, cost: { green: 551 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 5 }, cost: { green: 551 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -125,7 +118,7 @@ export const trenchRecipeEntries = [
       { stats: { speed: 3 }, cost: { green: 125 },  requiredBiomeLevel: 4 },
       { stats: { speed: 3 }, cost: { green: 200 }, requiredBiomeLevel: 4 },
       { stats: { speed: 3 }, cost: { green: 326 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 3 }, cost: { green: 551 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 3 }, cost: { green: 551 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -137,7 +130,7 @@ export const trenchRecipeEntries = [
     id: 'relic-virulent-hourglass', name: 'Virulent Hourglass',
     recipeGroup: 'trench', requiredBiomeLevel: 5, slot: 'relic',
     lineageId: 'relic-virulent-hourglass',
-    cost: { green: 3400 }, catalystCost: { dominion: 9 },
+    cost: { green: 3400 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': 0.20,

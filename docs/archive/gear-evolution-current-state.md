@@ -1,10 +1,39 @@
+> **ARCHIVED (2026-10-01) — PARTIALLY HISTORICAL.** Weapon evolve/reconstruct/
+> upgrade are deleted (Phase 2b, `docs/progression-rework-plan.md` §2.3,
+> Override A): `checkEvolve`/`checkReconstruct`/`checkUpgrade` now reject every
+> `slot === 'weapon'` recipe outright, and `getMaxUpgrade` is 0 for weapons. A
+> weapon's power track is its lineage tree instead — see
+> `docs/lineages-current-state.md`. **Everything in this doc about armor,
+> recovery (charm), and mobility (boots) items is still live and accurate**:
+> `Recipe.upgrades`, `UpgradeTab`, `EvolutionPreview`, `inventory:upgradeItem`,
+> and `crafting:evolveItem` all survive unchanged for those three slots,
+> including the Armor niches and Charm roles tables below. Catalyst costs
+> (`catalystCost`/`reconstructCatalystCost`) are gone everywhere, weapon or not —
+> every surviving upgrade/evolve/reconstruct cost is essence-only now.
+>
+> **Open gap found during Phase 2b (not fixed, flagged for the designer):** the
+> weapon lineage tree (`shared/src/data/lineages/`) currently only wires T1→T2
+> forms for all five lineages (broadsword, rapier, hammer, axe, dagger — plus
+> jungle-stinger-rapier as the rapier lineage's T2 branch). No lineage has a T3
+> or T4 `LineageForm` entry yet. Every T3/T4 weapon recipe below (e.g.
+> `mountain-avalanche-maul`, `cave-cataclysm-axe`, `jungle-venomthorn-rapier`,
+> `desert-solar-cross`, every Tundra/Volcanic/Graveyard/Trench weapon) still has
+> `evolvesFrom` set, so plain-crafting it was already blocked before this phase
+> (the "loophole closed" rule below), and it can no longer be evolved or
+> reconstructed either. **These items are currently unreachable by any player
+> action.** This is a direct, immediate consequence of Override A combined with
+> the lineage tree's current T1–T2-only scope — not a bug introduced by this
+> pass, but a sequencing gap this pass's rejection exposed. Needs either an
+> interim exception, fast-tracked T3/T4 lineage-form authoring, or an explicit
+> designer call before shipping.
+
 # Step 6 — Gear Evolution & Reconstruction — Current State
 
 **Audited:** 2026-09-27.
 
 The structural machinery and authored gear lineages now cover the live T1–T4
 recipe set. This page is paired with the historical
-[`docs/archive/gear-evolution-plan.md`](archive/gear-evolution-plan.md). Numerical
+[`docs/archive/gear-evolution-plan.md`](gear-evolution-plan.md). Numerical
 costs and balance remain user-owned tuning inputs, but the data is no longer a
 single-lineage implementation placeholder.
 

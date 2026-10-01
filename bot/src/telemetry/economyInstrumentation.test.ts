@@ -1,9 +1,6 @@
 import {
-  GAME_CONFIG,
   ITEM_DATABASE,
   RECIPE_DATABASE,
-  catalystProgressPerUnit,
-  catalystProgressRewardMult,
 } from "@mmo-idle/shared";
 import type { Observation } from "../state/observation";
 import {
@@ -23,27 +20,24 @@ function assert(condition: unknown, message: string): asserts condition {
 // ── T1 economy candidate C: the +5 essence transformation ────────────────────
 //
 // Verified against the LIVE recipe database rather than a restated table, so a
-// later edit that reinflates a cost fails here.
+// later edit that reinflates a cost fails here. Weapon recipes are excluded:
+// the progression rework deleted their +N ladder outright (the lineage tree
+// owns weapon progression now), so only armor/charm/boots still author one.
 {
   // The transformation the candidate applied: round(old * 0.75 / 5) * 5.
   const expected: Record<string, number> = {
-    "chaotic-axe": 155,
     "cave-vest-t1": 195,
     "cave-charm-t1": 75,
     "cave-boots-t1": 55,
-    "flash-rapier": 155,
     "forest-vest-t1": 150,
     "forest-charm-t1": 75,
     "forest-boots-t1": 45,
-    "heavy-hammer": 155,
     "mountain-vest-t1": 155,
     "mountain-charm-t1": 75,
     "mountain-boots-t1": 55,
-    "iron-broadsword": 75,
     "plains-vest-t1": 150,
     "plains-charm-t1": 55,
     "plains-boots-t1": 45,
-    "ashbrand-blade": 150,
     "swamp-vest-t1": 150,
     "swamp-charm-t1": 75,
     "swamp-boots-t1": 55,
@@ -51,7 +45,7 @@ function assert(condition: unknown, message: string): asserts condition {
 
   let seen = 0;
   for (const recipe of RECIPE_DATABASE.values()) {
-    if (recipe.tier !== 1) continue;
+    if (recipe.tier !== 1 || recipe.slot === "weapon") continue;
     const step = recipe.upgrades?.[4];
     assert(step, `T1 recipe ${recipe.id} must author a +5 step`);
     const total = Object.values(step.cost).reduce<number>((sum, n) => sum + (n ?? 0), 0);
@@ -61,10 +55,6 @@ function assert(condition: unknown, message: string): asserts condition {
       `T1 recipe ${recipe.id} is not covered by the +5 cost table — extend it deliberately`,
     );
     assert(total === want, `${recipe.id} +5 essence should be ${want}, is ${total}`);
-    // The candidate cut ESSENCE only. Catalyst asks stay at exactly one unit.
-    for (const [family, amount] of Object.entries(step.catalystCost ?? {})) {
-      assert(amount === 1, `${recipe.id} +5 should still ask for one ${family}, asks ${amount}`);
-    }
     seen += 1;
   }
   assert(
@@ -80,27 +70,27 @@ function assert(condition: unknown, message: string): asserts condition {
   console.log("t1 +5 essence costs: ok");
 }
 
-// ── T1 catalyst rate ─────────────────────────────────────────────────────────
+// ── No weapon recipe authors an upgrade ladder any more ───────────────────────
 {
-  assert(catalystProgressPerUnit() === 100, "every tier must mint at 100 catalyst progress");
-  assert(catalystProgressRewardMult(1) === 0.5, "T1 kill-weight must be halved");
-  assert(catalystProgressRewardMult(2) === 1, "later tiers must retain full catalyst kill-weight");
-  console.log("t1 catalyst rate: ok");
+  for (const recipe of RECIPE_DATABASE.values()) {
+    if (recipe.slot !== "weapon") continue;
+    assert(!recipe.upgrades, `${recipe.id}: weapon recipes must not author upgrades[]`);
+  }
+  console.log("weapon recipes have no upgrade ladder: ok");
 }
 
 // ── Explicit block reasons ───────────────────────────────────────────────────
 //
 // The 2026-08-31 deep-dive could only guess essence-versus-catalyst from the
-// farm node, because the block event carried a bare `{blocked:1}`. These
-// assertions are the guard on that never coming back.
+// farm node, because the block event carried a bare `{blocked:1}`. Catalysts
+// are gone (progression rework Phase 2b); these assertions now guard only the
+// essence half of that finding.
 {
   const item = ITEM_DATABASE.get("plains-vest-t1");
   assert(item, "plains-vest-t1 must exist");
 
   const baseSelf = {
     essences: { yellow: 10, red: 0, green: 0, blue: 0, purple: 0 },
-    catalysts: {} as Record<string, number>,
-    catalystProgress: {} as Record<string, number>,
     biomeLevel: { plains: 4 } as Record<string, number>,
     globalMastery: 30,
     itemUpgrades: { "plains-vest-t1": 4 } as Record<string, number>,
@@ -113,7 +103,6 @@ function assert(condition: unknown, message: string): asserts condition {
     ({
       self,
       essence: (type: string) => (self.essences as Record<string, number>)[type] ?? 0,
-      catalyst: (family: string) => self.catalysts[family] ?? 0,
       biomeLevel: (group: string) => self.biomeLevel[group] ?? 0,
       itemPlus: (id: string) => self.itemUpgrades[id] ?? 0,
       recipeUnlocked: (id: string) => self.unlockedRecipes.includes(id),
@@ -124,17 +113,11 @@ function assert(condition: unknown, message: string): asserts condition {
   const obs = makeObs(baseSelf);
   const reasons = upgradeBlockReasons("plains-vest-t1", obs);
   const essence = reasons.find((r) => r.kind === "essence");
-  const catalyst = reasons.find((r) => r.kind === "catalyst");
   assert(essence && essence.kind === "essence", "an essence shortage must be named explicitly");
   assert(essence.essence === "yellow", "essence colour must be recorded");
   assert(
     essence.current === 10 && essence.required === 150 && essence.missing === 140,
     `essence current/required/missing must be exact, got ${JSON.stringify(essence)}`,
-  );
-  assert(catalyst && catalyst.kind === "catalyst", "a catalyst shortage must be named explicitly");
-  assert(
-    catalyst.family === "alacrity" && catalyst.required === 1 && catalyst.missing === 1,
-    `catalyst family/required/missing must be exact, got ${JSON.stringify(catalyst)}`,
   );
   assert(
     !reasons.some((r) => r.kind === "globalMastery"),
@@ -143,8 +126,8 @@ function assert(condition: unknown, message: string): asserts condition {
 
   const missing = reasonsToMissing(reasons);
   assert(
-    missing["essence.yellow"] === 140 && missing["catalyst.alacrity"] === 1,
-    `flat missing map must carry both shortfalls, got ${JSON.stringify(missing)}`,
+    missing["essence.yellow"] === 140,
+    `flat missing map must carry the essence shortfall, got ${JSON.stringify(missing)}`,
   );
   assert(!("blocked" in missing), "the generic `blocked` marker must not come back");
 
@@ -170,11 +153,11 @@ function assert(condition: unknown, message: string): asserts condition {
   );
 
   const condReasons = conditionBlockReasons(
-    { type: "catalystAtLeast", family: "heavy", amount: 2 },
+    { type: "essenceAtLeast", essence: "red", amount: 2 },
     obs,
   );
   assert(
-    condReasons.length === 1 && condReasons[0].kind === "catalyst",
+    condReasons.length === 1 && condReasons[0].kind === "essence",
     "a condition wait must resolve to typed reasons too",
   );
 
@@ -199,8 +182,6 @@ function assert(condition: unknown, message: string): asserts condition {
     nodeId: "plains-01",
     self: {
       essences: { yellow: 42, red: 1, green: 0, blue: 0, purple: 0 },
-      catalysts: { alacrity: 1 },
-      catalystProgress: { alacrity: 90 },
       biomeLevel: { plains: 4 },
       globalMastery: 12,
       itemUpgrades: { "plains-vest-t1": 4 },
@@ -211,11 +192,6 @@ function assert(condition: unknown, message: string): asserts condition {
   const snapshot = written.find((e) => e.kind === "wallet-snapshot");
   assert(snapshot && snapshot.kind === "wallet-snapshot", "a wallet snapshot must be emitted");
   assert(snapshot.essences.yellow === 42, "the full essence wallet must be captured");
-  assert(snapshot.catalysts.alacrity === 1, "the full catalyst wallet must be captured");
-  assert(
-    snapshot.catalystProgress.alacrity === 90,
-    "partial catalyst progress must be captured — it is the only direct read on the mint rate",
-  );
   assert(
     snapshot.globalMastery === 12 && snapshot.reason === "pre-upgrade",
     "the snapshot's context must be captured",

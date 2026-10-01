@@ -1,6 +1,5 @@
 import {
   EVOLUTION_REQUIRED_PLUS,
-  NODE_BIOMES,
   RECIPE_DATABASE,
   STANCE_RECIPE_DATABASE,
   biomeLevelCap,
@@ -143,47 +142,6 @@ for (const plan of T2_CLASS_PLANS) {
   }
 }
 
-// Anything that costs catalysts must farm for them where they are MINTED.
-// Catalysts come from the node modifier and from nothing else, so a cost-farm
-// pointed at the plain biome ref waits on a wallet that may never fill -- the
-// failure that cost a measured Striker run 521 of its 540 seconds.
-for (const route of T2_ROUTES) {
-  for (const step of flatten(route.steps)) {
-    let cost: Partial<Record<string, number>> | undefined;
-    let id: string;
-    if (step.type === "evolveItem") {
-      const recipe = RECIPE_DATABASE.get(step.recipeId)!;
-      cost = step.mode === "reconstruct" ? recipe.reconstructCatalystCost : recipe.catalystCost;
-      id = step.recipeId;
-    } else if (step.type === "craft") {
-      const recipe = RECIPE_DATABASE.get(step.recipeIds[0])!;
-      cost = recipe.catalystCost;
-      id = step.recipeIds[0];
-    } else {
-      continue;
-    }
-    const families = Object.entries(cost ?? {}).filter(([, n]) => (n ?? 0) > 0).map(([f]) => f);
-    if (families.length !== 1) continue;
-    const family = families[0];
-    const at = step.farmAt;
-    if (!at || at.kind !== "biome") continue;
-    // Only demand it where the biome actually HAS a node of that family; the
-    // helper falls back deliberately rather than making a route unresolvable.
-    const available = Object.values(NODE_BIOMES).some(
-      (info) =>
-        info.biomeGroup === at.biomeGroup &&
-        info.biomeTier === 2 &&
-        info.kind === "normal" &&
-        (info as { modifier?: string }).modifier === family,
-    );
-    if (!available) continue;
-    assert(
-      at.modifier === family,
-      `${route.id}: ${id} costs ${family} catalysts but farms at an unfiltered ${at.biomeGroup} ref`,
-    );
-  }
-}
-
 // ── Every scheduled purchase must be PAYABLE on the leg it is scheduled ────
 //
 // A gate is a biome LEVEL; affordability is a separate question, and on a clean
@@ -202,20 +160,12 @@ for (const route of T2_ROUTES) {
   };
   const legOf = new Map<string, number>();
   T2_PROGRESSION_ORDER.forEach((g, i) => legOf.set(g, i + 1));
-  const familyLeg = new Map<string, number>();
-  for (const info of Object.values(NODE_BIOMES)) {
-    if (info.biomeTier !== 2 || info.kind !== "normal") continue;
-    const family = (info as { modifier?: string }).modifier;
-    const leg = legOf.get(info.biomeGroup);
-    if (family && leg) familyLeg.set(family, Math.min(familyLeg.get(family) ?? 99, leg));
-  }
 
   const checkCost = (
     routeId: string,
     what: string,
     scheduledLeg: number,
     cost: Partial<Record<string, number>> | undefined,
-    catalystCost: Partial<Record<string, number>> | undefined,
   ): void => {
     for (const [type, amount] of Object.entries(cost ?? {})) {
       if ((amount ?? 0) <= 0) continue;
@@ -224,15 +174,6 @@ for (const route of T2_ROUTES) {
         leg <= scheduledLeg,
         `${routeId}: ${what} is scheduled on leg ${scheduledLeg} but needs ${amount} ${type}, ` +
           `first minted on leg ${leg}`,
-      );
-    }
-    for (const [family, amount] of Object.entries(catalystCost ?? {})) {
-      if ((amount ?? 0) <= 0) continue;
-      const leg = familyLeg.get(family) ?? 99;
-      assert(
-        leg <= scheduledLeg,
-        `${routeId}: ${what} is scheduled on leg ${scheduledLeg} but needs ${amount} ${family} ` +
-          `catalysts, first minted on leg ${leg}`,
       );
     }
   };
@@ -247,7 +188,7 @@ for (const route of T2_ROUTES) {
       if (step.type === "craft") {
         for (const id of step.recipeIds) {
           const r = RECIPE_DATABASE.get(id)!;
-          checkCost(route.id, id, leg, r.cost, r.catalystCost);
+          checkCost(route.id, id, leg, r.cost);
         }
       } else if (step.type === "evolveItem") {
         const r = RECIPE_DATABASE.get(step.recipeId)!;
@@ -256,12 +197,11 @@ for (const route of T2_ROUTES) {
           step.recipeId,
           leg,
           step.mode === "reconstruct" ? r.reconstructCost : r.cost,
-          step.mode === "reconstruct" ? r.reconstructCatalystCost : r.catalystCost,
         );
       } else if (step.type === "craftStance") {
         const r = STANCE_RECIPE_DATABASE.get(step.recipeId)!;
         assert(r, `${route.id}: stance recipe exists (${step.recipeId})`);
-        checkCost(route.id, step.recipeId, leg, r.cost, r.catalystCost);
+        checkCost(route.id, step.recipeId, leg, r.cost);
       }
     }
   }

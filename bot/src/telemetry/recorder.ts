@@ -54,7 +54,6 @@ export interface BiomeStats {
   craftsCompleted: number;
   upgradesCompleted: number;
   essenceGained: Partial<Record<EssenceType, number>>;
-  catalystsByModifier: Record<string, number>;
   damageBySource: Record<string, number>;
   killsByMonster: Record<string, number>;
   concurrencySamples: number;
@@ -65,7 +64,6 @@ export interface BiomeStats {
 export interface EconomyTimeline {
   nodeEntries: Array<Extract<BotEvent, { kind: "node-enter" }>>;
   biomeLevelUps: Array<Extract<BotEvent, { kind: "biome-level-up" }>>;
-  catalystGains: Array<Extract<BotEvent, { kind: "catalyst-gain" }>>;
   crafts: Array<Extract<BotEvent, { kind: "craft" }>>;
   evolutions: Array<Extract<BotEvent, { kind: "evolution" }>>;
   stanceCrafts: Array<Extract<BotEvent, { kind: "stance-craft" }>>;
@@ -149,8 +147,6 @@ function describeEvent(event: BotEvent): string | null {
       return event.phase === "start"
         ? `waiting on resources for ${event.forWhat}`
         : `unblocked ${event.forWhat}`;
-    case "catalyst-gain":
-      return `+${event.amount} ${event.family} catalyst`;
     case "wallet-snapshot":
       return `wallet @ ${event.reason}${event.detail ? ` (${event.detail})` : ""}`;
     case "stall":
@@ -196,7 +192,6 @@ function emptyBiome(biomeGroup: string): BiomeStats {
     craftsCompleted: 0,
     upgradesCompleted: 0,
     essenceGained: {},
-    catalystsByModifier: {},
     damageBySource: {},
     killsByMonster: {},
     concurrencySamples: 0,
@@ -222,7 +217,6 @@ export class Recorder {
   readonly economyTimeline: EconomyTimeline = {
     nodeEntries: [],
     biomeLevelUps: [],
-    catalystGains: [],
     crafts: [],
     evolutions: [],
     stanceCrafts: [],
@@ -362,7 +356,6 @@ export class Recorder {
   private lastHp = 0;
   private lastConcurrencySampleAt = 0;
   private lastBiomeLevels: Record<string, number> = {};
-  private lastCatalysts: Record<string, number> = {};
   private productiveActivityWindow: OpenProductiveActivityWindow | null = null;
   private totalKillCount = 0;
   private lastKillAtMs: number | null = null;
@@ -390,7 +383,6 @@ export class Recorder {
 
   /** Prevent inherited checkpoint balances from appearing as newly minted rewards. */
   seedProgression(self: import('@mmo-idle/shared').PlayerView): void {
-    this.lastCatalysts = { ...self.catalysts };
     this.lastBiomeLevels = { ...self.biomeLevel };
   }
   now(): number {
@@ -405,7 +397,6 @@ export class Recorder {
     switch (event.kind) {
       case "node-enter": this.economyTimeline.nodeEntries.push(event); break;
       case "biome-level-up": this.economyTimeline.biomeLevelUps.push(event); break;
-      case "catalyst-gain": this.economyTimeline.catalystGains.push(event); break;
       case "craft": this.economyTimeline.crafts.push(event); break;
       case "evolution": this.economyTimeline.evolutions.push(event); break;
       case "stance-craft": this.economyTimeline.stanceCrafts.push(event); break;
@@ -482,8 +473,6 @@ export class Recorder {
       reason,
       detail,
       essences: { ...self.essences },
-      catalysts: { ...self.catalysts },
-      catalystProgress: { ...self.catalystProgress },
       biomeLevels: { ...self.biomeLevel },
       globalMastery: self.globalMastery,
       itemUpgrades: { ...self.itemUpgrades },
@@ -598,7 +587,6 @@ export class Recorder {
     stats.concurrencyTotal += attackers;
     stats.maxConcurrency = Math.max(stats.maxConcurrency, attackers);
 
-    this.trackProgressionDeltas(obs, nodeId);
     this.trackContention(obs, nodeId);
     this.sampleBossDiagnostics(obs);
     this.trackFormationAttrition(obs, now, nodeId, attackers);
@@ -953,36 +941,6 @@ export class Recorder {
       diag.summons.maxLiving = Math.max(diag.summons.maxLiving, living);
       if (living === 0) diag.summons.emptySamples += 1;
     }
-  }
-
-  /**
-   * Catalysts are minted server-side from kill progress and never announced, so
-   * the only honest way to see income is to watch the wallet move.
-   */
-  private trackProgressionDeltas(obs: Observation, nodeId: string): void {
-    const self = obs.self;
-    if (!self) return;
-
-    for (const [family, amount] of Object.entries(self.catalysts)) {
-      const previous = this.lastCatalysts[family] ?? 0;
-      if (amount > previous) {
-        const gained = amount - previous;
-        const ctx = this.context(nodeId);
-        const modifier = ctx.nodeModifier ?? "none";
-        const stats = this.currentBiome();
-        stats.catalystsByModifier[modifier] =
-          (stats.catalystsByModifier[modifier] ?? 0) + gained;
-        this.emit({
-          kind: "catalyst-gain",
-          atMs: this.now(),
-          family,
-          amount: gained,
-          context: ctx,
-        });
-      }
-    }
-    this.lastCatalysts = { ...self.catalysts };
-    this.lastBiomeLevels = { ...self.biomeLevel };
   }
 
   private trackContention(obs: Observation, nodeId: string): void {

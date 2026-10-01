@@ -171,8 +171,7 @@ const header: RunHeader = {
   rewardMultiplier: 1, taints: [],
   economyCandidate: {
     id: 'test', revision: 'test-revision', arm: 'C',
-    t1Plus5EssenceCostMultiplier: 0.75, catalystProgressPerUnitT1: 150,
-    catalystsScaledByRewardMultiplier: false,
+    t1Plus5EssenceCostMultiplier: 0.75,
     t1BiomeXpRewardMultiplier: 2, t1BiomeEssenceRewardMultiplier: 2,
     t1Plus5EssenceCosts: {},
   },

@@ -1,6 +1,5 @@
 import {
   ESSENCE_TYPES,
-  GAME_CONFIG,
   biomeLevelCap,
   type EssenceType,
 } from '@mmo-idle/shared';
@@ -17,7 +16,7 @@ import { setupArena, teardownArena, BOT_SPAWN } from './arena';
 import { materializeBot, BENCH_BOT_ID } from './botFactory';
 import { BalanceMetricsCollector } from './metrics';
 import { ConcurrencySampler } from './concurrency';
-import { diffLedger, perHour, snapshotLedger } from './ledger';
+import { diffLedger, snapshotLedger } from './ledger';
 import type { FarmTarget } from './farmTargets';
 import type { BuildSpec, FarmRunResult } from './types';
 
@@ -184,11 +183,7 @@ export function runFarm(
     }
 
     const after = snapshotLedger(bot);
-    const delta = diffLedger(
-      before,
-      after,
-      GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT,
-    );
+    const delta = diffLedger(before, after);
 
     const simDurationMs = ticks * dt;
     const hours = simDurationMs / MS_PER_HOUR;
@@ -218,11 +213,6 @@ export function runFarm(
       essencePerHour: essenceRates(delta.essences, hours),
       essenceSum: delta.essenceTotal,
       essenceSumPerHour: hours > 0 ? delta.essenceTotal / hours : 0,
-
-      catalystTotal: delta.catalysts,
-      catalystPerHour: perHour(delta.catalysts, hours),
-      catalystSum: delta.catalystTotal,
-      catalystSumPerHour: hours > 0 ? delta.catalystTotal / hours : 0,
 
       biomeXpTotal: delta.biomeXP[target.biomeGroup] ?? 0,
       biomeXpPerHour:

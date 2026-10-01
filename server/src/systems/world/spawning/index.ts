@@ -19,11 +19,8 @@ import {
   moverOverlapsBlockShapes,
   navigationBodyHalfExtents,
   nearestWalkableCell,
-  NODE_MODIFIERS,
   blendSpawnPick,
   nodeSpawnBlend,
-  modifierStatScalars,
-  modifiedDamageReduction,
   respawnNodeIdForNodeId,
   type MonsterPatrolRoute,
   type Vec2,
@@ -209,35 +206,16 @@ export function createMonster(
       ? Math.round(def.stats.attack * DUNGEON_ATK_MULT)
       : def.stats.attack;
 
-  // Reshape non-boss monsters around the node's modifier, composing on top of the
-  // dungeon mults above. Bosses are immune. Unlike the previous pace design these
-  // scalars touch DEFENCE and HEALTH as well as offence, and they are not
-  // threat-budget-neutral — a modifier is a net difficulty increase that
-  // `modifierRewardMult` pays for at kill time. Every value bakes into the entity
-  // at spawn; nothing rides a runtime component.
-  const nodeModifier = isBoss ? undefined : NODE_MODIFIERS[nodeId];
-  const modBiomeTier = NODE_BIOMES[nodeId]?.biomeTier ?? 0;
-  const modScalars = nodeModifier
-    ? modifierStatScalars(nodeModifier.modifier, modBiomeTier)
-    : null;
-  const hp = modScalars
-    ? Math.max(1, Math.round(hpBase * modScalars.hpMult))
-    : hpBase;
-  const attack = modScalars
-    ? Math.max(1, Math.round(atkBase * modScalars.attackMult))
-    : atkBase;
-  const attackCooldown = modScalars
-    ? Math.max(1, Math.round(def.stats.attackCooldown * modScalars.attackCooldownMult))
-    : def.stats.attackCooldown;
-  const speed = modScalars
-    ? def.stats.speed * modScalars.moveSpeedMult
-    : def.stats.speed;
-  const plating = modScalars
-    ? Math.round(def.stats.plating * modScalars.platingMult)
-    : def.stats.plating;
-  const damageReduction = modScalars
-    ? modifiedDamageReduction(def.stats.damageReduction, modScalars.incomingDamageMult)
-    : def.stats.damageReduction;
+  // Node modifiers no longer reshape monster stats (progression rework Phase 2b) —
+  // a T2-T4 node's modifier is authoring identity only now (node count, display
+  // name), so every monster spawns at its dungeon-adjusted base with nothing
+  // further applied.
+  const hp = hpBase;
+  const attack = atkBase;
+  const attackCooldown = def.stats.attackCooldown;
+  const speed = def.stats.speed;
+  const plating = def.stats.plating;
+  const damageReduction = def.stats.damageReduction;
 
   const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
   const pullRange = isTestRoom ? 0 : def.stats.pullRange;

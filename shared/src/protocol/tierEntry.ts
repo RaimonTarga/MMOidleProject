@@ -16,8 +16,6 @@ import type { PlayerView } from "./views";
  */
 export interface TierEntryWallet {
   essences: Record<EssenceType, number>;
-  catalysts: Record<string, number>;
-  catalystProgress?: Record<string, number>;
 }
 
 export type TierEntryEconomyPolicy =
@@ -97,7 +95,6 @@ export interface TierEntryInitialState {
   knownRites: string[];
   equippedRites: EquippedRites;
   initialEssences: Record<EssenceType, number>;
-  initialCatalysts: Record<string, number>;
 }
 
 export interface TierEntryApplyResult {

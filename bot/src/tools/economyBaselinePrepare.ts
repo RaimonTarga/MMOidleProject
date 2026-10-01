@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { GAME_CONFIG, NODE_BIOMES, NODE_MODIFIERS, NATIVE_MODIFIER,
-  modifierRewardMult, modifierSpawnFactor, RECIPE_DATABASE, catalystProgressRewardMult,
+  RECIPE_DATABASE,
   tierEntryProfileFromT1Snapshot } from '@mmo-idle/shared';
 import { ROUTES } from '../routes/index';
 import { validateProfile } from '../tierEntry/validate';
@@ -40,8 +40,10 @@ const nodes = Object.entries(NODE_BIOMES)
     const modifier = NODE_MODIFIERS[nodeId]?.modifier;
     return { nodeId, biome: n.biomeGroup, contentTier: n.biomeTier, modifier,
       native: modifier === NATIVE_MODIFIER[n.biomeGroup],
-      rewardPremium: modifierRewardMult(modifier, n.biomeTier),
-      authoredMobDensity: n.mobDensity ?? null, spawnFactor: modifierSpawnFactor(modifier, n.biomeTier),
+      // Node modifiers carry no reward/population effect any more (progression
+      // rework Phase 2b) -- both are frozen at neutral for this archived report shape.
+      rewardPremium: 1,
+      authoredMobDensity: n.mobDensity ?? null, spawnFactor: 1,
       reachability: 'requires-entry-state-travel-check' };
   });
 const selectedRoutes = actors.flatMap(a => [1, 2].map(t => {
@@ -141,8 +143,7 @@ write('campaign.json', {
   normalNodes: nodes.length, snapshotFilesInspected: snapshots.length,
   provenanceCandidates: snapshots.filter(s => s.candidateOnly).length,
   rewardFacts: { biomeXp: GAME_CONFIG.BIOME_XP_REWARD_MULT_BY_TIER.slice(1, 5),
-    essence: GAME_CONFIG.BIOME_ESSENCE_TIER_MULT.slice(1, 5), catalystThreshold: GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT,
-    catalystTierMultipliers: [1, 2, 3, 4].map(catalystProgressRewardMult) },
+    essence: GAME_CONFIG.BIOME_ESSENCE_TIER_MULT.slice(1, 5) },
   pacingTargets: null, pacingVerdict: 'unset-awaiting-product-targets',
   confirmation: { durationSimulatedMs: 3600000, timeScale: 1, red: 'all',
     yellowPairsMaximum: 8, yellowSelection: 'largest death-rate reduction first; tie by ratio descending then cell id',

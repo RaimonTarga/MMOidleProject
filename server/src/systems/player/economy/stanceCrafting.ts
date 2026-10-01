@@ -4,7 +4,7 @@ import { runicLoadoutFromProgression, runicPointEditAllowed, attunedAbilityIds, 
  * Stance crafting + loadout (system rework Step 10).
  *
  * Crafting a stance recipe LEARNS the stance (adds it to
- * `TracksProgression.knownStances`), spending essence + catalysts and gating on
+ * `TracksProgression.knownStances`), spending essence and gating on
  * Biome Mastery — mirroring rune / ability crafting. Attuning learned stances
  * reserves RP once; the default and Rune destinations use that attuned pool.
  * Updating the default resets the active posture and recalculates stats.
@@ -16,7 +16,6 @@ import {
   ESSENCE_TYPES,
   ESSENCE_LABELS,
   TEST_ROOM_NODE_ID,
-  catalystLabel,
   emptyEquippedStances,
   isStanceRecipeUnlocked,
   type StanceSlot,
@@ -52,9 +51,6 @@ export function craftStanceRecipe(
   const isTestRoom = entity.hasPosition.nodeId === TEST_ROOM_NODE_ID;
   if (isTestRoom) {
     for (const type of ESSENCE_TYPES) prog.essences[type] = TEST_ROOM_ESSENCE_AMOUNT;
-    for (const group of Object.keys(recipe.catalystCost ?? {})) {
-      prog.catalysts[group] = TEST_ROOM_ESSENCE_AMOUNT;
-    }
     markSliceDirty(world, entity, "tracksProgression");
   } else if (
     !isStanceRecipeUnlocked(recipe, {
@@ -80,22 +76,7 @@ export function craftStanceRecipe(
     }
   }
 
-  const catalystEntries = Object.entries(recipe.catalystCost ?? {}) as [string, number][];
-  for (const [group, amount] of catalystEntries) {
-    const held = prog.catalysts[group] ?? 0;
-    if (held < amount) {
-      return {
-        recipeId,
-        success: false,
-        reason: `Not enough ${catalystLabel(group)}. Need ${amount}, have ${held}.`,
-      };
-    }
-  }
-
   for (const [type, amount] of costEntries) prog.essences[type] -= amount;
-  for (const [group, amount] of catalystEntries) {
-    prog.catalysts[group] = (prog.catalysts[group] ?? 0) - amount;
-  }
 
   prog.knownStances = [...known, recipe.stanceId];
   markSliceDirty(world, entity, "tracksProgression");

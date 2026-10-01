@@ -5,7 +5,6 @@ import {
   getMaxUpgrade,
   globalMastery,
   upgradeCostFor,
-  upgradeCatalystCostFor,
 } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
@@ -49,7 +48,6 @@ export function upgradeItem(
       currentPlus: current,
       biomeLevel,
       essences: entity.tracksProgression.essences,
-      catalysts: entity.tracksProgression.catalysts,
       globalMastery: globalMastery(entity.tracksProgression.biomeLevel),
       t1Plus5EssenceCostMultiplier:
         world.t1EconomyConfigForPlayer(entity.isPlayer.id).t1Plus5EssenceCostMultiplier,
@@ -71,13 +69,6 @@ export function upgradeItem(
     for (const [type, amount] of Object.entries(cost)) {
       entity.tracksProgression.essences[type as EssenceType] =
         (entity.tracksProgression.essences[type as EssenceType] ?? 0) - (amount ?? 0);
-    }
-    const catalystCost = upgradeCatalystCostFor(def, targetPlus);
-    if (catalystCost) {
-      for (const [group, amount] of Object.entries(catalystCost)) {
-        entity.tracksProgression.catalysts[group] =
-          (entity.tracksProgression.catalysts[group] ?? 0) - (amount ?? 0);
-      }
     }
     markSliceDirty(world, entity, 'tracksProgression');
   }

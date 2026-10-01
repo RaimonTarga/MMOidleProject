@@ -1,6 +1,5 @@
 import {
   ESSENCE_TYPES,
-  NODE_MODIFIER_FAMILIES,
   RECIPE_DATABASE,
   type EssenceType,
   type TierEntryProfile,
@@ -16,33 +15,34 @@ import {
  *   earned. Deterministic, derived from the canonical T1 route (see
  *   `profiles.ts`).
  *
- *   CARRYOVER ECONOMY — essence and catalysts left in the wallet. This is NOT
- *   deterministic in the real game: it depends on how long the T1 boss
- *   gauntlet took, which nodes were farmed, and what the player chose not to
- *   buy. It therefore has to be an explicitly labelled MODEL, never a silent
- *   constant.
+ *   CARRYOVER ECONOMY — essence left in the wallet. This is NOT deterministic
+ *   in the real game: it depends on how long the T1 boss gauntlet took, which
+ *   nodes were farmed, and what the player chose not to buy. It therefore has
+ *   to be an explicitly labelled MODEL, never a silent constant.
  *
  * ── Why the previous constant was replaced ────────────────────────────────
  * The first version of this harness gave every entry profile 1,500 of EVERY
- * essence and 25 of EVERY catalyst family. Measured against live recipe data
- * that is not a "starting wallet", it is most of a finished tier:
+ * essence. Measured against live recipe data that is not a "starting
+ * wallet", it is most of a finished tier:
  *
- *   ruinous-axe (Cave T2 weapon), crafted and taken to +5 .. 1,164 red + 3 swarming
- *   quake-hammer (Mountain T2 weapon), crafted to +5 ...... 1,222 blue + 3 heavy
+ *   ruinous-axe (Cave T2 weapon), crafted and taken to +5 .. 1,164 red
+ *   quake-hammer (Mountain T2 weapon), crafted to +5 ...... 1,222 blue
  *
  * 1,500 of a colour buys a full T2 weapon at +5 outright with change left, in
- * every colour simultaneously, and 25 catalysts covers roughly eight items'
- * worth of a family that a real character mints slowly. Any run started from
- * that wallet skips the entire early-T2 economy, so it can report combat
- * outcomes but cannot report progression pacing, gear adoption ORDER, or
- * resource-blocked time — three of the things a T2 campaign exists to measure.
+ * every colour simultaneously. Any run started from that wallet skips the
+ * entire early-T2 economy, so it can report combat outcomes but cannot
+ * report progression pacing, gear adoption ORDER, or resource-blocked time —
+ * three of the things a T2 campaign exists to measure.
+ *
+ * Progression rework Phase 2b: the catalyst wallet and the "catalyst-primed"
+ * entry mode it existed for are both retired — no recipe spends a catalyst
+ * any more, so there is nothing left for that mode to prime.
  */
-export type EntryEconomyMode = "clean" | "natural" | "catalyst-primed";
+export type EntryEconomyMode = "clean" | "natural";
 
 export interface EntryWalletModel {
   mode: EntryEconomyMode;
   essences: Record<EssenceType, number>;
-  catalysts: Record<string, number>;
   /** Human-readable provenance, copied into run artifacts. */
   derivation: string;
   /** True when the numbers came from measured run evidence rather than a model. */
@@ -73,15 +73,6 @@ export function largestT1FinalUpgradeStep(): Record<EssenceType, number> {
 }
 
 /**
- * Catalysts held spare at entry, per family.
- *
- * Anchored the same way: the deepest single T1 upgrade step costs 1 catalyst
- * of one family, so "two spare of each" is one unspent purchase plus one, and
- * is roughly two thirds of ONE T2 item's crafted-to-+5 catalyst bill (3).
- */
-const NATURAL_SPARE_CATALYSTS = 2;
-
-/**
  * ⚠ UNMEASURED. This is a documented conservative MODEL, not evidence.
  *
  * Model: "the character stopped one purchase short". A T1-completing character
@@ -106,99 +97,36 @@ export function naturalEntryWallet(): EntryWalletModel {
   return {
     mode: "natural",
     essences,
-    catalysts: Object.fromEntries(
-      NODE_MODIFIER_FAMILIES.map((family) => [family, NATURAL_SPARE_CATALYSTS]),
-    ),
     derivation:
       "MODEL, NOT MEASURED: per-colour = the largest single Tier-1 +5 upgrade step in " +
-      "that colour, read live from RECIPE_DATABASE ('stopped one purchase short'); " +
-      `catalysts = ${NATURAL_SPARE_CATALYSTS} spare per family. Replace with ` +
-      "walletFromT1Run() output once a canonical T1 run exists.",
+      "that colour, read live from RECIPE_DATABASE ('stopped one purchase short'). " +
+      "Replace with walletFromT1Run() output once a canonical T1 run exists.",
     measured: false,
   };
 }
 
 /**
  * Zero carryover. The control arm for anything economy-shaped: every essence
- * and catalyst a Clean-entry run spends in Tier 2 was earned in Tier 2, so
- * resource-blocked time and gear adoption ORDER mean what they say.
+ * a Clean-entry run spends in Tier 2 was earned in Tier 2, so resource-blocked
+ * time and gear adoption ORDER mean what they say.
  */
 export function cleanEntryWallet(): EntryWalletModel {
   return {
     mode: "clean",
     essences: Object.fromEntries(ESSENCE_TYPES.map((t) => [t, 0])) as Record<EssenceType, number>,
-    catalysts: Object.fromEntries(NODE_MODIFIER_FAMILIES.map((f) => [f, 0])),
     derivation: "Zero carryover by construction — the economy-isolation control arm.",
-    measured: true,
-  };
-}
-
-/**
- * Total Tier-2 catalyst demand per family, derived live: for every Tier-2
- * recipe, the WORSE of its evolve and reconstruct catalyst costs (which path a
- * character gets is decided by its Tier-1 history, not by the route), plus every
- * `+5` upgrade step's catalyst cost.
- */
-export function totalT2CatalystDemand(): Record<string, number> {
-  const demand = Object.fromEntries(NODE_MODIFIER_FAMILIES.map((f) => [f, 0]));
-  const sum = (cost: Partial<Record<string, number>> | undefined): number =>
-    Object.values(cost ?? {}).reduce<number>((a, b) => a + (b ?? 0), 0);
-  for (const recipe of RECIPE_DATABASE.values()) {
-    if (recipe.tier !== 2) continue;
-    const worst =
-      sum(recipe.reconstructCatalystCost) > sum(recipe.catalystCost)
-        ? recipe.reconstructCatalystCost
-        : recipe.catalystCost;
-    for (const cost of [worst, ...(recipe.upgrades ?? []).map((u) => u.catalystCost)]) {
-      for (const [family, amount] of Object.entries(cost ?? {})) {
-        demand[family] = (demand[family] ?? 0) + (amount ?? 0);
-      }
-    }
-  }
-  return demand;
-}
-
-/**
- * Clean essence, but catalyst discovery taken off the critical path.
- *
- * ── Why this arm has to exist ──────────────────────────────────────────────
- *
- * The dev reward multiplier now scales catalyst progress with the rest of a
- * kill's payout, so accelerated runs can earn catalysts naturally. This arm is
- * still useful when a test needs an exact, immediately available catalyst wallet
- * and must remove kill-count variance from the setup.
- *
- * This arm carries the whole tier's catalyst demand and no essence at all, so a
- * progression-integrity run measures recipes, gates, gear, bosses and combat
- * rather than catalyst discovery time.
- *
- * ⚠ It is NEVER admissible evidence about the economy. Catalyst supply is one of
- * the things a Tier-2 balance pass most needs to measure, and this arm deletes
- * it by construction. Use `clean` or `natural` for anything economy-shaped.
- */
-export function catalystPrimedWallet(): EntryWalletModel {
-  return {
-    mode: "catalyst-primed",
-    essences: Object.fromEntries(ESSENCE_TYPES.map((t) => [t, 0])) as Record<EssenceType, number>,
-    catalysts: totalT2CatalystDemand(),
-    derivation:
-      "Zero essence; catalysts = the full derived Tier-2 demand per family (worst " +
-      "acquisition path plus every +5 upgrade step). PROGRESSION-INTEGRITY ARM ONLY: " +
-      "catalyst supply is deleted by construction, so this is never economy evidence.",
     measured: true,
   };
 }
 
 export function entryWallet(mode: EntryEconomyMode): EntryWalletModel {
   if (mode === "clean") return cleanEntryWallet();
-  if (mode === "catalyst-primed") return catalystPrimedWallet();
   return naturalEntryWallet();
 }
 
 /** Shape of the closing wallet a bot run summary records. */
 export interface T1RunClosingWallet {
   essences?: Partial<Record<EssenceType, number>>;
-  catalysts?: Record<string, number>;
 }
 
 /**
@@ -222,9 +150,6 @@ export function walletFromT1Run(
     essences: Object.fromEntries(
       ESSENCE_TYPES.map((t) => [t, Math.max(0, Math.floor(closing.essences?.[t] ?? 0))]),
     ) as Record<EssenceType, number>,
-    catalysts: Object.fromEntries(
-      NODE_MODIFIER_FAMILIES.map((f) => [f, Math.max(0, Math.floor(closing.catalysts?.[f] ?? 0))]),
-    ),
     derivation: `MEASURED from canonical run ${provenance.runId} (route ${provenance.routeId}).`,
     measured: true,
   };
@@ -236,8 +161,6 @@ export function withWallet(profile: TierEntryProfile, wallet: EntryWalletModel):
     ...profile,
     wallet: {
       essences: { ...wallet.essences },
-      catalysts: { ...wallet.catalysts },
-      catalystProgress: {},
     },
   };
 }

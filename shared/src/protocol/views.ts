@@ -94,10 +94,6 @@ export interface PlayerView {
   partyMembers: PartyMember[];
   nodeId: string;
   essences: Record<EssenceType, number>;
-  /** Node-modifier catalyst wallet, keyed by modifier family. */
-  catalysts: Record<string, number>;
-  /** Accumulating progress toward the next modifier-family catalyst. */
-  catalystProgress: Record<string, number>;
   /** Lineage shard wallet, keyed by packet (progression rework Phase 1). */
   shards: Partial<Record<PacketId, number>>;
   /** Boss capstone wallet, keyed by biome — the gate cost of a lineage form. */
@@ -378,8 +374,6 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     partyMembers: entity.inParty?.members ?? [],
     nodeId: entity.hasPosition.nodeId,
     essences: progression.essences,
-    catalysts: progression.catalysts,
-    catalystProgress: progression.catalystProgress,
     shards: progression.shards ?? {},
     capstones: progression.capstones ?? {},
     level: progression.level,

@@ -103,8 +103,6 @@ export function resetPlayerProgress(world: World, player: PlayerEntity): GameAct
   player.tracksProgression.essences = Object.fromEntries(
     ESSENCE_TYPES.map((type) => [type, 0]),
   ) as typeof player.tracksProgression.essences;
-  player.tracksProgression.catalysts = {};
-  player.tracksProgression.catalystProgress = {};
   player.tracksProgression.biomeXP = {};
   player.tracksProgression.biomeLevel = {};
   player.tracksProgression.unlockedRecipes = [];
@@ -347,10 +345,6 @@ export function applyTierEntryProfile(
       return fail(`Profile wallet has an invalid ${type} essence amount.`);
     }
   }
-  for (const [family, amount] of Object.entries(profile.wallet?.catalysts ?? {})) {
-    if (!Number.isFinite(amount) || amount < 0) return fail(`Profile wallet has invalid ${family} catalysts.`);
-  }
-
   const itemIds = [...new Set([
     ...profile.inventory,
     ...Object.values(profile.equipment),
@@ -431,8 +425,6 @@ export function applyTierEntryProfile(
   player.tracksProgression.level = Math.max(0, Math.floor(profile.level));
   player.tracksProgression.skillPoints = Math.max(0, Math.floor(profile.skillPoints));
   player.tracksProgression.essences = { ...profile.wallet.essences };
-  player.tracksProgression.catalysts = { ...profile.wallet.catalysts };
-  player.tracksProgression.catalystProgress = { ...(profile.wallet.catalystProgress ?? {}) };
   player.tracksProgression.biomeLevel = { ...(profile.biomeLevels ?? {}) };
   player.tracksProgression.biomeXP = { ...(profile.biomeXP ?? {}) };
   player.tracksProgression.playerTier = profile.targetTier;

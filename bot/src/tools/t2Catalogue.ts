@@ -25,17 +25,15 @@ for (const group of ORDER) {
     .sort((a, b) => a.requiredBiomeLevel - b.requiredBiomeLevel);
   for (const r of recipes) {
     const total: Record<string, number> = { ...r.cost } as unknown as Record<string, number>;
-    const cat: Record<string, number> = { ...(r.catalystCost ?? {}) } as unknown as Record<string, number>;
     for (const u of r.upgrades ?? []) {
       for (const [k, v] of Object.entries(u.cost)) total[k] = (total[k] ?? 0) + (v as number);
-      for (const [k, v] of Object.entries(u.catalystCost ?? {})) cat[k] = (cat[k] ?? 0) + (v as number);
     }
     console.log(
       `  L${String(r.requiredBiomeLevel).padStart(2)} ${r.slot.padEnd(8)} ${r.id.padEnd(24)}` +
         ` aps=${r.attacksPerSecond ?? "-"} stats=${JSON.stringify(r.stats)}` +
         `${r.mechanicEffects ? ` mech=${JSON.stringify(r.mechanicEffects)}` : ""}` +
-        `\n        craft=${JSON.stringify(r.cost)}${r.catalystCost ? `+${JSON.stringify(r.catalystCost)}` : ""}` +
-        ` | to+5=${JSON.stringify(total)}+${JSON.stringify(cat)}`,
+        `\n        craft=${JSON.stringify(r.cost)}` +
+        ` | to+5=${JSON.stringify(total)}`,
     );
     if (r.description) console.log(`        "${r.description}"`);
   }

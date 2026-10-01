@@ -12,7 +12,7 @@ export type NodeRef =
       biomeGroup: string;
       tier: number;
       pick?: "first" | "rotate" | "uncleared" | "current";
-      /** Prefer nodes whose live modifier mints this catalyst family. */
+      /** Prefer a node carrying this modifier (T2-T4 authoring identity only; no gameplay effect). */
       modifier?: string;
     }
   | { kind: "dungeon"; biomeGroup: string; tier: number };
@@ -21,7 +21,6 @@ export type NodeRef =
 export type Condition =
   | { type: "biomeLevelAtLeast"; biomeGroup: string; level: number }
   | { type: "essenceAtLeast"; essence: EssenceType; amount: number }
-  | { type: "catalystAtLeast"; family: string; amount: number }
   | { type: "recipeUnlocked"; recipeId: string }
   | { type: "hasItem"; definitionId: string }
   | { type: "itemAtLeastPlus"; definitionId: string; plus: number }
@@ -109,7 +108,7 @@ export type StepBody =
       toPlus: number;
       farmAt?: NodeRef;
       opportunistic?: boolean;
-      /** Treat farmAt as a preference; follow the actual missing essence/catalyst. */
+      /** Treat farmAt as a preference; follow the actual missing essence. */
       farmForMissingResources?: boolean;
     }
   | { type: "configureRunes"; rules: EquippedRule[] }

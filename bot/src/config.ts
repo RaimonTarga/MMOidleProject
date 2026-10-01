@@ -229,7 +229,7 @@ export function buildConfig(args: Record<string, string>): BotConfig {
     tierEntrySnapshotDir: args.tierEntrySnapshotDir,
     requireTierEntrySnapshot: args.requireTierEntrySnapshot === "true",
     entryEconomy:
-      args.entryEconomy === "natural" || args.entryEconomy === "catalyst-primed"
+      args.entryEconomy === "natural"
         ? args.entryEconomy
         : "clean",
     completionMode,

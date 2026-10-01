@@ -14,8 +14,6 @@ function presentationDefaults(projection: SpectatorPlayer): Partial<NetworkedEnt
       level: 0,
       skillPoints: 0,
       essences: {} as never,
-      catalysts: {},
-      catalystProgress: {},
       shards: {},
       capstones: {},
       biomeXP: {},

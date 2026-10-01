@@ -15,13 +15,11 @@ import {
   NO_STANCE_ID,
   ITEM_DATABASE,
   NODE_BIOMES,
-  NODE_MODIFIERS,
   biomeLevelCap,
   RECIPE_DATABASE,
   canUnlockSkillFromView,
   globalMasteryRequiredForUpgrade,
   SKILL_TREE,
-  upgradeCatalystCostFor,
   upgradeCeilingFromGlobalMastery,
   upgradeCostFor,
   type EquippedRule,
@@ -977,7 +975,7 @@ export class RouteExecutor {
       const recipe = RECIPE_DATABASE.get(recipeId);
       if (!recipe) throw new StallError("unknown recipe in route", { recipeId });
 
-      const farmNode = this.resourceFarmNode(step.farmAt, recipe.recipeGroup, recipe.catalystCost);
+      const farmNode = this.resolveFarmNode(step.farmAt, recipe.recipeGroup);
 
       if (!obs.canCraft(recipeId)) {
         if (!farmNode) {
@@ -1009,9 +1007,6 @@ export class RouteExecutor {
             success: attempt.success,
             reason: attempt.reason,
             essenceSpent: attempt.success ? { ...recipe.cost } : {},
-            catalystsSpent: attempt.success
-              ? definedNumbers(recipe.catalystCost ?? {})
-              : {},
             context: recorder.context(obs.nodeId),
           }),
       );
@@ -1195,10 +1190,6 @@ export class RouteExecutor {
                   obs.economyConfig?.t1Plus5EssenceCostMultiplier,
                 ) ?? {})
               : {};
-          const stepCatalysts =
-            attempt.success && item
-              ? (upgradeCatalystCostFor(item, attempt.newLevel) ?? {})
-              : {};
           recorder.emit({
             kind: "upgrade",
             atMs: recorder.now(),
@@ -1208,7 +1199,6 @@ export class RouteExecutor {
             success: attempt.success,
             reason: attempt.reason,
             essenceSpent: { ...stepCost },
-            catalystsSpent: definedNumbers(stepCatalysts),
             context: recorder.context(obs.nodeId),
           });
         },
@@ -1265,15 +1255,12 @@ export class RouteExecutor {
       if (!recipe) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown ability recipe in route", { step });
 
       const farmNode = recipe.recipeGroup
-        ? this.resourceFarmNode(step.farmAt, recipe.recipeGroup, recipe.catalystCost)
+        ? this.resolveFarmNode(step.farmAt, recipe.recipeGroup)
         : (step.farmAt ? resolveNode(step.farmAt, obs, this.rotation) : null);
 
       const affordable = (): boolean => {
         for (const [type, amount] of Object.entries(recipe.cost)) {
           if (obs.essence(type as EssenceType) < (amount ?? 0)) return false;
-        }
-        for (const [family, amount] of Object.entries(recipe.catalystCost ?? {})) {
-          if (obs.catalyst(family) < (amount ?? 0)) return false;
         }
         return isAbilityRecipeUnlocked(recipe, obs.requireSelf());
       };
@@ -1287,10 +1274,6 @@ export class RouteExecutor {
           for (const [type, amount] of Object.entries(recipe.cost)) {
             const short = (amount ?? 0) - obs.essence(type as EssenceType);
             if (short > 0) missing[`essence.${type}`] = short;
-          }
-          for (const [family, amount] of Object.entries(recipe.catalystCost ?? {})) {
-            const short = (amount ?? 0) - obs.catalyst(family);
-            if (short > 0) missing[`catalyst.${family}`] = short;
           }
           if (recipe.recipeGroup) {
             const short =
@@ -1889,11 +1872,7 @@ export class RouteExecutor {
       });
     }
 
-    const farmNode = this.resourceFarmNode(
-      step.farmAt,
-      recipe.recipeGroup,
-      step.mode === "evolve" ? recipe.catalystCost : recipe.reconstructCatalystCost,
-    );
+    const farmNode = this.resolveFarmNode(step.farmAt, recipe.recipeGroup);
     const canDo = (): boolean => obs.canEvolve(step.recipeId, step.mode).ok;
     const missing = (): Record<string, number> => {
       const cost = step.mode === "evolve" ? recipe.cost : recipe.reconstructCost;
@@ -1901,13 +1880,6 @@ export class RouteExecutor {
       for (const [type, amount] of Object.entries(cost ?? {})) {
         const short = (amount ?? 0) - obs.essence(type as EssenceType);
         if (short > 0) out[`essence.${type}`] = short;
-      }
-      const catalysts = step.mode === "evolve"
-        ? recipe.catalystCost
-        : recipe.reconstructCatalystCost;
-      for (const [family, amount] of Object.entries(catalysts ?? {})) {
-        const short = (amount ?? 0) - obs.catalyst(family);
-        if (short > 0) out[`catalyst.${family}`] = short;
       }
       if (!obs.recipeUnlocked(step.recipeId)) {
         out[`biomeLevel.${recipe.recipeGroup}`] = Math.max(
@@ -1942,9 +1914,6 @@ export class RouteExecutor {
       () => this.deps.intents.evolveItem(step.recipeId, step.mode),
       (attempt) => {
         const essenceCost = step.mode === "evolve" ? recipe.cost : recipe.reconstructCost;
-        const catalystCost = step.mode === "evolve"
-          ? recipe.catalystCost
-          : recipe.reconstructCatalystCost;
         recorder.emit({
           kind: "evolution",
           atMs: recorder.now(),
@@ -1954,7 +1923,6 @@ export class RouteExecutor {
           success: attempt.success,
           reason: attempt.reason,
           essenceSpent: attempt.success ? { ...(essenceCost ?? {}) } : {},
-          catalystsSpent: attempt.success ? definedNumbers(catalystCost ?? {}) : {},
           context: recorder.context(obs.nodeId),
         });
       },
@@ -1994,9 +1962,6 @@ export class RouteExecutor {
       for (const [type, amount] of Object.entries(recipe.cost)) {
         if (obs.essence(type as EssenceType) < (amount ?? 0)) return false;
       }
-      for (const [family, amount] of Object.entries(recipe.catalystCost ?? {})) {
-        if (obs.catalyst(family) < (amount ?? 0)) return false;
-      }
       return true;
     };
     const missing = (): Record<string, number> => {
@@ -2004,10 +1969,6 @@ export class RouteExecutor {
       for (const [type, amount] of Object.entries(recipe.cost)) {
         const short = (amount ?? 0) - obs.essence(type as EssenceType);
         if (short > 0) out[`essence.${type}`] = short;
-      }
-      for (const [family, amount] of Object.entries(recipe.catalystCost ?? {})) {
-        const short = (amount ?? 0) - obs.catalyst(family);
-        if (short > 0) out[`catalyst.${family}`] = short;
       }
       if (!unlocked() && recipe.recipeGroup) {
         out[`biomeLevel.${recipe.recipeGroup}`] = Math.max(
@@ -2019,7 +1980,7 @@ export class RouteExecutor {
     };
     if (!affordable()) {
       const farmNode = recipe.recipeGroup
-        ? this.resourceFarmNode(step.farmAt, recipe.recipeGroup, recipe.catalystCost)
+        ? this.resolveFarmNode(step.farmAt, recipe.recipeGroup)
         : (step.farmAt ? resolveNode(step.farmAt, obs, this.rotation) : null);
       if (!farmNode) throw new StallError("cannot satisfy stance requirement", { step, missing: missing() });
       await this.farmBlocked(
@@ -2043,7 +2004,6 @@ export class RouteExecutor {
       success: result.success,
       reason: result.reason,
       essenceSpent: { ...recipe.cost },
-      catalystsSpent: definedNumbers(recipe.catalystCost ?? {}),
       context: recorder.context(obs.nodeId),
     });
     await this.waitUntil(
@@ -2069,9 +2029,6 @@ export class RouteExecutor {
       for (const [type, amount] of Object.entries(recipe.cost)) {
         if (obs.essence(type as EssenceType) < (amount ?? 0)) return false;
       }
-      for (const [family, amount] of Object.entries(recipe.catalystCost ?? {})) {
-        if (obs.catalyst(family) < (amount ?? 0)) return false;
-      }
       return true;
     };
     const missing = (): Record<string, number> => {
@@ -2079,10 +2036,6 @@ export class RouteExecutor {
       for (const [type, amount] of Object.entries(recipe.cost)) {
         const short = (amount ?? 0) - obs.essence(type as EssenceType);
         if (short > 0) out[`essence.${type}`] = short;
-      }
-      for (const [family, amount] of Object.entries(recipe.catalystCost ?? {})) {
-        const short = (amount ?? 0) - obs.catalyst(family);
-        if (short > 0) out[`catalyst.${family}`] = short;
       }
       if (!unlocked() && recipe.recipeGroup) {
         out[`biomeLevel.${recipe.recipeGroup}`] = Math.max(
@@ -2094,7 +2047,7 @@ export class RouteExecutor {
     };
     if (!affordable()) {
       const farmNode = recipe.recipeGroup
-        ? this.resourceFarmNode(step.farmAt, recipe.recipeGroup, recipe.catalystCost)
+        ? this.resolveFarmNode(step.farmAt, recipe.recipeGroup)
         : (step.farmAt ? resolveNode(step.farmAt, obs, this.rotation) : null);
       if (!farmNode) throw new StallError("cannot satisfy rite requirement", { step, missing: missing() });
       await this.farmBlocked(
@@ -2217,37 +2170,17 @@ export class RouteExecutor {
     );
   }
 
-  /** Resolve an authored farm location without falling through to a different
-   * modifier when the route explicitly requested one. */
+  /** Resolve an authored farm location, falling back to the default node for
+   * the biome when the route leaves it unspecified. */
   private resolveFarmNode(ref: NodeRef | undefined, biomeGroup: string): string | null {
     if (ref) return resolveNode(ref, this.deps.obs, this.rotation);
     return this.defaultFarmNodeFor(biomeGroup);
   }
 
-  /** Choose a live modifier that can mint the first missing catalyst. An
-   * authored `farmAt` remains authoritative, including its requested modifier. */
-  private resourceFarmNode(
-    ref: NodeRef | undefined,
-    biomeGroup: string,
-    catalystCost: Partial<Record<string, number>> | undefined,
-  ): string | null {
-    const explicit = ref ? resolveNode(ref, this.deps.obs, this.rotation) : null;
-    if (ref) return explicit;
-    const preferred = this.defaultFarmNodeFor(biomeGroup);
-    const missingFamily = Object.entries(catalystCost ?? {}).find(
-      ([family, amount]) => this.deps.obs.catalyst(family) < (amount ?? 0),
-    )?.[0];
-    if (!missingFamily) return preferred;
-    const preferredInfo = preferred ? NODE_BIOMES[preferred] : undefined;
-    const tier = preferredInfo?.biomeTier ?? BIOME_START_TIER_BY_GROUP[biomeGroup] ?? 1;
-    return normalNodesFor(biomeGroup, tier, missingFamily)[0] ?? null;
-  }
-
   /**
    * Resolve the next live upgrade's actual bottleneck. Essence stays in the
-   * authored biome; a missing catalyst selects that biome's node carrying the
-   * required live modifier instead of assuming the generic `uncleared` pick
-   * happens to mint the right family.
+   * authored biome -- node modifiers carry no resource of their own any more
+   * (progression rework Phase 2b), so there is no second currency to retarget for.
    */
   private upgradeFarmNode(
     step: Extract<RouteStep, { type: "upgrade" }>,
@@ -2269,39 +2202,16 @@ export class RouteExecutor {
       const essenceCost = item ? upgradeCostFor(item, nextPlus, this.deps.obs.economyConfig?.t1Plus5EssenceCostMultiplier) ?? {} : {};
       const essence = Object.entries(essenceCost).find(([type, amount]) =>
         this.deps.obs.essence(type as EssenceType) < (amount ?? 0))?.[0];
-      const catalystCost = item ? upgradeCatalystCostFor(item, nextPlus) ?? {} : {};
-      const family = Object.entries(catalystCost).find(([type, amount]) =>
-        this.deps.obs.catalyst(type) < (amount ?? 0))?.[0];
-      if (!essence && !family) return preferred;
+      if (!essence) return preferred;
       const tier = preferred ? NODE_BIOMES[preferred]?.biomeTier : recipe.tier;
       const groups = [recipe.recipeGroup, ...Object.keys(BIOME_PRIMARY_ESSENCE)]
         .filter((group, index, all) => all.indexOf(group) === index &&
-          (!essence || BIOME_PRIMARY_ESSENCE[group] === essence));
+          BIOME_PRIMARY_ESSENCE[group] === essence);
       const candidates = groups.flatMap(group => normalNodesFor(group, tier ?? recipe.tier));
-      const matchingFamily = family ? candidates.filter(id => NODE_MODIFIERS[id]?.modifier === family) : candidates;
-      // If no node produces both, earn essence first, then reselect for catalysts.
-      const eligible = matchingFamily.length > 0 ? matchingFamily : essence ? candidates : [];
-      return preferred && eligible.includes(preferred) ? preferred : eligible[0] ?? null;
+      return preferred && candidates.includes(preferred) ? preferred : candidates[0] ?? null;
     }
 
-    // An explicit modifier is a hard authoring request. Farming an unrelated
-    // family forever would make the route look alive while never satisfying its
-    // real resource predicate.
-    if (step.farmAt?.kind === "biome" && step.farmAt.modifier) return preferred;
-
-    const item = ITEM_DATABASE.get(step.definitionId);
-    const catalystCost = item ? (upgradeCatalystCostFor(item, nextPlus) ?? {}) : {};
-    const missingFamily = Object.entries(catalystCost).find(
-      ([family, amount]) => this.deps.obs.catalyst(family) < (amount ?? 0),
-    )?.[0];
-    if (!missingFamily) return preferred;
-
-    const preferredInfo = preferred ? NODE_BIOMES[preferred] : undefined;
-    const biomeGroup = preferredInfo?.biomeGroup ?? recipe.recipeGroup;
-    const tier = preferredInfo?.biomeTier ?? BIOME_START_TIER_BY_GROUP[biomeGroup] ?? 1;
-    return normalNodesFor(biomeGroup, tier, missingFamily).find(
-      (nodeId) => NODE_MODIFIERS[nodeId]?.modifier === missingFamily,
-    ) ?? preferred;
+    return preferred;
   }
 
   /**
@@ -2448,15 +2358,6 @@ function progressSignal(obs: Observation): string {
   const essence = Object.values(self.essences).reduce((a, b) => a + b, 0);
   const xp = Object.values(self.biomeXP).reduce((a, b) => a + b, 0);
   return `${essence}|${xp}|${self.playerTier}|${self.bossesCleared.length}`;
-}
-
-/** Drop `undefined` holes so an optional cost record becomes a plain tally. */
-function definedNumbers(record: Partial<Record<string, number>>): Record<string, number> {
-  const out: Record<string, number> = {};
-  for (const [key, value] of Object.entries(record)) {
-    if (typeof value === "number") out[key] = value;
-  }
-  return out;
 }
 
 function defaultLabel(step: RouteStep): string {
