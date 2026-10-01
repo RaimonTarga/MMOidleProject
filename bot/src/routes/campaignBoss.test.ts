@@ -76,6 +76,8 @@ assert.deepEqual(preparation.completion, { type: "allOf", of: repair.steps.filte
 assert.deepEqual(repair.steps.filter(s => s.type === "assert"), route.steps.filter(s => s.type === "assert"));
 assert.deepEqual(repair.steps.filter(s => s.type === "configureBuild").map(s => s.build), [build]);
 assert.equal(repair.steps.some(s => s.type === "learnAbility" && s.abilityId === "expose-weakness" && s.attune !== false), false);
-for (const item of ["chaotic-axe", "plains-vest-t1", "swamp-charm-t1", "plains-boots-t1"]) {
+// chaotic-axe (weapon) is excluded: weapons are off the +N ladder entirely
+// (Phase 2b, Override A), so routes no longer author an upgrade step for it.
+for (const item of ["plains-vest-t1", "swamp-charm-t1", "plains-boots-t1"]) {
   assert(repair.steps.some(s => s.type === "upgrade" && s.definitionId === item && s.toPlus === 5));
 }

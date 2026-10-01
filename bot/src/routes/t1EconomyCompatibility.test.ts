@@ -139,6 +139,10 @@ for (const route of T1_CONTROLLED_ROUTES) {
       );
       if (previousEquip?.type === "equip") {
         for (const itemId of previousEquip.definitionIds) {
+          // Weapons are off the +N ladder entirely (Phase 2b, Override A: a
+          // weapon's power track is its lineage tree), so routes no longer
+          // author upgrade steps for them — nothing to check here.
+          if (ITEM_DATABASE.get(itemId)?.slot === "weapon") continue;
           assert((itemPlus.get(itemId) ?? 0) === 5, `${route.id}: ${itemId} reaches intended +5 boss loadout`);
         }
       }
