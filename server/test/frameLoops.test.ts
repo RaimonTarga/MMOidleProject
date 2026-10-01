@@ -45,7 +45,7 @@ import {
   getFrameCharge,
 } from '../src/systems/classes/shared/frameLoop';
 
-function assert(condition: unknown, message: string): void {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 

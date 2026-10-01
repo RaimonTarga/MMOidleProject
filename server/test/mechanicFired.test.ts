@@ -299,7 +299,8 @@ function exchange(player: PlayerEntity, defender: ReturnType<typeof monster>, me
   victim.hasHealth.hp = 10_000_000;
   victim.mitigatesDamage.plating = 0;
   victim.mitigatesDamage.damageReduction = 0;
-  victim.isMonster.evasion = 0;
+  // Nothing to clear for evasion: a monster's dodge fraction lives on its static
+  // definition, not on the entity, and this target authors none.
 
   for (let i = 0; i < bodies.length - 1; i++) {
     runFormationAttack(world, player, bodies[i]!, victim, 2_000);

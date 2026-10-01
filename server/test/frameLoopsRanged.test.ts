@@ -138,7 +138,10 @@ function punchbag(x: number, y = 400): MonsterEntity {
   monster.hasHealth.hp = 10_000_000;
   monster.mitigatesDamage.plating = 0;
   monster.mitigatesDamage.damageReduction = 0;
-  monster.isMonster.evasion = 0;
+  // No evasion to clear: a monster's dodge fraction comes from its static
+  // definition (`def.evasion`, overridable only by a boss script), not from a
+  // field on the entity, and `plains-slime` authors none. Picking a target that
+  // cannot dodge is what keeps these damage assertions exact.
   return monster;
 }
 
@@ -283,9 +286,15 @@ function fireShot(player: PlayerEntity, target: MonsterEntity): CombatContext {
 
   // THE POINT: nothing caps the ramp before the magazine runs dry. Warmonger's
   // path ramp stops at 15 stacks; a frame that inherited that cap would stall here.
+  //
+  // Asserted through an explicitly-typed local, not on the live field: a strict
+  // equality against the field would narrow its type to that literal for the rest
+  // of the function, and the `=== 0` check after the reload — the thing this test
+  // exists to prove — would become a comparison the compiler rejects as impossible.
+  const stacksAtTop: number = reload.clipSpeedStacks;
   assert(
-    reload.clipSpeedStacks === clip,
-    `the ramp must reach the clip length (${clip}), got ${reload.clipSpeedStacks}`,
+    stacksAtTop === clip,
+    `the ramp must reach the clip length (${clip}), got ${stacksAtTop}`,
   );
   close(
     player.performsAttack.attackCooldown,
@@ -307,8 +316,12 @@ function fireShot(player: PlayerEntity, target: MonsterEntity): CombatContext {
   // Reset on reload. The last shot emptied the clip and started the timer; its
   // deferred start hooks fire on the tail, which is what clears the ramp.
   assert(reload.reloadingMs > 0, 'the emptied clip should have started a reload');
+  // Read into a local: asserting on the live field would narrow its type to that
+  // literal, and the `=== 0` check below — which `finishShot` is what makes true —
+  // would then be a comparison the compiler believes can never hold.
+  const stacksBeforeReset: number = reload.clipSpeedStacks;
   assert(
-    reload.clipSpeedStacks === clip,
+    stacksBeforeReset === clip,
     'the ramp is still at its top until the reload-start hooks run',
   );
   finishShot(lastCtx!);
