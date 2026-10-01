@@ -94,5 +94,55 @@ export const AXE_LINEAGE: LineageDefinition = {
       name: 'Split Guard', description: 'Your mechanic leaves the target easier to hurt.',
       fx: 'empowered.weak-point', trigger: 'mechanic-fired', payoff: 'vulnerability',
     },
+
+    // ── T2 band (design §4): stat (L2), payoff (L3), amplifier (L5) ──────────
+    {
+      id: 'axe-t2-tempo-stat', lineageId: 'axe', tier: 2, row: 'stat', lane: 'tempo',
+      name: 'Looser Still', description: 'The head does more of the work than ever.',
+      fx: 'tempo.trail',
+    },
+    {
+      id: 'axe-t2-kill-chain-stat', lineageId: 'axe', tier: 2, row: 'stat', lane: 'kill-chain',
+      name: 'Deeper Scent', description: 'You move differently once several things have gone down.',
+      fx: 'kill-chain.trail',
+    },
+    {
+      id: 'axe-t2-empowered-stat', lineageId: 'axe', tier: 2, row: 'stat', lane: 'empowered',
+      name: 'Wider Arc', description: 'The arc keeps opening, and so does everything it finds.',
+      fx: 'empowered.trail',
+    },
+
+    {
+      id: 'axe-t2-tempo-payoff', lineageId: 'axe', tier: 2, row: 'payoff', lane: 'tempo',
+      name: 'Harder Bite', description: 'Every third hit bites twice, and bites deeper.',
+      fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'echo-hit',
+    },
+    {
+      id: 'axe-t2-kill-chain-payoff', lineageId: 'axe', tier: 2, row: 'payoff', lane: 'kill-chain',
+      name: 'Deeper Frenzy', description: 'A kill puts the next swings on a faster clock than before.',
+      fx: 'kill-chain.kill-pulse', trigger: 'kill', payoff: 'speed-window',
+    },
+    {
+      id: 'axe-t2-empowered-payoff', lineageId: 'axe', tier: 2, row: 'payoff', lane: 'empowered',
+      name: 'Wider Guard Split', description: 'Your mechanic leaves the target wide open, not merely easy to hurt.',
+      fx: 'empowered.weak-point', trigger: 'mechanic-fired', payoff: 'vulnerability',
+    },
+
+    // Amplifiers modify this tier's own payoff card, not the T1 one (design §4).
+    {
+      id: 'axe-t2-tempo-amplifier', lineageId: 'axe', tier: 2, row: 'amplifier', lane: 'tempo',
+      name: 'Wasted Swing Returns', description: 'The dead swing finds a second body to not be wasted on.',
+      fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'echo-hit', modifies: 'axe-t2-tempo-payoff',
+    },
+    {
+      id: 'axe-t2-kill-chain-amplifier', lineageId: 'axe', tier: 2, row: 'amplifier', lane: 'kill-chain',
+      name: 'Running Tally', description: 'A second kill inside the window resets it to full length.',
+      fx: 'kill-chain.kill-pulse', trigger: 'kill', payoff: 'speed-window', modifies: 'axe-t2-kill-chain-payoff',
+    },
+    {
+      id: 'axe-t2-empowered-amplifier', lineageId: 'axe', tier: 2, row: 'amplifier', lane: 'empowered',
+      name: 'Guard Split Wide', description: 'The opening reaches whatever stands beside the target too.',
+      fx: 'empowered.weak-point', trigger: 'mechanic-fired', payoff: 'vulnerability', modifies: 'axe-t2-empowered-payoff',
+    },
   ],
 };
