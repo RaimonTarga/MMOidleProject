@@ -631,15 +631,17 @@ on every lineage because their forms come from biomes that are alive at those ti
 Global Mastery band keeps its meaning (§4). Switching between two owned forms of one tier
 from different biomes re-resolves the band against the worn one.
 
-## 22. Ability pass and the Technique packet (decided 2026-10-01, scheduled after the playtest)
+## 22. Ability pass and the Technique packet (decided 2026-10-01; Technique pulled into run 4, the pass after the playtest)
 
 **Technique becomes the ninth packet.** It wants technique cooldown reduction and technique
 power (the stat the Plains Broadsword and the Desert staff/cross line already carry), fires
 on a new trigger kind `technique-cast`, and pays with a cooldown refund or a window that
 empowers the next Technique. Its keystone: a landed Technique counts as the class mechanic
 firing. The Broadsword's lanes become Kill chain, Empowered, Technique; the Desert forms
-crown Technique. Adding it touches shards, families, coverage and the bench, so it lands
-with the ability pass, not mid-run.
+crown Technique. Adding it touches shards, families, coverage and the bench, which the packet union
+enumerates at typecheck; it ships in run 4 (W1-G) so the playtest sees the real wallet.
+Plains Swarm drops Technique (area and control Techniques beat many weak bodies); Tempo
+keeps Forest Pack and Mountain Hopper.
 
 **The ability pass** (design session with the designer, then one run), paired with the T3
 class path review since both use the packet tags:

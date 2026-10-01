@@ -9,7 +9,7 @@ that carries this brief.
 `reports/progression-phase1/monster-proposals-run3.md` (the table this run applies).
 **Goal:** after this run the designer plays, then an ultra review and the merge. So: every
 T3/T4 card reachable; families that actually punish the lane they declare; the Consort
-loop; a real avoid face for Guards; the seven pre-existing review findings fixed; T2
+loop; the Technique packet (design §22, pulled forward into this run); a real avoid face for Guards; the seven pre-existing review findings fixed; T2
 reference profiles and a bench that can read a family contract, then the bench rerun;
 the tutorial's gate chapter validated live; the day-run record reconstructed; a report.
 
@@ -54,9 +54,10 @@ commit it, stop. No PR.
 
 ---
 
-## Wave 1 — six tasks in parallel
+## Wave 1 — seven tasks in parallel
 
-Merge order: **W1-A, W1-C, W1-D, W1-E, W1-B, W1-F.**
+Merge order: **W1-A, W1-G, W1-C, W1-D, W1-E, W1-B, W1-F.** (W1-G and W1-D both add
+members to the vocabulary unions in types.ts; resolve by keeping both additions.)
 
 ### W1-A — band gating on the worn form's biome · model: opus
 
@@ -153,6 +154,46 @@ verify from a commit or a test as "unverified". Docs only; strip CR; commit. Rep
 you could not reconstruct.
 ```
 
+### W1-G — Technique, the ninth packet · model: opus
+
+```
+Implement design §22's Technique packet on a branch feat/technique-packet off
+feat/lineage-data-model. Read design §3, §6, §12, §22 and the lineage runtime first. The
+packet union is the checklist: add 'technique' to PacketId and WEAPON_PACKET_IDS and let
+the typecheck enumerate every table, switch and map that must name it (PACKET_BUDGET,
+packetDefinition colour and label, shard wallet sanitiser, materials panel, map shard
+icon, coverage tests, bench profile tables, ability-node offer tables). Then:
+
+1. Vocabulary: trigger kind 'technique-cast' (fired from the Technique firing seam in
+   abilityFiring.ts, once per cast that lands or resolves — never from a Guard); payoff
+   kinds 'technique-refund' (reduces the remaining cooldown of the player's Technique
+   abilities by the magnitude share) and 'technique-window' (a timed window in which the
+   next Technique is empowered via empoweredMultiplier). Units in PAYOFF_UNIT; dispatchers
+   in lineageCards; fx keys 'technique.trail', 'technique.cast-flare',
+   'technique.keystone'; client handlers in combatFx.ts in a new lane colour from
+   packetDefinition (pick one distinct from the eight).
+2. Keystone: 'Signature' — a landed Technique counts as the class mechanic firing (emit
+   mechanic-fired without setting the empowered flag), module under keystones/, test block.
+3. Broadsword: lanes become ['technique', 'kill-chain', 'empowered'] (Technique is Lane A,
+   so the Plains boss stopgap pays Technique shards); its Tempo stat/payoff/amplifier/
+   keystone/cross cards become Technique cards (stat key technique power via the existing
+   technique.power-pct passive — add 'techniquePowerPct' to LineageStatKey if the
+   stat-row seam needs it); the Desert forms' capstones crown Technique. Rename cards to
+   fit. Remove 'tempo' from the Broadsword; Tempo's coverage must still hold (Rapier, Axe).
+4. Families: Plains Swarm drops 'technique' instead of 'tempo' (area and control
+   Techniques are what beat many weak bodies). Tempo keeps Forest Pack and Mountain
+   Hopper. Coverage: every packet ≥ 2 T1 sources counting the boss stopgap.
+5. Ability-node offers: Technique replaces one offer on Slam, Sweep, Snipe, Stunning
+   Strike, Binding Strike and Detonate (the Technique-lane node on a Technique means
+   "landing this ability refunds part of its own cooldown"). Guards unchanged.
+6. Magnitude table: PACKET_BUDGET.technique = 1; trigger-rate normalisation entry for
+   technique-cast from the average Technique cooldown at reference wiring.
+Tests: coverage (nine packets everywhere), keystone block, technique-cast fires once per
+cast and never for Guards, Broadsword reachability unchanged, Plains Swarm partition.
+Related tests + typecheck; strip CR; commit per step. Report every file the union forced
+you into, and any table you had to extend by hand because it was not typed by PacketId.
+```
+
 ---
 
 ## Wave 2 — two tasks, after the wave 1 merge
@@ -170,7 +211,8 @@ On a branch feat/bench-t2 off feat/lineage-data-model:
    their time-to-kill-N, with the minimum-sample guards from run 3. This is the
    arbiter for design §18 3b, and it does not depend on blends.
 3. Rerun both benches (lane matrix with frames + T2; contract instrument for every T1
-   and T2 family) on the branch AFTER W1-B's monster pass. Write
+   and T2 family) on the branch AFTER W1-B's monster pass and W1-G's Technique packet
+   (nine packets; the Broadsword's lanes changed). Write
    reports/progression-phase1/lane-matrix-run4.md and
    reports/progression-phase1/family-contracts-run4.md.
 4. Apply design §18 3b with the contract instrument: where the punished lane beats the
