@@ -1075,11 +1075,8 @@ const WINDOW_LANE: Partial<Record<PayoffKind, PacketId>> = {
   'engagement-dr': 'engagement',
   'ward': 'bulwark',
   'plating-stack': 'bulwark',
-<<<<<<< HEAD
   'technique-window': 'technique',
-=======
   'evasion-window': 'engagement',
->>>>>>> feat/evasion-window
 };
 
 function windowColor(kind: PayoffKind): string {
@@ -1131,9 +1128,6 @@ export const LINEAGE_BUFFS = [
   defineWindowBuff('engagement-dr', 'lineage-guard', 'Brace', 'Damage reduction'),
   defineWindowBuff('ward', 'lineage-ward', 'Shell', 'Absorb'),
   defineWindowBuff('plating-stack', 'lineage-plate', 'Plate', 'Plating per stack'),
-<<<<<<< HEAD
   defineWindowBuff('technique-window', 'lineage-technique', 'Form', 'Next Technique'),
-=======
   defineWindowBuff('evasion-window', 'lineage-evasion', 'Slip', 'Evade chance'),
->>>>>>> feat/evasion-window
 ] as const;
