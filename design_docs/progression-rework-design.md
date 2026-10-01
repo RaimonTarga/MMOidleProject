@@ -12,6 +12,16 @@
    18 rows) to show Light / Balanced / Heavy uplift. Approved as its own follow-up task;
    it roughly triples the run.
 # Progression Rework — Design Bible
+11. **Band gating follows the worn form (2026-10-01).** A band of tier N gates on the biome
+   of the form worn at tier N, its door biome, not the lineage's home biome. The Rapier's T3
+   band is earned in the Jungle. Without this every T3/T4 card on a lineage whose home
+   biome retires (Plains and Forest at T2, Cave at T3) was unreachable.
+12. **Monster pass delegated (2026-10-01).** The run-3 proposal table is applied by run 4,
+   one provisional commit per family, for the designer to revert row by row. Families must
+   carry the stats their contracts name: `dotResistance` was on no monster, `evasion` on two.
+   Locked comments in monster files lose to a family contract and are rewritten.
+13. **Consort loop decided: "the line holds."** Formation plating and DR while all five
+   slots live; a death breaks it; a reconstruction restores it. Frame brief §1 is closed.
 
 **Status:** design authority, drafted 2026-09-30 from the post-v0.6.2 playtest review.
 **Scope:** item lineage trees, biome variants and materials, frame loops, range nodes,
@@ -230,7 +240,8 @@ most of the way there.
 
 **Payoff kinds** (≤15): `vulnerability`, `plating-shred`, `echo-hit`, `hemorrhage`,
 `poison-stack`, `slow`, `stun`, `damage-window`, `speed-window`, `recovery-window`,
-`ward`, `cleanse`, `plating-stack`, `engagement-dr`, `contagion`.
+`ward`, `cleanse`, `plating-stack`, `engagement-dr`, `contagion`, `evasion-window`
+(added 2026-10-01 so the avoid face has a real effect).
 
 Every payoff maps onto an existing server hook (cadence aftershock/hemorrhage/rampage,
 cooldown rupture/overdrive, dot conflagration/chill, defense hit-plating/engagement-dr/
@@ -471,8 +482,8 @@ is retired. The cap is now whatever the tier's authored HP/s adds up to.
    `docs/briefs/frame-loops-2026-10-01.md`. Still OPEN inside it: the Consort (balanced
    Conduit) loop. The T3 class paths it displaces (Pyromancer, Warmonger) are reviewed as a
    whole after the rework.
-2. Mountain, Cave and Swamp family tables (§12.1), plus a second T1 source for Engagement
-   shards. Needed before Phase 4.
+2. ~~Mountain, Cave and Swamp family tables.~~ **Approved as authored 2026-10-01.** Engagement
+   has family sources since the T1 third mobs.
 3. Where Bulwark and Barrier tempo shards drop at T1 (defensive families or boss secondary
    drop). Needed before Phase 4.
 3b. **Drops versus favours, per family (from the 2026-10-01 bench).** Eight of nine encounter
@@ -611,3 +622,11 @@ max HP, seeded 1.25 / 1.30 / 1.35 / 1.40 for T1 to T4, benched at three factors 
 against bosses (time-to-death versus kill time per lane) and committed **provisional** at
 the bench's pick so the playtest includes it. The recovery reference pools do not scale
 with it; that separation is the point of §15.
+
+## 21. Band gating by door biome (locked 2026-10-01)
+
+A lineage band of tier N resolves its biome-level requirement against the biome of the
+form worn at that tier. T1 and T2 are unchanged in practice; T3 and T4 become reachable
+on every lineage because their forms come from biomes that are alive at those tiers. The
+Global Mastery band keeps its meaning (§4). Switching between two owned forms of one tier
+from different biomes re-resolves the band against the worn one.
