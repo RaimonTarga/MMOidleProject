@@ -97,7 +97,13 @@ export const jungleMonsterEntries = [
     // to hasten nearby monsters and call a small number of unengaged creatures
     // onto its target. The old invisible attack ramp is removed; the casted
     // window gives the player a clear moment to interrupt or focus the Ape.
-    stats: { hp: 1200, attack: 33, plating: 0, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 240 },
+    // APE FAMILY (progression rework, 2026-10-01, PROVISIONAL): plating 0 -> 5. Ape
+    // declares `punishes: 'tempo'` and flat plating is the only stat that punishes
+    // Tempo; without it the contract had no mechanism. 5 of the ~23 T2 median player
+    // hit is the same fraction boar's 3 is of T1's ~12, and under swamp-hydra's 6,
+    // the T2 anchor's value. The Jungle rows in this pass come from the CONTRACT,
+    // not from the lane bench: Jungle is unmeasured at T1 band (gear-gap artefact).
+    stats: { hp: 1200, attack: 33, plating: 5, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1700, pullRange: 240 },
     behavior: 'melee', attackStyle: 'ape-fist', biome: 'jungle', elite: true,
     rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 44 },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3800 },
