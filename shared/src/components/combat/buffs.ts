@@ -34,6 +34,10 @@ export const BUFF_IDS = [
   'energy-reservoir',
   'energy-equilibrium',
   'energy-sm-pool',
+  // Spirit frame loops (progression rework Phase 3): Wraith's gain window and
+  // Phantasm's overcharge bank.
+  'energy-frame-surge',
+  'energy-frame-overcharge',
   'dot-vigor',
   'dot-conflag',
   'dot-chill',
@@ -45,6 +49,8 @@ export const BUFF_IDS = [
   'reload-cover-fire',
   'reload-momentum',
   'reload-cannon',
+  // Slinger frame loop (progression rework Phase 3): Artillerist's clip-long ramp.
+  'reload-frame-ramp',
   'flurry',
   // Desert Falchion's alpha window (shared/src/systems/alphaWindow.ts).
   'sunlight',
@@ -84,6 +90,10 @@ export const BUFF_IDS = [
   'summoner-colossus',
   'summoner-battle-bond',
   'summoner-twin-covenant',
+  // Conduit frame loops (progression rework Phase 3): Splinter's frenzy window and
+  // Effigy's linked-slam bank. Consort has no loop by design.
+  'summoner-frame-frenzy',
+  'summoner-frame-link',
   'debuff-stunned',
   // Abilities (system rework Step 7): the active Guard-ability buff (e.g. Brace).
   // One id per GUARD SLOT — two equipped Guards layer independently and each

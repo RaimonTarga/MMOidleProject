@@ -1,6 +1,13 @@
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { setEmpoweredAttack, registerEmpoweredMultiplier, isEmpoweredAttack } from '../../../combat/engine/empoweredAttacks';
 import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
+import {
+  energyFrameGainMult,
+  energyOverchargeCapacity,
+  energyOverchargeStacks,
+  registerEnergyFrameLoop,
+  syncEnergyOvercharge,
+} from './frameLoop';
 import { initEnergyT3 } from './t3';
 import type { World } from '../../../../world/World';
 import {
@@ -53,6 +60,11 @@ export function initEnergyArchetype(): void {
     passiveKey:        'energy.empowered-mult',
   });
 
+  // Frame loops (Phase 3): registered after the empowered multiplier so the
+  // chain/overcharge read the discharge's resolved damage and fold onto the one
+  // multiplier the hit is allowed.
+  registerEnergyFrameLoop();
+
   // `mechanic-fired` (progression rework 1c): the discharge IS energy's moment.
   // The pool draining is not — energy fills and empties continuously, and a card
   // that fired on that would fire on nothing in particular. `empoweredAttack`
@@ -84,15 +96,30 @@ export function initEnergyArchetype(): void {
     if (energy.energyMax === 0) energy.energyMax = ENERGY_MAX_DEFAULT;
 
     const passives = entity.usesSkills.passives;
-    const energyPerHit = resolveEnergyRelicProfile(
+    const basePerHit = resolveEnergyRelicProfile(
       Math.max(1, Math.round(passives['energy.per-hit'] ?? ENERGY_PER_HIT_DEFAULT)),
       resolveEnergyMaxBeforeRelic(passives, entity.tracksProgression.playerTier),
       passives['energy.empowered-mult'] ?? EMPOWERED_MULT_DEFAULT,
       relicRatingsFromPassives(passives),
     ).gainPerHit.after;
-    energy.energy = Math.min(energy.energy + energyPerHit, energy.energyMax);
+    // Wraith's frame loop (Phase 3): the window after a discharge multiplies the
+    // gain. Applied HERE, the single place energy accrues, so it cannot double-count.
+    const energyPerHit = Math.max(
+      1,
+      Math.round(basePerHit * energyFrameGainMult(entity)),
+    );
+    // Phantasm's frame loop: the pool keeps taking energy ABOVE the cap before the
+    // discharge arms, and the part above the cap IS the bank. Every other frame has
+    // a capacity of 0, which is the old `Math.min(..., energyMax)` exactly.
+    const armAt = energy.energyMax + energyOverchargeCapacity(entity, energyPerHit);
+    energy.energy = Math.min(energy.energy + energyPerHit, armAt);
+    syncEnergyOvercharge(
+      _world,
+      entity,
+      energyOverchargeStacks(entity, energy.energy, energy.energyMax, energyPerHit),
+    );
 
-    if (energy.energy >= energy.energyMax) {
+    if (energy.energy >= armAt) {
       energy.energy = 0;
       setEmpoweredAttack(_world, entity);
     }

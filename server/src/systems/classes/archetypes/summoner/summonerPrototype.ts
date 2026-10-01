@@ -26,6 +26,7 @@ import { onSummonDeath, tickSummonerSpecializations } from './specs';
 import { syncSummonerFormationTarget } from './formationTarget';
 import { isPlayerInCombat } from '../../../combat/ai/engagement';
 import { pruneFormationTechnique } from './formationTechnique';
+import { registerSummonerFrameLoop, summonerFrenzyApsPct } from './frameLoop';
 
 type SummonerPlayerEntity = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
@@ -133,9 +134,15 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
       minion.dealsDamage.attack = desiredAttack;
       markSliceDirty(world, minion, 'dealsDamage');
     }
+    // Splinter's frenzy window (Phase 3) lives HERE rather than writing minion
+    // cooldowns of its own: this resync runs every tick and is the single writer, so
+    // the window applies and lapses without an un-apply step that could be missed.
     const desiredCooldown = Math.max(
       100,
-      Math.round(owner.performsAttack.attackCooldown * profile.summonAttackCooldownMult),
+      Math.round(
+        (owner.performsAttack.attackCooldown * profile.summonAttackCooldownMult)
+        / (1 + summonerFrenzyApsPct(owner)),
+      ),
     );
     if (minion.performsAttack.attackCooldown !== desiredCooldown
       || minion.performsAttack.attackRange !== profile.attackRange) {
@@ -210,7 +217,11 @@ function spawnFreshSlots(world: World, owner: SummonerPlayerEntity): void {
   }
 }
 
-export function initSummonerArchetype(): void {}
+export function initSummonerArchetype(): void {
+  // Frame loops + the root's `mechanic-fired` moment, both hung off the formation
+  // cycle (progression rework Phase 3).
+  registerSummonerFrameLoop();
+}
 
 export function updateSummonerArchetype(world: World, dt: number, now: number): void {
   for (const owner of world.summonerPlayers) {

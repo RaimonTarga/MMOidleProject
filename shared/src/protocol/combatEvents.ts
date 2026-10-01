@@ -315,13 +315,18 @@ type CombatEventPayload =
   // and the brief makes the readout part of the feature: a stack counter (the
   // `frame-charge` buff tile) and a weapon glow that grows with the charge. The
   // tile rides the 5 Hz buff snapshot; the glow needs the beat the charge landed
-  // on, which a snapshot cannot give it.
+  // on, which a snapshot cannot give it. There was no weapon-glow intent in the
+  // repo before this, so this event is it.
   //
   // So this is that beat. `stacks` is the bank AFTER the change and `max` the cap
   // it is counting toward, both authoritative — the client never derives the cap
-  // from a frame id, because it moves with the threshold and with relics. Pushed
-  // only when the number actually changed (never per tick, never per hit), and
-  // `stacks: 0` is the spend: the glow goes out as the finisher lands.
+  // from a frame id, because it moves with the threshold and with relics, and it
+  // can draw the glow as a fraction without knowing which root it is looking at.
+  // Pushed only when the number actually changed (never per tick, never per hit),
+  // and `stacks: 0` is the spend: the glow goes out as the finisher lands.
+  //
+  // WINDOWS need no event — they are `frame.<root>.window` status effects and ride
+  // the existing buff sync. This is banks only.
   //
   // Node-wide like every other combat event; an unknown kind draws nothing, so a
   // client without a glow handler simply ignores it.

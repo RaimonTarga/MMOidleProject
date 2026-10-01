@@ -4,9 +4,9 @@
  *
  * WHY IT EXISTS. Every class root has a moment its whole loop builds toward: the
  * cadence finisher, the cooldown execution, a full DoT stack, the reload landing,
- * the energy burst, a summon command. A lineage card that wants to hang a payoff
- * on "when your mechanic fires" must not have to know which of the six it is
- * looking at — otherwise a card is six cards, and the closed vocabulary (design
+ * the energy burst, a completed formation cycle. A lineage card that wants to hang
+ * a payoff on "when your mechanic fires" must not have to know which of the six it
+ * is looking at — otherwise a card is six cards, and the closed vocabulary (design
  * §6) stops being closed.
  *
  * So each root calls {@link emitMechanicFired} at its own moment, ONCE, and
@@ -17,17 +17,23 @@
  *   dot        a target reaches max stacks                (dotPrototype.ts)
  *   reload     a reload completes                         (reloadLifecycle.ts)
  *   energy     the burst fires                            (energyPrototype.ts)
- *   summoner   a command intent is applied                (summoner/command.ts)
+ *   summoner   a formation cycle completes                (summoner/frameLoop.ts)
+ *
+ * The summoner's moment MOVED in Phase 3. 1c hung it on `applySummonerCommand`, but
+ * a command is a click: it never fires unattended, so a card keyed to it would never
+ * pay out for an idle player, and idle play is the game. The formation cycle — every
+ * living summon having hit the same target since the last fire — is the root's loop
+ * actually closing, and it closes whether or not anybody is at the keyboard.
  *
  * This module DISPATCHES and nothing else: it owns no state of its own, applies
  * no effect, and reads no card. `lineageCards.ts` is currently its only listener.
  *
  * ONE PER HIT. Where an emission rides an attack, the `ctx` is passed in and used
- * as the latch: the four roots whose moment is an on-hit moment (cadence,
- * cooldown, dot, energy) can register in any order, and an exchange that somehow
- * satisfied two of them still emits exactly once. Emissions with no attack behind
- * them (reload, a summon command) pass no `ctx` and are not latched, because
- * their caller already fires once per event.
+ * as the latch: the five roots whose moment is an on-hit moment (cadence, cooldown,
+ * dot, energy, summoner) can register in any order, and an exchange that somehow
+ * satisfied two of them still emits exactly once. Reload passes no `ctx` — a reload
+ * completes on a timer, so there is no exchange to latch — and is not latched,
+ * because its caller already fires once per event.
  */
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';

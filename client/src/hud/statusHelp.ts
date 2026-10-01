@@ -111,6 +111,8 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'energy-reservoir': m('Reservoir', 'A stored pool that scales the size of your discharge.'),
   'energy-equilibrium': m('Equilibrium', 'Holding energy in balance pays a flat damage bonus.'),
   'energy-sm-pool': m('Stored charge', 'True damage held in reserve — it ignores plating and damage reduction when it is spent.'),
+  'energy-frame-surge': m('Surge', 'Wraith’s frame loop. The discharge opened a window where every hit generates more energy, so the loop feeds the next discharge. The window is shorter than one charge cycle, which is why attack speed raises its uptime instead of merely shortening the wait.'),
+  'energy-frame-overcharge': m('Overcharge', 'Phantasm’s frame loop. The pool keeps taking energy above its cap before the discharge arms, and each hit’s worth banked here adds to the discharge’s damage. The discharge spends the whole bank and staggers what it hits.'),
 
   // -- DoT -------------------------------------------------------------------
   'dot-vigor': m('Vigor', 'Your own damage and attack speed rise while your poison is working on the target.'),
@@ -126,6 +128,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'reload-cover-fire': m('Cover fire', 'You take reduced damage while reloading — the downtime stops being a hole in your defense.'),
   'reload-momentum': m('Momentum', 'Each completed reload grants a stack that raises attack speed and shortens reload time. Stacks persist through combat and decay slowly out of combat.'),
   'reload-cannon': m('Cannon', 'Shots stored to fire mid-reload, so the magazine break is not silent.'),
+  'reload-frame-ramp': m('Ramp', 'Artillerist’s frame loop. Every round fired raises attack speed, with no cap before the magazine runs dry, and your damage climbs with the same ramp. Reloading is the reset, which is what makes the long clip the climb and the reload the cool-down.'),
 
   // -- Summoner --------------------------------------------------------------
   'summoner-volatile-brood': m('Volatile brood', 'One summon at a time is armed to detonate. Between detonations the next one is being prepared.'),
@@ -137,6 +140,8 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'summoner-colossus': m('Colossus', 'Your formation is condensed into a single large summon. While it is down, it is reconstructing.'),
   'summoner-battle-bond': m('Battle bond', 'Fixed contributions accumulate toward a linked strike shared between you and your summons.'),
   'summoner-twin-covenant': m('Twin covenant', 'Two complementary twins. If one falls the survivor keeps a bounded fallback rather than the full pairing.'),
+  'summoner-frame-frenzy': m('Frenzy', 'Splinter’s frame loop. Every living body has now struck the same target, completing a formation cycle, and the swarm answers with a short burst of extra attack speed and on-hit damage. The window is shorter than one swing, so keeping the cycle turning is the whole skill.'),
+  'summoner-frame-link': m('Link', 'Effigy’s frame loop. Each body banks a charge every time it hits. When both bodies have struck the same target inside the window, the pair spends the whole bank as one linked slam that also staggers the target. Losing a body means there is no pair and nothing to spend.'),
 
   // -- Weapons ---------------------------------------------------------------
   flurry: b('Flurry', 'A weapon proc raising your attack speed while its stacks hold.'),

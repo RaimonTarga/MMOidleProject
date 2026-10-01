@@ -36,6 +36,9 @@ import {
 import { applyClassDotStack } from '../src/systems/classes/archetypes/dot/dotPrototype';
 import { completeReload } from '../src/systems/classes/archetypes/reload/reloadLifecycle';
 import { applySummonerCommand } from '../src/systems/classes/archetypes/summoner/command';
+import { runFormationAttack } from '../src/systems/classes/archetypes/summoner/formationAttack';
+import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
+import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -259,22 +262,77 @@ function exchange(player: PlayerEntity, defender: ReturnType<typeof monster>, me
   );
 }
 
-// ── summoner: a command intent ───────────────────────────────────────────────
+// ── summoner: the formation cycle, never the click command ───────────────────
+//
+// Phase 3 moved this moment. 1c hung it on `applySummonerCommand`, but a command
+// is a CLICK: it never fires unattended, so a card keyed to it would never pay out
+// for an idle player, and idle play is the game. The moment is now the FORMATION
+// CYCLE — every living summon has hit the same target since the last fire.
+//
+// Driven through the real `runFormationAttack` rather than a hand-built context,
+// because what is being pinned here is the CYCLE's arithmetic (one emission per
+// full cycle, none per summon hit), and a context whose `cycleCompleted` the test
+// set itself would pin nothing.
 
 {
   const player = spawn('mf-summoner', 'summoner');
   assert(player.summonsMinions !== undefined, 'the summoner slice should be attached');
 
-  // A move command (empty ground) and a focus command (a monster under the click)
-  // are the same intent pointed at different things, and each is one moment.
+  // Neither flavour of command is the mechanic firing any more.
   applySummonerCommand(world, player, { x: 900, y: 900 });
-  assert(countFor('mf-summoner') === 1, `a move command should fire once, got ${countFor('mf-summoner')}`);
+  const clicked = monster(620);
+  applySummonerCommand(world, player, { ...clicked.hasPosition.current });
+  assert(
+    countFor('mf-summoner') === 0,
+    `a command intent must not fire the mechanic, got ${countFor('mf-summoner')}`,
+  );
 
-  const focus = monster(620);
-  applySummonerCommand(world, player, { ...focus.hasPosition.current });
+  recalculatePlayerEntityStats(world, player);
+  updateSummonerArchetype(world, 0, 1_000);
+  const bodies = player.summonsMinions!.minionIds
+    .map((id) => (id ? world.getMinionEntity(id) : undefined))
+    .filter((m): m is NonNullable<typeof m> => m !== undefined);
+  assert(bodies.length >= 2, `the formation needs several bodies to cycle, got ${bodies.length}`);
+
+  const victim = monster(700);
+  victim.hasHealth.maxHp = 10_000_000;
+  victim.hasHealth.hp = 10_000_000;
+  victim.mitigatesDamage.plating = 0;
+  victim.mitigatesDamage.damageReduction = 0;
+  victim.isMonster.evasion = 0;
+
+  for (let i = 0; i < bodies.length - 1; i++) {
+    runFormationAttack(world, player, bodies[i]!, victim, 2_000);
+  }
+  assert(
+    countFor('mf-summoner') === 0,
+    `a partial cycle is not the mechanic firing, got ${countFor('mf-summoner')}`,
+  );
+
+  runFormationAttack(world, player, bodies[bodies.length - 1]!, victim, 2_000);
+  assert(
+    countFor('mf-summoner') === 1,
+    `a completed cycle should fire exactly once, got ${countFor('mf-summoner')}`,
+  );
+
+  // The hit after a completed cycle opens the NEXT cycle; it is not the same one
+  // firing again. This is the failure mode worth a count: a cycle that re-reports
+  // completion on every further hit doubles every payoff hung off the trigger.
+  runFormationAttack(world, player, bodies[0]!, victim, 2_100);
+  assert(
+    countFor('mf-summoner') === 1,
+    `the next cycle has not completed yet, got ${countFor('mf-summoner')}`,
+  );
+  for (let i = 1; i < bodies.length; i++) {
+    runFormationAttack(world, player, bodies[i]!, victim, 2_100);
+  }
   assert(
     countFor('mf-summoner') === 2,
-    `a focus command should fire once, got ${countFor('mf-summoner')}`,
+    `the second cycle is its own moment, got ${countFor('mf-summoner')}`,
+  );
+  assert(
+    seen.every((e) => e.playerId !== 'mf-summoner' || e.hadCtx),
+    'a formation cycle completes on a hit, so it carries that exchange',
   );
 }
 
