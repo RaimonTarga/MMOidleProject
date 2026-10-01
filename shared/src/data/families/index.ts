@@ -109,10 +109,13 @@ const familyEntries: [FamilyId, FamilyDefinition][] = [
     monsterIds: ['boar', 'stampede-bull', 'prairie-yearling'],
     drops: 'empowered', punishes: 'tempo',
   }],
+  // Swarm drops TECHNIQUE, not Tempo (design §22, run 4): area and control
+  // Techniques are what beat many weak bodies, so the shard the swarm pays is the
+  // one that buys them. Tempo's T1 sources are Forest Pack and Mountain Hopper.
   ['plains-swarm', {
     id: 'plains-swarm', name: 'Swarm', biome: 'plains',
     monsterIds: ['plains-slime', 'prairie-wolf'],
-    drops: 'tempo', punishes: 'empowered',
+    drops: 'technique', punishes: 'empowered',
   }],
   ['plains-sky', {
     id: 'plains-sky', name: 'Sky', biome: 'plains',

@@ -31,7 +31,7 @@ import {
   PACKET_IDS,
   WORLD_NODE_LIST,
   baseRecoveryForTier,
-  biomeDefensiveLaneAPackets,
+  biomeLaneAPackets,
   rowShardCost,
   blendEntries,
   emptyEquipment,
@@ -239,8 +239,8 @@ function farm(id: string, nodeId: string, monsterTypeId: string, kills: number) 
     'capstones are deterministic too — no pity timer',
   );
 
-  const forestLaneA = biomeDefensiveLaneAPackets('forest');
-  assert(forestLaneA.length > 0, 'fixture: Forest has non-weapon lineages with a Lane A');
+  const forestLaneA = biomeLaneAPackets('forest');
+  assert(forestLaneA.length > 0, 'fixture: Forest has lineages with a Lane A');
   assert(
     Object.keys(one.shards).length === forestLaneA.length,
     `a boss drops exactly its biome's Lane-A shards (${forestLaneA.join(', ')}), got ${Object.keys(one.shards).join(', ')}`,
@@ -266,14 +266,20 @@ function farm(id: string, nodeId: string, monsterTypeId: string, kills: number) 
 // biome whose armor and mobility Lane A are the same packet (Plains' Kill
 // chain) pays it once per boss kill, not twice.
 {
-  const plainsLaneA = biomeDefensiveLaneAPackets('plains');
+  const plainsLaneA = biomeLaneAPackets('plains');
   assert(
     plainsLaneA.includes('kill-chain') && plainsLaneA.includes('bulwark'),
     `fixture: Plains' Lane A should include kill-chain and bulwark, got ${plainsLaneA.join(', ')}`,
   );
+  // Design §22: the Broadsword's Lane A is Technique, and the stopgap pays every
+  // lineage's Lane A — which is the Plains boss's half of Technique's two sources.
+  assert(
+    plainsLaneA.includes('technique'),
+    `the Plains boss must pay Technique shards (design §18.6, §22), got ${plainsLaneA.join(', ')}`,
+  );
   assert(
     new Set(plainsLaneA).size === plainsLaneA.length,
-    'biomeDefensiveLaneAPackets must already be deduplicated',
+    'biomeLaneAPackets must already be deduplicated',
   );
 
   const boss = [...MONSTER_DATABASE.values()].find((m) => m.isBoss && m.biome === 'plains');
