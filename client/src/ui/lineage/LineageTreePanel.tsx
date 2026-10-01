@@ -22,6 +22,7 @@ import {
   TEST_ROOM_NODE_ID,
   TUTORIAL_ANCHORS,
   absorbedStatCards,
+  bandBiomeFloor,
   bandContents,
   capstoneMaterialName,
   checkSetActive,
@@ -29,6 +30,7 @@ import {
   checkUnlockForm,
   checkWearForm,
   emptyLineageProgress,
+  lineageBandBiome,
   lineageCardPrice,
   lineageCardTie,
   lineageEssenceType,
@@ -36,7 +38,7 @@ import {
   lineageGateCost,
   packetDefinition,
   resolveLineageCapstone,
-  resolveLineageCard,
+  resolveLineageCardFor,
   rowsForTier,
   statRowIsCollapsed,
   wornFormTier,
@@ -175,17 +177,19 @@ function CardTile({
           <span className="lin-card__state">in form</span>
         </span>
         <span className="lin-card__desc">
-          Folded into your form&apos;s base stats. {describeCardEffect(resolveLineageCard(card, lineage))}
+          Folded into your form&apos;s base stats. {describeCardEffect(resolveLineageCardFor(lineage, progress, card))}
         </span>
       </div>
     );
   }
 
-  const haveLevel = wallet.biomeLevels[lineage.homeBiome] ?? 0;
   // frameFace is left undefined: every Phase 1 weapon card is offensive (no
   // `card.face`), so `faceScalar` is 1 regardless (design §3.1). Phase 4's
   // non-weapon lineages will need the wearer's frame threaded in here.
-  const resolved = resolveLineageCard(card, lineage, {});
+  // The band gates on its DOOR biome (design §21), so the level is read in the
+  // biome the resolved card names — not in the lineage's home biome.
+  const resolved = resolveLineageCardFor(lineage, progress, card);
+  const haveLevel = wallet.biomeLevels[resolved.requiredBiomeGroup] ?? 0;
   const masteryLocked = !wallet.isTestRoom && (
     haveLevel < resolved.requiredBiomeLevel
     || (wallet.globalMastery !== undefined && wallet.globalMastery < resolved.requiredGlobalMastery)
@@ -200,7 +204,7 @@ function CardTile({
 
   const state: CardShellState = active ? 'active' : owned ? 'owned' : masteryLocked ? 'locked' : 'available';
   const blockedReason = masteryLocked
-    ? `Requires ${biomeName(lineage.homeBiome)} level ${resolved.requiredBiomeLevel}.`
+    ? `Requires ${biomeName(resolved.requiredBiomeGroup)} level ${resolved.requiredBiomeLevel}.`
     : (!owned && !check.ok) ? check.reason
       : (activateCheck && !activateCheck.ok) ? activateCheck.reason : undefined;
 
@@ -252,8 +256,8 @@ function RowSection({
   onSetActive: (row: RowKind, cardId: string) => void;
 }) {
   const first = cards[0];
-  const resolvedFirst = first ? resolveLineageCard(first, lineage) : null;
-  const haveLevel = wallet.biomeLevels[lineage.homeBiome] ?? 0;
+  const resolvedFirst = first ? resolveLineageCardFor(lineage, progress, first) : null;
+  const haveLevel = resolvedFirst ? wallet.biomeLevels[resolvedFirst.requiredBiomeGroup] ?? 0 : 0;
   const rowLocked = !silhouette && !wallet.isTestRoom && !!resolvedFirst && haveLevel < resolvedFirst.requiredBiomeLevel;
   const collapsedStatRow = row === 'stat' && !!absorbedIds?.size;
 
@@ -267,7 +271,7 @@ function RowSection({
             : collapsedStatRow
               ? 'folded into your form'
               : rowLocked
-                ? `opens at ${biomeName(lineage.homeBiome)} level ${resolvedFirst?.requiredBiomeLevel}`
+                ? `opens at ${biomeName(resolvedFirst?.requiredBiomeGroup ?? lineage.homeBiome)} level ${resolvedFirst?.requiredBiomeLevel}`
                 : ROW_HINT[row]}
         </span>
       </div>
@@ -466,7 +470,10 @@ function Band({
     <div className="lin-band lin-band--lit">
       <div className="lin-band__head">
         <h3>Tier {tier}</h3>
-        <span>Rows open with {biomeName(lineage.homeBiome)} mastery. Cards cost essence plus a lane shard.</span>
+        <span>
+          Rows open with {biomeName(lineageBandBiome(lineage, progress, tier))} mastery — the biome of
+          the form you wear here. Cards cost essence plus a lane shard.
+        </span>
       </div>
       {body}
     </div>
@@ -475,23 +482,28 @@ function Band({
 
 // ── Side column ────────────────────────────────────────────────────────────
 
-function MasterySection({ lineage, tier, biomeLevel, wallet }: {
-  lineage: LineageDefinition; tier: number; biomeLevel: number; wallet: LineageWallet;
+function MasterySection({ lineage, tier, progress, wallet }: {
+  lineage: LineageDefinition; tier: number; progress: LineageProgress; wallet: LineageWallet;
 }) {
-  const floor = (tier - 1) * BIOME_LEVELS_PER_TIER;
+  // The band's progress bar belongs to the band's DOOR biome (design §21): the
+  // T3 Rapier band is Jungle work, so this is Jungle mastery, counted in the
+  // Jungle's own levels — which is what `bandBiomeFloor` shifts the zero to.
+  const biome = lineageBandBiome(lineage, progress, tier);
+  const floor = bandBiomeFloor(tier, biome);
+  const biomeLevel = wallet.biomeLevels[biome] ?? 0;
   const local = Math.max(0, Math.min(BIOME_LEVELS_PER_TIER, biomeLevel - floor));
   const pct = (local / BIOME_LEVELS_PER_TIER) * 100;
   const { cards } = bandContents(lineage, tier);
   const ticks = rowsForTier(tier).map((row) => {
     const card = cards.find((c) => c.row === row);
-    const resolved = card ? resolveLineageCard(card, lineage) : null;
+    const resolved = card ? resolveLineageCardFor(lineage, progress, card) : null;
     const level = resolved ? resolved.requiredBiomeLevel - floor : null;
     return { label: ROW_LABEL[row], level };
   });
 
   return (
     <section className="lin-side">
-      <h3>{biomeName(lineage.homeBiome)} mastery</h3>
+      <h3>{biomeName(biome)} mastery</h3>
       <div className="lin-mastery-bar"><i style={{ width: `${wallet.isTestRoom ? 100 : pct}%` }} /></div>
       <div className="lin-mastery-ticks">
         {ticks.map(({ label, level }) => <span key={label}>{label}{level !== null ? ` L${level}` : ''}</span>)}
@@ -554,7 +566,7 @@ function BuildSection({ lineage, progress }: { lineage: LineageDefinition; progr
 
   // Everything the worn form absorbed from the bands below it (design §4).
   const absorbed = absorbedStatCards(lineage, progress)
-    .map((card) => resolveLineageCard(card, lineage));
+    .map((card) => resolveLineageCardFor(lineage, progress, card));
 
   const top = (Object.entries(laneCounts) as [PacketId, number][]).sort((a, b) => b[1] - a[1])[0];
   const total = Object.values(laneCounts).reduce((sum, n) => sum + (n ?? 0), 0);
@@ -729,7 +741,7 @@ export function LineageTreePanel({ slot, onClose }: Props) {
           )}
         </div>
         <div className="lin-side-column">
-          <MasterySection lineage={lineage} tier={wornTier} biomeLevel={biomeLevel[lineage.homeBiome] ?? 0} wallet={wallet} />
+          <MasterySection lineage={lineage} tier={wornTier} progress={progress} wallet={wallet} />
           <WalletSection lineage={lineage} tier={wornTier} wallet={wallet} />
           <BuildSection lineage={lineage} progress={progress} />
         </div>

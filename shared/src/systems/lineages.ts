@@ -146,6 +146,60 @@ export function lineageProgressFor(
 export { lineageMasteryLevelForRow, rowsForTier, tierHasRow };
 
 /**
+ * The DOOR biome a band gates on — design §21.
+ *
+ * A band of tier N is earned in the biome whose boss let the player into tier N,
+ * which is the biome of the form they wear at that tier. The Rapier's T3 band is
+ * Jungle work, the Broadsword's is Desert work, the Axe's T4 band is Graveyard or
+ * Trench work depending on which T4 axe is in hand. The home biome is only ever
+ * the T1 door, so gating every band on it made the upper bands unreachable: Forest
+ * and Plains stop at level 12 and a T4 row wants a level in the twenties.
+ *
+ * Three cases, in order:
+ *  - The worn form IS of this tier: its biome. This is the lit band, and swapping
+ *    to a form of the same tier from another biome re-resolves the whole band.
+ *  - A band BELOW the worn form's (collapsed, still a wardrobe to buy from): the
+ *    first owned form of that tier in authored order. Any owned door of that tier
+ *    is a door the player genuinely walked through; authored order just makes the
+ *    answer stable when they own both.
+ *  - A band the player has not reached (silhouette) or an empty tree: the first
+ *    authored form of that tier, else the home biome. Nothing there is buyable —
+ *    `checkUnlockCard` refuses on the worn tier first — so this is a display
+ *    default, and for tier 1 it is the base form, i.e. the home biome.
+ */
+export function lineageBandBiome(
+  lineage: Pick<LineageDefinition, 'homeBiome' | 'forms'>,
+  progress: Pick<LineageProgress, 'wornForm' | 'ownedForms'>,
+  tier: number,
+): string {
+  const worn = lineage.forms.find((f) => f.recipeId === progress.wornForm);
+  if (worn && worn.tier === tier) return worn.biome;
+  const owned = lineage.forms.find(
+    (f) => f.tier === tier && progress.ownedForms.includes(f.recipeId),
+  );
+  if (owned) return owned.biome;
+  return lineage.forms.find((f) => f.tier === tier)?.biome ?? lineage.homeBiome;
+}
+
+/**
+ * A card resolved against its band's door biome (design §21) — the one way the
+ * server, the client and the tutorial should ever resolve a card they have the
+ * player's tree for. `resolveLineageCard` with no `bandBiome` falls back to the
+ * home biome, which is only right at T1.
+ */
+export function resolveLineageCardFor(
+  lineage: LineageDefinition,
+  progress: Pick<LineageProgress, 'wornForm' | 'ownedForms'>,
+  card: LineageCard,
+  options: { frameFace?: DefensiveFace; discounted?: boolean } = {},
+): ResolvedLineageCard {
+  return resolveLineageCard(card, lineage, {
+    ...options,
+    bandBiome: lineageBandBiome(lineage, progress, card.tier),
+  });
+}
+
+/**
  * Whether this row is HALF PRICE on this lineage because the player already owns
  * the same row at the same tier on another lineage of the same slot (design §2:
  * "a respec at T2 costs an afternoon, not a restart"). Gates are never discounted.
@@ -246,11 +300,16 @@ export function checkUnlockCard(params: {
   if (wallet.isTestRoom) return OK;
 
   const discounted = lineageSwitchDiscount({ card, slot: lineage.slot, lineages });
-  const resolved = resolveLineageCard(card, lineage, { discounted });
+  const resolved = resolveLineageCardFor(lineage, progress, card, { discounted });
 
-  const level = wallet.biomeLevels[lineage.homeBiome] ?? 0;
+  // The band gates on its door biome, not on the home biome (design §21), so the
+  // level AND the biome it is read in both come off the resolved card.
+  const level = wallet.biomeLevels[resolved.requiredBiomeGroup] ?? 0;
   if (level < resolved.requiredBiomeLevel) {
-    return { ok: false, reason: `Requires ${lineage.homeBiome} level ${resolved.requiredBiomeLevel}.` };
+    return {
+      ok: false,
+      reason: `Requires ${resolved.requiredBiomeGroup} level ${resolved.requiredBiomeLevel}.`,
+    };
   }
   if (wallet.globalMastery !== undefined && wallet.globalMastery < resolved.requiredGlobalMastery) {
     return { ok: false, reason: `Requires Global Mastery ${resolved.requiredGlobalMastery}.` };
@@ -382,7 +441,7 @@ export function resolveLineageCards(
     // here. Skipping it is what makes the fold land EXACTLY ONCE even when a
     // save still points `active.stat` at the card the gate collapsed.
     if (statRowIsCollapsed(lineage, progress, card)) continue;
-    out.push(resolveLineageCard(card, lineage, { frameFace }));
+    out.push(resolveLineageCardFor(lineage, progress, card, { frameFace }));
   }
   return composeAmplifiers(out);
 }
@@ -620,7 +679,7 @@ export function resolveActiveLineages(
     // from here, because `resolveLineageCards` skips it. It is NOT pushed to
     // `cards`: an absorbed row is base stats, not a card the runtime fires.
     for (const card of absorbedStatCards(lineage, progress)) {
-      const resolved = resolveLineageCard(card, lineage, { frameFace });
+      const resolved = resolveLineageCardFor(lineage, progress, card, { frameFace });
       absorbed.push(resolved);
       addStats(resolved);
     }

@@ -6,6 +6,7 @@
  * resolve it here, optionally against the wearer's frame face so defensive cards
  * pay the off-face bias (design §3.1).
  */
+import { BIOME_LEVELS_PER_TIER, biomeLevelOffset } from '../../config/gameConfig';
 import { BIOME_PRIMARY_ESSENCE } from '../../items';
 import type { EssenceType } from '../../items';
 import { packetScalingStat } from './packets';
@@ -18,7 +19,7 @@ import {
 import type {
   DefensiveFace, LineageCapstone, LineageCard, LineageCost, LineageDefinition,
   LineageForm, LineageGateCost, LineageStatEffects, LineageStatKey,
-  ResolvedLineageCapstone, ResolvedLineageCard,
+  ResolvedLineageCapstone, ResolvedLineageCard, RowKind,
 } from './types';
 
 export interface ResolveOptions {
@@ -27,6 +28,42 @@ export interface ResolveOptions {
   /** Halve the cost — the player already owns this row on another lineage of the
    *  slot at the same tier (design §2). Gates are never discounted. */
   discounted?: boolean;
+  /**
+   * The band's DOOR biome: the biome of the form worn at this card's tier
+   * (design §21). A band of tier N gates on the biome that let the player in at
+   * tier N, never on the lineage's home biome — which is only ever the T1 door.
+   *
+   * Omitted means the home biome, which is exactly right for a T1 band and is the
+   * display default for a band the player has not reached yet (no door chosen).
+   * WHICH door a band has is a question about the player's progress, so that
+   * policy lives in `lineageBandBiome` (`shared/src/systems/lineages.ts`); this
+   * file only turns a biome into a number.
+   */
+  bandBiome?: string;
+}
+
+/**
+ * The level a band row asks for IN A GIVEN BIOME — design §21.
+ *
+ * `rowBiomeLevel` is an ABSOLUTE reference level: what a biome that debuts in T1
+ * would call it. A biome that debuts later numbers its own levels from 1
+ * ({@link biomeLevelOffset}), and `biomeLevelCap` is in those same local numbers,
+ * so a T3 Jungle door asks for Jungle 8 rather than Jungle 14 — the same content,
+ * counted the way that biome counts. Without the shift, every band whose door
+ * biome debuts above T1 demanded a level that biome can never reach: the Graveyard
+ * caps at 6 and the T4 band wanted 19–23.
+ */
+export function bandBiomeLevel(tier: number, row: RowKind, biome: string): number {
+  return Math.max(1, rowBiomeLevel(tier, row) - biomeLevelOffset(biome));
+}
+
+/**
+ * The door biome's own level a band of `tier` sits above — the zero of that band's
+ * mastery bar, and the floor the UI subtracts to show "L2 of 6".
+ */
+export function bandBiomeFloor(tier: number, biome: string): number {
+  const band = Math.max(1, Math.floor(tier));
+  return Math.max(0, (band - 1) * BIOME_LEVELS_PER_TIER - biomeLevelOffset(biome));
 }
 
 /** The stat a card's stat row scales: its override, else its lane's. */
@@ -65,9 +102,13 @@ export function resolveLineageCard(
   options: ResolveOptions = {},
 ): ResolvedLineageCard {
   const scale = { tier: card.tier, lane: card.lane, cardFace: card.face, frameFace: options.frameFace };
+  // The band gates on its DOOR biome (design §21). The Global Mastery band is
+  // unchanged in meaning: it is tier-wide, so it never moves with the door.
+  const bandBiome = options.bandBiome ?? lineage.homeBiome;
   const resolved: ResolvedLineageCard = {
     card,
-    requiredBiomeLevel: rowBiomeLevel(card.tier, card.row),
+    requiredBiomeGroup: bandBiome,
+    requiredBiomeLevel: bandBiomeLevel(card.tier, card.row, bandBiome),
     requiredGlobalMastery: lineageMasteryLevelForRow(card.tier, card.row),
     cost: lineageCardCost(card, lineage, options),
   };
@@ -133,10 +174,16 @@ export function lineageGateCost(
   };
 }
 
-/** Biome level required in the FORM's biome to pay its gate. */
+/**
+ * Biome level required in the FORM's biome to pay its gate.
+ *
+ * The gate sits at the cap of the band below the form it opens — read in that
+ * biome's own numbering, for the reason {@link bandBiomeLevel} gives: the T2 gate
+ * into a Jungle T3 form is full mastery of the Jungle's T2 content, which the
+ * Jungle calls level 6, not level 12 (a level it only reaches at player tier 3).
+ */
 export function formGateBiomeLevel(form: LineageForm): number {
-  // The gate sits at the cap of the band below the form it opens.
-  return gateBiomeLevel(form.tier - 1);
+  return Math.max(1, gateBiomeLevel(form.tier - 1) - biomeLevelOffset(form.biome));
 }
 
 /** Global Mastery required to pay a form's gate — where +5 sits in that band. */
