@@ -1561,6 +1561,59 @@ clean; `coverage.test.ts`, `weaponReachability.test.ts`, the new
    2026-10-01 overnight report. No monster numbers were touched; only which family
    a node favours and how often.
 
+### Phase 5 progress note — run 3 W1-B: T3 keystone / T4 cross cards, T3 path packet tags (2026-10-01)
+
+On `feat/t3-t4-bands` off `feat/lineage-data-model`, scoped to run 3's W1-B task
+(`docs/briefs/run3-progression-2026-10-01.md`). Authored, for all twenty
+lineages, the T3 `keystone` row (one card per lane, naming design §4's amended
+shared-per-packet keystone: Chain, Shockwave, Festering, Ladder, Refund, Always
+First, Immovable, Unbroken, each in the lineage's own flavour, `fx:
+'<lane>.keystone'`) and the T4 `cross` row (one card per lane, `borrowsLane` a
+derangement of the lineage's other two lanes — never a fixed point, never two
+cross cards naming the same borrowed lane). Both resolve through the existing
+generic `resolveLineageCard`/`cardScalar` path with zero runtime code changes:
+`ROW_SCALAR.keystone` (1.2) and `.cross` (0.5) and
+`triggerNForLane(card.borrowsLane ?? card.lane)` were already general. Also
+tagged all 54 T3 class paths (`t3CombatA/B.ts`, `t3Summoner.ts`) with a
+PROVISIONAL `SkillNode.packet: PacketId`, chosen from each path's description,
+for design §4's keystone handoff ("the item keystone and the class path name
+the same lane"). `pnpm typecheck` and the `lineage`/`skill` test substrings all
+green (18 files). Related work: run 3 W1-A (parallel, `feat/keystones`, not
+visible on this branch) implements the eight keystones' actual runtime rule
+changes; this task only authors the data side.
+
+**Divergences from the brief, recorded because the code (and an existing
+invariant) won.**
+
+1. **`coverage.test.ts`'s pre-existing "every row this tier has, per lane" check
+   had to be narrowed for T3/T4.** Before this task, every tier any lineage
+   authored had its FULL row set (stat/payoff/amplifier/keystone at T3, same +
+   cross at T4) checked per lane. Design §18.5 already says T3/T4 carry FORMS
+   ONLY until Phase 5's stat/payoff/amplifier rows land; this task adds exactly
+   the keystone (T3) and cross (T4) rows as the one exception, so the check now
+   applies in full only at T1/T2, and checks just the one row this phase
+   authors at T3 (`keystone`) and T4 (`cross`). Not a numeric or runtime change;
+   recorded here because it touches a test another task's invariant depends on.
+2. **"Every lane carried by a root's frames" (the brief's phrasing for the T3
+   path tag coverage test) was read as "every packet a WEAPON can carry"** —
+   `WEAPON_PACKET_IDS`, the six offensive packets — rather than a literal
+   per-class-root lane set, because no such root-to-lane binding exists
+   anywhere in the codebase (a player's class root and their equipped weapon
+   lineage are independent choices). Under that reading, `bulwark` and
+   `barrier-tempo` are reported as the expected zero-coverage misses (no weapon
+   keystone ever names them, so no class ATTACK path should either), and all
+   six weapon-eligible packets have at least one tagged path (tempo 15,
+   empowered 20, affliction 13, control 2, kill-chain 1, engagement 3) — see
+   `shared/src/data/skillTree/t3PacketTags.test.ts`.
+3. **Cross-card fx reuses the card's OWN lane's existing payoff fx, not the
+   borrowed lane's.** `coverage.test.ts` already enforces `card.fx` starting
+   with `${card.lane}.`, so a cross card slotted under lane X (even though its
+   trigger/payoff are borrowed from lane Y) draws X's established visual, not
+   Y's. Visually this means a cross card can borrow a mechanic's number but
+   keeps its own lane's grammar on screen — a deliberate reading of design §8
+   ("lane grammar" is a property of the slot, not the borrowed effect), not an
+   oversight.
+
 ---
 
 ## Cross-cutting rules
