@@ -1,0 +1,295 @@
+{
+  "schema": 1,
+  "source": "519a82dc58d367cbbfdb9d498e62e6a41b708057",
+  "tiers": [
+    1
+  ],
+  "seeds": [
+    101009,
+    101033
+  ],
+  "bossCapMs": 300000,
+  "nodeCapMs": 120000,
+  "nodeLanes": 3,
+  "plus": 3,
+  "factorSpec": [
+    "1.75",
+    "2"
+  ],
+  "seedFactorByTier": [
+    1,
+    1.25,
+    1.3,
+    1.35,
+    1.4
+  ],
+  "committedFactorByTier": [
+    1,
+    1.25,
+    1.3,
+    1.35,
+    1.4
+  ],
+  "grants": [
+    "wallet credited for the lineage band and zeroed afterwards",
+    "lineage home biome raised to the tier's gate level where the biome's own cap is lower"
+  ],
+  "scope": "Pure weapon lanes (5 lineages x 3 lanes) per tier. BOSS: the lineage biome's dungeon, guard stripped, boss woken; kill time and time-to-death from the same fight, extrapolated when not measured. NORMAL: an open node of the same biome, FightHpTracker median fight-end HP. Bench bot, +N gear, capped mastery, reference ability wiring, no travel.",
+  "cells": [
+    {
+      "id": "t1-broadsword-kill-chain",
+      "form": "iron-broadsword",
+      "gear": {
+        "armor": "plains-vest-t1",
+        "recovery": "plains-charm-t1",
+        "mobility": "mountain-boots-t1",
+        "weapon": "iron-broadsword"
+      },
+      "boss": "tusked-razorback",
+      "bossNode": "node-t1-plains-dungeon",
+      "normalNode": "node-t1-plains-03",
+      "cards": [
+        "broadsword-t1-kill-chain-stat",
+        "broadsword-t1-kill-chain-payoff"
+      ]
+    },
+    {
+      "id": "t1-broadsword-empowered",
+      "form": "iron-broadsword",
+      "gear": {
+        "armor": "plains-vest-t1",
+        "recovery": "plains-charm-t1",
+        "mobility": "mountain-boots-t1",
+        "weapon": "iron-broadsword"
+      },
+      "boss": "tusked-razorback",
+      "bossNode": "node-t1-plains-dungeon",
+      "normalNode": "node-t1-plains-03",
+      "cards": [
+        "broadsword-t1-empowered-stat",
+        "broadsword-t1-empowered-payoff"
+      ]
+    },
+    {
+      "id": "t1-broadsword-tempo",
+      "form": "iron-broadsword",
+      "gear": {
+        "armor": "plains-vest-t1",
+        "recovery": "plains-charm-t1",
+        "mobility": "mountain-boots-t1",
+        "weapon": "iron-broadsword"
+      },
+      "boss": "tusked-razorback",
+      "bossNode": "node-t1-plains-dungeon",
+      "normalNode": "node-t1-plains-03",
+      "cards": [
+        "broadsword-t1-tempo-stat",
+        "broadsword-t1-tempo-payoff"
+      ]
+    },
+    {
+      "id": "t1-rapier-tempo",
+      "form": "flash-rapier",
+      "gear": {
+        "armor": "forest-vest-t1",
+        "recovery": "forest-charm-t1",
+        "mobility": "mountain-boots-t1",
+        "weapon": "flash-rapier"
+      },
+      "boss": "gnarled-greatbear",
+      "bossNode": "node-t1-forest-dungeon",
+      "normalNode": "node-t1-forest-03",
+      "cards": [
+        "rapier-t1-tempo-stat",
+        "rapier-t1-tempo-payoff"
+      ]
+    },
+    {
+      "id": "t1-rapier-affliction",
+      "form": "flash-rapier",
+      "gear": {
+        "armor": "forest-vest-t1",
+        "recovery": "forest-charm-t1",
+        "mobility": "mountain-boots-t1",
+        "weapon": "flash-rapier"
+      },
+      "boss": "gnarled-greatbear",
+      "bossNode": "node-t1-forest-dungeon",
+      "normalNode": "node-t1-forest-03",
+      "cards": [
+        "rapier-t1-affliction-stat",
+        "rapier-t1-affliction-payoff"
+      ]
+    },
+    {
+      "id": "t1-rapier-engagement",
+      "form": "flash-rapier",
+      "gear": {
+        "armor": "forest-vest-t1",
+        "recovery": "forest-charm-t1",
+        "mobility": "mountain-boots-t1",
+        "weapon": "flash-rapier"
+      },
+      "boss": "gnarled-greatbear",
+      "bossNode": "node-t1-forest-dungeon",
+      "normalNode": "node-t1-forest-03",
+      "cards": [
+        "rapier-t1-engagement-stat",
+        "rapier-t1-engagement-payoff"
+      ]
+    },
+    {
+      "id": "t1-hammer-empowered",
+      "form": "heavy-hammer",
+      "gear": {
+        "armor": "mountain-vest-t1",
+        "recovery": "mountain-charm-t1",
+        "mobility": "mountain-boots-t1",
+        "weapon": "heavy-hammer"
+      },
+      "boss": "crag-behemoth",
+      "bossNode": "node-t1-mountain-dungeon",
+      "normalNode": "node-t1-mountain-03",
+      "cards": [
+        "hammer-t1-empowered-stat",
+        "hammer-t1-empowered-payoff"
+      ]
+    },
+    {
+      "id": "t1-hammer-control",
+      "form": "heavy-hammer",
+      "gear": {
+        "armor": "mountain-vest-t1",
+        "recovery": "mountain-charm-t1",
+        "mobility": "mountain-boots-t1",
+        "weapon": "heavy-hammer"
+      },
+      "boss": "crag-behemoth",
+      "bossNode": "node-t1-mountain-dungeon",
+      "normalNode": "node-t1-mountain-03",
+      "cards": [
+        "hammer-t1-control-stat",
+        "hammer-t1-control-payoff"
+      ]
+    },
+    {
+      "id": "t1-hammer-engagement",
+      "form": "heavy-hammer",
+      "gear": {
+        "armor": "mountain-vest-t1",
+        "recovery": "mountain-charm-t1",
+        "mobility": "mountain-boots-t1",
+        "weapon": "heavy-hammer"
+      },
+      "boss": "crag-behemoth",
+      "bossNode": "node-t1-mountain-dungeon",
+      "normalNode": "node-t1-mountain-03",
+      "cards": [
+        "hammer-t1-engagement-stat",
+        "hammer-t1-engagement-payoff"
+      ]
+    },
+    {
+      "id": "t1-axe-tempo",
+      "form": "chaotic-axe",
+      "gear": {
+        "armor": "cave-vest-t1",
+        "recovery": "cave-charm-t1",
+        "mobility": "mountain-boots-t1",
+        "weapon": "chaotic-axe"
+      },
+      "boss": "obsidian-broodmother",
+      "bossNode": "node-t1-cave-dungeon",
+      "normalNode": "node-t1-cave-03",
+      "cards": [
+        "axe-t1-tempo-stat",
+        "axe-t1-tempo-payoff"
+      ]
+    },
+    {
+      "id": "t1-axe-kill-chain",
+      "form": "chaotic-axe",
+      "gear": {
+        "armor": "cave-vest-t1",
+        "recovery": "cave-charm-t1",
+        "mobility": "mountain-boots-t1",
+        "weapon": "chaotic-axe"
+      },
+      "boss": "obsidian-broodmother",
+      "bossNode": "node-t1-cave-dungeon",
+      "normalNode": "node-t1-cave-03",
+      "cards": [
+        "axe-t1-kill-chain-stat",
+        "axe-t1-kill-chain-payoff"
+      ]
+    },
+    {
+      "id": "t1-axe-empowered",
+      "form": "chaotic-axe",
+      "gear": {
+        "armor": "cave-vest-t1",
+        "recovery": "cave-charm-t1",
+        "mobility": "mountain-boots-t1",
+        "weapon": "chaotic-axe"
+      },
+      "boss": "obsidian-broodmother",
+      "bossNode": "node-t1-cave-dungeon",
+      "normalNode": "node-t1-cave-03",
+      "cards": [
+        "axe-t1-empowered-stat",
+        "axe-t1-empowered-payoff"
+      ]
+    },
+    {
+      "id": "t1-dagger-affliction",
+      "form": "ashbrand-blade",
+      "gear": {
+        "armor": "swamp-vest-t1",
+        "recovery": "swamp-charm-t1",
+        "mobility": "mountain-boots-t1",
+        "weapon": "ashbrand-blade"
+      },
+      "boss": "grave-toadeater",
+      "bossNode": "node-t1-swamp-dungeon",
+      "normalNode": "node-t1-swamp-03",
+      "cards": [
+        "dagger-t1-affliction-stat",
+        "dagger-t1-affliction-payoff"
+      ]
+    },
+    {
+      "id": "t1-dagger-control",
+      "form": "ashbrand-blade",
+      "gear": {
+        "armor": "swamp-vest-t1",
+        "recovery": "swamp-charm-t1",
+        "mobility": "mountain-boots-t1",
+        "weapon": "ashbrand-blade"
+      },
+      "boss": "grave-toadeater",
+      "bossNode": "node-t1-swamp-dungeon",
+      "normalNode": "node-t1-swamp-03",
+      "cards": [
+        "dagger-t1-control-stat",
+        "dagger-t1-control-payoff"
+      ]
+    },
+    {
+      "id": "t1-dagger-kill-chain",
+      "form": "ashbrand-blade",
+      "gear": {
+        "armor": "swamp-vest-t1",
+        "recovery": "swamp-charm-t1",
+        "mobility": "mountain-boots-t1",
+        "weapon": "ashbrand-blade"
+      },
+      "boss": "grave-toadeater",
+      "bossNode": "node-t1-swamp-dungeon",
+      "normalNode": "node-t1-swamp-03",
+      "cards": [
+        "dagger-t1-kill-chain-stat",
+        "dagger-t1-kill-chain-payoff"
+      ]
+    }
+  ]
+}

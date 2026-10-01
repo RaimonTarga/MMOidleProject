@@ -56,8 +56,13 @@ export const GAME_CONFIG = {
    * re-coupling the rate to the pool is exactly what turned the 0a pool sweep
    * into a wash. Raising the pool has to raise attrition, not healing.
    *
-   * PROVISIONAL: these are the Phase 0 bench's pick
+   * PROVISIONAL, the Phase 0 bench's pick
    * (`reports/progression-phase0/pool-raise-run3.md`), not a playtested number.
+   * T1's 1.25 is the criterion outright: it is the lowest factor whose median
+   * boss time-to-death exceeds median kill time for the fifteen pure lanes
+   * (0.80 at 1.00, 1.04 at 1.25). T2-T4 keep the design's seeds because their
+   * bosses are already out-lasted at 1.00, so the criterion admits every
+   * candidate there and only says not to LOWER the pool.
    */
   PLAYER_POOL_FACTOR_BY_TIER: [1, 1.25, 1.3, 1.35, 1.4] as const,
   PLAYER_ATTACK: 15, // damage per hit (before plating)
