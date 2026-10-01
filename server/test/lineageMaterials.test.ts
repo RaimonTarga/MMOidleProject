@@ -96,15 +96,13 @@ assert(swept === claimed.size, `the partition sweep saw ${swept} monsters but th
 // the shares and the spawn cycle; this owns the join.
 
 /**
- * Families with no blend yet. Desert Stalker is T3+ only by design (W1-E's
- * families pass — its two named members, dune-stalker/dune-tyrant, debut at
- * T3/T4, so Desert fields only Basilisk+Scorpion at T2; see
- * `shared/src/data/families/index.ts` and `shared/src/world/map/regionT2.ts`).
- * Its shard has no source until the T3 blend pass authors it — an entry here
- * is that known, temporary gap, not a silent one. Remove the entry the day a
- * node names it.
+ * Families with no blend yet. Empty as of W1-C (2026-10-01): Desert Stalker
+ * is now named by `regionT3.ts`'s three-way Desert blends (its T2 gap is
+ * described in `shared/src/data/families/index.ts`), and every T3/T4 family
+ * authored in this same wave has a node. Kept as a named, typed set (rather
+ * than deleted) so the next gap has somewhere to go.
  */
-const UNSOURCED_FAMILIES = new Set<string>(['desert-stalker']);
+const UNSOURCED_FAMILIES = new Set<string>();
 
 const namedByNodes = new Set<string>();
 for (const node of WORLD_NODE_LIST) {

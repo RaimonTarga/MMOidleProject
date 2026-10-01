@@ -132,17 +132,20 @@ function checkTierBlends(tier: number, expectedCount: number) {
 
 const t1Normals = checkTierBlends(1, 27);
 const t2Normals = checkTierBlends(2, 37);
+const t3Normals = checkTierBlends(3, 38);
+const t4Normals = checkTierBlends(4, 38);
 
-// T3-T4 carry no blend yet (their family tables are not authored). This asserts
-// the CURRENT deliberate state; later waves are what flip it.
+// Every normal node of every tier now carries a blend (W1-C adds T3/T4). Only
+// non-normal kinds (dungeon/sanctuary/tutorial) stay blend-free, by design
+// (`validateKindsAndContent` enforces that separately).
 for (const node of WORLD_NODE_LIST) {
-  if (node.kind === 'normal' && (node.biomeTier === 1 || node.biomeTier === 2)) continue;
-  check(!node.blend, `${node.id}: only T1/T2 normal nodes carry a blend today`);
+  if (node.kind === 'normal') continue;
+  check(!node.blend, `${node.id}: a non-normal node must not carry a blend`);
 }
 
 check(
-  Object.keys(NODE_BLENDS).length === 27 + 37,
-  `NODE_BLENDS holds ${Object.keys(NODE_BLENDS).length} nodes, expected ${27 + 37}`,
+  Object.keys(NODE_BLENDS).length === 27 + 37 + 38 + 38,
+  `NODE_BLENDS holds ${Object.keys(NODE_BLENDS).length} nodes, expected ${27 + 37 + 38 + 38}`,
 );
 problems.push(...validateWorldMap());
 assert(problems.length === 0, `blend authoring failures:\n  ${problems.join('\n  ')}`);
@@ -187,7 +190,7 @@ assert(problems.length === 0, `blend authoring failures:\n  ${problems.join('\n 
 
 // ─── Every authored node's resolved blend, one cycle at a time ────────────────
 
-for (const node of t1Normals) {
+for (const node of [...t1Normals, ...t3Normals, ...t4Normals]) {
   const resolved = nodeSpawnBlend(node.id);
   assert(!!resolved, `${node.id}: no resolvable blend`);
 
@@ -319,14 +322,17 @@ assert(problems.length === 0, `blend resolution failures:\n  ${problems.join('\n
   assert(first() === dominant, `${nodeId}: a second fresh world must open on ${dominant} too`);
 }
 
-// A node with no blend still spawns, from the flat biome pool. This is the
-// T3-T4 path, and it must not have been broken by the blended one.
+// A node with no blend still spawns, from the flat biome pool. Every normal
+// node now carries a blend (W1-C), so the one kind that stays blend-free by
+// design is a dungeon node (`validateKindsAndContent` enforces that) — this
+// is the fallback path dungeons, sanctuaries, and the pre-blend T3/T4 state
+// all relied on, and it must not have been broken by the blended one.
 {
   const unblended = WORLD_NODE_LIST.find(
-    (node) => node.kind === 'normal' && node.biomeTier === 3,
+    (node) => node.kind === 'dungeon' && node.biomeTier === 3,
   );
-  assert(!!unblended, 'fixture: a T3 normal node');
-  assert(!nodeSpawnBlend(unblended.id), `${unblended.id}: T3 nodes carry no blend yet`);
+  assert(!!unblended, 'fixture: a T3 dungeon node');
+  assert(!nodeSpawnBlend(unblended.id), `${unblended.id}: dungeon nodes carry no blend`);
   const world = new World();
   let placed = 0;
   for (let i = 0; i < 10; i += 1) if (spawnMonster(world, unblended.id)) placed += 1;
