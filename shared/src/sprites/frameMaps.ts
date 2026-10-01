@@ -399,14 +399,19 @@ export function resolveMonsterBurrowFrame(monsterTypeId: string): string | null 
 }
 
 /**
- * DISPLAY SCALE for regular monsters whose body should read bigger than the
- * standard 64px mob. Every monster sprite is authored at 64px, so without this a
- * Granite Mammoth draws the same height as a Field Hare. Presentation only: no
- * collision, range or hitbox reads it.
+ * DISPLAY SCALE for regular monsters whose body should NOT read at the standard
+ * 64px mob size. Every monster sprite is authored at 64px, so without this a
+ * Granite Mammoth draws the same height as a Field Hare, and a spiderling the
+ * same height as the spider it hatched from. Presentation only: no collision,
+ * range or hitbox reads it.
  *
- * Bosses draw at their own 128px size and ignore this map. Regular mobs stay at
- * or below 1.75 (112px) so a boss is always the largest body in the room.
- * Omitted types draw at 1.
+ * It scales both ways: heavy beasts sit above 1, and the T1 kin mobs sit below
+ * it, which is the whole point of a kin mob reading as the younger body. Bosses
+ * draw at their own 128px size and ignore this map, so regular mobs stay at or
+ * below 1.75 (112px) and a boss is always the largest body in the room. The
+ * floor is 0.5 (32px), under which a body stops being a target the player can
+ * read. Omitted types draw at 1, so an entry of exactly 1 is a line with no
+ * effect.
  */
 export const MONSTER_DISPLAY_SCALE: Record<string, number> = {
   // ── Small (48px): spawn and fledglings ─────────────────────────────────────
