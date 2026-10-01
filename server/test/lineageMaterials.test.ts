@@ -32,6 +32,7 @@ import {
   WORLD_NODE_LIST,
   baseRecoveryForTier,
   biomeDefensiveLaneAPackets,
+  rowShardCost,
   blendEntries,
   emptyEquipment,
   familyForMonster,
@@ -230,6 +231,14 @@ function farm(id: string, nodeId: string, monsterTypeId: string, kills: number) 
     assert(
       (three.shards[packet] ?? 0) === (one.shards[packet] ?? 0) * 3,
       `the Lane-A stopgap is deterministic too, for '${packet}'`,
+    );
+    // Design §18.6 prices the stopgap by what it BUYS: a boss-only lane reaches a
+    // payoff card in two kills. Asserting "> 0" let the price drift away from its
+    // own stated purpose, which is the whole reason it has a number.
+    assert(
+      (one.shards[packet] ?? 0) * 2 >= rowShardCost(1, 'payoff'),
+      `two boss kills must cover a T1 payoff row's ${rowShardCost(1, 'payoff')} shards, `
+        + `got ${(one.shards[packet] ?? 0)} per kill for '${packet}'`,
     );
   }
 }

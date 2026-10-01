@@ -27,10 +27,14 @@ const DEFAULT_BOSS_RESPAWN_MS = 30_000;
  * distinct Lane-A packet across its three non-weapon lineages (armor, recovery,
  * mobility) — deduplicated per packet, so a biome whose armor and mobility
  * lineages share a Lane A (e.g. Plains' Kill chain) pays that packet once per
- * kill, not once per lineage that names it. Provisional; remove when a family
- * covers it.
+ * kill, not once per lineage that names it.
+ *
+ * FOUR, so a boss-only lane buys a payoff card in two kills (design §18.6): a
+ * payoff row costs eight shards at T1, and at two per kill those lanes were four
+ * boss kills behind a lane whose family drops its shard on ordinary trash.
+ * Provisional; remove when a family covers it.
  */
-const BOSS_LANE_A_SHARD_AMOUNT = 2;
+const BOSS_LANE_A_SHARD_AMOUNT = 4;
 
 export interface KillRewardInfo {
   essenceGained: number;
