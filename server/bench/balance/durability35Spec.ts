@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {MONSTER_DATABASE,NODE_BIOMES} from '@mmo-idle/shared';
+import {MONSTER_DATABASE,NODE_BIOMES,blendEntries} from '@mmo-idle/shared';
 import {SURVEY_CLASSES} from './ttkSurveySpec';
 import type {Night5Cell} from './night5Spec';
 
@@ -121,7 +121,11 @@ export function assertDurability35Definitions(): void {
   assert.equal(b.biomeGroup,'mountain',`${nodeId} must be Mountain`);
  }
  // The two contexts must genuinely differ, or this is one context run twice.
- const modifiers=DURABILITY35_NODES.map(n=>(NODE_BIOMES[n] as {modifier?:string}).modifier);
- assert.equal(modifiers[0],'heavy','entry node modifier drift');
- assert.equal(modifiers[1],'swarming','second context modifier drift');
+ // Was each node's `modifier` ('heavy'/'swarming'); progression rework Phase 2b
+ // deleted that field from T1 nodes outright, so the dominant family of each
+ // node's authored blend is the live equivalent -- node-01 is Crag-led (was
+ // Heavy), node-02 is Ridge-led (was Swarming), still two distinct contexts.
+ const dominantFamilies=DURABILITY35_NODES.map(n=>blendEntries(NODE_BIOMES[n]!.blend!)[0]!.family);
+ assert.equal(dominantFamilies[0],'mountain-crag','entry node family drift');
+ assert.equal(dominantFamilies[1],'mountain-ridge','second context family drift');
 }
