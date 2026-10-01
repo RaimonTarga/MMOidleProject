@@ -918,6 +918,16 @@ Every number above is a placeholder for the designer's hand-edit after the bench
    list would have said "+20% damage", which is false on a ×4 finisher. The node
    descriptions carry the real sentence instead; `client/src/ui/describe/passiveText.ts`
    is untouched.
+8. **OPEN, cross-cutting: a Technique rider compounds with a frame window.**
+   `addEmpoweredDamage` (`abilityEffects.ts`) divides the hit by
+   `empoweredMultiplier` only when `empoweredAttack` is also set. A frame window —
+   like a lineage `damage-window`, which has had this shape since Phase 1c — records
+   the multiplier WITHOUT claiming the mechanic fired, because setting
+   `empoweredAttack` would restart cooldowns and fire every `mechanic-fired` card. So
+   a rider landing inside a window scales off the boosted hit. Reading the divisor
+   unconditionally is a one-line change and is probably the correct reading of the
+   one-multiplier rule, but it moves lineage-card numbers as well as frame numbers,
+   so it belongs to whoever owns the card windows rather than to this task.
 
 ---
 
