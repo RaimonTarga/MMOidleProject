@@ -34,6 +34,7 @@
 import {
   applyStatusEffect,
   type StatusEffect,
+  type StatusEffectConfig,
   defensiveFaceForSubVariant,
   getCooldown,
   getCounter,
@@ -66,7 +67,7 @@ import type { World } from '../../world/World';
 import { attachMarker } from '../../ecs/markerHelpers';
 import { registerCombatListener, type CombatContext } from './engine/combatPipeline';
 import { registerMechanicFiredListener } from './engine/mechanicFired';
-import { applyPlayerDebuff } from '../classes/shared/applyPlayerDebuff';
+import { applyPlayerDebuff, playerDebuffConfig } from '../classes/shared/applyPlayerDebuff';
 import { LINEAGE_BLEED_ID, LINEAGE_POISON_ID } from './damage/bleedIds';
 import { applyPlayerProcDamage } from './damage/procDamage';
 import { applyMonsterSlow } from './status/monsterControl';
@@ -394,14 +395,35 @@ function applyOnTarget(
       // Shared record, max-wins (design §18.1). The cadence finisher's strip is
       // PERMANENT and multi-stack; a timed single-stack card must not shorten it
       // to its own window or drop its stack count.
-      applySharedDebuffMaxWins(player, target.tracksCombat, {
+      //
+      // AND THE RECORD IS READ AS stacks × platingReduction (`effectivePlatingAfterShred`
+      // subtracts that product, and the target-frame tile prints it), so the card's
+      // fraction — which resolves to the WHOLE strip it promises — is divided across
+      // the stacks the shared record carries. Written straight in, it was multiplied
+      // by the finisher's three-stack brand and stripped three times what it
+      // authored. Max-wins is therefore settled in TOTALS here: comparing a total
+      // against a per-stack value is not a comparison.
+      const config: StatusEffectConfig = {
         id: 'plating-shred',
         maxStacks: 1,
         refreshable: true,
         remainingMs: durationMs ?? 0,
         sourceId,
         data: { totalMs: durationMs ?? 0, platingReduction: reduction },
-      }, ['platingReduction', 'totalMs']);
+      };
+      const prior = getStatusEffect(target.tracksCombat, 'plating-shred');
+      const priorPerStack = prior?.data['platingReduction'] ?? 0;
+      const priorTotal = (prior?.stacks ?? 0) * priorPerStack;
+      // The core-scaled total the card promises. `playerDebuffConfig` is the same
+      // scaling step the applier runs internally; read here because the comparison
+      // needs the scaled figure and the applier only returns the merged one.
+      const cardTotal = Number(
+        playerDebuffConfig(player, config).data?.['platingReduction'] ?? reduction,
+      );
+      const effect = applySharedDebuffMaxWins(player, target.tracksCombat, config, ['totalMs']);
+      effect.data['platingReduction'] = cardTotal > priorTotal
+        ? cardTotal / Math.max(1, effect.stacks)
+        : priorPerStack;
       return landed;
     }
 

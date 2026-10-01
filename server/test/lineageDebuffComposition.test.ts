@@ -38,6 +38,7 @@ import { World } from '../src/world/World';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { emitCombatEvent } from '../src/systems/combat/engine/combatPipeline';
 import { emitMechanicFired } from '../src/systems/combat/engine/mechanicFired';
+import { effectivePlatingAfterShred } from '../src/systems/combat/damage/effectivePlating';
 
 const NODE = 'node-5-5';
 let nextId = 0;
@@ -234,6 +235,76 @@ function cardFxCount(): number {
     'the card should resolve a real plating reduction of its own',
   );
   assert.notEqual(shred?.remainingMs, -1, "the card's own application is timed, not permanent");
+}
+
+// ── plating-shred: the card's TOTAL is not multiplied by the record's stacks ──
+//
+// `effectivePlatingAfterShred` reads the shared record as stacks × platingReduction.
+// A card's fraction resolves to the whole strip it promises, so writing that total
+// into `platingReduction` made the cadence finisher's three-stack brand strip three
+// times what the card authored — the record's stack count silently amplifying a
+// number that was never per-stack.
+{
+  const player = spawn('comp-shred-total', [seededCard({
+    trigger: { kind: 'mechanic-fired' },
+    payoff: { kind: 'plating-shred', magnitude: 0.3, durationMs: 4_000 },
+    fx: 'empowered.plating-crack',
+  })]);
+  const target = monster(760); // 100 plating
+
+  // A three-stack brand that strips little per stack, so the CARD is the stronger
+  // source here and its own total is what has to land.
+  const brand = applyStatusEffect(target.tracksCombat, {
+    id: 'plating-shred',
+    instanced: false,
+    maxStacks: 4,
+    remainingMs: -1,
+    sourceId: player.isPlayer.id,
+    data: { platingReduction: 2 },
+  });
+  brand.stacks = 3;
+
+  world.takeNodeEvents(NODE);
+  const ctx = hit(player, target);
+  emitMechanicFired(world, player, ctx);
+  assert.equal(cardFxCount(), 1, 'the card must actually fire, or this case proves nothing');
+
+  assert.equal(
+    effectivePlatingAfterShred(target.mitigatesDamage.plating, target.tracksCombat),
+    70,
+    '30% of 100 plating is a 30-point strip however many stacks the shared record carries',
+  );
+}
+
+// ── and a card weaker than the whole brand leaves the brand's total alone ─────
+{
+  const player = spawn('comp-shred-weak', [seededCard({
+    trigger: { kind: 'mechanic-fired' },
+    payoff: { kind: 'plating-shred', magnitude: 0.05, durationMs: 4_000 },
+    fx: 'empowered.plating-crack',
+  })]);
+  const target = monster(800); // 100 plating
+
+  const brand = applyStatusEffect(target.tracksCombat, {
+    id: 'plating-shred',
+    instanced: false,
+    maxStacks: 4,
+    remainingMs: -1,
+    sourceId: player.isPlayer.id,
+    data: { platingReduction: 12 },
+  });
+  brand.stacks = 3;
+
+  world.takeNodeEvents(NODE);
+  const ctx = hit(player, target);
+  emitMechanicFired(world, player, ctx);
+  assert.equal(cardFxCount(), 1, 'the card must actually fire');
+
+  assert.equal(
+    effectivePlatingAfterShred(target.mitigatesDamage.plating, target.tracksCombat),
+    100 - 36,
+    "a 5-point card must not lower the brand's 3 × 12 strip",
+  );
 }
 
 console.log('lineageDebuffComposition: ok');
