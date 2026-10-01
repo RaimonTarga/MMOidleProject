@@ -95,6 +95,14 @@
 .stance-entry__controls > span { margin-left: auto; font-size: 10px; }
 .attunement-panel .attunement-button--default[aria-pressed="true"] { color: #d9ba78; border-color: #a78e58; background: rgba(217, 186, 120, .08); }
 .attunement-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+/* Ability nodes (design §19). The tiles and the lane grid come from
+   lineageTree.css — this only places the block inside the ability entry. */
+.ability-nodes { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--hud-edge-divider); }
+.ability-nodes__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+.ability-nodes__head strong { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+.ability-nodes__head span { font-size: 10px; color: var(--hud-text-dim); }
+.ability-nodes .lin-toast { margin: 0; }
 @media (max-width: 720px) {
   .stance-collection { grid-template-columns: minmax(0, 1fr); }
   .stance-entry__heading { flex-wrap: wrap; }
@@ -109,6 +117,7 @@
   .ability-entry__disclosure { grid-column: 1 / -1; display: flex; align-items: center; min-height: 36px; }
   .attunement-control { position: absolute; bottom: 5px; right: 12px; margin: 0; }
   .ability-entry__details { margin-left: 12px; }
+  .ability-nodes .lin-row { grid-template-columns: 56px repeat(3, minmax(0, 1fr)); gap: 6px; }
   .ability-entry__behavior, .ability-entry__shortfall { margin-left: 12px; }
   .ability-numbers { grid-template-columns: minmax(0, 1fr); }
   .attunement-budget__parts { gap: 8px 14px; }
