@@ -275,6 +275,22 @@ export const RELOAD_KEYS = [
   'reload.cannon-damage-per-shot',
   // Fraction of the reload spent charging before the cannon fires.
   'reload.cannon-charge-fraction',
+  // ── Frame loop (progression rework Phase 3) ────────────────────────────────
+  // The Slinger's loop is WHERE IN THE CLIP the payoff lives
+  // (docs/briefs/frame-loops-2026-10-01.md §1). Authored on the frame nodes, so
+  // every Slinger carries exactly one of the three shapes.
+  //
+  // Scout — START: the first N rounds of a fresh clip are empowered, so reload
+  // speed buys more openers.
+  'reload.frame-opener-rounds',
+  'reload.frame-opener-mult',
+  // Marksman — END: the clip's last round is the big one; a countdown to watch.
+  'reload.frame-last-round-mult',
+  // Artillerist — ACROSS: attack speed ramps with every shot of the clip with NO
+  // cap below the clip length, and damage rides the same ramp (×1 at an empty
+  // ramp, ×`frame-ramp-top-mult` at the top). Both reset on reload.
+  'reload.frame-ramp-pct-per-shot',
+  'reload.frame-ramp-top-mult',
 ] as const;
 
 export const ENERGY_KEYS = [
@@ -339,6 +355,28 @@ export const ENERGY_KEYS = [
   'energy.endless-storm-duration-ms',
   'energy.endless-storm-extend-ms',
   'energy.endless-storm-max-ms',
+  // ── Frame loop (progression rework Phase 3) ────────────────────────────────
+  // The Spirit's loop is WHAT THE DISCHARGE DOES
+  // (docs/briefs/frame-loops-2026-10-01.md §1).
+  //
+  // Spark — CHAIN: the discharge arcs to the nearest `chain-targets` bodies
+  // inside `chain-radius`, each taking `chain-share` of the discharge. Wisp
+  // (the Far range node) sets `energy.range-far-single-target`, and the share
+  // that would have arced is folded onto the primary hit instead.
+  'energy.frame-chain-targets',
+  'energy.frame-chain-radius',
+  'energy.frame-chain-share',
+  // Wraith — LOOP: the discharge opens a window (shorter than one charge cycle)
+  // where every hit generates `frame-gain-mult`× energy.
+  'energy.frame-gain-window-ms',
+  'energy.frame-gain-mult',
+  // Phantasm — OVERCHARGE: the pool keeps taking energy ABOVE the cap before the
+  // discharge arms, one stack per hit's worth, capped at `frame-overcharge-max`.
+  // Each stack adds `frame-overcharge-mult-per-stack` to the discharge, and the
+  // discharge staggers for `frame-stagger-ms` (the stun ladder's shortest rung).
+  'energy.frame-overcharge-max',
+  'energy.frame-overcharge-mult-per-stack',
+  'energy.frame-stagger-ms',
 ] as const;
 
 export const DOT_KEYS = [
@@ -460,6 +498,26 @@ export const SUMMONER_KEYS = [
   'summoner.minion-attack-cooldown',
   'summoner.damage-sponge-pct',
   'summoner.leash-mult',
+  // ── Frame loops (progression rework Phase 3) ───────────────────────────────
+  // The Conduit's loop hangs off the FORMATION CYCLE — every living summon has
+  // hit the same target since the last fire (docs/briefs/frame-loops-2026-10-01.md
+  // §1). Consort (`summoner-balanced`) deliberately has NO loop: that container is
+  // still open with the designer, and the frame keeps its stat skew alone.
+  //
+  // Splinter — a completed cycle on one target opens a frenzy window (shorter
+  // than one summon swing) where the swarm attacks faster and delivers more
+  // on-hit magnitude.
+  'summoner.frame-frenzy-window-ms',
+  'summoner.frame-frenzy-aps-pct',
+  'summoner.frame-frenzy-onhit-mult',
+  // Effigy — each body banks charge per hit; when both bodies have hit the same
+  // target inside `frame-link-window-ms`, the pair spends the bank as one linked
+  // slam (attack × stacks × `frame-link-slam-mult`) with a stagger.
+  'summoner.frame-link-window-ms',
+  'summoner.frame-link-charge-per-hit',
+  'summoner.frame-link-max-charge',
+  'summoner.frame-link-slam-mult',
+  'summoner.frame-link-stagger-ms',
 ] as const;
 
 // Mobility / boot mechanics. Strictly on the speed + positioning axis — these

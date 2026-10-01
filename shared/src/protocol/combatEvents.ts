@@ -308,4 +308,13 @@ type CombatEventPayload =
   // The client draws one handler per `LineageFxKey` in `render/combatFx.ts`,
   // keyed by the lane grammar (design §8). An unknown key draws nothing.
   | { kind: 'card-fx'; playerId: string; fx: LineageFxKey; pos: Vec2;
-      targetId?: string; targetPos?: Vec2; stacks?: number };
+      targetId?: string; targetPos?: Vec2; stacks?: number }
+  // A frame loop's BANK changed — progression rework Phase 3, the weapon glow that
+  // grows with charge (frame-loops brief §1: "a stack counter for banks, a clock for
+  // windows, a weapon glow that grows with charge").
+  //
+  // There was no weapon-glow intent in the repo, so this is it: one event per change
+  // of a frame bank, carrying the count and its cap so the client can draw the glow
+  // as a fraction without knowing which root it is looking at. Windows need no event
+  // — they are `frame.<root>.window` status effects and ride the existing buff sync.
+  | { kind: 'frame-charge'; playerId: string; stacks: number; max: number };

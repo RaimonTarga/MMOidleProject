@@ -177,9 +177,11 @@ export const rootsAndFramesEntries = [
     id: 'summoner-light', name: 'Splinter', tier: 1,
     classId: 'summoner-root', subVariantId: 'light',
     parent: 'summoner-root', children: ['summoner-light-t3-a', 'summoner-light-t3-b', 'summoner-light-t3-c'],
-    description: 'Formation mechanic — maximum summons before relic expansion: 6 (+2 from Conduit\'s 4). Six small, fast bodies share one formation budget: ×1.05 formation offense, 66% total summon-HP budget, ×1.18 movement, ×0.72 body size, and ×1.20 on-hit/secondary weapon effects. Reconstruction starts at 2.0s with a 1.5s floor; each loss costs little offense and reconstruction HP, while plating and area damage punish the swarm.',
+    description: 'Formation mechanic — maximum summons before relic expansion: 6 (+2 from Conduit\'s 4). Six small, fast bodies share one formation budget: ×1.05 formation offense, 66% total summon-HP budget, ×1.18 movement, ×0.72 body size, and ×1.20 on-hit/secondary weapon effects. Reconstruction starts at 2.0s with a 1.5s floor; each loss costs little offense and reconstruction HP, while plating and area damage punish the swarm. Frame loop — a completed formation cycle (every living body has hit the same target) opens a 0.9s frenzy: the swarm attacks 20% faster and lands 25% more on-hit magnitude.',
     cost: 1, statEffects: {"maxHpPct": 0.04, "attackSpeedPct": 0.06, "moveSpeedPct": 0.08, "platingPct": 0},
-    mechanicEffects: {},
+    // Frame loop (Phase 3): the window must stay SHORTER than one summon swing,
+    // or uptime is 100% and the loop collapses into a flat stat (design §10).
+    mechanicEffects: {"summoner.frame-frenzy-window-ms": 900, "summoner.frame-frenzy-aps-pct": 0.2, "summoner.frame-frenzy-onhit-mult": 1.25},
   }],
 
   ['summoner-balanced', {
@@ -188,6 +190,9 @@ export const rootsAndFramesEntries = [
     parent: 'summoner-root', children: ['summoner-balanced-t3-a', 'summoner-balanced-t3-b', 'summoner-balanced-t3-c'],
     description: 'Formation mechanic — maximum summons before relic expansion: 5 (+1 from Conduit\'s 4). Five medium bodies form the reference ensemble: ×1.00 formation offense, 100% total summon-HP budget, baseline movement and size, and 2.5s reconstruction with a 1.5s floor. Damage, durability, and reconstruction pressure stay moderate.',
     cost: 1, statEffects: {"maxHpPct": 0.08, "platingPct": 0, "moveSpeedPct": 0.02},
+    // Consort deliberately ships with NO frame loop: its container is the one
+    // still open with the designer (brief §1, bible open decision 1). The frame
+    // keeps its stat skew alone until that call lands — do not improvise one.
     mechanicEffects: {},
   }],
 
@@ -195,9 +200,12 @@ export const rootsAndFramesEntries = [
     id: 'summoner-heavy', name: 'Effigy', tier: 1,
     classId: 'summoner-root', subVariantId: 'heavy',
     parent: 'summoner-root', children: ['summoner-heavy-t3-a', 'summoner-heavy-t3-b', 'summoner-heavy-t3-c'],
-    description: 'Formation mechanic — maximum summons before relic expansion: 2 (−2 from Conduit\'s 4). Two large bodies concentrate the budget: ×1.15 formation offense, 140% total summon-HP budget, ×0.78 movement, ×1.75 body size, and 3.92s reconstruction with a 2.5s floor. Each loss removes major offense and is expensive to reconstruct.',
+    description: 'Formation mechanic — maximum summons before relic expansion: 2 (−2 from Conduit\'s 4). Two large bodies concentrate the budget: ×1.15 formation offense, 140% total summon-HP budget, ×0.78 movement, ×1.75 body size, and 3.92s reconstruction with a 2.5s floor. Each loss removes major offense and is expensive to reconstruct. Frame loop — each body banks a charge per hit (up to 5); when both bodies have struck the same target within 2.5s, the pair spends the bank as one linked slam for attack × stacks × 0.30 and staggers the target.',
     cost: 1, statEffects: {"maxHpPct": 0.16, "platingPct": 0.05, "attackSpeedPct": -0.06, "moveSpeedPct": -0.06, "damageReduction": 0.01},
-    mechanicEffects: {},
+    // Frame loop (Phase 3): a capped, deterministic bank plus a non-damage rider
+    // (design §10, Heavy). The stagger is the stun ladder's SHORTEST rung — the
+    // same 750ms the magnitude table's `stun` payoff unit carries.
+    mechanicEffects: {"summoner.frame-link-window-ms": 2500, "summoner.frame-link-charge-per-hit": 1, "summoner.frame-link-max-charge": 5, "summoner.frame-link-slam-mult": 0.3, "summoner.frame-link-stagger-ms": 750},
   }],
 
 
@@ -297,27 +305,35 @@ export const rootsAndFramesEntries = [
     id: 'reload-light', name: 'Scout', tier: 1,
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-root', children: [],
-    description: 'Reload change — 5-round clip and 1.2s reload. All-in on mobility with extra dodge: maximum uptime and a minimum profile to hit.',
+    description: 'Reload change — 5-round clip and 1.2s reload. All-in on mobility with extra dodge: maximum uptime and a minimum profile to hit. Frame loop — the first 2 rounds of a fresh clip hit for ×1.3, so faster reloads buy more openers.',
     cost: 1, statEffects: {"attackPct": 0.08, "maxHpPct": 0.04, "attackSpeedPct": 0.1, "moveSpeedPct": 0.1, "evasion": 0.07, "platingPct": 0},
-    mechanicEffects: {"reload.max-ammo": 5, "reload.reload-time-ms": 1200},
+    // Frame loop (Phase 3) — START of the clip. 2 of 5 rounds, so reload speed
+    // pays twice: a shorter clip cycle is a higher share of empowered rounds.
+    mechanicEffects: {"reload.max-ammo": 5, "reload.reload-time-ms": 1200, "reload.frame-opener-rounds": 2, "reload.frame-opener-mult": 1.3},
   }],
 
   ['reload-balanced', {
     id: 'reload-balanced', name: 'Marksman', tier: 1,
     classId: 'reload-root', subVariantId: 'balanced',
     parent: 'reload-root', children: [],
-    description: 'Reload change — 10-round clip and 2.0s reload. A steady burst fighter with modest avoidance: tempo and staying power in balance.',
+    description: 'Reload change — 10-round clip and 2.0s reload. A steady burst fighter with modest avoidance: tempo and staying power in balance. Frame loop — the last round of the clip hits for ×2.2: a countdown you can watch.',
     cost: 1, statEffects: {"attackPct": 0.08, "maxHpPct": 0.08, "attackSpeedPct": 0.04, "moveSpeedPct": 0.04, "evasion": 0.04, "platingPct": 0},
-    mechanicEffects: {"reload.max-ammo": 10, "reload.reload-time-ms": 2000},
+    // Frame loop (Phase 3) — END of the clip. One round in ten, so it carries the
+    // largest single multiplier of the three Slinger shapes.
+    mechanicEffects: {"reload.max-ammo": 10, "reload.reload-time-ms": 2000, "reload.frame-last-round-mult": 2.2},
   }],
 
   ['reload-heavy', {
     id: 'reload-heavy', name: 'Artillerist', tier: 1,
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-root', children: [],
-    description: 'Reload change — 20-round clip and 3.0s reload. Slower but harder to put down: sustained bursting and real armor for the first time on this chassis, with longer planned downtime.',
+    description: 'Reload change — 20-round clip and 3.0s reload. Slower but harder to put down: sustained bursting and real armor for the first time on this chassis, with longer planned downtime. Frame loop — every shot ramps attack speed by 2% with no cap before the clip runs dry, and damage rides the same ramp up to ×1.3 at the top. The 3s reload is the cool-down.',
     cost: 1, statEffects: {"attackPct": 0.1, "maxHpPct": 0.14, "platingPct": 0.05, "attackSpeedPct": -0.04, "moveSpeedPct": -0.05},
-    mechanicEffects: {"reload.max-ammo": 20, "reload.reload-time-ms": 3000},
+    // Frame loop (Phase 3) — ACROSS the clip. The ramp's cap IS the clip length,
+    // never below it, so the whole magazine is the climb and the reload is the
+    // reset. This ramp supersedes Warmonger's capped one at runtime (see
+    // `frameLoop.ts`); the path's re-home is a T3-review item.
+    mechanicEffects: {"reload.max-ammo": 20, "reload.reload-time-ms": 3000, "reload.frame-ramp-pct-per-shot": 0.02, "reload.frame-ramp-top-mult": 1.3},
   }],
 
 
@@ -325,27 +341,34 @@ export const rootsAndFramesEntries = [
     id: 'energy-light', name: 'Spark', tier: 1,
     classId: 'energy-root', subVariantId: 'light',
     parent: 'energy-root', children: [],
-    description: 'Energy change — gain 20 energy per hit and discharge at ×1.5 damage. Pure momentum: blazing speed and rapid attacks thrive on frequent discharges and their AoE splash.',
+    description: 'Energy change — gain 20 energy per hit and discharge at ×1.5 damage. Pure momentum: blazing speed and rapid attacks thrive on frequent discharges. Frame loop — the discharge arcs to the 2 nearest enemies for 35% of it each; Wisp trades the arcs for all of it on one target.',
     cost: 1, statEffects: {"attackPct": 0.02, "maxHpPct": 0.03, "attackSpeedPct": 0.04, "moveSpeedPct": 0.12, "platingPct": 0},
-    mechanicEffects: {"energy.per-hit": 20, "energy.empowered-mult": 1.5},
+    // Frame loop (Phase 3) — CHAIN. Arcs are proc damage, so they skip plating and
+    // pay half DR like every other player tick.
+    mechanicEffects: {"energy.per-hit": 20, "energy.empowered-mult": 1.5, "energy.frame-chain-targets": 2, "energy.frame-chain-radius": 160, "energy.frame-chain-share": 0.35},
   }],
 
   ['energy-balanced', {
     id: 'energy-balanced', name: 'Wraith', tier: 1,
     classId: 'energy-root', subVariantId: 'balanced',
     parent: 'energy-root', children: [],
-    description: 'Energy change — gain 14 energy per hit and discharge at ×2 damage. Fast and capable, with extra punch and light armor without sacrificing mobility.',
+    description: 'Energy change — gain 14 energy per hit and discharge at ×2 damage. Fast and capable, with extra punch and light armor without sacrificing mobility. Frame loop — the discharge opens a 2s window where every hit generates 60% more energy, so the loop feeds itself.',
     cost: 1, statEffects: {"attackPct": 0.03, "maxHpPct": 0.07, "platingPct": 0, "attackSpeedPct": 0, "moveSpeedPct": 0.06},
-    mechanicEffects: {"energy.per-hit": 14, "energy.empowered-mult": 2},
+    // Frame loop (Phase 3) — LOOP. 2s against a ~7-hit charge cycle, so the window
+    // stays well under one cycle (design §10) and uptime rises with attack speed.
+    mechanicEffects: {"energy.per-hit": 14, "energy.empowered-mult": 2, "energy.frame-gain-window-ms": 2000, "energy.frame-gain-mult": 1.6},
   }],
 
   ['energy-heavy', {
     id: 'energy-heavy', name: 'Phantasm', tier: 1,
     classId: 'energy-root', subVariantId: 'heavy',
     parent: 'energy-root', children: [],
-    description: 'Energy change — gain 10 energy per hit and discharge at ×6 damage. Measured power: heavier armor and damage reduction traded against attack pace; it builds slowly and hits very hard.',
+    description: 'Energy change — gain 10 energy per hit and discharge at ×6 damage. Measured power: heavier armor and damage reduction traded against attack pace; it builds slowly and hits very hard. Frame loop — the pool keeps taking energy above the cap for up to 4 more hits, each banking an Overcharge stack worth +15% discharge damage, and the discharge staggers.',
     cost: 1, statEffects: {"attackPct": 0.1, "maxHpPct": 0.14, "platingPct": 0.05, "attackSpeedPct": -0.1, "moveSpeedPct": -0.08, "damageReduction": 0.02},
-    mechanicEffects: {"energy.per-hit": 10, "energy.empowered-mult": 6},
+    // Frame loop (Phase 3) — OVERCHARGE: a capped, deterministic bank plus a
+    // non-damage rider (design §10, Heavy). The stagger is the stun ladder's
+    // SHORTEST rung — the same 750ms the magnitude table's `stun` unit carries.
+    mechanicEffects: {"energy.per-hit": 10, "energy.empowered-mult": 6, "energy.frame-overcharge-max": 4, "energy.frame-overcharge-mult-per-stack": 0.15, "energy.frame-stagger-ms": 750},
   }],
 
 
