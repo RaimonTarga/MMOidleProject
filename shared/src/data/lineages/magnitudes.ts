@@ -72,6 +72,28 @@ export const ROW_SCALAR: Record<RowKind, number> = {
 };
 
 /**
+ * What an ABILITY node pays, as a share of the row it borrows from (design §19).
+ *
+ * An ability node is not a lineage row: it hangs a packet's payoff off an ability
+ * the player already paid for, fires on that ability's own cadence rather than on
+ * a lane trigger, and is one purchase instead of a whole band. So it gets its own
+ * column rather than reusing {@link ROW_SCALAR} — "half a payoff row" and "what
+ * an ability amplifier is worth" must be tunable for abilities without moving
+ * every lineage card in the game.
+ *
+ *  - `packet`    the fraction of a full payoff row the node's payoff is worth.
+ *  - `amplifier` the boost the amplifier node's axis applies, exactly as
+ *    `ROW_SCALAR.amplifier` does for a lineage amplifier — seeded at the same
+ *    value deliberately, so the two read alike until a bench separates them.
+ *
+ * PROVISIONAL, like the rest of this table: nothing here has been benched.
+ */
+export const ABILITY_NODE_SHARE: Record<'packet' | 'amplifier', number> = {
+  packet: 0.5,
+  amplifier: 0.6,
+};
+
+/**
  * The lane budget (design §9). Every packet starts at parity; the bench moves
  * these, one number per lane, when a pure lane lands outside ±10% of the tier
  * median on its favoured variant.

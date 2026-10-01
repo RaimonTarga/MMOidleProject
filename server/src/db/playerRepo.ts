@@ -32,6 +32,7 @@ import {
   PACKET_IDS,
   CAPSTONE_MATERIALS,
   normalizeLineageProgressMap,
+  normalizeAbilityNodeProgressMap,
   CLEARING_NODE_ID,
   WORLD_NODES,
   buildCharacterSummary,
@@ -647,6 +648,11 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
       runesOwned:     runeIdsFromCraftedRecipes(runeRecipesCrafted),
       knownRites,
       equippedRites,
+      // Ability nodes (design §19). Absent from every save written before they
+      // shipped, and normalized the same way lineage trees are: unknown ability
+      // ids, unknown option ids and active rows pointing at something unowned
+      // are dropped, so a save written before an offer changed loads clean.
+      abilityNodes: normalizeAbilityNodeProgressMap(tracksProgression.abilityNodes),
       ...attunement,
     },
     holdsInventory,
