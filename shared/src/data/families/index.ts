@@ -26,6 +26,15 @@
  * The mobs §12.1 did not name are assigned here by kind, so the partition holds:
  * prairie-yearling with the Herd, young-wolf and dire-whelp with the Pack, and so
  * on. Those assignments are authoring, not design decisions, and move freely.
+ *
+ * **Jungle and Desert (T2 — W1-E, 2026-10-01)** add the first T2 family slice,
+ * approved by the designer's re-homing/families brief. Jungle's ten non-boss
+ * mobs partition exactly across its three families (Ape / Undergrowth /
+ * Stalker). Desert's approved families (Basilisk / Scorpion / Stalker, the
+ * last T3+ only) only named seven of its ten — the leftover scarab "Dealer"
+ * line is assigned by kind, same policy as above, with the reasoning inline on
+ * each entry below; that assignment is this wave's own authoring/review item,
+ * flagged in the implementation report, not a locked design call.
  */
 import type { PacketId } from '../lineages/types';
 
@@ -39,7 +48,11 @@ export type FamilyId =
   // Cave
   | 'cave-brood' | 'cave-brute' | 'cave-deep'
   // Swamp
-  | 'swamp-mire' | 'swamp-coven' | 'swamp-stalker';
+  | 'swamp-mire' | 'swamp-coven' | 'swamp-stalker'
+  // Jungle (T2 — W1-E)
+  | 'jungle-ape' | 'jungle-undergrowth' | 'jungle-stalker'
+  // Desert (T2 — W1-E)
+  | 'desert-basilisk' | 'desert-scorpion' | 'desert-stalker';
 
 export interface FamilyDefinition {
   id: FamilyId;
@@ -139,13 +152,84 @@ const familyEntries: [FamilyId, FamilyDefinition][] = [
     monsterIds: ['mud-toad', 'mire-stalker'],
     drops: 'kill-chain', punishes: 'bulwark',
   }],
+
+  // ── Jungle (T2 — W1-E) ──────────────────────────────────────────────────────
+  // Jungle's ten non-boss mobs partition EXACTLY across these three families —
+  // no "assigned by kind" gap here (contrast Desert below).
+  ['jungle-ape', {
+    id: 'jungle-ape', name: 'Ape', biome: 'jungle',
+    monsterIds: ['jungle-ape', 'silverback', 'apex-silverback'],
+    // Empowered/Tempo mirrors Plains Herd and Forest Grove: every Empowered
+    // family in the game so far punishes Tempo.
+    drops: 'empowered', punishes: 'tempo',
+  }],
+  ['jungle-undergrowth', {
+    id: 'jungle-undergrowth', name: 'Undergrowth', biome: 'jungle',
+    monsterIds: ['jungle-snake', 'jungle-blowdarter', 'emerald-constrictor', 'thornback-lizard'],
+    // Affliction/Control mirrors Forest Canopy, Jungle's own ancestor biome.
+    drops: 'affliction', punishes: 'control',
+  }],
+  ['jungle-stalker', {
+    id: 'jungle-stalker', name: 'Stalker', biome: 'jungle',
+    monsterIds: ['jungle-stalker', 'canopy-harrier', 'hunting-panther'],
+    // Engagement/Affliction mirrors Plains Sky, the game's other Engagement source.
+    drops: 'engagement', punishes: 'affliction',
+  }],
+
+  // ── Desert (T2 — W1-E) ──────────────────────────────────────────────────────
+  // Desert's ten non-boss mobs do NOT partition across the three approved
+  // families (design review item, see the file header): Basilisk, Scorpion and
+  // Stalker between them name only 7 of the 10. The leftover three are the
+  // scarab "Dealer" line (dust-djinn / sandweaver / sandspitter-cobra) — kiting,
+  // high-direct-damage, carries no CC of its own (see desert.monsters.ts's
+  // header) — which §12.1's approved table never gave a family of its own.
+  // Assigned here BY KIND so the partition holds, per the same "mobs the design
+  // did not name are assigned here, and move freely" policy already governing
+  // Mountain/Cave/Swamp:
+  //   - dust-djinn (T2) pairs 1:1 (`pack.followers`) with BOTH T2 controllers
+  //     (sand-scorpion AND stone-basilisk), so there is no single "its" family
+  //     by pairing alone. Placed with Scorpion: Basilisk already has 3 members
+  //     across every tier (stone/desert/dune-basilisk) to Scorpion's 2
+  //     (sand-scorpion, sand-viper), so this is also the family-size balance
+  //     call. It must NOT go to Stalker: Stalker is T3+-only by design (its two
+  //     named members are T3/T4), so a T2 body there would field a T2 node with
+  //     a family that has no T2 blend member — see regionT2.ts.
+  //   - sandweaver (T3) and sandspitter-cobra (T4) are placed with Stalker
+  //     (kill-chain): both are the dealer line's high-direct-damage, fast-kill
+  //     bodies, which fits "kill chain" better than it fits either controller
+  //     family, and both are T3+ so Stalker's T3+-only shape is unchanged.
+  ['desert-basilisk', {
+    id: 'desert-basilisk', name: 'Basilisk', biome: 'desert',
+    monsterIds: ['stone-basilisk', 'desert-basilisk', 'dune-basilisk'],
+    // Empowered/Tempo mirrors Plains Herd, Forest Grove, Jungle Ape.
+    drops: 'empowered', punishes: 'tempo',
+  }],
+  ['desert-scorpion', {
+    id: 'desert-scorpion', name: 'Scorpion', biome: 'desert',
+    // dust-djinn: the shared T2 Dealer, assigned here — see the header comment above.
+    monsterIds: ['sand-scorpion', 'sand-viper', 'dust-djinn'],
+    // Control/Kill-chain mirrors Mountain Ridge.
+    drops: 'control', punishes: 'kill-chain',
+  }],
+  ['desert-stalker', {
+    id: 'desert-stalker', name: 'Stalker', biome: 'desert',
+    // T3+ only (design table): dune-stalker/dune-tyrant are its named members;
+    // sandweaver/sandspitter-cobra are the Dealer line assigned here by kind —
+    // see the header comment above. No T2 member, so Desert fields only
+    // Basilisk + Scorpion at T2 (regionT2.ts's blends are two-way).
+    monsterIds: ['dune-stalker', 'dune-tyrant', 'sandweaver', 'sandspitter-cobra'],
+    // Kill-chain/Bulwark mirrors Swamp Stalker (same family name, same pairing).
+    drops: 'kill-chain', punishes: 'bulwark',
+  }],
 ];
 
 export const FAMILY_DATABASE: Map<FamilyId, FamilyDefinition> =
   new Map<FamilyId, FamilyDefinition>(familyEntries);
 
 /** Biomes whose pool the family table covers. A kill outside these drops no shard. */
-export const FAMILY_BIOMES: readonly string[] = ['plains', 'forest', 'mountain', 'cave', 'swamp'];
+export const FAMILY_BIOMES: readonly string[] = [
+  'plains', 'forest', 'mountain', 'cave', 'swamp', 'jungle', 'desert',
+];
 
 /** monsterId → family, built once. The reward seam's only lookup. */
 const FAMILY_BY_MONSTER: Map<string, FamilyDefinition> = (() => {
