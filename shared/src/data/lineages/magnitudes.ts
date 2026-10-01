@@ -22,7 +22,7 @@
 import { BIOME_LEVELS_PER_TIER } from '../../config/gameConfig';
 import { globalMasteryRequiredForUpgrade, MAX_UPGRADE } from '../../systems/itemUpgrades';
 import type {
-  DefensiveFace, LineageStatKey, PacketId, PayoffKind, RowKind,
+  DefensiveFace, LineageStatKey, PacketId, PayoffKind, RowKind, TriggerKind,
 } from './types';
 
 // ─── The three scalars ───────────────────────────────────────────────────────
@@ -194,6 +194,65 @@ export const TRIGGER_N_BY_LANE: Record<PacketId, number> = {
   'bulwark': 1,
   'barrier-tempo': 1,
 };
+
+/**
+ * The pull a payoff's value is measured against (design §18.3).
+ *
+ * PROVISIONAL, and grounded in the Phase 1.5 lane matrix rather than invented: a
+ * reference T1 pull is about three bodies over twelve seconds, and a ~1.5 aps
+ * weapon lands about eighteen hits in that time.
+ */
+export const REFERENCE_PULL = {
+  /** Hits a reference weapon lands in one pull. */
+  hits: 18,
+  /** Monsters killed in one pull. */
+  bodies: 3,
+  /** How long one pull lasts. */
+  ms: 12_000,
+};
+
+/**
+ * How often a trigger is expected to fire in one reference pull (design §18.3).
+ *
+ * WHY. `PACKET_BUDGET` is one scalar per lane, so before this it paid a payoff
+ * that fires on every hit and one that fires once per pull exactly the same — and
+ * the bench measured the consequence: Affliction fired 4563 times against
+ * Engagement's 452, and no packet landed inside §9's band. Dividing a payoff's
+ * magnitude by its expected fires makes `PAYOFF_UNIT` a PER-PULL total, so the
+ * lane budget compares like with like and starts at parity for real.
+ *
+ * `hit-nth` is computed from {@link REFERENCE_PULL} and the card's own interval,
+ * so a lane that buys a shorter interval pays for it automatically. The rest are
+ * authored here, derived from the reference pull: `kill` is one per body, `pulse`
+ * is the pull divided by its cadence, `standing` assumes about half a pull held
+ * still, and the incoming triggers assume a monster connects roughly every other
+ * second.
+ *
+ * Binary payoffs (stun, cleanse) are NOT normalised: they happen or they do not,
+ * and a stun divided by eighteen is not a shorter stun, it is no stun.
+ */
+export const TRIGGER_FIRES_PER_PULL: Record<TriggerKind, number> = {
+  'hit-nth': 0, // computed; see triggerFiresPerPull
+  'mechanic-fired': 6,
+  'first-hit': 1,
+  'kill': REFERENCE_PULL.bodies,
+  'evade': 2,
+  'hit-taken': 6,
+  'guard-cast': 1,
+  'standing': 4,
+  'pulse': 3,
+  'barrier-break': 1,
+};
+
+/** Expected fires per pull for one resolved trigger. Never below 1. */
+export function triggerFiresPerPull(trigger?: { kind: TriggerKind; n?: number }): number {
+  if (!trigger) return 1;
+  if (trigger.kind === 'hit-nth') {
+    const n = Math.max(1, Math.round(trigger.n ?? 1));
+    return Math.max(1, REFERENCE_PULL.hits / n);
+  }
+  return Math.max(1, TRIGGER_FIRES_PER_PULL[trigger.kind] ?? 1);
+}
 
 // ─── Unlock levels (design §4) ───────────────────────────────────────────────
 
@@ -392,19 +451,28 @@ export function payoffValue(params: {
   lane: PacketId;
   cardFace?: DefensiveFace;
   frameFace?: DefensiveFace;
+  /** The card's resolved trigger, so the value is normalised by its rate. */
+  trigger?: { kind: TriggerKind; n?: number };
 }): { magnitude: number; durationMs?: number } {
   const unit = PAYOFF_UNIT.get(params.payoff);
   if (!unit) throw new Error(`unknown payoff kind '${params.payoff}'`);
 
   // A binary payoff has nothing to scale: it happens or it does not, and a stun
-  // that grew with the tier scalar would be an eight-second stun at T4.
+  // that grew with the tier scalar would be an eight-second stun at T4. For the
+  // same reason it is never divided by its trigger rate.
   if (unit.binary) return { magnitude: unit.magnitude, durationMs: unit.durationMs };
 
   const kind: ScaleKind = unit.fractional ? 'fraction' : 'absolute';
-  const scaled = unit.magnitude * cardScalar({ ...params, kind });
+  // `PAYOFF_UNIT` is a PER-PULL total (design §18.3), so a payoff is worth its
+  // unit divided by how often it fires. Floored so a high-rate trigger rounds to
+  // something rather than to nothing.
+  const scaled = unit.magnitude * cardScalar({ ...params, kind })
+    / triggerFiresPerPull(params.trigger);
   return {
     // Durations do NOT scale with tier — a longer window is an amplifier's job.
-    magnitude: unit.fractional ? Math.round(scaled * 1000) / 1000 : Math.round(scaled),
+    magnitude: unit.fractional
+      ? Math.max(0.001, Math.round(scaled * 1000) / 1000)
+      : Math.max(1, Math.round(scaled)),
     durationMs: unit.durationMs,
   };
 }

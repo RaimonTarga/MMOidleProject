@@ -260,9 +260,13 @@ across the room.
 
 ## 9. Balance and coverage rules (locked)
 
-- **Lane budget.** At full rows for a tier, each lane's measured throughput (or eHP, for
-  defensive faces) lands within ±10% of the tier median on the bench, on that lane's
-  intended variant. Off-lane on an unfavourable variant may fall to ~70%.
+- **Lane budget.** At full rows for a tier, each lane's **uplift over the lineage's own
+  lane-less control, on the lane's favoured node**, lands within ±10% of the tier median.
+  Off-lane on an unfavourable variant may fall to ~70%. Amended 2026-10-01 (§18.3): the
+  older form compared absolute throughput across rows measured on DIFFERENT nodes, whose
+  mob HP differs by more than 2×, so the band could not be met by construction — and the
+  lane-less controls themselves span +21% to −14%, so an absolute reading is mostly class.
+  Payoff magnitudes are normalised by trigger rate, so the comparison is per-pull value.
 - **Per-tier magnitude table.** One scalar per row per tier plus a lane budget drives
   every card's numbers, like the modifier `M` table. Tuning a tier is one row in one table.
 - **Coverage matrix is a test.** For every tier: every packet appears on ≥2 lineages per

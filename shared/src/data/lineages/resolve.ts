@@ -84,7 +84,11 @@ export function resolveLineageCard(
       : { kind: card.trigger };
   }
   if (card.payoff) {
-    resolved.payoff = { kind: card.payoff, ...payoffValue({ payoff: card.payoff, row: card.row, ...scale }) };
+    // The trigger goes in so the magnitude is normalised by its rate (design §18.3).
+    resolved.payoff = {
+      kind: card.payoff,
+      ...payoffValue({ payoff: card.payoff, row: card.row, ...scale, trigger: resolved.trigger }),
+    };
   }
   return resolved;
 }
@@ -97,16 +101,17 @@ export function resolveLineageCapstone(
   const capstone: LineageCapstone | undefined = form.capstone;
   if (!capstone) return undefined;
   // A capstone is the band's reward, so it resolves at the payoff row's scalar.
+  const trigger: ResolvedLineageCapstone['trigger'] = capstone.trigger === 'hit-nth'
+    ? { kind: 'hit-nth', n: triggerNForLane(capstone.lane) }
+    : { kind: capstone.trigger };
   const payoff = payoffValue({
     payoff: capstone.payoff, tier: form.tier, row: 'payoff',
-    lane: capstone.lane, frameFace: options.frameFace,
+    lane: capstone.lane, frameFace: options.frameFace, trigger,
   });
   return {
     capstone,
     form,
-    trigger: capstone.trigger === 'hit-nth'
-      ? { kind: 'hit-nth', n: triggerNForLane(capstone.lane) }
-      : { kind: capstone.trigger },
+    trigger,
     payoff: { kind: capstone.payoff, ...payoff },
   };
 }
