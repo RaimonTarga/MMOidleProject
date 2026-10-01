@@ -59,6 +59,12 @@ export const caveMonsterEntries = [
     // armored enough that fast weapons don't trivially shred it.
     stats: { hp: 250, attack: 80, plating: 1, damageReduction: 0.10, speed: 18, attackRange: 12, attackCooldown: 2800, pullRange: 240 }, // pullRange 145→240: high-detection patrolling elite (overpull risk)
     behavior: 'melee', attackStyle: 'troll-fist', biome: 'cave', elite: true,
+    // BRUTE FAMILY (progression rework, 2026-10-01, PROVISIONAL): dotResistance
+    // unset -> 0.30. Brute declares `punishes: 'affliction'` and had no mechanism for
+    // it. The biome's elite, and the mob a DoT build ought to have to think about;
+    // Cave is also the %DR biome, so a second mitigation axis on its elite is in
+    // character. 0.30 stacks ON TOP of DOT_DR_SHARE of the 0.10 DR above.
+    dotResistance: 0.30,
     rewards: { essence: 13, essenceType: 'red', level: 1, biomeXp: 90 },
     ai: { wanderRadius: 130, leashRange: 460, idleMinMs: 3000, idleMaxMs: 8000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
