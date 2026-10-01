@@ -138,6 +138,12 @@ export const jungleMonsterEntries = [
     // with a pounce. Poison is DE-EMPHASIZED here (removed, locked) — venom is the
     // Snake's early-tier note, speed is this one's.
     stats: { hp: 1250, attack: 55, plating: 0, damageReduction: 0, speed: 78, attackRange: 12, attackCooldown: 1000, pullRange: 270 },
+    // STALKER FAMILY (progression rework, 2026-10-01, PROVISIONAL): dotResistance
+    // unset -> 0.25. Stalker declares `punishes: 'affliction'` and had no mechanism
+    // for it. Proposed purely from the CONTRACT — Jungle is unmeasured at the T1 band,
+    // so no Jungle row can be justified from the lane bench. Its removed-poison lock
+    // is about what the Stalker INFLICTS; this is what it resists.
+    dotResistance: 0.25,
     behavior: 'melee', attackStyle: 'claws-light', biome: 'jungle',
     rewards: { essence: 25, essenceType: 'green', level: 2, biomeXp: 150 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 600, idleMaxMs: 2600 },
