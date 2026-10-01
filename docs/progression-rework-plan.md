@@ -839,6 +839,86 @@ clears.
 - Tests: `frameLoops.test` (window shorter than cycle; stacks capped at threshold−1;
   uptime rises with attack speed), `rangeMechanics.test` per root.
 
+### Phase 3 progress note — frame loops: Striker, Squire, Apprentice (2026-10-01)
+
+**Built.** The three melee/dot roots' frame loops on `feat/frames-melee-dot`, from
+brief §1. Slinger / Spirit / Conduit are a sibling task; range nodes are not started.
+`pnpm typecheck` clean for `shared`, `server`, `client` (see divergence 6 for `admin`).
+Tests run: `frameLoops` (new), plus `mechanicFired`, `cadenceClassSelection`,
+`cooldownClock`, `skillTreeMechanicCopy`, `skillTreeData`, `describeText`,
+`hudStatusTooltips`, `lineageDebuffComposition`, `lineageDots`, `lineageCards.wiring`,
+`lineagePlatingStack`, `relics`, `relicMechanicEffectCoverage`, `coreRelicIntegration`,
+`skillPreview`, `tier2SkillPropagation`, `monsterDotBuffIcons`, `tundraChill`,
+`tundraClassFramePacket`, `classAffinity`, `attackProgression`, `balanceInstruments`,
+`bossDeclaration`, `tierEntryBootstrap`, `shared/protocol/characters`,
+`shared/protocol/tier1Snapshot`, `shared/systems/mechanicEffectScaling` — all green.
+
+Authored keys, one `<root>.frame-*` family per container:
+
+| Frame | `mechanicEffects` added |
+|---|---|
+| Flurry (`cadence-light`) | `cadence.frame-window-ms` 1600, `cadence.frame-window-mult` 1.3 |
+| Skirmisher (`cadence-balanced`) | `cadence.frame-window-ms` 800, `cadence.frame-window-mult` 1.15, `cadence.frame-charge-per-stack` 0.1 |
+| Breaker (`cadence-heavy`) | `cadence.frame-charge-per-stack` 0.2, `cadence.frame-stagger-ms` 750 |
+| Warrior (`cooldown-light`) | `cooldown.frame-window-ms` 2000, `cooldown.frame-refund-ms` 300 |
+| Knight (`cooldown-balanced`) | `cooldown.frame-window-ms` 1000, `cooldown.frame-refund-ms` 150, `cooldown.frame-charge-cap` 4, `cooldown.frame-charge-per-stack` 0.1 |
+| Bulwark (`cooldown-heavy`) | `cooldown.frame-charge-cap` 8, `cooldown.frame-charge-per-stack` 0.2, `cooldown.frame-shred-pct` 0.15, `cooldown.frame-shred-duration-ms` 6000 |
+| Venom vessel (`dot-light`) | `dot.frame-opener-stacks` 4 |
+| Ember mage (`dot-balanced`) | `dot.frame-max-stack-mult` 1.4 |
+| Rime-Bound (`dot-heavy`) | `dot.chill-max-stacks` 3, `dot.chill-move-slow-per-stack` 0.02, `dot.chill-attack-slow-per-stack` 0.02, `dot.chill-duration-ms` 4000 (existing keys, frame magnitudes) |
+
+Every number above is a placeholder for the designer's hand-edit after the bench.
+
+**Divergences from the brief and the plan, recorded because the code won.**
+
+1. **The window is clamped by the runtime, not trusted from the node.** The brief
+   says a window must be shorter than one cycle; authoring alone cannot promise that,
+   because the cycle moves with attack speed, haste, relics and Rampage. So
+   `resolveFrameWindowMs` caps every window at 60% of the LIVE cycle, and the
+   authored value is a ceiling. Uptime therefore rises with attack speed until the
+   clamp binds, and is flat at 60% past that — a deliberate ceiling on the Light
+   container, not an accident.
+2. **The Striker's bank cap is derived, the Squire's is authored.** The brief says
+   "cap threshold−1" for both Heavy frames. Cadence owns a threshold, so its cap is
+   `threshold − 1` with no key. A cooldown cycle is TIME: a derived cap would scale
+   with attack speed and hand fast weapons a bigger bank, so `cooldown.frame-charge-cap`
+   is authored. The plan's "stacks capped at threshold−1" test line therefore holds
+   literally for the Striker and as "capped at its authored cap" for the Squire.
+3. **The bank grows the mechanic's own multiplier.** "Finisher scales with stacks
+   spent" is implemented as `empoweredMultiplier + bank × per-stack`, applied as the
+   ratio between the two totals so nothing re-derives a pre-empowered base, and the
+   recorded multiplier ends up as the one honest number a Technique rider reads. No
+   second multiplier key, and the Ember bonus and the Flurry window fold the same way
+   (multiplicatively, exactly as a `damage-window` card already does).
+4. **Winter Warden's chill keys are now deltas.** The brief says Rime-Bound reuses
+   `dot.chill-*` at frame magnitudes and that Winter Warden "keeps deepening the same
+   chill". Passives SUM, so leaving the path's absolutes alongside the frame's would
+   have given it 12 stacks at 7% each. Its node now authors the delta (6 stacks, 3%,
+   2000ms) and still resolves to the 9 / 5% / 6s its copy promises. The frame's own
+   chill application stands down whenever `dot.freezing-cold` is present, so the two
+   never advance the record twice per hit and the freeze is not duplicated. The node's
+   tooltip rows now read as deltas (the same shape `cadence.threshold-mod` already has);
+   its hand-written description is unchanged and still states the resolved numbers.
+5. **Pyromancer still overlaps Ember Mage — NOT resolved here.** Brief §1 flags that
+   the T3 path does what the Ember frame now does; per the task that is noted, not
+   fixed. The frame's bonus and the path's own max-stack payoff both fire today. It
+   belongs to the T3 review after the rework, together with the Venomslinger and
+   Winter Warden re-homes the brief already lists.
+6. **Seams NOT reached.** (a) No client renderer for the weapon glow: the
+   `frame-charge` event is on the wire with an authoritative `stacks`/`max`, but
+   `client/src/render/combatFx.ts` has no handler, so nothing draws yet (an unknown
+   event kind draws nothing). Left unclaimed deliberately — the sibling task emits the
+   same event, and one renderer should serve both. (b) No authored art for the
+   `frame-window` / `frame-charge` tiles; they are registered in `conceptIcons` the way
+   the Phase 1c lineage tiles are, with the PNGs still to come from `art:`. (c)
+   `npx tsc -p admin/tsconfig.json` fails on `--ignoreDeprecations` in this worktree,
+   pre-existing and unrelated (no admin file is touched).
+7. **The frame-charge per-stack keys report as raw numbers in tooltips.** `+0.2` rather
+   than a percentage: the value is in multiplier POINTS, so `passiveText`'s percent
+   list would have said "+20% damage", which is false on a ×4 finisher. The node
+   descriptions carry the real sentence instead; `client/src/ui/describe/passiveText.ts`
+   is untouched.
+
 ---
 
 ## Phase 4 — Armor, charm, boots trees; remaining T1 families
