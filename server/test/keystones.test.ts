@@ -39,8 +39,10 @@ import {
   initUsesEnergy,
   initUsesReload,
   keystoneFxKey,
+  lineageUnit,
   setCounter,
   setLineageRuntime,
+  tickCooldowns,
   type CombatEvent,
   type PacketId,
   type ResolvedLineageCard,
@@ -64,7 +66,8 @@ import { applyClassDotStack } from '../src/systems/classes/archetypes/dot/dotPro
 import {
   getUndamagedMs, runBarrierRecharge, stampBarrierDamage, syncBarrier,
 } from '../src/systems/defense/barrier/barrier';
-import { getReactivePlatingStacks } from '../src/systems/defense/mitigation/reactivePlating';
+import { getReactivePlatingStacks, runReactivePlating } from '../src/systems/defense/mitigation/reactivePlating';
+import { runStationaryDr } from '../src/systems/defense/mitigation/stationaryDr';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -638,6 +641,44 @@ function withPlatingStack(id: string, cards: ResolvedLineageCard[]): PlayerEntit
   const before = { ...player.hasPosition.current };
   assert(pushPlayer(world, player, from, 200) !== null, 'without the keystone the push lands');
   assert(player.hasPosition.current.x !== before.x, 'and the player is moved');
+}
+
+{
+  // The OTHER half of Immovable: plating stacks persist for the grace after the
+  // player moves, and then stop. Regression — the movement clock used to be kept
+  // inside `runStationaryDr` below its early returns, so this player (who wears
+  // no stationary-DR item) never advanced it: the hold did nothing, and a clock
+  // left frozen inside the grace held the stacks against the fade forever.
+  const player = withPlatingStack('ks-immovable-hold', [keystoneCard('bulwark')]);
+  assert(
+    player.usesSkills.passives['defense.stationary-dr-pct'] === undefined,
+    'the hold must not need a stance item',
+  );
+  // Past the stacks' own hold window, so only the keystone can be keeping them.
+  tickCooldowns(player.tracksCombat, 4000);
+  const grace = lineageUnit('immovableGraceMs');
+
+  // Moving, inside the grace: held.
+  for (let elapsed = 0; elapsed < grace - 200; elapsed += 100) {
+    player.hasPosition.current.x += 1;
+    runStationaryDr(world, player, 100);
+    runReactivePlating(world, player, 100);
+  }
+  assert(
+    getReactivePlatingStacks(player) === 1,
+    'Immovable holds the plating stack through the grace after moving',
+  );
+
+  // Still moving, past the grace: the fade runs again.
+  for (let elapsed = 0; elapsed < 4000; elapsed += 100) {
+    player.hasPosition.current.x += 1;
+    runStationaryDr(world, player, 100);
+    runReactivePlating(world, player, 100);
+  }
+  assert(
+    getReactivePlatingStacks(player) === 0,
+    'and past the grace the stack fades — the hold is a window, not immunity',
+  );
 }
 
 // ── BARRIER TEMPO / Unbroken ─────────────────────────────────────────────────

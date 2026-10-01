@@ -56,16 +56,16 @@ export function stationaryIsMoving(cs: TracksCombat): boolean {
 }
 
 /**
- * Advance the movement clock. Runs for EVERY live player, every tick, whatever
- * they are wearing.
+ * Advance the movement clock. Called at the TOP of `runStationaryDr`, above its
+ * early returns, so it runs for every live player every tick whatever they are
+ * wearing.
  *
- * Deliberately not part of `runStationaryDr`: that step returns early when the
- * player has no stationary-DR item, and the Bulwark keystone (Immovable) reads
- * this same clock to hold plating stacks. While the clock lived inside the
- * ramp, a build with no stationary-DR passive never advanced it — so Immovable's
- * plating half did nothing — and a player who lost the passive mid-movement
- * froze it inside the grace window, which held their plating stacks against the
- * fade permanently.
+ * That placement is the point. The Bulwark keystone (Immovable) reads this same
+ * clock to hold plating stacks, and while the bookkeeping sat below those early
+ * returns a build with no stationary-DR passive never advanced it — so
+ * Immovable's plating half did nothing — and a player who lost the passive
+ * mid-movement froze it inside the grace window, where it held their plating
+ * stacks against the fade permanently.
  */
 export function trackStationaryMovement(player: PlayerEntity, dt: number): void {
   const cs = player.tracksCombat;
@@ -114,6 +114,9 @@ export function resetStationaryDr(player: PlayerEntity): void {
  * remaining after base DR and updates the networked mitigation stat in place.
  */
 export function runStationaryDr(world: World, player: PlayerEntity, dt: number): void {
+  // First, and above the early returns: the keystone reads this clock too.
+  trackStationaryMovement(player, dt);
+
   const maxBonus = player.usesSkills.passives['defense.stationary-dr-pct'] ?? 0;
   if (maxBonus <= 0) return; // no item equipped — recalc already cleared any bonus
   const ramptime = player.usesSkills.passives['defense.stationary-dr-ramptime-ms'] ?? 0;
@@ -123,8 +126,7 @@ export function runStationaryDr(world: World, player: PlayerEntity, dt: number):
   const prevRamp = getResource(cs, RAMP_KEY);
 
   const active = isPlayerActivelyInCombat(world, player) && isCooldownActive(cs, PRESSURE_CD);
-  // The clock itself is advanced by `trackStationaryMovement`, which the defense
-  // tick runs for every player before this step.
+  // The clock itself was advanced above, by `trackStationaryMovement`.
   const moving = stationaryIsMoving(cs);
   const movementMs = stationaryMovementMs(cs);
   // Immovable (design §4) widens this grace, which is the whole of "stationary DR
