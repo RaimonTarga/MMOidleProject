@@ -2201,11 +2201,6 @@ needs Plains Herd's and Forest Grove's bodies to have plating in order to punish
 all. The biome-mitigation lesson and the family punishment contract want opposite things
 from the same stat on the same mobs.
 
-re-derivation) were implemented the same day, and Phase 0 call four (the per-tier pool
-factor) on 2026-10-01 at the design's seed values and flagged PROVISIONAL — the bench found
-that NEITHER half of its acceptance criterion discriminates between the candidate factors.
-Live-bot confirmation and the human playtest are still open — see the progress notes under
-Phase 0. Phases 1–5 are not implemented.
 ### Phase 0 call four — the player pool raise (2026-10-01, PROVISIONAL)
 
 **Shipped.** `GAME_CONFIG.PLAYER_POOL_FACTOR_BY_TIER` and `poolFactorForTier`, applied in

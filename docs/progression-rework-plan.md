@@ -14,13 +14,13 @@ only for history or rationale; the pages below are the living truth.
 | Lineages: bands/rows, keystones, cross-lane, re-homed forms, ability nodes | [lineages-current-state.md](lineages-current-state.md) |
 | Variants: families, blends, shards, capstones, the drops rule | [variants-current-state.md](variants-current-state.md) |
 | Frame loops and range mechanics | [frames-current-state.md](frames-current-state.md) |
-| Recovery: the flat model and the pool-raise pointer | [recovery-current-state.md](recovery-current-state.md) |
+| Recovery: the flat model and the pool raise | [recovery-current-state.md](recovery-current-state.md) |
 
 ## Phase scoreboard
 
 | Phase | What it covers | Status |
 | --- | --- | --- |
-| 0 | Coarse HP/recovery pass; flat recovery; player pool raise | Shipped (0a/0b); the per-tier pool raise is a concurrent run-3 task (`feat/pool-raise`) and is PROVISIONAL once it lands — see `recovery-current-state.md` |
+| 0 | Coarse HP/recovery pass; flat recovery; player pool raise | Shipped (0a/0b); the per-tier pool raise landed in run 3 at 1.25/1.30/1.35/1.40, PROVISIONAL — see `recovery-current-state.md` |
 | 1 | Weapon lineage tree, T1, five lineages; card runtime; bot profiles/lane bench | Shipped |
 | 2 | Variants, shards, removal of the old economy (catalysts, node modifiers, weapon `+N`) | Shipped |
 | 3 | Frame loops and range-node mechanics | Shipped (Consort's loop is the one open piece — see `frames-current-state.md`) |
@@ -35,8 +35,9 @@ only for history or rationale; the pages below are the living truth.
   concurrent bench pass may remap — see `variants-current-state.md` §6 and
   `reports/progression-phase1/lane-matrix-run3.md`.
 - The Consort (balanced Conduit) frame loop — ships with its stat skew only.
-- The player pool raise's picked factors, once `feat/pool-raise` lands — see
-  `reports/progression-phase0/pool-raise-run3.md`.
+- The player pool raise's factors (1.25/1.30/1.35/1.40) are PROVISIONAL: only the boss
+  half of their acceptance criterion discriminates, and the normal-node half was already
+  breached before the raise — see `reports/progression-phase0/pool-raise-run3.md`.
 - The T3 class-path review (Pyromancer/Ember Mage overlap, Warmonger/Artillerist overlap,
   the PROVISIONAL `packet` tags on all 54 T3 paths).
 

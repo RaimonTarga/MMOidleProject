@@ -332,21 +332,32 @@ deliberately not touched); the class-pool spread the median-P3 derivation cannot
 (per-class charm values would); the bot's charm pick was not re-checked (routes use
 fixed gear plans); then the player pool raise, bosses first.
 
-### The player pool raise (run 3, `feat/pool-raise`) — not yet landed here, pointer only
+### The player pool raise (run 3) — landed, PROVISIONAL
 
 Design bible §20 and the plan's Phase 0 call four: `GAME_CONFIG.PLAYER_POOL_FACTOR_BY_TIER`
 applied to base max HP and armor max HP at recalc (seeded 1.25/1.30/1.35/1.40 for T1–T4,
 1.0 for T0), with `RECOVERY_REFERENCE_POOL_BY_TIER` left untouched — raising the pool is
 deliberately not allowed to raise the rate again, which is the whole point of the flat
-model in §1. This is a **separate, concurrent run-3 task** (`feat/pool-raise`, run by a
-sibling session) that had not merged into this branch as of this audit, so there is
-nothing to report here yet beyond the pointer: once it lands, the picked per-tier factors
-are committed **PROVISIONAL** in that task's own commit message, benched against each
-tier's bosses (time-to-death versus kill time per lane, with fight-end HP on normal nodes
-as a sanity column) at three candidate factors per tier, and the full table is written to
-`reports/progression-phase0/pool-raise-run3.md`. Read that report and
-`GAME_CONFIG.PLAYER_POOL_FACTOR_BY_TIER` itself for the actual numbers — do not infer them
-from the seeds above, which are the bible's starting proposal, not the bench's pick.
+model in §1.
+
+**The bench kept the seeds: 1.25 / 1.30 / 1.35 / 1.40, committed PROVISIONAL.** The factor
+is applied in exactly one place, `shared/src/systems/stats.ts` step 3c-bis, where the flat
+pool is complete and nothing has multiplied it yet; every percentage layer below it still
+multiplies the finished pool. `server/test/playerPoolFactor.test.ts` pins the separation:
+doubling the factor doubles the pool while `hasHealth.recovery`, `recoveryPerSecond` and
+`baseRecoveryForTier` do not move. Full table: `reports/progression-phase0/pool-raise-run3.md`.
+
+Two things to know before reading the numbers as settled:
+
+- **Only half the acceptance criterion discriminates.** The boss clause picks T1's 1.25
+  outright (it is the lowest factor whose median boss time-to-death exceeds median kill
+  time). At T2–T4 the median lane already out-lasts its boss at factor 1.00, so the clause
+  admits every candidate; the seeds are kept there rather than collapsed to 1.00.
+- **The normal-node sanity clause was already breached before the raise** — median
+  fight-end HP is 0.89 at T1 and 1.00 at T2–T4 at factor 1.00, against an 0.80 ceiling, and
+  the raise contributes +0.03 at T1 and nothing above. The pool is not what makes an
+  ordinary node unthreatening; the lineage band is. That clause cannot brake anything until
+  Phase 4's monster pass answers the band.
 
 ### Still open
 
