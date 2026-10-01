@@ -98,7 +98,12 @@ export const swampMonsterEntries = [
     // family's shard is Control — control answers control.
     // PLACEHOLDER numbers seeded from the T1 Swamp band (toad 120/13); designer
     // hand-edits before the lane bench.
-    stats: { hp: 110, attack: 15, plating: 0, damageReduction: 0, speed: 32, attackRange: 170, attackCooldown: 2400, pullRange: 210 },
+    // COVEN FAMILY (progression rework, 2026-10-01, PROVISIONAL): plating 0 -> 2.
+    // Coven declares `punishes: 'tempo'` and flat plating is the only stat that
+    // punishes Tempo; without it the contract had no mechanism. 2 matches `mud-toad`,
+    // the only other T1 Swamp body that carries any, and keeps the hex (not the
+    // statline) as the Hexer's weapon.
+    stats: { hp: 110, attack: 15, plating: 2, damageReduction: 0, speed: 32, attackRange: 170, attackCooldown: 2400, pullRange: 210 },
     behavior: 'ranged', attackStyle: 'hex', biome: 'swamp',
     rewards: { essence: 5, essenceType: 'purple', level: 1, biomeXp: 32 },
     chargedAttack: {
