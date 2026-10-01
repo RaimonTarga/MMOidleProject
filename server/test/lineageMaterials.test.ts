@@ -38,11 +38,12 @@ import {
   familyForMonster,
   shardForMonster,
 } from '@mmo-idle/shared';
-import type { PacketId, PersistedPlayerSlices } from '@mmo-idle/shared';
+import type { PacketId } from '@mmo-idle/shared';
+import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { World } from '../src/world/World';
 import { grantMonsterRewards } from '../src/systems/player/progression/rewards';
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -145,11 +146,11 @@ function makePlayer(id: string): PersistedPlayerSlices {
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, shards: {}, capstones: {},
+      shards: {}, capstones: {},
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier: 4, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
       runesOwned: [], runeRecipesCrafted: [], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { technique: null, guard: null },
+      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },

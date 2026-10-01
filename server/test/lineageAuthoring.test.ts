@@ -15,7 +15,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { LINEAGE_DATABASE } from '@mmo-idle/shared';
 
-function assert(cond: boolean, msg: string): void {
+function assert(cond: unknown, msg: string): void {
   if (!cond) throw new Error(msg);
 }
 

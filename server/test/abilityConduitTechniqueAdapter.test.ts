@@ -33,7 +33,7 @@ import { World } from '../src/world/World';
 // expected integers stay readable; every consumer scales by it uniformly.
 (SUMMONER_CORE_TUNING as { formationOffenseMult: number }).formationOffenseMult = 1;
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -57,8 +57,7 @@ function slices(
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -525,7 +524,7 @@ for (const interruption of ['expiry', 'owner-death', 'target-death', 'rooted-sum
     if (interruption === 'target-death') target.hasHealth.hp = 0;
     if (interruption === 'rooted-summons') {
       for (const m of minions) applyStatusEffect(m.tracksCombat,
-        { id: 'stunned', remainingMs: 5_000, refreshable: true, data: {} });
+        { id: 'stunned', remainingMs: 5_000, refreshable: true, sourceId: '', data: {} });
     }
     if (interruption === 'move-command') player.hasSummonerCommand = { kind: 'move', monsterId: null, pos: { x: 400, y: 400 } };
     updateAbilityCharges(world, interruption === 'expiry' ? 5_000 : 1_500);
@@ -559,7 +558,7 @@ for (const loss of ['dead-caster', 'missing-caster', 'range', 'node', 'stun', 'd
   if (loss === 'dead-target') target.hasHealth.hp = 0;
   if (loss === 'stun' || loss === 'owner-stun') {
     applyStatusEffect(loss === 'stun' ? minions[0]!.tracksCombat : player.tracksCombat,
-      { id: 'stunned', remainingMs: 5_000, refreshable: true, data: {} });
+      { id: 'stunned', remainingMs: 5_000, refreshable: true, sourceId: '', data: {} });
   }
   updateAbilityCasts(world, castEnd);
   assert(!player.isCastingAbility, `${loss} must abort the summon cast`);

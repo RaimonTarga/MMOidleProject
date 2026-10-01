@@ -20,7 +20,7 @@ import { syncPlayerBuffs } from "../src/systems/combat/buffs/buffSync";
 import { World } from "../src/world/World";
 import { takeWorldLogEvents } from "../src/world/worldLog";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -41,8 +41,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -100,8 +99,8 @@ updateRuneDerivedConfig(world, 1_100);
 updateAbilityFiring(world, Date.now());
 const effect = getStatusEffect(player.tracksCombat, ABILITY_SECOND_WIND_EFFECT_ID);
 assert(!!effect, "In Combat -> Fire Guard should activate Second Wind when damaged");
-assert(effect.data.recoveryPct === 0.5, "Second Wind status carries its Recovery fraction");
-assert(effect.data.totalMs === 4000, "Second Wind lasts four seconds");
+assert(effect!.data.recoveryPct === 0.5, "Second Wind status carries its Recovery fraction");
+assert(effect!.data.totalMs === 4000, "Second Wind lasts four seconds");
 assert(player.hasHealth.hp === hpBefore, "Second Wind should not heal instantly");
 assert(
   takeWorldLogEvents(world, player.isPlayer.id).some(
@@ -123,7 +122,7 @@ const secondWindBuff = player.hasStatus.activeBuffs?.find(
   (buff) => buff.id === "ability-second-wind",
 );
 assert(!!secondWindBuff, "Second Wind should project its own buff");
-assert(secondWindBuff.iconKey === "second-wind", "Second Wind buff should use its own icon key");
+assert(secondWindBuff!.iconKey === "second-wind", "Second Wind buff should use its own icon key");
 assert(
   !player.hasStatus.activeBuffs?.some((buff) => buff.id === "ability-guard"),
   "Second Wind should not project the generic Guard buff",

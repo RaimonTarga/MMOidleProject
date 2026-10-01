@@ -47,7 +47,7 @@ function fixture(identityId = 'breadth-t3-slinger-light') {
 {
   const { world, bot, hit } = fixture();
   applyWard(world, bot, 100, 5000);
-  applyStatusEffect(bot.tracksCombat, { id: 'ability-guard', remainingMs: 3000, totalMs: 3000, stacks: 1, data: { drPct: 0.5 } });
+  applyStatusEffect(bot.tracksCombat, { id: 'ability-guard', remainingMs: 3000, sourceId: '', data: { drPct: 0.5, totalMs: 3000 } });
   const ctx = hit(100);
   assert.equal(ctx.damage, 0);
   assert.equal(bot.holdsWards?.wards[0].amount, 50, 'Guard protects ward capacity');

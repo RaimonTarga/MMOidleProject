@@ -272,16 +272,22 @@ export interface LineageLaneReference {
   cardIds: string[];
   /**
    * True when NO Tier-1 mob family drops this lane's shard, so the cards cannot
-   * be bought from T1 kills at all. Engagement is the case: its only T1 family
-   * is Plains Sky, whose one mob (savanna-hawk) debuts in the Tier-2 pool, so
-   * `resolveNodeBlend` drops the family from every T1 node. A harness that runs
-   * this profile has to grant the shards outright and SAY SO.
+   * be bought from T1 kills at all. This was Engagement's case until the third
+   * mob per biome was authored (design §18.8) and Plains Sky could finally field
+   * `savanna-hawk` at tier 1; `LANES_WITHOUT_T1_SHARD_SOURCE` is now empty. A
+   * harness that ever runs such a profile has to grant the shards outright and
+   * SAY SO.
    */
   shardsUnobtainableAtT1: boolean;
 }
 
-/** Lanes whose shard has no Tier-1 source (see `shardsUnobtainableAtT1`). */
-export const LANES_WITHOUT_T1_SHARD_SOURCE: readonly PacketId[] = ["engagement"];
+/**
+ * Lanes whose shard has no Tier-1 source (see `shardsUnobtainableAtT1`). EMPTY
+ * since the third family mob per biome landed: `laneProfiles.test.ts` recomputes
+ * this from the pools and the family table, so it fails the moment the list and
+ * the data disagree in either direction.
+ */
+export const LANES_WITHOUT_T1_SHARD_SOURCE: readonly PacketId[] = [];
 
 function laneCardIds(lineage: LineageDefinition, lane: PacketId): string[] {
   return T1_LANE_ROWS.map((row) => {

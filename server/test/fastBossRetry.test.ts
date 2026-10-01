@@ -14,7 +14,7 @@ import { publishGroundZone, publishToxicPool } from "../src/systems/world/ground
 import { takeWorldLogEvents } from "../src/world/worldLog";
 import { World } from "../src/world/World";
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -38,8 +38,7 @@ function playerSlices(id: string): PersistedPlayerSlices {
       level: 7,
       skillPoints: 2,
       essences: { red: 11, blue: 12, green: 13, yellow: 14, purple: 15 },
-      catalysts: { plains: 2 },
-      catalystProgress: { plains: 3 },
+      shards: {}, capstones: {},
       biomeXP: { plains: 99 },
       biomeLevel: { plains: 4 },
       unlockedRecipes: ["primordial-club"],
@@ -52,7 +51,7 @@ function playerSlices(id: string): PersistedPlayerSlices {
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,
@@ -100,15 +99,15 @@ function authenticSnapshot(player: ReturnType<World["attachPlayerEntity"]>) {
   const oldGuardianIds = [...stateBefore.guardianIds];
   const oldBoss = world.createMonster(NODE, DEF.boss.bossId, { x: DEF.altar.x, y: DEF.altar.y });
   assert(oldBoss, "old boss fixture should spawn");
-  oldBoss.scriptsBoss ??= { phaseTriggered: [0], repeatingTimers: [123], activeEffects: [] };
-  oldBoss.scriptsBoss.spawnedAddIds = [];
+  oldBoss.scriptsBoss ??= { phaseTriggered: [false], repeatingTimers: [123], activeEffects: [] };
+  oldBoss.scriptsBoss!.spawnedAddIds = [];
   stateBefore.status = "boss";
   stateBefore.bossMonsterId = oldBoss.isMonster.id;
   stateBefore.startedAtMs = 1;
   stateBefore.participantPlayerIds.add(player.isPlayer.id);
   const oldAdd = world.createMonster(NODE, "plains-slime", { x: 500, y: 400 });
   assert(oldAdd, "old add fixture should spawn");
-  oldBoss.scriptsBoss.spawnedAddIds.push(oldAdd.isMonster.id);
+  oldBoss.scriptsBoss!.spawnedAddIds.push(oldAdd.isMonster.id);
   publishGroundZone(world, NODE, {
     kind: "slam-telegraph", pos: { x: 400, y: 400 }, radius: 90,
     startedAtMs: 1, resolvesAtMs: 10_000, ownerId: oldBoss.isMonster.id,
@@ -120,13 +119,14 @@ function authenticSnapshot(player: ReturnType<World["attachPlayerEntity"]>) {
     killer: { monsterTypeId: DEF.boss.bossId, monsterName: "old boss", isBoss: true, nodeId: NODE },
   });
   world.corpses.set(NODE, [{
+    id: 'corpse-fast-boss',
     monsterTypeId: "plains-slime", pos: { x: 400, y: 400 }, diedAtMs: 1,
   }]);
   world.ambientRampOverrides.set(NODE, { rampMsMult: 0.5, minStacks: 2, maxStacksAdd: 3 });
   player.hasHealth.hp = 1;
   player.tracksCombat.cooldowns["test"] = 5_000;
   player.tracksCombat.statusEffects.push({
-    id: "test", stacks: 1, remainingMs: 5_000, refreshable: true,
+    id: "test", stacks: 1, maxStacks: 0, remainingMs: 5_000, refreshable: true,
     instanced: false, sourceId: "test", data: {},
   });
 

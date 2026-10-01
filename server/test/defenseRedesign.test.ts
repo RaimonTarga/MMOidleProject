@@ -13,7 +13,7 @@ function fixture(){
  const world=createBalanceWorld();
  const c=structuredClone(BREADTH_CELLS.find(c=>c.identityId==='breadth-t3-slinger-light'&&c.role==='farm')!);
  const {bot}=prepareSurveyBot(world,c,{x:400,y:400});
- bot.usesSkills.passives={};bot.evadesHits.dodgeRate=0;bot.mitigatesDamage.plating=0;bot.mitigatesDamage.damageReduction=0;
+ bot.usesSkills.passives={};bot.evadesHits!.dodgeRate=0;bot.mitigatesDamage.plating=0;bot.mitigatesDamage.damageReduction=0;
  bot.hasHealth.maxHp=1000;bot.hasHealth.hp=1000;bot.tracksProgression.activeStance=null;
  if(bot.hasBarrier)bot.hasBarrier.current=0;
  const monster=world.createMonster(c.nodeId,'magma-brute',{x:400,y:400})!;assert(monster);

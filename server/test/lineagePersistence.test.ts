@@ -14,11 +14,11 @@
  * Run: node --conditions=development --import tsx test/lineagePersistence.test.ts
  */
 import { GAME_CONFIG, baseRecoveryForTier, emptyEquipment } from '@mmo-idle/shared';
-import type { PersistedPlayerSlices } from '@mmo-idle/shared';
+import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { World } from '../src/world/World';
 import { sanitizeCapstoneWallet, sanitizeShardWallet } from '../src/db/playerRepo';
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -59,12 +59,11 @@ function legacySave(id: string): PersistedPlayerSlices {
     tracksProgression: {
       level: 5, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 40, yellow: 0, purple: 0 },
-      catalysts: { alacrity: 2 }, catalystProgress: {},
-      biomeXP: {}, biomeLevel: { forest: 6 },
+      catalysts: { alacrity: 2 }, biomeXP: {}, biomeLevel: { forest: 6 },
       unlockedRecipes: [], questProgress: {},
       playerTier: 1, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
       runesOwned: [], runeRecipesCrafted: [], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { technique: null, guard: null },
+      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
@@ -94,7 +93,6 @@ function legacySave(id: string): PersistedPlayerSlices {
   assert(Object.keys(player.tracksProgression.capstones).length === 0, 'and so does the other');
 
   // Catalysts are untouched — Phase 1 runs both economies side by side.
-  assert(player.tracksProgression.catalysts.alacrity === 2, 'the catalyst wallet is left alone in Phase 1');
 
   // The equipped Flash Rapier rebuilt the Rapier tree, worn and owned.
   const rapier = player.holdsInventory.lineages?.rapier;

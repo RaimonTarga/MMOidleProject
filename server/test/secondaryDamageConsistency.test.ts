@@ -20,7 +20,7 @@ import { playerOnHitDamage } from '../src/systems/combat/engine/onHitDamage';
 import { consumeWeightedProc } from '../src/systems/classes/archetypes/summoner/formationAttack';
 import { World } from '../src/world/World';
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -42,10 +42,11 @@ function slices(id: string, archetype: 'reload' | 'summoner' | null): PersistedP
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 1, currentSkillTier: 1,
       bossesCleared: [], clearedNodes: [], runesOwned: [], runeRecipesCrafted: [], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { technique: null, guard: null },
+      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
@@ -98,7 +99,7 @@ function formationContribution(
     onHitMagnitudeWeight: slot.procWeight * profile.secondaryEffectMult,
     secondaryEffectMult: profile.secondaryEffectMult,
     procWeight: slot.procWeight * profile.secondaryEffectMult,
-    targetId: 'target', cycleSerial: 0, cycleCompleted: false, side: 'summon',
+    targetId: 'target', cycleSerial: 0, cycleCompleted: false, tempoWeight: 1, side: 'summon',
   };
 }
 

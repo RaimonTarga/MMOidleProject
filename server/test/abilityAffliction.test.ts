@@ -47,7 +47,7 @@ import { syncPlayerBuffs } from "../src/systems/combat/buffs/buffSync";
 import { World } from "../src/world/World";
 import type { MonsterEntity, PlayerEntity } from "../src/ecs/entity";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -70,8 +70,7 @@ function makePlayerSlices(id: string, techniques: string[]): PersistedPlayerSlic
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -572,7 +571,7 @@ console.log("affliction: Contagion resolves around the source's live position");
     kind: "melee",
     damage: 1,
     killer: {
-      monsterTypeId: primary.isMonster.typeId,
+      monsterTypeId: primary.isMonster.monsterTypeId,
       monsterName: "Contagion Source",
       isBoss: false,
       nodeId: NODE,

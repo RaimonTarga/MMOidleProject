@@ -33,7 +33,7 @@ import { setEntityMotion } from "../src/systems/world/movement";
 import { updateNodeFeatures } from "../src/systems/world/nodeFeatures";
 import { World } from "../src/world/World";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -64,8 +64,7 @@ function makePlayerSlices(
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -78,7 +77,7 @@ function makePlayerSlices(
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,
@@ -146,13 +145,13 @@ function scenario(nodeId=node){
  updateRuneDerivedConfig(world,1000);strict.equal(heatManagementState(player),'normal');strict(heatAllowsTarget(world,player,fresh));
  effect.stacks=25;updateRuneDerivedConfig(world,1000);strict.equal(heatManagementState(player),'waiting');strict(!heatAllowsTarget(world,player,fresh));
  strict.equal(selectAutoCombatAction(world,player,player.usesAutocombat,1000).kind,'idle');
- markEngaged(world,player,1000);updateNodeFeatures(world,100,1100);strict.equal(effect.stacks,25,'grace must not cool');
+ markEngaged(world,player,1000);updateNodeFeatures(world,100);strict.equal(effect.stacks,25,'grace must not cool');
  effect.stacks=24;updateRuneDerivedConfig(world,1100);strict.equal(heatManagementState(player),'waiting');
  setAggroTarget(world,fresh,{id:player.isPlayer.id,kind:'player'},1200);updateRuneDerivedConfig(world,1200);
  strict.equal(heatManagementState(player),'requested');strict(!getFlag(player.tracksCombat,RUNE_WAIT_IT_OUT_FLAG));
  strict.equal(selectAutoCombatAction(world,player,player.usesAutocombat,1200).kind,'attack');
  fresh.hasHealth.hp=0;setAttackTarget(world,player,null);updateRuneDerivedConfig(world,1300);strict.equal(heatManagementState(player),'waiting');
- clearEngagement(world,player);updateNodeFeatures(world,1000,2000);strict(effect.stacks<24,'native cooling');
+ clearEngagement(world,player);updateNodeFeatures(world,1000);strict(effect.stacks<24,'native cooling');
  effect.stacks=10;updateRuneDerivedConfig(world,2100);strict.equal(heatManagementState(player),'resumed');strict(!getFlag(player.tracksCombat,RUNE_WAIT_IT_OUT_FLAG));
  for(const cancel of ['auto','death','exit','unequip','manual']){
   effect.stacks=25;updateRuneDerivedConfig(world,2200);strict.equal(heatManagementState(player),'waiting');

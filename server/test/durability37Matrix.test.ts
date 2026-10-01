@@ -12,7 +12,7 @@ import {
 import { DURABILITY36_BLOCKS, DURABILITY36_LADDER_NODES } from '../bench/balance/durability36Spec';
 import { SURVEY_CLASSES } from '../bench/balance/ttkSurveySpec';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -85,9 +85,9 @@ assertDurability37Definitions();
   }
 
   // Block I must not duplicate Block J's Jungle ladder or the already-guarded T1 Mountain.
-  assert(!DURABILITY37_FAMILIES.some((f) => f.role === 'jungle'),
+  assert(!DURABILITY37_FAMILIES.some((f) => (f.role as string) === 'jungle'),
     'Jungle is Block J; duplicating it here wastes the spot-check budget');
-  assert(!DURABILITY37_FAMILIES.some((f) => f.role === 'mountain' && f.tier === 1),
+  assert(!DURABILITY37_FAMILIES.some((f) => f.role === 'mountain' && (f.tier as number) === 1),
     'T1 Mountain is already guarded in source by t1MountainPressureAdoption.test.ts');
 
   const roots = new Set(cells.map((c) => c.className));

@@ -12,7 +12,7 @@ import { updateCombat } from '../src/systems/combat/engine/combat';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { World } from '../src/world/World';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -26,12 +26,13 @@ function playerSlices(id: string): PersistedPlayerSlices {
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null }, knownStances: [],
-      equippedStances: { default: null }, activeStance: null,
+      attunedAbilities: { techniques: [], guards: [] }, knownStances: [],
+      equippedStances: { default: null }, activeStance: null, knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {
@@ -75,7 +76,7 @@ initCombatSystems();
   assert(player.hasHealth.hp === hpBeforeCast, 'the Dive Bomb wind-up should suppress ordinary attacks');
 
   updateMonsters(world, 0, 2_000);
-  assert(hawk.hasAwareness.state === 'chasing' && hawk.hasPosition.speed === 374, 'when the cast resolves, the hawk should rush at its Dive Bomb speed');
+  assert((hawk.hasAwareness.state as string) === 'chasing' && hawk.hasPosition.speed === 374, 'when the cast resolves, the hawk should rush at its Dive Bomb speed');
   assert(
     world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-end' && event.fired && event.fx === 'dive-bomb'),
     'the cast completion should publish the Dive Bomb flight cue',
@@ -94,7 +95,7 @@ initCombatSystems();
   assert(root?.remainingMs === 2_000 && root.data.speedMult === 0, 'contact at the end of Dive Bomb should root the player for two seconds');
   assert(!getStatusEffect(player.tracksCombat, 'stunned'), 'Dive Bomb should not stun the player');
   syncPlayerBuffs(world, 2_100);
-  const rootTile = player.hasStatus.activeBuffs.find(buff => buff.id === 'debuff-root');
+  const rootTile = player.hasStatus.activeBuffs!.find(buff => buff.id === 'debuff-root');
   assert(rootTile?.label === 'Root' && rootTile.remainingMs === 2_000, 'Dive Bomb root should appear as a timed Root debuff on the player buff bar');
   updateCombat(world, 0, 2_100);
   assert(player.hasHealth.hp < hpBeforeCast, 'the hawk should immediately follow its landing with its melee talon strike');

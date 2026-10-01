@@ -29,7 +29,7 @@ import { World } from '../src/world/World';
 import { teleportPlayerToNode } from '../src/admin/gameActions';
 import { respawnPlayer } from '../src/systems/world/spawning';
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -63,8 +63,7 @@ function makePlayerSlices(id: string, nodeId: string): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -77,7 +76,7 @@ function makePlayerSlices(id: string, nodeId: string): PersistedPlayerSlices {
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,
@@ -232,7 +231,7 @@ initCombatSystems();
 
   // Buff tile: the whole client tell for a status that is otherwise invisible.
   syncPlayerBuffs(world, Date.now());
-  const tile = player.hasStatus.activeBuffs.find((b) => b.id === 'debuff-volcanic-heat');
+  const tile = player.hasStatus.activeBuffs!.find((b) => b.id === 'debuff-volcanic-heat');
   assert(tile !== undefined, 'the ramp must project a buff tile');
   assert(tile!.stacks === BREAKPOINT, 'the tile reports live stacks');
   assert(tile!.durationPct === -1, 'uncapped Heat must not display a full-stack ceiling');
@@ -294,7 +293,7 @@ initCombatSystems();
   assert(playerOutgoingDamageMult(player.tracksCombat) > 1.5, 'Heat exceeds the former outgoing cap');
   assert(playerIncomingDamageMult(player.tracksCombat) > 1 + TAKEN_PER_STACK * BREAKPOINT, 'incoming Heat continues beyond the softcap');
   syncPlayerBuffs(world, Date.now());
-  const tile = player.hasStatus.activeBuffs.find(b => b.id === 'debuff-volcanic-heat')!;
+  const tile = player.hasStatus.activeBuffs!.find(b => b.id === 'debuff-volcanic-heat')!;
   assert(tile.values?.some(v => v.label === 'Damage dealt' && v.value === '+74.2%') === true, 'high-stack HUD reflects logarithmic damage');
   tickFeatures(world, player, RAMP_MS, true);
   assert(heat.stacks === 101, 'live accumulation continues above all former ceilings');
@@ -362,12 +361,12 @@ for (const [source, destination] of [
   tickFeatures(world, player, 20_000, true);
   syncPlayerBuffs(world, Date.now());
   const oldId = ambientRampStatus(player.tracksCombat)!.id;
-  assert(player.hasStatus.activeBuffs.some(b => b.id === `debuff-${oldId}`), 'source ramp is visible');
+  assert(player.hasStatus.activeBuffs!.some(b => b.id === `debuff-${oldId}`), 'source ramp is visible');
   assert(teleportPlayerToNode(world, player, destination).ok, 'admin teleport succeeds');
   assert(!ambientRampStatus(player.tracksCombat), 'teleport immediately clears old ramp before a tick');
   assert(player.hasStatus.attackCadenceMult === 1, 'teleport clears the displayed attack slow');
   assert(player.hasStatus.finalDamageDealtMult === 1 && player.hasStatus.finalDamageTakenMult === 1, 'teleport clears displayed heat amplifiers');
-  assert(!player.hasStatus.activeBuffs.some(b => b.id === `debuff-${oldId}`), 'teleport immediately clears old icon');
+  assert(!player.hasStatus.activeBuffs!.some(b => b.id === `debuff-${oldId}`), 'teleport immediately clears old icon');
   player.hasPosition.current = { ...CLEAR_SPOT };
   tickFeatures(world, player, 100, true);
   const next = ambientRampStatus(player.tracksCombat)!;
@@ -397,7 +396,7 @@ for (const nodeId of [HEAT_NODE, 'node-t4-tundra-01']) {
   assert(!ambientRampStatus(player.tracksCombat), 'death clears ramp status');
   assert(player.hasStatus.attackCadenceMult === 1, 'death clears displayed chill penalty');
   assert(player.hasStatus.finalDamageDealtMult === 1 && player.hasStatus.finalDamageTakenMult === 1, 'death clears displayed heat amplifiers');
-  assert(!player.hasStatus.activeBuffs.some(b => b.id === `debuff-${id}`), 'death clears ramp icon immediately');
+  assert(!player.hasStatus.activeBuffs!.some(b => b.id === `debuff-${id}`), 'death clears ramp icon immediately');
   tickFeatures(world, player, 100, true);
   assert(!ambientRampStatus(player.tracksCombat), 'dead players cannot regain stacks');
   respawnPlayer(world, player.isPlayer.id);

@@ -18,7 +18,7 @@ import { runFormationAttack } from '../src/systems/classes/archetypes/summoner/f
 // (`lastAttackEmpowered`), summon hits tagged `fromSummon`, and the Iconoclast's
 // `summon-shatter` — plus a guard that every path has a strike layer.
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -37,11 +37,12 @@ function slices(id: string, specId: string, range: string): PersistedPlayerSlice
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 4, currentSkillTier: 4,
       bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { technique: null, guard: null },
+      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },

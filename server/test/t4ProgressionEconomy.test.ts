@@ -21,12 +21,12 @@ import {
 import { MONSTER_DATABASE } from "@mmo-idle/shared";
 import type { Recipe } from "@mmo-idle/shared";
 
-function assert(cond: boolean, msg: string): void {
+function assert(cond: unknown, msg: string): void {
   if (!cond) throw new Error(msg);
 }
 
 const essenceTotal = (cost: Partial<Record<string, number>> | undefined): number =>
-  Object.values(cost ?? {}).reduce((sum, amount) => sum + (amount ?? 0), 0);
+  Object.values(cost ?? {}).reduce((sum: number, amount) => sum + (amount ?? 0), 0);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 1. Census: exactly 39 ordinary T4 gear items, 36 with evolvesFrom, 3 without

@@ -33,10 +33,10 @@ import {
   type LineagePayoff,
   type LineageTrigger,
   type PacketId,
-  type PersistedPlayerSlices,
   type ResolvedLineageCapstone,
   type ResolvedLineageCard,
 } from '@mmo-idle/shared';
+import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import type { MonsterEntity, PlayerEntity } from '../src/ecs/entity';
 import { World } from '../src/world/World';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
@@ -52,7 +52,7 @@ import { attackHasteBonus } from '../src/systems/combat/engine/attackCadence';
 import { activeRecoveryFraction } from '../src/systems/defense/regen/recovery';
 import { setAttackTarget } from '../src/systems/combat/ai/targeting';
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -70,11 +70,12 @@ function makeSlices(id: string): PersistedPlayerSlices {
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 4, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [],
       runesOwned: [], runeRecipesCrafted: [], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { technique: null, guard: null },
+      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },

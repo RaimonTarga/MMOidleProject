@@ -3,7 +3,7 @@ import {
   type BossTerminal, type BossTickInput,
 } from '../bench/balance/bossTerminal';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -78,7 +78,7 @@ const expect = (input: Partial<BossTickInput>, want: BossTerminal, why: string):
   // how a loss was recorded as 100% of the boss removed.
   const vanished = resolveTerminalBossHp('boss-vanished-no-kill', 3750);
   assert(vanished.hp === 3750, 'a vanished boss keeps its last supported HP');
-  assert(vanished.hp !== 0, 'a vanished boss must not report zero HP');
+  assert((vanished.hp as number) !== 0, 'a vanished boss must not report zero HP');
 
   const never = resolveTerminalBossHp('bot-died', null);
   assert(never.hp === null && !never.supported, 'no reading means unsupported, not zero');

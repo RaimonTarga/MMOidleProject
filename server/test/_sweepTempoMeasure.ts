@@ -50,7 +50,8 @@ function slices(id: string, tier: number, archetype: Archetype, frame: string | 
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {},
       playerTier: tier, currentSkillTier: tier,
       bossesCleared: [], clearedNodes: [],
@@ -84,7 +85,8 @@ function build(id: string, tier: number, archetype: Archetype, frame: string | n
     monster.hasHealth.maxHp = 1e12;
     monster.mitigatesDamage.plating = 0;
     monster.mitigatesDamage.damageReduction = 0;
-    monster.mitigatesDamage.evasion = 0;
+    // Evasion is its own component now, attached only when the monster has any.
+    if (monster.evadesHits) monster.evadesHits.dodgeRate = 0;
     targets.push(monster);
   }
   return { world, player, target: targets[0]! };

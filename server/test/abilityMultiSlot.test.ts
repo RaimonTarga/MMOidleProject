@@ -30,7 +30,7 @@ import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCoold
 import { updateCombatState } from "../src/systems/combat/engine/combatState";
 import { World } from "../src/world/World";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -52,8 +52,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -171,8 +170,8 @@ assert(
 );
 
 // ── 4. Guard slots: independent effects, one activation per window ───────────
-const guard0 = getStatusEffect(player.tracksCombat, guardEffectIdForAbility("brace"));
-const guard1 = getStatusEffect(player.tracksCombat, guardEffectIdForAbility("endure"));
+const guard0 = getStatusEffect(player.tracksCombat, guardEffectIdForAbility("brace")!);
+const guard1 = getStatusEffect(player.tracksCombat, guardEffectIdForAbility("endure")!);
 assert(!!guard0, "the first Guard should have activated on its own effect id");
 assert(
   !guard1,
@@ -182,13 +181,13 @@ assert(
 // Next window: the second Guard is free to activate, and both layer.
 updateCombatState(world, 100);
 fireWithReferenceWiring(world, Date.now());
-const guard1After = getStatusEffect(player.tracksCombat, guardEffectIdForAbility("endure"));
+const guard1After = getStatusEffect(player.tracksCombat, guardEffectIdForAbility("endure")!);
 assert(
   !!guard1After,
   "the second Guard should activate on a later window",
 );
 assert(
-  !!getStatusEffect(player.tracksCombat, guardEffectIdForAbility("brace")),
+  !!getStatusEffect(player.tracksCombat, guardEffectIdForAbility("brace")!),
   "already-active Guard buffs should keep running while a second one layers on",
 );
 

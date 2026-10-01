@@ -16,7 +16,7 @@ import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiri
 import { World } from "../src/world/World";
 import { takeWorldLogEvents } from "../src/world/worldLog";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -37,8 +37,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -115,7 +114,7 @@ assert(
 const exposed = getStatusEffect(target.tracksCombat, EXPOSE_WEAKNESS_EFFECT_ID);
 assert(!!exposed, "Expose Weakness should apply its target debuff");
 assert(
-  exposed.remainingMs === 4000 && exposed.data.damageTakenPct === 0.15,
+  exposed!.remainingMs === 4000 && exposed!.data.damageTakenPct === 0.15,
   "Expose Weakness I should last 4s and increase damage taken by 15%",
 );
 
@@ -124,7 +123,7 @@ const hit = world
   .find((event) => event.kind === "player-hit");
 assert(!!hit && hit.kind === "player-hit", "expected a player-hit event");
 assert(
-  hit.effects?.includes(ABILITY_EXPOSE_WEAKNESS_FX),
+  hit!.effects?.includes(ABILITY_EXPOSE_WEAKNESS_FX),
   "Expose Weakness should tag the hit so the client plays its Technique FX",
 );
 

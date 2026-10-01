@@ -11,6 +11,7 @@
 
 import { baseRecoveryForTier } from '@mmo-idle/shared';
 import { GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment } from '@mmo-idle/shared';
+import type { SubVariant } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import type { MonsterEntity, PlayerEntity } from '../src/ecs/entity';
 import { World } from '../src/world/World';
@@ -47,7 +48,8 @@ function makeSlices(opts: {
     hasHealth: { hp: 1_000_000, maxHp: 1_000_000, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0, skillPoints: 0, essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
       questProgress: {}, playerTier: 4, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
@@ -59,7 +61,7 @@ function makeSlices(opts: {
       unlockedSkills: opts.unlockedSkills ?? (opts.archetype ? [`${opts.archetype}-root`] : []),
       passives: {},
       selectedClass: opts.archetype ? `${opts.archetype}-root` : null,
-      selectedSubVariant: opts.selectedSubVariant ?? null,
+      selectedSubVariant: (opts.selectedSubVariant ?? null) as SubVariant | null,
       selectedRange: opts.selectedRange ?? null,
       combatArchetype: opts.archetype,
     },

@@ -25,7 +25,7 @@ import {
 } from '../src/systems/combat/engine/monsterMechanics';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 

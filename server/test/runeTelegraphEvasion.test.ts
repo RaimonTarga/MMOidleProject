@@ -34,7 +34,7 @@ import { respawnPlayer } from "../src/systems/world/spawning";
 import { takeWorldLogEvents } from "../src/world/worldLog";
 import { World } from "../src/world/World";
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -54,8 +54,7 @@ function playerSlices(
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -68,7 +67,7 @@ function playerSlices(
       runeRecipesCrafted: ["rune-recipe-step-back"],
       runesEquipped: rules,
       knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,

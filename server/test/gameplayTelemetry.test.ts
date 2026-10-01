@@ -45,7 +45,7 @@ async function main() {
   recordWorldLogEvent(world, { kind: 'damage', nodeId: opts.nodeId, source: { id: player.isPlayer.id, name: player.isPlayer.name, actorType: 'player' }, target: { id: boss.isMonster.id, name: boss.isMonster.name, actorType: 'monster' }, hpDamage: 12, absorbed: 0, damageType: 'direct' }, opts);
   assert.equal(events.filter(e => e.payload.kind === 'encounter-start').length, 1, 'observer fanout must not create duplicate attempts');
   recordWorldLogEvent(world, { kind: 'damage', nodeId: opts.nodeId, source: { id: boss.isMonster.id, name: boss.isMonster.name, actorType: 'monster' }, target: { id: player.isPlayer.id, name: player.isPlayer.name, actorType: 'player' }, hpDamage: 8, absorbed: 0, damageType: 'direct' }, opts);
-  applyStatusEffect(player.tracksCombat, { id: 'telemetry-poison', maxStacks: 5, remainingMs: 10_000 });
+  applyStatusEffect(player.tracksCombat, { id: 'telemetry-poison', maxStacks: 5, remainingMs: 10_000, sourceId: '' });
   now += 500;
   world.killPlayer(player.isPlayer.id, { kind: 'melee', killer: { monsterTypeId: boss.isMonster.monsterTypeId, monsterName: boss.isMonster.name, isBoss: true, nodeId: opts.nodeId }, damage: 8, abilityName: 'Boss slam' });
   const death = events.find(e => e.payload.kind === 'death')!.payload;

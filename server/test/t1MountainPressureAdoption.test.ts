@@ -1,7 +1,7 @@
 import { MONSTER_DATABASE } from '@mmo-idle/shared';
 import { DURABILITY35_ADOPTED_FROM, DURABILITY35_ATTACK } from '../bench/balance/durability35Spec';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 

@@ -18,7 +18,7 @@ import { setEntityMotion } from '../src/systems/world/movement';
 import { startManualNavigation } from '../src/systems/world/autoTraverse';
 import { World } from '../src/world/World';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -38,11 +38,12 @@ function playerSlices(id: string): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null }, knownStances: [],
+      attunedAbilities: { techniques: [], guards: [] }, knownStances: [],
       equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
@@ -77,8 +78,8 @@ function playerSlices(id: string): PersistedPlayerSlices {
   world.killPlayer('dies-mid-order', { kind: 'stance', damage: 100, stanceName: 'Test Stance' });
 
   assert(!!player.isDead, 'the player should be dead');
-  assert(player.usesAutocombat.auto === false, 'death must clear auto-combat');
-  assert(player.usesAutocombat.autoTraverse === false, 'death must clear auto-traverse');
+  assert((player.usesAutocombat.auto as boolean) === false, 'death must clear auto-combat');
+  assert((player.usesAutocombat.autoTraverse as boolean) === false, 'death must clear auto-traverse');
   assert(!player.hasAutoTraversePath, 'death must clear the traverse path');
   assert(!player.isMoving, 'death must stop movement');
   assert(!player.hasManualMoveIntent, 'death must release the manual-move latch');
@@ -106,7 +107,7 @@ function playerSlices(id: string): PersistedPlayerSlices {
 
   assert(!player.isDead, 'the player should be alive again');
   assert(player.hasHealth.hp === player.hasHealth.maxHp, 'a respawn should be at full health');
-  assert(player.usesAutocombat.auto === false, 'a respawn must not resume auto-combat');
+  assert((player.usesAutocombat.auto as boolean) === false, 'a respawn must not resume auto-combat');
   assert(player.usesAutocombat.autoTraverse === false, 'a respawn must not resume auto-traverse');
   assert(!player.hasAutoTraversePath, 'a respawn must carry no traverse path');
   assert(!player.isMoving, 'a respawn must stand still');

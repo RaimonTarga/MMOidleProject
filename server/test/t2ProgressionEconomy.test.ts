@@ -12,7 +12,7 @@ import {
 } from "@mmo-idle/shared";
 import type { EssenceType } from "@mmo-idle/shared";
 
-function assert(cond: boolean, msg: string): void {
+function assert(cond: unknown, msg: string): void {
   if (!cond) throw new Error(msg);
 }
 
@@ -197,7 +197,6 @@ for (const [id, spec] of Object.entries(ABILITY_COSTS)) {
   const recipe = ABILITY_RECIPE_DATABASE.get(id);
   assert(!!recipe, `${id}: recipe must exist`);
   assert(recipe!.cost[spec.color] === spec.amount, `${id}: cost must be ${spec.amount} ${spec.color} (got ${JSON.stringify(recipe!.cost)})`);
-  assert(!recipe!.catalystCost, `${id}: must not require a catalyst`);
   assert(recipe!.requiredBiomeLevel === spec.level, `${id}: unlock level must stay at ${spec.group} L${spec.level}`);
   assert(recipe!.recipeGroup === spec.group, `${id}: biome gate must stay ${spec.group}`);
 }
@@ -217,7 +216,6 @@ for (const spec of SWAMP_T2_RUNES) {
   assert(recipe!.recipeGroup === "swamp", `${spec.id}: must stay in swamp`);
   assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: must unlock at L${spec.level} (got ${recipe!.requiredBiomeLevel})`);
   assert(recipe!.cost.purple === spec.cost, `${spec.id}: cost must be ${spec.cost} purple (got ${JSON.stringify(recipe!.cost)})`);
-  assert(!recipe!.catalystCost, `${spec.id}: must not require a catalyst`);
 
   // Cannot unlock anywhere in Swamp's T1 band (levels 1-6).
   const lockedAtT1Cap = isRuneRecipeUnlocked(recipe!, { biomeLevel: { swamp: 6 }, bossesCleared: [] });

@@ -12,7 +12,7 @@ import type { HoldsInventory, EssenceType } from "@mmo-idle/shared";
 import { refundWeaponUpgradeEssence } from "../src/db/playerRepo";
 import { weaponUpgradeRefundFor, WEAPON_UPGRADE_REFUND_TABLE } from "../src/db/weaponUpgradeRefund";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 

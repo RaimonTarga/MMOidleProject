@@ -31,8 +31,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { ...emptyEssences },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -69,7 +68,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
   };
 }
 
-const snapshot=JSON.parse(readFileSync(new URL('./fixtures/v1m-earned-t3-snapshot.json',import.meta.url),'utf8')) as T1CharacterSnapshot;
+const snapshot=JSON.parse(readFileSync(join(__dirname, 'fixtures/v1m-earned-t3-snapshot.json'),'utf8')) as T1CharacterSnapshot;
 const world=new World(); const original=world.attachPlayerEntity(makePlayerSlices(),'source');
 const applied=applyTierEntryProfile(world,original,tierEntryProfileFromT1Snapshot(snapshot,'node-t3-sanctuary',3));
 assert(applied.success,applied.reason);

@@ -64,7 +64,7 @@ function pools(a: ReturnType<typeof arena>): RuntimeToxicPool[] {
 
   a.boss.hasHealth.hp = Math.round(a.boss.hasHealth.maxHp * 0.2);
   updateBossScripts(a.world, 0);
-  assert(a.boss.hasStatus.bossPhase === 'Rot Bloom', 'Rot Bloom is announced');
+  assert((a.boss.hasStatus.bossPhase as string) === 'Rot Bloom', 'Rot Bloom is announced');
   const grown = pools(a)[0];
   const startRadius = grown?.radius ?? 0;
   runUntil(a, () => { pin(a.player, { x: 1500, y: 1200 }); return false; }, 9_000);

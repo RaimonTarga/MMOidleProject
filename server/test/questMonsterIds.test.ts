@@ -10,7 +10,7 @@
  */
 import { QUEST_DATABASE, MONSTER_DATABASE, BIOME_DATABASE } from "@mmo-idle/shared";
 
-function assert(cond: boolean, msg: string): void {
+function assert(cond: unknown, msg: string): void {
   if (!cond) throw new Error(msg);
 }
 

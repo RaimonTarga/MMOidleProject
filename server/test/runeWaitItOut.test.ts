@@ -33,7 +33,7 @@ import { setEntityMotion } from "../src/systems/world/movement";
 import { updateNodeFeatures } from "../src/systems/world/nodeFeatures";
 import { World } from "../src/world/World";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -64,8 +64,7 @@ function makePlayerSlices(
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -78,7 +77,7 @@ function makePlayerSlices(
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,
@@ -177,7 +176,7 @@ assert(!idleWaitInGrace.waitItOut, "Out of Combat -> Wait It Out should retain t
   assert(folded.waitForRegen && folded.waitItOut, "Recover First and Wait It Out should both claim while disengaged");
   assert(folded.oocMaintenanceClaims.length === 2, "both maintenance claims should remain observable");
 
-  const { world, player } = makeAutoPlayer("composed", rules, CLEARING_NODE, 50);
+  const { world, player } = makeAutoPlayer("composed", rules, CLEARING_NODE, 50 as never);
   addBystander(world);
   applyStatusEffect(player.tracksCombat, {
     id: "poison-dagger-burn",

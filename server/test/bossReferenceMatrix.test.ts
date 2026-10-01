@@ -7,7 +7,7 @@ import {
   assertBossReferenceDefinitions, bossReferenceRpCost, installBossReferenceTreatment,
 } from '../bench/balance/bossReferenceSpec';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 

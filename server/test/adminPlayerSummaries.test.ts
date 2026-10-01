@@ -3,7 +3,7 @@ import type { PlayerEntity } from '../src/ecs/entity';
 import type { PlayerSocketSession } from '../src/net/socketSession';
 import type { World } from '../src/world/World';
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 

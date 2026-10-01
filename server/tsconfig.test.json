@@ -1,0 +1,69 @@
+{
+  // `tsconfig.json` includes only `src` (it drives the emitted build) and
+  // `tsconfig.bench.json` adds `bench`, so `test/` was typechecked by NOTHING.
+  // That is how a fixture keeps passing a field its component no longer has, and
+  // how a test's own type errors stay invisible until the day it runs. The first
+  // run of this config found ~180 real errors, including dead `catalysts` wallets,
+  // `mitigatesDamage.evasion`, and nineteen comparisons that can never be true —
+  // assertions that had quietly stopped testing anything.
+  //
+  // NOT CHECKED, and why:
+  //
+  // 1. Null-safety and implicit `any` are off. Test code feeds `effect?.data.x`
+  //    straight into `assert`, which is 170-odd `boolean | undefined` errors that
+  //    say nothing about the code under test — a test that derefs undefined fails
+  //    loudly on the next line anyway. Turning them on is its own cleanup, and
+  //    gating this config on it would have meant not having the config at all.
+  //
+  // 2. The 38 tests under `exclude` import real client source. Client files cannot
+  //    be checked from this package: they resolve their own `jotai` and need Vite's
+  //    ambient types, so checking them here reports ~104 errors that the client's
+  //    own `tsc` does not. Their client imports are covered by the client package;
+  //    their own fixtures are the gap, and the honest size of it is this list.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": ".."
+  },
+  "include": ["src", "test"],
+  "exclude": [
+    "test/abilityEquipmentFeedback.test.ts",
+    "test/abilityTimingPresentation.test.ts",
+    "test/ambientStackFlash.test.ts",
+    "test/areaInformation.test.ts",
+    "test/attackProgression.test.ts",
+    "test/audioRouting.test.ts",
+    "test/autoMovementSmoothness.test.ts",
+    "test/bossStatusCopy.test.ts",
+    "test/cameraMotion.test.ts",
+    "test/clientMovementState.test.ts",
+    "test/combatPlayback.test.ts",
+    "test/combatText.test.ts",
+    "test/combatTextCoverage.test.ts",
+    "test/combatTextResync.test.ts",
+    "test/conduitPathFx.test.ts",
+    "test/conduitPlayerBodies.test.ts",
+    "test/cooldownClock.test.ts",
+    "test/coreRelicIntegration.test.ts",
+    "test/craftingRailAndMapFog.test.ts",
+    "test/describeText.test.ts",
+    "test/equippedEvolutionAbilityTags.test.ts",
+    "test/essenceMoteProfile.test.ts",
+    "test/evolutionPreview.test.ts",
+    "test/hudStatusTooltips.test.ts",
+    "test/inventoryStatSheet.test.ts",
+    "test/manualCombatControls.test.ts",
+    "test/monsterStunAnimation.test.ts",
+    "test/monsterStyleCoverage.test.ts",
+    "test/mountainCornerTextures.test.ts",
+    "test/neighborDestination.test.ts",
+    "test/playerCombatLog.test.ts",
+    "test/playerKillLunge.test.ts",
+    "test/playerNodePosition.test.ts",
+    "test/playerSync.test.ts",
+    "test/remotePlayerAttack.test.ts",
+    "test/skillPreview.test.ts",
+    "test/skillTreeData.test.ts",
+    "test/tutorialAnchors.test.ts"
+  ]
+}

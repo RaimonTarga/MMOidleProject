@@ -11,7 +11,7 @@ import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { syncPlayerBuffs } from "../src/systems/combat/buffs/buffSync";
 import { World } from "../src/world/World";
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -32,8 +32,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -90,7 +89,7 @@ for (const monsterDef of MONSTER_DATABASE.values()) {
     refreshable: true,
     sourceId: monster.isMonster.id,
     data: {
-      totalMs: monsterDef.dotEffect.durationMs,
+      totalMs: monsterDef.dotEffect.durationMs ?? 0,
       damagePerStack: monsterDef.dotEffect.damagePerStack,
       flavorCode: debuff.code,
     },

@@ -16,7 +16,7 @@ import { findShortestNodePath } from "../src/world/nodePath";
 import { updateAutoIntent } from "../src/systems/world/autoIntent";
 import { World } from "../src/world/World";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -37,8 +37,7 @@ function playerSlices(): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -51,7 +50,7 @@ function playerSlices(): PersistedPlayerSlices {
       runeRecipesCrafted: [],
       runesEquipped: [...DEFAULT_RUNE_LOADOUT],
       knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,

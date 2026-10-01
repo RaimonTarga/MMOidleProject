@@ -45,7 +45,7 @@ import { World } from "../src/world/World";
 import { takeWorldLogEvents } from "../src/world/worldLog";
 import { mirrorHpForecast } from "../src/systems/defense/core/hpForecast";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -71,8 +71,7 @@ function makePlayerSlices(
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -150,7 +149,7 @@ initCombatSystems();
   // The accidental post-cleanse damage reduction is gone: mitigation belongs to
   // Brace and Endure, and a Guard that quietly did both would make them redundant.
   assert(
-    getStatusEffect(player.tracksCombat, guardEffectIdForAbility("brace")) === undefined,
+    getStatusEffect(player.tracksCombat, guardEffectIdForAbility("brace")!) === undefined,
     "Cleanse must not grant a damage-reduction buff",
   );
   const activation = takeWorldLogEvents(world, player.isPlayer.id).find(
@@ -323,11 +322,11 @@ initCombatSystems();
   fireWithReferenceWiring(world, Date.now());
 
   assert(
-    !!getStatusEffect(player.tracksCombat, recoveryEffectIdForAbility("second-wind")),
+    !!getStatusEffect(player.tracksCombat, recoveryEffectIdForAbility("second-wind")!),
     "the first Recovery Guard should have its own buff",
   );
   assert(
-    !!getStatusEffect(player.tracksCombat, recoveryEffectIdForAbility("recuperate")),
+    !!getStatusEffect(player.tracksCombat, recoveryEffectIdForAbility("recuperate")!),
     "the second Recovery Guard should have an INDEPENDENT buff, not overwrite the first",
   );
   // Sharing one engine source would let Second Wind's 70% ride Recuperate's 10s

@@ -3,7 +3,7 @@ import { DURABILITY22_HP } from '../bench/balance/durability22Spec';
 import { DURABILITY24_HP } from '../bench/balance/durability24Spec';
 import { DURABILITY34_JUNGLE_HP } from '../bench/balance/durability34Spec';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -184,7 +184,7 @@ for (const [id, want] of Object.entries(ADOPTED)) {
   const tierOf = new Map<string, number>();
   for (const biome of BIOME_DATABASE.values()) {
     for (const [tier, pool] of Object.entries(biome.monsterPoolByTier ?? {})) {
-      for (const id of pool) tierOf.set(id, Number(tier));
+      for (const id of pool!) tierOf.set(id, Number(tier));
     }
   }
   for (const id of Object.keys(ADOPTED)) {

@@ -27,7 +27,7 @@ import { BOSS3_BLOCKS_DEF, boss3ArmCells } from '../bench/balance/boss3Spec';
 import { BOSS2_SEED } from '../bench/balance/boss2Spec';
 import { resolveSurveyPackage } from '../bench/balance/ttkSurveySpec';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 

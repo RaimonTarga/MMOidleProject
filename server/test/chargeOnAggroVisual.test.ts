@@ -14,7 +14,7 @@ import { World } from '../src/world/World';
 // The charge-on-aggro burst is published as `hasStatus.charging` for the client's
 // charge-rush aura: present exactly on the ticks the burst is applied.
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -34,11 +34,12 @@ function playerSlices(id: string, x: number): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null }, knownStances: [],
+      attunedAbilities: { techniques: [], guards: [] }, knownStances: [],
       equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },

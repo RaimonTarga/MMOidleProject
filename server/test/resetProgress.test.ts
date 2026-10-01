@@ -1,4 +1,5 @@
 import { baseRecoveryForTier } from '@mmo-idle/shared';
+import type { PassiveKey } from '@mmo-idle/shared';
 import {
   DEFAULT_RUNE_LOADOUT,
   GAME_CONFIG,
@@ -12,7 +13,7 @@ import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { resetPlayerProgress } from "../src/admin/gameActions";
 import { World } from "../src/world/World";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -64,7 +65,7 @@ const slices: PersistedPlayerSlices = {
   },
   usesSkills: {
     unlockedSkills: ["cadence"],
-    passives: { "cadence.threshold": 3 },
+    passives: { ["cadence.threshold" as PassiveKey]: 3 },
     selectedClass: "cadence",
     selectedSubVariant: "balanced",
     selectedRange: "cadence-range-close",

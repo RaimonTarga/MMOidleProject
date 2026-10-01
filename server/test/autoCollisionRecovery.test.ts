@@ -11,7 +11,7 @@ import { steerTowardTarget } from "../src/systems/combat/ai/autoTarget";
 import { updateMovement } from "../src/systems/world/movement";
 import { World } from "../src/world/World";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -32,8 +32,7 @@ function playerSlices(id: string, nodeId: string): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -46,7 +45,7 @@ function playerSlices(id: string, nodeId: string): PersistedPlayerSlices {
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,

@@ -16,7 +16,7 @@ import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summo
 import { requestManualAbilityUse } from '../src/systems/player/abilities/abilityFiring';
 import { World } from '../src/world/World';
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -28,7 +28,8 @@ function slices(id: string, abilityId: string): PersistedPlayerSlices {
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {},
       playerTier: 3, currentSkillTier: 3,
       bossesCleared: [], clearedNodes: [],

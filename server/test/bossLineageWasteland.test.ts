@@ -147,7 +147,7 @@ const stepName = (a: ReturnType<typeof arena>) => {
     if (name === 'Grave Burst' || name === 'Bone Spear' || name === 'Soul Nova') sawWrath = true;
     return fed >= 2 && sawWrath;
   }, 12_000);
-  assert(a.boss.hasStatus.bossPhase === 'Harvest', 'Harvest is announced');
+  assert((a.boss.hasStatus.bossPhase as string) === 'Harvest', 'Harvest is announced');
   assert(a.boss.scriptsBoss?.raiseDisabled === true, 'it stops raising');
   assert(fed >= 2 && a.boss.dealsDamage.attack > attack, `it devours its dead for attack (${fed} fed)`);
   assert(sawWrath, 'and casts to kill');

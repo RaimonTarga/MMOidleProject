@@ -24,7 +24,8 @@ import {
   resolveLineageCard,
   rowBiomeLevel,
 } from '@mmo-idle/shared';
-import type { EssenceType, PacketId, PersistedPlayerSlices } from '@mmo-idle/shared';
+import type { PersistedPlayerSlices } from '../src/db/playerRepo';
+import type { EssenceType, PacketId } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../src/ecs/entity';
 import { World } from '../src/world/World';
 import { craftRecipe } from '../src/systems/player/economy/crafting';
@@ -33,7 +34,7 @@ import {
   setLineageActive, unlockLineageCard, unlockLineageForm, wearLineageForm,
 } from '../src/systems/player/economy/lineages';
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -56,14 +57,13 @@ function makePlayer(id: string, opts: { rich?: boolean } = {}): PersistedPlayerS
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: wallet, blue: wallet, green: wallet, yellow: wallet, purple: wallet },
-      catalysts: {}, catalystProgress: {},
       shards, capstones: rich ? { forest: 99, jungle: 99 } : {},
       biomeXP: {}, biomeLevel: rich ? { forest: 99, jungle: 99 } : {},
       unlockedRecipes: [], questProgress: {},
       playerTier: rich ? 4 : 1, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [],
       runesOwned: [], runeRecipesCrafted: [], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { technique: null, guard: null },
+      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },

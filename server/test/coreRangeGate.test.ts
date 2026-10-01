@@ -22,7 +22,7 @@ import {
 } from "@mmo-idle/shared";
 import { enumerateBuildsForContentTier, coreScore } from "../bench/balance/progression";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -114,7 +114,7 @@ for (const build of builds) {
   const range = build.skillPath.find((id) => id.includes("-range-")) ?? null;
   assert(range !== null, `T3 build ${build.id} should have picked a range node`);
   assert(
-    range.startsWith(build.classRoot.replace(/-root$/, "")),
+    range!.startsWith(build.classRoot.replace(/-root$/, "")),
     `range node ${range} must be class-prefixed (the unlock-failure bug)`,
   );
 

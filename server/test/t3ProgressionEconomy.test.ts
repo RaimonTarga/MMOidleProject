@@ -31,7 +31,7 @@ import {
 } from "@mmo-idle/shared";
 import type { EssenceType } from "@mmo-idle/shared";
 
-function assert(cond: boolean, msg: string): void {
+function assert(cond: unknown, msg: string): void {
   if (!cond) throw new Error(msg);
 }
 
@@ -280,7 +280,7 @@ for (const dead of DEAD_END_T2_IDS) {
 // 2d. Multi-parent evolution was explicitly REJECTED — no such field may exist.
 for (const recipe of RECIPE_DATABASE.values()) {
   assert(
-    !("evolvesFromAny" in (recipe as Record<string, unknown>)),
+    !("evolvesFromAny" in (recipe as unknown as Record<string, unknown>)),
     `${recipe.id}: multi-parent evolution is rejected; evolvesFrom is single-parent by design`,
   );
   if (recipe.evolvesFrom !== undefined) {
@@ -387,7 +387,9 @@ for (const recipe of T3_GEAR) {
     }
   }
   const colours = Object.entries(lifeByColour).sort((a, b) => b[1] - a[1]);
-  if (recipe.slot === "weapon" || recipe.slot === "mobility") {
+  // Weapons are skipped above (they have no upgrade steps since the +N ladder
+  // went), so this audit only ever sees mobility here.
+  if (recipe.slot === "mobility") {
     assert(colours.length === 1, `${id}: ${recipe.slot} items must be a single essence colour`);
   } else {
     assert(colours.length <= 2, `${id}: at most one splash colour`);
@@ -440,8 +442,7 @@ for (const recipe of T3_GEAR) {
     assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: gate level unchanged`);
     assert(recipe!.cost[spec.type] === spec.cost, `${spec.id}: cost must be ${spec.cost} ${spec.type}`);
     assert(Object.keys(recipe!.cost).length === 1, `${spec.id}: abilities stay single-colour`);
-    assert(!recipe!.catalystCost, `${spec.id}: T3 abilities charge no catalysts`);
-  }
+    }
   // Ordering: within each biome L3 < L5, and the whole set sits in the T3 band.
   for (const spec of ABILITIES) assert(spec.cost >= 140 && spec.cost <= 220, `${spec.id}: inside the T3 band`);
 }

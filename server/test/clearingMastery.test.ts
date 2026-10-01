@@ -12,7 +12,7 @@ import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { grantMonsterRewards } from "../src/systems/player/progression/rewards";
 import { World } from "../src/world/World";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -33,8 +33,7 @@ function freshPlayer(id: string): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -47,7 +46,7 @@ function freshPlayer(id: string): PersistedPlayerSlices {
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,
@@ -90,5 +89,4 @@ assert(progression.biomeXP.clearing === CLEARING_MASTERY_XP_THRESHOLDS[4], "twen
 assert(progression.biomeLevel.clearing === 4, "twenty kills reach Clearing mastery level 4");
 assert(progression.essences.green === 20, "existing Tiny Wisp essence rewards remain unchanged");
 assert(progression.level === 20, "existing Tiny Wisp player-level rewards remain unchanged");
-assert(Object.keys(progression.catalysts).length === 0, "Clearing still grants no catalysts");
 console.log("clearingMastery.test.ts: all passed");

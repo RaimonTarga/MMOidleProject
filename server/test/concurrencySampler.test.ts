@@ -12,7 +12,7 @@ import { ConcurrencySampler } from "../bench/balance/concurrency";
 // Deliberately does NOT run the bench (that needs Postgres for the hitbox cache).
 // This drives the sampler against a hand-built World instead.
 
-function assert(cond: boolean, msg: string): void {
+function assert(cond: unknown, msg: string): void {
   if (!cond) throw new Error(msg);
 }
 
@@ -33,8 +33,7 @@ function makePlayer(id: string): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -47,7 +46,7 @@ function makePlayer(id: string): PersistedPlayerSlices {
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,
@@ -127,7 +126,7 @@ const deadSampler = new ConcurrencySampler();
 for (const m of [near1, near2]) {
   setAggroTarget(world, m, { id: player.entityId, kind: "player" }, now);
 }
-world.ecs.addComponent(player, "isDead", { diedAt: now, cause: "monster" });
+world.ecs.addComponent(player, "isDead", { diedAtMs: now, graveFrame: 0 });
 deadSampler.sample(world, NODE, player);
 const deadStats = deadSampler.result(0);
 assert(deadStats.meanInRange === 0, "a dead player takes no contact");

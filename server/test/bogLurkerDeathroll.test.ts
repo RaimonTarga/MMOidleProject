@@ -48,7 +48,7 @@ import { setEntityMotion, updateMovement } from "../src/systems/world/movement";
 import { syncPlayerBuffs } from "../src/systems/combat/buffs/buffSync";
 import { World } from "../src/world/World";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -265,7 +265,7 @@ for (const d of MONSTER_DATABASE.values()) {
   );
   assert(!player.cannotAttack, "a rooted victim must still be able to fight back");
   syncPlayerBuffs(world, now);
-  assert(player.hasStatus.activeBuffs.some(b => b.id === "debuff-root" && b.speedMult === 0),
+  assert(player.hasStatus.activeBuffs!.some(b => b.id === "debuff-root" && b.speedMult === 0),
     "the grab root must reach client movement prediction and the buff HUD");
 
   // 7b. BOTH BODIES CLOSE ON THE WATER, and the haul telegraphs itself.
@@ -458,8 +458,7 @@ function makePlayerSlices(
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -472,7 +471,7 @@ function makePlayerSlices(
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,
@@ -520,7 +519,7 @@ function makePlayer(world: World, nodeId: string, x: number, y: number): PlayerE
   updateMovement(world, 100, now + 100);
   assert(dist(start, player.hasPosition.current) > 1, "the released player can actually walk again");
   syncPlayerBuffs(world, now + 100);
-  assert(!player.hasStatus.activeBuffs.some(b => b.id === "debuff-root"),
+  assert(!player.hasStatus.activeBuffs!.some(b => b.id === "debuff-root"),
     "the root must also disappear from the client buff state");
 }
 console.log("bogLurkerDeathroll: ok");

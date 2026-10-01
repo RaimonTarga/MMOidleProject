@@ -26,7 +26,7 @@ import { grantMonsterRewards } from "../src/systems/player/progression/rewards";
 import { World } from "../src/world/World";
 import { attachComponent } from '../src/ecs/markerHelpers';
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -61,7 +61,7 @@ function makePlayer(id: string, playerTier = 4): PersistedPlayerSlices {
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,

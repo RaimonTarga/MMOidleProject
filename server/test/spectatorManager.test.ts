@@ -14,7 +14,7 @@ import {
   SpectatorManager,
 } from "../src/net/spectatorManager";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -124,8 +124,7 @@ function playerSlices(id: string, name: string, playerTier: number): PersistedPl
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],

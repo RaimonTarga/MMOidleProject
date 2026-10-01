@@ -18,7 +18,7 @@ import {
 import { NIGHT5_BLOCKS } from '../bench/balance/night5Spec';
 import { SURVEY_CLASSES } from '../bench/balance/ttkSurveySpec';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -121,7 +121,7 @@ assertBoss1Definitions();
       if (action.type === 'cast') walk(action.actions);
     }
   };
-  for (const phase of script.phases) walk(phase.actions ?? []);
+  for (const phase of script.phases) walk((phase.actions ?? []) as never);
   assert(JSON.stringify([...summoned].sort()) === JSON.stringify(Object.keys(BOSS1_ESCORTS).sort()),
     `declared escorts must be exactly what the script spawns, got ${JSON.stringify([...summoned].sort())}`);
 

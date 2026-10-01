@@ -10,7 +10,7 @@ import {
 import { DURABILITY32_BLOCKS, RIDGE_ARCHER_POWER_SHOT_CANDIDATE, RIDGE_ARCHER_POWER_SHOT_CONTROL }
   from '../bench/balance/durability32Spec';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 

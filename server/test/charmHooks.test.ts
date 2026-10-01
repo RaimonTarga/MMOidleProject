@@ -25,7 +25,8 @@ function slices(id: string): PersistedPlayerSlices {
     hasHealth: { hp: 1000, maxHp: 1000, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0, skillPoints: 0, essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
       questProgress: {}, playerTier: 4, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
@@ -64,8 +65,8 @@ function drainBarrier(p: ReturnType<typeof withCharm>) {
   drainBarrier(p);
   fire();
   const pct = p.usesSkills.passives["guard.barrier-refill-pct"];
-  assert(pct > 0);
-  assert.equal(p.hasBarrier!.current, Math.min(p.hasBarrier!.max, p.hasBarrier!.max * pct), "Brace restores the authored share of the barrier");
+  assert(pct! > 0);
+  assert.equal(p.hasBarrier!.current, Math.min(p.hasBarrier!.max, p.hasBarrier!.max * pct!), "Brace restores the authored share of the barrier");
 }
 
 // Tundra: Break Free (Control) restores the barrier; Brace (Mitigation) does not.
@@ -86,11 +87,11 @@ function drainBarrier(p: ReturnType<typeof withCharm>) {
   const p = withCharm("tundra-charm-t4", "brace");
   drainBarrier(p);
   const monster = world.createMonster("node-5-5", "magma-brute", { x: 420, y: 400 })!;
-  setAggroTarget(world, monster, { kind: "player", id: p.isPlayer.id });
+  setAggroTarget(world, monster, { kind: "player", id: p.isPlayer.id }, 0);
   stampBarrierDamage(world, p);
   runBarrierRecharge(world, p, 1000);
   const rate = p.usesSkills.passives["defense.barrier-stationary-recharge-pct"];
-  assert(Math.abs(p.hasBarrier!.current - p.hasBarrier!.max * rate) < 1e-6, "holding recharges at the charm rate right after a hit");
+  assert(Math.abs(p.hasBarrier!.current - p.hasBarrier!.max * rate!) < 1e-6, "holding recharges at the charm rate right after a hit");
   p.hasBarrier!.current = 0;
   stampBarrierDamage(world, p);
   p.isMoving = {} as never;
@@ -133,13 +134,13 @@ function drainBarrier(p: ReturnType<typeof withCharm>) {
   const base = p.usesSkills.passives["defense.absorb-pct"];
   const bonus = p.usesSkills.passives["defense.absorb-guard-bonus-pct"];
   const plain = hit();
-  assert(Math.abs(getResource(p.tracksCombat, ABSORB_POOL_KEY) - plain * base) < 1e-6, "plain absorb without a Guard");
+  assert(Math.abs(getResource(p.tracksCombat, ABSORB_POOL_KEY) - plain * base!) < 1e-6, "plain absorb without a Guard");
   fire();
   const before = getResource(p.tracksCombat, ABSORB_POOL_KEY);
   // Brace also reduces the hit; absorb converts what is left of it.
   const guarded = hit();
   assert(guarded < plain, "Brace is up");
-  assert(Math.abs(getResource(p.tracksCombat, ABSORB_POOL_KEY) - before - guarded * (base + bonus)) < 1e-6, "Brace up adds the Guard bonus");
+  assert(Math.abs(getResource(p.tracksCombat, ABSORB_POOL_KEY) - before - guarded * (base! + bonus!)) < 1e-6, "Brace up adds the Guard bonus");
   world.removeMonsterEntity(monster.isMonster.id);
 }
 
@@ -151,10 +152,10 @@ function drainBarrier(p: ReturnType<typeof withCharm>) {
   p.holdsInventory.itemUpgrades["trench-charm-t4"] = 5;
   assert(equipItem(world, p, "trench-charm-t4"));
   const cdr = p.usesSkills.passives["recovery.cooldown-reduction-pct"];
-  assert(cdr > 0);
+  assert(cdr! > 0);
   for (const id of ["second-wind", "recuperate"]) {
     const a = ABILITY_DATABASE.get(id)!;
-    assert(Math.abs(modifiedAbilityCooldownMs(a, 4, p.usesSkills.passives) - abilityCooldownMs(a, 4) * (1 - cdr)) < 1e-6, `${id} cooldown shortened`);
+    assert(Math.abs(modifiedAbilityCooldownMs(a, 4, p.usesSkills.passives) - abilityCooldownMs(a, 4) * (1 - cdr!)) < 1e-6, `${id} cooldown shortened`);
   }
   const brace = ABILITY_DATABASE.get("brace")!;
   assert.equal(modifiedAbilityCooldownMs(brace, 4, p.usesSkills.passives), abilityCooldownMs(brace, 4), "Brace is not a Recovery skill");

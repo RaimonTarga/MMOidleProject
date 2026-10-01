@@ -27,7 +27,7 @@ import {
   validateAbilityRecipes,
 } from "@mmo-idle/shared";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 

@@ -6,7 +6,7 @@ import { BOSS1_BLOCKS } from '../bench/balance/boss1Spec';
 // what puts it under `pnpm test` at all.
 import { verifyDeclaredApplied } from '../../scripts/boss-verify.mjs';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
