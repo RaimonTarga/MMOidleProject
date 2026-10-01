@@ -308,4 +308,21 @@ type CombatEventPayload =
   // The client draws one handler per `LineageFxKey` in `render/combatFx.ts`,
   // keyed by the lane grammar (design §8). An unknown key draws nothing.
   | { kind: 'card-fx'; playerId: string; fx: LineageFxKey; pos: Vec2;
-      targetId?: string; targetPos?: Vec2; stacks?: number };
+      targetId?: string; targetPos?: Vec2; stacks?: number }
+  // A frame loop's BANK changed — progression rework Phase 3, design §10.
+  //
+  // Heavy frames build charge on every regular hit and spend it on the mechanic,
+  // and the brief makes the readout part of the feature: a stack counter (the
+  // `frame-charge` buff tile) and a weapon glow that grows with the charge. The
+  // tile rides the 5 Hz buff snapshot; the glow needs the beat the charge landed
+  // on, which a snapshot cannot give it.
+  //
+  // So this is that beat. `stacks` is the bank AFTER the change and `max` the cap
+  // it is counting toward, both authoritative — the client never derives the cap
+  // from a frame id, because it moves with the threshold and with relics. Pushed
+  // only when the number actually changed (never per tick, never per hit), and
+  // `stacks: 0` is the spend: the glow goes out as the finisher lands.
+  //
+  // Node-wide like every other combat event; an unknown kind draws nothing, so a
+  // client without a glow handler simply ignores it.
+  | { kind: 'frame-charge'; playerId: string; stacks: number; max: number };

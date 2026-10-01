@@ -166,6 +166,14 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'lineage-guard': b('Brace', 'A lineage card opened a damage-reduction window — opening protection, earned by how the card fires rather than by gear.'),
   'lineage-ward': b('Shell', 'A lineage card granted a temporary absorb pool, spent before your barrier and your health.'),
   'lineage-plate': b('Plate', 'A lineage card is adding plating to each reactive-plating stack you are holding. The stacks themselves still build from hits taken and fade one at a time.'),
+
+  // -- Frame loops -------------------------------------------------------------
+  // Two tiles for all six classes: a frame is either a window or a bank (or, on a
+  // Balanced frame, a little of both), and which one you have is decided by the
+  // frame you picked. The tile is labelled by that frame, so the copy here speaks
+  // about the CONTAINER rather than naming one class's version of it.
+  'frame-window': b('Frame window', 'Your frame’s mechanic just fired and opened its window. It is deliberately shorter than one full cycle, so the faster you attack the more of each cycle you spend inside it — your frame tile says what the window is doing while it counts down.'),
+  'frame-charge': b('Frame charge', 'Your frame is banking charge, one per regular hit, up to the cap shown. Your mechanic spends the whole bank when it fires and makes that one hit bigger — it is not a second multiplier stacked on top, it is the same multiplier grown.'),
 };
 
 // -- Target-frame statuses ---------------------------------------------------

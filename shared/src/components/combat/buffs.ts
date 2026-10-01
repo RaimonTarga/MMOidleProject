@@ -119,6 +119,12 @@ export const BUFF_IDS = [
   'lineage-guard',
   'lineage-ward',
   'lineage-plate',
+  // Frame loops (progression rework Phase 3). TWO ids for all six roots, not two
+  // per root: a player wears exactly one frame, so the clock and the counter are
+  // the same two tiles whatever root is under them, and each root's descriptor
+  // labels and colours its own (see `classes/shared/frameLoop.ts`).
+  'frame-window',   // Light/Balanced — the timed window the mechanic opened
+  'frame-charge',   // Heavy/Balanced — the bank, counting toward its cap
   // Stances (see server/src/systems/player/stances/stanceBehaviors.ts)
   'stance-reaper',   // Reaper — on-kill momentum, outlives the stance itself
   'stance-charge',   // Powering Up — the charge accruing, shown as a filling clock

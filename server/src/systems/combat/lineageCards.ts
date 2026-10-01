@@ -244,7 +244,7 @@ const ON_TARGET: ReadonlySet<PayoffKind> = new Set<PayoffKind>([
  * is what makes the comparison honest — reading them back off the effect would
  * compare the prior source's value with itself.
  */
-function applySharedDebuffMaxWins(
+export function applySharedDebuffMaxWins(
   player: PlayerEntity,
   targetState: TracksCombat,
   config: StatusEffectConfig,
