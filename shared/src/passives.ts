@@ -153,6 +153,16 @@ export const CADENCE_KEYS = [
   'cadence.crescendo-ramp-seconds',
   'cadence.crescendo-ramp-mult',
   'cadence.crescendo-tail-per-sec',
+  // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
+  // Lancer (mid): every hit on a target held AT BAY — inside the player's reach
+  // and outside the target's own — applies a short movement slow.
+  'cadence.range-mid-at-bay-slow-pct',
+  'cadence.range-mid-at-bay-slow-ms',
+  // Phantom-Blade (far): the first hit on a fresh body landed from the outer
+  // `-max-reach-pct` band of the player's reach is an opening strike worth
+  // `-opener-pct` more, folded into `empoweredMultiplier` (one multiplier per hit).
+  'cadence.range-far-max-reach-pct',
+  'cadence.range-far-opener-pct',
 ] as const;
 
 export const COOLDOWN_KEYS = [
@@ -206,6 +216,18 @@ export const COOLDOWN_KEYS = [
   // Devout Priest: holy-beam channel duration and per-tick interval (ms).
   'cooldown.beam-duration-ms',
   'cooldown.beam-tick-ms',
+  // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
+  // Phalanx (mid): the at-bay slow, plus a stagger when the EXECUTION lands on a
+  // target held at bay (the stun ladder's shortest rung).
+  'cooldown.range-mid-at-bay-slow-pct',
+  'cooldown.range-mid-at-bay-slow-ms',
+  'cooldown.range-mid-execution-stagger-ms',
+  // Sentinel (far): an execution from the outer `-max-reach-pct` band of reach
+  // opens a vulnerability window on the target. Shared `vulnerability` record,
+  // max-wins (design §18.1).
+  'cooldown.range-far-max-reach-pct',
+  'cooldown.range-far-vuln-pct',
+  'cooldown.range-far-vuln-ms',
 ] as const;
 
 export const RELOAD_KEYS = [
@@ -275,6 +297,14 @@ export const RELOAD_KEYS = [
   'reload.cannon-damage-per-shot',
   // Fraction of the reload spent charging before the cannon fires.
   'reload.cannon-charge-fraction',
+  // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
+  // Enforcer (mid): the at-bay slow — the Slinger's "pin".
+  'reload.range-mid-at-bay-slow-pct',
+  'reload.range-mid-at-bay-slow-ms',
+  // Deadeye (far): shots landed from the outer `-max-reach-pct` band of reach
+  // deal `-damage-pct` more, folded into `empoweredMultiplier`.
+  'reload.range-far-max-reach-pct',
+  'reload.range-far-damage-pct',
 ] as const;
 
 export const ENERGY_KEYS = [
@@ -339,6 +369,14 @@ export const ENERGY_KEYS = [
   'energy.endless-storm-duration-ms',
   'energy.endless-storm-extend-ms',
   'energy.endless-storm-max-ms',
+  // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
+  // Shade (mid): the discharge staggers a target held at bay.
+  'energy.range-mid-discharge-stagger-ms',
+  // Wisp (far): 1 = the discharge does not chain; the whole of it lands on one
+  // target. AUTHORED HERE, CONSUMED BY THE ENERGY FRAME LOOP (Phase 3, W1-B):
+  // the chain-count resolution reads this key and, when it is 1, chains to zero
+  // targets and folds the chained share onto the primary.
+  'energy.range-far-single-target',
 ] as const;
 
 export const DOT_KEYS = [
@@ -389,6 +427,18 @@ export const DOT_KEYS = [
   'dot.ignition',       // fire: front-load all stacks on a fresh target
   'dot.rimeshatter',    // frost: at max stacks, full direct + DR debuff
   'dot.wind-spirit',    // frost: max-stack hits apply Frostbite DoT vulnerability
+  // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
+  // Warlock (mid): a class stack landed on a target held at bay also lands
+  // `-spread-stacks` on its nearest neighbour inside `-spread-radius`.
+  'dot.range-mid-spread-stacks',
+  'dot.range-mid-spread-radius',
+  // Harbinger (far): the class DoT's DELIVERY cap rises by `-stack-cap-bonus` and
+  // each application lasts `-duration-pct` longer. Deliberately NOT the damage
+  // reference (`computeDotClassDamagePerStack` still divides by the frame's own
+  // max stacks), so the extra stack is extra damage rather than a thinner one.
+  // Suppresses Warlock's spread.
+  'dot.range-far-stack-cap-bonus',
+  'dot.range-far-duration-pct',
 ] as const;
 
 export const SHARED_KEYS = [
