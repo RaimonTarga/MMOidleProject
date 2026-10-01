@@ -2250,3 +2250,153 @@ same 31–34 s however large the pool is, which is a burst or max-HP-scaling mec
 pool does not answer.
 
 Still open for this call: the human playtest.
+
+---
+
+## Technique packet progress note — design §22 shipped (2026-10-01, run 4 W1-G)
+
+On `feat/technique-packet` off `feat/lineage-data-model`. Six commits, one per step of
+the brief. `pnpm typecheck` clean throughout (it is this task's enumeration mechanism);
+related suites green.
+
+### What was built
+
+- **The union.** `technique` in `PacketId`, `PACKET_IDS` and `WEAPON_PACKET_IDS` (now
+  seven, not design §3's six). Trigger kind `technique-cast`; payoff kinds
+  `technique-refund` and `technique-window`; fx keys `technique.trail`,
+  `technique.cast-flare`, `technique.keystone`; keystone `signature`.
+- **The lane's stat is the EXISTING passive.** A new `techniquePowerPct` member of
+  `LineageStatKey`/`LineageStatEffects` resolves into `passives['technique.power-pct']`
+  at recalc (`shared/src/systems/stats.ts`, step 3c), so a lineage stat row and a Desert
+  recipe's `technique.power-pct` are the same number to the ability code. It is NOT added
+  to skill-tree `StatEffects`: that would hand every skill node a stat the tree has no
+  authored home for.
+- **One Technique resolution seam.** `server/src/systems/combat/techniqueResolved.ts` is
+  new and is now the single call every Technique shape's resolution makes. It spends a
+  live `technique-window`, then fires the ability node, then the `technique-cast` cards,
+  then the Signature keystone. The five sites that each called
+  `onAbilityNodeTechniqueLanded` directly (two in `abilityFiring`, two in
+  `abilityCasting`, one in `abilityEffects`) call it instead. `ability.slot` is checked
+  once, there, so a Guard can never fire an offensive lane.
+- **`technique-window` routes through `empoweredMultiplier`.** Spent at the top of
+  `applyTechniqueRider`, BEFORE `formationBasis` is read, so `addEmpoweredDamage`'s
+  divide-by-`empoweredMultiplier` recovers the pre-window basis and the window and the
+  rider ADD. One multiplier per hit, no second metadata key, no bare `ctx.damage` scale.
+- **Signature** (`keystones/signature.ts`): `emitMechanicFired` without
+  `setEmpoweredAttack`. No `register` — like Festering and Unbroken it is a call its own
+  seam makes, not a pipeline listener.
+- **Broadsword**: lanes `['technique', 'kill-chain', 'empowered']`, seven Tempo cards
+  renamed onto Technique, T4 cross derangement re-formed, all five Desert capstones
+  crowning Technique with five different payoffs.
+- **Families**: Plains Swarm drops `technique`. Tempo keeps Forest Pack and Mountain
+  Hopper.
+- **Ability nodes**: Sweep, Slam, Snipe, Stunning Strike, Binding Strike and Detonate
+  each trade one offer for `technique`/`technique-refund`. Guards untouched.
+- **Magnitudes**: `PACKET_BUDGET.technique = 1`;
+  `TRIGGER_FIRES_PER_PULL['technique-cast'] = 2`; `PAYOFF_UNIT` gains `technique-refund`
+  0.35 (no duration) and `technique-window` 0.30 / 4000 ms;
+  `STAT_UNIT.techniquePowerPct = 0.1`.
+
+### Divergences from the brief, and why
+
+1. **The boss stopgap had to be widened, and the function renamed.** The brief says
+   "Technique is Lane A, so the Plains boss stopgap pays Technique shards" — but
+   `biomeDefensiveLaneAPackets` skipped weapon lineages, so it did not. That restriction
+   was an assumption from §17 (every weapon Lane A already had a mob family); §18.6's own
+   sentence says "the lineage's Lane A packet" without qualification. It is now
+   `biomeLaneAPackets`, reading every lineage homed in the biome. Side effect, flagged
+   rather than hidden: the Forest and Cave bosses now also pay 4 Tempo shards, Mountain 4
+   Empowered, Swamp 4 Affliction — a small boss-kill bonus for four lanes that already
+   had family sources. Reversible if unwanted; the alternative is a bespoke "weapon Lane
+   A with fewer than two sources" rule, which is a second table in disguise.
+2. **Coverage needed two named exemptions, not none.** §22 moves exactly ONE lineage onto
+   Technique, so it is on one weapon lineage and no non-weapon one, while
+   `coverage.test.ts` demands two of each. `WEAPON_COVERAGE_BELOW_TWO` and
+   `NON_WEAPON_COVERAGE_BELOW_TWO` are self-cleaning — both loops FAIL if a listed packet
+   has met the rule — the same shape as `UNCROWNED_LANES`. A second weapon carrier means
+   taking a lane off a lineage already at the floor (after §22, Tempo, Affliction,
+   Control and Engagement are each on exactly two), which is a design call, not
+   authoring.
+3. **The Broadsword's T2 Technique amplifier moves `magnitude`, not `duration`.** The
+   brief did not say which axis. It had to be `magnitude`: the Broadsword's T2 Tempo
+   amplifier was the ONLY magnitude-axis amplifier in the whole database, and
+   `lineageAmplifiers.test.ts` asserts all four axes are in use.
+4. **`nodePayoffAxis` gained a third case.** `technique-refund` is the first untimed SELF
+   payoff the node table uses, and `applyAmplifiedAxis` silently does nothing with
+   `duration` on one — an amplifier charging a price and changing nothing. An untimed
+   self payoff now amplifies its magnitude.
+5. **`technique-window` is not offered on ability nodes**, only `technique-refund`. A
+   window that empowers the next Technique, hung off a Technique, is "do this again
+   harder" — the louder-number shape `offers.ts`'s own header rules out.
+6. **A `technique-window` is spent only where the resolution rides an exchange.** A cast
+   payload and a self-cast resolve with no `CombatContext`, so there is no hit to empower
+   and the window waits rather than being silently eaten. Pinned by a test.
+7. **`PACKET_FACE.technique = 'avoid'` is provisional and currently unread** — no
+   non-weapon lineage carries the lane, so nothing resolves a Technique card's face.
+
+### Tables the typecheck did NOT force (the repo's blind spots)
+
+The union enumerated less than hoped. These had to be found by hand, and a tenth packet
+or a nineteenth payoff would miss them again:
+
+- **`PAYOFF_UNIT`** is built from a `[PayoffKind, PayoffUnit][]` array, not an exhaustive
+  `Record`. A payoff with no unit throws at RUNTIME inside `payoffValue`, and only if a
+  card uses it.
+- **`PAYOFF_BLURB`** in `shared/src/data/abilityNodes/index.ts` is
+  `Record<string, string>` with an "also fires <payoff>" fallback — a new payoff
+  silently ships programmer text to the player.
+- **`ABILITY_NODE_FX`** is a `Map<string, LineageFxKey>` keyed by a `lane/payoff` STRING.
+  A missing entry makes the node refuse to draw, caught only by `abilityNodes.test.ts`'s
+  own loop.
+- **`OFFENSIVE_NODE_PAYOFFS` / `DEFENSIVE_NODE_PAYOFFS`** are `ReadonlySet<PayoffKind>`;
+  membership is a test, not a type.
+- **`WINDOW_LANE`** and **`LINEAGE_BUFFS`** in `lineageCards.ts` are a
+  `Partial<Record<...>>` and a hand list: a timed payoff with no entry gets a grey HUD
+  tile or no tile at all.
+- **`PAYOFF_IS_TIMED`** in `coverage.test.ts` is a `Set<string>` — a `PayoffKind` typo in
+  it would not even be a type error.
+- **The `combatFx.ts` fx switch** has a `default`, so a new `LineageFxKey` compiles and
+  draws nothing (dev-only console warning).
+- **`shared/src/components/combat/buffs.ts`'s `BuffId`** union,
+  `client/src/hud/statusHelp.ts` and `client/src/ui/conceptIcons.ts` are three separate
+  hand lists for one new buff tile; only the first is typed against the server's
+  descriptors (`_BuffIdsMatch`).
+
+What the union DID force, which is the part that worked: `PACKET_BUDGET`,
+`TRIGGER_N_BY_LANE`, `TRIGGER_FIRES_PER_PULL`, `PACKET_FACE`, `STAT_UNIT`,
+`client/src/ui/map/ShardIcon.tsx`'s `SHARD_ABBREVIATIONS`, and `LineageTreePanel.tsx`'s
+`STAT_LABEL`. `sanitizeShardWallet`, `MaterialsPanel`, `economyIcons` and
+`LINEAGE_LANE_REFERENCES` needed nothing at all: every one is derived from `PACKET_IDS`
+or from the lineage database.
+
+### Numbers, with their derivations
+
+- `TRIGGER_FIRES_PER_PULL['technique-cast'] = 2`. A `REFERENCE_PULL` is 12 s; the
+  reference wiring fires every attuned Technique off cooldown in combat; a T1 reference
+  loadout carries one Technique slot, and the profile the lane matrix measures the
+  Broadsword with attunes Sweep at 6000 ms. 12000 / 6000 = 2. (The whole T1 Technique
+  roster averages ~9.7 s, which would read 1.2 — but the reference loadout's own pick is
+  what the bench measures. Revisit when the matrix gains a second Technique slot.)
+- `technique-refund` 0.35 per pull, pitched at `echo-hit`'s unit: across a pull a
+  Technique build hands itself back about a third of a Technique cooldown. Applied as a
+  fraction of the REMAINING cooldown, which is self-limiting and is also what makes an
+  ability node's "refunds part of its own cooldown" true with no special case.
+- `technique-window` 0.30 per pull, twice `damage-window`'s. A `damage-window` empowers
+  EVERY hit inside it; this empowers the next Technique and closes, so the same per-pull
+  total would be a fraction of the value at the same price.
+- `STAT_UNIT.techniquePowerPct = 0.1`, twice `attackPct`'s 0.05: Technique power
+  multiplies Technique damage only, so a row of it buys less of the player's total
+  output.
+
+### Not done
+
+- No second weapon or non-weapon carrier for Technique (divergence 2).
+- No bench run. `PACKET_BUDGET.technique` enters at parity and nothing has measured it.
+  The lane matrix now has a `lineage-broadsword-technique` profile, derived automatically
+  from the lineage database, so the next lane run picks it up with no table edit.
+- `LANES_WITHOUT_T1_SHARD_SOURCE` stayed EMPTY, recomputed from the pools by
+  `laneProfiles.test.ts`. Technique's two T1 sources are the Plains Swarm and the Plains
+  boss — both in Plains, which is a single-biome dependency worth closing when a second
+  biome fields a Technique family.
+- The §22 ability pass itself (roster audit, reauthored offers, bespoke per-ability
+  keystones, T3 path re-homing) is untouched: it is a design session plus its own run.
