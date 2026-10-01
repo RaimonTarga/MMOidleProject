@@ -647,6 +647,7 @@ async function main() {
   const bossPath = resolve(out, 'boss.jsonl');
   const nodePath = resolve(out, 'node.jsonl');
   const started = Date.now();
+  const reportOpts: ReportOpts = { tiers, bossCapMs, nodeCapMs, seeds, plus, factorSpec, nodeLanes };
   let done = 0;
   const totalBoss = cells.reduce((a, c) => a + factorsFor(c.tier).length * seeds.length, 0);
 
@@ -669,8 +670,14 @@ async function main() {
         `medEnd=${fmt2(nrow.medianEndHp)} inBand=${fmt2(nrow.timeInBand)} deaths=${nrow.deaths} kills=${nrow.kills}`,
       );
     }
-    writeReport(out, bossRows, nodeRows, { tiers, bossCapMs, nodeCapMs, seeds, plus, factorSpec, nodeLanes });
+    // Re-render every twentieth cell and at the end, not every cell. The rows
+    // are already durable in the two append-only `.jsonl` files, and rewriting
+    // `report.md` plus a whole-run `summary.json` after each fight cost more
+    // wall clock than the simulation on a Windows box with live file scanning:
+    // the first full run sat idle four fifths of the time.
+    if (done % 20 === 0) writeReport(out, bossRows, nodeRows, reportOpts);
   }
+  writeReport(out, bossRows, nodeRows, reportOpts);
 
   console.log(`\nwrote ${out}`);
 }
