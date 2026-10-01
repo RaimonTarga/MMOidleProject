@@ -69,10 +69,11 @@ for (const lineage of LINEAGE_DATABASE.values()) {
     const authoredCap = biomeLevelCap(final, biome);
     const capAtTier = biomeLevelCap(form.tier, biome);
 
-    const rows = rowsForTier(form.tier).filter(
-      (row) => lineage.cards.some((c) => c.tier === form.tier && c.row === row),
-    );
-    for (const row of rows) {
+    // EVERY row of the band, not only the rows whose cards are authored today:
+    // the band's shape is what has to fit behind the door, so a later authoring
+    // pass cannot quietly land a row in a biome that cannot reach it. The binding
+    // row is the last one anyway (keystone at T3, cross at T4).
+    for (const row of rowsForTier(form.tier)) {
       const required = bandBiomeLevel(form.tier, row, biome);
       check(required >= 1, `${where}: the ${row} row resolved to level ${required}`);
       check(
