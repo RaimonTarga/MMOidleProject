@@ -974,7 +974,7 @@ function withWindowFromGuard(id: string): PlayerEntity {
     }
   }
   assert(problems.length === 0, `payoff coverage failures:\n  ${problems.join('\n  ')}`);
-
+}
 
 // ── the clock pass costs nothing for a player with no clock card ──────────────
 //

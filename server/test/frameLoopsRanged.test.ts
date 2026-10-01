@@ -790,6 +790,8 @@ function fireShot(player: PlayerEntity, target: MonsterEntity): CombatContext {
   assert(
     restored.length === 1 && restored[0]!.kind === 'frame-charge' && restored[0]!.stacks === slots,
     'the restore should beat frame-charge at full',
+  );
+}
 
 // ── Effigy: two Conduits on one body are two pairs, not one ──────────────────
 //
