@@ -49,5 +49,45 @@ export const TREADS_LINEAGE: LineageDefinition = {
       fx: 'control.chill-blur', trigger: 'kill', payoff: 'stun',
       face: packetDefaultFace('control'),
     },
+
+    // ── T2 payoff row (L3): the T1 payoff, grown up ─────────────────────────
+    {
+      id: 'treads-t2-engagement-payoff', lineageId: 'treads', tier: 2, row: 'payoff', lane: 'engagement',
+      name: 'Hard Ground', description: 'The last three steps now cost even less, whatever closes the gap.',
+      fx: 'engagement.sidestep-blur', trigger: 'first-hit', payoff: 'engagement-dr',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'treads-t2-empowered-payoff', lineageId: 'treads', tier: 2, row: 'payoff', lane: 'empowered',
+      name: 'Deep Root', description: 'Anchor first and the opening you leave for them runs deeper than before.',
+      fx: 'empowered.guard-spark', trigger: 'standing', payoff: 'vulnerability',
+      face: packetDefaultFace('empowered'),
+    },
+    {
+      id: 'treads-t2-control-payoff', lineageId: 'treads', tier: 2, row: 'payoff', lane: 'control',
+      name: 'Lasting Aftershock', description: 'The ground stays unsteady longer after a kill, for anything still close.',
+      fx: 'control.chill-blur', trigger: 'kill', payoff: 'stun',
+      face: packetDefaultFace('control'),
+    },
+
+    // ── T2 amplifier row (L5): an extra trigger kind for the same payoff ────
+    {
+      id: 'treads-t2-engagement-amplifier', lineageId: 'treads', tier: 2, row: 'amplifier', lane: 'engagement',
+      name: 'Braced Ground', description: 'Anchoring before the approach keeps the discount live without the first hit.',
+      fx: 'engagement.sidestep-blur', trigger: 'standing', payoff: 'engagement-dr', modifies: 'treads-t2-engagement-payoff',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'treads-t2-empowered-amplifier', lineageId: 'treads', tier: 2, row: 'amplifier', lane: 'empowered',
+      name: 'Killing Root', description: 'A kill leaves the same opening anchoring first would.',
+      fx: 'empowered.guard-spark', trigger: 'kill', payoff: 'vulnerability', modifies: 'treads-t2-empowered-payoff',
+      face: packetDefaultFace('empowered'),
+    },
+    {
+      id: 'treads-t2-control-amplifier', lineageId: 'treads', tier: 2, row: 'amplifier', lane: 'control',
+      name: 'Opening Shock', description: 'The opening hit unsteadies the ground without waiting on a kill.',
+      fx: 'control.chill-blur', trigger: 'first-hit', payoff: 'stun', modifies: 'treads-t2-control-payoff',
+      face: packetDefaultFace('control'),
+    },
   ],
 };

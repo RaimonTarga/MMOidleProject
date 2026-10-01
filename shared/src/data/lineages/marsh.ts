@@ -49,5 +49,45 @@ export const MARSH_LINEAGE: LineageDefinition = {
       fx: 'bulwark.plating-chip', trigger: 'first-hit', payoff: 'plating-stack',
       face: packetDefaultFace('bulwark'),
     },
+
+    // ── T2 payoff row (L3): the T1 payoff, grown up ─────────────────────────
+    {
+      id: 'marsh-t2-control-payoff', lineageId: 'marsh', tier: 2, row: 'payoff', lane: 'control',
+      name: 'Deep Mire', description: 'Hold your footing long enough and the marsh stops letting go at all.',
+      fx: 'control.chill-blur', trigger: 'standing', payoff: 'stun',
+      face: packetDefaultFace('control'),
+    },
+    {
+      id: 'marsh-t2-affliction-payoff', lineageId: 'marsh', tier: 2, row: 'payoff', lane: 'affliction',
+      name: 'Rising Gas', description: 'Every kill now stirs up more of the marsh floor than the last one did.',
+      fx: 'affliction.toxic-pulse', trigger: 'kill', payoff: 'poison-stack',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'marsh-t2-bulwark-payoff', lineageId: 'marsh', tier: 2, row: 'payoff', lane: 'bulwark',
+      name: 'Braced Footing', description: 'Ground braced this well keeps answering long after the opening hit.',
+      fx: 'bulwark.plating-chip', trigger: 'first-hit', payoff: 'plating-stack',
+      face: packetDefaultFace('bulwark'),
+    },
+
+    // ── T2 amplifier row (L5): an extra trigger kind for the same payoff ────
+    {
+      id: 'marsh-t2-control-amplifier', lineageId: 'marsh', tier: 2, row: 'amplifier', lane: 'control',
+      name: 'Killing Mire', description: 'A kill locks the mire shut just as hard as holding your footing does.',
+      fx: 'control.chill-blur', trigger: 'kill', payoff: 'stun', modifies: 'marsh-t2-control-payoff',
+      face: packetDefaultFace('control'),
+    },
+    {
+      id: 'marsh-t2-affliction-amplifier', lineageId: 'marsh', tier: 2, row: 'amplifier', lane: 'affliction',
+      name: 'First Gas', description: 'The opening hit stirs the marsh floor without waiting on a kill.',
+      fx: 'affliction.toxic-pulse', trigger: 'first-hit', payoff: 'poison-stack', modifies: 'marsh-t2-affliction-payoff',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'marsh-t2-bulwark-amplifier', lineageId: 'marsh', tier: 2, row: 'amplifier', lane: 'bulwark',
+      name: 'Settled Footing', description: 'Holding your ground after the opener keeps the plate coming on its own.',
+      fx: 'bulwark.plating-chip', trigger: 'standing', payoff: 'plating-stack', modifies: 'marsh-t2-bulwark-payoff',
+      face: packetDefaultFace('bulwark'),
+    },
   ],
 };

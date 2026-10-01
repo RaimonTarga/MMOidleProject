@@ -1358,6 +1358,73 @@ Tests run: `coverage.test.ts`, `normalisation.test.ts`,
 `server/test/lineageAuthoring.test.ts`, `server/test/lineageEconomy.test.ts`, plus
 `server/test/weaponReachability.test.ts` as a spot check — all green, alongside
 `npx tsc -p shared/tsconfig.json --noEmit`.
+### Phase 5 progress note — T2 band, fifteen non-weapon lineages (2026-10-01)
+
+**Built.** W1-D2, on `feat/t2-band-nonweapon`: the T2 payoff (L3) + amplifier (L5) rows
+for all fifteen non-weapon lineages — **90 cards**, none of this phase's weapon-side work
+(owned by a sibling task this wave). `npx tsc -p shared/tsconfig.json --noEmit` and
+`npx tsc -p server/tsconfig.json --noEmit` both clean; `coverage.test.ts`,
+`normalisation.test.ts`, `lineageAuthoring.test.ts` (server), and `lineageEconomy.test.ts`
+(server) all green. No sibling-branch failures observed — the weapon lineages still carry
+zero T2 cards (their T2 band is forms-only per the Phase 1c note), so `coverage.test.ts`'s
+per-tier/per-lane/per-row loop (it only inspects tiers present in `lineage.cards`) never
+reaches a weapon T2 row and passed clean end to end.
+
+- Six cards per lineage: a T2 payoff per lane (same `trigger`/`payoff` kind as that
+  lineage's own T1 payoff card — "that lane's T1 payoff, grown up," new id/name/
+  description only) and a T2 amplifier per lane (`modifies` the T2 payoff id, same lane,
+  same `payoff` kind, same `fx`, a **different trigger drawn from the same per-slot
+  vocabulary** — design §4's "an extra trigger kind" bullet, chosen as the one amplifier
+  shape expressible without guessing at runtime stacking semantics; see divergence 2).
+  `card.face` stays derived via `packetDefaultFace(lane)` throughout, never hand-authored.
+- `magnitudes.ts` **not touched**. T2's `TIER_SCALAR`/`ESSENCE_TIER_MULT`/
+  `SHARD_TIER_MULT`/`ROW_SCALAR.amplifier` columns already existed from Phase 1; the T2
+  band resolves off them with zero new numbers, as the brief predicted.
+- Every lane in the armor/recovery/mobility vocabularies (design §17: armor
+  evade/hit-taken/standing, recovery kill/guard-cast/pulse/barrier-break, mobility
+  kill/first-hit/standing) turned out expressible as an amplifier — no lane needed to be
+  reported as unamplifiable.
+
+**Divergences from the brief, recorded per the brief's own instruction.**
+
+1. **fx keys: none minted**, as instructed — every T2 payoff and amplifier reuses its
+   lane's existing per-packet `LineageFxKey` (`tempo.evasive-blur`,
+   `engagement.sidestep-blur`, `control.chill-blur`, `kill-chain.recovery-pulse`,
+   `barrier-tempo.ward-shell`, `affliction.toxic-pulse`, `bulwark.plating-chip`,
+   `empowered.guard-spark`), the same one the T1 payoff and the form's capstone already
+   share (Phase 4 progress note, divergence 3). This is a second departure from design
+   §8's "Payoff = a new on-screen event": now THREE cards per lane (T1 payoff, T2 payoff,
+   T2 amplifier) plus the capstone draw the identical signature rather than each adding a
+   new one. `combatFx.ts` stays untouched; W1-F's job is making the amplified payoff read
+   as bigger (duration/stack/second-trigger), not drawing a new effect.
+2. **The amplifier's `trigger` field is mechanically inert beyond bookkeeping** — nothing
+   in `resolve.ts` or `magnitudes.ts` reads `card.modifies` to extend the modified card's
+   duration, add a target, or add stacks; `resolveLineageCard` treats an `amplifier` row
+   exactly like a `payoff` row (its own trigger, its own payoff, scaled by
+   `ROW_SCALAR.amplifier` = 0.6) with `modifies` carried through only as an unread string.
+   So "duration/second-target/stacks" amplification is a Phase 1b/5 RUNTIME decision not
+   yet built, out of scope for pure data authoring. The data models the one amplifier
+   shape fully expressible today — the SAME payoff kind firing off an ADDITIONAL trigger
+   from the slot's vocabulary, so owning the amplifier makes the payoff proc from two
+   triggers instead of one. Whether that nets out as "more stacks" or "longer effective
+   uptime" in play depends on the §18.1 composition rule chosen for that payoff kind
+   (multiplier max-wins vs. DoT-style per-stack refresh), which is runtime work for
+   whoever wires amplifiers, not this task.
+3. **Amplifier trigger choice is a fixed within-lineage rotation** (next item in the
+   slot's trigger list after the T2 payoff's own trigger, cyclic), not hand-picked per
+   card for maximum thematic fit — with 45 amplifier cards to author, this kept the
+   choice systematic and verifiably exhaustive (every slot vocabulary fully covered) at
+   the cost of occasional flavor-text stretching (e.g. Treads' Empowered amplifier reads
+   "a kill leaves the same opening anchoring first would," which is serviceable but not
+   as tight as the hand-authored T1 cards). Worth a flavor pass later, not a data defect.
+4. **Per-packet trigger/payoff pairing is per-LINEAGE, not per-packet-globally** — same
+   caveat as the Phase 4 note's divergence 5, now doubled for T2: e.g. armor's Kill-chain
+   payoff is `evade`/`recovery-window` on Hide alone (the only armor lineage carrying
+   Kill-chain), so there was nothing to reconcile there, but recovery's Empowered
+   (Barrier only) and Bulwark (Barrier + Pulse, consistent) show the pattern holds only
+   where a packet repeats across lineages of the same slot. Not a defect — each lineage's
+   T1→T2 progression is internally consistent, which is what the "grown up" instruction
+   asked for.
 
 ---
 

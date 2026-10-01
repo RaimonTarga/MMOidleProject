@@ -49,5 +49,45 @@ export const PLATE_LINEAGE: LineageDefinition = {
       fx: 'control.chill-blur', trigger: 'evade', payoff: 'stun',
       face: packetDefaultFace('control'),
     },
+
+    // ── T2 payoff row (L3): the T1 payoff, grown up ─────────────────────────
+    {
+      id: 'plate-t2-bulwark-payoff', lineageId: 'plate', tier: 2, row: 'payoff', lane: 'bulwark',
+      name: 'Unyielding Footing', description: 'The longer you hold the line, the less the plate has to answer for.',
+      fx: 'bulwark.plating-chip', trigger: 'standing', payoff: 'plating-stack',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'plate-t2-barrier-tempo-payoff', lineageId: 'plate', tier: 2, row: 'payoff', lane: 'barrier-tempo',
+      name: 'Granite Reply', description: 'Every hit that lands now cracks into a shell thick enough to matter.',
+      fx: 'barrier-tempo.ward-shell', trigger: 'hit-taken', payoff: 'ward',
+      face: packetDefaultFace('barrier-tempo'),
+    },
+    {
+      id: 'plate-t2-control-payoff', lineageId: 'plate', tier: 2, row: 'payoff', lane: 'control',
+      name: 'Check and Topple', description: 'Step clear and whatever missed you staggers harder for the miss.',
+      fx: 'control.chill-blur', trigger: 'evade', payoff: 'stun',
+      face: packetDefaultFace('control'),
+    },
+
+    // ── T2 amplifier row (L5): an extra trigger kind for the same payoff ────
+    {
+      id: 'plate-t2-bulwark-amplifier', lineageId: 'plate', tier: 2, row: 'amplifier', lane: 'bulwark',
+      name: 'Reflex Plating', description: 'A clean dodge settles the plate exactly like holding the line would.',
+      fx: 'bulwark.plating-chip', trigger: 'evade', payoff: 'plating-stack', modifies: 'plate-t2-bulwark-payoff',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'plate-t2-barrier-tempo-amplifier', lineageId: 'plate', tier: 2, row: 'amplifier', lane: 'barrier-tempo',
+      name: 'Held Shell', description: 'Holding ground tops the shell up on its own, hit or no hit.',
+      fx: 'barrier-tempo.ward-shell', trigger: 'standing', payoff: 'ward', modifies: 'plate-t2-barrier-tempo-payoff',
+      face: packetDefaultFace('barrier-tempo'),
+    },
+    {
+      id: 'plate-t2-control-amplifier', lineageId: 'plate', tier: 2, row: 'amplifier', lane: 'control',
+      name: 'Punished Contact', description: 'Taking the hit staggers them back just as hard as dodging it would.',
+      fx: 'control.chill-blur', trigger: 'hit-taken', payoff: 'stun', modifies: 'plate-t2-control-payoff',
+      face: packetDefaultFace('control'),
+    },
   ],
 };

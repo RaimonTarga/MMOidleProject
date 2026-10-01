@@ -49,5 +49,45 @@ export const BARRIER_LINEAGE: LineageDefinition = {
       fx: 'empowered.guard-spark', trigger: 'pulse', payoff: 'vulnerability',
       face: packetDefaultFace('empowered'),
     },
+
+    // ── T2 payoff row (L3): the T1 payoff, grown up ─────────────────────────
+    {
+      id: 'barrier-t2-barrier-tempo-payoff', lineageId: 'barrier', tier: 2, row: 'payoff', lane: 'barrier-tempo',
+      name: 'Mountain Refill', description: 'The mountain sends more than it used to, every time the barrier gives.',
+      fx: 'barrier-tempo.ward-shell', trigger: 'barrier-break', payoff: 'ward',
+      face: packetDefaultFace('barrier-tempo'),
+    },
+    {
+      id: 'barrier-t2-bulwark-payoff', lineageId: 'barrier', tier: 2, row: 'payoff', lane: 'bulwark',
+      name: 'Standing Cairn', description: 'Every guard raised now stacks stone the last one left behind.',
+      fx: 'bulwark.plating-chip', trigger: 'guard-cast', payoff: 'plating-stack',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'barrier-t2-empowered-payoff', lineageId: 'barrier', tier: 2, row: 'payoff', lane: 'empowered',
+      name: 'Deep Pressure', description: 'The hum finds the weak point and keeps leaning on it a while longer.',
+      fx: 'empowered.guard-spark', trigger: 'pulse', payoff: 'vulnerability',
+      face: packetDefaultFace('empowered'),
+    },
+
+    // ── T2 amplifier row (L5): an extra trigger kind for the same payoff ────
+    {
+      id: 'barrier-t2-barrier-tempo-amplifier', lineageId: 'barrier', tier: 2, row: 'amplifier', lane: 'barrier-tempo',
+      name: 'Cairn Refill', description: 'A kill sends the same refill a broken barrier does.',
+      fx: 'barrier-tempo.ward-shell', trigger: 'kill', payoff: 'ward', modifies: 'barrier-t2-barrier-tempo-payoff',
+      face: packetDefaultFace('barrier-tempo'),
+    },
+    {
+      id: 'barrier-t2-bulwark-amplifier', lineageId: 'barrier', tier: 2, row: 'amplifier', lane: 'bulwark',
+      name: 'Resonant Cairn', description: "The barrier's own cadence keeps stacking stone between guards.",
+      fx: 'bulwark.plating-chip', trigger: 'pulse', payoff: 'plating-stack', modifies: 'barrier-t2-bulwark-payoff',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'barrier-t2-empowered-amplifier', lineageId: 'barrier', tier: 2, row: 'amplifier', lane: 'empowered',
+      name: 'Cracked Pressure', description: 'The barrier giving way finds the same weak point the hum does.',
+      fx: 'empowered.guard-spark', trigger: 'barrier-break', payoff: 'vulnerability', modifies: 'barrier-t2-empowered-payoff',
+      face: packetDefaultFace('empowered'),
+    },
   ],
 };

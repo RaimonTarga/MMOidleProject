@@ -51,5 +51,45 @@ export const EYE_LINEAGE: LineageDefinition = {
       fx: 'kill-chain.recovery-pulse', trigger: 'kill', payoff: 'recovery-window',
       face: packetDefaultFace('kill-chain'),
     },
+
+    // ── T2 payoff row (L3): the T1 payoff, grown up ─────────────────────────
+    {
+      id: 'eye-t2-affliction-payoff', lineageId: 'eye', tier: 2, row: 'payoff', lane: 'affliction',
+      name: 'Weeping Rot', description: 'The air the eye leaves caustic now stays that way between pulses.',
+      fx: 'affliction.toxic-pulse', trigger: 'pulse', payoff: 'poison-stack',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'eye-t2-control-payoff', lineageId: 'eye', tier: 2, row: 'payoff', lane: 'control',
+      name: 'Hard Stare', description: 'Whatever broke the barrier now flinches harder, and longer, for it.',
+      fx: 'control.chill-blur', trigger: 'barrier-break', payoff: 'stun',
+      face: packetDefaultFace('control'),
+    },
+    {
+      id: 'eye-t2-kill-chain-payoff', lineageId: 'eye', tier: 2, row: 'payoff', lane: 'kill-chain',
+      name: 'Deep Green', description: "The eye's glow now holds toward healing well past the kill that lit it.",
+      fx: 'kill-chain.recovery-pulse', trigger: 'kill', payoff: 'recovery-window',
+      face: packetDefaultFace('kill-chain'),
+    },
+
+    // ── T2 amplifier row (L5): an extra trigger kind for the same payoff ────
+    {
+      id: 'eye-t2-affliction-amplifier', lineageId: 'eye', tier: 2, row: 'amplifier', lane: 'affliction',
+      name: 'Broken Rot', description: 'The barrier giving way leaves the same rot behind a pulse would.',
+      fx: 'affliction.toxic-pulse', trigger: 'barrier-break', payoff: 'poison-stack', modifies: 'eye-t2-affliction-payoff',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'eye-t2-control-amplifier', lineageId: 'eye', tier: 2, row: 'amplifier', lane: 'control',
+      name: 'Killing Stare', description: 'A kill draws the same flinching stare the broken barrier does.',
+      fx: 'control.chill-blur', trigger: 'kill', payoff: 'stun', modifies: 'eye-t2-control-payoff',
+      face: packetDefaultFace('control'),
+    },
+    {
+      id: 'eye-t2-kill-chain-amplifier', lineageId: 'eye', tier: 2, row: 'amplifier', lane: 'kill-chain',
+      name: 'Guarded Green', description: 'Raising a guard turns the eye toward healing without waiting on a kill.',
+      fx: 'kill-chain.recovery-pulse', trigger: 'guard-cast', payoff: 'recovery-window', modifies: 'eye-t2-kill-chain-payoff',
+      face: packetDefaultFace('kill-chain'),
+    },
   ],
 };

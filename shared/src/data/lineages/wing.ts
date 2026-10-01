@@ -50,5 +50,45 @@ export const WING_LINEAGE: LineageDefinition = {
       fx: 'control.chill-blur', trigger: 'standing', payoff: 'stun',
       face: packetDefaultFace('control'),
     },
+
+    // ── T2 payoff row (L3): the T1 payoff, grown up ─────────────────────────
+    {
+      id: 'wing-t2-engagement-payoff', lineageId: 'wing', tier: 2, row: 'payoff', lane: 'engagement',
+      name: 'Deeper Dark', description: 'Out of the dark, the first hit now lands softer than it ever did before.',
+      fx: 'engagement.sidestep-blur', trigger: 'first-hit', payoff: 'engagement-dr',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'wing-t2-kill-chain-payoff', lineageId: 'wing', tier: 2, row: 'payoff', lane: 'kill-chain',
+      name: 'Second Wingbeat', description: 'A kill now carries you further airborne than the last one did.',
+      fx: 'kill-chain.recovery-pulse', trigger: 'kill', payoff: 'recovery-window',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'wing-t2-control-payoff', lineageId: 'wing', tier: 2, row: 'payoff', lane: 'control',
+      name: 'Patient Perch', description: 'Wait long enough in the dark and the pounce stuns harder on contact.',
+      fx: 'control.chill-blur', trigger: 'standing', payoff: 'stun',
+      face: packetDefaultFace('control'),
+    },
+
+    // ── T2 amplifier row (L5): an extra trigger kind for the same payoff ────
+    {
+      id: 'wing-t2-engagement-amplifier', lineageId: 'wing', tier: 2, row: 'amplifier', lane: 'engagement',
+      name: 'Settled Dark', description: 'Waiting in the dark before you drop keeps the discount live without the first hit.',
+      fx: 'engagement.sidestep-blur', trigger: 'standing', payoff: 'engagement-dr', modifies: 'wing-t2-engagement-payoff',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'wing-t2-kill-chain-amplifier', lineageId: 'wing', tier: 2, row: 'amplifier', lane: 'kill-chain',
+      name: 'Opening Wingbeat', description: 'The opening hit of a fight launches you airborne without waiting on a kill.',
+      fx: 'kill-chain.recovery-pulse', trigger: 'first-hit', payoff: 'recovery-window', modifies: 'wing-t2-kill-chain-payoff',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'wing-t2-control-amplifier', lineageId: 'wing', tier: 2, row: 'amplifier', lane: 'control',
+      name: 'Killing Perch', description: 'A kill stuns the next one close just as hard as the patient pounce does.',
+      fx: 'control.chill-blur', trigger: 'kill', payoff: 'stun', modifies: 'wing-t2-control-payoff',
+      face: packetDefaultFace('control'),
+    },
   ],
 };

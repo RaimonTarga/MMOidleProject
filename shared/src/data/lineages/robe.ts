@@ -49,5 +49,45 @@ export const ROBE_LINEAGE: LineageDefinition = {
       fx: 'tempo.evasive-blur', trigger: 'evade', payoff: 'speed-window',
       face: packetDefaultFace('tempo'),
     },
+
+    // ── T2 payoff row (L3): the T1 payoff, grown up ─────────────────────────
+    {
+      id: 'robe-t2-bulwark-payoff', lineageId: 'robe', tier: 2, row: 'payoff', lane: 'bulwark',
+      name: 'Locked Formation', description: 'Hold your ground long enough and the plates stop settling — they lock.',
+      fx: 'bulwark.plating-chip', trigger: 'standing', payoff: 'plating-stack',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'robe-t2-empowered-payoff', lineageId: 'robe', tier: 2, row: 'payoff', lane: 'empowered',
+      name: 'Marked Retaliation', description: 'What hits you now wears the mark long after the blow lands.',
+      fx: 'empowered.guard-spark', trigger: 'hit-taken', payoff: 'vulnerability',
+      face: packetDefaultFace('empowered'),
+    },
+    {
+      id: 'robe-t2-tempo-payoff', lineageId: 'robe', tier: 2, row: 'payoff', lane: 'tempo',
+      name: 'Clean Break', description: 'A dodge this practiced carries you well past the next step.',
+      fx: 'tempo.evasive-blur', trigger: 'evade', payoff: 'speed-window',
+      face: packetDefaultFace('tempo'),
+    },
+
+    // ── T2 amplifier row (L5): an extra trigger kind for the same payoff ────
+    {
+      id: 'robe-t2-bulwark-amplifier', lineageId: 'robe', tier: 2, row: 'amplifier', lane: 'bulwark',
+      name: 'Reflexive Bracing', description: 'A clean dodge settles the plates in just as well as standing fast.',
+      fx: 'bulwark.plating-chip', trigger: 'evade', payoff: 'plating-stack', modifies: 'robe-t2-bulwark-payoff',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'robe-t2-empowered-amplifier', lineageId: 'robe', tier: 2, row: 'amplifier', lane: 'empowered',
+      name: 'Lingering Mark', description: 'Hold your ground and the mark spreads to whatever is still close.',
+      fx: 'empowered.guard-spark', trigger: 'standing', payoff: 'vulnerability', modifies: 'robe-t2-empowered-payoff',
+      face: packetDefaultFace('empowered'),
+    },
+    {
+      id: 'robe-t2-tempo-amplifier', lineageId: 'robe', tier: 2, row: 'amplifier', lane: 'tempo',
+      name: 'Undeterred Step', description: 'Taking a hit does not cost you the rhythm a dodge started.',
+      fx: 'tempo.evasive-blur', trigger: 'hit-taken', payoff: 'speed-window', modifies: 'robe-t2-tempo-payoff',
+      face: packetDefaultFace('tempo'),
+    },
   ],
 };

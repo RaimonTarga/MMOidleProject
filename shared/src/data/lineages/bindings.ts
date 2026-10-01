@@ -51,5 +51,45 @@ export const BINDINGS_LINEAGE: LineageDefinition = {
       fx: 'affliction.toxic-pulse', trigger: 'standing', payoff: 'poison-stack',
       face: packetDefaultFace('affliction'),
     },
+
+    // ── T2 payoff row (L3): the T1 payoff, grown up ─────────────────────────
+    {
+      id: 'bindings-t2-engagement-payoff', lineageId: 'bindings', tier: 2, row: 'payoff', lane: 'engagement',
+      name: 'Guarded Opening', description: 'The first exchange of any fight now costs noticeably less, every time.',
+      fx: 'engagement.sidestep-blur', trigger: 'hit-taken', payoff: 'engagement-dr',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'bindings-t2-tempo-payoff', lineageId: 'bindings', tier: 2, row: 'payoff', lane: 'tempo',
+      name: 'Vanishing Step', description: 'The dodge that used to just clear space now launches you past it.',
+      fx: 'tempo.evasive-blur', trigger: 'evade', payoff: 'speed-window',
+      face: packetDefaultFace('tempo'),
+    },
+    {
+      id: 'bindings-t2-affliction-payoff', lineageId: 'bindings', tier: 2, row: 'payoff', lane: 'affliction',
+      name: 'Deep Weave', description: 'What grips you while you hold still now digs in deeper than before.',
+      fx: 'affliction.toxic-pulse', trigger: 'standing', payoff: 'poison-stack',
+      face: packetDefaultFace('affliction'),
+    },
+
+    // ── T2 amplifier row (L5): an extra trigger kind for the same payoff ────
+    {
+      id: 'bindings-t2-engagement-amplifier', lineageId: 'bindings', tier: 2, row: 'amplifier', lane: 'engagement',
+      name: 'Braced Opening', description: 'Plant your feet before the exchange starts and the discount is already there waiting.',
+      fx: 'engagement.sidestep-blur', trigger: 'standing', payoff: 'engagement-dr', modifies: 'bindings-t2-engagement-payoff',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'bindings-t2-tempo-amplifier', lineageId: 'bindings', tier: 2, row: 'amplifier', lane: 'tempo',
+      name: 'Uninterrupted', description: 'Eating a hit does not break the step a dodge would have started.',
+      fx: 'tempo.evasive-blur', trigger: 'hit-taken', payoff: 'speed-window', modifies: 'bindings-t2-tempo-payoff',
+      face: packetDefaultFace('tempo'),
+    },
+    {
+      id: 'bindings-t2-affliction-amplifier', lineageId: 'bindings', tier: 2, row: 'amplifier', lane: 'affliction',
+      name: 'Reflexive Grip', description: "A clean dodge leaves the weave's grip behind just as surely as standing still does.",
+      fx: 'affliction.toxic-pulse', trigger: 'evade', payoff: 'poison-stack', modifies: 'bindings-t2-affliction-payoff',
+      face: packetDefaultFace('affliction'),
+    },
   ],
 };

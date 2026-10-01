@@ -50,5 +50,45 @@ export const PULSE_LINEAGE: LineageDefinition = {
       fx: 'control.chill-blur', trigger: 'barrier-break', payoff: 'stun',
       face: packetDefaultFace('control'),
     },
+
+    // ── T2 payoff row (L3): the T1 payoff, grown up ─────────────────────────
+    {
+      id: 'pulse-t2-bulwark-payoff', lineageId: 'pulse', tier: 2, row: 'payoff', lane: 'bulwark',
+      name: 'Deep Beat', description: 'Raising a guard now sets a rhythm the plate keeps answering to.',
+      fx: 'bulwark.plating-chip', trigger: 'guard-cast', payoff: 'plating-stack',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'pulse-t2-affliction-payoff', lineageId: 'pulse', tier: 2, row: 'payoff', lane: 'affliction',
+      name: 'Lasting Ache', description: 'Each beat now leaves more behind than the last one cleared.',
+      fx: 'affliction.toxic-pulse', trigger: 'pulse', payoff: 'poison-stack',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'pulse-t2-control-payoff', lineageId: 'pulse', tier: 2, row: 'payoff', lane: 'control',
+      name: 'Louder Chime', description: "The barrier breaking rings loud enough now to stagger more than what's closest.",
+      fx: 'control.chill-blur', trigger: 'barrier-break', payoff: 'stun',
+      face: packetDefaultFace('control'),
+    },
+
+    // ── T2 amplifier row (L5): an extra trigger kind for the same payoff ────
+    {
+      id: 'pulse-t2-bulwark-amplifier', lineageId: 'pulse', tier: 2, row: 'amplifier', lane: 'bulwark',
+      name: 'Resonant Plate', description: "The crystal's own cadence keeps the plate coming between guards.",
+      fx: 'bulwark.plating-chip', trigger: 'pulse', payoff: 'plating-stack', modifies: 'pulse-t2-bulwark-payoff',
+      face: packetDefaultFace('bulwark'),
+    },
+    {
+      id: 'pulse-t2-affliction-amplifier', lineageId: 'pulse', tier: 2, row: 'amplifier', lane: 'affliction',
+      name: 'Shattered Ache', description: 'The barrier giving way also seeds the ache the pulse alone would take longer to build.',
+      fx: 'affliction.toxic-pulse', trigger: 'barrier-break', payoff: 'poison-stack', modifies: 'pulse-t2-affliction-payoff',
+      face: packetDefaultFace('affliction'),
+    },
+    {
+      id: 'pulse-t2-control-amplifier', lineageId: 'pulse', tier: 2, row: 'amplifier', lane: 'control',
+      name: 'Killing Chime', description: 'A kill rings the chime just as loud as the barrier breaking does.',
+      fx: 'control.chill-blur', trigger: 'kill', payoff: 'stun', modifies: 'pulse-t2-control-payoff',
+      face: packetDefaultFace('control'),
+    },
   ],
 };
