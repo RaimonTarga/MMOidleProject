@@ -16,6 +16,7 @@ import {
   ITEM_DATABASE,
   BIOME_DATABASE,
   FAMILY_DATABASE,
+  biomeDefensiveLaneAPackets,
   LINEAGE_DATABASE,
   lineageCardPrice,
   resolveLineageCard,
@@ -1429,8 +1430,12 @@ export class RouteExecutor {
 
     if (Object.keys(missing()).length > 0) {
       if (!farmNode) {
+        const bossBiomes = bossBiomesDroppingShardAtTier1(card.lane);
         throw new StallError(
-          `no tier-1 biome drops the ${card.lane} shard this card costs`,
+          bossBiomes.length > 0
+            ? `the ${card.lane} shard has no tier-1 family source: it drops only from the `
+              + `${bossBiomes.join("/")} boss, and this route has no boss step for it`
+            : `no tier-1 biome drops the ${card.lane} shard this card costs`,
           { step, missing: missing() },
         );
       }
@@ -2529,6 +2534,17 @@ const LINEAGE_SHARD_BIOMES = ['plains', 'forest', 'mountain', 'cave', 'swamp'] a
  * live in a later tier's pool is dropped from every blend by `resolveNodeBlend` —
  * so it drops nothing at tier 1 no matter what a node's blend claims.
  */
+/**
+ * The tier-1 biomes whose BOSS drops `lane`, via the design-§17 stopgap: a boss
+ * kill pays shards of each of its biome's non-weapon Lane-A packets. Engagement,
+ * Bulwark and Barrier tempo have no tier-1 family source at all, so for those a
+ * boss is the ONLY source and no amount of farming trash will do.
+ */
+function bossBiomesDroppingShardAtTier1(lane: PacketId): string[] {
+  return LINEAGE_SHARD_BIOMES.filter((biomeGroup) =>
+    biomeDefensiveLaneAPackets(biomeGroup).includes(lane));
+}
+
 function biomeDropsShardAtTier1(biomeGroup: string, lane: PacketId): boolean {
   const pool = BIOME_DATABASE.get(biomeGroup)?.monsterPoolByTier[1] ?? [];
   if (pool.length === 0) return false;
