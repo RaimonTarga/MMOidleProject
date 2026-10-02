@@ -1,5 +1,3 @@
-import { catalystFamilyLabel } from './world/nodeModifiers';
-
 export interface BiomeDefinition {
   id: string;
   name: string;
@@ -31,17 +29,6 @@ export interface BiomeDefinition {
    * cave/desert) pressure via per-hit. The per-mob stats assume these values.
    */
   mobDensity?: number;
-}
-
-/**
- * Player-facing name for a catalyst, e.g. `alacrity` → "Alacrity Catalyst".
- *
- * Catalyst re-keyed from per-biome-group to per-combat-family (Map Variety Stage
- * A). This delegates to `catalystFamilyLabel`; the name/signature/export are kept
- * so the ~10 existing call sites compile unchanged.
- */
-export function catalystLabel(familyKey: string): string {
-  return catalystFamilyLabel(familyKey);
 }
 
 export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
@@ -77,7 +64,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     id: 'forest', name: 'Forest',
     backgroundColor: 0x0a1a0a,
     monsterPoolByTier: {
-      1: ['forest-slime', 'wolf'],
+      1: ['forest-slime', 'wolf', 'bramble-pod'],
       2: ['ancient-wolf', 'ironwood-golem', 'canopy-sprite'],
       // ⚠ T4 trash not yet authored — forest T4 ring nodes spawn nothing.
     },
@@ -86,7 +73,12 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       2: ['apex-timberclaw'],
     },
     essenceType: 'essence',
-    mobDensity: 36,
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): 36 -> 28. Forest's headcount is not
+    // what it looks like: the Pack family spawns THREE bodies per pick (alpha + two
+    // young), so a pack-heavy node fielded nine simultaneous wolves inside a 36 budget.
+    // 28 is the budget that makes the authored 2-3 pack size the real group size again.
+    // Still above mountain (20) and below plains (36), as this file's ordering intends.
+    mobDensity: 28,
   }],
 
   // MOUNTAIN — rare HUGE hits that trip the damage cap; slow + charge to connect.
@@ -95,7 +87,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     id: 'mountain', name: 'Mountain',
     backgroundColor: 0x141418,
     monsterPoolByTier: {
-      1: ['cliff-hopper', 'cliff-hopper', 'ridge-archer'],
+      1: ['cliff-hopper', 'cliff-hopper', 'ridge-archer', 'rockback-ram'],
       2: ['granite-titan', 'stone-eagle', 'peak-archer'],
       3: ['mountain-colossus', 'avalanche-ram', 'crag-mortar'],
       4: ['granite-mammoth', 'avalanche-tyrant', 'cliffside-roc', 'cragback-rhino'],
@@ -107,7 +99,11 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['iron-crest-titan'],
     },
     essenceType: 'essence',
-    mobDensity: 24,
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): 24 -> 20. The smallest density cut
+    // of the three, because Mountain's threat really is per-hit rather than volume — it
+    // is here so the pull-range cuts above are not undone by sheer spacing. Equal to
+    // swamp (20) and still above cave (16).
+    mobDensity: 20,
   }],
 
   // PLAINS — swarm of small, fast, low-per-hit mobs; volume is the threat.
@@ -116,7 +112,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     id: 'plains', name: 'Plains',
     backgroundColor: 0x141a08,
     monsterPoolByTier: {
-      1: ['plains-slime', 'boar'],
+      1: ['plains-slime', 'boar', 'grass-kite'],
       2: ['stampede-bull', 'prairie-wolf', 'savanna-hawk'],
       // ⚠ T4 trash not yet authored — plains T4 ring nodes spawn nothing.
     },
@@ -125,7 +121,12 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       2: ['gorging-razortusk'],
     },
     essenceType: 'essence',
-    mobDensity: 48,
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): 48 -> 36. Plains stays the densest
+    // starter biome, but 48 bodies on a 4800x4800 node put the mean spacing (~693px)
+    // inside two mobs' pull ranges at once, so the authored swarm caps were never the
+    // real group size. Only T1's entry experience was the complaint; this number is
+    // read by every tier of the biome, which is the cost of the dial being per-biome.
+    mobDensity: 36,
   }],
 
   // SWAMP — trivial direct damage, heavy stacking DoT; attrition. Dot-resist's
@@ -134,7 +135,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     id: 'swamp', name: 'Swamp',
     backgroundColor: 0x0c1708,
     monsterPoolByTier: {
-      1: ['bog-slime', 'mud-toad'],
+      1: ['bog-slime', 'mud-toad', 'fen-hexer'],
       2: ['swamp-hydra', 'bog-witch', 'mire-stalker'],
       3: ['plague-hydra', 'mire-hex-spitter', 'bog-lurker'],
     },
@@ -154,7 +155,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     id: 'cave', name: 'Caverns',
     backgroundColor: 0x0c0c0f,
     monsterPoolByTier: {
-      1: ['cave-lurker', 'cave-brute'],
+      1: ['cave-lurker', 'cave-brute', 'brood-spiderling'],
       2: ['giant-spider', 'cave-troll', 'cave-gargoyle'],
       3: ['deep-spider', 'cavern-troll', 'crystal-gargoyle'],
     },

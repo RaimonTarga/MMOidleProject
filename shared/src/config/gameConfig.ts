@@ -44,6 +44,27 @@ export const GAME_CONFIG = {
 
   // ── Player base stats ────────────────────────────────────────────────────────
   PLAYER_MAX_HP: 100,
+  /**
+   * Per-player-tier multiplier on the authored max-HP pool (progression rework
+   * Phase 0 call four, design bible §20). Indexed by
+   * `tracksProgression.playerTier` (0 = fresh character in the Clearing, 1-4 =
+   * T1-T4). It scales the flat pool once at recalc - the base above plus the
+   * armor's `maxHp` - so a boss has to chew through more of it per fight.
+   *
+   * `RECOVERY_REFERENCE_POOL_BY_TIER` deliberately does NOT follow it. Under the
+   * flat model (§15) the pool is a budget and the recovery rate is a choice;
+   * re-coupling the rate to the pool is exactly what turned the 0a pool sweep
+   * into a wash. Raising the pool has to raise attrition, not healing.
+   *
+   * PROVISIONAL, the Phase 0 bench's pick
+   * (`reports/progression-phase0/pool-raise-run3.md`), not a playtested number.
+   * T1's 1.25 is the criterion outright: it is the lowest factor whose median
+   * boss time-to-death exceeds median kill time for the fifteen pure lanes
+   * (0.80 at 1.00, 1.04 at 1.25). T2-T4 keep the design's seeds because their
+   * bosses are already out-lasted at 1.00, so the criterion admits every
+   * candidate there and only says not to LOWER the pool.
+   */
+  PLAYER_POOL_FACTOR_BY_TIER: [1, 1.25, 1.3, 1.35, 1.4] as const,
   PLAYER_ATTACK: 15, // damage per hit (before plating)
   PLAYER_PLATING: 2,
   /** Edge-to-edge weapon reach past body contact (pixels). */
@@ -60,7 +81,13 @@ export const GAME_CONFIG = {
   /**
    * Reference max-HP pool per player tier, indexed by `tracksProgression.playerTier`
    * (0 = fresh character in the Clearing, 1–4 = T1–T4). Seeds are the naked
-   * base plus the tier's entry gear; provisional until the per-tier pool raise.
+   * base plus the tier's entry gear.
+   *
+   * These are a CALIBRATION CONSTANT for the base recovery rate, not the pool
+   * the player carries, and they deliberately do not follow
+   * `PLAYER_POOL_FACTOR_BY_TIER`. Scaling them would re-couple the rate to the
+   * pool and undo the flat model; the pool raise is meant to cost the player
+   * attrition, not hand it healing.
    */
   RECOVERY_REFERENCE_POOL_BY_TIER: [100, 130, 200, 330, 560] as const,
   /** Naked base Recovery = this fraction of the tier's reference pool, in HP/s. */
@@ -231,6 +258,34 @@ export function baseRecoveryForTier(playerTier: number | undefined): number {
   const pools = GAME_CONFIG.RECOVERY_REFERENCE_POOL_BY_TIER;
   const index = Math.max(0, Math.min(pools.length - 1, Math.floor(playerTier ?? 0)));
   return Math.round(GAME_CONFIG.RECOVERY_BASE_FRACTION * pools[index] * 10) / 10;
+}
+
+/**
+ * Recovery as the HUD shows it: HP/s to at most one decimal, trailing zero dropped.
+ *
+ * Recovery became a FLAT rate in Phase 0b, so it is now a sum of fractional charm
+ * and passive contributions rather than a whole number, and a realistic sum renders
+ * as `18.799999999999997 HP/s` when it is interpolated raw. Both HUD sites — the
+ * compact stat tile and the full Defense & Recovery row — format through here so
+ * they cannot disagree about the rule.
+ */
+export function formatRecoveryRate(recovery: number): string {
+  return String(Math.round(recovery * 10) / 10);
+}
+
+/**
+ * Multiplier on the authored max-HP pool for a player tier (design bible §20).
+ * Tiers past the table hold at the last entry, and an absent tier is a fresh
+ * character (factor 1).
+ *
+ * Read ONLY by the pool fold in `recalculatePlayerStats`. Nothing in recovery
+ * calls it: `baseRecoveryForTier` above is a fraction of the tier's REFERENCE
+ * pool, which this factor does not touch.
+ */
+export function poolFactorForTier(playerTier: number | undefined): number {
+  const factors = GAME_CONFIG.PLAYER_POOL_FACTOR_BY_TIER;
+  const index = Math.max(0, Math.min(factors.length - 1, Math.floor(playerTier ?? 0)));
+  return factors[index];
 }
 
 /** Universal kill-weight required to mint one catalyst. */

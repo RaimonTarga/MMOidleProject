@@ -29,7 +29,7 @@ import { markEngaged } from "../src/systems/combat/ai/engagement";
 import { emitCombatEvent, makeCombatContext } from "../src/systems/combat/engine/combatPipeline";
 import { setAggroTarget } from "../src/systems/combat/ai/targeting";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -41,7 +41,8 @@ function makePlayerSlices(): PersistedPlayerSlices {
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier: 0, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [],
       runesEquipped: [{ conditionId: "hp-below-25", actionId: "switch-stance", targetStanceId: "defensive-stance" }],

@@ -38,7 +38,7 @@ for (const profile of TIER_ENTRY_PROFILES.values()) {
       } else if (held === "EQUIPPED" && plus >= EVOLUTION_REQUIRED_PLUS) {
         verdict = `EVOLVE after unequip (${pred} +${plus} is worn, not in bag)`;
       } else if (recipe.reconstructCost) {
-        verdict = `RECONSTRUCT (${pred} ${held}${held === "absent" ? "" : ` +${plus}`}) cost=${JSON.stringify(recipe.reconstructCost)}+${JSON.stringify(recipe.reconstructCatalystCost ?? {})}`;
+        verdict = `RECONSTRUCT (${pred} ${held}${held === "absent" ? "" : ` +${plus}`}) cost=${JSON.stringify(recipe.reconstructCost)}`;
       } else {
         verdict = `UNREACHABLE (needs ${pred} +${EVOLUTION_REQUIRED_PLUS}, have ${held} +${plus}; no reconstruct cost authored)`;
       }

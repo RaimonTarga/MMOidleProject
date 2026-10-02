@@ -75,9 +75,9 @@ function resetPlayerProgression(world: World, player: PlayerEntity): void {
   player.usesAutocombat.auto = false;
   despawnMinionsForOwner(world, player);
 
+  // Reset before the recalc, which builds the runtime caches the reset deletes.
+  resetTracksCombat(player.tracksCombat);
   recalculatePlayerEntityStats(world, player);
   syncArchetypeSlices(world, player);
   player.hasHealth.hp = player.hasHealth.maxHp;
-
-  resetTracksCombat(player.tracksCombat);
 }

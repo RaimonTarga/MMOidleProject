@@ -113,6 +113,7 @@ export function registerEmpoweredMultiplier(
     // empoweredAttack metadata set so their own onHit handlers can detect the trigger.
     if (ctx.metadata['suppressEmpoweredMult']) {
       ctx.metadata['empoweredAttack']     = true;
+      ctx.metadata['mechanicConsumed']    = true;
       // Keep a multiplier the mechanic recorded itself (energy discharges) so
       // Technique riders still see it; otherwise the standard one is 1.
       ctx.metadata['empoweredMultiplier'] = Number(ctx.metadata['empoweredMultiplier'] ?? 1);
@@ -160,6 +161,12 @@ export function registerEmpoweredMultiplier(
     ctx.damage     = Math.floor(base * effectiveMult);
 
     ctx.metadata['empoweredAttack']    = true;
+    // `empoweredAttack` is ALSO set by several T3 paths for crit styling only
+    // (Surge in Overdrive, Blunderbuss pellets, Fan the Flames, the Snipe full-HP
+    // shot), so anything that means "the class mechanic just spent its charge" —
+    // frame loops, the mechanic-fired emitters, Shockwave, the range gates — reads
+    // this key instead (review finding P1, 2026-10-02).
+    ctx.metadata['mechanicConsumed']    = true;
     ctx.metadata['empoweredMultiplier'] = effectiveMult;
     ctx.metadata['empoweredBonus']      = ctx.damage - base;
 

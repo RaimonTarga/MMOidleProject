@@ -11,7 +11,7 @@ import {
 } from '../bench/balance/durability36Spec';
 import { DURABILITY34_JUNGLE_HP } from '../bench/balance/durability34Spec';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 

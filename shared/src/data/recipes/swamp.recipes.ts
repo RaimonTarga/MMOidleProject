@@ -45,20 +45,13 @@ export const swampRecipeEntries = [
     id: 'ashbrand-blade', name: 'Poison Dagger',
     recipeGroup: 'swamp', requiredBiomeLevel: 1, slot: 'weapon',
     // 2026-09-26 weapon pass: Attack 10->12 (+5: 15->18).
-    cost: { purple: 22 }, stats: { attack: 12 }, attacksPerSecond: 0.90, tier: 1,
+    cost: { purple: 22 }, stats: { attack: 18 }, attacksPerSecond: 0.90, tier: 1,
     weaponDot: { effectId: 'poison-dagger-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/poison-dagger.png',
     description: 'A short blade kept slick with mire-venom that refuses to dry.',
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (472).
     // +5 catalyst from ashbrand-blade's own T2 successor tag ("poison
     // DoT-conversion weapon → Fortified").
-    upgrades: [
-      { stats: { attack: 1 }, cost: { purple: 20 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 1 }, cost: { purple: 45 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 1 }, cost: { purple: 70 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 1 }, cost: { purple: 115 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2 }, cost: { purple: 150 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // Substantially better in a DoT-heavy fight, and deliberately so — but it
@@ -79,7 +72,7 @@ export const swampRecipeEntries = [
       {"cost": {"purple": 45}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
       {"cost": {"purple": 70}, "requiredBiomeLevel": 4, "stats": {"maxHp": 4}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
       {"cost": {"purple": 115}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 150}, "catalystCost": {"fortified": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
+      {"cost": {"purple": 150}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
     ],
   }],
 
@@ -137,18 +130,11 @@ export const swampRecipeEntries = [
     evolvesFrom: 'ashbrand-blade',
     // 2026-09-26 weapon normalization: Attack 18->22 (+5: 27->47), a T2-sized curve. Judged on sustained
     // damage (DoT weapons start slow by design).
-    cost: { purple: 52 }, stats: { attack: 22 }, attacksPerSecond: 1.0, tier: 2, // family-tag: poison DoT-conversion weapon → Fortified
-    reconstructCost: { purple: 182 }, reconstructCatalystCost: { fortified: 2 },
+    cost: { purple: 52 }, stats: { attack: 47 }, attacksPerSecond: 1.0, tier: 2, // family-tag: poison DoT-conversion weapon → Fortified
+    reconstructCost: { purple: 182 },
     weaponDot: { effectId: 'swamp-mirebrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/venom-knife.png',
     description: 'The venom runs deeper now; what it touches keeps rotting.',
-    upgrades: [
-      { stats: { attack: 5 }, cost: { purple: 47 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 5 }, cost: { purple: 117 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 5 }, cost: { purple: 187 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 4 }, cost: { purple: 304 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 6 }, cost: { purple: 515 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // (T2 Frostbrand removed — frost DoT now lives on Tundra. See item-identity-audit.md.)
@@ -159,7 +145,7 @@ export const swampRecipeEntries = [
     recipeGroup: 'swamp', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'swamp-vest-t1',
     cost: { purple: 54 }, stats: {"maxHp": 58, "damageReduction": 0.08}, // family-tag: dot-resistance armor → Fortified
-    reconstructCost: { purple: 189 }, reconstructCatalystCost: { fortified: 2 },
+    reconstructCost: { purple: 189 },
     // hit-to-DoT is the T2+ specialisation of this lineage: deliberately held out
     // of the T1 baseline, kept here as the thing the tier upgrade actually buys.
     mechanicEffects: {"defense.dot-resistance": 0.3, "defense.hit-to-dot-pct": 0.15},
@@ -170,8 +156,8 @@ export const swampRecipeEntries = [
       {"cost": {"purple": 45}, "requiredBiomeLevel": 9, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
       {"cost": {"purple": 113}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
       {"cost": {"purple": 180}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 293}, "catalystCost": {"fortified": 1}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 494}, "catalystCost": {"fortified": 2}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
+      {"cost": {"purple": 293}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 494}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
     ],
   }],
 
@@ -184,7 +170,7 @@ export const swampRecipeEntries = [
     recipeGroup: 'swamp', requiredBiomeLevel: 9, slot: 'recovery',
     evolvesFrom: 'swamp-charm-t1',
     cost: { purple: 44 }, stats: { recovery: 11.1 }, // family-tag: attrition-Recovery charm → Fortified
-    reconstructCost: { purple: 154 }, reconstructCatalystCost: { fortified: 2 },
+    reconstructCost: { purple: 154 },
     mechanicEffects: {
       'defense.recovery-pulse-pct': 0.32,
       'defense.recovery-pulse-interval-ms': 8000,
@@ -199,7 +185,7 @@ export const swampRecipeEntries = [
       { stats: { recovery: 2.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 45 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 72 }, requiredBiomeLevel: 10 },
       { stats: { recovery: 2.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 117 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 198 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 198 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -209,7 +195,7 @@ export const swampRecipeEntries = [
     recipeGroup: 'swamp', requiredBiomeLevel: 10, slot: 'mobility',
     evolvesFrom: 'swamp-boots-t1',
     cost: { purple: 44 }, stats: { speed: 32 }, tier: 2, // family-tag: swamp mobility → Fortified
-    reconstructCost: { purple: 154 }, reconstructCatalystCost: { fortified: 2 },
+    reconstructCost: { purple: 154 },
     mechanicEffects: { 'mobility.slow-resistance': 0.45 },
     icon: 'items/boots/wetland-wraps.png',
     description: 'Enchanted bindings that find footing where there should be none.',
@@ -218,7 +204,7 @@ export const swampRecipeEntries = [
       { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 30 }, requiredBiomeLevel: 10 },
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 48 }, requiredBiomeLevel: 10 },
       { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 78 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 132 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 132 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -234,18 +220,11 @@ export const swampRecipeEntries = [
     evolvesFrom: 'swamp-mirebrand',
     // 2026-09-26 weapon normalization: Attack 32->54 (+5: 48->86), so +0 clears the buffed Venom Knife
     // at +5 by 10% and +5 sits on the T3 median (sustained). No T4 successor.
-    cost: { purple: 116 }, stats: { attack: 54 }, attacksPerSecond: 1.00, tier: 3, // family-tag: poison DoT weapon → Fortified
-    reconstructCost: { purple: 406 }, reconstructCatalystCost: { fortified: 3 },
+    cost: { purple: 116 }, stats: { attack: 86 }, attacksPerSecond: 1.00, tier: 3, // family-tag: poison DoT weapon → Fortified
+    reconstructCost: { purple: 406 },
     weaponDot: { effectId: 'swamp-blightbrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/plague-fang.png',
     description: 'The rot it carries does more work than the edge ever could.',
-    upgrades: [
-      { stats: { attack: 7 }, cost: { purple: 93 },  requiredBiomeLevel: 14 },
-      { stats: { attack: 7 }, cost: { purple: 233 }, requiredBiomeLevel: 15 },
-      { stats: { attack: 7 }, cost: { purple: 372 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 6 }, cost: { purple: 605 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 5 }, cost: { purple: 1025 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   // (T3 Rimebrand removed from Swamp — relocated to Tundra as its T3 frost DoT
@@ -259,7 +238,7 @@ export const swampRecipeEntries = [
     // to the Trench carapace on 2026-09-26; this lineage owns damage over time.)
     evolvesFrom: 'swamp-vest-t2',
     cost: { purple: 140 }, stats: {"maxHp": 158, "damageReduction": 0.14}, // family-tag: dot-resistance armor → Fortified
-    reconstructCost: { purple: 490 }, reconstructCatalystCost: { fortified: 3 },
+    reconstructCost: { purple: 490 },
     mechanicEffects: {"defense.dot-resistance": 0.35, "defense.hit-to-dot-pct": 0.2},
     tier: 3,
     icon: 'items/armor/plaguebound-shroud.png',
@@ -268,8 +247,8 @@ export const swampRecipeEntries = [
       {"cost": {"purple": 89}, "requiredBiomeLevel": 15, "stats": {"maxHp": 17}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
       {"cost": {"purple": 222}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
       {"cost": {"purple": 355}, "requiredBiomeLevel": 16, "stats": {"maxHp": 17}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 577}, "catalystCost": {"fortified": 2}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 975}, "catalystCost": {"fortified": 3}, "requiredBiomeLevel": 16, "stats": {"maxHp": 17}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
+      {"cost": {"purple": 577}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 975}, "requiredBiomeLevel": 16, "stats": {"maxHp": 17}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
     ],
   }],
 
@@ -282,7 +261,7 @@ export const swampRecipeEntries = [
     // borrowed mechanic") produces no splash here.
     evolvesFrom: 'swamp-charm-t2',
     cost: { purple: 100 }, stats: { recovery: 37 }, // family-tag: attrition-Recovery charm → Fortified
-    reconstructCost: { purple: 350 }, reconstructCatalystCost: { fortified: 3 },
+    reconstructCost: { purple: 350 },
     mechanicEffects: {
       'defense.recovery-pulse-pct': 0.44,
       'defense.recovery-pulse-interval-ms': 8000,
@@ -297,7 +276,7 @@ export const swampRecipeEntries = [
       { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 89 }, requiredBiomeLevel: 16 },
       { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 142 }, requiredBiomeLevel: 16 },
       { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 231 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 390 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 390 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -306,7 +285,7 @@ export const swampRecipeEntries = [
     recipeGroup: 'swamp', requiredBiomeLevel: 16, slot: 'mobility',
     evolvesFrom: 'swamp-boots-t2',
     cost: { purple: 100 }, stats: { speed: 58 }, tier: 3, // family-tag: swamp mobility → Fortified
-    reconstructCost: { purple: 350 }, reconstructCatalystCost: { fortified: 3 },
+    reconstructCost: { purple: 350 },
     mechanicEffects: { 'mobility.slow-resistance': 0.62 },
     icon: 'items/boots/mire-striders.png',
     description: 'Nothing the bog grips holds them; they walk free of any mire that tries to keep them.',
@@ -315,7 +294,7 @@ export const swampRecipeEntries = [
       { stats: { speed: 3 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 59 },  requiredBiomeLevel: 16 },
       { stats: { speed: 3 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 94 }, requiredBiomeLevel: 16 },
       { stats: { speed: 4 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 153 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 258 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 3 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 258 }, requiredBiomeLevel: 16 },
     ],
   }],
 

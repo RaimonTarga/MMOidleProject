@@ -177,27 +177,38 @@ export const rootsAndFramesEntries = [
     id: 'summoner-light', name: 'Splinter', tier: 1,
     classId: 'summoner-root', subVariantId: 'light',
     parent: 'summoner-root', children: ['summoner-light-t3-a', 'summoner-light-t3-b', 'summoner-light-t3-c'],
-    description: 'Formation mechanic — maximum summons before relic expansion: 6 (+2 from Conduit\'s 4). Six small, fast bodies share one formation budget: ×1.05 formation offense, 66% total summon-HP budget, ×1.18 movement, ×0.72 body size, and ×1.20 on-hit/secondary weapon effects. Reconstruction starts at 2.0s with a 1.5s floor; each loss costs little offense and reconstruction HP, while plating and area damage punish the swarm.',
+    description: 'Formation mechanic — maximum summons before relic expansion: 6 (+2 from Conduit\'s 4). Six small, fast bodies share one formation budget: ×1.05 formation offense, 66% total summon-HP budget, ×1.18 movement, ×0.72 body size, and ×1.20 on-hit/secondary weapon effects. Reconstruction starts at 2.0s with a 1.5s floor; each loss costs little offense and reconstruction HP, while plating and area damage punish the swarm. Frame loop — a completed formation cycle (every living body has hit the same target) opens a 0.9s frenzy: the swarm attacks 20% faster and lands 25% more on-hit magnitude.',
     cost: 1, statEffects: {"maxHpPct": 0.04, "attackSpeedPct": 0.06, "moveSpeedPct": 0.08, "platingPct": 0},
-    mechanicEffects: {},
+    // Frame loop (Phase 3): the window must stay SHORTER than one summon swing,
+    // or uptime is 100% and the loop collapses into a flat stat (design §10).
+    mechanicEffects: {"summoner.frame-frenzy-window-ms": 900, "summoner.frame-frenzy-aps-pct": 0.2, "summoner.frame-frenzy-onhit-mult": 1.25},
   }],
 
   ['summoner-balanced', {
     id: 'summoner-balanced', name: 'Consort', tier: 1,
     classId: 'summoner-root', subVariantId: 'balanced',
     parent: 'summoner-root', children: ['summoner-balanced-t3-a', 'summoner-balanced-t3-b', 'summoner-balanced-t3-c'],
-    description: 'Formation mechanic — maximum summons before relic expansion: 5 (+1 from Conduit\'s 4). Five medium bodies form the reference ensemble: ×1.00 formation offense, 100% total summon-HP budget, baseline movement and size, and 2.5s reconstruction with a 1.5s floor. Damage, durability, and reconstruction pressure stay moderate.',
+    description: 'Formation mechanic — maximum summons before relic expansion: 5 (+1 from Conduit\'s 4). Five medium bodies form the reference ensemble: ×1.00 formation offense, 100% total summon-HP budget, baseline movement and size, and 2.5s reconstruction with a 1.5s floor. Damage, durability, and reconstruction pressure stay moderate. Frame loop — the line holds: while every slot is alive, each body carries 15% of your plating again and 15% more damage reduction. A single loss breaks the line at once; completing the reconstruction restores it.',
     cost: 1, statEffects: {"maxHpPct": 0.08, "platingPct": 0, "moveSpeedPct": 0.02},
-    mechanicEffects: {},
+    // Frame loop (Phase 3; decided 2026-10-01, bible amendment 13 — "the line
+    // holds"). Consort's container is neither a window nor a bank but a STANDING
+    // condition, which is the Balanced skew read on the FORMATION instead of on one
+    // hit: it pays for keeping five bodies alive, the one thing the reference
+    // ensemble is shaped to do. Any death breaks it, a completed reconstruction
+    // restores it, so the lever is reconstruction uptime rather than a cadence.
+    mechanicEffects: {"summoner.frame-line-plating-pct": 0.15, "summoner.frame-line-dr": 0.15},
   }],
 
   ['summoner-heavy', {
     id: 'summoner-heavy', name: 'Effigy', tier: 1,
     classId: 'summoner-root', subVariantId: 'heavy',
     parent: 'summoner-root', children: ['summoner-heavy-t3-a', 'summoner-heavy-t3-b', 'summoner-heavy-t3-c'],
-    description: 'Formation mechanic — maximum summons before relic expansion: 2 (−2 from Conduit\'s 4). Two large bodies concentrate the budget: ×1.15 formation offense, 140% total summon-HP budget, ×0.78 movement, ×1.75 body size, and 3.92s reconstruction with a 2.5s floor. Each loss removes major offense and is expensive to reconstruct.',
+    description: 'Formation mechanic — maximum summons before relic expansion: 2 (−2 from Conduit\'s 4). Two large bodies concentrate the budget: ×1.15 formation offense, 140% total summon-HP budget, ×0.78 movement, ×1.75 body size, and 3.92s reconstruction with a 2.5s floor. Each loss removes major offense and is expensive to reconstruct. Frame loop — each body banks a charge per hit (up to 5); when both bodies have struck the same target within 2.5s, the pair spends the bank as one linked slam for attack × stacks × 0.30 and staggers the target.',
     cost: 1, statEffects: {"maxHpPct": 0.16, "platingPct": 0.05, "attackSpeedPct": -0.06, "moveSpeedPct": -0.06, "damageReduction": 0.01},
-    mechanicEffects: {},
+    // Frame loop (Phase 3): a capped, deterministic bank plus a non-damage rider
+    // (design §10, Heavy). The stagger is the stun ladder's SHORTEST rung — the
+    // same 750ms the magnitude table's `stun` payoff unit carries.
+    mechanicEffects: {"summoner.frame-link-window-ms": 2500, "summoner.frame-link-charge-per-hit": 1, "summoner.frame-link-max-charge": 5, "summoner.frame-link-slam-mult": 0.3, "summoner.frame-link-stagger-ms": 750},
   }],
 
 
@@ -205,27 +216,38 @@ export const rootsAndFramesEntries = [
     id: 'cadence-light', name: 'Flurry', tier: 1,
     classId: 'cadence-root', subVariantId: 'light',
     parent: 'cadence-root', children: [],
-    description: 'Cadence change — a 4-hit finisher cycle at ×1.5 empowered damage. Swift and agile, this frame trades bulk for a blistering attack pace: frequency over raw power.',
+    description: 'Cadence change — a 4-hit finisher cycle at ×1.5 empowered damage. Swift and agile, this frame trades bulk for a blistering attack pace: frequency over raw power. Frame loop — the finisher opens a 1.6s flurry: ×1.3 damage on every regular hit inside it. The window is shorter than one cycle, so attack speed pays twice.',
     cost: 1, statEffects: {"attackPct": 0.06, "maxHpPct": 0.04, "attackSpeedPct": 0.12, "moveSpeedPct": 0.1, "platingPct": 0},
-    mechanicEffects: {"cadence.empowered-threshold": 4, "cadence.empowered-mult": 1.5},
+    mechanicEffects: {
+      "cadence.empowered-threshold": 4, "cadence.empowered-mult": 1.5,
+      "cadence.frame-window-ms": 1600, "cadence.frame-window-mult": 1.3,
+    },
   }],
 
   ['cadence-balanced', {
     id: 'cadence-balanced', name: 'Skirmisher', tier: 1,
     classId: 'cadence-root', subVariantId: 'balanced',
     parent: 'cadence-root', children: [],
-    description: 'Cadence change — a 5-hit finisher cycle at ×2 empowered damage. A measured approach with modest gains across the board and no commitment to either extreme.',
+    description: 'Cadence change — a 5-hit finisher cycle at ×2 empowered damage. A measured approach with modest gains across the board and no commitment to either extreme. Frame loop — both halves at half strength: regular hits bank charge worth +0.1× to the finisher each, and the finisher opens a 0.8s ×1.15 window.',
     cost: 1, statEffects: {"attackPct": 0.07, "maxHpPct": 0.1, "platingPct": 0.05, "attackSpeedPct": 0.04, "moveSpeedPct": 0.03},
-    mechanicEffects: {"cadence.empowered-threshold": 5, "cadence.empowered-mult": 2},
+    mechanicEffects: {
+      "cadence.empowered-threshold": 5, "cadence.empowered-mult": 2,
+      "cadence.frame-window-ms": 800, "cadence.frame-window-mult": 1.15,
+      "cadence.frame-charge-per-stack": 0.1,
+    },
   }],
 
   ['cadence-heavy', {
     id: 'cadence-heavy', name: 'Breaker', tier: 1,
     classId: 'cadence-root', subVariantId: 'heavy',
     parent: 'cadence-root', children: [],
-    description: 'Cadence change — a 6-hit finisher cycle at ×4 empowered damage. Endurance over speed: significant bulk and armor, paid for in attack pace and footwork; patience is rewarded with one enormous blow.',
+    description: 'Cadence change — a 6-hit finisher cycle at ×4 empowered damage. Endurance over speed: significant bulk and armor, paid for in attack pace and footwork; patience is rewarded with one enormous blow. Frame loop — every regular hit banks a charge (up to 5, one short of the cycle), and the finisher spends the whole bank at +0.2× each, then staggers what it hits.',
     cost: 1, statEffects: {"attackPct": 0.05, "maxHpPct": 0.18, "platingPct": 0.1, "attackSpeedPct": -0.1, "moveSpeedPct": -0.1, "damageReduction": 0.02},
-    mechanicEffects: {"cadence.empowered-threshold": 6, "cadence.empowered-mult": 4},
+    mechanicEffects: {
+      "cadence.empowered-threshold": 6, "cadence.empowered-mult": 4,
+      "cadence.frame-charge-per-stack": 0.2,
+      "cadence.frame-stagger-ms": 750,
+    },
   }],
 
 
@@ -233,18 +255,25 @@ export const rootsAndFramesEntries = [
     id: 'cooldown-light', name: 'Warrior', tier: 1,
     classId: 'cooldown-root', subVariantId: 'light',
     parent: 'cooldown-root', children: [],
-    description: 'Execution change — 5s recharge at ×1.5 damage. The aggressive tank keeps its armored core but trades patience for a fast, hungry tempo.',
+    description: 'Execution change — 5s recharge at ×1.5 damage. The aggressive tank keeps its armored core but trades patience for a fast, hungry tempo. Frame loop — the execution opens a 2s window, and every regular hit landed inside it cuts 300ms off the next recharge.',
     cost: 1, statEffects: {"attackPct": 0.07, "maxHpPct": 0.05, "platingPct": 0, "attackSpeedPct": 0.12, "moveSpeedPct": 0.1},
-    mechanicEffects: {"cooldown.empowered-cd-ms": 5000, "cooldown.empowered-mult": 1.5},
+    mechanicEffects: {
+      "cooldown.empowered-cd-ms": 5000, "cooldown.empowered-mult": 1.5,
+      "cooldown.frame-window-ms": 2000, "cooldown.frame-refund-ms": 300,
+    },
   }],
 
   ['cooldown-balanced', {
     id: 'cooldown-balanced', name: 'Knight', tier: 1,
     classId: 'cooldown-root', subVariantId: 'balanced',
     parent: 'cooldown-root', children: [],
-    description: 'Execution change — 7s recharge at ×2 damage. A sturdy foundation: substantial HP and armor amplify the class\'s defensive identity without tipping into immobility.',
+    description: 'Execution change — 7s recharge at ×2 damage. A sturdy foundation: substantial HP and armor amplify the class\'s defensive identity without tipping into immobility. Frame loop — both halves at half strength: regular hits bank charge (up to 4) worth +0.1× to the execution each, and the execution opens a 1s window where hits cut 150ms off the next recharge.',
     cost: 1, statEffects: {"attackPct": 0.08, "maxHpPct": 0.12, "platingPct": 0.05, "attackSpeedPct": 0.03, "moveSpeedPct": -0.02, "damageReduction": 0.02},
-    mechanicEffects: {"cooldown.empowered-cd-ms": 7000, "cooldown.empowered-mult": 2},
+    mechanicEffects: {
+      "cooldown.empowered-cd-ms": 7000, "cooldown.empowered-mult": 2,
+      "cooldown.frame-window-ms": 1000, "cooldown.frame-refund-ms": 150,
+      "cooldown.frame-charge-cap": 4, "cooldown.frame-charge-per-stack": 0.1,
+    },
   }],
 
   ['cooldown-heavy', {
@@ -254,9 +283,13 @@ export const rootsAndFramesEntries = [
     // Bulwark keeps real ATTACK affinity on purpose: the fantasy is enormous
     // individual hits, not merely maximum defense. Its sustained throughput is
     // constrained by the attack-speed penalty, not by a weak attack stat.
-    description: 'Execution change — 8s recharge at ×3.5 damage. Fortress of patience: maximum bulk makes you a wall, and every blow lands like one — but you move like a boulder and swing even slower.',
+    description: 'Execution change — 8s recharge at ×3.5 damage. Fortress of patience: maximum bulk makes you a wall, and every blow lands like one — but you move like a boulder and swing even slower. Frame loop — every regular hit banks a charge (up to 8), and the execution spends the whole bank at +0.2× each, then strips 15% of the target\'s armor for 6s.',
     cost: 1, statEffects: {"attackPct": 0.1, "maxHpPct": 0.22, "platingPct": 0.1, "attackSpeedPct": -0.12, "moveSpeedPct": -0.12, "damageReduction": 0.03},
-    mechanicEffects: {"cooldown.empowered-cd-ms": 8000, "cooldown.empowered-mult": 3.5},
+    mechanicEffects: {
+      "cooldown.empowered-cd-ms": 8000, "cooldown.empowered-mult": 3.5,
+      "cooldown.frame-charge-cap": 8, "cooldown.frame-charge-per-stack": 0.2,
+      "cooldown.frame-shred-pct": 0.15, "cooldown.frame-shred-duration-ms": 6000,
+    },
   }],
 
 
@@ -264,27 +297,43 @@ export const rootsAndFramesEntries = [
     id: 'dot-light', name: 'Venom vessel', tier: 1,
     classId: 'dot-root', subVariantId: 'light',
     parent: 'dot-root', children: [],
-    description: 'DoT change — up to 8 poison stacks; each hit converts 30% of your attack into poison. Ticks every 1s for 5s at ×1.25 DoT output. Apply wounds quickly and stay mobile.',
+    description: 'DoT change — up to 8 poison stacks; each hit converts 30% of your attack into poison. Ticks every 1s for 5s at ×1.25 DoT output. Apply wounds quickly and stay mobile. Frame loop — you open hard: the first hit on a target carrying no poison lands 4 stacks at once, so switching targets costs you almost nothing.',
     cost: 1, statEffects: {"attackPct": 0.06, "maxHpPct": 0.04, "attackSpeedPct": 0.1, "moveSpeedPct": 0.1, "platingPct": 0},
-    mechanicEffects: {"dot.max-stacks": 8, "dot.conversion-pct": 0.3, "dot.tick-interval-ms": 1000, "dot.duration-ms": 5000, "dot.mechanic-mult": 1.25},
+    mechanicEffects: {
+      "dot.max-stacks": 8, "dot.conversion-pct": 0.3, "dot.tick-interval-ms": 1000, "dot.duration-ms": 5000, "dot.mechanic-mult": 1.25,
+      "dot.frame-opener-stacks": 4,
+    },
   }],
 
   ['dot-balanced', {
     id: 'dot-balanced', name: 'Ember mage', tier: 1,
     classId: 'dot-root', subVariantId: 'balanced',
     parent: 'dot-root', children: [],
-    description: 'DoT change — up to 6 burn stacks; each hit converts 50% of your attack into burn. Ticks every 1.5s for 5.5s at ×1.20 DoT output. A deliberate fighter who rewards measured pressure.',
+    description: 'DoT change — up to 6 burn stacks; each hit converts 50% of your attack into burn. Ticks every 1.5s for 5.5s at ×1.20 DoT output. A deliberate fighter who rewards measured pressure. Frame loop — you intensify: once a target is already at max burn, your hits into it strike at ×1.4, so the reward is holding the fire at its ceiling.',
     cost: 1, statEffects: {"attackPct": 0.07, "maxHpPct": 0.1, "platingPct": 0, "attackSpeedPct": 0.03},
-    mechanicEffects: {"dot.max-stacks": 6, "dot.conversion-pct": 0.5, "dot.tick-interval-ms": 1500, "dot.duration-ms": 5500, "dot.mechanic-mult": 1.2},
+    mechanicEffects: {
+      "dot.max-stacks": 6, "dot.conversion-pct": 0.5, "dot.tick-interval-ms": 1500, "dot.duration-ms": 5500, "dot.mechanic-mult": 1.2,
+      "dot.frame-max-stack-mult": 1.4,
+    },
   }],
 
   ['dot-heavy', {
     id: 'dot-heavy', name: 'Rime-Bound', tier: 1,
     classId: 'dot-root', subVariantId: 'heavy',
     parent: 'dot-root', children: [],
-    description: 'DoT change — up to 3 frost stacks; each hit converts 70% of your attack into frost. Ticks every 2s for 6.5s at ×1.15 DoT output. A slow war of attrition built around deep, lingering wounds.',
+    description: 'DoT change — up to 3 frost stacks; each hit converts 70% of your attack into frost. Ticks every 2s for 6.5s at ×1.15 DoT output. A slow war of attrition built around deep, lingering wounds. Frame loop — you chill: every frost stack on a target slows its movement and attacks by 2% for 4s, so the longer you stay on one target the less it can do about it.',
     cost: 1, statEffects: {"attackPct": 0.08, "maxHpPct": 0.18, "platingPct": 0.05, "attackSpeedPct": -0.1, "moveSpeedPct": -0.1, "damageReduction": 0.03},
-    mechanicEffects: {"dot.max-stacks": 3, "dot.conversion-pct": 0.7, "dot.tick-interval-ms": 2000, "dot.duration-ms": 6500, "dot.mechanic-mult": 1.15},
+    // Chill is authored through the EXISTING `dot.chill-*` keys, at frame
+    // magnitudes, so Winter Warden (dot-heavy-t3-b) DEEPENS this record rather
+    // than owning a second one: passives sum, and its node now authors the delta
+    // up to its 9 stacks / 5% per stack / 6s. Nothing else about its freeze moves.
+    mechanicEffects: {
+      "dot.max-stacks": 3, "dot.conversion-pct": 0.7, "dot.tick-interval-ms": 2000, "dot.duration-ms": 6500, "dot.mechanic-mult": 1.15,
+      "dot.chill-max-stacks": 3,
+      "dot.chill-move-slow-per-stack": 0.02,
+      "dot.chill-attack-slow-per-stack": 0.02,
+      "dot.chill-duration-ms": 4000,
+    },
   }],
 
 
@@ -297,27 +346,35 @@ export const rootsAndFramesEntries = [
     id: 'reload-light', name: 'Scout', tier: 1,
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-root', children: [],
-    description: 'Reload change — 5-round clip and 1.2s reload. All-in on mobility with extra dodge: maximum uptime and a minimum profile to hit.',
+    description: 'Reload change — 5-round clip and 1.2s reload. All-in on mobility with extra dodge: maximum uptime and a minimum profile to hit. Frame loop — the first 2 rounds of a fresh clip hit for ×1.3, so faster reloads buy more openers.',
     cost: 1, statEffects: {"attackPct": 0.08, "maxHpPct": 0.04, "attackSpeedPct": 0.1, "moveSpeedPct": 0.1, "evasion": 0.07, "platingPct": 0},
-    mechanicEffects: {"reload.max-ammo": 5, "reload.reload-time-ms": 1200},
+    // Frame loop (Phase 3) — START of the clip. 2 of 5 rounds, so reload speed
+    // pays twice: a shorter clip cycle is a higher share of empowered rounds.
+    mechanicEffects: {"reload.max-ammo": 5, "reload.reload-time-ms": 1200, "reload.frame-opener-rounds": 2, "reload.frame-opener-mult": 1.3},
   }],
 
   ['reload-balanced', {
     id: 'reload-balanced', name: 'Marksman', tier: 1,
     classId: 'reload-root', subVariantId: 'balanced',
     parent: 'reload-root', children: [],
-    description: 'Reload change — 10-round clip and 2.0s reload. A steady burst fighter with modest avoidance: tempo and staying power in balance.',
+    description: 'Reload change — 10-round clip and 2.0s reload. A steady burst fighter with modest avoidance: tempo and staying power in balance. Frame loop — the last round of the clip hits for ×2.2: a countdown you can watch.',
     cost: 1, statEffects: {"attackPct": 0.08, "maxHpPct": 0.08, "attackSpeedPct": 0.04, "moveSpeedPct": 0.04, "evasion": 0.04, "platingPct": 0},
-    mechanicEffects: {"reload.max-ammo": 10, "reload.reload-time-ms": 2000},
+    // Frame loop (Phase 3) — END of the clip. One round in ten, so it carries the
+    // largest single multiplier of the three Slinger shapes.
+    mechanicEffects: {"reload.max-ammo": 10, "reload.reload-time-ms": 2000, "reload.frame-last-round-mult": 2.2},
   }],
 
   ['reload-heavy', {
     id: 'reload-heavy', name: 'Artillerist', tier: 1,
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-root', children: [],
-    description: 'Reload change — 20-round clip and 3.0s reload. Slower but harder to put down: sustained bursting and real armor for the first time on this chassis, with longer planned downtime.',
+    description: 'Reload change — 20-round clip and 3.0s reload. Slower but harder to put down: sustained bursting and real armor for the first time on this chassis, with longer planned downtime. Frame loop — every shot ramps attack speed by 2% with no cap before the clip runs dry, and damage rides the same ramp up to ×1.3 at the top. The 3s reload is the cool-down.',
     cost: 1, statEffects: {"attackPct": 0.1, "maxHpPct": 0.14, "platingPct": 0.05, "attackSpeedPct": -0.04, "moveSpeedPct": -0.05},
-    mechanicEffects: {"reload.max-ammo": 20, "reload.reload-time-ms": 3000},
+    // Frame loop (Phase 3) — ACROSS the clip. The ramp's cap IS the clip length,
+    // never below it, so the whole magazine is the climb and the reload is the
+    // reset. This ramp supersedes Warmonger's capped one at runtime (see
+    // `frameLoop.ts`); the path's re-home is a T3-review item.
+    mechanicEffects: {"reload.max-ammo": 20, "reload.reload-time-ms": 3000, "reload.frame-ramp-pct-per-shot": 0.02, "reload.frame-ramp-top-mult": 1.3},
   }],
 
 
@@ -325,27 +382,34 @@ export const rootsAndFramesEntries = [
     id: 'energy-light', name: 'Spark', tier: 1,
     classId: 'energy-root', subVariantId: 'light',
     parent: 'energy-root', children: [],
-    description: 'Energy change — gain 20 energy per hit and discharge at ×1.5 damage. Pure momentum: blazing speed and rapid attacks thrive on frequent discharges and their AoE splash.',
+    description: 'Energy change — gain 20 energy per hit and discharge at ×1.5 damage. Pure momentum: blazing speed and rapid attacks thrive on frequent discharges. Frame loop — the discharge arcs to the 2 nearest enemies for 35% of it each; Wisp trades the arcs for all of it on one target.',
     cost: 1, statEffects: {"attackPct": 0.02, "maxHpPct": 0.03, "attackSpeedPct": 0.04, "moveSpeedPct": 0.12, "platingPct": 0},
-    mechanicEffects: {"energy.per-hit": 20, "energy.empowered-mult": 1.5},
+    // Frame loop (Phase 3) — CHAIN. Arcs are proc damage, so they skip plating and
+    // pay half DR like every other player tick.
+    mechanicEffects: {"energy.per-hit": 20, "energy.empowered-mult": 1.5, "energy.frame-chain-targets": 2, "energy.frame-chain-radius": 160, "energy.frame-chain-share": 0.35},
   }],
 
   ['energy-balanced', {
     id: 'energy-balanced', name: 'Wraith', tier: 1,
     classId: 'energy-root', subVariantId: 'balanced',
     parent: 'energy-root', children: [],
-    description: 'Energy change — gain 14 energy per hit and discharge at ×2 damage. Fast and capable, with extra punch and light armor without sacrificing mobility.',
+    description: 'Energy change — gain 14 energy per hit and discharge at ×2 damage. Fast and capable, with extra punch and light armor without sacrificing mobility. Frame loop — the discharge opens a 2s window where every hit generates 60% more energy, so the loop feeds itself.',
     cost: 1, statEffects: {"attackPct": 0.03, "maxHpPct": 0.07, "platingPct": 0, "attackSpeedPct": 0, "moveSpeedPct": 0.06},
-    mechanicEffects: {"energy.per-hit": 14, "energy.empowered-mult": 2},
+    // Frame loop (Phase 3) — LOOP. 2s against a ~7-hit charge cycle, so the window
+    // stays well under one cycle (design §10) and uptime rises with attack speed.
+    mechanicEffects: {"energy.per-hit": 14, "energy.empowered-mult": 2, "energy.frame-gain-window-ms": 2000, "energy.frame-gain-mult": 1.6},
   }],
 
   ['energy-heavy', {
     id: 'energy-heavy', name: 'Phantasm', tier: 1,
     classId: 'energy-root', subVariantId: 'heavy',
     parent: 'energy-root', children: [],
-    description: 'Energy change — gain 10 energy per hit and discharge at ×6 damage. Measured power: heavier armor and damage reduction traded against attack pace; it builds slowly and hits very hard.',
+    description: 'Energy change — gain 10 energy per hit and discharge at ×6 damage. Measured power: heavier armor and damage reduction traded against attack pace; it builds slowly and hits very hard. Frame loop — the pool keeps taking energy above the cap for up to 4 more hits, each banking an Overcharge stack worth +15% discharge damage, and the discharge staggers.',
     cost: 1, statEffects: {"attackPct": 0.1, "maxHpPct": 0.14, "platingPct": 0.05, "attackSpeedPct": -0.1, "moveSpeedPct": -0.08, "damageReduction": 0.02},
-    mechanicEffects: {"energy.per-hit": 10, "energy.empowered-mult": 6},
+    // Frame loop (Phase 3) — OVERCHARGE: a capped, deterministic bank plus a
+    // non-damage rider (design §10, Heavy). The stagger is the stun ladder's
+    // SHORTEST rung — the same 750ms the magnitude table's `stun` unit carries.
+    mechanicEffects: {"energy.per-hit": 10, "energy.empowered-mult": 6, "energy.frame-overcharge-max": 4, "energy.frame-overcharge-mult-per-stack": 0.15, "energy.frame-stagger-ms": 750},
   }],
 
 
@@ -355,7 +419,8 @@ export const rootsAndFramesEntries = [
   //
   //   Close → gives up distance as defense, so it takes the largest raw
   //           defensive compensation PLUS a class-specific defensive payoff.
-  //   Mid   → the safe default: even all-around growth.
+  //   Mid   → the standard range, plus a control layer: holding an enemy AT BAY
+  //           (inside your reach, outside its own) is what Mid converts into.
   //   Far   → minimal raw combat stats. Range, first-hit advantage and move
   //           speed are ALREADY forms of defense; the kiting payoff is the value.
   //
@@ -365,6 +430,16 @@ export const rootsAndFramesEntries = [
   // only +10%, because Squire already fights in melee. Compensation restores
   // FUNCTION, never identity: a melee Spirit survives on HP, speed and its
   // barrier, and must not converge on a Squire.
+  //
+  // MID AND FAR MECHANICS (progression rework Phase 3, brief §2). Players
+  // defaulted to Mid because Mid had no mechanic at all — it was "even growth"
+  // against two real payoffs. Every Mid and Far node below (except the Conduit's
+  // three, which already carry formation geometry) now authors `<root>.range-*`
+  // keys, consumed in ONE module, `server/src/systems/combat/rangeMechanics.ts`.
+  // Close keeps exactly the payoffs it had. Range stays a LEAF (design §11):
+  // nothing downstream reads it, and `isRangedCombatant` above is untouched.
+  // Numbers are first-pass placeholders seeded off the magnitude table's T1 row
+  // (slow 20%, stagger 750 ms, vulnerability +15%/4 s) and are meant to be benched.
 
   ['cadence-range-close', {
     id: 'cadence-range-close', name: 'In-Fighter', tier: 2,
@@ -378,20 +453,18 @@ export const rootsAndFramesEntries = [
     id: 'cadence-range-mid', name: 'Lancer', tier: 2,
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Increase your reach to the standard fighting distance. Solid all-around growth with no commitment to either extreme.',
+    description: 'Increase your reach to the standard fighting distance. Solid all-around growth, and every hit on an enemy you are holding at bay — inside your reach, outside its own — slows it by 20% for 1.2s.',
     cost: 1, statEffects: {"attackRange": 60, "attackPct": 0.06, "maxHpPct": 0.08, "attackSpeedPct": 0.04, "moveSpeedPct": 0.02},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"cadence.range-mid-at-bay-slow-pct": 0.2, "cadence.range-mid-at-bay-slow-ms": 1200},
+  }],
   ['cadence-range-far', {
     id: 'cadence-range-far', name: 'Phantom-Blade', tier: 2,
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed let you land hits before the enemy ever closes — distance as armor.',
+    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed let you land hits before the enemy ever closes — distance as armor. Your first hit on a fresh enemy, landed from the outer quarter of your reach, is an opening strike for +50% damage.',
     cost: 1, statEffects: {"attackRange": 120, "attackPct": 0.03, "maxHpPct": 0.03, "attackSpeedPct": 0.02, "moveSpeedPct": 0.08},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"cadence.range-far-max-reach-pct": 0.75, "cadence.range-far-opener-pct": 0.5},
+  }],
 
   ['cooldown-range-close', {
     id: 'cooldown-range-close', name: 'Vanguard', tier: 2,
@@ -407,20 +480,18 @@ mechanicEffects: {},
     id: 'cooldown-range-mid', name: 'Phalanx', tier: 2,
     classId: 'cooldown-root', subVariantId: null,
     parent: null, children: [],
-    description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
+    description: 'The standard fighting distance. Solid all-around growth, every hit on an enemy you are holding at bay — inside your reach, outside its own — slows it by 20% for 1.2s, and an execution landed on an enemy at bay staggers it for 750ms.',
     cost: 1, statEffects: {"attackRange": 60, "attackPct": 0.06, "maxHpPct": 0.08, "attackSpeedPct": 0.03},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"cooldown.range-mid-at-bay-slow-pct": 0.2, "cooldown.range-mid-at-bay-slow-ms": 1200, "cooldown.range-mid-execution-stagger-ms": 750},
+  }],
   ['cooldown-range-far', {
     id: 'cooldown-range-far', name: 'Sentinel', tier: 2,
     classId: 'cooldown-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed let a slow tank punish from afar — distance as armor.',
+    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed let a slow tank punish from afar — distance as armor. An execution landed from the outer quarter of your reach leaves the target taking +15% damage for 4s.',
     cost: 1, statEffects: {"attackRange": 120, "attackPct": 0.03, "maxHpPct": 0.03, "attackSpeedPct": 0.02, "moveSpeedPct": 0.06},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"cooldown.range-far-max-reach-pct": 0.75, "cooldown.range-far-vuln-pct": 0.15, "cooldown.range-far-vuln-ms": 4000},
+  }],
 
   ['dot-range-close', {
     id: 'dot-range-close', name: 'Hexblade', tier: 2,
@@ -437,20 +508,18 @@ mechanicEffects: {},
     id: 'dot-range-mid', name: 'Warlock', tier: 2,
     classId: 'dot-root', subVariantId: null,
     parent: null, children: [],
-    description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
+    description: 'The standard fighting distance. Solid all-around growth, and a stack you land on an enemy you are holding at bay — inside your reach, outside its own — also lands 1 stack on its nearest neighbour within 140px.',
     cost: 1, statEffects: {"attackPct": 0.06, "maxHpPct": 0.08, "attackSpeedPct": 0.04, "moveSpeedPct": 0.02},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"dot.range-mid-spread-stacks": 1, "dot.range-mid-spread-radius": 140},
+  }],
   ['dot-range-far', {
     id: 'dot-range-far', name: 'Harbinger', tier: 2,
     classId: 'dot-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed let you apply stacks and retreat — distance as armor.',
+    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed let you apply stacks and retreat — distance as armor. Your affliction holds 1 extra stack and each application lasts 35% longer on a single target, and it never spreads.',
     cost: 1, statEffects: {"attackRange": 100, "attackPct": 0.03, "maxHpPct": 0.03, "attackSpeedPct": 0.02, "moveSpeedPct": 0.1},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"dot.range-far-stack-cap-bonus": 1, "dot.range-far-duration-pct": 0.35},
+  }],
 
   ['reload-range-close', {
     id: 'reload-range-close', name: 'Breacher', tier: 2,
@@ -466,20 +535,18 @@ mechanicEffects: {},
     id: 'reload-range-mid', name: 'Enforcer', tier: 2,
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
-    description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
+    description: 'The standard fighting distance. Solid all-around growth, and every shot that lands on an enemy you are holding at bay — inside your reach, outside its own — pins it, slowing it by 20% for 1.2s.',
     cost: 1, statEffects: {"attackPct": 0.06, "maxHpPct": 0.08, "attackSpeedPct": 0.04, "moveSpeedPct": 0.04},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"reload.range-mid-at-bay-slow-pct": 0.2, "reload.range-mid-at-bay-slow-ms": 1200},
+  }],
   ['reload-range-far', {
     id: 'reload-range-far', name: 'Deadeye', tier: 2,
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed maximize your kiting buffer — distance as armor.',
+    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed maximize your kiting buffer — distance as armor. Shots landed from the outer quarter of your range hit for +20% damage.',
     cost: 1, statEffects: {"attackRange": 80, "attackPct": 0.03, "maxHpPct": 0.03, "attackSpeedPct": 0.02, "moveSpeedPct": 0.12},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"reload.range-far-max-reach-pct": 0.75, "reload.range-far-damage-pct": 0.2},
+  }],
 
   ['energy-range-close', {
     id: 'energy-range-close', name: 'Haunt', tier: 2,
@@ -496,20 +563,18 @@ mechanicEffects: {},
     id: 'energy-range-mid', name: 'Shade', tier: 2,
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
-    description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
+    description: 'The standard fighting distance. Solid all-around growth, and your discharge staggers an enemy you are holding at bay — inside your reach, outside its own — for 750ms.',
     cost: 1, statEffects: {"attackPct": 0.06, "maxHpPct": 0.08, "attackSpeedPct": 0.04, "moveSpeedPct": 0.04},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"energy.range-mid-discharge-stagger-ms": 750},
+  }],
   ['energy-range-far', {
     id: 'energy-range-far', name: 'Wisp', tier: 2,
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed buy the untouched seconds your barrier needs to recharge — distance as armor.',
+    description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed buy the untouched seconds your barrier needs to recharge — distance as armor. Your discharge no longer chains: the whole of it lands on one target.',
     cost: 1, statEffects: {"attackRange": 80, "attackPct": 0.03, "maxHpPct": 0.03, "attackSpeedPct": 0.02, "moveSpeedPct": 0.12},
-
-mechanicEffects: {},
-}],
+    mechanicEffects: {"energy.range-far-single-target": 1},
+  }],
 
   // Summoner INVERTS the normal range logic. Close summons intercept and
   // protect the Conduit, so the Conduit itself keeps the smallest defensive

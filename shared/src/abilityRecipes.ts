@@ -28,8 +28,6 @@ export interface AbilityRecipe {
   abilityId: string;
   tier: number;
   cost: Partial<Record<EssenceType, number>>;
-  /** Catalyst cost, parallel to `cost` (mirrors gear/rune catalyst gating). */
-  catalystCost?: Partial<Record<string, number>>;
   /** Biome-mastery gate. */
   recipeGroup?: string;
   requiredBiomeLevel?: number;

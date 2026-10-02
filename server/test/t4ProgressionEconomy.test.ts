@@ -14,8 +14,6 @@ import {
   STANCE_RECIPE_DATABASE,
   RITE_RECIPE_DATABASE,
   RUNE_RECIPE_DATABASE,
-  MODIFIER_BANS,
-  NATIVE_MODIFIER,
   maxGlobalMasteryAtTier,
   globalMasteryRequiredForUpgrade,
   EVOLUTION_REQUIRED_PLUS,
@@ -23,13 +21,12 @@ import {
 import { MONSTER_DATABASE } from "@mmo-idle/shared";
 import type { Recipe } from "@mmo-idle/shared";
 
-function assert(cond: boolean, msg: string): void {
+function assert(cond: unknown, msg: string): void {
   if (!cond) throw new Error(msg);
 }
 
-const NODE_MODIFIER_FAMILIES = ["alacrity", "heavy", "swarming", "dominion", "fortified"] as const;
 const essenceTotal = (cost: Partial<Record<string, number>> | undefined): number =>
-  Object.values(cost ?? {}).reduce((sum, amount) => sum + (amount ?? 0), 0);
+  Object.values(cost ?? {}).reduce((sum: number, amount) => sum + (amount ?? 0), 0);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 1. Census: exactly 39 ordinary T4 gear items, 36 with evolvesFrom, 3 without
@@ -138,7 +135,11 @@ function lifetimeTotal(r: Recipe): number {
   return total;
 }
 
+// Weapons are excluded (Phase 2b, Override A): off the +N ladder entirely, so
+// "lifetime total" collapses to the one-time base craft cost and the x2
+// per-tier ratio this rule polices no longer applies.
 for (const child of withLineage) {
+  if (child.slot === "weapon") continue;
   const parent = RECIPE_DATABASE.get(child.evolvesFrom!)!;
   const childTotal = lifetimeTotal(child);
   const parentTotal = lifetimeTotal(parent);
@@ -154,6 +155,7 @@ for (const child of withLineage) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 for (const r of t4Gear) {
+  if (r.slot === "weapon") continue; // off the +N ladder entirely (Phase 2b)
   const steps = r.upgrades ?? [];
   assert(steps.length === 5, `${r.id}: must have exactly 5 upgrade steps`);
   const stepTotals = steps.map((s) => Object.values(s.cost ?? {}).reduce((a, b) => a + (b ?? 0), 0));
@@ -173,28 +175,9 @@ for (const r of t4Gear) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 6. Catalysts: weapon/armor 0/0/0/0/3/4, recovery/mobility 0/0/0/0/0/3; reconstruct=4
+// 6. Catalysts: RETIRED, Phase 2b. The catalyst wallet and every `catalystCost`/
+// `reconstructCatalystCost` field are gone — nothing left to schedule-audit.
 // ═══════════════════════════════════════════════════════════════════════════
-
-function catTotal(cat: Partial<Record<string, number>> | undefined): number {
-  return Object.values(cat ?? {}).reduce((a, b) => a + (b ?? 0), 0);
-}
-
-for (const r of t4Gear) {
-  assert(catTotal(r.catalystCost) === 0, `${r.id}: base craft/evolution must charge 0 catalysts (got ${catTotal(r.catalystCost)})`);
-  const steps = r.upgrades ?? [];
-  const isWeaponArmor = r.slot === "weapon" || r.slot === "armor";
-  const expected = isWeaponArmor ? [0, 0, 0, 3, 4] : [0, 0, 0, 0, 3];
-  steps.forEach((s, i) => {
-    const got = catTotal(s.catalystCost);
-    assert(got === expected[i], `${r.id}: +${i + 1} catalyst must be ${expected[i]} (${isWeaponArmor ? "weapon/armor" : "recovery/mobility"} schedule), got ${got}`);
-  });
-  if (r.reconstructCost) {
-    assert(catTotal(r.reconstructCatalystCost) === 4, `${r.id}: reconstruction must charge exactly 4 catalysts`);
-  } else {
-    assert(!r.reconstructCatalystCost, `${r.id}: no reconstructCost implies no reconstructCatalystCost`);
-  }
-}
 
 // Reconstruction essence ≈3.5× base essence per colour (±1 on rounding), only on the 36 lineaged items.
 for (const child of withLineage) {
@@ -210,63 +193,11 @@ for (const noLineage of withoutLineage) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 7. Catalyst families: exact approved assignments, each with ≥1 legal T4 node
+// 7. Catalyst families: RETIRED, Phase 2b. Items no longer carry a catalyst
+// family at all (no field to assign one to), so there is nothing to audit
+// against the modifier-ban table here. Node modifiers survive only as T2-T4
+// node authoring identity (see shared/src/world/nodeModifiers.test.ts).
 // ═══════════════════════════════════════════════════════════════════════════
-
-const EXPECTED_FAMILY: Record<string, string> = {
-  // Mountain — native heavy
-  "mountain-earthsunder-maul": "heavy", "mountain-warmaul": "heavy",
-  "mountain-vest-t4": "heavy", "mountain-vest-t4-stormwall": "heavy",
-  "mountain-charm-t4": "heavy", "mountain-charm-t4-shieldmend": "heavy",
-  "mountain-boots-t4": "heavy",
-  // Jungle — native alacrity
-  "jungle-deathfang-rapier": "alacrity", "jungle-vest-t4": "alacrity",
-  "jungle-charm-t4": "alacrity", "jungle-charm-t4-overgrowth": "alacrity",
-  "jungle-boots-t4": "alacrity",
-  // Desert — native dominion (newly assigned)
-  "desert-zenith-cross": "dominion", "desert-vest-t4": "dominion",
-  "desert-charm-t4": "dominion", "desert-boots-t4": "dominion",
-  // Desert technique staff (2026-09-26), continuing the Plains Technique swords.
-  "desert-sunmonk-warstaff": "dominion",
-  // Tundra — native heavy, Rimebrand keeps fortified
-  "tundra-glacial-tyrant-maul": "heavy", "tundra-glacial-rimebrand": "fortified",
-  "tundra-vest-t4": "heavy", "tundra-charm-t4": "heavy", "tundra-charm-t4-deepfreeze": "heavy",
-  "tundra-boots-t4": "heavy",
-  // Volcanic — weapon/boots swarming, armor/charm alacrity (Plains-inherited)
-  "volcanic-eruption-lash": "swarming", "volcanic-blightbrand": "swarming",
-  "volcanic-vest-t4": "alacrity", "volcanic-vest-t4-lavatempered": "alacrity",
-  "volcanic-charm-t4": "alacrity", "volcanic-boots-t4": "swarming",
-  // Graveyard — weapon/boots swarming, armor/recovery fortified (Swamp-inherited)
-  "graveyard-plague-axe": "swarming",
-  "graveyard-vest-t4": "fortified", "graveyard-vest-t4-debtward": "fortified",
-  "graveyard-charm-t4": "fortified", "graveyard-charm-t4-gravetide": "fortified",
-  "graveyard-boots-t4": "swarming",
-  // Trench — weapon/armor/stealth-boots swarming (Cave-inherited), new items dominion
-  "trench-abyssal-axe": "swarming", "trench-vest-t4": "swarming",
-  "trench-boots-t4-stalkers": "swarming",
-  "trench-charm-t4": "dominion", "trench-boots-t4-treaders": "dominion",
-};
-
-assert(Object.keys(EXPECTED_FAMILY).length === 40, "family map must cover all 40 items");
-
-for (const r of t4Gear) {
-  const expectedFamily = EXPECTED_FAMILY[r.id];
-  assert(!!expectedFamily, `${r.id}: must have an expected family entry in this test`);
-  const steps = r.upgrades ?? [];
-  const familiesUsed = new Set<string>();
-  const collectFamilies = (cat: Partial<Record<string, number>> | undefined) => {
-    for (const [fam, amt] of Object.entries(cat ?? {})) if ((amt ?? 0) > 0) familiesUsed.add(fam);
-  };
-  collectFamilies(r.reconstructCatalystCost);
-  for (const s of steps) collectFamilies(s.catalystCost);
-  assert(familiesUsed.size <= 1, `${r.id}: must use exactly one catalyst family, found ${[...familiesUsed].join(",")}`);
-  if (familiesUsed.size === 1) {
-    assert([...familiesUsed][0] === expectedFamily, `${r.id}: expected family ${expectedFamily}, got ${[...familiesUsed][0]}`);
-  }
-  // Legal-node check: the family must not be banned for this recipe's biome.
-  const bans = MODIFIER_BANS[r.recipeGroup] ?? [];
-  assert(!bans.includes(expectedFamily as never), `${r.id}: family ${expectedFamily} must not be banned in biome ${r.recipeGroup}`);
-}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 8. Hybrid essence: approved ratios, splash <= 33%, weapons/mobility pure
@@ -337,16 +268,14 @@ for (const [id, spec] of Object.entries(EXPECTED_ABILITIES)) {
     id: string;
     group: string;
     level: number;
-    family: string;
-    catalysts: number;
     cost: Record<string, number>;
   }> = [
-    { id: "stance-recipe-perfection", group: "jungle", level: 14, family: "alacrity", catalysts: 3, cost: { green: 450 } },
-    { id: "stance-recipe-time-to-strike", group: "mountain", level: 20, family: "heavy", catalysts: 3, cost: { blue: 450 } },
-    { id: "stance-recipe-brawler", group: "jungle", level: 14, family: "swarming", catalysts: 3, cost: { green: 500 } },
-    { id: "stance-recipe-reaper", group: "volcanic", level: 8, family: "swarming", catalysts: 3, cost: { red: 500 } },
-    { id: "stance-recipe-recuperating", group: "graveyard", level: 2, family: "fortified", catalysts: 3, cost: { purple: 450 } },
-    { id: "stance-recipe-powering-up", group: "trench", level: 2, family: "dominion", catalysts: 4, cost: { green: 550 } },
+    { id: "stance-recipe-perfection", group: "jungle", level: 14, cost: { green: 450 } },
+    { id: "stance-recipe-time-to-strike", group: "mountain", level: 20, cost: { blue: 450 } },
+    { id: "stance-recipe-brawler", group: "jungle", level: 14, cost: { green: 500 } },
+    { id: "stance-recipe-reaper", group: "volcanic", level: 8, cost: { red: 500 } },
+    { id: "stance-recipe-recuperating", group: "graveyard", level: 2, cost: { purple: 450 } },
+    { id: "stance-recipe-powering-up", group: "trench", level: 2, cost: { green: 550 } },
   ];
   assert(STANCES.length === 6, "T4 must have exactly six placed Stances");
   for (const spec of STANCES) {
@@ -356,12 +285,7 @@ for (const [id, spec] of Object.entries(EXPECTED_ABILITIES)) {
     assert(stance!.recipeGroup === spec.group, `${spec.id}: biome gate must be ${spec.group}`);
     assert(stance!.requiredBiomeLevel === spec.level, `${spec.id}: gate must be ${spec.group} L${spec.level}`);
     assert(JSON.stringify(stance!.cost) === JSON.stringify(spec.cost), `${spec.id}: essence cost must be exact`);
-    assert(
-      JSON.stringify(stance!.catalystCost) === JSON.stringify({ [spec.family]: spec.catalysts }),
-      `${spec.id}: catalyst cost must be ${spec.family}:${spec.catalysts}`,
-    );
     assert(essenceTotal(stance!.cost) >= 400 && essenceTotal(stance!.cost) <= 600, `${spec.id}: T4 stance essence must be in 400-600`);
-    assert(catTotal(stance!.catalystCost) >= 3 && catTotal(stance!.catalystCost) <= 4, `${spec.id}: T4 stance catalysts must be in 3-4`);
     assert(!stance!.requiredBossClear, `${spec.id}: must not require a boss clear`);
   }
   const t4StanceIds = [...STANCE_RECIPE_DATABASE.values()]
@@ -417,15 +341,15 @@ for (const [id, snap] of Object.entries(TRENCH_MONSTER_SNAPSHOT)) {
 const relics = [...RECIPE_DATABASE.values()].filter((r) => r.slot === "relic");
 assert(relics.length === 8, `expected exactly 8 relics, got ${relics.length}`);
 
-const RELIC_SNAPSHOT: Record<string, { group: string; level: number; cost: Record<string, number>; catalyst: Record<string, number> }> = {
-  "relic-hastebound-dial": { group: "volcanic", level: 11, cost: { red: 3300 }, catalyst: { swarming: 9 } },
-  "relic-verdant-flywheel": { group: "jungle", level: 18, cost: { green: 3000 }, catalyst: { alacrity: 8 } },
-  "relic-glacial-bell": { group: "tundra", level: 12, cost: { blue: 3200 }, catalyst: { heavy: 9 } },
-  "relic-haunted-prism": { group: "graveyard", level: 6, cost: { purple: 3500 }, catalyst: { fortified: 10 } },
-  "relic-colossus-heart": { group: "mountain", level: 24, cost: { blue: 3300 }, catalyst: { heavy: 10 } },
-  "relic-equilibrium-shard": { group: "mountain", level: 24, cost: { blue: 2500 }, catalyst: { heavy: 8 } },
-  "relic-withering-lens": { group: "desert", level: 18, cost: { yellow: 3300 }, catalyst: { dominion: 9 } },
-  "relic-virulent-hourglass": { group: "trench", level: 5, cost: { green: 3400 }, catalyst: { dominion: 9 } },
+const RELIC_SNAPSHOT: Record<string, { group: string; level: number; cost: Record<string, number> }> = {
+  "relic-hastebound-dial": { group: "volcanic", level: 11, cost: { red: 3300 } },
+  "relic-verdant-flywheel": { group: "jungle", level: 18, cost: { green: 3000 } },
+  "relic-glacial-bell": { group: "tundra", level: 12, cost: { blue: 3200 } },
+  "relic-haunted-prism": { group: "graveyard", level: 6, cost: { purple: 3500 } },
+  "relic-colossus-heart": { group: "mountain", level: 24, cost: { blue: 3300 } },
+  "relic-equilibrium-shard": { group: "mountain", level: 24, cost: { blue: 2500 } },
+  "relic-withering-lens": { group: "desert", level: 18, cost: { yellow: 3300 } },
+  "relic-virulent-hourglass": { group: "trench", level: 5, cost: { green: 3400 } },
 };
 assert(Object.keys(RELIC_SNAPSHOT).length === 8, "relic snapshot must cover all 8 relics");
 for (const [id, spec] of Object.entries(RELIC_SNAPSHOT)) {
@@ -433,9 +357,7 @@ for (const [id, spec] of Object.entries(RELIC_SNAPSHOT)) {
   assert(!!r, `${id}: relic must exist`);
   assert(r!.recipeGroup === spec.group && r!.requiredBiomeLevel === spec.level, `${id}: gate must be unchanged (${spec.group} L${spec.level})`);
   assert(JSON.stringify(r!.cost) === JSON.stringify(spec.cost), `${id}: normalized essence cost must be exact`);
-  assert(JSON.stringify(r!.catalystCost) === JSON.stringify(spec.catalyst), `${id}: normalized catalyst cost must be exact`);
   assert(essenceTotal(r!.cost) >= 2500 && essenceTotal(r!.cost) <= 3500, `${id}: relic essence must be in 2500-3500`);
-  assert(catTotal(r!.catalystCost) >= 8 && catTotal(r!.catalystCost) <= 10, `${id}: relic catalysts must be in 8-10`);
   assert(!r!.evolvesFrom && !r!.reconstructCost, `${id}: relics must not gain lineage/reconstruction`);
 }
 
@@ -464,13 +386,11 @@ for (const [id, spec] of Object.entries(RELIC_SNAPSHOT)) {
     id: string;
     group: string;
     level: number;
-    family: string;
-    catalysts: number;
     cost: Record<string, number>;
   }> = [
-    { id: "core-juggernaut", group: "mountain", level: 22, family: "heavy", catalysts: 7, cost: { blue: 2200 } },
-    { id: "core-controller", group: "graveyard", level: 4, family: "fortified", catalysts: 7, cost: { purple: 2100 } },
-    { id: "core-catalyst", group: "volcanic", level: 10, family: "swarming", catalysts: 8, cost: { red: 2300 } },
+    { id: "core-juggernaut", group: "mountain", level: 22, cost: { blue: 2200 } },
+    { id: "core-controller", group: "graveyard", level: 4, cost: { purple: 2100 } },
+    { id: "core-catalyst", group: "volcanic", level: 10, cost: { red: 2300 } },
   ];
   const cores = [...RECIPE_DATABASE.values()].filter((r) => r.slot === "core");
   assert(cores.length === 12, `expected 12 Core recipes total, got ${cores.length}`);
@@ -484,12 +404,7 @@ for (const [id, spec] of Object.entries(RELIC_SNAPSHOT)) {
     assert(core!.recipeGroup === spec.group, `${spec.id}: home must be ${spec.group}`);
     assert(core!.requiredBiomeLevel === spec.level, `${spec.id}: gate must be ${spec.group} L${spec.level}`);
     assert(JSON.stringify(core!.cost) === JSON.stringify(spec.cost), `${spec.id}: essence cost must be exact`);
-    assert(
-      JSON.stringify(core!.catalystCost) === JSON.stringify({ [spec.family]: spec.catalysts }),
-      `${spec.id}: catalyst cost must be ${spec.family}:${spec.catalysts}`,
-    );
     assert(essenceTotal(core!.cost) >= 2000 && essenceTotal(core!.cost) <= 2500, `${spec.id}: T4 Core essence must be in 2000-2500`);
-    assert(catTotal(core!.catalystCost) >= 7 && catTotal(core!.catalystCost) <= 8, `${spec.id}: T4 Core catalysts must be in 7-8`);
     assert(!core!.requiredBossClear, `${spec.id}: must not require a boss clear`);
   }
   const t4CoreIds = cores.filter((core) => core.tier === 4).map((core) => core.id).sort();
@@ -529,12 +444,5 @@ for (const stance of t4Stances) {
   assert(stance.requiredBiomeLevel! <= cap, `${stance.id}: requiredBiomeLevel ${stance.requiredBiomeLevel} must not exceed T4 cap ${cap}`);
   assert(!stance.requiredBossClear, `${stance.id}: must not require a boss clear`);
 }
-
-// Sanity: every family referenced anywhere in this test is a real modifier family.
-for (const fam of Object.values(EXPECTED_FAMILY)) {
-  assert((NODE_MODIFIER_FAMILIES as readonly string[]).includes(fam), `${fam} must be a real NodeModifierFamily`);
-}
-// NATIVE_MODIFIER sanity — used only to document, not assert, native-vs-inherited status.
-void NATIVE_MODIFIER;
 
 console.log("t4ProgressionEconomy: ok");

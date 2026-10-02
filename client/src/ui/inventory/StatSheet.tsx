@@ -10,7 +10,7 @@ import { hudBus } from '../../hudBus';
 import {
   activeStanceAtom, equippedRitesAtom, equipmentAtom, itemUpgradesAtom, passivesAtom,
   combatArchetypeAtom, selectedRangeAtom, selectedSubVariantAtom, playerTierAtom,
-  unlockedSkillsAtom, hpAtom, maxHpAtom, playerNodeIdAtom,
+  unlockedSkillsAtom, hpAtom, maxHpAtom, playerNodeIdAtom, lineagesAtom,
 } from '../../hud/atoms';
 import { SLOT_LABELS, biomeName, tierColor } from './constants';
 import { buildStatSheet, type SheetRow, type StatSheetData } from './statSheetModel';
@@ -40,6 +40,7 @@ export function StatSheet({ compare }: Props) {
   const hp = useAtomValue(hpAtom);
   const maxHp = useAtomValue(maxHpAtom);
   const playerNodeId = useAtomValue(playerNodeIdAtom);
+  const lineages = useAtomValue(lineagesAtom);
   const hpFraction = hp / Math.max(1, maxHp);
 
   const defId = compare.shown && ITEM_DATABASE.has(compare.shown) ? compare.shown : null;
@@ -48,9 +49,9 @@ export function StatSheet({ compare }: Props) {
       unlockedSkills, passives, selectedClass: combatArchetype ? `${combatArchetype}-root` : null,
       selectedSubVariant, selectedRange, combatArchetype,
     },
-    equipment, itemUpgrades, playerTier, activeStance, equippedRites, hpFraction,
+    equipment, itemUpgrades, playerTier, activeStance, equippedRites, hpFraction, lineages,
   }, defId), [unlockedSkills, passives, combatArchetype, selectedSubVariant, selectedRange, equipment,
-    itemUpgrades, playerTier, activeStance, equippedRites, hpFraction, defId]);
+    itemUpgrades, playerTier, activeStance, equippedRites, hpFraction, lineages, defId]);
 
   const def = defId ? ITEM_DATABASE.get(defId) : undefined;
   const plus = defId ? itemUpgrades[defId] ?? 0 : 0;

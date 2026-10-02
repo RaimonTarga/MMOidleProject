@@ -9,7 +9,7 @@ import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { unlockSkill } from '../src/systems/player/progression/skills';
 import { World } from '../src/world/World';
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -30,8 +30,7 @@ function makeUnclassedPlayer(): PersistedPlayerSlices {
       level: 0,
       skillPoints: 1,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -44,7 +43,7 @@ function makeUnclassedPlayer(): PersistedPlayerSlices {
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,

@@ -1,5 +1,5 @@
 {
-  "atlasHash": "4a7787e093a8f49d278148967da26836c1cea47478f1ced352f83c49e8d76363",
+  "atlasHash": "346228b80520f3c85333af8b838a4d64d363a20dcdc25316dfb3a7cf5f7a8037",
   "frames": {
     "sprites/accents/crest-close-cadence.png": {
       "sourceW": 32,
@@ -1075,6 +1075,18 @@
       "footY": 20,
       "halfWAtFoot": 13.5
     },
+    "sprites/monsters/bramble-pod.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 23,
+      "halfWAtFoot": 12.5
+    },
+    "sprites/monsters/brood-spiderling.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 22,
+      "halfWAtFoot": 17
+    },
     "sprites/monsters/brute-variant-2.png": {
       "sourceW": 64,
       "sourceH": 64,
@@ -1417,6 +1429,12 @@
       "footY": 27,
       "halfWAtFoot": 26
     },
+    "sprites/monsters/fen-hexer.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 29,
+      "halfWAtFoot": 21
+    },
     "sprites/monsters/field-hare.png": {
       "sourceW": 64,
       "sourceH": 64,
@@ -1482,6 +1500,12 @@
       "sourceH": 64,
       "footY": 25,
       "halfWAtFoot": 19.5
+    },
+    "sprites/monsters/grass-kite.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 15,
+      "halfWAtFoot": 5
     },
     "sprites/monsters/gravewright.png": {
       "sourceW": 64,
@@ -1746,6 +1770,12 @@
       "sourceH": 64,
       "footY": 24,
       "halfWAtFoot": 17.5
+    },
+    "sprites/monsters/rockback-ram.png": {
+      "sourceW": 64,
+      "sourceH": 64,
+      "footY": 21,
+      "halfWAtFoot": 19
     },
     "sprites/monsters/ruins-archer.png": {
       "sourceW": 64,

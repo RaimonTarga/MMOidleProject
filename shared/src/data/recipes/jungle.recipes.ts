@@ -24,17 +24,10 @@ export const jungleRecipeEntries = [
     id: 'jungle-stinger-rapier', name: 'Stinger Rapier',
     recipeGroup: 'jungle', requiredBiomeLevel: 1, slot: 'weapon',
     // 2026-09-26 T2-T4 weapon normalization: Attack 10->11 (+5: 30->24). On-hit unchanged.
-    cost: { green: 55}, stats: { attack: 11, onHitDamage: 8 }, attacksPerSecond: 1.55, tier: 2, // family-tag: fast on-hit rapier → Alacrity
+    cost: { green: 55}, stats: { attack: 24, onHitDamage: 23 }, attacksPerSecond: 1.55, tier: 2, // family-tag: fast on-hit rapier → Alacrity
     icon: 'items/weapons/stinger-rapier.png',
     element: 'poison',   // cosmetic attack tint only
     description: 'A thin blade kept slick with something the jungle distilled and never named.',
-    upgrades: [
-      { stats: { attack: 3, onHitDamage: 3 }, cost: { green: 40 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 3, onHitDamage: 3 }, cost: { green: 99 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 3, onHitDamage: 3 }, cost: { green: 158 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2, onHitDamage: 3 }, cost: { green: 257 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2, onHitDamage: 3 }, cost: { green: 436 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   ['jungle-vest-t2', {
@@ -48,8 +41,8 @@ export const jungleRecipeEntries = [
       {"cost": {"green": 31, "yellow": 8}, "requiredBiomeLevel": 3, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
       {"cost": {"green": 78, "yellow": 20}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
       {"cost": {"green": 125, "yellow": 31}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"green": 203, "yellow": 51}, "catalystCost": {"alacrity": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"green": 342, "yellow": 86}, "catalystCost": {"alacrity": 2}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
+      {"cost": {"green": 203, "yellow": 51}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"green": 342, "yellow": 86}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
     ],
 
 mechanicEffects: {"defense.evade-mitigation": 0.2, "defense.dot-resistance": 0.15},
@@ -74,7 +67,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.2, "defense.dot-resistance": 0.1
       { stats: { recovery: 1.2 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 46 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 1.2 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 73 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 1.2 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 119 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1.2 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 203 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1.2 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 203 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -91,7 +84,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.2, "defense.dot-resistance": 0.1
       { stats: { speed: 3 }, cost: { green: 30 }, requiredBiomeLevel: 4 },
       { stats: { speed: 3 }, cost: { green: 48 }, requiredBiomeLevel: 4 },
       { stats: { speed: 3 }, cost: { green: 78 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 3 }, cost: { green: 132 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 3 }, cost: { green: 132 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -106,18 +99,11 @@ mechanicEffects: {"defense.evade-mitigation": 0.2, "defense.dot-resistance": 0.1
     // reconstruct path.
     evolvesFrom: 'jungle-stinger-rapier',
     // 2026-09-26 T2-T4 weapon normalization: Attack 22->29 (+5: 42->50). On-hit unchanged.
-    cost: { green: 120 }, stats: { attack: 29, onHitDamage: 18 }, attacksPerSecond: 1.65, tier: 3, // family-tag: fast on-hit rapier → Alacrity
-    reconstructCost: { green: 420 }, reconstructCatalystCost: { alacrity: 3 },
+    cost: { green: 120 }, stats: { attack: 50, onHitDamage: 38 }, attacksPerSecond: 1.65, tier: 3, // family-tag: fast on-hit rapier → Alacrity
+    reconstructCost: { green: 420 },
     icon: 'items/weapons/venomthorn-rapier.png',
     element: 'poison',   // cosmetic attack tint only
     description: 'Thin and quick, and slick with a thorn-sap that bites a little more with every touch.',
-    upgrades: [
-      { stats: { attack: 5, onHitDamage: 4 }, cost: { green: 79 },  requiredBiomeLevel: 8 },
-      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 197 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 315 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 512 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 867 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   ['jungle-vest-t3', {
@@ -125,7 +111,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.2, "defense.dot-resistance": 0.1
     recipeGroup: 'jungle', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'jungle-vest-t2',
     cost: { green: 90, yellow: 30 }, stats: {"maxHp": 143, "evasion": 0.32, "damageReduction": 0.07}, // family-tag: evasion armor → Alacrity
-    reconstructCost: { green: 315, yellow: 105 }, reconstructCatalystCost: { alacrity: 3 },
+    reconstructCost: { green: 315, yellow: 105 },
     tier: 3,
     icon: 'items/armor/wildgrowth-weave.png',
     description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade and resists damage over time.",
@@ -133,8 +119,8 @@ mechanicEffects: {"defense.evade-mitigation": 0.2, "defense.dot-resistance": 0.1
       {"cost": {"green": 59, "yellow": 19}, "requiredBiomeLevel": 9, "stats": {"maxHp": 15, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
       {"cost": {"green": 146, "yellow": 49}, "requiredBiomeLevel": 10, "stats": {"maxHp": 14, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
       {"cost": {"green": 234, "yellow": 78}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"green": 380, "yellow": 127}, "catalystCost": {"alacrity": 2}, "requiredBiomeLevel": 10, "stats": {"maxHp": 14, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"green": 644, "yellow": 214}, "catalystCost": {"alacrity": 3}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
+      {"cost": {"green": 380, "yellow": 127}, "requiredBiomeLevel": 10, "stats": {"maxHp": 14, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"green": 644, "yellow": 214}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
     ],
 
 mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.2},
@@ -149,7 +135,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     // colour — there is nothing left to splash.
     evolvesFrom: 'jungle-charm-t2',
     cost: { green: 100 }, stats: { recovery: 50.4 }, // family-tag: jungle recovery → Alacrity
-    reconstructCost: { green: 350 }, reconstructCatalystCost: { alacrity: 3 },
+    reconstructCost: { green: 350 },
     mechanicEffects: {
       'defense.recovery-ramp-start-pct': 0.05,
       'defense.recovery-ramp-max-pct': 0.14,
@@ -164,7 +150,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
       { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 91 }, requiredBiomeLevel: 10 },
       { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 145 }, requiredBiomeLevel: 10 },
       { stats: { recovery: 2.2 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 236 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 2.2 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 400 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 2.2 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 400 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -174,7 +160,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     evolvesFrom: 'jungle-boots-t2',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 44->68 (+5: 88->88).
     cost: { green: 90 }, stats: { speed: 68 }, tier: 3, // family-tag: jungle mobility → Alacrity
-    reconstructCost: { green: 315 }, reconstructCatalystCost: { alacrity: 3 },
+    reconstructCost: { green: 315 },
     mechanicEffects: { 'mobility.aggro-pull-pct': 0.65 },
     icon: 'items/boots/canopy-striders.png',
     description: 'They crash through the green loud enough to turn every hungry thing your way.',
@@ -183,7 +169,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
       { stats: { speed: 4 },  cost: { green: 57 }, requiredBiomeLevel: 10 },
       { stats: { speed: 5 }, cost: { green: 91 }, requiredBiomeLevel: 10 },
       { stats: { speed: 4 }, cost: { green: 148 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 4 }, cost: { green: 251 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 4 }, cost: { green: 251 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -197,18 +183,11 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     recipeGroup: 'jungle', requiredBiomeLevel: 13, slot: 'weapon',
     evolvesFrom: 'jungle-venomthorn-rapier',
     // 2026-09-26 T2-T4 weapon normalization: Attack 34->59 (+5: 84->108). On-hit unchanged.
-    cost: { green: 264 }, stats: { attack: 59, onHitDamage: 30 }, attacksPerSecond: 1.75, tier: 4, // family-tag: capstone fast on-hit rapier → Alacrity
-    reconstructCost: { green: 924 }, reconstructCatalystCost: { alacrity: 4 },
+    cost: { green: 264 }, stats: { attack: 108, onHitDamage: 70 }, attacksPerSecond: 1.75, tier: 4, // family-tag: capstone fast on-hit rapier → Alacrity
+    reconstructCost: { green: 924 },
     icon: 'items/weapons/deathfang-rapier.png',
     element: 'poison',   // cosmetic attack tint only
     description: 'Quick past seeing, and slick with something the deep jungle spent a long time perfecting.',
-    upgrades: [
-      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 157 }, requiredBiomeLevel: 14 },
-      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 392 }, requiredBiomeLevel: 15 },
-      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 627 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 1018 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 9, onHitDamage: 8 }, cost: { green: 1722 }, catalystCost: { alacrity: 4 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   ['jungle-vest-t4', {
@@ -216,7 +195,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     recipeGroup: 'jungle', requiredBiomeLevel: 14, slot: 'armor',
     evolvesFrom: 'jungle-vest-t3',
     cost: { green: 220, yellow: 55 }, stats: {"maxHp": 274, "evasion": 0.36, "damageReduction": 0.1}, // family-tag: evasion armor → Alacrity
-    reconstructCost: { green: 770, yellow: 193 }, reconstructCatalystCost: { alacrity: 4 },
+    reconstructCost: { green: 770, yellow: 193 },
     // Bonus evade-mitigation: increases the fraction of damage avoided on an evade
     // (the reload-class mechanic). Stacks on GAME_CONFIG.EVADE_MITIGATION_BASE.
     mechanicEffects: {"defense.evade-mitigation": 0.3, "defense.dot-resistance": 0.25},
@@ -227,8 +206,8 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
       {"cost": {"green": 124, "yellow": 31}, "requiredBiomeLevel": 15, "stats": {"maxHp": 27, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
       {"cost": {"green": 310, "yellow": 77}, "requiredBiomeLevel": 16, "stats": {"maxHp": 27, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
       {"cost": {"green": 494, "yellow": 124}, "requiredBiomeLevel": 16, "stats": {"maxHp": 27, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"green": 804, "yellow": 201}, "catalystCost": {"alacrity": 3}, "requiredBiomeLevel": 16, "stats": {"maxHp": 27, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"green": 1360, "yellow": 340}, "catalystCost": {"alacrity": 4}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
+      {"cost": {"green": 804, "yellow": 201}, "requiredBiomeLevel": 16, "stats": {"maxHp": 27, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"green": 1360, "yellow": 340}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
     ],
   }],
 
@@ -237,7 +216,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     recipeGroup: 'jungle', requiredBiomeLevel: 15, slot: 'recovery',
     evolvesFrom: 'jungle-charm-t3',
     cost: { green: 200 }, stats: { recovery: 115.4 }, // family-tag: jungle recovery → Alacrity
-    reconstructCost: { green: 700 }, reconstructCatalystCost: { alacrity: 4 },
+    reconstructCost: { green: 700 },
     mechanicEffects: {
       'defense.recovery-ramp-start-pct': 0.04, 'defense.recovery-ramp-max-pct': 0.14, 'defense.recovery-ramp-ramptime-ms': 9000,
       'guard.recovery-ramp-advance-ms': 4000,
@@ -250,7 +229,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 182 }, requiredBiomeLevel: 16 },
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 291 }, requiredBiomeLevel: 16 },
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 472 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 798 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 798 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -259,7 +238,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     recipeGroup: 'jungle', requiredBiomeLevel: 15, slot: 'recovery',
     evolvesFrom: 'jungle-charm-t3',
     cost: { green: 200 }, stats: { recovery: 115.4 }, // family-tag: jungle recovery → Alacrity
-    reconstructCost: { green: 700 }, reconstructCatalystCost: { alacrity: 4 },
+    reconstructCost: { green: 700 },
     // † overheal-ward-pct: regen beyond max HP converts to a temporary ward.
     mechanicEffects: {
       'defense.recovery-ramp-start-pct': 0.04, 'defense.recovery-ramp-max-pct': 0.12, 'defense.recovery-ramp-ramptime-ms': 9000,
@@ -277,7 +256,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 182 }, requiredBiomeLevel: 16 },
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 291 }, requiredBiomeLevel: 16 },
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 472 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 798 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 798 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -288,7 +267,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     evolvesFrom: 'jungle-boots-t3',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 66->97 (+5: 120->120).
     cost: { green: 198 }, stats: { speed: 97 }, tier: 4, // family-tag: jungle mobility → Alacrity
-    reconstructCost: { green: 693 }, reconstructCatalystCost: { alacrity: 4 },
+    reconstructCost: { green: 693 },
     mechanicEffects: { 'mobility.aggro-pull-pct': 0.80 },
     icon: 'items/boots/warpath-treads.png',
     description: 'They tear through the green loud enough to wake the whole canopy — and bring all of it to you at once.',
@@ -297,7 +276,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
       { stats: { speed: 4 }, cost: { green: 112 }, requiredBiomeLevel: 16 },
       { stats: { speed: 5 }, cost: { green: 180 }, requiredBiomeLevel: 16 },
       { stats: { speed: 5 }, cost: { green: 292 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 5 }, cost: { green: 493 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 5 }, cost: { green: 493 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -312,7 +291,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     id: 'core-survivalist', name: 'Survivalist Core',
     recipeGroup: 'jungle', requiredBiomeLevel: 6, slot: 'core', coreEligibility: 'unrestricted',
     lineageId: 'core-survivalist',
-    cost: { green: 500 }, catalystCost: { fortified: 4 }, // family-tag: attrition survival → Fortified
+    cost: { green: 500 }, // family-tag: attrition survival → Fortified
     stats: {}, tier: 2,
     // recovery-mult scales the Recovery RATE, and every in-combat regen effect
     // activates a fraction of that rate — so this lifts OOC regen and all active
@@ -329,7 +308,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     id: 'core-bruiser', name: 'Bruiser Core',
     recipeGroup: 'jungle', requiredBiomeLevel: 11, slot: 'core', coreEligibility: 'melee',
     lineageId: 'core-bruiser',
-    cost: { green: 1350 }, catalystCost: { alacrity: 6 }, // Heavy is BANNED in Jungle; its native family is Alacrity
+    cost: { green: 1350 }, // Heavy is BANNED in Jungle; its native family is Alacrity
     stats: {}, tier: 3,
     // The refund is INERT without an ability tagged `mobility` (today: Charge). The
     // stat half is always on, so the slot is never dead — and the clause widens for
@@ -351,7 +330,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     id: 'core-accelerant', name: 'Accelerant Core',
     recipeGroup: 'jungle', requiredBiomeLevel: 12, slot: 'core', coreEligibility: 'unrestricted',
     lineageId: 'core-accelerant',
-    cost: { green: 1150 }, catalystCost: { alacrity: 5 }, // family-tag: attack-speed tempo → Alacrity
+    cost: { green: 1150 }, // family-tag: attack-speed tempo → Alacrity
     stats: {}, tier: 3,
     mechanicEffects: { 'core.attack-speed-mult': 0.55, 'core.damage-dealt-pct': -0.18 },
     icon: 'items/cores/accelerant.png',
@@ -362,7 +341,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     id: 'relic-verdant-flywheel', name: 'Verdant Flywheel',
     recipeGroup: 'jungle', requiredBiomeLevel: 18, slot: 'relic',
     lineageId: 'relic-verdant-flywheel',
-    cost: { green: 3000 }, catalystCost: { alacrity: 8 },
+    cost: { green: 3000 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': 0.20,

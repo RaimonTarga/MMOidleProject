@@ -3,6 +3,7 @@ import {
   getDefenseAbsorbPool,
   getDefenseDebtPool,
 } from './pools';
+import { formatRecoveryRate } from '@mmo-idle/shared';
 import { activeRecoveryFraction, recoveryPerSecond } from '../regen/recovery';
 import { isPlayerInCombat } from '../../combat/ai/engagement';
 import { getStationaryDrBonus } from '../mitigation/stationaryDr';
@@ -76,7 +77,7 @@ export const DEFENSE_BUFFS = [
       logDetail: `${Math.round(fraction * 100)}% Recovery — ${pctOfMax.toFixed(1)}% max HP/s`,
       values: [
         { label: "Recovery active", value: `${Math.round(fraction * 100)}%`, good: true },
-        { label: "Healing", value: `${Math.round(perSec)} HP/s`, good: true },
+        { label: "Healing", value: `${formatRecoveryRate(perSec)} HP/s`, good: true },
         { label: "As a share of max HP", value: `${pctOfMax.toFixed(1)}%/s` },
       ],
     };

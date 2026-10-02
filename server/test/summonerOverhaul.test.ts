@@ -22,7 +22,7 @@ import { syncSummonerFormationTarget } from '../src/systems/classes/archetypes/s
 import { mirrorTargetStatus } from '../src/systems/combat/targetStatus';
 import { setAttackTarget } from '../src/systems/combat/ai/targeting';
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -39,11 +39,12 @@ function slices(
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 4, currentSkillTier: 4,
       bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { technique: null, guard: null },
+      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
@@ -72,8 +73,8 @@ function attachSummoner(world: World, persisted: PersistedPlayerSlices) {
   player.performsAttack.attackCooldown = 1_375;
   updateSummonerArchetype(world, 0, 1_000);
   assert(player.summonsMinions?.targetCount === 4, 'root must create four logical slots');
-  assert(player.summonsMinions.minionIds.every(Boolean), 'fresh root slots should spawn immediately');
-  for (const id of player.summonsMinions.minionIds) {
+  assert(player.summonsMinions!.minionIds.every(Boolean), 'fresh root slots should spawn immediately');
+  for (const id of player.summonsMinions!.minionIds) {
     const minion = world.getMinionEntity(id)!;
     assert(minion.performsAttack.attackCooldown === 1_375, 'summon cadence must inherit weapon cooldown');
     assert(minion.performsAttack.attackRange === 24, 'root summons must fight at near-melee range');
@@ -158,36 +159,36 @@ function attachSummoner(world: World, persisted: PersistedPlayerSlices) {
   const targetB = world.createMonster('node-clearing', 'plains-slime', { x: 760, y: 400 });
   assert(targetA !== null && targetB !== null, 'formation target fixtures must spawn');
 
-  setAttackTarget(world, minions[0]!, targetB.isMonster.id);
+  setAttackTarget(world, minions[0]!, targetB!.isMonster.id);
   syncSummonerFormationTarget(world, summoner);
-  assert(summoner.summonsMinions.formationTargetId === targetB.isMonster.id,
+  assert(summoner.summonsMinions.formationTargetId === targetB!.isMonster.id,
     'formation target should follow a summon attack target');
-  assert(composePlayerView(player)?.attackTargetId === targetB.isMonster.id,
+  assert(composePlayerView(player)?.attackTargetId === targetB!.isMonster.id,
     'player view should project the formation target into the existing target frame');
   assert(player.hasAttackTarget === undefined,
     'formation targeting must not give an ordinary Conduit a direct attack target');
 
   // A split formation retains its previous valid target rather than flickering
   // back to whichever logical slot happens to be evaluated first.
-  setAttackTarget(world, minions[0]!, targetA.isMonster.id);
-  setAttackTarget(world, minions[1]!, targetB.isMonster.id);
+  setAttackTarget(world, minions[0]!, targetA!.isMonster.id);
+  setAttackTarget(world, minions[1]!, targetB!.isMonster.id);
   syncSummonerFormationTarget(world, summoner);
-  assert(summoner.summonsMinions.formationTargetId === targetB.isMonster.id,
+  assert(summoner.summonsMinions.formationTargetId === targetB!.isMonster.id,
     'split-target formations should retain the previous active display target');
 
-  applySummonerCommand(world, player, targetA.hasPosition.current);
+  applySummonerCommand(world, player, targetA!.hasPosition.current);
   syncSummonerFormationTarget(world, summoner);
-  assert(summoner.summonsMinions.formationTargetId === targetA.isMonster.id,
+  assert(summoner.summonsMinions.formationTargetId === targetA!.isMonster.id,
     'manual focus should immediately override the displayed formation target');
 
-  applyStatusEffect(targetA.tracksCombat, {
+  applyStatusEffect(targetA!.tracksCombat, {
     id: 'test-formation-debuff',
     sourceId: player.isPlayer.id,
     remainingMs: 5_000,
     data: { totalMs: 5_000 },
   });
   mirrorTargetStatus(world);
-  assert(targetA.hasStatus.targetStatus?.some((status) => status.id === 'test-formation-debuff') === true,
+  assert(targetA!.hasStatus.targetStatus?.some((status) => status.id === 'test-formation-debuff') === true,
     'formation target debuffs should be mirrored into the target-frame status list');
 
   applySummonerCommand(world, player, { x: 700, y: 700 });
@@ -196,10 +197,10 @@ function attachSummoner(world: World, persisted: PersistedPlayerSlices) {
     'a formation move command should clear the displayed combat target');
 
   clearSummonerCommand(world, player);
-  setAttackTarget(world, minions[0]!, targetA.isMonster.id);
-  targetA.hasHealth.hp = 0;
+  setAttackTarget(world, minions[0]!, targetA!.isMonster.id);
+  targetA!.hasHealth.hp = 0;
   syncSummonerFormationTarget(world, summoner);
-  assert(summoner.summonsMinions.formationTargetId === targetB.isMonster.id,
+  assert(summoner.summonsMinions.formationTargetId === targetB!.isMonster.id,
     'a dead displayed target should fall back to another summon target');
   setAttackTarget(world, minions[1]!, null);
   syncSummonerFormationTarget(world, summoner);
@@ -229,13 +230,13 @@ function attachSummoner(world: World, persisted: PersistedPlayerSlices) {
   updateSummonerArchetype(world, 0, 1_000);
   const target = world.createMonster('node-clearing', 'plains-slime', { x: 650, y: 400 });
   assert(target !== null, 'volatile test target must exist');
-  target.hasHealth.hp = 1_000_000;
-  target.hasHealth.maxHp = 1_000_000;
+  target!.hasHealth.hp = 1_000_000;
+  target!.hasHealth.maxHp = 1_000_000;
   updateSummonerArchetype(world, 0, 7_000);
   assert(!!player.summonsMinions!.volatileMarkedSlotId, 'volatile timer should visibly mark one slot');
   const markedIndex = player.summonsMinions!.slotIds.indexOf(player.summonsMinions!.volatileMarkedSlotId!);
   world.getMinionEntity(player.summonsMinions!.minionIds[markedIndex]!)!.hasAttackTarget = {
-    targetId: target.isMonster.id,
+    targetId: target!.isMonster.id,
   };
   updateSummonerArchetype(world, 0, 9_000);
   assert(player.summonsMinions!.activeReconstruction !== undefined, 'detonated slot must enter shared reconstruction');

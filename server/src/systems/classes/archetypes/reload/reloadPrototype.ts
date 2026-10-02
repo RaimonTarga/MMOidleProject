@@ -13,6 +13,7 @@ import {
   resolveReloadTimeMs,
   startReloadTimer,
 } from './reloadLifecycle';
+import { registerReloadFrameLoop } from './frameLoop';
 import { blunderbussAimPos } from './t3/pipeline/blunderbuss';
 import {
   BLUNDERBUSS_VOLLEY_HITS_COUNTER,
@@ -81,6 +82,10 @@ export function initReloadArchetype(): void {
     attackerSlice: 'usesReload',
     passiveKey:    'reload.empowered-mult',
   });
+
+  // Frame loop (Phase 3): registered right after the empowered multiplier so the
+  // clip-position fold composes onto `empoweredMultiplier` rather than racing it.
+  registerReloadFrameLoop();
 
   initReloadT3();
   registerReloadAfterHitListener();
@@ -155,6 +160,12 @@ export function initReloadArchetype(): void {
     if (isBlunderbussPellet) return;
 
     reload.ammo -= 1;
+
+    // Which round of the clip this is, 1-based — the frame loop's whole input
+    // (Phase 3). Deliberately NOT re-derived downstream from `ammoMax - ammo`: the
+    // Blunderbuss branch above empties the clip in one beat and returns before here,
+    // so a volley pellet carries no clip position and the frame loop skips it.
+    ctx.metadata['reloadClipIndex'] = Math.max(1, reload.ammoMax - reload.ammo);
 
     if (reload.ammo === 0) {
       // Duelist: the bullet that empties the clip fires as an empowered attack.

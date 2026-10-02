@@ -1,3 +1,4 @@
+import type { PassiveKey } from '@mmo-idle/shared';
 import {
   CLEARING_NODE_ID,
   GAME_CONFIG,
@@ -10,7 +11,7 @@ import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { World } from "../src/world/World";
 import { buildSpectatorNodeSnapshot } from "../src/world/spectatorSnapshot";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -26,8 +27,7 @@ const slices: PersistedPlayerSlices = {
     level: 77,
     skillPoints: 9,
     essences: { red: 12345, blue: 0, green: 0, yellow: 0, purple: 0 },
-    catalysts: { "private-wallet": 42 },
-    catalystProgress: {},
+    shards: {}, capstones: {},
     biomeXP: { "private-biome": 999 },
     biomeLevel: {},
     unlockedRecipes: ["private-recipe"],
@@ -55,7 +55,7 @@ const slices: PersistedPlayerSlices = {
   },
   usesSkills: {
     unlockedSkills: ["private-skill"],
-    passives: { "private-passive": 11 },
+    passives: { ["private-passive" as PassiveKey]: 11 },
     selectedClass: "cadence",
     selectedSubVariant: null,
     selectedRange: null,

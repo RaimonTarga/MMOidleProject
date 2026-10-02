@@ -1,5 +1,7 @@
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { setEmpoweredAttack, isEmpoweredAttack, registerEmpoweredMultiplier } from '../../../combat/engine/empoweredAttacks';
+import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
+import { initCooldownFrameLoop } from './frameLoop';
 import { initCooldownT3 } from './t3';
 import type { World } from '../../../../world/World';
 import { relicRatingsFromPassives, resolveCooldownRelicProfile } from '@mmo-idle/shared';
@@ -9,7 +11,13 @@ import { relicRatingsFromPassives, resolveCooldownRelicProfile } from '@mmo-idle
 export const EXECUTION_COOLDOWN_MS = 7_000;  // ms between execution windows
 const EXECUTION_MULTIPLIER         = 2.0;    // damage multiplier on execution strike
 
-function resolveExecutionCooldownMs(entity: { usesSkills: { passives: import('@mmo-idle/shared').PassiveMap } }): number {
+/**
+ * The live recharge length — the Squire's cycle. Exported because the frame loop
+ * clamps its window against the same number (design §10: a window shorter than
+ * one cycle) and floors its refund against it; a second copy of this resolution
+ * would drift the moment a relic touched the cooldown.
+ */
+export function resolveExecutionCooldownMs(entity: { usesSkills: { passives: import('@mmo-idle/shared').PassiveMap } }): number {
   const passives = entity.usesSkills.passives;
   const base = Math.max(100, Math.round(passives['cooldown.empowered-cd-ms'] ?? EXECUTION_COOLDOWN_MS));
   return resolveCooldownRelicProfile(
@@ -97,7 +105,7 @@ export function initCooldownArchetype(): void {
   initCooldownT3();
 
   // After the execution fires, restart the preparation cycle.
-  registerCombatListener('onHit', (ctx, _world) => {
+  registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
     if (!ctx.metadata['empoweredAttack']) return;
 
@@ -109,5 +117,15 @@ export function initCooldownArchetype(): void {
 
     const cdMs = resolveExecutionCooldownMs(entity);
     cd.executionCooldownMs = cdMs;
+
+    // `mechanic-fired` (progression rework 1c): this handler already IS "the
+    // execution's empowered flag was consumed" — it is why the cycle restarts —
+    // so the seam rides it rather than duplicating the gate in a second listener.
+    emitMechanicFired(world, entity, ctx);
   });
+
+  // The frame loop (progression rework Phase 3) registers LAST: the Warrior window
+  // has to open on the recharge the handler above just reset, and the Bulwark bank
+  // folds into the multiplier the empowered handler resolved.
+  initCooldownFrameLoop();
 }

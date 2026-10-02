@@ -45,7 +45,7 @@ import { attachMarker } from "../src/ecs/markerHelpers";
 import { CHILL_EFFECT } from "../src/systems/classes/archetypes/dot/t3/core/constants";
 import { World } from "../src/world/World";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -66,8 +66,7 @@ function makePlayerSlices(id: string, abilities: string[]): PersistedPlayerSlice
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -134,8 +133,8 @@ initCombatSystems();
 
   updateMonsterSlows(world);
   assert(
-    composeMonsterView(target).speed < baseSpeed,
-    `slow should cut the monster's speed (${composeMonsterView(target).speed} vs ${baseSpeed})`,
+    composeMonsterView(target)!.speed < baseSpeed,
+    `slow should cut the monster's speed (${composeMonsterView(target)!.speed} vs ${baseSpeed})`,
   );
   const baseAttackCooldown = target.performsAttack.attackCooldown;
   assert(
@@ -150,10 +149,10 @@ initCombatSystems();
     "a slowed monster can still land an attack");
 
   // Reconciling twice in a row must not compound the multiplier.
-  const afterOne = composeMonsterView(target).speed;
+  const afterOne = composeMonsterView(target)!.speed;
   updateMonsterSlows(world);
   assert(
-    composeMonsterView(target).speed === afterOne,
+    composeMonsterView(target)!.speed === afterOne,
     "repeated reconciliation must not ratchet the slow deeper",
   );
 
@@ -161,8 +160,8 @@ initCombatSystems();
   updateCombatState(world, slow!.remainingMs + 100);
   updateMonsterSlows(world);
   assert(
-    composeMonsterView(target).speed === baseSpeed,
-    `speed should return to base once the slow expires (${composeMonsterView(target).speed} vs ${baseSpeed})`,
+    composeMonsterView(target)!.speed === baseSpeed,
+    `speed should return to base once the slow expires (${composeMonsterView(target)!.speed} vs ${baseSpeed})`,
   );
   assert(target.hasAbilitySlow === undefined, "the slow marker must clear with the effect");
 }
@@ -219,21 +218,34 @@ initCombatSystems();
 
   applyMonsterSlow(world, target, 0.5, 4000, "tester");
   updateMonsterSlows(world);
-  const halfSpeed = composeMonsterView(target).speed;
+  const halfSpeed = composeMonsterView(target)!.speed;
   assert(halfSpeed === base * 0.5, "50% slow halves speed");
 
   // A weaker second source must not deepen it, and must not be added on top.
   applyMonsterSlow(world, target, 0.2, 4000, "tester");
   updateMonsterSlows(world);
   assert(
-    composeMonsterView(target).speed === halfSpeed,
+    composeMonsterView(target)!.speed === halfSpeed,
     "a weaker slow refreshing the same source must not change the magnitude",
   );
+
+  // A weaker, SHORTER source (the at-bay tap: 20% for 1.2 s) must neither override
+  // the magnitude nor cut the stronger slow's clock, and the clock it leaves must
+  // be consistent (remaining <= total) — review finding P7, 2026-10-02.
+  {
+    const strong = getStatusEffect(target.tracksCombat, ABILITY_SLOW_EFFECT_ID)!;
+    strong.remainingMs = 3000; strong.data["totalMs"] = 3000;
+    applyMonsterSlow(world, target, 0.2, 1200, "at-bay");
+    const after = getStatusEffect(target.tracksCombat, ABILITY_SLOW_EFFECT_ID)!;
+    assert(after.data["moveSlowPct"] === 0.5, `the stronger slow keeps its magnitude, got ${after.data["moveSlowPct"]}`);
+    assert(after.remainingMs === 3000, `the stronger slow keeps its clock, got ${after.remainingMs}`);
+    assert(after.remainingMs <= (after.data["totalMs"] ?? 0), "the clock never reads above 100%");
+  }
 
   // A slow can never become a silent root.
   applyMonsterSlow(world, target, 5, 4000, "tester");
   updateMonsterSlows(world);
-  assert(composeMonsterView(target).speed > 0, "a slow must leave the monster able to move at all");
+  assert(composeMonsterView(target)!.speed > 0, "a slow must leave the monster able to move at all");
   assert(target.isRooted === undefined, "an extreme slow is still not a root");
 }
 
@@ -274,13 +286,13 @@ for (const speed of [0, 5, 200, 600]) {
     const moved = target.hasPosition.current.x - before;
     assert(Math.abs(moved - speed * 0.5 * 0.1) < 0.001,
       `slow must reduce actual movement at speed ${speed}: moved ${moved}`);
-    assert(composeMonsterView(target).speed === speed * 0.5, "client speed agrees with movement");
+    assert(composeMonsterView(target)!.speed === speed * 0.5, "client speed agrees with movement");
     assert(target.hasPosition.speed === speed, "slow must not corrupt authored speed");
     assert(monsterAttackCooldown(target) === 777, "Hamstring preserves authored cadence");
   }
   updateCombatState(world, 4100);
   updateMonsterSlows(world);
-  assert(composeMonsterView(target).speed === speed, "expiry preserves custom speed");
+  assert(composeMonsterView(target)!.speed === speed, "expiry preserves custom speed");
   assert(monsterAttackCooldown(target) === 777, "expiry preserves custom cadence");
 }
 
@@ -303,7 +315,7 @@ for (const speed of [0, 5, 200, 600]) {
   const target = world.createMonster("node-5-5", "plains-slime", { x: 400, y: 400 })!;
   applyMonsterSlow(world, target, 0.5, 500, "tester");
   applyStatusEffect(target.tracksCombat, {
-    id: CHILL_EFFECT, maxStacks: 1, remainingMs: 2000, refreshable: true,
+    id: CHILL_EFFECT, maxStacks: 1, remainingMs: 2000, refreshable: true, sourceId: '',
     data: { moveSlowPerStack: 0.3, attackSlowPerStack: 0.2, totalMs: 2000 },
   });
   attachMarker(world, target, "hasChill");

@@ -23,7 +23,7 @@ import { runMonsterAttack, runPlayerAttack, updateCombat } from '../src/systems/
 import { spawnPack } from '../src/systems/world/spawning';
 import { World } from '../src/world/World';
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -38,8 +38,7 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -52,7 +51,7 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,
@@ -95,9 +94,9 @@ initCombatSystems();
   const player = world.attachPlayerEntity(makePlayerSlices('sting-target'), 'sting-target');
   const scorpion = world.createMonster(NODE, 'sand-scorpion', { x: 405, y: 400 });
   assert(scorpion, 'Sand Scorpion should spawn for Numbing Sting coverage');
-  setAggroTarget(world, scorpion, { id: player.isPlayer.id, kind: 'player' }, 1_000);
-  scorpion.hasAwareness.state = 'attacking';
-  scorpion.performsAttack.lastAttackAt = 0;
+  setAggroTarget(world, scorpion!, { id: player.isPlayer.id, kind: 'player' }, 1_000);
+  scorpion!.hasAwareness.state = 'attacking';
+  scorpion!.performsAttack.lastAttackAt = 0;
   player.performsAttack.lastAttackAt = 3_000;
 
   // The first tick initializes the per-combat initial cooldown. It is armed half
@@ -307,7 +306,7 @@ initCombatSystems();
   );
 
   syncPlayerBuffs(world, 10_000);
-  const tile = player.hasStatus.activeBuffs.find((buff) => buff.id === 'debuff-sundered');
+  const tile = player.hasStatus.activeBuffs!.find((buff) => buff.id === 'debuff-sundered');
   assert(!!tile, 'the buff bar should project a SUNDERED tile');
   assert(tile!.durationPct >= 0, 'the tile should carry a running duration clock');
 
@@ -389,13 +388,13 @@ initCombatSystems();
 for (const id of ['dune-stalker-emperor', 'dune-carapace-monarch', 'dune-throne-sovereign']) {
   const def = MONSTER_DATABASE.get(id)!;
   assert(!!def.bossPattern, `${id} should run an ordered mark/execution pattern`);
-  const steps = def.bossPattern.steps;
+  const steps = def.bossPattern!.steps;
 
   const marks = steps.filter(
     (step) => step.kind === 'apply-status' && step.effectId === SUN_MARK_EFFECT_ID,
   );
   const payoffs = steps.filter(
-    (step) => step.kind === 'payoff' && step.consumes.effectId === SUN_MARK_EFFECT_ID,
+    (step) => step.kind === 'payoff' && step.consumes!.effectId === SUN_MARK_EFFECT_ID,
   );
   assert(marks.length === 1, `${id} should have exactly ONE mark source`);
   assert(payoffs.length === 1, `${id} should have exactly ONE payoff consuming it`);
@@ -413,7 +412,7 @@ for (const id of ['dune-stalker-emperor', 'dune-carapace-monarch', 'dune-throne-
   // The mark AMPLIFIES; it does not gate. A cleansed player still eats the payoff.
   const payoff = payoffs[0];
   assert(
-    payoff.kind === 'payoff' && payoff.damageMult > 0 && payoff.amplifiedMult > 1,
+    payoff.kind === 'payoff' && payoff.damageMult > 0 && payoff.amplifiedMult! > 1,
     `${id} Execution should land unmarked and hit harder marked`,
   );
 }

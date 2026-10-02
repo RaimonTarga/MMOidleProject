@@ -43,7 +43,7 @@ import { World } from "../src/world/World";
 import type { PlayerEntity } from "../src/ecs/entity";
 import type { CombatEvent } from "@mmo-idle/shared";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -72,8 +72,7 @@ function slices(id: string, options: Options = {}): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -126,7 +125,8 @@ function durableMonster(world: World, x: number) {
   monster.mitigatesDamage.plating = 0;
   monster.mitigatesDamage.damageReduction = 0;
   // Evasion would silently drop attacks and make every refund count flaky.
-  monster.mitigatesDamage.evasion = 0;
+  // Evasion is its own component now, attached only when the monster has any.
+  if (monster.evadesHits) monster.evadesHits.dodgeRate = 0;
   return monster;
 }
 

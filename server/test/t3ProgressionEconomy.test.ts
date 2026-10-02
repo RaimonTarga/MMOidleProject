@@ -31,14 +31,12 @@ import {
 } from "@mmo-idle/shared";
 import type { EssenceType } from "@mmo-idle/shared";
 
-function assert(cond: boolean, msg: string): void {
+function assert(cond: unknown, msg: string): void {
   if (!cond) throw new Error(msg);
 }
 
 const fullEssences = () =>
   Object.fromEntries(ESSENCE_TYPES.map((t) => [t, 1_000_000])) as Record<EssenceType, number>;
-const fullCatalysts = (): Record<string, number> =>
-  ({ alacrity: 999, heavy: 999, swarming: 999, dominion: 999, fortified: 999 });
 
 const MAX_TIER = 4;
 
@@ -282,7 +280,7 @@ for (const dead of DEAD_END_T2_IDS) {
 // 2d. Multi-parent evolution was explicitly REJECTED — no such field may exist.
 for (const recipe of RECIPE_DATABASE.values()) {
   assert(
-    !("evolvesFromAny" in (recipe as Record<string, unknown>)),
+    !("evolvesFromAny" in (recipe as unknown as Record<string, unknown>)),
     `${recipe.id}: multi-parent evolution is rejected; evolvesFrom is single-parent by design`,
   );
   if (recipe.evolvesFrom !== undefined) {
@@ -291,29 +289,41 @@ for (const recipe of RECIPE_DATABASE.values()) {
   }
 }
 
-// 2e. One step below the gate cannot evolve, the gate itself can — spot-checked
-//     on a continuing lineage AND on the cross-biome Plains→Volcanic handoff.
+// 2e. Weapon evolution is rejected outright (Phase 2b, Override A: a weapon's
+//     power track is its lineage tree). Non-weapon lineages keep the +2/+3 gate
+//     shape — one step below cannot evolve, the gate itself can — spot-checked
+//     on the cross-biome Plains→Volcanic handoff.
 //     (Was +4/+5; the gate returned to +3 on 2026-09-04, so this is +2/+3. The
 //     SHAPE is the invariant, not the literal levels.)
+{
+  const recipe = RECIPE_DATABASE.get("mountain-avalanche-maul")!;
+  for (const plus of [2, 3]) {
+    const check = checkEvolve({
+      recipe, inventory: ["quake-hammer"], itemUpgrades: { "quake-hammer": plus },
+      essences: fullEssences(),
+    });
+    assert(!check.ok, `mountain-avalanche-maul: a +${plus} quake-hammer must NOT evolve (weapons use the lineage tree)`);
+  }
+}
 for (const { t2, t3 } of [
-  { t2: "quake-hammer", t3: "mountain-avalanche-maul" },
   { t2: "plains-vest-t2", t3: "volcanic-vest-t3" },
   { t2: "plains-charm-t2", t3: "volcanic-charm-t3" },
 ]) {
   const recipe = RECIPE_DATABASE.get(t3)!;
   const notReady = checkEvolve({
     recipe, inventory: [t2], itemUpgrades: { [t2]: 2 },
-    essences: fullEssences(), catalysts: fullCatalysts(),
+    essences: fullEssences(),
   });
   assert(!notReady.ok, `${t3}: a +2 ${t2} must NOT evolve`);
   const ready = checkEvolve({
     recipe, inventory: [t2], itemUpgrades: { [t2]: 3 },
-    essences: fullEssences(), catalysts: fullCatalysts(),
+    essences: fullEssences(),
   });
   assert(ready.ok, `${t3}: a +3 ${t2} must evolve (got: ${ready.reason})`);
 }
 
-// 2f. Reconstruction is 3.5x the evolve essence, per colour, plus 3 catalysts.
+// 2f. Reconstruction is 3.5x the evolve essence, per colour. The catalyst leg
+// of this rule (RETIRED, Phase 2b) is gone with the wallet.
 for (const recipe of T3_GEAR) {
   if (!recipe.evolvesFrom) continue;
   const recon = recipe.reconstructCost!;
@@ -322,8 +332,6 @@ for (const recipe of T3_GEAR) {
     const want = (amount ?? 0) * 3.5;
     assert(Math.abs(got - want) <= 1, `${recipe.id}: reconstruct ${type} must be ~3.5x ${amount} (got ${got})`);
   }
-  const catalysts = Object.values(recipe.reconstructCatalystCost ?? {});
-  assert(catalysts.length === 1 && catalysts[0] === 3, `${recipe.id}: reconstruction must cost 3 catalysts`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -333,19 +341,23 @@ for (const recipe of T3_GEAR) {
 const total = (c: Partial<Record<string, number>> | undefined) =>
   Object.values(c ?? {}).reduce((a: number, b) => a + (b ?? 0), 0);
 
-/** Approved lifetime totals (base + all five steps). */
+/**
+ * Approved lifetime totals (base + all five steps). Weapons are excluded
+ * (Phase 2b, Override A): off the +N ladder entirely, so "lifetime cost" no
+ * longer applies — a weapon's power now comes from its lineage tree.
+ */
 const T3_TOTALS: Record<string, number> = {
-  "mountain-avalanche-maul": 2444, "mountain-vest-t3": 2228, "mountain-charm-t3": 936, "mountain-boots-t3": 658,
-  "cave-cataclysm-axe": 2328, "cave-vest-t3": 2418, "cave-charm-t3": 1006, "cave-boots-t3": 666,
-  "swamp-blightbrand": 2444, "swamp-vest-t3": 2358, "swamp-charm-t3": 988, "swamp-boots-t3": 688,
-  "jungle-venomthorn-rapier": 2090, "jungle-vest-t3": 2070, "jungle-charm-t3": 1008, "jungle-boots-t3": 660,
-  "desert-solar-cross": 2540, "desert-pilgrim-quarterstaff": 1440, "desert-vest-t3": 2520, "desert-charm-t3": 1310, "desert-boots-t3": 864,
-  "volcanic-cinderlash": 2540, "volcanic-vest-t3": 2112, "volcanic-charm-t3": 1100, "volcanic-boots-t3": 680,
-  "tundra-permafrost-maul": 2450, "tundra-rimebrand": 2444, "tundra-vest-t3": 2200,
-  "tundra-charm-t3": 1050, "tundra-boots-t3": 670,
+  "mountain-vest-t3": 2228, "mountain-charm-t3": 936, "mountain-boots-t3": 658,
+  "cave-vest-t3": 2418, "cave-charm-t3": 1006, "cave-boots-t3": 666,
+  "swamp-vest-t3": 2358, "swamp-charm-t3": 988, "swamp-boots-t3": 688,
+  "jungle-vest-t3": 2070, "jungle-charm-t3": 1008, "jungle-boots-t3": 660,
+  "desert-vest-t3": 2520, "desert-charm-t3": 1310, "desert-boots-t3": 864,
+  "volcanic-vest-t3": 2112, "volcanic-charm-t3": 1100, "volcanic-boots-t3": 680,
+  "tundra-vest-t3": 2200, "tundra-charm-t3": 1050, "tundra-boots-t3": 670,
 };
 
 for (const recipe of T3_GEAR) {
+  if (recipe.slot === "weapon") continue;
   const id = recipe.id;
   const steps = recipe.upgrades ?? [];
   assert(steps.length === 5, `${id}: must author exactly 5 upgrade steps`);
@@ -375,7 +387,9 @@ for (const recipe of T3_GEAR) {
     }
   }
   const colours = Object.entries(lifeByColour).sort((a, b) => b[1] - a[1]);
-  if (recipe.slot === "weapon" || recipe.slot === "mobility") {
+  // Weapons are skipped above (they have no upgrade steps since the +N ladder
+  // went), so this audit only ever sees mobility here.
+  if (recipe.slot === "mobility") {
     assert(colours.length === 1, `${id}: ${recipe.slot} items must be a single essence colour`);
   } else {
     assert(colours.length <= 2, `${id}: at most one splash colour`);
@@ -386,37 +400,12 @@ for (const recipe of T3_GEAR) {
     }
   }
 
-  // 3e. Catalyst schedule: nothing on the base/evolution craft or +1..+3;
-  //     weapon/armor 0/0/0/0/2/3, recovery/mobility 0/0/0/0/0/2.
-  assert(recipe.catalystCost === undefined, `${id}: base/evolution craft must be catalyst-free`);
-  const catalystAt = (i: number) => Object.values(steps[i].catalystCost ?? {}).reduce((a: number, b) => a + (b ?? 0), 0);
-  const wantSchedule = recipe.slot === "weapon" || recipe.slot === "armor"
-    ? [0, 0, 0, 2, 3]
-    : [0, 0, 0, 0, 2];
-  for (let i = 0; i < 5; i++) {
-    assert(catalystAt(i) === wantSchedule[i], `${id}: +${i + 1} must cost ${wantSchedule[i]} catalysts (got ${catalystAt(i)})`);
-  }
-  // Exactly one family, and the same one throughout the item.
-  const families = new Set(steps.flatMap((s) => Object.keys(s.catalystCost ?? {})));
-  assert(families.size === 1, `${id}: an item must charge exactly one catalyst family (got ${[...families]})`);
 }
+// 3e (catalyst schedule) and 3f (volcanic catalyst families) RETIRED, Phase 2b:
+// the catalyst wallet and every `catalystCost` field are gone.
 
-// 3f. Volcanic families were assigned for the first time — pin them.
-{
-  const VOLCANIC_FAMILIES: Record<string, string> = {
-    "volcanic-vest-t3": "alacrity",   // inherits plains-vest-t2's tag (family follows the ITEM)
-    "volcanic-charm-t3": "alacrity",  // inherits plains-charm-t2's tag
-    "volcanic-cinderlash": "swarming", // genuinely new -> Volcanic's native family
-    "volcanic-boots-t3": "swarming",
-  };
-  for (const [id, family] of Object.entries(VOLCANIC_FAMILIES)) {
-    const recipe = RECIPE_DATABASE.get(id)!;
-    const fams = new Set((recipe.upgrades ?? []).flatMap((s) => Object.keys(s.catalystCost ?? {})));
-    assert(fams.has(family) && fams.size === 1, `${id}: must charge ${family} (got ${[...fams]})`);
-  }
-}
-
-// 3g. Slot ordering per biome: weapon/armor > recovery > mobility.
+// 3g. Slot ordering per biome: armor > recovery > mobility. (Weapons are
+// excluded — off the +N ladder entirely, Phase 2b.)
 {
   const byGroup = new Map<string, typeof T3_GEAR>();
   for (const r of T3_GEAR) {
@@ -429,7 +418,6 @@ for (const recipe of T3_GEAR) {
         .map((i) => total(i.cost) + (i.upgrades ?? []).reduce((a, s) => a + total(s.cost), 0));
     const minOf = (slot: string) => Math.min(...lifetimeOf(slot));
     const maxOf = (slot: string) => Math.max(...lifetimeOf(slot));
-    assert(minOf("weapon") > maxOf("recovery"), `${group}: weapon must cost more than recovery`);
     assert(minOf("armor") > maxOf("recovery"), `${group}: armor must cost more than recovery`);
     assert(minOf("recovery") > maxOf("mobility"), `${group}: recovery must cost more than mobility`);
   }
@@ -454,8 +442,7 @@ for (const recipe of T3_GEAR) {
     assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: gate level unchanged`);
     assert(recipe!.cost[spec.type] === spec.cost, `${spec.id}: cost must be ${spec.cost} ${spec.type}`);
     assert(Object.keys(recipe!.cost).length === 1, `${spec.id}: abilities stay single-colour`);
-    assert(!recipe!.catalystCost, `${spec.id}: T3 abilities charge no catalysts`);
-  }
+    }
   // Ordering: within each biome L3 < L5, and the whole set sits in the T3 band.
   for (const spec of ABILITIES) assert(spec.cost >= 140 && spec.cost <= 220, `${spec.id}: inside the T3 band`);
 }
@@ -485,10 +472,6 @@ for (const recipe of T3_GEAR) {
     assert(recipe!.tier === 3, `${spec.id}: must stay tier 3`);
     assert(recipe!.recipeGroup === spec.group, `${spec.id}: biome gate must be ${spec.group}`);
     assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: gate must be ${spec.group} L${spec.level}`);
-    assert(
-      JSON.stringify(recipe!.catalystCost) === JSON.stringify({ [spec.family]: 2 }),
-      `${spec.id}: must charge exactly 2 ${spec.family} (got ${JSON.stringify(recipe!.catalystCost)})`,
-    );
     assert(JSON.stringify(recipe!.cost) === JSON.stringify(spec.cost), `${spec.id}: essence cost changed unexpectedly`);
     assert(total(recipe!.cost) >= 180 && total(recipe!.cost) <= 250, `${spec.id}: T3 stance essence total is outside 180-250`);
     assert(!recipe!.requiredBossClear, `${spec.id}: must not require a boss clear`);
@@ -533,12 +516,7 @@ for (const recipe of T3_GEAR) {
     assert(recipe!.recipeGroup === spec.group, `${spec.id}: home must remain ${spec.group}`);
     assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: gate must be ${spec.group} L${spec.level}`);
     assert(JSON.stringify(recipe!.cost) === JSON.stringify(spec.cost), `${spec.id}: essence cost must be exact`);
-    assert(
-      JSON.stringify(recipe!.catalystCost) === JSON.stringify({ [spec.family]: spec.catalysts }),
-      `${spec.id}: catalyst cost must be ${spec.family}:${spec.catalysts}`,
-    );
     assert(total(recipe!.cost) >= 1000 && total(recipe!.cost) <= 1500, `${spec.id}: Core essence total is outside 1000-1500`);
-    assert(total(recipe!.catalystCost) >= 5 && total(recipe!.catalystCost) <= 6, `${spec.id}: Core catalyst total is outside 5-6`);
     assert(!recipe!.requiredBossClear, `${spec.id}: must not require a boss clear`);
   }
   const t3CoreIds = [...RECIPE_DATABASE.values()]
@@ -575,10 +553,6 @@ for (const recipe of T3_GEAR) {
     const recipe = RITE_RECIPE_DATABASE.get(spec.id);
     assert(!!recipe, `${spec.id}: recipe must exist`);
     assert(recipe!.tier === 3, `${spec.id}: must stay tier 3`);
-    assert(
-      JSON.stringify(recipe!.catalystCost) === JSON.stringify({ [spec.family]: spec.catalyst }),
-      `${spec.id}: must charge ${spec.catalyst} ${spec.family} (got ${JSON.stringify(recipe!.catalystCost)})`,
-    );
     assert(
       JSON.stringify(recipe!.cost) === JSON.stringify(spec.cost),
       `${spec.id}: essence cost must be UNCHANGED (got ${JSON.stringify(recipe!.cost)})`,

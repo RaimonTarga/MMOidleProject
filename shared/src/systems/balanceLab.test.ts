@@ -22,7 +22,9 @@ for (const tier of snapshot.tiers) {
 
 const mountainT1 = snapshot.biomes.find((row) => row.biomeTier === 1 && row.biomeId === 'mountain');
 assert(mountainT1, 'known mountain T1 row should be present');
-assert(mountainT1.rosterSize === 3 && mountainT1.uniqueMonsters === 2, 'pool slots must preserve authored duplicate weighting');
+// 4 slots over 3 unique mobs since Mountain's third family mob (`rockback-ram`)
+// landed: `cliff-hopper` is still listed twice, which is the weighting this guards.
+assert(mountainT1.rosterSize === 4 && mountainT1.uniqueMonsters === 3, 'pool slots must preserve authored duplicate weighting');
 assert(mountainT1.threatIndex > 0, 'threat index should be a finite positive comparison');
 
 const ridgeArcher = snapshot.encounters.find((row) => row.biomeTier === 1 && row.monsterId === 'ridge-archer');

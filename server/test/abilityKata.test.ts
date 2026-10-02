@@ -26,7 +26,7 @@ import { KATA_EFFECT_ID } from "../src/systems/player/abilities/abilityKata";
 import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
 import { World } from "../src/world/World";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -38,7 +38,8 @@ function slices(id: string, weapon: string | null): PersistedPlayerSlices {
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier: 4, currentSkillTier: 4, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
       knownAbilities: ["power-strike"], attunedAbilities: { techniques: ["power-strike"], guards: [] },
@@ -87,7 +88,8 @@ initCombatSystems();
   target.hasHealth.hp = target.hasHealth.maxHp = 1_000_000;
   target.mitigatesDamage.plating = 0;
   target.mitigatesDamage.damageReduction = 0;
-  target.mitigatesDamage.evasion = 0;
+  // Evasion is its own component now, attached only when the monster has any.
+  if (target.evadesHits) target.evadesHits.dodgeRate = 0;
   setAttackTarget(world, player, target.isMonster.id);
 
   let now = 1_000;

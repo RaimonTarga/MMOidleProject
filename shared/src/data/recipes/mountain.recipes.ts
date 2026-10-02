@@ -55,20 +55,13 @@ export const mountainRecipeEntries = [
     id: 'heavy-hammer', name: 'Heavy Hammer',
     recipeGroup: 'mountain', requiredBiomeLevel: 1, slot: 'weapon',
     // 2026-09-26 weapon pass: Attack 26->27 (+5: 36->38).
-    cost: { blue: 22 }, stats: { attack: 27 }, attacksPerSecond: 0.55, tier: 1,
+    cost: { blue: 22 }, stats: { attack: 38 }, attacksPerSecond: 0.55, tier: 1,
     icon: 'items/weapons/heavy-hammer.png',
-    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.15 },
+    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.22 },
     description: 'Two-handed, brutal, and honest. It asks only that you find the time to swing it.',
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~497 (was 496).
     // +5 catalyst from its own T2 hammer successor's tag ("slow heavy hammer →
     // Heavy").
-    upgrades: [
-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 25 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 45 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 75 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 125 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 3 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 155 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   ['mountain-vest-t1', {
@@ -87,7 +80,7 @@ export const mountainRecipeEntries = [
       {"cost": {"blue": 45}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
       {"cost": {"blue": 75}, "requiredBiomeLevel": 4, "stats": {"maxHp": 4, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
       {"cost": {"blue": 125}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 155}, "catalystCost": {"heavy": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": 4, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
+      {"cost": {"blue": 155}, "requiredBiomeLevel": 4, "stats": {"maxHp": 4, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
     ],
   }],
 
@@ -139,24 +132,17 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 7, slot: 'weapon',
     evolvesFrom: 'heavy-hammer',
     // 2026-09-26 weapon normalization: Attack 47->45 (+5: 70->85).
-    cost: { blue: 52 }, stats: { attack: 45 }, attacksPerSecond: 0.55, tier: 2, // family-tag: slow heavy hammer → Heavy
-    reconstructCost: { blue: 182 }, reconstructCatalystCost: { heavy: 2 },
+    cost: { blue: 52 }, stats: { attack: 85 }, attacksPerSecond: 0.55, tier: 2, // family-tag: slow heavy hammer → Heavy
+    reconstructCost: { blue: 182 },
     icon: 'items/weapons/quake-hammer.png',
     // Cast Speed (abilities evolution §6.1) lives on Mountain's T2 hammer — the
     // biome that owns Charged Strike, and whose whole identity is the wind-up.
     // Only affects abilities with a real castTime.
     mechanicEffects: {
-      'weapon.empowered-mult-bonus': 0.26,
+      'weapon.empowered-mult-bonus': 0.33,
       'technique.cast-speed-pct': 0.15,
     },
     description: 'When it lands, the ground remembers it longer than the foe does.',
-    upgrades: [
-      { stats: { attack: 9 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 47 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 8 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 117 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 8 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 187 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 8 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 304 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 7 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 515 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // T2 economy pass (2026-08-29): now an EVOLUTION of mountain-vest-t1 at +5.
@@ -165,7 +151,7 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'mountain-vest-t1',
     cost: { blue: 52 }, stats: {"maxHp": 66, "plating": 1, "damageReduction": 0.08}, // family-tag: Guard-amplifying plate → Heavy
-    reconstructCost: { blue: 182 }, reconstructCatalystCost: { heavy: 2 },
+    reconstructCost: { blue: 182 },
     mechanicEffects: {"guard.potency-pct": 0.2},
     tier: 2,
     icon: 'items/armor/iron-crusader-plate.png',
@@ -174,8 +160,8 @@ export const mountainRecipeEntries = [
       {"cost": {"blue": 42}, "requiredBiomeLevel": 9, "stats": {"maxHp": 7, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
       {"cost": {"blue": 106}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
       {"cost": {"blue": 170}, "requiredBiomeLevel": 10, "stats": {"maxHp": 7, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 276}, "catalystCost": {"heavy": 1}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 468}, "catalystCost": {"heavy": 2}, "requiredBiomeLevel": 10, "stats": {"maxHp": 7, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
+      {"cost": {"blue": 276}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 468}, "requiredBiomeLevel": 10, "stats": {"maxHp": 7, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
     ],
   }],
 
@@ -185,7 +171,7 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 9, slot: 'recovery',
     evolvesFrom: 'mountain-charm-t1',
     cost: { blue: 42 }, stats: { recovery: 6.4 }, // family-tag: barrier pool (anti-spike) → Heavy
-    reconstructCost: { blue: 147 }, reconstructCatalystCost: { heavy: 2 },
+    reconstructCost: { blue: 147 },
     mechanicEffects: { 'defense.barrier-pct': 0.20, 'guard.barrier-refill-pct': 0.15 },
     tier: 2,
     icon: 'items/charms/iron-bulwark.png',
@@ -195,7 +181,7 @@ export const mountainRecipeEntries = [
       { stats: { recovery: 2.3 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 43 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 68 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 111 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 187 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 187 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -205,7 +191,7 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 10, slot: 'mobility',
     evolvesFrom: 'mountain-boots-t1',
     cost: { blue: 42 }, stats: { speed: 29 }, tier: 2, // family-tag: gap-closer boots serve the heavy-hit identity → Heavy
-    reconstructCost: { blue: 147 }, reconstructCatalystCost: { heavy: 2 },
+    reconstructCost: { blue: 147 },
     mechanicEffects: { 'mobility.approach-speed-pct': 0.65 },
     icon: 'items/boots/mountain-stride.png',
     description: 'Forged for those who treat a sheer slope as a road.',
@@ -214,7 +200,7 @@ export const mountainRecipeEntries = [
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 29 }, requiredBiomeLevel: 10 },
       { stats: { speed: 2 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 46 }, requiredBiomeLevel: 10 },
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 75 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 126 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 126 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -228,19 +214,12 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 13, slot: 'weapon',
     evolvesFrom: 'quake-hammer',
     // 2026-09-26 weapon normalization: Attack 84->96 (+5: 126->164). It sat 21% under the T3 +5 median.
-    cost: { blue: 116 }, stats: { attack: 96 }, attacksPerSecond: 0.55, tier: 3, // family-tag: slow heavy maul → Heavy
-    reconstructCost: { blue: 406 }, reconstructCatalystCost: { heavy: 3 },
+    cost: { blue: 116 }, stats: { attack: 164 }, attacksPerSecond: 0.55, tier: 3, // family-tag: slow heavy maul → Heavy
+    reconstructCost: { blue: 406 },
     icon: 'items/weapons/avalanche-maul.png',
     element: 'frost',   // cosmetic attack tint only
-    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.37 },
+    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.44 },
     description: 'It does not so much strike as arrive, the way a slope arrives on a village.',
-    upgrades: [
-      { stats: { attack: 14 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 93 },  requiredBiomeLevel: 14 },
-      { stats: { attack: 15 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 233 }, requiredBiomeLevel: 15 },
-      { stats: { attack: 13 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 372 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 13 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 605 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 13 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 1025 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   // T3 is where the lineage picks the damage cap back up — see change (1) in the
@@ -251,7 +230,7 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 14, slot: 'armor',
     evolvesFrom: 'mountain-vest-t2',
     cost: { blue: 116, red: 29 }, stats: {"maxHp": 180, "plating": 2, "damageReduction": 0.17}, // family-tag: Guard-amplifying plate → Heavy
-    reconstructCost: { blue: 406, red: 102 }, reconstructCatalystCost: { heavy: 3 },
+    reconstructCost: { blue: 406, red: 102 },
     mechanicEffects: {"guard.potency-pct": 0.25},
     tier: 3,
     icon: 'items/armor/summit-aegis.png',
@@ -260,8 +239,8 @@ export const mountainRecipeEntries = [
       {"cost": {"blue": 66, "red": 17}, "requiredBiomeLevel": 15, "stats": {"maxHp": 18, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
       {"cost": {"blue": 166, "red": 42}, "requiredBiomeLevel": 16, "stats": {"maxHp": 18, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
       {"cost": {"blue": 266, "red": 67}, "requiredBiomeLevel": 16, "stats": {"maxHp": 18, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 434, "red": 108}, "catalystCost": {"heavy": 2}, "requiredBiomeLevel": 16, "stats": {"maxHp": 18, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 734, "red": 183}, "catalystCost": {"heavy": 3}, "requiredBiomeLevel": 16, "stats": {"maxHp": 18, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
+      {"cost": {"blue": 434, "red": 108}, "requiredBiomeLevel": 16, "stats": {"maxHp": 18, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 734, "red": 183}, "requiredBiomeLevel": 16, "stats": {"maxHp": 18, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
     ],
   }],
 
@@ -270,7 +249,7 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 15, slot: 'recovery',
     evolvesFrom: 'mountain-charm-t2',
     cost: { blue: 100, red: 25 }, stats: { recovery: 19.2 }, // family-tag: barrier pool (anti-spike) → Heavy
-    reconstructCost: { blue: 350, red: 88 }, reconstructCatalystCost: { heavy: 3 },
+    reconstructCost: { blue: 350, red: 88 },
     mechanicEffects: { 'defense.barrier-pct': 0.28, 'guard.barrier-refill-pct': 0.20 },
     tier: 3,
     icon: 'items/charms/bastion-heart.png',
@@ -280,7 +259,7 @@ export const mountainRecipeEntries = [
       { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 65, red: 16 }, requiredBiomeLevel: 16 },
       { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 104, red: 26 }, requiredBiomeLevel: 16 },
       { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 169, red: 42 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 286, red: 71 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 16 },
+      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 286, red: 71 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -289,7 +268,7 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 16, slot: 'mobility',
     evolvesFrom: 'mountain-boots-t2',
     cost: { blue: 100 }, stats: { speed: 52 }, tier: 3, // family-tag: gap-closer boots → Heavy
-    reconstructCost: { blue: 350 }, reconstructCatalystCost: { heavy: 3 },
+    reconstructCost: { blue: 350 },
     mechanicEffects: { 'mobility.approach-speed-pct': 0.95 },
     icon: 'items/boots/peak-stride.png',
     description: 'Not even the mountain can keep you from your prey.',
@@ -298,7 +277,7 @@ export const mountainRecipeEntries = [
       { stats: { speed: 3 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 56 }, requiredBiomeLevel: 16 },
       { stats: { speed: 3 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 89 }, requiredBiomeLevel: 16 },
       { stats: { speed: 2 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 145 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 246 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 3 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 246 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -315,17 +294,10 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 19, slot: 'weapon',
     evolvesFrom: 'mountain-avalanche-maul',
     // 2026-09-26 T2-T4 weapon normalization: Attack 240->264 (+5: 540->486).
-    cost: { blue: 256 }, stats: { attack: 264 }, attacksPerSecond: 0.40, tier: 4, // family-tag: capstone heavy maul → Heavy
-    reconstructCost: { blue: 896 }, reconstructCatalystCost: { heavy: 4 },
+    cost: { blue: 256 }, stats: { attack: 486 }, attacksPerSecond: 0.40, tier: 4, // family-tag: capstone heavy maul → Heavy
+    reconstructCost: { blue: 896 },
     icon: 'items/weapons/earthsunder-maul.png',
     description: 'It does not strike the earth so much as remind it of an old grievance.',
-    upgrades: [
-      { stats: { attack: 45 }, cost: { blue: 185 },  requiredBiomeLevel: 20 },
-      { stats: { attack: 45 }, cost: { blue: 463 },  requiredBiomeLevel: 21 },
-      { stats: { attack: 44 }, cost: { blue: 741 },  requiredBiomeLevel: 22 },
-      { stats: { attack: 44 }, cost: { blue: 1204 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
-      { stats: { attack: 44 }, cost: { blue: 2039 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 22 },
-    ],
   }],
 
   ['mountain-warmaul', {
@@ -333,24 +305,17 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 19, slot: 'weapon',
     evolvesFrom: 'mountain-avalanche-maul',
     // 2026-09-26 T2-T4 weapon normalization: Attack 98->184 (+5: 147->370).
-    cost: { blue: 240 }, stats: { attack: 184 }, attacksPerSecond: 0.55, tier: 4, // family-tag: capstone hammer → Heavy
-    reconstructCost: { blue: 840 }, reconstructCatalystCost: { heavy: 4 },
+    cost: { blue: 240 }, stats: { attack: 370 }, attacksPerSecond: 0.55, tier: 4, // family-tag: capstone hammer → Heavy
+    reconstructCost: { blue: 840 },
     // ⚠⚠ empowered-mult-bonus MUST be implemented MULTIPLICATIVELY, not additively.
     // final empowered mult = base_mult * (1 + 0.48), i.e. a flat +48% to the
     // empowered hit REGARDLESS of the spec's base multiplier.
     // Additive (+0.48 flat) would skew hugely toward low-mult/high-frequency
     // specs and barely help high-mult specs. Multiplicative gives every spec the
     // same %, which is the design intent.
-    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.48 },
+    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.55 },
     icon: 'items/weapons/warmaul.png',
     description: 'Lighter in the haft, quicker to the shoulder — it rewards the soldier who already knows when to swing.',
-    upgrades: [
-      { stats: { attack: 38 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 186 },  requiredBiomeLevel: 20 },
-      { stats: { attack: 38 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 465 },  requiredBiomeLevel: 21 },
-      { stats: { attack: 38 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 744 }, requiredBiomeLevel: 22 },
-      { stats: { attack: 34 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 1208 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
-      { stats: { attack: 38 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 2045 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 22 },
-    ],
   }],
 
   ['mountain-vest-t4', {
@@ -358,7 +323,7 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 20, slot: 'armor',
     evolvesFrom: 'mountain-vest-t3',
     cost: { blue: 256, red: 64 }, stats: {"maxHp": 346, "plating": 3, "damageReduction": 0.21}, // family-tag: capstone Guard plate → Heavy
-    reconstructCost: { blue: 896, red: 224 }, reconstructCatalystCost: { heavy: 4 },
+    reconstructCost: { blue: 896, red: 224 },
     // Timed Guard potency replaces the former cap-triggered barrier refill.
     mechanicEffects: {"guard.potency-pct": 0.3},
     tier: 4,
@@ -368,8 +333,8 @@ export const mountainRecipeEntries = [
       {"cost": {"blue": 132, "red": 33}, "requiredBiomeLevel": 21, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
       {"cost": {"blue": 331, "red": 83}, "requiredBiomeLevel": 22, "stats": {"maxHp": 34, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
       {"cost": {"blue": 530, "red": 132}, "requiredBiomeLevel": 22, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 860, "red": 215}, "catalystCost": {"heavy": 3}, "requiredBiomeLevel": 22, "stats": {"maxHp": 34, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 1456, "red": 364}, "catalystCost": {"heavy": 4}, "requiredBiomeLevel": 22, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
+      {"cost": {"blue": 860, "red": 215}, "requiredBiomeLevel": 22, "stats": {"maxHp": 34, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 1456, "red": 364}, "requiredBiomeLevel": 22, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
     ],
   }],
 
@@ -379,7 +344,7 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 20, slot: 'armor',
     evolvesFrom: 'mountain-vest-t3',
     cost: { blue: 256, red: 64 }, stats: {"maxHp": 346, "plating": 3, "damageReduction": 0.21}, // family-tag: capstone anti-spike plate → Heavy
-    reconstructCost: { blue: 896, red: 224 }, reconstructCatalystCost: { heavy: 4 },
+    reconstructCost: { blue: 896, red: 224 },
     // † barrier-break-hp-recovery-pct: when the barrier is emptied, recover 30% of
     //   its max value as HP (armor-side variant; rider cooldown applies).
     mechanicEffects: {"guard.potency-pct": 0.2, "defense.barrier-pct": 0.1, "defense.barrier-break-hp-recovery-pct": 0.2},
@@ -390,8 +355,8 @@ export const mountainRecipeEntries = [
       {"cost": {"blue": 132, "red": 33}, "requiredBiomeLevel": 21, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
       {"cost": {"blue": 331, "red": 83}, "requiredBiomeLevel": 22, "stats": {"maxHp": 34, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
       {"cost": {"blue": 530, "red": 132}, "requiredBiomeLevel": 22, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 860, "red": 215}, "catalystCost": {"heavy": 3}, "requiredBiomeLevel": 22, "stats": {"maxHp": 34, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 1456, "red": 364}, "catalystCost": {"heavy": 4}, "requiredBiomeLevel": 22, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
+      {"cost": {"blue": 860, "red": 215}, "requiredBiomeLevel": 22, "stats": {"maxHp": 34, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 1456, "red": 364}, "requiredBiomeLevel": 22, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
     ],
   }],
 
@@ -400,7 +365,7 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 21, slot: 'recovery',
     evolvesFrom: 'mountain-charm-t3',
     cost: { blue: 220, red: 30 }, stats: { recovery: 55 }, // family-tag: barrier pool (anti-spike) → Heavy
-    reconstructCost: { blue: 770, red: 105 }, reconstructCatalystCost: { heavy: 4 },
+    reconstructCost: { blue: 770, red: 105 },
     mechanicEffects: { 'defense.barrier-pct': 0.36, 'guard.barrier-refill-pct': 0.30 },
     tier: 4,
     icon: 'items/charms/fortress-heart.png',
@@ -410,7 +375,7 @@ export const mountainRecipeEntries = [
       { stats: { recovery: 3.8 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 143, red: 19 }, requiredBiomeLevel: 22 },
       { stats: { recovery: 7.6 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 229, red: 31 }, requiredBiomeLevel: 22 },
       { stats: { recovery: 3.8 }, mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 371, red: 51 }, requiredBiomeLevel: 22 },
-      { stats: { recovery: 3.8 }, mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 627, red: 86 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
+      { stats: { recovery: 3.8 }, mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 627, red: 86 }, requiredBiomeLevel: 22 },
     ],
   }],
 
@@ -420,7 +385,7 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 21, slot: 'recovery',
     evolvesFrom: 'mountain-charm-t3',
     cost: { blue: 220, red: 30 }, stats: { recovery: 55 }, // family-tag: barrier-break survival → Heavy
-    reconstructCost: { blue: 770, red: 105 }, reconstructCatalystCost: { heavy: 4 },
+    reconstructCost: { blue: 770, red: 105 },
     // † barrier-break-heal-pct: when the barrier is emptied, heal 25% of its max
     //   value as HP (rider cooldown applies).
     mechanicEffects: {
@@ -436,7 +401,7 @@ export const mountainRecipeEntries = [
       { stats: { recovery: 3.8 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 143, red: 19 }, requiredBiomeLevel: 22 },
       { stats: { recovery: 7.6 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 229, red: 31 }, requiredBiomeLevel: 22 },
       { stats: { recovery: 3.8 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 371, red: 51 }, requiredBiomeLevel: 22 },
-      { stats: { recovery: 3.8 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 627, red: 86 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
+      { stats: { recovery: 3.8 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 627, red: 86 }, requiredBiomeLevel: 22 },
     ],
   }],
 
@@ -445,7 +410,7 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 22, slot: 'mobility',
     evolvesFrom: 'mountain-boots-t3',
     cost: { blue: 220 }, stats: { speed: 93 }, tier: 4, // family-tag: gap-closer boots → Heavy
-    reconstructCost: { blue: 770 }, reconstructCatalystCost: { heavy: 4 },
+    reconstructCost: { blue: 770 },
     mechanicEffects: { 'mobility.approach-speed-pct': 1.25 },
     icon: 'items/boots/vanguard-stride.png',
     description: 'While a foe stands at distance, they close the gap as if the mountain itself leaned them forward.',
@@ -454,7 +419,7 @@ export const mountainRecipeEntries = [
       { stats: { speed: 5 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 110 },  requiredBiomeLevel: 22 },
       { stats: { speed: 5 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 175 }, requiredBiomeLevel: 22 },
       { stats: { speed: 6 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 285 }, requiredBiomeLevel: 22 },
-      { stats: { speed: 5 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 482 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
+      { stats: { speed: 5 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 482 }, requiredBiomeLevel: 22 },
     ],
   }],
 
@@ -471,7 +436,7 @@ export const mountainRecipeEntries = [
     id: 'core-juggernaut', name: 'Juggernaut Core',
     recipeGroup: 'mountain', requiredBiomeLevel: 22, slot: 'core', coreEligibility: 'melee',
     lineageId: 'core-juggernaut',
-    cost: { blue: 2200 }, catalystCost: { heavy: 7 }, // family-tag: durability wall → Heavy
+    cost: { blue: 2200 }, // family-tag: durability wall → Heavy
     stats: {}, tier: 4,
     // HP, plating and the separate DR layer COMPOUND, so this must be judged as a
     // whole survivability package rather than three numbers. It clears slowly —
@@ -490,7 +455,7 @@ export const mountainRecipeEntries = [
     id: 'core-arcanist', name: 'Arcanist Core',
     recipeGroup: 'mountain', requiredBiomeLevel: 18, slot: 'core', coreEligibility: 'unrestricted',
     lineageId: 'core-arcanist',
-    cost: { blue: 1200 }, catalystCost: { swarming: 5 }, // family-tag: ability tempo → Swarming
+    cost: { blue: 1200 }, // family-tag: ability tempo → Swarming
     stats: {}, tier: 3,
     // Worth little when abilities are a minor part of the build — the specialisation
     // IS the opportunity cost, so no explicit penalty is authored.
@@ -503,7 +468,7 @@ export const mountainRecipeEntries = [
     id: 'relic-colossus-heart', name: 'Colossus Heart',
     recipeGroup: 'mountain', requiredBiomeLevel: 24, slot: 'relic',
     lineageId: 'relic-colossus-heart',
-    cost: { blue: 3300 }, catalystCost: { heavy: 10 },
+    cost: { blue: 3300 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': -0.30,
@@ -523,7 +488,7 @@ export const mountainRecipeEntries = [
     id: 'relic-equilibrium-shard', name: 'Equilibrium Shard',
     recipeGroup: 'mountain', requiredBiomeLevel: 24, slot: 'relic',
     lineageId: 'relic-equilibrium-shard',
-    cost: { blue: 2500 }, catalystCost: { heavy: 8 },
+    cost: { blue: 2500 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': 0.10,

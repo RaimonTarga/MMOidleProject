@@ -1,4 +1,4 @@
-import { baseRecoveryForTier } from '@mmo-idle/shared';
+import { baseRecoveryForTier, poolFactorForTier } from '@mmo-idle/shared';
 import {
   tierEntryProfileFromT1Snapshot,
   type T1CharacterSnapshot,
@@ -13,6 +13,7 @@ import {
   type TierEntryProfile,
 } from "@mmo-idle/shared";
 import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { validateProfile, validateSpawn } from "../../bot/src/tierEntry/validate";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { applyTierEntryProfile } from "../src/admin/gameActions";
@@ -35,8 +36,6 @@ const profile: TierEntryProfile = {
   economyPolicy: "synthetic-combat-progression",
   wallet: {
     essences: { ...emptyEssences, yellow: 123 },
-    catalysts: { alacrity: 7 },
-    catalystProgress: { alacrity: 2 },
   },
   level: 4,
   skillPoints: 0,
@@ -77,8 +76,8 @@ function makePlayerSlices(): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { ...emptyEssences },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {},
+      capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -141,10 +140,9 @@ assert(world.countPlayersInNode(CLEARING_NODE_ID) === 0, "old node is vacated");
 assert(player.tracksProgression.playerTier === 2, "player tier is authoritative profile tier");
 assert(player.tracksProgression.biomeLevel.plains === 6, "T1 biome state is applied");
 assert(player.tracksProgression.essences.yellow === 123, "essence wallet is applied exactly");
-assert(player.tracksProgression.catalysts.alacrity === 7, "catalyst wallet is applied exactly");
 assert(player.usesSkills.selectedClass === profile.classRoot, "root class is selected");
 assert(
-  player.usesSkills.selectedSubVariant === SKILL_TREE.get(profile.frameId)?.subVariantId,
+  player.usesSkills.selectedSubVariant === SKILL_TREE.get(profile.frameId!)?.subVariantId,
   "frame is selected",
 );
 assert(player.usesSkills.unlockedSkills.join(",") === "cadence-root,cadence-balanced", "root and frame are selected only");
@@ -153,7 +151,7 @@ assert(!player.usesAutocombat.auto && !player.usesAutocombat.autoTraverse, "entr
 assert(Object.keys(player.tracksCombat.cooldowns).length === 0, "entry clears cooldowns");
 assert(Object.keys(player.tracksCombat.flags).length === 0, "entry clears combat flags");
 assert(player.tracksCombat.statusEffects.length === 0, "entry clears transient effects");
-assert(player.hasStatus.activeBuffs.length === 0, "entry clears visible buffs");
+assert(player.hasStatus.activeBuffs!.length === 0, "entry clears visible buffs");
 assert(!player.isDead, "entry cannot inherit a corpse");
 
 // One real T1 -> T2 lineage proves the server path the bot executor calls:
@@ -165,7 +163,7 @@ const evolution = evolveItem(world, player, "plains-vest-t2", "evolve");
 assert(evolution.success, evolution.reason ?? "legal evolution should succeed");
 assert(!player.holdsInventory.inventory.includes("plains-vest-t1"), "evolution consumes the predecessor");
 assert(player.holdsInventory.inventory.includes("plains-vest-t2"), "evolution grants the child item");
-assert(player.tracksProgression.essences.yellow === 63, "evolution deducts its authored essence cost");
+assert((player.tracksProgression.essences.yellow as number) === 63, "evolution deducts its authored essence cost");
 
 player.holdsInventory.inventory = [];
 const missingPredecessor = evolveItem(world, player, "plains-vest-t2", "evolve");
@@ -178,19 +176,20 @@ assert(!insufficientResources.success, "evolution rejects insufficient essence w
 player.holdsInventory.inventory = [];
 
 // Reconstruction is a distinct path: it does not require an owned predecessor.
-player.tracksProgression.unlockedRecipes.push("knight-steelsword");
-player.tracksProgression.essences.yellow = 180;
-const reconstruction = evolveItem(world, player, "knight-steelsword", "reconstruct");
+// Weapons are off this ladder entirely (Phase 2b, Override A: lineage tree
+// instead), so this uses an armor recipe — cave-vest-t2 reconstructs for 189 red.
+player.tracksProgression.unlockedRecipes.push("cave-vest-t2");
+player.tracksProgression.essences.red = 189;
+const reconstruction = evolveItem(world, player, "cave-vest-t2", "reconstruct");
 assert(reconstruction.success, reconstruction.reason ?? "supported reconstruction should succeed");
-assert(player.holdsInventory.inventory.includes("knight-steelsword"), "reconstruction grants the child item");
-assert(player.tracksProgression.essences.yellow === 0, "reconstruction deducts its authored essence cost");
+assert(player.holdsInventory.inventory.includes("cave-vest-t2"), "reconstruction grants the child item");
+assert(player.tracksProgression.essences.red === 0, "reconstruction deducts its authored essence cost");
 
 // Stance craft and default assignment are the player-facing build operations;
 // no bot-only active-stance mutation is involved.
 const stanceRecipe = STANCE_RECIPE_DATABASE.get("stance-recipe-offensive")!;
 player.tracksProgression.biomeLevel.plains = 7;
 player.tracksProgression.essences.yellow = stanceRecipe.cost.yellow ?? 0;
-player.tracksProgression.catalysts.alacrity = 1;
 const stance = craftStanceRecipe(world, player, stanceRecipe.id);
 assert(stance.success, stance.reason ?? "stance craft should succeed");
 assert(player.tracksProgression.knownStances.includes("offensive-stance"), "stance craft learns the stance");
@@ -214,22 +213,29 @@ const t1Profile: TierEntryProfile = { ...structuredClone(profile), id: "earned-t
 const t1Result = applyTierEntryProfile(world, player, t1Profile);
 assert(t1Result.success, t1Result.reason ?? "root-only T1 entry applies");
 assert(player.usesSkills.unlockedSkills.join() === "cadence-root", "T1 import does not add a frame");
-assert(player.tracksProgression.playerTier === 1 && player.tracksProgression.currentSkillTier === 1, "T1 progression stays T1");
+assert((player.tracksProgression.playerTier as number) === 1 && player.tracksProgression.currentSkillTier === 1, "T1 progression stays T1");
 assert(player.tracksProgression.level === 127, "earned level is retained");
 assert(player.hasHealth.hp === player.hasHealth.maxHp && !player.usesAutocombat.auto, "entry resets HP and auto");
 assert(!applyTierEntryProfile(world, player, { ...t1Profile, frameId: "cadence-balanced" }).success, "T1 rejects frame injection");
 assert(!applyTierEntryProfile(world, player, { ...t1Profile, spawnNodeId: "node-t1-plains-01" }).success, "T1 entry cannot bypass travel");
 
 // V1d's earned state is a permanent regression fixture, not a synthetic kit.
-const earned = JSON.parse(readFileSync(new URL("./fixtures/v1d-earned-t1-state.json", import.meta.url), "utf8"));
+const earned = JSON.parse(readFileSync(join(__dirname, "fixtures/v1d-earned-t1-state.json"), "utf8"));
 const earnedProfile = tierEntryProfileFromT1Snapshot({ schemaVersion: 1,
   snapshotKind: "tier2-handoff", snapshotId: "v1d-regression", frameId: null, state: earned.state,
 } as T1CharacterSnapshot, CLEARING_NODE_ID, 1);
 const earnedResult = applyTierEntryProfile(world, player, earnedProfile);
 assert(earnedResult.success, earnedResult.reason ?? "actual V1d state imports");
 // Rebuilt from the V1d gear under the current armor data (164 before the 2026-09-25 defense rebudget).
-const EARNED_MAX_HP = 166;
-assert(player.hasHealth.maxHp === EARNED_MAX_HP, "actual prepared defensive stats reconstruct without a frame");
+// The pin is the pool the GEAR buys. The per-tier pool raise (design §20) lands on
+// top of it at recalc, so it is read from the config rather than baked in again; the
+// tolerance is the second rounding the class affinity fold applies after the raise.
+const EARNED_UNRAISED_MAX_HP = 166;
+const EARNED_MAX_HP = player.hasHealth.maxHp;
+assert(
+  Math.abs(EARNED_MAX_HP - EARNED_UNRAISED_MAX_HP * poolFactorForTier(1)) <= 1,
+  `actual prepared defensive stats reconstruct without a frame (got ${EARNED_MAX_HP})`,
+);
 assert(JSON.stringify(player.holdsInventory.equipment) === JSON.stringify(earnedProfile.equipment), "earned equipment survives import");
 assert(JSON.stringify(player.tracksProgression.runesEquipped) === JSON.stringify(earnedProfile.runesEquipped), "earned ordered rules survive import");
 assert(JSON.stringify(player.tracksProgression.essences) === JSON.stringify(earnedProfile.wallet.essences), "earned wallet survives import");
@@ -237,7 +243,7 @@ assert(earnedResult.spawnView && validateSpawn(earnedProfile, earnedResult.spawn
 // Night 1 failed after a later tick had dealt 0.0406 damage and added a buff.
 // Later mutation must not change the evidence attached to the reset response.
 player.hasHealth.hp -= 0.0406;
-player.hasStatus.activeBuffs.push({ id: "entry-race", name: "Entry race", remainingMs: 1000 } as any);
+player.hasStatus.activeBuffs!.push({ id: "entry-race", name: "Entry race", remainingMs: 1000 } as any);
 assert(earnedResult.spawnView.hp === EARNED_MAX_HP && earnedResult.spawnView.activeBuffs.length === 0, "spawn evidence is deeply detached from later combat");
 const invalidView = structuredClone(earnedResult.spawnView);
 invalidView.hp -= 0.0406;
@@ -265,7 +271,7 @@ for (const patch of [{ selectedRange: "energy-range-far" }, { skillPoints: 1 }, 
 
 // Read-only qualification of the actual earned checkpoint in this in-memory world.
 {
-  const checkpointPath = process.argv[2] ?? new URL("./fixtures/v1m-earned-t3-snapshot.json", import.meta.url);
+  const checkpointPath = process.argv[2] ?? join(__dirname, "fixtures/v1m-earned-t3-snapshot.json");
   const raw = readFileSync(checkpointPath, "utf8");
   const snapshot = JSON.parse(raw) as T1CharacterSnapshot;
   const actual = tierEntryProfileFromT1Snapshot(snapshot, "node-t3-sanctuary", 3);

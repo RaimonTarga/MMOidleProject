@@ -164,6 +164,7 @@ export function registerNormalHit(): void {
       const damageMult = Math.max(0, passives['energy.awakened-damage-mult'] ?? AWAKENED_MULT);
       ctx.damage = Math.round(ctx.damage * damageMult);
       ctx.metadata['empoweredAttack'] = true;
+      ctx.metadata['mechanicConsumed'] = true; // a spent charge is the mechanic firing
       energy.awakenedCharges--;
     }
 

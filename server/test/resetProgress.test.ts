@@ -1,4 +1,5 @@
 import { baseRecoveryForTier } from '@mmo-idle/shared';
+import type { PassiveKey } from '@mmo-idle/shared';
 import {
   DEFAULT_RUNE_LOADOUT,
   GAME_CONFIG,
@@ -12,7 +13,7 @@ import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { resetPlayerProgress } from "../src/admin/gameActions";
 import { World } from "../src/world/World";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -35,8 +36,8 @@ const slices: PersistedPlayerSlices = {
     level: 99,
     skillPoints: 7,
     essences: { red: 10, blue: 20, green: 30, yellow: 40, purple: 50 },
-    catalysts: { alacrity: 8, brutality: 3 },
-    catalystProgress: { alacrity: 91, volatility: 42 },
+    shards: { tempo: 8, empowered: 3 },
+    capstones: { forest: 2 },
     biomeXP: { plains: 500 },
     biomeLevel: { plains: 4 },
     unlockedRecipes: ["recipe-a"],
@@ -64,7 +65,7 @@ const slices: PersistedPlayerSlices = {
   },
   usesSkills: {
     unlockedSkills: ["cadence"],
-    passives: { "cadence.threshold": 3 },
+    passives: { ["cadence.threshold" as PassiveKey]: 3 },
     selectedClass: "cadence",
     selectedSubVariant: "balanced",
     selectedRange: "cadence-range-close",
@@ -86,10 +87,10 @@ assert(
   Object.values(progression.essences).every((amount) => amount === 0),
   "all essence balances should reset",
 );
-assert(Object.keys(progression.catalysts).length === 0, "catalysts should reset");
+assert(Object.keys(progression.shards).length === 0, "lineage shards should reset");
 assert(
-  Object.keys(progression.catalystProgress).length === 0,
-  "catalyst progress should reset",
+  Object.keys(progression.capstones).length === 0,
+  "capstones should reset",
 );
 assert(Object.keys(progression.biomeXP).length === 0, "biome XP should reset");
 assert(Object.keys(progression.biomeLevel).length === 0, "biome levels should reset");

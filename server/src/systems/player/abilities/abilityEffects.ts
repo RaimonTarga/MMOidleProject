@@ -63,6 +63,7 @@ import type {
 import type { World } from "../../../world/World";
 import type { WorldLogActor } from "@mmo-idle/shared";
 import { techniquePowerPctFor } from "./abilityKata";
+import { onTechniqueResolved } from "../../combat/techniqueResolved";
 
 /** Reporting-only: Technique/Sweep adapter contribution for combat-run diagnostics. */
 function recordTechniqueAdapter(
@@ -391,6 +392,29 @@ function applyTechniqueRider(
   // Riders act on enemy-facing hits only.
   if (ctx.attackerType !== "player" || ctx.defenderType !== "monster") return;
 
+  // The Technique resolution seam (`combat/techniqueResolved.ts`) fires HERE
+  // rather than in the listener above, because this is the one place every armed
+  // shape — a plain rider, a Conduit formation delivery, a Charge's landing blow —
+  // actually lands. An armed charge the fight never consumed pays nothing, which
+  // is the point of "lands". It runs BEFORE `formationBasis` is read below, so a
+  // `technique-window` it spends is already folded into `empoweredMultiplier` when
+  // `addEmpoweredDamage` divides by it — which is what keeps the window and the
+  // rider additive instead of compounding.
+  //
+  // A formation Technique reaches this function once per living summon, each
+  // carrying a share of one armed payload, so it keys off the claim that
+  // completes it. Firing per delivery paid the packet payoff N times at full
+  // magnitude while the rider's own damage was weight-divided, against the
+  // "ONCE PER LANDING" contract in `combat/techniqueResolved.ts`.
+  // The FIRST delivery, not the last: the last pending body can die or forfeit
+  // and never claim, which left the cast unresolved (review finding P8).
+  if (!formationDelivery || formationDelivery.isFirstDelivery) {
+    onTechniqueResolved(world, ctx.attacker, ability, {
+      ctx,
+      target: ctx.defender,
+    });
+  }
+
   const effect = techniqueEffect(ctx.attacker, ability);
   const formationBasis = formationDelivery
     ? Math.max(1, Math.round(
@@ -654,10 +678,21 @@ function addEmpoweredDamage(
     ));
     return;
   }
-  // One multiplier per hit: a rider landing on the class's empowered hit scales
-  // the hit as it was before the empowered multiplier, so the two add instead of
+  // One multiplier per hit: a rider landing on an already-multiplied hit scales
+  // the hit as it was BEFORE that multiplier, so the two add instead of
   // compounding (Charge wired to Empowered Ready was a x2 outlier).
-  const empoweredMult = ctx.metadata["empoweredAttack"] ? Number(ctx.metadata["empoweredMultiplier"] ?? 1) : 1;
+  //
+  // The divisor is `empoweredMultiplier` alone, never gated on the
+  // `empoweredAttack` marker. The marker means "the class mechanic fired this
+  // hit", which is strictly narrower than "this hit already carries a
+  // multiplier": a lineage `damage-window` card and a Light/Balanced frame window
+  // both fold themselves into `empoweredMultiplier` WITHOUT setting the marker,
+  // because setting it would restart cooldowns and fire every `mechanic-fired`
+  // card. Gating on the marker therefore skipped the division for exactly those
+  // sources and let a rider compound with the window — which is what
+  // `lineageCards.ts` already promises does not happen ("a Technique rider
+  // reading `empoweredMultiplier` sees one honest number").
+  const empoweredMult = Number(ctx.metadata["empoweredMultiplier"] ?? 1);
   const basis = empoweredMult > 1 ? formationBasis / empoweredMult : formationBasis;
   ctx.damage = Math.max(0, Math.round(
     ctx.damage + basis * Math.max(0, mult - 1),

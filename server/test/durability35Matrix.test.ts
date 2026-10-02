@@ -1,4 +1,4 @@
-import { MONSTER_DATABASE, NODE_BIOMES } from '@mmo-idle/shared';
+import { MONSTER_DATABASE, NODE_BIOMES, blendEntries } from '@mmo-idle/shared';
 import {
   DURABILITY35_ADOPTED_FROM,
   DURABILITY35_ATTACK,
@@ -9,7 +9,7 @@ import {
   installDurability35Treatment,
 } from '../bench/balance/durability35Spec';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -34,9 +34,11 @@ assertDurability35Definitions();
 
   const nodes = [...new Set(block.cells.map((c) => c.nodeId))].sort();
   assert(nodes.join(',') === DURABILITY35_NODES.slice().sort().join(','), `node drift: ${nodes.join(',')}`);
-  // Two genuinely different contexts, not one node run twice.
-  const modifiers = DURABILITY35_NODES.map((n) => (NODE_BIOMES[n] as { modifier?: string }).modifier);
-  assert(new Set(modifiers).size === 2, `the two contexts must differ: ${modifiers.join(',')}`);
+  // Two genuinely different contexts, not one node run twice. Was each node's
+  // `modifier`; Phase 2b deleted that field from T1 nodes, so the dominant
+  // family of each node's authored blend is the live equivalent.
+  const dominantFamilies = DURABILITY35_NODES.map((n) => blendEntries(NODE_BIOMES[n]!.blend!)[0]!.family);
+  assert(new Set(dominantFamilies).size === 2, `the two contexts must differ: ${dominantFamilies.join(',')}`);
 
   // Matched pairs: only the arm label may differ.
   for (const c of control) {

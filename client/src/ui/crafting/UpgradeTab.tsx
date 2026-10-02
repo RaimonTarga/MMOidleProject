@@ -10,20 +10,20 @@ import {
   getMaxUpgrade,
   requiredBiomeLevelForUpgrade,
   upgradeCostFor,
-  upgradeCatalystCostFor,
   upgradeCeilingFromGlobalMastery,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import { tutorialFocusAtom } from '../../tutorial/atoms';
 import {
   biomeLevelAtom,
-  catalystsAtom,
+  capstonesAtom,
   equipmentAtom,
   essencesAtom,
   globalMasteryAtom,
   inventoryAtom,
   itemUpgradesAtom,
   playerNodeIdAtom,
+  shardsAtom,
 } from '../../hud/atoms';
 import { SLOT_LABELS, biomeName, tierColor } from './common';
 import { CostDisplay, WalletSummary } from './shared';
@@ -99,7 +99,8 @@ export function UpgradeTab() {
   const equipment    = useAtomValue(equipmentAtom);
   const itemUpgrades = useAtomValue(itemUpgradesAtom);
   const essences     = useAtomValue(essencesAtom);
-  const catalysts    = useAtomValue(catalystsAtom);
+  const shards       = useAtomValue(shardsAtom);
+  const capstones    = useAtomValue(capstonesAtom);
   const biomeLevel   = useAtomValue(biomeLevelAtom);
   const gm           = useAtomValue(globalMasteryAtom);
   const nodeId       = useAtomValue(playerNodeIdAtom);
@@ -155,12 +156,18 @@ export function UpgradeTab() {
   // off the list entirely. Equipped items sort first, then by tier, then name.
   // The dev test room also exposes legacy/dev gear so it can be bumped without
   // needing a biome-backed recipe.
+  //
+  // Weapons are excluded: the progression rework's lineage tree (LineageTreePanel,
+  // opened from the weapon slot) owns weapon progression now — the +N ladder stays
+  // live for armor/recovery/mobility/core/relic until their own trees ship (plan
+  // Phase 4).
   const items = useMemo(() => {
     const ids = new Set<string>([...inventory, ...equippedSet]);
     return Array.from(ids)
       .map(id => ITEM_DATABASE.get(id))
       .filter((def): def is NonNullable<typeof def> =>
         !!def
+        && def.slot !== 'weapon'
         && (isTestRoom || !!def.biomeGroup)
         && (
           (itemUpgrades[def.id] ?? 0) < getMaxUpgrade(def)
@@ -176,7 +183,7 @@ export function UpgradeTab() {
   const stepFor = (def: UpgradeItem) => {
     const currentPlus = itemUpgrades[def.id] ?? 0;
     const haveLevel = def.biomeGroup ? (biomeLevel[def.biomeGroup] ?? 0) : 0;
-    const check = checkUpgrade({ item: def, currentPlus, biomeLevel: haveLevel, essences, catalysts, globalMastery: gm });
+    const check = checkUpgrade({ item: def, currentPlus, biomeLevel: haveLevel, essences, globalMastery: gm });
     const isMaxed = currentPlus >= getMaxUpgrade(def);
     return { currentPlus, haveLevel, isMaxed, canUpgrade: !isMaxed && (isTestRoom || check.ok) };
   };
@@ -185,7 +192,7 @@ export function UpgradeTab() {
 
   return (
     <div className="craft-body craft-body--browser">
-      <WalletSummary essences={essences} catalysts={catalysts} />
+      <WalletSummary essences={essences} shards={shards} capstones={capstones} />
       <BrowserPane
         label="Upgradeable items"
         className="upgrade-browser"
@@ -234,7 +241,6 @@ export function UpgradeTab() {
           const levelMet      = isTestRoom || haveLevel >= reqLevel;
           const masteryMet    = isTestRoom || gm >= reqMastery;
           const cost          = upgradeCostFor(def, currentPlus + 1);
-          const catalystCost  = upgradeCatalystCostFor(def, currentPlus + 1);
           const cardResult    = result?.itemId === def.id ? result : null;
 
           return (
@@ -297,7 +303,7 @@ export function UpgradeTab() {
                 <>
                   <div className="make-detail__cost-label">Cost</div>
                   {cost && (
-                    <CostDisplay cost={cost} essences={essences} catalystCost={catalystCost ?? undefined} catalysts={catalysts} />
+                    <CostDisplay cost={cost} essences={essences} />
                   )}
                   <div className="upgrade-detail__reqs">
                     <span className={`craft-upgrade__req${levelMet ? ' craft-upgrade__req--ok' : ' craft-upgrade__req--bad'}`}>

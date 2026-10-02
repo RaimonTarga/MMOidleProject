@@ -1,4 +1,4 @@
-import type { AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, EvolveMode, StanceSlot, Vec2 } from '@mmo-idle/shared';
+import type { AbilityNodeRow, AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, EvolveMode, RowKind, StanceSlot, Vec2 } from '@mmo-idle/shared';
 import { intents } from './intents';
 
 type RecipeUnlockListener = (name: string, biomeGroup: string) => void;
@@ -126,6 +126,36 @@ export const hudBus = {
   /** Called by the Upgrade tab — GameScene picks this up and emits the socket event. */
   requestUpgradeItem(itemId: string): void {
     intents.emit('upgradeItem', itemId);
+  },
+
+  /** Called by LineageTreePanel — buy a card. Permanent; costs essence + lane shards. */
+  requestLineageUnlockCard(lineageId: string, cardId: string): void {
+    intents.emit('lineageUnlockCard', { lineageId, cardId });
+  },
+
+  /** Called by LineageTreePanel — make an owned card active for its row. Free, instant. */
+  requestLineageSetActive(lineageId: string, row: RowKind, cardId: string | null): void {
+    intents.emit('lineageSetActive', { lineageId, row, cardId });
+  },
+
+  /** Called by LineageTreePanel — pay a gate to unlock a new form. */
+  requestLineageUnlockForm(lineageId: string, recipeId: string): void {
+    intents.emit('lineageUnlockForm', { lineageId, recipeId });
+  },
+
+  /** Called by LineageTreePanel — wear an owned form. Free; mirrors equipItem. */
+  requestLineageWearForm(lineageId: string, recipeId: string): void {
+    intents.emit('lineageWearForm', { lineageId, recipeId });
+  },
+
+  /** Called by the Abilities panel — buy an ability node (design §19). */
+  requestAbilityUnlockNode(abilityId: string, optionId: string): void {
+    intents.emit('abilityUnlockNode', { abilityId, optionId });
+  },
+
+  /** Called by the Abilities panel — make an owned node active for its row. */
+  requestAbilitySetNode(abilityId: string, row: AbilityNodeRow, optionId: string | null): void {
+    intents.emit('abilitySetNode', { abilityId, row, optionId });
   },
 
   /** Navigate the player to a node via BFS auto-path. `path` is the sequence of

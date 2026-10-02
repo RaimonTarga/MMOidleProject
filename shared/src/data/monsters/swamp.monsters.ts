@@ -19,8 +19,13 @@ import type { MonsterDefinition } from './types';
 //
 // CHARGE = closes the gap for SLOW big-hitters (anti-kite for the ponderous).
 // HIGH BASE SPEED = the fast-ambusher identity. RANGED = anti-kite from afar.
-// Squishy biomes (plains/forest) carry NO plating/DR (fast weapons shred them —
-// intended); CAVE elites carry DR/plating (where slow/piercing weapons earn keep).
+// PLATING RULE SUPERSEDED (progression rework, 2026-10-01, PROVISIONAL): plains and
+// forest used to carry NO plating/DR at all ("fast weapons shred them — intended").
+// A family's `punishes` field is now a contract, and flat `plating` is the only stat
+// that punishes Tempo (`packets.ts`: "weak against fortified plating"), so Plains Herd
+// and Forest Grove — both Tempo-punishing — must carry some. They still carry NO %DR,
+// so fast weapons still shred them; see monster-proposals-run3.md §1/§4.
+// CAVE elites carry DR/plating (where slow/piercing weapons earn keep).
 //
 // Rewards / ai wander+leash / colors / ids kept as-is. A few NAMES no longer
 // match their refactored shape (flagged inline) — rename in the cosmetic pass.
@@ -43,9 +48,24 @@ export const swampMonsterEntries = [
     id: 'bog-slime', name: 'Mire Ooze', color: 0x558833,
     // BASELINE POISON ENEMY. Weak direct attack; the stacking poison is the whole
     // threat. No extra mechanic, deliberately.
-    stats: { hp: 140, attack: 10, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 2000, pullRange: 165 },
+    // MIRE FAMILY (progression rework, 2026-10-01, PROVISIONAL) — the one MEASURED
+    // family inversion in the game: Affliction, the lane Mire DROPS, ranked last of six
+    // on its own node in both seeds at both bench caps, and the margin against its
+    // declared victim widened as sampling improved (-12.0pp at 90 s, -18.7pp at 270 s).
+    //  - hp 140 -> 300: Affliction fires on stacks reaching cap. At 140 HP a Mire body
+    //    died in three to five hits, so the stack ladder never reached its payoff on the
+    //    one node that is seven-tenths Mire. The family's own T3 body bog-lurker is
+    //    already 490, so this also removes an internal inconsistency.
+    //  - attack stays 10 ON PURPOSE: Mire is the low-direct-damage DoT body by design;
+    //    more HP must not become more pressure by accident.
+    stats: { hp: 300, attack: 10, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 2000, pullRange: 165 },
     behavior: 'melee', attackStyle: 'ooze-engulf', biome: 'swamp',
     rewards: { essence: 5, essenceType: 'purple', level: 1, biomeXp: 35 },
+    // evasion unset -> 0.15 (same pass): Mire declares `punishes: 'empowered'` and had
+    // no mechanism to do it — a multiplied hit that misses is the entire punishment.
+    // Inside the ≤ 0.25 ceiling and below bog-lurker's 0.25, so the line still
+    // escalates by tier.
+    evasion: 0.15,
     ai: { wanderRadius: 160, leashRange: 530, idleMinMs: 2000, idleMaxMs: 5500 },
     // Fewer, heavier, faster-ticking stacks than before. The old 4-stack/1500ms poison
     // needed ~6.6s of uninterrupted hits to reach cap, which is longer than the mob
@@ -68,6 +88,30 @@ export const swampMonsterEntries = [
     // slowed while the Ooze's poison stacks. Skipped on an evaded hit like every
     // other on-hit rider.
     slowEffect: { speedMult: 0.6, durationMs: 2000 },
+  }],
+
+  ['fen-hexer', {
+    id: 'fen-hexer', name: 'Fen Hexer', color: 0x6f6a3a,
+    // COVEN FAMILY, T1 (progression rework, 2026-10-01). The Bog Witch's lesser
+    // kin: a faceless reed-wrapped vessel that plants and casts MIRE HEX, a
+    // telegraphed slow. Weak normal attacks on purpose; the hex is the kit. The
+    // family's shard is Control — control answers control.
+    // PLACEHOLDER numbers seeded from the T1 Swamp band (toad 120/13); designer
+    // hand-edits before the lane bench.
+    // COVEN FAMILY (progression rework, 2026-10-01, PROVISIONAL): plating 0 -> 2.
+    // Coven declares `punishes: 'tempo'` and flat plating is the only stat that
+    // punishes Tempo; without it the contract had no mechanism. 2 matches `mud-toad`,
+    // the only other T1 Swamp body that carries any, and keeps the hex (not the
+    // statline) as the Hexer's weapon.
+    stats: { hp: 110, attack: 15, plating: 2, damageReduction: 0, speed: 32, attackRange: 170, attackCooldown: 2400, pullRange: 210 },
+    behavior: 'ranged', attackStyle: 'hex', biome: 'swamp',
+    rewards: { essence: 5, essenceType: 'purple', level: 1, biomeXp: 32 },
+    chargedAttack: {
+      name: 'Mire Hex', castMs: 1300, cooldownMs: 7000, initialCooldownMs: 1500,
+      multiplier: 1.0, fx: 'wither',
+      appliesSlow: { speedMult: 0.55, durationMs: 3000 },
+    },
+    ai: { wanderRadius: 180, leashRange: 540, idleMinMs: 1500, idleMaxMs: 4500 },
   }],
 
   // ── SWAMP T2 — DoT engines; trivial direct hits, brutal stacking poison ──

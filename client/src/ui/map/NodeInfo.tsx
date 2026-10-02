@@ -3,16 +3,15 @@ import { useAtomValue } from 'jotai';
 import type {
   EssenceType,
   MonsterDefinition,
-  NodeModifierFamily,
 } from '@mmo-idle/shared';
 import {
   NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, ESSENCE_COLORS, ESSENCE_LABELS,
   essenceLabel,
-  catalystLabel, catalystFamilyLabel,
   coreEligibilityLabel, isRestrictedCore,
   relicRatingsFromPassives, relicRatingsFromEffects, resolveRelicComparison,
   NODE_MODIFIERS, MODIFIER_COLORS, MODIFIER_LABELS, MODIFIER_SUMMARIES,
-  modifierDetails,
+  FAMILY_DATABASE, blendEntries, nodeSpawnBlend,
+  capstoneMaterial, packetDefinition, shardName,
   biomeLevelCap, biomeXpForBiomeLevel, formatNodeCoord, formatRespawnRemaining, nodeIdToCoord,
   WORLD_REGIONS,
 } from '@mmo-idle/shared';
@@ -32,6 +31,7 @@ import { bfsPath } from './pathing';
 import { useMapClock } from './useMapClock';
 import { BiomeIcon } from './BiomeIcon';
 import { ModifierIcon } from './ModifierIcon';
+import { ShardIcon } from './ShardIcon';
 import {
   formatMonsterMechanics,
   monsterQuickStats,
@@ -58,18 +58,15 @@ interface NodeInfoProps {
 }
 
 // ── Expandable monster row ──────────────────────────────────────────────────────
-function MonsterRow({ m, isBoss, modifier, biomeTier, open, onToggle }: {
+function MonsterRow({ m, isBoss, open, onToggle }: {
   m: MonsterDefinition;
   isBoss: boolean;
-  modifier?: NodeModifierFamily;
-  biomeTier: number;
   open: boolean;
   onToggle: () => void;
 }) {
-  const effectiveModifier = isBoss ? undefined : modifier;
   const tags  = monsterTags(m);
-  const lines = formatMonsterMechanics(m, effectiveModifier, biomeTier);
-  const quick = monsterQuickStats(m, effectiveModifier, biomeTier);
+  const lines = formatMonsterMechanics(m);
+  const quick = monsterQuickStats(m);
   return (
     <div className={`map-monster${isBoss ? ' map-monster--boss' : ''}${open ? ' map-monster--open' : ''}`}>
       <button className="map-monster__row" onClick={onToggle}>
@@ -96,7 +93,7 @@ function MonsterRow({ m, isBoss, modifier, biomeTier, open, onToggle }: {
       {open && (
         <div className="map-monster__detail">
           <div className="map-monster__statgrid">
-            {monsterStatRows(m, effectiveModifier, biomeTier).map(cell => (
+            {monsterStatRows(m).map(cell => (
               <div key={cell.label} className="map-monster__statcell">
                 <span className="map-monster__statlabel">{cell.label}</span>
                 <span className="map-monster__statvalue">
@@ -176,9 +173,6 @@ function UnlockRow({ unlock, unlocked, open, onToggle, relicPreview, abilityCont
         <span className="map-recipe-cost">
           {costs.map(([type, amt]) => (
             <span key={type} style={{ color: ESSENCE_COLORS[type], marginLeft: 4 }}>{amt} {ESSENCE_LABELS[type]}</span>
-          ))}
-          {(Object.entries(unlock.catalystCost ?? {}) as [string, number][]).map(([group, amt]) => (
-            <span key={group} style={{ marginLeft: 4 }}>{amt} {catalystLabel(group)}</span>
           ))}
         </span>
       </button>
@@ -319,6 +313,24 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
   const accentColor  = isDungeon ? '#882222' : tileColor(biomeGroup);
 
   const modifier = NODE_MODIFIERS[nodeId];
+
+  // What the node is made of (design 12). `nodeSpawnBlend` resolves the authored
+  // blend against the mobs this tier can actually field, so the panel and the
+  // spawner always read the same vector -- a node cannot advertise a family it
+  // does not spawn.
+  const blend = nodeSpawnBlend(nodeId);
+  const blendRows = blend
+    ? blendEntries(blend.shares).map((row) => ({
+        share: row.share,
+        family: FAMILY_DATABASE.get(row.family)!,
+      }))
+    : [];
+  const dominantFamily = blendRows[0]?.family;
+  const dominantColor = dominantFamily
+    ? packetDefinition(dominantFamily.drops)?.color ?? accentColor
+    : accentColor;
+  const capstone = isDungeon ? capstoneMaterial(biomeGroup) : undefined;
+
   const monsterIds = biome.monsterPoolByTier[biomeTier] ?? [];
   const monsters   = monsterIds.map(id => MONSTER_DATABASE.get(id)).filter((m): m is MonsterDefinition => m !== undefined);
 
@@ -341,7 +353,7 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
   const xpCeil     = biomeXpForBiomeLevel(biomeGroup, biomeLevel + 1);
   const levelPct   = xpCeil > xpFloor ? Math.min(100, Math.max(0, (biomeXP - xpFloor) / (xpCeil - xpFloor)) * 100) : 100;
   const nextUnlock = unlockLevels.find(([reqLevel]) => reqLevel > biomeLevel);
-  const hasDetails = !!modifier || isDungeon || monsters.length > 0 || unlockLevels.length > 0;
+  const hasDetails = !!blend || !!modifier || isDungeon || monsters.length > 0 || unlockLevels.length > 0;
 
   return (
     <div className="map-node-info">
@@ -374,6 +386,16 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
                 {felledBoss
                   ? `Felled · back in ${formatRespawnRemaining(felledMarker!.respawnAt, mapNow)}`
                   : bosses.map((boss) => boss.name).join(', ') || 'Boss encounter'}
+              </dd>
+            </div>
+          )}
+          {dominantFamily && (
+            <div className="map-summary__row">
+              <dt>Mobs</dt>
+              <dd>
+                {dominantFamily.name}
+                {' · '}
+                {shardName(dominantFamily.drops)}
               </dd>
             </div>
           )}
@@ -422,7 +444,54 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
       )}
 
       {showDetails && (<>
-      {modifier && (
+      {/* The node's families and the shards they drop (design 12). A node with no
+          authored blend -- every dungeon, and all of T2-T4 until their family
+          tables exist -- still shows its modifier band; Phase 2b deletes that
+          branch along with modifiers. */}
+      {blend && dominantFamily && (
+        <section className="map-modifier" style={{ borderLeftColor: dominantColor }}>
+          <div className="map-modifier__head">
+            <span className="map-modifier__chip" style={{ background: dominantColor }}>
+              <ShardIcon packet={dominantFamily.drops} size={16} />
+              <span>{dominantFamily.name}</span>
+            </span>
+            <span className="map-modifier__density-tag">
+              {Math.round((blendRows[0]?.share ?? 0) * 100)}% of spawns here
+            </span>
+          </div>
+          <p className="map-modifier__summary">
+            Every kill drops the shard of the family it came from.
+          </p>
+          <dl className="map-family-rows">
+            {blendRows.map(({ family, share }, index) => (
+              <div
+                key={family.id}
+                className={`map-family-row${index > 0 ? ' map-family-row--minor' : ''}`}
+              >
+                <dt>{family.name}</dt>
+                <dd>
+                  <span className="map-family-row__share">{Math.round(share * 100)}%</span>
+                  <ShardIcon packet={family.drops} size={12} />
+                  <span>{shardName(family.drops)}</span>
+                </dd>
+              </div>
+            ))}
+          </dl>
+          {blend.unavailable.length > 0 && (
+            <div className="map-family__absent">
+              Absent at Tier {biomeTier}:{' '}
+              {blend.unavailable
+                .map((id) => FAMILY_DATABASE.get(id)?.name ?? id)
+                .join(', ')}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* T2-T4 nodes have no family blend yet, so the modifier is shown as pure
+          identity -- a name, not a mechanical promise (progression rework
+          Phase 2b deleted the stat/population/reward math). */}
+      {!blend && modifier && (
         <section
           className="map-modifier"
           style={{ borderLeftColor: MODIFIER_COLORS[modifier.modifier] }}
@@ -437,19 +506,6 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
             </span>
           </div>
           <p className="map-modifier__summary">{MODIFIER_SUMMARIES[modifier.modifier]}</p>
-          <dl className="map-modifier__values">
-            {modifierDetails(modifier.modifier, biomeTier).map((detail) => (
-              <div key={detail.label} className="map-modifier__value-row">
-                <dt>{detail.label}</dt>
-                <dd className={`map-modifier__value--${detail.direction}`}>
-                  {detail.value}
-                </dd>
-              </div>
-            ))}
-          </dl>
-          <div className="map-modifier__grant">
-            Grants: <strong>{catalystFamilyLabel(modifier.modifier)}</strong>
-          </div>
         </section>
       )}
 
@@ -458,6 +514,11 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
       {felledMarker && felledMarker.respawnAt > mapNow && felledBoss && (
         <section className="map-info-section">
           <div className="map-info-section__title map-info-section__title--boss">Boss</div>
+          {capstone && (
+            <div className="map-boss-capstone">
+              Drops <strong>{capstone.name}</strong> on every kill
+            </div>
+          )}
           <div className="map-boss-felled">
             <span className="map-boss-felled__tag">[FELLED]</span>
             <span className="map-boss-felled__name">{felledBoss.name}</span>
@@ -471,12 +532,17 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
       {!felledMarker && bosses.length > 0 && (
         <section className="map-info-section">
           <div className="map-info-section__title map-info-section__title--boss">Boss</div>
+          {capstone && (
+            <div className="map-boss-capstone">
+              Drops <strong>{capstone.name}</strong> on every kill -- the gate material
+              for this biome's forms
+            </div>
+          )}
           {bosses.map(m => (
             <MonsterRow
               key={m.id}
               m={m}
               isBoss
-              biomeTier={biomeTier}
               open={openMonster === m.id}
               onToggle={() => setOpenMonster(prev => prev === m.id ? null : m.id)}
             />
@@ -492,8 +558,6 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
               key={m.id}
               m={m}
               isBoss={false}
-              modifier={modifier?.modifier}
-              biomeTier={biomeTier}
               open={openMonster === m.id}
               onToggle={() => setOpenMonster(prev => prev === m.id ? null : m.id)}
             />

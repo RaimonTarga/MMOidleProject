@@ -21,7 +21,7 @@ import {
 import { BOSS2_BLOCKS, BOSS2_BOSSES, BOSS2_SEED } from '../bench/balance/boss2Spec';
 import { resolveSurveyPackage } from '../bench/balance/ttkSurveySpec';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -142,7 +142,7 @@ assertBoss3Definitions();
       // Neither arm may claim historical corroboration: Spirit's only historical clear
       // is against Apex Timberclaw, and a substituted package has no history at all.
       const treatments = BOSS3_ARMS.map((a) => a.treatment);
-      assert(treatments.includes(cell.treatment!), `${cell.id}: unknown treatment ${cell.treatment}`);
+      assert(treatments.includes(cell.treatment as (typeof treatments)[number]), `${cell.id}: unknown treatment ${cell.treatment}`);
       assert(!/corroborated/.test(cell.treatment!), `${cell.id}: no Boss3 row is a historical result`);
       for (const id of Object.values(cell.build.gearItemIds)) {
         const recipe = RECIPE_DATABASE.get(id!);

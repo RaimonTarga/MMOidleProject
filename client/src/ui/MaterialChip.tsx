@@ -1,54 +1,70 @@
 import {
-  catalystLabel,
+  capstoneMaterialName,
   ESSENCE_COLORS,
   ESSENCE_LABELS,
-  MODIFIER_COLORS,
+  packetDefinition,
   type EssenceType,
-  type NodeModifierFamily,
+  type PacketId,
 } from '@mmo-idle/shared';
 import { GameIcon, type IconSource } from './GameIcon';
-import { catalystIconSource, essenceIconSource } from './economyIcons';
+import { capstoneIconSource, essenceIconSource, shardIconSource } from './economyIcons';
 import './materialChip.css';
 
 /**
- * Anything the economy can hold or charge for. Essence types and catalyst
- * families are separate authoritative wallets; this is a presentation-only
- * union so one component can render either.
+ * Anything the economy can hold or charge for. `shard` (keyed by lineage
+ * packet) and `capstone` (keyed by biome) are the two lineage-tree wallets
+ * from the progression rework (design §12). This is a presentation-only
+ * union so one component can render any of them.
  */
 export type MaterialRef =
   | { kind: 'essence'; type: EssenceType }
-  | { kind: 'catalyst'; family: string };
+  | { kind: 'shard'; packet: PacketId }
+  | { kind: 'capstone'; biome: string };
 
 export function essenceMaterial(type: EssenceType): MaterialRef {
   return { kind: 'essence', type };
 }
 
-/** Catalyst wallets are keyed by pace family; unknown keys still render. */
-export function catalystMaterial(family: string): MaterialRef {
-  return { kind: 'catalyst', family };
+/** Lineage shard wallets are keyed by packet. */
+export function shardMaterial(packet: PacketId): MaterialRef {
+  return { kind: 'shard', packet };
+}
+
+/** Boss capstone wallets are keyed by biome. */
+export function capstoneMaterial(biome: string): MaterialRef {
+  return { kind: 'capstone', biome };
 }
 
 export function materialKey(material: MaterialRef): string {
-  return material.kind === 'essence'
-    ? `essence:${material.type}`
-    : `catalyst:${material.family}`;
+  switch (material.kind) {
+    case 'essence': return `essence:${material.type}`;
+    case 'shard': return `shard:${material.packet}`;
+    case 'capstone': return `capstone:${material.biome}`;
+  }
 }
 
 export function materialLabel(material: MaterialRef): string {
-  return material.kind === 'essence'
-    ? ESSENCE_LABELS[material.type]
-    : catalystLabel(material.family);
+  switch (material.kind) {
+    case 'essence': return ESSENCE_LABELS[material.type];
+    case 'shard': return `${packetDefinition(material.packet)?.name ?? material.packet} shard`;
+    case 'capstone': return capstoneMaterialName(material.biome);
+  }
 }
 
 export function materialAccent(material: MaterialRef): string {
-  if (material.kind === 'essence') return ESSENCE_COLORS[material.type];
-  return MODIFIER_COLORS[material.family as NodeModifierFamily] ?? 'var(--hud-primary)';
+  switch (material.kind) {
+    case 'essence': return ESSENCE_COLORS[material.type];
+    case 'shard': return packetDefinition(material.packet)?.color ?? 'var(--hud-primary)';
+    case 'capstone': return '#d9b25c';
+  }
 }
 
 export function materialIconSource(material: MaterialRef): IconSource {
-  return material.kind === 'essence'
-    ? essenceIconSource(material.type)
-    : catalystIconSource(material.family as NodeModifierFamily);
+  switch (material.kind) {
+    case 'essence': return essenceIconSource(material.type);
+    case 'shard': return shardIconSource(material.packet);
+    case 'capstone': return capstoneIconSource(material.biome);
+  }
 }
 
 export interface MaterialChipProps {
@@ -67,7 +83,7 @@ export interface MaterialChipProps {
 }
 
 /**
- * The single way an essence or catalyst quantity is drawn: packed icon, amount,
+ * The single way an essence, shard or capstone quantity is drawn: packed icon, amount,
  * and — for costs — the held balance plus an affordable/short state. Every
  * wallet summary and every recipe cost in the game routes through this, so a
  * player learns one visual grammar for the economy.

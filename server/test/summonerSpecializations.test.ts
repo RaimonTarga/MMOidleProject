@@ -22,7 +22,7 @@ import { SUMMONER_T4_BUFFS } from '../src/systems/classes/archetypes/summoner/sp
 import { pickLivingMinion } from '../src/systems/classes/archetypes/summoner/damageSponge';
 import { runPlayerAttack } from '../src/systems/combat/engine/combat';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -55,11 +55,12 @@ function slices(id: string, specId: string, range = 'summoner-range-mid'): Persi
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 4, currentSkillTier: 4,
       bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { technique: null, guard: null },
+      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
@@ -173,7 +174,7 @@ function minions(world: World, player: ReturnType<typeof attach>) {
   updateSummonerArchetype(world, 0, 2_300);
   assert(player.controlsSummons!.harrierMarksByTarget[target.isMonster.id]!.slotIds.length === 1,
     'dead Harrier slots must stop contributing to the offensive mark');
-  assert(effect.stacks === 1, 'Harried target status must mirror living unique contributors');
+  assert((effect.stacks as number) === 1, 'Harried target status must mirror living unique contributors');
 }
 
 // Endless Swarm: count increases while offense/proc budgets stay normalized, and surplus entities clean up.
@@ -194,7 +195,7 @@ function minions(world: World, player: ReturnType<typeof attach>) {
     .filter((id) => id !== 'summoner-light-t3-b')
     .concat('summoner-light-t3-a');
   updateSummonerArchetype(world, 0, 2_000);
-  assert(player.summonsMinions!.targetCount === 6 && minions(world, player).length === 6,
+  assert((player.summonsMinions!.targetCount as number) === 6 && minions(world, player).length === 6,
     'leaving Endless Swarm must remove its two surplus ECS entities');
 }
 
@@ -327,7 +328,7 @@ function minions(world: World, player: ReturnType<typeof attach>) {
   assert(charges[0] === 2, 'a chaotic dead swing must preserve its Grand Ritual charge');
   player.usesSkills.passives['weapon.dead-swing-interval'] = 0;
   runFormationAttack(world, player, formation[0]!, target, 11_200);
-  assert(charges[0] === 1, 'a landed empowered summon attack consumes exactly one Ritual charge');
+  assert((charges[0] as number) === 1, 'a landed empowered summon attack consumes exactly one Ritual charge');
   updateSummonerArchetype(world, 20_000, 31_200);
   assert(player.summonsMinions!.ritualCharges!.at(-1) === 0,
     'reconstruction after a ritual must not retroactively receive that ritual package');

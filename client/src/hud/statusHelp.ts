@@ -111,6 +111,8 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'energy-reservoir': m('Reservoir', 'A stored pool that scales the size of your discharge.'),
   'energy-equilibrium': m('Equilibrium', 'Holding energy in balance pays a flat damage bonus.'),
   'energy-sm-pool': m('Stored charge', 'True damage held in reserve — it ignores plating and damage reduction when it is spent.'),
+  'energy-frame-surge': m('Surge', 'Wraith’s frame loop. The discharge opened a window where every hit generates more energy, so the loop feeds the next discharge. The window is shorter than one charge cycle, which is why attack speed raises its uptime instead of merely shortening the wait.'),
+  'energy-frame-overcharge': m('Overcharge', 'Phantasm’s frame loop. The pool keeps taking energy above its cap before the discharge arms, and each hit’s worth banked here adds to the discharge’s damage. The discharge spends the whole bank and staggers what it hits.'),
 
   // -- DoT -------------------------------------------------------------------
   'dot-vigor': m('Vigor', 'Your own damage and attack speed rise while your poison is working on the target.'),
@@ -126,6 +128,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'reload-cover-fire': m('Cover fire', 'You take reduced damage while reloading — the downtime stops being a hole in your defense.'),
   'reload-momentum': m('Momentum', 'Each completed reload grants a stack that raises attack speed and shortens reload time. Stacks persist through combat and decay slowly out of combat.'),
   'reload-cannon': m('Cannon', 'Shots stored to fire mid-reload, so the magazine break is not silent.'),
+  'reload-frame-ramp': m('Ramp', 'Artillerist’s frame loop. Every round fired raises attack speed, with no cap before the magazine runs dry, and your damage climbs with the same ramp. Reloading is the reset, which is what makes the long clip the climb and the reload the cool-down.'),
 
   // -- Summoner --------------------------------------------------------------
   'summoner-volatile-brood': m('Volatile brood', 'One summon at a time is armed to detonate. Between detonations the next one is being prepared.'),
@@ -137,6 +140,9 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'summoner-colossus': m('Colossus', 'Your formation is condensed into a single large summon. While it is down, it is reconstructing.'),
   'summoner-battle-bond': m('Battle bond', 'Fixed contributions accumulate toward a linked strike shared between you and your summons.'),
   'summoner-twin-covenant': m('Twin covenant', 'Two complementary twins. If one falls the survivor keeps a bounded fallback rather than the full pairing.'),
+  'summoner-frame-frenzy': m('Frenzy', 'Splinter’s frame loop. Every living body has now struck the same target, completing a formation cycle, and the swarm answers with a short burst of extra attack speed and on-hit damage. The window is shorter than one swing, so keeping the cycle turning is the whole skill.'),
+  'summoner-frame-link': m('Link', 'Effigy’s frame loop. Each body banks a charge every time it hits. When both bodies have struck the same target inside the window, the pair spends the whole bank as one linked slam that also staggers the target. Losing a body means there is no pair and nothing to spend.'),
+  'summoner-frame-line': m('Line', 'Consort’s frame loop. While every slot of your formation is standing, the line holds: each body carries a share of your plating again and extra damage reduction. One death breaks it immediately — the tile stays, counting the bodies you still have — and finishing the reconstruction restores it. The reward is an unbroken line, so reconstruction speed is what you scale.'),
 
   // -- Weapons ---------------------------------------------------------------
   flurry: b('Flurry', 'A weapon proc raising your attack speed while its stacks hold.'),
@@ -155,6 +161,27 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'stance-reaper': b('Momentum', 'Reaper Stance: a kill stores momentum. Leave Reaper to activate +35% Damage and +25% Attack Speed for 10 seconds. Re-entering ends the buff; another kill is needed to re-arm it. Stance loadout edits discard momentum.'),
   'stance-charge': b('Charge', 'Powering Up: charge banked so far. It only builds while you are fighting, and it is lost if the fight ends. Leaving the stance spends it for a burst lasting as long as you charged.'),
   'stance-release': b('Unleashed', 'Powering Up: the charge you banked, spent. Extra damage and attack speed for as long as you spent charging it.'),
+
+  // -- Lineage card windows ---------------------------------------------------
+  // One tile per timed payoff a lineage card can open. The card that opened it
+  // names itself in the tree panel; these say what the window is DOING, because
+  // that is what the player needs while it is counting down.
+  'lineage-damage': b('Surge', 'A lineage card opened a damage window. Your hits land harder until it closes — the same one-multiplier-per-hit slot an empowered attack uses, so it does not stack a second multiplier on top.'),
+  'lineage-speed': b('Wake', 'A lineage card opened an attack-speed window. It adds to Frenzy and any stance window rather than replacing them.'),
+  'lineage-recovery': b('Mend', 'A lineage card switched on a share of your Recovery rate for a window. What that converts to in HP depends on your Recovery stat.'),
+  'lineage-guard': b('Brace', 'A lineage card opened a damage-reduction window — opening protection, earned by how the card fires rather than by gear.'),
+  'lineage-ward': b('Shell', 'A lineage card granted a temporary absorb pool, spent before your barrier and your health.'),
+  'lineage-plate': b('Plate', 'A lineage card is adding plating to each reactive-plating stack you are holding. The stacks themselves still build from hits taken and fade one at a time.'),
+  'lineage-technique': b('Form', 'A Technique lineage card opened a window: the next Technique that lands does so empowered, and the window closes when it spends. It uses the same one-multiplier-per-hit slot an empowered attack does, so a Technique rider adds to it rather than multiplying with it.'),
+  'lineage-evasion': b('Slip', 'A lineage card opened an evasion window: for its duration, a chance to graze a hit (take half of it) on top of whatever your gear already gives you. A graze still lets the monster\'s ailments through.'),
+
+  // -- Frame loops -------------------------------------------------------------
+  // Two tiles for all six classes: a frame is either a window or a bank (or, on a
+  // Balanced frame, a little of both), and which one you have is decided by the
+  // frame you picked. The tile is labelled by that frame, so the copy here speaks
+  // about the CONTAINER rather than naming one class's version of it.
+  'frame-window': b('Frame window', 'Your frame’s mechanic just fired and opened its window. It is deliberately shorter than one full cycle, so the faster you attack the more of each cycle you spend inside it — your frame tile says what the window is doing while it counts down.'),
+  'frame-charge': b('Frame charge', 'Your frame is banking charge, one per regular hit, up to the cap shown. Your mechanic spends the whole bank when it fires and makes that one hit bigger — it is not a second multiplier stacked on top, it is the same multiplier grown.'),
 };
 
 // -- Target-frame statuses ---------------------------------------------------

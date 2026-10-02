@@ -56,7 +56,6 @@ export interface BotStatus {
     equipment: Record<string, string | null>;
     upgrades: Record<string, number>;
     essences: Record<string, number>;
-    catalysts: Record<string, number>;
     biomeLevels: Record<string, number>;
     bossesCleared: string[];
     techniques: string[];

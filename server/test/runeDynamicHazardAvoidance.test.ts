@@ -45,7 +45,7 @@ import { updateMovement } from '../src/systems/world/movement';
 import { takeWorldLogEvents } from '../src/world/worldLog';
 import { World } from '../src/world/World';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -67,13 +67,14 @@ function playerSlices(
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS, 'avoid-hazards', 'step-back'],
       runeRecipesCrafted: ['rune-recipe-avoid-hazards', 'rune-recipe-step-back'],
       runesEquipped: rules,
-      knownAbilities: [], attunedAbilities: { technique: null, guard: null },
+      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
@@ -576,7 +577,7 @@ for (const trap of D32_TRAPS) {
   const bush = jungleBush('jungle_bush_3');
   const shapes = (RESOLVED_NODE_FEATURES[JUNGLE] ?? []).map((f) => f.shape);
   // Just beyond the padded envelope, on the +x axis from the bush centre.
-  const near = { x: bush.shape.x + bush.shape.radius + pad.x + 12, y: bush.shape.y };
+  const near = { x: bush.shape.x + (bush.shape as { radius: number }).radius + pad.x + 12, y: bush.shape.y };
   assert(!moverOverlapsBlockShapes(near, shapes, pad), 'fixture must sit outside the padded envelope');
   const player = junglePlayer(world, 'jungle-near-miss', near);
   updateRuneDerivedConfig(world, now);
@@ -644,7 +645,7 @@ for (const trap of D32_TRAPS) {
 
   // An enemy already attacking the player is always answered, pool or not.
   target.hasPosition.current = { x: 450, y: 400 };
-  setAggroTarget(world, target, { id: player.isPlayer.id, kind: 'player' });
+  setAggroTarget(world, target, { id: player.isPlayer.id, kind: 'player' }, 0);
   const retaliation = selectFar(world, player, now + 6_100);
   assert(retaliation.kind === 'attack' && retaliation.target === target, 'an aggroed enemy in a hazard is still fought');
 }

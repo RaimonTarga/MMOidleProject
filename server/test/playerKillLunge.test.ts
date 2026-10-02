@@ -26,6 +26,7 @@ const context = vm.createContext({
   resolveAttackTint: () => undefined,
   transientElement: () => undefined,
   playEmpoweredRing: () => {},
+  playLineageTrail: () => {},
   resolveAttackFx: () => () => {},
 });
 vm.runInContext(ts.transpileModule([

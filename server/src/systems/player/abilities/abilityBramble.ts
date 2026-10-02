@@ -1,3 +1,4 @@
+import type { TracksCombat } from '@mmo-idle/shared';
 import { outgoingFinalDamage } from '../../combat/damage/finalDamage';
 import { pushDamageEvent } from '../../combat/damage/damageEvent';
 /**
@@ -132,4 +133,9 @@ export function registerBrambleReflect(): void {
     // Killing blow is handled by the normal monster-death sweep on the next
     // tick; deliberately not calling removeMonsterEntity mid-pipeline.
   });
+}
+
+/** See `forgetReactivePlatingApplied`: bookkeeping only, the stat is untouched. */
+export function forgetBramblePlatingApplied(cs: TracksCombat): void {
+  setResource(cs, APPLIED_KEY, 0);
 }

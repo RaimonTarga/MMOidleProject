@@ -153,6 +153,28 @@ export const CADENCE_KEYS = [
   'cadence.crescendo-ramp-seconds',
   'cadence.crescendo-ramp-mult',
   'cadence.crescendo-tail-per-sec',
+  // ── Striker frame loops (progression rework Phase 3) ────────────────────────
+  // Flurry/Skirmisher: the finisher opens a damage window. The duration is
+  // clamped to a share of the live cycle at runtime (design §10), so this is the
+  // authored ceiling, not a promise.
+  'cadence.frame-window-ms',
+  'cadence.frame-window-mult',
+  // Breaker/Skirmisher: multiplier points the finisher gains per banked charge.
+  // The bank itself is capped at threshold−1 by the mechanic, never authored.
+  'cadence.frame-charge-per-stack',
+  // Breaker's rider: the finisher staggers. Authored at the shortest rung of the
+  // existing stun ladder; `applyStun` owns resistance and the immunity window.
+  'cadence.frame-stagger-ms',
+  // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
+  // Lancer (mid): every hit on a target held AT BAY — inside the player's reach
+  // and outside the target's own — applies a short movement slow.
+  'cadence.range-mid-at-bay-slow-pct',
+  'cadence.range-mid-at-bay-slow-ms',
+  // Phantom-Blade (far): the first hit on a fresh body landed from the outer
+  // `-max-reach-pct` band of the player's reach is an opening strike worth
+  // `-opener-pct` more, folded into `empoweredMultiplier` (one multiplier per hit).
+  'cadence.range-far-max-reach-pct',
+  'cadence.range-far-opener-pct',
 ] as const;
 
 export const COOLDOWN_KEYS = [
@@ -206,6 +228,33 @@ export const COOLDOWN_KEYS = [
   // Devout Priest: holy-beam channel duration and per-tick interval (ms).
   'cooldown.beam-duration-ms',
   'cooldown.beam-tick-ms',
+  // ── Squire frame loops (progression rework Phase 3) ─────────────────────────
+  // Warrior/Knight: the execution opens a window, and regular hits landed inside
+  // it shave `frame-refund-ms` off the next recharge. The window is clamped to a
+  // share of the live recharge at runtime (design §10); the refund can never take
+  // the recharge into its last quarter, so an execution is never made instant.
+  'cooldown.frame-window-ms',
+  'cooldown.frame-refund-ms',
+  // Bulwark/Knight: the bank. A time-based mechanic has no hit threshold to derive
+  // a cap from, so unlike the Striker's this one IS authored.
+  'cooldown.frame-charge-cap',
+  'cooldown.frame-charge-per-stack',
+  // Bulwark's rider: the execution strips a fraction of the target's plating,
+  // through the shared `plating-shred` record under the §18.1 max-wins rule.
+  'cooldown.frame-shred-pct',
+  'cooldown.frame-shred-duration-ms',
+  // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
+  // Phalanx (mid): the at-bay slow, plus a stagger when the EXECUTION lands on a
+  // target held at bay (the stun ladder's shortest rung).
+  'cooldown.range-mid-at-bay-slow-pct',
+  'cooldown.range-mid-at-bay-slow-ms',
+  'cooldown.range-mid-execution-stagger-ms',
+  // Sentinel (far): an execution from the outer `-max-reach-pct` band of reach
+  // opens a vulnerability window on the target. Shared `vulnerability` record,
+  // max-wins (design §18.1).
+  'cooldown.range-far-max-reach-pct',
+  'cooldown.range-far-vuln-pct',
+  'cooldown.range-far-vuln-ms',
 ] as const;
 
 export const RELOAD_KEYS = [
@@ -275,6 +324,30 @@ export const RELOAD_KEYS = [
   'reload.cannon-damage-per-shot',
   // Fraction of the reload spent charging before the cannon fires.
   'reload.cannon-charge-fraction',
+  // ── Frame loop (progression rework Phase 3) ────────────────────────────────
+  // The Slinger's loop is WHERE IN THE CLIP the payoff lives
+  // (docs/briefs/frame-loops-2026-10-01.md §1). Authored on the frame nodes, so
+  // every Slinger carries exactly one of the three shapes.
+  //
+  // Scout — START: the first N rounds of a fresh clip are empowered, so reload
+  // speed buys more openers.
+  'reload.frame-opener-rounds',
+  'reload.frame-opener-mult',
+  // Marksman — END: the clip's last round is the big one; a countdown to watch.
+  'reload.frame-last-round-mult',
+  // Artillerist — ACROSS: attack speed ramps with every shot of the clip with NO
+  // cap below the clip length, and damage rides the same ramp (×1 at an empty
+  // ramp, ×`frame-ramp-top-mult` at the top). Both reset on reload.
+  'reload.frame-ramp-pct-per-shot',
+  'reload.frame-ramp-top-mult',
+  // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
+  // Enforcer (mid): the at-bay slow — the Slinger's "pin".
+  'reload.range-mid-at-bay-slow-pct',
+  'reload.range-mid-at-bay-slow-ms',
+  // Deadeye (far): shots landed from the outer `-max-reach-pct` band of reach
+  // deal `-damage-pct` more, folded into `empoweredMultiplier`.
+  'reload.range-far-max-reach-pct',
+  'reload.range-far-damage-pct',
 ] as const;
 
 export const ENERGY_KEYS = [
@@ -339,6 +412,36 @@ export const ENERGY_KEYS = [
   'energy.endless-storm-duration-ms',
   'energy.endless-storm-extend-ms',
   'energy.endless-storm-max-ms',
+  // ── Frame loop (progression rework Phase 3) ────────────────────────────────
+  // The Spirit's loop is WHAT THE DISCHARGE DOES
+  // (docs/briefs/frame-loops-2026-10-01.md §1).
+  //
+  // Spark — CHAIN: the discharge arcs to the nearest `chain-targets` bodies
+  // inside `chain-radius`, each taking `chain-share` of the discharge. Wisp
+  // (the Far range node) sets `energy.range-far-single-target`, and the share
+  // that would have arced is folded onto the primary hit instead.
+  'energy.frame-chain-targets',
+  'energy.frame-chain-radius',
+  'energy.frame-chain-share',
+  // Wraith — LOOP: the discharge opens a window (shorter than one charge cycle)
+  // where every hit generates `frame-gain-mult`× energy.
+  'energy.frame-gain-window-ms',
+  'energy.frame-gain-mult',
+  // Phantasm — OVERCHARGE: the pool keeps taking energy ABOVE the cap before the
+  // discharge arms, one stack per hit's worth, capped at `frame-overcharge-max`.
+  // Each stack adds `frame-overcharge-mult-per-stack` to the discharge, and the
+  // discharge staggers for `frame-stagger-ms` (the stun ladder's shortest rung).
+  'energy.frame-overcharge-max',
+  'energy.frame-overcharge-mult-per-stack',
+  'energy.frame-stagger-ms',
+  // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
+  // Shade (mid): the discharge staggers a target held at bay.
+  'energy.range-mid-discharge-stagger-ms',
+  // Wisp (far): 1 = the discharge does not chain; the whole of it lands on one
+  // target. AUTHORED HERE, CONSUMED BY THE ENERGY FRAME LOOP (Phase 3, W1-B):
+  // the chain-count resolution reads this key and, when it is 1, chains to zero
+  // targets and folds the chained share onto the primary.
+  'energy.range-far-single-target',
 ] as const;
 
 export const DOT_KEYS = [
@@ -389,6 +492,27 @@ export const DOT_KEYS = [
   'dot.ignition',       // fire: front-load all stacks on a fresh target
   'dot.rimeshatter',    // frost: at max stacks, full direct + DR debuff
   'dot.wind-spirit',    // frost: max-stack hits apply Frostbite DoT vulnerability
+  // ── Apprentice frame loops (progression rework Phase 3) ─────────────────────
+  // The Apprentice's frames are a VERB each, by element, not a window and a bank:
+  // poison OPENS HARD, fire INTENSIFIES, frost CHILLS (brief §1).
+  // Venom vessel: total stacks the first hit on an unpoisoned target lands.
+  'dot.frame-opener-stacks',
+  // Ember mage: multiplier on a hit into a target already at max burn.
+  'dot.frame-max-stack-mult',
+  // Rime-Bound chills through the EXISTING `dot.chill-*` keys above, at frame
+  // magnitudes — Winter Warden then deepens the same record rather than owning it.
+  // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
+  // Warlock (mid): a class stack landed on a target held at bay also lands
+  // `-spread-stacks` on its nearest neighbour inside `-spread-radius`.
+  'dot.range-mid-spread-stacks',
+  'dot.range-mid-spread-radius',
+  // Harbinger (far): the class DoT's DELIVERY cap rises by `-stack-cap-bonus` and
+  // each application lasts `-duration-pct` longer. Deliberately NOT the damage
+  // reference (`computeDotClassDamagePerStack` still divides by the frame's own
+  // max stacks), so the extra stack is extra damage rather than a thinner one.
+  // Suppresses Warlock's spread.
+  'dot.range-far-stack-cap-bonus',
+  'dot.range-far-duration-pct',
 ] as const;
 
 export const SHARED_KEYS = [
@@ -460,6 +584,32 @@ export const SUMMONER_KEYS = [
   'summoner.minion-attack-cooldown',
   'summoner.damage-sponge-pct',
   'summoner.leash-mult',
+  // ── Frame loops (progression rework Phase 3) ───────────────────────────────
+  // Splinter's and Effigy's loops hang off the FORMATION CYCLE — every living
+  // summon has hit the same target since the last fire
+  // (docs/briefs/frame-loops-2026-10-01.md §1). Consort's does not: its container
+  // is a STANDING condition on the formation's integrity, decided 2026-10-01.
+  //
+  // Splinter — a completed cycle on one target opens a frenzy window (shorter
+  // than one summon swing) where the swarm attacks faster and delivers more
+  // on-hit magnitude.
+  'summoner.frame-frenzy-window-ms',
+  'summoner.frame-frenzy-aps-pct',
+  'summoner.frame-frenzy-onhit-mult',
+  // Effigy — each body banks charge per hit; when both bodies have hit the same
+  // target inside `frame-link-window-ms`, the pair spends the bank as one linked
+  // slam (attack × stacks × `frame-link-slam-mult`) with a stagger.
+  'summoner.frame-link-window-ms',
+  'summoner.frame-link-charge-per-hit',
+  'summoner.frame-link-max-charge',
+  'summoner.frame-link-slam-mult',
+  'summoner.frame-link-stagger-ms',
+  // Consort — "the line holds". While EVERY formation slot is alive, each body
+  // carries `frame-line-plating-pct` of the owner's plating again and
+  // `frame-line-dr` more damage reduction. A death breaks it on the same summoner
+  // pass that observes the death; a completed reconstruction restores it.
+  'summoner.frame-line-plating-pct',
+  'summoner.frame-line-dr',
 ] as const;
 
 // Mobility / boot mechanics. Strictly on the speed + positioning axis — these

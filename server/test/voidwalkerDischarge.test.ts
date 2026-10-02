@@ -24,10 +24,11 @@ function voidwalker() {
     hasHealth: { hp: 1000, maxHp: 1000, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0, skillPoints: 0, essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
       questProgress: {}, playerTier: 4, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { techniques: [], guard: null },
+      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
@@ -52,7 +53,8 @@ function target(world: World, armored: boolean, hp = 1e7) {
   t.hasHealth.hp = t.hasHealth.maxHp = hp;
   t.mitigatesDamage.plating = armored ? 50 : 0;
   t.mitigatesDamage.damageReduction = armored ? 0.4 : 0;
-  t.mitigatesDamage.evasion = 0;
+  // Evasion is its own component now, attached only when the monster has any.
+  if (t.evadesHits) t.evadesHits.dodgeRate = 0;
   return t;
 }
 

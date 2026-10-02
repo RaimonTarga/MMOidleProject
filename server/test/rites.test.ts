@@ -16,7 +16,7 @@ import { markEngaged, updateCombatTransitions } from "../src/systems/combat/ai/e
 import { World } from "../src/world/World";
 import { emitCombatEvent, makeCombatContext } from "../src/systems/combat/engine/combatPipeline";
 
-function assert(condition: boolean, message: string): void { if (!condition) throw new Error(message); }
+function assert(condition: unknown, message: string): void { if (!condition) throw new Error(message); }
 
 function makePlayerSlices(): PersistedPlayerSlices {
   return {
@@ -25,8 +25,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
     hasHealth: { hp: GAME_CONFIG.PLAYER_MAX_HP, maxHp: GAME_CONFIG.PLAYER_MAX_HP, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0, skillPoints: 0,
-      essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 }, catalysts: {}, catalystProgress: {},
-      biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
+      essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 }, shards: {}, capstones: {}, biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
       knownAbilities: ["brace"], attunedAbilities: { techniques: [], guards: ["brace"] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,

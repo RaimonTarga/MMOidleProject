@@ -42,7 +42,6 @@ export interface BiomeUnlock {
   description: string;
   tier: number;
   cost: Partial<Record<EssenceType, number>>;
-  catalystCost?: Partial<Record<string, number>>;
   /** Present for gear (weapon/armor/recovery/mobility/core/relic) only. */
   gear?: Recipe;
   /**
@@ -58,7 +57,6 @@ interface LearnedRecipe {
   name: string;
   tier: number;
   cost: Partial<Record<EssenceType, number>>;
-  catalystCost?: Partial<Record<string, number>>;
   recipeGroup?: string;
   requiredBiomeLevel?: number;
   /** Only rune recipes ever set this; see `RuneRecipe.deprecated`. */
@@ -92,7 +90,6 @@ function learnedUnlocks<T extends LearnedRecipe>(
       description: blurbOf(learnedId),
       tier: recipe.tier,
       cost: recipe.cost,
-      catalystCost: recipe.catalystCost,
       learnedId,
     });
   }
@@ -113,7 +110,6 @@ export function biomeUnlocks(group: string): BiomeUnlock[] {
       description: recipe.description ?? '',
       tier: recipe.tier,
       cost: recipe.cost,
-      catalystCost: recipe.catalystCost,
       gear: recipe,
     });
   }

@@ -1,0 +1,148 @@
+/**
+ * The Wing — Cave mobility lineage, stealth (design §17).
+ *
+ * PROVISIONAL. Authored in the overnight run from design §17's non-weapon lane
+ * matrix (proposed, not approved) so the defensive trees exist to playtest. Lane
+ * A (Engagement) is the matrix's assignment for Cave mobility — a first-strike
+ * read on the item's stealth mechanic. Lanes B/C (Kill chain, Control) are
+ * likewise not yet bench-reviewed.
+ *
+ * No numbers here — see `types.ts`.
+ */
+import type { LineageDefinition } from './types';
+import { packetDefaultFace } from './packets';
+
+export const WING_LINEAGE: LineageDefinition = {
+  id: 'wing',
+  slot: 'mobility',
+  homeBiome: 'cave',
+  lanes: ['engagement', 'kill-chain', 'control'],
+
+  forms: [
+    { recipeId: 'cave-boots-t1', tier: 1, biome: 'cave' },
+    {
+      recipeId: 'cave-boots-t2', tier: 2, biome: 'cave',
+      capstone: {
+        id: 'wing-capstone-cavern', name: 'Cavern Sprint',
+        description: 'The opening exchange keeps costing less, wherever the dark takes you next.',
+        fx: 'engagement.cavern-sprint', lane: 'engagement',
+        trigger: 'first-hit', payoff: 'engagement-dr',
+      },
+    },
+  {
+    recipeId: 'volcanic-boots-t3', tier: 3, biome: 'volcanic',
+    capstone: {
+      id: 'wing-capstone-ember-spark', name: 'Ember Spark',
+      description: 'A kill restores the spark a solid hit just knocked loose.',
+      fx: 'kill-chain.ember-spark', lane: 'kill-chain',
+      trigger: 'kill', payoff: 'speed-window',
+    },
+  },
+
+  ],
+
+  cards: [
+    {
+      id: 'wing-t1-engagement-payoff', lineageId: 'wing', tier: 1, row: 'payoff', lane: 'engagement',
+      name: 'Silent Drop', description: 'Out of the dark, the first hit lands on you softer than it should.',
+      fx: 'engagement.sidestep-blur', trigger: 'first-hit', payoff: 'engagement-dr',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'wing-t1-kill-chain-payoff', lineageId: 'wing', tier: 1, row: 'payoff', lane: 'kill-chain',
+      name: 'Wingbeat', description: 'A kill and you are already airborne toward the next.',
+      fx: 'kill-chain.recovery-pulse', trigger: 'kill', payoff: 'recovery-window',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'wing-t1-control-payoff', lineageId: 'wing', tier: 1, row: 'payoff', lane: 'control',
+      name: 'Ambush Perch', description: 'Wait long enough in the dark and the pounce stuns on contact.',
+      fx: 'control.chill-blur', trigger: 'standing', payoff: 'stun',
+      face: packetDefaultFace('control'),
+    },
+
+    // ── T2 payoff row (L3): the T1 payoff, grown up ─────────────────────────
+    {
+      id: 'wing-t2-engagement-payoff', lineageId: 'wing', tier: 2, row: 'payoff', lane: 'engagement',
+      name: 'Deeper Dark', description: 'Out of the dark, the first hit now lands softer than it ever did before.',
+      fx: 'engagement.sidestep-blur', trigger: 'first-hit', payoff: 'engagement-dr',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'wing-t2-kill-chain-payoff', lineageId: 'wing', tier: 2, row: 'payoff', lane: 'kill-chain',
+      name: 'Second Wingbeat', description: 'A kill now carries you further airborne than the last one did.',
+      fx: 'kill-chain.recovery-pulse', trigger: 'kill', payoff: 'recovery-window',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'wing-t2-control-payoff', lineageId: 'wing', tier: 2, row: 'payoff', lane: 'control',
+      name: 'Patient Perch', description: 'Wait long enough in the dark and the pounce stuns harder on contact.',
+      fx: 'control.chill-blur', trigger: 'standing', payoff: 'stun',
+      face: packetDefaultFace('control'),
+    },
+
+    // ── T2 amplifier row (L5): an extra trigger kind for the same payoff ────
+    {
+      id: 'wing-t2-engagement-amplifier', lineageId: 'wing', tier: 2, row: 'amplifier', lane: 'engagement',
+      name: 'Settled Dark', description: 'Waiting in the dark before you drop keeps the discount live without the first hit.',
+      fx: 'engagement.sidestep-blur', trigger: 'standing', payoff: 'engagement-dr', modifies: 'wing-t2-engagement-payoff',
+      amplifies: 'trigger',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'wing-t2-kill-chain-amplifier', lineageId: 'wing', tier: 2, row: 'amplifier', lane: 'kill-chain',
+      name: 'Opening Wingbeat', description: 'The opening hit of a fight launches you airborne without waiting on a kill.',
+      fx: 'kill-chain.recovery-pulse', trigger: 'first-hit', payoff: 'recovery-window', modifies: 'wing-t2-kill-chain-payoff',
+      amplifies: 'trigger',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'wing-t2-control-amplifier', lineageId: 'wing', tier: 2, row: 'amplifier', lane: 'control',
+      name: 'Killing Perch', description: 'A kill stuns the next one close just as hard as the patient pounce does.',
+      fx: 'control.chill-blur', trigger: 'kill', payoff: 'stun', modifies: 'wing-t2-control-payoff',
+      amplifies: 'trigger',
+      face: packetDefaultFace('control'),
+    },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'wing-t3-engagement-keystone', lineageId: 'wing', tier: 3, row: 'keystone', lane: 'engagement',
+      name: 'Every Silent Drop', description: 'Every new target meets the same soft landing the first one did.',
+      fx: 'engagement.keystone', trigger: 'first-hit', payoff: 'damage-window',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'wing-t3-kill-chain-keystone', lineageId: 'wing', tier: 3, row: 'keystone', lane: 'kill-chain',
+      name: "Wingbeat's Due", description: 'A kill pays the mechanic back in full, right there.',
+      fx: 'kill-chain.keystone', trigger: 'kill', payoff: 'recovery-window',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'wing-t3-control-keystone', lineageId: 'wing', tier: 3, row: 'keystone', lane: 'control',
+      name: 'Perch Ladder', description: 'Hit something already slowed and it roots; hit something rooted and it stuns — once per step, per target.',
+      fx: 'control.keystone', trigger: 'hit-nth', payoff: 'stun',
+      face: packetDefaultFace('control'),
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'wing-t4-engagement-cross', lineageId: 'wing', tier: 4, row: 'cross', lane: 'engagement',
+      name: 'Airborne Drop', description: 'A kill carries you airborne the same way the drop out of the dark does.',
+      fx: 'engagement.sidestep-blur', trigger: 'kill', payoff: 'recovery-window', borrowsLane: 'kill-chain',
+      face: packetDefaultFace('engagement'),
+    },
+    {
+      id: 'wing-t4-kill-chain-cross', lineageId: 'wing', tier: 4, row: 'cross', lane: 'kill-chain',
+      name: 'Waiting Wingbeat', description: 'Holding still in the dark stuns on contact the same way the patient pounce does.',
+      fx: 'kill-chain.recovery-pulse', trigger: 'standing', payoff: 'stun', borrowsLane: 'control',
+      face: packetDefaultFace('kill-chain'),
+    },
+    {
+      id: 'wing-t4-control-cross', lineageId: 'wing', tier: 4, row: 'cross', lane: 'control',
+      name: 'Perched Opening', description: 'The first hit out of the dark lands as soft as the ambush does.',
+      fx: 'control.chill-blur', trigger: 'first-hit', payoff: 'engagement-dr', borrowsLane: 'engagement',
+      face: packetDefaultFace('control'),
+    },
+  ],
+};

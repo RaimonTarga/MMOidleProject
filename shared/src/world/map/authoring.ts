@@ -1,4 +1,9 @@
 import {
+  FAMILY_DATABASE,
+  blendShareTotal,
+  type NodeBlend,
+} from '../../data/families';
+import {
   MODIFIER_BANS,
   NATIVE_MODIFIER,
   NODE_MODIFIER_FAMILIES,
@@ -27,6 +32,34 @@ export interface RegionAuthoringInput {
   biomes: readonly string[];
   specials: readonly RegionSpecialNode[];
   dungeonCells: readonly WorldMapCoord[];
+  /**
+   * Per-biome node blends (design 12), one per normal node of that biome.
+   *
+   * THIS LIST IS THE BIOME'S NODE COUNT. It took that job from the modifier
+   * list (see the warning on `MODIFIER_BANS`): `normalNodeCountForBiome` reads the
+   * blend list where one exists and the modifier list where none does. The
+   * hand-cut region masks are sized to that count exactly, so adding or removing a
+   * blend changes how many cells the biome needs and will break its mask.
+   *
+   * T2's blend lists stay exactly as long as their biome's modifier sequence
+   * (Phase 2a's dual-authored state: a T2 node still carries `modifier` too,
+   * and several bot routes select T2 farm nodes by it). Only T1 (`dropsModifier`
+   * below) has moved past that.
+   */
+  blends?: Readonly<Record<string, readonly NodeBlend[]>>;
+  /**
+   * Phase 2b (2026-10-01), T1 only: a blended normal node carries no
+   * `modifier` field at all any more (cosmetic only -- shard granting is
+   * family-keyed). Display names still draw from the SAME modifier-keyed
+   * table, but only as an authoring-time lookup: `buildRegionNodes` takes a
+   * PREFIX of the biome's modifier sequence, as long as `blends[biome]`, to
+   * name its nodes, and never attaches a `modifier` to the pushed node. That
+   * lets a blend list be shorter than the modifier sequence (e.g. Cave/Swamp's
+   * re-cut from six nodes to five) without touching `MODIFIER_BANS` or
+   * `NATIVE_MODIFIER`, which stay T2's (and a future T3/T4's) node-count and
+   * `modifier`-field source.
+   */
+  dropsModifier?: boolean;
 }
 
 function cellKey(coord: WorldMapCoord): string {
@@ -101,9 +134,7 @@ function allocateNormalCellsByBiome(
 ): Map<string, WorldMapCoord[]> {
   const remaining = new Map(normalCells.map((coord) => [cellKey(coord), coord]));
   const territories = input.biomes.map((biomeGroup, biomeIndex) => {
-    const native = NATIVE_MODIFIER[biomeGroup];
-    const capacity =
-      allowedModifiersForBiome(biomeGroup).length + (native ? 1 : 0);
+    const capacity = normalNodeCountForBiome(input, biomeGroup);
     const seed = input.dungeonCells[biomeIndex];
     return {
       biomeGroup,
@@ -353,12 +384,60 @@ function maskCells(input: RegionAuthoringInput): WorldMapCoord[] {
 }
 
 /**
- * The modifiers a biome may host. This also fixes how many normal nodes the biome
- * gets — see the warning on `MODIFIER_BANS`.
+ * The modifiers a biome may host, in canonical order. Still the source of each
+ * normal node's display name and stat scaling; no longer the source of the node
+ * COUNT for a biome whose region authors a blend list -- see `blends` above.
  */
 function allowedModifiersForBiome(biomeGroup: string): NodeModifierFamily[] {
   const bans = new Set(MODIFIER_BANS[biomeGroup] ?? []);
   return NODE_MODIFIER_FAMILIES.filter((modifier) => !bans.has(modifier));
+}
+
+/** One node per allowed modifier, plus a second for the biome's native. */
+function modifierSequenceForBiome(biomeGroup: string): NodeModifierFamily[] {
+  const allowed = allowedModifiersForBiome(biomeGroup);
+  const native = NATIVE_MODIFIER[biomeGroup];
+  return native ? [...allowed, native] : allowed;
+}
+
+/**
+ * How many normal nodes a biome gets: the blend list where the region authors
+ * one, the modifier list otherwise. See the warning on `blends`.
+ */
+function normalNodeCountForBiome(
+  input: RegionAuthoringInput,
+  biomeGroup: string,
+): number {
+  return (
+    input.blends?.[biomeGroup]?.length ??
+    modifierSequenceForBiome(biomeGroup).length
+  );
+}
+
+/**
+ * A blend must name only families of its own biome, and its shares must sum to 1.
+ * Authored decimals do not sum exactly in binary, hence the tolerance.
+ */
+function validateBlend(
+  regionId: WorldRegionId,
+  biomeGroup: string,
+  index: number,
+  blend: NodeBlend,
+): void {
+  const where = `${regionId} ${biomeGroup} blend ${index + 1}`;
+  const keys = Object.keys(blend) as (keyof NodeBlend)[];
+  if (keys.length === 0) throw new Error(`${where}: empty blend`);
+  for (const key of keys) {
+    const family = FAMILY_DATABASE.get(key);
+    if (!family) throw new Error(`${where}: unknown family '${key}'`);
+    if (family.biome !== biomeGroup) {
+      throw new Error(`${where}: family '${key}' belongs to ${family.biome}`);
+    }
+  }
+  const total = blendShareTotal(blend);
+  if (Math.abs(total - 1) > 1e-6) {
+    throw new Error(`${where}: shares sum to ${total}, not 1`);
+  }
 }
 
 /**
@@ -404,27 +483,51 @@ export function buildRegionNodes(
   }));
 
   input.biomes.forEach((biomeGroup, biomeIndex) => {
-    const allowedModifiers = allowedModifiersForBiome(biomeGroup);
-    const native = NATIVE_MODIFIER[biomeGroup];
-    const modifiers = native ? [...allowedModifiers, native] : allowedModifiers;
+    const modifiers = modifierSequenceForBiome(biomeGroup);
+    const blends = input.blends?.[biomeGroup];
+    if (blends && !input.dropsModifier && blends.length !== modifiers.length) {
+      throw new Error(
+        `${input.regionId} ${biomeGroup}: ${blends.length} blends but ` +
+          `${modifiers.length} modifiers -- a region that still attaches the ` +
+          'modifier field (the T2 dual-authored state) must keep the two lists ' +
+          'the same length',
+      );
+    }
+    if (blends && input.dropsModifier && blends.length > modifiers.length) {
+      throw new Error(
+        `${input.regionId} ${biomeGroup}: ${blends.length} blends exceed the ` +
+          `${modifiers.length} modifiers available to name them`,
+      );
+    }
+    const normalCount = blends ? blends.length : modifiers.length;
+    // Naming is still a modifier-table lookup (`dropsModifier` only deletes
+    // the node's own `modifier` field; the authored name tables stay keyed by
+    // it). A shorter blend list takes a PREFIX of the full modifier sequence
+    // -- the native modifier's extra occurrence is always appended last by
+    // `modifierSequenceForBiome`, so trimming the tail here is exactly "fewer
+    // of the biome's native flavour", never a skipped or duplicated modifier.
+    const namingModifiers = blends ? modifiers.slice(0, normalCount) : modifiers;
     const biomeCells = normalCellsByBiome.get(biomeGroup) ?? [];
     const normalNameOccurrences = new Map<NodeModifierFamily, number>();
 
-    modifiers.forEach((modifier, normalIndex) => {
+    for (let normalIndex = 0; normalIndex < normalCount; normalIndex += 1) {
       const map = biomeCells[normalIndex];
       if (!map) {
         throw new Error(
           `${input.regionId}: missing clustered cell for ${biomeGroup}`,
         );
       }
-      const nameOccurrence = normalNameOccurrences.get(modifier) ?? 0;
-      normalNameOccurrences.set(modifier, nameOccurrence + 1);
+      const blend = blends?.[normalIndex];
+      if (blend) validateBlend(input.regionId, biomeGroup, normalIndex, blend);
+      const namingModifier = namingModifiers[normalIndex];
+      const nameOccurrence = normalNameOccurrences.get(namingModifier) ?? 0;
+      normalNameOccurrences.set(namingModifier, nameOccurrence + 1);
       nodes.push({
         id: `node-${input.regionId}-${biomeGroup}-${String(normalIndex + 1).padStart(2, '0')}`,
         displayName: resolveNormalNodeDisplayName(
           input.tier,
           biomeGroup,
-          modifier,
+          namingModifier,
           nameOccurrence,
         ),
         regionId: input.regionId,
@@ -432,11 +535,17 @@ export function buildRegionNodes(
         kind: 'normal',
         biomeGroup,
         biomeTier: input.tier,
-        modifier,
+        // A blend-authored T1 node carries no `modifier` at all (Phase 2b:
+        // vestigial once a family blend exists). A blend-authored T2 node
+        // keeps BOTH (Phase 2a's still-live dual-authored state). Every
+        // other node (T3-T4, no blend yet) keeps modifier as its only
+        // identity, same as always.
+        ...(blend ? { blend } : {}),
+        ...(blend && input.dropsModifier ? {} : { modifier: namingModifier }),
         featureSetId: biomeGroup,
         featureVariant: normalIndex,
       });
-    });
+    }
 
     const dungeonMap = input.dungeonCells[biomeIndex];
     nodes.push({

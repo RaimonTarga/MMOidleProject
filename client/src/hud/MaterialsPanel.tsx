@@ -1,25 +1,24 @@
 import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import { useAtomValue } from "jotai";
 import {
-  catalystLabel,
+  capstoneMaterialName,
   ESSENCE_COLORS,
   ESSENCE_LABELS,
   ESSENCE_TYPES,
-  NODE_MODIFIER_FAMILIES,
-  MODIFIER_COLORS,
-  catalystProgressPerUnit,
+  PACKET_IDS,
+  packetDefinition,
   type EssenceType,
 } from "@mmo-idle/shared";
 import { GameIcon } from "../ui/GameIcon";
 import {
-  catalystMaterial,
+  capstoneMaterial,
   essenceMaterial,
   MaterialChip,
   materialIconSource,
+  shardMaterial,
 } from "../ui/MaterialChip";
-import { catalystProgressAtom, catalystsAtom, essencesAtom } from "./atoms";
-import { DisclosureHeader, EngravedMeter, HudPanel } from "./primitives";
-import { displayedCatalystProgress } from "./catalystProgress";
+import { capstonesAtom, essencesAtom, shardsAtom } from "./atoms";
+import { DisclosureHeader, HudPanel } from "./primitives";
 import "./essence.css";
 
 const MATERIALS_EXPANDED_STORAGE_KEY = "mmo_idle.desktop.materials_expanded";
@@ -68,22 +67,23 @@ function useEssenceGainFlash(essences: Record<EssenceType, number>) {
 
 /**
  * The player's whole spendable economy in one rail panel. Collapsed it is a
- * dense chip strip; expanded it names each material and reports catalyst
- * progress toward the next unit. Catalyst families the player has never touched
- * stay hidden so the early game is not cluttered with five empty rows.
+ * dense chip strip; expanded it names each material. Shards and touched
+ * capstones stay hidden until the player has actually held one, so the early
+ * game is not cluttered with empty rows.
  */
 export function MaterialsPanel() {
   const essences = useAtomValue(essencesAtom);
-  const catalysts = useAtomValue(catalystsAtom);
-  const progress = useAtomValue(catalystProgressAtom);
+  const shards = useAtomValue(shardsAtom);
+  const capstones = useAtomValue(capstonesAtom);
   const [expanded, setExpanded] = useState(readExpandedPreference);
   const detailsId = useId();
   const flashClass = useEssenceGainFlash(essences);
 
-  const families = NODE_MODIFIER_FAMILIES.filter(
-    (family) => (catalysts[family] ?? 0) > 0 || (progress[family] ?? 0) > 0,
-  );
-  const perUnit = catalystProgressPerUnit();
+  // Lineage wallets (progression rework Phase 1): shards by packet, touched
+  // capstones by biome. Hidden until touched — eight empty shard rows would
+  // swamp the early game before a player has opened a single tree.
+  const ownedShards = PACKET_IDS.filter((packet) => (shards[packet] ?? 0) > 0);
+  const ownedCapstones = Object.entries(capstones).filter(([, amount]) => (amount ?? 0) > 0);
 
   const toggleExpanded = () => {
     setExpanded((value) => {
@@ -111,8 +111,6 @@ export function MaterialsPanel() {
       />
 
       {!expanded && (
-        // Two wallets, kept visually separate: run together they read as one
-        // ten-item strip, and a catalyst count gets mistaken for an essence.
         <div className="materials-strip">
           <div className="materials-strip__group material-chip-strip">
             {ESSENCE_TYPES.map((type) => (
@@ -123,15 +121,27 @@ export function MaterialsPanel() {
               />
             ))}
           </div>
-          {families.length > 0 && (
+          {ownedShards.length > 0 && (
             <div className="materials-strip__group material-chip-strip">
-                {families.map((family) => (
-                  <MaterialChip
-                    key={family}
-                    material={catalystMaterial(family)}
-                    held={catalysts[family] ?? 0}
-                    size={18}
-                  />
+              {ownedShards.map((packet) => (
+                <MaterialChip
+                  key={packet}
+                  material={shardMaterial(packet)}
+                  held={shards[packet] ?? 0}
+                  size={18}
+                />
+              ))}
+            </div>
+          )}
+          {ownedCapstones.length > 0 && (
+            <div className="materials-strip__group material-chip-strip">
+              {ownedCapstones.map(([biome, amount]) => (
+                <MaterialChip
+                  key={biome}
+                  material={capstoneMaterial(biome)}
+                  held={amount}
+                  size={18}
+                />
               ))}
             </div>
           )}
@@ -160,34 +170,37 @@ export function MaterialsPanel() {
             </div>
           ))}
 
-          {families.length > 0 && <div className="materials-divider" />}
+          {ownedShards.length > 0 && <div className="materials-divider" />}
 
-          {families.map((family) => (
-            <div key={family} className="essence-row">
+          {ownedShards.map((packet) => (
+            <div key={packet} className="essence-row">
               <GameIcon
-                source={materialIconSource(catalystMaterial(family))}
+                source={materialIconSource(shardMaterial(packet))}
                 size={18}
                 fallback={null}
-                className="economy-icon catalyst-icon"
+                className="economy-icon"
                 decorative
               />
-              <span className="essence-name" style={{ color: MODIFIER_COLORS[family] }}>
-                {catalystLabel(family)}
+              <span className="essence-name" style={{ color: packetDefinition(packet)?.color }}>
+                {packetDefinition(packet)?.name ?? packet} shards
               </span>
-              <span className="essence-value">{catalysts[family] ?? 0}</span>
-              <span className="essence-progress">
-                <span className="essence-progress__value">
-                  {displayedCatalystProgress(progress[family])}/{perUnit}
-                </span>
-                {/* Bounded and static between kills, so engraved rather than
-                    conduit — the count above says how many, this says how close
-                    the next one is. */}
-                <EngravedMeter
-                  className="essence-progress__meter"
-                  fraction={perUnit > 0 ? (progress[family] ?? 0) / perUnit : 0}
-                  label={`${catalystLabel(family)}: ${displayedCatalystProgress(progress[family])} of ${perUnit} toward the next`}
-                />
-              </span>
+              <span className="essence-value">{shards[packet] ?? 0}</span>
+            </div>
+          ))}
+
+          {ownedCapstones.length > 0 && <div className="materials-divider" />}
+
+          {ownedCapstones.map(([biome, amount]) => (
+            <div key={biome} className="essence-row">
+              <GameIcon
+                source={materialIconSource(capstoneMaterial(biome))}
+                size={18}
+                fallback={null}
+                className="economy-icon"
+                decorative
+              />
+              <span className="essence-name">{capstoneMaterialName(biome)}</span>
+              <span className="essence-value">{amount}</span>
             </div>
           ))}
         </div>

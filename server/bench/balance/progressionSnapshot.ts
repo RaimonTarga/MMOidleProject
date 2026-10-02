@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { ABILITY_RECIPE_DATABASE, STANCE_RECIPE_DATABASE, RUNE_RECIPE_DATABASE, STARTER_RUNE_IDS,
   RECIPE_DATABASE, ITEM_DATABASE, globalMastery, runeBudgetForGlobalMastery, biomeLevelCap,
   getMaxUpgrade, requiredBiomeLevelForUpgrade, upgradeCeilingFromGlobalMastery,
-  upgradeCostFor, upgradeCatalystCostFor, isAbilityRecipeUnlocked, isStanceRecipeUnlocked, isRuneRecipeUnlocked,
+  upgradeCostFor, isAbilityRecipeUnlocked, isStanceRecipeUnlocked, isRuneRecipeUnlocked,
   checkReconstruct, ABILITY_DATABASE, abilityRankNumber, bossSealSourcesAtTier, sealsRequiredForTier, sealsHeldAtTier, SKILL_TREE } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../src/ecs/entity';
 import type { SurveyCell } from './ttkSurveySpec';
@@ -38,16 +38,16 @@ export function applyProgressionSnapshot(bot:PlayerEntity,cell:SurveyCell) {
   }
   p.knownAbilities=[];p.knownStances=[];p.knownRites=[];p.equippedRites=[];
   p.runesOwned=[...STARTER_RUNE_IDS];p.runeRecipesCrafted=[];
-  const purchases:{id:string;kind:string;cost:Record<string,number>;catalysts:Record<string,number>}[]=[];
-  const pay=(id:string,kind:string,cost:object={},catalysts:object={})=>purchases.push({id,kind,cost:{...cost},catalysts:{...catalysts}});
+  const purchases:{id:string;kind:string;cost:Record<string,number>}[]=[];
+  const pay=(id:string,kind:string,cost:object={})=>purchases.push({id,kind,cost:{...cost}});
   for(const id of [...cell.abilities!.techniques,...cell.abilities!.guards]) {
     const r=[...ABILITY_RECIPE_DATABASE.values()].find(r=>r.abilityId===id)!;
     assert(r && isAbilityRecipeUnlocked(r,p),`${cell.id}: unearned ability ${id}`);
-    pay(r.id,'learn-ability',r.cost,r.catalystCost);p.knownAbilities.push(id);
+    pay(r.id,'learn-ability',r.cost);p.knownAbilities.push(id);
   }
   if(cell.stance){const r=[...STANCE_RECIPE_DATABASE.values()].find(r=>r.stanceId===cell.stance)!;
     assert(r && isStanceRecipeUnlocked(r,p),`Unearned stance ${cell.stance}`);
-    pay(r.id,'learn-stance',r.cost,r.catalystCost);p.knownStances.push(cell.stance);}
+    pay(r.id,'learn-stance',r.cost);p.knownStances.push(cell.stance);}
   for(const id of new Set(cell.runeRules!.flatMap(r=>[r.conditionId,r.actionId]))) {
     if(p.runesOwned.includes(id))continue;
     const r=[...RUNE_RECIPE_DATABASE.values()].find(r=>!r.deprecated && r.runeId===id)!;
@@ -61,20 +61,20 @@ export function applyProgressionSnapshot(bot:PlayerEntity,cell:SurveyCell) {
     if(r.evolvesFrom){
       assert(r.reconstructCost,`No reconstruction path ${id}`);
       const wallet={red:0,blue:0,green:0,yellow:0,purple:0,...r.reconstructCost};
-      assert(checkReconstruct({recipe:r,essences:wallet,catalysts:r.reconstructCatalystCost as Record<string,number>}).ok);
-      pay(id!,'paid-reconstruction',r.reconstructCost,r.reconstructCatalystCost);
-    } else pay(id!,'craft',r.cost,r.catalystCost);
+      assert(checkReconstruct({recipe:r,essences:wallet}).ok);
+      pay(id!,'paid-reconstruction',r.reconstructCost);
+    } else pay(id!,'craft',r.cost);
     let plus=Math.min(cell.upgradeLevel!,getMaxUpgrade(item),upgradeCeilingFromGlobalMastery(s.gm,r.tier));
     while(plus>0 && requiredBiomeLevelForUpgrade(item,plus)>(p.biomeLevel[r.recipeGroup]??0))plus--;
     if(s.id==='t4-established-gm148')assert.equal(plus,['core','relic'].includes(r.slot)?0:4,`${cell.id}: T4 upgrade must not silently clamp ${id}`);
     bot.holdsInventory.itemUpgrades[id!]=plus;
-    for(let n=1;n<=plus;n++)pay(`${id}+${n}`,'upgrade',upgradeCostFor(item,n)!,upgradeCatalystCostFor(item,n)??{});
+    for(let n=1;n<=plus;n++)pay(`${id}+${n}`,'upgrade',upgradeCostFor(item,n)!);
   }
-  const totals={essences:{red:0,blue:0,green:0,yellow:0,purple:0} as Record<string,number>,catalysts:{} as Record<string,number>};
-  for(const row of purchases)for(const [axis,values] of [['essences',row.cost],['catalysts',row.catalysts]] as const)
-    for(const [k,v]of Object.entries(values))totals[axis][k]=(totals[axis][k]??0)+v;
-  p.essences={red:0,blue:0,green:0,yellow:0,purple:0};p.catalysts={};
-  return {snapshot:s,purchases,priorResources:totals,remainingResources:{essences:p.essences,catalysts:p.catalysts},
+  const totals={essences:{red:0,blue:0,green:0,yellow:0,purple:0} as Record<string,number>};
+  for(const row of purchases)
+    for(const [k,v]of Object.entries(row.cost))totals.essences[k]=(totals.essences[k]??0)+v;
+  p.essences={red:0,blue:0,green:0,yellow:0,purple:0};
+  return {snapshot:s,purchases,priorResources:totals,remainingResources:{essences:p.essences},
     ...(s.priorBossClears?{priorBossClears:[...p.bossesCleared],priorSealOwnership:'Synthetic earned prior clears assumed; no acquisition combat measured',classSkillPointBudget:s.tier,classSkillPointsSpent:cell.build.skillPath.reduce((sum,id)=>sum+SKILL_TREE.get(id)!.cost,0)}:{}),
     acquisition:'Synthetic prior paid ownership; direct reconstruction at production price. No acquisition time measured.',
     abilityRanks:Object.fromEntries(p.knownAbilities.map(id=>[id,abilityRankNumber(ABILITY_DATABASE.get(id)!,s.tier)])),knownAbilities:[...p.knownAbilities],knownStances:[...p.knownStances],runesOwned:[...p.runesOwned],runeRecipesCrafted:[...p.runeRecipesCrafted]};

@@ -26,6 +26,8 @@ import { onSummonDeath, tickSummonerSpecializations } from './specs';
 import { syncSummonerFormationTarget } from './formationTarget';
 import { isPlayerInCombat } from '../../../combat/ai/engagement';
 import { pruneFormationTechnique } from './formationTechnique';
+import { registerSummonerFrameLoop, summonerFrenzyApsPct } from './frameLoop';
+import { summonerLineBonus, syncSummonerLine } from './lineHolds';
 
 type SummonerPlayerEntity = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
@@ -80,6 +82,10 @@ function reconcileMinionSlots(world: World, owner: SummonerPlayerEntity): void {
 function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): void {
   const profile = summonerProfileFor(owner);
   const desiredSpeed = computeMinionSpeed(owner);
+  // Consort's frame loop (`lineHolds.ts`). Resolved ONCE per pass: it is a
+  // property of the whole formation, so re-deriving it per body would read the
+  // same slots n times and could not usefully disagree with itself.
+  const lineBonus = summonerLineBonus(world, owner);
   for (let index = 0; index < owner.summonsMinions.minionIds.length; index++) {
     const id = owner.summonsMinions.minionIds[index];
     const minion = id ? world.getMinionEntity(id) : undefined;
@@ -110,8 +116,8 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
       markSliceDirty(world, minion, 'isMinion');
     }
     syncMinionMaxHp(world, minion, computeMinionMaxHp(owner, index));
-    syncMinionMitigation(world, minion, owner);
-    const desiredHpRegen = minionRecoveryFor(owner, minion.hasHealth.maxHp);
+    syncMinionMitigation(world, minion, owner, lineBonus);
+    const desiredHpRegen = minionRecoveryFor(minion.hasHealth.maxHp);
     if (minion.hasHealth.recovery !== desiredHpRegen) {
       minion.hasHealth.recovery = desiredHpRegen;
       markSliceDirty(world, minion, 'hasHealth');
@@ -133,9 +139,15 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
       minion.dealsDamage.attack = desiredAttack;
       markSliceDirty(world, minion, 'dealsDamage');
     }
+    // Splinter's frenzy window (Phase 3) lives HERE rather than writing minion
+    // cooldowns of its own: this resync runs every tick and is the single writer, so
+    // the window applies and lapses without an un-apply step that could be missed.
     const desiredCooldown = Math.max(
       100,
-      Math.round(owner.performsAttack.attackCooldown * profile.summonAttackCooldownMult),
+      Math.round(
+        (owner.performsAttack.attackCooldown * profile.summonAttackCooldownMult)
+        / (1 + summonerFrenzyApsPct(owner)),
+      ),
     );
     if (minion.performsAttack.attackCooldown !== desiredCooldown
       || minion.performsAttack.attackRange !== profile.attackRange) {
@@ -170,8 +182,9 @@ function runMinionRegen(
   if (minion.hasHealth.hp >= minion.hasHealth.maxHp) return;
   const recovery = minion.hasHealth.recovery ?? 0;
   if (recovery <= 0 || isMinionInCombat(world, owner, minion, now)) return;
-  // Flat HP/s (Phase 0b): the minion's rate is already scaled to its own pool
-  // by `minionRecoveryFor`, so this is the owner's share applied directly.
+  // Flat HP/s: `minionRecoveryFor` already expressed the out-of-combat rule as a
+  // share of the minion's OWN pool, so it applies directly. This path is
+  // out-of-combat only — the guard above is what makes that the right rule.
   applyHealToMinion(minion, owner.isPlayer.id, recovery * (dt / 1_000), world);
 }
 
@@ -210,7 +223,11 @@ function spawnFreshSlots(world: World, owner: SummonerPlayerEntity): void {
   }
 }
 
-export function initSummonerArchetype(): void {}
+export function initSummonerArchetype(): void {
+  // Frame loops + the root's `mechanic-fired` moment, both hung off the formation
+  // cycle (progression rework Phase 3).
+  registerSummonerFrameLoop();
+}
 
 export function updateSummonerArchetype(world: World, dt: number, now: number): void {
   for (const owner of world.summonerPlayers) {
@@ -227,6 +244,11 @@ export function updateSummonerArchetype(world: World, dt: number, now: number): 
     pruneFormationTechnique(world, summoner);
     spawnFreshSlots(world, summoner);
     tickSummonReconstruction(world, summoner, dt, now);
+    // AFTER `collectDeaths` and `tickSummonReconstruction`, so a death breaks
+    // Consort's line and a completed reconstruction restores it on the same pass
+    // that observed either, and BEFORE the resync, so the HUD record and the
+    // bodies' mitigation are decided from one reading of the formation.
+    syncSummonerLine(world, summoner);
     syncLiveMinionFrameStats(world, summoner);
     validateSummonerCommand(world, summoner, now);
 

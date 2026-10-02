@@ -36,6 +36,12 @@ import {
   sendUnequip,
   sendUnlockSkill,
   sendUpgradeItem,
+  sendLineageUnlockCard,
+  sendLineageSetActive,
+  sendLineageUnlockForm,
+  sendLineageWearForm,
+  sendAbilityUnlockNode,
+  sendAbilitySetNode,
   sendAckDeath,
   sendActivateDungeonAltar,
   sendEmote,
@@ -167,6 +173,36 @@ export function attachHudEvents(scene: GameScene): () => void {
   intents.on("upgradeItem", (itemId) => {
     if (isDeathOverlayActive()) return;
     sendUpgradeItem(scene.socket, itemId);
+  });
+
+  intents.on("lineageUnlockCard", (payload) => {
+    if (isDeathOverlayActive()) return;
+    sendLineageUnlockCard(scene.socket, payload);
+  });
+
+  intents.on("lineageSetActive", (payload) => {
+    if (isDeathOverlayActive()) return;
+    sendLineageSetActive(scene.socket, payload);
+  });
+
+  intents.on("lineageUnlockForm", (payload) => {
+    if (isDeathOverlayActive()) return;
+    sendLineageUnlockForm(scene.socket, payload);
+  });
+
+  intents.on("lineageWearForm", (payload) => {
+    if (isDeathOverlayActive()) return;
+    sendLineageWearForm(scene.socket, payload);
+  });
+
+  intents.on("abilityUnlockNode", (payload) => {
+    if (isDeathOverlayActive()) return;
+    sendAbilityUnlockNode(scene.socket, payload);
+  });
+
+  intents.on("abilitySetNode", (payload) => {
+    if (isDeathOverlayActive()) return;
+    sendAbilitySetNode(scene.socket, payload);
   });
 
   intents.on("ackDeath", () => {

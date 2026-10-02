@@ -8,6 +8,7 @@ import type {
   StanceSlot,
   ProgressionCheckpointResult,
   ProgressionCheckpointRestore,
+  RowKind,
   TierEntryApplyResult,
   TierEntryProfile,
   T1EconomyArm,
@@ -19,6 +20,14 @@ import type { BotConnection } from "./connection";
 export interface CraftOutcome {
   success: boolean;
   reason?: string;
+}
+
+/** Answer to any of the four lineage intents; one event serves all of them. */
+export interface LineageResult {
+  success: boolean;
+  reason?: string;
+  lineageId: string;
+  action: "unlockCard" | "setActive" | "unlockForm" | "wearForm";
 }
 
 export interface UpgradeOutcome {
@@ -181,6 +190,35 @@ export class Intents {
 
   setAbilityLoadout(equipped: AttunedAbilities): Promise<CraftOutcome> {
     return this.conn.request("build:loadoutResult", () => this.conn.raw.emit("ability:setLoadout", { equipped }), 15_000, p => p.system === "abilities");
+  }
+
+  // ── Lineage trees (progression rework Phase 1) ───────────────────────────
+  // All four lineage intents answer on the single `lineage:result` event, so the
+  // request filter has to match on the ACTION as well as the lineage: two
+  // in-flight lineage intents would otherwise resolve each other's promise.
+
+  unlockLineageCard(lineageId: string, cardId: string): Promise<LineageResult> {
+    return this.conn.request<LineageResult>("lineage:result",
+      () => this.conn.raw.emit("lineage:unlockCard", { lineageId, cardId }),
+      15_000, p => p.lineageId === lineageId && p.action === "unlockCard");
+  }
+
+  setLineageActive(lineageId: string, row: RowKind, cardId: string | null): Promise<LineageResult> {
+    return this.conn.request<LineageResult>("lineage:result",
+      () => this.conn.raw.emit("lineage:setActive", { lineageId, row, cardId }),
+      15_000, p => p.lineageId === lineageId && p.action === "setActive");
+  }
+
+  unlockLineageForm(lineageId: string, recipeId: string): Promise<LineageResult> {
+    return this.conn.request<LineageResult>("lineage:result",
+      () => this.conn.raw.emit("lineage:unlockForm", { lineageId, recipeId }),
+      15_000, p => p.lineageId === lineageId && p.action === "unlockForm");
+  }
+
+  wearLineageForm(lineageId: string, recipeId: string): Promise<LineageResult> {
+    return this.conn.request<LineageResult>("lineage:result",
+      () => this.conn.raw.emit("lineage:wearForm", { lineageId, recipeId }),
+      15_000, p => p.lineageId === lineageId && p.action === "wearForm");
   }
 
   craftRiteRecipe(recipeId: string): Promise<CraftOutcome> {

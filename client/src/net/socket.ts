@@ -53,6 +53,18 @@ export interface SocketHandlers {
   onRiteCraftResult(result: { recipeId: string; success: boolean; reason?: string }): void;
   onBuildLoadoutResult(result: { system: "abilities" | "runes" | "stances" | "rites"; success: boolean; reason?: string }): void;
   onUpgradeResult(result: { success: boolean; reason?: string; itemId: string; newLevel: number }): void;
+  onLineageResult(result: {
+    success: boolean;
+    reason?: string;
+    lineageId: string;
+    action: 'unlockCard' | 'setActive' | 'unlockForm' | 'wearForm';
+  }): void;
+  onAbilityNodeResult(result: {
+    success: boolean;
+    reason?: string;
+    abilityId: string;
+    action: 'unlockNode' | 'setNode';
+  }): void;
   onPlayerDied(payload: PlayerDeathPayload): void;
   onPlayerAscended(tier: number): void;
   onBossFelled(markers: BossFelledMarker[]): void;
@@ -93,6 +105,8 @@ export function wireSocketHandlers(
   socket.on('rite:craftResult', (r) => h.onRiteCraftResult(r));
   socket.on('build:loadoutResult', (r) => h.onBuildLoadoutResult(r));
   socket.on('inventory:upgradeResult', (r) => h.onUpgradeResult(r));
+  socket.on('lineage:result', (r) => h.onLineageResult(r));
+  socket.on('ability:nodeResult', (r) => h.onAbilityNodeResult(r));
   socket.on('player:died', (p) => h.onPlayerDied(p));
   socket.on('player:ascended', (t) => h.onPlayerAscended(t));
   socket.on('world:bossFelled', (m) => h.onBossFelled(m));
@@ -126,6 +140,7 @@ export function wireSocketHandlers(
     socket.off('rite:craftResult');
     socket.off('build:loadoutResult');
     socket.off('inventory:upgradeResult');
+    socket.off('lineage:result');
     socket.off('player:died');
     socket.off('player:ascended');
     socket.off('world:bossFelled');

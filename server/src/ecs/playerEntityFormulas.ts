@@ -8,15 +8,27 @@ import { attachComponent, detachComponent } from './markerHelpers';
 import { markSliceDirty } from './dirtyHelpers';
 import { hitboxEqual, resolvePlayerHitbox } from '../hitbox/resolve';
 import { syncDevInvulnerability } from '../dev/syncDevInvulnerability';
-import { resetStationaryDr } from '../systems/defense/mitigation/stationaryDr';
-import { resetReactivePlating } from '../systems/defense/mitigation/reactivePlating';
-import { resetBramblePlating } from '../systems/player/abilities/abilityBramble';
+import { forgetStationaryDrApplied, resetStationaryDr } from '../systems/defense/mitigation/stationaryDr';
+import { forgetReactivePlatingApplied, resetReactivePlating } from '../systems/defense/mitigation/reactivePlating';
+import { forgetBramblePlatingApplied, resetBramblePlating } from '../systems/player/abilities/abilityBramble';
 import { syncBarrier } from '../systems/defense/barrier/barrier';
+import { refreshLineageRuntime } from '../systems/combat/lineageCards';
+import { refreshAbilityNodeRuntime } from '../systems/combat/abilityNodes';
 
 export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity): void {
   resetStationaryDr(entity);
   resetReactivePlating(entity);
   resetBramblePlating(entity);
+  // The lineage card runtime's cache (progression rework 1c). Refreshed HERE
+  // because recalc is the one place its inputs — the trees, what is equipped, and
+  // the frame's sub-variant — can have moved, and because the card runtime must
+  // never resolve lazily on a hit: two sites answering the same question is how a
+  // cache and its source drift.
+  refreshLineageRuntime(entity);
+  // Ability nodes resolve on the same beat and for the same reason (design §19):
+  // the cache is a recalc product, and resolving it on an ability's landing would
+  // make two sites responsible for one answer.
+  refreshAbilityNodeRuntime(entity);
   const evadesHits = entity.evadesHits
     ? { ...entity.evadesHits }
     : { dodgeRate: 0, evadeMitigation: 0, charge: 0 };
@@ -109,6 +121,14 @@ export function recalculatePlayerStatsPreservingCombatState(world: World, entity
 
   cs.counters = combatSnapshot.counters;
   cs.resources = combatSnapshot.resources;
+  // The recalc's resets unwound the three in-place defense bonuses and rebuilt the
+  // base stats; the restored `*Applied` keys would now claim a bonus that is not
+  // on the stat, and the next fade would subtract it from the fresh base (plating
+  // ending at -1, stationary DR at a quarter of its base — review finding P2,
+  // 2026-10-02). Stacks and ramps are kept; the next defense tick re-applies.
+  forgetReactivePlatingApplied(cs);
+  forgetStationaryDrApplied(cs);
+  forgetBramblePlatingApplied(cs);
   cs.resourceMaxes = combatSnapshot.resourceMaxes;
   cs.cooldowns = combatSnapshot.cooldowns;
   cs.flags = combatSnapshot.flags;

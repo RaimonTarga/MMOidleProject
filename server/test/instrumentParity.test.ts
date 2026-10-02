@@ -37,7 +37,7 @@ import { applyWard } from "../src/systems/defense/barrier/wards";
 import { World } from "../src/world/World";
 import type { MonsterEntity, PlayerEntity } from "../src/ecs/entity";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -65,8 +65,7 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],

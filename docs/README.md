@@ -1,6 +1,6 @@
 # Documentation Index
 
-**Last audited:** 2026-09-28
+**Last audited:** 2026-10-01
 
 This is the navigation page for documentation that is useful in the current
 repository. It is deliberately not a dump of every dated report. Source code
@@ -53,7 +53,8 @@ because it is detailed.
 | Monster behavior | [monster-behavior-current-state.md](monster-behavior-current-state.md) |
 | Monster combat rework | [monster-combat-rework-current-state.md](monster-combat-rework-current-state.md) |
 | Monster targeting | [monster-targeting-current-state.md](monster-targeting-current-state.md) |
-| Node modifiers | [node-modifiers-current-state.md](node-modifiers-current-state.md) |
+| Node variants (family blends) | [variants-current-state.md](variants-current-state.md) |
+| Frame loops and range mechanics | [frames-current-state.md](frames-current-state.md) |
 | Area banners and danger previews | [area-information-current-state.md](area-information-current-state.md) |
 | Map, Crafting, Upgrade, Inventory and Passive Tree panels | [map-crafting-panels-current-state.md](map-crafting-panels-current-state.md) |
 | Player movement | [player-movement-current-state.md](player-movement-current-state.md) |
@@ -63,11 +64,10 @@ because it is detailed.
 
 | System | Current-state record |
 | --- | --- |
-| Aspects and catalysts | [aspects-catalysts-current-state.md](aspects-catalysts-current-state.md) |
+| Lineage trees (weapon + armor/charm/boots), keystones, ability nodes | [lineages-current-state.md](lineages-current-state.md) |
 | Charms | [charms-current-state.md](charms-current-state.md) |
 | Cores | [cores-current-state.md](cores-current-state.md) |
 | Global Mastery | [global-mastery-current-state.md](global-mastery-current-state.md) |
-| Gear evolution | [gear-evolution-current-state.md](gear-evolution-current-state.md) |
 | Relics | [relics-current-state.md](relics-current-state.md) |
 | Rites | [rites-current-state.md](rites-current-state.md) |
 | Runes | [rune-system-current-state.md](rune-system-current-state.md) |
@@ -107,21 +107,30 @@ read the linked current-state page before using it to describe shipped
 behavior.
 
 - [Future plans](future-plans.md) — backlog and deliberately deferred ideas.
-- [Progression rework plan](progression-rework-plan.md) — ACTIVE 2026-09-30: phased
-  plan for item lineage trees, biome variants and materials, frame loops, and the
-  removal of catalysts, node modifiers, and the +1..+5 ladder. Design authority is
+- [Progression rework plan](progression-rework-plan.md) — now a short status index:
+  **Phases 0–5 all shipped** (at least their first slice) as of run 3, 2026-10-01. Live
+  state is [lineages-current-state.md](lineages-current-state.md) (all twenty lineages,
+  rows, keystones, cross, re-homed forms, ability nodes),
+  [variants-current-state.md](variants-current-state.md) (families/blends through T4),
+  [frames-current-state.md](frames-current-state.md) (frame loops, range mechanics), and
+  [recovery-current-state.md](recovery-current-state.md) (flat recovery, pool-raise
+  pointer). The full phase-by-phase build log is archived at
+  [archive/progression-rework-plan.md](archive/progression-rework-plan.md). Design
+  authority is
   [`design_docs/progression-rework-design.md`](../design_docs/progression-rework-design.md).
-  Nothing implemented yet.
+- [Ability pass run brief](briefs/ability-pass-run-2026-10-02.md) — the run that implements design §22 (roster 22 → 17, ability keystone + cross rows, five T3 path re-homes); starts after the T1 boss pass merges; T1 lab DPS held within ±5%.
 - [Guided T1 tutorial plan](guided-tutorial-plan.md) — optional desktop guide that plays Tier 1 beat by beat from bot-validated scripts; Phase 1 in progress.
 - [Release v0.6 record](briefs/release-v0.6-2026-09-28.md) — what shipped in v0.6, merged branches, save policy, bandwidth changes, validation and the deploy check.
 - [T4 power curve review](archive/briefs/t4-power-curve-review-2026-09-27.md) — ARCHIVED 2026-09-27: done; report in `reports/t4-power-curve-2026-09-27/REVIEW.md`, live state in [tier-balance-current-state.md](tier-balance-current-state.md) §6–7.
 - [Boss lineage art list](briefs/boss-lineage-art-list-2026-09-27.md) — icons and ground textures the boss lineages borrow art for, with target paths and wiring.
+- [T1 boss pass report](briefs/t1-boss-pass-report-2026-10-02.md) — COMPLETE 2026-10-02: three T1 boss rows moved (Behemoth attack, Greatbear HP+attack, Toadeater HP) so every class beats every T1 boss on the guide's kit; second seal stays Mountain. Two findings outlive the numbers: a solo T1 boss fight was deterministic (24 of 30 cells), and the Behemoth/Broodmother are a 10x melee/ranged split rather than a difficulty.
 - [Boss redesign implementation plan](boss-encounter-redesign-implementation-plan-2026-09-04.md)
   — the remaining cleanup/tuning handoff after the shipped phases.
 - [Core rework design/balance handoff](core-rework-design-balance-handoff.md) —
   approved direction for a future Core pass; implementation is not implied.
-- [Map variety design](map-variety-plan.md) — locked node-modifier and region
-  design vocabulary.
+- [Map variety design](map-variety-plan.md) — locked region design vocabulary;
+  its node-modifier vocabulary is superseded for T1 by family blends, see
+  [variants-current-state.md](variants-current-state.md).
 - [Terrain variance plan](terrain-variance-plan.md) — parked terrain work.
 - [UI redesign plan](ui-redesign-plan.md) — presentation work and review
   history; verify implementation against client code.

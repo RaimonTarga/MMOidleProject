@@ -4,11 +4,12 @@ import {
   ESSENCE_LABELS,
   RECIPE_DATABASE,
   TEST_ROOM_NODE_ID,
-  catalystLabel,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
+import { syncLineagesFromInventory } from './lineageSync';
+import { isGatedLineageForm } from '@mmo-idle/shared';
 
 const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
 
@@ -29,14 +30,17 @@ export function craftRecipe(
   if (recipe.evolvesFrom) {
     return { success: false, reason: "This item must be evolved or reconstructed." };
   }
+  // A lineage's tier-2+ form is opened at its gate (boss capstone + shards), never
+  // crafted for essence — the re-homed doors carry no `evolvesFrom`, so the check
+  // above does not catch them (design §5: the boss is the only way up).
+  if (isGatedLineageForm(recipe.id)) {
+    return { success: false, reason: "This form is opened at its lineage's gate." };
+  }
 
   const isTestRoom = entity.hasPosition.nodeId === TEST_ROOM_NODE_ID;
   if (isTestRoom) {
     for (const type of ESSENCE_TYPES) {
       entity.tracksProgression.essences[type] = TEST_ROOM_ESSENCE_AMOUNT;
-    }
-    for (const group of Object.keys(recipe.catalystCost ?? {})) {
-      entity.tracksProgression.catalysts[group] = TEST_ROOM_ESSENCE_AMOUNT;
     }
     markSliceDirty(world, entity, "tracksProgression");
   } else {
@@ -68,23 +72,8 @@ export function craftRecipe(
     }
   }
 
-  const catalystEntries = Object.entries(recipe.catalystCost ?? {}) as [string, number][];
-  for (const [group, amount] of catalystEntries) {
-    const held = entity.tracksProgression.catalysts[group] ?? 0;
-    if (held < amount) {
-      return {
-        success: false,
-        reason: `Not enough ${catalystLabel(group)}. Need ${amount}, have ${held}.`,
-      };
-    }
-  }
-
   for (const [type, amount] of costEntries) {
     entity.tracksProgression.essences[type] -= amount;
-  }
-  for (const [group, amount] of catalystEntries) {
-    entity.tracksProgression.catalysts[group] =
-      (entity.tracksProgression.catalysts[group] ?? 0) - amount;
   }
 
   entity.holdsInventory.inventory = [
@@ -92,5 +81,8 @@ export function craftRecipe(
     recipe.id,
   ];
   markSliceDirty(world, entity, "holdsInventory");
+  // Crafting a lineage's T1 base form IS taking that slot's lineage, so the tree
+  // opens with it — there is no separate "unlock the tree" purchase (design §2).
+  syncLineagesFromInventory(world, entity);
   return { success: true };
 }

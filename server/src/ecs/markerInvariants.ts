@@ -10,6 +10,7 @@ import {
   isNetworkedComponentKey,
   networkedKeysForKind,
 } from "@mmo-idle/shared";
+import { BLEED_EFFECT_IDS } from "../systems/combat/damage/bleedIds";
 import type { World } from "../world/World";
 import type { ServerEntity } from "./entity";
 import { entityNetworkKind } from "./entity";
@@ -37,7 +38,14 @@ interface ArchetypeSliceCheck {
 const MONSTER_MARKER_CHECKS: MarkerCheck[] = [
   { marker: "hasDot", effectId: "dot" },
   { marker: "hasDetonation", effectId: "cadence-detonation", multi: true },
-  { marker: "hasHemorrhage", effectId: "cadence-hemorrhage", multi: true },
+  {
+    // The marker means "carries some bleed": a lineage card's DoT payoff has its
+    // own id (design §18.1) and the same driver ticks all of them.
+    marker: "hasHemorrhage",
+    effectId: "cadence-hemorrhage",
+    multi: true,
+    hasEffect: (state) => BLEED_EFFECT_IDS.some((id) => getStatusEffects(state, id).length > 0),
+  },
   { marker: "hasConflagration", effectId: "dot-conf" },
   { marker: "hasChill", effectId: "dot-chill" },
   { marker: "hasFrozen", effectId: "dot-frozen" },

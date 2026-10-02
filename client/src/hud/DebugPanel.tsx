@@ -127,10 +127,10 @@ function buildPlayerSection(p: DebugPlayer): DebugSection {
 }
 
 // ── Reward multiplier ─────────────────────────────────────────────────────────
-// Server-global scalar on essence, biome XP and catalyst progress, so a
-// balance/playtest cycle can reach late content without farming it. The atom
-// mirrors the server, which is the authority: pressing a preset only *asks*, and
-// the displayed value updates when the server echoes the change back.
+// Server-global scalar on essence and biome XP, so a balance/playtest cycle can
+// reach late content without farming it. The atom mirrors the server, which is
+// the authority: pressing a preset only *asks*, and the displayed value updates
+// when the server echoes the change back.
 
 const REWARD_MULT_PRESETS = [1, 5, 10, 25, 100];
 
@@ -153,7 +153,7 @@ function RewardMultiplierSection() {
         <span className="debug-key">rewards</span>
         <span className="debug-val">{multiplier}x</span>
       </div>
-      <div className="debug-div">essence · biome xp · catalysts</div>
+      <div className="debug-div">essence · biome xp</div>
       <div style={{ display: 'flex', gap: 4 }}>
         {REWARD_MULT_PRESETS.map(preset => (
           <button

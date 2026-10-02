@@ -14,11 +14,12 @@ import { EQUIPMENT_SLOTS } from '../items';
 import { coreIsActive } from './cores';
 import { activeStanceModifiers, stanceDef, type StanceModifiers } from '../stances';
 import { effectiveAttacksPerSecond, upgradeMechanicEffectsTotal, upgradeStatBonusTotal } from './itemUpgrades';
-import { GAME_CONFIG, baseRecoveryForTier } from '../index';
+import { GAME_CONFIG, baseRecoveryForTier, poolFactorForTier } from '../index';
 import { mergePassives, makePulseAccumulator, finalizePulse } from '../passives';
 import { relicRatingsFromPassives, resolveCadenceRelicProfile } from './relics';
 import { summonerSpecializationFor } from '../data/summoner';
 import { SLINGER_DIRECT_ATTACK_EFFECTIVENESS } from './classSecondaryDamage';
+import { defensiveFaceForSubVariant, resolveActiveLineages } from './lineages';
 
 /**
  * Map a raw evasion rating (Σ 1/N across all evasion sources) to a deterministic
@@ -260,6 +261,37 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     mergePassives(p.usesSkills.passives, stance.mechanicEffects, pulseAcc);
   }
 
+  // 2b. Lineage stat rows (progression rework Phase 1).
+  //
+  // Resolved ONCE here, before the cooldown fold, because a Tempo stat row grants
+  // `attackSpeedPct` and attack speed has to land before step 2a computes the
+  // cooldown, which is the line immediately below. The flat half of the same
+  // result is applied with equipment in step 3c, because a card is item power and
+  // must sit inside the magnitude the class affinities then multiply.
+  //
+  // Only a lineage whose worn form is the item actually equipped in its slot
+  // contributes, and only the active card of each row — owning a card is not
+  // playing it.
+  //
+  // BAND COLLAPSE (design §4, Phase 5). `statEffects` also carries the stat row
+  // of every band the worn form has collapsed: "the stat row's value folds into
+  // the next form's base stats at the gate". Those absorbed rows arrive in the
+  // SAME bag as the active one and so land through these two existing sites —
+  // the percentage half here, the flat half in step 3c — which is what makes an
+  // absorbed row contribute exactly once however many times recalc runs. There
+  // is deliberately no third application site; `resolveActiveLineages` also
+  // drops a slotted stat card its band has collapsed, so the two sets are
+  // disjoint by construction.
+  const lineageEffects = resolveActiveLineages(
+    p.holdsInventory,
+    defensiveFaceForSubVariant(p.usesSkills.selectedSubVariant),
+  );
+  attackSpeedPct += lineageEffects.statEffects.attackSpeedPct ?? 0;
+  if ((lineageEffects.statEffects.evasion ?? 0) > 0) evasionChance += lineageEffects.statEffects.evasion!;
+  if (lineageEffects.statEffects.attackPct) {
+    affinities.attack += lineageEffects.statEffects.attackPct;
+  }
+
   p.performsAttack.attackCooldown = Math.round(
     p.performsAttack.attackCooldown / Math.max(0.1, 1 + attackSpeedPct),
   );
@@ -307,9 +339,50 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
       if (Object.keys(meFx).length > 0) mergePassives(p.usesSkills.passives, meFx, pulseAcc);
     }
   }
+  // 3c. The flat half of the lineage stat rows — the slotted one plus the
+  // absorbed ones (step 2b) — folded with equipment so class affinities multiply
+  // it. Percentages and evasion already landed in step 2b; damage reduction joins
+  // the ITEM bucket, because a card is item power. An absorbed row is base stats
+  // of the worn form, so it belongs in exactly this bucket too.
+  for (const [stat, value] of Object.entries(lineageEffects.statEffects)) {
+    if (stat === 'attackSpeedPct' || stat === 'attackPct' || stat === 'evasion') continue;
+    if (stat === 'damageReduction') { itemDr += value; continue; }
+    // Technique power is the existing `technique.power-pct` PASSIVE, not an
+    // `ItemStats` field (design §22): the Technique lane scales the same number
+    // the Desert recipes author and `techniquePowerPctFor` reads, so a stat row
+    // ADDS into that passive rather than inventing a parallel stat for the
+    // ability code to miss. Additive and applied once, like every other `*Pct`.
+    if (stat === 'techniquePowerPct') {
+      p.usesSkills.passives['technique.power-pct'] =
+        (p.usesSkills.passives['technique.power-pct'] ?? 0) + value;
+      continue;
+    }
+    applyStatModToTarget(p, stat, value);
+  }
+
   p.mitigatesDamage.damageReduction = 1 - (1-classDr)*(1-Math.min(.9,Math.max(0,itemDr)));
   if (itemDr > 0) p.usesSkills.passives['defense.item-dr-base'] = itemDr;
   finalizePulse(pulseAcc, p.usesSkills.passives);
+
+  // 3c-bis. THE PLAYER POOL RAISE (progression rework Phase 0 call four, design
+  // bible §20) — the ONE place the per-tier pool factor is applied.
+  //
+  // It sits here because the flat pool is now complete and nothing has multiplied
+  // it yet: `GAME_CONFIG.PLAYER_MAX_HP` from step 1, the armor's `maxHp` and its
+  // upgrade steps from step 3, and the flat half of a defensive lineage's HP row
+  // from step 3c (which §3c itself calls item power) are the only flat sources in
+  // the game — no skill node or stance authors a flat `maxHp`, they all author
+  // `maxHpPct`. So one multiplication here IS "base max HP and armor maxHp", and
+  // every percentage layer below (class affinities 3d, the stance 3e, the core's
+  // `core.maxhp-mult`) keeps multiplying the finished pool exactly as before.
+  //
+  // Recovery is NOT touched: `hasHealth.recovery` was seeded in step 1 from the
+  // tier's REFERENCE pool and is a flat HP/s, so a bigger pool buys attrition
+  // rather than healing. That separation is the whole point of §15.
+  const poolFactor = poolFactorForTier(p.playerTier);
+  if (poolFactor !== 1) {
+    p.hasHealth.maxHp = Math.max(1, Math.round(p.hasHealth.maxHp * poolFactor));
+  }
 
   // 3d. Class affinity layer. Base + equipment have now established raw magnitude,
   // so the summed class-tree percentages land here — once each, never compounding
@@ -436,8 +509,15 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     p.mitigatesDamage.plating = Math.max(0, Math.round(p.mitigatesDamage.plating * (1 + platMult)));
   if (speedMult !== 0)
     p.hasPosition.speed = Math.max(0, Math.round(p.hasPosition.speed * (1 + speedMult)));
+  // Quantized to a TENTH, not to a whole number like the four integer stats above.
+  // Recovery became a fractional HP/s rate in Phase 0b, so `Math.round` was eating
+  // most of the bonus: the Jungle core's +30% on a naked T1's 6.5 HP/s is 8.45, which
+  // rounded to 8 and delivered +1.5 of the +1.95 it authored — a quarter of the core's
+  // whole payoff, gone. One decimal is the same resolution `baseRecoveryForTier`
+  // already quantizes to and the HUD already shows.
   if (recoveryMult !== 0)
-    p.hasHealth.recovery = Math.max(0, Math.round((p.hasHealth.recovery ?? 0) * (1 + recoveryMult)));
+    p.hasHealth.recovery = Math.max(0,
+      Math.round((p.hasHealth.recovery ?? 0) * (1 + recoveryMult) * 10) / 10);
   if (atkSpeedMult !== 0)
     p.performsAttack.attackCooldown = Math.max(
       1,

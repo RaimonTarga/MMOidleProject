@@ -13,6 +13,15 @@
 - **Self-reliant grind.** Mitigation + recovery must permit continuous unattended farming.
 - **Solo-complete, party-incentivized.** Whole game beatable solo; optional bosses need a group; partying is a large net positive (see §8), never a tax on solo.
 
+**Amendment (2026-09-30, progression rework).** Recovery is now a **flat** HP/s rate
+("self-reliant grind" above still holds; how it's achieved changed) — it no longer scales
+with max HP, so a bigger pool is a bigger budget, not more healing. This retires §7's old
+"soft cap total in-combat heal throughput at ~3-4% max-HP/sec" line outright: there is no
+percentage to cap once the stat isn't a percentage. See
+[`progression-rework-design.md`](progression-rework-design.md) §15 and
+[`recovery-current-state.md`](../docs/recovery-current-state.md) for the full rule and the
+numbers.
+
 ---
 
 ## 2. Tier & roster model
@@ -68,6 +77,20 @@ Each mechanic has ONE home biome. Others borrow it as a cross or scaled variant,
 | absorb (damage->heal-over-time) | Swamp | charm |
 | regen-burst (periodic pulse) | Cave | charm |
 | in-combat-regen | Volcanic *(tent.)* | charm |
+
+**Amendment (2026-10-01, progression rework).** This table's "one mechanic, one home
+biome" rule still governs which biome's *item identity* a mechanic belongs to, but every
+mechanic above is now also reachable through the **packet/lane vocabulary**: each item
+slot's lineage carries three packets (`tempo`, `empowered`, `affliction`, `control`,
+`kill-chain`, `engagement`, plus the defensive-only `bulwark`, `barrier-tempo`) drawn from
+a fixed list shared across every biome, and a lineage's own Lane A is still the biome's
+mechanic from this table. Kill-driven materials are keyed by **packet**, not by biome —
+eight shards for the whole game, one per packet, dropped by whichever monster **family**
+favours that packet — so "the material's name says what it buys and the map says where it
+drops" replaces biome-named materials (catalysts) outright. See
+[`progression-rework-design.md`](progression-rework-design.md) §2–3, §12 and
+[`lineages-current-state.md`](../docs/lineages-current-state.md) /
+[`variants-current-state.md`](../docs/variants-current-state.md) for the shipped system.
 
 ---
 
@@ -162,7 +185,15 @@ Five base archetypes (= the five starters). Variants keep the archetype's *feel*
 
 **Healing & debt clamps:**
 - Absorb heals on the **final** post-mitigation hit, once; debt ticks do NOT re-trigger absorb.
-- **Soft cap total in-combat heal throughput** (regen+absorb+in-combat-regen) at ~3-4% max-HP/sec, diminishing past it. (Calibrate to a target "seconds-to-live for a max-recovery build vs un-out-damageable DPS.")
+- ~~Soft cap total in-combat heal throughput (regen+absorb+in-combat-regen) at ~3-4%
+  max-HP/sec, diminishing past it.~~ **RETIRED 2026-09-30 (progression rework §1, §15).**
+  Recovery is now a **flat** HP/s rate, not a percentage of max HP — see §1 above and
+  [`progression-rework-design.md`](progression-rework-design.md) §15 and
+  [`recovery-current-state.md`](../docs/recovery-current-state.md). A percentage soft cap
+  has no referent once the stat itself isn't a percentage; the cap is now whatever the
+  tier's authored HP/s adds up to, with no clamp beyond that. `hpRegen 10%/s OOC (4s
+  delay)` above is unchanged — that line was always the *out-of-combat* rate, which stays
+  a fixed percentage under the flat model too (`GAME_CONFIG.OOC_RECOVERY_PCT`).
 - Cap **debt conversion** <= ~40-50% (a chunk of every burst lands raw).
 - No *hard* caps on individual mitigations — the threat matrix is the structural soft cap (can't be immortal vs all shapes on a split budget).
 

@@ -23,6 +23,12 @@ export const TUTORIAL_ANCHORS = {
   respawn: 'death.respawn',
   makeRow: (entryKey: string) => `make.row:${entryKey}`,
   inventoryItem: (definitionId: string) => `inventory.item:${definitionId}`,
+  /** The equipped slot that opens its lineage tree (weapon only, for now). */
+  equipmentSlot: (slot: string) => `inventory.slot:${slot}`,
+  /** One card in a lineage tree: pressing it buys it, or makes it active. */
+  lineageCard: (cardId: string) => `lineage.card:${cardId}`,
+  /** One form at a band's gate: pressing it pays the gate, or wears it. */
+  lineageForm: (recipeId: string) => `lineage.form:${recipeId}`,
   upgradeRow: (definitionId: string) => `upgrade.row:${definitionId}`,
   abilityAttune: (abilityId: string) => `abilities.attune:${abilityId}`,
   /** "Use default timing" under an attuned ability: adds its reference Rune. */

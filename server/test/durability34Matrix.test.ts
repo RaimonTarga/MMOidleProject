@@ -10,7 +10,7 @@ import {
   installDurability34Treatment,
 } from '../bench/balance/durability34Spec';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 

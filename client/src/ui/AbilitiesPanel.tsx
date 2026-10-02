@@ -7,6 +7,7 @@ import { attunedAbilitiesAtom, knownAbilitiesAtom, playerTierAtom, runesEquipped
 import { abilityTiming } from "./describe/abilityTiming";
 import { describeAbility } from "./describe/abilityText";
 import { AbilityDetails } from "./AbilityDetails";
+import { AbilityNodeRows } from "./AbilityNodeRows";
 import { AttunementBudget } from "./AttunementBudget";
 import { GameIcon } from "./GameIcon";
 import { abilityIconSource } from "./abilityIcons";
@@ -93,6 +94,8 @@ export function AbilitiesPanelContent() {
               <span>After {isAttuned ? "unattuning" : "attuning"}: <b>{nextSpent} / {budget} RP</b>{isAttuned && timing.overrides.length > 0 && " · removes this ability’s Rune rules"}</span>
             </div>
             {isAttuned && <p className="attunement-note">Fires automatically only through Use Ability rules, in Rune priority order.</p>}
+            {/* Runes decide WHEN it fires; nodes decide WHAT it does (design §19). */}
+            <AbilityNodeRows ability={ability} />
           </div>}
         </article>;
       })}

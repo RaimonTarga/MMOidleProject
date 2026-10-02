@@ -168,6 +168,8 @@ const BUFF_IDS = new Set([
   'energy-channel',
   'energy-critical-mass',
   'energy-equilibrium',
+  'energy-frame-overcharge',
+  'energy-frame-surge',
   'energy-overcharge',
   'energy-overdrive',
   'energy-reservoir',
@@ -185,6 +187,7 @@ const BUFF_IDS = new Set([
   'mob-volcanic',
   'reload-cannon',
   'reload-cover-fire',
+  'reload-frame-ramp',
   'reload-hair-trigger',
   'reload-momentum',
   'reload-snipe-ready',
@@ -193,6 +196,9 @@ const BUFF_IDS = new Set([
   'summoner-colossus',
   'summoner-coordinated-hunt',
   'summoner-endless-swarm',
+  'summoner-frame-frenzy',
+  'summoner-frame-line',
+  'summoner-frame-link',
   'summoner-grand-ritual',
   'summoner-harrier-brood',
   'summoner-howl-banner',
@@ -202,6 +208,21 @@ const BUFF_IDS = new Set([
   'stance-charge',
   'stance-reaper',
   'stance-release',
+  // Lineage card windows (progression rework 1c).
+  'lineage-damage',
+  'lineage-speed',
+  'lineage-recovery',
+  'lineage-guard',
+  'lineage-ward',
+  'lineage-plate',
+  'lineage-technique',
+  'lineage-evasion',
+  // Frame loops (progression rework Phase 3). Two tiles for all six roots: the
+  // window the mechanic opened, and the bank counting toward its cap. Art is
+  // authored through the normal pipeline; until it lands these resolve the same
+  // way the lineage tiles above do.
+  'frame-window',
+  'frame-charge',
 ]);
 
 const DEBUFF_IDS = new Set([
@@ -307,6 +328,32 @@ export function riteIconSource(id: string): AssetIconSource | null {
 const BUFF_ICON_ALIASES: Record<string, string> = {
   'defense-engagement-dr': 'defense-sustained-dr',
   'defense-recovery': 'defense-burst',
+  // Lineage card windows and the two frame tiles have no authored PNG yet; an
+  // id with no file drew a blank dark square with an invisible clock (review
+  // P6, 2026-10-02). Each borrows the tile of the effect it most resembles.
+  'lineage-damage': 'cadence-crescendo',
+  'lineage-speed': 'cadence-accelerando',
+  'lineage-recovery': 'defense-burst',
+  'lineage-guard': 'defense-sustained-dr',
+  'lineage-ward': 'defense-ward',
+  'lineage-plate': 'defense-reactive-plating',
+  'lineage-technique': 'flurry',
+  'lineage-evasion': 'mob-kite',
+  'frame-window': 'cooldown-channel',
+  'frame-charge': 'energy-ac-charge',
+  // Frame loops (progression rework Phase 3) borrow the authored tile of the
+  // mechanic they ARE, rather than shipping five 404s until the art pass reaches
+  // them: Artillerist's ramp is the Hair Trigger ramp re-homed onto the frame,
+  // Phantasm's bank is overcharge, Wraith's window is energy accruing faster,
+  // Splinter's frenzy is the formation cycle paying off, Effigy's pair spends its
+  // bank as a linked strike, and Consort's held line is the formation standing as
+  // one durable body.
+  'reload-frame-ramp': 'reload-hair-trigger',
+  'energy-frame-overcharge': 'energy-overcharge',
+  'energy-frame-surge': 'energy-ac-charge',
+  'summoner-frame-frenzy': 'summoner-coordinated-hunt',
+  'summoner-frame-line': 'summoner-colossus',
+  'summoner-frame-link': 'summoner-battle-bond',
 };
 
 const BUFF_ABILITY_ICON_ALIASES: Record<string, string> = {

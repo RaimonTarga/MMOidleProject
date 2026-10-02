@@ -142,9 +142,7 @@ function card(b){
     inner += '<div class="sect"><h3>Equipment</h3><table>'+slotRows(p)+'</table></div>';
 
     const ess = nz(p.essences).map(([k,v]) => '<span>'+k+' <b>'+v+'</b></span>').join('');
-    const cat = nz(p.catalysts).map(([k,v]) => '<span>'+k+' <b>'+v+'</b></span>').join('');
-    inner += '<div class="sect"><h3>Resources</h3><div class="kv">'+(ess||'<span>—</span>')+'</div>'
-      + (cat ? '<div class="kv" style="margin-top:4px">'+cat+'</div>' : '') + '</div>';
+    inner += '<div class="sect"><h3>Resources</h3><div class="kv">'+(ess||'<span>—</span>')+'</div></div>';
 
     const lv = nz(p.biomeLevels).map(([k,v]) => '<span>'+k+' <b>'+v+'</b></span>').join('');
     inner += '<div class="sect"><h3>Mastery</h3><div class="kv">'+(lv||'<span>—</span>')+'</div>'

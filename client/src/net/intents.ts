@@ -7,6 +7,8 @@ import type {
   PlayerMoveOptions,
   PlayerMoveResult,
   CombatControlResult,
+  RowKind,
+  AbilityNodeRow,
   StanceSlot,
   Vec2,
 } from '@mmo-idle/shared';
@@ -156,6 +158,52 @@ export function sendEvolveItem(
 
 export function sendUpgradeItem(socket: GameSocket, itemId: string): void {
   socket.emit('inventory:upgradeItem', itemId);
+}
+
+// ── Lineage trees (progression rework Phase 1) ──────────────────────────────
+
+export function sendLineageUnlockCard(
+  socket: GameSocket,
+  payload: { lineageId: string; cardId: string },
+): void {
+  socket.emit('lineage:unlockCard', payload);
+}
+
+export function sendLineageSetActive(
+  socket: GameSocket,
+  payload: { lineageId: string; row: RowKind; cardId: string | null },
+): void {
+  socket.emit('lineage:setActive', payload);
+}
+
+export function sendLineageUnlockForm(
+  socket: GameSocket,
+  payload: { lineageId: string; recipeId: string },
+): void {
+  socket.emit('lineage:unlockForm', payload);
+}
+
+export function sendLineageWearForm(
+  socket: GameSocket,
+  payload: { lineageId: string; recipeId: string },
+): void {
+  socket.emit('lineage:wearForm', payload);
+}
+
+// ── Ability nodes (design §19) ──────────────────────────────────────────────
+
+export function sendAbilityUnlockNode(
+  socket: GameSocket,
+  payload: { abilityId: string; optionId: string },
+): void {
+  socket.emit('ability:unlockNode', payload);
+}
+
+export function sendAbilitySetNode(
+  socket: GameSocket,
+  payload: { abilityId: string; row: AbilityNodeRow; optionId: string | null },
+): void {
+  socket.emit('ability:setNode', payload);
 }
 
 export function sendJoinParty(socket: GameSocket, targetPlayerId: string): void {

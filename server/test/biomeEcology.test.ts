@@ -8,7 +8,7 @@ import { World } from "../src/world/World";
 import { MONSTER_DATABASE } from "@mmo-idle/shared";
 import { packTestPlayerSlices } from "./fixtures/packTestPlayer";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 

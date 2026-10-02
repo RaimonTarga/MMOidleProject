@@ -59,7 +59,7 @@ const PLAINS: BiomePlan = {
   before: [{ piece: 'iron-broadsword' }, { piece: 'plains-vest-t1' }],
   after: [{ piece: 'plains-charm-t1' }, { piece: 'plains-boots-t1' }],
   afterMax: [{
-    upgrade: [['iron-broadsword', 1], ['plains-vest-t1', 1], ['plains-charm-t1', 1], ['plains-boots-t1', 1]],
+    upgrade: [['plains-vest-t1', 1], ['plains-charm-t1', 1], ['plains-boots-t1', 1]],
   }],
 };
 
@@ -69,20 +69,20 @@ function durableMelee(): Record<T1Biome, BiomePlan> {
     forest: {
       before: [{ piece: 'flash-rapier' }],
       afterMax: [{
-        upgrade: [['flash-rapier', 2], ['plains-vest-t1', 2], ['plains-charm-t1', 2], ['plains-boots-t1', 2]],
+        upgrade: [['plains-vest-t1', 2], ['plains-charm-t1', 2], ['plains-boots-t1', 2]],
       }],
     },
     swamp: {
       after: [{ piece: 'swamp-charm-t1' }],
       afterMax: [{
-        upgrade: [['swamp-charm-t1', 3], ['flash-rapier', 3], ['plains-vest-t1', 3], ['plains-boots-t1', 3]],
+        upgrade: [['swamp-charm-t1', 3], ['plains-vest-t1', 3], ['plains-boots-t1', 3]],
       }],
     },
     mountain: {
       after: [{ piece: 'mountain-vest-t1' }],
       afterMax: [{
         upgrade: [
-          ['mountain-vest-t1', 4], ['flash-rapier', 4], ['swamp-charm-t1', 4],
+          ['mountain-vest-t1', 4], ['swamp-charm-t1', 4],
           ['plains-vest-t1', 4], ['plains-boots-t1', 4],
         ],
       }],
@@ -93,12 +93,11 @@ function durableMelee(): Record<T1Biome, BiomePlan> {
         { craft: 'chaotic-axe' },
       ],
       after: [
-        { upgrade: [['chaotic-axe', 4]], say: 'The axe needs a few upgrades before it beats the rapier.' },
         { equip: ['chaotic-axe'] },
       ],
       afterMax: [{
         upgrade: [
-          ['chaotic-axe', 5], ['plains-vest-t1', 5], ['mountain-vest-t1', 5],
+          ['plains-vest-t1', 5], ['mountain-vest-t1', 5],
           ['swamp-charm-t1', 5], ['plains-boots-t1', 5],
         ],
       }],
@@ -112,22 +111,21 @@ function slinger(): Record<T1Biome, BiomePlan> {
     forest: {
       before: [{ piece: 'flash-rapier' }, { piece: 'forest-vest-t1' }],
       afterMax: [{
-        upgrade: [['flash-rapier', 2], ['forest-vest-t1', 2], ['plains-charm-t1', 2], ['plains-boots-t1', 2]],
+        upgrade: [['forest-vest-t1', 2], ['plains-charm-t1', 2], ['plains-boots-t1', 2]],
       }],
     },
     swamp: {
       after: [{ piece: 'swamp-charm-t1' }, { craft: 'ashbrand-blade' }],
       afterMax: [{
         upgrade: [
-          ['swamp-charm-t1', 3], ['ashbrand-blade', 3], ['forest-vest-t1', 3],
-          ['flash-rapier', 3], ['plains-boots-t1', 3],
+          ['swamp-charm-t1', 3], ['forest-vest-t1', 3], ['plains-boots-t1', 3],
         ],
       }],
     },
     mountain: {
       afterMax: [{
         upgrade: [
-          ['ashbrand-blade', 4], ['flash-rapier', 4], ['forest-vest-t1', 4],
+          ['forest-vest-t1', 4],
           ['swamp-charm-t1', 4], ['plains-boots-t1', 4],
         ],
       }],
@@ -138,7 +136,7 @@ function slinger(): Record<T1Biome, BiomePlan> {
       // The bot also crafts a Mountain vest here, but only for the Mountain,
       // Swamp and Cave bosses, which the guide does not fight.
       afterMax: [{
-        upgrade: [['ashbrand-blade', 5], ['forest-vest-t1', 5], ['swamp-charm-t1', 5], ['plains-boots-t1', 5]],
+        upgrade: [['forest-vest-t1', 5], ['swamp-charm-t1', 5], ['plains-boots-t1', 5]],
       }],
     },
   };
@@ -150,7 +148,7 @@ function apprentice(): Record<T1Biome, BiomePlan> {
     after: [{ piece: 'swamp-vest-t1' }, { piece: 'swamp-charm-t1' }],
     afterMax: [{
       upgrade: [
-        ['swamp-vest-t1', 3], ['swamp-charm-t1', 3], ['flash-rapier', 3],
+        ['swamp-vest-t1', 3], ['swamp-charm-t1', 3],
         ['plains-vest-t1', 3], ['plains-boots-t1', 3],
       ],
     }],
@@ -159,7 +157,7 @@ function apprentice(): Record<T1Biome, BiomePlan> {
     after: [{ piece: 'mountain-vest-t1' }],
     afterMax: [{
       upgrade: [
-        ['mountain-vest-t1', 4], ['flash-rapier', 4], ['swamp-vest-t1', 4],
+        ['mountain-vest-t1', 4], ['swamp-vest-t1', 4],
         ['swamp-charm-t1', 4], ['plains-boots-t1', 4],
       ],
     }],
@@ -168,7 +166,7 @@ function apprentice(): Record<T1Biome, BiomePlan> {
     ...plan.cave,
     afterMax: [{
       upgrade: [
-        ['chaotic-axe', 5], ['plains-vest-t1', 5], ['mountain-vest-t1', 5],
+        ['plains-vest-t1', 5], ['mountain-vest-t1', 5],
         ['swamp-vest-t1', 5], ['swamp-charm-t1', 5], ['plains-boots-t1', 5],
       ],
     }],

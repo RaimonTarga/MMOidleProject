@@ -61,7 +61,7 @@ import {
   assertBoss3Definitions,
 } from "../bench/balance/boss3Spec";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -88,8 +88,7 @@ function makePlayerSlices(id: string, guards: string[]): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -211,8 +210,8 @@ const REF_GUARDS = ["second-wind", BOSS3_GUARD_OUT];
 // expected stack count everywhere below.
 const cleanseRank = abilityRankAt(ABILITY_DATABASE.get(BOSS3_GUARD_IN)!, BOSS3_TIER).effect;
 assert(cleanseRank.kind === "cleanse", "the substituted Guard must resolve a cleanse effect");
-const RANK_STACKS = cleanseRank.stacks;
-const RANK_DEBUFFS = cleanseRank.debuffs;
+const RANK_STACKS = (cleanseRank as { stacks?: number }).stacks ?? 0;
+const RANK_DEBUFFS = (cleanseRank as { debuffs?: number }).debuffs;
 console.log(
   `boss3Cleanse: ${BOSS3_GUARD_IN} at player tier ${BOSS3_TIER} = ${RANK_STACKS} stacks off ${RANK_DEBUFFS} affliction(s)`,
 );

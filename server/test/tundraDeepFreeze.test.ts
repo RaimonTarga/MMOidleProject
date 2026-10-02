@@ -38,7 +38,7 @@ import { attachComponent } from '../src/ecs/markerHelpers';
 import { World } from '../src/world/World';
 import type { MonsterEntity, PlayerEntity } from '../src/ecs/entity';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -54,11 +54,12 @@ function playerSlices(id: string): PersistedPlayerSlices {
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null }, knownStances: [],
+      attunedAbilities: { techniques: [], guards: [] }, knownStances: [],
       equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },

@@ -1,6 +1,6 @@
 import { MONSTER_DATABASE } from '@mmo-idle/shared';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 

@@ -1,6 +1,6 @@
 import { useId, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { estimatePlayerDps, playerMoveSpeedMult, resolveEmpoweredMultiplier, resolveOnHitDamage, riteDef } from '@mmo-idle/shared';
+import { estimatePlayerDps, formatRecoveryRate, playerMoveSpeedMult, resolveEmpoweredMultiplier, resolveOnHitDamage, riteDef } from '@mmo-idle/shared';
 import { DefensePassivesSection, MobilityPassivesSection, StatRow } from './components';
 import { ArchetypeMechanics } from './mechanics';
 import { useHoverTooltip } from './tooltip';
@@ -365,7 +365,7 @@ export function StatPanel() {
               {
                 id: 'regen',
                 glyph: STAT_GLYPH.regen,
-                value: String(Math.round(player.recovery * 10) / 10),
+                value: formatRecoveryRate(player.recovery),
                 // Recovery is a flat rate: 1 point = 1 HP per second at 100%
                 // active Recovery (Phase 0b). It no longer scales with max HP.
                 unit: 'HP/s',
@@ -433,7 +433,7 @@ export function StatPanel() {
               value={player ? `${Math.round(player.damageReduction * 100)}%` : '—'}
               help={STAT_HELP.damageReduction}
             />
-            <StatRow label="Recovery" value={player ? `${player.recovery} HP/s` : '—'} help={STAT_HELP.recovery} />
+            <StatRow label="Recovery" value={player ? `${formatRecoveryRate(player.recovery)} HP/s` : '—'} help={STAT_HELP.recovery} />
           </div>
 
           {player && player.dodgeRate > 0 && (

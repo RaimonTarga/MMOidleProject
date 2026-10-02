@@ -2,12 +2,12 @@ import { STANCE_RECIPE_DATABASE } from "@mmo-idle/shared";
 import { CAMPAIGN_PROFILES } from "../loadout/campaignProfiles";
 import { requireTierEntryProfile, t2EntryProfileId } from "../tierEntry/profiles";
 import type { Route, RouteStep } from "../route/types";
-import { soleCatalystFamily, t2FarmFor } from "./t2Common";
+import { t2 } from "./t2Common";
 
 /** No bosses, upgrades or later biomes: qualify one explicit build transition. */
 export const CAMPAIGN_READINESS_ROUTES: Route[] = CAMPAIGN_PROFILES.map(profile => {
   const entry = requireTierEntryProfile(t2EntryProfileId(profile.classRoot, "clean"));
-  const at = t2FarmFor("plains");
+  const at = t2("plains");
   const steps: RouteStep[] = [
     { type: "assert", condition: { type: "frameSelected", frameId: profile.frameId } },
     { type: "assert", condition: { type: "not", of: { type: "playerTierAtLeast", tier: 3 } } },
@@ -21,7 +21,7 @@ export const CAMPAIGN_READINESS_ROUTES: Route[] = CAMPAIGN_PROFILES.map(profile 
     const recipe = STANCE_RECIPE_DATABASE.get(recipeId);
     if (!recipe) throw new Error(`Missing campaign stance recipe ${recipeId}`);
     steps.push({ type: "craftStance", recipeId,
-      farmAt: t2FarmFor("plains", soleCatalystFamily(recipe.catalystCost)) });
+      farmAt: t2("plains") });
   }
   steps.push(
     { type: "configureBuild", build: structuredClone(profile.farm), label: `${profile.id}: Plains farm` },

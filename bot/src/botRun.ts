@@ -9,7 +9,6 @@ import {
   GAME_CONFIG,
   NODE_BIOMES,
   SKILL_TREE,
-  catalystProgressRewardMult,
   defaultT1EconomyConfig,
   t1EconomyConfigForArm,
   t1Plus5EssenceCosts,
@@ -506,8 +505,7 @@ export async function runBot(
       !result.success ||
       result.arm !== economyConfig.arm ||
       result.config?.revision !== economyConfig.revision ||
-      result.config?.t1Plus5EssenceCostMultiplier !== economyConfig.t1Plus5EssenceCostMultiplier ||
-      result.config?.catalystProgressPerUnitT1 !== economyConfig.catalystProgressPerUnitT1
+      result.config?.t1Plus5EssenceCostMultiplier !== economyConfig.t1Plus5EssenceCostMultiplier
     ) {
       throw new Error(
         `server rejected or mismatched T1 economy arm ${economyConfig.arm}: ${result.reason ?? "invalid acknowledgement"}`,
@@ -594,14 +592,13 @@ export async function runBot(
     startState: Object.fromEntries([
       "nodeId", "hp", "maxHp", "activeStance", "runesOwned", "unlockedRecipes", "level",
       "playerTier", "selectedClass", "selectedSubVariant", "selectedRange", "unlockedSkills", "skillPoints",
-      "biomeLevel", "biomeXP", "bossesCleared", "inventory", "equipment", "itemUpgrades", "essences", "catalysts", "catalystProgress",
+      "biomeLevel", "biomeXP", "bossesCleared", "inventory", "equipment", "itemUpgrades", "essences",
       "knownAbilities", "attunedAbilities", "knownStances", "attunedStances", "equippedStances", "knownRites", "equippedRites", "runesEquipped",
     ].map(key => [key, structuredClone(initialSelf[key as keyof typeof initialSelf])])),
     checkpoint: sourceSnapshot?.progressionCheckpoint ? { snapshotId:sourceSnapshot.snapshotId,
       sourceRevision:sourceSnapshot.progressionCheckpoint.sourceRevision,boundaryId:sourceSnapshot.progressionCheckpoint.boundaryId,
       inheritedProvenance:sourceSnapshot.inheritedProvenance,skippedPreparation:'inherited, not measured in this continuation' } : undefined,
     initialEssences: { ...initialSelf.essences },
-    initialCatalysts: { ...initialSelf.catalysts },
     tierEntry: tierEntryProfile
       ? buildTierEntryInitialState(tierEntryProfile, initialSelf)
       : undefined,
@@ -775,7 +772,6 @@ export async function runBot(
             equipment: { ...self.equipment },
             upgrades: { ...self.itemUpgrades },
             essences: { ...self.essences },
-            catalysts: { ...self.catalysts },
             biomeLevels: { ...self.biomeLevel },
             bossesCleared: [...self.bossesCleared],
             techniques: [...self.attunedAbilities.techniques],
@@ -1110,19 +1106,14 @@ function buildTierEntryInitialState(
     knownRites: [...self.knownRites],
     equippedRites: [...self.equippedRites],
     initialEssences: { ...self.essences },
-    initialCatalysts: { ...self.catalysts },
   };
 }
 
 /**
  * Read the economy candidate out of the LIVE shared data the connected build is
  * running, so a run header records what actually applied rather than a
- * hand-copied intent. `CATALYSTS_SCALED_BY_REWARD_MULTIPLIER` is a constant
- * mirror of the reward path's decision in
- * `server/src/systems/player/progression/rewards.ts`; flip both together.
+ * hand-copied intent.
  */
-const CATALYSTS_SCALED_BY_REWARD_MULTIPLIER = true;
-
 function resolveEconomyCandidate(
   economyConfig: ReturnType<typeof t1EconomyConfigForArm>,
 ): EconomyCandidate {
@@ -1131,9 +1122,6 @@ function resolveEconomyCandidate(
     revision: economyConfig.revision,
     arm: economyConfig.arm,
     t1Plus5EssenceCostMultiplier: economyConfig.t1Plus5EssenceCostMultiplier,
-    catalystProgressPerUnitT1: economyConfig.catalystProgressPerUnitT1,
-    t1CatalystProgressRewardMultiplier: catalystProgressRewardMult(1),
-    catalystsScaledByRewardMultiplier: CATALYSTS_SCALED_BY_REWARD_MULTIPLIER,
     t1BiomeXpRewardMultiplier: economyConfig.t1BiomeXpRewardMultiplier,
     t1BiomeEssenceRewardMultiplier: economyConfig.t1BiomeEssenceRewardMultiplier,
     t1Plus5EssenceCosts: t1Plus5EssenceCosts(

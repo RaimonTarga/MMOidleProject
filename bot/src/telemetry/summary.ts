@@ -80,7 +80,6 @@ export interface RunSummary {
     craftsCompleted: number;
     upgradesCompleted: number;
     essenceGained: Record<string, number>;
-    catalystsByModifier: Record<string, number>;
     topDamageSources: Array<{ name: string; damage: number }>;
     topKills: Array<{ name: string; kills: number }>;
     averageConcurrency: number;
@@ -218,11 +217,7 @@ export interface RunSummary {
   economy: {
     winCondition: CompletionMode;
     initialEssences: Record<string, number>;
-    initialCatalysts: Record<string, number>;
     finalEssences: Record<string, number>;
-    finalCatalysts: Record<string, number>;
-    catalystsGainedByFamily: Record<string, number>;
-    catalystsSpentByFamily: Record<string, number>;
     essenceSpentByType: Record<string, number>;
     essenceGainedByBiome: Record<string, Record<string, number>>;
     totalBlockedOnResourceMs: number;
@@ -239,15 +234,8 @@ export interface RunSummary {
       killsPerHour: number;
       essenceGained: Record<string, number>;
       essencePerHour: Record<string, number>;
-      catalystsByModifier: Record<string, number>;
       craftsCompleted: number;
       upgradesCompleted: number;
-    }>;
-    catalystGains: Array<{
-      atMs: number;
-      family: string;
-      amount: number;
-      context: unknown;
     }>;
     gearTimeline: {
       crafts: Array<{
@@ -255,7 +243,6 @@ export interface RunSummary {
         recipeId: string;
         success: boolean;
         essenceSpent: Record<string, number>;
-        catalystsSpent: Record<string, number>;
         context: unknown;
       }>;
       upgrades: Array<{
@@ -265,7 +252,6 @@ export interface RunSummary {
         newLevel: number;
         success: boolean;
         essenceSpent: Record<string, number>;
-        catalystsSpent: Record<string, number>;
         context: unknown;
       }>;
       evolutions: Array<{
@@ -275,7 +261,6 @@ export interface RunSummary {
         predecessorId: string;
         success: boolean;
         essenceSpent: Record<string, number>;
-        catalystsSpent: Record<string, number>;
         context: unknown;
       }>;
       stanceCrafts: Array<{
@@ -284,7 +269,6 @@ export interface RunSummary {
         stanceId: string;
         success: boolean;
         essenceSpent: Record<string, number>;
-        catalystsSpent: Record<string, number>;
         context: unknown;
       }>;
       equips: Array<{ atMs: number; slot: string; definitionId: string | null }>;
@@ -301,16 +285,10 @@ export interface RunSummary {
       reason: string;
       detail?: string;
       essences: Record<string, number>;
-      catalysts: Record<string, number>;
-      catalystProgress: Record<string, number>;
       biomeLevels: Record<string, number>;
       globalMastery: number;
       nodeId: string;
     }>;
-  };
-  catalysts: {
-    finalWallet: Record<string, number>;
-    gainedByModifier: Record<string, number>;
   };
   world: {
     otherPlayersSeen: number;
@@ -384,17 +362,10 @@ export function buildSummary(params: {
   }
 
   const essenceGainedByBiome: Record<string, Record<string, number>> = {};
-  const catalystsByModifier: Record<string, number> = {};
-  const catalystsGainedByFamily: Record<string, number> = {};
-  const catalystsSpentByFamily: Record<string, number> = {};
   const essenceSpentByType: Record<string, number> = {};
   let totalKills = 0;
   let blockedTotal = 0;
 
-  for (const event of recorder.economyTimeline.catalystGains) {
-    catalystsGainedByFamily[event.family] =
-      (catalystsGainedByFamily[event.family] ?? 0) + event.amount;
-  }
   for (const event of [
     ...recorder.economyTimeline.crafts,
     ...recorder.economyTimeline.upgrades,
@@ -404,9 +375,6 @@ export function buildSummary(params: {
     if (!event.success) continue;
     for (const [type, amount] of Object.entries(event.essenceSpent)) {
       essenceSpentByType[type] = (essenceSpentByType[type] ?? 0) + amount;
-    }
-    for (const [family, amount] of Object.entries(event.catalystsSpent)) {
-      catalystsSpentByFamily[family] = (catalystsSpentByFamily[family] ?? 0) + amount;
     }
   }
 
@@ -440,9 +408,6 @@ export function buildSummary(params: {
       totalKills += stats.kills;
       blockedTotal += stats.blockedMs;
       essenceGainedByBiome[stats.biomeGroup] = { ...stats.essenceGained } as Record<string, number>;
-      for (const [modifier, amount] of Object.entries(stats.catalystsByModifier)) {
-        catalystsByModifier[modifier] = (catalystsByModifier[modifier] ?? 0) + amount;
-      }
       return {
         biomeGroup: stats.biomeGroup,
         timeMs: stats.timeMs,
@@ -459,7 +424,6 @@ export function buildSummary(params: {
         craftsCompleted: stats.craftsCompleted,
         upgradesCompleted: stats.upgradesCompleted,
         essenceGained: { ...stats.essenceGained } as Record<string, number>,
-        catalystsByModifier: { ...stats.catalystsByModifier },
         topDamageSources: topDamage(stats.damageBySource, 5),
         topKills: topKills(stats.killsByMonster, 5),
         averageConcurrency:
@@ -506,7 +470,6 @@ export function buildSummary(params: {
           hoursInBiome > 0 ? round(amount / hoursInBiome) : 0,
         ]),
       ),
-      catalystsByModifier: { ...(stats?.catalystsByModifier ?? {}) },
       craftsCompleted: stats?.craftsCompleted ?? 0,
       upgradesCompleted: stats?.upgradesCompleted ?? 0,
     };
@@ -698,28 +661,17 @@ export function buildSummary(params: {
     economy: {
       winCondition: params.winCondition ?? "full-gauntlet",
       initialEssences: { ...(header.initialEssences ?? {}) },
-      initialCatalysts: { ...(header.initialCatalysts ?? {}) },
       finalEssences: { ...(self?.essences ?? {}) },
-      finalCatalysts: { ...(self?.catalysts ?? {}) },
-      catalystsGainedByFamily,
-      catalystsSpentByFamily,
       essenceSpentByType,
       essenceGainedByBiome,
       totalBlockedOnResourceMs: blockedTotal,
       zoneTiming: economyBiomes,
-      catalystGains: recorder.economyTimeline.catalystGains.map((event) => ({
-        atMs: event.atMs,
-        family: event.family,
-        amount: event.amount,
-        context: event.context,
-      })),
       gearTimeline: {
         crafts: recorder.economyTimeline.crafts.map((event) => ({
           atMs: event.atMs,
           recipeId: event.recipeId,
           success: event.success,
           essenceSpent: { ...event.essenceSpent } as Record<string, number>,
-          catalystsSpent: { ...event.catalystsSpent },
           context: event.context,
         })),
         upgrades: recorder.economyTimeline.upgrades.map((event) => ({
@@ -729,7 +681,6 @@ export function buildSummary(params: {
           newLevel: event.newLevel,
           success: event.success,
           essenceSpent: { ...event.essenceSpent } as Record<string, number>,
-          catalystsSpent: { ...event.catalystsSpent },
           context: event.context,
         })),
         evolutions: recorder.economyTimeline.evolutions.map((event) => ({
@@ -739,7 +690,6 @@ export function buildSummary(params: {
           predecessorId: event.predecessorId,
           success: event.success,
           essenceSpent: { ...event.essenceSpent } as Record<string, number>,
-          catalystsSpent: { ...event.catalystsSpent },
           context: event.context,
         })),
         stanceCrafts: recorder.economyTimeline.stanceCrafts.map((event) => ({
@@ -748,7 +698,6 @@ export function buildSummary(params: {
           stanceId: event.stanceId,
           success: event.success,
           essenceSpent: { ...event.essenceSpent } as Record<string, number>,
-          catalystsSpent: { ...event.catalystsSpent },
           context: event.context,
         })),
         equips: recorder.economyTimeline.equips.map((event) => ({
@@ -762,8 +711,6 @@ export function buildSummary(params: {
         reason: event.reason,
         detail: event.detail,
         essences: { ...event.essences },
-        catalysts: { ...event.catalysts },
-        catalystProgress: { ...event.catalystProgress },
         biomeLevels: { ...event.biomeLevels },
         globalMastery: event.globalMastery,
         nodeId: event.nodeId,
@@ -777,10 +724,6 @@ export function buildSummary(params: {
         atMs: event.atMs,
         newTier: event.newTier,
       })),
-    },
-    catalysts: {
-      finalWallet: { ...(self?.catalysts ?? {}) },
-      gainedByModifier: catalystsByModifier,
     },
     world: {
       otherPlayersSeen: recorder.otherPlayerSightings.size,

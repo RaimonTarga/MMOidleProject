@@ -5,6 +5,25 @@ import type { World } from '../../../world/World';
 import { recordWorldLogEvent } from '../../../world/worldLog';
 import { actorFromMinion, actorFromPlayer } from '../../../world/worldLogActors';
 import { applyWard } from '../barrier/wards';
+import { getCounter, setCounter } from '@mmo-idle/shared';
+
+/**
+ * Heal-log carry. Flat Recovery heals in sub-1 HP slices at 10 Hz, and logging each
+ * slice rounded (0.5 -> 1, 0.4 -> 0) over-reported some classes by ~75% and reported
+ * zero healing for others (T1 boss pass, 2026-10-02). HP was always right; only the
+ * log was wrong. The exact applied amount is accumulated in a server-only counter and
+ * logged in whole points as it crosses each integer, so the logged total matches the
+ * HP ledger to within one point at any moment.
+ */
+const HEAL_LOG_CARRY = 'heal-log-carry';
+
+function takeLoggableHeal(cs: TracksCombat, exactApplied: number): number {
+  if (exactApplied <= 0) return 0;
+  const carry = getCounter(cs, HEAL_LOG_CARRY) + exactApplied;
+  const whole = Math.floor(carry);
+  setCounter(cs, HEAL_LOG_CARRY, carry - whole);
+  return whole;
+}
 
 // Duration of the temporary ward minted from overheal (defense.overheal-ward-pct).
 const OVERHEAL_WARD_MS = 6000;
@@ -51,7 +70,7 @@ export function applyHealToPlayer(
   const maxHp = player.hasHealth.maxHp;
   const raw = before + amount * getAntiHealMult(cs);
   player.hasHealth.hp = Math.min(maxHp, raw);
-  const applied = Math.round(player.hasHealth.hp - before);
+  const applied = takeLoggableHeal(cs, player.hasHealth.hp - before);
 
   // Overheal → ward: convert HP that would spill past max into a temporary pool.
   const overhealPct = player.usesSkills.passives['defense.overheal-ward-pct'] ?? 0;
@@ -96,7 +115,7 @@ export function applyHealToMinion(
     minion.hasHealth.maxHp,
     minion.hasHealth.hp + amount * getAntiHealMult(minion.tracksCombat),
   );
-  const applied = Math.round(minion.hasHealth.hp - before);
+  const applied = takeLoggableHeal(minion.tracksCombat, minion.hasHealth.hp - before);
   if (minion.hasHealth.hp > before) {
     markSliceDirty(world, minion, 'hasHealth');
   }

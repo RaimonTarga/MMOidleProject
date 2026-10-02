@@ -34,6 +34,10 @@ export const BUFF_IDS = [
   'energy-reservoir',
   'energy-equilibrium',
   'energy-sm-pool',
+  // Spirit frame loops (progression rework Phase 3): Wraith's gain window and
+  // Phantasm's overcharge bank.
+  'energy-frame-surge',
+  'energy-frame-overcharge',
   'dot-vigor',
   'dot-conflag',
   'dot-chill',
@@ -45,6 +49,8 @@ export const BUFF_IDS = [
   'reload-cover-fire',
   'reload-momentum',
   'reload-cannon',
+  // Slinger frame loop (progression rework Phase 3): Artillerist's clip-long ramp.
+  'reload-frame-ramp',
   'flurry',
   // Desert Falchion's alpha window (shared/src/systems/alphaWindow.ts).
   'sunlight',
@@ -84,6 +90,14 @@ export const BUFF_IDS = [
   'summoner-colossus',
   'summoner-battle-bond',
   'summoner-twin-covenant',
+  // Conduit frame loops (progression rework Phase 3): Splinter's frenzy window,
+  // Effigy's linked-slam bank, and Consort's standing line. The line's tile is the
+  // only one of the three with neither a clock nor a cap, because it is a STATE —
+  // it reports bodies standing out of the formation's slots, and stays on the bar
+  // while the line is broken so the player can see what they are missing.
+  'summoner-frame-frenzy',
+  'summoner-frame-link',
+  'summoner-frame-line',
   'debuff-stunned',
   // Abilities (system rework Step 7): the active Guard-ability buff (e.g. Brace).
   // One id per GUARD SLOT — two equipped Guards layer independently and each
@@ -110,6 +124,24 @@ export const BUFF_IDS = [
   'mob-rush',     // Tundra — continuous-move ramp
   'mob-volcanic', // Volcanic — passive speed (active while not suppressed)
   'mob-suppress', // Volcanic — speed suppressed after a direct hit
+  // Lineage card windows (progression rework 1c). One tile per timed payoff, fed
+  // by the `lineage.<payoff>` status effects the card runtime applies — the
+  // existing buff-sync path, with no channel of its own.
+  'lineage-damage',
+  'lineage-speed',
+  'lineage-recovery',
+  'lineage-guard',
+  'lineage-ward',
+  'lineage-plate',
+  'lineage-technique', // Technique packet (design §22) — the next Technique's window
+  // Added 2026-10-01 with the `evasion-window` payoff (design §6).
+  'lineage-evasion',
+  // Frame loops (progression rework Phase 3). TWO ids for all six roots, not two
+  // per root: a player wears exactly one frame, so the clock and the counter are
+  // the same two tiles whatever root is under them, and each root's descriptor
+  // labels and colours its own (see `classes/shared/frameLoop.ts`).
+  'frame-window',   // Light/Balanced — the timed window the mechanic opened
+  'frame-charge',   // Heavy/Balanced — the bank, counting toward its cap
   // Stances (see server/src/systems/player/stances/stanceBehaviors.ts)
   'stance-reaper',   // Reaper — on-kill momentum, outlives the stance itself
   'stance-charge',   // Powering Up — the charge accruing, shown as a filling clock

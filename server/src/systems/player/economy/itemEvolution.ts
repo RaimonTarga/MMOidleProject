@@ -11,6 +11,7 @@ import type { PlayerEntity } from "../../../ecs/entity";
 import { recalculateAfterEquipmentChange } from "./inventory";
 import { syncArchetypeSlices } from "../../../ecs/archetypeSliceSync";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
+import { syncLineagesFromInventory, syncWornFormFromEquipment } from "./lineageSync";
 
 const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
 
@@ -40,8 +41,6 @@ export function evolveItem(
 
   if (isTestRoom) {
     for (const type of ESSENCE_TYPES) prog.essences[type] = TEST_ROOM_ESSENCE_AMOUNT;
-    const allCatalysts = { ...recipe.catalystCost, ...recipe.reconstructCatalystCost };
-    for (const group of Object.keys(allCatalysts)) prog.catalysts[group] = TEST_ROOM_ESSENCE_AMOUNT;
     markSliceDirty(world, entity, "tracksProgression");
   } else if (!prog.unlockedRecipes.includes(recipeId)) {
     return {
@@ -52,7 +51,6 @@ export function evolveItem(
 
   // Which cost axis applies depends on the path.
   const essenceCost = mode === "evolve" ? recipe.cost : recipe.reconstructCost;
-  const catalystCost = mode === "evolve" ? recipe.catalystCost : recipe.reconstructCatalystCost;
 
   if (mode === "evolve") {
     const check = checkEvolve({
@@ -61,7 +59,6 @@ export function evolveItem(
       equipment: inv.equipment,
       itemUpgrades: inv.itemUpgrades,
       essences: prog.essences,
-      catalysts: prog.catalysts,
       isTestRoom,
     });
     if (!check.ok) return { success: false, reason: check.reason };
@@ -69,7 +66,6 @@ export function evolveItem(
     const check = checkReconstruct({
       recipe,
       essences: prog.essences,
-      catalysts: prog.catalysts,
       isTestRoom,
     });
     if (!check.ok) return { success: false, reason: check.reason };
@@ -83,13 +79,10 @@ export function evolveItem(
     inv.inventory = [...inv.inventory.slice(0, idx), ...inv.inventory.slice(idx + 1)];
   }
 
-  // Spend essence + catalysts for the chosen path.
+  // Spend essence for the chosen path.
   if (!isTestRoom) {
     for (const [type, amount] of Object.entries(essenceCost ?? {}) as [EssenceType, number][]) {
       prog.essences[type] = (prog.essences[type] ?? 0) - amount;
-    }
-    for (const [group, amount] of Object.entries(catalystCost ?? {}) as [string, number][]) {
-      prog.catalysts[group] = (prog.catalysts[group] ?? 0) - amount;
     }
     markSliceDirty(world, entity, "tracksProgression");
   }
@@ -97,10 +90,16 @@ export function evolveItem(
   // Grant the evolved definition without transferring predecessor upgrades.
   if (equippedPredecessor) {
     inv.equipment[recipe.slot] = recipe.id;
+    // The tree follows the slot (review finding P3, 2026-10-02): a lineage pays
+    // only while `wornForm` equals the equipped item, so an evolve that moved the
+    // slot without moving the form left every card, the capstone and the stat row
+    // dark until a relog or re-equip.
+    syncWornFormFromEquipment(world, entity, recipe.id);
     recalculateAfterEquipmentChange(world, entity, recipe.slot);
     syncArchetypeSlices(world, entity);
   } else {
     inv.inventory = [...inv.inventory, recipe.id];
+    syncLineagesFromInventory(world, entity);
   }
   markSliceDirty(world, entity, "holdsInventory");
   return { success: true };

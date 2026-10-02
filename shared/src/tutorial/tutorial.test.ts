@@ -1,6 +1,10 @@
 import { ABILITY_DATABASE } from '../abilities';
 import { ABILITY_RECIPE_DATABASE } from '../abilityRecipes';
 import { globalMastery } from '../config/gameConfig';
+import { familiesDropping } from '../data/families';
+import { LINEAGE_DATABASE, lineageForRecipeId } from '../data/lineages';
+import { GATE_CAPSTONE_AMOUNT } from '../data/lineages/magnitudes';
+import type { LineageProgressMap } from '../data/lineages/types';
 import { RECIPE_DATABASE } from '../data/recipes';
 import { ITEM_DATABASE } from '../itemDatabase';
 import { emptyEquipment, type EssenceType } from '../items';
@@ -44,7 +48,6 @@ function view(overrides: Partial<TutorialView> = {}): TutorialView {
     globalMastery: 0,
     unlockedRecipes: [],
     essences: { ...NO_ESSENCE },
-    catalysts: {},
     inventory: [],
     equipment: emptyEquipment(),
     itemUpgrades: {},
@@ -55,6 +58,9 @@ function view(overrides: Partial<TutorialView> = {}): TutorialView {
     attunedAbilities: { techniques: [], guards: [] },
     bossesCleared: [],
     clearedNodes: [],
+    lineages: {},
+    shards: {},
+    capstones: {},
   };
   const merged = { ...base, ...overrides };
   return { ...merged, globalMastery: globalMastery(merged.biomeLevel) };
@@ -202,14 +208,53 @@ for (const plan of TUTORIAL_CLASS_PLANS) {
         case 'attemptBoss':
           assert(nodesFor({ kind: 'dungeon', biomeGroup: step.biomeGroup, tier: step.tier }).length === 1, `${where}: no dungeon`);
           break;
+        case 'unlockCard': {
+          const lineage = LINEAGE_DATABASE.get(step.lineageId);
+          assert(!!lineage, `${where}: unknown lineage ${step.lineageId}`);
+          assert(lineage!.cards.some((c) => c.id === step.cardId), `${where}: unknown card ${step.cardId}`);
+          break;
+        }
+        case 'unlockForm':
+        case 'wearForm': {
+          const lineage = LINEAGE_DATABASE.get(step.lineageId);
+          assert(!!lineage, `${where}: unknown lineage ${step.lineageId}`);
+          assert(lineage!.forms.some((f) => f.recipeId === step.recipeId), `${where}: unknown form ${step.recipeId}`);
+          break;
+        }
         case 'chooseClass':
           break;
       }
     }
   }
   const bosses = script.beats.flatMap((b) => b.steps).filter((s) => s.type === 'attemptBoss');
-  assert(bosses.length === 2, `${script.id}: exactly two seals`);
-  assert(bosses.every((s, i) => s.type === 'attemptBoss' && s.biomeGroup === TUTORIAL_SEALS[i]), `${script.id}: the seals are TUTORIAL_SEALS, in order`);
+  // Two seals, then the gate's repeated boss for its capstone drops.
+  const seals = bosses.filter((s) => s.type === 'attemptBoss' && !s.until);
+  assert(seals.length === 2, `${script.id}: exactly two seals`);
+  assert(seals.every((s, i) => s.type === 'attemptBoss' && s.biomeGroup === TUTORIAL_SEALS[i]), `${script.id}: the seals are TUTORIAL_SEALS, in order`);
+  assert(bosses.length === 3, `${script.id}: the seals plus the gate's capstone boss`);
+}
+
+/**
+ * What `lineageSync` does on the server: equipping a lineage form opens that
+ * lineage's progress and makes the form the worn one, which is what opens its
+ * tree for the first card.
+ */
+function wearing(lineages: LineageProgressMap, definitionIds: readonly string[]): LineageProgressMap {
+  let next = lineages;
+  for (const id of definitionIds) {
+    const lineage = lineageForRecipeId(id);
+    if (!lineage) continue;
+    const current = next[lineage.id] ?? { ownedCards: [], active: {}, ownedForms: [id], wornForm: '' };
+    next = {
+      ...next,
+      [lineage.id]: {
+        ...current,
+        ownedForms: current.ownedForms.includes(id) ? current.ownedForms : [...current.ownedForms, id],
+        wornForm: id,
+      },
+    };
+  }
+  return next;
 }
 
 // ── Class scripts: a simulated playthrough only ever moves forward ───────────
@@ -232,7 +277,6 @@ function simulate(plan: (typeof TUTORIAL_CLASS_PLANS)[number]): void {
   };
   const rich = () => set({
     essences: { red: 1e6, blue: 1e6, green: 1e6, yellow: 1e6, purple: 1e6 },
-    catalysts: { alacrity: 1e6, heavy: 1e6, swarming: 1e6, dominion: 1e6, fortified: 1e6 },
   });
   const checkBudget = (where: string) => {
     const cost = runicPointBreakdown({ abilities: v.attunedAbilities, rules: v.runesEquipped, stances: [], rites: [] }).total;
@@ -253,8 +297,10 @@ function simulate(plan: (typeof TUTORIAL_CLASS_PLANS)[number]): void {
       switch (step.type) {
         case 'farm': {
           const levels = { ...v.biomeLevel };
+          const shards = { ...v.shards };
           for (const c of conditionsIn(step.until)) {
             if (c.type === 'biomeLevelAtLeast') levels[c.biomeGroup] = Math.max(levels[c.biomeGroup] ?? 0, c.level);
+            if (c.type === 'shardAtLeast') shards[c.packet] = Math.max(shards[c.packet] ?? 0, c.amount);
             if (c.type === 'playerTierAtLeast') set({ playerTier: Math.max(v.playerTier, c.tier) });
             if ((c.type === 'canCraft' || c.type === 'recipeUnlocked') && RECIPE_DATABASE.has(c.recipeId)) {
               const r = RECIPE_DATABASE.get(c.recipeId)!;
@@ -268,7 +314,7 @@ function simulate(plan: (typeof TUTORIAL_CLASS_PLANS)[number]): void {
               }
             }
           }
-          set({ biomeLevel: levels });
+          set({ biomeLevel: levels, shards });
           unlockRecipes();
           rich();
           break;
@@ -291,7 +337,51 @@ function simulate(plan: (typeof TUTORIAL_CLASS_PLANS)[number]): void {
             if (worn) inventory.push(worn);
             equipment[slot] = id;
           }
-          set({ equipment, inventory });
+          set({ equipment, inventory, lineages: wearing(v.lineages, step.definitionIds) });
+          break;
+        }
+        case 'unlockCard': {
+          const lineage = LINEAGE_DATABASE.get(step.lineageId)!;
+          const progress = v.lineages[step.lineageId];
+          // Holding the base form is what opens the tree (`checkUnlockCard`).
+          assert(!!progress && progress.wornForm !== '',
+            `${script.id}/${beat.id}: buys ${step.cardId} with no ${step.lineageId} form worn`);
+          const card = lineage.cards.find((c) => c.id === step.cardId)!;
+          set({
+            lineages: {
+              ...v.lineages,
+              [step.lineageId]: {
+                ...progress!,
+                ownedCards: [...progress!.ownedCards, step.cardId],
+                // Buying into an empty row activates it, server-side.
+                active: { ...progress!.active, [card.row]: progress!.active[card.row] ?? step.cardId },
+              },
+            },
+          });
+          break;
+        }
+        case 'unlockForm': {
+          const progress = v.lineages[step.lineageId];
+          assert(!!progress, `${script.id}/${beat.id}: pays a gate on an unopened ${step.lineageId}`);
+          set({
+            lineages: {
+              ...v.lineages,
+              [step.lineageId]: { ...progress!, ownedForms: [...progress!.ownedForms, step.recipeId] },
+            },
+          });
+          break;
+        }
+        case 'wearForm': {
+          const progress = v.lineages[step.lineageId];
+          assert(!!progress?.ownedForms.includes(step.recipeId),
+            `${script.id}/${beat.id}: wears ${step.recipeId} before paying its gate`);
+          const slot = LINEAGE_DATABASE.get(step.lineageId)!.slot;
+          const previous = v.equipment[slot];
+          set({
+            lineages: { ...v.lineages, [step.lineageId]: { ...progress!, wornForm: step.recipeId } },
+            equipment: { ...v.equipment, [slot]: step.recipeId },
+            inventory: previous && previous !== step.recipeId ? [...v.inventory, previous] : v.inventory,
+          });
           break;
         }
         case 'upgrade':
@@ -318,8 +408,13 @@ function simulate(plan: (typeof TUTORIAL_CLASS_PLANS)[number]): void {
           break;
         }
         case 'attemptBoss': {
-          const cleared = [...v.bossesCleared, bossClearKey(step.biomeGroup, step.tier)];
-          set({ bossesCleared: cleared, playerTier: cleared.length >= 2 ? 2 : v.playerTier });
+          const cleared = [...new Set([...v.bossesCleared, bossClearKey(step.biomeGroup, step.tier)])];
+          // One capstone per kill, which is why the gate beat repeats the fight.
+          set({
+            bossesCleared: cleared,
+            playerTier: cleared.length >= 2 ? 2 : v.playerTier,
+            capstones: { ...v.capstones, [step.biomeGroup]: (v.capstones[step.biomeGroup] ?? 0) + 1 },
+          });
           break;
         }
       }
@@ -339,9 +434,46 @@ function simulate(plan: (typeof TUTORIAL_CLASS_PLANS)[number]): void {
   }
   assert(v.playerTier === 2, `${script.id}: ends at Tier 2`);
   assert(v.globalMastery === 30, `${script.id}: reaches Global Mastery 30 before the bosses (got ${v.globalMastery})`);
+
+  // The tree lessons actually land: a card bought, a gate paid, the form worn.
+  const taught = Object.entries(v.lineages).filter(([, p]) => p.ownedCards.length > 0);
+  assert(taught.length === 1, `${script.id}: exactly one lineage is taught (got ${taught.length})`);
+  const [lineageId, progress] = taught[0];
+  assert(progress.ownedCards.length === 1, `${script.id}: one card, not a shopping trip`);
+  assert(progress.active.stat === progress.ownedCards[0], `${script.id}: the bought card ends up active`);
+  const gated = LINEAGE_DATABASE.get(lineageId)!.forms.find((f) => f.recipeId === progress.wornForm)!;
+  assert(gated.tier === 2, `${script.id}: ends wearing the tier-2 form the gate opened`);
+  assert(
+    (v.capstones[gated.biome] ?? 0) >= (GATE_CAPSTONE_AMOUNT[1] ?? 0),
+    `${script.id}: the gate beat earns its ${gated.biome} capstones`,
+  );
+  assert(Object.values(v.equipment).includes(progress.wornForm), `${script.id}: the gated form is equipped`);
 }
 
 for (const plan of TUTORIAL_CLASS_PLANS) simulate(plan);
+
+// ── The shards line names a real drop source ────────────────────────────────
+/**
+ * The guide says Tempo Shards "drop off the Pack — the Forest's wolves". That is
+ * the one hand-written claim about the family table in the whole script, so it
+ * is checked here rather than trusted: a table edit that moves Tempo out of the
+ * Forest fails this instead of lying to a new player.
+ */
+{
+  const script = tutorialScriptFor(TUTORIAL_CLASS_PLANS[0].classRoot);
+  const card = script.beats
+    .flatMap((b) => b.steps)
+    .find((s): s is Extract<TutorialStep, { type: 'unlockCard' }> => s.type === 'unlockCard');
+  assert(!!card, 'the script buys a lineage card');
+  const lineage = LINEAGE_DATABASE.get(card!.lineageId)!;
+  const lane = lineage.cards.find((c) => c.id === card!.cardId)!.lane;
+  const sources = familiesDropping(lane).filter((f) => f.biome === lineage.homeBiome);
+  assert(sources.length > 0, `no ${lineage.homeBiome} family drops the ${lane} shard the first card costs`);
+  assert(
+    sources.some((f) => f.name === 'Pack' && f.monsterIds.some((id) => id.includes('wolf'))),
+    `the shards line names the Pack's wolves, but ${lineage.homeBiome}'s ${lane} source is now ${sources.map((f) => f.name).join('/')}`,
+  );
+}
 
 // Before the class pick, and for a class with no plan, the script is the opening alone.
 assert(tutorialScriptFor(null) === TUTORIAL_OPENING, 'no class → opening only');

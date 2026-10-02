@@ -20,6 +20,6 @@ for (const p of TIER_ENTRY_PROFILES.values()) {
   console.log(`  abilities  known=[${p.knownAbilities.join(", ")}] equipped=T[${p.attunedAbilities.techniques.join(",")}] G[${p.attunedAbilities.guards.join(",")}]`);
   console.log(`  runes      crafted=[${p.runeRecipesCrafted.join(", ")}]`);
   for (const rule of p.runesEquipped) console.log(`             ${rule.conditionId} -> ${rule.actionId}`);
-  console.log(`  wallet     essence=${JSON.stringify(p.wallet.essences)} catalysts=${JSON.stringify(p.wallet.catalysts)}`);
+  console.log(`  wallet     essence=${JSON.stringify(p.wallet.essences)}`);
   console.log(`  ${formatValidation("VALIDATION", r).replace(/\n/g, "\n  ")}`);
 }

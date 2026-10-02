@@ -12,17 +12,21 @@ import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { updateRuneDerivedConfig } from "../src/systems/combat/ai/runeConfig";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
 import { runPlayerAttack } from "../src/systems/combat/engine/combat";
+import { registerCombatListener } from "../src/systems/combat/engine/combatPipeline";
 import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
 import { World } from "../src/world/World";
 import { takeWorldLogEvents } from "../src/world/worldLog";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
-function makePlayerSlices(): PersistedPlayerSlices {
+function makePlayerSlices(
+  abilityId = "expose-weakness",
+  playerId = "technique-rune-player",
+): PersistedPlayerSlices {
   return {
-    isPlayer: { id: "technique-rune-player", name: "Technique Rune" },
+    isPlayer: { id: playerId, name: "Technique Rune" },
     hasPosition: {
       current: { x: 400, y: 400 },
       nodeId: "node-5-5",
@@ -37,8 +41,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -49,9 +52,9 @@ function makePlayerSlices(): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [],
-      runesEquipped: [{ conditionId: "in-combat", actionId: "use-ability", targetAbilityId: "expose-weakness" }],
-      knownAbilities: ["expose-weakness"],
-      attunedAbilities: { techniques: ["expose-weakness"], guards: [] },
+      runesEquipped: [{ conditionId: "in-combat", actionId: "use-ability", targetAbilityId: abilityId }],
+      knownAbilities: [abilityId],
+      attunedAbilities: { techniques: [abilityId], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,
@@ -73,6 +76,18 @@ function makePlayerSlices(): PersistedPlayerSlices {
     },
   };
 }
+
+// Registered BEFORE the combat systems so this stands ahead of the ability
+// rider's own `onHit` listener; it stays inert until the windowed scenario at the
+// bottom of the file arms it. See that scenario for what it is proving.
+const WINDOW_MULT = 1.5;
+let windowArmed = false;
+registerCombatListener("onHit", (ctx) => {
+  if (!windowArmed) return;
+  ctx.damage = Math.round(ctx.damage * WINDOW_MULT);
+  ctx.metadata["empoweredMultiplier"] =
+    Number(ctx.metadata["empoweredMultiplier"] ?? 1) * WINDOW_MULT;
+});
 
 initCombatSystems();
 
@@ -115,7 +130,7 @@ assert(
 const exposed = getStatusEffect(target.tracksCombat, EXPOSE_WEAKNESS_EFFECT_ID);
 assert(!!exposed, "Expose Weakness should apply its target debuff");
 assert(
-  exposed.remainingMs === 4000 && exposed.data.damageTakenPct === 0.15,
+  exposed!.remainingMs === 4000 && exposed!.data.damageTakenPct === 0.15,
   "Expose Weakness I should last 4s and increase damage taken by 15%",
 );
 
@@ -124,7 +139,7 @@ const hit = world
   .find((event) => event.kind === "player-hit");
 assert(!!hit && hit.kind === "player-hit", "expected a player-hit event");
 assert(
-  hit.effects?.includes(ABILITY_EXPOSE_WEAKNESS_FX),
+  hit!.effects?.includes(ABILITY_EXPOSE_WEAKNESS_FX),
   "Expose Weakness should tag the hit so the client plays its Technique FX",
 );
 
@@ -133,6 +148,93 @@ updateAbilityFiring(world, Date.now());
 assert(
   player.hasArmedAbility === undefined,
   "Technique should not re-arm again while its cooldown is still running",
+);
+
+// ── One multiplier per hit, against a WINDOW rather than a finisher ──────────
+//
+// `addEmpoweredDamage` divides the rider's basis by any multiplier the hit is
+// already carrying, so a rider ADDS its share instead of compounding. It used to
+// read that divisor only when `ctx.metadata.empoweredAttack` was set — the marker
+// meaning "the class mechanic fired this hit".
+//
+// That marker is strictly narrower than "this hit already carries a multiplier".
+// A lineage `damage-window` card and a Light or Balanced frame window both fold
+// themselves into `empoweredMultiplier` and deliberately do NOT set the marker,
+// because setting it would restart cooldowns and fire every `mechanic-fired`
+// card. So the division was skipped for exactly those sources and the rider
+// compounded with the window — the thing `lineageCards.ts` promises cannot
+// happen, and a hard axiom either way.
+//
+// The window rides `onHit` exactly as the real `damage-window` payoff does, and
+// is registered ahead of `initCombatSystems()` above so it runs before the
+// ability rider's own `onHit` listener. It cannot be applied on `onAttack`
+// instead: the swing's damage is computed after that stage, which would discard
+// the scaling and leave only the metadata.
+//
+// Quick Strike, not Expose Weakness: Expose Weakness pays its 15% as a `damage-
+// taken` DEBUFF on the target, which never reaches `addEmpoweredDamage` at all.
+// Quick Strike is a true `empower` rider (`damageMult`), which is the path under
+// test. Its multiplier is never hardcoded here — the control run below measures
+// what the rider is worth, so the ability's balance can move freely.
+const BIG_ATTACK = 1000;
+
+function armedRun(playerId: string, withWindow: boolean): { base: number; dealt: number } {
+  const w = new World();
+  const p = w.attachPlayerEntity(makePlayerSlices("quick-strike", playerId), playerId);
+  p.usesAutocombat.auto = true;
+  const t = w.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 });
+  if (!t) throw new Error("failed to create the rider target");
+  t.hasHealth.maxHp = 10_000_000;
+  t.hasHealth.hp = 10_000_000;
+  t.mitigatesDamage.plating = 0;
+  t.mitigatesDamage.damageReduction = 0;
+
+  setAttackTarget(w, p, t.isMonster.id);
+  updateRuneDerivedConfig(w, 1_000);
+  updateAbilityFiring(w, Date.now());
+  assert(
+    p.hasArmedAbility?.abilityId === "quick-strike",
+    `${playerId}: Quick Strike should be armed before the hit`,
+  );
+
+  // A big swing on purpose: compounding and adding differ by
+  // `base × (WINDOW_MULT − 1) × riderPct`, which rounding can hide entirely at a
+  // starter attack of ~15.
+  p.dealsDamage.attack = BIG_ATTACK;
+  const hp = t.hasHealth.hp;
+  windowArmed = withWindow;
+  const outcome = runPlayerAttack(w, p, t, 1_100, {
+    attackOrigin: p.hasPosition.current,
+    aggroSource: { id: p.isPlayer.id, kind: "player" },
+  });
+  windowArmed = false;
+  assert(outcome === "hit" || outcome === "killed", `${playerId}: the armed attack should land`);
+  return { base: BIG_ATTACK, dealt: hp - Math.max(0, t.hasHealth.hp) };
+}
+
+// Control: the rider with no window, to measure what it is worth.
+const control = armedRun("rider-control", false);
+const riderShare = control.dealt - control.base;
+assert(
+  riderShare > 50,
+  `the control run must show a real rider share, got ${riderShare} over ${control.base}`,
+);
+
+const windowed = armedRun("rider-windowed", true);
+const windowedSwing = Math.round(control.base * WINDOW_MULT);
+// Adding: the window scales the swing, and the rider contributes the same share it
+// was worth without the window. Compounding would scale that share by the window too.
+const additive = windowedSwing + riderShare;
+const compounded = windowedSwing + Math.round(riderShare * WINDOW_MULT);
+assert(
+  compounded - additive > 10,
+  `the fixture is useless unless compounding and adding differ clearly ` +
+    `(${compounded} vs ${additive})`,
+);
+assert(
+  Math.abs(windowed.dealt - additive) <= 2,
+  `a rider inside a damage window must ADD its share, not compound: got ${windowed.dealt}, ` +
+    `expected about ${additive} (compounding would be ${compounded})`,
 );
 
 console.log("abilityTechniqueRune.test.ts: ok");

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {MONSTER_DATABASE,NODE_BIOMES} from '@mmo-idle/shared';
+import {MONSTER_DATABASE,NODE_BIOMES,blendEntries} from '@mmo-idle/shared';
 import {SURVEY_CLASSES} from './ttkSurveySpec';
 import type {Night5Cell} from './night5Spec';
 
@@ -121,7 +121,12 @@ export function assertDurability35Definitions(): void {
   assert.equal(b.biomeGroup,'mountain',`${nodeId} must be Mountain`);
  }
  // The two contexts must genuinely differ, or this is one context run twice.
- const modifiers=DURABILITY35_NODES.map(n=>(NODE_BIOMES[n] as {modifier?:string}).modifier);
- assert.equal(modifiers[0],'heavy','entry node modifier drift');
- assert.equal(modifiers[1],'swarming','second context modifier drift');
+ // Was each node's `modifier` ('heavy'/'swarming'); progression rework Phase 2b
+ // deleted that field from T1 nodes outright, so the dominant family of each
+ // node's authored blend is the live equivalent. The invariant is only that the
+ // two dominants DIFFER: the blends are the designer's and get reordered (the
+ // 2026-10-02 entry-pressure pass made node-01 Ridge-led and node-02 a Crag/Ridge
+ // tie), so pinning the exact families here was a review finding, not a guard.
+ const dominantFamilies=DURABILITY35_NODES.map(n=>blendEntries(NODE_BIOMES[n]!.blend!)[0]!.family);
+ assert.notEqual(dominantFamilies[0],dominantFamilies[1],'the two contexts must differ');
 }

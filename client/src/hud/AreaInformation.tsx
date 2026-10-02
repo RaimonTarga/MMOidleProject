@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState, type CSSProperties } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
+import { MODIFIER_SUMMARIES } from '@mmo-idle/shared';
 import {
   AREA_DANGER_LABELS, areaDanger, BIOME_DATABASE, MODIFIER_LABELS, type AreaDanger,
   NODE_BIOMES, type NodeBiomeInfo, type NodeGateEntity, type NodeModifierFamily,
@@ -11,13 +12,10 @@ import { areaArrivalAtom } from './areaInformationState';
 import { nearbyExits } from './areaInformationModel';
 import './areaInformation.css';
 
-const MODIFIER_COPY: Record<NodeModifierFamily, string> = {
-  alacrity: 'Monsters move and attack faster.',
-  heavy: 'Monsters attack more slowly, but hit harder.',
-  swarming: 'More monsters inhabit this area.',
-  dominion: 'Fewer monsters, with more health, stronger attacks and defences, and faster movement.',
-  fortified: 'Monsters have more plating and damage reduction.',
-};
+// A modifier is identity only since progression rework Phase 2b (the mechanical
+// effects were removed with the family blends); the shared summaries say so,
+// the old copy here promised faster/heavier/more monsters (review P13).
+const MODIFIER_COPY: Record<NodeModifierFamily, string> = MODIFIER_SUMMARIES;
 const ARROWS = { north: '↑', south: '↓', east: '→', west: '←' };
 
 /**

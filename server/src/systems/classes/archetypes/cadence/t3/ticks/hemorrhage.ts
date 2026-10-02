@@ -2,7 +2,7 @@ import { outgoingFinalDamage } from '../../../../../combat/damage/finalDamage';
 import { mitigatePlayerTickOnMonster } from '../../../../../combat/damage/monsterTickMitigation';
 import { getStatusEffects, pruneStatusEffects } from '@mmo-idle/shared';
 import type { World } from '../../../../../../world/World';
-import { detachMarkerIfNoEffects } from '../../../../../../ecs/markerHelpers';
+import { detachMarker } from '../../../../../../ecs/markerHelpers';
 import { grantMonsterRewards } from '../../../../../player/progression/rewards';
 import {
   buildSimpleBreakdown,
@@ -14,6 +14,11 @@ import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
 import { pushDotTickEvent } from '../../../../../combat/damage/dotTickEvent';
 import { emitPlayerMonsterOnKill } from '../../../../../combat/damage/killHooks';
 import { applyMonsterDamageTakenDebuffs } from '../../../../shared/debuffs';
+import {
+  BLEED_EFFECT_IDS,
+  hasAnyBleed,
+  type BleedMode,
+} from '../../../../../combat/damage/bleedIds';
 
 export function updateHemorrhages(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string; damage: number }> = [];
@@ -22,7 +27,9 @@ export function updateHemorrhages(world: World, dt: number): void {
     const monsterId = entity.isMonster.id;
     const state     = entity.tracksCombat;
     if (isInvulnerableMonster(entity)) continue;
-    const bleeds = getStatusEffects(state, 'cadence-hemorrhage');
+    // Every bleed id the driver owns, not just the cadence root's: a lineage
+    // card's DoT payoff has its own id (design §18.1) and the same tick shape.
+    const bleeds = BLEED_EFFECT_IDS.flatMap((id) => getStatusEffects(state, id));
     if (bleeds.length === 0) continue;
 
     let lastSourceId = '';
@@ -33,8 +40,14 @@ export function updateHemorrhages(world: World, dt: number): void {
       if (bleed.data['nextTickIn'] > 0) continue;
 
       bleed.data['nextTickIn'] = bleed.data['tickIntervalMs'];
-      bleed.stacks--; // consume a stack — drives the target-frame countdown
-      const tickDmg = outgoingFinalDamage(world, bleed.sourceId, applyMonsterDamageTakenDebuffs(state, mitigatePlayerTickOnMonster(entity, bleed.data['damagePerTick'], 'dot')));
+      const mode: BleedMode = bleed.data['bleedMode'] === 1 ? 'intensity' : 'ticks';
+      // `ticks`: one stack is one remaining tick, consumed here and pruned at
+      // zero. `intensity`: stacks multiply the tick and expire with the timer.
+      const perTick = mode === 'intensity'
+        ? bleed.data['damagePerTick'] * Math.max(1, bleed.stacks)
+        : bleed.data['damagePerTick'];
+      if (mode === 'ticks') bleed.stacks--; // drives the target-frame countdown
+      const tickDmg = outgoingFinalDamage(world, bleed.sourceId, applyMonsterDamageTakenDebuffs(state, mitigatePlayerTickOnMonster(entity, perTick, 'dot')));
       recordMonsterDamagedByPlayer(
         world,
         bleed.sourceId,
@@ -50,8 +63,9 @@ export function updateHemorrhages(world: World, dt: number): void {
       lastTickDamage = tickDmg;
     }
 
-    pruneStatusEffects(state, e => e.id === 'cadence-hemorrhage' && e.stacks <= 0);
-    detachMarkerIfNoEffects(world, entity, 'hasHemorrhage', state, 'cadence-hemorrhage');
+    pruneStatusEffects(state, e => BLEED_EFFECT_IDS.includes(e.id) && e.stacks <= 0);
+    // The marker means "carries some bleed", so it only leaves when every id has.
+    if (!hasAnyBleed(state)) detachMarker(world, entity, 'hasHemorrhage');
 
     if (entity.hasHealth.hp <= 0) {
       toKill.push({ monsterId, sourceId: lastSourceId, damage: lastTickDamage });

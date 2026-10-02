@@ -13,8 +13,6 @@ import {
   BIOME_DATABASE,
   GAME_CONFIG,
   NODE_BIOMES,
-  NODE_MODIFIERS,
-  modifierSpawnFactor,
   CLEARING_NODE_ID,
   TEST_ROOM_NODE_ID,
   DEBUG_REWARD_MULT_DEFAULT,
@@ -81,6 +79,7 @@ import { updateKnockback } from "../systems/combat/damage/knockback";
 import { updateLairDrags } from "../systems/combat/damage/lairDrag";
 import { updateMonsterSlows } from "../systems/combat/status/monsterControl";
 import { syncPlayerBuffs } from "../systems/combat/buffs/buffSync";
+import { updateLineageCards } from '../systems/combat/lineageCards';
 import { mirrorHpForecast } from "../systems/defense/core/hpForecast";
 import {
   createMonster as createMonsterInWorld,
@@ -486,6 +485,10 @@ export class World {
     syncMonsterStateMirror(this, now);
     updateCombatTransitions(this, now);
     updateDefensiveSystems(this, dt, now);
+    // `standing` and `pulse` lineage cards (progression rework 1c) — the two
+    // triggers that answer to time rather than to an event. Before the buff sync,
+    // so a window opened this tick shows its clock on the same frame.
+    updateLineageCards(this, dt);
     syncPlayerBuffs(this, now);
     mirrorHpForecast(this);
     updateAutoIntent(this);
@@ -666,23 +669,16 @@ export class World {
 
   getMobDensity(nodeId: string): number {
     const biomeInfo = NODE_BIOMES[nodeId];
-    const base =
+    // Node modifiers no longer reshape a node's target population (progression
+    // rework Phase 2b) — a T2-T4 node's modifier is authoring identity only, so
+    // the target headcount is just the biome's authored density.
+    return (
       biomeInfo?.mobDensity !== undefined
         ? biomeInfo.mobDensity
         : (biomeInfo
             ? BIOME_DATABASE.get(biomeInfo.biomeGroup)?.mobDensity
-            : undefined) ?? GAME_CONFIG.MONSTERS_PER_NODE;
-    // Swarming and Dominion nodes reshape the POPULATION rather than the monsters:
-    // this is the single seam where a node's target headcount is decided, so the
-    // factor belongs here and nowhere else. Excluded nodes carry no modifier and
-    // are therefore untouched. Never round a positive target down to zero — a
-    // 1-monster node under Dominion must still spawn one.
-    const factor = modifierSpawnFactor(
-      NODE_MODIFIERS[nodeId]?.modifier,
-      biomeInfo?.biomeTier ?? 0,
+            : undefined) ?? GAME_CONFIG.MONSTERS_PER_NODE
     );
-    if (factor === 1 || base <= 0) return base;
-    return Math.max(1, Math.round(base * factor));
   }
 
   // ── EVENTS ─────────────────────────────────────────

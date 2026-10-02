@@ -48,12 +48,6 @@ export interface EconomyCandidate {
   arm: T1EconomyArm;
   /** Exact per-player T1 +5 essence multiplier. */
   t1Plus5EssenceCostMultiplier: number;
-  /** Kill-weight per catalyst unit at biome tier 1, read from GAME_CONFIG. */
-  catalystProgressPerUnitT1: number;
-  /** T1's scalar on each monster's catalyst kill-weight. Absent in older artifacts. */
-  t1CatalystProgressRewardMultiplier?: number;
-  /** Whether the dev reward multiplier also scales catalyst progress. */
-  catalystsScaledByRewardMultiplier: boolean;
   /** Canonical T1 biome XP rate at rewardMultiplier=1. */
   t1BiomeXpRewardMultiplier: number;
   /** Canonical T1 essence rate at rewardMultiplier=1. */
@@ -90,7 +84,6 @@ export interface RunHeader {
   maxConcurrency: number;
   /** Wallet at the first authoritative run snapshot. */
   initialEssences?: Record<EssenceType, number>;
-  initialCatalysts?: Record<string, number>;
   /** Present only for an explicit synthetic tier-entry run. */
   tierEntry?: TierEntryInitialState;
   /**
@@ -196,12 +189,11 @@ export type WalletSnapshotReason =
 
 /**
  * One failed predicate behind a block, named precisely enough that an analysis
- * can separate essence waits from catalyst waits from gate waits without
- * guessing from the farm node.
+ * can separate essence waits from gate waits without guessing from the farm
+ * node.
  */
 export type BlockReason =
   | { kind: "essence"; essence: string; current: number; required: number; missing: number }
-  | { kind: "catalyst"; family: string; current: number; required: number; missing: number }
   | { kind: "globalMastery"; current: number; required: number; missing: number }
   | { kind: "biomeLevel"; biomeGroup: string; current: number; required: number; missing: number }
   | { kind: "recipeLocked"; recipeId: string }
@@ -401,7 +393,6 @@ export type BotEvent =
       success: boolean;
       reason?: string;
       essenceSpent: Partial<Record<EssenceType, number>>;
-      catalystsSpent: Record<string, number>;
       context: EconomyContext;
     }
   | {
@@ -414,7 +405,6 @@ export type BotEvent =
       success: boolean;
       reason?: string;
       essenceSpent: Partial<Record<EssenceType, number>>;
-      catalystsSpent: Record<string, number>;
       context: EconomyContext;
     }
   | {
@@ -426,7 +416,6 @@ export type BotEvent =
       success: boolean;
       reason?: string;
       essenceSpent: Partial<Record<EssenceType, number>>;
-      catalystsSpent: Record<string, number>;
       context: EconomyContext;
     }
   | {
@@ -437,7 +426,6 @@ export type BotEvent =
       success: boolean;
       reason?: string;
       essenceSpent: Partial<Record<EssenceType, number>>;
-      catalystsSpent: Record<string, number>;
       context: EconomyContext;
     }
   | { kind: "equip"; atMs: number; slot: string; definitionId: string | null }
@@ -450,7 +438,6 @@ export type BotEvent =
   | { kind: "build-change"; atMs: number; system: string; detail: Record<string, unknown> }
   | { kind: "biome-level-up"; atMs: number; biomeGroup: string; newLevel: number; unlockedRecipeIds: string[] }
   | { kind: "tier-up"; atMs: number; newTier: number }
-  | { kind: "catalyst-gain"; atMs: number; family: string; amount: number; context: EconomyContext }
   | {
       /**
        * A complete wallet reading at an economically meaningful instant.
@@ -463,9 +450,6 @@ export type BotEvent =
       /** Free-form tag: the milestone id, the `forWhat` of a block, etc. */
       detail?: string;
       essences: Record<string, number>;
-      catalysts: Record<string, number>;
-      /** Partial kill-weight banked toward the NEXT catalyst of each family. */
-      catalystProgress: Record<string, number>;
       biomeLevels: Record<string, number>;
       globalMastery: number;
       itemUpgrades: Record<string, number>;

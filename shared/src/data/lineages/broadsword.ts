@@ -1,0 +1,210 @@
+/**
+ * The Broadsword — Plains weapon lineage, the generalist floor (design §3.2, §22).
+ *
+ * Lanes: Technique / Kill chain / Empowered. Technique replaced Tempo in run 4
+ * (design §22): the technique CDR and technique power this sword and its Desert
+ * staff/cross line already leaned on are a packet now, so the lane it was always
+ * described BY is the lane it carries. Technique is Lane A, which is also what
+ * makes the Plains boss pay Technique shards through §18.6's stopgap.
+ *
+ * Tempo keeps its coverage on the Rapier (Lane A) and the Axe (Lane A), which
+ * author its whole band between them.
+ *
+ * No numbers here — see `types.ts`.
+ */
+import type { LineageDefinition } from './types';
+
+export const BROADSWORD_LINEAGE: LineageDefinition = {
+  id: 'broadsword',
+  slot: 'weapon',
+  homeBiome: 'plains',
+  lanes: ['technique', 'kill-chain', 'empowered'],
+
+  forms: [
+    { recipeId: 'iron-broadsword', tier: 1, biome: 'plains' },
+    {
+      recipeId: 'knight-steelsword', tier: 2, biome: 'plains',
+      capstone: {
+        id: 'broadsword-capstone-steelsword', name: 'Steel Vigil',
+        description: 'Each kill opens a window where your wounds close fast.',
+        fx: 'kill-chain.steel-vigil', lane: 'kill-chain',
+        trigger: 'kill', payoff: 'recovery-window',
+      },
+    },
+
+  {
+    recipeId: 'desert-sunsteel-cross', tier: 2, biome: 'desert',
+    capstone: {
+      id: 'broadsword-capstone-sunsteel', name: 'Noon Strike',
+      description: "The cross gathers the whole day's heat between forms, and the next one spends it.",
+      fx: 'technique.cast-flare', lane: 'technique',
+      trigger: 'technique-cast', payoff: 'technique-window',
+    },
+  },
+
+  // ── T3 forms (design §18.5) ─────────────────────────────────────────────
+  //
+  // Authored from the existing `evolvesFrom` graph so no weapon dead-ends:
+  // removing the +N ladder left every T3/T4 weapon craftable by nothing and
+  // evolvable by nothing. The band above T2 carries FORMS ONLY — its cards are
+  // Phase 5's, with the amplifier row and the T2+ magnitude columns.
+  {
+    recipeId: 'desert-pilgrim-quarterstaff', tier: 3, biome: 'desert',
+    capstone: {
+      id: 'broadsword-capstone-pilgrim', name: 'Pilgrim\'s Pace',
+      description: 'A walking rhythm that does not break: each form comes round sooner than the road says it should.',
+      fx: 'technique.cast-flare', lane: 'technique',
+      trigger: 'technique-cast', payoff: 'technique-refund',
+    },
+  },
+  {
+    recipeId: 'desert-solar-cross', tier: 3, biome: 'desert',
+    capstone: {
+      id: 'broadsword-capstone-solar', name: 'Solar Weight',
+      description: 'Held up it gathers the noon; brought down, it leaves what it struck open.',
+      fx: 'technique.cast-flare', lane: 'technique',
+      trigger: 'technique-cast', payoff: 'vulnerability',
+    },
+  },
+  {
+    recipeId: 'desert-sunmonk-warstaff', tier: 4, biome: 'desert',
+    capstone: {
+      id: 'broadsword-capstone-sunmonk', name: 'Sunmonk\'s Mercy',
+      description: 'Every form the monk completes pays a little of the bearer back.',
+      fx: 'technique.cast-flare', lane: 'technique',
+      trigger: 'technique-cast', payoff: 'recovery-window',
+    },
+  },
+  {
+    recipeId: 'desert-zenith-cross', tier: 4, biome: 'desert',
+    capstone: {
+      id: 'broadsword-capstone-zenith', name: 'Zenith',
+      description: 'At the top of the arc there is no waiting, only the next form.',
+      fx: 'technique.cast-flare', lane: 'technique',
+      trigger: 'technique-cast', payoff: 'technique-refund',
+    },
+  },
+  ],
+
+  cards: [
+    {
+      id: 'broadsword-t1-kill-chain-stat', lineageId: 'broadsword', tier: 1, row: 'stat', lane: 'kill-chain',
+      name: 'Warpath', description: 'Ground covered between one body and the next.',
+      fx: 'kill-chain.trail',
+    },
+    {
+      id: 'broadsword-t1-empowered-stat', lineageId: 'broadsword', tier: 1, row: 'stat', lane: 'empowered',
+      name: 'Weight Behind It', description: 'The whole shoulder goes into the swing.',
+      fx: 'empowered.trail',
+    },
+    {
+      id: 'broadsword-t1-technique-stat', lineageId: 'broadsword', tier: 1, row: 'stat', lane: 'technique',
+      name: 'Drilled Form', description: 'Ten thousand repetitions, no wasted motion.',
+      fx: 'technique.trail',
+    },
+
+    {
+      id: 'broadsword-t1-kill-chain-payoff', lineageId: 'broadsword', tier: 1, row: 'payoff', lane: 'kill-chain',
+      name: 'Momentum', description: 'A kill hurries the next swing.',
+      fx: 'kill-chain.kill-pulse', trigger: 'kill', payoff: 'speed-window',
+    },
+    {
+      id: 'broadsword-t1-empowered-payoff', lineageId: 'broadsword', tier: 1, row: 'payoff', lane: 'empowered',
+      name: 'Find the Gap', description: 'Your mechanic leaves the target open.',
+      fx: 'empowered.weak-point', trigger: 'mechanic-fired', payoff: 'vulnerability',
+    },
+    {
+      id: 'broadsword-t1-technique-payoff', lineageId: 'broadsword', tier: 1, row: 'payoff', lane: 'technique',
+      name: 'Set and Reset', description: 'A form that lands comes round again sooner.',
+      fx: 'technique.cast-flare', trigger: 'technique-cast', payoff: 'technique-refund',
+    },
+
+    // ── T2 band (design §4): stat (L2), payoff (L3), amplifier (L5) ──────────
+    {
+      id: 'broadsword-t2-kill-chain-stat', lineageId: 'broadsword', tier: 2, row: 'stat', lane: 'kill-chain',
+      name: 'Longer Warpath', description: 'The ground between one body and the next keeps growing.',
+      fx: 'kill-chain.trail',
+    },
+    {
+      id: 'broadsword-t2-empowered-stat', lineageId: 'broadsword', tier: 2, row: 'stat', lane: 'empowered',
+      name: 'More Weight Behind It', description: 'The whole body goes into the swing now, not just the shoulder.',
+      fx: 'empowered.trail',
+    },
+    {
+      id: 'broadsword-t2-technique-stat', lineageId: 'broadsword', tier: 2, row: 'stat', lane: 'technique',
+      name: 'Drilled Further', description: 'The repetitions kept going after the Plains.',
+      fx: 'technique.trail',
+    },
+
+    {
+      id: 'broadsword-t2-kill-chain-payoff', lineageId: 'broadsword', tier: 2, row: 'payoff', lane: 'kill-chain',
+      name: 'Greater Momentum', description: 'A kill hurries the next swing more than it used to.',
+      fx: 'kill-chain.kill-pulse', trigger: 'kill', payoff: 'speed-window',
+    },
+    {
+      id: 'broadsword-t2-empowered-payoff', lineageId: 'broadsword', tier: 2, row: 'payoff', lane: 'empowered',
+      name: 'Widen the Gap', description: 'Your mechanic leaves the target open for longer.',
+      fx: 'empowered.weak-point', trigger: 'mechanic-fired', payoff: 'vulnerability',
+    },
+    {
+      id: 'broadsword-t2-technique-payoff', lineageId: 'broadsword', tier: 2, row: 'payoff', lane: 'technique',
+      name: 'Opening Form', description: 'A form that lands leaves the next one loaded.',
+      fx: 'technique.cast-flare', trigger: 'technique-cast', payoff: 'technique-window',
+    },
+
+    // Amplifiers modify this tier's own payoff card, not the T1 one (design §4).
+    {
+      id: 'broadsword-t2-kill-chain-amplifier', lineageId: 'broadsword', tier: 2, row: 'amplifier', lane: 'kill-chain',
+      name: 'Chained Momentum', description: 'A second kill before the window closes starts it again at full length.',
+      fx: 'kill-chain.kill-pulse', trigger: 'kill', payoff: 'speed-window', modifies: 'broadsword-t2-kill-chain-payoff',
+      amplifies: 'duration',
+    },
+    {
+      id: 'broadsword-t2-empowered-amplifier', lineageId: 'broadsword', tier: 2, row: 'amplifier', lane: 'empowered',
+      name: 'Shared Gap', description: 'Whatever stands next to the opening is open too.',
+      fx: 'empowered.weak-point', trigger: 'mechanic-fired', payoff: 'vulnerability', modifies: 'broadsword-t2-empowered-payoff',
+      amplifies: 'targets',
+    },
+    {
+      id: 'broadsword-t2-technique-amplifier', lineageId: 'broadsword', tier: 2, row: 'amplifier', lane: 'technique',
+      name: 'Loaded Form', description: 'The window loads the next form heavier than it used to.',
+      fx: 'technique.cast-flare', trigger: 'technique-cast', payoff: 'technique-window', modifies: 'broadsword-t2-technique-payoff',
+      amplifies: 'magnitude',
+    },
+
+    // ── T3 keystone row (design §4 amended 2026-10-01): one shared keystone per
+    // packet, this lineage's own flavour of it. Run 3 W1-B.
+    {
+      id: 'broadsword-t3-kill-chain-keystone', lineageId: 'broadsword', tier: 3, row: 'keystone', lane: 'kill-chain',
+      name: "Warpath's End", description: 'A kill pays the whole swing back — the mechanic is ready again, right there.',
+      fx: 'kill-chain.keystone', trigger: 'kill', payoff: 'recovery-window',
+    },
+    {
+      id: 'broadsword-t3-empowered-keystone', lineageId: 'broadsword', tier: 3, row: 'keystone', lane: 'empowered',
+      name: 'Full Weight', description: 'What the mechanic hits, the ground around it answers for too.',
+      fx: 'empowered.keystone', trigger: 'mechanic-fired', payoff: 'echo-hit',
+    },
+    {
+      id: 'broadsword-t3-technique-keystone', lineageId: 'broadsword', tier: 3, row: 'keystone', lane: 'technique',
+      name: 'Signature Form', description: 'A form that lands IS your mechanic. Everything that waits on the mechanic answers it.',
+      fx: 'technique.keystone', trigger: 'technique-cast', payoff: 'technique-window',
+    },
+
+    // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
+    {
+      id: 'broadsword-t4-kill-chain-cross', lineageId: 'broadsword', tier: 4, row: 'cross', lane: 'kill-chain',
+      name: "Momentum's Opening", description: 'The swing that hurries you also leaves what it hit easier to hurt.',
+      fx: 'kill-chain.kill-pulse', trigger: 'mechanic-fired', payoff: 'vulnerability', borrowsLane: 'empowered',
+    },
+    {
+      id: 'broadsword-t4-empowered-cross', lineageId: 'broadsword', tier: 4, row: 'cross', lane: 'empowered',
+      name: 'Weighted Form', description: 'The heavy swing is heavy enough to pay part of a form back with it.',
+      fx: 'empowered.weak-point', trigger: 'technique-cast', payoff: 'technique-refund', borrowsLane: 'technique',
+    },
+    {
+      id: 'broadsword-t4-technique-cross', lineageId: 'broadsword', tier: 4, row: 'cross', lane: 'technique',
+      name: 'Drilled Momentum', description: 'Ten thousand repetitions remember what a kill feels like, and borrow the hurry.',
+      fx: 'technique.cast-flare', trigger: 'kill', payoff: 'speed-window', borrowsLane: 'kill-chain',
+    },
+  ],
+};

@@ -9,7 +9,7 @@ import { shouldRunDependentBlock, isGlobalIdentityFailure } from '../../scripts/
 // The runner's cwd is the server package, so anchor on this file instead.
 const REPO_ROOT = resolve(__dirname, '..', '..');
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 

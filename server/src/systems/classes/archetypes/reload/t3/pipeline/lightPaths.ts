@@ -73,6 +73,15 @@ export function registerReloadLightT3(): void {
 
     if ((passives['reload.hair-trigger'] ?? 0) <= 0) return;
 
+    // THE FRAME OWNS THE RAMP (progression rework Phase 3). Artillerist authors
+    // `reload.frame-ramp-pct-per-shot`, and its ramp has no cap below the clip
+    // length, where Warmonger's caps at 15 stacks on a 40-round clip. Both write
+    // `clipSpeedStacks` and `performsAttack.attackCooldown`, so they must never run
+    // together — the frame wins and the path defers. Warmonger's data stays authored
+    // on the node; its agreed re-home ("half the ramp carries through a reload") is a
+    // T3-review item, noted in docs/progression-rework-plan.md.
+    if ((passives['reload.frame-ramp-pct-per-shot'] ?? 0) > 0) return;
+
     if (reload.clipBaseAttackCooldownMs === 0) {
       reload.clipBaseAttackCooldownMs = player.performsAttack.attackCooldown;
     }

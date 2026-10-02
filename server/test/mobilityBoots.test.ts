@@ -7,8 +7,9 @@
 //      alone, and is read from a really-equipped boot (not a poked passive map).
 //   2. `mobility.approach-speed-pct` pays out only while moving TOWARD the
 //      current target and only while outside the minimum gap — no proc, no timer.
-//   3. Weapon upgrade steps may carry an `attacksPerSecond` delta, and the stat
-//      rebuild has to fold it in before attack-speed multipliers.
+//   3. Weapons are off the +N ladder entirely (Phase 2b: a weapon's power track
+//      is its lineage tree, not this ladder) — `effectiveAttacksPerSecond` must
+//      report the same cadence at every plus, and the stat rebuild must agree.
 //   4. Clearing gear is fixed-power: `getMaxUpgrade` is 0 and `checkUpgrade` says no.
 
 import {
@@ -30,7 +31,7 @@ import { attachComponent } from "../src/ecs/markerHelpers";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
 import { World } from "../src/world/World";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -62,8 +63,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -76,7 +76,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,
@@ -184,7 +184,10 @@ assert(
   "gap closing must switch off once inside the minimum gap",
 );
 
-// ── 3. Upgrade steps can spend budget on cadence ─────────────────────────────
+// ── 3. Weapons are off the +N ladder: cadence cannot be upgraded ────────────
+// Phase 2b removed the weapon upgrade ladder (a weapon's power track is its
+// lineage tree instead). `getMaxUpgrade` must say 0, and `effectiveAttacksPerSecond`
+// must therefore report the same base cadence at the only legal plus.
 
 const RAPIER = "flash-rapier";
 const rapier = ITEM_DATABASE.get(RAPIER);
@@ -193,17 +196,13 @@ const baseAps = rapier!.attacksPerSecond ?? 0;
 assert(baseAps > 0, `'${RAPIER}' should author attacksPerSecond`);
 
 const maxPlus = getMaxUpgrade(rapier!);
-const topAps = effectiveAttacksPerSecond(rapier!, maxPlus) ?? 0;
+assert(maxPlus === 0, `'${RAPIER}' must be off the +N ladder (got max +${maxPlus})`);
 assert(
-  topAps > baseAps,
-  `'${RAPIER}' spends upgrade budget on cadence, so +${maxPlus} APS (${topAps}) must exceed +0 (${baseAps})`,
-);
-assert(
-  near(effectiveAttacksPerSecond(rapier!, 0) ?? 0, baseAps),
-  "+0 must equal the authored base APS",
+  near(effectiveAttacksPerSecond(rapier!, maxPlus) ?? 0, baseAps),
+  "a weapon's cadence cannot change at its only legal plus (+0)",
 );
 
-// And the stat rebuild has to honour it, not just the helper.
+// And the stat rebuild has to agree, not just the helper.
 player.holdsInventory.equipment.weapon = RAPIER;
 player.holdsInventory.itemUpgrades = {};
 recalculatePlayerEntityStats(world, player);
@@ -214,24 +213,12 @@ recalculatePlayerEntityStats(world, player);
 const cdAtMax = player.performsAttack.attackCooldown;
 
 assert(
-  cdAtMax < cdAtZero,
-  `an APS upgrade must shorten the attack cooldown (${cdAtZero}ms → ${cdAtMax}ms)`,
+  cdAtMax === cdAtZero,
+  `a weapon's attack cooldown must not change off the +N ladder (${cdAtZero}ms vs ${cdAtMax}ms)`,
 );
 assert(
-  cdAtMax === Math.round(1000 / topAps),
-  `cooldown should be round(1000/${topAps}) = ${Math.round(1000 / topAps)}, got ${cdAtMax}`,
-);
-
-// A weapon that spends nothing on cadence must be completely unaffected.
-const HAMMER = "heavy-hammer";
-const hammer = ITEM_DATABASE.get(HAMMER);
-assert(hammer !== undefined, `test needs '${HAMMER}' in the item database`);
-assert(
-  near(
-    effectiveAttacksPerSecond(hammer!, getMaxUpgrade(hammer!)) ?? 0,
-    hammer!.attacksPerSecond ?? 0,
-  ),
-  "a weapon with no authored APS deltas must keep its base cadence at every +N",
+  cdAtZero === Math.round(1000 / baseAps),
+  `cooldown should be round(1000/${baseAps}) = ${Math.round(1000 / baseAps)}, got ${cdAtZero}`,
 );
 
 // ── 4. Clearing gear is fixed-power ──────────────────────────────────────────
@@ -255,7 +242,6 @@ for (const id of CLEARING_IDS) {
     currentPlus: 0,
     biomeLevel: 99,
     essences: { red: 9999, blue: 9999, green: 9999, yellow: 9999, purple: 9999 },
-    catalysts: {},
     globalMastery: 9999,
   });
   assert(
@@ -264,10 +250,18 @@ for (const id of CLEARING_IDS) {
   );
 }
 
-// Every non-tutorial T1-biome item, by contrast, still upgrades to +5.
+// Every non-tutorial T1-biome item still upgrades to +5 — except weapons, which
+// are off the ladder entirely (Phase 2b: lineage tree instead).
 for (const def of ITEM_DATABASE.values()) {
   if (def.tier !== 1) continue;
   if (def.slot === "core" || def.slot === "relic") continue;
+  if (def.slot === "weapon") {
+    assert(
+      getMaxUpgrade(def) === 0,
+      `T1 weapon '${def.id}' must be off the +N ladder (got max +${getMaxUpgrade(def)})`,
+    );
+    continue;
+  }
   assert(
     getMaxUpgrade(def) === 5,
     `T1 item '${def.id}' should reach +5 (got max +${getMaxUpgrade(def)})`,

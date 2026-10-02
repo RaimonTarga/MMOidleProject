@@ -28,7 +28,7 @@ import { World } from '../src/world/World';
 import { attackCadenceMult } from '../src/systems/combat/engine/attackCadence';
 import { mirrorHpForecast } from '../src/systems/defense/core/hpForecast';
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -54,8 +54,7 @@ function makePlayerSlices(id: string, nodeId: string): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -68,7 +67,7 @@ function makePlayerSlices(id: string, nodeId: string): PersistedPlayerSlices {
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,
@@ -182,7 +181,7 @@ initCombatSystems();
   // The tile is the whole client tell for an invisible status, and its speedMult is
   // load-bearing: own-player extrapolation collapses it through the same clamp.
   syncPlayerBuffs(world, Date.now());
-  const tile = player.hasStatus.activeBuffs.find((b) => b.id === 'debuff-tundra-chill');
+  const tile = player.hasStatus.activeBuffs!.find((b) => b.id === 'debuff-tundra-chill');
   assert(tile !== undefined, 'the chill must project a buff tile');
   assert(tile!.stacks === MAX_STACKS, 'the tile reports live stacks');
   assert(tile!.durationPct === 100, 'a full ramp reads as a full fill, not a countdown');
@@ -205,7 +204,7 @@ initCombatSystems();
   syncPlayerBuffs(world, Date.now());
   assert(!getStatusEffect(cs, TUNDRA_CHILL_EFFECT_ID), 'chill fully decays out of combat');
   assert(attackCadenceMult(cs) === 1, 'attack cadence recovers after decay');
-  assert(!player.hasStatus.activeBuffs.some(b => b.id === 'debuff-tundra-chill'), 'decay removes the icon');
+  assert(!player.hasStatus.activeBuffs!.some(b => b.id === 'debuff-tundra-chill'), 'decay removes the icon');
 }
 
 // ── The slow reaches real movement, and meets the shared floor ────────────────

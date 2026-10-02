@@ -15,7 +15,6 @@ export interface T1EconomyExperimentConfig {
   experimentId: typeof T1_ECONOMY_EXPERIMENT_ID;
   revision: typeof T1_ECONOMY_EXPERIMENT_REVISION;
   t1Plus5EssenceCostMultiplier: 0.6 | 0.75;
-  catalystProgressPerUnitT1: 100;
   /** Canonical T1 farm rates; these are real at rewardMultiplier=1. */
   t1BiomeXpRewardMultiplier: 2;
   t1BiomeEssenceRewardMultiplier: 2;
@@ -51,7 +50,6 @@ const ARM_CONFIGS: Readonly<Record<T1EconomyArm, T1EconomyExperimentConfig>> = {
     experimentId: T1_ECONOMY_EXPERIMENT_ID,
     revision: T1_ECONOMY_EXPERIMENT_REVISION,
     t1Plus5EssenceCostMultiplier: 0.75,
-    catalystProgressPerUnitT1: 100,
     t1BiomeXpRewardMultiplier: 2,
     t1BiomeEssenceRewardMultiplier: 2,
   },
@@ -60,7 +58,6 @@ const ARM_CONFIGS: Readonly<Record<T1EconomyArm, T1EconomyExperimentConfig>> = {
     experimentId: T1_ECONOMY_EXPERIMENT_ID,
     revision: T1_ECONOMY_EXPERIMENT_REVISION,
     t1Plus5EssenceCostMultiplier: 0.6,
-    catalystProgressPerUnitT1: 100,
     t1BiomeXpRewardMultiplier: 2,
     t1BiomeEssenceRewardMultiplier: 2,
   },
@@ -69,7 +66,6 @@ const ARM_CONFIGS: Readonly<Record<T1EconomyArm, T1EconomyExperimentConfig>> = {
     experimentId: T1_ECONOMY_EXPERIMENT_ID,
     revision: T1_ECONOMY_EXPERIMENT_REVISION,
     t1Plus5EssenceCostMultiplier: 0.75,
-    catalystProgressPerUnitT1: 100,
     t1BiomeXpRewardMultiplier: 2,
     t1BiomeEssenceRewardMultiplier: 2,
   },
@@ -78,7 +74,6 @@ const ARM_CONFIGS: Readonly<Record<T1EconomyArm, T1EconomyExperimentConfig>> = {
     experimentId: T1_ECONOMY_EXPERIMENT_ID,
     revision: T1_ECONOMY_EXPERIMENT_REVISION,
     t1Plus5EssenceCostMultiplier: 0.6,
-    catalystProgressPerUnitT1: 100,
     t1BiomeXpRewardMultiplier: 2,
     t1BiomeEssenceRewardMultiplier: 2,
   },

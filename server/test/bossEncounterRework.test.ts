@@ -34,7 +34,7 @@ import { World } from '../src/world/World';
 import type { PlayerEntity } from '../src/ecs/entity';
 import { makeTracksCombat } from '@mmo-idle/shared';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -53,11 +53,12 @@ function playerSlices(id: string, nodeId = NODE): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null }, knownStances: [],
+      attunedAbilities: { techniques: [], guards: [] }, knownStances: [],
       equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
@@ -205,7 +206,7 @@ for (const id of ['dune-stalker-emperor', 'dune-carapace-monarch', 'dune-throne-
   const steps = def(id).bossPattern?.steps ?? [];
   assert(
     steps.some(step => step.kind === 'apply-status' && step.effectId === SUN_MARK_EFFECT_ID) &&
-      steps.some(step => step.kind === 'payoff' && step.consumes.effectId === SUN_MARK_EFFECT_ID),
+      steps.some(step => step.kind === 'payoff' && step.consumes!.effectId === SUN_MARK_EFFECT_ID),
     `${id} should run the Sun Mark cycle`,
   );
   // The cash-out is a named, cast-time step, so it is readable as it arrives.

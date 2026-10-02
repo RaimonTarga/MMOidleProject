@@ -24,10 +24,11 @@ function fixture(archetype: 'cadence' | 'cooldown' | 'reload' | 'dot' | 'energy'
     hasHealth: { hp: 1000, maxHp: 1000, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0, skillPoints: 0, essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
       questProgress: {}, playerTier: 4, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { techniques: [], guard: null },
+      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
@@ -77,7 +78,7 @@ for (const mode of ['direct', 'proc', 'aoe', 'dot', 'laser'] as const) {
     updateReloadT3Ticks(world, 100, 1000);
   }
   if (mode === 'dot') {
-    applyStatusEffect(target.tracksCombat, { id: 'dot', sourceId: player.isPlayer.id, stacks: 1, maxStacks: 1,
+    applyStatusEffect(target.tracksCombat, { id: 'dot', sourceId: player.isPlayer.id, maxStacks: 1,
       remainingMs: 5000, data: { damagePerStack: 120, tickIntervalMs: 1000, nextTickIn: 0 } });
     attachComponent(world, target, 'hasDot', {});
     updateDotArchetype(world, 100);
@@ -99,7 +100,7 @@ for (const mode of ['direct', 'aoe', 'dot'] as const) {
   if (mode === 'direct') runMonsterAttack(world, monster, player, 1000);
   else if (mode === 'aoe') applyMonsterAoe(world, monster, player.hasPosition.current, 100, 100);
   else {
-    applyStatusEffect(player.tracksCombat, { id: 'monster-dot:test', sourceId: monster.isMonster.id, stacks: 1, maxStacks: 1,
+    applyStatusEffect(player.tracksCombat, { id: 'monster-dot:test', sourceId: monster.isMonster.id, maxStacks: 1,
       remainingMs: 5000, data: { damagePerStack: 100, tickIntervalMs: 1000, nextTickIn: 0 } });
     attachComponent(world, player, 'hasDot', {});
     updateDotArchetype(world, 100);

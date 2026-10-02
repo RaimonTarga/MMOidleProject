@@ -1,4 +1,4 @@
-import type { EquipmentSlot, EquippedRule, EssenceType, EvolveMode, TierCheckpointKind, TutorialUpgradeTarget } from "@mmo-idle/shared";
+import type { EquipmentSlot, EquippedRule, EssenceType, EvolveMode, PacketId, RowKind, TierCheckpointKind, TutorialUpgradeTarget } from "@mmo-idle/shared";
 import type { DesiredBuild } from "../loadout/loadout";
 
 /**
@@ -12,7 +12,7 @@ export type NodeRef =
       biomeGroup: string;
       tier: number;
       pick?: "first" | "rotate" | "uncleared" | "current";
-      /** Prefer nodes whose live modifier mints this catalyst family. */
+      /** Prefer a node carrying this modifier (T2-T4 authoring identity only; no gameplay effect). */
       modifier?: string;
     }
   | { kind: "dungeon"; biomeGroup: string; tier: number };
@@ -21,7 +21,6 @@ export type NodeRef =
 export type Condition =
   | { type: "biomeLevelAtLeast"; biomeGroup: string; level: number }
   | { type: "essenceAtLeast"; essence: EssenceType; amount: number }
-  | { type: "catalystAtLeast"; family: string; amount: number }
   | { type: "recipeUnlocked"; recipeId: string }
   | { type: "hasItem"; definitionId: string }
   | { type: "itemAtLeastPlus"; definitionId: string; plus: number }
@@ -38,6 +37,12 @@ export type Condition =
   | { type: "canReconstruct"; recipeId: string }
   | { type: "canUpgrade"; definitionId: string }
   | { type: "globalMasteryAtLeast"; value: number }
+  // Lineage trees: the two kill-driven wallets, and what they have already bought.
+  | { type: "shardAtLeast"; packet: PacketId; amount: number }
+  | { type: "capstoneAtLeast"; biome: string; amount: number }
+  | { type: "lineageCardOwned"; lineageId: string; cardId: string }
+  | { type: "lineageFormOwned"; lineageId: string; recipeId: string }
+  | { type: "lineageFormWorn"; lineageId: string; recipeId: string }
   // Guided-tutorial vocabulary (shared/src/tutorial/types.ts), so tutorial scripts run as routes.
   | { type: "classSelected" }
   | { type: "runeRecipeCrafted"; recipeId: string }
@@ -109,7 +114,7 @@ export type StepBody =
       toPlus: number;
       farmAt?: NodeRef;
       opportunistic?: boolean;
-      /** Treat farmAt as a preference; follow the actual missing essence/catalyst. */
+      /** Treat farmAt as a preference; follow the actual missing essence. */
       farmForMissingResources?: boolean;
     }
   | { type: "configureRunes"; rules: EquippedRule[] }
@@ -137,7 +142,40 @@ export type StepBody =
   | { type: "setAbilities"; techniques: string[]; guards: string[] }
   /** Craft a Rune forge recipe, which is how new rune FRAGMENTS are unlocked. */
   | { type: "craftRune"; recipeId: string; farmAt?: NodeRef }
-  | { type: "attemptBoss"; biomeGroup: string; tier: number; maxAttempts?: number }
+  /**
+   * Buy one lineage card, farming `farmAt` while the wallet falls short.
+   *
+   * Costs (essence AND the lane's shard) come from the magnitude table at
+   * runtime, exactly as `craft` reads `RECIPE_DATABASE` — a route never restates
+   * a price. The tree itself is opened by HOLDING the lineage's base form, so an
+   * `unlockCard` step is only legal after the `craft`/`equip` that took the slot.
+   *
+   * Buying a card into an EMPTY row also activates it (the server does that), so
+   * a route that only ever owns one card per row needs no `setActive` at all.
+   */
+  | { type: "unlockCard"; lineageId: string; cardId: string; farmAt?: NodeRef }
+  /**
+   * Choose which owned card is active for a row, or clear the row with `null`.
+   * Free and instant — this is the swap the lane matrix measures, and the step a
+   * route uses to state "own three, run one".
+   */
+  | { type: "setActive"; lineageId: string; row: RowKind; cardId: string | null }
+  /**
+   * Pay a band's gate, farming `farmAt` while the wallet falls short. The gate
+   * costs essence, the crowned lane's shard and the biome boss's capstone — and
+   * the capstone only drops from that boss, so a route that pays a gate must
+   * have cleared it enough times first (the executor raises a named stall
+   * rather than farming a node that can never mint one).
+   */
+  | { type: "unlockForm"; lineageId: string; recipeId: string; farmAt?: NodeRef }
+  /** Wear an owned form. Free and instant, like swapping gear. */
+  | { type: "wearForm"; lineageId: string; recipeId: string }
+  /**
+   * Fight a biome's tier boss. `repeat` marks a step that wants a FRESH kill even
+   * though the biome's seal is already held — a capstone loop, where the drop is the
+   * point and `bossesCleared` (a first-clear flag, true forever) is the wrong signal.
+   */
+  | { type: "attemptBoss"; biomeGroup: string; tier: number; maxAttempts?: number; repeat?: boolean }
   | { type: "repeatUntil"; steps: RouteStep[]; until: Condition; maxIterations?: number }
   /**
    * Run `steps` only if `when` holds AT THE MOMENT THE STEP IS REACHED, and skip

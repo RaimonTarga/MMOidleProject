@@ -44,20 +44,13 @@ export const caveRecipeEntries = [
     // 2026-09-26 weapon pass: Attack 22->20 (+5: 32->29), about -5% throughput.
     // Its per-hit size made it the best T1 weapon for every class once Power
     // Strike and monster plating were counted, not only on raw DPS.
-    cost: { red: 26 }, stats: { attack: 20 }, attacksPerSecond: 1.10, tier: 1,
+    cost: { red: 26 }, stats: { attack: 29 }, attacksPerSecond: 1.10, tier: 1,
     mechanicEffects: { 'weapon.dead-swing-interval': 3 },
     icon: 'items/weapons/chaotic-axe.png',
     description: 'A wild, top-heavy thing that fights as much as it is wielded.',
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~501 (was 500).
     // +5 catalyst from its own T2 successor's tag ("chaotic-axe (counted
     // disruption) → Swarming").
-    upgrades: [
-      { stats: { attack: 1 }, cost: { red: 25 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 2 }, cost: { red: 45 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 2 }, cost: { red: 75 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2 }, cost: { red: 125 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2 }, cost: { red: 155 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // %DR is kept well below runaway values on purpose: percentage mitigation
@@ -77,7 +70,7 @@ export const caveRecipeEntries = [
       {"cost": {"red": 60}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "damageReduction": 0.008}},
       {"cost": {"red": 95}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "damageReduction": 0.008}},
       {"cost": {"red": 155}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "damageReduction": 0.008}},
-      {"cost": {"red": 195}, "catalystCost": {"swarming": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "damageReduction": 0.008}}
+      {"cost": {"red": 195}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "damageReduction": 0.008}}
     ],
 
 mechanicEffects: {},
@@ -129,18 +122,11 @@ mechanicEffects: {},
     evolvesFrom: 'chaotic-axe',
     // 2026-09-26 weapon normalization: Attack 43->31 (+5: 65->60). Its +0 sat 28% over the T2 +0
     // median (a flat curve with a huge start); +5 is the axe's ~5% cut.
-    cost: { red: 60 }, stats: { attack: 31 }, attacksPerSecond: 1.20, tier: 2, // family-tag: chaotic-axe (counted disruption) → Swarming
-    reconstructCost: { red: 210 }, reconstructCatalystCost: { swarming: 2 },
+    cost: { red: 60 }, stats: { attack: 60 }, attacksPerSecond: 1.20, tier: 2, // family-tag: chaotic-axe (counted disruption) → Swarming
+    reconstructCost: { red: 210 },
     mechanicEffects: { 'weapon.dead-swing-interval': 4 },
     icon: 'items/weapons/ruinous-axe.png',
     description: 'Bigger, meaner, and somehow better balanced — chaos with the faintest thread of discipline.',
-    upgrades: [
-      { stats: { attack: 6 }, cost: { red: 44 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 6 }, cost: { red: 110 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 6 }, cost: { red: 177 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 6 }, cost: { red: 287 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 5 }, cost: { red: 486 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // T2 economy pass (2026-08-29): now an EVOLUTION of cave-vest-t1 at +5.
@@ -149,15 +135,15 @@ mechanicEffects: {},
     recipeGroup: 'cave', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'cave-vest-t1',
     cost: { red: 54 }, stats: {"maxHp": 55, "damageReduction": 0.18}, tier: 2, // family-tag: premium %DR generalist wall → Swarming
-    reconstructCost: { red: 189 }, reconstructCatalystCost: { swarming: 2 },
+    reconstructCost: { red: 189 },
     icon: 'items/armor/dire-bestial-hide.png',
     description: "Dependable protection against direct damage and damage over time.",
     upgrades: [
       {"cost": {"red": 46}, "requiredBiomeLevel": 9, "stats": {"maxHp": 6, "damageReduction": 0.008}},
       {"cost": {"red": 116}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "damageReduction": 0.008}},
       {"cost": {"red": 185}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6, "damageReduction": 0.008}},
-      {"cost": {"red": 300}, "catalystCost": {"swarming": 1}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "damageReduction": 0.008}},
-      {"cost": {"red": 508}, "catalystCost": {"swarming": 2}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6, "damageReduction": 0.008}}
+      {"cost": {"red": 300}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "damageReduction": 0.008}},
+      {"cost": {"red": 508}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6, "damageReduction": 0.008}}
     ],
 
 mechanicEffects: {},
@@ -170,7 +156,7 @@ mechanicEffects: {},
     recipeGroup: 'cave', requiredBiomeLevel: 9, slot: 'recovery',
     evolvesFrom: 'cave-charm-t1',
     cost: { red: 44 }, stats: { recovery: 11.1 }, // family-tag: reliable generalist recovery → Swarming
-    reconstructCost: { red: 154 }, reconstructCatalystCost: { swarming: 2 },
+    reconstructCost: { red: 154 },
     mechanicEffects: { 'defense.absorb-pct': 0.14, 'defense.absorb-guard-bonus-pct': 0.08 },
     tier: 2,
     icon: 'items/charms/resonant-gem.png',
@@ -180,7 +166,7 @@ mechanicEffects: {},
       { stats: { recovery: 2.3 }, mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 46 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 73 }, requiredBiomeLevel: 10 },
       { stats: { recovery: 2.3 }, mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 119 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 203 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 10 },
+      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 203 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -190,7 +176,7 @@ mechanicEffects: {},
     recipeGroup: 'cave', requiredBiomeLevel: 10, slot: 'mobility',
     evolvesFrom: 'cave-boots-t1',
     cost: { red: 33 }, stats: { speed: 36 }, tier: 2, // family-tag: cave generalist mobility → Swarming
-    reconstructCost: { red: 116 }, reconstructCatalystCost: { swarming: 2 },
+    reconstructCost: { red: 116 },
     mechanicEffects: { 'mobility.stealth-pct': 0.38 },
     icon: 'items/boots/cavern-sprints.png',
     description: 'Worn smooth on tunnel floors no map has ever charted.',
@@ -199,7 +185,7 @@ mechanicEffects: {},
       { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 30 }, requiredBiomeLevel: 10 },
       { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 48 }, requiredBiomeLevel: 10 },
       { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 78 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 132 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 132 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -211,18 +197,11 @@ mechanicEffects: {},
     // total on the shipped accelerating curve; catalysts moved to +4/+5.
     evolvesFrom: 'ruinous-axe',
     // 2026-09-26 T2-T4 weapon normalization: Attack 78->67 (+5: 117->112).
-    cost: { red: 120 }, stats: { attack: 67 }, attacksPerSecond: 1.20, tier: 3, // family-tag: chaotic-axe → Swarming
-    reconstructCost: { red: 420 }, reconstructCatalystCost: { swarming: 3 },
+    cost: { red: 120 }, stats: { attack: 112 }, attacksPerSecond: 1.20, tier: 3, // family-tag: chaotic-axe → Swarming
+    reconstructCost: { red: 420 },
     mechanicEffects: { 'weapon.dead-swing-interval': 5 },
     icon: 'items/weapons/cataclysm-axe.png',
     description: 'Chaos given an edge — and, at last, a little rhythm. Every fifth swing still finds only air.',
-    upgrades: [
-      { stats: { attack: 10 }, cost: { red: 88 },  requiredBiomeLevel: 14 },
-      { stats: { attack: 9 }, cost: { red: 221 }, requiredBiomeLevel: 15 },
-      { stats: { attack: 9 }, cost: { red: 353 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 8 }, cost: { red: 574 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 9 }, cost: { red: 972 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   ['cave-vest-t3', {
@@ -230,7 +209,7 @@ mechanicEffects: {},
     recipeGroup: 'cave', requiredBiomeLevel: 14, slot: 'armor',
     evolvesFrom: 'cave-vest-t2',
     cost: { red: 116, yellow: 29 }, stats: {"maxHp": 150, "damageReduction": 0.26}, // family-tag: premium %DR wall → Swarming
-    reconstructCost: { red: 406, yellow: 102 }, reconstructCatalystCost: { swarming: 3 },
+    reconstructCost: { red: 406, yellow: 102 },
     tier: 3,
     icon: 'items/armor/deepscale-hide.png',
     description: "Dependable protection against direct damage and damage over time.",
@@ -238,8 +217,8 @@ mechanicEffects: {},
       {"cost": {"red": 73, "yellow": 18}, "requiredBiomeLevel": 15, "stats": {"maxHp": 15, "damageReduction": 0.008}},
       {"cost": {"red": 182, "yellow": 45}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15, "damageReduction": 0.008}},
       {"cost": {"red": 291, "yellow": 73}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15, "damageReduction": 0.008}},
-      {"cost": {"red": 473, "yellow": 118}, "catalystCost": {"swarming": 2}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15, "damageReduction": 0.008}},
-      {"cost": {"red": 800, "yellow": 200}, "catalystCost": {"swarming": 3}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15, "damageReduction": 0.008}}
+      {"cost": {"red": 473, "yellow": 118}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15, "damageReduction": 0.008}},
+      {"cost": {"red": 800, "yellow": 200}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15, "damageReduction": 0.008}}
     ],
 
 mechanicEffects: {},
@@ -254,7 +233,7 @@ mechanicEffects: {},
     recipeGroup: 'cave', requiredBiomeLevel: 15, slot: 'recovery',
     evolvesFrom: 'cave-charm-t2',
     cost: { red: 100, green: 25 }, stats: { recovery: 37 }, // family-tag: reliable generalist recovery → Swarming
-    reconstructCost: { red: 350, green: 88 }, reconstructCatalystCost: { swarming: 3 },
+    reconstructCost: { red: 350, green: 88 },
     mechanicEffects: { 'defense.absorb-pct': 0.20, 'defense.absorb-guard-bonus-pct': 0.10 },
     tier: 3,
     icon: 'items/charms/echo-geode.png',
@@ -264,7 +243,7 @@ mechanicEffects: {},
       { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 70, green: 18 }, requiredBiomeLevel: 16 },
       { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 113, green: 28 }, requiredBiomeLevel: 16 },
       { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 183, green: 46 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 4.5 }, cost: { red: 310, green: 78 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 4.5 }, cost: { red: 310, green: 78 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -273,7 +252,7 @@ mechanicEffects: {},
     recipeGroup: 'cave', requiredBiomeLevel: 16, slot: 'mobility',
     evolvesFrom: 'cave-boots-t2',
     cost: { red: 100 }, stats: { speed: 65 }, tier: 3, // family-tag: cave generalist mobility → Swarming
-    reconstructCost: { red: 350 }, reconstructCatalystCost: { swarming: 3 },
+    reconstructCost: { red: 350 },
     mechanicEffects: { 'mobility.stealth-pct': 0.50 },
     icon: 'items/boots/echostep-treads.png',
     description: 'They give back no sound at all — not even the echo the deep stone expects.',
@@ -282,7 +261,7 @@ mechanicEffects: {},
       { stats: { speed: 3 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 57 },  requiredBiomeLevel: 16 },
       { stats: { speed: 4 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 91 }, requiredBiomeLevel: 16 },
       { stats: { speed: 3 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 147 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 4 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 248 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 4 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 248 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -298,7 +277,7 @@ mechanicEffects: {},
     id: 'core-tempered', name: 'Tempered Core',
     recipeGroup: 'cave', requiredBiomeLevel: 12, slot: 'core', coreEligibility: 'unrestricted',
     lineageId: 'core-tempered',
-    cost: { red: 500 }, catalystCost: { dominion: 4 }, // family-tag: cave capstone generalist → Dominion
+    cost: { red: 500 }, // family-tag: cave capstone generalist → Dominion
     stats: {}, tier: 2,
     mechanicEffects: { 'core.damage-dealt-pct': 0.12, 'core.maxhp-mult': 0.12 },
     icon: 'items/cores/tempered.png',
@@ -313,7 +292,7 @@ mechanicEffects: {},
     id: 'core-duelist', name: 'Duelist Core',
     recipeGroup: 'cave', requiredBiomeLevel: 18, slot: 'core', coreEligibility: 'melee',
     lineageId: 'core-duelist',
-    cost: { red: 1350 }, catalystCost: { dominion: 6 }, // family-tag: single-target alpha → Dominion
+    cost: { red: 1350 }, // family-tag: single-target alpha → Dominion
     stats: {}, tier: 3,
     mechanicEffects: {
       'core.damage-dealt-pct': 0.18, 'core.maxhp-mult': 0.10,

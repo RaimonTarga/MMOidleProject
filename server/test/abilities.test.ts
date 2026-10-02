@@ -21,7 +21,7 @@ import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCoold
 import { World } from "../src/world/World";
 import { takeWorldLogEvents } from "../src/world/worldLog";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -42,8 +42,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -109,7 +108,7 @@ player.hasHealth.hp = player.hasHealth.maxHp * 0.2;
 fireAbilities(world, Date.now());
 const firstBuff = getStatusEffect(player.tracksCombat, ABILITY_GUARD_EFFECT_ID);
 assert(!!firstBuff, "Brace should fire on its HP Below 25% rule");
-assert(firstBuff.data.drPct === 0.35, "Brace I should apply its 35% damage-reduction magnitude");
+assert(firstBuff!.data.drPct === 0.35, "Brace I should apply its 35% damage-reduction magnitude");
 assert(
   takeWorldLogEvents(world, player.isPlayer.id).some(
     (event) => event.kind === "ability-activation" && event.abilityId === "brace",

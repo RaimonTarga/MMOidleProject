@@ -216,6 +216,9 @@ export function upsertPlayer(
       transform.speed = 0;
     }
     state.ambientStackFlash.delete(player.id);
+    const frameCharge = state.frameChargeGlow.get(player.id);
+    if (frameCharge?.graphics) frameCharge.graphics.destroy();
+    state.frameChargeGlow.delete(player.id);
     if (isOwn) {
       clearOwnMovePath(state);
       setManualActive(false);

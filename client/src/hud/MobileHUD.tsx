@@ -6,6 +6,7 @@ import { SkillTreePanel } from '../ui/SkillTreePanel';
 import { BuildPanel } from '../ui/BuildPanel';
 import { MasteryPanel } from '../ui/MasteryPanel';
 import { InventoryPanel } from '../ui/InventoryPanel';
+import { LineageTreePanel } from '../ui/lineage/LineageTreePanel';
 import { CraftingPanel } from '../ui/CraftingPanel';
 import { MapPanel } from '../ui/MapPanel';
 import { QuestPanel } from '../ui/QuestPanel';
@@ -31,6 +32,7 @@ import {
   deathOverlayAtom,
   hpAtom,
   incomingDotAtom,
+  lineageTreeSlotAtom,
   maxHpAtom,
   pendingHealAtom,
   playerNameAtom,
@@ -82,6 +84,7 @@ interface MoreEntry {
 
 function MobileHUDContent() {
   const [view, setView] = useState<MobileView>(null);
+  const [lineageSlot, setLineageSlot] = useAtom(lineageTreeSlotAtom);
   const [settingsOpen, setSettingsOpen] = useAtom(settingsOpenAtom);
   const [charSelectPrompt, setCharSelectPrompt] = useState(false);
   const setBuildTab = useSetAtom(buildPanelTabAtom);
@@ -443,6 +446,9 @@ function MobileHUDContent() {
       {/* ── Self-overlaying panels (reused from desktop, full-screen) ───── */}
       {view === 'skills' && <SkillTreePanel onClose={close} />}
       {view === 'bag'    && <InventoryPanel onClose={close} />}
+      {lineageSlot !== null && (
+        <LineageTreePanel slot={lineageSlot} onClose={() => setLineageSlot(null)} />
+      )}
       {view === 'craft' && <CraftingPanel tab="make" onClose={close} />}
       {view === 'upgrade' && <CraftingPanel tab="upgrade" onClose={close} />}
       {view === 'map'    && <MapPanel onClose={close} />}

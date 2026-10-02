@@ -1,6 +1,8 @@
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { registerEmpoweredMultiplier, setEmpoweredAttack, isEmpoweredAttack } from '../../../combat/engine/empoweredAttacks';
+import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
 import type { World } from '../../../../world/World';
+import { initCadenceFrameLoop } from './frameLoop';
 import { initCadenceT3 } from './t3';
 import { relicRatingsFromPassives, resolveCadenceRelicProfile } from '@mmo-idle/shared';
 
@@ -15,6 +17,18 @@ export function initCadenceArchetype(): void {
     attackerSlice: 'usesCadence',
     passiveKey:    'cadence.empowered-mult',
     passiveAddKey: 'cadence.damage-mult-add',
+  });
+
+  // `mechanic-fired` (progression rework 1c): the finisher IS cadence's moment,
+  // and `empoweredAttack` metadata is set by exactly the handler above that
+  // consumed the flag — so this reads "the flag was just spent", not "a flag
+  // exists". Registered immediately after it, before the T3 hooks, so a card's
+  // payoff and a T3 rider see the same hit.
+  registerCombatListener('onHit', (ctx, world) => {
+    if (ctx.attackerType !== 'player') return;
+    if (!ctx.metadata['empoweredAttack']) return;
+    if (!ctx.attacker.usesCadence) return;
+    emitMechanicFired(world, ctx.attacker, ctx);
   });
 
   initCadenceT3();
@@ -54,6 +68,11 @@ export function initCadenceArchetype(): void {
       cadence.count = 0;
     }
   });
+
+  // The frame loop (progression rework Phase 3) registers LAST: its finisher
+  // branch folds the Breaker bank into the multiplier the handler above resolved,
+  // and its window clamp reads the threshold the counting handler just settled.
+  initCadenceFrameLoop();
 }
 
 export function updateCadenceArchetype(_world: World, _dt: number): void {

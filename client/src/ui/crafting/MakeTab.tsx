@@ -6,7 +6,6 @@ import {
   ESSENCE_COLORS,
   TUTORIAL_ANCHORS,
   TEST_ROOM_NODE_ID,
-  catalystLabel,
   essenceLabel,
   ITEM_DATABASE,
   abilityDef,
@@ -14,6 +13,7 @@ import {
   checkReconstruct,
   coreEligibilityLabel,
   isEvolvedRecipe,
+  isGatedLineageForm,
   isRestrictedCore,
   requiredPlusFor,
   relicRatingsFromPassives, relicRatingsFromEffects,
@@ -22,7 +22,7 @@ import {
 import { hudBus } from '../../hudBus';
 import { tutorialFocusAtom } from '../../tutorial/atoms';
 import {
-  catalystsAtom,
+  capstonesAtom,
   essencesAtom,
   inventoryAtom,
   equipmentAtom,
@@ -31,7 +31,7 @@ import {
   playerNodeIdAtom,
   combatArchetypeAtom,
   passivesAtom, playerTierAtom, activeStanceAtom, equippedRitesAtom, hpAtom, maxHpAtom,
-  selectedSubVariantAtom, selectedRangeAtom, unlockedSkillsAtom,
+  selectedSubVariantAtom, selectedRangeAtom, shardsAtom, unlockedSkillsAtom, lineagesAtom,
 } from '../../hud/atoms';
 import { BrowserPane, CategoryRail, RailLayout } from '../../hud/primitives';
 import { SLOT_ABBR, biomeName, tierColor } from './common';
@@ -66,12 +66,20 @@ import type { AbilityContext } from '../describe';
 import { makeFiltersAtom } from '../panelFilters';
 
 /** What a recipe still needs, per material; empty when it is affordable. */
+/**
+ * A recipe the Make tab must not sell: a lineage's tier-2+ form, opened at the
+ * previous band's gate in the tree. Weapons carry `evolvesFrom`; the re-homed
+ * armour, charm and boots doors do not, so both checks are needed.
+ */
+function lineageGated(recipe: { id: string; slot: string; evolvesFrom?: string }): boolean {
+  return isGatedLineageForm(recipe.id) || (recipe.slot === 'weapon' && isEvolvedRecipe(recipe as Parameters<typeof isEvolvedRecipe>[0]));
+}
+
 function missingMaterials(
   entry: MakeEntry,
   essences: Record<EssenceType, number>,
-  catalysts: Record<string, number>,
 ): { key: string; label: string; amount: number; color?: string }[] {
-  const essence = (Object.entries(entry.cost) as [EssenceType, number][])
+  return (Object.entries(entry.cost) as [EssenceType, number][])
     .filter(([type, amount]) => (essences[type] ?? 0) < amount)
     .map(([type, amount]) => ({
       key: type,
@@ -79,14 +87,6 @@ function missingMaterials(
       amount: amount - (essences[type] ?? 0),
       color: ESSENCE_COLORS[type],
     }));
-  const catalyst = (Object.entries(entry.catalystCost ?? {}) as [string, number][])
-    .filter(([family, amount]) => (catalysts[family] ?? 0) < amount)
-    .map(([family, amount]) => ({
-      key: family,
-      label: catalystLabel(family),
-      amount: amount - (catalysts[family] ?? 0),
-    }));
-  return [...essence, ...catalyst];
 }
 
 type MakeSection = 'new' | 'ready' | 'short' | 'locked';
@@ -325,7 +325,8 @@ export function MakeTab() {
   const playerId = useAtomValue(playerIdAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
   const essences = useAtomValue(essencesAtom);
-  const catalysts = useAtomValue(catalystsAtom);
+  const shards = useAtomValue(shardsAtom);
+  const capstones = useAtomValue(capstonesAtom);
   const inventory = useAtomValue(inventoryAtom);
   const itemUpgrades = useAtomValue(itemUpgradesAtom);
   const equipment = useAtomValue(equipmentAtom);
@@ -405,14 +406,19 @@ export function MakeTab() {
   const canMake = (entry: MakeEntry): boolean => {
     if (isTestRoom) return true;
     const recipe = entry.gear;
-    if (!recipe || !isEvolvedRecipe(recipe)) return entryAffordable(entry, essences, catalysts);
-    return checkEvolve({ recipe, inventory, equipment, itemUpgrades, essences, catalysts }).ok
-      || (!!recipe.reconstructCost && checkReconstruct({ recipe, essences, catalysts }).ok);
+    // A lineage's tier-2+ form is paid at its gate in the tree, never made here
+    // (review findings B4/P11, 2026-10-02): the weapon +N ladder it would ask for
+    // no longer exists, and the re-homed doors must not be craftable for essence.
+    if (recipe && lineageGated(recipe)) return false;
+    if (!recipe || !isEvolvedRecipe(recipe)) return entryAffordable(entry, essences);
+    return checkEvolve({ recipe, inventory, equipment, itemUpgrades, essences }).ok
+      || (!!recipe.reconstructCost && checkReconstruct({ recipe, essences }).ok);
   };
 
   /** The row's short "what is missing" line for an evolution whose materials are covered. */
   const evolveNeed = (entry: MakeEntry): string => {
     const recipe = entry.gear;
+    if (recipe && lineageGated(recipe)) return 'from its lineage tree';
     if (!recipe?.evolvesFrom || !isEvolvedRecipe(recipe)) return '';
     const source = ITEM_DATABASE.get(recipe.evolvesFrom)?.name ?? 'source item';
     const owned = inventory.includes(recipe.evolvesFrom) || equipment[recipe.slot] === recipe.evolvesFrom;
@@ -439,7 +445,7 @@ export function MakeTab() {
       });
     }
     return stats;
-  }, [railKinds, entries, newEntries, essences, catalysts, isTestRoom, inventory, equipment, itemUpgrades]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [railKinds, entries, newEntries, essences, isTestRoom, inventory, equipment, itemUpgrades]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // A remembered category that is no longer on the rail would select nothing;
   // fall back to where the news is, then to what can be made.
@@ -524,7 +530,7 @@ export function MakeTab() {
           ? <CraftReveal key={craftResult.id} result={craftResult} />
           : <CraftStamp key={craftResult.id} result={craftResult} />
       )}
-      <WalletSummary essences={essences} catalysts={catalysts} />
+      <WalletSummary essences={essences} shards={shards} capstones={capstones} />
       <RailLayout>
       {rail}
       <BrowserPane
@@ -547,7 +553,7 @@ export function MakeTab() {
         renderItem={(entry) => (
           <MakeRow
             entry={entry}
-            missing={isTestRoom || canMake(entry) ? [] : missingMaterials(entry, essences, catalysts)}
+            missing={isTestRoom || canMake(entry) ? [] : missingMaterials(entry, essences)}
             need={isTestRoom || canMake(entry) ? '' : evolveNeed(entry)}
             isNew={newEntries.has(entry.key)}
             onSeen={() => newEntries.clear(entry.key)}
@@ -557,7 +563,6 @@ export function MakeTab() {
           <MakeDetail
             entry={entry}
             essences={essences}
-            catalysts={catalysts}
             inventory={inventory}
             itemUpgrades={itemUpgrades}
             abilityContext={abilityContext}
@@ -644,7 +649,6 @@ function MakeRow({
 interface MakeDetailProps {
   entry: MakeEntry;
   essences: Record<EssenceType, number>;
-  catalysts: Record<string, number>;
   inventory: readonly string[];
   itemUpgrades: Record<string, number>;
   abilityContext: AbilityContext;
@@ -672,7 +676,6 @@ function madeThingLines(entry: MakeEntry, context: AbilityContext) {
 function MakeDetail({
   entry,
   essences,
-  catalysts,
   inventory,
   itemUpgrades,
   abilityContext,
@@ -691,14 +694,19 @@ function MakeDetail({
   const equippedRites = useAtomValue(equippedRitesAtom);
   const hp = useAtomValue(hpAtom);
   const maxHp = useAtomValue(maxHpAtom);
-  const affordable = entryAffordable(entry, essences, catalysts);
+  const lineages = useAtomValue(lineagesAtom);
+  const affordable = entryAffordable(entry, essences);
   const recipe = entry.gear;
-  const evolved = recipe ? isEvolvedRecipe(recipe) : false;
+  // Weapon tier-2+ forms are the lineage tree's gate now (LineageTreePanel, open
+  // from the weapon slot) — the old evolve/reconstruct path stays live only for
+  // slots whose trees have not shipped yet (progression rework plan Phase 4).
+  const isWeaponLineageForm = !!recipe && lineageGated(recipe);
+  const evolved = recipe ? isEvolvedRecipe(recipe) && !isWeaponLineageForm : false;
   const evolveCheck = recipe && evolved
-    ? checkEvolve({ recipe, inventory, equipment, itemUpgrades, essences, catalysts, isTestRoom })
+    ? checkEvolve({ recipe, inventory, equipment, itemUpgrades, essences, isTestRoom })
     : null;
   const reconstructCheck = recipe && evolved && recipe.reconstructCost
-    ? checkReconstruct({ recipe, essences, catalysts, isTestRoom })
+    ? checkReconstruct({ recipe, essences, isTestRoom })
     : null;
   // The DPS row runs two full stat rebuilds, so the plan is only recomputed when
   // something it reads actually moves.
@@ -717,14 +725,14 @@ function MakeDetail({
             selectedClass: combatArchetype ? `${combatArchetype}-root` : null,
             selectedSubVariant, selectedRange, combatArchetype,
           },
-          playerTier, activeStance, equippedRites,
+          playerTier, activeStance, equippedRites, lineages,
           hpFraction: maxHp > 0 ? hp / maxHp : 1,
         },
       })
       : null),
     [recipe, evolved, inventory, equipment, itemUpgrades, unlockedSkills, passives,
       combatArchetype, selectedSubVariant, selectedRange, playerTier, activeStance,
-      equippedRites, hp, maxHp],
+      equippedRites, lineages, hp, maxHp],
   );
 
   const statList = recipe
@@ -819,13 +827,15 @@ function MakeDetail({
           something the player already owns, not a fresh craft. */}
       {plan && <EvolutionPreview plan={plan} />}
 
-      <div className="make-detail__cost-label">{plan ? 'Evolution cost' : 'Cost'}</div>
-      <CostDisplay
-        cost={entry.cost}
-        essences={essences}
-        catalystCost={entry.catalystCost}
-        catalysts={catalysts}
-      />
+      {!isWeaponLineageForm && (
+        <>
+          <div className="make-detail__cost-label">{plan ? 'Evolution cost' : 'Cost'}</div>
+          <CostDisplay
+            cost={entry.cost}
+            essences={essences}
+          />
+        </>
+      )}
 
       {result && !result.success && (
         <div className="craft-card-result craft-card-result--err">
@@ -836,50 +846,60 @@ function MakeDetail({
         </div>
       )}
 
-      <div className="make-detail__actions">
-        {evolved && recipe ? (
-          <>
-            <button
-              type="button"
-              className="craft-recipe__btn"
-              disabled={evolveBlocked !== ''}
-              title={evolveBlocked}
-              onClick={() => onAttempt(() => hudBus.requestEvolveItem(recipe.id, 'evolve'))}
-            >
-              Evolve
-            </button>
-            {evolveBlocked && <span className="make-detail__blocked">{evolveBlocked}</span>}
-          </>
-        ) : (
-          <>
-            <button
-              type="button"
-              className="craft-recipe__btn"
-              disabled={blocked !== ''}
-              title={blocked}
-              data-tutorial-anchor={TUTORIAL_ANCHORS.makeAction}
-              onClick={() => onAttempt(() => {
-                if (recipe) hudBus.requestCraftRecipe(recipe.id);
-                else learnIntent();
-              })}
-            >
-              {recipe ? 'Craft' : 'Learn'}
-            </button>
-            {blocked && <span className="make-detail__blocked">{blocked}</span>}
-          </>
-        )}
-      </div>
+      {isWeaponLineageForm ? (
+        // Tier-2+ weapon forms are bought at the previous band's gate, in the
+        // lineage tree — not crafted or evolved here (design §5).
+        <div className="make-detail__lineage-note">
+          Tier {recipe!.tier}+ forms are unlocked from the item's lineage tree.
+          Open it from the matching slot in your Equipment panel.
+        </div>
+      ) : (
+        <>
+          <div className="make-detail__actions">
+            {evolved && recipe ? (
+              <>
+                <button
+                  type="button"
+                  className="craft-recipe__btn"
+                  disabled={evolveBlocked !== ''}
+                  title={evolveBlocked}
+                  onClick={() => onAttempt(() => hudBus.requestEvolveItem(recipe.id, 'evolve'))}
+                >
+                  Evolve
+                </button>
+                {evolveBlocked && <span className="make-detail__blocked">{evolveBlocked}</span>}
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="craft-recipe__btn"
+                  disabled={blocked !== ''}
+                  title={blocked}
+                  data-tutorial-anchor={TUTORIAL_ANCHORS.makeAction}
+                  onClick={() => onAttempt(() => {
+                    if (recipe) hudBus.requestCraftRecipe(recipe.id);
+                    else learnIntent();
+                  })}
+                >
+                  {recipe ? 'Craft' : 'Learn'}
+                </button>
+                {blocked && <span className="make-detail__blocked">{blocked}</span>}
+              </>
+            )}
+          </div>
 
-      {/* The escape hatch for a lineage the player never started, deliberately
-          below the action it is an alternative to. */}
-      {evolved && recipe && (
-        <ReconstructOption
-          recipe={recipe}
-          essences={essences}
-          catalysts={catalysts}
-          blocked={reconstructBlocked}
-          onReconstruct={() => onAttempt(() => hudBus.requestEvolveItem(recipe.id, 'reconstruct'))}
-        />
+          {/* The escape hatch for a lineage the player never started, deliberately
+              below the action it is an alternative to. */}
+          {evolved && recipe && (
+            <ReconstructOption
+              recipe={recipe}
+              essences={essences}
+              blocked={reconstructBlocked}
+              onReconstruct={() => onAttempt(() => hudBus.requestEvolveItem(recipe.id, 'reconstruct'))}
+            />
+          )}
+        </>
       )}
     </div>
   );

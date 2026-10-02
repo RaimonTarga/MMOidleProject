@@ -1,9 +1,10 @@
-import { NODE_BIOMES, NODE_MODIFIERS, modifierRewardMult, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, GAME_CONFIG, catalystProgressPerUnit, catalystProgressRewardMult } from '@mmo-idle/shared';
+import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, GAME_CONFIG, familyForMonster, CAPSTONE_MATERIALS, SHARD_BASE_PER_KILL, SHARD_TIER_MULT, biomeLaneAPackets } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import { checkSealTierAdvance, registerKillForQuests } from './questSystem';
+import { recalculatePlayerStatsPreservingCombatState } from '../../../ecs/playerEntityFormulas';
 import { recordWorldLogEvent } from '../../../world/worldLog';
 import { actorFromPlayer } from '../../../world/worldLogActors';
 import { onDungeonMonsterRewarded } from '../../world/dungeons/dungeon';
@@ -17,6 +18,21 @@ export interface KillRewards {
 
 const FALLBACK_REWARDS: KillRewards = { essence: 1, essenceType: 'green', level: 1 };
 const DEFAULT_BOSS_RESPAWN_MS = 30_000;
+
+/**
+ * Design §18.6's shard-sourcing stopgap: Bulwark and Barrier tempo have NO T1 mob
+ * family at all and would otherwise be unreachable, and Technique (design §22) has
+ * only one. So a biome boss kill also drops this many shards of EACH distinct
+ * Lane-A packet across the lineages homed in that biome — deduplicated per packet,
+ * so a biome whose armor and mobility lineages share a Lane A (e.g. Plains' Kill
+ * chain) pays that packet once per kill, not once per lineage that names it.
+ *
+ * FOUR, so a boss-only lane buys a payoff card in two kills (design §18.6): a
+ * payoff row costs eight shards at T1, and at two per kill those lanes were four
+ * boss kills behind a lane whose family drops its shard on ordinary trash.
+ * Provisional; remove when a family covers it.
+ */
+const BOSS_LANE_A_SHARD_AMOUNT = 4;
 
 export interface KillRewardInfo {
   essenceGained: number;
@@ -34,28 +50,63 @@ export function rewardPlayer(entity: PlayerEntity, rewards: KillRewards): void {
 }
 
 /**
- * Add per-kill catalyst progress under a combat-family key and mint catalysts
- * whenever progress crosses the threshold (carrying the remainder). No-op when
- * the node has no pace family (excluded node) or the monster grants no weight.
- * Caller marks the slice dirty.
+ * Lineage shards and boss capstones (progression rework Phase 1b).
  *
- * The threshold is per BIOME TIER, so a tier can set its own catalyst identity
- * without touching any other tier's.
+ * Deterministic, like every other lineage material: every kill drops a little of
+ * the shard its mob family favours, and the biome boss drops its capstone every
+ * kill (design §1, §12). No rolls and no pity timer — costs gate the pace.
+ *
+ * A monster outside the five T1-biome families drops no shard. That is the
+ * Phase 1 footprint, not a rule: Phase 2 authors the remaining families along
+ * with per-node blends, and until then cards only exist at T1 anyway.
+ *
+ * Was the sibling of a per-kill catalyst accumulator (keyed by the node's
+ * modifier); Phase 2b deleted that wallet outright, so shards are now the
+ * only kill-driven material wallet.
  */
-function grantCatalystProgress(
-  entity: PlayerEntity,
-  familyKey: string | undefined,
-  weight: number,
+function grantLineageMaterials(
+  world: World,
+  recipient: PlayerEntity,
+  monster: MonsterEntity,
+  params: { biomeTier: number; biomeGroup: string | undefined; debugMult: number },
 ): void {
-  if (!familyKey || weight <= 0) return;
-  const prog = entity.tracksProgression;
-  const per = catalystProgressPerUnit();
-  const total = (prog.catalystProgress[familyKey] ?? 0) + weight;
-  const minted = Math.floor(total / per);
-  prog.catalystProgress[familyKey] = total - minted * per;
-  if (minted > 0) {
-    prog.catalysts[familyKey] = (prog.catalysts[familyKey] ?? 0) + minted;
+  const prog = recipient.tracksProgression;
+  let touched = false;
+
+  const family = familyForMonster(monster.isMonster.monsterTypeId);
+  if (family && !monster.isMonster.isBoss) {
+    // Shards scale by tier the way essence does, so lower-tier farming stays a
+    // slow but legal route rather than a dead one.
+    const amount = Math.max(
+      1,
+      Math.round(
+        SHARD_BASE_PER_KILL * (SHARD_TIER_MULT[params.biomeTier] ?? 1) * params.debugMult,
+      ),
+    );
+    prog.shards[family.drops] = (prog.shards[family.drops] ?? 0) + amount;
+    touched = true;
   }
+
+  // The boss is the only way up a tree, so its capstone is not multiplier-scaled
+  // by node identity: one kill, one capstone, every time. The dev reward
+  // multiplier still applies, so a playtest can reach a gate without farming it.
+  if (monster.isMonster.isBoss && params.biomeGroup && CAPSTONE_MATERIALS.has(params.biomeGroup)) {
+    prog.capstones[params.biomeGroup] =
+      (prog.capstones[params.biomeGroup] ?? 0) + Math.max(1, Math.round(params.debugMult));
+    touched = true;
+  }
+
+  // Shard-sourcing stopgap (design §18.6) — see BOSS_LANE_A_SHARD_AMOUNT's comment.
+  // Same "not multiplier-scaled by node identity" treatment as the capstone above.
+  if (monster.isMonster.isBoss && params.biomeGroup) {
+    for (const packet of biomeLaneAPackets(params.biomeGroup)) {
+      prog.shards[packet] =
+        (prog.shards[packet] ?? 0) + Math.max(1, Math.round(BOSS_LANE_A_SHARD_AMOUNT * params.debugMult));
+      touched = true;
+    }
+  }
+
+  if (touched) markSliceDirty(world, recipient, 'tracksProgression');
 }
 
 
@@ -178,19 +229,13 @@ function applyKillRewardsToPlayer(
   const biomeInfo = NODE_BIOMES[nodeId];
   const biomeTier = biomeInfo?.biomeTier ?? 1;
   const essenceMult = GAME_CONFIG.BIOME_ESSENCE_TIER_MULT[biomeTier] ?? 1;
-  // Node modifiers are net difficulty increases, so they pay a matching premium on
-  // everything the kill is worth: essence, biome XP and catalyst progress alike.
-  // Bosses are modifier-immune for STATS, but the node's reward identity still
-  // applies to them (as it always has for the catalyst bundle below).
-  const nodeModifier = NODE_MODIFIERS[nodeId]?.modifier;
-  const rewardMult = modifierRewardMult(nodeModifier, biomeTier);
   // Dev-only flat scalar on top of the real reward maths, so a playtest can reach
   // late content without farming it. 1x in production and by default, which makes
   // every line below identical to the shipped formula.
   const debugMult = world.rewardMultiplier;
   const scaledEssence = Math.max(
     1,
-    Math.round(rewards.essence * essenceMult * rewardMult * debugMult),
+    Math.round(rewards.essence * essenceMult * debugMult),
   );
   rewardPlayer(recipient, { ...rewards, essence: scaledEssence });
   world.pushEvent(nodeId, {
@@ -198,32 +243,16 @@ function applyKillRewardsToPlayer(
     targetId: monster.isMonster.id, pos: { ...monster.hasPosition.current },
     amount: scaledEssence, essenceType: rewards.essenceType,
   });
-  // Catalyst progress is keyed by the NODE'S modifier (not its biome): every kill in
-  // an Alacrity node grants Alacrity Catalyst regardless of biome. The weight
-  // defaults to the monster's base essence reward (a tuned per-mob toughness
-  // number) unless it sets an explicit `catalystWeight`. No modifier
-  // (clearing / test room / throne) → no grant.
-  // The dev multiplier scales the complete kill payout. This keeps accelerated
-  // playtests from becoming catalyst-bound after essence and mastery have already
-  // advanced. Round the ordinary scaled kill-weight first, then apply T1's
-  // half-rate exactly; the HUD hides any resulting half-point without changing
-  // the authoritative accumulator.
-  const catalystWeight =
-    Math.round((def?.rewards.catalystWeight ?? rewards.essence) * rewardMult * debugMult) *
-    catalystProgressRewardMult(biomeTier);
-  if (catalystWeight > 0 && nodeModifier) {
-    grantCatalystProgress(
-      recipient,
-      nodeModifier,
-      catalystWeight,
-    );
-    markSliceDirty(world, recipient, 'tracksProgression');
-  }
+  grantLineageMaterials(world, recipient, monster, {
+    biomeTier,
+    biomeGroup: biomeInfo?.biomeGroup,
+    debugMult,
+  });
   const biomeResult = applyBiomeXP(
     world,
     recipient,
     nodeId,
-    Math.max(1, Math.round((rewards.biomeXp ?? 1) * rewardMult * debugMult)),
+    Math.max(1, Math.round((rewards.biomeXp ?? 1) * debugMult)),
   );
   const questResult = registerKillForQuests(recipient, monster.isMonster.monsterTypeId);
   if (monster.isMonster.isBoss) {
@@ -248,6 +277,15 @@ function applyKillRewardsToPlayer(
     : checkSealTierAdvance(recipient);
   if (tierResult.advanced && tierResult.prevTier !== undefined && tierResult.newTier !== undefined) {
     markSliceDirty(world, recipient, 'tracksProgression');
+    // `playerTier` is a STAT INPUT, not just a progression counter: base max HP,
+    // `baseRecoveryForTier`, `poolFactorForTier` and the T4 path on-hit scaling all
+    // read it. Bumping it without a recalc left the player on the previous tier's
+    // numbers — 6.5 HP/s instead of 10 on T1->T2 — until some unrelated recalc
+    // (equipping something, a stance swap) happened to fire. The state-preserving
+    // rebuild is the right one here: a tier-up lands on a kill, mid-combat, so the
+    // class mechanic's counters, resources and cooldowns must survive it, and HP
+    // carries across as a share of the pool that just grew.
+    recalculatePlayerStatsPreservingCombatState(world, recipient);
     recordWorldLogEvent(
       world,
       {
@@ -289,8 +327,8 @@ export function grantMonsterRewards(
 ): KillRewardInfo | null {
   const killer = world.getPlayerEntity(killerPlayerId);
   if (!killer) return null;
-  // A necromancer's risen dead are worth NOTHING: no essence, biome XP, catalyst
-  // progress, quest credit or party share. This single gate covers every kill
+  // A necromancer's risen dead are worth NOTHING: no essence, biome XP, lineage
+  // materials, quest credit or party share. This single gate covers every kill
   // path because they all funnel through here, and it is why the raise loop can
   // never be farmed — killing the raiser is the only way to stop the tide.
   if (monster.isRaised) return null;

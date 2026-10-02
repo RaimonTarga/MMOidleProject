@@ -60,5 +60,8 @@ export function destroyEntity(
   state.allyAoeFootprintPulse.delete(id);
   state.reloadTiming.delete(id);
   state.ambientStackFlash.delete(id);
+  const frameCharge = state.frameChargeGlow.get(id);
+  if (frameCharge?.graphics) frameCharge.graphics.destroy();
+  state.frameChargeGlow.delete(id);
   clearMovementEffectsForEntity(state, id);
 }

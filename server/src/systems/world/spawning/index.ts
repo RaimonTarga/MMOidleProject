@@ -19,9 +19,8 @@ import {
   moverOverlapsBlockShapes,
   navigationBodyHalfExtents,
   nearestWalkableCell,
-  NODE_MODIFIERS,
-  modifierStatScalars,
-  modifiedDamageReduction,
+  blendSpawnPick,
+  nodeSpawnBlend,
   respawnNodeIdForNodeId,
   type MonsterPatrolRoute,
   type Vec2,
@@ -207,35 +206,16 @@ export function createMonster(
       ? Math.round(def.stats.attack * DUNGEON_ATK_MULT)
       : def.stats.attack;
 
-  // Reshape non-boss monsters around the node's modifier, composing on top of the
-  // dungeon mults above. Bosses are immune. Unlike the previous pace design these
-  // scalars touch DEFENCE and HEALTH as well as offence, and they are not
-  // threat-budget-neutral — a modifier is a net difficulty increase that
-  // `modifierRewardMult` pays for at kill time. Every value bakes into the entity
-  // at spawn; nothing rides a runtime component.
-  const nodeModifier = isBoss ? undefined : NODE_MODIFIERS[nodeId];
-  const modBiomeTier = NODE_BIOMES[nodeId]?.biomeTier ?? 0;
-  const modScalars = nodeModifier
-    ? modifierStatScalars(nodeModifier.modifier, modBiomeTier)
-    : null;
-  const hp = modScalars
-    ? Math.max(1, Math.round(hpBase * modScalars.hpMult))
-    : hpBase;
-  const attack = modScalars
-    ? Math.max(1, Math.round(atkBase * modScalars.attackMult))
-    : atkBase;
-  const attackCooldown = modScalars
-    ? Math.max(1, Math.round(def.stats.attackCooldown * modScalars.attackCooldownMult))
-    : def.stats.attackCooldown;
-  const speed = modScalars
-    ? def.stats.speed * modScalars.moveSpeedMult
-    : def.stats.speed;
-  const plating = modScalars
-    ? Math.round(def.stats.plating * modScalars.platingMult)
-    : def.stats.plating;
-  const damageReduction = modScalars
-    ? modifiedDamageReduction(def.stats.damageReduction, modScalars.incomingDamageMult)
-    : def.stats.damageReduction;
+  // Node modifiers no longer reshape monster stats (progression rework Phase 2b) —
+  // a T2-T4 node's modifier is authoring identity only now (node count, display
+  // name), so every monster spawns at its dungeon-adjusted base with nothing
+  // further applied.
+  const hp = hpBase;
+  const attack = atkBase;
+  const attackCooldown = def.stats.attackCooldown;
+  const speed = def.stats.speed;
+  const plating = def.stats.plating;
+  const damageReduction = def.stats.damageReduction;
 
   const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
   const pullRange = isTestRoom ? 0 : def.stats.pullRange;
@@ -323,9 +303,52 @@ export function createMonster(
 }
 
 /**
- * Pick a random monster type from the node's biome pool and attempt to
- * place it at a position that respects minimum spacing. Returns true on success.
- * When the rolled type is a pack alpha, the whole pack spawns clustered at the spot.
+ * Per-node spawn cursors for family blends (design 12).
+ *
+ * Keyed by world so benches and tests never share a cursor with the live sim, and
+ * per node inside it. Nothing here is persisted or networked: a frozen node's
+ * cursor simply resumes, and a fresh world starts every node on its dominant
+ * family.
+ */
+const blendCursorsByWorld = new WeakMap<World, Map<string, number>>();
+
+/**
+ * The cursor for this spawn, advanced immediately.
+ *
+ * Advanced on the PICK, not on a successful placement: a type that cannot be
+ * placed in a node (terrain, spacing) would otherwise be re-picked forever and
+ * stall the node's population. The cost is that a failed placement consumes a
+ * slot, which shifts composition by at most the failure rate.
+ */
+function nextBlendCursor(world: World, nodeId: string): number {
+  let cursors = blendCursorsByWorld.get(world);
+  if (!cursors) {
+    cursors = new Map<string, number>();
+    blendCursorsByWorld.set(world, cursors);
+  }
+  const cursor = cursors.get(nodeId) ?? 0;
+  cursors.set(nodeId, cursor + 1);
+  return cursor;
+}
+
+/** Test seam: forget a world's cursors so a composition run starts from slot 0. */
+export function resetBlendCursors(world: World, nodeId?: string): void {
+  if (!nodeId) {
+    blendCursorsByWorld.delete(world);
+    return;
+  }
+  blendCursorsByWorld.get(world)?.delete(nodeId);
+}
+
+/**
+ * Pick the next monster type for the node and attempt to place it at a position
+ * that respects minimum spacing. Returns true on success. When the picked type is
+ * a pack alpha, the whole pack spawns clustered at the spot.
+ *
+ * A node with an authored family blend CYCLES rather than rolls: the family comes
+ * from the blend's deterministic spawn order and the mob from that family's own
+ * list, so a 70/20/10 node visibly fields 7-2-1 per ten spawns. Nodes with no
+ * blend (dungeons, T2-T4) keep the flat random pick from the biome pool.
  */
 export function spawnMonster(world: World, nodeId: string): boolean {
   const biomeInfo = NODE_BIOMES[nodeId];
@@ -336,7 +359,11 @@ export function spawnMonster(world: World, nodeId: string): boolean {
   const pool = biome.monsterPoolByTier[biomeInfo.biomeTier] ?? [];
   if (pool.length === 0) return false;
 
-  const typeId = pool[Math.floor(Math.random() * pool.length)];
+  const blend = nodeSpawnBlend(nodeId);
+  const blendPick = blend
+    ? blendSpawnPick(blend, nextBlendCursor(world, nodeId))
+    : undefined;
+  const typeId = blendPick?.monsterTypeId ?? pool[Math.floor(Math.random() * pool.length)];
   const typeDef = MONSTER_DATABASE.get(typeId);
   const node = NODE_REGISTRY.get(nodeId) ?? world.node;
   const minDistSq = GAME_CONFIG.MONSTER_MIN_SPAWN_DIST ** 2;
@@ -995,6 +1022,12 @@ export function respawnPlayer(world: World, playerId: string): void {
   // Drop any live slimes — the summoner tick will restage them at the new spawn.
   despawnMinionsForOwner(world, entity);
 
+  // Scratch state is cleared BEFORE the recalc: the recalc builds the lineage and
+  // ability-node runtime caches onto `tracksCombat`, and `resetTracksCombat` deletes
+  // them, so the old order (recalc, then reset) respawned every character with its
+  // cards, capstone, keystones and ability nodes switched off until some unrelated
+  // recalc — in idle play, the rest of the session (review finding B2, 2026-10-02).
+  resetTracksCombat(entity.tracksCombat);
   recalculatePlayerEntityStats(world, entity);
   syncArchetypeSlices(world, entity);
   entity.hasHealth.hp = entity.hasHealth.maxHp;
@@ -1010,7 +1043,6 @@ export function respawnPlayer(world: World, playerId: string): void {
   detachComponent(world, entity, "hasAlignment");
   detachComponent(world, entity, "inAcChargePhase");
   detachComponent(world, entity, "inAcDischarge");
-  resetTracksCombat(entity.tracksCombat);
 
   for (const e of world.aggroedMonsters) {
     if (

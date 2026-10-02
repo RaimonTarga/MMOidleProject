@@ -1,8 +1,26 @@
-import { getResource, setResource, isCooldownActive, setCooldown } from '@mmo-idle/shared';
+import { getResource, setResource, isCooldownActive, setCooldown, type TracksCombat } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../combat/engine/combatPipeline';
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
+import { lineagePlatingStackFraction } from '../../combat/lineageCards';
+import { immovableHoldsPlating } from '../../combat/keystones/immovable';
+
+/**
+ * Plating one stack is worth: the charm/armor passive plus whatever a live
+ * lineage `plating-stack` window adds. ONE definition, because the listener's
+ * gate and the tick's target must agree about whether the mechanic is on at all.
+ */
+function platingPerStack(player: PlayerEntity): number {
+  const cs = player.tracksCombat;
+  const passive = player.usesSkills.passives['defense.hit-plating-per-stack'] ?? 0;
+  const fraction = lineagePlatingStackFraction(cs);
+  if (fraction <= 0) return passive;
+  // Base plating = the stat minus what WE have already added to it, or a card
+  // that scales off plating would compound against its own stacks every refresh.
+  const base = Math.max(0, player.mitigatesDamage.plating - Math.round(getResource(cs, APPLIED_KEY)));
+  return passive + Math.max(1, Math.round(base * fraction));
+}
 
 // Integer plating currently added to mitigatesDamage.plating from the stacks.
 const APPLIED_KEY = 'reactivePlatingApplied';
@@ -18,6 +36,11 @@ const FADE_STEP_MS = 500;
 /** Current reactive-plating bonus applied (integer plating). For the buff descriptor. */
 export function getReactivePlatingBonus(player: PlayerEntity): number {
   return Math.round(getResource(player.tracksCombat, APPLIED_KEY));
+}
+
+/** Stacks currently standing. Read by the Bulwark keystone's displacement refusal. */
+export function getReactivePlatingStacks(player: PlayerEntity): number {
+  return getResource(player.tracksCombat, STACKS_KEY);
 }
 
 /** Remove the applied reactive plating and zero tracking (recalc, before rebuild). */
@@ -45,7 +68,7 @@ export function registerReactivePlating(): void {
 
     const player = ctx.defender;
     const passives = player.usesSkills.passives;
-    if ((passives['defense.hit-plating-per-stack'] ?? 0) <= 0) return;
+    if (platingPerStack(player) <= 0) return;
 
     const cs = player.tracksCombat;
     const maxStacks = Math.max(1, Math.round(passives['defense.hit-plating-max-stacks'] ?? 1));
@@ -61,10 +84,12 @@ export function registerReactivePlating(): void {
  */
 export function runReactivePlating(world: World, player: PlayerEntity, dt: number): void {
   const cs = player.tracksCombat;
-  const perStack = player.usesSkills.passives['defense.hit-plating-per-stack'] ?? 0;
+  const perStack = platingPerStack(player);
   let stacks = perStack > 0 ? getResource(cs, STACKS_KEY) : 0;
 
-  if (stacks > 0 && !isCooldownActive(cs, HOLD_CD)) {
+  // Immovable (design §4): plating stacks persist for the keystone's grace after
+  // the player moves, so the fade does not run at all inside it.
+  if (stacks > 0 && !isCooldownActive(cs, HOLD_CD) && !immovableHoldsPlating(player)) {
     let fade = getResource(cs, FADE_KEY) + dt;
     while (fade >= FADE_STEP_MS && stacks > 0) { fade -= FADE_STEP_MS; stacks -= 1; }
     setResource(cs, FADE_KEY, stacks > 0 ? fade : 0);
@@ -79,4 +104,14 @@ export function runReactivePlating(world: World, player: PlayerEntity, dt: numbe
     setResource(cs, APPLIED_KEY, target);
     markSliceDirty(world, player, 'mitigatesDamage');
   }
+}
+
+/**
+ * Forget the applied bookkeeping WITHOUT unwinding the stat. For a recalc that
+ * restores `resources` wholesale after `resetReactivePlating` already unwound the
+ * bonus and rebuilt the base: the restored `*Applied` would otherwise describe a
+ * bonus that is no longer on the stat, and the next fade would subtract it twice.
+ */
+export function forgetReactivePlatingApplied(cs: TracksCombat): void {
+  setResource(cs, APPLIED_KEY, 0);
 }

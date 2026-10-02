@@ -28,7 +28,7 @@ import { makeCombatContext, emitCombatEvent } from "../src/systems/combat/engine
 import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
 import { World } from "../src/world/World";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -44,7 +44,8 @@ function slices(id: string, abilities: string[], weapon: string | null): Persist
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier: 3, currentSkillTier: 3, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
       knownAbilities: [...abilities], attunedAbilities: { techniques: [...abilities], guards: [] },
@@ -72,7 +73,8 @@ function monsterAt(world: World, x: number) {
   monster.hasHealth.hp = monster.hasHealth.maxHp = 100_000;
   monster.mitigatesDamage.plating = 0;
   monster.mitigatesDamage.damageReduction = 0;
-  monster.mitigatesDamage.evasion = 0;
+  // Evasion is its own component now, attached only when the monster has any.
+  if (monster.evadesHits) monster.evadesHits.dodgeRate = 0;
   return monster;
 }
 

@@ -39,7 +39,7 @@ import { World } from "../src/world/World";
  * `eliteTargeting.test.ts` pins that behavior on purpose.
  */
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(`assertion failed: ${message}`);
 }
 
@@ -62,8 +62,7 @@ function makePlayerSlices(id: string, runesEquipped: EquippedRule[]): PersistedP
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -80,7 +79,7 @@ function makePlayerSlices(id: string, runesEquipped: EquippedRule[]): PersistedP
       runeRecipesCrafted: ["rune-recipe-focus-highest-hp", "rune-recipe-focus-lowest-hp"],
       runesEquipped,
       knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,

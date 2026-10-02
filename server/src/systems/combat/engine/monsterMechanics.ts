@@ -1,12 +1,9 @@
 import { emitMonsterSession } from './sessionObservation';
 import {
   MONSTER_DATABASE,
-  NODE_BIOMES,
-  NODE_MODIFIERS,
   getCounter,
   getStatusEffect,
   getString,
-  modifiedDotDamagePerStack,
   removeStatusEffect,
   setCounter,
   setString,
@@ -123,15 +120,10 @@ function combatSession(monster: MonsterEntity, now: number): number {
 }
 
 /**
- * The DoT effect this monster actually applies on hit, in precedence order:
- *   boss morph override → the def's own DoT, scaled by the node modifier.
- * Only the SOURCE and MAGNITUDE change, so evade rules, shield-bypass, and the buff
- * UI all flow through unchanged.
- *
- * The modifier scale is derived from the monster's node rather than baked in at
- * spawn, because a boss morph can swap the DoT mid-fight and the override must not
- * inherit a multiplier computed for a different effect. Bosses are modifier-immune,
- * matching their stat immunity.
+ * The DoT effect this monster actually applies on hit: a boss morph override,
+ * or the def's own authored DoT unchanged. Node modifiers no longer scale DoT
+ * damage (progression rework Phase 2b) — they carry no combat effect at all
+ * any more, so this is a straight lookup.
  */
 export function effectiveMonsterDot(
   monster: MonsterEntity,
@@ -139,18 +131,7 @@ export function effectiveMonsterDot(
 ): MonsterDotEffect | undefined {
   const override = monster.scriptsBoss?.dotEffectOverride;
   if (override) return override;
-  const dot = def?.dotEffect;
-  if (!dot || monster.isMonster.isBoss) return dot;
-
-  const nodeId = monster.hasPosition.nodeId;
-  const modifier = NODE_MODIFIERS[nodeId]?.modifier;
-  if (!modifier) return dot;
-  const damagePerStack = modifiedDotDamagePerStack(
-    dot.damagePerStack,
-    modifier,
-    NODE_BIOMES[nodeId]?.biomeTier ?? 0,
-  );
-  return damagePerStack === dot.damagePerStack ? dot : { ...dot, damagePerStack };
+  return def?.dotEffect;
 }
 
 /**

@@ -30,7 +30,7 @@ export const desertRecipeEntries = [
     recipeGroup: 'desert', requiredBiomeLevel: 1, slot: 'weapon',
     // 2026-09-26 weapon normalization: Attack 24->32 (+5: 69->65). The steep weak-start curve was
     // flattened; judged on the opener, where the alpha window is meant to win.
-    cost: { yellow: 70 }, stats: { attack: 32 }, attacksPerSecond: 0.80, tier: 2, // family-tag: alpha-window ambush weapon → Dominion
+    cost: { yellow: 70 }, stats: { attack: 65 }, attacksPerSecond: 0.80, tier: 2, // family-tag: alpha-window ambush weapon → Dominion
     // ALPHA WINDOW (2026-09-15): the lineage's old 2.0x/2.5x/3.0x pure alpha strike
     // is replaced by a modest opener PLUS `Sunlight`, a short outgoing-damage
     // window. Same fantasy ("strongest right after you engage"), spread over a few
@@ -50,13 +50,6 @@ export const desertRecipeEntries = [
     icon: 'items/weapons/sunsteel-falchion.png',
     element: 'fire',   // cosmetic attack tint only
     description: 'Sun-forged and ward-etched: the opening blow breaks, and for a few breaths after it the light does not let go.',
-    upgrades: [
-      { stats: { attack: 7 }, cost: { yellow: 48 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 7 }, cost: { yellow: 120 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 7 }, cost: { yellow: 192 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 6 }, cost: { yellow: 312 }, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 6 }, cost: { yellow: 528 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   ['desert-vest-t2', {
@@ -71,8 +64,8 @@ export const desertRecipeEntries = [
       {"cost": {"yellow": 29, "purple": 19}, "requiredBiomeLevel": 3, "stats": {"maxHp": 6, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
       {"cost": {"yellow": 72, "purple": 48}, "requiredBiomeLevel": 4, "stats": {"maxHp": 5, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
       {"cost": {"yellow": 115, "purple": 77}, "requiredBiomeLevel": 4, "stats": {"maxHp": 6, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 187, "purple": 125}, "catalystCost": {"dominion": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": 5, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 317, "purple": 211}, "catalystCost": {"dominion": 2}, "requiredBiomeLevel": 4, "stats": {"maxHp": 6, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}}
+      {"cost": {"yellow": 187, "purple": 125}, "requiredBiomeLevel": 4, "stats": {"maxHp": 5, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 317, "purple": 211}, "requiredBiomeLevel": 4, "stats": {"maxHp": 6, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}}
     ],
   }],
 
@@ -90,7 +83,7 @@ export const desertRecipeEntries = [
       { stats: { recovery: 1.2 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 39, purple: 19 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 1.2 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 62, purple: 31 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 1.2 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 101, purple: 50 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1.2 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 171, purple: 84 }, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1.2 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 171, purple: 84 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -107,7 +100,7 @@ export const desertRecipeEntries = [
       { stats: { speed: 5 }, cost: { yellow: 37 }, requiredBiomeLevel: 4 },
       { stats: { speed: 6 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
       { stats: { speed: 6 }, cost: { yellow: 97 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 6 }, cost: { yellow: 165 }, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 6 }, cost: { yellow: 165 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -118,8 +111,8 @@ export const desertRecipeEntries = [
     // T3 economy pass (2026-08-30): EVOLUTION of desert-sunsteel-cross at +5.
     evolvesFrom: 'desert-sunsteel-cross',
     // 2026-09-26 T2-T4 weapon normalization: Attack 42->71 (+5: 102->112).
-    cost: { yellow: 116 }, stats: { attack: 71 }, attacksPerSecond: 0.80, tier: 3, // family-tag: opening-strike weapon → Dominion
-    reconstructCost: { yellow: 406 }, reconstructCatalystCost: { dominion: 3 },
+    cost: { yellow: 116 }, stats: { attack: 112 }, attacksPerSecond: 0.80, tier: 3, // family-tag: opening-strike weapon → Dominion
+    reconstructCost: { yellow: 406 },
     // Alpha window (2026-09-15): opener + a longer, stronger Sunlight. The lineage
     // carries NO Technique Power at any tier - see Sunsteel Falchion.
     mechanicEffects: {
@@ -130,13 +123,6 @@ export const desertRecipeEntries = [
     icon: 'items/weapons/solar-falchion.png',
     element: 'fire',   // cosmetic attack tint only
     description: 'It spends its fury on the opening blow, then burns on a while in the wound it made.',
-    upgrades: [
-      { stats: { attack: 9 }, cost: { yellow: 97 },  requiredBiomeLevel: 8 },
-      { stats: { attack: 8 }, cost: { yellow: 242 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 8 }, cost: { yellow: 388 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 8 }, cost: { yellow: 630 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 8 }, cost: { yellow: 1067 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // DESERT TECHNIQUE STAFF (2026-09-26): continues the Plains Technique line
@@ -148,18 +134,11 @@ export const desertRecipeEntries = [
     id: 'desert-pilgrim-quarterstaff', name: "Pilgrim's Quarterstaff",
     recipeGroup: 'desert', requiredBiomeLevel: 7, slot: 'weapon',
     evolvesFrom: 'knight-steelsword',
-    cost: { yellow: 66 }, stats: { attack: 58 }, attacksPerSecond: 1.0, tier: 3, // family-tag: technique staff -> Dominion
-    reconstructCost: { yellow: 231 }, reconstructCatalystCost: { dominion: 3 },
-    mechanicEffects: { 'technique.cooldown-reduction-pct': 0.19, 'technique.power-pct': 0.50 },
+    cost: { yellow: 66 }, stats: { attack: 90 }, attacksPerSecond: 1.0, tier: 3, // family-tag: technique staff -> Dominion
+    reconstructCost: { yellow: 231 },
+    mechanicEffects: { 'technique.cooldown-reduction-pct': 0.23, 'technique.power-pct': 0.65 },
     icon: 'items/weapons/pilgrim-quarterstaff.png',
     description: 'Sun-bleached ironwood shod in brass. It teaches the body a rhythm, and the rhythm does the rest.',
-    upgrades: [
-      { stats: { attack: 7 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.03 }, cost: { yellow: 55 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 6 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0, 'technique.power-pct': 0.03 }, cost: { yellow: 137 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 7 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.03 }, cost: { yellow: 220 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 6 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.03 }, cost: { yellow: 357 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 6 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.03 }, cost: { yellow: 605 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   ['desert-vest-t3', {
@@ -167,7 +146,7 @@ export const desertRecipeEntries = [
     recipeGroup: 'desert', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'desert-vest-t2',
     cost: { yellow: 120, purple: 30 }, stats: {"maxHp": 150, "damageReduction": 0.14, plating: DESERT_PLATING.t3.base}, // family-tag: opening-protection (Dawn) armor → Dominion
-    reconstructCost: { yellow: 420, purple: 105 }, reconstructCatalystCost: { dominion: 3 },
+    reconstructCost: { yellow: 420, purple: 105 },
     mechanicEffects: {"defense.engagement-dr-pct": DAWN.pct, "defense.engagement-dr-ms": DAWN.t3Ms},
     tier: 3,
     icon: 'items/armor/eternal-duneplate.png',
@@ -176,8 +155,8 @@ export const desertRecipeEntries = [
       {"cost": {"yellow": 76, "purple": 19}, "requiredBiomeLevel": 9, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
       {"cost": {"yellow": 190, "purple": 47}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
       {"cost": {"yellow": 303, "purple": 76}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 493, "purple": 123}, "catalystCost": {"dominion": 2}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 834, "purple": 209}, "catalystCost": {"dominion": 3}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}}
+      {"cost": {"yellow": 493, "purple": 123}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 834, "purple": 209}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}}
     ],
   }],
 
@@ -187,7 +166,7 @@ export const desertRecipeEntries = [
     recipeGroup: 'desert', requiredBiomeLevel: 9, slot: 'recovery',
     evolvesFrom: 'desert-charm-t2',
     cost: { yellow: 100, purple: 25 }, stats: { recovery: 50.4 }, // family-tag: cleanse recovery → Dominion
-    reconstructCost: { yellow: 350, purple: 88 }, reconstructCatalystCost: { dominion: 3 },
+    reconstructCost: { yellow: 350, purple: 88 },
     mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.20 },
     tier: 3,
     icon: 'items/charms/oasis-heart.png',
@@ -197,7 +176,7 @@ export const desertRecipeEntries = [
       { stats: { recovery: 4.5 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 95, purple: 24 }, requiredBiomeLevel: 10 },
       { stats: { recovery: 4.5 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 152, purple: 38 }, requiredBiomeLevel: 10 },
       { stats: { recovery: 2.2 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 246, purple: 62 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 2.2 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 417, purple: 104 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 2.2 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 417, purple: 104 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -207,7 +186,7 @@ export const desertRecipeEntries = [
     evolvesFrom: 'desert-boots-t2',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 86->125 (+5: 157->157).
     cost: { yellow: 90 }, stats: { speed: 125 }, tier: 3, // family-tag: desert kite mobility → Dominion
-    reconstructCost: { yellow: 315 }, reconstructCatalystCost: { dominion: 3 },
+    reconstructCost: { yellow: 315 },
     mechanicEffects: { 'mobility.kite-speed-pct': 0.30 },
     icon: 'items/boots/mirage-striders.png',
     description: 'By the time the storm reaches where you stood, you are already a rumor on the next dune.',
@@ -216,7 +195,7 @@ export const desertRecipeEntries = [
       { stats: { speed: 6 }, cost: { yellow: 77 },  requiredBiomeLevel: 10 },
       { stats: { speed: 7 }, cost: { yellow: 124 }, requiredBiomeLevel: 10 },
       { stats: { speed: 7 }, cost: { yellow: 201 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 8 }, cost: { yellow: 341 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 8 }, cost: { yellow: 341 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -232,8 +211,8 @@ export const desertRecipeEntries = [
     recipeGroup: 'desert', requiredBiomeLevel: 13, slot: 'weapon',
     evolvesFrom: 'desert-solar-cross',
     // 2026-09-26 T2-T4 weapon normalization: Attack 110->122 (+5: 210->212).
-    cost: { yellow: 255 }, stats: { attack: 122 }, attacksPerSecond: 0.80, tier: 4,
-    reconstructCost: { yellow: 893 }, reconstructCatalystCost: { dominion: 4 },
+    cost: { yellow: 255 }, stats: { attack: 212 }, attacksPerSecond: 0.80, tier: 4,
+    reconstructCost: { yellow: 893 },
     // Alpha window (2026-09-15). Opener 1.4 / 1.5 / 1.6; Sunlight 15%/4s, 20%/5s,
     // 25%/6s. The tier deepening is the WINDOW, not the opener - that is the whole
     // point of the rework (the old line was 2.0 / 2.5 / 3.0 on one hit).
@@ -245,13 +224,6 @@ export const desertRecipeEntries = [
     icon: 'items/weapons/zenith-falchion.png',
     element: 'fire',   // cosmetic attack tint only
     description: 'At the sun\'s height the opening cut lets in the whole day, and it takes its time going out.',
-    upgrades: [
-      { stats: { attack: 18 }, cost: { yellow: 193 }, requiredBiomeLevel: 14 },
-      { stats: { attack: 18 }, cost: { yellow: 483 }, requiredBiomeLevel: 15 },
-      { stats: { attack: 18 }, cost: { yellow: 772 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 18 }, cost: { yellow: 1255 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 18 }, cost: { yellow: 2122 }, catalystCost: { dominion: 4 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   // T4 heir of the Desert technique staff: deeper Technique Power + CDR, plus KATA
@@ -262,21 +234,14 @@ export const desertRecipeEntries = [
     id: 'desert-sunmonk-warstaff', name: "Sunmonk's Warstaff",
     recipeGroup: 'desert', requiredBiomeLevel: 13, slot: 'weapon',
     evolvesFrom: 'desert-pilgrim-quarterstaff',
-    cost: { yellow: 145 }, stats: { attack: 115 }, attacksPerSecond: 1.0, tier: 4,
-    reconstructCost: { yellow: 508 }, reconstructCatalystCost: { dominion: 4 },
+    cost: { yellow: 145 }, stats: { attack: 192 }, attacksPerSecond: 1.0, tier: 4,
+    reconstructCost: { yellow: 508 },
     mechanicEffects: {
-      'technique.cooldown-reduction-pct': 0.23, 'technique.power-pct': 0.65,
+      'technique.cooldown-reduction-pct': 0.26, 'technique.power-pct': 0.8,
       'technique.kata-power-pct': 0.80, 'technique.kata-stacks': 3,
     },
     icon: 'items/weapons/sunmonk-warstaff.png',
     description: 'Every form flows into the next, and the fourth lands like the noon sun.',
-    upgrades: [
-      { stats: { attack: 16 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.03 }, cost: { yellow: 109 }, requiredBiomeLevel: 14 },
-      { stats: { attack: 16 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0, 'technique.power-pct': 0.03 }, cost: { yellow: 274 }, requiredBiomeLevel: 15 },
-      { stats: { attack: 15 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.03 }, cost: { yellow: 438 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 15 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0, 'technique.power-pct': 0.03 }, cost: { yellow: 711 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 15 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.03 }, cost: { yellow: 1203 }, catalystCost: { dominion: 4 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   ['desert-vest-t4', {
@@ -284,7 +249,7 @@ export const desertRecipeEntries = [
     recipeGroup: 'desert', requiredBiomeLevel: 14, slot: 'armor',
     evolvesFrom: 'desert-vest-t3',
     cost: { yellow: 220, purple: 55 }, stats: {"maxHp": 288, "damageReduction": 0.18, plating: DESERT_PLATING.t4.base},
-    reconstructCost: { yellow: 770, purple: 193 }, reconstructCatalystCost: { dominion: 4 },
+    reconstructCost: { yellow: 770, purple: 193 },
     // Dawnward protects the opening of an engagement; no cheat-death rider.
     mechanicEffects: {"defense.engagement-dr-pct": DAWN.pct, "defense.engagement-dr-ms": DAWN.t4Ms},
     tier: 4,
@@ -294,8 +259,8 @@ export const desertRecipeEntries = [
       {"cost": {"yellow": 153, "purple": 38}, "requiredBiomeLevel": 15, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
       {"cost": {"yellow": 382, "purple": 95}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
       {"cost": {"yellow": 610, "purple": 152}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 991, "purple": 248}, "catalystCost": {"dominion": 3}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 1677, "purple": 419}, "catalystCost": {"dominion": 4}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}}
+      {"cost": {"yellow": 991, "purple": 248}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 1677, "purple": 419}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}}
     ],
   }],
 
@@ -304,7 +269,7 @@ export const desertRecipeEntries = [
     recipeGroup: 'desert', requiredBiomeLevel: 15, slot: 'recovery',
     evolvesFrom: 'desert-charm-t3',
     cost: { yellow: 200, purple: 50 }, stats: { recovery: 115.4 },
-    reconstructCost: { yellow: 700, purple: 175 }, reconstructCatalystCost: { dominion: 4 },
+    reconstructCost: { yellow: 700, purple: 175 },
     // 25% Cleanse cooldown reduction; each upgrade adds 1.5 percentage points.
     mechanicEffects: {
       'cleanse.cooldown-reduction-pct': 0.25,
@@ -317,7 +282,7 @@ export const desertRecipeEntries = [
       { stats: { recovery: 11.3 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 190, purple: 47 }, requiredBiomeLevel: 16 },
       { stats: { recovery: 11.3 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 303, purple: 76 }, requiredBiomeLevel: 16 },
       { stats: { recovery: 11.3 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 493, purple: 123 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 834, purple: 209 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 11.3 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 834, purple: 209 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -328,7 +293,7 @@ export const desertRecipeEntries = [
     evolvesFrom: 'desert-boots-t3',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 121->173 (+5: 209->209).
     cost: { yellow: 198 }, stats: { speed: 173 }, tier: 4,
-    reconstructCost: { yellow: 693 }, reconstructCatalystCost: { dominion: 4 },
+    reconstructCost: { yellow: 693 },
     mechanicEffects: { 'mobility.kite-speed-pct': 0.40 },
     icon: 'items/boots/simoom-striders.png',
     description: 'Named for the desert wind that arrives only as the dust it already left behind.',
@@ -337,7 +302,7 @@ export const desertRecipeEntries = [
       { stats: { speed: 7 }, cost: { yellow: 153 }, requiredBiomeLevel: 16 },
       { stats: { speed: 8 }, cost: { yellow: 245 }, requiredBiomeLevel: 16 },
       { stats: { speed: 8 }, cost: { yellow: 398 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 8 }, cost: { yellow: 673 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 8 }, cost: { yellow: 673 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -352,7 +317,7 @@ export const desertRecipeEntries = [
     id: 'core-force', name: 'Force Core',
     recipeGroup: 'desert', requiredBiomeLevel: 6, slot: 'core', coreEligibility: 'unrestricted',
     lineageId: 'core-force',
-    cost: { yellow: 500 }, catalystCost: { dominion: 4 }, // family-tag: raw offence → Dominion
+    cost: { yellow: 500 }, // family-tag: raw offence → Dominion
     stats: {}, tier: 2,
     mechanicEffects: {"core.damage-dealt-pct": 0.22},
     icon: 'items/cores/force.png',
@@ -366,7 +331,7 @@ export const desertRecipeEntries = [
     id: 'core-sniper', name: 'Sniper Core',
     recipeGroup: 'desert', requiredBiomeLevel: 12, slot: 'core', coreEligibility: 'ranged',
     lineageId: 'core-sniper',
-    cost: { yellow: 1300 }, catalystCost: { dominion: 6 }, // family-tag: ranged alpha-strike → Dominion
+    cost: { yellow: 1300 }, // family-tag: ranged alpha-strike → Dominion
     stats: {}, tier: 3,
     // Deliberately no mobility bonus — the Scout core is the one that buys spacing.
     mechanicEffects: {"core.damage-dealt-pct": 0.3},
@@ -378,7 +343,7 @@ export const desertRecipeEntries = [
     id: 'relic-withering-lens', name: 'Withering Lens',
     recipeGroup: 'desert', requiredBiomeLevel: 18, slot: 'relic',
     lineageId: 'relic-withering-lens',
-    cost: { yellow: 3300 }, catalystCost: { dominion: 9 },
+    cost: { yellow: 3300 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': -0.20,

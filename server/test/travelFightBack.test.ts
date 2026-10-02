@@ -20,7 +20,7 @@ import {
 } from '../src/systems/world/autoTraverse';
 import { World } from '../src/world/World';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -44,8 +44,7 @@ function playerSlices(id: string): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -58,7 +57,7 @@ function playerSlices(id: string): PersistedPlayerSlices {
       runeRecipesCrafted: [],
       runesEquipped: [...DEFAULT_RUNE_LOADOUT],
       knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,
@@ -202,7 +201,7 @@ function makeTraveler(id: string) {
 // Corrupt/invalid next-hop state keeps its existing cancellation semantics.
 {
   const { world, player } = makeTraveler('invalid-path');
-  player.hasAutoTraversePath.remainingPath[0] = 'not-a-neighbor';
+  player.hasAutoTraversePath!.remainingPath[0] = 'not-a-neighbor';
   updateRuneDerivedConfig(world, 4_000);
   updateAutoTraverse(world, 4_000);
   assert(!player.hasAutoTraversePath && !player.fightsWhileTraveling, 'an invalid path cancels travel instead of retrying it');

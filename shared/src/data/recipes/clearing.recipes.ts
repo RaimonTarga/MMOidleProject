@@ -21,7 +21,6 @@ export const clearingRecipeEntries = [
     cost: { green: 4 }, stats: { attack: 8 }, attacksPerSecond: 0.75, tier: 0,
     icon: 'items/weapons/primordial-club.png',
     description: 'Whittled from ironwood in a single evening, and it has not snapped since.',
-    upgrades: [],
   }],
 
   ['clearing-vest-t1', {

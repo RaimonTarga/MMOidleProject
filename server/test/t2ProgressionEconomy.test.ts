@@ -12,7 +12,7 @@ import {
 } from "@mmo-idle/shared";
 import type { EssenceType } from "@mmo-idle/shared";
 
-function assert(cond: boolean, msg: string): void {
+function assert(cond: unknown, msg: string): void {
   if (!cond) throw new Error(msg);
 }
 
@@ -82,92 +82,36 @@ for (const id of JUNGLE_DESERT_T2_IDS) {
 assert(RECIPE_DATABASE.get("gale-needle")!.evolvesFrom === "flash-rapier", "gale-needle branches from flash-rapier");
 assert(!RECIPE_DATABASE.has("thorn-needle"), "thorn-needle is retired");
 
-// A +2 predecessor cannot evolve; a +3 predecessor can. (Under the old +5 gate
-// this pair was +4 / +5; the shape of the assertion is what matters -- one step
-// below the gate must fail and the gate itself must pass.)
+// Weapon evolution/reconstruction is rejected server-side (Phase 2b, Override A):
+// a weapon's power track is its lineage tree now, regardless of plus or funding.
 {
   const recipe = RECIPE_DATABASE.get("gale-needle")!;
-  const notReady = checkEvolve({
-    recipe,
-    inventory: ["flash-rapier"],
-    itemUpgrades: { "flash-rapier": 2 },
-    essences: fullEssences(),
-    catalysts: {},
-  });
-  assert(!notReady.ok, "gale-needle: a +2 flash-rapier must NOT be able to evolve");
-
-  const ready = checkEvolve({
-    recipe,
-    inventory: ["flash-rapier"],
-    itemUpgrades: { "flash-rapier": 3 },
-    essences: fullEssences(),
-    catalysts: {},
-  });
-  assert(ready.ok, "gale-needle: a +5 flash-rapier must be able to evolve");
+  for (const plus of [2, 3]) {
+    const check = checkEvolve({
+      recipe,
+      inventory: ["flash-rapier"],
+      itemUpgrades: { "flash-rapier": plus },
+      essences: fullEssences(),
+    });
+    assert(!check.ok, `gale-needle: a +${plus} flash-rapier must NOT be able to evolve (weapons use the lineage tree)`);
+  }
 }
 
-// Reconstruction works with no predecessor at all, for the rapier evolution and for a
-// plain returning-biome lineage.
+// Reconstruction is likewise rejected for every weapon in the returning-biome
+// lineage map, with full essence and no predecessor needed.
 for (const id of ["gale-needle", "knight-steelsword", "ruinous-axe"]) {
   const recipe = RECIPE_DATABASE.get(id)!;
-  assert(!!recipe.reconstructCost, `${id}: must define a reconstruct path`);
-  const check = checkReconstruct({ recipe, essences: fullEssences(), catalysts: { alacrity: 100, swarming: 100 } });
-  assert(check.ok, `${id}: reconstruct must succeed with no predecessor and full wallets`);
+  const check = checkReconstruct({ recipe, essences: fullEssences() });
+  assert(!check.ok, `${id}: weapon reconstruct must be rejected (weapons use the lineage tree)`);
 }
 
 // ── Catalyst economy (§2, §7, §8) ───────────────────────────────────────────
+// RETIRED (Phase 2b): the catalyst wallet and every `catalystCost`/
+// `reconstructCatalystCost` field are gone. Non-weapon upgrade/evolve/
+// reconstruct costs are essence-only now (Override C); weapons are off this
+// ladder entirely (see the rejections above). Nothing left here to audit.
 
-const WEAPON_ARMOR_SLOTS = new Set(["weapon", "armor"]);
-const RECOVERY_MOBILITY_SLOTS = new Set(["recovery", "mobility"]);
-
-// Every evolution's own evolve `catalystCost` must be empty/absent — evolution
-// pays no catalyst (§7). This does not apply to reconstruct, which is checked
-// separately below.
-for (const { t2 } of RETURNING_BIOME_LINEAGES) {
-  const recipe = RECIPE_DATABASE.get(t2)!;
-  const catalystKeys = Object.keys(recipe.catalystCost ?? {});
-  assert(catalystKeys.length === 0, `${t2}: evolve cost must not require a catalyst (found ${catalystKeys})`);
-}
-
-// Jungle/Desert base crafts must also be catalyst-free (§2).
-for (const id of JUNGLE_DESERT_T2_IDS) {
-  const recipe = RECIPE_DATABASE.get(id)!;
-  const catalystKeys = Object.keys(recipe.catalystCost ?? {});
-  assert(catalystKeys.length === 0, `${id}: base craft must not require a catalyst (found ${catalystKeys})`);
-}
-
-// Reconstruction always costs exactly 2 catalyst units of one family.
-for (const { t2 } of RETURNING_BIOME_LINEAGES) {
-  const recipe = RECIPE_DATABASE.get(t2)!;
-  if (!recipe.reconstructCatalystCost) continue; // knight-steelsword: documented neutral exception
-  const total = Object.values(recipe.reconstructCatalystCost).reduce((a, b) => a + (b ?? 0), 0);
-  assert(total === 2, `${t2}: reconstruct must cost exactly 2 catalyst units (got ${total})`);
-}
-
-// +4/+5 catalyst schedule on every T2 gear item with an explicit upgrade track.
 const ALL_T2_GEAR_IDS = [...RETURNING_BIOME_LINEAGES.map((l) => l.t2), ...JUNGLE_DESERT_T2_IDS];
-for (const id of ALL_T2_GEAR_IDS) {
-  const recipe = RECIPE_DATABASE.get(id)!;
-  if (!recipe.upgrades || recipe.upgrades.length !== 5) continue;
-  const [u1, u2, u3, u4, u5] = recipe.upgrades;
-  for (const [step, label] of [[u1, "+1"], [u2, "+2"], [u3, "+3"]] as const) {
-    assert(!step.catalystCost, `${id} ${label}: must not require a catalyst`);
-  }
-  if (WEAPON_ARMOR_SLOTS.has(recipe.slot)) {
-    const c4 = Object.values(u4.catalystCost ?? {}).reduce((a, b) => a + (b ?? 0), 0);
-    const c5 = Object.values(u5.catalystCost ?? {}).reduce((a, b) => a + (b ?? 0), 0);
-    if (id !== "knight-steelsword") {
-      assert(c4 === 1, `${id} +4: weapon/armor must cost exactly 1 catalyst (got ${c4})`);
-      assert(c5 === 2, `${id} +5: weapon/armor must cost exactly 2 catalysts (got ${c5})`);
-    } else {
-      assert(c4 === 0 && c5 === 0, "knight-steelsword: documented catalyst-neutral exception");
-    }
-  } else if (RECOVERY_MOBILITY_SLOTS.has(recipe.slot)) {
-    assert(!u4.catalystCost, `${id} +4: recovery/mobility must not require a catalyst`);
-    const c5 = Object.values(u5.catalystCost ?? {}).reduce((a, b) => a + (b ?? 0), 0);
-    assert(c5 === 1, `${id} +5: recovery/mobility must cost exactly 1 catalyst (got ${c5})`);
-  }
-}
 
 // ── Upgrade economy (§3, §17, §19) ─────────────────────────────────────────
 
@@ -184,20 +128,19 @@ type T2RewardSpec = {
   group: string;
   level: number;
   cost: Record<string, number>;
-  catalystCost: Record<string, number>;
   essenceBand: readonly [number, number];
 };
 
 const T2_STANCE_REWARDS: T2RewardSpec[] = [
-  { id: "stance-recipe-offensive", group: "plains", level: 7, cost: { yellow: 60 }, catalystCost: { alacrity: 1 }, essenceBand: [50, 70] },
-  { id: "stance-recipe-defensive", group: "plains", level: 7, cost: { yellow: 60 }, catalystCost: { fortified: 1 }, essenceBand: [50, 70] },
-  { id: "stance-recipe-fleeting", group: "swamp", level: 8, cost: { purple: 110 }, catalystCost: { alacrity: 1 }, essenceBand: [90, 120] },
+  { id: "stance-recipe-offensive", group: "plains", level: 7, cost: { yellow: 60 }, essenceBand: [50, 70] },
+  { id: "stance-recipe-defensive", group: "plains", level: 7, cost: { yellow: 60 }, essenceBand: [50, 70] },
+  { id: "stance-recipe-fleeting", group: "swamp", level: 8, cost: { purple: 110 }, essenceBand: [90, 120] },
 ];
 
 const T2_CORE_REWARDS: T2RewardSpec[] = [
-  { id: "core-tempered", group: "cave", level: 12, cost: { red: 500 }, catalystCost: { dominion: 4 }, essenceBand: [450, 600] },
-  { id: "core-survivalist", group: "jungle", level: 6, cost: { green: 500 }, catalystCost: { fortified: 4 }, essenceBand: [450, 600] },
-  { id: "core-force", group: "desert", level: 6, cost: { yellow: 500 }, catalystCost: { dominion: 4 }, essenceBand: [450, 600] },
+  { id: "core-tempered", group: "cave", level: 12, cost: { red: 500 }, essenceBand: [450, 600] },
+  { id: "core-survivalist", group: "jungle", level: 6, cost: { green: 500 }, essenceBand: [450, 600] },
+  { id: "core-force", group: "desert", level: 6, cost: { yellow: 500 }, essenceBand: [450, 600] },
 ];
 
 for (const spec of T2_STANCE_REWARDS) {
@@ -207,7 +150,6 @@ for (const spec of T2_STANCE_REWARDS) {
   assert(recipe!.recipeGroup === spec.group, `${spec.id}: biome gate must be ${spec.group}`);
   assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: unlock level must be ${spec.group} L${spec.level}`);
   assert(normalizedCost(recipe!.cost) === normalizedCost(spec.cost), `${spec.id}: essence cost changed unexpectedly`);
-  assert(normalizedCost(recipe!.catalystCost) === normalizedCost(spec.catalystCost), `${spec.id}: catalyst cost changed unexpectedly`);
   assert(!recipe!.requiredBossClear, `${spec.id}: must not require a boss clear`);
   const total = essenceSum(recipe!.cost);
   assert(total >= spec.essenceBand[0] && total <= spec.essenceBand[1], `${spec.id}: stance essence total is outside its band`);
@@ -220,11 +162,9 @@ for (const spec of T2_CORE_REWARDS) {
   assert(recipe!.recipeGroup === spec.group, `${spec.id}: biome gate must be ${spec.group}`);
   assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: unlock level must be ${spec.group} L${spec.level}`);
   assert(normalizedCost(recipe!.cost) === normalizedCost(spec.cost), `${spec.id}: essence cost changed unexpectedly`);
-  assert(normalizedCost(recipe!.catalystCost) === normalizedCost(spec.catalystCost), `${spec.id}: catalyst cost changed unexpectedly`);
   assert(!recipe!.requiredBossClear, `${spec.id}: must not require a boss clear`);
   const total = essenceSum(recipe!.cost);
   assert(total >= spec.essenceBand[0] && total <= spec.essenceBand[1], `${spec.id}: core essence total is outside its band`);
-  assert(essenceSum(recipe!.catalystCost) >= 3 && essenceSum(recipe!.catalystCost) <= 4, `${spec.id}: core catalyst total is outside its band`);
 }
 
 for (const id of ALL_T2_GEAR_IDS) {
@@ -245,14 +185,6 @@ for (const id of ALL_T2_GEAR_IDS) {
   );
 }
 
-// Gale Needle normalization (§4): off the old ~1,920 doubling
-// curve, into the specialist-weapon band.
-{
-  const gale = RECIPE_DATABASE.get("gale-needle")!;
-  const galeTotal = essenceSum(gale.cost) + gale.upgrades!.reduce((a, u) => a + essenceSum(u.cost), 0);
-  assert(galeTotal >= 900 && galeTotal <= 1100, `gale-needle total should land near 1,000 (got ${galeTotal})`);
-}
-
 // ── Techniques / Guards (§10) ───────────────────────────────────────────────
 
 const ABILITY_COSTS: Record<string, { color: EssenceType; amount: number; level: number; group: string }> = {
@@ -265,7 +197,6 @@ for (const [id, spec] of Object.entries(ABILITY_COSTS)) {
   const recipe = ABILITY_RECIPE_DATABASE.get(id);
   assert(!!recipe, `${id}: recipe must exist`);
   assert(recipe!.cost[spec.color] === spec.amount, `${id}: cost must be ${spec.amount} ${spec.color} (got ${JSON.stringify(recipe!.cost)})`);
-  assert(!recipe!.catalystCost, `${id}: must not require a catalyst`);
   assert(recipe!.requiredBiomeLevel === spec.level, `${id}: unlock level must stay at ${spec.group} L${spec.level}`);
   assert(recipe!.recipeGroup === spec.group, `${id}: biome gate must stay ${spec.group}`);
 }
@@ -285,7 +216,6 @@ for (const spec of SWAMP_T2_RUNES) {
   assert(recipe!.recipeGroup === "swamp", `${spec.id}: must stay in swamp`);
   assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: must unlock at L${spec.level} (got ${recipe!.requiredBiomeLevel})`);
   assert(recipe!.cost.purple === spec.cost, `${spec.id}: cost must be ${spec.cost} purple (got ${JSON.stringify(recipe!.cost)})`);
-  assert(!recipe!.catalystCost, `${spec.id}: must not require a catalyst`);
 
   // Cannot unlock anywhere in Swamp's T1 band (levels 1-6).
   const lockedAtT1Cap = isRuneRecipeUnlocked(recipe!, { biomeLevel: { swamp: 6 }, bossesCleared: [] });

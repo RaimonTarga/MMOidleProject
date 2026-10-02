@@ -110,14 +110,19 @@ export function applySummonerCommand(world: World, owner: PlayerEntity, pos: Vec
       monsterId: monster.isMonster.id,
       pos:       rounded,
     });
-    return;
+  } else {
+    attachComponent(world, owner, 'hasSummonerCommand', {
+      kind:      'move',
+      monsterId: null,
+      pos:       rounded,
+    });
   }
 
-  attachComponent(world, owner, 'hasSummonerCommand', {
-    kind:      'move',
-    monsterId: null,
-    pos:       rounded,
-  });
+  // NO `mechanic-fired` HERE. 1c hung the summoner's moment on this command, but a
+  // command is a CLICK: it never fires unattended, so a card keyed to it would never
+  // pay out for an idle player — and idle play is the game. Phase 3 moved the moment
+  // to the FORMATION CYCLE (`frameLoop.ts`), which is the root's loop completing and
+  // happens whether or not anybody is at the keyboard.
 }
 
 export function applySummonerRecall(world: World, owner: PlayerEntity, now: number): void {

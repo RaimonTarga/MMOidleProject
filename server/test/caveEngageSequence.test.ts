@@ -14,7 +14,7 @@ import { buildGroundZoneViews } from '../src/systems/world/groundZones';
 import { updateMovement } from '../src/systems/world/movement';
 import { World } from '../src/world/World';
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -37,7 +37,7 @@ const T3_SEQUENCE = T3_DEF!.engageSequence!;
 assert(
   T3_SEQUENCE.kind === 'cast-charge-root' && T3_SEQUENCE.castMs === 500 &&
     T3_SEQUENCE.speedMult === 15 && T3_SEQUENCE.rootMs === 1_700 &&
-    T3_SEQUENCE.followWithChargedAttack === true && T3_DEF.chargeOnAggro === undefined,
+    T3_SEQUENCE.followWithChargedAttack === true && T3_DEF!.chargeOnAggro === undefined,
   'Cavern Troll should replace its legacy charge-lock opener with Savage Rush',
 );
 
@@ -54,11 +54,12 @@ function playerSlices(id: string, x: number): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null }, knownStances: [],
+      attunedAbilities: { techniques: [], guards: [] }, knownStances: [],
       equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },

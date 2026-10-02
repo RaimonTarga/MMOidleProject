@@ -1,4 +1,4 @@
-import { NODE_BIOMES, biomeLevelCap, type EquippedRule } from "@mmo-idle/shared";
+import { biomeLevelCap, type EquippedRule } from "@mmo-idle/shared";
 import type { NodeRef, RouteStep } from "../route/types";
 
 /**
@@ -28,53 +28,6 @@ export type T2BiomeGroup = (typeof T2_PROGRESSION_ORDER)[number];
 /** A Tier-2 biome's normal nodes. */
 export function t2(biomeGroup: string): NodeRef {
   return { kind: "biome", biomeGroup, tier: 2, pick: "uncleared" };
-}
-
-/**
- * Where to farm for a purchase that costs CATALYSTS.
- *
- * Catalysts are minted by the node MODIFIER, not by the biome, and a node's
- * modifier is static (`NODE_BIOMES[...].modifier`). Farming for a cost in
- * whichever node the rotation happened to pick therefore mints the wrong family
- * indefinitely, and the bot waits forever on a wallet that will never fill.
- *
- * This is not hypothetical -- it was measured. A Striker run spent **521 of its
- * 540 seconds** blocked on `reconstruct:plains-charm-t2` needing 2 alacrity,
- * parked in `node-t2-plains-04` (dominion), holding 46,044 spare yellow essence
- * and 5 dominion catalysts it could not spend. Essence was never the constraint;
- * the node was.
- *
- * Falls back to the plain biome ref when the biome has no node of that family,
- * so a route can never become unresolvable because of this preference.
- */
-export function t2FarmFor(biomeGroup: string, catalystFamily?: string): NodeRef {
-  if (!catalystFamily) return t2(biomeGroup);
-  const hasFamily = Object.values(NODE_BIOMES).some(
-    (info) =>
-      info.biomeGroup === biomeGroup &&
-      info.biomeTier === 2 &&
-      info.kind === "normal" &&
-      (info as { modifier?: string }).modifier === catalystFamily,
-  );
-  if (!hasFamily) return t2(biomeGroup);
-  return { kind: "biome", biomeGroup, tier: 2, pick: "uncleared", modifier: catalystFamily };
-}
-
-/**
- * The single catalyst family a cost record demands, or undefined when it demands
- * none -- or more than one, which no node can mint at once and which therefore
- * has no single right place to farm.
- */
-export function soleCatalystFamily(
-  ...costs: Array<Partial<Record<string, number>> | undefined>
-): string | undefined {
-  const families = new Set<string>();
-  for (const cost of costs) {
-    for (const [family, amount] of Object.entries(cost ?? {})) {
-      if ((amount ?? 0) > 0) families.add(family);
-    }
-  }
-  return families.size === 1 ? [...families][0] : undefined;
 }
 
 /**

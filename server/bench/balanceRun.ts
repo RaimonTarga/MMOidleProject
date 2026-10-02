@@ -1,7 +1,6 @@
 #!/usr/bin/env tsx
 import {
   ESSENCE_TYPES,
-  NODE_MODIFIER_FAMILIES,
   SKILL_TREE,
   ITEM_DATABASE,
   getMaxUpgrade,
@@ -285,8 +284,6 @@ const FARM_CSV_HEADER = [
   'kills_per_hr',
   'essence_per_hr',
   ...ESSENCE_TYPES.map((t) => `ess_${t}_per_hr`),
-  'catalysts_per_hr',
-  ...NODE_MODIFIER_FAMILIES.map((f) => `cat_${f}_per_hr`),
   'biome_xp_per_hr',
   'biome_level_end',
   'biome_level_cap',
@@ -336,8 +333,6 @@ function printFarmCsvRow(result: FarmRunResult): void {
       round2(result.killsPerHour),
       round2(result.essenceSumPerHour),
       ...ESSENCE_TYPES.map((t) => round2(result.essencePerHour[t] ?? 0)),
-      round2(result.catalystSumPerHour),
-      ...NODE_MODIFIER_FAMILIES.map((f) => round2(result.catalystPerHour[f] ?? 0)),
       round2(result.biomeXpPerHour),
       result.biomeLevelEnd,
       result.biomeLevelCap,
@@ -424,7 +419,6 @@ function runScaleSweep(args: BalanceCliArgs): void {
       `(${args.maxSimSeconds / 3600}h per run, baseline scale ${baseline.timeScale})\n` +
       `  kills/hr     max drift ${drift((r) => r.killsPerHour)}\n` +
       `  essence/hr   max drift ${drift((r) => r.essenceSumPerHour)}\n` +
-      `  catalysts/hr max drift ${drift((r) => r.catalystSumPerHour)}\n` +
       `  biomeXP/hr   max drift ${drift((r) => r.biomeXpPerHour)}`,
   );
 }

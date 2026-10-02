@@ -52,7 +52,7 @@ import {
 } from "../src/systems/world/spawning";
 import { World } from "../src/world/World";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -595,16 +595,16 @@ const GRAVEWRIGHT = def("gravewright");
     seq?.kind === "cast-charge-strike",
     "the Frost Lurker should open with a committed lunge",
   );
-  assert(seq!.kind === "cast-charge-strike" && seq.name === "Rime Pounce", "named Rime Pounce");
+  assert(seq!.kind === "cast-charge-strike" && seq!.name === "Rime Pounce", "named Rime Pounce");
   assert(
     seq!.kind === "cast-charge-strike" &&
-      lurker.stats.speed * seq.speedMult > GAME_CONFIG.PLAYER_SPEED,
+      lurker.stats.speed * seq!.speedMult > GAME_CONFIG.PLAYER_SPEED,
     "the pounce must actually close on a moving player, or the slow ambusher never reaches anyone",
   );
   // Modest by design: the tier ladder is measured off sustained pressure, and this
   // fires once per aggro session.
   assert(
-    seq!.kind === "cast-charge-strike" && seq.damageMultiplier <= 1.5,
+    seq!.kind === "cast-charge-strike" && seq!.damageMultiplier <= 1.5,
     "the pounce should be a readable spike, not a one-shot",
   );
   assert(
@@ -897,8 +897,7 @@ function makePlayerSlices(
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -911,7 +910,7 @@ function makePlayerSlices(
       runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null },
+      attunedAbilities: { techniques: [], guards: [] },
       knownStances: [],
       equippedStances: { default: null },
       activeStance: null,

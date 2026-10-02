@@ -44,3 +44,7 @@ tmp/
 # and the cached anchor session token. The ENCODED clip and poster are committed
 # under client/public/landing/ — only this working directory is throwaway.
 .landing/
+
+# Generated bench data. `lane-matrix.md` is the committed reading; the JSON is a
+# 566 KB replay cache that `LANE_REPLAY=<json>` rebuilds the tables from.
+reports/progression-phase1/lane-matrix.json

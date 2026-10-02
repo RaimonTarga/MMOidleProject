@@ -1,4 +1,12 @@
 import { BIOME_DATABASE } from '../../biomeDatabase';
+import {
+  FAMILY_BIOMES,
+  FAMILY_DATABASE,
+  blendEntries,
+  blendShareTotal,
+  familiesForBiome,
+  type FamilyId,
+} from '../../data/families';
 import { MONSTER_DATABASE } from '../../monsterDatabase';
 import {
   MODIFIER_BANS,
@@ -24,7 +32,7 @@ const EXPECTED_ACTIVE_BIOMES: Record<number, readonly string[]> = {
 };
 
 const EXPECTED_KIND_COUNTS: Record<string, number> = {
-  normal: 140,
+  normal: 138,
   dungeon: 26,
   sanctuary: 3,
   tutorial: 1,
@@ -32,7 +40,7 @@ const EXPECTED_KIND_COUNTS: Record<string, number> = {
 };
 
 const EXPECTED_NORMAL_COUNTS: Record<number, number> = {
-  1: 27,
+  1: 25,
   2: 37,
   3: 38,
   4: 38,
@@ -104,7 +112,12 @@ function validateKindsAndContent(violations: string[]): void {
     }
 
     if (node.kind === 'normal') {
-      if (!node.modifier) violations.push(`${node.id}: normal node has no modifier`);
+      // A blend-authored node (T1, Phase 2b) carries no `modifier` at all --
+      // the blend IS its identity. Every other normal node still needs one.
+      if (!node.modifier && !node.blend) {
+        violations.push(`${node.id}: normal node has no modifier or blend`);
+      }
+      if (node.blend) validateBlendShape(node, violations);
       const pool = biome.monsterPoolByTier[node.biomeTier] ?? [];
       if (pool.length === 0) {
         violations.push(`${node.id}: normal node has no monster pool`);
@@ -119,11 +132,12 @@ function validateKindsAndContent(violations: string[]): void {
       if (node.modifier) {
         violations.push(`${node.id}: dungeon must be modifier-free`);
       }
+      if (node.blend) violations.push(`${node.id}: dungeon must be blend-free`);
       if ((biome.bossPoolByTier?.[node.biomeTier] ?? []).length === 0) {
         violations.push(`${node.id}: dungeon has no boss pool`);
       }
     } else if (node.kind === 'sanctuary') {
-      if (node.modifier || node.bossTypeId || node.mobDensity !== 0) {
+      if (node.modifier || node.blend || node.bossTypeId || node.mobDensity !== 0) {
         violations.push(`${node.id}: sanctuary must be empty and modifier-free`);
       }
     } else if (node.kind === 'tutorial') {
@@ -132,6 +146,75 @@ function validateKindsAndContent(violations: string[]): void {
       }
     } else if (node.kind === 'unique') {
       violations.push(`${node.id}: no unique nodes are authored in this stage`);
+    }
+  }
+}
+
+/**
+ * A node blend names only families of its own biome and its shares sum to 1
+ * (design 12). Authored decimals do not sum exactly in binary, hence 1e-6.
+ */
+function validateBlendShape(
+  node: WorldNodeAuthoring,
+  violations: string[],
+): void {
+  const blend = node.blend;
+  if (!blend) return;
+  const keys = Object.keys(blend) as FamilyId[];
+  if (keys.length === 0) {
+    violations.push(`${node.id}: empty blend`);
+    return;
+  }
+  for (const key of keys) {
+    const family = FAMILY_DATABASE.get(key);
+    if (!family) {
+      violations.push(`${node.id}: blend names unknown family '${key}'`);
+    } else if (family.biome !== node.biomeGroup) {
+      violations.push(
+        `${node.id}: blend names '${key}', which is a ${family.biome} family`,
+      );
+    }
+    if ((blend[key] ?? 0) < 0) {
+      violations.push(`${node.id}: negative share for '${key}'`);
+    }
+  }
+  const total = blendShareTotal(blend);
+  if (Math.abs(total - 1) > 1e-6) {
+    violations.push(`${node.id}: blend shares sum to ${total}, not 1`);
+  }
+}
+
+/**
+ * Where a biome has an authored family table, every normal node of it must carry
+ * a blend, and every one of its families must be reachable on some node -- a
+ * family no node fields is a shard with no source.
+ *
+ * Only tier 1 is covered: T2-T4 families are not authored yet, so those nodes
+ * carry no blend and spawn from the flat biome pool (Phase 2a gap).
+ */
+function validateBlendCoverage(violations: string[]): void {
+  for (const biomeGroup of FAMILY_BIOMES) {
+    const normals = WORLD_NODE_LIST.filter(
+      (node) =>
+        node.kind === 'normal' &&
+        node.biomeTier === 1 &&
+        node.biomeGroup === biomeGroup,
+    );
+    if (normals.length === 0) continue;
+    const seen = new Set<FamilyId>();
+    for (const node of normals) {
+      if (!node.blend) {
+        violations.push(`${node.id}: T1 normal node has no family blend`);
+        continue;
+      }
+      for (const entry of blendEntries(node.blend)) seen.add(entry.family);
+    }
+    for (const family of familiesForBiome(biomeGroup)) {
+      if (!seen.has(family.id)) {
+        violations.push(
+          `T1 ${biomeGroup}: no node fields the ${family.name} family`,
+        );
+      }
     }
   }
 }
@@ -150,26 +233,55 @@ function validateBiomeCoverage(violations: string[]): void {
       const biomeNormals = normals.filter(
         (node) => node.biomeGroup === biomeGroup,
       );
-      const allowed = NODE_MODIFIER_FAMILIES.filter(
-        (modifier) => !(MODIFIER_BANS[biomeGroup] ?? []).includes(modifier),
-      );
-      const modifierCounts = new Map<NodeModifierFamily, number>();
-      for (const node of biomeNormals) {
-        if (node.modifier) {
-          modifierCounts.set(
-            node.modifier,
-            (modifierCounts.get(node.modifier) ?? 0) + 1,
+      // A blend-authored biome that has dropped `modifier` outright (T1,
+      // Phase 2b) cannot be tallied per modifier. `validateBlendCoverage`
+      // still checks that every family is reachable, but node COUNT was what
+      // the modifier tally pinned against the hand-cut region mask, and the
+      // per-tier total in `validateCountSnapshot` cannot see a cell moved from
+      // one biome to another — the two errors cancel. So the count is pinned
+      // here instead, per biome. A DUAL-authored blended biome (T2, both fields
+      // still present) keeps the modifier tally below like any other biome.
+      const modifierDropped =
+        biomeNormals.length > 0 &&
+        biomeNormals.every((node) => node.blend && !node.modifier);
+      if (modifierDropped) {
+        const tierTotal = EXPECTED_NORMAL_COUNTS[tier];
+        const perBiome = tierTotal === undefined ? undefined : tierTotal / expectedBiomes.length;
+        if (perBiome === undefined || !Number.isInteger(perBiome)) {
+          // Not a silent pass: a tier whose blend-authored biomes are not all
+          // the same size needs an authored per-biome expectation here.
+          violations.push(
+            `T${tier} ${biomeGroup}: dropped 'modifier' but T${tier}'s ${tierTotal ?? '?'} normal nodes do not divide evenly across ${expectedBiomes.length} biomes — add an explicit per-biome count`,
+          );
+        } else if (biomeNormals.length !== perBiome) {
+          violations.push(
+            `T${tier} ${biomeGroup}: expected ${perBiome} normal nodes, found ${biomeNormals.length} (the region mask over- or under-allocated this biome)`,
           );
         }
       }
-      // One node per allowed modifier, two for the biome's native — this is also
-      // what fixes the biome's node count against its hand-cut region mask.
-      for (const modifier of allowed) {
-        const expected = NATIVE_MODIFIER[biomeGroup] === modifier ? 2 : 1;
-        if ((modifierCounts.get(modifier) ?? 0) !== expected) {
-          violations.push(
-            `T${tier} ${biomeGroup}: expected ${expected} '${modifier}' nodes`,
-          );
+      if (!modifierDropped) {
+        const allowed = NODE_MODIFIER_FAMILIES.filter(
+          (modifier) => !(MODIFIER_BANS[biomeGroup] ?? []).includes(modifier),
+        );
+        const modifierCounts = new Map<NodeModifierFamily, number>();
+        for (const node of biomeNormals) {
+          if (node.modifier) {
+            modifierCounts.set(
+              node.modifier,
+              (modifierCounts.get(node.modifier) ?? 0) + 1,
+            );
+          }
+        }
+        // One node per allowed modifier, two for the biome's native — this is
+        // also what fixes the biome's node count against its hand-cut region
+        // mask.
+        for (const modifier of allowed) {
+          const expected = NATIVE_MODIFIER[biomeGroup] === modifier ? 2 : 1;
+          if ((modifierCounts.get(modifier) ?? 0) !== expected) {
+            violations.push(
+              `T${tier} ${biomeGroup}: expected ${expected} '${modifier}' nodes`,
+            );
+          }
         }
       }
 
@@ -366,8 +478,8 @@ function validateBiomeShape(violations: string[]): void {
 }
 
 function validateCountSnapshot(violations: string[]): void {
-  if (WORLD_NODE_LIST.length !== 170) {
-    violations.push(`expected 170 nodes, found ${WORLD_NODE_LIST.length}`);
+  if (WORLD_NODE_LIST.length !== 168) {
+    violations.push(`expected 168 nodes, found ${WORLD_NODE_LIST.length}`);
   }
   for (const [kind, expected] of Object.entries(EXPECTED_KIND_COUNTS)) {
     const actual = WORLD_NODE_LIST.filter((node) => node.kind === kind).length;
@@ -393,6 +505,7 @@ export function validateWorldMap(): string[] {
   validateKindsAndContent(violations);
   violations.push(...validateNodeDisplayNames(WORLD_NODE_LIST));
   validateBiomeCoverage(violations);
+  validateBlendCoverage(violations);
   validateTopology(violations);
   validateBiomeShape(violations);
   validateCountSnapshot(violations);

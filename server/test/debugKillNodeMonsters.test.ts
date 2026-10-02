@@ -3,7 +3,7 @@ import { killNodeMonsters } from "../src/admin/gameActions";
 import { ensureDungeon } from "../src/systems/world/dungeons/dungeon";
 import { World } from "../src/world/World";
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 

@@ -1,3 +1,4 @@
+import type { PacketId } from '../data/lineages/types';
 import type { EssenceType } from '../items';
 import type { EquippedRule } from '../runeDatabase';
 
@@ -28,7 +29,6 @@ export type TutorialCondition =
   | { type: 'biomeLevelAtLeast'; biomeGroup: string; level: number }
   | { type: 'globalMasteryAtLeast'; value: number }
   | { type: 'essenceAtLeast'; essence: EssenceType; amount: number }
-  | { type: 'catalystAtLeast'; family: string; amount: number }
   | { type: 'recipeUnlocked'; recipeId: string }
   | { type: 'canCraft'; recipeId: string }
   | { type: 'hasItem'; definitionId: string }
@@ -37,10 +37,18 @@ export type TutorialCondition =
   | { type: 'abilityKnown'; abilityId: string }
   | { type: 'runeRecipeCrafted'; recipeId: string }
   | { type: 'bossCleared'; biomeGroup: string; tier: number }
+  // ── Lineage trees (progression rework Phase 1; design §4, §5, §12) ─────────
+  /** Lane shards, the kill-driven wallet a card and a gate are paid in. */
+  | { type: 'shardAtLeast'; packet: PacketId; amount: number }
+  /** A biome boss's capstone material — the only thing a boss kill mints. */
+  | { type: 'capstoneAtLeast'; biome: string; amount: number }
+  | { type: 'lineageCardOwned'; lineageId: string; cardId: string }
+  | { type: 'lineageFormOwned'; lineageId: string; recipeId: string }
+  | { type: 'lineageFormWorn'; lineageId: string; recipeId: string }
   /**
    * Every listed item can be taken from its CURRENT level to its target right
-   * now: Global Mastery, biome level, and the summed essence + catalyst cost
-   * of all remaining levels. Monotone across the upgrades themselves: each one
+   * now: Global Mastery, biome level, and the summed essence cost of all
+   * remaining levels. Monotone across the upgrades themselves: each one
    * spends exactly what it removes from the remaining cost.
    */
   | { type: 'canAffordUpgrades'; items: TutorialUpgradeTarget[] }
@@ -65,7 +73,23 @@ export type TutorialStep =
   /** Craft the ability recipe, then make it the only ability of its slot kind. */
   | { type: 'learnAbility'; recipeId: string; abilityId: string; slot: 'technique' | 'guard' }
   | { type: 'setAbilities'; techniques: string[]; guards: string[] }
-  | { type: 'attemptBoss'; biomeGroup: string; tier: number };
+  /**
+   * Buy one lineage card. Permanent, and buying into an empty row activates it
+   * server-side, so the guide never needs a separate `setActive`. Only legal
+   * once the lineage's base form is WORN — holding the form is what opens the
+   * tree (`checkUnlockCard`).
+   */
+  | { type: 'unlockCard'; lineageId: string; cardId: string }
+  /** Pay a band's gate: essence, the crowned lane's shard, the boss capstone. */
+  | { type: 'unlockForm'; lineageId: string; recipeId: string }
+  /** Wear an owned form. Free, and it moves the slot like any equip. */
+  | { type: 'wearForm'; lineageId: string; recipeId: string }
+  /**
+   * `until` turns one boss attempt into "keep fighting this boss until"; the
+   * gate's three capstone materials are three kills, which is the one place the
+   * guide repeats a fight. Without it the step ends on the first clear.
+   */
+  | { type: 'attemptBoss'; biomeGroup: string; tier: number; until?: TutorialCondition };
 
 /** What a waiting beat shows as "current / target". */
 export type TutorialProgressRef =
@@ -73,7 +97,8 @@ export type TutorialProgressRef =
   | { type: 'biomeLevel'; biomeGroup: string; level: number }
   | { type: 'essenceFor'; recipeId: string }
   | { type: 'essence'; essence: EssenceType; amount: number }
-  | { type: 'catalyst'; family: string; amount: number }
+  | { type: 'shard'; packet: PacketId; amount: number }
+  | { type: 'capstone'; biome: string; amount: number }
   | { type: 'upgradeCost'; items: TutorialUpgradeTarget[] };
 
 /**

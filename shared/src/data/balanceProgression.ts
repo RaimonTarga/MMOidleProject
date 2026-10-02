@@ -70,6 +70,7 @@ export const T1_STARTER_PROGRESSION: BalanceProgressionPolicy = {
       roster: [
         { monsterId: 'plains-slime', role: 'Swarm filler', purpose: 'Low individual threat; density creates the danger.' },
         { monsterId: 'boar', role: 'Swarm catcher', purpose: 'Charge closes the gap and prevents effortless disengagement.' },
+        { monsterId: 'grass-kite', role: 'Aerial opener', purpose: 'Starts the fight from the air with one readable stoop (Sky family, Engagement).' },
       ],
     },
     {
@@ -106,6 +107,7 @@ export const T1_STARTER_PROGRESSION: BalanceProgressionPolicy = {
       roster: [
         { monsterId: 'cliff-hopper', role: 'Charging bruiser', purpose: 'Forces a close-range reaction with a readable kick.' },
         { monsterId: 'ridge-archer', role: 'Artillery sentinel', purpose: 'Controls space with a slow, interruptible power shot.' },
+        { monsterId: 'rockback-ram', role: 'Plated anchor', purpose: 'Flat plating eats light hits; big hits are the answer (Crag family, Empowered).' },
       ],
     },
     {

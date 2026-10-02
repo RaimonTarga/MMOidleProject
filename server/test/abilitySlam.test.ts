@@ -45,7 +45,7 @@ import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
 import { World } from "../src/world/World";
 import type { PlayerEntity } from "../src/ecs/entity";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -84,8 +84,7 @@ function slices(
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {},
-      catalystProgress: {},
+      shards: {}, capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -136,7 +135,8 @@ function monsterAt(world: World, x: number, y = 400) {
   monster.hasHealth.maxHp = 100_000;
   monster.mitigatesDamage.plating = 0;
   monster.mitigatesDamage.damageReduction = 0;
-  monster.mitigatesDamage.evasion = 0;
+  // Evasion is its own component now, attached only when the monster has any.
+  if (monster.evadesHits) monster.evadesHits.dodgeRate = 0;
   return monster;
 }
 
@@ -170,7 +170,7 @@ initCombatSystems();
     assert(abilityCastMs(SLAM, tier) === 1600, "Slam holds a 1.6s wind-up");
   }
   assert(
-    slamEffect(2).radius > 90,
+    (slamEffect(2)!.radius ?? 0) > 90,
     "Slam's area must be meaningfully broader than Sweep's 90px splash",
   );
   assert(
@@ -297,7 +297,11 @@ initCombatSystems();
 // Attack speed does NOT shorten the wind-up; cast speed does.
 {
   const fast = spawn("slam-attack-speed");
-  fast.player.usesSkills.passives["shared.attack-speed-pct"] = 1.5;
+  // NOTE: "shared.attack-speed-pct" is NOT a PassiveKey — nothing reads it, so this
+  // line is a no-op and the assertion below cannot actually fail. Left as-is
+  // rather than guessed at: giving this player real attack speed may legitimately
+  // change the result, which is the designer's call.
+  (fast.player.usesSkills.passives as Record<string, number>)["shared.attack-speed-pct"] = 1.5;
   const fastTarget = monsterAt(fast.world, 430);
   setAttackTarget(fast.world, fast.player, fastTarget.isMonster.id);
   fireWithReferenceWiring(fast.world, 1_000);
@@ -531,7 +535,7 @@ function castEnds(world: World) {
     kind: "melee",
     damage: 1,
     killer: {
-      monsterTypeId: target.isMonster.typeId,
+      monsterTypeId: target.isMonster.monsterTypeId,
       monsterName: "Slam Target",
       isBoss: false,
       nodeId: "node-5-5",

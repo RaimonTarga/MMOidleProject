@@ -106,7 +106,7 @@ import {
   performAmbushLunge,
 } from "../ai/ambushLunge";
 import { canApplyPlayerDebuff, applyResistedPlayerDebuff, resistedPlayerDebuffMagnitude } from "../status/debuffGuard";
-import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
+import { evadeBlocksDebuffs, monsterDodgeChance, rollMonsterDodge } from "../../defense/mitigation/evasion";
 import { isMonsterStunned, applyStun } from "../status/stun";
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
 import { applyPlatingShredStacks } from '../status/platingShred';
@@ -146,6 +146,7 @@ import {
   recordTelegraphResolutionVictim,
 } from "../ai/telegraphEvasion";
 import { isConcealedEntity } from "../invulnerability";
+import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 
 export type PlayerAttackOutcome = "cancelled" | "dodged" | "hit" | "killed";
 export type MonsterAttackOutcome = "cancelled" | "hit" | "killed";
@@ -353,13 +354,13 @@ export function runPlayerAttack(
   const monsterDef = MONSTER_DATABASE.get(target.isMonster.monsterTypeId);
   // A boss 'stat-buff' evasion action can override the dodge fraction at runtime
   // (e.g. drop to 0 in a desperation phase). 0 is a valid override, so use ??.
-  const evadeChance = target.scriptsBoss?.evasionOverride ?? monsterDef?.evasion;
+  // ONE dodge clock per monster, shared with the Tempo keystone's chain links —
+  // see `rollMonsterDodge`.
+  const evadeChance = monsterDodgeChance(target);
   let evaded = false;
   let evadeMult = 0;
-  if (evadeChance !== undefined && evadeChance > 0) {
-    const acc = getCounter(target.tracksCombat, "evadeAcc") + evadeChance;
-    if (acc >= 1) {
-      setCounter(target.tracksCombat, "evadeAcc", acc - 1);
+  if (evadeChance > 0) {
+    if (rollMonsterDodge(target, evadeChance)) {
       evaded = true;
       evadeMult = monsterDef?.evadeMitigation ?? GAME_CONFIG.EVADE_MITIGATION_BASE;
       if ((player.usesSkills.passives["shared.applies-through-evade"] ?? 0) <= 0) {
@@ -391,8 +392,6 @@ export function runPlayerAttack(
         });
         return "dodged";
       }
-    } else {
-      setCounter(target.tracksCombat, "evadeAcc", acc);
     }
   }
 
@@ -439,6 +438,11 @@ export function runPlayerAttack(
   if (outgoingMult > 1) ctx.damage = Math.round(ctx.damage * outgoingMult);
 
   emitCombatEvent("onHit", ctx, world);
+  // An onHit proc (a lineage echo, the Effigy's linked slam) can kill the target
+  // through `applyPlayerProcDamage`, which already paid onKill, the rewards and the
+  // removal. Carrying on would find hp <= 0 below and pay the kill a second time
+  // (review finding B3, 2026-10-02).
+  if (!world.hasMonster(target.isMonster.id)) return "killed";
 
   const onHitDamage = playerOnHitDamage(ctx);
   ctx.damage += mitigateOnHitDamage(onHitDamage, player.dealsDamage.attack * minionDamageMult, effectivePlating * ctx.platingMult, effectiveDr);
@@ -808,6 +812,15 @@ export function runMonsterAttack(
   if (rawDamage !== undefined) ctx.metadata["empoweredAttack"] = true;
   emitCombatEvent("onHit", ctx, world);
   emitCombatEvent("onDamageTaken", ctx, world);
+  // A hit-taken proc can kill the ATTACKER (the proc seam pays its kill); the rest
+  // of this exchange reads and writes the monster, so it ends here. The player
+  // still takes the hit that triggered the proc.
+  if (!world.hasMonster(monster.isMonster.id)) {
+    target.hasHealth.hp -= ctx.damage;
+    if (target.hasHealth.hp <= 0) target.hasHealth.hp = 1;
+    markSliceDirty(world, target, "hasHealth");
+    return "hit";
+  }
 
   const absorbed = Number(ctx.metadata["absorbed"] ?? 0);
   const mitigation = buildPlatingDrBreakdown({

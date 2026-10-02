@@ -6,7 +6,7 @@ import {
 import { BOSS1_BLOCKS, BOSS1_TIMBERCLAW_BOSS_ID } from '../bench/balance/boss1Spec';
 import { resolveSurveyPackage } from '../bench/balance/ttkSurveySpec';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 

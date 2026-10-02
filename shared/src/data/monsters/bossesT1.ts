@@ -140,7 +140,32 @@ export const bossMonsterEntriesT1 = [
     // knife-edge and 20 is mostly losses. DO NOT answer this boss with a Frenzy
     // stack cap: players die before 4 stacks, and a capped boss stops spending
     // 1.5s of every 6s casting, so a cap made the fight HARDER on the bench.
-    stats: { hp: 1800, attack: 18, plating: 0, damageReduction: 0, speed: 60, attackRange: 15, attackCooldown: 1900, pullRange: 300 },
+    // T1 BOSS PASS NERF (2026-10-02): hp 1800 -> 1450, attack 18 -> 16. On the
+    // six-class boss lab at GM 30 with the guide's own Forest kit it beat FIVE of six
+    // classes 30/30 (only the Slinger won, 29/30), with the losses at 19-26% of its
+    // bar left. The 2026-09-26 note above still holds for its own question -- at 18
+    // every class's BEST build wins -- but the tutorial's build is not that build, and
+    // this pass's bar is the kit the guide actually equips.
+    //
+    // Two levers, because one cannot do it. Both single levers CLIFF: HP goes 43% ->
+    // 100% between 1350 and 1200, attack 43% -> 100% between 15 and 13, so each alone
+    // either leaves a class below the floor or puts every class at 100%. And attack 13
+    // would equal the Toadeater's hit, which that boss's own comment calls trivial --
+    // it would end this boss's identity as the tier's pressure fight.
+    //
+    // So most of it comes out of FIGHT LENGTH, which is where the uncapped Bestial
+    // Frenzy ramp lives (five stacks by 29s = 2.5x attack speed) and which leans into
+    // the authored identity in the header: fast, frequent, FRAIL. Incoming DPS stays
+    // at 8.5 against the old 9.8, so the boss still has the tier's highest steady
+    // pressure. Every class now wins; the Apprentice still loses one in thirty.
+    //
+    // The armour is NOT the lever, measured: the guide's Plains vest (plating 3) is
+    // the best of the three T1 vests here, because this boss's beat is two small hits
+    // and plating is a flat subtract. The Mountain vest (plating 2) is WORSE -- it
+    // drops the Slinger from 97% to 40% -- and the Forest vest's 36% evasion is worth
+    // only ~3.6% mitigation, since `defense.evade-mitigation` is 0.1 on the player
+    // side. Nothing in T1 gear answers "the evasion exam" above.
+    stats: { hp: 1450, attack: 16, plating: 0, damageReduction: 0, speed: 60, attackRange: 15, attackCooldown: 1900, pullRange: 300 },
     behavior: 'melee', attackStyle: 'bear-claws', biome: 'forest',
     rewards: { essence: 100, essenceType: 'green', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 160, leashRange: 800, idleMinMs: 1200, idleMaxMs: 4000 },
@@ -166,7 +191,26 @@ export const bossMonsterEntriesT1 = [
   ['crag-behemoth', {
     id: 'crag-behemoth', name: 'Crag Behemoth', color: 0x8899bb,
     isBoss: true,
-    stats: { hp: 2100, attack: 56, plating: 0, damageReduction: 0, speed: 22, attackRange: 18, attackCooldown: 3500, pullRange: 280 },
+    // T1 BOSS PASS NERF (2026-10-02): attack 56 -> 50. The tutorial Striker was 1/30 on
+    // the six-class boss lab, and the mechanism is NOT the single charge. Trimming the
+    // charge instead -- `damageMultiplier` 1.9 -> 1.5 -- gives the Striker a SMALLER
+    // biggest hit (72.7 against this row's 82.6) and a smaller worst 5-second window
+    // (57.1% of its pool against 58.4%), and still wins only 3 of 30 where this row
+    // wins 23. So do not "fix" this boss by shrinking the charge; it has been measured
+    // and it does not work.
+    //
+    // The Striker dies to a SAWTOOTH: the ordinary swing out-paces its Recovery by ~10
+    // points of pool per 3.5s cycle, so it arrives at each charge lower than the last
+    // (46% when the killing one lands) and the charge finishes a bar the plain attack
+    // emptied. `attack` is the one number both the swing and the charge scale from,
+    // which is why it is the single lever.
+    //
+    // The Crag Charge keeps its 1.9 and its 1.15 phase empower, so the exam is intact.
+    // The worst 5-second window is now 58% of the Striker's pool against 66% before,
+    // which is the "survivable from ~60% HP" the pass was given -- but note that the
+    // criterion is NOT sufficient on its own, since the 1.5 row above satisfies it
+    // better and still walls the class. Reverting is this one number.
+    stats: { hp: 2100, attack: 50, plating: 0, damageReduction: 0, speed: 22, attackRange: 18, attackCooldown: 3500, pullRange: 280 },
     behavior: 'melee', attackStyle: 'quake', biome: 'mountain',
     rewards: { essence: 105, essenceType: 'blue', level: 5, biomeXp: 158 },
     ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 2000, idleMaxMs: 5000 },
@@ -174,10 +218,12 @@ export const bossMonsterEntriesT1 = [
     // `chargeOnAggro` REMOVED with the 2026-09-04 encounter redesign: a speed burst
     // on aggro is not a charge, it just made the opening seconds unreadable, and the
     // lineage's actual committed charge is the cast below.
-    // 56 x1.9 = 106 — the tier's biggest single hit, ~55-60% of an end-of-T1 pool.
-    // Above the 40-50% anchor in boss-design.md on purpose: this is the one T1 fight
-    // that is supposed to make the damage cap (mountain plate / Striker root) read as
-    // the difference between surviving the impact and not. Every 10s, three a fight.
+    // 50 x1.9 = 95 — the tier's biggest single hit, ~45-50% of an end-of-T1 pool.
+    // (Was 56 x1.9 = 106, ~55-60%, until the 2026-10-02 pass; see the stat line.)
+    // At the top of the 40-50% anchor in boss-design.md, and ON it rather than above it
+    // since the 2026-10-02 pass: this is still the one T1 fight that is supposed to
+    // make the damage cap (mountain plate / Striker root) read as the difference
+    // between surviving the impact and not. Every 10s, three a fight.
     //
     // MOUNTAIN'S LINEAGE PRIMITIVE, as an ORDERED PATTERN. The circular Ground Slam
     // it replaces asked the same question the Cave slam already asks ("leave the
@@ -223,7 +269,26 @@ export const bossMonsterEntriesT1 = [
     // The tier's ATTRITION boss: the longest fight, the smallest hits, and ~85% of its
     // damage arriving through channels plating and DR never touch. The direct slap stays
     // trivial (13 is exactly the Mud Toad's hit) — the toxin and the rot pool are the boss.
-    stats: { hp: 2100, attack: 13, plating: 2, damageReduction: 0.02, speed: 28, attackRange: 15, attackCooldown: 2600, pullRange: 260 },
+    // T1 BOSS PASS NERF (2026-10-02): hp 2100 -> 1750. On the six-class boss lab at
+    // GM 30 it beat four of six classes 30/30 and the Striker 15/30; only the
+    // Apprentice won outright, and only because its plan wears `swamp-vest-t1` for
+    // this one fight (25% DoT resistance). Every class is now at 87% or better.
+    //
+    // HP is the whole lever, and it is the right one for an ATTRITION boss: it
+    // shortens the window the poison and the pools work in and leaves every mechanic
+    // at its authored size. The alternatives were measured and are worse. Halving
+    // `damagePerStack` 2 -> 1 puts all six at 100% and cuts incoming DPS 36%, which
+    // ends the exam. Cutting the pool's `damagePerTick` 3 -> 2 does literally nothing
+    // (0/30 stays 0/30): the pool is not this fight, the poison is -- worth knowing
+    // before anyone tunes the pool again.
+    //
+    // THE CHEAPER FIX IS NOT A BOSS ROW, and the designer should see it before
+    // keeping this one: giving every class the Swamp vest for this fight, which the
+    // Apprentice's plan already does, takes the untouched boss from 0/0/0/0 to
+    // 100/100/100/53 (reports/t1-boss-pass/base-swampvest.jsonl). This boss is the
+    // tier's DoT exam and five of six tutorial plans bring no DoT answer to it. If
+    // that is fixed in `plans.ts`, revert this HP cut.
+    stats: { hp: 1750, attack: 13, plating: 2, damageReduction: 0.02, speed: 28, attackRange: 15, attackCooldown: 2600, pullRange: 260 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 100, essenceType: 'purple', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 100, leashRange: 700, idleMinMs: 2000, idleMaxMs: 5500 },

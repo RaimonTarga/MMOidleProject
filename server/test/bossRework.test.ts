@@ -42,7 +42,7 @@ import {
 } from '../src/systems/world/groundZones';
 import { World } from '../src/world/World';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -61,11 +61,12 @@ function playerSlices(id: string): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null }, knownStances: [],
+      attunedAbilities: { techniques: [], guards: [] }, knownStances: [],
       equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
@@ -128,7 +129,9 @@ for (const id of ['gnarled-greatbear', 'apex-timberclaw']) {
   assert(!forest.rampOnCombat, `${id} should not retain an invisible attack-speed ramp`);
   const frenzyCasts = scriptActions(id).filter(action => action.type === 'cast' && action.label === 'Bestial Frenzy');
   assert(
-    frenzyCasts.length === 1 && frenzyCasts[0].castMs === 1500 && frenzyCasts[0].fx === 'frenzy',
+    frenzyCasts.length === 1
+      && (frenzyCasts[0] as { castMs?: number }).castMs === 1500
+      && (frenzyCasts[0] as { fx?: string }).fx === 'frenzy',
     `${id} should telegraph Bestial Frenzy with a 1.5-second cast`,
   );
   // SHAPE, not magnitude. This used to pin `mult === 1.20` and `intervalMs`, which
@@ -137,7 +140,7 @@ for (const id of ['gnarled-greatbear', 'apex-timberclaw']) {
   // down to 1.12 on 2026-09-06 so its ramp would stop out-running T1's). What must
   // not change is that the stack is permanent, uncapped, and compounds: that is the
   // fight's time limit, and `forestT2BossSwipe.test.ts` guards the relationship.
-  const frenzyStack = frenzyCasts[0]?.actions[0];
+  const frenzyStack = (frenzyCasts[0] as { actions?: Record<string, never>[] } | undefined)?.actions?.[0];
   assert(
     frenzyStack?.type === 'stat-buff' &&
       frenzyStack.stat === 'attackSpeed' &&
@@ -154,12 +157,16 @@ for (const id of ['gnarled-greatbear', 'apex-timberclaw']) {
   );
   assert(!hasAction(id, 'spawn-adds') && !hasAction(id, 'summon'), `${id} must not spawn adds`);
 }
-assert(def('gnarled-greatbear').stats.hp === 1800, 'T1 Greatbear HP should be reduced by exactly 10%');
+// 2026-10-02 T1 boss pass: hp 1800 -> 1450 and attack 18 -> 16, because the guide's
+// own Forest kit lost 30/30 on five of six classes. The CADENCE and the two-hit combo
+// are the identity and are still pinned -- they are what makes this the tier's
+// sustained-pressure boss, and the pass deliberately paid in fight length instead.
+assert(def('gnarled-greatbear').stats.hp === 1450, 'T1 Greatbear HP should be its 2026-10-02 boss-pass value');
 assert(
-    def('gnarled-greatbear').stats.attack === 18 &&
+    def('gnarled-greatbear').stats.attack === 16 &&
     def('gnarled-greatbear').stats.attackCooldown === 1900 &&
     def('gnarled-greatbear').consecutiveHits === 2,
-  'T1 Greatbear must keep its 2026-09-26 attack (18), cadence, and combo',
+  'T1 Greatbear must keep its 2026-10-02 attack (16), its 1900ms cadence, and its combo',
 );
 assert(
   !!def('apex-timberclaw').chargedAttack?.aoe &&
@@ -387,7 +394,7 @@ initCombatSystems();
   updateBossScripts(world, 4_500);
   assert(!!boss.isRooted, 'the next Bestial Frenzy should begin on its six-second cadence');
   updateBossScripts(world, 1_500);
-  assert(boss.hasStatus.bossEffectStacks?.['bestial-frenzy'] === 2, 'each completed Frenzy cast should stack permanently');
+  assert((boss.hasStatus.bossEffectStacks?.['bestial-frenzy'] as number) === 2, 'each completed Frenzy cast should stack permanently');
   assert(
     boss.performsAttack.attackCooldown === Math.round(Math.round(1900 / 1.20) / 1.20),
     'second Frenzy stack should further accelerate the bear',
@@ -412,7 +419,7 @@ initCombatSystems();
   assert(!!boss.isRooted, 'uncapped Frenzy should continue starting casts beyond five stacks');
   updateBossScripts(world, 1_500);
   assert(
-    boss.hasStatus.bossEffectStacks?.['bestial-frenzy'] === 7,
+    (boss.hasStatus.bossEffectStacks?.['bestial-frenzy'] as number) === 7,
     'Frenzy should continue past the former five-stack cap',
   );
   assert(boss.performsAttack.attackCooldown < sixthStackCooldown, 'the seventh Frenzy stack should further accelerate attack cadence');

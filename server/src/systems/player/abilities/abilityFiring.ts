@@ -49,8 +49,10 @@ import {
   worstHardControl,
 } from "../../combat/status/playerHardControl";
 import { syncPlayerControlLockout } from "../../combat/status/playerControlLockout";
+import { cleansePlayerAfflictions, type RemovedEffect } from "../../combat/status/cleanse";
 import { activateRecovery } from "../../defense/regen/recovery";
 import { onGuardFired } from "../../defense/charmHooks";
+import { onTechniqueResolved } from "../../combat/techniqueResolved";
 import { repositionPlayer } from "../../combat/damage/knockback";
 import { abilityCooldownKey, guardCooldownMs, startTechniqueCooldown } from "./abilityCooldowns";
 import { beginAbilityCast } from "./abilityCasting";
@@ -339,7 +341,12 @@ function maybeFireTechnique(
     if (!options.manual && !autoFireGateOpen(world, player, ability)) return DECLINED_TECHNIQUE;
     applyInstantTechnique(world, player, ability);
     recordAbilityActivation(world, player, abilityId, 'technique');
+    // The cooldown starts BEFORE the resolution fires, because `technique-refund`
+    // takes its share off the REMAINING cooldown: resolve first and the refund
+    // reads zero and skips. The armed path below already orders it this way.
     startTechniqueCooldown(world, player, ability);
+    // An instant Technique resolves the moment it fires, so firing IS landing.
+    onTechniqueResolved(world, player, ability);
     // Carry the window length so the client can sustain an in-world cue for the
     // ability's REAL duration. Resolved here rather than looked up client-side
     // because the authored rank is the server's to interpret.
@@ -429,6 +436,11 @@ function maybeFireTechnique(
     recordAbilityActivation(world, player, abilityId, 'technique');
     if (effect.empowerMult !== undefined) {
       armTechnique(world, player, abilityId);
+    } else {
+      // A reposition with no strike rider has nothing further to land, so the
+      // move itself is the landing. One that DOES arm pays out from the armed
+      // rider instead, so nothing fires twice for one cooldown.
+      onTechniqueResolved(world, player, ability);
     }
     return { activated: true, claimed: true };
   }
@@ -447,8 +459,6 @@ function maybeFireTechnique(
   recordAbilityActivation(world, player, abilityId, 'technique');
   return { activated: true, claimed: true };
 }
-
-type RemovedEffect = { effectId: string; stacks: number };
 
 function recordAbilityActivation(
   world: World,
@@ -581,7 +591,7 @@ function applyGuardEffect(
       effect.knockbackResistPct,
     );
   } else if (effect.kind === "cleanse") {
-    return applyCleanse(player, effect.stacks, effect.debuffs);
+    return cleansePlayerAfflictions(player, effect.stacks, effect.debuffs);
   } else if (effect.kind === "break-free") {
     applyBreakFree(world, player, effect.controlResistPct, effect.controlResistMs);
   } else if (effect.kind === "heal") {
@@ -593,50 +603,6 @@ function applyGuardEffect(
   // channel, never as a Guard immediate.
 }
 
-/**
- * Strip `stacks` from up to `debuffs` distinct harmful effects.
- *
- * DETERMINISTIC PRIORITY, not map order: when several afflictions are present,
- * take the deepest stack first (that is the one doing the most, and the one the
- * player cannot out-heal), and break ties by id so two identical situations
- * always cleanse the same thing. Instanced effects are skipped — they are
- * per-source entries, and stripping one of five identical burns reads as the
- * button doing nothing.
- */
-function applyCleanse(player: PlayerEntity, stacks: number, debuffs: number): RemovedEffect[] {
-  const cs = player.tracksCombat;
-  const byId = new Map<string, { stacks: number; data: Record<string, number> }>();
-  for (const effect of cs.statusEffects) {
-    if (effect.instanced) continue;
-    if (effect.stacks <= 0) continue;
-    if (!isHarmfulPlayerStatusEffect(effect.id, effect.data)) continue;
-    // CLEANSE POLICY (redesign §4.7). Being harmful is no longer enough: Heat is
-    // genuinely hurting you and is still the wrong thing to answer with a button,
-    // because walking out of the vent is the mechanic. Immune effects are skipped
-    // ENTIRELY here rather than filtered later, so they cannot consume one of the
-    // `debuffs` slots and quietly make Cleanse do nothing.
-    if (!isCleanseable(effect.id, effect.data)) continue;
-    const existing = byId.get(effect.id);
-    if (!existing || effect.stacks > existing.stacks) {
-      byId.set(effect.id, { stacks: effect.stacks, data: effect.data });
-    }
-  }
-  const ordered = [...byId.entries()]
-    .sort((a, b) => (b[1].stacks - a[1].stacks) || a[0].localeCompare(b[0]))
-    .slice(0, Math.max(1, debuffs));
-  const removed: RemovedEffect[] = [];
-  for (const [id, { stacks: before, data }] of ordered) {
-    // A `partial` effect is REDUCED, never deleted: the room re-applies it, so a
-    // full strip would be true for a second and read as the button not working.
-    const allowed = cleanseableStacks(id, data, Math.max(1, stacks));
-    if (allowed <= 0) continue;
-    removeStatusEffectStacks(cs, id, allowed);
-    const after = cs.statusEffects.find((effect) => effect.id === id)?.stacks ?? 0;
-    const removedStacks = Math.max(0, before - after);
-    if (removedStacks > 0) removed.push({ effectId: id, stacks: removedStacks });
-  }
-  return removed;
-}
 
 /**
  * Break Free: remove the worst hard control AND every root holding the player,

@@ -35,7 +35,7 @@ import {
 } from "../src/systems/player/abilities/abilityCooldowns";
 import { equipItem } from "../src/systems/player/economy/inventory";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 
@@ -51,11 +51,12 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 4, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { technique: null, guard: null },
+      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
@@ -95,6 +96,28 @@ const world = new World();
     scaled === 100,
     `the heal funnel must not re-apply core.recovery-mult, got ${scaled}`,
   );
+}
+
+// ── the heal LOG carries sub-1 slices instead of rounding each one ──
+//
+// Flat Recovery at 10 Hz heals in slices under 1 HP. Rounding each slice logged
+// 0.5/tick as 1 (a 75% over-report) and 0.4/tick as 0 (no healing at all), which is
+// what an operator reads when judging Recovery by hand. The log must track the HP
+// ledger to within a point.
+{
+  const player = world.attachPlayerEntity(makePlayerSlices("heal-log-player"), "heal-log-player");
+  player.hasHealth.maxHp = 1000;
+  player.hasHealth.hp = 500;
+  const healEvents = () => (world.worldLogJournal as any[]).filter((e) => e.kind === "heal" && e.target?.id === "heal-log-player");
+  world.worldLogJournal = [];
+  for (let i = 0; i < 3; i++) applyHealToPlayer(player, player.tracksCombat, 0.4, world);
+  const logged = healEvents().reduce((sum, e) => sum + e.amount, 0);
+  assert(logged === 1, `three 0.4 heals must log exactly 1 point, got ${logged} over ${healEvents().length} events`);
+  assert(Math.abs(player.hasHealth.hp - 501.2) < 1e-9, `HP must still move by the exact amount, got ${player.hasHealth.hp}`);
+  world.worldLogJournal = [];
+  for (let i = 0; i < 20; i++) applyHealToPlayer(player, player.tracksCombat, 0.5, world);
+  const logged2 = healEvents().reduce((sum, e) => sum + e.amount, 0);
+  assert(logged2 === 10, `twenty 0.5 heals must log 10 points, not 20, got ${logged2}`);
 }
 
 {

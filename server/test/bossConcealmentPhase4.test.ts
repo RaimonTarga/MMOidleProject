@@ -35,7 +35,7 @@ import { applyStun } from '../src/systems/combat/status/stun';
 import { World } from '../src/world/World';
 import type { MonsterEntity, PlayerEntity } from '../src/ecs/entity';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -49,11 +49,12 @@ function playerSlices(id: string, x = 405, y = 400, nodeId = NODE): PersistedPla
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null }, knownStances: [],
+      attunedAbilities: { techniques: [], guards: [] }, knownStances: [],
       equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
@@ -878,7 +879,7 @@ for (const id of ['chitinous-dreadbore', 'deep-core-burrow-gorger']) {
     gapAtSurface! < impact.radius,
     `${id}: a ${conceal.durationMs}ms burrow at ${conceal.travelSpeed}px/s` +
       (conceal.feint
-        ? ` with a ${conceal.feint.awayPx}px${conceal.feint.arcDeg ? `/${conceal.feint.arcDeg}deg` : ''} feint`
+        ? ` with a ${(conceal.feint as { awayPx?: number }).awayPx}px${(conceal.feint as { arcDeg?: number }).arcDeg ? `/${(conceal.feint as { arcDeg?: number }).arcDeg}deg` : ''} feint`
         : '') +
       ` surfaced ${gapAtSurface!.toFixed(0)}px from a sprinting player it started ` +
       `${def.stats.attackRange}px away from — outside its own ${impact.radius}px eruption. ` +

@@ -1,11 +1,14 @@
 import { ABILITY_DATABASE } from '../../abilities';
 import { ABILITY_RECIPE_DATABASE } from '../../abilityRecipes';
+import { LINEAGE_DATABASE } from '../../data/lineages';
+import { capstoneMaterialName } from '../../data/lineages/capstones';
+import { shardName } from '../../data/lineages/packets';
+import { lineageGateCost, resolveLineageCard } from '../../data/lineages/resolve';
+import type { LineageCost, PacketId } from '../../data/lineages/types';
 import { RECIPE_DATABASE } from '../../data/recipes';
 import { ITEM_DATABASE } from '../../itemDatabase';
 import type { EssenceType } from '../../items';
 import { RUNE_RECIPE_DATABASE } from '../../runeRecipes';
-import { upgradeCatalystCostFor } from '../../systems/itemUpgrades';
-import { NODE_BIOMES } from '../../world/nodeBiomes';
 import type {
   TutorialBeat,
   TutorialCondition,
@@ -96,12 +99,12 @@ const ITEM_REASON: Record<string, string> = {
 };
 
 const CRAFT_REASON: Record<string, string> = {
-  'chaotic-axe': 'The Chaotic Axe hits hardest of anything here but whiffs now and then. Once upgraded, it is worth it.',
-  'ashbrand-blade': 'The Poison Dagger poisons what it hits. It becomes your main weapon once it is upgraded.',
+  'chaotic-axe': 'The Chaotic Axe hits hardest of anything here but whiffs now and then. Worth it.',
+  'ashbrand-blade': 'The Poison Dagger poisons what it hits. It becomes your main weapon.',
 };
 
 const EQUIP_REASON: Record<string, string> = {
-  'chaotic-axe': 'The axe is upgraded enough now. Switch to it.',
+  'chaotic-axe': 'The axe is ready. Switch to it.',
   'ashbrand-blade': 'The Poison Dagger is ready. Switch to it.',
 };
 
@@ -111,6 +114,32 @@ const LEARN_REASON: Record<string, string> = {
   cleanse: 'Learn Cleanse. Here it takes Second Wind\'s place, because poison is the real threat.',
   'expose-weakness': 'Learn Expose Weakness. It replaces Sweep and marks your target to take more damage from everything.',
 };
+
+/**
+ * The weapon tree the guide teaches (design §4, §5, §12; W1-E).
+ *
+ * The Rapier is the Forest's lineage AND the weapon every class plan crafts
+ * there, so the three lessons land where the weapon is earned: a card at the
+ * stat row, the shards that pay for it, and — after the seals — the gate that
+ * turns the item into its tier-2 form. The weapon `+N` ladder these beats
+ * replace was deleted by the lineage rework (commit 03783104).
+ */
+const TUTORIAL_TREE = {
+  lineageId: 'rapier',
+  /** The T1 stat row card: Quick Wrist, the cheapest honest first purchase. */
+  firstCardId: 'rapier-t1-tempo-stat',
+  /** The tier-2 form behind the T1 gate, crowning the same lane. */
+  gateFormId: 'gale-needle',
+  /**
+   * Where the lane's shard comes from, for the one line that names a drop
+   * source. Data-checked in `tutorial.test.ts`, so a family table edit that
+   * moves Tempo out of the Forest fails loudly instead of lying on screen.
+   */
+  shardSource: 'the Pack — the Forest\'s wolves',
+} as const;
+
+/** The leg the first-card lesson rides on — the lineage's own home biome. */
+const TUTORIAL_TREE_BIOME: T1Biome = 'forest';
 
 const RUNE_REASON: Record<string, { craft: string; equip: string }> = {
   'rune-recipe-avoid-hazards': {
@@ -131,13 +160,8 @@ function name(definitionId: string): string {
   return ITEM_DATABASE.get(definitionId)?.name ?? definitionId;
 }
 
-function biomeRef(biome: string, modifier?: string): TutorialNodeRef {
-  return { kind: 'biome', biomeGroup: biome, tier: 1, pick: 'uncleared', ...(modifier ? { modifier } : {}) };
-}
-
-function biomeHasModifier(biome: string, family: string): boolean {
-  return Object.values(NODE_BIOMES).some((info) =>
-    info.biomeGroup === biome && info.biomeTier === 1 && info.kind === 'normal' && info.modifier === family);
+function biomeRef(biome: string): TutorialNodeRef {
+  return { kind: 'biome', biomeGroup: biome, tier: 1, pick: 'uncleared' };
 }
 
 /** Essence (+ biome level) gate for a recipe as conditions. */
@@ -154,6 +178,29 @@ function costConditions(
     if ((amount ?? 0) > 0) conditions.push({ type: 'essenceAtLeast', essence: essence as EssenceType, amount: amount ?? 0 });
   }
   return conditions;
+}
+
+/** Essence + shard gate for a lineage card or a gate, as conditions. */
+function lineageCostConditions(cost: LineageCost): TutorialCondition[] {
+  const conditions: TutorialCondition[] = [];
+  for (const [essence, amount] of Object.entries(cost.essence)) {
+    if ((amount ?? 0) > 0) conditions.push({ type: 'essenceAtLeast', essence: essence as EssenceType, amount: amount ?? 0 });
+  }
+  for (const [packet, amount] of Object.entries(cost.shards)) {
+    if ((amount ?? 0) > 0) conditions.push({ type: 'shardAtLeast', packet: packet as PacketId, amount: amount ?? 0 });
+  }
+  return conditions;
+}
+
+function lineageCostProgress(cost: LineageCost): TutorialProgressRef[] {
+  const rows: TutorialProgressRef[] = [];
+  for (const [essence, amount] of Object.entries(cost.essence)) {
+    if ((amount ?? 0) > 0) rows.push({ type: 'essence', essence: essence as EssenceType, amount: amount ?? 0 });
+  }
+  for (const [packet, amount] of Object.entries(cost.shards)) {
+    if ((amount ?? 0) > 0) rows.push({ type: 'shard', packet: packet as PacketId, amount: amount ?? 0 });
+  }
+  return rows;
 }
 
 function costProgress(
@@ -197,19 +244,15 @@ class ScriptBuilder {
     const recipe = RECIPE_DATABASE.get(recipeId);
     if (!recipe) throw new Error(`unknown recipe ${recipeId}`);
     const itemName = name(recipeId);
-    const catalysts = Object.entries(recipe.catalystCost ?? {}).filter(([, amount]) => (amount ?? 0) > 0);
     this.push({
       id: `farm:${recipeId}`,
       chapter,
       say: sayFarm ?? `Next up: the ${itemName}.`,
       waiting: `Fighting in ${BIOME_NAME[recipe.recipeGroup as T1Biome] ?? recipe.recipeGroup} until the ${itemName} is ready.`,
-      progress: [
-        ...costProgress(recipe.cost, recipe.recipeGroup, recipe.requiredBiomeLevel),
-        ...catalysts.map(([family, amount]): TutorialProgressRef => ({ type: 'catalyst', family, amount: amount ?? 0 })),
-      ],
+      progress: costProgress(recipe.cost, recipe.recipeGroup, recipe.requiredBiomeLevel),
       steps: [{
         type: 'farm',
-        at: biomeRef(recipe.recipeGroup, catalysts[0]?.[0]),
+        at: biomeRef(recipe.recipeGroup),
         until: {
           type: 'anyOf',
           of: [{ type: 'hasItem', definitionId: recipeId }, { type: 'canCraft', recipeId }],
@@ -324,41 +367,12 @@ class ScriptBuilder {
     const ordered = [...groups.entries()].sort(([a], [b]) => (a === leg ? -1 : b === leg ? 1 : 0));
     let first = true;
     for (const [biome, items] of ordered) {
-      const catalystNeed = new Map<string, number>();
-      for (const target of items) {
-        const item = ITEM_DATABASE.get(target.definitionId)!;
-        for (let plus = (this.plannedPlus.get(target.definitionId) ?? 0) + 1; plus <= target.toPlus; plus += 1) {
-          for (const [family, amount] of Object.entries(upgradeCatalystCostFor(item, plus) ?? {})) {
-            catalystNeed.set(family, (catalystNeed.get(family) ?? 0) + (amount ?? 0));
-          }
-        }
-      }
-      const family = [...catalystNeed.keys()][0];
       const done: TutorialCondition = {
         type: 'allOf',
         of: items.map((t): TutorialCondition => ({ type: 'itemAtLeastPlus', definitionId: t.definitionId, plus: t.toPlus })),
       };
       const key = `${leg}:${this.upgradeSets}:${biome}`;
       const zone = BIOME_NAME[biome as T1Biome] ?? biome;
-
-      // A zone with no node of the needed modifier gets its catalysts elsewhere first.
-      if (family && !biomeHasModifier(biome, family)) {
-        const source = T1_BIOME_ORDER.find((b) => biomeHasModifier(b, family));
-        if (!source) throw new Error(`no T1 node mints ${family}`);
-        const amount = catalystNeed.get(family)!;
-        this.push({
-          id: `catalysts:${key}`,
-          chapter,
-          say: 'These upgrades also need catalysts, which drop in specially marked zones.',
-          waiting: `Fighting in a marked part of ${BIOME_NAME[source]} for catalysts.`,
-          progress: [{ type: 'catalyst', family, amount }],
-          steps: [{
-            type: 'farm',
-            at: biomeRef(source, family),
-            until: { type: 'anyOf', of: [done, { type: 'catalystAtLeast', family, amount }] },
-          }],
-        });
-      }
 
       const names = items.map((t) => name(t.definitionId)).join(', ');
       this.push({
@@ -371,7 +385,7 @@ class ScriptBuilder {
         progress: [{ type: 'upgradeCost', items }],
         steps: [{
           type: 'farm',
-          at: biomeRef(biome, family && biomeHasModifier(biome, family) ? family : undefined),
+          at: biomeRef(biome),
           until: { type: 'anyOf', of: [done, { type: 'canAffordUpgrades', items }] },
         }],
       });
@@ -442,6 +456,117 @@ class ScriptBuilder {
     }
   }
 
+  /**
+   * The weapon tree's first card: the shards that pay for it, then the buy.
+   *
+   * Two beats as everywhere else, and the farm beat is skipped automatically
+   * when the wallet already covers it — so the card beat's own line repeats the
+   * price, and the lesson survives a well-stocked character.
+   */
+  firstCard(chapter: string): void {
+    const lineage = LINEAGE_DATABASE.get(TUTORIAL_TREE.lineageId);
+    if (!lineage) throw new Error(`unknown lineage ${TUTORIAL_TREE.lineageId}`);
+    const card = lineage.cards.find((c) => c.id === TUTORIAL_TREE.firstCardId);
+    if (!card) throw new Error(`unknown lineage card ${TUTORIAL_TREE.firstCardId}`);
+    const resolved = resolveLineageCard(card, lineage);
+    const owned: TutorialCondition = { type: 'lineageCardOwned', lineageId: lineage.id, cardId: card.id };
+    const shard = shardName(card.lane);
+
+    this.push({
+      id: `shards:${card.id}`,
+      chapter,
+      say: `The ${name(lineage.forms[0].recipeId)} has a tree of its own, and its first card is paid in ${shard}s. Those drop off ${TUTORIAL_TREE.shardSource}.`,
+      waiting: `Fighting in ${BIOME_NAME[lineage.homeBiome as T1Biome] ?? lineage.homeBiome} for ${shard}s.`,
+      progress: [
+        { type: 'biomeLevel', biomeGroup: lineage.homeBiome, level: resolved.requiredBiomeLevel },
+        ...lineageCostProgress(resolved.cost),
+      ],
+      steps: [{
+        type: 'farm',
+        at: biomeRef(lineage.homeBiome),
+        until: {
+          type: 'anyOf',
+          of: [owned, {
+            type: 'allOf',
+            of: [
+              { type: 'biomeLevelAtLeast', biomeGroup: lineage.homeBiome, level: resolved.requiredBiomeLevel },
+              { type: 'globalMasteryAtLeast', value: resolved.requiredGlobalMastery },
+              ...lineageCostConditions(resolved.cost),
+            ],
+          }],
+        },
+      }],
+    });
+    this.push({
+      id: `card:${card.id}`,
+      chapter,
+      say: `Open the tree and buy ${card.name}. A card is bought once and kept; which one is active stays a free choice after that.`,
+      steps: [{ type: 'unlockCard', lineageId: lineage.id, cardId: card.id }],
+    });
+  }
+
+  /**
+   * The gate, after the seals: the boss capstone, the purchase, the next band.
+   *
+   * It sits after Tier 2 because that is the only place it fits — the gate asks
+   * for full Tier-1 Global Mastery, and a THIRD boss kill before the seals would
+   * itself count as a seal (any two biome bosses promote; `sealsHeldAtTier`).
+   */
+  gate(): void {
+    const chapter = 'The Gate';
+    const lineage = LINEAGE_DATABASE.get(TUTORIAL_TREE.lineageId);
+    if (!lineage) throw new Error(`unknown lineage ${TUTORIAL_TREE.lineageId}`);
+    const form = lineage.forms.find((f) => f.recipeId === TUTORIAL_TREE.gateFormId);
+    if (!form) throw new Error(`unknown lineage form ${TUTORIAL_TREE.gateFormId}`);
+    const cost = lineageGateCost(form, lineage);
+    const owned: TutorialCondition = { type: 'lineageFormOwned', lineageId: lineage.id, recipeId: form.recipeId };
+    const zone = ZONE_WORD[form.biome] ?? form.biome;
+    const capstone = capstoneMaterialName(form.biome);
+    const shards = Object.keys(cost.shards).map((packet) => `${shardName(packet as PacketId)}s`).join(' and ');
+
+    this.push({
+      id: `farm:gate:${form.recipeId}`,
+      chapter,
+      say: `Tier 1 is done, and this last part is optional. Tier 2 opens the ${name(form.recipeId)}: its gate wants ${zone} essence and ${shards}.`,
+      waiting: `Working ${BIOME_NAME[form.biome as T1Biome] ?? form.biome} for the gate's essence and shards.`,
+      progress: lineageCostProgress(cost),
+      steps: [{
+        type: 'farm',
+        at: biomeRef(form.biome),
+        until: { type: 'anyOf', of: [owned, { type: 'allOf', of: lineageCostConditions(cost) }] },
+      }],
+    });
+    this.push({
+      id: `capstone:${form.recipeId}`,
+      chapter,
+      say: `The gate also wants ${cost.capstone.amount} ${capstone} drops, and only the ${zone} boss has them. Going up a tier always runs through a boss.`,
+      waiting: `Fighting the ${zone} boss for ${capstone} drops.`,
+      progress: [{ type: 'capstone', biome: form.biome, amount: cost.capstone.amount }],
+      steps: [{
+        type: 'attemptBoss',
+        biomeGroup: form.biome,
+        tier: form.tier - 1,
+        until: {
+          type: 'anyOf',
+          of: [owned, { type: 'capstoneAtLeast', biome: form.biome, amount: cost.capstone.amount }],
+        },
+      }],
+    });
+    this.push({
+      id: `gate:${form.recipeId}`,
+      chapter,
+      say: `Pay the gate and wear it: the ${name(form.recipeId)}, and a whole new band of cards above the one you have.`,
+      steps: [
+        // Every melee plan swapped to the seal weapon for the bosses, and the
+        // director opens the tree BY SLOT, so without this the guide pointed at
+        // the Axe's tree while talking about the Rapier's gate (review P9).
+        { type: 'equip', definitionIds: [lineage.forms.find((f) => f.tier === form.tier - 1)?.recipeId ?? form.recipeId] },
+        { type: 'unlockForm', lineageId: lineage.id, recipeId: form.recipeId },
+        { type: 'wearForm', lineageId: lineage.id, recipeId: form.recipeId },
+      ],
+    });
+  }
+
   bosses(): void {
     const chapter = 'The Seals';
     const { bossKit, bosses } = this.plan;
@@ -480,6 +605,9 @@ class ScriptBuilder {
       const biomePlan = this.plan.biomes[biome];
       const intro = { value: BIOME_INTRO[biome] as string | undefined };
       this.items(chapter, biome, biomePlan.before, intro);
+      // The weapon's tree, taught where the weapon is earned: the Flash Rapier
+      // is worn by now, and holding the base form is what opens the tree.
+      if (biome === TUTORIAL_TREE_BIOME) this.firstCard(chapter);
       if (intro.value) {
         // No gear to open the leg with (e.g. Mountain for some classes): the
         // intro rides on the leg's first learning beat instead.
@@ -498,6 +626,7 @@ class ScriptBuilder {
       this.items(chapter, biome, biomePlan.afterMax);
     }
     this.bosses();
+    this.gate();
     return this.beats;
   }
 }

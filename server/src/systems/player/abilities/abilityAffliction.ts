@@ -183,7 +183,7 @@ export function resolveContagion(
 
   for (const victim of victims) {
     for (const entry of entries) {
-      copyDotOnto(world, player, victim, entry);
+      copyPlayerDotOnto(world, player, victim, entry);
     }
     for (const element of elements) {
       links.push({ to: { ...victim.hasPosition.current }, element });
@@ -231,11 +231,17 @@ export function resolveContagion(
  * target — an ability that can make your own damage worse is a bug, not a
  * trade-off.
  */
-function copyDotOnto(
+export function copyPlayerDotOnto(
   world: World,
   player: PlayerEntity,
   victim: MonsterEntity,
   entry: DotInventoryEntry,
+  /**
+   * Share of the source's stacks the copy carries. 1 (Contagion's own default)
+   * copies the affliction whole; a lineage `contagion` payoff passes its authored
+   * fraction, which is what makes a card a trickle and the Technique a flood.
+   */
+  stackFraction = 1,
 ): void {
   const source = entry.effect;
   // Captured BEFORE applying: `applyStatusEffect` INCREMENTS an existing stack
@@ -255,7 +261,7 @@ function copyDotOnto(
     data: { ...source.data },
   });
 
-  mergeCopiedDot(applied, source, priorStacks);
+  mergeCopiedDot(applied, source, priorStacks, stackFraction);
 
   if (entry.marker) attachMarker(world, victim, entry.marker);
 }
@@ -267,12 +273,19 @@ function mergeCopiedDot(
   applied: StatusEffect,
   source: StatusEffect,
   priorStacks: number,
+  stackFraction = 1,
 ): void {
   // Set explicitly from what was ALREADY there versus what is arriving — never
   // from `applied.stacks`, which `applyStatusEffect` has already incremented.
   // Capped at the effect's own ceiling so a copy can never exceed what the
   // target could have accumulated on its own.
-  const merged = Math.max(priorStacks, source.stacks);
+  // A partial share still delivers at least one stack: a copy of nothing is not a
+  // weaker spread, it is a spread that did not happen, and the caller already
+  // decided it should.
+  const arriving = stackFraction >= 1
+    ? source.stacks
+    : Math.max(1, Math.round(source.stacks * Math.max(0, stackFraction)));
+  const merged = Math.max(priorStacks, arriving);
   applied.stacks = source.maxStacks > 0 ? Math.min(merged, source.maxStacks) : merged;
   applied.remainingMs =
     applied.remainingMs < 0 || source.remainingMs < 0

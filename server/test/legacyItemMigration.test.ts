@@ -6,7 +6,7 @@ import { ITEM_DATABASE, RECIPE_DATABASE, emptyEquipment } from "@mmo-idle/shared
 import { migrateLegacyItems, migrateLegacyRecipeIds } from "../src/db/playerRepo";
 import type { HoldsInventory } from "@mmo-idle/shared";
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 

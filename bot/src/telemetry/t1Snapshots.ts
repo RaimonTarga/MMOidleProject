@@ -82,8 +82,6 @@ export function buildT1CharacterSnapshot(
     visitedNodes: [...self.visitedNodes],
     questProgress: cloneRecord(self.questProgress),
     essences: cloneRecord(self.essences),
-    catalysts: cloneRecord(self.catalysts),
-    catalystProgress: cloneRecord(self.catalystProgress),
     inventory: [...self.inventory],
     equipment: { ...self.equipment },
     itemUpgrades: cloneRecord(self.itemUpgrades),

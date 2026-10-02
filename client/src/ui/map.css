@@ -1193,6 +1193,64 @@
 .map-modifier__value--down { color: #ff6f6f; }
 .map-modifier__value--neutral { color: #d4d1df; }
 
+/* Family blend + shard rows in the node detail panel (design 12). */
+.map-family-rows {
+  margin: 7px 0 0;
+  display: grid;
+  gap: 3px;
+}
+
+.map-family-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 3px;
+  border-top: 1px solid rgba(190, 183, 210, 0.1);
+  font-size: 10px;
+}
+
+.map-family-row--minor {
+  opacity: 0.72;
+}
+
+.map-family-row dt {
+  color: rgba(212, 208, 223, 0.86);
+  font-weight: 700;
+}
+
+.map-family-row dd {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: rgba(212, 208, 223, 0.72);
+}
+
+.map-family-row__share {
+  min-width: 26px;
+  text-align: right;
+  font-weight: 700;
+  color: #d4d1df;
+}
+
+.map-family__absent {
+  margin-top: 6px;
+  font-size: 10px;
+  color: rgba(230, 225, 210, 0.55);
+}
+
+.map-boss-capstone {
+  margin: 2px 0 4px;
+  font-size: 11px;
+  line-height: 1.35;
+  color: rgba(230, 225, 210, 0.85);
+}
+
+.shard-icon {
+  border-radius: 3px;
+}
+
 /* ── Sparse stitched world (Map Variety Stage B) ─────────────────────────── */
 
 .game-dialog__panel.map-dialog {

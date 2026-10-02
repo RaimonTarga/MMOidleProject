@@ -7,7 +7,7 @@ import { attackFlairOf, flairCount } from '../../client/src/fx/attackFlair';
 // the stage ladder follows class advancement, ascension scales intensity, and
 // every tier-3 specialization has its own animation.
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 

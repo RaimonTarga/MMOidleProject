@@ -10,6 +10,7 @@ import {
 import type { World } from "./World";
 import type { PlayerEntity } from "../ecs/entity";
 import type { PersistedPlayerSlices } from "../db/playerRepo";
+import { syncLineagesFromInventory } from '../systems/player/economy/lineageSync';
 import { resolvePlayerHitbox } from "../hitbox/resolve";
 import { freezeNode } from "./nodeLifecycle";
 import { despawnMinionsForOwner } from "../systems/classes/archetypes/summoner";
@@ -25,6 +26,11 @@ export function attachPlayerEntity(
 ): PlayerEntity {
   Object.assign(player.tracksProgression, migrateAttunement(player.tracksProgression));
   delete (player.tracksProgression as unknown as { equippedAbilities?: unknown }).equippedAbilities;
+  // Lineage wallets, normalized here rather than at each construction site: a
+  // save written before the progression rework has neither, and the reward seam
+  // and the four economy handlers both write into them unconditionally.
+  player.tracksProgression.shards ??= {};
+  player.tracksProgression.capstones ??= {};
   const craftedRuneRecipes = player.tracksProgression.runeRecipesCrafted ?? [];
   player.tracksProgression.runeRecipesCrafted = craftedRuneRecipes;
   player.tracksProgression.runesOwned = runeIdsFromCraftedRecipes(craftedRuneRecipes);
@@ -86,6 +92,11 @@ export function attachPlayerEntity(
   entity.hasHitbox = resolvePlayerHitbox(entity);
   world.ecs.add(entity);
   world.incrementPlayersInNode(entity.hasPosition.nodeId);
+  // Give every lineage the character already holds a base form of its tree. This
+  // is what a save written before Phase 1 gets: crafting the Flash Rapier was
+  // always how you took the weapon slot, so the tree opens live rather than
+  // demanding a second purchase for something already owned.
+  syncLineagesFromInventory(world, entity);
   return entity;
 }
 

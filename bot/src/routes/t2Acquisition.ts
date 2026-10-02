@@ -5,7 +5,7 @@ import {
   type TierEntryProfile,
 } from "@mmo-idle/shared";
 import type { RouteStep } from "../route/types";
-import { soleCatalystFamily, t2, t2FarmFor, type T2BiomeGroup } from "./t2Common";
+import { t2, type T2BiomeGroup } from "./t2Common";
 
 /**
  * How a Tier-2 item is actually obtained.
@@ -119,16 +119,7 @@ export function planAcquisition(
  * report rather than crash on.
  */
 export function obtainSteps(group: T2BiomeGroup, plan: AcquisitionPlan): RouteStep[] {
-  const recipe = RECIPE_DATABASE.get(plan.recipeId)!;
-  // The catalyst family this purchase needs decides WHERE to farm for it, because
-  // catalysts are minted by the node modifier and nothing else. Evolve and
-  // reconstruct have separate catalyst cost axes, so the family is read from the
-  // one this plan will actually pay. See `t2FarmFor` for the measured failure
-  // this prevents.
-  const family = soleCatalystFamily(
-    plan.path === "reconstruct" ? recipe.reconstructCatalystCost : recipe.catalystCost,
-  );
-  const at = t2FarmFor(group, family);
+  const at = t2(group);
   const gate: RouteStep = {
     // The GATE farm is about biome XP, which any node in the biome grants, so it
     // stays on the plain rotating ref and spreads load across the biome.

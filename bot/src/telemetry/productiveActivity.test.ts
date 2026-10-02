@@ -129,8 +129,6 @@ try {
       revision: "test",
       arm: "C",
       t1Plus5EssenceCostMultiplier: 1,
-      catalystProgressPerUnitT1: 150,
-      catalystsScaledByRewardMultiplier: false,
       t1BiomeXpRewardMultiplier: 1,
       t1BiomeEssenceRewardMultiplier: 1,
       t1Plus5EssenceCosts: {},

@@ -35,11 +35,12 @@ function playerSlices(id: string): PersistedPlayerSlices {
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null }, knownStances: [],
+      attunedAbilities: { techniques: [], guards: [] }, knownStances: [],
       equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
@@ -140,7 +141,7 @@ initCombatSystems();
     });
   }
   syncPlayerBuffs(world, 1_000);
-  const tile = player.hasStatus.activeBuffs.find(buff => buff.id === 'debuff-plating-shred');
+  const tile = player.hasStatus.activeBuffs!.find(buff => buff.id === 'debuff-plating-shred');
   assert(tile?.stacks === 3, 'corrosion should publish its stack count on the player bar');
   assert(
     tile.values?.some(value => value.label === 'Plating stripped' && value.value === '-6'),
@@ -227,7 +228,7 @@ initCombatSystems();
   const player = world.attachPlayerEntity(playerSlices('raise-target'), 'raise-target');
   const gravewright = world.createMonster(NODE, 'gravewright', { x: 400, y: 400 });
   assert(gravewright, 'Gravewright should spawn');
-  world.corpses.set(NODE, [{ monsterTypeId: 'plague-rat', pos: { x: 430, y: 400 }, diedAtMs: 1_000 }]);
+  world.corpses.set(NODE, [{ id: 'corpse-wave1', monsterTypeId: 'plague-rat', pos: { x: 430, y: 400 }, diedAtMs: 1_000 }]);
   setAggroTarget(world, gravewright, { id: player.isPlayer.id, kind: 'player' }, 1_000);
 
   updateRaisers(world, 1_000);
@@ -253,6 +254,7 @@ initCombatSystems();
   const boss = world.createMonster(NODE, 'charnel-crown-sovereign', { x: 400, y: 400 });
   assert(boss, 'Charnel-Crown Sovereign should spawn');
   world.corpses.set(NODE, [0, 1, 2].map(index => ({
+    id: `corpse-wave1-${index}`,
     monsterTypeId: 'plague-rat',
     pos: { x: 430 + index * 10, y: 400 },
     diedAtMs: 1_000,

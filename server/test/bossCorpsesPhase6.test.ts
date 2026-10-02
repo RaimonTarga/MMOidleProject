@@ -41,7 +41,7 @@ import { buildNodeDelta } from '../src/world/nodeDelta';
 import { World } from '../src/world/World';
 import type { MonsterEntity } from '../src/ecs/entity';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -55,11 +55,12 @@ function playerSlices(id: string): PersistedPlayerSlices {
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {},
+      shards: {}, capstones: {},
+      biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [],
-      attunedAbilities: { technique: null, guard: null }, knownStances: [],
+      attunedAbilities: { techniques: [], guards: [] }, knownStances: [],
       equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
@@ -116,7 +117,7 @@ function sovereign(world: World, playerId: string): MonsterEntity {
   assert(views.every(v => v.reservedBy === undefined), 'nothing is claimed yet');
 
   // It actually reaches the wire.
-  const { snapshot } = buildNodeDelta(world, NODE, true);
+  const { snapshot } = buildNodeDelta(world, NODE, { patched: new Map(), detached: new Map() });
   assert(snapshot.corpses?.length === 3, 'corpses should ride the node delta');
 }
 
@@ -127,7 +128,7 @@ function sovereign(world: World, playerId: string): MonsterEntity {
     buildCorpseViews(world, NODE, Date.now()) === undefined,
     'an empty node should omit corpses entirely',
   );
-  const { snapshot } = buildNodeDelta(world, NODE, true);
+  const { snapshot } = buildNodeDelta(world, NODE, { patched: new Map(), detached: new Map() });
   assert(snapshot.corpses === undefined, 'and send no key at all');
 }
 

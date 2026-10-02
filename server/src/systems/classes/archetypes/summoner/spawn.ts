@@ -10,6 +10,7 @@ import { emitMonsterSession } from '../../../combat/engine/sessionObservation';
  */
 import {
   FALLBACK_MONSTER_AABB,
+  GAME_CONFIG,
   initIsMinion,
   makeTracksCombat,
   MINION_BASE_DISPLAY_SIZE,
@@ -29,15 +30,26 @@ import { setAttackTarget } from '../../../combat/ai/targeting';
 import { stopEntity } from '../../../world/movement';
 import { summonerProfileFor } from './profile';
 import { emitSummonObservation } from './observation';
+import {
+  applySummonerLineBonus,
+  summonerLineBonus,
+  type SummonerLineBonus,
+} from './lineHolds';
 
 /**
- * A minion's flat out-of-combat Recovery (HP/s): the owner's flat rate scaled
- * by the minion's pool relative to the owner's, so a body one third the size
- * heals a third as many HP per second and refills on the same clock (Phase 0b).
+ * A minion's OUT-OF-COMBAT regen rate (HP/s): a fixed share of its own pool.
+ *
+ * `runMinionRegen` only ever runs out of combat, so this follows the player's
+ * out-of-combat rule — `maxHp × OOC_RECOVERY_PCT`, independent of the Recovery stat
+ * (design bible §15: downtime is a constant 10 s at every tier). It used to read the
+ * owner's IN-COMBAT Recovery instead, which made a naked T1 summoner's bodies refill
+ * at ~5%/s against the player's own fixed 10%/s, and let Recovery gear speed up a
+ * clock that is deliberately constant. "The same clock" is now true: pool share in,
+ * pool share out, so a body one third the size heals a third as many HP per second
+ * and empty-to-full takes exactly as long as the owner's does.
  */
-export function minionRecoveryFor(owner: PlayerEntity, minionMaxHp: number): number {
-  const ownerMaxHp = Math.max(1, owner.hasHealth.maxHp);
-  return Math.round((owner.hasHealth.recovery ?? 0) * (minionMaxHp / ownerMaxHp) * 100) / 100;
+export function minionRecoveryFor(minionMaxHp: number): number {
+  return Math.round(minionMaxHp * GAME_CONFIG.OOC_RECOVERY_PCT * 100) / 100;
 }
 
 
@@ -98,16 +110,30 @@ export function computeMinionMaxHp(owner: PlayerEntity, slot = 0): number {
  * plating and DR in full (a copy, not a split). Plains/Forest swarm hits are
  * tuned to be eaten by plating, so unarmored summons took every hit at full
  * strength while every other class shrugged them off.
+ *
+ * `lineBonus` is Consort's frame loop on top of that (`lineHolds.ts`): the whole
+ * formation's share while every slot still stands. It is a REQUIRED argument rather
+ * than a default so a future call site cannot silently drop it — this function and
+ * the per-tick resync disagreeing is the exact trap `summoner.minion-damage-pct`
+ * already fell into once (see `syncLiveMinionFrameStats`).
  */
-export function computeMinionMitigation(owner: PlayerEntity): { plating: number; damageReduction: number } {
-  return {
+export function computeMinionMitigation(
+  owner: PlayerEntity,
+  lineBonus: SummonerLineBonus,
+): { plating: number; damageReduction: number } {
+  return applySummonerLineBonus({
     plating: owner.mitigatesDamage.plating,
     damageReduction: owner.mitigatesDamage.damageReduction,
-  };
+  }, lineBonus);
 }
 
-export function syncMinionMitigation(world: World, minion: MinionEntity, owner: PlayerEntity): void {
-  const desired = computeMinionMitigation(owner);
+export function syncMinionMitigation(
+  world: World,
+  minion: MinionEntity,
+  owner: PlayerEntity,
+  lineBonus: SummonerLineBonus,
+): void {
+  const desired = computeMinionMitigation(owner, lineBonus);
   if (minion.mitigatesDamage.plating === desired.plating
     && minion.mitigatesDamage.damageReduction === desired.damageReduction) return;
   minion.mitigatesDamage.plating = desired.plating;
@@ -243,7 +269,7 @@ export function spawnMinionForOwner(
     hasHealth: {
       hp: maxHp,
       maxHp,
-      recovery: minionRecoveryFor(owner, maxHp),
+      recovery: minionRecoveryFor(maxHp),
     },
     dealsDamage: {
       attack,
@@ -255,7 +281,11 @@ export function spawnMinionForOwner(
       attackCooldown,
       lastAttackAt: 0,
     },
-    mitigatesDamage: computeMinionMitigation(owner),
+    // The line bonus is read HERE too, not just in the resync: a body that
+    // completes the formation sees it one call later in the same summoner pass
+    // anyway, and sharing the one function is what keeps spawn and resync from
+    // drifting apart.
+    mitigatesDamage: computeMinionMitigation(owner, summonerLineBonus(world, owner)),
     tracksCombat: makeTracksCombat(),
     hasStatus: {},
   };

@@ -1,7 +1,7 @@
 import { authenticateSocketHandshake } from '../src/auth/socketAuth';
 import type { DB } from '../src/db/playerRepo';
 
-function assert(condition: boolean, message: string): void {
+function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
 }
 

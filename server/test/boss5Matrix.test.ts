@@ -28,7 +28,7 @@ import { BOSS2_SEED } from '../bench/balance/boss2Spec';
 import { REFERENCE_GUARDS } from '../bench/balance/boss1Spec';
 import { resolveSurveyPackage } from '../bench/balance/ttkSurveySpec';
 
-function assert(condition: boolean, message: string): asserts condition {
+function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -104,7 +104,7 @@ assertBoss5Definitions();
   const cave = BOSS5_BLOCKS_DEF.find((b) => b.kind === 'cave-refinement')!;
   assert(cave.seed === BOSS5_CAVE_SEED && cave.seed === BOSS2_SEED,
     `cave-refinement: seed ${cave.seed} is not the carried ${BOSS2_SEED}`);
-  assert(BOSS5_SEED !== BOSS5_CAVE_SEED,
+  assert((BOSS5_SEED as number) !== BOSS5_CAVE_SEED,
     'the breadth seed and the carried Cave seed must be distinguishable in the artifacts');
 
   // WHAT A SEED CAN MOVE. Boss1 established that a boss with no adds, a fixed spawn
