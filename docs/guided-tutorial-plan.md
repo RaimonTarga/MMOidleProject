@@ -265,6 +265,54 @@ All 2026-09-29, dev stack, 25x rewards (pipeline evidence, not balance evidence)
   boss's endless one-slime-per-12-s trickle keeps the Squire's timed strikes on
   adds. Worth watching in a hand playtest.
 
+### 2026-10-02, revision `a5d49ae9` — the tree lessons and the gate chapter, live
+
+First live `bot:run` of the tree lessons and the gate chapter (run 3's W1-E built
+them against the two in-process validations only). All on the wave-1 merge
+`a5d49ae9`, local dev stack, **25x rewards, so still pipeline evidence, not
+balance evidence** — with one extra caveat specific to this chapter, below.
+
+Runs were **solo and sequential**, not the parallel cohort the 2026-09-29 rows
+used, so a boss result here is uncontended. Striker ran with the route's authored
+boss budget; the other five added `--fastBossRetry --fastBossRetryIncludeGuardians=true`
+(a second recorded taint, `NON_CANONICAL_FAST_BOSS_RETRY`) because an authored
+attempt costs ~4.3 min of travel-and-rest and twelve of them do not fit a run
+cap. `includeGuardians=true` keeps the guard clear and the boss fight intact and
+skips only overworld travel, dungeon traversal and the guardian-reform wait.
+
+Every class that reached a chapter passed every beat of it: the two tree-lesson
+beats (`shards:` / `card:rapier-t1-tempo-stat`) and all three gate beats
+(`farm:gate:` / `capstone:` / `gate:gale-needle`) performed correctly, and
+`gate-paid` plus the T2 band followed. **No script-level failure was found** —
+nothing in anchors, waits, ordering or route composition needed fixing.
+
+What this evidence does **not** cover:
+
+- **25x collapses the gate's own cost.** The dev multiplier scales essence,
+  biome XP, shards *and* capstones (`grantLineageMaterials`), so one boss kill
+  grants `round(25)` capstones against a gate that asks for 3, and the gate's
+  180 essence + 10 Tempo Shards are already paid by ordinary farming. A gate
+  farm beat therefore costs **0 s** and the `capstone:` beat needs **one**
+  Greatbear kill, not three. The chapter's three-kill shape only exists at 1x,
+  and no multiplier accelerates farming while leaving the capstone count intact
+  (anything ≥ 3 collapses it, and 1x is 1x).
+- **1x was not run at all.** See "Running the validation": at 25x a full route
+  is 27–60 min, and the multiplier scales the two dominant costs (essence and
+  biome XP) linearly, so one canonical 1x route is on the order of ten hours and
+  a six-class sweep is out of reach of a single session. No 1x row exists yet for
+  any class.
+- **The farewell is not bot-testable.** `TUTORIAL_FAREWELL` (including the frames
+  line) is panel copy, not a beat, so `bot:run` never exercises it. It still
+  needs a real-client pass.
+
+One harness note for whoever reads a gate stall: the gate's `attemptBoss` budget
+is `TUTORIAL_GATE_BOSS_ATTEMPTS` (4) *per round* of `TUTORIAL_GATE_BOSS_ROUNDS`
+(5), and the inner step's exhaustion does not end the repeat — `failedRequirement`
+only short-circuits `bossCleared` conditions, and the gate's `until` is
+`anyOf(lineageFormOwned, capstoneAtLeast)`. So a walled class really does fight
+up to twenty times, travelling back to the dungeon between rounds, which is what
+consumes its run cap.
+
 ## Findings
 
 - **The Forest boss walls a GM-30, +5 Striker.** Gnarled Greatbear's Bestial
