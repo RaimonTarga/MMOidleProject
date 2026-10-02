@@ -112,9 +112,12 @@ Both matrices are six classes × five bosses × 30 seeds, GM 30, +5 gear, the gu
 - Four of six classes still lose to something: Striker (Razorback 90%, Behemoth 77%),
   Squire and Spirit (Toadeater 87%), Apprentice (Greatbear 97%).
 
-`pre-pass.jsonl` was measured with the final lab build, reverting only the three boss
-rows, and it agrees with the original `base.jsonl` cell for cell — the check that the new
-instrumentation did not move the fights.
+`pre-pass.jsonl` was measured with the final lab build, reverting only the three boss rows
+through `bp`, and it reproduces the original `base.jsonl` **exactly: all 900 fights match
+on outcome, duration and boss HP left, and 0 of 30 cells differ by a single win.** That is
+the check that the instrumentation which landed alongside the tuning did not itself move
+any fight, and it is also a check on the `bp` override path — reverting three numbers
+through it lands back on the measurement taken before they were edited in the data file.
 
 ---
 
