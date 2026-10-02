@@ -21,6 +21,8 @@ import {
   ROW_KINDS,
   TEST_ROOM_NODE_ID,
   TUTORIAL_ANCHORS,
+  ESSENCE_LABELS,
+  nodeAxisBlurb,
   absorbedStatCards,
   bandBiomeFloor,
   bandContents,
@@ -118,6 +120,11 @@ function formatPayoff(payoff: LineagePayoff): string {
 }
 
 function describeCardEffect(resolved: ResolvedLineageCard): string | null {
+  // An amplifier's resolved payoff is the BOOST it applies to the card it
+  // modifies, and a keystone's is the share its rule reads; neither is a number
+  // the game applies as a payoff, so neither is shown as one (review P5).
+  if (resolved.card.row === 'amplifier') return nodeAxisBlurb(resolved.card.amplifies ?? 'duration');
+  if (resolved.card.row === 'keystone') return null;
   return formatStatEffect(resolved) ?? (resolved.payoff ? formatPayoff(resolved.payoff) : null);
 }
 
@@ -193,11 +200,14 @@ function CardTile({
   // biome the resolved card names — not in the lineage's home biome.
   const resolved = resolveLineageCardFor(lineage, progress, card);
   const haveLevel = wallet.biomeLevels[resolved.requiredBiomeGroup] ?? 0;
-  const masteryLocked = !wallet.isTestRoom && (
+  const owned = progress.ownedCards.includes(card.id);
+  // Mastery gates the PURCHASE. Owned is forever and active is a choice (the
+  // server's setActive has no mastery gate), so an owned card is never disabled
+  // by a door biome that moved with a form change (review P12).
+  const masteryLocked = !owned && !wallet.isTestRoom && (
     haveLevel < resolved.requiredBiomeLevel
     || (wallet.globalMastery !== undefined && wallet.globalMastery < resolved.requiredGlobalMastery)
   );
-  const owned = progress.ownedCards.includes(card.id);
   const active = progress.active[card.row] === card.id;
   const check = checkUnlockCard({ lineage, card, progress, wallet, lineages });
   const activateCheck = owned && !active
@@ -528,7 +538,7 @@ function WalletSection({ lineage, tier, wallet }: { lineage: LineageDefinition; 
       <h3>Materials</h3>
       <div className="lin-wallet">
         <div>
-          <span>{essenceType} essence</span>
+          <span>{ESSENCE_LABELS[essenceType]}</span>
           <b>{wallet.essences[essenceType] ?? 0}</b>
         </div>
         {lineage.lanes.map((lane) => (

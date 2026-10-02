@@ -229,6 +229,19 @@ initCombatSystems();
     "a weaker slow refreshing the same source must not change the magnitude",
   );
 
+  // A weaker, SHORTER source (the at-bay tap: 20% for 1.2 s) must neither override
+  // the magnitude nor cut the stronger slow's clock, and the clock it leaves must
+  // be consistent (remaining <= total) — review finding P7, 2026-10-02.
+  {
+    const strong = getStatusEffect(target.tracksCombat, ABILITY_SLOW_EFFECT_ID)!;
+    strong.remainingMs = 3000; strong.data["totalMs"] = 3000;
+    applyMonsterSlow(world, target, 0.2, 1200, "at-bay");
+    const after = getStatusEffect(target.tracksCombat, ABILITY_SLOW_EFFECT_ID)!;
+    assert(after.data["moveSlowPct"] === 0.5, `the stronger slow keeps its magnitude, got ${after.data["moveSlowPct"]}`);
+    assert(after.remainingMs === 3000, `the stronger slow keeps its clock, got ${after.remainingMs}`);
+    assert(after.remainingMs <= (after.data["totalMs"] ?? 0), "the clock never reads above 100%");
+  }
+
   // A slow can never become a silent root.
   applyMonsterSlow(world, target, 5, 4000, "tester");
   updateMonsterSlows(world);

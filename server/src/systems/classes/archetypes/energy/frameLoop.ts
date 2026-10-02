@@ -168,7 +168,7 @@ function chainVictims(
 export function registerEnergyFrameLoop(): void {
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
-    if (!ctx.metadata['empoweredAttack']) return;   // discharges only
+    if (!ctx.metadata['mechanicConsumed']) return;  // discharges only (not Overdrive crit styling)
     const player = ctx.attacker;
     if (!player.usesEnergy) return;
     const passives = player.usesSkills.passives;

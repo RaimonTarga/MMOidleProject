@@ -18,7 +18,8 @@ import { TutorialHighlight } from './TutorialHighlight';
 import './tutorial.css';
 
 /** `done` = the guide finished (Tier 2) and the farewell was dismissed. */
-type Choice = 'on' | 'off' | 'done';
+// 'farewell' is the transient state between "I'm done" and "Thanks!" (review P10).
+type Choice = 'on' | 'off' | 'done' | 'farewell';
 
 const STORAGE_PREFIX = 'mmo_idle.tutorial.';
 
@@ -181,8 +182,8 @@ export function TutorialPanel() {
   // for full Tier-1 mastery and a third boss before the seals would itself be
   // one (`sealsHeldAtTier` counts any two biome bosses).
   const scriptDone = !script || index >= script.beats.length;
-  if (view.playerTier >= 2 && scriptDone) {
-    if (choice !== 'on') return null;
+  if (view.playerTier >= 2 && (scriptDone || choice === 'farewell')) {
+    if (choice !== 'on' && choice !== 'farewell') return null;
     return (
       <HudPanel className="sidebar-panel tutorial-panel tutorial-panel--farewell">
         <div className="panel-title">Guide</div>
@@ -310,7 +311,7 @@ export function TutorialPanel() {
                   optional lesson, so there has to be a way to the farewell
                   that is not "Stop the guide". */}
               {view.playerTier >= 2 && (
-                <button type="button" className="tutorial-button" onClick={() => setChoice('done')}>
+                <button type="button" className="tutorial-button" onClick={() => setChoice('farewell')}>
                   I'm done
                 </button>
               )}

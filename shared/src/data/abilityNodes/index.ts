@@ -103,7 +103,7 @@ const PAYOFF_BLURB: Record<string, string> = {
   'plating-stack': 'also banks a stack of plating.',
   'technique-refund': 'also pays part of its own cooldown back.',
   'technique-window': 'also loads the next Technique.',
-  'evasion-window': 'also opens a window where you are more likely to dodge outright.',
+  'evasion-window': 'also opens a window where you are more likely to graze a hit.',
 };
 
 /** The blurb for a payoff, or a plain fallback if a new kind arrives unnamed. */

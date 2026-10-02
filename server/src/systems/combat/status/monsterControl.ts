@@ -55,15 +55,26 @@ export function applyMonsterSlow(
   sourceId: string,
 ): void {
   if (slowPct <= 0 || durationMs <= 0) return;
-  applyStatusEffect(monster.tracksCombat, {
+  // Max wins on both axes (review finding P7, 2026-10-02): a plain refresh kept
+  // the OLD record's data and overwrote its clock, so a 20%/1.2 s at-bay tap
+  // landing on a 40%/3 s Hamstring left the slow at 20% with a clock reading
+  // 250%, then cut it back to 1.2 s on the next tap.
+  const prior = getStatusEffect(monster.tracksCombat, ABILITY_SLOW_EFFECT_ID);
+  const pct = Math.max(slowPct, prior?.data['moveSlowPct'] ?? 0);
+  const remainingMs = Math.max(durationMs, prior?.remainingMs ?? 0);
+  const totalMs = Math.max(durationMs, prior?.data['totalMs'] ?? 0, remainingMs);
+  const effect = applyStatusEffect(monster.tracksCombat, {
     id: ABILITY_SLOW_EFFECT_ID,
     maxStacks: 1,
-    remainingMs: durationMs,
+    remainingMs,
     refreshable: true,
     sourceId,
     // `totalMs` is required for the buff-bar clock on every timed effect.
-    data: { totalMs: durationMs, moveSlowPct: slowPct },
+    data: { totalMs, moveSlowPct: pct },
   });
+  effect.remainingMs = remainingMs;
+  effect.data['moveSlowPct'] = pct;
+  effect.data['totalMs'] = totalMs;
   attachMarker(world, monster, "hasAbilitySlow");
 }
 

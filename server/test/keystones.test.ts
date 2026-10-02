@@ -329,7 +329,7 @@ function keystoneFx(lane: PacketId): Array<Extract<CombatEvent, { kind: 'card-fx
   const targetHp = target.hasHealth.hp;
   const nearHp = near.hasHealth.hp;
   const farHp = far.hasHealth.hp;
-  hit(player, target, { empoweredAttack: true, empoweredMultiplier: 2 }, 400);
+  hit(player, target, { empoweredAttack: true, mechanicConsumed: true, empoweredMultiplier: 2 }, 400);
 
   assert(near.hasHealth.hp < nearHp, 'Shockwave must hit a body inside the footprint');
   assert(far.hasHealth.hp === farHp, 'Shockwave must not reach outside the footprint');
@@ -357,14 +357,14 @@ function keystoneFx(lane: PacketId): Array<Extract<CombatEvent, { kind: 'card-fx
   const plainTarget = monster(7000, 7000);
   const plainNear = monster(7050, 7000);
   const plainBefore = plainNear.hasHealth.hp;
-  hit(player, plainTarget, { empoweredAttack: true }, 400);
+  hit(player, plainTarget, { empoweredAttack: true, mechanicConsumed: true }, 400);
   const plainSplash = plainBefore - plainNear.hasHealth.hp;
   cardFx();
 
   const empTarget = monster(8000, 8000);
   const empNear = monster(8050, 8000);
   const empBefore = empNear.hasHealth.hp;
-  hit(player, empTarget, { empoweredAttack: true, empoweredMultiplier: 2 }, 400);
+  hit(player, empTarget, { empoweredAttack: true, mechanicConsumed: true, empoweredMultiplier: 2 }, 400);
   const empSplash = empBefore - empNear.hasHealth.hp;
   cardFx();
   assert(

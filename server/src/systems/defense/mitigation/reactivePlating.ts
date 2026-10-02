@@ -1,4 +1,4 @@
-import { getResource, setResource, isCooldownActive, setCooldown } from '@mmo-idle/shared';
+import { getResource, setResource, isCooldownActive, setCooldown, type TracksCombat } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../combat/engine/combatPipeline';
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -104,4 +104,14 @@ export function runReactivePlating(world: World, player: PlayerEntity, dt: numbe
     setResource(cs, APPLIED_KEY, target);
     markSliceDirty(world, player, 'mitigatesDamage');
   }
+}
+
+/**
+ * Forget the applied bookkeeping WITHOUT unwinding the stat. For a recalc that
+ * restores `resources` wholesale after `resetReactivePlating` already unwound the
+ * bonus and rebuilt the base: the restored `*Applied` would otherwise describe a
+ * bonus that is no longer on the stat, and the next fade would subtract it twice.
+ */
+export function forgetReactivePlatingApplied(cs: TracksCombat): void {
+  setResource(cs, APPLIED_KEY, 0);
 }

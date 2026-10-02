@@ -27,7 +27,8 @@ import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import type { PlayerEntity } from '../src/ecs/entity';
 import { World } from '../src/world/World';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
-import { runReactivePlating } from '../src/systems/defense/mitigation/reactivePlating';
+import { resetReactivePlating, runReactivePlating } from '../src/systems/defense/mitigation/reactivePlating';
+import { recalculatePlayerStatsPreservingCombatState } from '../src/ecs/playerEntityFormulas';
 import { lineagePlatingStackFraction } from '../src/systems/combat/lineageCards';
 import { applyStatusEffect } from '@mmo-idle/shared';
 
@@ -108,6 +109,31 @@ assert.equal(
   BASE_PLATING + expectedPerStack,
   'the plating stat should carry exactly one stack of the card on top of the base',
 );
+
+// A state-preserving recalc (stance switch, core swap, the tier-up kill) unwinds
+// the bonus and rebuilds the base, then restores `resources`. The restored
+// `reactivePlatingApplied` must NOT describe a bonus that is no longer on the
+// stat, or the next fade subtracts it from the fresh base (review finding P2).
+{
+  recalculatePlayerStatsPreservingCombatState(world, player);
+  const rebuiltBase = player.mitigatesDamage.plating;
+  assert.equal(
+    Math.round(getResource(player.tracksCombat, 'reactivePlatingApplied')),
+    0,
+    'after a preserving recalc the applied bookkeeping is zero, like the bonus it described',
+  );
+  assert.equal(
+    getResource(player.tracksCombat, 'reactivePlatingStacks'),
+    1,
+    'the stacks themselves survive the recalc',
+  );
+  resetReactivePlating(player);
+  assert.equal(
+    player.mitigatesDamage.plating,
+    rebuiltBase,
+    'fading the stacks after a preserving recalc never drops plating below the rebuilt base',
+  );
+}
 assert(
   new Set(seen).size === 1,
   `the applied plating must not climb across refreshes; went ${seen.join(' -> ')}`,

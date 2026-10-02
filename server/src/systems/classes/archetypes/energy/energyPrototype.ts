@@ -72,7 +72,9 @@ export function initEnergyArchetype(): void {
   // is precisely "the burst just landed".
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
-    if (!ctx.metadata['empoweredAttack']) return;
+    // `mechanicConsumed`, not `empoweredAttack`: Surge sets the latter on every
+    // Overdrive hit for crit styling, which made every such hit "the burst".
+    if (!ctx.metadata['mechanicConsumed']) return;
     if (!ctx.attacker.usesEnergy) return;
     emitMechanicFired(world, ctx.attacker, ctx);
   });

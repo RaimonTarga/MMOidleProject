@@ -8,9 +8,9 @@ import { attachComponent, detachComponent } from './markerHelpers';
 import { markSliceDirty } from './dirtyHelpers';
 import { hitboxEqual, resolvePlayerHitbox } from '../hitbox/resolve';
 import { syncDevInvulnerability } from '../dev/syncDevInvulnerability';
-import { resetStationaryDr } from '../systems/defense/mitigation/stationaryDr';
-import { resetReactivePlating } from '../systems/defense/mitigation/reactivePlating';
-import { resetBramblePlating } from '../systems/player/abilities/abilityBramble';
+import { forgetStationaryDrApplied, resetStationaryDr } from '../systems/defense/mitigation/stationaryDr';
+import { forgetReactivePlatingApplied, resetReactivePlating } from '../systems/defense/mitigation/reactivePlating';
+import { forgetBramblePlatingApplied, resetBramblePlating } from '../systems/player/abilities/abilityBramble';
 import { syncBarrier } from '../systems/defense/barrier/barrier';
 import { refreshLineageRuntime } from '../systems/combat/lineageCards';
 import { refreshAbilityNodeRuntime } from '../systems/combat/abilityNodes';
@@ -121,6 +121,14 @@ export function recalculatePlayerStatsPreservingCombatState(world: World, entity
 
   cs.counters = combatSnapshot.counters;
   cs.resources = combatSnapshot.resources;
+  // The recalc's resets unwound the three in-place defense bonuses and rebuilt the
+  // base stats; the restored `*Applied` keys would now claim a bonus that is not
+  // on the stat, and the next fade would subtract it from the fresh base (plating
+  // ending at -1, stationary DR at a quarter of its base — review finding P2,
+  // 2026-10-02). Stacks and ramps are kept; the next defense tick re-applies.
+  forgetReactivePlatingApplied(cs);
+  forgetStationaryDrApplied(cs);
+  forgetBramblePlatingApplied(cs);
   cs.resourceMaxes = combatSnapshot.resourceMaxes;
   cs.cooldowns = combatSnapshot.cooldowns;
   cs.flags = combatSnapshot.flags;

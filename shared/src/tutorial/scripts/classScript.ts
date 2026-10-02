@@ -557,6 +557,10 @@ class ScriptBuilder {
       chapter,
       say: `Pay the gate and wear it: the ${name(form.recipeId)}, and a whole new band of cards above the one you have.`,
       steps: [
+        // Every melee plan swapped to the seal weapon for the bosses, and the
+        // director opens the tree BY SLOT, so without this the guide pointed at
+        // the Axe's tree while talking about the Rapier's gate (review P9).
+        { type: 'equip', definitionIds: [lineage.forms.find((f) => f.tier === form.tier - 1)?.recipeId ?? form.recipeId] },
         { type: 'unlockForm', lineageId: lineage.id, recipeId: form.recipeId },
         { type: 'wearForm', lineageId: lineage.id, recipeId: form.recipeId },
       ],

@@ -38,7 +38,7 @@ export const SHOCKWAVE_KEYSTONE = defineKeystone({
   register: () => {
     registerCombatListener('onHit', (ctx, world) => {
       if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
-      if (ctx.metadata['empoweredAttack'] !== true) return;
+      if (ctx.metadata['mechanicConsumed'] !== true) return; // the charge was spent, not crit styling
       const player = ctx.attacker;
       if (!keystoneActive(player, LANE)) return;
       // A dodged mechanic hit did not land, so there is nothing to spread from.

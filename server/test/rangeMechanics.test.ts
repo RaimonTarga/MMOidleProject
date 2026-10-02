@@ -306,7 +306,7 @@ function holdClose(player: PlayerEntity, target: MonsterEntity, frac: number): v
   hit(player, target);
   assert(stunOn(target) === undefined, 'a regular Phalanx hit does not stagger');
 
-  hit(player, target, { empoweredAttack: true });
+  hit(player, target, { empoweredAttack: true, mechanicConsumed: true });
   const stun = stunOn(target);
   assert(stun !== undefined, 'a Phalanx execution on a target at bay staggers it');
   assert(stun!.remainingMs === 750, `the stagger is the ladder's shortest rung, got ${stun!.remainingMs}`);
@@ -318,7 +318,7 @@ function holdClose(player: PlayerEntity, target: MonsterEntity, frac: number): v
   const d = gap(player, target);
   player.performsAttack.attackRange = d + 40;
   target.performsAttack.attackRange = d + 20; // not at bay
-  hit(player, target, { empoweredAttack: true });
+  hit(player, target, { empoweredAttack: true, mechanicConsumed: true });
   assert(stunOn(target) === undefined, 'an execution on a target that can reach back does not stagger');
 }
 
@@ -332,7 +332,7 @@ function holdClose(player: PlayerEntity, target: MonsterEntity, frac: number): v
   hit(player, target);
   assert(stunOn(target) === undefined, 'a regular Shade hit does not stagger');
 
-  hit(player, target, { empoweredAttack: true });
+  hit(player, target, { empoweredAttack: true, mechanicConsumed: true });
   assert(stunOn(target) !== undefined, 'a Shade discharge on a target at bay staggers it');
 }
 
@@ -492,7 +492,7 @@ function holdClose(player: PlayerEntity, target: MonsterEntity, frac: number): v
   hit(player, target);
   assert(vulnOn(target) === undefined, 'a regular hit opens no window');
 
-  hit(player, target, { empoweredAttack: true });
+  hit(player, target, { empoweredAttack: true, mechanicConsumed: true });
   const vuln = vulnOn(target);
   assert(vuln !== undefined, 'an execution from max reach opens the vulnerability window');
   assert(
@@ -507,7 +507,7 @@ function holdClose(player: PlayerEntity, target: MonsterEntity, frac: number): v
   const player = spawn('rm-sentinel-close', { x: 1000, y: 1600 }, keys, 'cooldown');
   const target = monster(1120, 1600);
   holdClose(player, target, keys['cooldown.range-far-max-reach-pct']!);
-  hit(player, target, { empoweredAttack: true });
+  hit(player, target, { empoweredAttack: true, mechanicConsumed: true });
   assert(vulnOn(target) === undefined, 'an execution from inside the band opens no window');
 }
 
@@ -525,7 +525,7 @@ function holdClose(player: PlayerEntity, target: MonsterEntity, frac: number): v
     sourceId: 'stronger-source',
     data: { totalMs: 9_000, damageMultiplier: 1.5 },
   });
-  hit(player, target, { empoweredAttack: true });
+  hit(player, target, { empoweredAttack: true, mechanicConsumed: true });
   const vuln = vulnOn(target);
   assert(vuln !== undefined, 'the record survives');
   assert(vuln!.data.damageMultiplier === 1.5, `the stronger multiplier stands, got ${vuln!.data.damageMultiplier}`);

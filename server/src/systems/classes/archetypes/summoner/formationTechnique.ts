@@ -47,6 +47,15 @@ export interface FormationTechniqueDelivery {
    * keys off this instead, or it would pay out once per summon at full value.
    */
   isFinalDelivery: boolean;
+  /**
+   * True on the first claim out of the snapshot. "Once per Technique" keys off
+   * THIS, not off `isFinalDelivery`: the last pending body can die or forfeit
+   * (`pruneFormationTechnique`, `finishMember`) and the final claim then never
+   * happens, so a cast whose first bodies killed the target resolved nothing —
+   * no `technique-cast` card, no node, no Signature, no window spend (review
+   * finding P8, 2026-10-02). A delivery that landed is a Technique that landed.
+   */
+  isFirstDelivery: boolean;
 }
 
 /**
@@ -126,10 +135,12 @@ export function consumeFormationTechniqueDelivery(
 
   state.pendingEntityIds.splice(index, 1);
   const isFinalDelivery = state.pendingEntityIds.length === 0;
+  const isFirstDelivery = state.pendingEntityIds.length + 1 === Object.keys(state.weightByEntityId).length;
   const delivery = {
     state,
     magnitudeWeight: state.weightByEntityId[formation.physicalEntityId] ?? 0,
     isFinalDelivery,
+    isFirstDelivery,
   };
   recordConduitAdapter(world, owner, 'conduit-delivery');
   if (isFinalDelivery) {

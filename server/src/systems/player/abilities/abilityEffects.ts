@@ -406,7 +406,9 @@ function applyTechniqueRider(
   // completes it. Firing per delivery paid the packet payoff N times at full
   // magnitude while the rider's own damage was weight-divided, against the
   // "ONCE PER LANDING" contract in `combat/techniqueResolved.ts`.
-  if (!formationDelivery || formationDelivery.isFinalDelivery) {
+  // The FIRST delivery, not the last: the last pending body can die or forfeit
+  // and never claim, which left the cast unresolved (review finding P8).
+  if (!formationDelivery || formationDelivery.isFirstDelivery) {
     onTechniqueResolved(world, ctx.attacker, ability, {
       ctx,
       target: ctx.defender,

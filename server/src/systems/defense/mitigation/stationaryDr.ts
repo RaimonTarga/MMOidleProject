@@ -153,3 +153,8 @@ export function runStationaryDr(world: World, player: PlayerEntity, dt: number):
     markSliceDirty(world, player, 'mitigatesDamage');
   }
 }
+
+/** See `forgetReactivePlatingApplied`: bookkeeping only, the stat is untouched. */
+export function forgetStationaryDrApplied(cs: TracksCombat): void {
+  setResource(cs, APPLIED_KEY, 0);
+}

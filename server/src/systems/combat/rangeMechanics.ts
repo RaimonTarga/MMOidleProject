@@ -201,7 +201,7 @@ function applyAtBayStagger(
   target: MonsterEntity,
   passives: PassiveMap,
 ): void {
-  if (!ctx.metadata['empoweredAttack']) return;
+  if (!ctx.metadata['mechanicConsumed']) return; // the mechanic spent its charge (review P1)
   const ms = Math.max(
     player.usesCooldown ? passives['cooldown.range-mid-execution-stagger-ms'] ?? 0 : 0,
     player.usesEnergy ? passives['energy.range-mid-discharge-stagger-ms'] ?? 0 : 0,
@@ -316,7 +316,7 @@ function applyReachVulnerability(
   target: MonsterEntity,
   passives: PassiveMap,
 ): void {
-  if (!ctx.metadata['empoweredAttack']) return;
+  if (!ctx.metadata['mechanicConsumed']) return; // the mechanic spent its charge (review P1)
   if (!player.usesCooldown) return;
   const pct = passives['cooldown.range-far-vuln-pct'] ?? 0;
   const ms = passives['cooldown.range-far-vuln-ms'] ?? 0;
