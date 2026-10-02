@@ -13,6 +13,7 @@
     2
   ],
   "allLanes": false,
+  "elapsedMs": 4764000,
   "nodes": [
     {
       "nodeId": "node-t1-plains-01",
@@ -444,6 +445,23 @@
       ],
       "favoured": "control",
       "punished": "kill-chain"
+    }
+  ],
+  "unfieldable": [
+    {
+      "family": "swamp-mire",
+      "tier": 2,
+      "biome": "swamp"
+    },
+    {
+      "family": "jungle-stalker",
+      "tier": 2,
+      "biome": "jungle"
+    },
+    {
+      "family": "desert-stalker",
+      "tier": 2,
+      "biome": "desert"
     }
   ],
   "rows": [

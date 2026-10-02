@@ -1,6 +1,6 @@
 # Family contracts — the §18 3b arbiter
 
-Generated 2026-10-02T00:05:09.775Z from `d2910a3b1345c6d8a94d7457a63d1308fa8bcf3d`.
+Generated 2026-10-02T00:10:31.168Z from `1a06977fff9e13625e65f4c860d9249746194d70`.
 33 synthetic nodes x 4 seeds (101009, 101033, 101063, 101081), every cell run to **30 kills** or a 600 s hard cap; 1112 measured runs; wall clock 79.4 min.
 
 This instrument answers one question per family: **does the family reward the
@@ -92,6 +92,19 @@ call order. Nothing here is written to disk.
 | Undergrowth | `node-t2-jungle-02` | 2 | Undergrowth 70% / Stalker 20% / Ape 10% | Undergrowth 100% | jungle-snake, jungle-blowdarter |
 | Basilisk | `node-t2-desert-01` | 2 | Basilisk 70% / Scorpion 30% | Basilisk 100% | stone-basilisk |
 | Scorpion | `node-t2-desert-02` | 2 | Scorpion 70% / Basilisk 30% | Scorpion 100% | sand-scorpion |
+
+### (family, tier) pairs with no node, because the tier fields none of their bodies
+
+Not a failure of this instrument — a gap in the monster pools. It is the same gap
+that makes nine of the 37 authored Tier-2 blends resolve as something other than
+what they name, so the lane matrix measures a different family on those nodes while
+this bench simply has no row.
+
+| family | biome | tier | why |
+|---|---|---:|---|
+| Mire | swamp | 2 | `monsterPoolByTier[2]` of swamp fields none of its bodies |
+| Stalker | jungle | 2 | `monsterPoolByTier[2]` of jungle fields none of its bodies |
+| Stalker | desert | 2 | `monsterPoolByTier[2]` of desert fields none of its bodies |
 
 ## The contract, per family
 
