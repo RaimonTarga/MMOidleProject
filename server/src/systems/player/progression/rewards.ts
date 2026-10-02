@@ -4,6 +4,7 @@ import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import { checkSealTierAdvance, registerKillForQuests } from './questSystem';
+import { recalculatePlayerStatsPreservingCombatState } from '../../../ecs/playerEntityFormulas';
 import { recordWorldLogEvent } from '../../../world/worldLog';
 import { actorFromPlayer } from '../../../world/worldLogActors';
 import { onDungeonMonsterRewarded } from '../../world/dungeons/dungeon';
@@ -276,6 +277,15 @@ function applyKillRewardsToPlayer(
     : checkSealTierAdvance(recipient);
   if (tierResult.advanced && tierResult.prevTier !== undefined && tierResult.newTier !== undefined) {
     markSliceDirty(world, recipient, 'tracksProgression');
+    // `playerTier` is a STAT INPUT, not just a progression counter: base max HP,
+    // `baseRecoveryForTier`, `poolFactorForTier` and the T4 path on-hit scaling all
+    // read it. Bumping it without a recalc left the player on the previous tier's
+    // numbers — 6.5 HP/s instead of 10 on T1->T2 — until some unrelated recalc
+    // (equipping something, a stance swap) happened to fire. The state-preserving
+    // rebuild is the right one here: a tier-up lands on a kill, mid-combat, so the
+    // class mechanic's counters, resources and cooldowns must survive it, and HP
+    // carries across as a share of the pool that just grew.
+    recalculatePlayerStatsPreservingCombatState(world, recipient);
     recordWorldLogEvent(
       world,
       {
