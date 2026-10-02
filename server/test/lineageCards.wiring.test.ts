@@ -633,7 +633,7 @@ function withSweepOnCooldown(
   })]);
   player.tracksProgression.attunedAbilities.techniques = ['power-strike'];
   const target = monster(560);
-  setAttackTarget(world, player, target);
+  setAttackTarget(world, player, target.isMonster.id);
 
   assert(beginAbilityCast(world, player, CAST!, 1_000), 'the cast should begin');
   updateAbilityCasts(world, 1_000 + 60_000); // well past the wind-up
