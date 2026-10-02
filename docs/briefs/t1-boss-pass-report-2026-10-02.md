@@ -492,11 +492,25 @@ bar's net decline, so every point of damage that did not end up missing from the
 numbers do not support it, and here is the specific reason rather than a restatement of
 the bisect:**
 
-1. **Recovery is 12.5 HP/s for every one of the six classes, in every one of the thirty
-   cells.** The `swamp-charm-t1` +5 the guide buys is the only Recovery source any tutorial
-   build carries, and no class root or tutorial skill adds to the stat. A quantity that is
-   *identical* across all six classes cannot be what separates a class that loses from a
-   class that wins. What differs is **damage taken**, by up to 10x (section 8).
+1. **The Recovery stat is 12.5 HP/s for every one of the six classes, in every one of the
+   thirty cells.** The `swamp-charm-t1` +5 the guide buys is the only Recovery source any
+   tutorial build carries, and no class root or tutorial skill adds to the stat.
+
+   The *access fraction* does differ by root — the Squire's is permanent in combat, others
+   are windowed — so what each class realizes is not identical. But measured rather than
+   assumed, the realized healing barely varies and the damage does:
+
+   | | striker | squire | slinger | spirit | apprentice | conduit | spread |
+   |---|---|---|---|---|---|---|---|
+   | share of raw damage healed back | 62% | 61% | 61% | 44% | 51% | 64% | **1.5x** |
+   | incoming HP/s, mean over 5 bosses | 8.7 | 7.7 | 4.4 | 3.7 | 5.3 | 4.6 | **2.4x** |
+   | incoming HP/s, worst single boss | 11.2 | 9.8 | 7.0 | 7.3 | 8.5 | 7.2 | — |
+   | incoming HP/s, Behemoth only | 8.2 | 7.0 | **1.2** | **0.8** | 3.5 | 2.6 | **10x** |
+
+   Recovery varies across classes by half again; the damage it is answering varies by
+   two and a half times over the tier and by **ten times** on the two bosses in section 8.
+   The quantity that separates a class that loses from a class that wins is the bottom
+   row, not the top one.
 2. **It is not a small share of the fight.** It heals back **38–72%** of all raw damage in
    the four non-trivial columns, and up to 100% in the trivial ones. Against the Behemoth
    the Striker heals 366 HP into a 228 pool — one and a half bars over a 67-second fight,
