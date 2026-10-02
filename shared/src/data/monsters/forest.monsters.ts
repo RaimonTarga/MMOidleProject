@@ -43,7 +43,11 @@ export const forestMonsterEntries = [
     // Grove declares `punishes: 'tempo'` and flat plating is the only stat that
     // punishes Tempo; the Grove is the only Forest family whose shape is "stand and
     // absorb". The superseded squishy-biome no-plating rule is in the file banner.
-    stats: { hp: 160, attack: 17, plating: 4, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1400, pullRange: 600 },
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): pullRange 600 -> 300. 600 was the
+    // widest notice radius of any T1 body — an eighth of a 4800px node — so a Moss Rat
+    // reliably walked into a wolf-pack fight that was already three-on-one. 300 still
+    // leaves it the most alert thing in the Grove. attack/hp/plating unchanged.
+    stats: { hp: 160, attack: 17, plating: 4, damageReduction: 0, speed: 54, attackRange: 12, attackCooldown: 1400, pullRange: 300 },
     behavior: 'melee', attackStyle: 'gnaw', biome: 'forest',
     rewards: { essence: 3, essenceType: 'green', level: 1, biomeXp: 18 },
     ai: { wanderRadius: 230, leashRange: 1200, idleMinMs: 1200, idleMaxMs: 4000 },
@@ -52,7 +56,11 @@ export const forestMonsterEntries = [
   ['wolf', {
     id: 'wolf', name: 'Wolf', color: 0xaaaacc,
     // Fast baseline speed IS the anti-kite — no charge needed. Frequent light bites.
-    stats: { hp: 130, attack: 20, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1100, pullRange: 476 },
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): pullRange 476 -> 320. The pack's
+    // MEMBERSHIP is already inside the 2-3 band (one alpha + two young = three bodies,
+    // below), so the fix here is chaining, not size: at 476 a second alpha noticed the
+    // player mid-fight and the engagement became six wolves. attack/hp/evasion stand.
+    stats: { hp: 130, attack: 20, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1100, pullRange: 320 },
     behavior: 'melee', attackStyle: 'bite', biome: 'forest',
     rewards: { essence: 4, essenceType: 'green', level: 1, biomeXp: 25 },
     // PACK FAMILY (progression rework, 2026-10-01, PROVISIONAL): evasion unset -> 0.12.
@@ -71,7 +79,10 @@ export const forestMonsterEntries = [
     id: 'young-wolf', name: 'Young Wolf', color: 0xaaaacc,
     // Uses the wolf sprite for now. Slightly smaller/softer than the adult alpha,
     // but still fast enough that the pack reads as one moving threat.
-    stats: { hp: 70, attack: 14, plating: 0, damageReduction: 0, speed: 86, attackRange: 12, attackCooldown: 1150, pullRange: 434 },
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): pullRange 434 -> 300, kept a step
+    // under its alpha's 320 so a follower never drags a pack into a fight its alpha
+    // has not noticed.
+    stats: { hp: 70, attack: 14, plating: 0, damageReduction: 0, speed: 86, attackRange: 12, attackCooldown: 1150, pullRange: 300 },
     behavior: 'melee', attackStyle: 'bite', biome: 'forest',
     rewards: { essence: 2, essenceType: 'green', level: 1, biomeXp: 12 },
     ai: { wanderRadius: 260, leashRange: 1240, idleMinMs: 700, idleMaxMs: 2800 },

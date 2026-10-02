@@ -55,7 +55,13 @@ export const mountainMonsterEntries = [
     // The other half of the T1 Mountain pressure package; see ridge-archer.
     // Strong Kick's multiplier is unchanged at 1.9 and derives from this attack,
     // so its damage moves with the base cut. That is intended.
-    stats: { hp: 190, attack: 40, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 3000, pullRange: 420 },
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): pullRange 420 -> 330. Mountain has
+    // no packs and no swarms, so its concurrency comes entirely from pull: the
+    // documented T1 failure is "the combined ordinary + charged pressure of the
+    // archer/hopper pair" (see ridge-archer), and at 420 + 350 that pair arrived
+    // together routinely. Attack stays 40 and Strong Kick stays 1.9 — this pass moves
+    // no number that is not a radius.
+    stats: { hp: 190, attack: 40, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 3000, pullRange: 330 },
     // HOPPER FAMILY (progression rework, 2026-10-01, PROVISIONAL): evasion unset -> 0.15.
     // Hopper declares `punishes: 'empowered'` and evasion is the one stat that punishes
     // it — a multiplied hit that misses is the entire punishment. A leaping goat is the
@@ -86,7 +92,11 @@ export const mountainMonsterEntries = [
     // pressure of the archer/hopper pair, not on a guard choice: survival across
     // both nodes went 7/36 -> 28/36 with no adverse terminal flip in 36 pairs.
     // Cut as a two-species package with cliff-hopper; Power Shot stays 2.2.
-    stats: { hp: 240, attack: 40, plating: 0, damageReduction: 0, speed: 26, attackRange: 210, attackCooldown: 3100, pullRange: 350 },
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): pullRange 350 -> 300, the other half
+    // of the archer/hopper package above. Still comfortably past its own 210
+    // attackRange, so the artillery identity (it shoots before you arrive) is intact;
+    // Power Shot's 2.2 and the attack 40 are untouched.
+    stats: { hp: 240, attack: 40, plating: 0, damageReduction: 0, speed: 26, attackRange: 210, attackCooldown: 3100, pullRange: 300 },
     behavior: 'ranged', attackStyle: 'arrow', holdsChokepoints: true, biome: 'mountain',
     rewards: { essence: 8, essenceType: 'blue', level: 1, biomeXp: 52 },
     ai: { wanderRadius: 210, leashRange: 600, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -111,7 +121,10 @@ export const mountainMonsterEntries = [
     // hits are eaten and big hits are rewarded — the family's shard is Empowered.
     // PLACEHOLDER numbers seeded from the T1 Mountain band (hopper 190/40);
     // designer hand-edits before the lane bench.
-    stats: { hp: 260, attack: 34, plating: 3, damageReduction: 0, speed: 24, attackRange: 12, attackCooldown: 3200, pullRange: 300 },
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): pullRange 300 -> 260. The mildest
+    // cut of the three: the ram is slow enough that its notice radius mostly decides
+    // whether it joins somebody else's fight, which is exactly what this pass trims.
+    stats: { hp: 260, attack: 34, plating: 3, damageReduction: 0, speed: 24, attackRange: 12, attackCooldown: 3200, pullRange: 260 },
     // PROGRESSION REWORK, 2026-10-01, PROVISIONAL: dotResistance unset -> 0.25, the
     // FIRST use of the stat anywhere in the game. Crag declares `punishes: 'affliction'`
     // and had no mechanism for it. A stone-plated ram shrugging off poison is the

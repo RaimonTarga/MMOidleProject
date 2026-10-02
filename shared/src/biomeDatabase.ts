@@ -73,7 +73,12 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       2: ['apex-timberclaw'],
     },
     essenceType: 'essence',
-    mobDensity: 36,
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): 36 -> 28. Forest's headcount is not
+    // what it looks like: the Pack family spawns THREE bodies per pick (alpha + two
+    // young), so a pack-heavy node fielded nine simultaneous wolves inside a 36 budget.
+    // 28 is the budget that makes the authored 2-3 pack size the real group size again.
+    // Still above mountain (20) and below plains (36), as this file's ordering intends.
+    mobDensity: 28,
   }],
 
   // MOUNTAIN — rare HUGE hits that trip the damage cap; slow + charge to connect.
@@ -94,7 +99,11 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['iron-crest-titan'],
     },
     essenceType: 'essence',
-    mobDensity: 24,
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): 24 -> 20. The smallest density cut
+    // of the three, because Mountain's threat really is per-hit rather than volume — it
+    // is here so the pull-range cuts above are not undone by sheer spacing. Equal to
+    // swamp (20) and still above cave (16).
+    mobDensity: 20,
   }],
 
   // PLAINS — swarm of small, fast, low-per-hit mobs; volume is the threat.
@@ -112,7 +121,12 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       2: ['gorging-razortusk'],
     },
     essenceType: 'essence',
-    mobDensity: 48,
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): 48 -> 36. Plains stays the densest
+    // starter biome, but 48 bodies on a 4800x4800 node put the mean spacing (~693px)
+    // inside two mobs' pull ranges at once, so the authored swarm caps were never the
+    // real group size. Only T1's entry experience was the complaint; this number is
+    // read by every tier of the biome, which is the cost of the dial being per-biome.
+    mobDensity: 36,
   }],
 
   // SWAMP — trivial direct damage, heavy stacking DoT; attrition. Dot-resist's
