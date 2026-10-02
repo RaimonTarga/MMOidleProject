@@ -118,6 +118,7 @@ behavior.
   [archive/progression-rework-plan.md](archive/progression-rework-plan.md). Design
   authority is
   [`design_docs/progression-rework-design.md`](../design_docs/progression-rework-design.md).
+- [Ability pass run brief](briefs/ability-pass-run-2026-10-02.md) — the run that implements design §22 (roster 22 → 17, ability keystone + cross rows, five T3 path re-homes); starts after the T1 boss pass merges; T1 lab DPS held within ±5%.
 - [Guided T1 tutorial plan](guided-tutorial-plan.md) — optional desktop guide that plays Tier 1 beat by beat from bot-validated scripts; Phase 1 in progress.
 - [Release v0.6 record](briefs/release-v0.6-2026-09-28.md) — what shipped in v0.6, merged branches, save policy, bandwidth changes, validation and the deploy check.
 - [T4 power curve review](archive/briefs/t4-power-curve-review-2026-09-27.md) — ARCHIVED 2026-09-27: done; report in `reports/t4-power-curve-2026-09-27/REVIEW.md`, live state in [tier-balance-current-state.md](tier-balance-current-state.md) §6–7.

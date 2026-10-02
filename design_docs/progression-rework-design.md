@@ -666,37 +666,172 @@ biome that debuts at the *new* tier (Jungle at T2, Tundra at T3, Graveyard at T4
 level requirement to speak of, because that biome has no content at the tier below. The
 boss capstone is the whole gate there, which is §5's intent anyway.
 
-## 22. Ability pass and the Technique packet (decided 2026-10-01; Technique pulled into run 4, the pass after the playtest)
+## 22. Ability pass and the Technique packet (Technique shipped 2026-10-01 in run 4; the pass designed 2026-10-02)
 
-*SHIPPED 2026-10-01 (run 4, W1-G) except the ability pass below; see the progress note in
-`docs/archive/progression-rework-plan.md`.*
+*The Technique packet SHIPPED 2026-10-01 (run 4, W1-G); see the progress note in
+`docs/archive/progression-rework-plan.md`. The ability pass below was designed with the
+designer on 2026-10-02; every table is theirs. Run brief:
+`docs/briefs/ability-pass-run-2026-10-02.md`. The run starts only after the T1 boss pass
+(`docs/briefs/t1-boss-pass-2026-10-02.md`) has merged into `feat/lineage-data-model`.*
 
-**Technique becomes the ninth packet.** It wants technique cooldown reduction and technique
+**Technique is the ninth packet.** It wants technique cooldown reduction and technique
 power (the stat the Plains Broadsword and the Desert staff/cross line already carry), fires
-on a new trigger kind `technique-cast`, and pays with a cooldown refund or a window that
-empowers the next Technique. Its keystone: a landed Technique counts as the class mechanic
-firing. The Broadsword's lanes become Kill chain, Empowered, Technique; the Desert forms
-crown Technique. Adding it touches shards, families, coverage and the bench, which the packet union
-enumerates at typecheck; it ships in run 4 (W1-G) so the playtest sees the real wallet.
-Plains Swarm drops Technique (area and control Techniques beat many weak bodies); Tempo
-keeps Forest Pack and Mountain Hopper.
+on the trigger kind `technique-cast`, and pays with a cooldown refund or a window that
+empowers the next Technique. Its keystone, *Signature*: a landed Technique counts as the
+class mechanic firing. The Broadsword's lanes are Technique, Kill chain, Empowered; the
+Desert forms crown Technique; Plains Swarm drops the Technique shard (area and control
+Techniques beat many weak bodies); Tempo keeps Forest Pack and Mountain Hopper.
 
-**The ability pass** (design session with the designer, then one run), paired with the T3
-class path review since both use the packet tags:
+### 22.1 Principles of the pass (locked 2026-10-02)
 
-1. **Roster audit against the lanes.** Abilities that are now a lane's payoff are cut or
-   merged: Expose Weakness (Empowered vulnerability), Hamstring (Control slow), Power
-   Strike / Quick Strike / Frenzy (damage multipliers at three cadences, which frames and
-   the Tempo and Empowered lanes now own). Shapes stay: Slam, Sweep, Snipe, Charge,
-   Disengage, Stunning Strike, Binding Strike, Detonate, Contagion, Imbue; and the Guards,
-   which are the three faces.
-2. **Offers reauthored** per surviving ability: three packet offers are its routes (Slam
-   with Empowered, Control or Technique is three builds).
-3. **One bespoke keystone per surviving ability** (about a dozen): the flashy verb, the
-   answer to "no ability feels great to use". Cross rows follow the same cross scalar.
-4. **Runes stay the when; nodes stay the what.** Not reopened.
-5. **T3 class paths**: Pyromancer and Warmonger re-homed; every path's provisional packet
-   tag confirmed or moved; a path that duplicates a lane keystone is redesigned.
+- **An ability that is a lane's payoff is cut.** The lane fires it on the lane's trigger
+  for whoever carries the lane; the roster keeps *shapes* (a cleave, a cast, a rush, a
+  spread, a root, a detonation, a reposition, a long shot, a stun, a charge window) and the
+  three Guard faces.
+- **Nodes stay generic; keystones are the exception.** Packet and amplifier rows remain
+  data over the closed vocabulary (§19). The keystone row is bespoke per ability, exactly
+  as the lane keystone row is bespoke per packet (§4): a named server module that changes
+  a rule, never a number. The cross row borrows one of the ability's other two offers at
+  `ROW_SCALAR.cross`, derived, no authoring.
+- **Row tiers: home tier + N, clamped at T4.** Packet at the ability's home tier,
+  amplifier +1, keystone +2, cross +3. A T1 ability reads 1/2/3/4; a T2 one 2/3/4/4; a T3
+  one 3/4/4/4; a T4 ability's four rows spread across the T4 band, as §4 already spreads a
+  lineage's T3/T4 bands. One rule, no new resolver logic.
+- **Runes stay the when; nodes stay the what.** Not reopened.
+- **Defence never scales with offence.** A Guard keystone may grant immunity, control the
+  attacker, or share a mend; it never deals damage.
+- **Net reference-wiring DPS at T1 moves by at most ±5%** (per class, per T1 boss, the
+  lab's `dps` column, same seeds), because the T1 boss pass is tuned against today's
+  tutorial kit. The one T1 change that touches DPS is the Expose Weakness cut, and Slam at
+  T1 is authored to hold parity (§22.2).
+
+### 22.2 Roster audit (locked 2026-10-02)
+
+Fifteen Techniques and seven Guards in; ten Techniques and seven Guards out.
+
+| Ability | Was | Verdict | Who owns the job now |
+|---|---|---|---|
+| Sweep | T1 Plains 2, armed cleave | **keep** | — |
+| Expose Weakness | T1 Cave 3, armed vulnerability | **cut** | Empowered lane `vulnerability` payoff; Snipe/Charge/Binding Strike/Detonate/Imbue offer it on any build |
+| Power Strike | T1 Mountain 5, cast 3× | **merge into Slam** | Slam re-homes to T1 Mountain 5 as the burst cast; rank I is the single-target-leaning rank |
+| Second Wind | T1 Forest 3 | keep | — |
+| Cleanse | T1 Swamp 3 | keep | — |
+| Brace | T1 Mountain 3 | keep | — |
+| Hamstring | T2 Jungle 3, armed slow | **cut** | Control lane `slow` payoff; the melee at-bay slow on Mid range nodes (frame brief §2) |
+| Charge | T2 Desert 3, rush | **keep, re-home to T1 Cave 3** | — |
+| Contagion | T2 Swamp 9, cast spread | keep | — |
+| Slam | T2 Mountain 9, cast area | **keep, re-home to T1 Mountain 5** (absorbs Power Strike) | — |
+| Bramble Guard | T2 Jungle 5 | keep | — |
+| Endure | T2 Desert 5 | keep | — |
+| Binding Strike | T3 Tundra 3, armed root | **keep, re-home to T2 Jungle 3** (Hamstring's slot; root is the T2 control) | — |
+| Frenzy | T3 Volcanic 3, instant attack speed | **cut** | Tempo and Kill chain `speed-window` payoffs; the light frames' windows |
+| Quick Strike | T3 Volcanic 5, armed 1.25× every 3 s | **cut** | Tempo lane per-hit payoffs; frames |
+| Detonate | T3 Swamp 17 | keep | — |
+| Break Free | T3 Tundra 5 | keep | — |
+| Disengage | T4 Trench 3 | keep | — |
+| Snipe | T4 Graveyard 3 | keep | — |
+| Stunning Strike | T4 Graveyard 5 | keep | — |
+| Imbue Lightning | T4 Jungle 15, self-cast charge window | **keep, re-home to T3 Volcanic 3** | — |
+| Recuperate | T4 Trench 5 | keep | — |
+
+Roster after the pass, by home tier: **T1** Sweep (Plains 2), Charge (Cave 3), Slam
+(Mountain 5); Second Wind, Cleanse, Brace. **T2** Binding Strike (Jungle 3), Contagion
+(Swamp 9); Bramble Guard, Endure. **T3** Imbue Lightning (Volcanic 3), Detonate (Swamp 17);
+Break Free. **T4** Disengage (Trench 3), Snipe (Graveyard 3), Stunning Strike (Graveyard 5);
+Recuperate. Techniques 3/2/2/3, Guards 3/2/1/1.
+
+A re-homed ability gains one authored rank at its new home tier (ranks are authored per
+tier from the home tier; `abilities-current-state.md`, "AUTHORED, not scaled"); its recipe
+moves to the new biome and level; the mid-band placement rule (level 3 and 5 of the
+biome's own band) holds.
+
+**The Expose Weakness cut and the T1 kit.** The tutorial boss kit wears Expose Weakness in
+Forest, Mountain, Swamp and Cave (`plans.ts`), and the T1 boss pass is tuned against it;
+its uptime-weighted value is roughly +5% single-target DPS. The kit swaps Expose
+Weakness → Slam, and **Slam rank I is authored so the lab's per-class DPS on every T1
+boss stays within ±5% of today's kit** (same seeds; the lab's `ap` override is the
+instrument, the committed rank the result). The Cave tutorial beat teaches Charge in
+Expose Weakness's place.
+
+### 22.3 Packet offers (locked 2026-10-02)
+
+The shipped tables (`shared/src/data/abilityNodes/offers.ts`) already express each
+survivor's three routes and stay as they are, with one swap: **Stunning Strike offers
+Control / Tempo / Technique** (its Empowered plating-shred becomes Tempo echo-hit: a
+stunned target eats a second hit), so that after the cuts every offensive packet sits on at
+least three Techniques. Coverage across the ten Techniques: Tempo 3 (Sweep, Stunning
+Strike, Imbue), Empowered 6, Affliction 4, Control 5, Kill chain 3, Engagement 3,
+Technique 6. Guards are unchanged: one avoid, one sustain, one endure face each.
+
+### 22.4 Ability keystones (locked 2026-10-02): the flashy verb
+
+One per surviving ability, bespoke, on the keystone row. The alternates the designer did
+not pick are recorded in the run brief for the next pass, not here.
+
+| Ability | Keystone | Rule |
+|---|---|---|
+| Sweep | **Whirlwind** | Sweep becomes a one-second spin that cleaves every tick. |
+| Slam | **Aftershock** | The ground erupts again at the same spot one second later. |
+| Charge | **Trample** | The rush hits every body it passes through. |
+| Contagion | **Outbreak** | A body Contagion infected passes its afflictions to its nearest neighbour when it dies. |
+| Binding Strike | **Dragnet** | The root takes every body adjacent to the target. |
+| Detonate | **Chain Reaction** | A Detonate kill detonates every afflicted body in reach. |
+| Disengage | **Vanish** | Breaking contact drops you from every nearby monster's aggro until your next hit. |
+| Snipe | **Pierce** | The shot passes through its target and hits everything in line behind it. |
+| Stunning Strike | **Relay** | When the stun ends it jumps to the nearest body not yet stunned this fight. |
+| Imbue Lightning | **Fork** | Every imbued hit arcs to the nearest other body. |
+| Second Wind | **Shared Breath** | The mend also runs on your summons and same-node party. |
+| Cleanse | **Immunity** | The affliction kind you stripped cannot be reapplied for a few seconds. |
+| Brace | **Riposte** | A melee hit absorbed while Braced staggers the attacker. |
+| Bramble Guard | **Entangle** | A body that hits you while brambled is slowed. |
+| Endure | **Unyielding** | You cannot be hard-controlled while Endure is up. |
+| Break Free | **Backlash** | Breaking free staggers every adjacent body. |
+| Recuperate | **Overflow** | Healing past full becomes a ward. |
+
+Every rule reuses an existing seam: `applyPlayerAoe` (Whirlwind, Aftershock, Trample,
+Pierce, Fork, Chain Reaction), the control ladder at its shortest rung for stagger
+(Riposte, Backlash) and `monsterControl` for slows and roots (Entangle, Dragnet),
+`setAggroTarget` (Vanish), the player hard-control list (Unyielding) and the cleanse and
+affliction inventories (Immunity, Outbreak), the overheal ward (Overflow), the Recovery
+engine's party and summon sources (Shared Breath). Durations and shares come from the
+magnitude table at `ROW_SCALAR.keystone`; a keystone with no number (Vanish, Unyielding,
+Immunity's kind lock) authors a payoff only because `coverage.test.ts` requires every
+non-stat row to do something when bought, as the lane keystones already do. Names are
+placeholders the designer may rename; the rules are locked.
+
+### 22.5 T3 class path review (locked 2026-10-02)
+
+Every path's provisional packet tag (run 3 W1-B) was read against the frame loops (frame
+brief §1), the nine lane keystones and §22.4. Five paths are redesigned, one retagged, the
+rest confirmed.
+
+| Path | Was | Duplicates | Becomes |
+|---|---|---|---|
+| Reverb (Squire balanced-a) | attacks bank into the next execution | the Squire heavy frame's bank | **Empowered.** The execution echoes: it lands now and lands again at half strength when its cooldown reaches the halfway mark, on whatever you are hitting then. No bank, no window: a second beat on the clock. |
+| Destroyer (Squire heavy-b) | normals deal no damage; execution on 5 s; first strike on a new target is an execution | Engagement keystone *Always First* | **Technique** (the lane had no path). Your execution is delivered by your Techniques: when ready it waits, primed, and the next Technique you land fires it with that Technique's shape (a Slam execution hits the area, a Snipe execution lands from range) at a higher multiplier. Regular hits deal normal damage. Distinct from *Signature* (a Technique counts as the mechanic); here the mechanic rides the Technique. |
+| Duelist (Slinger light-a) | last bullet empowered with splash | the Marksman frame's end-of-clip; *Shockwave* | **Kill chain** (the lane had one path). Every kill adds a round above the clip's size until the next reload; a long chain is a long clip and the ammo counter climbs past max. Distinct from *Refund*, which readies the mechanic. |
+| Warmonger (Slinger heavy-b) | attack speed ramps per shot, resets on reload | the Artillerist frame's ramp | **Tempo.** As agreed in the frame brief: half the ramp carries through a reload (a per-clip climb becomes a sustained one); the barrel glow persists while reloading. |
+| Pyromancer (Apprentice balanced-a) | 2 stacks per hit at 55%; bonus direct damage at max burn | the Ember Mage frame's "intensifies" | **Affliction.** Keeps two stacks per hit at 55%. New payoff *Radiant*: burn ticks on a target at max stacks also strike every adjacent body for the tick. Fire radiates; no stacks spread, no direct bonus. |
+| Justicar (Striker balanced-c) | Verdict execute, tagged Affliction | — | **Retag Empowered.** No effect change. |
+
+Confirmed as compatible, with the reasoning the run must keep in the path comments:
+Venomslinger, Winter Warden and Iconoclast per the frame brief; Scrapper pays Empowered
+*payoffs* (vulnerability, plating shred) on the finisher, not the keystone; Marshal's
+opening strike is an Engagement payoff, not *Always First*; Cultist's unlimited stacks are
+not *Festering* (which is non-expiry while hitting); Shockblade and Swiftblade are echo
+hits on the finisher, not *Chain*.
+
+Lane coverage across the 54 paths after the review: Empowered 24 (Justicar in, Destroyer
+out), Tempo 17, Affliction 11, Engagement 2, Control 2, Kill chain 2, Technique 1. The
+remaining lopsidedness is recorded, not fixed: the next class review decides whether
+Control and Engagement need paths of their own.
+
+### 22.6 What the run does not touch
+
+Magnitudes (`magnitudes.ts`, `ABILITY_NODE_SHARE`), except the one Slam rank I number
+the parity rule produces. Lineage cards. Monster rows. Recovery. The tutorial beyond the
+kit table and the Cave recipe line. T2+ boss numbers. The alternates the designer passed
+over.
 
 ## 23. Forms are full power at the craft (locked 2026-10-02)
 
