@@ -394,6 +394,70 @@ Two game failures recorded, neither tuned:
   after Tier 2, the run reports `timed-out`/`partial` rather than falsely
   complete, and nothing earlier in the script is affected.
 
+### 2026-10-02 — the canonical 1x sweep, all six classes
+
+**The first untainted six-class run of the whole script.** No reward multiplier, no fast
+boss retry, uncontended: each class got its OWN server and its OWN game database (ports
+4301+, `gamedb_tut1..5`), so no two bots ever shared a dungeon. Run cap 2 h per class.
+On the branch after four fixes this sweep depended on — the weapon-curve fold, the
+capstone-loop fix, the tier-up recalc, and the `core.recovery-mult` quantization.
+
+Beats passed per chapter. A short cell is beats never reached, not beats that failed.
+
+| Class | Rate | Clearing | Plains | Forest | Swamp | Mountain | Cave | Seals | Gate | wall | deaths | outcome |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Conduit | 1x | 11/11 | 13/13 | 9/9 | 12/12 | 13/13 | 16/16 | 4/4 | **3/3** | 60 m | 3 | **completed** |
+| Slinger | 1x | 11/11 | 13/13 | 13/13 | 16/16 | 11/11 | 14/14 | 4/4 | **3/3** | 61 m | 3 | **completed** |
+| Spirit | 1x | 11/11 | 13/13 | 9/9 | 12/12 | 13/13 | 16/16 | 4/4 | **3/3** | 65 m | 5 | **completed** |
+| Apprentice | 1x | 11/11 | 13/13 | 9/9 | 14/14 | 13/13 | 16/16 | 4/4 | 1/3 | 2 h cap | 11 | Greatbear |
+| Squire | 1x | 11/11 | 13/13 | 9/9 | 12/12 | 10/10 | 16/16 | 4/4 | 1/3 | 2 h cap | 13 | Greatbear |
+| Striker | 1x | 11/11 | 13/13 | 9/9 | 12/12 | 10/10 | 16/16 | 3/4 | 1/3 | 2 h cap | 17 | Behemoth |
+
+Every boss attempt, from `boss-attempt` events. The gate needs **three** Greatbear kills.
+
+| Class | Plains seal | Mountain seal | Greatbear (gate) | loss hp-left |
+|---|---|---|---|---|
+| Conduit | 1/1 (225 s) | 1/1 (326 s) | **3 kills / 6 attempts** | — |
+| Slinger | 1/1 (199 s) | 1/1 (326 s) | **3 kills / 5 attempts** | — |
+| Spirit | 1/1 (255 s) | 1/1 (366 s) | **3 kills / 8 attempts** | — |
+| Apprentice | 1/1 (194 s) | 1/1 (315 s) | **0/11** | 5–18% |
+| Squire | 1/1 (215 s) | 1/1 (474 s) | **0/13** | 11–16% |
+| Striker | 1/1 (187 s) | **0/12** | 0/4 (no Tier 2) | mtn 7–28% |
+
+**Every class takes the Plains seal first try.** That closes the 2026-10-02 finding below
+(0/11); its cause was the retired weapon `+N` ladder, not the Field Hare — see
+`briefs/run4-report-2026-10-02.md`'s addendum for the bisect.
+
+**Three classes now complete the whole script at 1x, gate paid, in 60–65 minutes.** That
+is the first time the gate chapter has ever finished, at any multiplier: it could not
+before, for any class, because `doAttemptBoss` read the biome's permanent first-clear flag
+as "this fight is won" and returned instantly from every attempt after the first. At 25x a
+single kill dropped `round(25)` capstones and hid it.
+
+**The Greatbear genuinely walls the Squire and the Apprentice**, and the earlier
+"four of six" reading was two separate things at once: the harness made the gate
+unfinishable for *everyone*, and the boss is additionally unbeatable for these two. Both
+take every seal first try and then cannot kill it once — Squire 0/13 losing at
+11/11/11/11/12/12/15/15/16/16/16/16/16 %, Apprentice 0/11 at 5–18%. The clustering is
+tight enough to read as a flat shortfall rather than variance. For a class that *can* kill
+it, it is a demanding grind, not a wall: the Spirit lost five of eight attempts and still
+paid the gate.
+
+**The Mountain seal walls the Striker** — 0/12 at 7–28% left, over two independent runs, so
+it never reaches Tier 2 or the gate at all. This is NOT new: the T1 boss lab says `develop`
+is worse (36% left, and the Squire was 0/3 there too, where it now wins). The
+2026-09-29 decision to swap the second seal from Forest to Mountain was taken on 25x
+evidence that the Mountain fell first try; at 1x the Mountain is the Striker's wall and the
+Greatbear is beatable by half the roster, so **that swap wants re-deciding**.
+
+**Pacing did not move.** GM 6 at 8–13 min, GM 24 at 21–34 min, GM 30 at 26–44 min, against
+10m08s / 27m47s for the pre-fold 1x Striker. T1 farming is gated by travel and spawn
+density, not weapon damage, so restoring the weapon curve changed boss outcomes and nothing
+else.
+
+**Still not bot-testable:** the farewell, including its frames line — `TUTORIAL_FAREWELL`
+is panel copy, not a beat. Real-client pass still owed.
+
 ## Findings
 
 - **The Forest boss walls a GM-30, +5 Striker.** Gnarled Greatbear's Bestial
