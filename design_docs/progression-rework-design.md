@@ -698,6 +698,8 @@ Techniques beat many weak bodies); Tempo keeps Forest Pack and Mountain Hopper.
   one 3/4/4/4; a T4 ability's four rows spread across the T4 band, as §4 already spreads a
   lineage's T3/T4 bands. One rule, no new resolver logic.
 - **Runes stay the when; nodes stay the what.** Not reopened.
+- **Cast time is an axis** (§22.9): a cast iff the ability deals its own damage; cast speed
+  is the Technique lane's stat and an amplifier axis; a cast is never removed or added.
 - **Defence never scales with offence.** A Guard keystone may grant immunity, control the
   attacker, or share a mend; it never deals damage.
 - **Net reference-wiring DPS at T1 moves by at most ±5%** (per class, per T1 boss, the
@@ -707,7 +709,7 @@ Techniques beat many weak bodies); Tempo keeps Forest Pack and Mountain Hopper.
 
 ### 22.2 Roster audit (locked 2026-10-02)
 
-Fifteen Techniques and seven Guards in; ten Techniques and seven Guards out.
+Fifteen Techniques and seven Guards in; ten Techniques and seven Guards out of the audit, then two additions and one more re-home in §22.8 (final roster 19).
 
 | Ability | Was | Verdict | Who owns the job now |
 |---|---|---|---|
@@ -729,12 +731,12 @@ Fifteen Techniques and seven Guards in; ten Techniques and seven Guards out.
 | Detonate | T3 Swamp 17 | keep | — |
 | Break Free | T3 Tundra 5 | keep | — |
 | Disengage | T4 Trench 3 | keep | — |
-| Snipe | T4 Graveyard 3 | keep | — |
+| Snipe | T4 Graveyard 3 | **keep, re-home to T2 Desert 3** (§22.8: the ranged opener) | — |
 | Stunning Strike | T4 Graveyard 5 | keep | — |
 | Imbue Lightning | T4 Jungle 15, self-cast charge window | **keep, re-home to T3 Volcanic 3** | — |
 | Recuperate | T4 Trench 5 | keep | — |
 
-Roster after the pass, by home tier: **T1** Sweep (Plains 2), Charge (Cave 3), Slam
+Roster after the audit alone (superseded by the final roster in §22.8), by home tier: **T1** Sweep (Plains 2), Charge (Cave 3), Slam
 (Mountain 5); Second Wind, Cleanse, Brace. **T2** Binding Strike (Jungle 3), Contagion
 (Swamp 9); Bramble Guard, Endure. **T3** Imbue Lightning (Volcanic 3), Detonate (Swamp 17);
 Break Free. **T4** Disengage (Trench 3), Snipe (Graveyard 3), Stunning Strike (Graveyard 5);
@@ -761,7 +763,7 @@ Control / Tempo / Technique** (its Empowered plating-shred becomes Tempo echo-hi
 stunned target eats a second hit), so that after the cuts every offensive packet sits on at
 least three Techniques. Coverage across the ten Techniques: Tempo 3 (Sweep, Stunning
 Strike, Imbue), Empowered 6, Affliction 4, Control 5, Kill chain 3, Engagement 3,
-Technique 6. Guards are unchanged: one avoid, one sustain, one endure face each.
+Technique 6, before the §22.8 additions (final coverage there). Guards are unchanged: one avoid, one sustain, one endure face each; Sidestep (§22.8) follows the same rule.
 
 ### 22.4 Ability keystones (locked 2026-10-02): the flashy verb
 
@@ -787,6 +789,8 @@ not pick are recorded in the run brief for the next pass, not here.
 | Endure | **Unyielding** | You cannot be hard-controlled while Endure is up. |
 | Break Free | **Backlash** | Breaking free staggers every adjacent body. |
 | Recuperate | **Overflow** | Healing past full becomes a ward. |
+| Sidestep (§22.8) | **Afterimage** | A hit you dodge during the window leaves an afterimage the attacker keeps swinging at until it is struck. |
+| Cull (§22.8) | **Harvest** | A Cull kill lands the same strike on the nearest body below the same health share, and keeps going while it keeps killing. |
 
 Every rule reuses an existing seam: `applyPlayerAoe` (Whirlwind, Aftershock, Trample,
 Pierce, Fork, Chain Reaction), the control ladder at its shortest rung for stagger
@@ -873,6 +877,68 @@ row and the lane**, so a new ability or a renamed keystone needs no new copy tab
 new art; only the keystone's second glyph and its animation are authored, one per
 keystone, by the same pass that authors the keystone's rule. Numbers never appear in a
 name.
+### 22.8 Additions and the Snipe re-home (locked 2026-10-02)
+
+Reading the roster by job rather than by tier found two holes, and one the roster already
+answered in the wrong place.
+
+- **Sidestep** (Guard, instant, **T1 Forest 5**): an evasion window plus a short burst of
+  move speed. The Avoid face had no Guard of its own (Second Wind and Recuperate are
+  Sustain; Brace, Endure and Bramble Guard are Endure; Cleanse and Break Free are removal),
+  so a Light-frame player had none. It is not Disengage: Disengage moves you out of
+  contact, Sidestep stays put and dodges. The `evasion-window` payoff from run 4 is its
+  primitive. Offers: Engagement `evasion-window` / Kill chain `recovery-window` / Bulwark
+  `plating-stack`. Keystone **Afterimage**: a hit you dodge during the window leaves an
+  afterimage the attacker keeps swinging at until it is struck (the monster's target is a
+  decoy marker; no damage, no displacement).
+- **Cull** (Technique, cast, **T3 Tundra 3**, the slot Binding Strike vacates): a strike
+  that hits harder the lower the target's health and refunds itself on a kill. No ability
+  was kill-shaped although Kill chain is a lane on three lineages. Offers: Kill chain
+  `speed-window` / Empowered `vulnerability` / Technique `technique-refund`. Keystone
+  **Harvest**: a Cull kill lands the same strike on the nearest body below the same health
+  share and keeps going while it keeps killing (each body once; the chain is the visible
+  verb). Harvest and Chain Reaction are the two kill-chaining keystones and must stay
+  distinct: Chain Reaction spends afflictions, Harvest spends health.
+- **Snipe re-homes to T2 Desert 3** (Charge's old slot). Snipe is the ranged opener, and
+  at T4 Graveyard a ranged build had no opener until the last tier while melee had Charge
+  at T1. Its +300 reach, hold-position and Pierce keystone are unchanged; it gains an
+  authored rank at T2. Graveyard keeps Stunning Strike at 5.
+
+Roster after the additions: **19** (11 Techniques, 8 Guards). By home tier: **T1** Sweep,
+Charge, Slam; Second Wind, Cleanse, Brace, Sidestep. **T2** Binding Strike, Contagion,
+Snipe; Bramble Guard, Endure. **T3** Imbue Lightning, Detonate, Cull; Break Free. **T4**
+Disengage, Stunning Strike; Recuperate. Techniques 3/3/3/2, Guards 4/2/1/1. Offer
+coverage across the eleven Techniques: Tempo 3, Empowered 7, Affliction 4, Control 5,
+Kill chain 4, Engagement 4, Technique 7. Neither addition enters the T1 tutorial kit, so
+the T1 DPS budget is untouched; Sidestep is a Guard and Cull is T3.
+
+### 22.9 Cast time is an axis, not flavor (locked 2026-10-02)
+
+Casts used to be assigned by feel: flavor, or "strong things wind up". The rule now:
+
+- **An ability has a cast time if and only if it deals its own damage.** A cast is a hit
+  the ability lands by itself, scaled by Technique Power; the wind-up is the price of that
+  magnitude. An armed ability is a rider on the next weapon hit: it waits for a swing
+  instead of winding up, and it scales with the weapon. The fork is the build choice:
+  weapon builds want armed, Technique builds want casts and the stats that shorten them.
+  Charge is its own shape (a wind-up that becomes movement); Guards are instant.
+- Sorted by the rule: Slam, Snipe, Stunning Strike, Detonate and Cull keep their casts;
+  Sweep and Binding Strike stay armed. Two were arbitrary and are reshaped: **Contagion
+  becomes armed** (your next hit spreads what the target carries; it deals no damage of
+  its own) and **Imbue Lightning becomes instant** (a self-buff needs no telegraph; the
+  shape Frenzy had). Neither touches T1 DPS.
+- **Cast speed is the Technique lane's stat.** `technique.cast-speed-pct` already exists,
+  capped at 60%, carried by the Desert staff line; it is shown beside Technique Power as
+  the lane's own number, so the tree says which lane makes casts fast.
+- **The amplifier row gains a cast axis.** For a cast ability "shorter wind-up" is a fourth
+  amplifier axis beside duration, targets and magnitude, and the louder one.
+- **A cast is never removed and never added.** The 60% cap holds against every source
+  combined, so a cast never collapses into a bigger armed rider; no row turns a cast
+  instant, and no row gives an armed ability a wind-up (that would be a number trade
+  dressed as a verb). Keystones change what the cast is (Aftershock erupts twice), not
+  whether it is one.
+- Frames stay out of it. A heavier frame does not lengthen casts; frames are bias, and a
+  slow caster on a heavy frame is slow already.
 
 ## 23. Forms are full power at the craft (locked 2026-10-02)
 

@@ -12,8 +12,9 @@ are the decisions, all locked with the designer), §4, §6, §19; `docs/briefs/f
 `shared/src/data/abilityNodes/` (the generic node tree the keystone and cross rows extend);
 `docs/briefs/t1-boss-pass-report-2026-10-02.md` (the boss pass's numbers and the abilities
 its tuning leaned on).
-**Goal:** after this run the roster is ten Techniques and seven Guards (§22.2), every
-survivor has four node rows (packet, amplifier, keystone, cross) with its bespoke keystone
+**Goal:** after this run the roster is eleven Techniques and eight Guards (§22.2 with the
+§22.8 additions Sidestep and Cull, Snipe at T2), casts follow the §22.9 rule, every
+survivor has four node rows (packet, amplifier with a cast axis, keystone, cross) with its bespoke keystone
 verb live in combat (§22.4), the offers table carries the Stunning Strike swap (§22.3), the
 five T3 paths are re-homed and Justicar retagged (§22.5), names, icons and animations deepen with the rows (§22.7), the tutorial kit wears Slam and
 teaches Charge at the Cave, and the T1 lab matrix is within ±5% of the baseline taken at
@@ -163,9 +164,29 @@ final one as reports/ability-pass/w1a.jsonl. If no single value brings every cel
 stop at the value that minimises the worst cell, commit it, and report the cells outside
 with their deltas — do not touch any other number.
 
-Update docs/abilities-current-state.md's roster tables (22 → 17, the per-tier tables, the
+Additions and reshapes (design §22.8, §22.9): re-home Snipe to T2 Desert 3 with an
+authored rank II-equivalent at T2 (its +300 reach, hold-position and the T4 ranks stay).
+Reshape Contagion to `armed` (your next hit spreads what the target carries; drop
+castMs; the Conduit formation adapter treats it as an armed rider) and Imbue Lightning
+to `instant` (drop castMs; the charge window opens on activation; `validateAbilities`
+must stay green). Author two NEW abilities with ranks from their home tier, recipes at
+the stated biome level in the biome's essence colour, offers.ts rows exactly as §22.8
+lists, reference wiring (Sidestep: In Combat → Use Ability; Cull: In Combat → Use
+Ability) and attunementCost priced net of it like every other ability, and a placeholder
+icon tile until art is generated: SIDESTEP (Guard, instant, T1 Forest 5: an
+`evasion-window` plus a short move-speed burst, both from the magnitude table's units,
+no number in the ability file beyond the authored rank shape; situational gate: it does
+not fire with nothing in reach) and CULL (Technique, cast, T3 Tundra 3: a strike whose
+multiplier rises as the target's health share falls, and that refunds its own cooldown
+on a kill; Technique Power scales the strike; the threshold curve is the rank's shape).
+Neither enters the tutorial kit. Add abilityCull.test.ts (multiplier rises as health
+falls; a kill refunds) and abilitySidestep.test.ts (window opens, speed burst ends with
+it, no fire out of combat); extend abilityAffliction.test.ts for armed Contagion and
+abilityImbue's suite for instant Imbue.
+
+Update docs/abilities-current-state.md's roster tables (22 → 19, the per-tier tables, the
 reference-wiring table, the summoner ownership lists that name cut abilities) and
-abilityNodes.test.ts's count. Related tests + typecheck; strip CR on touched files;
+abilityNodes.test.ts's count (19). Related tests + typecheck; strip CR on touched files;
 commit in steps (cuts / re-homes / migration / tutorial / parity). Report the parity
 matrix and the Slam value.
 ```
@@ -200,6 +221,12 @@ two rows, per design §22.1:
   card shows the rule sentence; the cross card the borrowed packet's name at the cross
   scalar. HUD: a keystone that opens a window or a stack uses the existing lineage card-fx
   and buff-bar seams (`card-fx` events, buff ids), never a per-tick boolean.
+- Cast axis (design §22.9): `AmplifiedAxis` gains `cast` ("shorter wind-up"), offered by
+  `nodePayoffAxis` only when the ability's shape is `cast` (or `charge`); it applies
+  through the existing `technique.cast-speed-pct` path so the 60% cap holds against every
+  source combined. The Technique lane's stat card shows cast speed beside Technique
+  Power. A test proves no combination of lane stat, weapon and amplifier shortens a cast
+  below 40% of its authored wind-up.
 
 Then implement the first five Technique keystones from design §22.4, each its own module,
 each with a wiring smoke test in a new server/test/abilityKeystones.test.ts (attach, tick,
@@ -341,7 +368,7 @@ keep both sides.
 
 ```
 On a branch feat/ability-keystones-2 off feat/lineage-data-model, implement the remaining
-Technique keystones of design §22.4 on the rows W1-B landed, one module each under
+Technique keystones of design §22.4 and §22.8 on the rows W1-B landed, one module each under
 server/src/systems/combat/keystones/ability/, one wiring smoke test each in
 server/test/abilityKeystones.test.ts:
   Detonate CHAIN REACTION — a Detonate kill detonates every afflicted body in reach (on
@@ -359,6 +386,10 @@ server/test/abilityKeystones.test.ts:
     fight set in TracksCombat; post-stun immunity still applies to the first body).
   Imbue Lightning FORK — every imbued hit arcs to the nearest other body (an echo at the
     share to the nearest body other than the target, spending no extra charge).
+  Cull HARVEST — a Cull kill lands the same strike on the nearest body below the same
+    health share and keeps going while it keeps killing (each body once per Cull; Chain
+    Reaction spends afflictions, Harvest spends health — write the test that a body both
+    could take is taken once).
 Same rules as W1-B: evadeBlocksDebuffs on every application, one multiplier per hit,
 keystone area hits are not attack-equivalents, fx through existing card-fx keys. Related
 tests + typecheck; strip CR; commit per keystone.
@@ -368,7 +399,7 @@ tests + typecheck; strip CR; commit per keystone.
 
 ```
 On a branch feat/guard-keystones off feat/lineage-data-model, implement the Guard
-keystones of design §22.4 on the rows W1-B landed, one module each, one wiring smoke test
+keystones of design §22.4 and §22.8 on the rows W1-B landed, one module each, one wiring smoke test
 each in server/test/abilityKeystones.test.ts. Defence never scales with offence and a
 Guard never deals damage: these grant immunity, control the attacker, or share a mend.
   Second Wind SHARED BREATH — the mend also runs on your summons and same-node party
@@ -387,6 +418,11 @@ Guard never deals damage: these grant immunity, control the attacker, or share a
     body once).
   Recuperate OVERFLOW — healing past full becomes a ward (the overheal-ward hook; the
     ward's cap from the magnitude table's ward unit).
+  Sidestep AFTERIMAGE — a hit you dodge during the window leaves an afterimage the
+    attacker keeps swinging at until it is struck (a decoy marker the monster's target
+    resolves to, via setAttackTarget/setAggroTarget; one afterimage at a time; it takes
+    no damage and deals none; struck = the attacker's next hit resolves on it, then it
+    clears and the monster re-acquires).
 Related tests + typecheck; strip CR; commit per keystone.
 ```
 
@@ -438,7 +474,7 @@ ground, Vanish's fading outline, Riposte's stagger flash, Shared Breath's pulse 
 formation). Server emits the keystone's event through world.pushEvent with the keystone
 id; no per-tick booleans. Guards use the face grammar (blur / pulse-shell / chips).
 
-Scope: all 17 survivors' names and icons; keystone animations for every keystone merged
+Scope: all 19 abilities' names and icons; keystone animations for every keystone merged
 by the time you start (W1-B's five at least; add the rest if W2-A/W2-B have merged, else
 leave a keyed stub that draws the lane fx and list them). Related tests + typecheck;
 strip CR; commit in steps (names / icons / animations). Report the layer list per
@@ -465,13 +501,14 @@ After the wave-2 merge: `pnpm typecheck`, `pnpm test`, parity check
 
 ## Tests the run must leave green or add
 
-- `abilityNodes.test.ts` (count 17, four rows, tier rule, cross derivation, offer
+- `abilityNodes.test.ts` (count 19, four rows, tier rule, cast axis, cross derivation, offer
   coverage), `abilityRanks.test.ts`, `abilityWiring.test.ts`, `attunement.test.ts`
   (migration of cut ids), `coverage.test.ts` (unchanged), `keystones.test.ts` (unchanged),
   new `abilityKeystones.test.ts` (17 wiring smokes), `t3PacketTags.test.ts`,
   `skillTreeMechanicCopy.test.ts`, `frameLoops.test.ts` / `frameLoopsRanged.test.ts` or
   the new per-root path tests, `tutorialAnchors.test.ts`, `abilitySlam.test.ts` (Slam at
-  T1 rank I), `abilityCharge.test.ts` (Charge at T1), every durability and boss-reference
+  T1 rank I), `abilityCharge.test.ts` (Charge at T1), new `abilityCull.test.ts` and
+  `abilitySidestep.test.ts`, armed Contagion and instant Imbue in their suites, every durability and boss-reference
   suite that attuned a cut ability.
 - Each task: related tests + `pnpm typecheck` before commit; the conductor runs the full
   suite after each wave merge (`pnpm test`, ~4–6 min).
