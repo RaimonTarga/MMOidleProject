@@ -833,6 +833,47 @@ the parity rule produces. Lineage cards. Monster rows. Recovery. The tutorial be
 kit table and the Cave recipe line. T2+ boss numbers. The alternates the designer passed
 over.
 
+### 22.7 Flavor progression (locked 2026-10-02)
+
+An ability's rows change what it does; without this section the ability would still be
+called Sweep, wear the same icon and play the same swing until its keystone, and the
+player would read the tree as different numbers with verbs attached. The designer's
+principle: **as an ability deepens, its identity deepens**, in name, icon and animation,
+so progression is visibly not a bigger number. This is §8's visual rule applied to the
+ability's identity rather than to the fight.
+
+- **Naming grows with the row.** The packet row prefixes the lane's own word: Bleeding
+  Sweep, Echoing Sweep, Drilled Sweep (the nine lane words come from the packet
+  definitions, so the prefix is derived, not authored per ability). The amplifier adds a
+  second qualifier from its axis. The keystone **renames the ability outright**: the hotbar
+  and the tooltip read *Whirlwind*, with "Sweep" as the lineage line beneath it. The cross
+  row earns the compound name, which is where *Bleeding Whirlwind* appears. Rank numerals
+  (Sweep III) stay, after the name.
+- **Icons compose programmatically.** The base glyph is the one hand-made asset. The
+  packet row adds the lane's colour as a tint or frame (the lane colours already exist,
+  rose-magenta for Technique and so on); the amplifier adds a small overlay glyph for its
+  axis; the keystone adds a border treatment and, where the keystone's silhouette differs
+  from the base (a spin, a line, a fork), a second glyph layered over the base. Composited
+  at runtime in the HUD from the existing atlases: no hand art per node, no PixelLab
+  spend, and every step is visible on the bar.
+- **Animation deepens rather than adds.** The packet row draws the lane's existing fx on
+  top of the ability's own cast or swing (the node fx table already keys this). The
+  amplifier scales or extends what the packet drew: a longer trail, a second echo. The
+  keystone owns a bespoke animation, the one that reads from across the screen, in the
+  premium grammar the boss and mob passes set: a readable wind-up, a visible payoff, a
+  lasting mark where the rule leaves one (Aftershock's cracked ground, Vanish's fading
+  outline).
+- **Guards use the three faces as their colour language.** Avoid is a blur, Sustain a
+  pulse or a shell, Endure chips, exactly as the node fx table keys them; the Guard's
+  keystone animation is the face's grammar at full size (Riposte's stagger flash, Shared
+  Breath's pulse running down the formation).
+
+Rules that keep it cheap: the name, tint, overlay and border are all **derived from the
+row and the lane**, so a new ability or a renamed keystone needs no new copy table and no
+new art; only the keystone's second glyph and its animation are authored, one per
+keystone, by the same pass that authors the keystone's rule. Numbers never appear in a
+name.
+
 ## 23. Forms are full power at the craft (locked 2026-10-02)
 
 Run 4's boss walls had one cause: retiring the +1..+5 ladder removed every weapon's ladder

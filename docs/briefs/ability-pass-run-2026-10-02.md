@@ -15,7 +15,7 @@ its tuning leaned on).
 **Goal:** after this run the roster is ten Techniques and seven Guards (§22.2), every
 survivor has four node rows (packet, amplifier, keystone, cross) with its bespoke keystone
 verb live in combat (§22.4), the offers table carries the Stunning Strike swap (§22.3), the
-five T3 paths are re-homed and Justicar retagged (§22.5), the tutorial kit wears Slam and
+five T3 paths are re-homed and Justicar retagged (§22.5), names, icons and animations deepen with the rows (§22.7), the tutorial kit wears Slam and
 teaches Charge at the Cave, and the T1 lab matrix is within ±5% of the baseline taken at
 the start of the run.
 
@@ -331,9 +331,9 @@ owns them, so the only expected movement is W1-A's; any other movement is a defe
 
 ---
 
-## Wave 2 — three tasks, after the wave 1 merge
+## Wave 2 — four tasks, after the wave 1 merge
 
-Merge order: **W2-A, W2-B, W2-C.** W2-A and W2-B both append to
+Merge order: **W2-A, W2-B, W2-D, W2-C.** W2-A and W2-B both append to
 `shared/src/data/abilityNodes/keystones.ts` and `server/test/abilityKeystones.test.ts`:
 keep both sides.
 
@@ -405,6 +405,46 @@ character tab for the five cut ids. Do not write what the code does not do; if W
 are not merged yet, document the rows and point at §22.4 for the verbs. Strip CR; commit.
 ```
 
+### W2-D — flavor progression: names, composed icons, keystone animations · model: opus
+
+```
+On a branch feat/ability-flavor off feat/lineage-data-model (after W1 merged), implement
+design §22.7 so that an ability's identity deepens with its rows:
+
+Names: a shared helper (shared/src/data/abilityNodes/flavor.ts) derives the display name
+from the ability's active rows — the packet row prefixes the lane's own word (from the
+packet definitions, e.g. "Bleeding Sweep", "Drilled Sweep"), the amplifier adds its axis
+qualifier, the keystone renames the ability to the keystone's name with the base name as
+the lineage line beneath, the cross row yields the compound ("Bleeding Whirlwind").
+Rank numerals stay after the name. `abilityDisplayName` becomes the one entry point;
+the hotbar, the Abilities panel, tooltips, the buff bar and the tutorial copy all read
+it. Nothing authored per ability: a test proves every (ability, row combination) yields
+a non-empty, number-free name.
+
+Icons: client/src/ui/abilityIcons.ts composes at runtime from existing atlases — base
+glyph; packet row = lane colour tint or frame (the lane colours in the lineage theme);
+amplifier = a small axis overlay glyph; keystone = a border treatment plus, where
+§22.4's rule has a silhouette (spin, line, fork, shell), a second glyph layered over the
+base from the existing concept/lane icon set. No new PNGs; never edit packed atlases.
+The composition is a pure function of (ability, active rows) and is unit-tested at the
+shared level for the layer list it emits.
+
+Animation: the packet row already draws the lane's fx (ABILITY_NODE_FX); the amplifier
+scales or extends it (longer trail, second echo) through the same card-fx event with the
+axis in its data; each keystone owns ONE bespoke animation on the client, keyed by the
+keystone id, in the premium grammar of docs/combat-animation-current-state.md (readable
+wind-up, visible payoff, lasting mark where the rule leaves one: Aftershock's cracked
+ground, Vanish's fading outline, Riposte's stagger flash, Shared Breath's pulse down the
+formation). Server emits the keystone's event through world.pushEvent with the keystone
+id; no per-tick booleans. Guards use the face grammar (blur / pulse-shell / chips).
+
+Scope: all 17 survivors' names and icons; keystone animations for every keystone merged
+by the time you start (W1-B's five at least; add the rest if W2-A/W2-B have merged, else
+leave a keyed stub that draws the lane fx and list them). Related tests + typecheck;
+strip CR; commit in steps (names / icons / animations). Report the layer list per
+keystone and any keystone whose silhouette you could not express from existing glyphs.
+```
+
 After the wave-2 merge: `pnpm typecheck`, `pnpm test`, parity check
 (`reports/ability-pass/wave2.jsonl`).
 
@@ -446,7 +486,7 @@ After the wave-2 merge: `pnpm typecheck`, `pnpm test`, parity check
 ## What to playtest (the 17 verbs: where each unlocks, what to look for; the kit swap;
    Charge at the Cave; the five path changes)
 ## Divergences from the brief
-## Keystones: per keystone the seam reused, the fx key, and anything that needed a seam
+## Keystones: per keystone the seam reused, the fx key, the icon layers and the animation, and anything that needed a seam
    the vocabulary did not have
 ## T3 paths: per path the old and new description, the tag, the test
 ## Code review (a self-review pass over the merged diff: every hook early-returns on
