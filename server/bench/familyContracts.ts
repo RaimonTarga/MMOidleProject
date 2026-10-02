@@ -196,9 +196,28 @@ function installSyntheticNodes(
    * selected.
    */
   hostOverride: Map<FamilyId, string>,
+  /**
+   * `FAM_HOSTS_ALL=1` — give the one selected family a synthetic node on EVERY
+   * eligible node of its biome and tier, instead of one host.
+   *
+   * This is the mode a `drops` decision should be taken in, and run 4 is why. The
+   * one-host sweep called Cave Brute's T1 contract a decisive inversion at -6.4pp
+   * with all five guards passing; measured on all five Cave T1 nodes under the same
+   * forced 100% Brute blend, the favoured lane ranks 6th, 4th, 1st, 1st and 4th and
+   * the pooled margin is -0.7pp. The host node is a variance source as large as the
+   * effect, and no number of seeds on ONE host can see it.
+   *
+   * Requires exactly one selected family, because every host it claims is a host no
+   * other family can use.
+   */
+  hostsAll: boolean,
 ): SyntheticNode[] {
   const out: SyntheticNode[] = [];
   const takenHosts = new Set<string>([...hostOverride.values()]);
+  if (hostsAll) {
+    assert(families.length === 1,
+      `FAM_HOSTS_ALL needs exactly one family (FAM_FAMILIES), got ${families.length}`);
+  }
   for (const tier of tiers) {
     // Host assignment walks EVERY family the tier can field, not just the selected
     // ones, and only the selected ones are emitted. Otherwise a family's synthetic
@@ -213,6 +232,17 @@ function installSyntheticNodes(
       const mobs = fieldableMobs(family, tier);
       if (mobs.length === 0) continue;
       const selected = families.includes(family);
+      if (hostsAll && selected) {
+        // Every eligible node of the biome and tier becomes its own synthetic node.
+        const hosts = WORLD_NODE_LIST.filter((node) =>
+          node.biomeGroup === def.biome
+          && node.biomeTier === tier
+          && NODE_BIOMES[node.id]?.kind === 'normal'
+          && !!node.blend);
+        assert(hosts.length > 0, `no ${def.biome} T${tier} node can host the ${def.name} contract`);
+        for (const node of hosts) out.push(forceHost(node, family, def, tier, mobs));
+        continue;
+      }
       const forced = hostOverride.get(family);
       const host = forced
         ? WORLD_NODE_LIST.find((node) => node.id === forced)
@@ -234,44 +264,59 @@ function installSyntheticNodes(
       // Claim the host either way, then skip the unselected family: claiming is what
       // keeps the mapping stable, emitting is what the caller asked for.
       if (!selected) continue;
-      const authored = blendEntries(host!.blend!)
-        .map((e) => `${short(e.family)} ${Math.round(e.share * 100)}%`).join(' / ');
-
-      // The override. Written to the node record AND to `NODE_BLENDS`, the
-      // nodeId-keyed view built at module load, so the two cannot disagree.
-      const pureBlend: NodeBlend = { [family]: 1 } as NodeBlend;
-      // `WORLD_NODES` holds the SAME object as `WORLD_NODE_LIST` (the registry builds
-      // the map from the list), so mutating the record reaches every reader of either.
-      assert(WORLD_NODES.get(host!.id) === host, `${host!.id}: registry and list disagree`);
-      (host as { blend?: NodeBlend }).blend = pureBlend;
-      NODE_BLENDS[host!.id] = pureBlend;
-
-      // Prove it landed: `nodeSpawnBlend` memoizes, so a host that had already been
-      // resolved would silently keep its authored cycle and every number below would
-      // be about the wrong encounter.
-      const resolved = nodeSpawnBlend(host!.id);
-      assert(resolved, `${host!.id}: the forced blend resolved to nothing`);
-      assert(resolved!.shares[family] === 1 && blendEntries(resolved!.shares).length === 1,
-        `${host!.id}: forced blend resolved to ${JSON.stringify(resolved!.shares)}`);
-      assert(resolved!.cycle.every((f) => f === family),
-        `${host!.id}: spawn cycle is not 100% ${family}`);
-      assert(JSON.stringify([...(resolved!.poolByFamily.get(family) ?? [])]) === JSON.stringify(mobs),
-        `${host!.id}: pool is ${JSON.stringify(resolved!.poolByFamily.get(family))}, expected ${JSON.stringify(mobs)}`);
-
-      out.push({
-        nodeId: host!.id,
-        family,
-        familyName: def.name,
-        biome: def.biome,
-        tier,
-        authored,
-        mobs,
-        favoured: def.drops,
-        punished: def.punishes,
-      });
+      out.push(forceHost(host!, family, def, tier, mobs));
     }
   }
   return out;
+}
+
+/**
+ * Overwrite one node's authored blend with 100% `family`, in this process only, and
+ * return the synthetic node record.
+ *
+ * Shared by the one-host and the all-hosts paths so the forcing and its assertions
+ * cannot drift between them.
+ */
+function forceHost(
+  host: (typeof WORLD_NODE_LIST)[number],
+  family: FamilyId,
+  def: { name: string; biome: string; drops: PacketId; punishes: PacketId },
+  tier: number,
+  mobs: readonly string[],
+): SyntheticNode {
+  const authored = blendEntries(host.blend!)
+    .map((e) => `${short(e.family)} ${Math.round(e.share * 100)}%`).join(' / ');
+  // Written to the node record AND to `NODE_BLENDS`, the nodeId-keyed view built at
+  // module load, so the two cannot disagree. `WORLD_NODES` holds the SAME object as
+  // `WORLD_NODE_LIST` (the registry builds the map from the list), so mutating the
+  // record reaches every reader of either.
+  const pureBlend: NodeBlend = { [family]: 1 } as NodeBlend;
+  assert(WORLD_NODES.get(host.id) === host, `${host.id}: registry and list disagree`);
+  (host as { blend?: NodeBlend }).blend = pureBlend;
+  NODE_BLENDS[host.id] = pureBlend;
+
+  // Prove it landed: `nodeSpawnBlend` memoizes, so a host that had already been
+  // resolved would silently keep its authored cycle and every number below would be
+  // about the wrong encounter.
+  const resolved = nodeSpawnBlend(host.id);
+  assert(resolved, `${host.id}: the forced blend resolved to nothing`);
+  assert(resolved!.shares[family] === 1 && blendEntries(resolved!.shares).length === 1,
+    `${host.id}: forced blend resolved to ${JSON.stringify(resolved!.shares)}`);
+  assert(resolved!.cycle.every((f) => f === family), `${host.id}: spawn cycle is not 100% ${family}`);
+  assert(JSON.stringify([...(resolved!.poolByFamily.get(family) ?? [])]) === JSON.stringify(mobs),
+    `${host.id}: pool is ${JSON.stringify(resolved!.poolByFamily.get(family))}, expected ${JSON.stringify([...mobs])}`);
+
+  return {
+    nodeId: host.id,
+    family,
+    familyName: def.name,
+    biome: def.biome,
+    tier,
+    authored,
+    mobs: [...mobs],
+    favoured: def.drops,
+    punished: def.punishes,
+  };
 }
 
 // ── One measurement: time to kill N ──────────────────────────────────────────
@@ -445,7 +490,8 @@ async function main(): Promise<void> {
     }),
   );
   // MUST run before anything resolves a blend, `nodeSpawnBlend` being memoized.
-  const nodes = installSyntheticNodes(tiers, families, hostOverride);
+  const hostsAll = process.env.FAM_HOSTS_ALL === '1';
+  const nodes = installSyntheticNodes(tiers, families, hostOverride, hostsAll);
   assert(nodes.length > 0, 'no (family, tier) pair can be fielded at all');
 
   if (!process.env.FAM_REPLAY) {
@@ -710,6 +756,87 @@ async function main(): Promise<void> {
     })
     : ['Not measured on this run (`FAM_ALL_LANES=1` to add it).'];
 
+  // ── Pooled across HOSTS (`FAM_HOSTS_ALL=1`) ───────────────────────────────
+  //
+  // The reading a `drops` decision has to be taken on. One host's ranking is not the
+  // family's contract: run 4 measured Cave Brute's T1 contract on all five Cave T1
+  // nodes under the same forced 100% blend and the favoured lane came 6th, 4th, 1st,
+  // 1st and 4th. A margin that changes sign between two nodes of the same composition
+  // is a margin the node is deciding, and the only way to see that is to measure
+  // several and pool them.
+  //
+  // The pooled margin is the mean of the per-host margins; the spread is half the
+  // range across hosts, read the same way guard G4 reads the seed spread. A pooled
+  // margin smaller than its host spread settles nothing, however clean each host was.
+  interface PooledRow {
+    family: FamilyId;
+    tier: number;
+    band: BandTier;
+    favoured: PacketId;
+    punished: PacketId;
+    hosts: Array<{ nodeId: string; marginPp: number | null; favRank: number | null; lanes: number }>;
+    pooledMarginPp: number | null;
+    hostHalfSpreadPp: number | null;
+    /** Lane means pooled over every host, in rank order. Only with `FAM_ALL_LANES`. */
+    laneMeans: Array<{ lane: PacketId; mean: number; hostsWithReading: number; wonHosts: number }>;
+  }
+  const pooledRows: PooledRow[] = [...new Set(contractRows.map((r) => `${r.node.family}|${r.node.tier}`))]
+    .map((key) => {
+      const [familyKey, tierKey] = key.split('|');
+      const family = familyKey as FamilyId;
+      const tier = Number(tierKey);
+      const group = contractRows.filter((r) => r.node.family === family && r.node.tier === tier);
+      const band = group[0].band;
+      const lanes = allLanes
+        ? [...new Set(laneRefs.filter((r) => r.bandTier === band).map((r) => r.lane!))]
+        : [...new Set([group[0].favoured, group[0].punished])];
+      // Per host, per lane: the mean uplift over the seeds that produced one.
+      const perHostLane = group.map((row) => {
+        const scored = lanes.map((lane) => {
+          const values = seeds.flatMap((seed) => {
+            const reading = readingFor(lane, row.node, band, seed);
+            return reading.uplift === null ? [] : [reading.uplift];
+          });
+          return { lane, mean: values.length ? values.reduce((a, b) => a + b, 0) / values.length : null };
+        }).sort((a, b) => (b.mean ?? -Infinity) - (a.mean ?? -Infinity));
+        return { nodeId: row.node.nodeId, scored };
+      });
+      const hosts = group.map((row, index) => {
+        const scored = perHostLane[index].scored;
+        const rank = scored.findIndex((x) => x.lane === row.favoured);
+        return {
+          nodeId: row.node.nodeId,
+          marginPp: row.meanMarginPp,
+          favRank: rank >= 0 ? rank + 1 : null,
+          lanes: scored.filter((x) => x.mean !== null).length,
+        };
+      });
+      const margins = hosts.flatMap((h) => (h.marginPp === null ? [] : [h.marginPp]));
+      const laneMeans = lanes.map((lane) => {
+        const values = perHostLane.flatMap((h) => {
+          const found = h.scored.find((x) => x.lane === lane);
+          return found?.mean === undefined || found.mean === null ? [] : [found.mean];
+        });
+        const wonHosts = perHostLane.filter((h) => h.scored[0]?.lane === lane).length;
+        return {
+          lane,
+          mean: values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0,
+          hostsWithReading: values.length,
+          wonHosts,
+        };
+      }).sort((a, b) => b.mean - a.mean);
+      return {
+        family, tier, band,
+        favoured: group[0].favoured,
+        punished: group[0].punished,
+        hosts,
+        pooledMarginPp: margins.length ? margins.reduce((a, b) => a + b, 0) / margins.length : null,
+        hostHalfSpreadPp: margins.length > 1 ? (Math.max(...margins) - Math.min(...margins)) / 2 : null,
+        laneMeans,
+      };
+    })
+    .filter((r) => r.hosts.length > 1);
+
   // ── Report ────────────────────────────────────────────────────────────────
 
   const yn = (ok: boolean): string => (ok ? 'yes' : 'NO');
@@ -916,6 +1043,46 @@ async function main(): Promise<void> {
            + ` (\`${r.node.nodeId}\`): ${r.unmeasured}`),
          '']
       : []),
+    ...(pooledRows.length
+      ? ['## Pooled across HOSTS — the reading a `drops` decision needs',
+         '',
+         'One host is not a family. The same forced 100% composition on two nodes of the',
+         'same biome and tier can rank the lanes differently, because the node decides',
+         'terrain, mob density and spawn geometry. The pooled margin is the mean of the',
+         'per-host margins and the spread is half their range, read exactly as guard G4',
+         'reads the seed spread: **a pooled margin smaller than its host spread settles',
+         'nothing, however clean each individual host looked.**',
+         '',
+         '| family | tier | band | favours | punishes | pooled margin | ± host half-spread | fav rank per host | per-host margin | verdict |',
+         '|---|---:|---:|---|---|---:|---:|---|---|---|',
+         ...pooledRows.map((r) => {
+           const decided = r.pooledMarginPp !== null && r.hostHalfSpreadPp !== null
+             && Math.abs(r.pooledMarginPp) > r.hostHalfSpreadPp;
+           const verdict = r.pooledMarginPp === null ? '_not measured_'
+             : !decided ? 'UNDECIDED (host spread covers it)'
+               : r.pooledMarginPp >= 0 ? 'holds across hosts' : '**INVERTED across hosts**';
+           return `| ${short(r.family)} | ${r.tier} | ${r.band} | ${r.favoured} | ${r.punished}`
+             + ` | ${signedPct(r.pooledMarginPp)}`
+             + ` | ${r.hostHalfSpreadPp === null ? '—' : signedPct(r.hostHalfSpreadPp)}`
+             + ` | ${r.hosts.map((h) => (h.favRank === null ? '—' : `${h.favRank}/${h.lanes}`)).join(', ')}`
+             + ` | ${r.hosts.map((h) => signedPct(h.marginPp)).join(', ')} | ${verdict} |`;
+         }),
+         '',
+         ...(allLanes
+           ? pooledRows.flatMap((r) => [
+             `### Lanes pooled over ${r.hosts.length} hosts — ${short(r.family)} T${r.tier}`,
+             '',
+             '| rank | lane | mean uplift over all hosts | hosts with a reading | hosts it won |',
+             '|---:|---|---:|---:|---:|',
+             ...r.laneMeans.map((l, i) => `| ${i + 1} | ${l.lane}`
+               + `${l.lane === r.favoured ? ' **(favoured)**' : ''}`
+               + `${l.lane === r.punished ? ' _(punished)_' : ''}`
+               + ` | ${signedPct(l.mean)} | ${l.hostsWithReading}/${r.hosts.length} | ${l.wonHosts} |`),
+             '',
+           ])
+           : []),
+        ]
+      : []),
     '## The wider pass — every weapon lane on the same synthetic node',
     '',
     'What names the lane a decisive inversion should move `drops` to.',
@@ -939,6 +1106,7 @@ async function main(): Promise<void> {
     elapsedMs,
     nodes,
     unfieldable,
+    pooledByHost: pooledRows,
     rows,
     contracts: contractRows.map((r) => ({
       family: r.node.family,
