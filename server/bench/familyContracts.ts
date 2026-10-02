@@ -185,10 +185,19 @@ function installSyntheticNodes(tiers: readonly number[], families: readonly Fami
   const out: SyntheticNode[] = [];
   const takenHosts = new Set<string>();
   for (const tier of tiers) {
-    for (const family of families) {
+    // Host assignment walks EVERY family the tier can field, not just the selected
+    // ones, and only the selected ones are emitted. Otherwise a family's synthetic
+    // node would depend on which other families happened to be in the run: the full
+    // sweep gives Cave Brood `t1-cave-01` and Cave Brute `t1-cave-02`, but a
+    // `FAM_FAMILIES=cave-brute` re-run on its own would take `t1-cave-01` and land on
+    // a different node's terrain and density. Two runs of the same contract have to
+    // mean the same encounter, or a narrow follow-up pass cannot be compared to the
+    // sweep that prompted it.
+    for (const family of FAMILY_DATABASE.keys()) {
       const def = FAMILY_DATABASE.get(family)!;
       const mobs = fieldableMobs(family, tier);
       if (mobs.length === 0) continue;
+      const selected = families.includes(family);
       const host = WORLD_NODE_LIST.find((node) =>
         node.biomeGroup === def.biome
         && node.biomeTier === tier
@@ -197,6 +206,9 @@ function installSyntheticNodes(tiers: readonly number[], families: readonly Fami
         && !takenHosts.has(node.id));
       assert(host, `no spare ${def.biome} T${tier} node to host the ${def.name} contract`);
       takenHosts.add(host!.id);
+      // Claim the host either way, then skip the unselected family: claiming is what
+      // keeps the mapping stable, emitting is what the caller asked for.
+      if (!selected) continue;
       const authored = blendEntries(host!.blend!)
         .map((e) => `${short(e.family)} ${Math.round(e.share * 100)}%`).join(' / ');
 
@@ -419,11 +431,16 @@ async function main(): Promise<void> {
   const bandForTier = (tier: number): BandTier => (tier <= 1 ? 1 : 2);
 
   const rows: Row[] = [];
+  let replayElapsedMs = 0;
   const startedAt = Date.now();
   if (process.env.FAM_REPLAY) {
-    const stored = JSON.parse(readFileSync(resolve(process.env.FAM_REPLAY), 'utf8')) as { rows: Row[] };
+    const stored = JSON.parse(readFileSync(resolve(process.env.FAM_REPLAY), 'utf8')) as
+      { rows: Row[]; elapsedMs?: number };
     assert(Array.isArray(stored.rows) && stored.rows.length > 0, 'replay file holds no rows');
     rows.push(...stored.rows);
+    // The measured run's wall clock travels in the JSON, so a replay that only
+    // regenerates the prose does not silently rewrite the header to "0.0 min".
+    replayElapsedMs = stored.elapsedMs ?? 0;
     console.log(`replaying ${rows.length} measured rows`);
   } else {
     for (const node of nodes) {
@@ -460,7 +477,7 @@ async function main(): Promise<void> {
       }
     }
   }
-  const elapsedMs = process.env.FAM_REPLAY ? 0 : Date.now() - startedAt;
+  const elapsedMs = process.env.FAM_REPLAY ? replayElapsedMs : Date.now() - startedAt;
 
   // ── Readings ──────────────────────────────────────────────────────────────
 
@@ -875,6 +892,7 @@ async function main(): Promise<void> {
   writeFileSync(resolve(out, `${base}.json`), `${JSON.stringify({
     schema: 1,
     killTarget, capMs, seeds, tiers, allLanes,
+    elapsedMs,
     nodes,
     unfieldable,
     rows,
