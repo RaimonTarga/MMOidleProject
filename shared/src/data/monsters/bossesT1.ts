@@ -260,7 +260,26 @@ export const bossMonsterEntriesT1 = [
     // The tier's ATTRITION boss: the longest fight, the smallest hits, and ~85% of its
     // damage arriving through channels plating and DR never touch. The direct slap stays
     // trivial (13 is exactly the Mud Toad's hit) — the toxin and the rot pool are the boss.
-    stats: { hp: 2100, attack: 13, plating: 2, damageReduction: 0.02, speed: 28, attackRange: 15, attackCooldown: 2600, pullRange: 260 },
+    // T1 BOSS PASS NERF (2026-10-02): hp 2100 -> 1750. On the six-class boss lab at
+    // GM 30 it beat four of six classes 30/30 and the Striker 15/30; only the
+    // Apprentice won outright, and only because its plan wears `swamp-vest-t1` for
+    // this one fight (25% DoT resistance). Every class is now at 87% or better.
+    //
+    // HP is the whole lever, and it is the right one for an ATTRITION boss: it
+    // shortens the window the poison and the pools work in and leaves every mechanic
+    // at its authored size. The alternatives were measured and are worse. Halving
+    // `damagePerStack` 2 -> 1 puts all six at 100% and cuts incoming DPS 36%, which
+    // ends the exam. Cutting the pool's `damagePerTick` 3 -> 2 does literally nothing
+    // (0/30 stays 0/30): the pool is not this fight, the poison is -- worth knowing
+    // before anyone tunes the pool again.
+    //
+    // THE CHEAPER FIX IS NOT A BOSS ROW, and the designer should see it before
+    // keeping this one: giving every class the Swamp vest for this fight, which the
+    // Apprentice's plan already does, takes the untouched boss from 0/0/0/0 to
+    // 100/100/100/53 (reports/t1-boss-pass/base-swampvest.jsonl). This boss is the
+    // tier's DoT exam and five of six tutorial plans bring no DoT answer to it. If
+    // that is fixed in `plans.ts`, revert this HP cut.
+    stats: { hp: 1750, attack: 13, plating: 2, damageReduction: 0.02, speed: 28, attackRange: 15, attackCooldown: 2600, pullRange: 260 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 100, essenceType: 'purple', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 100, leashRange: 700, idleMinMs: 2000, idleMaxMs: 5500 },
