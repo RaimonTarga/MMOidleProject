@@ -191,17 +191,25 @@ export const bossMonsterEntriesT1 = [
   ['crag-behemoth', {
     id: 'crag-behemoth', name: 'Crag Behemoth', color: 0x8899bb,
     isBoss: true,
-    // T1 BOSS PASS NERF (2026-10-02): attack 56 -> 50. The tutorial Striker was 1/30
-    // on the six-class boss lab, and the mechanism is NOT the single charge -- cutting
-    // `damageMultiplier` 1.9 -> 1.5 (-21%) moved it only 3% -> 10%, while this -11% to
-    // `attack` moved it 3% -> 77%. The Striker dies to a SAWTOOTH: the ordinary swing
-    // out-paces its Recovery by ~10 points of pool a cycle, so it arrives at each
-    // charge lower than the last (46% when the killing one lands), and the charge then
-    // finishes a bar the plain attack emptied. `attack` is the one number both scale
-    // from, which is why it is the single lever. The Crag Charge keeps its 1.9 and its
-    // 1.15 phase empower, so the exam is intact: the worst 5-second window is now 58%
-    // of the Striker's pool against 66% before, i.e. survivable from ~60% HP, which is
-    // the bar the pass was given. Reverting is this one number.
+    // T1 BOSS PASS NERF (2026-10-02): attack 56 -> 50. The tutorial Striker was 1/30 on
+    // the six-class boss lab, and the mechanism is NOT the single charge. Trimming the
+    // charge instead -- `damageMultiplier` 1.9 -> 1.5 -- gives the Striker a SMALLER
+    // biggest hit (72.7 against this row's 82.6) and a smaller worst 5-second window
+    // (57.1% of its pool against 58.4%), and still wins only 3 of 30 where this row
+    // wins 23. So do not "fix" this boss by shrinking the charge; it has been measured
+    // and it does not work.
+    //
+    // The Striker dies to a SAWTOOTH: the ordinary swing out-paces its Recovery by ~10
+    // points of pool per 3.5s cycle, so it arrives at each charge lower than the last
+    // (46% when the killing one lands) and the charge finishes a bar the plain attack
+    // emptied. `attack` is the one number both the swing and the charge scale from,
+    // which is why it is the single lever.
+    //
+    // The Crag Charge keeps its 1.9 and its 1.15 phase empower, so the exam is intact.
+    // The worst 5-second window is now 58% of the Striker's pool against 66% before,
+    // which is the "survivable from ~60% HP" the pass was given -- but note that the
+    // criterion is NOT sufficient on its own, since the 1.5 row above satisfies it
+    // better and still walls the class. Reverting is this one number.
     stats: { hp: 2100, attack: 50, plating: 0, damageReduction: 0, speed: 22, attackRange: 18, attackCooldown: 3500, pullRange: 280 },
     behavior: 'melee', attackStyle: 'quake', biome: 'mountain',
     rewards: { essence: 105, essenceType: 'blue', level: 5, biomeXp: 158 },

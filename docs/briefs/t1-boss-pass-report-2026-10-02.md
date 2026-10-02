@@ -159,10 +159,22 @@ Striker three points; cutting the magnitude by 11% moved it 74.
 | `damageMultiplier` 1.65 | 7% @24.3 | 83% @1.4 | 100% | 39.0% | 4.3 |
 | `damageMultiplier` 1.50 | 10% @23.4 | 100% | 100% | 36.0% | 4.2 |
 
-Read the last two rows against `atk 50`. **`mult 1.50` produces a *smaller* mean burst
-window (36.0% of pool) than the adopted `atk 50` (38.5%) and leaves the Striker at 10%
-instead of 77%.** If the single charge were the problem, that row would be the fix. It is
-not.
+Read the last two rows against `atk 50`. On the **Striker specifically**, `mult 1.50`
+does strictly better than the adopted row on both burst measures and still loses:
+
+| Striker vs Behemoth | biggest single hit | worst 5 s window | wins |
+|---|---|---|---|
+| base (atk 56, x1.9) | 92.6 (40.6% of pool) | 150.0 (65.8%) | 1/30 |
+| `mult 1.50` | **72.7** (31.9%) | **130.1** (57.1%) | **3/30** |
+| **`atk 50` (adopted)** | 82.6 (36.2%) | 133.0 (58.4%) | **23/30** |
+
+**A smaller biggest hit and a smaller burst window, and it wins three fights in thirty
+instead of twenty-three.** The burst is not the binding constraint.
+
+This also means decision 3's stated criterion — make the sequence survivable from ~60%
+HP — **is not sufficient on its own**, and is worth flagging as such: `mult 1.50` satisfies
+it better than the row I adopted and leaves the Striker walled. The adopted row meets the
+criterion, but that is not why it works.
 
 What kills the Striker is a **sawtooth**. Its HP trace through one losing fight, as a
 percentage of a 228 pool, sampled per second:
