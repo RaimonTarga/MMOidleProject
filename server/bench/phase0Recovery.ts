@@ -31,6 +31,7 @@ import { writeHitboxArtifact, hydrateHitboxCacheFromArtifact } from '../src/hitb
 import { isPlayerActivelyInCombat } from '../src/systems/combat/ai/engagement';
 import { registerCombatListener, unregisterCombatListener, type CombatEventHandler } from '../src/systems/combat/engine/combatPipeline';
 import { FightHpTracker, summarizeFights, type FightHpRecord, type FightHpSummary } from '../../bot/src/telemetry/fightHp';
+import { oldModelRecovery, type OldCharmPct } from './phase0RecoveryModel';
 
 const BIOMES = ['plains', 'forest'] as const;
 const FRAMES = ['light', 'heavy'] as const;
@@ -120,14 +121,9 @@ async function main() {
   // reports/progression-phase0/old-charm-pct.json (extracted from the pre-0b recipes).
   const model = (process.env.PHASE0_MODEL ?? 'new') as 'old' | 'new';
   assert(model === 'old' || model === 'new', 'PHASE0_MODEL must be old or new');
-  const oldCharms = model === 'old'
-    ? JSON.parse(readFileSync(resolve('../reports/progression-phase0/old-charm-pct.json'), 'utf8')) as Record<string, { base: number; steps: number[] }>
+  const oldCharms: Record<string, OldCharmPct> = model === 'old'
+    ? JSON.parse(readFileSync(resolve('../reports/progression-phase0/old-charm-pct.json'), 'utf8')) as Record<string, OldCharmPct>
     : {};
-  const oldPctFor = (charmId: string | undefined): number => {
-    if (!charmId) return 5;
-    const c = oldCharms[charmId]; assert(c, `no pre-0b value for ${charmId}`);
-    return 5 + c.base + c.steps.slice(0, plus).reduce((a, b) => a + b, 0);
-  };
   assert(wiring === 'reference' || wiring === 'timed', 'PHASE0_SW must be reference or timed');
   // Lever overrides for the sweep. GAME_CONFIG is `as const` for types only; the
   // stat recalc reads these at call time, so mutating before any bot is built is
@@ -190,12 +186,15 @@ async function main() {
       setupArena(world, target);
       const { bot } = prepareSurveyBot(world, cell, BOT_SPAWN);
       const maxHp = bot.hasHealth.maxHp;
-      const oldFlat = maxHp * oldPctFor(cell.build.gearItemIds.recovery) / 100;
-      if (model === 'old') bot.hasHealth.recovery = oldFlat;
+      // Null under the DEFAULT `new` model: `oldCharms` is only loaded for the
+      // `old` arm, so asking it for a charm's pre-0b percentage there threw and
+      // took the bench's own primary arm down with it.
+      const oldFlat = oldModelRecovery({ model, maxHp, charmId: cell.build.gearItemIds.recovery, plus, oldCharms });
+      if (oldFlat !== null) bot.hasHealth.recovery = oldFlat;
       const recovery = bot.hasHealth.recovery ?? 0;
       lastHp = bot.hasHealth.hp;
       for (; now < capMs;) {
-        if (model === 'old') bot.hasHealth.recovery = oldFlat;
+        if (oldFlat !== null) bot.hasHealth.recovery = oldFlat;
         world.tick(100, now); now += 100;
         world.pendingDeaths = [];
         world.clearNodeEvents(cell.nodeId);
