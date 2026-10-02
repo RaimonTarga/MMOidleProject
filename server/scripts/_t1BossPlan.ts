@@ -145,9 +145,26 @@ function kitFor(cls: (typeof TUTORIAL_CLASS_PLANS)[number], biome: T1Biome) {
   };
 }
 
+/**
+ * What the adopted rows LEAN ON. Not tuning candidates: each zeroes one tutorial
+ * ability's key effect on top of whatever boss numbers are live, so the ability pass
+ * can see how much of each win rate it is holding up before it changes one. Run these
+ * against `final`, not `base` -- the question is what the tuned matrix depends on.
+ */
+const ABILITY_CANDIDATES: Record<string, Record<string, { field: string; values: number[] }>> = {
+  // Expose Weakness is the technique in four of the five boss loadouts.
+  'abl-no-expose': { 'expose-weakness': { field: 'damageTakenPct', values: [0, 0, 0, 0] } },
+  // Second Wind is the guard in four of five, and it is a Recovery activation --
+  // `recoveryPct` is the fraction of the flat rate it switches on.
+  'abl-no-secondwind': { 'second-wind': { field: 'recoveryPct', values: [0, 0, 0, 0] } },
+  // Sweep's cleave only matters where there are adds, i.e. the Razorback.
+  'abl-no-sweep': { 'sweep': { field: 'splashPct', values: [0, 0, 0, 0] } },
+};
+
 const cand = args.cand ?? 'base';
-const bp = CANDIDATES[cand];
-assert(bp, `unknown candidate ${cand} (have: ${Object.keys(CANDIDATES).join(', ')})`);
+const ap = ABILITY_CANDIDATES[cand];
+const bp = ap ? {} : CANDIDATES[cand];
+assert(bp, `unknown candidate ${cand} (have: ${[...Object.keys(CANDIDATES), ...Object.keys(ABILITY_CANDIDATES)].join(', ')})`);
 const nSeeds = Number(args.seeds ?? SEEDS.length);
 assert(nSeeds >= 1 && nSeeds <= SEEDS.length, `seeds must be 1..${SEEDS.length}`);
 const onlyClasses = args.classes?.split(',');
@@ -170,6 +187,7 @@ for (const cls of TUTORIAL_CLASS_PLANS) {
         ...kit,
         rules: tutorialRunes(cls.movement, 'final', cls.classRoot),
         ...(Object.keys(bp).length > 0 ? { bp } : {}),
+        ...(ap ? { ap } : {}),
       });
     }
   }
