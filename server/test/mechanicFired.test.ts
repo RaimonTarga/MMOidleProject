@@ -117,7 +117,7 @@ function exchange(player: PlayerEntity, defender: ReturnType<typeof monster>, me
   emitCombatEvent('onHit', exchange(player, target, {}), world);
   assert(countFor('mf-cadence') === 0, 'a normal cadence hit is not the mechanic firing');
 
-  emitCombatEvent('onHit', exchange(player, target, { empoweredAttack: true }), world);
+  emitCombatEvent('onHit', exchange(player, target, { empoweredAttack: true, mechanicConsumed: true }), world);
   assert(
     countFor('mf-cadence') === 1,
     `the finisher should fire exactly once, got ${countFor('mf-cadence')}`,
@@ -125,7 +125,7 @@ function exchange(player: PlayerEntity, defender: ReturnType<typeof monster>, me
 
   // The same exchange re-emitted: the latch on `ctx.metadata` is what keeps one
   // hit to one emission no matter how many listeners on it would qualify.
-  const reused = exchange(player, target, { empoweredAttack: true });
+  const reused = exchange(player, target, { empoweredAttack: true, mechanicConsumed: true });
   emitCombatEvent('onHit', reused, world);
   emitCombatEvent('onHit', reused, world);
   assert(
@@ -145,7 +145,7 @@ function exchange(player: PlayerEntity, defender: ReturnType<typeof monster>, me
   emitCombatEvent('onHit', exchange(player, target, {}), world);
   assert(countFor('mf-cooldown') === 0, 'a normal cooldown hit is not the mechanic firing');
 
-  emitCombatEvent('onHit', exchange(player, target, { empoweredAttack: true }), world);
+  emitCombatEvent('onHit', exchange(player, target, { empoweredAttack: true, mechanicConsumed: true }), world);
   assert(
     countFor('mf-cooldown') === 1,
     `the execution should fire exactly once, got ${countFor('mf-cooldown')}`,
@@ -168,7 +168,7 @@ function exchange(player: PlayerEntity, defender: ReturnType<typeof monster>, me
     { executionCooldownMs: 0, executionCooldownPct: 0, initialized: true };
   const target = monster(540);
 
-  emitCombatEvent('onHit', exchange(player, target, { empoweredAttack: true }), world);
+  emitCombatEvent('onHit', exchange(player, target, { empoweredAttack: true, mechanicConsumed: true }), world);
   assert(
     countFor('mf-both') === 1,
     `cadence and cooldown must not both fire on one hit, got ${countFor('mf-both')}`,
@@ -255,7 +255,7 @@ function exchange(player: PlayerEntity, defender: ReturnType<typeof monster>, me
   emitCombatEvent('onHit', exchange(player, target, {}), world);
   assert(countFor('mf-energy') === 0, 'building energy is not the mechanic firing');
 
-  emitCombatEvent('onHit', exchange(player, target, { empoweredAttack: true }), world);
+  emitCombatEvent('onHit', exchange(player, target, { empoweredAttack: true, mechanicConsumed: true }), world);
   assert(
     countFor('mf-energy') === 1,
     `the discharge should fire exactly once, got ${countFor('mf-energy')}`,
