@@ -98,6 +98,28 @@ const world = new World();
   );
 }
 
+// ── the heal LOG carries sub-1 slices instead of rounding each one ──
+//
+// Flat Recovery at 10 Hz heals in slices under 1 HP. Rounding each slice logged
+// 0.5/tick as 1 (a 75% over-report) and 0.4/tick as 0 (no healing at all), which is
+// what an operator reads when judging Recovery by hand. The log must track the HP
+// ledger to within a point.
+{
+  const player = world.attachPlayerEntity(makePlayerSlices("heal-log-player"), "heal-log-player");
+  player.hasHealth.maxHp = 1000;
+  player.hasHealth.hp = 500;
+  const healEvents = () => (world.worldLogJournal as any[]).filter((e) => e.kind === "heal" && e.target?.id === "heal-log-player");
+  world.worldLogJournal = [];
+  for (let i = 0; i < 3; i++) applyHealToPlayer(player, player.tracksCombat, 0.4, world);
+  const logged = healEvents().reduce((sum, e) => sum + e.amount, 0);
+  assert(logged === 1, `three 0.4 heals must log exactly 1 point, got ${logged} over ${healEvents().length} events`);
+  assert(Math.abs(player.hasHealth.hp - 501.2) < 1e-9, `HP must still move by the exact amount, got ${player.hasHealth.hp}`);
+  world.worldLogJournal = [];
+  for (let i = 0; i < 20; i++) applyHealToPlayer(player, player.tracksCombat, 0.5, world);
+  const logged2 = healEvents().reduce((sum, e) => sum + e.amount, 0);
+  assert(logged2 === 10, `twenty 0.5 heals must log 10 points, not 20, got ${logged2}`);
+}
+
 {
   // The same core DOES scale the rate itself, once, during recalc.
   const player = world.attachPlayerEntity(makePlayerSlices("recovery-stat"), "recovery-stat");
