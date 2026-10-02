@@ -166,7 +166,18 @@ export const bossMonsterEntriesT1 = [
   ['crag-behemoth', {
     id: 'crag-behemoth', name: 'Crag Behemoth', color: 0x8899bb,
     isBoss: true,
-    stats: { hp: 2100, attack: 56, plating: 0, damageReduction: 0, speed: 22, attackRange: 18, attackCooldown: 3500, pullRange: 280 },
+    // T1 BOSS PASS NERF (2026-10-02): attack 56 -> 50. The tutorial Striker was 1/30
+    // on the six-class boss lab, and the mechanism is NOT the single charge -- cutting
+    // `damageMultiplier` 1.9 -> 1.5 (-21%) moved it only 3% -> 10%, while this -11% to
+    // `attack` moved it 3% -> 77%. The Striker dies to a SAWTOOTH: the ordinary swing
+    // out-paces its Recovery by ~10 points of pool a cycle, so it arrives at each
+    // charge lower than the last (46% when the killing one lands), and the charge then
+    // finishes a bar the plain attack emptied. `attack` is the one number both scale
+    // from, which is why it is the single lever. The Crag Charge keeps its 1.9 and its
+    // 1.15 phase empower, so the exam is intact: the worst 5-second window is now 58%
+    // of the Striker's pool against 66% before, i.e. survivable from ~60% HP, which is
+    // the bar the pass was given. Reverting is this one number.
+    stats: { hp: 2100, attack: 50, plating: 0, damageReduction: 0, speed: 22, attackRange: 18, attackCooldown: 3500, pullRange: 280 },
     behavior: 'melee', attackStyle: 'quake', biome: 'mountain',
     rewards: { essence: 105, essenceType: 'blue', level: 5, biomeXp: 158 },
     ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 2000, idleMaxMs: 5000 },
@@ -174,7 +185,8 @@ export const bossMonsterEntriesT1 = [
     // `chargeOnAggro` REMOVED with the 2026-09-04 encounter redesign: a speed burst
     // on aggro is not a charge, it just made the opening seconds unreadable, and the
     // lineage's actual committed charge is the cast below.
-    // 56 x1.9 = 106 — the tier's biggest single hit, ~55-60% of an end-of-T1 pool.
+    // 50 x1.9 = 95 — the tier's biggest single hit, ~45-50% of an end-of-T1 pool.
+    // (Was 56 x1.9 = 106, ~55-60%, until the 2026-10-02 pass; see the stat line.)
     // Above the 40-50% anchor in boss-design.md on purpose: this is the one T1 fight
     // that is supposed to make the damage cap (mountain plate / Striker root) read as
     // the difference between surviving the impact and not. Every 10s, three a fight.
