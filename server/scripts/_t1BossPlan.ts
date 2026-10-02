@@ -14,6 +14,13 @@
  *
  *   tsx scripts/_t1BossPlan.ts --out=plan.json [--cand=base] [--seeds=20] [--fixed]
  *                              [--classes=striker,squire] [--bosses=crag-behemoth]
+ *                              [--armor=forest-vest-t1]
+ *
+ * `--armor` is a DIAGNOSTIC, not a candidate: it replaces the per-boss armour every
+ * class wears, to price the tutorial's armour choice against a boss nerf. It exists
+ * because the Greatbear is authored as the evasion exam and the Toadeater as the DoT
+ * exam, and in each case the only class that beats it is the one whose tutorial
+ * armour happens to carry the counter.
  *
  * Rows carry the lab's seeded approach geometry (`jitter`) by default, because
  * without it a solo T1 boss fight is deterministic and a win rate can only be 0% or
@@ -57,6 +64,18 @@ const SEEDS = [173, 947, 2027, 3331, 4409, 5501, 6607, 7717, 8821, 9929,
 const CANDIDATES: Record<string, Record<string, Record<string, number>>> = {
   base: {},
 
+  /**
+   * The numbers as they stood BEFORE the 2026-10-02 pass, so the before and after
+   * matrices run on the same lab build and the comparison is not confounded by the
+   * instrumentation that landed alongside the tuning. This is also the pass's own
+   * revert list, expressed as data.
+   */
+  'pre-pass': {
+    'crag-behemoth': { 'stats.attack': 56 },
+    'gnarled-greatbear': { 'stats.hp': 1800, 'stats.attack': 18 },
+    'grave-toadeater': { 'stats.hp': 2100 },
+  },
+
   // ---- Crag Behemoth (decision 3: the dominant hit's magnitude or multiplier) ----
   // `stats.attack` is the magnitude BOTH the Crag Charge and the ordinary swing scale
   // from, which is why it is the single lever here: the measured mechanism is a
@@ -81,8 +100,24 @@ const CANDIDATES: Record<string, Record<string, Record<string, number>>> = {
   'bear-hp1500': { 'gnarled-greatbear': { 'stats.hp': 1500 } },
   'bear-hp1350': { 'gnarled-greatbear': { 'stats.hp': 1350 } },
   'bear-hp1200': { 'gnarled-greatbear': { 'stats.hp': 1200 } },
+  'bear-atk16': { 'gnarled-greatbear': { 'stats.attack': 16 } },
   'bear-atk15': { 'gnarled-greatbear': { 'stats.attack': 15 } },
+  'bear-atk14': { 'gnarled-greatbear': { 'stats.attack': 14 } },
   'bear-atk13': { 'gnarled-greatbear': { 'stats.attack': 13 } },
+  // Both single levers CLIFF -- HP goes 43% -> 100% between 1350 and 1200, attack
+  // 43% -> 100% between 15 and 13 -- so neither alone can leave the melee pair in a
+  // band. These pair a shorter fight with a smaller claw.
+  'bear-hp1600-atk15': { 'gnarled-greatbear': { 'stats.hp': 1600, 'stats.attack': 15 } },
+  'bear-hp1500-atk16': { 'gnarled-greatbear': { 'stats.hp': 1500, 'stats.attack': 16 } },
+  'bear-hp1500-atk15': { 'gnarled-greatbear': { 'stats.hp': 1500, 'stats.attack': 15 } },
+  'bear-hp1350-atk16': { 'gnarled-greatbear': { 'stats.hp': 1350, 'stats.attack': 16 } },
+  'bear-hp1450-atk16': { 'gnarled-greatbear': { 'stats.hp': 1450, 'stats.attack': 16 } },
+  'bear-hp1400-atk16': { 'gnarled-greatbear': { 'stats.hp': 1400, 'stats.attack': 16 } },
+  'bear-hp1700-atk15': { 'gnarled-greatbear': { 'stats.hp': 1700, 'stats.attack': 15 } },
+  // The ramp itself, for the designer's comparison: a SMALLER step, not the stack cap
+  // the data file rules out. 1.20^5 = 2.49x attack speed by 29 s; 1.14^5 = 1.93x.
+  'bear-frenzy114': { 'gnarled-greatbear': { 'bossScript.repeating.0.actions.0.actions.0.mult': 1.14 } },
+  'bear-hp1600-frenzy114': { 'gnarled-greatbear': { 'stats.hp': 1600, 'bossScript.repeating.0.actions.0.actions.0.mult': 1.14 } },
 
   // ---- Grave Toadeater (step 4: below the floor, smallest lever) ----
   // The attrition exam, and the losses are near-misses, so HP is the lever that keeps
@@ -106,7 +141,7 @@ function kitFor(cls: (typeof TUTORIAL_CLASS_PLANS)[number], biome: T1Biome) {
   assert(ITEM_DATABASE.get(loadout.armor)?.slot === 'armor', `${cls.className}/${biome}: ${loadout.armor} is not armour`);
   return {
     weapon: slots['weapon']!, charm: slots['recovery']!, boots: slots['mobility']!,
-    armor: loadout.armor, techniques: [loadout.technique], guards: [loadout.guard],
+    armor: args.armor ?? loadout.armor, techniques: [loadout.technique], guards: [loadout.guard],
   };
 }
 
@@ -117,6 +152,7 @@ const nSeeds = Number(args.seeds ?? SEEDS.length);
 assert(nSeeds >= 1 && nSeeds <= SEEDS.length, `seeds must be 1..${SEEDS.length}`);
 const onlyClasses = args.classes?.split(',');
 const onlyBosses = args.bosses?.split(',');
+if (args.armor) assert(ITEM_DATABASE.get(args.armor)?.slot === 'armor', `--armor=${args.armor} is not armour`);
 
 const rows: unknown[] = [];
 for (const cls of TUTORIAL_CLASS_PLANS) {
@@ -128,7 +164,7 @@ for (const cls of TUTORIAL_CLASS_PLANS) {
     const kit = kitFor(cls, biome);
     for (const seed of SEEDS.slice(0, nSeeds)) {
       rows.push({
-        id: `${cand}|${name}|${boss}|${seed}`,
+        id: `${cand}${args.armor ? `+${args.armor}` : ''}|${name}|${boss}|${seed}`,
         boss, cls: name, seed, tier: 1, upgrade: 5,
         ...(args.fixed ? {} : { jitter: true }),
         ...kit,
