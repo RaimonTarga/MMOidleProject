@@ -181,9 +181,24 @@ function fieldableMobs(family: FamilyId, tier: number): string[] {
  * Returns the nodes in (biome, tier, family) order. MUST be called before anything
  * else resolves a blend.
  */
-function installSyntheticNodes(tiers: readonly number[], families: readonly FamilyId[]): SyntheticNode[] {
+function installSyntheticNodes(
+  tiers: readonly number[],
+  families: readonly FamilyId[],
+  /**
+   * `FAM_HOST=cave-brute:node-t1-cave-03,...` — force a family's host node.
+   *
+   * Exists because run 4 found that two hosts of the SAME forced 100% blend can rank
+   * the lanes differently: `t1-cave-01` put Tempo first and Affliction fifth on a pure
+   * Cave Brute encounter, `t1-cave-02` put Affliction first and Tempo second. The
+   * composition is identical, so the difference is the node itself — terrain, mob
+   * density, spawn geometry. A ranking that moves with the host has to be measured
+   * over SEVERAL hosts before it can name a lane, and this is how the extra hosts are
+   * selected.
+   */
+  hostOverride: Map<FamilyId, string>,
+): SyntheticNode[] {
   const out: SyntheticNode[] = [];
-  const takenHosts = new Set<string>();
+  const takenHosts = new Set<string>([...hostOverride.values()]);
   for (const tier of tiers) {
     // Host assignment walks EVERY family the tier can field, not just the selected
     // ones, and only the selected ones are emitted. Otherwise a family's synthetic
@@ -198,12 +213,22 @@ function installSyntheticNodes(tiers: readonly number[], families: readonly Fami
       const mobs = fieldableMobs(family, tier);
       if (mobs.length === 0) continue;
       const selected = families.includes(family);
-      const host = WORLD_NODE_LIST.find((node) =>
-        node.biomeGroup === def.biome
-        && node.biomeTier === tier
-        && NODE_BIOMES[node.id]?.kind === 'normal'
-        && !!node.blend
-        && !takenHosts.has(node.id));
+      const forced = hostOverride.get(family);
+      const host = forced
+        ? WORLD_NODE_LIST.find((node) => node.id === forced)
+        : WORLD_NODE_LIST.find((node) =>
+          node.biomeGroup === def.biome
+          && node.biomeTier === tier
+          && NODE_BIOMES[node.id]?.kind === 'normal'
+          && !!node.blend
+          && !takenHosts.has(node.id));
+      if (forced) {
+        assert(host, `FAM_HOST names unknown node "${forced}"`);
+        assert(host!.biomeGroup === def.biome && host!.biomeTier === tier,
+          `FAM_HOST ${forced} is ${host!.biomeGroup} T${host!.biomeTier}, not ${def.biome} T${tier}`);
+        assert(NODE_BIOMES[host!.id]?.kind === 'normal' && !!host!.blend,
+          `FAM_HOST ${forced} is not a normal node with an authored blend`);
+      }
       assert(host, `no spare ${def.biome} T${tier} node to host the ${def.name} contract`);
       takenHosts.add(host!.id);
       // Claim the host either way, then skip the unselected family: claiming is what
@@ -214,12 +239,12 @@ function installSyntheticNodes(tiers: readonly number[], families: readonly Fami
 
       // The override. Written to the node record AND to `NODE_BLENDS`, the
       // nodeId-keyed view built at module load, so the two cannot disagree.
-      const forced: NodeBlend = { [family]: 1 } as NodeBlend;
+      const pureBlend: NodeBlend = { [family]: 1 } as NodeBlend;
       // `WORLD_NODES` holds the SAME object as `WORLD_NODE_LIST` (the registry builds
       // the map from the list), so mutating the record reaches every reader of either.
       assert(WORLD_NODES.get(host!.id) === host, `${host!.id}: registry and list disagree`);
-      (host as { blend?: NodeBlend }).blend = forced;
-      NODE_BLENDS[host!.id] = forced;
+      (host as { blend?: NodeBlend }).blend = pureBlend;
+      NODE_BLENDS[host!.id] = pureBlend;
 
       // Prove it landed: `nodeSpawnBlend` memoizes, so a host that had already been
       // resolved would silently keep its authored cycle and every number below would
@@ -411,8 +436,16 @@ async function main(): Promise<void> {
   mkdirSync(out, { recursive: true });
 
   const families = [...FAMILY_DATABASE.keys()].filter((id) => !familyFilter || familyFilter.includes(id));
+  const hostOverride = new Map<FamilyId, string>(
+    (process.env.FAM_HOST ?? '').split(',').filter(Boolean).map((pair) => {
+      const [family, nodeId] = pair.split(':');
+      assert(family && nodeId, `FAM_HOST entry "${pair}" is not family:nodeId`);
+      assert(FAMILY_DATABASE.has(family as FamilyId), `FAM_HOST names unknown family "${family}"`);
+      return [family as FamilyId, nodeId] as const;
+    }),
+  );
   // MUST run before anything resolves a blend, `nodeSpawnBlend` being memoized.
-  const nodes = installSyntheticNodes(tiers, families);
+  const nodes = installSyntheticNodes(tiers, families, hostOverride);
   assert(nodes.length > 0, 'no (family, tier) pair can be fielded at all');
 
   if (!process.env.FAM_REPLAY) {
