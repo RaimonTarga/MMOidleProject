@@ -296,7 +296,7 @@ matrix is Tier-1.
 
 I did **not** build a synthetic Tier-2 gate row for it: `canonicalBiomeLevels(2)` would
 also hand the bot Tier-2 biome levels a freshly promoted character does not have, and an
-approximated character is worse than none. The live sweep in section 11 fights the real
+approximated character is worse than none. The live sweep in section 12 fights the real
 gate, and is the measurement. The direction is not in doubt — a Tier-1-sized nerf lands
 *softer* at Tier 2 than this matrix shows — so if the sweep shows the gate now too cheap,
 the lever to pull is this row, downward.
@@ -564,7 +564,57 @@ a sub-1 remainder or log at a coarser cadence.
 
 ---
 
-## 10. What I could not verify
+## 10. What the adopted rows lean on — for the ability pass
+
+The brief asks this pass to name any ability its tuning depends on, so the ability pass
+that follows can keep it under its own constraint (reference-wiring T1 DPS within a few
+percent of today). Measured rather than listed: each row zeroes one ability's key effect
+on top of the **tuned** boss numbers, 30 seeds, same seeds as `final`.
+
+**Second Wind is the single most load-bearing number in T1 boss combat.** Zeroing its
+`recoveryPct` (0.5 at rank 0 — it activates half the flat Recovery rate for 4 s):
+
+| boss | striker | squire | slinger | spirit | apprentice | conduit |
+|---|---|---|---|---|---|---|
+| Razorback | 90 → **0** | 100 → **43** | 100 → 97 | 100 → 80 | 100 → **3** | 100 → 70 |
+| Greatbear | 100 → **0** | 100 → **0** | 100 → 100 | 100 → **7** | 97 → **0** | 100 → 87 |
+| Toadeater | *no change* | *no change* | *no change* | *no change* | *no change* | *no change* |
+| Behemoth | 77 → **0** | 100 → **0** | 100 → 100 | 100 → 100 | 100 → 100 | 100 → 100 |
+| Broodmother | 100 → **0** | 100 → **23** | 100 → 100 | 100 → 100 | 100 → 100 | 100 → 100 |
+
+Without it the melee pair loses almost the whole tier — **including the Broodmother**,
+which is otherwise a pushover nobody drops below 37% HP against. The Toadeater row is
+unchanged because the Swamp loadout runs Cleanse instead, which is the check that this is
+measuring what it claims to.
+
+**Expose Weakness is what makes my Greatbear row work for the Striker.** Zeroing its
+`damageTakenPct` (+15% at rank 0):
+
+| boss | striker | squire | slinger | spirit | apprentice | conduit |
+|---|---|---|---|---|---|---|
+| Greatbear | 100 → **0** | 100 → 90 | 100 → 100 | 100 → 97 | 97 → 80 | 100 → 100 |
+| Toadeater | 97 → 90 | 87 → **60** | 100 → 100 | 87 → 77 | 100 → 100 | 100 → 93 |
+| Razorback / Behemoth / Broodmother | *no change* | | | | | |
+
+The Razorback is unchanged because its loadout runs Sweep, and the Behemoth and
+Broodmother because neither fight is damage-limited for the classes that already win it.
+
+**Sweep matters only where there are adds**, which is one boss:
+
+| boss | striker | squire | others |
+|---|---|---|---|
+| Razorback | 90 → **3** | 100 → **47** | *no change* |
+| all four others | *no change* | | |
+
+**What the ability pass needs to keep.** In priority order: Second Wind's `recoveryPct`,
+because every adopted row assumes it; Expose Weakness's `damageTakenPct`, because the
+Striker's Greatbear win is 100% with it and 0% without; and Sweep's `splashPct` for the
+Razorback alone. If any of the three moves materially downward, **all three boss rows in
+section 2 need re-measuring** — they were tuned against these abilities as they stand.
+
+---
+
+## 11. What I could not verify
 
 - **The ceiling half of the bar.** Not measurable in this instrument (section 0). The
   Slinger and Conduit read 100% on all five; whether a real player loses to any of them is
@@ -584,6 +634,9 @@ a sub-1 remainder or log at a coarser cadence.
   matrices — in particular the Squire's 2026-09-29 Razorback stall (the fight sitting at
   1–3% boss HP for twelve minutes) did not reproduce here, but this lab force-wakes the boss
   and strips the guards, so it is not the instrument that would show it.
+- **The ability-dependency rows against a real player.** Section 10 zeroes an ability
+  entirely, which prices whether a row leans on it, not how it responds to a 10% trim.
+  A partial change needs its own measurement.
 - **Whether `attack` was the right axis for the Behemoth as a matter of design**, as
   opposed to arithmetic. The lab says it is the lever that works; whether the Mountain
   lineage should instead get a second, non-telegraphed damage channel so melee has
@@ -591,7 +644,7 @@ a sub-1 remainder or log at a coarser cadence.
 
 ---
 
-## 11. Canonical 1x sweep
+## 12. Canonical 1x sweep
 
 Launched on the committed tip `637ce2f5`, `canonical-isolated`, no reward multiplier, no
 fast boss retry, one server and one game DB per class, 4 workers, 2 h cap per class.
