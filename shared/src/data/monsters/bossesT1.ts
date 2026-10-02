@@ -143,7 +143,7 @@ export const bossMonsterEntriesT1 = [
     // T1 BOSS PASS NERF (2026-10-02): hp 1800 -> 1450, attack 18 -> 16. On the
     // six-class boss lab at GM 30 with the guide's own Forest kit it beat FIVE of six
     // classes 30/30 (only the Slinger won, 29/30), with the losses at 19-26% of its
-    // bar left. The 2026-09-26 note below still holds for its own question -- at 18
+    // bar left. The 2026-09-26 note above still holds for its own question -- at 18
     // every class's BEST build wins -- but the tutorial's build is not that build, and
     // this pass's bar is the kit the guide actually equips.
     //
@@ -212,9 +212,10 @@ export const bossMonsterEntriesT1 = [
     // lineage's actual committed charge is the cast below.
     // 50 x1.9 = 95 — the tier's biggest single hit, ~45-50% of an end-of-T1 pool.
     // (Was 56 x1.9 = 106, ~55-60%, until the 2026-10-02 pass; see the stat line.)
-    // Above the 40-50% anchor in boss-design.md on purpose: this is the one T1 fight
-    // that is supposed to make the damage cap (mountain plate / Striker root) read as
-    // the difference between surviving the impact and not. Every 10s, three a fight.
+    // At the top of the 40-50% anchor in boss-design.md, and ON it rather than above it
+    // since the 2026-10-02 pass: this is still the one T1 fight that is supposed to
+    // make the damage cap (mountain plate / Striker root) read as the difference
+    // between surviving the impact and not. Every 10s, three a fight.
     //
     // MOUNTAIN'S LINEAGE PRIMITIVE, as an ORDERED PATTERN. The circular Ground Slam
     // it replaces asked the same question the Cave slam already asks ("leave the

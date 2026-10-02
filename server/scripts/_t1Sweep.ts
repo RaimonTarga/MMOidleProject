@@ -54,7 +54,12 @@ const cls = (k: string) => k.replace(/^\d+-tutorial-/, '').replace(/-t1-intended
 const beatId = (label: string) => label.slice(0, label.lastIndexOf(': '));
 const mins = (ms?: number) => ms === undefined ? '—' : `${Math.floor(ms / 60000)}m${String(Math.round((ms % 60000) / 1000)).padStart(2, '0')}s`;
 const secs = (ms?: number) => ms === undefined ? '—' : `${Math.round(ms / 1000)} s`;
-const WON = new Set(['cleared', 'won', 'success', 'boss-cleared']);
+/**
+ * `boss-attempt`'s whole outcome vocabulary is `victory | death | timeout | unreachable`
+ * (bot/src/route/executor.ts), so only `victory` is a win and the other three are all
+ * real failures — a `timeout` is a fight the bot could not finish, not a missing row.
+ */
+const WON = new Set(['victory']);
 
 const header = runs.find((r) => r.events.length > 0)?.events.find((e) => e.kind === 'run-start')?.header;
 console.log(`\n# ${state.experimentId}`);
