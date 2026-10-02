@@ -261,6 +261,19 @@ export function baseRecoveryForTier(playerTier: number | undefined): number {
 }
 
 /**
+ * Recovery as the HUD shows it: HP/s to at most one decimal, trailing zero dropped.
+ *
+ * Recovery became a FLAT rate in Phase 0b, so it is now a sum of fractional charm
+ * and passive contributions rather than a whole number, and a realistic sum renders
+ * as `18.799999999999997 HP/s` when it is interpolated raw. Both HUD sites — the
+ * compact stat tile and the full Defense & Recovery row — format through here so
+ * they cannot disagree about the rule.
+ */
+export function formatRecoveryRate(recovery: number): string {
+  return String(Math.round(recovery * 10) / 10);
+}
+
+/**
  * Multiplier on the authored max-HP pool for a player tier (design bible §20).
  * Tiers past the table hold at the last entry, and an absent tier is a fresh
  * character (factor 1).
