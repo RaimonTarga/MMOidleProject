@@ -211,10 +211,13 @@ export function updateAbilityCasts(world: World, now: number): void {
       if (now < casting.endsAt) continue;
       detachComponent(world, player, "isCastingAbility");
       resolveSelfCastPayload(world, player, ability);
+      // The cooldown starts before the resolution: `technique-refund` takes its
+      // share off the REMAINING cooldown, so a resolution that runs first reads
+      // zero and refunds nothing.
+      startTechniqueCooldown(world, player, ability);
       // Everything hung off a Technique fires on the RESOLVE, never on the begin:
       // an aborted wind-up costs the player nothing, so it pays them nothing.
       onTechniqueResolved(world, player, ability);
-      startTechniqueCooldown(world, player, ability);
       world.pushEvent(player.hasPosition.nodeId, {
         kind: "player-cast-end",
         playerId: player.isPlayer.id,
@@ -256,11 +259,15 @@ export function updateAbilityCasts(world: World, now: number): void {
         });
         continue;
       }
+      startTechniqueCooldown(world, player, ability);
     } else {
       resolveCastPayload(world, player, ability, target);
+      // Cooldown first, so `technique-refund` has a remaining cooldown to take
+      // its share off: a resolution that runs before the cooldown is charged
+      // reads zero and refunds nothing. Same ordering as the armed path.
+      startTechniqueCooldown(world, player, ability);
       onTechniqueResolved(world, player, ability, { target });
     }
-    startTechniqueCooldown(world, player, ability);
     world.pushEvent(player.hasPosition.nodeId, {
       kind: "player-cast-end",
       playerId: player.isPlayer.id,

@@ -340,10 +340,13 @@ function maybeFireTechnique(
     if (getCooldown(player.tracksCombat, cdKey) > 0) return DECLINED_TECHNIQUE;
     if (!options.manual && !autoFireGateOpen(world, player, ability)) return DECLINED_TECHNIQUE;
     applyInstantTechnique(world, player, ability);
+    recordAbilityActivation(world, player, abilityId, 'technique');
+    // The cooldown starts BEFORE the resolution fires, because `technique-refund`
+    // takes its share off the REMAINING cooldown: resolve first and the refund
+    // reads zero and skips. The armed path below already orders it this way.
+    startTechniqueCooldown(world, player, ability);
     // An instant Technique resolves the moment it fires, so firing IS landing.
     onTechniqueResolved(world, player, ability);
-    recordAbilityActivation(world, player, abilityId, 'technique');
-    startTechniqueCooldown(world, player, ability);
     // Carry the window length so the client can sustain an in-world cue for the
     // ability's REAL duration. Resolved here rather than looked up client-side
     // because the authored rank is the server's to interpret.

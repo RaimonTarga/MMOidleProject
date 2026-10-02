@@ -74,7 +74,7 @@ import { applyMonsterSlow } from './status/monsterControl';
 import { applySharedDebuffMaxWins } from './status/sharedDebuffRecord';
 import { applyStun } from './status/stun';
 import { monsterIgnoresControl } from './status/controlImmunity';
-import { evadeBlocksDebuffs, evadeFullyAvoided } from '../defense/mitigation/evasion';
+import { evadeBlocksDebuffs, evadeMitigationOf } from '../defense/mitigation/evasion';
 import { applyWardPercent } from '../defense/barrier/wards';
 import { activateRecovery } from '../defense/regen/recovery';
 import { isPlayerActivelyInCombat } from './ai/engagement';
@@ -852,15 +852,23 @@ function registerKill(): void {
 /**
  * `evade` — the player AVOIDED an incoming hit.
  *
- * A full avoid, not a graze. `metadata.evaded` is set for both, so gating on it alone
- * fired this card on hits that landed and had it pay out alongside `hit-taken` — the
- * rest of the defense stack reads an avoid as `evadeMitigation >= 1` (the same test
- * `evadeFull` and `evadeBlocksDebuffs` are derived from), and so does this.
+ * The player's dodge roll SUCCEEDED — not necessarily a full avoid.
+ *
+ * This deliberately differs from `evadeBlocksDebuffs`, which stays full-dodge-only
+ * per the defense rule. Gating the card on `evadeMitigation >= 1` as well made every
+ * `evade` card in the game inert: `EVADE_MITIGATION_BASE` is 0.5 and the best
+ * authored mitigation sources add +0.1 and +0.3, so full avoidance is unreachable in
+ * authored content and the trigger could never fire. A graze IS the dodge this game
+ * ships — it halves the hit — so the card pays on the successful roll, and firing
+ * alongside `hit-taken` is correct for it: a grazed hit did land.
+ *
+ * What it must still refuse is a hit where no roll succeeded at all, which is what
+ * `metadata.evaded` carries.
  */
 function registerEvade(): void {
   registerCombatListener('onDamageTaken', (ctx, world) => {
     if (ctx.defenderType !== 'player') return;
-    if (!evadeFullyAvoided(ctx)) return;
+    if (ctx.metadata['evaded'] !== true || evadeMitigationOf(ctx) <= 0) return;
     const player = ctx.defender;
     if (!hasLineageRuntime(player)) return;
     const firings = firingsFor(player, 'evade');
@@ -1112,7 +1120,13 @@ const WINDOW_LANE: Partial<Record<PayoffKind, PacketId>> = {
   'ward': 'bulwark',
   'plating-stack': 'bulwark',
   'technique-window': 'technique',
-  'evasion-window': 'engagement',
+  // Every authored `evasion-window` CARD is on an avoid-faced tempo lane (17 of
+  // them, across bindings/fleet/robe/stone/wraps); only two ability-node offers
+  // put it on engagement. This map is keyed by payoff kind, not by the firing
+  // card's lane, so it can only name one owner per payoff — `speed-window` has
+  // the same imprecision already, sitting on tempo while the Axe's kill-chain
+  // rows pay with it. Named for where the cards are.
+  'evasion-window': 'tempo',
 };
 
 function windowColor(kind: PayoffKind): string {

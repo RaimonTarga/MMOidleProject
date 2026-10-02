@@ -166,7 +166,12 @@ export function applySummonerLineBonus(
 export function syncSummonerLine(world: World, owner: PlayerEntity): void {
   const line = authoredLine(owner);
   if (!line || !owner.summonsMinions) {
-    removeStatusEffect(owner.tracksCombat, SUMMONER_FRAME_LINE_EFFECT);
+    // Splinter and Effigy reach here ten times a second and have no line to
+    // hold, so only pay the removal when there is in fact a record to remove —
+    // `removeStatusEffect` reallocates the list whether or not it matched.
+    if (getStatusEffect(owner.tracksCombat, SUMMONER_FRAME_LINE_EFFECT)) {
+      removeStatusEffect(owner.tracksCombat, SUMMONER_FRAME_LINE_EFFECT);
+    }
     return;
   }
 

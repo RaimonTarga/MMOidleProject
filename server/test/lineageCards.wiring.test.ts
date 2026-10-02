@@ -58,6 +58,9 @@ import {
   lineagePlatingStackFraction, onLineageGuardCast, updateLineageCards,
 } from '../src/systems/combat/lineageCards';
 import { onTechniqueResolved } from '../src/systems/combat/techniqueResolved';
+import {
+  beginAbilityCast, updateAbilityCasts,
+} from '../src/systems/player/abilities/abilityCasting';
 import { abilityCooldownKey } from '../src/systems/player/abilities/abilityCooldowns';
 import { attackHasteBonus } from '../src/systems/combat/engine/attackCadence';
 import { runMonsterAttack } from '../src/systems/combat/engine/combat';
@@ -464,18 +467,24 @@ function cardFx(): Array<Extract<CombatEvent, { kind: 'card-fx' }>> {
   taken(player, attacker, {});
   assert(cardFx().length === 0, 'an ordinary hit taken is not an evade');
 
-  // A GRAZE sets `evaded` too — it lands reduced damage, keeps the monster's
-  // ailments and raises its own "GRAZE" floater. An avoid card that reads `evaded`
-  // alone paid out on hits that landed, and alongside `hit-taken`.
-  taken(player, attacker, { evaded: true, evadeMitigation: 0.5 });
-  assert(cardFx().length === 0, 'a graze is a hit that landed, not an evade');
+  // A hit with no successful roll at all is what the trigger must refuse. The
+  // metadata flag is the roll, so an absent flag is no evade however the hit was
+  // mitigated.
+  taken(player, attacker, { evadeMitigation: 1 });
+  assert(cardFx().length === 0, 'mitigation without a successful roll is not an evade');
   assert(
     getStatusEffect(attacker.tracksCombat, ABILITY_SLOW_EFFECT_ID) === undefined,
     'and so it must not have paid out its payoff either',
   );
 
-  taken(player, attacker, { evaded: true, evadeMitigation: 1 });
-  assert(cardFx().length === 1, 'a full avoid should fire once');
+  // A GRAZE is the dodge this game ships: `EVADE_MITIGATION_BASE` is 0.5 and the
+  // best authored sources add +0.1 and +0.3, so `evadeMitigation >= 1` is
+  // unreachable in authored content. Gating the card on a FULL avoid made every
+  // `evade` card inert, which is why the trigger reads the successful roll and
+  // leaves full-dodge-only to `evadeBlocksDebuffs`. Firing alongside `hit-taken`
+  // is correct here — a grazed hit did land.
+  taken(player, attacker, { evaded: true, evadeMitigation: 0.5 });
+  assert(cardFx().length === 1, 'a successful dodge roll should fire, graze or not');
   const slow = getStatusEffect(attacker.tracksCombat, ABILITY_SLOW_EFFECT_ID);
   assert(slow !== undefined, 'slow should reach the monster control ladder');
   assert((slow?.data.totalMs ?? 0) > 0, 'a slow must store totalMs for the buff clock');
@@ -602,6 +611,45 @@ function withSweepOnCooldown(
   // The Guard's own seam still works, and still does not reach this trigger.
   onLineageGuardCast(world, player);
   assert(cardFx().length === 0, 'and guard-cast does not reach a technique-cast card');
+}
+
+{
+  // THE ORDER OF THE SEAM, through the real cast path rather than a direct call.
+  //
+  // `technique-refund` takes its share off what is LEFT of a cooldown, so the
+  // resolution has to run AFTER the firing ability's own cooldown is charged. The
+  // three non-`armed` shapes resolved first, which meant the cast's own cooldown
+  // was still zero when the card read it: Slam, Snipe, Stunning Strike, Detonate
+  // and the Broadsword's `Set and Reset` refunded nothing at all, while the armed
+  // shapes — the ones the bench's reference wiring attunes — worked, so nothing
+  // measured it. Driven here through `beginAbilityCast` + `updateAbilityCasts` so
+  // the ordering is what is under test, not the helper.
+  const CAST = ABILITY_DATABASE.get('power-strike');
+  assert(CAST?.shape === 'cast', 'power-strike should be the cast-shape Technique');
+  const player = spawn('lc-tech-refund-cast', [seededCard({
+    trigger: { kind: 'technique-cast' },
+    payoff: { kind: 'technique-refund', magnitude: 0.25 },
+    fx: 'technique.cast-flare', lane: 'technique',
+  })]);
+  player.tracksProgression.attunedAbilities.techniques = ['power-strike'];
+  const target = monster(560);
+  setAttackTarget(world, player, target);
+
+  assert(beginAbilityCast(world, player, CAST!, 1_000), 'the cast should begin');
+  updateAbilityCasts(world, 1_000 + 60_000); // well past the wind-up
+
+  assert(cardFx().length === 1, 'a resolved cast Technique should fire the card once');
+  const left = getCooldown(player.tracksCombat, abilityCooldownKey('power-strike'));
+  assert(left > 0, 'the cast should be on cooldown after it resolves');
+  const full = CAST!.ranks[0]!.cooldownMs;
+  assert(
+    left < full,
+    `the refund should have come off the cast's own cooldown: ${left} vs a full ${full}`,
+  );
+  assert(
+    Math.abs(left - full * 0.75) < full * 0.02,
+    `a quarter of ${full}ms should be gone, got ${left}`,
+  );
 }
 
 {
