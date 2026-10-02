@@ -148,14 +148,24 @@ for (const { run, events } of runs) {
   console.log(`| ${cls(run.runKey)} | ${cell('plains')} | ${cell('mountain')} | ${cell('forest')} |`);
 }
 
+/**
+ * The recorder emits named milestones, so read those by id rather than inferring them.
+ * An earlier version fell back to the last `biome-level-up` when no GM-30 milestone was
+ * present, which quietly reported a wrong time for any run still in progress -- a
+ * half-finished Conduit read "GM 30 at 0m43s". A milestone that has not happened must
+ * print as not reached, not as the most recent thing that looked like it.
+ */
+const MILESTONES = [
+  ['GM 30', 'gm-30-all-maxed'],
+  ['1st seal', 'first-seal'],
+  ['Tier 2', 'tier-2-reached'],
+  ['gate paid', 'gate-paid'],
+] as const;
 console.log('\n## Milestones\n');
-console.log('| Class | GM 30 | Tier 2 | gate paid | last event |');
-console.log('|---|---|---|---|---|');
+console.log(`| Class | ${MILESTONES.map(([label]) => label).join(' | ')} | last event |`);
+console.log(`|---|${MILESTONES.map(() => '---').join('|')}|---|`);
 for (const { run, events } of runs) {
-  const gm30 = events.find((e) => e.kind === 'milestone' && (e.detail?.globalMastery ?? 0) >= 30)
-    ?? events.filter((e) => e.kind === 'biome-level-up').at(-1);
-  const t2 = events.find((e) => e.kind === 'tier-up' && (e.newTier ?? 0) >= 2);
-  const gate = events.find((e) => e.kind === 'route-step-end' && /^gate:/.test(e.label ?? '') && e.outcome === 'done');
-  console.log(`| ${cls(run.runKey)} | ${mins(gm30?.atMs)} | ${mins(t2?.atMs)} | ${mins(gate?.atMs)} | ${mins(events.at(-1)?.atMs)} |`);
+  const at = (id: string) => mins(events.find((e) => e.kind === 'milestone' && e.id === id)?.atMs);
+  console.log(`| ${cls(run.runKey)} | ${MILESTONES.map(([, id]) => at(id)).join(' | ')} | ${mins(events.at(-1)?.atMs)} |`);
 }
 console.log();
