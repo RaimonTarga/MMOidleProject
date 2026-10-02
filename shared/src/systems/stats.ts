@@ -509,8 +509,15 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     p.mitigatesDamage.plating = Math.max(0, Math.round(p.mitigatesDamage.plating * (1 + platMult)));
   if (speedMult !== 0)
     p.hasPosition.speed = Math.max(0, Math.round(p.hasPosition.speed * (1 + speedMult)));
+  // Quantized to a TENTH, not to a whole number like the four integer stats above.
+  // Recovery became a fractional HP/s rate in Phase 0b, so `Math.round` was eating
+  // most of the bonus: the Jungle core's +30% on a naked T1's 6.5 HP/s is 8.45, which
+  // rounded to 8 and delivered +1.5 of the +1.95 it authored — a quarter of the core's
+  // whole payoff, gone. One decimal is the same resolution `baseRecoveryForTier`
+  // already quantizes to and the HUD already shows.
   if (recoveryMult !== 0)
-    p.hasHealth.recovery = Math.max(0, Math.round((p.hasHealth.recovery ?? 0) * (1 + recoveryMult)));
+    p.hasHealth.recovery = Math.max(0,
+      Math.round((p.hasHealth.recovery ?? 0) * (1 + recoveryMult) * 10) / 10);
   if (atkSpeedMult !== 0)
     p.performsAttack.attackCooldown = Math.max(
       1,
