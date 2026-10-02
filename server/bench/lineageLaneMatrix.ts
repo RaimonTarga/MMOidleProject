@@ -103,33 +103,26 @@ import {
   type TierEntryProfile,
 } from '@mmo-idle/shared';
 import {
+  ALL_FRAME_PROFILES,
+  ALL_FRAME_REFERENCES,
+  ALL_LANE_PROFILES,
+  ALL_LANE_REFERENCES,
   FRAME_SHAPES,
-  LINEAGE_FRAME_PROFILES,
-  LINEAGE_FRAME_REFERENCES,
-  LINEAGE_LANE_PROFILES,
-  LINEAGE_LANE_REFERENCES,
+  type BandTier,
   type LineageFrameReference,
   type LineageLaneReference,
 } from '../../bot/src/tierEntry/profiles';
-import { validateBuild } from '../../bot/src/loadout/loadout';
-import { BOT_SPAWN, setupArena, teardownArena } from './balance/arena';
-import { BENCH_BOT_ID, materializeBot } from './balance/botFactory';
+import { setupArena, teardownArena } from './balance/arena';
 import { reviveInFarmNode } from './balance/runFarm';
 import { createFarmWorld } from './balance/worldFactory';
-import type { BuildSpec, GearSlot } from './balance/types';
+import { prepareLaneBot } from './lineage/laneBot';
 import { hydrateHitboxCacheFromArtifact, writeHitboxArtifact } from '../src/hitbox/cache';
-import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
-import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
-import { refillBarrier } from '../src/systems/defense/barrier/barrier';
 import { isPlayerActivelyInCombat } from '../src/systems/combat/ai/engagement';
 import {
   registerCombatListener,
   unregisterCombatListener,
   type CombatEventHandler,
 } from '../src/systems/combat/engine/combatPipeline';
-import { setAbilityLoadout } from '../src/systems/player/economy/abilityCrafting';
-import { setLineageActive, unlockLineageCard } from '../src/systems/player/economy/lineages';
-import type { PlayerEntity } from '../src/ecs/entity';
 import type { World } from '../src/world/World';
 
 /**
@@ -227,133 +220,19 @@ function laneNodes(): LaneNode[] {
   return [...byKey.values()];
 }
 
+/**
+ * The resolved share at which a node counts as a family's OWN: the 70/20/10 and 70/30
+ * shapes, never a 45/45/10 or a 34/33/33 where two families share the encounter.
+ * Module scope because `LANE_OWN_NODES` filters on it before the node set is built.
+ */
+const OWN_NODE_SHARE = 0.6;
+
 const short = (family: FamilyId): string => FAMILY_DATABASE.get(family)?.name ?? family;
 const pct = (share: number): string => `${Math.round(share * 100)}%`;
 /** `node-t2-jungle-03` as `t2-jungle-03`: short enough for a column heading. */
 const shortNode = (nodeId: string): string => nodeId.replace('node-', '');
 
 // ── Bot preparation ──────────────────────────────────────────────────────────
-
-/**
- * A Tier-1 character with a Tier-1 frame: the state a lane reference profile
- * describes (`playerTier` 2 — a frame costs the point the second tier mints —
- * with Tier-1 gear, Tier-1 mastery and the Tier-1 lineage band).
- *
- * Deliberately NOT `prepareSurveyBot`: that helper asserts a tier-1 cell has no
- * frame, which is exactly the build §1.5 asks for, so reusing it would mean
- * loosening an assertion that is right for every other bench.
- */
-function prepareLaneBot(
-  world: World,
-  profile: TierEntryProfile,
-  /** Null for a frame reference: same preparation, no lineage band to buy. */
-  reference: LineageLaneReference | null,
-  nodeId: string,
-): { bot: PlayerEntity; refusals: string[]; grantedShards: boolean } {
-  const biome = NODE_BIOMES[nodeId].biomeGroup;
-  const gearItemIds: Partial<Record<GearSlot, string>> = {};
-  for (const [slot, itemId] of Object.entries(profile.equipment)) {
-    if (itemId) gearItemIds[slot as GearSlot] = itemId;
-  }
-  const build: BuildSpec = {
-    id: profile.id,
-    classRoot: profile.classRoot,
-    skillPath: [profile.classRoot, profile.frameId!],
-    contentTier: 1,
-    playerTier: 2,
-    gearTier: 1,
-    gearItemIds,
-  };
-  const bot = materializeBot(
-    world,
-    build,
-    { nodeId, biomeGroup: biome, contentTier: 1, isDungeon: false },
-    BOT_SPAWN,
-    BENCH_BOT_ID,
-  );
-
-  // The profile's own +N per item, not one bench-wide level: the reference
-  // carries its base form at +0 so a lane's card is never competing with an
-  // upgrade ladder Phase 2 deletes for weapons anyway.
-  for (const itemId of Object.keys(bot.holdsInventory.itemUpgrades)) {
-    bot.holdsInventory.itemUpgrades[itemId] = profile.itemUpgrades[itemId] ?? 0;
-  }
-
-  const p = bot.tracksProgression;
-  p.skillPoints = 0;
-  p.equippedRites = [];
-  p.attunedStances = [];
-  p.equippedStances = { default: null };
-  p.activeStance = null;
-  p.attunedAbilities = { techniques: [], guards: [] };
-
-  // The Tier-1 survey package: one technique, Second Wind, and the five-rule
-  // behaviour policy with reference ability wiring. Ranged roots orbit.
-  const melee = profile.classRoot === 'cadence-root' || profile.classRoot === 'cooldown-root';
-  const abilities: AttunedAbilities = { techniques: ['sweep'], guards: ['second-wind'] };
-  const rules: EquippedRule[] = withReferenceAbilityWiring([
-    { conditionId: 'always', actionId: 'auto-path-enemy' },
-    { conditionId: 'inside-telegraph', actionId: 'step-back' },
-    ...(melee ? [] : [{ conditionId: 'in-combat', actionId: 'orbit' }]),
-    { conditionId: 'always', actionId: 'avoid-hazards' },
-    { conditionId: 'always', actionId: 'wait-for-regen' },
-  ], abilities);
-  for (const recipe of RUNE_RECIPE_DATABASE.values()) {
-    if (recipe.deprecated || !recipe.runeId) continue;
-    if (p.runesOwned.includes(recipe.runeId)) continue;
-    if (!rules.some((rule) => rule.actionId === recipe.runeId)) continue;
-    assert(isRuneRecipeUnlocked(recipe, p), `${profile.id}: unreachable rune ${recipe.id}`);
-    p.runesOwned.push(recipe.runeId);
-  }
-  p.runesEquipped = rules;
-  assert(setAbilityLoadout(world, bot, abilities).success, `${profile.id}: illegal ability budget`);
-
-  // Buy the band through the real economy handler, so a refusal is a finding.
-  for (const type of ESSENCE_TYPES) p.essences[type] = BENCH_ESSENCE;
-  const lane = reference?.lane ?? null;
-  const grantedShards = reference?.shardsUnobtainableAtT1 ?? false;
-  if (lane) p.shards[lane] = BENCH_SHARDS;
-  const refusals: string[] = [];
-  if (reference) {
-    const lineage = LINEAGE_DATABASE.get(reference.lineageId)!;
-    for (const cardId of reference.cardIds) {
-      const card = lineage.cards.find((c) => c.id === cardId)!;
-      const bought = unlockLineageCard(world, bot, reference.lineageId, cardId);
-      if (!bought.success) {
-        refusals.push(`unlockCard ${cardId}: ${bought.reason}`);
-        continue;
-      }
-      const activated = setLineageActive(world, bot, reference.lineageId, card.row, cardId);
-      if (!activated.success) refusals.push(`setActive ${cardId}: ${activated.reason}`);
-    }
-  }
-  // Zero the credited wallet again: a reference build does not walk into a node
-  // holding five thousand of every essence, and nothing in combat reads it.
-  for (const type of ESSENCE_TYPES) p.essences[type] = 0;
-
-  recalculatePlayerEntityStats(world, bot);
-  syncArchetypeSlices(world, bot);
-  bot.hasHealth.hp = bot.hasHealth.maxHp;
-  refillBarrier(world, bot);
-
-  const view = composePlayerView(bot)!;
-  assert.deepEqual(
-    validateBuild({ abilities, runeRules: rules, stances: { attuned: [], default: null }, rites: [] }, view),
-    [],
-    profile.id,
-  );
-  if (reference) {
-    const tree = view.lineages[reference.lineageId];
-    assert(tree, `${profile.id}: the worn base form opened no tree`);
-    assert(tree.wornForm === reference.baseForm, `${profile.id}: worn form is the base form`);
-  } else {
-    // A frame reference buys nothing, so the only claim to check is that it is
-    // still carrying the weapon the whole root shares.
-    assert(bot.holdsInventory.equipment.weapon === profile.equipment.weapon,
-      `${profile.id}: wears the root's reference weapon`);
-  }
-  return { bot, refusals, grantedShards };
-}
 
 // ── One measurement ──────────────────────────────────────────────────────────
 
@@ -364,6 +243,8 @@ interface Row {
   lineageId: string | null;
   lane: PacketId | null;
   classRoot: string;
+  /** Which tier's band and gear the row was measured with (run 4). */
+  bandTier: BandTier;
   /** Set on a frame reference only: the frame under test and its shape. */
   frameId?: string;
   frameShape?: string;
@@ -443,7 +324,7 @@ function measure(
     const mobCount = setupArena(world, {
       nodeId: node.nodeId, biomeGroup: node.biome, contentTier: node.tier, isDungeon: false,
     });
-    const { bot, refusals, grantedShards } = prepareLaneBot(world, profile, reference, node.nodeId);
+    const { bot, refusals, grantedShards } = prepareLaneBot(world, profile, reference, node.nodeId, frame);
     for (; now < capMs;) {
       world.tick(100, now);
       now += 100;
@@ -469,6 +350,7 @@ function measure(
       lineageId: reference?.lineageId ?? null,
       lane: reference?.lane ?? null,
       classRoot: (reference ?? frame!).classRoot,
+      bandTier: (reference ?? frame!).bandTier,
       ...(frame ? { frameId: frame.frameId, frameShape: frame.frameShape } : {}),
       nodeId: node.nodeId,
       biome: node.biome,
@@ -491,6 +373,7 @@ interface Cell {
   lineageId: string | null;
   lane: PacketId | null;
   classRoot: string;
+  bandTier: BandTier;
   frameId?: string;
   frameShape?: string;
   nodeId: string;
@@ -536,6 +419,7 @@ function aggregate(rows: Row[], bySeed = false): Map<string, Cell> {
       lineageId: group[0].lineageId,
       lane: group[0].lane,
       classRoot: group[0].classRoot,
+      bandTier: group[0].bandTier ?? 1,
       frameId: group[0].frameId,
       frameShape: group[0].frameShape,
       nodeId: group[0].nodeId,
@@ -593,12 +477,45 @@ async function main(): Promise<void> {
   }
 
   const tierFilter = process.env.LANE_TIERS?.split(',').map(Number);
+  /**
+   * `LANE_OWN_NODES=1` — keep only nodes a single family DOMINATES (resolved share at
+   * or above `OWN_NODE_SHARE`), which is the 70/20/10 and 70/30 shapes and nothing else.
+   *
+   * This is not an arbitrary sample: it is exactly the node set both §18.9 criteria
+   * read. The lane budget is measured on each lane's favoured node (the node its own
+   * family dominates hardest) and the encounter check on each family's own node (the
+   * same 60% floor). The 45/45/10 and 34/33/33 blends only ever fed the secondary
+   * "uplift over every node" table, and at run 4's size — two bands instead of one —
+   * paying for them would have cost hours for a column nothing is decided on. Run 4
+   * uses it; `lane-matrix-run4.md` says so in its header.
+   */
+  const ownNodesOnly = process.env.LANE_OWN_NODES === '1';
   const nodes = laneNodes()
     .filter((n) => !biomeFilter || biomeFilter.includes(n.biome))
     .filter((n) => !tierFilter || tierFilter.includes(n.tier))
-    .filter((n) => !nodeFilter || nodeFilter.includes(n.nodeId));
-  const references = LINEAGE_LANE_REFERENCES.filter((r) => !filter || r.profileId.includes(filter));
+    .filter((n) => !nodeFilter || nodeFilter.includes(n.nodeId))
+    .filter((n) => !ownNodesOnly || n.dominantShare >= OWN_NODE_SHARE);
+  const bandFilter = process.env.LANE_BANDS?.split(',').map(Number);
+  const references = ALL_LANE_REFERENCES
+    .filter((r) => !filter || r.profileId.includes(filter))
+    .filter((r) => !bandFilter || bandFilter.includes(r.bandTier));
   assert(nodes.length > 0 && references.length > 0, 'nothing selected');
+
+  /**
+   * Which nodes a reference of a given BAND is measured on (run 4).
+   *
+   * Band 1 runs on every selected node, Tier 1 and Tier 2 alike: that is run 3's
+   * reading, "what does a Tier-1 lane still buy you here", and it is kept
+   * unchanged so the two runs can be laid side by side.
+   *
+   * Band 2 runs on Tier-2 nodes ONLY, and the omission is deliberate. A Tier-2
+   * band on a Tier-1 node is a character farming a tier behind its own gear;
+   * §18.9 asks nothing about it, and including it would have added roughly a
+   * thousand runs to say so. Said plainly in the report rather than left to be
+   * noticed from a gap in a table.
+   */
+  const nodesForBand = (bandTier: BandTier): LaneNode[] =>
+    bandTier === 1 ? nodes : nodes.filter((n) => n.tier >= 2);
 
   // ── The frames column's node set (design §18.10) ──────────────────────────
   //
@@ -623,7 +540,9 @@ async function main(): Promise<void> {
     })();
   const frameReferences = process.env.LANE_FRAMES === '0'
     ? []
-    : LINEAGE_FRAME_REFERENCES.filter((r) => !filter || r.profileId.includes(filter));
+    : ALL_FRAME_REFERENCES
+      .filter((r) => !filter || r.profileId.includes(filter))
+      .filter((r) => !bandFilter || bandFilter.includes(r.bandTier));
 
   // Regenerating the report is a report change, not a measurement, so it must not
   // cost another three quarters of an hour: `LANE_REPLAY` reads a previous run's
@@ -660,17 +579,17 @@ async function main(): Promise<void> {
   if (!replay) {
     sweep(references.map((reference) => ({
       profileId: reference.profileId,
-      profile: LINEAGE_LANE_PROFILES.get(reference.profileId)!,
+      profile: ALL_LANE_PROFILES.get(reference.profileId)!,
       lane: reference,
       frame: null,
-      nodes,
+      nodes: nodesForBand(reference.bandTier),
     })));
     sweep(frameReferences.map((reference) => ({
       profileId: reference.profileId,
-      profile: LINEAGE_FRAME_PROFILES.get(reference.profileId)!,
+      profile: ALL_FRAME_PROFILES.get(reference.profileId)!,
       lane: null,
       frame: reference,
-      nodes: frameNodes,
+      nodes: reference.bandTier === 1 ? frameNodes : frameNodes.filter((n) => n.tier >= 2),
     })));
   }
   const elapsedMs = replay ? 0 : Date.now() - startedAt;
@@ -681,12 +600,18 @@ async function main(): Promise<void> {
     cells.get(`${profileId}@${nodeId}`);
   const seedCellFor = (profileId: string, nodeId: string, seed: number): Cell | undefined =>
     seedCells.get(`${profileId}@${nodeId}#${seed}`);
-  const baselineId = (lineageId: string): string => `lineage-${lineageId}-baseline`;
+  /**
+   * The lane-less control of a lineage AT A BAND. Band-matched on purpose: a
+   * band-2 lane measured against the band-1 control would report the gear gap as
+   * the lane's uplift, which is the exact confusion run 3's Tier-2 rows suffered.
+   */
+  const baselineId = (lineageId: string, bandTier: BandTier): string =>
+    `lineage-${lineageId}-baseline${bandTier === 1 ? '' : '-t2'}`;
 
   /** Uplift of a lane cell over its own lineage's control on the same node. */
   const uplift = (cell: Cell): number | null => {
     if (!cell.lane || !cell.lineageId) return null;
-    const control = cellFor(baselineId(cell.lineageId), cell.nodeId);
+    const control = cellFor(baselineId(cell.lineageId, cell.bandTier), cell.nodeId);
     if (!control || control.killsPerMin <= 0) return null;
     return cell.killsPerMin / control.killsPerMin - 1;
   };
@@ -694,7 +619,7 @@ async function main(): Promise<void> {
   const seedUplift = (reference: LineageLaneReference, nodeId: string, seed: number): number | null => {
     if (!reference.lane) return null;
     const cell = seedCellFor(reference.profileId, nodeId, seed);
-    const control = seedCellFor(baselineId(reference.lineageId), nodeId, seed);
+    const control = seedCellFor(baselineId(reference.lineageId, reference.bandTier), nodeId, seed);
     if (!cell || !control || control.killsPerMin <= 0) return null;
     return cell.killsPerMin / control.killsPerMin - 1;
   };
@@ -711,17 +636,28 @@ async function main(): Promise<void> {
    * every Tier-1 cell (15 to 30) and well above every Desert one (0).
    */
   const MIN_KILLS_PER_SEED_FOR_RANK = 8;
-  const rankable = (profileId: string, lineageId: string, nodeId: string, seed?: number): boolean => {
+  const rankable = (reference: LineageLaneReference, nodeId: string, seed?: number): boolean => {
+    const { profileId, lineageId, bandTier } = reference;
     const min = MIN_KILLS_PER_SEED_FOR_RANK * (seed === undefined ? seeds.length : 1);
     const cell = seed === undefined ? cellFor(profileId, nodeId) : seedCellFor(profileId, nodeId, seed);
     const control = seed === undefined
-      ? cellFor(baselineId(lineageId), nodeId)
-      : seedCellFor(baselineId(lineageId), nodeId, seed);
+      ? cellFor(baselineId(lineageId, bandTier), nodeId)
+      : seedCellFor(baselineId(lineageId, bandTier), nodeId, seed);
     return !!cell && !!control && cell.kills >= min && control.kills >= min;
   };
 
   // ── The matrix ─────────────────────────────────────────────────────────────
   const laneRefs = references.filter((r) => r.lane);
+  /** Bands measured on this run, ascending. Every per-band table loops over this. */
+  const bandsRun: BandTier[] = ([1, 2] as const).filter(
+    (band) => references.some((r) => r.bandTier === band),
+  );
+  const bandLabel = (band: BandTier): string =>
+    band === 1 ? 'Band 1 (T1 cards, T1 gear)' : 'Band 2 (T2 cards, T2 gear)';
+  const refsOfBand = (band: BandTier): LineageLaneReference[] =>
+    references.filter((r) => r.bandTier === band);
+  const laneRefsOfBand = (band: BandTier): LineageLaneReference[] =>
+    laneRefs.filter((r) => r.bandTier === band);
   const matrix: string[] = [
     '| node | tier | biome | authored blend | resolved blend | shares this row | mobs (of 10 slots) |',
     '|---|---:|---|---|---|---|---|',
@@ -747,25 +683,25 @@ async function main(): Promise<void> {
   };
   const ttkCell = (cell: Cell | undefined): string => (cell?.ttkMs == null ? '—' : String(cell.ttkMs));
   const upliftCell = (cell: Cell | undefined): string => (cell ? signedPct(uplift(cell)) : '—');
-  const pivot = BENCH_TIERS.flatMap((tier) => {
-    const table = pivotFor(tier, references, ttkCell);
-    return table.length ? [`**Tier ${tier}**`, '', ...table, ''] : [];
-  });
-  const upliftPivot = BENCH_TIERS.flatMap((tier) => {
-    const table = pivotFor(tier, laneRefs, upliftCell);
-    return table.length ? [`**Tier ${tier}**`, '', ...table, ''] : [];
-  });
+  const pivot = BENCH_TIERS.flatMap((tier) => bandsRun.flatMap((band) => {
+    const table = pivotFor(tier, refsOfBand(band), ttkCell);
+    return table.length ? [`**Tier ${tier} node, ${bandLabel(band)}**`, '', ...table, ''] : [];
+  }));
+  const upliftPivot = BENCH_TIERS.flatMap((tier) => bandsRun.flatMap((band) => {
+    const table = pivotFor(tier, laneRefsOfBand(band), upliftCell);
+    return table.length ? [`**Tier ${tier} node, ${bandLabel(band)}**`, '', ...table, ''] : [];
+  }));
 
   const perNode: string[] = [];
   for (const node of nodes) {
     perNode.push('', `### \`${node.nodeId}\` — ${node.resolved} (${node.biome} T${node.tier}; shared by ${node.aliases.length} authored node${node.aliases.length === 1 ? '' : 's'})`, '');
     perNode.push(`Dominant family **${short(node.dominant)}** drops \`${node.dropsLane}\`, punishes \`${node.punishesLane}\`. Authored ${node.authored}; unfieldable at T${node.tier}: ${node.unavailable.map(short).join(', ') || 'none'}.`, '');
-    perNode.push('| profile | lane | class | kills | TTK (ms engaged/kill) | kills/min | uplift vs control | deaths | card-fx fired |', '|---|---|---|---:|---:|---:|---:|---:|---|');
+    perNode.push('| profile | lane | band | class | kills | TTK (ms engaged/kill) | kills/min | uplift vs control | deaths | card-fx fired |', '|---|---|---:|---|---:|---:|---:|---:|---:|---|');
     for (const reference of references) {
       const cell = cellFor(reference.profileId, node.nodeId);
       if (!cell) continue;
       perNode.push(
-        `| \`${reference.profileId}\` | ${reference.lane ?? '_control_'} | ${reference.classRoot.replace('-root', '')} | ${cell.kills} | ${fmt(cell.ttkMs, 0)} | ${fmt(cell.killsPerMin)} | ${reference.lane ? signedPct(uplift(cell)) : '—'} | ${cell.deaths} | ${Object.entries(cell.fx).map(([k, v]) => `${k} x${v}`).join(', ') || '—'} |` +
+        `| \`${reference.profileId}\` | ${reference.lane ?? '_control_'} | ${reference.bandTier} | ${reference.classRoot.replace('-root', '')} | ${cell.kills} | ${fmt(cell.ttkMs, 0)} | ${fmt(cell.killsPerMin)} | ${reference.lane ? signedPct(uplift(cell)) : '—'} | ${cell.deaths} | ${Object.entries(cell.fx).map(([k, v]) => `${k} x${v}`).join(', ') || '—'} |` +
         (cell.refusals.length ? ` <!-- ${cell.refusals.join('; ')} -->` : ''),
       );
     }
@@ -773,7 +709,7 @@ async function main(): Promise<void> {
       const cell = cellFor(reference.profileId, node.nodeId);
       if (!cell) continue;
       perNode.push(
-        `| \`${reference.profileId}\` | _frame ${reference.frameShape}_ | ${reference.classRoot.replace('-root', '')} | ${cell.kills} | ${fmt(cell.ttkMs, 0)} | ${fmt(cell.killsPerMin)} | — | ${cell.deaths} | ${Object.entries(cell.fx).map(([k, v]) => `${k} x${v}`).join(', ') || '—'} |`,
+        `| \`${reference.profileId}\` | _frame ${reference.frameShape}_ | ${reference.bandTier} | ${reference.classRoot.replace('-root', '')} | ${cell.kills} | ${fmt(cell.ttkMs, 0)} | ${fmt(cell.killsPerMin)} | — | ${cell.deaths} | ${Object.entries(cell.fx).map(([k, v]) => `${k} x${v}`).join(', ') || '—'} |`,
       );
     }
   }
@@ -806,8 +742,8 @@ async function main(): Promise<void> {
     absolute: number | null;
     upliftValue: number | null;
   }
-  const budgetTableFor = (tier: number): { rows: BudgetRow[]; upMedian: number; lines: string[] } => {
-    const rowsForTier: BudgetRow[] = laneRefs.map((reference) => {
+  const budgetTableFor = (tier: number, band: BandTier): { rows: BudgetRow[]; upMedian: number; lines: string[] } => {
+    const rowsForTier: BudgetRow[] = laneRefsOfBand(band).map((reference) => {
       const node = favouredNodeFor(reference.lane!, tier) ?? null;
       const cell = node ? cellFor(reference.profileId, node.nodeId) : undefined;
       return {
@@ -820,7 +756,7 @@ async function main(): Promise<void> {
     const absMedianTier = median(rowsForTier.flatMap((r) => (r.absolute === null ? [] : [r.absolute])));
     const upMedianTier = median(rowsForTier.flatMap((r) => (r.upliftValue === null ? [] : [r.upliftValue])));
     const lines = [
-      `**Tier ${tier}.** Median lane uplift on the favoured node: **${signedPct(upMedianTier)}**.`
+      `**Tier ${tier} node, ${bandLabel(band)}.** Median lane uplift on the favoured node: **${signedPct(upMedianTier)}**.`
       + ` The §18.9 band is ${signedPct(upMedianTier - BAND_PP)} to ${signedPct(upMedianTier + BAND_PP)}`
       + ` (median ±3 pp). Median absolute throughput there: ${fmt(absMedianTier)} kills/min.`,
       '',
@@ -837,7 +773,9 @@ async function main(): Promise<void> {
   };
   const budgetByTier = BENCH_TIERS
     .filter((tier) => nodes.some((n) => n.tier === tier))
-    .map((tier) => ({ tier, ...budgetTableFor(tier) }));
+    .flatMap((tier) => bandsRun
+      .filter((band) => nodesForBand(band).some((n) => n.tier === tier))
+      .map((band) => ({ tier, band, ...budgetTableFor(tier, band) })));
   const budget = budgetByTier.flatMap((b) => b.lines);
   const budgetRows = budgetByTier[0]?.rows ?? [];
   const upMedian = budgetByTier[0]?.upMedian ?? 0;
@@ -850,10 +788,11 @@ async function main(): Promise<void> {
   // packet's reading is the mean of its references' mean uplift over every node,
   // and the band is the median PACKET ±3 pp. This is the table the designer
   // tunes `PACKET_BUDGET` from.
-  const packetRows = [...new Set(laneRefs.map((r) => r.lane!))].map((lane) => {
-    const refs = laneRefs.filter((r) => r.lane === lane);
+  const packetRowsFor = (band: BandTier) =>
+    [...new Set(laneRefsOfBand(band).map((r) => r.lane!))].map((lane) => {
+    const refs = laneRefsOfBand(band).filter((r) => r.lane === lane);
     const means = refs.flatMap((reference) => {
-      const values = nodes.flatMap((n) => {
+      const values = nodesForBand(band).flatMap((n) => {
         const cell = cellFor(reference.profileId, n.nodeId);
         if (!cell) return [];
         const u = uplift(cell);
@@ -861,7 +800,7 @@ async function main(): Promise<void> {
       });
       return values.length === 0 ? [] : [values.reduce((a, b) => a + b, 0) / values.length];
     });
-    const fxTotal = refs.reduce((total, reference) => total + nodes.reduce(
+    const fxTotal = refs.reduce((total, reference) => total + nodesForBand(band).reduce(
       (sub, n) => sub + Object.values(cellFor(reference.profileId, n.nodeId)?.fx ?? {}).reduce((a, b) => a + b, 0),
       0,
     ), 0);
@@ -873,18 +812,22 @@ async function main(): Promise<void> {
       favoured: favouredNodeFor(lane) ?? null,
     };
   }).sort((a, b) => (b.mean ?? -1) - (a.mean ?? -1));
-  const packetMedian = median(packetRows.flatMap((r) => (r.mean === null ? [] : [r.mean])));
-  const packetBudget: string[] = [
-    `Median packet uplift: **${signedPct(packetMedian)}**. The §18.9 band is` +
-    ` ${signedPct(packetMedian - BAND_PP)} to ${signedPct(packetMedian + BAND_PP)} (median ±3 pp).`,
-    '',
-    '| packet | lineages carrying it | mean uplift | − median | in ±3 pp | payoff fx fired | hardest favouring node |',
-    '|---|---:|---:|---:|:--:|---:|---|',
-    ...packetRows.map((r) => {
-      const delta = r.mean === null ? null : r.mean - packetMedian;
-      return `| ${r.lane} | ${r.lineages} | ${signedPct(r.mean)} | ${delta === null ? '—' : signedPct(delta)} | ${delta !== null && Math.abs(delta) <= BAND_PP ? 'yes' : 'NO'} | ${r.fxTotal} | ${r.favoured ? `\`${r.favoured.nodeId}\`` : '**none**'} |`;
-    }),
-  ];
+  const packetBudget: string[] = bandsRun.flatMap((band) => {
+    const packetRows = packetRowsFor(band);
+    const packetMedian = median(packetRows.flatMap((r) => (r.mean === null ? [] : [r.mean])));
+    return [
+      `**${bandLabel(band)}.** Median packet uplift: **${signedPct(packetMedian)}**. The §18.9 band is` +
+      ` ${signedPct(packetMedian - BAND_PP)} to ${signedPct(packetMedian + BAND_PP)} (median ±3 pp).`,
+      '',
+      '| packet | lineages carrying it | mean uplift | − median | in ±3 pp | payoff fx fired | hardest favouring node |',
+      '|---|---:|---:|---:|:--:|---:|---|',
+      ...packetRows.map((r) => {
+        const delta = r.mean === null ? null : r.mean - packetMedian;
+        return `| ${r.lane} | ${r.lineages} | ${signedPct(r.mean)} | ${delta === null ? '—' : signedPct(delta)} | ${delta !== null && Math.abs(delta) <= BAND_PP ? 'yes' : 'NO'} | ${r.fxTotal} | ${r.favoured ? `\`${r.favoured.nodeId}\`` : '**none**'} |`;
+      }),
+      '',
+    ];
+  });
 
   // ── §18.9 encounter check: an ORDINAL reading, per fieldable family ───────
   //
@@ -909,10 +852,10 @@ async function main(): Promise<void> {
     rank: number;
     refs: number;
   }
-  const ranksOn = (nodeId: string, seed?: number): LaneRank[] => {
+  const ranksOn = (nodeId: string, band: BandTier, seed?: number): LaneRank[] => {
     const byLane = new Map<PacketId, number[]>();
-    for (const reference of laneRefs) {
-      if (!rankable(reference.profileId, reference.lineageId, nodeId, seed)) continue;
+    for (const reference of laneRefsOfBand(band)) {
+      if (!rankable(reference, nodeId, seed)) continue;
       const value = seed === undefined
         ? (() => {
           const cell = cellFor(reference.profileId, nodeId);
@@ -937,7 +880,6 @@ async function main(): Promise<void> {
    * and only when that share is a clear majority (the 70/20/10 and 70/30 shapes,
    * never a 45/45/10 or a 34/33/33 where two families share the encounter).
    */
-  const OWN_NODE_SHARE = 0.6;
   const ownNodeOf = (family: FamilyId, tier: number): LaneNode | undefined => {
     const candidates = nodes
       .filter((n) => n.dominant === family && n.tier === tier && n.dominantShare >= OWN_NODE_SHARE)
@@ -947,6 +889,8 @@ async function main(): Promise<void> {
 
   interface EncounterRow {
     family: FamilyId;
+    /** Which band's references produced this ranking. Never mixed. */
+    bandTier: BandTier;
     node: LaneNode;
     favoured: PacketId;
     punished: PacketId;
@@ -960,8 +904,8 @@ async function main(): Promise<void> {
   }
   const encounterRows: EncounterRow[] = [];
   const encounter: string[] = [
-    '| family | own node | tier | favoured | rank | punished | rank | margin (fav − pun) | lanes | per-seed fav rank | per-seed top lane | fav deaths | pun deaths |',
-    '|---|---|---:|---|---:|---|---:|---:|---:|---|---|---:|---:|',
+    '| family | own node | tier | band | favoured | rank | punished | rank | margin (fav − pun) | lanes | per-seed fav rank | per-seed top lane | fav deaths | pun deaths |',
+    '|---|---|---:|---:|---|---:|---|---:|---:|---:|---|---|---:|---:|',
   ];
   const familyTiers = [...new Set(nodes.map((n) => `${n.dominant}|${n.tier}`))]
     .map((key) => {
@@ -969,15 +913,18 @@ async function main(): Promise<void> {
       return { family: family as FamilyId, tier: Number(tier) };
     })
     .sort((a, b) => (a.family === b.family ? a.tier - b.tier : a.family.localeCompare(b.family)));
-  for (const { family, tier } of familyTiers) {
+  const familyBands = familyTiers.flatMap(({ family, tier }) => bandsRun
+    .filter((band) => nodesForBand(band).some((n) => n.tier === tier))
+    .map((band) => ({ family, tier, band })));
+  for (const { family, tier, band } of familyBands) {
     const node = ownNodeOf(family, tier);
     if (!node) continue;
-    const pooled = ranksOn(node.nodeId);
+    const pooled = ranksOn(node.nodeId, band);
     if (pooled.length === 0) continue;
     const favRank = rankOf(pooled, node.dropsLane);
     const punRank = rankOf(pooled, node.punishesLane);
     const perSeed = seeds.map((seed) => {
-      const list = ranksOn(node.nodeId, seed);
+      const list = ranksOn(node.nodeId, band, seed);
       return {
         seed,
         favRank: rankOf(list, node.dropsLane)?.rank ?? null,
@@ -998,11 +945,12 @@ async function main(): Promise<void> {
     const topLane = wideEnough && topLanes.size === 1 && perSeed[0].topLane !== node.dropsLane
       ? perSeed[0].topLane
       : null;
-    const deathsFor = (lane: PacketId): number => laneRefs
+    const deathsFor = (lane: PacketId): number => laneRefsOfBand(band)
       .filter((r) => r.lane === lane)
       .reduce((a, r) => a + (cellFor(r.profileId, node.nodeId)?.deaths ?? 0), 0);
     const row: EncounterRow = {
       family,
+      bandTier: band,
       node,
       favoured: node.dropsLane,
       punished: node.punishesLane,
@@ -1015,7 +963,7 @@ async function main(): Promise<void> {
     };
     encounterRows.push(row);
     encounter.push(
-      `| ${short(family)} | \`${node.nodeId}\` | ${node.tier} | ${node.dropsLane}`
+      `| ${short(family)} | \`${node.nodeId}\` | ${node.tier} | ${band} | ${node.dropsLane}`
       + ` | ${favRank ? `${favRank.rank}/${pooled.length}` : 'no reference'}`
       + ` | ${node.punishesLane} | ${punRank ? `${punRank.rank}/${pooled.length}` : 'no reference'}`
       + ` | ${signedPct(row.marginPp)} | ${pooled.length}`
@@ -1031,29 +979,33 @@ async function main(): Promise<void> {
   // the reference build is a Tier-1 band and Tier 1 is the tier that band is tuned
   // for; a higher tier's own node is reported beside it as corroboration. A
   // T2-only family (Jungle, Desert) has only the T2 reading and is decided on it.
-  const decidingRows = [...new Map(encounterRows.map((r) => [r.family, r] as const)).values()];
+  const decidingRows = [...new Map(
+    encounterRows.map((r) => [`${r.family}|${r.bandTier}`, r] as const),
+  ).values()];
   const remapCandidates = decidingRows.filter((r) => r.clearRemap.favouredLast && r.clearRemap.topLane);
   const remap: string[] = remapCandidates.length === 0
     ? ['No family meets the test: no `drops` move is CLEAR on this run.']
     : [
-      '| family | deciding node | drops today | ranks | the lane that beats it | both seeds agree | higher tier agrees | move to |',
-      '|---|---|---|---:|---|:--:|:--:|---|',
+      '| family | band | deciding node | drops today | ranks | the lane that beats it | both seeds agree | higher tier agrees | move to |',
+      '|---|---:|---|---|---:|---|:--:|:--:|---|',
       ...remapCandidates.map((r) => {
-        const others = encounterRows.filter((o) => o.family === r.family && o !== r);
+        const others = encounterRows.filter(
+          (o) => o.family === r.family && o.bandTier === r.bandTier && o !== r,
+        );
         const agree = others.length === 0
           ? 'n/a (one tier)'
           : others.every((o) => o.clearRemap.favouredLast) ? 'yes' : 'NO';
-        return `| ${short(r.family)} | \`${r.node.nodeId}\` | \`${r.favoured}\` | last of ${r.lanesRanked} | \`${r.clearRemap.topLane}\` | yes | ${agree} | \`${r.clearRemap.topLane}\` |`;
+        return `| ${short(r.family)} | ${r.bandTier} | \`${r.node.nodeId}\` | \`${r.favoured}\` | last of ${r.lanesRanked} | \`${r.clearRemap.topLane}\` | yes | ${agree} | \`${r.clearRemap.topLane}\` |`;
       }),
     ];
 
   // ── Per-lane summary over ALL nodes: the most robust lane signal ───────────
   const laneSummary: string[] = [
-    '| lane | profile | mean uplift over all nodes | uplift on favoured node | worst node | best node | payoff fx fired (all nodes) |',
-    '|---|---|---:|---:|---|---|---:|',
+    '| lane | profile | band | mean uplift over all nodes | uplift on favoured node | worst node | best node | payoff fx fired (all nodes) |',
+    '|---|---|---:|---:|---:|---|---|---:|',
   ];
   for (const reference of laneRefs) {
-    const perNodeUplift = nodes.flatMap((n) => {
+    const perNodeUplift = nodesForBand(reference.bandTier).flatMap((n) => {
       const cell = cellFor(reference.profileId, n.nodeId);
       if (!cell) return [];
       const u = uplift(cell);
@@ -1062,35 +1014,47 @@ async function main(): Promise<void> {
     if (perNodeUplift.length === 0) continue;
     const mean = perNodeUplift.reduce((a, b) => a + b.u, 0) / perNodeUplift.length;
     const sorted = [...perNodeUplift].sort((a, b) => a.u - b.u);
-    const favNode = favouredNodeFor(reference.lane!, 1) ?? favouredNodeFor(reference.lane!);
-    const favCell = favNode ? cellFor(reference.profileId, favNode.nodeId) : undefined;
+    const favBandNodes = nodesForBand(reference.bandTier);
+    const favNode = favouredNodeFor(reference.lane!, reference.bandTier === 1 ? 1 : 2)
+      ?? favouredNodeFor(reference.lane!);
+    const favCell = favNode && favBandNodes.some((n) => n.nodeId === favNode.nodeId)
+      ? cellFor(reference.profileId, favNode.nodeId)
+      : undefined;
     laneSummary.push(
-      `| ${reference.lane} | \`${reference.profileId}\` | ${signedPct(mean)} | ${favCell ? signedPct(uplift(favCell)) : '—'} | ${shortNode(sorted[0].nodeId)} ${signedPct(sorted[0].u)} | ${shortNode(sorted.at(-1)!.nodeId)} ${signedPct(sorted.at(-1)!.u)} | ${nodes.reduce((total, n) => total + Object.values(cellFor(reference.profileId, n.nodeId)?.fx ?? {}).reduce((a, b) => a + b, 0), 0)} |`,
+      `| ${reference.lane} | \`${reference.profileId}\` | ${reference.bandTier} | ${signedPct(mean)} | ${favCell ? signedPct(uplift(favCell)) : '—'} | ${shortNode(sorted[0].nodeId)} ${signedPct(sorted[0].u)} | ${shortNode(sorted.at(-1)!.nodeId)} ${signedPct(sorted.at(-1)!.u)} | ${favBandNodes.reduce((total, n) => total + Object.values(cellFor(reference.profileId, n.nodeId)?.fx ?? {}).reduce((a, b) => a + b, 0), 0)} |`,
     );
   }
 
   // ── Control spread: how much of the absolute reading is class, not lane ───
-  const controls = references.filter((r) => !r.lane).map((r) => {
-    const perNodeThroughput = nodes.flatMap((n) => {
-      const cell = cellFor(r.profileId, n.nodeId);
-      return cell ? [cell.killsPerMin] : [];
+  //
+  // Per band, because the two bands wear different gear and a pooled spread would
+  // read the tier step as class noise.
+  const controlSpread: string[] = bandsRun.flatMap((band) => {
+    const controls = references.filter((r) => !r.lane && r.bandTier === band).map((r) => {
+      const perNodeThroughput = nodesForBand(band).flatMap((n) => {
+        const cell = cellFor(r.profileId, n.nodeId);
+        return cell ? [cell.killsPerMin] : [];
+      });
+      return { reference: r, mean: perNodeThroughput.reduce((a, b) => a + b, 0) / Math.max(1, perNodeThroughput.length) };
     });
-    return { reference: r, mean: perNodeThroughput.reduce((a, b) => a + b, 0) / Math.max(1, perNodeThroughput.length) };
+    const controlMedian = median(controls.map((c) => c.mean));
+    return [
+      `**${bandLabel(band)}.**`,
+      '',
+      '| control | class | weapon | mean kills/min over its node set | vs that band\'s control median |',
+      '|---|---|---|---:|---:|',
+      ...controls.map((c) => `| \`${c.reference.profileId}\` | ${c.reference.classRoot.replace('-root', '')} | ${c.reference.wornForm} | ${fmt(c.mean)} | ${signedPct(controlMedian === 0 ? null : c.mean / controlMedian - 1)} |`),
+      '',
+    ];
   });
-  const controlMedian = median(controls.map((c) => c.mean));
-  const controlSpread: string[] = [
-    '| control | class | weapon | mean kills/min over all nodes | vs control median |',
-    '|---|---|---|---:|---:|',
-    ...controls.map((c) => `| \`${c.reference.profileId}\` | ${c.reference.classRoot.replace('-root', '')} | ${c.reference.baseForm} | ${fmt(c.mean)} | ${signedPct(controlMedian === 0 ? null : c.mean / controlMedian - 1)} |`),
-  ];
 
   // ── Survival, for the lanes whose T1 payoff is not damage ─────────────────
   const survival: string[] = [
-    '| profile | lane | class | mean HP while engaged | damage taken / engaged s | deaths | Δ HP vs control | Δ damage taken vs control |',
-    '|---|---|---|---:|---:|---:|---:|---:|',
+    '| profile | lane | band | class | mean HP while engaged | damage taken / engaged s | deaths | Δ HP vs control | Δ damage taken vs control |',
+    '|---|---|---:|---|---:|---:|---:|---:|---:|',
   ];
   for (const reference of references) {
-    const cellsForRef = nodes.flatMap((n) => {
+    const cellsForRef = nodesForBand(reference.bandTier).flatMap((n) => {
       const cell = cellFor(reference.profileId, n.nodeId);
       return cell ? [cell] : [];
     });
@@ -1102,8 +1066,8 @@ async function main(): Promise<void> {
     const dps = withDmg.length === 0
       ? null
       : withDmg.reduce((a, c) => a + (c.damageTakenPerSec ?? 0), 0) / withDmg.length;
-    const controls = nodes.flatMap((n) => {
-      const cell = cellFor(baselineId(reference.lineageId), n.nodeId);
+    const controls = nodesForBand(reference.bandTier).flatMap((n) => {
+      const cell = cellFor(baselineId(reference.lineageId, reference.bandTier), n.nodeId);
       return cell && cell.meanHpFraction !== null ? [cell] : [];
     });
     const controlHp = controls.length
@@ -1113,7 +1077,7 @@ async function main(): Promise<void> {
       ? controls.reduce((a, c) => a + (c.damageTakenPerSec ?? 0), 0) / controls.length
       : null;
     survival.push(
-      `| \`${reference.profileId}\` | ${reference.lane ?? '_control_'} | ${reference.classRoot.replace('-root', '')} | ${fmt(hp)} | ${fmt(dps)} | ${cellsForRef.reduce((a, c) => a + c.deaths, 0)} | ${reference.lane && controlHp ? signedPct(hp / controlHp - 1) : '—'} | ${reference.lane && controlDps ? signedPct((dps ?? 0) / controlDps - 1) : '—'} |`,
+      `| \`${reference.profileId}\` | ${reference.lane ?? '_control_'} | ${reference.bandTier} | ${reference.classRoot.replace('-root', '')} | ${fmt(hp)} | ${fmt(dps)} | ${cellsForRef.reduce((a, c) => a + c.deaths, 0)} | ${reference.lane && controlHp ? signedPct(hp / controlHp - 1) : '—'} | ${reference.lane && controlDps ? signedPct((dps ?? 0) / controlDps - 1) : '—'} |`,
     );
   }
 
@@ -1130,8 +1094,10 @@ async function main(): Promise<void> {
   // not optional. Every T1 character has bought one, so "the same build without
   // a frame" is not a character and a frame has nothing to be an uplift over.
   // The reading is frame-against-frame inside one root.
+  const frameNodesForBand = (band: BandTier) =>
+    band === 1 ? frameNodes : frameNodes.filter((n) => n.tier >= 2);
   const frameRows = frameReferences.map((reference) => {
-    const cellsForRef = frameNodes.flatMap((n) => {
+    const cellsForRef = frameNodesForBand(reference.bandTier).flatMap((n) => {
       const cell = cellFor(reference.profileId, n.nodeId);
       return cell ? [{ node: n, cell }] : [];
     });
@@ -1155,7 +1121,9 @@ async function main(): Promise<void> {
   });
   const frameDelta = (row: (typeof frameRows)[number]): number | null => {
     const canonical = frameRows.find(
-      (r) => r.reference.classRoot === row.reference.classRoot && r.reference.canonical,
+      (r) => r.reference.classRoot === row.reference.classRoot
+        && r.reference.bandTier === row.reference.bandTier
+        && r.reference.canonical,
     );
     if (!canonical || !canonical.throughput || row.throughput === null) return null;
     return row.throughput / canonical.throughput - 1;
@@ -1163,32 +1131,42 @@ async function main(): Promise<void> {
   const frameColumn: string[] = frameRows.length === 0
     ? ['Not measured on this run (`LANE_FRAMES=0`).']
     : [
-      `Eighteen lane-less frame references over ${frameNodes.length} node`
-      + `${frameNodes.length === 1 ? '' : 's'}`
-      + ` (${frameNodes.map((n) => shortNode(n.nodeId)).join(', ')}).`,
+      `${frameRows.length} lane-less frame references, three per class root per band.`,
       '',
-      "| root | frame | shape | weapon | kills/min | vs the root's canonical frame | median TTK (ms) | mean HP engaged | deaths |",
-      '|---|---|---|---|---:|---:|---:|---:|---:|',
-      ...frameRows.map((row) => `| ${row.reference.classRoot.replace('-root', '')} | \`${row.reference.frameId}\` | ${row.reference.frameShape}${row.reference.canonical ? ' **(canonical)**' : ''} | ${row.reference.baseForm} | ${fmt(row.throughput)} | ${row.reference.canonical ? '_denominator_' : signedPct(frameDelta(row))} | ${fmt(row.ttk, 0)} | ${fmt(row.hp)} | ${row.deaths} |`),
-      '',
-      '### The same reading per frame SHAPE, across all six roots',
-      '',
-      '| shape | mean kills/min | mean delta vs each root\'s canonical frame | roots where it is fastest |',
-      '|---|---:|---:|---:|',
-      ...FRAME_SHAPES.map((shape) => {
-        const group = frameRows.filter((r) => r.reference.frameShape === shape);
-        const values = group.flatMap((r) => (r.throughput === null ? [] : [r.throughput]));
-        const deltas = group.flatMap((r) => {
-          const delta = frameDelta(r);
-          return delta === null ? [] : [delta];
-        });
-        const fastest = new Set(frameRows.map((r) => r.reference.classRoot)).size === 0 ? 0
-          : [...new Set(frameRows.map((r) => r.reference.classRoot))].filter((root) => {
-            const inRoot = frameRows.filter((r) => r.reference.classRoot === root);
-            const best = inRoot.reduce((a, b) => ((b.throughput ?? -1) > (a.throughput ?? -1) ? b : a));
-            return best.reference.frameShape === shape;
-          }).length;
-        return `| ${shape} | ${values.length ? fmt(values.reduce((a, b) => a + b, 0) / values.length) : '—'} | ${deltas.length ? signedPct(deltas.reduce((a, b) => a + b, 0) / deltas.length) : '—'} | ${fastest} of 6 |`;
+      ...bandsRun.flatMap((band) => {
+        const bandRows = frameRows.filter((r) => r.reference.bandTier === band);
+        if (bandRows.length === 0) return [];
+        const bandNodes = frameNodesForBand(band);
+        const roots = [...new Set(bandRows.map((r) => r.reference.classRoot))];
+        return [
+          `**${bandLabel(band)}**, over ${bandNodes.length} node`
+          + `${bandNodes.length === 1 ? '' : 's'} (${bandNodes.map((n) => shortNode(n.nodeId)).join(', ')}).`,
+          '',
+          "| root | frame | shape | weapon | kills/min | vs the root's canonical frame | median TTK (ms) | mean HP engaged | deaths |",
+          '|---|---|---|---|---:|---:|---:|---:|---:|',
+          ...bandRows.map((row) => `| ${row.reference.classRoot.replace('-root', '')} | \`${row.reference.frameId}\` | ${row.reference.frameShape}${row.reference.canonical ? ' **(canonical)**' : ''} | ${row.reference.wornForm} | ${fmt(row.throughput)} | ${row.reference.canonical ? '_denominator_' : signedPct(frameDelta(row))} | ${fmt(row.ttk, 0)} | ${fmt(row.hp)} | ${row.deaths} |`),
+          '',
+          `*Per frame SHAPE across the ${roots.length} roots, ${bandLabel(band).toLowerCase()}.*`,
+          '',
+          '| shape | mean kills/min | mean delta vs each root\'s canonical frame | roots where it is fastest |',
+          '|---|---:|---:|---:|',
+          ...FRAME_SHAPES.map((shape) => {
+            const group = bandRows.filter((r) => r.reference.frameShape === shape);
+            const values = group.flatMap((r) => (r.throughput === null ? [] : [r.throughput]));
+            const deltas = group.flatMap((r) => {
+              const delta = frameDelta(r);
+              return delta === null ? [] : [delta];
+            });
+            const fastest = roots.filter((root) => {
+              const inRoot = bandRows.filter((r) => r.reference.classRoot === root);
+              if (inRoot.length === 0) return false;
+              const best = inRoot.reduce((a, b) => ((b.throughput ?? -1) > (a.throughput ?? -1) ? b : a));
+              return best.reference.frameShape === shape;
+            }).length;
+            return `| ${shape} | ${values.length ? fmt(values.reduce((a, b) => a + b, 0) / values.length) : '—'} | ${deltas.length ? signedPct(deltas.reduce((a, b) => a + b, 0) / deltas.length) : '—'} | ${fastest} of ${roots.length} |`;
+          }),
+          '',
+        ];
       }),
     ];
 
@@ -1199,8 +1177,9 @@ async function main(): Promise<void> {
     `# Lineage lane matrix — Tier ${tiersRun.join(' and ')}`,
     '',
     `Generated ${new Date().toISOString()} from \`${execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()}\`.`,
-    `${references.length} lane reference profiles x ${nodes.length} distinct node blends`
-    + `${frameReferences.length ? `, plus ${frameReferences.length} frame references x ${frameNodes.length} nodes` : ''}`
+    `${references.length} lane reference profiles (band 1: ${refsOfBand(1).length}, band 2: ${refsOfBand(2).length})`
+    + ` x ${nodes.length} distinct node blends`
+    + `${frameReferences.length ? `, plus ${frameReferences.length} frame references x up to ${frameNodes.length} nodes` : ''}`
     + `, x ${seeds.length} seeds (${seeds.join(', ')}), ${capMs / 1000} s of sim per cell per seed;`
     + ` ${rows.length} measured runs; wall clock ${(elapsedMs / 60_000).toFixed(1)} min.`,
     '',
@@ -1214,9 +1193,31 @@ async function main(): Promise<void> {
     '**ordinal** reading — does the favoured lane out-uplift the punished lane on that',
     'family\'s own node, and by what margin? The margin is reported, never thresholded.',
     '',
-    'The references are unchanged by the addition of Tier 2: a Tier-1 band on a Tier-2',
-    'encounter is the character the gate hands over, so the T2 rows read as "what does',
-    'a T1 lane still buy here" and their death counts are part of the answer.',
+    'RUN 4 ADDS THE SECOND BAND. Run 3 measured only a Tier-1 band, so every Tier-2',
+    'row it produced was reading the gear gap at the gate rather than the lane (a T1',
+    'band scored 1.6 kills against 7.0 deaths per cell on Tier-2 Desert). Band 2 is the',
+    'character the Tier-2 gate hands over: the lineage\'s tier-2 form, the tier-2 form of',
+    'every armour/charm/boot the band-1 reference wears, and the T2 stat/payoff/amplifier',
+    'rows on top of the T1 band it bought on the way. Class, frame and ability package',
+    'are held fixed across the bands, so a band-1 and band-2 row of one lane are the same',
+    'build one tier apart.',
+    '',
+    'Band 1 still runs on BOTH tiers, unchanged, so run 3 and run 4 can be laid side by',
+    'side — those rows remain the "what does a Tier-1 lane still buy you here" reading.',
+    'Band 2 runs on TIER-2 NODES ONLY, and that omission is deliberate: a Tier-2 band on',
+    'a Tier-1 node is a character farming a tier behind its own gear, which §18.9 asks',
+    'nothing about, and including it would have added roughly a thousand runs to say so.',
+    '',
+    'Every control is BAND-MATCHED. A band-2 lane measured against the band-1 control',
+    'would report the tier step as the lane\'s uplift, which is exactly the confusion',
+    'run 3 ran into. One known confound remains and is not hidden: the tier-2 form a',
+    'band-2 row wears carries a CAPSTONE whose lane is fixed per lineage (the Rapier\'s',
+    'Gale Needle crowns Tempo, the Axe\'s Ruinous Axe crowns Tempo, the Hammer\'s Quake',
+    'Hammer crowns Empowered, the Dagger\'s Mirebrand crowns Control, the Broadsword\'s',
+    'Knight Steelsword crowns Kill chain). It is in the control too, so most of it',
+    'divides out, but it still favours one of each lineage\'s three lanes. The',
+    'family-contract instrument (`family-contracts-run4.md`) is the arbiter that does',
+    'not depend on this.',
     '',
     '## What the map actually offers',
     '',
@@ -1319,12 +1320,14 @@ async function main(): Promise<void> {
       upliftMedian: upMedian,
       byTier: budgetByTier.map((b) => ({
         tier: b.tier,
+        bandTier: b.band,
         upliftMedian: b.upMedian,
         rows: b.rows.map((r) => ({ lane: r.reference.lane, profileId: r.reference.profileId, nodeId: r.node?.nodeId ?? null, absolute: r.absolute, uplift: r.upliftValue })),
       })),
     },
     encounter: encounterRows.map((r) => ({
       family: r.family,
+      bandTier: r.bandTier,
       nodeId: r.node.nodeId,
       tier: r.node.tier,
       dominantShare: r.node.dominantShare,
@@ -1342,8 +1345,10 @@ async function main(): Promise<void> {
       classRoot: r.reference.classRoot,
       frameId: r.reference.frameId,
       frameShape: r.reference.frameShape,
+      bandTier: r.reference.bandTier,
       canonical: r.reference.canonical,
       baseForm: r.reference.baseForm,
+      wornForm: r.reference.wornForm,
       killsPerMin: r.throughput,
       vsCanonical: frameDelta(r),
       ttkMs: r.ttk,

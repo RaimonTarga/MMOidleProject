@@ -1,19 +1,32 @@
 import {
   BIOME_DATABASE,
   FAMILY_DATABASE,
+  ITEM_DATABASE,
   LINEAGE_DATABASE,
   SKILL_TREE,
   WEAPON_PACKET_IDS,
+  biomeLevelCap,
+  globalMastery,
+  lineageMasteryLevelForRow,
+  rowsForTier,
   type PacketId,
 } from "@mmo-idle/shared";
 import {
+  ALL_FRAME_PROFILES,
+  ALL_FRAME_REFERENCES,
+  ALL_LANE_PROFILES,
+  ALL_LANE_REFERENCES,
   FRAME_REFERENCE_ROOTS,
   FRAME_SHAPES,
   LANES_WITHOUT_T1_SHARD_SOURCE,
   LINEAGE_FRAME_PROFILES,
+  LINEAGE_FRAME_PROFILES_T2,
   LINEAGE_FRAME_REFERENCES,
+  LINEAGE_FRAME_REFERENCES_T2,
   LINEAGE_LANE_PROFILES,
+  LINEAGE_LANE_PROFILES_T2,
   LINEAGE_LANE_REFERENCES,
+  LINEAGE_LANE_REFERENCES_T2,
   LINEAGE_REFERENCE_CLASS,
   frameReferenceFor,
   laneReferenceFor,
@@ -302,5 +315,193 @@ for (const ref of LINEAGE_FRAME_REFERENCES) {
 
 assert(frameReferenceFor(LINEAGE_FRAME_REFERENCES[0].profileId) === LINEAGE_FRAME_REFERENCES[0],
   "frameReferenceFor round-trips a profile id");
+
+// --- The band-2 reference set (run 4, W2-A step 1) --------------------------
+//
+// Twenty more lane rows and eighteen more frame rows, carrying the TIER-2 band on
+// TIER-2 gear: the character the Tier-2 gate hands over, which is what the matrix
+// needs before it can read a Tier-2 node as anything but a gear gap.
+//
+// The band-1 rows above are untouched by this, and that is the point of two arrays
+// rather than one: their size and T1 shape are an older contract.
+
+assert(
+  LINEAGE_LANE_REFERENCES_T2.length === weaponLineages.length * 4,
+  `one band-2 row per lane plus a control per weapon lineage (got ${LINEAGE_LANE_REFERENCES_T2.length})`,
+);
+assert(
+  LINEAGE_LANE_PROFILES_T2.size === LINEAGE_LANE_REFERENCES_T2.length,
+  "one band-2 profile per band-2 reference",
+);
+assert(
+  ALL_LANE_REFERENCES.length === LINEAGE_LANE_REFERENCES.length + LINEAGE_LANE_REFERENCES_T2.length
+    && ALL_LANE_PROFILES.size === ALL_LANE_REFERENCES.length,
+  "both bands join without an id collision -- the bench keys cells by profile id",
+);
+
+for (const ref of LINEAGE_LANE_REFERENCES) {
+  assert(ref.bandTier === 1, `${ref.profileId}: the first array is band 1`);
+  assert(ref.wornForm === ref.baseForm, `${ref.profileId}: band 1 wears the base form`);
+  assert(JSON.stringify(ref.activeCardIds) === JSON.stringify(ref.cardIds),
+    `${ref.profileId}: at band 1 every owned card is slotted`);
+}
+
+for (const ref of LINEAGE_LANE_REFERENCES_T2) {
+  const lineage = LINEAGE_DATABASE.get(ref.lineageId)!;
+  const profile = LINEAGE_LANE_PROFILES_T2.get(ref.profileId)!;
+  const report = validateProfile(profile);
+  assert(report.pass, formatValidation(ref.profileId, report));
+  assert(ref.bandTier === 2, `${ref.profileId}: the second array is band 2`);
+
+  // The worn form is the lineage's FIRST tier-2 form, fixed per lineage so the
+  // capstone it carries is the same for every lane of that lineage and for its
+  // control (see `t2WornForm`'s own note on the residual confound).
+  const t2Form = lineage.forms.find((f) => f.tier === 2);
+  assert(t2Form && ref.wornForm === t2Form.recipeId,
+    `${ref.profileId}: wears ${lineage.id}'s first tier-2 form`);
+  assert(ref.baseForm === LINEAGE_REFERENCE_CLASS[ref.lineageId].baseForm,
+    `${ref.profileId}: still owns the tier-1 base form that opened the tree`);
+  assert(profile.equipment.weapon === ref.wornForm, `${ref.profileId}: equips the worn form`);
+  assert(profile.inventory.includes(ref.baseForm),
+    `${ref.profileId}: the displaced base form stays in the bag`);
+
+  // THE WHOLE GEAR SET MOVED. A band-2 row whose armour is still tier 1 would read
+  // as a weak T2 band rather than as a gear gap, which is the exact confusion run 3
+  // ran into on the Tier-2 nodes.
+  for (const slot of ["weapon", "armor", "recovery", "mobility"] as const) {
+    const id = profile.equipment[slot];
+    assert(id, `${ref.profileId}: ${slot} is equipped`);
+    assert(ITEM_DATABASE.get(id!)?.tier === 2,
+      `${ref.profileId}: ${slot} "${id}" is not a tier-2 item`);
+  }
+
+  // Mastery at the Tier-2 cap, which is NOT one number: a T1 group reaches 12
+  // inside Tier 2, Jungle and Desert do not pass 6 until Tier 3.
+  for (const [group, level] of Object.entries(profile.biomeLevels)) {
+    if (group === "clearing") continue;
+    assert(level === biomeLevelCap(2, group),
+      `${ref.profileId}: ${group} is ${level}, the tier-2 cap is ${biomeLevelCap(2, group)}`);
+  }
+  assert(globalMastery(profile.biomeLevels) >= lineageMasteryLevelForRow(2, "amplifier"),
+    `${ref.profileId}: mastery does not reach the T2 amplifier row`);
+
+  if (!ref.lane) {
+    assert(ref.cardIds.length === 0 && ref.activeCardIds.length === 0,
+      `${ref.profileId}: the band-2 control buys and runs nothing`);
+    const tree = profile.lineages?.[ref.lineageId];
+    assert(tree && Object.keys(tree.active).length === 0,
+      `${ref.profileId}: the control slots nothing`);
+    continue;
+  }
+
+  // Owned: the T1 band plus the whole T2 band, all of one lane. Slotted: the T2
+  // rows only -- `active` is one card per row across the tree, and the T1 stat row
+  // is inside the worn form now (design §4 band collapse), which is why it is still
+  // owned and no longer active.
+  const expectedOwned = [
+    ...rowsForTier(1).map((row) =>
+      lineage.cards.find((c) => c.tier === 1 && c.row === row && c.lane === ref.lane)!.id),
+    ...rowsForTier(2).map((row) =>
+      lineage.cards.find((c) => c.tier === 2 && c.row === row && c.lane === ref.lane)!.id),
+  ];
+  assert(JSON.stringify(ref.cardIds) === JSON.stringify(expectedOwned),
+    `${ref.profileId}: owns the T1 band then the T2 band of its own lane, in row order`);
+  assert(ref.cardIds.length === 5,
+    `${ref.profileId}: two T1 rows and three T2 rows (got ${ref.cardIds.length})`);
+  assert(ref.activeCardIds.length === 3,
+    `${ref.profileId}: the T2 band is stat, payoff and amplifier`);
+  const tree = profile.lineages?.[ref.lineageId];
+  assert(tree, `${ref.profileId}: declares its own lineage's tree`);
+  assert(tree!.wornForm === ref.wornForm, `${ref.profileId}: worn form mirrors equipment.weapon`);
+  assert(JSON.stringify(tree!.ownedCards) === JSON.stringify(ref.cardIds),
+    `${ref.profileId}: the profile owns exactly the declared cards`);
+  for (const cardId of ref.activeCardIds) {
+    const card = lineage.cards.find((c) => c.id === cardId)!;
+    assert(card.tier === 2 && card.lane === ref.lane,
+      `${ref.profileId}: ${cardId} is a T2 card of its lane`);
+    assert(tree!.active[card.row] === cardId,
+      `${ref.profileId}: ${cardId} is the active ${card.row}`);
+  }
+  assert(Object.keys(tree!.active).length === 3,
+    `${ref.profileId}: exactly the three T2 rows are slotted`);
+  // The amplifier modifies the payoff of the same band, and owning the target is
+  // what the purchase gate checks -- so a band that slotted an amplifier without it
+  // would be an inert card the matrix would read as a weak lane.
+  const amplifier = lineage.cards.find((c) => ref.activeCardIds.includes(c.id) && c.row === "amplifier")!;
+  assert(amplifier.modifies && ref.cardIds.includes(amplifier.modifies),
+    `${ref.profileId}: the amplifier's target payoff is owned`);
+}
+
+// Band 1 and band 2 differ in the BAND and the GEAR, and in nothing else: same
+// class, same frame, same lane. Anything else moving would make the pair
+// unreadable as a tier comparison.
+for (const t2 of LINEAGE_LANE_REFERENCES_T2) {
+  const t1 = LINEAGE_LANE_REFERENCES.find(
+    (r) => r.lineageId === t2.lineageId && r.lane === t2.lane,
+  );
+  assert(t1, `${t2.profileId}: has a band-1 sibling`);
+  assert(t1!.classRoot === t2.classRoot && t1!.frameId === t2.frameId
+    && t1!.baseForm === t2.baseForm && t1!.homeBiome === t2.homeBiome,
+    `${t2.profileId}: differs from ${t1!.profileId} in more than the band`);
+  const p1 = LINEAGE_LANE_PROFILES.get(t1!.profileId)!;
+  const p2 = LINEAGE_LANE_PROFILES_T2.get(t2.profileId)!;
+  assert(p1.classRoot === p2.classRoot && p1.frameId === p2.frameId,
+    `${t2.profileId}: class and frame are held fixed across the bands`);
+  assert(JSON.stringify(p1.attunedAbilities) === JSON.stringify(p2.attunedAbilities),
+    `${t2.profileId}: the ability package is held fixed across the bands`);
+}
+
+// --- Band-2 frame references ------------------------------------------------
+
+assert(LINEAGE_FRAME_REFERENCES_T2.length === 18,
+  `eighteen band-2 frame rows (got ${LINEAGE_FRAME_REFERENCES_T2.length})`);
+assert(LINEAGE_FRAME_PROFILES_T2.size === LINEAGE_FRAME_REFERENCES_T2.length,
+  "one band-2 frame profile per band-2 frame reference");
+assert(ALL_FRAME_REFERENCES.length === 36 && ALL_FRAME_PROFILES.size === 36,
+  "both frame bands join without an id collision");
+
+for (const ref of LINEAGE_FRAME_REFERENCES) assert(ref.bandTier === 1, `${ref.profileId}: band 1`);
+for (const ref of LINEAGE_FRAME_REFERENCES_T2) {
+  const profile = LINEAGE_FRAME_PROFILES_T2.get(ref.profileId)!;
+  const report = validateProfile(profile);
+  assert(report.pass, formatValidation(ref.profileId, report));
+  assert(ref.bandTier === 2, `${ref.profileId}: band 2`);
+  assert(profile.lane === undefined, `${ref.profileId}: a frame reference declares no lane`);
+  for (const tree of Object.values(profile.lineages ?? {})) {
+    assert(tree.ownedCards.length === 0, `${ref.profileId}: a frame reference buys no cards`);
+  }
+  // A frame is a TIER-1 skill node at both bands -- bought once, never replaced --
+  // so what band 2 varies is the gear the frame is read on.
+  const frame = SKILL_TREE.get(ref.frameId);
+  assert(frame && frame.tier === 1 && frame.parent === ref.classRoot,
+    `${ref.profileId}: ${ref.frameId} is still a tier-1 frame of ${ref.classRoot}`);
+  for (const slot of ["weapon", "armor", "recovery", "mobility"] as const) {
+    const id = profile.equipment[slot];
+    assert(id && ITEM_DATABASE.get(id)?.tier === 2,
+      `${ref.profileId}: ${slot} "${id}" is not a tier-2 item`);
+  }
+  // Within a root the frame is still the only variable at band 2.
+  const siblings = LINEAGE_FRAME_REFERENCES_T2.filter((r) => r.classRoot === ref.classRoot);
+  assert(siblings.length === 3, `${ref.classRoot}: Light, Balanced and Heavy at band 2`);
+  assert(siblings.every((r) => r.wornForm === ref.wornForm),
+    `${ref.profileId}: the whole root wears one band-2 weapon`);
+  assert(siblings.filter((r) => r.canonical).length === 1,
+    `${ref.classRoot}: exactly one band-2 frame is the denominator`);
+}
+
+assert(laneReferenceFor(LINEAGE_LANE_REFERENCES_T2[0].profileId) === LINEAGE_LANE_REFERENCES_T2[0],
+  "laneReferenceFor round-trips a band-2 profile id");
+assert(frameReferenceFor(LINEAGE_FRAME_REFERENCES_T2[0].profileId) === LINEAGE_FRAME_REFERENCES_T2[0],
+  "frameReferenceFor round-trips a band-2 profile id");
+
+// Lane and frame ids stay distinct across BOTH bands.
+{
+  const ids = new Set([
+    ...ALL_LANE_REFERENCES.map((r) => r.profileId),
+    ...ALL_FRAME_REFERENCES.map((r) => r.profileId),
+  ]);
+  assert(ids.size === ALL_LANE_REFERENCES.length + ALL_FRAME_REFERENCES.length,
+    "no profile id is shared by two reference rows");
+}
 
 console.log("laneProfiles.test.ts: ok");

@@ -4,11 +4,14 @@ import {
   NODE_BIOMES,
   STANCE_RECIPE_DATABASE, RITE_RECIPE_DATABASE,
   RECIPE_DATABASE,
+  biomeLevelCap,
   biomeXpForBiomeLevel,
   emptyEquipment,
   emptyAttunedAbilities,
+  rowsForTier,
   type EquipmentMap,
   type LineageDefinition,
+  type LineageForm,
   type PacketId,
   type RowKind,
   type TierEntryProfile,
@@ -259,6 +262,20 @@ export const LINEAGE_REFERENCE_CLASS: Record<string, LineageReferenceClass> = {
 /** The T1 band's rows, in the order a player buys them (`rowsForTier(1)`). */
 const T1_LANE_ROWS: readonly RowKind[] = ["stat", "payoff"];
 
+/**
+ * Which tier's BAND and gear a reference carries (run 4, W2-A step 1).
+ *
+ * Band 1 is the character the Tier-1 gate hands over: T1 gear, the T1 stat and
+ * payoff rows, T1 mastery. Band 2 is the character the Tier-2 gate hands over:
+ * the lineage's tier-2 form, the T2 form of every armour/charm/boot the band-1
+ * reference wears, the T2 stat/payoff/amplifier rows, and mastery at the Tier-2
+ * cap. Nothing else differs between the two — same class, same frame, same
+ * ability package — so a band-1 and a band-2 row of the same lane are the same
+ * build one tier apart, and that is the only reading in which the BAND is the
+ * variable.
+ */
+export type BandTier = 1 | 2;
+
 export interface LineageLaneReference {
   profileId: string;
   lineageId: string;
@@ -266,10 +283,27 @@ export interface LineageLaneReference {
   lane: PacketId | null;
   classRoot: string;
   frameId: string;
+  /** Which tier's band and gear this row carries. */
+  bandTier: BandTier;
+  /** The lineage's tier-1 base form. Owned by every band; worn only by band 1. */
   baseForm: string;
+  /** The form actually equipped: the base form at band 1, the T2 form at band 2. */
+  wornForm: string;
   homeBiome: string;
-  /** The T1 stat and payoff cards of this lane, in row order. */
+  /**
+   * Every card this reference OWNS, in purchase order. At band 1 that is the T1
+   * stat and payoff rows; at band 2 it is those two plus the T2 stat, payoff and
+   * amplifier, because a T2 character bought the T1 band on the way and its stat
+   * row folded into the form it is wearing (design §4 band collapse).
+   */
   cardIds: string[];
+  /**
+   * The subset of `cardIds` that is SLOTTED. `active` is one card per row across
+   * the whole tree, so a band-2 reference runs the T2 rows and leaves the T1
+   * payoff owned-but-inert; its T1 stat row is absorbed by the worn form and
+   * pays out from there (`absorbedStatCards`), which is why it is still owned.
+   */
+  activeCardIds: string[];
   /**
    * True when NO Tier-1 mob family drops this lane's shard, so the cards cannot
    * be bought from T1 kills at all. This was Engagement's case until the third
@@ -289,39 +323,115 @@ export interface LineageLaneReference {
  */
 export const LANES_WITHOUT_T1_SHARD_SOURCE: readonly PacketId[] = [];
 
-function laneCardIds(lineage: LineageDefinition, lane: PacketId): string[] {
-  return T1_LANE_ROWS.map((row) => {
-    const card = lineage.cards.find((c) => c.tier === 1 && c.row === row && c.lane === lane);
-    if (!card) throw new Error(`${lineage.id}: no T1 ${row} card on lane ${lane}`);
+function laneCardIds(lineage: LineageDefinition, lane: PacketId, tier = 1): string[] {
+  return rowsForTier(tier).map((row) => {
+    const card = lineage.cards.find((c) => c.tier === tier && c.row === row && c.lane === lane);
+    if (!card) throw new Error(`${lineage.id}: no T${tier} ${row} card on lane ${lane}`);
     return card.id;
   });
+}
+
+/**
+ * The tier-2 form a band-2 reference wears: the lineage's FIRST authored tier-2
+ * form, which is the one whose door stands in the lineage's own home biome.
+ *
+ * Fixed per lineage rather than chosen to match the lane, and deliberately so.
+ * Seven of the fifteen weapon lanes have no tier-2 form crowning them at all
+ * (the Hammer, Axe and Dagger each author one T2 door, the Rapier and Broadsword
+ * two), so a lane-matched form is not available for most rows, and a mixed
+ * selection would make the lanes of one lineage incomparable — one of them would
+ * carry a capstone that answers its own lane while the others carry one that does
+ * not. Holding it fixed moves the form's capstone into the CONTROL as well, where
+ * the uplift reading divides most of it out.
+ *
+ * The residual is named rather than hidden: the capstone's lane still synergises
+ * with one of the lineage's three lanes more than the others, and that is the
+ * band-2 instrument's known confound. Reported in `lane-matrix-run4.md`.
+ */
+function t2WornForm(lineage: LineageDefinition): LineageForm {
+  const form = lineage.forms.find((f) => f.tier === 2);
+  if (!form) throw new Error(`${lineage.id}: no tier-2 form, so it has no tier-2 band`);
+  return form;
+}
+
+/**
+ * The tier-2 counterpart of a tier-1 armour / charm / boot: the same lineage's
+ * tier-2 form in the SAME biome.
+ *
+ * Derived rather than listed, so the T2 gear set can never drift from the T1 one
+ * the band-1 references already wear. Returns null when the item belongs to no
+ * lineage or its lineage authors no same-biome T2 form, and the caller then keeps
+ * the T1 item — which would be a finding, not a silent downgrade, because
+ * `validateProfile`'s `no-future-tier-items` says nothing about carrying an older
+ * item and the band-2 test below asserts the whole set moved.
+ */
+function t2CounterpartItem(recipeId: string): string | null {
+  for (const lineage of LINEAGE_DATABASE.values()) {
+    const t1 = lineage.forms.find((f) => f.recipeId === recipeId && f.tier === 1);
+    if (!t1) continue;
+    const t2 = lineage.forms.find((f) => f.tier === 2 && f.biome === t1.biome);
+    return t2?.recipeId ?? null;
+  }
+  return null;
 }
 
 /**
  * One reference per (weapon lineage x lane), plus one lane-less control each.
  * Twenty rows: five lineages x (three lanes + control).
  */
-export const LINEAGE_LANE_REFERENCES: readonly LineageLaneReference[] =
-  [...LINEAGE_DATABASE.values()]
+function laneReferencesForBand(bandTier: BandTier): LineageLaneReference[] {
+  return [...LINEAGE_DATABASE.values()]
     .filter((lineage) => lineage.slot === "weapon")
     .flatMap((lineage) => {
       const ref = LINEAGE_REFERENCE_CLASS[lineage.id];
       if (!ref) throw new Error(`no reference class for weapon lineage ${lineage.id}`);
+      const wornForm = bandTier === 1 ? ref.baseForm : t2WornForm(lineage).recipeId;
+      const suffix = bandTier === 1 ? "" : "-t2";
       const lanes: (PacketId | null)[] = [...lineage.lanes, null];
-      return lanes.map((lane) => ({
-        // NOT "control": `control` is itself a packet name, so the lane-less
-        // profile of the Hammer would have collided with its Control lane.
-        profileId: `lineage-${lineage.id}-${lane ?? "baseline"}`,
-        lineageId: lineage.id,
-        lane,
-        classRoot: ref.classRoot,
-        frameId: ref.frameId,
-        baseForm: ref.baseForm,
-        homeBiome: lineage.homeBiome,
-        cardIds: lane ? laneCardIds(lineage, lane) : [],
-        shardsUnobtainableAtT1: lane !== null && LANES_WITHOUT_T1_SHARD_SOURCE.includes(lane),
-      }));
+      return lanes.map((lane) => {
+        // Band 2 owns the T1 band as well: a tier-2 character bought it on the
+        // way up and its stat row is inside the form now (design §4).
+        const owned = lane
+          ? (bandTier === 1
+            ? laneCardIds(lineage, lane, 1)
+            : [...laneCardIds(lineage, lane, 1), ...laneCardIds(lineage, lane, 2)])
+          : [];
+        const active = lane ? laneCardIds(lineage, lane, bandTier) : [];
+        return {
+          // NOT "control": `control` is itself a packet name, so the lane-less
+          // profile of the Hammer would have collided with its Control lane.
+          profileId: `lineage-${lineage.id}-${lane ?? "baseline"}${suffix}`,
+          lineageId: lineage.id,
+          lane,
+          classRoot: ref.classRoot,
+          frameId: ref.frameId,
+          bandTier,
+          baseForm: ref.baseForm,
+          wornForm,
+          homeBiome: lineage.homeBiome,
+          cardIds: owned,
+          activeCardIds: active,
+          shardsUnobtainableAtT1: lane !== null && LANES_WITHOUT_T1_SHARD_SOURCE.includes(lane),
+        };
+      });
     });
+}
+
+export const LINEAGE_LANE_REFERENCES: readonly LineageLaneReference[] = laneReferencesForBand(1);
+
+/**
+ * The band-2 half of the reference set (run 4, W2-A step 1): twenty more rows,
+ * five lineages x (three lanes + control), carrying the T2 band on T2 gear.
+ *
+ * A SEPARATE array rather than twenty more entries in `LINEAGE_LANE_REFERENCES`,
+ * because that array's own test asserts its exact size and every row's T1 shape —
+ * a contract the band-2 rows are not part of. The bench reads `ALL_LANE_REFERENCES`.
+ */
+export const LINEAGE_LANE_REFERENCES_T2: readonly LineageLaneReference[] = laneReferencesForBand(2);
+
+/** Both bands, in band order — the set the lane matrix sweeps. */
+export const ALL_LANE_REFERENCES: readonly LineageLaneReference[] =
+  [...LINEAGE_LANE_REFERENCES, ...LINEAGE_LANE_REFERENCES_T2];
 
 /**
  * The lane reference as a tier-entry profile.
@@ -336,41 +446,165 @@ export const LINEAGE_LANE_REFERENCES: readonly LineageLaneReference[] =
 function laneReferenceProfile(reference: LineageLaneReference): TierEntryProfile {
   const route = T1_BASELINE_ROUTES.find((r) => r.classRoot === reference.classRoot);
   if (!route) throw new Error(`no canonical T1 baseline route for ${reference.classRoot}`);
-  const base = buildProfile(route, "clean");
+  const t1 = buildProfile(route, "clean");
+  const base = reference.bandTier === 1 ? t1 : t2CompleteManifest(t1);
 
-  // The reference wears the lineage's own base form. Whatever weapon the route
-  // finished T1 on stays in the bag: a character who crafted it still owns it,
-  // and dropping it would make the manifest claim essence was never spent.
-  const displaced = base.equipment.weapon;
-  const equipment: EquipmentMap = { ...base.equipment, weapon: reference.baseForm };
+  // The reference wears the lineage's own form for its band. Whatever the route
+  // or the previous band wore stays in the bag: a character who crafted it still
+  // owns it, and dropping it would make the manifest claim essence was never spent.
+  const gear = reference.bandTier === 1
+    ? { ...base.equipment, weapon: reference.wornForm }
+    : t2Equipment(base.equipment, reference.wornForm);
+  const worn = new Set(Object.values(gear).filter((id): id is string => !!id));
   const inventory = [...new Set([
-    ...base.inventory.filter((id) => id !== reference.baseForm),
-    ...(displaced && displaced !== reference.baseForm ? [displaced] : []),
+    ...base.inventory.filter((id) => !worn.has(id)),
+    ...Object.values(base.equipment).filter((id): id is string => !!id && !worn.has(id)),
+    // The base form is owned at every band: it is what opened the tree, and at
+    // band 2 it is the form the gate was paid FROM.
+    ...(worn.has(reference.baseForm) ? [] : [reference.baseForm]),
   ])];
 
-  // The base form is carried at +0. Every lane profile of a lineage then differs
+  // The worn form is carried at +0. Every lane profile of a lineage then differs
   // ONLY in its cards, and the card's magnitude is not competing with an upgrade
-  // ladder that Phase 2 deletes for weapons anyway.
-  const itemUpgrades = { ...base.itemUpgrades, [reference.baseForm]: 0 };
+  // ladder that Phase 2 deletes for weapons anyway. (The tier-2 forms author no
+  // upgrade steps at all, so +0 is their only legal level.)
+  const itemUpgrades: Record<string, number> = { ...base.itemUpgrades };
+  for (const id of [reference.baseForm, reference.wornForm]) itemUpgrades[id] = 0;
+  if (reference.bandTier === 2) {
+    for (const slot of ["armor", "recovery", "mobility"] as const) {
+      const id = gear[slot];
+      if (id && id !== base.equipment[slot]) itemUpgrades[id] = T2_GEAR_PLUS;
+    }
+  }
+  // `upgrade-refers-to-owned-item`: the band-1 manifest records a +N for items the
+  // route crafted and this build no longer carries in either place.
+  for (const id of Object.keys(itemUpgrades)) {
+    if (!worn.has(id) && !inventory.includes(id)) delete itemUpgrades[id];
+  }
+
+  const lineage = LINEAGE_DATABASE.get(reference.lineageId)!;
+  const rowOf = (cardId: string): RowKind => {
+    const card = lineage.cards.find((c) => c.id === cardId);
+    if (!card) throw new Error(`${reference.profileId}: ${cardId} is not a card of ${lineage.id}`);
+    return card.row;
+  };
 
   return {
     ...base,
     id: reference.profileId,
     lane: reference.lane ?? undefined,
-    equipment,
+    equipment: gear,
     inventory,
     itemUpgrades,
     lineages: {
       [reference.lineageId]: {
         ownedCards: [...reference.cardIds],
         active: Object.fromEntries(
-          reference.cardIds.map((cardId, index) => [T1_LANE_ROWS[index], cardId]),
+          reference.activeCardIds.map((cardId) => [rowOf(cardId), cardId]),
         ) as Partial<Record<RowKind, string>>,
-        ownedForms: [reference.baseForm],
-        wornForm: reference.baseForm,
+        ownedForms: [...new Set([reference.baseForm, reference.wornForm])],
+        wornForm: reference.wornForm,
       },
     },
   };
+}
+
+// --- The band-2 manifest (run 4, W2-A step 1) -------------------------------
+
+/** Biomes the Tier-2 region adds on top of the five T1 ones. */
+const T2_BIOMES = ["jungle", "desert"] as const;
+
+/**
+ * Upgrade level the band-2 armour / charm / boots are carried at.
+ *
+ * +5, the same ceiling the band-1 references carry their T1 set at, so the gear
+ * is a tier up and not also an upgrade step behind. A tier-2 item's +5 needs its
+ * recipe group at level 10 and a Global Mastery ceiling of +5; the band-2 manifest
+ * sits at level 12 in all five T1 groups and Global Mastery 72, so both are met
+ * with room to spare. `validateProfile` checks exactly this, and the test below
+ * runs it over every band-2 row.
+ */
+const T2_GEAR_PLUS = 5;
+
+/**
+ * The band-1 (T1-complete) manifest raised to the state the Tier-2 gate hands
+ * over: every T1 biome at the top of its Tier-2 band, both Tier-2 biomes at the
+ * cap their own tier allows, every Tier-1 AND Tier-2 boss felled.
+ *
+ * `biomeLevelCap(2, group)` is the authority for both numbers and they are NOT the
+ * same: a T1 group reaches 12 while the character is still inside Tier 2, but
+ * Jungle and Desert cap at 6 until the third tier is entered. "Mastery at the T2
+ * cap" therefore means 12 for the five T1 groups and 6 for the two T2 ones --
+ * which `validateProfile`'s `mastery-within-previous-tier-cap` enforces against
+ * this very function, so the two cannot drift.
+ *
+ * Global Mastery lands at 72, clearing the T2 amplifier row's 64 and the +5
+ * ceiling for tier-2 items. The band's own biome gate (level 11 for an amplifier)
+ * is read in the lineage's DOOR biome, and every tier-2 weapon door of the five
+ * weapon lineages stands in a T1 biome -- so nothing in the band depends on the
+ * Jungle/Desert levels being short of twelve.
+ */
+function t2CompleteManifest(base: TierEntryProfile): TierEntryProfile {
+  const groups: string[] = [...T1_BIOMES, ...T2_BIOMES];
+  const biomeLevels: Record<string, number> = { clearing: CLEARING_MAX_LEVEL };
+  const biomeXP: Record<string, number> = {
+    clearing: biomeXpForBiomeLevel("clearing", CLEARING_MAX_LEVEL),
+  };
+  for (const group of groups) {
+    const level = biomeLevelCap(2, group);
+    biomeLevels[group] = level;
+    biomeXP[group] = biomeXpForBiomeLevel(group, level);
+  }
+
+  const nodes = Object.entries(NODE_BIOMES)
+    .filter(([, info]) => groups.includes(info.biomeGroup) && info.biomeTier <= 2)
+    .map(([id, info]) => ({ id, kind: info.kind }));
+
+  return {
+    ...base,
+    targetTier: 3,
+    spawnNodeId: "node-t3-sanctuary",
+    // ONE unspent point, and no branch. A T3-entry character has been minted the
+    // point the third tier pays and has not spent it: `currentSkillTier` 3 is the
+    // tier it may buy from and the tier-2 Range node is what it would buy. Left
+    // UNSPENT on purpose -- the band is what this reference varies, and a Range
+    // pick would be a second variable. `validateProfile`'s
+    // `no-unearned-skill-points` asserts exactly this pairing, so the choice is
+    // checked rather than assumed.
+    skillPoints: 1,
+    currentSkillTier: 3,
+    biomeLevels,
+    biomeXP,
+    // Every T1 and T2 boss, mirroring the band-1 manifest's "all five T1 bosses".
+    // Three T2 seals are what Tier 3 requires; seven is what a character that has
+    // actually finished the region holds.
+    bossesCleared: [
+      ...T1_BIOMES.map((group) => `${group}:1`),
+      ...groups.map((group) => `${group}:2`),
+    ],
+    clearedNodes: nodes.filter(({ kind }) => kind === "normal").map(({ id }) => id),
+    visitedNodes: nodes.map(({ id }) => id),
+    questProgress: { "tier-0": 10, "tier-1": 10, "tier-2": 1 },
+  };
+}
+
+/**
+ * The band-2 equipment set: the tier-2 weapon form plus the tier-2 counterpart of
+ * every armour / charm / boot the band-1 reference wears.
+ *
+ * Derived from the band-1 set item by item (`t2CounterpartItem`) rather than
+ * listed, so the two sets can never name different lineages. An item with no
+ * same-biome tier-2 form keeps its T1 entry, and the band-2 test fails on it --
+ * the gap is the finding, not a silent downgrade.
+ */
+function t2Equipment(band1: EquipmentMap, wornForm: string): EquipmentMap {
+  const out: EquipmentMap = { ...band1, weapon: wornForm };
+  for (const slot of ["armor", "recovery", "mobility"] as const) {
+    const current = band1[slot];
+    if (!current) continue;
+    out[slot] = t2CounterpartItem(current) ?? current;
+  }
+  return out;
 }
 
 /**
@@ -383,8 +617,19 @@ export const LINEAGE_LANE_PROFILES = new Map<string, TierEntryProfile>(
   LINEAGE_LANE_REFERENCES.map((reference) => [reference.profileId, laneReferenceProfile(reference)]),
 );
 
+/** The band-2 half, keyed the same way. */
+export const LINEAGE_LANE_PROFILES_T2 = new Map<string, TierEntryProfile>(
+  LINEAGE_LANE_REFERENCES_T2.map((reference) => [reference.profileId, laneReferenceProfile(reference)]),
+);
+
+/** Both bands in one lookup -- what a bench sweeping `ALL_LANE_REFERENCES` needs. */
+export const ALL_LANE_PROFILES = new Map<string, TierEntryProfile>([
+  ...LINEAGE_LANE_PROFILES,
+  ...LINEAGE_LANE_PROFILES_T2,
+]);
+
 export function laneReferenceFor(profileId: string): LineageLaneReference {
-  const reference = LINEAGE_LANE_REFERENCES.find((r) => r.profileId === profileId);
+  const reference = ALL_LANE_REFERENCES.find((r) => r.profileId === profileId);
   if (!reference) throw new Error(`unknown lane reference "${profileId}"`);
   return reference;
 }
@@ -518,8 +763,12 @@ export interface LineageFrameReference {
   classRoot: string;
   frameShape: FrameShape;
   frameId: string;
+  /** Which tier's gear this row carries; the frame itself is a tier-1 node at both. */
+  bandTier: BandTier;
   /** The weapon every frame of this root wears, so the frame is the only variable. */
   baseForm: string;
+  /** The form actually equipped: the base form at band 1, its T2 form at band 2. */
+  wornForm: string;
   /** The weapon lineage that base form belongs to, or null when it anchors none. */
   lineageId: string | null;
   /**
@@ -543,26 +792,51 @@ function frameWeaponFor(classRoot: string): { baseForm: string; lineageId: strin
   return { baseForm: weapon, lineageId: lineage?.id ?? null };
 }
 
-/** Eighteen rows: six class roots x Light / Balanced / Heavy. */
-export const LINEAGE_FRAME_REFERENCES: readonly LineageFrameReference[] =
-  FRAME_REFERENCE_ROOTS.flatMap((classRoot) => {
+function frameReferencesForBand(bandTier: BandTier): LineageFrameReference[] {
+  return FRAME_REFERENCE_ROOTS.flatMap((classRoot) => {
     const { baseForm, lineageId } = frameWeaponFor(classRoot);
     const canonicalFrame = T1_BASELINE_ROUTES.find((r) => r.classRoot === classRoot)?.frameId
       ?? FRAME_BY_ROOT[classRoot];
     const root = classRoot.replace("-root", "");
+    const suffix = bandTier === 1 ? "" : "-t2";
+    // The root's weapon one tier up. Every root's lane-matrix weapon has a tier-2
+    // form; a root whose weapon belongs to no lineage (none today) would keep the
+    // T1 weapon and the test says so.
+    const lineage = lineageId ? LINEAGE_DATABASE.get(lineageId) : undefined;
+    const wornForm = bandTier === 1 || !lineage ? baseForm : t2WornForm(lineage).recipeId;
     return FRAME_SHAPES.map((frameShape) => {
       const frameId = `${root}-${frameShape}`;
       return {
-        profileId: `frame-${root}-${frameShape}`,
+        profileId: `frame-${root}-${frameShape}${suffix}`,
         classRoot,
         frameShape,
         frameId,
+        bandTier,
         baseForm,
+        wornForm,
         lineageId,
         canonical: frameId === canonicalFrame,
       };
     });
   });
+}
+
+/** Eighteen rows: six class roots x Light / Balanced / Heavy. */
+export const LINEAGE_FRAME_REFERENCES: readonly LineageFrameReference[] = frameReferencesForBand(1);
+
+/**
+ * The same eighteen on Tier-2 gear (run 4, W2-A step 1).
+ *
+ * The frame nodes themselves are tier-1 skills at both bands -- a frame is bought
+ * once and never replaced -- so what the band-2 rows vary is the GEAR the frame is
+ * read on. "Is Heavy still worth what it was once the T2 set is on?" is the
+ * question, and it is not one the band-1 rows can answer.
+ */
+export const LINEAGE_FRAME_REFERENCES_T2: readonly LineageFrameReference[] = frameReferencesForBand(2);
+
+/** Both bands, in band order. */
+export const ALL_FRAME_REFERENCES: readonly LineageFrameReference[] =
+  [...LINEAGE_FRAME_REFERENCES, ...LINEAGE_FRAME_REFERENCES_T2];
 
 /**
  * The frame reference as a tier-entry profile: the root's canonical T2-entry
@@ -571,20 +845,36 @@ export const LINEAGE_FRAME_REFERENCES: readonly LineageFrameReference[] =
 function frameReferenceProfile(reference: LineageFrameReference): TierEntryProfile {
   const route = T1_BASELINE_ROUTES.find((r) => r.classRoot === reference.classRoot);
   if (!route) throw new Error(`no canonical T1 baseline route for ${reference.classRoot}`);
-  const base = buildProfile(route, "clean");
-  const displaced = base.equipment.weapon;
-  const equipment: EquipmentMap = { ...base.equipment, weapon: reference.baseForm };
+  const t1 = buildProfile(route, "clean");
+  const base = reference.bandTier === 1 ? t1 : t2CompleteManifest(t1);
+  const gear = reference.bandTier === 1
+    ? { ...base.equipment, weapon: reference.wornForm }
+    : t2Equipment(base.equipment, reference.wornForm);
+  const worn = new Set(Object.values(gear).filter((id): id is string => !!id));
+  const inventory = [...new Set([
+    ...base.inventory.filter((id) => !worn.has(id)),
+    ...Object.values(base.equipment).filter((id): id is string => !!id && !worn.has(id)),
+    ...(worn.has(reference.baseForm) ? [] : [reference.baseForm]),
+  ])];
+  const itemUpgrades: Record<string, number> = { ...base.itemUpgrades };
+  for (const id of [reference.baseForm, reference.wornForm]) itemUpgrades[id] = 0;
+  if (reference.bandTier === 2) {
+    for (const slot of ["armor", "recovery", "mobility"] as const) {
+      const id = gear[slot];
+      if (id && id !== base.equipment[slot]) itemUpgrades[id] = T2_GEAR_PLUS;
+    }
+  }
+  for (const id of Object.keys(itemUpgrades)) {
+    if (!worn.has(id) && !inventory.includes(id)) delete itemUpgrades[id];
+  }
   return {
     ...base,
     id: reference.profileId,
     frameId: reference.frameId,
     lane: undefined,
-    equipment,
-    inventory: [...new Set([
-      ...base.inventory.filter((id) => id !== reference.baseForm),
-      ...(displaced && displaced !== reference.baseForm ? [displaced] : []),
-    ])],
-    itemUpgrades: { ...base.itemUpgrades, [reference.baseForm]: 0 },
+    equipment: gear,
+    inventory,
+    itemUpgrades,
   };
 }
 
@@ -592,8 +882,19 @@ export const LINEAGE_FRAME_PROFILES = new Map<string, TierEntryProfile>(
   LINEAGE_FRAME_REFERENCES.map((reference) => [reference.profileId, frameReferenceProfile(reference)]),
 );
 
+/** The band-2 half, keyed the same way. */
+export const LINEAGE_FRAME_PROFILES_T2 = new Map<string, TierEntryProfile>(
+  LINEAGE_FRAME_REFERENCES_T2.map((reference) => [reference.profileId, frameReferenceProfile(reference)]),
+);
+
+/** Both bands in one lookup. */
+export const ALL_FRAME_PROFILES = new Map<string, TierEntryProfile>([
+  ...LINEAGE_FRAME_PROFILES,
+  ...LINEAGE_FRAME_PROFILES_T2,
+]);
+
 export function frameReferenceFor(profileId: string): LineageFrameReference {
-  const reference = LINEAGE_FRAME_REFERENCES.find((r) => r.profileId === profileId);
+  const reference = ALL_FRAME_REFERENCES.find((r) => r.profileId === profileId);
   if (!reference) throw new Error(`unknown frame reference "${profileId}"`);
   return reference;
 }

@@ -2679,3 +2679,175 @@ mobs are what must move.
 written into both its fixture and its assertion; it now reads the cap from
 `MONSTER_DATABASE`, because the guarded invariant is "the swarm stops at its cap",
 not the cap's value.
+## Band-2 references and the family-contract arbiter progress note (2026-10-02, run 4 W2-A)
+
+**Built.** The Tier-2 half of the lane bench's reference set, a new instrument that
+arbitrates design §18 3b, and the two run-4 reports.
+
+- `bot/src/tierEntry/profiles.ts` — `LINEAGE_LANE_REFERENCES_T2` (20 rows) and
+  `LINEAGE_FRAME_REFERENCES_T2` (18), joined by `ALL_LANE_REFERENCES` /
+  `ALL_FRAME_REFERENCES`. The reference set is now **76 rows**: 40 lane (20 per band)
+  and 36 frame (18 per band). A band-2 row carries the lineage's first tier-2 form, the
+  tier-2 counterpart of every armour/charm/boot the band-1 row wears (derived item by
+  item, so the two sets cannot name different lineages), the T2 stat/payoff/amplifier
+  rows of its lane **plus** the T1 band it bought on the way — the T1 stat row is
+  absorbed by the worn form (design §4) and the T1 payoff is owned-but-inert — and
+  mastery at the Tier-2 cap. Class, frame and ability package are held fixed across the
+  bands, so a band-1 and band-2 row of one lane are the same build one tier apart. All
+  38 band-2 profiles pass `validateProfile`.
+- `server/bench/lineage/laneBot.ts` — `prepareLaneBot` extracted from the lane matrix so
+  the contract instrument prepares the identical character. It takes the band from the
+  reference and slots the declared active set **explicitly** after every purchase: a
+  band-2 reference buys five cards into three rows, so its T1 payoff lands first and
+  auto-activation alone would leave the T1 card running.
+- `server/bench/lineageLaneMatrix.ts` — sweeps both bands with **band-matched controls**,
+  and every per-band quantity (both pivots, the §18.9 budget per tier *and* band, the
+  packet budget, the ordinal ranking, the remap shortlist, the lane summary, the control
+  spread, survival, frames) is band-scoped rather than pooled.
+- `server/bench/familyContracts.ts` — the new arbiter. See below.
+- `reports/progression-phase1/lane-matrix-run4.md` and `family-contracts-run4.md`, plus
+  `family-contracts-run4-cave-brute-hosts.md` (the multi-host follow-up).
+
+**Mastery at the T2 cap is not one number,** and the manifest says so: `biomeLevelCap(2,
+group)` gives a T1 group 12 while Jungle and Desert stop at 6 until Tier 3 is entered.
+Global Mastery lands at 72, clearing the T2 amplifier row's 64 and the +5 ceiling for
+tier-2 items. Nothing in the band depends on the Jungle/Desert levels being short of
+twelve, because every tier-2 weapon door of the five weapon lineages stands in a T1
+biome (design §21's "unchanged in practice" at work).
+
+### The arbiter, and why the matrix could not be it
+
+Run 3's §2 was explicit: ranking six lanes on one blended node is below the lane
+matrix's own resolution — the ordinal ranking failed to reproduce between two seeds for
+seven of nine families and the margins moved 7–15pp between a 90 s and a 270 s cap, more
+than the ±3pp band §18.9 judges in. Run 4's matrix reproduces that: **its own §18 3b test
+again finds no clear remap**, and its per-seed rank columns swing exactly as before.
+
+`familyContracts.ts` is the replacement §2 prescribed. One lane against one lane, on a
+node forced to **100% the family under test**, to a **fixed kill count** (30) rather than a
+fixed clock, pooled across every weapon lineage carrying the lane, over four seeds, with
+five guards: G1 reached-N per carrier, G2 carriers exist, G3 every seed agrees on the
+sign, G4 |mean margin| exceeds half the seed spread, G5 the raw time-to-kill-N ratio
+agrees in sign with the control-normalised margin. The synthetic node sidesteps the blend
+problem by construction — nine of the 37 authored T2 blends do not resolve as authored, so
+the matrix sometimes measures a family its row does not name.
+
+### `drops` remaps applied: NONE. Here is the whole chain.
+
+1. The sweep found **exactly one** decisive inversion: **Cave Brute at T1** (favours
+   `empowered`, punishes `affliction`) — margin **−6.4pp** against a half-spread of
+   5.9pp, all four seeds negative (−9.2, −0.6, −12.4, −3.6), TTK-N ratio 0.99, all five
+   guards passing. The mechanism was legible: Affliction's payoffs fired 889–1499 times
+   per cell against Empowered's 60–120 on a single 250 HP body, and the family already
+   carries `dotResistance: 0.30` from W1-B, so the punishment exists and is not enough.
+2. A decisive inversion cannot name its own destination. With two lanes the winner is by
+   construction the lane the family PUNISHES, and `drops === punishes` is refused by
+   `server/test/lineageMaterials.test.ts` by name. So the wider `FAM_ALL_LANES=1` pass
+   ran, and on its host it put **Tempo first at +7.7%** (all four seeds +5.8 to +13.2)
+   with Empowered sixth of seven — a legal third lane and, on that evidence, a remap.
+3. **The wider pass had landed on a different host node than the sweep** (`t1-cave-01`
+   against the sweep's `t1-cave-02`), because host assignment walked only the selected
+   families. Fixed, and re-run on the sweep's own host — where **Affliction came first at
+   +7.6% and Tempo second at +3.8%**. Two nodes, identical forced composition, opposite
+   winners.
+4. So all five Cave T1 nodes were measured under the same forced 100% Brute blend, in one
+   pass, with the pooling done by the bench rather than by hand
+   (`family-contracts-run4-cave-brute-hosts.md`, 400 runs, 13.1 min). The favoured lane
+   ranks **6/7, 4/7, 1/7, 1/7, 4/7** and the per-host margins are **−1.9%, −6.4%, +2.9%,
+   +3.8%, −1.5%**. Pooled: **margin −0.6% against a host half-spread of +5.1%** —
+   `UNDECIDED (host spread covers it)`. Pooled lane means: Tempo +5.4%, Affliction
+   (punished) +5.0%, **Empowered (favoured) +4.3%**, Control +3.8%, Kill-chain +3.3%,
+   Engagement +1.9%, Technique +0.0%. The favoured lane **won two of the five hosts** and
+   sits 1.1pp off the top.
+
+**The Cave Brute inversion is a single-host artefact, and no `drops` field moved.** The
+instrument fixed run 3's *sampling* problem and uncovered a second variance source the
+design did not anticipate: **the host node decides a margin as large as the lane's** — the
+sweep's −6.4pp was one node of five, and three of the other four are positive or near
+zero. `FAM_HOSTS_ALL=1` is now the mode a `drops` decision has to be taken in, and the
+report marks a pooled margin smaller than its host spread **UNDECIDED however clean each
+individual host looked**.
+
+**Consequence for the next run.** Every one of the twelve inverted rows and every one of
+the four decisive holds was measured on ONE host, so all sixteen carry the variance this
+pass found in Cave Brute. The twelve inversions should not be read as findings until they
+have been through `FAM_HOSTS_ALL`, and the four holds should not be read as settled
+either. That is roughly 16 families x 5 hosts x ~10 profiles x 4 seeds; at run 4's 13
+minutes per family it is an overnight run of its own, which is the honest price of a
+criterion written in ±3 percentage points.
+
+### Families still inverted (none decisive after pooling)
+
+Twelve rows. Eleven have at least one guard failing — the failing guards are printed per
+row in the report — and the twelfth is Cave Brute, which passed all five on one host and
+is undecided across five: Herd T1 (−1.5pp), Swarm T1 (−2.8), Grove T1 (−0.2), Crag T1
+(−10.5), Deep T1 (−4.2), Mire T1 (−6.2), **Brute T1 (−6.4, the one above)**, Herd T2
+(−7.2), Grove T2 (−1.4), Canopy T2 (−2.4), Undergrowth T2 (−10.9), Basilisk T2 (−7.4).
+Four contracts hold with all five guards: **Forest Pack T1** (+9.8pp), **Mountain Ridge
+T1** (+8.2) and **T2** (+10.2), **Cave Brood T2** (+13.5).
+
+Note that Crag T1's −10.5pp is larger than Brute's and is NOT decisive: its seeds split
+(−14.3, −18.5, −12.4, **+3.1**) and its half-spread is 10.8pp. The guards are doing their
+job in both directions.
+
+### Contracts that could not be measured at all (5)
+
+- **Swamp Stalker T1 and T2** — punishes `bulwark`, which **no weapon lineage carries**.
+  Neither does `barrier-tempo`. Two of the nine packets are defensive-only, so any family
+  punishing them has no measurable punished half until the armour/charm/boot lineages get
+  reference profiles of their own. Desert Stalker has the same pairing and no T2 body.
+- **Mountain Crag T2** (`granite-titan`) and **Cave Brute T2** (`cave-troll`) — no cell
+  reached 30 kills inside the 600 s cap, lane or control: 15–27 of 30. A Tier-2 band on a
+  pure anchor encounter is a 20-second-per-kill fight. Raise `FAM_CAP_MS` or lower
+  `FAM_KILLS` for these two specifically; do not pool them with the rest at a different N.
+- **Jungle Ape T2** — the favoured lane's carriers all failed G1 (controls 18–30 of 30)
+  while the punished lane's survived, so the row would have been a comparison between a
+  complete reading and a truncated one.
+
+### Monster-pool gaps the instrument names rather than works around
+
+`swamp-mire`, `jungle-stalker` and `desert-stalker` field **no Tier-2 body**, so they get
+no T2 synthetic node. This is the same gap that makes nine of the 37 authored T2 blends
+resolve as something other than what they name — the Jungle's authored Stalker node
+collapses into an Ape node — which the lane matrix measures silently and this bench
+reports.
+
+### Divergences from the run-4 brief, for review
+
+1. **"Move `drops` to the lane that won" was not executed, and could not be as written.**
+   With a favoured-versus-punished instrument the lane that won is the punished lane, and
+   `drops === punishes` is an illegal data state. The brief's intent is served by the
+   wider pass naming a third lane — which it did (Tempo) — but that answer did not
+   survive being measured on a second host, so nothing moved. Every number is above.
+2. **Band 2 runs on Tier-2 nodes only.** A Tier-2 band on a Tier-1 node is a character
+   farming behind its own gear; §18.9 asks nothing about it and it would have added
+   roughly a thousand cells. Band 1 still runs on both tiers unchanged, so run 3 and run 4
+   compare row for row.
+3. **The tier-2 form is fixed per lineage, not matched to the lane.** Seven of the fifteen
+   weapon lanes have no tier-2 form crowning them, so a lane-matched form is unavailable
+   for most rows and a mixed selection would give one lane of a lineage a capstone that
+   answers itself while the others got one that does not. Fixed means the capstone is in
+   the control too and mostly divides out; the residual — it still favours one of each
+   lineage's three lanes — is named in `t2WornForm` and in the matrix report's header.
+   This is a bench authoring choice, flagged for the designer.
+4. **The ability package is held fixed across the bands.** A band-2 character has more
+   runic points and could run a wider loadout, but then a band-1/band-2 pair would differ
+   in the band AND the package and neither reading would be about the band.
+5. **The matrix kept run 3's 90 s cap and two seeds** rather than the 270 s re-run's
+   shape. The contract instrument is the arbiter now, so the matrix's job is the §18.9
+   budget and the frames column, and comparability with run 3 is worth more there than
+   another tripling of its cost. `LANE_OWN_NODES=1` was added as the escape hatch for the
+   next band and was NOT needed: throughput held at ~1.8 s per cell.
+6. **`validateProfile` is satisfied by a T3-entry-shaped manifest**: `targetTier` 3,
+   `currentSkillTier` 3, exactly ONE unspent skill point and no Range branch. The point is
+   deliberately unspent — a Range pick would be a second variable — and the validator's
+   `no-unearned-skill-points` asserts that exact pairing, so the choice is checked rather
+   than assumed.
+
+### Frames column, both bands (design §18.10)
+
+Band 1: Heavy is fastest on average (+14.3% against each root's canonical frame) and Light
+next (+7.2%); Balanced is fastest for **no** root. Band 2 reverses much of it — Heavy still
+leads but the spread narrows and Light drops to −0.8% — and `summoner-heavy` is a 61%/76%
+outlier at both bands, which is the minions' damage, not the frame's. Full tables in the
+report.
