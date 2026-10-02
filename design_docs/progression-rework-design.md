@@ -693,7 +693,7 @@ Techniques beat many weak bodies); Tempo keeps Forest Pack and Mountain Hopper.
   as the lane keystone row is bespoke per packet (§4): a named server module that changes
   a rule, never a number. The cross row borrows one of the ability's other two offers at
   `ROW_SCALAR.cross`, derived, no authoring.
-- **Row tiers: home tier + N** (clamp removed and a fifth row added in §22.10). Packet at the ability's home tier,
+- **Row tiers: home tier + N** (clamp removed in §22.10; T5–T8 rows sketched in §22.11). Packet at the ability's home tier,
   amplifier +1, keystone +2, cross +3. A T1 ability reads 1/2/3/4; a T2 one 2/3/4/4; a T3
   one 3/4/4/4; a T4 ability's four rows spread across the T4 band, as §4 already spreads a
   lineage's T3/T4 bands. One rule, no new resolver logic.
@@ -951,7 +951,7 @@ tiers ship. Until a tier exists, the rows above the current cap **fold into the 
 band** (so today's game still reaches every row of every ability) and unfold when the
 tier ships; what a player bought stays bought. §22.1's "clamped at T4" is superseded.
 
-**Keystone II is the second verb.** The alternates recorded in the run brief's appendix
+**Keystone II is the second verb** (SUPERSEDED by §22.11: three verbs on the keystone row at home + 2, no Keystone II row). The alternates recorded in the run brief's appendix
 are no longer alternates: each is its ability's second keystone, a second rename the
 player chooses between, unlocking at home + 4 (T5 for a T1 ability). They are designed
 now and implemented in a later wave; the run ships the first verb. Sidestep's second is
@@ -1036,6 +1036,69 @@ cleanse, break-free).
 keyed by execution shape) was weighed as the way to make T2 feel different and parked;
 it overlaps the keystones (Whirlwind is "cast becomes a channel") and must be designed
 with them. Lives in `docs/future-plans.md` as "ability variation row".
+### 22.11 Third review: three keystones per ability, T5–T8 as amplification (decided 2026-10-02)
+
+Supersedes §22.10's "Keystone II" paragraph. The designer wanted the fork where the
+flashy choice is, not a tier later, and later tiers to deepen what was chosen rather than
+open new routes.
+
+**The keystone row holds three verbs, pick one, at home + 2.** All three are designed now
+(the trios below, with §22.4's first verbs and the former alternates); the run ships the
+first verb of each trio, and the second and third land in a follow-up wave into the same
+row, so the choice exists from the start as silhouettes. Trample is dropped: it needed a
+path-sweep primitive and sat badly on a Conduit where the summons do the rushing.
+
+**T5–T8 rows are amplification and utility, never new routes** (sketched, not locked, so
+the tree is designed with eight tiers in mind): Amplifier II at home + 4 (a second axis
+on the active route), Cross II at + 5 (the third route at half), Utility at + 6 (reach,
+interruptibility, cost), Keystone amplifier at + 7 (the chosen verb grows). Numbers are
+acceptable there: by T5 the player has the verbs and wants them bigger. Rows above the
+current cap fold into the cap band until the tier ships, as §22.10 says.
+
+**The trios.** Delivery body in parentheses where it is not the owner.
+
+| Ability | First (this run) | Second | Third |
+|---|---|---|---|
+| Sweep | Whirlwind | Reap: a Sweep kill cleaves again from the body it killed (delivering body) | Momentum: a Sweep that hits three or more bodies re-arms at once (delivering body). **Flagged by the designer as probably broken; test before shipping.** |
+| Charge | Breakthrough: arriving staggers the target (delivering body) | Rebound: **if the Charge kills**, the rush continues to the next body in reach and lands there (delivering body) | Impact: arrival also hits every body adjacent to the target (delivering body) |
+| Slam | Aftershock | Tremor: every body hit is staggered (delivering body) | Crater: the Slam leaves a crater that slows anything standing in it (delivering body). Designer note: a slow alone is thin unless you are slamming distant bodies as a ranged build; may gain a burn later; leave as is and test. |
+| Second Wind | Shared Breath (formation) | Deep Breath: no hard control while the mend runs | Clean Breath: the mend also strips one affliction |
+| Cleanse | Immunity | Purge: the stripped affliction is thrown back onto its applier | Clarity: with nothing to strip, Cleanse raises a small ward instead of holding its cooldown |
+| Brace | Riposte | Set: Brace also roots you and doubles its footing | Shield Wall: summons and same-node party behind you share the reduction (formation) |
+| Sidestep | Afterimage | Flow: every hit dodged during the window extends it; the first that lands ends it | Grace: each dodge in the window also shakes off a slow or root on you |
+| Binding Strike | Dragnet (delivering body) | Impale: a rooted target cannot attack you while you stand at max reach | Trapper: stays armed for two hits, rooting two bodies in a row (delivering body) |
+| Contagion | Outbreak (delivering body) | Carrier: afflicted bodies infect what touches them (delivering body) | Plague Wind: spreads from every afflicted body in reach, not only the one you hit (delivering body) |
+| Snipe | Pierce (delivering body) | Mark: the sniped body takes your next Technique as if from max reach | Overwatch: while you hold for the wind-up you cannot be interrupted, and the shot cannot be dodged |
+| Bramble Guard | Entangle | Thicket: thorns also hit every body adjacent to the attacker | Deep Roots: holds as long as you stand still, drops when you move |
+| Endure | Unyielding | Second Skin: the shell persists at half while you keep taking hits | Ironhide: nothing staggers or displaces you while it is up |
+| Imbue Lightning | Fork (delivering body) | Static: an imbued hit that kills refunds its charge | Thunderclap: the last charge discharges in an area around the target (delivering body) |
+| Detonate | Chain Reaction (delivering body) | Fuse: the detonation lands a second later, doubled on a body still afflicted (delivering body) | Smoulder: half the afflictions survive the detonation (delivering body) |
+| Cull | Harvest (delivering body) | Death Sentence: a body Cull hits but does not kill is marked; your next kill of any body also kills it if below the threshold | Executioner's Eye: Cull targets the lowest-health body in reach, not the one you are fighting |
+| Break Free | Backlash | Slip: untargetable for a moment after breaking free | Turn the Tables: the body that held you is rooted for as long as it held you |
+| Disengage | Vanish | Parting Shot: also arms your next hit as an opening strike | Caltrops: the spot you left slows any body that crosses it |
+| Stunning Strike | Relay (delivering body) | Concussion: an area stun, shorter (delivering body) | Long Night: the stun holds until the body is hit again, instead of a timer (delivering body). Watch for power. |
+| Recuperate | Overflow | Battle Rest: full rate while you are hit | Steady Hand: your casts cannot be interrupted while it runs |
+
+Terms: **stagger** is the control ladder's shortest stun rung, with post-stun immunity;
+"staggers" and "stuns briefly" mean the same thing. **Ground patch** (Crater, Caltrops)
+is one new shared seam: a short-lived marker at a position that pulses a status onto the
+bodies inside it; two keystones use it and nothing else may until it has shipped.
+
+**Class adapters, closed.** Packet and amplifier payoffs hang off the landed event and
+inherit whichever body the adapter delivered through, with the owner's stats. Keystones
+carry a delivery body. The Conduit casting its cast-shaped Techniques through a physical
+summon is kept as it is (the designer likes it; it may be strong). **A node payoff on a
+Conduit cast resolves once per cast, through the one physical summon, never once per
+formation body**, exactly as the cast's own payload already does; a formation rider's node
+payoff shares the rider's normalised budget. The armed-rider adapters that cover only
+some abilities are untouched by the pass; Contagion, now armed, rides the formation rider
+adapter Sweep already uses.
+
+**Recorded, not acted on**: the party-facing variants (Shared Breath, Shield Wall) are
+liked and are the seed of a party layer for later. The designer asked whether the game is
+getting too complex; the answer this design gives is §4's: one question per row, the
+screen never wider, and everything above T4 amplifies instead of branching. If the trios
+play as too much, the row shrinks to two before it shrinks to one.
 
 ## 23. Forms are full power at the craft (locked 2026-10-02)
 

@@ -237,14 +237,14 @@ two rows, per design §22.1:
   below 40% of its authored wind-up.
 - Second review (design §22.10) applies to every row above: tiers are home + N with NO
   clamp (rows above the current cap fold into the cap band and unfold when the tier
-  ships; owned stays owned); a fifth row `keystone2` exists in the union and the
-  resolver at home + 4 with NO option authored this run (the second verbs are a later
-  wave); the amplifier offers every axis on the active route (second body, longer
+  ships; owned stays owned); the keystone row holds up to THREE options (design §22.11), of
+  which only the first verb of each trio is authored this run (the second and third verbs are a later
+  wave into the same row; the panel shows the unauthored two as silhouettes); the amplifier offers every axis on the active route (second body, longer
   window, bigger payoff, and the cast axis on casts), `nodePayoffAxis` is the default
   only; a Kill chain packet option on a Technique fires on the kill its hit makes, not on
   landing (W1-A tags those offers); `AbilityKeystoneDefinition` carries `delivery:
   'owner' | 'delivering-body' | 'formation'` and the module resolves on that body (Reload:
-  keystone echoes are first-hit-only); display names follow the §22.10 grammar through
+  keystone echoes are first-hit-only; a node payoff on a Conduit cast resolves ONCE per cast through the one physical summon, never per formation body, and a formation rider's node payoff shares the rider's normalised budget — test both); display names follow the §22.10 grammar through
   `abilityDisplayName` (adjective from the payoff, "of X" from the axis, the keystone's
   noun, ", with Y" from the cross).
 
@@ -257,8 +257,8 @@ never a balance number):
     control like a cast).
   Slam AFTERSHOCK — the ground erupts again at the same spot one second later (a delayed
     applyPlayerAoe at the resolved cast position; the share from the magnitude table).
-  Charge TRAMPLE — the rush hits every body it passes through (a path sweep while
-    isChargingAbility moves the player; each body once).
+  Charge BREAKTHROUGH — arriving staggers the target (the control ladder's shortest rung on
+    arrival; on a Conduit, the summon that arrives delivers it). Trample is dropped (design §22.11).
   Contagion OUTBREAK — a body Contagion infected passes its afflictions to its nearest
     neighbour when it dies (tag the infected bodies; on their kill event spread once via
     the affliction toolkit; a body infected by an Outbreak does not re-tag).
@@ -554,7 +554,7 @@ After the wave-2 merge: `pnpm typecheck`, `pnpm test`, parity check
 
 ---
 
-## Appendix — the second verbs (Keystone II, design §22.10; designed, implemented in a later wave)
+## Appendix — the second and third verbs (design §22.11: same keystone row, implemented in a follow-up wave; the trios table there is authoritative, this list is the history)
 
 Technique: Sweep *Reap* (a Sweep kill cleaves again from the body it killed); Slam
 *Tremor* (every body hit is staggered); Charge *Breakthrough* (arriving staggers the
