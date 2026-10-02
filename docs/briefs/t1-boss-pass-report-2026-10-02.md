@@ -1,5 +1,10 @@
 # T1 boss pass — report (2026-10-02)
 
+**COMPLETE 2026-10-02.** Source revision `637ce2f5` on `balance/t1-boss-pass`, merged into
+`feat/lineage-data-model`. Three shipped boss rows moved; the numbers below are scoped to
+the tutorial's own boss kit at GM 30 with no lineage band, which is a FLOOR, not a real
+player. Read section 0 before any win rate in this report.
+
 Branch `balance/t1-boss-pass` off `feat/lineage-data-model`, merged back at the end.
 Brief: `docs/briefs/t1-boss-pass-2026-10-02.md`. Evidence: `reports/t1-boss-pass/`
 (its README has the two commands that reproduce any row).

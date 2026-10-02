@@ -122,6 +122,7 @@ behavior.
 - [Release v0.6 record](briefs/release-v0.6-2026-09-28.md) — what shipped in v0.6, merged branches, save policy, bandwidth changes, validation and the deploy check.
 - [T4 power curve review](archive/briefs/t4-power-curve-review-2026-09-27.md) — ARCHIVED 2026-09-27: done; report in `reports/t4-power-curve-2026-09-27/REVIEW.md`, live state in [tier-balance-current-state.md](tier-balance-current-state.md) §6–7.
 - [Boss lineage art list](briefs/boss-lineage-art-list-2026-09-27.md) — icons and ground textures the boss lineages borrow art for, with target paths and wiring.
+- [T1 boss pass report](briefs/t1-boss-pass-report-2026-10-02.md) — COMPLETE 2026-10-02: three T1 boss rows moved (Behemoth attack, Greatbear HP+attack, Toadeater HP) so every class beats every T1 boss on the guide's kit; second seal stays Mountain. Two findings outlive the numbers: a solo T1 boss fight was deterministic (24 of 30 cells), and the Behemoth/Broodmother are a 10x melee/ranged split rather than a difficulty.
 - [Boss redesign implementation plan](boss-encounter-redesign-implementation-plan-2026-09-04.md)
   — the remaining cleanup/tuning handoff after the shipped phases.
 - [Core rework design/balance handoff](core-rework-design-balance-handoff.md) —

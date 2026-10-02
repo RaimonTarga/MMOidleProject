@@ -17,5 +17,6 @@
   // T1 boss pass tunes shipped numbers against them, and a silent path typo in a boss
   // override reads as "the candidate did nothing".
   "include": ["src", "bench", "scripts/bossScreen.ts",
-    "scripts/_t1BossLab.ts", "scripts/_t1BossPlan.ts", "scripts/_t1BossMatrix.ts"]
+    "scripts/_t1BossLab.ts", "scripts/_t1BossPlan.ts", "scripts/_t1BossMatrix.ts",
+    "scripts/_t1Sweep.ts"]
 }
