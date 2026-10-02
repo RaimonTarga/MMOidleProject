@@ -170,7 +170,12 @@ export type StepBody =
   | { type: "unlockForm"; lineageId: string; recipeId: string; farmAt?: NodeRef }
   /** Wear an owned form. Free and instant, like swapping gear. */
   | { type: "wearForm"; lineageId: string; recipeId: string }
-  | { type: "attemptBoss"; biomeGroup: string; tier: number; maxAttempts?: number }
+  /**
+   * Fight a biome's tier boss. `repeat` marks a step that wants a FRESH kill even
+   * though the biome's seal is already held — a capstone loop, where the drop is the
+   * point and `bossesCleared` (a first-clear flag, true forever) is the wrong signal.
+   */
+  | { type: "attemptBoss"; biomeGroup: string; tier: number; maxAttempts?: number; repeat?: boolean }
   | { type: "repeatUntil"; steps: RouteStep[]; until: Condition; maxIterations?: number }
   /**
    * Run `steps` only if `when` holds AT THE MOMENT THE STEP IS REACHED, and skip

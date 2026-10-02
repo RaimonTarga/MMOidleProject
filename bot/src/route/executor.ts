@@ -1647,6 +1647,8 @@ export class RouteExecutor {
     nodeId: string,
     step: Extract<RouteStep, { type: "attemptBoss" }>,
     attempt: number,
+    /** "this attempt's boss is down" — see `doAttemptBoss`'s `killed`. */
+    killed: () => boolean,
   ): Promise<void> {
     const { obs, intents, recorder } = this.deps;
 
@@ -1679,7 +1681,7 @@ export class RouteExecutor {
 
     let outcome: "cleared" | "reformed" | "gave-up" = "cleared";
     try {
-      if ((alive() ?? 0) > 0 && !obs.bossCleared(step.biomeGroup, step.tier)) {
+      if ((alive() ?? 0) > 0 && !killed()) {
         intents.setAutocombatConfig(this.deps.policy.autocombat);
         intents.setAutoTraverse(false);
         intents.setAuto(true);
@@ -1696,7 +1698,7 @@ export class RouteExecutor {
         // pack indefinitely. `doAttemptBoss`'s own post-guard check (see its
         // comment) is what actually turns this into "victory" once we return.
         await this.waitUntil(
-          () => alive() === 0 || obs.bossCleared(step.biomeGroup, step.tier),
+          () => alive() === 0 || killed(),
           {
             timeoutMs: GUARD_CLEAR_TIMEOUT_MS,
             what: `${step.biomeGroup} guard cleared`,
@@ -1771,7 +1773,22 @@ export class RouteExecutor {
   private async doAttemptBoss(step: Extract<RouteStep, { type: "attemptBoss" }>): Promise<void> {
     const { obs, intents, recorder } = this.deps;
     const leaseSession = this.deps.leaseSession;
-    if (obs.bossCleared(step.biomeGroup, step.tier)) return;
+    // `bossesCleared` is the biome's FIRST clear and stays true forever, so it answers
+    // "do I hold the seal", not "did I just kill it". A capstone loop needs the second
+    // question: the gate wants three drops, so the bot has to kill the boss three
+    // times. Reading the first question returned instantly from every attempt after
+    // the first, and the gate chapter's `repeatUntil` spent all five rounds in one
+    // tick (seen live on 2026-10-02: five `boss forest T1` steps starting and ending
+    // at the same millisecond, then `repeatUntil exhausted 5 iterations`). At 25x
+    // rewards one kill dropped round(25) capstones, so the defect never showed.
+    //
+    // A repeat attempt reads its own kill off the capstone wallet instead: the boss
+    // drops one every kill, deterministically, no rolls (design §1).
+    // `?.[` on the map too: a view that predates the lineage wallet (and every test
+    // fixture that builds `self` by hand) has no `capstones` at all, and indexing it
+    // would throw inside a boss attempt rather than read as "none yet".
+    const capstonesHeld = (): number => obs.self?.capstones?.[step.biomeGroup] ?? 0;
+    if (!step.repeat && obs.bossCleared(step.biomeGroup, step.tier)) return;
 
     const nodeId = dungeonNodeFor(step.biomeGroup, step.tier);
     if (!nodeId) throw new StallError("no dungeon node for target", { step });
@@ -1780,7 +1797,14 @@ export class RouteExecutor {
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       if (this.deps.aborted()) throw new AbortError("run aborted");
-      if (obs.bossCleared(step.biomeGroup, step.tier)) return;
+      // Per ATTEMPT, not per step: each attempt is asking for one more drop, so the
+      // baseline has to move with it or the second kill of a step would read as won
+      // before it started.
+      const capstonesBefore = capstonesHeld();
+      const killed = (): boolean => (step.repeat
+        ? capstonesHeld() > capstonesBefore
+        : obs.bossCleared(step.biomeGroup, step.tier));
+      if (killed()) return;
 
       await this.deps.awaitAlive();
       // A dungeon has exactly one node, so this is a genuine exclusive queue:
@@ -1811,7 +1835,7 @@ export class RouteExecutor {
       // this check an already-won boss still forces a fresh guard-clear (and a
       // real chance of dying to IT instead), which is what an outside observer
       // sees as "stuck re-fighting a boss it already beat".
-      if (obs.bossCleared(step.biomeGroup, step.tier)) return;
+      if (killed()) return;
 
       if (attempt > 1 && this.deps.fastBossRetry) {
         if (this.deps.leaseSession && !this.deps.leaseSession.ownsNode(nodeId)) {
@@ -1903,7 +1927,7 @@ export class RouteExecutor {
         // server puts it plainly: "the survivors simply fight alongside the
         // boss". Skipping this is how a fully geared character ends up facing a
         // boss plus 11 guardians and loses a damage race it would otherwise win.
-        await this.clearDungeonGuard(nodeId, step, attempt);
+        await this.clearDungeonGuard(nodeId, step, attempt, killed);
         if (this.deps.leaseSession && !this.deps.leaseSession.ownsNode(nodeId)) {
           throw new StallError("boss combat reservation was interrupted", { nodeId, attempt });
         }
@@ -1911,7 +1935,7 @@ export class RouteExecutor {
         // The guard-clear itself can take a while and can die to or alongside
         // a party member (see the comment at the top of this loop) -- bail
         // before walking to the altar if the boss is already down.
-        const clearedDuringGuard = obs.bossCleared(step.biomeGroup, step.tier);
+        const clearedDuringGuard = killed();
 
         // Dying during the guard-clear is normal and already survived by
         // `clearDungeonGuard` itself (see its own doc comment) -- it must not
@@ -1994,7 +2018,7 @@ export class RouteExecutor {
                 return (
                   diedThisAttempt() ||
                   (obs.dungeon?.status ?? "idle") !== "idle" ||
-                  obs.bossCleared(step.biomeGroup, step.tier)
+                  killed()
                 );
               },
               {
@@ -2018,7 +2042,7 @@ export class RouteExecutor {
           await this.waitUntil(
             () => {
               sampleBoss();
-              return obs.bossCleared(step.biomeGroup, step.tier) || diedThisAttempt();
+              return killed() || diedThisAttempt();
             },
             {
               timeoutMs: BOSS_FIGHT_TIMEOUT_MS,
@@ -2028,7 +2052,7 @@ export class RouteExecutor {
           );
         }
 
-        if (obs.bossCleared(step.biomeGroup, step.tier)) outcome = "victory";
+        if (killed()) outcome = "victory";
         else if (diedThisAttempt()) outcome = "death";
         if (bossCombatStartedAt !== null) bossCombatEndedAt = Date.now();
         if (outcome === "victory") bossHpFraction = 0;
@@ -2090,7 +2114,13 @@ export class RouteExecutor {
       attempts: maxAttempts,
       nextAction: "skip-dependent",
     });
-    this.failedFacts.add(`bossCleared:${step.biomeGroup}:${step.tier}`);
+    // Only a ONE-SHOT step's exhaustion is evidence the boss is beyond this build. A
+    // repeat step exhausting one round says nothing — its own `repeatUntil` owns that
+    // verdict — and poisoning the fact here would skip every later step that depends
+    // on the seal the bot does in fact hold.
+    if (!step.repeat) {
+      this.failedFacts.add(`bossCleared:${step.biomeGroup}:${step.tier}`);
+    }
     this.partial = true;
     this.activeStepOutcome = {
       status: "blocked",

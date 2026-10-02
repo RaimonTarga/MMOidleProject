@@ -43,7 +43,10 @@ function toRouteStep(step: TutorialStep, classRoot: string): RouteStep {
         type: "repeatUntil",
         until: until as Condition,
         maxIterations: TUTORIAL_GATE_BOSS_ROUNDS,
-        steps: [{ ...boss, maxAttempts: TUTORIAL_GATE_BOSS_ATTEMPTS }],
+        // `repeat`: the gate wants N capstone drops, so every round needs a FRESH
+        // kill. Without it the harness reads `bossesCleared` — already true after the
+        // first — and every later round returns instantly.
+        steps: [{ ...boss, repeat: true, maxAttempts: TUTORIAL_GATE_BOSS_ATTEMPTS }],
       };
     }
     default:
