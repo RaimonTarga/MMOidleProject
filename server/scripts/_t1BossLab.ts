@@ -39,6 +39,32 @@ interface Row {
   wp?: Record<string, { atk?: [number, number]; aps?: [number, number]; me?: Record<string, [number, number]> }>;
   /** Skill-node overrides: mechanicEffects / statEffects values merged onto the node. */
   sp?: Record<string, { me?: Record<string, number>; st?: Record<string, number> }>;
+  /**
+   * Boss-definition overrides by dot-path, e.g.
+   * `{ 'crag-behemoth': { 'stats.attack': 50, 'bossPattern.damageMultiplier': 1.7 } }`.
+   * Arrays index numerically (`bossScript.phases.0.actions.0.multiplierMult`). A path
+   * that does not already exist on the definition throws, so a candidate can never be
+   * a silent no-op -- which is how an A/B on the same seeds reads as "no effect".
+   */
+  bp?: Record<string, Record<string, number>>;
+  /**
+   * Seeded APPROACH GEOMETRY, instead of the one fixed `BOT_SPAWN` point.
+   *
+   * Without it a solo boss fight is fully DETERMINISTIC: measured 2026-10-02, 24 of
+   * the 30 class x boss cells returned 20 byte-identical fights from 20 seeds, because
+   * nothing in them rolls a die -- no T1 boss authors `evasion`, the tutorial kits
+   * carry no dodge, the Chaotic Axe's whiff is a COUNTED dead swing, and the guards
+   * are stripped. Only the Razorback varied, off its adds' spawn offsets. So a
+   * seedless win rate is 0% or 100% and can never express "sometimes".
+   *
+   * This restores the one thing the arena removed rather than inventing a
+   * distribution: a player walks to the altar from the node's entrance, not from a
+   * fixed pixel. Angle is uniform and radius is 400 +/- 80 -- the same engagement
+   * distance, a different bearing -- which is exactly the question a directional lane
+   * charge and a travelling mound ask. Drawing it moves the RNG stream, so jittered
+   * rows compare only against jittered rows.
+   */
+  jitter?: boolean;
 }
 
 function skillPathFor(row: Row, c: { prefix: string; melee: boolean }, tier: number): string[] {
@@ -163,6 +189,34 @@ function patchSkills(sp: Row['sp']): () => void {
   }
   return () => { for (const u of undo.reverse()) u(); };
 }
+/**
+ * Install boss-definition overrides by dot-path; returns restore.
+ *
+ * This is the tuning lever the T1 boss pass (2026-10-02) runs its candidates on:
+ * every candidate is the same plan row with one `bp` block, so a before/after pair
+ * shares its seeds exactly and the only moving part is the number under test.
+ */
+function patchBossStats(bp: Row['bp']): () => void {
+  const undo: (() => void)[] = [];
+  for (const [id, paths] of Object.entries(bp ?? {})) {
+    assert(def(id), `unknown monster ${id}`);
+    undo.push(patchDef(id, (d) => {
+      for (const [path, value] of Object.entries(paths)) {
+        const keys = path.split('.');
+        let cur: any = d;
+        for (const k of keys.slice(0, -1)) {
+          cur = cur?.[k];
+          assert(cur !== null && typeof cur === 'object', `${id}: no such path ${path}`);
+        }
+        const last = keys[keys.length - 1]!;
+        assert(last in cur, `${id}: no such field ${path}`);
+        cur[last] = value;
+      }
+    }));
+  }
+  return () => { for (const u of undo.reverse()) u(); };
+}
+
 /** Install weapon overrides; returns restore. */
 function patchWeapons(wp: Row['wp']): () => void {
   const undo: (() => void)[] = [];
@@ -212,7 +266,10 @@ const DEFAULT_RULES = (melee: boolean) => [
 
 /** Richest rule set the 22 RP T1 budget admits: full -> no hazards/regen -> no step-back. */
 function pickRules(row: Row, melee: boolean) {
-  if (row.rules) return row.rules;
+  // An explicit rule set is honoured verbatim; its RP legality is still enforced,
+  // by `prepareSurveyBot`'s `setAbilityLoadout` assert, which sees the equipped
+  // rules alongside the abilities.
+  if (row.rules) { chosenRules = row.rules.length; return row.rules; }
   const full = DEFAULT_RULES(melee);
   const abilities = { techniques: row.techniques, guards: row.guards };
   for (const rules of [full, full.slice(0, 3), [full[0]!, full[2]!]]) {
@@ -222,6 +279,17 @@ function pickRules(row: Row, melee: boolean) {
   throw Error('no legal rule set');
 }
 let chosenRules = 0;
+
+/** Worst sum over any window of `w` consecutive ticks. */
+function worstWindow(xs: number[], w: number): number {
+  let run = 0, best = 0;
+  for (let i = 0; i < xs.length; i++) {
+    run += xs[i]!;
+    if (i >= w) run -= xs[i - w]!;
+    if (run > best) best = run;
+  }
+  return Math.round(best * 10) / 10;
+}
 
 function forceBossPhase(world: World, nodeId: string): void {
   ensureDungeon(world, nodeId);
@@ -314,6 +382,8 @@ function run(row: Row) {
   const restoreAbilities = patchAbilities(row.ap);
   const restoreSkills = patchSkills(row.sp);
   const restore = (TREATMENTS[row.treatment ?? 'live'] ?? (() => { throw Error(`unknown treatment ${row.treatment}`); }))(row);
+  // After the treatment, so a `bp` candidate is the last word on the definition.
+  const restoreBoss = patchBossStats(row.bp);
   const nodeId = BOSS_NODE[row.boss]!;
   const tier = row.tier ?? 1;
   const c = SURVEY_CLASSES.find((x) => x.name === row.cls)!;
@@ -333,7 +403,13 @@ function run(row: Row) {
         gearItemIds: { weapon: row.weapon, armor: row.armor, recovery: row.charm, mobility: row.boots, ...(row.core ? { core: row.core } : {}), ...(row.relic ? { relic: row.relic } : {}) },
       },
     } as SurveyCell;
-    const { bot, view } = prepareSurveyBot(world, cell, BOT_SPAWN);
+    const spawn = row.jitter
+      ? (() => {
+        const angle = Math.random() * Math.PI * 2, radius = 320 + Math.random() * 160;
+        return { x: BOT_SPAWN.x + Math.cos(angle) * radius, y: BOT_SPAWN.y - 400 + Math.sin(angle) * radius };
+      })()
+      : BOT_SPAWN;
+    const { bot, view } = prepareSurveyBot(world, cell, spawn);
     const loadout = {
       maxHp: view.maxHp, plating: view.plating, dr: view.damageReduction, dodge: (view as any).dodgeRate ?? (view as any).evasion,
       barrier: view.barrierMax, recovery: (view as any).recovery, attack: view.attack,
@@ -345,6 +421,21 @@ function run(row: Row) {
     const bossMaxHp = boss.hasHealth.maxHp, bossEntityId = boss.entityId;
     const cap = row.capMs ?? 180_000;
     let elapsed = 0, outcome = 'capped', minHp = 1, lastBotHp = bot.hasHealth.hp, hpLost = 0;
+    // Recovery report (T1 boss pass decision 7, 2026-10-02). `healed` is the logged
+    // heal total -- `applyHealToPlayer` is the single funnel and logs the APPLIED
+    // amount, so overheal is already out of it. `hpGained` sums positive per-tick HP
+    // deltas, which is NET of damage landing in the same 100 ms tick and so reads
+    // lower; the healed-back share is `healed`, and `hpGained` is how much of it the
+    // bar actually kept.
+    let healed = 0, hpGained = 0, under25Ms = 0;
+    const hpTrack: number[] = [];
+    // Burst shape, for the Behemoth trim (decision 3): the biggest SINGLE post-
+    // mitigation hit, and the worst 5-second window of damage taken. 5 s is the Crag
+    // Charge sequence end to end (2.4 s cast + ~1.3 s run + 1 s recovery), so
+    // `burst5s` is the number "survivable from ~60% HP" is a statement about -- the
+    // dominant hit alone is not, because the sequence lands ordinary swings too.
+    let maxHit = 0, maxHitFrom: string | null = null;
+    const dmgPerTick: number[] = [];
     let bossHp = bossMaxHp, killAt: number | null = null, deathAt: number | null = null, resetAt: number | null = null;
     let hpAt8: number | null = null;
     const tally: Record<string, { n: number; amount: number }> = {};
@@ -353,9 +444,12 @@ function run(row: Row) {
     for (; elapsed < cap; elapsed += 100) {
       now = 1800000000000 + elapsed;
       world.tick(100, now);
+      let tickDmg = 0;
       const hp = bot.hasHealth.hp;
-      if (hp < lastBotHp) hpLost += lastBotHp - hp;
+      if (hp < lastBotHp) hpLost += lastBotHp - hp; else hpGained += hp - lastBotHp;
       lastBotHp = hp;
+      if (hp > 0 && hp < bot.hasHealth.maxHp * 0.25) under25Ms += 100;
+      if (elapsed % 1000 === 0) hpTrack.push(Math.round((hp / bot.hasHealth.maxHp) * 100));
       // Refill to 90%, never 100%: a full bar turns the next heal into overheal (ward).
       if (row.durable && bot.hasHealth.hp > 0 && bot.hasHealth.hp < bot.hasHealth.maxHp * 0.5) { bot.hasHealth.hp = Math.floor(bot.hasHealth.maxHp * 0.9); lastBotHp = bot.hasHealth.hp; }
       for (const e of world.worldLogJournal as any[]) {
@@ -366,12 +460,16 @@ function run(row: Row) {
         if (e.kind === 'kill' && (e.victim?.id === bossEntityId || e.victim?.name === def(row.boss).name)) killAt ??= elapsed;
         if (e.kind === 'player-death') { deathAt ??= elapsed; killer ??= e.cause?.killer?.name ?? e.cause?.killer?.monsterTypeId ?? JSON.stringify(e.cause ?? null).slice(0, 160); }
         if (e.kind === 'dungeon-message' && /reforms/i.test(e.message ?? '')) resetAt ??= elapsed;
+        if (e.kind === 'heal' && e.target?.id === bot.isPlayer.id) healed += e.amount ?? 0;
         if (e.kind === 'damage' && e.target?.id === bot.isPlayer.id) {
           const amt = e.hpDamage ?? 0;
+          tickDmg += amt;
+          if (amt > maxHit) { maxHit = amt; maxHitFrom = e.source?.name ?? e.source?.id ?? null; }
           if (e.source?.id === bossEntityId || e.source?.name === def(row.boss).name) fromBoss += amt; else fromAdds += amt;
         }
       }
       world.worldLogJournal = []; world.worldLogByPlayer.clear(); world.takeNodeEvents(nodeId);
+      dmgPerTick.push(tickDmg);
       const live = findBoss();
       if (elapsed === 8000 && live) hpAt8 = live.hasHealth.hp;
       if (live) { bossHp = live.hasHealth.hp; if (halfAt === null && bossHp <= bossMaxHp / 2) halfAt = elapsed; }
@@ -390,14 +488,28 @@ function run(row: Row) {
       world.pendingDeaths = [];
     }
     return {
-      id: row.id, boss: row.boss, cls: row.cls, treatment: row.treatment ?? 'live', seed,
+      id: row.id, boss: row.boss, cls: row.cls, treatment: row.treatment ?? 'live', seed, jitter: row.jitter ?? false,
       weapon: row.weapon, armor: row.armor, charm: row.charm, techniques: row.techniques, guards: row.guards,
       ...(row.debugEvents ? { tally } : {}), rules: chosenRules, outcome, won: isVictory(outcome as any), t: elapsed / 1000, dealt: bossMaxHp - bossHp, dps8: hpAt8 === null ? null : Math.round(((bossMaxHp - hpAt8) / 8.1) * 10) / 10, dps: Math.round(((bossMaxHp - bossHp) / Math.max(0.1, elapsed / 1000)) * 10) / 10, bossPctLeft: Math.round((bossHp / bossMaxHp) * 1000) / 10,
       minHpPct: Math.round(minHp * 1000) / 10, hpLost, fromBoss, fromAdds, maxAdds, halfAt: halfAt && halfAt / 1000, killer, loadout,
+      // `healApplied` is the EXACT healing this fight applied, from the HP ledger:
+      // every point of raw hpDamage that the bar does not show as missing was healed
+      // back. Prefer it over both of the others. `healed` (the sum of logged heal
+      // events) is wrong in both directions at flat Recovery, because the log rounds
+      // a sub-1 per-tick slice: 0.5 HP/tick logs as 1 (Striker/Toadeater reads 378
+      // against a true 215) and anything under 0.5 logs as 0, which is why four
+      // classes report literally no healing. `hpGained` is net of damage landing in
+      // the same 100 ms tick, so it is a floor, not the total.
+      hpEnd: Math.round(bot.hasHealth.hp * 10) / 10,
+      healApplied: Math.round(((fromBoss + fromAdds) - (bot.hasHealth.maxHp - Math.max(0, bot.hasHealth.hp))) * 10) / 10,
+      healed, hpGained, healedShare: hpLost > 0 ? Math.round((healed / hpLost) * 1000) / 10 : null,
+      maxHit, maxHitFrom, maxHitPctPool: Math.round((maxHit / loadout.maxHp) * 1000) / 10,
+      burst5s: worstWindow(dmgPerTick, 50), burst5sPctPool: Math.round((worstWindow(dmgPerTick, 50) / loadout.maxHp) * 1000) / 10,
+      under25Pct: elapsed > 0 ? Math.round((under25Ms / elapsed) * 1000) / 10 : 0, under25s: under25Ms / 1000, hpTrack,
     };
   } finally {
     try { teardownArena(world); } catch { /* ignore */ }
-    restore(); restoreWeapons(); restoreAbilities(); restoreSkills();
+    restoreBoss(); restore(); restoreWeapons(); restoreAbilities(); restoreSkills();
     Date.now = realNow; Math.random = realRandom;
   }
 }
