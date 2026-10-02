@@ -73,7 +73,12 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       2: ['apex-timberclaw'],
     },
     essenceType: 'essence',
-    mobDensity: 36,
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): 36 -> 28. Forest's headcount is not
+    // what it looks like: the Pack family spawns THREE bodies per pick (alpha + two
+    // young), so a pack-heavy node fielded nine simultaneous wolves inside a 36 budget.
+    // 28 is the budget that makes the authored 2-3 pack size the real group size again.
+    // Still above mountain (20) and below plains (36), as this file's ordering intends.
+    mobDensity: 28,
   }],
 
   // MOUNTAIN — rare HUGE hits that trip the damage cap; slow + charge to connect.

@@ -46,12 +46,15 @@ const PLAINS_BLENDS: readonly NodeBlend[] = [
   { 'plains-herd': 0.34, 'plains-swarm': 0.33, 'plains-sky': 0.33 },  // 05, 1st
 ];
 
+// Arrives 04 > 05 > 03 > 02 > 01. Pures outward: canopy (a rooted ranged lobber),
+// grove, then pack last — a Pack pick fields three bodies, so a 70% pack node is the
+// heaviest concurrency in T1.
 const FOREST_BLENDS: readonly NodeBlend[] = [
-  { 'forest-pack': 0.70, 'forest-grove': 0.20, 'forest-canopy': 0.10 },
-  { 'forest-grove': 0.70, 'forest-canopy': 0.20, 'forest-pack': 0.10 },
-  { 'forest-canopy': 0.70, 'forest-pack': 0.20, 'forest-grove': 0.10 },
-  { 'forest-pack': 0.45, 'forest-grove': 0.45, 'forest-canopy': 0.10 },
-  { 'forest-pack': 0.34, 'forest-grove': 0.33, 'forest-canopy': 0.33 },
+  { 'forest-pack': 0.70, 'forest-grove': 0.20, 'forest-canopy': 0.10 },   // 01, 5th
+  { 'forest-grove': 0.70, 'forest-canopy': 0.20, 'forest-pack': 0.10 },   // 02, 4th
+  { 'forest-canopy': 0.70, 'forest-pack': 0.20, 'forest-grove': 0.10 },   // 03, 3rd
+  { 'forest-pack': 0.34, 'forest-grove': 0.33, 'forest-canopy': 0.33 },   // 04, 1st
+  { 'forest-pack': 0.45, 'forest-grove': 0.45, 'forest-canopy': 0.10 },   // 05, 2nd
 ];
 
 const MOUNTAIN_BLENDS: readonly NodeBlend[] = [
