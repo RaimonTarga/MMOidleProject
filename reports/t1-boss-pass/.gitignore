@@ -1,0 +1,5 @@
+# Candidate plan files are a pure function of `_t1BossPlan.ts` + the candidate name,
+# so they are regenerable and not worth 160 KB each in history. `plan-base.json` is
+# kept as the committed record of the matrix's own shape.
+plan-*.json
+!plan-base.json

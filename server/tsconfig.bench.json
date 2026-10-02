@@ -13,6 +13,10 @@
   // errors (netcode-baseline, t4ValidationExitPreflight, ttkSurvey) that are their
   // own cleanup. `bossScreen.ts` is listed individually because it is new, it is
   // clean, and an unchecked experiment runner is how a rename bug reaches a frozen
-  // packet unnoticed.
-  "include": ["src", "bench", "scripts/bossScreen.ts"]
+  // packet unnoticed. The three `_t1Boss*` files are listed for the same reason: the
+  // T1 boss pass tunes shipped numbers against them, and a silent path typo in a boss
+  // override reads as "the candidate did nothing".
+  "include": ["src", "bench", "scripts/bossScreen.ts",
+    "scripts/_t1BossLab.ts", "scripts/_t1BossPlan.ts", "scripts/_t1BossMatrix.ts",
+    "scripts/_t1Sweep.ts"]
 }
