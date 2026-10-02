@@ -267,12 +267,16 @@ All 2026-09-29, dev stack, 25x rewards (pipeline evidence, not balance evidence)
   boss's endless one-slime-per-12-s trickle keeps the Squire's timed strikes on
   adds. Worth watching in a hand playtest.
 
-### 2026-10-02, revision `a5d49ae9` — the tree lessons and the gate chapter, live
+### 2026-10-02 — the tree lessons and the gate chapter, live
 
 First live `bot:run` of the tree lessons and the gate chapter (run 3's W1-E built
-them against the two in-process validations only). All on the wave-1 merge
-`a5d49ae9`, local dev stack, **25x rewards, so still pipeline evidence, not
-balance evidence** — with one extra caveat specific to this chapter, below.
+them against the two in-process validations only). Local dev stack, on the wave-1
+merge `a5d49ae9` plus this file's own two docs commits (`b1e0ff7c`, `e77c477a`;
+no code differs between them, and each run's header records which it saw).
+
+Six runs at **25x rewards, so still pipeline evidence, not balance evidence** —
+with one extra caveat specific to this chapter, below — plus one **canonical 1x**
+run, time-boxed, which is the first untainted run of a tutorial route.
 
 Runs were **solo and sequential**, not the parallel cohort the 2026-09-29 rows
 used, so a boss result here is uncontended. Striker ran with the route's authored
@@ -335,11 +339,30 @@ What this evidence does **not** cover:
   Greatbear kill, not three. The chapter's three-kill shape only exists at 1x,
   and no multiplier accelerates farming while leaving the capstone count intact
   (anything ≥ 3 collapses it, and 1x is 1x).
-- **1x was not run at all.** See "Running the validation": at 25x a full route
-  is 27–60 min, and the multiplier scales the two dominant costs (essence and
-  biome XP) linearly, so one canonical 1x route is on the order of ten hours and
-  a six-class sweep is out of reach of a single session. No 1x row exists yet for
-  any class.
+- **1x was measured for one class only, and did not reach the seals or the gate.**
+  A **canonical** Striker run (`taints: []`, the first for any tutorial route)
+  time-boxed at 35 min got through the Clearing, Plains, Forest, Swamp and
+  Mountain legs and 7 of the Cave's 16 beats — **62/78 beats, 0 deaths, every
+  beat passed** — reaching Global Mastery 24 at 27m47s. No 1x run has yet reached
+  a seal, the Greatbear or the gate, for any class.
+
+  Worth correcting an intuition here: **1x is not 25x slower.** The same Striker
+  hit GM 6 at 10m08s and GM 24 at 27m47s, against 2m42s and 7m04s at 25x — a
+  ratio of only **~3.9x**, because the early and middle legs are bounded by
+  combat and travel time rather than by essence accrual. So a full 1x route to
+  GM 30 is on the order of 30–40 min, not hours, and a canonical six-class sweep
+  including seals is a realistic next session rather than an impractical one.
+  The gate's own three-kill cost (above) remains the part only 1x can exercise.
+
+  One canonical-run trap found while setting this up: **the reward-multiplier
+  taint is sticky from the moment the bot connects.** `noteRewardMultiplier` runs
+  on the server's *current* global rate, so starting a run against a world some
+  earlier batch left at 25x tags it `NON_CANONICAL_REWARD_MULTIPLIER` even with
+  `--rewardMultiplier=1`, and its first kills really are at 25x. A canonical run
+  needs a world that is already at 1x — restarting the dev server is the reliable
+  way, since `world.rewardMultiplier` boots at 1. Note also that a `bot:batch`
+  that dies before its restore step leaves the world at 25x for whatever runs
+  next; this is what the taint caught.
 - **The farewell is not bot-testable.** `TUTORIAL_FAREWELL` (including the frames
   line) is panel copy, not a beat, so `bot:run` never exercises it. It still
   needs a real-client pass.
