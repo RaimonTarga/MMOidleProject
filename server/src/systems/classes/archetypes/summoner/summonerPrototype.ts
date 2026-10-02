@@ -117,7 +117,7 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
     }
     syncMinionMaxHp(world, minion, computeMinionMaxHp(owner, index));
     syncMinionMitigation(world, minion, owner, lineBonus);
-    const desiredHpRegen = minionRecoveryFor(owner, minion.hasHealth.maxHp);
+    const desiredHpRegen = minionRecoveryFor(minion.hasHealth.maxHp);
     if (minion.hasHealth.recovery !== desiredHpRegen) {
       minion.hasHealth.recovery = desiredHpRegen;
       markSliceDirty(world, minion, 'hasHealth');
@@ -182,8 +182,9 @@ function runMinionRegen(
   if (minion.hasHealth.hp >= minion.hasHealth.maxHp) return;
   const recovery = minion.hasHealth.recovery ?? 0;
   if (recovery <= 0 || isMinionInCombat(world, owner, minion, now)) return;
-  // Flat HP/s (Phase 0b): the minion's rate is already scaled to its own pool
-  // by `minionRecoveryFor`, so this is the owner's share applied directly.
+  // Flat HP/s: `minionRecoveryFor` already expressed the out-of-combat rule as a
+  // share of the minion's OWN pool, so it applies directly. This path is
+  // out-of-combat only — the guard above is what makes that the right rule.
   applyHealToMinion(minion, owner.isPlayer.id, recovery * (dt / 1_000), world);
 }
 

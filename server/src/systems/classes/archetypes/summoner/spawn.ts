@@ -10,6 +10,7 @@ import { emitMonsterSession } from '../../../combat/engine/sessionObservation';
  */
 import {
   FALLBACK_MONSTER_AABB,
+  GAME_CONFIG,
   initIsMinion,
   makeTracksCombat,
   MINION_BASE_DISPLAY_SIZE,
@@ -36,13 +37,19 @@ import {
 } from './lineHolds';
 
 /**
- * A minion's flat out-of-combat Recovery (HP/s): the owner's flat rate scaled
- * by the minion's pool relative to the owner's, so a body one third the size
- * heals a third as many HP per second and refills on the same clock (Phase 0b).
+ * A minion's OUT-OF-COMBAT regen rate (HP/s): a fixed share of its own pool.
+ *
+ * `runMinionRegen` only ever runs out of combat, so this follows the player's
+ * out-of-combat rule — `maxHp × OOC_RECOVERY_PCT`, independent of the Recovery stat
+ * (design bible §15: downtime is a constant 10 s at every tier). It used to read the
+ * owner's IN-COMBAT Recovery instead, which made a naked T1 summoner's bodies refill
+ * at ~5%/s against the player's own fixed 10%/s, and let Recovery gear speed up a
+ * clock that is deliberately constant. "The same clock" is now true: pool share in,
+ * pool share out, so a body one third the size heals a third as many HP per second
+ * and empty-to-full takes exactly as long as the owner's does.
  */
-export function minionRecoveryFor(owner: PlayerEntity, minionMaxHp: number): number {
-  const ownerMaxHp = Math.max(1, owner.hasHealth.maxHp);
-  return Math.round((owner.hasHealth.recovery ?? 0) * (minionMaxHp / ownerMaxHp) * 100) / 100;
+export function minionRecoveryFor(minionMaxHp: number): number {
+  return Math.round(minionMaxHp * GAME_CONFIG.OOC_RECOVERY_PCT * 100) / 100;
 }
 
 
@@ -262,7 +269,7 @@ export function spawnMinionForOwner(
     hasHealth: {
       hp: maxHp,
       maxHp,
-      recovery: minionRecoveryFor(owner, maxHp),
+      recovery: minionRecoveryFor(maxHp),
     },
     dealsDamage: {
       attack,
