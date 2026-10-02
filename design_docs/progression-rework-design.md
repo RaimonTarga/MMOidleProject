@@ -697,3 +697,27 @@ class path review since both use the packet tags:
 4. **Runes stay the when; nodes stay the what.** Not reopened.
 5. **T3 class paths**: Pyromancer and Warmonger re-homed; every path's provisional packet
    tag confirmed or moved; a path that duplicates a lane keystone is redesigned.
+
+## 23. Forms are full power at the craft (locked 2026-10-02)
+
+Run 4's boss walls had one cause: retiring the +1..+5 ladder removed every weapon's ladder
+power while all monster, boss and node numbers stayed calibrated against a fully upgraded
+weapon, and the stat row that was meant to replace it carries ~2% at T1 against a ladder
+worth ~31% DPS. The fix (74ab24ac) folds each weapon's deleted ladder total into its base
+stats, and that is now the rule:
+
+- **A form is crafted or gated at its old +5 power.** One craft is full power. There is no
+  within-tier number grind; that is the rework's thesis (§0: the drip was the problem).
+- **Within a tier, growth is verbs**: payoff, amplifier, keystone, cross. The stat row stays
+  modest and is the lane's cosmetic plus a small lean, not the tier's power curve.
+- **The gate is the number step.** A T2 form must beat the T1 form the player arrives
+  holding (Gale Needle 35 against the axe's 29), which the weapon ladder rules (floor,
+  band) already encode in +5 terms. `weaponCurve.test.ts` pins both halves.
+- Every absolute bench number taken at +0 weapons (lane matrix run 4, contract margins,
+  T2 reference TTKs) is void; the comparisons survive because they are band-matched.
+
+Tutorial consequences, for the tutorial pass: the guide teaches the tree on the Rapier and
+then swaps every melee plan to the Chaotic Axe for the seals and the gate, so the one card
+it buys is inert in every boss fight (a lineage pays only while its own form is worn); and
+no tutorial character ever picks a frame, so the frame loops are untaught. Both belong to
+the next tutorial beat pass, with the second-node-per-biome beat.
