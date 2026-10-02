@@ -693,7 +693,7 @@ Techniques beat many weak bodies); Tempo keeps Forest Pack and Mountain Hopper.
   as the lane keystone row is bespoke per packet (§4): a named server module that changes
   a rule, never a number. The cross row borrows one of the ability's other two offers at
   `ROW_SCALAR.cross`, derived, no authoring.
-- **Row tiers: home tier + N, clamped at T4.** Packet at the ability's home tier,
+- **Row tiers: home tier + N** (clamp removed and a fifth row added in §22.10). Packet at the ability's home tier,
   amplifier +1, keystone +2, cross +3. A T1 ability reads 1/2/3/4; a T2 one 2/3/4/4; a T3
   one 3/4/4/4; a T4 ability's four rows spread across the T4 band, as §4 already spreads a
   lineage's T3/T4 bands. One rule, no new resolver logic.
@@ -758,7 +758,7 @@ Expose Weakness's place.
 ### 22.3 Packet offers (locked 2026-10-02)
 
 The shipped tables (`shared/src/data/abilityNodes/offers.ts`) already express each
-survivor's three routes and stay as they are, with one swap: **Stunning Strike offers
+survivor's three routes and stay as they are (three more revisions in §22.10), with one swap: **Stunning Strike offers
 Control / Tempo / Technique** (its Empowered plating-shred becomes Tempo echo-hit: a
 stunned target eats a second hit), so that after the cuts every offensive packet sits on at
 least three Techniques. Coverage across the ten Techniques: Tempo 3 (Sweep, Stunning
@@ -767,7 +767,7 @@ Technique 6, before the §22.8 additions (final coverage there). Guards are unch
 
 ### 22.4 Ability keystones (locked 2026-10-02): the flashy verb
 
-One per surviving ability, bespoke, on the keystone row. The alternates the designer did
+One per surviving ability, bespoke, on the keystone row (§22.10 makes the alternates a second row, Keystone II, and adds a delivery body to each). The alternates the designer did
 not pick are recorded in the run brief for the next pass, not here.
 
 | Ability | Keystone | Rule |
@@ -846,7 +846,7 @@ principle: **as an ability deepens, its identity deepens**, in name, icon and an
 so progression is visibly not a bigger number. This is §8's visual rule applied to the
 ability's identity rather than to the fight.
 
-- **Naming grows with the row.** The packet row prefixes the lane's own word: Bleeding
+- **Naming grows with the row** (grammar finalised in §22.10: payoff adjective, "of X", noun, "with Y"). The packet row prefixes the lane's own word: Bleeding
   Sweep, Echoing Sweep, Drilled Sweep (the nine lane words come from the packet
   definitions, so the prefix is derived, not authored per ability). The amplifier adds a
   second qualifier from its axis. The keystone **renames the ability outright**: the hotbar
@@ -939,6 +939,103 @@ Casts used to be assigned by feel: flavor, or "strong things wind up". The rule 
   whether it is one.
 - Frames stay out of it. A heavier frame does not lengthen casts; frames are bias, and a
   slow caster on a heavy frame is slow already.
+### 22.10 Second review: rows, names, fire-shapes, delivery (decided 2026-10-02, fire-shapes PROPOSED)
+
+The designer reviewed the mockup (the "Ability Trees" artifact) and changed five things.
+Where a rule below contradicts an earlier subsection, this one wins.
+
+**Row tiers: home + N, no clamp.** Packet at home, amplifier +1, keystone +2, cross +3,
+and a fifth row, **Keystone II**, at +4. Nothing is retroactive: a row unlocks on the tier
+that owns it, so late abilities grow into T5–T8 and the tree needs no new rows when those
+tiers ship. Until a tier exists, the rows above the current cap **fold into the cap
+band** (so today's game still reaches every row of every ability) and unfold when the
+tier ships; what a player bought stays bought. §22.1's "clamped at T4" is superseded.
+
+**Keystone II is the second verb.** The alternates recorded in the run brief's appendix
+are no longer alternates: each is its ability's second keystone, a second rename the
+player chooses between, unlocking at home + 4 (T5 for a T1 ability). They are designed
+now and implemented in a later wave; the run ships the first verb. Sidestep's second is
+*Flow* (every hit you dodge during the window extends it; the first that lands ends it);
+Cull's is *Death Sentence* (a target Cull hits but does not kill is marked; your next kill
+of any body also kills the marked one if it is below the threshold).
+
+**The amplifier is a free choice of axis.** Any axis applies to the active route: second
+body, longer window, bigger payoff, or shorter wind-up on a cast (§22.9). The amplifier
+is no longer tied to one route's natural axis; `nodePayoffAxis` becomes the default, not
+the only option.
+
+**Kill chain routes fire on the kill.** A Kill chain offer on a Technique fires when the
+ability's hit kills, not when it lands, and pays the table's partial share: Charge,
+Contagion, Disengage and Snipe refund part of their cooldown on a kill; Cull, which
+refunds natively, opens its speed window on the kill instead. Never a full reset.
+
+**Every keystone names its delivery body**: `owner`, `delivering body` (the physical
+summon or formation body that landed the ability on a Conduit; the owner elsewhere), or
+`formation`. This is how the class adapters survive the pass: packet and amplifier
+payoffs hang off the landed event and inherit whatever body the adapter delivered through;
+keystones are bespoke rules and must say. Reload treats keystone echoes as first-hit-only.
+Explicit calls: Trample on a Conduit runs along the summons' rush paths; Shared Breath is
+formation; Vanish, Afterimage, Riposte, Backlash and every Guard keystone are owner;
+Harvest and Relay chain from whichever body made the kill or stun.
+
+**Names by row** (amends §22.7's packet-prefix rule): each row owns a grammatical slot,
+and every word is derived from the payoff or the axis, never authored per ability.
+
+| Row | Slot | Words |
+|---|---|---|
+| Packet | adjective, from the payoff | Echoing, Branding, Sundering, Bleeding, Venomed, Chilling, Opening, Quickening, Drilled, Braced, Mending, Warded, Plated, Fleet |
+| Amplifier | "of X", from the axis | of Many, of the Lingering, of Weight, of Haste |
+| Keystone / Keystone II | the noun: the keystone's name replaces the ability's | Whirlwind, Aftershock, … |
+| Cross | "with Y", from the borrowed payoff's noun | with Echoes, with Brands, with Sundering, with Bleeding, with Venom, with Chill, with Opening, with Quickening, with Drill, with Bracing, with Mending, with Ward, with Plate, with Fleetness |
+
+*Bleeding Sweep* → *Bleeding Sweep of Many* → *Bleeding Whirlwind of Many* →
+*Bleeding Whirlwind of Many, with Echoes*. The hotbar shows the noun; the tooltip the
+whole name. Adverbs for the cross were tried and read badly.
+
+**Three offers revised** to cut the sameness (the Technique refund was on six of eleven
+Techniques, the brand on seven): Binding Strike's Technique refund becomes an Affliction
+bleed (a rooted body bleeds); Snipe's Technique refund becomes the Kill chain on-kill
+refund; Detonate's Empowered brand becomes a Control chill. Refund now on four, brand on
+four.
+
+**Fire-shape (PROPOSED, for line-by-line review before W1-A commits it).** The offers
+table gains one column saying *where and when* the packet payoff fires, from a closed
+list. Same payoffs, same magnitudes; this is where Brace and Endure stop being the same
+card.
+
+| Ability | Fires |
+|---|---|
+| Sweep | on every body the cleave hits |
+| Charge | on the first body the rush touches, and the target on arrival |
+| Slam | on every body the Slam hits |
+| Second Wind | on cast |
+| Cleanse | on strip, sized by what it removed |
+| Brace | per hit absorbed while Braced |
+| Sidestep | per hit dodged during the window |
+| Binding Strike | on the rooted body |
+| Contagion | on every body the spread reaches |
+| Snipe | on the shot body |
+| Bramble Guard | per thorn hit |
+| Endure | per tick while held |
+| Imbue Lightning | on each imbued hit |
+| Detonate | on the detonated body |
+| Cull | on the struck body |
+| Break Free | on the break |
+| Disengage | on the body you broke from |
+| Stunning Strike | on the stunned body |
+| Recuperate | per tick of the mend |
+
+Kill chain routes override the fire-shape with "on the kill". The closed list is: on
+land / on every body hit / on each hit of a window / on the kill / on cast / per hit
+absorbed / per hit dodged / per tick while active / on strip / on the break. Every entry
+maps to an existing trigger seam (hit, kill, guard-cast, hit-taken, evade, pulse,
+cleanse, break-free).
+
+**Deferred, recorded here**: an amplifier that is a *variation* of the ability's shape
+(an armed rider lingers two hits, a cast becomes a line or an area or a held charge,
+keyed by execution shape) was weighed as the way to make T2 feel different and parked;
+it overlaps the keystones (Whirlwind is "cast becomes a channel") and must be designed
+with them. Lives in `docs/future-plans.md` as "ability variation row".
 
 ## 23. Forms are full power at the craft (locked 2026-10-02)
 

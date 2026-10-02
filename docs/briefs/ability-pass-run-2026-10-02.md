@@ -183,6 +183,14 @@ Neither enters the tutorial kit. Add abilityCull.test.ts (multiplier rises as he
 falls; a kill refunds) and abilitySidestep.test.ts (window opens, speed burst ends with
 it, no fire out of combat); extend abilityAffliction.test.ts for armed Contagion and
 abilityImbue's suite for instant Imbue.
+Second review (design §22.10): apply the three revised offers (Binding Strike
+Affliction hemorrhage instead of the Technique refund; Snipe Kill chain technique-refund
+on kill instead of the Technique refund; Detonate Control slow instead of the Empowered
+brand), tag the Kill chain offers of Charge, Contagion, Disengage, Snipe and Cull with
+the `kill` trigger, and add the `fire` column to offers.ts from the §22.10 fire-shape
+table EXACTLY as the designer left it after review (the table is marked PROPOSED; if it
+is still marked so when you start, stop and say so). Each fire-shape maps to an existing
+trigger seam; a fire-shape with no seam is a defect to report, not a new primitive.
 
 Update docs/abilities-current-state.md's roster tables (22 → 19, the per-tier tables, the
 reference-wiring table, the summoner ownership lists that name cut abilities) and
@@ -227,6 +235,18 @@ two rows, per design §22.1:
   source combined. The Technique lane's stat card shows cast speed beside Technique
   Power. A test proves no combination of lane stat, weapon and amplifier shortens a cast
   below 40% of its authored wind-up.
+- Second review (design §22.10) applies to every row above: tiers are home + N with NO
+  clamp (rows above the current cap fold into the cap band and unfold when the tier
+  ships; owned stays owned); a fifth row `keystone2` exists in the union and the
+  resolver at home + 4 with NO option authored this run (the second verbs are a later
+  wave); the amplifier offers every axis on the active route (second body, longer
+  window, bigger payoff, and the cast axis on casts), `nodePayoffAxis` is the default
+  only; a Kill chain packet option on a Technique fires on the kill its hit makes, not on
+  landing (W1-A tags those offers); `AbilityKeystoneDefinition` carries `delivery:
+  'owner' | 'delivering-body' | 'formation'` and the module resolves on that body (Reload:
+  keystone echoes are first-hit-only); display names follow the §22.10 grammar through
+  `abilityDisplayName` (adjective from the payoff, "of X" from the axis, the keystone's
+  noun, ", with Y" from the cross).
 
 Then implement the first five Technique keystones from design §22.4, each its own module,
 each with a wiring smoke test in a new server/test/abilityKeystones.test.ts (attach, tick,
@@ -534,7 +554,7 @@ After the wave-2 merge: `pnpm typecheck`, `pnpm test`, parity check
 
 ---
 
-## Appendix — alternates the designer did not pick (recorded for the next pass, not for this run)
+## Appendix — the second verbs (Keystone II, design §22.10; designed, implemented in a later wave)
 
 Technique: Sweep *Reap* (a Sweep kill cleaves again from the body it killed); Slam
 *Tremor* (every body hit is staggered); Charge *Breakthrough* (arriving staggers the
