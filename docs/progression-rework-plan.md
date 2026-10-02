@@ -31,9 +31,17 @@ only for history or rationale; the pages below are the living truth.
 
 - The Mountain/Cave/Swamp T1 family review and a second T1 source for Engagement-type
   gaps on other packets (design bible open decisions 2–3).
-- Every T3/T4 family assignment, every provisional magnitude, and every `drops` value a
-  concurrent bench pass may remap — see `variants-current-state.md` §6 and
-  `reports/progression-phase1/lane-matrix-run3.md`.
+- Every T3/T4 family assignment and every provisional magnitude — see
+  `variants-current-state.md` §6.
+- **Every `drops` value is still unsettled, and run 4 explains why.** No `drops` field
+  moved: `reports/progression-phase1/family-contracts-run4.md` measured all 33 family
+  contracts on nodes forced to 100% the family under test and found exactly one decisive
+  inversion (Cave Brute at T1), which then failed to reproduce on four more nodes of the
+  same composition — pooled margin −0.6% against a host half-spread of +5.1%
+  (`family-contracts-run4-cave-brute-hosts.md`). The host node moves a contract's margin
+  as much as the lane does, so the twelve still-inverted rows AND the four decisive holds
+  were each measured on one host and none of them is settled. The next pass is
+  `FAM_HOSTS_ALL=1` over those sixteen families.
 - The Consort (balanced Conduit) frame loop — ships with its stat skew only.
 - The player pool raise's factors (1.25/1.30/1.35/1.40) are PROVISIONAL: only the boss
   half of their acceptance criterion discriminates, and the normal-node half was already
