@@ -157,12 +157,16 @@ for (const id of ['gnarled-greatbear', 'apex-timberclaw']) {
   );
   assert(!hasAction(id, 'spawn-adds') && !hasAction(id, 'summon'), `${id} must not spawn adds`);
 }
-assert(def('gnarled-greatbear').stats.hp === 1800, 'T1 Greatbear HP should be reduced by exactly 10%');
+// 2026-10-02 T1 boss pass: hp 1800 -> 1450 and attack 18 -> 16, because the guide's
+// own Forest kit lost 30/30 on five of six classes. The CADENCE and the two-hit combo
+// are the identity and are still pinned -- they are what makes this the tier's
+// sustained-pressure boss, and the pass deliberately paid in fight length instead.
+assert(def('gnarled-greatbear').stats.hp === 1450, 'T1 Greatbear HP should be its 2026-10-02 boss-pass value');
 assert(
-    def('gnarled-greatbear').stats.attack === 18 &&
+    def('gnarled-greatbear').stats.attack === 16 &&
     def('gnarled-greatbear').stats.attackCooldown === 1900 &&
     def('gnarled-greatbear').consecutiveHits === 2,
-  'T1 Greatbear must keep its 2026-09-26 attack (18), cadence, and combo',
+  'T1 Greatbear must keep its 2026-10-02 attack (16), its 1900ms cadence, and its combo',
 );
 assert(
   !!def('apex-timberclaw').chargedAttack?.aoe &&

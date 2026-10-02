@@ -140,7 +140,32 @@ export const bossMonsterEntriesT1 = [
     // knife-edge and 20 is mostly losses. DO NOT answer this boss with a Frenzy
     // stack cap: players die before 4 stacks, and a capped boss stops spending
     // 1.5s of every 6s casting, so a cap made the fight HARDER on the bench.
-    stats: { hp: 1800, attack: 18, plating: 0, damageReduction: 0, speed: 60, attackRange: 15, attackCooldown: 1900, pullRange: 300 },
+    // T1 BOSS PASS NERF (2026-10-02): hp 1800 -> 1450, attack 18 -> 16. On the
+    // six-class boss lab at GM 30 with the guide's own Forest kit it beat FIVE of six
+    // classes 30/30 (only the Slinger won, 29/30), with the losses at 19-26% of its
+    // bar left. The 2026-09-26 note below still holds for its own question -- at 18
+    // every class's BEST build wins -- but the tutorial's build is not that build, and
+    // this pass's bar is the kit the guide actually equips.
+    //
+    // Two levers, because one cannot do it. Both single levers CLIFF: HP goes 43% ->
+    // 100% between 1350 and 1200, attack 43% -> 100% between 15 and 13, so each alone
+    // either leaves a class below the floor or puts every class at 100%. And attack 13
+    // would equal the Toadeater's hit, which that boss's own comment calls trivial --
+    // it would end this boss's identity as the tier's pressure fight.
+    //
+    // So most of it comes out of FIGHT LENGTH, which is where the uncapped Bestial
+    // Frenzy ramp lives (five stacks by 29s = 2.5x attack speed) and which leans into
+    // the authored identity in the header: fast, frequent, FRAIL. Incoming DPS stays
+    // at 8.5 against the old 9.8, so the boss still has the tier's highest steady
+    // pressure. Every class now wins; the Apprentice still loses one in thirty.
+    //
+    // The armour is NOT the lever, measured: the guide's Plains vest (plating 3) is
+    // the best of the three T1 vests here, because this boss's beat is two small hits
+    // and plating is a flat subtract. The Mountain vest (plating 2) is WORSE -- it
+    // drops the Slinger from 97% to 40% -- and the Forest vest's 36% evasion is worth
+    // only ~3.6% mitigation, since `defense.evade-mitigation` is 0.1 on the player
+    // side. Nothing in T1 gear answers "the evasion exam" above.
+    stats: { hp: 1450, attack: 16, plating: 0, damageReduction: 0, speed: 60, attackRange: 15, attackCooldown: 1900, pullRange: 300 },
     behavior: 'melee', attackStyle: 'bear-claws', biome: 'forest',
     rewards: { essence: 100, essenceType: 'green', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 160, leashRange: 800, idleMinMs: 1200, idleMaxMs: 4000 },
