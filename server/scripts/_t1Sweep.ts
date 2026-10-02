@@ -36,20 +36,35 @@ interface Ev { kind: string; atMs?: number; label?: string; outcome?: string; ph
 const state = JSON.parse(readFileSync(join(root, 'state.json'), 'utf8')) as
   { experimentId: string; runs: { runKey: string; status: string; reason?: string }[] };
 
-function eventsFor(runKey: string): Ev[] {
+interface Death { atMs: number; biomeGroup?: string; routeStepLabel?: string;
+  cause?: { killer?: { monsterName?: string; monsterTypeId?: string; isBoss?: boolean } } }
+
+function artifactFile(runKey: string, name: string): string | null {
   const art = join(root, 'runs', runKey, 'artifacts');
-  if (!existsSync(art)) return [];
+  if (!existsSync(art)) return null;
   for (const d of readdirSync(art)) {
-    const p = join(art, d, 'events.jsonl');
-    if (!existsSync(p)) continue;
-    return readFileSync(p, 'utf8').split('\n').filter((l) => l.trim())
-      .map((l) => { try { return JSON.parse(l) as Ev; } catch { return null; } })
-      .filter((e): e is Ev => e !== null);
+    const p = join(art, d, name);
+    if (existsSync(p)) return p;
   }
-  return [];
+  return null;
 }
 
-const runs = state.runs.map((run) => ({ run, events: eventsFor(run.runKey) }));
+function jsonl<T>(path: string | null): T[] {
+  if (path === null) return [];
+  return readFileSync(path, 'utf8').split('\n').filter((l) => l.trim())
+    .map((l) => { try { return JSON.parse(l) as T; } catch { return null; } })
+    .filter((e): e is T => e !== null);
+}
+
+const runs = state.runs.map((run) => ({
+  run,
+  events: jsonl<Ev>(artifactFile(run.runKey, 'events.jsonl')),
+  // Attributed separately because a death during a boss STEP is not necessarily a
+  // death to the BOSS: the guard pack stands between the player and the altar, and
+  // `deaths.jsonl` carries the killer with an `isBoss` flag. Counting a guardian kill
+  // as a boss loss is how a boss gets blamed for the encounter around it.
+  deaths: jsonl<Death>(artifactFile(run.runKey, 'deaths.jsonl')),
+}));
 const cls = (k: string) => k.replace(/^\d+-tutorial-/, '').replace(/-t1-intended-r\d+$/, '');
 const beatId = (label: string) => label.slice(0, label.lastIndexOf(': '));
 const mins = (ms?: number) => ms === undefined ? '—' : `${Math.floor(ms / 60000)}m${String(Math.round((ms % 60000) / 1000)).padStart(2, '0')}s`;
@@ -69,7 +84,7 @@ console.log('## Beats passed per chapter (a short cell is beats never reached)\n
 console.log(`| Class | ${chapterOrder.join(' | ')} | status | deaths | wall |`);
 console.log(`|---|${chapterOrder.map(() => '---').join('|')}|---|---|---|`);
 const notDone: string[] = [];
-for (const { run, events } of runs) {
+for (const { run, events, deaths } of runs) {
   const seen = new Map<string, boolean>();
   for (const e of events) {
     if (e.kind === 'route-step-start' && e.label) seen.set(beatId(e.label), seen.get(beatId(e.label)) ?? false);
@@ -84,8 +99,21 @@ for (const { run, events } of runs) {
     if (ids.length === 0) return '—';
     return `${ids.filter((id) => seen.get(id)).length}/${ids.length}`;
   });
-  const deaths = events.filter((e) => e.kind === 'player-death' || e.kind === 'death').length;
-  console.log(`| ${cls(run.runKey)} | ${cells.join(' | ')} | ${run.status}${run.reason ? ` (${run.reason})` : ''} | ${deaths} | ${mins(events.at(-1)?.atMs)} |`);
+  const toBoss = deaths.filter((d) => d.cause?.killer?.isBoss === true).length;
+  const deathCell = deaths.length === 0 ? '0' : `${deaths.length} (${toBoss} to a boss)`;
+  console.log(`| ${cls(run.runKey)} | ${cells.join(' | ')} | ${run.status}${run.reason ? ` (${run.reason})` : ''} | ${deathCell} | ${mins(events.at(-1)?.atMs)} |`);
+}
+// Who actually killed the bot. A death during a boss STEP is often a guardian.
+const killers = new Map<string, number>();
+for (const { deaths } of runs) {
+  for (const d of deaths) {
+    const k = d.cause?.killer;
+    const name = `${k?.monsterName ?? k?.monsterTypeId ?? 'unknown'}${k?.isBoss ? ' (boss)' : ''}`;
+    killers.set(name, (killers.get(name) ?? 0) + 1);
+  }
+}
+if (killers.size > 0) {
+  console.log('\nKilled by: ' + [...killers].sort((a, b) => b[1] - a[1]).map(([n, c]) => `${n} x${c}`).join(', '));
 }
 console.log(`\n**Beats not \`done\`: ${notDone.length === 0 ? 'none.**' : `${notDone.length}.**`}`);
 for (const b of notDone) console.log(`- ${b}`);
