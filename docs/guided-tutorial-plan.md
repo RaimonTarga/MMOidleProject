@@ -187,8 +187,10 @@ Three things this needed:
 
 ⚠ The Greatbear wall in Findings below applies here: the gate chapter asks every
 class for three Forest boss kills, and a GM-30 Striker and Apprentice could not
-manage one in September. It is after Tier 2, so it blocks no progression, but the
-live 1x runs will show it as a stalled route if the wall still stands.
+manage one in September. It is after Tier 2, so it blocks no progression, but a
+live run shows it as a stalled route while the wall stands — **measured on
+2026-10-02** (see the Validation record): four of six classes never killed it,
+Conduit needed nine fights, Slinger needed 40 seconds.
 
 `tutorial.test.ts` simulates every class's playthrough (each step made true the way
 the server would) and asserts the guide only ever moves forward, reaches GM 30,
@@ -264,6 +266,133 @@ All 2026-09-29, dev stack, 25x rewards (pipeline evidence, not balance evidence)
   the Razorback at 1–3% HP for the full 12 minutes. Suspected (unverified): the
   boss's endless one-slime-per-12-s trickle keeps the Squire's timed strikes on
   adds. Worth watching in a hand playtest.
+
+### 2026-10-02 — the tree lessons and the gate chapter, live
+
+First live `bot:run` of the tree lessons and the gate chapter (run 3's W1-E built
+them against the two in-process validations only). Local dev stack, on the wave-1
+merge `a5d49ae9` plus this file's own two docs commits (`b1e0ff7c`, `e77c477a`;
+no code differs between them, and each run's header records which it saw).
+
+Six runs at **25x rewards, so still pipeline evidence, not balance evidence** —
+with one extra caveat specific to this chapter, below — plus one **canonical 1x**
+run, time-boxed, which is the first untainted run of a tutorial route.
+
+Runs were **solo and sequential**, not the parallel cohort the 2026-09-29 rows
+used, so a boss result here is uncontended. Striker ran with the route's authored
+boss budget; the other five added `--fastBossRetry --fastBossRetryIncludeGuardians=true`
+(a second recorded taint, `NON_CANONICAL_FAST_BOSS_RETRY`) because an authored
+attempt costs ~4.3 min of travel-and-rest and twelve of them do not fit a run
+cap. `includeGuardians=true` keeps the guard clear and the boss fight intact and
+skips only overworld travel, dungeon traversal and the guardian-reform wait.
+
+**Beats passed, by chapter** (`route-step-end.outcome` per beat; a short cell is
+beats never reached, not beats that failed):
+
+| Class | Clearing | Plains | Forest | Swamp | Mountain | Cave | Seals | Gate |
+|---|---|---|---|---|---|---|---|---|
+| Slinger | 11/11 | 13/13 | 13/13 | 16/16 | 11/11 | 14/14 | 4/4 | **3/3** |
+| Conduit | 11/11 | 13/13 | 9/9 | 12/12 | 13/13 | 16/16 | 4/4 | **3/3** |
+| Apprentice | 11/11 | 13/13 | 9/9 | 14/14 | 13/13 | 16/16 | 4/4 | 1/3 |
+| Spirit | 11/11 | 13/13 | 9/9 | 12/12 | 13/13 | 16/16 | 4/4 | 1/3 |
+| Squire | 11/11 | 13/13 | 9/9 | 12/12 | 10/10 | 16/16 | 4/4 | 1/3 |
+| Striker | 11/11 | 13/13 | 9/9 | 12/12 | 10/10 | 16/16 | 1/4 | 0/3 |
+
+**Not one beat anywhere came back `stalled` or `blocked`.** Every beat that was
+reached, passed — including both tree-lesson beats for all six classes and all
+three gate beats for the two that got through the Greatbear. `gate-paid` and the
+T2 band followed. **No script-level failure was found**: nothing in anchors,
+waits, ordering or route composition needed fixing.
+
+**Run outcomes and timings**
+
+| Class | First card | GM 30 | Tier 2 | Gate paid | Route | Deaths |
+|---|---|---|---|---|---|---|
+| Slinger | 3m39s | 8m09s | 22m31s | **27m08s** | **completed, 27m09s** | 0 |
+| Conduit | 3m50s | 9m03s | 20m52s | **47m22s** | partial, 47m22s | 9 |
+| Spirit | 3m29s | 7m34s | 22m32s | — | 60-min cap | 14 |
+| Apprentice | 3m49s | 9m43s | 23m13s | — | 60-min cap | 12 |
+| Squire | 3m57s | 8m14s | 28m12s | — | 60-min cap | 12 |
+| Striker | 4m10s | 7m48s | — | — | 60-min cap | 11 |
+
+Conduit's `partial` is the `boss-step-exhausted` flag from its two lost Greatbear
+rounds, not a missing beat: it paid the gate and all 81 beats passed.
+
+**Bosses**
+
+| Class | Plains seal | Mountain seal | Greatbear (gate) |
+|---|---|---|---|
+| Slinger | 1st, 58 s | 1st, 58 s | **1st, 40 s** |
+| Conduit | 1st, 78 s | 1st, 99 s | **won on fight 9** (8 deaths, left 13–26%) |
+| Apprentice | 1st, 54 s | 1st, 61 s | 0/12 (left 19–36%) |
+| Spirit | 1st, 67 s | 1st, 68 s | 0/14 (left 17–31%) |
+| Squire | 1st, 83 s | 2nd (1 death, left 15%) | 0/11 (left 30–40%) |
+| Striker | **0/11 (left 2–31%)** | not reached | not reached |
+
+What this evidence does **not** cover:
+
+- **25x collapses the gate's own cost.** The dev multiplier scales essence,
+  biome XP, shards *and* capstones (`grantLineageMaterials`), so one boss kill
+  grants `round(25)` capstones against a gate that asks for 3, and the gate's
+  180 essence + 10 Tempo Shards are already paid by ordinary farming. A gate
+  farm beat therefore costs **0 s** and the `capstone:` beat needs **one**
+  Greatbear kill, not three. The chapter's three-kill shape only exists at 1x,
+  and no multiplier accelerates farming while leaving the capstone count intact
+  (anything ≥ 3 collapses it, and 1x is 1x).
+- **1x was measured for one class only, and did not reach the seals or the gate.**
+  A **canonical** Striker run (`taints: []`, the first for any tutorial route)
+  time-boxed at 35 min got through the Clearing, Plains, Forest, Swamp and
+  Mountain legs and 7 of the Cave's 16 beats — **62/78 beats, 0 deaths, every
+  beat passed** — reaching Global Mastery 24 at 27m47s. No 1x run has yet reached
+  a seal, the Greatbear or the gate, for any class.
+
+  Worth correcting an intuition here: **1x is not 25x slower.** The same Striker
+  hit GM 6 at 10m08s and GM 24 at 27m47s, against 2m42s and 7m04s at 25x — a
+  ratio of only **~3.9x**, because the early and middle legs are bounded by
+  combat and travel time rather than by essence accrual. So a full 1x route to
+  GM 30 is on the order of 30–40 min, not hours, and a canonical six-class sweep
+  including seals is a realistic next session rather than an impractical one.
+  The gate's own three-kill cost (above) remains the part only 1x can exercise.
+
+  One canonical-run trap found while setting this up: **the reward-multiplier
+  taint is sticky from the moment the bot connects.** `noteRewardMultiplier` runs
+  on the server's *current* global rate, so starting a run against a world some
+  earlier batch left at 25x tags it `NON_CANONICAL_REWARD_MULTIPLIER` even with
+  `--rewardMultiplier=1`, and its first kills really are at 25x. A canonical run
+  needs a world that is already at 1x — restarting the dev server is the reliable
+  way, since `world.rewardMultiplier` boots at 1. Note also that a `bot:batch`
+  that dies before its restore step leaves the world at 25x for whatever runs
+  next; this is what the taint caught.
+- **The farewell is not bot-testable.** `TUTORIAL_FAREWELL` (including the frames
+  line) is panel copy, not a beat, so `bot:run` never exercises it. It still
+  needs a real-client pass.
+
+One harness note for whoever reads a gate stall: the gate's `attemptBoss` budget
+is `TUTORIAL_GATE_BOSS_ATTEMPTS` (4) *per round* of `TUTORIAL_GATE_BOSS_ROUNDS`
+(5), and the inner step's exhaustion does not end the repeat — `failedRequirement`
+only short-circuits `bossCleared` conditions, and the gate's `until` is
+`anyOf(lineageFormOwned, capstoneAtLeast)`. So a walled class really does fight
+up to twenty times, travelling back to the dungeon between rounds, which is what
+consumes its run cap.
+
+Two game failures recorded, neither tuned:
+
+- **The Plains boss now walls the tutorial Striker.** Eleven uncontended
+  attempts at GM 30 on the authored kit (Chaotic Axe, +5 Plains vest, +5 Swamp
+  charm, maxHp 208, plating 5, DR 0.213) all ended in death, with the Tusked
+  Razorback left at 2–31% and twice at 2%. The fight itself only runs 43–61 s;
+  the chip damage comes from the Field Hare trickle, which was the dominant
+  damage source in one death at 93. This reverses the 2026-09-29 rerun, where the
+  Striker took the Plains seal first try, and it is the one result that blocks a
+  whole route — Plains is the first seal for every class. Every other class won
+  it first try, so it is kit-shaped, not a boss-wide change.
+- **The Greatbear still walls the gate chapter, and now for four classes of six.**
+  Slinger kills it in 40 s; Conduit needs nine fights; Spirit (0/14), Apprentice
+  (0/12) and Squire (0/11) never do, all dying with the boss at 17–40%. September
+  had Conduit and Squire beating this boss first try, so the spread has widened
+  rather than moved. The containment the plan predicted does hold: the chapter is
+  after Tier 2, the run reports `timed-out`/`partial` rather than falsely
+  complete, and nothing earlier in the script is affected.
 
 ## Findings
 
