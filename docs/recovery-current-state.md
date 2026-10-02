@@ -2,7 +2,10 @@
 
 What the code does today. Paired with `design_docs/archive/RECOVERY_REGEN_REWORK_HANDOFF.md`
 (the original design handoff, kept for rationale). Shipped 2026-08-22; moved to the
-flat HP/s model on 2026-09-30 (progression rework Phase 0b, design bible §15).
+flat HP/s model on 2026-09-30 (progression rework Phase 0b, design bible §15); five
+correctness fixes from run 4's code review folded in on 2026-10-02 (the tier-up recalc in
+§1, the minion clock in §3, `core.recovery-mult`'s quantization in §4, and the stat panel's
+formatting in §7).
 
 **This was a systems overhaul, not a balance pass.** Every coefficient below is a
 first-pass value chosen to roughly preserve the old throughput; the numbers pass
@@ -31,6 +34,13 @@ The naked base is **per player tier**: `baseRecoveryForTier(tier)` =
 16.5 / 28 HP/s. A naked character at tier entry therefore recovers the same 5% of
 its reference pool per second it did under the old percentage model, and the pool
 outgrows the rate within the tier.
+
+Because the base is a function of `playerTier`, **a tier-up is a stat change**: the kill
+that advances the tier rebuilds the player's stats on that same tick
+(`recalculatePlayerStatsPreservingCombatState` in `rewards.ts`), state-preserving because
+the tier-up lands mid-combat. Until 2026-10-02 it did not, so a player who tiered up kept
+the previous tier's rate — 6.5 HP/s instead of 10 on T1→T2 — until an unrelated recalc
+happened to fire.
 
 Out of combat, past `GAME_CONFIG.COMBAT_REGEN_DELAY`, healing is **not Recovery**: a
 fixed 10% of max HP per second regardless of the stat, so empty-to-full is 10 s at
@@ -80,10 +90,14 @@ fixed pool share (`oocRecoveryPerSecond`). Applying sources separately is exactl
 bug the 2026-08 rework removed. `activeRecoveryFraction` is in-combat access only and
 reads 0 out of combat.
 
-Minions (Conduit) carry their own `hasHealth.recovery` = the owner's flat rate ×
-(minion max HP / owner max HP), set at spawn and resynced per tick
-(`minionRecoveryFor` in `summoner/spawn.ts`), so a small body refills on the owner's
-clock. Reconstruction's in-combat queue heal is a share of the owner's flat rate.
+Minions (Conduit) carry their own `hasHealth.recovery` = **their own pool's
+out-of-combat share** (`minionMaxHp × OOC_RECOVERY_PCT`), set at spawn and resynced per
+tick (`minionRecoveryFor` in `summoner/spawn.ts`), so a small body refills on the owner's
+clock. `runMinionRegen` only ever runs out of combat, which is why the out-of-combat rule
+is the right one: until 2026-10-02 the rate came from the owner's IN-combat Recovery
+instead, which ran a naked T1 summoner's bodies at ~5%/s against the player's fixed 10%/s
+and let Recovery gear buy a faster downtime clock. Reconstruction's in-combat queue heal
+is a share of the owner's flat rate, and that one is correctly the in-combat stat.
 
 Timed sources are two resources each on `TracksCombat`
 (`recovery.<id>Ms` / `recovery.<id>Pct`). The fraction is **stored at activation**
@@ -104,6 +118,11 @@ order via its `advance()` helper.
 ## 4. `core.recovery-mult` applies exactly once
 
 On the **stat**, in `shared/src/systems/stats.ts`. Never in `applyHealToPlayer`.
+
+Quantized to a **tenth**, not to a whole number like the four integer core multipliers
+beside it. Until 2026-10-02 it shared their `Math.round`, which on a fractional HP/s rate
+ate most of the bonus: the Survivalist core's +30% on a naked T1's 6.5 HP/s is 8.45, which
+rounded to 8 and paid +1.5 of +1.95.
 
 Because every in-combat regen effect is a fraction of the rate, scaling the rate
 already covers all of them; re-applying it per-heal would compound it (a +25% core
@@ -138,8 +157,12 @@ will fill, the same way `defense.barrier-recharge-pct` does.
 
 ## 7. Player-facing surface
 
-- **Stat panel:** `Recovery` is the stat row, in **HP/s**. Access passives get their
-  own rows: Combat Recovery, Recovery Pulse, Recovery on Kill, Recovery Skill Potency.
+- **Stat panel:** `Recovery` is the stat row, in **HP/s**, formatted through the one
+  shared `formatRecoveryRate` in `gameConfig.ts` (at most one decimal) that the compact
+  stat tile also reads — a flat rate is a sum of fractional contributions, so the raw
+  number is a float and two sites open-coding their own rounding is how they drift.
+  Access passives get their own rows: Combat Recovery, Recovery Pulse, Recovery on Kill,
+  Recovery Skill Potency.
 - **Buff bar:** one `defense-recovery` tile, shown in combat only, whose stack
   count is the **summed** active percentage and whose detail lines spell out the
   resulting `HP/s` and its share of max HP. Since the fractions add invisibly, this
