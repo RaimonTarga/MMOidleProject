@@ -57,12 +57,15 @@ const FOREST_BLENDS: readonly NodeBlend[] = [
   { 'forest-pack': 0.45, 'forest-grove': 0.45, 'forest-canopy': 0.10 },   // 05, 2nd
 ];
 
+// Arrives 05 > 02 > 03 > 04 > 01. Pures outward: crag (slow, plated, walk-away-able),
+// hopper, then ridge last — Power Shot is the scariest single hit in T1 and the
+// archer/hopper pair is this biome's documented entry wall.
 const MOUNTAIN_BLENDS: readonly NodeBlend[] = [
-  { 'mountain-crag': 0.70, 'mountain-ridge': 0.20, 'mountain-hopper': 0.10 },
-  { 'mountain-ridge': 0.70, 'mountain-hopper': 0.20, 'mountain-crag': 0.10 },
-  { 'mountain-hopper': 0.70, 'mountain-crag': 0.20, 'mountain-ridge': 0.10 },
-  { 'mountain-crag': 0.45, 'mountain-ridge': 0.45, 'mountain-hopper': 0.10 },
-  { 'mountain-crag': 0.34, 'mountain-ridge': 0.33, 'mountain-hopper': 0.33 },
+  { 'mountain-ridge': 0.70, 'mountain-hopper': 0.20, 'mountain-crag': 0.10 }, // 01, 5th
+  { 'mountain-crag': 0.45, 'mountain-ridge': 0.45, 'mountain-hopper': 0.10 }, // 02, 2nd
+  { 'mountain-crag': 0.70, 'mountain-ridge': 0.20, 'mountain-hopper': 0.10 }, // 03, 3rd
+  { 'mountain-hopper': 0.70, 'mountain-crag': 0.20, 'mountain-ridge': 0.10 }, // 04, 4th
+  { 'mountain-crag': 0.34, 'mountain-ridge': 0.33, 'mountain-hopper': 0.33 }, // 05, 1st
 ];
 
 const CAVE_BLENDS: readonly NodeBlend[] = [

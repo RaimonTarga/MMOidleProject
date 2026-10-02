@@ -99,7 +99,11 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       4: ['iron-crest-titan'],
     },
     essenceType: 'essence',
-    mobDensity: 24,
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): 24 -> 20. The smallest density cut
+    // of the three, because Mountain's threat really is per-hit rather than volume — it
+    // is here so the pull-range cuts above are not undone by sheer spacing. Equal to
+    // swamp (20) and still above cave (16).
+    mobDensity: 20,
   }],
 
   // PLAINS — swarm of small, fast, low-per-hit mobs; volume is the threat.
