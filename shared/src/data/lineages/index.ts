@@ -79,6 +79,19 @@ export function lineageForm(lineageId: string, recipeId: string): LineageForm | 
   return LINEAGE_DATABASE.get(lineageId)?.forms.find((f) => f.recipeId === recipeId);
 }
 
+/**
+ * A form that is opened at its lineage's gate (tier >= 2), never crafted. The
+ * re-homed doors have no `evolvesFrom`, so the crafting guard and the Make tab
+ * need this rather than the recipe graph (review finding B4, 2026-10-02).
+ */
+export function isGatedLineageForm(recipeId: string): boolean {
+  for (const lineage of LINEAGE_DATABASE.values()) {
+    const form = lineage.forms.find((f) => f.recipeId === recipeId);
+    if (form) return form.tier > 1;
+  }
+  return false;
+}
+
 /** The lineage that owns a form's recipe id — how an equipped item finds its tree. */
 export function lineageForRecipeId(recipeId: string): LineageDefinition | undefined {
   for (const lineage of LINEAGE_DATABASE.values()) {

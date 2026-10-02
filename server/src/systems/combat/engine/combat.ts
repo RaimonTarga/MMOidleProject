@@ -146,6 +146,7 @@ import {
   recordTelegraphResolutionVictim,
 } from "../ai/telegraphEvasion";
 import { isConcealedEntity } from "../invulnerability";
+import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 
 export type PlayerAttackOutcome = "cancelled" | "dodged" | "hit" | "killed";
 export type MonsterAttackOutcome = "cancelled" | "hit" | "killed";
@@ -437,6 +438,11 @@ export function runPlayerAttack(
   if (outgoingMult > 1) ctx.damage = Math.round(ctx.damage * outgoingMult);
 
   emitCombatEvent("onHit", ctx, world);
+  // An onHit proc (a lineage echo, the Effigy's linked slam) can kill the target
+  // through `applyPlayerProcDamage`, which already paid onKill, the rewards and the
+  // removal. Carrying on would find hp <= 0 below and pay the kill a second time
+  // (review finding B3, 2026-10-02).
+  if (!world.hasMonster(target.isMonster.id)) return "killed";
 
   const onHitDamage = playerOnHitDamage(ctx);
   ctx.damage += mitigateOnHitDamage(onHitDamage, player.dealsDamage.attack * minionDamageMult, effectivePlating * ctx.platingMult, effectiveDr);
@@ -806,6 +812,15 @@ export function runMonsterAttack(
   if (rawDamage !== undefined) ctx.metadata["empoweredAttack"] = true;
   emitCombatEvent("onHit", ctx, world);
   emitCombatEvent("onDamageTaken", ctx, world);
+  // A hit-taken proc can kill the ATTACKER (the proc seam pays its kill); the rest
+  // of this exchange reads and writes the monster, so it ends here. The player
+  // still takes the hit that triggered the proc.
+  if (!world.hasMonster(monster.isMonster.id)) {
+    target.hasHealth.hp -= ctx.damage;
+    if (target.hasHealth.hp <= 0) target.hasHealth.hp = 1;
+    markSliceDirty(world, target, "hasHealth");
+    return "hit";
+  }
 
   const absorbed = Number(ctx.metadata["absorbed"] ?? 0);
   const mitigation = buildPlatingDrBreakdown({

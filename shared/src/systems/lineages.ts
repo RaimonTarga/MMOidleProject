@@ -116,11 +116,13 @@ export function normalizeLineageProgressMap(
       if (card && card.row === row && ownedCards.includes(cardId)) active[row] = cardId;
     }
 
-    const base = baseFormRecipeId(lineage);
-    if (base && !ownedForms.includes(base)) ownedForms.push(base);
+    // Ownership is never invented here. The base form is recorded when the player
+    // holds it (`syncLineagesFromInventory` on attach, craft and equip), and a tree
+    // with no owned form stays empty — pushing the base form on every load was
+    // review finding B1 (2026-10-02): a free T1 item per lineage per relog.
     const wornForm = raw.wornForm && ownedForms.includes(raw.wornForm)
       ? raw.wornForm
-      : (base ?? ownedForms[0] ?? '');
+      : (ownedForms[0] ?? '');
 
     out[lineageId] = { ownedCards, active, ownedForms, wornForm };
   }

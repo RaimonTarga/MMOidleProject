@@ -123,9 +123,10 @@ export function assertDurability35Definitions(): void {
  // The two contexts must genuinely differ, or this is one context run twice.
  // Was each node's `modifier` ('heavy'/'swarming'); progression rework Phase 2b
  // deleted that field from T1 nodes outright, so the dominant family of each
- // node's authored blend is the live equivalent -- node-01 is Crag-led (was
- // Heavy), node-02 is Ridge-led (was Swarming), still two distinct contexts.
+ // node's authored blend is the live equivalent. The invariant is only that the
+ // two dominants DIFFER: the blends are the designer's and get reordered (the
+ // 2026-10-02 entry-pressure pass made node-01 Ridge-led and node-02 a Crag/Ridge
+ // tie), so pinning the exact families here was a review finding, not a guard.
  const dominantFamilies=DURABILITY35_NODES.map(n=>blendEntries(NODE_BIOMES[n]!.blend!)[0]!.family);
- assert.equal(dominantFamilies[0],'mountain-crag','entry node family drift');
- assert.equal(dominantFamilies[1],'mountain-ridge','second context family drift');
+ assert.notEqual(dominantFamilies[0],dominantFamilies[1],'the two contexts must differ');
 }

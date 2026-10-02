@@ -13,6 +13,7 @@ import {
   checkReconstruct,
   coreEligibilityLabel,
   isEvolvedRecipe,
+  isGatedLineageForm,
   isRestrictedCore,
   requiredPlusFor,
   relicRatingsFromPassives, relicRatingsFromEffects,
@@ -65,6 +66,15 @@ import type { AbilityContext } from '../describe';
 import { makeFiltersAtom } from '../panelFilters';
 
 /** What a recipe still needs, per material; empty when it is affordable. */
+/**
+ * A recipe the Make tab must not sell: a lineage's tier-2+ form, opened at the
+ * previous band's gate in the tree. Weapons carry `evolvesFrom`; the re-homed
+ * armour, charm and boots doors do not, so both checks are needed.
+ */
+function lineageGated(recipe: { id: string; slot: string; evolvesFrom?: string }): boolean {
+  return isGatedLineageForm(recipe.id) || (recipe.slot === 'weapon' && isEvolvedRecipe(recipe as Parameters<typeof isEvolvedRecipe>[0]));
+}
+
 function missingMaterials(
   entry: MakeEntry,
   essences: Record<EssenceType, number>,
@@ -396,6 +406,10 @@ export function MakeTab() {
   const canMake = (entry: MakeEntry): boolean => {
     if (isTestRoom) return true;
     const recipe = entry.gear;
+    // A lineage's tier-2+ form is paid at its gate in the tree, never made here
+    // (review findings B4/P11, 2026-10-02): the weapon +N ladder it would ask for
+    // no longer exists, and the re-homed doors must not be craftable for essence.
+    if (recipe && lineageGated(recipe)) return false;
     if (!recipe || !isEvolvedRecipe(recipe)) return entryAffordable(entry, essences);
     return checkEvolve({ recipe, inventory, equipment, itemUpgrades, essences }).ok
       || (!!recipe.reconstructCost && checkReconstruct({ recipe, essences }).ok);
@@ -404,6 +418,7 @@ export function MakeTab() {
   /** The row's short "what is missing" line for an evolution whose materials are covered. */
   const evolveNeed = (entry: MakeEntry): string => {
     const recipe = entry.gear;
+    if (recipe && lineageGated(recipe)) return 'from its lineage tree';
     if (!recipe?.evolvesFrom || !isEvolvedRecipe(recipe)) return '';
     const source = ITEM_DATABASE.get(recipe.evolvesFrom)?.name ?? 'source item';
     const owned = inventory.includes(recipe.evolvesFrom) || equipment[recipe.slot] === recipe.evolvesFrom;
@@ -685,7 +700,7 @@ function MakeDetail({
   // Weapon tier-2+ forms are the lineage tree's gate now (LineageTreePanel, open
   // from the weapon slot) — the old evolve/reconstruct path stays live only for
   // slots whose trees have not shipped yet (progression rework plan Phase 4).
-  const isWeaponLineageForm = !!recipe && recipe.slot === 'weapon' && isEvolvedRecipe(recipe);
+  const isWeaponLineageForm = !!recipe && lineageGated(recipe);
   const evolved = recipe ? isEvolvedRecipe(recipe) && !isWeaponLineageForm : false;
   const evolveCheck = recipe && evolved
     ? checkEvolve({ recipe, inventory, equipment, itemUpgrades, essences, isTestRoom })
@@ -835,8 +850,8 @@ function MakeDetail({
         // Tier-2+ weapon forms are bought at the previous band's gate, in the
         // lineage tree — not crafted or evolved here (design §5).
         <div className="make-detail__lineage-note">
-          Tier {recipe!.tier}+ weapon forms are unlocked from the weapon's lineage
-          tree. Open it from the weapon slot in your Equipment panel.
+          Tier {recipe!.tier}+ forms are unlocked from the item's lineage tree.
+          Open it from the matching slot in your Equipment panel.
         </div>
       ) : (
         <>

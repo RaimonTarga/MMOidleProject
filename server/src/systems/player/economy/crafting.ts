@@ -9,6 +9,7 @@ import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import { syncLineagesFromInventory } from './lineageSync';
+import { isGatedLineageForm } from '@mmo-idle/shared';
 
 const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
 
@@ -28,6 +29,12 @@ export function craftRecipe(
   // (which would skip consuming the +3 predecessor). See economy/itemEvolution.ts.
   if (recipe.evolvesFrom) {
     return { success: false, reason: "This item must be evolved or reconstructed." };
+  }
+  // A lineage's tier-2+ form is opened at its gate (boss capstone + shards), never
+  // crafted for essence — the re-homed doors carry no `evolvesFrom`, so the check
+  // above does not catch them (design §5: the boss is the only way up).
+  if (isGatedLineageForm(recipe.id)) {
+    return { success: false, reason: "This form is opened at its lineage's gate." };
   }
 
   const isTestRoom = entity.hasPosition.nodeId === TEST_ROOM_NODE_ID;

@@ -31,7 +31,7 @@ import type { PlayerEntity } from '../../../ecs/entity';
 import { recalculatePlayerEntityStats } from '../../../ecs/playerEntityFormulas';
 import { markSliceDirty, mutateSlice } from '../../../ecs/dirtyHelpers';
 import { equipItem } from './inventory';
-import { ensureLineageProgress } from './lineageSync';
+import { ensureLineageProgress, writeLineageProgress } from './lineageSync';
 
 export type LineageAction = 'unlockCard' | 'setActive' | 'unlockForm' | 'wearForm';
 
@@ -127,8 +127,7 @@ export function unlockLineageCard(
     spend(world, entity, cost);
   }
 
-  mutateSlice(world, entity, 'holdsInventory', (inv) => {
-    const current = inv.lineages![lineageId]!;
+  writeLineageProgress(world, entity, lineageId, progress, (current) => {
     const ownedCards = [...current.ownedCards, cardId];
     // A row the player has nothing in yet activates the card they just bought;
     // a row already filled is left alone, because swapping is their choice.
@@ -145,7 +144,7 @@ export function unlockLineageCard(
       && checkSetActive({ lineage, progress: { ...current, ownedCards }, row: card.row, cardId }).ok
       ? { ...current.active, [card.row]: cardId }
       : current.active;
-    inv.lineages = { ...inv.lineages, [lineageId]: { ...current, ownedCards, active } };
+    return { ...current, ownedCards, active };
   });
   recalculatePlayerEntityStats(world, entity);
   world.gameplay?.lineage(entity, 'lineage.card-unlocked', {
@@ -171,12 +170,11 @@ export function setLineageActive(
   if (!check.ok) return fail(lineageId, 'setActive', check.reason ?? 'Cannot activate that card.');
 
   const replacedCardId = progress.active[row] ?? null;
-  mutateSlice(world, entity, 'holdsInventory', (inv) => {
-    const current = inv.lineages![lineageId]!;
+  writeLineageProgress(world, entity, lineageId, progress, (current) => {
     const active = { ...current.active };
     if (cardId === null) delete active[row];
     else active[row] = cardId;
-    inv.lineages = { ...inv.lineages, [lineageId]: { ...current, active } };
+    return { ...current, active };
   });
   recalculatePlayerEntityStats(world, entity);
   // Only a REPLACEMENT is a swap. Activating into an empty row is the tail of a
@@ -220,13 +218,9 @@ export function unlockLineageForm(
     spend(world, entity, cost, cost.capstone);
   }
 
-  mutateSlice(world, entity, 'holdsInventory', (inv) => {
-    const current = inv.lineages![lineageId]!;
-    inv.lineages = {
-      ...inv.lineages,
-      [lineageId]: { ...current, ownedForms: [...current.ownedForms, recipeId] },
-    };
-  });
+  writeLineageProgress(world, entity, lineageId, progress, (current) => (
+    { ...current, ownedForms: [...current.ownedForms, recipeId] }
+  ));
   recalculatePlayerEntityStats(world, entity);
   world.gameplay?.lineage(entity, 'lineage.gate-paid', {
     lineageId, formRecipeId: recipeId, lane: form.capstone?.lane ?? null, ...paid,
@@ -254,9 +248,8 @@ export function wearLineageForm(
   const check = checkWearForm({ lineage, progress, recipeId });
   if (!check.ok) return fail(lineageId, 'wearForm', check.reason ?? 'Cannot wear that form.');
 
+  writeLineageProgress(world, entity, lineageId, progress, (current) => ({ ...current, wornForm: recipeId }));
   mutateSlice(world, entity, 'holdsInventory', (inv) => {
-    const current = inv.lineages![lineageId]!;
-    inv.lineages = { ...inv.lineages, [lineageId]: { ...current, wornForm: recipeId } };
     // The worn form has to be in the bag for the equip path to find it. Owning
     // the form IS owning the item, so a gated form the player never physically
     // crafted still appears here.

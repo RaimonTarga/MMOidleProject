@@ -212,8 +212,15 @@ function richWallet(overrides: Partial<LineageWallet> = {}): LineageWallet {
   assert(r.active.stat === statCard.id, 'an owned active card survives');
   assert(r.active.payoff === undefined, 'an active card the player does not own is cleared');
   assert(!r.ownedForms.includes('an-item-that-no-longer-exists'), 'unknown forms are dropped');
-  assert(r.ownedForms.includes(baseFormRecipeId(rapier)!), 'the crafted base form is always owned');
-  assert(r.wornForm === baseFormRecipeId(rapier), 'a worn form that vanished falls back to the base form');
+  assert(!r.ownedForms.includes(baseFormRecipeId(rapier)!), 'a base form the save never recorded is not invented');
+  assert(r.wornForm === 'gale-needle', 'a worn form that vanished falls back to an owned form');
+
+  // Hydration grants nothing: a saved tree with NO owned form loads with no owned
+  // form, rather than being handed its base form (review finding B1, 2026-10-02 —
+  // that was a free T1 item per lineage per relog).
+  const bare = normalizeLineageProgressMap({ rapier: { ownedCards: [], active: {}, ownedForms: [], wornForm: '' } });
+  assert(bare.rapier!.ownedForms.length === 0, 'an empty tree hydrates with no forms');
+  assert(bare.rapier!.wornForm === '', 'and wears nothing');
 
   assert(Object.keys(normalizeLineageProgressMap(undefined)).length === 0, 'no lineages hydrates to none');
   const untouched = lineageProgressFor(undefined, 'rapier');
