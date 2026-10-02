@@ -32,7 +32,7 @@ The brief asked for at least 10 seeds per cell. Seeds were doing nothing in 24 o
 cells.
 
 Measured on the untouched baseline: **20 seeds produced 20 byte-identical fights** — same
-duration to 100 ms, same boss HP left to a tenth — in every cell except the five Razorback
+duration to 100 ms, same boss HP left to a tenth — in every cell except the six Razorback
 ones. Nothing in a solo T1 boss fight rolls a die. No T1 boss authors `evasion`; the
 tutorial kits carry no dodge; the Chaotic Axe's "whiffs now and then" is a **counted**
 `weapon.dead-swing-interval`, not a roll; and `forceBossPhase` strips the guards. Only
