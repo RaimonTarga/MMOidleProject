@@ -20,6 +20,15 @@ import { buildRegionNodes } from './authoring';
  * Shares are authored so the dominant family is unambiguous, except in the
  * deliberate 45/45 pair where the tie breaks in family-table order.
  *
+ * ORDER IS DISTANCE (T1 entry pressure, 2026-10-02). Index N is cell -0(N+1), and a
+ * cell's id comes from the procedural territory growth, so it carries no position at
+ * all. The order that matters is the one a player meets the cells in: the nearest
+ * UNCLEARED node from wherever they are standing, repeatedly (`resolveNodeCandidates`,
+ * and `tutorialNodeFor` for the guide). Each T1 biome therefore puts its two MIXED
+ * blends on the first two arrivals and its three 70/20/10 pures on the rest, mildest
+ * first, so no sanctuary-adjacent node opens with a biome's worst concentration. Each
+ * list below records its own arrival order.
+ *
  * ⚠ KNOWN GAP (Phase 2a): the T1 monster pools field only one or two of each
  * biome's three families — the rest of each family's mobs are authored into the
  * T2/T3 pools of the same biome. Spawning therefore resolves a blend against the
@@ -27,12 +36,14 @@ import { buildRegionNodes } from './authoring';
  * (`resolveNodeBlend`). These authored blends are the design target; they become
  * fully visible once the T1 pools grow a mob for the missing family.
  */
+// Arrives 05 > 02 > 01 > 03 > 04. Pures outward: herd (a charge you can walk out
+// of), sky, then swarm — the most bodies at once — last.
 const PLAINS_BLENDS: readonly NodeBlend[] = [
-  { 'plains-herd': 0.70, 'plains-swarm': 0.20, 'plains-sky': 0.10 },
-  { 'plains-swarm': 0.70, 'plains-sky': 0.20, 'plains-herd': 0.10 },
-  { 'plains-sky': 0.70, 'plains-herd': 0.20, 'plains-swarm': 0.10 },
-  { 'plains-herd': 0.45, 'plains-swarm': 0.45, 'plains-sky': 0.10 },
-  { 'plains-herd': 0.34, 'plains-swarm': 0.33, 'plains-sky': 0.33 },
+  { 'plains-herd': 0.70, 'plains-swarm': 0.20, 'plains-sky': 0.10 },  // 01, 3rd
+  { 'plains-herd': 0.45, 'plains-swarm': 0.45, 'plains-sky': 0.10 },  // 02, 2nd
+  { 'plains-sky': 0.70, 'plains-herd': 0.20, 'plains-swarm': 0.10 },  // 03, 4th
+  { 'plains-swarm': 0.70, 'plains-sky': 0.20, 'plains-herd': 0.10 },  // 04, 5th
+  { 'plains-herd': 0.34, 'plains-swarm': 0.33, 'plains-sky': 0.33 },  // 05, 1st
 ];
 
 const FOREST_BLENDS: readonly NodeBlend[] = [

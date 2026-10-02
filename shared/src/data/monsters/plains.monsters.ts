@@ -43,7 +43,11 @@ export const plainsMonsterEntries = [
     // against plating 4 a 9-damage hit is cut 44% and a 12-damage hit only 33%, so the
     // player's own plating becomes visible for the first time. `hp` is untouched, so
     // the economy and the XP curve do not move.
-    stats: { hp: 50, attack: 9, plating: 0, damageReduction: 0, speed: 46, attackRange: 12, attackCooldown: 1100, pullRange: 190 },
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): pullRange 190 -> 160. Not the
+    // hare's own notice distance that hurt, but the SECOND one: a cluster 190px past
+    // the one you were fighting became its own swarm seed, so two caps stacked. No
+    // attack or hp moves anywhere in this pass.
+    stats: { hp: 50, attack: 9, plating: 0, damageReduction: 0, speed: 46, attackRange: 12, attackCooldown: 1100, pullRange: 160 },
     behavior: 'melee', attackStyle: 'hind-kick', biome: 'plains',
     rewards: { essence: 2, essenceType: 'yellow', level: 1, biomeXp: 10 },
     ai: { wanderRadius: 250, leashRange: 640, idleMinMs: 1200, idleMaxMs: 4000 },
@@ -55,7 +59,12 @@ export const plainsMonsterEntries = [
     // is weak to swarms AS A COUNT — a mechanic that fires on one body while five
     // others chew you is the punishment. On-theme and cheaper than evasion for the
     // biome whose whole identity is volume.
-    swarm: { recruitRange: 260, maxMembers: 6, cohesion: 0.1, separation: 40 },
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): 6 -> 3. Six bodies on a fresh
+    // character is the whole of T1 entry difficulty, and a second seed doubled it.
+    // The Swarm family keeps the LARGEST group in T1 (3, against the herd's 2), so
+    // the Empowered punishment above survives as a count — it just no longer
+    // outnumbers a starting character six to one. T2+ membership is untouched.
+    swarm: { recruitRange: 260, maxMembers: 3, cohesion: 0.1, separation: 40 },
     // Also the swarm body a Prairie Wolf "caller" rallies: as a pack follower it
     // joins the call-allies net (roams + swarms solo when not in a caller's pack).
     pack: { role: 'follower' },
@@ -72,13 +81,20 @@ export const plainsMonsterEntries = [
     //    build ZERO times across 118 bench cells while running among the SLOWEST
     //    T1 cadences in the game. Per-hit down as frequency goes up, so the biome's
     //    pressure rises while the player's own plating reads for the first time.
-    stats: { hp: 100, attack: 15, plating: 3, damageReduction: 0, speed: 50, attackRange: 12, attackCooldown: 1400, pullRange: 205 },
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): pullRange 205 -> 175, for the same
+    // reason as the hare above — a charging herd 205px away joining a fight already in
+    // progress is what made the entry node unsurvivable. attack/plating unchanged.
+    stats: { hp: 100, attack: 15, plating: 3, damageReduction: 0, speed: 50, attackRange: 12, attackCooldown: 1400, pullRange: 175 },
     behavior: 'melee', attackStyle: 'gore', biome: 'plains',
     rewards: { essence: 3, essenceType: 'yellow', level: 1, biomeXp: 18 },
     ai: { wanderRadius: 260, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3500 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1000 },
     // Boars charge in as a converging herd, not single-file (swarm-catcher pressure).
-    swarm: { recruitRange: 260, maxMembers: 4, cohesion: 0.08, separation: 56 },
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): maxMembers 4 -> 2. The Herd's
+    // pressure is the CHARGE, not the count (chargeOnAggro above), so the herd pays
+    // the larger cut and the Swarm keeps the bigger group — two families that both
+    // used to field four bodies now read differently from one another.
+    swarm: { recruitRange: 260, maxMembers: 2, cohesion: 0.08, separation: 56 },
   }],
 
 
@@ -94,7 +110,13 @@ export const plainsMonsterEntries = [
     // 2200 -> 1500. "The Sky body joins the biome's cadence." A *pressure* row only —
     // the Sky lane contract already holds at the slow bench cap, so nothing about the
     // kite's pull/leash geometry changes.
-    stats: { hp: 90, attack: 13, plating: 0, damageReduction: 0, speed: 100, attackRange: 12, attackCooldown: 1500, pullRange: 380 },
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): pullRange 380 -> 300, which
+    // SUPERSEDES the line directly above ("nothing about the kite pull/leash geometry
+    // changes"). The Sky body's long notice IS its identity — it opens from the air —
+    // so this is the gentlest cut in the pass: enough that a Stoop no longer lands on
+    // top of a swarm fight half a node away, not enough to make the kite an ambusher.
+    // The leash is untouched.
+    stats: { hp: 90, attack: 13, plating: 0, damageReduction: 0, speed: 100, attackRange: 12, attackCooldown: 1500, pullRange: 300 },
     behavior: 'melee', attackStyle: 'talons', biome: 'plains',
     rewards: { essence: 3, essenceType: 'yellow', level: 1, biomeXp: 18 },
     // Sky declares `punishes: 'affliction'` and had no mechanism for it. `dotResistance`

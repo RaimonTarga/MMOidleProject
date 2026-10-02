@@ -112,7 +112,12 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       2: ['gorging-razortusk'],
     },
     essenceType: 'essence',
-    mobDensity: 48,
+    // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): 48 -> 36. Plains stays the densest
+    // starter biome, but 48 bodies on a 4800x4800 node put the mean spacing (~693px)
+    // inside two mobs' pull ranges at once, so the authored swarm caps were never the
+    // real group size. Only T1's entry experience was the complaint; this number is
+    // read by every tier of the biome, which is the cost of the dial being per-biome.
+    mobDensity: 36,
   }],
 
   // SWAMP — trivial direct damage, heavy stacking DoT; attrition. Dot-resist's
