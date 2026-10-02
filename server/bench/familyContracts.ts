@@ -440,7 +440,10 @@ async function main(): Promise<void> {
     rows.push(...stored.rows);
     // The measured run's wall clock travels in the JSON, so a replay that only
     // regenerates the prose does not silently rewrite the header to "0.0 min".
-    replayElapsedMs = stored.elapsedMs ?? 0;
+    // `FAM_ELAPSED_MS` covers a JSON written before `elapsedMs` was stored: a replay of
+    // one of those would otherwise print "wall clock 0.0 min" for a run that took over
+    // an hour, which is worse than taking the number from the operator.
+    replayElapsedMs = stored.elapsedMs ?? Number(process.env.FAM_ELAPSED_MS ?? 0);
     console.log(`replaying ${rows.length} measured rows`);
   } else {
     for (const node of nodes) {
@@ -725,9 +728,17 @@ async function main(): Promise<void> {
    * the lane matrix. This instrument cannot measure a contract whose family the tier
    * cannot field either — but unlike the matrix it says so instead of quietly measuring
    * a different family.
+   *
+   * Only counted where the family's BIOME has a pool at that tier. A Tundra family with
+   * no Tier-1 body is not a gap — the Tundra does not exist at Tier 1 — and listing all
+   * of those would bury the three rows that are real.
    */
   const unfieldable = tiers.flatMap((tier) => families
-    .filter((family) => fieldableMobs(family, tier).length === 0)
+    .filter((family) => {
+      const biome = FAMILY_DATABASE.get(family)!.biome;
+      const pool = BIOME_DATABASE.get(biome)?.monsterPoolByTier[tier] ?? [];
+      return pool.length > 0 && fieldableMobs(family, tier).length === 0;
+    })
     .map((family) => ({ family, tier, biome: FAMILY_DATABASE.get(family)!.biome })));
 
   const nodeTable = [
