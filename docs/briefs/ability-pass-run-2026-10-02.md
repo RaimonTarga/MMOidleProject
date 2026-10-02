@@ -27,6 +27,16 @@ pass's plan rows with today's tutorial kit). The baseline is taken in wave 0 on 
 merged boss-pass tip; the check is re-run after every wave merge and in wave 3. A wave
 that breaks it is not merged until it is back inside.
 
+**Load-bearing abilities (measured by the boss pass, report §10, after the tuned rows):**
+zeroing Second Wind's `recoveryPct` takes the Striker from 77–100% to 0% on four of five
+T1 bosses and the Squire to 0–43%; zeroing Expose Weakness's `damageTakenPct` takes the
+Striker's Greatbear from 100% to 0%; zeroing Sweep's `splashPct` takes the Striker's
+Razorback from 90% to 3%. The three boss rows adopted on 2026-10-02 were tuned with these
+three effects as they stand. Whatever this run does to those abilities (rename, re-home,
+new keystone), their rank-0 effect values and their presence in the tutorial kit at the
+seals and gate must not go down. If one must, the boss rows are re-measured on the lab
+and the matrix is in this run's report, not left for the next one.
+
 **Not in scope:** magnitudes (`magnitudes.ts`, `ABILITY_NODE_SHARE`, `ROW_SCALAR`),
 except the one Slam rank I value the parity rule produces; lineage cards; monster rows;
 Recovery; the tutorial beyond the kit table and the Cave recipe line; T2+ boss numbers;
