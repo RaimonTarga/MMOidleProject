@@ -939,7 +939,7 @@ Casts used to be assigned by feel: flavor, or "strong things wind up". The rule 
   whether it is one.
 - Frames stay out of it. A heavier frame does not lengthen casts; frames are bias, and a
   slow caster on a heavy frame is slow already.
-### 22.10 Second review: rows, names, fire-shapes, delivery (decided 2026-10-02, fire-shapes PROPOSED)
+### 22.10 Second review: rows, names, fire-shapes, delivery (decided 2026-10-02; fire-shapes LOCKED later the same day)
 
 The designer reviewed the mockup (the "Ability Trees" artifact) and changed five things.
 Where a rule below contradicts an earlier subsection, this one wins.
@@ -998,7 +998,7 @@ bleed (a rooted body bleeds); Snipe's Technique refund becomes the Kill chain on
 refund; Detonate's Empowered brand becomes a Control chill. Refund now on four, brand on
 four.
 
-**Fire-shape (PROPOSED, for line-by-line review before W1-A commits it).** The offers
+**Fire-shape (LOCKED 2026-10-02, every line approved by the designer in four groups).** The offers
 table gains one column saying *where and when* the packet payoff fires, from a closed
 list. Same payoffs, same magnitudes; this is where Brace and Endure stop being the same
 card.

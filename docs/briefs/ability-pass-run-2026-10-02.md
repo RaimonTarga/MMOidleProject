@@ -188,8 +188,8 @@ Affliction hemorrhage instead of the Technique refund; Snipe Kill chain techniqu
 on kill instead of the Technique refund; Detonate Control slow instead of the Empowered
 brand), tag the Kill chain offers of Charge, Contagion, Disengage, Snipe and Cull with
 the `kill` trigger, and add the `fire` column to offers.ts from the §22.10 fire-shape
-table EXACTLY as the designer left it after review (the table is marked PROPOSED; if it
-is still marked so when you start, stop and say so). Each fire-shape maps to an existing
+table exactly as written (the designer approved every line on 2026-10-02; if the table is
+ever marked PROPOSED again, stop and say so). Each fire-shape maps to an existing
 trigger seam; a fire-shape with no seam is a defect to report, not a new primitive.
 
 Update docs/abilities-current-state.md's roster tables (22 → 19, the per-tier tables, the
