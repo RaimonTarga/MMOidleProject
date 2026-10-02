@@ -1,7 +1,9 @@
 # T1 boss pass — report (2026-10-02)
 
-**COMPLETE 2026-10-02.** Source revision `637ce2f5` on `balance/t1-boss-pass`, merged into
-`feat/lineage-data-model`. Three shipped boss rows moved; the numbers below are scoped to
+**COMPLETE 2026-10-02**, and confirmed by a canonical six-class 1x sweep on the same
+revision (section 12): all six classes finish the script with the gate paid, against three
+before the pass, and no boss killed anyone. Source revision `637ce2f5` on
+`balance/t1-boss-pass`, merged into `feat/lineage-data-model`. Three shipped boss rows moved; the numbers below are scoped to
 the tutorial's own boss kit at GM 30 with no lineage band, which is a FLOOR, not a real
 player. Read section 0 before any win rate in this report.
 
@@ -296,10 +298,11 @@ matrix is Tier-1.
 
 I did **not** build a synthetic Tier-2 gate row for it: `canonicalBiomeLevels(2)` would
 also hand the bot Tier-2 biome levels a freshly promoted character does not have, and an
-approximated character is worse than none. The live sweep in section 12 fights the real
-gate, and is the measurement. The direction is not in doubt — a Tier-1-sized nerf lands
-*softer* at Tier 2 than this matrix shows — so if the sweep shows the gate now too cheap,
-the lever to pull is this row, downward.
+approximated character is worse than none. The live sweep fights the real gate, and it is
+the measurement: section 12 has it. The answer is that the gate is **not** too cheap. Every
+class now banks its three kills in five attempts, the Slinger's cost is identical to before
+the pass, and the two failed attempts per class are guard-pack deaths rather than boss
+losses. So this row does not want pulling back down.
 
 ---
 
@@ -617,8 +620,12 @@ section 2 need re-measuring** — they were tuned against these abilities as the
 ## 11. What I could not verify
 
 - **The ceiling half of the bar.** Not measurable in this instrument (section 0). The
-  Slinger and Conduit read 100% on all five; whether a real player loses to any of them is
-  a question only the live sweep or a hand playtest answers.
+  Slinger and Conduit read 100% on all five. The sweep does not settle it either, and in
+  one sense argues the other way: **no boss killed anyone in it at all**, so on live
+  evidence every class is currently 100% against every boss it fights. What kills players
+  in the T1 boss chapter is the Forest guard pack, which is not a boss row. Whether a boss
+  should ever beat a well-played character is the designer's call, and it cannot be
+  answered by either instrument I have.
 - **The 70–90% band, for four of the five bosses.** The lab's cliffs (section 0) mean the
   adopted rows land at 97–100% for most cells rather than in a band. Only the Toadeater
   landed one. The win rates are therefore a floor, not a prediction of live rates.
@@ -626,8 +633,9 @@ section 2 need re-measuring** — they were tuned against these abilities as the
   (`materializeBot`), and the melee plans' Chaotic Axe swap leaves the one card the guide
   teaches inert — a lineage pays only while its own form is worn. Every number here is the
   **floor** a player with no tree sits on; a real player is stronger.
-- **The Greatbear at the gate**, i.e. at Tier 2, which is the only place the tutorial
-  actually fights it (section 4). Deliberately not approximated.
+- ~~The Greatbear at the gate, i.e. at Tier 2~~ — **settled by the sweep** (section 12):
+  3 kills in 5 attempts for every class, the Slinger unchanged from before the pass, and
+  the failures are guard-pack deaths. The lab was never asked to model it.
 - **The Behemoth's burst tail.** The mean 5-second window meets decision 3's criterion; the
   worst of 30 does not (section 3).
 - **The Razorback's and Broodmother's rows at all.** Untouched and unmeasured beyond the two
@@ -644,11 +652,84 @@ section 2 need re-measuring** — they were tuned against these abilities as the
 
 ---
 
-## 12. Canonical 1x sweep
+## 12. Canonical 1x sweep — the confirmation
 
-Launched on the committed tip `637ce2f5`, `canonical-isolated`, no reward multiplier, no
-fast boss retry, one server and one game DB per class, 4 workers, 2 h cap per class.
-Results appended to `docs/guided-tutorial-plan.md` as a new sweep record.
+Ran on the committed tip `637ce2f5`, `canonical-isolated`, `taints: []`, reward multiplier
+1, no fast boss retry, one server and one game DB per class, 4 workers, 2 h cap. Full
+ledger appended to `docs/guided-tutorial-plan.md`; only the conclusions are here.
 
-*(Pending at the time of writing; this section and the plan's ledger are filled in from
-the run.)*
+The revision it ran is the shipped one: **no non-comment change landed in `shared/` or
+`server/src/` after `637ce2f5`**, so this validates the exact numbers in section 2.
+
+### All six classes completed the whole script, gate paid
+
+| Class | Plains seal | Mountain seal | Greatbear (gate, 3 kills) | route | deaths |
+|---|---|---|---|---|---|
+| Striker | 1/1 | **1/1**, 74 s | **3/5** | **67m40s** | 2 (0 to a boss) |
+| Squire | 1/1 | 1/1, 75 s | **3/5** | **68m31s** | 2 (0 to a boss) |
+| Slinger | 1/1 | 1/1, 50 s | 3/5 | **63m15s** | 2 (0 to a boss) |
+| Spirit | 1/1 | 1/1, 56 s | 3/5 | **54m38s** | 2 (0 to a boss) |
+| Apprentice | 1/1 | 1/1, 50 s | **3/5** | **77m28s** | 2 (0 to a boss) |
+| Conduit | 1/1 | 1/1, 74 s | 3/5 | **58m13s** | 2 (0 to a boss) |
+
+Against the morning sweep on the same harness: the **Striker** went from 0/12 on the
+Behemoth and a 2 h cap with 17 deaths to both seals first try and a finished route; the
+**Squire** from 0/13 at the gate to 3/5; the **Apprentice** from 0/11 to 3/5. The three
+walls the brief named are closed, and no beat in the whole sweep returned `stalled` or
+`blocked`.
+
+### The two results that most constrain what to do next
+
+**The nerfs are sized, not overshot.** The Slinger's gate is *identical* pre and post —
+3 kills in 5 attempts — and the Spirit's moved only from 3/8 to 3/5. A Greatbear that had
+been trivialised would have moved the classes that were already comfortable; it did not.
+Pacing is also unchanged: 55–77 min against the morning's 60–65, GM 30 at 27–41 against
+26–44.
+
+**No boss killed anyone in the entire sweep.** The Greatbear went **18 victories and no
+losses** in 28–36 s a fight. All twelve deaths are Forest dungeon guardians, and the reason
+is a concurrency spike this lab cannot see, because `forceBossPhase` strips the guards:
+
+| dungeon | max concurrent attackers (identical for all six classes) |
+|---|---|
+| Plains (seal 1) | 4 |
+| Mountain (seal 2) | **1** |
+| **Forest (the gate)** | **9** |
+
+Every gate death is the same shape: rest to full, hold at full through the travel, engage,
+die 55–60 s later under seven to nine wolves to a 12–15 damage blow. Not a low-HP
+re-entry — the HP trace sits at max until the engagement — and not the boss.
+
+This is **not** a consequence of the pass. The morning sweep's three finishers show `—` in
+their loss-hp-left column too, so their failures were already guard deaths. What changed is
+that the boss is no longer *additionally* a wall for half the roster, leaving everyone at
+the guard-pack cost that the capable classes always paid. **If the designer wants the gate's
+difficulty to live in the boss rather than in nine wolves, the lever is the guard pack, not
+the Greatbear row** — and the lab is the wrong instrument for it.
+
+The Mountain dungeon's **1** concurrent attacker is the corollary that justifies section 3:
+the Behemoth is a pure duel, so its own `attack` was the only thing that could have been
+the lever there.
+
+### The lab predicts fight length well and win rate badly
+
+Ten independent cells, lab mean TTK against the live fight:
+
+| cell | lab | live | error |
+|---|---|---|---|
+| striker / Behemoth | 69 s | 74 s | −7% |
+| squire / Behemoth | 76 s | 75 s | +1% |
+| slinger / Behemoth | 47 s | 50 s | −6% |
+| spirit / Behemoth | 54 s | 56 s | −4% |
+| striker / Razorback | 46 s | 45 s | +2% |
+| squire / Razorback | 54 s | 51 s | +6% |
+| slinger / Razorback | 46 s | 45 s | +2% |
+| spirit / Razorback | 50 s | 51 s | −2% |
+| slinger / Greatbear | 27 s | 28 s | −4% |
+| spirit / Greatbear | 32 s | 31 s | +3% |
+
+Within 1–7% everywhere, which is a good independent check on the instrument — and a useful
+boundary on it. The lab models **fight length** accurately; it does not model **win rate**,
+because the variance that decides a win lives in things it holds fixed (the guard pack,
+arrival state, approach) — see section 0. Read a lab TTK as a prediction; read a lab win
+rate as a floor.

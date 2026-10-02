@@ -458,6 +458,113 @@ else.
 **Still not bot-testable:** the farewell, including its frames line — `TUTORIAL_FAREWELL`
 is panel copy, not a beat. Real-client pass still owed.
 
+### 2026-10-02 (evening) — the canonical 1x sweep after the T1 boss pass
+
+**The second untainted six-class run of the whole script**, and the confirmation step of
+the T1 boss pass (`briefs/t1-boss-pass-report-2026-10-02.md`). Same harness and isolation
+as the morning sweep above — `canonical-isolated`, `taints: []`, reward multiplier 1, no
+fast boss retry, one server and one game database per class, 2 h cap — on revision
+`637ce2f5`, which carries three changed boss rows and nothing else:
+
+| boss | field | before | after |
+|---|---|---|---|
+| Crag Behemoth | `stats.attack` | 56 | 50 |
+| Gnarled Greatbear | `stats.hp` / `stats.attack` | 1800 / 18 | 1450 / 16 |
+| Grave Toadeater | `stats.hp` | 2100 | 1750 |
+
+**All six classes complete the whole script, gate paid.** The morning sweep had three.
+
+| Class | Clearing | Plains | Forest | Swamp | Mountain | Cave | Seals | Gate | deaths | wall |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Striker | 11/11 | 13/13 | 9/9 | 12/12 | 10/10 | 16/16 | 4/4 | **3/3** | 2 (0 to a boss) | 67m40s |
+| Squire | 11/11 | 13/13 | 9/9 | 12/12 | 10/10 | 16/16 | 4/4 | **3/3** | 2 (0 to a boss) | 68m31s |
+| Slinger | 11/11 | 13/13 | 13/13 | 16/16 | 11/11 | 14/14 | 4/4 | **3/3** | 2 (0 to a boss) | 63m15s |
+| Spirit | 11/11 | 13/13 | 9/9 | 12/12 | 13/13 | 16/16 | 4/4 | **3/3** | 2 (0 to a boss) | 54m38s |
+| Apprentice | 11/11 | 13/13 | 9/9 | 14/14 | 13/13 | 16/16 | 4/4 | **3/3** | 2 (0 to a boss) | 77m28s |
+| Conduit | 11/11 | 13/13 | 9/9 | 12/12 | 13/13 | 16/16 | 4/4 | **3/3** | 2 (0 to a boss) | 58m13s |
+
+**Not one beat anywhere came back `stalled` or `blocked`**, for the second sweep running.
+
+| Class | Plains seal | Mountain seal | Greatbear (gate, 3 kills) | GM 30 | Tier 2 | gate paid |
+|---|---|---|---|---|---|---|
+| Striker | 1/1, 45 s fight | **1/1**, 74 s | **3/5** | 34m25s | 52m30s | **67m39s** |
+| Squire | 1/1, 51 s | 1/1, 75 s | **3/5** | 34m51s | 52m38s | **68m30s** |
+| Slinger | 1/1, 45 s | 1/1, 50 s | 3/5 | 29m38s | 44m25s | **63m14s** |
+| Spirit | 1/1, 51 s | 1/1, 56 s | 3/5 | 27m00s | 40m24s | **54m38s** |
+| Apprentice | 1/1, 45 s | 1/1, 50 s | **3/5** | 40m52s | 62m07s | **77m27s** |
+| Conduit | 1/1, 55 s | 1/1, 74 s | 3/5 | 29m24s | 44m37s | **58m12s** |
+
+**Against the morning sweep, same day, same harness:**
+
+| Class | Mountain seal | Greatbear (gate) | outcome | deaths |
+|---|---|---|---|---|
+| Striker | **0/12 → 1/1** | not reached → **3/5** | 2 h cap, no Tier 2 → **completed** | 17 → 2 |
+| Squire | 2nd try → 1/1 | **0/13 → 3/5** | 2 h cap → **completed** | 13 → 2 |
+| Apprentice | 1/1 → 1/1 | **0/11 → 3/5** | 2 h cap → **completed** | 11 → 2 |
+| Spirit | 1/1 → 1/1 | 3/8 → 3/5 | completed → completed | 5 → 2 |
+| Conduit | 1/1 → 1/1 | 3/6 → 3/5 | completed → completed | 3 → 2 |
+| Slinger | 1/1 → 1/1 | 3/5 → **3/5, unchanged** | completed → completed | 3 → 2 |
+
+Three things there matter more than the rest.
+
+**The three walled classes are unwalled and the comfortable one did not move.** The
+Slinger's gate is identical pre and post — 3 kills in 5 attempts — and the Spirit's barely
+moved. A nerf that had trivialised the fight would have moved them too, so the Greatbear's
+new pair reads as sized rather than overshot.
+
+**Pacing did not change.** Completions run 55–77 min against the morning's 60–65 for its
+three finishers, and GM 30 lands at 27–41 min against 26–44. The pass opened two walled
+routes without lengthening anyone's. (The Apprentice is the slowest at 77 min and was
+also the slowest to GM 30 at 41 min; that is its farm pace, not the gate.)
+
+**No boss killed anyone, in the entire sweep.** The Greatbear went **18 victories and no
+losses** across the six classes, in 28–36 s a fight, and all twelve deaths are Forest
+dungeon guardians.
+
+### The Forest dungeon's guard pack is the gate's real cost
+
+The sweep's own finding, not the boss pass's, and the one thing to carry forward. Max
+concurrent attackers on the player, from `concurrency-sample`, **identical for all six
+classes** — so it is the encounter, not a build:
+
+| dungeon | max concurrent attackers |
+|---|---|
+| Plains (seal 1) | 4 |
+| Mountain (seal 2) | **1** |
+| **Forest (the gate)** | **9** |
+
+Every gate death looks the same in every run: the character rests to full, holds at full
+through the travel, engages, and dies 55–60 s later with seven to nine guardians on it, to
+a 12–15 damage killing blow. It is **not** a low-HP re-entry — the HP trace sits at max
+right up to the engagement — and it is not the boss, which those attempts never reach.
+All twelve killers are `Forest Sentinel` (x8) and `Young Wolf` (x4), `isBoss: false`.
+
+So the gate chapter has always been paid in guard-pack deaths rather than boss losses: the
+morning sweep's three finishers also show `—` in their loss-hp-left column, meaning their
+failed attempts recorded no boss HP either. What this pass changed is that the boss is no
+longer *additionally* a wall for half the roster. The residual cost — about two deaths per
+three kills — is the nine-wolf guard, and tuning it is a dungeon-guard question rather
+than a boss row.
+
+A corollary worth keeping: the Mountain dungeon runs its boss fight at **one** concurrent
+attacker, so the Crag Behemoth is a pure duel. That is why the boss pass's lever there had
+to be the boss's own `attack`, and why nothing about a guard pack could have fixed it.
+
+### What this sweep still does not cover
+
+- **One replica per class.** Each cell is a single run, so a 3/5 gate is one sample, not a
+  rate. The lab matrix in the boss-pass report carries the per-cell spread; this carries
+  the route.
+- **The farewell**, still — `TUTORIAL_FAREWELL` is panel copy, not a beat, so no bot run
+  exercises it. A real-client pass is owed.
+- **The Swamp and Cave bosses**, which the script never fights; the boss pass measured
+  those in the lab only.
+- **The second-seal decision was re-taken on the lab, not on this sweep** (boss-pass report
+  section 7): Mountain stays, because it is harder for one class of six rather than most,
+  and because Step Back — taught in the leg immediately before the seals — is inert against
+  a Greatbear that authors no telegraphed attack. This sweep is consistent with that (every
+  class takes both seals first try) but does not discriminate between the two.
+
 ## Findings
 
 - **The Forest boss walls a GM-30, +5 Striker.** Gnarled Greatbear's Bestial
