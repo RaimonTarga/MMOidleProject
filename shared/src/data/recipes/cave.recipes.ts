@@ -44,7 +44,7 @@ export const caveRecipeEntries = [
     // 2026-09-26 weapon pass: Attack 22->20 (+5: 32->29), about -5% throughput.
     // Its per-hit size made it the best T1 weapon for every class once Power
     // Strike and monster plating were counted, not only on raw DPS.
-    cost: { red: 26 }, stats: { attack: 20 }, attacksPerSecond: 1.10, tier: 1,
+    cost: { red: 26 }, stats: { attack: 29 }, attacksPerSecond: 1.10, tier: 1,
     mechanicEffects: { 'weapon.dead-swing-interval': 3 },
     icon: 'items/weapons/chaotic-axe.png',
     description: 'A wild, top-heavy thing that fights as much as it is wielded.',
@@ -122,7 +122,7 @@ mechanicEffects: {},
     evolvesFrom: 'chaotic-axe',
     // 2026-09-26 weapon normalization: Attack 43->31 (+5: 65->60). Its +0 sat 28% over the T2 +0
     // median (a flat curve with a huge start); +5 is the axe's ~5% cut.
-    cost: { red: 60 }, stats: { attack: 31 }, attacksPerSecond: 1.20, tier: 2, // family-tag: chaotic-axe (counted disruption) → Swarming
+    cost: { red: 60 }, stats: { attack: 60 }, attacksPerSecond: 1.20, tier: 2, // family-tag: chaotic-axe (counted disruption) → Swarming
     reconstructCost: { red: 210 },
     mechanicEffects: { 'weapon.dead-swing-interval': 4 },
     icon: 'items/weapons/ruinous-axe.png',
@@ -197,7 +197,7 @@ mechanicEffects: {},
     // total on the shipped accelerating curve; catalysts moved to +4/+5.
     evolvesFrom: 'ruinous-axe',
     // 2026-09-26 T2-T4 weapon normalization: Attack 78->67 (+5: 117->112).
-    cost: { red: 120 }, stats: { attack: 67 }, attacksPerSecond: 1.20, tier: 3, // family-tag: chaotic-axe → Swarming
+    cost: { red: 120 }, stats: { attack: 112 }, attacksPerSecond: 1.20, tier: 3, // family-tag: chaotic-axe → Swarming
     reconstructCost: { red: 420 },
     mechanicEffects: { 'weapon.dead-swing-interval': 5 },
     icon: 'items/weapons/cataclysm-axe.png',

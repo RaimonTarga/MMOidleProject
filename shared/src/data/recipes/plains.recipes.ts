@@ -48,8 +48,8 @@ export const plainsRecipeEntries = [
   ['iron-broadsword', {
     id: 'iron-broadsword', name: 'Iron Broadsword',
     recipeGroup: 'plains', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { yellow: 10 }, stats: { attack: 13 }, attacksPerSecond: 0.90, tier: 1,
-    mechanicEffects: { 'technique.cooldown-reduction-pct': 0.08, 'technique.power-pct': 0.15 },
+    cost: { yellow: 10 }, stats: { attack: 19 }, attacksPerSecond: 0.90, tier: 1,
+    mechanicEffects: { 'technique.cooldown-reduction-pct': 0.16, 'technique.power-pct': 0.4 },
     icon: 'items/weapons/iron-broadsword.png',
     description: 'Mass-forged for the ranks, dependable as sunrise. Ten thousand like it have won quiet wars.',
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (240)
@@ -136,7 +136,7 @@ mechanicEffects: {},
     recipeGroup: 'plains', requiredBiomeLevel: 7, slot: 'weapon',
     evolvesFrom: 'iron-broadsword',
     // 2026-09-26 weapon normalization: Attack 18->25 (+5: 27->51).
-    cost: { yellow: 45 }, stats: { attack: 25 }, attacksPerSecond: 1.00, tier: 2,
+    cost: { yellow: 45 }, stats: { attack: 51 }, attacksPerSecond: 1.00, tier: 2,
     reconstructCost: { yellow: 180 },
     icon: 'items/weapons/knight-steelsword.png',
     // The Technique weapon, inherited from the Broadsword: bought for stronger,
@@ -144,7 +144,7 @@ mechanicEffects: {},
     // 2026-09-26 weapon pass: a T2-sized upgrade curve (was +9 Attack over five
     // steps, a T1-sized curve) and Technique Power. Watch the T3 stack with the
     // Arcanist Core (+20% CDR / +20% power).
-    mechanicEffects: { 'technique.cooldown-reduction-pct': 0.13, 'technique.power-pct': 0.25 },
+    mechanicEffects: { 'technique.cooldown-reduction-pct': 0.18, 'technique.power-pct': 0.45 },
     description: 'A knight sidearm kept keen by habit and pride — plain, proven, never flashy.',
   }],
 

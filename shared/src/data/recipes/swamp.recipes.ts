@@ -45,7 +45,7 @@ export const swampRecipeEntries = [
     id: 'ashbrand-blade', name: 'Poison Dagger',
     recipeGroup: 'swamp', requiredBiomeLevel: 1, slot: 'weapon',
     // 2026-09-26 weapon pass: Attack 10->12 (+5: 15->18).
-    cost: { purple: 22 }, stats: { attack: 12 }, attacksPerSecond: 0.90, tier: 1,
+    cost: { purple: 22 }, stats: { attack: 18 }, attacksPerSecond: 0.90, tier: 1,
     weaponDot: { effectId: 'poison-dagger-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/poison-dagger.png',
     description: 'A short blade kept slick with mire-venom that refuses to dry.',
@@ -130,7 +130,7 @@ export const swampRecipeEntries = [
     evolvesFrom: 'ashbrand-blade',
     // 2026-09-26 weapon normalization: Attack 18->22 (+5: 27->47), a T2-sized curve. Judged on sustained
     // damage (DoT weapons start slow by design).
-    cost: { purple: 52 }, stats: { attack: 22 }, attacksPerSecond: 1.0, tier: 2, // family-tag: poison DoT-conversion weapon → Fortified
+    cost: { purple: 52 }, stats: { attack: 47 }, attacksPerSecond: 1.0, tier: 2, // family-tag: poison DoT-conversion weapon → Fortified
     reconstructCost: { purple: 182 },
     weaponDot: { effectId: 'swamp-mirebrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/venom-knife.png',
@@ -220,7 +220,7 @@ export const swampRecipeEntries = [
     evolvesFrom: 'swamp-mirebrand',
     // 2026-09-26 weapon normalization: Attack 32->54 (+5: 48->86), so +0 clears the buffed Venom Knife
     // at +5 by 10% and +5 sits on the T3 median (sustained). No T4 successor.
-    cost: { purple: 116 }, stats: { attack: 54 }, attacksPerSecond: 1.00, tier: 3, // family-tag: poison DoT weapon → Fortified
+    cost: { purple: 116 }, stats: { attack: 86 }, attacksPerSecond: 1.00, tier: 3, // family-tag: poison DoT weapon → Fortified
     reconstructCost: { purple: 406 },
     weaponDot: { effectId: 'swamp-blightbrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/plague-fang.png',

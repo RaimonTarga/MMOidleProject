@@ -24,7 +24,7 @@ export const jungleRecipeEntries = [
     id: 'jungle-stinger-rapier', name: 'Stinger Rapier',
     recipeGroup: 'jungle', requiredBiomeLevel: 1, slot: 'weapon',
     // 2026-09-26 T2-T4 weapon normalization: Attack 10->11 (+5: 30->24). On-hit unchanged.
-    cost: { green: 55}, stats: { attack: 11, onHitDamage: 8 }, attacksPerSecond: 1.55, tier: 2, // family-tag: fast on-hit rapier → Alacrity
+    cost: { green: 55}, stats: { attack: 24, onHitDamage: 23 }, attacksPerSecond: 1.55, tier: 2, // family-tag: fast on-hit rapier → Alacrity
     icon: 'items/weapons/stinger-rapier.png',
     element: 'poison',   // cosmetic attack tint only
     description: 'A thin blade kept slick with something the jungle distilled and never named.',
@@ -99,7 +99,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.2, "defense.dot-resistance": 0.1
     // reconstruct path.
     evolvesFrom: 'jungle-stinger-rapier',
     // 2026-09-26 T2-T4 weapon normalization: Attack 22->29 (+5: 42->50). On-hit unchanged.
-    cost: { green: 120 }, stats: { attack: 29, onHitDamage: 18 }, attacksPerSecond: 1.65, tier: 3, // family-tag: fast on-hit rapier → Alacrity
+    cost: { green: 120 }, stats: { attack: 50, onHitDamage: 38 }, attacksPerSecond: 1.65, tier: 3, // family-tag: fast on-hit rapier → Alacrity
     reconstructCost: { green: 420 },
     icon: 'items/weapons/venomthorn-rapier.png',
     element: 'poison',   // cosmetic attack tint only
@@ -183,7 +183,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     recipeGroup: 'jungle', requiredBiomeLevel: 13, slot: 'weapon',
     evolvesFrom: 'jungle-venomthorn-rapier',
     // 2026-09-26 T2-T4 weapon normalization: Attack 34->59 (+5: 84->108). On-hit unchanged.
-    cost: { green: 264 }, stats: { attack: 59, onHitDamage: 30 }, attacksPerSecond: 1.75, tier: 4, // family-tag: capstone fast on-hit rapier → Alacrity
+    cost: { green: 264 }, stats: { attack: 108, onHitDamage: 70 }, attacksPerSecond: 1.75, tier: 4, // family-tag: capstone fast on-hit rapier → Alacrity
     reconstructCost: { green: 924 },
     icon: 'items/weapons/deathfang-rapier.png',
     element: 'poison',   // cosmetic attack tint only

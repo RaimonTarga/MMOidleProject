@@ -67,7 +67,15 @@ export interface Recipe {
    */
   attacksPerSecond?: number;
   description?: string;
-  /** Per-item upgrade steps authored alongside the recipe. See UpgradeStep. */
+  /**
+   * Per-item upgrade steps authored alongside the recipe. See UpgradeStep.
+   *
+   * NEVER on a weapon. The lineage rework retired the weapon `+N` ladder, and its
+   * totals are folded into `stats` instead, so a weapon is at full authored power
+   * the moment it is crafted — the curve was authored in `+5` terms and every
+   * monster number is calibrated against it. `weaponCurve.test.ts` pins both halves;
+   * read its header before touching a weapon's `stats.attack`.
+   */
   upgrades?: UpgradeStep[];
   /** Frame name in the /assets/icons.png atlas for the item's inventory icon. */
   icon?: string;

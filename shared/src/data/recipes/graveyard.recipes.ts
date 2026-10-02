@@ -23,7 +23,7 @@ export const graveyardRecipeEntries = [
     // INVARIANT: the dead swing must NOT consume class mechanic resources
     //   (no cadence count, no energy, no cooldown progress).
     // 2026-09-26 T2-T4 weapon normalization: Attack 150->140 (+5: 300->258).
-    cost: { purple: 270 }, stats: { attack: 140 }, attacksPerSecond: 1.10, tier: 4, // family-tag: dead-swing axe → Swarming
+    cost: { purple: 270 }, stats: { attack: 258 }, attacksPerSecond: 1.10, tier: 4, // family-tag: dead-swing axe → Swarming
     reconstructCost: { purple: 945 },
     mechanicEffects: {
       'weapon.dead-swing-interval': 3,

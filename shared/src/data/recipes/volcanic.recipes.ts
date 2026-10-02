@@ -27,7 +27,7 @@ export const volcanicRecipeEntries = [
     // parent: that item's whole identity is technique CDR, which was retired to the
     // Arcanist Core, not to a weapon. Priced at the top of the T3 weapon band.
     // 2026-09-26 T2-T4 weapon normalization: Attack 34->39 (+5: 64->70).
-    cost: { red: 140 }, stats: { attack: 39 }, attacksPerSecond: 1.65, tier: 3, // family-tag: new Volcanic item → Swarming (native)
+    cost: { red: 140 }, stats: { attack: 70 }, attacksPerSecond: 1.65, tier: 3, // family-tag: new Volcanic item → Swarming (native)
     mechanicEffects: { 'weapon.flurry-pct': 0.03, 'weapon.flurry-stacks': 5 },
     icon: 'items/weapons/cinderlash.png',
     element: 'fire',   // cosmetic attack tint only
@@ -114,7 +114,7 @@ export const volcanicRecipeEntries = [
     recipeGroup: 'volcanic', requiredBiomeLevel: 7, slot: 'weapon',
     evolvesFrom: 'volcanic-cinderlash',
     // 2026-09-26 T2-T4 weapon normalization: Attack 58->65 (+5: 113->119).
-    cost: { red: 308 }, stats: { attack: 65 }, attacksPerSecond: 1.80, tier: 4, // family-tag: flurry weapon → Swarming
+    cost: { red: 308 }, stats: { attack: 119 }, attacksPerSecond: 1.80, tier: 4, // family-tag: flurry weapon → Swarming
     reconstructCost: { red: 1078 },
     mechanicEffects: { 'weapon.flurry-pct': 0.04, 'weapon.flurry-stacks': 5 },
     icon: 'items/weapons/eruption-lash.png',
@@ -133,7 +133,7 @@ export const volcanicRecipeEntries = [
     // revalidated against current combat formulas — that remains a separate
     // balance question.
     // 2026-09-26 T2-T4 weapon normalization: Attack 70->105 (+5: 170->172).
-    cost: { red: 290 }, stats: { attack: 105 }, attacksPerSecond: 1.20, tier: 4, // family-tag: fast-DoT weapon → Swarming
+    cost: { red: 290 }, stats: { attack: 172 }, attacksPerSecond: 1.20, tier: 4, // family-tag: fast-DoT weapon → Swarming
     reconstructCost: { red: 1015 },
     weaponDot: { effectId: 'cinderbrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'fire' },
     icon: 'items/weapons/cinderbrand.png',

@@ -20,7 +20,7 @@ export const tundraRecipeEntries = [
     id: 'tundra-permafrost-maul', name: 'Permafrost Maul',
     recipeGroup: 'tundra', requiredBiomeLevel: 1, slot: 'weapon',
     // 2026-09-26 T2-T4 weapon normalization: Attack 120->98 (+5: 270->162).
-    cost: { blue: 124 }, stats: { attack: 98 }, attacksPerSecond: 0.50, tier: 3, // family-tag: slow heavy maul → Heavy
+    cost: { blue: 124 }, stats: { attack: 162 }, attacksPerSecond: 0.50, tier: 3, // family-tag: slow heavy maul → Heavy
     mechanicEffects: { 'weapon.brittle-plating': 2, 'weapon.brittle-dr': 0.01, 'weapon.brittle-stacks': 8 },
     icon: 'items/weapons/permafrost-maul.png',
     element: 'frost',   // cosmetic attack tint only
@@ -34,7 +34,7 @@ export const tundraRecipeEntries = [
     id: 'tundra-rimebrand', name: 'Rimebrand',
     recipeGroup: 'tundra', requiredBiomeLevel: 3, slot: 'weapon',
     // 2026-09-26 T2-T4 weapon normalization: Attack 96->84 (+5: 216->132).
-    cost: { blue: 120 }, stats: { attack: 84 }, attacksPerSecond: 0.60, tier: 3, // family-tag: frost DoT-conversion weapon → Fortified
+    cost: { blue: 120 }, stats: { attack: 132 }, attacksPerSecond: 0.60, tier: 3, // family-tag: frost DoT-conversion weapon → Fortified
     weaponDot: { effectId: 'tundra-rimebrand-burn', convPct: 0.70, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'frost' },
     icon: 'items/weapons/rimebrand.png',
     description: 'The first true frost-brand — slow and heavy, planting a cold in the wound that goes on biting after the blade is gone.',
@@ -108,7 +108,7 @@ export const tundraRecipeEntries = [
     recipeGroup: 'tundra', requiredBiomeLevel: 7, slot: 'weapon',
     evolvesFrom: 'tundra-permafrost-maul',
     // 2026-09-26 T2-T4 weapon normalization: Attack 200->204 (+5: 450->378).
-    cost: { blue: 273 }, stats: { attack: 204 }, attacksPerSecond: 0.50, tier: 4, // family-tag: capstone heavy maul → Heavy
+    cost: { blue: 273 }, stats: { attack: 378 }, attacksPerSecond: 0.50, tier: 4, // family-tag: capstone heavy maul → Heavy
     reconstructCost: { blue: 956 },
     // † brittle-shatter-threshold: at max brittle stacks (8), strip the target's
     //   DR for 2s (brittle-shatter-dr-strip-ms). (new key)
@@ -129,7 +129,7 @@ export const tundraRecipeEntries = [
     // line (no Swamp predecessor — see the file header). Base attack and mechanic
     // identity (`weaponDot`, convPct 0.70) are carried forward from the T3 item.
     // 2026-09-26 T2-T4 weapon normalization: Attack 155->165 (+5: 330->310).
-    cost: { blue: 258 }, stats: { attack: 165 }, attacksPerSecond: 0.60, tier: 4, // family-tag: frost DoT-conversion weapon → Fortified
+    cost: { blue: 258 }, stats: { attack: 310 }, attacksPerSecond: 0.60, tier: 4, // family-tag: frost DoT-conversion weapon → Fortified
     reconstructCost: { blue: 903 },
     // 2026-09-28 T4 outlier pass: convPct 0.70 -> 0.60. It was the best T4 weapon for most specs (its
     // plating-free conversion) and, with Detonate, every class's damage ceiling (1.2-1.38x).

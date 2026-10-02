@@ -30,7 +30,7 @@ export const desertRecipeEntries = [
     recipeGroup: 'desert', requiredBiomeLevel: 1, slot: 'weapon',
     // 2026-09-26 weapon normalization: Attack 24->32 (+5: 69->65). The steep weak-start curve was
     // flattened; judged on the opener, where the alpha window is meant to win.
-    cost: { yellow: 70 }, stats: { attack: 32 }, attacksPerSecond: 0.80, tier: 2, // family-tag: alpha-window ambush weapon → Dominion
+    cost: { yellow: 70 }, stats: { attack: 65 }, attacksPerSecond: 0.80, tier: 2, // family-tag: alpha-window ambush weapon → Dominion
     // ALPHA WINDOW (2026-09-15): the lineage's old 2.0x/2.5x/3.0x pure alpha strike
     // is replaced by a modest opener PLUS `Sunlight`, a short outgoing-damage
     // window. Same fantasy ("strongest right after you engage"), spread over a few
@@ -111,7 +111,7 @@ export const desertRecipeEntries = [
     // T3 economy pass (2026-08-30): EVOLUTION of desert-sunsteel-cross at +5.
     evolvesFrom: 'desert-sunsteel-cross',
     // 2026-09-26 T2-T4 weapon normalization: Attack 42->71 (+5: 102->112).
-    cost: { yellow: 116 }, stats: { attack: 71 }, attacksPerSecond: 0.80, tier: 3, // family-tag: opening-strike weapon → Dominion
+    cost: { yellow: 116 }, stats: { attack: 112 }, attacksPerSecond: 0.80, tier: 3, // family-tag: opening-strike weapon → Dominion
     reconstructCost: { yellow: 406 },
     // Alpha window (2026-09-15): opener + a longer, stronger Sunlight. The lineage
     // carries NO Technique Power at any tier - see Sunsteel Falchion.
@@ -134,9 +134,9 @@ export const desertRecipeEntries = [
     id: 'desert-pilgrim-quarterstaff', name: "Pilgrim's Quarterstaff",
     recipeGroup: 'desert', requiredBiomeLevel: 7, slot: 'weapon',
     evolvesFrom: 'knight-steelsword',
-    cost: { yellow: 66 }, stats: { attack: 58 }, attacksPerSecond: 1.0, tier: 3, // family-tag: technique staff -> Dominion
+    cost: { yellow: 66 }, stats: { attack: 90 }, attacksPerSecond: 1.0, tier: 3, // family-tag: technique staff -> Dominion
     reconstructCost: { yellow: 231 },
-    mechanicEffects: { 'technique.cooldown-reduction-pct': 0.19, 'technique.power-pct': 0.50 },
+    mechanicEffects: { 'technique.cooldown-reduction-pct': 0.23, 'technique.power-pct': 0.65 },
     icon: 'items/weapons/pilgrim-quarterstaff.png',
     description: 'Sun-bleached ironwood shod in brass. It teaches the body a rhythm, and the rhythm does the rest.',
   }],
@@ -211,7 +211,7 @@ export const desertRecipeEntries = [
     recipeGroup: 'desert', requiredBiomeLevel: 13, slot: 'weapon',
     evolvesFrom: 'desert-solar-cross',
     // 2026-09-26 T2-T4 weapon normalization: Attack 110->122 (+5: 210->212).
-    cost: { yellow: 255 }, stats: { attack: 122 }, attacksPerSecond: 0.80, tier: 4,
+    cost: { yellow: 255 }, stats: { attack: 212 }, attacksPerSecond: 0.80, tier: 4,
     reconstructCost: { yellow: 893 },
     // Alpha window (2026-09-15). Opener 1.4 / 1.5 / 1.6; Sunlight 15%/4s, 20%/5s,
     // 25%/6s. The tier deepening is the WINDOW, not the opener - that is the whole
@@ -234,10 +234,10 @@ export const desertRecipeEntries = [
     id: 'desert-sunmonk-warstaff', name: "Sunmonk's Warstaff",
     recipeGroup: 'desert', requiredBiomeLevel: 13, slot: 'weapon',
     evolvesFrom: 'desert-pilgrim-quarterstaff',
-    cost: { yellow: 145 }, stats: { attack: 115 }, attacksPerSecond: 1.0, tier: 4,
+    cost: { yellow: 145 }, stats: { attack: 192 }, attacksPerSecond: 1.0, tier: 4,
     reconstructCost: { yellow: 508 },
     mechanicEffects: {
-      'technique.cooldown-reduction-pct': 0.23, 'technique.power-pct': 0.65,
+      'technique.cooldown-reduction-pct': 0.26, 'technique.power-pct': 0.8,
       'technique.kata-power-pct': 0.80, 'technique.kata-stacks': 3,
     },
     icon: 'items/weapons/sunmonk-warstaff.png',

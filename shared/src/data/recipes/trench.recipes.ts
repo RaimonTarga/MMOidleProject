@@ -22,7 +22,7 @@ export const trenchRecipeEntries = [
     // combat formulas — that remains a separate balance question.
     // INVARIANT: dead swing must NOT consume class mechanic resources.
     // 2026-09-26 T2-T4 weapon normalization: Attack 120->140 (+5: 240->257).
-    cost: { green: 270 }, stats: { attack: 140 }, attacksPerSecond: 1.15, tier: 4, // family-tag: dead-swing/execute axe → Swarming
+    cost: { green: 270 }, stats: { attack: 257 }, attacksPerSecond: 1.15, tier: 4, // family-tag: dead-swing/execute axe → Swarming
     reconstructCost: { green: 945 },
     // † execute-threshold-pct / execute-dmg-mult: vs targets below 20% HP, ×2.5.
     mechanicEffects: {

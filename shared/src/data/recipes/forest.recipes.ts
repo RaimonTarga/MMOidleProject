@@ -46,7 +46,7 @@ export const forestRecipeEntries = [
     lineageId: 'rapier',
     // 2026-09-26 weapon pass: Attack 5->8 (+5: 8->12). Per-hit size is what Power
     // Strike and monster plating reward, so the buff is Attack, not APS.
-    cost: { green: 20 }, stats: { attack: 8 }, attacksPerSecond: 1.50, tier: 1,
+    cost: { green: 20 }, stats: { attack: 12 }, attacksPerSecond: 1.60, tier: 1,
     icon: 'items/weapons/flash-rapier.png',
     description: 'Forged thin as a reed by duelists who prized speed above all.',
     // T1 economy pass (2026-08-28): Flash Rapier was the one T1 item whose total
@@ -142,7 +142,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
     reconstructCost: { green: 210 }, // RECONSTRUCT (no predecessor)
     // 2026-09-26 weapon normalization: Attack 9->17 (+5: 14->35). The old curve was T1-sized, so a
     // +5 Flash Rapier matched a +0 Gale Needle.
-    stats: { attack: 17 }, attacksPerSecond: 1.60, tier: 2,
+    stats: { attack: 35 }, attacksPerSecond: 1.70, tier: 2,
     icon: 'items/weapons/gale-needle.png',
     description: 'A fencing blade machined to an impossible point, humming faintly when drawn.',
   }],

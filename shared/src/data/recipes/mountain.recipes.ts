@@ -55,9 +55,9 @@ export const mountainRecipeEntries = [
     id: 'heavy-hammer', name: 'Heavy Hammer',
     recipeGroup: 'mountain', requiredBiomeLevel: 1, slot: 'weapon',
     // 2026-09-26 weapon pass: Attack 26->27 (+5: 36->38).
-    cost: { blue: 22 }, stats: { attack: 27 }, attacksPerSecond: 0.55, tier: 1,
+    cost: { blue: 22 }, stats: { attack: 38 }, attacksPerSecond: 0.55, tier: 1,
     icon: 'items/weapons/heavy-hammer.png',
-    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.15 },
+    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.22 },
     description: 'Two-handed, brutal, and honest. It asks only that you find the time to swing it.',
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~497 (was 496).
     // +5 catalyst from its own T2 hammer successor's tag ("slow heavy hammer →
@@ -132,14 +132,14 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 7, slot: 'weapon',
     evolvesFrom: 'heavy-hammer',
     // 2026-09-26 weapon normalization: Attack 47->45 (+5: 70->85).
-    cost: { blue: 52 }, stats: { attack: 45 }, attacksPerSecond: 0.55, tier: 2, // family-tag: slow heavy hammer → Heavy
+    cost: { blue: 52 }, stats: { attack: 85 }, attacksPerSecond: 0.55, tier: 2, // family-tag: slow heavy hammer → Heavy
     reconstructCost: { blue: 182 },
     icon: 'items/weapons/quake-hammer.png',
     // Cast Speed (abilities evolution §6.1) lives on Mountain's T2 hammer — the
     // biome that owns Charged Strike, and whose whole identity is the wind-up.
     // Only affects abilities with a real castTime.
     mechanicEffects: {
-      'weapon.empowered-mult-bonus': 0.26,
+      'weapon.empowered-mult-bonus': 0.33,
       'technique.cast-speed-pct': 0.15,
     },
     description: 'When it lands, the ground remembers it longer than the foe does.',
@@ -214,11 +214,11 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 13, slot: 'weapon',
     evolvesFrom: 'quake-hammer',
     // 2026-09-26 weapon normalization: Attack 84->96 (+5: 126->164). It sat 21% under the T3 +5 median.
-    cost: { blue: 116 }, stats: { attack: 96 }, attacksPerSecond: 0.55, tier: 3, // family-tag: slow heavy maul → Heavy
+    cost: { blue: 116 }, stats: { attack: 164 }, attacksPerSecond: 0.55, tier: 3, // family-tag: slow heavy maul → Heavy
     reconstructCost: { blue: 406 },
     icon: 'items/weapons/avalanche-maul.png',
     element: 'frost',   // cosmetic attack tint only
-    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.37 },
+    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.44 },
     description: 'It does not so much strike as arrive, the way a slope arrives on a village.',
   }],
 
@@ -294,7 +294,7 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 19, slot: 'weapon',
     evolvesFrom: 'mountain-avalanche-maul',
     // 2026-09-26 T2-T4 weapon normalization: Attack 240->264 (+5: 540->486).
-    cost: { blue: 256 }, stats: { attack: 264 }, attacksPerSecond: 0.40, tier: 4, // family-tag: capstone heavy maul → Heavy
+    cost: { blue: 256 }, stats: { attack: 486 }, attacksPerSecond: 0.40, tier: 4, // family-tag: capstone heavy maul → Heavy
     reconstructCost: { blue: 896 },
     icon: 'items/weapons/earthsunder-maul.png',
     description: 'It does not strike the earth so much as remind it of an old grievance.',
@@ -305,7 +305,7 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 19, slot: 'weapon',
     evolvesFrom: 'mountain-avalanche-maul',
     // 2026-09-26 T2-T4 weapon normalization: Attack 98->184 (+5: 147->370).
-    cost: { blue: 240 }, stats: { attack: 184 }, attacksPerSecond: 0.55, tier: 4, // family-tag: capstone hammer → Heavy
+    cost: { blue: 240 }, stats: { attack: 370 }, attacksPerSecond: 0.55, tier: 4, // family-tag: capstone hammer → Heavy
     reconstructCost: { blue: 840 },
     // ⚠⚠ empowered-mult-bonus MUST be implemented MULTIPLICATIVELY, not additively.
     // final empowered mult = base_mult * (1 + 0.48), i.e. a flat +48% to the
@@ -313,7 +313,7 @@ export const mountainRecipeEntries = [
     // Additive (+0.48 flat) would skew hugely toward low-mult/high-frequency
     // specs and barely help high-mult specs. Multiplicative gives every spec the
     // same %, which is the design intent.
-    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.48 },
+    mechanicEffects: { 'weapon.empowered-mult-bonus': 0.55 },
     icon: 'items/weapons/warmaul.png',
     description: 'Lighter in the haft, quicker to the shoulder — it rewards the soldier who already knows when to swing.',
   }],
