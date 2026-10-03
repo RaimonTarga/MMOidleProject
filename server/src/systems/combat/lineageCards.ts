@@ -42,8 +42,10 @@
  * weapon trail, derived client-side from `PlayerView.lineages`).
  */
 import {
+  ABILITY_DATABASE,
   ABILITY_ROOT_EFFECT_ID,
   applyStatusEffect,
+  lineagePayloadHitFx,
   payoffLandsOnTarget,
   type StatusEffect,
   type StatusEffectConfig,
@@ -77,7 +79,7 @@ import {
 import type { MonsterEntity, PlayerEntity } from '../../ecs/entity';
 import type { World } from '../../world/World';
 import { attachMarker } from '../../ecs/markerHelpers';
-import { registerCombatListener, type CombatContext } from './engine/combatPipeline';
+import { pushClientEffect, registerCombatListener, type CombatContext } from './engine/combatPipeline';
 import { registerMechanicFiredListener } from './engine/mechanicFired';
 import { applyPlayerDebuff, playerDebuffConfig } from '../classes/shared/applyPlayerDebuff';
 import { LINEAGE_BLEED_ID, LINEAGE_POISON_ID } from './damage/bleedIds';
@@ -88,7 +90,7 @@ import { playerOnHitDamage } from './engine/onHitDamage';
 import { applyHealToPlayer } from '../defense/regen/healing';
 import { actorFromPlayer } from '../../world/worldLogActors';
 import { applySharedDebuffMaxWins } from './status/sharedDebuffRecord';
-import { applyStun } from './status/stun';
+import { applyStun, STUN_EFFECT } from './status/stun';
 import { monsterIgnoresControl } from './status/controlImmunity';
 import { evadeBlocksDebuffs, evadeMitigationOf } from '../defense/mitigation/evasion';
 import { applyWardPercent } from '../defense/barrier/wards';
@@ -100,7 +102,9 @@ import { copyPlayerDotOnto } from '../player/abilities/abilityAffliction';
 import { cleansePlayerAfflictions } from './status/cleanse';
 import { defineBuff } from './buffs/descriptor';
 import { registerKeystones, runChain } from './keystones';
-import { abilityCooldownKey } from '../player/abilities/abilityCooldowns';
+import {
+  abilityCooldownKey, publishAbilityCooldown, techniqueCooldownMs,
+} from '../player/abilities/abilityCooldowns';
 
 // ── Authored units ───────────────────────────────────────────────────────────
 //
@@ -483,8 +487,8 @@ function applyPayoff(site: PayoffSite, firing: LineageFiring): CardFxDraft | nul
       // any other moment there is no "that" Technique, so it refunds every
       // attuned one, as a legacy card does.
       const only = firing.composed ? site.abilityId : undefined;
-      const refunded = refundTechniqueCooldowns(player, magnitude, only);
-      return refunded ? { fx: firing.fx } : null;
+      const refunded = refundTechniqueCooldowns(world, player, magnitude, only);
+      return refunded.length > 0 ? { fx: firing.fx, abilityIds: refunded } : null;
     }
 
     case 'big-hit': {
@@ -493,6 +497,9 @@ function applyPayoff(site: PayoffSite, firing: LineageFiring): CardFxDraft | nul
       if (!liveExchange(world, ctx)) return null;
       if (!(magnitude > 0)) return null;
       foldHitMultiplier(ctx, magnitude);
+      // The hit in flight IS the payload's hit (a lunge, a crash): say so on its
+      // own event, so the client presents that swing as the payload's.
+      pushClientEffect(ctx, lineagePayloadHitFx(firing.fx));
       return { fx: firing.fx, targetId: ctx.defender.isMonster.id, targetPos: { ...ctx.defender.hasPosition.current } };
     }
 
@@ -503,6 +510,7 @@ function applyPayoff(site: PayoffSite, firing: LineageFiring): CardFxDraft | nul
       // `magnitude` is only the fallback for a root with no multiplier mechanic.
       if (!liveExchange(world, ctx)) return null;
       if (applyMechanicProxy(world, ctx, magnitude) <= 0) return null;
+      pushClientEffect(ctx, lineagePayloadHitFx(firing.fx));
       return { fx: firing.fx, targetId: ctx.defender.isMonster.id, targetPos: { ...ctx.defender.hasPosition.current } };
     }
 
@@ -515,7 +523,16 @@ function applyPayoff(site: PayoffSite, firing: LineageFiring): CardFxDraft | nul
       const loaded = (firing.payoff.loadMultiplier ?? 1) > 1 && liveExchange(world, ctx);
       if (heal <= 0 && !loaded) return null;
       if (heal > 0) applyHealToPlayer(player, player.tracksCombat, heal, world, actorFromPlayer(player));
-      if (loaded && ctx) foldHitMultiplier(ctx, firing.payoff.loadMultiplier ?? 1);
+      if (loaded && ctx) {
+        foldHitMultiplier(ctx, firing.payoff.loadMultiplier ?? 1);
+        pushClientEffect(ctx, lineagePayloadHitFx(firing.fx));
+        // The loaded hit's target, so the discharge has somewhere to land.
+        return {
+          fx: firing.fx,
+          targetId: ctx.defender.isMonster.id,
+          targetPos: { ...ctx.defender.hasPosition.current },
+        };
+      }
       return { fx: firing.fx };
     }
 
@@ -618,6 +635,9 @@ function applyOnTarget(
       const damage = Math.max(1, Math.round(basis * magnitude));
       const outcome = applyPlayerProcDamage(world, player, target, damage, {
         tags: ['lineage', firing.key],
+        // The echo's own hit names the payload, so the client draws it as the
+        // SECOND swing, a beat after the first, rather than on top of it.
+        clientEffects: [lineagePayloadHitFx(firing.fx)],
       });
       if (outcome === 'skipped') return null;
       // CHAIN is NOT started here. This function runs once per body an amplified
@@ -637,7 +657,7 @@ function applyOnTarget(
       const ticks = Math.max(1, Math.round((durationMs ?? BLEED_TICK_MS) / BLEED_TICK_MS));
       const perTick = Math.max(1, Math.round(hitBasis(player, ctx) * magnitude / ticks));
       writeLineageBleed(world, player, target, perTick, ticks);
-      return landed;
+      return { ...landed, durationMs: ticks * BLEED_TICK_MS };
     }
 
     case 'redose': {
@@ -657,7 +677,7 @@ function applyOnTarget(
       const ticks = Math.max(1, priorTicks, Math.round((durationMs ?? BLEED_TICK_MS) / BLEED_TICK_MS));
       const perTick = Math.max(1, Math.round((priorOwed + extra) / ticks));
       writeLineageBleed(world, player, target, perTick, ticks);
-      return landed;
+      return { ...landed, durationMs: ticks * BLEED_TICK_MS };
     }
 
     case 'root': {
@@ -668,7 +688,9 @@ function applyOnTarget(
       applyMonsterRoot(world, target, durationMs ?? 0, sourceId);
       const root = getStatusEffect(target.tracksCombat, ABILITY_ROOT_EFFECT_ID);
       if (!root || root.remainingMs === 0) return null;
-      return landed;
+      // The root as it stands now (a longer one already running keeps its clock),
+      // so the shackle the client draws breaks when this root does.
+      return { ...landed, durationMs: root.remainingMs };
     }
 
     case 'poison-stack': {
@@ -716,7 +738,11 @@ function applyOnTarget(
       // rather than showing a stun its pattern then ignores.
       if (monsterIgnoresControl(target)) return null;
       if (!applyStun(target.tracksCombat, durationMs ?? 0, sourceId)) return null;
-      return landed;
+      // As APPLIED: control resistance shortens a stun at the one place it enters.
+      return {
+        ...landed,
+        durationMs: getStatusEffect(target.tracksCombat, STUN_EFFECT)?.remainingMs ?? durationMs ?? 0,
+      };
 
     case 'contagion': {
       // Copy a SHARE of what this target carries onto its nearest neighbour,
@@ -775,8 +801,8 @@ function applyTimedSelf(
 
 /**
  * Take `share` off what is LEFT of every attuned Technique's cooldown. Returns
- * true when at least one cooldown actually moved, so a payoff that found nothing
- * running draws no effect claiming it did.
+ * the Techniques whose cooldown actually moved — empty when none did, so a payoff
+ * that found nothing running draws no effect claiming it did.
  *
  * Attuned rather than "every Technique the player knows": a cooldown that no
  * loadout can fire is not readiness, and the attuned pair is what the Rune board
@@ -784,12 +810,23 @@ function applyTimedSelf(
  * untouched — it answers "how far down may Tempo push the cooldown", which is a
  * different question from "how long until ready", and refunding it would let the
  * lane drive an ability past its own minimum cycle.
+ *
+ * Every refund is SAMPLED to the HUD (`publishAbilityCooldown`), the same rule as
+ * Sweep's Tempo and the mobility core: a cooldown the server shortened for a
+ * reason the client could not predict must reach the ability bar, or the tile
+ * keeps sweeping over a Technique that is already back — and the refund, the
+ * whole of this lane's payload, is invisible (design §24.1).
  */
-function refundTechniqueCooldowns(player: PlayerEntity, share: number, onlyAbilityId?: string): boolean {
+function refundTechniqueCooldowns(
+  world: World,
+  player: PlayerEntity,
+  share: number,
+  onlyAbilityId?: string,
+): string[] {
   const fraction = Math.min(1, Math.max(0, share));
-  if (fraction <= 0) return false;
+  if (fraction <= 0) return [];
   const cs = player.tracksCombat;
-  let refunded = false;
+  const refunded: string[] = [];
   const techniques = onlyAbilityId !== undefined
     ? [onlyAbilityId]
     : player.tracksProgression.attunedAbilities.techniques;
@@ -797,8 +834,14 @@ function refundTechniqueCooldowns(player: PlayerEntity, share: number, onlyAbili
     const key = abilityCooldownKey(abilityId);
     const remaining = getCooldown(cs, key);
     if (remaining <= 0) continue;
-    setCooldown(cs, key, remaining * (1 - fraction));
-    refunded = true;
+    const next = remaining * (1 - fraction);
+    setCooldown(cs, key, next);
+    const ability = ABILITY_DATABASE.get(abilityId);
+    publishAbilityCooldown(
+      world, player, abilityId, next,
+      ability ? techniqueCooldownMs(player, ability) : remaining,
+    );
+    refunded.push(abilityId);
   }
   return refunded;
 }
@@ -844,6 +887,10 @@ interface CardFxDraft {
   targetId?: string;
   targetPos?: { x: number; y: number };
   stacks?: number;
+  /** How long the payload holds, as applied (a root, a stun, a bleed). */
+  durationMs?: number;
+  /** `technique-refund`: the Techniques whose cooldown moved. */
+  abilityIds?: string[];
 }
 
 /**
@@ -872,9 +919,30 @@ function fire(site: PayoffSite, firings: readonly LineageFiring[]): number {
       ...(drawn.targetId !== undefined ? { targetId: drawn.targetId } : {}),
       ...(drawn.targetPos !== undefined ? { targetPos: drawn.targetPos } : {}),
       ...(drawn.stacks !== undefined ? { stacks: drawn.stacks } : {}),
+      ...(drawn.durationMs !== undefined ? { durationMs: drawn.durationMs } : {}),
+      ...(drawn.abilityIds !== undefined ? { abilityIds: drawn.abilityIds } : {}),
     });
   }
   return applied;
+}
+
+/**
+ * Whether a carried Kill-chain firing will land LOADED — the "loaded weapon" the
+ * client glows between the kill that arms it and the hit that spends it.
+ */
+function carriesLoad(firing: LineageFiring): boolean {
+  return firing.trigger.carry === true
+    && firing.payoff.kind === 'heal-and-load'
+    && (firing.payoff.loadMultiplier ?? 1) > 1;
+}
+
+/** The beat each end of a loaded carry needs (`lineage-load`, combatEvents.ts). */
+function pushLoad(world: World, player: PlayerEntity, loaded: boolean): void {
+  world.pushEvent(player.hasPosition.nodeId, {
+    kind: 'lineage-load',
+    playerId: player.isPlayer.id,
+    loaded,
+  });
 }
 
 // ── Registration: one listener per trigger kind ──────────────────────────────
@@ -1028,10 +1096,18 @@ function registerKill(): void {
     const firings = firingsFor(player, 'kill');
     if (firings.length === 0) return;
     const now: LineageFiring[] = [];
+    let armedLoad = false;
     for (const firing of firings) {
-      if (firing.trigger.carry) setFlag(player.tracksCombat, carryFlag(firing.key), true);
-      else now.push(firing);
+      if (!firing.trigger.carry) {
+        now.push(firing);
+        continue;
+      }
+      // A carry that will land loaded tells the client when it arms (once: a
+      // second kill before the next hit re-arms nothing it can see).
+      if (carriesLoad(firing) && !getFlag(player.tracksCombat, carryFlag(firing.key))) armedLoad = true;
+      setFlag(player.tracksCombat, carryFlag(firing.key), true);
     }
+    if (armedLoad) pushLoad(world, player, true);
     if (now.length === 0) return;
     // The corpse is still in the world at onKill, so a payoff that spreads OFF it
     // (contagion) still has something to read.
@@ -1063,6 +1139,8 @@ function registerKillCarry(): void {
     if (ctx.defender.hasHealth.hp <= 0 || !world.hasMonster(ctx.defender.isMonster.id)) return;
     for (const firing of armed) setFlag(cs, carryFlag(firing.key), false);
     fire({ world, player, ctx, target: ctx.defender }, armed);
+    // The load is spent with the carry, whatever the payoff then did.
+    if (armed.some(carriesLoad)) pushLoad(world, player, false);
   });
 }
 
