@@ -6,13 +6,9 @@ import {
   emptyEquipment,
   estimateMonsterHitDamage,
   GAME_CONFIG,
-  getMaxUpgrade,
   ITEM_DATABASE,
-  MAX_UPGRADE,
   MONSTER_DATABASE,
   recalculatePlayerStats,
-  upgradeMechanicEffectsTotal,
-  upgradeStatBonusTotal,
   SKILL_TREE,
   type CombatArchetype,
   type ItemDefinition,
@@ -54,10 +50,7 @@ const REPORT_PATH = path.join(
 
 type RangeKind = 'close' | 'mid' | 'far';
 const RANGE_CHOICES = ['close', 'far'] as const satisfies readonly RangeKind[];
-// Fully-upgraded gear. Tracks the shared cap so the report never drifts behind
-// it again — this was a literal `3` after MAX_UPGRADE moved 3 → 5, which
-// silently under-reported every item by two upgrade levels.
-const ITEM_UPGRADE_LEVEL = MAX_UPGRADE;
+// Items are authored at full base power (design section 23).
 const REPORT_HORIZON_SEC = 60;
 // Window over which sustained recovery is folded into the survival-score ranking.
 // Short enough to weight a dangerous burst, long enough to reward sustain charms.
@@ -154,7 +147,6 @@ interface ReportRow extends Survivability {
   armorName: string;
   recoveryId: string | null;
   recoveryName: string;
-  plus: typeof ITEM_UPGRADE_LEVEL;
   combo: BuildCombo;
 }
 
@@ -462,17 +454,14 @@ function makeStatsTarget(
   combo: BuildCombo,
   armor: ItemDefinition,
   recovery: ItemDefinition | null,
-  plus: number,
   tier: number,
 ): PlayerStatsTarget {
   const equipment = emptyEquipment();
   equipment.armor = armor.id;
   if (recovery) equipment.recovery = recovery.id;
   const inventory = [armor.id];
-  const itemUpgrades: Record<string, number> = { [armor.id]: Math.min(plus, getMaxUpgrade(armor)) };
   if (recovery) {
     inventory.push(recovery.id);
-    itemUpgrades[recovery.id] = Math.min(plus, getMaxUpgrade(recovery));
   }
   return {
     dealsDamage: { attack: 0, onHitDamage: 0, attackStyle: 'slash' },
@@ -489,7 +478,7 @@ function makeStatsTarget(
       selectedRange: combo.rangeId,
       combatArchetype: combo.archetype,
     },
-    holdsInventory: { inventory, equipment, itemUpgrades },
+    holdsInventory: { inventory, equipment },
     playerTier: tier,
   };
 }
@@ -771,8 +760,8 @@ function buildRowsForTier(reportTier: number, comboOptions: BuildComboOptions = 
   for (const combo of combos) {
     for (const armor of armors) {
       for (const recovery of recoveryChoices) {
-        const plus = ITEM_UPGRADE_LEVEL;
-        const stats = makeStatsTarget(combo, armor, recovery, plus, classTier);
+
+        const stats = makeStatsTarget(combo, armor, recovery, classTier);
         recalculatePlayerStats(stats);
         const surv = evaluateSurvivability(stats, attacker);
         rows.push({
@@ -787,7 +776,7 @@ function buildRowsForTier(reportTier: number, comboOptions: BuildComboOptions = 
           armorName: armor.name,
           recoveryId: recovery?.id ?? null,
           recoveryName: recovery?.name ?? 'None',
-          plus,
+
           combo,
           ...surv,
         });
@@ -800,7 +789,7 @@ function buildRowsForTier(reportTier: number, comboOptions: BuildComboOptions = 
 function evaluateRowAgainst(row: ReportRow, attacker: Attacker): Survivability {
   const armor = ITEM_DATABASE.get(row.armorId)!;
   const recovery = row.recoveryId ? ITEM_DATABASE.get(row.recoveryId) ?? null : null;
-  const stats = makeStatsTarget(row.combo, armor, recovery, row.plus, row.tier - 1);
+  const stats = makeStatsTarget(row.combo, armor, recovery, row.tier - 1);
   recalculatePlayerStats(stats);
   return evaluateSurvivability(stats, attacker);
 }
@@ -896,8 +885,8 @@ function renderOptimalLoadoutTable(rows: ReportRow[], reportTier: number): strin
       const tone = outlierTone(outlierFlag(row.survivalScore, avg));
       return `<tr>
         ${buildDetailCells(row, reportTier)}
-        <td>${html(row.armorName)} +${row.plus}</td>
-        <td>${html(row.recoveryName)}${row.recoveryId ? ` +${row.plus}` : ''}</td>
+        <td>${html(row.armorName)}</td>
+        <td>${html(row.recoveryName)}</td>
         <td class="${tone ? `outlier ${tone}` : ''}">${asNumber(row.survivalScore)}</td>
         <td>${asNumber(row.ehp)}</td>
         <td>${asNumber(row.maxHp)}</td>
@@ -960,7 +949,7 @@ function renderAllSamplesTable(rows: ReportRow[], reportTier: number): string {
           <tr>
             <td>${asNumber(row.ehp)}</td>
             ${buildDetailCells(row, reportTier)}
-            <td>${html(row.armorName)} +${row.plus}</td>
+            <td>${html(row.armorName)}</td>
             <td>${html(row.recoveryName)}</td>
             <td>${asNumber(row.maxHp)}</td>
             <td>${asNumber(row.plating)}</td>
@@ -980,7 +969,7 @@ function renderAllSamplesTable(rows: ReportRow[], reportTier: number): string {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Progression-focused views: instead of only "same-tier +3 vs same-tier mobs",
+// Progression-focused views: instead of only "same-tier full power vs same-tier mobs",
 // these model the moments that actually gate progression — entering a tier with
 // old gear, gearing up, hitting the tier's bosses, and probing the next tier.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1080,7 +1069,7 @@ function comparisonCombos(reportTier: number): BuildCombo[] {
 }
 
 function buildRowsWithCombos(
-  reportTier: number, gearTier: number, plus: number, attacker: Attacker, combos: BuildCombo[],
+  reportTier: number, gearTier: number, attacker: Attacker, combos: BuildCombo[],
 ): ReportRow[] {
   const classTier = reportTier - 1;
   const armors = itemsForSlotTier('armor', gearTier);
@@ -1088,7 +1077,7 @@ function buildRowsWithCombos(
   const recoveryChoices: Array<ItemDefinition | null> = recoveries.length ? recoveries : [null];
   const rows: ReportRow[] = [];
   for (const combo of combos) for (const armor of armors) for (const recovery of recoveryChoices) {
-    const stats = makeStatsTarget(combo, armor, recovery, plus, classTier);
+    const stats = makeStatsTarget(combo, armor, recovery, classTier);
     recalculatePlayerStats(stats);
     const surv = evaluateSurvivability(stats, attacker);
     rows.push({
@@ -1097,13 +1086,13 @@ function buildRowsWithCombos(
       buildKey: formatBuildCombo(combo, reportTier),
       armorId: armor.id, armorName: armor.name,
       recoveryId: recovery?.id ?? null, recoveryName: recovery?.name ?? 'None',
-      plus: plus as typeof ITEM_UPGRADE_LEVEL, combo, ...surv,
+      combo, ...surv,
     });
   }
   return rows;
 }
 
-interface Checkpoint { label: string; gearTier: number; plus: number; attacker: Attacker; isBoss: boolean }
+interface Checkpoint { label: string; gearTier: number; attacker: Attacker; isBoss: boolean }
 
 function checkpointsForTier(reportTier: number): Checkpoint[] {
   const curTier = attackerMonsterSource(reportTier).sourceTier;
@@ -1113,12 +1102,11 @@ function checkpointsForTier(reportTier: number): Checkpoint[] {
   const boss = worstBossAttacker(curTier);
   const cps: Checkpoint[] = [];
   if (curMobs && itemsForSlotTier('armor', reportTier - 1).length > 0)
-    cps.push({ label: 'Prev-tier +3 vs current mobs', gearTier: reportTier - 1, plus: 3, attacker: curMobs, isBoss: false });
-  if (curMobs) cps.push({ label: 'Current +0 vs current mobs (entry)', gearTier: reportTier, plus: 0, attacker: curMobs, isBoss: false });
-  if (curMobs) cps.push({ label: 'Current +3 vs current mobs (geared)', gearTier: reportTier, plus: 3, attacker: curMobs, isBoss: false });
-  if (boss) cps.push({ label: 'Current +3 vs boss/elite', gearTier: reportTier, plus: 3, attacker: boss, isBoss: true });
+    cps.push({ label: 'Prev-tier full power vs current mobs', gearTier: reportTier - 1, attacker: curMobs, isBoss: false });
+  if (curMobs) cps.push({ label: 'Current full power vs current mobs', gearTier: reportTier, attacker: curMobs, isBoss: false });
+  if (boss) cps.push({ label: 'Current full power vs boss/elite', gearTier: reportTier, attacker: boss, isBoss: true });
   if (nextMobs && nextSrc.sourceTier !== curTier)
-    cps.push({ label: 'Current +3 vs next-tier mobs', gearTier: reportTier, plus: 3, attacker: nextMobs, isBoss: false });
+    cps.push({ label: 'Current full power vs next-tier mobs', gearTier: reportTier, attacker: nextMobs, isBoss: false });
   return cps;
 }
 
@@ -1127,7 +1115,7 @@ interface CheckpointData { cp: Checkpoint; rows: ReportRow[]; best: ReportRow[] 
 function computeCheckpoints(reportTier: number): CheckpointData[] {
   const combos = comparisonCombos(reportTier);
   return checkpointsForTier(reportTier).map((cp) => {
-    const rows = buildRowsWithCombos(reportTier, cp.gearTier, cp.plus, cp.attacker, combos);
+    const rows = buildRowsWithCombos(reportTier, cp.gearTier, cp.attacker, combos);
     return { cp, rows, best: optimalRowsByBuild(rows) };
   });
 }
@@ -1143,7 +1131,7 @@ function progressionView(checkpoints: CheckpointData[]): DataView {
       const minTtl = Math.min(...best.map((r) => r.ttlSec));
       const safe = best.filter((r) => routeStatus(r, cp.isBoss) === 'Safe').length;
       const blocked = best.filter((r) => routeStatus(r, cp.isBoss) === 'Blocked').length;
-      return [cp.label, `T${cp.gearTier} +${cp.plus}`, attackerSummary(cp.attacker),
+      return [cp.label, `T${cp.gearTier}`, attackerSummary(cp.attacker),
         asNumber(avgEhp), asNumber(avgNet), ttl(minTtl), `${asNumber((safe / n) * 100)}%`, blocked];
     }),
   };
@@ -1168,11 +1156,11 @@ function biomeRouteView(reportTier: number): DataView {
   const biomes = [...BIOME_DATABASE.values()].filter((b) => reportMonstersForBiome(b, curTier).length > 0);
   return {
     title: 'Biome Route',
-    note: `Player at current +3 gear, spec-agnostic best loadout, vs each biome's tier-${curTier} pool.`,
+    note: `Player at current full power gear, spec-agnostic best loadout, vs each biome's tier-${curTier} pool.`,
     headers: ['Biome', 'Attacker', 'Best loadout', 'eHP', 'In DPS', 'Recov/s', 'Net/s', 'TTL', 'Spike %HP', 'Status'],
     rows: biomes.map((biome) => {
       const attacker = averageAttacker(reportMonstersForBiome(biome, curTier), biome.name, biome.name)!;
-      const rows = buildRowsWithCombos(reportTier, reportTier, 3, attacker, combos);
+      const rows = buildRowsWithCombos(reportTier, reportTier, attacker, combos);
       const best = rows.reduce((a, b) => (b.survivalScore > a.survivalScore ? b : a));
       const status = routeStatus(best, false);
       return [biome.name, attackerSummary(attacker), `${best.buildKey} · ${best.armorName}/${best.recoveryName}`,
@@ -1203,7 +1191,7 @@ function comparisonProfiles(reportTier: number): ComparisonProfile[] {
 /** Mean survivability of one item across class builds (other slot fixed), per profile. */
 function itemAgainstProfiles(
   reportTier: number, item: ItemDefinition, slot: 'armor' | 'recovery',
-  plus: number, combos: BuildCombo[], profiles: ComparisonProfile[], fixedOther: ItemDefinition | null,
+  combos: BuildCombo[], profiles: ComparisonProfile[], fixedOther: ItemDefinition | null,
 ): Array<{ label: string; ehp: number; net: number; rec: number; surv: number; ttl: number }> {
   return profiles.map((prof) => {
     let ehp = 0, net = 0, rec = 0, surv = 0, n = 0; const ttls: number[] = [];
@@ -1211,7 +1199,7 @@ function itemAgainstProfiles(
       const armor = slot === 'armor' ? item : fixedOther;
       const recovery = slot === 'recovery' ? item : fixedOther;
       if (!armor) continue;
-      const stats = makeStatsTarget(combo, armor, recovery, plus, reportTier - 1);
+      const stats = makeStatsTarget(combo, armor, recovery, reportTier - 1);
       recalculatePlayerStats(stats);
       const s = evaluateSurvivability(stats, prof.attacker);
       ehp += Number.isFinite(s.ehp) ? s.ehp : 0; net += s.netHpPerSec; rec += s.recoveryDps;
@@ -1227,10 +1215,9 @@ function bestWorstLabel(per: Array<{ label: string; surv: number }>): { best: st
   return { best: sorted[0]?.label ?? '-', worst: sorted[sorted.length - 1]?.label ?? '-' };
 }
 
-function itemStatLine(item: ItemDefinition, plus: number): { maxHp: number; plating: number; dr: number; evasion: number; recovery: number; special: string } {
-  const clamped = Math.min(plus, getMaxUpgrade(item));
-  const stats = mergedNumberMaps(item.statModifiers, upgradeStatBonusTotal(item, clamped));
-  const fx = mergedNumberMaps(item.mechanicEffects, upgradeMechanicEffectsTotal(item, clamped));
+function itemStatLine(item: ItemDefinition): { maxHp: number; plating: number; dr: number; evasion: number; recovery: number; special: string } {
+  const stats = item.statModifiers ?? {};
+  const fx = item.mechanicEffects ?? {};
   return { maxHp: stats.maxHp ?? 0, plating: stats.plating ?? 0, dr: stats.damageReduction ?? 0, evasion: stats.evasion ?? 0, recovery: stats.recovery ?? 0, special: mapSummary(fx, 6) };
 }
 
@@ -1239,19 +1226,19 @@ function armorComparisonView(reportTier: number): DataView {
   const profiles = comparisonProfiles(reportTier);
   const armors = itemsForSlotTier('armor', reportTier);
   const rows: Array<Array<string | number>> = [];
-  for (const armor of armors) for (const plus of [0, ITEM_UPGRADE_LEVEL]) {
-    const per = itemAgainstProfiles(reportTier, armor, 'armor', plus, combos, profiles, null);
+  for (const armor of armors) {
+    const per = itemAgainstProfiles(reportTier, armor, 'armor', combos, profiles, null);
     const avg = per.find((p) => p.label === 'avg mob') ?? per[0];
     const { best, worst } = bestWorstLabel(per);
-    const stat = itemStatLine(armor, plus);
-    rows.push([armor.name, `+${Math.min(plus, getMaxUpgrade(armor))}`, asNumber(stat.maxHp), asNumber(stat.plating),
+    const stat = itemStatLine(armor);
+    rows.push([armor.name, asNumber(stat.maxHp), asNumber(stat.plating),
       `${asNumber(stat.dr * 100)}%`, asNumber(stat.evasion), stat.special,
       asNumber(avg.ehp), ttl(avg.ttl), asNumber(avg.net), best, worst]);
   }
   return {
     title: 'Armor Comparison',
     note: 'No charm equipped; eHP/TTL/net are vs the avg-mob profile, averaged over spec-agnostic class builds. Best/worst = profile handled best/worst.',
-    headers: ['Armor', 'Plus', 'maxHP', 'Plating', 'DR', 'Evasion', 'Special', 'eHP', 'TTL', 'Net/s', 'Best matchup', 'Worst matchup'],
+    headers: ['Armor', 'maxHP', 'Plating', 'DR', 'Evasion', 'Special', 'eHP', 'TTL', 'Net/s', 'Best matchup', 'Worst matchup'],
     rows,
   };
 }
@@ -1263,24 +1250,24 @@ function charmComparisonView(reportTier: number): DataView {
   const refArmor = [...itemsForSlotTier('armor', reportTier)].sort((a, b) => (b.statModifiers.maxHp ?? 0) - (a.statModifiers.maxHp ?? 0))[0];
   if (!refArmor || charms.length === 0) return { title: 'Charm Comparison', headers: ['Charm'], rows: [], note: 'No charms or armor at this tier.' };
   // Baseline eHP (same ref armor, no charm) to express each charm's eHP contribution.
-  const baseEhp = itemAgainstProfiles(reportTier, refArmor, 'armor', ITEM_UPGRADE_LEVEL, combos, profiles, null)
+  const baseEhp = itemAgainstProfiles(reportTier, refArmor, 'armor', combos, profiles, null)
     .find((p) => p.label === 'avg mob')?.ehp ?? 0;
   const rows: Array<Array<string | number>> = [];
-  for (const charm of charms) for (const plus of [0, ITEM_UPGRADE_LEVEL]) {
-    const per = itemAgainstProfiles(reportTier, charm, 'recovery', plus, combos, profiles, refArmor);
+  for (const charm of charms) {
+    const per = itemAgainstProfiles(reportTier, charm, 'recovery', combos, profiles, refArmor);
     const avg = per.find((p) => p.label === 'avg mob') ?? per[0];
     const { best, worst } = bestWorstLabel(per);
-    const stat = itemStatLine(charm, plus);
+    const stat = itemStatLine(charm);
     // On-kill Recovery is not modeled (no kill cadence), so flag charms that
     // carry it rather than letting them read as dead weight.
     const undercounted = (stat.special.includes('recovery-on-kill') ? ' (on-kill Recovery undercounted)' : '');
-    rows.push([charm.name, `+${Math.min(plus, getMaxUpgrade(charm))}`, asNumber(stat.recovery), stat.special + undercounted,
+    rows.push([charm.name, asNumber(stat.recovery), stat.special + undercounted,
       asNumber(avg.rec), asNumber(avg.ehp - baseEhp), ttl(avg.ttl), best, worst]);
   }
   return {
     title: 'Charm Comparison',
-    note: `Reference armor ${refArmor.name} +3; metrics vs avg-mob profile averaged over class builds. eHP contribution = eHP with charm − without. Kill-burst needs a kill cadence to value fully.`,
-    headers: ['Charm', 'Plus', 'recovery', 'Special', 'Recov/s', 'eHP contrib', 'TTL', 'Best matchup', 'Worst matchup'],
+    note: `Reference armor ${refArmor.name} full power; metrics vs avg-mob profile averaged over class builds. eHP contribution = eHP with charm − without. Kill-burst needs a kill cadence to value fully.`,
+    headers: ['Charm', 'recovery', 'Special', 'Recov/s', 'eHP contrib', 'TTL', 'Best matchup', 'Worst matchup'],
     rows,
   };
 }
@@ -1291,14 +1278,14 @@ function outlierView(reportTier: number, checkpoints: CheckpointData[]): DataVie
   const avgProfile = profiles.filter((p) => p.label === 'avg mob');
   const rows: Array<Array<string | number>> = [];
 
-  // Item survival vs the avg-mob profile, at +3.
+  // Item survival vs the avg-mob profile, at full power.
   const armors = itemsForSlotTier('armor', reportTier);
   const charms = itemsForSlotTier('recovery', reportTier);
   const refArmor = [...armors].sort((a, b) => (b.statModifiers.maxHp ?? 0) - (a.statModifiers.maxHp ?? 0))[0] ?? null;
-  const armorSurv = armors.map((a) => ({ name: a.name, surv: itemAgainstProfiles(reportTier, a, 'armor', ITEM_UPGRADE_LEVEL, combos, avgProfile, null)[0]?.surv ?? 0,
-    all: itemAgainstProfiles(reportTier, a, 'armor', ITEM_UPGRADE_LEVEL, combos, profiles, null) }));
-  const charmSurv = charms.map((c) => ({ name: c.name, surv: itemAgainstProfiles(reportTier, c, 'recovery', ITEM_UPGRADE_LEVEL, combos, profiles, refArmor)[0]?.surv ?? 0,
-    all: itemAgainstProfiles(reportTier, c, 'recovery', ITEM_UPGRADE_LEVEL, combos, profiles, refArmor) }));
+  const armorSurv = armors.map((a) => ({ name: a.name, surv: itemAgainstProfiles(reportTier, a, 'armor', combos, avgProfile, null)[0]?.surv ?? 0,
+    all: itemAgainstProfiles(reportTier, a, 'armor', combos, profiles, null) }));
+  const charmSurv = charms.map((c) => ({ name: c.name, surv: itemAgainstProfiles(reportTier, c, 'recovery', combos, profiles, refArmor)[0]?.surv ?? 0,
+    all: itemAgainstProfiles(reportTier, c, 'recovery', combos, profiles, refArmor) }));
 
   const flagItems = (items: typeof armorSurv, kind: string) => {
     const mean = items.reduce((s, i) => s + i.surv, 0) / Math.max(1, items.length);
@@ -1313,11 +1300,11 @@ function outlierView(reportTier: number, checkpoints: CheckpointData[]): DataVie
   flagItems(armorSurv, 'armor');
   flagItems(charmSurv, 'charm');
 
-  // Loadouts that sustain average mobs too early (at +0 entry).
-  const entry = checkpoints.find((c) => c.cp.label.includes('+0'));
+  // Loadouts that sustain average mobs too early (at full power entry).
+  const entry = checkpoints.find((c) => c.cp.label === 'Current full power vs current mobs');
   if (entry) {
     const early = entry.best.filter((r) => !Number.isFinite(r.ttlSec)).length;
-    if (early > 0) rows.push(['sustains too early', `${early} build(s)`, `already immortal vs avg mobs on entry (+0) gear`]);
+    if (early > 0) rows.push(['sustains too early', `${early} build(s)`, `already immortal vs avg mobs on entry (full power) gear`]);
   }
   // Boss TTL below the risk threshold.
   const bossCp = checkpoints.find((c) => c.cp.isBoss);
@@ -1342,7 +1329,7 @@ function computeBossMatchups(reportTier: number): BossMatchup[] {
   const curTier = attackerMonsterSource(reportTier).sourceTier;
   const combos = comparisonCombos(reportTier);
   return bossAttackersForTier(curTier).map((boss) => {
-    const rows = buildRowsWithCombos(reportTier, reportTier, 3, boss, combos);
+    const rows = buildRowsWithCombos(reportTier, reportTier, boss, combos);
     const bestByClass = new Map<string, ReportRow>();
     for (const r of rows) {
       const cur = bestByClass.get(r.className);
@@ -1358,7 +1345,7 @@ function bossMatchupsByClassView(matchups: BossMatchup[]): DataView {
   const classes = [...new Set(matchups.flatMap((m) => [...m.bestByClass.keys()]))].sort();
   return {
     title: 'Boss Matchups By Class',
-    note: 'Best current +3 loadout for each class vs each boss; cell = TTL (⚠ = one-shot risk).',
+    note: 'Best current full power loadout for each class vs each boss; cell = TTL (⚠ = one-shot risk).',
     headers: ['Class', ...matchups.map((m) => m.boss.source)],
     rows: classes.map((cls) => [cls, ...matchups.map((m) => {
       const r = m.bestByClass.get(cls);
@@ -1370,7 +1357,7 @@ function bossMatchupsByClassView(matchups: BossMatchup[]): DataView {
 function bestGearPerBossView(matchups: BossMatchup[]): DataView {
   return {
     title: 'Best Gear Per Boss',
-    note: 'Single highest-survival loadout (any class) at current +3 vs each boss.',
+    note: 'Single highest-survival loadout (any class) at current full power vs each boss.',
     headers: ['Boss', 'Attacker', 'Best build', 'Armor', 'Charm', 'eHP', 'TTL', 'Net/s', 'Spike %HP', 'Status'],
     rows: matchups.map(({ boss, bestOverall: r }) => [
       boss.source, attackerSummary(boss), r.buildKey, r.armorName, r.recoveryName,
@@ -1385,10 +1372,10 @@ function armorMatrixView(reportTier: number): DataView {
   const armors = itemsForSlotTier('armor', reportTier);
   return {
     title: 'Armor Matrix By Attacker Profile',
-    note: 'Survival score (mitigation × pool incl. recovery) at +3, no charm, averaged over class builds.',
+    note: 'Survival score (mitigation × pool incl. recovery) at full power, no charm, averaged over class builds.',
     headers: ['Armor', ...profiles.map((p) => p.label)],
     rows: armors.map((a) => {
-      const per = itemAgainstProfiles(reportTier, a, 'armor', ITEM_UPGRADE_LEVEL, combos, profiles, null);
+      const per = itemAgainstProfiles(reportTier, a, 'armor', combos, profiles, null);
       return [a.name, ...per.map((p) => asNumber(p.surv))];
     }),
   };
@@ -1402,10 +1389,10 @@ function charmMatrixView(reportTier: number): DataView {
   if (!refArmor || charms.length === 0) return { title: 'Charm Matrix By Attacker Profile', headers: ['Charm'], rows: [], note: 'No charms or armor at this tier.' };
   return {
     title: 'Charm Matrix By Attacker Profile',
-    note: `Survival score at +3 with reference armor ${refArmor.name}, averaged over class builds.`,
+    note: `Survival score at full power with reference armor ${refArmor.name}, averaged over class builds.`,
     headers: ['Charm', ...profiles.map((p) => p.label)],
     rows: charms.map((c) => {
-      const per = itemAgainstProfiles(reportTier, c, 'recovery', ITEM_UPGRADE_LEVEL, combos, profiles, refArmor);
+      const per = itemAgainstProfiles(reportTier, c, 'recovery', combos, profiles, refArmor);
       return [c.name, ...per.map((p) => asNumber(p.surv))];
     }),
   };
@@ -1434,7 +1421,7 @@ function renderTierSectionV2(reportTier: number): string {
       ${renderHtmlView(charmComparisonView(reportTier))}
       ${renderHtmlView(charmMatrixView(reportTier))}
       ${renderHtmlView(outlierView(reportTier, checkpoints))}
-      <details><summary>Full samples (current +3 vs current mobs, all specs)</summary>${renderAllSamplesTable(fullRows, reportTier)}</details>
+      <details><summary>Full samples (current full power vs current mobs, all specs)</summary>${renderAllSamplesTable(fullRows, reportTier)}</details>
     </section>
   `;
 }
@@ -1514,7 +1501,7 @@ function renderReport(sections: string[]): string {
   </p>
   <p class="meta">
     Unlock model: T1 class root, T2 frame, T3 close/far range, T4 path/spec. Each class build is crossed
-    with every armor × charm (recovery) combination at +${ITEM_UPGRADE_LEVEL}. Weapon held empty; mobility slot excluded
+    with every armor × charm (recovery) combination at full power. Weapon held empty; mobility slot excluded
     (movement only). Incoming pressure uses biome spawn pools one tier below the report tier, plus
     representative shape attackers and boss spikes. eHP = maxHP × (raw attacker DPS ÷ post-mitigation DPS),
     so it folds plating, DR, evasion, damage-cap and DoT-resistance into one comparable number. TTL and
@@ -1571,7 +1558,7 @@ function defensivePassiveSummary(passives: PassiveMap): string {
 function rowMarkdownSummary(row: ReportRow): Array<string | number> {
   return [
     row.buildKey,
-    `${row.armorName} +${row.plus}`,
+    `${row.armorName}`,
     row.recoveryName,
     asNumber(row.survivalScore),
     asNumber(row.ehp),
@@ -1585,19 +1572,9 @@ function rowMarkdownSummary(row: ReportRow): Array<string | number> {
 }
 
 function itemInputRows(slot: 'armor' | 'recovery', reportTier: number): Array<Array<string | number>> {
-  return itemsForSlotTier(slot, reportTier).flatMap((item) =>
-    [0, ITEM_UPGRADE_LEVEL].map((plus) => {
-      const clamped = Math.min(plus, getMaxUpgrade(item));
-      const stats = mergedNumberMaps(item.statModifiers, upgradeStatBonusTotal(item, clamped));
-      const effects = mergedNumberMaps(item.mechanicEffects, upgradeMechanicEffectsTotal(item, clamped));
-      return [
-        item.name,
-        `+${clamped}`,
-        mapSummary(stats, 8),
-        mapSummary(effects, 10),
-        item.upgrades ? `steps ${clamped}/${getMaxUpgrade(item)}` : `generic upgrade ${clamped}/${getMaxUpgrade(item)}`,
-      ];
-    }));
+  return itemsForSlotTier(slot, reportTier).map((item) => [
+    item.name, mapSummary(item.statModifiers ?? {}, 8), mapSummary(item.mechanicEffects ?? {}, 10),
+  ]);
 }
 
 function renderMdView(view: DataView): string {
@@ -1611,7 +1588,7 @@ ${view.note ? `_${md(view.note)}_
 function renderLlmPacketV2(reportTier: number): string {
   const checkpoints = computeCheckpoints(reportTier);
   const matchups = computeBossMatchups(reportTier);
-  const geared = checkpoints.find((c) => c.cp.label.includes('geared')) ?? checkpoints[checkpoints.length - 1];
+  const geared = checkpoints.find((c) => c.cp.label === 'Current full power vs current mobs') ?? checkpoints[checkpoints.length - 1];
   const ranked = (geared?.best ?? []).slice().sort((a, b) => b.survivalScore - a.survivalScore);
   const summary = (row: ReportRow): Array<string | number> => [
     row.buildKey, `${row.armorName}/${row.recoveryName}`, asNumber(row.survivalScore), asNumber(row.ehp),
@@ -1627,8 +1604,8 @@ Generated from \`tools/ehp-report.ts --llm-packet\`. Progression-focused compani
 
 - ${LOADOUT_MODEL_NOTE}
 
-- Class unlock tier ${reportTier - 1}. Views model progression moments, not just same-tier +3 gear.
-- Checkpoints: prev-tier +3 entering, current +0 entry, current +3 geared, current +3 vs boss, current +3 vs next-tier mobs. "Current mobs" = biome spawn pools one tier below report tier (the established convention); bosses come from boss pools.
+- Class unlock tier ${reportTier - 1}. Views model progression moments, not just same-tier full power gear.
+- Checkpoints: prev-tier full power entering, current full power, current full power vs boss, current full power vs next-tier mobs. "Current mobs" = biome spawn pools one tier below report tier (the established convention); bosses come from boss pools.
 - Comparison/route/checkpoint views are **spec-agnostic** (root+frame+range only) to keep the cross-product readable; the HTML report's collapsed dump keeps full per-spec rows.
 - eHP = maxHP × (raw ÷ post-mitigation DPS). Survival = (maxHP + recovery×${RECOVERY_WINDOW_SEC}s) × mitigation, so charms rank. TTL/"sustains" use averaged recovery.
 - Status: Safe / Risky / Blocked from TTL + one-shot risk (mob risk<${MOB_TTL_RISK_SEC}s/block<${MOB_TTL_BLOCK_SEC}s; boss risk<${BOSS_TTL_RISK_SEC}s/block<${BOSS_TTL_BLOCK_SEC}s).
@@ -1653,7 +1630,7 @@ ${renderMdView(bestGearPerBossView(matchups))}
 ${renderMdView(armorMatrixView(reportTier))}
 ${renderMdView(charmMatrixView(reportTier))}
 
-## Top / Bottom Loadouts (current +3 vs current mobs)
+## Top / Bottom Loadouts (current full power vs current mobs)
 
 ${mdTable(topBottomHeaders, ranked.slice(0, 10).map(summary))}
 

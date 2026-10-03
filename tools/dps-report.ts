@@ -10,9 +10,7 @@ import {
   emptyEquipment,
   estimatePlayerHitDamage,
   GAME_CONFIG,
-  getMaxUpgrade,
   ITEM_DATABASE,
-  MAX_UPGRADE,
   MONSTER_DATABASE,
   recalculatePlayerStats,
   resolveUpkeepConfig,
@@ -22,8 +20,6 @@ import {
   resolveSummonerProfile,
   SUMMONER_SPECIALIZATION_TUNING,
   SKILL_TREE,
-  upgradeMechanicEffectsTotal,
-  upgradeStatBonusTotal,
   upkeepOnHitBonus,
   weaponDotProfileForWeapon,
   weaponDotBasisFromResolvedDirectDamage,
@@ -53,10 +49,7 @@ const REPORT_PATH = path.join(
 );
 type RangeKind = 'close' | 'mid' | 'far';
 const RANGE_CHOICES = ['close', 'far'] as const satisfies readonly RangeKind[];
-// Fully-upgraded weapon. Tracks the shared cap so the report never drifts behind
-// it again — this was a literal `3` after MAX_UPGRADE moved 3 → 5, which
-// silently under-reported every weapon by two upgrade levels.
-const WEAPON_UPGRADE_LEVEL = MAX_UPGRADE;
+// Items are authored at full base power (design section 23).
 const REPORT_HORIZON_SEC = 60;
 const TUTORIAL_WEAPON_IDS = new Set(['primordial-club']);
 const TUTORIAL_MONSTER_IDS = new Set(['tiny-slime']);
@@ -118,7 +111,6 @@ interface ReportRow extends DpsBreakdown {
   buildKey: string;
   weaponId: string;
   weaponName: string;
-  plus: typeof WEAPON_UPGRADE_LEVEL;
   total: number;
   attack: number;
   onHitDamage: number;
@@ -438,7 +430,6 @@ function representativeMonstersForTier(reportTier: number): Array<{ role: string
 function makeStatsTarget(
   combo: BuildCombo,
   weapon: ItemDefinition,
-  plus: number,
   tier: number,
 ): PlayerStatsTarget {
   const equipment = emptyEquipment();
@@ -461,7 +452,6 @@ function makeStatsTarget(
     holdsInventory: {
       inventory: [weapon.id],
       equipment,
-      itemUpgrades: { [weapon.id]: Math.min(plus, getMaxUpgrade(weapon)) },
     },
     playerTier: tier,
   };
@@ -1297,8 +1287,8 @@ function buildRowsForTier(reportTier: number, comboOptions: BuildComboOptions = 
 
   for (const combo of combos) {
     for (const weapon of weapons) {
-      const plus = WEAPON_UPGRADE_LEVEL;
-        const stats = makeStatsTarget(combo, weapon, plus, classTier);
+
+        const stats = makeStatsTarget(combo, weapon, classTier);
         recalculatePlayerStats(stats);
         const estimate = estimateClassDamage(stats, target, weapon);
         const total = estimate.direct + estimate.classMechanic + estimate.dot + estimate.weaponProc;
@@ -1313,7 +1303,7 @@ function buildRowsForTier(reportTier: number, comboOptions: BuildComboOptions = 
           buildKey,
           weaponId: weapon.id,
           weaponName: weapon.name,
-          plus,
+
           total,
           ...estimate,
           attack: stats.dealsDamage.attack,
@@ -1403,7 +1393,7 @@ function renderClassAverageTable(rows: ReportRow[]): string {
 }
 
 function renderWeaponPerformanceTable(rows: ReportRow[]): string {
-  const weaponAverages = averageBy(rows, (row) => `${row.weaponName} +${row.plus}`)
+  const weaponAverages = averageBy(rows, (row) => `${row.weaponName}`)
     .sort((a, b) => b.avg - a.avg);
   const avg = weaponAverages.reduce((sum, item) => sum + item.avg, 0) / Math.max(1, weaponAverages.length);
   return `<table><thead><tr><th>Weapon</th><th>Avg DPS</th><th>Samples</th></tr></thead><tbody>${
@@ -1425,7 +1415,7 @@ function renderOutlierTable(rows: ReportRow[]): string {
         <td class="dps-outlier ${tone}">${asNumber(row.total)}</td>
         <td>${classBadge(row.classId, row.className)}</td>
         <td>${html(row.buildKey)}</td>
-        <td>${html(row.weaponName)} +${row.plus}</td>
+        <td>${html(row.weaponName)}</td>
       </tr>`;
     }).join('')
   }</tbody></table>`;
@@ -1452,7 +1442,7 @@ function renderOptimalWeaponTable(rows: ReportRow[], reportTier: number): string
   return `<table><thead><tr>${buildDetailHeaders(reportTier)}<th>Best Weapon</th><th>DPS</th><th>Direct</th><th>Class</th><th>DoT</th><th>Weapon/proc</th></tr></thead><tbody>${
     bestRows.map((row) => `<tr>
       ${buildDetailCells(row, reportTier)}
-      <td>${html(row.weaponName)} +${row.plus}</td>
+      <td>${html(row.weaponName)}</td>
       <td>${asNumber(row.total)}</td>
       <td>${asNumber(row.direct)}</td>
       <td>${asNumber(row.classMechanic)}</td>
@@ -1466,7 +1456,7 @@ function estimateRowAgainstMonster(row: ReportRow, monster: MonsterDefinition): 
   const weapon = ITEM_DATABASE.get(row.weaponId);
   if (!weapon) return row;
   const classTier = row.tier - 1;
-  const stats = makeStatsTarget(row.combo, weapon, row.plus, classTier);
+  const stats = makeStatsTarget(row.combo, weapon, classTier);
   recalculatePlayerStats(stats);
   const estimate = estimateClassDamage(stats, targetForMonster(monster), weapon);
   return {
@@ -1498,7 +1488,7 @@ function renderTtkExamples(reportTier: number, optimalRows: ReportRow[]): string
               <td>${html(monster.name)}</td>
               <td>${html(monsterDefenseLabel(monster))}</td>
               <td>${html(row.buildKey)}</td>
-              <td>${html(row.weaponName)} +${row.plus}</td>
+              <td>${html(row.weaponName)}</td>
               <td>${asNumber(estimated.total)}</td>
               <td>${asNumber(ttk)}s</td>
             </tr>`;
@@ -1543,7 +1533,7 @@ function renderAllSamplesTable(rows: ReportRow[], reportTier: number): string {
             <td class="${tone ? `dps-outlier ${tone}` : ''}">${asNumber(row.total)}</td>
             <td class="flag ${html(row.flag)}">${html(row.flag)}</td>
             ${buildDetailCells(row, reportTier)}
-            <td>${html(row.weaponName)} +${row.plus}</td>
+            <td>${html(row.weaponName)}</td>
             <td>${asNumber(row.direct)}</td>
             <td>${asNumber(row.classMechanic)}</td>
             <td>${asNumber(row.dot)}</td>
@@ -1660,7 +1650,7 @@ function mergedNumberMaps(...maps: Array<Record<string, number> | undefined>): R
 function statsForRow(row: ReportRow): PlayerStatsTarget {
   const weapon = ITEM_DATABASE.get(row.weaponId);
   if (!weapon) throw new Error(`Missing weapon: ${row.weaponId}`);
-  const stats = makeStatsTarget(row.combo, weapon, row.plus, row.tier - 1);
+  const stats = makeStatsTarget(row.combo, weapon, row.tier - 1);
   recalculatePlayerStats(stats);
   return stats;
 }
@@ -1751,7 +1741,7 @@ function formulaLabel(row: ReportRow): string {
 function rowBuildSummary(row: ReportRow): Array<string | number> {
   return [
     row.buildKey,
-    `${row.weaponName} +${row.plus}`,
+    `${row.weaponName}`,
     asNumber(row.total),
     asNumber(row.direct),
     asNumber(row.classMechanic),
@@ -1788,7 +1778,7 @@ function averageWeaponDpsAgainstTarget(reportTier: number, weapon: ItemDefinitio
   let total = 0;
   let count = 0;
   for (const combo of combos) {
-    const stats = makeStatsTarget(combo, weapon, WEAPON_UPGRADE_LEVEL, classTier);
+    const stats = makeStatsTarget(combo, weapon, classTier);
     recalculatePlayerStats(stats);
     const estimate = estimateClassDamage(stats, target, weapon);
     total += estimate.direct + estimate.classMechanic + estimate.dot + estimate.weaponProc;
@@ -1800,7 +1790,7 @@ function averageWeaponDpsAgainstTarget(reportTier: number, weapon: ItemDefinitio
 function weaponTargetShapeRows(reportTier: number): Array<Array<string | number>> {
   const shapes = targetShapeChecks(reportTier);
   return weaponsForTier(reportTier).map((weapon) => [
-    `${weapon.name} +${WEAPON_UPGRADE_LEVEL}`,
+    `${weapon.name} full power`,
     ...shapes.map(({ target }) => asNumber(averageWeaponDpsAgainstTarget(reportTier, weapon, target))),
     shapes.map(({ label, source }) => `${label}: ${source}`).join('; '),
   ]);
@@ -1960,7 +1950,7 @@ function groupedTopBottomSubclassRows(rows: ReportRow[]): Array<Array<string | n
           row.className,
           kind,
           row.buildKey,
-          `${row.weaponName} +${row.plus}`,
+          `${row.weaponName}`,
           asNumber(row.total),
           asNumber(row.direct),
           asNumber(row.classMechanic),
@@ -1983,7 +1973,7 @@ Generated from \`tools/dps-report.ts --t4-subclass-mechanics\`. This packet is m
 
 ## Scope And Assumptions
 
-- Report tier: T4; class unlock tier: 3; weapons: T4 at +${WEAPON_UPGRADE_LEVEL}.
+- Report tier: T4; class unlock tier: 3; weapons: T4 at full power.
 - Row set uses the HTML report's compact T4 rule: only the mid/balanced range node is included for each frame/path, avoiding close/far duplicate rows.
 - Target baseline: ${target.monsterCount} mobs from biome tier ${target.sourceTier}${target.usedFallback ? ' fallback' : ''}; HP ${asNumber(target.hp)}, plating ${asNumber(target.plating)}, DR ${asNumber(target.damageReduction * 100)}%.
 - Single-target theoretical steady-state only. Movement, sustain, enemy attacks, death, pathing, aggro, party effects, eHP, and real AoE target count are omitted.
@@ -2050,7 +2040,7 @@ function renderLlmPacket(reportTier: number, rows: ReportRow[]): string {
       const hitRate = reloadCycleRate(stats, stats.usesSkills.passives, attackRate(stats, stats.usesSkills.passives));
       return [
         row.buildKey,
-        `${row.weaponName} +${row.plus}`,
+        `${row.weaponName}`,
         asNumber(stats.dealsDamage.attack),
         asNumber(stats.dealsDamage.onHitDamage),
         asNumber(hitRate),
@@ -2065,25 +2055,14 @@ function renderLlmPacket(reportTier: number, rows: ReportRow[]): string {
       ];
     });
 
-  const weaponInputRows = weaponsForTier(reportTier).flatMap((weapon) =>
-    [0, WEAPON_UPGRADE_LEVEL].map((plus) => {
-      const clampedPlus = Math.min(plus, getMaxUpgrade(weapon));
-      const stats = mergedNumberMaps(weapon.statModifiers, upgradeStatBonusTotal(weapon, clampedPlus));
-      const effects = mergedNumberMaps(weapon.mechanicEffects, upgradeMechanicEffectsTotal(weapon, clampedPlus));
-      const profile = weaponDotProfileForWeapon(weapon.id);
-      const formulas = [
-        weapon.attacksPerSecond ? `${asNumber(weapon.attacksPerSecond)} APS base` : '',
-        profile ? `${profile.effectId} DoT reservoir ${asNumber(profile.convPct * 100)}% conversion x${asNumber(profile.dotMultiplier)}` : '',
-      ].filter(Boolean).join('; ') || '-';
-      return [
-        weapon.name,
-        `+${clampedPlus}`,
-        mapSummary(stats, 8),
-        mapSummary(effects, 8),
-        formulas,
-        weapon.upgrades ? `explicit steps ${clampedPlus}/${getMaxUpgrade(weapon)}` : `generic fallback upgrade ${clampedPlus}/${getMaxUpgrade(weapon)}`,
-      ];
-    }));
+  const weaponInputRows = weaponsForTier(reportTier).map((weapon) => {
+    const profile = weaponDotProfileForWeapon(weapon.id);
+    const formulas = [
+      weapon.attacksPerSecond ? `${asNumber(weapon.attacksPerSecond)} APS base` : '',
+      profile ? `${profile.effectId} DoT reservoir ${asNumber(profile.convPct * 100)}% conversion x${asNumber(profile.dotMultiplier)}` : '',
+    ].filter(Boolean).join('; ') || '-';
+    return [weapon.name, mapSummary(weapon.statModifiers ?? {}, 8), mapSummary(weapon.mechanicEffects ?? {}, 8), formulas];
+  });
 
   const classAverages = averageBy(rows, (row) => row.className).sort((a, b) => b.avg - a.avg);
   const weaponAverages = averageBy(rows, (row) => row.weaponName).sort((a, b) => b.avg - a.avg);
@@ -2100,11 +2079,11 @@ Generated from \`tools/dps-report.ts\`. This packet is Markdown only; it intenti
 
 - ${LOADOUT_MODEL_NOTE}
 - Report tier T${reportTier}; class unlock tier ${reportTier - 1}; weapons are tier ${reportTier}.
-- DPS conclusions use +${WEAPON_UPGRADE_LEVEL} weapons only. Weapon input context includes +0 and +${WEAPON_UPGRADE_LEVEL}.
+- Items use their authored full-power base stats; there is no upgrade ladder.
 - Target mobs come from biome spawn pools one tier below report tier; tutorial/test/interact/boss monsters are excluded.
 - When the shifted target tier contains only tutorial/test content, the packet falls back to the first real non-tutorial biome tier.
 - Single-target theoretical steady-state only: no movement, enemy attacks, deaths, sustain, AoE value, pathing, aggro, party effects, or eHP.
-- Outliers/top/bottom use each class combination's optimal +${WEAPON_UPGRADE_LEVEL} weapon. Class/weapon averages use all +${WEAPON_UPGRADE_LEVEL} weapon samples.
+- Outliers/top/bottom use each class combination's optimal full power weapon. Class/weapon averages use all full power weapon samples.
 
 ## 2. Target Monster Baseline
 
@@ -2138,10 +2117,10 @@ ${mdTable(
   classInputRows,
 )}
 
-## 4. Weapon Input Table (+0 and +${WEAPON_UPGRADE_LEVEL})
+## 4. Weapon Input Table (full power)
 
 ${mdTable(
-  ['Weapon', 'Plus', 'Stats', 'Effects', 'Formulas', 'Scaling notes'],
+  ['Weapon', 'Stats', 'Effects', 'Formulas'],
   weaponInputRows,
 )}
 
@@ -2189,7 +2168,7 @@ ${mdTable(
   outliers.map((row) => [
     row.flag,
     row.buildKey,
-    `${row.weaponName} +${row.plus}`,
+    `${row.weaponName}`,
     asNumber(row.total),
     asNumber(row.direct),
     asNumber(row.classMechanic),
@@ -2346,7 +2325,7 @@ Generated from \`SKILL_TREE\`, shared stat rebuild rules, and the report's formu
 
 - Base stats reset from \`GAME_CONFIG\`, then equipped weapon APS sets base attack cooldown when present.
 - Skill stat effects apply additively. \`attackSpeedPct\` sources sum, then cooldown becomes \`round(cooldown / max(0.1, 1 + attackSpeedPct))\`, floored to 200 ms before reload-specific layers.
-- Equipment stats and item upgrade stats apply after skill stats. Mechanic effects merge into \`usesSkills.passives\`.
+- Equipment base stats apply after skill stats. Mechanic effects merge into \`usesSkills.passives\`.
 - Close range gets its authored range node plus class-specific close bonus from the stat pipeline: Squire +5 plating/+1 recovery, Apprentice +4/+2, Striker +3/+3, Slinger +2/+4, Spirit +1/+5.
 - \`shared.damage-mult\` matches the live pipeline (combat.ts): direct DPS and class-mechanic DPS are multiplied by \`1 + shared.damage-mult\` (applied before weapon-DoT conversion so the converted reservoir inherits it). Standalone class DoT is unaffected, mirroring the separate live DoT path.
 - Empowered multiplier formula: \`effective = (archetypeBase + archetypeAdd + shared.empowered-mult-add) * (1 + weapon.empowered-mult-bonus)\`, then \`ctx.damage = floor(ctx.damage * effective)\`.
@@ -2445,14 +2424,14 @@ function renderReport(sections: string[]): string {
   <h1>MMO Idle Theoretical DPS Report</h1>
   <p>
     External balance/debug report generated from shared item, skill, monster, stat, DoT,
-    empowered, upgrade, and weapon-family formulas. This is not an in-game panel and not
+    empowered and weapon-family formulas. This is not an in-game panel and not
     a combat simulator. It omits movement, enemies attacking back, deaths, sustain, AoE,
     pathing, aggro, and eHP.
   </p>
   <p class="meta"><strong>${LOADOUT_MODEL_NOTE}</strong></p>
   <p class="meta">
     Unlock model: T1 class root, T2 frame, T3 close/far range, T4 path/spec.
-    Weapons: each report tier's non-tutorial weapons at +${WEAPON_UPGRADE_LEVEL}. Targets use biome spawn pools one tier below the report tier,
+    Weapons: each report tier's non-tutorial weapons at full power. Targets use biome spawn pools one tier below the report tier,
     excluding tutorial/test monsters. Mechanics with runtime
     state are represented as deterministic steady-state estimates and are called out in row notes.
     ${OPTIONS.excludeConduit ? 'Conduit and its subclasses are excluded.' : 'Run with --exclude-conduit to omit Conduit and its subclasses.'}
