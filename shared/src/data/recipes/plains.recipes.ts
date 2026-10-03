@@ -63,19 +63,12 @@ export const plainsRecipeEntries = [
   ['plains-vest-t1', {
     id: 'plains-vest-t1', name: "Survivor's Robe",
     recipeGroup: 'plains', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { yellow: 20 }, stats: {"maxHp": 27, "plating": 2, "damageReduction": 0.04}, tier: 1,
+    cost: { yellow: 20 }, stats: { "maxHp": 41, "plating": 3, "damageReduction": 0.04 }, tier: 1,
     icon: 'items/armor/survivors-robe.png',
     description: "Flat plating specializes in frequent small direct hits.",
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (470).
     // +5 catalyst inherited from plains-vest-t2's own family-tag ("plating
     // answers frequent light hits → Alacrity").
-    upgrades: [
-      {"cost": {"yellow": 20}, "requiredBiomeLevel": 3, "stats": {"maxHp": 3, "plating": 0}},
-      {"cost": {"yellow": 45}, "requiredBiomeLevel": 4, "stats": {"maxHp": 2, "plating": 0}},
-      {"cost": {"yellow": 70}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "plating": 1}},
-      {"cost": {"yellow": 115}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "plating": 0}},
-      {"cost": {"yellow": 150}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "plating": 0}}
-    ],
 
 mechanicEffects: {},
 }],
@@ -87,20 +80,13 @@ mechanicEffects: {},
   ['plains-charm-t1', {
     id: 'plains-charm-t1', name: 'Plains Stone',
     recipeGroup: 'plains', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { yellow: 10 }, stats: { recovery: 2.9 },
-    mechanicEffects: { 'defense.recovery-on-kill-pct': 0.20, 'defense.recovery-on-kill-ms': 4000 },
+    cost: { yellow: 10 }, stats: { "recovery": 4.5 },
+    mechanicEffects: { "defense.recovery-on-kill-pct": 0.3, "defense.recovery-on-kill-ms": 4000 },
     tier: 1,
     icon: 'items/charms/plains-stone.png',
     description: 'A sun-warmed stone from the heart of the grasslands, humming with quiet vigor.',
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (190).
     // No catalyst — charms stay clean at T1.
-    upgrades: [
-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 10 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 0.8 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 20 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 30 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 0.8 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 45 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 55 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // BOOTS — kill momentum. The movement half of Plains' chain-farming identity;
@@ -108,18 +94,11 @@ mechanicEffects: {},
   ['plains-boots-t1', {
     id: 'plains-boots-t1', name: 'Fleet Boots',
     recipeGroup: 'plains', requiredBiomeLevel: 4, slot: 'mobility',
-    cost: { yellow: 10 }, stats: { speed: 18 }, tier: 1,
-    mechanicEffects: { 'mobility.kill-speed-pct': 0.25, 'mobility.kill-speed-ms': 3000 },
+    cost: { yellow: 10 }, stats: { "speed": 23 }, tier: 1,
+    mechanicEffects: { "mobility.kill-speed-pct": 0.4, "mobility.kill-speed-ms": 3000 },
     icon: 'items/boots/fleet-boots.png',
     description: 'Open sandals built for crossing flat ground at a dead run.',
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (160).
-    upgrades: [
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 15 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 25 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 40 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 45 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // ── T2 ──
@@ -153,17 +132,10 @@ mechanicEffects: {},
     id: 'plains-vest-t2', name: 'Enduring Robe',
     recipeGroup: 'plains', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'plains-vest-t1',
-    cost: { yellow: 60 }, stats: {"maxHp": 50, "plating": 5, "damageReduction": 0.08}, tier: 2, // family-tag: plating answers frequent light hits → Alacrity
+    cost: { yellow: 60 }, stats: { "maxHp": 75, "plating": 8, "damageReduction": 0.08 }, tier: 2, // family-tag: plating answers frequent light hits → Alacrity
     reconstructCost: { yellow: 210 },
     icon: 'items/armor/enduring-robe.png',
     description: "Flat plating specializes in frequent small direct hits.",
-    upgrades: [
-      {"cost": {"yellow": 36}, "requiredBiomeLevel": 9, "stats": {"maxHp": 5, "plating": 1}},
-      {"cost": {"yellow": 90}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "plating": 0}},
-      {"cost": {"yellow": 144}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "plating": 1}},
-      {"cost": {"yellow": 234}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "plating": 0}},
-      {"cost": {"yellow": 396}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "plating": 1}}
-    ],
 
 mechanicEffects: {},
 }],
@@ -174,19 +146,12 @@ mechanicEffects: {},
     id: 'plains-charm-t2', name: 'Stalwart Heart',
     recipeGroup: 'plains', requiredBiomeLevel: 9, slot: 'recovery',
     evolvesFrom: 'plains-charm-t1',
-    cost: { yellow: 50 }, stats: { recovery: 6.4 }, // family-tag: on-kill Recovery answers swarm attrition → Alacrity
+    cost: { yellow: 50 }, stats: { "recovery": 8.8 }, // family-tag: on-kill Recovery answers swarm attrition → Alacrity
     reconstructCost: { yellow: 175 },
-    mechanicEffects: { 'defense.recovery-on-kill-pct': 0.32, 'defense.recovery-on-kill-ms': 4000 },
+    mechanicEffects: { "defense.recovery-on-kill-pct": 0.42, "defense.recovery-on-kill-ms": 4000 },
     tier: 2,
     icon: 'items/charms/stalwart-heart.png',
     description: 'A greater plains-stone, its warmth swelling with every foe laid low.',
-    upgrades: [
-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 18 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 1.2 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 45 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 72 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 1.2 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 117 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 198 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // T2 economy pass (2026-08-29): now an EVOLUTION of plains-boots-t1 at +5.
@@ -194,18 +159,11 @@ mechanicEffects: {},
     id: 'plains-boots-t2', name: 'Gale Boots',
     recipeGroup: 'plains', requiredBiomeLevel: 10, slot: 'mobility',
     evolvesFrom: 'plains-boots-t1',
-    cost: { yellow: 40 }, stats: { speed: 32 }, tier: 2, // family-tag: plains speed → Alacrity
+    cost: { yellow: 40 }, stats: { "speed": 41 }, tier: 2, // family-tag: plains speed → Alacrity
     reconstructCost: { yellow: 140 },
-    mechanicEffects: { 'mobility.kill-speed-pct': 0.45, 'mobility.kill-speed-ms': 3000 },
+    mechanicEffects: { "mobility.kill-speed-pct": 0.6, "mobility.kill-speed-ms": 3000 },
     icon: 'items/boots/gale-boots.png',
     description: 'Wind-cured leather that seems to lean into every stride.',
-    upgrades: [
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 12 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 30 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 48 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 78 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 132 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // ── Cores ───────────────────────────────────────────────────────────────────
