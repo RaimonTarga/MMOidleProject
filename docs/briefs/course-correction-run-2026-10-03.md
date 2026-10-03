@@ -10,9 +10,9 @@ The two approved mockups are the UI contract:
 - the weapon page, readout and map: https://claude.ai/artifact/NM5PeB1tEpXJGhPU3qLnd7
 - the lean × verb review sheet (sentences, halves, shard names): https://claude.ai/artifact/MaMEHdKZHZiYPiiB3NJC34
 
-**Conductor: Opus**, in the worktree `../mmo-lineages` (NOT the main repo, which the designer's
-Astra session is using): `git checkout -b feat/course-correction develop` there, develop tip ≥ a052e07e. Subagents in the prepared worktrees `../mmo-lin-w1a`, `w1b`,
-`w1c`, `w1d2`, `w2a`, `w2b`, `w2c` (each: `git checkout -b <task-branch> feat/course-correction`
+**Conductor: Opus**, in the worktree `../mmo-lin-w2c` on `feat/course-correction` (off develop ≥
+a052e07e). Subagents use `../mmo-lin-w1a`, `w1b`, `w1c`, `w1d2`, `w2a` only. Subagents in the prepared worktrees `../mmo-lin-w1a`, `w1b`,
+`w1c`, `w1d2`, `w2a` (w2b is the icons session's, w2c is the conductor's) (each: `git checkout -b <task-branch> feat/course-correction`
 AFTER `git status` shows no foreign files; they are junctioned to `../mmo-lineages`'s pnpm
 store — never `pnpm install` anywhere; never push; strip CR only on files you touch; never
 kill processes by image name; one dev server per bot arm). Merge order is given per wave.
@@ -21,8 +21,8 @@ into `feat/course-correction` (the review found a merge that skipped it).
 
 **Models.** Design, UI, combat FX, bot and bench work: **Opus**. Two tasks are marked for
 the designer's OpenAI budget because they are mechanical and test-pinned, and the designer
-runs those sessions himself: **W1-E (icons, codex pipeline, in `../mmo-lin-w2c` on `feat/cc-icons`)** and **W1-D (ladder fold,
-Astra, in the main repo on `feat/cc-fold`)**. Every session gets its own worktree; nobody
+runs those sessions himself: **W1-E (icons, codex pipeline, in `../mmo-lin-w2b` on `feat/cc-icons`)** and **W1-D (ladder fold,
+Astra, in the main repo on `feat/cc-fold` — DONE 2026-10-03, 86 items, eight commits + fixture/test)**. Every session gets its own worktree; nobody
 switches branches in a worktree another session is using. If a marked task is not picked up by launch, Opus does it.
 
 ## Hard rules
