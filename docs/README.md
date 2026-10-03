@@ -64,7 +64,7 @@ because it is detailed.
 
 | System | Current-state record |
 | --- | --- |
-| Lineage trees (weapon + armor/charm/boots), keystones, ability nodes | [lineages-current-state.md](lineages-current-state.md) |
+| Lineage trees (the weapon tree live; armor/charm/boots parked), the T1 lean and verb, keystones, ability nodes, the weapon page and the rhythm readout | [lineages-current-state.md](lineages-current-state.md) |
 | Charms | [charms-current-state.md](charms-current-state.md) |
 | Cores | [cores-current-state.md](cores-current-state.md) |
 | Global Mastery | [global-mastery-current-state.md](global-mastery-current-state.md) |
@@ -123,7 +123,9 @@ behavior.
 - [Release v0.6 record](briefs/release-v0.6-2026-09-28.md) — what shipped in v0.6, merged branches, save policy, bandwidth changes, validation and the deploy check.
 - [T4 power curve review](archive/briefs/t4-power-curve-review-2026-09-27.md) — ARCHIVED 2026-09-27: done; report in `reports/t4-power-curve-2026-09-27/REVIEW.md`, live state in [tier-balance-current-state.md](tier-balance-current-state.md) §6–7.
 - [Boss lineage art list](briefs/boss-lineage-art-list-2026-09-27.md) — icons and ground textures the boss lineages borrow art for, with target paths and wiring.
-- [Course-correction icon candidates](briefs/cc-icons-report-2026-10-03.md) — W1-E: 26 candidates pending designer gallery review, with source/runtime targets and the acceptance-to-pack handoff.
+- [Course-correction run report](briefs/course-correction-report-2026-10-03.md) — COMPLETE 2026-10-03, merged to develop: design §24 implemented (the T1 lean and verb compose into one generated sentence, one shard per node, non-weapon trees parked, the ladder and evolve retired on every slot, the weapon page, the rhythm readout, payload FX, the guide's two purchases). Carries every number picked, the lean × verb composition matrix (13 of 45 pairs under the viability floor, all for verbs that do not fire at T1), the boss-lab delta, the 1x sweep ledger and the designer's open calls. Brief: [course-correction-run-2026-10-03.md](briefs/course-correction-run-2026-10-03.md). Evidence: `reports/course-correction/`.
+- [Course-correction icons](briefs/cc-icons-report-2026-10-03.md) — W1-E: the 26 icons and nine essence-style shard replacements, designer-approved and packed; source/runtime targets and the gallery handoff.
+- [Non-weapon ladder fold report](briefs/cc-fold-report-2026-10-03.md) — W1-D evidence: all 86 original +5 totals, per-field before/after values, and validation.
 - [T1 boss pass report](briefs/t1-boss-pass-report-2026-10-02.md) — COMPLETE 2026-10-02: three T1 boss rows moved (Behemoth attack, Greatbear HP+attack, Toadeater HP) so every class beats every T1 boss on the guide's kit; second seal stays Mountain. Two findings outlive the numbers: a solo T1 boss fight was deterministic (24 of 30 cells), and the Behemoth/Broodmother are a 10x melee/ranged split rather than a difficulty.
 - [Boss redesign implementation plan](boss-encounter-redesign-implementation-plan-2026-09-04.md)
   — the remaining cleanup/tuning handoff after the shipped phases.
@@ -180,8 +182,6 @@ Some design files intentionally describe targets rather than shipped behavior.
 Use the current-state table above and the source when they conflict.
 
 ## Historical material and archive lifecycle
-
-- [Non-weapon ladder fold report](briefs/cc-fold-report-2026-10-03.md) — W1-D evidence: all 86 original +5 totals, per-field before/after values, and validation.
 
 - [Archive guide](archive/README.md) explains how completed plans and
   handoffs are moved without losing provenance.

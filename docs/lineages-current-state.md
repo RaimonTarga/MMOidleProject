@@ -207,7 +207,10 @@ the packets at resolve time:
 - **A proxy never recurses** (hard rule 3): `mechanic-proxy` applies the archetype's
   resolved empowered multiplier (`resolveEffectiveMultiplier`, shared with the real path)
   and sets `mechanicConsumed` plus `mechanicProxy`. It never consumes the class's charge and
-  never emits `mechanic-fired` (`emitMechanicFired` refuses a proxied exchange), and every
+  never emits `mechanic-fired` (`emitMechanicFired` refuses a proxied exchange); it does
+  nothing on an exchange whose real mechanic already fired, whether it spent a charge
+  (`mechanicConsumed`) or only announced (`mechanicAlreadyFired`: the DoT stack fill, the
+  Conduit formation); and every
   frame loop returns early on `mechanicProxy`. Range mechanics and Shockwave do treat it as
   the mechanic.
 - **One multiplier per hit:** big-hit and the loaded hit fold into
@@ -520,9 +523,11 @@ active card per owned row plus the worn form's capstone.
   counters on a small networked slice, `ShowsRhythm` (present only while the player has a
   triggered card; written on change, never per tick; detached on death). The lineage
   window tiles left the buff bar; their statuses remain for the tooltips.
-- **Icons:** the shard icons, buff tiles and payload glyphs are the designer's W1-E
-  session (candidates staged for review); until they land the page draws the existing
-  material glyphs and the readout has an empty `RHYTHM_PAYLOAD_GLYPHS` hook.
+- **Icons** (the designer's W1-E session, approved and packed): the nine shard crystals
+  are `items/materials/<shard>.png` in the item atlas, read by `shardIconSource`; the ten
+  lineage/frame buff tiles are concept-icon PNGs (their old aliases are gone); the seven
+  payload glyphs (`/assets/concept-icons/payloads/`) label the readout rings through
+  `RHYTHM_PAYLOAD_GLYPHS`.
 
 ## 14. Card telemetry — the first LIVE run (2026-10-01)
 
