@@ -225,7 +225,12 @@ for (const verb of rapier.lanes) {
 assert(STAT_UNIT.attackSpeedPct === 0.09, 'the Tempo lean is +9% attack speed (PROVISIONAL)');
 assert(statLine({ attackSpeedPct: 0.09 }) === '+9% attack speed.', `stat line: ${statLine({ attackSpeedPct: 0.09 })}`);
 assert(statLine({ attack: 3 }) === '+3 Attack.', `stat line: ${statLine({ attack: 3 })}`);
-assert(statLine({ dotPotencyPct: 0.1 }) === '+10% DoT potency.', `stat line: ${statLine({ dotPotencyPct: 0.1 })}`);
+// The Affliction lean seeds its condition for every class (design §24.9): its line
+// says the bleed, from the stat and the lean-condition table.
+assert(
+  statLine({ dotPotencyPct: 0.1 }) === '+10% DoT potency, and every hit bleeds for a tenth of its damage over 4 s.',
+  `stat line: ${statLine({ dotPotencyPct: 0.1 })}`,
+);
 assert(statLine({ speed: 11 }) === '+11 move speed.', `stat line: ${statLine({ speed: 11 })}`);
 
 // `composedSentence` and `cardSentence` read the active lean. Registered rapier

@@ -137,6 +137,9 @@ export const LINEAGE_SWITCH_DISCOUNT = 0.5;
  *    was 0.05; the lean puts all three percentage lanes at one number.)
  *  - `dotPotencyPct` 0.10 — the top of the band, because it adds into
  *    `dot.mechanic-mult` (base 1.15–1.25), so +0.10 there is +8–8.7% DoT damage.
+ *    Since design §24.9 the same number is also the share of every landed hit
+ *    added as a light bleed, for every class (`LEAN_CONDITION_NUMBERS`): the two
+ *    partition the DoT root's damage (its DoT, its hit) rather than stacking.
  *  - `attack` 3 — unchanged: ≈ +10% of a ~29-Attack T1 weapon.
  *  - `speed` 11 — 9% of the reference player's base move speed
  *    (`GAME_CONFIG.PLAYER_SPEED` 120 × 0.09 = 10.8 → 11). Note the tier scalar's
@@ -466,6 +469,50 @@ export const PACKET_HALF_NUMBERS: Partial<Record<PacketId, PacketHalfNumbers>> =
     payload: { magnitude: 1 / 3 },
     pure: { magnitude: 0.5 },
   },
+};
+
+/**
+ * The shape of a condition a LEAN seeds (design §24.9): what its stat does on
+ * every landed hit beyond the number itself.
+ */
+export interface LeanConditionNumbers {
+  /** How long one hit's condition holds, ms. Never tier-scaled (like every duration here). */
+  durationMs: number;
+  /**
+   * Control only: the slow also holds for the wielder's own swing interval plus
+   * this much, whichever is longer — a slow that lapses between two of your own
+   * swings holds nothing your next hit can find.
+   */
+  swingBridgeMs?: number;
+}
+
+/**
+ * The two leans that SEED their lane's condition (design §24.9: "a lane's lean is
+ * its POTENCY stat, and for the two conditional lanes that stat is the condition's
+ * source"). The lean's STAT is the magnitude — a stat row like any other, so it
+ * climbs with the tier through `STAT_UNIT` — and this table is the rest of the
+ * shape, which does not climb:
+ *
+ *   affliction  every landed hit adds `dotPotencyPct` × the hit (as it was before
+ *               any empowered multiplier) to a light lineage bleed over
+ *               `durationMs`; the DoT root's own DoT still reads the same stat
+ *               through `dot.mechanic-mult`.
+ *   control     every landed hit slows its target by `slowOnHit` for `durationMs`,
+ *               or for the wielder's swing interval + `swingBridgeMs` if that is
+ *               longer (max-wins through `applyMonsterSlow`).
+ *
+ * EVERY NUMBER IS PROVISIONAL, the designer's:
+ *   affliction 4000 ms   the heavy payload's own window ("a whole swing over 4 s"),
+ *                        so the light bleed reads as the same bleed, lighter.
+ *   control 1500 ms      the brief's "short weak slow".
+ *   bridge 500 ms        a T1 Heavy Hammer swings every 1.5–2.5 s by class, longer
+ *                        than 1.5 s, so a flat 1.5 s slow lapsed before the next
+ *                        swing and the Control moment could never find it; one
+ *                        swing plus half a second covers the 10 Hz tick rounding.
+ */
+export const LEAN_CONDITION_NUMBERS: Partial<Record<PacketId, LeanConditionNumbers>> = {
+  'affliction': { durationMs: 4_000 },
+  'control': { durationMs: 1_500, swingBridgeMs: 500 },
 };
 
 // ─── Unlock levels (design §4) ───────────────────────────────────────────────

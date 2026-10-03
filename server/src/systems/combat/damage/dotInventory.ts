@@ -40,7 +40,7 @@ import {
 } from "../../classes/archetypes/dot/t3/core/selectors";
 import { applyMonsterDamageTakenDebuffs } from "../../classes/shared/debuffs";
 import { dotElementForSource } from "./dotTickEvent";
-import { LINEAGE_BLEED_ID, LINEAGE_POISON_ID } from "./bleedIds";
+import { LEAN_BLEED_ID, LINEAGE_BLEED_ID, LINEAGE_POISON_ID } from "./bleedIds";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 
@@ -332,11 +332,14 @@ const WEAPON_RESERVOIR_FAMILY: DotFamily = {
  * Two shapes behind one family, told apart by `bleedMode`: a `hemorrhage` spends
  * one stack per tick and is permanent until spent, so its stack count IS its
  * remaining ticks; a `poison-stack` multiplies the tick by its stacks and ends
- * with its timer.
+ * with its timer. The Affliction lean's light bleed (design §24.9) is the first
+ * shape under its own id, so it afflicts — the Affliction moment finds it — and
+ * a re-dose, Contagion or Detonate counts it like any other bleed.
  */
 const LINEAGE_BLEED_FAMILY: DotFamily = {
   id: "lineage-bleed",
-  owns: (effect) => effect.id === LINEAGE_BLEED_ID || effect.id === LINEAGE_POISON_ID,
+  owns: (effect) =>
+    effect.id === LINEAGE_BLEED_ID || effect.id === LINEAGE_POISON_ID || effect.id === LEAN_BLEED_ID,
   describe({ world, monster, effect }) {
     if (effect.stacks <= 0) return null;
     const intensity = effect.data["bleedMode"] === 1;

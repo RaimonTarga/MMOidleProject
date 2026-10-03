@@ -19,6 +19,7 @@ import type { PacketMomentNumbers, PacketPayloadNumbers } from './magnitudes';
 import { packetHalves } from './packets';
 import { composeVerb } from './resolve';
 import type { LineageStatEffects, LineageStatKey, PacketId } from './types';
+import { LEAN_CONDITION_NUMBERS } from './magnitudes';
 
 // ─── Numbers into words ──────────────────────────────────────────────────────
 
@@ -193,11 +194,24 @@ const STAT_LINE_LABEL: Record<LineageStatKey, string> = {
   dotPotencyPct: 'DoT potency',
 };
 
+/**
+ * The leans whose stat also SEEDS a condition (design §24.9) read as what they
+ * do: "+10% DoT potency." told the five classes with no DoT nothing, and the bleed
+ * is the half of the stat they get. Numbers from the stat and from
+ * `LEAN_CONDITION_NUMBERS`, never typed here.
+ */
+const STAT_LINE_FORM: Partial<Record<LineageStatKey, (value: number) => string>> = {
+  dotPotencyPct: (value) => `+${pct(value)} DoT potency, and every hit bleeds for ${shareOf(value)} its damage`
+    + ` over ${seconds(LEAN_CONDITION_NUMBERS.affliction?.durationMs ?? 0)}.`,
+};
+
 /** A resolved stat row as one sentence: "+9% attack speed.", "+3 Attack.". */
 export function statLine(effects: LineageStatEffects | undefined): string | undefined {
   const entry = Object.entries(effects ?? {})[0] as [LineageStatKey, number] | undefined;
   if (!entry) return undefined;
   const [key, value] = entry;
+  const form = STAT_LINE_FORM[key];
+  if (form) return form(value);
   const amount = isFractionalStat(key) ? pct(value) : trimmed(value);
   return `+${amount} ${STAT_LINE_LABEL[key] ?? key}.`;
 }

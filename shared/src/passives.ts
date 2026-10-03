@@ -567,6 +567,11 @@ export const SHARED_KEYS = [
   'weapon.flurry-pct',
   // Flurry: maximum attack-speed stacks the buff can reach.
   'weapon.flurry-stacks',
+  // The Affliction lean's seeded condition (design §24.9): the share of every
+  // landed hit (as it was before any empowered multiplier) added to a light
+  // lineage bleed. Written by the lineage stat fold (`dotPotencyPct`), read by
+  // `server/src/systems/combat/leanConditions.ts`.
+  'shared.bleed-on-hit-pct',
 ] as const;
 
 export const SUMMONER_KEYS = [

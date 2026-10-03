@@ -274,7 +274,7 @@ function targetFor(
  * command) the basis is the player's Attack, which is what the magnitude table's
  * flat column is seeded against.
  */
-function hitBasis(player: PlayerEntity, ctx?: CombatContext): number {
+export function hitBasis(player: PlayerEntity, ctx?: CombatContext): number {
   if (!ctx) return Math.max(1, Math.round(player.dealsDamage.attack));
   const empowered = Number(ctx.metadata['empoweredMultiplier'] ?? 1);
   const base = empowered > 1 ? ctx.damage / empowered : ctx.damage;
