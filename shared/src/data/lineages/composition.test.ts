@@ -26,7 +26,7 @@
 import { bandComposes, cardSentence, composedSentence, resolveLineageCards } from '../../systems/lineages';
 import { LINEAGE_DATABASE, lineagesForSlot } from './index';
 import { PACKET_DEFINITIONS, packetHalves } from './packets';
-import { PACKET_HALF_NUMBERS, STAT_UNIT, payloadSize, verbTierScalar } from './magnitudes';
+import { LEAN_CONDITION_NUMBERS, PACKET_HALF_NUMBERS, STAT_UNIT, payloadSize, quickenMoment, verbTierScalar } from './magnitudes';
 import {
   composeVerb, isVerbCard, packetMoment, packetPayload, packetPurePair, resolveLineageCard,
 } from './resolve';
@@ -72,7 +72,7 @@ const REVIEW_SHEET: Record<string, { moment: string; payload: string; pure: stri
     pure: 'Every 6th hit strikes twice.',
   },
   affliction: {
-    moment: 'A hit on a target you have already afflicted (once every 5 s)',
+    moment: 'A hit on a target you have already afflicted (every 5 s at most)',
     payload: 'leaves a heavy poison or bleed, a whole swing over 4 s',
     pure: 'Hitting an afflicted target doubles its affliction.',
   },
@@ -82,23 +82,23 @@ const REVIEW_SHEET: Record<string, { moment: string; payload: string; pure: stri
     pure: 'Your first hit on each target is a lunge for double damage.',
   },
   empowered: {
-    moment: 'When your class mechanic fires',
+    moment: 'When your class mechanic fires (every 4 s at most)',
     payload: 'counts as your class mechanic firing',
     pure: 'Your mechanic hits half again as hard.',
   },
   control: {
-    moment: 'A hit on a slowed or rooted target (once every 5 s)',
+    moment: 'A hit on a slowed or rooted target (every 5 s at most)',
     payload: 'roots the target for 2 s',
     pure: 'Hitting a held target knocks it down for 1.5 s.',
   },
   'kill-chain': {
     moment: 'Your next hit after a kill',
     payload: 'heals a tenth of your pool and lands loaded (+50%)',
-    pure: 'A kill heals a tenth of your pool and loads your next hit.',
+    pure: 'Your next hit after a kill heals a tenth of your pool and lands loaded (+50%).',
   },
   technique: {
     moment: 'When a Technique lands',
-    payload: "refunds a third of that Technique's cooldown",
+    payload: 'refunds a third of your Technique cooldowns',
     pure: 'A landed Technique refunds half its cooldown.',
   },
 };
@@ -119,9 +119,23 @@ assert(
 );
 assert(
   verbSentence('affliction', 'engagement')
-    === 'A hit on a target you have already afflicted (once every 5 s) is a lunge for double damage.',
+    === 'A hit on a target you have already afflicted (every 5 s at most) is a lunge for double damage.',
   `subject grammar with a capped moment: ${verbSentence('affliction', 'engagement')}`,
 );
+
+// The Technique payload rides only another lane's moment, where no Technique
+// landed: it never names "that" Technique (it refunds every one, as the runtime does).
+assert(
+  verbSentence('tempo', 'technique') === 'Every 6th hit refunds a third of your Technique cooldowns.',
+  `technique payload at a hit moment: ${verbSentence('tempo', 'technique')}`,
+);
+for (const verb of WEAPON_PACKET_IDS) {
+  for (const lean of WEAPON_PACKET_IDS) {
+    const sentence = verbSentence(verb, lean) ?? '';
+    if (verb !== 'technique') assert(!/that Technique/.test(sentence), `${verb}×${lean}: "${sentence}"`);
+    assert(!/once every/.test(sentence), `${verb}×${lean}: a cap reads "(every N s at most)": "${sentence}"`);
+  }
+}
 
 // ── 3. The composition rule ──────────────────────────────────────────────────
 
@@ -152,15 +166,20 @@ for (const verb of WEAPON_PACKET_IDS) {
     );
   }
 }
-// The Control moment needs a hold the tree does not supply; the page says so.
+// The Control moment needs a hold; the page says so — unless the lean is the
+// Control lean, whose slow on every hit IS the hold (design §24.9).
 for (const lean of [undefined, ...WEAPON_PACKET_IDS]) {
-  assert(composeVerb('control', lean)?.needs === 'slow', `control verb × ${lean ?? 'no lean'}: needs a slow`);
+  const expected = lean === 'control' ? undefined : 'slow';
+  assert(composeVerb('control', lean)?.needs === expected,
+    `control verb × ${lean ?? 'no lean'}: ${expected ? 'needs a slow' : 'its own lean holds the target'}`);
   assert(composeVerb('tempo', lean)?.needs === undefined, `tempo verb × ${lean ?? 'no lean'}: needs nothing`);
 }
+assert(PACKET_DEFINITIONS.get('control')?.scalingStat === 'slowOnHit', 'the Control lean is its slow, not Attack');
 // The moments carry the shapes §24.2 names.
 assert(packetMoment('tempo')?.n === 6, 'tempo fires on every 6th hit');
 assert(packetMoment('affliction')?.capMs === 5_000, 'the affliction moment caps at one per 5 s');
 assert(packetMoment('control')?.capMs === 5_000, 'the control moment caps at one per 5 s');
+assert(packetMoment('empowered')?.capMs === 4_000, 'the empowered moment caps at one per 4 s (design §24.9)');
 assert(packetMoment('engagement')?.perTarget === true, 'the engagement moment latches per body');
 assert(packetMoment('kill-chain')?.carry === true, 'the kill-chain moment is the next hit after a kill');
 
@@ -230,8 +249,28 @@ for (const verb of rapier.lanes) {
 assert(STAT_UNIT.attackSpeedPct === 0.09, 'the Tempo lean is +9% attack speed (PROVISIONAL)');
 assert(statLine({ attackSpeedPct: 0.09 }) === '+9% attack speed.', `stat line: ${statLine({ attackSpeedPct: 0.09 })}`);
 assert(statLine({ attack: 3 }) === '+3 Attack.', `stat line: ${statLine({ attack: 3 })}`);
-assert(statLine({ dotPotencyPct: 0.1 }) === '+10% DoT potency.', `stat line: ${statLine({ dotPotencyPct: 0.1 })}`);
+// The Affliction lean seeds its condition for every class (design §24.9): its line
+// says the bleed, from the stat and the lean-condition table.
+assert(
+  statLine({ dotPotencyPct: 0.1 }) === '+10% DoT potency, and every hit bleeds for a tenth of its damage over 4 s.',
+  `stat line: ${statLine({ dotPotencyPct: 0.1 })}`,
+);
 assert(statLine({ speed: 11 }) === '+11 move speed.', `stat line: ${statLine({ speed: 11 })}`);
+assert(statLine({ dotPotencyPct: 0.1 }, 'short') === '+10% DoT potency.', 'the short form quotes the bare stat');
+assert(STAT_UNIT.slowOnHit === 0.15, 'the Control lean is a 15% slow (PROVISIONAL)');
+assert(
+  statLine({ slowOnHit: 0.15 }) === 'Every hit slows its target by 15% until your next swing.',
+  `stat line: ${statLine({ slowOnHit: 0.15 })}`,
+);
+// Each of the Hammer's three leans names its own stat (they read "+9% Attack.",
+// "+3 Attack." and "+3 Attack." while Control borrowed Attack).
+{
+  const hammer = LINEAGE_DATABASE.get('hammer')!;
+  const lines = hammer.cards.filter((c) => c.tier === 1 && c.row === 'stat').map((c) => cardSentence(c, {
+    ownedCards: [], active: {}, ownedForms: ['heavy-hammer'], wornForm: 'heavy-hammer',
+  }));
+  assert(new Set(lines).size === 3, `the Hammer's leans read three different lines: ${lines.join(' | ')}`);
+}
 
 // `composedSentence` and `cardSentence` read the active lean. Registered rapier
 // cards are needed for `cardSentence` (it looks the lineage up by id), so the
@@ -415,10 +454,10 @@ const T2_SHEET: Array<[PacketId, PacketId | undefined, string]> = [
   ['tempo', 'tempo', 'Every 6th hit strikes again at 115% strength.'],
   ['tempo', 'affliction', 'Every 6th hit leaves a heavy poison or bleed, 115% of a swing over 4 s.'],
   ['engagement', 'engagement', 'Your first hit on each target is a lunge for 2.15× damage.'],
-  ['affliction', 'tempo', 'A hit on a target you have already afflicted (once every 5 s) lands again at 115% strength.'],
+  ['affliction', 'tempo', 'A hit on a target you have already afflicted (every 5 s at most) lands again at 115% strength.'],
   ['technique', 'empowered', 'When a Technique lands, the hit counts as your class mechanic firing with a 15% bigger bonus.'],
-  ['kill-chain', 'kill-chain', 'A kill heals 11.5% of your pool and loads your next hit.'],
-  ['empowered', 'kill-chain', 'When your class mechanic fires, the hit heals 11.5% of your pool and lands loaded (+57.5%).'],
+  ['kill-chain', 'kill-chain', 'Your next hit after a kill heals 11.5% of your pool and lands loaded (+57.5%).'],
+  ['empowered', 'kill-chain', 'When your class mechanic fires (every 4 s at most), the hit heals 11.5% of your pool and lands loaded (+57.5%).'],
 ];
 for (const [verb, lean, expected] of T2_SHEET) {
   const got = verbSentence(verb, lean, 2);
@@ -434,6 +473,28 @@ for (const [verb, lean, expected] of T2_SHEET) {
   for (let tier = 1; tier <= 4; tier++) {
     assert(composeVerb('technique', 'technique', tier)!.payoff.magnitude <= 1, `T${tier}: a refund never passes the whole cooldown`);
   }
+}
+
+{
+  // The T2 leans, including the two that SEED a condition (wave-1 A): every T2
+  // lean's stat is at least its T1 lean's (the depth climbs with the tier), while
+  // the condition's own duration is a shape and never does.
+  for (const lineage of lineagesForSlot('weapon')) {
+    for (const lane of lineage.lanes) {
+      const t1 = lineage.cards.find((c) => c.tier === 1 && c.row === 'stat' && c.lane === lane)!;
+      const t2 = lineage.cards.find((c) => c.tier === 2 && c.row === 'stat' && c.lane === lane)!;
+      const a = Object.entries(resolveLineageCard(t1, lineage).statEffects ?? {});
+      const b = Object.entries(resolveLineageCard(t2, lineage).statEffects ?? {});
+      assert(a.length === 1 && b.length === 1 && a[0]![0] === b[0]![0], `${lineage.id} ${lane}: the T2 lean scales the T1 lean's stat`);
+      assert(b[0]![1] >= a[0]![1], `${lineage.id} ${lane}: T2 lean ${b[0]![1]} < T1 ${a[0]![1]}`);
+    }
+  }
+  assert(LEAN_CONDITION_NUMBERS.control?.durationMs === 1_500 && LEAN_CONDITION_NUMBERS.affliction?.durationMs === 4_000,
+    'fixture: the lean conditions hold for their authored windows at every tier');
+  // The capped Empowered moment keeps its cap at T2; a frequency amplifier shortens it.
+  const empowered = composeVerb('empowered', 'kill-chain', 2)!.trigger;
+  assert(empowered.capMs !== undefined && empowered.capMs === packetMoment('empowered')!.capMs, 'the Empowered cap is the T1 cap');
+  assert((quickenMoment(empowered, 1.6)?.capMs ?? Infinity) < empowered.capMs!, 'a frequency amplifier shortens the Empowered cap');
 }
 
 console.log('composition: ok');

@@ -46,6 +46,7 @@ import {
   nodeFamily,
   nodesPayingShard,
   packetDefinition,
+  packetHalves,
   payloadSize,
   previewEquipmentStats,
   resolveDotClassProfile,
@@ -362,6 +363,50 @@ export function verbNeedsSlow(lineage: LineageDefinition, card: LineageCard, pro
   return composeVerb(card.lane, leanLaneFor(lineage, progress))?.needs === 'slow';
 }
 
+export const NEEDS_SLOW_NOTE = 'needs a slow';
+export const NO_HIT_NOTE = 'your mechanic has no hit yet';
+
+/**
+ * The roots whose mechanic fires with no hit to act on: a reload completes on a
+ * timer (`mechanicFired.ts` — the one emitter that passes no exchange).
+ */
+const MECHANIC_WITHOUT_HIT: ReadonlySet<CombatArchetype> = new Set<CombatArchetype>(['reload']);
+
+/**
+ * The payloads that act on the hit in flight rather than on a body or the player
+ * (`types.ts`: they are not `ON_TARGET_PAYOFF_KINDS`; the runtime's `liveExchange`
+ * refuses them with no exchange). `heal-and-load` still heals; only its load needs
+ * the hit.
+ */
+const HIT_PAYLOADS: ReadonlySet<PayoffKind> = new Set<PayoffKind>(['big-hit', 'mechanic-proxy', 'heal-and-load']);
+
+/**
+ * The one caveat a VERB card shows under its sentence, or undefined — at most one,
+ * the most binding first:
+ *  - "needs a slow": a Control verb with no hold source in the tree (§24.2; the
+ *    Control lean is one, §24.9);
+ *  - "your mechanic has no hit yet": the Slinger's Empowered verb when its payload
+ *    acts on the hit — a reload has no hit, so it does not land until the T3 paths
+ *    (§24.9: a known asymmetry, shown rather than patched);
+ *  - the verb lane's own moment caveat ("weak on bosses" for Kill chain, §24.9).
+ */
+export function verbNote(
+  lineage: LineageDefinition,
+  card: LineageCard,
+  progress: LineageProgress,
+  archetype?: CombatArchetype | null,
+): string | undefined {
+  if (!isVerbCard(card)) return undefined;
+  const composed = composeVerb(card.lane, leanLaneFor(lineage, progress));
+  if (!composed) return undefined;
+  if (composed.needs === 'slow') return NEEDS_SLOW_NOTE;
+  if (archetype && MECHANIC_WITHOUT_HIT.has(archetype)
+    && composed.trigger.kind === 'mechanic-fired' && HIT_PAYLOADS.has(composed.payoff.kind)) {
+    return NO_HIT_NOTE;
+  }
+  return packetHalves(card.lane)?.momentCaveat;
+}
+
 // ─── Cost chips and the requirement ──────────────────────────────────────────
 
 export interface CostChip {
@@ -457,6 +502,8 @@ export interface PageCardModel {
   sentence: string;
   /** A Control verb with no hold source in the tree: "needs a slow". */
   needsSlow: boolean;
+  /** The verb's one caveat under its sentence (`verbNote`): "needs a slow", … */
+  note?: string;
   state: PageCardState;
   /** The tiny tag top-right: "active", "owned · click to swap in", "in your form". */
   tag?: string;
@@ -503,13 +550,17 @@ export function pageCard(params: {
   locked?: boolean;
   /** This collapsed band's stat card the worn form absorbed. */
   absorbed?: boolean;
+  /** The player's class root, for the caveats that depend on it (`verbNote`). */
+  archetype?: CombatArchetype | null;
 }): PageCardModel {
   const { lineage, card, progress, wallet, lineages, locked, absorbed } = params;
   const sentence = pageCardSentence(lineage, card, params.sentenceProgress ?? progress);
   const needsSlow = verbNeedsSlow(lineage, card, params.sentenceProgress ?? progress);
+  const note = verbNote(lineage, card, params.sentenceProgress ?? progress, params.archetype);
   const owned = progress.ownedCards.includes(card.id);
   const base = {
     card, laneColor: laneColor(card.lane), sentence, needsSlow,
+    ...(note ? { note } : {}),
     isLean: card.row === 'stat', chips: [] as CostChip[],
   };
 
@@ -547,7 +598,7 @@ export function pageCard(params: {
   }
   return {
     ...model,
-    accessibleName: `${card.name}. ${sentence}${needsSlow ? ' Needs a slow.' : ''} ${STATE_TEXT[model.state]}`,
+    accessibleName: `${card.name}. ${sentence}${note ? ` ${note.charAt(0).toUpperCase()}${note.slice(1)}.` : ''} ${STATE_TEXT[model.state]}`,
   };
 }
 
@@ -587,6 +638,8 @@ export function pageBands(params: {
   lineages?: LineageProgressMap;
   /** The progress verb sentences read (the lean preview while one is hovered). */
   sentenceProgress?: LineageProgress;
+  /** The player's class root, for the verbs' caveats. */
+  archetype?: CombatArchetype | null;
 }): PageBand[] {
   const { lineage, progress } = params;
   const wornTier = Math.max(1, wornFormTier(lineage, progress));

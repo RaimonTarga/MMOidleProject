@@ -143,9 +143,11 @@ export type TriggerKind =
    */
   | 'hit-afflicted'
   /**
-   * The Control moment (design §24.2): a landed hit on a monster that is slowed
-   * or rooted (any source — an at-bay slow, a chill, a freeze, an ability slow or
-   * root). Rate-capped by its packet's `capMs`, so the payload cannot chain.
+   * The Control moment (design §24.2): a landed hit on a monster that is held —
+   * slowed, rooted, stunned or knocked down (any source — the Control lean's
+   * slow, an at-bay slow, a chill, a freeze, an ability slow, root or stun, the
+   * Control payload's own knockdown; design §24.9: "a knockdown counts as held").
+   * Rate-capped by its packet's `capMs`, so the payload cannot chain.
    */
   | 'hit-held';
 
@@ -329,8 +331,20 @@ export type LineageStatKey =
    * was NOT taken: it moves damage OUT of the hit into the DoT, so a point of it
    * is roughly neutral on the light root and a direct-damage loss on every hit —
    * a shift, not potency.
+   *
+   * Since design §24.9 it also SEEDS the Affliction moment for every class: the
+   * same share of each landed hit becomes a light bleed (`LEAN_CONDITION_NUMBERS`).
    */
-  | 'dotPotencyPct';
+  | 'dotPotencyPct'
+  /**
+   * The Control lane's lean (design §24.9: "the honest Control stat; `attack` was
+   * a placeholder"): every landed hit slows its target by this fraction of its
+   * move speed — short and weak, so it SEEDS the Control moment's hold rather than
+   * being the payoff. A fraction like every `*Pct` lean, so the tier scalar's
+   * `fraction` column climbs it; its duration is `LEAN_CONDITION_NUMBERS`' and
+   * does not climb. Folds into the `shared.slow-on-hit-pct` passive.
+   */
+  | 'slowOnHit';
 
 /**
  * What a resolved stat row contributes. Folds into passives at recalc through the
@@ -344,7 +358,7 @@ export type LineageStatKey =
 export type LineageStatEffects =
   Partial<Pick<ItemStats, 'attack' | 'onHitDamage' | 'plating' | 'damageReduction' | 'evasion' | 'maxHp' | 'recovery' | 'speed'>>
   & Partial<Pick<StatEffects, 'attackPct' | 'attackSpeedPct'>>
-  & { techniquePowerPct?: number; dotPotencyPct?: number };
+  & { techniquePowerPct?: number; dotPotencyPct?: number; slowOnHit?: number };
 
 // ─── Visual signatures (design §8) ───────────────────────────────────────────
 
@@ -697,9 +711,11 @@ export interface LineageComposition {
   pure: boolean;
   /**
    * What the moment depends on that the tree itself does not supply, for the
-   * page to say so. `slow`: the Control moment needs a slowed or rooted target,
-   * which comes from a class range (Mid's at-bay slow), a chill, or an ability —
-   * at T1, without one, the verb fires rarely (design §24.2).
+   * page to say so. `slow`: the Control moment needs a held target, which the
+   * Control LEAN supplies on every hit (design §24.9) — so a Control verb with
+   * the Control lean needs nothing; with any other lean, or none, the hold must
+   * come from a class range (Mid's at-bay slow), a chill, or an ability, and at
+   * T1 the verb then fires rarely (design §24.2).
    */
   needs?: 'slow';
 }

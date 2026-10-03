@@ -137,7 +137,15 @@ export const LINEAGE_SWITCH_DISCOUNT = 0.5;
  *    was 0.05; the lean puts all three percentage lanes at one number.)
  *  - `dotPotencyPct` 0.10 — the top of the band, because it adds into
  *    `dot.mechanic-mult` (base 1.15–1.25), so +0.10 there is +8–8.7% DoT damage.
+ *    Since design §24.9 the same number is also the share of every landed hit
+ *    added as a light bleed, for every class (`LEAN_CONDITION_NUMBERS`): the two
+ *    partition the DoT root's damage (its DoT, its hit) rather than stacking.
  *  - `attack` 3 — unchanged: ≈ +10% of a ~29-Attack T1 weapon.
+ *  - `slowOnHit` 0.15 — the Control lean (design §24.9), the brief's "short weak
+ *    slow": 15% move speed off the target on every hit. A two-number stat whose
+ *    second number (how long) lives in `LEAN_CONDITION_NUMBERS` and never climbs,
+ *    so only the slow's DEPTH takes the tier scalar, through the `fraction`
+ *    column like every percentage: 0.15 / 0.173 / 0.198 / 0.225 at T1–T4.
  *  - `speed` 11 — 9% of the reference player's base move speed
  *    (`GAME_CONFIG.PLAYER_SPEED` 120 × 0.09 = 10.8 → 11). Note the tier scalar's
  *    `absolute` column climbs ×11 by T4 (→ 121), which no other move-speed source
@@ -158,12 +166,13 @@ export const STAT_UNIT: Record<LineageStatKey, number> = {
   attackSpeedPct: 0.09,
   techniquePowerPct: 0.09,
   dotPotencyPct: 0.10,
+  slowOnHit: 0.15,
 };
 
 /** Stats that are fractions and keep three decimals; everything else is an integer. */
 const FRACTIONAL_STATS: ReadonlySet<LineageStatKey> = new Set<LineageStatKey>([
   'damageReduction', 'evasion', 'attackPct', 'attackSpeedPct', 'techniquePowerPct',
-  'dotPotencyPct',
+  'dotPotencyPct', 'slowOnHit',
 ]);
 
 /** Whether a stat row's value is a fraction (shown as a percentage). */
@@ -418,7 +427,10 @@ export interface PacketHalfNumbers {
  *               payload a lineage bleed worth 1.0 × the hit over 4 s;
  *               pure a re-dose of 1.0 × what the target's DoTs still owe (doubles)
  *   engagement  moment per body; payload/pure a ×2 lunge
- *   empowered   moment = the mechanic's own cadence;
+ *   empowered   moment = the mechanic's own cadence, capped at one per 4 s (§24.9:
+ *               the Conduit's formation cycle fired it 25–40 times a minute,
+ *               against 1–9 for every other root; 4 s is the fast end of §24.1's
+ *               4–6 s cadence, so the cap binds the Conduit and nobody else);
  *               payload the class's own empowered multiplier (`magnitude` 1.5 is
  *               the fallback for a root with none — dot, summoner, non-Duelist
  *               reload); pure ×1.5 on the mechanic's hit ("half again")
@@ -427,8 +439,9 @@ export interface PacketHalfNumbers {
  *   kill-chain  moment = the next landed hit after a kill;
  *               payload/pure heal 10% of max HP and the hit lands ×1.5
  *   technique   moment = a Technique landing;
- *               payload refunds 1/3 of that Technique's remaining cooldown;
- *               pure refunds 1/2
+ *               payload refunds 1/3 of every Technique's remaining cooldown (it rides
+ *               another lane's moment, where no Technique landed);
+ *               pure refunds 1/2 of the landed Technique's
  */
 export const PACKET_HALF_NUMBERS: Partial<Record<PacketId, PacketHalfNumbers>> = {
   'tempo': {
@@ -447,7 +460,7 @@ export const PACKET_HALF_NUMBERS: Partial<Record<PacketId, PacketHalfNumbers>> =
     pure: { magnitude: 2 },
   },
   'empowered': {
-    moment: {},
+    moment: { capMs: 4_000 },
     payload: { magnitude: 1.5 },
     pure: { magnitude: 1.5 },
   },
@@ -468,9 +481,53 @@ export const PACKET_HALF_NUMBERS: Partial<Record<PacketId, PacketHalfNumbers>> =
   },
 };
 
+/**
+ * The shape of a condition a LEAN seeds (design §24.9): what its stat does on
+ * every landed hit beyond the number itself.
+ */
+export interface LeanConditionNumbers {
+  /** How long one hit's condition holds, ms. Never tier-scaled (like every duration here). */
+  durationMs: number;
+  /**
+   * Control only: the slow also holds for the wielder's own swing interval plus
+   * this much, whichever is longer — a slow that lapses between two of your own
+   * swings holds nothing your next hit can find.
+   */
+  swingBridgeMs?: number;
+}
+
+/**
+ * The two leans that SEED their lane's condition (design §24.9: "a lane's lean is
+ * its POTENCY stat, and for the two conditional lanes that stat is the condition's
+ * source"). The lean's STAT is the magnitude — a stat row like any other, so it
+ * climbs with the tier through `STAT_UNIT` — and this table is the rest of the
+ * shape, which does not climb:
+ *
+ *   affliction  every landed hit adds `dotPotencyPct` × the hit (as it was before
+ *               any empowered multiplier) to a light lineage bleed over
+ *               `durationMs`; the DoT root's own DoT still reads the same stat
+ *               through `dot.mechanic-mult`.
+ *   control     every landed hit slows its target by `slowOnHit` for `durationMs`,
+ *               or for the wielder's swing interval + `swingBridgeMs` if that is
+ *               longer (max-wins through `applyMonsterSlow`).
+ *
+ * EVERY NUMBER IS PROVISIONAL, the designer's:
+ *   affliction 4000 ms   the heavy payload's own window ("a whole swing over 4 s"),
+ *                        so the light bleed reads as the same bleed, lighter.
+ *   control 1500 ms      the brief's "short weak slow".
+ *   bridge 500 ms        a T1 Heavy Hammer swings every 1.5–2.5 s by class, longer
+ *                        than 1.5 s, so a flat 1.5 s slow lapsed before the next
+ *                        swing and the Control moment could never find it; one
+ *                        swing plus half a second covers the 10 Hz tick rounding.
+ */
+export const LEAN_CONDITION_NUMBERS: Partial<Record<PacketId, LeanConditionNumbers>> = {
+  'affliction': { durationMs: 4_000 },
+  'control': { durationMs: 1_500, swingBridgeMs: 500 },
+};
+
 // ─── T2+ verbs compose too (design §24.9) ────────────────────────────────────
 //
-// The table above is the T1 column. A T2+ band is a lean and a verb exactly like
+// PACKET_HALF_NUMBERS is the T1 column. A T2+ band is a lean and a verb exactly like
 // T1 (design §24.9: "T2+ bands compose too"), resolved through the SAME halves
 // and the SAME numbers, and the tier moves ONE number per payload — its SIZE —
 // never the moment's cadence: the 4–6 s rhythm and the rate caps are the shape

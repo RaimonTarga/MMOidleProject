@@ -354,10 +354,26 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     // `resolveDotClassProfile` reads the passive with `??`, so a frameless
     // Apprentice holding only this lean would otherwise read 0.10 as the WHOLE
     // multiplier instead of base + 0.10.
+    //
+    // Since design §24.9 the same stat also SEEDS the Affliction moment for every
+    // class: that share of each landed hit becomes a light bleed
+    // (`shared.bleed-on-hit-pct`, read by the server's lean-condition listener).
+    // For the DoT root the two halves partition its damage — the multiplier
+    // scales its DoT, the bleed scales its hit — so neither counts twice.
     if (stat === 'dotPotencyPct') {
       const base = p.usesSkills.passives['dot.mechanic-mult']
         ?? dotClassProfileForSubVariant(p.usesSkills.selectedSubVariant).dotMechanicMultiplier;
       p.usesSkills.passives['dot.mechanic-mult'] = base + value;
+      p.usesSkills.passives['shared.bleed-on-hit-pct'] =
+        (p.usesSkills.passives['shared.bleed-on-hit-pct'] ?? 0) + value;
+      continue;
+    }
+    // The Control lean (design §24.9) is the same shape: a passive the server's
+    // lean-condition listener reads to slow every landed hit's target. It is not
+    // a stat-sheet number, so it lands nowhere else.
+    if (stat === 'slowOnHit') {
+      p.usesSkills.passives['shared.slow-on-hit-pct'] =
+        (p.usesSkills.passives['shared.slow-on-hit-pct'] ?? 0) + value;
       continue;
     }
     applyStatModToTarget(p, stat, value);

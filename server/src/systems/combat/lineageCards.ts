@@ -274,7 +274,7 @@ function targetFor(
  * command) the basis is the player's Attack, which is what the magnitude table's
  * flat column is seeded against.
  */
-function hitBasis(player: PlayerEntity, ctx?: CombatContext): number {
+export function hitBasis(player: PlayerEntity, ctx?: CombatContext): number {
   if (!ctx) return Math.max(1, Math.round(player.dealsDamage.attack));
   const empowered = Number(ctx.metadata['empoweredMultiplier'] ?? 1);
   const base = empowered > 1 ? ctx.damage / empowered : ctx.damage;
@@ -663,10 +663,20 @@ function applyOnTarget(
       // per-tick damage, and the "take the better of both" guard against that was
       // a ratchet: one big hit's bleed maintained forever by chip hits. Ordinary
       // refresh — this application's numbers win, the window restarts.
+      //
+      // EXCEPT a composed T1 payload (design §24.1): an event, "a whole swing over
+      // 4 s" PER FIRING, so what the previous firing still owes joins this one
+      // instead of being cut — a Tempo verb on a fast Rapier fires every ~3.6 s,
+      // inside the 4 s window, and refresh dropped a quarter of every payload. Not
+      // a ratchet: the total owed is the sum of the firings, and it runs out.
       const ticks = Math.max(1, Math.round((durationMs ?? BLEED_TICK_MS) / BLEED_TICK_MS));
-      const perTick = Math.max(1, Math.round(hitBasis(player, ctx) * magnitude / ticks));
-      writeLineageBleed(world, player, target, perTick, ticks);
-      return { ...landed, durationMs: ticks * BLEED_TICK_MS };
+      const prior = firing.composed ? getStatusEffect(target.tracksCombat, LINEAGE_BLEED_ID) : undefined;
+      const priorTicks = prior && prior.data.bleedMode === 0 ? Math.max(0, prior.stacks) : 0;
+      const priorOwed = priorTicks * Math.max(0, prior?.data.damagePerTick ?? 0);
+      const spread = Math.max(ticks, priorTicks);
+      const perTick = Math.max(1, Math.round((hitBasis(player, ctx) * magnitude + priorOwed) / spread));
+      writeLineageBleed(world, player, target, perTick, spread);
+      return { ...landed, durationMs: spread * BLEED_TICK_MS };
     }
 
     case 'redose': {
