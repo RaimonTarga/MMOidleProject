@@ -46,7 +46,10 @@ const CAVE_T3_BLENDS: readonly NodeBlend[] = [
 
 const JUNGLE_T3_BLENDS: readonly NodeBlend[] = [
   { 'jungle-ape': 0.70, 'jungle-undergrowth': 0.20, 'jungle-stalker': 0.10 },
-  { 'jungle-undergrowth': 0.70, 'jungle-stalker': 0.20, 'jungle-ape': 0.10 },
+  // 02 — Stalker territory, not Undergrowth (verbs-that-fire C, PROVISIONAL): no
+  // Undergrowth body lives at T3 (snake/blowdarter are T2, lizard/constrictor T4), so
+  // the node spawned Stalker 7 / Ape 3 while paying Venom. Spawns unchanged.
+  { 'jungle-stalker': 0.70, 'jungle-ape': 0.30 },
   { 'jungle-stalker': 0.70, 'jungle-ape': 0.20, 'jungle-undergrowth': 0.10 },
   { 'jungle-ape': 0.45, 'jungle-undergrowth': 0.45, 'jungle-stalker': 0.10 },
   { 'jungle-ape': 0.34, 'jungle-undergrowth': 0.33, 'jungle-stalker': 0.33 },
