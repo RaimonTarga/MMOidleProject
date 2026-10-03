@@ -52,7 +52,11 @@ const jsonl = <T>(path: string): T[] => (existsSync(path)
     .filter((e): e is NonNullable<typeof e> => e !== null) as T[]
   : []);
 
-const mins = (ms?: number) => (ms === undefined ? '—' : `${Math.floor(ms / 60000)}m${String(Math.round((ms % 60000) / 1000)).padStart(2, '0')}s`);
+const mins = (ms?: number) => {
+  if (ms === undefined) return '—';
+  const s = Math.round(ms / 1000);
+  return `${Math.floor(s / 60)}m${String(s % 60).padStart(2, '0')}s`;
+};
 const beatOf = (label: string) => label.slice(0, label.lastIndexOf(': '));
 const ZONE: Record<string, string> = {
   'The Clearing': 'clearing', 'The Plains': 'plains', 'The Forest': 'forest',
@@ -120,10 +124,15 @@ for (const plan of TUTORIAL_CLASS_PLANS) {
 
   // Purchases.
   const milestone = (id: string) => events.find((e) => e.kind === 'milestone' && e.id === id)?.atMs;
-  const purchase = (milestoneId: string) => {
+  // How long the purchase's shards farm stood (0 s: skipped, the wallet already covered it).
+  const farmFor = (cardId: string) => {
+    const ends = stepEnds.get(`shards:${cardId}`) ?? [];
+    return ends.length === 0 ? '' : `, farm ${Math.round(ends.reduce((t, e) => t + (e.durationMs ?? 0), 0) / 1000)} s`;
+  };
+  const purchase = (milestoneId: string, cardId: string) => {
     const at = milestone(milestoneId);
     if (at === undefined) return 'not bought';
-    return `${mins(at)} (Forest ${levelAt('forest', at)}, GM ${gmAt(at)})`;
+    return `${mins(at)} (Forest ${levelAt('forest', at)}, GM ${gmAt(at)}${farmFor(cardId)})`;
   };
 
   const stallEvents = events.filter((e) => e.kind === 'stall' || e.kind === 'boss-step-exhausted');
@@ -146,8 +155,8 @@ for (const plan of TUTORIAL_CLASS_PLANS) {
     })),
     seals: { plains: bossCell('plains'), mountain: bossCell('mountain') },
     gate: bossCell('forest'),
-    lean: { card: cardName(plan.weaponCards.lean), at: purchase('first-lineage-card') },
-    verb: { card: cardName(plan.weaponCards.verb), at: purchase('verb-card') },
+    lean: { card: cardName(plan.weaponCards.lean), at: purchase('first-lineage-card', plan.weaponCards.lean) },
+    verb: { card: cardName(plan.weaponCards.verb), at: purchase('verb-card', plan.weaponCards.verb) },
     notDone: notDone.map((e) => `${e.label} -> ${e.outcome}${e.reason ? ` (${e.reason})` : ''}`),
     stalls: stallEvents.map((e) => `${mins(e.atMs)} ${e.kind}${e.reason ? `: ${e.reason}` : ''}`),
   };
