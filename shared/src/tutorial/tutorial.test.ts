@@ -14,6 +14,8 @@ import { RUNE_RECIPE_DATABASE } from '../runeRecipes';
 import { runicPointBreakdown } from '../runicPoints';
 import { bossClearKey } from '../systems/biomeProgress';
 import { NODE_BIOMES } from '../world/nodeBiomes';
+import { nodeShard } from '../world/nodeBlends';
+import { tutorialNodeFor } from './nodes';
 import {
   TUTORIAL_CLASS_PLANS,
   TUTORIAL_OPENING,
@@ -473,6 +475,52 @@ for (const plan of TUTORIAL_CLASS_PLANS) simulate(plan);
     sources.some((f) => f.name === 'Pack' && f.monsterIds.some((id) => id.includes('wolf'))),
     `the shards line names the Pack's wolves, but ${lineage.homeBiome}'s ${lane} source is now ${sources.map((f) => f.name).join('/')}`,
   );
+}
+
+// ── A shard farm stands where the shard is paid (design §24.3) ──────────────
+/**
+ * Every kill in a node pays that node's ONE shard, so a farm beat that waits on
+ * shards must stand in territory paying them: a Forest farm for Gale Shards on a
+ * Grove-led node would never end. Every farm whose `until` names exactly one shard
+ * carries that `shard` on its ref, and from every node of the biome the guide
+ * resolves the farm to a node that pays it.
+ */
+{
+  const shardsIn = (c: TutorialCondition): string[] => {
+    switch (c.type) {
+      case 'shardAtLeast': return [c.packet];
+      case 'allOf': case 'anyOf': return c.of.flatMap(shardsIn);
+      default: return [];
+    }
+  };
+  let farms = 0;
+  for (const plan of TUTORIAL_CLASS_PLANS) {
+    for (const beat of tutorialScriptFor(plan.classRoot).beats) {
+      for (const step of beat.steps) {
+        if (step.type !== 'farm') continue;
+        const shards = [...new Set(shardsIn(step.until))];
+        if (shards.length !== 1) continue;
+        farms += 1;
+        assert(
+          step.at.kind === 'biome' && step.at.shard === shards[0],
+          `${plan.classRoot}/${beat.id}: a farm for ${shards[0]} shards must stand in its territory`,
+        );
+        if (step.at.kind !== 'biome') continue;
+        const at = step.at;
+        const starts = Object.entries(NODE_BIOMES)
+          .filter(([, info]) => info.biomeGroup === at.biomeGroup && info.biomeTier === at.tier)
+          .map(([id]) => id);
+        for (const from of starts) {
+          const node = tutorialNodeFor(at, { nodeId: from, clearedNodes: [] });
+          assert(
+            !!node && nodeShard(node) === shards[0],
+            `${plan.classRoot}/${beat.id}: from ${from} the guide farms ${node}, which pays ${node ? nodeShard(node) : 'nothing'}`,
+          );
+        }
+      }
+    }
+  }
+  assert(farms >= TUTORIAL_CLASS_PLANS.length, `only ${farms} shard farm beats found — the sweep is broken`);
 }
 
 // Before the class pick, and for a class with no plan, the script is the opening alone.

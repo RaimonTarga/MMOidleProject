@@ -160,8 +160,9 @@ function name(definitionId: string): string {
   return ITEM_DATABASE.get(definitionId)?.name ?? definitionId;
 }
 
-function biomeRef(biome: string): TutorialNodeRef {
-  return { kind: 'biome', biomeGroup: biome, tier: 1, pick: 'uncleared' };
+/** A Tier-1 biome farm; with `shard`, only the territories that pay it (design §24.3). */
+function biomeRef(biome: string, shard?: PacketId): TutorialNodeRef {
+  return { kind: 'biome', biomeGroup: biome, tier: 1, pick: 'uncleared', ...(shard ? { shard } : {}) };
 }
 
 /** Essence (+ biome level) gate for a recipe as conditions. */
@@ -483,7 +484,9 @@ class ScriptBuilder {
       ],
       steps: [{
         type: 'farm',
-        at: biomeRef(lineage.homeBiome),
+        // Design §24.3: a node pays one shard, its dominant family's, so the
+        // farm stands in the territory that pays the card's lane.
+        at: biomeRef(lineage.homeBiome, card.lane),
         until: {
           type: 'anyOf',
           of: [owned, {
@@ -523,6 +526,10 @@ class ScriptBuilder {
     const zone = ZONE_WORD[form.biome] ?? form.biome;
     const capstone = capstoneMaterialName(form.biome);
     const shards = Object.keys(cost.shards).map((packet) => `${shardName(packet as PacketId)}s`).join(' and ');
+    // One crowned lane is one shard, so the farm narrows to the nodes that pay it
+    // (design §24.3); a gate costing two shards would farm the whole biome.
+    const gateShards = Object.keys(cost.shards) as PacketId[];
+    const gateFarm = biomeRef(form.biome, gateShards.length === 1 ? gateShards[0] : undefined);
 
     this.push({
       id: `farm:gate:${form.recipeId}`,
@@ -532,7 +539,7 @@ class ScriptBuilder {
       progress: lineageCostProgress(cost),
       steps: [{
         type: 'farm',
-        at: biomeRef(form.biome),
+        at: gateFarm,
         until: { type: 'anyOf', of: [owned, { type: 'allOf', of: lineageCostConditions(cost) }] },
       }],
     });

@@ -305,7 +305,7 @@ export interface LineageLaneReference {
    */
   activeCardIds: string[];
   /**
-   * True when NO Tier-1 mob family drops this lane's shard, so the cards cannot
+   * True when NO Tier-1 node pays this lane's shard (`nodeShard`), so the cards cannot
    * be bought from T1 kills at all. This was Engagement's case until the third
    * mob per biome was authored (design §18.8) and Plains Sky could finally field
    * `savanna-hawk` at tier 1; `LANES_WITHOUT_T1_SHARD_SOURCE` is now empty. A
@@ -318,8 +318,8 @@ export interface LineageLaneReference {
 /**
  * Lanes whose shard has no Tier-1 source (see `shardsUnobtainableAtT1`). EMPTY
  * since the third family mob per biome landed: `laneProfiles.test.ts` recomputes
- * this from the pools and the family table, so it fails the moment the list and
- * the data disagree in either direction.
+ * this from the node rule (`nodeShard`, design §24.3), so it fails the moment the
+ * list and the data disagree in either direction.
  */
 export const LANES_WITHOUT_T1_SHARD_SOURCE: readonly PacketId[] = [];
 

@@ -14,6 +14,7 @@ import {
   bossClearKey,
   globalMastery,
   lineageGateCost,
+  nodeShard,
   isRuneRecipeAvailableForArchetype,
   isRuneRuleCompatibleForArchetype,
   runeBudgetForGlobalMastery,
@@ -468,6 +469,31 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
       if (tight.length < all.length) narrowed += 1;
     }
     assert(narrowed > 0, "zero slack must exclude the more distant candidates somewhere");
+  }
+
+  // A `shard` narrows a biome ref to the nodes that pay it (design §24.3: every
+  // kill in a node pays its dominant family's shard). Every pick obeys it, and a
+  // shard the biome's territories never pay resolves to nothing rather than to a
+  // node that would farm forever.
+  for (const biomeGroup of T1_BIOMES) {
+    const paid = [...new Set(normalNodesFor(biomeGroup, 1).map((id) => nodeShard(id)!))];
+    assert(paid.length >= 2, `${biomeGroup}: fixture — its nodes pay more than one shard`);
+    for (const shard of paid) {
+      for (const pick of ["first", "rotate", "uncleared"] as const) {
+        const ref = { kind: "biome", biomeGroup, tier: 1, pick, shard } as const;
+        const candidates = resolveNodeCandidates(ref, obs, 1);
+        assert(candidates.length > 0, `${biomeGroup}/${shard}/${pick}: some node pays it`);
+        assert(
+          candidates.every((nodeId) => nodeShard(nodeId) === shard),
+          `${biomeGroup}/${shard}/${pick}: every candidate pays ${shard}, got ${candidates.join(",")}`,
+        );
+      }
+    }
+    assert(
+      resolveNodeCandidates({ kind: "biome", biomeGroup, tier: 1, pick: "uncleared", shard: "bulwark" }, obs, 0)
+        .length === 0,
+      `${biomeGroup}: no T1 node pays bulwark, so a bulwark farm resolves nowhere`,
+    );
   }
 
   // A dungeon must never offer an alternative -- boss state has to serialize.

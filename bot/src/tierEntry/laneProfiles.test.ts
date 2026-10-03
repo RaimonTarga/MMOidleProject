@@ -1,6 +1,4 @@
 import {
-  BIOME_DATABASE,
-  FAMILY_DATABASE,
   ITEM_DATABASE,
   LINEAGE_DATABASE,
   SKILL_TREE,
@@ -8,6 +6,7 @@ import {
   biomeLevelCap,
   globalMastery,
   lineageMasteryLevelForRow,
+  nodeShard,
   rowsForTier,
   type PacketId,
 } from "@mmo-idle/shared";
@@ -35,6 +34,7 @@ import {
   lineageSwapRouteSteps,
 } from "./profiles";
 import { requireRoute } from "../routes/index";
+import { normalNodesFor } from "../state/observation";
 import type { RouteStep } from "../route/types";
 import { formatValidation, validateProfile } from "./validate";
 
@@ -132,17 +132,16 @@ assert(laneReferenceFor(LINEAGE_LANE_REFERENCES[0].profileId) === LINEAGE_LANE_R
 //
 // A lane whose shard no Tier-1 node can drop cannot buy its cards from Tier-1
 // kills, so a harness has to grant them. `LANES_WITHOUT_T1_SHARD_SOURCE` is the
-// allowlist that says so; this recomputes it from the biome pools and the family
-// table, so the entry cannot outlive the gap (nor the gap the entry).
+// allowlist that says so; this recomputes it from the node rule (design §24.3:
+// every kill in a node pays its dominant family's shard, `nodeShard`), so the
+// entry cannot outlive the gap (nor the gap the entry).
 
 const t1Biomes = ["plains", "forest", "mountain", "cave", "swamp"] as const;
-const fieldableAtT1 = new Set<string>(
-  t1Biomes.flatMap((biome) => BIOME_DATABASE.get(biome)?.monsterPoolByTier[1] ?? []),
+const t1ShardSources = new Set<PacketId>(
+  t1Biomes.flatMap((biome) => normalNodesFor(biome, 1))
+    .map((nodeId) => nodeShard(nodeId))
+    .filter((shard): shard is PacketId => shard !== undefined),
 );
-const t1ShardSources = new Set<PacketId>();
-for (const family of FAMILY_DATABASE.values()) {
-  if (family.monsterIds.some((id) => fieldableAtT1.has(id))) t1ShardSources.add(family.drops);
-}
 const weaponLanesInUse = new Set<PacketId>(weaponLineages.flatMap((l) => [...l.lanes]));
 const computedGap = [...weaponLanesInUse].filter((lane) => !t1ShardSources.has(lane)).sort();
 assert(
