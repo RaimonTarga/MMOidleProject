@@ -705,6 +705,15 @@ lane out-uplift the punished lane, and by what margin (reported, never threshold
   (`server/scripts/_t1BossPlan.ts --matrix=composition`, bought through the real economy in
   `_t1BossLab.ts`) and the lane bench (`server/bench/compositionLanes.ts`, home-biome
   family-dominated nodes). `server/bench/compositionReport.ts` writes
-  `reports/course-correction/composition-matrix.md`: per weapon a 3 × 3 lean × verb grid of
+  `composition-matrix.md`: per weapon a 3 × 3 lean × verb grid of
   median uplift and verb firings per minute, per-class rows, the floor and the outliers
-  (above 1.5× / below 0.9× of the median), never-fired verbs, refusals and deaths.
+  (above 1.5× / below 0.9× of the median), never-fired verbs, refusals and deaths. The
+  latest is [`reports/verbs-that-fire/composition-matrix.md`](../reports/verbs-that-fire/composition-matrix.md)
+  (at `57916b52`): 12 of 45 pairs under the floor on both instruments, four of them because
+  the verb never fires (an off-lane lean on a conditional verb, no other source of the
+  condition), four Control-lean pairs whose slow and root a DPS metric cannot see, and four
+  small or boss-starved (the Broadsword's Technique lean, Kill chain on bosses). The first
+  run is [`reports/course-correction/composition-matrix.md`](../reports/course-correction/composition-matrix.md).
+- **DPS is the only metric the floor reads.** The Control pure pair's value on a boss is
+  survival (the Hammer's win rate against the no-card control +16 pp, the Dagger's +12 pp),
+  which the floor does not see; the run report carries the win-rate column per pair.

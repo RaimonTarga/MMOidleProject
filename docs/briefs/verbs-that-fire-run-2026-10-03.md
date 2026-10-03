@@ -1,5 +1,10 @@
 # Verbs-that-fire run — brief (2026-10-03)
 
+**Status:** DONE — implemented and merged to develop (2026-10-04). Report:
+[verbs-that-fire-report-2026-10-03.md](verbs-that-fire-report-2026-10-03.md). Task D (tick
+quantisation) was not launched; it stays the designer's open call. This brief is now
+evidence of what the run was asked to do.
+
 Follow-up to the course-correction run (docs/briefs/course-correction-report-2026-10-03.md,
 merged 2bb1a8af). Implements design §24.9 and closes the report's open calls that are not
 the designer's numbers. **Opus conductor** in `../mmo-lin-w2c` on `feat/verbs-that-fire`
