@@ -5,7 +5,15 @@ import { TUTORIAL_CLASS_PLANS } from './plans';
 
 export { TUTORIAL_FAREWELL } from './farewell';
 export { TUTORIAL_OPENING } from './opening';
-export { TUTORIAL_CLASS_PLANS, TUTORIAL_SEALS, T1_BIOME_ORDER, type TutorialClassPlan, type T1Biome } from './plans';
+export {
+  TUTORIAL_CLASS_PLANS,
+  TUTORIAL_SEALS,
+  TUTORIAL_WEAPON_LINEAGE,
+  T1_BIOME_ORDER,
+  type TutorialClassPlan,
+  type TutorialWeaponCards,
+  type T1Biome,
+} from './plans';
 export { tutorialRunes, type TutorialMovement, type TutorialRuneStage } from './runes';
 
 const scripts = new Map<string, TutorialScript>();

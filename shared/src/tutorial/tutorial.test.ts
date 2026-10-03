@@ -3,7 +3,10 @@ import { ABILITY_RECIPE_DATABASE } from '../abilityRecipes';
 import { globalMastery } from '../config/gameConfig';
 import { LINEAGE_DATABASE, lineageForRecipeId } from '../data/lineages';
 import { GATE_CAPSTONE_AMOUNT } from '../data/lineages/magnitudes';
+import { isVerbCard, resolveLineageCard } from '../data/lineages/resolve';
+import { verbSentence } from '../data/lineages/sentences';
 import type { LineageProgressMap } from '../data/lineages/types';
+import { cardSentence } from '../systems/lineages';
 import { RECIPE_DATABASE } from '../data/recipes';
 import { ITEM_DATABASE } from '../itemDatabase';
 import { emptyEquipment, type EssenceType } from '../items';
@@ -17,16 +20,23 @@ import { nodeFamily, nodeShard, nodesPayingShard } from '../world/nodeBlends';
 import { shardName } from '../data/lineages/packets';
 import { tutorialNodeFor } from './nodes';
 import {
+  TUTORIAL_ANCHORS,
   TUTORIAL_CLASS_PLANS,
+  TUTORIAL_CONCEPTS,
+  TUTORIAL_CONCEPTS_PER_LEVEL,
   TUTORIAL_OPENING,
   TUTORIAL_SEALS,
+  TUTORIAL_WEAPON_LINEAGE,
   abilityLoadoutFor,
   nextStepOf,
   resolveBeatIndex,
+  tutorialChecklist,
   tutorialProgress,
   tutorialScriptFor,
   wiredRunes,
   type TutorialCondition,
+  type TutorialConcept,
+  type TutorialConceptId,
   type TutorialScript,
   type TutorialStep,
   type TutorialView,
@@ -167,6 +177,13 @@ for (const plan of TUTORIAL_CLASS_PLANS) {
     assert(!ids.has(beat.id), `${script.id}: duplicate beat id ${beat.id}`);
     ids.add(beat.id);
     assert(beat.say.length > 0 && beat.say.length <= SAY_LIMIT, `${script.id}/${beat.id}: line should be a short phrase (${beat.say.length})`);
+    for (const line of [beat.lesson?.read, beat.lesson?.ring]) {
+      if (line !== undefined) assert(line.length > 0 && line.length <= SAY_LIMIT, `${script.id}/${beat.id}: lesson line too long (${line.length})`);
+    }
+    // The guide never says "tree" any more: the player opens a weapon PAGE (W2-A).
+    for (const line of [beat.say, beat.waiting, beat.lesson?.read, beat.lesson?.ring]) {
+      if (line !== undefined) assert(!/\btree\b/i.test(line.replace(/Passive Tree/g, '')), `${script.id}/${beat.id}: says "tree": "${line}"`);
+    }
     assert(beat.chapter.length > 0, `${script.id}/${beat.id}: no chapter`);
     for (const step of beat.steps) {
       const where = `${script.id}/${beat.id}`;
@@ -213,6 +230,12 @@ for (const plan of TUTORIAL_CLASS_PLANS) {
           assert(lineage!.cards.some((c) => c.id === step.cardId), `${where}: unknown card ${step.cardId}`);
           break;
         }
+        case 'setActive': {
+          const card = LINEAGE_DATABASE.get(step.lineageId)?.cards.find((c) => c.id === step.cardId);
+          assert(!!card, `${where}: unknown card ${step.cardId}`);
+          assert(card!.row === step.row, `${where}: ${step.cardId} is a ${card!.row} card, activated as ${step.row}`);
+          break;
+        }
         case 'unlockForm':
         case 'wearForm': {
           const lineage = LINEAGE_DATABASE.get(step.lineageId);
@@ -256,6 +279,13 @@ function wearing(lineages: LineageProgressMap, definitionIds: readonly string[])
   return next;
 }
 
+/** The slot of `lineageId` holds one of its forms — its page is the one on screen, and its cards pay. */
+function wieldsFormOf(v: TutorialView, lineageId: string): boolean {
+  const lineage = LINEAGE_DATABASE.get(lineageId)!;
+  const held = v.equipment[lineage.slot];
+  return !!held && lineage.forms.some((f) => f.recipeId === held);
+}
+
 // ── Class scripts: a simulated playthrough only ever moves forward ───────────
 /**
  * A fake character that makes each step true the way the server would, with
@@ -286,6 +316,8 @@ function simulate(plan: (typeof TUTORIAL_CLASS_PLANS)[number]): void {
   // A rich character skips farm beats it can already afford; that is intended.
   // What must never happen is the resume point moving backwards.
   let visited = 0;
+  /** A verb was just bought and its ring pointed at: the next fight must be on its weapon. */
+  let ringLessonOn: string | null = null;
   for (let at = resolveBeatIndex(script, v); at < script.beats.length; at = resolveBeatIndex(script, v)) {
     assert(at >= visited, `${script.id}: resume went back from ${script.beats[visited]?.id} to ${script.beats[at].id}`);
     visited = at + 1;
@@ -295,6 +327,11 @@ function simulate(plan: (typeof TUTORIAL_CLASS_PLANS)[number]): void {
       if (!step) break;
       switch (step.type) {
         case 'farm': {
+          if (ringLessonOn) {
+            // "In a fight, its ring fills…": that fight has to be one where the verb can fire.
+            assert(wieldsFormOf(v, ringLessonOn), `${script.id}/${beat.id}: the fight after the verb lesson is off the ${ringLessonOn}`);
+            ringLessonOn = null;
+          }
           const levels = { ...v.biomeLevel };
           const shards = { ...v.shards };
           for (const c of conditionsIn(step.until)) {
@@ -335,10 +372,22 @@ function simulate(plan: (typeof TUTORIAL_CLASS_PLANS)[number]): void {
         case 'unlockCard': {
           const lineage = LINEAGE_DATABASE.get(step.lineageId)!;
           const progress = v.lineages[step.lineageId];
-          // Holding the base form is what opens the tree (`checkUnlockCard`).
+          // Holding the base form is what opens the page (`checkUnlockCard`), and
+          // the director opens the page of whatever is IN the slot: the card it
+          // buys must be on screen and live (design §23: a lineage pays only while
+          // its own form is worn).
           assert(!!progress && progress.wornForm !== '',
             `${script.id}/${beat.id}: buys ${step.cardId} with no ${step.lineageId} form worn`);
+          assert(wieldsFormOf(v, lineage.id),
+            `${script.id}/${beat.id}: buys ${step.cardId} while wearing ${v.equipment[lineage.slot]}, not the ${lineage.id}`);
           const card = lineage.cards.find((c) => c.id === step.cardId)!;
+          // The beat sits where the card's own gates are open (W2-A: the T1 verb
+          // row needs Global Mastery 18 as well as Forest 4).
+          const gates = resolveLineageCard(card, lineage);
+          assert((v.biomeLevel[gates.requiredBiomeGroup] ?? 0) >= gates.requiredBiomeLevel,
+            `${script.id}/${beat.id}: ${card.id} needs ${gates.requiredBiomeGroup} ${gates.requiredBiomeLevel}`);
+          assert(v.globalMastery >= gates.requiredGlobalMastery,
+            `${script.id}/${beat.id}: ${card.id} needs Global Mastery ${gates.requiredGlobalMastery}, the guide is at ${v.globalMastery}`);
           set({
             lineages: {
               ...v.lineages,
@@ -352,9 +401,21 @@ function simulate(plan: (typeof TUTORIAL_CLASS_PLANS)[number]): void {
           });
           break;
         }
+        case 'setActive': {
+          const progress = v.lineages[step.lineageId];
+          assert(!!progress?.ownedCards.includes(step.cardId), `${script.id}/${beat.id}: activates unowned ${step.cardId}`);
+          assert(wieldsFormOf(v, step.lineageId), `${script.id}/${beat.id}: activates ${step.cardId} off the ${step.lineageId}`);
+          set({
+            lineages: { ...v.lineages, [step.lineageId]: { ...progress!, active: { ...progress!.active, [step.row]: step.cardId } } },
+          });
+          break;
+        }
         case 'unlockForm': {
           const progress = v.lineages[step.lineageId];
           assert(!!progress, `${script.id}/${beat.id}: pays a gate on an unopened ${step.lineageId}`);
+          // Review P9: the gate is paid on the page of the weapon it gates.
+          assert(wieldsFormOf(v, step.lineageId),
+            `${script.id}/${beat.id}: pays the ${step.recipeId} gate while wearing ${v.equipment[LINEAGE_DATABASE.get(step.lineageId)!.slot]}`);
           set({
             lineages: {
               ...v.lineages,
@@ -408,8 +469,17 @@ function simulate(plan: (typeof TUTORIAL_CLASS_PLANS)[number]): void {
       if (guard === 19) throw new Error(`${script.id}/${beat.id}: step never settles`);
     }
     assert(resolveBeatIndex(script, v) > at, `${script.id}/${beat.id}: finishing the beat does not move the guide on`);
+    if (beat.lesson) {
+      // The lesson points at the card the beat just bought, on a live page.
+      const progress = v.lineages[beat.lesson.lineageId];
+      assert(!!progress && Object.values(progress.active).includes(beat.lesson.cardId),
+        `${script.id}/${beat.id}: the lesson's card is not active after the beat`);
+      assert(wieldsFormOf(v, beat.lesson.lineageId), `${script.id}/${beat.id}: the lesson's page is not the worn weapon's`);
+      if (beat.lesson.ring) ringLessonOn = beat.lesson.lineageId;
+    }
   }
   assert(resolveBeatIndex(script, v) === script.beats.length, `${script.id}: finishes`);
+  assert(ringLessonOn === null, `${script.id}: the verb lesson is never followed by a fight`);
   // Switching TUTORIAL_SEALS must not strand a class: every boss loadout is owned by the end.
   for (const [biome, loadout] of Object.entries(plan.bosses)) {
     for (const id of [...plan.bossKit, loadout.armor]) {
@@ -422,12 +492,20 @@ function simulate(plan: (typeof TUTORIAL_CLASS_PLANS)[number]): void {
   assert(v.playerTier === 2, `${script.id}: ends at Tier 2`);
   assert(v.globalMastery === 30, `${script.id}: reaches Global Mastery 30 before the bosses (got ${v.globalMastery})`);
 
-  // The tree lessons actually land: a card bought, a gate paid, the form worn.
+  // The weapon-page lessons actually land: a lean and a verb bought and active,
+  // a gate paid, the form worn.
   const taught = Object.entries(v.lineages).filter(([, p]) => p.ownedCards.length > 0);
   assert(taught.length === 1, `${script.id}: exactly one lineage is taught (got ${taught.length})`);
   const [lineageId, progress] = taught[0];
-  assert(progress.ownedCards.length === 1, `${script.id}: one card, not a shopping trip`);
-  assert(progress.active.stat === progress.ownedCards[0], `${script.id}: the bought card ends up active`);
+  assert(lineageId === TUTORIAL_WEAPON_LINEAGE, `${script.id}: teaches the ${lineageId}, not the ${TUTORIAL_WEAPON_LINEAGE}`);
+  assert(
+    progress.ownedCards.length === 2
+      && progress.ownedCards.includes(plan.weaponCards.lean)
+      && progress.ownedCards.includes(plan.weaponCards.verb),
+    `${script.id}: two cards, the plan's lean and verb (got ${progress.ownedCards.join(', ')})`,
+  );
+  assert(progress.active.stat === plan.weaponCards.lean, `${script.id}: the lean ends up active`);
+  assert(progress.active.payoff === plan.weaponCards.verb, `${script.id}: the verb ends up active`);
   const gated = LINEAGE_DATABASE.get(lineageId)!.forms.find((f) => f.recipeId === progress.wornForm)!;
   assert(gated.tier === 2, `${script.id}: ends wearing the tier-2 form the gate opened`);
   assert(
@@ -448,22 +526,132 @@ for (const plan of TUTORIAL_CLASS_PLANS) simulate(plan);
  * pays the card's shard, and the line must use the shard's own name.
  */
 {
-  const script = tutorialScriptFor(TUTORIAL_CLASS_PLANS[0].classRoot);
-  const card = script.beats
-    .flatMap((b) => b.steps)
-    .find((s): s is Extract<TutorialStep, { type: 'unlockCard' }> => s.type === 'unlockCard');
-  assert(!!card, 'the script buys a lineage card');
-  const lineage = LINEAGE_DATABASE.get(card!.lineageId)!;
-  const lane = lineage.cards.find((c) => c.id === card!.cardId)!.lane;
-  const beat = script.beats.find((b) => b.id === `shards:${card!.cardId}`);
-  assert(!!beat, 'the script has a shards beat for the first card');
-  const territories = nodesPayingShard(lineage.homeBiome, 1, lane).map((id) => nodeFamily(id)?.name);
-  assert(territories.length > 0, `no ${lineage.homeBiome} node pays the ${lane} shard the first card costs`);
-  const named = territories.find((name) => !!name && beat!.say.includes(`${name} territory`));
-  assert(!!named, `the shards line must name a territory that pays ${lane}: "${beat!.say}"`);
-  assert(beat!.say.includes(shardName(lane)), `the shards line must use the shard's name: "${beat!.say}"`);
-  // The Rapier's first card is Tempo, and Tempo's Forest territory is the Pack's.
-  assert(named === 'Pack', `expected the Pack's territory, got ${named}`);
+  // Every class, both purchases: each card has a shards beat naming where its shard drops.
+  const named = new Set<string>();
+  for (const plan of TUTORIAL_CLASS_PLANS) {
+    const script = tutorialScriptFor(plan.classRoot);
+    const cards = script.beats
+      .flatMap((b) => b.steps)
+      .filter((s): s is Extract<TutorialStep, { type: 'unlockCard' }> => s.type === 'unlockCard');
+    assert(cards.map((c) => c.cardId).join() === [plan.weaponCards.lean, plan.weaponCards.verb].join(),
+      `${script.id}: buys the lean, then the verb, and nothing else`);
+    for (const step of cards) {
+      const lineage = LINEAGE_DATABASE.get(step.lineageId)!;
+      const lane = lineage.cards.find((c) => c.id === step.cardId)!.lane;
+      const beat = script.beats.find((b) => b.id === `shards:${step.cardId}`);
+      assert(!!beat, `${script.id}: no shards beat for ${step.cardId}`);
+      const territories = nodesPayingShard(lineage.homeBiome, 1, lane).map((id) => nodeFamily(id)?.name);
+      assert(territories.length > 0, `no ${lineage.homeBiome} node pays the ${lane} shard ${step.cardId} costs`);
+      const territory = territories.find((name) => !!name && beat!.say.includes(`${name} territory`));
+      assert(!!territory, `${script.id}: the shards line must name a territory that pays ${lane}: "${beat!.say}"`);
+      assert(beat!.say.includes(shardName(lane)), `${script.id}: the shards line must use the shard's name: "${beat!.say}"`);
+      // Copy uses shard names, never lane names, on materials (design §24.2).
+      assert(!new RegExp(`\\b${lane}\\b`, 'i').test(beat!.say), `${script.id}: the shards line names the ${lane} lane: "${beat!.say}"`);
+      named.add(territory!);
+    }
+  }
+  // Quick Wrist's Gale is the Pack's, Keen Edge's Spark the Grove's, Envenomed's Venom the Canopy's.
+  for (const family of ['Pack', 'Grove', 'Canopy']) assert(named.has(family), `no class farms ${family} territory`);
+}
+
+// ── The two purchases compose (design §24.2) ────────────────────────────────
+/**
+ * A lean and a verb of DIFFERENT lanes, so the verb reads the composed sentence
+ * and the lean visibly changes it — the lesson. The lesson quotes the sentence
+ * the shared generator produces, and the verb beat names the ring.
+ */
+for (const plan of TUTORIAL_CLASS_PLANS) {
+  const lineage = LINEAGE_DATABASE.get(TUTORIAL_WEAPON_LINEAGE)!;
+  const lean = lineage.cards.find((c) => c.id === plan.weaponCards.lean);
+  const verb = lineage.cards.find((c) => c.id === plan.weaponCards.verb);
+  assert(!!lean && lean.tier === 1 && lean.row === 'stat', `${plan.className}: the lean is a tier-1 stat card`);
+  assert(!!verb && verb.tier === 1 && isVerbCard(verb), `${plan.className}: the verb is a tier-1 verb`);
+  assert(lean!.lane !== verb!.lane, `${plan.className}: a same-lane pair reads the pure sentence, so there is nothing to look at`);
+  const composed = verbSentence(verb!.lane, lean!.lane)!;
+  assert(composed !== verbSentence(verb!.lane), `${plan.className}: the lean does not change what ${verb!.name} says`);
+  const script = tutorialScriptFor(plan.classRoot);
+  const buy = script.beats.find((b) => b.id === `card:${verb!.id}`);
+  assert(!!buy?.lesson, `${plan.className}: the verb purchase has no lesson`);
+  assert(buy!.lesson!.cardId === verb!.id, `${plan.className}: the lesson points at another card`);
+  assert(buy!.lesson!.read.includes(composed), `${plan.className}: the lesson must quote "${composed}"`);
+  assert(buy!.lesson!.read.includes(lean!.name), `${plan.className}: the lesson must name the lean`);
+  assert(!!buy!.lesson!.ring && buy!.lesson!.ring.includes(verb!.name), `${plan.className}: the lesson must point at the verb's ring`);
+  assert(cardSentence(verb!, {
+    ownedCards: [lean!.id, verb!.id], active: { stat: lean!.id, payoff: verb!.id }, ownedForms: ['flash-rapier'], wornForm: 'flash-rapier',
+  }) === composed, `${plan.className}: the page shows a different sentence than the lesson quotes`);
+  // The verb comes after the lean.
+  const order = script.beats.map((b) => b.id);
+  assert(order.indexOf(`card:${lean!.id}`) < order.indexOf(`card:${verb!.id}`), `${plan.className}: the verb before the lean`);
+}
+
+// ── A purchase into a row the player already filled ─────────────────────────
+/**
+ * The server activates a purchase only into an EMPTY row (W2-A). A player who
+ * opted in mid-Tier-1 with another lean already active owns the guide's lean
+ * after the buy, but it is not active, so the beat must not be done yet: its
+ * `setActive` is what the director does next.
+ */
+{
+  const plan = TUTORIAL_CLASS_PLANS[0];
+  const script = tutorialScriptFor(plan.classRoot);
+  const leanBeat = script.beats.find((b) => b.id === `card:${plan.weaponCards.lean}`)!;
+  const other = LINEAGE_DATABASE.get(TUTORIAL_WEAPON_LINEAGE)!.cards
+    .find((c) => c.tier === 1 && c.row === 'stat' && c.id !== plan.weaponCards.lean)!;
+  const progress = {
+    ownedCards: [other.id, plan.weaponCards.lean],
+    active: { stat: other.id },
+    ownedForms: ['flash-rapier'],
+    wornForm: 'flash-rapier',
+  };
+  const midway = view({
+    playerTier: 1,
+    selectedClass: plan.classRoot,
+    biomeLevel: { clearing: 4, plains: 6, forest: 2 },
+    equipment: { ...emptyEquipment(), weapon: 'flash-rapier' },
+    lineages: { [TUTORIAL_WEAPON_LINEAGE]: progress },
+  });
+  const next = nextStepOf(script, leanBeat, midway);
+  assert(next?.type === 'setActive' && next.cardId === plan.weaponCards.lean,
+    `owning the lean with another one active must leave the setActive to do (got ${next?.type})`);
+  const swapped = view({ ...midway, lineages: { [TUTORIAL_WEAPON_LINEAGE]: { ...progress, active: { stat: plan.weaponCards.lean } } } });
+  assert(nextStepOf(script, leanBeat, swapped) === null, 'with the lean active the purchase beat is done');
+}
+
+// ── The first-hour checklist (docs/guided-tutorial-plan.md) ─────────────────
+/**
+ * At most two new ideas per level and per beat, each introduced once, each with
+ * a screen element that explains it (an anchor the guide can ring, when it names
+ * one). Levels are read off the script's own gates (`tutorialChecklist`). Every
+ * class meets the weapon page, both rows and the readout.
+ */
+for (const plan of TUTORIAL_CLASS_PLANS) {
+  const script = tutorialScriptFor(plan.classRoot);
+  const rows = tutorialChecklist(script);
+  const seen = new Set<TutorialConceptId>();
+  const perLevel = new Map<string, TutorialConceptId[]>();
+  for (const row of rows) {
+    assert(row.teaches.length <= TUTORIAL_CONCEPTS_PER_LEVEL, `${script.id}/${row.beatId}: one line introduces ${row.teaches.length} ideas`);
+    for (const concept of row.teaches) {
+      assert(concept in TUTORIAL_CONCEPTS, `${script.id}/${row.beatId}: unknown idea ${concept}`);
+      assert(!seen.has(concept), `${script.id}/${row.beatId}: "${concept}" was already introduced`);
+      seen.add(concept);
+      perLevel.set(row.level, [...(perLevel.get(row.level) ?? []), concept]);
+    }
+  }
+  for (const [level, concepts] of perLevel) {
+    assert(concepts.length <= TUTORIAL_CONCEPTS_PER_LEVEL,
+      `${script.id}: ${level} introduces ${concepts.length} ideas (${concepts.join(', ')})`);
+  }
+  for (const concept of ['weapon-page', 'shards', 'lean', 'verb', 'rhythm-ring', 'gate'] as const) {
+    assert(seen.has(concept), `${script.id}: never teaches ${concept}`);
+  }
+  // The lean is introduced on the level its card opens at, the verb no later than its purchase.
+  const levelOf = (id: string) => rows.find((r) => r.beatId === id)?.level;
+  assert(levelOf(`card:${plan.weaponCards.lean}`) === 'Forest 2', `${script.id}: the lean is bought at ${levelOf(`card:${plan.weaponCards.lean}`)}, not Forest 2`);
+}
+for (const [id, concept] of Object.entries(TUTORIAL_CONCEPTS) as [TutorialConceptId, TutorialConcept][]) {
+  assert(concept.name.length > 0 && concept.shownBy.length > 0, `${id}: an idea needs a name and what shows it`);
+  if (concept.anchor) assert(concept.anchor in TUTORIAL_ANCHORS, `${id}: unknown anchor ${concept.anchor}`);
 }
 
 // ── A shard farm stands where the shard is paid (design §24.3) ──────────────

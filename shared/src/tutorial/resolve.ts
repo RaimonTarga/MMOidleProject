@@ -146,6 +146,8 @@ export function stepSatisfied(step: TutorialStep, view: TutorialView, later: Lat
     }
     case 'unlockCard':
       return viewOwnsLineageCard(view, step.lineageId, step.cardId);
+    case 'setActive':
+      return view.lineages[step.lineageId]?.active[step.row] === step.cardId;
     case 'unlockForm':
       return viewOwnsLineageForm(view, step.lineageId, step.recipeId);
     case 'wearForm':

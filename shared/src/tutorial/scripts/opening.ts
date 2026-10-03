@@ -1,4 +1,5 @@
 import { CLEARING_NODE_ID } from '../../world/nodeBiomes';
+import type { TutorialConceptId } from '../concepts';
 import type { TutorialBeat, TutorialNodeRef, TutorialScript } from '../types';
 
 const CLEARING: TutorialNodeRef = { kind: 'node', nodeId: CLEARING_NODE_ID };
@@ -14,6 +15,7 @@ function clearingPiece(
   recipeId: string,
   requiredBiomeLevel: number,
   lines: { farm: string; waiting: string; craft: string },
+  teaches: TutorialConceptId[],
 ): TutorialBeat[] {
   return [
     {
@@ -21,6 +23,7 @@ function clearingPiece(
       chapter: CHAPTER,
       say: lines.farm,
       waiting: lines.waiting,
+      teaches,
       progress: [
         { type: 'biomeLevel', biomeGroup: 'clearing', level: requiredBiomeLevel },
         { type: 'essenceFor', recipeId },
@@ -65,6 +68,7 @@ export const TUTORIAL_OPENING: TutorialScript = {
       say: 'Tiny Wisps are harmless. Ten of them earn your first tier.',
       waiting: 'Auto Combat does the fighting. Sit back and watch the count.',
       progress: [{ type: 'questKills', questId: 'tier-0' }],
+      teaches: ['auto-combat', 'tier'],
       steps: [{ type: 'farm', at: CLEARING, until: { type: 'playerTierAtLeast', tier: 1 } }],
     },
     {
@@ -72,27 +76,28 @@ export const TUTORIAL_OPENING: TutorialScript = {
       chapter: CHAPTER,
       say: 'Pick the class you like the look of. The guide has a route for every one.',
       waiting: 'Read the cards, then confirm your pick with Unlock.',
+      teaches: ['class'],
       steps: [{ type: 'chooseClass' }],
     },
     ...clearingPiece('primordial-club', 1, {
       farm: 'Bare hands will not last. The Clearing can pay for a club.',
       waiting: 'Keep fighting here until the club is unlocked and paid for.',
       craft: 'Any weapon beats none. Craft the club and wield it.',
-    }),
+    }, ['gear']),
     ...clearingPiece('clearing-vest-t1', 2, {
       farm: 'Armor next: more health means fewer close calls.',
       waiting: 'A little more Clearing mastery opens the Bark Wrap.',
       craft: 'Craft the Bark Wrap and wear it.',
-    }),
+    }, ['mastery', 'armor']),
     ...clearingPiece('clearing-charm-t1', 3, {
       farm: 'A charm gets you back to full faster between fights.',
       waiting: 'The Herb Pouch opens at the next mastery level.',
       craft: 'Craft the Herb Pouch and carry it.',
-    }),
+    }, ['charm']),
     ...clearingPiece('clearing-boots-t1', 4, {
       farm: 'Last piece: boots, so less time walking and more time fighting.',
       waiting: 'The Soft Boots open at mastery 4, the Clearing\'s last level.',
       craft: 'Craft the Soft Boots and lace them up. That is the full Clearing set.',
-    }),
+    }, ['boots']),
   ],
 };
