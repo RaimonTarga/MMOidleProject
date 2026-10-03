@@ -439,8 +439,9 @@ export interface PacketHalfNumbers {
  *   kill-chain  moment = the next landed hit after a kill;
  *               payload/pure heal 10% of max HP and the hit lands ×1.5
  *   technique   moment = a Technique landing;
- *               payload refunds 1/3 of that Technique's remaining cooldown;
- *               pure refunds 1/2
+ *               payload refunds 1/3 of every Technique's remaining cooldown (it rides
+ *               another lane's moment, where no Technique landed);
+ *               pure refunds 1/2 of the landed Technique's
  */
 export const PACKET_HALF_NUMBERS: Partial<Record<PacketId, PacketHalfNumbers>> = {
   'tempo': {

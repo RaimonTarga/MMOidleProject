@@ -69,6 +69,12 @@ export interface PacketHalves {
   payloadPhrase: string;
   /** The one hand-authored sentence per packet: the pure pair (design §24.2). */
   pureSentence: string;
+  /**
+   * What this lane's MOMENT cannot reach, as the short note the weapon page shows
+   * under a verb of the lane (design §24.9: Kill chain "is weak on bosses" until
+   * the boss HP bar shows quarters). Absent for a moment every fight supplies.
+   */
+  momentCaveat?: string;
 }
 
 export interface PacketDefinition {
@@ -159,7 +165,7 @@ const packetEntries: [PacketId, PacketDefinition][] = [
       payload: 'hemorrhage', payloadFx: 'affliction.heavy-drip',
       pure: { payload: 'redose', fx: 'affliction.double-dose' },
       momentPhrase: {
-        text: 'A hit on a target you have already afflicted (once every {cap})',
+        text: 'A hit on a target you have already afflicted (every {cap} at most)',
         kind: 'subject',
       },
       payloadPhrase: 'leaves a heavy poison or bleed, {swing} over {duration}',
@@ -179,7 +185,7 @@ const packetEntries: [PacketId, PacketDefinition][] = [
       payload: 'root', payloadFx: 'control.shackle',
       pure: { payload: 'stun', fx: 'control.knockdown' },
       momentPhrase: {
-        text: 'A hit on a slowed or rooted target (once every {cap})',
+        text: 'A hit on a slowed or rooted target (every {cap} at most)',
         kind: 'subject',
       },
       payloadPhrase: 'roots the target for {duration}',
@@ -200,7 +206,10 @@ const packetEntries: [PacketId, PacketDefinition][] = [
       pure: { payload: 'heal-and-load', fx: 'kill-chain.heal-load' },
       momentPhrase: { text: 'Your next hit after a kill', kind: 'subject' },
       payloadPhrase: 'heals {shareOf} your pool and lands loaded ({loadPct})',
-      pureSentence: 'A kill heals {shareOf} your pool and loads your next hit.',
+      // The heal lands with the next hit, not the kill (course-correction report
+      // item 20), so the pure sentence says when it happens.
+      pureSentence: 'Your next hit after a kill heals {shareOf} your pool and lands loaded ({loadPct}).',
+      momentCaveat: 'weak on bosses',
     },
   }],
   ['engagement', {
@@ -250,7 +259,10 @@ const packetEntries: [PacketId, PacketDefinition][] = [
       payload: 'technique-refund', payloadFx: 'technique.refund-flash',
       pure: { payload: 'technique-refund', fx: 'technique.refund-flash' },
       momentPhrase: { text: 'When a Technique lands', kind: 'clause' },
-      payloadPhrase: "refunds {shareOf} that Technique's cooldown",
+      // The payload only ever rides ANOTHER lane's moment (a Technique lean on the
+      // Technique verb is the pure pair), where no Technique landed — so it
+      // refunds every Technique's cooldown, as the runtime does, never "that" one.
+      payloadPhrase: 'refunds {shareOf} your Technique cooldowns',
       pureSentence: 'A landed Technique refunds {shareOf} its cooldown.',
     },
   }],

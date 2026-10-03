@@ -125,6 +125,7 @@ const find = (band: PageBand, id: string): PageCardModel => {
   };
   const verb = pageCard({ lineage: hammer, card: card(hammer, 'hammer-t1-control-payoff'), progress, wallet: wallet() });
   assert.equal(verb.needsSlow, true);
+  assert.equal(verb.note, 'needs a slow');
   assert.equal(verb.state, 'active');
   assert.match(verb.accessibleName, /Needs a slow\./);
   assert.equal(verb.sentence, verbSentence('control', 'empowered'));
@@ -139,10 +140,41 @@ const find = (band: PageBand, id: string): PageCardModel => {
   };
   const pinned = pageCard({ lineage: hammer, card: card(hammer, 'hammer-t1-control-payoff'), progress: seeded, wallet: wallet() });
   assert.equal(pinned.needsSlow, false);
+  assert.equal(pinned.note, undefined);
   assert.doesNotMatch(pinned.accessibleName, /Needs a slow/);
   // And the lean's own line names its stat (it read "+3 Attack." like Engagement's).
   const lean = pageCard({ lineage: hammer, card: card(hammer, 'hammer-t1-control-stat'), progress: seeded, wallet: wallet() });
   assert.equal(lean.sentence, 'Every hit slows its target by 15% until your next swing.');
+}
+
+// ── The other verb caveats (design §24.9) ────────────────────────────────────
+{
+  const broadsword = LINEAGE_DATABASE.get('broadsword')!;
+  const bTree = (over: Partial<LineageProgress> = {}): LineageProgress => ({
+    ownedCards: [], active: {}, ownedForms: ['iron-broadsword'], wornForm: 'iron-broadsword', ...over,
+  });
+  const crown = card(broadsword, 'broadsword-t1-empowered-payoff');
+  // The Slinger's mechanic is a reload, which has no hit: a payload that acts on
+  // the hit (the pure pair's bigger mechanic hit) says so. Shown, not patched.
+  const slinger = pageCard({ lineage: broadsword, card: crown, progress: bTree(), wallet: wallet(), archetype: 'reload' });
+  assert.equal(slinger.note, 'your mechanic has no hit yet');
+  assert.match(slinger.accessibleName, /Your mechanic has no hit yet\./);
+  assert.equal(pageCard({ lineage: broadsword, card: crown, progress: bTree(), wallet: wallet(), archetype: 'cadence' }).note, undefined,
+    'every other root\'s mechanic rides a hit');
+  // A payload that does not need the hit (a refund) lands from a reload: no caveat.
+  const refunding = bTree({ ownedCards: ['broadsword-t1-technique-stat'], active: { stat: 'broadsword-t1-technique-stat' } });
+  assert.equal(pageCard({ lineage: broadsword, card: crown, progress: refunding, wallet: wallet(), archetype: 'reload' }).note, undefined);
+
+  // Kill chain's moment is weak on bosses, whatever the lean; its lean is not a moment.
+  const chain = pageCard({ lineage: broadsword, card: card(broadsword, 'broadsword-t1-kill-chain-payoff'), progress: bTree(), wallet: wallet() });
+  assert.equal(chain.note, 'weak on bosses');
+  assert.equal(chain.sentence, 'Your next hit after a kill heals a tenth of your pool and lands loaded (+50%).');
+  assert.equal(pageCard({ lineage: broadsword, card: card(broadsword, 'broadsword-t1-kill-chain-stat'), progress: bTree(), wallet: wallet() }).note,
+    undefined);
+
+  // The page threads the class through every band's cards.
+  const [lit] = pageBands({ lineage: broadsword, progress: bTree(), wallet: wallet(), archetype: 'reload' });
+  assert.equal(find(lit, 'broadsword-t1-empowered-payoff').note, 'your mechanic has no hit yet');
 }
 
 // ── One sentence per card, never the authored description (rule 5) ──────────

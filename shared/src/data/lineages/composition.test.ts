@@ -67,7 +67,7 @@ const REVIEW_SHEET: Record<string, { moment: string; payload: string; pure: stri
     pure: 'Every 6th hit strikes twice.',
   },
   affliction: {
-    moment: 'A hit on a target you have already afflicted (once every 5 s)',
+    moment: 'A hit on a target you have already afflicted (every 5 s at most)',
     payload: 'leaves a heavy poison or bleed, a whole swing over 4 s',
     pure: 'Hitting an afflicted target doubles its affliction.',
   },
@@ -82,18 +82,18 @@ const REVIEW_SHEET: Record<string, { moment: string; payload: string; pure: stri
     pure: 'Your mechanic hits half again as hard.',
   },
   control: {
-    moment: 'A hit on a slowed or rooted target (once every 5 s)',
+    moment: 'A hit on a slowed or rooted target (every 5 s at most)',
     payload: 'roots the target for 2 s',
     pure: 'Hitting a held target knocks it down for 1.5 s.',
   },
   'kill-chain': {
     moment: 'Your next hit after a kill',
     payload: 'heals a tenth of your pool and lands loaded (+50%)',
-    pure: 'A kill heals a tenth of your pool and loads your next hit.',
+    pure: 'Your next hit after a kill heals a tenth of your pool and lands loaded (+50%).',
   },
   technique: {
     moment: 'When a Technique lands',
-    payload: "refunds a third of that Technique's cooldown",
+    payload: 'refunds a third of your Technique cooldowns',
     pure: 'A landed Technique refunds half its cooldown.',
   },
 };
@@ -114,9 +114,23 @@ assert(
 );
 assert(
   verbSentence('affliction', 'engagement')
-    === 'A hit on a target you have already afflicted (once every 5 s) is a lunge for double damage.',
+    === 'A hit on a target you have already afflicted (every 5 s at most) is a lunge for double damage.',
   `subject grammar with a capped moment: ${verbSentence('affliction', 'engagement')}`,
 );
+
+// The Technique payload rides only another lane's moment, where no Technique
+// landed: it never names "that" Technique (it refunds every one, as the runtime does).
+assert(
+  verbSentence('tempo', 'technique') === 'Every 6th hit refunds a third of your Technique cooldowns.',
+  `technique payload at a hit moment: ${verbSentence('tempo', 'technique')}`,
+);
+for (const verb of WEAPON_PACKET_IDS) {
+  for (const lean of WEAPON_PACKET_IDS) {
+    const sentence = verbSentence(verb, lean) ?? '';
+    if (verb !== 'technique') assert(!/that Technique/.test(sentence), `${verb}×${lean}: "${sentence}"`);
+    assert(!/once every/.test(sentence), `${verb}×${lean}: a cap reads "(every N s at most)": "${sentence}"`);
+  }
+}
 
 // ── 3. The composition rule ──────────────────────────────────────────────────
 
