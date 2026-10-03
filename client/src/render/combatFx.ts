@@ -263,6 +263,7 @@ import { nodeToScene } from "./sceneCoords";
 import type { RenderState } from "./state";
 import { DEPTH } from "./depth";
 import { recordFrameCharge } from "../fx/frameChargeGlow";
+import { playCardWord } from "../fx/cardWord";
 // Deliberately NOT `import.meta.env.DEV`: `remotePlayerAttack.test.ts` transpiles
 // this whole file to CommonJS and runs it in a vm, where `import.meta` is a
 // syntax error. Keep this file free of it.
@@ -1455,7 +1456,11 @@ export function dispatchCombatEvent(
   if (ev.kind === "card-fx") {
     // Node-wide, like every other payoff signature: an ally should see a
     // build's cards land exactly as they'd see a Guard or a Technique fire.
-    if (shouldRunClientFx()) fxLineageCard(scene, ev);
+    if (shouldRunClientFx()) {
+      fxLineageCard(scene, ev);
+      // The card's name over the player, and its readout ring's pulse (W2-B).
+      playCardWord(state, scene, ev);
+    }
     return;
   }
   // dot-tick / monster-hit amounts render separately in deltaApplier.
