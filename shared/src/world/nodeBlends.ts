@@ -4,12 +4,15 @@ import {
   blendEntries,
   blendFamilyOccurrence,
   blendSpawnCycle,
+  dominantBlendFamily,
   familiesForBiome,
   FAMILY_DATABASE,
   renormalizeBlend,
+  type FamilyDefinition,
   type FamilyId,
   type NodeBlend,
 } from '../data/families';
+import type { PacketId } from '../data/lineages/types';
 import { WORLD_NODE_LIST, WORLD_NODES } from './map/registry';
 
 /**
@@ -122,6 +125,57 @@ export function blendSpawnPick(
   if (pool.length === 0) return undefined;
   const occurrence = blendFamilyOccurrence(resolved.cycle, cursor);
   return { family, monsterTypeId: pool[occurrence % pool.length] };
+}
+
+// ── One shard per node (design §24.3) ────────────────────────────────────────
+
+const familyByNode = new Map<string, FamilyDefinition | undefined>();
+
+/**
+ * The family a node is categorised under: its AUTHORED blend's dominant family —
+ * the largest share, ties broken in family-table order (`dominantBlendFamily`, the
+ * one definition; the 45/45 nodes rely on the tie-break). Undefined for a node
+ * with no blend: dungeons, sanctuaries and the Clearing.
+ *
+ * Authored, not resolved, on purpose: a node's identity is what the map author
+ * wrote, so a node whose dominant family has no body at its tier (six T2–T4 nodes,
+ * review L16) still reads — and pays — as that family's territory. That is a data
+ * gap to fill with a monster, not a reason to re-categorise the node silently.
+ */
+export function nodeFamily(nodeId: string): FamilyDefinition | undefined {
+  if (familyByNode.has(nodeId)) return familyByNode.get(nodeId);
+  const blend = WORLD_NODES.get(nodeId)?.blend;
+  const dominant = blend ? dominantBlendFamily(blend) : undefined;
+  const family = dominant ? FAMILY_DATABASE.get(dominant) : undefined;
+  familyByNode.set(nodeId, family);
+  return family;
+}
+
+/**
+ * The one shard every non-boss kill in this node pays (design §24.3): its
+ * dominant family's `drops`, minority families included. A player learns a
+ * node's currency in one visit and never collects three from one clearing, and
+ * a pack follower filed under another family pays the node's shard like every
+ * other body here (review P16, closed by construction).
+ *
+ * Undefined for a node with no blend; the reward seam then falls back to the
+ * dead monster's own family shard there (dungeons — the behaviour before §24.3).
+ */
+export function nodeShard(nodeId: string): PacketId | undefined {
+  return nodeFamily(nodeId)?.drops;
+}
+
+/**
+ * The normal nodes of one biome and tier that pay `packet`, in id order. Where a
+ * shard can be farmed under the node rule — what the map, the bot and the
+ * tutorial ask instead of "which family drops it".
+ */
+export function nodesPayingShard(biomeGroup: string, tier: number, packet: PacketId): string[] {
+  return WORLD_NODE_LIST
+    .filter((node) => node.biomeGroup === biomeGroup && node.biomeTier === tier && node.blend)
+    .filter((node) => nodeShard(node.id) === packet)
+    .map((node) => node.id)
+    .sort();
 }
 
 /**
