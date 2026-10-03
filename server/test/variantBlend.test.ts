@@ -63,7 +63,11 @@ function countFamilies(families: readonly FamilyId[]): Map<FamilyId, number> {
 // node" rule is checked per tier against the families that tier's OWN blends
 // actually name, not every family of the biome: Desert's Stalker family is
 // T3+ only by design (no T2 member — see families/index.ts), so a T2 check
-// against `familiesForBiome` would wrongly demand a Stalker-led T2 node.
+// against `familiesForBiome` would wrongly demand a Stalker-led T2 node. And
+// only the named families the tier's pool FIELDS: a family with no body at the
+// tier must lead nothing (`nodeShards.test.ts` — a node pays its leader's
+// shard, so a bodiless leader pays for a family it never spawns), so a minority
+// share it keeps in a blend is texture for when a body is authored, not a claim.
 
 function checkTierBlends(tier: number, expectedCount: number) {
   const normals = WORLD_NODE_LIST.filter(
@@ -76,6 +80,7 @@ function checkTierBlends(tier: number, expectedCount: number) {
 
   const countByBiome = new Map<string, number>();
   const familiesNamedByBiome = new Map<string, Set<FamilyId>>();
+  const familiesFieldedByBiome = new Map<string, Set<FamilyId>>();
   for (const node of normals) {
     countByBiome.set(node.biomeGroup, (countByBiome.get(node.biomeGroup) ?? 0) + 1);
 
@@ -102,6 +107,9 @@ function checkTierBlends(tier: number, expectedCount: number) {
       named.add(key);
     }
     familiesNamedByBiome.set(node.biomeGroup, named);
+    const fielded = familiesFieldedByBiome.get(node.biomeGroup) ?? new Set<FamilyId>();
+    for (const familyId of nodeSpawnBlend(node.id)?.poolByFamily.keys() ?? []) fielded.add(familyId);
+    familiesFieldedByBiome.set(node.biomeGroup, fielded);
     check(
       Object.keys(NODE_BLENDS).includes(node.id),
       `${node.id}: authored a blend but is missing from NODE_BLENDS`,
@@ -117,9 +125,12 @@ function checkTierBlends(tier: number, expectedCount: number) {
       blended === count,
       `T${tier} ${biomeGroup}: ${count} normal nodes but ${blended} blends`,
     );
-    // Every family this tier's blends name for the biome leads at least one
-    // node, so no shard this tier claims to source is actually unreachable.
+    // Every family this tier's blends name for the biome, and its pool fields,
+    // leads at least one node, so no shard this tier claims to source is
+    // actually unreachable.
+    const fielded = familiesFieldedByBiome.get(biomeGroup) ?? new Set<FamilyId>();
     for (const familyId of familiesNamedByBiome.get(biomeGroup) ?? []) {
+      if (!fielded.has(familyId)) continue;
       const leads = normals.some(
         (node) =>
           node.biomeGroup === biomeGroup &&

@@ -9,9 +9,9 @@ import { resolveSanctuaryNodeDisplayName } from './displayNames';
  * family table by this wave (`shared/src/data/families/index.ts`): the five
  * starter biomes plus Jungle/Desert reuse their existing families (their
  * T3 mobs already live in those families' `monsterIds`), and Tundra/Volcanic
- * are the new biomes authored in this same wave. Desert fields all THREE
- * families at T3 for the first time (Stalker's two T3+ members debut here),
- * unlike its two-way T2 blends.
+ * are the new biomes authored in this same wave. Desert's T3 blends name all
+ * THREE families for the first time (Stalker's T3+ members debut here), though
+ * its T3 pool fields only two of them (see DESERT_T3_BLENDS).
  *
  * Counted against the live T3 normal node count (2026-10-01): tundra 5,
  * mountain 5, cave 6, jungle 5, desert 5, volcanic 6, swamp 6 (38 total) —
@@ -46,16 +46,26 @@ const CAVE_T3_BLENDS: readonly NodeBlend[] = [
 
 const JUNGLE_T3_BLENDS: readonly NodeBlend[] = [
   { 'jungle-ape': 0.70, 'jungle-undergrowth': 0.20, 'jungle-stalker': 0.10 },
-  { 'jungle-undergrowth': 0.70, 'jungle-stalker': 0.20, 'jungle-ape': 0.10 },
+  // 02 — Stalker territory, not Undergrowth (verbs-that-fire C, PROVISIONAL): no
+  // Undergrowth body lives at T3 (snake/blowdarter are T2, lizard/constrictor T4), so
+  // the node spawned Stalker 7 / Ape 3 while paying Venom. Spawns unchanged.
+  { 'jungle-stalker': 0.70, 'jungle-ape': 0.30 },
   { 'jungle-stalker': 0.70, 'jungle-ape': 0.20, 'jungle-undergrowth': 0.10 },
   { 'jungle-ape': 0.45, 'jungle-undergrowth': 0.45, 'jungle-stalker': 0.10 },
   { 'jungle-ape': 0.34, 'jungle-undergrowth': 0.33, 'jungle-stalker': 0.33 },
 ];
 
-/** Desert's first THREE-way tier: Stalker's T3+ members debut here. */
+/**
+ * Stalker's T3+ members debut here — but the T3 pool fields only Basilisk and
+ * Stalker: `dune-stalker` (its monster file's "soft controller T3", the Scorpion
+ * line's middle step) is filed under Stalker, so Scorpion has no T3 body.
+ */
 const DESERT_T3_BLENDS: readonly NodeBlend[] = [
   { 'desert-basilisk': 0.70, 'desert-scorpion': 0.20, 'desert-stalker': 0.10 },
-  { 'desert-scorpion': 0.70, 'desert-stalker': 0.20, 'desert-basilisk': 0.10 },
+  // 02 — Stalker territory, not Scorpion (verbs-that-fire C, PROVISIONAL): with no T3
+  // Scorpion the node spawned Stalker 7 / Basilisk 3 while paying Shackle. Spawns
+  // unchanged.
+  { 'desert-stalker': 0.70, 'desert-basilisk': 0.30 },
   { 'desert-stalker': 0.70, 'desert-basilisk': 0.20, 'desert-scorpion': 0.10 },
   { 'desert-basilisk': 0.45, 'desert-scorpion': 0.45, 'desert-stalker': 0.10 },
   { 'desert-basilisk': 0.34, 'desert-scorpion': 0.33, 'desert-stalker': 0.33 },
@@ -73,7 +83,10 @@ const VOLCANIC_T3_BLENDS: readonly NodeBlend[] = [
 const SWAMP_T3_BLENDS: readonly NodeBlend[] = [
   { 'swamp-mire': 0.70, 'swamp-coven': 0.20, 'swamp-stalker': 0.10 },
   { 'swamp-coven': 0.70, 'swamp-stalker': 0.20, 'swamp-mire': 0.10 },
-  { 'swamp-stalker': 0.70, 'swamp-mire': 0.20, 'swamp-coven': 0.10 },
+  // 03 — Mire territory, not Stalker (verbs-that-fire C, PROVISIONAL): no Stalker body
+  // lives at T3 (mud-toad is T1, mire-stalker T2), so the node spawned Mire 7 /
+  // Coven 3 while paying Bone. Spawns unchanged.
+  { 'swamp-mire': 0.70, 'swamp-coven': 0.30 },
   { 'swamp-mire': 0.45, 'swamp-coven': 0.45, 'swamp-stalker': 0.10 },
   { 'swamp-mire': 0.34, 'swamp-coven': 0.33, 'swamp-stalker': 0.33 },
   { 'swamp-coven': 0.55, 'swamp-stalker': 0.30, 'swamp-mire': 0.15 },

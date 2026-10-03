@@ -14,13 +14,16 @@
  * kill that silently pays nothing.
  *
  * It also pins the shard-sourcing STOPGAP (design §18.6): a boss kill also drops
- * shards of each Lane-A packet of the lineages homed in its biome, deduplicated per
- * packet, because Bulwark and Barrier tempo have no T1 mob family at all and
- * Technique (design §22) has only one.
+ * shards of each Lane-A packet of the LIVE lineages homed in its biome,
+ * deduplicated per packet, because Technique (design §22) has only one family
+ * source — and, once their trees return, because Bulwark and Barrier tempo have no
+ * T1 mob family at all. A PARKED lineage's Lane A is not paid (design §24.5,
+ * course-correction report item 17), read off `parked` so un-parking restores it.
  *
  * And it pins §12's COVERAGE RULE — "every packet has >= 2 sources per tier, so no
- * shard has a single source" — counting the stopgap, computed from the pools and the
- * family table rather than asserted by hand.
+ * shard has a single source" — for every packet a live lineage can spend, counting
+ * the stopgap, computed from the pools and the family table rather than asserted by
+ * hand.
  *
  * Deliberately NOT asserted: drop amounts. Those are one row in the magnitude
  * table; everything here is relative or structural.
@@ -44,6 +47,8 @@ import {
   emptyEquipment,
   familiesForBiome,
   familyForMonster,
+  isLineageParked,
+  liveLineages,
   nodeFamily,
   nodeShard,
   nodeSpawnBlend,
@@ -306,7 +311,8 @@ function farm(id: string, nodeId: string, monsterTypeId: string, kills: number) 
 }
 
 // The boss drops its biome's capstone, every kill, plus the Phase 4
-// shard-sourcing stopgap's Lane-A shards (design §17) — and nothing else.
+// shard-sourcing stopgap's Lane-A shards of its LIVE lineages (design §17,
+// §24.5) — and nothing else.
 {
   const boss = [...MONSTER_DATABASE.values()].find((m) => m.isBoss && m.biome === 'forest');
   assert(!!boss, 'fixture: a Forest boss');
@@ -343,32 +349,82 @@ function farm(id: string, nodeId: string, monsterTypeId: string, kills: number) 
   }
 }
 
-// The stopgap is deduplicated per packet, not per lineage that names it: a
-// biome whose armor and mobility Lane A are the same packet (Plains' Kill
-// chain) pays it once per boss kill, not twice.
-{
-  const plainsLaneA = biomeLaneAPackets('plains');
-  assert(
-    plainsLaneA.includes('kill-chain') && plainsLaneA.includes('bulwark'),
-    `fixture: Plains' Lane A should include kill-chain and bulwark, got ${plainsLaneA.join(', ')}`,
-  );
-  // Design §22: the Broadsword's Lane A is Technique, and the stopgap pays every
-  // lineage's Lane A — which is the Plains boss's half of Technique's two sources.
-  assert(
-    plainsLaneA.includes('technique'),
-    `the Plains boss must pay Technique shards (design §18.6, §22), got ${plainsLaneA.join(', ')}`,
-  );
-  assert(
-    new Set(plainsLaneA).size === plainsLaneA.length,
-    'biomeLaneAPackets must already be deduplicated',
-  );
+// ── Parked lineages pay nothing (design §24.5, course-correction item 17) ────
+//
+// A parked tree can spend no shard, so the stopgap skips it: while the armour,
+// charm and boots trees are parked, every T1 boss pays exactly its biome's
+// WEAPON Lane A, and no boss pays Iron (Bulwark) or Glass (Barrier tempo) Shards.
+// Through the live reward seam, every T1 biome.
 
-  const boss = [...MONSTER_DATABASE.values()].find((m) => m.isBoss && m.biome === 'plains');
-  assert(!!boss, 'fixture: a Plains boss');
-  const one = farm('m-boss-plains', 'node-t1-plains-01', boss!.id, 1);
+/** The T1 boss of a biome, by its pool — not "some boss of that biome". */
+function t1Boss(biome: string): string {
+  const id = BIOME_DATABASE.get(biome)?.bossPoolByTier?.[1]?.[0];
+  assert(!!id && MONSTER_DATABASE.get(id)?.isBoss === true, `fixture: ${biome} has a T1 boss`);
+  return id!;
+}
+
+{
+  const parkedOnly: PacketId[] = ['bulwark', 'barrier-tempo'];
+  const parked = [...LINEAGE_DATABASE.values()].filter((l) => isLineageParked(l));
+  assert(parked.length === 15, `fixture: the fifteen non-weapon trees are parked, got ${parked.length}`);
+  for (const biome of T1_BIOMES) {
+    const weapon = liveLineages().filter((l) => l.homeBiome === biome);
+    assert(weapon.length === 1 && weapon[0].slot === 'weapon', `fixture: ${biome}'s one live tree is its weapon`);
+    const laneA = biomeLaneAPackets(biome);
+    check(
+      laneA.length === 1 && laneA[0] === weapon[0].lanes[0],
+      `${biome}: the stopgap pays the ${weapon[0].id}'s Lane A (${weapon[0].lanes[0]}) only, got ${laneA.join(', ')}`,
+    );
+    const kill = farm(`m-boss-live-${biome}`, `node-t1-${biome}-01`, t1Boss(biome), 1);
+    const paid = Object.keys(kill.shards) as PacketId[];
+    check(
+      paid.length === 1 && paid[0] === weapon[0].lanes[0],
+      `${biome}: a boss kill pays the weapon's Lane-A shard only, got ${JSON.stringify(kill.shards)}`,
+    );
+    for (const packet of parkedOnly) {
+      check((kill.shards[packet] ?? 0) === 0, `${biome}: a boss kill pays '${packet}' shards a parked tree cannot spend`);
+    }
+  }
+  // Design §22: the Broadsword's Lane A is Technique, so the Plains boss is still
+  // the second of Technique's two sources with every non-weapon tree parked.
+  check(
+    biomeLaneAPackets('plains').includes('technique'),
+    `the Plains boss must pay Technique shards (design §18.6, §22), got ${biomeLaneAPackets('plains').join(', ')}`,
+  );
+}
+
+// Un-parking restores it, with no other edit: un-park Plains' three non-weapon
+// trees and the Plains boss pays their Lane As too — deduplicated per packet, not
+// per lineage (armour Bulwark; charm and boots both Kill chain, paid once).
+{
+  const plainsParked = [...LINEAGE_DATABASE.values()].filter(
+    (l) => l.homeBiome === 'plains' && isLineageParked(l),
+  );
+  assert(plainsParked.length === 3, `fixture: Plains parks three trees, got ${plainsParked.length}`);
+  const laneAs = new Set(plainsParked.map((l) => l.lanes[0]));
   assert(
-    Object.keys(one.shards).length === plainsLaneA.length,
-    `a Plains boss kill pays each Lane-A packet once, got ${Object.keys(one.shards).join(', ')}`,
+    laneAs.has('bulwark') && laneAs.has('kill-chain') && laneAs.size < plainsParked.length,
+    `fixture: Plains' parked Lane As include Bulwark and a shared Kill chain, got ${[...plainsParked.map((l) => l.lanes[0])].join(', ')}`,
+  );
+  for (const lineage of plainsParked) delete lineage.parked;
+  try {
+    const plainsLaneA = biomeLaneAPackets('plains');
+    check(
+      ['technique', ...laneAs].every((packet) => plainsLaneA.includes(packet as PacketId)),
+      `un-parked, the Plains boss pays every live Lane A, got ${plainsLaneA.join(', ')}`,
+    );
+    check(new Set(plainsLaneA).size === plainsLaneA.length, 'biomeLaneAPackets must already be deduplicated');
+    const one = farm('m-boss-plains-unparked', 'node-t1-plains-01', t1Boss('plains'), 1);
+    check(
+      Object.keys(one.shards).length === plainsLaneA.length && (one.shards.bulwark ?? 0) > 0,
+      `an un-parked Plains boss kill pays each Lane-A packet once, Iron included, got ${JSON.stringify(one.shards)}`,
+    );
+  } finally {
+    for (const lineage of plainsParked) lineage.parked = true;
+  }
+  check(
+    biomeLaneAPackets('plains').join() === 'technique',
+    `parked again, the Plains boss pays Technique only, got ${biomeLaneAPackets('plains').join(', ')}`,
   );
 }
 
@@ -400,8 +456,15 @@ function farm(id: string, nodeId: string, monsterTypeId: string, kills: number) 
 // stopgap, so neither half can quietly become the only source. A family whose mobs
 // all live in a later tier's pool drops nothing at tier 1 however a blend names it,
 // which is why this reads the POOL and not the blends.
+//
+// "Every packet" is every packet a LIVE lineage can spend: while the non-weapon
+// trees are parked (design §24.5) nothing buys Bulwark or Barrier tempo, and the
+// stopgap no longer pays them, so they need no source. Derived from `parked`, so
+// un-parking a tree puts its lanes back under the rule.
 
 {
+  const spendable = new Set<PacketId>(liveLineages().flatMap((l) => [...l.lanes]));
+  assert(spendable.size >= 7, `fixture: the live trees spend ${spendable.size} packets, expected the seven weapon lanes`);
   const fieldableAtT1 = new Set<string>(
     T1_BIOMES.flatMap((biome) => BIOME_DATABASE.get(biome)?.monsterPoolByTier[1] ?? []),
   );
@@ -415,6 +478,7 @@ function farm(id: string, nodeId: string, monsterTypeId: string, kills: number) 
     for (const packet of biomeLaneAPackets(biome)) sources.get(packet)!.push(`${biome} boss`);
   }
   for (const packet of PACKET_IDS) {
+    if (!spendable.has(packet)) continue;
     const from = sources.get(packet)!;
     check(
       from.length >= 2,

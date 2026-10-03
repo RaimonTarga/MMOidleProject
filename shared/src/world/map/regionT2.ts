@@ -58,18 +58,32 @@ const CAVE_T2_BLENDS: readonly NodeBlend[] = [
 ];
 
 const SWAMP_T2_BLENDS: readonly NodeBlend[] = [
-  { 'swamp-mire': 0.70, 'swamp-coven': 0.20, 'swamp-stalker': 0.10 },
+  // 01 — Coven territory, not Mire (verbs-that-fire C, PROVISIONAL): no Mire body lives
+  // at T2 (bog-slime is T1, bog-lurker T3), so this node already spawned Coven 7 /
+  // Stalker 3 while paying Venom. Two-way like Desert's T2 blends; spawns unchanged.
+  { 'swamp-coven': 0.70, 'swamp-stalker': 0.30 },
   { 'swamp-coven': 0.70, 'swamp-stalker': 0.20, 'swamp-mire': 0.10 },
   { 'swamp-stalker': 0.70, 'swamp-mire': 0.20, 'swamp-coven': 0.10 },
-  { 'swamp-mire': 0.45, 'swamp-coven': 0.45, 'swamp-stalker': 0.10 },
-  { 'swamp-mire': 0.34, 'swamp-coven': 0.33, 'swamp-stalker': 0.33 },
+  // 04 — Coven territory, not Mire (verbs-that-fire C, PROVISIONAL): the 45/45 tie went
+  // to Mire, which has no T2 body, so the node spawned Coven 8 / Stalker 2. Spawns
+  // unchanged.
+  { 'swamp-coven': 0.80, 'swamp-stalker': 0.20 },
+  // 05 — Stalker territory, not Mire (verbs-that-fire C, PROVISIONAL): Mire has no T2
+  // body, so the node spawned Coven 5 / Stalker 5. Stalker leads (6 / 4) rather than
+  // Coven so the tier's Bone Shards come from two nodes, not one (Coven already leads
+  // 01, 02, 04 and 06).
+  { 'swamp-stalker': 0.60, 'swamp-coven': 0.40 },
   { 'swamp-coven': 0.55, 'swamp-stalker': 0.30, 'swamp-mire': 0.15 },
 ];
 
 const JUNGLE_T2_BLENDS: readonly NodeBlend[] = [
   { 'jungle-ape': 0.70, 'jungle-undergrowth': 0.20, 'jungle-stalker': 0.10 },
   { 'jungle-undergrowth': 0.70, 'jungle-stalker': 0.20, 'jungle-ape': 0.10 },
-  { 'jungle-stalker': 0.70, 'jungle-ape': 0.20, 'jungle-undergrowth': 0.10 },
+  // 03 — Undergrowth territory, not Stalker (verbs-that-fire C, PROVISIONAL): no Jungle
+  // Stalker lives below T3, so the node spawned Ape 7 / Undergrowth 3 while paying
+  // Spark. Undergrowth leads (6 / 4) rather than Ape so the tier pays Venom from two
+  // nodes — the Stinger's gate shard and a Rapier lane — not Anvil from four.
+  { 'jungle-undergrowth': 0.60, 'jungle-ape': 0.40 },
   { 'jungle-ape': 0.45, 'jungle-undergrowth': 0.45, 'jungle-stalker': 0.10 },
   { 'jungle-ape': 0.34, 'jungle-undergrowth': 0.33, 'jungle-stalker': 0.33 },
 ];

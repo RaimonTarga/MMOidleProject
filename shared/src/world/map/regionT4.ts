@@ -18,7 +18,10 @@ import { resolveSanctuaryNodeDisplayName } from './displayNames';
  */
 const MOUNTAIN_T4_BLENDS: readonly NodeBlend[] = [
   { 'mountain-crag': 0.70, 'mountain-ridge': 0.20, 'mountain-hopper': 0.10 },
-  { 'mountain-ridge': 0.70, 'mountain-hopper': 0.20, 'mountain-crag': 0.10 },
+  // 02 — Hopper territory, not Ridge (verbs-that-fire C, PROVISIONAL): no Ridge body
+  // lives at T4 (ridge-archer T1, peak-archer T2, crag-mortar T3), so the node spawned
+  // Hopper 7 / Crag 3 while paying Shackle. Spawns unchanged.
+  { 'mountain-hopper': 0.70, 'mountain-crag': 0.30 },
   { 'mountain-hopper': 0.70, 'mountain-crag': 0.20, 'mountain-ridge': 0.10 },
   { 'mountain-crag': 0.45, 'mountain-ridge': 0.45, 'mountain-hopper': 0.10 },
   { 'mountain-crag': 0.34, 'mountain-ridge': 0.33, 'mountain-hopper': 0.33 },

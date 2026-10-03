@@ -27,6 +27,11 @@ const DEFAULT_BOSS_RESPAWN_MS = 30_000;
  * so a biome whose armor and mobility lineages share a Lane A (e.g. Plains' Kill
  * chain) pays that packet once per kill, not once per lineage that names it.
  *
+ * Only LIVE lineages count (`biomeLaneAPackets` skips parked ones): while the
+ * non-weapon trees are parked (design §24.5) the stopgap pays the weapon lanes
+ * only, so no boss pays Iron or Glass Shards nothing can spend. Un-parking a tree
+ * restores its Lane A with no edit here.
+ *
  * FOUR, so a boss-only lane buys a payoff card in two kills (design §18.6): a
  * payoff row costs eight shards at T1, and at two per kill those lanes were four
  * boss kills behind a lane whose family drops its shard on ordinary trash.
