@@ -206,7 +206,9 @@ export const RELOAD_FRAME_BUFFS = [
       id: 'reload-frame-ramp',
       label: 'Ramp',
       stacks,
-      durationPct: -1,
+      // The ramp reports its FILL here, like a bank: the rhythm readout's frame
+      // ring draws it (design §24.6).
+      durationPct: fill * 100,
       color: '#ffbb55',
       logDetail: `+${Math.round(stacks * pct * 100)}% attack speed, +${damagePct}% damage`,
       values: [

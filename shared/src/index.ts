@@ -41,6 +41,7 @@ export * from './systems/evolution';
 export * from './data/lineages';
 export * from './data/families';
 export * from './systems/lineages';
+export * from './systems/rhythm';
 export * from './data/abilityNodes';
 export * from './systems/abilityNodes';
 export * from './systems/cores';

@@ -64,6 +64,7 @@ import {
   setFlag,
   setLineageRuntime,
   setResource,
+  LINEAGE_WINDOW_BUFF_IDS,
   PACKET_DEFINITIONS,
   type BuffId,
   type LineageFxKey,
@@ -101,6 +102,8 @@ import { cleansePlayerAfflictions } from './status/cleanse';
 import { defineBuff } from './buffs/descriptor';
 import { registerKeystones, runChain } from './keystones';
 import { abilityCooldownKey } from '../player/abilities/abilityCooldowns';
+import { ENGAGEMENT_CD, capCd, carryFlag, firstHitFlag, nthCounter } from './lineageKeys';
+import { syncRhythmReadout, type OpenerSpent } from './rhythmReadout';
 
 // ── Authored units ───────────────────────────────────────────────────────────
 //
@@ -119,8 +122,11 @@ const CLEANSE_STACKS = lineageUnit('cleanseStacks');
 const ENGAGEMENT_IDLE_MS = lineageUnit('engagementIdleMs');
 
 // ── TracksCombat keys ────────────────────────────────────────────────────────
+//
+// The moment keys the rhythm readout also reads (`nthCounter`, `firstHitFlag`,
+// `capCd`, `carryFlag`, `ENGAGEMENT_CD`) live in `lineageKeys.ts`, so the two
+// can never spell them differently.
 
-const ENGAGEMENT_CD = 'lineage.engagement';
 const STANDING_MS_KEY = 'lineage.standingMs';
 /**
  * Set once a standing payout has been spent, cleared the moment the player moves.
@@ -128,14 +134,8 @@ const STANDING_MS_KEY = 'lineage.standingMs';
  * reads false, and "not yet spent" is the state a fresh player should be in.
  */
 const STANDING_SPENT = 'lineage.standingSpent';
-const nthCounter = (key: string): string => `lineage.nth.${key}`;
-const firstHitFlag = (key: string): string => `lineage.first.${key}`;
 const pulseCd = (key: string): string => `lineage.pulse.${key}`;
 const standingCd = (key: string): string => `lineage.stand.${key}`;
-/** A moment's rate cap (design §24.2), per card: one landed firing per `capMs`. */
-const capCd = (key: string): string => `lineage.cap.${key}`;
-/** `kill` with `carry`: armed by a kill, spent by the next landed hit. */
-const carryFlag = (key: string): string => `lineage.carry.${key}`;
 /**
  * `hit-afflicted` reads whether the target was afflicted BEFORE this hit — "a
  * target you have ALREADY afflicted" — so the class DoT this very hit lays down
@@ -181,6 +181,12 @@ interface LineageFiring {
    * every attuned Technique.
    */
   composed?: boolean;
+  /**
+   * Set when the firing IS a card or a worn capstone (its id), so its `card-fx`
+   * names it: the rhythm readout pulses that card's ring and floats its name
+   * (design §24.6). An ability node's external payoff leaves it unset.
+   */
+  cardId?: string;
 }
 
 /**
@@ -219,6 +225,7 @@ function firingsFor(player: PlayerEntity, kind: TriggerKind): LineageFiring[] {
       payoff: resolved.payoff,
       perTarget: resolved.perTargetTrigger,
       composed: resolved.composition !== undefined,
+      cardId: resolved.card.id,
     });
   }
   for (const worn of runtime.capstones) {
@@ -228,6 +235,7 @@ function firingsFor(player: PlayerEntity, kind: TriggerKind): LineageFiring[] {
       fx: worn.capstone.fx,
       trigger: worn.trigger,
       payoff: worn.payoff,
+      cardId: worn.capstone.id,
     });
   }
   return out;
@@ -862,7 +870,12 @@ function fire(site: PayoffSite, firings: readonly LineageFiring[]): number {
     if (capMs > 0 && isCooldownActive(cs, capCd(firing.key))) continue;
     const drawn = applyPayoff(site, firing);
     if (!drawn) continue;
-    if (capMs > 0) setCooldown(cs, capCd(firing.key), capMs);
+    if (capMs > 0) {
+      setCooldown(cs, capCd(firing.key), capMs);
+      // The cap's clock is the readout's to draw (design §24.6): written once,
+      // here, where it starts — never re-sent while it runs.
+      syncRhythmReadout(site.world, site.player);
+    }
     applied++;
     site.world.pushEvent(site.player.hasPosition.nodeId, {
       kind: 'card-fx',
@@ -872,6 +885,7 @@ function fire(site: PayoffSite, firings: readonly LineageFiring[]): number {
       ...(drawn.targetId !== undefined ? { targetId: drawn.targetId } : {}),
       ...(drawn.targetPos !== undefined ? { targetPos: drawn.targetPos } : {}),
       ...(drawn.stacks !== undefined ? { stacks: drawn.stacks } : {}),
+      ...(firing.cardId !== undefined ? { cardId: firing.cardId } : {}),
     });
   }
   return applied;
@@ -947,6 +961,8 @@ function registerHitNth(): void {
         setCounter(player.tracksCombat, nthCounter(firing.key), next);
       }
     }
+    // Every counter above moved, so the readout's count did too.
+    syncRhythmReadout(world, player);
     if (due.length === 0) return;
     fire({ world, player, ctx, target: ctx.defender }, due);
   });
@@ -1004,11 +1020,16 @@ function registerFirstHit(): void {
       const latch = openerLatch(firing);
       return !getFlag(latch.cs, latch.flag);
     });
-    if (due.length === 0) return;
+    const spent: OpenerSpent[] = [];
     for (const firing of due) {
       const latch = openerLatch(firing);
       setFlag(latch.cs, latch.flag, true);
+      if (firing.perTarget) spent.push({ key: firing.key, bodyId: ctx.defender.isMonster.id });
     }
+    // Every landed hit moves the engagement clock a per-engagement latch re-arms
+    // on, and a spend changes a latch outright: both are the readout's to show.
+    syncRhythmReadout(world, player, spent);
+    if (due.length === 0) return;
     fire({ world, player, ctx, target: ctx.defender }, due);
   });
 }
@@ -1032,6 +1053,8 @@ function registerKill(): void {
       if (firing.trigger.carry) setFlag(player.tracksCombat, carryFlag(firing.key), true);
       else now.push(firing);
     }
+    // An armed carry is a ready ring (design §24.6).
+    if (now.length < firings.length) syncRhythmReadout(world, player);
     if (now.length === 0) return;
     // The corpse is still in the world at onKill, so a payoff that spreads OFF it
     // (contagion) still has something to read.
@@ -1062,6 +1085,7 @@ function registerKillCarry(): void {
     if (ctx.metadata['chaoticMiss']) return;
     if (ctx.defender.hasHealth.hp <= 0 || !world.hasMonster(ctx.defender.isMonster.id)) return;
     for (const firing of armed) setFlag(cs, carryFlag(firing.key), false);
+    syncRhythmReadout(world, player);
     fire({ world, player, ctx, target: ctx.defender }, armed);
   });
 }
@@ -1464,12 +1488,12 @@ function defineWindowBuff<const Id extends BuffId>(
  * existing buff-sync path, with no new channel (Phase 1c contract).
  */
 export const LINEAGE_BUFFS = [
-  defineWindowBuff('damage-window', 'lineage-damage', 'Surge', 'Damage'),
-  defineWindowBuff('speed-window', 'lineage-speed', 'Wake', 'Attack speed'),
-  defineWindowBuff('recovery-window', 'lineage-recovery', 'Mend', 'Recovery'),
-  defineWindowBuff('engagement-dr', 'lineage-guard', 'Brace', 'Damage reduction'),
-  defineWindowBuff('ward', 'lineage-ward', 'Shell', 'Absorb'),
-  defineWindowBuff('plating-stack', 'lineage-plate', 'Plate', 'Plating per stack'),
-  defineWindowBuff('technique-window', 'lineage-technique', 'Form', 'Next Technique'),
-  defineWindowBuff('evasion-window', 'lineage-evasion', 'Slip', 'Evade chance'),
+  defineWindowBuff('damage-window', LINEAGE_WINDOW_BUFF_IDS['damage-window'], 'Surge', 'Damage'),
+  defineWindowBuff('speed-window', LINEAGE_WINDOW_BUFF_IDS['speed-window'], 'Wake', 'Attack speed'),
+  defineWindowBuff('recovery-window', LINEAGE_WINDOW_BUFF_IDS['recovery-window'], 'Mend', 'Recovery'),
+  defineWindowBuff('engagement-dr', LINEAGE_WINDOW_BUFF_IDS['engagement-dr'], 'Brace', 'Damage reduction'),
+  defineWindowBuff('ward', LINEAGE_WINDOW_BUFF_IDS['ward'], 'Shell', 'Absorb'),
+  defineWindowBuff('plating-stack', LINEAGE_WINDOW_BUFF_IDS['plating-stack'], 'Plate', 'Plating per stack'),
+  defineWindowBuff('technique-window', LINEAGE_WINDOW_BUFF_IDS['technique-window'], 'Form', 'Next Technique'),
+  defineWindowBuff('evasion-window', LINEAGE_WINDOW_BUFF_IDS['evasion-window'], 'Slip', 'Evade chance'),
 ] as const;
