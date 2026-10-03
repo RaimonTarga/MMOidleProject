@@ -27,6 +27,13 @@ export interface PacketDefinition {
   color: string;
   /** False for the two defensive-only packets weapons never draw from. */
   weaponEligible: boolean;
+  /**
+   * The player-facing name of this packet's shard material (design §24.2): one
+   * physical noun per packet, because the player never reads a lane name on a
+   * material. Lane names stay the internal vocabulary; the player sees shards,
+   * colours and sentences. Read through {@link shardName}.
+   */
+  shardName: string;
 }
 
 /**
@@ -39,56 +46,56 @@ export interface PacketDefinition {
  */
 const packetEntries: [PacketId, PacketDefinition][] = [
   ['tempo', {
-    id: 'tempo', name: 'Tempo', scalingStat: 'attackSpeedPct',
+    id: 'tempo', name: 'Tempo', scalingStat: 'attackSpeedPct', shardName: 'Gale Shard',
     wants: 'attack speed, on-hit', firesOn: 'every nth hit',
     paysWith: 'echo hits, speed windows, rampage',
     weakAgainst: 'fortified plating, a single big target',
     color: '#7fe3ff', weaponEligible: true,
   }],
   ['empowered', {
-    id: 'empowered', name: 'Empowered', scalingStat: 'attackPct',
+    id: 'empowered', name: 'Empowered', scalingStat: 'attackPct', shardName: 'Anvil Shard',
     wants: 'attack %, empowered multiplier', firesOn: 'your class mechanic',
     paysWith: 'vulnerability, plating shred, stagger',
     weakAgainst: 'swarms, evasive mobs',
     color: '#ffb347', weaponEligible: true,
   }],
   ['affliction', {
-    id: 'affliction', name: 'Affliction', scalingStat: 'onHitDamage',
+    id: 'affliction', name: 'Affliction', scalingStat: 'onHitDamage', shardName: 'Venom Shard',
     wants: 'conversion %, stacks', firesOn: 'stacks reaching cap',
     paysWith: 'hemorrhage, poison, Detonate, Contagion',
     weakAgainst: 'dot-resistant mobs, short fights',
     color: '#9be564', weaponEligible: true,
   }],
   ['control', {
-    id: 'control', name: 'Control', scalingStat: 'attack',
+    id: 'control', name: 'Control', scalingStat: 'attack', shardName: 'Shackle Shard',
     wants: 'slow, chill', firesOn: 'a hit on a slowed target',
     paysWith: 'root, stun, bonus damage vs controlled',
     weakAgainst: 'control-immune bosses',
     color: '#8fb8ff', weaponEligible: true,
   }],
   ['kill-chain', {
-    id: 'kill-chain', name: 'Kill Chain', scalingStat: 'speed',
+    id: 'kill-chain', name: 'Kill Chain', scalingStat: 'speed', shardName: 'Bone Shard',
     wants: 'move speed, on-kill', firesOn: 'a kill',
     paysWith: 'recovery bursts, kill speed, cooldown refunds',
     weakAgainst: 'a lone boss with nothing to chain',
     color: '#c58fff', weaponEligible: true,
   }],
   ['engagement', {
-    id: 'engagement', name: 'Engagement', scalingStat: 'attack',
+    id: 'engagement', name: 'Engagement', scalingStat: 'attack', shardName: 'Spark Shard',
     wants: 'approach, the first hit', firesOn: 'the start of a fight',
     paysWith: 'engagement DR, opening burst, barrier refill',
     weakAgainst: 'long attrition fights',
     color: '#ff9f9f', weaponEligible: true,
   }],
   ['bulwark', {
-    id: 'bulwark', name: 'Bulwark', scalingStat: 'plating',
+    id: 'bulwark', name: 'Bulwark', scalingStat: 'plating', shardName: 'Iron Shard',
     wants: 'plating, stationary DR', firesOn: 'standing still, or a hit taken',
     paysWith: 'plating stacks, absorb ramp, ward',
     weakAgainst: 'fights that demand mobility',
     color: '#b8b8a0', weaponEligible: false,
   }],
   ['barrier-tempo', {
-    id: 'barrier-tempo', name: 'Barrier Tempo', scalingStat: 'recovery',
+    id: 'barrier-tempo', name: 'Barrier Tempo', scalingStat: 'recovery', shardName: 'Glass Shard',
     wants: 'barrier %, recharge', firesOn: 'the barrier breaking',
     paysWith: 'break heal, refill on a max hit',
     weakAgainst: 'sustained chip damage',
@@ -101,7 +108,7 @@ const packetEntries: [PacketId, PacketDefinition][] = [
   // so the tree accent, the shard glyph, the buff clock and the combat flare all
   // read this line and move together.
   ['technique', {
-    id: 'technique', name: 'Technique', scalingStat: 'techniquePowerPct',
+    id: 'technique', name: 'Technique', scalingStat: 'techniquePowerPct', shardName: 'Sigil Shard',
     wants: 'Technique power, Technique cooldown reduction',
     firesOn: 'a Technique landing',
     paysWith: 'cooldown refunds, a window that empowers the next Technique',
@@ -154,12 +161,13 @@ export function packetDefaultFace(id: PacketId): DefensiveFace {
 }
 
 /**
- * Player-facing name of a lane's shard material, e.g. `tempo` → "Tempo Shard".
+ * Player-facing name of a lane's shard material, e.g. `tempo` → "Gale Shard".
  *
- * Shards are keyed by PACKET, not by biome (design §12), so the material's name
- * says what it buys and the map says where it drops. There is no per-tier
- * variant: a tier multiplies the quantity, never the name.
+ * Shards are keyed by PACKET, not by biome (design §12), and named with one
+ * physical noun per packet (design §24.2), so the material never shows a lane
+ * name. There is no per-tier variant: a tier multiplies the quantity, never the
+ * name.
  */
 export function shardName(id: PacketId): string {
-  return `${PACKET_DEFINITIONS.get(id)?.name ?? id} Shard`;
+  return PACKET_DEFINITIONS.get(id)?.shardName ?? `${id} shard`;
 }
