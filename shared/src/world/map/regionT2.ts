@@ -58,7 +58,10 @@ const CAVE_T2_BLENDS: readonly NodeBlend[] = [
 ];
 
 const SWAMP_T2_BLENDS: readonly NodeBlend[] = [
-  { 'swamp-mire': 0.70, 'swamp-coven': 0.20, 'swamp-stalker': 0.10 },
+  // 01 — Coven territory, not Mire (verbs-that-fire C, PROVISIONAL): no Mire body lives
+  // at T2 (bog-slime is T1, bog-lurker T3), so this node already spawned Coven 7 /
+  // Stalker 3 while paying Venom. Two-way like Desert's T2 blends; spawns unchanged.
+  { 'swamp-coven': 0.70, 'swamp-stalker': 0.30 },
   { 'swamp-coven': 0.70, 'swamp-stalker': 0.20, 'swamp-mire': 0.10 },
   { 'swamp-stalker': 0.70, 'swamp-mire': 0.20, 'swamp-coven': 0.10 },
   { 'swamp-mire': 0.45, 'swamp-coven': 0.45, 'swamp-stalker': 0.10 },
