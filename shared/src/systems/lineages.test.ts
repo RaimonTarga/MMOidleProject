@@ -77,7 +77,7 @@ function richWallet(overrides: Partial<LineageWallet> = {}): LineageWallet {
   const noShards = checkUnlockCard({
     lineage: rapier, card: statCard, progress, wallet: richWallet({ shards: {} }),
   });
-  assert(!noShards.ok && noShards.reason!.includes('shard'), 'the shard gate did not bite');
+  assert(!noShards.ok && /shard/i.test(noShards.reason!), 'the shard gate did not bite');
 
   // Global Mastery gates WHEN, on the same band the +N ladder used.
   const lowGm = checkUnlockCard({
@@ -164,7 +164,7 @@ function richWallet(overrides: Partial<LineageWallet> = {}): LineageWallet {
     lineage: rapier, form: stinger, progress,
     wallet: richWallet({ biomeLevels: { forest: 99, jungle: 0 } }),
   });
-  assert(!noJungle.ok && noJungle.reason!.includes('jungle'), 'a form door gates on its own biome');
+  assert(!noJungle.ok && /jungle/i.test(noJungle.reason!), 'a form door gates on its own biome');
 
   // The home-biome gate sits at full mastery of the tier, so a T1 player who has
   // maxed Forest can pay it — that is the point of the reward moment.

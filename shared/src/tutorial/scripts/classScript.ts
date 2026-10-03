@@ -9,6 +9,7 @@ import { RECIPE_DATABASE } from '../../data/recipes';
 import { ITEM_DATABASE } from '../../itemDatabase';
 import type { EssenceType } from '../../items';
 import { RUNE_RECIPE_DATABASE } from '../../runeRecipes';
+import { nodeFamily, nodesPayingShard } from '../../world/nodeBlends';
 import type {
   TutorialBeat,
   TutorialCondition,
@@ -130,12 +131,6 @@ const TUTORIAL_TREE = {
   firstCardId: 'rapier-t1-tempo-stat',
   /** The tier-2 form behind the T1 gate, crowning the same lane. */
   gateFormId: 'gale-needle',
-  /**
-   * Where the lane's shard comes from, for the one line that names a drop
-   * source. Data-checked in `tutorial.test.ts`, so a family table edit that
-   * moves Tempo out of the Forest fails loudly instead of lying on screen.
-   */
-  shardSource: 'the Pack — the Forest\'s wolves',
 } as const;
 
 /** The leg the first-card lesson rides on — the lineage's own home biome. */
@@ -472,12 +467,19 @@ class ScriptBuilder {
     const resolved = resolveLineageCard(card, lineage);
     const owned: TutorialCondition = { type: 'lineageCardOwned', lineageId: lineage.id, cardId: card.id };
     const shard = shardName(card.lane);
+    // Where it drops, read off the node rule rather than hand-written (design
+    // §24.3): every kill in a node pays its dominant family's shard, so the line
+    // names that family's territory — the word the map and the arrival banner use.
+    const territory = nodesPayingShard(lineage.homeBiome, 1, card.lane)
+      .map((id) => nodeFamily(id)?.name)
+      .find((familyName): familyName is string => !!familyName);
+    if (!territory) throw new Error(`no T1 ${lineage.homeBiome} node pays the ${card.lane} shard ${card.id} costs`);
 
     this.push({
       id: `shards:${card.id}`,
       chapter,
-      say: `The ${name(lineage.forms[0].recipeId)} has a tree of its own, and its first card is paid in ${shard}s. Those drop off ${TUTORIAL_TREE.shardSource}.`,
-      waiting: `Fighting in ${BIOME_NAME[lineage.homeBiome as T1Biome] ?? lineage.homeBiome} for ${shard}s.`,
+      say: `The ${name(lineage.forms[0].recipeId)} has a tree of its own, and its first card is paid in ${shard}s. Every kill in ${territory} territory pays them; the map names each node's territory.`,
+      waiting: `Fighting in ${territory} territory for ${shard}s.`,
       progress: [
         { type: 'biomeLevel', biomeGroup: lineage.homeBiome, level: resolved.requiredBiomeLevel },
         ...lineageCostProgress(resolved.cost),

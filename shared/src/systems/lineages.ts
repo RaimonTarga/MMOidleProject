@@ -16,6 +16,8 @@
  *  - **One row, one active card.** A row is a choice, not a shopping list.
  */
 import { ESSENCE_LABELS } from '../items';
+import { BIOME_DATABASE } from '../biomeDatabase';
+import { shardName } from '../data/lineages/packets';
 import type { EquipmentSlot, EssenceType } from '../items';
 import type { SubVariant } from '../data/skillTree/types';
 import { biomeLevelCap } from '../config/gameConfig';
@@ -227,6 +229,11 @@ export function lineageSwitchDiscount(params: {
 
 // ─── Affordability ───────────────────────────────────────────────────────────
 
+/** A biome's display name for refusal text — "Forest", never "forest" (review L21). */
+function biomeName(biomeGroup: string): string {
+  return BIOME_DATABASE.get(biomeGroup)?.name ?? biomeGroup;
+}
+
 function affordEssence(
   cost: Partial<Record<EssenceType, number>>,
   essences: Partial<Record<EssenceType, number>>,
@@ -245,7 +252,8 @@ function affordShards(
 ): LineageCheck {
   for (const [packet, amount] of Object.entries(cost) as [PacketId, number][]) {
     if ((shards?.[packet] ?? 0) < amount) {
-      return { ok: false, reason: `Not enough ${packet} shards (need ${amount}).` };
+      // The player's noun, never the lane id (design §24.2, review L21).
+      return { ok: false, reason: `Not enough ${shardName(packet)}s (need ${amount}).` };
     }
   }
   return OK;
@@ -310,7 +318,7 @@ export function checkUnlockCard(params: {
   if (level < resolved.requiredBiomeLevel) {
     return {
       ok: false,
-      reason: `Requires ${resolved.requiredBiomeGroup} level ${resolved.requiredBiomeLevel}.`,
+      reason: `Requires ${biomeName(resolved.requiredBiomeGroup)} level ${resolved.requiredBiomeLevel}.`,
     };
   }
   if (wallet.globalMastery !== undefined && wallet.globalMastery < resolved.requiredGlobalMastery) {
@@ -379,9 +387,9 @@ export function checkUnlockForm(params: {
   // The gate is gated by the FORM's biome — a Jungle door needs Jungle levels.
   const level = wallet.biomeLevels[form.biome] ?? 0;
   const required = formGateBiomeLevel(form);
-  if (level < required) return { ok: false, reason: `Requires ${form.biome} level ${required}.` };
+  if (level < required) return { ok: false, reason: `Requires ${biomeName(form.biome)} level ${required}.` };
   if (wallet.playerTier !== undefined && biomeLevelCap(wallet.playerTier, form.biome) < required) {
-    return { ok: false, reason: `${form.biome} cannot reach level ${required} at your tier yet.` };
+    return { ok: false, reason: `${biomeName(form.biome)} cannot reach level ${required} at your tier yet.` };
   }
   const mastery = formGateMastery(form);
   if (wallet.globalMastery !== undefined && wallet.globalMastery < mastery) {

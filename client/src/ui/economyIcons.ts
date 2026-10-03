@@ -1,6 +1,6 @@
 import { createElement } from 'react';
 import type { EssenceType, PacketId } from '@mmo-idle/shared';
-import { packetDefinition } from '@mmo-idle/shared';
+import { packetDefinition, shardName } from '@mmo-idle/shared';
 import { atlasIcon, nodeIcon, type AtlasIconSource, type IconSource } from './GameIcon';
 
 const ESSENCE_ICON_SOURCES: Record<EssenceType, AtlasIconSource> = {
@@ -24,7 +24,8 @@ export function essenceIconSource(type: EssenceType): AtlasIconSource {
  */
 export function shardIconSource(packet: PacketId): IconSource {
   const color = packetDefinition(packet)?.color ?? '#a99e8a';
-  const letter = packetDefinition(packet)?.name.charAt(0) ?? packet.charAt(0).toUpperCase();
+  // The shard's own initial (G for Gale), matching the name beside it (design §24.2).
+  const letter = shardName(packet).charAt(0).toUpperCase();
   return nodeIcon(
     createElement(
       'span',

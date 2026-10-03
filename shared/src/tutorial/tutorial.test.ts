@@ -1,7 +1,6 @@
 import { ABILITY_DATABASE } from '../abilities';
 import { ABILITY_RECIPE_DATABASE } from '../abilityRecipes';
 import { globalMastery } from '../config/gameConfig';
-import { familiesDropping } from '../data/families';
 import { LINEAGE_DATABASE, lineageForRecipeId } from '../data/lineages';
 import { GATE_CAPSTONE_AMOUNT } from '../data/lineages/magnitudes';
 import type { LineageProgressMap } from '../data/lineages/types';
@@ -14,7 +13,8 @@ import { RUNE_RECIPE_DATABASE } from '../runeRecipes';
 import { runicPointBreakdown } from '../runicPoints';
 import { bossClearKey } from '../systems/biomeProgress';
 import { NODE_BIOMES } from '../world/nodeBiomes';
-import { nodeShard } from '../world/nodeBlends';
+import { nodeFamily, nodeShard, nodesPayingShard } from '../world/nodeBlends';
+import { shardName } from '../data/lineages/packets';
 import { tutorialNodeFor } from './nodes';
 import {
   TUTORIAL_CLASS_PLANS,
@@ -456,10 +456,11 @@ for (const plan of TUTORIAL_CLASS_PLANS) simulate(plan);
 
 // ── The shards line names a real drop source ────────────────────────────────
 /**
- * The guide says Tempo Shards "drop off the Pack — the Forest's wolves". That is
- * the one hand-written claim about the family table in the whole script, so it
- * is checked here rather than trusted: a table edit that moves Tempo out of the
- * Forest fails this instead of lying to a new player.
+ * The guide names where the first card's shard drops: "Every kill in Pack
+ * territory pays them" (design §24.3 — a node pays its dominant family's shard).
+ * It is the one claim about the map in the whole script, so it is checked here
+ * rather than trusted: the territory it names must lead a home-biome node that
+ * pays the card's shard, and the line must use the shard's own name.
  */
 {
   const script = tutorialScriptFor(TUTORIAL_CLASS_PLANS[0].classRoot);
@@ -469,12 +470,15 @@ for (const plan of TUTORIAL_CLASS_PLANS) simulate(plan);
   assert(!!card, 'the script buys a lineage card');
   const lineage = LINEAGE_DATABASE.get(card!.lineageId)!;
   const lane = lineage.cards.find((c) => c.id === card!.cardId)!.lane;
-  const sources = familiesDropping(lane).filter((f) => f.biome === lineage.homeBiome);
-  assert(sources.length > 0, `no ${lineage.homeBiome} family drops the ${lane} shard the first card costs`);
-  assert(
-    sources.some((f) => f.name === 'Pack' && f.monsterIds.some((id) => id.includes('wolf'))),
-    `the shards line names the Pack's wolves, but ${lineage.homeBiome}'s ${lane} source is now ${sources.map((f) => f.name).join('/')}`,
-  );
+  const beat = script.beats.find((b) => b.id === `shards:${card!.cardId}`);
+  assert(!!beat, 'the script has a shards beat for the first card');
+  const territories = nodesPayingShard(lineage.homeBiome, 1, lane).map((id) => nodeFamily(id)?.name);
+  assert(territories.length > 0, `no ${lineage.homeBiome} node pays the ${lane} shard the first card costs`);
+  const named = territories.find((name) => !!name && beat!.say.includes(`${name} territory`));
+  assert(!!named, `the shards line must name a territory that pays ${lane}: "${beat!.say}"`);
+  assert(beat!.say.includes(shardName(lane)), `the shards line must use the shard's name: "${beat!.say}"`);
+  // The Rapier's first card is Tempo, and Tempo's Forest territory is the Pack's.
+  assert(named === 'Pack', `expected the Pack's territory, got ${named}`);
 }
 
 // ── A shard farm stands where the shard is paid (design §24.3) ──────────────
