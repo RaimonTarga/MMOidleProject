@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
-import { EQUIPMENT_SLOTS, ITEM_DATABASE, lineageForRecipeId, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS, relicIsUnlocked } from '@mmo-idle/shared';
+import { EQUIPMENT_SLOTS, ITEM_DATABASE, lineageForEquippedItem, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS, relicIsUnlocked } from '@mmo-idle/shared';
 import { equipmentAtom, inventoryAtom, itemUpgradesAtom, playerNodeIdAtom, playerTierAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
 import { ItemIcon } from '../ItemIcon';
@@ -30,14 +30,15 @@ export function BackpackGrid({ compare }: Props) {
   // sitting in the bag as ordinary loose gear (design §2). Before that — most
   // importantly, the freshly-crafted T1 base form, which has no other equip
   // path — a lineage form stays an ordinary backpack item so the ordinary
-  // equip flow (tap to pin, then Equip) still reaches it.
+  // equip flow (tap to pin, then Equip) still reaches it. A parked lineage's
+  // forms (design §24.5) have no tree to move to, so they always stay here.
   const items = useMemo(() => inventory
     .map((defId, invIndex) => ({ defId, def: ITEM_DATABASE.get(defId) ?? null, invIndex }))
     .filter(({ defId }) => {
-      const lineage = lineageForRecipeId(defId);
+      const lineage = lineageForEquippedItem(defId);
       if (!lineage) return true;
       const equippedId = equipment[lineage.slot];
-      const wearingThisLineage = !!equippedId && lineageForRecipeId(equippedId)?.id === lineage.id;
+      const wearingThisLineage = !!equippedId && lineageForEquippedItem(equippedId)?.id === lineage.id;
       return !wearingThisLineage;
     })
     .sort((a, b) => (b.def?.tier ?? -1) - (a.def?.tier ?? -1)

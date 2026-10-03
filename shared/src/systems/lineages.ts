@@ -21,7 +21,7 @@ import type { SubVariant } from '../data/skillTree/types';
 import { biomeLevelCap } from '../config/gameConfig';
 import type { HoldsInventory } from '../components/core/networkedSlices';
 import {
-  cardsForTier, formsAtGate, LINEAGE_DATABASE, lineageForRecipeId, lineagesForSlot,
+  cardsForTier, formsAtGate, isLineageParked, LINEAGE_DATABASE, lineageForRecipeId, lineagesForSlot,
 } from '../data/lineages';
 import { capstoneMaterialName } from '../data/lineages/capstones';
 import {
@@ -74,6 +74,13 @@ export function defensiveFaceForSubVariant(sub: SubVariant | null | undefined): 
 }
 
 const OK: LineageCheck = { ok: true };
+
+/**
+ * Why every check refuses a parked lineage (design §24.5). One string, so the
+ * server's reply, the client's disabled button and the tests all say the same.
+ */
+export const PARKED_LINEAGE_REASON = 'This slot has no tree yet.';
+const PARKED: LineageCheck = { ok: false, reason: PARKED_LINEAGE_REASON };
 
 // ─── State helpers ───────────────────────────────────────────────────────────
 
@@ -282,6 +289,7 @@ export function checkUnlockCard(params: {
 }): LineageCheck {
   const { lineage, card, progress, wallet, lineages } = params;
 
+  if (isLineageParked(lineage)) return PARKED;
   if (card.lineageId !== lineage.id) return { ok: false, reason: 'That card belongs to another lineage.' };
   if (!lineage.cards.some((c) => c.id === card.id)) return { ok: false, reason: 'Unknown card.' };
   if (progress.ownedCards.includes(card.id)) return { ok: false, reason: 'Already owned.' };
@@ -335,6 +343,7 @@ export function checkSetActive(params: {
   cardId: string | null;
 }): LineageCheck {
   const { lineage, progress, row, cardId } = params;
+  if (isLineageParked(lineage)) return PARKED;
   if (cardId === null) return OK;
   const card = lineage.cards.find((c) => c.id === cardId);
   if (!card) return { ok: false, reason: 'Unknown card.' };
@@ -363,6 +372,7 @@ export function checkUnlockForm(params: {
 }): LineageCheck {
   const { lineage, form, progress, wallet } = params;
 
+  if (isLineageParked(lineage)) return PARKED;
   if (!lineage.forms.some((f) => f.recipeId === form.recipeId)) {
     return { ok: false, reason: 'That form is not part of this lineage.' };
   }
@@ -411,6 +421,7 @@ export function checkWearForm(params: {
   recipeId: string;
 }): LineageCheck {
   const { lineage, progress, recipeId } = params;
+  if (isLineageParked(lineage)) return PARKED;
   if (!lineage.forms.some((f) => f.recipeId === recipeId)) {
     return { ok: false, reason: 'That form is not part of this lineage.' };
   }
@@ -651,6 +662,12 @@ export interface ActiveLineageEffects {
  * A lineage only contributes while its worn form is the item equipped in its
  * slot — owning a second tree changes nothing until you wear it. This is what
  * Phase 1b's recalc and card runtime consume.
+ *
+ * A PARKED lineage contributes nothing at all — no cards, no absorbed stat
+ * rows, and no capstone (design §24.5). A save that still holds a parked tree
+ * keeps it untouched; it is simply not resolved. The capstone goes with the
+ * cards: a parked lineage's T2+ forms are plain recipes now, so a verb granted
+ * for wearing one would be a lineage verb with no tree behind it.
  */
 export function resolveActiveLineages(
   inventory: Pick<HoldsInventory, 'equipment' | 'lineages'> | undefined,
@@ -669,7 +686,7 @@ export function resolveActiveLineages(
 
   for (const [lineageId, progress] of Object.entries(inventory.lineages ?? {})) {
     const lineage = LINEAGE_DATABASE.get(lineageId);
-    if (!lineage || !progress) continue;
+    if (!lineage || !progress || isLineageParked(lineage)) continue;
     if (inventory.equipment[lineage.slot] !== progress.wornForm) continue;
 
     for (const resolved of resolveLineageCards(lineage, progress, frameFace)) {
@@ -692,11 +709,14 @@ export function resolveActiveLineages(
 }
 
 /**
- * The lineage an equipped item belongs to — how the inventory panel turns a slot
- * into a tree. Falls back to undefined for items with no lineage (cores, relics).
+ * The tree an equipped item opens — how the inventory panel turns a slot into a
+ * tree. Undefined for items with no lineage (cores, relics) AND for a parked
+ * lineage's forms (design §24.5): a parked slot shows no tree entry anywhere.
+ * `lineageForRecipeId` stays the raw data lookup.
  */
 export function lineageForEquippedItem(recipeId: string | null | undefined): LineageDefinition | undefined {
-  return recipeId ? lineageForRecipeId(recipeId) : undefined;
+  const lineage = recipeId ? lineageForRecipeId(recipeId) : undefined;
+  return lineage && !isLineageParked(lineage) ? lineage : undefined;
 }
 
 // ─── Amplifier connectors (design §4, §8) ────────────────────────────────────

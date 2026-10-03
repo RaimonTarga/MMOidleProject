@@ -433,6 +433,15 @@ export interface LineageDefinition {
   lanes: readonly [PacketId, PacketId, PacketId];
   forms: readonly LineageForm[];
   cards: readonly LineageCard[];
+  /**
+   * A parked tree: the data is kept, the tree is unreachable (design §24.5). No
+   * page entry, no card or gate purchasable, no runtime cards or capstone, no
+   * tree created or persisted for it, and its forms are plain recipes (crafted at
+   * their biome level, never gated). Every armour, charm and boots lineage is
+   * parked for the second playtest; absent on the live (weapon) trees. Read it
+   * through `isLineageParked`, never as a falsy check scattered at call sites.
+   */
+  parked?: true;
 }
 
 // ─── Resolved shapes (numbers, from the magnitude table) ─────────────────────

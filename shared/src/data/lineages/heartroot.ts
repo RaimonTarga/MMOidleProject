@@ -16,6 +16,8 @@ import { packetDefaultFace } from './packets';
 export const HEARTROOT_LINEAGE: LineageDefinition = {
   id: 'heartroot',
   slot: 'recovery',
+  // Parked for the second playtest (design §24.5): data kept, tree unreachable.
+  parked: true,
   homeBiome: 'forest',
   lanes: ['barrier-tempo', 'affliction', 'engagement'],
 

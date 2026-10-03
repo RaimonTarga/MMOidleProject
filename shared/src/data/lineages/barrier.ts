@@ -14,6 +14,8 @@ import { packetDefaultFace } from './packets';
 export const BARRIER_LINEAGE: LineageDefinition = {
   id: 'barrier',
   slot: 'recovery',
+  // Parked for the second playtest (design §24.5): data kept, tree unreachable.
+  parked: true,
   homeBiome: 'mountain',
   lanes: ['barrier-tempo', 'bulwark', 'empowered'],
 

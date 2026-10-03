@@ -14,7 +14,7 @@
  */
 import assert from 'node:assert/strict';
 import {
-  LINEAGE_DATABASE, ROW_SCALAR, emptyEquipment, resolveActiveLineages,
+  LINEAGE_DATABASE, ROW_SCALAR, emptyEquipment, liveLineages, resolveActiveLineages,
   resolveLineageCard,
 } from '@mmo-idle/shared';
 import type { LineageCard, LineageProgress } from '@mmo-idle/shared';
@@ -55,6 +55,13 @@ function activeCards(lineageId: string, cards: LineageCard[]) {
   }).cards;
 }
 
+/**
+ * The sweeps walk the LIVE trees only: a parked lineage (design §24.5 — every
+ * armour, charm and boots tree) resolves no runtime cards at all, so its
+ * amplifiers have nothing to fold into. Its data stays authored.
+ */
+const LIVE = new Map(liveLineages().map((l) => [l.id, l]));
+
 const BOOST = ROW_SCALAR.amplifier;
 assert(BOOST > 0, 'the amplifier row scalar is what an amplifier is worth; it must be non-zero');
 
@@ -63,7 +70,7 @@ assert(BOOST > 0, 'the amplifier row scalar is what an amplifier is worth; it mu
   // Every lineage, every amplifier: with the amplifier slotted, the runtime must
   // see the payoff and NOT the amplifier. This is the whole defect, swept.
   let checked = 0;
-  for (const [id, def] of LINEAGE_DATABASE) {
+  for (const [id, def] of LIVE) {
     for (const amp of def.cards.filter((c) => c.row === 'amplifier')) {
       const target = def.cards.find((c) => c.id === amp.modifies);
       assert(target, `${amp.id} should modify a real card`);
@@ -79,7 +86,8 @@ assert(BOOST > 0, 'the amplifier row scalar is what an amplifier is worth; it mu
       checked++;
     }
   }
-  assert.equal(checked, 60, `expected 60 authored amplifiers, swept ${checked}`);
+  // 15 = three per weapon lineage; the 45 on the parked trees are not swept.
+  assert.equal(checked, 15, `expected 15 live amplifiers, swept ${checked}`);
 }
 
 // ── 2. Every axis moves the thing it names, and nothing else ─────────────────
@@ -87,7 +95,7 @@ assert(BOOST > 0, 'the amplifier row scalar is what an amplifier is worth; it mu
   // One real card per axis, so the assertions are about shipped data rather than
   // a fixture that agrees with the implementation.
   const cases: Array<{ lineageId: string; ampId: string; axis: string }> = [];
-  for (const [id, def] of LINEAGE_DATABASE) {
+  for (const [id, def] of LIVE) {
     for (const amp of def.cards.filter((c) => c.row === 'amplifier')) {
       if (!cases.some((c) => c.axis === amp.amplifies)) {
         cases.push({ lineageId: id, ampId: amp.id, axis: amp.amplifies! });
@@ -148,7 +156,7 @@ assert(BOOST > 0, 'the amplifier row scalar is what an amplifier is worth; it mu
   // re-scopes `first-hit`'s latch from per-engagement to per-body. Adding an extra
   // trigger of a kind the card already fires on would instead be a no-op.
   const sameKind: Array<{ lineageId: string; amp: LineageCard }> = [];
-  for (const [id, def] of LINEAGE_DATABASE) {
+  for (const [id, def] of LIVE) {
     for (const amp of def.cards) {
       if (amp.row !== 'amplifier' || amp.amplifies !== 'trigger') continue;
       const target = def.cards.find((c) => c.id === amp.modifies);

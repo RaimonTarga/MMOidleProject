@@ -12,12 +12,14 @@
  */
 import {
   LINEAGE_DATABASE,
+  PARKED_LINEAGE_REASON,
   TEST_ROOM_NODE_ID,
   checkSetActive,
   checkUnlockCard,
   checkUnlockForm,
   checkWearForm,
   globalMastery,
+  isLineageParked,
   lineageCardPrice,
   lineageGateCost,
   statRowIsCollapsed,
@@ -44,6 +46,22 @@ export interface LineageResult {
 
 const fail = (lineageId: string, action: LineageAction, reason: string): LineageResult =>
   ({ success: false, reason, lineageId, action });
+
+/**
+ * The lineage a request names, or the refusal for it. A parked lineage (design
+ * §24.5) is refused HERE, before `ensureLineageProgress` can see it, so no
+ * request for a parked tree ever creates or writes one (review finding B1 was
+ * exactly an empty tree persisted on request).
+ */
+function liveLineage(lineageId: string, action: LineageAction): LineageDefinition | LineageResult {
+  const lineage = LINEAGE_DATABASE.get(lineageId);
+  if (!lineage) return fail(lineageId, action, 'Unknown lineage.');
+  if (isLineageParked(lineage)) return fail(lineageId, action, PARKED_LINEAGE_REASON);
+  return lineage;
+}
+
+const isRefusal = (value: LineageDefinition | LineageResult): value is LineageResult =>
+  'success' in value;
 
 // ─── Shared plumbing ─────────────────────────────────────────────────────────
 
@@ -108,8 +126,8 @@ export function unlockLineageCard(
   lineageId: string,
   cardId: string,
 ): LineageResult {
-  const lineage = LINEAGE_DATABASE.get(lineageId);
-  if (!lineage) return fail(lineageId, 'unlockCard', 'Unknown lineage.');
+  const lineage = liveLineage(lineageId, 'unlockCard');
+  if (isRefusal(lineage)) return lineage;
   const card = lineage.cards.find((c) => c.id === cardId);
   if (!card) return fail(lineageId, 'unlockCard', 'Unknown card.');
 
@@ -162,8 +180,8 @@ export function setLineageActive(
   row: RowKind,
   cardId: string | null,
 ): LineageResult {
-  const lineage = LINEAGE_DATABASE.get(lineageId);
-  if (!lineage) return fail(lineageId, 'setActive', 'Unknown lineage.');
+  const lineage = liveLineage(lineageId, 'setActive');
+  if (isRefusal(lineage)) return lineage;
 
   const progress = ensureLineageProgress(world, entity, lineage);
   const check = checkSetActive({ lineage, progress, row, cardId });
@@ -201,8 +219,8 @@ export function unlockLineageForm(
   lineageId: string,
   recipeId: string,
 ): LineageResult {
-  const lineage = LINEAGE_DATABASE.get(lineageId);
-  if (!lineage) return fail(lineageId, 'unlockForm', 'Unknown lineage.');
+  const lineage = liveLineage(lineageId, 'unlockForm');
+  if (isRefusal(lineage)) return lineage;
   const form = lineage.forms.find((f) => f.recipeId === recipeId);
   if (!form) return fail(lineageId, 'unlockForm', 'That form is not part of this lineage.');
 
@@ -241,8 +259,8 @@ export function wearLineageForm(
   lineageId: string,
   recipeId: string,
 ): LineageResult {
-  const lineage = LINEAGE_DATABASE.get(lineageId);
-  if (!lineage) return fail(lineageId, 'wearForm', 'Unknown lineage.');
+  const lineage = liveLineage(lineageId, 'wearForm');
+  if (isRefusal(lineage)) return lineage;
 
   const progress = ensureLineageProgress(world, entity, lineage);
   const check = checkWearForm({ lineage, progress, recipeId });

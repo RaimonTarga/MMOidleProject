@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
-import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS, coreEligibilityLabel, coreIsActive, isRestrictedCore, lineageForRecipeId, relicIsUnlocked } from '@mmo-idle/shared';
+import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS, coreEligibilityLabel, coreIsActive, isRestrictedCore, lineageForEquippedItem, relicIsUnlocked } from '@mmo-idle/shared';
 import { equipmentAtom, itemUpgradesAtom, lineagesAtom, playerNodeIdAtom, playerTierAtom, selectedRangeAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
 import { lineageDisplayName } from '../lineage/lineageDisplayName';
@@ -41,7 +41,9 @@ export function EquipmentSlots({ compare, onOpenLineage }: Props) {
           // The slot holds the lineage, not the item (design §2): a form's slot
           // reads as "<Lineage name>" with the worn form's own name underneath,
           // and tapping it opens the tree instead of pinning a compare card.
-          const lineage = filled ? lineageForRecipeId(defId!) : undefined;
+          // A parked slot (design §24.5: armour, charm, boots) has no tree to
+          // open, even when an old save still holds one, so it reads as an item.
+          const lineage = filled ? lineageForEquippedItem(defId) : undefined;
           const hasTree = !!lineage && !!lineages[lineage.id];
 
           return (
