@@ -278,11 +278,16 @@ export function isMechanicProxy(ctx: CombatContext): boolean {
  *  - One multiplier per hit: a hit that already spent the real mechanic (or was
  *    already proxied) is left alone, and any other multiplier already on the hit
  *    (a damage window, a lunge) is folded into the same record, never a layer.
+ *  - `bonusScale` multiplies the multiplier's BONUS (a T2+ verb's tier, a size
+ *    amplifier: design §24.9): 1 is exactly the mechanic, 1.15 lands a ×1.8
+ *    mechanic at ×1.92. The proxy's size is the mechanic's, so this is the only
+ *    way a tier can grow it.
  */
 export function applyMechanicProxy(
   world: World,
   ctx: CombatContext,
   fallbackMultiplier: number,
+  bonusScale = 1,
 ): number {
   if (ctx.attackerType !== 'player') return 0;
   if (ctx.metadata['chaoticMiss']) return 0;
@@ -295,7 +300,9 @@ export function applyMechanicProxy(
   // emission AND the proxy's multiplier on one exchange). The hit IS the mechanic's
   // already: left alone, like a hit that spent the charge.
   if (mechanicAlreadyFired(ctx)) return 0;
-  const multiplier = proxyEmpoweredMultiplier(world, ctx.attacker) ?? fallbackMultiplier;
+  const own = proxyEmpoweredMultiplier(world, ctx.attacker) ?? fallbackMultiplier;
+  if (!(own > 0)) return 0;
+  const multiplier = bonusScale > 0 && bonusScale !== 1 ? 1 + (own - 1) * bonusScale : own;
   if (!(multiplier > 0)) return 0;
 
   const base = ctx.damage;

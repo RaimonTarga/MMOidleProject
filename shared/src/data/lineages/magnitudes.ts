@@ -19,7 +19,7 @@
  * (§9: full rows land within ±10% of the tier median) is Phase 1.5, and the T2–T4
  * columns exist so the shape is testable, not because they are calibrated.
  */
-import { BIOME_LEVELS_PER_TIER } from '../../config/gameConfig';
+import { BIOME_LEVELS_PER_TIER, GAME_CONFIG } from '../../config/gameConfig';
 import { globalMasteryRequiredForUpgrade, MAX_UPGRADE } from '../../systems/itemUpgrades';
 import type {
   DefensiveFace, LineageStatKey, PacketId, PayoffKind, RowKind, TriggerKind,
@@ -524,6 +524,167 @@ export const LEAN_CONDITION_NUMBERS: Partial<Record<PacketId, LeanConditionNumbe
   'affliction': { durationMs: 4_000 },
   'control': { durationMs: 1_500, swingBridgeMs: 500 },
 };
+
+// ─── T2+ verbs compose too (design §24.9) ────────────────────────────────────
+//
+// PACKET_HALF_NUMBERS is the T1 column. A T2+ band is a lean and a verb exactly like
+// T1 (design §24.9: "T2+ bands compose too"), resolved through the SAME halves
+// and the SAME numbers, and the tier moves ONE number per payload — its SIZE —
+// never the moment's cadence: the 4–6 s rhythm and the rate caps are the shape
+// (§24.1), and a moment that came round faster at T2 would be a different verb.
+// So a gate never makes a card read smaller: every T2+ payload is its T1 payload
+// with its size multiplied by a scalar ≥ 1.
+
+/**
+ * What a payload's SIZE is — the one number a T2+ verb's tier scales, and the
+ * number a `magnitude` amplifier (or an amplifier whose own axis the composed
+ * pair does not have) moves on a composed pair. PROVISIONAL, a pick for the
+ * designer, per payload kind:
+ *
+ *   share     `magnitude` is a share — of the hit (the echo, the heavy bleed), of
+ *             what a DoT still owes (the re-dose), of the pool (the Kill-chain heal),
+ *             of a cooldown (the Technique refund). It is multiplied, and capped
+ *             at `max` where it is a share of a whole that cannot be exceeded.
+ *             A `heal-and-load`'s load is a hit multiplier and grows by its bonus
+ *             with it (×1.5 at s = 1.15 is ×1.575).
+ *   bonus     `magnitude` is a hit multiplier (the lunge, the crash): its BONUS
+ *             above 1 is multiplied, so ×2 at s = 1.15 is ×2.15, never ×2.3.
+ *   duration  a binary payload (the root, the knockdown) either happens or does
+ *             not, so what grows is how long it holds, rounded to the logic tick.
+ *   proxy     `mechanic-proxy` lands at the CLASS mechanic's own multiplier, which
+ *             only the runtime knows, so the size is a multiple of that bonus,
+ *             carried as `bonusScale` (and of the fallback multiplier, for a root
+ *             with none).
+ *
+ * `spread` marks a share that is a TOTAL laid out over `durationMs` (the heavy
+ * bleed, the re-dose): lengthening one with a `duration` amplifier holds its tick
+ * rate and so grows its total, rather than thinning the same total out.
+ */
+export type PayloadSizeAxis = 'share' | 'bonus' | 'duration' | 'proxy';
+
+export interface PayloadSize {
+  axis: PayloadSizeAxis;
+  /** `share` only: the ceiling of the scaled share (a whole pool, a whole cooldown). */
+  max?: number;
+  /** `share` only: the share is a total over the payload's duration (a bleed). */
+  spread?: boolean;
+}
+
+export const PAYLOAD_SIZE: Partial<Record<PayoffKind, PayloadSize>> = {
+  'echo-hit': { axis: 'share' },
+  'hemorrhage': { axis: 'share', spread: true },
+  'redose': { axis: 'share', spread: true },
+  'heal-and-load': { axis: 'share', max: 1 },
+  'technique-refund': { axis: 'share', max: 1 },
+  'big-hit': { axis: 'bonus' },
+  'mechanic-proxy': { axis: 'proxy' },
+  'root': { axis: 'duration' },
+  'stun': { axis: 'duration' },
+};
+
+/** A payload kind's size: its entry, else `duration` for a binary unit, else a share. */
+export function payloadSize(kind: PayoffKind): PayloadSize {
+  return PAYLOAD_SIZE[kind] ?? { axis: PAYOFF_UNIT.get(kind)?.binary ? 'duration' : 'share' };
+}
+
+/**
+ * The scalar a T2+ verb's payload size is multiplied by: the tier scalar's
+ * `fraction` column (1 / 1.15 / 1.32 / 1.5). PROVISIONAL, the designer's: every
+ * composed payload is already relative to something that grows with the tier on
+ * its own — a hit, a pool, a cooldown, the class's mechanic — so the `absolute`
+ * column would double-dip (a T4 echo of eleven hits), which is exactly the reason
+ * the `fraction` column exists.
+ */
+export function verbTierScalar(tier: number): number {
+  return tierScalar(tier, 'fraction');
+}
+
+/** The logic tick a scaled duration or cadence rounds to: nothing finer is real. */
+const LOGIC_TICK_MS = 1000 / GAME_CONFIG.LOGIC_TICK_RATE;
+
+const roundTo3 = (x: number): number => Math.round(x * 1000) / 1000;
+const roundToTick = (ms: number): number => Math.max(LOGIC_TICK_MS, Math.round(ms / LOGIC_TICK_MS) * LOGIC_TICK_MS);
+
+/**
+ * Multiply a payload's SIZE by `factor`, in place — the tier's scaling of a T2+
+ * verb and a size amplifier's move on a composed pair, one arithmetic for both.
+ * A factor of 1 changes nothing; nothing here ever makes a payload smaller for a
+ * factor ≥ 1.
+ */
+export function scalePayloadSize(
+  payoff: { kind: PayoffKind; magnitude: number; durationMs?: number; loadMultiplier?: number; bonusScale?: number },
+  factor: number,
+): void {
+  if (!(factor > 0) || factor === 1) return;
+  const size = payloadSize(payoff.kind);
+  switch (size.axis) {
+    case 'share': {
+      const scaled = roundTo3(payoff.magnitude * factor);
+      payoff.magnitude = size.max !== undefined ? Math.min(size.max, scaled) : scaled;
+      if (payoff.loadMultiplier !== undefined) {
+        payoff.loadMultiplier = roundTo3(1 + (payoff.loadMultiplier - 1) * factor);
+      }
+      break;
+    }
+    case 'bonus':
+      payoff.magnitude = roundTo3(1 + (payoff.magnitude - 1) * factor);
+      break;
+    case 'duration':
+      if (payoff.durationMs !== undefined && payoff.durationMs > 0) {
+        payoff.durationMs = roundToTick(payoff.durationMs * factor);
+      }
+      break;
+    case 'proxy':
+      payoff.bonusScale = roundTo3((payoff.bonusScale ?? 1) * factor);
+      break;
+  }
+}
+
+/**
+ * Lengthen a payload's DURATION by `factor`, in place — a `duration` amplifier on
+ * a composed pair. A `spread` share (a bleed that lays a total over its duration)
+ * keeps its tick rate, so its total grows with it; anything else simply holds
+ * longer. A payload with no duration is left alone (the caller falls back to its
+ * size — see `composedAmplifierMove`).
+ */
+export function lengthenPayload(
+  payoff: { kind: PayoffKind; magnitude: number; durationMs?: number },
+  factor: number,
+): void {
+  if (!(factor > 0) || factor === 1) return;
+  if (payoff.durationMs === undefined || payoff.durationMs <= 0) return;
+  const before = payoff.durationMs;
+  payoff.durationMs = roundToTick(before * factor);
+  const size = payloadSize(payoff.kind);
+  if (size.axis === 'share' && size.spread) {
+    const scaled = roundTo3(payoff.magnitude * (payoff.durationMs / before));
+    payoff.magnitude = size.max !== undefined ? Math.min(size.max, scaled) : scaled;
+  }
+}
+
+/**
+ * The same moment, coming round `factor` times as often — a `trigger` amplifier on
+ * a composed pair (its FREQUENCY). A counted moment shortens its count (never
+ * below every 2nd hit: every hit is not a rhythm), a capped one shortens its cap
+ * (to the logic tick). Undefined when the moment has no number to move — a first
+ * hit on each body, the hit after a kill, a mechanic or a Technique with no cap
+ * come round exactly as often as the fight brings them.
+ */
+export function quickenMoment<T extends { kind: TriggerKind; n?: number; capMs?: number }>(
+  trigger: T,
+  factor: number,
+): T | undefined {
+  if (!(factor > 1)) return undefined;
+  if (trigger.kind === 'hit-nth' && trigger.n !== undefined) {
+    const n = Math.max(2, Math.round(trigger.n / factor));
+    return n < trigger.n ? { ...trigger, n } : undefined;
+  }
+  if (trigger.capMs !== undefined && trigger.capMs > 0) {
+    const capMs = roundToTick(trigger.capMs / factor);
+    return capMs < trigger.capMs ? { ...trigger, capMs } : undefined;
+  }
+  return undefined;
+}
 
 // ─── Unlock levels (design §4) ───────────────────────────────────────────────
 

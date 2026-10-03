@@ -90,6 +90,23 @@ export const ROW_LABELS: Readonly<Record<RowKind, string>> = {
   cross: 'Cross',
 };
 
+/**
+ * What a row reads in a band whose rows do NOT compose — a band whose payoff row
+ * authors its own trigger and payoff (design §24.9: "Lean"/"Verb" only where the
+ * rows compose). Every live weapon band composes; this is the honest label for
+ * any band that does not, so the page never names a lean that names no payload.
+ */
+export const PLAIN_ROW_LABELS: Readonly<Record<RowKind, string>> = {
+  ...ROW_LABELS,
+  stat: 'Stat',
+  payoff: 'Payoff',
+};
+
+/** A row's label in a band that composes (`ROW_LABELS`) or does not (`PLAIN_ROW_LABELS`). */
+export function rowLabel(row: RowKind, composes: boolean): string {
+  return (composes ? ROW_LABELS : PLAIN_ROW_LABELS)[row];
+}
+
 // ─── Trigger and payoff vocabulary (design §6) ───────────────────────────────
 
 /**
@@ -259,6 +276,24 @@ export function payoffLandsOnTarget(kind: PayoffKind): boolean {
  *
  * Closed, like every other vocabulary here: a card that wants a fifth axis is a
  * design decision, not an authoring one.
+ *
+ * ON A COMPOSED PAIR (design §24.9: "the amplifier row moves an axis of the
+ * composed pair"). A weapon band's verb takes its payload from the active lean, so
+ * which payload an amplifier modifies is the player's choice, not the author's.
+ * The axes then read as the pair's four — FREQUENCY, targets, duration, size —
+ * and an axis the active pair does not have moves its SIZE instead
+ * (`composedAmplifierMove`), so an amplifier never charges a price and changes
+ * nothing:
+ *
+ *  - `trigger`   the moment comes round more often (frequency: every 4th hit
+ *                instead of every 6th, a 3.1 s cap instead of 5 s). The amplifier's
+ *                own authored trigger is not read: on a pair the moment is the
+ *                verb's. A moment with no count or cap (a first hit on each body,
+ *                the hit after a kill, an uncapped mechanic or Technique) → size.
+ *  - `targets`   a second body, for a payload that lands on one; else → size.
+ *  - `duration`  the payload holds longer, for one with a duration; else → size.
+ *  - `magnitude` the size: the share, the multiplier's bonus, or a binary
+ *                payload's hold (`PAYLOAD_SIZE` in `magnitudes.ts`).
  */
 export type AmplifiedAxis = 'duration' | 'magnitude' | 'targets' | 'trigger';
 
@@ -465,13 +500,15 @@ export interface LineageCard {
   /** `stat` rows only: the stat this lane scales. */
   statKey?: LineageStatKey;
   /**
-   * Every row but `stat`: when it fires — EXCEPT a T1 verb (design §24.2).
+   * Every row but `stat`: when it fires — EXCEPT a verb (design §24.2, §24.9).
    *
    * A `payoff`-row card authored with NEITHER `trigger` nor `payoff` is a VERB:
    * it carries only its lane, its moment comes from that lane's packet, and what
    * happens at the moment comes from the active lean's packet (`composeVerb` in
-   * `resolve.ts`). Every legacy payoff-row card (T2 and up) still authors both and
-   * resolves exactly as it always did; it never composes.
+   * `resolve.ts`), with the payload's size scaled by the verb's own tier. Every
+   * weapon band's payoff row is verbs (T1 and T2); a payoff-row card that authors
+   * both (the parked non-weapon trees) resolves exactly as it always did and never
+   * composes.
    */
   trigger?: TriggerKind;
   /** Every row but `stat`: what it does. Absent on a T1 verb — see `trigger`. */
@@ -592,6 +629,13 @@ export interface LineagePayoff {
    * the `targets` axis. Absent on an unamplified payoff; never authored.
    */
   extraTargets?: number;
+  /**
+   * `mechanic-proxy` only: the multiple of the class mechanic's own BONUS the
+   * proxied hit lands at (1, or absent, is exactly the mechanic). A T2+ verb's
+   * tier and a size amplifier raise it (`scalePayloadSize`, design §24.9): the
+   * proxy's size is the mechanic's, which only the runtime knows. Never authored.
+   */
+  bonusScale?: number;
 }
 
 export interface LineageCost {
@@ -647,7 +691,7 @@ export interface ResolvedLineageCard {
    * lean's payload key. Never authored.
    */
   payoffFx?: LineageFxKey;
-  /** Set on a T1 verb: which halves produced its trigger and payoff. */
+  /** Set on a verb (any tier): which halves produced its trigger and payoff. */
   composition?: LineageComposition;
 }
 

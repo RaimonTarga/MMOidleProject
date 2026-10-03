@@ -14,20 +14,25 @@
  *      sits on the mechanic's own moment;
  *   5. `resolveLineageCards` re-composes an active verb against the active lean,
  *      and the sentence helpers the page reads (`cardSentence`,
- *      `composedSentence`) agree with it.
+ *      `composedSentence`) agree with it;
+ *   7. T2+ bands compose too (design §24.9): every weapon band above T1 that
+ *      authors a payoff row is three verbs; all nine pairs produce a sentence with
+ *      the tier's numbers, and resolve on the SAME moment as their T1 pair with a
+ *      payload at least as large on every number (a gate never makes a card
+ *      smaller); the tier moves the payload's size and never the cadence.
  *
  * Run: node --conditions=development --import tsx shared/src/data/lineages/composition.test.ts
  */
-import { cardSentence, composedSentence, resolveLineageCards } from '../../systems/lineages';
+import { bandComposes, cardSentence, composedSentence, resolveLineageCards } from '../../systems/lineages';
 import { LINEAGE_DATABASE, lineagesForSlot } from './index';
 import { PACKET_DEFINITIONS, packetHalves } from './packets';
-import { PACKET_HALF_NUMBERS, STAT_UNIT } from './magnitudes';
+import { LEAN_CONDITION_NUMBERS, PACKET_HALF_NUMBERS, STAT_UNIT, payloadSize, quickenMoment, verbTierScalar } from './magnitudes';
 import {
   composeVerb, isVerbCard, packetMoment, packetPayload, packetPurePair, resolveLineageCard,
 } from './resolve';
 import { momentText, payloadText, pureSentenceText, statLine, verbSentence } from './sentences';
-import { PACKET_IDS, ROW_LABELS, WEAPON_PACKET_IDS } from './types';
-import type { LineageCard, LineageDefinition, LineageProgress, PacketId } from './types';
+import { PACKET_IDS, PLAIN_ROW_LABELS, ROW_LABELS, WEAPON_PACKET_IDS, rowLabel } from './types';
+import type { LineageCard, LineageDefinition, LineagePayoff, LineageProgress, PacketId } from './types';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -298,9 +303,9 @@ for (const lineage of lineagesForSlot('weapon')) {
     assert(verbs[0]!.id === `${lineage.id}-t1-${lane}-payoff`, `${lineage.id}: the ${lane} verb keeps its id`);
   }
   assert(band.length === 6, `${lineage.id}: the T1 band is six cards, got ${band.length}`);
-  // Above T1, every payoff row is still a legacy card that never composes.
+  // Above T1, a payoff row is verbs too (design §24.9); no other row is.
   for (const card of lineage.cards.filter((c) => c.tier > 1)) {
-    assert(!isVerbCard(card), `${card.id}: only the T1 band is lean-and-verb`);
+    assert(isVerbCard(card) === (card.row === 'payoff'), `${card.id}: a weapon band's payoff row, and only it, is verbs`);
   }
 
   // Every lean × verb, through the real cards and a real progress: the verb's
@@ -348,6 +353,148 @@ for (const lineage of lineagesForSlot('weapon')) {
   const [resolved] = resolveLineageCards(rapier, alone);
   assert(resolved?.payoff?.kind === 'echo-hit' && resolved.payoff.magnitude === 1, 'Flurry alone echoes a whole hit');
   assert(resolved?.trigger?.kind === 'hit-nth' && resolved.trigger.n === 6, 'on every 6th hit');
+}
+
+// ── 7. T2+ bands compose too (design §24.9) ──────────────────────────────────
+
+/** Every number on a payload, as "bigger is bigger" (a cap is not one). */
+const payloadNumbers = (p: LineagePayoff): Record<string, number> => ({
+  magnitude: p.magnitude,
+  durationMs: p.durationMs ?? 0,
+  loadMultiplier: p.loadMultiplier ?? 1,
+  bonusScale: p.bonusScale ?? 1,
+  extraTargets: p.extraTargets ?? 0,
+});
+
+// The tier scalar a verb's payload size takes is ≥ 1 and climbs.
+assert(verbTierScalar(1) === 1, 'a T1 verb is the table verbatim');
+for (let tier = 2; tier <= 4; tier++) {
+  assert(verbTierScalar(tier) >= verbTierScalar(tier - 1), `the verb tier scalar never falls (T${tier})`);
+}
+
+let t2Pairs = 0;
+for (const lineage of lineagesForSlot('weapon')) {
+  const tiers = [...new Set(lineage.cards.filter((c) => c.tier > 1 && c.row === 'payoff').map((c) => c.tier))];
+  for (const tier of tiers) {
+    const band = lineage.cards.filter((c) => c.tier === tier);
+    assert(bandComposes(lineage, tier), `${lineage.id} T${tier}: the band composes`);
+    const form = lineage.forms.find((f) => f.tier === tier);
+    assert(form, `${lineage.id} T${tier}: a form opens the band`);
+    let pure = 0;
+    for (const verbLane of lineage.lanes) {
+      const verbCard = band.find((c) => c.lane === verbLane && c.row === 'payoff');
+      const t1Verb = lineage.cards.find((c) => c.tier === 1 && c.lane === verbLane && c.row === 'payoff');
+      assert(verbCard && isVerbCard(verbCard), `${lineage.id} T${tier}: one ${verbLane} VERB`);
+      assert(t1Verb, `${lineage.id}: a T1 ${verbLane} verb to compare against`);
+      for (const leanLane of [undefined, ...lineage.lanes]) {
+        const t1 = composeVerb(verbLane, leanLane, 1)!;
+        const tn = composeVerb(verbLane, leanLane, tier)!;
+        const label = `${lineage.id} T${tier} ${leanLane ?? 'no lean'}×${verbLane}`;
+        // The same pair, the same moment: the tier never moves the cadence.
+        assert(tn.trigger.kind === t1.trigger.kind && tn.trigger.n === t1.trigger.n && tn.trigger.capMs === t1.trigger.capMs,
+          `${label}: the moment is the T1 moment (cadence stays 4–6 s)`);
+        assert(tn.payoff.kind === t1.payoff.kind && tn.pure === t1.pure && tn.fx === t1.fx, `${label}: the same payload`);
+        // A gate never makes a card read smaller — every number at least the T1 one…
+        const a = payloadNumbers(t1.payoff);
+        const b = payloadNumbers(tn.payoff);
+        for (const key of Object.keys(a)) {
+          assert(b[key]! >= a[key]! - 1e-9, `${label}: ${key} ${b[key]} < T1 ${a[key]}`);
+        }
+        // …and its SIZE strictly larger above T1, where the tier scalar is.
+        if (verbTierScalar(tier) > 1) {
+          const axis = payloadSize(tn.payoff.kind).axis;
+          const grew = axis === 'duration' ? b.durationMs! > a.durationMs!
+            : axis === 'proxy' ? b.bonusScale! > a.bonusScale!
+              : b.magnitude! > a.magnitude! || (tn.payoff.kind === 'technique-refund' && b.magnitude === 1);
+          assert(grew, `${label}: the ${axis} did not grow with the tier`);
+        }
+        // The sentence is generated from the halves with the tier's numbers.
+        const sentence = verbSentence(verbLane, leanLane, tier);
+        assert(typeof sentence === 'string' && sentence.endsWith('.') && !/[{}]|NaN|undefined/.test(sentence),
+          `${label}: no sentence (${sentence})`);
+        if (leanLane === undefined) continue;
+        t2Pairs++;
+        if (leanLane === verbLane) {
+          pure++;
+          assert(sentence === pureSentenceText(verbLane, tier), `${label}: the same lane reads the pure sentence`);
+        }
+        if (verbTierScalar(tier) > 1) {
+          assert(sentence !== verbSentence(verbLane, leanLane, 1), `${label}: the T${tier} sentence quotes the T${tier} numbers`);
+        }
+
+        // Through the real cards and a real tree: the T2 lean slotted, the T2 verb
+        // slotted, the T2 form worn — what the runtime and the page both read.
+        const leanCard = band.find((c) => c.lane === leanLane && c.row === 'stat');
+        assert(leanCard, `${label}: a T${tier} lean`);
+        const tree: LineageProgress = {
+          ownedCards: [leanCard!.id, verbCard!.id],
+          active: { stat: leanCard!.id, payoff: verbCard!.id },
+          ownedForms: [lineage.forms.find((f) => f.tier === 1)!.recipeId, form!.recipeId],
+          wornForm: form!.recipeId,
+        };
+        const resolved = resolveLineageCards(lineage, tree).find((c) => c.card.id === verbCard!.id);
+        assert(resolved?.composition?.leanLane === leanLane, `${label}: resolveLineageCards composed it`);
+        assert(JSON.stringify(resolved?.payoff) === JSON.stringify(tn.payoff), `${label}: resolved at the verb's tier`);
+        assert(cardSentence(verbCard!, tree) === sentence, `${label}: the page's sentence is the composed one`);
+        assert(composedSentence(lineage, tree) === sentence, `${label}: composedSentence agrees`);
+      }
+    }
+    assert(pure === 3, `${lineage.id} T${tier}: three of nine pairs read pure, got ${pure}`);
+    // The rows read Lean and Verb because they compose; a band that did not would not.
+    assert(rowLabel('stat', bandComposes(lineage, tier)) === 'Lean' && rowLabel('payoff', true) === 'Verb', 'composed labels');
+  }
+}
+assert(t2Pairs === 45, `five weapons × nine T2 pairs, got ${t2Pairs}`);
+assert(rowLabel('stat', false) === PLAIN_ROW_LABELS.stat && PLAIN_ROW_LABELS.stat !== ROW_LABELS.stat,
+  'a band that does not compose never reads "Lean"');
+
+// The T2 sentences the designer reads, at today's numbers (TIER_SCALAR.fraction
+// 1.15 at T2). A number or phrase change that moves what the player reads fails here.
+const T2_SHEET: Array<[PacketId, PacketId | undefined, string]> = [
+  ['tempo', 'tempo', 'Every 6th hit strikes again at 115% strength.'],
+  ['tempo', 'affliction', 'Every 6th hit leaves a heavy poison or bleed, 115% of a swing over 4 s.'],
+  ['engagement', 'engagement', 'Your first hit on each target is a lunge for 2.15× damage.'],
+  ['affliction', 'tempo', 'A hit on a target you have already afflicted (every 5 s at most) lands again at 115% strength.'],
+  ['technique', 'empowered', 'When a Technique lands, the hit counts as your class mechanic firing with a 15% bigger bonus.'],
+  ['kill-chain', 'kill-chain', 'Your next hit after a kill heals 11.5% of your pool and lands loaded (+57.5%).'],
+  ['empowered', 'kill-chain', 'When your class mechanic fires (every 4 s at most), the hit heals 11.5% of your pool and lands loaded (+57.5%).'],
+];
+for (const [verb, lean, expected] of T2_SHEET) {
+  const got = verbSentence(verb, lean, 2);
+  assert(got === expected, `T2 ${lean}×${verb}: "${got}" ≠ "${expected}"`);
+}
+{
+  // A binary payload grows by its hold, rounded to the logic tick.
+  const root = composeVerb('tempo', 'control', 2)!.payoff;
+  assert(root.kind === 'root' && root.durationMs === 2300, `T2 root holds 2.3 s, got ${root.durationMs}`);
+  const stun = composeVerb('control', 'control', 2)!.payoff;
+  assert(stun.kind === 'stun' && stun.durationMs === 1700, `T2 knockdown holds 1.7 s, got ${stun.durationMs}`);
+  // A refund is a share of a whole cooldown and never passes it.
+  for (let tier = 1; tier <= 4; tier++) {
+    assert(composeVerb('technique', 'technique', tier)!.payoff.magnitude <= 1, `T${tier}: a refund never passes the whole cooldown`);
+  }
+}
+
+{
+  // The T2 leans, including the two that SEED a condition (wave-1 A): every T2
+  // lean's stat is at least its T1 lean's (the depth climbs with the tier), while
+  // the condition's own duration is a shape and never does.
+  for (const lineage of lineagesForSlot('weapon')) {
+    for (const lane of lineage.lanes) {
+      const t1 = lineage.cards.find((c) => c.tier === 1 && c.row === 'stat' && c.lane === lane)!;
+      const t2 = lineage.cards.find((c) => c.tier === 2 && c.row === 'stat' && c.lane === lane)!;
+      const a = Object.entries(resolveLineageCard(t1, lineage).statEffects ?? {});
+      const b = Object.entries(resolveLineageCard(t2, lineage).statEffects ?? {});
+      assert(a.length === 1 && b.length === 1 && a[0]![0] === b[0]![0], `${lineage.id} ${lane}: the T2 lean scales the T1 lean's stat`);
+      assert(b[0]![1] >= a[0]![1], `${lineage.id} ${lane}: T2 lean ${b[0]![1]} < T1 ${a[0]![1]}`);
+    }
+  }
+  assert(LEAN_CONDITION_NUMBERS.control?.durationMs === 1_500 && LEAN_CONDITION_NUMBERS.affliction?.durationMs === 4_000,
+    'fixture: the lean conditions hold for their authored windows at every tier');
+  // The capped Empowered moment keeps its cap at T2; a frequency amplifier shortens it.
+  const empowered = composeVerb('empowered', 'kill-chain', 2)!.trigger;
+  assert(empowered.capMs !== undefined && empowered.capMs === packetMoment('empowered')!.capMs, 'the Empowered cap is the T1 cap');
+  assert((quickenMoment(empowered, 1.6)?.capMs ?? Infinity) < empowered.capMs!, 'a frequency amplifier shortens the Empowered cap');
 }
 
 console.log('composition: ok');

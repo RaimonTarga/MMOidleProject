@@ -116,6 +116,8 @@ export const DAGGER_LINEAGE: LineageDefinition = {
     },
 
     // ── T2 band (design §4): stat (L2), payoff (L3), amplifier (L5) ──────────
+    // A lean and a verb that compose exactly like T1 (design §24.9), the verb
+    // paying its payload at T2 size; the amplifier moves one axis of that pair.
     {
       id: 'dagger-t2-affliction-stat', lineageId: 'dagger', tier: 2, row: 'stat', lane: 'affliction',
       name: 'Twice-Coated', description: 'Re-dipped more often, in something stronger.',
@@ -135,17 +137,17 @@ export const DAGGER_LINEAGE: LineageDefinition = {
     {
       id: 'dagger-t2-affliction-payoff', lineageId: 'dagger', tier: 2, row: 'payoff', lane: 'affliction',
       name: 'Deeper Envenom', description: 'Each hit leaves a stronger dose in the wound.',
-      fx: 'affliction.venom-pips', trigger: 'hit-nth', payoff: 'poison-stack',
+      fx: 'affliction.venom-pips',
     },
     {
       id: 'dagger-t2-control-payoff', lineageId: 'dagger', tier: 2, row: 'payoff', lane: 'control',
       name: 'Deeper Hamstring', description: 'Every third hit takes the legs out further.',
-      fx: 'control.frost-drag', trigger: 'hit-nth', payoff: 'slow',
+      fx: 'control.frost-drag',
     },
     {
       id: 'dagger-t2-kill-chain-payoff', lineageId: 'dagger', tier: 2, row: 'payoff', lane: 'kill-chain',
       name: 'Greater Plaguebearer', description: 'What killed one carries further, to whatever stood near it.',
-      fx: 'kill-chain.spread-arc', trigger: 'kill', payoff: 'contagion',
+      fx: 'kill-chain.spread-arc',
     },
 
     // Amplifiers modify this tier's own payoff card, not the T1 one (design §4).

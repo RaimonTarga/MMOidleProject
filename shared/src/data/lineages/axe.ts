@@ -97,6 +97,8 @@ export const AXE_LINEAGE: LineageDefinition = {
     },
 
     // ── T2 band (design §4): stat (L2), payoff (L3), amplifier (L5) ──────────
+    // A lean and a verb that compose exactly like T1 (design §24.9), the verb
+    // paying its payload at T2 size; the amplifier moves one axis of that pair.
     {
       id: 'axe-t2-tempo-stat', lineageId: 'axe', tier: 2, row: 'stat', lane: 'tempo',
       name: 'Looser Still', description: 'The head does more of the work than ever.',
@@ -116,17 +118,17 @@ export const AXE_LINEAGE: LineageDefinition = {
     {
       id: 'axe-t2-tempo-payoff', lineageId: 'axe', tier: 2, row: 'payoff', lane: 'tempo',
       name: 'Harder Bite', description: 'Every third hit bites twice, and bites deeper.',
-      fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'echo-hit',
+      fx: 'tempo.ghost-strike',
     },
     {
       id: 'axe-t2-kill-chain-payoff', lineageId: 'axe', tier: 2, row: 'payoff', lane: 'kill-chain',
       name: 'Deeper Frenzy', description: 'A kill puts the next swings on a faster clock than before.',
-      fx: 'kill-chain.kill-pulse', trigger: 'kill', payoff: 'speed-window',
+      fx: 'kill-chain.kill-pulse',
     },
     {
       id: 'axe-t2-empowered-payoff', lineageId: 'axe', tier: 2, row: 'payoff', lane: 'empowered',
       name: 'Wider Guard Split', description: 'Your mechanic leaves the target wide open, not merely easy to hurt.',
-      fx: 'empowered.weak-point', trigger: 'mechanic-fired', payoff: 'vulnerability',
+      fx: 'empowered.weak-point',
     },
 
     // Amplifiers modify this tier's own payoff card, not the T1 one (design §4).

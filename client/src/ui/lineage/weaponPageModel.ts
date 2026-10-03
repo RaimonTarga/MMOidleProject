@@ -27,6 +27,8 @@ import {
   ROW_SCALAR,
   absorbedStatCards,
   applyAmplifiedAxis,
+  applyComposedAmplifier,
+  bandComposes,
   bandContents,
   cardSentence,
   checkSetActive,
@@ -45,9 +47,12 @@ import {
   nodesPayingShard,
   packetDefinition,
   packetHalves,
+  payloadSize,
   previewEquipmentStats,
   resolveDotClassProfile,
   resolveLineageCardFor,
+  resolveLineageCards,
+  rowLabel,
   rowsForTier,
   shardName,
   statRowIsCollapsed,
@@ -132,8 +137,13 @@ export const ROW_QUESTIONS: Readonly<Record<RowKind, string>> = {
   cross: 'What does it borrow? One active.',
 };
 
-export function rowTitle(tier: number, row: RowKind): string {
-  return `Tier ${tier} · ${ROW_LABELS[row]}`;
+/**
+ * "Tier 2 · Verb". The rows read Lean and Verb only where they compose (design
+ * §24.9) — every live weapon band does; a band whose payoff row authors its own
+ * trigger and payoff reads "Stat" and "Payoff".
+ */
+export function rowTitle(tier: number, row: RowKind, composes = true): string {
+  return `Tier ${tier} · ${rowLabel(row, composes)}`;
 }
 
 /** What a locked row's header says instead of its question. */
@@ -214,14 +224,94 @@ export function triggerPayoffLine(resolved: Pick<ResolvedLineageCard, 'trigger' 
   return `${triggerSubject(resolved.trigger, !!resolved.perTargetTrigger)} ${predicate(resolved.payoff)}.`;
 }
 
+/** A share's words, per payload: what the share is OF. */
+const SHARE_OF: Partial<Record<PayoffKind, string>> = {
+  'echo-hit': 'of the hit',
+  'hemorrhage': 'of a swing',
+  'redose': 'of what it owes',
+  'technique-refund': 'of the cooldown',
+};
+
+/** A payload's SIZE as words, for "bigger: X (was Y)" (`PAYLOAD_SIZE`). */
+function sizeWords(payoff: LineagePayoff): string {
+  switch (payloadSize(payoff.kind).axis) {
+    case 'bonus': return `×${trimmed(payoff.magnitude, 2)}`;
+    case 'duration': return seconds(payoff.durationMs ?? 0);
+    case 'proxy': return `its mechanic bonus ×${trimmed(payoff.bonusScale ?? 1, 2)}`;
+    default:
+      if (payoff.kind === 'heal-and-load') {
+        return `heals ${pct(payoff.magnitude)} and loads ×${trimmed(payoff.loadMultiplier ?? 1, 2)}`;
+      }
+      return [pct(payoff.magnitude), SHARE_OF[payoff.kind]].filter(Boolean).join(' ');
+  }
+}
+
+/** Why an amplifier's own axis is missing on this pair (it moves the size instead). */
+const MISSING_AXIS: Readonly<Record<string, string>> = {
+  trigger: 'Its moment cannot come round sooner',
+  targets: 'Its payload lands on no body',
+  duration: 'Its payload does not hold',
+};
+
+/**
+ * An amplifier on a VERB, as what it changes on the pair the player has right now
+ * (design §24.9): the target verb composed with the active lean — what the runtime
+ * will fold it into — before and after `applyComposedAmplifier`, the runtime's own
+ * arithmetic. When its axis does not exist on this pair it says so and what it
+ * does instead, so a fallback is never a surprise.
+ */
+function composedAmplifierLine(
+  lineage: LineageDefinition,
+  progress: LineageProgress,
+  card: LineageCard,
+  target: LineageCard,
+): string | undefined {
+  const tree: LineageProgress = {
+    ...progress,
+    ownedCards: [...new Set([...progress.ownedCards, target.id])],
+    active: { ...progress.active, payoff: target.id },
+  };
+  delete tree.active.amplifier;
+  const bare = resolveLineageCards(lineage, tree).find((c) => c.card.id === target.id);
+  if (!bare?.trigger || !bare.payoff) return undefined;
+  const after = { trigger: { ...bare.trigger }, payoff: { ...bare.payoff } };
+  const move = applyComposedAmplifier(after, card.amplifies, ROW_SCALAR.amplifier);
+  const name = target.name;
+  switch (move) {
+    case 'frequency':
+      return after.trigger.n !== undefined && bare.trigger.n !== undefined
+        ? `${name} fires every ${ordinal(after.trigger.n)} hit (was every ${ordinal(bare.trigger.n)}).`
+        : `${name} can fire every ${seconds(after.trigger.capMs ?? 0)} (was every ${seconds(bare.trigger.capMs ?? 0)}).`;
+    case 'targets':
+      return `${name} also lands on a second body.`;
+    case 'duration':
+      return `${name} lasts ${seconds(after.payoff.durationMs ?? 0)} (was ${seconds(bare.payoff.durationMs ?? 0)})${
+        payloadSize(bare.payoff.kind).spread ? ', ticking as hard' : ''}.`;
+    case 'size': {
+      const change = `${sizeWords(after.payoff)} (was ${sizeWords(bare.payoff)})`;
+      const missing = card.amplifies && card.amplifies !== 'magnitude' ? MISSING_AXIS[card.amplifies] : undefined;
+      return missing
+        ? `${missing}, so ${name} lands bigger: ${change}.`
+        : `${name} lands bigger: ${change}.`;
+    }
+    default:
+      return undefined;
+  }
+}
+
 /**
  * An amplifier as what it CHANGES on the card it modifies (review P5): never the
  * boost it resolves to as if it were a payoff of its own, which nothing applies.
- * The duration case quotes before and after through `applyAmplifiedAxis`, the
- * runtime's own arithmetic, so the number is the one the game will use.
+ * On a verb it reads the composed pair (`composedAmplifierLine`); on a legacy
+ * payoff the duration case quotes before and after through `applyAmplifiedAxis`,
+ * the runtime's own arithmetic, so the number is the one the game will use.
  */
 export function amplifierLine(lineage: LineageDefinition, progress: LineageProgress, card: LineageCard): string {
   const target = card.modifies ? lineage.cards.find((c) => c.id === card.modifies) : undefined;
+  if (target && isVerbCard(target)) {
+    const composed = composedAmplifierLine(lineage, progress, card, target);
+    if (composed) return composed;
+  }
   const name = target?.name ?? 'The card below';
   const axis = card.amplifies ?? 'duration';
   switch (axis) {
@@ -561,7 +651,7 @@ export function pageBands(params: {
       .filter((row) => cards.some((c) => c.row === row))
       .map((row) => ({
         tier, row, locked,
-        title: rowTitle(tier, row),
+        title: rowTitle(tier, row, bandComposes(lineage, tier)),
         question: locked ? lockedRowQuestion(tier) : ROW_QUESTIONS[row],
         cards: lineage.lanes
           .map((lane) => cards.find((c) => c.row === row && c.lane === lane))

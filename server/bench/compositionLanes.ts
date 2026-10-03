@@ -26,9 +26,16 @@
  *   node --conditions=development --import tsx bench/compositionLanes.ts <out.jsonl>
  *
  *   LANE_SHARD=0 LANE_SHARDS=6   round-robin over (pair, class, node) jobs
+ *   CMP_TIER=2                   the T2 band (verbs-that-fire B, design §24.9): the
+ *                                class's canonical BAND-2 lane-bench character
+ *                                (`LINEAGE_FRAME_PROFILES_T2`: T2 gear, T2-cap
+ *                                mastery) wearing the lineage's band-2 form, its T2
+ *                                lean and T2 verb, on the home biome's
+ *                                family-dominated TIER-2 nodes. Cell ids are
+ *                                `cmpt2-...`, so tiers never share a key.
  *   CMP_SEEDS=10                 seeds per cell (the first N of a fixed list)
  *   CMP_CAP_MS=90000             sim time per cell per seed
- *   CMP_FILTER=rapier            substring filter on the profile id
+ *   CMP_FILTER=rapier            substring filter on the profile id (comma = any of)
  *   LANE_HITBOX=path.json        hitbox artifact (written to tmp if absent)
  *
  * Rows are APPENDED as they finish and a restarted shard skips the (cell, seed)
@@ -44,13 +51,17 @@ import { dirname, join, resolve } from 'node:path';
 import { LINEAGE_DATABASE, type PacketId, type TierEntryProfile } from '@mmo-idle/shared';
 import {
   LINEAGE_FRAME_PROFILES,
+  LINEAGE_FRAME_PROFILES_T2,
   LINEAGE_FRAME_REFERENCES,
+  LINEAGE_FRAME_REFERENCES_T2,
+  type BandTier,
   type LineageLaneReference,
 } from '../../bot/src/tierEntry/profiles';
 import { hydrateHitboxCacheFromArtifact, writeHitboxArtifact } from '../src/hitbox/cache';
 import { OWN_NODE_SHARE, laneNodes, measure, type LaneNode } from './lineage/laneMeasure';
 import {
   CLASS_BY_ROOT,
+  bandFormOf,
   compositionPairs,
   t1FormOf,
   weaponLineages,
@@ -65,11 +76,18 @@ interface CompositionReference extends LineageLaneReference {
   className: string;
 }
 
+/** The canonical frame reference of a root at a band. */
+function canonicalFrame(classRoot: string, tier: BandTier) {
+  const refs = tier === 1 ? LINEAGE_FRAME_REFERENCES : LINEAGE_FRAME_REFERENCES_T2;
+  const frame = refs.find((r) => r.classRoot === classRoot && r.canonical && r.bandTier === tier);
+  assert(frame, `${classRoot}: no canonical band-${tier} frame reference`);
+  return frame;
+}
+
 /** The class's canonical lane-bench character, wearing `form` instead of its own weapon. */
-function compositionProfile(classRoot: string, form: string, profileId: string): TierEntryProfile {
-  const frame = LINEAGE_FRAME_REFERENCES.find((r) => r.classRoot === classRoot && r.canonical && r.bandTier === 1);
-  assert(frame, `${classRoot}: no canonical band-1 frame reference`);
-  const base = LINEAGE_FRAME_PROFILES.get(frame.profileId);
+function compositionProfile(classRoot: string, form: string, profileId: string, tier: BandTier): TierEntryProfile {
+  const frame = canonicalFrame(classRoot, tier);
+  const base = (tier === 1 ? LINEAGE_FRAME_PROFILES : LINEAGE_FRAME_PROFILES_T2).get(frame.profileId);
   assert(base, `${frame.profileId}: no profile`);
   const previous = base.equipment.weapon;
   const inventory = [...new Set([
@@ -86,17 +104,18 @@ function compositionProfile(classRoot: string, form: string, profileId: string):
   };
 }
 
-function references(): Array<{ reference: CompositionReference; profile: TierEntryProfile }> {
+function references(tier: BandTier): Array<{ reference: CompositionReference; profile: TierEntryProfile }> {
   const out: Array<{ reference: CompositionReference; profile: TierEntryProfile }> = [];
+  const prefix = tier === 1 ? 'cmp' : `cmpt${tier}`;
   for (const lineage of weaponLineages()) {
-    const form = t1FormOf(lineage);
+    const form = bandFormOf(lineage, tier);
     for (const [classRoot, className] of Object.entries(CLASS_BY_ROOT)) {
-      const frame = LINEAGE_FRAME_REFERENCES.find((r) => r.classRoot === classRoot && r.canonical && r.bandTier === 1)!;
-      for (const pair of compositionPairs(lineage)) {
-        const profileId = `cmp-${lineage.id}-${className}-${pair.label}`;
+      const frame = canonicalFrame(classRoot, tier);
+      for (const pair of compositionPairs(lineage, tier)) {
+        const profileId = `${prefix}-${lineage.id}-${className}-${pair.label}`;
         const cardIds = [pair.leanCardId, pair.verbCardId].filter((id): id is string => id !== null);
         out.push({
-          profile: compositionProfile(classRoot, form, profileId),
+          profile: compositionProfile(classRoot, form, profileId, tier),
           reference: {
             profileId,
             lineageId: lineage.id,
@@ -105,8 +124,8 @@ function references(): Array<{ reference: CompositionReference; profile: TierEnt
             lane: null,
             classRoot,
             frameId: frame.frameId,
-            bandTier: 1,
-            baseForm: form,
+            bandTier: tier,
+            baseForm: t1FormOf(lineage),
             wornForm: form,
             homeBiome: lineage.homeBiome,
             cardIds,
@@ -125,6 +144,8 @@ function references(): Array<{ reference: CompositionReference; profile: TierEnt
 /** The compact row this bench writes — what the composition report reads. */
 export interface CompositionLaneRow {
   cellId: string;
+  /** The band measured (absent on rows written before the T2 instrument: 1). */
+  tier?: number;
   lineageId: string;
   cls: string;
   pair: string;
@@ -155,15 +176,17 @@ async function main(): Promise<void> {
   const seeds = SEEDS.slice(0, nSeeds);
   const capMs = Number(process.env.CMP_CAP_MS ?? 90_000);
   const filter = process.env.CMP_FILTER;
+  const tier = Number(process.env.CMP_TIER ?? 1) as BandTier;
+  assert(tier === 1 || tier === 2, `CMP_TIER must be 1 or 2, got ${process.env.CMP_TIER}`);
 
   const artifact = process.env.LANE_HITBOX ?? join(tmpdir(), 'mmo-lane-matrix-hitboxes.json');
   if (!existsSync(artifact)) await writeHitboxArtifact(artifact);
   assert(hydrateHitboxCacheFromArtifact(artifact) > 0, 'hitbox cache is empty');
 
-  // The home biome's family-dominated T1 nodes, per lineage.
+  // The home biome's family-dominated nodes of the band's tier, per lineage.
   const allNodes = laneNodes();
   const homeNodes = (homeBiome: string): LaneNode[] => allNodes
-    .filter((n) => n.tier === 1 && n.biome === homeBiome && n.dominantShare >= OWN_NODE_SHARE);
+    .filter((n) => n.tier === tier && n.biome === homeBiome && n.dominantShare >= OWN_NODE_SHARE);
 
   // Resume: the (cell, seed) pairs already measured — in this output AND in every
   // other `.jsonl` beside it, so a run restarted with a different shard count
@@ -180,11 +203,11 @@ async function main(): Promise<void> {
     }
   }
 
-  const jobs = references()
-    .filter(({ reference }) => !filter || reference.profileId.includes(filter))
+  const jobs = references(tier)
+    .filter(({ reference }) => !filter || filter.split(',').some((f) => reference.profileId.includes(f)))
     .flatMap(({ reference, profile }) => {
       const nodes = homeNodes(LINEAGE_DATABASE.get(reference.lineageId)!.homeBiome);
-      assert(nodes.length > 0, `${reference.lineageId}: no family-dominated T1 node in its home biome`);
+      assert(nodes.length > 0, `${reference.lineageId}: no family-dominated T${tier} node in its home biome`);
       return nodes.map((node) => ({ reference, profile, node }));
     });
   const mine = jobs.filter((_, index) => index % shards === shard);
@@ -204,6 +227,7 @@ async function main(): Promise<void> {
       const verbFires = reference.pair.verbCardId ? row.fxByCard?.[reference.pair.verbCardId] ?? 0 : 0;
       const out: CompositionLaneRow = {
         cellId,
+        ...(tier === 1 ? {} : { tier }),
         lineageId: reference.lineageId,
         cls: reference.className,
         pair: reference.pair.label,
