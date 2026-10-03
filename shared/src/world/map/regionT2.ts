@@ -79,7 +79,11 @@ const SWAMP_T2_BLENDS: readonly NodeBlend[] = [
 const JUNGLE_T2_BLENDS: readonly NodeBlend[] = [
   { 'jungle-ape': 0.70, 'jungle-undergrowth': 0.20, 'jungle-stalker': 0.10 },
   { 'jungle-undergrowth': 0.70, 'jungle-stalker': 0.20, 'jungle-ape': 0.10 },
-  { 'jungle-stalker': 0.70, 'jungle-ape': 0.20, 'jungle-undergrowth': 0.10 },
+  // 03 — Undergrowth territory, not Stalker (verbs-that-fire C, PROVISIONAL): no Jungle
+  // Stalker lives below T3, so the node spawned Ape 7 / Undergrowth 3 while paying
+  // Spark. Undergrowth leads (6 / 4) rather than Ape so the tier pays Venom from two
+  // nodes — the Stinger's gate shard and a Rapier lane — not Anvil from four.
+  { 'jungle-undergrowth': 0.60, 'jungle-ape': 0.40 },
   { 'jungle-ape': 0.45, 'jungle-undergrowth': 0.45, 'jungle-stalker': 0.10 },
   { 'jungle-ape': 0.34, 'jungle-undergrowth': 0.33, 'jungle-stalker': 0.33 },
 ];
