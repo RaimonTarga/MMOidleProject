@@ -153,8 +153,9 @@ configs (Striker/Squire durable melee, Slinger, Spirit/Conduit, Apprentice), wit
 - **Order:** Clearing → Plains → Forest → Swamp → Mountain → Cave → the two
   seals in `TUTORIAL_SEALS` (currently Plains, then Mountain). Boss loadouts are the
   bot's dodge-profile matrix for all five bosses. Each zone: its gear, its shared learning (Sweep, Second Wind, Avoid
-  Hazards + Cleanse, Orbit for ranged, Step Back), master to 6. The Forest leg adds
-  the lean, the end of the Swamp leg the verb (below).
+  Hazards + Cleanse, Orbit for ranged, Step Back), master to 6. The boss weapon's home
+  leg adds the lean and the verb (below): the Cave for five plans, the Swamp for the
+  Slinger.
 - **Two beats per paid action:** a farm beat that ends when the action is affordable
   (skipped automatically when it already is), then the action beat.
 - **Safety Runes** (`scripts/runes.ts`): `hp-below-25 → flee` above chase/orbit until
@@ -170,53 +171,84 @@ configs (Striker/Squire durable melee, Slinger, Spirit/Conduit, Apprentice), wit
   checklist below).
 - **No upgrade beats** since the course correction: the `+N` ladder is retired on every
   slot (design §24.5) and an item is crafted at its old `+5` power.
-- Beat counts (2026-10-03, after the course correction): Striker 60, Squire 60,
-  Slinger 63, Spirit 63, Conduit 63, Apprentice 65. (2026-10-01, with the upgrade
+- **The boss weapon is worn from where it is made** (verbs-that-fire, design §24.9): the
+  Chaotic Axe from the Cave's first level (the bot crafts it there and swaps after Step
+  Back), the Slinger's Poison Dagger from the Swamp's (the bot keeps the Rapier to the
+  Cave), because its page is the one the guide teaches.
+- Beat counts (2026-10-04, verbs-that-fire): Striker 59, Squire 59, Slinger 62, Spirit 62,
+  Conduit 62, Apprentice 64. (2026-10-03, after the course correction: Striker 60, Squire
+  60, Slinger 63, Spirit 63, Conduit 63, Apprentice 65. 2026-10-01, with the upgrade
   beats and the one-card lesson: Striker 78, Squire 78, Spirit 81, Conduit 81,
   Apprentice 83, Slinger 85.)
 
-### The weapon-page lessons (course correction, 2026-10-03)
+### The weapon-page lessons (verbs-that-fire, 2026-10-04; course correction 2026-10-03)
 
 Design §24.2 makes the T1 band two rows, a **lean** (row 1: a stat, and the payload it
 names) and a **verb** (row 2: a moment), and the verb's sentence is generated from the
-two. The guide teaches exactly that, on the Rapier — the Forest's lineage and the weapon
-every class plan wears from the Forest leg into the Cave, so both cards are live while
-they are taught (a lineage pays only while its own form is worn, design §23). Seven beats,
-all authored from `shared/src/data/lineages/` so no price, level or sentence is restated:
+two. The guide teaches exactly that, **on the weapon the class fights with** (design
+§24.9): the Chaotic Axe for the Striker, Squire, Spirit, Apprentice and Conduit plans, the
+Poison Dagger for the Slinger (`TutorialClassPlan.weaponCards.lineageId`, the boss kit's
+weapon; `tutorial.test.ts` holds the plan to that). The weapon is worn from where it is
+made in its home zone, so both cards are live from their purchase on — through the rest
+of the leg, every seal fight and every gate fight (a lineage pays only while its own form
+is worn, design §23; the test asserts both cards active in the slot at every
+`attemptBoss`). Seven beats, all authored from `shared/src/data/lineages/` so no price,
+level or sentence is restated:
 
-| Beat | Where | What it does |
+| Beat | Where (Axe plans / Slinger) | What it does |
 |---|---|---|
-| `shards:<lean>` | Forest 1, the Flash Rapier just worn | farms the Forest territory that pays the lean's shard; the line names the weapon page, the shard and the territory |
-| `card:<lean>` | Forest 2 (the lean row's level; Global Mastery 6 is the Plains) | buys the lean and makes it active: "Row one is the lean, a stat while the Flash Rapier is worn (+9% attack speed); one lean is active at a time." |
-| `shards:<verb>` | end of the Swamp leg | "Three zones mastered opens row two…": back to the Forest territory that pays the verb's shard |
-| `card:<verb>` | same | buys the verb and makes it active; its **lesson**: "Look at what Opening Lunge says now: “Your first hit on each new target lands twice.” Your lean, Quick Wrist, chose that.", then the verb's ring on the rhythm readout |
-| `farm:gate:gale-needle` | last chapter, "The Gate" | the gate's Forest essence and Gale Shards, farmed in Pack territory |
-| `capstone:gale-needle` | same | the Forest boss, repeatedly, for its three Warden's Hearts |
-| `gate:gale-needle` | same | wears the Flash Rapier (review P9: the page shown is the slot's), pays the gate, wears the Gale Needle |
+| `shards:<lean>` | Cave 1 / Swamp 1, the weapon just crafted and worn | farms the home-zone territory that pays the lean's shard; the line names the weapon page, the shard and the territory |
+| `card:<lean>` | Cave 2 / Swamp 2 (the lean row's level; its Global Mastery 6 is long held) | buys the lean and makes it active: "Row one is the lean, a stat while the Chaotic Axe is worn (+9% attack speed); one lean is active at a time." |
+| `shards:<verb>` | the same leg, after its shared learning | "Cave 4 opens row two of the Chaotic Axe's page…": the territory that pays the verb's shard |
+| `card:<verb>` | Cave 4 / Swamp 4 | buys the verb and makes it active; its **lesson** quotes the sentence the pair now reads (`verbSentence`, the page's own `cardSentence`), then points at the verb's ring on the rhythm readout |
+| `farm:gate:<form>` | last chapter, "The Gate" | the gate's home-zone essence and crowned-lane shards, farmed in the territory that pays them |
+| `capstone:<form>` | same | the home zone's boss, in its boss-matrix loadout, repeatedly, for three capstones |
+| `gate:<form>` | same | pays the gate (with the weapon in the slot, review P9) and wears the tier-2 form |
 
-**Which lean and verb** is per class (`TutorialClassPlan.weaponCards`), always two
-different lanes: a same-lane pair reads its packet's pure sentence, so the lean would
-change nothing on the verb card and there would be nothing to look at.
+**The gate is the taught weapon's** (a designer call, flagged): the Axe's Ruinous Axe,
+paid with three Broodmother Chitin from the Cave boss, and the Slinger's Venom Knife
+(`swamp-mirebrand`), with three Toadeater Glands from the Swamp boss — `tutorialGateForm`
+reads the lineage's tier-2 form in its home biome. The course-correction script paid the
+Rapier's Gale Needle at the Greatbear, which after this move would have made the gate
+chapter equip a weapon whose page the player never bought from, and end the tutorial on a
+tier-2 Rapier with an empty band. The gate's boss is fought in its own row of the boss
+matrix, like a seal (the capstone beat equips the boss kit and that boss's armour,
+Technique and Guard); for the Axe plans the Cave loadout is the Mountain seal's, for the
+Slinger the Swamp's brings Cleanse back. The gate's essence and shard farm stands where
+the leg already ended.
 
-| Class | Lean (row 1) | Verb (row 2) | The verb then reads | Why |
-|---|---|---|---|---|
-| Striker | Quick Wrist (+9% attack speed) | Opening Lunge | Your first hit on each new target lands twice. | the finisher is every 5th swing, so swings per second is its own currency, and a second swing lands on every new body — T1 farming is many short pulls |
-| Squire | Keen Edge (+3 Attack) | Flurry | Every 6th hit is a lunge for double damage. | the slowest hands and the biggest hits: flat Attack under a ×2 timed execution, and on a slow chassis the six-count is a steady, readable ring |
-| Slinger | Quick Wrist | Opening Lunge | Your first hit on each new target lands twice. | Attack keeps only 65% at the clip's cadence while on-hit keeps all of it, and the echo carries on-hit (§24.2: on-hit is Tempo's), so Keen Edge is its weakest lean; a kiting build opens on many targets |
-| Spirit | Keen Edge | Flurry | Every 6th hit is a lunge for double damage. | the fastest chassis fills the six-count fastest, so the lunge lands often and the ring is never idle |
-| Apprentice | Envenomed (+10% DoT potency) | Opening Lunge | Your first hit on each new target leaves a heavy poison or bleed, a whole swing over 4 s. | DoT potency is its whole package (§24.2), and Affliction × Engagement is the pair that suggested the structure |
-| Conduit | Quick Wrist | Opening Lunge | Your first hit on each new target lands twice. | the weapon sets the formation's cadence, so attack speed reaches every summon, and four bodies open on many targets |
+**No Rapier lesson.** The Rapier is still crafted and worn from the Forest to the boss
+weapon (it is the farming weapon there), but its page is not taught: one page, learned
+once, on the weapon kept through the seals and the gate, is fewer concepts than two pages
+whose cards stay with their weapon. The cost is that the page now arrives later: in the
+Cave leg for five plans (Global Mastery 24–30) and the Swamp leg for the Slinger (12–18),
+against the Forest leg (6–12) before.
 
-No class takes Venom Point: its moment needs an already-afflicted target, which only the
-Apprentice supplies, and the Apprentice's lean is Envenomed (same lane, pure sentence).
+**Which lean and verb** is per class (`TutorialClassPlan.weaponCards`): on the class's own
+boss weapon, the pair with the best boss-lab uplift among those whose verb FIRES for that
+class (verb firings > 0), read off the verbs-that-fire composition matrix (5 bosses × 10
+seeds per pair, at `57916b52`; `server/scripts/_vfTutorialPicks.ts` prints the table). A
+pick may be a same-lane (pure) pair, whose sentence is the lane's own: the lesson then says
+the lean is the same colour instead of "your lean chose that".
 
-**Where the verb lands.** The brief said Forest 4; the verb row is gated at Forest 4
-**and** the T1 band's Global Mastery 18 (W2-A measured it), and the script reaches GM 18
-only when the Swamp is mastered (Plains 6 + Forest 6 + Swamp 6). The script computes the
-first leg end where both gates hold from the data, so a gate change moves the beat. The
-verb's shard is paid only in the Forest (Pack for Gale, Grove for Spark), so the beat walks
-back there; the Rapier is still worn through the Mountain leg, so the lesson's first fight
-is one where the verb fires (`tutorial.test.ts` asserts it).
+| Class | Weapon | Lean (row 1) | Verb (row 2) | The verb then reads | Boss-lab uplift · fires/min |
+|---|---|---|---|---|---|
+| Striker | Chaotic Axe | Loose Grip (+9% attack speed) | Cleaving Blow | When your class mechanic fires (every 4 s at most), the hit lands twice. | +31.2% · 10.2 |
+| Squire | Chaotic Axe | Hewing Arc (+9% Attack) | Cleaving Blow | Your mechanic hits half again as hard. (pure) | +25.4% · 6.6 |
+| Slinger | Poison Dagger | Coated Edge (+10% DoT potency, and a light bleed) | Into the Wound | Hitting an afflicted target doubles its affliction. (pure) | +42.8% · 11.6 |
+| Spirit | Chaotic Axe | Loose Grip | Chopping Rhythm | Every 6th hit strikes twice. (pure) | +24.8% · 7.3 (tied with Loose Grip → Cleaving Blow; the mean over the bosses breaks it, +23.7% to +22.7%) |
+| Apprentice | Chaotic Axe | Hewing Arc | Chopping Rhythm | Every 6th hit counts as your class mechanic firing. | +14.0% · 6.0 (its pure Empowered pair never fired) |
+| Conduit | Chaotic Axe | Loose Grip | Chopping Rhythm | Every 6th hit strikes twice. (pure) | +17.0% · 26.9 (four summons fill the count) |
+
+The full per-class tables: `reports/verbs-that-fire/tutorial-picks.md`.
+
+**Where the verb lands.** Design §24.9 lowered the T1 verb row's Global Mastery from 18
+(three mastered zones) to 10 (`ROW_GLOBAL_MASTERY`, a Rapier player's Forest 4 with the
+Plains behind them), so the verb opens with its zone level, inside its home leg: Cave 4
+(Global Mastery 28) for the Axe plans, Swamp 4 (16) for the Slinger — at 18 the
+Slinger's would have waited for Swamp 6. The script places it from the data: inside the
+home leg when the row's Global Mastery is held at that level, else after the first leg
+end where it is.
 
 **Each purchase is `unlockCard` + `setActive`.** The server activates a bought card only
 into an EMPTY row (W2-A), so a player who opted in mid-Tier-1 with another lean already
@@ -226,9 +258,9 @@ empty row the `setActive` is a no-op. The bot runs the same two intents.
 Three things the gate chapter needed (2026-10-01, unchanged):
 
 - **The gate chapter runs after the seals.** The T1 gate asks for Global Mastery 30
-  and Forest 6, which only arrive at the end of the Cave leg, and any two distinct
-  biome bosses promote to Tier 2 — so a third boss before the seals would itself be
-  a seal. The panel's farewell therefore waits for the script to run out rather than
+  and its home zone at 6, which only arrive at the end of the Cave leg, and any two
+  distinct biome bosses promote to Tier 2 — so a third boss before the seals would itself
+  be a seal. The panel's farewell therefore waits for the script to run out rather than
   for `playerTier >= 2`, and a Tier-2 player with beats left gets an "I'm done"
   button so the farewell is never out of reach.
 - **`attemptBoss` takes an optional `until`.** A gate costs three capstone drops,
@@ -236,21 +268,16 @@ Three things the gate chapter needed (2026-10-01, unchanged):
 - **The route completion includes the gate**, because `runSteps` returns the moment
   completion holds and "two seals" would have cut the run short of the new chapter.
 
-The Greatbear wall the gate chapter used to hit (four classes of six, 2026-10-02 morning)
-was closed by the T1 boss pass: every class paid the gate in the 2026-10-02 evening sweep
-(Validation record). The gate's Greatbear fights are still fought in the Mountain-seal
-loadout — the Chaotic Axe for five classes, the Poison Dagger for the Slinger — so the
-Rapier's lean and verb are inert in every boss fight of the script (design §23's note).
-Whether the gate chapter should wear the Rapier is a designer call.
-
 `tutorial.test.ts` simulates every class's playthrough (each step made true the way
 the server would) and asserts the guide only ever moves forward, reaches GM 30,
 ends at Tier 2, and that every loadout fits the RP budget of the Global Mastery
-guaranteed at that point. Since the course correction it also asserts: both cards
-bought and active; every lineage step happens with the Rapier in the slot; each card
-bought where its own gates hold; the fight after the verb lesson is on the Rapier; a
-mid-T1 player with another lean active still gets the `setActive`; the lesson quotes
-the sentence the weapon page shows; and the first-hour checklist below.
+guaranteed at that point. It also asserts: both cards bought and active; the taught
+lineage is the boss kit's weapon; every lineage step happens with that weapon in the
+slot; each card bought where its own gates hold, at its row's level of the home zone;
+every boss fight (seals and gate) fought on that weapon with both cards active; the
+fight after the verb lesson is on it; a mid-T1 player with another lean active still
+gets the `setActive`; the lesson quotes the sentence the weapon page shows (and claims
+the lean "chose" it only for a composed pair); and the first-hour checklist below.
 
 ### The first-hour checklist (2026-10-03)
 
@@ -281,23 +308,28 @@ those.
 | Plains 2 | `learn:ability-recipe-sweep` | A Technique fires on its own every so often | the Abilities tab, Attune | all |
 |  |  | An ability fires from a Rune | "Use default timing" under the ability |  |
 | Plains 4 | `max:plains` | Zone mastery opens recipes | the Mastery level bar on the guide card | all |
-| Forest 1 | `shards:<lean>` | A weapon has a page of cards | the weapon page, opened from the equipped weapon | all |
-|  |  | Every kill pays its territory's shard | the arrival banner and the map ("Pack territory · Gale Shards") |  |
-| Forest 2 | `card:<lean>` | Row 1, the lean: a stat while the form is worn, one active | the lean card's sentence and the stat sheet beside it | all |
 | Forest 2 | `learn:ability-recipe-second-wind` | A Guard rescues you mid-fight | the Abilities tab, Attune | all |
 | Forest 3 | `craft:forest-vest-t1` | Evasion: harder to hit | the Evasion row of the stat sheet | Slinger |
-| Swamp 0 | `farm:rune-recipe-avoid-hazards` | Poison keeps hurting after the hit | the poison tile on the buff bar | all |
+| Swamp 0 | `farm:rune-recipe-avoid-hazards` (Slinger: `farm:ashbrand-blade`) | Poison keeps hurting after the hit | the poison tile on the buff bar | all |
+| Swamp 1 | `shards:<lean>` | A weapon has a page of cards | the weapon page, opened from the equipped weapon | Slinger |
+|  |  | Every kill pays its territory's shard | the arrival banner and the map ("Mire territory · Venom Shards") |  |
+| Swamp 2 | `card:<lean>` | Row 1, the lean: a stat while the form is worn, one active | the lean card's sentence and the stat sheet beside it | Slinger |
 | Swamp 2 | `rune:rune-recipe-avoid-hazards` | Hazard ground hurts, and a Rune walks around it | the hazard patches on the Swamp floor | all |
 | Swamp 3 | `learn:ability-recipe-cleanse` | Abilities are swapped to fit the zone | the Abilities tab, Unattune then Attune | all |
-| Swamp 6 | `card:<verb>` | Row 2, the verb: a moment, and the lean decides what happens then | the verb card's sentence on the weapon page, rewritten by the lean, ringed | all |
+| Swamp 4 | `card:<verb>` | Row 2, the verb: a moment, and the lean decides what happens then | the verb card's sentence on the weapon page, ringed | Slinger |
 |  |  | A ring by the health bar shows the verb coming | the verb's ring on the rhythm readout, ringed |  |
 | Mountain 3 | `rune:rune-recipe-keep-distance` | Orbit: circle out of reach while attacking | the Runes board | Slinger, Spirit, Apprentice, Conduit |
 | Cave 0 | `farm:chaotic-axe` (Slinger: `farm:rune-recipe-step-back`) | A wound-up hit can be dodged | the cast bar over a monster winding up | all |
+| Cave 1 | `shards:<lean>` | A weapon has a page of cards | the weapon page, opened from the equipped weapon | all but the Slinger |
+|  |  | Every kill pays its territory's shard | the arrival banner and the map ("Brood territory · Gale Shards") |  |
+| Cave 2 | `card:<lean>` | Row 1, the lean: a stat while the form is worn, one active | the lean card's sentence and the stat sheet beside it | all but the Slinger |
 | Cave 2 | `rune:rune-recipe-step-back` | Step Back dodges a wound-up hit | Step Back at the top of the Runes board | all |
+| Cave 4 | `card:<verb>` | Row 2, the verb: a moment, and the lean decides what happens then | the verb card's sentence on the weapon page, ringed | all but the Slinger |
+|  |  | A ring by the health bar shows the verb coming | the verb's ring on the rhythm readout, ringed |  |
 | The Seals | `boss-prep:plains` | Two boss seals open Tier 2 | the tier-up after the second seal | all |
 | The Seals | `boss:plains` | Clear the guard, then wake the boss at its altar | the altar button, ringed | all |
-| The Gate | `farm:gate:gale-needle` | A gate turns the weapon into its next form | the gate block at the bottom of the weapon page | all |
-| The Gate | `capstone:gale-needle` | Only the boss drops the gate's capstone | the capstone pips on the gate block | all |
+| The Gate | `capstone:<form>` | Only the boss drops the gate's capstone | the capstone pips on the gate block | all |
+| The Gate | `gate:<form>` | A gate turns the weapon into its next form | the gate block at the bottom of the weapon page | all |
 
 What counts as an idea: something the player holds in their head from then on (a system,
 a screen, a rule), not an item — the first charm is an idea, the second charm is not, and a
@@ -326,8 +358,14 @@ is already met is skipped and never shown at all.
   gate chapter's farm beat was skipped for all six classes and its line (the one that said
   the chapter is optional) never showed. The capstone line now says it, and the gate idea
   rides on the pay-and-wear beat.
-- The lesson beats were split to fit: the weapon page and shards at Forest 1, the lean at
-  Forest 2, the verb and the readout ring at the purchase at the end of the Swamp leg.
+- The lesson beats were split to fit: the weapon page and shards at the home zone's level
+  1, the lean at 2, the verb and the readout ring at the verb's purchase (Forest 1 / 2 and
+  the end of the Swamp leg until verbs-that-fire; Cave 1 / 2 / 4, and Swamp 1 / 2 / 4 for
+  the Slinger, since).
+- **Verbs-that-fire (2026-10-04).** Moving the lesson to the boss weapon's home leg puts
+  the lean beside Step Back at Cave 2 (beside Avoid Hazards at the Slinger's Swamp 2): two
+  ideas each, inside the rule. The Forest now introduces one idea, the Guard (two for the
+  Slinger, whose armor's evasion stays held at Forest 3).
 
 **Measured on the 1x sweep** (rev `1297b206`, before the opening change; the opening was
 smoke-measured separately on the new revision): see "2026-10-03 — the course-correction

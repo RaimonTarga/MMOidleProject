@@ -23,7 +23,6 @@ import {
   LINEAGE_DATABASE,
   TUTORIAL_CLASS_PLANS,
   TUTORIAL_CONCEPTS_PER_LEVEL,
-  TUTORIAL_WEAPON_LINEAGE,
   tutorialScriptFor,
   type TutorialConceptId,
 } from '@mmo-idle/shared';
@@ -62,8 +61,9 @@ const ZONE: Record<string, string> = {
   'The Clearing': 'clearing', 'The Plains': 'plains', 'The Forest': 'forest',
   'The Swamp': 'swamp', 'The Mountain': 'mountain', 'The Cave': 'cave',
 };
-const rapier = LINEAGE_DATABASE.get(TUTORIAL_WEAPON_LINEAGE)!;
-const cardName = (id: string) => rapier.cards.find((c) => c.id === id)?.name ?? id;
+// Card names across every lineage: the course-correction sweep's pairs were the Rapier's; since
+// verbs-that-fire wave 2 each plan names its own lineage (`weaponCards.lineageId`).
+const cardName = (id: string) => [...LINEAGE_DATABASE.values()].flatMap((l) => l.cards).find((c) => c.id === id)?.name ?? id;
 
 const ledger: Record<string, unknown>[] = [];
 const measured: string[] = [];
