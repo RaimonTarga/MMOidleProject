@@ -34,7 +34,7 @@ import { TooltipCard, useHoverTooltip, type TooltipCardContent } from './primiti
 import { buffTooltipContent } from './statusTooltips';
 import { useIsMobile } from './useIsMobile';
 import { GameIcon } from '../ui/GameIcon';
-import { atlasIcon } from '../ui/iconSource';
+import { assetIcon } from '../ui/iconSource';
 import './rhythmReadout.css';
 
 /** How long a pulse ring stays lit after its card fires. */
@@ -163,7 +163,7 @@ function Ring({
       </div>
       <span className="rhythm-ring__label">
         {ring.glyph && (
-          <GameIcon source={atlasIcon(ring.glyph)} size={10} fallback={null} decorative />
+          <GameIcon source={assetIcon(ring.glyph)} size={10} fallback={null} decorative />
         )}
         {ring.label}
       </span>

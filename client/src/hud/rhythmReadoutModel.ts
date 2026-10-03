@@ -32,13 +32,22 @@ export const SPENT_MARK = '—';
 /** A resting pulse ring: the server keeps no count toward its moment. */
 export const PULSE_MARK = '•';
 
-// ── W1-E HOOK: payload glyphs ────────────────────────────────────────────────
+// ── Payload glyphs (W1-E, designer-approved 2026-10-03) ─────────────────────
 //
-// The seven payload glyphs (W1-E) go here, keyed by the PAYLOAD's packet, as UI
-// icon-atlas frame names. The ring label draws the glyph beside the card's name.
-// Until the art lands every entry is absent and the label is text only, so
-// wiring the art is one line per payload and nothing else changes.
-export const RHYTHM_PAYLOAD_GLYPHS: Partial<Record<PacketId, string>> = {};
+// One glyph per PAYLOAD, keyed by the payload's packet, as loose concept-icon
+// files (neutral ivory, so the ring carries the moment's lane colour). The ring
+// label draws the glyph beside the card's name; a payload with no entry reads as
+// text only.
+const PAYLOAD_GLYPH_ROOT = '/assets/concept-icons/payloads';
+export const RHYTHM_PAYLOAD_GLYPHS: Partial<Record<PacketId, string>> = {
+  'tempo': `${PAYLOAD_GLYPH_ROOT}/lands-twice.png`,
+  'affliction': `${PAYLOAD_GLYPH_ROOT}/heavy-poison.png`,
+  'engagement': `${PAYLOAD_GLYPH_ROOT}/lunge.png`,
+  'empowered': `${PAYLOAD_GLYPH_ROOT}/mechanic-proxy.png`,
+  'control': `${PAYLOAD_GLYPH_ROOT}/root.png`,
+  'kill-chain': `${PAYLOAD_GLYPH_ROOT}/heal-and-load.png`,
+  'technique': `${PAYLOAD_GLYPH_ROOT}/technique-refund.png`,
+};
 
 // ── The frame's containers ───────────────────────────────────────────────────
 //
