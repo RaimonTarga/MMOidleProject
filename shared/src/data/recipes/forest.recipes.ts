@@ -62,19 +62,12 @@ export const forestRecipeEntries = [
   ['forest-vest-t1', {
     id: 'forest-vest-t1', name: 'Shaded Bindings',
     recipeGroup: 'forest', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { green: 20 }, stats: {"maxHp": 29, "evasion": 0.28, "damageReduction": 0.02}, tier: 1,
+    cost: { green: 20 }, stats: { "maxHp": 44, "evasion": 0.36, "damageReduction": 0.02 }, tier: 1,
     icon: 'items/armor/shaded-bindings.png',
     description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade.",
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (470).
     // +5 catalyst from forest-vest-t2's own family-tag ("evasion armor answers
     // frequent light hits → Alacrity").
-    upgrades: [
-      {"cost": {"green": 20}, "requiredBiomeLevel": 3, "stats": {"maxHp": 3, "evasion": 0.016}},
-      {"cost": {"green": 45}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "evasion": 0.016}},
-      {"cost": {"green": 70}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "evasion": 0.016}},
-      {"cost": {"green": 115}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "evasion": 0.016}},
-      {"cost": {"green": 150}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "evasion": 0.016}}
-    ],
 
 mechanicEffects: {"defense.evade-mitigation": 0.1},
 }],
@@ -90,18 +83,11 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
   ['forest-charm-t1', {
     id: 'forest-charm-t1', name: 'Heartroot Amulet',
     recipeGroup: 'forest', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { green: 15 }, stats: { recovery: 6 }, tier: 1,
-    mechanicEffects: { 'defense.recovery-skill-potency': 0.10 },
+    cost: { green: 15 }, stats: { "recovery": 9.2 }, tier: 1,
+    mechanicEffects: { "defense.recovery-skill-potency": 0.15 },
     icon: 'items/charms/heartroot-amulet.png',
     description: 'Heartroot drawn from the oldest tree in the grove, still faintly warm.',
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (240).
-    upgrades: [
-      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 10 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1.6 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 20 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 35 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1.6 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 75 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // BOOTS — traversal. The straightforward fast-travel option, no kill trigger
@@ -109,21 +95,14 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
   ['forest-boots-t1', {
     id: 'forest-boots-t1', name: 'Sprinter Wraps',
     recipeGroup: 'forest', requiredBiomeLevel: 4, slot: 'mobility',
-    cost: { green: 10 }, stats: { speed: 22 }, tier: 1,
+    cost: { green: 10 }, stats: { "speed": 32 }, tier: 1,
     // 2026-09-26: out-of-combat speed +25->50% trimmed to +20->35% (T2: +55->80% ->
     // +40->55%). Raw travel speed ran ~20% above every other boot; it applies to all
     // node-to-node travel, which the single-node farm pace test undercounts.
-    mechanicEffects: { 'mobility.ooc-speed-pct': 0.20 },
+    mechanicEffects: { "mobility.ooc-speed-pct": 0.35 },
     icon: 'items/boots/sprinter-wraps.png',
     description: 'Strips of supple hide that move when you move, and never before.',
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (160).
-    upgrades: [
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 15 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 25 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 40 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 45 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // ── T2 — Rapier lineage evolved forms (system rework Step 6) ───────────────
@@ -158,17 +137,10 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
   ['forest-vest-t2', {
     id: 'forest-vest-t2', name: 'Phantom Bindings',
     recipeGroup: 'forest', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { green: 48, yellow: 12 }, stats: {"maxHp": 52, "evasion": 0.34, "damageReduction": 0.04}, tier: 2, // family-tag: evasion armor answers frequent light hits → Alacrity
+    cost: { green: 48, yellow: 12 }, stats: { "maxHp": 78, "evasion": 0.42, "damageReduction": 0.04 }, tier: 2, // family-tag: evasion armor answers frequent light hits → Alacrity
     reconstructCost: { green: 168, yellow: 42 },
     icon: 'items/armor/phantom-bindings.png',
     description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade.",
-    upgrades: [
-      {"cost": {"green": 29, "yellow": 7}, "requiredBiomeLevel": 9, "stats": {"maxHp": 5, "evasion": 0.016}},
-      {"cost": {"green": 72, "yellow": 18}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "evasion": 0.016}},
-      {"cost": {"green": 115, "yellow": 29}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6, "evasion": 0.016}},
-      {"cost": {"green": 187, "yellow": 47}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "evasion": 0.016}},
-      {"cost": {"green": 317, "yellow": 79}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "evasion": 0.016}}
-    ],
 
 mechanicEffects: {"defense.evade-mitigation": 0.1},
 }],
@@ -179,36 +151,22 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
   ['forest-charm-t2', {
     id: 'forest-charm-t2', name: 'Ancient Heartroot Amulet',
     recipeGroup: 'forest', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { green: 50 }, stats: { recovery: 13.4 }, tier: 2,
+    cost: { green: 50 }, stats: { "recovery": 20.3 }, tier: 2,
     reconstructCost: { green: 175 }, // family-tag: recovery charm → Alacrity
-    mechanicEffects: { 'defense.recovery-skill-potency': 0.18 },
+    mechanicEffects: { "defense.recovery-skill-potency": 0.23 },
     icon: 'items/charms/ancient-heartroot-amulet.png',
     description: 'A relic of a grove that burned an age ago, its life somehow undimmed.',
-    upgrades: [
-      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 18 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 2.3 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 45 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 72 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 2.3 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 117 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 2.3 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 198 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // T2 economy pass (2026-08-29): now an EVOLUTION of forest-boots-t1 at +5.
   ['forest-boots-t2', {
     id: 'forest-boots-t2', name: 'Windstep Wraps',
     recipeGroup: 'forest', requiredBiomeLevel: 10, slot: 'mobility',
-    cost: { green: 40 }, stats: { speed: 40 }, tier: 2,
+    cost: { green: 40 }, stats: { "speed": 51 }, tier: 2,
     reconstructCost: { green: 140 }, // family-tag: forest mobility → Alacrity
-    mechanicEffects: { 'mobility.ooc-speed-pct': 0.40 },
+    mechanicEffects: { "mobility.ooc-speed-pct": 0.55 },
     icon: 'items/boots/windstep-wraps.png',
     description: 'Light enough that the wind mistakes the wearer for one of its own.',
-    upgrades: [
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 12 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 30 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 48 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 78 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 132 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // ── Cores ───────────────────────────────────────────────────────────────────

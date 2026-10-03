@@ -1,6 +1,5 @@
 import {
   ESSENCE_TYPES,
-  RECIPE_DATABASE,
   type EssenceType,
   type TierEntryProfile,
 } from "@mmo-idle/shared";
@@ -50,25 +49,30 @@ export interface EntryWalletModel {
 }
 
 /**
- * The largest single +5 upgrade step a Tier-1 item asks for, per essence
- * colour, read live from `RECIPE_DATABASE`.
+ * The largest single +5 upgrade step a Tier-1 item asked for, per essence
+ * colour — FROZEN at the values the live recipe database held when the ladder
+ * was retired (design §23 for weapons, §24.5 for armour, charm and boots; the
+ * last ladders left `RECIPE_DATABASE` in the 2026-10-03 course-correction run).
  *
- * This is the anchor for the Natural model below. It is a real in-game
- * magnitude rather than a round number, and it moves automatically when the
- * T1 upgrade costs are retuned.
+ * This is the anchor for the Natural model below. It used to be read live so it
+ * moved with retuned T1 upgrade costs; with no ladder left a live read is zero
+ * in every colour and the Natural arm would silently collapse into the Clean
+ * one, which is the one thing a control pair must never do. The numbers are the
+ * final steps of `cave-vest-t1` (red), `mountain-vest-t1` (blue) and the
+ * plains / forest / swamp T1 vests (yellow, green, purple) — the same table
+ * `server/src/db/gearUpgradeRefund.ts` refunds from.
  */
+const LARGEST_T1_FINAL_UPGRADE_STEP: Readonly<Record<EssenceType, number>> = {
+  red: 195,
+  blue: 155,
+  green: 150,
+  yellow: 150,
+  purple: 150,
+};
+
 export function largestT1FinalUpgradeStep(): Record<EssenceType, number> {
   const worst = Object.fromEntries(ESSENCE_TYPES.map((t) => [t, 0])) as Record<EssenceType, number>;
-  for (const recipe of RECIPE_DATABASE.values()) {
-    if (recipe.tier !== 1) continue;
-    const last = recipe.upgrades?.[recipe.upgrades.length - 1];
-    if (!last) continue;
-    for (const [type, amount] of Object.entries(last.cost)) {
-      const key = type as EssenceType;
-      if (!ESSENCE_TYPES.includes(key)) continue;
-      worst[key] = Math.max(worst[key], amount as number);
-    }
-  }
+  for (const type of ESSENCE_TYPES) worst[type] = LARGEST_T1_FINAL_UPGRADE_STEP[type] ?? 0;
   return worst;
 }
 
@@ -99,7 +103,7 @@ export function naturalEntryWallet(): EntryWalletModel {
     essences,
     derivation:
       "MODEL, NOT MEASURED: per-colour = the largest single Tier-1 +5 upgrade step in " +
-      "that colour, read live from RECIPE_DATABASE ('stopped one purchase short'). " +
+      "that colour, frozen at retirement of the ladder ('stopped one purchase short'). " +
       "Replace with walletFromT1Run() output once a canonical T1 run exists.",
     measured: false,
   };

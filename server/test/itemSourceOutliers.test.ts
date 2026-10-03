@@ -163,9 +163,11 @@ for(const mode of ['normal','laser','beam'] as const) {
   assert(Math.abs(axe.total / normal.total - 2/3) < .001,'laser sheet pays dead tick (rounded display)');
 }
 // Requested conservative authored budgets (not simulated balance conclusions).
+// "Completed" was base + the +5 ladder; the ladder is folded into base now
+// (design §24.5, 2026-10-03), so the base IS the completed item.
 for(const [id,speed] of [['desert-boots-t2',113],['desert-boots-t3',157],['desert-boots-t4',209]] as const) {
   const item=ITEM_DATABASE.get(id)!;
-  eq(item.statModifiers.speed+upgradeStatBonusTotal(item,5).speed,speed,id+' completed speed');
+  eq(item.statModifiers.speed,speed,id+' completed speed');
 }
 {
   // Charms grow flat Recovery with upgrades at every tier (2026-09-26), so compare

@@ -338,87 +338,27 @@ for (const recipe of T3_GEAR) {
 const total = (c: Partial<Record<string, number>> | undefined) =>
   Object.values(c ?? {}).reduce((a: number, b) => a + (b ?? 0), 0);
 
-/**
- * Approved lifetime totals (base + all five steps). Weapons are excluded
- * (Phase 2b, Override A): off the +N ladder entirely, so "lifetime cost" no
- * longer applies — a weapon's power now comes from its lineage tree.
- */
-const T3_TOTALS: Record<string, number> = {
-  "mountain-vest-t3": 2228, "mountain-charm-t3": 936, "mountain-boots-t3": 658,
-  "cave-vest-t3": 2418, "cave-charm-t3": 1006, "cave-boots-t3": 666,
-  "swamp-vest-t3": 2358, "swamp-charm-t3": 988, "swamp-boots-t3": 688,
-  "jungle-vest-t3": 2070, "jungle-charm-t3": 1008, "jungle-boots-t3": 660,
-  "desert-vest-t3": 2520, "desert-charm-t3": 1310, "desert-boots-t3": 864,
-  "volcanic-vest-t3": 2112, "volcanic-charm-t3": 1100, "volcanic-boots-t3": 680,
-  "tundra-vest-t3": 2200, "tundra-charm-t3": 1050, "tundra-boots-t3": 670,
-};
-
+// 3a-3d and 3g RETIRED with the ladder (design §23 for weapons, §24.5 for armour,
+// charm and boots, 2026-10-03). They audited a LIFETIME cost — the craft plus
+// five accelerating +N steps — and the +4/+5 share of it. No item carries a
+// ladder now: each crafts at its folded +5 power for its recipe cost, so the
+// approved lifetime totals have no subject. What still holds of a plain craft
+// is checked below. The slot ordering (armour > charm > boots) is NOT asserted:
+// on the craft cost alone it ties in places (swamp T3 charm = boots), which is a
+// pricing call for the designer, not a regression to pin.
 for (const recipe of T3_GEAR) {
   if (recipe.slot === "weapon") continue;
   const id = recipe.id;
-  const steps = recipe.upgrades ?? [];
-  assert(steps.length === 5, `${id}: must author exactly 5 upgrade steps`);
-
-  const stepTotals = steps.map((s) => total(s.cost));
-  const postBase = stepTotals.reduce((a, b) => a + b, 0);
-  const lifetime = total(recipe.cost) + postBase;
-
-  // 3a. Approved lifetime totals.
-  assert(T3_TOTALS[id] !== undefined, `${id}: missing from the approved T3 cost table`);
-  assert(lifetime === T3_TOTALS[id], `${id}: lifetime total must be ${T3_TOTALS[id]} (got ${lifetime})`);
-
-  // 3b. Strictly accelerating — this alone kills the old +3=+4=+5 plateau.
-  for (let i = 1; i < stepTotals.length; i++) {
-    assert(stepTotals[i] > stepTotals[i - 1], `${id}: step +${i + 1} must cost more than +${i}`);
-  }
-
-  // 3c. +4/+5 hold ~70% of post-base spend.
-  const share = (stepTotals[3] + stepTotals[4]) / postBase;
-  assert(share >= 0.65 && share <= 0.75, `${id}: +4/+5 must be 65-75% of post-base spend (got ${(share * 100).toFixed(1)}%)`);
-
-  // 3d. Hybrid rules. Weapons and mobility stay pure; hybrids keep home dominant.
-  const lifeByColour: Partial<Record<EssenceType, number>> = {};
-  for (const c of [recipe.cost, ...steps.map((s) => s.cost)]) {
-    for (const [k, v] of Object.entries(c ?? {})) {
-      lifeByColour[k as EssenceType] = (lifeByColour[k as EssenceType] ?? 0) + (v ?? 0);
-    }
-  }
-  const colours = Object.entries(lifeByColour).sort((a, b) => b[1] - a[1]);
-  // Weapons are skipped above (they have no upgrade steps since the +N ladder
-  // went), so this audit only ever sees mobility here.
+  assert(!recipe.upgrades?.length, `${id}: the +N ladder is retired; no item may author upgrade steps`);
+  const colours = Object.keys(recipe.cost ?? {});
   if (recipe.slot === "mobility") {
     assert(colours.length === 1, `${id}: ${recipe.slot} items must be a single essence colour`);
   } else {
     assert(colours.length <= 2, `${id}: at most one splash colour`);
-    if (colours.length === 2) {
-      const homeShare = colours[0][1] / lifetime;
-      assert(homeShare >= 0.73 && homeShare <= 0.82, `${id}: home share must be 73-82% (got ${(homeShare * 100).toFixed(1)}%)`);
-      assert(1 - homeShare <= 0.33, `${id}: splash must stay under the 33% ceiling`);
-    }
   }
-
 }
 // 3e (catalyst schedule) and 3f (volcanic catalyst families) RETIRED, Phase 2b:
 // the catalyst wallet and every `catalystCost` field are gone.
-
-// 3g. Slot ordering per biome: armor > recovery > mobility. (Weapons are
-// excluded — off the +N ladder entirely, Phase 2b.)
-{
-  const byGroup = new Map<string, typeof T3_GEAR>();
-  for (const r of T3_GEAR) {
-    if (!byGroup.has(r.recipeGroup)) byGroup.set(r.recipeGroup, []);
-    byGroup.get(r.recipeGroup)!.push(r);
-  }
-  for (const [group, items] of byGroup) {
-    const lifetimeOf = (slot: string) =>
-      items.filter((i) => i.slot === slot)
-        .map((i) => total(i.cost) + (i.upgrades ?? []).reduce((a, s) => a + total(s.cost), 0));
-    const minOf = (slot: string) => Math.min(...lifetimeOf(slot));
-    const maxOf = (slot: string) => Math.max(...lifetimeOf(slot));
-    assert(minOf("armor") > maxOf("recovery"), `${group}: armor must cost more than recovery`);
-    assert(minOf("recovery") > maxOf("mobility"), `${group}: recovery must cost more than mobility`);
-  }
-}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 4. Abilities / stances / rites

@@ -59,21 +59,14 @@ export const swampRecipeEntries = [
   ['swamp-vest-t1', {
     id: 'swamp-vest-t1', name: 'Arcane Wrappings',
     recipeGroup: 'swamp', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { purple: 22 }, stats: {"maxHp": 32, "damageReduction": 0.04},
-    mechanicEffects: {"defense.dot-resistance": 0.25},
+    cost: { purple: 22 }, stats: { "maxHp": 48, "damageReduction": 0.04 },
+    mechanicEffects: { "defense.dot-resistance": 0.35 },
     tier: 1,
     icon: 'items/armor/arcane-wrappings.png',
     description: "Resists damage over time and spreads part of incoming direct damage into debt.",
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (472).
     // +5 catalyst from swamp-vest-t2's own family-tag ("dot-resistance armor →
     // Fortified").
-    upgrades: [
-      {"cost": {"purple": 20}, "requiredBiomeLevel": 3, "stats": {"maxHp": 3}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 45}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 70}, "requiredBiomeLevel": 4, "stats": {"maxHp": 4}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 115}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 150}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
-    ],
   }],
 
   // CHARM — periodic attrition Recovery. Every 8s in combat, switch on 20→30% of
@@ -82,23 +75,12 @@ export const swampRecipeEntries = [
   ['swamp-charm-t1', {
     id: 'swamp-charm-t1', name: 'Murk Eye',
     recipeGroup: 'swamp', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { purple: 18 }, stats: { recovery: 4.4 },
-    mechanicEffects: {
-      'defense.recovery-pulse-pct': 0.20,
-      'defense.recovery-pulse-interval-ms': 8000,
-      'defense.recovery-pulse-duration-ms': 4000,
-    },
+    cost: { purple: 18 }, stats: { "recovery": 6 },
+    mechanicEffects: { "defense.recovery-pulse-pct": 0.3, "defense.recovery-pulse-interval-ms": 8000, "defense.recovery-pulse-duration-ms": 4000 },
     tier: 1,
     icon: 'items/charms/murk-eye.png',
     description: 'A preserved golem eye, still weeping faint green light.',
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~253 (was 255).
-    upgrades: [
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 25 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1.6 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 40 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 60 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 75 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // BOOTS — Slow Resistance. Reduces the MAGNITUDE of soft movement slows (a 50%
@@ -107,18 +89,11 @@ export const swampRecipeEntries = [
   ['swamp-boots-t1', {
     id: 'swamp-boots-t1', name: 'Marsh Treads',
     recipeGroup: 'swamp', requiredBiomeLevel: 4, slot: 'mobility',
-    cost: { purple: 18 }, stats: { speed: 18 }, tier: 1,
-    mechanicEffects: { 'mobility.slow-resistance': 0.25 },
+    cost: { purple: 18 }, stats: { "speed": 23 }, tier: 1,
+    mechanicEffects: { "mobility.slow-resistance": 0.4 },
     icon: 'items/boots/marsh-treads.png',
     description: 'Broad soles that ride the surface of soft, sucking ground.',
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~178 (was 176).
-    upgrades: [
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 15 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 25 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 40 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 55 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // ── T2 ──
@@ -143,21 +118,14 @@ export const swampRecipeEntries = [
   ['swamp-vest-t2', {
     id: 'swamp-vest-t2', name: 'Bog Wrappings',
     recipeGroup: 'swamp', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { purple: 54 }, stats: {"maxHp": 58, "damageReduction": 0.08}, // family-tag: dot-resistance armor → Fortified
+    cost: { purple: 54 }, stats: { "maxHp": 87, "damageReduction": 0.08 }, // family-tag: dot-resistance armor → Fortified
     reconstructCost: { purple: 189 },
     // hit-to-DoT is the T2+ specialisation of this lineage: deliberately held out
     // of the T1 baseline, kept here as the thing the tier upgrade actually buys.
-    mechanicEffects: {"defense.dot-resistance": 0.3, "defense.hit-to-dot-pct": 0.15},
+    mechanicEffects: { "defense.dot-resistance": 0.4, "defense.hit-to-dot-pct": 0.15 },
     tier: 2,
     icon: 'items/armor/bog-wrappings.png',
     description: "Resists damage over time and spreads part of incoming direct damage into debt.",
-    upgrades: [
-      {"cost": {"purple": 45}, "requiredBiomeLevel": 9, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 113}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 180}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 293}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 494}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
-    ],
   }],
 
   // CHARM — periodic Recovery pulse, deepened. Same 8s / 4s cadence as the T1
@@ -167,42 +135,23 @@ export const swampRecipeEntries = [
   ['swamp-charm-t2', {
     id: 'swamp-charm-t2', name: 'Bog Eye',
     recipeGroup: 'swamp', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { purple: 44 }, stats: { recovery: 11.1 }, // family-tag: attrition-Recovery charm → Fortified
+    cost: { purple: 44 }, stats: { "recovery": 15.7 }, // family-tag: attrition-Recovery charm → Fortified
     reconstructCost: { purple: 154 },
-    mechanicEffects: {
-      'defense.recovery-pulse-pct': 0.32,
-      'defense.recovery-pulse-interval-ms': 8000,
-      'defense.recovery-pulse-duration-ms': 4000,
-      'guard.cleanse-pulse': 1,
-    },
+    mechanicEffects: { "defense.recovery-pulse-pct": 0.42, "defense.recovery-pulse-interval-ms": 8000, "defense.recovery-pulse-duration-ms": 4000, "guard.cleanse-pulse": 1 },
     tier: 2,
     icon: 'items/charms/bog-eye.png',
     description: 'A bog-touched eye that drinks deep and gives quietly back.',
-    upgrades: [
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 18 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 2.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 45 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 72 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 2.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 117 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 198 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // T2 economy pass (2026-08-29): now an EVOLUTION of swamp-boots-t1 at +5.
   ['swamp-boots-t2', {
     id: 'swamp-boots-t2', name: 'Wetland Wraps',
     recipeGroup: 'swamp', requiredBiomeLevel: 10, slot: 'mobility',
-    cost: { purple: 44 }, stats: { speed: 32 }, tier: 2, // family-tag: swamp mobility → Fortified
+    cost: { purple: 44 }, stats: { "speed": 41 }, tier: 2, // family-tag: swamp mobility → Fortified
     reconstructCost: { purple: 154 },
-    mechanicEffects: { 'mobility.slow-resistance': 0.45 },
+    mechanicEffects: { "mobility.slow-resistance": 0.58 },
     icon: 'items/boots/wetland-wraps.png',
     description: 'Enchanted bindings that find footing where there should be none.',
-    upgrades: [
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 12 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 30 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 48 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 78 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 132 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // ── T3 ── (poison DoT weapon; the old frost variant moved to Tundra)
@@ -233,19 +182,12 @@ export const swampRecipeEntries = [
     // PURE purple by design, not by omission: a Swamp item borrowing purple from
     // Swamp is not a hybrid, so there is nothing to splash. (Debuff resistance moved
     // to the Trench carapace on 2026-09-26; this lineage owns damage over time.)
-    cost: { purple: 140 }, stats: {"maxHp": 158, "damageReduction": 0.14}, // family-tag: dot-resistance armor → Fortified
+    cost: { purple: 140 }, stats: { "maxHp": 239, "damageReduction": 0.14 }, // family-tag: dot-resistance armor → Fortified
     reconstructCost: { purple: 490 },
-    mechanicEffects: {"defense.dot-resistance": 0.35, "defense.hit-to-dot-pct": 0.2},
+    mechanicEffects: { "defense.dot-resistance": 0.45, "defense.hit-to-dot-pct": 0.2 },
     tier: 3,
     icon: 'items/armor/plaguebound-shroud.png',
     description: "Resists damage over time and spreads part of incoming direct damage into debt.",
-    upgrades: [
-      {"cost": {"purple": 89}, "requiredBiomeLevel": 15, "stats": {"maxHp": 17}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 222}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 355}, "requiredBiomeLevel": 16, "stats": {"maxHp": 17}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 577}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 975}, "requiredBiomeLevel": 16, "stats": {"maxHp": 17}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
-    ],
   }],
 
   // CHARM — periodic Recovery pulse, T3.
@@ -255,41 +197,22 @@ export const swampRecipeEntries = [
     // PURE purple by design: the recovery pulse is Swamp-native — nothing is borrowed
     // from another biome's mechanic, so the hybrid rule ("splash = the colour of the
     // borrowed mechanic") produces no splash here.
-    cost: { purple: 100 }, stats: { recovery: 37 }, // family-tag: attrition-Recovery charm → Fortified
+    cost: { purple: 100 }, stats: { "recovery": 50.5 }, // family-tag: attrition-Recovery charm → Fortified
     reconstructCost: { purple: 350 },
-    mechanicEffects: {
-      'defense.recovery-pulse-pct': 0.44,
-      'defense.recovery-pulse-interval-ms': 8000,
-      'defense.recovery-pulse-duration-ms': 4000,
-      'guard.cleanse-pulse': 1,
-    },
+    mechanicEffects: { "defense.recovery-pulse-pct": 0.54, "defense.recovery-pulse-interval-ms": 8000, "defense.recovery-pulse-duration-ms": 4000, "guard.cleanse-pulse": 1 },
     tier: 3,
     icon: 'items/charms/sorrow-eye.png',
     description: 'It weeps for every wound, and gives the tears back as strength.',
-    upgrades: [
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 36 },  requiredBiomeLevel: 16 },
-      { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 89 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 142 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 231 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 390 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   ['swamp-boots-t3', {
     id: 'swamp-boots-t3', name: 'Mire Striders',
     recipeGroup: 'swamp', requiredBiomeLevel: 16, slot: 'mobility',
-    cost: { purple: 100 }, stats: { speed: 58 }, tier: 3, // family-tag: swamp mobility → Fortified
+    cost: { purple: 100 }, stats: { "speed": 74 }, tier: 3, // family-tag: swamp mobility → Fortified
     reconstructCost: { purple: 350 },
-    mechanicEffects: { 'mobility.slow-resistance': 0.62 },
+    mechanicEffects: { "mobility.slow-resistance": 0.72 },
     icon: 'items/boots/mire-striders.png',
     description: 'Nothing the bog grips holds them; they walk free of any mire that tries to keep them.',
-    upgrades: [
-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 24 },  requiredBiomeLevel: 16 },
-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 59 },  requiredBiomeLevel: 16 },
-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 94 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 4 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 153 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 258 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   // ── Cores ───────────────────────────────────────────────────────────────────────

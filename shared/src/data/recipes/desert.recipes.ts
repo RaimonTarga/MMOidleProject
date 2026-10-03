@@ -55,53 +55,32 @@ export const desertRecipeEntries = [
   ['desert-vest-t2', {
     id: 'desert-vest-t2', name: 'Duneplate of the Last Stand',
     recipeGroup: 'desert', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { yellow: 35, purple: 25 }, stats: {"maxHp": 55, "damageReduction": 0.08, plating: DESERT_PLATING.t2.base}, // family-tag: opening-protection (Dawn) armor → Dominion
-    mechanicEffects: {"defense.engagement-dr-pct": DAWN.pct, "defense.engagement-dr-ms": DAWN.t2Ms},
+    cost: { yellow: 35, purple: 25 }, stats: { "maxHp": 83, "damageReduction": 0.08, "plating": 8 }, // family-tag: opening-protection (Dawn) armor → Dominion
+    mechanicEffects: { "defense.engagement-dr-pct": 0.35, "defense.engagement-dr-ms": 6000 },
     tier: 2,
     icon: 'items/armor/duneplate-last-stand.png',
     description: "Gain strong damage reduction for 6 seconds from the first attack in a hostile engagement. Rearms after 4 seconds without engagement or incoming attacks.",
-    upgrades: [
-      {"cost": {"yellow": 29, "purple": 19}, "requiredBiomeLevel": 3, "stats": {"maxHp": 6, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 72, "purple": 48}, "requiredBiomeLevel": 4, "stats": {"maxHp": 5, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 115, "purple": 77}, "requiredBiomeLevel": 4, "stats": {"maxHp": 6, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 187, "purple": 125}, "requiredBiomeLevel": 4, "stats": {"maxHp": 5, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 317, "purple": 211}, "requiredBiomeLevel": 4, "stats": {"maxHp": 6, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}}
-    ],
   }],
 
   // Charm: 15% Cleanse cooldown reduction; each upgrade adds 1 percentage point.
   ['desert-charm-t2', {
     id: 'desert-charm-t2', name: 'Mirage Talisman',
     recipeGroup: 'desert', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { yellow: 50, purple: 25 }, stats: { recovery: 13.4 }, // family-tag: cleanse/last-stand recovery → Dominion
-    mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.15 },
+    cost: { yellow: 50, purple: 25 }, stats: { "recovery": 19.4 }, // family-tag: cleanse/last-stand recovery → Dominion
+    mechanicEffects: { "cleanse.cooldown-reduction-pct": 0.2 },
     tier: 2,
     icon: 'items/charms/mirage-talisman.png',
     description: 'A shard of cooled glass that shows you water which is not there, and mends what is.',
-    upgrades: [
-      { stats: { recovery: 1.2 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 15, purple: 8 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1.2 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 39, purple: 19 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1.2 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 62, purple: 31 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1.2 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 101, purple: 50 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1.2 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 171, purple: 84 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   ['desert-boots-t2', {
     id: 'desert-boots-t2', name: 'Sand Sprint',
     recipeGroup: 'desert', requiredBiomeLevel: 4, slot: 'mobility',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 52->87 (+5: 113->113).
-    cost: { yellow: 58 }, stats: { speed: 87 }, tier: 2, // family-tag: desert kite mobility → Dominion
+    cost: { yellow: 58 }, stats: { "speed": 113 }, tier: 2, // family-tag: desert kite mobility → Dominion
     mechanicEffects: { 'mobility.kite-speed-pct': 0.20 },
     icon: 'items/boots/sand-sprint.png',
     description: 'Wide and light, made to outpace a storm across open dune.',
-    upgrades: [
-      { stats: { speed: 3 },  cost: { yellow: 15 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 5 }, cost: { yellow: 37 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 6 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 6 }, cost: { yellow: 97 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 6 }, cost: { yellow: 165 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // ── T3 ──
@@ -144,56 +123,35 @@ export const desertRecipeEntries = [
   ['desert-vest-t3', {
     id: 'desert-vest-t3', name: 'Eternal Duneplate',
     recipeGroup: 'desert', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { yellow: 120, purple: 30 }, stats: {"maxHp": 150, "damageReduction": 0.14, plating: DESERT_PLATING.t3.base}, // family-tag: opening-protection (Dawn) armor → Dominion
+    cost: { yellow: 120, purple: 30 }, stats: { "maxHp": 225, "damageReduction": 0.14, "plating": 15 }, // family-tag: opening-protection (Dawn) armor → Dominion
     reconstructCost: { yellow: 420, purple: 105 },
-    mechanicEffects: {"defense.engagement-dr-pct": DAWN.pct, "defense.engagement-dr-ms": DAWN.t3Ms},
+    mechanicEffects: { "defense.engagement-dr-pct": 0.35, "defense.engagement-dr-ms": 8000 },
     tier: 3,
     icon: 'items/armor/eternal-duneplate.png',
     description: "Gain strong damage reduction for 8 seconds from the first attack in a hostile engagement. Rearms after 4 seconds without engagement or incoming attacks.",
-    upgrades: [
-      {"cost": {"yellow": 76, "purple": 19}, "requiredBiomeLevel": 9, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 190, "purple": 47}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 303, "purple": 76}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 493, "purple": 123}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 834, "purple": 209}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}}
-    ],
   }],
 
   // Charm: 20% Cleanse cooldown reduction; each upgrade adds 1 percentage point.
   ['desert-charm-t3', {
     id: 'desert-charm-t3', name: 'Oasis Heart',
     recipeGroup: 'desert', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { yellow: 100, purple: 25 }, stats: { recovery: 50.4 }, // family-tag: cleanse recovery → Dominion
+    cost: { yellow: 100, purple: 25 }, stats: { "recovery": 68.3 }, // family-tag: cleanse recovery → Dominion
     reconstructCost: { yellow: 350, purple: 88 },
-    mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.20 },
+    mechanicEffects: { "cleanse.cooldown-reduction-pct": 0.25 },
     tier: 3,
     icon: 'items/charms/oasis-heart.png',
     description: 'A patient spring that helps you find the strength to purge curses and break your bonds again sooner.',
-    upgrades: [
-      { stats: { recovery: 4.5 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 38, purple: 9 },  requiredBiomeLevel: 10 },
-      { stats: { recovery: 4.5 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 95, purple: 24 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 4.5 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 152, purple: 38 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 2.2 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 246, purple: 62 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 2.2 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 417, purple: 104 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   ['desert-boots-t3', {
     id: 'desert-boots-t3', name: 'Mirage Striders',
     recipeGroup: 'desert', requiredBiomeLevel: 10, slot: 'mobility',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 86->125 (+5: 157->157).
-    cost: { yellow: 90 }, stats: { speed: 125 }, tier: 3, // family-tag: desert kite mobility → Dominion
+    cost: { yellow: 90 }, stats: { "speed": 157 }, tier: 3, // family-tag: desert kite mobility → Dominion
     reconstructCost: { yellow: 315 },
     mechanicEffects: { 'mobility.kite-speed-pct': 0.30 },
     icon: 'items/boots/mirage-striders.png',
     description: 'By the time the storm reaches where you stood, you are already a rumor on the next dune.',
-    upgrades: [
-      { stats: { speed: 4 }, cost: { yellow: 31 },  requiredBiomeLevel: 10 },
-      { stats: { speed: 6 }, cost: { yellow: 77 },  requiredBiomeLevel: 10 },
-      { stats: { speed: 7 }, cost: { yellow: 124 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 7 }, cost: { yellow: 201 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 8 }, cost: { yellow: 341 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // ── T4 ──
@@ -244,41 +202,25 @@ export const desertRecipeEntries = [
   ['desert-vest-t4', {
     id: 'desert-vest-t4', name: 'Deathless Duneplate',
     recipeGroup: 'desert', requiredBiomeLevel: 14, slot: 'armor',
-    cost: { yellow: 220, purple: 55 }, stats: {"maxHp": 288, "damageReduction": 0.18, plating: DESERT_PLATING.t4.base},
+    cost: { yellow: 220, purple: 55 }, stats: { "maxHp": 433, "damageReduction": 0.18, "plating": 29 },
     reconstructCost: { yellow: 770, purple: 193 },
     // Dawnward protects the opening of an engagement; no cheat-death rider.
-    mechanicEffects: {"defense.engagement-dr-pct": DAWN.pct, "defense.engagement-dr-ms": DAWN.t4Ms},
+    mechanicEffects: { "defense.engagement-dr-pct": 0.35, "defense.engagement-dr-ms": 10000 },
     tier: 4,
     icon: 'items/armor/deathless-duneplate.png',
     description: "Gain strong damage reduction for 10 seconds from the first attack in a hostile engagement. Rearms after 4 seconds without engagement or incoming attacks.",
-    upgrades: [
-      {"cost": {"yellow": 153, "purple": 38}, "requiredBiomeLevel": 15, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 382, "purple": 95}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 610, "purple": 152}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 991, "purple": 248}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 1677, "purple": 419}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}}
-    ],
   }],
 
   ['desert-charm-t4', {
     id: 'desert-charm-t4', name: 'Last Oasis',
     recipeGroup: 'desert', requiredBiomeLevel: 15, slot: 'recovery',
-    cost: { yellow: 200, purple: 50 }, stats: { recovery: 115.4 },
+    cost: { yellow: 200, purple: 50 }, stats: { "recovery": 168.2 },
     reconstructCost: { yellow: 700, purple: 175 },
     // 25% Cleanse cooldown reduction; each upgrade adds 1.5 percentage points.
-    mechanicEffects: {
-      'cleanse.cooldown-reduction-pct': 0.25,
-    },
+    mechanicEffects: { "cleanse.cooldown-reduction-pct": 0.325 },
     tier: 4,
     icon: 'items/charms/last-oasis.png',
     description: 'The last spring never runs dry; each purge and broken bond brings the next within reach.',
-    upgrades: [
-      { stats: { recovery: 7.6 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 76, purple: 19 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 190, purple: 47 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 303, purple: 76 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 493, purple: 123 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 834, purple: 209 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   // T4 boots — kite-speed (faster while kiting). T3 0.30 → T4 0.40.
@@ -286,18 +228,11 @@ export const desertRecipeEntries = [
     id: 'desert-boots-t4', name: 'Simoom Striders',
     recipeGroup: 'desert', requiredBiomeLevel: 16, slot: 'mobility',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 121->173 (+5: 209->209).
-    cost: { yellow: 198 }, stats: { speed: 173 }, tier: 4,
+    cost: { yellow: 198 }, stats: { "speed": 209 }, tier: 4,
     reconstructCost: { yellow: 693 },
     mechanicEffects: { 'mobility.kite-speed-pct': 0.40 },
     icon: 'items/boots/simoom-striders.png',
     description: 'Named for the desert wind that arrives only as the dust it already left behind.',
-    upgrades: [
-      { stats: { speed: 5 }, cost: { yellow: 61 },  requiredBiomeLevel: 16 },
-      { stats: { speed: 7 }, cost: { yellow: 153 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 8 }, cost: { yellow: 245 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 8 }, cost: { yellow: 398 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 8 }, cost: { yellow: 673 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   // ── Cores ───────────────────────────────────────────────────────────────────────

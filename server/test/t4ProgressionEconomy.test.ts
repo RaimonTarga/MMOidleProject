@@ -170,54 +170,17 @@ assert(
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 4. Lifetime ratio: for all 36 successors, total / predecessorTotal in [1.8, 2.2]
-// ═══════════════════════════════════════════════════════════════════════════
-
-function lifetimeTotal(r: Recipe): number {
-  let total = Object.values(r.cost ?? {}).reduce((a, b) => a + (b ?? 0), 0);
-  for (const step of r.upgrades ?? []) {
-    total += Object.values(step.cost ?? {}).reduce((a, b) => a + (b ?? 0), 0);
-  }
-  return total;
-}
-
-// Weapons are excluded (Phase 2b, Override A): off the +N ladder entirely, so
-// "lifetime total" collapses to the one-time base craft cost and the x2
-// per-tier ratio this rule polices no longer applies.
-for (const child of withLineage) {
-  if (child.slot === "weapon") continue;
-  const parent = RECIPE_DATABASE.get(parentOf(child))!;
-  const childTotal = lifetimeTotal(child);
-  const parentTotal = lifetimeTotal(parent);
-  const ratio = childTotal / parentTotal;
-  assert(
-    ratio >= 1.8 && ratio <= 2.2,
-    `${child.id}: lifetime ratio vs ${parent.id} must be in [1.8, 2.2], got ${ratio.toFixed(3)} (${childTotal}/${parentTotal})`,
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// 5. Curve shape: strictly accelerating, no +3=+4=+5 plateau, +4/+5 share in [65%,75%]
+// 4. Lifetime ratio and 5. curve shape: RETIRED with the ladder on every slot
+// (design §23 for weapons, §24.5 for armour/charm/boots, 2026-10-03). Both
+// audited the +N ladder — a successor's craft plus five steps against its
+// predecessor's, and the accelerating step curve — and every item now crafts at
+// its folded +5 power for its recipe cost, so "lifetime" is the one craft. The
+// weapons left these sections at Phase 2b ("Override A") for the same reason.
+// What remains true is that nothing reintroduces a ladder.
 // ═══════════════════════════════════════════════════════════════════════════
 
 for (const r of t4Gear) {
-  if (r.slot === "weapon") continue; // off the +N ladder entirely (Phase 2b)
-  const steps = r.upgrades ?? [];
-  assert(steps.length === 5, `${r.id}: must have exactly 5 upgrade steps`);
-  const stepTotals = steps.map((s) => Object.values(s.cost ?? {}).reduce((a, b) => a + (b ?? 0), 0));
-  // No +3=+4=+5 plateau (indices 2,3,4 — the old defect pattern).
-  assert(
-    !(stepTotals[2] === stepTotals[3] && stepTotals[3] === stepTotals[4]),
-    `${r.id}: +3/+4/+5 must not be a flat plateau (got ${stepTotals[2]}, ${stepTotals[3]}, ${stepTotals[4]})`,
-  );
-  // Strictly non-decreasing (accelerating curve).
-  for (let i = 1; i < stepTotals.length; i++) {
-    assert(stepTotals[i] >= stepTotals[i - 1], `${r.id}: step ${i + 1} cost must not be less than step ${i} (got ${stepTotals[i]} < ${stepTotals[i - 1]})`);
-  }
-  const postBase = stepTotals.reduce((a, b) => a + b, 0);
-  const plus45 = stepTotals[3] + stepTotals[4];
-  const share = plus45 / postBase;
-  assert(share >= 0.65 && share <= 0.75, `${r.id}: +4/+5 share of post-base spend must be in [0.65, 0.75], got ${(share * 100).toFixed(1)}%`);
+  assert(!r.upgrades?.length, `${r.id}: the +N ladder is retired; no item may author upgrade steps`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

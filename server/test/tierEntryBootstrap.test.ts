@@ -223,14 +223,14 @@ const earnedProfile = tierEntryProfileFromT1Snapshot({ schemaVersion: 1,
 const earnedResult = applyTierEntryProfile(world, player, earnedProfile);
 assert(earnedResult.success, earnedResult.reason ?? "actual V1d state imports");
 // Rebuilt from the V1d gear under the current armor data (164 before the 2026-09-25 defense
-// rebudget; 166 while the fixture's +N levels still counted — design §24.5 retired the
-// ladder on every slot, so they add nothing and the bare gear buys 150). The pin is the
-// pool the GEAR buys. NOTE for the ladder fold (W1-D): the fixture wears its vest, charm
-// and boots at +5, so once each item's +5 total is folded into its base this returns to 166.
+// rebudget). Design §24.5 retired the ladder on every slot, so the fixture's +N levels add
+// nothing; the ladder fold (W1-D) put each item's old +5 total into its base, and the
+// fixture wears its vest, charm and boots at +5 — so the bare gear buys the same 166 it
+// bought as +5 gear. The pin is the pool the GEAR buys.
 // The per-tier pool raise (design §20) lands on top of it at recalc, so it is read from
 // the config rather than baked in again; the tolerance is the second rounding the class
 // affinity fold applies after the raise.
-const EARNED_UNRAISED_MAX_HP = 150;
+const EARNED_UNRAISED_MAX_HP = 166;
 const EARNED_MAX_HP = player.hasHealth.maxHp;
 assert(
   Math.abs(EARNED_MAX_HP - EARNED_UNRAISED_MAX_HP * poolFactorForTier(1)) <= 1,

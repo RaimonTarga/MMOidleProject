@@ -33,59 +33,33 @@ export const jungleRecipeEntries = [
   ['jungle-vest-t2', {
     id: 'jungle-vest-t2', name: 'Verdant Weave',
     recipeGroup: 'jungle', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { green: 48, yellow: 12 }, stats: {"maxHp": 52, "evasion": 0.28, "damageReduction": 0.04}, // family-tag: evasion armor (anti-fast-hit) → Alacrity
+    cost: { green: 48, yellow: 12 }, stats: { "maxHp": 112, "evasion": 0.36, "damageReduction": 0.04 }, // family-tag: evasion armor (anti-fast-hit) → Alacrity
     tier: 2,
     icon: 'items/armor/verdant-weave.png',
     description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade and resists damage over time.",
-    upgrades: [
-      {"cost": {"green": 31, "yellow": 8}, "requiredBiomeLevel": 3, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"green": 78, "yellow": 20}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"green": 125, "yellow": 31}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"green": 203, "yellow": 51}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"green": 342, "yellow": 86}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
-    ],
 
-mechanicEffects: {"defense.evade-mitigation": 0.2, "defense.dot-resistance": 0.15},
+mechanicEffects: { "defense.evade-mitigation": 0.2, "defense.dot-resistance": 0.25 },
 }],
 
   // Charm: recovery flat; upgrades ramp ramp-regen MAX 0.21 -> 0.30 (start/ramptime flat).
   ['jungle-charm-t2', {
     id: 'jungle-charm-t2', name: 'Canopy Heart',
     recipeGroup: 'jungle', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { green: 45 }, stats: { recovery: 13.4 }, // family-tag: jungle recovery → Alacrity
-    mechanicEffects: {
-      'defense.recovery-ramp-start-pct': 0.04,
-      'defense.recovery-ramp-max-pct': 0.10,
-      'defense.recovery-ramp-ramptime-ms': 10000,
-      'guard.recovery-ramp-advance-ms': 3000,
-    },
+    cost: { green: 45 }, stats: { "recovery": 19.4 }, // family-tag: jungle recovery → Alacrity
+    mechanicEffects: { "defense.recovery-ramp-start-pct": 0.04, "defense.recovery-ramp-max-pct": 0.2, "defense.recovery-ramp-ramptime-ms": 10000, "guard.recovery-ramp-advance-ms": 3000 },
     tier: 2,
     icon: 'items/charms/canopy-heart.png',
     description: 'A knot of ancient vine that wakes, slowly, to the rhythm of a long fight.',
-    upgrades: [
-      { stats: { recovery: 1.2 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 18 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1.2 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 46 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1.2 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 73 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1.2 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 119 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1.2 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 203 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   ['jungle-boots-t2', {
     id: 'jungle-boots-t2', name: 'Vine Wraps',
     recipeGroup: 'jungle', requiredBiomeLevel: 4, slot: 'mobility',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 22->47 (+5: 61->61).
-    cost: { green: 30 }, stats: { speed: 47 }, tier: 2, // family-tag: jungle mobility → Alacrity
+    cost: { green: 30 }, stats: { "speed": 61 }, tier: 2, // family-tag: jungle mobility → Alacrity
     mechanicEffects: { 'mobility.aggro-pull-pct': 0.50 },
     icon: 'items/boots/vine-wraps.png',
     description: 'Springy growth lashed to the feet, always eager to be running.',
-    upgrades: [
-      { stats: { speed: 2 }, cost: { green: 12 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 3 }, cost: { green: 30 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 3 }, cost: { green: 48 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 3 }, cost: { green: 78 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 3 }, cost: { green: 132 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // ── T3 ──
@@ -109,20 +83,13 @@ mechanicEffects: {"defense.evade-mitigation": 0.2, "defense.dot-resistance": 0.1
   ['jungle-vest-t3', {
     id: 'jungle-vest-t3', name: 'Wildgrowth Weave',
     recipeGroup: 'jungle', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { green: 90, yellow: 30 }, stats: {"maxHp": 143, "evasion": 0.32, "damageReduction": 0.07}, // family-tag: evasion armor → Alacrity
+    cost: { green: 90, yellow: 30 }, stats: { "maxHp": 216, "evasion": 0.4, "damageReduction": 0.07 }, // family-tag: evasion armor → Alacrity
     reconstructCost: { green: 315, yellow: 105 },
     tier: 3,
     icon: 'items/armor/wildgrowth-weave.png',
     description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade and resists damage over time.",
-    upgrades: [
-      {"cost": {"green": 59, "yellow": 19}, "requiredBiomeLevel": 9, "stats": {"maxHp": 15, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"green": 146, "yellow": 49}, "requiredBiomeLevel": 10, "stats": {"maxHp": 14, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"green": 234, "yellow": 78}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"green": 380, "yellow": 127}, "requiredBiomeLevel": 10, "stats": {"maxHp": 14, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"green": 644, "yellow": 214}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
-    ],
 
-mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.2},
+mechanicEffects: { "defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.3 },
 }],
 
   // Charm: recovery flat; upgrades ramp ramp-regen MAX 0.23 -> 0.35.
@@ -132,42 +99,23 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     // PURE green by design: the ramping-Recovery foundation is the Forest→Jungle
     // inheritance and green followed it, so mechanic and home colour are the same
     // colour — there is nothing left to splash.
-    cost: { green: 100 }, stats: { recovery: 50.4 }, // family-tag: jungle recovery → Alacrity
+    cost: { green: 100 }, stats: { "recovery": 68.3 }, // family-tag: jungle recovery → Alacrity
     reconstructCost: { green: 350 },
-    mechanicEffects: {
-      'defense.recovery-ramp-start-pct': 0.05,
-      'defense.recovery-ramp-max-pct': 0.14,
-      'defense.recovery-ramp-ramptime-ms': 10000,
-      'guard.recovery-ramp-advance-ms': 3000,
-    },
+    mechanicEffects: { "defense.recovery-ramp-start-pct": 0.05, "defense.recovery-ramp-max-pct": 0.24, "defense.recovery-ramp-ramptime-ms": 10000, "guard.recovery-ramp-advance-ms": 3000 },
     tier: 3,
     icon: 'items/charms/worldvine-heart.png',
     description: 'It wakes slowly to a long fight, and by the end is pouring life back faster than it leaves.',
-    upgrades: [
-      { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 36 },  requiredBiomeLevel: 10 },
-      { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 91 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 145 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 2.2 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 236 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 2.2 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 400 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   ['jungle-boots-t3', {
     id: 'jungle-boots-t3', name: 'Canopy Striders',
     recipeGroup: 'jungle', requiredBiomeLevel: 10, slot: 'mobility',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 44->68 (+5: 88->88).
-    cost: { green: 90 }, stats: { speed: 68 }, tier: 3, // family-tag: jungle mobility → Alacrity
+    cost: { green: 90 }, stats: { "speed": 88 }, tier: 3, // family-tag: jungle mobility → Alacrity
     reconstructCost: { green: 315 },
     mechanicEffects: { 'mobility.aggro-pull-pct': 0.65 },
     icon: 'items/boots/canopy-striders.png',
     description: 'They crash through the green loud enough to turn every hungry thing your way.',
-    upgrades: [
-      { stats: { speed: 3 },  cost: { green: 23 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 4 },  cost: { green: 57 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 5 }, cost: { green: 91 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 4 }, cost: { green: 148 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 4 }, cost: { green: 251 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // ── T4 ──
@@ -190,68 +138,37 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
   ['jungle-vest-t4', {
     id: 'jungle-vest-t4', name: 'Primal Canopy',
     recipeGroup: 'jungle', requiredBiomeLevel: 14, slot: 'armor',
-    cost: { green: 220, yellow: 55 }, stats: {"maxHp": 274, "evasion": 0.36, "damageReduction": 0.1}, // family-tag: evasion armor → Alacrity
+    cost: { green: 220, yellow: 55 }, stats: { "maxHp": 411, "evasion": 0.44, "damageReduction": 0.1 }, // family-tag: evasion armor → Alacrity
     reconstructCost: { green: 770, yellow: 193 },
     // Bonus evade-mitigation: increases the fraction of damage avoided on an evade
     // (the reload-class mechanic). Stacks on GAME_CONFIG.EVADE_MITIGATION_BASE.
-    mechanicEffects: {"defense.evade-mitigation": 0.3, "defense.dot-resistance": 0.25},
+    mechanicEffects: { "defense.evade-mitigation": 0.3, "defense.dot-resistance": 0.35 },
     tier: 4,
     icon: 'items/armor/primal-canopy.png',
     description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade and resists damage over time.",
-    upgrades: [
-      {"cost": {"green": 124, "yellow": 31}, "requiredBiomeLevel": 15, "stats": {"maxHp": 27, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"green": 310, "yellow": 77}, "requiredBiomeLevel": 16, "stats": {"maxHp": 27, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"green": 494, "yellow": 124}, "requiredBiomeLevel": 16, "stats": {"maxHp": 27, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"green": 804, "yellow": 201}, "requiredBiomeLevel": 16, "stats": {"maxHp": 27, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"green": 1360, "yellow": 340}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
-    ],
   }],
 
   ['jungle-charm-t4', {
     id: 'jungle-charm-t4', name: 'Ancient Canopy',
     recipeGroup: 'jungle', requiredBiomeLevel: 15, slot: 'recovery',
-    cost: { green: 200 }, stats: { recovery: 115.4 }, // family-tag: jungle recovery → Alacrity
+    cost: { green: 200 }, stats: { "recovery": 168.2 }, // family-tag: jungle recovery → Alacrity
     reconstructCost: { green: 700 },
-    mechanicEffects: {
-      'defense.recovery-ramp-start-pct': 0.04, 'defense.recovery-ramp-max-pct': 0.14, 'defense.recovery-ramp-ramptime-ms': 9000,
-      'guard.recovery-ramp-advance-ms': 4000,
-    },
+    mechanicEffects: { "defense.recovery-ramp-start-pct": 0.04, "defense.recovery-ramp-max-pct": 0.24, "defense.recovery-ramp-ramptime-ms": 9000, "guard.recovery-ramp-advance-ms": 4000 },
     tier: 4,
     icon: 'items/charms/ancient-canopy.png',
     description: 'Older than the trees around it, and by a long fight\'s end it is pouring life back faster than any blade can take it.',
-    upgrades: [
-      { stats: { recovery: 7.6 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 73 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 182 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 291 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 472 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 798 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   ['jungle-charm-t4-overgrowth', {
     id: 'jungle-charm-t4-overgrowth', name: 'Overgrowth Pulse',
     recipeGroup: 'jungle', requiredBiomeLevel: 15, slot: 'recovery',
-    cost: { green: 200 }, stats: { recovery: 115.4 }, // family-tag: jungle recovery → Alacrity
+    cost: { green: 200 }, stats: { "recovery": 168.2 }, // family-tag: jungle recovery → Alacrity
     reconstructCost: { green: 700 },
     // † overheal-ward-pct: regen beyond max HP converts to a temporary ward.
-    mechanicEffects: {
-      'defense.recovery-ramp-start-pct': 0.04, 'defense.recovery-ramp-max-pct': 0.12, 'defense.recovery-ramp-ramptime-ms': 9000,
-      'defense.overheal-ward-pct': 0.10,
-      // Cap (fraction of max HP) on the ward: uncapped, overheal from constant
-      // Recovery stacked into a second health bar (Squire 3.7x survival in the lab).
-      'defense.overheal-ward-cap-pct': 0.05,
-      'guard.recovery-ramp-advance-ms': 4000,
-    },
+    mechanicEffects: { "defense.recovery-ramp-start-pct": 0.04, "defense.recovery-ramp-max-pct": 0.22, "defense.recovery-ramp-ramptime-ms": 9000, "defense.overheal-ward-pct": 0.1, "defense.overheal-ward-cap-pct": 0.05, "guard.recovery-ramp-advance-ms": 4000 },
     tier: 4,
     icon: 'items/charms/overgrowth-pulse.png',
     description: 'It grows past the wound and keeps growing, hardening the surplus into a living shell.',
-    upgrades: [
-      { stats: { recovery: 7.6 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 73 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 182 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 291 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 472 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 798 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   // T4 boots — aggro-pull (draws more aggro, suits the swarm). T3 0.65 → T4 0.80.
@@ -259,18 +176,11 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     id: 'jungle-boots-t4', name: 'Warpath Treads',
     recipeGroup: 'jungle', requiredBiomeLevel: 16, slot: 'mobility',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 66->97 (+5: 120->120).
-    cost: { green: 198 }, stats: { speed: 97 }, tier: 4, // family-tag: jungle mobility → Alacrity
+    cost: { green: 198 }, stats: { "speed": 120 }, tier: 4, // family-tag: jungle mobility → Alacrity
     reconstructCost: { green: 693 },
     mechanicEffects: { 'mobility.aggro-pull-pct': 0.80 },
     icon: 'items/boots/warpath-treads.png',
     description: 'They tear through the green loud enough to wake the whole canopy — and bring all of it to you at once.',
-    upgrades: [
-      { stats: { speed: 4 },  cost: { green: 45 },  requiredBiomeLevel: 16 },
-      { stats: { speed: 4 }, cost: { green: 112 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 5 }, cost: { green: 180 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 5 }, cost: { green: 292 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 5 }, cost: { green: 493 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   // ── Cores ───────────────────────────────────────────────────────────────────────

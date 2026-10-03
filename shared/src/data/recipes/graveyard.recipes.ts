@@ -37,84 +37,52 @@ export const graveyardRecipeEntries = [
   ['graveyard-vest-t4', {
     id: 'graveyard-vest-t4', name: 'Plaguebound Mantle',
     recipeGroup: 'graveyard', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { purple: 220 }, stats: {"maxHp": 302, "damageReduction": 0.18}, // family-tag: dot-resistance armor (Swamp inheritance) → Fortified
+    cost: { purple: 220 }, stats: { "maxHp": 452, "damageReduction": 0.18 }, // family-tag: dot-resistance armor (Swamp inheritance) → Fortified
     reconstructCost: { purple: 770 },
     // 2026-09-26 armor niches: the pure Swamp continuation — resist damage over
     // time and spread hits into it. The Mantle leans on resistance, Grave Ward on
     // deferral. Its reactive plating moved to Volcanic, its debuff resist to Trench.
-    mechanicEffects: {"defense.dot-resistance": 0.45, "defense.hit-to-dot-pct": 0.2},
+    mechanicEffects: { "defense.dot-resistance": 0.55, "defense.hit-to-dot-pct": 0.2 },
     tier: 4,
     icon: 'items/armor/plaguebound-mantle.png',
     description: "Strongly resists damage over time and spreads part of incoming direct damage into debt.",
-    upgrades: [
-      {"cost": {"purple": 180}, "requiredBiomeLevel": 3, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 450}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 719}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 1169}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 1978}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
-    ],
   }],
 
   ['graveyard-vest-t4-debtward', {
     id: 'graveyard-vest-t4-debtward', name: 'Grave Ward',
     recipeGroup: 'graveyard', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { purple: 220 }, stats: {"maxHp": 302, "damageReduction": 0.18}, // family-tag: dot-resistance armor (Swamp inheritance) → Fortified
+    cost: { purple: 220 }, stats: { "maxHp": 452, "damageReduction": 0.18 }, // family-tag: dot-resistance armor (Swamp inheritance) → Fortified
     reconstructCost: { purple: 770 },
     // Debt specialist: larger deferral, less resistance than the Mantle.
     // Debt is repaid normally; this armor grants no automatic forgiveness.
-    mechanicEffects: {"defense.dot-resistance": 0.25, "defense.hit-to-dot-pct": 0.3},
+    mechanicEffects: { "defense.dot-resistance": 0.35, "defense.hit-to-dot-pct": 0.3 },
     tier: 4,
     icon: 'items/armor/grave-ward.png',
     description: "Resists damage over time and spreads part of incoming direct damage into debt.",
-    upgrades: [
-      {"cost": {"purple": 180}, "requiredBiomeLevel": 3, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 450}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 719}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 1169}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 1978}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
-    ],
   }],
 
   ['graveyard-charm-t4', {
     id: 'graveyard-charm-t4', name: 'Necrotic Pulse',
     recipeGroup: 'graveyard', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { purple: 150 }, stats: { recovery: 115.4 }, // family-tag: recovery-pulse charm (Swamp inheritance) → Fortified
+    cost: { purple: 150 }, stats: { "recovery": 168.2 }, // family-tag: recovery-pulse charm (Swamp inheritance) → Fortified
     reconstructCost: { purple: 525 },
-    mechanicEffects: { 'defense.recovery-pulse-pct': 0.11, 'defense.recovery-pulse-interval-ms': 6000, 'guard.cleanse-pulse': 1 },
+    mechanicEffects: { "defense.recovery-pulse-pct": 0.26, "defense.recovery-pulse-interval-ms": 6000, "guard.cleanse-pulse": 1 },
     tier: 4,
     icon: 'items/charms/necrotic-pulse.png',
     description: 'A slow, certain throb of returning life, timed like a tired heart that refuses to stop.',
-    upgrades: [
-      { stats: { recovery: 7.6 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 73 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 183 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 292 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 475 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 803 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   ['graveyard-charm-t4-gravetide', {
     id: 'graveyard-charm-t4-gravetide', name: 'Grave-Tide Pulse',
     recipeGroup: 'graveyard', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { purple: 150 }, stats: { recovery: 115.4 }, // family-tag: recovery-pulse charm (Swamp inheritance) → Fortified
+    cost: { purple: 150 }, stats: { "recovery": 168.2 }, // family-tag: recovery-pulse charm (Swamp inheritance) → Fortified
     reconstructCost: { purple: 525 },
     // Combined: slower burst, compensated by a baseline in-combat trickle.
     // +5: 12% active + 12% for 4s/8s = 18% mean access (2.88% HP/s at 16 Recovery).
-    mechanicEffects: {
-      'defense.recovery-pulse-pct': 0.04, 'defense.recovery-pulse-interval-ms': 8000,
-      'defense.recovery-active-pct': 0.04,
-      'guard.cleanse-pulse': 1,
-    },
+    mechanicEffects: { "defense.recovery-pulse-pct": 0.12, "defense.recovery-pulse-interval-ms": 8000, "defense.recovery-active-pct": 0.12, "guard.cleanse-pulse": 1 },
     tier: 4,
     icon: 'items/charms/grave-tide-pulse.png',
     description: 'A tide that never fully goes out — it gives back in a steady seep between the larger swells.',
-    upgrades: [
-      { stats: { recovery: 7.6 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.01, 'defense.recovery-active-pct': 0.01 }, cost: { purple: 73 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 183 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.01, 'defense.recovery-active-pct': 0.01 }, cost: { purple: 292 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 475 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 803 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // T4 boots — on-kill stacking speed + tenacity (max 3, 4s). Suits the dense swarm.
@@ -125,7 +93,7 @@ export const graveyardRecipeEntries = [
     id: 'graveyard-boots-t4', name: 'Gravewalker Boots',
     recipeGroup: 'graveyard', requiredBiomeLevel: 4, slot: 'mobility',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 30->75 (+5: 98->98).
-    cost: { purple: 80 }, stats: { speed: 75 }, tier: 4, // family-tag: Graveyard native mobility → Swarming
+    cost: { purple: 80 }, stats: { "speed": 98 }, tier: 4, // family-tag: Graveyard native mobility → Swarming
     mechanicEffects: {
       'mobility.kill-stack-speed-pct': 0.12,
       'mobility.kill-stack-tenacity-pct': 0.12,
@@ -133,13 +101,6 @@ export const graveyardRecipeEntries = [
     },
     icon: 'items/boots/gravewalker-boots.png',
     description: 'Each fallen foe lends a little of its lingering haste — and the more that fall, the harder it becomes to hold you down.',
-    upgrades: [
-      { stats: { speed: 3 },  cost: { purple: 50 },  requiredBiomeLevel: 4 },
-      { stats: { speed: 4 }, cost: { purple: 125 },  requiredBiomeLevel: 4 },
-      { stats: { speed: 6 }, cost: { purple: 200 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 5 }, cost: { purple: 326 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 5 }, cost: { purple: 551 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // T4 premium unrestricted — Controller: Graveyard's mature control capstone.

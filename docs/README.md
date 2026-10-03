@@ -180,6 +180,8 @@ Use the current-state table above and the source when they conflict.
 
 ## Historical material and archive lifecycle
 
+- [Non-weapon ladder fold report](briefs/cc-fold-report-2026-10-03.md) — W1-D evidence: all 86 original +5 totals, per-field before/after values, and validation.
+
 - [Archive guide](archive/README.md) explains how completed plans and
   handoffs are moved without losing provenance.
 - [Briefs and evidence](briefs/README.md) explains the active/history split for

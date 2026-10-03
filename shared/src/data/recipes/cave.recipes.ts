@@ -59,19 +59,12 @@ export const caveRecipeEntries = [
   ['cave-vest-t1', {
     id: 'cave-vest-t1', name: 'Bestial Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { red: 22 }, stats: {"maxHp": 30, "damageReduction": 0.1}, tier: 1,
+    cost: { red: 22 }, stats: { "maxHp": 45, "damageReduction": 0.14 }, tier: 1,
     icon: 'items/armor/bestial-hide.png',
     description: "Dependable protection against direct damage and damage over time.",
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (622).
     // +5 catalyst from cave-vest-t2's own tag ("premium %DR generalist wall →
     // Swarming").
-    upgrades: [
-      {"cost": {"red": 30}, "requiredBiomeLevel": 3, "stats": {"maxHp": 3, "damageReduction": 0.008}},
-      {"cost": {"red": 60}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "damageReduction": 0.008}},
-      {"cost": {"red": 95}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "damageReduction": 0.008}},
-      {"cost": {"red": 155}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "damageReduction": 0.008}},
-      {"cost": {"red": 195}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "damageReduction": 0.008}}
-    ],
 
 mechanicEffects: {},
 }],
@@ -82,36 +75,22 @@ mechanicEffects: {},
   ['cave-charm-t1', {
     id: 'cave-charm-t1', name: 'Pulse Stone',
     recipeGroup: 'cave', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { red: 18 }, stats: { recovery: 4.4 },
-    mechanicEffects: { 'defense.absorb-pct': 0.08 },
+    cost: { red: 18 }, stats: { "recovery": 6 },
+    mechanicEffects: { "defense.absorb-pct": 0.12 },
     tier: 1,
     icon: 'items/charms/pulse-stone.png',
     description: 'A cave-crystal that beats, slow and steady, like a sleeping heart.',
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~253 (was 255).
-    upgrades: [
-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 10 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 25 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1.6 }, cost: { red: 40 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 60 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 75 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   ['cave-boots-t1', {
     id: 'cave-boots-t1', name: 'Bat Wing Boots',
     recipeGroup: 'cave', requiredBiomeLevel: 4, slot: 'mobility',
-    cost: { red: 18 }, stats: { speed: 20 }, tier: 1,
-    mechanicEffects: { 'mobility.stealth-pct': 0.25 },
+    cost: { red: 18 }, stats: { "speed": 25 }, tier: 1,
+    mechanicEffects: { "mobility.stealth-pct": 0.35 },
     icon: 'items/boots/bat-wing-boots.png',
     description: 'Stretched membrane that falls on stone without a whisper.',
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~178 (was 176).
-    upgrades: [
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 15 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 25 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 40 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 55 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // ── T2 ──
@@ -133,17 +112,10 @@ mechanicEffects: {},
   ['cave-vest-t2', {
     id: 'cave-vest-t2', name: 'Dire Bestial Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 8, slot: 'armor',
-    cost: { red: 54 }, stats: {"maxHp": 55, "damageReduction": 0.18}, tier: 2, // family-tag: premium %DR generalist wall → Swarming
+    cost: { red: 54 }, stats: { "maxHp": 83, "damageReduction": 0.22 }, tier: 2, // family-tag: premium %DR generalist wall → Swarming
     reconstructCost: { red: 189 },
     icon: 'items/armor/dire-bestial-hide.png',
     description: "Dependable protection against direct damage and damage over time.",
-    upgrades: [
-      {"cost": {"red": 46}, "requiredBiomeLevel": 9, "stats": {"maxHp": 6, "damageReduction": 0.008}},
-      {"cost": {"red": 116}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "damageReduction": 0.008}},
-      {"cost": {"red": 185}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6, "damageReduction": 0.008}},
-      {"cost": {"red": 300}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "damageReduction": 0.008}},
-      {"cost": {"red": 508}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6, "damageReduction": 0.008}}
-    ],
 
 mechanicEffects: {},
 }],
@@ -153,37 +125,23 @@ mechanicEffects: {},
   ['cave-charm-t2', {
     id: 'cave-charm-t2', name: 'Resonant Gem',
     recipeGroup: 'cave', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { red: 44 }, stats: { recovery: 11.1 }, // family-tag: reliable generalist recovery → Swarming
+    cost: { red: 44 }, stats: { "recovery": 15.7 }, // family-tag: reliable generalist recovery → Swarming
     reconstructCost: { red: 154 },
-    mechanicEffects: { 'defense.absorb-pct': 0.14, 'defense.absorb-guard-bonus-pct': 0.08 },
+    mechanicEffects: { "defense.absorb-pct": 0.19, "defense.absorb-guard-bonus-pct": 0.08 },
     tier: 2,
     icon: 'items/charms/resonant-gem.png',
     description: 'A gem that rings on its own in the dark, answering a song no one else hears.',
-    upgrades: [
-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 18 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 2.3 }, mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 46 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 73 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 2.3 }, mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 119 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 203 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // T2 economy pass (2026-08-29): now an EVOLUTION of cave-boots-t1 at +5.
   ['cave-boots-t2', {
     id: 'cave-boots-t2', name: 'Cavern Sprints',
     recipeGroup: 'cave', requiredBiomeLevel: 10, slot: 'mobility',
-    cost: { red: 33 }, stats: { speed: 36 }, tier: 2, // family-tag: cave generalist mobility → Swarming
+    cost: { red: 33 }, stats: { "speed": 46 }, tier: 2, // family-tag: cave generalist mobility → Swarming
     reconstructCost: { red: 116 },
-    mechanicEffects: { 'mobility.stealth-pct': 0.38 },
+    mechanicEffects: { "mobility.stealth-pct": 0.48 },
     icon: 'items/boots/cavern-sprints.png',
     description: 'Worn smooth on tunnel floors no map has ever charted.',
-    upgrades: [
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 12 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 30 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 48 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 78 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 132 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // ── T3 ──
@@ -204,18 +162,11 @@ mechanicEffects: {},
   ['cave-vest-t3', {
     id: 'cave-vest-t3', name: 'Deepscale Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 14, slot: 'armor',
-    cost: { red: 116, yellow: 29 }, stats: {"maxHp": 150, "damageReduction": 0.26}, // family-tag: premium %DR wall → Swarming
+    cost: { red: 116, yellow: 29 }, stats: { "maxHp": 225, "damageReduction": 0.3 }, // family-tag: premium %DR wall → Swarming
     reconstructCost: { red: 406, yellow: 102 },
     tier: 3,
     icon: 'items/armor/deepscale-hide.png',
     description: "Dependable protection against direct damage and damage over time.",
-    upgrades: [
-      {"cost": {"red": 73, "yellow": 18}, "requiredBiomeLevel": 15, "stats": {"maxHp": 15, "damageReduction": 0.008}},
-      {"cost": {"red": 182, "yellow": 45}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15, "damageReduction": 0.008}},
-      {"cost": {"red": 291, "yellow": 73}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15, "damageReduction": 0.008}},
-      {"cost": {"red": 473, "yellow": 118}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15, "damageReduction": 0.008}},
-      {"cost": {"red": 800, "yellow": 200}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15, "damageReduction": 0.008}}
-    ],
 
 mechanicEffects: {},
 }],
@@ -227,36 +178,22 @@ mechanicEffects: {},
   ['cave-charm-t3', {
     id: 'cave-charm-t3', name: 'Echo Geode',
     recipeGroup: 'cave', requiredBiomeLevel: 15, slot: 'recovery',
-    cost: { red: 100, green: 25 }, stats: { recovery: 37 }, // family-tag: reliable generalist recovery → Swarming
+    cost: { red: 100, green: 25 }, stats: { "recovery": 50.5 }, // family-tag: reliable generalist recovery → Swarming
     reconstructCost: { red: 350, green: 88 },
-    mechanicEffects: { 'defense.absorb-pct': 0.20, 'defense.absorb-guard-bonus-pct': 0.10 },
+    mechanicEffects: { "defense.absorb-pct": 0.24, "defense.absorb-guard-bonus-pct": 0.1 },
     tier: 3,
     icon: 'items/charms/echo-geode.png',
     description: 'It rings with every blow that lands, and rings louder while you stand behind a guard.',
-    upgrades: [
-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 28, green: 7 },  requiredBiomeLevel: 16 },
-      { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 70, green: 18 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 113, green: 28 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 183, green: 46 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 4.5 }, cost: { red: 310, green: 78 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   ['cave-boots-t3', {
     id: 'cave-boots-t3', name: 'Echostep Treads',
     recipeGroup: 'cave', requiredBiomeLevel: 16, slot: 'mobility',
-    cost: { red: 100 }, stats: { speed: 65 }, tier: 3, // family-tag: cave generalist mobility → Swarming
+    cost: { red: 100 }, stats: { "speed": 83 }, tier: 3, // family-tag: cave generalist mobility → Swarming
     reconstructCost: { red: 350 },
-    mechanicEffects: { 'mobility.stealth-pct': 0.50 },
+    mechanicEffects: { "mobility.stealth-pct": 0.6 },
     icon: 'items/boots/echostep-treads.png',
     description: 'They give back no sound at all — not even the echo the deep stone expects.',
-    upgrades: [
-      { stats: { speed: 4 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 23 },  requiredBiomeLevel: 16 },
-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 57 },  requiredBiomeLevel: 16 },
-      { stats: { speed: 4 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 91 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 147 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 4 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 248 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
 
