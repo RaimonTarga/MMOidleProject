@@ -11,8 +11,10 @@ import {
   barrierIntegrity, barrierStyleOf, defOf, drawBarrier, drawPrimedGlint, drawQuills, drawShellDome,
   primedAccentOf, shellStyleOf,
 } from './mobStates';
-import { posePath, releasePose, tweenPose } from './bodyPose';
-import { ring } from './bossKit';
+import { bodyPose, posePath, releasePose, tweenPose } from './bodyPose';
+import { drawLoadGather, fallingDrop, laneColor, shackleGeometry } from './lineagePayloadFx';
+import { lastingActive, lastingRecord, noteLastingPos } from './lineagePayloadStates';
+import { dustCloud, ring } from './bossKit';
 import {
   bossEffectStacks,
   hasBossEffect,
@@ -69,6 +71,108 @@ function assemble(c: AuraContext, color: number, count: number): void {
     });
   }
 }
+
+
+// ── Lineage payloads (course-correction W2-C) ────────────────────────────────
+//
+// The lasting looks a T1 payload leaves (lineagePayloadFx.ts draws the one-shots).
+// Their state is the payload's own events, kept by lineagePayloadStates.ts, because
+// a monster's status list is broadcast only while somebody targets it; each row
+// ends on the server's applied clock or the server's early end, and draws a
+// visible end of its own (a shackle breaking, a body getting up).
+
+const SHACKLE_DARK = 0x2b3346;
+const SHACKLE_STEEL = 0xc9d6ee;
+
+/** Chain links along part of a ground ellipse (a = 0 at the right, clockwise). */
+function chainArc(
+  g: Phaser.GameObjects.Graphics, x: number, y: number, rx: number, ry: number,
+  a0: number, a1: number, light: number, alpha: number,
+): void {
+  const links = 10;
+  for (let i = 0; i < links; i++) {
+    const s0 = a0 + ((a1 - a0) * i) / links;
+    const s1 = s0 + ((a1 - a0) / links) * 0.74;
+    const p0 = { x: x + Math.cos(s0) * rx, y: y + Math.sin(s0) * ry };
+    const p1 = { x: x + Math.cos(s1) * rx, y: y + Math.sin(s1) * ry };
+    g.lineStyle(i % 2 ? 6 : 7, SHACKLE_DARK, 0.95 * alpha);
+    g.lineBetween(p0.x, p0.y, p1.x, p1.y);
+    g.lineStyle(2.2, light, 0.95 * alpha);
+    g.lineBetween(p0.x, p0.y, p1.x, p1.y);
+  }
+}
+
+/** The shackle round the feet: the back half under the body, the front over it. */
+function drawShackle(g: Phaser.GameObjects.Graphics, c: AuraContext, half: 'back' | 'front'): void {
+  const record = lastingRecord(c.id, 'shackle');
+  const left = record ? record.endsAt - performance.now() : 0;
+  // The last 400 ms: the links strain and flicker before they give.
+  const strain = left < 400 ? 0.55 + 0.45 * Math.abs(Math.sin(performance.now() / 45)) : 1;
+  const alpha = c.s * strain;
+  const { x, y, rx, ry } = shackleGeometry(c.x, c.y, c.w, c.h);
+  const light = laneColor('control');
+  if (half === 'back') {
+    // A cold glow on the ground the body is pinned to, pulsing.
+    g.fillStyle(light, (0.16 + 0.08 * c.pulse) * c.s);
+    g.fillEllipse(x, y, rx * 2.5, ry * 2.5);
+    chainArc(g, x, y, rx, ry, Math.PI, Math.PI * 2, SHACKLE_STEEL, alpha);
+    // Two pegs driven into the ground, a chain run out to each.
+    for (const side of [-1, 1]) {
+      const px = x + side * rx * 1.6;
+      const py = y + ry * 0.5;
+      g.lineStyle(4, SHACKLE_DARK, 0.95 * alpha);
+      g.lineBetween(x + side * rx, y, px, py);
+      g.lineStyle(1.5, SHACKLE_STEEL, 0.9 * alpha);
+      g.lineBetween(x + side * rx, y, px, py);
+      g.fillStyle(SHACKLE_DARK, 0.95 * alpha);
+      g.fillRect(px - 3.5, py - 12, 7, 15);
+      g.fillStyle(light, 0.95 * alpha);
+      g.fillRect(px - 3.5, py - 12, 7, 3);
+    }
+    return;
+  }
+  chainArc(g, x, y, rx, ry, 0, Math.PI, light, alpha);
+  // The cuffs, at the front where the eye lands.
+  for (const a of [Math.PI * 0.32, Math.PI * 0.68]) {
+    const cx = x + Math.cos(a) * rx;
+    const cy = y + Math.sin(a) * ry;
+    g.fillStyle(SHACKLE_DARK, 0.95 * alpha);
+    g.fillRect(cx - 5, cy - 4, 10, 8);
+    g.lineStyle(1.5, light, 0.95 * alpha);
+    g.strokeRect(cx - 5, cy - 4, 10, 8);
+  }
+  noteLastingPos(c.id, 'shackle', c.x, c.y, c.w, c.h);
+}
+
+/** The shackle giving way: links thrown off the feet, a ring where it was. */
+export function shackleBreak(scene: AuraContext['scene'], bodyX: number, bodyY: number, w: number, h: number): void {
+  const light = laneColor('control');
+  const { x, y, rx } = shackleGeometry(bodyX, bodyY, w, h);
+  burstFx(scene, 'ptx-dot', x, y, 18, 640, {
+    tint: [SHACKLE_DARK, SHACKLE_STEEL, light],
+    speed: { min: 120, max: 260 }, angle: { min: 190, max: 350 },
+    scale: { start: 1.1, end: 0.1 }, alpha: { start: 1, end: 0 }, gravityY: 520, rotate: { min: 0, max: 360 },
+  });
+  ring(scene, x, y, light, { from: rx, scale: 1.8, width: 3, ms: 320, flat: true });
+}
+
+/**
+ * Lying down: how far the body tips, how flat it is pressed, how low it settles.
+ * A tilt plus a squash rather than a quarter turn: these are side-view sprites, and
+ * a quadruped turned 70° reads as rearing up, not as knocked off its feet.
+ */
+function downPose(
+  c: AuraContext,
+  side = lastingRecord(c.id, 'knockdown')?.side ?? 1,
+): { rot: number; sx: number; sy: number; lift: number } {
+  const view = c.scene.state.view.get(c.id) as MonsterView | undefined;
+  return view?.isBoss
+    ? { rot: side * 0.3, sx: 1.08, sy: 0.84, lift: 0 }
+    : { rot: side * 0.55, sx: 1.14, sy: 0.72, lift: -c.h * 0.04 };
+}
+
+/** The fall itself: knocked up off the feet, then down onto its side. */
+const KNOCKDOWN_FALL_MS = 260;
 
 export const AURA_DEFS: AuraDef[] = [
   // ── Jungle ───────────────────────────────────────────────────────────────
@@ -646,5 +750,117 @@ export const AURA_DEFS: AuraDef[] = [
     active: (v) => hasPlayerBuff(v, 'debuff-boss', 'depth'),
     pulseMs: 2200,
     ground: { color: 0x0b2a4a, scale: 1.5, alpha: 0.28 },
+  },
+  // ── Lineage payloads (course-correction W2-C) ─────────────────────────────
+  {
+    // Control's root (the shackle): the feet locked for the root's applied clock.
+    id: 'lineage-shackle',
+    on: ['monster', 'boss'],
+    active: (v) => lastingActive(v.id, 'shackle', v, performance.now()),
+    pulseMs: 700,
+    tremblePx: 0.6,
+    under: (g, c) => drawShackle(g, c, 'back'),
+    overhead: (g, c) => drawShackle(g, c, 'front'),
+    onEnd: (c) => shackleBreak(c.scene, c.x, c.y, c.w, c.h),
+  },
+  {
+    // Control's pure stun (the knockdown): off its feet, down, and back up.
+    id: 'lineage-knockdown',
+    on: ['monster', 'boss'],
+    active: (v) => lastingActive(v.id, 'knockdown', v, performance.now()),
+    pulseMs: 900,
+    onStart: (c) => {
+      const down = downPose(c);
+      posePath(c.scene, c.id, [
+        { rot: down.rot * 0.3, sx: 0.94, sy: 1.08, lift: 8, ms: 100, ease: 'Quad.easeOut' },
+        { ...down, ms: KNOCKDOWN_FALL_MS - 100, ease: 'Quad.easeIn' },
+      ]);
+    },
+    under: (g, c) => {
+      // The body's smear on the ground where it lies.
+      g.fillStyle(0x1a140c, 0.28 * c.s);
+      g.fillEllipse(c.x, c.y + c.h * 0.42, c.w * 1.1, c.h * 0.22);
+    },
+    overhead: (_g, c) => {
+      // Hold it down: anything else that touched the pose (a wind-up let go) is
+      // overruled while the knockdown lasts.
+      const pose = bodyPose(c.scene, c.id);
+      if (c.age > KNOCKDOWN_FALL_MS && !c.scene.tweens.isTweening(pose)) Object.assign(pose, downPose(c));
+      noteLastingPos(c.id, 'knockdown', c.x, c.y);
+    },
+    beat: {
+      everyMs: 420,
+      draw: (c) => burstFx(c.scene, 'ptx-dot', c.x + (Math.random() - 0.5) * c.w * 0.6, c.y + c.h * 0.4, 2, 600, {
+        tint: [0x9a8a70, 0x7a6e58], speed: { min: 6, max: 22 }, angle: { min: 240, max: 300 },
+        scale: { start: 0.7, end: 1.4 }, alpha: { start: 0.5, end: 0 },
+      }),
+    },
+    onEnd: (c) => {
+      // The get-up: rolls back upright with a small hop, dust off the ground. The
+      // record is gone by now, so the side it fell to is read off the pose.
+      const down = downPose(c, Math.sign(bodyPose(c.scene, c.id).rot) || 1);
+      posePath(c.scene, c.id, [
+        { rot: down.rot * 0.35, sx: 0.95, sy: 1.08, lift: 6, ms: 170, ease: 'Quad.easeOut' },
+        { rot: 0, sx: 1, sy: 1, lift: 0, ms: 240, ease: 'Back.easeOut' },
+      ]);
+      dustCloud(c.scene, c.x, c.y + c.h * 0.42, [0x9a8a70, 0x7a6e58], 0.6);
+    },
+  },
+  {
+    // Affliction's heavy dose: heavy drops off the body while the bleed runs.
+    id: 'lineage-drip',
+    on: ['monster', 'boss'],
+    active: (v) => lastingActive(v.id, 'drip', v, performance.now()),
+    pulseMs: 1100,
+    under: (g, c) => {
+      const venom = laneColor('affliction');
+      const grow = Math.min(1, c.age / 1500);
+      g.fillStyle(venom, 0.24 * c.s);
+      g.fillEllipse(c.x, c.y + c.h * 0.42, c.w * (0.4 + 0.45 * grow), c.h * (0.1 + 0.08 * grow));
+      g.fillStyle(0x1d3a12, 0.22 * c.s);
+      g.fillEllipse(c.x, c.y + c.h * 0.42, c.w * (0.22 + 0.25 * grow), c.h * (0.06 + 0.04 * grow));
+    },
+    overhead: (_g, c) => noteLastingPos(c.id, 'drip', c.x, c.y),
+    beat: {
+      everyMs: 230,
+      draw: (c) => {
+        const heavy = (lastingRecord(c.id, 'drip')?.intensity ?? 1) > 1;
+        for (let i = 0; i < (heavy ? 2 : 1); i++) {
+          fallingDrop(
+            c.scene, c.x + (Math.random() - 0.5) * c.w * 0.5, c.y - c.h * (0.05 + Math.random() * 0.2),
+            c.y + c.h * 0.46, laneColor('affliction'), heavy ? 5.2 : 4.4,
+          );
+        }
+      },
+    },
+  },
+  {
+    // Kill chain's load: the weapon glowing between the kill that armed it and the
+    // hit that spends it (both ends are server beats: lineage-load, card-fx).
+    id: 'lineage-loaded',
+    on: 'player',
+    active: (v) => lastingActive(v.id, 'loaded', v, performance.now()),
+    pulseMs: 420,
+    ground: { color: laneColor('kill-chain'), scale: 0.85, alpha: 0.1 },
+    overhead: (g, c) => {
+      const violet = laneColor('kill-chain');
+      const sprite = c.scene.state.sprite.get(c.id);
+      const side = sprite && 'flipX' in sprite && sprite.flipX ? -1 : 1;
+      const x = c.x + side * c.w * 0.22;
+      const y = c.y - c.h * 0.04;
+      const r = (4.5 + 2 * c.pulse) * c.s;
+      g.fillStyle(violet, 0.22 * c.s);
+      g.fillCircle(x, y, r * 2.6);
+      g.fillStyle(violet, 0.75 * c.s);
+      g.fillCircle(x, y, r * 1.4);
+      g.fillStyle(0xffffff, 0.9 * c.s);
+      g.fillCircle(x, y, r * 0.6);
+      for (let i = 0; i < 3; i++) {
+        const a = c.age / 180 + (i / 3) * Math.PI * 2;
+        g.fillStyle(0xe8d4ff, 0.9 * c.s);
+        g.fillCircle(x + Math.cos(a) * r * 2.4, y + Math.sin(a) * r * 1.2, 1.6);
+      }
+    },
+    onStart: (c) => drawLoadGather(c.scene, c.id),
   },
 ];

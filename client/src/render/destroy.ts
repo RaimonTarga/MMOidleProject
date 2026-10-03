@@ -14,6 +14,9 @@ import { endDetonateWindup } from '../fx/detonateWindup';
 import { endAllyAoeFootprint } from '../fx/allyAoeFootprint';
 import { clearBodyPose } from '../fx/bodyPose';
 import { forgetCamouflage } from '../fx/camouflage';
+import { forgetLasting } from '../fx/lineagePayloadStates';
+import { shackleBreak } from '../fx/auraDefs';
+import { shouldRunClientFx } from '../fx/guard';
 
 export function destroyEntity(
   state: RenderState,
@@ -26,6 +29,13 @@ export function destroyEntity(
     scene.tweens.killTweensOf(interp.lungeOffset);
   }
   clearBodyPose(scene, id);
+  // A lineage payload's lasting look on a body that left is forgotten; a shackle
+  // still locked on a body that died breaks visibly where it was. A node change
+  // pauses client FX, so it forgets quietly.
+  for (const record of forgetLasting(id, performance.now())) {
+    if (record.kind !== 'shackle' || record.lastX === undefined || record.lastY === undefined) continue;
+    if (shouldRunClientFx()) shackleBreak(scene, record.lastX, record.lastY, record.lastW ?? 40, record.lastH ?? 40);
+  }
 
   destroySprite(state, id);
   destroyShadow(state, id);

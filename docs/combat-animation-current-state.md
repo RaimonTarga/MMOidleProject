@@ -7,7 +7,7 @@ and `server/src/systems/combat/engine/monsterStateMirror.ts` (presentation state
 server publishes).
 **Tests:** `server/test/monsterStyleCoverage.test.ts`, `chargeOnAggroVisual.test.ts`,
 `monsterStateMirror.test.ts`, `plainsHawkDiveBomb.test.ts`, `attackProgression.test.ts`,
-`conduitPathFx.test.ts`.
+`conduitPathFx.test.ts`, `lineagePayloadFx.test.ts`, `lineagePayloadEvents.test.ts`.
 
 This page covers the premium animation pass that took the boss-lineage grammar to
 ordinary mobs and to player attacks and abilities. Boss animations are documented in
@@ -140,6 +140,40 @@ own). Skill callouts and cast bars show the numeral from II. Every ability needs
 `ABILITY_COLOR` row (enforced by `attackProgression.test.ts`). Rank I is the
 ability's existing look; abilities have no stage-0 thinning.
 
+## Lineage payloads (T1 lean and verb, course-correction W2-C, 2026-10-03)
+
+Design §24.1–§24.2 rule 4: every T1 payload is perceptible with the sound off, as a
+change in what bodies do. The server pushes one `card-fx` per application with the
+PAYLOAD's key; `fx/lineagePayloadFx.ts` draws the ten keys, `fx/lineagePayloadModel.ts`
+(pure) says what each is and when it plays, and the lasting looks are four aura rows
+in `fx/auraDefs.ts` fed by `fx/lineagePayloadStates.ts`.
+
+| Payload (key) | What the bodies do |
+| --- | --- |
+| lands twice (`tempo.ghost-strike`) | the body winds back as the moment lands and wind gathers at the blade; 190 ms later the echo's own hit is presented as a SECOND swing (the class swing, a body lunge, afterimages, a crossing crescent in the lane colour) |
+| lunge (`engagement.lunge`) | the body dashes at the target with afterimages and a push-off kick; the multiplied hit is presented at contact (110 ms) with a starburst, a hit-stop and the target recoiling; the body holds, then slides home |
+| mechanic flash (`empowered.mechanic-flash`) | the hit itself draws as the root's own empowered hit; beside the player the CLASS's mechanic glyph fills and flashes (combo pips, cooldown dial, a round chambering, a bolt, a dose at full stacks, a rune); weapon flare, brace pose |
+| crash (`empowered.crash`) | the same glyph, bigger, and the ground cracks under the target: dust ring, debris, the target buckles; medium shake |
+| heavy drip (`affliction.heavy-drip`) | venom thrown off the body and falling, a splat, a flinch; then heavy drops and a growing stain while the bleed runs |
+| double dose (`affliction.double-dose`) | the affliction is drawn in, then bursts: its pips split in two, heavier venom, a stronger flinch; then the heavier drip |
+| shackle (`control.shackle`) | two chain halves fly in and lock round the feet (clank, sparks, a jolt); a chain ring on pegs holds for the root's clock, strains in its last 400 ms, then breaks |
+| knockdown (`control.knockdown`) | a blow; the body is knocked up, then tipped and pressed flat to the ground and held there (against other pose writers) for the stun's clock; it gets up with a hop and dust |
+| heal and load (`kill-chain.heal-load`) | a pulse up the player's body (rings, rising motes, a straighten); the load leaves the weapon and lands with the hit; between the kill that arms it and that hit the weapon glows (`lineage-loaded`) |
+| refund (`technique.refund-flash`) | the refunded Technique's ability-bar tile flashes in the lane colour with a backward sweep while its cooldown jumps; a sigil turns backward under the player |
+
+Server truth, not client guesses: a payload's own hit carries `lineage-hit:<fx>`
+(`shared/src/protocol/clientEffects.ts`) so the client presents it as the payload's
+swing; `card-fx` carries the APPLIED `durationMs` (root, stun after resistance, bleed
+ticks) and the refunded `abilityIds`; `lineage-load` marks when a loaded carry is
+armed and spent; a refund samples the new cooldown to the HUD. A lasting look ends on
+its clock, or early when the view shows the server's state gone (the mirrored root or
+bleed, `hardControlled`), and is forgotten with its body (a shackle on a dying body
+breaks where it was). Card-fx play on the combat playback clock with the hit they rode;
+the refund, HUD first, stays immediate. Every payload takes the player's
+`AttackFlair` through `payloadFlair`: full size on a fresh character, a little more
+with stage and ascension, capped below a T3 specialization. The floating payoff WORD
+belongs to the rhythm readout (W2-B).
+
 ## Guards (tests)
 
 - `monsterStyleCoverage` — every authored `attackStyle` is registered client-side and
@@ -149,6 +183,11 @@ ability's existing look; abilities have no stage-0 thinning.
   one each), class tables registered, dispatch hooks present, ability colours.
 - `monsterStateMirror`, `chargeOnAggroVisual`, `plainsHawkDiveBomb` — the mirrored
   flags and the landing event, through the real tick.
+- `lineagePayloadFx` — every payload a packet's halves can push has a client effect,
+  routed before the lane-primitive switch; hit presentation delays; server durations;
+  the lasting-state lifecycle; the loaded-carry guard; mid-weight flair.
+  `lineagePayloadEvents` — the hit tags, applied durations, refund sample and
+  `lineage-load` beats, through the real listeners.
 
 ## Open / deferred
 
