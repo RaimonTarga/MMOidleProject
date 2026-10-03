@@ -27,7 +27,9 @@
  * Plains and Forest are LOCKED (the first slice). Mountain, Cave and Swamp are
  * PROPOSED from design §12.1 and are reviewed before Phase 4 (bible open
  * decision 2). Bulwark and Barrier tempo have no T1 family at all (bible open
- * decision 3); the biome boss's Lane-A stopgap (design §18.6) is their source.
+ * decision 3); the biome boss's Lane-A stopgap (design §18.6) is their source
+ * once their trees return — while the non-weapon trees are parked (§24.5) the
+ * stopgap pays the weapon lanes only, and nothing pays Iron or Glass.
  *
  * The mobs §12.1 did not name are assigned here by kind, so the partition holds:
  * prairie-yearling with the Herd, young-wolf and dire-whelp with the Pack, and so

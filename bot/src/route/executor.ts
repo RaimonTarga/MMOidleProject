@@ -2688,7 +2688,9 @@ const LINEAGE_SHARD_BIOMES = ['plains', 'forest', 'mountain', 'cave', 'swamp'] a
  * The tier-1 biomes whose BOSS drops `lane`, via the design-§18.6 stopgap: a boss
  * kill pays shards of each Lane-A packet of the lineages homed in its biome.
  * Bulwark and Barrier tempo have no tier-1 family source at all, so for those a
- * boss is the ONLY source and no amount of farming trash will do.
+ * boss is the ONLY source and no amount of farming trash will do — and while their
+ * trees are parked (design §24.5) not even a boss pays them: the stopgap skips
+ * parked lineages.
  */
 function bossBiomesDroppingShardAtTier1(lane: PacketId): string[] {
   return LINEAGE_SHARD_BIOMES.filter((biomeGroup) =>
