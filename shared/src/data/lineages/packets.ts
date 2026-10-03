@@ -141,7 +141,7 @@ const packetEntries: [PacketId, PacketDefinition][] = [
       moment: { kind: 'mechanic-fired' },
       payload: 'mechanic-proxy', payloadFx: 'empowered.mechanic-flash',
       pure: { payload: 'big-hit', fx: 'empowered.crash' },
-      momentPhrase: { text: 'When your class mechanic fires', kind: 'clause' },
+      momentPhrase: { text: 'When your class mechanic fires (every {cap} at most)', kind: 'clause' },
       payloadPhrase: 'counts as your class mechanic firing',
       pureSentence: 'Your mechanic hits {asHard} as hard.',
     },

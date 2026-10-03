@@ -427,7 +427,10 @@ export interface PacketHalfNumbers {
  *               payload a lineage bleed worth 1.0 × the hit over 4 s;
  *               pure a re-dose of 1.0 × what the target's DoTs still owe (doubles)
  *   engagement  moment per body; payload/pure a ×2 lunge
- *   empowered   moment = the mechanic's own cadence;
+ *   empowered   moment = the mechanic's own cadence, capped at one per 4 s (§24.9:
+ *               the Conduit's formation cycle fired it 25–40 times a minute,
+ *               against 1–9 for every other root; 4 s is the fast end of §24.1's
+ *               4–6 s cadence, so the cap binds the Conduit and nobody else);
  *               payload the class's own empowered multiplier (`magnitude` 1.5 is
  *               the fallback for a root with none — dot, summoner, non-Duelist
  *               reload); pure ×1.5 on the mechanic's hit ("half again")
@@ -456,7 +459,7 @@ export const PACKET_HALF_NUMBERS: Partial<Record<PacketId, PacketHalfNumbers>> =
     pure: { magnitude: 2 },
   },
   'empowered': {
-    moment: {},
+    moment: { capMs: 4_000 },
     payload: { magnitude: 1.5 },
     pure: { magnitude: 1.5 },
   },

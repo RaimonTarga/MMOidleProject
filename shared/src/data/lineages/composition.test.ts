@@ -77,7 +77,7 @@ const REVIEW_SHEET: Record<string, { moment: string; payload: string; pure: stri
     pure: 'Your first hit on each target is a lunge for double damage.',
   },
   empowered: {
-    moment: 'When your class mechanic fires',
+    moment: 'When your class mechanic fires (every 4 s at most)',
     payload: 'counts as your class mechanic firing',
     pure: 'Your mechanic hits half again as hard.',
   },
@@ -160,6 +160,7 @@ assert(PACKET_DEFINITIONS.get('control')?.scalingStat === 'slowOnHit', 'the Cont
 assert(packetMoment('tempo')?.n === 6, 'tempo fires on every 6th hit');
 assert(packetMoment('affliction')?.capMs === 5_000, 'the affliction moment caps at one per 5 s');
 assert(packetMoment('control')?.capMs === 5_000, 'the control moment caps at one per 5 s');
+assert(packetMoment('empowered')?.capMs === 4_000, 'the empowered moment caps at one per 4 s (design §24.9)');
 assert(packetMoment('engagement')?.perTarget === true, 'the engagement moment latches per body');
 assert(packetMoment('kill-chain')?.carry === true, 'the kill-chain moment is the next hit after a kill');
 
