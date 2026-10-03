@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import {
+  TUTORIAL_ANCHORS,
   cardSentence,
   defensiveFaceForSubVariant,
   lineageForCardId,
@@ -139,6 +140,8 @@ function Ring({
       aria-label={`${ring.label}: ${ringStateText(ring)}`}
       tabIndex={interactive ? 0 : undefined}
       data-rhythm-ring={ring.key}
+      // The guide's verb lesson rings this (a card ring's key is its card id).
+      data-tutorial-anchor={TUTORIAL_ANCHORS.rhythmRing(ring.key)}
       {...handlers}
     >
       <div className="rhythm-ring__dial">

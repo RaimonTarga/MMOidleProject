@@ -1,6 +1,7 @@
-import type { PacketId } from '../data/lineages/types';
+import type { PacketId, RowKind } from '../data/lineages/types';
 import type { EssenceType } from '../items';
 import type { EquippedRule } from '../runeDatabase';
+import type { TutorialConceptId } from './concepts';
 
 /**
  * Guided Tier-1 tutorial vocabulary (docs/guided-tutorial-plan.md).
@@ -70,12 +71,18 @@ export type TutorialStep =
   | { type: 'learnAbility'; recipeId: string; abilityId: string; slot: 'technique' | 'guard' }
   | { type: 'setAbilities'; techniques: string[]; guards: string[] }
   /**
-   * Buy one lineage card. Permanent, and buying into an empty row activates it
-   * server-side, so the guide never needs a separate `setActive`. Only legal
-   * once the lineage's base form is WORN — holding the form is what opens the
-   * tree (`checkUnlockCard`).
+   * Buy one lineage card. Permanent. Only legal once the lineage's base form is
+   * WORN — holding the form is what opens the weapon page (`checkUnlockCard`).
+   * Buying activates the card only into an EMPTY row (server-side), so every
+   * purchase beat follows it with a `setActive` for the same card.
    */
   | { type: 'unlockCard'; lineageId: string; cardId: string }
+  /**
+   * Make an owned card the active one of its row. Free. A no-op right after a
+   * purchase into an empty row; the swap a player who already filled the row
+   * by hand needs (the weapon page sends the same intent after a buy).
+   */
+  | { type: 'setActive'; lineageId: string; row: RowKind; cardId: string }
   /** Pay a band's gate: essence, the crowned lane's shard, the boss capstone. */
   | { type: 'unlockForm'; lineageId: string; recipeId: string }
   /** Wear an owned form. Free, and it moves the slot like any equip. */
@@ -120,6 +127,28 @@ export interface TutorialBeat {
   /** Section heading for the panel (e.g. "The Plains"). */
   chapter: string;
   steps: TutorialStep[];
+  /**
+   * The new ideas this beat's line puts in front of the player, at most two
+   * (the first-hour checklist, docs/guided-tutorial-plan.md). Presentation
+   * data: the bot never reads it; `tutorial.test.ts` counts it per level.
+   */
+  teaches?: TutorialConceptId[];
+  /**
+   * Shown AFTER the beat's steps are done, while the guide points: the card the
+   * beat bought, then (with `ring`) that card's ring on the rhythm readout. The
+   * client director only; the bot has nothing to read. Lines are generated from
+   * data in `classScript.ts`, like every other line.
+   */
+  lesson?: TutorialLesson;
+}
+
+export interface TutorialLesson {
+  lineageId: string;
+  cardId: string;
+  /** The line while the ring rests on the bought card ("look at what it says now"). */
+  read: string;
+  /** The line while the ring rests on the card's readout ring, near the HP bar. */
+  ring?: string;
 }
 
 export interface TutorialScript {

@@ -27,6 +27,8 @@ export const TUTORIAL_ANCHORS = {
   lineageCard: (cardId: string) => `lineage.card:${cardId}`,
   /** One form at a band's gate: pressing it pays the gate, or wears it. */
   lineageForm: (recipeId: string) => `lineage.form:${recipeId}`,
+  /** One ring of the rhythm readout near the HP bar, keyed like the ring (a card id). */
+  rhythmRing: (ringKey: string) => `hud.rhythm:${ringKey}`,
   abilityAttune: (abilityId: string) => `abilities.attune:${abilityId}`,
   /** "Use default timing" under an attuned ability: adds its reference Rune. */
   abilityTiming: (abilityId: string) => `abilities.timing:${abilityId}`,
