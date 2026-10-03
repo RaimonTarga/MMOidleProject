@@ -17,7 +17,7 @@ for (const route of CAMPAIGN_NIGHT2_SQUIRE_ROUTES) {
   assert.equal(buildRP(finalBuild.build).total, 25);
   assert.equal(route.steps.filter(s => s.type === "attemptBoss").length, 1);
   assert(route.steps.findIndex(s => s.type === "learnAbility" && s.abilityId === "brace") < route.steps.findIndex(s => s.type === "configureBuild" && s.build.abilities.guards.includes("brace")));
-  assert.equal(route.steps.filter(s => s.type === "upgrade").length, 5, "both armors upgraded identically before selection");
+  assert.equal(route.steps.filter(s => s.type === "upgrade").length, 0, "full-power items need no upgrades");
 }
 
 for (const [i, route] of CAMPAIGN_NIGHT2_ROUTES.entries()) {

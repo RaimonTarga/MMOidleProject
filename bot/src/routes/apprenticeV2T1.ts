@@ -88,10 +88,6 @@ export const APPRENTICE_V2_T1: Route = {
     ...getPiece(biome("plains"), "plains-boots-t1"),
 
     maxOut("plains"),
-    { type: "upgrade", definitionId: "iron-broadsword", toPlus: 1, farmAt: biome("plains") },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 1, farmAt: biome("plains") },
-    { type: "upgrade", definitionId: "plains-charm-t1", toPlus: 1, farmAt: biome("plains") },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 1, farmAt: biome("plains") },
     { type: "milestone", id: "plains-maxed" },
 
     // ── Forest: the interim weapon and the first real Guard -> +2 ───────────
@@ -100,10 +96,6 @@ export const APPRENTICE_V2_T1: Route = {
     learnSecondWind(),
 
     maxOut("forest"),
-    { type: "upgrade", definitionId: "flash-rapier", toPlus: 2, farmAt: biome("forest") },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 2 },
-    { type: "upgrade", definitionId: "plains-charm-t1", toPlus: 2 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 2 },
     { type: "milestone", id: "forest-maxed" },
 
     // ── Swamp: Cleanse, Arcane Wrappings, the charm -> +3 ─────────────────────
@@ -113,11 +105,6 @@ export const APPRENTICE_V2_T1: Route = {
     ...getPiece(biome("swamp"), "swamp-charm-t1"),
 
     maxOut("swamp"),
-    { type: "upgrade", definitionId: "swamp-vest-t1", toPlus: 3, farmAt: biome("swamp") },
-    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 3 },
-    { type: "upgrade", definitionId: "flash-rapier", toPlus: 3 },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 3 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 3 },
     { type: "milestone", id: "swamp-maxed" },
 
     // ── Mountain: Brace, the plate, commit to the Heavy Hammer -> +4 ────────
@@ -134,11 +121,6 @@ export const APPRENTICE_V2_T1: Route = {
     { type: "configureRunes", rules: RUNES_ORBIT, label: "kite with orbit (new hypothesis for this class)" },
 
     maxOut("mountain"),
-    { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 4, farmAt: biome("mountain") },
-    { type: "upgrade", definitionId: "heavy-hammer", toPlus: 4, farmAt: biome("mountain") },
-    { type: "upgrade", definitionId: "swamp-vest-t1", toPlus: 4 },
-    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 4 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 4 },
     { type: "milestone", id: "mountain-maxed" },
 
     // ── Cave: Expose Weakness -> GM 30 (Heavy Hammer stays equipped) ─────────
@@ -153,12 +135,6 @@ export const APPRENTICE_V2_T1: Route = {
     maxOut("cave"),
     { type: "milestone", id: "all-biomes-maxed" },
 
-    { type: "upgrade", definitionId: "heavy-hammer", toPlus: 5, farmAt: biome("mountain") },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 5 },
-    { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 5 },
-    { type: "upgrade", definitionId: "swamp-vest-t1", toPlus: 5, farmAt: biome("swamp") },
-    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 5 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 5 },
     { type: "milestone", id: "gear-plus-5" },
 
     // ── The boss gauntlet: Heavy Hammer everywhere, Second Wind on the two

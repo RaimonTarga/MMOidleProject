@@ -26,13 +26,10 @@ const returnRested: RouteStep[] = [
 export const V1U_PURCHASES: RouteStep[] = [
   { type: 'learnAbility', recipeId: 'ability-recipe-frenzy', abilityId: 'frenzy', slot: 'technique', attune: false },
   { type: 'craft', recipeIds: ['volcanic-cinderlash', 'core-accelerant'] },
-  { type: 'evolveItem', recipeId: 'mountain-vest-t2', mode: 'evolve' },
-  { type: 'upgrade', definitionId: 'mountain-vest-t2', toPlus: 5, farmForMissingResources: false },
-  { type: 'evolveItem', recipeId: 'mountain-vest-t3', mode: 'evolve' },
+  { type: 'craft', recipeIds: ['mountain-vest-t2'] },
+  { type: 'craft', recipeIds: ['mountain-vest-t3'] },
   { type: 'unequip', slot: 'recovery', expectedDefinitionId: 'mountain-charm-t2' },
-  { type: 'evolveItem', recipeId: 'mountain-charm-t3', mode: 'evolve' },
-  ...['volcanic-cinderlash', 'mountain-vest-t3', 'mountain-charm-t3'].map(definitionId =>
-    ({ type: 'upgrade' as const, definitionId, toPlus: 2, farmForMissingResources: false })),
+  { type: 'craft', recipeIds: ['mountain-charm-t3'] },
   { type: 'equip', definitionIds: ['volcanic-cinderlash', 'mountain-vest-t3', 'mountain-charm-t3', 'core-accelerant', 'desert-boots-t2'] },
 ];
 const prepared = allOf(recovered, { type: 'not', of: victory },
@@ -40,15 +37,14 @@ const prepared = allOf(recovered, { type: 'not', of: victory },
   { type: 'biomeLevelAtLeast', biomeGroup: 'mountain', level: 16 },
   { type: 'globalMasteryAtLeast', value: 114 },
   ...['volcanic-cinderlash', 'mountain-vest-t3', 'mountain-charm-t3'].flatMap(definitionId => [
-    { type: 'equipped' as const, definitionId }, { type: 'itemAtLeastPlus' as const, definitionId, plus: 5 },
+    { type: 'equipped' as const, definitionId }, { type: 'hasItem' as const, definitionId },
   ]), { type: 'equipped', definitionId: 'core-accelerant' },
   { type: 'equipped', definitionId: 'desert-boots-t2' },
   { type: 'abilityKnown', abilityId: 'frenzy' });
 
 export const V1U_EARLY_MASTERY = [{ group: 'mountain', level: 18 }, { group: 'jungle', level: 12 }];
 export const V1U_LATE_MASTERY = [{ group: 'swamp', level: 18 }, { group: 'cave', level: 18 }, { group: 'desert', level: 12 }, { group: 'tundra', level: 6 }];
-export const V1U_FINAL_UPGRADES: RouteStep[] = ['volcanic-cinderlash', 'mountain-vest-t3', 'mountain-charm-t3'].map(definitionId =>
-  ({ type: 'upgrade', definitionId, toPlus: 5, farmForMissingResources: false }));
+export const V1U_FINAL_UPGRADES: RouteStep[] = [];
 
 /** Earn gates and purchases once; never consume a combat-outcome-selected state. */
 export const CAMPAIGN_T3_V1U_PREP: Route = {

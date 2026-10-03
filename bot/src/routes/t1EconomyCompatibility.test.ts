@@ -5,8 +5,6 @@ import {
   RUNE_RECIPE_DATABASE,
   STARTER_RUNE_IDS,
   globalMastery,
-  upgradeCeilingFromGlobalMastery,
-  upgradeCostFor,
 } from "@mmo-idle/shared";
 import { buildConfig } from "../config";
 import type { Condition, RouteStep } from "../route/types";
@@ -39,7 +37,6 @@ function hasHardcodedWalletThreshold(condition: Condition): boolean {
 for (const route of T1_CONTROLLED_ROUTES) {
   const levels: Record<string, number> = {};
   const craftedItems = new Set<string>();
-  const itemPlus = new Map<string, number>();
   const learnedAbilities = new Set<string>();
   const ownedRunes = new Set(STARTER_RUNE_IDS);
 
@@ -61,28 +58,7 @@ for (const route of T1_CONTROLLED_ROUTES) {
       continue;
     }
 
-    if (step.type === "upgrade") {
-      const item = ITEM_DATABASE.get(step.definitionId);
-      const recipe = RECIPE_DATABASE.get(step.definitionId);
-      assert(item && recipe, `${route.id}: upgrade item is live (${step.definitionId})`);
-      assert(craftedItems.has(step.definitionId), `${route.id}: ${step.definitionId} acquired before upgrade`);
-      const from = itemPlus.get(step.definitionId) ?? 0;
-      const ceiling = upgradeCeilingFromGlobalMastery(globalMastery(levels), item.tier);
-      const target = step.opportunistic ? Math.min(step.toPlus, ceiling) : step.toPlus;
-      assert(step.opportunistic || ceiling >= target, `${route.id}: GM gate permits ${step.definitionId} +${target}`);
-      for (let plus = from + 1; plus <= target; plus += 1) {
-        const cost = upgradeCostFor(item, plus);
-        assert(cost, `${route.id}: ${step.definitionId} +${plus} resolves live upgrade cost`);
-        const authored = item.upgrades?.[plus - 1];
-        if (authored && (levels[recipe.recipeGroup] ?? 0) < authored.requiredBiomeLevel) {
-          // doUpgrade farms against checkUpgrade until the live gate opens.
-          assert(authored.requiredBiomeLevel <= 6, `${route.id}: ${step.definitionId} +${plus} gate is reachable in T1`);
-          levels[recipe.recipeGroup] = authored.requiredBiomeLevel;
-        }
-      }
-      itemPlus.set(step.definitionId, target);
-      continue;
-    }
+    assert(step.type !== "upgrade" && step.type !== "evolveItem", `${route.id}: no retired purchases`);
 
     if (step.type === "equip") {
       for (const itemId of step.definitionIds) {
@@ -133,17 +109,13 @@ for (const route of T1_CONTROLLED_ROUTES) {
     }
 
     if (step.type === "attemptBoss") {
-      // Every authored boss kit has already completed its live +5 sequence.
+      // Every authored boss kit is already acquired at full base power.
       const previousEquip = route.steps.slice(0, route.steps.indexOf(step)).reverse().find(
         (candidate) => candidate.type === "equip",
       );
       if (previousEquip?.type === "equip") {
         for (const itemId of previousEquip.definitionIds) {
-          // Weapons are off the +N ladder entirely (Phase 2b, Override A: a
-          // weapon's power track is its lineage tree), so routes no longer
-          // author upgrade steps for them — nothing to check here.
-          if (ITEM_DATABASE.get(itemId)?.slot === "weapon") continue;
-          assert((itemPlus.get(itemId) ?? 0) === 5, `${route.id}: ${itemId} reaches intended +5 boss loadout`);
+          assert(craftedItems.has(itemId), `${route.id}: ${itemId} acquired for the boss loadout`);
         }
       }
     }

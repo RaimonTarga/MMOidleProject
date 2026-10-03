@@ -97,7 +97,6 @@ function biomeLegSteps(
   plan: T2ClassPlan,
   group: T2BiomeGroup,
   profile: TierEntryProfile,
-  adopted: string[],
 ): RouteStep[] {
   const biomePlan = plan.biomes[group];
   if (!biomePlan) return [];
@@ -110,8 +109,11 @@ function biomeLegSteps(
     // must not produce an `equip` step -- that would stall the run on a piece the
     // template can never own, and hide the real finding behind a timeout.
     if (acquisition.path !== "unreachable") {
-      steps.push({ type: "equip", definitionIds: [recipeId] });
-      adopted.push(recipeId);
+      if (acquisition.path === "form") {
+        steps.push({ type: "wearForm", lineageId: acquisition.lineageId!, recipeId });
+      } else {
+        steps.push({ type: "equip", definitionIds: [recipeId] });
+      }
     }
   }
   for (const recipeId of biomePlan.craftOnly ?? []) {
@@ -141,27 +143,6 @@ function learnAbilitySteps(group: T2BiomeGroup, plan: T2ClassPlan): RouteStep[] 
       label: `learn ${learn.abilityId} (replaces the single ${learn.slot} slot)`,
     },
   ];
-}
-
-/**
- * Upgrade what the Global Mastery ceiling currently allows, and move on.
- *
- * Always `opportunistic`. The Tier-2 ceiling is +0 until Global Mastery 42 and
- * only reaches +5 at GM 72 (every one of the seven biomes at its cap), so a
- * fixed `toPlus` target would park the bot in a biome waiting for headroom that
- * only arrives by farming a DIFFERENT one. A real player upgrades what it can
- * afford and keeps going.
- */
-function opportunisticUpgrades(worn: readonly string[], group: T2BiomeGroup): RouteStep[] {
-  return worn.map((definitionId) => ({
-    type: "upgrade" as const,
-    definitionId,
-    toPlus: 5,
-    farmAt: t2(group),
-    opportunistic: true,
-    farmForMissingResources: true,
-    label: `upgrade ${definitionId} as far as Global Mastery allows`,
-  }));
 }
 
 /**
@@ -360,10 +341,6 @@ export interface T2RouteConfig {
  * carryover biomes at 12, plus Jungle and Desert at 6 -- they FIRST APPEAR at
  * Tier 2, so their own caps are half the others'). Entry is GM 30.
  *
- * It is also the threshold that governs the Tier-2 item upgrade ceiling: +0
- * until GM 42, +5 only at GM 72. So "mastered the tier" and "can finally reach
- * +5 on tier gear" are the same moment, which is what makes it the right place
- * to stop a progression run.
  */
 export const T2_BOSSLESS_MASTERY_TARGET = maxGlobalMasteryAtTier(2);
 
@@ -391,10 +368,7 @@ function buildT2Route(config: T2RouteConfig): Route {
   const progressionOrder = T2_PROGRESSION_ORDER.slice(startIndex, stopIndex + 1);
   const terminalGroup = progressionOrder[progressionOrder.length - 1];
   if (!terminalGroup) throw new Error("T2 route has no biome legs");
-  // Everything the class is currently wearing, so upgrade steps target the live
-  // kit rather than a guess. Seeded empty: the Tier-1 kit arrives with the
-  // template and is upgraded no further (its ceiling is already +5 at GM 30).
-  const worn: string[] = [];
+
 
   steps.push(
     {
@@ -446,9 +420,7 @@ function buildT2Route(config: T2RouteConfig): Route {
     }
     steps.push(...buildCoreAcquisitionSteps(group, config.skipCoreIds));
     steps.push(...farmCoreEquipSteps(group, plan));
-    const adopted: string[] = [];
-    steps.push(...biomeLegSteps(plan, group, profile, adopted));
-    for (const id of adopted) if (!worn.includes(id)) worn.push(id);
+    steps.push(...biomeLegSteps(plan, group, profile));
     if (group === progressionOrder[0]) {
       for (const assertion of config.treatmentAssertions ?? []) {
         steps.push({
@@ -486,7 +458,6 @@ function buildT2Route(config: T2RouteConfig): Route {
       label: `farm ${group} T2 to level ${maxLevel}`,
     });
     steps.push({ type: "milestone", id: `${group}-t2-maxed` });
-    steps.push(...opportunisticUpgrades(worn, group));
     if (!bossless) {
       steps.push(...bossLoadoutSteps(group));
       steps.push({ type: "attemptBoss", biomeGroup: group, tier: 2, maxAttempts: 4 });

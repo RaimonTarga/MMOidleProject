@@ -72,10 +72,6 @@ export const SLINGER_MURKEYEONLY_T1: Route = {
     learnSweep(),
 
     maxOut("plains"),
-    { type: "upgrade", definitionId: "iron-broadsword", toPlus: 1, farmAt: biome("plains") },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 1, farmAt: biome("plains") },
-    { type: "upgrade", definitionId: "plains-charm-t1", toPlus: 1, farmAt: biome("plains") },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 1, farmAt: biome("plains") },
     { type: "milestone", id: "plains-maxed" },
 
     // ── Forest: the fast weapon, Shaded Bindings, first Guard -> +2 ──────────
@@ -85,10 +81,6 @@ export const SLINGER_MURKEYEONLY_T1: Route = {
     learnSecondWind(),
 
     maxOut("forest"),
-    { type: "upgrade", definitionId: "flash-rapier", toPlus: 2, farmAt: biome("forest") },
-    { type: "upgrade", definitionId: "forest-vest-t1", toPlus: 2, farmAt: biome("forest") },
-    { type: "upgrade", definitionId: "plains-charm-t1", toPlus: 2 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 2 },
     { type: "milestone", id: "forest-maxed" },
 
     // ── Swamp: Cleanse, hazard pathing, Murk Eye, the dagger -> +3 ───────────
@@ -105,11 +97,6 @@ export const SLINGER_MURKEYEONLY_T1: Route = {
     { type: "equip", definitionIds: ["flash-rapier"], label: "keep the rapier active; the dagger levels up in reserve" },
 
     maxOut("swamp"),
-    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 3, farmAt: biome("swamp") },
-    { type: "upgrade", definitionId: "ashbrand-blade", toPlus: 3, farmAt: biome("swamp"), opportunistic: true },
-    { type: "upgrade", definitionId: "forest-vest-t1", toPlus: 3 },
-    { type: "upgrade", definitionId: "flash-rapier", toPlus: 3 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 3 },
     { type: "milestone", id: "swamp-maxed" },
 
     // ── Mountain: Brace, orbit rune -- Murk Eye carried straight through -> +4
@@ -128,11 +115,6 @@ export const SLINGER_MURKEYEONLY_T1: Route = {
     },
 
     maxOut("mountain"),
-    { type: "upgrade", definitionId: "ashbrand-blade", toPlus: 4, farmAt: biome("swamp"), opportunistic: true },
-    { type: "upgrade", definitionId: "flash-rapier", toPlus: 4 },
-    { type: "upgrade", definitionId: "forest-vest-t1", toPlus: 4 },
-    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 4 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 4 },
     { type: "milestone", id: "mountain-maxed" },
 
     // ── Cave: the Poison Dagger and Expose Weakness -> GM 30 ─────────────────
@@ -144,13 +126,6 @@ export const SLINGER_MURKEYEONLY_T1: Route = {
     },
     learnExposeWeakness(),
 
-    {
-      type: "upgrade",
-      definitionId: "ashbrand-blade",
-      toPlus: 4,
-      farmAt: biome("swamp"),
-      opportunistic: true,
-    },
     { type: "equip", definitionIds: ["ashbrand-blade"], label: "switch to the Poison Dagger" },
 
     maxOut("cave"),
@@ -158,11 +133,6 @@ export const SLINGER_MURKEYEONLY_T1: Route = {
 
     ...getPiece(biome("mountain"), "mountain-vest-t1"),
 
-    { type: "upgrade", definitionId: "ashbrand-blade", toPlus: 5, farmAt: biome("swamp") },
-    { type: "upgrade", definitionId: "forest-vest-t1", toPlus: 5 },
-    { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 5, farmAt: biome("mountain") },
-    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 5 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 5 },
     { type: "milestone", id: "gear-plus-5" },
 
     // ── The boss gauntlet ────────────────────────────────────────────────────

@@ -24,11 +24,9 @@ export const CAMPAIGN_T2_V1K_ROUTES: Route[] = [
   });
   if (group === "swamp") preparation.push(
     // Both arms earn the candidate armor while wearing the same Cave armor.
-    { type: "evolveItem", recipeId: "swamp-vest-t2", mode: "reconstruct",
+    { type: "craft", recipeIds: ["swamp-vest-t2"],
       farmAt: { kind: "biome", biomeGroup: "swamp", tier: 2, modifier: "fortified" } },
-    { type: "upgrade", definitionId: "swamp-vest-t2", toPlus: 5, farmForMissingResources: true,
-      farmAt: { kind: "biome", biomeGroup: "swamp", tier: 2, modifier: "fortified" } },
-    { type: "assert", condition: { type: "itemAtLeastPlus", definitionId: "swamp-vest-t2", plus: 5 } },
+    { type: "assert", condition: { type: "hasItem", definitionId: "swamp-vest-t2" } },
   );
   else preparation.push({ type: "learnAbility", recipeId: "ability-recipe-cleanse", abilityId: "cleanse", slot: "guard", attune: false,
     farmAt: { kind: "biome", biomeGroup: "swamp", tier: 2 } });
@@ -44,7 +42,7 @@ export const CAMPAIGN_T2_V1K_ROUTES: Route[] = [
     steps: [...preparation,
       { type: "equip", definitionIds: [armor] },
       { type: "assert", condition: { type: "equipped", definitionId: armor } },
-      { type: "assert", condition: { type: "itemAtLeastPlus", definitionId: armor, plus: 5 } },
+      { type: "assert", condition: { type: "hasItem", definitionId: armor } },
       { type: "configureBuild", build, label: `${tag}:build` },
       { type: "milestone", id: `${tag}:ready` },
       { type: "attemptBoss", biomeGroup: group, tier: 2, maxAttempts: 1, label: `${tag}:attempt` },

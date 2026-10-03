@@ -27,7 +27,7 @@ const gates: RouteStep[] = [
   { type: "assert", condition: { type: "globalMasteryAtLeast", value: 30 } },
   ...kit.flatMap(definitionId => [
     { type: "assert" as const, condition: { type: "equipped" as const, definitionId } },
-    { type: "assert" as const, condition: { type: "itemAtLeastPlus" as const, definitionId, plus: 5 } },
+    { type: "assert" as const, condition: { type: "hasItem" as const, definitionId } },
   ]),
 ];
 
@@ -38,10 +38,9 @@ export const STRIKER_CAMPAIGN_PLAINS_ENTRY_T1: Route = {
   description: "V1e: earned snapshot entry, verified T1 Plains kit, one ordinary dungeon cycle.",
   steps: [
     ...structuredClone(gates),
-    { type: "upgrade", definitionId: "plains-charm-t1", toPlus: 5 },
     { type: "equip", definitionIds: ["plains-charm-t1"] },
     { type: "assert", condition: { type: "equipped", definitionId: "plains-charm-t1" } },
-    { type: "assert", condition: { type: "itemAtLeastPlus", definitionId: "plains-charm-t1", plus: 5 } },
+    { type: "assert", condition: { type: "hasItem", definitionId: "plains-charm-t1" } },
     { type: "configureBuild", build: structuredClone(CAMPAIGN_PLAINS_T1_BUILD), label: "v1e:verified-plains-build" },
     { type: "milestone", id: "v1e:encounter-entry-ready" },
     { type: "attemptBoss", biomeGroup: "plains", tier: 1, maxAttempts: 1, label: "v1e:plains-attempt" },

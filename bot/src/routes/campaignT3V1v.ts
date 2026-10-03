@@ -26,7 +26,7 @@ export const CAMPAIGN_T3_V1V: Route = {
       { type: 'globalMasteryAtLeast', value: 114 }, { type: 'bossCleared', biomeGroup: 'volcanic', tier: 3 },
       { type: 'not', of: victory },
       ...['volcanic-cinderlash', 'mountain-vest-t3', 'mountain-charm-t3'].flatMap(definitionId => [
-        { type: 'equipped' as const, definitionId }, { type: 'itemAtLeastPlus' as const, definitionId, plus: 5 }]),
+        { type: 'equipped' as const, definitionId }, { type: 'hasItem' as const, definitionId }]),
       { type: 'equipped', definitionId: 'core-accelerant' }, { type: 'equipped', definitionId: 'desert-boots-t2' }] },
   steps: [
     { type: 'learnAbility', recipeId: 'ability-recipe-break-free', abilityId: 'break-free', slot: 'guard', attune: false, stepTimeoutMs: 15000 },

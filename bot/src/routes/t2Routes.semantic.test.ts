@@ -1,5 +1,5 @@
 import {
-  EVOLUTION_REQUIRED_PLUS,
+  lineageForRecipeId,
   RECIPE_DATABASE,
   STANCE_RECIPE_DATABASE,
   biomeLevelCap,
@@ -127,11 +127,9 @@ for (const plan of T2_CLASS_PLANS) {
         `${plan.slug}: ${id} is planned in ${group} but belongs to ${recipe.recipeGroup}`,
       );
       const acquisition = planAcquisition(profile, id);
-      if (acquisition.path === "evolve" || acquisition.path === "evolve-after-unequip") {
-        assert(
-          (profile.itemUpgrades[acquisition.predecessorId!] ?? 0) >= EVOLUTION_REQUIRED_PLUS,
-          `${plan.slug}: ${id} evolves only from a +${EVOLUTION_REQUIRED_PLUS} predecessor`,
-        );
+      assert(acquisition.path === (recipe.slot === "weapon" ? "form" : "craft"), `${id}: live acquisition`);
+      if (acquisition.path === "form") {
+        assert(acquisition.lineageId === lineageForRecipeId(id)?.id, `${id}: correct lineage`);
       }
     }
     // A skip must name a real recipe, or the adoption report counts a typo as a

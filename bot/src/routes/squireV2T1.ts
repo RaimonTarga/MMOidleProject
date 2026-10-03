@@ -78,10 +78,6 @@ export const SQUIRE_V2_T1: Route = {
     learnSweep(),
 
     maxOut("plains"),
-    { type: "upgrade", definitionId: "iron-broadsword", toPlus: 1, farmAt: biome("plains") },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 1, farmAt: biome("plains") },
-    { type: "upgrade", definitionId: "plains-charm-t1", toPlus: 1, farmAt: biome("plains") },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 1, farmAt: biome("plains") },
     { type: "milestone", id: "plains-maxed" },
 
     // ── Forest: the fast weapon, Heartroot Amulet, first Guard -> +2 ─────────
@@ -91,10 +87,6 @@ export const SQUIRE_V2_T1: Route = {
     learnSecondWind(),
 
     maxOut("forest"),
-    { type: "upgrade", definitionId: "flash-rapier", toPlus: 2, farmAt: biome("forest") },
-    { type: "upgrade", definitionId: "forest-charm-t1", toPlus: 2, farmAt: biome("forest") },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 2 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 2 },
     { type: "milestone", id: "forest-maxed" },
 
     // ── Swamp: Cleanse -> +3 (3rd leg; no swamp gear needed) ─────────────────
@@ -102,10 +94,6 @@ export const SQUIRE_V2_T1: Route = {
     learnCleanse(),
 
     maxOut("swamp"),
-    { type: "upgrade", definitionId: "flash-rapier", toPlus: 3 },
-    { type: "upgrade", definitionId: "forest-charm-t1", toPlus: 3 },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 3 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 3 },
     { type: "milestone", id: "swamp-maxed" },
 
     // ── Mountain: Brace (farming), Power Strike at L5, the plate -> +4 ───────
@@ -122,11 +110,6 @@ export const SQUIRE_V2_T1: Route = {
     },
 
     maxOut("mountain"),
-    { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 4, farmAt: biome("mountain") },
-    { type: "upgrade", definitionId: "flash-rapier", toPlus: 4 },
-    { type: "upgrade", definitionId: "forest-charm-t1", toPlus: 4 },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 4 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 4 },
     { type: "milestone", id: "mountain-maxed" },
 
     // ── Cave: the Chaotic Axe -> GM 30 ────────────────────────────────────────
@@ -139,23 +122,11 @@ export const SQUIRE_V2_T1: Route = {
     { type: "farm", at: biome("cave"), until: { type: "recipeUnlocked", recipeId: "chaotic-axe" } },
     { type: "craft", recipeIds: ["chaotic-axe"], farmAt: biome("cave") },
 
-    {
-      type: "upgrade",
-      definitionId: "chaotic-axe",
-      toPlus: 4,
-      farmAt: biome("cave"),
-      opportunistic: true,
-    },
     { type: "equip", definitionIds: ["chaotic-axe"], label: "switch to the Chaotic Axe" },
 
     maxOut("cave"),
     { type: "milestone", id: "all-biomes-maxed" },
 
-    { type: "upgrade", definitionId: "chaotic-axe", toPlus: 5, farmAt: biome("cave") },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 5 },
-    { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 5 },
-    { type: "upgrade", definitionId: "forest-charm-t1", toPlus: 5 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 5 },
     { type: "milestone", id: "gear-plus-5" },
 
     // ── The boss gauntlet: Power Strike everywhere, Second Wind on the two

@@ -8,8 +8,7 @@ export const V1Z_LEGS = [
   { group: 'jungle', path: [hub, 'node-t4-jungle-05'], build: V1W_CASES.find(c => c.group === 'jungle')!.build },
   { group: 'desert', path: [hub, 'node-t4-mountain-05', 'node-t4-desert-05'], build: V1V_BOSS_BUILD },
 ];
-export const V1Z_UPGRADES: RouteStep[] = ['mountain-vest-t4', 'mountain-charm-t4'].map(definitionId =>
-  ({ type: 'upgrade', definitionId, toPlus: 2, farmForMissingResources: false, stepTimeoutMs: 15000 }));
+export const V1Z_UPGRADES: RouteStep[] = [];
 function walk(path: string[]): RouteStep[] { return [
   { type: 'configureBuild', build: V1V_TRAVEL_BUILD },
   ...path.slice(1).map(nodeId => ({ type: 'travel' as const, to: { kind: 'node' as const, nodeId }, stepTimeoutMs: 180000 })),
@@ -26,9 +25,9 @@ export const CAMPAIGN_T4_V1Z: Route = {
     revisionPolicy: 'explicit-current-revision', prerequisites: [recovered,
       { type: 'globalMasteryAtLeast', value: 124 }, { type: 'biomeLevelAtLeast', biomeGroup: 'mountain', level: 24 },
       ...['mountain-vest-t4', 'mountain-charm-t4'].flatMap(definitionId => [
-        { type: 'equipped' as const, definitionId }, { type: 'itemAtLeastPlus' as const, definitionId, plus: 1 }]),
+        { type: 'equipped' as const, definitionId }, { type: 'hasItem' as const, definitionId }]),
       ...['volcanic-cinderlash', 'desert-boots-t2'].flatMap(definitionId => [
-        { type: 'equipped' as const, definitionId }, { type: 'itemAtLeastPlus' as const, definitionId, plus: 5 }]),
+        { type: 'equipped' as const, definitionId }, { type: 'hasItem' as const, definitionId }]),
       { type: 'equipped', definitionId: 'core-accelerant' },
     ] },
   steps: [
@@ -51,6 +50,6 @@ export const CAMPAIGN_T4_V1Z: Route = {
   ], completion: allOf(recovered, { type: 'globalMasteryAtLeast', value: 132 },
     ...['jungle', 'desert'].map(biomeGroup => ({ type: 'biomeLevelAtLeast' as const, biomeGroup, level: 18 })),
     ...['mountain-vest-t4', 'mountain-charm-t4'].flatMap(definitionId => [
-      { type: 'equipped' as const, definitionId }, { type: 'itemAtLeastPlus' as const, definitionId, plus: 2 }])),
+      { type: 'equipped' as const, definitionId }, { type: 'hasItem' as const, definitionId }])),
   milestones: [],
 };

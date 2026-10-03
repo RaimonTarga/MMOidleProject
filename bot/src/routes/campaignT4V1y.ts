@@ -10,14 +10,13 @@ const hub = V1Y_FARM_PATH[0], farm = V1Y_FARM_PATH[1];
 const recovered = { type: 'fullyRecovered' as const };
 export const V1Y_PURCHASES: RouteStep[] = [
   { type: 'unequip', slot: 'armor', expectedDefinitionId: 'mountain-vest-t3' },
-  { type: 'evolveItem', recipeId: 'mountain-vest-t4', mode: 'evolve', stepTimeoutMs: 15000 },
+  { type: 'craft', recipeIds: ['mountain-vest-t4'], stepTimeoutMs: 15000 },
   { type: 'equip', definitionIds: ['mountain-vest-t4'] },
   { type: 'unequip', slot: 'recovery', expectedDefinitionId: 'mountain-charm-t3' },
-  { type: 'evolveItem', recipeId: 'mountain-charm-t4', mode: 'evolve', stepTimeoutMs: 15000 },
+  { type: 'craft', recipeIds: ['mountain-charm-t4'], stepTimeoutMs: 15000 },
   { type: 'equip', definitionIds: ['mountain-charm-t4'] },
 ];
-export const V1Y_UPGRADES: RouteStep[] = ['mountain-vest-t4', 'mountain-charm-t4'].map(definitionId =>
-  ({ type: 'upgrade', definitionId, toPlus: 1, farmForMissingResources: false, stepTimeoutMs: 15000 }));
+export const V1Y_UPGRADES: RouteStep[] = [];
 function walk(path: string[]): RouteStep[] { return [
   { type: 'configureBuild', build: V1V_TRAVEL_BUILD },
   ...path.slice(1).map(nodeId => ({ type: 'travel' as const, to: { kind: 'node' as const, nodeId }, stepTimeoutMs: 180000 })),
@@ -35,7 +34,7 @@ export const CAMPAIGN_T4_V1Y: Route = {
       { type: 'globalMasteryAtLeast', value: 120 }, { type: 'biomeLevelAtLeast', biomeGroup: 'mountain', level: 22 },
       ...['volcanic', 'tundra', 'mountain', 'cave'].map(biomeGroup => ({ type: 'bossCleared' as const, biomeGroup, tier: 3 })),
       ...['volcanic-cinderlash', 'mountain-vest-t3', 'mountain-charm-t3', 'desert-boots-t2'].flatMap(definitionId => [
-        { type: 'equipped' as const, definitionId }, { type: 'itemAtLeastPlus' as const, definitionId, plus: 5 }]),
+        { type: 'equipped' as const, definitionId }, { type: 'hasItem' as const, definitionId }]),
       { type: 'equipped', definitionId: 'core-accelerant' },
     ] },
   steps: [
@@ -63,6 +62,6 @@ export const CAMPAIGN_T4_V1Y: Route = {
   ], completion: allOf(recovered, { type: 'playerTierAtLeast', tier: 4 },
     { type: 'biomeLevelAtLeast', biomeGroup: 'mountain', level: 24 },
     ...['mountain-vest-t4', 'mountain-charm-t4'].flatMap(definitionId => [
-      { type: 'equipped' as const, definitionId }, { type: 'itemAtLeastPlus' as const, definitionId, plus: 1 }])),
+      { type: 'equipped' as const, definitionId }, { type: 'hasItem' as const, definitionId }])),
   milestones: [],
 };

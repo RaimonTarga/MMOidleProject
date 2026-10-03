@@ -33,9 +33,9 @@ import type { T2BiomeGroup, T2MovementProfile } from "./t2Common";
  */
 
 export interface T2BiomePlan {
-  /** Craft AND equip. The class wants to fight with this. */
+  /** Acquire and wear: weapons unlock a lineage form; other slots are plain crafts. */
   adopt?: readonly string[];
-  /** Craft but do NOT equip. Owned, judged not an upgrade over what is worn. */
+  /** Acquire without changing equipment (unlock only for weapon forms). */
   craftOnly?: readonly string[];
   /**
    * Deliberately not crafted, with the reason. Recorded as an intentional skip

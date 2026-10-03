@@ -38,7 +38,7 @@ export const CAMPAIGN_T4_NIGHT3_ROUTES: Route[] = NIGHT3_CASES.map(c => {
     progressionEntry: { ...CAMPAIGN_T4_V1Z.progressionEntry!, boundaryId: 'v1z-plus2-prepared-returned', prerequisites: [
       recovered, { type: 'globalMasteryAtLeast', value: 132 },
       ...['mountain-vest-t4', 'mountain-charm-t4'].flatMap(definitionId => [
-        { type: 'equipped' as const, definitionId }, { type: 'itemAtLeastPlus' as const, definitionId, plus: 2 }]),
+        { type: 'equipped' as const, definitionId }, { type: 'hasItem' as const, definitionId }]),
       { type: 'not', of: victory },
     ] },
     steps: [
