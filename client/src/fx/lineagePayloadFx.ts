@@ -312,7 +312,9 @@ function lungeDash(b: Bodies): void {
   streak.lineBetween(from.x, from.y + 6, from.x + d.x * reach, from.y + d.y * reach + 6);
   fading(scene, streak, 320, {}, LUNGE_CONTACT_MS);
 
-  afterimages(scene, ev.playerId, { count: 5, everyMs: 22, tint: color, alpha: 0.5, fadeMs: 320 });
+  // A lower alpha than the echo's: the salmon lane colour, added over a lit
+  // ground, whitens out at 0.5 and the ghost reads as a blob rather than a body.
+  afterimages(scene, ev.playerId, { count: 5, everyMs: 22, tint: color, alpha: 0.32, fadeMs: 320 });
   posePath(scene, ev.playerId, [
     { sx: 1.14, sy: 0.88, rot: side * 0.22, ms: LUNGE_CONTACT_MS, ease: 'Cubic.easeIn' },
     { sx: 1.08, sy: 0.93, rot: side * 0.12, ms: LUNGE_HOLD_MS },
@@ -352,7 +354,7 @@ function lungeContact(
   burst.fillStyle(core, 0.95);
   burst.fillCircle(0, 0, 9 * k);
   fading(scene, burst, 260, { scaleX: 1.5, scaleY: 1.5 });
-  ring(scene, to.x, to.y, color, { from: 12 * k, scale: 3.4, width: 3, ms: 340 });
+  ring(scene, to.x, to.y, color, { from: 12 * k, scale: 2.6, width: 2, ms: 300 });
   const dirDeg = (Math.atan2(to.y - from.y, to.x - from.x) * 180) / Math.PI;
   burstFx(scene, 'ptx-spark', to.x, to.y, count(10, sparks), 360, {
     tint: [core, color], speed: { min: 140, max: 300 }, angle: { min: dirDeg - 50, max: dirDeg + 50 },
