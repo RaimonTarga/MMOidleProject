@@ -234,6 +234,10 @@ export function TutorialPanel() {
   const beat = script.beats[index] ?? null;
   const busy = !!run && (run.status === 'working' || run.status === 'waiting' || run.status === 'player');
   const ownRun = run && beat && run.beatId === beat.id ? run : null;
+  // A beat whose steps are done can still be talking: its lesson (the card it
+  // bought, then that card's readout ring) plays after the purchase has already
+  // moved the panel on to the next beat.
+  const lessonRun = !ownRun && run?.status === 'working' && run.message ? run : null;
   const dead = deathOverlay || view.isDead;
 
   const next = () => {
@@ -252,6 +256,7 @@ export function TutorialPanel() {
   let line = beat?.say ?? '';
   if (ownRun?.status === 'waiting' || ownRun?.status === 'player') line = beat?.waiting ?? line;
   if (ownRun?.message) line = ownRun.message;
+  if (lessonRun?.message) line = lessonRun.message;
   if (dead) line = 'You fell. That happens; press Next to get back up, and the guide carries on.';
 
   return (
