@@ -103,9 +103,9 @@ export interface PacketDefinition {
 
 /**
  * Scaling-stat notes:
- *  - `control` and `engagement` both scale flat Attack at T1. Control has no stat
- *    of its own yet (slow/chill magnitudes are authored, not scaled); the Phase 3
- *    class-by-class review (bible open decision 1) is where it gets one if it needs it.
+ *  - `control` scales `slowOnHit` (design §24.9): the lean slows on every hit, so
+ *    it SEEDS its own moment's hold, as Affliction's DoT potency seeds its bleed.
+ *    Until then it scaled flat Attack, a placeholder shared with `engagement`.
  *  - `bulwark` and `barrier-tempo` are placeholders until Phase 4 authors the
  *    defensive matrices; no weapon lane can reach them, so nothing reads them yet.
  */
@@ -167,7 +167,7 @@ const packetEntries: [PacketId, PacketDefinition][] = [
     },
   }],
   ['control', {
-    id: 'control', name: 'Control', scalingStat: 'attack', shardName: 'Shackle Shard',
+    id: 'control', name: 'Control', scalingStat: 'slowOnHit', shardName: 'Shackle Shard',
     wants: 'slow, chill', firesOn: 'a hit on a slowed target',
     paysWith: 'root, stun, bonus damage vs controlled',
     weakAgainst: 'control-immune bosses',

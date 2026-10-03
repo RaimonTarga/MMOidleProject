@@ -67,7 +67,8 @@ export function initCombatSystems(): void {
   // one multiplier per hit depends on that order.
   withCombatRegistrationLabel('registerLineageCards', registerLineageCards);
   // The leans that seed their lane's condition (design §24.9): the Affliction
-  // lean's light bleed on every landed hit. After the card runtime for the same
+  // lean's light bleed and the Control lean's slow on every landed hit. After
+  // the card runtime for the same
   // reason — the hit's empowered multiplier is recorded by now — and the
   // moments that look for the condition probe the target in `beforeAttack`, so
   // this hit's own seed is for the NEXT hit to find.

@@ -147,11 +147,15 @@ for (const verb of WEAPON_PACKET_IDS) {
     );
   }
 }
-// The Control moment needs a hold the tree does not supply; the page says so.
+// The Control moment needs a hold; the page says so — unless the lean is the
+// Control lean, whose slow on every hit IS the hold (design §24.9).
 for (const lean of [undefined, ...WEAPON_PACKET_IDS]) {
-  assert(composeVerb('control', lean)?.needs === 'slow', `control verb × ${lean ?? 'no lean'}: needs a slow`);
+  const expected = lean === 'control' ? undefined : 'slow';
+  assert(composeVerb('control', lean)?.needs === expected,
+    `control verb × ${lean ?? 'no lean'}: ${expected ? 'needs a slow' : 'its own lean holds the target'}`);
   assert(composeVerb('tempo', lean)?.needs === undefined, `tempo verb × ${lean ?? 'no lean'}: needs nothing`);
 }
+assert(PACKET_DEFINITIONS.get('control')?.scalingStat === 'slowOnHit', 'the Control lean is its slow, not Attack');
 // The moments carry the shapes §24.2 names.
 assert(packetMoment('tempo')?.n === 6, 'tempo fires on every 6th hit');
 assert(packetMoment('affliction')?.capMs === 5_000, 'the affliction moment caps at one per 5 s');
@@ -232,6 +236,21 @@ assert(
   `stat line: ${statLine({ dotPotencyPct: 0.1 })}`,
 );
 assert(statLine({ speed: 11 }) === '+11 move speed.', `stat line: ${statLine({ speed: 11 })}`);
+assert(statLine({ dotPotencyPct: 0.1 }, 'short') === '+10% DoT potency.', 'the short form quotes the bare stat');
+assert(STAT_UNIT.slowOnHit === 0.15, 'the Control lean is a 15% slow (PROVISIONAL)');
+assert(
+  statLine({ slowOnHit: 0.15 }) === 'Every hit slows its target by 15% until your next swing.',
+  `stat line: ${statLine({ slowOnHit: 0.15 })}`,
+);
+// Each of the Hammer's three leans names its own stat (they read "+9% Attack.",
+// "+3 Attack." and "+3 Attack." while Control borrowed Attack).
+{
+  const hammer = LINEAGE_DATABASE.get('hammer')!;
+  const lines = hammer.cards.filter((c) => c.tier === 1 && c.row === 'stat').map((c) => cardSentence(c, {
+    ownedCards: [], active: {}, ownedForms: ['heavy-hammer'], wornForm: 'heavy-hammer',
+  }));
+  assert(new Set(lines).size === 3, `the Hammer's leans read three different lines: ${lines.join(' | ')}`);
+}
 
 // `composedSentence` and `cardSentence` read the active lean. Registered rapier
 // cards are needed for `cardSentence` (it looks the lineage up by id), so the

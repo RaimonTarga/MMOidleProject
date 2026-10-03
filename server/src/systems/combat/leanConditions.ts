@@ -11,6 +11,16 @@
  *   Affliction lean  that share of the hit (as it was before any empowered
  *                    multiplier — one multiplier per hit) is ADDED to a light
  *                    lineage bleed over `LEAN_CONDITION_NUMBERS.affliction`.
+ *   Control lean     the target is slowed by that fraction, through
+ *                    `applyMonsterSlow` (max-wins: never weakens or shortens a
+ *                    stronger slow), for `LEAN_CONDITION_NUMBERS.control` or one of
+ *                    the wielder's own swings and a beat, whichever is longer — a
+ *                    Heavy Hammer swings slower than the authored 1.5 s.
+ *
+ * A slow is the ladder's bottom rung and enters a monster the way every other
+ * slow does (Hamstring, the at-bay slow): control immunity refuses the ROOT and
+ * the STUN the Control payloads apply (`applyMonsterRoot`, `applyStun` and the
+ * stun ladder), not a slow.
  *
  * WHY HERE AND NOT A CARD. A lean is a stat row, not a triggered card: it folds
  * into the stat rebuild like any item stat (`stats.ts` writes the passive), so it
@@ -36,6 +46,19 @@ import { applyPlayerDebuff } from '../classes/shared/applyPlayerDebuff';
 import { evadeBlocksDebuffs } from '../defense/mitigation/evasion';
 import { LEAN_BLEED_ID } from './damage/bleedIds';
 import { hitBasis } from './lineageCards';
+import { applyMonsterSlow } from './status/monsterControl';
+
+/**
+ * How long one hit's lean slow holds: the authored window, or the wielder's own
+ * swing interval plus the bridge, whichever is longer — so the slow one swing lays
+ * down is still on the target when the next swing lands, whatever the weapon.
+ */
+export function leanSlowMs(player: PlayerEntity): number {
+  const numbers = LEAN_CONDITION_NUMBERS.control;
+  const authored = numbers?.durationMs ?? 0;
+  const bridged = player.performsAttack.attackCooldown + (numbers?.swingBridgeMs ?? 0);
+  return Math.max(authored, bridged);
+}
 
 /**
  * ADD `amount` to the lean's light bleed on `target`, spread over at least one
@@ -85,10 +108,12 @@ export function registerLeanConditions(): void {
     if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
     const player = ctx.attacker;
     const bleedShare = player.usesSkills.passives['shared.bleed-on-hit-pct'] ?? 0;
-    if (bleedShare <= 0) return;
+    const slowPct = player.usesSkills.passives['shared.slow-on-hit-pct'] ?? 0;
+    if (bleedShare <= 0 && slowPct <= 0) return;
     if (evadeBlocksDebuffs(ctx)) return;
     const target = ctx.defender;
     if (target.hasHealth.hp <= 0 || !world.hasMonster(target.isMonster.id)) return;
-    addLeanBleed(world, player, target, hitBasis(player, ctx) * bleedShare);
+    if (bleedShare > 0) addLeanBleed(world, player, target, hitBasis(player, ctx) * bleedShare);
+    if (slowPct > 0) applyMonsterSlow(world, target, slowPct, leanSlowMs(player), player.isPlayer.id);
   });
 }

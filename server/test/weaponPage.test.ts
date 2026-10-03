@@ -130,6 +130,19 @@ const find = (band: PageBand, id: string): PageCardModel => {
   assert.equal(verb.sentence, verbSentence('control', 'empowered'));
   const other = pageCard({ lineage: hammer, card: card(hammer, 'hammer-t1-engagement-payoff'), progress, wallet: wallet() });
   assert.equal(other.needsSlow, false);
+
+  // With the Control lean active the lean IS the hold source (design §24.9).
+  const seeded: LineageProgress = {
+    ...progress,
+    ownedCards: [...progress.ownedCards, 'hammer-t1-control-stat'],
+    active: { stat: 'hammer-t1-control-stat', payoff: 'hammer-t1-control-payoff' },
+  };
+  const pinned = pageCard({ lineage: hammer, card: card(hammer, 'hammer-t1-control-payoff'), progress: seeded, wallet: wallet() });
+  assert.equal(pinned.needsSlow, false);
+  assert.doesNotMatch(pinned.accessibleName, /Needs a slow/);
+  // And the lean's own line names its stat (it read "+3 Attack." like Engagement's).
+  const lean = pageCard({ lineage: hammer, card: card(hammer, 'hammer-t1-control-stat'), progress: seeded, wallet: wallet() });
+  assert.equal(lean.sentence, 'Every hit slows its target by 15% until your next swing.');
 }
 
 // ── One sentence per card, never the authored description (rule 5) ──────────

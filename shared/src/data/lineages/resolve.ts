@@ -284,7 +284,11 @@ export function composeVerb(verbLane: PacketId, leanLane?: PacketId): VerbCompos
   const verbHalves = packetHalves(verbLane);
   const pure = packetPurePair(verbLane);
   if (!verbHalves || !pure) return undefined;
-  const needs = verbHalves.moment.kind === 'hit-held' ? { needs: 'slow' as const } : {};
+  // The Control moment needs a held target. A lean whose stat slows on every hit
+  // (the Control lean, design §24.9) is that hold's source, so with it active the
+  // verb needs nothing; with any other lean, or none, the page says "needs a slow".
+  const leanHolds = leanLane !== undefined && packetScalingStat(leanLane) === 'slowOnHit';
+  const needs = verbHalves.moment.kind === 'hit-held' && !leanHolds ? { needs: 'slow' as const } : {};
 
   if (leanLane && leanLane !== verbLane) {
     const leanHalves = packetHalves(leanLane);

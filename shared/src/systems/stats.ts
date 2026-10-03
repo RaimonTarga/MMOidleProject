@@ -368,6 +368,14 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
         (p.usesSkills.passives['shared.bleed-on-hit-pct'] ?? 0) + value;
       continue;
     }
+    // The Control lean (design §24.9) is the same shape: a passive the server's
+    // lean-condition listener reads to slow every landed hit's target. It is not
+    // a stat-sheet number, so it lands nowhere else.
+    if (stat === 'slowOnHit') {
+      p.usesSkills.passives['shared.slow-on-hit-pct'] =
+        (p.usesSkills.passives['shared.slow-on-hit-pct'] ?? 0) + value;
+      continue;
+    }
     applyStatModToTarget(p, stat, value);
   }
 

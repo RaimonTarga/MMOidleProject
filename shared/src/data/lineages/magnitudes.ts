@@ -141,6 +141,11 @@ export const LINEAGE_SWITCH_DISCOUNT = 0.5;
  *    added as a light bleed, for every class (`LEAN_CONDITION_NUMBERS`): the two
  *    partition the DoT root's damage (its DoT, its hit) rather than stacking.
  *  - `attack` 3 — unchanged: ≈ +10% of a ~29-Attack T1 weapon.
+ *  - `slowOnHit` 0.15 — the Control lean (design §24.9), the brief's "short weak
+ *    slow": 15% move speed off the target on every hit. A two-number stat whose
+ *    second number (how long) lives in `LEAN_CONDITION_NUMBERS` and never climbs,
+ *    so only the slow's DEPTH takes the tier scalar, through the `fraction`
+ *    column like every percentage: 0.15 / 0.173 / 0.198 / 0.225 at T1–T4.
  *  - `speed` 11 — 9% of the reference player's base move speed
  *    (`GAME_CONFIG.PLAYER_SPEED` 120 × 0.09 = 10.8 → 11). Note the tier scalar's
  *    `absolute` column climbs ×11 by T4 (→ 121), which no other move-speed source
@@ -161,12 +166,13 @@ export const STAT_UNIT: Record<LineageStatKey, number> = {
   attackSpeedPct: 0.09,
   techniquePowerPct: 0.09,
   dotPotencyPct: 0.10,
+  slowOnHit: 0.15,
 };
 
 /** Stats that are fractions and keep three decimals; everything else is an integer. */
 const FRACTIONAL_STATS: ReadonlySet<LineageStatKey> = new Set<LineageStatKey>([
   'damageReduction', 'evasion', 'attackPct', 'attackSpeedPct', 'techniquePowerPct',
-  'dotPotencyPct',
+  'dotPotencyPct', 'slowOnHit',
 ]);
 
 /** Whether a stat row's value is a fraction (shown as a percentage). */

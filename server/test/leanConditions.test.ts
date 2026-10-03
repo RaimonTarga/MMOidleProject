@@ -15,10 +15,17 @@
  *      (so a re-dose doubles it); the one bleed driver ticks it out and the marker
  *      leaves with it.
  *   C. THE APPRENTICE. The same stat still adds into its DoT multiplier.
+ *   D. THE CONTROL LEAN, A HAMMER STRIKER WITH NO MID RANGE. Crushing Weight
+ *      slows on every landed hit (`slowOnHit`, no longer the placeholder Attack),
+ *      long enough to bridge the Hammer's own swing, so Pinned fires at its cap
+ *      from the second hit on the real attack at the real cadence. The slow is
+ *      max-wins, a blocking evade lays none, a knockdown is a hold, and a
+ *      control-immune boss still refuses the knockdown it feeds.
  *
  * Run: node --conditions=development --import tsx test/leanConditions.test.ts
  */
 import {
+  ABILITY_SLOW_EFFECT_ID,
   GAME_CONFIG,
   baseRecoveryForTier,
   dotClassProfileForSubVariant,
@@ -44,6 +51,10 @@ import { unlockSkill } from '../src/systems/player/progression/skills';
 import { playerDotsOnMonster } from '../src/systems/combat/damage/dotInventory';
 import { updateHemorrhages } from '../src/systems/classes/archetypes/cadence/t3/ticks/hemorrhage';
 import { LEAN_BLEED_ID, LINEAGE_BLEED_ID } from '../src/systems/combat/damage/bleedIds';
+import { leanSlowMs } from '../src/systems/combat/leanConditions';
+import { applyMonsterSlow, monsterIsHeld } from '../src/systems/combat/status/monsterControl';
+import { applyStun, STUN_EFFECT } from '../src/systems/combat/status/stun';
+import { monsterIgnoresControl } from '../src/systems/combat/status/controlImmunity';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -283,6 +294,96 @@ function hit(player: PlayerEntity, defender: MonsterEntity, damage: number, meta
   const clean = dummy();
   hit(plain, clean, 200);
   assert(getStatusEffect(clean.tracksCombat, LEAN_BLEED_ID) === undefined, 'a player with no Affliction lean seeds nothing');
+}
+
+// ══ D. THE CONTROL LEAN ON A HAMMER STRIKER, NO MID RANGE ══════════════════════
+
+{
+  const LEAN = 'hammer-t1-control-stat'; // Crushing Weight
+  const VERB = 'hammer-t1-control-payoff'; // Pinned
+  const player = wielder('lean-ctl-striker', 'heavy-hammer', 'hammer', [LEAN, VERB], 'cadence-root');
+  assert(player.usesSkills.combatArchetype === 'cadence', 'a real Striker');
+  assert(player.usesSkills.selectedRange === null, 'with no range node: no at-bay slow to borrow');
+  const slow = player.usesSkills.passives['shared.slow-on-hit-pct'] ?? 0;
+  assert(near(slow, 0.15), `the Control lean is a 15% slow on hit, got ${slow}`);
+  assert(player.dealsDamage.attack === wielder('lean-ctl-attack', 'heavy-hammer', 'hammer', [], 'cadence-root').dealsDamage.attack,
+    'and no longer the placeholder +3 Attack');
+  const verb = getLineageRuntime(player.tracksCombat)?.cards.find((c) => c.card.id === VERB);
+  assert(verb?.trigger?.kind === 'hit-held' && verb.trigger.capMs === 5_000, 'Pinned: the Control moment, capped');
+  assert(verb?.payoff?.kind === 'stun', 'Crushing Weight on Pinned is the pure pair (the knockdown)');
+
+  // The slow outlasts the Hammer's own swing, so the next swing finds it.
+  const STEP = realStep(player);
+  assert(STEP > 1_500, `a Hammer Striker swings slower than the authored 1.5 s (${STEP} ms)`);
+  assert(leanSlowMs(player) > STEP, `the lean slow (${leanSlowMs(player)} ms) bridges one swing (${STEP} ms)`);
+
+  const target = dummy();
+  assert(swing(player, target, VERB).length === 0, 'the first hit lands on a free target');
+  const laid = getStatusEffect(target.tracksCombat, ABILITY_SLOW_EFFECT_ID);
+  assert(laid !== undefined && near(laid.data['moveSlowPct'] ?? 0, 0.15), 'and leaves the 15% slow');
+  assert((laid?.data['totalMs'] ?? 0) === leanSlowMs(player), 'with the clock the buff UI needs');
+
+  const firedAt: number[] = [];
+  let swings = 1;
+  for (let t = STEP; t <= 30_000; t += STEP) {
+    clock += STEP;
+    tickCooldowns(player.tracksCombat, STEP);
+    tickStatusEffectDurations(target.tracksCombat, STEP);
+    const fx = swing(player, target, VERB);
+    if (fx.length > 0) {
+      firedAt.push(t);
+      assert(fx[0].fx === 'control.knockdown', 'the pure Control payload: the knockdown');
+    }
+    swings += 1;
+  }
+  assert(firedAt[0] === STEP, `the second swing finds the target held and fires, got ${firedAt[0]}`);
+  for (let i = 1; i < firedAt.length; i++) {
+    const gap = firedAt[i] - firedAt[i - 1];
+    assert(gap >= 5_000 && gap < 5_000 + STEP, `fires at the 5 s cap, never chaining (gap ${gap})`);
+  }
+  assert(firedAt.length >= 5, `a Hammer Striker's Pinned fires through a 30 s fight: ${firedAt.length} of ${swings} swings`);
+  console.log(`  D hammer striker  step ${STEP} ms  slow ${leanSlowMs(player)} ms  swings ${swings}  Pinned fired ${firedAt.length}`);
+}
+
+{
+  // The slow rules: max-wins (a stronger slow is never weakened or shortened), a
+  // blocking evade lays none, and a knockdown on its own is a hold.
+  const player = seeded('lean-ctl-rules');
+  player.usesSkills.passives['shared.bleed-on-hit-pct'] = 0;
+  player.usesSkills.passives['shared.slow-on-hit-pct'] = 0.15;
+  const target = dummy();
+  assert(leanSlowMs(player) < 10_000, 'the lean slow is the shorter one here');
+  applyMonsterSlow(world, target, 0.4, 10_000, 'hamstring');
+  hit(player, target, 200);
+  const held = getStatusEffect(target.tracksCombat, ABILITY_SLOW_EFFECT_ID)!;
+  assert(near(held.data['moveSlowPct'] ?? 0, 0.4), 'a stronger slow keeps its depth');
+  assert(held.remainingMs === 10_000, 'and its clock');
+
+  const dodged = dummy();
+  hit(player, dodged, 200, { evadeBlocksDebuffs: true });
+  assert(getStatusEffect(dodged.tracksCombat, ABILITY_SLOW_EFFECT_ID) === undefined, 'a blocking evade lays no slow');
+
+  const knocked = dummy();
+  assert(!monsterIsHeld(knocked), 'a free body is not held');
+  assert(applyStun(knocked.tracksCombat, 1_500, 'someone'), 'knocked down');
+  assert(monsterIsHeld(knocked), 'a knockdown (a stun) counts as held (design §24.9)');
+
+  // A control-immune boss takes the slow like any slow, and refuses the
+  // knockdown it feeds — the immunity holds where control enters.
+  const pinned = wielder('lean-ctl-immune', 'heavy-hammer', 'hammer',
+    ['hammer-t1-control-stat', 'hammer-t1-control-payoff'], 'cadence-root');
+  const boss = world.createMonster(NODE, 'cinder-shell-magma-salamander', { x: nextX += 500, y: 400 })!;
+  boss.hasHealth.maxHp = 10_000_000;
+  boss.hasHealth.hp = 10_000_000;
+  assert(monsterIgnoresControl(boss), 'the test boss really is control-immune');
+  let knockdowns = 0;
+  for (let i = 0; i < 4; i++) {
+    clock += 2_000;
+    tickCooldowns(pinned.tracksCombat, 2_000);
+    knockdowns += swing(pinned, boss, 'hammer-t1-control-payoff').length;
+  }
+  assert(knockdowns === 0, 'an immune boss is never knocked down');
+  assert(getStatusEffect(boss.tracksCombat, STUN_EFFECT) === undefined, 'and carries no stun');
 }
 
 // ══ C. THE APPRENTICE — DoT potency still feeds its DoT ════════════════════════
