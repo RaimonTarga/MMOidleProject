@@ -103,20 +103,21 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
       fx: 'technique.trail',
     },
 
+    // ── T1 verb row (§24.2): a moment; the lean above decides what happens ───
     {
       id: 'broadsword-t1-kill-chain-payoff', lineageId: 'broadsword', tier: 1, row: 'payoff', lane: 'kill-chain',
-      name: 'Momentum', description: 'A kill hurries the next swing.',
-      fx: 'kill-chain.kill-pulse', trigger: 'kill', payoff: 'speed-window',
+      name: 'Onward', description: 'The swing after a kill is already on its way.',
+      fx: 'kill-chain.kill-pulse',
     },
     {
       id: 'broadsword-t1-empowered-payoff', lineageId: 'broadsword', tier: 1, row: 'payoff', lane: 'empowered',
-      name: 'Find the Gap', description: 'Your mechanic leaves the target open.',
-      fx: 'empowered.weak-point', trigger: 'mechanic-fired', payoff: 'vulnerability',
+      name: 'Crowning Blow', description: 'When the training pays out, the blade goes with it.',
+      fx: 'empowered.weak-point',
     },
     {
       id: 'broadsword-t1-technique-payoff', lineageId: 'broadsword', tier: 1, row: 'payoff', lane: 'technique',
-      name: 'Set and Reset', description: 'A form that lands comes round again sooner.',
-      fx: 'technique.cast-flare', trigger: 'technique-cast', payoff: 'technique-refund',
+      name: 'Set Piece', description: 'A drilled form that lands is a beat the next one builds on.',
+      fx: 'technique.cast-flare',
     },
 
     // ── T2 band (design §4): stat (L2), payoff (L3), amplifier (L5) ──────────

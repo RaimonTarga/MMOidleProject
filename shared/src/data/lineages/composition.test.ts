@@ -245,4 +245,70 @@ for (const card of rapier.cards.filter((c) => c.tier === 1 && c.row === 'stat'))
 // The labels the page reads for the two T1 rows.
 assert(ROW_LABELS.stat === 'Lean' && ROW_LABELS.payoff === 'Verb', 'the T1 rows read Lean and Verb');
 
+// ── 6. The five T1 weapon bands are three leans and three verbs ──────────────
+
+for (const lineage of lineagesForSlot('weapon')) {
+  const band = lineage.cards.filter((c) => c.tier === 1);
+  for (const lane of lineage.lanes) {
+    const leans = band.filter((c) => c.lane === lane && c.row === 'stat');
+    const verbs = band.filter((c) => c.lane === lane && c.row === 'payoff');
+    assert(leans.length === 1, `${lineage.id}: one ${lane} lean`);
+    assert(verbs.length === 1 && isVerbCard(verbs[0]!), `${lineage.id}: one ${lane} VERB, authored with no trigger/payoff`);
+    // Ids are unchanged so saves, the tutorial and the bot routes keep working.
+    assert(leans[0]!.id === `${lineage.id}-t1-${lane}-stat`, `${lineage.id}: the ${lane} lean keeps its id`);
+    assert(verbs[0]!.id === `${lineage.id}-t1-${lane}-payoff`, `${lineage.id}: the ${lane} verb keeps its id`);
+  }
+  assert(band.length === 6, `${lineage.id}: the T1 band is six cards, got ${band.length}`);
+  // Above T1, every payoff row is still a legacy card that never composes.
+  for (const card of lineage.cards.filter((c) => c.tier > 1)) {
+    assert(!isVerbCard(card), `${card.id}: only the T1 band is lean-and-verb`);
+  }
+
+  // Every lean × verb, through the real cards and a real progress: the verb's
+  // sentence follows the active lean, three of nine read pure.
+  const base = lineage.forms.find((f) => f.tier === 1)!.recipeId;
+  let pure = 0;
+  for (const verbLane of lineage.lanes) {
+    const verbCardReal = band.find((c) => c.lane === verbLane && c.row === 'payoff')!;
+    for (const leanLane of lineage.lanes) {
+      const leanCardReal = band.find((c) => c.lane === leanLane && c.row === 'stat')!;
+      const tree: LineageProgress = {
+        ownedCards: [leanCardReal.id, verbCardReal.id],
+        active: { stat: leanCardReal.id, payoff: verbCardReal.id },
+        ownedForms: [base], wornForm: base,
+      };
+      const sentence = cardSentence(verbCardReal, tree);
+      assert(sentence === verbSentence(verbLane, leanLane), `${verbCardReal.id} with ${leanLane}: cardSentence`);
+      assert(composedSentence(lineage, tree) === sentence, `${lineage.id}: composedSentence is the active verb's`);
+      if (sentence === pureSentenceText(verbLane)) pure += 1;
+      const resolved = resolveLineageCards(lineage, tree).find((c) => c.card.id === verbCardReal.id)!;
+      assert(resolved.composition?.leanLane === leanLane, `${verbCardReal.id}: composed against ${leanLane}`);
+    }
+  }
+  assert(pure === 3, `${lineage.id}: three of nine real pairs read pure, got ${pure}`);
+}
+
+// The Rapier's names are the approved weapon-page mockup's.
+{
+  const names = Object.fromEntries(rapier.cards.filter((c) => c.tier === 1).map((c) => [c.id, c.name]));
+  assert(names['rapier-t1-tempo-stat'] === 'Quick Wrist', 'Rapier tempo lean');
+  assert(names['rapier-t1-affliction-stat'] === 'Envenomed', 'Rapier affliction lean');
+  assert(names['rapier-t1-engagement-stat'] === 'Keen Edge', 'Rapier engagement lean');
+  assert(names['rapier-t1-tempo-payoff'] === 'Flurry', 'Rapier tempo verb');
+  assert(names['rapier-t1-affliction-payoff'] === 'Venom Point', 'Rapier affliction verb');
+  assert(names['rapier-t1-engagement-payoff'] === 'Opening Lunge', 'Rapier engagement verb');
+}
+
+// A verb the player owns with NO lean slotted reads, and fires, its pure pair.
+{
+  const flurry = rapier.cards.find((c) => c.id === 'rapier-t1-tempo-payoff')!;
+  const alone: LineageProgress = {
+    ownedCards: [flurry.id], active: { payoff: flurry.id }, ownedForms: ['flash-rapier'], wornForm: 'flash-rapier',
+  };
+  assert(cardSentence(flurry, alone) === 'Every 6th hit strikes twice.', `Flurry alone: ${cardSentence(flurry, alone)}`);
+  const [resolved] = resolveLineageCards(rapier, alone);
+  assert(resolved?.payoff?.kind === 'echo-hit' && resolved.payoff.magnitude === 1, 'Flurry alone echoes a whole hit');
+  assert(resolved?.trigger?.kind === 'hit-nth' && resolved.trigger.n === 6, 'on every 6th hit');
+}
+
 console.log('composition: ok');

@@ -29,12 +29,12 @@ import {
   LINEAGE_DATABASE, cardsForTier, formsAtGate, lineageForCardId, lineageForRecipeId,
   lineagesForSlot, lineagesWithLane,
 } from './index';
-import { PACKET_DEFINITIONS, packetDefaultFace, packetScalingStat } from './packets';
+import { PACKET_DEFINITIONS, packetDefaultFace, packetHalves, packetScalingStat } from './packets';
 import {
   GATE_LOCAL_LEVEL, MAX_LINEAGE_TIER, rowBiomeLevel, rowsForTier, tierHasRow,
 } from './magnitudes';
 import {
-  bandBiomeLevel, lineageGateCost, resolveLineageCapstone, resolveLineageCard,
+  bandBiomeLevel, isVerbCard, lineageGateCost, resolveLineageCapstone, resolveLineageCard,
 } from './resolve';
 import {
   AMPLIFIED_AXES, LINEAGE_FX_KEYS, PACKET_IDS, PAYOFF_KINDS, ROW_KINDS,
@@ -137,6 +137,13 @@ for (const [key, lineage] of LINEAGE_DATABASE) {
 
     if (card.row === 'stat') {
       check(!card.trigger && !card.payoff, `${card.id}: a stat row is the one row that is a number, not an effect`);
+    } else if (isVerbCard(card)) {
+      // A T1 VERB (design §24.2): it carries only its lane — the moment comes from
+      // the packet, the payload from the active lean — and that shape exists only
+      // in a weapon's T1 band, on a lane with halves to compose.
+      check(card.tier === 1, `${card.id}: only the T1 band is lean-and-verb; a T${card.tier} payoff authors its own trigger and payoff`);
+      check(lineage.slot === 'weapon', `${card.id}: only a weapon band composes (non-weapon trees are parked)`);
+      check(!!packetHalves(card.lane), `${card.id}: lane '${card.lane}' has no halves to compose a verb from`);
     } else {
       check(!!card.trigger, `${card.id}: every row but stat fires on something`);
       check(!!card.payoff, `${card.id}: a card must DO something the moment it is bought (design §4)`);
