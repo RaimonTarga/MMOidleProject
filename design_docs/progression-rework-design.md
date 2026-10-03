@@ -1157,38 +1157,63 @@ The bench criterion (§18.9) changes job: it is a **viability floor** — no lan
 the median uplift of its tier — and stops being a similarity target. Ordinal encounter
 checks stay.
 
-### 24.2 The T1 band is a lean and a verb
+### 24.2 The T1 band is a lean and a verb, and they compose
 
-Two rows at T1. **Row 1, the lean**: a real stat move of 8–10% in the lane's stat, the
-direction the player chooses; the headroom is the folded ladder (§23). **Row 2, the verb**:
-one event-shaped payoff per lane, describable in one sentence, visible under 24.1. Rows
-above are unchanged in kind (T2 amplifier, T3 keystone, T4 cross); an amplifier now moves
-an EVENT's axis (every 6th → every 4th hit; one body → two; 2 s → 4 s), which is what
-`AmplifiedAxis` already encodes.
+Two rows at T1, and the two rows are the two halves of a card the runtime already knows:
+a **trigger** and a **payoff**.
 
-Provisional verbs for the five T1 weapons, for the designer to edit (the existing payoff
-vocabulary is reused where it fits; new kinds are marked *new*):
+- **Row 1, the lean.** A real stat move of 8–10% in the lane's scaling stat (`packets.ts`:
+  Tempo attack speed, Empowered attack %, Affliction on-hit, Control attack, Kill chain
+  move speed, Engagement attack, Technique power). A lean is a character stat while the
+  form is worn, like any item stat, so it is global: an Apprentice holding a Rapier with
+  the Tempo lean swings faster with everything. That is the point of a lean. **It also
+  names a payload**: the lane's event-shaped effect.
+- **Row 2, the verb.** A **moment**: the lane's trigger, at a cadence of one firing every
+  4–6 s at reference attack speed.
 
-| Weapon (biome) | Lane | Verb | One sentence |
+**The composition rule.** The active verb fires its moment; what happens at that moment
+is the active lean's payload. With no lean active, the verb pays its own lane's payload,
+so a verb alone never does nothing. When the lean and the verb are the same lane, the pair
+uses that lane's hand-authored **pure** sentence, because two lanes' halves can be
+degenerate together (Empowered × Empowered would read "when your mechanic fires, it counts
+as your mechanic firing"). Two purchases give nine real combinations per weapon; swapping
+either card changes the sentence, and the sentence is generated from the two halves, which
+is how the page stays one line per card.
+
+**Moments and payloads, per packet** (the seven weapon-eligible packets; magnitudes are the
+designer's, shapes and cadences are fixed here):
+
+| Packet | Moment (the verb row) | Payload (the lean row) | Pure sentence (same lane) |
 |---|---|---|---|
-| Broadsword (Plains) | Technique | Drilled Form | Every 5th hit resets your Technique's cooldown; the ability icon flashes ready. (`technique-refund` at 100%) |
-| | Kill chain | Momentum | A kill makes your next swing land twice. (`echo-hit` at 100%, `kill` trigger) |
-| | Empowered | Breaker | Every 6th hit is a heavy swing that counts as your mechanic firing. (*new* `mechanic-proxy`, the Signature idea on a counter) |
-| Rapier (Forest) | Tempo | Flurry | Every 6th hit strikes twice. (`echo-hit` at 100%) |
-| | Affliction | Venom Point | Every 6th hit leaves a bleed worth a whole swing over 4 s. (`hemorrhage`) |
-| | Engagement | Opening Lunge | Your first hit on each new target is a lunge for double damage, with an afterimage. (`first-hit` + *new* `big-hit` 2×) |
-| Hammer (Mountain) | Empowered | Quake | Every 6th hit shakes the ground and hits every adjacent body for a full swing. (`echo-hit` with `targets`) |
-| | Control | Stagger | Every 5th hit knocks the target down for 1.5 s. (`stun`) |
-| | Engagement | Standfast | Stand still for 3 s and you plate up until you move. (`standing` + `plating-stack`) |
-| Axe (Cave) | Tempo | Frenzy | Every 6th hit opens 3 s of doubled attack speed. (`speed-window` at 100%) |
-| | Kill chain | Reaper | A kill heals a tenth of your pool and loads your next hit. (`heal` + `empower-next`) |
-| | Empowered | Cleave | Every 6th hit splits onto a second body for full damage. (`echo-hit`, `targets` 2) |
-| Dagger (Swamp) | Affliction | Fester | Every 5th hit doubles the poison on the target. (`poison-stack` burst) |
-| | Control | Hamstring | Every 5th hit roots the target for 2 s. (`root`) |
-| | Kill chain | Shadow Step | After a kill, your first hit on the next target is a backstab for triple. (`kill` latch + *new* `big-hit` 3×) |
+| Tempo | every 6th hit | the hit lands twice | Every 6th hit strikes twice. |
+| Affliction | a hit on a target you have already afflicted, at most once every 5 s | a heavy poison or bleed, a whole swing over 4 s | Hitting an afflicted target doubles its affliction. |
+| Engagement | your first hit on each new target | the hit is a lunge for double damage | Your first hit on each target is a lunge for double damage. |
+| Empowered | when your class mechanic fires | the hit counts as your mechanic firing (`mechanic-proxy`, the Signature idea) | Your mechanic hits half again as hard. |
+| Control | a hit on a slowed or rooted target, at most once every 5 s | the target is rooted for 2 s | Hitting a held target knocks it down for 1.5 s. |
+| Kill chain | your next hit after a kill | heal a tenth of your pool and the hit is loaded (+50%) | A kill heals a tenth of your pool and loads your next hit. |
+| Technique | when a Technique lands | refund a third of that Technique's cooldown | A landed Technique refunds half its cooldown. |
 
-Magnitudes are the designer's; the table fixes shape and cadence. Every verb needs its
-own readable fx, not a tint.
+A weapon exposes its three lanes' moments and payloads, so each weapon has 6 off-lane
+sentences and 3 pure ones. The full 45 are reviewable in the combinations mockup
+(2026-10-03); the designer reviews them for the pairs worth making special, the way
+Affliction × Engagement ("your first hit on each target poisons it heavily") was the pair
+that suggested the structure.
+
+Two things the bench must carry: the Empowered moment fires as often as the class mechanic
+does, so its normalisation entry comes from the mechanic's reference cadence, not from
+hits; and the Control moment needs a slow source, which melee classes get from the Mid
+range at T3 and which the Control payload itself supplies once it has fired once — at T1 a
+Control verb with no Control lean and no Mid range fires rarely, and the page should say so
+("needs a slow").
+
+**Shard names.** The player never reads a lane name on a material. One physical noun per
+packet: Tempo → **Gale Shard**, Empowered → **Anvil Shard**, Affliction → **Venom Shard**,
+Control → **Shackle Shard**, Kill chain → **Bone Shard**, Engagement → **Spark Shard**,
+Technique → **Sigil Shard**, Bulwark → **Iron Shard**, Barrier tempo → **Glass Shard**.
+Lane names stay the internal vocabulary; the player sees shards, colours and sentences.
+
+Every payload needs its own readable fx, not a tint; the moment's fx is the rhythm readout
+ring (24.6).
 
 ### 24.3 One shard per node
 
