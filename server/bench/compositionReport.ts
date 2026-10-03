@@ -20,13 +20,14 @@
  * The judgments are design §24.1's viability floor (no pair below 0.9× the median
  * pair of its tier and instrument) and the brief's outlier ceiling (listed above
  * 1.5×), both from `lineage/viabilityFloor.ts`. Moment firings are the verb card's
- * landed `card-fx` events, reported per minute of engaged (lanes) or fight (boss)
+ * landed `card-fx` events, reported per minute of farming (lanes, sim time) or fight (boss)
  * time, so "fires rarely" is visible next to the uplift.
  *
  *   node --conditions=development --import tsx bench/compositionReport.ts \
  *     [--boss=../reports/course-correction/matrix-boss.jsonl] \
  *     [--lanes=../reports/course-correction/matrix-lanes.jsonl] \
  *     [--out=../reports/course-correction/composition-matrix.md] [--note=<runs line>]
+ *     [--findings=<findings.md>]
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -59,7 +60,7 @@ interface BossRow {
   minHpPct: number; error?: string;
 }
 interface LaneRow {
-  cellId: string; lineageId: string; cls: string; pair: string; lean: PacketId | null; verb: PacketId | null;
+  lineageId: string; cls: string; pair: string; lean: PacketId | null; verb: PacketId | null;
   nodeId: string; seed: number; kills: number; deaths: number; engagedMs: number; capMs: number;
   refusals: string[]; verbFires: number;
 }
@@ -74,9 +75,16 @@ function readJsonl<T>(path: string): T[] {
   return out;
 }
 
-const bossRows = readJsonl<BossRow>(bossPath).filter((r) => !r.error && r.lineage);
-const bossErrors = readJsonl<BossRow>(bossPath).filter((r) => r.error);
-const laneRows = readJsonl<LaneRow>(lanesPath);
+// The committed rows are slimmed (`lineage`, `weapon`, empty `refusals` dropped):
+// the lineage is the id's `cmp-<lineage>-` prefix (lineage ids carry no hyphen).
+const allBoss = readJsonl<BossRow>(bossPath).map((r) => ({
+  ...r,
+  lineage: r.lineage ?? r.id.split('|')[0].split('-')[1],
+  refusals: r.refusals ?? [],
+}));
+const bossRows = allBoss.filter((r) => !r.error && r.id.startsWith('cmp-'));
+const bossErrors = allBoss.filter((r) => r.error);
+const laneRows = readJsonl<LaneRow>(lanesPath).map((r) => ({ ...r, refusals: r.refusals ?? [] }));
 
 /** `cmp-rapier-tempo×affliction|striker|...` → `tempo×affliction`. */
 const bossPair = (r: BossRow): string => r.id.split('|')[0].slice(`cmp-${r.lineage}-`.length);
@@ -93,7 +101,10 @@ const shard = (lane: PacketId | null): string => (lane ? PACKET_DEFINITIONS.get(
 interface PairCell {
   /** Median over nodes (lanes) or bosses (boss lab) of the per-encounter uplift. */
   uplift: number | null;
-  /** Verb firings per minute of engaged (lanes) / fight (boss) time. */
+  /**
+   * Verb firings per minute of farming (lanes: SIM time, not engaged time — the
+   * Conduit's summons fight while it reads as never engaged) / fight (boss) time.
+   */
   firesPerMin: number | null;
   verbFires: number;
   /** Lanes: deaths; boss: fights lost. Control's alongside for the delta. */
@@ -124,7 +135,7 @@ function laneCells(): Map<CellKey, PairCell> {
         if (pair.label === 'control') continue;
         const nodes = [...new Set(laneRows.filter((r) => r.lineageId === lineage.id && r.cls === cls).map((r) => r.nodeId))];
         const uplifts: number[] = [];
-        let fires = 0; let engaged = 0; let deaths = 0; let controlDeaths = 0; let n = 0;
+        let fires = 0; let simMs = 0; let deaths = 0; let controlDeaths = 0; let n = 0;
         const refusals = new Set<string>();
         for (const nodeId of nodes) {
           const mine = byEncounter.get(`${lineage.id}|${cls}|${pair.label}|${nodeId}`) ?? [];
@@ -134,7 +145,7 @@ function laneCells(): Map<CellKey, PairCell> {
           const c = kpm(control);
           if (c > 0) uplifts.push(kpm(mine) / c - 1);
           fires += mine.reduce((a, r) => a + r.verbFires, 0);
-          engaged += mine.reduce((a, r) => a + r.engagedMs, 0);
+          simMs += mine.reduce((a, r) => a + r.capMs, 0);
           deaths += mine.reduce((a, r) => a + r.deaths, 0);
           controlDeaths += control.reduce((a, r) => a + r.deaths, 0);
           n += mine.length;
@@ -143,7 +154,7 @@ function laneCells(): Map<CellKey, PairCell> {
         if (n === 0) continue;
         out.set(key(lineage.id, cls, pair.label), {
           uplift: medianOf(uplifts),
-          firesPerMin: engaged > 0 ? fires / (engaged / 60_000) : null,
+          firesPerMin: simMs > 0 ? fires / (simMs / 60_000) : null,
           verbFires: fires, bad: deaths, controlBad: controlDeaths, n, refusals: [...refusals],
         });
       }
@@ -260,13 +271,17 @@ push(
   'nodes); in the **boss lab**, mean boss DPS (HP removed per fight-second) on the same boss',
   'and seeds (median over the five bosses). A (weapon, pair) reading is the median over the',
   'six classes. **Fires/min** is the verb card\'s landed `card-fx` events per minute of',
-  'engaged (lanes) or fight (boss) time — 0 means the moment never paid out.',
+  'farming (lanes, sim time) or fight (boss) time — 0 means the moment never paid out.',
   '',
   '**Judgments.** Design §24.1\'s viability floor: no pair below **0.9×** the median pair of',
   'its instrument (T1 is the only tier measured). Outliers are listed above **1.5×** and below',
   '0.9× of that median — the 1.5× list is a reading, never a failure.',
   '',
 );
+
+// `--findings=<file.md>`: the analyst's reading of the tables, inserted here so the
+// generated tables and the words about them travel in one file.
+if (args.findings) push(readFileSync(resolve(args.findings), 'utf8').trimEnd(), '');
 
 for (const inst of instruments) {
   const readings = pairReadings(inst.cells);
