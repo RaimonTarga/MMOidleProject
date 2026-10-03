@@ -1349,3 +1349,45 @@ their verb cannot fire at T1, not because a number is small. The decisions:
   to three classes on the Rapier); the ten numbers the report lists as picks; the eight
   T2–T4 nodes that pay a family they cannot field; the vocabulary over §6's caps (raise the
   caps or consolidate in the ability pass).
+
+
+## 25. Reach: the second channel for the two kiteable T1 bosses (decided 2026-10-03)
+
+The T1 boss pass (docs/briefs/t1-boss-pass-report-2026-10-02.md §8) measured incoming
+HP/s by class on the untouched bosses. Three bosses sit at a 1.4–2.0× spread between the
+class that takes the most and the one that takes the least. Two sit at 9.8× and infinity:
+
+| boss | striker | squire | slinger | spirit | apprentice | conduit |
+|---|---|---|---|---|---|---|
+| Crag Behemoth | 9.8 | 7.8 | 1.3 | 1.0 | 4.0 | 2.9 |
+| Obsidian Broodmother | 8.0 | 6.8 | 1.5 | 0.0 | 1.7 | 1.6 |
+
+The cause is not the telegraphed attack; it is what is around it. Both are slow giants
+(speed 22 and 24 against the Greatbear's 60) whose only reach beyond melee is the one
+telegraphed pattern, and an orbiting ranged class is never where that lands. The Spirit
+finishes a Broodmother fight on a full bar. `design_docs/boss-design.md` already states the
+rule this breaks: *anti-kite — every boss needs charge (if slow) or speed + reach; never
+kiteable to triviality.* The charge is there and it is not reach.
+
+**The fix is reach, not speed and not a nerf.** Each of the two bosses gains a
+**continuous, lightly telegraphed channel that pressures a target beyond melee range**, the
+way the Greatbear's ordinary swing pressures everyone:
+
+- **Crag Behemoth — Rockfall.** While its target is beyond melee reach, the Behemoth hurls
+  rock on its basic cadence: a thrown hit that lands where the target is, small radius,
+  telegraph under 0.6 s, about 0.6–0.7× its attack. Readable, frequent, avoidable only by
+  moving — which is the one thing an orbiter is already doing, so it lands often enough to
+  be a budget rather than an exam. The Crag Charge is unchanged.
+- **Obsidian Broodmother — Tremor.** Every few seconds the cave shakes: a pulse around the
+  boss (radius wider than orbit distance) for about 0.4× its attack, unavoidable inside the
+  radius. Ambient pressure that an orbiter cannot kite, melee already pays, and the mound
+  exam is unchanged.
+
+Numbers are the designer's and provisional, applied per row like the boss pass. The target
+is a spread of **≤ 2.5×** between the class that takes the most and the least on each boss,
+with **melee incoming unchanged** (they already pay the full price) and **every class still
+≥ 70%** on the tutorial kit (§ boss pass bar). If the reach channel pushes a melee class
+below the bar, the channel is wrong, not the melee row.
+
+The same rule reads forward: a slow boss at any tier that cannot touch an orbiter is
+missing its reach, and the fix is a reach channel in the boss's own idiom, never speed.
