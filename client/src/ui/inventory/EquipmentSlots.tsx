@@ -38,7 +38,8 @@ export function EquipmentSlots({ compare, onOpenLineage }: Props) {
             && !relicIsUnlocked(playerTier, playerNodeId === TEST_ROOM_NODE_ID);
           // The slot holds the lineage, not the item (design §2): a form's slot
           // reads as "<Lineage name>" with the worn form's own name underneath,
-          // and tapping it opens the tree instead of pinning a compare card.
+          // and tapping it opens the weapon page (design §24.6) instead of
+          // pinning a compare card.
           // A parked slot (design §24.5: armour, charm, boots) has no tree to
           // open, even when an old save still holds one, so it reads as an item.
           const lineage = filled ? lineageForEquippedItem(defId) : undefined;
@@ -61,10 +62,10 @@ export function EquipmentSlots({ compare, onOpenLineage }: Props) {
               style={color ? { borderColor: `${color}88` } : undefined}
               title={relicLocked ? 'Relics unlock at Tier 4' : coreInactive
                 ? `Inactive — ${coreEligibilityLabel(def.coreEligibility).toLowerCase()}`
-                : hasTree ? `Open the ${lineageDisplayName(lineage!)} tree`
+                : hasTree ? `Open the ${lineageDisplayName(lineage!)} page`
                   : undefined}
               aria-label={filled
-                ? hasTree ? `Open the ${lineageDisplayName(lineage!)} tree` : `Show what ${def.name} gives you`
+                ? hasTree ? `Open the ${lineageDisplayName(lineage!)} page` : `Show what ${def.name} gives you`
                 : `${SLOT_LABELS[slot]} slot empty`}
               aria-pressed={filled && !hasTree ? isPinned : undefined}
               disabled={!filled}
