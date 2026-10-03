@@ -102,10 +102,12 @@ export const TUTORIAL_OPENING: TutorialScript = {
       waiting: 'The Herb Pouch opens at the next mastery level.',
       craft: 'Craft the Herb Pouch and carry it.',
     }, { farm: ['charm'] }),
+    // The boots' idea rides on the CRAFT line: the farm line shows right after
+    // the charm, still at Clearing 3 with the class and the charm.
     ...clearingPiece('clearing-boots-t1', 4, {
-      farm: 'Last piece: boots, so less time walking and more time fighting.',
+      farm: 'Last piece of the Clearing set: the Soft Boots.',
       waiting: 'The Soft Boots open at mastery 4, the Clearing\'s last level.',
-      craft: 'Craft the Soft Boots and lace them up. That is the full Clearing set.',
-    }, { farm: ['boots'] }),
+      craft: 'Craft the Soft Boots and lace them up: less time walking, more time fighting. That is the full Clearing set.',
+    }, { craft: ['boots'] }),
   ],
 };
