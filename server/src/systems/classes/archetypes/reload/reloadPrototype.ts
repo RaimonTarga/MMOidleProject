@@ -81,6 +81,10 @@ export function initReloadArchetype(): void {
     attackerType:  'player',
     attackerSlice: 'usesReload',
     passiveKey:    'reload.empowered-mult',
+    // `mechanic-proxy` (design §24.2): only the Duelist authors this multiplier,
+    // so only the Duelist's proxy uses it; every other reload spec has no
+    // damage-multiplier mechanic and takes the proxy's fallback.
+    proxyRequiresPassive: true,
   });
 
   // Frame loop (Phase 3): registered right after the empowered multiplier so the

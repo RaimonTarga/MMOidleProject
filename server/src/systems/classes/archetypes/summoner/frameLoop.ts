@@ -36,6 +36,7 @@ import {
 import type { MonsterEntity, PlayerEntity } from '../../../../ecs/entity';
 import type { World } from '../../../../world/World';
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
+import { isMechanicProxy } from '../../../combat/engine/empoweredAttacks';
 import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
 import { defineBuff, type BuffDescriptor } from '../../../combat/buffs/descriptor';
 import { applyPlayerProcDamage } from '../../../combat/damage/procDamage';
@@ -208,6 +209,9 @@ function bankAndMaybeSlam(
 
 export function registerSummonerFrameLoop(): void {
   registerCombatListener('onHit', (ctx, world) => {
+    // A `mechanic-proxy` hit (design §24.2) COUNTS AS the mechanic for what reads
+    // it downstream, but it never walks the root's own loop (rule 3).
+    if (isMechanicProxy(ctx)) return;
     if (ctx.attackerType !== 'player') return;
     if (ctx.defenderType !== 'monster') return;
     const formation = ctx.formation;
@@ -276,7 +280,9 @@ export const SUMMONER_FRAME_BUFFS = [
       id:          'summoner-frame-link',
       label:       'Link',
       stacks,
-      durationPct: -1,
+      // A bank reports its FILL here, like the cadence and cooldown banks: the
+      // rhythm readout's frame ring draws it (design §24.6).
+      durationPct: Math.min(100, (stacks / max) * 100),
       color:       '#cc99ff',
       logDetail:   `${slam} banked for the next linked slam`,
       values:      [

@@ -1,0 +1,22 @@
+{
+  "id": "lineage-speed",
+  "category": "cc-icons",
+  "provider": "built-in OpenAI imagegen",
+  "status": "pending",
+  "candidate": "candidate-1.png",
+  "out": "files/concept-icons/statuses/buffs/lineage-speed.png",
+  "size": {
+    "w": 48,
+    "h": 48
+  },
+  "generationSize": {
+    "w": 1254,
+    "h": 1254
+  },
+  "sourceSha256": "5cef7d8894bb776d43b6f3e8c839b8c4d5bd98af405408fb059767010964098d",
+  "candidateSha256": "c31887e265bb4f14955e273c83e962f19cb01fefe9d778d841ee972630559f95",
+  "generatedFilename": "exec-d7e379bd-32bc-4e58-901a-1c1ee642280b.png",
+  "prompt": "Use case: stylized-concept\nAsset type: MMO Idle buff tile, final 48x48 PNG, displayed at 24-48px, matching existing concept-icons/statuses/buffs/ square framing.\nPrimary request: one cyan sweeping featherlike motion streak with two short trailing bars, clear acceleration silhouette.\nComposition: one centered bold symbol occupying 70 percent of square canvas, generous padding; only two or three broad value groups. Readable at 24px.\nStyle: concise semi-painterly fantasy game UI symbol with crisp angular shapes and restrained material highlights. Prioritize clean silhouette over surface detail.\nPalette: dominant #7fe3ff, restrained pale highlight and dark low-saturation shadow.\nBackground: fully opaque full-square charcoal #11161d, even edge-to-edge, no vignette. Absolutely no transparency, no checkerboard.\nConstraints: the HUD supplies all timing sweeps and frames; do not draw any ornamental surround, bevel, circular clock overlay, border, or UI panel. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
+  "preprocessing": "Direct Lanczos3 resize to 48px; flattened to opaque #11161d.",
+  "review": "No acceptance or rejection by the agent."
+}

@@ -307,8 +307,33 @@ type CombatEventPayload =
   //
   // The client draws one handler per `LineageFxKey` in `render/combatFx.ts`,
   // keyed by the lane grammar (design §8). An unknown key draws nothing.
+  //
+  // `cardId` names the card or worn capstone that fired (design §24.6, W2-B): the
+  // rhythm readout pulses that card's ring and floats its NAME over the player.
+  // Absent on a firing that is not a card's — an ability node's payoff, a
+  // keystone's chain link — which draws its fx and no word.
+  //
+  // Two more OPTIONAL fields serve the T1 payload fx (design §24.2, W2-C), so a
+  // lasting look ends when the server's state does and not on a client guess:
+  //   `durationMs`  how long the payload actually holds, as APPLIED — a root's or
+  //                 a stun's clock after control resistance, a bleed's ticks ×
+  //                 its tick interval. Absent for an instant payload.
+  //   `abilityIds`  `technique-refund` only: the Techniques whose cooldown the
+  //                 refund actually moved (the HUD flashes those tiles).
   | { kind: 'card-fx'; playerId: string; fx: LineageFxKey; pos: Vec2;
-      targetId?: string; targetPos?: Vec2; stacks?: number }
+      targetId?: string; targetPos?: Vec2; stacks?: number; cardId?: string;
+      durationMs?: number; abilityIds?: string[] }
+  // A Kill-chain carry that will land LOADED was armed or spent (design §24.2:
+  // "a kill heals a tenth of your pool and loads your next hit").
+  //
+  // The kill ARMS a server-only carry flag and the next landed hit spends it, so
+  // the "loaded weapon" glow between the two needs a beat for each end — the
+  // client must never guess when the load goes. `loaded: true` is pushed by the
+  // kill that arms a carry whose payload is `heal-and-load`; `loaded: false` by
+  // the hit that spends it (whatever the payoff then does). A respawn wipes the
+  // flag with the rest of `TracksCombat`; the client drops the glow on death on
+  // its own. Node-wide, like every other payload signature.
+  | { kind: 'lineage-load'; playerId: string; loaded: boolean }
   // A frame loop's BANK changed — progression rework Phase 3, design §10.
   //
   // Heavy frames build charge on every regular hit and spend it on the mechanic,

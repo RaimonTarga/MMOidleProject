@@ -1,0 +1,145 @@
+/* The rhythm readout (design §24.6): a ring per active triggered card plus the
+   frame's window or bank, at most three. Lane colour comes in as --ring-color
+   (packetDefinition(lane).color; the frame ring is gold). */
+
+.rhythm-readout {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 4px;
+  pointer-events: none;
+}
+
+/* Desktop: right of the character panel's HP bar, under the buff row. */
+#rhythm-overlay > .rhythm-readout {
+  position: absolute;
+  top: 84px;
+  left: 12px;
+  z-index: 10;
+}
+
+.rhythm-ring {
+  --ring-size: 40px;
+  width: 68px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  outline: none;
+}
+
+.rhythm-ring__dial {
+  position: relative;
+  width: var(--ring-size);
+  height: var(--ring-size);
+}
+
+.rhythm-ring__svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* A dark plate under the track keeps the count legible over any ground. */
+.rhythm-ring__track {
+  fill: rgba(10, 9, 7, 0.72);
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 4;
+}
+
+.rhythm-ring__fill {
+  fill: none;
+  stroke: var(--ring-color);
+  stroke-width: 4;
+  stroke-linecap: butt;
+  transition: stroke-dashoffset 180ms linear;
+}
+
+.rhythm-ring__count {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: bold;
+  color: #ece4d4;
+  text-shadow: 0 1px 0 #000;
+  line-height: 1;
+}
+
+.rhythm-ring__label {
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.15;
+  color: #a99e8a;
+  text-shadow: 0 1px 0 #000, 0 0 3px #000;
+}
+
+/* READY: a full ring that glows in its colour, its label lit. */
+.rhythm-ring--ready .rhythm-ring__svg {
+  filter: drop-shadow(0 0 4px var(--ring-color));
+}
+.rhythm-ring--ready .rhythm-ring__count,
+.rhythm-ring--ready .rhythm-ring__label {
+  color: var(--ring-color);
+}
+.rhythm-ring--ready .rhythm-ring__count {
+  font-size: 13px;
+}
+
+/* A running payoff window drains in place; its seconds stay ink-coloured. */
+.rhythm-ring--window .rhythm-ring__count {
+  color: #ece4d4;
+  font-size: 10px;
+}
+
+/* The one-shot flash when a ring becomes ready, or its card fires. */
+.rhythm-ring__flash {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow: 0 0 0 2px var(--ring-color), 0 0 16px 2px var(--ring-color);
+  animation: rhythm-ring-flash 520ms ease-out forwards;
+}
+
+@keyframes rhythm-ring-flash {
+  0% { opacity: 1; transform: scale(0.9); }
+  100% { opacity: 0; transform: scale(1.45); }
+}
+
+/* Mobile: a column at the right edge, under the top strip (the HP bar's home). */
+.rhythm-readout--compact {
+  position: absolute;
+  top: calc(var(--mhud-top-h, 66px) + env(safe-area-inset-top, 0px) + 8px);
+  right: calc(6px + env(safe-area-inset-right, 0px));
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.rhythm-readout--compact .rhythm-ring {
+  --ring-size: 34px;
+  width: 58px;
+  gap: 2px;
+}
+.rhythm-readout--compact .rhythm-ring__label {
+  font-size: 8px;
+}
+.rhythm-readout--compact .rhythm-ring__count {
+  font-size: 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rhythm-ring__fill { transition: none; }
+  .rhythm-ring__flash { animation: none; opacity: 0; }
+}

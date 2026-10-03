@@ -54,7 +54,6 @@ export function StatSheet({ compare }: Props) {
     itemUpgrades, playerTier, activeStance, equippedRites, hpFraction, lineages, defId]);
 
   const def = defId ? ITEM_DATABASE.get(defId) : undefined;
-  const plus = defId ? itemUpgrades[defId] ?? 0 : 0;
   const slot = sheet.slot;
   const relicLocked = slot === 'relic' && sheet.mode === 'swap'
     && !relicIsUnlocked(playerTier, playerNodeId === TEST_ROOM_NODE_ID);
@@ -71,11 +70,11 @@ export function StatSheet({ compare }: Props) {
       // Keyed so the changed values replay their arrival when the subject changes.
       key={defId ?? 'character'}
     >
-      <SheetHeader sheet={sheet} defId={defId} plus={plus} selectedRange={selectedRange} />
+      <SheetHeader sheet={sheet} defId={defId} selectedRange={selectedRange} />
       <Headline sheet={sheet} />
       <SheetRows sheet={sheet} />
       {def && <SheetEffects sheet={sheet} />}
-      {def && <EquipmentAbilityTags item={def} plus={plus} />}
+      {def && <EquipmentAbilityTags item={def} />}
       {def?.description && <p className="inv-stat-sheet__flavor">{def.description}</p>}
 
       <div className="inv-stat-sheet__footer">
@@ -105,8 +104,8 @@ export function StatSheet({ compare }: Props) {
   );
 }
 
-function SheetHeader({ sheet, defId, plus, selectedRange }: {
-  sheet: StatSheetData; defId: string | null; plus: number; selectedRange: Parameters<typeof coreIsActive>[1];
+function SheetHeader({ sheet, defId, selectedRange }: {
+  sheet: StatSheetData; defId: string | null; selectedRange: Parameters<typeof coreIsActive>[1];
 }) {
   const def = defId ? ITEM_DATABASE.get(defId) : undefined;
   if (!def || !sheet.slot) {
@@ -128,7 +127,6 @@ function SheetHeader({ sheet, defId, plus, selectedRange }: {
     <div className="inv-stat-sheet__item-header" style={{ borderColor: `${color}44` }}>
       <div className="inv-stat-sheet__item-row">
         <span className="inv-stat-sheet__item-name">{def.name}</span>
-        {plus > 0 && <span className="inv-stat-sheet__plus">+{plus}</span>}
         <span className="inv-stat-sheet__tier" style={{ color }}>T{def.tier}</span>
         <span className="inv-stat-sheet__slot-label">{SLOT_LABELS[slot]}</span>
       </div>

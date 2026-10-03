@@ -28,6 +28,7 @@ import type { PlayerEntity } from '../../../../ecs/entity';
 import type { World } from '../../../../world/World';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
+import { isMechanicProxy } from '../../../combat/engine/empoweredAttacks';
 import { defineBuff, type BuffDescriptor } from '../../../combat/buffs/descriptor';
 import { registerReloadLifecycleHook } from './reloadLifecycle';
 
@@ -144,6 +145,9 @@ function advanceRamp(world: World, player: PlayerEntity): void {
  */
 export function registerReloadFrameLoop(): void {
   registerCombatListener('onHit', (ctx, world) => {
+    // A `mechanic-proxy` hit (design §24.2) COUNTS AS the mechanic for what reads
+    // it downstream, but it never walks the root's own loop (rule 3).
+    if (isMechanicProxy(ctx)) return;
     if (ctx.attackerType !== 'player') return;
     const player = ctx.attacker;
     const reload = player.usesReload;
@@ -202,7 +206,9 @@ export const RELOAD_FRAME_BUFFS = [
       id: 'reload-frame-ramp',
       label: 'Ramp',
       stacks,
-      durationPct: -1,
+      // The ramp reports its FILL here, like a bank: the rhythm readout's frame
+      // ring draws it (design §24.6).
+      durationPct: fill * 100,
       color: '#ffbb55',
       logDetail: `+${Math.round(stacks * pct * 100)}% attack speed, +${damagePct}% damage`,
       values: [

@@ -1,11 +1,13 @@
-import type { AbilityNodeRow, AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, EvolveMode, RowKind, StanceSlot, Vec2 } from '@mmo-idle/shared';
+import type { AbilityNodeRow, AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, RowKind, StanceSlot, Vec2 } from '@mmo-idle/shared';
 import { intents } from './intents';
 
 type RecipeUnlockListener = (name: string, biomeGroup: string) => void;
 type TacticalViewListener = (enabled: boolean) => void;
+type CardFiredListener = (cardId: string) => void;
 
 const recipeUnlockListeners = new Set<RecipeUnlockListener>();
 const tacticalViewListeners = new Set<TacticalViewListener>();
+const cardFiredListeners = new Set<CardFiredListener>();
 
 export const hudBus = {
   /** Called by HUD components — GameScene listens for the resulting CustomEvent. */
@@ -116,16 +118,6 @@ export const hudBus = {
   /** Called by CraftingPanel — GameScene picks this up and emits the socket event. */
   requestCraftRecipe(recipeId: string): void {
     intents.emit('craftRecipe', recipeId);
-  },
-
-  /** Called by the Forge tab for evolved recipes — evolve (consume +3 predecessor) or reconstruct. */
-  requestEvolveItem(recipeId: string, mode: EvolveMode): void {
-    intents.emit('evolveItem', { recipeId, mode });
-  },
-
-  /** Called by the Upgrade tab — GameScene picks this up and emits the socket event. */
-  requestUpgradeItem(itemId: string): void {
-    intents.emit('upgradeItem', itemId);
   },
 
   /** Called by LineageTreePanel — buy a card. Permanent; costs essence + lane shards. */
@@ -246,5 +238,19 @@ export const hudBus = {
 
   notifyTacticalView(enabled: boolean): void {
     for (const fn of tacticalViewListeners) fn(enabled);
+  },
+
+  /**
+   * One of the OWN player's cards just paid out (its `card-fx` named it) — the
+   * rhythm readout pulses that card's ring. Presentation only: the counters the
+   * rings show still come off the server's `ShowsRhythm` slice.
+   */
+  notifyCardFired(cardId: string): void {
+    for (const fn of cardFiredListeners) fn(cardId);
+  },
+
+  subscribeCardFired(fn: CardFiredListener): () => void {
+    cardFiredListeners.add(fn);
+    return () => cardFiredListeners.delete(fn);
   },
 };

@@ -7,6 +7,7 @@ import {
   ESSENCE_TYPES,
   PACKET_IDS,
   packetDefinition,
+  shardName,
   type EssenceType,
 } from "@mmo-idle/shared";
 import { GameIcon } from "../ui/GameIcon";
@@ -182,7 +183,7 @@ export function MaterialsPanel() {
                 decorative
               />
               <span className="essence-name" style={{ color: packetDefinition(packet)?.color }}>
-                {packetDefinition(packet)?.name ?? packet} shards
+                {shardName(packet)}s
               </span>
               <span className="essence-value">{shards[packet] ?? 0}</span>
             </div>

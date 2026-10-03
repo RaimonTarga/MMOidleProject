@@ -11,12 +11,15 @@ import {
   checkUpgrade,
   checkEvolve,
   checkReconstruct,
+  isGatedLineageForm,
+  nodeShard,
   type EvolveMode,
   type DungeonView,
   type EquipmentSlot,
   type EssenceType,
   type MinionView,
   type MonsterView,
+  type PacketId,
   type PlayerView,
   type Recipe,
   type T1EconomyExperimentConfig,
@@ -145,12 +148,14 @@ export class Observation {
     const self = this.self;
     const recipe = RECIPE_DATABASE.get(recipeId);
     if (!self || !recipe) return false;
-    if (recipe.evolvesFrom) return false;
+    // The server's craft guard: a live lineage's tier-2+ form is opened at its
+    // gate, never crafted (review B4).
+    if (isGatedLineageForm(recipeId)) return false;
     if (!self.unlockedRecipes.includes(recipeId)) return false;
     return this.canAfford(recipe);
   }
 
-  /** Authoritative shared predicate for consuming a fully-upgraded predecessor. */
+  /** The shared evolve/reconstruct checks — which refuse every slot now (design §24.5). */
   canEvolve(recipeId: string, mode: EvolveMode = "evolve"): { ok: boolean; reason?: string } {
     const self = this.self;
     const recipe = RECIPE_DATABASE.get(recipeId);
@@ -218,6 +223,7 @@ export function normalNodesFor(
   biomeGroup: string,
   tier: number,
   modifier?: string,
+  shard?: PacketId,
 ): string[] {
   return Object.entries(NODE_BIOMES)
     .filter(
@@ -227,6 +233,9 @@ export function normalNodesFor(
         info.kind === "normal",
     )
     .filter(([, info]) => modifier === undefined || info.modifier === modifier)
+    // Design §24.3: every kill in a node pays that node's ONE shard, so a shard
+    // farm narrows the biome to the territories that pay it.
+    .filter(([id]) => shard === undefined || nodeShard(id) === shard)
     .map(([id]) => id)
     .sort();
 }

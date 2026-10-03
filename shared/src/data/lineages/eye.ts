@@ -16,6 +16,8 @@ import { packetDefaultFace } from './packets';
 export const EYE_LINEAGE: LineageDefinition = {
   id: 'eye',
   slot: 'recovery',
+  // Parked for the second playtest (design §24.5): data kept, tree unreachable.
+  parked: true,
   homeBiome: 'swamp',
   lanes: ['affliction', 'control', 'kill-chain'],
 

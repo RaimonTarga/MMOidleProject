@@ -9,8 +9,11 @@
  * asked for Cave 19–23 against a Cave that stops at 18. Those cards were not
  * expensive, they were unbuyable.
  *
- * This walks EVERY lineage, EVERY tier, EVERY form, with no allowlist, and asks
- * four questions of each door:
+ * This walks EVERY live lineage, EVERY tier, EVERY form, with no allowlist, and
+ * asks four questions of each door. A PARKED lineage (design §24.5: every armour,
+ * charm and boots tree) has no doors — its forms are plain recipes crafted at
+ * their biome level — so it is skipped, and review finding P4 (its unbuyable
+ * T3/T4 cards) is moot until it returns:
  *
  *   1. Is the door biome real, and alive at the form's own tier? A T4 form behind
  *      a Forest door is a dead door — the Forest retires after T2.
@@ -32,7 +35,7 @@ import {
   BIOME_FINAL_TIER_BY_GROUP, BIOME_LEVELS_PER_TIER, BIOME_START_TIER_BY_GROUP,
   biomeLevelCap,
 } from '../../config/gameConfig';
-import { LINEAGE_DATABASE } from './index';
+import { liveLineages } from './index';
 import { MAX_LINEAGE_TIER, rowsForTier } from './magnitudes';
 import { bandBiomeFloor, bandBiomeLevel, formGateBiomeLevel } from './resolve';
 
@@ -49,7 +52,7 @@ function assert(cond: boolean, msg: string): void {
 
 let doorsWalked = 0;
 
-for (const lineage of LINEAGE_DATABASE.values()) {
+for (const lineage of liveLineages()) {
   for (const form of lineage.forms) {
     const biome = form.biome;
     const start = BIOME_START_TIER_BY_GROUP[biome];
@@ -118,7 +121,7 @@ assert(doorsWalked > 0, 'fixture: no lineage forms walked');
 for (let tier = 1; tier <= MAX_LINEAGE_TIER; tier++) {
   for (const row of rowsForTier(tier)) {
     const doors = new Set<string>();
-    for (const lineage of LINEAGE_DATABASE.values()) {
+    for (const lineage of liveLineages()) {
       for (const form of lineage.forms) if (form.tier === tier) doors.add(form.biome);
     }
     const positions = new Map<number, string[]>();
@@ -145,7 +148,7 @@ for (let tier = 1; tier <= MAX_LINEAGE_TIER; tier++) {
 
 // ─── 3. T1 is the home biome, which is what keeps T1 unchanged ──────────────
 
-for (const lineage of LINEAGE_DATABASE.values()) {
+for (const lineage of liveLineages()) {
   const base = lineage.forms.filter((f) => f.tier === 1);
   check(base.length === 1, `${lineage.id}: a lineage has exactly one crafted T1 form`);
   for (const form of base) {

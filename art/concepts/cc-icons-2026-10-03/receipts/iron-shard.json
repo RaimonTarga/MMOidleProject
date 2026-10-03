@@ -1,0 +1,22 @@
+{
+  "id": "iron-shard",
+  "category": "cc-icons",
+  "provider": "built-in OpenAI imagegen",
+  "status": "pending",
+  "candidate": "candidate-1.png",
+  "out": "items/materials/iron-shard.png",
+  "size": {
+    "w": 32,
+    "h": 32
+  },
+  "generationSize": {
+    "w": 1254,
+    "h": 1254
+  },
+  "sourceSha256": "896e75fe61bbf68a8530c3099bbc00e0b3e5f9d1c51c0055edddfd2a5e873380",
+  "candidateSha256": "fbd8044b20ba1a9033e2b3118e977011e2991c52c5b1db67789c22ff2a0d2146",
+  "generatedFilename": "exec-b5e42032-8a4e-4c9e-ad08-3944123d0f82.png",
+  "prompt": "Use case: stylized-concept\nAsset type: MMO Idle material inventory icon, final 32x32 PNG, displayed at 24px.\nPrimary request: Iron Shard: one raw irregular wedge of chipped iron ore with a thick stepped fracture and a broad metallic edge; muted olive-grey iron, neither rectangular nor a polished ingot. Physical crafting material, mundane and grounded rather than an ornate artifact.\nComposition: one isolated fragment centered on square canvas, occupies 78 percent of the frame, slight diagonal, generous padding; bold literal object silhouette readable at 24px.\nStyle: flat bold pixel-art inventory icon, hard dark outline, crisp intentional pixel clusters, limited palette, three broad value groups, minimal detail, no smooth gradients or glow.\nPalette: lane colour #b8b8a0 is the dominant material tint with charcoal shadows and a narrow pale edge.\nBackground: genuine transparency.\nConstraints: material fragment only; no relic, iron plaque, square plate, polished gemstone, complete equipment piece, or drop shadow. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
+  "preprocessing": "Direct nearest-neighbor resize to 32px; generated alpha preserved.",
+  "review": "No acceptance or rejection by the agent."
+}

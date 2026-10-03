@@ -1,0 +1,34 @@
+{
+  "id": "venom-shard-essence-v2",
+  "category": "cc-shards-essence",
+  "provider": "Codex built-in OpenAI image generation",
+  "status": "pending",
+  "candidate": "candidate-1.png",
+  "out": "items/materials/venom-shard.png",
+  "size": {
+    "w": 32,
+    "h": 32
+  },
+  "generationSize": {
+    "w": 1254,
+    "h": 1254
+  },
+  "sourceSha256": "6faa1114ed3d2066fdf50783e5c6d37f2779ff0dca52c4a142a40f3a3b624dbc",
+  "candidateSha256": "2bc34b96778b8183e046ee410f64ead01614d2253f996328f6a6949b3add1c54",
+  "currentApprovedSourceSha256": "0595f429c2b478b24d62a39492c4e406c654d7454fd8bddf95035a033686ca09",
+  "generatedFilename": "exec-f2840b96-4498-4d3a-9d0f-d83b6eadac0a.png",
+  "references": [
+    {
+      "role": "Shared crystal geometry",
+      "generatedFilename": "exec-046b24f8-61aa-41d2-9721-cc0425e3d9ea.png",
+      "sha256": "2dddb09de977b9f8b584ff8230e97f2928342bf10dbbfbbbac5295232266190a"
+    },
+    {
+      "path": "art/src/UI_icons/essences/green.png",
+      "sha256": "dd2d774a79ff0e7f1b75fe93c1d5a8c6df4c58e1d2c2ead8d0e9b80009662c0b"
+    }
+  ],
+  "prompt": "Use case: style-transfer\nAsset type: MMO Idle venom-shard material-tab icon, final 32x32, readable at 16px and 24px.\nInput images: Image 1 is the new Gale shard's shared crystal silhouette and facet geometry; Image 2 is an existing essence icon showing the rendering language.\nEdit request: Preserve Image 1's compact chipped crystal outline, proportions, facet planes and padding exactly. Change its lane palette and replace the inner wind mark with the symbol below. Keep Image 2's luminous stepped pixel-art treatment. Produce ONE venom Shard icon. Preserve the essence reference's luminous stepped pixel-art treatment, inner brightness, small clean dark edge, and compact footprint. Replace its circular orb silhouette and inner motif with the shard described here. This is a new comparison candidate; never show a sheet of several icons.\nSubject: ONE compact upright chipped crystal fragment, approximately round-square in visual weight but with an irregular pentagonal broken outline, a short pointed bottom and one missing small upper corner. Its whole silhouette must use the same shared crystal form as the other eight shards. A material chunk with broken mineral facets, not a relic plaque, badge, bottle, sphere, jewellery setting or complete artifact.\nInternal symbol: one pointed poison droplet split by one jagged dark hostile incision; clearly venom, not a leaf. The mark occupies at least half the crystal's face, broad and instantly legible. It looks embedded as bright inner essence, not printed on a flat panel.\nPalette: exact lane colour #9be564 as the dominant face, brighter pale tinted inner glyph, a restrained deep same-hue shadow. No gold rim unless the lane itself is amber. For Iron, keep muted olive-grey #9be564; for Bone, stay lavender #9be564, not white.\nComposition: centred on square transparent canvas; fills 78 percent of height and 68 percent of width, with even padding. Shared chunky crystal proportions across the family; avoid long needle or thin splinter shapes.\nStyle: crisp intentional pixel clusters with three or four broad stepped shades, like the supplied existing essence icon. Luminous material achieved with bright solid clusters and one thin highlighted edge; no blurry exterior halo, no realistic or smooth painterly rendering, no thick black cartoon outline. No microtexture or dither.\nConstraints: genuine transparent background. One icon only, no words, letters, numbers, logo, watermark, ornamental border, circular container, iron plate, scene, floor, cast shadow or loose particles.",
+  "preprocessing": "Direct nearest-neighbor resize to 32px; generated alpha preserved.",
+  "review": "Pending designer comparison; no acceptance or rejection by the agent."
+}

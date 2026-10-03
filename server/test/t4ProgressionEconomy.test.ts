@@ -16,7 +16,6 @@ import {
   RUNE_RECIPE_DATABASE,
   maxGlobalMasteryAtTier,
   globalMasteryRequiredForUpgrade,
-  EVOLUTION_REQUIRED_PLUS,
 } from "@mmo-idle/shared";
 import { MONSTER_DATABASE } from "@mmo-idle/shared";
 import type { Recipe } from "@mmo-idle/shared";
@@ -29,7 +28,7 @@ const essenceTotal = (cost: Partial<Record<string, number>> | undefined): number
   Object.values(cost ?? {}).reduce((sum: number, amount) => sum + (amount ?? 0), 0);
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 1. Census: exactly 39 ordinary T4 gear items, 36 with evolvesFrom, 3 without
+// 1. Census: exactly 40 ordinary T4 gear items, 37 successions, 3 without
 // ═══════════════════════════════════════════════════════════════════════════
 
 const t4Gear: Recipe[] = [...RECIPE_DATABASE.values()].filter(
@@ -38,11 +37,66 @@ const t4Gear: Recipe[] = [...RECIPE_DATABASE.values()].filter(
 
 assert(t4Gear.length === 40, `expected 40 ordinary T4 gear items, got ${t4Gear.length}`);
 
-const withLineage = t4Gear.filter((r) => !!r.evolvesFrom);
-const withoutLineage = t4Gear.filter((r) => !r.evolvesFrom);
+/**
+ * The approved T3→T4 successions, child → parent. Weapons keep this link in data
+ * as their lineage form graph (`evolvesFrom`). Armour, charm and boots became
+ * plain recipes in design §24.5 and lost it, so the rows are FROZEN here as the
+ * economy's reference: the lifetime ratios and branch groups below are still
+ * the authored price relationships between those items.
+ */
+const T4_SUCCESSIONS: Readonly<Record<string, string>> = {
+  "jungle-deathfang-rapier": "jungle-venomthorn-rapier",
+  "jungle-vest-t4": "jungle-vest-t3",
+  "jungle-charm-t4": "jungle-charm-t3",
+  "jungle-charm-t4-overgrowth": "jungle-charm-t3",
+  "jungle-boots-t4": "jungle-boots-t3",
+  "mountain-earthsunder-maul": "mountain-avalanche-maul",
+  "mountain-warmaul": "mountain-avalanche-maul",
+  "mountain-vest-t4": "mountain-vest-t3",
+  "mountain-vest-t4-stormwall": "mountain-vest-t3",
+  "mountain-charm-t4": "mountain-charm-t3",
+  "mountain-charm-t4-shieldmend": "mountain-charm-t3",
+  "mountain-boots-t4": "mountain-boots-t3",
+  "tundra-glacial-tyrant-maul": "tundra-permafrost-maul",
+  "tundra-glacial-rimebrand": "tundra-rimebrand",
+  "tundra-vest-t4": "tundra-vest-t3",
+  "tundra-charm-t4": "tundra-charm-t3",
+  "tundra-charm-t4-deepfreeze": "tundra-charm-t3",
+  "tundra-boots-t4": "tundra-boots-t3",
+  "desert-zenith-cross": "desert-solar-cross",
+  "desert-sunmonk-warstaff": "desert-pilgrim-quarterstaff",
+  "desert-vest-t4": "desert-vest-t3",
+  "desert-charm-t4": "desert-charm-t3",
+  "desert-boots-t4": "desert-boots-t3",
+  "volcanic-eruption-lash": "volcanic-cinderlash",
+  "volcanic-blightbrand": "volcanic-cinderlash",
+  "volcanic-vest-t4": "volcanic-vest-t3",
+  "volcanic-vest-t4-lavatempered": "volcanic-vest-t3",
+  "volcanic-charm-t4": "volcanic-charm-t3",
+  "volcanic-boots-t4": "volcanic-boots-t3",
+  "graveyard-plague-axe": "cave-cataclysm-axe",
+  "graveyard-vest-t4": "swamp-vest-t3",
+  "graveyard-vest-t4-debtward": "swamp-vest-t3",
+  "graveyard-charm-t4": "swamp-charm-t3",
+  "graveyard-charm-t4-gravetide": "swamp-charm-t3",
+  "trench-abyssal-axe": "cave-cataclysm-axe",
+  "trench-vest-t4": "cave-vest-t3",
+  "trench-boots-t4-stalkers": "cave-boots-t3",
+};
+const parentOf = (child: Recipe): string => T4_SUCCESSIONS[child.id]!;
 
-assert(withLineage.length === 37, `expected 37 T4 items with evolvesFrom, got ${withLineage.length}`);
-assert(withoutLineage.length === 3, `expected 3 T4 items without evolvesFrom, got ${withoutLineage.length}`);
+const withLineage = t4Gear.filter((r) => T4_SUCCESSIONS[r.id] !== undefined);
+const withoutLineage = t4Gear.filter((r) => T4_SUCCESSIONS[r.id] === undefined);
+
+assert(withLineage.length === 37, `expected 37 T4 successions, got ${withLineage.length}`);
+assert(withoutLineage.length === 3, `expected 3 T4 items without a predecessor, got ${withoutLineage.length}`);
+for (const r of t4Gear) {
+  if (r.slot === "weapon") {
+    assert(r.evolvesFrom === T4_SUCCESSIONS[r.id], `${r.id}: the weapon form graph must match the succession table`);
+  } else {
+    assert(r.evolvesFrom === undefined, `${r.id}: a plain recipe carries no predecessor link (design §24.5)`);
+  }
+}
 
 const NO_LINEAGE_IDS = new Set(["graveyard-boots-t4", "trench-charm-t4", "trench-boots-t4-treaders"]);
 assert(
@@ -59,26 +113,18 @@ for (const r of t4Gear) {
 // 2. Predecessors: exactly 27 distinct ids, each real, T3, slot-matched
 // ═══════════════════════════════════════════════════════════════════════════
 
-const predecessorIds = new Set(withLineage.map((r) => r.evolvesFrom!));
+const predecessorIds = new Set(withLineage.map(parentOf));
 assert(predecessorIds.size === 27, `expected 27 distinct predecessor ids, got ${predecessorIds.size}`);
 
 for (const child of withLineage) {
-  const parent = RECIPE_DATABASE.get(child.evolvesFrom!);
-  assert(!!parent, `${child.id}: predecessor ${child.evolvesFrom} must exist in RECIPE_DATABASE`);
-  assert(parent!.tier === 3, `${child.id}: predecessor ${child.evolvesFrom} must be tier 3 (got ${parent!.tier})`);
+  const parent = RECIPE_DATABASE.get(parentOf(child));
+  assert(!!parent, `${child.id}: predecessor ${parentOf(child)} must exist in RECIPE_DATABASE`);
+  assert(parent!.tier === 3, `${child.id}: predecessor ${parentOf(child)} must be tier 3 (got ${parent!.tier})`);
   assert(
     parent!.slot === child.slot,
-    `${child.id}: predecessor ${child.evolvesFrom} slot (${parent!.slot}) must match child slot (${child.slot})`,
+    `${child.id}: predecessor ${parentOf(child)} slot (${parent!.slot}) must match child slot (${child.slot})`,
   );
 }
-
-// Evolution/reconstruction both require the predecessor at +EVOLUTION_REQUIRED_PLUS.
-// Designer decision 2026-09-04 returned the gate to +3 (see
-// shared/src/systems/evolution.ts and
-// docs/briefs/t2-bossless-progression-campaign-2026-09-03.md section 12): the
-// canonical T1 routes were never updated for +5, so it taxed genuinely-invested
-// predecessors rather than rewarding commitment.
-assert(EVOLUTION_REQUIRED_PLUS === 3, "evolution/reconstruction require the predecessor at +3");
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 3. Branch groups: exactly 10 parents with 2+ children
@@ -86,9 +132,9 @@ assert(EVOLUTION_REQUIRED_PLUS === 3, "evolution/reconstruction require the pred
 
 const childrenByParent = new Map<string, Recipe[]>();
 for (const child of withLineage) {
-  const list = childrenByParent.get(child.evolvesFrom!) ?? [];
+  const list = childrenByParent.get(parentOf(child)) ?? [];
   list.push(child);
-  childrenByParent.set(child.evolvesFrom!, list);
+  childrenByParent.set(parentOf(child), list);
 }
 const branchGroups = [...childrenByParent.entries()].filter(([, kids]) => kids.length >= 2);
 assert(branchGroups.length === 10, `expected 10 branch groups, got ${branchGroups.length}`);
@@ -124,54 +170,17 @@ assert(
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 4. Lifetime ratio: for all 36 successors, total / predecessorTotal in [1.8, 2.2]
-// ═══════════════════════════════════════════════════════════════════════════
-
-function lifetimeTotal(r: Recipe): number {
-  let total = Object.values(r.cost ?? {}).reduce((a, b) => a + (b ?? 0), 0);
-  for (const step of r.upgrades ?? []) {
-    total += Object.values(step.cost ?? {}).reduce((a, b) => a + (b ?? 0), 0);
-  }
-  return total;
-}
-
-// Weapons are excluded (Phase 2b, Override A): off the +N ladder entirely, so
-// "lifetime total" collapses to the one-time base craft cost and the x2
-// per-tier ratio this rule polices no longer applies.
-for (const child of withLineage) {
-  if (child.slot === "weapon") continue;
-  const parent = RECIPE_DATABASE.get(child.evolvesFrom!)!;
-  const childTotal = lifetimeTotal(child);
-  const parentTotal = lifetimeTotal(parent);
-  const ratio = childTotal / parentTotal;
-  assert(
-    ratio >= 1.8 && ratio <= 2.2,
-    `${child.id}: lifetime ratio vs ${parent.id} must be in [1.8, 2.2], got ${ratio.toFixed(3)} (${childTotal}/${parentTotal})`,
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// 5. Curve shape: strictly accelerating, no +3=+4=+5 plateau, +4/+5 share in [65%,75%]
+// 4. Lifetime ratio and 5. curve shape: RETIRED with the ladder on every slot
+// (design §23 for weapons, §24.5 for armour/charm/boots, 2026-10-03). Both
+// audited the +N ladder — a successor's craft plus five steps against its
+// predecessor's, and the accelerating step curve — and every item now crafts at
+// its folded +5 power for its recipe cost, so "lifetime" is the one craft. The
+// weapons left these sections at Phase 2b ("Override A") for the same reason.
+// What remains true is that nothing reintroduces a ladder.
 // ═══════════════════════════════════════════════════════════════════════════
 
 for (const r of t4Gear) {
-  if (r.slot === "weapon") continue; // off the +N ladder entirely (Phase 2b)
-  const steps = r.upgrades ?? [];
-  assert(steps.length === 5, `${r.id}: must have exactly 5 upgrade steps`);
-  const stepTotals = steps.map((s) => Object.values(s.cost ?? {}).reduce((a, b) => a + (b ?? 0), 0));
-  // No +3=+4=+5 plateau (indices 2,3,4 — the old defect pattern).
-  assert(
-    !(stepTotals[2] === stepTotals[3] && stepTotals[3] === stepTotals[4]),
-    `${r.id}: +3/+4/+5 must not be a flat plateau (got ${stepTotals[2]}, ${stepTotals[3]}, ${stepTotals[4]})`,
-  );
-  // Strictly non-decreasing (accelerating curve).
-  for (let i = 1; i < stepTotals.length; i++) {
-    assert(stepTotals[i] >= stepTotals[i - 1], `${r.id}: step ${i + 1} cost must not be less than step ${i} (got ${stepTotals[i]} < ${stepTotals[i - 1]})`);
-  }
-  const postBase = stepTotals.reduce((a, b) => a + b, 0);
-  const plus45 = stepTotals[3] + stepTotals[4];
-  const share = plus45 / postBase;
-  assert(share >= 0.65 && share <= 0.75, `${r.id}: +4/+5 share of post-base spend must be in [0.65, 0.75], got ${(share * 100).toFixed(1)}%`);
+  assert(!r.upgrades?.length, `${r.id}: the +N ladder is retired; no item may author upgrade steps`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

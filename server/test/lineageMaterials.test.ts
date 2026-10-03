@@ -1,12 +1,13 @@
 /**
  * Shards and capstones: the kill side of the lineage economy (Phase 1b).
  *
- * WHY THIS EXISTS: drops are DETERMINISTIC by design — "every kill drops its
- * family's shard; the boss drops its capstone material every kill. No rolls, no
- * pity timers. Costs, not chance, gate the pace" (design §1). Determinism is
- * exactly the kind of property that rots quietly, so this pins it directly:
- * N kills is N times one kill, the shard is the family's and not the biome's,
- * and a boss pays a capstone rather than a shard.
+ * WHY THIS EXISTS: drops are DETERMINISTIC by design — "the boss drops its
+ * capstone material every kill. No rolls, no pity timers. Costs, not chance, gate
+ * the pace" (design §1). Determinism is exactly the kind of property that rots
+ * quietly, so this pins it directly: N kills is N times one kill, a kill pays the
+ * NODE's shard (design §24.3 — every kill in a node pays its dominant family's
+ * shard, minority bodies included) and not its own family's, a node with no blend
+ * keeps the per-monster rule, and a boss pays a capstone rather than a node shard.
  *
  * It also pins the FAMILY PARTITION, which is the invariant that makes the whole
  * thing work: a non-boss monster of a T1 biome that belongs to no family is a
@@ -32,6 +33,7 @@ import {
   FAMILY_BIOMES,
   FAMILY_DATABASE,
   GAME_CONFIG,
+  LINEAGE_DATABASE,
   MONSTER_DATABASE,
   PACKET_IDS,
   WORLD_NODE_LIST,
@@ -40,10 +42,15 @@ import {
   rowShardCost,
   blendEntries,
   emptyEquipment,
+  familiesForBiome,
   familyForMonster,
+  nodeFamily,
+  nodeShard,
+  nodeSpawnBlend,
+  nodesPayingShard,
   shardForMonster,
 } from '@mmo-idle/shared';
-import type { PacketId } from '@mmo-idle/shared';
+import type { FamilyId, PacketId } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { World } from '../src/world/World';
 import { grantMonsterRewards } from '../src/systems/player/progression/rewards';
@@ -57,14 +64,31 @@ const check = (condition: boolean, message: string): void => {
   if (!condition) problems.push(message);
 };
 
+const T1_BIOMES = ['plains', 'forest', 'mountain', 'cave', 'swamp'] as const;
+
 // ─── The family table partitions each T1 biome's pool ────────────────────────
+
+/**
+ * Families allowed to drop the lane they punish. Design §24.4 moved the Brood's
+ * `drops` to Tempo so the Cave's families are its weapon's lanes, and left
+ * `punishes` (Tempo) unchanged on purpose — so the Brood now favours and punishes
+ * one lane, which `server/bench/familyContracts.ts` reads as a degenerate one-lane
+ * contract. A DESIGNER CALL, named here rather than waved through: the set is
+ * checked both ways below, so it cannot outlive the collision nor hide a new one.
+ */
+const SAME_LANE_FAMILIES = new Set<string>(['cave-brood']);
 
 const claimed = new Map<string, string>();
 for (const family of FAMILY_DATABASE.values()) {
   check(FAMILY_BIOMES.includes(family.biome), `${family.id}: biome '${family.biome}' is not a family biome`);
   check(PACKET_IDS.includes(family.drops), `${family.id}: drops unknown packet '${family.drops}'`);
   check(PACKET_IDS.includes(family.punishes), `${family.id}: punishes unknown packet '${family.punishes}'`);
-  check(family.drops !== family.punishes, `${family.id}: favours and punishes the same lane`);
+  check(
+    (family.drops === family.punishes) === SAME_LANE_FAMILIES.has(family.id),
+    SAME_LANE_FAMILIES.has(family.id)
+      ? `${family.id}: no longer favours and punishes the same lane — drop it from SAME_LANE_FAMILIES`
+      : `${family.id}: favours and punishes the same lane`,
+  );
   check(family.monsterIds.length > 0, `${family.id}: has no monsters`);
 
   for (const id of family.monsterIds) {
@@ -198,35 +222,87 @@ function farm(id: string, nodeId: string, monsterTypeId: string, kills: number) 
   };
 }
 
-// A Forest wolf is Pack, and Pack drops Tempo.
+// A Forest wolf on a Pack-led node pays the Pack's shard, Tempo.
 {
   const wolfShard = shardForMonster('wolf');
   assert(wolfShard === 'tempo', `fixture: the Pack should drop tempo, got ${wolfShard}`);
+  const packNode = nodesPayingShard('forest', 1, 'tempo')[0];
+  assert(packNode && nodeFamily(packNode)?.id === 'forest-pack', `fixture: a Pack-led T1 Forest node, got ${packNode}`);
 
-  const one = farm('m-one', 'node-t1-forest-01', 'wolf', 1);
-  const ten = farm('m-ten', 'node-t1-forest-01', 'wolf', 10);
+  const one = farm('m-one', packNode, 'wolf', 1);
+  const ten = farm('m-ten', packNode, 'wolf', 10);
 
-  assert((one.shards.tempo ?? 0) > 0, 'a kill in a family must drop its shard');
+  assert((one.shards.tempo ?? 0) > 0, 'a kill on a Pack node must drop the Pack shard');
   assert(
     (ten.shards.tempo ?? 0) === (one.shards.tempo ?? 0) * 10,
     'drops are deterministic: ten kills is exactly ten times one',
   );
   assert(
     Object.keys(one.shards).length === 1,
-    `a kill drops exactly its own family's shard, got ${Object.keys(one.shards).join()}`,
+    `a kill drops exactly one shard, got ${Object.keys(one.shards).join()}`,
   );
   assert(Object.keys(one.capstones).length === 0, 'a normal kill drops no capstone');
 }
 
-// Two families in the same biome drop DIFFERENT shards — the whole point of
-// keying materials by packet rather than by biome.
+// Two families in the same biome still drop DIFFERENT shards — what keys a node's
+// currency by packet rather than by biome.
 {
   const pack = shardForMonster('wolf');
   const grove = shardForMonster('ironwood-golem');
   assert(pack !== grove, 'two Forest families must not drop the same shard');
-  const golem = farm('m-golem', 'node-t1-forest-01', 'ironwood-golem', 1);
-  assert((golem.shards[grove as PacketId] ?? 0) > 0, 'the Grove drops its own shard');
-  assert((golem.shards[pack as PacketId] ?? 0) === 0, 'and not the Pack\'s');
+}
+
+// ── The node pays, not the body (design §24.3) ───────────────────────────────
+//
+// The reward seam's whole change: a MINORITY-family kill in a blended node pays
+// the node's shard and never its own family's. One node per T1 biome, chosen by
+// the invariant rather than by id (a blend reorder must not silently skip it,
+// review B5): the first node, in id order, that fields a minority family whose
+// shard differs from the node's.
+
+{
+  let exercised = 0;
+  for (const biome of T1_BIOMES) {
+    const nodes = WORLD_NODE_LIST.filter((n) => n.biomeGroup === biome && n.biomeTier === 1 && n.blend)
+      .map((n) => n.id)
+      .sort();
+    const pick = nodes.flatMap((nodeId) => {
+      const resolved = nodeSpawnBlend(nodeId);
+      const paid = nodeShard(nodeId);
+      return [...(resolved?.poolByFamily ?? new Map<FamilyId, readonly string[]>())]
+        .filter(([familyId]) => FAMILY_DATABASE.get(familyId)?.drops !== paid)
+        .map(([familyId, pool]) => ({ nodeId, familyId, monsterTypeId: pool[0]!, paid: paid! }));
+    })[0];
+    check(!!pick, `${biome}: no T1 node fields a minority family with a different shard`);
+    if (!pick) continue;
+    const own = FAMILY_DATABASE.get(pick.familyId)!.drops;
+    const kill = farm(`m-minority-${biome}`, pick.nodeId, pick.monsterTypeId, 1);
+    check(
+      (kill.shards[pick.paid] ?? 0) > 0,
+      `${pick.nodeId}: a ${pick.familyId} kill must pay the node's ${pick.paid} shard`,
+    );
+    check(
+      (kill.shards[own] ?? 0) === 0 && Object.keys(kill.shards).length === 1,
+      `${pick.nodeId}: a ${pick.familyId} kill must not pay its own ${own} shard, got ${JSON.stringify(kill.shards)}`,
+    );
+    exercised += 1;
+  }
+  assert(exercised === T1_BIOMES.length, `the minority-kill sweep exercised ${exercised} of ${T1_BIOMES.length} biomes`);
+}
+
+// A node with NO blend keeps the per-monster rule (the behaviour before §24.3):
+// a dungeon kill pays the dead mob's own family shard.
+{
+  const dungeon = WORLD_NODE_LIST.find((n) => n.biomeGroup === 'forest' && n.biomeTier === 1 && n.kind === 'dungeon');
+  assert(!!dungeon && !dungeon.blend, 'fixture: an unblended T1 Forest dungeon');
+  const dungeonId = dungeon!.id;
+  assert(nodeShard(dungeonId) === undefined, 'a node with no blend has no node shard');
+  const slime = farm('m-dungeon', dungeonId, 'forest-slime', 1);
+  const grove = shardForMonster('forest-slime')!;
+  assert(
+    (slime.shards[grove] ?? 0) > 0 && Object.keys(slime.shards).length === 1,
+    `a dungeon kill pays the mob's own family shard (${grove}), got ${JSON.stringify(slime.shards)}`,
+  );
 }
 
 // The boss drops its biome's capstone, every kill, plus the Phase 4
@@ -325,8 +401,6 @@ function farm(id: string, nodeId: string, monsterTypeId: string, kills: number) 
 // all live in a later tier's pool drops nothing at tier 1 however a blend names it,
 // which is why this reads the POOL and not the blends.
 
-const T1_BIOMES = ['plains', 'forest', 'mountain', 'cave', 'swamp'] as const;
-
 {
   const fieldableAtT1 = new Set<string>(
     T1_BIOMES.flatMap((biome) => BIOME_DATABASE.get(biome)?.monsterPoolByTier[1] ?? []),
@@ -356,6 +430,42 @@ const T1_BIOMES = ['plains', 'forest', 'mountain', 'cave', 'swamp'] as const;
     technique.includes('plains/Swarm') && technique.includes('plains boss'),
     `Technique's two T1 sources are the Plains Swarm and the Plains boss, got ${technique.join(', ')}`,
   );
+
+  // Design §24.4's own count of FAMILY sources after its four moves, stopgap
+  // excluded: "empowered 3, kill-chain 3, tempo 2, engagement 2, affliction 2,
+  // control 2, technique 1 (+ the Plains boss stopgap)". Pinned exactly, so a
+  // family edit that silently re-balances the T1 shard sources has to say so here.
+  const SECTION_24_4_FAMILY_SOURCES: Partial<Record<PacketId, number>> = {
+    empowered: 3, 'kill-chain': 3, tempo: 2, engagement: 2, affliction: 2, control: 2, technique: 1,
+  };
+  for (const [packet, expected] of Object.entries(SECTION_24_4_FAMILY_SOURCES) as [PacketId, number][]) {
+    const families = sources.get(packet)!.filter((source) => !source.endsWith(' boss'));
+    check(
+      families.length === expected,
+      `design §24.4: '${packet}' should have ${expected} T1 family source(s), got ${families.length} (${families.join(', ')})`,
+    );
+  }
+}
+
+// ── A T1 biome's three families are its weapon's three lanes (design §24.4) ───
+//
+// "Stay in the Forest to build Forest gear" is only coherent without a lookup if
+// the shards a biome's territory pays are exactly the lanes its weapon's tree
+// costs. One weapon lineage per T1 biome (design §2), three families per biome.
+
+{
+  const weapons = [...LINEAGE_DATABASE.values()].filter((l) => l.slot === 'weapon');
+  for (const biome of T1_BIOMES) {
+    const weapon = weapons.filter((l) => l.homeBiome === biome);
+    check(weapon.length === 1, `${biome}: expected one weapon lineage, got ${weapon.length}`);
+    if (weapon.length !== 1) continue;
+    const lanes = [...weapon[0].lanes].sort();
+    const drops = familiesForBiome(biome).map((f) => f.drops).sort();
+    check(
+      JSON.stringify(drops) === JSON.stringify(lanes),
+      `design §24.4: ${biome}'s families drop ${drops.join('/')}, but the ${weapon[0].id}'s lanes are ${lanes.join('/')}`,
+    );
+  }
 }
 
 // ── Plains' three families partition the biome and pay three DIFFERENT shards ──
@@ -385,12 +495,15 @@ const T1_BIOMES = ['plains', 'forest', 'mountain', 'cave', 'swamp'] as const;
       `${id} must belong to the Swarm and nothing else`,
     );
   }
-  // And a Swarm kill really pays Technique shards through the live reward seam.
-  const kill = farm('m-swarm', 'node-t1-plains-01', swarm!.monsterIds[0]!, 1);
-  check((kill.shards.technique ?? 0) > 0, 'a Swarm kill pays Technique shards');
+  // And a kill in Swarm territory really pays Technique shards through the live
+  // reward seam (design §24.3: the node pays, so the node must be Swarm-led).
+  const swarmNode = nodesPayingShard('plains', 1, 'technique')[0];
+  check(!!swarmNode, 'a T1 Plains node is Swarm territory');
+  const kill = farm('m-swarm', swarmNode ?? 'node-t1-plains-01', swarm!.monsterIds[0]!, 1);
+  check((kill.shards.technique ?? 0) > 0, 'a kill in Swarm territory pays Technique shards');
   check(
     Object.keys(kill.shards).length === 1,
-    `and only its own family's shard, got ${Object.keys(kill.shards).join(', ')}`,
+    `and only the node's shard, got ${Object.keys(kill.shards).join(', ')}`,
   );
 }
 

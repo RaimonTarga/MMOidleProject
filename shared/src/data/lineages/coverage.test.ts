@@ -27,14 +27,14 @@ import { MONSTER_DATABASE } from '../../monsterDatabase';
 import { CAPSTONE_MATERIALS } from './capstones';
 import {
   LINEAGE_DATABASE, cardsForTier, formsAtGate, lineageForCardId, lineageForRecipeId,
-  lineagesForSlot, lineagesWithLane,
+  lineagesForSlot, lineagesWithLane, liveLineages,
 } from './index';
-import { PACKET_DEFINITIONS, packetDefaultFace, packetScalingStat } from './packets';
+import { PACKET_DEFINITIONS, packetDefaultFace, packetHalves, packetScalingStat } from './packets';
 import {
   GATE_LOCAL_LEVEL, MAX_LINEAGE_TIER, rowBiomeLevel, rowsForTier, tierHasRow,
 } from './magnitudes';
 import {
-  bandBiomeLevel, lineageGateCost, resolveLineageCapstone, resolveLineageCard,
+  bandBiomeLevel, isVerbCard, lineageGateCost, resolveLineageCapstone, resolveLineageCard,
 } from './resolve';
 import {
   AMPLIFIED_AXES, LINEAGE_FX_KEYS, PACKET_IDS, PAYOFF_KINDS, ROW_KINDS,
@@ -137,6 +137,13 @@ for (const [key, lineage] of LINEAGE_DATABASE) {
 
     if (card.row === 'stat') {
       check(!card.trigger && !card.payoff, `${card.id}: a stat row is the one row that is a number, not an effect`);
+    } else if (isVerbCard(card)) {
+      // A T1 VERB (design §24.2): it carries only its lane — the moment comes from
+      // the packet, the payload from the active lean — and that shape exists only
+      // in a weapon's T1 band, on a lane with halves to compose.
+      check(card.tier === 1, `${card.id}: only the T1 band is lean-and-verb; a T${card.tier} payoff authors its own trigger and payoff`);
+      check(lineage.slot === 'weapon', `${card.id}: only a weapon band composes (non-weapon trees are parked)`);
+      check(!!packetHalves(card.lane), `${card.id}: lane '${card.lane}' has no halves to compose a verb from`);
     } else {
       check(!!card.trigger, `${card.id}: every row but stat fires on something`);
       check(!!card.payoff, `${card.id}: a card must DO something the moment it is bought (design §4)`);
@@ -248,7 +255,11 @@ for (const [key, lineage] of LINEAGE_DATABASE) {
 // eight packets), not two per slot" — because "any slot may complete a packet"
 // (design §7) is what makes borrowing a sibling slot legal.
 
-const SLOTS_AUTHORED = [...new Set([...LINEAGE_DATABASE.values()].map((l) => l.slot))];
+// Coverage is a rule about trees a player can REACH, so it reads the live
+// lineages: every armour, charm and boots tree is parked (design §24.5), which
+// leaves no non-weapon slot authored and skips the §17 block below until they
+// return. Their data stays, and the structural rules above still walk it.
+const SLOTS_AUTHORED = [...new Set(liveLineages().map((l) => l.slot))];
 const NON_WEAPON_SLOTS_AUTHORED = SLOTS_AUTHORED.filter((slot) => slot !== 'weapon');
 
 /**
@@ -392,6 +403,17 @@ for (const lineage of LINEAGE_DATABASE.values()) {
     if (!form.capstone) continue;
     check(declaredFx.has(form.capstone.fx), `${form.capstone.id}: fx '${form.capstone.fx}' is not in LINEAGE_FX_KEYS`);
     usedFx.add(form.capstone.fx);
+  }
+}
+// A payload owns its fx (design §24.2): a composed T1 verb pushes the key its
+// lean's packet names, so a key a packet half names is drawn without any card
+// authoring it.
+for (const packet of PACKET_DEFINITIONS.values()) {
+  if (!packet.halves) continue;
+  for (const fx of [packet.halves.payloadFx, packet.halves.pure.fx]) {
+    check(declaredFx.has(fx), `packet '${packet.id}': fx '${fx}' is not in LINEAGE_FX_KEYS`);
+    check(fx.startsWith(`${packet.id}.`), `packet '${packet.id}': fx '${fx}' does not speak its lane's grammar`);
+    usedFx.add(fx);
   }
 }
 for (const key of declaredFx) {
@@ -569,8 +591,14 @@ for (const lineage of LINEAGE_DATABASE.values()) {
 // `server/src/systems/combat/keystones/`, which `shared/` cannot import (package
 // boundary), so this asserts against the closed `PACKET_IDS` list instead; the
 // conductor reconciles with W1-A's actual registry at merge.
+//
+// Live lineages only. This is where review finding P4 bit (78 non-weapon T3/T4
+// cards authored on trees with no form to open their band); it is MOOT while
+// those trees are parked (design §24.5) — nothing on a parked tree is buyable at
+// all. When the trees return, P4's rule comes back with them: every authored
+// card's tier must be ≤ the highest gate-reachable form tier of its lineage.
 
-for (const lineage of LINEAGE_DATABASE.values()) {
+for (const lineage of liveLineages()) {
   const keystoneCards = lineage.cards.filter((c) => c.tier === 3 && c.row === 'keystone');
   const crossCards = lineage.cards.filter((c) => c.tier === 4 && c.row === 'cross');
 

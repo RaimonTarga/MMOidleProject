@@ -3,7 +3,6 @@ import type {
   EquipmentSlot,
   AttunedAbilities,
   EquippedRule,
-  EvolveMode,
   PlayerMoveOptions,
   PlayerMoveResult,
   CombatControlResult,
@@ -147,17 +146,6 @@ export function sendUnequip(socket: GameSocket, slot: EquipmentSlot): void {
 
 export function sendCraftRecipe(socket: GameSocket, recipeId: string): void {
   socket.emit('crafting:craftRecipe', recipeId);
-}
-
-export function sendEvolveItem(
-  socket: GameSocket,
-  payload: { recipeId: string; mode: EvolveMode },
-): void {
-  socket.emit('crafting:evolveItem', payload);
-}
-
-export function sendUpgradeItem(socket: GameSocket, itemId: string): void {
-  socket.emit('inventory:upgradeItem', itemId);
 }
 
 // ── Lineage trees (progression rework Phase 1) ──────────────────────────────

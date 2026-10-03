@@ -132,9 +132,6 @@ export function stepSatisfied(step: TutorialStep, view: TutorialView, later: Lat
           (next.type === 'equip' && next.definitionIds.includes(worn))
           || (next.type === 'wearForm' && next.recipeId === worn));
       });
-    case 'upgrade':
-      return viewHasItem(view, step.definitionId)
-        && (view.itemUpgrades[step.definitionId] ?? 0) >= step.toPlus;
     case 'configureRunes':
       return loadoutIncludes(view.runesEquipped, step.rules)
         || later.some((next) => next.type === 'configureRunes' && loadoutIncludes(view.runesEquipped, next.rules));
@@ -149,6 +146,8 @@ export function stepSatisfied(step: TutorialStep, view: TutorialView, later: Lat
     }
     case 'unlockCard':
       return viewOwnsLineageCard(view, step.lineageId, step.cardId);
+    case 'setActive':
+      return view.lineages[step.lineageId]?.active[step.row] === step.cardId;
     case 'unlockForm':
       return viewOwnsLineageForm(view, step.lineageId, step.recipeId);
     case 'wearForm':

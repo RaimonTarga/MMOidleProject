@@ -3,7 +3,7 @@
  * jsonl outputs and prints the win-rate matrix plus the Recovery columns the brief's
  * decision 7 asks for. Row ids are `cand|cls|boss|seed`.
  *
- *   tsx scripts/_t1BossMatrix.ts res.jsonl [more.jsonl ...] [--md] [--recovery]
+ *   tsx scripts/_t1BossMatrix.ts res.jsonl [more.jsonl ...] [--md] [--recovery] [--before=base.jsonl]
  */
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -121,4 +121,46 @@ for (const cand of cands) {
     for (const l of rl) console.log(`| ${fmt2(l)} |`);
   }
 }
+/**
+ * `--before=<baseline.jsonl>` (course-correction W3-A item 4): an AFTER/BEFORE table.
+ * The positional files are the "after" rows; the baseline's rows are matched by id
+ * (same plan, same seeds), and the table reads per class and per boss: win rate,
+ * median TTK on wins, median boss %HP left on losses, before -> after, plus how
+ * many fights changed at all.
+ */
+const beforeArg = process.argv.slice(2).find((a) => a.startsWith('--before='));
+if (beforeArg) {
+  const before = new Map<string, Res>();
+  for (const line of readFileSync(beforeArg.slice('--before='.length), 'utf8').split('\n')) {
+    if (!line.trim()) continue;
+    const r = JSON.parse(line) as Res;
+    if (!r.error) before.set(r.id, r);
+  }
+  const after = rows.filter((r) => !r.error && before.has(r.id));
+  const unmatched = rows.filter((r) => !r.error && !before.has(r.id)).length;
+  const fmtWin = (f: Res[]) => `${Math.round((f.filter((r) => r.won).length / Math.max(1, f.length)) * 100)}% ${f.filter((r) => r.won).length}/${f.length}`;
+  const medTtk = (f: Res[]) => { const w = f.filter((r) => r.won); return w.length ? `${r1(med(w.map((r) => r.t)))}s` : '-'; };
+  const medLeft = (f: Res[]) => { const l = f.filter((r) => !r.won); return l.length ? `${r1(med(l.map((r) => r.bossPctLeft)))}%` : '-'; };
+  const changed = (f: Res[]) => f.filter((r) => {
+    const b = before.get(r.id)!;
+    return b.won !== r.won || b.t !== r.t || b.bossPctLeft !== r.bossPctLeft || b.hpLost !== r.hpLost;
+  }).length;
+  const table = (label: string, groups: Array<[string, (r: Res) => boolean]>) => {
+    console.log(`\n${label} — before -> after (${after.length} fights matched by id${unmatched ? `, ${unmatched} unmatched` : ''})`);
+    console.log('| group | win rate | median TTK on wins | median boss % left on losses | fights changed |');
+    console.log('|---|---|---|---|---:|');
+    for (const [name, pick] of groups) {
+      const a = after.filter(pick);
+      if (a.length === 0) continue;
+      const b = a.map((r) => before.get(r.id)!);
+      console.log(`| ${name} | ${fmtWin(b)} -> ${fmtWin(a)} | ${medTtk(b)} -> ${medTtk(a)} | ${medLeft(b)} -> ${medLeft(a)} | ${changed(a)}/${a.length} |`);
+    }
+  };
+  table('Per class', CLASSES.map((cls) => [cls, (r: Res) => r.cls === cls]));
+  table('Per boss', BOSSES.map((boss) => [SHORT[boss]!, (r: Res) => r.boss === boss]));
+  table('Per class x boss (changed cells only)', CLASSES.flatMap((cls) => BOSSES
+    .filter((boss) => changed(after.filter((r) => r.cls === cls && r.boss === boss)) > 0)
+    .map((boss): [string, (r: Res) => boolean] => [`${cls} / ${SHORT[boss]}`, (r: Res) => r.cls === cls && r.boss === boss])));
+}
+
 assert(errors.length === 0, `${errors.length} rows errored`);

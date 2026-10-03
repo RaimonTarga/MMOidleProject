@@ -3,6 +3,7 @@ import type {
   CannotAttack,
   ChillsTarget,
   ControlsMonster,
+  ShowsRhythm,
   InPack,
   DealsDamage,
   EvadesHits,
@@ -277,6 +278,8 @@ export interface ServerEntity {
   hasEnvironmentalDot?: HasEnvironmentalDot;
   hasNodeFeatureEffect?: HasNodeFeatureEffect;
   isDead?: IsDead;
+  /** The rhythm readout (design §24.6): present while a triggered lineage card is in play. */
+  showsRhythm?: ShowsRhythm;
 
   // Monster-only slices
   isMonster?: IsMonster;

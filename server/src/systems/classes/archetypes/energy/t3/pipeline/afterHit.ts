@@ -1,5 +1,5 @@
 import { registerCombatListener } from "../../../../../combat/engine/combatPipeline";
-import { setEmpoweredAttack } from "../../../../../combat/engine/empoweredAttacks";
+import { isMechanicProxy, setEmpoweredAttack } from "../../../../../combat/engine/empoweredAttacks";
 import {
   attachComponent,
   detachComponent,
@@ -45,7 +45,8 @@ export function registerAfterHit(): void {
     const entity = ctx.attacker;
     if (!entity?.usesEnergy) return;
 
-    if (ctx.metadata["empoweredAttack"]) return;
+    // A `mechanic-proxy` hit spent no charge (design §24.2): it builds like any hit.
+    if (ctx.metadata["empoweredAttack"] && !isMechanicProxy(ctx)) return;
 
     const player = entity;
     const passives = player.usesSkills.passives;

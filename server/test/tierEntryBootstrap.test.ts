@@ -19,6 +19,7 @@ import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { applyTierEntryProfile } from "../src/admin/gameActions";
 import { World } from "../src/world/World";
 import { evolveItem } from "../src/systems/player/economy/itemEvolution";
+import { craftRecipe } from "../src/systems/player/economy/crafting";
 import { craftStanceRecipe, setStanceLoadout } from "../src/systems/player/economy/stanceCrafting";
 
 function assert(condition: unknown, message: string): asserts condition {
@@ -154,36 +155,31 @@ assert(player.tracksCombat.statusEffects.length === 0, "entry clears transient e
 assert(player.hasStatus.activeBuffs!.length === 0, "entry clears visible buffs");
 assert(!player.isDead, "entry cannot inherit a corpse");
 
-// One real T1 -> T2 lineage proves the server path the bot executor calls:
-// +5 predecessor, exact evolution spend, predecessor consumption, and +0 child.
+// One real T1 -> T2 step proves the server path the bot executor calls. Since
+// design §24.5 the T2 vest is a plain recipe: crafted for its authored essence
+// cost, with the T1 vest neither required nor consumed. The retired evolve and
+// reconstruct paths refuse and change nothing.
 player.tracksProgression.unlockedRecipes.push("plains-vest-t2");
 player.holdsInventory.inventory = ["plains-vest-t1"];
-player.holdsInventory.itemUpgrades["plains-vest-t1"] = 5;
-const evolution = evolveItem(world, player, "plains-vest-t2", "evolve");
-assert(evolution.success, evolution.reason ?? "legal evolution should succeed");
-assert(!player.holdsInventory.inventory.includes("plains-vest-t1"), "evolution consumes the predecessor");
-assert(player.holdsInventory.inventory.includes("plains-vest-t2"), "evolution grants the child item");
-assert((player.tracksProgression.essences.yellow as number) === 63, "evolution deducts its authored essence cost");
+const crafted = craftRecipe(world, player, "plains-vest-t2");
+assert(crafted.success, crafted.reason ?? "the T2 vest crafts from its recipe");
+assert(player.holdsInventory.inventory.includes("plains-vest-t1"), "the T1 vest is not consumed");
+assert(player.holdsInventory.inventory.includes("plains-vest-t2"), "the craft grants the T2 vest");
+assert((player.tracksProgression.essences.yellow as number) === 63, "the craft deducts its authored essence cost");
 
 player.holdsInventory.inventory = [];
-const missingPredecessor = evolveItem(world, player, "plains-vest-t2", "evolve");
-assert(!missingPredecessor.success, "evolution rejects an absent predecessor");
-player.holdsInventory.inventory = ["plains-vest-t1"];
-player.holdsInventory.itemUpgrades["plains-vest-t1"] = 5;
 player.tracksProgression.essences.yellow = 0;
-const insufficientResources = evolveItem(world, player, "plains-vest-t2", "evolve");
-assert(!insufficientResources.success, "evolution rejects insufficient essence without changing mode");
-player.holdsInventory.inventory = [];
+const insufficientResources = craftRecipe(world, player, "plains-vest-t2");
+assert(!insufficientResources.success, "the craft rejects insufficient essence");
 
-// Reconstruction is a distinct path: it does not require an owned predecessor.
-// Weapons are off this ladder entirely (Phase 2b, Override A: lineage tree
-// instead), so this uses an armor recipe — cave-vest-t2 reconstructs for 189 red.
 player.tracksProgression.unlockedRecipes.push("cave-vest-t2");
 player.tracksProgression.essences.red = 189;
-const reconstruction = evolveItem(world, player, "cave-vest-t2", "reconstruct");
-assert(reconstruction.success, reconstruction.reason ?? "supported reconstruction should succeed");
-assert(player.holdsInventory.inventory.includes("cave-vest-t2"), "reconstruction grants the child item");
-assert(player.tracksProgression.essences.red === 0, "reconstruction deducts its authored essence cost");
+for (const mode of ["evolve", "reconstruct"] as const) {
+  const retired = evolveItem(world, player, "cave-vest-t2", mode);
+  assert(!retired.success, `${mode} is retired on every slot`);
+}
+assert(!player.holdsInventory.inventory.includes("cave-vest-t2"), "a refused evolve grants nothing");
+assert(player.tracksProgression.essences.red === 189, "and spends nothing");
 
 // Stance craft and default assignment are the player-facing build operations;
 // no bot-only active-stance mutation is involved.
@@ -226,10 +222,14 @@ const earnedProfile = tierEntryProfileFromT1Snapshot({ schemaVersion: 1,
 } as T1CharacterSnapshot, CLEARING_NODE_ID, 1);
 const earnedResult = applyTierEntryProfile(world, player, earnedProfile);
 assert(earnedResult.success, earnedResult.reason ?? "actual V1d state imports");
-// Rebuilt from the V1d gear under the current armor data (164 before the 2026-09-25 defense rebudget).
-// The pin is the pool the GEAR buys. The per-tier pool raise (design §20) lands on
-// top of it at recalc, so it is read from the config rather than baked in again; the
-// tolerance is the second rounding the class affinity fold applies after the raise.
+// Rebuilt from the V1d gear under the current armor data (164 before the 2026-09-25 defense
+// rebudget). Design §24.5 retired the ladder on every slot, so the fixture's +N levels add
+// nothing; the ladder fold (W1-D) put each item's old +5 total into its base, and the
+// fixture wears its vest, charm and boots at +5 — so the bare gear buys the same 166 it
+// bought as +5 gear. The pin is the pool the GEAR buys.
+// The per-tier pool raise (design §20) lands on top of it at recalc, so it is read from
+// the config rather than baked in again; the tolerance is the second rounding the class
+// affinity fold applies after the raise.
 const EARNED_UNRAISED_MAX_HP = 166;
 const EARNED_MAX_HP = player.hasHealth.maxHp;
 assert(

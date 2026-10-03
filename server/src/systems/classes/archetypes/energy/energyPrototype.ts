@@ -1,5 +1,5 @@
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
-import { setEmpoweredAttack, registerEmpoweredMultiplier, isEmpoweredAttack } from '../../../combat/engine/empoweredAttacks';
+import { setEmpoweredAttack, registerEmpoweredMultiplier, isEmpoweredAttack, isMechanicProxy } from '../../../combat/engine/empoweredAttacks';
 import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
 import {
   energyFrameGainMult,
@@ -75,6 +75,7 @@ export function initEnergyArchetype(): void {
     // `mechanicConsumed`, not `empoweredAttack`: Surge sets the latter on every
     // Overdrive hit for crit styling, which made every such hit "the burst".
     if (!ctx.metadata['mechanicConsumed']) return;
+    if (isMechanicProxy(ctx)) return; // a proxy counts as the burst, never announces it (rule 3)
     if (!ctx.attacker.usesEnergy) return;
     emitMechanicFired(world, ctx.attacker, ctx);
   });
@@ -86,7 +87,9 @@ export function initEnergyArchetype(): void {
     const entity = ctx.attacker;
     if (!entity?.usesEnergy) return;
 
-    if (ctx.metadata['empoweredAttack']) return; // empowered hits never generate energy
+    // Empowered hits never generate energy — but a `mechanic-proxy` hit spent no
+    // charge (design §24.2), so it builds energy like the ordinary hit it was.
+    if (ctx.metadata['empoweredAttack'] && !isMechanicProxy(ctx)) return;
     if (ctx.metadata['energyHandled']) return;   // T3 mechanic already handled this hit
     // Missed discharge: the charge is still armed (the multiplier skipped it on the
     // miss), so don't generate more energy — the empowered attack is preserved for

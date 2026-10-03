@@ -9,7 +9,7 @@ export const SLOT_ABBR: Record<string, string> = {
 };
 
 // Stat labels/formatting live in ./itemDisplay (STAT_META) — the single source
-// of truth shared by the Forge, Upgrade, Biome, and inventory stat panels.
+// of truth shared by the crafting and inventory stat panels.
 
 export function biomeName(group: string): string {
   const biome = BIOME_DATABASE.get(group);

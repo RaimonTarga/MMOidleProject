@@ -20,6 +20,7 @@ import type {
   PlayerView,
   MonsterView,
   ReleaseAnnouncementPayload,
+  RhythmMoment,
   WardState,
   SubVariant,
   SummonSlotView,
@@ -238,6 +239,11 @@ export const lineagesAtom = atom<LineageProgressMap>({});
 export const abilityNodesAtom = atom<AbilityNodeProgressMap>({});
 
 export const activeBuffsAtom = atom<PlayerBuff[]>([]);
+/**
+ * The rhythm readout's moment state (`PlayerView.rhythm`, design §24.6) — the
+ * `ShowsRhythm` slice's moments, undefined while the slice is absent.
+ */
+export const rhythmAtom = atom<Record<string, RhythmMoment> | undefined>(undefined);
 export const autoPathAtom = atom<string[] | null>(null);
 
 /**
@@ -253,6 +259,22 @@ export function notifyAbilityFired(abilityId: string): void {
   const store = getDefaultStore();
   const prev = store.get(abilityFiredAtAtom);
   store.set(abilityFiredAtAtom, { ...prev, [abilityId]: Date.now() });
+}
+
+/**
+ * How many times each Technique has had cooldown handed back by a lineage
+ * refund (the Technique payload, design §24.2 — `technique.refund-flash`). A
+ * COUNT rather than a timestamp: the tile keys a one-shot flash on it, so every
+ * refund replays the flash and a remount never replays an old one.
+ */
+export const abilityRefundCountAtom = atom<Record<string, number>>({});
+
+/** The server refunded these Techniques' cooldowns (own player only). */
+export function notifyAbilityRefunded(abilityIds: readonly string[]): void {
+  const store = getDefaultStore();
+  const next = { ...store.get(abilityRefundCountAtom) };
+  for (const id of abilityIds) next[id] = (next[id] ?? 0) + 1;
+  store.set(abilityRefundCountAtom, next);
 }
 
 /**
@@ -465,7 +487,7 @@ export const inventoryOpenAtom = atom<boolean>(false);
  */
 export const lineageTreeSlotAtom = atom<EquipmentSlot | null>(null);
 export const mapOpenAtom = atom<boolean>(false);
-export const craftTabAtom = atom<'make' | 'upgrade' | null>(null);
+export const craftTabAtom = atom<'make' | null>(null);
 export const questOpenAtom = atom<boolean>(false);
 export const settingsOpenAtom = atom<boolean>(false);
 export const debugPanelOpenAtom = atom<boolean>(false);
@@ -875,6 +897,7 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(bossesClearedAtom, []);
   setIfShallowArrayEqual(visitedNodesAtom, []);
   setIfShallowArrayEqual(activeBuffsAtom, []);
+  setIfChanged(rhythmAtom, undefined);
   store.set(abilityFiredAtAtom, {});
   store.set(abilityCooldownStartedAtAtom, {});
   store.set(stanceCooldownStartedAtAtom, 0);
@@ -1006,6 +1029,9 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfShallowArrayEqual(bossesClearedAtom, player.bossesCleared);
   setIfShallowArrayEqual(visitedNodesAtom, player.visitedNodes);
   setIfBuffsEqual(activeBuffsAtom, player.activeBuffs);
+  // The slice object is replaced only when the server rewrote it, so identity
+  // is the change signal.
+  setIfChanged(rhythmAtom, player.rhythm);
   setIfShallowObjectEqual(passivesAtom, player.passives);
   setIfShallowObjectEqual(equipmentAtom, player.equipment);
   setIfShallowObjectEqual(itemUpgradesAtom, player.itemUpgrades ?? {});

@@ -6,8 +6,7 @@ import {
   isRuneRecipeUnlocked,
   checkEvolve,
   checkReconstruct,
-  requiredPlusFor,
-  EVOLUTION_REQUIRED_PLUS,
+  isGatedLineageForm,
   ESSENCE_TYPES,
 } from "@mmo-idle/shared";
 import type { EssenceType } from "@mmo-idle/shared";
@@ -22,8 +21,10 @@ const fullEssences = () =>
   Object.fromEntries(ESSENCE_TYPES.map((t) => [t, 1_000_000])) as Record<EssenceType, number>;
 
 // ─────────────────────────────────────────────────────────────────────────
-// The returning-biome T2 lineage map (§5/§18/§19). Every entry here is a T2
-// item that must now be an EVOLUTION of its same-slot T1 predecessor.
+// The returning-biome T2 map (§5/§18/§19): each T2 item and the same-slot T1
+// item it follows. A WEAPON T2 is a lineage form whose `evolvesFrom` names its
+// T1 form (the graph its tree was authored from; opened at the gate). Armour,
+// charm and boots T2s are plain recipes since design §24.5: no predecessor.
 // ─────────────────────────────────────────────────────────────────────────
 const RETURNING_BIOME_LINEAGES: Array<{ t1: string; t2: string }> = [
   { t1: "iron-broadsword", t2: "knight-steelsword" },
@@ -53,22 +54,21 @@ const JUNGLE_DESERT_T2_IDS = [
   "desert-sunsteel-cross", "desert-vest-t2", "desert-charm-t2", "desert-boots-t2",
 ];
 
-// ── Evolution wiring ────────────────────────────────────────────────────────
-
-// Designer decision 2026-09-04 returned the gate to +3 (see
-// shared/src/systems/evolution.ts and
-// docs/briefs/t2-bossless-progression-campaign-2026-09-03.md section 12): the
-// canonical T1 routes were never updated for +5, so it taxed genuinely-invested
-// predecessors rather than rewarding commitment.
-assert(EVOLUTION_REQUIRED_PLUS === 3, "evolution requires a +3 predecessor (reverted from +5)");
+// ── The T2 graph after the evolve path's retirement (design §24.5) ──────────
 
 for (const { t1, t2 } of RETURNING_BIOME_LINEAGES) {
   const predecessor = RECIPE_DATABASE.get(t1);
   const recipe = RECIPE_DATABASE.get(t2);
   assert(!!predecessor, `${t1}: predecessor recipe must exist`);
   assert(!!recipe, `${t2}: recipe must exist`);
-  assert(recipe!.evolvesFrom === t1, `${t2}: must evolve from ${t1} (got ${recipe!.evolvesFrom})`);
-  assert(requiredPlusFor(recipe!) === 3, `${t2}: evolution must require +3`);
+  assert(predecessor!.slot === recipe!.slot, `${t2}: follows a same-slot T1 item`);
+  if (recipe!.slot === "weapon") {
+    assert(recipe!.evolvesFrom === t1, `${t2}: the weapon form graph names ${t1} (got ${recipe!.evolvesFrom})`);
+    assert(isGatedLineageForm(t2), `${t2}: a T2 weapon form is opened at its gate`);
+  } else {
+    assert(recipe!.evolvesFrom === undefined, `${t2}: a plain recipe has no predecessor (got ${recipe!.evolvesFrom})`);
+    assert(!isGatedLineageForm(t2), `${t2}: a plain recipe, not a gated door`);
+  }
 }
 
 for (const id of JUNGLE_DESERT_T2_IDS) {
@@ -82,34 +82,27 @@ for (const id of JUNGLE_DESERT_T2_IDS) {
 assert(RECIPE_DATABASE.get("gale-needle")!.evolvesFrom === "flash-rapier", "gale-needle branches from flash-rapier");
 assert(!RECIPE_DATABASE.has("thorn-needle"), "thorn-needle is retired");
 
-// Weapon evolution/reconstruction is rejected server-side (Phase 2b, Override A):
-// a weapon's power track is its lineage tree now, regardless of plus or funding.
-{
-  const recipe = RECIPE_DATABASE.get("gale-needle")!;
-  for (const plus of [2, 3]) {
+// Evolution and reconstruction are retired on every slot, whatever the plus or
+// funding (weapons in Phase 2b, armour/charm/boots in design §24.5).
+for (const { t1, t2 } of RETURNING_BIOME_LINEAGES) {
+  const recipe = RECIPE_DATABASE.get(t2)!;
+  for (const plus of [3, 5]) {
     const check = checkEvolve({
       recipe,
-      inventory: ["flash-rapier"],
-      itemUpgrades: { "flash-rapier": plus },
+      inventory: [t1],
+      itemUpgrades: { [t1]: plus },
       essences: fullEssences(),
     });
-    assert(!check.ok, `gale-needle: a +${plus} flash-rapier must NOT be able to evolve (weapons use the lineage tree)`);
+    assert(!check.ok, `${t2}: a +${plus} ${t1} must NOT be able to evolve (the path is retired)`);
   }
-}
-
-// Reconstruction is likewise rejected for every weapon in the returning-biome
-// lineage map, with full essence and no predecessor needed.
-for (const id of ["gale-needle", "knight-steelsword", "ruinous-axe"]) {
-  const recipe = RECIPE_DATABASE.get(id)!;
-  const check = checkReconstruct({ recipe, essences: fullEssences() });
-  assert(!check.ok, `${id}: weapon reconstruct must be rejected (weapons use the lineage tree)`);
+  assert(!checkReconstruct({ recipe, essences: fullEssences() }).ok, `${t2}: reconstruct is retired`);
 }
 
 // ── Catalyst economy (§2, §7, §8) ───────────────────────────────────────────
 // RETIRED (Phase 2b): the catalyst wallet and every `catalystCost`/
-// `reconstructCatalystCost` field are gone. Non-weapon upgrade/evolve/
-// reconstruct costs are essence-only now (Override C); weapons are off this
-// ladder entirely (see the rejections above). Nothing left here to audit.
+// `reconstructCatalystCost` field are gone, and so are the evolve and
+// reconstruct paths that spent them (see the refusals above). Nothing left
+// here to audit.
 
 const ALL_T2_GEAR_IDS = [...RETURNING_BIOME_LINEAGES.map((l) => l.t2), ...JUNGLE_DESERT_T2_IDS];
 

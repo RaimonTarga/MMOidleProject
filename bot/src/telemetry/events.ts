@@ -196,6 +196,7 @@ export type BlockReason =
   | { kind: "essence"; essence: string; current: number; required: number; missing: number }
   | { kind: "globalMastery"; current: number; required: number; missing: number }
   | { kind: "biomeLevel"; biomeGroup: string; current: number; required: number; missing: number }
+  | { kind: "shard"; packet: string; current: number; required: number; missing: number }
   | { kind: "recipeLocked"; recipeId: string }
   | { kind: "prerequisite"; detail: string };
 

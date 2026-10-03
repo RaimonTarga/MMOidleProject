@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
-import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS, coreEligibilityLabel, coreIsActive, isRestrictedCore, lineageForRecipeId, relicIsUnlocked } from '@mmo-idle/shared';
-import { equipmentAtom, itemUpgradesAtom, lineagesAtom, playerNodeIdAtom, playerTierAtom, selectedRangeAtom } from '../../hud/atoms';
+import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS, coreEligibilityLabel, coreIsActive, isRestrictedCore, lineageForEquippedItem, relicIsUnlocked } from '@mmo-idle/shared';
+import { equipmentAtom, lineagesAtom, playerNodeIdAtom, playerTierAtom, selectedRangeAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
 import { lineageDisplayName } from '../lineage/lineageDisplayName';
 import { ItemIcon } from '../ItemIcon';
@@ -15,7 +15,6 @@ interface Props {
 
 export function EquipmentSlots({ compare, onOpenLineage }: Props) {
   const equipment = useAtomValue(equipmentAtom);
-  const itemUpgrades = useAtomValue(itemUpgradesAtom);
   const lineages = useAtomValue(lineagesAtom);
   const selectedRange = useAtomValue(selectedRangeAtom);
   const playerTier = useAtomValue(playerTierAtom);
@@ -32,7 +31,6 @@ export function EquipmentSlots({ compare, onOpenLineage }: Props) {
           const isShown = !!defId && compare.shown === defId;
           const isPinned = !!defId && compare.pinned === defId;
           const color = filled ? tierColor(def.tier) : null;
-          const plus = defId ? (itemUpgrades[defId] ?? 0) : 0;
           const coreInactive = filled && slot === 'core'
             && isRestrictedCore(def.coreEligibility)
             && !coreIsActive(def.coreEligibility, selectedRange);
@@ -40,8 +38,11 @@ export function EquipmentSlots({ compare, onOpenLineage }: Props) {
             && !relicIsUnlocked(playerTier, playerNodeId === TEST_ROOM_NODE_ID);
           // The slot holds the lineage, not the item (design §2): a form's slot
           // reads as "<Lineage name>" with the worn form's own name underneath,
-          // and tapping it opens the tree instead of pinning a compare card.
-          const lineage = filled ? lineageForRecipeId(defId!) : undefined;
+          // and tapping it opens the weapon page (design §24.6) instead of
+          // pinning a compare card.
+          // A parked slot (design §24.5: armour, charm, boots) has no tree to
+          // open, even when an old save still holds one, so it reads as an item.
+          const lineage = filled ? lineageForEquippedItem(defId) : undefined;
           const hasTree = !!lineage && !!lineages[lineage.id];
 
           return (
@@ -61,10 +62,10 @@ export function EquipmentSlots({ compare, onOpenLineage }: Props) {
               style={color ? { borderColor: `${color}88` } : undefined}
               title={relicLocked ? 'Relics unlock at Tier 4' : coreInactive
                 ? `Inactive — ${coreEligibilityLabel(def.coreEligibility).toLowerCase()}`
-                : hasTree ? `Open the ${lineageDisplayName(lineage!)} tree`
+                : hasTree ? `Open the ${lineageDisplayName(lineage!)} page`
                   : undefined}
               aria-label={filled
-                ? hasTree ? `Open the ${lineageDisplayName(lineage!)} tree` : `Show what ${def.name} gives you`
+                ? hasTree ? `Open the ${lineageDisplayName(lineage!)} page` : `Show what ${def.name} gives you`
                 : `${SLOT_LABELS[slot]} slot empty`}
               aria-pressed={filled && !hasTree ? isPinned : undefined}
               disabled={!filled}
@@ -94,7 +95,7 @@ export function EquipmentSlots({ compare, onOpenLineage }: Props) {
                 </span>
                 {filled && (
                   <span className="inv-equip-slot__name">
-                    {def.name}{plus > 0 ? ` +${plus}` : ''}
+                    {def.name}
                   </span>
                 )}
               </span>

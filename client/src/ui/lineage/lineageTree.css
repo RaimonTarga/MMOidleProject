@@ -1,25 +1,6 @@
-/* Lineage tree panel (progression rework Phase 1). Reuses the passive-tree
-   dialog shell and card/lock vocabulary from skillTree.css; this file only
-   adds the lane-grid, band and gate layout the mockup
-   (docs/briefs/lineage-tree-mockup.html) introduces. */
-
-.game-dialog__panel.lineage-tree-dialog {
-  max-width: min(1040px, calc((100vw - 32px) / var(--ui-font-scale, 1)));
-}
-
-.lin-tree-sub {
-  color: var(--hud-text-dim);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.lin-empty {
-  padding: 24px 20px;
-  color: var(--hud-text-muted);
-  font-size: 12px;
-  font-style: italic;
-}
+/* The lineage card shell (`CardShell.tsx`) and the lane-row grid, as the
+   Abilities panel's node rows (`AbilityNodeRows.tsx`) use them. The weapon page
+   itself has its own layout in `weaponPage.css` (design §24.6). */
 
 .lin-toast {
   margin: 0 20px;
@@ -29,118 +10,6 @@
   color: var(--hud-text);
   font-size: 11px;
 }
-
-/* ── Workspace: tree body + side column ──────────────────────────────────── */
-
-.lin-workspace {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-}
-
-.lin-tree-body {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  min-height: 0;
-  padding: 16px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.lin-side-column {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 16px;
-  overflow-y: auto;
-  background: var(--hud-material-panel);
-}
-
-@media (min-width: 1101px) {
-  .lin-workspace { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(260px, 320px); }
-  .lin-side-column { border-left: 1px solid var(--bevel-dark); }
-}
-
-/* ── Lane header row ──────────────────────────────────────────────────────── */
-
-.lin-lanes {
-  display: grid;
-  grid-template-columns: 70px repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  align-items: center;
-}
-
-.lin-lanes__h {
-  padding: 3px 4px;
-  border-bottom: 2px solid var(--lane-color, var(--hud-primary));
-  color: var(--lane-color, var(--hud-primary));
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  text-align: center;
-}
-
-/* ── Bands ────────────────────────────────────────────────────────────────── */
-
-.lin-band {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 10px;
-  border: 1px solid var(--hud-edge-light);
-  background: var(--hud-material-panel);
-}
-
-.lin-band--lit {
-  border-color: var(--hud-primary-strong, #d9b25c);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--hud-primary) 6%, transparent), transparent 45%);
-}
-
-.lin-band--dim { opacity: 0.55; }
-
-/* The next tier exists in the design but is not authored yet: a head, no cards. */
-.lin-band--absent { border-style: dashed; }
-
-.lin-band--collapsed { padding: 0; border-color: var(--hud-edge-divider); }
-.lin-band--collapsed > summary {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  padding: 8px 10px;
-  cursor: pointer;
-  color: var(--hud-text);
-  font-size: 12px;
-  list-style: none;
-}
-.lin-band--collapsed > summary::-webkit-details-marker { display: none; }
-.lin-band--collapsed > summary span { color: var(--hud-text-dim); font-size: 10px; }
-/* The stat row this band folded into the worn form (design §4). */
-.lin-band--collapsed > summary .lin-band__absorbed {
-  margin-left: auto;
-  padding-left: 8px;
-  border-left: 2px solid var(--hud-primary-strong, #d9b25c);
-  color: var(--hud-text-muted);
-  font-style: italic;
-  text-align: right;
-}
-.lin-band--collapsed[open] { padding: 0 0 10px; }
-.lin-band--collapsed[open] > summary { border-bottom: 1px solid var(--hud-edge-divider); margin-bottom: 8px; }
-.lin-band--collapsed > *:not(summary) { padding-left: 10px; padding-right: 10px; }
-
-.lin-band__head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.lin-band__head h3 { margin: 0; color: var(--hud-primary-strong, #d9b25c); font-size: 13px; }
-.lin-band__head span { color: var(--hud-text-dim); font-size: 10px; }
 
 /* ── Rows ─────────────────────────────────────────────────────────────────── */
 
@@ -158,7 +27,6 @@
 }
 .lin-row__label b { font-size: 11px; color: var(--hud-text); }
 .lin-row__label span { font-size: 9px; color: var(--hud-text-dim); line-height: 1.25; }
-.lin-row__label--locked b { color: var(--hud-text-dim); }
 
 /* ── Cards ────────────────────────────────────────────────────────────────── */
 
@@ -192,25 +60,6 @@
   box-shadow: 0 0 0 1px var(--hud-primary-strong, #d9b25c), 0 0 14px color-mix(in srgb, var(--lane-color) 35%, transparent);
 }
 
-.lin-card--silhouette {
-  border-style: dashed;
-  border-left-style: dashed;
-  background: transparent;
-  cursor: default;
-  opacity: 0.6;
-}
-.lin-card--silhouette .lin-card__desc { color: var(--hud-text-dim); font-style: italic; }
-
-/* Absorbed: a collapsed band's stat row, now part of the worn form's base stats
-   (design §4). Lane-lit like an active card but flat and inert — it is a readout,
-   so it is a div with no hover and no cursor. */
-.lin-card--absorbed {
-  border-color: color-mix(in srgb, var(--lane-color) 45%, var(--hud-edge-light));
-  background: color-mix(in srgb, var(--lane-color) 6%, var(--hud-material-inset));
-  cursor: default;
-}
-.lin-card--absorbed .lin-card__desc { font-style: italic; }
-
 /* The amplifier's connector: a short tick from this card up to the card it
    modifies, which the lane grid puts directly above it. `--lane-color` is already
    on the tile, so the tie is always the lane's colour. */
@@ -242,8 +91,6 @@
   color: var(--lane-color);
 }
 
-.lin-card--empty { visibility: hidden; }
-
 .lin-card__top { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
 .lin-card__name { font-size: 11px; font-weight: 700; overflow-wrap: anywhere; }
 .lin-card__state {
@@ -259,113 +106,10 @@
 .lin-card__cost { margin-top: 2px; }
 .lin-card__discount { font-size: 8px; color: var(--hud-success, #62d98a); }
 
-/* ── Gate ─────────────────────────────────────────────────────────────────── */
-
-.lin-gate {
-  display: grid;
-  grid-template-columns: 70px 1fr;
-  gap: 8px;
-  margin-top: 2px;
-}
-
-.lin-gate__forms {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 8px;
-}
-
-.lin-form {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 9px 10px;
-  border: 1px solid var(--hud-primary-strong, #d9b25c);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--hud-primary) 10%, transparent), transparent);
-  color: var(--hud-text);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-.lin-form:disabled { opacity: 0.5; cursor: not-allowed; }
-.lin-form:focus-visible { outline: 1px solid var(--hud-primary); outline-offset: 2px; }
-.lin-form--worn {
-  box-shadow: 0 0 0 1px var(--hud-primary-strong, #d9b25c), 0 0 16px color-mix(in srgb, var(--hud-primary) 30%, transparent);
-  cursor: default;
-}
-
-.lin-form__name {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--hud-primary-strong, #d9b25c);
-}
-.lin-form__name small {
-  font-size: 9px;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  color: var(--hud-text-dim);
-}
-.lin-form--worn .lin-form__name small { color: var(--hud-primary-strong, #d9b25c); }
-.lin-form__cap { font-size: 10px; color: var(--hud-text-muted); line-height: 1.4; }
-.lin-form__cap b { color: var(--hud-text); }
-.lin-form__cost { margin-top: 2px; }
-
-/* ── Side column sections ─────────────────────────────────────────────────── */
-
-.lin-side { display: flex; flex-direction: column; gap: 8px; }
-.lin-side + .lin-side { padding-top: 14px; border-top: 1px solid var(--hud-edge-divider); }
-.lin-side h3 { margin: 0; color: var(--hud-primary-strong, #d9b25c); font-size: 12px; }
-
-.lin-mastery-bar {
-  height: 7px;
-  border: 1px solid var(--hud-edge-light);
-  background: var(--hud-material-inset);
-  overflow: hidden;
-}
-.lin-mastery-bar > i {
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--hud-primary) 50%, transparent), var(--hud-primary-strong, #d9b25c));
-}
-.lin-mastery-ticks {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 2px 8px;
-  font-size: 9px;
-  color: var(--hud-text-dim);
-  font-variant-numeric: tabular-nums;
-}
-
-.lin-wallet { display: flex; flex-direction: column; gap: 3px; font-size: 11px; }
-.lin-wallet > div { display: flex; justify-content: space-between; gap: 8px; }
-.lin-wallet span { color: var(--hud-text-muted); text-transform: capitalize; }
-.lin-wallet b { color: var(--hud-text); font-variant-numeric: tabular-nums; }
-
-.lin-build { display: flex; flex-direction: column; gap: 5px; font-size: 11px; }
-.lin-build__line { display: grid; grid-template-columns: 56px 1fr; gap: 8px; align-items: baseline; }
-.lin-build__k { font-size: 9px; letter-spacing: 0.6px; text-transform: uppercase; color: var(--hud-text-dim); }
-.lin-build__v { color: var(--hud-text); }
-.lin-build__v--dim { color: var(--hud-text-muted); font-style: italic; }
-.lin-build__empty { color: var(--hud-text-dim); font-style: italic; font-size: 10px; }
-
-.lin-readout {
-  margin: 0;
-  padding-left: 8px;
-  border-left: 2px solid var(--hud-primary-strong, #d9b25c);
-  color: var(--hud-text-muted);
-  font-size: 10px;
-  line-height: 1.45;
-}
-
 /* ── Narrow / phone width: cards stay three-across, the row label shrinks ─── */
 
 @media (max-width: 480px) {
-  .lin-lanes, .lin-row { grid-template-columns: 46px repeat(3, minmax(64px, 1fr)); gap: 5px; }
-  .lin-gate { grid-template-columns: 46px 1fr; }
+  .lin-row { grid-template-columns: 46px repeat(3, minmax(64px, 1fr)); gap: 5px; }
   .lin-card { min-height: 64px; padding: 6px; }
   .lin-card__name { font-size: 10px; }
   .lin-card__desc { font-size: 9px; }

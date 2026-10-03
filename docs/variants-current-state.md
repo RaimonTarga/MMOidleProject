@@ -11,16 +11,20 @@ this page and that history disagree, read the code.
 
 "Variant" is this system's working name for a node that carries a **family blend**
 instead of a node modifier. A blended node is a composition of its biome's monster
-families, and because each family drops one shard, the blend also says what the node
-pays.
+families, and its DOMINANT family says what the node pays: since design §24.3 every
+kill in a node pays that one shard (`nodeShard`), minority bodies included.
 
 ## 1. Families (`shared/src/data/families/index.ts`)
 
 Every non-boss monster of a covered biome belongs to **exactly one family**
 (`lineageMaterials.test.ts`'s partition sweep enforces this for every entry in
 `FAMILY_BIOMES` — a mob in no family is a kill that pays no shard). A `FamilyDefinition`
-names `monsterIds`, `drops` (the `PacketId` shard every kill in this family grants) and
-`punishes` (the lane this family is built to pressure — see §6).
+names `monsterIds`, `drops` (the `PacketId` shard a node this family dominates pays, for
+every kill there — design §24.3) and `punishes` (the lane this family is built to
+pressure — see §6). Since design §24.4 a T1 biome's three families drop exactly its
+weapon lineage's three lanes (Sky → kill-chain, Grove → engagement, Hopper → engagement,
+Brood → tempo moved to make that true; `punishes` unchanged, which leaves the Brood
+favouring and punishing Tempo — a named exception in `lineageMaterials.test.ts`).
 
 **Coverage today: all eleven biomes that have monster content at all, T1 through T4.**
 
@@ -110,19 +114,26 @@ stat/HP tables are untouched by blend or family.
 
 ## 4. Rewards
 
-Shard-granting is **monster-family-based, not node-based** — see
-[`lineages-current-state.md`](lineages-current-state.md) §10. A node's blend decides
-which family you are likely to fight (and therefore which shard you are likely to earn);
-the grant itself reads the dead monster's own family membership, so a non-family monster
-drops no shard regardless of node, and a family monster drops its shard even off-blend.
+Shard-granting is **node-based** (design §24.3) — see
+[`lineages-current-state.md`](lineages-current-state.md) §10. Every node is categorised
+under its AUTHORED blend's dominant family (largest share, ties in family-table order:
+`nodeFamily`), and every non-boss kill in it pays that family's `drops` (`nodeShard`),
+whatever the body's own family — so pack followers filed under another family pay what
+the map says (review P16, closed by construction). A node with no blend (a dungeon) keeps
+the old per-monster rule: the dead mob's own family shard, nothing for a mob in no family.
+Eight T2–T4 nodes are territories of a family their tier cannot field (they still pay its
+shard; `nodeShards.test.ts`'s `UNFIELDED_TERRITORIES`).
 
 ## 5. Map presentation
 
-The node info panel's headline band shows the blend's dominant family, every family
-present with its share and shard (a lane-coloured `ShardIcon`), a summary row of mobs
-actually fielded, and the families this tier's pool cannot field listed as absent. A
-dungeon's boss band names the capstone material it drops. Nodes with no blend keep the
-plain, reward/stat-inert modifier-named band. Shard and capstone chips in the materials
+The node info panel's summary names the node's territory ("Territory: Pack") and its
+one shard ("Drops: Gale Shards") over a composition bar; its details band reads "<Family>
+territory · Every kill here drops <Shard>s, whichever family it came from", the families
+present with their shares, and the families this tier's pool cannot field listed as
+absent. The arrival banner says "Pack territory · every kill here drops Gale Shards"
+(`arrivalTerritoryLine`), the world-map tiles carry a shard badge, and map search matches
+territory and shard names. A dungeon's boss band names the capstone material it drops;
+nodes with no blend show no territory and promise no shard. Shard and capstone chips in the materials
 panel and the crafting wallet strip render through `GameIcon` with a lane-coloured glyph
 (`shardIconSource`/`capstoneIconSource`), never a bare text glyph, and both panels group
 essence/shard/capstone rows with a divider and hide untouched (zero-amount) rows.
@@ -143,7 +154,9 @@ verdict; this page deliberately does not restate them, because they move with th
 `server/bench/familyContracts.ts`). Run 3 tried to settle the question from the matrix's
 ordinal ranking of six lanes on a blended node and could not: that ranking failed to
 reproduce between two seeds for seven of nine families, and its margins moved 7–15pp
-between a 90 s and a 270 s cap — more than the ±3pp band design §18.9 judges in. The
+between a 90 s and a 270 s cap — more than the ±3pp band design §18.9 then judged in (the
+lane-budget criterion is now design §24.1's viability floor; see
+[`lineages-current-state.md`](lineages-current-state.md) §14). The
 instrument that replaced it compares ONE lane against ONE lane on a node forced to 100%
 the family under test, to a fixed kill count, pooled across every weapon lineage carrying
 the lane, with five guards (reached-N, carriers, seed agreement, a spread that excludes
@@ -152,8 +165,8 @@ ratio). Only a verdict with all five guards passing may move a `drops` field.
 
 **A decisive inversion does not by itself say where `drops` should go.** With two lanes the
 lane that beat the favoured one is, by construction, the lane the family PUNISHES, and
-`drops === punishes` is refused by `server/test/lineageMaterials.test.ts` and incoherent
-besides. The instrument's `FAM_ALL_LANES=1` pass ranks every weapon lane on the same
+`drops === punishes` is refused by `server/test/lineageMaterials.test.ts` (one named
+exception since design §24.4, the Cave Brood) and incoherent besides. The instrument's `FAM_ALL_LANES=1` pass ranks every weapon lane on the same
 synthetic node, and that is what names the lane. Where the winner of the wider pass is the
 punished lane itself, nothing moves and the row stays a monster-shape finding, which is
 what design §18.7 says it is.

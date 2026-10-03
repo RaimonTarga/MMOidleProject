@@ -1,23 +1,40 @@
 import { ABILITY_DATABASE } from '../../abilities';
 import { ABILITY_RECIPE_DATABASE } from '../../abilityRecipes';
+import { biomeLevelCap } from '../../config/gameConfig';
 import { LINEAGE_DATABASE } from '../../data/lineages';
 import { capstoneMaterialName } from '../../data/lineages/capstones';
 import { shardName } from '../../data/lineages/packets';
-import { lineageGateCost, resolveLineageCard } from '../../data/lineages/resolve';
-import type { LineageCost, PacketId } from '../../data/lineages/types';
+import { isVerbCard, lineageGateCost, packetMoment, resolveLineageCard } from '../../data/lineages/resolve';
+import { statLine, verbSentence } from '../../data/lineages/sentences';
+import type {
+  LineageCard,
+  LineageCost,
+  LineageDefinition,
+  PacketId,
+  ResolvedLineageCard,
+} from '../../data/lineages/types';
 import { RECIPE_DATABASE } from '../../data/recipes';
 import { ITEM_DATABASE } from '../../itemDatabase';
 import type { EssenceType } from '../../items';
 import { RUNE_RECIPE_DATABASE } from '../../runeRecipes';
+import { nodeFamily, nodesPayingShard } from '../../world/nodeBlends';
+import type { TutorialConceptId } from '../concepts';
 import type {
   TutorialBeat,
   TutorialCondition,
+  TutorialLesson,
   TutorialNodeRef,
   TutorialProgressRef,
   TutorialStep,
-  TutorialUpgradeTarget,
 } from '../types';
-import { T1_BIOME_ORDER, TUTORIAL_SEALS, type PlanItem, type T1Biome, type TutorialClassPlan } from './plans';
+import {
+  T1_BIOME_ORDER,
+  TUTORIAL_SEALS,
+  TUTORIAL_WEAPON_LINEAGE,
+  type PlanItem,
+  type T1Biome,
+  type TutorialClassPlan,
+} from './plans';
 import { tutorialRunes, type TutorialRuneStage } from './runes';
 
 /**
@@ -29,7 +46,7 @@ import { tutorialRunes, type TutorialRuneStage } from './runes';
  * character presses Next far fewer times.
  *
  * Lines explain WHY only where the choice is not obvious (a weapon swap, a
- * Guard change, a Rune); routine crafting and upgrading just say what happens.
+ * Guard change, a Rune); routine crafting just says what happens.
  */
 
 const BIOME_NAME: Record<T1Biome, string> = {
@@ -57,13 +74,16 @@ const CHAPTER: Record<T1Biome, string> = {
   cave: 'The Cave',
 };
 
-/** Prep line when the boss is the first seal. */
+/**
+ * Prep line when the boss is the first seal. (No "+5" any more: an item is
+ * crafted at full power, design §23–§24.5.)
+ */
 const SEAL_OPENING: Record<T1Biome, string> = {
-  plains: 'Every zone mastered, gear at +5. Now the seals: two boss kills unlock Tier 2. The Plains boss is the gentlest, so it goes first.',
-  forest: 'Every zone mastered, gear at +5. Now the seals: two boss kills unlock Tier 2, starting in the Forest.',
-  swamp: 'Every zone mastered, gear at +5. Now the seals: two boss kills unlock Tier 2, starting in the Swamp.',
-  mountain: 'Every zone mastered, gear at +5. Now the seals: two boss kills unlock Tier 2, starting on the Mountain.',
-  cave: 'Every zone mastered, gear at +5. Now the seals: two boss kills unlock Tier 2, starting in the Cave.',
+  plains: 'Every zone mastered. Now the seals: two boss kills unlock Tier 2. The Plains boss is the gentlest, so it goes first.',
+  forest: 'Every zone mastered. Now the seals: two boss kills unlock Tier 2, starting in the Forest.',
+  swamp: 'Every zone mastered. Now the seals: two boss kills unlock Tier 2, starting in the Swamp.',
+  mountain: 'Every zone mastered. Now the seals: two boss kills unlock Tier 2, starting on the Mountain.',
+  cave: 'Every zone mastered. Now the seals: two boss kills unlock Tier 2, starting in the Cave.',
 };
 
 /** Prep line for the second seal: the one reason this fight's loadout differs. */
@@ -83,6 +103,52 @@ const BIOME_INTRO: Record<T1Biome, string> = {
   mountain: 'The Mountain hits harder but pays well.',
   cave: 'Last zone: the Cave. Its monsters wind up big hits you can dodge.',
 };
+
+/**
+ * The new idea each intro line introduces (the first-hour checklist,
+ * `concepts.ts`). An intro rides on the leg's first farm or learning beat, and
+ * so do these.
+ */
+const BIOME_INTRO_TEACHES: Partial<Record<T1Biome, TutorialConceptId[]>> = {
+  plains: ['zones'],
+  swamp: ['poison'],
+  cave: ['telegraphs'],
+};
+
+/** The new idea a craft line introduces, on the craft beat that says it. */
+const ITEM_TEACHES: Record<string, TutorialConceptId[]> = {
+  'forest-vest-t1': ['evasion'],
+};
+
+/** The new ideas a learning line introduces, on the learn beat. */
+const LEARN_TEACHES: Record<string, TutorialConceptId[]> = {
+  sweep: ['technique', 'ability-runes'],
+  'second-wind': ['guard'],
+  cleanse: ['loadout-swap'],
+};
+
+/** The new idea a Rune's craft line introduces, on the craft beat. */
+const RUNE_TEACHES: Record<string, TutorialConceptId[]> = {
+  'rune-recipe-avoid-hazards': ['hazards'],
+  'rune-recipe-keep-distance': ['orbit'],
+  'rune-recipe-step-back': ['step-back'],
+};
+
+/** A beat with its `teaches` set, or without the field when there is nothing new. */
+function teaching(beat: TutorialBeat, teaches: readonly TutorialConceptId[] | undefined): TutorialBeat {
+  const list = [...new Set([...(beat.teaches ?? []), ...(teaches ?? [])])];
+  if (list.length === 0) {
+    const { teaches: _omit, ...rest } = beat;
+    return rest;
+  }
+  return { ...beat, teaches: list };
+}
+
+/** The leg's intro line and its idea, consumed by whichever beat says it first. */
+interface LegIntro {
+  say?: string;
+  teaches: TutorialConceptId[];
+}
 
 /**
  * Lines for items whose pick needs a reason. Everything else gets the routine
@@ -116,30 +182,59 @@ const LEARN_REASON: Record<string, string> = {
 };
 
 /**
- * The weapon tree the guide teaches (design §4, §5, §12; W1-E).
+ * The weapon page the guide teaches (design §24.2, §24.6).
  *
  * The Rapier is the Forest's lineage AND the weapon every class plan crafts
- * there, so the three lessons land where the weapon is earned: a card at the
- * stat row, the shards that pay for it, and — after the seals — the gate that
- * turns the item into its tier-2 form. The weapon `+N` ladder these beats
- * replace was deleted by the lineage rework (commit 03783104).
+ * there, so the lessons land where the weapon is earned and while it is worn
+ * (a lineage pays only while its own form is: design §23):
+ *
+ *  1. the LEAN, row 1, at its Forest level — a stat, and the payload it names;
+ *  2. the VERB, row 2, as soon as its gates open — a moment, and the lesson is
+ *     the sentence the lean just rewrote ("look at what your verb says now")
+ *     plus the ring on the rhythm readout that counts toward it;
+ *  3. after the seals, the gate that turns the item into its tier-2 form.
+ *
+ * WHICH lean and verb is per class (`TutorialClassPlan.weaponCards`).
  */
 const TUTORIAL_TREE = {
-  lineageId: 'rapier',
-  /** The T1 stat row card: Quick Wrist, the cheapest honest first purchase. */
-  firstCardId: 'rapier-t1-tempo-stat',
-  /** The tier-2 form behind the T1 gate, crowning the same lane. */
+  lineageId: TUTORIAL_WEAPON_LINEAGE,
+  /** The tier-2 form behind the T1 gate. */
   gateFormId: 'gale-needle',
-  /**
-   * Where the lane's shard comes from, for the one line that names a drop
-   * source. Data-checked in `tutorial.test.ts`, so a family table edit that
-   * moves Tempo out of the Forest fails loudly instead of lying on screen.
-   */
-  shardSource: 'the Pack — the Forest\'s wolves',
 } as const;
 
-/** The leg the first-card lesson rides on — the lineage's own home biome. */
-const TUTORIAL_TREE_BIOME: T1Biome = 'forest';
+const COUNT_WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'];
+
+function ordinal(n: number): string {
+  const whole = Math.round(n);
+  const mod100 = whole % 100;
+  if (mod100 >= 11 && mod100 <= 13) return `${whole}th`;
+  switch (whole % 10) {
+    case 1: return `${whole}st`;
+    case 2: return `${whole}nd`;
+    case 3: return `${whole}rd`;
+    default: return `${whole}th`;
+  }
+}
+
+/**
+ * What a verb's ring on the rhythm readout does, in words, read off the verb's
+ * own moment (`packetMoment`), so a moment change rewrites the line.
+ */
+function ringPhrase(card: LineageCard): string {
+  const moment = packetMoment(card.lane);
+  switch (moment?.kind) {
+    case 'hit-nth':
+      return `fills one hit at a time and fires on the ${ordinal(moment.n ?? 1)}`;
+    case 'first-hit':
+      return moment.perTarget
+        ? 'stays lit until your first hit on a target spends it'
+        : 'stays lit until your first hit of a fight spends it';
+    case 'kill':
+      return 'lights on a kill, for the next hit';
+    default:
+      return moment?.capMs ? 'shows the wait until it can fire again' : 'shows when it is ready';
+  }
+}
 
 const RUNE_REASON: Record<string, { craft: string; equip: string }> = {
   'rune-recipe-avoid-hazards': {
@@ -160,8 +255,9 @@ function name(definitionId: string): string {
   return ITEM_DATABASE.get(definitionId)?.name ?? definitionId;
 }
 
-function biomeRef(biome: string): TutorialNodeRef {
-  return { kind: 'biome', biomeGroup: biome, tier: 1, pick: 'uncleared' };
+/** A Tier-1 biome farm; with `shard`, only the territories that pay it (design §24.3). */
+function biomeRef(biome: string, shard?: PacketId): TutorialNodeRef {
+  return { kind: 'biome', biomeGroup: biome, tier: 1, pick: 'uncleared', ...(shard ? { shard } : {}) };
 }
 
 /** Essence (+ biome level) gate for a recipe as conditions. */
@@ -218,9 +314,6 @@ function costProgress(
 
 class ScriptBuilder {
   readonly beats: TutorialBeat[] = [];
-  /** Upgrade level each item reaches by this point of the script. */
-  private readonly plannedPlus = new Map<string, number>();
-  private upgradeSets = 0;
 
   constructor(private readonly plan: TutorialClassPlan) {}
 
@@ -231,44 +324,55 @@ class ScriptBuilder {
     this.beats.push(beat);
   }
 
-  runes(chapter: string, id: string, say: string, stage: TutorialRuneStage): void {
-    this.push({
+  runes(chapter: string, id: string, say: string, stage: TutorialRuneStage, teaches?: TutorialConceptId[]): void {
+    this.push(teaching({
       id,
       chapter,
       say,
       steps: [{ type: 'configureRunes', rules: tutorialRunes(this.plan.movement, stage, this.plan.classRoot) }],
-    });
+    }, teaches));
   }
 
-  piece(chapter: string, recipeId: string, wear: boolean, sayFarm?: string): void {
+  /**
+   * `atLevel` holds the craft back to a later level of the recipe's zone (the
+   * first-hour checklist's pacing); the farm then waits for both.
+   */
+  piece(chapter: string, recipeId: string, wear: boolean, intro?: LegIntro, atLevel?: number): void {
     const recipe = RECIPE_DATABASE.get(recipeId);
     if (!recipe) throw new Error(`unknown recipe ${recipeId}`);
     const itemName = name(recipeId);
-    this.push({
+    const level = Math.max(recipe.requiredBiomeLevel, atLevel ?? 0);
+    const craftable: TutorialCondition = level > recipe.requiredBiomeLevel
+      ? {
+        type: 'allOf',
+        of: [{ type: 'canCraft', recipeId }, { type: 'biomeLevelAtLeast', biomeGroup: recipe.recipeGroup, level }],
+      }
+      : { type: 'canCraft', recipeId };
+    this.push(teaching({
       id: `farm:${recipeId}`,
       chapter,
-      say: sayFarm ?? `Next up: the ${itemName}.`,
+      say: intro?.say ?? `Next up: the ${itemName}.`,
       waiting: `Fighting in ${BIOME_NAME[recipe.recipeGroup as T1Biome] ?? recipe.recipeGroup} until the ${itemName} is ready.`,
-      progress: costProgress(recipe.cost, recipe.recipeGroup, recipe.requiredBiomeLevel),
+      progress: costProgress(recipe.cost, recipe.recipeGroup, level),
       steps: [{
         type: 'farm',
         at: biomeRef(recipe.recipeGroup),
         until: {
           type: 'anyOf',
-          of: [{ type: 'hasItem', definitionId: recipeId }, { type: 'canCraft', recipeId }],
+          of: [{ type: 'hasItem', definitionId: recipeId }, craftable],
         },
       }],
-    });
+    }, intro?.say ? intro.teaches : undefined));
     const steps: TutorialStep[] = [{ type: 'craft', recipeIds: [recipeId] }];
     if (wear) steps.push({ type: 'equip', definitionIds: [recipeId] });
-    this.push({
+    this.push(teaching({
       id: `craft:${recipeId}`,
       chapter,
       say: wear
         ? ITEM_REASON[recipeId] ?? `Craft the ${itemName} and wear it.`
         : CRAFT_REASON[recipeId] ?? `Craft the ${itemName} for later.`,
       steps,
-    });
+    }, ITEM_TEACHES[recipeId]));
   }
 
   equip(chapter: string, definitionIds: string[], say: string, id: string): void {
@@ -297,12 +401,12 @@ class ScriptBuilder {
         },
       }],
     });
-    this.push({
+    this.push(teaching({
       id: `learn:${recipeId}`,
       chapter,
       say: LEARN_REASON[recipe.abilityId] ?? `Learn ${abilityName}.`,
       steps: [{ type: 'learnAbility', recipeId, abilityId: recipe.abilityId, slot }],
-    });
+    }, LEARN_TEACHES[recipe.abilityId]));
   }
 
   setAbilities(chapter: string, id: string, say: string, techniques: string[], guards: string[]): void {
@@ -331,86 +435,41 @@ class ScriptBuilder {
         },
       }],
     });
-    this.push({ id: `rune:${recipeId}`, chapter, say: lines.craft, steps: [{ type: 'craftRune', recipeId }] });
+    this.push(teaching(
+      { id: `rune:${recipeId}`, chapter, say: lines.craft, steps: [{ type: 'craftRune', recipeId }] },
+      RUNE_TEACHES[recipeId],
+    ));
     this.runes(chapter, `runes:${recipeId}`, lines.equip, stage);
   }
 
   maxOut(chapter: string, biome: T1Biome): void {
-    this.push({
+    this.push(teaching({
       id: `max:${biome}`,
       chapter,
       say: biome === 'plains'
-        ? 'Now master the Plains. Every zone you master opens stronger gear upgrades.'
+        ? 'Now master the Plains. Every zone you master opens stronger gear to craft.'
         : `Now master ${BIOME_NAME[biome]}.`,
       waiting: `Fighting in ${BIOME_NAME[biome]} until its mastery is maxed.`,
       progress: [{ type: 'biomeLevel', biomeGroup: biome, level: 6 }],
       steps: [{ type: 'farm', at: biomeRef(biome), until: { type: 'biomeLevelAtLeast', biomeGroup: biome, level: 6 } }],
-    });
+      // The first line that says what mastery is for, and a max beat is never
+      // skipped (the Clearing's own mastery lines ride on farms that often are).
+    }, biome === 'plains' ? ['mastery'] : undefined));
   }
 
-  /**
-   * One set of upgrades, split by the zone whose essence pays for them (the
-   * Plains vest is paid in Plains essence even during the Forest leg).
-   */
-  upgrades(chapter: string, leg: T1Biome, targets: Array<[string, number]>, intro?: string): void {
-    const groups = new Map<string, TutorialUpgradeTarget[]>();
-    for (const [definitionId, toPlus] of targets) {
-      const biome = ITEM_DATABASE.get(definitionId)?.biomeGroup;
-      if (!biome) throw new Error(`cannot upgrade ${definitionId}`);
-      const group = groups.get(biome) ?? [];
-      group.push({ definitionId, toPlus });
-      groups.set(biome, group);
-    }
-
-    this.upgradeSets += 1;
-    // The leg's own zone first: the player is already standing in it.
-    const ordered = [...groups.entries()].sort(([a], [b]) => (a === leg ? -1 : b === leg ? 1 : 0));
-    let first = true;
-    for (const [biome, items] of ordered) {
-      const done: TutorialCondition = {
-        type: 'allOf',
-        of: items.map((t): TutorialCondition => ({ type: 'itemAtLeastPlus', definitionId: t.definitionId, plus: t.toPlus })),
-      };
-      const key = `${leg}:${this.upgradeSets}:${biome}`;
-      const zone = BIOME_NAME[biome as T1Biome] ?? biome;
-
-      const names = items.map((t) => name(t.definitionId)).join(', ');
-      this.push({
-        id: `farm:upgrades:${key}`,
-        chapter,
-        say: first
-          ? intro ?? `Time to upgrade before moving on: ${names}.`
-          : `The rest is paid in ${ZONE_WORD[biome] ?? biome} essence, so back to ${zone} for a while.`,
-        waiting: `Gathering ${ZONE_WORD[biome] ?? biome} essence for the upgrades.`,
-        progress: [{ type: 'upgradeCost', items }],
-        steps: [{
-          type: 'farm',
-          at: biomeRef(biome),
-          until: { type: 'anyOf', of: [done, { type: 'canAffordUpgrades', items }] },
-        }],
-      });
-      this.push({
-        id: `upgrade:${key}`,
-        chapter,
-        say: items.length === 1
-          ? `Upgrade the ${names} to +${items[0].toPlus}.`
-          : `Upgrade them all: ${names}.`,
-        steps: items.map((t): TutorialStep => ({ type: 'upgrade', definitionId: t.definitionId, toPlus: t.toPlus })),
-      });
-      for (const t of items) this.plannedPlus.set(t.definitionId, t.toPlus);
-      first = false;
-    }
-  }
-
-  items(chapter: string, leg: T1Biome, items: readonly PlanItem[] | undefined, firstFarmLine?: { value?: string }): void {
+  items(chapter: string, leg: T1Biome, items: readonly PlanItem[] | undefined, intro?: LegIntro): void {
+    const consume = () => {
+      if (!intro) return;
+      intro.say = undefined;
+      intro.teaches = [];
+    };
     for (const item of items ?? []) {
-      const intro = firstFarmLine?.value;
       if ('piece' in item) {
-        this.piece(chapter, item.piece, true, intro);
-        if (firstFarmLine) firstFarmLine.value = undefined;
+        this.piece(chapter, item.piece, true, intro, item.atLevel);
+        consume();
       } else if ('craft' in item) {
         this.piece(chapter, item.craft, false, intro);
-        if (firstFarmLine) firstFarmLine.value = undefined;
+        consume();
       } else if ('equip' in item) {
         const single = item.equip.length === 1 ? item.equip[0] : null;
         this.equip(
@@ -419,8 +478,6 @@ class ScriptBuilder {
           single ? EQUIP_REASON[single] ?? `Wear the ${name(single)}.` : 'Put on the best of what you have before going in.',
           `equip:${leg}:${item.equip.join('+')}`,
         );
-      } else {
-        this.upgrades(chapter, leg, item.upgrade, item.say);
       }
     }
   }
@@ -456,34 +513,62 @@ class ScriptBuilder {
     }
   }
 
-  /**
-   * The weapon tree's first card: the shards that pay for it, then the buy.
-   *
-   * Two beats as everywhere else, and the farm beat is skipped automatically
-   * when the wallet already covers it — so the card beat's own line repeats the
-   * price, and the lesson survives a well-stocked character.
-   */
-  firstCard(chapter: string): void {
+  /** One of this class's two weapon-page cards, resolved, and the territory that pays its shard. */
+  private weaponCard(cardId: string): {
+    lineage: LineageDefinition;
+    card: LineageCard;
+    resolved: ResolvedLineageCard;
+    territory: string;
+  } {
     const lineage = LINEAGE_DATABASE.get(TUTORIAL_TREE.lineageId);
     if (!lineage) throw new Error(`unknown lineage ${TUTORIAL_TREE.lineageId}`);
-    const card = lineage.cards.find((c) => c.id === TUTORIAL_TREE.firstCardId);
-    if (!card) throw new Error(`unknown lineage card ${TUTORIAL_TREE.firstCardId}`);
+    const card = lineage.cards.find((c) => c.id === cardId);
+    if (!card) throw new Error(`${this.plan.className}: unknown ${lineage.id} card ${cardId}`);
     const resolved = resolveLineageCard(card, lineage);
+    // Where it drops, read off the node rule rather than hand-written (design
+    // §24.3): every kill in a node pays its dominant family's shard, so the line
+    // names that family's territory — the word the map and the arrival banner use.
+    const territory = nodesPayingShard(lineage.homeBiome, 1, card.lane)
+      .map((id) => nodeFamily(id)?.name)
+      .find((familyName): familyName is string => !!familyName);
+    if (!territory) throw new Error(`no T1 ${lineage.homeBiome} node pays the ${card.lane} shard ${card.id} costs`);
+    return { lineage, card, resolved, territory };
+  }
+
+  /**
+   * One weapon-page purchase as two beats, like every paid action: the shards
+   * that pay for it, farmed in the territory that pays them, then the buy.
+   *
+   * The farm beat is skipped automatically when the wallet already covers it, so
+   * the buy beat's own line stands on its own. The buy is followed by a
+   * `setActive` for the same card: the server activates a purchase only into an
+   * EMPTY row, and a player who opted in mid-Tier-1 may have filled it by hand
+   * (the weapon page sends the same intent after a buy).
+   */
+  private cardBeats(
+    chapter: string,
+    cardId: string,
+    lines: { farm: (shard: string, territory: string) => string; buy: string },
+    teaches: { farm: TutorialConceptId[]; buy: TutorialConceptId[] },
+    lesson?: TutorialLesson,
+  ): void {
+    const { lineage, card, resolved, territory } = this.weaponCard(cardId);
     const owned: TutorialCondition = { type: 'lineageCardOwned', lineageId: lineage.id, cardId: card.id };
     const shard = shardName(card.lane);
-
-    this.push({
+    this.push(teaching({
       id: `shards:${card.id}`,
       chapter,
-      say: `The ${name(lineage.forms[0].recipeId)} has a tree of its own, and its first card is paid in ${shard}s. Those drop off ${TUTORIAL_TREE.shardSource}.`,
-      waiting: `Fighting in ${BIOME_NAME[lineage.homeBiome as T1Biome] ?? lineage.homeBiome} for ${shard}s.`,
+      say: lines.farm(shard, territory),
+      waiting: `Fighting in ${territory} territory for ${shard}s.`,
       progress: [
         { type: 'biomeLevel', biomeGroup: lineage.homeBiome, level: resolved.requiredBiomeLevel },
         ...lineageCostProgress(resolved.cost),
       ],
       steps: [{
         type: 'farm',
-        at: biomeRef(lineage.homeBiome),
+        // Design §24.3: a node pays one shard, its dominant family's, so the
+        // farm stands in the territory that pays the card's lane.
+        at: biomeRef(lineage.homeBiome, card.lane),
         until: {
           type: 'anyOf',
           of: [owned, {
@@ -496,12 +581,56 @@ class ScriptBuilder {
           }],
         },
       }],
-    });
-    this.push({
+    }, teaches.farm));
+    this.push(teaching({
       id: `card:${card.id}`,
       chapter,
-      say: `Open the tree and buy ${card.name}. A card is bought once and kept; which one is active stays a free choice after that.`,
-      steps: [{ type: 'unlockCard', lineageId: lineage.id, cardId: card.id }],
+      say: lines.buy,
+      steps: [
+        { type: 'unlockCard', lineageId: lineage.id, cardId: card.id },
+        { type: 'setActive', lineageId: lineage.id, row: card.row, cardId: card.id },
+      ],
+      ...(lesson ? { lesson } : {}),
+    }, teaches.buy));
+  }
+
+  /** Row 1, the lean: at its own Forest level, with the Rapier in hand. */
+  leanLesson(chapter: string): void {
+    const { lineage, card, resolved } = this.weaponCard(this.plan.weaponCards.lean);
+    if (card.row !== 'stat' || card.tier !== 1) throw new Error(`${this.plan.className}: ${card.id} is not a tier-1 lean`);
+    const weapon = name(lineage.forms[0].recipeId);
+    const stat = statLine(resolved.statEffects)?.replace(/\.$/, '');
+    if (!stat) throw new Error(`${this.plan.className}: ${card.id} resolves to no stat`);
+    this.cardBeats(chapter, card.id, {
+      farm: (shard, territory) => `The ${weapon} has a page of its own, and its first card is paid in ${shard}s. Every kill in ${territory} territory pays them; the map names each node's territory.`,
+      buy: `Open the ${weapon}'s page and buy ${card.name}. Row one is the lean, a stat while the ${weapon} is worn (${stat}); one lean is active at a time.`,
+    }, { farm: ['weapon-page', 'shards'], buy: ['lean'] });
+  }
+
+  /**
+   * Row 2, the verb: the first moment both its gates are open, with the Rapier
+   * still in hand. The lesson is the sentence the lean just wrote, then the ring
+   * that counts toward it (design §24.2, §24.6).
+   */
+  verbLesson(chapter: string, masteredZones: number): void {
+    const lean = this.weaponCard(this.plan.weaponCards.lean).card;
+    const { lineage, card } = this.weaponCard(this.plan.weaponCards.verb);
+    if (!isVerbCard(card) || card.tier !== 1) throw new Error(`${this.plan.className}: ${card.id} is not a tier-1 verb`);
+    const composed = verbSentence(card.lane, lean.lane);
+    if (!composed) throw new Error(`${this.plan.className}: ${card.id} has no sentence with ${lean.id}`);
+    const weapon = name(lineage.forms[0].recipeId);
+    const zones = COUNT_WORDS[masteredZones] ?? String(masteredZones);
+    const home = BIOME_NAME[lineage.homeBiome as T1Biome] ?? lineage.homeBiome;
+    this.cardBeats(chapter, card.id, {
+      farm: (shard, territory) => `${zones} zones mastered opens row two of the ${weapon}'s page: the verb, what the weapon does. ${card.name} costs ${shard}s from ${home}'s ${territory} territory.`,
+      buy: `Buy ${card.name}. A verb is a moment in the fight, and your lean decides what happens at that moment.`,
+      // The verb's idea rides on the BUY line: max-ing the Forest often pays for
+      // the verb already, and then its farm beat is skipped and never shown.
+    }, { farm: [], buy: ['verb', 'rhythm-ring'] }, {
+      lineageId: lineage.id,
+      cardId: card.id,
+      read: `Look at what ${card.name} says now: “${composed}” Your lean, ${lean.name}, chose that.`,
+      ring: `In a fight, ${card.name}'s ring by your health bar ${ringPhrase(card)}.`,
     });
   }
 
@@ -523,25 +652,32 @@ class ScriptBuilder {
     const zone = ZONE_WORD[form.biome] ?? form.biome;
     const capstone = capstoneMaterialName(form.biome);
     const shards = Object.keys(cost.shards).map((packet) => `${shardName(packet as PacketId)}s`).join(' and ');
+    // One crowned lane is one shard, so the farm narrows to the nodes that pay it
+    // (design §24.3); a gate costing two shards would farm the whole biome.
+    const gateShards = Object.keys(cost.shards) as PacketId[];
+    const gateFarm = biomeRef(form.biome, gateShards.length === 1 ? gateShards[0] : undefined);
 
     this.push({
       id: `farm:gate:${form.recipeId}`,
       chapter,
-      say: `Tier 1 is done, and this last part is optional. Tier 2 opens the ${name(form.recipeId)}: its gate wants ${zone} essence and ${shards}.`,
+      // Usually skipped: Tier 2 arrives with the essence and shards in hand (the
+      // 1x sweep, all six classes), so the capstone line opens the chapter.
+      say: `Tier 2 opens the ${name(form.recipeId)}: its gate wants ${zone} essence and ${shards} first.`,
       waiting: `Working ${BIOME_NAME[form.biome as T1Biome] ?? form.biome} for the gate's essence and shards.`,
       progress: lineageCostProgress(cost),
       steps: [{
         type: 'farm',
-        at: biomeRef(form.biome),
+        at: gateFarm,
         until: { type: 'anyOf', of: [owned, { type: 'allOf', of: lineageCostConditions(cost) }] },
       }],
     });
     this.push({
       id: `capstone:${form.recipeId}`,
       chapter,
-      say: `The gate also wants ${cost.capstone.amount} ${capstone} drops, and only the ${zone} boss has them. Going up a tier always runs through a boss.`,
+      say: `Tier 1 is done, and this part is optional: the ${name(form.recipeId)}'s gate also wants ${cost.capstone.amount} ${capstone} drops, and only the ${zone} boss has them.`,
       waiting: `Fighting the ${zone} boss for ${capstone} drops.`,
       progress: [{ type: 'capstone', biome: form.biome, amount: cost.capstone.amount }],
+      teaches: ['capstone'],
       steps: [{
         type: 'attemptBoss',
         biomeGroup: form.biome,
@@ -556,10 +692,11 @@ class ScriptBuilder {
       id: `gate:${form.recipeId}`,
       chapter,
       say: `Pay the gate and wear it: the ${name(form.recipeId)}, and a whole new band of cards above the one you have.`,
+      teaches: ['gate'],
       steps: [
         // Every melee plan swapped to the seal weapon for the bosses, and the
-        // director opens the tree BY SLOT, so without this the guide pointed at
-        // the Axe's tree while talking about the Rapier's gate (review P9).
+        // director opens the page BY SLOT, so without this the guide pointed at
+        // the Axe's page while talking about the Rapier's gate (review P9).
         { type: 'equip', definitionIds: [lineage.forms.find((f) => f.tier === form.tier - 1)?.recipeId ?? form.recipeId] },
         { type: 'unlockForm', lineageId: lineage.id, recipeId: form.recipeId },
         { type: 'wearForm', lineageId: lineage.id, recipeId: form.recipeId },
@@ -572,7 +709,7 @@ class ScriptBuilder {
     const { bossKit, bosses } = this.plan;
     TUTORIAL_SEALS.forEach((biome, index) => {
       const loadout = bosses[biome];
-      this.push({
+      this.push(teaching({
         id: `boss-prep:${biome}`,
         chapter,
         say: index === 0 ? SEAL_OPENING[biome] : SEAL_SECOND[biome],
@@ -580,8 +717,8 @@ class ScriptBuilder {
           { type: 'equip', definitionIds: [...bossKit, loadout.armor] },
           { type: 'setAbilities', techniques: [loadout.technique], guards: [loadout.guard] },
         ],
-      });
-      this.push({
+      }, index === 0 ? ['seals'] : undefined));
+      this.push(teaching({
         id: `boss:${biome}`,
         chapter,
         say: index === 0
@@ -589,7 +726,7 @@ class ScriptBuilder {
           : 'The last seal before Tier 2.',
         waiting: `Fighting for the ${ZONE_WORD[biome]} seal.`,
         steps: [{ type: 'attemptBoss', biomeGroup: biome, tier: 1 }],
-      });
+      }, index === 0 ? ['boss-altar'] : undefined));
     });
   }
 
@@ -599,32 +736,62 @@ class ScriptBuilder {
       'runes:opening',
       'These Runes are your standing orders: rest up between fights and back off when badly hurt.',
       'opening',
+      ['runes'],
     );
+    const home = this.weaponCard(this.plan.weaponCards.lean).lineage.homeBiome;
+    const lean = this.weaponCard(this.plan.weaponCards.lean).resolved;
+    const verb = this.weaponCard(this.plan.weaponCards.verb).resolved;
+    // Global Mastery is the sum of the T1 zones' levels, and every leg masters its
+    // zone before the next one starts, so the mastery at any leg's end is known.
+    const mastered: T1Biome[] = [];
+    const masteryOf = (zones: readonly T1Biome[]) => zones.reduce((sum, zone) => sum + biomeLevelCap(1, zone), 0);
+    let verbTaught = false;
     for (const biome of T1_BIOME_ORDER) {
       const chapter = CHAPTER[biome];
       const biomePlan = this.plan.biomes[biome];
-      const intro = { value: BIOME_INTRO[biome] as string | undefined };
+      const intro: LegIntro = { say: BIOME_INTRO[biome], teaches: [...(BIOME_INTRO_TEACHES[biome] ?? [])] };
       this.items(chapter, biome, biomePlan.before, intro);
-      // The weapon's tree, taught where the weapon is earned: the Flash Rapier
-      // is worn by now, and holding the base form is what opens the tree.
-      if (biome === TUTORIAL_TREE_BIOME) this.firstCard(chapter);
-      if (intro.value) {
+      // Row 1, taught where the weapon is earned: the Flash Rapier is worn by
+      // now, and holding the base form is what opens its page.
+      if (biome === home) {
+        if (masteryOf(mastered) < lean.requiredGlobalMastery) {
+          throw new Error(`${this.plan.className}: the lean needs Global Mastery ${lean.requiredGlobalMastery} before the ${biome} leg`);
+        }
+        this.leanLesson(chapter);
+      }
+      if (intro.say) {
         // No gear to open the leg with (e.g. Mountain for some classes): the
         // intro rides on the leg's first learning beat instead.
         const before = this.beats.length;
         this.shared(chapter, biome);
-        if (this.beats[before]) this.beats[before] = { ...this.beats[before], say: `${intro.value} ${this.beats[before].say}` };
-        intro.value = undefined;
+        if (this.beats[before]) {
+          this.beats[before] = teaching({ ...this.beats[before], say: `${intro.say} ${this.beats[before].say}` }, intro.teaches);
+        }
+        intro.say = undefined;
+        intro.teaches = [];
       } else {
         this.shared(chapter, biome);
       }
       this.items(chapter, biome, biomePlan.after);
       this.maxOut(chapter, biome);
+      mastered.push(biome);
+      // Row 2 the moment both of its gates are open: its level in the home zone
+      // AND the band's Global Mastery (design §4), which at T1 is three mastered
+      // zones — so the verb lands at the end of the Swamp leg, not at Forest 4.
+      // The Rapier is still worn there, so the lesson is live (design §23).
+      if (!verbTaught
+        && mastered.includes(home as T1Biome)
+        && biomeLevelCap(1, home) >= verb.requiredBiomeLevel
+        && masteryOf(mastered) >= verb.requiredGlobalMastery) {
+        this.verbLesson(chapter, mastered.length);
+        verbTaught = true;
+      }
       // The bot learns it at Cave 3, but with Step Back and two abilities the
       // build only fits the Rune budget of a fully mastered Tier 1 (GM 30).
       if (biome === 'cave') this.learn(chapter, 'ability-recipe-expose-weakness', 'technique');
       this.items(chapter, biome, biomePlan.afterMax);
     }
+    if (!verbTaught) throw new Error(`${this.plan.className}: the verb's gates never open inside Tier 1`);
     this.bosses();
     this.gate();
     return this.beats;

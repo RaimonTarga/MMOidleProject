@@ -3,6 +3,7 @@ import {
   ESSENCE_COLORS,
   ESSENCE_LABELS,
   packetDefinition,
+  shardName,
   type EssenceType,
   type PacketId,
 } from '@mmo-idle/shared';
@@ -46,7 +47,8 @@ export function materialKey(material: MaterialRef): string {
 export function materialLabel(material: MaterialRef): string {
   switch (material.kind) {
     case 'essence': return ESSENCE_LABELS[material.type];
-    case 'shard': return `${packetDefinition(material.packet)?.name ?? material.packet} shard`;
+    // The material's own noun ("Gale Shard"), never the lane name (design §24.2).
+    case 'shard': return shardName(material.packet);
     case 'capstone': return capstoneMaterialName(material.biome);
   }
 }

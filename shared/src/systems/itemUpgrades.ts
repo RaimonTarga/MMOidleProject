@@ -1,14 +1,30 @@
-import type { EquipmentSlot, EssenceType, ItemDefinition } from '../items';
-import { BIOME_PRIMARY_ESSENCE, ESSENCE_LABELS } from '../items';
+import type { EssenceType, ItemDefinition } from '../items';
+import { BIOME_PRIMARY_ESSENCE } from '../items';
 import { BIOME_LEVELS_PER_TIER, maxGlobalMasteryAtTier } from '../config/gameConfig';
 import { t1ExperimentUpgradeCost } from './t1EconomyExperiment';
 
 /**
- * Highest upgrade level for items without explicit upgrade definitions. Raised
- * 3 → 5 (system rework Step 6): +3 = evolution-ready, +4 = comfort, +5 = premium.
- * Items with explicit `upgrades[]` are bound by their array length; the GM ceiling
- * (`upgradeCeilingFromGlobalMastery`) gates the effective max on top of this.
+ * The item +N ladder — RETIRED on every slot (design §24.5).
+ *
+ * Weapons left it in progression rework Phase 2b; armour, charm and boots left it
+ * in the course correction, where each item's +1..+5 total folded into its base
+ * stats (design §23's rule for weapons, applied to every slot: an item is crafted
+ * at its old +5 power). One rule for four slots now: `getMaxUpgrade` is 0,
+ * `checkUpgrade` refuses, `inventory:upgradeItem` answers with that refusal, the
+ * stat rebuild never reads `itemUpgrades`, and hydration refunds any level a save
+ * still holds (`server/src/db/{weapon,gear}UpgradeRefund.ts`).
+ *
+ * What survives here is not the ladder:
+ *  - The Global Mastery band below (`MAX_UPGRADE`, `globalMasteryRequiredForUpgrade`,
+ *    `upgradeCeilingFromGlobalMastery`) still prices the lineage rows' Global
+ *    Mastery gate (`data/lineages/magnitudes.ts`) and the bot's GM milestones.
+ *  - The step readers (`upgradeStatBonusTotal`, `upgradeMechanicEffectsTotal`,
+ *    `upgradeCostFor`, `requiredBiomeLevelForUpgrade`) read whatever `upgrades`
+ *    steps a recipe still authors, for the legacy bot routes, the balance tools and
+ *    economy tests. Nothing in the game applies them.
  */
+
+/** The five-step width of the Global Mastery band per item tier (see above). */
 export const MAX_UPGRADE = 5;
 
 /** Highest item tier the GM ceiling distinguishes; tier-0 starter gear shares tier 1's band. */
@@ -49,39 +65,18 @@ export function upgradeCeilingFromGlobalMastery(globalMastery: number, itemTier:
   return ceiling;
 }
 
-/** Primary stat each slot's generic upgrade buffs. (Cores never upgrade — see getMaxUpgrade.) */
-export const UPGRADE_STAT_BY_SLOT: Record<EquipmentSlot, string> = {
-  weapon:   'attack',
-  armor:    'damageReduction',
-  mobility: 'speed',
-  recovery: 'recovery',
-  core:     'attack',
-  relic:    'attack',
-};
-
-// ─── Generic formula tuning (fallback for items without explicit upgrades) ────
-
-const BONUS_PER_LEVEL: Record<EquipmentSlot, number> = {
-  weapon:   2,
-  armor:    0.02,
-  mobility: 5,
-  recovery: 1,
-  core:     0,
-  relic:    0,
-};
+// ─── Generic cost formula (legacy readers of items without explicit steps) ────
 
 const COST_PER_LEVEL = 20;
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Per-item max upgrade level — upgrades[].length or MAX_UPGRADE for generic items.
- *  Cores (Step 9) are off the +N track entirely — they rank up via the evolution chain.
- *  Weapons (Phase 2b) are off it too — a weapon's power track is its lineage tree
- *  (`shared/src/systems/lineages.ts`), not this ladder; see `checkUpgrade`'s matching
- *  rejection. */
-export function getMaxUpgrade(item: ItemDefinition): number {
-  if (item.slot === 'core' || item.slot === 'relic' || item.slot === 'weapon') return 0;
-  return item.upgrades ? item.upgrades.length : MAX_UPGRADE;
+/**
+ * Per-item max upgrade level: 0 for every item. The ladder is retired on every
+ * slot (design §24.5; weapons since Phase 2b, cores and relics never had one).
+ */
+export function getMaxUpgrade(_item: ItemDefinition): number {
+  return 0;
 }
 
 /** Biome level required to push an item to `targetPlus`. */
@@ -94,23 +89,22 @@ export function requiredBiomeLevelForUpgrade(item: ItemDefinition, targetPlus: n
 }
 
 /**
- * Cumulative stat bonuses (additive deltas on base stats) for an item at `plus`.
- * Returns a record of stat key → total bonus across all steps up to and including `plus`.
+ * Cumulative stat deltas the item's AUTHORED steps carry up to `plus` — a reader
+ * of historical ladder data, applied by nothing in the game (see the header).
+ *
+ * An item with no authored steps reads as no bonus. The generic per-slot formula
+ * that used to answer for it is gone with the ladder: once the recipe ladders are
+ * folded into base stats, it would have handed a stale `+N` a second bonus.
  */
 export function upgradeStatBonusTotal(item: ItemDefinition, plus: number): Record<string, number> {
-  if (plus <= 0) return {};
-  if (item.upgrades) {
-    const totals: Record<string, number> = {};
-    for (let i = 0; i < plus && i < item.upgrades.length; i++) {
-      for (const [k, v] of Object.entries(item.upgrades[i].stats ?? {})) {
-        if (v !== undefined) totals[k] = (totals[k] ?? 0) + v;
-      }
+  if (plus <= 0 || !item.upgrades) return {};
+  const totals: Record<string, number> = {};
+  for (let i = 0; i < plus && i < item.upgrades.length; i++) {
+    for (const [k, v] of Object.entries(item.upgrades[i].stats ?? {})) {
+      if (v !== undefined) totals[k] = (totals[k] ?? 0) + v;
     }
-    return totals;
   }
-  // Generic fallback: single primary stat for the slot.
-  const slot = item.slot;
-  return { [UPGRADE_STAT_BY_SLOT[slot]]: BONUS_PER_LEVEL[slot] * item.tier * plus };
+  return totals;
 }
 
 /** Authored mechanics plus all earned upgrade steps, for equipment feedback. */
@@ -160,7 +154,12 @@ export function effectiveAttacksPerSecond(
   return Math.max(0.05, item.attacksPerSecond + upgradeApsBonusTotal(item, plus));
 }
 
-/** Essence cost for going from (targetPlus-1) → targetPlus. */
+/**
+ * Essence cost for going from (targetPlus-1) → targetPlus. RETIRED with the
+ * ladder: no live server, client or tutorial path calls it. Kept for the legacy
+ * bot routes (`bot/src/route/*`, `bot/src/reference.ts`) and economy tests; the
+ * refund tables freeze their own copies of these numbers.
+ */
 export function upgradeCostFor(
   item: ItemDefinition,
   targetPlus: number,
@@ -187,8 +186,16 @@ export interface UpgradeCheck {
   reason?: string;
 }
 
-/** Shared authority check — used by both server (to apply) and client (to gate the button). */
-export function checkUpgrade(params: {
+/** Why `checkUpgrade` refuses, for every item. */
+export const UPGRADES_RETIRED_REASON =
+  'Upgrades are retired: every item is crafted at full power.';
+
+/**
+ * Shared authority check — the server applies it and the bot gates on it. One
+ * rule for every slot: refused (design §24.5). The parameters are kept so the
+ * legacy callers type-check unchanged.
+ */
+export function checkUpgrade(_params: {
   item: ItemDefinition;
   currentPlus: number;
   biomeLevel: number;
@@ -198,39 +205,5 @@ export function checkUpgrade(params: {
   /** Optional per-player dev experiment overlay for T1 +5 essence pricing. */
   t1Plus5EssenceCostMultiplier?: number;
 }): UpgradeCheck {
-  const {
-    item,
-    currentPlus,
-    biomeLevel,
-    essences,
-    globalMastery,
-    t1Plus5EssenceCostMultiplier,
-  } = params;
-  const targetPlus = currentPlus + 1;
-  if (!item.biomeGroup) return { ok: false, reason: 'This item cannot be upgraded.' };
-  // The lineage tree owns weapon progression now; the +N ladder never applies to weapons.
-  if (item.slot === 'weapon') {
-    return { ok: false, reason: 'Weapon upgrades are unlocked from its lineage tree.' };
-  }
-  if (currentPlus >= getMaxUpgrade(item)) return { ok: false, reason: 'Already at maximum upgrade.' };
-  if (globalMastery !== undefined && targetPlus > upgradeCeilingFromGlobalMastery(globalMastery, item.tier)) {
-    return {
-      ok: false,
-      reason: `Requires Global Mastery ${globalMasteryRequiredForUpgrade(item.tier, targetPlus)}.`,
-    };
-  }
-
-  const reqLevel = requiredBiomeLevelForUpgrade(item, targetPlus);
-  if (biomeLevel < reqLevel) {
-    return { ok: false, reason: `Requires ${item.biomeGroup} level ${reqLevel}.` };
-  }
-
-  const cost = upgradeCostFor(item, targetPlus, t1Plus5EssenceCostMultiplier);
-  if (!cost) return { ok: false, reason: 'This item cannot be upgraded.' };
-  for (const [type, amount] of Object.entries(cost)) {
-    if ((essences[type as EssenceType] ?? 0) < (amount ?? 0)) {
-      return { ok: false, reason: `Not enough ${ESSENCE_LABELS[type as EssenceType]} essence (need ${amount}).` };
-    }
-  }
-  return { ok: true };
+  return { ok: false, reason: UPGRADES_RETIRED_REASON };
 }

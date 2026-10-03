@@ -1,0 +1,22 @@
+{
+  "id": "shackle-shard",
+  "category": "cc-icons",
+  "provider": "built-in OpenAI imagegen",
+  "status": "pending",
+  "candidate": "candidate-1.png",
+  "out": "items/materials/shackle-shard.png",
+  "size": {
+    "w": 32,
+    "h": 32
+  },
+  "generationSize": {
+    "w": 1254,
+    "h": 1254
+  },
+  "sourceSha256": "1b17f0ab35989804e555cd07d4b7da2ddb1bdca771871856802016953fc0e1cf",
+  "candidateSha256": "acebc657990ff43050a06201100504e0b61f3a33e37b35415c7ebf0f3d793b89",
+  "generatedFilename": "exec-dfd063ab-0d76-4314-9980-c721a935d7f4.png",
+  "prompt": "Use case: stylized-concept\nAsset type: MMO Idle material inventory icon, final 32x32 PNG, displayed at 24px.\nPrimary request: Shackle Shard: one snapped open C-shaped forged metal link fragment, squared angular cross-section, two visibly fractured ends and a pale steel-blue restraint notch; not a necklace. Physical crafting material, mundane and grounded rather than an ornate artifact.\nComposition: one isolated fragment centered on square canvas, occupies 78 percent of the frame, slight diagonal, generous padding; bold literal object silhouette readable at 24px.\nStyle: flat bold pixel-art inventory icon, hard dark outline, crisp intentional pixel clusters, limited palette, three broad value groups, minimal detail, no smooth gradients or glow.\nPalette: lane colour #8fb8ff is the dominant material tint with charcoal shadows and a narrow pale edge.\nBackground: genuine transparency.\nConstraints: material fragment only; no relic, iron plaque, square plate, polished gemstone, complete equipment piece, or drop shadow. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
+  "preprocessing": "Direct nearest-neighbor resize to 32px; generated alpha preserved.",
+  "review": "No acceptance or rejection by the agent."
+}

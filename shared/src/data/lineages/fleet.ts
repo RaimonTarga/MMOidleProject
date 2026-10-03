@@ -14,6 +14,8 @@ import { packetDefaultFace } from './packets';
 export const FLEET_LINEAGE: LineageDefinition = {
   id: 'fleet',
   slot: 'mobility',
+  // Parked for the second playtest (design §24.5): data kept, tree unreachable.
+  parked: true,
   homeBiome: 'plains',
   lanes: ['kill-chain', 'tempo', 'empowered'],
 

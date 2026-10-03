@@ -22,7 +22,6 @@ import {
   baseRecoveryForTier,
   emptyEquipment,
   poolFactorForTier,
-  upgradeStatBonusTotal,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { recalculatePlayerEntityStats } from "../src/ecs/playerEntityFormulas";
@@ -35,6 +34,11 @@ function assert(condition: unknown, message: string): void {
 
 /** The armor whose flat `maxHp` the equipped arms measure. */
 const ARMOR_ID = "plains-vest-t1";
+/**
+ * A stale `+N` the save still holds. The ladder is retired on every slot
+ * (design §24.5), so it must add nothing: the expectation below is the item's
+ * own authored `maxHp`, with no upgrade term.
+ */
 const PLUS = 3;
 
 function makePlayerSlices(id: string, tier: number, armor: string | null): PersistedPlayerSlices {
@@ -100,7 +104,7 @@ function flatPool(armor: string | null): number {
   assert(def !== undefined, `the test needs ${armor} in the item database`);
   const base = def!.statModifiers.maxHp ?? 0;
   assert(base > 0, `${armor} should author a flat maxHp for this test to mean anything`);
-  return GAME_CONFIG.PLAYER_MAX_HP + base + (upgradeStatBonusTotal(def!, PLUS).maxHp ?? 0);
+  return GAME_CONFIG.PLAYER_MAX_HP + base;
 }
 
 // ── 1. The table is a factor per player tier, T0 included and neutral ────────

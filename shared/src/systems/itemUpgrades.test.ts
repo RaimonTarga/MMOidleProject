@@ -2,7 +2,9 @@ import { maxGlobalMasteryAtTier } from '../config/gameConfig';
 import {
   MAX_ITEM_TIER,
   MAX_UPGRADE,
+  UPGRADES_RETIRED_REASON,
   checkUpgrade,
+  getMaxUpgrade,
   globalMasteryRequiredForUpgrade,
   upgradeCeilingFromGlobalMastery,
 } from './itemUpgrades';
@@ -71,48 +73,27 @@ function testCeilingIsTierScoped(): void {
   assert(upgradeCeilingFromGlobalMastery(9999, 1) === MAX_UPGRADE, 'ceiling capped at MAX_UPGRADE');
 }
 
-function testCheckUpgradeGatesByItemTier(): void {
-  // Weapons are off the +N ladder entirely (Phase 2b: lineage tree instead), so
-  // the GM-gate fixture must be a slot that still rides it.
-  const tierTwo = [...ITEM_DATABASE.values()].find(
-    (item) => item.tier === 2 && item.biomeGroup !== undefined
-      && item.slot !== 'core' && item.slot !== 'weapon',
-  );
-  assert(tierTwo !== undefined, 'database has an upgradeable tier 2 item');
-  if (!tierTwo) return;
-
-  // GM 30 (tier 1 fully mastered) must not open tier 2 upgrades.
-  const locked = checkUpgrade({
-    item: tierTwo,
-    currentPlus: 0,
-    biomeLevel: 999,
-    essences: NO_ESSENCES,
-    globalMastery: 30,
-  });
-  assert(!locked.ok, 'tier 2 upgrade blocked at GM 30');
-  assert(
-    (locked.reason ?? '').includes('Global Mastery'),
-    'tier 2 block reason is the GM gate',
-  );
-
-  // At GM 72 the GM gate is open; any remaining failure is a different gate.
-  const open = checkUpgrade({
-    item: tierTwo,
-    currentPlus: 0,
-    biomeLevel: 999,
-    essences: NO_ESSENCES,
-    globalMastery: 72,
-  });
-  assert(
-    open.ok || !(open.reason ?? '').includes('Global Mastery'),
-    'tier 2 GM gate open at GM 72',
-  );
+/**
+ * The ladder itself is retired on every slot (design §24.5): no item has a step
+ * to take, and `checkUpgrade` refuses everything — at any Global Mastery, level
+ * or wallet. The GM band above survives because it prices the lineage rows'
+ * Global Mastery gate (`data/lineages/magnitudes.ts`).
+ */
+function testLadderRetired(): void {
+  const rich = { red: 1e9, blue: 1e9, green: 1e9, yellow: 1e9, purple: 1e9 } as Record<EssenceType, number>;
+  for (const item of ITEM_DATABASE.values()) {
+    assert(getMaxUpgrade(item) === 0, `${item.id}: no item has a ladder`);
+    for (const essences of [NO_ESSENCES, rich]) {
+      const check = checkUpgrade({ item, currentPlus: 0, biomeLevel: 999, essences, globalMastery: 999 });
+      assert(!check.ok && check.reason === UPGRADES_RETIRED_REASON, `${item.id}: upgrade refused`);
+    }
+  }
 }
 
 testBandBoundaries();
 testTierOneThresholds();
 testThresholdsFillEachBand();
 testCeilingIsTierScoped();
-testCheckUpgradeGatesByItemTier();
+testLadderRetired();
 
 console.log('itemUpgrades: ok');

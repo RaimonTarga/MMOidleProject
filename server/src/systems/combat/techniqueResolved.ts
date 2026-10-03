@@ -65,6 +65,6 @@ export function onTechniqueResolved(
   if (ability.slot !== 'technique') return;
   if (site.ctx) consumeTechniqueWindow(player, site.ctx);
   onAbilityNodeTechniqueLanded(world, player, ability, site);
-  onLineageTechniqueCast(world, player, site);
+  onLineageTechniqueCast(world, player, { ...site, abilityId: ability.id });
   signatureOnTechniqueResolved(world, player, site);
 }

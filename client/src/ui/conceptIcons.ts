@@ -328,19 +328,6 @@ export function riteIconSource(id: string): AssetIconSource | null {
 const BUFF_ICON_ALIASES: Record<string, string> = {
   'defense-engagement-dr': 'defense-sustained-dr',
   'defense-recovery': 'defense-burst',
-  // Lineage card windows and the two frame tiles have no authored PNG yet; an
-  // id with no file drew a blank dark square with an invisible clock (review
-  // P6, 2026-10-02). Each borrows the tile of the effect it most resembles.
-  'lineage-damage': 'cadence-crescendo',
-  'lineage-speed': 'cadence-accelerando',
-  'lineage-recovery': 'defense-burst',
-  'lineage-guard': 'defense-sustained-dr',
-  'lineage-ward': 'defense-ward',
-  'lineage-plate': 'defense-reactive-plating',
-  'lineage-technique': 'flurry',
-  'lineage-evasion': 'mob-kite',
-  'frame-window': 'cooldown-channel',
-  'frame-charge': 'energy-ac-charge',
   // Frame loops (progression rework Phase 3) borrow the authored tile of the
   // mechanic they ARE, rather than shipping five 404s until the art pass reaches
   // them: Artillerist's ramp is the Hair Trigger ramp re-homed onto the frame,

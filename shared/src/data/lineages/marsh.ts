@@ -14,6 +14,8 @@ import { packetDefaultFace } from './packets';
 export const MARSH_LINEAGE: LineageDefinition = {
   id: 'marsh',
   slot: 'mobility',
+  // Parked for the second playtest (design §24.5): data kept, tree unreachable.
+  parked: true,
   homeBiome: 'swamp',
   lanes: ['control', 'affliction', 'bulwark'],
 

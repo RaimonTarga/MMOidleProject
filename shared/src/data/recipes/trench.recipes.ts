@@ -36,24 +36,16 @@ export const trenchRecipeEntries = [
   ['trench-vest-t4', {
     id: 'trench-vest-t4', name: 'Deep Sea Carapace',
     recipeGroup: 'trench', requiredBiomeLevel: 2, slot: 'armor',
-    evolvesFrom: 'cave-vest-t3',
     // Elite-fighting profile (Cave inheritor), 2026-09-26 armor niches: raw stats —
     // high DR, high HP — plus the game's debuff resistance (moved here from the
     // Swamp/Wasteland line). Tundra stays the best stand-and-trade vest when debuffs
     // don't matter; this is the one for elites that shred, slow and mark you.
-    cost: { green: 220 }, stats: {"maxHp": 330, "damageReduction": 0.26}, // family-tag: elite (raw stats + debuff resist) armor → Swarming
+    cost: { green: 220 }, stats: { "maxHp": 475, "damageReduction": 0.3 }, // family-tag: elite (raw stats + debuff resist) armor → Swarming
     reconstructCost: { green: 770 },
-    mechanicEffects: {"defense.debuff-resistance": 0.3},
+    mechanicEffects: { "defense.debuff-resistance": 0.4 },
     tier: 4,
     icon: 'items/armor/deep-sea-carapace.png',
     description: "Heavy all-round protection that also weakens enemy debuffs: slows, plating shred, anti-heal and damage-taken marks.",
-    upgrades: [
-      {"cost": {"green": 185}, "requiredBiomeLevel": 3, "stats": {"maxHp": 29, "damageReduction": 0.008}, "mechanicEffects": {"defense.debuff-resistance": 0.02}},
-      {"cost": {"green": 462}, "requiredBiomeLevel": 4, "stats": {"maxHp": 29, "damageReduction": 0.008}, "mechanicEffects": {"defense.debuff-resistance": 0.02}},
-      {"cost": {"green": 739}, "requiredBiomeLevel": 4, "stats": {"maxHp": 29, "damageReduction": 0.008}, "mechanicEffects": {"defense.debuff-resistance": 0.02}},
-      {"cost": {"green": 1200}, "requiredBiomeLevel": 4, "stats": {"maxHp": 29, "damageReduction": 0.008}, "mechanicEffects": {"defense.debuff-resistance": 0.02}},
-      {"cost": {"green": 2030}, "requiredBiomeLevel": 4, "stats": {"maxHp": 29, "damageReduction": 0.008}, "mechanicEffects": {"defense.debuff-resistance": 0.02}}
-    ],
   }],
 
   // No evolvesFrom: blends Cave's charm identity (`defense.absorb-pct`) and
@@ -63,41 +55,23 @@ export const trenchRecipeEntries = [
   ['trench-charm-t4', {
     id: 'trench-charm-t4', name: 'Pressure Vessel',
     recipeGroup: 'trench', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { green: 150 }, stats: { recovery: 115.4 }, // family-tag: Trench native recovery → Dominion
-    mechanicEffects: {
-      'defense.recovery-skill-potency': 0.30,
-      'recovery.cooldown-reduction-pct': 0.15,
-    },
+    cost: { green: 150 }, stats: { "recovery": 168.2 }, // family-tag: Trench native recovery → Dominion
+    mechanicEffects: { "defense.recovery-skill-potency": 0.4, "recovery.cooldown-reduction-pct": 0.25 },
     tier: 4,
     icon: 'items/charms/pressure-vessel.png',
     description: 'Built for the long breath held under a crushing deep: every second wind comes sooner, and fills you deeper.',
-    upgrades: [
-      { stats: { recovery: 7.6 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.02, 'recovery.cooldown-reduction-pct': 0.02 }, cost: { green: 73 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.02, 'recovery.cooldown-reduction-pct': 0.02 }, cost: { green: 183 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.02, 'recovery.cooldown-reduction-pct': 0.02 }, cost: { green: 292 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.02, 'recovery.cooldown-reduction-pct': 0.02 }, cost: { green: 475 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.02, 'recovery.cooldown-reduction-pct': 0.02 }, cost: { green: 803 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   ['trench-boots-t4-stalkers', {
     id: 'trench-boots-t4-stalkers', name: 'Abyssal Stalkers',
     recipeGroup: 'trench', requiredBiomeLevel: 4, slot: 'mobility',
-    evolvesFrom: 'cave-boots-t3',
     // Cave stealth-boot inheritor — soft stealth: reduces enemy detection radius.
     // 2026-09-26 T2-T4 boots curve normalization: Speed 52->92 (+5: 82->118).
-    cost: { green: 80 }, stats: { speed: 92 }, tier: 4, // family-tag: stealth mobility (Cave inheritance) → Swarming
+    cost: { green: 80 }, stats: { "speed": 118 }, tier: 4, // family-tag: stealth mobility (Cave inheritance) → Swarming
     reconstructCost: { green: 280 },
     mechanicEffects: { 'mobility.stealth-pct': 0.72 },
     icon: 'items/boots/abyssal-stalkers.png',
     description: 'They take you past the great blind hunters unseen — and lend the first strike, when it comes, a killing edge.',
-    upgrades: [
-      { stats: { speed: 6 }, cost: { green: 50 },  requiredBiomeLevel: 4 },
-      { stats: { speed: 5 }, cost: { green: 125 },  requiredBiomeLevel: 4 },
-      { stats: { speed: 5 }, cost: { green: 200 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 5 }, cost: { green: 326 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 5 }, cost: { green: 551 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // No evolvesFrom: `mobility.tenacity-pct` matches neither Cave nor Swamp —
@@ -109,17 +83,10 @@ export const trenchRecipeEntries = [
     // † tenacity-pct: flat, always-on CC duration reduction (distinct from
     //   Graveyard's kill-stack tenacity). Suits the Trench's slow heavy hitters.
     // 2026-09-26 T2-T4 boots curve normalization: Speed 48->57 (+5: 73->73).
-    cost: { green: 80 }, stats: { speed: 57 }, tier: 4, // family-tag: Trench native mobility → Dominion
+    cost: { green: 80 }, stats: { "speed": 73 }, tier: 4, // family-tag: Trench native mobility → Dominion
     mechanicEffects: { 'mobility.tenacity-pct': 0.55 },
     icon: 'items/boots/abyssal-treaders.png',
     description: 'Ballasted for the deep — slows and snares and stuns wash over them and recede twice as fast.',
-    upgrades: [
-      { stats: { speed: 4 }, cost: { green: 50 },  requiredBiomeLevel: 4 },
-      { stats: { speed: 3 }, cost: { green: 125 },  requiredBiomeLevel: 4 },
-      { stats: { speed: 3 }, cost: { green: 200 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 3 }, cost: { green: 326 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 3 }, cost: { green: 551 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
 

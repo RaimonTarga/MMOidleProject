@@ -1,0 +1,22 @@
+{
+  "id": "gale-shard",
+  "category": "cc-icons",
+  "provider": "built-in OpenAI imagegen",
+  "status": "pending",
+  "candidate": "candidate-1.png",
+  "out": "items/materials/gale-shard.png",
+  "size": {
+    "w": 32,
+    "h": 32
+  },
+  "generationSize": {
+    "w": 1254,
+    "h": 1254
+  },
+  "sourceSha256": "b6ddb09a8c1e338a8b75779ff5f6b1067bb239428cc4e4954520cf3175142469",
+  "candidateSha256": "0d828c473185368b422e13449a92b56623e57f561ad7ee35c8ee67f7dabed1f0",
+  "generatedFilename": "exec-62002a44-e14f-49e3-b5c3-93fc1a0a841a.png",
+  "prompt": "Use case: stylized-concept\nAsset type: MMO Idle material inventory icon, final 32x32 PNG, displayed at 24px.\nPrimary request: one Gale Shard: a small chipped mineral splinter whose hooked tapered silhouette bends like a wind gust. A physical crafting fragment, with one broad carved wind notch; no complete artifact or jewel setting.\nComposition: single isolated object centered, about 78 percent of square canvas, slight diagonal, generous empty padding. Very bold silhouette readable at 24px. Three broad value groups, crisp intentional pixel clusters, hard dark outline, restrained flat pixel-art inventory style; no tiny details.\nPalette: pale cyan lane colour #7fe3ff, shadow teal and charcoal, a narrow off-white edge; make cyan the dominant material tint.\nBackground: genuine transparency.\nConstraints: one material fragment only. No relic, iron plaque, square plate, medallion, pedestal, ornamental frame, badge, border, text, letters, numbers, watermark, character, scene, ground, drop shadow, smooth gradients, realistic rendering, sparkle cloud, or additional objects. Generate this ONE icon alone.",
+  "preprocessing": "Direct nearest-neighbor resize to 32px; generated alpha preserved.",
+  "review": "No acceptance or rejection by the agent."
+}

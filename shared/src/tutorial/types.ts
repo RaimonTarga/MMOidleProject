@@ -1,6 +1,7 @@
-import type { PacketId } from '../data/lineages/types';
+import type { PacketId, RowKind } from '../data/lineages/types';
 import type { EssenceType } from '../items';
 import type { EquippedRule } from '../runeDatabase';
+import type { TutorialConceptId } from './concepts';
 
 /**
  * Guided Tier-1 tutorial vocabulary (docs/guided-tutorial-plan.md).
@@ -14,14 +15,19 @@ import type { EquippedRule } from '../runeDatabase';
 
 export type TutorialNodeRef =
   | { kind: 'node'; nodeId: string }
-  | { kind: 'biome'; biomeGroup: string; tier: number; pick?: 'first' | 'uncleared'; modifier?: string }
+  | {
+      kind: 'biome';
+      biomeGroup: string;
+      tier: number;
+      pick?: 'first' | 'uncleared';
+      modifier?: string;
+      /**
+       * Only nodes that pay this shard (design §24.3: every kill in a node pays its
+       * dominant family's shard, so a shard farm must stand in that territory).
+       */
+      shard?: PacketId;
+    }
   | { kind: 'dungeon'; biomeGroup: string; tier: number };
-
-/** One upgrade target inside `canAffordUpgrades`. */
-export interface TutorialUpgradeTarget {
-  definitionId: string;
-  toPlus: number;
-}
 
 export type TutorialCondition =
   | { type: 'playerTierAtLeast'; tier: number }
@@ -33,7 +39,6 @@ export type TutorialCondition =
   | { type: 'canCraft'; recipeId: string }
   | { type: 'hasItem'; definitionId: string }
   | { type: 'equipped'; definitionId: string }
-  | { type: 'itemAtLeastPlus'; definitionId: string; plus: number }
   | { type: 'abilityKnown'; abilityId: string }
   | { type: 'runeRecipeCrafted'; recipeId: string }
   | { type: 'bossCleared'; biomeGroup: string; tier: number }
@@ -45,13 +50,6 @@ export type TutorialCondition =
   | { type: 'lineageCardOwned'; lineageId: string; cardId: string }
   | { type: 'lineageFormOwned'; lineageId: string; recipeId: string }
   | { type: 'lineageFormWorn'; lineageId: string; recipeId: string }
-  /**
-   * Every listed item can be taken from its CURRENT level to its target right
-   * now: Global Mastery, biome level, and the summed essence cost of all
-   * remaining levels. Monotone across the upgrades themselves: each one
-   * spends exactly what it removes from the remaining cost.
-   */
-  | { type: 'canAffordUpgrades'; items: TutorialUpgradeTarget[] }
   | { type: 'allOf'; of: TutorialCondition[] }
   | { type: 'anyOf'; of: TutorialCondition[] }
   | { type: 'not'; of: TutorialCondition };
@@ -67,19 +65,24 @@ export type TutorialStep =
   | { type: 'chooseClass' }
   | { type: 'craft'; recipeIds: string[] }
   | { type: 'equip'; definitionIds: string[] }
-  | { type: 'upgrade'; definitionId: string; toPlus: number }
   | { type: 'configureRunes'; rules: EquippedRule[] }
   | { type: 'craftRune'; recipeId: string }
   /** Craft the ability recipe, then make it the only ability of its slot kind. */
   | { type: 'learnAbility'; recipeId: string; abilityId: string; slot: 'technique' | 'guard' }
   | { type: 'setAbilities'; techniques: string[]; guards: string[] }
   /**
-   * Buy one lineage card. Permanent, and buying into an empty row activates it
-   * server-side, so the guide never needs a separate `setActive`. Only legal
-   * once the lineage's base form is WORN — holding the form is what opens the
-   * tree (`checkUnlockCard`).
+   * Buy one lineage card. Permanent. Only legal once the lineage's base form is
+   * WORN — holding the form is what opens the weapon page (`checkUnlockCard`).
+   * Buying activates the card only into an EMPTY row (server-side), so every
+   * purchase beat follows it with a `setActive` for the same card.
    */
   | { type: 'unlockCard'; lineageId: string; cardId: string }
+  /**
+   * Make an owned card the active one of its row. Free. A no-op right after a
+   * purchase into an empty row; the swap a player who already filled the row
+   * by hand needs (the weapon page sends the same intent after a buy).
+   */
+  | { type: 'setActive'; lineageId: string; row: RowKind; cardId: string }
   /** Pay a band's gate: essence, the crowned lane's shard, the boss capstone. */
   | { type: 'unlockForm'; lineageId: string; recipeId: string }
   /** Wear an owned form. Free, and it moves the slot like any equip. */
@@ -98,8 +101,7 @@ export type TutorialProgressRef =
   | { type: 'essenceFor'; recipeId: string }
   | { type: 'essence'; essence: EssenceType; amount: number }
   | { type: 'shard'; packet: PacketId; amount: number }
-  | { type: 'capstone'; biome: string; amount: number }
-  | { type: 'upgradeCost'; items: TutorialUpgradeTarget[] };
+  | { type: 'capstone'; biome: string; amount: number };
 
 /**
  * One press of Next.
@@ -125,6 +127,28 @@ export interface TutorialBeat {
   /** Section heading for the panel (e.g. "The Plains"). */
   chapter: string;
   steps: TutorialStep[];
+  /**
+   * The new ideas this beat's line puts in front of the player, at most two
+   * (the first-hour checklist, docs/guided-tutorial-plan.md). Presentation
+   * data: the bot never reads it; `tutorial.test.ts` counts it per level.
+   */
+  teaches?: TutorialConceptId[];
+  /**
+   * Shown AFTER the beat's steps are done, while the guide points: the card the
+   * beat bought, then (with `ring`) that card's ring on the rhythm readout. The
+   * client director only; the bot has nothing to read. Lines are generated from
+   * data in `classScript.ts`, like every other line.
+   */
+  lesson?: TutorialLesson;
+}
+
+export interface TutorialLesson {
+  lineageId: string;
+  cardId: string;
+  /** The line while the ring rests on the bought card ("look at what it says now"). */
+  read: string;
+  /** The line while the ring rests on the card's readout ring, near the HP bar. */
+  ring?: string;
 }
 
 export interface TutorialScript {

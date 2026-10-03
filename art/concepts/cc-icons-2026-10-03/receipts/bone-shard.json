@@ -1,0 +1,22 @@
+{
+  "id": "bone-shard",
+  "category": "cc-icons",
+  "provider": "built-in OpenAI imagegen",
+  "status": "pending",
+  "candidate": "candidate-1.png",
+  "out": "items/materials/bone-shard.png",
+  "size": {
+    "w": 32,
+    "h": 32
+  },
+  "generationSize": {
+    "w": 1254,
+    "h": 1254
+  },
+  "sourceSha256": "1b7034b7334895c2ed921be6c9e1e6ef8827c686db305ee2ce1b26f025e0ccd1",
+  "candidateSha256": "2d9c630bb10ff04c83db0d0c9b0a97238c9079eb25d91af8d9f9b7aba6186ce1",
+  "generatedFilename": "exec-a72d8554-e2f2-4321-b9d4-af4b512eb16c.png",
+  "prompt": "Use case: stylized-concept\nAsset type: MMO Idle material inventory icon, final 32x32 PNG, displayed at 24px.\nPrimary request: Bone Shard: one splintered curved bone fragment with a single rounded joint end and a rough broken shaft; ivory bone heavily tinted lavender along its broad shadow face. Physical crafting material, mundane and grounded rather than an ornate artifact.\nComposition: one isolated fragment centered on square canvas, occupies 78 percent of the frame, slight diagonal, generous padding; bold literal object silhouette readable at 24px.\nStyle: flat bold pixel-art inventory icon, hard dark outline, crisp intentional pixel clusters, limited palette, three broad value groups, minimal detail, no smooth gradients or glow.\nPalette: lane colour #c58fff is the dominant material tint with charcoal shadows and a narrow pale edge.\nBackground: genuine transparency.\nConstraints: material fragment only; no relic, iron plaque, square plate, polished gemstone, complete equipment piece, or drop shadow. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
+  "preprocessing": "Direct nearest-neighbor resize to 32px; generated alpha preserved.",
+  "review": "No acceptance or rejection by the agent."
+}

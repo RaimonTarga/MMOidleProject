@@ -14,8 +14,6 @@ import {
   isStanceRecipeUnlocked,
   NO_STANCE_ID,
   ITEM_DATABASE,
-  BIOME_DATABASE,
-  FAMILY_DATABASE,
   biomeLaneAPackets,
   LINEAGE_DATABASE,
   capstoneMaterialName,
@@ -29,6 +27,7 @@ import {
   RECIPE_DATABASE,
   canUnlockSkillFromView,
   globalMasteryRequiredForUpgrade,
+  isGatedLineageForm,
   SKILL_TREE,
   upgradeCeilingFromGlobalMastery,
   upgradeCostFor,
@@ -1129,9 +1128,25 @@ export class RouteExecutor {
     recorder.emit({ kind: "unequip", atMs: recorder.now(), slot, definitionId });
   }
 
+  /**
+   * `upgrade` is a RETIRED step kind (design §24.5): no item has a +N ladder,
+   * `getMaxUpgrade` is 0 everywhere and the server refuses every upgrade. A
+   * legacy route's step is therefore skipped, with a `retired-step` record; the
+   * clamp below would reach the same `target <= 0` return, so the body after it
+   * is kept only for the day a ladder exists again.
+   */
   private async doUpgrade(step: Extract<RouteStep, { type: "upgrade" }>): Promise<void> {
     const { obs, intents, recorder } = this.deps;
     const recipe = RECIPE_DATABASE.get(step.definitionId);
+    if (obs.maxUpgradeFor(step.definitionId) <= 0) {
+      recorder.emit({
+        kind: "build-change",
+        atMs: recorder.now(),
+        system: "retired-step",
+        detail: { step: "upgrade", definitionId: step.definitionId, toPlus: step.toPlus, skipped: true },
+      });
+      return;
+    }
     let target = Math.min(
       this.deps.policy.upgradeTarget(step.toPlus),
       obs.maxUpgradeFor(step.definitionId),
@@ -1459,9 +1474,9 @@ export class RouteExecutor {
         const bossBiomes = bossBiomesDroppingShardAtTier1(card.lane);
         throw new StallError(
           bossBiomes.length > 0
-            ? `the ${card.lane} shard has no tier-1 family source: it drops only from the `
+            ? `no tier-1 node pays the ${card.lane} shard: it drops only from the `
               + `${bossBiomes.join("/")} boss, and this route has no boss step for it`
-            : `no tier-1 biome drops the ${card.lane} shard this card costs`,
+            : `no tier-1 node pays the ${card.lane} shard this card costs`,
           { step, missing: missing() },
         );
       }
@@ -2140,100 +2155,38 @@ export class RouteExecutor {
     return null;
   }
 
+  /**
+   * `evolveItem` is a RETIRED step kind (design §24.5): the server refuses
+   * evolve and reconstruct on every slot. Legacy routes still carry it, so the
+   * executor rewrites what it can rather than stalling on a refusal:
+   *
+   *  - a recipe that is a plain recipe now (every armour, charm and boots T2+
+   *    item) is CRAFTED from its recipe at its biome level, which is how a
+   *    player gets it today. Nothing is consumed: the predecessor stays owned.
+   *  - a live lineage's gated form (a tier-2+ weapon) cannot be made outside
+   *    its tree, so the step stalls with that reason; a route that wants one
+   *    must pay the gate (`unlockForm`) instead.
+   */
   private async doEvolveItem(
     step: Extract<RouteStep, { type: "evolveItem" }>,
   ): Promise<void> {
     const { obs, recorder } = this.deps;
     const recipe = RECIPE_DATABASE.get(step.recipeId);
     if (!recipe) throw new StallError("unknown evolution recipe in route", { step });
-    if (!recipe.evolvesFrom) {
-      throw new StallError("evolveItem requires an evolved recipe", { recipeId: step.recipeId });
-    }
-    const predecessor = recipe.evolvesFrom;
     if (obs.hasItem(step.recipeId)) return;
-
-    // A missing predecessor is a structural evolution failure, not a resource
-    // shortage. Do not farm forever (or silently switch to reconstruction) when
-    // the route explicitly requested consume-the-predecessor evolution.
-    if (step.mode === "evolve" && !(obs.self?.inventory ?? []).includes(predecessor)) {
-      throw new StallError("evolution requires the owned predecessor", {
-        recipeId: step.recipeId,
-        mode: step.mode,
-        predecessor,
-      });
-    }
-
-    const farmNode = this.resolveFarmNode(step.farmAt, recipe.recipeGroup);
-    const canDo = (): boolean => obs.canEvolve(step.recipeId, step.mode).ok;
-    const missing = (): Record<string, number> => {
-      const cost = step.mode === "evolve" ? recipe.cost : recipe.reconstructCost;
-      const out: Record<string, number> = {};
-      for (const [type, amount] of Object.entries(cost ?? {})) {
-        const short = (amount ?? 0) - obs.essence(type as EssenceType);
-        if (short > 0) out[`essence.${type}`] = short;
-      }
-      if (!obs.recipeUnlocked(step.recipeId)) {
-        out[`biomeLevel.${recipe.recipeGroup}`] = Math.max(
-          1,
-          recipe.requiredBiomeLevel - obs.biomeLevel(recipe.recipeGroup),
-        );
-      }
-      if (step.mode === "evolve" && !obs.self?.inventory.includes(predecessor)) {
-        out[`predecessor.${predecessor}`] = 1;
-      }
-      return out;
-    };
-
-    if (!canDo()) {
-      if (!farmNode) {
-        throw new StallError("cannot satisfy evolution requirement", {
-          recipeId: step.recipeId,
-          mode: step.mode,
-          missing: missing(),
-        });
-      }
-      await this.farmBlocked(
-        farmNode,
-        `${step.mode}:${step.recipeId}`,
-        canDo,
-        () => missingToReasons(missing(), obs),
-        true,
+    if (isGatedLineageForm(recipe.id)) {
+      throw new StallError(
+        "evolveItem is retired: a lineage's tier-2+ form is opened at its gate (use unlockForm)",
+        { recipeId: step.recipeId, mode: step.mode },
       );
     }
-
-    const result = await this.mutate(
-      () => this.deps.intents.evolveItem(step.recipeId, step.mode),
-      (attempt) => {
-        const essenceCost = step.mode === "evolve" ? recipe.cost : recipe.reconstructCost;
-        recorder.emit({
-          kind: "evolution",
-          atMs: recorder.now(),
-          recipeId: step.recipeId,
-          mode: step.mode,
-          predecessorId: predecessor,
-          success: attempt.success,
-          reason: attempt.reason,
-          essenceSpent: attempt.success ? { ...(essenceCost ?? {}) } : {},
-          context: recorder.context(obs.nodeId),
-        });
-      },
-    );
-    if (!result.success) {
-      throw new StallError(`evolution rejected: ${result.reason ?? "unknown"}`, {
-        recipeId: step.recipeId,
-        mode: step.mode,
-      });
-    }
-    await this.waitUntil(() => obs.hasItem(step.recipeId), {
-      timeoutMs: 30_000,
-      what: `${step.recipeId} in inventory`,
+    recorder.emit({
+      kind: "build-change",
+      atMs: recorder.now(),
+      system: "retired-step",
+      detail: { step: "evolveItem", mode: step.mode, recipeId: step.recipeId, rewrittenAs: "craft" },
     });
-    if (step.mode === "evolve") {
-      await this.waitUntil(
-        () => !(obs.self?.inventory ?? []).includes(predecessor),
-        { timeoutMs: 30_000, what: `${predecessor} consumed by evolution` },
-      );
-    }
+    await this.doCraft({ type: "craft", recipeIds: [step.recipeId], farmAt: step.farmAt });
   }
 
   private async doCraftStance(
@@ -2487,27 +2440,39 @@ export class RouteExecutor {
   }
 
   /**
-   * Where to farm for a lineage card. Shards are keyed by PACKET, not by biome
-   * (design §12), so the home biome is often the wrong place: the Rapier lives in
-   * Forest, but Forest's Tier-1 pool fields only Pack and Grove, which drop tempo
-   * and empowered — an affliction card bought there would farm forever for a
-   * shard the node cannot pay.
+   * Where to farm for a lineage card or gate. Since design §24.3 a shard is paid
+   * by the NODE — every kill in a node pays its dominant family's shard and no
+   * other — so the question is which node, not which biome: a Forest farm for an
+   * affliction card on a Pack-led node pays tempo forever.
    *
-   * So an authored `farmAt` stays authoritative, and otherwise the home biome is
-   * used only when it can actually field a family that drops the lane's shard;
-   * failing that, the first Tier-1 biome that can. Null when NO biome of the
-   * tier can, which `doUnlockCard` turns into a stall with a reason rather than
-   * an endless farm.
+   * An authored `farmAt` keeps its biome and pick, narrowed to the territories
+   * that pay `lane` (the ref's `shard`). If none of that biome's nodes pays it, the
+   * un-narrowed node is returned and `farmBlocked` raises the named "pays none of
+   * this packet" stall instead of an endless farm. With no `farmAt`, the home
+   * biome is tried first and then each Tier-1 biome in map order, nearest
+   * uncleared paying node first. Null when no such node exists, which
+   * `doUnlockCard` turns into a stall with a reason.
    */
   private lineageFarmNode(
     ref: NodeRef | undefined,
     homeBiome: string,
     lane: PacketId,
   ): string | null {
-    if (ref) return resolveNode(ref, this.deps.obs, this.rotation);
+    const { obs } = this.deps;
+    if (ref) {
+      if (ref.kind === "biome" && !ref.shard) {
+        const paying = resolveNode({ ...ref, shard: lane }, obs, this.rotation);
+        if (paying) return paying;
+      }
+      return resolveNode(ref, obs, this.rotation);
+    }
     for (const biomeGroup of [homeBiome, ...LINEAGE_SHARD_BIOMES]) {
-      if (!biomeDropsShardAtTier1(biomeGroup, lane)) continue;
-      const node = this.defaultFarmNodeFor(biomeGroup);
+      const tier = BIOME_START_TIER_BY_GROUP[biomeGroup] ?? 1;
+      const node = resolveNode(
+        { kind: "biome", biomeGroup, tier, pick: "uncleared", shard: lane },
+        obs,
+        this.rotation,
+      );
       if (node) return node;
     }
     return null;
@@ -2713,19 +2678,12 @@ function definedNumbers(record: Partial<Record<string, number>>): Record<string,
 }
 
 /**
- * The Tier-1 biomes a shard can be farmed in, in map order. Local rather than in
- * `shared/src/data/families`, so this stays a BOT policy: the family table says
- * which family drops what, and this says where the bot goes looking.
+ * The Tier-1 biomes a shard is looked for in, in map order. Local rather than in
+ * `shared/src/data/families`, so this stays a BOT policy: `nodeShard` says which
+ * node pays what, and this says where the bot goes looking.
  */
 const LINEAGE_SHARD_BIOMES = ['plains', 'forest', 'mountain', 'cave', 'swamp'] as const;
 
-/**
- * Whether `biomeGroup` can field, at biome tier 1, any family that drops `lane`.
- *
- * Reads the pool rather than the authored blends, because a family whose mobs all
- * live in a later tier's pool is dropped from every blend by `resolveNodeBlend` —
- * so it drops nothing at tier 1 no matter what a node's blend claims.
- */
 /**
  * The tier-1 biomes whose BOSS drops `lane`, via the design-§18.6 stopgap: a boss
  * kill pays shards of each Lane-A packet of the lineages homed in its biome.
@@ -2735,16 +2693,6 @@ const LINEAGE_SHARD_BIOMES = ['plains', 'forest', 'mountain', 'cave', 'swamp'] a
 function bossBiomesDroppingShardAtTier1(lane: PacketId): string[] {
   return LINEAGE_SHARD_BIOMES.filter((biomeGroup) =>
     biomeLaneAPackets(biomeGroup).includes(lane));
-}
-
-function biomeDropsShardAtTier1(biomeGroup: string, lane: PacketId): boolean {
-  const pool = BIOME_DATABASE.get(biomeGroup)?.monsterPoolByTier[1] ?? [];
-  if (pool.length === 0) return false;
-  for (const family of FAMILY_DATABASE.values()) {
-    if (family.biome !== biomeGroup || family.drops !== lane) continue;
-    if (family.monsterIds.some((id) => pool.includes(id))) return true;
-  }
-  return false;
 }
 
 function defaultLabel(step: RouteStep): string {

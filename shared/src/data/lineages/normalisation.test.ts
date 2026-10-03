@@ -34,7 +34,9 @@ function assert(condition: boolean, message: string): void {
     'kill fires once per body',
   );
   assert(triggerFiresPerPull(undefined) === 1, 'no trigger is a single fire, never zero');
-  for (const kind of ['mechanic-fired', 'evade', 'hit-taken', 'standing', 'pulse'] as TriggerKind[]) {
+  for (const kind of [
+    'mechanic-fired', 'evade', 'hit-taken', 'standing', 'pulse', 'hit-afflicted', 'hit-held',
+  ] as TriggerKind[]) {
     assert(triggerFiresPerPull({ kind }) >= 1, `${kind} must never normalise by less than 1`);
   }
 }
@@ -83,6 +85,23 @@ function assert(condition: boolean, message: string): void {
       `binary payoff '${kind}' must ignore the trigger rate: ${fast.magnitude} vs ${slow.magnitude}`,
     );
   }
+}
+
+// ── per-firing payloads (design §24.1) are never normalised either ───────────
+{
+  let perFiring = 0;
+  for (const [kind, unit] of PAYOFF_UNIT) {
+    if (!unit.perFiring) continue;
+    perFiring += 1;
+    const value = payoffValue({
+      payoff: kind, tier: 1, row: 'payoff', lane: 'tempo', trigger: { kind: 'hit-nth', n: 1 },
+    });
+    assert(
+      value.magnitude === unit.magnitude,
+      `per-firing payoff '${kind}' must not be divided by its trigger rate: ${value.magnitude} vs ${unit.magnitude}`,
+    );
+  }
+  assert(perFiring >= 3, 'the event-shaped payloads are marked per-firing');
 }
 
 // ── every authored payoff card still resolves to something that does work ────

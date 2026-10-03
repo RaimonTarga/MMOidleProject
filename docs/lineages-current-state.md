@@ -1,29 +1,35 @@
 # Lineage Trees — Current State
 
-**Audited:** 2026-10-01 (progression rework run 3, after Phases 1–2 and the overnight/
-day-run slices of Phases 3–5 — keystones, T3/T4 bands, defensive lineages, ability nodes,
-re-homed forms, T2 amplifiers, band collapse). Supersedes the weapon-only version of this
-page from Phase 1.
+**Audited:** 2026-10-03 (the course-correction run, design §24: the T1 lean and verb, one
+shard per node, non-weapon trees parked, the ladder retired on every slot, the weapon page
+and the rhythm readout — report:
+[`briefs/course-correction-report-2026-10-03.md`](briefs/course-correction-report-2026-10-03.md)).
+Earlier audit 2026-10-01 (run 3: keystones, T3/T4 bands, defensive lineages, ability
+nodes, re-homed forms, T2 amplifiers, band collapse).
 
 **Design authority:** [`design_docs/progression-rework-design.md`](../design_docs/progression-rework-design.md)
-§2–9, §18, §19, §21. **History:** [`archive/progression-rework-plan.md`](archive/progression-rework-plan.md)
+§2–9, §18, §19, §21, §23, §24 (§24 supersedes §18.9's ±3pp band, and §17's non-weapon
+trees while they are parked). **History:** [`archive/progression-rework-plan.md`](archive/progression-rework-plan.md)
 §1–§5 and their progress notes are the detailed build log, including every divergence from
 the original sketch; read the code where this page and that history disagree.
 
 A gear slot no longer holds an item with a `+N` ladder — it holds a **lineage**: a small
 tree of permanent card purchases plus a chain of "forms" (the actual equipped item, still
-an ordinary `RECIPE_DATABASE`/`ITEM_DATABASE` entry). This now covers **all four gear
-slots**, not just weapons: the weapon slot moved first (Phase 1/2), the other three
-(armor, recovery/charm, mobility/boots) got their own lineages in Phase 4. Non-weapon
-slots still also run the old `+N` ladder in parallel — see §9.
+an ordinary `RECIPE_DATABASE`/`ITEM_DATABASE` entry). All four gear slots have lineage
+DATA, but since design §24.5 **only the weapon tree is live**: the fifteen armour, charm
+and boots lineages are `parked` (§2), and those slots hold plain items crafted at full
+power. The `+N` ladder and the evolve path are retired on every slot (§9).
 
 ## 1. The vocabulary (`shared/src/data/lineages/types.ts`)
 
-- **Packet** (`PacketId`): one of eight lanes. Six are weapon-eligible (`tempo`,
-  `empowered`, `affliction`, `control`, `kill-chain`, `engagement`); two are
+- **Packet** (`PacketId`): one of nine lanes. Seven are weapon-eligible (`tempo`,
+  `empowered`, `affliction`, `control`, `kill-chain`, `engagement`, `technique`); two are
   defensive-only (`bulwark`, `barrier-tempo`). A lineage carries exactly three packets as
-  its lanes. Each packet names the stat it scales, what fires it, what it pays out, and
-  what it is weak against — `shared/src/data/lineages/packets.ts`.
+  its lanes. Each packet names the stat it scales, what fires it, what it pays out, what it
+  is weak against, its colour, its **shard name** (Gale, Anvil, Venom, Shackle, Bone,
+  Spark, Sigil, Iron, Glass — the player never reads a lane name on a material), and, for
+  the seven weapon packets, its two **halves** (the moment and the payload, §3a) —
+  `shared/src/data/lineages/packets.ts`.
 - **Card** (`LineageCard`): one tree node. Authored with **no numbers at all** — tier,
   row, lane, trigger/payoff kind, and (for amplifier/keystone/cross rows) which card it
   `modifies` or which lane it `borrowsLane` from. `resolveLineageCard` (`resolve.ts`) is
@@ -32,7 +38,9 @@ slots still also run the old `+N` ladder in parallel — see §9.
 - **Row** (`RowKind`): `stat` → `payoff` → `amplifier` → `keystone` → `cross`, one band
   per tier (T1 asks stat/payoff, T2 adds amplifier, T3 adds keystone, T4 adds cross). A
   row is a **choice**, not a shopping list — `LineageProgress.active` holds one active
-  card per owned row, across the whole tree (not per band — see §3).
+  card per owned row, across the whole tree (not per band — see §3). The ids stayed;
+  the player reads them through `ROW_LABELS`: `stat` is the **Lean**, `payoff` the
+  **Verb** (§3a).
 - **Form** (`LineageForm`): the actual wearable item, keyed by an ordinary recipe id.
   Tier-1 forms are crafted normally (Make tab, no gate). Tier ≥2 forms are bought at the
   tier-below's **gate**: essence, the shard of the lane the new form crowns, and the home
@@ -62,11 +70,21 @@ slots still also run the old `+N` ladder in parallel — see §9.
 The five weapon lineages carry a T1 base form (crafted) plus T2/T3/T4 gated forms along
 the existing `evolvesFrom` graph (e.g. Rapier: `flash-rapier` T1 → `gale-needle` /
 `jungle-stinger-rapier` T2 → `jungle-venomthorn-rapier` T3 → `jungle-deathfang-rapier`
-T4). **Every weapon and every non-weapon item with an `evolvesFrom` chain is reachable
-now** — `server/test/weaponReachability.test.ts`'s `KNOWN_UNREACHABLE` allowlist and
-`server/test/itemReachability.test.ts`'s sibling allowlist are both **empty**. (This
+T4). **Every weapon is reachable** — `server/test/weaponReachability.test.ts`'s
+`KNOWN_UNREACHABLE` allowlist is **empty** — and since §24.5 every non-weapon item is a
+plain recipe unlocked at its biome level (`server/test/itemReachability.test.ts`). (This
 closes the Phase 2b gap this page used to carry: T3/T4 weapons were unreachable until
 design §18.5's T3/T4 form authoring and the Phase 5 re-homing table landed — see §6.)
+
+**The fifteen non-weapon lineages are PARKED (design §24.5, 2026-10-03).** `parked: true`
+on each definition; `isLineageParked` / `liveLineages()` in `index.ts`. A parked lineage
+has no page entry (`lineageForEquippedItem` returns undefined), refuses every purchase,
+swap and gate with "This slot has no tree yet." before any other check, resolves no
+runtime cards, absorbed rows or capstones, and is never created or written by
+`ensureLineageProgress` / `syncLineagesFromInventory`. A save that already holds a parked
+tree keeps it untouched and unresolved. Coverage and reachability tests walk the live
+lineages only, so review P4 (78 unreachable non-weapon cards) is moot while they are
+parked. The data stays for when the trees return.
 
 All fifteen non-weapon lineages, and all PROVISIONAL assignments inside them, are flagged
 in their own file headers — design §17 (the non-weapon lane matrices) is itself marked
@@ -144,6 +162,59 @@ against a Cave that stops at 18.
 No magnitude moved for any of this: `magnitudes.ts` is untouched, and
 `shared/src/data/lineages/reachability.test.ts` walks every lineage × tier × form with no
 allowlist to assert each band is finishable behind its own door, at that band's own tier.
+
+## 3a. The T1 band is a lean and a verb, and they compose (design §24.2)
+
+A weapon's T1 band is three **lean** cards (`<weapon>-t1-<lane>-stat`) and three **verb**
+cards (`<weapon>-t1-<lane>-payoff`). The card ids did not change, so saves, the tutorial
+and the bot routes kept working. A lean is the lane's scaling stat (`packetScalingStat`); a
+verb is authored with **no trigger and no payoff** (`isVerbCard`), because both come from
+the packets at resolve time:
+
+- **The rule** (`composeVerb`, called from `resolveLineageCards`): the active verb fires its
+  packet's **moment**; what happens is the active lean's packet **payload**. Same lane →
+  that lane's hand-authored **pure** pair. No lean active → the verb's own pure pair (the
+  composed own-lane reading is degenerate for Empowered: "when your mechanic fires, the hit
+  counts as your mechanic firing"). The lean is whichever owned card sits in the active
+  `stat` row, at any tier. Legacy payoff cards (every T2+ card) author their own
+  trigger/payoff and never compose.
+- **Sentences are generated, never hand-typed per pair** (`sentences.ts`): subject moments
+  read "X <payload>.", clause moments "X, the hit <payload>.", and same lane / no lean reads
+  the pure sentence. The phrases are templates whose numbers come from the magnitude table,
+  so a number change rewrites the sentence. `cardSentence(card, progress)` and
+  `composedSentence(lineage, progress)` are what the page renders; a lean card's sentence is
+  its stat line. `composeVerb(...).needs === 'slow'` marks a Control verb with no hold
+  source.
+- **Numbers** (`PACKET_HALF_NUMBERS` in `magnitudes.ts`, all PROVISIONAL and the
+  designer's): payloads are PER FIRING — event-shaped and NOT divided by the trigger rate
+  (§24.1: the 4–6 s cadence and the caps carry the budget).
+
+| Packet | Moment (verb) | Payload (lean) | Pure pair (same lane, or no lean) | Lean stat (T1) |
+|---|---|---|---|---|
+| Tempo | `hit-nth` n = 6 (landed swings) | `echo-hit` 1.0: a whole second swing through the proc seam, carrying on-hit | the same | attack speed +9% |
+| Affliction | `hit-afflicted`, cap 5000 ms | lineage bleed 1.0 × the hit over 4 s | `redose`: 1.0 × what its DoTs still owe, over 4 s | DoT potency +10% (`dotPotencyPct` → `dot.mechanic-mult`) |
+| Engagement | `first-hit`, per body | `big-hit` ×2 | the same | Attack +3 |
+| Empowered | `mechanic-fired` | `mechanic-proxy` (the class's own multiplier; 1.5 for dot, summoner and non-Duelist reload) | `big-hit` ×1.5 on the mechanic's hit | attack +9% |
+| Control | `hit-held` (slowed, rooted, chilled or frozen), cap 5000 ms | `root` 2000 ms | `stun` 1500 ms | Attack +3 |
+| Kill chain | `kill` + carry (the next landed hit after a kill) | `heal-and-load`: heal 10% of max HP, the hit ×1.5 | the same | move speed +11 |
+| Technique | `technique-cast` | refund ⅓ of that Technique's cooldown | refund ½ | Technique power +9% |
+
+- **Caps and latches** (`server/src/systems/combat/lineageCards.ts`, keys in
+  `lineageKeys.ts`): a capped moment sets `lineage.cap.<cardId>` when its payoff lands;
+  `hit-nth` counts per card and only landed swings (a chaotic miss neither advances nor
+  fires it); the Engagement latch is per body, kept on the monster; the kill carry is armed
+  by a kill and spent by the next landed hit.
+- **A proxy never recurses** (hard rule 3): `mechanic-proxy` applies the archetype's
+  resolved empowered multiplier (`resolveEffectiveMultiplier`, shared with the real path)
+  and sets `mechanicConsumed` plus `mechanicProxy`. It never consumes the class's charge and
+  never emits `mechanic-fired` (`emitMechanicFired` refuses a proxied exchange); it does
+  nothing on an exchange whose real mechanic already fired, whether it spent a charge
+  (`mechanicConsumed`) or only announced (`mechanicAlreadyFired`: the DoT stack fill, the
+  Conduit formation); and every
+  frame loop returns early on `mechanicProxy`. Range mechanics and Shockwave do treat it as
+  the mechanic.
+- **One multiplier per hit:** big-hit and the loaded hit fold into
+  `ctx.metadata.empoweredMultiplier`, like `damage-window`.
 
 ## 4. Keystones (design §4, amended 2026-10-01)
 
@@ -227,6 +298,10 @@ re-homed as second (or third) gated doors on an existing lineage, each adding on
 | Trench treaders (T4) | marsh (swamp mobility) | 4 | trench |
 | Graveyard boots (T4) | fleet (plains mobility) | 4 | graveyard — thematically the weakest fit (a death-and-decay boot crowning sunlit Plains), mechanically clean (its kill-stack-speed payoff maps directly onto Fleet's native kill-chain lane) |
 
+The eleven non-weapon doors in this table belong to PARKED lineages (§2): while the trees
+are parked those items are plain recipes, crafted at their biome level, and wearing one
+grants no capstone.
+
 No new `LineageFxKey`s were needed for any of the fourteen — every lane already had a
 non-stat fx verb to reuse. The T3/T4 weapon forms proper (Jungle Venomthorn/Deathfang on
 Rapier, Mountain Avalanche/Earthsunder/Warmaul and Tundra Permafrost/Glacial Tyrant on
@@ -286,6 +361,9 @@ emit telemetry, the node handlers do not — no node event exists on the recorde
 Pure functions the server applies and the client gates buttons with, mirroring
 `checkUpgrade`/`checkEvolve`:
 
+- Every check below refuses a **parked** lineage first, with "This slot has no tree yet."
+  (§2), and refusal reasons name shards and biomes as the player reads them ("Not enough
+  Gale Shards (need 4).", "Requires Forest level 2.").
 - `checkUnlockCard` — gate requirements (worn-form tier ≥ card tier, any `modifies`
   target owned), then (unless `wallet.isTestRoom`) **door-biome** level (§3: the biome of
   the form worn at that tier, read off `resolved.requiredBiomeGroup`), Global Mastery,
@@ -308,13 +386,33 @@ Server handlers: `server/src/systems/player/economy/lineages.ts`
 `lineage:unlockCard` / `lineage:setActive` / `lineage:unlockForm` / `lineage:wearForm`,
 all replying with `lineage:result`.
 
-## 9. The non-weapon `+N` ladder still runs alongside these trees
+## 9. The `+N` ladder and the evolve path are retired on every slot (design §23, §24.5)
 
-A deliberate, temporary double system (designer instruction, Phase 4): armor, charm and
-boots items keep `Recipe.upgrades`, `UpgradeTab`, `EvolutionPreview`,
-`inventory:upgradeItem` and `crafting:evolveItem` exactly as before, in parallel with
-their new lineage tree. Only the **weapon** slot's old ladder was deleted (Phase 2b).
-Reconciling the two systems on non-weapon slots is Phase 4's exit, not yet scheduled.
+One rule for four slots since 2026-10-03: an item is crafted at full power from its recipe,
+and there is no within-tier number grind anywhere.
+
+- **The fold.** Weapons first (§23, `74ab24ac`), then armour, charm and boots (the
+  designer's W1-D session, `feat/cc-fold`, 86 items): each item's old `+1..+5` total —
+  stats AND `mechanicEffects` steps — is in its base, and no recipe carries `upgrades`.
+  `shared/src/data/recipes/recipeCurve.test.ts` pins every fold against
+  `nonWeaponLadders.fixture.ts` (the original bases and steps); `weaponCurve.test.ts` still
+  pins the weapons. Report: [`briefs/cc-fold-report-2026-10-03.md`](briefs/cc-fold-report-2026-10-03.md).
+- **The upgrade path** refuses for every slot (`checkUpgrade`, server `upgradeItem`);
+  `getMaxUpgrade` is 0; `stats.ts` no longer reads `itemUpgrades`, so a stale `+5` adds
+  nothing (it would double the fold). The Upgrade tab, its menu entries and every `+N`
+  badge are gone. `upgradeCostFor` survives only for legacy bot routes and is marked
+  retired.
+- **The refund.** `refundRetiredUpgradeEssence` (on `loadCharacter`, idempotent, mirroring
+  migration 0009) pays back every non-weapon level the player had taken, from the frozen
+  per-step table `server/src/db/gearUpgradeRefund.ts` (86 items × 5 steps), and keeps the
+  item. Like 0009 there is no SQL migration: SQL cannot tell which slot an item is in.
+- **The evolve path** refuses everywhere (`checkEvolve`, `checkReconstruct`, server
+  `evolveItem`). Non-weapon recipes lost `evolvesFrom`; a T2+ vest, charm or boot is a
+  plain recipe unlocked at its biome level and crafted for its `cost`.
+  `isGatedLineageForm` is the one check (server craft guard, Make tab, tutorial, bot): true
+  for a weapon form of tier ≥ 2, false for a parked lineage's forms. Weapon T2+ forms are
+  still only bought at their gate (review B4), and the Make tab lists them as "from its
+  lineage tree".
 
 ## 10. Materials — shards and capstones
 
@@ -322,10 +420,13 @@ Both wallets live on `TracksProgression` (`shards: Partial<Record<PacketId, numb
 `capstones: Record<biome, number>`) and are the only kill-driven material wallets since
 Phase 2b deleted the catalyst accumulator outright.
 
-- **Shards.** Granted by `grantLineageMaterials` on every non-boss kill whose monster
-  belongs to a family (see [`variants-current-state.md`](variants-current-state.md)):
-  `shards[family.drops] += max(1, round(SHARD_BASE_PER_KILL × SHARD_TIER_MULT[biomeTier] ×
-  debugMult))`. A monster outside the family table drops no shard.
+- **Shards.** Granted by `grantLineageMaterials` on every non-boss kill, by the NODE
+  (design §24.3; see [`variants-current-state.md`](variants-current-state.md) §4):
+  `shards[nodeShard(nodeId)] += max(1, round(SHARD_BASE_PER_KILL ×
+  SHARD_TIER_MULT[biomeTier] × debugMult))`, where `nodeShard` is the node's dominant
+  family's `drops`. A node with no blend (a dungeon) pays the dead mob's own family shard,
+  and nothing for a mob in no family. The player reads shard names (Gale, Anvil, Venom,
+  Shackle, Bone, Spark, Sigil, Iron, Glass — `shardName`), never lane names.
 - **Capstones.** Granted on every boss kill whose biome has a capstone material: `+= max(1,
   round(debugMult))` per kill — not scaled by node identity.
 - **Boss Lane-A stopgap (design §17, provisional).** Every biome boss kill also drops 2
@@ -334,7 +435,8 @@ Phase 2b deleted the catalyst accumulator outright.
   armor and mobility both name Kill chain, so one boss kill pays Kill chain once, not
   twice). This is how Bulwark and Barrier-tempo earn any T1 income at all, since no T1
   family drops either shard yet — remove this stopgap when a family covers them (open
-  decision 3).
+  decision 3). While the non-weapon trees are parked it pays Iron and Glass Shards nothing
+  can spend (a designer call recorded in the course-correction report).
 - Both wallets are wiped (not refunded) by `resetPlayerProgress` and start at `{}` on a
   fresh character.
 
@@ -347,16 +449,24 @@ active card per owned row plus the worn form's capstone.
 
 - `stat` rows fold into `itemMechanicEffectsAt`'s seam, same `*Pct` sum-then-apply-once
   semantics as everything else.
-- Every other row has a trigger (`hit-nth`, `mechanic-fired`, `kill`, `evade`,
-  `hit-taken`, `guard-cast`, `standing`, `pulse`, `barrier-break`, `first-hit`) and a
-  payoff (`vulnerability`, `plating-shred`, `echo-hit`, `hemorrhage`, `poison-stack`,
-  `slow`, `stun`, `damage-window`, `speed-window`, `recovery-window`, `ward`, `cleanse`,
-  `plating-stack`, `engagement-dr`, `contagion`), each mapped onto an existing combat
-  primitive. Wiring lives in `server/src/systems/combat/lineageCards.ts`; `standing`/
+- Every other row has a trigger (`hit-nth`, `mechanic-fired`, `first-hit`, `kill`,
+  `evade`, `hit-taken`, `guard-cast`, `standing`, `pulse`, `barrier-break`,
+  `technique-cast`, and since §24.2 `hit-afflicted` and `hit-held`; `kill` may carry to the
+  next hit) and a payoff (`vulnerability`, `plating-shred`, `echo-hit`, `hemorrhage`,
+  `poison-stack`, `slow`, `stun`, `damage-window`, `speed-window`, `recovery-window`,
+  `ward`, `cleanse`, `plating-stack`, `engagement-dr`, `contagion`, `technique-refund`,
+  `technique-window`, `evasion-window`, and since §24.2 `big-hit`, `mechanic-proxy`,
+  `heal-and-load`, `root`, `redose`), each mapped onto an existing combat primitive. The
+  vocabulary is now 13 triggers and 23 payoffs against design §6's "≤12 / ≤18" (a
+  designer call). Wiring lives in `server/src/systems/combat/lineageCards.ts`; `standing`/
   `pulse` run off `updateLineageCards(world, dt)` from `World.tick` since they have no
   listener seam to ride.
 - Defensive cards carry a `face` and pay `OFF_FACE_SCALAR` off their frame's native face
   (§1); weapon cards carry none and are frame-neutral.
+- Each application pushes one `card-fx` event (with the firing card's `cardId`, the
+  payload's applied `durationMs`, and for a refund the `abilityIds` it moved); a
+  Kill-chain load also pushes `lineage-load` when it arms and when it is spent. A composed
+  firing draws its PAYLOAD's fx key ([`combat-animation-current-state.md`](combat-animation-current-state.md), "Lineage payloads").
 - Every card the player buys adds one visible signature on screen (`LineageFxKey`) —
   "a card with no signature is a stat," per design §8. T2 payoff/amplifier cards and
   defensive capstones mostly **reuse** their lane's existing T1 fx key rather than minting
@@ -376,16 +486,50 @@ active card per owned row plus the worn form's capstone.
   So an amplifier never resolves as a payoff row of its own, which is what keeps "one
   multiplier per hit" true of an amplified build. `applyAmplifiedAxis` is shared with the
   ability-node amplifier (§19) so there is one copy of the arithmetic.
-- All fifteen defensive lineages are PROVISIONAL — design §17 is itself unapproved.
+- All fifteen defensive lineages are PROVISIONAL — design §17 is itself unapproved — and
+  PARKED (§2).
+- Every T1 lean/verb number (`PACKET_HALF_NUMBERS`, the lean `STAT_UNIT`s) is PROVISIONAL;
+  the course-correction report lists each with its reason.
+- The Affliction lean (`dotPotencyPct` → `dot.mechanic-mult`) moves a number only for the
+  DoT root; the lineage bleed/poison payloads do not read it.
+- T2+ cards keep the old per-pull resolution, so they read small next to the T1
+  event-shaped verbs (Running Riposte's echo is 6.7% of a hit).
 - All T3/T4 family and blend data behind the shard economy is PROVISIONAL — see
   [`variants-current-state.md`](variants-current-state.md).
 - The T3 path `packet` tags are PROVISIONAL labels, not a class-path rewrite.
 - `ABILITY_NODE_SHARE` is unbenched.
-- Engagement, Bulwark and Barrier-tempo shard income at T1 still depends partly or wholly
-  on the boss Lane-A stopgap (§10) rather than a trash-mob family; see
-  `variants-current-state.md` §1 for exactly which packets that affects.
+- Bulwark and Barrier-tempo shard income at T1 depends wholly on the boss Lane-A stopgap
+  (§10), and Technique's partly (one Swarm-led Plains node); since design §24.4 every
+  other weapon lane is paid by at least two T1 nodes' territories.
 
-## 13. Card telemetry — the first LIVE run (2026-10-01)
+## 13. The weapon page and the rhythm readout (design §24.6)
+
+- **The page** (`client/src/ui/lineage/LineageTreePanel.tsx`, the pure
+  `weaponPageModel.ts`, `weaponPage.css`): reached by clicking the equipped weapon; the
+  form's art and name; one row per tier-row as a choice of three in lane colours, one lit;
+  each card is its name, ONE generated sentence (`cardSentence`, never `description`), cost
+  chips (essence label, shard name) and the requirement that actually blocks it; hovering a
+  lean shows before → after on the real stat sheet (`previewEquipmentStats`) and re-reads
+  every verb with that lean; the next band shows locked; one gate block per boss
+  (portrait, capstone pips, what it opens, pay buttons); a materials column that says where
+  each shard drops. Card states come only from the shared `check*` functions. Parked slots
+  show no entry. A purchase auto-activates only into an empty row server-side, so the page
+  (and the tutorial) send `lineage:setActive` after a buy.
+- **The rhythm readout** (`client/src/hud/RhythmReadout.tsx`, `rhythmReadoutModel.ts`):
+  at most three rings near the HP bar — one per active triggered card (k/n toward a
+  `hit-nth`, a clock for a capped moment, ✦/— for a per-body latch or a kill carry, a pulse
+  for the mechanic and Technique moments) plus the frame's window/bank ring — and a
+  floating word (the card's name) over the player when it pays. The server exposes the
+  counters on a small networked slice, `ShowsRhythm` (present only while the player has a
+  triggered card; written on change, never per tick; detached on death). The lineage
+  window tiles left the buff bar; their statuses remain for the tooltips.
+- **Icons** (the designer's W1-E session, approved and packed): the nine shard crystals
+  are `items/materials/<shard>.png` in the item atlas, read by `shardIconSource`; the ten
+  lineage/frame buff tiles are concept-icon PNGs (their old aliases are gone); the seven
+  payload glyphs (`/assets/concept-icons/payloads/`) label the readout rings through
+  `RHYTHM_PAYLOAD_GLYPHS`.
+
+## 14. Card telemetry — the first LIVE run (2026-10-01)
 
 `lineage:unlockCard` and `lineage:setActive` had existed since Phase 1c and had never run
 against a live server until route `striker-lineage-forest-t1` did. Run: cadence-root /
@@ -406,5 +550,35 @@ MULTIPLIER` itself); treat every pacing number below as a smoke test, not a bala
 pacing finding and a harness defect: at T1 the **payoff** row sits at Global Mastery 18
 (three biomes at level 6), unreachable from farming one or two maxed biomes however much
 currency is held, and `doUnlockCard`'s `farmBlocked` only names a stall for "this packet
-has no T1 shard source" — a Global-Mastery shortfall the farm node cannot fix farms
-silently forever instead of raising a named stall. Neither is a card-runtime defect.
+has no T1 shard source" — a Global-Mastery shortfall the farm node cannot fix farmed
+silently instead of raising a named stall. Neither is a card-runtime defect. (Both stalls
+are named now: the Global-Mastery one since `b88779fb`, the unfarmable-shard one since the
+course-correction run's W1-B, review L26.)
+
+## 15. The bench criterion — a viability floor (design §24.1, course-correction 2026-10-03)
+
+**The criterion is a FLOOR, not a band.** No lane (or lean × verb pair) below **0.9× the
+median uplift of its tier**, per instrument; a lane above the median is a reading, never a
+failure. It retires design §18.9's "median ±3 percentage points, absolute" (which had
+itself replaced §9's "±10% of the tier median"): a similarity band balanced every card to be
+indistinguishable from its neighbours, which §24.1 calls imperceptible by construction.
+The **ordinal encounter check is unchanged** — on a family's own node, does the favoured
+lane out-uplift the punished lane, and by what margin (reported, never thresholded).
+
+- Arithmetic: `server/bench/lineage/viabilityFloor.ts` (`viabilityFloor`, `floorFor`), one
+  implementation for every instrument; the ordinal check is `lineage/encounterOrdinal.ts`.
+  Both are pinned on synthetic rows by `server/test/viabilityFloor.test.ts`.
+- A non-positive tier median is reported as such ("the lanes collectively buy nothing
+  here"); the floor is then read as a tenth of the median's size below it, so the median
+  lane never fails its own floor (a bench pick, flagged for the designer).
+- The lane matrix (`server/bench/lineageLaneMatrix.ts`) prints the floor per tier and per
+  packet; `LANE_SHARD`/`LANE_SHARDS` split it across processes and `LANE_REPLAY=a,b,...`
+  merges the shards' rows back into one report.
+- **The composition matrix** measures every weapon's nine T1 pairs (plus a no-band control)
+  on all six tutorial classes with two instruments: the boss lab
+  (`server/scripts/_t1BossPlan.ts --matrix=composition`, bought through the real economy in
+  `_t1BossLab.ts`) and the lane bench (`server/bench/compositionLanes.ts`, home-biome
+  family-dominated nodes). `server/bench/compositionReport.ts` writes
+  `reports/course-correction/composition-matrix.md`: per weapon a 3 × 3 lean × verb grid of
+  median uplift and verb firings per minute, per-class rows, the floor and the outliers
+  (above 1.5× / below 0.9× of the median), never-fired verbs, refusals and deaths.

@@ -5,7 +5,8 @@
  * Lanes: Tempo / Affliction / Engagement. Derived from the weapon it already is:
  * 1.50 aps, the Jungle on-hit successor in the same family, a duelist's opener.
  *
- * The T1 band is three stat rows (L2), three payoff rows (L4), and a gate (L6)
+ * The T1 band is three leans (stat row, L2), three verbs (payoff row, L4; design
+ * §24.2 — a verb's moment composes with the active lean's payload), and a gate (L6)
  * with two doors — Gale Needle through the Forest boss, Stinger Rapier through
  * the Jungle boss. Both can be owned; swapping the worn form is free.
  *
@@ -73,7 +74,7 @@ export const RAPIER_LINEAGE: LineageDefinition = {
   ],
 
   cards: [
-    // ── T1 stat row (L2): the one row that is a number ───────────────────────
+    // ── T1 lean row (L2): a stat move that also names a payload (§24.2) ──────
     {
       id: 'rapier-t1-tempo-stat', lineageId: 'rapier', tier: 1, row: 'stat', lane: 'tempo',
       name: 'Quick Wrist', description: 'The blade never quite stops moving.',
@@ -90,21 +91,23 @@ export const RAPIER_LINEAGE: LineageDefinition = {
       fx: 'engagement.trail',
     },
 
-    // ── T1 payoff row (L4): a trigger AND its effect, in one card ────────────
+    // ── T1 verb row (L4): a moment; the lean decides what happens (§24.2) ────
+    // No trigger, no payoff: the moment is the lane's packet's, the payload the
+    // active lean's (`composeVerb`). Names from the approved weapon-page mockup.
     {
       id: 'rapier-t1-tempo-payoff', lineageId: 'rapier', tier: 1, row: 'payoff', lane: 'tempo',
-      name: 'Echo Strike', description: 'Every third hit lands twice.',
-      fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'echo-hit',
+      name: 'Flurry', description: 'Every so often the wrist runs a beat ahead of the count.',
+      fx: 'tempo.ghost-strike',
     },
     {
       id: 'rapier-t1-affliction-payoff', lineageId: 'rapier', tier: 1, row: 'payoff', lane: 'affliction',
-      name: 'Bloodletting', description: 'A share of each hit keeps bleeding after it.',
-      fx: 'affliction.bleed-pips', trigger: 'hit-nth', payoff: 'hemorrhage',
+      name: 'Venom Point', description: 'The point finds the wound it already opened.',
+      fx: 'affliction.bleed-pips',
     },
     {
       id: 'rapier-t1-engagement-payoff', lineageId: 'rapier', tier: 1, row: 'payoff', lane: 'engagement',
-      name: 'First Blood', description: 'The opening hit of a fight opens a damage window.',
-      fx: 'engagement.opening-flash', trigger: 'first-hit', payoff: 'damage-window',
+      name: 'Opening Lunge', description: 'The first thrust at each new opponent comes from further out.',
+      fx: 'engagement.opening-flash',
     },
 
     // ── T2 band (design §13): stat (L2), payoff (L3), amplifier (L5) ─────────

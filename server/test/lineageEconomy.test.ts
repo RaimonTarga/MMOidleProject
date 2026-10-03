@@ -494,39 +494,35 @@ function wearT2(id: string, opts: { withStatCard: boolean }): { world: World; pl
 //
 // Design §4/§17: "Non-weapon slots run one row fewer per tier (no stat row; base
 // stats come from the form)." Absorption must leave them alone rather than throw
-// or invent a row to fold.
+// or invent a row to fold. The armour trees are PARKED now (design §24.5), so
+// the handlers refuse them (pinned in `lineageParked.test.ts`); the pure fold is
+// still pinned here against the kept data, for the day the trees return.
 
 {
-  const { world, player } = spawn('p-plate');
-  player.tracksProgression.biomeLevel.mountain = 99;
-  player.tracksProgression.capstones.mountain = 99;
-  for (const lane of ['bulwark', 'barrier-tempo', 'control'] as PacketId[]) {
-    player.tracksProgression.shards[lane] = 999;
-  }
-  player.holdsInventory.inventory.push('mountain-vest-t1');
-  equipItem(world, player, 'mountain-vest-t1');
-
   const plate = LINEAGE_DATABASE.get('plate')!;
   assert(!plate.cards.some((c) => c.row === 'stat'), 'fixture: a non-weapon lineage authors no stat row');
   const platePayoff = plate.cards.find((c) => c.row === 'payoff')!;
-  const boughtPayoff = unlockLineageCard(world, player, 'plate', platePayoff.id);
-  assert(boughtPayoff.success, `the plate payoff row should be buyable: ${boughtPayoff.reason}`);
-
-  assert(unlockLineageForm(world, player, 'plate', 'mountain-vest-t2').success, 'the plate gate should open');
-  assert(wearLineageForm(world, player, 'plate', 'mountain-vest-t2').success, 'and the tier-2 plate is wearable');
-
-  const progress = player.holdsInventory.lineages!.plate!;
+  const progress = {
+    ownedCards: [platePayoff.id],
+    active: { payoff: platePayoff.id },
+    ownedForms: ['mountain-vest-t1', 'mountain-vest-t2'],
+    wornForm: 'mountain-vest-t2',
+  };
   assert(absorbedStatCards(plate, progress).length === 0, 'a lineage with no stat row absorbs nothing');
-  assert(
-    progress.active.payoff === platePayoff.id,
-    "and the collapsed band's payoff row is left slotted, not retired",
-  );
 
+  // And a parked tree never reaches the player's stats, whatever a save holds.
+  const { world, player } = spawn('p-plate');
+  player.holdsInventory.inventory.push('mountain-vest-t1');
+  equipItem(world, player, 'mountain-vest-t1');
   const hp = player.hasHealth.maxHp;
   const plating = player.mitigatesDamage.plating;
+  player.holdsInventory.lineages = {
+    ...(player.holdsInventory.lineages ?? {}),
+    plate: { ...progress, ownedForms: ['mountain-vest-t1'], wornForm: 'mountain-vest-t1' },
+  };
   recalculatePlayerEntityStats(world, player);
   recalculatePlayerEntityStats(world, player);
-  assert(player.hasHealth.maxHp === hp, 'recalc must not move maxHp for a lineage with nothing to absorb');
+  assert(player.hasHealth.maxHp === hp, 'a parked tree in the save must not move maxHp');
   assert(player.mitigatesDamage.plating === plating, 'nor plating');
 }
 

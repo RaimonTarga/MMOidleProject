@@ -13,7 +13,9 @@ import {
   STARTER_RUNE_IDS,
   bossClearKey,
   globalMastery,
+  isGatedLineageForm,
   lineageGateCost,
+  nodeShard,
   isRuneRecipeAvailableForArchetype,
   isRuneRuleCompatibleForArchetype,
   runeBudgetForGlobalMastery,
@@ -470,6 +472,31 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
     assert(narrowed > 0, "zero slack must exclude the more distant candidates somewhere");
   }
 
+  // A `shard` narrows a biome ref to the nodes that pay it (design §24.3: every
+  // kill in a node pays its dominant family's shard). Every pick obeys it, and a
+  // shard the biome's territories never pay resolves to nothing rather than to a
+  // node that would farm forever.
+  for (const biomeGroup of T1_BIOMES) {
+    const paid = [...new Set(normalNodesFor(biomeGroup, 1).map((id) => nodeShard(id)!))];
+    assert(paid.length >= 2, `${biomeGroup}: fixture — its nodes pay more than one shard`);
+    for (const shard of paid) {
+      for (const pick of ["first", "rotate", "uncleared"] as const) {
+        const ref = { kind: "biome", biomeGroup, tier: 1, pick, shard } as const;
+        const candidates = resolveNodeCandidates(ref, obs, 1);
+        assert(candidates.length > 0, `${biomeGroup}/${shard}/${pick}: some node pays it`);
+        assert(
+          candidates.every((nodeId) => nodeShard(nodeId) === shard),
+          `${biomeGroup}/${shard}/${pick}: every candidate pays ${shard}, got ${candidates.join(",")}`,
+        );
+      }
+    }
+    assert(
+      resolveNodeCandidates({ kind: "biome", biomeGroup, tier: 1, pick: "uncleared", shard: "bulwark" }, obs, 0)
+        .length === 0,
+      `${biomeGroup}: no T1 node pays bulwark, so a bulwark farm resolves nowhere`,
+    );
+  }
+
   // A dungeon must never offer an alternative -- boss state has to serialize.
   assert(
     resolveNodeCandidates({ kind: "dungeon", biomeGroup: "plains", tier: 1 }, obs, 0).length === 1,
@@ -847,28 +874,28 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
             `${route.id}: ${step.recipeId} is worn before the route obtains it`,
           );
         } else if (step.type === "evolveItem") {
-          // Evolution and reconstruction both END with the evolved item in the
-          // bag, so both count as obtaining it. The `evolve` path additionally
-          // CONSUMES the predecessor, which is why it is dropped here -- a route
-          // that tries to wear the predecessor afterwards is authored wrong and
-          // this is where that shows up.
+          // A RETIRED step kind (design §24.5): the server refuses evolve and
+          // reconstruct on every slot. The executor rewrites one on a plain
+          // recipe (every armour, charm and boots T2+ item) as an ordinary
+          // craft — the item is obtained, nothing is consumed — and stalls on a
+          // gated weapon form, which only its lineage gate opens.
           const recipe = RECIPE_DATABASE.get(step.recipeId);
           assert(recipe, `${route.id}: evolution recipe exists (${step.recipeId})`);
-          assert(
-            !!recipe.evolvesFrom,
-            `${route.id}: evolveItem targets an evolved recipe (${step.recipeId})`,
-          );
-          if (step.mode === "reconstruct") {
-            assert(
-              !!recipe.reconstructCost,
-              `${route.id}: ${step.recipeId} authors a reconstruction cost`,
-            );
-          } else {
-            assert(
-              craftedItems.has(recipe.evolvesFrom!),
-              `${route.id}: ${step.recipeId} evolves from an owned ${recipe.evolvesFrom}`,
-            );
-            craftedItems.delete(recipe.evolvesFrom!);
+          if (isGatedLineageForm(step.recipeId)) {
+            // LEGACY: a weapon-form evolve has been refused by the server since
+            // Phase 2b, and dozens of old T2 route definitions still carry one.
+            // They stall at run time; statically they are walked as authored
+            // (predecessor consumed) until they are retired or rewritten to an
+            // `unlockForm`.
+            if (step.mode === "reconstruct") {
+              assert(!!recipe.reconstructCost, `${route.id}: ${step.recipeId} authors a reconstruction cost`);
+            } else {
+              assert(
+                !!recipe.evolvesFrom && craftedItems.has(recipe.evolvesFrom),
+                `${route.id}: ${step.recipeId} evolves from an owned ${recipe.evolvesFrom}`,
+              );
+              craftedItems.delete(recipe.evolvesFrom!);
+            }
           }
           craftedItems.add(step.recipeId);
         } else if (step.type === "equip") {

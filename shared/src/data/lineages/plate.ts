@@ -14,6 +14,8 @@ import { packetDefaultFace } from './packets';
 export const PLATE_LINEAGE: LineageDefinition = {
   id: 'plate',
   slot: 'armor',
+  // Parked for the second playtest (design §24.5): data kept, tree unreachable.
+  parked: true,
   homeBiome: 'mountain',
   lanes: ['bulwark', 'barrier-tempo', 'control'],
 

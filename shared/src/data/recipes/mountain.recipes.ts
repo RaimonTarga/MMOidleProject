@@ -67,21 +67,14 @@ export const mountainRecipeEntries = [
   ['mountain-vest-t1', {
     id: 'mountain-vest-t1', name: 'Fallen Knight Plate',
     recipeGroup: 'mountain', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { blue: 22 }, stats: {"maxHp": 36, "plating": 1, "damageReduction": 0.04},
-    mechanicEffects: {"guard.potency-pct": 0.15},
+    cost: { blue: 22 }, stats: { "maxHp": 54, "plating": 2, "damageReduction": 0.04 },
+    mechanicEffects: { "guard.potency-pct": 0.25 },
     tier: 1,
     icon: 'items/armor/fallen-knight-plate.png',
     description: "A sturdy health reserve that strengthens timed Guards.",
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~497 (was 496).
     // +5 catalyst from mountain-vest-t2's own tag ("Guard-amplifying plate →
     // Heavy").
-    upgrades: [
-      {"cost": {"blue": 25}, "requiredBiomeLevel": 3, "stats": {"maxHp": 4, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 45}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 75}, "requiredBiomeLevel": 4, "stats": {"maxHp": 4, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 125}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 155}, "requiredBiomeLevel": 4, "stats": {"maxHp": 4, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
-    ],
   }],
 
   // CHARM — Barrier. Capacity is the only axis that grows at T1 on purpose:
@@ -90,19 +83,12 @@ export const mountainRecipeEntries = [
   ['mountain-charm-t1', {
     id: 'mountain-charm-t1', name: 'Granite Barrier',
     recipeGroup: 'mountain', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { blue: 18 }, stats: { recovery: 2.9 },
-    mechanicEffects: { 'defense.barrier-pct': 0.12 },
+    cost: { blue: 18 }, stats: { "recovery": 4.5 },
+    mechanicEffects: { "defense.barrier-pct": 0.18 },
     tier: 1,
     icon: 'items/charms/granite-barrier.png',
     description: 'A palm of carved granite, cold and patient as the peak it came from.',
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~253 (was 255).
-    upgrades: [
-      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 10 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 25 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1.6 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 40 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 60 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 75 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // BOOTS — continuous gap closing. No proc timer, no internal cooldown, no
@@ -111,18 +97,11 @@ export const mountainRecipeEntries = [
   ['mountain-boots-t1', {
     id: 'mountain-boots-t1', name: 'Iron Treads',
     recipeGroup: 'mountain', requiredBiomeLevel: 4, slot: 'mobility',
-    cost: { blue: 18 }, stats: { speed: 16 }, tier: 1,
-    mechanicEffects: { 'mobility.approach-speed-pct': 0.35 },
+    cost: { blue: 18 }, stats: { "speed": 21 }, tier: 1,
+    mechanicEffects: { "mobility.approach-speed-pct": 0.6 },
     icon: 'items/boots/iron-treads.png',
     description: 'Heavy soles that bite into scree and loose rock alike.',
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~178 (was 176).
-    upgrades: [
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 15 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 25 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 40 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 55 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // ── T2 ──
@@ -149,59 +128,35 @@ export const mountainRecipeEntries = [
   ['mountain-vest-t2', {
     id: 'mountain-vest-t2', name: 'Iron Crusader Plate',
     recipeGroup: 'mountain', requiredBiomeLevel: 8, slot: 'armor',
-    evolvesFrom: 'mountain-vest-t1',
-    cost: { blue: 52 }, stats: {"maxHp": 66, "plating": 1, "damageReduction": 0.08}, // family-tag: Guard-amplifying plate → Heavy
+    cost: { blue: 52 }, stats: { "maxHp": 99, "plating": 2, "damageReduction": 0.08 }, // family-tag: Guard-amplifying plate → Heavy
     reconstructCost: { blue: 182 },
-    mechanicEffects: {"guard.potency-pct": 0.2},
+    mechanicEffects: { "guard.potency-pct": 0.3 },
     tier: 2,
     icon: 'items/armor/iron-crusader-plate.png',
     description: "A sturdy health reserve that strengthens timed Guards.",
-    upgrades: [
-      {"cost": {"blue": 42}, "requiredBiomeLevel": 9, "stats": {"maxHp": 7, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 106}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 170}, "requiredBiomeLevel": 10, "stats": {"maxHp": 7, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 276}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 468}, "requiredBiomeLevel": 10, "stats": {"maxHp": 7, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
-    ],
   }],
 
   // T2 economy pass (2026-08-29): now an EVOLUTION of mountain-charm-t1 at +5.
   ['mountain-charm-t2', {
     id: 'mountain-charm-t2', name: 'Iron Bulwark',
     recipeGroup: 'mountain', requiredBiomeLevel: 9, slot: 'recovery',
-    evolvesFrom: 'mountain-charm-t1',
-    cost: { blue: 42 }, stats: { recovery: 6.4 }, // family-tag: barrier pool (anti-spike) → Heavy
+    cost: { blue: 42 }, stats: { "recovery": 8.7 }, // family-tag: barrier pool (anti-spike) → Heavy
     reconstructCost: { blue: 147 },
-    mechanicEffects: { 'defense.barrier-pct': 0.20, 'guard.barrier-refill-pct': 0.15 },
+    mechanicEffects: { "defense.barrier-pct": 0.26, "guard.barrier-refill-pct": 0.15 },
     tier: 2,
     icon: 'items/charms/iron-bulwark.png',
     description: 'A ward-stone the mountainfolk pass down, hand to weathered hand.',
-    upgrades: [
-      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 17 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 2.3 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 43 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 68 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 111 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 187 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // T2 economy pass (2026-08-29): now an EVOLUTION of mountain-boots-t1 at +5.
   ['mountain-boots-t2', {
     id: 'mountain-boots-t2', name: 'Mountain Stride',
     recipeGroup: 'mountain', requiredBiomeLevel: 10, slot: 'mobility',
-    evolvesFrom: 'mountain-boots-t1',
-    cost: { blue: 42 }, stats: { speed: 29 }, tier: 2, // family-tag: gap-closer boots serve the heavy-hit identity → Heavy
+    cost: { blue: 42 }, stats: { "speed": 37 }, tier: 2, // family-tag: gap-closer boots serve the heavy-hit identity → Heavy
     reconstructCost: { blue: 147 },
-    mechanicEffects: { 'mobility.approach-speed-pct': 0.65 },
+    mechanicEffects: { "mobility.approach-speed-pct": 0.9 },
     icon: 'items/boots/mountain-stride.png',
     description: 'Forged for those who treat a sheer slope as a road.',
-    upgrades: [
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 11 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 29 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 46 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 75 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 126 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // ── T3 ──
@@ -228,57 +183,33 @@ export const mountainRecipeEntries = [
   ['mountain-vest-t3', {
     id: 'mountain-vest-t3', name: 'Summit Aegis',
     recipeGroup: 'mountain', requiredBiomeLevel: 14, slot: 'armor',
-    evolvesFrom: 'mountain-vest-t2',
-    cost: { blue: 116, red: 29 }, stats: {"maxHp": 180, "plating": 2, "damageReduction": 0.17}, // family-tag: Guard-amplifying plate → Heavy
+    cost: { blue: 116, red: 29 }, stats: { "maxHp": 270, "plating": 3, "damageReduction": 0.17 }, // family-tag: Guard-amplifying plate → Heavy
     reconstructCost: { blue: 406, red: 102 },
-    mechanicEffects: {"guard.potency-pct": 0.25},
+    mechanicEffects: { "guard.potency-pct": 0.35 },
     tier: 3,
     icon: 'items/armor/summit-aegis.png',
     description: "A sturdy health reserve that strengthens timed Guards.",
-    upgrades: [
-      {"cost": {"blue": 66, "red": 17}, "requiredBiomeLevel": 15, "stats": {"maxHp": 18, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 166, "red": 42}, "requiredBiomeLevel": 16, "stats": {"maxHp": 18, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 266, "red": 67}, "requiredBiomeLevel": 16, "stats": {"maxHp": 18, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 434, "red": 108}, "requiredBiomeLevel": 16, "stats": {"maxHp": 18, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 734, "red": 183}, "requiredBiomeLevel": 16, "stats": {"maxHp": 18, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
-    ],
   }],
 
   ['mountain-charm-t3', {
     id: 'mountain-charm-t3', name: 'Bastion Heart',
     recipeGroup: 'mountain', requiredBiomeLevel: 15, slot: 'recovery',
-    evolvesFrom: 'mountain-charm-t2',
-    cost: { blue: 100, red: 25 }, stats: { recovery: 19.2 }, // family-tag: barrier pool (anti-spike) → Heavy
+    cost: { blue: 100, red: 25 }, stats: { "recovery": 28.2 }, // family-tag: barrier pool (anti-spike) → Heavy
     reconstructCost: { blue: 350, red: 88 },
-    mechanicEffects: { 'defense.barrier-pct': 0.28, 'guard.barrier-refill-pct': 0.20 },
+    mechanicEffects: { "defense.barrier-pct": 0.34, "guard.barrier-refill-pct": 0.2 },
     tier: 3,
     icon: 'items/charms/bastion-heart.png',
     description: 'A core of mountain-heart stone that raises a wall of itself, over and over.',
-    upgrades: [
-      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 26, red: 6 },  requiredBiomeLevel: 16 },
-      { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 65, red: 16 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 104, red: 26 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 169, red: 42 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 286, red: 71 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   ['mountain-boots-t3', {
     id: 'mountain-boots-t3', name: 'Peak Stride',
     recipeGroup: 'mountain', requiredBiomeLevel: 16, slot: 'mobility',
-    evolvesFrom: 'mountain-boots-t2',
-    cost: { blue: 100 }, stats: { speed: 52 }, tier: 3, // family-tag: gap-closer boots → Heavy
+    cost: { blue: 100 }, stats: { "speed": 66 }, tier: 3, // family-tag: gap-closer boots → Heavy
     reconstructCost: { blue: 350 },
-    mechanicEffects: { 'mobility.approach-speed-pct': 0.95 },
+    mechanicEffects: { "mobility.approach-speed-pct": 1.2 },
     icon: 'items/boots/peak-stride.png',
     description: 'Not even the mountain can keep you from your prey.',
-    upgrades: [
-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 22 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 56 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 89 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 145 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 246 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   // ── T4 ──
@@ -321,106 +252,62 @@ export const mountainRecipeEntries = [
   ['mountain-vest-t4', {
     id: 'mountain-vest-t4', name: "Titan's Keep",
     recipeGroup: 'mountain', requiredBiomeLevel: 20, slot: 'armor',
-    evolvesFrom: 'mountain-vest-t3',
-    cost: { blue: 256, red: 64 }, stats: {"maxHp": 346, "plating": 3, "damageReduction": 0.21}, // family-tag: capstone Guard plate → Heavy
+    cost: { blue: 256, red: 64 }, stats: { "maxHp": 519, "plating": 5, "damageReduction": 0.21 }, // family-tag: capstone Guard plate → Heavy
     reconstructCost: { blue: 896, red: 224 },
     // Timed Guard potency replaces the former cap-triggered barrier refill.
-    mechanicEffects: {"guard.potency-pct": 0.3},
+    mechanicEffects: { "guard.potency-pct": 0.4 },
     tier: 4,
     icon: 'items/armor/titans-keep.png',
     description: "A sturdy health reserve that strengthens timed Guards.",
-    upgrades: [
-      {"cost": {"blue": 132, "red": 33}, "requiredBiomeLevel": 21, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 331, "red": 83}, "requiredBiomeLevel": 22, "stats": {"maxHp": 34, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 530, "red": 132}, "requiredBiomeLevel": 22, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 860, "red": 215}, "requiredBiomeLevel": 22, "stats": {"maxHp": 34, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 1456, "red": 364}, "requiredBiomeLevel": 22, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
-    ],
   }],
 
   // Branch: trades some of Titan's Keep plating for a barrier-break payout.
   ['mountain-vest-t4-stormwall', {
     id: 'mountain-vest-t4-stormwall', name: 'Stormwall Plate',
     recipeGroup: 'mountain', requiredBiomeLevel: 20, slot: 'armor',
-    evolvesFrom: 'mountain-vest-t3',
-    cost: { blue: 256, red: 64 }, stats: {"maxHp": 346, "plating": 3, "damageReduction": 0.21}, // family-tag: capstone anti-spike plate → Heavy
+    cost: { blue: 256, red: 64 }, stats: { "maxHp": 519, "plating": 5, "damageReduction": 0.21 }, // family-tag: capstone anti-spike plate → Heavy
     reconstructCost: { blue: 896, red: 224 },
     // † barrier-break-hp-recovery-pct: when the barrier is emptied, recover 30% of
     //   its max value as HP (armor-side variant; rider cooldown applies).
-    mechanicEffects: {"guard.potency-pct": 0.2, "defense.barrier-pct": 0.1, "defense.barrier-break-hp-recovery-pct": 0.2},
+    mechanicEffects: { "guard.potency-pct": 0.3, "defense.barrier-pct": 0.1, "defense.barrier-break-hp-recovery-pct": 0.2 },
     tier: 4,
     icon: 'items/armor/stormwall-plate.png',
     description: "Strengthens timed Guards and grants a small barrier that heals you when broken.",
-    upgrades: [
-      {"cost": {"blue": 132, "red": 33}, "requiredBiomeLevel": 21, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 331, "red": 83}, "requiredBiomeLevel": 22, "stats": {"maxHp": 34, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 530, "red": 132}, "requiredBiomeLevel": 22, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 860, "red": 215}, "requiredBiomeLevel": 22, "stats": {"maxHp": 34, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
-      {"cost": {"blue": 1456, "red": 364}, "requiredBiomeLevel": 22, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
-    ],
   }],
 
   ['mountain-charm-t4', {
     id: 'mountain-charm-t4', name: 'Fortress Heart',
     recipeGroup: 'mountain', requiredBiomeLevel: 21, slot: 'recovery',
-    evolvesFrom: 'mountain-charm-t3',
-    cost: { blue: 220, red: 30 }, stats: { recovery: 55 }, // family-tag: barrier pool (anti-spike) → Heavy
+    cost: { blue: 220, red: 30 }, stats: { "recovery": 77.8 }, // family-tag: barrier pool (anti-spike) → Heavy
     reconstructCost: { blue: 770, red: 105 },
-    mechanicEffects: { 'defense.barrier-pct': 0.36, 'guard.barrier-refill-pct': 0.30 },
+    mechanicEffects: { "defense.barrier-pct": 0.42, "guard.barrier-refill-pct": 0.3 },
     tier: 4,
     icon: 'items/charms/fortress-heart.png',
     description: 'A keep in miniature: it throws up a wall, lets it fall, and throws up another, tireless as siegework.',
-    upgrades: [
-      { stats: { recovery: 3.8 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 57, red: 8 }, requiredBiomeLevel: 22 },
-      { stats: { recovery: 3.8 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 143, red: 19 }, requiredBiomeLevel: 22 },
-      { stats: { recovery: 7.6 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 229, red: 31 }, requiredBiomeLevel: 22 },
-      { stats: { recovery: 3.8 }, mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 371, red: 51 }, requiredBiomeLevel: 22 },
-      { stats: { recovery: 3.8 }, mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 627, red: 86 }, requiredBiomeLevel: 22 },
-    ],
   }],
 
   // Branch: a smaller pool that pays out when it breaks.
   ['mountain-charm-t4-shieldmend', {
     id: 'mountain-charm-t4-shieldmend', name: 'Shieldmend Ward',
     recipeGroup: 'mountain', requiredBiomeLevel: 21, slot: 'recovery',
-    evolvesFrom: 'mountain-charm-t3',
-    cost: { blue: 220, red: 30 }, stats: { recovery: 55 }, // family-tag: barrier-break survival → Heavy
+    cost: { blue: 220, red: 30 }, stats: { "recovery": 77.8 }, // family-tag: barrier-break survival → Heavy
     reconstructCost: { blue: 770, red: 105 },
     // † barrier-break-heal-pct: when the barrier is emptied, heal 25% of its max
     //   value as HP (rider cooldown applies).
-    mechanicEffects: {
-      'defense.barrier-pct': 0.32,
-      'defense.barrier-break-heal-pct': 0.25,
-      'guard.barrier-refill-pct': 0.20,
-    },
+    mechanicEffects: { "defense.barrier-pct": 0.37, "defense.barrier-break-heal-pct": 0.25, "guard.barrier-refill-pct": 0.2 },
     tier: 4,
     icon: 'items/charms/shieldmend-ward.png',
     description: 'When the ward shatters, it gives back a little of the blow it ate.',
-    upgrades: [
-      { stats: { recovery: 3.8 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 57, red: 8 }, requiredBiomeLevel: 22 },
-      { stats: { recovery: 3.8 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 143, red: 19 }, requiredBiomeLevel: 22 },
-      { stats: { recovery: 7.6 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 229, red: 31 }, requiredBiomeLevel: 22 },
-      { stats: { recovery: 3.8 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 371, red: 51 }, requiredBiomeLevel: 22 },
-      { stats: { recovery: 3.8 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 627, red: 86 }, requiredBiomeLevel: 22 },
-    ],
   }],
 
   ['mountain-boots-t4', {
     id: 'mountain-boots-t4', name: 'Vanguard Stride',
     recipeGroup: 'mountain', requiredBiomeLevel: 22, slot: 'mobility',
-    evolvesFrom: 'mountain-boots-t3',
-    cost: { blue: 220 }, stats: { speed: 93 }, tier: 4, // family-tag: gap-closer boots → Heavy
+    cost: { blue: 220 }, stats: { "speed": 119 }, tier: 4, // family-tag: gap-closer boots → Heavy
     reconstructCost: { blue: 770 },
-    mechanicEffects: { 'mobility.approach-speed-pct': 1.25 },
+    mechanicEffects: { "mobility.approach-speed-pct": 1.5 },
     icon: 'items/boots/vanguard-stride.png',
     description: 'While a foe stands at distance, they close the gap as if the mountain itself leaned them forward.',
-    upgrades: [
-      { stats: { speed: 5 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 44 },  requiredBiomeLevel: 22 },
-      { stats: { speed: 5 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 110 },  requiredBiomeLevel: 22 },
-      { stats: { speed: 5 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 175 }, requiredBiomeLevel: 22 },
-      { stats: { speed: 6 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 285 }, requiredBiomeLevel: 22 },
-      { stats: { speed: 5 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 482 }, requiredBiomeLevel: 22 },
-    ],
   }],
 
 

@@ -8,7 +8,6 @@ import {
   craftBlockReasons,
   missingToReasons,
   reasonsToMissing,
-  upgradeBlockReasons,
 } from "../route/conditions";
 import { Recorder } from "./recorder";
 import type { BotEvent } from "./events";
@@ -17,66 +16,18 @@ function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(`assertion failed: ${message}`);
 }
 
-// ── T1 economy candidate C: the +5 essence transformation ────────────────────
+// ── No recipe authors an upgrade ladder any more (design §23, §24.5) ─────────
 //
-// Verified against the LIVE recipe database rather than a restated table, so a
-// later edit that reinflates a cost fails here. Weapon recipes are excluded:
-// the progression rework deleted their +N ladder outright (the lineage tree
-// owns weapon progression now), so only armor/charm/boots still author one.
-{
-  // The transformation the candidate applied: round(old * 0.75 / 5) * 5.
-  const expected: Record<string, number> = {
-    "cave-vest-t1": 195,
-    "cave-charm-t1": 75,
-    "cave-boots-t1": 55,
-    "forest-vest-t1": 150,
-    "forest-charm-t1": 75,
-    "forest-boots-t1": 45,
-    "mountain-vest-t1": 155,
-    "mountain-charm-t1": 75,
-    "mountain-boots-t1": 55,
-    "plains-vest-t1": 150,
-    "plains-charm-t1": 55,
-    "plains-boots-t1": 45,
-    "swamp-vest-t1": 150,
-    "swamp-charm-t1": 75,
-    "swamp-boots-t1": 55,
-  };
-
-  let seen = 0;
-  for (const recipe of RECIPE_DATABASE.values()) {
-    if (recipe.tier !== 1 || recipe.slot === "weapon") continue;
-    const step = recipe.upgrades?.[4];
-    assert(step, `T1 recipe ${recipe.id} must author a +5 step`);
-    const total = Object.values(step.cost).reduce<number>((sum, n) => sum + (n ?? 0), 0);
-    const want = expected[recipe.id];
-    assert(
-      want !== undefined,
-      `T1 recipe ${recipe.id} is not covered by the +5 cost table — extend it deliberately`,
-    );
-    assert(total === want, `${recipe.id} +5 essence should be ${want}, is ${total}`);
-    seen += 1;
-  }
-  assert(
-    seen === Object.keys(expected).length,
-    `expected ${Object.keys(expected).length} T1 +5 steps, saw ${seen}`,
-  );
-
-  // +1..+4 and the initial craft were explicitly left alone.
-  const plainsVest = RECIPE_DATABASE.get("plains-vest-t1");
-  assert(plainsVest?.upgrades?.[0].cost.yellow === 20, "+1 cost must be untouched");
-  assert(plainsVest?.upgrades?.[3].cost.yellow === 115, "+4 cost must be untouched");
-  assert(plainsVest?.cost.yellow === 20, "initial craft cost must be untouched");
-  console.log("t1 +5 essence costs: ok");
-}
-
-// ── No weapon recipe authors an upgrade ladder any more ───────────────────────
+// The T1 economy candidate C pinned the +5 step's essence here. The ladder is
+// retired on every slot now: weapons first (§23), then armour, charm and boots
+// (§24.5), each folded into its item's base stats at the old +5 total — the fold
+// itself is pinned by `shared/src/data/recipes/recipeCurve.test.ts`. What this
+// file still guards is that no recipe reintroduces a ladder.
 {
   for (const recipe of RECIPE_DATABASE.values()) {
-    if (recipe.slot !== "weapon") continue;
-    assert(!recipe.upgrades, `${recipe.id}: weapon recipes must not author upgrades[]`);
+    assert(!recipe.upgrades?.length, `${recipe.id}: no recipe may author upgrades[] (the ladder is retired)`);
   }
-  console.log("weapon recipes have no upgrade ladder: ok");
+  console.log("no recipe has an upgrade ladder: ok");
 }
 
 // ── Explicit block reasons ───────────────────────────────────────────────────
@@ -111,36 +62,28 @@ function assert(condition: unknown, message: string): asserts condition {
     }) as unknown as Observation;
 
   const obs = makeObs(baseSelf);
-  const reasons = upgradeBlockReasons("plains-vest-t1", obs);
+  // The essence shortage is read off a CRAFT now: the +N ladder these lines
+  // used to price is retired on every slot (design §23, §24.5), so a craft is
+  // the one essence spend a gear step still has. plains-vest-t1 costs 20 yellow.
+  const reasons = craftBlockReasons("plains-vest-t1", obs);
   const essence = reasons.find((r) => r.kind === "essence");
   assert(essence && essence.kind === "essence", "an essence shortage must be named explicitly");
   assert(essence.essence === "yellow", "essence colour must be recorded");
   assert(
-    essence.current === 10 && essence.required === 150 && essence.missing === 140,
+    essence.current === 10 && essence.required === 20 && essence.missing === 10,
     `essence current/required/missing must be exact, got ${JSON.stringify(essence)}`,
-  );
-  assert(
-    !reasons.some((r) => r.kind === "globalMastery"),
-    "GM 30 must not read as a blocker on a T1 +5",
   );
 
   const missing = reasonsToMissing(reasons);
   assert(
-    missing["essence.yellow"] === 140,
+    missing["essence.yellow"] === 10,
     `flat missing map must carry the essence shortfall, got ${JSON.stringify(missing)}`,
   );
   assert(!("blocked" in missing), "the generic `blocked` marker must not come back");
 
-  // A Global-Mastery wall is a distinct, named reason rather than an unexplained wait.
-  const gmReasons = upgradeBlockReasons(
-    "plains-vest-t1",
-    makeObs({ ...baseSelf, globalMastery: 0 }),
-  );
-  const gm = gmReasons.find((r) => r.kind === "globalMastery");
-  assert(
-    gm && gm.kind === "globalMastery" && gm.required === 30,
-    `GM block must name its requirement, got ${JSON.stringify(gmReasons)}`,
-  );
+  // The Global-Mastery wall this block also pinned belonged to the +N ladder,
+  // which is retired; the lineage rows' own GM gate is checked server-side by
+  // `checkUnlockCard` and covered by the lineage economy tests.
 
   // A locked recipe is its own reason, not an essence shortage.
   const craftReasons = craftBlockReasons(

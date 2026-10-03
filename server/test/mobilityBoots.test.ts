@@ -250,21 +250,13 @@ for (const id of CLEARING_IDS) {
   );
 }
 
-// Every non-tutorial T1-biome item still upgrades to +5 — except weapons, which
-// are off the ladder entirely (Phase 2b: lineage tree instead).
+// No T1-biome item rides the +N ladder any more: weapons left it in Phase 2b,
+// armour/charm/boots in design §24.5 (crafted at full power).
 for (const def of ITEM_DATABASE.values()) {
   if (def.tier !== 1) continue;
-  if (def.slot === "core" || def.slot === "relic") continue;
-  if (def.slot === "weapon") {
-    assert(
-      getMaxUpgrade(def) === 0,
-      `T1 weapon '${def.id}' must be off the +N ladder (got max +${getMaxUpgrade(def)})`,
-    );
-    continue;
-  }
   assert(
-    getMaxUpgrade(def) === 5,
-    `T1 item '${def.id}' should reach +5 (got max +${getMaxUpgrade(def)})`,
+    getMaxUpgrade(def) === 0,
+    `T1 item '${def.id}' must be off the +N ladder (got max +${getMaxUpgrade(def)})`,
   );
 }
 

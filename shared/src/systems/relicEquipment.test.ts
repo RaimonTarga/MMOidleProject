@@ -1,6 +1,6 @@
 import { getMaxUpgrade } from './itemUpgrades';
 import { normalizeEquipment } from '../items';
-import { checkEvolve, requiredPlusFor } from './evolution';
+import { checkEvolve } from './evolution';
 import type { Recipe } from '../data/recipes/types';
 
 function assert(condition: boolean, message: string): void {
@@ -37,12 +37,13 @@ const evolvedRelic: Recipe = {
   lineageId: 'test-relic',
   evolvesFrom: 'test-relic',
 };
-assert(requiredPlusFor(evolvedRelic) === 0, 'relic evolution consumes a +0 predecessor');
-assert(checkEvolve({
+// The evolve path is retired on every slot (design §24.5), relics included: no
+// relic recipe authors a predecessor, and a synthetic one is refused like any.
+assert(!checkEvolve({
   recipe: evolvedRelic,
   inventory: ['test-relic'],
   itemUpgrades: {},
   essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-}).ok, 'relic predecessor evolves without +N upgrades');
+}).ok, 'relic evolution is retired with every other slot');
 
 console.log('relicEquipment: ok');

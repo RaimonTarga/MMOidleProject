@@ -79,20 +79,21 @@ export const AXE_LINEAGE: LineageDefinition = {
       fx: 'empowered.trail',
     },
 
+    // ── T1 verb row (§24.2): a moment; the lean above decides what happens ───
     {
       id: 'axe-t1-tempo-payoff', lineageId: 'axe', tier: 1, row: 'payoff', lane: 'tempo',
-      name: 'Double Bite', description: 'Every third hit bites twice.',
-      fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'echo-hit',
+      name: 'Chopping Rhythm', description: "A woodcutter's count, and every so often the axe keeps going.",
+      fx: 'tempo.ghost-strike',
     },
     {
       id: 'axe-t1-kill-chain-payoff', lineageId: 'axe', tier: 1, row: 'payoff', lane: 'kill-chain',
-      name: 'Frenzy Step', description: 'A kill puts the next swings on a faster clock.',
-      fx: 'kill-chain.kill-pulse', trigger: 'kill', payoff: 'speed-window',
+      name: 'Next Head', description: 'The swing after a kill is already looking for the next neck.',
+      fx: 'kill-chain.kill-pulse',
     },
     {
       id: 'axe-t1-empowered-payoff', lineageId: 'axe', tier: 1, row: 'payoff', lane: 'empowered',
-      name: 'Split Guard', description: 'Your mechanic leaves the target easier to hurt.',
-      fx: 'empowered.weak-point', trigger: 'mechanic-fired', payoff: 'vulnerability',
+      name: 'Cleaving Blow', description: 'When the mechanic fires, the axe goes all the way through.',
+      fx: 'empowered.weak-point',
     },
 
     // ── T2 band (design §4): stat (L2), payoff (L3), amplifier (L5) ──────────

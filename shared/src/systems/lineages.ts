@@ -1,9 +1,9 @@
 /**
  * Lineage tree rules — the shared authority (progression rework Phase 1a).
  *
- * These are to the lineage tree what `checkUpgrade`/`checkEvolve` are to the
- * +N ladder: pure functions the SERVER applies and the CLIENT gates buttons with,
- * so the two can never disagree. Nothing here mutates; the Phase 1b handlers in
+ * Pure functions the SERVER applies and the CLIENT gates buttons with, so the
+ * two can never disagree (the arrangement the retired +N ladder and evolve path
+ * had with `checkUpgrade`/`checkEvolve`). Nothing here mutates; the Phase 1b handlers in
  * `server/src/systems/player/economy/lineages.ts` validate with these, then spend
  * and mutate.
  *
@@ -16,21 +16,24 @@
  *  - **One row, one active card.** A row is a choice, not a shopping list.
  */
 import { ESSENCE_LABELS } from '../items';
+import { BIOME_DATABASE } from '../biomeDatabase';
+import { shardName } from '../data/lineages/packets';
 import type { EquipmentSlot, EssenceType } from '../items';
 import type { SubVariant } from '../data/skillTree/types';
 import { biomeLevelCap } from '../config/gameConfig';
 import type { HoldsInventory } from '../components/core/networkedSlices';
 import {
-  cardsForTier, formsAtGate, LINEAGE_DATABASE, lineageForRecipeId, lineagesForSlot,
+  cardsForTier, formsAtGate, isLineageParked, LINEAGE_DATABASE, lineageForRecipeId, lineagesForSlot,
 } from '../data/lineages';
 import { capstoneMaterialName } from '../data/lineages/capstones';
 import {
   ROW_SCALAR, lineageMasteryLevelForRow, rowsForTier, tierHasRow,
 } from '../data/lineages/magnitudes';
 import {
-  formGateBiomeLevel, formGateMastery, lineageCardCost, lineageGateCost,
-  resolveLineageCapstone, resolveLineageCard,
+  applyComposition, composeVerb, formGateBiomeLevel, formGateMastery, isVerbCard,
+  lineageCardCost, lineageGateCost, resolveLineageCapstone, resolveLineageCard,
 } from '../data/lineages/resolve';
+import { statLine, verbSentence } from '../data/lineages/sentences';
 import type {
   AmplifiedAxis, DefensiveFace, LineageCard, LineageDefinition, LineageForm,
   LineagePayoff, LineageProgress, LineageProgressMap, LineageStatEffects,
@@ -74,6 +77,13 @@ export function defensiveFaceForSubVariant(sub: SubVariant | null | undefined): 
 }
 
 const OK: LineageCheck = { ok: true };
+
+/**
+ * Why every check refuses a parked lineage (design §24.5). One string, so the
+ * server's reply, the client's disabled button and the tests all say the same.
+ */
+export const PARKED_LINEAGE_REASON = 'This slot has no tree yet.';
+const PARKED: LineageCheck = { ok: false, reason: PARKED_LINEAGE_REASON };
 
 // ─── State helpers ───────────────────────────────────────────────────────────
 
@@ -227,6 +237,11 @@ export function lineageSwitchDiscount(params: {
 
 // ─── Affordability ───────────────────────────────────────────────────────────
 
+/** A biome's display name for refusal text — "Forest", never "forest" (review L21). */
+function biomeName(biomeGroup: string): string {
+  return BIOME_DATABASE.get(biomeGroup)?.name ?? biomeGroup;
+}
+
 function affordEssence(
   cost: Partial<Record<EssenceType, number>>,
   essences: Partial<Record<EssenceType, number>>,
@@ -245,7 +260,8 @@ function affordShards(
 ): LineageCheck {
   for (const [packet, amount] of Object.entries(cost) as [PacketId, number][]) {
     if ((shards?.[packet] ?? 0) < amount) {
-      return { ok: false, reason: `Not enough ${packet} shards (need ${amount}).` };
+      // The player's noun, never the lane id (design §24.2, review L21).
+      return { ok: false, reason: `Not enough ${shardName(packet)}s (need ${amount}).` };
     }
   }
   return OK;
@@ -282,6 +298,7 @@ export function checkUnlockCard(params: {
 }): LineageCheck {
   const { lineage, card, progress, wallet, lineages } = params;
 
+  if (isLineageParked(lineage)) return PARKED;
   if (card.lineageId !== lineage.id) return { ok: false, reason: 'That card belongs to another lineage.' };
   if (!lineage.cards.some((c) => c.id === card.id)) return { ok: false, reason: 'Unknown card.' };
   if (progress.ownedCards.includes(card.id)) return { ok: false, reason: 'Already owned.' };
@@ -310,7 +327,7 @@ export function checkUnlockCard(params: {
   if (level < resolved.requiredBiomeLevel) {
     return {
       ok: false,
-      reason: `Requires ${resolved.requiredBiomeGroup} level ${resolved.requiredBiomeLevel}.`,
+      reason: `Requires ${biomeName(resolved.requiredBiomeGroup)} level ${resolved.requiredBiomeLevel}.`,
     };
   }
   if (wallet.globalMastery !== undefined && wallet.globalMastery < resolved.requiredGlobalMastery) {
@@ -335,6 +352,7 @@ export function checkSetActive(params: {
   cardId: string | null;
 }): LineageCheck {
   const { lineage, progress, row, cardId } = params;
+  if (isLineageParked(lineage)) return PARKED;
   if (cardId === null) return OK;
   const card = lineage.cards.find((c) => c.id === cardId);
   if (!card) return { ok: false, reason: 'Unknown card.' };
@@ -363,6 +381,7 @@ export function checkUnlockForm(params: {
 }): LineageCheck {
   const { lineage, form, progress, wallet } = params;
 
+  if (isLineageParked(lineage)) return PARKED;
   if (!lineage.forms.some((f) => f.recipeId === form.recipeId)) {
     return { ok: false, reason: 'That form is not part of this lineage.' };
   }
@@ -379,9 +398,9 @@ export function checkUnlockForm(params: {
   // The gate is gated by the FORM's biome — a Jungle door needs Jungle levels.
   const level = wallet.biomeLevels[form.biome] ?? 0;
   const required = formGateBiomeLevel(form);
-  if (level < required) return { ok: false, reason: `Requires ${form.biome} level ${required}.` };
+  if (level < required) return { ok: false, reason: `Requires ${biomeName(form.biome)} level ${required}.` };
   if (wallet.playerTier !== undefined && biomeLevelCap(wallet.playerTier, form.biome) < required) {
-    return { ok: false, reason: `${form.biome} cannot reach level ${required} at your tier yet.` };
+    return { ok: false, reason: `${biomeName(form.biome)} cannot reach level ${required} at your tier yet.` };
   }
   const mastery = formGateMastery(form);
   if (wallet.globalMastery !== undefined && wallet.globalMastery < mastery) {
@@ -411,6 +430,7 @@ export function checkWearForm(params: {
   recipeId: string;
 }): LineageCheck {
   const { lineage, progress, recipeId } = params;
+  if (isLineageParked(lineage)) return PARKED;
   if (!lineage.forms.some((f) => f.recipeId === recipeId)) {
     return { ok: false, reason: 'That form is not part of this lineage.' };
   }
@@ -445,7 +465,67 @@ export function resolveLineageCards(
     if (statRowIsCollapsed(lineage, progress, card)) continue;
     out.push(resolveLineageCardFor(lineage, progress, card, { frameFace }));
   }
+  composeVerbs(out, leanLaneFor(lineage, progress));
   return composeAmplifiers(out);
+}
+
+// ─── The T1 lean and verb compose (design §24.2) ─────────────────────────────
+
+/**
+ * The lane of the active LEAN: the owned card in the active stat row, of any tier.
+ * Its lane names the payload every verb of this lineage delivers.
+ *
+ * A collapsed band's stat card still counts when the save points `active.stat` at
+ * it: the lane identity carries up through the gate (design §4), and the player
+ * changes it by slotting the current tier's stat row.
+ */
+export function leanLaneFor(lineage: LineageDefinition, progress: LineageProgress): PacketId | undefined {
+  const cardId = progress.active.stat;
+  if (!cardId || !progress.ownedCards.includes(cardId)) return undefined;
+  return lineage.cards.find((c) => c.id === cardId && c.row === 'stat')?.lane;
+}
+
+/**
+ * Re-compose every active VERB against the active lean, in place: the verb's
+ * moment with the lean's payload, or the verb lane's pure pair for the same lane
+ * or no lean. Legacy payoff cards (they author their own trigger and payoff)
+ * are untouched, as are amplifiers, keystones and cross rows.
+ */
+function composeVerbs(cards: ResolvedLineageCard[], leanLane: PacketId | undefined): void {
+  for (const resolved of cards) {
+    if (!isVerbCard(resolved.card)) continue;
+    applyComposition(resolved, composeVerb(resolved.card.lane, leanLane));
+  }
+}
+
+/**
+ * The sentence the lineage's active verb reads right now, with the active lean —
+ * or undefined when no verb is active (design §24.2).
+ */
+export function composedSentence(lineage: LineageDefinition, progress: LineageProgress): string | undefined {
+  const verbId = progress.active.payoff;
+  if (!verbId || !progress.ownedCards.includes(verbId)) return undefined;
+  const verb = lineage.cards.find((c) => c.id === verbId);
+  if (!verb || !isVerbCard(verb)) return undefined;
+  return verbSentence(verb.lane, leanLaneFor(lineage, progress));
+}
+
+/**
+ * One card as one sentence (design §24.6, rule 5: no flavour text rendered).
+ *
+ *  - A stat card (the LEAN at T1): its resolved stat line, "+9% attack speed.".
+ *  - A T1 VERB: the sentence it reads with the player's active lean RIGHT NOW,
+ *    owned or not — a verb tile re-renders when the lean changes.
+ *
+ * Undefined for every other row (legacy payoff, amplifier, keystone, cross),
+ * which the tree still renders from `description` and resolved numbers.
+ */
+export function cardSentence(card: LineageCard, progress: LineageProgress): string | undefined {
+  const lineage = LINEAGE_DATABASE.get(card.lineageId);
+  if (!lineage) return undefined;
+  if (card.row === 'stat') return statLine(resolveLineageCardFor(lineage, progress, card).statEffects);
+  if (isVerbCard(card)) return verbSentence(card.lane, leanLaneFor(lineage, progress));
+  return undefined;
 }
 
 // ─── The amplifier row modifies a payoff; it does not add one (design §4) ────
@@ -651,6 +731,12 @@ export interface ActiveLineageEffects {
  * A lineage only contributes while its worn form is the item equipped in its
  * slot — owning a second tree changes nothing until you wear it. This is what
  * Phase 1b's recalc and card runtime consume.
+ *
+ * A PARKED lineage contributes nothing at all — no cards, no absorbed stat
+ * rows, and no capstone (design §24.5). A save that still holds a parked tree
+ * keeps it untouched; it is simply not resolved. The capstone goes with the
+ * cards: a parked lineage's T2+ forms are plain recipes now, so a verb granted
+ * for wearing one would be a lineage verb with no tree behind it.
  */
 export function resolveActiveLineages(
   inventory: Pick<HoldsInventory, 'equipment' | 'lineages'> | undefined,
@@ -669,7 +755,7 @@ export function resolveActiveLineages(
 
   for (const [lineageId, progress] of Object.entries(inventory.lineages ?? {})) {
     const lineage = LINEAGE_DATABASE.get(lineageId);
-    if (!lineage || !progress) continue;
+    if (!lineage || !progress || isLineageParked(lineage)) continue;
     if (inventory.equipment[lineage.slot] !== progress.wornForm) continue;
 
     for (const resolved of resolveLineageCards(lineage, progress, frameFace)) {
@@ -692,11 +778,14 @@ export function resolveActiveLineages(
 }
 
 /**
- * The lineage an equipped item belongs to — how the inventory panel turns a slot
- * into a tree. Falls back to undefined for items with no lineage (cores, relics).
+ * The tree an equipped item opens — how the inventory panel turns a slot into a
+ * tree. Undefined for items with no lineage (cores, relics) AND for a parked
+ * lineage's forms (design §24.5): a parked slot shows no tree entry anywhere.
+ * `lineageForRecipeId` stays the raw data lookup.
  */
 export function lineageForEquippedItem(recipeId: string | null | undefined): LineageDefinition | undefined {
-  return recipeId ? lineageForRecipeId(recipeId) : undefined;
+  const lineage = recipeId ? lineageForRecipeId(recipeId) : undefined;
+  return lineage && !isLineageParked(lineage) ? lineage : undefined;
 }
 
 // ─── Amplifier connectors (design §4, §8) ────────────────────────────────────

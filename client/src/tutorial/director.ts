@@ -33,7 +33,6 @@ import {
   buildOpenAtom,
   buildPanelTabAtom,
   clearDeathOverlay,
-  craftTabAtom,
   deathOverlayAtom,
   dungeonAtom,
   lineageTreeSlotAtom,
@@ -316,39 +315,11 @@ async function equip(definitionId: string, beat: TutorialBeat, signal: AbortSign
   store.set(tutorialHighlightAtom, null);
 }
 
-async function upgrade(
-  step: Extract<TutorialStep, { type: 'upgrade' }>,
-  beat: TutorialBeat,
-  signal: AbortSignal,
-): Promise<void> {
-  const item = ITEM_DATABASE.get(step.definitionId);
-  if (!item) throw new TutorialStop(`Unknown item ${step.definitionId}.`, 'error');
-  const plus = () => requireView().itemUpgrades[step.definitionId] ?? 0;
-  if (plus() >= step.toPlus) return;
-
-  report(beat, 'working');
-  if (store.get(craftTabAtom) !== 'upgrade') {
-    closePrimaryOverlays();
-    await point(TUTORIAL_ANCHORS.menuUpgrade, signal);
-    store.set(craftTabAtom, 'upgrade');
-  }
-  store.set(tutorialFocusAtom, { surface: 'upgrade', definitionId: step.definitionId });
-  await point(TUTORIAL_ANCHORS.upgradeRow(step.definitionId), signal);
-  while (plus() < step.toPlus) {
-    const before = plus();
-    await point(TUTORIAL_ANCHORS.upgradeAction, signal);
-    await pressPointed(signal);
-    hudBus.requestUpgradeItem(step.definitionId);
-    const done = await waitAlive((v) => (v.itemUpgrades[step.definitionId] ?? 0) > before, signal, ACTION_TIMEOUT_MS);
-    if (!done) throw new TutorialStop(`The ${item.name} upgrade did not go through. Press Next to try again.`, 'error');
-  }
-  store.set(tutorialHighlightAtom, null);
-}
-
 /**
- * Open a slot's lineage tree the way a player does: Inventory → the equipped
- * slot → the tree, which replaces the Inventory dialog rather than stacking on
- * it (`lineageTreeSlotAtom`).
+ * Open a slot's weapon page the way a player does: Inventory → the equipped
+ * slot → the page, which replaces the Inventory dialog rather than stacking on
+ * it (`lineageTreeSlotAtom`). The page shows whatever the slot holds, which is
+ * why the scripts wear the lineage's form before any lineage step (review P9).
  */
 async function openLineageTree(
   lineageId: string,
@@ -383,6 +354,61 @@ async function unlockCard(
   if (!bought) throw new TutorialStop('The card was not bought. Press Next to try again.', 'error');
   // Buying into an empty row activates it server-side; the button now reads
   // "active", so the ring must not stay on it.
+  store.set(tutorialHighlightAtom, null);
+}
+
+/**
+ * Make an owned card the active one of its row — the same press and intent the
+ * weapon page uses for "owned · click to swap in". After a purchase into an
+ * empty row there is nothing to do: the server already slotted it.
+ */
+async function setActive(
+  step: Extract<TutorialStep, { type: 'setActive' }>,
+  beat: TutorialBeat,
+  signal: AbortSignal,
+): Promise<void> {
+  const active = (v: PlayerView) => v.lineages[step.lineageId]?.active[step.row] === step.cardId;
+  if (active(requireView())) return;
+  await openLineageTree(step.lineageId, beat, signal);
+  await point(TUTORIAL_ANCHORS.lineageCard(step.cardId), signal);
+  await pressPointed(signal);
+  hudBus.requestLineageSetActive(step.lineageId, step.row, step.cardId);
+  const on = await waitAlive(active, signal, ACTION_TIMEOUT_MS);
+  if (!on) throw new TutorialStop('The card did not become active. Press Next to try again.', 'error');
+  store.set(tutorialHighlightAtom, null);
+}
+
+/** How long the ring rests on what a lesson line is about, so it can be read. */
+const READ_MS = 5_000;
+
+/**
+ * A beat's lesson, after its steps are done (shared `TutorialBeat.lesson`): the
+ * ring rests on the card the beat bought while its line reads out what the card
+ * now says, then — with the page closed — on that card's ring on the rhythm
+ * readout by the HP bar. Nothing is pressed and nothing is sent.
+ *
+ * By now the panel has moved on to the next beat (the purchase made this one
+ * done); `TutorialPanel` shows a finished beat's `working` message for exactly
+ * this.
+ */
+async function playLesson(beat: TutorialBeat, signal: AbortSignal): Promise<void> {
+  const lesson = beat.lesson;
+  if (!lesson) return;
+  const view = requireView();
+  const progress = view.lineages[lesson.lineageId];
+  // Never narrate a card that is not the live one (a player can swap mid-beat).
+  if (!progress || !Object.values(progress.active).includes(lesson.cardId)) return;
+  await openLineageTree(lesson.lineageId, beat, signal);
+  report(beat, 'working', lesson.read);
+  store.set(tutorialHighlightAtom, TUTORIAL_ANCHORS.lineageCard(lesson.cardId));
+  await pause(READ_MS, signal);
+  if (lesson.ring) {
+    // The page is a dialog over the HUD; the readout sits by the HP bar under it.
+    store.set(lineageTreeSlotAtom, null);
+    report(beat, 'working', lesson.ring);
+    store.set(tutorialHighlightAtom, TUTORIAL_ANCHORS.rhythmRing(lesson.cardId));
+    await pause(READ_MS, signal);
+  }
   store.set(tutorialHighlightAtom, null);
 }
 
@@ -751,8 +777,6 @@ async function performStep(
     case 'equip':
       for (const id of step.definitionIds) await equip(id, beat, signal);
       return;
-    case 'upgrade':
-      return upgrade(step, beat, signal);
     case 'configureRunes':
       return configureRunes(step, beat, signal);
     case 'craftRune':
@@ -763,6 +787,8 @@ async function performStep(
       return applyAbilities(abilityLoadoutFor(step, requireView()), beat, signal);
     case 'unlockCard':
       return unlockCard(step, beat, signal);
+    case 'setActive':
+      return setActive(step, beat, signal);
     case 'unlockForm':
       return unlockForm(step, beat, signal);
     case 'wearForm':
@@ -793,6 +819,7 @@ export async function runBeat(script: TutorialScript, beat: TutorialBeat, signal
       if (!step) break;
       await performStep(script, beat, step, signal);
     }
+    await playLesson(beat, signal);
     // Let the result land on screen before the panel closes.
     await pause(POINT_MS, signal);
     closePrimaryOverlays();

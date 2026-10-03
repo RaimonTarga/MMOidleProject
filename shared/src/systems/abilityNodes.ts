@@ -17,6 +17,7 @@
  */
 import { ABILITY_DATABASE } from '../abilities';
 import { ESSENCE_LABELS } from '../items';
+import { shardName } from '../data/lineages/packets';
 import type { EssenceType } from '../items';
 import {
   ABILITY_NODE_DATABASE, abilityNodeOptionsForRow, abilityNodePayoff,
@@ -102,7 +103,7 @@ function affordShards(
 ): LineageCheck {
   for (const [packet, amount] of Object.entries(cost) as [PacketId, number][]) {
     if ((shards?.[packet] ?? 0) < amount) {
-      return { ok: false, reason: `Not enough ${packet} shards (need ${amount}).` };
+      return { ok: false, reason: `Not enough ${shardName(packet)}s (need ${amount}).` };
     }
   }
   return OK;

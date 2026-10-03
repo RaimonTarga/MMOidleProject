@@ -204,7 +204,7 @@ export function RightSidebar() {
     { tab: "runes", label: "Runes", gate: "loadout" },
   ];
 
-  const toggleCraftDestination = (tab: 'make' | 'upgrade') => {
+  const toggleCraftDestination = (tab: 'make') => {
     if (craftTab === tab) {
       closePrimaryOverlays();
       return;
@@ -293,17 +293,6 @@ export function RightSidebar() {
               badges.clear("crafting");
               toggleCraftDestination("make");
             }}
-          />
-        )}
-        {visibility.crafting && (
-          <RightNavButton
-            label="Upgrade"
-            icon={menuIconSource("upgrade")}
-            selected={craftTab === "upgrade"}
-            disabled={dead}
-            unlockSystems={["crafting"]}
-            anchor={TUTORIAL_ANCHORS.menuUpgrade}
-            onClick={() => toggleCraftDestination("upgrade")}
           />
         )}
         {visibility.map && (

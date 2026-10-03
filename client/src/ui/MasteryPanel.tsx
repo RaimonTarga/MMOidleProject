@@ -2,13 +2,9 @@ import { useMemo, type CSSProperties } from 'react';
 import { useAtomValue } from 'jotai';
 import {
   BIOME_DATABASE,
-  MAX_ITEM_TIER,
-  MAX_UPGRADE,
   RUNE_POINT_GLOBAL_MASTERY_STEP,
   biomeLevelCap,
-  globalMasteryRequiredForUpgrade,
   runeBudgetForGlobalMastery,
-  upgradeCeilingFromGlobalMastery,
 } from '@mmo-idle/shared';
 import {
   biomeLevelAtom,
@@ -60,12 +56,6 @@ export function MasteryPanel({ onClose }: Props) {
   const gm = useAtomValue(globalMasteryAtom);
   const biomeLevel = useAtomValue(biomeLevelAtom);
   const playerTier = useAtomValue(playerTierAtom);
-  const itemCaps = Array.from({ length: MAX_ITEM_TIER }, (_, i) => ({
-    tier: i + 1,
-    cap: upgradeCeilingFromGlobalMastery(gm, i + 1),
-  }));
-  const unlockedCaps = itemCaps.filter(({ cap }) => cap > 0);
-  const nextItemTier = itemCaps.find(({ cap }) => cap < MAX_UPGRADE);
   const runeBudget = runeBudgetForGlobalMastery(gm);
   const nextRuneReq =
     (Math.floor(gm / RUNE_POINT_GLOBAL_MASTERY_STEP) + 1) *
@@ -112,17 +102,6 @@ export function MasteryPanel({ onClose }: Props) {
             fallback={null}
           />
           <GlyphTile
-            value={unlockedCaps.length === 0
-              ? '+0'
-              : `+${Math.max(...unlockedCaps.map(({ cap }) => cap))}`}
-            label="Best item cap"
-            icon={masterySectionIconSource('items')}
-            fallback={null}
-            title={unlockedCaps.length === 0
-              ? 'No item upgrade tiers unlocked yet'
-              : unlockedCaps.map(({ tier, cap }) => `Tier ${tier}: +${cap}`).join(' · ')}
-          />
-          <GlyphTile
             value={runeBudget}
             label="Rune points"
             icon={masterySectionIconSource('runes')}
@@ -131,51 +110,6 @@ export function MasteryPanel({ onClose }: Props) {
         </div>
 
         <div className="craft-body">
-          <section className="craft-biome-section craft-biome-section--current">
-            <div className="craft-biome-section__header">
-              <span className="craft-biome-section__name craft-biome-section__name--icon">
-                <GameIcon
-                  source={masterySectionIconSource('items')}
-                  size={18}
-                  fallback={null}
-                  decorative
-                />
-                Item Upgrades
-              </span>
-              <span className="craft-biome-section__level">per item tier</span>
-            </div>
-            <div className="craft-unlock-path">
-              {itemCaps.map(({ tier, cap }) => {
-                const maxed = cap >= MAX_UPGRADE;
-                const nextReq = globalMasteryRequiredForUpgrade(tier, Math.min(cap + 1, MAX_UPGRADE));
-                return (
-                  <div
-                    key={tier}
-                    className={[
-                      'craft-unlock-row',
-                      cap > 0 ? 'craft-unlock-row--unlocked' : '',
-                    ].filter(Boolean).join(' ')}
-                  >
-                    <span className="craft-unlock-row__level">
-                      GM {maxed ? globalMasteryRequiredForUpgrade(tier, MAX_UPGRADE) : nextReq}
-                    </span>
-                    <span className="craft-unlock-row__name">
-                      Tier {tier} items{maxed ? '' : ` — next +${cap + 1}`}
-                    </span>
-                    <span className="craft-unlock-row__slot">+{cap}</span>
-                    <MilestoneStatus unlocked={maxed} label={`Tier ${tier} items`} />
-                  </div>
-                );
-              })}
-            </div>
-            {nextItemTier && (
-              <div className="mastery-note">
-                Next: Tier {nextItemTier.tier} +{nextItemTier.cap + 1} at GM{' '}
-                {globalMasteryRequiredForUpgrade(nextItemTier.tier, nextItemTier.cap + 1)}.
-              </div>
-            )}
-          </section>
-
           <section className="craft-biome-section">
             <div className="craft-biome-section__header">
               <span className="craft-biome-section__name craft-biome-section__name--icon">

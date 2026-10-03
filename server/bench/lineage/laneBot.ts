@@ -164,12 +164,20 @@ export function prepareLaneBot(
 
   // Buy the band through the real economy handler, so a refusal is a finding.
   for (const type of ESSENCE_TYPES) p.essences[type] = BENCH_ESSENCE;
-  const lane = reference?.lane ?? null;
   const grantedShards = reference?.shardsUnobtainableAtT1 ?? false;
-  if (lane) p.shards[lane] = BENCH_SHARDS;
   const refusals: string[] = [];
   if (reference) {
     const lineage = LINEAGE_DATABASE.get(reference.lineageId)!;
+    // Every lane the declared cards are paid in. A pure lane reference buys both
+    // rows in its own lane; a composition reference (course-correction W3-A) buys
+    // a LEAN in one lane and a VERB in another, so crediting only `reference.lane`
+    // would make the second purchase a wallet refusal the matrix never meant.
+    const paidLanes = new Set(reference.cardIds.flatMap((cardId) => {
+      const card = lineage.cards.find((c) => c.id === cardId);
+      return card ? [card.lane] : [];
+    }));
+    if (reference.lane) paidLanes.add(reference.lane);
+    for (const lane of paidLanes) p.shards[lane] = BENCH_SHARDS;
     for (const cardId of reference.cardIds) {
       const bought = unlockLineageCard(world, bot, reference.lineageId, cardId);
       if (!bought.success) refusals.push(`unlockCard ${cardId}: ${bought.reason}`);

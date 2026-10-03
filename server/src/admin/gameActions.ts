@@ -352,12 +352,13 @@ export function applyTierEntryProfile(
   ].filter((id): id is string => typeof id === 'string'))];
   if (itemIds.some((id) => !ITEM_DATABASE.has(id))) return fail('Profile contains an unknown item.');
   const equipment = normalizeEquipment(profile.equipment);
+  // A declared `+N` is validated and then dropped: the ladder is retired on every
+  // slot (design §24.5), so a level would add nothing and only look like it did.
   const itemUpgrades: Record<string, number> = {};
   for (const [id, raw] of Object.entries(profile.itemUpgrades ?? {})) {
     if (!itemIds.includes(id) || !Number.isFinite(raw) || raw < 0) {
       return fail(`Profile has an invalid upgrade entry for ${id}.`);
     }
-    itemUpgrades[id] = Math.min(ITEM_DATABASE.get(id)?.upgrades?.length ?? 0, Math.floor(raw));
   }
 
   const knownAbilities = [...new Set(profile.knownAbilities ?? [])];

@@ -4,7 +4,7 @@
  * Split out of `lineages.ts` so the ordinary equip path can call it without
  * importing the handlers, which import the equip path back.
  */
-import { LINEAGE_DATABASE, baseFormRecipeId, emptyLineageProgress, lineageForRecipeId } from '@mmo-idle/shared';
+import { LINEAGE_DATABASE, baseFormRecipeId, emptyLineageProgress, isLineageParked, lineageForRecipeId } from '@mmo-idle/shared';
 import type { LineageDefinition, LineageProgress } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
 import type { PlayerEntity } from '../../../ecs/entity';
@@ -16,6 +16,11 @@ import { mutateSlice } from '../../../ecs/dirtyHelpers';
  * A tree is born the moment the player holds the lineage's crafted T1 form —
  * there is no separate "unlock the tree" step, because the slot holds the
  * lineage and the base form IS how you take the slot (design §2).
+ *
+ * A PARKED lineage (design §24.5) never gets a tree: the saved one, if a save
+ * still holds it, is returned untouched, and otherwise a transient empty tree
+ * that is never written. The handlers refuse a parked lineage before calling
+ * this; the guard here is so no future caller can persist one by accident.
  */
 export function ensureLineageProgress(
   world: World,
@@ -24,6 +29,7 @@ export function ensureLineageProgress(
 ): LineageProgress {
   const existing = entity.holdsInventory.lineages?.[lineage.id];
   if (existing) return existing;
+  if (isLineageParked(lineage)) return { ownedCards: [], active: {}, ownedForms: [], wornForm: '' };
 
   const base = baseFormRecipeId(lineage);
   const held = base !== undefined
@@ -81,9 +87,13 @@ export function writeLineageProgress(
  *    policy. Cards are never granted: nothing was ever paid for one.
  *
  * Idempotent: relogging must not duplicate a form.
+ *
+ * Parked lineages (design §24.5) are skipped: holding a vest creates no tree,
+ * and a save that already holds one keeps it exactly as it was.
  */
 export function syncLineagesFromInventory(world: World, entity: PlayerEntity): void {
   for (const lineage of LINEAGE_DATABASE.values()) {
+    if (isLineageParked(lineage)) continue;
     const equipped = entity.holdsInventory.equipment[lineage.slot];
     const held = lineage.forms
       .map((f) => f.recipeId)
@@ -124,7 +134,8 @@ export function syncWornFormFromEquipment(
   recipeId: string,
 ): void {
   const lineage = lineageForRecipeId(recipeId);
-  if (!lineage) return;
+  // A parked lineage's form is a plain item: equipping it touches no tree.
+  if (!lineage || isLineageParked(lineage)) return;
   const current = entity.holdsInventory.lineages?.[lineage.id];
   if (current?.wornForm === recipeId) return;
   // Equipping a form the player somehow holds without having paid its gate also

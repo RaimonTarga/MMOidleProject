@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
-import { EQUIPMENT_SLOTS, ITEM_DATABASE, lineageForRecipeId, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS, relicIsUnlocked } from '@mmo-idle/shared';
-import { equipmentAtom, inventoryAtom, itemUpgradesAtom, playerNodeIdAtom, playerTierAtom } from '../../hud/atoms';
+import { EQUIPMENT_SLOTS, ITEM_DATABASE, lineageForEquippedItem, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS, relicIsUnlocked } from '@mmo-idle/shared';
+import { equipmentAtom, inventoryAtom, playerNodeIdAtom, playerTierAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
 import { ItemIcon } from '../ItemIcon';
 import type { ComparePin } from './useFocus';
@@ -17,7 +17,6 @@ interface Props {
 
 export function BackpackGrid({ compare }: Props) {
   const inventory    = useAtomValue(inventoryAtom);
-  const itemUpgrades = useAtomValue(itemUpgradesAtom);
   const equipment    = useAtomValue(equipmentAtom);
   const playerTier = useAtomValue(playerTierAtom);
   const playerNodeId = useAtomValue(playerNodeIdAtom);
@@ -30,14 +29,15 @@ export function BackpackGrid({ compare }: Props) {
   // sitting in the bag as ordinary loose gear (design §2). Before that — most
   // importantly, the freshly-crafted T1 base form, which has no other equip
   // path — a lineage form stays an ordinary backpack item so the ordinary
-  // equip flow (tap to pin, then Equip) still reaches it.
+  // equip flow (tap to pin, then Equip) still reaches it. A parked lineage's
+  // forms (design §24.5) have no tree to move to, so they always stay here.
   const items = useMemo(() => inventory
     .map((defId, invIndex) => ({ defId, def: ITEM_DATABASE.get(defId) ?? null, invIndex }))
     .filter(({ defId }) => {
-      const lineage = lineageForRecipeId(defId);
+      const lineage = lineageForEquippedItem(defId);
       if (!lineage) return true;
       const equippedId = equipment[lineage.slot];
-      const wearingThisLineage = !!equippedId && lineageForRecipeId(equippedId)?.id === lineage.id;
+      const wearingThisLineage = !!equippedId && lineageForEquippedItem(equippedId)?.id === lineage.id;
       return !wearingThisLineage;
     })
     .sort((a, b) => (b.def?.tier ?? -1) - (a.def?.tier ?? -1)
@@ -144,7 +144,6 @@ export function BackpackGrid({ compare }: Props) {
             const isShown  = !!defId && compare.shown === defId;
             const isPinned = !!defId && compare.pinned === defId;
             const color     = def ? tierColor(def.tier) : null;
-            const plus      = defId ? (itemUpgrades[defId] ?? 0) : 0;
             const relicLocked = def?.slot === 'relic'
               && !relicIsUnlocked(playerTier, playerNodeId === TEST_ROOM_NODE_ID);
 
@@ -178,7 +177,7 @@ export function BackpackGrid({ compare }: Props) {
                       }
                     </span>
                     <span className="inv-item-slot__name">
-                      {def.name}{plus > 0 ? ` +${plus}` : ''}
+                      {def.name}
                     </span>
                   </>
                 )}

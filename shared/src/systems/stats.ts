@@ -13,13 +13,14 @@ import { ITEM_DATABASE } from '../itemDatabase';
 import { EQUIPMENT_SLOTS } from '../items';
 import { coreIsActive } from './cores';
 import { activeStanceModifiers, stanceDef, type StanceModifiers } from '../stances';
-import { effectiveAttacksPerSecond, upgradeMechanicEffectsTotal, upgradeStatBonusTotal } from './itemUpgrades';
+import { effectiveAttacksPerSecond } from './itemUpgrades';
 import { GAME_CONFIG, baseRecoveryForTier, poolFactorForTier } from '../index';
 import { mergePassives, makePulseAccumulator, finalizePulse } from '../passives';
 import { relicRatingsFromPassives, resolveCadenceRelicProfile } from './relics';
 import { summonerSpecializationFor } from '../data/summoner';
 import { SLINGER_DIRECT_ATTACK_EFFECTIVENESS } from './classSecondaryDamage';
 import { defensiveFaceForSubVariant, resolveActiveLineages } from './lineages';
+import { dotClassProfileForSubVariant } from './dotClassProfile';
 
 /**
  * Map a raw evasion rating (Σ 1/N across all evasion sources) to a deterministic
@@ -200,16 +201,12 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   p.hasHealth.recovery           = baseRecoveryForTier(p.playerTier);
   p.hasPosition.speed           = GAME_CONFIG.PLAYER_SPEED;
 
-  // 1b. Weapon attack rate. Upgrade steps may add an APS delta (the rapier
-  // lineage buys cadence instead of Attack), so the effective rate is resolved
-  // here rather than read straight off the base definition.
+  // 1b. Weapon attack rate: the crafted form's own cadence. `itemUpgrades` is
+  // never read — the +N ladder is retired on every slot (design §24.5).
   const weaponId = p.holdsInventory.equipment.weapon;
   const weapon   = weaponId ? ITEM_DATABASE.get(weaponId) : undefined;
   if (weapon) {
-    const aps = effectiveAttacksPerSecond(
-      weapon,
-      p.holdsInventory.itemUpgrades?.[weapon.id] ?? 0,
-    );
+    const aps = effectiveAttacksPerSecond(weapon, 0);
     if (aps) p.performsAttack.attackCooldown = Math.round(1000 / aps);
   }
 
@@ -326,18 +323,9 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
       }
     }
     mergePassives(p.usesSkills.passives, omitKeys(def.mechanicEffects, p.previewOmitItemEffects, defId), pulseAcc);
-
-    // Item upgrade bonuses: all stat and mechanic effect deltas from upgrade steps.
-    const plus = p.holdsInventory.itemUpgrades?.[defId] ?? 0;
-    if (plus > 0) {
-      for (const [stat, value] of Object.entries(upgradeStatBonusTotal(def, plus))) {
-        if (stat === 'damageReduction') { itemDr += value; continue; }
-        if (stat === 'evasion') { if (value > 0) evasionChance += value; }
-        else applyStatModToTarget(p, stat, value);
-      }
-      const meFx = omitKeys(upgradeMechanicEffectsTotal(def, plus), p.previewOmitItemEffects, defId) ?? {};
-      if (Object.keys(meFx).length > 0) mergePassives(p.usesSkills.passives, meFx, pulseAcc);
-    }
+    // No `+N` bonus on top: the ladder is retired on every slot and an item is
+    // crafted at full power (design §23, §24.5). A save's stale `itemUpgrades`
+    // entry adds nothing here; hydration refunds it.
   }
   // 3c. The flat half of the lineage stat rows — the slotted one plus the
   // absorbed ones (step 2b) — folded with equipment so class affinities multiply
@@ -355,6 +343,21 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     if (stat === 'techniquePowerPct') {
       p.usesSkills.passives['technique.power-pct'] =
         (p.usesSkills.passives['technique.power-pct'] ?? 0) + value;
+      continue;
+    }
+    // DoT potency, the Affliction lean (design §24.2), is the same shape: it ADDS
+    // into `dot.mechanic-mult`, the DoT root's damage multiplier that
+    // `computeDotClassDamagePerStack` reads, on top of the frame node's base (the
+    // class nodes merged above). Inert for a root with no class DoT.
+    //
+    // The base is seeded from the profile when no frame has authored it yet:
+    // `resolveDotClassProfile` reads the passive with `??`, so a frameless
+    // Apprentice holding only this lean would otherwise read 0.10 as the WHOLE
+    // multiplier instead of base + 0.10.
+    if (stat === 'dotPotencyPct') {
+      const base = p.usesSkills.passives['dot.mechanic-mult']
+        ?? dotClassProfileForSubVariant(p.usesSkills.selectedSubVariant).dotMechanicMultiplier;
+      p.usesSkills.passives['dot.mechanic-mult'] = base + value;
       continue;
     }
     applyStatModToTarget(p, stat, value);

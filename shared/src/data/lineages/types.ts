@@ -75,6 +75,21 @@ export type RowKind = 'stat' | 'payoff' | 'amplifier' | 'keystone' | 'cross';
 
 export const ROW_KINDS: readonly RowKind[] = ['stat', 'payoff', 'amplifier', 'keystone', 'cross'] as const;
 
+/**
+ * What the player reads for each row (design §24.2). The T1 band is a LEAN and a
+ * VERB: the stat row is the lean (a stat move that also names a payload), the
+ * payoff row is the verb (a moment). The internal ids stay `stat`/`payoff` — a
+ * rename across data, resolver, UI, tests, tutorial scripts and bot routes would
+ * be churn with no behaviour — so the label lives here, once.
+ */
+export const ROW_LABELS: Readonly<Record<RowKind, string>> = {
+  stat: 'Lean',
+  payoff: 'Verb',
+  amplifier: 'Amplifier',
+  keystone: 'Keystone',
+  cross: 'Cross',
+};
+
 // ─── Trigger and payoff vocabulary (design §6) ───────────────────────────────
 
 /**
@@ -101,12 +116,26 @@ export type TriggerKind =
    * lands or resolves, and NEVER from a Guard: a Guard has `guard-cast`, and
    * defence must not fire an offensive lane.
    */
-  | 'technique-cast';
+  | 'technique-cast'
+  /**
+   * The Affliction moment (design §24.2): a landed hit on a monster that ALREADY
+   * carries one of this player's damage-over-time effects (read through the DoT
+   * inventory, so every family counts). Rate-capped by its packet's `capMs`: a
+   * DoT class satisfies it on almost every hit, and synergy buys reliability,
+   * never rate.
+   */
+  | 'hit-afflicted'
+  /**
+   * The Control moment (design §24.2): a landed hit on a monster that is slowed
+   * or rooted (any source — an at-bay slow, a chill, a freeze, an ability slow or
+   * root). Rate-capped by its packet's `capMs`, so the payload cannot chain.
+   */
+  | 'hit-held';
 
 export const TRIGGER_KINDS: readonly TriggerKind[] = [
   'hit-nth', 'mechanic-fired', 'first-hit', 'kill', 'evade',
   'hit-taken', 'guard-cast', 'standing', 'pulse', 'barrier-break',
-  'technique-cast',
+  'technique-cast', 'hit-afflicted', 'hit-held',
 ] as const;
 
 /**
@@ -146,7 +175,34 @@ export type PayoffKind =
    */
   | 'technique-refund'
   | 'technique-window'
-  | 'evasion-window';
+  | 'evasion-window'
+  /**
+   * The T1 composition payloads (design §24.2). Event-shaped: their magnitudes
+   * are PER FIRING, never divided by the trigger rate (§24.1 — the cadence and
+   * the rate caps carry the budget), and they live in `PACKET_HALF_NUMBERS`.
+   *
+   *  - `big-hit`         the triggering hit is multiplied by `magnitude`, folded
+   *                      into `ctx.metadata.empoweredMultiplier` — the ONE
+   *                      multiplier per hit, never a second layer (Engagement's
+   *                      lunge, and Empowered's pure "half again as hard").
+   *  - `mechanic-proxy`  the triggering hit counts as the class mechanic firing:
+   *                      the root's own empowered multiplier, `mechanicConsumed`
+   *                      set, but NEVER `mechanic-fired` and never a frame loop
+   *                      (rule 3). `magnitude` is the multiplier used for a root
+   *                      with no damage-multiplier mechanic of its own.
+   *  - `heal-and-load`   heals `magnitude` × max HP and multiplies the triggering
+   *                      hit by `loadMultiplier` (Kill chain).
+   *  - `root`            roots the target for `durationMs` through the control
+   *                      ladder's root rung (Control's payload).
+   *  - `redose`          adds `magnitude` × what the target's player DoTs still
+   *                      owe, as a lineage bleed over `durationMs` — 1.0 doubles
+   *                      the affliction (Affliction's pure pair).
+   */
+  | 'big-hit'
+  | 'mechanic-proxy'
+  | 'heal-and-load'
+  | 'root'
+  | 'redose';
 
 export const PAYOFF_KINDS: readonly PayoffKind[] = [
   'vulnerability', 'plating-shred', 'echo-hit', 'hemorrhage', 'poison-stack',
@@ -154,6 +210,7 @@ export const PAYOFF_KINDS: readonly PayoffKind[] = [
   'ward', 'cleanse', 'plating-stack', 'engagement-dr', 'contagion',
   'technique-refund', 'technique-window',
   'evasion-window',
+  'big-hit', 'mechanic-proxy', 'heal-and-load', 'root', 'redose',
 ] as const;
 
 /**
@@ -163,10 +220,14 @@ export const PAYOFF_KINDS: readonly PayoffKind[] = [
  * "every on-target applier early-returns on a blocking evade", and the authoring
  * check that only an on-target payoff can be amplified along the `targets` axis —
  * a second body is meaningless for a window that opens on yourself.
+ *
+ * `big-hit`, `mechanic-proxy` and `heal-and-load` are NOT here: they act on the
+ * EXCHANGE (the hit's own damage) or on the player, not as a debuff on the body,
+ * so an evade that blocks debuffs does not block them.
  */
 export const ON_TARGET_PAYOFF_KINDS: ReadonlySet<PayoffKind> = new Set<PayoffKind>([
   'vulnerability', 'plating-shred', 'echo-hit', 'hemorrhage', 'poison-stack',
-  'slow', 'stun', 'contagion',
+  'slow', 'stun', 'contagion', 'root', 'redose',
 ]);
 
 /** Whether this payoff lands on a monster. See {@link ON_TARGET_PAYOFF_KINDS}. */
@@ -222,7 +283,19 @@ export type LineageStatKey =
    * inventing a parallel stat, so a lineage stat row and a Desert recipe's
    * `technique.power-pct` are the same number to the ability code.
    */
-  | 'techniquePowerPct';
+  | 'techniquePowerPct'
+  /**
+   * DoT potency — the Affliction lane's lean (design §24.2, corrected
+   * 2026-10-03: "the `dot.*` family — conversion, or max stacks — not on-hit").
+   * Like `techniquePowerPct` it is an existing PASSIVE, not a new stat: it adds
+   * into `dot.mechanic-mult`, the DoT root's damage multiplier that
+   * `computeDotClassDamagePerStack` reads (full-stack throughput is attack ×
+   * conversion × mechanic multiplier). Conversion was the first candidate and
+   * was NOT taken: it moves damage OUT of the hit into the DoT, so a point of it
+   * is roughly neutral on the light root and a direct-damage loss on every hit —
+   * a shift, not potency.
+   */
+  | 'dotPotencyPct';
 
 /**
  * What a resolved stat row contributes. Folds into passives at recalc through the
@@ -236,7 +309,7 @@ export type LineageStatKey =
 export type LineageStatEffects =
   Partial<Pick<ItemStats, 'attack' | 'onHitDamage' | 'plating' | 'damageReduction' | 'evasion' | 'maxHp' | 'recovery' | 'speed'>>
   & Partial<Pick<StatEffects, 'attackPct' | 'attackSpeedPct'>>
-  & { techniquePowerPct?: number };
+  & { techniquePowerPct?: number; dotPotencyPct?: number };
 
 // ─── Visual signatures (design §8) ───────────────────────────────────────────
 
@@ -303,7 +376,17 @@ export type LineageFxKey =
   | 'engagement.cavern-sprint'
   | 'affliction.spore-veil' | 'affliction.bog-eye'
   | 'kill-chain.wind-chaser' | 'kill-chain.ember-spark'
-  | 'barrier-tempo.bulwark-heart';
+  | 'barrier-tempo.bulwark-heart'
+  // The T1 composition payloads (design §24.2). A PAYLOAD owns its fx, so a
+  // composed verb pushes the key of the lean's payload, not the verb card's own
+  // key (rule 4: perceptible with the sound off — every payload its own effect).
+  // `tempo.ghost-strike` already IS "lands twice" and is reused for that payload.
+  | 'affliction.heavy-drip' | 'affliction.double-dose'
+  | 'engagement.lunge'
+  | 'empowered.mechanic-flash' | 'empowered.crash'
+  | 'control.shackle' | 'control.knockdown'
+  | 'kill-chain.heal-load'
+  | 'technique.refund-flash';
 
 export const LINEAGE_FX_KEYS: readonly LineageFxKey[] = [
   'tempo.trail', 'empowered.trail', 'affliction.trail',
@@ -334,6 +417,12 @@ export const LINEAGE_FX_KEYS: readonly LineageFxKey[] = [
   'affliction.spore-veil', 'affliction.bog-eye',
   'kill-chain.wind-chaser', 'kill-chain.ember-spark',
   'barrier-tempo.bulwark-heart',
+  'affliction.heavy-drip', 'affliction.double-dose',
+  'engagement.lunge',
+  'empowered.mechanic-flash', 'empowered.crash',
+  'control.shackle', 'control.knockdown',
+  'kill-chain.heal-load',
+  'technique.refund-flash',
 ] as const;
 
 /** The keystone fx key of a lane. One per packet (design §4). */
@@ -361,9 +450,17 @@ export interface LineageCard {
   fx: LineageFxKey;
   /** `stat` rows only: the stat this lane scales. */
   statKey?: LineageStatKey;
-  /** Every row but `stat`: when it fires. */
+  /**
+   * Every row but `stat`: when it fires — EXCEPT a T1 verb (design §24.2).
+   *
+   * A `payoff`-row card authored with NEITHER `trigger` nor `payoff` is a VERB:
+   * it carries only its lane, its moment comes from that lane's packet, and what
+   * happens at the moment comes from the active lean's packet (`composeVerb` in
+   * `resolve.ts`). Every legacy payoff-row card (T2 and up) still authors both and
+   * resolves exactly as it always did; it never composes.
+   */
   trigger?: TriggerKind;
-  /** Every row but `stat`: what it does. */
+  /** Every row but `stat`: what it does. Absent on a T1 verb — see `trigger`. */
   payoff?: PayoffKind;
   /**
    * `amplifier` / `keystone` / `cross` rows: the card in this lineage they modify.
@@ -433,6 +530,15 @@ export interface LineageDefinition {
   lanes: readonly [PacketId, PacketId, PacketId];
   forms: readonly LineageForm[];
   cards: readonly LineageCard[];
+  /**
+   * A parked tree: the data is kept, the tree is unreachable (design §24.5). No
+   * page entry, no card or gate purchasable, no runtime cards or capstone, no
+   * tree created or persisted for it, and its forms are plain recipes (crafted at
+   * their biome level, never gated). Every armour, charm and boots lineage is
+   * parked for the second playtest; absent on the live (weapon) trees. Read it
+   * through `isLineageParked`, never as a falsy check scattered at call sites.
+   */
+  parked?: true;
 }
 
 // ─── Resolved shapes (numbers, from the magnitude table) ─────────────────────
@@ -441,6 +547,19 @@ export interface LineageTrigger {
   kind: TriggerKind;
   /** `hit-nth` only: fires on every nth hit. 1 = every hit. */
   n?: number;
+  /**
+   * The moment's rate cap (design §24.2 rule 2: synergy buys reliability, never
+   * rate). A firing whose trigger carries one sets a per-card cooldown when it
+   * lands and is skipped while that cooldown runs. Data, from
+   * `PACKET_HALF_NUMBERS`; absent means uncapped.
+   */
+  capMs?: number;
+  /**
+   * `kill` only: the kill ARMS the card and the player's next landed hit fires it
+   * ("your next hit after a kill", design §24.2). One arming per card, so several
+   * kills before the next hit still pay once.
+   */
+  carry?: boolean;
 }
 
 export interface LineagePayoff {
@@ -448,6 +567,12 @@ export interface LineagePayoff {
   /** Meaning is per payoff kind — see `PAYOFF_UNIT` in `magnitudes.ts`. */
   magnitude: number;
   durationMs?: number;
+  /**
+   * `heal-and-load` only: the multiplier the loaded hit lands at (1.5 = +50%),
+   * folded into `ctx.metadata.empoweredMultiplier` like every other hit
+   * multiplier. The one payoff with two numbers; absent means no load.
+   */
+  loadMultiplier?: number;
   /**
    * Extra bodies an on-target payoff also lands on, from an active amplifier on
    * the `targets` axis. Absent on an unamplified payoff; never authored.
@@ -502,6 +627,37 @@ export interface ResolvedLineageCard {
    * same-trigger form on any other kind, where it would be inert. Never authored.
    */
   perTargetTrigger?: boolean;
+  /**
+   * The fx a firing of this card pushes, when it is not `card.fx`. Set on a
+   * composed T1 verb: a PAYLOAD owns its fx (design §24.2), so the verb pushes the
+   * lean's payload key. Never authored.
+   */
+  payoffFx?: LineageFxKey;
+  /** Set on a T1 verb: which halves produced its trigger and payoff. */
+  composition?: LineageComposition;
+}
+
+/**
+ * How a T1 verb's trigger and payoff were put together (design §24.2).
+ *
+ * The verb names the MOMENT (its own lane's packet); the active lean names the
+ * PAYLOAD (the lean's lane's packet). Same lane, or no lean at all, uses the verb
+ * lane's hand-authored PURE pair, so a verb alone never does nothing and two
+ * halves of one lane never read degenerately.
+ */
+export interface LineageComposition {
+  verbLane: PacketId;
+  /** The active lean's lane, or absent when no lean is active. */
+  leanLane?: PacketId;
+  /** True when the pure pair was used (same lane, or no lean). */
+  pure: boolean;
+  /**
+   * What the moment depends on that the tree itself does not supply, for the
+   * page to say so. `slow`: the Control moment needs a slowed or rooted target,
+   * which comes from a class range (Mid's at-bay slow), a chill, or an ability —
+   * at T1, without one, the verb fires rarely (design §24.2).
+   */
+  needs?: 'slow';
 }
 
 /** A worn form's capstone with its numbers filled in. Granted, never bought. */
