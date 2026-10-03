@@ -162,7 +162,7 @@ function CardView({
       {tag && <span className={`wp-card__tag${state === 'active' ? ' wp-card__tag--active' : ''}`}>{tag}</span>}
       <span className="wp-card__name">{card.name}</span>
       <span className="wp-card__sentence">{keepUnits(model.sentence)}</span>
-      {model.needsSlow && <span className="wp-card__needs">needs a slow</span>}
+      {model.note && <span className="wp-card__needs">{model.note}</span>}
       {(chips.length > 0 || requirement) && (
         <span className="wp-card__foot">
           <span className="wp-card__cost">
@@ -430,8 +430,8 @@ export function LineageTreePanel({ slot, onClose }: Props) {
   );
 
   const bands = useMemo(() => (lineage && progress
-    ? pageBands({ lineage, progress, wallet, lineages, sentenceProgress: preview ?? undefined })
-    : []), [lineage, progress, wallet, lineages, preview]);
+    ? pageBands({ lineage, progress, wallet, lineages, sentenceProgress: preview ?? undefined, archetype: combatArchetype })
+    : []), [lineage, progress, wallet, lineages, preview, combatArchetype]);
   const leanIds = useMemo(() => bands
     .filter((band) => band.mode === 'lit')
     .flatMap((band) => band.rows.filter((row) => row.row === 'stat').flatMap((row) => row.cards.map((c) => c.card.id))),

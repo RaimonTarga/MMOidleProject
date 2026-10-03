@@ -17,14 +17,12 @@
  * lineage listeners run, so a proxy then landed on the same exchange — the hit
  * counted as the mechanic twice.
  *
- * What A found, pinned here so it cannot drift silently: NO T1 composition can
- * hold its own Control moment. The Control verb's moment is "a hit on a slowed or
- * rooted target", and the only payload that roots is the Control LEAN's — which, on
- * the Control verb, is the same-lane PURE pair, whose payload is the knockdown (a
- * stun, which `monsterIsHeld` does not count). So the pure Control pair never
- * self-feeds, and with no outside slow it never fires at all ("needs a slow",
- * §24.2). Design §24.2's "which the Control payload itself supplies once it has
- * fired once" is therefore not true of the shipped composition — a designer call.
+ * What A found: no T1 composition could hold its own Control moment — the pure
+ * Control pair's knockdown was a stun, which did not count as held, and nothing
+ * else slowed. The designer's answer (design §24.9) is pinned here: the Control
+ * LEAN now slows on every hit (`slowOnHit`) and a knockdown counts as held, so the
+ * pure pair seeds its own moment and fires at the cap; a Control verb with any
+ * OTHER lean still has no hold source and never fires ("needs a slow").
  *
  * Run: node --conditions=development --import tsx test/compositionPairs.test.ts
  */
@@ -199,15 +197,26 @@ function assertCapped(label: string, firedAt: number[], capMs: number, stepMs: n
   const VERB = 'hammer-t1-control-payoff';
   const STEP = 500;
 
-  // A1. No slow source: the pure pair never fires ("needs a slow"), and its
-  // knockdown never makes the target held.
+  // A1. Another lean, no slow source: the Control verb never fires ("needs a
+  // slow"), and nothing holds the target.
   {
-    const player = wielder('ctl-free', 'heavy-hammer', 'hammer', [LEAN, VERB]);
+    const player = wielder('ctl-free', 'heavy-hammer', 'hammer', ['hammer-t1-empowered-stat', VERB]);
     const target = dummy();
     const { firedAt } = fight(player, target, VERB, 30_000, STEP, () => {
       assert(!monsterIsHeld(target), 'nothing on a free target holds it');
     });
     assert(firedAt.length === 0, `with no slow source the Control verb never fires, got ${firedAt.length}`);
+  }
+
+  // A1b. The pure pair seeds its own hold (design §24.9): the Control lean's slow
+  // on the first hit is held by the second, and it fires at the cap, never faster
+  // — the knockdown (a hold too) re-arms nothing inside the cap.
+  {
+    const player = wielder('ctl-seeded', 'heavy-hammer', 'hammer', [LEAN, VERB]);
+    const target = dummy();
+    const { firedAt } = fight(player, target, VERB, 30_000, STEP);
+    assert(firedAt[0] === STEP, `the lean's slow from the first hit holds the second, which fires (got ${firedAt[0]})`);
+    assertCapped('pure Control, self-seeded', firedAt, 5_000, STEP);
   }
 
   // A2. Held for the whole fight by an OUTSIDE slow (the stand-in for the Mid

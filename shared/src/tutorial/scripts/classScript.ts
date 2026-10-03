@@ -599,7 +599,7 @@ class ScriptBuilder {
     const { lineage, card, resolved } = this.weaponCard(this.plan.weaponCards.lean);
     if (card.row !== 'stat' || card.tier !== 1) throw new Error(`${this.plan.className}: ${card.id} is not a tier-1 lean`);
     const weapon = name(lineage.forms[0].recipeId);
-    const stat = statLine(resolved.statEffects)?.replace(/\.$/, '');
+    const stat = statLine(resolved.statEffects, 'short')?.replace(/\.$/, '');
     if (!stat) throw new Error(`${this.plan.className}: ${card.id} resolves to no stat`);
     this.cardBeats(chapter, card.id, {
       farm: (shard, territory) => `The ${weapon} has a page of its own, and its first card is paid in ${shard}s. Every kill in ${territory} territory pays them; the map names each node's territory.`,
