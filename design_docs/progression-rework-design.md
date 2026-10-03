@@ -1123,3 +1123,142 @@ then swaps every melee plan to the Chaotic Axe for the seals and the gate, so th
 it buys is inert in every boss fight (a lineage pays only while its own form is worn); and
 no tutorial character ever picks a frame, so the frame loops are untaught. Both belong to
 the next tutorial beat pass, with the second-node-per-biome beat.
+
+
+## 24. Course correction after the first playtest (decided 2026-10-03)
+
+The designer played the merged rework (develop `9ccd9d3d`) on 2026-10-02. Verdict: the
+structure works and the texture does not. Nothing below touches the backbone — a slot
+holds a lineage, forms open at boss gates, cards are owned forever and active by choice,
+the capstone is the gate's price, migration and persistence. Everything below is about
+what a card feels like, where its currency comes from, and how the page explains it.
+
+The complaints, verbatim in spirit: upgrades do not feel consequential at T1; the choices
+are not cool; shards are all over the place (three currencies per node from mobs that look
+alike); armour, charm and boots kept the +N ladder while weapons lost it; the tree panel is
+a data-model viewer; card flavour text clutters the tiles.
+
+### 24.1 Perceptibility is a shape rule, not a size rule
+
+Run 2–4 balanced every card to within ±3 percentage points of its neighbours' DPS uplift.
+A card balanced to be indistinguishable is, by construction, imperceptible; we rebuilt the
+drip we set out to remove (§0). Two rules replace that:
+
+- **A payoff is perceptible with the sound off, by a change in what bodies do, never by a
+  damage number.** An echo is a whole second swing at full damage, not 30% folded into the
+  first. A slow makes the target visibly crawl. A bleed ticks big and rarely. An evasion
+  window leaves an afterimage. Event-shaped payoffs do not scale with base attack, so they
+  feel the same at T1 as at T4; percent payoffs are the only kind small numbers starve.
+- **Trade frequency for magnitude.** The trigger-rate normalisation keeps the expected value;
+  the authored cadence moves to one firing every 4–6 s at reference attack speed (`hit-nth`
+  n of 5–6 at T1), and the magnitude rises to a whole attack's worth or more.
+
+The bench criterion (§18.9) changes job: it is a **viability floor** — no lane below 0.9×
+the median uplift of its tier — and stops being a similarity target. Ordinal encounter
+checks stay.
+
+### 24.2 The T1 band is a lean and a verb
+
+Two rows at T1. **Row 1, the lean**: a real stat move of 8–10% in the lane's stat, the
+direction the player chooses; the headroom is the folded ladder (§23). **Row 2, the verb**:
+one event-shaped payoff per lane, describable in one sentence, visible under 24.1. Rows
+above are unchanged in kind (T2 amplifier, T3 keystone, T4 cross); an amplifier now moves
+an EVENT's axis (every 6th → every 4th hit; one body → two; 2 s → 4 s), which is what
+`AmplifiedAxis` already encodes.
+
+Provisional verbs for the five T1 weapons, for the designer to edit (the existing payoff
+vocabulary is reused where it fits; new kinds are marked *new*):
+
+| Weapon (biome) | Lane | Verb | One sentence |
+|---|---|---|---|
+| Broadsword (Plains) | Technique | Drilled Form | Every 5th hit resets your Technique's cooldown; the ability icon flashes ready. (`technique-refund` at 100%) |
+| | Kill chain | Momentum | A kill makes your next swing land twice. (`echo-hit` at 100%, `kill` trigger) |
+| | Empowered | Breaker | Every 6th hit is a heavy swing that counts as your mechanic firing. (*new* `mechanic-proxy`, the Signature idea on a counter) |
+| Rapier (Forest) | Tempo | Flurry | Every 6th hit strikes twice. (`echo-hit` at 100%) |
+| | Affliction | Venom Point | Every 6th hit leaves a bleed worth a whole swing over 4 s. (`hemorrhage`) |
+| | Engagement | Opening Lunge | Your first hit on each new target is a lunge for double damage, with an afterimage. (`first-hit` + *new* `big-hit` 2×) |
+| Hammer (Mountain) | Empowered | Quake | Every 6th hit shakes the ground and hits every adjacent body for a full swing. (`echo-hit` with `targets`) |
+| | Control | Stagger | Every 5th hit knocks the target down for 1.5 s. (`stun`) |
+| | Engagement | Standfast | Stand still for 3 s and you plate up until you move. (`standing` + `plating-stack`) |
+| Axe (Cave) | Tempo | Frenzy | Every 6th hit opens 3 s of doubled attack speed. (`speed-window` at 100%) |
+| | Kill chain | Reaper | A kill heals a tenth of your pool and loads your next hit. (`heal` + `empower-next`) |
+| | Empowered | Cleave | Every 6th hit splits onto a second body for full damage. (`echo-hit`, `targets` 2) |
+| Dagger (Swamp) | Affliction | Fester | Every 5th hit doubles the poison on the target. (`poison-stack` burst) |
+| | Control | Hamstring | Every 5th hit roots the target for 2 s. (`root`) |
+| | Kill chain | Shadow Step | After a kill, your first hit on the next target is a backstab for triple. (`kill` latch + *new* `big-hit` 3×) |
+
+Magnitudes are the designer's; the table fixes shape and cadence. Every verb needs its
+own readable fx, not a tint.
+
+### 24.3 One shard per node
+
+The designer's proposal, adopted over §5's family-keyed drops: **every node is categorised
+under its dominant family, and every kill in the node pays that family's shard**, minority
+families included. Blends stay as composition and texture (the minority families still
+punish differently); the drop seam reads the node, not the monster. The map and the arrival
+banner name the family and the shard ("Pack territory · drops Tempo"). A player learns a
+node's currency in one visit and never collects three currencies from one clearing.
+
+Node authoring gets a brief from this: every node has a family identity, a shard, a
+composition, and ideally one thing that makes it a place. That is the node variety §0 asked
+for, by a different door than modifiers.
+
+### 24.4 A biome's families are its weapon's lanes
+
+So that "stay in the Forest to build Forest gear" is coherent without a lookup: **the three
+families of a T1 biome drop exactly the three lanes of that biome's weapon.** Four moves,
+`punishes` unchanged:
+
+| Biome | Weapon lanes | Family → shard today | Change |
+|---|---|---|---|
+| Plains | technique / kill-chain / empowered | Herd empowered, Swarm technique, **Sky engagement** | Sky → **kill-chain** |
+| Forest | tempo / affliction / engagement | Pack tempo, **Grove empowered**, Canopy affliction | Grove → **engagement** |
+| Mountain | empowered / control / engagement | Crag empowered, Ridge control, **Hopper tempo** | Hopper → **engagement** |
+| Cave | tempo / kill-chain / empowered | **Brood affliction**, Brute empowered, Deep kill-chain | Brood → **tempo** |
+| Swamp | affliction / control / kill-chain | Mire affliction, Coven control, Stalker kill-chain | none |
+
+T1 coverage after the moves: empowered 3, kill-chain 3, tempo 2, engagement 2, affliction
+2, control 2, technique 1 (+ the Plains boss stopgap). Bulwark and Barrier-tempo have no T1
+weapon lane and no T1 family, which is fine while non-weapon trees are parked (24.5). When
+they return, a biome's non-weapon lineages pick their lanes from the biome's three.
+
+### 24.5 Non-weapon slots are plain items; the ladder is retired everywhere
+
+For the next playtest the weapon tree is the one thing made excellent. **Armour, charm and
+boots trees are parked**: data kept, not reachable (no cards buyable, no page entry, no
+shard cost anywhere), so nothing is deleted and the review's P4 (78 unreachable non-weapon
+cards) is moot until they return. **The +N ladder and the evolve path are retired on every
+slot**: a non-weapon item is crafted full power at its recipe (fold its ladder into base
+per §23), and a T2 vest is a plain recipe gated by biome level, not an evolution of the
+T1 vest. One rule for four slots.
+
+### 24.6 The page, not the panel
+
+The tree is reached by clicking the equipped weapon, and reads top to bottom:
+
+1. the form's art and name — the thing you are growing;
+2. one row per tier, each row **a choice of three cards in three lane colours, one lit**;
+   "a row is a choice, a lane is a colour" is the whole mental model;
+3. the gate at the bottom: boss portrait, capstone count, what it opens.
+
+A card is **one sentence, no flavour text** (the `description` field stays authored and is
+not rendered). Its number is shown as before → after on the real stat sheet for a lean,
+and as the sentence for a verb. Shards appear where they drop — map and banner — and only
+secondarily in a wallet. In combat, one **rhythm readout** near the HP bar, shared with the
+frame loop's window/bank, shows a filling ring per active triggered card (at most three)
+that flashes when the payoff is ready. Not buff tiles.
+
+Mockup first, in the browser, like the original tree mockup; the run implements the
+approved mockup.
+
+### 24.7 Unchanged
+
+Runtime and persistence; gates and capstones; the keystones at T3 and the cross at T4;
+ability nodes (data-only) and the Technique packet; the families' `punishes` table and the
+monster pass; the T1 boss pass; flat Recovery; the ability pass design (§22), which now
+inherits 24.1's shape rule for its bespoke keystones.
+
+### 24.8 Order
+
+Mockup → the designer approves → one run (data, runtime seam, page, readout, bench floor,
+tutorial kit) → second playtest. The ability run (§22) follows the second playtest.
