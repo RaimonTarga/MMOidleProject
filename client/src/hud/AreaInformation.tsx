@@ -2,14 +2,14 @@ import { useEffect, useId, useRef, useState, type CSSProperties } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import {
   AREA_DANGER_LABELS, areaDanger, BIOME_DATABASE, type AreaDanger,
-  NODE_BIOMES, nodeFamily, nodeShard, shardName, type NodeBiomeInfo, type NodeGateEntity,
+  NODE_BIOMES, type NodeBiomeInfo, type NodeGateEntity,
 } from '@mmo-idle/shared';
 import { UIIcon } from '../ui/UIIcon';
 import { DUNGEON_ICON } from '../ui/map/constants';
 import { ShardIcon } from '../ui/map/ShardIcon';
 import { deathOverlayAtom, hpAtom, nodeLoadingAtom, playerNodeIdAtom, playerPosAtom, statusAtom, tabResyncAtom } from './atoms';
 import { areaArrivalAtom } from './areaInformationState';
-import { nearbyExits } from './areaInformationModel';
+import { arrivalTerritoryLine, nearbyExits } from './areaInformationModel';
 import './areaInformation.css';
 
 const ARROWS = { north: '↑', south: '↓', east: '→', west: '←' };
@@ -103,11 +103,7 @@ export function AreaInformation() {
   if (blocked || !nodeId) return null;
   const info = arrival?.nodeId === nodeId ? NODE_BIOMES[nodeId] : null;
   // The node's territory and the one shard every kill in it pays (design §24.3).
-  // It replaces the modifier line, whose copy promised effects Phase 2b removed
-  // (review P13). A node with no blend (dungeon, sanctuary) has no territory and
-  // says nothing about shards rather than something untrue.
-  const territory = info ? nodeFamily(nodeId) : undefined;
-  const paidShard = info ? nodeShard(nodeId) : undefined;
+  const territoryLine = info && arrival ? arrivalTerritoryLine(nodeId, arrival.kind) : null;
   const visibleExits = exits.filter(exit => exit.nodeId === nodeId && exit.exitNodeId && NODE_BIOMES[exit.exitNodeId]);
   return <>
     {info && arrival && <section key={arrival.startedAt} className={`area-arrival area-arrival--${arrival.kind}`}
@@ -116,12 +112,10 @@ export function AreaInformation() {
       <h2>{info.displayName}</h2>
       <div className="area-arrival__metadata">{BIOME_DATABASE.get(info.biomeGroup)?.name ?? info.biomeGroup} · Tier {info.biomeTier}</div>
       <AreaDangerLabel info={info} />
-      {territory && paidShard && <div className="area-arrival__modifier area-arrival__territory">
-        <ShardIcon packet={paidShard} size={14} />
-        <strong>{territory.name} territory</strong>
-        {arrival.kind === 'return'
-          ? <span> · {shardName(paidShard)}s</span>
-          : <span> · every kill here drops {shardName(paidShard)}s</span>}
+      {territoryLine && <div className="area-arrival__modifier area-arrival__territory">
+        <ShardIcon packet={territoryLine.shard} size={14} />
+        <strong>{territoryLine.territory}</strong>
+        <span> · {territoryLine.detail}</span>
       </div>}
     </section>}
     {!info && <div className={visibleExits.length > 1 ? 'area-exits area-exits--multiple' : 'area-exits'}>{visibleExits.map(exit => {

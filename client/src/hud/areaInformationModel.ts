@@ -1,4 +1,7 @@
-import { buildNodeGateEntities, NODE_BIOMES, type NodeGateEntity, type Vec2 } from '@mmo-idle/shared';
+import {
+  buildNodeGateEntities, NODE_BIOMES, nodeFamily, nodeShard, shardName,
+  type NodeGateEntity, type PacketId, type Vec2,
+} from '@mmo-idle/shared';
 
 export type ArrivalKind = 'discovery' | 'new-node' | 'return';
 export const ARRIVAL_DURATION_MS: Record<ArrivalKind, number> = {
@@ -13,6 +16,27 @@ export function arrivalKind(nodeId: string, previouslyVisited: readonly string[]
     return prior && prior.biomeTier === info?.biomeTier && prior.biomeGroup === info?.biomeGroup;
   });
   return familiar ? 'new-node' : 'discovery';
+}
+
+/**
+ * The arrival banner's territory line (design §24.3): the node's dominant family
+ * and the one shard every kill in it pays — "Pack territory · every kill here
+ * drops Gale Shards", shortened on a return visit. Null for a node with no blend
+ * (dungeon, sanctuary, the Clearing): it says nothing about shards rather than
+ * something untrue. Replaces the modifier line (review P13).
+ */
+export function arrivalTerritoryLine(
+  nodeId: string,
+  kind: ArrivalKind,
+): { territory: string; shard: PacketId; detail: string } | null {
+  const family = nodeFamily(nodeId);
+  const shard = nodeShard(nodeId);
+  if (!family || !shard) return null;
+  return {
+    territory: `${family.name} territory`,
+    shard,
+    detail: kind === 'return' ? `${shardName(shard)}s` : `every kill here drops ${shardName(shard)}s`,
+  };
 }
 
 // At baseline movement speed this gives several seconds of notice before crossing.
