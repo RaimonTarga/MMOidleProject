@@ -110,6 +110,29 @@ export function applyMonsterRoot(
   }
 }
 
+/**
+ * Is this monster HELD — slowed or rooted, by anyone, right now? The Control
+ * moment's condition (design §24.2: "a hit on a slowed or rooted target").
+ *
+ * Read off the live status records rather than the reconciled
+ * `monsterMoveSpeedMult`, which only catches up on the next control pass: a slow
+ * that landed earlier in this tick already holds the body. Every slow the ladder
+ * knows counts — an ability or at-bay slow, a chill, a freeze — and the ladder's
+ * root. A boss that roots ITSELF for a scripted phase is not held by anyone, so
+ * the script's `isRooted` alone does not count. A stun is a different rung and is
+ * not a hold either: "slowed or rooted" is the whole sentence.
+ */
+export function monsterIsHeld(monster: MonsterEntity): boolean {
+  const live = (id: string): boolean => {
+    const effect = getStatusEffect(monster.tracksCombat, id);
+    return effect !== undefined && effect.remainingMs !== 0;
+  };
+  return live(ABILITY_SLOW_EFFECT_ID)
+    || live(ABILITY_ROOT_EFFECT_ID)
+    || live(CHILL_EFFECT)
+    || live(FROZEN_EFFECT);
+}
+
 interface SlowTotals {
   entity: MonsterEntity;
   move: number;

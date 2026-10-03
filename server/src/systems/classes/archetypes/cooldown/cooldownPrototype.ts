@@ -1,5 +1,5 @@
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
-import { setEmpoweredAttack, isEmpoweredAttack, registerEmpoweredMultiplier } from '../../../combat/engine/empoweredAttacks';
+import { setEmpoweredAttack, isEmpoweredAttack, isMechanicProxy, registerEmpoweredMultiplier } from '../../../combat/engine/empoweredAttacks';
 import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
 import { initCooldownFrameLoop } from './frameLoop';
 import { initCooldownT3 } from './t3';
@@ -108,6 +108,9 @@ export function initCooldownArchetype(): void {
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
     if (!ctx.metadata['empoweredAttack']) return;
+    // A `mechanic-proxy` hit counts as the execution for what reads it, but it
+    // never restarts the cycle or announces `mechanic-fired` (rule 3).
+    if (isMechanicProxy(ctx)) return;
 
     // Query by component presence, not by combatArchetype string.
     const entity = ctx.attacker;

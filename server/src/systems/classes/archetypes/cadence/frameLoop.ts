@@ -20,6 +20,7 @@
  */
 
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
+import { isMechanicProxy } from '../../../combat/engine/empoweredAttacks';
 import { attackCadenceMult } from '../../../combat/engine/attackCadence';
 import { applyStun } from '../../../combat/status/stun';
 import { monsterIgnoresControl } from '../../../combat/status/controlImmunity';
@@ -76,6 +77,9 @@ function cadenceBankCap(player: PlayerEntity): number {
 
 export function initCadenceFrameLoop(): void {
   registerCombatListener('onHit', (ctx, world) => {
+    // A `mechanic-proxy` hit (design §24.2) COUNTS AS the mechanic for what reads
+    // it downstream, but it never walks the root's own loop (rule 3).
+    if (isMechanicProxy(ctx)) return;
     if (ctx.attackerType !== 'player') return;
     const player = ctx.attacker;
     if (!player.usesCadence) return;

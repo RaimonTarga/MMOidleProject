@@ -127,6 +127,23 @@ export const LINEAGE_SWITCH_DISCOUNT = 0.5;
 /**
  * The value of one stat row at tier scalar 1 — the natural unit of each stat, not
  * a per-tier tuning row. `quantizeStat` decides how each is rounded.
+ *
+ * THE T1 LEAN (design §24.2, 2026-10-03): "a real stat move of 8–10% in the lane's
+ * scaling stat". The seven weapon lanes' units were re-pitched to that band, each
+ * a PROVISIONAL pick for the designer:
+ *
+ *  - `attackSpeedPct` / `attackPct` / `techniquePowerPct` 0.09 — the middle of the
+ *    band. (Technique power was 0.10, sized as "twice attackPct" when attackPct
+ *    was 0.05; the lean puts all three percentage lanes at one number.)
+ *  - `dotPotencyPct` 0.10 — the top of the band, because it adds into
+ *    `dot.mechanic-mult` (base 1.15–1.25), so +0.10 there is +8–8.7% DoT damage.
+ *  - `attack` 3 — unchanged: ≈ +10% of a ~29-Attack T1 weapon.
+ *  - `speed` 11 — 9% of the reference player's base move speed
+ *    (`GAME_CONFIG.PLAYER_SPEED` 120 × 0.09 = 10.8 → 11). Note the tier scalar's
+ *    `absolute` column climbs ×11 by T4 (→ 121), which no other move-speed source
+ *    does: a designer call before any T2+ Kill-chain stat row is benched.
+ *
+ * These units also feed every T2+ stat row through the tier scalar.
  */
 export const STAT_UNIT: Record<LineageStatKey, number> = {
   attack: 3,
@@ -136,21 +153,23 @@ export const STAT_UNIT: Record<LineageStatKey, number> = {
   evasion: 0.02,
   maxHp: 12,
   recovery: 1,
-  speed: 4,
-  attackPct: 0.05,
-  attackSpeedPct: 0.06,
-  // Technique power multiplies the Technique's own damage and nothing else
-  // (`abilities.ts` applies `technique.power-pct` only when
-  // `ability.slot === 'technique'`), so one row of it buys less of the player's
-  // total output than a row of `attackPct` does — which is why the unit is twice
-  // as large and not the same number. PROVISIONAL, like every other unit here.
-  techniquePowerPct: 0.1,
+  speed: 11,
+  attackPct: 0.09,
+  attackSpeedPct: 0.09,
+  techniquePowerPct: 0.09,
+  dotPotencyPct: 0.10,
 };
 
 /** Stats that are fractions and keep three decimals; everything else is an integer. */
 const FRACTIONAL_STATS: ReadonlySet<LineageStatKey> = new Set<LineageStatKey>([
   'damageReduction', 'evasion', 'attackPct', 'attackSpeedPct', 'techniquePowerPct',
+  'dotPotencyPct',
 ]);
+
+/** Whether a stat row's value is a fraction (shown as a percentage). */
+export function isFractionalStat(key: LineageStatKey): boolean {
+  return FRACTIONAL_STATS.has(key);
+}
 
 export function quantizeStat(key: LineageStatKey, value: number): number {
   if (FRACTIONAL_STATS.has(key)) return Math.round(value * 1000) / 1000;
@@ -170,6 +189,13 @@ export interface PayoffUnit {
    * tier scalar buys duration-free presence and `magnitude` stays 1.
    */
   binary?: boolean;
+  /**
+   * True for the event-shaped T1 payloads (design §24.1): the unit is a value PER
+   * FIRING — a multiplier, a share of a whole swing — never divided by the
+   * trigger rate and never tier-scaled. A ×2 lunge divided by a hit-rate is not a
+   * smaller lunge, it is a hit that does less than nothing extra.
+   */
+  perFiring?: boolean;
 }
 
 /**
@@ -192,6 +218,17 @@ export interface PayoffUnit {
  *   technique-refund fraction taken off the REMAINING cooldown of each Technique
  *   technique-window fraction the next Technique's hit is empowered by
  *   evasion-window  flat evade (dodge) chance added to the player for the window
+ *   big-hit         multiplier on the triggering hit (2 = double)
+ *   mechanic-proxy  multiplier for a root with no damage-multiplier mechanic of
+ *                   its own; every other root uses its own empowered multiplier
+ *   heal-and-load   fraction of max HP healed (the load is `loadMultiplier`)
+ *   root            binary
+ *   redose          share of what the target's player DoTs still owe, added as
+ *                   a lineage bleed (1 = doubles the affliction)
+ *
+ * The last five are the T1 composition payloads (design §24.2). The numbers the
+ * T1 band actually fires are in {@link PACKET_HALF_NUMBERS}; their entries here
+ * are the units a hand-authored (legacy-shaped) card using the kind would get.
  */
 const payoffUnitEntries: [PayoffKind, PayoffUnit][] = [
   ['vulnerability',   { magnitude: 0.12, durationMs: 4000, fractional: true }],
@@ -231,6 +268,12 @@ const payoffUnitEntries: [PayoffKind, PayoffUnit][] = [
   // and speed-window's duration (both are proc-triggered, short windows) —
   // since the payoff has no bench history of its own yet.
   ['evasion-window',  { magnitude: 0.15, durationMs: 2500, fractional: true }],
+  // The T1 composition payloads (design §24.2): per-firing, see `perFiring`.
+  ['big-hit',         { magnitude: 2, fractional: false, perFiring: true }],
+  ['mechanic-proxy',  { magnitude: 1.5, fractional: false, perFiring: true }],
+  ['heal-and-load',   { magnitude: 0.10, fractional: true, perFiring: true }],
+  ['root',            { magnitude: 1, durationMs: 2000, fractional: false, binary: true }],
+  ['redose',          { magnitude: 1, durationMs: 4000, fractional: true, perFiring: true }],
 ];
 
 export const PAYOFF_UNIT: Map<PayoffKind, PayoffUnit> = new Map<PayoffKind, PayoffUnit>(payoffUnitEntries);
@@ -311,6 +354,12 @@ export const TRIGGER_FIRES_PER_PULL: Record<TriggerKind, number> = {
   // the figure authored. Revisit when the lane matrix gains a second Technique
   // slot (design §18.10's frames column is the same kind of gap).
   'technique-cast': 2,
+  // The two §24.2 moments are rate-capped at 5 s, and a class that satisfies them
+  // trivially fires them AT the cap: 12 s / 5 s = 2.4 per pull, floored to 2
+  // because the first firing has to wait for the target to be afflicted / held.
+  // PROVISIONAL; only legacy-shaped cards (none authored) are normalised by it.
+  'hit-afflicted': 2,
+  'hit-held': 2,
 };
 
 /** Expected fires per pull for one resolved trigger. Never below 1. */
@@ -322,6 +371,102 @@ export function triggerFiresPerPull(trigger?: { kind: TriggerKind; n?: number })
   }
   return Math.max(1, TRIGGER_FIRES_PER_PULL[trigger.kind] ?? 1);
 }
+
+// ─── The T1 lean-and-verb halves (design §24.2) ──────────────────────────────
+
+/** A moment's numbers: the `hit-nth` interval and the rate cap. */
+export interface PacketMomentNumbers {
+  n?: number;
+  capMs?: number;
+}
+
+/** A payload's numbers, PER FIRING. Meaning per kind — see `PAYOFF_UNIT`. */
+export interface PacketPayloadNumbers {
+  magnitude: number;
+  durationMs?: number;
+  /** `heal-and-load` only: the loaded hit's multiplier. */
+  loadMultiplier?: number;
+}
+
+export interface PacketHalfNumbers {
+  /** The verb's moment. The pure pair fires on this same moment. */
+  moment: PacketMomentNumbers;
+  /** The payload this lane's lean hands a verb of another lane. */
+  payload: PacketPayloadNumbers;
+  /** The pure payload: same-lane pair, or a verb with no lean. */
+  pure: PacketPayloadNumbers;
+}
+
+/**
+ * Every number the T1 band fires (design §24.2). The SHAPES — which trigger, which
+ * payoff, which fx, the phrases — are on `PacketDefinition.halves`
+ * (`packets.ts`); `packetMoment`/`packetPayload`/`packetPurePair` (`resolve.ts`)
+ * join the two, so this stays the one magnitude table.
+ *
+ * PER FIRING, NOT PER PULL (design §24.1): a payload is an event — a whole second
+ * swing, a lunge, a root — and the moment's cadence (one firing every 4–6 s at
+ * reference attack speed) and its rate cap carry the budget. Nothing here is
+ * divided by the trigger rate, and nothing is tier-scaled: an event feels the
+ * same at T1 as at T4.
+ *
+ * EVERY NUMBER IS PROVISIONAL — the shapes and cadences are design §24.2's, the
+ * magnitudes are the course-correction brief's seeds for the designer:
+ *
+ *   tempo       moment every 6th hit, uncapped (the §24.1 "n of 5–6");
+ *               payload/pure an echo of the WHOLE hit (1.0), on-hit included
+ *   affliction  moment capped at one per 5 s (§24.2);
+ *               payload a lineage bleed worth 1.0 × the hit over 4 s;
+ *               pure a re-dose of 1.0 × what the target's DoTs still owe (doubles)
+ *   engagement  moment per body; payload/pure a ×2 lunge
+ *   empowered   moment = the mechanic's own cadence;
+ *               payload the class's own empowered multiplier (`magnitude` 1.5 is
+ *               the fallback for a root with none — dot, summoner, non-Duelist
+ *               reload); pure ×1.5 on the mechanic's hit ("half again")
+ *   control     moment capped at one per 5 s (§24.2);
+ *               payload a 2 s root; pure a 1.5 s stun ("knocks it down")
+ *   kill-chain  moment = the next landed hit after a kill;
+ *               payload/pure heal 10% of max HP and the hit lands ×1.5
+ *   technique   moment = a Technique landing;
+ *               payload refunds 1/3 of that Technique's remaining cooldown;
+ *               pure refunds 1/2
+ */
+export const PACKET_HALF_NUMBERS: Partial<Record<PacketId, PacketHalfNumbers>> = {
+  'tempo': {
+    moment: { n: 6 },
+    payload: { magnitude: 1 },
+    pure: { magnitude: 1 },
+  },
+  'affliction': {
+    moment: { capMs: 5_000 },
+    payload: { magnitude: 1, durationMs: 4_000 },
+    pure: { magnitude: 1, durationMs: 4_000 },
+  },
+  'engagement': {
+    moment: {},
+    payload: { magnitude: 2 },
+    pure: { magnitude: 2 },
+  },
+  'empowered': {
+    moment: {},
+    payload: { magnitude: 1.5 },
+    pure: { magnitude: 1.5 },
+  },
+  'control': {
+    moment: { capMs: 5_000 },
+    payload: { magnitude: 1, durationMs: 2_000 },
+    pure: { magnitude: 1, durationMs: 1_500 },
+  },
+  'kill-chain': {
+    moment: {},
+    payload: { magnitude: 0.1, loadMultiplier: 1.5 },
+    pure: { magnitude: 0.1, loadMultiplier: 1.5 },
+  },
+  'technique': {
+    moment: {},
+    payload: { magnitude: 1 / 3 },
+    pure: { magnitude: 0.5 },
+  },
+};
 
 // ─── Unlock levels (design §4) ───────────────────────────────────────────────
 
@@ -528,8 +673,10 @@ export function payoffValue(params: {
 
   // A binary payoff has nothing to scale: it happens or it does not, and a stun
   // that grew with the tier scalar would be an eight-second stun at T4. For the
-  // same reason it is never divided by its trigger rate.
-  if (unit.binary) return { magnitude: unit.magnitude, durationMs: unit.durationMs };
+  // same reason it is never divided by its trigger rate. A per-firing payload
+  // (design §24.1) is the same shape for a different reason: its unit already IS
+  // one firing's worth.
+  if (unit.binary || unit.perFiring) return { magnitude: unit.magnitude, durationMs: unit.durationMs };
 
   const kind: ScaleKind = unit.fractional ? 'fraction' : 'absolute';
   // `PAYOFF_UNIT` is a PER-PULL total (design §18.3), so a payoff is worth its

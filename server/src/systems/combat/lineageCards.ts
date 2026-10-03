@@ -32,7 +32,9 @@
  * weapon trail, derived client-side from `PlayerView.lineages`).
  */
 import {
+  ABILITY_ROOT_EFFECT_ID,
   applyStatusEffect,
+  payoffLandsOnTarget,
   type StatusEffect,
   type StatusEffectConfig,
   defensiveFaceForSubVariant,
@@ -70,7 +72,11 @@ import { registerMechanicFiredListener } from './engine/mechanicFired';
 import { applyPlayerDebuff, playerDebuffConfig } from '../classes/shared/applyPlayerDebuff';
 import { LINEAGE_BLEED_ID, LINEAGE_POISON_ID } from './damage/bleedIds';
 import { applyPlayerProcDamage } from './damage/procDamage';
-import { applyMonsterSlow } from './status/monsterControl';
+import { applyMonsterRoot, applyMonsterSlow, monsterIsHeld } from './status/monsterControl';
+import { applyMechanicProxy } from './engine/empoweredAttacks';
+import { playerOnHitDamage } from './engine/onHitDamage';
+import { applyHealToPlayer } from '../defense/regen/healing';
+import { actorFromPlayer } from '../../world/worldLogActors';
 import { applySharedDebuffMaxWins } from './status/sharedDebuffRecord';
 import { applyStun } from './status/stun';
 import { monsterIgnoresControl } from './status/controlImmunity';
@@ -116,6 +122,16 @@ const nthCounter = (key: string): string => `lineage.nth.${key}`;
 const firstHitFlag = (key: string): string => `lineage.first.${key}`;
 const pulseCd = (key: string): string => `lineage.pulse.${key}`;
 const standingCd = (key: string): string => `lineage.stand.${key}`;
+/** A moment's rate cap (design §24.2), per card: one landed firing per `capMs`. */
+const capCd = (key: string): string => `lineage.cap.${key}`;
+/** `kill` with `carry`: armed by a kill, spent by the next landed hit. */
+const carryFlag = (key: string): string => `lineage.carry.${key}`;
+/**
+ * `hit-afflicted` reads whether the target was afflicted BEFORE this hit — "a
+ * target you have ALREADY afflicted" — so the class DoT this very hit lays down
+ * does not count. Probed in `beforeAttack` and carried on the exchange.
+ */
+const AFFLICTED_BEFORE = 'lineageAfflictedBefore';
 
 // ── The resolved-card cache ──────────────────────────────────────────────────
 
@@ -147,6 +163,12 @@ interface LineageFiring {
    * `trigger`-axis amplifier naming the trigger its payoff already fires on.
    */
   perTarget?: boolean;
+  /**
+   * A composed T1 verb (design §24.2). Its `technique-refund` payload refunds THE
+   * Technique that landed at the technique moment, where a legacy card refunds
+   * every attuned Technique.
+   */
+  composed?: boolean;
 }
 
 /**
@@ -178,10 +200,13 @@ function firingsFor(player: PlayerEntity, kind: TriggerKind): LineageFiring[] {
     if (!moment) continue;
     out.push({
       key: resolved.card.id,
-      fx: resolved.card.fx,
+      // A composed verb pushes its PAYLOAD's fx (design §24.2: a payload owns its
+      // effect), not the verb card's own key.
+      fx: resolved.payoffFx ?? resolved.card.fx,
       trigger: moment,
       payoff: resolved.payoff,
       perTarget: resolved.perTargetTrigger,
+      composed: resolved.composition !== undefined,
     });
   }
   for (const worn of runtime.capstones) {
@@ -232,6 +257,49 @@ function hitBasis(player: PlayerEntity, ctx?: CombatContext): number {
   return Math.max(1, Math.round(base));
 }
 
+/**
+ * The on-hit an echo carries: the exchange's own resolved on-hit when there is
+ * one (imbues and formation weights included), else the weapon's flat on-hit. On
+ * the echo it goes through the proc seam with the rest of the hit, so it skips
+ * plating and pays half DR like the echo does.
+ */
+function echoOnHit(player: PlayerEntity, ctx?: CombatContext): number {
+  const onHit = ctx ? playerOnHitDamage(ctx) : player.dealsDamage.onHitDamage;
+  return Math.max(0, onHit);
+}
+
+/**
+ * Write the lineage bleed (`LINEAGE_BLEED_ID`, its own id per design §18.1) as
+ * `ticks` ticks of `perTick`. Ordinary refresh: this application's numbers win.
+ * A caller that must ADD to what is already ticking (`redose`) folds the old
+ * remainder into `perTick` itself.
+ */
+function writeLineageBleed(
+  world: World,
+  player: PlayerEntity,
+  target: MonsterEntity,
+  perTick: number,
+  ticks: number,
+): void {
+  const tickMs = BLEED_TICK_MS;
+  const bleed = applyPlayerDebuff(player, target.tracksCombat, {
+    id: LINEAGE_BLEED_ID,
+    instanced: false,
+    remainingMs: -1,
+    sourceId: player.isPlayer.id,
+    data: {
+      damagePerTick: perTick, nextTickIn: tickMs, tickIntervalMs: tickMs,
+      bleedMode: 0,
+    },
+  });
+  bleed.data.damagePerTick = perTick;
+  bleed.data.tickIntervalMs = tickMs;
+  bleed.data.bleedMode = 0;
+  if (!(bleed.data.nextTickIn > 0)) bleed.data.nextTickIn = tickMs;
+  bleed.stacks = ticks;
+  attachMarker(world, target, 'hasHemorrhage');
+}
+
 // ── The payoff dispatch ──────────────────────────────────────────────────────
 
 interface PayoffSite {
@@ -241,13 +309,37 @@ interface PayoffSite {
   ctx?: CombatContext;
   /** The monster, when the trigger had one. */
   target?: MonsterEntity;
+  /** `technique-cast` only: the Technique that resolved. */
+  abilityId?: string;
 }
 
-/** Payoffs that land on a monster — the ones evade blocks and that carry a target. */
-const ON_TARGET: ReadonlySet<PayoffKind> = new Set<PayoffKind>([
-  'vulnerability', 'plating-shred', 'echo-hit', 'hemorrhage', 'poison-stack',
-  'slow', 'stun', 'contagion',
-]);
+/**
+ * The exchange a hit-shaped payoff (`big-hit`, `mechanic-proxy`, the load of
+ * `heal-and-load`) acts on: a player's hit on a monster that is still standing.
+ *
+ * A moment with no exchange (a reload completing, a cast Technique, a Guard) has
+ * no hit to multiply, so those payoffs do nothing there rather than invent one.
+ * A chaotic miss deals no direct damage, so multiplying it would draw an effect
+ * for nothing.
+ */
+function liveExchange(world: World, ctx: CombatContext | undefined): ctx is CombatContext & {
+  attackerType: 'player'; defenderType: 'monster'; attacker: PlayerEntity; defender: MonsterEntity;
+} {
+  if (!ctx || ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return false;
+  if (ctx.metadata['chaoticMiss']) return false;
+  return ctx.defender.hasHealth.hp > 0 && world.hasMonster(ctx.defender.isMonster.id);
+}
+
+/**
+ * Multiply the hit in flight, folded into `ctx.metadata.empoweredMultiplier` —
+ * exactly as `damage-window` does. ONE multiplier per hit (design §6): a lunge,
+ * a loaded hit and a mechanic's own multiplier share one record, so a Technique
+ * rider or a share-of-the-hit payoff dividing by it sees one honest number.
+ */
+function foldHitMultiplier(ctx: CombatContext, multiplier: number): void {
+  ctx.damage = Math.floor(ctx.damage * multiplier);
+  ctx.metadata['empoweredMultiplier'] = Number(ctx.metadata['empoweredMultiplier'] ?? 1) * multiplier;
+}
 
 /**
  * Apply one payoff. Returns the `card-fx` this application earned, or null when
@@ -258,7 +350,7 @@ function applyPayoff(site: PayoffSite, firing: LineageFiring): CardFxDraft | nul
   const { kind, magnitude, durationMs } = firing.payoff;
   const sourceId = player.isPlayer.id;
 
-  if (ON_TARGET.has(kind)) {
+  if (payoffLandsOnTarget(kind)) {
     // Every on-target applier early-returns on a blocking evade, like every other
     // on-hit applier in the codebase (CLAUDE.md, "Combat And Mechanics").
     if (ctx && evadeBlocksDebuffs(ctx)) return null;
@@ -373,8 +465,46 @@ function applyPayoff(site: PayoffSite, firing: LineageFiring): CardFxDraft | nul
       // fires IS the ability's own.
       //
       // Nothing to refund means nothing happened, so no effect is drawn.
-      const refunded = refundTechniqueCooldowns(player, magnitude);
+      //
+      // A composed T1 verb at the Technique moment refunds THE Technique that
+      // landed ("refunds a third of that Technique's cooldown", design §24.2); at
+      // any other moment there is no "that" Technique, so it refunds every
+      // attuned one, as a legacy card does.
+      const only = firing.composed ? site.abilityId : undefined;
+      const refunded = refundTechniqueCooldowns(player, magnitude, only);
       return refunded ? { fx: firing.fx } : null;
+    }
+
+    case 'big-hit': {
+      // The triggering hit is multiplied — the Engagement lunge, Empowered's pure
+      // "half again as hard". Folded into the one multiplier record.
+      if (!liveExchange(world, ctx)) return null;
+      if (!(magnitude > 0)) return null;
+      foldHitMultiplier(ctx, magnitude);
+      return { fx: firing.fx, targetId: ctx.defender.isMonster.id, targetPos: { ...ctx.defender.hasPosition.current } };
+    }
+
+    case 'mechanic-proxy': {
+      // The hit COUNTS AS the class mechanic firing (design §24.2, rule 3): the
+      // root's own empowered multiplier and `mechanicConsumed`, never
+      // `mechanic-fired`, never a frame loop, never the root's pending charge.
+      // `magnitude` is only the fallback for a root with no multiplier mechanic.
+      if (!liveExchange(world, ctx)) return null;
+      if (applyMechanicProxy(world, ctx, magnitude) <= 0) return null;
+      return { fx: firing.fx, targetId: ctx.defender.isMonster.id, targetPos: { ...ctx.defender.hasPosition.current } };
+    }
+
+    case 'heal-and-load': {
+      // A tenth of the pool back, through the one heal funnel (antiheal, the
+      // overheal ward, the heal log), and the hit in flight lands loaded. With no
+      // exchange to load (a Technique that resolved without one), only the heal.
+      if (player.hasHealth.hp <= 0) return null;
+      const heal = Math.round(player.hasHealth.maxHp * Math.max(0, magnitude));
+      const loaded = (firing.payoff.loadMultiplier ?? 1) > 1 && liveExchange(world, ctx);
+      if (heal <= 0 && !loaded) return null;
+      if (heal > 0) applyHealToPlayer(player, player.tracksCombat, heal, world, actorFromPlayer(player));
+      if (loaded && ctx) foldHitMultiplier(ctx, firing.payoff.loadMultiplier ?? 1);
+      return { fx: firing.fx };
     }
 
     case 'technique-window':
@@ -466,7 +596,13 @@ function applyOnTarget(
       // A second, non-empowered hit through the proc seam, which owns
       // invulnerability, the world log, kill credit and rewards. Procs skip
       // plating and pay half DR by design (`mitigatePlayerTickOnMonster`).
-      const basis = hitBasis(player, ctx);
+      //
+      // AND IT CARRIES ON-HIT (design §24.2: "the second hit is a proc — skips
+      // plating, pays half DR, carries on-hit"). The proc seam adds no on-hit of
+      // its own, and `ctx.damage` at `onHit` does not include it yet (on-hit is
+      // added after the onHit listeners), so the echo's share is taken of the hit
+      // PLUS the weapon's on-hit: a whole echo is a whole second swing.
+      const basis = hitBasis(player, ctx) + echoOnHit(player, ctx);
       const damage = Math.max(1, Math.round(basis * magnitude));
       const outcome = applyPlayerProcDamage(world, player, target, damage, {
         tags: ['lineage', firing.key],
@@ -486,25 +622,40 @@ function applyOnTarget(
       // per-tick damage, and the "take the better of both" guard against that was
       // a ratchet: one big hit's bleed maintained forever by chip hits. Ordinary
       // refresh — this application's numbers win, the window restarts.
-      const tickMs = BLEED_TICK_MS;
-      const ticks = Math.max(1, Math.round((durationMs ?? tickMs) / tickMs));
+      const ticks = Math.max(1, Math.round((durationMs ?? BLEED_TICK_MS) / BLEED_TICK_MS));
       const perTick = Math.max(1, Math.round(hitBasis(player, ctx) * magnitude / ticks));
-      const bleed = applyPlayerDebuff(player, target.tracksCombat, {
-        id: LINEAGE_BLEED_ID,
-        instanced: false,
-        remainingMs: -1,
-        sourceId,
-        data: {
-          damagePerTick: perTick, nextTickIn: tickMs, tickIntervalMs: tickMs,
-          bleedMode: 0,
-        },
-      });
-      bleed.data.damagePerTick = perTick;
-      bleed.data.tickIntervalMs = tickMs;
-      bleed.data.bleedMode = 0;
-      if (!(bleed.data.nextTickIn > 0)) bleed.data.nextTickIn = tickMs;
-      bleed.stacks = ticks;
-      attachMarker(world, target, 'hasHemorrhage');
+      writeLineageBleed(world, player, target, perTick, ticks);
+      return landed;
+    }
+
+    case 'redose': {
+      // Affliction's pure pair (design §24.2): "hitting an afflicted target
+      // doubles its affliction". Contagion's copier cannot do it — copying a DoT
+      // onto the body that already carries it merges to the same stacks — so this
+      // ADDS `magnitude` × what every one of this player's DoTs on the target
+      // still owes (the DoT inventory's own estimate, every family counted) to the
+      // lineage bleed, on top of whatever that bleed still had to tick.
+      const owed = playerDotsOnMonster(world, player, target)
+        .reduce((sum, entry) => sum + Math.max(0, entry.remainingDamage), 0);
+      const extra = owed * Math.max(0, magnitude);
+      if (!(extra >= 1)) return null;
+      const prior = getStatusEffect(target.tracksCombat, LINEAGE_BLEED_ID);
+      const priorTicks = prior && prior.data.bleedMode === 0 ? Math.max(0, prior.stacks) : 0;
+      const priorOwed = priorTicks * Math.max(0, prior?.data.damagePerTick ?? 0);
+      const ticks = Math.max(1, priorTicks, Math.round((durationMs ?? BLEED_TICK_MS) / BLEED_TICK_MS));
+      const perTick = Math.max(1, Math.round((priorOwed + extra) / ticks));
+      writeLineageBleed(world, player, target, perTick, ticks);
+      return landed;
+    }
+
+    case 'root': {
+      // Control's payload: the control ladder's root rung, through the one
+      // function that owns it — a control-immune boss refuses it, and a refused
+      // root must not draw an effect that says it landed.
+      if (monsterIgnoresControl(target)) return null;
+      applyMonsterRoot(world, target, durationMs ?? 0, sourceId);
+      const root = getStatusEffect(target.tracksCombat, ABILITY_ROOT_EFFECT_ID);
+      if (!root || root.remainingMs === 0) return null;
       return landed;
     }
 
@@ -622,12 +773,15 @@ function applyTimedSelf(
  * different question from "how long until ready", and refunding it would let the
  * lane drive an ability past its own minimum cycle.
  */
-function refundTechniqueCooldowns(player: PlayerEntity, share: number): boolean {
+function refundTechniqueCooldowns(player: PlayerEntity, share: number, onlyAbilityId?: string): boolean {
   const fraction = Math.min(1, Math.max(0, share));
   if (fraction <= 0) return false;
   const cs = player.tracksCombat;
   let refunded = false;
-  for (const abilityId of player.tracksProgression.attunedAbilities.techniques) {
+  const techniques = onlyAbilityId !== undefined
+    ? [onlyAbilityId]
+    : player.tracksProgression.attunedAbilities.techniques;
+  for (const abilityId of techniques) {
     const key = abilityCooldownKey(abilityId);
     const remaining = getCooldown(cs, key);
     if (remaining <= 0) continue;
@@ -686,9 +840,17 @@ interface CardFxDraft {
  */
 function fire(site: PayoffSite, firings: readonly LineageFiring[]): number {
   let applied = 0;
+  const cs = site.player.tracksCombat;
   for (const firing of firings) {
+    // THE RATE CAP (design §24.2 rule 2: synergy buys reliability, never rate).
+    // A capped moment pays at most once per `capMs` per card. The clock starts
+    // only when the payoff LANDED: a dodge or an immune boss leaves the moment
+    // armed for the next hit rather than eating five seconds for nothing.
+    const capMs = firing.trigger.capMs ?? 0;
+    if (capMs > 0 && isCooldownActive(cs, capCd(firing.key))) continue;
     const drawn = applyPayoff(site, firing);
     if (!drawn) continue;
+    if (capMs > 0) setCooldown(cs, capCd(firing.key), capMs);
     applied++;
     site.world.pushEvent(site.player.hasPosition.nodeId, {
       kind: 'card-fx',

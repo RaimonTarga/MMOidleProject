@@ -20,6 +20,7 @@ import { relicRatingsFromPassives, resolveCadenceRelicProfile } from './relics';
 import { summonerSpecializationFor } from '../data/summoner';
 import { SLINGER_DIRECT_ATTACK_EFFECTIVENESS } from './classSecondaryDamage';
 import { defensiveFaceForSubVariant, resolveActiveLineages } from './lineages';
+import { dotClassProfileForSubVariant } from './dotClassProfile';
 
 /**
  * Map a raw evasion rating (Σ 1/N across all evasion sources) to a deterministic
@@ -355,6 +356,21 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     if (stat === 'techniquePowerPct') {
       p.usesSkills.passives['technique.power-pct'] =
         (p.usesSkills.passives['technique.power-pct'] ?? 0) + value;
+      continue;
+    }
+    // DoT potency, the Affliction lean (design §24.2), is the same shape: it ADDS
+    // into `dot.mechanic-mult`, the DoT root's damage multiplier that
+    // `computeDotClassDamagePerStack` reads, on top of the frame node's base (the
+    // class nodes merged above). Inert for a root with no class DoT.
+    //
+    // The base is seeded from the profile when no frame has authored it yet:
+    // `resolveDotClassProfile` reads the passive with `??`, so a frameless
+    // Apprentice holding only this lean would otherwise read 0.10 as the WHOLE
+    // multiplier instead of base + 0.10.
+    if (stat === 'dotPotencyPct') {
+      const base = p.usesSkills.passives['dot.mechanic-mult']
+        ?? dotClassProfileForSubVariant(p.usesSkills.selectedSubVariant).dotMechanicMultiplier;
+      p.usesSkills.passives['dot.mechanic-mult'] = base + value;
       continue;
     }
     applyStatModToTarget(p, stat, value);

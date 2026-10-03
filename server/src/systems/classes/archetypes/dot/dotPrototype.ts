@@ -50,6 +50,7 @@ import {
 } from "../../../combat/damage/dotTickEvent";
 import { emitPlayerMonsterOnKill } from "../../../combat/damage/killHooks";
 import { emitMechanicFired } from "../../../combat/engine/mechanicFired";
+import { isMechanicProxy } from "../../../combat/engine/empoweredAttacks";
 import { consumeRefundedDotFill } from "../../../combat/keystones/refund";
 import { buildKillerFromSourceId } from "../../../world/deathCause";
 import {
@@ -160,6 +161,9 @@ export function applyClassDotStack(
   // so it is per target by construction and disappears with the effect when the
   // stack drops off, which is exactly when a refill should be able to fire again.
   // Every further hit into a capped stack is the same fill, not a new one.
+  // A `mechanic-proxy` exchange (design §24.2) never announces the moment, so it
+  // must not spend the fill latch either: the next real hit announces it.
+  if (ctx && isMechanicProxy(ctx)) return;
   if (application.maxStacks > 0 && effect.stacks >= application.maxStacks) {
     if (effect.data.maxStackFired !== 1) {
       effect.data.maxStackFired = 1;

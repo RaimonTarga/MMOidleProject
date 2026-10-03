@@ -27,6 +27,7 @@ import {
   ABILITY_SLOW_EFFECT_ID,
   GAME_CONFIG,
   LINEAGE_DATABASE,
+  PACKET_DEFINITIONS,
   PAYOFF_KINDS,
   applyStatusEffect,
   baseRecoveryForTier,
@@ -1011,14 +1012,23 @@ function withWindowFromGuard(id: string): PlayerEntity {
       if (option.row === 'packet') usedByAbilityNode.add(option.payoff);
     }
   }
+  // The T1 composition payloads (design §24.2) are authored on the PACKETS, not on
+  // a card: a verb delivers its lean's payload, so a kind a packet half names is
+  // reachable from every T1 band that carries the lane.
+  const usedByPacket = new Set<PayoffKind>();
+  for (const packet of PACKET_DEFINITIONS.values()) {
+    if (!packet.halves) continue;
+    usedByPacket.add(packet.halves.payload);
+    usedByPacket.add(packet.halves.pure.payload);
+  }
 
   const problems: string[] = [];
   for (const kind of PAYOFF_KINDS) {
     if (!source.includes(`case '${kind}':`)) {
       problems.push(`'${kind}': no case in lineageCards.ts's dispatch switches`);
     }
-    if (!usedByCard.has(kind) && !usedByAbilityNode.has(kind)) {
-      problems.push(`'${kind}': authored on no lineage card, capstone or ability-node option — it has no visible fx anywhere`);
+    if (!usedByCard.has(kind) && !usedByAbilityNode.has(kind) && !usedByPacket.has(kind)) {
+      problems.push(`'${kind}': authored on no lineage card, capstone, packet half or ability-node option — it has no visible fx anywhere`);
     }
   }
   assert(problems.length === 0, `payoff coverage failures:\n  ${problems.join('\n  ')}`);

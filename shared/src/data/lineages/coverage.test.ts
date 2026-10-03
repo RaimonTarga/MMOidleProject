@@ -394,6 +394,17 @@ for (const lineage of LINEAGE_DATABASE.values()) {
     usedFx.add(form.capstone.fx);
   }
 }
+// A payload owns its fx (design §24.2): a composed T1 verb pushes the key its
+// lean's packet names, so a key a packet half names is drawn without any card
+// authoring it.
+for (const packet of PACKET_DEFINITIONS.values()) {
+  if (!packet.halves) continue;
+  for (const fx of [packet.halves.payloadFx, packet.halves.pure.fx]) {
+    check(declaredFx.has(fx), `packet '${packet.id}': fx '${fx}' is not in LINEAGE_FX_KEYS`);
+    check(fx.startsWith(`${packet.id}.`), `packet '${packet.id}': fx '${fx}' does not speak its lane's grammar`);
+    usedFx.add(fx);
+  }
+}
 for (const key of declaredFx) {
   // A `<lane>.keystone` key is owned by the keystone REGISTRY, not by a card's
   // authoring choice: design §4 (amended 2026-10-01) gives each packet exactly one

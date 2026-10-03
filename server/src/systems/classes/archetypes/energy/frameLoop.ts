@@ -30,6 +30,7 @@ import { applyStatusEffect, getStatusEffect, removeStatusEffect } from '@mmo-idl
 import type { MonsterEntity, PlayerEntity } from '../../../../ecs/entity';
 import type { World } from '../../../../world/World';
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
+import { isMechanicProxy } from '../../../combat/engine/empoweredAttacks';
 import { defineBuff, type BuffDescriptor } from '../../../combat/buffs/descriptor';
 import { playerAoeTargets } from '../../../combat/damage/aoeDamage';
 import { applyPlayerProcDamage } from '../../../combat/damage/procDamage';
@@ -167,6 +168,9 @@ function chainVictims(
  */
 export function registerEnergyFrameLoop(): void {
   registerCombatListener('onHit', (ctx, world) => {
+    // A `mechanic-proxy` hit (design §24.2) COUNTS AS the mechanic for what reads
+    // it downstream, but it never walks the root's own loop (rule 3).
+    if (isMechanicProxy(ctx)) return;
     if (ctx.attackerType !== 'player') return;
     if (!ctx.metadata['mechanicConsumed']) return;  // discharges only (not Overdrive crit styling)
     const player = ctx.attacker;
