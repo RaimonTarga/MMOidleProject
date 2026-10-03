@@ -1,0 +1,22 @@
+{
+  "id": "lunge",
+  "category": "cc-icons",
+  "provider": "built-in OpenAI imagegen",
+  "status": "pending",
+  "candidate": "candidate-1.png",
+  "out": "files/concept-icons/payloads/lunge.png",
+  "size": {
+    "w": 32,
+    "h": 32
+  },
+  "generationSize": {
+    "w": 1254,
+    "h": 1254
+  },
+  "sourceSha256": "5974fc29eb5a30cca315ef48d2c0f8280bade8acc26e98cea1e5f95563683a46",
+  "candidateSha256": "ebd973a734829ed0ad4f30007541bcc77ed4b07c2f79fa0f388c36af1ec5d601",
+  "generatedFilename": "exec-212eb170-afee-4575-ad72-cc371c30769d.png",
+  "prompt": "Use case: stylized-concept\nAsset type: MMO Idle small rhythm-readout payload glyph, final 32x32 PNG, displayed at 24px inside a HUD ring label.\nPrimary request: one stout forward-pointing spearhead joined to a short tapering motion tail, a committed forward lunge.\nComposition: one centered bold connected symbol occupying 72 percent of square canvas with generous padding. Extremely clear silhouette at 24px, thick strokes and broad negative spaces.\nStyle: restrained flat pixel-art fantasy HUD glyph; crisp intentional chunky pixel clusters, two broad value groups, hard dark outline. No fine detail, no gradients, no soft glow.\nPalette: neutral warm ivory #e9e6d2 with pale slate #a8b1b8 and charcoal outline. Keep glyph neutral so the independently coloured moment ring remains meaningful.\nBackground: genuine transparency.\nConstraints: no baked ring, circular container, timing sweep, iron plaque, ornamental tile, or object scene. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
+  "preprocessing": "Direct nearest-neighbor resize to 32px; generated alpha preserved.",
+  "review": "No acceptance or rejection by the agent."
+}

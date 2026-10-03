@@ -1,0 +1,22 @@
+{
+  "id": "heal-and-load",
+  "category": "cc-icons",
+  "provider": "built-in OpenAI imagegen",
+  "status": "pending",
+  "candidate": "candidate-1.png",
+  "out": "files/concept-icons/payloads/heal-and-load.png",
+  "size": {
+    "w": 32,
+    "h": 32
+  },
+  "generationSize": {
+    "w": 1254,
+    "h": 1254
+  },
+  "sourceSha256": "5f445bc4498a6c57567c8477e0cf2d1e03f00f455b0d1fb58b28ab9c6b5d30bd",
+  "candidateSha256": "5cc228fb1b8bf1a0e2917a0cb55f2054863decfc8abab21018aa83d3e9ba06da",
+  "generatedFilename": "exec-d1f6a9b2-732e-4ada-becc-a2c8ce6ed203.png",
+  "prompt": "Use case: stylized-concept\nAsset type: MMO Idle small rhythm-readout payload glyph, final 32x32 PNG, displayed at 24px inside a HUD ring label.\nPrimary request: one compact heart-shaped pulse whose right lobe forms a short loaded forward arrow; one connected silhouette expressing heal plus charged next hit.\nComposition: one centered bold connected symbol occupying 72 percent of square canvas with generous padding. Extremely clear silhouette at 24px, thick strokes and broad negative spaces.\nStyle: restrained flat pixel-art fantasy HUD glyph; crisp intentional chunky pixel clusters, two broad value groups, hard dark outline. No fine detail, no gradients, no soft glow.\nPalette: neutral warm ivory #e9e6d2 with pale slate #a8b1b8 and charcoal outline. Keep glyph neutral so the independently coloured moment ring remains meaningful.\nBackground: genuine transparency.\nConstraints: no baked ring, circular container, timing sweep, iron plaque, ornamental tile, or object scene. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
+  "preprocessing": "Direct nearest-neighbor resize to 32px; generated alpha preserved.",
+  "review": "No acceptance or rejection by the agent."
+}

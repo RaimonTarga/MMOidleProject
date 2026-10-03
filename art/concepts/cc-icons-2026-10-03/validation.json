@@ -1,0 +1,276 @@
+{
+  "candidateCount": 26,
+  "shards": 9,
+  "buffs": 10,
+  "payloads": 7,
+  "pending": 26,
+  "accepted": 0,
+  "rejected": 0,
+  "uniqueBitmaps": 26,
+  "opaqueBuffs": 10,
+  "transparentMaterialsAndGlyphs": 16,
+  "packetPalettePrompts": 9,
+  "existingBuffAliasesPreserved": 10,
+  "rows": [
+    {
+      "id": "gale-shard",
+      "group": "shards",
+      "width": 32,
+      "height": 32,
+      "transparent": 789,
+      "partial": 231,
+      "opaque": 4,
+      "sha256": "0d828c473185368b422e13449a92b56623e57f561ad7ee35c8ee67f7dabed1f0"
+    },
+    {
+      "id": "anvil-shard",
+      "group": "shards",
+      "width": 32,
+      "height": 32,
+      "transparent": 736,
+      "partial": 288,
+      "opaque": 0,
+      "sha256": "3ea82a800a73d2c46f277a734f571d978037e31ff78f0ed9191869eda25e9c7a"
+    },
+    {
+      "id": "venom-shard",
+      "group": "shards",
+      "width": 32,
+      "height": 32,
+      "transparent": 825,
+      "partial": 193,
+      "opaque": 6,
+      "sha256": "0595f429c2b478b24d62a39492c4e406c654d7454fd8bddf95035a033686ca09"
+    },
+    {
+      "id": "shackle-shard",
+      "group": "shards",
+      "width": 32,
+      "height": 32,
+      "transparent": 685,
+      "partial": 338,
+      "opaque": 1,
+      "sha256": "acebc657990ff43050a06201100504e0b61f3a33e37b35415c7ebf0f3d793b89"
+    },
+    {
+      "id": "bone-shard",
+      "group": "shards",
+      "width": 32,
+      "height": 32,
+      "transparent": 771,
+      "partial": 251,
+      "opaque": 2,
+      "sha256": "2d9c630bb10ff04c83db0d0c9b0a97238c9079eb25d91af8d9f9b7aba6186ce1"
+    },
+    {
+      "id": "spark-shard",
+      "group": "shards",
+      "width": 32,
+      "height": 32,
+      "transparent": 607,
+      "partial": 414,
+      "opaque": 3,
+      "sha256": "c73d58c145f5abd9cdaf1771dcffc37337445323c3ec706b25feae3b0902e9d1"
+    },
+    {
+      "id": "sigil-shard",
+      "group": "shards",
+      "width": 32,
+      "height": 32,
+      "transparent": 699,
+      "partial": 325,
+      "opaque": 0,
+      "sha256": "6cb8b8ecf2827b931ffc4fb16d06ec58bc8e021bcef465f2fa578b5771d26dd1"
+    },
+    {
+      "id": "iron-shard",
+      "group": "shards",
+      "width": 32,
+      "height": 32,
+      "transparent": 666,
+      "partial": 357,
+      "opaque": 1,
+      "sha256": "fbd8044b20ba1a9033e2b3118e977011e2991c52c5b1db67789c22ff2a0d2146"
+    },
+    {
+      "id": "glass-shard",
+      "group": "shards",
+      "width": 32,
+      "height": 32,
+      "transparent": 698,
+      "partial": 325,
+      "opaque": 1,
+      "sha256": "21b5ab9fc74c77ba47e064057af1e5e5ae7a58f53474887fef0f7fc8e22900ea"
+    },
+    {
+      "id": "lineage-damage",
+      "group": "buffs",
+      "width": 48,
+      "height": 48,
+      "transparent": 0,
+      "partial": 0,
+      "opaque": 2304,
+      "sha256": "b1db68354f2d62f2463680c472a9a6773767f885d4577ce1a27d932098f4fbf6"
+    },
+    {
+      "id": "lineage-speed",
+      "group": "buffs",
+      "width": 48,
+      "height": 48,
+      "transparent": 0,
+      "partial": 0,
+      "opaque": 2304,
+      "sha256": "c31887e265bb4f14955e273c83e962f19cb01fefe9d778d841ee972630559f95"
+    },
+    {
+      "id": "lineage-recovery",
+      "group": "buffs",
+      "width": 48,
+      "height": 48,
+      "transparent": 0,
+      "partial": 0,
+      "opaque": 2304,
+      "sha256": "53a448151eb99266ed491a4c5c9990572ad8715ed61774a7a1a34ddf469813a5"
+    },
+    {
+      "id": "lineage-guard",
+      "group": "buffs",
+      "width": 48,
+      "height": 48,
+      "transparent": 0,
+      "partial": 0,
+      "opaque": 2304,
+      "sha256": "76992543fead00f18b0b64ded6003d0df71eec3c571239eeb2b384c4774ff685"
+    },
+    {
+      "id": "lineage-ward",
+      "group": "buffs",
+      "width": 48,
+      "height": 48,
+      "transparent": 0,
+      "partial": 0,
+      "opaque": 2304,
+      "sha256": "a5fbafa1ffda12d8ca16dec3dd1fd14ab156005551ea4856c87fb0288d8c4158"
+    },
+    {
+      "id": "lineage-plate",
+      "group": "buffs",
+      "width": 48,
+      "height": 48,
+      "transparent": 0,
+      "partial": 0,
+      "opaque": 2304,
+      "sha256": "96d961f4d13d9699dd7610fe216b808c32dd3e8b70a14a8516860fed83eca943"
+    },
+    {
+      "id": "lineage-technique",
+      "group": "buffs",
+      "width": 48,
+      "height": 48,
+      "transparent": 0,
+      "partial": 0,
+      "opaque": 2304,
+      "sha256": "2ffa281c34a2f14a0cd28d2ac34e4d85bb3cc9f46cb5487f98b2e907ef857179"
+    },
+    {
+      "id": "lineage-evasion",
+      "group": "buffs",
+      "width": 48,
+      "height": 48,
+      "transparent": 0,
+      "partial": 0,
+      "opaque": 2304,
+      "sha256": "f285b5ab74bcf8af6ad8f2861c77a1c779a4db2d6b703815925805f2a463481f"
+    },
+    {
+      "id": "frame-window",
+      "group": "buffs",
+      "width": 48,
+      "height": 48,
+      "transparent": 0,
+      "partial": 0,
+      "opaque": 2304,
+      "sha256": "8f2f46d9ebb8775caf3297fcd4b003ca6989c854a326e78f5f2aa968d5d65b3e"
+    },
+    {
+      "id": "frame-charge",
+      "group": "buffs",
+      "width": 48,
+      "height": 48,
+      "transparent": 0,
+      "partial": 0,
+      "opaque": 2304,
+      "sha256": "f5b984f7e9ec94c0442db44677547177c47a0d62bdfe55df70dfa75ca5f46d3d"
+    },
+    {
+      "id": "lands-twice",
+      "group": "payloads",
+      "width": 32,
+      "height": 32,
+      "transparent": 763,
+      "partial": 260,
+      "opaque": 1,
+      "sha256": "c5293aedf0be226b338c1e5a1e9b68285f350cbbe8954470cad8d79962c08e2b"
+    },
+    {
+      "id": "heavy-poison",
+      "group": "payloads",
+      "width": 32,
+      "height": 32,
+      "transparent": 687,
+      "partial": 336,
+      "opaque": 1,
+      "sha256": "3a8c99fb424d40622d9aea48e851eed99c1070cd114d11b24ed9b365e5feb281"
+    },
+    {
+      "id": "lunge",
+      "group": "payloads",
+      "width": 32,
+      "height": 32,
+      "transparent": 889,
+      "partial": 135,
+      "opaque": 0,
+      "sha256": "ebd973a734829ed0ad4f30007541bcc77ed4b07c2f79fa0f388c36af1ec5d601"
+    },
+    {
+      "id": "mechanic-proxy",
+      "group": "payloads",
+      "width": 32,
+      "height": 32,
+      "transparent": 736,
+      "partial": 285,
+      "opaque": 3,
+      "sha256": "dc995b2536cdcd6e7cb87bbeee71ca8dd1933bc892dbf9e61b7e8da707cba378"
+    },
+    {
+      "id": "root",
+      "group": "payloads",
+      "width": 32,
+      "height": 32,
+      "transparent": 798,
+      "partial": 226,
+      "opaque": 0,
+      "sha256": "8a9e79df4988969ab82997eaa5602793c5a8864fab443ad42ed1b2e4bd94cd2d"
+    },
+    {
+      "id": "heal-and-load",
+      "group": "payloads",
+      "width": 32,
+      "height": 32,
+      "transparent": 767,
+      "partial": 255,
+      "opaque": 2,
+      "sha256": "5cc228fb1b8bf1a0e2917a0cb55f2054863decfc8abab21018aa83d3e9ba06da"
+    },
+    {
+      "id": "technique-refund",
+      "group": "payloads",
+      "width": 32,
+      "height": 32,
+      "transparent": 707,
+      "partial": 315,
+      "opaque": 2,
+      "sha256": "d877507266cc312384ca24f1067d5f5cc0bc0fc9f07fb1e14bcb70c24ee28419"
+    }
+  ]
+}
