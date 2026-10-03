@@ -64,7 +64,10 @@ const SWAMP_T2_BLENDS: readonly NodeBlend[] = [
   { 'swamp-coven': 0.70, 'swamp-stalker': 0.30 },
   { 'swamp-coven': 0.70, 'swamp-stalker': 0.20, 'swamp-mire': 0.10 },
   { 'swamp-stalker': 0.70, 'swamp-mire': 0.20, 'swamp-coven': 0.10 },
-  { 'swamp-mire': 0.45, 'swamp-coven': 0.45, 'swamp-stalker': 0.10 },
+  // 04 — Coven territory, not Mire (verbs-that-fire C, PROVISIONAL): the 45/45 tie went
+  // to Mire, which has no T2 body, so the node spawned Coven 8 / Stalker 2. Spawns
+  // unchanged.
+  { 'swamp-coven': 0.80, 'swamp-stalker': 0.20 },
   { 'swamp-mire': 0.34, 'swamp-coven': 0.33, 'swamp-stalker': 0.33 },
   { 'swamp-coven': 0.55, 'swamp-stalker': 0.30, 'swamp-mire': 0.15 },
 ];
