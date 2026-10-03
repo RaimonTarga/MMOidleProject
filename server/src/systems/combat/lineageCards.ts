@@ -1067,6 +1067,9 @@ function registerMechanicFired(): void {
 function registerFirstHit(): void {
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
+    // A chaotic miss is not a landed hit (as `hit-nth`): it neither opens an
+    // engagement, nor fires, nor spends an opener latch.
+    if (ctx.metadata['chaoticMiss']) return;
     const player = ctx.attacker;
     if (!hasLineageRuntime(player)) return;
     const cs = player.tracksCombat;
@@ -1220,6 +1223,9 @@ function registerConditionProbes(): void {
 function registerHitAfflicted(): void {
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
+    // A chaotic miss is not a landed hit (as `hit-nth`): it neither fires nor
+    // starts the cap.
+    if (ctx.metadata['chaoticMiss']) return;
     const player = ctx.attacker;
     if (!hasLineageRuntime(player)) return;
     const cs = player.tracksCombat;
@@ -1240,6 +1246,9 @@ function registerHitAfflicted(): void {
 function registerHitHeld(): void {
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
+    // A chaotic miss is not a landed hit (as `hit-nth`): it neither fires nor
+    // starts the cap.
+    if (ctx.metadata['chaoticMiss']) return;
     const player = ctx.attacker;
     if (!hasLineageRuntime(player)) return;
     const cs = player.tracksCombat;
