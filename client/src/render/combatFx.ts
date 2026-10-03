@@ -21,6 +21,7 @@ import {
   DOT_MAXSTACK_BURST_FX,
   DOT_RIMESHATTER_FX,
   lineageForRecipeId,
+  lineagePayloadOfHitFx,
   packetDefinition,
   type CombatArchetype,
   type PacketId,
@@ -254,6 +255,7 @@ import {
   notifyAbilityCooldownStarted,
   notifyAbilityFired,
   notifyAbilityArmed,
+  notifyAbilityRefunded,
   notifyCleansed,
   notifyStanceCooldownStarted,
 } from "../hud/atoms";
@@ -264,6 +266,9 @@ import type { RenderState } from "./state";
 import { DEPTH } from "./depth";
 import { recordFrameCharge } from "../fx/frameChargeGlow";
 import { playCardWord } from "../fx/cardWord";
+import { hitOwnsBodyLunge, isPayloadFx, payloadOfHit } from "../fx/lineagePayloadModel";
+import { drawPayloadFx, drawPayloadHit } from "../fx/lineagePayloadFx";
+import { endLasting, startLasting } from "../fx/lineagePayloadStates";
 // Deliberately NOT `import.meta.env.DEV`: `remotePlayerAttack.test.ts` transpiles
 // this whole file to CommonJS and runs it in a vm, where `import.meta` is a
 // syntax error. Keep this file free of it.
@@ -647,6 +652,12 @@ const warnedUnknownFx = new Set<string>();
  * resolved per event. There is nothing to add to this switch for an amplifier.
  */
 function fxLineageCard(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }): void {
+  // The T1 payloads (design §24.2, course-correction W2-C) each own a premium
+  // effect of their own — lineagePayloadFx.ts. The rest keep the lane primitives.
+  if (isPayloadFx(ev.fx)) {
+    drawPayloadFx(scene, ev, ev.fx);
+    return;
+  }
   const pos = nodeToScene(ev.pos.x, ev.pos.y);
   // `targetId` first: a payoff that spread to a second target names that monster,
   // and its live sprite is where the player is looking. `targetPos` is the
@@ -657,10 +668,8 @@ function fxLineageCard(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }):
   const amp = ampScale(ev.stacks);
 
   switch (ev.fx) {
-    // Payoff rows — a new on-screen event (design §8).
-    case "tempo.ghost-strike":
-      fxCardGhostStrike(scene, target, color, amp);
-      return;
+    // Payoff rows — a new on-screen event (design §8). `tempo.ghost-strike`
+    // ("lands twice") is a payload now, drawn above with the other nine.
     case "empowered.plating-crack":
       fxCardPlatingCrack(scene, target, color, amp);
       return;
@@ -1454,6 +1463,12 @@ export function dispatchCombatEvent(
     return;
   }
   if (ev.kind === "card-fx") {
+    // The Technique refund is HUD first: the refunded tiles flash on the own
+    // ability bar whatever the in-world FX state, like the cooldown sample it
+    // explains (which arrives in the same batch).
+    if (ev.fx === "technique.refund-flash" && ev.playerId === scene.myId && ev.abilityIds?.length) {
+      notifyAbilityRefunded(ev.abilityIds);
+    }
     // Node-wide, like every other payoff signature: an ally should see a
     // build's cards land exactly as they'd see a Guard or a Technique fire.
     if (shouldRunClientFx()) {
@@ -1461,6 +1476,14 @@ export function dispatchCombatEvent(
       // The card's name over the player, and its readout ring's pulse (W2-B).
       playCardWord(state, scene, ev);
     }
+    return;
+  }
+  if (ev.kind === "lineage-load") {
+    // Bookkeeping only (the `lineage-loaded` aura row draws it): kept current
+    // whatever the tab state, like `frame-charge`, so a load armed while hidden
+    // still glows when the tab returns and one spent while hidden does not.
+    if (ev.loaded) startLasting(ev.playerId, "loaded", performance.now(), 0);
+    else endLasting(ev.playerId, "loaded");
     return;
   }
   // dot-tick / monster-hit amounts render separately in deltaApplier.
@@ -2415,6 +2438,10 @@ function runFxForAttackStyle(
     undefined;
   const flair = attackFlairOf(player);
   const args: AttackFxArgs = { scene, ev, player, from, to, dotPath, tint, flair };
+  // A lineage payload's OWN hit (the echo's second swing, the lunge's contact):
+  // drawn over the class's ordinary hit, which still draws beneath it.
+  const payloadHit = payloadOfHit(ev.effects);
+  if (payloadHit) drawPayloadHit(scene, ev, payloadHit, from, to, player);
   // The active weapon lineage's stat row is a persistent cosmetic on every
   // basic attack, independent of which style/branch below actually fires.
   playLineageTrail(args);
@@ -2545,6 +2572,7 @@ function runFxForAttackStyle(
     if (effectId === DEATH_MARK_BLAST_CLIENT_EFFECT) continue; // handled above
     if (effectId === CANNON_BLAST_CLIENT_EFFECT) continue; // handled above
     if (effectId === VOID_DISCHARGE_CLIENT_EFFECT) continue; // handled above
+    if (lineagePayloadOfHitFx(effectId)) continue; // the payload's own hit, above
     const triggerFx = TRIGGER_FX_BY_EFFECT[effectId];
     if (triggerFx) {
       triggerFx(scene, to, args);
@@ -2610,7 +2638,9 @@ function runFxForAttackStyle(
     !isHolyFlash &&
     !isFlashTeleport &&
     !isRangedPlayerView(player) &&
-    lungeTarget
+    lungeTarget &&
+    // The Engagement lunge's dash already carries the body to this hit.
+    !hitOwnsBodyLunge(ev.effects)
   ) {
     applyLunge(state, actorId, { ...lungeTarget }, scene);
   }

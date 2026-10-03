@@ -7,6 +7,7 @@ import * as shared from '@mmo-idle/shared';
 import { createRenderState } from '../../client/src/render/state';
 import { nodeToScene } from '../../client/src/render/sceneCoords';
 import { attackFlairOf } from '../../client/src/fx/attackFlair';
+import { hitOwnsBodyLunge, payloadOfHit } from '../../client/src/fx/lineagePayloadModel';
 import type { PlayerAttackPresentation } from '../../client/src/render/combatFx';
 import type { GameScene } from '../../client/src/scenes/GameScene';
 
@@ -28,6 +29,11 @@ const context = vm.createContext({
   playEmpoweredRing: () => {},
   playLineageTrail: () => {},
   resolveAttackFx: () => () => {},
+  // The lineage payload hit (course-correction W2-C): the pure model decides
+  // whether a hit carries a payload and owns the body lunge; only its drawing
+  // is stubbed, like every other effect here.
+  payloadOfHit, hitOwnsBodyLunge,
+  drawPayloadHit: () => {},
 });
 vm.runInContext(ts.transpileModule([
   declarations('../../client/src/render/combatFx.ts', ['capturePlayerAttack', 'runFxForAttackStyle', 'CHAMPION_SPEC']),

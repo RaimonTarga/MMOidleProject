@@ -7,9 +7,13 @@ import { shouldRunClientFx } from '../fx/guard';
 import { spawnDamageNumber } from '../fx/particles';
 import { fxBossDeath, fxMobDeath } from '../fx/monsterDeath';
 import { playSfx } from '../audio/audioEngine';
+import { PAYLOAD_FX, hitPresentationDelayMs, isPayloadFx } from '../fx/lineagePayloadModel';
 
 export type CombatPlaybackItem =
   | { kind: 'reward'; event: Extract<CombatEvent, { kind: 'essence-drop' }> }
+  // A lineage payload's look (`card-fx`) or the loaded carry's beat
+  // (`lineage-load`): played on the beat of the hit that caused it.
+  | { kind: 'payload'; event: Extract<CombatEvent, { kind: 'card-fx' | 'lineage-load' }> }
   | { kind: 'attack'; event: CombatEvent; presentation: PlayerAttackPresentation; text: CombatTextBatch }
   | { kind: 'death'; play: () => void };
 
@@ -29,17 +33,35 @@ function isBufferedPlayer(player: PlayerView, event: CombatEvent): boolean {
     effect === 'flash-teleport' || effect === 'channel-beam' || effect === 'holy-flash'));
 }
 
+/**
+ * A lineage payload's look plays on the playback clock with the hit it rode
+ * (course-correction W2-C): pushed in the same tick as that hit, it would
+ * otherwise draw a quarter second BEFORE the swing it belongs to. A payload whose
+ * timing is `immediate` (the Technique refund, HUD first) and a player whose hits
+ * are not buffered keep their immediate dispatch.
+ */
+function queuePayload(state: RenderState, event: Extract<CombatEvent, { kind: 'card-fx' | 'lineage-load' }>): boolean {
+  if (!Number.isFinite(event.at)) return false;
+  if (event.kind === 'card-fx' && isPayloadFx(event.fx) && PAYLOAD_FX[event.fx].timing === 'immediate') return false;
+  const player = state.view.get(event.playerId) as PlayerView | undefined;
+  if (player && !isBufferedPlayer(player, event)) return false;
+  state.combatPlayback.enqueue(event.at!, { kind: 'payload', event });
+  return true;
+}
+
 /** True means handled, including a cosmetic drop when the queue is full. */
 export function queuePlayerAttack(state: RenderState, event: CombatEvent): boolean {
   if (event.kind === 'essence-drop' && Number.isFinite(event.at)) {
     state.combatPlayback.enqueue(event.at!, { kind: 'reward', event });
     return true;
   }
+  if (event.kind === 'card-fx' || event.kind === 'lineage-load') return queuePayload(state, event);
   if (event.kind !== 'player-hit' && event.kind !== 'player-kill') return false;
   if (!Number.isFinite(event.at)) return false;
-  if (event.kind === 'player-kill' && state.combatPlayback.latestTime(item =>
+  const killedBy = event.kind === 'player-kill' ? state.combatPlayback.latestTime(item =>
     item.kind === 'attack' && item.event.kind === 'player-hit' &&
-    item.event.playerId === event.playerId && item.event.targetId === event.targetId) === undefined) return false;
+    item.event.playerId === event.playerId && item.event.targetId === event.targetId) : undefined;
+  if (event.kind === 'player-kill' && killedBy === undefined) return false;
   const presentation = capturePlayerAttack(state, event);
   if (!presentation || !isBufferedPlayer(presentation.player, event)) return false;
   const text = prepareCombatText([event]);
@@ -47,7 +69,13 @@ export function queuePlayerAttack(state: RenderState, event: CombatEvent): boole
     entry.targetPos = presentation.to;
     entry.targetKind = 'monster';
   }
-  state.combatPlayback.enqueue(event.at!, { kind: 'attack', event, presentation, text });
+  // A lineage payload's OWN hit is presented as the payload: the echo a beat after
+  // the hit it echoes, the lunge's hit at the end of its dash. A kill plays no
+  // earlier than the hit that made it (an echo can be the killing blow).
+  const at = event.kind === 'player-hit'
+    ? event.at! + hitPresentationDelayMs(event.effects)
+    : Math.max(event.at!, killedBy!);
+  state.combatPlayback.enqueue(at, { kind: 'attack', event, presentation, text });
   return true;
 }
 
@@ -87,7 +115,7 @@ export function stepCombatPlayback(state: RenderState, scene: GameScene): void {
     spawnDamageNumber(scene, pos, offset, amount, color, style));
   for (const item of ready) {
     if (item.kind === 'death') item.play();
-    else if (item.kind === 'reward') dispatchCombatEvent(state, item.event, scene);
+    else if (item.kind === 'reward' || item.kind === 'payload') dispatchCombatEvent(state, item.event, scene);
     else dispatchCombatEvent(state, item.event, scene, item.presentation);
   }
 }

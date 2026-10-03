@@ -11,6 +11,7 @@
  * drift this file exists to prevent. Migrate them here when they are next
  * touched; do not add new ones the old way.
  */
+import type { LineageFxKey } from '../data/lineages/types';
 
 // ── tier-4 path thresholds ─────────────────────────────────────────────────
 
@@ -28,6 +29,30 @@ export const CADENCE_CURSED_FINALE_FX = 'cadence-cursed-finale';
 export const COOLDOWN_SUNDER_FX = 'cooldown-sunder';
 /** Justicar: the banked Verdict executes the target outright. */
 export const CADENCE_VERDICT_EXECUTE_FX = 'verdict-execute';
+
+// ── lineage payloads (design §24.2, course-correction W2-C) ─────────────────
+
+/**
+ * A hit that IS a lineage payload's hit carries `lineage-hit:<fx key>`: the
+ * echo's own second hit ("lands twice", through the proc seam), and the hit in
+ * flight a `big-hit`, `mechanic-proxy` or `heal-and-load` multiplied. The card-fx
+ * says the payload fired; this says which swing it was, so the client can present
+ * that swing as the payload's (the echo a beat after the hit it echoes, the lunge
+ * at the end of its dash) instead of guessing by matching events.
+ */
+export const LINEAGE_PAYLOAD_HIT_PREFIX = 'lineage-hit:';
+
+/** The client-effect tag a lineage payload's own hit carries. */
+export function lineagePayloadHitFx(fx: LineageFxKey): string {
+  return `${LINEAGE_PAYLOAD_HIT_PREFIX}${fx}`;
+}
+
+/** The payload fx a hit's client-effect tag names, or undefined for any other tag. */
+export function lineagePayloadOfHitFx(effect: string): LineageFxKey | undefined {
+  return effect.startsWith(LINEAGE_PAYLOAD_HIT_PREFIX)
+    ? effect.slice(LINEAGE_PAYLOAD_HIT_PREFIX.length) as LineageFxKey
+    : undefined;
+}
 
 /**
  * Destroyer: a regular attack that was zeroed out by Singular Extraction. Tagged
