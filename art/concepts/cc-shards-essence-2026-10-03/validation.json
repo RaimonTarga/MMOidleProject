@@ -1,0 +1,124 @@
+{
+  "candidateCount": 9,
+  "status": "pending",
+  "visualReview": "Reserved for the designer.",
+  "checks": [
+    {
+      "id": "gale-shard-essence-v2",
+      "dimensions": [
+        32,
+        32
+      ],
+      "transparentPixels": 742,
+      "visiblePixels": 282,
+      "candidateSha256": "0af09322e0095634328fba6334c0906caacc5f113c9a09fe98944fa70aa29ceb",
+      "approvedSourcePreserved": true,
+      "lane": "tempo",
+      "promptColour": "#7fe3ff"
+    },
+    {
+      "id": "anvil-shard-essence-v2",
+      "dimensions": [
+        32,
+        32
+      ],
+      "transparentPixels": 739,
+      "visiblePixels": 285,
+      "candidateSha256": "59827bd1a229ab94505dd2fb82b3b7e2f1326c12925a9855ac9e6613f092247b",
+      "approvedSourcePreserved": true,
+      "lane": "empowered",
+      "promptColour": "#ffb347"
+    },
+    {
+      "id": "venom-shard-essence-v2",
+      "dimensions": [
+        32,
+        32
+      ],
+      "transparentPixels": 739,
+      "visiblePixels": 285,
+      "candidateSha256": "2bc34b96778b8183e046ee410f64ead01614d2253f996328f6a6949b3add1c54",
+      "approvedSourcePreserved": true,
+      "lane": "affliction",
+      "promptColour": "#9be564"
+    },
+    {
+      "id": "shackle-shard-essence-v2",
+      "dimensions": [
+        32,
+        32
+      ],
+      "transparentPixels": 748,
+      "visiblePixels": 276,
+      "candidateSha256": "01744fef0d4275766193b513fa25738ce9e511155e3d7f812b94369c694ff3d1",
+      "approvedSourcePreserved": true,
+      "lane": "control",
+      "promptColour": "#8fb8ff"
+    },
+    {
+      "id": "bone-shard-essence-v2",
+      "dimensions": [
+        32,
+        32
+      ],
+      "transparentPixels": 739,
+      "visiblePixels": 285,
+      "candidateSha256": "46bd6893fb61f06d572fc414f01ba0893bc2970ea10f699610dc9324e67800b8",
+      "approvedSourcePreserved": true,
+      "lane": "kill-chain",
+      "promptColour": "#c58fff"
+    },
+    {
+      "id": "spark-shard-essence-v2",
+      "dimensions": [
+        32,
+        32
+      ],
+      "transparentPixels": 741,
+      "visiblePixels": 283,
+      "candidateSha256": "7c98c6910429cd62bdf350ec4ecd1b7b01da25a2a85c33938e51fc1a9464e3fa",
+      "approvedSourcePreserved": true,
+      "lane": "engagement",
+      "promptColour": "#ff9f9f"
+    },
+    {
+      "id": "sigil-shard-essence-v2",
+      "dimensions": [
+        32,
+        32
+      ],
+      "transparentPixels": 742,
+      "visiblePixels": 282,
+      "candidateSha256": "e99f240b3b2311cfdb98804539137a213e2036603e7708f5a60117fd09efc377",
+      "approvedSourcePreserved": true,
+      "lane": "technique",
+      "promptColour": "#ff7fd4"
+    },
+    {
+      "id": "iron-shard-essence-v2",
+      "dimensions": [
+        32,
+        32
+      ],
+      "transparentPixels": 745,
+      "visiblePixels": 279,
+      "candidateSha256": "3b7c3fec043e729bb4dfaf9613259839d7e26324d9f0788fe450c22995c651b9",
+      "approvedSourcePreserved": true,
+      "lane": "bulwark",
+      "promptColour": "#b8b8a0"
+    },
+    {
+      "id": "glass-shard-essence-v2",
+      "dimensions": [
+        32,
+        32
+      ],
+      "transparentPixels": 742,
+      "visiblePixels": 282,
+      "candidateSha256": "15e49a5550ea3362eb67d8759914ba4b9219cb4e79de86264ffa8e04d7efbb17",
+      "approvedSourcePreserved": true,
+      "lane": "barrier-tempo",
+      "promptColour": "#7fd8c8"
+    }
+  ]
+}

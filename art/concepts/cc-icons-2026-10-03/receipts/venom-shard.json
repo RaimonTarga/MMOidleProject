@@ -1,0 +1,22 @@
+{
+  "id": "venom-shard",
+  "category": "cc-icons",
+  "provider": "built-in OpenAI imagegen",
+  "status": "pending",
+  "candidate": "candidate-1.png",
+  "out": "items/materials/venom-shard.png",
+  "size": {
+    "w": 32,
+    "h": 32
+  },
+  "generationSize": {
+    "w": 1254,
+    "h": 1254
+  },
+  "sourceSha256": "8cd79b514b132b0377f6a1a91186fc41bedabcc33c8629c0c53e5ba34ba5ec31",
+  "candidateSha256": "0595f429c2b478b24d62a39492c4e406c654d7454fd8bddf95035a033686ca09",
+  "generatedFilename": "exec-580ebca7-0f73-40ba-a15a-26d2816224af.png",
+  "prompt": "Use case: stylized-concept\nAsset type: MMO Idle material inventory icon, final 32x32 PNG, displayed at 24px.\nPrimary request: Venom Shard: one jagged green fang-shaped mineral fragment with a single thick venom drop adhering to its lower pointed edge; hostile sharp shape, not a potion bottle. Physical crafting material, mundane and grounded rather than an ornate artifact.\nComposition: one isolated fragment centered on square canvas, occupies 78 percent of the frame, slight diagonal, generous padding; bold literal object silhouette readable at 24px.\nStyle: flat bold pixel-art inventory icon, hard dark outline, crisp intentional pixel clusters, limited palette, three broad value groups, minimal detail, no smooth gradients or glow.\nPalette: lane colour #9be564 is the dominant material tint with charcoal shadows and a narrow pale edge.\nBackground: genuine transparency.\nConstraints: material fragment only; no relic, iron plaque, square plate, polished gemstone, complete equipment piece, or drop shadow. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
+  "preprocessing": "Direct nearest-neighbor resize to 32px; generated alpha preserved.",
+  "review": "No acceptance or rejection by the agent."
+}

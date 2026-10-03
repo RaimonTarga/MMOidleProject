@@ -1,0 +1,22 @@
+{
+  "id": "frame-charge",
+  "category": "cc-icons",
+  "provider": "built-in OpenAI imagegen",
+  "status": "pending",
+  "candidate": "candidate-1.png",
+  "out": "files/concept-icons/statuses/buffs/frame-charge.png",
+  "size": {
+    "w": 48,
+    "h": 48
+  },
+  "generationSize": {
+    "w": 1254,
+    "h": 1254
+  },
+  "sourceSha256": "a4e3a36ed8f7d4c992701c07bd275aeb0de165ce40b22f2879dacbb9746fa9ef",
+  "candidateSha256": "f5b984f7e9ec94c0442db44677547177c47a0d62bdfe55df70dfa75ca5f46d3d",
+  "generatedFilename": "exec-dc871cb1-3d29-44a5-af00-7ea2a20f415e.png",
+  "prompt": "Use case: stylized-concept\nAsset type: MMO Idle buff tile, final 48x48 PNG, displayed at 24-48px, matching existing concept-icons/statuses/buffs/ square framing.\nPrimary request: one cyan faceted energy core containing three broad stacked light bands, a stored charge bank rather than a clock.\nComposition: one centered bold symbol occupying 70 percent of square canvas, generous padding; only two or three broad value groups. Readable at 24px.\nStyle: concise semi-painterly fantasy game UI symbol with crisp angular shapes and restrained material highlights. Prioritize clean silhouette over surface detail.\nPalette: dominant #8fdfff, restrained pale highlight and dark low-saturation shadow.\nBackground: fully opaque full-square charcoal #11161d, even edge-to-edge, no vignette. Absolutely no transparency, no checkerboard.\nConstraints: the HUD supplies all timing sweeps and frames; do not draw any ornamental surround, bevel, circular clock overlay, border, or UI panel. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
+  "preprocessing": "Direct Lanczos3 resize to 48px; flattened to opaque #11161d.",
+  "review": "No acceptance or rejection by the agent."
+}

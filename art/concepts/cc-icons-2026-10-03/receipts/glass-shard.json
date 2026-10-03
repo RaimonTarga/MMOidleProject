@@ -1,0 +1,22 @@
+{
+  "id": "glass-shard",
+  "category": "cc-icons",
+  "provider": "built-in OpenAI imagegen",
+  "status": "pending",
+  "candidate": "candidate-1.png",
+  "out": "items/materials/glass-shard.png",
+  "size": {
+    "w": 32,
+    "h": 32
+  },
+  "generationSize": {
+    "w": 1254,
+    "h": 1254
+  },
+  "sourceSha256": "c2bbd9aa4f46a1bce32dc26c55b1eae07b4736f1494b867a08b7d78b1c073530",
+  "candidateSha256": "21b5ab9fc74c77ba47e064057af1e5e5ae7a58f53474887fef0f7fc8e22900ea",
+  "generatedFilename": "exec-f463ee57-2da1-47ff-a4b6-0b7bbf253516.png",
+  "prompt": "Use case: stylized-concept\nAsset type: MMO Idle material inventory icon, final 32x32 PNG, displayed at 24px.\nPrimary request: Glass Shard: one jagged curved broken glass fragment with a broad translucent-looking teal face and two crisp thick pale edges; a single salvaged material splinter, no bottle or jewel. Physical crafting material, mundane and grounded rather than an ornate artifact.\nComposition: one isolated fragment centered on square canvas, occupies 78 percent of the frame, slight diagonal, generous padding; bold literal object silhouette readable at 24px.\nStyle: flat bold pixel-art inventory icon, hard dark outline, crisp intentional pixel clusters, limited palette, three broad value groups, minimal detail, no smooth gradients or glow.\nPalette: lane colour #7fd8c8 is the dominant material tint with charcoal shadows and a narrow pale edge.\nBackground: genuine transparency.\nConstraints: material fragment only; no relic, iron plaque, square plate, polished gemstone, complete equipment piece, or drop shadow. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
+  "preprocessing": "Direct nearest-neighbor resize to 32px; generated alpha preserved.",
+  "review": "No acceptance or rejection by the agent."
+}
