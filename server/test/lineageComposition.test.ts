@@ -297,6 +297,34 @@ const proxyCard = (): ResolvedLineageCard => verb({
 }
 
 {
+  // A hit on which the real mechanic already ANNOUNCED itself without spending a
+  // charge — the DoT root's stack filling — is the mechanic's hit already, so the
+  // proxy leaves it alone (one mechanic per hit). The DoT root's listener runs
+  // before the lineage cards', so before this guard the filling hit both emitted
+  // `mechanic-fired` AND took the proxy's multiplier (course-correction W3-A).
+  const player = spawn('cmp-proxy-dot-fill', [proxyCard()]);
+  attachComponent(world, player, 'appliesDots', initAppliesDots());
+  const target = monster();
+  let fills = 0;
+  let proxied = 0;
+  for (let i = 0; i < 12; i++) {
+    const firedBefore = mechanicFiredCount;
+    const ctx = hit(player, target, {}, 200);
+    if (mechanicFiredCount > firedBefore) {
+      fills += 1;
+      assert(ctx.metadata['mechanicProxy'] !== true, 'the hit that filled the stack (the real mechanic) is not proxied as well');
+      assert(ctx.metadata['empoweredMultiplier'] === undefined,
+        `and carries no proxy multiplier, got ×${ctx.metadata['empoweredMultiplier']}`);
+    } else if (ctx.metadata['mechanicProxy'] === true) {
+      proxied += 1;
+    }
+  }
+  assert(fills === 1, `one fill per target per stack, announced once, got ${fills}`);
+  assert(proxied === 11, `every other hit is proxied, got ${proxied}`);
+  cardFx();
+}
+
+{
   // A proxied hit spent no energy charge, so it builds energy like the ordinary
   // hit it was; a real discharge does not.
   const player = spawn('cmp-proxy-energy', [proxyCard()]);

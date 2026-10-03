@@ -55,14 +55,20 @@
  *    question is what Light/Balanced/Heavy is worth per root, not how each frame
  *    reads on all 62 blends, and the full cross would have trebled the run.
  *
- *    THE CRITERION IS §18.9, NOT §9. The lane budget band is the median uplift
- *    ±3 PERCENTAGE POINTS, absolute — §9's "±10% of the tier median" is a
- *    proportion of a number that is itself small, so the band narrows as lanes
- *    weaken and no lane could sit inside it by construction. The encounter check
- *    drops "~30%" for a RANKING: does the favoured lane out-uplift the punished
- *    lane on that family's own node, and by what margin? The margin is reported,
- *    never thresholded, and the per-seed ranks are reported with it, because a
- *    remap (§18 3b) is only taken when both seeds agree.
+ *    The encounter check drops "~30%" for a RANKING: does the favoured lane
+ *    out-uplift the punished lane on that family's own node, and by what margin?
+ *    The margin is reported, never thresholded, and the per-seed ranks are
+ *    reported with it, because a remap (§18 3b) is only taken when both seeds
+ *    agree. (`lineage/encounterOrdinal.ts`.)
+ *
+ * 5. THE CRITERION IS §24.1's VIABILITY FLOOR (course-correction, 2026-10-03):
+ *    no lane below 0.9× the median uplift of its tier. It replaces §18.9's
+ *    "median ±3 percentage points, absolute", which itself replaced §9's "±10%
+ *    of the tier median". A similarity band balanced every card to be
+ *    indistinguishable from its neighbours — imperceptible by construction — so
+ *    the criterion now only asks that no lane is left behind; a lane above the
+ *    median is a reading, never a failure. The ordinal encounter check stays
+ *    exactly as it was. (`lineage/viabilityFloor.ts`.)
  *
  * Usage, from `server/`:
  *
@@ -77,7 +83,10 @@
  *   LANE_FRAMES=0            skip the frames column
  *   LANE_FRAME_NODES=a,b     the frames column's node set (default: one per biome)
  *   LANE_REPORT=lane-matrix  output basename (`.md` and `.json`)
- *   LANE_REPLAY=path.json    rebuild the report from a previous run's rows
+ *   LANE_REPLAY=a.json,b.json rebuild the report from previous runs' rows (merged)
+ *   LANE_SHARD=0 LANE_SHARDS=4  measure only every 4th (profile, node) job, from
+ *                            job 0, and write the rows to `<report>.shard0.json`
+ *                            without a report; merge the shards with LANE_REPLAY
  */
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
@@ -85,19 +94,6 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import {
-  ESSENCE_TYPES,
-  FAMILY_DATABASE,
-  LINEAGE_DATABASE,
-  NODE_BIOMES,
-  RUNE_RECIPE_DATABASE,
-  WORLD_NODE_LIST,
-  blendEntries,
-  composePlayerView,
-  isRuneRecipeUnlocked,
-  nodeSpawnBlend,
-  withReferenceAbilityWiring,
-  type AttunedAbilities,
-  type EquippedRule,
   type FamilyId,
   type PacketId,
   type TierEntryProfile,
@@ -112,259 +108,20 @@ import {
   type LineageFrameReference,
   type LineageLaneReference,
 } from '../../bot/src/tierEntry/profiles';
-import { setupArena, teardownArena } from './balance/arena';
-import { reviveInFarmNode } from './balance/runFarm';
-import { createFarmWorld } from './balance/worldFactory';
-import { prepareLaneBot } from './lineage/laneBot';
 import { hydrateHitboxCacheFromArtifact, writeHitboxArtifact } from '../src/hitbox/cache';
-import { isPlayerActivelyInCombat } from '../src/systems/combat/ai/engagement';
 import {
-  registerCombatListener,
-  unregisterCombatListener,
-  type CombatEventHandler,
-} from '../src/systems/combat/engine/combatPipeline';
-import type { World } from '../src/world/World';
+  BENCH_TIERS,
+  OWN_NODE_SHARE,
+  laneNodes,
+  measure,
+  short,
+  shortNode,
+  type LaneNode,
+  type Row,
+} from './lineage/laneMeasure';
+import { VIABILITY_FLOOR_RATIO, viabilityFloor } from './lineage/viabilityFloor';
+import { rankLanesByMedian, type LaneRank } from './lineage/encounterOrdinal';
 
-/**
- * Every biome with authored family blends, in map order: the five T1 biomes and
- * the two the T2 region adds. A biome absent from this list has no families yet,
- * so a node of it would resolve to an empty blend.
- */
-const BENCH_BIOMES = [
-  'plains', 'forest', 'mountain', 'cave', 'swamp', 'jungle', 'desert',
-] as const;
-const BENCH_TIERS = [1, 2] as const;
-
-/**
- * Wallet credited before the cards are bought. Generous on purpose: the matrix
- * measures COMBAT, and a lane that could not afford its own band would be
- * measuring the economy instead. Every purchase still goes through the real
- * handler, so a mastery or prerequisite refusal is still a refusal.
- */
-const BENCH_ESSENCE = 5_000;
-const BENCH_SHARDS = 200;
-
-// ── Node set: one row per DISTINCT resolved blend ─────────────────────────────
-
-interface LaneNode {
-  /** Representative node id — the first authored node with this composition. */
-  nodeId: string;
-  biome: string;
-  /** The node's own biome tier, which decides which monster pool it fields. */
-  tier: number;
-  /** Every authored node that resolves to the same spawn cycle. */
-  aliases: string[];
-  authored: string;
-  resolved: string;
-  /** Monster ids in the repeating cycle, with how many of the ten slots each takes. */
-  mobs: Array<{ monsterTypeId: string; family: FamilyId; slots: number }>;
-  dominant: FamilyId;
-  /** The dominant family's resolved share — what "its own node" means. */
-  dominantShare: number;
-  dropsLane: PacketId;
-  punishesLane: PacketId;
-  unavailable: FamilyId[];
-}
-
-function laneNodes(): LaneNode[] {
-  const byKey = new Map<string, LaneNode>();
-  for (const node of WORLD_NODE_LIST) {
-    if (!BENCH_TIERS.includes(node.biomeTier as (typeof BENCH_TIERS)[number])) continue;
-    if (NODE_BIOMES[node.id]?.kind !== 'normal') continue;
-    if (!BENCH_BIOMES.includes(node.biomeGroup as (typeof BENCH_BIOMES)[number])) continue;
-    const blend = node.blend;
-    const resolved = nodeSpawnBlend(node.id);
-    if (!blend || !resolved) continue;
-
-    // Two nodes are the same ENCOUNTER when their resolved spawn cycles agree
-    // slot for slot, which is what the spawner actually walks. Keyed by tier as
-    // well: the same biome's T1 and T2 nodes can share a cycle shape while
-    // fielding entirely different mobs.
-    const cycleKey = `${node.biomeGroup}|${node.biomeTier}|${resolved.cycle.join(',')}`;
-    const existing = byKey.get(cycleKey);
-    if (existing) {
-      existing.aliases.push(node.id);
-      continue;
-    }
-
-    const slots = new Map<string, { monsterTypeId: string; family: FamilyId; slots: number }>();
-    for (let cursor = 0; cursor < resolved.cycle.length; cursor += 1) {
-      const family = resolved.cycle[cursor];
-      const pool = resolved.poolByFamily.get(family) ?? [];
-      // Mirror `blendSpawnPick`: the family's own occurrence walks its mob list.
-      const occurrence = resolved.cycle.slice(0, cursor).filter((f) => f === family).length;
-      const monsterTypeId = pool[occurrence % Math.max(1, pool.length)];
-      const key = `${family}|${monsterTypeId}`;
-      const row = slots.get(key) ?? { monsterTypeId, family, slots: 0 };
-      row.slots += 1;
-      slots.set(key, row);
-    }
-    const dominantEntry = blendEntries(resolved.shares)[0];
-    const dominant = dominantEntry.family;
-    const family = FAMILY_DATABASE.get(dominant)!;
-    byKey.set(cycleKey, {
-      nodeId: node.id,
-      biome: node.biomeGroup,
-      tier: node.biomeTier,
-      aliases: [node.id],
-      authored: blendEntries(blend).map((e) => `${short(e.family)} ${pct(e.share)}`).join(' / '),
-      resolved: blendEntries(resolved.shares).map((e) => `${short(e.family)} ${pct(e.share)}`).join(' / '),
-      mobs: [...slots.values()].sort((a, b) => b.slots - a.slots),
-      dominant,
-      dominantShare: dominantEntry.share,
-      dropsLane: family.drops,
-      punishesLane: family.punishes,
-      unavailable: [...resolved.unavailable],
-    });
-  }
-  return [...byKey.values()];
-}
-
-/**
- * The resolved share at which a node counts as a family's OWN: the 70/20/10 and 70/30
- * shapes, never a 45/45/10 or a 34/33/33 where two families share the encounter.
- * Module scope because `LANE_OWN_NODES` filters on it before the node set is built.
- */
-const OWN_NODE_SHARE = 0.6;
-
-const short = (family: FamilyId): string => FAMILY_DATABASE.get(family)?.name ?? family;
-const pct = (share: number): string => `${Math.round(share * 100)}%`;
-/** `node-t2-jungle-03` as `t2-jungle-03`: short enough for a column heading. */
-const shortNode = (nodeId: string): string => nodeId.replace('node-', '');
-
-// ── Bot preparation ──────────────────────────────────────────────────────────
-
-// ── One measurement ──────────────────────────────────────────────────────────
-
-interface Row {
-  cellId: string;
-  profileId: string;
-  /** Null on a frame reference, which belongs to a root rather than a lineage. */
-  lineageId: string | null;
-  lane: PacketId | null;
-  classRoot: string;
-  /** Which tier's band and gear the row was measured with (run 4). */
-  bandTier: BandTier;
-  /** Set on a frame reference only: the frame under test and its shape. */
-  frameId?: string;
-  frameShape?: string;
-  nodeId: string;
-  biome: string;
-  seed: number;
-  kills: number;
-  deaths: number;
-  engagedMs: number;
-  capMs: number;
-  damageDealt: number;
-  refusals: string[];
-  grantedShards: boolean;
-  mobCount: number;
-  /**
-   * `card-fx` events pushed during the run, keyed by fx. This is the proof that
-   * the LANE fired: without it a +5% uplift is indistinguishable from the stat
-   * row alone with a payoff card that never triggered.
-   */
-  fx: Record<string, number>;
-  /**
-   * Survival, for the lanes whose T1 payoff is not damage. Control's slow and
-   * Engagement's opening DR buy time, not throughput, so a TTK-only matrix reads
-   * them as worth nothing — which is an instrument limit, not a finding.
-   * Optional so `LANE_REPLAY` of a run made before these existed still renders.
-   */
-  damageTaken?: number;
-  /** Sum of the player's HP fraction over engaged ticks, and the tick count. */
-  hpFractionSum?: number;
-  hpSamples?: number;
-}
-
-function seededRandom(seed: number): () => number {
-  let state = seed;
-  return () => {
-    state |= 0;
-    state = (state + 0x6d2b79f5) | 0;
-    let t = Math.imul(state ^ (state >>> 15), 1 | state);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function measure(
-  profile: TierEntryProfile,
-  reference: LineageLaneReference | null,
-  frame: LineageFrameReference | null,
-  node: LaneNode,
-  seed: number,
-  capMs: number,
-): Row {
-  const originalRandom = Math.random;
-  const originalNow = Date.now;
-  Math.random = seededRandom(seed);
-  let now = 0;
-  Date.now = () => now;
-
-  const world = createFarmWorld();
-  let kills = 0;
-  let deaths = 0;
-  let engagedMs = 0;
-  let damageDealt = 0;
-  const fx: Record<string, number> = {};
-  const onKill: CombatEventHandler = (ctx) => {
-    if (ctx.defenderType === 'monster') kills += 1;
-  };
-  let damageTaken = 0;
-  let hpFractionSum = 0;
-  let hpSamples = 0;
-  const onDealt: CombatEventHandler = (ctx) => {
-    if (ctx.defenderType === 'monster' && ctx.damage > 0) damageDealt += ctx.damage;
-    if (ctx.defenderType === 'player' && ctx.damage > 0) damageTaken += ctx.damage;
-  };
-  registerCombatListener('onKill', onKill);
-  registerCombatListener('onDamageTaken', onDealt);
-  try {
-    const mobCount = setupArena(world, {
-      nodeId: node.nodeId, biomeGroup: node.biome, contentTier: node.tier, isDungeon: false,
-    });
-    const { bot, refusals, grantedShards } = prepareLaneBot(world, profile, reference, node.nodeId, frame);
-    for (; now < capMs;) {
-      world.tick(100, now);
-      now += 100;
-      world.pendingDeaths = [];
-      for (const event of world.takeNodeEvents(node.nodeId)) {
-        if (event.kind === 'card-fx') fx[event.fx] = (fx[event.fx] ?? 0) + 1;
-      }
-      world.clearNodeEvents(node.nodeId);
-      const dead = bot.isDead !== undefined || bot.hasHealth.hp <= 0;
-      if (!dead && isPlayerActivelyInCombat(world, bot)) {
-        engagedMs += 100;
-        hpFractionSum += bot.hasHealth.hp / Math.max(1, bot.hasHealth.maxHp);
-        hpSamples += 1;
-      }
-      if (dead) {
-        deaths += 1;
-        reviveInFarmNode(world, bot, node.nodeId);
-      }
-    }
-    return {
-      cellId: `${profile.id}@${node.nodeId}`,
-      profileId: profile.id,
-      lineageId: reference?.lineageId ?? null,
-      lane: reference?.lane ?? null,
-      classRoot: (reference ?? frame!).classRoot,
-      bandTier: (reference ?? frame!).bandTier,
-      ...(frame ? { frameId: frame.frameId, frameShape: frame.frameShape } : {}),
-      nodeId: node.nodeId,
-      biome: node.biome,
-      seed, kills, deaths, engagedMs, capMs, damageDealt, refusals, grantedShards, mobCount, fx,
-      damageTaken, hpFractionSum, hpSamples,
-    };
-  } finally {
-    unregisterCombatListener('onKill', onKill);
-    unregisterCombatListener('onDamageTaken', onDealt);
-    teardownArena(world);
-    Math.random = originalRandom;
-    Date.now = originalNow;
-  }
-}
 
 // ── Aggregation and the two §9 checks ────────────────────────────────────────
 
@@ -481,7 +238,7 @@ async function main(): Promise<void> {
    * `LANE_OWN_NODES=1` — keep only nodes a single family DOMINATES (resolved share at
    * or above `OWN_NODE_SHARE`), which is the 70/20/10 and 70/30 shapes and nothing else.
    *
-   * This is not an arbitrary sample: it is exactly the node set both §18.9 criteria
+   * This is not an arbitrary sample: it is exactly the node set both criteria (the §24.1 floor and the ordinal encounter check)
    * read. The lane budget is measured on each lane's favoured node (the node its own
    * family dominates hardest) and the encounter check on each family's own node (the
    * same 60% floor). The 45/45/10 and 34/33/33 blends only ever fed the secondary
@@ -510,7 +267,7 @@ async function main(): Promise<void> {
    *
    * Band 2 runs on Tier-2 nodes ONLY, and the omission is deliberate. A Tier-2
    * band on a Tier-1 node is a character farming a tier behind its own gear;
-   * §18.9 asks nothing about it, and including it would have added roughly a
+   * no criterion asks anything about it, and including it would have added roughly a
    * thousand runs to say so. Said plainly in the report rather than left to be
    * noticed from a gap in a table.
    */
@@ -545,22 +302,38 @@ async function main(): Promise<void> {
       .filter((r) => !bandFilter || bandFilter.includes(r.bandTier));
 
   // Regenerating the report is a report change, not a measurement, so it must not
-  // cost another three quarters of an hour: `LANE_REPLAY` reads a previous run's
-  // `lane-matrix.json` and rebuilds every table from its stored rows.
+  // cost another three quarters of an hour: `LANE_REPLAY` reads previous runs'
+  // `lane-matrix.json` files (comma-separated, merged — which is also how the
+  // shards of a sharded run come back together) and rebuilds every table from
+  // their stored rows.
   const replay = process.env.LANE_REPLAY;
   const rows: Row[] = [];
   const startedAt = Date.now();
   if (replay) {
-    const stored = JSON.parse(readFileSync(resolve(replay), 'utf8')) as { rows: Row[] };
-    assert(Array.isArray(stored.rows) && stored.rows.length > 0, `${replay} holds no rows`);
-    rows.push(...stored.rows);
+    for (const path of replay.split(',')) {
+      const stored = JSON.parse(readFileSync(resolve(path), 'utf8')) as { rows: Row[] };
+      assert(Array.isArray(stored.rows) && stored.rows.length > 0, `${path} holds no rows`);
+      rows.push(...stored.rows);
+    }
     console.log(`replaying ${rows.length} measured rows from ${replay}`);
   }
+  /**
+   * `LANE_SHARD`/`LANE_SHARDS` (course-correction W3-A): split the (profile, node)
+   * jobs round-robin across processes. A shard measures only its own jobs and
+   * writes their rows, with no report — a report needs every row, and the merge is
+   * `LANE_REPLAY=<report>.shard0.json,...`. Each job is still one cell's whole
+   * seed list, so a cell never straddles two shards.
+   */
+  const shards = Number(process.env.LANE_SHARDS ?? 1);
+  const shard = Number(process.env.LANE_SHARD ?? 0);
+  assert(Number.isInteger(shards) && shards >= 1 && shard >= 0 && shard < shards, 'LANE_SHARD must be in [0, LANE_SHARDS)');
+  let jobIndex = 0;
   const sweep = (
     jobs: Array<{ profileId: string; profile: TierEntryProfile; lane: LineageLaneReference | null; frame: LineageFrameReference | null; nodes: LaneNode[] }>,
   ): void => {
     for (const job of jobs) {
       for (const node of job.nodes) {
+        if (jobIndex++ % shards !== shard) continue;
         for (const seed of seeds) {
           rows.push(measure(job.profile, job.lane, job.frame, node, seed, capMs));
         }
@@ -593,6 +366,13 @@ async function main(): Promise<void> {
     })));
   }
   const elapsedMs = replay ? 0 : Date.now() - startedAt;
+  if (!replay && shards > 1) {
+    const base = process.env.LANE_REPORT ?? 'lane-matrix';
+    const path = resolve(out, `${base}.shard${shard}.json`);
+    writeFileSync(path, `${JSON.stringify({ schema: 2, capMs, seeds, shard, shards, elapsedMs, rows }, null, 1)}\n`);
+    console.log(`\nshard ${shard}/${shards}: ${rows.length} rows in ${(elapsedMs / 60_000).toFixed(1)} min -> ${path}`);
+    return;
+  }
 
   const cells = aggregate(rows);
   const seedCells = aggregate(rows, true);
@@ -714,18 +494,31 @@ async function main(): Promise<void> {
     }
   }
 
-  // ── §18.9 lane budget, on the lane's favoured node ────────────────────────
+  // ── §24.1 viability floor, on the lane's favoured node ────────────────────
   //
   // "Favoured" is read off `FamilyDefinition.drops`, which design §18.7 confirms
   // IS the definition of favours — the family table carries no second `favours`
   // field and is not getting one.
   //
-  // The band is design §18.9's, not §9's: the median uplift ±3 PERCENTAGE
-  // POINTS, absolute. §9's "±10% of the tier median" is a proportion of a number
-  // that is itself small, so at a +4.3% median it reads +3.9% to +4.7% — tighter
-  // than the measurement noise, and unsatisfiable by construction. The absolute
-  // ±10% column is kept beside it only to show what the retired criterion said.
-  const BAND_PP = 0.03;
+  // The criterion is design §24.1's VIABILITY FLOOR: no lane below 0.9× the
+  // median uplift of its tier. It replaced §18.9's "median ±3 percentage points",
+  // which balanced every card to be indistinguishable from its neighbours and so,
+  // by construction, imperceptible (§24.1). A lane above the median is no longer a
+  // failure. The arithmetic is `lineage/viabilityFloor.ts`, shared with the
+  // composition matrix and pinned by `server/test/viabilityFloor.test.ts`.
+  const floorRatioLabel = `${VIABILITY_FLOOR_RATIO}×`;
+  const floorLine = (reading: { median: number | null; floor: number | null; medianPositive: boolean }): string =>
+    reading.median === null
+      ? 'No row has a reading, so there is no floor.'
+      : `The §24.1 floor is ${floorRatioLabel} the median: **${signedPct(reading.floor)}**.`
+        + (reading.medianPositive
+          ? ''
+          : ' **The median is not positive** — the lanes collectively buy nothing here, which is a'
+            + ' finding before any floor is (the floor is then read as a tenth of the median\'s size'
+            + ' below it; see `viabilityFloor.ts`).');
+  const verdictCell = (verdict: string): string =>
+    verdict === 'pass' ? 'yes' : verdict === 'below-floor' ? '**NO**' : 'n/a';
+  const ratioCell = (ratio: number | null): string => (ratio === null ? '—' : `${ratio.toFixed(2)}×`);
   const favouredNodeFor = (lane: PacketId, tier?: number): LaneNode | undefined => {
     const candidates = nodes
       .filter((n) => n.dropsLane === lane)
@@ -742,7 +535,7 @@ async function main(): Promise<void> {
     absolute: number | null;
     upliftValue: number | null;
   }
-  const budgetTableFor = (tier: number, band: BandTier): { rows: BudgetRow[]; upMedian: number; lines: string[] } => {
+  const budgetTableFor = (tier: number, band: BandTier) => {
     const rowsForTier: BudgetRow[] = laneRefsOfBand(band).map((reference) => {
       const node = favouredNodeFor(reference.lane!, tier) ?? null;
       const cell = node ? cellFor(reference.profileId, node.nodeId) : undefined;
@@ -754,22 +547,23 @@ async function main(): Promise<void> {
       };
     });
     const absMedianTier = median(rowsForTier.flatMap((r) => (r.absolute === null ? [] : [r.absolute])));
-    const upMedianTier = median(rowsForTier.flatMap((r) => (r.upliftValue === null ? [] : [r.upliftValue])));
+    const reading = viabilityFloor(rowsForTier, (r) => r.upliftValue);
     const lines = [
-      `**Tier ${tier} node, ${bandLabel(band)}.** Median lane uplift on the favoured node: **${signedPct(upMedianTier)}**.`
-      + ` The §18.9 band is ${signedPct(upMedianTier - BAND_PP)} to ${signedPct(upMedianTier + BAND_PP)}`
-      + ` (median ±3 pp). Median absolute throughput there: ${fmt(absMedianTier)} kills/min.`,
+      `**Tier ${tier} node, ${bandLabel(band)}.** Median lane uplift on the favoured node: **${signedPct(reading.median)}**.`
+      + ` ${floorLine(reading)} Lanes below it: **${reading.belowFloor.length}** of ${rowsForTier.length}.`
+      + ` Median absolute throughput there: ${fmt(absMedianTier)} kills/min.`,
       '',
-      '| lane | profile | favoured node | uplift | uplift − median | in ±3 pp (§18.9) | kills/min | in ±10% abs (§9, retired) | shards |',
-      '|---|---|---|---:|---:|:--:|---:|:--:|---|',
-      ...rowsForTier.map((r) => {
-        const deviation = r.absolute === null || absMedianTier === 0 ? null : r.absolute / absMedianTier - 1;
-        const delta = r.upliftValue === null ? null : r.upliftValue - upMedianTier;
-        return `| ${r.reference.lane} | \`${r.reference.profileId}\` | ${r.node ? `\`${r.node.nodeId}\`` : `**no T${tier} node favours this lane**`} | ${signedPct(r.upliftValue)} | ${delta === null ? '—' : signedPct(delta)} | ${delta === null ? 'n/a' : (Math.abs(delta) <= BAND_PP ? 'yes' : 'NO')} | ${fmt(r.absolute)} | ${deviation === null ? 'n/a' : (Math.abs(deviation) <= 0.10 ? 'yes' : 'NO')} | ${r.reference.shardsUnobtainableAtT1 ? 'granted (no T1 source)' : 'earned'} |`;
+      '| lane | profile | favoured node | uplift | × median | at or above the floor (§24.1) | kills/min | shards |',
+      '|---|---|---|---:|---:|:--:|---:|---|',
+      ...reading.rows.map(({ item: r, ratioToMedian, verdict }) => {
+        const node = r.node ? `\`${r.node.nodeId}\`` : `**no T${tier} node favours this lane**`;
+        const shards = r.reference.shardsUnobtainableAtT1 ? 'granted (no T1 source)' : 'earned';
+        return `| ${r.reference.lane} | \`${r.reference.profileId}\` | ${node} | ${signedPct(r.upliftValue)}`
+          + ` | ${ratioCell(ratioToMedian)} | ${verdictCell(verdict)} | ${fmt(r.absolute)} | ${shards} |`;
       }),
       '',
     ];
-    return { rows: rowsForTier, upMedian: upMedianTier, lines };
+    return { rows: rowsForTier, reading, lines };
   };
   const budgetByTier = BENCH_TIERS
     .filter((tier) => nodes.some((n) => n.tier === tier))
@@ -778,15 +572,15 @@ async function main(): Promise<void> {
       .map((band) => ({ tier, band, ...budgetTableFor(tier, band) })));
   const budget = budgetByTier.flatMap((b) => b.lines);
   const budgetRows = budgetByTier[0]?.rows ?? [];
-  const upMedian = budgetByTier[0]?.upMedian ?? 0;
+  const upMedian = budgetByTier[0]?.reading.median ?? 0;
   const absMedian = median(budgetRows.flatMap((r) => (r.absolute === null ? [] : [r.absolute])));
 
-  // ── §18.9 lane budget at the PACKET level ─────────────────────────────────
+  // ── §24.1 viability floor at the PACKET level ─────────────────────────────
   //
-  // The budget's unit is the lane (the packet), not the (lineage, lane) pair:
+  // The floor's unit is the lane (the packet), not the (lineage, lane) pair:
   // three lineages carry Tempo and they must not each be judged alone. So a
   // packet's reading is the mean of its references' mean uplift over every node,
-  // and the band is the median PACKET ±3 pp. This is the table the designer
+  // and the floor is 0.9× the median PACKET. This is the table the designer
   // tunes `PACKET_BUDGET` from.
   const packetRowsFor = (band: BandTier) =>
     [...new Set(laneRefsOfBand(band).map((r) => r.lane!))].map((lane) => {
@@ -812,22 +606,23 @@ async function main(): Promise<void> {
       favoured: favouredNodeFor(lane) ?? null,
     };
   }).sort((a, b) => (b.mean ?? -1) - (a.mean ?? -1));
-  const packetBudget: string[] = bandsRun.flatMap((band) => {
-    const packetRows = packetRowsFor(band);
-    const packetMedian = median(packetRows.flatMap((r) => (r.mean === null ? [] : [r.mean])));
-    return [
-      `**${bandLabel(band)}.** Median packet uplift: **${signedPct(packetMedian)}**. The §18.9 band is` +
-      ` ${signedPct(packetMedian - BAND_PP)} to ${signedPct(packetMedian + BAND_PP)} (median ±3 pp).`,
-      '',
-      '| packet | lineages carrying it | mean uplift | − median | in ±3 pp | payoff fx fired | hardest favouring node |',
-      '|---|---:|---:|---:|:--:|---:|---|',
-      ...packetRows.map((r) => {
-        const delta = r.mean === null ? null : r.mean - packetMedian;
-        return `| ${r.lane} | ${r.lineages} | ${signedPct(r.mean)} | ${delta === null ? '—' : signedPct(delta)} | ${delta !== null && Math.abs(delta) <= BAND_PP ? 'yes' : 'NO'} | ${r.fxTotal} | ${r.favoured ? `\`${r.favoured.nodeId}\`` : '**none**'} |`;
-      }),
-      '',
-    ];
-  });
+  const packetReadings = bandsRun.map((band) => ({
+    band,
+    reading: viabilityFloor(packetRowsFor(band), (r) => r.mean),
+  }));
+  const packetBudget: string[] = packetReadings.flatMap(({ band, reading }) => [
+    `**${bandLabel(band)}.** Median packet uplift: **${signedPct(reading.median)}**. ${floorLine(reading)}`
+    + ` Packets below it: **${reading.belowFloor.length}** of ${reading.rows.length}.`,
+    '',
+    '| packet | lineages carrying it | mean uplift | × median | at or above the floor | payoff fx fired | hardest favouring node |',
+    '|---|---:|---:|---:|:--:|---:|---|',
+    ...reading.rows.map(({ item: r, ratioToMedian, verdict }) => {
+      const favoured = r.favoured ? `\`${r.favoured.nodeId}\`` : '**none**';
+      return `| ${r.lane} | ${r.lineages} | ${signedPct(r.mean)} | ${ratioCell(ratioToMedian)}`
+        + ` | ${verdictCell(verdict)} | ${r.fxTotal} | ${favoured} |`;
+    }),
+    '',
+  ]);
 
   // ── §18.9 encounter check: an ORDINAL reading, per fieldable family ───────
   //
@@ -846,12 +641,9 @@ async function main(): Promise<void> {
   // The per-seed ranks are reported beside the pooled one, because design
   // §18 3b's remap is only taken when both seeds agree: "favoured ranks last
   // with both seeds, and one other lane ranks first with both seeds".
-  interface LaneRank {
-    lane: PacketId;
-    up: number;
-    rank: number;
-    refs: number;
-  }
+  //
+  // §24.1 keeps this check exactly as it was; the ranking itself lives in
+  // `lineage/encounterOrdinal.ts` so a unit test can pin it next to the floor.
   const ranksOn = (nodeId: string, band: BandTier, seed?: number): LaneRank[] => {
     const byLane = new Map<PacketId, number[]>();
     for (const reference of laneRefsOfBand(band)) {
@@ -867,10 +659,7 @@ async function main(): Promise<void> {
       list.push(value);
       byLane.set(reference.lane!, list);
     }
-    const scored = [...byLane.entries()]
-      .map(([lane, values]) => ({ lane, up: median(values), refs: values.length }))
-      .sort((a, b) => b.up - a.up);
-    return scored.map((entry, index) => ({ ...entry, rank: index + 1 }));
+    return rankLanesByMedian(byLane);
   };
   const rankOf = (list: LaneRank[], lane: PacketId): LaneRank | undefined =>
     list.find((r) => r.lane === lane);
@@ -1188,10 +977,12 @@ async function main(): Promise<void> {
     'cell against the SAME lineage’s lane-less control on the SAME node — the only',
     'reading in which the lane, and not the class or the weapon, is the variable.',
     '',
-    'The criteria are design §18.9\'s, which replaced §9\'s: the lane budget band is the',
-    'median uplift **±3 percentage points, absolute**, and the encounter check is an',
-    '**ordinal** reading — does the favoured lane out-uplift the punished lane on that',
-    'family\'s own node, and by what margin? The margin is reported, never thresholded.',
+    'The criteria are design §24.1\'s, which retired §18.9\'s ±3 percentage-point band:',
+    'the lane budget is a **viability floor** — no lane below **0.9× the median uplift**',
+    'of its tier; a lane above the median is a reading, never a failure — and the',
+    'encounter check stays an **ordinal** reading — does the favoured lane out-uplift the',
+    'punished lane on that family\'s own node, and by what margin? The margin is',
+    'reported, never thresholded.',
     '',
     'RUN 4 ADDS THE SECOND BAND. Run 3 measured only a Tier-1 band, so every Tier-2',
     'row it produced was reading the gear gap at the gate rather than the lane (a T1',
@@ -1205,7 +996,7 @@ async function main(): Promise<void> {
     'Band 1 still runs on BOTH tiers, unchanged, so run 3 and run 4 can be laid side by',
     'side — those rows remain the "what does a Tier-1 lane still buy you here" reading.',
     'Band 2 runs on TIER-2 NODES ONLY, and that omission is deliberate: a Tier-2 band on',
-    'a Tier-1 node is a character farming a tier behind its own gear, which §18.9 asks',
+    'a Tier-1 node is a character farming a tier behind its own gear, which no criterion asks',
     'nothing about, and including it would have added roughly a thousand runs to say so.',
     '',
     'Every control is BAND-MATCHED. A band-2 lane measured against the band-1 control',
@@ -1236,17 +1027,17 @@ async function main(): Promise<void> {
     '### The same table as uplift over each lineage’s own control',
     '',
     ...upliftPivot,
-    '## Lane budget (design §18.9)',
+    '## Viability floor (design §24.1)',
     '',
-    '“The band is the median uplift ±3pp, absolute.” Measured on each lane’s favoured',
-    'node — the node its own family dominates hardest — per tier.',
+    '“No lane below 0.9× the median uplift of its tier.” Measured on each lane’s',
+    'favoured node — the node its own family dominates hardest — per tier.',
     '',
     ...budget,
     '### How much of the absolute column is class, not lane',
     '',
     ...controlSpread,
     '',
-    '### Lane budget per PACKET — the table `PACKET_BUDGET` is tuned from',
+    '### Viability floor per PACKET — the table `PACKET_BUDGET` is tuned from',
     '',
     ...packetBudget,
     '',
@@ -1277,7 +1068,7 @@ async function main(): Promise<void> {
          'each against the same lineage’s lane-less control.',
          '', ...survival, '']
       : []),
-    '## Encounter check (design §18.9) — ordinal',
+    '## Encounter check (design §18.9, kept by §24.1) — ordinal',
     '',
     'One row per family that has an OWN node: a node where it reaches at least 60% of',
     'the resolved blend, so the encounter really is that family rather than two sharing',
@@ -1315,14 +1106,23 @@ async function main(): Promise<void> {
     rows,
     cells: [...cells.values()],
     budget: {
-      bandPp: BAND_PP,
+      // §24.1's viability floor; schema 2's ±3 pp `bandPp` is retired.
+      floorRatio: VIABILITY_FLOOR_RATIO,
       absoluteMedian: absMedian,
       upliftMedian: upMedian,
       byTier: budgetByTier.map((b) => ({
         tier: b.tier,
         bandTier: b.band,
-        upliftMedian: b.upMedian,
+        upliftMedian: b.reading.median,
+        floor: b.reading.floor,
+        belowFloor: b.reading.belowFloor.map((r) => r.item.reference.profileId),
         rows: b.rows.map((r) => ({ lane: r.reference.lane, profileId: r.reference.profileId, nodeId: r.node?.nodeId ?? null, absolute: r.absolute, uplift: r.upliftValue })),
+      })),
+      packets: packetReadings.map(({ band, reading }) => ({
+        bandTier: band,
+        upliftMedian: reading.median,
+        floor: reading.floor,
+        rows: reading.rows.map((r) => ({ lane: r.item.lane, uplift: r.uplift, verdict: r.verdict })),
       })),
     },
     encounter: encounterRows.map((r) => ({

@@ -154,7 +154,9 @@ verdict; this page deliberately does not restate them, because they move with th
 `server/bench/familyContracts.ts`). Run 3 tried to settle the question from the matrix's
 ordinal ranking of six lanes on a blended node and could not: that ranking failed to
 reproduce between two seeds for seven of nine families, and its margins moved 7–15pp
-between a 90 s and a 270 s cap — more than the ±3pp band design §18.9 judges in. The
+between a 90 s and a 270 s cap — more than the ±3pp band design §18.9 then judged in (the
+lane-budget criterion is now design §24.1's viability floor; see
+[`lineages-current-state.md`](lineages-current-state.md) §14). The
 instrument that replaced it compares ONE lane against ONE lane on a node forced to 100%
 the family under test, to a fixed kill count, pooled across every weapon lineage carrying
 the lane, with five guards (reached-N, carriers, seed agreement, a spread that excludes

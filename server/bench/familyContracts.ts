@@ -6,7 +6,8 @@
  * own resolution: at 21–57 kills per profile per seed the ordinal ranking failed to
  * reproduce between two seeds for SEVEN of nine families, and the margins moved
  * 7–15 pp between a 90 s and a 270 s cap — larger than the ±3 pp band the criterion
- * is written in. `monster-proposals-run3.md` §2 names the fix it needs:
+ * was then written in (§18.9; retired for design §24.1's viability floor, 0.9× the
+ * median). `monster-proposals-run3.md` §2 names the fix it needs:
  *
  *   "stop ranking six lanes against each other on one node and instead compare ONE
  *    lane against ONE lane on its own favoured node, pooled across all three
@@ -926,7 +927,8 @@ async function main(): Promise<void> {
     'each other on one blended node is below that instrument\'s resolution: run 3\'s',
     'ordinal ranking failed to reproduce between two seeds for seven of nine families,',
     'and its margins moved 7–15 pp between a 90 s and a 270 s cap — more than the ±3 pp',
-    'band the criterion is written in. `monster-proposals-run3.md` §2 prescribed exactly',
+    'band the criterion was then written in (§18.9, since retired for §24.1\'s viability',
+    'floor). `monster-proposals-run3.md` §2 prescribed exactly',
     'this replacement: one lane against one lane, on its own node, pooled across every',
     'lineage carrying the lane, with enough seeds to put an interval on the difference.',
     '',
