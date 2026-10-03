@@ -6,11 +6,18 @@
  * shard of the packet it favours, so the material's name says what it buys and
  * the map says where it drops."
  *
- * **Scope in Phase 1b.** Only the `drops` half of this table is live: the reward
- * seam reads the family of the monster that died and grants its shard. Phase 2
- * adds the other half — per-node blends, family-driven spawning, and the removal
- * of node modifiers — and `punishes` is the encounter contract it will check
- * ("does the intended lane win by ~30%? does the punished lane still clear?").
+ * **One shard per node (design §24.3, 2026-10-03).** A kill no longer pays the
+ * shard of the family it came from: every node is categorised under its DOMINANT
+ * family, and every non-boss kill in the node pays that family's `drops`, minority
+ * families included (`nodeShard` in `world/nodeBlends.ts` is the one reading; the
+ * reward seam calls it). `drops` therefore means "the shard a node this family
+ * leads pays", and only a node with no blend (a dungeon) still pays per mob.
+ *
+ * **A biome's families are its weapon's lanes (design §24.4).** The three families
+ * of a T1 biome drop exactly the three lanes of that biome's weapon lineage, so
+ * "stay in the Forest to build Forest gear" needs no lookup. Four moves made it
+ * true — Sky → kill-chain, Grove → engagement, Hopper → engagement, Brood → tempo —
+ * with `punishes` unchanged.
  *
  * **Every non-boss monster of a T1 biome belongs to exactly one family**, because
  * families must partition the biome's pool: a mob in no family is a kill that
@@ -19,9 +26,8 @@
  *
  * Plains and Forest are LOCKED (the first slice). Mountain, Cave and Swamp are
  * PROPOSED from design §12.1 and are reviewed before Phase 4 (bible open
- * decision 2), as is a second T1 source for Engagement shards — Plains Sky is
- * currently the only one (bible open decision 3 covers the same gap for Bulwark
- * and Barrier tempo, which have no T1 family at all).
+ * decision 2). Bulwark and Barrier tempo have no T1 family at all (bible open
+ * decision 3); the biome boss's Lane-A stopgap (design §18.6) is their source.
  *
  * The mobs §12.1 did not name are assigned here by kind, so the partition holds:
  * prairie-yearling with the Herd, young-wolf and dire-whelp with the Pack, and so
@@ -96,7 +102,10 @@ export interface FamilyDefinition {
   biome: string;
   /** The monsters that make up this family. Non-boss only. */
   monsterIds: readonly string[];
-  /** The shard every kill in this family drops. */
+  /**
+   * The shard a node this family DOMINATES pays, for every kill in it (design
+   * §24.3). Not what one of its bodies pays on a node another family leads.
+   */
   drops: PacketId;
   /** The lane this family is built to punish (design §12; Phase 2 measures it). */
   punishes: PacketId;
@@ -111,16 +120,18 @@ const familyEntries: [FamilyId, FamilyDefinition][] = [
   }],
   // Swarm drops TECHNIQUE, not Tempo (design §22, run 4): area and control
   // Techniques are what beat many weak bodies, so the shard the swarm pays is the
-  // one that buys them. Tempo's T1 sources are Forest Pack and Mountain Hopper.
+  // one that buys them. Tempo's T1 sources are Forest Pack and Cave Brood (§24.4).
   ['plains-swarm', {
     id: 'plains-swarm', name: 'Swarm', biome: 'plains',
     monsterIds: ['plains-slime', 'prairie-wolf'],
     drops: 'technique', punishes: 'empowered',
   }],
+  // Sky drops KILL CHAIN, not Engagement (design §24.4): the Plains weapon's lanes
+  // are technique / kill-chain / empowered.
   ['plains-sky', {
     id: 'plains-sky', name: 'Sky', biome: 'plains',
     monsterIds: ['grass-kite', 'savanna-hawk'],
-    drops: 'engagement', punishes: 'affliction',
+    drops: 'kill-chain', punishes: 'affliction',
   }],
 
   // ── Forest (locked) ────────────────────────────────────────────────────────
@@ -129,10 +140,12 @@ const familyEntries: [FamilyId, FamilyDefinition][] = [
     monsterIds: ['wolf', 'ancient-wolf', 'young-wolf', 'dire-whelp'],
     drops: 'tempo', punishes: 'empowered',
   }],
+  // Grove drops ENGAGEMENT, not Empowered (design §24.4): the Rapier's lanes are
+  // tempo / affliction / engagement.
   ['forest-grove', {
     id: 'forest-grove', name: 'Grove', biome: 'forest',
     monsterIds: ['ironwood-golem', 'forest-slime'],
-    drops: 'empowered', punishes: 'tempo',
+    drops: 'engagement', punishes: 'tempo',
   }],
   ['forest-canopy', {
     id: 'forest-canopy', name: 'Canopy', biome: 'forest',
@@ -157,14 +170,21 @@ const familyEntries: [FamilyId, FamilyDefinition][] = [
     // (cliff-hopper -> avalanche-ram -> avalanche-tyrant, mountain.monsters.ts's
     // lineage banner) — was filed under Crag, moved here to match the role.
     monsterIds: ['cliff-hopper', 'stone-eagle', 'avalanche-ram', 'cliffside-roc', 'avalanche-tyrant'],
-    drops: 'tempo', punishes: 'empowered',
+    // ENGAGEMENT, not Tempo (design §24.4): the Mountain weapon's lanes are
+    // empowered / control / engagement.
+    drops: 'engagement', punishes: 'empowered',
   }],
 
   // ── Cave (proposed) ────────────────────────────────────────────────────────
+  // TEMPO, not Affliction (design §24.4): the Cave weapon's lanes are tempo /
+  // kill-chain / empowered. §24.4 moves `drops` only and leaves `punishes` as it
+  // was, so the Brood now favours AND punishes Tempo — the one family that does.
+  // That collision is the designer's to resolve; `lineageMaterials.test.ts` names
+  // it in SAME_LANE_FAMILIES so it cannot spread quietly.
   ['cave-brood', {
     id: 'cave-brood', name: 'Brood', biome: 'cave',
     monsterIds: ['brood-spiderling', 'giant-spider', 'deep-spider'],
-    drops: 'affliction', punishes: 'tempo',
+    drops: 'tempo', punishes: 'tempo',
   }],
   ['cave-brute', {
     id: 'cave-brute', name: 'Brute', biome: 'cave',
@@ -397,13 +417,16 @@ const familyEntries: [FamilyId, FamilyDefinition][] = [
 export const FAMILY_DATABASE: Map<FamilyId, FamilyDefinition> =
   new Map<FamilyId, FamilyDefinition>(familyEntries);
 
-/** Biomes whose pool the family table covers. A kill outside these drops no shard. */
+/**
+ * Biomes whose pool the family table covers. A dungeon kill (no blend, so it pays
+ * per mob) outside these drops no shard.
+ */
 export const FAMILY_BIOMES: readonly string[] = [
   'plains', 'forest', 'mountain', 'cave', 'swamp', 'jungle', 'desert',
   'tundra', 'volcanic', 'graveyard', 'trench',
 ];
 
-/** monsterId → family, built once. The reward seam's only lookup. */
+/** monsterId → family, built once. */
 const FAMILY_BY_MONSTER: Map<string, FamilyDefinition> = (() => {
   const map = new Map<string, FamilyDefinition>();
   for (const family of FAMILY_DATABASE.values()) {
@@ -416,7 +439,11 @@ export function familyForMonster(monsterTypeId: string): FamilyDefinition | unde
   return FAMILY_BY_MONSTER.get(monsterTypeId);
 }
 
-/** The shard a kill of this monster drops, or undefined outside the T1 biomes. */
+/**
+ * This monster's FAMILY's shard. Since design §24.3 that is what a kill of it pays
+ * only on a node with no blend (a dungeon); on a blended node every kill pays
+ * `nodeShard(nodeId)` instead, whatever the body's family.
+ */
 export function shardForMonster(monsterTypeId: string): PacketId | undefined {
   return FAMILY_BY_MONSTER.get(monsterTypeId)?.drops;
 }
@@ -433,8 +460,8 @@ export function familiesDropping(packet: PacketId): FamilyDefinition[] {
 // ── Node blends (design §12, Phase 2a) ──────────────────────────────────────
 //
 // A node is not a modifier any more: it is a BLEND of its biome's families. The
-// blend says what you will be fighting there, and because each family drops one
-// shard, it also says what the node pays. Authored per node in
+// blend says what you will be fighting there, and its dominant family says what
+// the node pays (design §24.3: one shard per node). Authored per node in
 // `shared/src/world/map/regionT1.ts`.
 
 /**
