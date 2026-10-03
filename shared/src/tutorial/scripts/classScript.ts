@@ -660,10 +660,11 @@ class ScriptBuilder {
     this.push({
       id: `farm:gate:${form.recipeId}`,
       chapter,
-      say: `Tier 1 is done, and this last part is optional. Tier 2 opens the ${name(form.recipeId)}: its gate wants ${zone} essence and ${shards}.`,
+      // Usually skipped: Tier 2 arrives with the essence and shards in hand (the
+      // 1x sweep, all six classes), so the capstone line opens the chapter.
+      say: `Tier 2 opens the ${name(form.recipeId)}: its gate wants ${zone} essence and ${shards} first.`,
       waiting: `Working ${BIOME_NAME[form.biome as T1Biome] ?? form.biome} for the gate's essence and shards.`,
       progress: lineageCostProgress(cost),
-      teaches: ['gate'],
       steps: [{
         type: 'farm',
         at: gateFarm,
@@ -673,7 +674,7 @@ class ScriptBuilder {
     this.push({
       id: `capstone:${form.recipeId}`,
       chapter,
-      say: `The gate also wants ${cost.capstone.amount} ${capstone} drops, and only the ${zone} boss has them. Going up a tier always runs through a boss.`,
+      say: `Tier 1 is done, and this part is optional: the ${name(form.recipeId)}'s gate also wants ${cost.capstone.amount} ${capstone} drops, and only the ${zone} boss has them.`,
       waiting: `Fighting the ${zone} boss for ${capstone} drops.`,
       progress: [{ type: 'capstone', biome: form.biome, amount: cost.capstone.amount }],
       teaches: ['capstone'],
@@ -691,6 +692,7 @@ class ScriptBuilder {
       id: `gate:${form.recipeId}`,
       chapter,
       say: `Pay the gate and wear it: the ${name(form.recipeId)}, and a whole new band of cards above the one you have.`,
+      teaches: ['gate'],
       steps: [
         // Every melee plan swapped to the seal weapon for the bosses, and the
         // director opens the page BY SLOT, so without this the guide pointed at
