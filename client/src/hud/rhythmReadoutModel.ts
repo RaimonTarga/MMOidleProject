@@ -121,9 +121,12 @@ export interface RhythmInput {
 
 const clamp01 = (value: number): number => Math.max(0, Math.min(1, value));
 
-/** One decimal under ten seconds, whole seconds above: "0.8", "4". */
+/**
+ * One decimal under ten seconds, whole seconds above: "0.8", "12". Rounded UP, so
+ * a clock that is still running never reads "0.0".
+ */
 function seconds(ms: number): string {
-  const s = Math.max(0, ms) / 1000;
+  const s = Math.ceil(Math.max(0, ms) / 100) / 10;
   return s < 10 ? s.toFixed(1) : String(Math.ceil(s));
 }
 
