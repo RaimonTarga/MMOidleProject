@@ -11,6 +11,7 @@ import {
   checkUpgrade,
   checkEvolve,
   checkReconstruct,
+  isGatedLineageForm,
   type EvolveMode,
   type DungeonView,
   type EquipmentSlot,
@@ -145,12 +146,14 @@ export class Observation {
     const self = this.self;
     const recipe = RECIPE_DATABASE.get(recipeId);
     if (!self || !recipe) return false;
-    if (recipe.evolvesFrom) return false;
+    // The server's craft guard: a live lineage's tier-2+ form is opened at its
+    // gate, never crafted (review B4).
+    if (isGatedLineageForm(recipeId)) return false;
     if (!self.unlockedRecipes.includes(recipeId)) return false;
     return this.canAfford(recipe);
   }
 
-  /** Authoritative shared predicate for consuming a fully-upgraded predecessor. */
+  /** The shared evolve/reconstruct checks — which refuse every slot now (design §24.5). */
   canEvolve(recipeId: string, mode: EvolveMode = "evolve"): { ok: boolean; reason?: string } {
     const self = this.self;
     const recipe = RECIPE_DATABASE.get(recipeId);

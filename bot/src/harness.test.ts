@@ -13,6 +13,7 @@ import {
   STARTER_RUNE_IDS,
   bossClearKey,
   globalMastery,
+  isGatedLineageForm,
   lineageGateCost,
   isRuneRecipeAvailableForArchetype,
   isRuneRuleCompatibleForArchetype,
@@ -847,28 +848,28 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
             `${route.id}: ${step.recipeId} is worn before the route obtains it`,
           );
         } else if (step.type === "evolveItem") {
-          // Evolution and reconstruction both END with the evolved item in the
-          // bag, so both count as obtaining it. The `evolve` path additionally
-          // CONSUMES the predecessor, which is why it is dropped here -- a route
-          // that tries to wear the predecessor afterwards is authored wrong and
-          // this is where that shows up.
+          // A RETIRED step kind (design §24.5): the server refuses evolve and
+          // reconstruct on every slot. The executor rewrites one on a plain
+          // recipe (every armour, charm and boots T2+ item) as an ordinary
+          // craft — the item is obtained, nothing is consumed — and stalls on a
+          // gated weapon form, which only its lineage gate opens.
           const recipe = RECIPE_DATABASE.get(step.recipeId);
           assert(recipe, `${route.id}: evolution recipe exists (${step.recipeId})`);
-          assert(
-            !!recipe.evolvesFrom,
-            `${route.id}: evolveItem targets an evolved recipe (${step.recipeId})`,
-          );
-          if (step.mode === "reconstruct") {
-            assert(
-              !!recipe.reconstructCost,
-              `${route.id}: ${step.recipeId} authors a reconstruction cost`,
-            );
-          } else {
-            assert(
-              craftedItems.has(recipe.evolvesFrom!),
-              `${route.id}: ${step.recipeId} evolves from an owned ${recipe.evolvesFrom}`,
-            );
-            craftedItems.delete(recipe.evolvesFrom!);
+          if (isGatedLineageForm(step.recipeId)) {
+            // LEGACY: a weapon-form evolve has been refused by the server since
+            // Phase 2b, and dozens of old T2 route definitions still carry one.
+            // They stall at run time; statically they are walked as authored
+            // (predecessor consumed) until they are retired or rewritten to an
+            // `unlockForm`.
+            if (step.mode === "reconstruct") {
+              assert(!!recipe.reconstructCost, `${route.id}: ${step.recipeId} authors a reconstruction cost`);
+            } else {
+              assert(
+                !!recipe.evolvesFrom && craftedItems.has(recipe.evolvesFrom),
+                `${route.id}: ${step.recipeId} evolves from an owned ${recipe.evolvesFrom}`,
+              );
+              craftedItems.delete(recipe.evolvesFrom!);
+            }
           }
           craftedItems.add(step.recipeId);
         } else if (step.type === "equip") {

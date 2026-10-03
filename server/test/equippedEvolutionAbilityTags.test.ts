@@ -1,14 +1,13 @@
 import { baseRecoveryForTier } from "@mmo-idle/shared";
 import assert from "node:assert/strict";
 import { ABILITY_DATABASE, GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment, getStatusEffect,
-  ITEM_DATABASE, RECIPE_DATABASE, requiredPlusFor, abilityTags, abilityHasTag, abilityRankAt,
+  ITEM_DATABASE, RECIPE_DATABASE, abilityTags, abilityHasTag, abilityRankAt,
   abilityCooldownMs, modifiedAbilityCooldownMs, resolveAbilityEffectWithPassives,
   getCooldown, setCooldown } from "@mmo-idle/shared";
 import { applyStatusEffect, guardEffectIdForAbility, recoveryEffectIdForAbility, itemMechanicEffectsAt, equipmentAbilityTags } from '@mmo-idle/shared';
 import { applyStun, STUN_EFFECT } from '../src/systems/combat/status/stun';
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { World } from "../src/world/World";
-import { evolveItem } from "../src/systems/player/economy/itemEvolution";
 import { equipItem } from "../src/systems/player/economy/inventory";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { fireWithReferenceWiring } from './fixtures/abilityWiring';
@@ -91,69 +90,12 @@ function equipPassive(p: ReturnType<typeof player>, key: string) {
   assert((p.usesSkills.passives[key] ?? 0) > 0, `${key} reaches player from equipment`);
   return item;
 }
-// Every evolution lineage retains its slot; exercise real costs and server replacement.
+// Every weapon form's predecessor sits in the same slot. The evolve path itself
+// is retired on every slot (design §24.5); its refusals are pinned in
+// `slotRetirement.test.ts`.
 for (const recipe of RECIPE_DATABASE.values()) {
   if (!recipe.evolvesFrom) continue;
   assert.equal(ITEM_DATABASE.get(recipe.evolvesFrom)?.slot, recipe.slot, recipe.id);
-}
-// Weapon evolution/reconstruction is rejected server-side (Phase 2b, Override A):
-// a weapon's power track is its lineage tree, not this ladder. armor/recovery/
-// mobility keep it.
-for (const slot of ['armor', 'recovery', 'mobility'] as const) {
-  const recipe = [...RECIPE_DATABASE.values()].find(r => r.slot === slot && r.evolvesFrom);
-  assert(recipe, `evolution for ${slot}`);
-  const pred = recipe.evolvesFrom!;
-  const p = player();
-  p.tracksProgression.unlockedRecipes.push(recipe.id);
-  p.holdsInventory.inventory.push(pred, pred);
-  p.holdsInventory.itemUpgrades[pred] = requiredPlusFor(recipe);
-  assert(equipItem(world, p, pred));
-  // Failure cannot consume equipped item, spare copy, or wallet.
-  const before = JSON.stringify(p.holdsInventory);
-  assert.equal(evolveItem(world, p, recipe.id, 'evolve').success, false);
-  assert.equal(JSON.stringify(p.holdsInventory), before);
-  for (const [k,v] of Object.entries(recipe.cost)) p.tracksProgression.essences[k as keyof typeof p.tracksProgression.essences] = v!;
-  assert(evolveItem(world, p, recipe.id, 'evolve').success, recipe.id);
-  assert.equal(p.holdsInventory.equipment[slot], recipe.id);
-  assert.deepEqual(p.holdsInventory.inventory, [pred], 'spare copy remains in bag');
-  assert.equal(p.holdsInventory.itemUpgrades[recipe.id] ?? 0, 0, 'predecessor upgrades do not transfer');
-  for (const k of Object.keys(recipe.cost)) assert.equal(p.tracksProgression.essences[k as keyof typeof p.tracksProgression.essences], 0);
-  const equivalent = player();
-  equivalent.holdsInventory.inventory.push(recipe.id);
-  assert(equipItem(world, equivalent, recipe.id));
-  assert.deepEqual(p.usesSkills.passives, equivalent.usesSkills.passives, 'evolution immediately rebuilds item effects');
-  assert.equal(p.hasHealth.maxHp, equivalent.hasHealth.maxHp);
-}
-{
-  const weaponRecipe = [...RECIPE_DATABASE.values()].find(r => r.slot === 'weapon' && r.evolvesFrom)!;
-  const p = player();
-  p.tracksProgression.unlockedRecipes.push(weaponRecipe.id);
-  p.holdsInventory.inventory.push(weaponRecipe.evolvesFrom!);
-  assert(equipItem(world, p, weaponRecipe.evolvesFrom!));
-  p.holdsInventory.itemUpgrades[weaponRecipe.evolvesFrom!] = requiredPlusFor(weaponRecipe);
-  for (const k of Object.keys(p.tracksProgression.essences)) p.tracksProgression.essences[k as keyof typeof p.tracksProgression.essences] = 1000000;
-  assert.equal(evolveItem(world, p, weaponRecipe.id, 'evolve').success, false, 'weapon evolve is rejected even fully funded and at +3');
-  if (weaponRecipe.reconstructCost) {
-    assert.equal(evolveItem(world, p, weaponRecipe.id, 'reconstruct').success, false, 'weapon reconstruct is rejected even fully funded');
-  }
-  assert.equal(p.holdsInventory.equipment.weapon, weaponRecipe.evolvesFrom, 'the predecessor stays equipped');
-}
-// A sole equipped predecessor needs no temporary unequip. Reconstruction leaves it alone.
-{
-  const recipe = [...RECIPE_DATABASE.values()].find(r => r.slot === 'armor' && r.evolvesFrom && r.reconstructCost)!;
-  const p = player();
-  p.tracksProgression.unlockedRecipes.push(recipe.id);
-  p.holdsInventory.inventory.push(recipe.evolvesFrom!);
-  assert(equipItem(world, p, recipe.evolvesFrom!));
-  for (const k of Object.keys(p.tracksProgression.essences)) p.tracksProgression.essences[k as keyof typeof p.tracksProgression.essences] = 1000000;
-  assert.equal(evolveItem(world, p, recipe.id, 'evolve').success, false, 'equipped gear still needs +3');
-  assert(evolveItem(world, p, recipe.id, 'reconstruct').success);
-  assert.equal(p.holdsInventory.equipment.armor, recipe.evolvesFrom);
-  assert.deepEqual(p.holdsInventory.inventory, [recipe.id]);
-  p.holdsInventory.itemUpgrades[recipe.evolvesFrom!] = requiredPlusFor(recipe);
-  assert(evolveItem(world, p, recipe.id, 'evolve').success);
-  assert.equal(p.holdsInventory.equipment.armor, recipe.id);
-  assert.deepEqual(p.holdsInventory.inventory, [recipe.id]);
 }
 // Tags classify all current abilities, with family and Armed derived from execution.
 for (const a of ABILITY_DATABASE.values()) {

@@ -1,4 +1,5 @@
 import { capstoneMaterialName } from '../data/lineages/capstones';
+import { isGatedLineageForm } from '../data/lineages';
 import { shardName } from '../data/lineages/packets';
 import { RECIPE_DATABASE } from '../data/recipes';
 import { ITEM_DATABASE } from '../itemDatabase';
@@ -141,8 +142,10 @@ export function evaluateTutorialCondition(condition: TutorialCondition, view: Tu
       return view.unlockedRecipes.includes(condition.recipeId);
     case 'canCraft': {
       const recipe = RECIPE_DATABASE.get(condition.recipeId);
+      // The server's craft guard: a live lineage's tier-2+ form is opened at its
+      // gate, never crafted (review B4).
       return !!recipe
-        && !recipe.evolvesFrom
+        && !isGatedLineageForm(recipe.id)
         && view.unlockedRecipes.includes(condition.recipeId)
         && viewCanAffordRecipe(view, condition.recipeId);
     }

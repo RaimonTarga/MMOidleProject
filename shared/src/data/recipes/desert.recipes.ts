@@ -144,7 +144,6 @@ export const desertRecipeEntries = [
   ['desert-vest-t3', {
     id: 'desert-vest-t3', name: 'Eternal Duneplate',
     recipeGroup: 'desert', requiredBiomeLevel: 8, slot: 'armor',
-    evolvesFrom: 'desert-vest-t2',
     cost: { yellow: 120, purple: 30 }, stats: {"maxHp": 150, "damageReduction": 0.14, plating: DESERT_PLATING.t3.base}, // family-tag: opening-protection (Dawn) armor → Dominion
     reconstructCost: { yellow: 420, purple: 105 },
     mechanicEffects: {"defense.engagement-dr-pct": DAWN.pct, "defense.engagement-dr-ms": DAWN.t3Ms},
@@ -164,7 +163,6 @@ export const desertRecipeEntries = [
   ['desert-charm-t3', {
     id: 'desert-charm-t3', name: 'Oasis Heart',
     recipeGroup: 'desert', requiredBiomeLevel: 9, slot: 'recovery',
-    evolvesFrom: 'desert-charm-t2',
     cost: { yellow: 100, purple: 25 }, stats: { recovery: 50.4 }, // family-tag: cleanse recovery → Dominion
     reconstructCost: { yellow: 350, purple: 88 },
     mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.20 },
@@ -183,7 +181,6 @@ export const desertRecipeEntries = [
   ['desert-boots-t3', {
     id: 'desert-boots-t3', name: 'Mirage Striders',
     recipeGroup: 'desert', requiredBiomeLevel: 10, slot: 'mobility',
-    evolvesFrom: 'desert-boots-t2',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 86->125 (+5: 157->157).
     cost: { yellow: 90 }, stats: { speed: 125 }, tier: 3, // family-tag: desert kite mobility → Dominion
     reconstructCost: { yellow: 315 },
@@ -247,7 +244,6 @@ export const desertRecipeEntries = [
   ['desert-vest-t4', {
     id: 'desert-vest-t4', name: 'Deathless Duneplate',
     recipeGroup: 'desert', requiredBiomeLevel: 14, slot: 'armor',
-    evolvesFrom: 'desert-vest-t3',
     cost: { yellow: 220, purple: 55 }, stats: {"maxHp": 288, "damageReduction": 0.18, plating: DESERT_PLATING.t4.base},
     reconstructCost: { yellow: 770, purple: 193 },
     // Dawnward protects the opening of an engagement; no cheat-death rider.
@@ -267,7 +263,6 @@ export const desertRecipeEntries = [
   ['desert-charm-t4', {
     id: 'desert-charm-t4', name: 'Last Oasis',
     recipeGroup: 'desert', requiredBiomeLevel: 15, slot: 'recovery',
-    evolvesFrom: 'desert-charm-t3',
     cost: { yellow: 200, purple: 50 }, stats: { recovery: 115.4 },
     reconstructCost: { yellow: 700, purple: 175 },
     // 25% Cleanse cooldown reduction; each upgrade adds 1.5 percentage points.
@@ -290,7 +285,6 @@ export const desertRecipeEntries = [
   ['desert-boots-t4', {
     id: 'desert-boots-t4', name: 'Simoom Striders',
     recipeGroup: 'desert', requiredBiomeLevel: 16, slot: 'mobility',
-    evolvesFrom: 'desert-boots-t3',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 121->173 (+5: 209->209).
     cost: { yellow: 198 }, stats: { speed: 173 }, tier: 4,
     reconstructCost: { yellow: 693 },

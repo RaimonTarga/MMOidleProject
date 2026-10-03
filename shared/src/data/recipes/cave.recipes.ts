@@ -133,7 +133,6 @@ mechanicEffects: {},
   ['cave-vest-t2', {
     id: 'cave-vest-t2', name: 'Dire Bestial Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 8, slot: 'armor',
-    evolvesFrom: 'cave-vest-t1',
     cost: { red: 54 }, stats: {"maxHp": 55, "damageReduction": 0.18}, tier: 2, // family-tag: premium %DR generalist wall → Swarming
     reconstructCost: { red: 189 },
     icon: 'items/armor/dire-bestial-hide.png',
@@ -154,7 +153,6 @@ mechanicEffects: {},
   ['cave-charm-t2', {
     id: 'cave-charm-t2', name: 'Resonant Gem',
     recipeGroup: 'cave', requiredBiomeLevel: 9, slot: 'recovery',
-    evolvesFrom: 'cave-charm-t1',
     cost: { red: 44 }, stats: { recovery: 11.1 }, // family-tag: reliable generalist recovery → Swarming
     reconstructCost: { red: 154 },
     mechanicEffects: { 'defense.absorb-pct': 0.14, 'defense.absorb-guard-bonus-pct': 0.08 },
@@ -174,7 +172,6 @@ mechanicEffects: {},
   ['cave-boots-t2', {
     id: 'cave-boots-t2', name: 'Cavern Sprints',
     recipeGroup: 'cave', requiredBiomeLevel: 10, slot: 'mobility',
-    evolvesFrom: 'cave-boots-t1',
     cost: { red: 33 }, stats: { speed: 36 }, tier: 2, // family-tag: cave generalist mobility → Swarming
     reconstructCost: { red: 116 },
     mechanicEffects: { 'mobility.stealth-pct': 0.38 },
@@ -207,7 +204,6 @@ mechanicEffects: {},
   ['cave-vest-t3', {
     id: 'cave-vest-t3', name: 'Deepscale Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 14, slot: 'armor',
-    evolvesFrom: 'cave-vest-t2',
     cost: { red: 116, yellow: 29 }, stats: {"maxHp": 150, "damageReduction": 0.26}, // family-tag: premium %DR wall → Swarming
     reconstructCost: { red: 406, yellow: 102 },
     tier: 3,
@@ -231,7 +227,6 @@ mechanicEffects: {},
   ['cave-charm-t3', {
     id: 'cave-charm-t3', name: 'Echo Geode',
     recipeGroup: 'cave', requiredBiomeLevel: 15, slot: 'recovery',
-    evolvesFrom: 'cave-charm-t2',
     cost: { red: 100, green: 25 }, stats: { recovery: 37 }, // family-tag: reliable generalist recovery → Swarming
     reconstructCost: { red: 350, green: 88 },
     mechanicEffects: { 'defense.absorb-pct': 0.20, 'defense.absorb-guard-bonus-pct': 0.10 },
@@ -250,7 +245,6 @@ mechanicEffects: {},
   ['cave-boots-t3', {
     id: 'cave-boots-t3', name: 'Echostep Treads',
     recipeGroup: 'cave', requiredBiomeLevel: 16, slot: 'mobility',
-    evolvesFrom: 'cave-boots-t2',
     cost: { red: 100 }, stats: { speed: 65 }, tier: 3, // family-tag: cave generalist mobility → Swarming
     reconstructCost: { red: 350 },
     mechanicEffects: { 'mobility.stealth-pct': 0.50 },

@@ -36,7 +36,6 @@ export const trenchRecipeEntries = [
   ['trench-vest-t4', {
     id: 'trench-vest-t4', name: 'Deep Sea Carapace',
     recipeGroup: 'trench', requiredBiomeLevel: 2, slot: 'armor',
-    evolvesFrom: 'cave-vest-t3',
     // Elite-fighting profile (Cave inheritor), 2026-09-26 armor niches: raw stats —
     // high DR, high HP — plus the game's debuff resistance (moved here from the
     // Swamp/Wasteland line). Tundra stays the best stand-and-trade vest when debuffs
@@ -83,7 +82,6 @@ export const trenchRecipeEntries = [
   ['trench-boots-t4-stalkers', {
     id: 'trench-boots-t4-stalkers', name: 'Abyssal Stalkers',
     recipeGroup: 'trench', requiredBiomeLevel: 4, slot: 'mobility',
-    evolvesFrom: 'cave-boots-t3',
     // Cave stealth-boot inheritor — soft stealth: reduces enemy detection radius.
     // 2026-09-26 T2-T4 boots curve normalization: Speed 52->92 (+5: 82->118).
     cost: { green: 80 }, stats: { speed: 92 }, tier: 4, // family-tag: stealth mobility (Cave inheritance) → Swarming

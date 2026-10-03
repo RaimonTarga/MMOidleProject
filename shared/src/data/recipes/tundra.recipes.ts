@@ -141,7 +141,6 @@ export const tundraRecipeEntries = [
   ['tundra-vest-t4', {
     id: 'tundra-vest-t4', name: 'Permafrost Sovereign',
     recipeGroup: 'tundra', requiredBiomeLevel: 8, slot: 'armor',
-    evolvesFrom: 'tundra-vest-t3',
     cost: { blue: 256, red: 64 }, stats: {"maxHp": 346, "plating": 3, "damageReduction": 0.18}, // family-tag: stationary DR armor → Heavy
     reconstructCost: { blue: 896, red: 224 },
     mechanicEffects: {"defense.stationary-dr-pct": 0.16, "defense.stationary-dr-ramptime-ms": 4000},
@@ -160,7 +159,6 @@ export const tundraRecipeEntries = [
   ['tundra-charm-t4', {
     id: 'tundra-charm-t4', name: 'Glacial Ward',
     recipeGroup: 'tundra', requiredBiomeLevel: 9, slot: 'recovery',
-    evolvesFrom: 'tundra-charm-t3',
     cost: { blue: 220, purple: 30 }, stats: { recovery: 115.4 }, // family-tag: barrier charm (anti-spike) → Heavy
     reconstructCost: { blue: 770, purple: 105 },
     mechanicEffects: {
@@ -183,7 +181,6 @@ export const tundraRecipeEntries = [
   ['tundra-charm-t4-deepfreeze', {
     id: 'tundra-charm-t4-deepfreeze', name: 'Deepfreeze Ward',
     recipeGroup: 'tundra', requiredBiomeLevel: 9, slot: 'recovery',
-    evolvesFrom: 'tundra-charm-t3',
     cost: { blue: 220, purple: 30 }, stats: { recovery: 115.4 }, // family-tag: ramping absorb ward → Heavy
     reconstructCost: { blue: 770, purple: 105 },
     // † absorb-ramp: absorb starts at 0.04 and climbs to 0.18 over 12s in combat
@@ -207,7 +204,6 @@ export const tundraRecipeEntries = [
   ['tundra-boots-t4', {
     id: 'tundra-boots-t4', name: 'Avalanche Striders',
     recipeGroup: 'tundra', requiredBiomeLevel: 10, slot: 'mobility',
-    evolvesFrom: 'tundra-boots-t3',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 42->97 (+5: 120->118).
     cost: { blue: 176 }, stats: { speed: 97 }, tier: 4, // family-tag: tundra momentum mobility → Heavy
     reconstructCost: { blue: 616 },

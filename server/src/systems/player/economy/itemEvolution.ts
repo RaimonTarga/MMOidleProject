@@ -1,19 +1,7 @@
-import type { EssenceType, EvolveMode } from "@mmo-idle/shared";
-import {
-  ESSENCE_TYPES,
-  RECIPE_DATABASE,
-  TEST_ROOM_NODE_ID,
-  checkEvolve,
-  checkReconstruct,
-} from "@mmo-idle/shared";
+import type { EvolveMode } from "@mmo-idle/shared";
+import { EVOLUTION_RETIRED_REASON, RECIPE_DATABASE } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
-import { recalculateAfterEquipmentChange } from "./inventory";
-import { syncArchetypeSlices } from "../../../ecs/archetypeSliceSync";
-import { markSliceDirty } from "../../../ecs/dirtyHelpers";
-import { syncLineagesFromInventory, syncWornFormFromEquipment } from "./lineageSync";
-
-const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
 
 export interface CraftResult {
   success: boolean;
@@ -21,86 +9,20 @@ export interface CraftResult {
 }
 
 /**
- * Evolve or reconstruct an item (system rework Step 6). `evolve` consumes the +3
- * predecessor + pays the recipe's `cost`; `reconstruct` skips the predecessor and
- * pays the higher `reconstructCost`. Per-definition upgrade levels remain unchanged.
+ * Evolve or reconstruct an item — RETIRED on every slot (design §24.5).
+ *
+ * Weapons left this path in progression rework Phase 2b (a tier-2+ weapon form
+ * opens at its lineage's gate); armour, charm and boots left it in the course
+ * correction (their T2+ items are plain recipes, crafted at their biome level).
+ * The socket event stays wired so an old client gets a reason rather than
+ * silence, and the refusal changes nothing: no spend, no item moved.
  */
 export function evolveItem(
-  world: World,
-  entity: PlayerEntity,
+  _world: World,
+  _entity: PlayerEntity,
   recipeId: string,
-  mode: EvolveMode,
+  _mode: EvolveMode,
 ): CraftResult {
-  const recipe = RECIPE_DATABASE.get(recipeId);
-  if (!recipe) return { success: false, reason: "Unknown recipe." };
-  if (!recipe.evolvesFrom) return { success: false, reason: "This recipe is not an evolution." };
-
-  const prog = entity.tracksProgression;
-  const inv = entity.holdsInventory;
-  const isTestRoom = entity.hasPosition.nodeId === TEST_ROOM_NODE_ID;
-
-  if (isTestRoom) {
-    for (const type of ESSENCE_TYPES) prog.essences[type] = TEST_ROOM_ESSENCE_AMOUNT;
-    markSliceDirty(world, entity, "tracksProgression");
-  } else if (!prog.unlockedRecipes.includes(recipeId)) {
-    return {
-      success: false,
-      reason: `Recipe locked — reach ${recipe.recipeGroup} level ${recipe.requiredBiomeLevel}.`,
-    };
-  }
-
-  // Which cost axis applies depends on the path.
-  const essenceCost = mode === "evolve" ? recipe.cost : recipe.reconstructCost;
-
-  if (mode === "evolve") {
-    const check = checkEvolve({
-      recipe,
-      inventory: inv.inventory,
-      equipment: inv.equipment,
-      itemUpgrades: inv.itemUpgrades,
-      essences: prog.essences,
-      isTestRoom,
-    });
-    if (!check.ok) return { success: false, reason: check.reason };
-  } else {
-    const check = checkReconstruct({
-      recipe,
-      essences: prog.essences,
-      isTestRoom,
-    });
-    if (!check.ok) return { success: false, reason: check.reason };
-  }
-
-  // Prefer the equipped predecessor: the resulting item stays in that same slot.
-  const equippedPredecessor = mode === "evolve" && inv.equipment[recipe.slot] === recipe.evolvesFrom;
-  if (mode === "evolve" && !equippedPredecessor && !isTestRoom) {
-    const idx = inv.inventory.indexOf(recipe.evolvesFrom);
-    if (idx === -1) return { success: false, reason: "Predecessor item is no longer owned." };
-    inv.inventory = [...inv.inventory.slice(0, idx), ...inv.inventory.slice(idx + 1)];
-  }
-
-  // Spend essence for the chosen path.
-  if (!isTestRoom) {
-    for (const [type, amount] of Object.entries(essenceCost ?? {}) as [EssenceType, number][]) {
-      prog.essences[type] = (prog.essences[type] ?? 0) - amount;
-    }
-    markSliceDirty(world, entity, "tracksProgression");
-  }
-
-  // Grant the evolved definition without transferring predecessor upgrades.
-  if (equippedPredecessor) {
-    inv.equipment[recipe.slot] = recipe.id;
-    // The tree follows the slot (review finding P3, 2026-10-02): a lineage pays
-    // only while `wornForm` equals the equipped item, so an evolve that moved the
-    // slot without moving the form left every card, the capstone and the stat row
-    // dark until a relog or re-equip.
-    syncWornFormFromEquipment(world, entity, recipe.id);
-    recalculateAfterEquipmentChange(world, entity, recipe.slot);
-    syncArchetypeSlices(world, entity);
-  } else {
-    inv.inventory = [...inv.inventory, recipe.id];
-    syncLineagesFromInventory(world, entity);
-  }
-  markSliceDirty(world, entity, "holdsInventory");
-  return { success: true };
+  if (!RECIPE_DATABASE.has(recipeId)) return { success: false, reason: "Unknown recipe." };
+  return { success: false, reason: EVOLUTION_RETIRED_REASON };
 }
