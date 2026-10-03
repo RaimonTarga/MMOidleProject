@@ -344,6 +344,7 @@
 .lin-wallet > div { display: flex; justify-content: space-between; gap: 8px; }
 .lin-wallet span { color: var(--hud-text-muted); text-transform: capitalize; }
 .lin-wallet b { color: var(--hud-text); font-variant-numeric: tabular-nums; }
+.lin-wallet__where { text-transform: none; opacity: 0.8; }
 
 .lin-build { display: flex; flex-direction: column; gap: 5px; font-size: 11px; }
 .lin-build__line { display: grid; grid-template-columns: 56px 1fr; gap: 8px; align-items: baseline; }

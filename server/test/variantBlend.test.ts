@@ -27,6 +27,7 @@ import {
   BLEND_SPAWN_SLOTS,
   FAMILY_DATABASE,
   NODE_BLENDS,
+  T1_BIOME_ORDER,
   WORLD_NODE_LIST,
   blendEntries,
   blendShareTotal,
@@ -35,6 +36,7 @@ import {
   familyForMonster,
   nodeSpawnBlend,
   validateWorldMap,
+  worldNodeExits,
 } from '@mmo-idle/shared';
 import type { FamilyId, NodeBlend } from '@mmo-idle/shared';
 import { World } from '../src/world/World';
@@ -149,6 +151,67 @@ check(
 );
 problems.push(...validateWorldMap());
 assert(problems.length === 0, `blend authoring failures:\n  ${problems.join('\n  ')}`);
+
+// ─── T1 arrival order: the first two arrivals are mixed ──────────────────────
+//
+// `regionT1.ts` ("ORDER IS DISTANCE") puts each biome's two MIXED blends (no family
+// at 60% or more) on the first two nodes a player meets, so no biome opens on its
+// worst concentration — and since design §24.3 the order also decides which node
+// pays which shard. Asserted as the rule, from where the T1 routes and the guide
+// actually enter each biome (the previous biome of T1_BIOME_ORDER, every node of
+// it; Plains from the Clearing), with the bot's resolver (nearest uncleared by BFS
+// over worldNodeExits, ties N > S > E > W). Not as node ids: a reorder that keeps
+// the rule must pass, one that breaks it must fail (review B5, P17).
+{
+  const MIXED_MAX_SHARE = 0.6;
+  /** The bot's next node: BFS layers, neighbours in N > S > E > W order. */
+  const nextArrival = (from: string, pool: readonly string[]): string | undefined => {
+    const targets = new Set(pool);
+    if (targets.has(from)) return from;
+    const seen = new Set([from]);
+    let frontier = [from];
+    while (frontier.length > 0) {
+      const next: string[] = [];
+      for (const id of frontier) {
+        for (const neighbour of Object.values(worldNodeExits(id))) {
+          if (!neighbour || seen.has(neighbour)) continue;
+          if (targets.has(neighbour)) return neighbour;
+          seen.add(neighbour);
+          next.push(neighbour);
+        }
+      }
+      frontier = next;
+    }
+    return undefined;
+  };
+  const normalsOf = (biome: string): string[] =>
+    WORLD_NODE_LIST.filter((n) => n.biomeGroup === biome && n.biomeTier === 1 && n.kind === 'normal').map((n) => n.id);
+  let checked = 0;
+  T1_BIOME_ORDER.forEach((biome, index) => {
+    const pool = normalsOf(biome);
+    const entries = index === 0
+      ? ['node-clearing']
+      : normalsOf(T1_BIOME_ORDER[index - 1]);
+    for (const entry of entries) {
+      let at = entry;
+      const remaining = [...pool];
+      for (let arrival = 1; arrival <= 2; arrival += 1) {
+        const node = nextArrival(at, remaining);
+        assert(node, `${biome}: nothing reachable from ${at}`);
+        const top = Math.max(...blendEntries(NODE_BLENDS[node] ?? {}).map((e) => e.share));
+        check(
+          top < MIXED_MAX_SHARE,
+          `${biome} entered from ${entry}: arrival ${arrival} is ${node}, a ${Math.round(top * 100)}% pure`,
+        );
+        remaining.splice(remaining.indexOf(node), 1);
+        at = node;
+        checked += 1;
+      }
+    }
+  });
+  assert(checked >= 2 * (1 + 5 * 4), `the arrival sweep checked only ${checked} arrivals`);
+  assert(problems.length === 0, `T1 arrival order:\n  ${problems.join('\n  ')}`);
+}
 
 // ─── The cycle meets the shares to the slot ──────────────────────────────────
 

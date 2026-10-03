@@ -14,8 +14,6 @@ import {
   isStanceRecipeUnlocked,
   NO_STANCE_ID,
   ITEM_DATABASE,
-  BIOME_DATABASE,
-  FAMILY_DATABASE,
   biomeLaneAPackets,
   LINEAGE_DATABASE,
   capstoneMaterialName,
@@ -1459,9 +1457,9 @@ export class RouteExecutor {
         const bossBiomes = bossBiomesDroppingShardAtTier1(card.lane);
         throw new StallError(
           bossBiomes.length > 0
-            ? `the ${card.lane} shard has no tier-1 family source: it drops only from the `
+            ? `no tier-1 node pays the ${card.lane} shard: it drops only from the `
               + `${bossBiomes.join("/")} boss, and this route has no boss step for it`
-            : `no tier-1 biome drops the ${card.lane} shard this card costs`,
+            : `no tier-1 node pays the ${card.lane} shard this card costs`,
           { step, missing: missing() },
         );
       }
@@ -2487,27 +2485,39 @@ export class RouteExecutor {
   }
 
   /**
-   * Where to farm for a lineage card. Shards are keyed by PACKET, not by biome
-   * (design §12), so the home biome is often the wrong place: the Rapier lives in
-   * Forest, but Forest's Tier-1 pool fields only Pack and Grove, which drop tempo
-   * and empowered — an affliction card bought there would farm forever for a
-   * shard the node cannot pay.
+   * Where to farm for a lineage card or gate. Since design §24.3 a shard is paid
+   * by the NODE — every kill in a node pays its dominant family's shard and no
+   * other — so the question is which node, not which biome: a Forest farm for an
+   * affliction card on a Pack-led node pays tempo forever.
    *
-   * So an authored `farmAt` stays authoritative, and otherwise the home biome is
-   * used only when it can actually field a family that drops the lane's shard;
-   * failing that, the first Tier-1 biome that can. Null when NO biome of the
-   * tier can, which `doUnlockCard` turns into a stall with a reason rather than
-   * an endless farm.
+   * An authored `farmAt` keeps its biome and pick, narrowed to the territories
+   * that pay `lane` (the ref's `shard`). If none of that biome's nodes pays it, the
+   * un-narrowed node is returned and `farmBlocked` raises the named "pays none of
+   * this packet" stall instead of an endless farm. With no `farmAt`, the home
+   * biome is tried first and then each Tier-1 biome in map order, nearest
+   * uncleared paying node first. Null when no such node exists, which
+   * `doUnlockCard` turns into a stall with a reason.
    */
   private lineageFarmNode(
     ref: NodeRef | undefined,
     homeBiome: string,
     lane: PacketId,
   ): string | null {
-    if (ref) return resolveNode(ref, this.deps.obs, this.rotation);
+    const { obs } = this.deps;
+    if (ref) {
+      if (ref.kind === "biome" && !ref.shard) {
+        const paying = resolveNode({ ...ref, shard: lane }, obs, this.rotation);
+        if (paying) return paying;
+      }
+      return resolveNode(ref, obs, this.rotation);
+    }
     for (const biomeGroup of [homeBiome, ...LINEAGE_SHARD_BIOMES]) {
-      if (!biomeDropsShardAtTier1(biomeGroup, lane)) continue;
-      const node = this.defaultFarmNodeFor(biomeGroup);
+      const tier = BIOME_START_TIER_BY_GROUP[biomeGroup] ?? 1;
+      const node = resolveNode(
+        { kind: "biome", biomeGroup, tier, pick: "uncleared", shard: lane },
+        obs,
+        this.rotation,
+      );
       if (node) return node;
     }
     return null;
@@ -2713,19 +2723,12 @@ function definedNumbers(record: Partial<Record<string, number>>): Record<string,
 }
 
 /**
- * The Tier-1 biomes a shard can be farmed in, in map order. Local rather than in
- * `shared/src/data/families`, so this stays a BOT policy: the family table says
- * which family drops what, and this says where the bot goes looking.
+ * The Tier-1 biomes a shard is looked for in, in map order. Local rather than in
+ * `shared/src/data/families`, so this stays a BOT policy: `nodeShard` says which
+ * node pays what, and this says where the bot goes looking.
  */
 const LINEAGE_SHARD_BIOMES = ['plains', 'forest', 'mountain', 'cave', 'swamp'] as const;
 
-/**
- * Whether `biomeGroup` can field, at biome tier 1, any family that drops `lane`.
- *
- * Reads the pool rather than the authored blends, because a family whose mobs all
- * live in a later tier's pool is dropped from every blend by `resolveNodeBlend` —
- * so it drops nothing at tier 1 no matter what a node's blend claims.
- */
 /**
  * The tier-1 biomes whose BOSS drops `lane`, via the design-§18.6 stopgap: a boss
  * kill pays shards of each Lane-A packet of the lineages homed in its biome.
@@ -2735,16 +2738,6 @@ const LINEAGE_SHARD_BIOMES = ['plains', 'forest', 'mountain', 'cave', 'swamp'] a
 function bossBiomesDroppingShardAtTier1(lane: PacketId): string[] {
   return LINEAGE_SHARD_BIOMES.filter((biomeGroup) =>
     biomeLaneAPackets(biomeGroup).includes(lane));
-}
-
-function biomeDropsShardAtTier1(biomeGroup: string, lane: PacketId): boolean {
-  const pool = BIOME_DATABASE.get(biomeGroup)?.monsterPoolByTier[1] ?? [];
-  if (pool.length === 0) return false;
-  for (const family of FAMILY_DATABASE.values()) {
-    if (family.biome !== biomeGroup || family.drops !== lane) continue;
-    if (family.monsterIds.some((id) => pool.includes(id))) return true;
-  }
-  return false;
 }
 
 function defaultLabel(step: RouteStep): string {

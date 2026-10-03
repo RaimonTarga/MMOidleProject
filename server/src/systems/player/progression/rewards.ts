@@ -1,4 +1,4 @@
-import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, GAME_CONFIG, familyForMonster, CAPSTONE_MATERIALS, SHARD_BASE_PER_KILL, SHARD_TIER_MULT, biomeLaneAPackets } from '@mmo-idle/shared';
+import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, GAME_CONFIG, familyForMonster, nodeShard, CAPSTONE_MATERIALS, SHARD_BASE_PER_KILL, SHARD_TIER_MULT, biomeLaneAPackets } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -53,12 +53,15 @@ export function rewardPlayer(entity: PlayerEntity, rewards: KillRewards): void {
  * Lineage shards and boss capstones (progression rework Phase 1b).
  *
  * Deterministic, like every other lineage material: every kill drops a little of
- * the shard its mob family favours, and the biome boss drops its capstone every
- * kill (design §1, §12). No rolls and no pity timer — costs gate the pace.
+ * a shard, and the biome boss drops its capstone every kill (design §1, §12). No
+ * rolls and no pity timer — costs gate the pace.
  *
- * A monster outside the five T1-biome families drops no shard. That is the
- * Phase 1 footprint, not a rule: Phase 2 authors the remaining families along
- * with per-node blends, and until then cards only exist at T1 anyway.
+ * WHICH shard is the NODE's, not the monster's (design §24.3): every non-boss kill
+ * in a blended node pays `nodeShard` — the node's dominant family's shard —
+ * whichever family the body belongs to, so a pack follower filed under another
+ * family pays what the map says (review P16). A node with no blend (a dungeon)
+ * keeps the per-monster rule: the dead mob's own family shard, and nothing for a
+ * mob in no family.
  *
  * Was the sibling of a per-kill catalyst accumulator (keyed by the node's
  * modifier); Phase 2b deleted that wallet outright, so shards are now the
@@ -68,13 +71,15 @@ function grantLineageMaterials(
   world: World,
   recipient: PlayerEntity,
   monster: MonsterEntity,
-  params: { biomeTier: number; biomeGroup: string | undefined; debugMult: number },
+  params: { nodeId: string; biomeTier: number; biomeGroup: string | undefined; debugMult: number },
 ): void {
   const prog = recipient.tracksProgression;
   let touched = false;
 
-  const family = familyForMonster(monster.isMonster.monsterTypeId);
-  if (family && !monster.isMonster.isBoss) {
+  const shard = monster.isMonster.isBoss
+    ? undefined
+    : nodeShard(params.nodeId) ?? familyForMonster(monster.isMonster.monsterTypeId)?.drops;
+  if (shard) {
     // Shards scale by tier the way essence does, so lower-tier farming stays a
     // slow but legal route rather than a dead one.
     const amount = Math.max(
@@ -83,7 +88,7 @@ function grantLineageMaterials(
         SHARD_BASE_PER_KILL * (SHARD_TIER_MULT[params.biomeTier] ?? 1) * params.debugMult,
       ),
     );
-    prog.shards[family.drops] = (prog.shards[family.drops] ?? 0) + amount;
+    prog.shards[shard] = (prog.shards[shard] ?? 0) + amount;
     touched = true;
   }
 
@@ -244,6 +249,7 @@ function applyKillRewardsToPlayer(
     amount: scaledEssence, essenceType: rewards.essenceType,
   });
   grantLineageMaterials(world, recipient, monster, {
+    nodeId,
     biomeTier,
     biomeGroup: biomeInfo?.biomeGroup,
     debugMult,

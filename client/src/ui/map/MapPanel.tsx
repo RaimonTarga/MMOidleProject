@@ -15,6 +15,9 @@ import {
   WORLD_REGIONS,
   areaDanger,
   mapCoordForNodeId,
+  nodeFamily,
+  nodeShard,
+  shardName,
   worldNodeExits,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
@@ -33,6 +36,7 @@ import {
 } from './constants';
 import { NodeInfo } from './NodeInfo';
 import { BiomeIcon } from './BiomeIcon';
+import { ShardIcon } from './ShardIcon';
 import { atlasIcon, GameIcon } from '../GameIcon';
 import { DEV_TOOLS_ENABLED } from '../../devTools';
 import { DialogHeader, GameDialog } from '../../hud/primitives';
@@ -268,8 +272,15 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
     if (!normalizedQuery) return true;
     const node = NODE_BIOMES[nodeId];
     if (!node || !charted(nodeId)) return false;
-    return [node.displayName, BIOME_DATABASE.get(node.biomeGroup)?.name ?? node.biomeGroup]
-      .some((value) => value.toLowerCase().includes(normalizedQuery));
+    // A territory and its shard are searchable too ("gale" finds every node
+    // that pays Gale Shards — design §24.3: the map says where a shard drops).
+    const shard = nodeShard(nodeId);
+    return [
+      node.displayName,
+      BIOME_DATABASE.get(node.biomeGroup)?.name ?? node.biomeGroup,
+      nodeFamily(nodeId)?.name ?? '',
+      shard ? shardName(shard) : '',
+    ].some((value) => value.toLowerCase().includes(normalizedQuery));
   }
 
   const regionLabels = useMemo(
@@ -413,6 +424,12 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
               const placeName = node.kind === 'sanctuary'
                 ? 'Sanctuary'
                 : biome?.name ?? node.biomeGroup;
+              // Where each shard drops, at a glance (design §24.3).
+              const paidShard = isCharted ? nodeShard(node.id) : undefined;
+              const territory = paidShard ? nodeFamily(node.id)?.name : undefined;
+              const tileLabel = territory && paidShard
+                ? `${placeName} · ${territory} territory · ${shardName(paidShard)}s`
+                : placeName;
 
               return (
                 <button
@@ -446,8 +463,8 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
                   } as CSSProperties}
                   data-danger={danger ?? undefined}
                   onClick={(event) => handleTileClick(node.id, event)}
-                  title={`${isCharted ? placeName : 'Uncharted'}${DEV_TOOLS_ENABLED ? ' · Shift+Click to teleport' : ''}`}
-                  aria-label={isCharted ? placeName : 'Uncharted'}
+                  title={`${isCharted ? tileLabel : 'Uncharted'}${DEV_TOOLS_ENABLED ? ' · Shift+Click to teleport' : ''}`}
+                  aria-label={isCharted ? tileLabel : 'Uncharted'}
                 >
                   {isCharted ? (
                     <BiomeIcon
@@ -473,6 +490,11 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
                         fallback={null}
                         decorative
                       />
+                    </span>
+                  )}
+                  {paidShard && (
+                    <span className="world-map-node__shard" aria-hidden="true">
+                      <ShardIcon packet={paidShard} size={12} />
                     </span>
                   )}
                   {isCurrent && (

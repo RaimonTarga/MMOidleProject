@@ -1,21 +1,17 @@
 import { useEffect, useId, useRef, useState, type CSSProperties } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { MODIFIER_SUMMARIES } from '@mmo-idle/shared';
 import {
-  AREA_DANGER_LABELS, areaDanger, BIOME_DATABASE, MODIFIER_LABELS, type AreaDanger,
-  NODE_BIOMES, type NodeBiomeInfo, type NodeGateEntity, type NodeModifierFamily,
+  AREA_DANGER_LABELS, areaDanger, BIOME_DATABASE, type AreaDanger,
+  NODE_BIOMES, type NodeBiomeInfo, type NodeGateEntity,
 } from '@mmo-idle/shared';
 import { UIIcon } from '../ui/UIIcon';
 import { DUNGEON_ICON } from '../ui/map/constants';
+import { ShardIcon } from '../ui/map/ShardIcon';
 import { deathOverlayAtom, hpAtom, nodeLoadingAtom, playerNodeIdAtom, playerPosAtom, statusAtom, tabResyncAtom } from './atoms';
 import { areaArrivalAtom } from './areaInformationState';
-import { nearbyExits } from './areaInformationModel';
+import { arrivalTerritoryLine, nearbyExits } from './areaInformationModel';
 import './areaInformation.css';
 
-// A modifier is identity only since progression rework Phase 2b (the mechanical
-// effects were removed with the family blends); the shared summaries say so,
-// the old copy here promised faster/heavier/more monsters (review P13).
-const MODIFIER_COPY: Record<NodeModifierFamily, string> = MODIFIER_SUMMARIES;
 const ARROWS = { north: '↑', south: '↓', east: '→', west: '←' };
 
 /**
@@ -106,6 +102,8 @@ export function AreaInformation() {
 
   if (blocked || !nodeId) return null;
   const info = arrival?.nodeId === nodeId ? NODE_BIOMES[nodeId] : null;
+  // The node's territory and the one shard every kill in it pays (design §24.3).
+  const territoryLine = info && arrival ? arrivalTerritoryLine(nodeId, arrival.kind) : null;
   const visibleExits = exits.filter(exit => exit.nodeId === nodeId && exit.exitNodeId && NODE_BIOMES[exit.exitNodeId]);
   return <>
     {info && arrival && <section key={arrival.startedAt} className={`area-arrival area-arrival--${arrival.kind}`}
@@ -114,8 +112,10 @@ export function AreaInformation() {
       <h2>{info.displayName}</h2>
       <div className="area-arrival__metadata">{BIOME_DATABASE.get(info.biomeGroup)?.name ?? info.biomeGroup} · Tier {info.biomeTier}</div>
       <AreaDangerLabel info={info} />
-      {info.modifier && <div className="area-arrival__modifier"><strong>{MODIFIER_LABELS[info.modifier]}</strong>
-        {arrival.kind !== 'return' && <span> · {MODIFIER_COPY[info.modifier]}</span>}
+      {territoryLine && <div className="area-arrival__modifier area-arrival__territory">
+        <ShardIcon packet={territoryLine.shard} size={14} />
+        <strong>{territoryLine.territory}</strong>
+        <span> · {territoryLine.detail}</span>
       </div>}
     </section>}
     {!info && <div className={visibleExits.length > 1 ? 'area-exits area-exits--multiple' : 'area-exits'}>{visibleExits.map(exit => {

@@ -14,7 +14,18 @@ import type { EquippedRule } from '../runeDatabase';
 
 export type TutorialNodeRef =
   | { kind: 'node'; nodeId: string }
-  | { kind: 'biome'; biomeGroup: string; tier: number; pick?: 'first' | 'uncleared'; modifier?: string }
+  | {
+      kind: 'biome';
+      biomeGroup: string;
+      tier: number;
+      pick?: 'first' | 'uncleared';
+      modifier?: string;
+      /**
+       * Only nodes that pay this shard (design §24.3: every kill in a node pays its
+       * dominant family's shard, so a shard farm must stand in that territory).
+       */
+      shard?: PacketId;
+    }
   | { kind: 'dungeon'; biomeGroup: string; tier: number };
 
 /** One upgrade target inside `canAffordUpgrades`. */

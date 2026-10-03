@@ -8,6 +8,8 @@ import {
   biomeLevelCap,
   globalMasteryRequiredForUpgrade,
   maxGlobalMasteryAtTier,
+  nodeFamily,
+  nodeShard,
   requiredBiomeLevelForUpgrade,
   upgradeCeilingFromGlobalMastery,
   upgradeCostFor,
@@ -15,6 +17,7 @@ import {
   viewCanAffordUpgrades,
   worldNodeExits,
   type EssenceType,
+  type PacketId,
 } from "@mmo-idle/shared";
 import type { BlockReason } from "../telemetry/events";
 import type { Observation } from "../state/observation";
@@ -407,6 +410,12 @@ export function missingToReasons(
     } else if (key === "globalMasteryNeeded") {
       const current = obs.self?.globalMastery ?? 0;
       out.push({ kind: "globalMastery", current, required: current + short, missing: short });
+    } else if (head === "shard") {
+      // Its own kind, not a `prerequisite`: the round trip through
+      // `reasonsToMissing` must give `unsatisfiableByFarming` its `shard.<packet>`
+      // key back, or the unfarmable-shard stall can never fire (review L26).
+      const current = obs.self?.shards?.[name as PacketId] ?? 0;
+      out.push({ kind: "shard", packet: name, current, required: current + short, missing: short });
     } else {
       out.push({ kind: "prerequisite", detail: key });
     }
@@ -433,9 +442,11 @@ export function missingToReasons(
  *   ANOTHER BIOME'S  level cannot be raised by farming this biome at all, and a
  *                    level above this player tier's cap for that biome cannot be
  *                    raised by anyone without a tier-up.
- *   A SHARD          drops from the families of the node's own biome (design §12).
- *                    If none of them drops this packet, the node pays zero of it
- *                    however long the bot stands there.
+ *   A SHARD          is paid by the NODE (design §24.3): every kill in a blended
+ *                    node pays its dominant family's shard and nothing else, so a
+ *                    node that pays another shard pays zero of this one however
+ *                    long the bot stands there. A node with no blend (a dungeon)
+ *                    pays per mob, so there the biome's fieldable families decide.
  *
  * Essence is deliberately absent: every node pays essence, so an essence
  * shortfall is always satisfiable by waiting and is the one thing the span is
@@ -493,7 +504,13 @@ export function unsatisfiableByFarming(
     }
 
     if (head === "shard") {
-      if (!biomeDropsShardAtTier(farmedBiome, name, tier)) {
+      const paid = nodeShard(nodeId);
+      if (paid !== undefined && paid !== name) {
+        return `needs ${short} more ${name} shard${short === 1 ? "" : "s"} and ${nodeId} is `
+          + `${nodeFamily(nodeId)?.name ?? "another family's"} territory, which pays ${paid} shards`
+          + ` — every kill here pays ${paid}, none of this packet`;
+      }
+      if (paid === undefined && !biomeDropsShardAtTier(farmedBiome, name, tier)) {
         return `needs ${short} more ${name} shard${short === 1 ? "" : "s"} and no tier-${tier} `
           + `${farmedBiome} family drops them — farming ${nodeId} pays none of this packet`;
       }
@@ -505,9 +522,10 @@ export function unsatisfiableByFarming(
 
 /**
  * Whether `biomeGroup` can field, at biome tier `tier`, any family that drops
- * `lane`. Reads the POOL rather than the authored blends: a family whose mobs all
- * live in a later tier is dropped from every blend by `resolveNodeBlend`, so it
- * drops nothing at this tier no matter what a node's blend claims.
+ * `lane` — the per-mob rule, which since design §24.3 applies only on a node with
+ * no blend (a dungeon). Reads the POOL rather than the authored blends: a family
+ * whose mobs all live in a later tier is dropped from every blend by
+ * `resolveNodeBlend`, so it drops nothing at this tier.
  */
 function biomeDropsShardAtTier(biomeGroup: string, lane: string, tier: number): boolean {
   const pool = BIOME_DATABASE.get(biomeGroup)?.monsterPoolByTier[tier] ?? [];
@@ -528,6 +546,7 @@ export function reasonsToMissing(reasons: readonly BlockReason[]): Record<string
       case "biomeLevel": out[`biomeLevel.${reason.biomeGroup}`] = reason.missing; break;
       case "globalMastery": out.globalMasteryNeeded = reason.missing; break;
       case "recipeLocked": out[`recipeLocked.${reason.recipeId}`] = 1; break;
+      case "shard": out[`shard.${reason.packet}`] = reason.missing; break;
       case "prerequisite": out.prerequisite = (out.prerequisite ?? 0) + 1; break;
     }
   }
@@ -577,7 +596,7 @@ export function resolveNodeCandidates(
     return dungeon ? [dungeon] : [];
   }
 
-  const nodes = normalNodesFor(ref.biomeGroup, ref.tier, ref.modifier);
+  const nodes = normalNodesFor(ref.biomeGroup, ref.tier, ref.modifier, ref.shard);
   if (nodes.length === 0) return [];
 
   const pick = ref.pick ?? "first";

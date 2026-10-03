@@ -1194,6 +1194,28 @@
 .map-modifier__value--neutral { color: #d4d1df; }
 
 /* Family blend + shard rows in the node detail panel (design 12). */
+/* A node's composition, one segment per family (design §24.3: texture, not
+   currency — the territory's shard is the one every kill pays). */
+.map-family-mix {
+  display: flex;
+  height: 6px;
+  margin-top: 6px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: rgba(190, 183, 210, 0.12);
+}
+
+.map-family-mix i {
+  display: block;
+  height: 100%;
+}
+
+.map-summary__drops {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .map-family-rows {
   margin: 7px 0 0;
   display: grid;
@@ -1562,6 +1584,17 @@
   border-radius: 3px;
   background: rgba(91, 12, 16, 0.92);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+}
+
+/* The shard every kill on this node pays (design §24.3), bottom-left so it never
+   collides with the dungeon badge (top-right) or YOU (bottom-centre). */
+.world-map-node__shard {
+  position: absolute;
+  left: 2px;
+  bottom: 2px;
+  display: grid;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
 }
 
 .world-map-node__you {

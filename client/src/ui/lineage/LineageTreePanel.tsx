@@ -48,6 +48,7 @@ import {
   wornFormTier,
   type LineageWallet,
 } from '@mmo-idle/shared';
+import { nodeFamily, nodesPayingShard, shardName } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
 import {
   biomeLevelAtom,
@@ -489,7 +490,7 @@ function Band({
         <h3>Tier {tier}</h3>
         <span>
           Rows open with {biomeName(lineageBandBiome(lineage, progress, tier))} mastery — the biome of
-          the form you wear here. Cards cost essence plus a lane shard.
+          the form you wear here. Cards cost essence plus shards.
         </span>
       </div>
       {body}
@@ -533,6 +534,13 @@ function MasterySection({ lineage, tier, progress, wallet }: {
   );
 }
 
+/** "Pack territory": the family whose T1 nodes in `biome` pay `lane`, if any. */
+function shardTerritory(biome: string, lane: LineageDefinition['lanes'][number]): string | null {
+  const names = [...new Set(nodesPayingShard(biome, 1, lane).map((id) => nodeFamily(id)?.name))]
+    .filter((name): name is string => !!name);
+  return names.length > 0 ? `${names.join(' / ')} territory` : null;
+}
+
 function WalletSection({ lineage, tier, wallet }: { lineage: LineageDefinition; tier: number; wallet: LineageWallet }) {
   const essenceType = lineageEssenceType(lineage);
   const { gateForms } = bandContents(lineage, tier);
@@ -547,7 +555,14 @@ function WalletSection({ lineage, tier, wallet }: { lineage: LineageDefinition; 
         </div>
         {lineage.lanes.map((lane) => (
           <div key={lane}>
-            <span>{packetDefinition(lane)?.name ?? lane} shards</span>
+            {/* The shard's own name, and where it drops (design §24.3: the
+                territory of the family that pays it in the home biome). */}
+            <span>
+              {shardName(lane)}s
+              {shardTerritory(lineage.homeBiome, lane) && (
+                <small className="lin-wallet__where"> · {shardTerritory(lineage.homeBiome, lane)}</small>
+              )}
+            </span>
             <b>{wallet.shards?.[lane] ?? 0}</b>
           </div>
         ))}

@@ -166,9 +166,9 @@ The weapon `+N` ladder the script used to teach is gone (the lineage rework, com
 
 | Beat | Where | What it does |
 |---|---|---|
-| `shards:rapier-t1-tempo-stat` | Forest leg, once the Flash Rapier is worn | farms until the first card is affordable; the line names the Pack, the Forest's wolves, as the Tempo Shard source |
+| `shards:rapier-t1-tempo-stat` | Forest leg, once the Flash Rapier is worn | farms a Pack-territory node until the first card is affordable; the line names Pack territory as where Gale Shards drop (design §24.3: a node pays its dominant family's shard) |
 | `card:rapier-t1-tempo-stat` | same | buys Quick Wrist — "owned is forever, active is a choice" |
-| `farm:gate:gale-needle` | new last chapter, "The Gate" | the gate's Forest essence and Tempo Shards |
+| `farm:gate:gale-needle` | new last chapter, "The Gate" | the gate's Forest essence and Gale Shards, farmed in Pack territory |
 | `capstone:gale-needle` | same | the Forest boss, repeatedly, for its three Warden's Hearts |
 | `gate:gale-needle` | same | pays the gate and wears the Gale Needle, which opens the T2 band |
 

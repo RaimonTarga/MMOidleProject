@@ -9,8 +9,7 @@ import {
   essenceLabel,
   coreEligibilityLabel, isRestrictedCore,
   relicRatingsFromPassives, relicRatingsFromEffects, resolveRelicComparison,
-  NODE_MODIFIERS, MODIFIER_COLORS, MODIFIER_LABELS, MODIFIER_SUMMARIES,
-  FAMILY_DATABASE, blendEntries, nodeSpawnBlend,
+  FAMILY_DATABASE, blendEntries, nodeFamily, nodeShard, nodeSpawnBlend,
   capstoneMaterial, packetDefinition, shardName,
   biomeLevelCap, biomeXpForBiomeLevel, formatNodeCoord, formatRespawnRemaining, nodeIdToCoord,
   WORLD_REGIONS,
@@ -30,7 +29,6 @@ import { AreaDangerLabel } from '../../hud/AreaInformation';
 import { bfsPath } from './pathing';
 import { useMapClock } from './useMapClock';
 import { BiomeIcon } from './BiomeIcon';
-import { ModifierIcon } from './ModifierIcon';
 import { ShardIcon } from './ShardIcon';
 import {
   formatMonsterMechanics,
@@ -312,12 +310,18 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
   const dungeonBadge = dungeonBadgeLabel(info);
   const accentColor  = isDungeon ? '#882222' : tileColor(biomeGroup);
 
-  const modifier = NODE_MODIFIERS[nodeId];
+  // The node's identity and its currency (design §24.3): the territory of its
+  // dominant family, and the ONE shard every kill here pays, minority bodies
+  // included. Both read the authored blend, exactly as the reward seam does.
+  const territory = nodeFamily(nodeId);
+  const paidShard = nodeShard(nodeId);
+  const territoryColor = paidShard
+    ? packetDefinition(paidShard)?.color ?? accentColor
+    : accentColor;
 
   // What the node is made of (design 12). `nodeSpawnBlend` resolves the authored
-  // blend against the mobs this tier can actually field, so the panel and the
-  // spawner always read the same vector -- a node cannot advertise a family it
-  // does not spawn.
+  // blend against the mobs this tier can actually field, so the composition and
+  // the spawner always read the same vector.
   const blend = nodeSpawnBlend(nodeId);
   const blendRows = blend
     ? blendEntries(blend.shares).map((row) => ({
@@ -325,10 +329,7 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
         family: FAMILY_DATABASE.get(row.family)!,
       }))
     : [];
-  const dominantFamily = blendRows[0]?.family;
-  const dominantColor = dominantFamily
-    ? packetDefinition(dominantFamily.drops)?.color ?? accentColor
-    : accentColor;
+  const territoryShare = territory ? blend?.shares[territory.id] ?? 0 : 0;
   const capstone = isDungeon ? capstoneMaterial(biomeGroup) : undefined;
 
   const monsterIds = biome.monsterPoolByTier[biomeTier] ?? [];
@@ -353,7 +354,7 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
   const xpCeil     = biomeXpForBiomeLevel(biomeGroup, biomeLevel + 1);
   const levelPct   = xpCeil > xpFloor ? Math.min(100, Math.max(0, (biomeXP - xpFloor) / (xpCeil - xpFloor)) * 100) : 100;
   const nextUnlock = unlockLevels.find(([reqLevel]) => reqLevel > biomeLevel);
-  const hasDetails = !!blend || !!modifier || isDungeon || monsters.length > 0 || unlockLevels.length > 0;
+  const hasDetails = !!territory || isDungeon || monsters.length > 0 || unlockLevels.length > 0;
 
   return (
     <div className="map-node-info">
@@ -389,15 +390,20 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
               </dd>
             </div>
           )}
-          {dominantFamily && (
-            <div className="map-summary__row">
-              <dt>Mobs</dt>
-              <dd>
-                {dominantFamily.name}
-                {' · '}
-                {shardName(dominantFamily.drops)}
-              </dd>
-            </div>
+          {territory && paidShard && (
+            <>
+              <div className="map-summary__row">
+                <dt>Territory</dt>
+                <dd>{territory.name}</dd>
+              </div>
+              <div className="map-summary__row">
+                <dt>Drops</dt>
+                <dd className="map-summary__drops">
+                  <ShardIcon packet={paidShard} size={12} />
+                  {shardName(paidShard)}s
+                </dd>
+              </div>
+            </>
           )}
           {unlockLevels.length > 0 && (
             <div className="map-summary__row">
@@ -419,6 +425,19 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
             </div>
           )}
         </dl>
+        {/* The composition bar: each family's share, in the colour of the shard its
+            own territory pays — texture, not currency (every kill here pays the
+            territory's shard above). */}
+        {blendRows.length > 0 && (
+          <div className="map-family-mix" aria-hidden="true">
+            {blendRows.map(({ family, share }) => (
+              <i
+                key={family.id}
+                style={{ width: `${share * 100}%`, background: packetDefinition(family.drops)?.color ?? accentColor }}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {isSanctuary && (
@@ -444,40 +463,42 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
       )}
 
       {showDetails && (<>
-      {/* The node's families and the shards they drop (design 12). A node with no
-          authored blend -- every dungeon, and all of T2-T4 until their family
-          tables exist -- still shows its modifier band; Phase 2b deletes that
-          branch along with modifiers. */}
-      {blend && dominantFamily && (
-        <section className="map-modifier" style={{ borderLeftColor: dominantColor }}>
+      {/* The node's territory, its shard and its composition (design §24.3). A
+          node with no blend (a dungeon, a sanctuary) has no territory; every
+          normal node carries one, so the old modifier band is gone (review L25:
+          it could no longer render). */}
+      {territory && paidShard && (
+        <section className="map-modifier" style={{ borderLeftColor: territoryColor }}>
           <div className="map-modifier__head">
-            <span className="map-modifier__chip" style={{ background: dominantColor }}>
-              <ShardIcon packet={dominantFamily.drops} size={16} />
-              <span>{dominantFamily.name}</span>
+            <span className="map-modifier__chip" style={{ background: territoryColor }}>
+              <ShardIcon packet={paidShard} size={16} />
+              <span>{territory.name} territory</span>
             </span>
-            <span className="map-modifier__density-tag">
-              {Math.round((blendRows[0]?.share ?? 0) * 100)}% of spawns here
-            </span>
+            {blend && (
+              <span className="map-modifier__density-tag">
+                {Math.round(territoryShare * 100)}% of spawns here
+              </span>
+            )}
           </div>
           <p className="map-modifier__summary">
-            Every kill drops the shard of the family it came from.
+            Every kill here drops {shardName(paidShard)}s, whichever family it came from.
           </p>
-          <dl className="map-family-rows">
-            {blendRows.map(({ family, share }, index) => (
-              <div
-                key={family.id}
-                className={`map-family-row${index > 0 ? ' map-family-row--minor' : ''}`}
-              >
-                <dt>{family.name}</dt>
-                <dd>
-                  <span className="map-family-row__share">{Math.round(share * 100)}%</span>
-                  <ShardIcon packet={family.drops} size={12} />
-                  <span>{shardName(family.drops)}</span>
-                </dd>
-              </div>
-            ))}
-          </dl>
-          {blend.unavailable.length > 0 && (
+          {blendRows.length > 0 && (
+            <dl className="map-family-rows">
+              {blendRows.map(({ family, share }) => (
+                <div
+                  key={family.id}
+                  className={`map-family-row${family.id === territory.id ? '' : ' map-family-row--minor'}`}
+                >
+                  <dt>{family.name}</dt>
+                  <dd>
+                    <span className="map-family-row__share">{Math.round(share * 100)}%</span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          {blend && blend.unavailable.length > 0 && (
             <div className="map-family__absent">
               Absent at Tier {biomeTier}:{' '}
               {blend.unavailable
@@ -485,27 +506,9 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
                 .join(', ')}
             </div>
           )}
-        </section>
-      )}
-
-      {/* T2-T4 nodes have no family blend yet, so the modifier is shown as pure
-          identity -- a name, not a mechanical promise (progression rework
-          Phase 2b deleted the stat/population/reward math). */}
-      {!blend && modifier && (
-        <section
-          className="map-modifier"
-          style={{ borderLeftColor: MODIFIER_COLORS[modifier.modifier] }}
-        >
-          <div className="map-modifier__head">
-            <span
-              className="map-modifier__chip"
-              style={{ background: MODIFIER_COLORS[modifier.modifier] }}
-            >
-              <ModifierIcon modifier={modifier.modifier} size={16} />
-              <span>{MODIFIER_LABELS[modifier.modifier]}</span>
-            </span>
-          </div>
-          <p className="map-modifier__summary">{MODIFIER_SUMMARIES[modifier.modifier]}</p>
+          {!blend && (
+            <div className="map-family__absent">Nothing spawns here at Tier {biomeTier} yet.</div>
+          )}
         </section>
       )}
 

@@ -322,10 +322,13 @@ Both wallets live on `TracksProgression` (`shards: Partial<Record<PacketId, numb
 `capstones: Record<biome, number>`) and are the only kill-driven material wallets since
 Phase 2b deleted the catalyst accumulator outright.
 
-- **Shards.** Granted by `grantLineageMaterials` on every non-boss kill whose monster
-  belongs to a family (see [`variants-current-state.md`](variants-current-state.md)):
-  `shards[family.drops] += max(1, round(SHARD_BASE_PER_KILL × SHARD_TIER_MULT[biomeTier] ×
-  debugMult))`. A monster outside the family table drops no shard.
+- **Shards.** Granted by `grantLineageMaterials` on every non-boss kill, by the NODE
+  (design §24.3; see [`variants-current-state.md`](variants-current-state.md) §4):
+  `shards[nodeShard(nodeId)] += max(1, round(SHARD_BASE_PER_KILL ×
+  SHARD_TIER_MULT[biomeTier] × debugMult))`, where `nodeShard` is the node's dominant
+  family's `drops`. A node with no blend (a dungeon) pays the dead mob's own family shard,
+  and nothing for a mob in no family. The player reads shard names (Gale, Anvil, Venom,
+  Shackle, Bone, Spark, Sigil, Iron, Glass — `shardName`), never lane names.
 - **Capstones.** Granted on every boss kill whose biome has a capstone material: `+= max(1,
   round(debugMult))` per kill — not scaled by node identity.
 - **Boss Lane-A stopgap (design §17, provisional).** Every biome boss kill also drops 2
@@ -381,9 +384,9 @@ active card per owned row plus the worn form's capstone.
   [`variants-current-state.md`](variants-current-state.md).
 - The T3 path `packet` tags are PROVISIONAL labels, not a class-path rewrite.
 - `ABILITY_NODE_SHARE` is unbenched.
-- Engagement, Bulwark and Barrier-tempo shard income at T1 still depends partly or wholly
-  on the boss Lane-A stopgap (§10) rather than a trash-mob family; see
-  `variants-current-state.md` §1 for exactly which packets that affects.
+- Bulwark and Barrier-tempo shard income at T1 depends wholly on the boss Lane-A stopgap
+  (§10), and Technique's partly (one Swarm-led Plains node); since design §24.4 every
+  other weapon lane is paid by at least two T1 nodes' territories.
 
 ## 13. Card telemetry — the first LIVE run (2026-10-01)
 

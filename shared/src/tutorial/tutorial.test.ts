@@ -1,7 +1,6 @@
 import { ABILITY_DATABASE } from '../abilities';
 import { ABILITY_RECIPE_DATABASE } from '../abilityRecipes';
 import { globalMastery } from '../config/gameConfig';
-import { familiesDropping } from '../data/families';
 import { LINEAGE_DATABASE, lineageForRecipeId } from '../data/lineages';
 import { GATE_CAPSTONE_AMOUNT } from '../data/lineages/magnitudes';
 import type { LineageProgressMap } from '../data/lineages/types';
@@ -14,6 +13,9 @@ import { RUNE_RECIPE_DATABASE } from '../runeRecipes';
 import { runicPointBreakdown } from '../runicPoints';
 import { bossClearKey } from '../systems/biomeProgress';
 import { NODE_BIOMES } from '../world/nodeBiomes';
+import { nodeFamily, nodeShard, nodesPayingShard } from '../world/nodeBlends';
+import { shardName } from '../data/lineages/packets';
+import { tutorialNodeFor } from './nodes';
 import {
   TUTORIAL_CLASS_PLANS,
   TUTORIAL_OPENING,
@@ -454,10 +456,11 @@ for (const plan of TUTORIAL_CLASS_PLANS) simulate(plan);
 
 // ── The shards line names a real drop source ────────────────────────────────
 /**
- * The guide says Tempo Shards "drop off the Pack — the Forest's wolves". That is
- * the one hand-written claim about the family table in the whole script, so it
- * is checked here rather than trusted: a table edit that moves Tempo out of the
- * Forest fails this instead of lying to a new player.
+ * The guide names where the first card's shard drops: "Every kill in Pack
+ * territory pays them" (design §24.3 — a node pays its dominant family's shard).
+ * It is the one claim about the map in the whole script, so it is checked here
+ * rather than trusted: the territory it names must lead a home-biome node that
+ * pays the card's shard, and the line must use the shard's own name.
  */
 {
   const script = tutorialScriptFor(TUTORIAL_CLASS_PLANS[0].classRoot);
@@ -467,12 +470,61 @@ for (const plan of TUTORIAL_CLASS_PLANS) simulate(plan);
   assert(!!card, 'the script buys a lineage card');
   const lineage = LINEAGE_DATABASE.get(card!.lineageId)!;
   const lane = lineage.cards.find((c) => c.id === card!.cardId)!.lane;
-  const sources = familiesDropping(lane).filter((f) => f.biome === lineage.homeBiome);
-  assert(sources.length > 0, `no ${lineage.homeBiome} family drops the ${lane} shard the first card costs`);
-  assert(
-    sources.some((f) => f.name === 'Pack' && f.monsterIds.some((id) => id.includes('wolf'))),
-    `the shards line names the Pack's wolves, but ${lineage.homeBiome}'s ${lane} source is now ${sources.map((f) => f.name).join('/')}`,
-  );
+  const beat = script.beats.find((b) => b.id === `shards:${card!.cardId}`);
+  assert(!!beat, 'the script has a shards beat for the first card');
+  const territories = nodesPayingShard(lineage.homeBiome, 1, lane).map((id) => nodeFamily(id)?.name);
+  assert(territories.length > 0, `no ${lineage.homeBiome} node pays the ${lane} shard the first card costs`);
+  const named = territories.find((name) => !!name && beat!.say.includes(`${name} territory`));
+  assert(!!named, `the shards line must name a territory that pays ${lane}: "${beat!.say}"`);
+  assert(beat!.say.includes(shardName(lane)), `the shards line must use the shard's name: "${beat!.say}"`);
+  // The Rapier's first card is Tempo, and Tempo's Forest territory is the Pack's.
+  assert(named === 'Pack', `expected the Pack's territory, got ${named}`);
+}
+
+// ── A shard farm stands where the shard is paid (design §24.3) ──────────────
+/**
+ * Every kill in a node pays that node's ONE shard, so a farm beat that waits on
+ * shards must stand in territory paying them: a Forest farm for Gale Shards on a
+ * Grove-led node would never end. Every farm whose `until` names exactly one shard
+ * carries that `shard` on its ref, and from every node of the biome the guide
+ * resolves the farm to a node that pays it.
+ */
+{
+  const shardsIn = (c: TutorialCondition): string[] => {
+    switch (c.type) {
+      case 'shardAtLeast': return [c.packet];
+      case 'allOf': case 'anyOf': return c.of.flatMap(shardsIn);
+      default: return [];
+    }
+  };
+  let farms = 0;
+  for (const plan of TUTORIAL_CLASS_PLANS) {
+    for (const beat of tutorialScriptFor(plan.classRoot).beats) {
+      for (const step of beat.steps) {
+        if (step.type !== 'farm') continue;
+        const shards = [...new Set(shardsIn(step.until))];
+        if (shards.length !== 1) continue;
+        farms += 1;
+        assert(
+          step.at.kind === 'biome' && step.at.shard === shards[0],
+          `${plan.classRoot}/${beat.id}: a farm for ${shards[0]} shards must stand in its territory`,
+        );
+        if (step.at.kind !== 'biome') continue;
+        const at = step.at;
+        const starts = Object.entries(NODE_BIOMES)
+          .filter(([, info]) => info.biomeGroup === at.biomeGroup && info.biomeTier === at.tier)
+          .map(([id]) => id);
+        for (const from of starts) {
+          const node = tutorialNodeFor(at, { nodeId: from, clearedNodes: [] });
+          assert(
+            !!node && nodeShard(node) === shards[0],
+            `${plan.classRoot}/${beat.id}: from ${from} the guide farms ${node}, which pays ${node ? nodeShard(node) : 'nothing'}`,
+          );
+        }
+      }
+    }
+  }
+  assert(farms >= TUTORIAL_CLASS_PLANS.length, `only ${farms} shard farm beats found — the sweep is broken`);
 }
 
 // Before the class pick, and for a class with no plan, the script is the opening alone.

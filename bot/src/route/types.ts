@@ -14,6 +14,11 @@ export type NodeRef =
       pick?: "first" | "rotate" | "uncleared" | "current";
       /** Prefer a node carrying this modifier (T2-T4 authoring identity only; no gameplay effect). */
       modifier?: string;
+      /**
+       * Only nodes whose kills pay this shard (`nodeShard`, design §24.3). A shard
+       * farm on any other node of the biome pays none of it.
+       */
+      shard?: PacketId;
     }
   | { kind: "dungeon"; biomeGroup: string; tier: number };
 
