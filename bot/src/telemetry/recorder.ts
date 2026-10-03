@@ -21,6 +21,8 @@ const FORMATION_FIGHT_GRACE_MS = 2_000;
 export type Activity = "travel" | "farm" | "craft" | "boss" | "blocked" | "lease-wait" | "idle";
 
 const DEATH_WINDOW_MS = 15_000;
+/** Own damage-over-time ticks are written in windows this long (`own-dot-ticks`). */
+export const OWN_DOT_WINDOW_MS = 5_000;
 const CONCURRENCY_SAMPLE_MS = 2_000;
 export const PRODUCTIVE_ACTIVITY_IDLE_THRESHOLD_MS = 60_000;
 export const PRODUCTIVE_ACTIVITY_SAMPLE_INTERVAL_MS = 30_000;
@@ -365,6 +367,8 @@ export class Recorder {
   private lastAbilityAtMs: number | null = null;
   private lastTargetSwitchAtMs: number | null = null;
   private lastHazardEventAtMs: number | null = null;
+  private readonly cardFirings: Record<string, number> = {};
+  private ownDotWindow: { startedAtMs: number; nodeId: string; ticks: Record<string, number> } | null = null;
 
   readonly productiveActivity: ProductiveActivityQualification = {
     thresholdMs: PRODUCTIVE_ACTIVITY_IDLE_THRESHOLD_MS,
@@ -420,22 +424,57 @@ export class Recorder {
 
   /**
    * DeltaSnapshots carry authoritative combat cues separately from the
-   * player-scoped world log. Keep the stance cue when the server provides it;
-   * the player id filter prevents another player's posture from entering this
-   * run's evidence.
+   * player-scoped world log. Kept from them, each filtered to THIS player so
+   * another player's cues never enter this run's evidence:
+   *
+   *  - the stance cue;
+   *  - every lineage card that paid (`card-fx` with a `cardId`), one event each;
+   *  - our own damage-over-time ticks (`dot-tick` with our `sourceId`), batched
+   *    per {@link OWN_DOT_WINDOW_MS} by element.
    */
   ingestCombatEvents(events: CombatEvent[], nodeId: string): void {
     const ownId = this.ownIdProvider();
-    for (const event of events) {
-      if (event.kind !== "stance-switch" || event.playerId !== ownId) continue;
-      this.emit({
-        kind: "stance-switch",
-        atMs: this.now(),
-        playerId: event.playerId,
-        nodeId,
-        stanceId: event.stanceId,
-      });
+    const atMs = this.now();
+    if (this.ownDotWindow && (this.ownDotWindow.nodeId !== nodeId || atMs - this.ownDotWindow.startedAtMs >= OWN_DOT_WINDOW_MS)) {
+      this.flushOwnDotTicks(atMs);
     }
+    for (const event of events) {
+      if (event.kind === "stance-switch" && event.playerId === ownId) {
+        this.emit({ kind: "stance-switch", atMs, playerId: event.playerId, nodeId, stanceId: event.stanceId });
+      } else if (event.kind === "card-fx" && event.playerId === ownId && event.cardId) {
+        this.cardFirings[event.cardId] = (this.cardFirings[event.cardId] ?? 0) + 1;
+        this.emit({
+          kind: "card-fired",
+          atMs,
+          nodeId,
+          cardId: event.cardId,
+          fx: event.fx,
+          ...(event.targetId !== undefined ? { targetId: event.targetId } : {}),
+        });
+      } else if (event.kind === "dot-tick" && ownId && event.sourceId === ownId && event.targetId !== ownId) {
+        const window = this.ownDotWindow ??= { startedAtMs: atMs, nodeId, ticks: {} };
+        window.ticks[event.element] = (window.ticks[event.element] ?? 0) + 1;
+      }
+    }
+  }
+
+  /** Card id -> times it paid this run (the `card-fired` events, counted). */
+  cardFiringCounts(): Readonly<Record<string, number>> {
+    return { ...this.cardFirings };
+  }
+
+  /** Write the open own-DoT window, if it holds any tick. */
+  private flushOwnDotTicks(atMs: number): void {
+    const window = this.ownDotWindow;
+    this.ownDotWindow = null;
+    if (!window || Object.keys(window.ticks).length === 0) return;
+    this.emit({
+      kind: "own-dot-ticks",
+      atMs,
+      nodeId: window.nodeId,
+      windowMs: atMs - window.startedAtMs,
+      ticks: window.ticks,
+    });
   }
 
   /** Newest last. Read by the dashboard; never used for decisions. */
@@ -736,9 +775,10 @@ export class Recorder {
     this.productiveActivityWindow = null;
   }
 
-  /** Finish a diagnostic span before the run-end event is written. */
+  /** Finish a diagnostic span (and the open own-DoT window) before the run-end event is written. */
   finalizeProductiveActivity(obs: Observation): void {
     this.closeProductiveActivity(obs, "run-ended");
+    this.flushOwnDotTicks(this.now());
   }
 
   private emitActivityDiagnostic(

@@ -572,6 +572,34 @@ export type BotEvent =
       stanceId: string | null;
     }
   | {
+      /**
+       * One of this player's lineage cards PAID (design §24.2): a `card-fx` the
+       * server pushed with our `playerId` and the card's `cardId` — one per
+       * application that actually did something (`fire` in lineageCards.ts), so a
+       * capped, dodged or immune moment is not counted. The verbs-that-fire sweep
+       * reads these to prove the bought verb fired in each boss fight.
+       */
+      kind: "card-fired";
+      atMs: number;
+      nodeId: string;
+      cardId: string;
+      fx: string;
+      targetId?: string;
+    }
+  | {
+      /**
+       * Damage-over-time ticks this player's own sources dealt in the last window
+       * (`dot-tick` events carrying our `sourceId`), by element — the observable
+       * half of a lean that SEEDS a condition (design §24.9: the Affliction lean's
+       * light bleed). Batched, never one event per tick; only windows with ticks.
+       */
+      kind: "own-dot-ticks";
+      atMs: number;
+      nodeId: string;
+      windowMs: number;
+      ticks: Record<string, number>;
+    }
+  | {
       kind: "concurrency-sample";
       /** Optional read-only boss timeline; two-second samples, not exact hit/cast events. */
       bossState?: {
