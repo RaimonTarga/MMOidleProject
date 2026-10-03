@@ -735,15 +735,43 @@ export function gateBiomeLevel(tier: number): number {
 }
 
 /**
- * Global Mastery required for a row, reusing the per-tier GM band the +1..+5
- * ladder is built on (design §4: "Rows unlock on the same per-tier mastery band
- * that +1..+5 use today, with the gate where +5 sits").
+ * Rows whose Global Mastery gate is set by hand instead of by the ladder mapping
+ * ({@link ladderMasteryLevelForRow}), keyed like {@link ROW_LOCAL_LEVEL}.
+ * PROVISIONAL, the designer's number.
+ *
+ * T1 verb (`payoff`) row: 10, where the ladder says 18. Design §24.9 lands the
+ * verb in the Forest at Forest 4. On the ladder the row sat on plus-slot 3 = Global
+ * Mastery 18 — three mastered zones — so a Rapier player who opened Forest 4 with
+ * the Plains behind them (Plains 6 + Forest 4 = 10) waited out a whole Swamp leg
+ * for it. 10 is what that player holds: the guide's own zone order, and the Global
+ * Mastery the 1x sweep reads at each class's Forest 4
+ * (reports/verbs-that-fire/sweep-1x.md).
+ *
+ * Lineage cards only. The ability nodes price their gate off the ladder directly,
+ * so a hand-set row never moves them.
+ */
+export const ROW_GLOBAL_MASTERY: Readonly<Partial<Record<number, Partial<Record<RowKind, number>>>>> = {
+  1: { payoff: 10 },
+};
+
+/**
+ * Global Mastery required for a lineage card's row: the hand-set value where
+ * {@link ROW_GLOBAL_MASTERY} names one, else the ladder's.
+ */
+export function lineageMasteryLevelForRow(tier: number, row: RowKind): number {
+  return ROW_GLOBAL_MASTERY[clampTier(tier)]?.[row] ?? ladderMasteryLevelForRow(tier, row);
+}
+
+/**
+ * Global Mastery for a row on the per-tier GM band the +1..+5 ladder is built on
+ * (design §4: "Rows unlock on the same per-tier mastery band that +1..+5 use
+ * today, with the gate where +5 sits").
  *
  * The mapping is the ladder's own one: a +N step opened at biome level N+1, so a
  * row at local level L sits on plus-slot L−1, and the gate at local level 6 sits
  * on +5 — full mastery of the tier.
  */
-export function lineageMasteryLevelForRow(tier: number, row: RowKind): number {
+export function ladderMasteryLevelForRow(tier: number, row: RowKind): number {
   const local = rowLocalLevel(tier, row);
   if (local === undefined) throw new Error(`tier ${tier} has no '${row}' row`);
   return globalMasteryRequiredForUpgrade(clampTier(tier), plusSlotForLocalLevel(local));

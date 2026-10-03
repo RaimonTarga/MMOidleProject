@@ -76,13 +76,21 @@ const find = (band: PageBand, id: string): PageCardModel => {
   assert.equal(envenomed.reason, 'Not enough Venom Shards. Shards drop where the map says.');
   assert.equal(envenomed.chips.find((c) => c.kind === 'shard')?.short, true);
 
-  // The verb row: Forest 4 is met, Global Mastery 18 is the binding gate.
+  // The verb row (design §24.9): Forest 4 with the Plains behind it holds the
+  // row's Global Mastery 10, so the verb is buyable at Forest 4 — this wallet is
+  // only short on its Spark Shards.
   const lunge = find(lit, 'rapier-t1-engagement-payoff');
-  assert.equal(lunge.state, 'gated');
-  assert.deepEqual(lunge.requirement, { text: 'Global Mastery 18', met: false });
-  assert.match(lunge.reason ?? '', /Global Mastery 18/);
+  assert.equal(lunge.state, 'short');
+  assert.deepEqual(lunge.requirement, { text: 'Forest 4', met: true });
+  assert.equal(lunge.reason, 'Not enough Spark Shards. Shards drop where the map says.');
   // No lean: a verb reads its own pure sentence (design §24.2: a verb alone never does nothing).
   assert.equal(lunge.sentence, pureSentenceText('engagement'));
+  // Below the row's Global Mastery the gate binds, and the page names it.
+  const [early] = pageBands({ lineage: rapier, progress: tree(), wallet: wallet({ globalMastery: 9 }) });
+  const gated = find(early, 'rapier-t1-engagement-payoff');
+  assert.equal(gated.state, 'gated');
+  assert.deepEqual(gated.requirement, { text: 'Global Mastery 10', met: false });
+  assert.match(gated.reason ?? '', /Global Mastery 10/);
 }
 
 // ── A lean bought: verbs compose with it; the preview swaps it, display only ──
