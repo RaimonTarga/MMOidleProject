@@ -8,9 +8,10 @@
  * tutorial's own `final` Rune stage. Everything is at GM 30 and +5, which is where the
  * script's boss chapter sits (every zone mastered before the first seal).
  *
- * Two things this is deliberately NOT: it buys no lineage band (`materializeBot`, see
- * the run-4 report) and the melee plans' swap to the Chaotic Axe leaves the one card
- * the guide teaches inert. Both make this the FLOOR a real player sits on.
+ * What this is deliberately NOT: it buys no lineage band (`materializeBot`, see the
+ * run-4 report), which makes it the FLOOR a real player sits on. Since design §24.9
+ * the guide's lean and verb are on the boss kit's own weapon, so `--matrix=tutorial-pair`
+ * is the same plan with the guide's pair bought (and a no-card control).
  *
  *   tsx scripts/_t1BossPlan.ts --out=plan.json [--cand=base] [--seeds=20] [--fixed]
  *                              [--classes=striker,squire] [--bosses=crag-behemoth]
@@ -18,6 +19,7 @@
  *   tsx scripts/_t1BossPlan.ts --out=plan.json --matrix=composition [--seeds=10]
  *                              [--weapons=rapier,axe] [--classes=...] [--bosses=...]
  *                              [--tier=2] [--leans]
+ *   tsx scripts/_t1BossPlan.ts --out=plan.json --matrix=tutorial-pair [--seeds=30]
  *
  * `--matrix=composition` is the course-correction lean × verb matrix (W3-A): see the
  * block that builds it below. `--tier=2` is its T2 instrument (verbs-that-fire B).
@@ -276,51 +278,49 @@ if (args.matrix === 'composition') {
 }
 
 /**
- * `--matrix=tutorial-rapier` — a DIAGNOSTIC, not the tutorial kit (course-correction
- * W3-A item 4). The tutorial (W3-B) buys a lean and a verb on the Rapier, but every
- * boss kit wears the Chaotic Axe or the Poison Dagger, and a lineage pays only while
- * its own form is worn — so in the seal and gate fights those two cards do nothing.
- * This plan is the baseline plan with ONE change, the Rapier swapped in as the
- * weapon, run twice: with the class's own tutorial lean + verb (`diag-rapier-<pair>`)
- * and with no cards (`diag-rapier-control`) — what the bought pair would do in those
- * fights if the guide kept the Rapier on.
+ * `--matrix=tutorial-pair` — the tutorial kit WITH the pair the guide buys
+ * (verbs-that-fire wave 2, design §24.9). Since the guide teaches the page of the
+ * weapon the class fights with (`weaponCards.lineageId`, the boss kit's weapon:
+ * the Chaotic Axe, the Slinger's Poison Dagger), the bought lean and verb are live
+ * in every seal and gate fight, so this is the baseline plan run twice: with the
+ * class's own lean + verb (`tut-<lean>×<verb>`) and with no cards (`tut-control`).
  *
- * The picks mirror `weaponCards` in W3-B's `TUTORIAL_CLASS_PLANS`
- * (feat/cc-tutorial, `shared/src/tutorial/scripts/plans.ts`), which this branch
- * does not have yet; read them from there once merged.
+ * It replaces the course-correction `tutorial-rapier` diagnostic, which priced the
+ * Rapier kept on through the seals (reports/course-correction/after-boss.md).
  */
-// The tutorial's own pair per class, read from the plan it teaches
-// (`TUTORIAL_CLASS_PLANS[*].weaponCards`, course-correction W3-B) rather than copied,
-// so a change of pick moves the diagnostic with it. The label is the two lanes.
-const laneOfCard = (cardId: string): string =>
-  LINEAGE_DATABASE.get('rapier')?.cards.find((c) => c.id === cardId)?.lane ?? cardId;
-if (args.matrix === 'tutorial-rapier') {
+// The tutorial's own pair per class, read from the plan it teaches rather than
+// copied, so a change of pick moves the plan with it. The label is the two lanes.
+if (args.matrix === 'tutorial-pair') {
   const seeds = SEEDS.slice(0, nSeeds);
   for (const cls of TUTORIAL_CLASS_PLANS) {
     const name = cls.className.toLowerCase();
     if (onlyClasses && !onlyClasses.includes(name)) continue;
     const cards = cls.weaponCards;
-    assert(cards, `${name}: no tutorial Rapier pair`);
+    const lineage = LINEAGE_DATABASE.get(cards.lineageId);
+    assert(lineage, `${name}: unknown tutorial lineage ${cards.lineageId}`);
+    const laneOfCard = (cardId: string): string => lineage.cards.find((c) => c.id === cardId)?.lane ?? cardId;
     const pick = { ...cards, label: `${laneOfCard(cards.lean)}×${laneOfCard(cards.verb)}` };
     for (const withCards of [true, false]) {
       for (const biome of T1_BIOME_ORDER) {
         const boss = BOSS_BY_BIOME[biome];
         if (onlyBosses && !onlyBosses.includes(boss)) continue;
-        const kit = { ...kitFor(cls, biome), weapon: 'flash-rapier' };
+        const kit = kitFor(cls, biome);
+        assert(lineage.forms.some((f) => f.recipeId === kit.weapon),
+          `${name}: the boss kit wears ${kit.weapon}, not the ${lineage.id} the guide teaches`);
         for (const seed of seeds) {
           rows.push({
-            id: `diag-rapier-${withCards ? pick.label : 'control'}|${name}|${boss}|${seed}`,
+            id: `tut-${withCards ? pick.label : 'control'}|${name}|${boss}|${seed}`,
             boss, cls: name, seed, tier: 1, upgrade: 5, jitter: true, compact: true,
             ...kit,
             rules: tutorialRunes(cls.movement, 'final', cls.classRoot),
-            lineage: 'rapier', lean: withCards ? pick.lean : null, verb: withCards ? pick.verb : null,
+            lineage: lineage.id, lean: withCards ? pick.lean : null, verb: withCards ? pick.verb : null,
           });
         }
       }
     }
   }
   writeFileSync(args.out!, JSON.stringify(rows));
-  console.log(`tutorial-rapier diagnostic: ${rows.length} rows -> ${args.out}`);
+  console.log(`tutorial-pair plan: ${rows.length} rows -> ${args.out}`);
   process.exit(0);
 }
 

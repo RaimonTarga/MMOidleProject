@@ -157,6 +157,14 @@ against a Cave that stops at 18.
   through — the Broadsword's T2 stat row is the second level of the tier whether that tier
   is spent in the Plains (8 of 12) or the Desert (2 of 6). That invariant is what "T1 and T2
   are unchanged in practice" means, and `reachability.test.ts` pins it.
+- **A row's Global Mastery** is the +1..+5 ladder's band (`ladderMasteryLevelForRow`) unless
+  `ROW_GLOBAL_MASTERY` (`magnitudes.ts`) sets it by hand. One row does: the **T1 verb row is
+  Global Mastery 10** (the ladder said 18, three mastered zones), so a verb lands at its home
+  zone's level 4 with one zone mastered before it — a Rapier player's Forest 4 with the Plains
+  behind them (design §24.9; PROVISIONAL, the designer's number, = the Global Mastery the
+  verbs-that-fire 1x sweep reads at Forest 4). Lineage cards only: the ability nodes keep the
+  ladder. `reachability.test.ts` §4 pins the rows' Global Mastery monotone inside a tier, at or
+  under the gate, and the T1 verb reachable with one zone mastered.
 - Where a lineage holds two forms of one tier from different biomes (the Rapier's T2 Gale
   Needle/Forest and Stinger/Jungle; the Broadsword's T2 Plains/Desert; the Hammer's and
   Dagger's T3/T4 Mountain-or-Tundra and Tundra-or-Volcanic pairs; the Axe's T4

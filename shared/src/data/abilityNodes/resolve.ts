@@ -21,7 +21,7 @@ import { ABILITY_RECIPE_DATABASE } from '../../abilityRecipes';
 import type { AbilityRecipe } from '../../abilityRecipes';
 import type { EssenceType } from '../../items';
 import {
-  ABILITY_NODE_SHARE, PAYOFF_UNIT, clampTier, lineageMasteryLevelForRow,
+  ABILITY_NODE_SHARE, PAYOFF_UNIT, clampTier, ladderMasteryLevelForRow,
   payoffValue, rowEssenceCost, rowShardCost,
 } from '../lineages/magnitudes';
 import type { LineageCost, LineagePayoff, RowKind } from '../lineages/types';
@@ -140,7 +140,7 @@ export function resolveAbilityNodeOption(option: AbilityNodeOption): ResolvedAbi
   return {
     option,
     tier,
-    requiredGlobalMastery: lineageMasteryLevelForRow(tier, NODE_ROW_AS_LINEAGE_ROW[option.row]),
+    requiredGlobalMastery: ladderMasteryLevelForRow(tier, NODE_ROW_AS_LINEAGE_ROW[option.row]),
     cost: abilityNodeCost(option),
     ...(option.row === 'packet' ? { payoff: abilityNodePayoff(option) } : {}),
   };
