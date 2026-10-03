@@ -21,6 +21,8 @@
  *      from the second hit on the real attack at the real cadence. The slow is
  *      max-wins, a blocking evade lays none, a knockdown is a hold, and a
  *      control-immune boss still refuses the knockdown it feeds.
+ *   E. THE HEAVY PAYLOAD. A composed heavy bleed adds to one still owed (an
+ *      event per firing); a legacy card keeps ordinary refresh.
  *
  * Run: node --conditions=development --import tsx test/leanConditions.test.ts
  */
@@ -384,6 +386,41 @@ function hit(player: PlayerEntity, defender: MonsterEntity, damage: number, meta
   }
   assert(knockdowns === 0, 'an immune boss is never knocked down');
   assert(getStatusEffect(boss.tracksCombat, STUN_EFFECT) === undefined, 'and carries no stun');
+}
+
+// ══ E. THE HEAVY PAYLOAD NEVER CUTS ITS OWN PREDECESSOR ════════════════════════
+
+{
+  // A composed payload is an event: each firing is a whole swing, so a second
+  // firing inside the first one's 4 s window adds to what is still owed (a Tempo
+  // verb on a fast Rapier fires every ~3.6 s). A legacy card keeps ordinary
+  // refresh — `lineageDots.test.ts` pins that.
+  const heavyCard = (composed: boolean): ResolvedLineageCard => ({
+    card: {
+      id: `seed-heavy-${composed}`, lineageId: 'rapier', tier: 1, row: 'payoff', lane: 'tempo',
+      name: 'Seeded heavy', description: '', fx: 'tempo.ghost-strike',
+    },
+    requiredBiomeGroup: 'forest', requiredBiomeLevel: 1, requiredGlobalMastery: 0,
+    cost: { essence: {}, shards: {} },
+    trigger: { kind: 'hit-nth', n: 1 },
+    payoff: { kind: 'hemorrhage', magnitude: 1, durationMs: 4_000 },
+    payoffFx: 'affliction.heavy-drip',
+    ...(composed ? { composition: { verbLane: 'tempo' as const, leanLane: 'affliction' as const, pure: false } } : {}),
+  });
+  for (const composed of [true, false]) {
+    const player = seeded(`heavy-merge-${composed}`, [heavyCard(composed)]);
+    player.usesSkills.passives['shared.bleed-on-hit-pct'] = 0;
+    const target = dummy();
+    hit(player, target, 200);
+    assert(near(owed(target, LINEAGE_BLEED_ID), 200), `a whole swing, got ${owed(target, LINEAGE_BLEED_ID)}`);
+    updateHemorrhages(world, 1_000);
+    assert(near(owed(target, LINEAGE_BLEED_ID), 150), 'one tick spent, three still owed');
+    hit(player, target, 200);
+    const after = owed(target, LINEAGE_BLEED_ID);
+    if (composed) assert(after >= 349 && after <= 352, `the composed payload adds: 150 still owed + 200, got ${after}`);
+    else assert(near(after, 200), `a legacy card refreshes, got ${after}`);
+    world.takeNodeEvents(NODE);
+  }
 }
 
 // ══ C. THE APPRENTICE — DoT potency still feeds its DoT ════════════════════════
