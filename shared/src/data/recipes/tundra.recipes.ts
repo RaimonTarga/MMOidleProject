@@ -43,57 +43,32 @@ export const tundraRecipeEntries = [
   ['tundra-vest-t3', {
     id: 'tundra-vest-t3', name: 'Glacial Bulwark',
     recipeGroup: 'tundra', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { blue: 100, red: 25 }, stats: {"maxHp": 180, "plating": 2, "damageReduction": 0.14}, // family-tag: stationary DR armor → Heavy
+    cost: { blue: 100, red: 25 }, stats: { "maxHp": 270, "plating": 3, "damageReduction": 0.14 }, // family-tag: stationary DR armor → Heavy
     mechanicEffects: {"defense.stationary-dr-pct": 0.12, "defense.stationary-dr-ramptime-ms": 4000},
     tier: 3,
     icon: 'items/armor/glacial-bulwark.png',
     description: "Build damage reduction over 4 seconds while holding position under attack. Moving sheds it over 1 second; once the attacks stop it fades over 2 seconds.",
-    upgrades: [
-      {"cost": {"blue": 66, "red": 17}, "requiredBiomeLevel": 3, "stats": {"maxHp": 18, "plating": 0}},
-      {"cost": {"blue": 166, "red": 42}, "requiredBiomeLevel": 4, "stats": {"maxHp": 18, "plating": 0}},
-      {"cost": {"blue": 266, "red": 66}, "requiredBiomeLevel": 4, "stats": {"maxHp": 18, "plating": 1}},
-      {"cost": {"blue": 432, "red": 108}, "requiredBiomeLevel": 4, "stats": {"maxHp": 18, "plating": 0}},
-      {"cost": {"blue": 730, "red": 182}, "requiredBiomeLevel": 4, "stats": {"maxHp": 18, "plating": 0}}
-    ],
   }],
 
   // Charm: recovery flat; upgrades ramp barrier 0.12 -> 0.18 AND absorb 0.08 -> 0.14.
   ['tundra-charm-t3', {
     id: 'tundra-charm-t3', name: 'Frostward Charm',
     recipeGroup: 'tundra', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { blue: 75, purple: 25 }, stats: { recovery: 50.4 }, // family-tag: barrier charm (anti-spike) → Heavy
-    mechanicEffects: {
-      'defense.barrier-pct': 0.18,
-      'defense.barrier-stationary-recharge-pct': 0.02,
-      'guard.barrier-refill-on-control-pct': 0.5,
-    },
+    cost: { blue: 75, purple: 25 }, stats: { "recovery": 68.3 }, // family-tag: barrier charm (anti-spike) → Heavy
+    mechanicEffects: { "defense.barrier-pct": 0.28, "defense.barrier-stationary-recharge-pct": 0.02, "guard.barrier-refill-on-control-pct": 0.5 },
     tier: 3,
     icon: 'items/charms/frostward-charm.png',
     description: 'A rime-cold ward that thickens while you hold your ground, and shatters back into place when you break free.',
-    upgrades: [
-      { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.barrier-pct': 0.02 }, cost: { blue: 28, purple: 10 },  requiredBiomeLevel: 4 },
-      { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.barrier-pct': 0.02 }, cost: { blue: 71, purple: 24 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.barrier-pct': 0.02 }, cost: { blue: 114, purple: 38 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 2.2 }, mechanicEffects: { 'defense.barrier-pct': 0.02 }, cost: { blue: 185, purple: 62 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 2.2 }, mechanicEffects: { 'defense.barrier-pct': 0.02 }, cost: { blue: 314, purple: 104 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   ['tundra-boots-t3', {
     id: 'tundra-boots-t3', name: 'Glacier Striders',
     recipeGroup: 'tundra', requiredBiomeLevel: 4, slot: 'mobility',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 30->68 (+5: 98->88).
-    cost: { blue: 80 }, stats: { speed: 68 }, tier: 3, // family-tag: tundra momentum mobility → Heavy
+    cost: { blue: 80 }, stats: { "speed": 88 }, tier: 3, // family-tag: tundra momentum mobility → Heavy
     mechanicEffects: { 'mobility.ramp-speed-pct': 0.60, 'mobility.ramp-rate': 0.30 },
     icon: 'items/boots/glacier-striders.png',
     description: 'They gather momentum across the ice and are loath to give it back.',
-    upgrades: [
-      { stats: { speed: 2 },  cost: { blue: 24 },  requiredBiomeLevel: 4 },
-      { stats: { speed: 3 }, cost: { blue: 59 },  requiredBiomeLevel: 4 },
-      { stats: { speed: 5 }, cost: { blue: 94 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 5 }, cost: { blue: 153 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 5 }, cost: { blue: 260 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // T4
@@ -142,65 +117,38 @@ export const tundraRecipeEntries = [
     id: 'tundra-vest-t4', name: 'Permafrost Sovereign',
     recipeGroup: 'tundra', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'tundra-vest-t3',
-    cost: { blue: 256, red: 64 }, stats: {"maxHp": 346, "plating": 3, "damageReduction": 0.18}, // family-tag: stationary DR armor → Heavy
+    cost: { blue: 256, red: 64 }, stats: { "maxHp": 519, "plating": 5, "damageReduction": 0.18 }, // family-tag: stationary DR armor → Heavy
     reconstructCost: { blue: 896, red: 224 },
     mechanicEffects: {"defense.stationary-dr-pct": 0.16, "defense.stationary-dr-ramptime-ms": 4000},
     tier: 4,
     icon: 'items/armor/permafrost-sovereign.png',
     description: "Build damage reduction over 4 seconds while holding position under attack. Moving sheds it over 1 second; once the attacks stop it fades over 2 seconds.",
-    upgrades: [
-      {"cost": {"blue": 130, "red": 33}, "requiredBiomeLevel": 9, "stats": {"maxHp": 35, "plating": 0}},
-      {"cost": {"blue": 326, "red": 82}, "requiredBiomeLevel": 10, "stats": {"maxHp": 34, "plating": 1}},
-      {"cost": {"blue": 522, "red": 131}, "requiredBiomeLevel": 10, "stats": {"maxHp": 35, "plating": 0}},
-      {"cost": {"blue": 849, "red": 212}, "requiredBiomeLevel": 10, "stats": {"maxHp": 34, "plating": 1}},
-      {"cost": {"blue": 1436, "red": 359}, "requiredBiomeLevel": 10, "stats": {"maxHp": 35, "plating": 0}}
-    ],
   }],
 
   ['tundra-charm-t4', {
     id: 'tundra-charm-t4', name: 'Glacial Ward',
     recipeGroup: 'tundra', requiredBiomeLevel: 9, slot: 'recovery',
     evolvesFrom: 'tundra-charm-t3',
-    cost: { blue: 220, purple: 30 }, stats: { recovery: 115.4 }, // family-tag: barrier charm (anti-spike) → Heavy
+    cost: { blue: 220, purple: 30 }, stats: { "recovery": 168.2 }, // family-tag: barrier charm (anti-spike) → Heavy
     reconstructCost: { blue: 770, purple: 105 },
-    mechanicEffects: {
-      'defense.barrier-pct': 0.22,
-      'defense.barrier-stationary-recharge-pct': 0.025,
-      'guard.barrier-refill-on-control-pct': 1.0,
-    },
+    mechanicEffects: { "defense.barrier-pct": 0.37, "defense.barrier-stationary-recharge-pct": 0.025, "guard.barrier-refill-on-control-pct": 1 },
     tier: 4,
     icon: 'items/charms/glacial-ward.png',
     description: 'A glacier in miniature: it never stops growing while you stand, and breaking free raises it whole again.',
-    upgrades: [
-      { stats: { recovery: 7.6 }, mechanicEffects: { 'defense.barrier-pct': 0.03 }, cost: { blue: 65, purple: 9 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.barrier-pct': 0.03 }, cost: { blue: 163, purple: 22 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.barrier-pct': 0.03 }, cost: { blue: 260, purple: 36 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.barrier-pct': 0.03 }, cost: { blue: 423, purple: 58 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.barrier-pct': 0.03 }, cost: { blue: 716, purple: 98 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   ['tundra-charm-t4-deepfreeze', {
     id: 'tundra-charm-t4-deepfreeze', name: 'Deepfreeze Ward',
     recipeGroup: 'tundra', requiredBiomeLevel: 9, slot: 'recovery',
     evolvesFrom: 'tundra-charm-t3',
-    cost: { blue: 220, purple: 30 }, stats: { recovery: 115.4 }, // family-tag: ramping absorb ward → Heavy
+    cost: { blue: 220, purple: 30 }, stats: { "recovery": 168.2 }, // family-tag: ramping absorb ward → Heavy
     reconstructCost: { blue: 770, purple: 105 },
     // † absorb-ramp: absorb starts at 0.04 and climbs to 0.18 over 12s in combat
     //   (weaker early, stronger in long fights). (new keys)
-    mechanicEffects: {
-      'defense.absorb-ramp-start-pct': 0.06, 'defense.absorb-ramp-max-pct': 0.30, 'defense.absorb-ramptime-ms': 12000,
-    },
+    mechanicEffects: { "defense.absorb-ramp-start-pct": 0.06, "defense.absorb-ramp-max-pct": 0.45, "defense.absorb-ramptime-ms": 12000 },
     tier: 4,
     icon: 'items/charms/deepfreeze-ward.png',
     description: 'The longer the cold has to settle in, the more of the blow it swallows whole.',
-    upgrades: [
-      { stats: { recovery: 7.6 }, mechanicEffects: { 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 65, purple: 9 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 163, purple: 22 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 260, purple: 36 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 423, purple: 58 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 716, purple: 98 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // T4 boots — ramp-speed (momentum builds while moving). T3 0.60/0.30 → T4 0.75/0.35.
@@ -209,18 +157,11 @@ export const tundraRecipeEntries = [
     recipeGroup: 'tundra', requiredBiomeLevel: 10, slot: 'mobility',
     evolvesFrom: 'tundra-boots-t3',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 42->97 (+5: 120->118).
-    cost: { blue: 176 }, stats: { speed: 97 }, tier: 4, // family-tag: tundra momentum mobility → Heavy
+    cost: { blue: 176 }, stats: { "speed": 118 }, tier: 4, // family-tag: tundra momentum mobility → Heavy
     reconstructCost: { blue: 616 },
     mechanicEffects: { 'mobility.ramp-speed-pct': 0.75, 'mobility.ramp-rate': 0.35 },
     icon: 'items/boots/avalanche-striders.png',
     description: 'Slow to start and impossible to stop — by the far end of the ice you are a thing that simply happens to whatever is in the way.',
-    upgrades: [
-      { stats: { speed: 2 }, cost: { blue: 47 },  requiredBiomeLevel: 10 },
-      { stats: { speed: 4 }, cost: { blue: 116 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 5 }, cost: { blue: 186 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 5 }, cost: { blue: 303 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 5 }, cost: { blue: 512 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // ── Cores ───────────────────────────────────────────────────────────────────────
