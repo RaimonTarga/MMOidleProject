@@ -1,8 +1,10 @@
 # Guided Tier-1 Tutorial — Plan
 
 **Status:** ACTIVE PLAN — Phases 1–4 built on `feat/guided-tutorial` (2026-09-29),
-uncommitted and awaiting the designer's playtest. Nothing below is shipped behavior
-until a `guided-tutorial-current-state.md` exists.
+shipped in v0.6.2. The course-correction run (2026-10-03, W3-B) replaced the one-card
+tree lesson with the weapon page's two purchases, a lean and a verb, and added the
+first-hour checklist (both below). Nothing below is shipped behavior until a
+`guided-tutorial-current-state.md` exists.
 
 ## What it is
 
@@ -78,8 +80,10 @@ shared/src/tutorial/
   resolve.ts         resume-from-state, supersession, wiredRunes, abilityLoadoutFor
   nodes.ts           which node a farm/boss step happens at (bot's pick rules)
   anchors.ts         every data-tutorial-anchor id
+  concepts.ts        the first-hour checklist: ideas, what shows each, levels per beat
   scripts/opening.ts class-agnostic opening (quest, class pick, Clearing set)
   scripts/plans.ts   per-class gear plans (ported from bot/src/routes/t1GearPlans.ts)
+                     and the lean + verb each class buys (`weaponCards`)
   scripts/runes.ts   the guide's Rune loadout per stage
   scripts/classScript.ts  plan → beats, with the lines
   tutorial.test.ts   data validity + a simulated playthrough of all six classes
@@ -122,7 +126,16 @@ point, for the altar).
 | upgrade | Upgrade → the item → Upgrade, repeated to the target level |
 | learnAbility / setAbilities | craft the recipe, then Abilities → Attune; Runes are re-wired (below) |
 | configureRunes | Runes board; the guide sets its plan |
+| unlockCard / setActive | Inventory → the equipped weapon → its weapon page → the card (buy, then make active; the server only activates a purchase into an empty row) |
+| unlockForm / wearForm | the weapon page → the gate's door (pay, then wear) |
 | attemptBoss | rest to full HP, travel, clear the guard with auto-combat, walk to the altar, ring on the altar button, wake the boss, fight |
+
+**Lessons.** A beat may carry a `lesson` (shared `TutorialBeat.lesson`), played after its
+steps: the ring rests on the card the beat bought while the panel reads what the card now
+says (5 s), then the page closes and the ring rests on that card's ring on the rhythm
+readout by the HP bar (5 s). Nothing is pressed or sent; the bot ignores it. Because the
+purchase already moved the panel to the next beat, the panel shows a finished beat's
+`working` message until the lesson ends.
 
 **Ability wiring.** Abilities have no built-in trigger (`shared/src/abilityWiring.ts`).
 Every loadout the guide sends is `wiredRunes(rules, abilities)`: stale `use-ability`
@@ -140,12 +153,10 @@ configs (Striker/Squire durable melee, Slinger, Spirit/Conduit, Apprentice), wit
 - **Order:** Clearing → Plains → Forest → Swamp → Mountain → Cave → the two
   seals in `TUTORIAL_SEALS` (currently Plains, then Mountain). Boss loadouts are the
   bot's dodge-profile matrix for all five bosses. Each zone: its gear, its shared learning (Sweep, Second Wind, Avoid
-  Hazards + Cleanse, Orbit for ranged, Step Back), master to 6, then upgrades.
+  Hazards + Cleanse, Orbit for ranged, Step Back), master to 6. The Forest leg adds
+  the lean, the end of the Swamp leg the verb (below).
 - **Two beats per paid action:** a farm beat that ends when the action is affordable
   (skipped automatically when it already is), then the action beat.
-- **Upgrades are grouped by the zone whose essence pays** (the Plains vest is paid in
-  Plains essence even on the Forest leg), with a catalyst detour when a zone has no
-  node minting the needed catalyst.
 - **Safety Runes** (`scripts/runes.ts`): `hp-below-25 → flee` above chase/orbit until
   Step Back replaces it in the Cave (first-rule-wins in the Movement lane, so the
   default loadout's flee below chase could never fire in a fight);
@@ -154,25 +165,65 @@ configs (Striker/Squire durable melee, Slinger, Spirit/Conduit, Apprentice), wit
   Cave mastery, not at Cave 3 — with Step Back and two abilities the build only fits
   the Rune budget at GM 30. `flee` is dropped at the Step Back stage for the same
   reason (ranged builds would not fit even at GM 30).
-- **Slinger** skips the bot's Mountain vest (only worn against the later bosses).
-- Beat counts (2026-10-01, after the weapon `+N` ladder's removal and the tree
-  lessons): Striker 78, Squire 78, Spirit 81, Conduit 81, Apprentice 83, Slinger 85.
+- **Slinger** skips the bot's Mountain vest (only worn against the later bosses), and
+  crafts its Forest armor at Forest 3 rather than 2 (`PlanItem.atLevel`; the first-hour
+  checklist below).
+- **No upgrade beats** since the course correction: the `+N` ladder is retired on every
+  slot (design §24.5) and an item is crafted at its old `+5` power.
+- Beat counts (2026-10-03, after the course correction): Striker 60, Squire 60,
+  Slinger 63, Spirit 63, Conduit 63, Apprentice 65. (2026-10-01, with the upgrade
+  beats and the one-card lesson: Striker 78, Squire 78, Spirit 81, Conduit 81,
+  Apprentice 83, Slinger 85.)
 
-### The tree lessons (2026-10-01, `feat/tutorial-tree`)
+### The weapon-page lessons (course correction, 2026-10-03)
 
-The weapon `+N` ladder the script used to teach is gone (the lineage rework, commit
-`03783104`). Five beats teach the tree that replaced it, authored from
-`shared/src/data/lineages/` so no price or unlock level is restated:
+Design §24.2 makes the T1 band two rows, a **lean** (row 1: a stat, and the payload it
+names) and a **verb** (row 2: a moment), and the verb's sentence is generated from the
+two. The guide teaches exactly that, on the Rapier — the Forest's lineage and the weapon
+every class plan wears from the Forest leg into the Cave, so both cards are live while
+they are taught (a lineage pays only while its own form is worn, design §23). Seven beats,
+all authored from `shared/src/data/lineages/` so no price, level or sentence is restated:
 
 | Beat | Where | What it does |
 |---|---|---|
-| `shards:rapier-t1-tempo-stat` | Forest leg, once the Flash Rapier is worn | farms a Pack-territory node until the first card is affordable; the line names Pack territory as where Gale Shards drop (design §24.3: a node pays its dominant family's shard) |
-| `card:rapier-t1-tempo-stat` | same | buys Quick Wrist — "owned is forever, active is a choice" |
-| `farm:gate:gale-needle` | new last chapter, "The Gate" | the gate's Forest essence and Gale Shards, farmed in Pack territory |
+| `shards:<lean>` | Forest 1, the Flash Rapier just worn | farms the Forest territory that pays the lean's shard; the line names the weapon page, the shard and the territory |
+| `card:<lean>` | Forest 2 (the lean row's level; Global Mastery 6 is the Plains) | buys the lean and makes it active: "Row one is the lean, a stat while the Flash Rapier is worn (+9% attack speed); one lean is active at a time." |
+| `shards:<verb>` | end of the Swamp leg | "Three zones mastered opens row two…": back to the Forest territory that pays the verb's shard |
+| `card:<verb>` | same | buys the verb and makes it active; its **lesson**: "Look at what Opening Lunge says now: “Your first hit on each new target lands twice.” Your lean, Quick Wrist, chose that.", then the verb's ring on the rhythm readout |
+| `farm:gate:gale-needle` | last chapter, "The Gate" | the gate's Forest essence and Gale Shards, farmed in Pack territory |
 | `capstone:gale-needle` | same | the Forest boss, repeatedly, for its three Warden's Hearts |
-| `gate:gale-needle` | same | pays the gate and wears the Gale Needle, which opens the T2 band |
+| `gate:gale-needle` | same | wears the Flash Rapier (review P9: the page shown is the slot's), pays the gate, wears the Gale Needle |
 
-Three things this needed:
+**Which lean and verb** is per class (`TutorialClassPlan.weaponCards`), always two
+different lanes: a same-lane pair reads its packet's pure sentence, so the lean would
+change nothing on the verb card and there would be nothing to look at.
+
+| Class | Lean (row 1) | Verb (row 2) | The verb then reads | Why |
+|---|---|---|---|---|
+| Striker | Quick Wrist (+9% attack speed) | Opening Lunge | Your first hit on each new target lands twice. | the finisher is every 5th swing, so swings per second is its own currency, and a second swing lands on every new body — T1 farming is many short pulls |
+| Squire | Keen Edge (+3 Attack) | Flurry | Every 6th hit is a lunge for double damage. | the slowest hands and the biggest hits: flat Attack under a ×2 timed execution, and on a slow chassis the six-count is a steady, readable ring |
+| Slinger | Quick Wrist | Opening Lunge | Your first hit on each new target lands twice. | Attack keeps only 65% at the clip's cadence while on-hit keeps all of it, and the echo carries on-hit (§24.2: on-hit is Tempo's), so Keen Edge is its weakest lean; a kiting build opens on many targets |
+| Spirit | Keen Edge | Flurry | Every 6th hit is a lunge for double damage. | the fastest chassis fills the six-count fastest, so the lunge lands often and the ring is never idle |
+| Apprentice | Envenomed (+10% DoT potency) | Opening Lunge | Your first hit on each new target leaves a heavy poison or bleed, a whole swing over 4 s. | DoT potency is its whole package (§24.2), and Affliction × Engagement is the pair that suggested the structure |
+| Conduit | Quick Wrist | Opening Lunge | Your first hit on each new target lands twice. | the weapon sets the formation's cadence, so attack speed reaches every summon, and four bodies open on many targets |
+
+No class takes Venom Point: its moment needs an already-afflicted target, which only the
+Apprentice supplies, and the Apprentice's lean is Envenomed (same lane, pure sentence).
+
+**Where the verb lands.** The brief said Forest 4; the verb row is gated at Forest 4
+**and** the T1 band's Global Mastery 18 (W2-A measured it), and the script reaches GM 18
+only when the Swamp is mastered (Plains 6 + Forest 6 + Swamp 6). The script computes the
+first leg end where both gates hold from the data, so a gate change moves the beat. The
+verb's shard is paid only in the Forest (Pack for Gale, Grove for Spark), so the beat walks
+back there; the Rapier is still worn through the Mountain leg, so the lesson's first fight
+is one where the verb fires (`tutorial.test.ts` asserts it).
+
+**Each purchase is `unlockCard` + `setActive`.** The server activates a bought card only
+into an EMPTY row (W2-A), so a player who opted in mid-Tier-1 with another lean already
+active would otherwise own the guide's lean without running it. After a purchase into an
+empty row the `setActive` is a no-op. The bot runs the same two intents.
+
+Three things the gate chapter needed (2026-10-01, unchanged):
 
 - **The gate chapter runs after the seals.** The T1 gate asks for Global Mastery 30
   and Forest 6, which only arrive at the end of the Cave leg, and any two distinct
@@ -185,17 +236,83 @@ Three things this needed:
 - **The route completion includes the gate**, because `runSteps` returns the moment
   completion holds and "two seals" would have cut the run short of the new chapter.
 
-⚠ The Greatbear wall in Findings below applies here: the gate chapter asks every
-class for three Forest boss kills, and a GM-30 Striker and Apprentice could not
-manage one in September. It is after Tier 2, so it blocks no progression, but a
-live run shows it as a stalled route while the wall stands — **measured on
-2026-10-02** (see the Validation record): four of six classes never killed it,
-Conduit needed nine fights, Slinger needed 40 seconds.
+The Greatbear wall the gate chapter used to hit (four classes of six, 2026-10-02 morning)
+was closed by the T1 boss pass: every class paid the gate in the 2026-10-02 evening sweep
+(Validation record). The gate's Greatbear fights are still fought in the Mountain-seal
+loadout — the Chaotic Axe for five classes, the Poison Dagger for the Slinger — so the
+Rapier's lean and verb are inert in every boss fight of the script (design §23's note).
+Whether the gate chapter should wear the Rapier is a designer call.
 
 `tutorial.test.ts` simulates every class's playthrough (each step made true the way
 the server would) and asserts the guide only ever moves forward, reaches GM 30,
 ends at Tier 2, and that every loadout fits the RP budget of the Global Mastery
-guaranteed at that point.
+guaranteed at that point. Since the course correction it also asserts: both cards
+bought and active; every lineage step happens with the Rapier in the slot; each card
+bought where its own gates hold; the fight after the verb lesson is on the Rapier; a
+mid-T1 player with another lean active still gets the `setActive`; the lesson quotes
+the sentence the weapon page shows; and the first-hour checklist below.
+
+### The first-hour checklist (2026-10-03)
+
+**At most two new ideas per level, each explained by what the screen shows.** A level is
+where the player is when a line shows: "Tier 0" for the Clearing quest, then the chapter's
+zone and its mastery level, then "The Seals" and "The Gate". The checklist is DATA, not a
+manual review: every beat names the ideas its line introduces (`TutorialBeat.teaches`), the
+ideas and the screen element for each live in `shared/src/tutorial/concepts.ts`, and
+`tutorialChecklist(script)` reads each beat's level off the script's own gates (a beat is
+reached only once every farm before it has met its condition). `tutorial.test.ts` holds
+every class to ≤ 2 new ideas per level and per beat, each idea introduced once, every idea
+with a screen element, and every anchor it names a real one.
+
+| Level | Beat | New idea | What on screen explains it | Classes |
+|---|---|---|---|---|
+| Tier 0 | `first-blood` | Auto Combat fights for you | the Auto Combat button, ringed and pressed | all |
+|  |  | A quest's kills earn the next tier | the kill bar on the guide card |  |
+| Clearing 0 | `choose-class` | Your class | the class cards on the Passive Tree | all |
+| Clearing 0 | `farm:primordial-club` | Zones pay essence; the Make tab turns it into gear you wear | the essence bar on the guide card, then Make → Craft and Inventory → Equip | all |
+| Clearing 1 | `farm:clearing-vest-t1` | Zone mastery opens recipes | the Mastery level bar on the guide card | all |
+|  |  | Armor is health | the health bar growing when it is worn |  |
+| Clearing 2 | `farm:clearing-charm-t1` | A charm refills health between fights | the health bar refilling between pulls | all |
+| Clearing 3 | `farm:clearing-boots-t1` | Boots are speed | the walk between pulls getting shorter | all |
+| Clearing 4 | `runes:opening` | Runes are standing orders; the higher rule of a lane wins | the Runes board, built rule by rule | all |
+| Plains 0 | `farm:iron-broadsword` | The guide travels between zones | the arrival banner naming the zone | all |
+| Plains 2 | `learn:ability-recipe-sweep` | A Technique fires on its own every so often | the Abilities tab, Attune | all |
+|  |  | An ability fires from a Rune | "Use default timing" under the ability |  |
+| Forest 1 | `shards:<lean>` | A weapon has a page of cards | the weapon page, opened from the equipped weapon | all |
+|  |  | Every kill pays its territory's shard | the arrival banner and the map ("Pack territory · Gale Shards") |  |
+| Forest 2 | `card:<lean>` | Row 1, the lean: a stat while the form is worn, one active | the lean card's sentence and the stat sheet beside it | all |
+| Forest 2 | `learn:ability-recipe-second-wind` | A Guard rescues you mid-fight | the Abilities tab, Attune | all |
+| Forest 3 | `craft:forest-vest-t1` | Evasion: harder to hit | the Evasion row of the stat sheet | Slinger |
+| Swamp 0 | `farm:rune-recipe-avoid-hazards` | Poison keeps hurting after the hit | the poison tile on the buff bar | all |
+| Swamp 2 | `rune:rune-recipe-avoid-hazards` | Hazard ground hurts, and a Rune walks around it | the hazard patches on the Swamp floor | all |
+| Swamp 3 | `learn:ability-recipe-cleanse` | Abilities are swapped to fit the zone | the Abilities tab, Unattune then Attune | all |
+| Swamp 6 | `shards:<verb>` | Row 2, the verb: a moment, and the lean decides what happens then | the verb card's sentence on the weapon page, rewritten by the lean | all |
+| Swamp 6 | `card:<verb>` | A ring by the health bar shows the verb coming | the verb's ring on the rhythm readout, ringed | all |
+| Mountain 3 | `rune:rune-recipe-keep-distance` | Orbit: circle out of reach while attacking | the Runes board | Slinger, Spirit, Apprentice, Conduit |
+| Cave 0 | `farm:chaotic-axe` (Slinger: `farm:rune-recipe-step-back`) | A wound-up hit can be dodged | the cast bar over a monster winding up | all |
+| Cave 2 | `rune:rune-recipe-step-back` | Step Back dodges a wound-up hit | Step Back at the top of the Runes board | all |
+| The Seals | `boss-prep:plains` | Two boss seals open Tier 2 | the tier-up after the second seal | all |
+| The Seals | `boss:plains` | Clear the guard, then wake the boss at its altar | the altar button, ringed | all |
+| The Gate | `farm:gate:gale-needle` | A gate turns the weapon into its next form | the gate block at the bottom of the weapon page | all |
+| The Gate | `capstone:gale-needle` | Only the boss drops the gate's capstone | the capstone pips on the gate block | all |
+
+What counts as an idea: something the player holds in their head from then on (a system,
+a screen, a rule), not an item — the first charm is an idea, the second charm is not, and a
+reason that restates a known idea ("the Swamp armor resists poison") introduces nothing.
+A farm beat that is skipped because its cost is already met never shows its line, so each
+purchase's own line restates what its farm beat introduced.
+
+**What the check changed.** Every level was within two except the Slinger's **Forest 2**,
+which carried three: the lean, Second Wind (a Guard) and the Forest armor's "harder to hit"
+(evasion). The armor now waits for Forest 3 (`PlanItem.atLevel`); the recipe still opens
+at Forest 2, the price is unchanged. The lesson beats were split to fit: the weapon page
+and shards land at Forest 1, the lean at Forest 2; the verb at its farm beat and the
+readout ring at the purchase.
+
+**What the check cannot see.** Levels come from the script's gates, i.e. the earliest a
+line can show; a live run that overshoots (a farm for one item finishing two levels at
+once) lands two levels' lines together. The 1x sweep's own level-ups are in
+`reports/course-correction/sweep-1x.md`.
 
 ## Running the validation
 
@@ -212,6 +329,23 @@ pnpm experiment:launch --id=latest
 Route ids: `tutorial-{striker,squire,slinger,spirit,apprentice,conduit}-t1`.
 Parallel runs in one dev world collide in dungeons (fast retries are refused while
 another bot is inside), so shared-world batches are only pipeline evidence.
+
+**A 1x six-class sweep without the frozen runner** (the course-correction sweep, 2026-10-03):
+one server and one game database per class, so no two bots share a world. Per class N,
+from `server/`, with `PORT=432N`, `DATABASE_URL=…/gamedb_<name>N` (create it first; the
+migrations run at boot), the shared logdb, `REDIS_CHANNEL_PREFIX=<name>N`,
+`AUTH_DEV_BYPASS=1`, `NODE_ENV=development`:
+
+```bash
+node --env-file=../.env --conditions=development --import tsx src/index.ts
+# wait for /healthz, then from bot/:
+node --import tsx --conditions=development src/run.ts --route=tutorial-<class>-t1 \
+  --policy=intended --rewardMultiplier=1 --server=http://localhost:432N --account=bot-<name>-<class>
+```
+
+A fresh server boots at 1x, so the runs are untainted. The Redis database index does not
+isolate anything (the server uses Redis only for pub/sub, which ignores it, and the local
+Redis has 16 databases); `REDIS_CHANNEL_PREFIX` is what keeps the servers' telemetry apart.
 
 ## Phases
 
