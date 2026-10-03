@@ -19,6 +19,7 @@ import {
   BIOME_LEVELS_PER_TIER,
   ITEM_DATABASE,
   ROW_KINDS,
+  ROW_LABELS,
   TEST_ROOM_NODE_ID,
   TUTORIAL_ANCHORS,
   ESSENCE_LABELS,
@@ -26,6 +27,7 @@ import {
   absorbedStatCards,
   bandBiomeFloor,
   bandContents,
+  cardSentence,
   capstoneMaterialName,
   checkSetActive,
   checkUnlockCard,
@@ -78,11 +80,10 @@ interface Props {
 
 // ── Formatting ───────────────────────────────────────────────────────────────
 
-const ROW_LABEL: Record<RowKind, string> = {
-  stat: 'Stat', payoff: 'Payoff', amplifier: 'Amplifier', keystone: 'Keystone', cross: 'Cross',
-};
+// The T1 rows read Lean / Verb (design §24.2) — one shared map, internal ids unchanged.
+const ROW_LABEL: Readonly<Record<RowKind, string>> = ROW_LABELS;
 const ROW_HINT: Record<RowKind, string> = {
-  stat: 'what you scale', payoff: 'when it fires, what happens',
+  stat: 'a stat, and what your verb delivers', payoff: 'the moment; your lean decides what happens',
   amplifier: 'makes the payoff bigger', keystone: 'changes the rule',
   cross: 'a second lane, borrowed',
 };
@@ -235,7 +236,10 @@ function CardTile({
     <LineageCardShell
       laneColor={laneColor}
       name={card.name}
-      description={`${card.description} ${describeCardEffect(resolved) ?? ''}`}
+      // One sentence per card (design §24.6): a lean reads its stat line, a verb
+      // reads what it does with the lean slotted RIGHT NOW. Other rows keep the
+      // authored text and resolved numbers until the weapon page replaces this.
+      description={cardSentence(card, progress) ?? `${card.description} ${describeCardEffect(resolved) ?? ''}`}
       state={state}
       tie={tie}
       cost={!owned ? <CostChips cost={cost} wallet={wallet} /> : undefined}
