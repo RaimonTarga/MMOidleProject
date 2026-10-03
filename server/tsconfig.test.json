@@ -15,7 +15,7 @@
   //    loudly on the next line anyway. Turning them on is its own cleanup, and
   //    gating this config on it would have meant not having the config at all.
   //
-  // 2. The 38 tests under `exclude` import real client source. Client files cannot
+  // 2. The tests under `exclude` import real client source. Client files cannot
   //    be checked from this package: they resolve their own `jotai` and need Vite's
   //    ambient types, so checking them here reports ~104 errors that the client's
   //    own `tsc` does not. Their client imports are covered by the client package;
@@ -42,7 +42,6 @@
     "test/combatTextCoverage.test.ts",
     "test/combatTextResync.test.ts",
     "test/conduitPathFx.test.ts",
-    "test/conduitPlayerBodies.test.ts",
     "test/cooldownClock.test.ts",
     "test/coreRelicIntegration.test.ts",
     "test/craftingRailAndMapFog.test.ts",
