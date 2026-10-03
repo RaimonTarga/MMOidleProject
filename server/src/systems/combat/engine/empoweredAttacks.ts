@@ -7,6 +7,7 @@ import {
   type PassiveKey,
 } from '@mmo-idle/shared';
 import { registerCombatListener, type CombatContext } from './combatPipeline';
+import { mechanicAlreadyFired } from './mechanicFired';
 import { isClassActive } from '../../classes/shared/classActive';
 import type { MonsterEntity, PlayerEntity, ServerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -286,6 +287,14 @@ export function applyMechanicProxy(
   if (ctx.attackerType !== 'player') return 0;
   if (ctx.metadata['chaoticMiss']) return 0;
   if (ctx.metadata['mechanicConsumed'] === true) return 0;
+  // The real mechanic already ANNOUNCED itself on this exchange without spending a
+  // charge — the DoT root's stack filling, the Conduit's formation cycle closing.
+  // Both roots register their listeners before the lineage cards, so their
+  // emission lands first and their own "a proxy never announces" guards never see
+  // a proxy; proxying the hit as well counted it as the mechanic twice (an
+  // emission AND the proxy's multiplier on one exchange). The hit IS the mechanic's
+  // already: left alone, like a hit that spent the charge.
+  if (mechanicAlreadyFired(ctx)) return 0;
   const multiplier = proxyEmpoweredMultiplier(world, ctx.attacker) ?? fallbackMultiplier;
   if (!(multiplier > 0)) return 0;
 
