@@ -27,6 +27,7 @@ import {
   baseRecoveryForTier,
   emptyEquipment,
   getCooldown,
+  getLineageRuntime,
   getStatusEffect,
   initAppliesDots,
   initUsesCadence,
@@ -56,6 +57,10 @@ import { monsterIgnoresControl } from '../src/systems/combat/status/controlImmun
 import { applyMonsterRoot, applyMonsterSlow } from '../src/systems/combat/status/monsterControl';
 import { onTechniqueResolved } from '../src/systems/combat/techniqueResolved';
 import { abilityCooldownKey } from '../src/systems/player/abilities/abilityCooldowns';
+import { runPlayerAttack } from '../src/systems/combat/engine/combat';
+import { setAttackTarget } from '../src/systems/combat/ai/targeting';
+import { equipItem } from '../src/systems/player/economy/inventory';
+import { setLineageActive, unlockLineageCard } from '../src/systems/player/economy/lineages';
 import { LINEAGE_BLEED_ID } from '../src/systems/combat/damage/bleedIds';
 import { getFrameCharge, isFrameWindowLive } from '../src/systems/classes/shared/frameLoop';
 
@@ -570,6 +575,54 @@ function kill(player: PlayerEntity, defender: MonsterEntity): void {
   assert(hit(player, a, {}, 100).damage === 100, 'the second is not');
   assert(hit(player, b, {}, 100).damage === 200, 'a new body is a new opening');
   cardFx();
+}
+
+// ── End to end: bought through the economy, fired through the real attack ────
+
+{
+  const slices = makeSlices('cmp-e2e');
+  slices.tracksProgression.essences = { red: 99_999, blue: 99_999, green: 99_999, yellow: 99_999, purple: 99_999 };
+  slices.tracksProgression.shards = { tempo: 999, affliction: 999, engagement: 999 };
+  slices.tracksProgression.biomeLevel = { forest: 99 };
+  slices.tracksProgression.playerTier = 4;
+  slices.holdsInventory.inventory = ['flash-rapier'];
+  const player = world.attachPlayerEntity(slices, 'cmp-e2e');
+  equipItem(world, player, 'flash-rapier');
+
+  for (const cardId of ['rapier-t1-affliction-stat', 'rapier-t1-tempo-payoff']) {
+    const bought = unlockLineageCard(world, player, 'rapier', cardId);
+    assert(bought.success, `${cardId}: ${bought.reason}`);
+  }
+  const flurry = getLineageRuntime(player.tracksCombat)?.cards.find((c) => c.card.id === 'rapier-t1-tempo-payoff');
+  assert(flurry?.trigger?.kind === 'hit-nth' && flurry.trigger.n === 6, 'Flurry fires on every 6th hit');
+  assert(flurry?.payoff?.kind === 'hemorrhage' && flurry.payoff.magnitude === 1, 'with Envenomed, it leaves the heavy bleed');
+  assert(flurry?.payoffFx === 'affliction.heavy-drip', 'and draws the Affliction payload');
+  // The Affliction lean is DoT potency, folded into the DoT root's multiplier on
+  // top of its base even when no frame authored one (a frameless player reads
+  // the profile's base, never 0.10 alone).
+  const mult = player.usesSkills.passives['dot.mechanic-mult'] ?? 0;
+  assert(Math.abs(mult - 1.3) < 1e-9, `DoT potency adds +0.10 onto the 1.2 base, got ${mult}`);
+
+  const target = world.createMonster(NODE, 'plains-slime', { x: 430, y: 400 })!;
+  target.hasHealth.maxHp = 100_000;
+  target.hasHealth.hp = 100_000;
+  setAttackTarget(world, player, target.isMonster.id);
+  world.takeNodeEvents(NODE);
+  const swing = () => runPlayerAttack(world, player, target, Date.now(), {
+    attackOrigin: { ...player.hasPosition.current },
+    aggroSource: { id: player.isPlayer.id, kind: 'player' },
+  });
+  for (let i = 0; i < 5; i++) swing();
+  assert(getStatusEffect(target.tracksCombat, LINEAGE_BLEED_ID) === undefined, 'nothing before the 6th hit');
+  swing();
+  assert(getStatusEffect(target.tracksCombat, LINEAGE_BLEED_ID) !== undefined, 'the 6th hit leaves the heavy bleed');
+  assert(cardFx().some((e) => e.fx === 'affliction.heavy-drip'), 'drawn as the heavy drip');
+
+  // Swap the lean to the verb's own lane: the pair turns pure, no re-purchase.
+  assert(unlockLineageCard(world, player, 'rapier', 'rapier-t1-tempo-stat').success, 'Quick Wrist bought');
+  assert(setLineageActive(world, player, 'rapier', 'stat', 'rapier-t1-tempo-stat').success, 'Quick Wrist slotted');
+  const pure = getLineageRuntime(player.tracksCombat)?.cards.find((c) => c.card.id === 'rapier-t1-tempo-payoff');
+  assert(pure?.payoff?.kind === 'echo-hit' && pure.composition?.pure === true, 'Quick Wrist + Flurry is the pure pair');
 }
 
 console.log('lineageComposition: ok');
