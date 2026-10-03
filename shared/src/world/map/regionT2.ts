@@ -68,7 +68,11 @@ const SWAMP_T2_BLENDS: readonly NodeBlend[] = [
   // to Mire, which has no T2 body, so the node spawned Coven 8 / Stalker 2. Spawns
   // unchanged.
   { 'swamp-coven': 0.80, 'swamp-stalker': 0.20 },
-  { 'swamp-mire': 0.34, 'swamp-coven': 0.33, 'swamp-stalker': 0.33 },
+  // 05 — Stalker territory, not Mire (verbs-that-fire C, PROVISIONAL): Mire has no T2
+  // body, so the node spawned Coven 5 / Stalker 5. Stalker leads (6 / 4) rather than
+  // Coven so the tier's Bone Shards come from two nodes, not one (Coven already leads
+  // 01, 02, 04 and 06).
+  { 'swamp-stalker': 0.60, 'swamp-coven': 0.40 },
   { 'swamp-coven': 0.55, 'swamp-stalker': 0.30, 'swamp-mire': 0.15 },
 ];
 
