@@ -5,7 +5,7 @@
 			"format": "RGBA8888",
 			"size": {
 				"w": 1024,
-				"h": 384
+				"h": 416
 			},
 			"scale": 1,
 			"frames": [
@@ -5638,7 +5638,7 @@
 					}
 				},
 				{
-					"filename": "items/relics/colossus-heart.png",
+					"filename": "items/materials/anvil-shard.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5653,6 +5653,195 @@
 					},
 					"frame": {
 						"x": 384,
+						"y": 256,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/materials/bone-shard.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 416,
+						"y": 256,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/materials/gale-shard.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 448,
+						"y": 256,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/materials/glass-shard.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 480,
+						"y": 256,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/materials/iron-shard.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 512,
+						"y": 256,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/materials/shackle-shard.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 544,
+						"y": 256,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/materials/sigil-shard.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 576,
+						"y": 256,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/materials/spark-shard.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 608,
+						"y": 256,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/materials/venom-shard.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 640,
+						"y": 256,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/relics/colossus-heart.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 672,
 						"y": 256,
 						"w": 32,
 						"h": 32
@@ -5673,7 +5862,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 416,
+						"x": 704,
 						"y": 256,
 						"w": 32,
 						"h": 32
@@ -5694,7 +5883,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 448,
+						"x": 736,
 						"y": 256,
 						"w": 32,
 						"h": 32
@@ -5715,7 +5904,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 480,
+						"x": 768,
 						"y": 256,
 						"w": 32,
 						"h": 32
@@ -5736,7 +5925,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 512,
+						"x": 800,
 						"y": 256,
 						"w": 32,
 						"h": 32
@@ -5757,7 +5946,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 544,
+						"x": 832,
 						"y": 256,
 						"w": 32,
 						"h": 32
@@ -5778,7 +5967,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 576,
+						"x": 864,
 						"y": 256,
 						"w": 32,
 						"h": 32
@@ -5799,7 +5988,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 608,
+						"x": 896,
 						"y": 256,
 						"w": 32,
 						"h": 32
@@ -5820,7 +6009,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 640,
+						"x": 928,
 						"y": 256,
 						"w": 32,
 						"h": 32
@@ -5841,7 +6030,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 672,
+						"x": 960,
 						"y": 256,
 						"w": 32,
 						"h": 32
@@ -5862,7 +6051,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 704,
+						"x": 992,
 						"y": 256,
 						"w": 32,
 						"h": 32
@@ -5883,8 +6072,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 736,
-						"y": 256,
+						"x": 0,
+						"y": 288,
 						"w": 32,
 						"h": 32
 					}
@@ -5904,8 +6093,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 768,
-						"y": 256,
+						"x": 32,
+						"y": 288,
 						"w": 32,
 						"h": 32
 					}
@@ -5925,8 +6114,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 800,
-						"y": 256,
+						"x": 64,
+						"y": 288,
 						"w": 32,
 						"h": 32
 					}
@@ -5946,8 +6135,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 832,
-						"y": 256,
+						"x": 96,
+						"y": 288,
 						"w": 32,
 						"h": 32
 					}
@@ -5967,8 +6156,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 864,
-						"y": 256,
+						"x": 128,
+						"y": 288,
 						"w": 32,
 						"h": 32
 					}
@@ -5988,8 +6177,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 896,
-						"y": 256,
+						"x": 160,
+						"y": 288,
 						"w": 32,
 						"h": 32
 					}
@@ -6009,8 +6198,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 928,
-						"y": 256,
+						"x": 192,
+						"y": 288,
 						"w": 32,
 						"h": 32
 					}
@@ -6030,8 +6219,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 960,
-						"y": 256,
+						"x": 224,
+						"y": 288,
 						"w": 32,
 						"h": 32
 					}
@@ -6051,8 +6240,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 992,
-						"y": 256,
+						"x": 256,
+						"y": 288,
 						"w": 32,
 						"h": 32
 					}
@@ -6072,7 +6261,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 0,
+						"x": 288,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6093,7 +6282,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 32,
+						"x": 320,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6114,7 +6303,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 64,
+						"x": 352,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6135,7 +6324,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 96,
+						"x": 384,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6156,7 +6345,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 128,
+						"x": 416,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6177,7 +6366,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 160,
+						"x": 448,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6198,7 +6387,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 192,
+						"x": 480,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6219,7 +6408,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 224,
+						"x": 512,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6240,7 +6429,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 256,
+						"x": 544,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6261,7 +6450,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 288,
+						"x": 576,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6282,7 +6471,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 320,
+						"x": 608,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6303,7 +6492,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 352,
+						"x": 640,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6324,7 +6513,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 384,
+						"x": 672,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6345,7 +6534,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 416,
+						"x": 704,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6366,7 +6555,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 448,
+						"x": 736,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6387,7 +6576,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 480,
+						"x": 768,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6408,7 +6597,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 512,
+						"x": 800,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6429,7 +6618,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 544,
+						"x": 832,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6450,7 +6639,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 576,
+						"x": 864,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6471,7 +6660,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 608,
+						"x": 896,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6492,7 +6681,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 640,
+						"x": 928,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6513,7 +6702,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 672,
+						"x": 960,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6534,7 +6723,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 704,
+						"x": 992,
 						"y": 288,
 						"w": 32,
 						"h": 32
@@ -6555,8 +6744,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 736,
-						"y": 288,
+						"x": 0,
+						"y": 320,
 						"w": 32,
 						"h": 32
 					}
@@ -6576,8 +6765,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 768,
-						"y": 288,
+						"x": 32,
+						"y": 320,
 						"w": 32,
 						"h": 32
 					}
@@ -6597,8 +6786,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 800,
-						"y": 288,
+						"x": 64,
+						"y": 320,
 						"w": 32,
 						"h": 32
 					}
@@ -6618,8 +6807,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 832,
-						"y": 288,
+						"x": 96,
+						"y": 320,
 						"w": 32,
 						"h": 32
 					}
@@ -6639,8 +6828,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 864,
-						"y": 288,
+						"x": 128,
+						"y": 320,
 						"w": 32,
 						"h": 32
 					}
@@ -6660,8 +6849,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 896,
-						"y": 288,
+						"x": 160,
+						"y": 320,
 						"w": 32,
 						"h": 32
 					}
@@ -6681,8 +6870,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 928,
-						"y": 288,
+						"x": 192,
+						"y": 320,
 						"w": 32,
 						"h": 32
 					}
@@ -6702,8 +6891,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 960,
-						"y": 288,
+						"x": 224,
+						"y": 320,
 						"w": 32,
 						"h": 32
 					}
@@ -6723,8 +6912,8 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 992,
-						"y": 288,
+						"x": 256,
+						"y": 320,
 						"w": 32,
 						"h": 32
 					}
@@ -6744,7 +6933,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 0,
+						"x": 288,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -6765,7 +6954,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 32,
+						"x": 320,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -6786,7 +6975,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 64,
+						"x": 352,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -6807,7 +6996,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 96,
+						"x": 384,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -6828,7 +7017,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 128,
+						"x": 416,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -6849,7 +7038,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 160,
+						"x": 448,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -6870,7 +7059,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 192,
+						"x": 480,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -6891,7 +7080,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 224,
+						"x": 512,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -6912,7 +7101,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 256,
+						"x": 544,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -6933,7 +7122,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 288,
+						"x": 576,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -6954,7 +7143,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 320,
+						"x": 608,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -6975,7 +7164,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 352,
+						"x": 640,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -6996,7 +7185,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 384,
+						"x": 672,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7017,7 +7206,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 416,
+						"x": 704,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7038,7 +7227,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 448,
+						"x": 736,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7059,7 +7248,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 480,
+						"x": 768,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7080,7 +7269,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 512,
+						"x": 800,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7101,7 +7290,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 544,
+						"x": 832,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7122,7 +7311,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 576,
+						"x": 864,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7143,7 +7332,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 608,
+						"x": 896,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7164,7 +7353,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 640,
+						"x": 928,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7185,7 +7374,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 672,
+						"x": 960,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7206,7 +7395,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 704,
+						"x": 992,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7227,195 +7416,6 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 736,
-						"y": 320,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/rimebrand.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 768,
-						"y": 320,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/ruinous-axe.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 800,
-						"y": 320,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/ruins-arbalest.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 832,
-						"y": 320,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/ruins-pike.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 864,
-						"y": 320,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/ruins-polearm-variant-2.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 896,
-						"y": 320,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/ruins-polearm.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 928,
-						"y": 320,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/ruins-relic-blade-variant-2.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 960,
-						"y": 320,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/ruins-relic-blade.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 992,
-						"y": 320,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/ruins-spellblade-variant-2.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
 						"x": 0,
 						"y": 352,
 						"w": 32,
@@ -7423,7 +7423,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/ruins-spellblade.png",
+					"filename": "items/weapons/rimebrand.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7444,7 +7444,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/ruins-war-spear-variant-2.png",
+					"filename": "items/weapons/ruinous-axe.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7465,7 +7465,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/ruins-war-spear-variant-3.png",
+					"filename": "items/weapons/ruins-arbalest.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7486,7 +7486,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/ruins-war-spear-variant-4.png",
+					"filename": "items/weapons/ruins-pike.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7507,7 +7507,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/ruins-war-spear.png",
+					"filename": "items/weapons/ruins-polearm-variant-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7528,7 +7528,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/rune-sword-cold-1.png",
+					"filename": "items/weapons/ruins-polearm.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7549,7 +7549,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/rune-sword-cold-2.png",
+					"filename": "items/weapons/ruins-relic-blade-variant-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7570,7 +7570,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/rune-sword-hot-1.png",
+					"filename": "items/weapons/ruins-relic-blade.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7591,7 +7591,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/rune-sword-hot-2.png",
+					"filename": "items/weapons/ruins-spellblade-variant-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7612,7 +7612,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/simple-axe.png",
+					"filename": "items/weapons/ruins-spellblade.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7633,7 +7633,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/solar-falchion.png",
+					"filename": "items/weapons/ruins-war-spear-variant-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7654,7 +7654,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/spear-1.png",
+					"filename": "items/weapons/ruins-war-spear-variant-3.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7675,7 +7675,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/stinger-rapier.png",
+					"filename": "items/weapons/ruins-war-spear-variant-4.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7696,7 +7696,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/stormlands-lightning-staff.png",
+					"filename": "items/weapons/ruins-war-spear.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7717,7 +7717,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sunmonk-warstaff-variant-2.png",
+					"filename": "items/weapons/rune-sword-cold-1.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7738,7 +7738,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sunmonk-warstaff.png",
+					"filename": "items/weapons/rune-sword-cold-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7759,7 +7759,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sunsteel-falchion.png",
+					"filename": "items/weapons/rune-sword-hot-1.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7780,7 +7780,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sword-1.png",
+					"filename": "items/weapons/rune-sword-hot-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7801,7 +7801,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sword-2.png",
+					"filename": "items/weapons/simple-axe.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7822,7 +7822,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sword-3.png",
+					"filename": "items/weapons/solar-falchion.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7843,7 +7843,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sword-4.png",
+					"filename": "items/weapons/spear-1.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7864,7 +7864,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/thorn-needle.png",
+					"filename": "items/weapons/stinger-rapier.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7885,7 +7885,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/underworlds-furnace-hammer-variant-2.png",
+					"filename": "items/weapons/stormlands-lightning-staff.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7906,7 +7906,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/underworlds-furnace-hammer-variant-3.png",
+					"filename": "items/weapons/sunmonk-warstaff-variant-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7927,7 +7927,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/underworlds-furnace-hammer.png",
+					"filename": "items/weapons/sunmonk-warstaff.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7948,7 +7948,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/venom-knife.png",
+					"filename": "items/weapons/sunsteel-falchion.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7969,7 +7969,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/venomthorn-rapier.png",
+					"filename": "items/weapons/sword-1.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7990,7 +7990,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/warmaul.png",
+					"filename": "items/weapons/sword-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -8011,7 +8011,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/whirling-morning-star.png",
+					"filename": "items/weapons/sword-3.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -8032,7 +8032,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/zenith-falchion.png",
+					"filename": "items/weapons/sword-4.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -8048,6 +8048,195 @@
 					"frame": {
 						"x": 960,
 						"y": 352,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/thorn-needle.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 992,
+						"y": 352,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/underworlds-furnace-hammer-variant-2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 0,
+						"y": 384,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/underworlds-furnace-hammer-variant-3.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 32,
+						"y": 384,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/underworlds-furnace-hammer.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 64,
+						"y": 384,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/venom-knife.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 96,
+						"y": 384,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/venomthorn-rapier.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 128,
+						"y": 384,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/warmaul.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 160,
+						"y": 384,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/whirling-morning-star.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 192,
+						"y": 384,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/zenith-falchion.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 224,
+						"y": 384,
 						"w": 32,
 						"h": 32
 					}

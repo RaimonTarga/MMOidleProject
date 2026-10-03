@@ -13,10 +13,10 @@
         "h": 32
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle material inventory icon, final 32x32 PNG, displayed at 24px.\nPrimary request: one Gale Shard: a small chipped mineral splinter whose hooked tapered silhouette bends like a wind gust. A physical crafting fragment, with one broad carved wind notch; no complete artifact or jewel setting.\nComposition: single isolated object centered, about 78 percent of square canvas, slight diagonal, generous empty padding. Very bold silhouette readable at 24px. Three broad value groups, crisp intentional pixel clusters, hard dark outline, restrained flat pixel-art inventory style; no tiny details.\nPalette: pale cyan lane colour #7fe3ff, shadow teal and charcoal, a narrow off-white edge; make cyan the dominant material tint.\nBackground: genuine transparency.\nConstraints: one material fragment only. No relic, iron plaque, square plate, medallion, pedestal, ornamental frame, badge, border, text, letters, numbers, watermark, character, scene, ground, drop shadow, smooth gradients, realistic rendering, sparkle cloud, or additional objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
-      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Gale Shard, tempo lane #7fe3ff. Pending designer review; no self-acceptance. PixelLab endpoint is gallery-schema compatibility only.",
+      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Gale Shard, tempo lane #7fe3ff. Designer approved 2026-10-03. PixelLab endpoint is gallery-schema compatibility only.",
       "sources": [
         "shard:tempo"
       ],
@@ -32,10 +32,10 @@
         "h": 32
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle material inventory icon, final 32x32 PNG, displayed at 24px.\nPrimary request: Anvil Shard: one broken anvil-horn fragment: short squat metal wedge with a broad flat struck top, one warm amber impact crack and visibly rough broken lower edge; fragment rather than a whole anvil. Physical crafting material, mundane and grounded rather than an ornate artifact.\nComposition: one isolated fragment centered on square canvas, occupies 78 percent of the frame, slight diagonal, generous padding; bold literal object silhouette readable at 24px.\nStyle: flat bold pixel-art inventory icon, hard dark outline, crisp intentional pixel clusters, limited palette, three broad value groups, minimal detail, no smooth gradients or glow.\nPalette: lane colour #ffb347 is the dominant material tint with charcoal shadows and a narrow pale edge.\nBackground: genuine transparency.\nConstraints: material fragment only; no relic, iron plaque, square plate, polished gemstone, complete equipment piece, or drop shadow. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
-      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Anvil Shard, empowered lane #ffb347. Pending designer review; no self-acceptance. PixelLab endpoint is gallery-schema compatibility only.",
+      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Anvil Shard, empowered lane #ffb347. Designer approved 2026-10-03. PixelLab endpoint is gallery-schema compatibility only.",
       "sources": [
         "shard:empowered"
       ],
@@ -51,10 +51,10 @@
         "h": 32
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle material inventory icon, final 32x32 PNG, displayed at 24px.\nPrimary request: Venom Shard: one jagged green fang-shaped mineral fragment with a single thick venom drop adhering to its lower pointed edge; hostile sharp shape, not a potion bottle. Physical crafting material, mundane and grounded rather than an ornate artifact.\nComposition: one isolated fragment centered on square canvas, occupies 78 percent of the frame, slight diagonal, generous padding; bold literal object silhouette readable at 24px.\nStyle: flat bold pixel-art inventory icon, hard dark outline, crisp intentional pixel clusters, limited palette, three broad value groups, minimal detail, no smooth gradients or glow.\nPalette: lane colour #9be564 is the dominant material tint with charcoal shadows and a narrow pale edge.\nBackground: genuine transparency.\nConstraints: material fragment only; no relic, iron plaque, square plate, polished gemstone, complete equipment piece, or drop shadow. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
-      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Venom Shard, affliction lane #9be564. Pending designer review; no self-acceptance. PixelLab endpoint is gallery-schema compatibility only.",
+      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Venom Shard, affliction lane #9be564. Designer approved 2026-10-03. PixelLab endpoint is gallery-schema compatibility only.",
       "sources": [
         "shard:affliction"
       ],
@@ -70,10 +70,10 @@
         "h": 32
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle material inventory icon, final 32x32 PNG, displayed at 24px.\nPrimary request: Shackle Shard: one snapped open C-shaped forged metal link fragment, squared angular cross-section, two visibly fractured ends and a pale steel-blue restraint notch; not a necklace. Physical crafting material, mundane and grounded rather than an ornate artifact.\nComposition: one isolated fragment centered on square canvas, occupies 78 percent of the frame, slight diagonal, generous padding; bold literal object silhouette readable at 24px.\nStyle: flat bold pixel-art inventory icon, hard dark outline, crisp intentional pixel clusters, limited palette, three broad value groups, minimal detail, no smooth gradients or glow.\nPalette: lane colour #8fb8ff is the dominant material tint with charcoal shadows and a narrow pale edge.\nBackground: genuine transparency.\nConstraints: material fragment only; no relic, iron plaque, square plate, polished gemstone, complete equipment piece, or drop shadow. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
-      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Shackle Shard, control lane #8fb8ff. Pending designer review; no self-acceptance. PixelLab endpoint is gallery-schema compatibility only.",
+      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Shackle Shard, control lane #8fb8ff. Designer approved 2026-10-03. PixelLab endpoint is gallery-schema compatibility only.",
       "sources": [
         "shard:control"
       ],
@@ -89,10 +89,10 @@
         "h": 32
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle material inventory icon, final 32x32 PNG, displayed at 24px.\nPrimary request: Bone Shard: one splintered curved bone fragment with a single rounded joint end and a rough broken shaft; ivory bone heavily tinted lavender along its broad shadow face. Physical crafting material, mundane and grounded rather than an ornate artifact.\nComposition: one isolated fragment centered on square canvas, occupies 78 percent of the frame, slight diagonal, generous padding; bold literal object silhouette readable at 24px.\nStyle: flat bold pixel-art inventory icon, hard dark outline, crisp intentional pixel clusters, limited palette, three broad value groups, minimal detail, no smooth gradients or glow.\nPalette: lane colour #c58fff is the dominant material tint with charcoal shadows and a narrow pale edge.\nBackground: genuine transparency.\nConstraints: material fragment only; no relic, iron plaque, square plate, polished gemstone, complete equipment piece, or drop shadow. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
-      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Bone Shard, kill-chain lane #c58fff. Pending designer review; no self-acceptance. PixelLab endpoint is gallery-schema compatibility only.",
+      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Bone Shard, kill-chain lane #c58fff. Designer approved 2026-10-03. PixelLab endpoint is gallery-schema compatibility only.",
       "sources": [
         "shard:kill-chain"
       ],
@@ -108,10 +108,10 @@
         "h": 32
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle material inventory icon, final 32x32 PNG, displayed at 24px.\nPrimary request: Spark Shard: one small chipped flint fragment with a compact four-point salmon spark cut into its center; rough pink-red mineral body, not a star floating separately. Physical crafting material, mundane and grounded rather than an ornate artifact.\nComposition: one isolated fragment centered on square canvas, occupies 78 percent of the frame, slight diagonal, generous padding; bold literal object silhouette readable at 24px.\nStyle: flat bold pixel-art inventory icon, hard dark outline, crisp intentional pixel clusters, limited palette, three broad value groups, minimal detail, no smooth gradients or glow.\nPalette: lane colour #ff9f9f is the dominant material tint with charcoal shadows and a narrow pale edge.\nBackground: genuine transparency.\nConstraints: material fragment only; no relic, iron plaque, square plate, polished gemstone, complete equipment piece, or drop shadow. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
-      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Spark Shard, engagement lane #ff9f9f. Pending designer review; no self-acceptance. PixelLab endpoint is gallery-schema compatibility only.",
+      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Spark Shard, engagement lane #ff9f9f. Designer approved 2026-10-03. PixelLab endpoint is gallery-schema compatibility only.",
       "sources": [
         "shard:engagement"
       ],
@@ -127,10 +127,10 @@
         "h": 32
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle material inventory icon, final 32x32 PNG, displayed at 24px.\nPrimary request: Sigil Shard: one broken rose-magenta stone splinter with one simple angular non-letter sigil carved into its broad face; irregular fractured edges and no setting or medallion. Physical crafting material, mundane and grounded rather than an ornate artifact.\nComposition: one isolated fragment centered on square canvas, occupies 78 percent of the frame, slight diagonal, generous padding; bold literal object silhouette readable at 24px.\nStyle: flat bold pixel-art inventory icon, hard dark outline, crisp intentional pixel clusters, limited palette, three broad value groups, minimal detail, no smooth gradients or glow.\nPalette: lane colour #ff7fd4 is the dominant material tint with charcoal shadows and a narrow pale edge.\nBackground: genuine transparency.\nConstraints: material fragment only; no relic, iron plaque, square plate, polished gemstone, complete equipment piece, or drop shadow. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
-      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Sigil Shard, technique lane #ff7fd4. Pending designer review; no self-acceptance. PixelLab endpoint is gallery-schema compatibility only.",
+      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Sigil Shard, technique lane #ff7fd4. Designer approved 2026-10-03. PixelLab endpoint is gallery-schema compatibility only.",
       "sources": [
         "shard:technique"
       ],
@@ -146,10 +146,10 @@
         "h": 32
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle material inventory icon, final 32x32 PNG, displayed at 24px.\nPrimary request: Iron Shard: one raw irregular wedge of chipped iron ore with a thick stepped fracture and a broad metallic edge; muted olive-grey iron, neither rectangular nor a polished ingot. Physical crafting material, mundane and grounded rather than an ornate artifact.\nComposition: one isolated fragment centered on square canvas, occupies 78 percent of the frame, slight diagonal, generous padding; bold literal object silhouette readable at 24px.\nStyle: flat bold pixel-art inventory icon, hard dark outline, crisp intentional pixel clusters, limited palette, three broad value groups, minimal detail, no smooth gradients or glow.\nPalette: lane colour #b8b8a0 is the dominant material tint with charcoal shadows and a narrow pale edge.\nBackground: genuine transparency.\nConstraints: material fragment only; no relic, iron plaque, square plate, polished gemstone, complete equipment piece, or drop shadow. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
-      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Iron Shard, bulwark lane #b8b8a0. Pending designer review; no self-acceptance. PixelLab endpoint is gallery-schema compatibility only.",
+      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Iron Shard, bulwark lane #b8b8a0. Designer approved 2026-10-03. PixelLab endpoint is gallery-schema compatibility only.",
       "sources": [
         "shard:bulwark"
       ],
@@ -165,10 +165,10 @@
         "h": 32
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle material inventory icon, final 32x32 PNG, displayed at 24px.\nPrimary request: Glass Shard: one jagged curved broken glass fragment with a broad translucent-looking teal face and two crisp thick pale edges; a single salvaged material splinter, no bottle or jewel. Physical crafting material, mundane and grounded rather than an ornate artifact.\nComposition: one isolated fragment centered on square canvas, occupies 78 percent of the frame, slight diagonal, generous padding; bold literal object silhouette readable at 24px.\nStyle: flat bold pixel-art inventory icon, hard dark outline, crisp intentional pixel clusters, limited palette, three broad value groups, minimal detail, no smooth gradients or glow.\nPalette: lane colour #7fd8c8 is the dominant material tint with charcoal shadows and a narrow pale edge.\nBackground: genuine transparency.\nConstraints: material fragment only; no relic, iron plaque, square plate, polished gemstone, complete equipment piece, or drop shadow. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
-      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Glass Shard, barrier-tempo lane #7fd8c8. Pending designer review; no self-acceptance. PixelLab endpoint is gallery-schema compatibility only.",
+      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Glass Shard, barrier-tempo lane #7fd8c8. Designer approved 2026-10-03. PixelLab endpoint is gallery-schema compatibility only.",
       "sources": [
         "shard:barrier-tempo"
       ],
@@ -184,7 +184,7 @@
         "h": 48
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle buff tile, final 48x48 PNG, displayed at 24-48px, matching existing concept-icons/statuses/buffs/ square framing.\nPrimary request: a single broad scarlet upward slash striking a small compact impact notch; direct increased damage, no weapon illustration.\nComposition: one centered bold symbol occupying 70 percent of square canvas, generous padding; only two or three broad value groups. Readable at 24px.\nStyle: concise semi-painterly fantasy game UI symbol with crisp angular shapes and restrained material highlights. Prioritize clean silhouette over surface detail.\nPalette: dominant #eb777c, restrained pale highlight and dark low-saturation shadow.\nBackground: fully opaque full-square charcoal #11161d, even edge-to-edge, no vignette. Absolutely no transparency, no checkerboard.\nConstraints: the HUD supplies all timing sweeps and frames; do not draw any ornamental surround, bevel, circular clock overlay, border, or UI panel. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
       "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; opaque #11161d 48px tile. Pending designer review; keep alias until accepted source is packed to runtime path. PixelLab endpoint is gallery-schema compatibility only.",
@@ -203,7 +203,7 @@
         "h": 48
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle buff tile, final 48x48 PNG, displayed at 24-48px, matching existing concept-icons/statuses/buffs/ square framing.\nPrimary request: one cyan sweeping featherlike motion streak with two short trailing bars, clear acceleration silhouette.\nComposition: one centered bold symbol occupying 70 percent of square canvas, generous padding; only two or three broad value groups. Readable at 24px.\nStyle: concise semi-painterly fantasy game UI symbol with crisp angular shapes and restrained material highlights. Prioritize clean silhouette over surface detail.\nPalette: dominant #7fe3ff, restrained pale highlight and dark low-saturation shadow.\nBackground: fully opaque full-square charcoal #11161d, even edge-to-edge, no vignette. Absolutely no transparency, no checkerboard.\nConstraints: the HUD supplies all timing sweeps and frames; do not draw any ornamental surround, bevel, circular clock overlay, border, or UI panel. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
       "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; opaque #11161d 48px tile. Pending designer review; keep alias until accepted source is packed to runtime path. PixelLab endpoint is gallery-schema compatibility only.",
@@ -222,7 +222,7 @@
         "h": 48
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle buff tile, final 48x48 PNG, displayed at 24-48px, matching existing concept-icons/statuses/buffs/ square framing.\nPrimary request: one broad emerald leaf with a simple luminous healing pulse cut across its center; healthy recovery, no poison drop.\nComposition: one centered bold symbol occupying 70 percent of square canvas, generous padding; only two or three broad value groups. Readable at 24px.\nStyle: concise semi-painterly fantasy game UI symbol with crisp angular shapes and restrained material highlights. Prioritize clean silhouette over surface detail.\nPalette: dominant #78d89c, restrained pale highlight and dark low-saturation shadow.\nBackground: fully opaque full-square charcoal #11161d, even edge-to-edge, no vignette. Absolutely no transparency, no checkerboard.\nConstraints: the HUD supplies all timing sweeps and frames; do not draw any ornamental surround, bevel, circular clock overlay, border, or UI panel. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
       "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; opaque #11161d 48px tile. Pending designer review; keep alias until accepted source is packed to runtime path. PixelLab endpoint is gallery-schema compatibility only.",
@@ -241,7 +241,7 @@
         "h": 48
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle buff tile, final 48x48 PNG, displayed at 24-48px, matching existing concept-icons/statuses/buffs/ square framing.\nPrimary request: one thick steel-blue shield with a stout diagonal defensive bar through the center; solid guard.\nComposition: one centered bold symbol occupying 70 percent of square canvas, generous padding; only two or three broad value groups. Readable at 24px.\nStyle: concise semi-painterly fantasy game UI symbol with crisp angular shapes and restrained material highlights. Prioritize clean silhouette over surface detail.\nPalette: dominant #8fb8ff, restrained pale highlight and dark low-saturation shadow.\nBackground: fully opaque full-square charcoal #11161d, even edge-to-edge, no vignette. Absolutely no transparency, no checkerboard.\nConstraints: the HUD supplies all timing sweeps and frames; do not draw any ornamental surround, bevel, circular clock overlay, border, or UI panel. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
       "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; opaque #11161d 48px tile. Pending designer review; keep alias until accepted source is packed to runtime path. PixelLab endpoint is gallery-schema compatibility only.",
@@ -260,7 +260,7 @@
         "h": 48
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle buff tile, final 48x48 PNG, displayed at 24-48px, matching existing concept-icons/statuses/buffs/ square framing.\nPrimary request: one pale teal protective arch enclosing a compact light core, clearly a barrier ward rather than a solid shield.\nComposition: one centered bold symbol occupying 70 percent of square canvas, generous padding; only two or three broad value groups. Readable at 24px.\nStyle: concise semi-painterly fantasy game UI symbol with crisp angular shapes and restrained material highlights. Prioritize clean silhouette over surface detail.\nPalette: dominant #7fd8c8, restrained pale highlight and dark low-saturation shadow.\nBackground: fully opaque full-square charcoal #11161d, even edge-to-edge, no vignette. Absolutely no transparency, no checkerboard.\nConstraints: the HUD supplies all timing sweeps and frames; do not draw any ornamental surround, bevel, circular clock overlay, border, or UI panel. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
       "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; opaque #11161d 48px tile. Pending designer review; keep alias until accepted source is packed to runtime path. PixelLab endpoint is gallery-schema compatibility only.",
@@ -279,7 +279,7 @@
         "h": 48
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle buff tile, final 48x48 PNG, displayed at 24-48px, matching existing concept-icons/statuses/buffs/ square framing.\nPrimary request: three overlapping olive-grey metal scales forming one stepped reinforced stack, clearly plating rather than a shield.\nComposition: one centered bold symbol occupying 70 percent of square canvas, generous padding; only two or three broad value groups. Readable at 24px.\nStyle: concise semi-painterly fantasy game UI symbol with crisp angular shapes and restrained material highlights. Prioritize clean silhouette over surface detail.\nPalette: dominant #b8b8a0, restrained pale highlight and dark low-saturation shadow.\nBackground: fully opaque full-square charcoal #11161d, even edge-to-edge, no vignette. Absolutely no transparency, no checkerboard.\nConstraints: the HUD supplies all timing sweeps and frames; do not draw any ornamental surround, bevel, circular clock overlay, border, or UI panel. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
       "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; opaque #11161d 48px tile. Pending designer review; keep alias until accepted source is packed to runtime path. PixelLab endpoint is gallery-schema compatibility only.",
@@ -298,7 +298,7 @@
         "h": 48
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle buff tile, final 48x48 PNG, displayed at 24-48px, matching existing concept-icons/statuses/buffs/ square framing.\nPrimary request: one rose-magenta angular non-letter sigil pierced by a short bright blade-shaped flare; a technique power pulse.\nComposition: one centered bold symbol occupying 70 percent of square canvas, generous padding; only two or three broad value groups. Readable at 24px.\nStyle: concise semi-painterly fantasy game UI symbol with crisp angular shapes and restrained material highlights. Prioritize clean silhouette over surface detail.\nPalette: dominant #ff7fd4, restrained pale highlight and dark low-saturation shadow.\nBackground: fully opaque full-square charcoal #11161d, even edge-to-edge, no vignette. Absolutely no transparency, no checkerboard.\nConstraints: the HUD supplies all timing sweeps and frames; do not draw any ornamental surround, bevel, circular clock overlay, border, or UI panel. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
       "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; opaque #11161d 48px tile. Pending designer review; keep alias until accepted source is packed to runtime path. PixelLab endpoint is gallery-schema compatibility only.",
@@ -317,7 +317,7 @@
         "h": 48
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle buff tile, final 48x48 PNG, displayed at 24-48px, matching existing concept-icons/statuses/buffs/ square framing.\nPrimary request: one lavender sidestepping footprint with a single detached pale ghost contour behind it, an evasion afterimage.\nComposition: one centered bold symbol occupying 70 percent of square canvas, generous padding; only two or three broad value groups. Readable at 24px.\nStyle: concise semi-painterly fantasy game UI symbol with crisp angular shapes and restrained material highlights. Prioritize clean silhouette over surface detail.\nPalette: dominant #c58fff, restrained pale highlight and dark low-saturation shadow.\nBackground: fully opaque full-square charcoal #11161d, even edge-to-edge, no vignette. Absolutely no transparency, no checkerboard.\nConstraints: the HUD supplies all timing sweeps and frames; do not draw any ornamental surround, bevel, circular clock overlay, border, or UI panel. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
       "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; opaque #11161d 48px tile. Pending designer review; keep alias until accepted source is packed to runtime path. PixelLab endpoint is gallery-schema compatibility only.",
@@ -336,7 +336,7 @@
         "h": 48
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle buff tile, final 48x48 PNG, displayed at 24-48px, matching existing concept-icons/statuses/buffs/ square framing.\nPrimary request: one warm amber hourglass with a wide open middle and a clear bright horizontal opening; a timed opportunity window.\nComposition: one centered bold symbol occupying 70 percent of square canvas, generous padding; only two or three broad value groups. Readable at 24px.\nStyle: concise semi-painterly fantasy game UI symbol with crisp angular shapes and restrained material highlights. Prioritize clean silhouette over surface detail.\nPalette: dominant #ffcf7a, restrained pale highlight and dark low-saturation shadow.\nBackground: fully opaque full-square charcoal #11161d, even edge-to-edge, no vignette. Absolutely no transparency, no checkerboard.\nConstraints: the HUD supplies all timing sweeps and frames; do not draw any ornamental surround, bevel, circular clock overlay, border, or UI panel. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
       "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; opaque #11161d 48px tile. Pending designer review; keep alias until accepted source is packed to runtime path. PixelLab endpoint is gallery-schema compatibility only.",
@@ -355,7 +355,7 @@
         "h": 48
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle buff tile, final 48x48 PNG, displayed at 24-48px, matching existing concept-icons/statuses/buffs/ square framing.\nPrimary request: one cyan faceted energy core containing three broad stacked light bands, a stored charge bank rather than a clock.\nComposition: one centered bold symbol occupying 70 percent of square canvas, generous padding; only two or three broad value groups. Readable at 24px.\nStyle: concise semi-painterly fantasy game UI symbol with crisp angular shapes and restrained material highlights. Prioritize clean silhouette over surface detail.\nPalette: dominant #8fdfff, restrained pale highlight and dark low-saturation shadow.\nBackground: fully opaque full-square charcoal #11161d, even edge-to-edge, no vignette. Absolutely no transparency, no checkerboard.\nConstraints: the HUD supplies all timing sweeps and frames; do not draw any ornamental surround, bevel, circular clock overlay, border, or UI panel. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
       "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; opaque #11161d 48px tile. Pending designer review; keep alias until accepted source is packed to runtime path. PixelLab endpoint is gallery-schema compatibility only.",
@@ -374,7 +374,7 @@
         "h": 32
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle small rhythm-readout payload glyph, final 32x32 PNG, displayed at 24px inside a HUD ring label.\nPrimary request: two equally bold offset parallel crescent swing strokes, visibly a repeated second swing rather than one doubled slash.\nComposition: one centered bold connected symbol occupying 72 percent of square canvas with generous padding. Extremely clear silhouette at 24px, thick strokes and broad negative spaces.\nStyle: restrained flat pixel-art fantasy HUD glyph; crisp intentional chunky pixel clusters, two broad value groups, hard dark outline. No fine detail, no gradients, no soft glow.\nPalette: neutral warm ivory #e9e6d2 with pale slate #a8b1b8 and charcoal outline. Keep glyph neutral so the independently coloured moment ring remains meaningful.\nBackground: genuine transparency.\nConstraints: no baked ring, circular container, timing sweep, iron plaque, ornamental tile, or object scene. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
       "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; tempo payload. Neutral glyph inside independently lane-coloured moment ring. Pending designer review. PixelLab endpoint is gallery-schema compatibility only.",
@@ -393,7 +393,7 @@
         "h": 32
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle small rhythm-readout payload glyph, final 32x32 PNG, displayed at 24px inside a HUD ring label.\nPrimary request: one large pointed hostile poison droplet with a thick angular incision in its center; very heavy poison dose.\nComposition: one centered bold connected symbol occupying 72 percent of square canvas with generous padding. Extremely clear silhouette at 24px, thick strokes and broad negative spaces.\nStyle: restrained flat pixel-art fantasy HUD glyph; crisp intentional chunky pixel clusters, two broad value groups, hard dark outline. No fine detail, no gradients, no soft glow.\nPalette: neutral warm ivory #e9e6d2 with pale slate #a8b1b8 and charcoal outline. Keep glyph neutral so the independently coloured moment ring remains meaningful.\nBackground: genuine transparency.\nConstraints: no baked ring, circular container, timing sweep, iron plaque, ornamental tile, or object scene. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
       "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; affliction payload. Neutral glyph inside independently lane-coloured moment ring. Pending designer review. PixelLab endpoint is gallery-schema compatibility only.",
@@ -412,7 +412,7 @@
         "h": 32
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle small rhythm-readout payload glyph, final 32x32 PNG, displayed at 24px inside a HUD ring label.\nPrimary request: one stout forward-pointing spearhead joined to a short tapering motion tail, a committed forward lunge.\nComposition: one centered bold connected symbol occupying 72 percent of square canvas with generous padding. Extremely clear silhouette at 24px, thick strokes and broad negative spaces.\nStyle: restrained flat pixel-art fantasy HUD glyph; crisp intentional chunky pixel clusters, two broad value groups, hard dark outline. No fine detail, no gradients, no soft glow.\nPalette: neutral warm ivory #e9e6d2 with pale slate #a8b1b8 and charcoal outline. Keep glyph neutral so the independently coloured moment ring remains meaningful.\nBackground: genuine transparency.\nConstraints: no baked ring, circular container, timing sweep, iron plaque, ornamental tile, or object scene. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
       "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; engagement payload. Neutral glyph inside independently lane-coloured moment ring. Pending designer review. PixelLab endpoint is gallery-schema compatibility only.",
@@ -431,7 +431,7 @@
         "h": 32
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle small rhythm-readout payload glyph, final 32x32 PNG, displayed at 24px inside a HUD ring label.\nPrimary request: one four-lobed burst surrounding a compact central diamond with two opposing broad notches, the mechanic firing through a proxy; no literal gears.\nComposition: one centered bold connected symbol occupying 72 percent of square canvas with generous padding. Extremely clear silhouette at 24px, thick strokes and broad negative spaces.\nStyle: restrained flat pixel-art fantasy HUD glyph; crisp intentional chunky pixel clusters, two broad value groups, hard dark outline. No fine detail, no gradients, no soft glow.\nPalette: neutral warm ivory #e9e6d2 with pale slate #a8b1b8 and charcoal outline. Keep glyph neutral so the independently coloured moment ring remains meaningful.\nBackground: genuine transparency.\nConstraints: no baked ring, circular container, timing sweep, iron plaque, ornamental tile, or object scene. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
       "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; empowered payload. Neutral glyph inside independently lane-coloured moment ring. Pending designer review. PixelLab endpoint is gallery-schema compatibility only.",
@@ -450,7 +450,7 @@
         "h": 32
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle small rhythm-readout payload glyph, final 32x32 PNG, displayed at 24px inside a HUD ring label.\nPrimary request: one open ankle-shackle curve with two thick downward anchored prongs; a restraint anchored in place, no plant.\nComposition: one centered bold connected symbol occupying 72 percent of square canvas with generous padding. Extremely clear silhouette at 24px, thick strokes and broad negative spaces.\nStyle: restrained flat pixel-art fantasy HUD glyph; crisp intentional chunky pixel clusters, two broad value groups, hard dark outline. No fine detail, no gradients, no soft glow.\nPalette: neutral warm ivory #e9e6d2 with pale slate #a8b1b8 and charcoal outline. Keep glyph neutral so the independently coloured moment ring remains meaningful.\nBackground: genuine transparency.\nConstraints: no baked ring, circular container, timing sweep, iron plaque, ornamental tile, or object scene. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
       "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; control payload. Neutral glyph inside independently lane-coloured moment ring. Pending designer review. PixelLab endpoint is gallery-schema compatibility only.",
@@ -469,7 +469,7 @@
         "h": 32
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle small rhythm-readout payload glyph, final 32x32 PNG, displayed at 24px inside a HUD ring label.\nPrimary request: one compact heart-shaped pulse whose right lobe forms a short loaded forward arrow; one connected silhouette expressing heal plus charged next hit.\nComposition: one centered bold connected symbol occupying 72 percent of square canvas with generous padding. Extremely clear silhouette at 24px, thick strokes and broad negative spaces.\nStyle: restrained flat pixel-art fantasy HUD glyph; crisp intentional chunky pixel clusters, two broad value groups, hard dark outline. No fine detail, no gradients, no soft glow.\nPalette: neutral warm ivory #e9e6d2 with pale slate #a8b1b8 and charcoal outline. Keep glyph neutral so the independently coloured moment ring remains meaningful.\nBackground: genuine transparency.\nConstraints: no baked ring, circular container, timing sweep, iron plaque, ornamental tile, or object scene. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
       "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; kill-chain payload. Neutral glyph inside independently lane-coloured moment ring. Pending designer review. PixelLab endpoint is gallery-schema compatibility only.",
@@ -488,7 +488,7 @@
         "h": 32
       },
       "prompt": "Use case: stylized-concept\nAsset type: MMO Idle small rhythm-readout payload glyph, final 32x32 PNG, displayed at 24px inside a HUD ring label.\nPrimary request: one thick counterclockwise return arrow curving around a short upright blade-shaped stroke, cooldown returned to a technique; no clock face or numbers.\nComposition: one centered bold connected symbol occupying 72 percent of square canvas with generous padding. Extremely clear silhouette at 24px, thick strokes and broad negative spaces.\nStyle: restrained flat pixel-art fantasy HUD glyph; crisp intentional chunky pixel clusters, two broad value groups, hard dark outline. No fine detail, no gradients, no soft glow.\nPalette: neutral warm ivory #e9e6d2 with pale slate #a8b1b8 and charcoal outline. Keep glyph neutral so the independently coloured moment ring remains meaningful.\nBackground: genuine transparency.\nConstraints: no baked ring, circular container, timing sweep, iron plaque, ornamental tile, or object scene. No words, letters, numbers, logo, watermark, badge, border, frame, pedestal, scene, character, face, jewellery setting, tiny filigree, particle cloud, realistic rendering, or additional unrelated objects. Generate this ONE icon alone.",
-      "status": "pending",
+      "status": "accepted",
       "candidates": 1,
       "styleRef": null,
       "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; technique payload. Neutral glyph inside independently lane-coloured moment ring. Pending designer review. PixelLab endpoint is gallery-schema compatibility only.",
