@@ -624,7 +624,9 @@ class ScriptBuilder {
     this.cardBeats(chapter, card.id, {
       farm: (shard, territory) => `${zones} zones mastered opens row two of the ${weapon}'s page: the verb, what the weapon does. ${card.name} costs ${shard}s from ${home}'s ${territory} territory.`,
       buy: `Buy ${card.name}. A verb is a moment in the fight, and your lean decides what happens at that moment.`,
-    }, { farm: ['verb'], buy: ['rhythm-ring'] }, {
+      // The verb's idea rides on the BUY line: max-ing the Forest often pays for
+      // the verb already, and then its farm beat is skipped and never shown.
+    }, { farm: [], buy: ['verb', 'rhythm-ring'] }, {
       lineageId: lineage.id,
       cardId: card.id,
       read: `Look at what ${card.name} says now: “${composed}” Your lean, ${lean.name}, chose that.`,
