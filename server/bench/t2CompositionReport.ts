@@ -300,6 +300,15 @@ for (const inst of instruments) {
     + `${below.length ? `; below: ${below.map((r) => `\`${r.weapon}\` ${r.pair} (${pp(r.delta)})`).join(', ')}` : ''}.`,
     '',
   );
+  const shared = rows.filter((r) => r.verbT1 !== null && r.verbT2 !== null);
+  if (shared.length) {
+    const verbBelow = shared.filter((r) => r.verbT2! < r.verbT1!);
+    push(
+      `By the VERB's own share (pair − lean alone): T2 ≥ T1 in **${shared.length - verbBelow.length} of ${shared.length}** pairs`
+      + `${verbBelow.length ? `; below: ${verbBelow.map((r) => `\`${r.weapon}\` ${r.pair} (${pp(r.verbT2! - r.verbT1!)})`).join(', ')}` : ''}.`,
+      '',
+    );
+  }
   for (const w of weapons) {
     const form1 = bandFormOf(LINEAGE_DATABASE.get(w)!, 1);
     const form2 = bandFormOf(LINEAGE_DATABASE.get(w)!, 2);

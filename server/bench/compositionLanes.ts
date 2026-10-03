@@ -35,7 +35,7 @@
  *                                `cmpt2-...`, so tiers never share a key.
  *   CMP_SEEDS=10                 seeds per cell (the first N of a fixed list)
  *   CMP_CAP_MS=90000             sim time per cell per seed
- *   CMP_FILTER=rapier            substring filter on the profile id
+ *   CMP_FILTER=rapier            substring filter on the profile id (comma = any of)
  *   LANE_HITBOX=path.json        hitbox artifact (written to tmp if absent)
  *
  * Rows are APPENDED as they finish and a restarted shard skips the (cell, seed)
@@ -204,7 +204,7 @@ async function main(): Promise<void> {
   }
 
   const jobs = references(tier)
-    .filter(({ reference }) => !filter || reference.profileId.includes(filter))
+    .filter(({ reference }) => !filter || filter.split(',').some((f) => reference.profileId.includes(f)))
     .flatMap(({ reference, profile }) => {
       const nodes = homeNodes(LINEAGE_DATABASE.get(reference.lineageId)!.homeBiome);
       assert(nodes.length > 0, `${reference.lineageId}: no family-dominated T${tier} node in its home biome`);
