@@ -21,15 +21,20 @@
  * Run: node --conditions=development --import tsx test/lineageComposition.test.ts
  */
 import {
+  ABILITY_DATABASE,
   ABILITY_ROOT_EFFECT_ID,
   GAME_CONFIG,
   baseRecoveryForTier,
   emptyEquipment,
+  getCooldown,
   getStatusEffect,
   initAppliesDots,
   initUsesCadence,
   initUsesEnergy,
+  setCooldown,
   setLineageRuntime,
+  tickCooldowns,
+  tickStatusEffectDurations,
   type CombatEvent,
   type LineageFxKey,
   type LineagePayoff,
@@ -48,6 +53,9 @@ import {
   proxyEmpoweredMultiplier, setEmpoweredAttack,
 } from '../src/systems/combat/engine/empoweredAttacks';
 import { monsterIgnoresControl } from '../src/systems/combat/status/controlImmunity';
+import { applyMonsterRoot, applyMonsterSlow } from '../src/systems/combat/status/monsterControl';
+import { onTechniqueResolved } from '../src/systems/combat/techniqueResolved';
+import { abilityCooldownKey } from '../src/systems/player/abilities/abilityCooldowns';
 import { LINEAGE_BLEED_ID } from '../src/systems/combat/damage/bleedIds';
 import { getFrameCharge, isFrameWindowLive } from '../src/systems/classes/shared/frameLoop';
 
@@ -397,6 +405,170 @@ const proxyCard = (): ResolvedLineageCard => verb({
     onHitEcho > plainEcho,
     `a whole echo is a whole second swing, on-hit included (plain ${plainEcho}, with on-hit ${onHitEcho})`,
   );
+  cardFx();
+}
+
+// ── The moments: caps, holds, the kill carry, the landed Technique ───────────
+
+/** A full exchange's front half: the probe in `beforeAttack`, then `onHit`. */
+function fullHit(player: PlayerEntity, defender: MonsterEntity, damage = 200): CombatContext {
+  const ctx = exchange(player, defender, damage, {});
+  emitCombatEvent('beforeAttack', ctx, world);
+  emitCombatEvent('onHit', ctx, world);
+  return ctx;
+}
+
+function kill(player: PlayerEntity, defender: MonsterEntity): void {
+  emitCombatEvent('onKill', exchange(player, defender, 200, {}), world);
+}
+
+{
+  // hit-afflicted on the DoT root: every hit after the first lands on an
+  // afflicted target, so the moment is satisfied on nearly every hit — and still
+  // fires AT the cap, reliably, never more often (design §24.2 rule 2).
+  const player = spawn('cmp-afflicted-cap', [verb({
+    trigger: { kind: 'hit-afflicted', capMs: 5_000 },
+    payoff: { kind: 'big-hit', magnitude: 2 }, fx: 'engagement.lunge', lane: 'affliction',
+  })]);
+  attachComponent(world, player, 'appliesDots', initAppliesDots());
+  const target = monster();
+
+  const first = fullHit(player, target);
+  assert(first.metadata['empoweredMultiplier'] === undefined, 'the hit that FIRST afflicts is not on an afflicted target');
+  assert(cardFx().length === 0, 'so nothing fires on it');
+
+  const STEP_MS = 600;
+  const firedAt: number[] = [];
+  for (let t = STEP_MS; t <= 30_000; t += STEP_MS) {
+    tickCooldowns(player.tracksCombat, STEP_MS);
+    fullHit(player, target);
+    if (cardFx().length > 0) firedAt.push(t);
+  }
+  assert(firedAt[0] === STEP_MS, `the second hit lands on an afflicted target and fires, got ${firedAt[0]}`);
+  for (let i = 1; i < firedAt.length; i++) {
+    assert(firedAt[i] - firedAt[i - 1] >= 5_000, `two firings ${firedAt[i] - firedAt[i - 1]} ms apart — the cap is 5000`);
+    assert(firedAt[i] - firedAt[i - 1] < 5_000 + STEP_MS, 'and it fires again on the first hit the cap allows');
+  }
+  assert(firedAt.length === 6, `50 hits over 30 s fire 6 times at the cap, got ${firedAt.length}`);
+
+  // An unafflicted target never satisfies it, cap or no cap.
+  const clean = spawn('cmp-afflicted-none', [verb({
+    trigger: { kind: 'hit-afflicted', capMs: 5_000 },
+    payoff: { kind: 'big-hit', magnitude: 2 }, fx: 'engagement.lunge', lane: 'affliction',
+  })]);
+  for (let i = 0; i < 5; i++) fullHit(clean, monster());
+  assert(cardFx().length === 0, 'a non-DoT player hitting fresh bodies never afflicts, so never fires');
+}
+
+{
+  // hit-held: only on a slowed or rooted body, and capped the same way.
+  const player = spawn('cmp-held', [verb({
+    trigger: { kind: 'hit-held', capMs: 5_000 },
+    payoff: { kind: 'stun', magnitude: 1, durationMs: 1_500 }, fx: 'control.knockdown', lane: 'control',
+  })]);
+  const target = monster();
+  fullHit(player, target);
+  fullHit(player, target);
+  assert(cardFx().length === 0, 'a free target is not held');
+
+  applyMonsterSlow(world, target, 0.2, 20_000, player.isPlayer.id);
+  fullHit(player, target);
+  const fx = cardFx();
+  assert(fx.length === 1 && fx[0].fx === 'control.knockdown', 'a slowed target is held: the knockdown fires');
+  fullHit(player, target);
+  assert(cardFx().length === 0, 'and the cap stops it chaining');
+  tickCooldowns(player.tracksCombat, 5_000);
+  // The stun ladder's post-stun immunity (2x the stun) has to lapse too.
+  tickStatusEffectDurations(target.tracksCombat, 5_000);
+  fullHit(player, target);
+  assert(cardFx().length === 1, 'once the cap runs out, the next held hit fires again');
+
+  const rooted = monster();
+  applyMonsterRoot(world, rooted, 2_000, 'someone-else');
+  tickCooldowns(player.tracksCombat, 5_000);
+  fullHit(player, rooted);
+  assert(cardFx().length === 1, 'a rooted target is held too, whoever rooted it');
+}
+
+{
+  // The kill carry: the kill arms, the next landed hit pays, once.
+  const player = spawn('cmp-carry', [verb({
+    trigger: { kind: 'kill', carry: true },
+    payoff: { kind: 'heal-and-load', magnitude: 0.1, loadMultiplier: 1.5 },
+    fx: 'kill-chain.heal-load', lane: 'kill-chain',
+  })]);
+  const target = monster();
+  hit(player, target);
+  assert(cardFx().length === 0, 'no kill yet, nothing armed');
+
+  kill(player, monster());
+  assert(cardFx().length === 0, 'the kill itself pays nothing — it arms');
+  const loaded = hit(player, target, {}, 200);
+  assert(loaded.damage === 300, `the next hit lands loaded, got ${loaded.damage}`);
+  assert(cardFx().length === 1, 'and pays once');
+  const after = hit(player, target, {}, 200);
+  assert(after.damage === 200 && cardFx().length === 0, 'the hit after that is ordinary');
+
+  kill(player, monster());
+  kill(player, monster());
+  hit(player, target);
+  hit(player, target);
+  assert(cardFx().length === 1, 'two kills before the next hit still pay once');
+
+  kill(player, monster());
+  const corpse = monster();
+  corpse.hasHealth.hp = 0;
+  hit(player, corpse);
+  assert(cardFx().length === 0, 'a hit on a body already dead is not "the next hit"');
+  hit(player, target, { chaoticMiss: true });
+  assert(cardFx().length === 0, 'nor is a whiff');
+  hit(player, target);
+  assert(cardFx().length === 1, 'the carry waited for a real landed hit');
+}
+
+{
+  // A composed Technique verb refunds THE Technique that landed; a legacy card
+  // at the same moment refunds every attuned one.
+  const techniques = [...ABILITY_DATABASE.values()].filter((a) => a.slot === 'technique').slice(0, 2);
+  assert(techniques.length === 2, 'two Techniques to tell apart');
+  const [landed, other] = techniques;
+  const refundCard = (composed: boolean): ResolvedLineageCard => {
+    const card = verb({
+      trigger: { kind: 'technique-cast' },
+      payoff: { kind: 'technique-refund', magnitude: 0.5 }, fx: 'technique.refund-flash', lane: 'technique',
+    });
+    if (!composed) delete card.composition;
+    return card;
+  };
+
+  for (const composed of [true, false]) {
+    const player = spawn(`cmp-refund-${composed}`, [refundCard(composed)]);
+    player.tracksProgression.attunedAbilities.techniques = [landed.id, other.id];
+    setCooldown(player.tracksCombat, abilityCooldownKey(landed.id), 6_000);
+    setCooldown(player.tracksCombat, abilityCooldownKey(other.id), 6_000);
+    onTechniqueResolved(world, player, landed);
+    const landedLeft = getCooldown(player.tracksCombat, abilityCooldownKey(landed.id));
+    const otherLeft = getCooldown(player.tracksCombat, abilityCooldownKey(other.id));
+    assert(landedLeft === 3_000, `${composed ? 'composed' : 'legacy'}: the landed Technique gets half back, got ${landedLeft}`);
+    assert(
+      otherLeft === (composed ? 6_000 : 3_000),
+      `${composed ? 'a composed verb refunds only that Technique' : 'a legacy card refunds every attuned one'}, got ${otherLeft}`,
+    );
+    cardFx();
+  }
+}
+
+{
+  // The engagement moment latches per BODY: the first hit on each new target.
+  const player = spawn('cmp-first-per-body', [verb({
+    trigger: { kind: 'first-hit' }, payoff: { kind: 'big-hit', magnitude: 2 },
+    fx: 'engagement.lunge', lane: 'engagement', perTarget: true,
+  })]);
+  const a = monster();
+  const b = monster();
+  assert(hit(player, a, {}, 100).damage === 200, 'the first hit on a body is a lunge');
+  assert(hit(player, a, {}, 100).damage === 100, 'the second is not');
+  assert(hit(player, b, {}, 100).damage === 200, 'a new body is a new opening');
   cardFx();
 }
 

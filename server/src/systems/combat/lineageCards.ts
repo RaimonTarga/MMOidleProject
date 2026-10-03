@@ -2,29 +2,39 @@
  * The lineage card runtime (progression rework Phase 1c).
  *
  * Plan: `docs/progression-rework-plan.md` §1.3 and the "Phase 1c contract"
- * section. Design authority: `design_docs/progression-rework-design.md` §6–§8.
+ * section. Design authority: `design_docs/progression-rework-design.md` §6–§8,
+ * §24.2.
  *
- * WHAT THIS IS. A lineage card is data over a closed vocabulary: eleven trigger
- * kinds and seventeen payoff kinds (design §6, widened by §22's Technique
- * packet). This file is the whole of that vocabulary's implementation — ONE
- * listener per trigger kind, ONE dispatch per payoff kind, every payoff routed to
- * a hook that already existed. Adding a card adds no code here, and a card that
- * would need code is a design bug the card changes to answer.
+ * WHAT THIS IS. A lineage card is data over a closed vocabulary: thirteen trigger
+ * kinds and twenty-three payoff kinds (design §6, widened by §22's Technique
+ * packet and §24.2's lean-and-verb halves). This file is the whole of that
+ * vocabulary's implementation — ONE listener per trigger kind, ONE dispatch per
+ * payoff kind, every payoff routed to a hook that already existed. Adding a card
+ * adds no code here, and a card that would need code is a design bug the card
+ * changes to answer.
  *
- * THE THREE RULES IT ENFORCES.
+ * A T1 VERB (design §24.2) arrives here already composed: `resolveLineageCards`
+ * gave it its lane's moment and its lean's payload at recalc, so the runtime
+ * sees an ordinary trigger and payoff and knows nothing of halves.
+ *
+ * THE FOUR RULES IT ENFORCES.
  *
  *  1. **Resolve once, at recalc.** `resolveActiveLineages` walks every tree the
  *     player has opened and re-reads the magnitude table for each active card.
  *     Nothing about that answer can change between recalcs, so it is cached on
  *     `TracksCombat` through {@link setLineageRuntime} and read per hit.
  *
- *  2. **One multiplier per hit.** `damage-window` folds itself into
+ *  2. **One multiplier per hit.** `damage-window`, `big-hit`, the load of
+ *     `heal-and-load` and `mechanic-proxy` fold themselves into
  *     `ctx.metadata.empoweredMultiplier` — the same number a Technique rider
  *     reads — instead of adding a second multiplicative layer.
  *
  *  3. **Evade blocks the on-target ones.** Every payoff that lands on a monster
  *     early-returns on `evadeBlocksDebuffs(ctx)`, like every other on-hit
  *     applier in the codebase.
+ *
+ *  4. **Synergy buys reliability, never rate** (§24.2). A moment with a `capMs`
+ *     pays at most once per cap per card, enforced once, in {@link fire}.
  *
  * AND ONE VISIBLE THING PER CARD. Design §8: "every card the player buys adds one
  * thing they can see in combat." So every successful application pushes EXACTLY
@@ -132,6 +142,8 @@ const carryFlag = (key: string): string => `lineage.carry.${key}`;
  * does not count. Probed in `beforeAttack` and carried on the exchange.
  */
 const AFFLICTED_BEFORE = 'lineageAfflictedBefore';
+/** `hit-held`'s twin of {@link AFFLICTED_BEFORE}: was the target held before this hit? */
+const HELD_BEFORE = 'lineageHeldBefore';
 
 // ── The resolved-card cache ──────────────────────────────────────────────────
 
@@ -880,6 +892,10 @@ export function registerLineageCards(): void {
   registerMechanicFired();
   registerFirstHit();
   registerKill();
+  registerKillCarry();
+  registerConditionProbes();
+  registerHitAfflicted();
+  registerHitHeld();
   registerEvade();
   registerWindowReaders();
   // The keystones (design §4, nine of them since §22's Technique packet).
@@ -997,7 +1013,13 @@ function registerFirstHit(): void {
   });
 }
 
-/** `kill` — the player put a monster down. */
+/**
+ * `kill` — the player put a monster down.
+ *
+ * A `carry` firing (design §24.2's Kill-chain moment, "your next hit after a
+ * kill") does not pay here: the kill ARMS it and {@link registerKillCarry} pays it
+ * on the next landed hit. One arming per card, so a multi-kill still pays once.
+ */
 function registerKill(): void {
   registerCombatListener('onKill', (ctx, world) => {
     if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
@@ -1005,9 +1027,116 @@ function registerKill(): void {
     if (!hasLineageRuntime(player)) return;
     const firings = firingsFor(player, 'kill');
     if (firings.length === 0) return;
+    const now: LineageFiring[] = [];
+    for (const firing of firings) {
+      if (firing.trigger.carry) setFlag(player.tracksCombat, carryFlag(firing.key), true);
+      else now.push(firing);
+    }
+    if (now.length === 0) return;
     // The corpse is still in the world at onKill, so a payoff that spreads OFF it
     // (contagion) still has something to read.
-    fire({ world, player, ctx, target: ctx.defender }, firings);
+    fire({ world, player, ctx, target: ctx.defender }, now);
+  });
+}
+
+/**
+ * The carried half of the Kill-chain moment: the next LANDED hit on a live body
+ * after a kill pays every armed `carry` firing, once, on that hit's exchange — so
+ * a loaded hit multiplies the hit in flight (design §24.2).
+ *
+ * A hit whose target a proc already killed inside this `onHit` (an echo that was
+ * lethal, review finding B3) is not "the next hit": the carry stays armed. So
+ * does a chaotic-miss whiff, which lands nothing. Spent whatever the payoff then
+ * does — the moment is the hit, not the payoff's success.
+ */
+function registerKillCarry(): void {
+  registerCombatListener('onHit', (ctx, world) => {
+    if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
+    const player = ctx.attacker;
+    if (!hasLineageRuntime(player)) return;
+    const cs = player.tracksCombat;
+    const armed = firingsFor(player, 'kill').filter(
+      (firing) => firing.trigger.carry && getFlag(cs, carryFlag(firing.key)),
+    );
+    if (armed.length === 0) return;
+    if (ctx.metadata['chaoticMiss']) return;
+    if (ctx.defender.hasHealth.hp <= 0 || !world.hasMonster(ctx.defender.isMonster.id)) return;
+    for (const firing of armed) setFlag(cs, carryFlag(firing.key), false);
+    fire({ world, player, ctx, target: ctx.defender }, armed);
+  });
+}
+
+/** True while a capped firing's clock is still running — it cannot pay. */
+function capped(cs: TracksCombat, firing: LineageFiring): boolean {
+  return (firing.trigger.capMs ?? 0) > 0 && isCooldownActive(cs, capCd(firing.key));
+}
+
+/** Does the monster carry any damage-over-time effect this player owns? */
+function afflictedBy(world: World, player: PlayerEntity, monster: MonsterEntity): boolean {
+  return playerDotsOnMonster(world, player, monster).length > 0;
+}
+
+/**
+ * The two §24.2 condition moments read the target as it was BEFORE this hit, so
+ * the class DoT or slow this very hit lays down does not satisfy them ("a target
+ * you have ALREADY afflicted"). Probed in `beforeAttack` — only for a player with
+ * an uncapped firing waiting on it, since the DoT inventory walk is the one real
+ * cost — and read back in `onHit`. An exchange that never passed `beforeAttack`
+ * (a seam that emits `onHit` directly) reads the target live instead.
+ */
+function registerConditionProbes(): void {
+  registerCombatListener('beforeAttack', (ctx, world) => {
+    if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
+    const player = ctx.attacker;
+    if (!hasLineageRuntime(player)) return;
+    const cs = player.tracksCombat;
+    if (firingsFor(player, 'hit-afflicted').some((firing) => !capped(cs, firing))) {
+      ctx.metadata[AFFLICTED_BEFORE] = afflictedBy(world, player, ctx.defender);
+    }
+    if (firingsFor(player, 'hit-held').some((firing) => !capped(cs, firing))) {
+      ctx.metadata[HELD_BEFORE] = monsterIsHeld(ctx.defender);
+    }
+  });
+}
+
+/**
+ * `hit-afflicted` — a landed hit on a target that already carries one of this
+ * player's DoTs (design §24.2, the Affliction moment). Rate-capped by its
+ * packet's `capMs`, so a DoT class that satisfies it on every hit fires it at
+ * the cap, reliably, and never faster.
+ */
+function registerHitAfflicted(): void {
+  registerCombatListener('onHit', (ctx, world) => {
+    if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
+    const player = ctx.attacker;
+    if (!hasLineageRuntime(player)) return;
+    const cs = player.tracksCombat;
+    const due = firingsFor(player, 'hit-afflicted').filter((firing) => !capped(cs, firing));
+    if (due.length === 0) return;
+    const before = ctx.metadata[AFFLICTED_BEFORE];
+    const afflicted = typeof before === 'boolean' ? before : afflictedBy(world, player, ctx.defender);
+    if (!afflicted) return;
+    fire({ world, player, ctx, target: ctx.defender }, due);
+  });
+}
+
+/**
+ * `hit-held` — a landed hit on a slowed or rooted target (design §24.2, the
+ * Control moment). Rate-capped like `hit-afflicted`, which is also what stops a
+ * root or stun payload from chaining off its own hold.
+ */
+function registerHitHeld(): void {
+  registerCombatListener('onHit', (ctx, world) => {
+    if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
+    const player = ctx.attacker;
+    if (!hasLineageRuntime(player)) return;
+    const cs = player.tracksCombat;
+    const due = firingsFor(player, 'hit-held').filter((firing) => !capped(cs, firing));
+    if (due.length === 0) return;
+    const before = ctx.metadata[HELD_BEFORE];
+    const held = typeof before === 'boolean' ? before : monsterIsHeld(ctx.defender);
+    if (!held) return;
+    fire({ world, player, ctx, target: ctx.defender }, due);
   });
 }
 
@@ -1106,13 +1235,14 @@ export function onLineageGuardCast(world: World, player: PlayerEntity): void {
 export function onLineageTechniqueCast(
   world: World,
   player: PlayerEntity,
-  site: { ctx?: CombatContext; target?: MonsterEntity } = {},
+  /** `abilityId`: the Technique that resolved, for a composed verb's refund. */
+  site: { ctx?: CombatContext; target?: MonsterEntity; abilityId?: string } = {},
 ): void {
   if (!hasLineageRuntime(player)) return;
   const firings = firingsFor(player, 'technique-cast');
   if (firings.length === 0) return;
   const target = site.target ?? targetFor(world, player, site.ctx);
-  fire({ world, player, ctx: site.ctx, target }, firings);
+  fire({ world, player, ctx: site.ctx, target, abilityId: site.abilityId }, firings);
 }
 
 // ── The dispatcher, for payoff sources that are not lineage cards ────────────
