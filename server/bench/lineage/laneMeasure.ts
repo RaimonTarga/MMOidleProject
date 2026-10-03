@@ -16,6 +16,7 @@ import {
   WORLD_NODE_LIST,
   blendEntries,
   nodeSpawnBlend,
+  nodeShard,
   type FamilyId,
   type PacketId,
   type TierEntryProfile,
@@ -29,6 +30,7 @@ import { setupArena, teardownArena } from '../balance/arena';
 import { reviveInFarmNode } from '../balance/runFarm';
 import { createFarmWorld } from '../balance/worldFactory';
 import { prepareLaneBot } from './laneBot';
+import { shardKillCounter } from './shardAccounting';
 import { isPlayerActivelyInCombat } from '../../src/systems/combat/ai/engagement';
 import {
   registerCombatListener,
@@ -83,7 +85,7 @@ export function laneNodes(): LaneNode[] {
     // slot for slot, which is what the spawner actually walks. Keyed by tier as
     // well: the same biome's T1 and T2 nodes can share a cycle shape while
     // fielding entirely different mobs.
-    const cycleKey = `${node.biomeGroup}|${node.biomeTier}|${resolved.cycle.join(',')}`;
+    const cycleKey = `${node.biomeGroup}|${node.biomeTier}|${resolved.cycle.join(',')}|${nodeShard(node.id)}`;
     const existing = byKey.get(cycleKey);
     if (existing) {
       existing.aliases.push(node.id);
@@ -115,7 +117,7 @@ export function laneNodes(): LaneNode[] {
       mobs: [...slots.values()].sort((a, b) => b.slots - a.slots),
       dominant,
       dominantShare: dominantEntry.share,
-      dropsLane: family.drops,
+      dropsLane: nodeShard(node.id)!,
       punishesLane: family.punishes,
       unavailable: [...resolved.unavailable],
     });
@@ -153,6 +155,8 @@ export interface Row {
   biome: string;
   seed: number;
   kills: number;
+  /** Optional only for replaying older measurement rows. */
+  killsByShard?: Partial<Record<PacketId, number>>;
   deaths: number;
   engagedMs: number;
   capMs: number;
@@ -217,7 +221,10 @@ export function measure(
   let damageDealt = 0;
   const fx: Record<string, number> = {};
   const fxByCard: Record<string, number> = {};
+  const killsByShard: Partial<Record<PacketId, number>> = {};
+  const countShardKill = shardKillCounter(killsByShard);
   const onKill: CombatEventHandler = (ctx) => {
+    countShardKill(ctx);
     if (ctx.defenderType === 'monster') kills += 1;
   };
   let damageTaken = 0;
@@ -265,7 +272,7 @@ export function measure(
       ...(frame ? { frameId: frame.frameId, frameShape: frame.frameShape } : {}),
       nodeId: node.nodeId,
       biome: node.biome,
-      seed, kills, deaths, engagedMs, capMs, damageDealt, refusals, grantedShards, mobCount, fx, fxByCard,
+      seed, kills, killsByShard, deaths, engagedMs, capMs, damageDealt, refusals, grantedShards, mobCount, fx, fxByCard,
       damageTaken, hpFractionSum, hpSamples,
     };
   } finally {
