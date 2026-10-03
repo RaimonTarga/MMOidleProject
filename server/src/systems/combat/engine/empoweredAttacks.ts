@@ -6,9 +6,9 @@ import {
   resolveEnergyRelicProfile,
   type PassiveKey,
 } from '@mmo-idle/shared';
-import { registerCombatListener } from './combatPipeline';
+import { registerCombatListener, type CombatContext } from './combatPipeline';
 import { isClassActive } from '../../classes/shared/classActive';
-import type { ServerEntity } from '../../../ecs/entity';
+import type { MonsterEntity, PlayerEntity, ServerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
 
@@ -68,6 +68,102 @@ export interface EmpoweredMultiplierOptions {
    * on top of the frame-set base (e.g. cadence.damage-mult-add).
    */
   passiveAddKey?: PassiveKey;
+  /**
+   * `mechanic-proxy` (design §24.2) only: use this registration for a proxy ONLY
+   * when the player's `passiveKey` is authored. For a root whose registration is a
+   * SPEC's mechanic rather than the root's — reload's is the Duelist's exploding
+   * clip — every other spec has no damage-multiplier mechanic to proxy, so it gets
+   * the proxy's fallback instead of a multiplier its class never fires.
+   */
+  proxyRequiresPassive?: boolean;
+}
+
+interface EmpoweredRegistration {
+  multiplier: number;
+  options: EmpoweredMultiplierOptions;
+}
+
+/**
+ * Every registration, in order — the proxy's lookup table. The live listeners
+ * close over their own `(multiplier, options)`; this list exists so
+ * `mechanic-proxy` resolves a player's multiplier through EXACTLY the same
+ * arithmetic as the hit that really spends the charge.
+ */
+const _registrations: EmpoweredRegistration[] = [];
+
+type EmpoweredAttacker = CombatContext['attacker'];
+
+/** Whether a registration's filters admit this attacker. */
+function registrationAdmits(
+  world: World,
+  attackerType: CombatContext['attackerType'],
+  attacker: EmpoweredAttacker,
+  options: EmpoweredMultiplierOptions,
+): boolean {
+  if (options.attackerType && attackerType !== options.attackerType) return false;
+  if (options.attackerSlice) {
+    if (attackerType !== 'player') return false;
+    if ((attacker as PlayerEntity)[options.attackerSlice] === undefined) return false;
+  }
+  if (options.attackerMonsterArchetype) {
+    if (attackerType !== 'monster') return false;
+    if ((attacker as MonsterEntity).isMonster.combatArchetype !== options.attackerMonsterArchetype) return false;
+  }
+  if (options.attackerClass) {
+    if (attackerType !== 'player') return false;
+    if (!isClassActive(world, (attacker as PlayerEntity).isPlayer.id, options.attackerClass)) return false;
+  }
+  return true;
+}
+
+/**
+ * The multiplier an empowered hit lands at for this attacker: the static
+ * `multiplier`, or the player's `passiveKey` (+ `passiveAddKey`), then the
+ * universal bonuses and the root's relic profile. Factored out of the listener so
+ * the real hit and `mechanic-proxy` can never disagree about the number.
+ */
+function resolveEffectiveMultiplier(
+  attackerType: CombatContext['attackerType'],
+  attacker: EmpoweredAttacker,
+  multiplier: number,
+  options: EmpoweredMultiplierOptions,
+): number {
+  let effectiveMult = multiplier;
+  if (attackerType !== 'player') return effectiveMult;
+  const player = attacker as PlayerEntity;
+  // Resolve effective multiplier: use passives at runtime when passiveKey is given.
+  if (options.passiveKey) {
+    const base = player.usesSkills.passives[options.passiveKey];
+    if (base !== undefined && base > 0) {
+      effectiveMult = base;
+      if (options.passiveAddKey) {
+        effectiveMult += player.usesSkills.passives[options.passiveAddKey] ?? 0;
+      }
+    }
+  }
+  // Universal item/passive bonus — stacks on top of archetype base + T3 add.
+  effectiveMult += player.usesSkills.passives['shared.empowered-mult-add'] ?? 0;
+  // Multiplicative empowered bonus (weapon mechanic): scales the resolved
+  // multiplier by (1 + bonus), so every spec gains the same % regardless of
+  // its base multiplier. e.g. 2.5x base with +0.5 → 3.75x (NOT additive 3.0x).
+  const multBonus = player.usesSkills.passives['weapon.empowered-mult-bonus'] ?? 0;
+  if (multBonus !== 0) effectiveMult *= 1 + multBonus;
+
+  const passives = player.usesSkills.passives;
+  const ratings = relicRatingsFromPassives(passives);
+  if (options.attackerSlice === 'usesCadence') {
+    effectiveMult = resolveCadenceRelicProfile(5, effectiveMult, ratings).empoweredMultiplier.after;
+  } else if (options.attackerSlice === 'usesCooldown') {
+    effectiveMult = resolveCooldownRelicProfile(7000, effectiveMult, ratings).empoweredMultiplier.after;
+  } else if (options.attackerSlice === 'usesEnergy') {
+    effectiveMult = resolveEnergyRelicProfile(
+      passives['energy.per-hit'] ?? 14,
+      resolveEnergyMaxBeforeRelic(passives, player.tracksProgression.playerTier),
+      effectiveMult,
+      ratings,
+    ).dischargeMultiplier.after;
+  }
+  return effectiveMult;
 }
 
 /**
@@ -87,20 +183,9 @@ export function registerEmpoweredMultiplier(
   multiplier: number,
   options: EmpoweredMultiplierOptions = {},
 ): void {
+  _registrations.push({ multiplier, options });
   registerCombatListener('onHit', (ctx, world) => {
-    if (options.attackerType && ctx.attackerType !== options.attackerType) return;
-    if (options.attackerSlice) {
-      if (ctx.attackerType !== 'player') return;
-      if (ctx.attacker[options.attackerSlice] === undefined) return;
-    }
-    if (options.attackerMonsterArchetype) {
-      if (ctx.attackerType !== 'monster') return;
-      if (ctx.attacker.isMonster.combatArchetype !== options.attackerMonsterArchetype) return;
-    }
-    if (options.attackerClass) {
-      if (ctx.attackerType !== 'player') return;
-      if (!isClassActive(world, ctx.attacker.isPlayer.id, options.attackerClass)) return;
-    }
+    if (!registrationAdmits(world, ctx.attackerType, ctx.attacker, options)) return;
 
     // Chaotic miss: the attack whiffs. Don't consume the empowered charge, don't
     // multiply, don't set empoweredAttack metadata (which would restart cooldowns and
@@ -121,41 +206,7 @@ export function registerEmpoweredMultiplier(
       return;
     }
 
-    // Resolve effective multiplier: use passives at runtime when passiveKey is given.
-    let effectiveMult = multiplier;
-    if (options.passiveKey && ctx.attackerType === 'player') {
-      const base = ctx.attacker.usesSkills.passives[options.passiveKey];
-      if (base !== undefined && base > 0) {
-        effectiveMult = base;
-        if (options.passiveAddKey) {
-          effectiveMult += ctx.attacker.usesSkills.passives[options.passiveAddKey] ?? 0;
-        }
-      }
-    }
-    // Universal item/passive bonus — stacks on top of archetype base + T3 add.
-    if (ctx.attackerType === 'player') {
-      effectiveMult += ctx.attacker.usesSkills.passives['shared.empowered-mult-add'] ?? 0;
-      // Multiplicative empowered bonus (weapon mechanic): scales the resolved
-      // multiplier by (1 + bonus), so every spec gains the same % regardless of
-      // its base multiplier. e.g. 2.5x base with +0.5 → 3.75x (NOT additive 3.0x).
-      const multBonus = ctx.attacker.usesSkills.passives['weapon.empowered-mult-bonus'] ?? 0;
-      if (multBonus !== 0) effectiveMult *= 1 + multBonus;
-
-      const passives = ctx.attacker.usesSkills.passives;
-      const ratings = relicRatingsFromPassives(passives);
-      if (options.attackerSlice === 'usesCadence') {
-        effectiveMult = resolveCadenceRelicProfile(5, effectiveMult, ratings).empoweredMultiplier.after;
-      } else if (options.attackerSlice === 'usesCooldown') {
-        effectiveMult = resolveCooldownRelicProfile(7000, effectiveMult, ratings).empoweredMultiplier.after;
-      } else if (options.attackerSlice === 'usesEnergy') {
-        effectiveMult = resolveEnergyRelicProfile(
-          passives['energy.per-hit'] ?? 14,
-          resolveEnergyMaxBeforeRelic(passives, ctx.attacker.tracksProgression.playerTier),
-          effectiveMult,
-          ratings,
-        ).dischargeMultiplier.after;
-      }
-    }
+    const effectiveMult = resolveEffectiveMultiplier(ctx.attackerType, ctx.attacker, multiplier, options);
 
     const base     = ctx.damage;
     ctx.damage     = Math.floor(base * effectiveMult);
@@ -171,4 +222,79 @@ export function registerEmpoweredMultiplier(
     ctx.metadata['empoweredBonus']      = ctx.damage - base;
 
   });
+}
+
+// ── mechanic-proxy (design §24.2, course-correction rule 3) ──────────────────
+
+/**
+ * The empowered multiplier this player's root would land a real mechanic hit at,
+ * or undefined when the root has no damage-multiplier mechanic to proxy (the DoT
+ * root, the summoner, a reload spec other than the Duelist).
+ */
+export function proxyEmpoweredMultiplier(world: World, player: PlayerEntity): number | undefined {
+  for (const registration of _registrations) {
+    const { options } = registration;
+    if (options.attackerMonsterArchetype) continue;
+    if (!registrationAdmits(world, 'player', player, options)) continue;
+    if (options.proxyRequiresPassive) {
+      const authored = options.passiveKey ? player.usesSkills.passives[options.passiveKey] ?? 0 : 0;
+      if (!(authored > 0)) return undefined;
+    }
+    return resolveEffectiveMultiplier('player', player, registration.multiplier, options);
+  }
+  return undefined;
+}
+
+/**
+ * Whether this exchange's empowered flags came from a `mechanic-proxy` payoff
+ * rather than from the root spending its own charge.
+ *
+ * Every reader that walks the ROOT's own state — the six frame loops, the
+ * `mechanic-fired` emitters, the cooldown cycle restart, energy's gain gate —
+ * early-returns (or treats the hit as an ordinary one) on this, so a proxy never
+ * re-enters a frame loop and never announces `mechanic-fired` (rule 3, the same
+ * rule as the Signature keystone).
+ */
+export function isMechanicProxy(ctx: CombatContext): boolean {
+  return ctx.metadata['mechanicProxy'] === true;
+}
+
+/**
+ * Make this hit COUNT AS the class mechanic firing (design §24.2's Empowered
+ * payload, "the Signature idea"). Returns the multiplier it applied, or 0 when it
+ * did nothing.
+ *
+ *  - The multiplier is the root's own, resolved through the same function as the
+ *    real hit ({@link proxyEmpoweredMultiplier}); `fallbackMultiplier` (from the
+ *    magnitude table) for a root with no damage-multiplier mechanic.
+ *  - It sets `empoweredAttack`, `mechanicConsumed` and `empoweredMultiplier`, so
+ *    everything that reads "the mechanic's hit" AFTER it in the pipeline — the
+ *    Shockwave keystone, the range gates, a T3 finisher rider in `afterHit`, the
+ *    crit styling — treats it as one; and `mechanicProxy`, so the root's own
+ *    loops never do.
+ *  - It does NOT consume the root's pending charge, and it NEVER emits
+ *    `mechanic-fired`: `emitMechanicFired` refuses a proxied exchange outright.
+ *  - One multiplier per hit: a hit that already spent the real mechanic (or was
+ *    already proxied) is left alone, and any other multiplier already on the hit
+ *    (a damage window, a lunge) is folded into the same record, never a layer.
+ */
+export function applyMechanicProxy(
+  world: World,
+  ctx: CombatContext,
+  fallbackMultiplier: number,
+): number {
+  if (ctx.attackerType !== 'player') return 0;
+  if (ctx.metadata['chaoticMiss']) return 0;
+  if (ctx.metadata['mechanicConsumed'] === true) return 0;
+  const multiplier = proxyEmpoweredMultiplier(world, ctx.attacker) ?? fallbackMultiplier;
+  if (!(multiplier > 0)) return 0;
+
+  const base = ctx.damage;
+  ctx.damage = Math.floor(base * multiplier);
+  ctx.metadata['empoweredAttack'] = true;
+  ctx.metadata['mechanicConsumed'] = true;
+  ctx.metadata['mechanicProxy'] = true;
+  ctx.metadata['empoweredMultiplier'] = Number(ctx.metadata['empoweredMultiplier'] ?? 1) * multiplier;
+  ctx.metadata['empoweredBonus'] = Number(ctx.metadata['empoweredBonus'] ?? 0) + (ctx.damage - base);
+  return multiplier;
 }

@@ -28,9 +28,10 @@ import {
   ROW_SCALAR, lineageMasteryLevelForRow, rowsForTier, tierHasRow,
 } from '../data/lineages/magnitudes';
 import {
-  formGateBiomeLevel, formGateMastery, lineageCardCost, lineageGateCost,
-  resolveLineageCapstone, resolveLineageCard,
+  applyComposition, composeVerb, formGateBiomeLevel, formGateMastery, isVerbCard,
+  lineageCardCost, lineageGateCost, resolveLineageCapstone, resolveLineageCard,
 } from '../data/lineages/resolve';
+import { statLine, verbSentence } from '../data/lineages/sentences';
 import type {
   AmplifiedAxis, DefensiveFace, LineageCard, LineageDefinition, LineageForm,
   LineagePayoff, LineageProgress, LineageProgressMap, LineageStatEffects,
@@ -445,7 +446,67 @@ export function resolveLineageCards(
     if (statRowIsCollapsed(lineage, progress, card)) continue;
     out.push(resolveLineageCardFor(lineage, progress, card, { frameFace }));
   }
+  composeVerbs(out, leanLaneFor(lineage, progress));
   return composeAmplifiers(out);
+}
+
+// ─── The T1 lean and verb compose (design §24.2) ─────────────────────────────
+
+/**
+ * The lane of the active LEAN: the owned card in the active stat row, of any tier.
+ * Its lane names the payload every verb of this lineage delivers.
+ *
+ * A collapsed band's stat card still counts when the save points `active.stat` at
+ * it: the lane identity carries up through the gate (design §4), and the player
+ * changes it by slotting the current tier's stat row.
+ */
+export function leanLaneFor(lineage: LineageDefinition, progress: LineageProgress): PacketId | undefined {
+  const cardId = progress.active.stat;
+  if (!cardId || !progress.ownedCards.includes(cardId)) return undefined;
+  return lineage.cards.find((c) => c.id === cardId && c.row === 'stat')?.lane;
+}
+
+/**
+ * Re-compose every active VERB against the active lean, in place: the verb's
+ * moment with the lean's payload, or the verb lane's pure pair for the same lane
+ * or no lean. Legacy payoff cards (they author their own trigger and payoff)
+ * are untouched, as are amplifiers, keystones and cross rows.
+ */
+function composeVerbs(cards: ResolvedLineageCard[], leanLane: PacketId | undefined): void {
+  for (const resolved of cards) {
+    if (!isVerbCard(resolved.card)) continue;
+    applyComposition(resolved, composeVerb(resolved.card.lane, leanLane));
+  }
+}
+
+/**
+ * The sentence the lineage's active verb reads right now, with the active lean —
+ * or undefined when no verb is active (design §24.2).
+ */
+export function composedSentence(lineage: LineageDefinition, progress: LineageProgress): string | undefined {
+  const verbId = progress.active.payoff;
+  if (!verbId || !progress.ownedCards.includes(verbId)) return undefined;
+  const verb = lineage.cards.find((c) => c.id === verbId);
+  if (!verb || !isVerbCard(verb)) return undefined;
+  return verbSentence(verb.lane, leanLaneFor(lineage, progress));
+}
+
+/**
+ * One card as one sentence (design §24.6, rule 5: no flavour text rendered).
+ *
+ *  - A stat card (the LEAN at T1): its resolved stat line, "+9% attack speed.".
+ *  - A T1 VERB: the sentence it reads with the player's active lean RIGHT NOW,
+ *    owned or not — a verb tile re-renders when the lean changes.
+ *
+ * Undefined for every other row (legacy payoff, amplifier, keystone, cross),
+ * which the tree still renders from `description` and resolved numbers.
+ */
+export function cardSentence(card: LineageCard, progress: LineageProgress): string | undefined {
+  const lineage = LINEAGE_DATABASE.get(card.lineageId);
+  if (!lineage) return undefined;
+  if (card.row === 'stat') return statLine(resolveLineageCardFor(lineage, progress, card).statEffects);
+  if (isVerbCard(card)) return verbSentence(card.lane, leanLaneFor(lineage, progress));
+  return undefined;
 }
 
 // ─── The amplifier row modifies a payoff; it does not add one (design §4) ────

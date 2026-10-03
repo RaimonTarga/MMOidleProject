@@ -22,6 +22,7 @@
  */
 
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
+import { isMechanicProxy } from '../../../combat/engine/empoweredAttacks';
 import { evadeBlocksDebuffs } from '../../../defense/mitigation/evasion';
 import { defineBuff } from '../../../combat/buffs/descriptor';
 import {
@@ -55,6 +56,9 @@ function cooldownBankCap(player: PlayerEntity): number {
 
 export function initCooldownFrameLoop(): void {
   registerCombatListener('onHit', (ctx, world) => {
+    // A `mechanic-proxy` hit (design §24.2) COUNTS AS the mechanic for what reads
+    // it downstream, but it never walks the root's own loop (rule 3).
+    if (isMechanicProxy(ctx)) return;
     if (ctx.attackerType !== 'player') return;
     const player = ctx.attacker;
     const cd = player.usesCooldown;

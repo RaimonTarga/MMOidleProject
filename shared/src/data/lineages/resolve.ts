@@ -9,16 +9,18 @@
 import { BIOME_LEVELS_PER_TIER, biomeLevelOffset } from '../../config/gameConfig';
 import { BIOME_PRIMARY_ESSENCE } from '../../items';
 import type { EssenceType } from '../../items';
-import { packetScalingStat } from './packets';
+import { packetHalves, packetScalingStat } from './packets';
 import {
   gateBiomeLevel, gateCapstoneAmount, gateEssenceCost, gateShardCost,
-  LINEAGE_SWITCH_DISCOUNT, lineageMasteryLevelForGate, lineageMasteryLevelForRow,
-  payoffValue, rowBiomeLevel, rowEssenceCost, rowShardCost, statRowValue,
-  triggerNForLane,
+  LINEAGE_SWITCH_DISCOUNT, PACKET_HALF_NUMBERS, lineageMasteryLevelForGate,
+  lineageMasteryLevelForRow, payoffValue, rowBiomeLevel, rowEssenceCost, rowShardCost,
+  statRowValue, triggerNForLane,
 } from './magnitudes';
+import type { PacketPayloadNumbers } from './magnitudes';
 import type {
-  DefensiveFace, LineageCapstone, LineageCard, LineageCost, LineageDefinition,
-  LineageForm, LineageGateCost, LineageStatEffects, LineageStatKey,
+  DefensiveFace, LineageCapstone, LineageCard, LineageComposition, LineageCost,
+  LineageDefinition, LineageForm, LineageFxKey, LineageGateCost, LineagePayoff,
+  LineageStatEffects, LineageStatKey, LineageTrigger, PacketId, PayoffKind,
   ResolvedLineageCapstone, ResolvedLineageCard, RowKind,
 } from './types';
 
@@ -119,6 +121,14 @@ export function resolveLineageCard(
     return resolved;
   }
 
+  // A T1 verb (design §24.2) resolved on its own has no lean to compose with, so
+  // it reads its lane's PURE pair — exactly what it does in play with no lean
+  // active. `resolveLineageCards` re-composes it against the player's lean.
+  if (isVerbCard(card)) {
+    applyComposition(resolved, composeVerb(card.lane));
+    return resolved;
+  }
+
   if (card.trigger) {
     resolved.trigger = card.trigger === 'hit-nth'
       ? { kind: 'hit-nth', n: triggerNForLane(card.borrowsLane ?? card.lane) }
@@ -189,4 +199,126 @@ export function formGateBiomeLevel(form: LineageForm): number {
 /** Global Mastery required to pay a form's gate — where +5 sits in that band. */
 export function formGateMastery(form: LineageForm): number {
   return lineageMasteryLevelForGate(form.tier - 1);
+}
+
+// ─── The T1 lean and verb (design §24.2) ─────────────────────────────────────
+
+/**
+ * A T1 VERB: a `payoff`-row card authored with neither a trigger nor a payoff.
+ * It carries only its lane; the moment comes from that lane's packet and the
+ * payload from the active lean's. Every legacy payoff-row card authors both and
+ * is never a verb.
+ */
+export function isVerbCard(card: Pick<LineageCard, 'row' | 'trigger' | 'payoff'>): boolean {
+  return card.row === 'payoff' && card.trigger === undefined && card.payoff === undefined;
+}
+
+/** A packet moment with the per-body latch the engagement moment carries. */
+export type PacketMoment = LineageTrigger & { perTarget?: boolean };
+
+/**
+ * A packet's moment — the trigger its verb fires on, numbers filled in from
+ * `PACKET_HALF_NUMBERS`. Undefined for a packet with no halves (the two
+ * defensive ones, while non-weapon trees are parked).
+ */
+export function packetMoment(id: PacketId): PacketMoment | undefined {
+  const shape = packetHalves(id)?.moment;
+  const numbers = PACKET_HALF_NUMBERS[id]?.moment;
+  if (!shape || !numbers) return undefined;
+  const moment: PacketMoment = { kind: shape.kind };
+  if (numbers.n !== undefined) moment.n = numbers.n;
+  if (numbers.capMs !== undefined) moment.capMs = numbers.capMs;
+  if (shape.carry) moment.carry = true;
+  if (shape.perTarget) moment.perTarget = true;
+  return moment;
+}
+
+function payoffFrom(kind: PayoffKind, numbers: PacketPayloadNumbers): LineagePayoff {
+  const payoff: LineagePayoff = { kind, magnitude: numbers.magnitude };
+  if (numbers.durationMs !== undefined) payoff.durationMs = numbers.durationMs;
+  if (numbers.loadMultiplier !== undefined) payoff.loadMultiplier = numbers.loadMultiplier;
+  return payoff;
+}
+
+/** The payload a lean of this lane hands a verb of ANOTHER lane, per firing. */
+export function packetPayload(id: PacketId): LineagePayoff | undefined {
+  const kind = packetHalves(id)?.payload;
+  const numbers = PACKET_HALF_NUMBERS[id]?.payload;
+  return kind && numbers ? payoffFrom(kind, numbers) : undefined;
+}
+
+/**
+ * The packet's PURE pair: its own moment and its pure payload. Used when the lean
+ * is the verb's own lane, and when no lean is active (design §24.2: "a verb alone
+ * never does nothing").
+ */
+export function packetPurePair(id: PacketId): { trigger: PacketMoment; payoff: LineagePayoff } | undefined {
+  const trigger = packetMoment(id);
+  const kind = packetHalves(id)?.pure.payload;
+  const numbers = PACKET_HALF_NUMBERS[id]?.pure;
+  if (!trigger || !kind || !numbers) return undefined;
+  return { trigger, payoff: payoffFrom(kind, numbers) };
+}
+
+/** What one verb does with one lean (or none). */
+export interface VerbComposition extends LineageComposition {
+  trigger: PacketMoment;
+  payoff: LineagePayoff;
+  /** The fx the firing pushes: the payload's own. */
+  fx: LineageFxKey;
+}
+
+/**
+ * Compose a verb of `verbLane` with a lean of `leanLane` (design §24.2).
+ *
+ * Another lane's lean: the verb's moment, the lean's payload. The same lane, or no
+ * lean: the verb lane's pure pair. Resolve time only — the combat runtime sees an
+ * ordinary trigger and payoff and knows nothing of halves.
+ *
+ * NO COMPOSITION RECURSES. The one payload that "counts as the mechanic"
+ * (`mechanic-proxy`) never reaches the mechanic moment: Empowered × Empowered is
+ * pure (a bigger mechanic hit), and the proxy never emits `mechanic-fired`
+ * anyway (rule 3). `composition.test.ts` pins both halves of that.
+ */
+export function composeVerb(verbLane: PacketId, leanLane?: PacketId): VerbComposition | undefined {
+  const verbHalves = packetHalves(verbLane);
+  const pure = packetPurePair(verbLane);
+  if (!verbHalves || !pure) return undefined;
+  const needs = verbHalves.moment.kind === 'hit-held' ? { needs: 'slow' as const } : {};
+
+  if (leanLane && leanLane !== verbLane) {
+    const leanHalves = packetHalves(leanLane);
+    const payoff = packetPayload(leanLane);
+    if (leanHalves && payoff) {
+      return {
+        verbLane, leanLane, pure: false, ...needs,
+        trigger: pure.trigger, payoff, fx: leanHalves.payloadFx,
+      };
+    }
+  }
+  return {
+    verbLane, ...(leanLane ? { leanLane } : {}), pure: true, ...needs,
+    trigger: pure.trigger, payoff: pure.payoff, fx: verbHalves.pure.fx,
+  };
+}
+
+/** Write a composition onto a resolved verb, replacing whatever it carried. */
+export function applyComposition(resolved: ResolvedLineageCard, composed: VerbComposition | undefined): void {
+  delete resolved.trigger;
+  delete resolved.payoff;
+  delete resolved.payoffFx;
+  delete resolved.perTargetTrigger;
+  delete resolved.composition;
+  if (!composed) return;
+  const { perTarget, ...trigger } = composed.trigger;
+  resolved.trigger = trigger;
+  resolved.payoff = { ...composed.payoff };
+  resolved.payoffFx = composed.fx;
+  if (perTarget) resolved.perTargetTrigger = true;
+  resolved.composition = {
+    verbLane: composed.verbLane,
+    ...(composed.leanLane ? { leanLane: composed.leanLane } : {}),
+    pure: composed.pure,
+    ...(composed.needs ? { needs: composed.needs } : {}),
+  };
 }

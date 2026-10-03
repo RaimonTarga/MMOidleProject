@@ -98,20 +98,21 @@ export const HAMMER_LINEAGE: LineageDefinition = {
       fx: 'engagement.trail',
     },
 
+    // ── T1 verb row (§24.2): a moment; the lean above decides what happens ───
     {
       id: 'hammer-t1-empowered-payoff', lineageId: 'hammer', tier: 1, row: 'payoff', lane: 'empowered',
-      name: 'Sunder', description: 'Your mechanic caves in the target’s plating.',
-      fx: 'empowered.plating-crack', trigger: 'mechanic-fired', payoff: 'plating-shred',
+      name: 'Crash Down', description: 'When the mechanic lands, the whole weight comes down behind it.',
+      fx: 'empowered.plating-crack',
     },
     {
       id: 'hammer-t1-control-payoff', lineageId: 'hammer', tier: 1, row: 'payoff', lane: 'control',
-      name: 'Hobble', description: 'Every third hit leaves the target dragging.',
-      fx: 'control.frost-drag', trigger: 'hit-nth', payoff: 'slow',
+      name: 'Pinned', description: 'Something that cannot get away is something you can hit properly.',
+      fx: 'control.frost-drag',
     },
     {
       id: 'hammer-t1-engagement-payoff', lineageId: 'hammer', tier: 1, row: 'payoff', lane: 'engagement',
-      name: 'Set Feet', description: 'Opening a fight braced turns the first exchange aside.',
-      fx: 'engagement.brace-sparks', trigger: 'first-hit', payoff: 'engagement-dr',
+      name: 'Doorbreaker', description: 'The first blow on each new body is the one that breaks the door.',
+      fx: 'engagement.brace-sparks',
     },
 
     // ── T2 band (design §4): stat (L2), payoff (L3), amplifier (L5) ──────────

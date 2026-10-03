@@ -25,6 +25,8 @@ const LINEAGE_DIR = join(__dirname, '../../shared/src/data/lineages');
 const INFRASTRUCTURE = new Set([
   'types.ts', 'packets.ts', 'keystones.ts', 'magnitudes.ts', 'resolve.ts',
   'index.ts', 'capstones.ts',
+  // Turns the magnitude table's numbers into words (design §24.2) — no card.
+  'sentences.ts',
 ]);
 
 const cardFiles = readdirSync(LINEAGE_DIR).filter(

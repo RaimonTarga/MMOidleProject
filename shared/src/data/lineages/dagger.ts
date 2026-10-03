@@ -98,20 +98,21 @@ export const DAGGER_LINEAGE: LineageDefinition = {
       fx: 'kill-chain.trail',
     },
 
+    // ── T1 verb row (§24.2): a moment; the lean above decides what happens ───
     {
       id: 'dagger-t1-affliction-payoff', lineageId: 'dagger', tier: 1, row: 'payoff', lane: 'affliction',
-      name: 'Envenom', description: 'Each hit leaves another dose in the wound.',
-      fx: 'affliction.venom-pips', trigger: 'hit-nth', payoff: 'poison-stack',
+      name: 'Into the Wound', description: 'The blade goes back into what is already poisoned.',
+      fx: 'affliction.venom-pips',
     },
     {
       id: 'dagger-t1-control-payoff', lineageId: 'dagger', tier: 1, row: 'payoff', lane: 'control',
-      name: 'Hamstring', description: 'Every third hit takes the legs.',
-      fx: 'control.frost-drag', trigger: 'hit-nth', payoff: 'slow',
+      name: 'Easy Prey', description: 'A target that cannot run cannot slip the second cut either.',
+      fx: 'control.frost-drag',
     },
     {
       id: 'dagger-t1-kill-chain-payoff', lineageId: 'dagger', tier: 1, row: 'payoff', lane: 'kill-chain',
-      name: 'Plaguebearer', description: 'What killed one carries to whatever stood near it.',
-      fx: 'kill-chain.spread-arc', trigger: 'kill', payoff: 'contagion',
+      name: 'Next Throat', description: 'The cut after a kill is quicker than the first.',
+      fx: 'kill-chain.spread-arc',
     },
 
     // ── T2 band (design §4): stat (L2), payoff (L3), amplifier (L5) ──────────

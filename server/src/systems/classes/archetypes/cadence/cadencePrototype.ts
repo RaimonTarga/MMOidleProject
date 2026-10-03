@@ -1,5 +1,5 @@
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
-import { registerEmpoweredMultiplier, setEmpoweredAttack, isEmpoweredAttack } from '../../../combat/engine/empoweredAttacks';
+import { registerEmpoweredMultiplier, setEmpoweredAttack, isEmpoweredAttack, isMechanicProxy } from '../../../combat/engine/empoweredAttacks';
 import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
 import type { World } from '../../../../world/World';
 import { initCadenceFrameLoop } from './frameLoop';
@@ -27,6 +27,7 @@ export function initCadenceArchetype(): void {
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
     if (!ctx.metadata['empoweredAttack']) return;
+    if (isMechanicProxy(ctx)) return; // a proxy counts as the finisher, never announces it (rule 3)
     if (!ctx.attacker.usesCadence) return;
     emitMechanicFired(world, ctx.attacker, ctx);
   });
@@ -35,7 +36,8 @@ export function initCadenceArchetype(): void {
 
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
-    if (ctx.metadata['empoweredAttack']) return;
+    // A `mechanic-proxy` hit did not spend the finisher, so it counts like any hit.
+    if (ctx.metadata['empoweredAttack'] && !isMechanicProxy(ctx)) return;
 
     const entity = ctx.attacker;
     if (!entity.usesCadence) return;

@@ -47,6 +47,8 @@ export type MechanicFiredHandler = (
 ) => void;
 
 const LATCH = 'mechanicFired';
+/** Set by `applyMechanicProxy` (`empoweredAttacks.ts`); read here without importing it. */
+const PROXY = 'mechanicProxy';
 
 const _handlers: MechanicFiredHandler[] = [];
 
@@ -65,6 +67,12 @@ export function registerMechanicFiredListener(handler: MechanicFiredHandler): vo
  * Pass the `ctx` whenever the moment rides an attack — it is both the latch that
  * keeps one exchange to one emission and the record a payoff needs to read the
  * hit it is scaling off.
+ *
+ * A PROXIED exchange never emits (design §24.2, course-correction rule 3). A
+ * `mechanic-proxy` payoff makes a hit count as the mechanic — the multiplier and
+ * `mechanicConsumed` — but announcing `mechanic-fired` from it would fire every
+ * mechanic-fired card again off a card's own payload, which is the recursion the
+ * rule forbids. Refused here, centrally, rather than trusted to every emitter.
  */
 export function emitMechanicFired(
   world: World,
@@ -73,15 +81,20 @@ export function emitMechanicFired(
 ): void {
   if (_handlers.length === 0) return;
   if (ctx) {
+    if (ctx.metadata[PROXY] === true) return;
     if (ctx.metadata[LATCH] === true) return;
     ctx.metadata[LATCH] = true;
   }
   for (const handler of _handlers) handler(world, player, ctx);
 }
 
-/** Whether this exchange has already announced a mechanic moment. */
+/**
+ * Whether this exchange has already announced a mechanic moment — or already
+ * COUNTS as one through a `mechanic-proxy` payoff. Either way the moment has
+ * happened, so Always First and Signature draw nothing on it.
+ */
 export function mechanicAlreadyFired(ctx: CombatContext): boolean {
-  return ctx.metadata[LATCH] === true;
+  return ctx.metadata[LATCH] === true || ctx.metadata[PROXY] === true;
 }
 
 /** Test/bench escape hatch — never call from game code. */

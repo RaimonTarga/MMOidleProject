@@ -34,6 +34,7 @@ import {
   hasStatusEffect,
 } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
+import { isMechanicProxy } from '../../../combat/engine/empoweredAttacks';
 import { evadeBlocksDebuffs } from '../../../defense/mitigation/evasion';
 import { attachMarker } from '../../../../ecs/markerHelpers';
 import { playerDebuffConfig } from '../../shared/applyPlayerDebuff';
@@ -132,6 +133,9 @@ export function initDotFrameLoop(): void {
   });
 
   registerCombatListener('onHit', (ctx, world) => {
+    // A `mechanic-proxy` hit (design §24.2) COUNTS AS the mechanic for what reads
+    // it downstream, but it never walks the root's own loop (rule 3).
+    if (isMechanicProxy(ctx)) return;
     if (ctx.attackerType !== 'player') return;
     if (ctx.defenderType !== 'monster') return;
     const player = ctx.attacker;
