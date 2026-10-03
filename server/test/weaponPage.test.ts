@@ -76,13 +76,21 @@ const find = (band: PageBand, id: string): PageCardModel => {
   assert.equal(envenomed.reason, 'Not enough Venom Shards. Shards drop where the map says.');
   assert.equal(envenomed.chips.find((c) => c.kind === 'shard')?.short, true);
 
-  // The verb row: Forest 4 is met, Global Mastery 18 is the binding gate.
+  // The verb row (design §24.9): Forest 4 with the Plains behind it holds the
+  // row's Global Mastery 10, so the verb is buyable at Forest 4 — this wallet is
+  // only short on its Spark Shards.
   const lunge = find(lit, 'rapier-t1-engagement-payoff');
-  assert.equal(lunge.state, 'gated');
-  assert.deepEqual(lunge.requirement, { text: 'Global Mastery 18', met: false });
-  assert.match(lunge.reason ?? '', /Global Mastery 18/);
+  assert.equal(lunge.state, 'short');
+  assert.deepEqual(lunge.requirement, { text: 'Forest 4', met: true });
+  assert.equal(lunge.reason, 'Not enough Spark Shards. Shards drop where the map says.');
   // No lean: a verb reads its own pure sentence (design §24.2: a verb alone never does nothing).
   assert.equal(lunge.sentence, pureSentenceText('engagement'));
+  // Below the row's Global Mastery the gate binds, and the page names it.
+  const [early] = pageBands({ lineage: rapier, progress: tree(), wallet: wallet({ globalMastery: 9 }) });
+  const gated = find(early, 'rapier-t1-engagement-payoff');
+  assert.equal(gated.state, 'gated');
+  assert.deepEqual(gated.requirement, { text: 'Global Mastery 10', met: false });
+  assert.match(gated.reason ?? '', /Global Mastery 10/);
 }
 
 // ── A lean bought: verbs compose with it; the preview swaps it, display only ──
@@ -125,11 +133,56 @@ const find = (band: PageBand, id: string): PageCardModel => {
   };
   const verb = pageCard({ lineage: hammer, card: card(hammer, 'hammer-t1-control-payoff'), progress, wallet: wallet() });
   assert.equal(verb.needsSlow, true);
+  assert.equal(verb.note, 'needs a slow');
   assert.equal(verb.state, 'active');
   assert.match(verb.accessibleName, /Needs a slow\./);
   assert.equal(verb.sentence, verbSentence('control', 'empowered'));
   const other = pageCard({ lineage: hammer, card: card(hammer, 'hammer-t1-engagement-payoff'), progress, wallet: wallet() });
   assert.equal(other.needsSlow, false);
+
+  // With the Control lean active the lean IS the hold source (design §24.9).
+  const seeded: LineageProgress = {
+    ...progress,
+    ownedCards: [...progress.ownedCards, 'hammer-t1-control-stat'],
+    active: { stat: 'hammer-t1-control-stat', payoff: 'hammer-t1-control-payoff' },
+  };
+  const pinned = pageCard({ lineage: hammer, card: card(hammer, 'hammer-t1-control-payoff'), progress: seeded, wallet: wallet() });
+  assert.equal(pinned.needsSlow, false);
+  assert.equal(pinned.note, undefined);
+  assert.doesNotMatch(pinned.accessibleName, /Needs a slow/);
+  // And the lean's own line names its stat (it read "+3 Attack." like Engagement's).
+  const lean = pageCard({ lineage: hammer, card: card(hammer, 'hammer-t1-control-stat'), progress: seeded, wallet: wallet() });
+  assert.equal(lean.sentence, 'Every hit slows its target by 15% until your next swing.');
+}
+
+// ── The other verb caveats (design §24.9) ────────────────────────────────────
+{
+  const broadsword = LINEAGE_DATABASE.get('broadsword')!;
+  const bTree = (over: Partial<LineageProgress> = {}): LineageProgress => ({
+    ownedCards: [], active: {}, ownedForms: ['iron-broadsword'], wornForm: 'iron-broadsword', ...over,
+  });
+  const crown = card(broadsword, 'broadsword-t1-empowered-payoff');
+  // The Slinger's mechanic is a reload, which has no hit: a payload that acts on
+  // the hit (the pure pair's bigger mechanic hit) says so. Shown, not patched.
+  const slinger = pageCard({ lineage: broadsword, card: crown, progress: bTree(), wallet: wallet(), archetype: 'reload' });
+  assert.equal(slinger.note, 'your mechanic has no hit yet');
+  assert.match(slinger.accessibleName, /Your mechanic has no hit yet\./);
+  assert.equal(pageCard({ lineage: broadsword, card: crown, progress: bTree(), wallet: wallet(), archetype: 'cadence' }).note, undefined,
+    'every other root\'s mechanic rides a hit');
+  // A payload that does not need the hit (a refund) lands from a reload: no caveat.
+  const refunding = bTree({ ownedCards: ['broadsword-t1-technique-stat'], active: { stat: 'broadsword-t1-technique-stat' } });
+  assert.equal(pageCard({ lineage: broadsword, card: crown, progress: refunding, wallet: wallet(), archetype: 'reload' }).note, undefined);
+
+  // Kill chain's moment is weak on bosses, whatever the lean; its lean is not a moment.
+  const chain = pageCard({ lineage: broadsword, card: card(broadsword, 'broadsword-t1-kill-chain-payoff'), progress: bTree(), wallet: wallet() });
+  assert.equal(chain.note, 'weak on bosses');
+  assert.equal(chain.sentence, 'Your next hit after a kill heals a tenth of your pool and lands loaded (+50%).');
+  assert.equal(pageCard({ lineage: broadsword, card: card(broadsword, 'broadsword-t1-kill-chain-stat'), progress: bTree(), wallet: wallet() }).note,
+    undefined);
+
+  // The page threads the class through every band's cards.
+  const [lit] = pageBands({ lineage: broadsword, progress: bTree(), wallet: wallet(), archetype: 'reload' });
+  assert.equal(find(lit, 'broadsword-t1-empowered-payoff').note, 'your mechanic has no hit yet');
 }
 
 // ── One sentence per card, never the authored description (rule 5) ──────────
@@ -146,7 +199,7 @@ for (const lineage of LINEAGE_DATABASE.values()) {
   }
 }
 
-// ── The T2 band: legacy rows read from their resolved numbers ────────────────
+// ── The T2 band composes too (design §24.9): Lean / Verb / Amplifier ─────────
 {
   const progress = tree({
     ownedCards: ['rapier-t1-tempo-stat', 'rapier-t1-tempo-payoff'],
@@ -162,10 +215,32 @@ for (const lineage of LINEAGE_DATABASE.values()) {
   // The collapsed band's verb stays a wardrobe: owned and active.
   assert.equal(find(collapsed, 'rapier-t1-tempo-payoff').state, 'active');
   assert.deepEqual(lit.rows.map((r) => r.row), ['stat', 'payoff', 'amplifier']);
-  assert.match(find(lit, 'rapier-t2-tempo-payoff').sentence, /^Every 3rd hit lands again at [\d.]+% strength\.$/);
+  // The rows compose, so they read Lean and Verb at T2 as at T1.
+  assert.deepEqual(lit.rows.map((r) => r.title), ['Tier 2 · Lean', 'Tier 2 · Verb', 'Tier 2 · Amplifier']);
+  // A T2 verb reads the generated composed sentence with the T2 numbers — here
+  // with the lean carried up through the gate (Quick Wrist, absorbed: Tempo).
+  assert.equal(find(lit, 'rapier-t2-tempo-payoff').sentence, verbSentence('tempo', 'tempo', 2));
+  assert.equal(find(lit, 'rapier-t2-tempo-payoff').sentence, 'Every 6th hit strikes again at 115% strength.');
+  assert.equal(find(lit, 'rapier-t2-engagement-payoff').sentence, verbSentence('engagement', 'tempo', 2));
+  // The amplifier says what it changes on the pair the player has right now.
   assert.equal(find(lit, 'rapier-t2-tempo-amplifier').sentence, 'Running Riposte also lands on a second body.');
-  assert.equal(find(lit, 'rapier-t2-engagement-amplifier').sentence, 'Opening Gambit fires on each new target, not once a fight.');
-  assert.equal(find(lit, 'rapier-t2-affliction-amplifier').sentence, 'Deep Bloodletting also fires on a kill.');
+  assert.equal(find(lit, 'rapier-t2-affliction-amplifier').sentence, 'Deep Bloodletting can fire every 3.1 s (was every 5 s).');
+  // An axis the pair does not have: it says so, and what it does instead.
+  assert.equal(
+    find(lit, 'rapier-t2-engagement-amplifier').sentence,
+    'Its moment cannot come round sooner, so Opening Gambit lands bigger: 184% of the hit (was 115% of the hit).',
+  );
+  // With a lean whose payload lands on no body, the 'targets' amplifier grows the lunge.
+  const lunge = tree({ ...progress, ownedCards: [...progress.ownedCards, 'rapier-t2-engagement-stat'],
+    active: { ...progress.active, stat: 'rapier-t2-engagement-stat' } });
+  const [collapsedLunge, litLunge] = pageBands({ lineage: rapier, progress: lunge, wallet: wallet({ biomeLevels: { forest: 9 } }) });
+  assert.equal(find(litLunge!, 'rapier-t2-tempo-payoff').sentence, 'Every 6th hit is a lunge for 2.15× damage.');
+  assert.equal(
+    find(litLunge!, 'rapier-t2-tempo-amplifier').sentence,
+    'Its payload lands on no body, so Running Riposte lands bigger: ×2.84 (was ×2.15).',
+  );
+  // The collapsed band's verb, reslotted under the T2 form, reads its OWN tier's numbers.
+  assert.equal(find(collapsedLunge!, 'rapier-t1-tempo-payoff').sentence, 'Every 6th hit is a lunge for double damage.');
   // An absorbed stat card cannot be swapped back in, so a buy does not chase it.
   assert.equal(activateAfterBuy(rapier, progress, card(rapier, 'rapier-t1-engagement-stat')), false);
   assert.equal(activateAfterBuy(rapier, progress, card(rapier, 'rapier-t2-engagement-stat')), true);

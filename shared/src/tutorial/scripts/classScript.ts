@@ -30,7 +30,6 @@ import type {
 import {
   T1_BIOME_ORDER,
   TUTORIAL_SEALS,
-  TUTORIAL_WEAPON_LINEAGE,
   type PlanItem,
   type T1Biome,
   type TutorialClassPlan,
@@ -95,6 +94,18 @@ const SEAL_SECOND: Record<T1Biome, string> = {
   cave: 'One seal down. The Cave boss winds up big hits, and Step Back is already on your Runes for them.',
 };
 
+/**
+ * The gate chapter's boss, when its loadout differs from the last seal's: the one
+ * reason it differs, appended to the capstone line.
+ */
+const GATE_LOADOUT_REASON: Record<T1Biome, string> = {
+  plains: 'Sweep is back for its guards.',
+  forest: 'Expose Weakness is back.',
+  swamp: 'Cleanse is back: it poisons.',
+  mountain: 'Second Wind is back.',
+  cave: 'Second Wind is back.',
+};
+
 /** First beat of each biome: why we are going there. */
 const BIOME_INTRO: Record<T1Biome, string> = {
   plains: 'On to the Plains, next door to the Clearing and still forgiving.',
@@ -157,6 +168,8 @@ interface LegIntro {
 const ITEM_REASON: Record<string, string> = {
   'iron-broadsword': 'A real weapon at last: the Iron Broadsword.',
   'flash-rapier': 'The Flash Rapier swings far faster than the broadsword. Switch to it.',
+  'chaotic-axe': 'The Chaotic Axe hits hardest of anything here but whiffs now and then. It is the weapon you take to the bosses, so switch to it now.',
+  'ashbrand-blade': 'The Poison Dagger poisons what it hits. It is the weapon you take to the bosses, so switch to it now.',
   'mountain-vest-t1': 'The Mountain armor is the sturdiest yet.',
   'forest-vest-t1': 'The Forest armor makes you harder to hit, which suits fighting from range.',
   'swamp-vest-t1': 'The Swamp armor resists poison and damage over time.',
@@ -164,15 +177,13 @@ const ITEM_REASON: Record<string, string> = {
   'plains-boots-t1': 'These boots speed you up after every kill.',
 };
 
-const CRAFT_REASON: Record<string, string> = {
-  'chaotic-axe': 'The Chaotic Axe hits hardest of anything here but whiffs now and then. Worth it.',
-  'ashbrand-blade': 'The Poison Dagger poisons what it hits. It becomes your main weapon.',
-};
-
-const EQUIP_REASON: Record<string, string> = {
-  'chaotic-axe': 'The axe is ready. Switch to it.',
-  'ashbrand-blade': 'The Poison Dagger is ready. Switch to it.',
-};
+/**
+ * Lines for a `craft` (made now, worn later) or a single-item `equip` whose
+ * reason is not obvious. None today: since design §24.9 the boss weapons are
+ * worn the moment they are made (`ITEM_REASON`).
+ */
+const CRAFT_REASON: Record<string, string> = {};
+const EQUIP_REASON: Record<string, string> = {};
 
 const LEARN_REASON: Record<string, string> = {
   sweep: 'Learn Sweep: every so often your swing cleaves everything around you.',
@@ -182,25 +193,37 @@ const LEARN_REASON: Record<string, string> = {
 };
 
 /**
- * The weapon page the guide teaches (design §24.2, §24.6).
+ * The weapon page the guide teaches (design §24.2, §24.6, §24.9).
  *
- * The Rapier is the Forest's lineage AND the weapon every class plan crafts
- * there, so the lessons land where the weapon is earned and while it is worn
- * (a lineage pays only while its own form is: design §23):
+ * The page is the one of the weapon the class FIGHTS with — the Chaotic Axe for
+ * five plans, the Poison Dagger for the Slinger (`TutorialClassPlan.weaponCards`)
+ * — worn from where it is crafted in its home zone, so the lessons land where the
+ * weapon is earned and the bought pair is live in every seal and gate fight (a
+ * lineage pays only while its own form is worn: design §23):
  *
- *  1. the LEAN, row 1, at its Forest level — a stat, and the payload it names;
- *  2. the VERB, row 2, as soon as its gates open — a moment, and the lesson is
- *     the sentence the lean just rewrote ("look at what your verb says now")
- *     plus the ring on the rhythm readout that counts toward it;
- *  3. after the seals, the gate that turns the item into its tier-2 form.
- *
- * WHICH lean and verb is per class (`TutorialClassPlan.weaponCards`).
+ *  1. the LEAN, row 1, at its home zone's level — a stat, and the payload it names;
+ *  2. the VERB, row 2, as soon as its gates open — a moment, and the lesson is the
+ *     sentence the pair now reads plus the ring on the rhythm readout that counts
+ *     toward it;
+ *  3. after the seals, the gate that turns the same weapon into its tier-2 form,
+ *     paid with its home boss's capstones.
  */
-const TUTORIAL_TREE = {
-  lineageId: TUTORIAL_WEAPON_LINEAGE,
-  /** The tier-2 form behind the T1 gate. */
-  gateFormId: 'gale-needle',
-} as const;
+function tutorialLineage(plan: TutorialClassPlan): LineageDefinition {
+  const lineage = LINEAGE_DATABASE.get(plan.weaponCards.lineageId);
+  if (!lineage) throw new Error(`${plan.className}: unknown lineage ${plan.weaponCards.lineageId}`);
+  return lineage;
+}
+
+/**
+ * The tier-2 form behind the T1 gate: the one in the lineage's home biome, whose
+ * capstone the home zone's T1 boss drops (the Axe's Ruinous Axe and the Cave boss,
+ * the Dagger's Mirebrand and the Swamp boss).
+ */
+function tutorialGateForm(lineage: LineageDefinition): LineageDefinition['forms'][number] {
+  const form = lineage.forms.find((f) => f.tier === 2 && f.biome === lineage.homeBiome);
+  if (!form) throw new Error(`${lineage.id}: no tier-2 form in its home biome ${lineage.homeBiome}`);
+  return form;
+}
 
 const COUNT_WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'];
 
@@ -520,8 +543,7 @@ class ScriptBuilder {
     resolved: ResolvedLineageCard;
     territory: string;
   } {
-    const lineage = LINEAGE_DATABASE.get(TUTORIAL_TREE.lineageId);
-    if (!lineage) throw new Error(`unknown lineage ${TUTORIAL_TREE.lineageId}`);
+    const lineage = tutorialLineage(this.plan);
     const card = lineage.cards.find((c) => c.id === cardId);
     if (!card) throw new Error(`${this.plan.className}: unknown ${lineage.id} card ${cardId}`);
     const resolved = resolveLineageCard(card, lineage);
@@ -594,12 +616,12 @@ class ScriptBuilder {
     }, teaches.buy));
   }
 
-  /** Row 1, the lean: at its own Forest level, with the Rapier in hand. */
+  /** Row 1, the lean: at its own level of the weapon's home zone, with the weapon in hand. */
   leanLesson(chapter: string): void {
     const { lineage, card, resolved } = this.weaponCard(this.plan.weaponCards.lean);
     if (card.row !== 'stat' || card.tier !== 1) throw new Error(`${this.plan.className}: ${card.id} is not a tier-1 lean`);
     const weapon = name(lineage.forms[0].recipeId);
-    const stat = statLine(resolved.statEffects)?.replace(/\.$/, '');
+    const stat = statLine(resolved.statEffects, 'short')?.replace(/\.$/, '');
     if (!stat) throw new Error(`${this.plan.className}: ${card.id} resolves to no stat`);
     this.cardBeats(chapter, card.id, {
       farm: (shard, territory) => `The ${weapon} has a page of its own, and its first card is paid in ${shard}s. Every kill in ${territory} territory pays them; the map names each node's territory.`,
@@ -608,28 +630,38 @@ class ScriptBuilder {
   }
 
   /**
-   * Row 2, the verb: the first moment both its gates are open, with the Rapier
-   * still in hand. The lesson is the sentence the lean just wrote, then the ring
-   * that counts toward it (design §24.2, §24.6).
+   * Row 2, the verb: the first moment both its gates are open, with the weapon
+   * still in hand. The lesson is the sentence the pair now reads — generated from
+   * the two halves (`verbSentence`, the same call the page's `cardSentence` makes),
+   * never typed here — then the ring that counts toward it (design §24.2, §24.6).
+   *
+   * `opened` is what opened row two, for the farm line: the zone level when the
+   * verb lands inside its home leg ("Cave 4"), else the mastered-zone count whose
+   * Global Mastery it waited for ("Three zones mastered").
    */
-  verbLesson(chapter: string, masteredZones: number): void {
+  verbLesson(chapter: string, opened: string): void {
     const lean = this.weaponCard(this.plan.weaponCards.lean).card;
     const { lineage, card } = this.weaponCard(this.plan.weaponCards.verb);
     if (!isVerbCard(card) || card.tier !== 1) throw new Error(`${this.plan.className}: ${card.id} is not a tier-1 verb`);
-    const composed = verbSentence(card.lane, lean.lane);
-    if (!composed) throw new Error(`${this.plan.className}: ${card.id} has no sentence with ${lean.id}`);
+    const sentence = verbSentence(card.lane, lean.lane);
+    if (!sentence) throw new Error(`${this.plan.className}: ${card.id} has no sentence with ${lean.id}`);
     const weapon = name(lineage.forms[0].recipeId);
-    const zones = COUNT_WORDS[masteredZones] ?? String(masteredZones);
     const home = BIOME_NAME[lineage.homeBiome as T1Biome] ?? lineage.homeBiome;
+    // A lean of the verb's own lane reads that lane's pure sentence (design §24.2):
+    // the lean did not rewrite the verb, it is the same colour, so the lesson says
+    // so rather than claiming the lean "chose" it.
+    const why = lean.lane === card.lane
+      ? `${lean.name} is the same colour, so this is that colour's own move.`
+      : `Your lean, ${lean.name}, chose that.`;
     this.cardBeats(chapter, card.id, {
-      farm: (shard, territory) => `${zones} zones mastered opens row two of the ${weapon}'s page: the verb, what the weapon does. ${card.name} costs ${shard}s from ${home}'s ${territory} territory.`,
+      farm: (shard, territory) => `${opened} opens row two of the ${weapon}'s page: the verb, what the weapon does. ${card.name} costs ${shard}s from ${home}'s ${territory} territory.`,
       buy: `Buy ${card.name}. A verb is a moment in the fight, and your lean decides what happens at that moment.`,
-      // The verb's idea rides on the BUY line: max-ing the Forest often pays for
-      // the verb already, and then its farm beat is skipped and never shown.
+      // The verb's idea rides on the BUY line: the leg's kills often pay for the
+      // verb already, and then its farm beat is skipped and never shown.
     }, { farm: [], buy: ['verb', 'rhythm-ring'] }, {
       lineageId: lineage.id,
       cardId: card.id,
-      read: `Look at what ${card.name} says now: “${composed}” Your lean, ${lean.name}, chose that.`,
+      read: `Look at what ${card.name} says now: “${sentence}” ${why}`,
       ring: `In a fight, ${card.name}'s ring by your health bar ${ringPhrase(card)}.`,
     });
   }
@@ -643,10 +675,8 @@ class ScriptBuilder {
    */
   gate(): void {
     const chapter = 'The Gate';
-    const lineage = LINEAGE_DATABASE.get(TUTORIAL_TREE.lineageId);
-    if (!lineage) throw new Error(`unknown lineage ${TUTORIAL_TREE.lineageId}`);
-    const form = lineage.forms.find((f) => f.recipeId === TUTORIAL_TREE.gateFormId);
-    if (!form) throw new Error(`unknown lineage form ${TUTORIAL_TREE.gateFormId}`);
+    const lineage = tutorialLineage(this.plan);
+    const form = tutorialGateForm(lineage);
     const cost = lineageGateCost(form, lineage);
     const owned: TutorialCondition = { type: 'lineageFormOwned', lineageId: lineage.id, recipeId: form.recipeId };
     const zone = ZONE_WORD[form.biome] ?? form.biome;
@@ -671,22 +701,34 @@ class ScriptBuilder {
         until: { type: 'anyOf', of: [owned, { type: 'allOf', of: lineageCostConditions(cost) }] },
       }],
     });
+    // The gate's boss is fought in its own row of the boss matrix, like a seal: the
+    // boss kit (which wears this very weapon) and that boss's armour, Technique and
+    // Guard. When it matches the last seal's loadout, nothing changes and the line
+    // has nothing to add.
+    const loadout = this.plan.bosses[form.biome as T1Biome];
+    if (!loadout) throw new Error(`${this.plan.className}: no boss loadout for the ${form.biome} gate`);
+    const lastSeal = this.plan.bosses[TUTORIAL_SEALS[TUTORIAL_SEALS.length - 1]];
+    const swap = loadout.armor !== lastSeal.armor || loadout.technique !== lastSeal.technique || loadout.guard !== lastSeal.guard;
     this.push({
       id: `capstone:${form.recipeId}`,
       chapter,
-      say: `Tier 1 is done, and this part is optional: the ${name(form.recipeId)}'s gate also wants ${cost.capstone.amount} ${capstone} drops, and only the ${zone} boss has them.`,
+      say: `Tier 1 is done, and this part is optional: the ${name(form.recipeId)}'s gate also wants ${cost.capstone.amount} ${capstone} drops, and only the ${zone} boss has them.${swap && GATE_LOADOUT_REASON[form.biome as T1Biome] ? ` ${GATE_LOADOUT_REASON[form.biome as T1Biome]}` : ''}`,
       waiting: `Fighting the ${zone} boss for ${capstone} drops.`,
       progress: [{ type: 'capstone', biome: form.biome, amount: cost.capstone.amount }],
       teaches: ['capstone'],
-      steps: [{
-        type: 'attemptBoss',
-        biomeGroup: form.biome,
-        tier: form.tier - 1,
-        until: {
-          type: 'anyOf',
-          of: [owned, { type: 'capstoneAtLeast', biome: form.biome, amount: cost.capstone.amount }],
+      steps: [
+        { type: 'equip', definitionIds: [...this.plan.bossKit, loadout.armor] },
+        { type: 'setAbilities', techniques: [loadout.technique], guards: [loadout.guard] },
+        {
+          type: 'attemptBoss',
+          biomeGroup: form.biome,
+          tier: form.tier - 1,
+          until: {
+            type: 'anyOf',
+            of: [owned, { type: 'capstoneAtLeast', biome: form.biome, amount: cost.capstone.amount }],
+          },
         },
-      }],
+      ],
     });
     this.push({
       id: `gate:${form.recipeId}`,
@@ -694,9 +736,9 @@ class ScriptBuilder {
       say: `Pay the gate and wear it: the ${name(form.recipeId)}, and a whole new band of cards above the one you have.`,
       teaches: ['gate'],
       steps: [
-        // Every melee plan swapped to the seal weapon for the bosses, and the
-        // director opens the page BY SLOT, so without this the guide pointed at
-        // the Axe's page while talking about the Rapier's gate (review P9).
+        // The director opens the page BY SLOT, so the gate is paid with the form
+        // it gates in the slot (review P9). Since design §24.9 that is the boss
+        // weapon already worn, so this is a no-op unless the player swapped.
         { type: 'equip', definitionIds: [lineage.forms.find((f) => f.tier === form.tier - 1)?.recipeId ?? form.recipeId] },
         { type: 'unlockForm', lineageId: lineage.id, recipeId: form.recipeId },
         { type: 'wearForm', lineageId: lineage.id, recipeId: form.recipeId },
@@ -738,7 +780,7 @@ class ScriptBuilder {
       'opening',
       ['runes'],
     );
-    const home = this.weaponCard(this.plan.weaponCards.lean).lineage.homeBiome;
+    const home = tutorialLineage(this.plan).homeBiome as T1Biome;
     const lean = this.weaponCard(this.plan.weaponCards.lean).resolved;
     const verb = this.weaponCard(this.plan.weaponCards.verb).resolved;
     // Global Mastery is the sum of the T1 zones' levels, and every leg masters its
@@ -751,8 +793,8 @@ class ScriptBuilder {
       const biomePlan = this.plan.biomes[biome];
       const intro: LegIntro = { say: BIOME_INTRO[biome], teaches: [...(BIOME_INTRO_TEACHES[biome] ?? [])] };
       this.items(chapter, biome, biomePlan.before, intro);
-      // Row 1, taught where the weapon is earned: the Flash Rapier is worn by
-      // now, and holding the base form is what opens its page.
+      // Row 1, taught where the weapon is earned: the plan wears it by now (its
+      // home leg's `before`), and holding the base form is what opens its page.
       if (biome === home) {
         if (masteryOf(mastered) < lean.requiredGlobalMastery) {
           throw new Error(`${this.plan.className}: the lean needs Global Mastery ${lean.requiredGlobalMastery} before the ${biome} leg`);
@@ -773,17 +815,27 @@ class ScriptBuilder {
         this.shared(chapter, biome);
       }
       this.items(chapter, biome, biomePlan.after);
+      // Row 2 the moment both of its gates are open: its level in the home zone
+      // AND the row's Global Mastery. Design §24.9 lowered the T1 verb row's
+      // mastery so it opens with the zone level (Cave 4, Swamp 4), inside the home
+      // leg; its farm beat waits for that level, so it sits before the leg's max.
+      if (!verbTaught
+        && biome === home
+        && biomeLevelCap(1, home) >= verb.requiredBiomeLevel
+        && masteryOf(mastered) + verb.requiredBiomeLevel >= verb.requiredGlobalMastery) {
+        this.verbLesson(chapter, `${ZONE_WORD[home] ?? home} ${verb.requiredBiomeLevel}`);
+        verbTaught = true;
+      }
       this.maxOut(chapter, biome);
       mastered.push(biome);
-      // Row 2 the moment both of its gates are open: its level in the home zone
-      // AND the band's Global Mastery (design §4), which at T1 is three mastered
-      // zones — so the verb lands at the end of the Swamp leg, not at Forest 4.
-      // The Rapier is still worn there, so the lesson is live (design §23).
+      // A Global Mastery the home leg does not reach on its own waits for the
+      // first leg end where it holds (the weapon is still worn: design §23).
       if (!verbTaught
-        && mastered.includes(home as T1Biome)
+        && mastered.includes(home)
         && biomeLevelCap(1, home) >= verb.requiredBiomeLevel
         && masteryOf(mastered) >= verb.requiredGlobalMastery) {
-        this.verbLesson(chapter, mastered.length);
+        const zones = COUNT_WORDS[mastered.length] ?? String(mastered.length);
+        this.verbLesson(chapter, `${zones} zones mastered`);
         verbTaught = true;
       }
       // The bot learns it at Cave 3, but with Step Back and two abilities the

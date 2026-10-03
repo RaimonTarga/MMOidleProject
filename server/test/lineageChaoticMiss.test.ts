@@ -18,18 +18,34 @@
  *   - the counter the rhythm readout shows is the counter the server keeps
  *     (16 landed swings → 4 toward the next firing), on both.
  *
+ * And the same rule for the other three hit moments (verbs-that-fire C, the
+ * report's "latent, not fixed"): `first-hit`, `hit-afflicted` and `hit-held`
+ * neither fire on a whiff nor spend their latch or cap on it, so the first LANDED
+ * hit after the whiff is the one that pays. No T1 Axe lane carries these moments,
+ * so each is seeded onto the Axe-wielder's runtime as its T1 pure pair (the lunge,
+ * the redose, the knockdown) and swung for real; before the fix the whiff spent
+ * the latch or started the cap, and the landed swing after it paid nothing.
+ *
  * Run: node --conditions=development --import tsx test/lineageChaoticMiss.test.ts
  */
 import {
   GAME_CONFIG,
+  applyStatusEffect,
   baseRecoveryForTier,
   emptyEquipment,
   getCounter,
   getLineageRuntime,
+  setLineageRuntime,
+  tickCooldowns,
   type CombatEvent,
+  type LineageFxKey,
+  type LineagePayoff,
+  type LineageTrigger,
+  type PacketId,
+  type ResolvedLineageCard,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
-import type { PlayerEntity } from '../src/ecs/entity';
+import type { MonsterEntity, PlayerEntity } from '../src/ecs/entity';
 import { World } from '../src/world/World';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { runPlayerAttack } from '../src/systems/combat/engine/combat';
@@ -37,6 +53,8 @@ import { setAttackTarget } from '../src/systems/combat/ai/targeting';
 import { equipItem } from '../src/systems/player/economy/inventory';
 import { unlockLineageCard } from '../src/systems/player/economy/lineages';
 import { nthCounter } from '../src/systems/combat/lineageKeys';
+import { LINEAGE_BLEED_ID } from '../src/systems/combat/damage/bleedIds';
+import { applyMonsterSlow } from '../src/systems/combat/status/monsterControl';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -178,6 +196,150 @@ function checkReadout(player: PlayerEntity, label: string): void {
   );
   assert(log.firingFx.every((fx) => fx === 'empowered.mechanic-flash'), `drawn as the mechanic flash, got ${log.firingFx.join(',')}`);
   checkReadout(player, 'proxy');
+}
+
+// ── first-hit, hit-afflicted, hit-held: a whiff is not a landed hit either ───
+//
+// Each moment is seeded as its T1 pure pair onto a fresh Axe-wielder (whose 3rd
+// swing whiffs), and the swings are arranged so the 3rd lands on the body the
+// moment is waiting for. Before the fix that whiff spent the opener latch or
+// started the 5 s cap, so the 4th swing — the first LANDED hit — paid nothing.
+
+let seededCards = 0;
+/** A T1 pure pair as the runtime sees it (cf. `lineageComposition.test.ts`). */
+function seededVerb(
+  lane: PacketId, trigger: LineageTrigger, payoff: LineagePayoff, fx: LineageFxKey, perTarget = false,
+): ResolvedLineageCard {
+  return {
+    card: {
+      id: `chaos-seeded-${++seededCards}`,
+      lineageId: 'axe', tier: 1, row: 'payoff', lane,
+      name: 'Seeded verb', description: '', fx,
+    },
+    requiredBiomeGroup: 'cave',
+    requiredBiomeLevel: 4,
+    requiredGlobalMastery: 0,
+    cost: { essence: {}, shards: {} },
+    trigger,
+    payoff,
+    payoffFx: fx,
+    ...(perTarget ? { perTargetTrigger: true } : {}),
+    composition: { verbLane: lane, pure: true },
+  };
+}
+
+function seededAxe(id: string, card: ResolvedLineageCard): PlayerEntity {
+  const player = axeWielder(id, []);
+  setLineageRuntime(player.tracksCombat, { cards: [card], capstones: [] });
+  return player;
+}
+
+let nextBodyX = 2_500;
+function body(): MonsterEntity {
+  nextBodyX += 400;
+  const target = world.createMonster(NODE, 'plains-slime', { x: nextBodyX, y: 400 });
+  assert(target, 'the target spawned');
+  target!.hasHealth.maxHp = 1_000_000;
+  target!.hasHealth.hp = 1_000_000;
+  return target!;
+}
+
+/** One real swing at `target`: did it whiff, and did `card` pay on it? */
+function swing(player: PlayerEntity, target: MonsterEntity, card: ResolvedLineageCard): { whiff: boolean; fired: boolean } {
+  player.hasPosition.current = { x: target.hasPosition.current.x - 30, y: 400 };
+  setAttackTarget(world, player, target.isMonster.id);
+  world.takeNodeEvents(NODE);
+  runPlayerAttack(world, player, target, Date.now(), {
+    attackOrigin: { ...player.hasPosition.current },
+    aggroSource: { id: player.isPlayer.id, kind: 'player' },
+  });
+  const events: CombatEvent[] = world.takeNodeEvents(NODE);
+  return {
+    whiff: events.some((e) => e.kind === 'player-miss' && e.playerId === player.isPlayer.id),
+    fired: events.some((e) => e.kind === 'card-fx' && e.cardId === card.card.id),
+  };
+}
+
+// first-hit, per BODY (the Engagement verb's latch): the whiff on a new body is
+// not its opening; the first landed hit is.
+{
+  const card = seededVerb('engagement', { kind: 'first-hit' }, { kind: 'big-hit', magnitude: 2 }, 'engagement.lunge', true);
+  const player = seededAxe('chaos-first-body', card);
+  const a = body();
+  const b = body();
+  const s1 = swing(player, a, card);
+  const s2 = swing(player, a, card);
+  assert(!s1.whiff && s1.fired, 'swing 1 lands on A: its opening lunge');
+  assert(!s2.whiff && !s2.fired, 'swing 2 on A is not an opening');
+  const s3 = swing(player, b, card);
+  assert(s3.whiff, 'fixture: swing 3 whiffs');
+  assert(!s3.fired, 'first-hit: a whiff on a new body does not fire');
+  const s4 = swing(player, b, card);
+  assert(
+    !s4.whiff && s4.fired,
+    'first-hit: the first LANDED hit on B is its opening — the whiff did not spend the per-body latch',
+  );
+}
+
+// first-hit, per ENGAGEMENT: a whiff after a lull does not open the new pull.
+{
+  const card = seededVerb('engagement', { kind: 'first-hit' }, { kind: 'big-hit', magnitude: 2 }, 'engagement.lunge');
+  const player = seededAxe('chaos-first-engagement', card);
+  const target = body();
+  assert(swing(player, target, card).fired, 'swing 1 opens the engagement');
+  assert(!swing(player, target, card).fired, 'swing 2 is mid-engagement');
+  tickCooldowns(player.tracksCombat, 60_000); // a lull: the engagement lapses
+  const s3 = swing(player, target, card);
+  assert(s3.whiff && !s3.fired, 'first-hit: a whiff after a lull does not open the next pull');
+  const s4 = swing(player, target, card);
+  assert(
+    !s4.whiff && s4.fired,
+    'first-hit: the first LANDED hit opens it — the whiff neither re-armed the clock nor spent the latch',
+  );
+}
+
+// hit-afflicted (the Affliction pure pair: redose, capped 5 s).
+{
+  const card = seededVerb(
+    'affliction', { kind: 'hit-afflicted', capMs: 5_000 },
+    { kind: 'redose', magnitude: 1, durationMs: 4_000 }, 'affliction.double-dose',
+  );
+  const player = seededAxe('chaos-afflicted', card);
+  const clean = body();
+  const afflicted = body();
+  const bleed = applyStatusEffect(afflicted.tracksCombat, {
+    id: LINEAGE_BLEED_ID, sourceId: player.isPlayer.id, remainingMs: -1,
+    data: { damagePerTick: 10, nextTickIn: 1_000, tickIntervalMs: 1_000, bleedMode: 0 },
+  });
+  bleed.stacks = 100;
+  assert(!swing(player, clean, card).fired, 'swing 1 on a clean body is not on an afflicted target');
+  assert(!swing(player, clean, card).fired, 'nor is swing 2');
+  const s3 = swing(player, afflicted, card);
+  assert(s3.whiff, 'fixture: swing 3 whiffs');
+  assert(!s3.fired, 'hit-afflicted: a whiff on an afflicted target does not fire');
+  const s4 = swing(player, afflicted, card);
+  assert(!s4.whiff && s4.fired, 'hit-afflicted: the next LANDED hit fires — the whiff did not start the cap');
+  assert(!swing(player, afflicted, card).fired, 'and the cap runs from the landed hit');
+}
+
+// hit-held (the Control pure pair: the knockdown, capped 5 s).
+{
+  const card = seededVerb(
+    'control', { kind: 'hit-held', capMs: 5_000 },
+    { kind: 'stun', magnitude: 1, durationMs: 1_500 }, 'control.knockdown',
+  );
+  const player = seededAxe('chaos-held', card);
+  const free = body();
+  const held = body();
+  applyMonsterSlow(world, held, 0.2, 60_000, 'someone-else');
+  assert(!swing(player, free, card).fired, 'swing 1 on a free body is not on a held target');
+  assert(!swing(player, free, card).fired, 'nor is swing 2');
+  const s3 = swing(player, held, card);
+  assert(s3.whiff, 'fixture: swing 3 whiffs');
+  assert(!s3.fired, 'hit-held: a whiff on a held target does not fire');
+  const s4 = swing(player, held, card);
+  assert(!s4.whiff && s4.fired, 'hit-held: the next LANDED hit fires — the whiff did not start the cap');
+  assert(!swing(player, held, card).fired, 'and the cap runs from the landed hit');
 }
 
 console.log('lineageChaoticMiss: ok');

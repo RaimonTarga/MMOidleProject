@@ -33,10 +33,12 @@
  */
 import {
   BIOME_FINAL_TIER_BY_GROUP, BIOME_LEVELS_PER_TIER, BIOME_START_TIER_BY_GROUP,
-  biomeLevelCap,
+  biomeLevelCap, maxGlobalMasteryAtTier,
 } from '../../config/gameConfig';
 import { liveLineages } from './index';
-import { MAX_LINEAGE_TIER, rowsForTier } from './magnitudes';
+import {
+  MAX_LINEAGE_TIER, lineageMasteryLevelForGate, lineageMasteryLevelForRow, rowsForTier,
+} from './magnitudes';
 import { bandBiomeFloor, bandBiomeLevel, formGateBiomeLevel } from './resolve';
 
 const problems: string[] = [];
@@ -158,6 +160,38 @@ for (const lineage of liveLineages()) {
       + '— the T1 band would gate somewhere the lineage does not debut',
     );
   }
+}
+
+// ─── 4. Global Mastery never outruns the band ───────────────────────────────
+//
+// Global Mastery is tier-wide (design §4), so the door never moves it, but a
+// hand-set row (`ROW_GLOBAL_MASTERY`) moves it off the ladder. Within a tier a
+// later row never asks for less than an earlier one, no row asks for more than
+// the tier's gate or for mastery the tier below already holds.
+//
+// Design §24.9: the T1 verb lands at the home biome's verb level with ONE zone
+// mastered before it (the Rapier player's Forest 4, with the Plains behind them).
+
+for (let tier = 1; tier <= MAX_LINEAGE_TIER; tier++) {
+  const gate = lineageMasteryLevelForGate(tier);
+  check(gate <= maxGlobalMasteryAtTier(tier), `T${tier}: the gate asks Global Mastery ${gate}, beyond the tier's ${maxGlobalMasteryAtTier(tier)}`);
+  let previous = 0;
+  for (const row of rowsForTier(tier)) {
+    const gm = lineageMasteryLevelForRow(tier, row);
+    check(gm >= previous, `T${tier} ${row}: Global Mastery ${gm} is below the row before it (${previous})`);
+    check(gm <= gate, `T${tier} ${row}: Global Mastery ${gm} is above the tier's gate (${gate})`);
+    check(gm > maxGlobalMasteryAtTier(tier - 1), `T${tier} ${row}: Global Mastery ${gm} is already held at T${tier - 1}`);
+    previous = gm;
+  }
+}
+for (const lineage of liveLineages()) {
+  const verbLevel = bandBiomeLevel(1, 'payoff', lineage.homeBiome);
+  const oneZoneBehind = biomeLevelCap(1, 'plains') + verbLevel;
+  check(
+    lineageMasteryLevelForRow(1, 'payoff') <= oneZoneBehind,
+    `${lineage.id}: the T1 verb needs Global Mastery ${lineageMasteryLevelForRow(1, 'payoff')}, `
+    + `more than a ${lineage.homeBiome} ${verbLevel} player with one zone mastered holds (${oneZoneBehind}) — design §24.9`,
+  );
 }
 
 assert(

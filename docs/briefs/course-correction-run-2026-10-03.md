@@ -1,5 +1,10 @@
 # Course-correction run — brief (2026-10-03)
 
+**Status:** DONE — implemented and merged to develop (`2bb1a8af`, 2026-10-03). Report:
+[course-correction-report-2026-10-03.md](course-correction-report-2026-10-03.md); its open
+calls are taken up by [verbs-that-fire-run-2026-10-03.md](verbs-that-fire-run-2026-10-03.md).
+This brief is now evidence of what the run was asked to do.
+
 Implements design §24 (design_docs/progression-rework-design.md, commits ec985a76 →
 a980296c): the lean-and-verb composition, one shard per node, families follow lanes,
 non-weapon trees parked and the ladder retired everywhere, the weapon page and the rhythm

@@ -11,13 +11,20 @@
  * Two halves are tested here, because both have to hold for a card to mean
  * anything: `composeAmplifiers` folding the amplifier into its target at resolve
  * time (pure, no World), and the combat runtime honouring what the fold produced.
+ *
+ * ON A COMPOSED PAIR (design §24.9). Every weapon band's payoff row is verbs now,
+ * so a live amplifier modifies a verb whose payload is the active LEAN's: it moves
+ * one axis of the composed pair — frequency, targets, duration, size — and an
+ * axis the pair does not have moves its size instead. Blocks 2 and 2b sweep every
+ * live amplifier against every lean; block 2c pins the legacy (non-composed) axes
+ * on a parked tree's data, which still resolves that way.
  */
 import assert from 'node:assert/strict';
 import {
-  LINEAGE_DATABASE, ROW_SCALAR, emptyEquipment, liveLineages, resolveActiveLineages,
-  resolveLineageCard,
+  LINEAGE_DATABASE, ROW_SCALAR, composedAmplifierMove, emptyEquipment, liveLineages, payloadSize,
+  payoffLandsOnTarget, resolveActiveLineages, resolveLineageCard, resolveLineageCards,
 } from '@mmo-idle/shared';
-import type { LineageCard, LineageProgress } from '@mmo-idle/shared';
+import type { LineageCard, LineageProgress, PacketId, ResolvedLineageCard } from '@mmo-idle/shared';
 
 function lineage(id: string) {
   const def = LINEAGE_DATABASE.get(id);
@@ -90,97 +97,146 @@ assert(BOOST > 0, 'the amplifier row scalar is what an amplifier is worth; it mu
   assert.equal(checked, 15, `expected 15 live amplifiers, swept ${checked}`);
 }
 
-// ── 2. Every axis moves the thing it names, and nothing else ─────────────────
+// ── 2. On a composed pair: every axis moves the thing it names, or the size ──
 {
-  // One real card per axis, so the assertions are about shipped data rather than
-  // a fixture that agrees with the implementation.
-  const cases: Array<{ lineageId: string; ampId: string; axis: string }> = [];
+  // Every live amplifier, against every lean its lineage can slot (and none): the
+  // pair with the amplifier against the same pair without it. What moved must be
+  // exactly `composedAmplifierMove`'s answer, by exactly the row scalar, and
+  // nothing else may move.
+  const tick = (ms: number) => Math.max(100, Math.round(ms / 100) * 100);
+  const seenAxes = new Set<string>();
+  const seenMoves = new Set<string>();
+  let pairs = 0;
   for (const [id, def] of LIVE) {
     for (const amp of def.cards.filter((c) => c.row === 'amplifier')) {
-      if (!cases.some((c) => c.axis === amp.amplifies)) {
-        cases.push({ lineageId: id, ampId: amp.id, axis: amp.amplifies! });
+      seenAxes.add(amp.amplifies!);
+      const target = cardOf(id, amp.modifies!);
+      for (const leanLane of [undefined, ...def.lanes] as (PacketId | undefined)[]) {
+        const lean = leanLane
+          ? def.cards.find((c) => c.tier === target.tier && c.row === 'stat' && c.lane === leanLane)
+          : undefined;
+        const withLean = lean ? [lean] : [];
+        const bare = activeCards(id, [...withLean, target]).find((c) => c.card.id === target.id)!;
+        const amped = activeCards(id, [...withLean, target, amp]).find((c) => c.card.id === target.id)!;
+        const label = `${amp.id} on ${leanLane ?? 'no lean'}×${target.lane}`;
+        assert(bare.composition && amped.composition, `${label}: the target is a composed verb`);
+        const move = composedAmplifierMove(bare.trigger!, bare.payoff!, amp.amplifies);
+        seenMoves.add(move);
+        pairs++;
+        const b = bare.payoff!;
+        const a = amped.payoff!;
+        assert.equal(a.kind, b.kind, `${label}: the payload is the lean's either way`);
+        assert.equal(amped.extraTriggers, undefined, `${label}: a composed pair never gains a second moment`);
+        assert.equal(amped.perTargetTrigger, bare.perTargetTrigger, `${label}: the latch is the verb's`);
+        switch (move) {
+          case 'frequency': {
+            assert(
+              (amped.trigger!.n !== undefined && amped.trigger!.n < bare.trigger!.n!)
+                || (amped.trigger!.capMs !== undefined && amped.trigger!.capMs < bare.trigger!.capMs!),
+              `${label}: 'frequency' must make the moment come round sooner`,
+            );
+            assert.deepEqual(a, b, `${label}: 'frequency' must not touch the payload`);
+            break;
+          }
+          case 'targets':
+            assert(payoffLandsOnTarget(b.kind), `${label}: a second body only for a payload that lands on one`);
+            assert.equal(a.extraTargets, 1, `${label}: 'targets' must add one body`);
+            assert.equal(a.magnitude, b.magnitude, `${label}: 'targets' must not touch the size`);
+            assert.deepEqual(amped.trigger, bare.trigger, `${label}: nor the moment`);
+            break;
+          case 'duration':
+            assert(b.durationMs, `${label}: 'duration' only on a payload that holds`);
+            assert.equal(a.durationMs, tick(b.durationMs! * (1 + BOOST)), `${label}: 'duration' lengthens by the row scalar`);
+            if (payloadSize(b.kind).spread) {
+              assert(a.magnitude > b.magnitude, `${label}: a bleed held longer keeps its tick rate, so its total grows`);
+            } else {
+              assert.equal(a.magnitude, b.magnitude, `${label}: 'duration' must not touch the size of a hold`);
+            }
+            assert.deepEqual(amped.trigger, bare.trigger, `${label}: nor the moment`);
+            break;
+          case 'size': {
+            const size = payloadSize(b.kind);
+            if (size.axis === 'share') {
+              const expected = Math.round(b.magnitude * (1 + BOOST) * 1000) / 1000;
+              assert.equal(a.magnitude, size.max !== undefined ? Math.min(size.max, expected) : expected, `${label}: a share grows by the row scalar`);
+            } else if (size.axis === 'bonus') {
+              assert.equal(a.magnitude, Math.round((1 + (b.magnitude - 1) * (1 + BOOST)) * 1000) / 1000, `${label}: a multiplier's bonus grows by the row scalar`);
+            } else if (size.axis === 'duration') {
+              assert.equal(a.durationMs, tick(b.durationMs! * (1 + BOOST)), `${label}: a hold grows by the row scalar`);
+            } else {
+              assert(Math.abs((a.bonusScale ?? 1) - (b.bonusScale ?? 1) * (1 + BOOST)) < 1e-3, `${label}: the proxy's bonus grows by the row scalar`);
+            }
+            assert.equal(a.extraTargets, b.extraTargets, `${label}: 'size' adds no body`);
+            assert.deepEqual(amped.trigger, bare.trigger, `${label}: nor moves the moment`);
+            break;
+          }
+        }
+        // Whatever the move, the pair is never left as it was.
+        assert.notEqual(
+          JSON.stringify({ t: amped.trigger, p: a }), JSON.stringify({ t: bare.trigger, p: b }),
+          `${label}: an amplifier never charges a price and changes nothing`,
+        );
       }
     }
   }
-  assert.equal(cases.length, 4, `all four axes should be in use, found ${cases.map(c => c.axis).join()}`);
+  assert.equal(pairs, 15 * 4, `fifteen live amplifiers × (three leans + none), swept ${pairs}`);
+  assert.deepEqual([...seenAxes].sort(), ['duration', 'magnitude', 'targets', 'trigger'], 'all four authored axes are live');
+  assert.deepEqual([...seenMoves].sort(), ['duration', 'frequency', 'size', 'targets'], 'all four pair axes are reached');
+}
 
-  for (const { lineageId, ampId, axis } of cases) {
-    const amp = cardOf(lineageId, ampId);
-    const target = cardOf(lineageId, amp.modifies!);
-    const def = lineage(lineageId);
-
-    const bare = resolveLineageCard(target, def);
-    const amped = activeCards(lineageId, [target, amp])
-      .find((c) => c.card.id === target.id);
-    assert(amped?.payoff, `${ampId}: the modified payoff should still resolve`);
-
-    if (axis === 'duration') {
-      assert(bare.payoff?.durationMs, `${target.id} needs a window for a duration amplifier`);
-      assert.equal(
-        amped!.payoff!.durationMs,
-        Math.round(bare.payoff!.durationMs! * (1 + BOOST)),
-        `${ampId}: 'duration' must lengthen the window by the amplifier row scalar`,
-      );
-      assert.equal(amped!.payoff!.magnitude, bare.payoff!.magnitude, `${ampId}: 'duration' must not touch magnitude`);
-    }
-    if (axis === 'magnitude') {
-      assert(
-        Math.abs(amped!.payoff!.magnitude - bare.payoff!.magnitude * (1 + BOOST)) < 1e-9,
-        `${ampId}: 'magnitude' must raise the payoff by the amplifier row scalar`,
-      );
-      assert.equal(amped!.payoff!.durationMs, bare.payoff!.durationMs, `${ampId}: 'magnitude' must not touch the window`);
-    }
-    if (axis === 'targets') {
-      assert.equal(amped!.payoff!.extraTargets, 1, `${ampId}: 'targets' must add one body`);
-      assert.equal(amped!.payoff!.magnitude, bare.payoff!.magnitude, `${ampId}: 'targets' must not touch magnitude`);
-    }
-    if (axis === 'trigger') {
-      assert.equal(
-        amped!.extraTriggers?.length, 1,
-        `${ampId}: 'trigger' must add exactly one further moment`,
-      );
-      assert.equal(
-        amped!.extraTriggers![0]!.kind, amp.trigger,
-        `${ampId}: the added moment is the amplifier's own trigger`,
-      );
-      assert.equal(amped!.payoff!.magnitude, bare.payoff!.magnitude, `${ampId}: 'trigger' must not touch magnitude`);
-      assert.equal(amped!.payoff!.durationMs, bare.payoff!.durationMs, `${ampId}: 'trigger' must not touch the window`);
-    }
+// ── 2b. The `trigger` axis on a composed pair is the moment's FREQUENCY ──────
+{
+  const rapier = lineage('rapier');
+  const ofLane = (row: string, lane: PacketId) =>
+    rapier.cards.find((c) => c.tier === 2 && c.row === row && c.lane === lane)!;
+  // Spreading Rot on the Affliction verb: the 5 s cap comes round faster. Its own
+  // authored trigger ('kill') is not a second moment on a pair.
+  {
+    const verb = ofLane('payoff', 'affliction');
+    const amp = ofLane('amplifier', 'affliction');
+    assert.equal(amp.amplifies, 'trigger');
+    const bare = activeCards('rapier', [verb]).find((c) => c.card.id === verb.id)!;
+    const amped = activeCards('rapier', [verb, amp]).find((c) => c.card.id === verb.id)!;
+    assert.equal(bare.trigger!.capMs, 5_000, 'fixture: the Affliction moment is capped at 5 s');
+    assert.equal(amped.trigger!.capMs, 3_100, 'frequency: a 5 s cap at +60% rate is 3.1 s (tick-rounded)');
+    assert.equal(amped.extraTriggers, undefined, 'and no kill moment is added');
+  }
+  // On the Tempo verb (a counted moment), the same axis shortens the count: the
+  // Rapier's Tempo amplifier is a 'targets' one, so this is checked on the rule.
+  {
+    const verb = ofLane('payoff', 'tempo');
+    const bare = activeCards('rapier', [verb]).find((c) => c.card.id === verb.id)!;
+    assert.equal(composedAmplifierMove(bare.trigger!, bare.payoff!, 'trigger'), 'frequency');
+  }
+  // Fresh Opening on the Engagement verb: the composed moment ALREADY latches per
+  // body, and a first hit has no count or cap — so it grows the lunge instead.
+  {
+    const verb = ofLane('payoff', 'engagement');
+    const amp = ofLane('amplifier', 'engagement');
+    const bare = activeCards('rapier', [verb]).find((c) => c.card.id === verb.id)!;
+    const amped = activeCards('rapier', [verb, amp]).find((c) => c.card.id === verb.id)!;
+    assert.equal(bare.perTargetTrigger, true, 'the Engagement moment is per body already');
+    assert.equal(composedAmplifierMove(bare.trigger!, bare.payoff!, 'trigger'), 'size');
+    assert(amped.payoff!.magnitude > bare.payoff!.magnitude, 'so the lunge lands bigger');
   }
 }
 
-// ── 2b. `trigger` naming the trigger the payoff already fires on re-scopes it ─
+// ── 2c. Legacy pairs keep the legacy axes (a parked tree's data) ─────────────
 {
-  // Rapier's Fresh Opening: "every new body the duel turns to counts as a fresh
-  // opening hit". Same trigger kind as its target, so it adds no moment — it
-  // re-scopes `first-hit`'s latch from per-engagement to per-body. Adding an extra
-  // trigger of a kind the card already fires on would instead be a no-op.
-  const sameKind: Array<{ lineageId: string; amp: LineageCard }> = [];
-  for (const [id, def] of LIVE) {
-    for (const amp of def.cards) {
-      if (amp.row !== 'amplifier' || amp.amplifies !== 'trigger') continue;
-      const target = def.cards.find((c) => c.id === amp.modifies);
-      if (target && target.trigger === amp.trigger) sameKind.push({ lineageId: id, amp });
-    }
-  }
-  assert(sameKind.length > 0, 'at least one amplifier should re-scope its own trigger');
-
-  for (const { lineageId, amp } of sameKind) {
-    assert.equal(
-      amp.trigger, 'first-hit',
-      `${amp.id}: only 'first-hit' has a per-engagement latch worth re-scoping`,
-    );
-    const target = cardOf(lineageId, amp.modifies!);
-    const amped = activeCards(lineageId, [target, amp]).find((c) => c.card.id === target.id);
-    assert.equal(
-      amped!.perTargetTrigger, true,
-      `${amp.id}: naming its own trigger must re-scope the latch to per-body`,
-    );
-    assert.equal(
-      amped!.extraTriggers, undefined,
-      `${amp.id}: it must NOT add a duplicate moment, which the runtime would ignore`,
-    );
-  }
+  // The non-weapon trees are parked, but their cards still resolve through the
+  // legacy path when resolved directly; the composed rule must not leak into a
+  // card that authors its own trigger and payoff.
+  const robe = lineage('robe');
+  const amp = robe.cards.find((c) => c.row === 'amplifier' && c.amplifies === 'trigger')!;
+  const target = cardOf('robe', amp.modifies!);
+  const t2 = robe.forms.find((f) => f.tier === 2)!;
+  const tree: LineageProgress = {
+    ownedCards: [target.id, amp.id], active: { payoff: target.id, amplifier: amp.id },
+    ownedForms: [robe.forms[0]!.recipeId, t2.recipeId], wornForm: t2.recipeId,
+  };
+  const amped = resolveLineageCards(robe, tree).find((c: ResolvedLineageCard) => c.card.id === target.id)!;
+  assert.equal(amped.composition, undefined, 'a legacy payoff does not compose');
+  assert.equal(amped.extraTriggers?.[0]?.kind, amp.trigger, "a legacy 'trigger' amplifier still adds its own moment");
 }
 
 // ── 3. An amplifier whose target is not ACTIVE contributes nothing ───────────
@@ -215,6 +271,32 @@ assert(BOOST > 0, 'the amplifier row scalar is what an amplifier is worth; it mu
   assert.equal(other!.payoff!.durationMs, bareOther.payoff!.durationMs, 'nor its window');
   assert.equal(other!.payoff!.extraTargets, undefined, 'nor its target count');
   assert.equal(other!.extraTriggers, undefined, 'nor its trigger set');
+}
+
+// ── 3b. The T1 verb stays reslottable under the collapsed band ──────────────
+{
+  // A collapsed band is a wardrobe (design §4): the T1 verb can sit in the payoff
+  // row under a T2 form. It composes with the active (T2) lean at its OWN tier's
+  // numbers, and the T2 amplifier — which modifies the T2 verb — is inert while
+  // it does, exactly like any amplifier whose target is not slotted.
+  const def = lineage('rapier');
+  const t1Verb = cardOf('rapier', 'rapier-t1-tempo-payoff');
+  const t2Verb = cardOf('rapier', 'rapier-t2-tempo-payoff');
+  const t2Lean = cardOf('rapier', 'rapier-t2-affliction-stat');
+  const amp = cardOf('rapier', 'rapier-t2-tempo-amplifier');
+  const progress = progressWith('rapier', [t2Lean, t1Verb, amp]);
+  progress.ownedCards.push(t2Verb.id);
+  const cards = resolveActiveLineages({
+    equipment: { ...emptyEquipment(), weapon: progress.wornForm },
+    lineages: { rapier: progress },
+  }).cards;
+  const verb = cards.find((c) => c.card.id === t1Verb.id);
+  assert(verb?.composition, 'the T1 verb resolves, composed');
+  assert.equal(verb!.composition!.leanLane, 'affliction', 'with the T2 lean');
+  assert.equal(verb!.payoff!.kind, 'hemorrhage', "paying the lean's payload");
+  assert.equal(verb!.payoff!.magnitude, 1, 'at the T1 size: the verb is the T1 card');
+  assert.equal(verb!.payoff!.extraTargets, undefined, 'and the T2 amplifier does not reach it');
+  assert.equal(def.cards.find((c) => c.id === amp.modifies)?.tier, 2, 'fixture: the amplifier names the T2 verb');
 }
 
 // ── 4. Folding is idempotent across repeated resolves ───────────────────────

@@ -1,4 +1,7 @@
-9. **Bench criterion, replacing §9's bands (from the 2026-10-01 day-run bench).** "±10% of the
+9. ~~**Bench criterion, replacing §9's bands (from the 2026-10-01 day-run bench).**~~
+   **SUPERSEDED by §24.1 (2026-10-03): viability floor, no lane below 0.9× its tier's
+   median.** (The ±3 pp lane budget below is retired; the ordinal encounter check lives on
+   as §18.9's second paragraph. Kept as history.) "±10% of the
    median" shrinks as lanes weaken (+3.9% to +4.7% at a +4.3% median) and "favoured lane
    wins by ~30%" was never met. New reading: **lane budget** = every packet's mean uplift
    over its lane-less control lies within **±3 percentage points** of the median uplift at
@@ -307,7 +310,9 @@ across the room.
 
 ## 9. Balance and coverage rules (locked)
 
-- **Lane budget.** At full rows for a tier, each lane's **uplift over the lineage's own
+- ~~**Lane budget.**~~ **SUPERSEDED by §24.1 (2026-10-03): viability floor, no lane below
+  0.9× its tier's median.** (Already replaced once, by §18.9's ±3 pp band; kept as
+  history.) At full rows for a tier, each lane's **uplift over the lineage's own
   lane-less control, on the lane's favoured node**, lands within ±10% of the tier median.
   Off-lane on an unfavourable variant may fall to ~70%. Amended 2026-10-01 (§18.3): the
   older form compared absolute throughput across rows measured on DIFFERENT nodes, whose
@@ -605,6 +610,10 @@ Answers to the report's open design questions. Locked unless marked otherwise.
    earned rather than credited in-harness.
 
 9. **The bench criterion is ±3 PERCENTAGE POINTS, and the encounter check is ordinal.**
+   **First paragraph SUPERSEDED by §24.1 (2026-10-03): viability floor, no lane below
+   0.9× its tier's median.** The ±3 pp band is retired (kept below as history); the
+   ordinal encounter check in the second paragraph stands.
+
    Replaces §9's "±10% of the tier median", which was unreadable twice over: it is a
    proportion OF a number that is itself small, so the band narrows as lanes weaken
    (at a +4.3% median it reads +3.9% to +4.7%, tighter than the measurement noise),

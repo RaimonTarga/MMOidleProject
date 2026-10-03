@@ -58,7 +58,9 @@ export function updateHemorrhages(world: World, dt: number): void {
         buildSimpleBreakdown(tickDmg, tickDmg),
       );
       entity.hasHealth.hp -= tickDmg;
-      pushDotTickEvent(world, entity, 'bleed', tickDmg, { sourceType: 'special' }); // bleed-red number + 🩸 glyph
+      // `sourceId` attributes the tick to its owner (a lineage lean's light bleed is
+      // the observable half of the Affliction lean, design §24.9; the bot counts it).
+      pushDotTickEvent(world, entity, 'bleed', tickDmg, { sourceType: 'special', sourceId: bleed.sourceId }); // bleed-red number + 🩸 glyph
       lastSourceId = bleed.sourceId;
       lastTickDamage = tickDmg;
     }

@@ -8,7 +8,6 @@ export { TUTORIAL_OPENING } from './opening';
 export {
   TUTORIAL_CLASS_PLANS,
   TUTORIAL_SEALS,
-  TUTORIAL_WEAPON_LINEAGE,
   T1_BIOME_ORDER,
   type TutorialClassPlan,
   type TutorialWeaponCards,

@@ -8,18 +8,21 @@
  * tutorial's own `final` Rune stage. Everything is at GM 30 and +5, which is where the
  * script's boss chapter sits (every zone mastered before the first seal).
  *
- * Two things this is deliberately NOT: it buys no lineage band (`materializeBot`, see
- * the run-4 report) and the melee plans' swap to the Chaotic Axe leaves the one card
- * the guide teaches inert. Both make this the FLOOR a real player sits on.
+ * What this is deliberately NOT: it buys no lineage band (`materializeBot`, see the
+ * run-4 report), which makes it the FLOOR a real player sits on. Since design §24.9
+ * the guide's lean and verb are on the boss kit's own weapon, so `--matrix=tutorial-pair`
+ * is the same plan with the guide's pair bought (and a no-card control).
  *
  *   tsx scripts/_t1BossPlan.ts --out=plan.json [--cand=base] [--seeds=20] [--fixed]
  *                              [--classes=striker,squire] [--bosses=crag-behemoth]
  *                              [--armor=forest-vest-t1]
  *   tsx scripts/_t1BossPlan.ts --out=plan.json --matrix=composition [--seeds=10]
  *                              [--weapons=rapier,axe] [--classes=...] [--bosses=...]
+ *                              [--tier=2] [--leans]
+ *   tsx scripts/_t1BossPlan.ts --out=plan.json --matrix=tutorial-pair [--seeds=30]
  *
  * `--matrix=composition` is the course-correction lean × verb matrix (W3-A): see the
- * block that builds it below.
+ * block that builds it below. `--tier=2` is its T2 instrument (verbs-that-fire B).
  *
  * `--armor` is a DIAGNOSTIC, not a candidate: it replaces the per-boss armour every
  * class wears, to price the tutorial's armour choice against a boss nerf. It exists
@@ -35,7 +38,7 @@
 import assert from 'node:assert/strict';
 import { writeFileSync } from 'node:fs';
 import { ITEM_DATABASE, LINEAGE_DATABASE, TUTORIAL_CLASS_PLANS, tutorialRunes, T1_BIOME_ORDER, type T1Biome } from '@mmo-idle/shared';
-import { compositionPairs, t1FormOf, weaponLineages } from '../bench/lineage/compositionPairs';
+import { bandFormOf, compositionPairs, leanOnlyPairs, weaponLineages } from '../bench/lineage/compositionPairs';
 
 const args = Object.fromEntries(process.argv.slice(2).map((s) => {
   const i = s.indexOf('=');
@@ -49,6 +52,37 @@ const BOSS_BY_BIOME: Record<T1Biome, string> = {
   mountain: 'crag-behemoth',
   cave: 'obsidian-broodmother',
 };
+
+/**
+ * The same five biomes one tier up: each T1 biome's T2 dungeon boss
+ * (`_t1BossLab.ts`'s `BOSS_NODE`). The T2 composition matrix fights these, so a
+ * T2 pair is read on the encounter set its own tier's player meets, biome for
+ * biome, against the T1 pair on the T1 set.
+ */
+const T2_BOSS_BY_BIOME: Record<T1Biome, string> = {
+  plains: 'gorging-razortusk',
+  forest: 'apex-timberclaw',
+  swamp: 'mire-gorged-behemoth',
+  mountain: 'stoneplate-juggernaut',
+  cave: 'chitinous-dreadbore',
+};
+
+/**
+ * The tier-2 counterpart of a tier-1 armour / charm / boot: the same lineage's
+ * tier-2 form in the SAME biome — the derivation the lane bench's band-2
+ * references use (`t2CounterpartItem`, `bot/src/tierEntry/profiles.ts`), so the
+ * T2 kit is the tutorial kit one tier up and nothing else.
+ */
+function t2Counterpart(recipeId: string): string {
+  for (const lineage of LINEAGE_DATABASE.values()) {
+    const t1 = lineage.forms.find((f) => f.recipeId === recipeId && f.tier === 1);
+    if (!t1) continue;
+    const t2 = lineage.forms.find((f) => f.tier === 2 && f.biome === t1.biome);
+    assert(t2, `${recipeId}: its lineage has no same-biome tier-2 form`);
+    return t2.recipeId;
+  }
+  throw new Error(`${recipeId}: belongs to no lineage, so it has no tier-2 counterpart`);
+}
 
 /**
  * Thirty seeds. The 70% floor lands on a whole fight (21/30) and the binomial spread
@@ -193,24 +227,42 @@ const rows: unknown[] = [];
  * `cmp-<lineage>-control|...`), so `_t1BossMatrix.ts` groups each pair as one
  * candidate. Rows are `compact`: the matrix is ~15k fights and the per-second HP
  * track is not what it reads. `--seeds` defaults to 10 here.
+ *
+ * `--tier=2` (verbs-that-fire B, design §24.9) is the same matrix one tier up: the
+ * lineage's band-2 form (`bandFormOf`) with its T2 lean and T2 verb (or no cards,
+ * the control), the T2 counterpart of every other kit item, a tier-2 character
+ * (the balanced frame, `tier: 2`), against each T1 biome's T2 boss. Ids are
+ * `cmpt2-<lineage>-<pair>|...`, so a T1 and a T2 reading never share a key.
  */
 if (args.matrix === 'composition') {
   const seeds = SEEDS.slice(0, Number(args.seeds ?? 10));
+  const tier = Number(args.tier ?? 1);
+  assert(tier === 1 || tier === 2, `--tier must be 1 or 2, got ${args.tier}`);
+  const bossOf = tier === 1 ? BOSS_BY_BIOME : T2_BOSS_BY_BIOME;
+  const prefix = tier === 1 ? 'cmp' : `cmpt${tier}`;
   for (const cls of TUTORIAL_CLASS_PLANS) {
     const name = cls.className.toLowerCase();
     if (onlyClasses && !onlyClasses.includes(name)) continue;
     for (const lineage of weaponLineages()) {
       if (onlyWeapons && !onlyWeapons.includes(lineage.id)) continue;
-      const form = t1FormOf(lineage);
-      for (const pair of compositionPairs(lineage)) {
+      const form = bandFormOf(lineage, tier);
+      // `--leans`: the band's three leans ALONE (no verb, no control) — the
+      // decomposition rows `t2CompositionReport.ts` reads the verb's own share from.
+      for (const pair of args.leans ? leanOnlyPairs(lineage, tier) : compositionPairs(lineage, tier)) {
         for (const biome of T1_BIOME_ORDER) {
-          const boss = BOSS_BY_BIOME[biome];
+          const boss = bossOf[biome];
           if (onlyBosses && !onlyBosses.includes(boss)) continue;
-          const kit = { ...kitFor(cls, biome), weapon: form };
+          const t1Kit = kitFor(cls, biome);
+          const kit = tier === 1
+            ? { ...t1Kit, weapon: form }
+            : {
+              ...t1Kit, weapon: form,
+              armor: t2Counterpart(t1Kit.armor), charm: t2Counterpart(t1Kit.charm), boots: t2Counterpart(t1Kit.boots),
+            };
           for (const seed of seeds) {
             rows.push({
-              id: `cmp-${lineage.id}-${pair.label}|${name}|${boss}|${seed}`,
-              boss, cls: name, seed, tier: 1, upgrade: 5, jitter: true, compact: true,
+              id: `${prefix}-${lineage.id}-${pair.label}|${name}|${boss}|${seed}`,
+              boss, cls: name, seed, tier, upgrade: tier === 1 ? 5 : 0, jitter: true, compact: true,
               ...kit,
               rules: tutorialRunes(cls.movement, 'final', cls.classRoot),
               lineage: lineage.id, lean: pair.leanCardId, verb: pair.verbCardId,
@@ -226,51 +278,49 @@ if (args.matrix === 'composition') {
 }
 
 /**
- * `--matrix=tutorial-rapier` — a DIAGNOSTIC, not the tutorial kit (course-correction
- * W3-A item 4). The tutorial (W3-B) buys a lean and a verb on the Rapier, but every
- * boss kit wears the Chaotic Axe or the Poison Dagger, and a lineage pays only while
- * its own form is worn — so in the seal and gate fights those two cards do nothing.
- * This plan is the baseline plan with ONE change, the Rapier swapped in as the
- * weapon, run twice: with the class's own tutorial lean + verb (`diag-rapier-<pair>`)
- * and with no cards (`diag-rapier-control`) — what the bought pair would do in those
- * fights if the guide kept the Rapier on.
+ * `--matrix=tutorial-pair` — the tutorial kit WITH the pair the guide buys
+ * (verbs-that-fire wave 2, design §24.9). Since the guide teaches the page of the
+ * weapon the class fights with (`weaponCards.lineageId`, the boss kit's weapon:
+ * the Chaotic Axe, the Slinger's Poison Dagger), the bought lean and verb are live
+ * in every seal and gate fight, so this is the baseline plan run twice: with the
+ * class's own lean + verb (`tut-<lean>×<verb>`) and with no cards (`tut-control`).
  *
- * The picks mirror `weaponCards` in W3-B's `TUTORIAL_CLASS_PLANS`
- * (feat/cc-tutorial, `shared/src/tutorial/scripts/plans.ts`), which this branch
- * does not have yet; read them from there once merged.
+ * It replaces the course-correction `tutorial-rapier` diagnostic, which priced the
+ * Rapier kept on through the seals (reports/course-correction/after-boss.md).
  */
-// The tutorial's own pair per class, read from the plan it teaches
-// (`TUTORIAL_CLASS_PLANS[*].weaponCards`, course-correction W3-B) rather than copied,
-// so a change of pick moves the diagnostic with it. The label is the two lanes.
-const laneOfCard = (cardId: string): string =>
-  LINEAGE_DATABASE.get('rapier')?.cards.find((c) => c.id === cardId)?.lane ?? cardId;
-if (args.matrix === 'tutorial-rapier') {
+// The tutorial's own pair per class, read from the plan it teaches rather than
+// copied, so a change of pick moves the plan with it. The label is the two lanes.
+if (args.matrix === 'tutorial-pair') {
   const seeds = SEEDS.slice(0, nSeeds);
   for (const cls of TUTORIAL_CLASS_PLANS) {
     const name = cls.className.toLowerCase();
     if (onlyClasses && !onlyClasses.includes(name)) continue;
     const cards = cls.weaponCards;
-    assert(cards, `${name}: no tutorial Rapier pair`);
+    const lineage = LINEAGE_DATABASE.get(cards.lineageId);
+    assert(lineage, `${name}: unknown tutorial lineage ${cards.lineageId}`);
+    const laneOfCard = (cardId: string): string => lineage.cards.find((c) => c.id === cardId)?.lane ?? cardId;
     const pick = { ...cards, label: `${laneOfCard(cards.lean)}×${laneOfCard(cards.verb)}` };
     for (const withCards of [true, false]) {
       for (const biome of T1_BIOME_ORDER) {
         const boss = BOSS_BY_BIOME[biome];
         if (onlyBosses && !onlyBosses.includes(boss)) continue;
-        const kit = { ...kitFor(cls, biome), weapon: 'flash-rapier' };
+        const kit = kitFor(cls, biome);
+        assert(lineage.forms.some((f) => f.recipeId === kit.weapon),
+          `${name}: the boss kit wears ${kit.weapon}, not the ${lineage.id} the guide teaches`);
         for (const seed of seeds) {
           rows.push({
-            id: `diag-rapier-${withCards ? pick.label : 'control'}|${name}|${boss}|${seed}`,
+            id: `tut-${withCards ? pick.label : 'control'}|${name}|${boss}|${seed}`,
             boss, cls: name, seed, tier: 1, upgrade: 5, jitter: true, compact: true,
             ...kit,
             rules: tutorialRunes(cls.movement, 'final', cls.classRoot),
-            lineage: 'rapier', lean: withCards ? pick.lean : null, verb: withCards ? pick.verb : null,
+            lineage: lineage.id, lean: withCards ? pick.lean : null, verb: withCards ? pick.verb : null,
           });
         }
       }
     }
   }
   writeFileSync(args.out!, JSON.stringify(rows));
-  console.log(`tutorial-rapier diagnostic: ${rows.length} rows -> ${args.out}`);
+  console.log(`tutorial-pair plan: ${rows.length} rows -> ${args.out}`);
   process.exit(0);
 }
 

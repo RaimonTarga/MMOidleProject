@@ -111,6 +111,8 @@ export const RAPIER_LINEAGE: LineageDefinition = {
     },
 
     // ── T2 band (design §13): stat (L2), payoff (L3), amplifier (L5) ─────────
+    // A lean and a verb that compose exactly like T1 (design §24.9), the verb
+    // paying its payload at T2 size; the amplifier moves one axis of that pair.
     {
       id: 'rapier-t2-tempo-stat', lineageId: 'rapier', tier: 2, row: 'stat', lane: 'tempo',
       name: 'Fencer\'s Cadence', description: 'The wrist that never stopped moving now never tires.',
@@ -130,17 +132,17 @@ export const RAPIER_LINEAGE: LineageDefinition = {
     {
       id: 'rapier-t2-tempo-payoff', lineageId: 'rapier', tier: 2, row: 'payoff', lane: 'tempo',
       name: 'Running Riposte', description: 'Every third hit still lands twice, harder than it used to.',
-      fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'echo-hit',
+      fx: 'tempo.ghost-strike',
     },
     {
       id: 'rapier-t2-affliction-payoff', lineageId: 'rapier', tier: 2, row: 'payoff', lane: 'affliction',
       name: 'Deep Bloodletting', description: 'A larger share of each hit keeps bleeding after it.',
-      fx: 'affliction.bleed-pips', trigger: 'hit-nth', payoff: 'hemorrhage',
+      fx: 'affliction.bleed-pips',
     },
     {
       id: 'rapier-t2-engagement-payoff', lineageId: 'rapier', tier: 2, row: 'payoff', lane: 'engagement',
       name: 'Opening Gambit', description: 'The opening hit of a fight opens a wider damage window.',
-      fx: 'engagement.opening-flash', trigger: 'first-hit', payoff: 'damage-window',
+      fx: 'engagement.opening-flash',
     },
 
     // Amplifiers modify this tier's own payoff card, not the T1 one (design §4).

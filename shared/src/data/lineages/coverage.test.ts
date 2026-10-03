@@ -34,8 +34,9 @@ import {
   GATE_LOCAL_LEVEL, MAX_LINEAGE_TIER, rowBiomeLevel, rowsForTier, tierHasRow,
 } from './magnitudes';
 import {
-  bandBiomeLevel, isVerbCard, lineageGateCost, resolveLineageCapstone, resolveLineageCard,
+  bandBiomeLevel, composeVerb, isVerbCard, lineageGateCost, resolveLineageCapstone, resolveLineageCard,
 } from './resolve';
+import { applyComposedAmplifier } from '../../systems/lineages';
 import {
   AMPLIFIED_AXES, LINEAGE_FX_KEYS, PACKET_IDS, PAYOFF_KINDS, ROW_KINDS,
   TRIGGER_KINDS, WEAPON_PACKET_IDS, keystoneFxKey, payoffLandsOnTarget,
@@ -138,13 +139,19 @@ for (const [key, lineage] of LINEAGE_DATABASE) {
     if (card.row === 'stat') {
       check(!card.trigger && !card.payoff, `${card.id}: a stat row is the one row that is a number, not an effect`);
     } else if (isVerbCard(card)) {
-      // A T1 VERB (design §24.2): it carries only its lane — the moment comes from
-      // the packet, the payload from the active lean — and that shape exists only
-      // in a weapon's T1 band, on a lane with halves to compose.
-      check(card.tier === 1, `${card.id}: only the T1 band is lean-and-verb; a T${card.tier} payoff authors its own trigger and payoff`);
+      // A VERB (design §24.2, §24.9): it carries only its lane — the moment comes
+      // from the packet, the payload from the active lean, the size from its tier —
+      // and that shape exists only in a weapon band, on a lane with halves.
       check(lineage.slot === 'weapon', `${card.id}: only a weapon band composes (non-weapon trees are parked)`);
       check(!!packetHalves(card.lane), `${card.id}: lane '${card.lane}' has no halves to compose a verb from`);
     } else {
+      // Every weapon band's payoff row composes (design §24.9: "T2+ bands compose
+      // too"): a weapon payoff that authors its own pair would read "Verb" on the
+      // page and pay a per-pull legacy number next to its T1 verb.
+      check(
+        !(lineage.slot === 'weapon' && card.row === 'payoff'),
+        `${card.id}: a weapon band's payoff row is a verb — author it with no trigger and no payoff (design §24.9)`,
+      );
       check(!!card.trigger, `${card.id}: every row but stat fires on something`);
       check(!!card.payoff, `${card.id}: a card must DO something the moment it is bought (design §4)`);
       if (card.trigger) check(TRIGGER_KINDS.includes(card.trigger), `${card.id}: unknown trigger '${card.trigger}'`);
@@ -182,7 +189,28 @@ for (const [key, lineage] of LINEAGE_DATABASE) {
         !!card.amplifies && AMPLIFIED_AXES.includes(card.amplifies),
         `${card.id}: an amplifier must declare which axis it moves (${AMPLIFIED_AXES.join(' | ')})`,
       );
-      if (target?.payoff) {
+      if (target && isVerbCard(target)) {
+        // On a VERB the pair is the player's: the amplifier meets every payload a
+        // lean of this lineage can hand the verb (and the pure pair, with no lean).
+        // Whatever it meets, it must MOVE the pair — its own axis where the pair
+        // has it, the pair's size where it does not (design §24.9) — and never
+        // charge a price for nothing.
+        for (const lean of [undefined, ...lineage.lanes]) {
+          const composed = composeVerb(target.lane, lean, target.tier);
+          check(!!composed, `${card.id}: ${target.id} × ${lean ?? 'no lean'} did not compose`);
+          if (!composed) continue;
+          const pair = { trigger: { ...composed.trigger }, payoff: { ...composed.payoff } };
+          const before = JSON.stringify(pair);
+          const move = applyComposedAmplifier(pair, card.amplifies);
+          check(
+            JSON.stringify(pair) !== before,
+            `${card.id}: on ${target.id} × ${lean ?? 'no lean'} its '${card.amplifies}' (moved as '${move}') changed nothing`,
+          );
+          if (move === 'targets') {
+            check(payoffLandsOnTarget(pair.payoff.kind), `${card.id}: a second body for '${pair.payoff.kind}', which lands on no body`);
+          }
+        }
+      } else if (target?.payoff) {
         // A second body is meaningless for a payoff that lands on the player.
         check(
           card.amplifies !== 'targets' || payoffLandsOnTarget(target.payoff),
@@ -199,7 +227,7 @@ for (const [key, lineage] of LINEAGE_DATABASE) {
       // `first-hit`, the one trigger that latches per engagement rather than per
       // hit, kill or clock tick. There, naming it again re-scopes the latch to per
       // BODY ("every new body counts as a fresh opening"), which is a real effect.
-      if (target) {
+      if (target && !isVerbCard(target)) {
         check(
           card.amplifies !== 'trigger'
             || card.trigger !== target.trigger

@@ -12,9 +12,15 @@
  * (`scripts/_t1BossPlan.ts --matrix=composition`) and the lane bench
  * (`bench/compositionLanes.ts`) — so the two cannot enumerate different pairs.
  *
- * Pure data over `LINEAGE_DATABASE`: a weapon lineage that is not parked, its T1
+ * Pure data over `LINEAGE_DATABASE`: a weapon lineage that is not parked, its
  * cards by row and lane. Nothing here buys anything; both instruments buy through
  * the real economy handler (`unlockLineageCard` / `setLineageActive`).
+ *
+ * TIER (verbs-that-fire B, design §24.9: "T2+ bands compose too"). Every function
+ * takes the band's tier, default 1. A tier-2 pair is the T2 lean and the T2 verb,
+ * worn on the lineage's band-2 form (`bandFormOf`); its control wears the same
+ * form with no cards. Labels are the same `lean×verb` at every tier, so a T1 and a
+ * T2 reading of one pair line up by label.
  */
 import { LINEAGE_DATABASE, type LineageDefinition, type PacketId } from '@mmo-idle/shared';
 
@@ -39,8 +45,20 @@ export function weaponLineages(): LineageDefinition[] {
 
 /** The lineage's tier-1 form — what a matrix row wears. */
 export function t1FormOf(lineage: LineageDefinition): string {
-  const form = lineage.forms.find((f) => f.tier === 1);
-  if (!form) throw new Error(`${lineage.id}: no tier-1 form`);
+  return bandFormOf(lineage, 1);
+}
+
+/**
+ * The form a tier's matrix row wears: the lineage's FIRST authored form of that
+ * tier — at T1 the crafted base form, at T2 the door in the lineage's own home
+ * biome (the Rapier's Gale Needle, the Broadsword's Knight Steelsword). The same
+ * convention as the lane bench's band-2 references (`t2WornForm` in
+ * `bot/src/tierEntry/profiles.ts`), and for the same reason: one fixed form per
+ * lineage, so its capstone sits in the control as well as in every pair.
+ */
+export function bandFormOf(lineage: LineageDefinition, tier = 1): string {
+  const form = lineage.forms.find((f) => f.tier === tier);
+  if (!form) throw new Error(`${lineage.id}: no tier-${tier} form`);
   return form.recipeId;
 }
 
@@ -58,9 +76,9 @@ export interface CompositionPair {
   pure: boolean;
 }
 
-function t1Card(lineage: LineageDefinition, row: 'stat' | 'payoff', lane: PacketId): string {
-  const card = lineage.cards.find((c) => c.tier === 1 && c.row === row && c.lane === lane);
-  if (!card) throw new Error(`${lineage.id}: no T1 ${row} card on lane ${lane}`);
+function bandCard(lineage: LineageDefinition, row: 'stat' | 'payoff', lane: PacketId, tier: number): string {
+  const card = lineage.cards.find((c) => c.tier === tier && c.row === row && c.lane === lane);
+  if (!card) throw new Error(`${lineage.id}: no T${tier} ${row} card on lane ${lane}`);
   return card.id;
 }
 
@@ -69,8 +87,11 @@ export function pairLabel(lean: PacketId | null, verb: PacketId | null): string 
   return lean === null && verb === null ? 'control' : `${lean ?? 'none'}×${verb ?? 'none'}`;
 }
 
-/** Nine lean × verb pairs plus the no-band control, in lane order (control last). */
-export function compositionPairs(lineage: LineageDefinition): CompositionPair[] {
+/**
+ * Nine lean × verb pairs plus the no-band control, in lane order (control last),
+ * of the band of `tier` (default 1).
+ */
+export function compositionPairs(lineage: LineageDefinition, tier = 1): CompositionPair[] {
   const pairs: CompositionPair[] = [];
   for (const lean of lineage.lanes) {
     for (const verb of lineage.lanes) {
@@ -78,8 +99,8 @@ export function compositionPairs(lineage: LineageDefinition): CompositionPair[] 
         lineageId: lineage.id,
         lean,
         verb,
-        leanCardId: t1Card(lineage, 'stat', lean),
-        verbCardId: t1Card(lineage, 'payoff', verb),
+        leanCardId: bandCard(lineage, 'stat', lean, tier),
+        verbCardId: bandCard(lineage, 'payoff', verb, tier),
         label: pairLabel(lean, verb),
         pure: lean === verb,
       });
@@ -90,4 +111,22 @@ export function compositionPairs(lineage: LineageDefinition): CompositionPair[] 
     label: 'control', pure: false,
   });
   return pairs;
+}
+
+/**
+ * The band's three LEANS alone — a lean slotted, no verb (`<lean>×none`). Not
+ * matrix cells: the decomposition rows for the T2 report (verbs-that-fire B). A
+ * pair's uplift minus its lean's uplift alone is what the VERB's payload adds on
+ * top of the lean's stat, which is the half of a pair a tier's verb numbers move.
+ */
+export function leanOnlyPairs(lineage: LineageDefinition, tier = 1): CompositionPair[] {
+  return lineage.lanes.map((lean) => ({
+    lineageId: lineage.id,
+    lean,
+    verb: null,
+    leanCardId: bandCard(lineage, 'stat', lean, tier),
+    verbCardId: null,
+    label: pairLabel(lean, null),
+    pure: false,
+  }));
 }

@@ -13,7 +13,9 @@
  *   - `root` goes through the control rules (an immune boss refuses it);
  *   - `redose` doubles what the target's player DoTs still owe;
  *   - the echo carries the weapon's on-hit;
- *   - a composed firing pushes its PAYLOAD's fx.
+ *   - a composed firing pushes its PAYLOAD's fx;
+ *   - a T2+ verb's proxy lands the mechanic at its tier's `bonusScale`, and a T2
+ *     band bought through the economy fires its composed, amplified pair (§24.9).
  *
  * The cards are seeded straight onto the runtime cache, like
  * `lineageCards.wiring.test.ts`; `composition.test.ts` pins the resolve half.
@@ -280,6 +282,24 @@ const proxyCard = (): ResolvedLineageCard => verb({
   assert(ctx.damage === Math.floor(200 * multiplier), 'one multiplier per hit: the real one, not real × proxy');
   assert(isFrameWindowLive(player, 'cadence'), 'the real finisher runs the frame loop');
   assert(cardFx().every((e) => e.fx !== 'empowered.mechanic-flash'), 'the refused proxy draws nothing');
+}
+
+{
+  // A T2+ verb's proxy (design §24.9): the tier scales the mechanic's BONUS, not
+  // the whole multiplier — ×(1 + (m − 1) × bonusScale), still one multiplier.
+  const scaled = verb({
+    trigger: EVERY_HIT, payoff: { kind: 'mechanic-proxy', magnitude: 1.5, bonusScale: 1.15 },
+    fx: 'empowered.mechanic-flash', lane: 'tempo',
+  });
+  const player = cadencePlayer('cmp-proxy-scaled', [scaled]);
+  const own = proxyEmpoweredMultiplier(world, player)!;
+  const expected = 1 + (own - 1) * 1.15;
+  const ctx = hit(player, monster(), {}, 200);
+  assert(Math.abs(Number(ctx.metadata['empoweredMultiplier']) - expected) < 1e-9,
+    `the scaled proxy lands ${expected}, got ${ctx.metadata['empoweredMultiplier']}`);
+  assert(ctx.damage === Math.floor(200 * expected), `and the hit carries it, got ${ctx.damage}`);
+  assert(ctx.metadata['mechanicProxy'] === true, 'still a proxy');
+  cardFx();
 }
 
 {
@@ -651,6 +671,52 @@ function kill(player: PlayerEntity, defender: MonsterEntity): void {
   assert(setLineageActive(world, player, 'rapier', 'stat', 'rapier-t1-tempo-stat').success, 'Quick Wrist slotted');
   const pure = getLineageRuntime(player.tracksCombat)?.cards.find((c) => c.card.id === 'rapier-t1-tempo-payoff');
   assert(pure?.payoff?.kind === 'echo-hit' && pure.composition?.pure === true, 'Quick Wrist + Flurry is the pure pair');
+}
+
+// ── T2 end to end (design §24.9): the T2 band composes and amplifies ─────────
+
+{
+  const slices = makeSlices('cmp-e2e-t2');
+  slices.tracksProgression.essences = { red: 99_999, blue: 99_999, green: 99_999, yellow: 99_999, purple: 99_999 };
+  slices.tracksProgression.shards = { tempo: 999, affliction: 999, engagement: 999 };
+  slices.tracksProgression.biomeLevel = {
+    plains: 99, forest: 99, swamp: 99, mountain: 99, cave: 99, jungle: 99, desert: 99,
+  };
+  slices.tracksProgression.playerTier = 4;
+  // Holding the T2 form is what a paid gate leaves behind (lineageSync records it).
+  slices.holdsInventory.inventory = ['flash-rapier', 'gale-needle'];
+  const player = world.attachPlayerEntity(slices, 'cmp-e2e-t2');
+  equipItem(world, player, 'gale-needle');
+
+  for (const cardId of ['rapier-t2-affliction-stat', 'rapier-t2-tempo-payoff', 'rapier-t2-tempo-amplifier']) {
+    const bought = unlockLineageCard(world, player, 'rapier', cardId);
+    assert(bought.success, `${cardId}: ${bought.reason}`);
+  }
+  const cards = getLineageRuntime(player.tracksCombat)?.cards ?? [];
+  assert(!cards.some((c) => c.card.row === 'amplifier'), 'the amplifier is folded, never a card');
+  const riposte = cards.find((c) => c.card.id === 'rapier-t2-tempo-payoff');
+  assert(riposte?.composition?.leanLane === 'affliction', 'Running Riposte composes with Deeper Brew');
+  assert(riposte?.trigger?.kind === 'hit-nth' && riposte.trigger.n === 6, 'on the Tempo moment, every 6th hit, as at T1');
+  assert(riposte?.payoff?.kind === 'hemorrhage' && riposte.payoff.magnitude === 1.15,
+    `paying the heavy bleed at the T2 size (1.15 of a swing), got ${riposte?.payoff?.magnitude}`);
+  assert(riposte?.payoff?.extraTargets === 1, "Carried Wake ('targets') lands it on a second body");
+
+  const target = world.createMonster(NODE, 'plains-slime', { x: 430, y: 400 })!;
+  const neighbour = world.createMonster(NODE, 'plains-slime', { x: 470, y: 400 })!;
+  for (const m of [target, neighbour]) { m.hasHealth.maxHp = 100_000; m.hasHealth.hp = 100_000; }
+  setAttackTarget(world, player, target.isMonster.id);
+  world.takeNodeEvents(NODE);
+  const swing = () => runPlayerAttack(world, player, target, Date.now(), {
+    attackOrigin: { ...player.hasPosition.current },
+    aggroSource: { id: player.isPlayer.id, kind: 'player' },
+  });
+  for (let i = 0; i < 5; i++) swing();
+  assert(getStatusEffect(target.tracksCombat, LINEAGE_BLEED_ID) === undefined, 'nothing before the 6th hit');
+  swing();
+  assert(getStatusEffect(target.tracksCombat, LINEAGE_BLEED_ID) !== undefined, 'the 6th hit bleeds the target');
+  assert(getStatusEffect(neighbour.tracksCombat, LINEAGE_BLEED_ID) !== undefined, 'and the body beside it');
+  const drawn = cardFx().filter((e) => e.fx === 'affliction.heavy-drip');
+  assert(drawn.length >= 1 && drawn.every((e) => e.cardId === 'rapier-t2-tempo-payoff'), 'drawn as the heavy drip, named for the T2 verb');
 }
 
 console.log('lineageComposition: ok');

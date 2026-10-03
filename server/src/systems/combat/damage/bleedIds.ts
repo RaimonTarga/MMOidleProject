@@ -27,6 +27,17 @@ export const LINEAGE_BLEED_ID = 'lineage.hemorrhage';
 export const LINEAGE_POISON_ID = 'lineage.poison';
 
 /**
+ * The Affliction LEAN's light bleed (design §24.9), stacks = remaining ticks.
+ *
+ * Its own id rather than `LINEAGE_BLEED_ID` so the two never meet: the heavy
+ * payload keeps its ordinary-refresh rule (`lineageDots.test.ts`) and the client's
+ * heavy-drip look keeps reading only the heavy record, while this one is a
+ * reservoir every landed hit ADDS to — a light bleed never overwrites, truncates
+ * or extends a heavy one that is still owed, and the heavy one never erases it.
+ */
+export const LEAN_BLEED_ID = 'lineage.lean-bleed';
+
+/**
  * How a bleed's `stacks` field behaves, carried in the effect's own data under
  * `bleedMode` so one driver can serve both shapes.
  *
@@ -41,6 +52,7 @@ export const BLEED_EFFECT_IDS: readonly string[] = [
   CADENCE_BLEED_ID,
   LINEAGE_BLEED_ID,
   LINEAGE_POISON_ID,
+  LEAN_BLEED_ID,
 ];
 
 /** Whether this monster state carries any bleed the driver owns. */

@@ -92,9 +92,9 @@ const resolvedByNode = new Map<string, ResolvedNodeBlend | undefined>();
 
 /**
  * The resolved blend for a node, memoized. Undefined for every node with no
- * authored blend (dungeons, sanctuaries, the Clearing, and all of T3–T4; T1
- * and T2 normal nodes both carry one as of W1-E) — those spawn from the flat
- * biome pool exactly as before.
+ * authored blend (dungeons, sanctuaries, the Clearing; every T1–T4 normal node
+ * carries one since W1-C) — those spawn from the flat biome pool exactly as
+ * before.
  */
 export function nodeSpawnBlend(nodeId: string): ResolvedNodeBlend | undefined {
   if (resolvedByNode.has(nodeId)) return resolvedByNode.get(nodeId);
@@ -138,9 +138,11 @@ const familyByNode = new Map<string, FamilyDefinition | undefined>();
  * with no blend: dungeons, sanctuaries and the Clearing.
  *
  * Authored, not resolved, on purpose: a node's identity is what the map author
- * wrote, so a node whose dominant family has no body at its tier (six T2–T4 nodes,
- * review L16) still reads — and pays — as that family's territory. That is a data
- * gap to fill with a monster, not a reason to re-categorise the node silently.
+ * wrote, never something the spawner re-derives. The authoring rule that keeps the
+ * two equal: a family with no body at the node's tier never leads a blend
+ * (`nodeShards.test.ts`, every node, no allowlist — the eight T2–T4 nodes that
+ * broke it, review L16, were re-led by the verbs-that-fire run). A bodiless family
+ * may keep a minority share; it renormalises away and pays nothing.
  */
 export function nodeFamily(nodeId: string): FamilyDefinition | undefined {
   if (familyByNode.has(nodeId)) return familyByNode.get(nodeId);

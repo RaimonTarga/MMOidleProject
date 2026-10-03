@@ -1,0 +1,1141 @@
+{
+  "ledger": [
+    {
+      "class": "Striker",
+      "revision": "d42e4953",
+      "routeVersion": "1.4.0",
+      "taints": [],
+      "completion": "completed",
+      "endReason": null,
+      "wallMs": 3882451,
+      "tier2Ms": 2674889,
+      "gm30Ms": 1859468,
+      "gatePaidMs": 3881939,
+      "forest4": {
+        "atMs": 814407,
+        "gm": 10
+      },
+      "beatsPassed": 59,
+      "beatsTotal": 59,
+      "perChapter": {
+        "The Clearing": "11/11",
+        "The Plains": "11/11",
+        "The Forest": "5/5",
+        "The Swamp": "8/8",
+        "The Mountain": "4/4",
+        "The Cave": "13/13",
+        "The Seals": "4/4",
+        "The Gate": "3/3"
+      },
+      "deaths": [
+        {
+          "atMs": 3164379,
+          "where": "cave",
+          "step": "boss cave T1",
+          "killer": "Cave Sentinel"
+        },
+        {
+          "atMs": 3559000,
+          "where": "cave",
+          "step": "boss cave T1",
+          "killer": "Obsidian Broodmother (boss)"
+        }
+      ],
+      "lineage": "axe",
+      "lean": {
+        "card": "Loose Grip",
+        "at": 1671836,
+        "weapon": "chaotic-axe",
+        "level": "Cave 2",
+        "gm": 26,
+        "farmS": 18
+      },
+      "verb": {
+        "card": "Cleaving Blow",
+        "at": 1826863,
+        "weapon": "chaotic-axe",
+        "level": "Cave 5",
+        "gm": 29,
+        "farmS": 136
+      },
+      "sentence": "When your class mechanic fires (every 4 s at most), the hit lands twice.",
+      "pure": false,
+      "seals": {
+        "plains": "1/1, 41–41 s",
+        "mountain": "1/1, 59–59 s"
+      },
+      "gate": "3/5, 45–48 s (lost: death 100%, death 100%)",
+      "fights": [
+        {
+          "biome": "plains",
+          "outcome": "victory",
+          "atMs": 2240993,
+          "fightS": 41,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 8,
+          "verbPerMin": 11.8,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "mountain",
+          "outcome": "victory",
+          "atMs": 2675399,
+          "fightS": 59,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 7,
+          "verbPerMin": 7.1,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "victory",
+          "atMs": 3094383,
+          "fightS": 47,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 7,
+          "verbPerMin": 9,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "death",
+          "atMs": 3164653,
+          "fightS": 3,
+          "bossPctLeft": 100,
+          "weapon": "chaotic-axe",
+          "verbFires": 0,
+          "verbPerMin": 0,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "victory",
+          "atMs": 3488483,
+          "fightS": 45,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 7,
+          "verbPerMin": 9.3,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "death",
+          "atMs": 3559275,
+          "fightS": 4,
+          "bossPctLeft": 100,
+          "weapon": "chaotic-axe",
+          "verbFires": 1,
+          "verbPerMin": 14.7,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "victory",
+          "atMs": 3881431,
+          "fightS": 48,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 7,
+          "verbPerMin": 8.7,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        }
+      ],
+      "farming": {
+        "minutes": 3.3,
+        "verbFires": 9,
+        "verbPerMin": 2.8,
+        "ownBleedTicks": 0
+      },
+      "verbFiresTotal": 101,
+      "otherCardFires": {},
+      "notDone": [],
+      "stalls": []
+    },
+    {
+      "class": "Squire",
+      "revision": "d42e4953",
+      "routeVersion": "1.4.0",
+      "taints": [],
+      "completion": "completed",
+      "endReason": null,
+      "wallMs": 3841301,
+      "tier2Ms": 2660533,
+      "gm30Ms": 1847277,
+      "gatePaidMs": 3840791,
+      "forest4": {
+        "atMs": 820552,
+        "gm": 10
+      },
+      "beatsPassed": 59,
+      "beatsTotal": 59,
+      "perChapter": {
+        "The Clearing": "11/11",
+        "The Plains": "11/11",
+        "The Forest": "5/5",
+        "The Swamp": "8/8",
+        "The Mountain": "4/4",
+        "The Cave": "13/13",
+        "The Seals": "4/4",
+        "The Gate": "3/3"
+      },
+      "deaths": [
+        {
+          "atMs": 3072006,
+          "where": "cave",
+          "step": "boss cave T1",
+          "killer": "Cave Sentinel"
+        },
+        {
+          "atMs": 3493145,
+          "where": "cave",
+          "step": "boss cave T1",
+          "killer": "Obsidian Broodmother (boss)"
+        }
+      ],
+      "lineage": "axe",
+      "lean": {
+        "card": "Hewing Arc",
+        "at": 1741230,
+        "weapon": "chaotic-axe",
+        "level": "Cave 3",
+        "gm": 27,
+        "farmS": 104
+      },
+      "verb": {
+        "card": "Cleaving Blow",
+        "at": 1811623,
+        "weapon": "chaotic-axe",
+        "level": "Cave 5",
+        "gm": 29,
+        "farmS": 67
+      },
+      "sentence": "Your mechanic hits half again as hard.",
+      "pure": true,
+      "seals": {
+        "plains": "1/1, 42–42 s",
+        "mountain": "1/1, 57–57 s"
+      },
+      "gate": "3/5, 46–46 s (lost: death 100%, death 100%)",
+      "fights": [
+        {
+          "biome": "plains",
+          "outcome": "victory",
+          "atMs": 2253766,
+          "fightS": 42,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 6,
+          "verbPerMin": 8.5,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "mountain",
+          "outcome": "victory",
+          "atMs": 2661045,
+          "fightS": 57,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 7,
+          "verbPerMin": 7.4,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "victory",
+          "atMs": 3002435,
+          "fightS": 46,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 6,
+          "verbPerMin": 7.7,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "death",
+          "atMs": 3072260,
+          "fightS": 2,
+          "bossPctLeft": 100,
+          "weapon": "chaotic-axe",
+          "verbFires": 0,
+          "verbPerMin": 0,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "victory",
+          "atMs": 3421873,
+          "fightS": 46,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 6,
+          "verbPerMin": 7.9,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "death",
+          "atMs": 3493250,
+          "fightS": 4,
+          "bossPctLeft": 100,
+          "weapon": "chaotic-axe",
+          "verbFires": 1,
+          "verbPerMin": 14.7,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "victory",
+          "atMs": 3840276,
+          "fightS": 46,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 6,
+          "verbPerMin": 7.8,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        }
+      ],
+      "farming": {
+        "minutes": 2.6,
+        "verbFires": 10,
+        "verbPerMin": 3.9,
+        "ownBleedTicks": 0
+      },
+      "verbFiresTotal": 95,
+      "otherCardFires": {},
+      "notDone": [],
+      "stalls": []
+    },
+    {
+      "class": "Slinger",
+      "revision": "d42e4953",
+      "routeVersion": "1.4.0",
+      "taints": [],
+      "completion": "completed",
+      "endReason": null,
+      "wallMs": 3236380,
+      "tier2Ms": 2207247,
+      "gm30Ms": 1630392,
+      "gatePaidMs": 3235859,
+      "forest4": {
+        "atMs": 699133,
+        "gm": 10
+      },
+      "beatsPassed": 62,
+      "beatsTotal": 62,
+      "perChapter": {
+        "The Clearing": "11/11",
+        "The Plains": "11/11",
+        "The Forest": "7/7",
+        "The Swamp": "14/14",
+        "The Mountain": "5/5",
+        "The Cave": "7/7",
+        "The Seals": "4/4",
+        "The Gate": "3/3"
+      },
+      "deaths": [
+        {
+          "atMs": 2736741,
+          "where": "swamp",
+          "step": "boss swamp T1",
+          "killer": "Mire Keeper"
+        },
+        {
+          "atMs": 3018939,
+          "where": "swamp",
+          "step": "boss swamp T1",
+          "killer": "Grave Toadeater (boss)"
+        }
+      ],
+      "lineage": "dagger",
+      "lean": {
+        "card": "Coated Edge",
+        "at": 919640,
+        "weapon": "ashbrand-blade",
+        "level": "Swamp 2",
+        "gm": 14,
+        "farmS": 42
+      },
+      "verb": {
+        "card": "Into the Wound",
+        "at": 1102771,
+        "weapon": "ashbrand-blade",
+        "level": "Swamp 5",
+        "gm": 17,
+        "farmS": 90
+      },
+      "sentence": "Hitting an afflicted target doubles its affliction.",
+      "pure": true,
+      "seals": {
+        "plains": "1/1, 33–33 s",
+        "mountain": "1/1, 31–31 s"
+      },
+      "gate": "3/5, 22–24 s (lost: death 100%, death 100%)",
+      "fights": [
+        {
+          "biome": "plains",
+          "outcome": "victory",
+          "atMs": 1901775,
+          "fightS": 33,
+          "bossPctLeft": 0,
+          "weapon": "ashbrand-blade",
+          "verbFires": 6,
+          "verbPerMin": 10.9,
+          "leanFires": 0,
+          "ownBleedTicks": 50
+        },
+        {
+          "biome": "mountain",
+          "outcome": "victory",
+          "atMs": 2207758,
+          "fightS": 31,
+          "bossPctLeft": 0,
+          "weapon": "ashbrand-blade",
+          "verbFires": 6,
+          "verbPerMin": 11.8,
+          "leanFires": 0,
+          "ownBleedTicks": 47
+        },
+        {
+          "biome": "swamp",
+          "outcome": "victory",
+          "atMs": 2665488,
+          "fightS": 22,
+          "bossPctLeft": 0,
+          "weapon": "ashbrand-blade",
+          "verbFires": 4,
+          "verbPerMin": 10.7,
+          "leanFires": 0,
+          "ownBleedTicks": 35
+        },
+        {
+          "biome": "swamp",
+          "outcome": "death",
+          "atMs": 2736952,
+          "fightS": 4,
+          "bossPctLeft": 100,
+          "weapon": "ashbrand-blade",
+          "verbFires": 1,
+          "verbPerMin": 14.7,
+          "leanFires": 0,
+          "ownBleedTicks": 29
+        },
+        {
+          "biome": "swamp",
+          "outcome": "victory",
+          "atMs": 2948542,
+          "fightS": 22,
+          "bossPctLeft": 0,
+          "weapon": "ashbrand-blade",
+          "verbFires": 4,
+          "verbPerMin": 10.7,
+          "leanFires": 0,
+          "ownBleedTicks": 35
+        },
+        {
+          "biome": "swamp",
+          "outcome": "death",
+          "atMs": 3019353,
+          "fightS": 3,
+          "bossPctLeft": 100,
+          "weapon": "ashbrand-blade",
+          "verbFires": 1,
+          "verbPerMin": 19.6,
+          "leanFires": 0,
+          "ownBleedTicks": 25
+        },
+        {
+          "biome": "swamp",
+          "outcome": "victory",
+          "atMs": 3235353,
+          "fightS": 24,
+          "bossPctLeft": 0,
+          "weapon": "ashbrand-blade",
+          "verbFires": 4,
+          "verbPerMin": 9.8,
+          "leanFires": 0,
+          "ownBleedTicks": 36
+        }
+      ],
+      "farming": {
+        "minutes": 13.6,
+        "verbFires": 70,
+        "verbPerMin": 5.1,
+        "ownBleedTicks": 416
+      },
+      "verbFiresTotal": 155,
+      "otherCardFires": {},
+      "notDone": [],
+      "stalls": []
+    },
+    {
+      "class": "Spirit",
+      "revision": "d42e4953",
+      "routeVersion": "1.4.0",
+      "taints": [],
+      "completion": "completed",
+      "endReason": null,
+      "wallMs": 2802390,
+      "tier2Ms": 1893415,
+      "gm30Ms": 1382413,
+      "gatePaidMs": 2801865,
+      "forest4": {
+        "atMs": 630955,
+        "gm": 10
+      },
+      "beatsPassed": 62,
+      "beatsTotal": 62,
+      "perChapter": {
+        "The Clearing": "11/11",
+        "The Plains": "11/11",
+        "The Forest": "5/5",
+        "The Swamp": "8/8",
+        "The Mountain": "7/7",
+        "The Cave": "13/13",
+        "The Seals": "4/4",
+        "The Gate": "3/3"
+      },
+      "deaths": [
+        {
+          "atMs": 2236767,
+          "where": "cave",
+          "step": "boss cave T1",
+          "killer": "Cave Sentinel"
+        },
+        {
+          "atMs": 2558148,
+          "where": "cave",
+          "step": "boss cave T1",
+          "killer": "Cave Sentinel"
+        }
+      ],
+      "lineage": "axe",
+      "lean": {
+        "card": "Loose Grip",
+        "at": 1272390,
+        "weapon": "chaotic-axe",
+        "level": "Cave 2",
+        "gm": 26,
+        "farmS": 5
+      },
+      "verb": {
+        "card": "Chopping Rhythm",
+        "at": 1341441,
+        "weapon": "chaotic-axe",
+        "level": "Cave 4",
+        "gm": 28,
+        "farmS": 45
+      },
+      "sentence": "Every 6th hit strikes twice.",
+      "pure": true,
+      "seals": {
+        "plains": "1/1, 42–42 s",
+        "mountain": "1/1, 42–42 s"
+      },
+      "gate": "3/5, 37–38 s (lost: death 100%, death 98%)",
+      "fights": [
+        {
+          "biome": "plains",
+          "outcome": "victory",
+          "atMs": 1606231,
+          "fightS": 42,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 6,
+          "verbPerMin": 8.5,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "mountain",
+          "outcome": "victory",
+          "atMs": 1893923,
+          "fightS": 42,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 5,
+          "verbPerMin": 7.2,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "victory",
+          "atMs": 2161275,
+          "fightS": 37,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 5,
+          "verbPerMin": 8.2,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "death",
+          "atMs": 2237153,
+          "fightS": 8,
+          "bossPctLeft": 100,
+          "weapon": "chaotic-axe",
+          "verbFires": 1,
+          "verbPerMin": 7.4,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "victory",
+          "atMs": 2483088,
+          "fightS": 38,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 5,
+          "verbPerMin": 7.9,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "death",
+          "atMs": 2558554,
+          "fightS": 8,
+          "bossPctLeft": 98,
+          "weapon": "chaotic-axe",
+          "verbFires": 1,
+          "verbPerMin": 7.8,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "victory",
+          "atMs": 2801354,
+          "fightS": 37,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 5,
+          "verbPerMin": 8.2,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        }
+      ],
+      "farming": {
+        "minutes": 2.2,
+        "verbFires": 8,
+        "verbPerMin": 3.6,
+        "ownBleedTicks": 0
+      },
+      "verbFiresTotal": 61,
+      "otherCardFires": {},
+      "notDone": [],
+      "stalls": []
+    },
+    {
+      "class": "Apprentice",
+      "revision": "d42e4953",
+      "routeVersion": "1.4.0",
+      "taints": [],
+      "completion": "completed",
+      "endReason": null,
+      "wallMs": 4112975,
+      "tier2Ms": 2890553,
+      "gm30Ms": 2173142,
+      "gatePaidMs": 4112463,
+      "forest4": {
+        "atMs": 995921,
+        "gm": 10
+      },
+      "beatsPassed": 64,
+      "beatsTotal": 64,
+      "perChapter": {
+        "The Clearing": "11/11",
+        "The Plains": "11/11",
+        "The Forest": "5/5",
+        "The Swamp": "10/10",
+        "The Mountain": "7/7",
+        "The Cave": "13/13",
+        "The Seals": "4/4",
+        "The Gate": "3/3"
+      },
+      "deaths": [
+        {
+          "atMs": 3345030,
+          "where": "cave",
+          "step": "boss cave T1",
+          "killer": "Cave Sentinel"
+        },
+        {
+          "atMs": 3778652,
+          "where": "cave",
+          "step": "boss cave T1",
+          "killer": "Cave Sentinel"
+        }
+      ],
+      "lineage": "axe",
+      "lean": {
+        "card": "Hewing Arc",
+        "at": 1979170,
+        "weapon": "chaotic-axe",
+        "level": "Cave 2",
+        "gm": 26,
+        "farmS": 97
+      },
+      "verb": {
+        "card": "Chopping Rhythm",
+        "at": 2105804,
+        "weapon": "chaotic-axe",
+        "level": "Cave 4",
+        "gm": 28,
+        "farmS": 105
+      },
+      "sentence": "Every 6th hit counts as your class mechanic firing.",
+      "pure": false,
+      "seals": {
+        "plains": "1/1, 40–40 s",
+        "mountain": "1/1, 47–47 s"
+      },
+      "gate": "3/5, 39–40 s (lost: death 100%, death 100%)",
+      "fights": [
+        {
+          "biome": "plains",
+          "outcome": "victory",
+          "atMs": 2533103,
+          "fightS": 40,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 5,
+          "verbPerMin": 7.4,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "mountain",
+          "outcome": "victory",
+          "atMs": 2891057,
+          "fightS": 47,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 4,
+          "verbPerMin": 5.1,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "victory",
+          "atMs": 3272341,
+          "fightS": 40,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 4,
+          "verbPerMin": 6,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "death",
+          "atMs": 3345277,
+          "fightS": 5,
+          "bossPctLeft": 100,
+          "weapon": "chaotic-axe",
+          "verbFires": 1,
+          "verbPerMin": 11.8,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "victory",
+          "atMs": 3703523,
+          "fightS": 39,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 4,
+          "verbPerMin": 6.1,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "death",
+          "atMs": 3779003,
+          "fightS": 8,
+          "bossPctLeft": 100,
+          "weapon": "chaotic-axe",
+          "verbFires": 1,
+          "verbPerMin": 7.4,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "victory",
+          "atMs": 4111954,
+          "fightS": 40,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 4,
+          "verbPerMin": 6,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        }
+      ],
+      "farming": {
+        "minutes": 3.5,
+        "verbFires": 9,
+        "verbPerMin": 2.6,
+        "ownBleedTicks": 0
+      },
+      "verbFiresTotal": 59,
+      "otherCardFires": {},
+      "notDone": [],
+      "stalls": []
+    },
+    {
+      "class": "Conduit",
+      "revision": "d42e4953",
+      "routeVersion": "1.4.0",
+      "taints": [],
+      "completion": "completed",
+      "endReason": null,
+      "wallMs": 3020114,
+      "tier2Ms": 2017805,
+      "gm30Ms": 1487729,
+      "gatePaidMs": 3019600,
+      "forest4": {
+        "atMs": 683845,
+        "gm": 10
+      },
+      "beatsPassed": 62,
+      "beatsTotal": 62,
+      "perChapter": {
+        "The Clearing": "11/11",
+        "The Plains": "11/11",
+        "The Forest": "5/5",
+        "The Swamp": "8/8",
+        "The Mountain": "7/7",
+        "The Cave": "13/13",
+        "The Seals": "4/4",
+        "The Gate": "3/3"
+      },
+      "deaths": [
+        {
+          "atMs": 2416784,
+          "where": "cave",
+          "step": "boss cave T1",
+          "killer": "Cave Sentinel"
+        },
+        {
+          "atMs": 2750678,
+          "where": "cave",
+          "step": "boss cave T1",
+          "killer": "Cave Sentinel"
+        }
+      ],
+      "lineage": "axe",
+      "lean": {
+        "card": "Loose Grip",
+        "at": 1398416,
+        "weapon": "chaotic-axe",
+        "level": "Cave 2",
+        "gm": 26,
+        "farmS": 15
+      },
+      "verb": {
+        "card": "Chopping Rhythm",
+        "at": 1449942,
+        "weapon": "chaotic-axe",
+        "level": "Cave 4",
+        "gm": 28,
+        "farmS": 39
+      },
+      "sentence": "Every 6th hit strikes twice.",
+      "pure": true,
+      "seals": {
+        "plains": "1/1, 45–45 s",
+        "mountain": "1/1, 65–65 s"
+      },
+      "gate": "3/5, 45–50 s (lost: death 100%, death 100%)",
+      "fights": [
+        {
+          "biome": "plains",
+          "outcome": "victory",
+          "atMs": 1711828,
+          "fightS": 45,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 23,
+          "verbPerMin": 30.7,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "mountain",
+          "outcome": "victory",
+          "atMs": 2018317,
+          "fightS": 65,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 20,
+          "verbPerMin": 18.4,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "victory",
+          "atMs": 2342467,
+          "fightS": 50,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 23,
+          "verbPerMin": 27.6,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "death",
+          "atMs": 2416963,
+          "fightS": 7,
+          "bossPctLeft": 100,
+          "weapon": "chaotic-axe",
+          "verbFires": 1,
+          "verbPerMin": 8.4,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "victory",
+          "atMs": 2677584,
+          "fightS": 47,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 23,
+          "verbPerMin": 29.1,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "death",
+          "atMs": 2751017,
+          "fightS": 6,
+          "bossPctLeft": 100,
+          "weapon": "chaotic-axe",
+          "verbFires": 2,
+          "verbPerMin": 19.6,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        },
+        {
+          "biome": "cave",
+          "outcome": "victory",
+          "atMs": 3019095,
+          "fightS": 45,
+          "bossPctLeft": 0,
+          "weapon": "chaotic-axe",
+          "verbFires": 23,
+          "verbPerMin": 30.5,
+          "leanFires": 0,
+          "ownBleedTicks": 0
+        }
+      ],
+      "farming": {
+        "minutes": 2.9,
+        "verbFires": 26,
+        "verbPerMin": 9,
+        "ownBleedTicks": 0
+      },
+      "verbFiresTotal": 240,
+      "otherCardFires": {},
+      "notDone": [],
+      "stalls": []
+    }
+  ],
+  "measured": [],
+  "comparison": [
+    {
+      "class": "Striker",
+      "gm30": [
+        1975984,
+        1859468
+      ],
+      "tier2": [
+        3220610,
+        2674889
+      ],
+      "gatePaid": [
+        4120607,
+        3881939
+      ],
+      "wall": [
+        4121123,
+        3882451
+      ],
+      "deaths": [
+        4,
+        2
+      ],
+      "beats": [
+        60,
+        59
+      ]
+    },
+    {
+      "class": "Squire",
+      "gm30": [
+        2015560,
+        1847277
+      ],
+      "tier2": [
+        2763989,
+        2660533
+      ],
+      "gatePaid": [
+        3714378,
+        3840791
+      ],
+      "wall": [
+        3714913,
+        3841301
+      ],
+      "deaths": [
+        2,
+        2
+      ],
+      "beats": [
+        60,
+        59
+      ]
+    },
+    {
+      "class": "Slinger",
+      "gm30": [
+        1998663,
+        1630392
+      ],
+      "tier2": [
+        2591905,
+        2207247
+      ],
+      "gatePaid": [
+        3517673,
+        3235859
+      ],
+      "wall": [
+        3518199,
+        3236380
+      ],
+      "deaths": [
+        2,
+        2
+      ],
+      "beats": [
+        63,
+        62
+      ]
+    },
+    {
+      "class": "Spirit",
+      "gm30": [
+        1418289,
+        1382413
+      ],
+      "tier2": [
+        2002892,
+        1893415
+      ],
+      "gatePaid": [
+        2845075,
+        2801865
+      ],
+      "wall": [
+        2845592,
+        2802390
+      ],
+      "deaths": [
+        2,
+        2
+      ],
+      "beats": [
+        63,
+        62
+      ]
+    },
+    {
+      "class": "Apprentice",
+      "gm30": [
+        2429808,
+        2173142
+      ],
+      "tier2": [
+        3157530,
+        2890553
+      ],
+      "gatePaid": [
+        4165410,
+        4112463
+      ],
+      "wall": [
+        4165936,
+        4112975
+      ],
+      "deaths": [
+        2,
+        2
+      ],
+      "beats": [
+        65,
+        64
+      ]
+    },
+    {
+      "class": "Conduit",
+      "gm30": [
+        1636672,
+        1487729
+      ],
+      "tier2": [
+        2248351,
+        2017805
+      ],
+      "gatePaid": [
+        3078372,
+        3019600
+      ],
+      "wall": [
+        3078892,
+        3020114
+      ],
+      "deaths": [
+        2,
+        2
+      ],
+      "beats": [
+        63,
+        62
+      ]
+    }
+  ]
+}

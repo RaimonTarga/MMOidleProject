@@ -14,14 +14,18 @@
  *  3. Every T1 weapon lane is payable in the weapon's home biome — some node there
  *     is led by a family dropping it — so a T1 tree never sends the player out
  *     of its biome for a shard (design §24.4).
- *  4. The authored-dominant-but-unfielded nodes (review L16) are a named list, so
- *     a node whose territory family has no body at its tier cannot appear unseen.
+ *  4. Every node pays a family it FIELDS: the family whose shard a node pays has
+ *     at least one member in that node's tier pool — every node in the registry,
+ *     every tier, no allowlist. A node that paid for a family it never spawns
+ *     (review L16; eight T2–T4 nodes until the verbs-that-fire run) teaches the
+ *     player a currency with no body behind it.
  *
  * The reward seam's half (a kill really pays the node's shard) is in
  * `server/test/lineageMaterials.test.ts`, which owns a World.
  *
  * Run (from server/): node --conditions=development --import tsx ../shared/src/world/nodeShards.test.ts
  */
+import { BIOME_DATABASE } from '../biomeDatabase';
 import { dominantBlendFamily, FAMILY_DATABASE } from '../data/families';
 import { LINEAGE_DATABASE } from '../data/lineages';
 import { WORLD_NODE_LIST } from './map/registry';
@@ -110,32 +114,44 @@ const UNPAYABLE_AT_HOME = new Set<string>();
   }
 }
 
-// ── 4. Territories whose family has no body at their tier (review L16) ───────
+// ── 4. Every node pays a family it fields (review L16, no allowlist) ─────────
+//
+// Read off the RAW tier pool, not `resolveNodeBlend`, so the spawner's own
+// filtering cannot vouch for itself. A node's territory is its AUTHORED dominant
+// family (`nodeFamily`), so a family with no body at the node's tier must never
+// lead a blend: author the leader from what the tier fields, or add a body to
+// the pool (both the designer's). A minority share for a bodiless family is
+// allowed — it renormalises away and pays nothing.
 
-/**
- * Nodes whose AUTHORED dominant family has no monster in the node's tier pool, so
- * the node pays (and reads as) a family it does not spawn. The node rule keeps
- * the authored identity on purpose (`nodeFamily`); filling the pool is a designer
- * call. Checked both ways: the list cannot outlive a fix nor hide a new gap.
- */
-const UNFIELDED_TERRITORIES = new Set<string>([
-  'node-t2-swamp-01', 'node-t2-swamp-04', 'node-t2-swamp-05', 'node-t2-jungle-03',
-  'node-t3-jungle-02', 'node-t3-desert-02', 'node-t3-swamp-03', 'node-t4-mountain-02',
-]);
-
-for (const node of WORLD_NODE_LIST) {
-  if (!node.blend) continue;
-  const territory = nodeFamily(node.id)!;
-  const fielded = nodeSpawnBlend(node.id)?.poolByFamily.has(territory.id) ?? false;
-  check(
-    fielded !== UNFIELDED_TERRITORIES.has(node.id),
-    fielded
-      ? `${node.id}: ${territory.id} is fielded now — drop it from UNFIELDED_TERRITORIES`
-      : `${node.id}: its territory family ${territory.id} has no body at tier ${node.biomeTier}`,
-  );
-}
-for (const nodeId of UNFIELDED_TERRITORIES) {
-  check(WORLD_NODE_LIST.some((node) => node.id === nodeId), `UNFIELDED_TERRITORIES names unknown node ${nodeId}`);
+{
+  let territories = 0;
+  for (const node of WORLD_NODE_LIST) {
+    const shard = nodeShard(node.id);
+    if (shard === undefined) continue; // no blend: the per-mob rule (section 2)
+    territories += 1;
+    const territory = nodeFamily(node.id)!;
+    const pool = BIOME_DATABASE.get(node.biomeGroup)?.monsterPoolByTier[node.biomeTier] ?? [];
+    const bodies = pool.filter((id) => territory.monsterIds.includes(id));
+    check(
+      bodies.length > 0,
+      `${node.id}: pays ${territory.name}'s '${shard}' shard, but ${territory.id} has no member in `
+        + `${node.biomeGroup}'s tier-${node.biomeTier} pool (${pool.join(', ') || 'empty'})`,
+    );
+    // And the spawner agrees: the territory is a fielded family and leads what
+    // the node actually spawns, so the map's name and the bodies match.
+    const resolved = nodeSpawnBlend(node.id);
+    check(
+      resolved?.poolByFamily.has(territory.id) === true,
+      `${node.id}: the spawner does not field its territory family ${territory.id}`,
+    );
+    check(
+      resolved !== undefined && dominantBlendFamily(resolved.shares) === territory.id,
+      `${node.id}: reads as ${territory.id} but spawns mostly `
+        + `${resolved ? dominantBlendFamily(resolved.shares) : 'nothing'}`,
+    );
+  }
+  // Guard the guard: every blended node, T1 to T4, was swept (section 1 counted them).
+  assert(territories === blended, `swept ${territories} territories, expected every blended node (${blended})`);
 }
 
 assert(problems.length === 0, `node shard failures:\n  ${problems.join('\n  ')}`);

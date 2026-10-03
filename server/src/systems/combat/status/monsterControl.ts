@@ -27,7 +27,7 @@ import { attachMarker, detachMarker } from "../../../ecs/markerHelpers";
 import type { World } from "../../../world/World";
 import { setRooted } from "../../world/rooted";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
-import { isMonsterStunned } from "./stun";
+import { isMonsterStunned, STUN_EFFECT } from "./stun";
 import { monsterIgnoresControl } from "./controlImmunity";
 import { CHILL_EFFECT, FROZEN_EFFECT } from "../../classes/archetypes/dot/t3/core/constants";
 import {
@@ -111,16 +111,17 @@ export function applyMonsterRoot(
 }
 
 /**
- * Is this monster HELD — slowed or rooted, by anyone, right now? The Control
- * moment's condition (design §24.2: "a hit on a slowed or rooted target").
+ * Is this monster HELD — slowed, rooted, stunned or knocked down, by anyone, right
+ * now? The Control moment's condition (design §24.2, §24.9: "a knockdown counts
+ * as held").
  *
  * Read off the live status records rather than the reconciled
  * `monsterMoveSpeedMult`, which only catches up on the next control pass: a slow
- * that landed earlier in this tick already holds the body. Every slow the ladder
- * knows counts — an ability or at-bay slow, a chill, a freeze — and the ladder's
- * root. A boss that roots ITSELF for a scripted phase is not held by anyone, so
- * the script's `isRooted` alone does not count. A stun is a different rung and is
- * not a hold either: "slowed or rooted" is the whole sentence.
+ * that landed earlier in this tick already holds the body. Every rung of the
+ * ladder counts — an ability, at-bay or lean slow, a chill, a freeze, the root,
+ * and the stun, which is also what the Control payload's knockdown is. A boss
+ * that roots ITSELF for a scripted phase is not held by anyone, so the script's
+ * `isRooted` alone does not count, and neither does a pattern's own recovery.
  */
 export function monsterIsHeld(monster: MonsterEntity): boolean {
   const live = (id: string): boolean => {
@@ -130,7 +131,8 @@ export function monsterIsHeld(monster: MonsterEntity): boolean {
   return live(ABILITY_SLOW_EFFECT_ID)
     || live(ABILITY_ROOT_EFFECT_ID)
     || live(CHILL_EFFECT)
-    || live(FROZEN_EFFECT);
+    || live(FROZEN_EFFECT)
+    || live(STUN_EFFECT);
 }
 
 interface SlowTotals {

@@ -10,7 +10,10 @@ import type { TutorialMovement } from './runes';
  * - No upgrade beats: the +N ladder is retired on every slot (design §24.5) and
  *   an item is crafted at its old +5 power, so the kit the bot took to +5 is the
  *   plain crafted kit here.
- * - Two weapon-page purchases, a lean and a verb (`weaponCards`).
+ * - Two weapon-page purchases, a lean and a verb (`weaponCards`), on the weapon
+ *   the class FIGHTS with (design §24.9): so that weapon is worn from where it is
+ *   crafted — the Chaotic Axe from the Cave's first level, the Slinger's Poison
+ *   Dagger from the Swamp's — rather than swapped in late as the bot does.
  * - The Slinger's Forest armor waits for Forest 3 (`atLevel`).
  */
 
@@ -51,19 +54,20 @@ export interface BossPlan {
 }
 
 /**
- * The weapon lineage the guide teaches: the Forest's, because every class plan
- * crafts and wears the Flash Rapier from the Forest leg to the Cave.
- */
-export const TUTORIAL_WEAPON_LINEAGE = 'rapier';
-
-/**
- * The two purchases of the T1 band (design §24.2): a LEAN (row 1, Forest 2) and a
- * VERB (row 2, Forest 4 and the band's Global Mastery). Card ids in
- * {@link TUTORIAL_WEAPON_LINEAGE}. The two are always DIFFERENT lanes, so the
- * verb's sentence is the composed one — the lean visibly rewrites what the verb
- * does, which is the lesson. Same-lane pairs read their packet's pure sentence.
+ * The two purchases of the T1 band (design §24.2) on the page of the weapon the
+ * class fights with (design §24.9): a LEAN (row 1, its home zone's level 2) and a
+ * VERB (row 2, the zone's level 4 and the row's Global Mastery). The lineage is
+ * the boss kit's weapon's, so the pair is live in every seal and gate fight
+ * (`tutorial.test.ts` holds the plan to that), and the gate the last chapter pays
+ * is the same weapon's.
+ *
+ * Each class's pair is the one with the best boss-lab uplift for that class on
+ * that weapon whose verb FIRES for it (verb firings > 0) — the composition matrix,
+ * `reports/verbs-that-fire/` — so a pick may be a same-lane (pure) pair, which reads
+ * its lane's own sentence.
  */
 export interface TutorialWeaponCards {
+  lineageId: string;
   lean: string;
   verb: string;
 }
@@ -73,39 +77,36 @@ export interface TutorialClassPlan {
   className: string;
   movement: TutorialMovement;
   biomes: Record<T1Biome, BiomePlan>;
-  /** Weapon, charm and boots worn for both boss fights. */
+  /** Weapon, charm and boots worn for every boss fight (the seals and the gate). */
   bossKit: string[];
   bosses: Record<T1Biome, BossPlan>;
-  /** What the guide buys on the Rapier's page (reasons per class below). */
+  /** What the guide buys on the boss kit weapon's page (reasons per class below). */
   weaponCards: TutorialWeaponCards;
 }
 
 /**
- * The Rapier's three leans and three verbs (`data/lineages/rapier.ts`), by lane.
- * Named here only to keep the class table readable.
+ * The Axe's and the Dagger's three leans and three verbs (`data/lineages/axe.ts`,
+ * `dagger.ts`), by lane. Named here only to keep the class table readable.
  */
-const RAPIER = {
-  quickWrist: 'rapier-t1-tempo-stat',
-  envenomed: 'rapier-t1-affliction-stat',
-  keenEdge: 'rapier-t1-engagement-stat',
-  flurry: 'rapier-t1-tempo-payoff',
-  openingLunge: 'rapier-t1-engagement-payoff',
+const AXE = {
+  lineageId: 'axe',
+  looseGrip: 'axe-t1-tempo-stat',
+  bloodscent: 'axe-t1-kill-chain-stat',
+  hewingArc: 'axe-t1-empowered-stat',
+  choppingRhythm: 'axe-t1-tempo-payoff',
+  nextHead: 'axe-t1-kill-chain-payoff',
+  cleavingBlow: 'axe-t1-empowered-payoff',
 } as const;
 
-/**
- * "Your first hit on each new target lands twice." Quick Wrist's attack speed is
- * a stat every fast or cadence-counting class feels, and its payload — a whole
- * second swing — lands on every new body, which T1 farming (many short pulls)
- * hands out constantly.
- */
-const SPEED_OPENER: TutorialWeaponCards = { lean: RAPIER.quickWrist, verb: RAPIER.openingLunge };
-
-/**
- * "Every 6th hit is a lunge for double damage." Keen Edge's flat Attack is on
- * every blow, and Flurry's six-count is the readout ring that visibly fills one
- * hit at a time before the lunge.
- */
-const COUNTED_LUNGE: TutorialWeaponCards = { lean: RAPIER.keenEdge, verb: RAPIER.flurry };
+const DAGGER = {
+  lineageId: 'dagger',
+  coatedEdge: 'dagger-t1-affliction-stat',
+  tendonCut: 'dagger-t1-control-stat',
+  silentStep: 'dagger-t1-kill-chain-stat',
+  intoTheWound: 'dagger-t1-affliction-payoff',
+  easyPrey: 'dagger-t1-control-payoff',
+  nextThroat: 'dagger-t1-kill-chain-payoff',
+} as const;
 
 const PLAINS: BiomePlan = {
   before: [{ piece: 'iron-broadsword' }, { piece: 'plains-vest-t1' }],
@@ -126,11 +127,10 @@ function durableMelee(): Record<T1Biome, BiomePlan> {
     },
     cave: {
       before: [
-        { equip: ['flash-rapier', 'mountain-vest-t1', 'swamp-charm-t1', 'plains-boots-t1'] },
-        { craft: 'chaotic-axe' },
-      ],
-      after: [
-        { equip: ['chaotic-axe'] },
+        { equip: ['mountain-vest-t1', 'swamp-charm-t1', 'plains-boots-t1'] },
+        // Worn the moment it is made: its page is the tree the guide teaches,
+        // and a lineage pays only while its own form is worn (design §23).
+        { piece: 'chaotic-axe' },
       ],
     },
   };
@@ -141,18 +141,20 @@ function slinger(): Record<T1Biome, BiomePlan> {
     plains: PLAINS,
     forest: {
       before: [{ piece: 'flash-rapier' }],
-      // Forest 2 already brings the lean and Second Wind; the evasion armor's
-      // reason waits one level so no level carries three new ideas (the
-      // first-hour checklist). The recipe itself opens at Forest 2.
+      // The recipe opens at Forest 2; the evasion armor's reason waits one level
+      // (the first-hour checklist, course-correction W3-B).
       after: [{ piece: 'forest-vest-t1', atLevel: 3 }],
     },
     swamp: {
-      after: [{ piece: 'swamp-charm-t1' }, { craft: 'ashbrand-blade' }],
+      // The Poison Dagger is the Slinger's boss weapon and its page the tree the
+      // guide teaches, so it is made and worn first thing in the Swamp, where its
+      // shards drop (design §24.9).
+      before: [{ piece: 'ashbrand-blade' }],
+      after: [{ piece: 'swamp-charm-t1' }],
     },
     mountain: {},
     cave: {
-      before: [{ equip: ['flash-rapier', 'forest-vest-t1', 'swamp-charm-t1', 'plains-boots-t1'] }],
-      after: [{ equip: ['ashbrand-blade'] }],
+      before: [{ equip: ['ashbrand-blade', 'forest-vest-t1', 'swamp-charm-t1', 'plains-boots-t1'] }],
       // The bot also crafts a Mountain vest here, but only for the Mountain,
       // Swamp and Cave bosses, which the guide does not fight.
     },
@@ -188,6 +190,14 @@ function withArmor(bosses: Record<T1Biome, BossPlan>, armor: string): Record<T1B
   ) as Record<T1Biome, BossPlan>;
 }
 
+/*
+ * The picks (`weaponCards`), PROVISIONAL and the designer's to change: per class,
+ * the boss-lab composition matrix's best pair on the class's own boss weapon among
+ * the pairs whose verb fired for that class (verbs-that-fire rerun at 57916b52, five
+ * T1 bosses × 10 seeds; `server/scripts/_vfTutorialPicks.ts`, table in
+ * reports/verbs-that-fire/tutorial-picks.md). Uplift is boss DPS over the same class
+ * on the same Axe/Dagger with no cards, median over the bosses; per pick below.
+ */
 export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
   {
     classRoot: 'cadence-root',
@@ -196,9 +206,9 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     biomes: durableMelee(),
     bossKit: MELEE_KIT,
     bosses: DEFAULT_BOSSES,
-    // The finisher is every 5th swing, so swings per second is the Striker's own
-    // currency, and a landed-twice opener puts two of them on every new body.
-    weaponCards: SPEED_OPENER,
+    // +31.2%, 10.2 fires/min: the finisher every 5th swing is its mechanic, and
+    // "the hit lands twice" doubles it; attack speed brings it round sooner.
+    weaponCards: { lineageId: AXE.lineageId, lean: AXE.looseGrip, verb: AXE.cleavingBlow },
   },
   {
     classRoot: 'cooldown-root',
@@ -207,9 +217,9 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     biomes: durableMelee(),
     bossKit: MELEE_KIT,
     bosses: DEFAULT_BOSSES,
-    // The slowest hands and the biggest hits: flat Attack under a ×2 timed
-    // execution, and on a slow chassis the six-count is a steady, readable beat.
-    weaponCards: COUNTED_LUNGE,
+    // +25.4%, 6.6 fires/min (pure Empowered: "Your mechanic hits half again as hard"):
+    // the slowest hands and the biggest timed execution.
+    weaponCards: { lineageId: AXE.lineageId, lean: AXE.hewingArc, verb: AXE.cleavingBlow },
   },
   {
     classRoot: 'reload-root',
@@ -218,11 +228,10 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     biomes: slinger(),
     bossKit: ['ashbrand-blade', 'swamp-charm-t1', 'plains-boots-t1'],
     bosses: withArmor(DEFAULT_BOSSES, 'forest-vest-t1'),
-    // Attack keeps only 65% at the clip's cadence while on-hit keeps all of it,
-    // and the echo is a proc that carries on-hit (design §24.2: on-hit belongs to
-    // Tempo) — so Keen Edge's flat Attack is the Slinger's weakest lean. A kiting
-    // ranged build opens on many targets (design §24.2: Far feeds Engagement).
-    weaponCards: SPEED_OPENER,
+    // +42.8%, 11.6 fires/min (pure Affliction: "Hitting an afflicted target doubles
+    // its affliction"): the Dagger's poison and the lean's bleed are always on the
+    // target, so the moment fires at its cap. Every other Dagger pair is within ±3%.
+    weaponCards: { lineageId: DAGGER.lineageId, lean: DAGGER.coatedEdge, verb: DAGGER.intoTheWound },
   },
   {
     classRoot: 'energy-root',
@@ -231,9 +240,10 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     biomes: durableMelee(),
     bossKit: MELEE_KIT,
     bosses: DEFAULT_BOSSES,
-    // The fastest, highest-output chassis: its six-count fills fastest of the
-    // six classes, so the lunge lands often and the ring is never idle.
-    weaponCards: COUNTED_LUNGE,
+    // +24.8%, 7.3 fires/min (pure Tempo: "Every 6th hit strikes twice"). Tied on the
+    // median with Loose Grip → Cleaving Blow (both +24.8%, the same Greatbear reading);
+    // broken by the mean over the five bosses, +23.7% against +22.7%.
+    weaponCards: { lineageId: AXE.lineageId, lean: AXE.looseGrip, verb: AXE.choppingRhythm },
   },
   {
     classRoot: 'dot-root',
@@ -242,11 +252,10 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     biomes: apprentice(),
     bossKit: MELEE_KIT,
     bosses: { ...DEFAULT_BOSSES, swamp: { ...DEFAULT_BOSSES.swamp, armor: 'swamp-vest-t1' } },
-    // DoT potency is the Apprentice's whole package (design §24.2: with the
-    // Affliction lean it "poisons harder with everything, which is intended"),
-    // and Affliction × Engagement is the pair that suggested the structure:
-    // "Your first hit on each new target leaves a heavy poison or bleed".
-    weaponCards: { lean: RAPIER.envenomed, verb: RAPIER.openingLunge },
+    // +14.0%, 6.0 fires/min ("Every 6th hit counts as your class mechanic firing"):
+    // Cleaving Blow on Hewing Arc never fired for it in the lab, so the six-count
+    // carries its mechanic instead.
+    weaponCards: { lineageId: AXE.lineageId, lean: AXE.hewingArc, verb: AXE.choppingRhythm },
   },
   {
     classRoot: 'summoner-root',
@@ -255,8 +264,8 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     biomes: durableMelee(),
     bossKit: MELEE_KIT,
     bosses: DEFAULT_BOSSES,
-    // The weapon sets the formation's cadence, so attack speed reaches every
-    // summon, and four bodies spreading over a pull open on many targets.
-    weaponCards: SPEED_OPENER,
+    // +17.0%, 26.9 fires/min (pure Tempo): four summons' hits fill the six-count fast;
+    // its Empowered verb fell to +7.4% under the 4 s cap.
+    weaponCards: { lineageId: AXE.lineageId, lean: AXE.looseGrip, verb: AXE.choppingRhythm },
   },
 ];

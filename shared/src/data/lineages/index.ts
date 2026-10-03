@@ -152,11 +152,19 @@ export function lineagesWithLane(slot: EquipmentSlot, lane: PacketId): LineageDe
  * qualification, so the rule is now what it says. The four other weapon Lane As
  * (Rapier and Axe Tempo, Hammer Empowered, Dagger Affliction) already had family
  * sources, so for them this is a small boss-kill bonus rather than access.
+ *
+ * PARKED LINEAGES PAY NOTHING (design §24.5, course-correction report item 17). A
+ * parked tree can spend no shard, so its Lane A is not paid: while the armour,
+ * charm and boots trees are parked the stopgap pays the weapon lanes only, and no
+ * boss pays Iron (Bulwark) or Glass (Barrier tempo) Shards. Read off
+ * `isLineageParked`, so un-parking a tree restores its Lane A here with no other
+ * edit.
  */
 export function biomeLaneAPackets(biome: string): PacketId[] {
   const packets = new Set<PacketId>();
   for (const lineage of LINEAGE_DATABASE.values()) {
     if (lineage.homeBiome !== biome) continue;
+    if (isLineageParked(lineage)) continue;
     packets.add(lineage.lanes[0]);
   }
   return [...packets];

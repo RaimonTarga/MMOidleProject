@@ -27,6 +27,8 @@ import {
   ROW_SCALAR,
   absorbedStatCards,
   applyAmplifiedAxis,
+  applyComposedAmplifier,
+  bandComposes,
   bandContents,
   cardSentence,
   checkSetActive,
@@ -44,9 +46,13 @@ import {
   nodeFamily,
   nodesPayingShard,
   packetDefinition,
+  packetHalves,
+  payloadSize,
   previewEquipmentStats,
   resolveDotClassProfile,
   resolveLineageCardFor,
+  resolveLineageCards,
+  rowLabel,
   rowsForTier,
   shardName,
   statRowIsCollapsed,
@@ -131,8 +137,13 @@ export const ROW_QUESTIONS: Readonly<Record<RowKind, string>> = {
   cross: 'What does it borrow? One active.',
 };
 
-export function rowTitle(tier: number, row: RowKind): string {
-  return `Tier ${tier} · ${ROW_LABELS[row]}`;
+/**
+ * "Tier 2 · Verb". The rows read Lean and Verb only where they compose (design
+ * §24.9) — every live weapon band does; a band whose payoff row authors its own
+ * trigger and payoff reads "Stat" and "Payoff".
+ */
+export function rowTitle(tier: number, row: RowKind, composes = true): string {
+  return `Tier ${tier} · ${rowLabel(row, composes)}`;
 }
 
 /** What a locked row's header says instead of its question. */
@@ -213,14 +224,94 @@ export function triggerPayoffLine(resolved: Pick<ResolvedLineageCard, 'trigger' 
   return `${triggerSubject(resolved.trigger, !!resolved.perTargetTrigger)} ${predicate(resolved.payoff)}.`;
 }
 
+/** A share's words, per payload: what the share is OF. */
+const SHARE_OF: Partial<Record<PayoffKind, string>> = {
+  'echo-hit': 'of the hit',
+  'hemorrhage': 'of a swing',
+  'redose': 'of what it owes',
+  'technique-refund': 'of the cooldown',
+};
+
+/** A payload's SIZE as words, for "bigger: X (was Y)" (`PAYLOAD_SIZE`). */
+function sizeWords(payoff: LineagePayoff): string {
+  switch (payloadSize(payoff.kind).axis) {
+    case 'bonus': return `×${trimmed(payoff.magnitude, 2)}`;
+    case 'duration': return seconds(payoff.durationMs ?? 0);
+    case 'proxy': return `its mechanic bonus ×${trimmed(payoff.bonusScale ?? 1, 2)}`;
+    default:
+      if (payoff.kind === 'heal-and-load') {
+        return `heals ${pct(payoff.magnitude)} and loads ×${trimmed(payoff.loadMultiplier ?? 1, 2)}`;
+      }
+      return [pct(payoff.magnitude), SHARE_OF[payoff.kind]].filter(Boolean).join(' ');
+  }
+}
+
+/** Why an amplifier's own axis is missing on this pair (it moves the size instead). */
+const MISSING_AXIS: Readonly<Record<string, string>> = {
+  trigger: 'Its moment cannot come round sooner',
+  targets: 'Its payload lands on no body',
+  duration: 'Its payload does not hold',
+};
+
+/**
+ * An amplifier on a VERB, as what it changes on the pair the player has right now
+ * (design §24.9): the target verb composed with the active lean — what the runtime
+ * will fold it into — before and after `applyComposedAmplifier`, the runtime's own
+ * arithmetic. When its axis does not exist on this pair it says so and what it
+ * does instead, so a fallback is never a surprise.
+ */
+function composedAmplifierLine(
+  lineage: LineageDefinition,
+  progress: LineageProgress,
+  card: LineageCard,
+  target: LineageCard,
+): string | undefined {
+  const tree: LineageProgress = {
+    ...progress,
+    ownedCards: [...new Set([...progress.ownedCards, target.id])],
+    active: { ...progress.active, payoff: target.id },
+  };
+  delete tree.active.amplifier;
+  const bare = resolveLineageCards(lineage, tree).find((c) => c.card.id === target.id);
+  if (!bare?.trigger || !bare.payoff) return undefined;
+  const after = { trigger: { ...bare.trigger }, payoff: { ...bare.payoff } };
+  const move = applyComposedAmplifier(after, card.amplifies, ROW_SCALAR.amplifier);
+  const name = target.name;
+  switch (move) {
+    case 'frequency':
+      return after.trigger.n !== undefined && bare.trigger.n !== undefined
+        ? `${name} fires every ${ordinal(after.trigger.n)} hit (was every ${ordinal(bare.trigger.n)}).`
+        : `${name} can fire every ${seconds(after.trigger.capMs ?? 0)} (was every ${seconds(bare.trigger.capMs ?? 0)}).`;
+    case 'targets':
+      return `${name} also lands on a second body.`;
+    case 'duration':
+      return `${name} lasts ${seconds(after.payoff.durationMs ?? 0)} (was ${seconds(bare.payoff.durationMs ?? 0)})${
+        payloadSize(bare.payoff.kind).spread ? ', ticking as hard' : ''}.`;
+    case 'size': {
+      const change = `${sizeWords(after.payoff)} (was ${sizeWords(bare.payoff)})`;
+      const missing = card.amplifies && card.amplifies !== 'magnitude' ? MISSING_AXIS[card.amplifies] : undefined;
+      return missing
+        ? `${missing}, so ${name} lands bigger: ${change}.`
+        : `${name} lands bigger: ${change}.`;
+    }
+    default:
+      return undefined;
+  }
+}
+
 /**
  * An amplifier as what it CHANGES on the card it modifies (review P5): never the
  * boost it resolves to as if it were a payoff of its own, which nothing applies.
- * The duration case quotes before and after through `applyAmplifiedAxis`, the
- * runtime's own arithmetic, so the number is the one the game will use.
+ * On a verb it reads the composed pair (`composedAmplifierLine`); on a legacy
+ * payoff the duration case quotes before and after through `applyAmplifiedAxis`,
+ * the runtime's own arithmetic, so the number is the one the game will use.
  */
 export function amplifierLine(lineage: LineageDefinition, progress: LineageProgress, card: LineageCard): string {
   const target = card.modifies ? lineage.cards.find((c) => c.id === card.modifies) : undefined;
+  if (target && isVerbCard(target)) {
+    const composed = composedAmplifierLine(lineage, progress, card, target);
+    if (composed) return composed;
+  }
   const name = target?.name ?? 'The card below';
   const axis = card.amplifies ?? 'duration';
   switch (axis) {
@@ -270,6 +361,50 @@ export function pageCardSentence(lineage: LineageDefinition, card: LineageCard, 
 export function verbNeedsSlow(lineage: LineageDefinition, card: LineageCard, progress: LineageProgress): boolean {
   if (!isVerbCard(card)) return false;
   return composeVerb(card.lane, leanLaneFor(lineage, progress))?.needs === 'slow';
+}
+
+export const NEEDS_SLOW_NOTE = 'needs a slow';
+export const NO_HIT_NOTE = 'your mechanic has no hit yet';
+
+/**
+ * The roots whose mechanic fires with no hit to act on: a reload completes on a
+ * timer (`mechanicFired.ts` — the one emitter that passes no exchange).
+ */
+const MECHANIC_WITHOUT_HIT: ReadonlySet<CombatArchetype> = new Set<CombatArchetype>(['reload']);
+
+/**
+ * The payloads that act on the hit in flight rather than on a body or the player
+ * (`types.ts`: they are not `ON_TARGET_PAYOFF_KINDS`; the runtime's `liveExchange`
+ * refuses them with no exchange). `heal-and-load` still heals; only its load needs
+ * the hit.
+ */
+const HIT_PAYLOADS: ReadonlySet<PayoffKind> = new Set<PayoffKind>(['big-hit', 'mechanic-proxy', 'heal-and-load']);
+
+/**
+ * The one caveat a VERB card shows under its sentence, or undefined — at most one,
+ * the most binding first:
+ *  - "needs a slow": a Control verb with no hold source in the tree (§24.2; the
+ *    Control lean is one, §24.9);
+ *  - "your mechanic has no hit yet": the Slinger's Empowered verb when its payload
+ *    acts on the hit — a reload has no hit, so it does not land until the T3 paths
+ *    (§24.9: a known asymmetry, shown rather than patched);
+ *  - the verb lane's own moment caveat ("weak on bosses" for Kill chain, §24.9).
+ */
+export function verbNote(
+  lineage: LineageDefinition,
+  card: LineageCard,
+  progress: LineageProgress,
+  archetype?: CombatArchetype | null,
+): string | undefined {
+  if (!isVerbCard(card)) return undefined;
+  const composed = composeVerb(card.lane, leanLaneFor(lineage, progress));
+  if (!composed) return undefined;
+  if (composed.needs === 'slow') return NEEDS_SLOW_NOTE;
+  if (archetype && MECHANIC_WITHOUT_HIT.has(archetype)
+    && composed.trigger.kind === 'mechanic-fired' && HIT_PAYLOADS.has(composed.payoff.kind)) {
+    return NO_HIT_NOTE;
+  }
+  return packetHalves(card.lane)?.momentCaveat;
 }
 
 // ─── Cost chips and the requirement ──────────────────────────────────────────
@@ -367,6 +502,8 @@ export interface PageCardModel {
   sentence: string;
   /** A Control verb with no hold source in the tree: "needs a slow". */
   needsSlow: boolean;
+  /** The verb's one caveat under its sentence (`verbNote`): "needs a slow", … */
+  note?: string;
   state: PageCardState;
   /** The tiny tag top-right: "active", "owned · click to swap in", "in your form". */
   tag?: string;
@@ -413,13 +550,17 @@ export function pageCard(params: {
   locked?: boolean;
   /** This collapsed band's stat card the worn form absorbed. */
   absorbed?: boolean;
+  /** The player's class root, for the caveats that depend on it (`verbNote`). */
+  archetype?: CombatArchetype | null;
 }): PageCardModel {
   const { lineage, card, progress, wallet, lineages, locked, absorbed } = params;
   const sentence = pageCardSentence(lineage, card, params.sentenceProgress ?? progress);
   const needsSlow = verbNeedsSlow(lineage, card, params.sentenceProgress ?? progress);
+  const note = verbNote(lineage, card, params.sentenceProgress ?? progress, params.archetype);
   const owned = progress.ownedCards.includes(card.id);
   const base = {
     card, laneColor: laneColor(card.lane), sentence, needsSlow,
+    ...(note ? { note } : {}),
     isLean: card.row === 'stat', chips: [] as CostChip[],
   };
 
@@ -457,7 +598,7 @@ export function pageCard(params: {
   }
   return {
     ...model,
-    accessibleName: `${card.name}. ${sentence}${needsSlow ? ' Needs a slow.' : ''} ${STATE_TEXT[model.state]}`,
+    accessibleName: `${card.name}. ${sentence}${note ? ` ${note.charAt(0).toUpperCase()}${note.slice(1)}.` : ''} ${STATE_TEXT[model.state]}`,
   };
 }
 
@@ -497,6 +638,8 @@ export function pageBands(params: {
   lineages?: LineageProgressMap;
   /** The progress verb sentences read (the lean preview while one is hovered). */
   sentenceProgress?: LineageProgress;
+  /** The player's class root, for the verbs' caveats. */
+  archetype?: CombatArchetype | null;
 }): PageBand[] {
   const { lineage, progress } = params;
   const wornTier = Math.max(1, wornFormTier(lineage, progress));
@@ -508,7 +651,7 @@ export function pageBands(params: {
       .filter((row) => cards.some((c) => c.row === row))
       .map((row) => ({
         tier, row, locked,
-        title: rowTitle(tier, row),
+        title: rowTitle(tier, row, bandComposes(lineage, tier)),
         question: locked ? lockedRowQuestion(tier) : ROW_QUESTIONS[row],
         cards: lineage.lanes
           .map((lane) => cards.find((c) => c.row === row && c.lane === lane))
