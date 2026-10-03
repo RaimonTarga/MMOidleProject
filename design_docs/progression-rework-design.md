@@ -1163,11 +1163,21 @@ Two rows at T1, and the two rows are the two halves of a card the runtime alread
 a **trigger** and a **payoff**.
 
 - **Row 1, the lean.** A real stat move of 8–10% in the lane's scaling stat (`packets.ts`:
-  Tempo attack speed, Empowered attack %, Affliction on-hit, Control attack, Kill chain
-  move speed, Engagement attack, Technique power). A lean is a character stat while the
-  form is worn, like any item stat, so it is global: an Apprentice holding a Rapier with
-  the Tempo lean swings faster with everything. That is the point of a lean. **It also
-  names a payload**: the lane's event-shaped effect.
+  Tempo attack speed, Empowered attack %, **Affliction DoT potency** (the `dot.*` family —
+  conversion, or max stacks — not on-hit; corrected 2026-10-03, see below), Control attack,
+  Kill chain move speed, Engagement attack, Technique power). A lean is a character stat
+  while the form is worn, like any item stat, so it is global: an Apprentice holding a
+  Rapier with the Tempo lean swings faster with everything, and one with the Affliction
+  lean poisons harder with everything, which is intended — Affliction IS the DoT package.
+  **It also names a payload**: the lane's event-shaped effect.
+
+  *On-hit is not Affliction.* The designer's intent, restated: flat on-hit damage is the
+  fast-attacker's package — it ignores the empowered multiplier and wants swings per
+  second — while damage over time is the slow heavy hitter's, derived from attack. So
+  on-hit belongs with Tempo, as a WEAPON base stat that Tempo's attack speed and Tempo's
+  "lands twice" payload multiply, not as a lane's lean. The Affliction lane's scaling stat
+  moves from `onHitDamage` to DoT potency in the run. No new packet: on-hit is a stat, not
+  a package.
 - **Row 2, the verb.** A **moment**: the lane's trigger, at a cadence of one firing every
   4–6 s at reference attack speed.
 
@@ -1198,6 +1208,21 @@ sentences and 3 pure ones. The full 45 are reviewable in the combinations mockup
 (2026-10-03); the designer reviews them for the pairs worth making special, the way
 Affliction × Engagement ("your first hit on each target poisons it heavily") was the pair
 that suggested the structure.
+
+Three clarifications from the designer's review (2026-10-03):
+
+- **"Lands twice" is a real second swing, not double damage on paper.** The second hit is a
+  proc (skips plating, pays half DR, carries on-hit), and the one-in-six cadence is what
+  keeps the budget: a whole extra swing every 6th hit is ~+17% DPS on average. It reads as
+  an event and costs what every other verb costs.
+- **Control payloads carry their own cadence as their cooldown.** The Control moment fires
+  at most once every 5 s; the knockdown/root payload therefore cannot chain, and it goes
+  through the existing monster control rules (boss resistances, stun ladder).
+- **The class system supplies moments; the tree supplies payloads.** A Striker or Squire on
+  the Mid range (at-bay slow) makes the Control moment reliable; a Light frame that fires
+  the mechanic more often speeds the Empowered moment; a kiting Far build feeds Engagement.
+  That is the intended mesh, and the reason a weapon's three lanes should include at least
+  one moment every class can reach at T1 (Tempo, Engagement, Kill chain are universal).
 
 Two things the bench must carry: the Empowered moment fires as often as the class mechanic
 does, so its normalisation entry comes from the mechanic's reference cadence, not from
