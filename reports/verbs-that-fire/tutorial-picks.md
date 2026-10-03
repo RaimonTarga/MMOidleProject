@@ -7,11 +7,12 @@ the best boss-lab uplift **among the pairs whose verb fired for that class** (ve
 
 **Table:** the conductor's composition-matrix rerun on `57916b52` (wave 1 merged: the leans
 seed their conditions, the Empowered moment capped at 4 s, T2+ bands compose), boss lab,
-`_t1BossPlan.ts --matrix=composition` → `_t1BossLab.ts` in three shards, read at
-2026-10-04 00:05 from the shards in progress: every Axe and Dagger row of the six classes
-was complete (50 fights per pair: 5 bosses × 10 seeds), except the Conduit's Dagger rows,
-which no pick reads. The finished matrix lands at
-`../mmo-lin-w2c/reports/verbs-that-fire/matrix-boss.jsonl` (the conductor's). Printed by:
+`_t1BossPlan.ts --matrix=composition` → `_t1BossLab.ts`, 15,000 fights (5 weapons × 10 rows
+× 6 classes × 5 T1 bosses × 10 seeds, 0 errors, 0 refusals):
+`../mmo-lin-w2c/reports/verbs-that-fire/matrix-boss.jsonl` (the conductor's file; 50 fights
+per pair and class here). The picks were first read from its shards in progress, with every
+Axe and Dagger row the picks read already complete; the finished file gives the identical
+tables below. Printed by:
 
 ```bash
 # from server/
@@ -23,6 +24,12 @@ weapon with no cards, on the same boss and seeds, median over the five bosses (t
 the bosses beside it). **Fires/min** is the verb's landed `card-fx` per minute of fight.
 ⌀ = the verb never fired for that class. "(plan)" marks the plan's pick when it is not the
 table's.
+
+**The metric is DPS uplift, not win rate.** The Control lean is now a slow (wave 1), so
+Control-lean pairs read ~0% on DPS while their win rates can rise (the conductor's note).
+Only the Dagger has a Control lane among the two fighting weapons, and on the Dagger the
+Slinger wins 100% of fights with every pair and with no cards, so the win-rate column
+cannot separate its pairs; the Axe has no Control lane.
 
 | Class | Weapon | Pick | Uplift | Fires/min | The verb then reads |
 |---|---|---|---:|---:|---|

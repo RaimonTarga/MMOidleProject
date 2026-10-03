@@ -3,7 +3,9 @@
 **Status:** ACTIVE PLAN — Phases 1–4 built on `feat/guided-tutorial` (2026-09-29),
 shipped in v0.6.2. The course-correction run (2026-10-03, W3-B) replaced the one-card
 tree lesson with the weapon page's two purchases, a lean and a verb, and added the
-first-hour checklist (both below). Nothing below is shipped behavior until a
+first-hour checklist (both below). The verbs-that-fire run (2026-10-04, wave 2) moved
+both purchases and the gate to the weapon each class fights with (the Chaotic Axe, the
+Slinger's Poison Dagger; design §24.9). Nothing below is shipped behavior until a
 `guided-tutorial-current-state.md` exists.
 
 ## What it is
@@ -290,7 +292,7 @@ each beat's level off the script's own gates (a beat is reached only once every 
 before it has met its condition). `tutorial.test.ts` holds every class to ≤ 2 new ideas
 per level and per beat, each idea introduced once, every idea with a screen element, and
 every anchor it names a real one. The same ideas are then MEASURED on the bot's 1x runs
-(`server/scripts/_ccTutorialSweep.ts`): the level the run was actually at when each beat
+(`server/scripts/_vfTutorialSweep.ts`; `_ccTutorialSweep.ts` before it): the level the run was actually at when each beat
 started, with farm beats that were already satisfied left out — the guide never shows
 those.
 
@@ -781,6 +783,34 @@ pay the gate 4.6–8.0 min sooner than the evening sweep: the route lost its upg
 
 **The verb is live for only 4.6–8.6 minutes** (28–37 kills) before the Cave swaps every
 plan to the Chaotic Axe or the Poison Dagger, and inert in every boss fight after that.
+
+### 2026-10-04 — the verbs-that-fire 1x sweep
+
+The script after design §24.9 (revision `d42e4953`, route v1.4.0): the lean and the verb on
+the boss weapon's page (Cave 2 / Cave 4 for five plans, Swamp 2 / Swamp 4 for the Slinger),
+the verb row at Global Mastery 10, the gate paid on the same weapon. 1x and untainted, one
+server and one game database per class, bots launched directly. **The bot now records card
+firings.** Full ledger: `reports/verbs-that-fire/sweep-1x.md`.
+
+| Class | beats | lean | verb | Plains | Mountain | gate boss | gate paid | deaths |
+|---|---|---|---|---|---|---|---|---|
+| Striker | 59/59 | 27m52s | 30m27s | 1/1 | 1/1 | Cave 3/5 | 64m42s | 2 |
+| Squire | 59/59 | 29m01s | 30m12s | 1/1 | 1/1 | Cave 3/5 | 64m01s | 2 |
+| Slinger | 62/62 | 15m20s | 18m23s | 1/1 | 1/1 | Swamp 3/5 | 53m56s | 2 |
+| Spirit | 62/62 | 21m12s | 22m21s | 1/1 | 1/1 | Cave 3/5 | 46m42s | 2 |
+| Apprentice | 64/64 | 32m59s | 35m06s | 1/1 | 1/1 | Cave 3/5 | 68m32s | 2 |
+| Conduit | 62/62 | 23m18s | 24m10s | 1/1 | 1/1 | Cave 3/5 | 50m20s | 2 |
+
+**All six complete the whole script, gate paid; no beat ended anything but `done`. The bought
+verb fired in every one of the 30 boss wins** (4–8 times a fight for five classes, 20–23 for
+the Conduit), with the boss weapon in the slot at both purchases and in every fight; the
+Slinger's Affliction lean visibly seeds its bleed (0 own bleed ticks before it, 64 in the three
+minutes with the lean alone). The pair is live 24–36 min, against 4.6–8.6 before. Every class
+reaches GM 30 and Tier 2 sooner than the course-correction sweep; five pay the gate sooner (the
+Squire 2.1 min later). The twelve deaths are all the gate's second round (two per class, as
+before), now the Cave and Swamp dungeons' guard or a boss woken seconds after the previous win.
+The first-hour checklist held as measured. The box ran at 100% CPU for the first 24 min (the
+servers at 8.7 Hz, 9.2 Hz after).
 
 ## Findings
 
