@@ -256,6 +256,22 @@ export function notifyAbilityFired(abilityId: string): void {
 }
 
 /**
+ * How many times each Technique has had cooldown handed back by a lineage
+ * refund (the Technique payload, design §24.2 — `technique.refund-flash`). A
+ * COUNT rather than a timestamp: the tile keys a one-shot flash on it, so every
+ * refund replays the flash and a remount never replays an old one.
+ */
+export const abilityRefundCountAtom = atom<Record<string, number>>({});
+
+/** The server refunded these Techniques' cooldowns (own player only). */
+export function notifyAbilityRefunded(abilityIds: readonly string[]): void {
+  const store = getDefaultStore();
+  const next = { ...store.get(abilityRefundCountAtom) };
+  for (const id of abilityIds) next[id] = (next[id] ?? 0) + 1;
+  store.set(abilityRefundCountAtom, next);
+}
+
+/**
  * Client receipt time for the server event that places an ability on cooldown,
  * keyed by ability id. Distinct from `abilityFiredAtAtom`: Techniques enter
  * cooldown when ARMED, while their visible effect may land on a later attack.

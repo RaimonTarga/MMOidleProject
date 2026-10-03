@@ -10,6 +10,7 @@ import {
   abilityRankNumeral,
   attunedForFamily,
   guardEffectIdForAbility,
+  packetDefinition,
   recoveryEffectIdForAbility,
   stanceDef,
   type AbilityDef,
@@ -21,6 +22,7 @@ import {
   abilityFiredAtAtom,
   abilityCooldownSampleAtom,
   abilityCooldownStartedAtAtom,
+  abilityRefundCountAtom,
   activeBuffsAtom,
   activeStanceAtom,
   armedAbilityIdAtom,
@@ -125,6 +127,19 @@ function useReadyFlash(cooling: boolean): number {
   return count;
 }
 
+/**
+ * A Technique's cooldown handed back by a lineage refund (`technique.refund-flash`,
+ * design §24.2): the count it has reached since this tile mounted, or 0. Keyed on
+ * the count so each refund replays the flash and a remount replays none.
+ */
+function useRefundFlash(count: number): number {
+  const atMount = useRef(count);
+  return count > atMount.current ? count : 0;
+}
+
+/** The Technique lane's colour, from its one owner (design §18.2). */
+const REFUND_COLOR = packetDefinition('technique')?.color ?? '#ff7fd4';
+
 /** The draining border ring for an active effect's remaining duration. */
 function DurationRing({ pct, className }: { pct: number | undefined; className: string }) {
   const remaining = Math.max(0, Math.min(100, pct ?? 100));
@@ -209,12 +224,14 @@ function AbilityIcon({
   keyHint,
   queued,
   unavailable,
+  refunds,
 }: {
   ability: AbilityDef;
   status: SlotStatus;
   keyHint: string;
   queued: boolean;
   unavailable: boolean;
+  refunds: number;
 }) {
   const context = useAbilityContext();
   const timing = abilityTiming(ability, useAtomValue(attunedAbilitiesAtom), useAtomValue(runesEquippedAtom));
@@ -235,6 +252,7 @@ function AbilityIcon({
   const cooling = remainingPct > 0;
   const onCooldown = status.castRemainingMs === undefined && status.cooldownLeftMs > 0;
   const readyFlash = useReadyFlash(onCooldown);
+  const refundFlash = useRefundFlash(refunds);
   const state = primaryState(status, cooling);
   const glowClass = [
     status.justFired ? " ability-icon--fired" : "",
@@ -307,6 +325,14 @@ function AbilityIcon({
           )}
           {status.armed && <span className="ability-armed-tag">ARMED</span>}
           {readyFlash > 0 && <span key={readyFlash} className="ability-ready-flash" aria-hidden="true" />}
+          {refundFlash > 0 && (
+            <span
+              key={`refund-${refundFlash}`}
+              className="ability-refund-flash"
+              style={{ ["--refund-color" as string]: REFUND_COLOR }}
+              aria-hidden="true"
+            />
+          )}
         </div>
 
         {/* Slot badge remains readable over either artwork or the fallback glyph. */}
@@ -349,6 +375,8 @@ interface DesktopAbilityFamilyProps {
   keyHint?: string;
   queued: boolean;
   unavailable: boolean;
+  /** Lineage refunds seen for this Technique (`abilityRefundCountAtom`). */
+  refunds: number;
 }
 
 function DesktopAbilityFamily({
@@ -357,6 +385,7 @@ function DesktopAbilityFamily({
   keyHint,
   queued,
   unavailable,
+  refunds,
 }: DesktopAbilityFamilyProps) {
   const meta = SLOT_META[ability.slot];
   const icon = abilityIconSource(ability);
@@ -367,6 +396,7 @@ function DesktopAbilityFamily({
   const cooling = remainingPct > 0;
   const onCooldown = status.castRemainingMs === undefined && status.cooldownLeftMs > 0;
   const readyFlash = useReadyFlash(onCooldown);
+  const refundFlash = useRefundFlash(refunds);
   const state = primaryState(status, cooling);
 
   // The just-fired flash is a render cue layered over the primary state, not
@@ -428,6 +458,14 @@ function DesktopAbilityFamily({
         )}
         {status.armed && <span className="ability-armed-tag">ARMED</span>}
         {readyFlash > 0 && <span key={readyFlash} className="ability-ready-flash" aria-hidden="true" />}
+        {refundFlash > 0 && (
+          <span
+            key={`refund-${refundFlash}`}
+            className="ability-refund-flash"
+            style={{ ["--refund-color" as string]: REFUND_COLOR }}
+            aria-hidden="true"
+          />
+        )}
         {keyHint && (
           <span className="combat-ability-slot__key-hint" aria-hidden="true">
             {keyHint}
@@ -532,6 +570,7 @@ export function AbilityBar() {
   const firedAt = useAtomValue(abilityFiredAtAtom);
   const cooldownStartedAt = useAtomValue(abilityCooldownStartedAtAtom);
   const cooldownSamples = useAtomValue(abilityCooldownSampleAtom);
+  const refundCounts = useAtomValue(abilityRefundCountAtom);
   const buffs = useAtomValue(activeBuffsAtom);
   const cast = useAtomValue(abilityCastAtom);
   const armedAbilityId = useAtomValue(armedAbilityIdAtom);
@@ -628,6 +667,7 @@ export function AbilityBar() {
             keyHint={keyHints[index] ?? "—"}
             queued={queuedAbilityIds.includes(ability.id)}
             unavailable={!status.armed && ability.slot === "technique" && ability.shape !== "instant" && ability.shape !== "self-cast" && !targetId}
+            refunds={refundCounts[ability.id] ?? 0}
           />
         ))}
       </div>}
@@ -652,6 +692,7 @@ export function AbilityBar() {
               keyHint={keyHints[index] ?? "—"}
               queued={queuedAbilityIds.includes(ability.id)}
               unavailable={!status.armed && ability.slot === "technique" && ability.shape !== "instant" && ability.shape !== "self-cast" && !targetId}
+              refunds={refundCounts[ability.id] ?? 0}
             />
           ))}
         </div>}
