@@ -3,6 +3,8 @@
 **Audited:** 2026-10-01 (progression rework run 3: T3/T4 families and blends for every
 biome, the T1 third-mob close-out, and the T1 mask re-cut — on top of the Phase 2a/5
 work that first shipped this system for Plains/Forest/T1 and then Jungle/Desert/T2).
+Updated 2026-10-03 (verbs-that-fire run, task C): every node pays a family it fields — the
+eight T2–T4 territories with no body at their tier were re-led (§4).
 
 **Design authority:** [`design_docs/progression-rework-design.md`](../design_docs/progression-rework-design.md)
 §12, §18.7–§18.9. **History:** [`archive/progression-rework-plan.md`](archive/progression-rework-plan.md)
@@ -98,11 +100,14 @@ stat/HP tables are untouched by blend or family.
   re-familying Mud Toad from Mire to Stalker) now lets all 25 authored T1 blends resolve
   exactly as authored, with no family dropped and rescaled away. Engagement shards are
   now **earned** from Plains Sky kills rather than credited by a harness shim.
-- **A later-tier gap of the same shape remains open, and is explicitly not a code fix.**
-  Jungle's T2 pool fields only `jungle-ape` and two Undergrowth members — none of
-  Jungle Stalker's three named members exist below T3/T4 — so a T2 node that names
-  Stalker as dominant still re-scales onto Ape/Undergrowth at spawn time. Flagged for the
-  designer alongside the Desert Dealer-line split (§1).
+- **A later-tier gap of the same shape is still in the pools, but no longer leads a
+  node.** Six T2–T4 biome tiers field only two of their three families (Swamp T2 has no
+  Mire, Jungle T2 no Stalker, Jungle T3 no Undergrowth, Desert T3 no Scorpion, Swamp T3 no
+  Stalker, Mountain T4 no Ridge). A bodiless family may keep a minority share — it is
+  dropped and re-scaled away at spawn time and pays nothing — but it must not LEAD a
+  blend, because a node pays its leader's shard (§4). The verbs-that-fire run re-led the
+  eight nodes that broke that; filling the pools is the designer's (a tier-native body,
+  like design §18.8's third T1 mobs).
 - Pack mobs (e.g. a wolf alpha fielding followers) mean a family's share of **spawn
   picks** runs ahead of its share of **bodies on the field**.
 - A family's own monster list is deduplicated for spawning: a mob once listed twice to
@@ -121,8 +126,34 @@ under its AUTHORED blend's dominant family (largest share, ties in family-table 
 whatever the body's own family — so pack followers filed under another family pay what
 the map says (review P16, closed by construction). A node with no blend (a dungeon) keeps
 the old per-monster rule: the dead mob's own family shard, nothing for a mob in no family.
-Eight T2–T4 nodes are territories of a family their tier cannot field (they still pay its
-shard; `nodeShards.test.ts`'s `UNFIELDED_TERRITORIES`).
+
+**Every node pays a family it fields** (`nodeShards.test.ts` section 4, every node in the
+registry, no allowlist): the family a node is categorised under has at least one member
+in its biome's tier pool, the spawner fields it, and it leads what the node actually
+spawns. Eight T2–T4 nodes broke this until the verbs-that-fire run (2026-10-03, review
+L16, course-correction report item 15): each named as leader a family with no body at its
+tier, so it paid that family's shard while spawning two others. Each was re-led by a
+family it fields, chosen to keep the spawns as they were unless that left one of the
+tier's fielded families leading fewer than two nodes. All PROVISIONAL, the designer's:
+
+| Node | Was (leader → shard) | Now (blend → shard) | Spawns |
+|---|---|---|---|
+| t2-swamp-01 | Mire → Venom | Coven 70 / Stalker 30 → Shackle | unchanged (7/3) |
+| t2-swamp-04 | Mire (45/45 tie) → Venom | Coven 80 / Stalker 20 → Shackle | unchanged (8/2) |
+| t2-swamp-05 | Mire → Venom | Stalker 60 / Coven 40 → Bone | Coven 5/5 → Stalker 6/4 (Bone from two nodes, not one) |
+| t2-jungle-03 | Stalker → Spark | Undergrowth 60 / Ape 40 → Venom | Ape 7/3 → Undergrowth 6/4 (Venom from two nodes; Ape would lead four of five) |
+| t3-jungle-02 | Undergrowth → Venom | Stalker 70 / Ape 30 → Spark | unchanged (7/3) |
+| t3-desert-02 | Scorpion → Shackle | Stalker 70 / Basilisk 30 → Bone | unchanged (7/3) |
+| t3-swamp-03 | Stalker → Bone | Mire 70 / Coven 30 → Venom | unchanged (7/3) |
+| t4-mountain-02 | Ridge → Shackle | Hopper 70 / Crag 30 → Spark | unchanged (7/3) |
+
+Every new leader is a lane of the weapon whose door that biome tier is. What left: Swamp
+T2 pays no Venom (the Dagger's T2 door), Jungle T2 no Spark and Jungle T3 no Venom (the
+Rapier's doors; the Jungle forms crown Affliction), Desert T3 and Mountain T4 no Shackle.
+Two family-table notes for the designer sit behind these: `dune-stalker` is the Scorpion
+line's T3 step by its own monster file but is filed under Desert Stalker, and
+`bog-lurker` is the Mire Stalker's successor by its banner but is filed under Mire —
+re-filing either moves the gap to a sibling node rather than closing it.
 
 ## 5. Map presentation
 
@@ -177,7 +208,9 @@ what design §18.7 says it is.
 `server/test/variantBlend.test.ts` covers blend authoring (shares sum to 1, every key
 belongs to the node's own biome) per tier, the largest-remainder spawn cycle, and a
 thirty-spawn world run per tier asserting the resolved composition matches the authored
-blend within one mob per ten slots. `server/test/lineageMaterials.test.ts` covers the
-family partition (every `FAMILY_BIOMES` biome, every tier) and the `UNSOURCED_FAMILIES`
-tripwire. Blend shape and coverage are also folded into `validateWorldMap`, so a
+blend within one mob per ten slots; its "every family a tier's blends name leads a node"
+rule counts only the families the tier's pool fields. `server/test/lineageMaterials.test.ts`
+covers the family partition (every `FAMILY_BIOMES` biome, every tier) and the
+`UNSOURCED_FAMILIES` tripwire. `shared/src/world/nodeShards.test.ts` covers the node rule:
+one shard per node, its leader's `drops`, and a leader the node's tier pool fields. Blend shape and coverage are also folded into `validateWorldMap`, so a
 malformed blend fails dev boot rather than shipping silently.

@@ -80,8 +80,9 @@ design §18.5's T3/T4 form authoring and the Phase 5 re-homing table landed — 
 on each definition; `isLineageParked` / `liveLineages()` in `index.ts`. A parked lineage
 has no page entry (`lineageForEquippedItem` returns undefined), refuses every purchase,
 swap and gate with "This slot has no tree yet." before any other check, resolves no
-runtime cards, absorbed rows or capstones, and is never created or written by
-`ensureLineageProgress` / `syncLineagesFromInventory`. A save that already holds a parked
+runtime cards, absorbed rows or capstones, is never created or written by
+`ensureLineageProgress` / `syncLineagesFromInventory`, and earns no boss Lane-A shards
+(§10). A save that already holds a parked
 tree keeps it untouched and unresolved. Coverage and reachability tests walk the live
 lineages only, so review P4 (78 unreachable non-weapon cards) is moot while they are
 parked. The data stays for when the trees return.
@@ -201,9 +202,15 @@ the packets at resolve time:
 
 - **Caps and latches** (`server/src/systems/combat/lineageCards.ts`, keys in
   `lineageKeys.ts`): a capped moment sets `lineage.cap.<cardId>` when its payoff lands;
-  `hit-nth` counts per card and only landed swings (a chaotic miss neither advances nor
-  fires it); the Engagement latch is per body, kept on the monster; the kill carry is armed
-  by a kill and spent by the next landed hit.
+  `hit-nth` counts per card and only landed swings; the Engagement latch is per body, kept
+  on the monster; the kill carry is armed by a kill and spent by the next landed hit.
+- **A chaotic miss is not a landed hit for any hit moment.** A Chaotic Axe whiff
+  (`ctx.metadata.chaoticMiss`) returns before anything moves in `hit-nth`, `first-hit`,
+  `hit-afflicted`, `hit-held` and the kill carry: it neither fires the moment nor advances
+  its counter, spends its opener latch, re-arms the engagement clock or starts its cap, so
+  the first landed hit after a whiff is the one that pays (`hit-nth` since `dcd06e5e`; the
+  other three since the verbs-that-fire run). `server/test/lineageChaoticMiss.test.ts`
+  swings the real Axe for each.
 - **A proxy never recurses** (hard rule 3): `mechanic-proxy` applies the archetype's
   resolved empowered multiplier (`resolveEffectiveMultiplier`, shared with the real path)
   and sets `mechanicConsumed` plus `mechanicProxy`. It never consumes the class's charge and
@@ -426,17 +433,24 @@ Phase 2b deleted the catalyst accumulator outright.
   SHARD_TIER_MULT[biomeTier] × debugMult))`, where `nodeShard` is the node's dominant
   family's `drops`. A node with no blend (a dungeon) pays the dead mob's own family shard,
   and nothing for a mob in no family. The player reads shard names (Gale, Anvil, Venom,
-  Shackle, Bone, Spark, Sigil, Iron, Glass — `shardName`), never lane names.
+  Shackle, Bone, Spark, Sigil, Iron, Glass — `shardName`), never lane names. **Every node
+  pays a family it fields**: its leader has a body in its tier pool (`nodeShards.test.ts`,
+  no allowlist; the eight T2–T4 nodes that paid a bodiless family were re-led by the
+  verbs-that-fire run — table in [`variants-current-state.md`](variants-current-state.md) §4).
 - **Capstones.** Granted on every boss kill whose biome has a capstone material: `+= max(1,
   round(debugMult))` per kill — not scaled by node identity.
-- **Boss Lane-A stopgap (design §17, provisional).** Every biome boss kill also drops 2
-  shards of each **distinct non-weapon Lane-A packet** across that biome's three
-  non-weapon lineages (`biomeDefensiveLaneAPackets`, deduplicated per packet — e.g. Plains
-  armor and mobility both name Kill chain, so one boss kill pays Kill chain once, not
-  twice). This is how Bulwark and Barrier-tempo earn any T1 income at all, since no T1
-  family drops either shard yet — remove this stopgap when a family covers them (open
-  decision 3). While the non-weapon trees are parked it pays Iron and Glass Shards nothing
-  can spend (a designer call recorded in the course-correction report).
+- **Boss Lane-A stopgap (design §18.6, provisional).** Every biome boss kill also drops
+  `BOSS_LANE_A_SHARD_AMOUNT` (4, so a boss-only lane buys a T1 payoff in two kills) shards
+  of each **distinct Lane-A packet of the LIVE lineages** homed in that biome
+  (`biomeLaneAPackets`, deduplicated per packet). **Parked lineages pay nothing**
+  (verbs-that-fire run, course-correction report item 17): while the armour, charm and
+  boots trees are parked the stopgap pays the weapon lanes only — Plains Technique (half
+  of Technique's two T1 sources), Forest Tempo, Mountain Empowered, Cave Tempo, Swamp
+  Affliction — and no boss pays Iron (Bulwark) or Glass (Barrier tempo) Shards nothing
+  could spend. Read off `isLineageParked`, so un-parking a tree restores its Lane A (and,
+  for Bulwark and Barrier tempo, their only T1 income — no T1 family drops either; open
+  decision 3) with no other edit. `lineageMaterials.test.ts` pins both directions through
+  the live reward seam.
 - Both wallets are wiped (not refunded) by `resetPlayerProgress` and start at `{}` on a
   fresh character.
 
@@ -498,9 +512,14 @@ active card per owned row plus the worn form's capstone.
   [`variants-current-state.md`](variants-current-state.md).
 - The T3 path `packet` tags are PROVISIONAL labels, not a class-path rewrite.
 - `ABILITY_NODE_SHARE` is unbenched.
-- Bulwark and Barrier-tempo shard income at T1 depends wholly on the boss Lane-A stopgap
-  (§10), and Technique's partly (one Swarm-led Plains node); since design §24.4 every
-  other weapon lane is paid by at least two T1 nodes' territories.
+- Bulwark and Barrier-tempo have NO shard income while their trees are parked (the boss
+  Lane-A stopgap skips parked lineages, §10); un-parking a tree makes the stopgap their
+  only T1 source again. Technique's T1 income is one Swarm-led Plains node plus the Plains
+  boss; since design §24.4 every other weapon lane is paid by at least two T1 nodes'
+  territories.
+- Six T2–T4 biome tiers field only two of their three families, so the eight nodes
+  re-led in §10 pay a fielded family's shard instead of the one their template named
+  (variants-current-state §4); which shards those doors should pay is the designer's.
 
 ## 13. The weapon page and the rhythm readout (design §24.6)
 
