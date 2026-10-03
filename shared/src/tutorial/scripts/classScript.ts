@@ -443,7 +443,7 @@ class ScriptBuilder {
   }
 
   maxOut(chapter: string, biome: T1Biome): void {
-    this.push({
+    this.push(teaching({
       id: `max:${biome}`,
       chapter,
       say: biome === 'plains'
@@ -452,7 +452,9 @@ class ScriptBuilder {
       waiting: `Fighting in ${BIOME_NAME[biome]} until its mastery is maxed.`,
       progress: [{ type: 'biomeLevel', biomeGroup: biome, level: 6 }],
       steps: [{ type: 'farm', at: biomeRef(biome), until: { type: 'biomeLevelAtLeast', biomeGroup: biome, level: 6 } }],
-    });
+      // The first line that says what mastery is for, and a max beat is never
+      // skipped (the Clearing's own mastery lines ride on farms that often are).
+    }, biome === 'plains' ? ['mastery'] : undefined));
   }
 
   items(chapter: string, leg: T1Biome, items: readonly PlanItem[] | undefined, intro?: LegIntro): void {

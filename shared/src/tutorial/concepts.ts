@@ -174,7 +174,7 @@ const CHAPTER_ZONE: Readonly<Record<string, string>> = {
 };
 
 export interface TutorialChecklistRow {
-  /** "Tier 0", "Forest 2", "The Seals": where the player is when the line shows. */
+  /** "Clearing 0", "Forest 2", "The Seals": where the player is when the line shows. */
   level: string;
   beatId: string;
   say: string;
@@ -202,23 +202,20 @@ function gatesIn(condition: TutorialCondition): TutorialCondition[] {
  * that a farm finishing two levels at once lands two levels' lines together —
  * which the 1x sweep's own level-ups show (docs/guided-tutorial-plan.md).
  *
- * Before the first tier the level is "Tier 0" (the Clearing quest); the seals and
- * the gate are their own levels.
+ * The seals and the gate are their own levels.
  */
 export function tutorialChecklist(script: TutorialScript): TutorialChecklistRow[] {
   const levels: Record<string, number> = {};
-  let tier = 0;
   const rows: TutorialChecklistRow[] = [];
   for (const beat of script.beats) {
     const zone = CHAPTER_ZONE[beat.chapter];
     const zoneName = zone ? beat.chapter.replace(/^The /, '') : undefined;
-    const level = tier < 1 ? 'Tier 0' : zoneName ? `${zoneName} ${levels[zone!] ?? 0}` : beat.chapter;
+    const level = zoneName ? `${zoneName} ${levels[zone!] ?? 0}` : beat.chapter;
     rows.push({ level, beatId: beat.id, say: beat.say, teaches: beat.teaches ?? [] });
 
     for (const step of beat.steps) {
       if (step.type !== 'farm') continue;
       for (const gate of gatesIn(step.until)) {
-        if (gate.type === 'playerTierAtLeast') tier = Math.max(tier, gate.tier);
         if (gate.type === 'biomeLevelAtLeast') levels[gate.biomeGroup] = Math.max(levels[gate.biomeGroup] ?? 0, gate.level);
         if (gate.type === 'canCraft' || gate.type === 'recipeUnlocked') {
           const recipe = RECIPE_DATABASE.get(gate.recipeId);

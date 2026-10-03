@@ -90,7 +90,8 @@ export const TUTORIAL_ROUTES: readonly Route[] = TUTORIAL_CLASS_PLANS.map((plan)
     id: tutorialRouteId(plan.className),
     // 1.2.0: the weapon page's lean AND verb (design §24.2), each bought with
     // `unlockCard` + `setActive` — the intents the client's weapon page sends.
-    version: "1.2.0",
+    // 1.3.0: the Clearing's club and armor are made during the tier-0 quest.
+    version: "1.3.0",
     classRoot: plan.classRoot,
     description: `Guided Tier-1 tutorial for the ${plan.className}: every T1 zone to Global Mastery 30 with the Rapier's lean and verb, the ${TUTORIAL_SEALS.join(" and ")} seals, then the weapon lineage's tier-1 gate.`,
     steps: script.beats.flatMap((beat) =>

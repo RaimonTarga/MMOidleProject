@@ -84,7 +84,12 @@ const beatIndex = (script: TutorialScript, id: string): number => script.beats.f
 {
   const O = TUTORIAL_OPENING;
   assert(resolveBeatIndex(O, view()) === 0, 'a fresh character starts at the tier-0 quest');
-  assert(resolveBeatIndex(O, view({ playerTier: 1 })) === beatIndex(O, 'choose-class'), 'tier 1 without a class resumes at the class pick');
+  assert(!!O.beats[0].progress?.some((p) => p.type === 'questKills'), 'the first beat shows the quest count');
+  // The club and the armor are made DURING the quest (the first-hour checklist).
+  const armed = { equipment: { ...emptyEquipment(), weapon: 'primordial-club', armor: 'clearing-vest-t1' } };
+  assert(resolveBeatIndex(O, view(armed)) === beatIndex(O, 'first-blood'), 'armed at tier 0 resumes at the rest of the quest');
+  assert(resolveBeatIndex(O, view({ ...armed, playerTier: 1 })) === beatIndex(O, 'choose-class'), 'tier 1 without a class resumes at the class pick');
+  assert(beatIndex(O, 'craft:clearing-vest-t1') < beatIndex(O, 'first-blood'), 'the armor comes before the quest ends');
   const classed = { playerTier: 1, selectedClass: 'cadence-root' };
   assert(resolveBeatIndex(O, view(classed)) === beatIndex(O, 'farm:primordial-club'), 'a new class with no club waits on the club farm');
   const affordable = view({
