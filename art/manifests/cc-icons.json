@@ -16,7 +16,7 @@
       "status": "accepted",
       "candidates": 1,
       "styleRef": null,
-      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Gale Shard, tempo lane #7fe3ff. Designer approved 2026-10-03. PixelLab endpoint is gallery-schema compatibility only.",
+      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Gale Shard, tempo lane #7fe3ff. Designer approved 2026-10-03; source target superseded by the designer-approved essence-style shard replacement. PixelLab endpoint is gallery-schema compatibility only.",
       "sources": [
         "shard:tempo"
       ],
@@ -35,7 +35,7 @@
       "status": "accepted",
       "candidates": 1,
       "styleRef": null,
-      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Anvil Shard, empowered lane #ffb347. Designer approved 2026-10-03. PixelLab endpoint is gallery-schema compatibility only.",
+      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Anvil Shard, empowered lane #ffb347. Designer approved 2026-10-03; source target superseded by the designer-approved essence-style shard replacement. PixelLab endpoint is gallery-schema compatibility only.",
       "sources": [
         "shard:empowered"
       ],
@@ -54,7 +54,7 @@
       "status": "accepted",
       "candidates": 1,
       "styleRef": null,
-      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Venom Shard, affliction lane #9be564. Designer approved 2026-10-03. PixelLab endpoint is gallery-schema compatibility only.",
+      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Venom Shard, affliction lane #9be564. Designer approved 2026-10-03; source target superseded by the designer-approved essence-style shard replacement. PixelLab endpoint is gallery-schema compatibility only.",
       "sources": [
         "shard:affliction"
       ],
@@ -73,7 +73,7 @@
       "status": "accepted",
       "candidates": 1,
       "styleRef": null,
-      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Shackle Shard, control lane #8fb8ff. Designer approved 2026-10-03. PixelLab endpoint is gallery-schema compatibility only.",
+      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Shackle Shard, control lane #8fb8ff. Designer approved 2026-10-03; source target superseded by the designer-approved essence-style shard replacement. PixelLab endpoint is gallery-schema compatibility only.",
       "sources": [
         "shard:control"
       ],
@@ -92,7 +92,7 @@
       "status": "accepted",
       "candidates": 1,
       "styleRef": null,
-      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Bone Shard, kill-chain lane #c58fff. Designer approved 2026-10-03. PixelLab endpoint is gallery-schema compatibility only.",
+      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Bone Shard, kill-chain lane #c58fff. Designer approved 2026-10-03; source target superseded by the designer-approved essence-style shard replacement. PixelLab endpoint is gallery-schema compatibility only.",
       "sources": [
         "shard:kill-chain"
       ],
@@ -111,7 +111,7 @@
       "status": "accepted",
       "candidates": 1,
       "styleRef": null,
-      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Spark Shard, engagement lane #ff9f9f. Designer approved 2026-10-03. PixelLab endpoint is gallery-schema compatibility only.",
+      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Spark Shard, engagement lane #ff9f9f. Designer approved 2026-10-03; source target superseded by the designer-approved essence-style shard replacement. PixelLab endpoint is gallery-schema compatibility only.",
       "sources": [
         "shard:engagement"
       ],
@@ -130,7 +130,7 @@
       "status": "accepted",
       "candidates": 1,
       "styleRef": null,
-      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Sigil Shard, technique lane #ff7fd4. Designer approved 2026-10-03. PixelLab endpoint is gallery-schema compatibility only.",
+      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Sigil Shard, technique lane #ff7fd4. Designer approved 2026-10-03; source target superseded by the designer-approved essence-style shard replacement. PixelLab endpoint is gallery-schema compatibility only.",
       "sources": [
         "shard:technique"
       ],
@@ -149,7 +149,7 @@
       "status": "accepted",
       "candidates": 1,
       "styleRef": null,
-      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Iron Shard, bulwark lane #b8b8a0. Designer approved 2026-10-03. PixelLab endpoint is gallery-schema compatibility only.",
+      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Iron Shard, bulwark lane #b8b8a0. Designer approved 2026-10-03; source target superseded by the designer-approved essence-style shard replacement. PixelLab endpoint is gallery-schema compatibility only.",
       "sources": [
         "shard:bulwark"
       ],
@@ -168,7 +168,7 @@
       "status": "accepted",
       "candidates": 1,
       "styleRef": null,
-      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Glass Shard, barrier-tempo lane #7fd8c8. Designer approved 2026-10-03. PixelLab endpoint is gallery-schema compatibility only.",
+      "notes": "W1-E 2026-10-03. Built-in OpenAI imagegen candidate; Glass Shard, barrier-tempo lane #7fd8c8. Designer approved 2026-10-03; source target superseded by the designer-approved essence-style shard replacement. PixelLab endpoint is gallery-schema compatibility only.",
       "sources": [
         "shard:barrier-tempo"
       ],
