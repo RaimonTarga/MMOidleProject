@@ -9,9 +9,9 @@ import { resolveSanctuaryNodeDisplayName } from './displayNames';
  * family table by this wave (`shared/src/data/families/index.ts`): the five
  * starter biomes plus Jungle/Desert reuse their existing families (their
  * T3 mobs already live in those families' `monsterIds`), and Tundra/Volcanic
- * are the new biomes authored in this same wave. Desert fields all THREE
- * families at T3 for the first time (Stalker's two T3+ members debut here),
- * unlike its two-way T2 blends.
+ * are the new biomes authored in this same wave. Desert's T3 blends name all
+ * THREE families for the first time (Stalker's T3+ members debut here), though
+ * its T3 pool fields only two of them (see DESERT_T3_BLENDS).
  *
  * Counted against the live T3 normal node count (2026-10-01): tundra 5,
  * mountain 5, cave 6, jungle 5, desert 5, volcanic 6, swamp 6 (38 total) —
@@ -55,10 +55,17 @@ const JUNGLE_T3_BLENDS: readonly NodeBlend[] = [
   { 'jungle-ape': 0.34, 'jungle-undergrowth': 0.33, 'jungle-stalker': 0.33 },
 ];
 
-/** Desert's first THREE-way tier: Stalker's T3+ members debut here. */
+/**
+ * Stalker's T3+ members debut here — but the T3 pool fields only Basilisk and
+ * Stalker: `dune-stalker` (its monster file's "soft controller T3", the Scorpion
+ * line's middle step) is filed under Stalker, so Scorpion has no T3 body.
+ */
 const DESERT_T3_BLENDS: readonly NodeBlend[] = [
   { 'desert-basilisk': 0.70, 'desert-scorpion': 0.20, 'desert-stalker': 0.10 },
-  { 'desert-scorpion': 0.70, 'desert-stalker': 0.20, 'desert-basilisk': 0.10 },
+  // 02 — Stalker territory, not Scorpion (verbs-that-fire C, PROVISIONAL): with no T3
+  // Scorpion the node spawned Stalker 7 / Basilisk 3 while paying Shackle. Spawns
+  // unchanged.
+  { 'desert-stalker': 0.70, 'desert-basilisk': 0.30 },
   { 'desert-stalker': 0.70, 'desert-basilisk': 0.20, 'desert-scorpion': 0.10 },
   { 'desert-basilisk': 0.45, 'desert-scorpion': 0.45, 'desert-stalker': 0.10 },
   { 'desert-basilisk': 0.34, 'desert-scorpion': 0.33, 'desert-stalker': 0.33 },
