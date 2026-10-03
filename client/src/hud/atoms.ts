@@ -20,6 +20,7 @@ import type {
   PlayerView,
   MonsterView,
   ReleaseAnnouncementPayload,
+  RhythmMoment,
   WardState,
   SubVariant,
   SummonSlotView,
@@ -238,6 +239,11 @@ export const lineagesAtom = atom<LineageProgressMap>({});
 export const abilityNodesAtom = atom<AbilityNodeProgressMap>({});
 
 export const activeBuffsAtom = atom<PlayerBuff[]>([]);
+/**
+ * The rhythm readout's moment state (`PlayerView.rhythm`, design §24.6) — the
+ * `ShowsRhythm` slice's moments, undefined while the slice is absent.
+ */
+export const rhythmAtom = atom<Record<string, RhythmMoment> | undefined>(undefined);
 export const autoPathAtom = atom<string[] | null>(null);
 
 /**
@@ -875,6 +881,7 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(bossesClearedAtom, []);
   setIfShallowArrayEqual(visitedNodesAtom, []);
   setIfShallowArrayEqual(activeBuffsAtom, []);
+  setIfChanged(rhythmAtom, undefined);
   store.set(abilityFiredAtAtom, {});
   store.set(abilityCooldownStartedAtAtom, {});
   store.set(stanceCooldownStartedAtAtom, 0);
@@ -1006,6 +1013,9 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfShallowArrayEqual(bossesClearedAtom, player.bossesCleared);
   setIfShallowArrayEqual(visitedNodesAtom, player.visitedNodes);
   setIfBuffsEqual(activeBuffsAtom, player.activeBuffs);
+  // The slice object is replaced only when the server rewrote it, so identity
+  // is the change signal.
+  setIfChanged(rhythmAtom, player.rhythm);
   setIfShallowObjectEqual(passivesAtom, player.passives);
   setIfShallowObjectEqual(equipmentAtom, player.equipment);
   setIfShallowObjectEqual(itemUpgradesAtom, player.itemUpgrades ?? {});

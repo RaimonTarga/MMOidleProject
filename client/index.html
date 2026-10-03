@@ -136,6 +136,9 @@
 
         #auto-btn-overlay { display: none !important; }
 
+        /* The rhythm readout moves into MobileHUD, beside its HP strip. */
+        #rhythm-overlay { display: none !important; }
+
         #mobile-hud { display: block; }
 
         /* Buff bar — fixed so it tracks the same bars as MobileHUD.
@@ -157,6 +160,7 @@
       <div id="game-wrapper">
         <div id="mobile-hud"></div>
         <div id="buff-overlay"></div>
+        <div id="rhythm-overlay" style="position:absolute;inset:0;pointer-events:none;z-index:10"></div>
         <div id="ability-overlay" style="position:absolute;inset:0;pointer-events:none;z-index:12"></div>
         <div id="biome-xp-overlay" style="position:absolute;inset:0;pointer-events:none;z-index:10"></div>
         <div id="target-frame-overlay" style="position:absolute;inset:0;pointer-events:none;z-index:11"></div>

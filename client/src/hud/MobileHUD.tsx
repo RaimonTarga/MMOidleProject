@@ -13,6 +13,7 @@ import { QuestPanel } from '../ui/QuestPanel';
 import { StatPanel } from './StatPanel';
 import { BiomeXpBar } from './BiomeXpBar';
 import { ArchetypeMechanics } from './stat/mechanics';
+import { RhythmReadout } from './RhythmReadout';
 import { NODE_BIOMES, BIOME_DATABASE, stanceDef } from '@mmo-idle/shared';
 import { SettingsPanel } from './settings/SettingsPanel';
 import { CharacterSelectPrompt } from './CharacterSelectPrompt';
@@ -345,6 +346,9 @@ function MobileHUDContent() {
           </div>
         </div>
       </div>
+
+      {/* ── Rhythm readout: under the HP strip, at the right edge ───────── */}
+      <RhythmReadout compact />
 
       {/* ── Floating AUTO combat button ─────────────────────────────────── */}
       <button

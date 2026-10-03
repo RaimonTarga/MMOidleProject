@@ -1,13 +1,13 @@
 import { Fragment, useMemo, useRef } from "react";
 import { useAtomValue } from "jotai";
-import type { BuffCategory, EquipmentMap, LineageProgressMap, PlayerBuff, BuffShape } from "@mmo-idle/shared";
-import { resolveActiveLineages } from "@mmo-idle/shared";
-import { activeBuffsAtom, equipmentAtom, lastCleanseAtAtom, lineagesAtom } from "./atoms";
+import type { BuffCategory, PlayerBuff, BuffShape } from "@mmo-idle/shared";
+import { activeBuffsAtom, lastCleanseAtAtom } from "./atoms";
 import { GameIcon } from "../ui/GameIcon";
 import { statusIconSource } from "../ui/conceptIcons";
 import { TooltipCard, useStatusStrip, type StripTileProps } from "./primitives";
 import { buffTooltipContent } from "./statusTooltips";
 import { useIsMobile } from "./useIsMobile";
+import { useReadoutBuffIds } from "./RhythmReadout";
 import {
   CRITICAL_BUFF_IDS,
   SURGE_DEBUFF_IDS,
@@ -58,41 +58,6 @@ function displayTone(buff: PlayerBuff): string {
     : buff.color;
 }
 
-/**
- * Lane colours for the lineage buff clock (progression rework Phase 1c
- * contract), matching the combat-FX palette in `render/combatFx.ts` so a
- * card's payoff window and its landing FX read as the same colour.
- */
-const LANE_BUFF_COLOR: Record<string, string> = {
-  tempo: "#e0a23a",
-  empowered: "#d1453f",
-  affliction: "#6fb35a",
-  control: "#9fd8ff",
-  "kill-chain": "#d9b25c",
-  engagement: "#ffffff",
-};
-
-/**
- * A timed lineage payoff (`damage-window`, `speed-window`, `recovery-window`,
- * `engagement-dr`, `ward`) is applied as a status effect with id
- * `lineage.<payoff>` (Phase 1c contract) — the payoff kind, not the lane, so
- * the clock's colour has to be resolved from whichever active card or worn
- * capstone actually carries that payoff. Returns null for every other buff.
- */
-function lineageBuffLaneColor(
-  buffId: string,
-  equipment: EquipmentMap,
-  lineages: LineageProgressMap,
-): string | null {
-  const prefix = "lineage.";
-  if (!buffId.startsWith(prefix)) return null;
-  const payoffKind = buffId.slice(prefix.length);
-  const { cards, capstones } = resolveActiveLineages({ equipment, lineages });
-  const lane = cards.find((c) => c.payoff?.kind === payoffKind)?.card.lane
-    ?? capstones.find((c) => c.capstone.payoff === payoffKind)?.capstone.lane;
-  return lane ? LANE_BUFF_COLOR[lane] ?? null : null;
-}
-
 type EndReason = "ended" | "cleansed";
 
 interface BuffIconProps {
@@ -123,15 +88,10 @@ function BuffIcon({ buff, interactive, stripProps, ghost, onGhostDone, ended, fx
   const shapeStyle = SHAPE_STYLE[buff.shape];
   const icon = statusIconSource(buff.iconKey, buff.instanceKey);
   const hasArt = icon !== null;
-  // Lineage payoff windows read in their card's lane colour, not the generic
-  // per-category tone (progression rework Phase 1c contract). Cheap: the
-  // lookup only runs its lineage resolve pass for a `lineage.*` buff id.
-  const equipment = useAtomValue(equipmentAtom);
-  const lineages = useAtomValue(lineagesAtom);
-  const laneColor = buff.id.startsWith("lineage.")
-    ? lineageBuffLaneColor(buff.id, equipment, lineages)
-    : null;
-  const tone = laneColor ?? displayTone(buff);
+  // A lineage window's tile is already in its lane colour: the server projects
+  // it with `packetDefinition(lane).color` (`LINEAGE_BUFFS`). Most of them are
+  // not tiles at all any more — the rhythm readout draws them on a ring.
+  const tone = displayTone(buff);
   const catClass =
     buff.category === "neutral"
       ? "buff-icon"
@@ -326,7 +286,15 @@ export function BuffBar() {
   const buffs = useAtomValue(activeBuffsAtom);
   const lastCleanseAt = useAtomValue(lastCleanseAtAtom);
   const isMobile = useIsMobile();
-  const ordered = useMemo(() => orderBuffs(buffs), [buffs]);
+  // The rhythm readout replaces some tiles (design §24.6, "not buff tiles"): the
+  // frame's window and bank under its frame ring, and a lineage window under the
+  // ring of the card that opened it. Their statuses stay in `activeBuffs`, so
+  // the ring's tooltip and the world log still read them.
+  const readoutOwned = useReadoutBuffIds();
+  const ordered = useMemo(
+    () => orderBuffs(buffs.filter((buff) => !readoutOwned.has(buff.id))),
+    [buffs, readoutOwned],
+  );
   const { ghosts, fx, dropGhost } = useBuffTransitions(ordered, lastCleanseAt);
 
   // Why each recently-gone buff left, remembered past its exit animation: a tile
