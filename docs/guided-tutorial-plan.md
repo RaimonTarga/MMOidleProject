@@ -255,29 +255,32 @@ the sentence the weapon page shows; and the first-hour checklist below.
 ### The first-hour checklist (2026-10-03)
 
 **At most two new ideas per level, each explained by what the screen shows.** A level is
-where the player is when a line shows: "Tier 0" for the Clearing quest, then the chapter's
-zone and its mastery level, then "The Seals" and "The Gate". The checklist is DATA, not a
-manual review: every beat names the ideas its line introduces (`TutorialBeat.teaches`), the
-ideas and the screen element for each live in `shared/src/tutorial/concepts.ts`, and
-`tutorialChecklist(script)` reads each beat's level off the script's own gates (a beat is
-reached only once every farm before it has met its condition). `tutorial.test.ts` holds
-every class to ≤ 2 new ideas per level and per beat, each idea introduced once, every idea
-with a screen element, and every anchor it names a real one.
+where the player is when a line shows: the chapter's zone and its mastery level, then
+"The Seals" and "The Gate". The checklist is DATA, not a manual review: every beat names
+the ideas its line introduces (`TutorialBeat.teaches`), the ideas and the screen element
+for each live in `shared/src/tutorial/concepts.ts`, and `tutorialChecklist(script)` reads
+each beat's level off the script's own gates (a beat is reached only once every farm
+before it has met its condition). `tutorial.test.ts` holds every class to ≤ 2 new ideas
+per level and per beat, each idea introduced once, every idea with a screen element, and
+every anchor it names a real one. The same ideas are then MEASURED on the bot's 1x runs
+(`server/scripts/_ccTutorialSweep.ts`): the level the run was actually at when each beat
+started, with farm beats that were already satisfied left out — the guide never shows
+those.
 
 | Level | Beat | New idea | What on screen explains it | Classes |
 |---|---|---|---|---|
-| Tier 0 | `first-blood` | Auto Combat fights for you | the Auto Combat button, ringed and pressed | all |
+| Clearing 0 | `farm:primordial-club` | Auto Combat fights for you | the Auto Combat button, ringed and pressed | all |
 |  |  | A quest's kills earn the next tier | the kill bar on the guide card |  |
-| Clearing 0 | `choose-class` | Your class | the class cards on the Passive Tree | all |
-| Clearing 0 | `farm:primordial-club` | Zones pay essence; the Make tab turns it into gear you wear | the essence bar on the guide card, then Make → Craft and Inventory → Equip | all |
-| Clearing 1 | `farm:clearing-vest-t1` | Zone mastery opens recipes | the Mastery level bar on the guide card | all |
-|  |  | Armor is health | the health bar growing when it is worn |  |
+| Clearing 1 | `craft:primordial-club` | Zones pay essence; the Make tab turns it into gear you wear | Make → Craft, then Inventory → Equip, ringed | all |
+| Clearing 1 | `farm:clearing-vest-t1` | Armor is health | the health bar growing when it is worn | all |
+| Clearing 2 | `choose-class` | Your class | the class cards on the Passive Tree | all |
 | Clearing 2 | `farm:clearing-charm-t1` | A charm refills health between fights | the health bar refilling between pulls | all |
-| Clearing 3 | `farm:clearing-boots-t1` | Boots are speed | the walk between pulls getting shorter | all |
+| Clearing 4 | `craft:clearing-boots-t1` | Boots are speed | the walk between pulls getting shorter | all |
 | Clearing 4 | `runes:opening` | Runes are standing orders; the higher rule of a lane wins | the Runes board, built rule by rule | all |
 | Plains 0 | `farm:iron-broadsword` | The guide travels between zones | the arrival banner naming the zone | all |
 | Plains 2 | `learn:ability-recipe-sweep` | A Technique fires on its own every so often | the Abilities tab, Attune | all |
 |  |  | An ability fires from a Rune | "Use default timing" under the ability |  |
+| Plains 4 | `max:plains` | Zone mastery opens recipes | the Mastery level bar on the guide card | all |
 | Forest 1 | `shards:<lean>` | A weapon has a page of cards | the weapon page, opened from the equipped weapon | all |
 |  |  | Every kill pays its territory's shard | the arrival banner and the map ("Pack territory · Gale Shards") |  |
 | Forest 2 | `card:<lean>` | Row 1, the lean: a stat while the form is worn, one active | the lean card's sentence and the stat sheet beside it | all |
@@ -286,8 +289,8 @@ with a screen element, and every anchor it names a real one.
 | Swamp 0 | `farm:rune-recipe-avoid-hazards` | Poison keeps hurting after the hit | the poison tile on the buff bar | all |
 | Swamp 2 | `rune:rune-recipe-avoid-hazards` | Hazard ground hurts, and a Rune walks around it | the hazard patches on the Swamp floor | all |
 | Swamp 3 | `learn:ability-recipe-cleanse` | Abilities are swapped to fit the zone | the Abilities tab, Unattune then Attune | all |
-| Swamp 6 | `shards:<verb>` | Row 2, the verb: a moment, and the lean decides what happens then | the verb card's sentence on the weapon page, rewritten by the lean | all |
-| Swamp 6 | `card:<verb>` | A ring by the health bar shows the verb coming | the verb's ring on the rhythm readout, ringed | all |
+| Swamp 6 | `card:<verb>` | Row 2, the verb: a moment, and the lean decides what happens then | the verb card's sentence on the weapon page, rewritten by the lean, ringed | all |
+|  |  | A ring by the health bar shows the verb coming | the verb's ring on the rhythm readout, ringed |  |
 | Mountain 3 | `rune:rune-recipe-keep-distance` | Orbit: circle out of reach while attacking | the Runes board | Slinger, Spirit, Apprentice, Conduit |
 | Cave 0 | `farm:chaotic-axe` (Slinger: `farm:rune-recipe-step-back`) | A wound-up hit can be dodged | the cast bar over a monster winding up | all |
 | Cave 2 | `rune:rune-recipe-step-back` | Step Back dodges a wound-up hit | Step Back at the top of the Runes board | all |
@@ -299,20 +302,32 @@ with a screen element, and every anchor it names a real one.
 What counts as an idea: something the player holds in their head from then on (a system,
 a screen, a rule), not an item — the first charm is an idea, the second charm is not, and a
 reason that restates a known idea ("the Swamp armor resists poison") introduces nothing.
-A farm beat that is skipped because its cost is already met never shows its line, so each
-purchase's own line restates what its farm beat introduced.
+An idea rides on the line where the thing becomes real (the craft, the purchase), not on
+the "next up" farm line before it: a farm line shows a level early, and a farm whose cost
+is already met is skipped and never shown at all.
 
-**What the check changed.** Every level was within two except the Slinger's **Forest 2**,
-which carried three: the lean, Second Wind (a Guard) and the Forest armor's "harder to hit"
-(evasion). The armor now waits for Forest 3 (`PlanItem.atLevel`); the recipe still opens
-at Forest 2, the price is unchanged. The lesson beats were split to fit: the weapon page
-and shards land at Forest 1, the lean at Forest 2; the verb at its farm beat and the
-readout ring at the purchase.
+**What the check changed.**
 
-**What the check cannot see.** Levels come from the script's gates, i.e. the earliest a
-line can show; a live run that overshoots (a farm for one item finishing two levels at
-once) lands two levels' lines together. The 1x sweep's own level-ups are in
-`reports/course-correction/sweep-1x.md`.
+- **The Slinger's Forest 2** carried three ideas statically: the lean, Second Wind (a Guard)
+  and the Forest armor's "harder to hit" (evasion). The armor now waits for Forest 3
+  (`PlanItem.atLevel`); the recipe still opens at Forest 2 and the price is unchanged.
+- **The opening.** Measured on the sweep (which ran the old opening): the ten Wisps of the
+  tier-0 quest carry the Clearing to level 3 by themselves, so with the quest first, the
+  club's and the armor's farm beats were skipped and the class, the gear, the armor and the
+  charm reached a new player within ~15 s of the tier-up, while the armor's and mastery's
+  lines were never shown. The club and the Bark Wrap are now made DURING the quest
+  (crafting needs no tier or class, and the Make tab shows once essence is held), the
+  class pick and the charm come with the tier-up, the boots' idea moved from their farm
+  line to their craft line, and the mastery idea moved to `max:plains`, which is never
+  skipped.
+- **The verb.** Max-ing the Forest often pays for the verb already (the Spirit's verb farm
+  was skipped in the sweep), so the verb's idea rides on its purchase line.
+- The lesson beats were split to fit: the weapon page and shards at Forest 1, the lean at
+  Forest 2, the verb and the readout ring at the purchase at the end of the Swamp leg.
+
+**Measured on the 1x sweep** (rev `1297b206`, before the opening change; the opening was
+smoke-measured separately on the new revision): see "2026-10-03 — the course-correction
+1x sweep" in the Validation record and `reports/course-correction/sweep-1x.md`.
 
 ## Running the validation
 
