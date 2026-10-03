@@ -322,6 +322,10 @@ is already met is skipped and never shown at all.
   skipped.
 - **The verb.** Max-ing the Forest often pays for the verb already (the Spirit's verb farm
   was skipped in the sweep), so the verb's idea rides on its purchase line.
+- **The gate.** Tier 2 arrives with the gate's essence and Gale Shards already held, so the
+  gate chapter's farm beat was skipped for all six classes and its line (the one that said
+  the chapter is optional) never showed. The capstone line now says it, and the gate idea
+  rides on the pay-and-wear beat.
 - The lesson beats were split to fit: the weapon page and shards at Forest 1, the lean at
   Forest 2, the verb and the readout ring at the purchase at the end of the Swamp leg.
 
@@ -713,6 +717,32 @@ to be the boss's own `attack`, and why nothing about a guard pack could have fix
   and because Step Back — taught in the leg immediately before the seals — is inert against
   a Greatbear that authors no telegraphed attack. This sweep is consistent with that (every
   class takes both seals first try) but does not discriminate between the two.
+
+### 2026-10-03 — the course-correction 1x sweep
+
+The script after the course correction (W3-B, revision `1297b206`, route v1.2.0): the
+lean at Forest 2, the verb at the end of the Swamp leg, `unlockCard` + `setActive`. 1x and
+untainted, one server and one game database per class, bots launched directly rather than
+through the frozen runner. Full ledger: `reports/course-correction/sweep-1x.md`.
+
+| Class | beats | lean | verb | Plains | Mountain | Greatbear | gate paid | deaths |
+|---|---|---|---|---|---|---|---|---|
+| Striker | 60/60 | 12m26s | 23m22s | 1/1 | **1/3** (lost at 8% twice) | 3/5 | 68m41s | 4 |
+| Squire | 60/60 | 12m51s | 23m38s | 1/1 | 1/1 | 3/5 | 61m54s | 2 |
+| Slinger | 63/63 | 11m29s | 23m52s | 1/1 | 1/1 | 3/5 | 58m38s | 2 |
+| Spirit | 63/63 | 10m40s | 17m43s | 1/1 | 1/1 | 3/5 | 47m25s | 2 |
+| Apprentice | 65/65 | 16m00s | 29m40s | 1/1 | 1/1 | 3/5 | 69m25s | 2 |
+| Conduit | 63/63 | 10m28s | 18m56s | 1/1 | 1/1 | 3/5 | 51m18s | 2 |
+
+**All six complete the whole script, gate paid; no beat ended anything but `done`.** Every
+lean was bought at Forest 2 (GM 8) and every verb at GM 18 with the Flash Rapier in hand;
+the verb's walk back to the Forest cost 0–176 s. Twelve of the fourteen deaths are the
+Forest dungeon's guard during the gate rounds (two per class, as before); the Striker's other
+two are the Crag Behemoth at 8%, against 1/1 in the evening sweep (one replica). Five classes
+pay the gate 4.6–8.0 min sooner than the evening sweep: the route lost its upgrade beats.
+
+**The verb is live for only 4.6–8.6 minutes** (28–37 kills) before the Cave swaps every
+plan to the Chaotic Axe or the Poison Dagger, and inert in every boss fight after that.
 
 ## Findings
 

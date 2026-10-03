@@ -1,0 +1,336 @@
+{
+  "ledger": [
+    {
+      "class": "Striker",
+      "revision": "1297b206",
+      "taints": [],
+      "completion": "completed",
+      "endReason": null,
+      "wallMs": 4121123,
+      "tier2Ms": 3220610,
+      "gm30Ms": 1975984,
+      "gatePaidMs": 4120607,
+      "beatsPassed": 60,
+      "beatsTotal": 60,
+      "perChapter": {
+        "The Clearing": "11/11",
+        "The Plains": "11/11",
+        "The Forest": "7/7",
+        "The Swamp": "10/10",
+        "The Mountain": "4/4",
+        "The Cave": "10/10",
+        "The Seals": "4/4",
+        "The Gate": "3/3"
+      },
+      "deaths": [
+        {
+          "atMs": 2676446,
+          "where": "mountain",
+          "step": "boss:mountain: attemptBoss",
+          "killer": "Crag Behemoth (boss)"
+        },
+        {
+          "atMs": 2936491,
+          "where": "mountain",
+          "step": "boss:mountain: attemptBoss",
+          "killer": "Crag Behemoth (boss)"
+        },
+        {
+          "atMs": 3501324,
+          "where": "forest",
+          "step": "boss forest T1",
+          "killer": "Young Wolf"
+        },
+        {
+          "atMs": 3827765,
+          "where": "forest",
+          "step": "boss forest T1",
+          "killer": "Young Wolf"
+        }
+      ],
+      "seals": {
+        "plains": "1/1, fight 54–54 s",
+        "mountain": "1/3, fight 67–67 s (lost: death 8%, death 8%)"
+      },
+      "gate": "3/5, fight 30–32 s (lost: death, death)",
+      "lean": {
+        "card": "Quick Wrist",
+        "at": "12m26s (Forest 2, GM 8, farm 55 s)"
+      },
+      "verb": {
+        "card": "Opening Lunge",
+        "at": "23m22s (Forest 6, GM 18, farm 151 s)"
+      },
+      "notDone": [],
+      "stalls": []
+    },
+    {
+      "class": "Squire",
+      "revision": "1297b206",
+      "taints": [],
+      "completion": "completed",
+      "endReason": null,
+      "wallMs": 3714913,
+      "tier2Ms": 2763989,
+      "gm30Ms": 2015560,
+      "gatePaidMs": 3714378,
+      "beatsPassed": 60,
+      "beatsTotal": 60,
+      "perChapter": {
+        "The Clearing": "11/11",
+        "The Plains": "11/11",
+        "The Forest": "7/7",
+        "The Swamp": "10/10",
+        "The Mountain": "4/4",
+        "The Cave": "10/10",
+        "The Seals": "4/4",
+        "The Gate": "3/3"
+      },
+      "deaths": [
+        {
+          "atMs": 3087623,
+          "where": "forest",
+          "step": "boss forest T1",
+          "killer": "Young Wolf"
+        },
+        {
+          "atMs": 3435288,
+          "where": "forest",
+          "step": "boss forest T1",
+          "killer": "Forest Sentinel"
+        }
+      ],
+      "seals": {
+        "plains": "1/1, fight 51–51 s",
+        "mountain": "1/1, fight 77–77 s"
+      },
+      "gate": "3/5, fight 34–35 s (lost: death, death)",
+      "lean": {
+        "card": "Keen Edge",
+        "at": "12m51s (Forest 2, GM 8, farm 125 s)"
+      },
+      "verb": {
+        "card": "Flurry",
+        "at": "23m38s (Forest 6, GM 18, farm 40 s)"
+      },
+      "notDone": [],
+      "stalls": []
+    },
+    {
+      "class": "Slinger",
+      "revision": "1297b206",
+      "taints": [],
+      "completion": "completed",
+      "endReason": null,
+      "wallMs": 3518199,
+      "tier2Ms": 2591905,
+      "gm30Ms": 1998663,
+      "gatePaidMs": 3517673,
+      "beatsPassed": 63,
+      "beatsTotal": 63,
+      "perChapter": {
+        "The Clearing": "11/11",
+        "The Plains": "11/11",
+        "The Forest": "9/9",
+        "The Swamp": "12/12",
+        "The Mountain": "5/5",
+        "The Cave": "8/8",
+        "The Seals": "4/4",
+        "The Gate": "3/3"
+      },
+      "deaths": [
+        {
+          "atMs": 2932820,
+          "where": "forest",
+          "step": "boss forest T1",
+          "killer": "Forest Sentinel"
+        },
+        {
+          "atMs": 3243207,
+          "where": "forest",
+          "step": "boss forest T1",
+          "killer": "Forest Sentinel"
+        }
+      ],
+      "seals": {
+        "plains": "1/1, fight 43–43 s",
+        "mountain": "1/1, fight 48–48 s"
+      },
+      "gate": "3/5, fight 27–28 s (lost: death, death)",
+      "lean": {
+        "card": "Quick Wrist",
+        "at": "11m29s (Forest 2, GM 8, farm 41 s)"
+      },
+      "verb": {
+        "card": "Opening Lunge",
+        "at": "23m52s (Forest 6, GM 18, farm 166 s)"
+      },
+      "notDone": [],
+      "stalls": []
+    },
+    {
+      "class": "Spirit",
+      "revision": "1297b206",
+      "taints": [],
+      "completion": "completed",
+      "endReason": null,
+      "wallMs": 2845592,
+      "tier2Ms": 2002892,
+      "gm30Ms": 1418289,
+      "gatePaidMs": 2845075,
+      "beatsPassed": 63,
+      "beatsTotal": 63,
+      "perChapter": {
+        "The Clearing": "11/11",
+        "The Plains": "11/11",
+        "The Forest": "7/7",
+        "The Swamp": "10/10",
+        "The Mountain": "7/7",
+        "The Cave": "10/10",
+        "The Seals": "4/4",
+        "The Gate": "3/3"
+      },
+      "deaths": [
+        {
+          "atMs": 2301353,
+          "where": "forest",
+          "step": "boss forest T1",
+          "killer": "Forest Sentinel"
+        },
+        {
+          "atMs": 2607773,
+          "where": "forest",
+          "step": "boss forest T1",
+          "killer": "Forest Sentinel"
+        }
+      ],
+      "seals": {
+        "plains": "1/1, fight 50–50 s",
+        "mountain": "1/1, fight 51–51 s"
+      },
+      "gate": "3/5, fight 29–29 s (lost: death, death)",
+      "lean": {
+        "card": "Keen Edge",
+        "at": "10m40s (Forest 2, GM 8, farm 64 s)"
+      },
+      "verb": {
+        "card": "Flurry",
+        "at": "17m43s (Forest 6, GM 18, farm 0 s)"
+      },
+      "notDone": [],
+      "stalls": []
+    },
+    {
+      "class": "Apprentice",
+      "revision": "1297b206",
+      "taints": [],
+      "completion": "completed",
+      "endReason": null,
+      "wallMs": 4165936,
+      "tier2Ms": 3157530,
+      "gm30Ms": 2429808,
+      "gatePaidMs": 4165410,
+      "beatsPassed": 65,
+      "beatsTotal": 65,
+      "perChapter": {
+        "The Clearing": "11/11",
+        "The Plains": "11/11",
+        "The Forest": "7/7",
+        "The Swamp": "12/12",
+        "The Mountain": "7/7",
+        "The Cave": "10/10",
+        "The Seals": "4/4",
+        "The Gate": "3/3"
+      },
+      "deaths": [
+        {
+          "atMs": 3524775,
+          "where": "forest",
+          "step": "boss forest T1",
+          "killer": "Young Wolf"
+        },
+        {
+          "atMs": 3865775,
+          "where": "forest",
+          "step": "boss forest T1",
+          "killer": "Young Wolf"
+        }
+      ],
+      "seals": {
+        "plains": "1/1, fight 47–47 s",
+        "mountain": "1/1, fight 54–54 s"
+      },
+      "gate": "3/5, fight 33–34 s (lost: death, death)",
+      "lean": {
+        "card": "Envenomed",
+        "at": "16m00s (Forest 2, GM 8, farm 84 s)"
+      },
+      "verb": {
+        "card": "Opening Lunge",
+        "at": "29m40s (Forest 6, GM 18, farm 176 s)"
+      },
+      "notDone": [],
+      "stalls": []
+    },
+    {
+      "class": "Conduit",
+      "revision": "1297b206",
+      "taints": [],
+      "completion": "completed",
+      "endReason": null,
+      "wallMs": 3078892,
+      "tier2Ms": 2248351,
+      "gm30Ms": 1636672,
+      "gatePaidMs": 3078372,
+      "beatsPassed": 63,
+      "beatsTotal": 63,
+      "perChapter": {
+        "The Clearing": "11/11",
+        "The Plains": "11/11",
+        "The Forest": "7/7",
+        "The Swamp": "10/10",
+        "The Mountain": "7/7",
+        "The Cave": "10/10",
+        "The Seals": "4/4",
+        "The Gate": "3/3"
+      },
+      "deaths": [
+        {
+          "atMs": 2541661,
+          "where": "forest",
+          "step": "boss forest T1",
+          "killer": "Young Wolf"
+        },
+        {
+          "atMs": 2844216,
+          "where": "forest",
+          "step": "boss forest T1",
+          "killer": "Young Wolf"
+        }
+      ],
+      "seals": {
+        "plains": "1/1, fight 54–54 s",
+        "mountain": "1/1, fight 76–76 s"
+      },
+      "gate": "3/5, fight 32–35 s (lost: death 100%, death)",
+      "lean": {
+        "card": "Quick Wrist",
+        "at": "10m28s (Forest 2, GM 8, farm 35 s)"
+      },
+      "verb": {
+        "card": "Opening Lunge",
+        "at": "18m56s (Forest 6, GM 18, farm 131 s)"
+      },
+      "notDone": [],
+      "stalls": []
+    }
+  ],
+  "measured": [
+    "Striker: farm:gate:gale-needle skipped (line never shown): gate",
+    "Squire: farm:gate:gale-needle skipped (line never shown): gate",
+    "Slinger: farm:gate:gale-needle skipped (line never shown): gate",
+    "Spirit: farm:gate:gale-needle skipped (line never shown): gate",
+    "Apprentice: farm:gate:gale-needle skipped (line never shown): gate",
+    "Conduit: farm:gate:gale-needle skipped (line never shown): gate"
+  ]
+}
