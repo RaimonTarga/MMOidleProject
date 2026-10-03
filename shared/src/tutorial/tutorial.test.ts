@@ -173,11 +173,11 @@ for (const plan of TUTORIAL_CLASS_PLANS) {
           assert(nodesFor(step.at).length > 0, `${where}: farm location resolves to no node`);
           for (const c of conditionsIn(step.until)) {
             if (c.type === 'canCraft' || c.type === 'recipeUnlocked') assert(RECIPE_DATABASE.has(c.recipeId), `${where}: unknown recipe ${c.recipeId}`);
-            if (c.type === 'hasItem' || c.type === 'itemAtLeastPlus') assert(ITEM_DATABASE.has(c.definitionId), `${where}: unknown item ${c.definitionId}`);
+            if (c.type === 'hasItem') assert(ITEM_DATABASE.has(c.definitionId), `${where}: unknown item ${c.definitionId}`);
             if (c.type === 'abilityKnown') assert(ABILITY_DATABASE.has(c.abilityId), `${where}: unknown ability ${c.abilityId}`);
             if (c.type === 'runeRecipeCrafted') assert(RUNE_RECIPE_DATABASE.has(c.recipeId), `${where}: unknown rune recipe ${c.recipeId}`);
             // Monotone farm conditions: a bare spendable resource would regress after the spend.
-            assert(!(c === step.until && (c.type === 'canCraft' || c.type === 'essenceAtLeast' || c.type === 'canAffordUpgrades')),
+            assert(!(c === step.until && (c.type === 'canCraft' || c.type === 'essenceAtLeast')),
               `${where}: farm condition must be guarded by its outcome (anyOf)`);
           }
           break;
@@ -186,9 +186,6 @@ for (const plan of TUTORIAL_CLASS_PLANS) {
           break;
         case 'equip':
           for (const id of step.definitionIds) assert(ITEM_DATABASE.has(id), `${where}: unknown item ${id}`);
-          break;
-        case 'upgrade':
-          assert(ITEM_DATABASE.has(step.definitionId), `${where}: unknown item ${step.definitionId}`);
           break;
         case 'configureRunes':
           for (const rule of step.rules) {
@@ -306,13 +303,6 @@ function simulate(plan: (typeof TUTORIAL_CLASS_PLANS)[number]): void {
               const r = RECIPE_DATABASE.get(c.recipeId)!;
               levels[r.recipeGroup] = Math.max(levels[r.recipeGroup] ?? 0, r.requiredBiomeLevel);
             }
-            if (c.type === 'canAffordUpgrades') {
-              for (const target of c.items) {
-                const item = ITEM_DATABASE.get(target.definitionId)!;
-                const need = item.upgrades?.[target.toPlus - 1]?.requiredBiomeLevel ?? 0;
-                levels[item.biomeGroup!] = Math.max(levels[item.biomeGroup!] ?? 0, Math.min(need, 6));
-              }
-            }
           }
           set({ biomeLevel: levels, shards });
           unlockRecipes();
@@ -384,11 +374,6 @@ function simulate(plan: (typeof TUTORIAL_CLASS_PLANS)[number]): void {
           });
           break;
         }
-        case 'upgrade':
-          assert(v.inventory.includes(step.definitionId) || Object.values(v.equipment).includes(step.definitionId),
-            `${script.id}/${beat.id}: upgrades ${step.definitionId} before owning it`);
-          set({ itemUpgrades: { ...v.itemUpgrades, [step.definitionId]: step.toPlus } });
-          break;
         case 'configureRunes':
           set({ runesEquipped: wiredRunes(step.rules, v.attunedAbilities) });
           checkBudget(beat.id);

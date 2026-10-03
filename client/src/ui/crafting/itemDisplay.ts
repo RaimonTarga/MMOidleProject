@@ -1,21 +1,18 @@
-// Single source of truth for rendering item stats, mechanic effects, and upgrade
-// diffs across the crafting panels (Forge / Upgrade / Biome) and the inventory
-// StatSheet. Keeps stat labels/formatters and the mechanic-effect vocabulary in
-// one place so every surface reads the same way.
+// Single source of truth for rendering item stats and mechanic effects across
+// the crafting panels and the inventory StatSheet. Keeps stat labels/formatters
+// and the mechanic-effect vocabulary in one place so every surface reads the
+// same way.
 
-import type { ItemDefinition, ResolvedRelicProfile } from '@mmo-idle/shared';
+import type { ResolvedRelicProfile } from '@mmo-idle/shared';
 import {
   BURN_FAMILY,
-  effectiveAttacksPerSecond,
   isCompanionMechanic, mechanicLabelOrKey,
-  upgradeMechanicEffectsTotal, upgradeStatBonusTotal,
 } from '@mmo-idle/shared';
 
 // ─── Small format helpers ──────────────────────────────────────────────────────
 
 const signed = (n: number): string => `${n >= 0 ? '+' : ''}${n}`;
 const round1 = (n: number): number => Math.round(n * 10) / 10;
-const round2 = (n: number): number => Math.round(n * 100) / 100;
 
 // ─── Stat metadata (covers every ItemStats key) ────────────────────────────────
 
@@ -113,7 +110,7 @@ const MECHANIC_FMT: Record<string, (v: number) => string> = {
   'mobility.slow-resistance':         pct,
   'defense.evade-mitigation':         pct,
   // A potency SCALE on Recovery skills, written as a fraction with no `-pct` to
-  // say so; without this it reached the upgrade and evolution diffs as "0.1".
+  // say so; without this it reached the effect lists as "0.1".
   'defense.recovery-skill-potency':   pct,
   'defense.absorb-guard-bonus-pct':   pct,
   'guard.cleanse-pulse':             v => (v > 0 ? 'on' : 'off'),
@@ -176,76 +173,6 @@ export function describeMechanicDelta(key: string, from: number, to: number): st
   const m = mechanicMeta(key);
   if (from === 0) return `${m.label} ${m.fmt(to)}`;
   return `${m.label} ${m.fmt(from)} → ${m.fmt(to)}`;
-}
-
-// ─── Upgrade diff ──────────────────────────────────────────────────────────────
-
-export interface UpgradeDiffRow {
-  label: string;
-  from: string;
-  to: string;
-  /** Signed delta for stat rows; absent for mechanic rows. */
-  delta?: string;
-  up: boolean;
-}
-
-/**
- * Computes the per-stat and per-mechanic changes between `currentPlus` and
- * `currentPlus + 1`, layered on the item's base values. Returns one row per
- * changed stat/mechanic — the real "what this upgrade does" list (works for
- * primary stats, secondary stats, and charm/armor mechanic effects alike).
- */
-export function computeUpgradeDiff(def: ItemDefinition, currentPlus: number): UpgradeDiffRow[] {
-  const rows: UpgradeDiffRow[] = [];
-
-  // Attacks per second. A weapon lineage may spend upgrade budget on cadence
-  // instead of Attack, and that has to read as a real upgrade row.
-  const curAps  = effectiveAttacksPerSecond(def, currentPlus);
-  const nextAps = effectiveAttacksPerSecond(def, currentPlus + 1);
-  if (curAps !== undefined && nextAps !== undefined && nextAps !== curAps) {
-    rows.push({
-      label: 'APS',
-      from: String(round2(curAps)),
-      to:   String(round2(nextAps)),
-      delta: `${nextAps >= curAps ? '+' : ''}${round2(nextAps - curAps)}`,
-      up: nextAps > curAps,
-    });
-  }
-
-  // Direct stats
-  const curStats  = upgradeStatBonusTotal(def, currentPlus);
-  const nextStats = upgradeStatBonusTotal(def, currentPlus + 1);
-  for (const key of new Set([...Object.keys(curStats), ...Object.keys(nextStats)])) {
-    const delta = (nextStats[key] ?? 0) - (curStats[key] ?? 0);
-    if (delta === 0) continue;
-    const base = def.statModifiers[key] ?? 0;
-    const m = statMeta(key);
-    rows.push({
-      label: m.label,
-      from: m.fmt(base + (curStats[key] ?? 0)),
-      to:   m.fmt(base + (nextStats[key] ?? 0)),
-      delta: m.fmtDelta(delta),
-      up: delta > 0,
-    });
-  }
-
-  // Mechanic effects
-  const curMech  = upgradeMechanicEffectsTotal(def, currentPlus);
-  const nextMech = upgradeMechanicEffectsTotal(def, currentPlus + 1);
-  for (const key of new Set([...Object.keys(curMech), ...Object.keys(nextMech)])) {
-    const delta = (nextMech[key] ?? 0) - (curMech[key] ?? 0);
-    if (delta === 0) continue;
-    const base = (def.mechanicEffects as Record<string, number> | undefined)?.[key] ?? 0;
-    const m = mechanicMeta(key);
-    rows.push({
-      label: m.label,
-      from: m.fmt(base + (curMech[key] ?? 0)),
-      to:   m.fmt(base + (nextMech[key] ?? 0)),
-      up: delta > 0,
-    });
-  }
-
-  return rows;
 }
 
 // ─── Mechanic-effect prose (full sentences for tooltips / effect lists) ─────────

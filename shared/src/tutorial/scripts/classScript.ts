@@ -15,7 +15,6 @@ import type {
   TutorialNodeRef,
   TutorialProgressRef,
   TutorialStep,
-  TutorialUpgradeTarget,
 } from '../types';
 import { T1_BIOME_ORDER, TUTORIAL_SEALS, type PlanItem, type T1Biome, type TutorialClassPlan } from './plans';
 import { tutorialRunes, type TutorialRuneStage } from './runes';
@@ -29,7 +28,7 @@ import { tutorialRunes, type TutorialRuneStage } from './runes';
  * character presses Next far fewer times.
  *
  * Lines explain WHY only where the choice is not obvious (a weapon swap, a
- * Guard change, a Rune); routine crafting and upgrading just say what happens.
+ * Guard change, a Rune); routine crafting just says what happens.
  */
 
 const BIOME_NAME: Record<T1Biome, string> = {
@@ -218,9 +217,6 @@ function costProgress(
 
 class ScriptBuilder {
   readonly beats: TutorialBeat[] = [];
-  /** Upgrade level each item reaches by this point of the script. */
-  private readonly plannedPlus = new Map<string, number>();
-  private upgradeSets = 0;
 
   constructor(private readonly plan: TutorialClassPlan) {}
 
@@ -340,66 +336,12 @@ class ScriptBuilder {
       id: `max:${biome}`,
       chapter,
       say: biome === 'plains'
-        ? 'Now master the Plains. Every zone you master opens stronger gear upgrades.'
+        ? 'Now master the Plains. Every zone you master opens stronger gear to craft.'
         : `Now master ${BIOME_NAME[biome]}.`,
       waiting: `Fighting in ${BIOME_NAME[biome]} until its mastery is maxed.`,
       progress: [{ type: 'biomeLevel', biomeGroup: biome, level: 6 }],
       steps: [{ type: 'farm', at: biomeRef(biome), until: { type: 'biomeLevelAtLeast', biomeGroup: biome, level: 6 } }],
     });
-  }
-
-  /**
-   * One set of upgrades, split by the zone whose essence pays for them (the
-   * Plains vest is paid in Plains essence even during the Forest leg).
-   */
-  upgrades(chapter: string, leg: T1Biome, targets: Array<[string, number]>, intro?: string): void {
-    const groups = new Map<string, TutorialUpgradeTarget[]>();
-    for (const [definitionId, toPlus] of targets) {
-      const biome = ITEM_DATABASE.get(definitionId)?.biomeGroup;
-      if (!biome) throw new Error(`cannot upgrade ${definitionId}`);
-      const group = groups.get(biome) ?? [];
-      group.push({ definitionId, toPlus });
-      groups.set(biome, group);
-    }
-
-    this.upgradeSets += 1;
-    // The leg's own zone first: the player is already standing in it.
-    const ordered = [...groups.entries()].sort(([a], [b]) => (a === leg ? -1 : b === leg ? 1 : 0));
-    let first = true;
-    for (const [biome, items] of ordered) {
-      const done: TutorialCondition = {
-        type: 'allOf',
-        of: items.map((t): TutorialCondition => ({ type: 'itemAtLeastPlus', definitionId: t.definitionId, plus: t.toPlus })),
-      };
-      const key = `${leg}:${this.upgradeSets}:${biome}`;
-      const zone = BIOME_NAME[biome as T1Biome] ?? biome;
-
-      const names = items.map((t) => name(t.definitionId)).join(', ');
-      this.push({
-        id: `farm:upgrades:${key}`,
-        chapter,
-        say: first
-          ? intro ?? `Time to upgrade before moving on: ${names}.`
-          : `The rest is paid in ${ZONE_WORD[biome] ?? biome} essence, so back to ${zone} for a while.`,
-        waiting: `Gathering ${ZONE_WORD[biome] ?? biome} essence for the upgrades.`,
-        progress: [{ type: 'upgradeCost', items }],
-        steps: [{
-          type: 'farm',
-          at: biomeRef(biome),
-          until: { type: 'anyOf', of: [done, { type: 'canAffordUpgrades', items }] },
-        }],
-      });
-      this.push({
-        id: `upgrade:${key}`,
-        chapter,
-        say: items.length === 1
-          ? `Upgrade the ${names} to +${items[0].toPlus}.`
-          : `Upgrade them all: ${names}.`,
-        steps: items.map((t): TutorialStep => ({ type: 'upgrade', definitionId: t.definitionId, toPlus: t.toPlus })),
-      });
-      for (const t of items) this.plannedPlus.set(t.definitionId, t.toPlus);
-      first = false;
-    }
   }
 
   items(chapter: string, leg: T1Biome, items: readonly PlanItem[] | undefined, firstFarmLine?: { value?: string }): void {
@@ -419,8 +361,6 @@ class ScriptBuilder {
           single ? EQUIP_REASON[single] ?? `Wear the ${name(single)}.` : 'Put on the best of what you have before going in.',
           `equip:${leg}:${item.equip.join('+')}`,
         );
-      } else {
-        this.upgrades(chapter, leg, item.upgrade, item.say);
       }
     }
   }

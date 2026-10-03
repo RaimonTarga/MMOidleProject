@@ -11,8 +11,6 @@ import {
   requiredBiomeLevelForUpgrade,
   upgradeCeilingFromGlobalMastery,
   upgradeCostFor,
-  remainingUpgradeCost,
-  viewCanAffordUpgrades,
   worldNodeExits,
   type EssenceType,
 } from "@mmo-idle/shared";
@@ -97,7 +95,10 @@ export function evaluate(condition: Condition, ctx: ConditionContext): boolean {
     case "runeRecipeCrafted":
       return obs.self?.runeRecipesCrafted.includes(condition.recipeId) ?? false;
     case "canAffordUpgrades":
-      return !!obs.self && viewCanAffordUpgrades(obs.self, condition.items);
+      // RETIRED (design §24.5): no item has a +N ladder any more, so a legacy
+      // route's planned upgrades have nothing left to pay — the farm-until gate
+      // opens, and the `upgrade` step after it is skipped by the executor.
+      return !!obs.self;
     case "elapsedMs":
       return ctx.elapsedMs >= condition.ms;
     case "allOf":
@@ -201,15 +202,6 @@ export function shortfall(condition: Condition, obs: Observation): Record<string
       case "capstoneAtLeast": {
         const missing = c.amount - (obs.self?.capstones[c.biome] ?? 0);
         if (missing > 0) out[`capstone.${c.biome}`] = missing;
-        break;
-      }
-      case "canAffordUpgrades": {
-        if (!obs.self) break;
-        const remaining = remainingUpgradeCost(obs.self, c.items);
-        for (const [essence, amount] of Object.entries(remaining.essence)) {
-          const missing = (amount ?? 0) - obs.essence(essence as EssenceType);
-          if (missing > 0) out[`essence.${essence}`] = missing;
-        }
         break;
       }
       case "allOf":

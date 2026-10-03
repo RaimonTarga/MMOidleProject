@@ -182,6 +182,9 @@ for (const id of ['brace', 'endure', 'second-wind', 'recuperate']) {
   const p = player();
   const defensive = id === 'brace' || id === 'endure';
   const itemId = defensive ? 'mountain-vest-t1' : 'forest-charm-t1';
+  // The item's own authored potency: a stale `+3` adds nothing now that the
+  // ladder is retired on every slot (design §24.5).
+  const fx = ITEM_DATABASE.get(itemId)!.mechanicEffects ?? {};
   p.holdsInventory.inventory.push(itemId);
   p.holdsInventory.itemUpgrades[itemId] = 3;
   assert(equipItem(world, p, itemId));
@@ -197,13 +200,13 @@ for (const id of ['brace', 'endure', 'second-wind', 'recuperate']) {
   const live = getStatusEffect(p.tracksCombat, (defensive ? guardEffectIdForAbility(id) : recoveryEffectIdForAbility(id))!);
   assert(live, `${itemId} -> ${id} must fire`);
   if (resolved.kind === 'damage-reduction' && base.kind === 'damage-reduction') {
-    assert.equal(resolved.drPct, base.drPct * (1 + 0.15 + 0.02 * 3));
+    assert.equal(resolved.drPct, base.drPct * (1 + fx['guard.potency-pct']!));
     assert.equal(live.data.drPct, resolved.drPct);
     assert.equal(live.data.knockbackResistPct, resolved.knockbackResistPct);
     assert.equal(live.remainingMs, base.durationMs);
   } else {
     assert(resolved.kind === 'heal' && base.kind === 'heal');
-    assert(Math.abs(resolved.recoveryPct - base.recoveryPct * 1.13) < 1e-9);
+    assert(Math.abs(resolved.recoveryPct - base.recoveryPct * (1 + fx['defense.recovery-skill-potency']!)) < 1e-9);
     assert.equal(live.data.recoveryPct, resolved.recoveryPct);
     assert.equal(live.remainingMs, base.durationMs);
   }
@@ -212,7 +215,7 @@ for (const id of ['brace', 'endure', 'second-wind', 'recuperate']) {
 
 for (const tier of [2, 3, 4]) {
   const item = ITEM_DATABASE.get(`desert-charm-t${tier}`)!;
-  const effects = itemMechanicEffectsAt(item, 5);
+  const effects = itemMechanicEffectsAt(item, 0);
   assert.deepEqual(equipmentAbilityTags(effects), ['cleanse']);
   assert(!Object.keys(effects).some(k => k.startsWith('defense.cleanse-')), 'charm no longer owns an automatic cleanse or heal');
   assert(!Object.keys(ITEM_DATABASE.get(`desert-vest-t${tier}`)!.mechanicEffects ?? {}).some(k => k.startsWith('defense.cleanse-')), 'Desert armor trades its automatic cleanse for opening protection');

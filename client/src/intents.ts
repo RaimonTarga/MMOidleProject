@@ -26,7 +26,6 @@ export interface IntentMap {
   equipItem: string;
   unequipItem: EquipmentSlot;
   craftRecipe: string;
-  upgradeItem: string;
   // ── Lineage trees (progression rework Phase 1) ─────────────────────────────
   lineageUnlockCard: { lineageId: string; cardId: string };
   lineageSetActive: { lineageId: string; row: RowKind; cardId: string | null };

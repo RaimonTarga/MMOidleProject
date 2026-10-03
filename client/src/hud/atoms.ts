@@ -465,7 +465,7 @@ export const inventoryOpenAtom = atom<boolean>(false);
  */
 export const lineageTreeSlotAtom = atom<EquipmentSlot | null>(null);
 export const mapOpenAtom = atom<boolean>(false);
-export const craftTabAtom = atom<'make' | 'upgrade' | null>(null);
+export const craftTabAtom = atom<'make' | null>(null);
 export const questOpenAtom = atom<boolean>(false);
 export const settingsOpenAtom = atom<boolean>(false);
 export const debugPanelOpenAtom = atom<boolean>(false);

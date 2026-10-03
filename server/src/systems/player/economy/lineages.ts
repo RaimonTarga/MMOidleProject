@@ -4,8 +4,7 @@
  * Each one validates with the SHARED check (`checkUnlockCard`, `checkSetActive`,
  * `checkUnlockForm`, `checkWearForm`), spends, mutates `holdsInventory.lineages`
  * through `mutateSlice`, and recalculates stats. The client gates its buttons
- * with the same checks, so the two can never disagree — this is exactly the
- * arrangement `upgradeItem` has with `checkUpgrade`.
+ * with the same checks, so the two can never disagree.
  *
  * Buying is permanent and costs. Activating a card and wearing an owned form are
  * free and instant: "owned is forever, active is a choice" (design §1).

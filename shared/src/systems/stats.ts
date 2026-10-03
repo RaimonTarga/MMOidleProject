@@ -13,7 +13,7 @@ import { ITEM_DATABASE } from '../itemDatabase';
 import { EQUIPMENT_SLOTS } from '../items';
 import { coreIsActive } from './cores';
 import { activeStanceModifiers, stanceDef, type StanceModifiers } from '../stances';
-import { effectiveAttacksPerSecond, upgradeMechanicEffectsTotal, upgradeStatBonusTotal } from './itemUpgrades';
+import { effectiveAttacksPerSecond } from './itemUpgrades';
 import { GAME_CONFIG, baseRecoveryForTier, poolFactorForTier } from '../index';
 import { mergePassives, makePulseAccumulator, finalizePulse } from '../passives';
 import { relicRatingsFromPassives, resolveCadenceRelicProfile } from './relics';
@@ -200,16 +200,12 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   p.hasHealth.recovery           = baseRecoveryForTier(p.playerTier);
   p.hasPosition.speed           = GAME_CONFIG.PLAYER_SPEED;
 
-  // 1b. Weapon attack rate. Upgrade steps may add an APS delta (the rapier
-  // lineage buys cadence instead of Attack), so the effective rate is resolved
-  // here rather than read straight off the base definition.
+  // 1b. Weapon attack rate: the crafted form's own cadence. `itemUpgrades` is
+  // never read — the +N ladder is retired on every slot (design §24.5).
   const weaponId = p.holdsInventory.equipment.weapon;
   const weapon   = weaponId ? ITEM_DATABASE.get(weaponId) : undefined;
   if (weapon) {
-    const aps = effectiveAttacksPerSecond(
-      weapon,
-      p.holdsInventory.itemUpgrades?.[weapon.id] ?? 0,
-    );
+    const aps = effectiveAttacksPerSecond(weapon, 0);
     if (aps) p.performsAttack.attackCooldown = Math.round(1000 / aps);
   }
 
@@ -326,18 +322,9 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
       }
     }
     mergePassives(p.usesSkills.passives, omitKeys(def.mechanicEffects, p.previewOmitItemEffects, defId), pulseAcc);
-
-    // Item upgrade bonuses: all stat and mechanic effect deltas from upgrade steps.
-    const plus = p.holdsInventory.itemUpgrades?.[defId] ?? 0;
-    if (plus > 0) {
-      for (const [stat, value] of Object.entries(upgradeStatBonusTotal(def, plus))) {
-        if (stat === 'damageReduction') { itemDr += value; continue; }
-        if (stat === 'evasion') { if (value > 0) evasionChance += value; }
-        else applyStatModToTarget(p, stat, value);
-      }
-      const meFx = omitKeys(upgradeMechanicEffectsTotal(def, plus), p.previewOmitItemEffects, defId) ?? {};
-      if (Object.keys(meFx).length > 0) mergePassives(p.usesSkills.passives, meFx, pulseAcc);
-    }
+    // No `+N` bonus on top: the ladder is retired on every slot and an item is
+    // crafted at full power (design §23, §24.5). A save's stale `itemUpgrades`
+    // entry adds nothing here; hydration refunds it.
   }
   // 3c. The flat half of the lineage stat rows — the slotted one plus the
   // absorbed ones (step 2b) — folded with equipment so class affinities multiply

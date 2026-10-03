@@ -62,7 +62,6 @@ type MobileView =
   | 'skills'
   | 'bag'
   | 'craft'
-  | 'upgrade'
   | 'map'
   | 'quests'
   | 'build'
@@ -148,7 +147,7 @@ function MobileHUDContent() {
     if (!visibility.mastery && view === 'mastery') setView(null);
     if (!visibility.passiveTree && view === 'skills') setView(null);
     if (!visibility.inventory && view === 'bag') setView(null);
-    if (!visibility.crafting && (view === 'craft' || view === 'upgrade')) setView(null);
+    if (!visibility.crafting && view === 'craft') setView(null);
     if (!visibility.loadout && view === 'build') setView(null);
     if (!visibility.map && view === 'map') setView(null);
   }, [
@@ -164,7 +163,7 @@ function MobileHUDContent() {
   const close = () => setView(null);
 
   function toggle(key: Exclude<MobileView, null>) {
-    if ((key === 'bag' || key === 'craft' || key === 'upgrade') && dead) return;
+    if ((key === 'bag' || key === 'craft') && dead) return;
     setView(v => (v === key ? null : key));
   }
 
@@ -263,17 +262,6 @@ function MobileHUDContent() {
         unlockSystem: row.gate,
         onSelect: () => { setBuildTab(row.tab); setView('build'); },
       })),
-    ...(visibility.crafting
-      ? [{
-        key: 'upgrade' as const,
-        label: 'Upgrade',
-        icon: menuIconSource('upgrade'),
-        fallback: 'U',
-        unlockSystem: 'crafting' as const,
-        disabled: dead,
-        onSelect: () => setView('upgrade'),
-      }]
-      : []),
     ...(visibility.mastery
       ? [{
         key: 'mastery',
@@ -450,7 +438,6 @@ function MobileHUDContent() {
         <LineageTreePanel slot={lineageSlot} onClose={() => setLineageSlot(null)} />
       )}
       {view === 'craft' && <CraftingPanel tab="make" onClose={close} />}
-      {view === 'upgrade' && <CraftingPanel tab="upgrade" onClose={close} />}
       {view === 'map'    && <MapPanel onClose={close} />}
       {view === 'build' && <BuildPanel onClose={close} />}
       {view === 'mastery' && <MasteryPanel onClose={close} />}

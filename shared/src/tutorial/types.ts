@@ -17,12 +17,6 @@ export type TutorialNodeRef =
   | { kind: 'biome'; biomeGroup: string; tier: number; pick?: 'first' | 'uncleared'; modifier?: string }
   | { kind: 'dungeon'; biomeGroup: string; tier: number };
 
-/** One upgrade target inside `canAffordUpgrades`. */
-export interface TutorialUpgradeTarget {
-  definitionId: string;
-  toPlus: number;
-}
-
 export type TutorialCondition =
   | { type: 'playerTierAtLeast'; tier: number }
   | { type: 'classSelected' }
@@ -33,7 +27,6 @@ export type TutorialCondition =
   | { type: 'canCraft'; recipeId: string }
   | { type: 'hasItem'; definitionId: string }
   | { type: 'equipped'; definitionId: string }
-  | { type: 'itemAtLeastPlus'; definitionId: string; plus: number }
   | { type: 'abilityKnown'; abilityId: string }
   | { type: 'runeRecipeCrafted'; recipeId: string }
   | { type: 'bossCleared'; biomeGroup: string; tier: number }
@@ -45,13 +38,6 @@ export type TutorialCondition =
   | { type: 'lineageCardOwned'; lineageId: string; cardId: string }
   | { type: 'lineageFormOwned'; lineageId: string; recipeId: string }
   | { type: 'lineageFormWorn'; lineageId: string; recipeId: string }
-  /**
-   * Every listed item can be taken from its CURRENT level to its target right
-   * now: Global Mastery, biome level, and the summed essence cost of all
-   * remaining levels. Monotone across the upgrades themselves: each one
-   * spends exactly what it removes from the remaining cost.
-   */
-  | { type: 'canAffordUpgrades'; items: TutorialUpgradeTarget[] }
   | { type: 'allOf'; of: TutorialCondition[] }
   | { type: 'anyOf'; of: TutorialCondition[] }
   | { type: 'not'; of: TutorialCondition };
@@ -67,7 +53,6 @@ export type TutorialStep =
   | { type: 'chooseClass' }
   | { type: 'craft'; recipeIds: string[] }
   | { type: 'equip'; definitionIds: string[] }
-  | { type: 'upgrade'; definitionId: string; toPlus: number }
   | { type: 'configureRunes'; rules: EquippedRule[] }
   | { type: 'craftRune'; recipeId: string }
   /** Craft the ability recipe, then make it the only ability of its slot kind. */
@@ -98,8 +83,7 @@ export type TutorialProgressRef =
   | { type: 'essenceFor'; recipeId: string }
   | { type: 'essence'; essence: EssenceType; amount: number }
   | { type: 'shard'; packet: PacketId; amount: number }
-  | { type: 'capstone'; biome: string; amount: number }
-  | { type: 'upgradeCost'; items: TutorialUpgradeTarget[] };
+  | { type: 'capstone'; biome: string; amount: number };
 
 /**
  * One press of Next.

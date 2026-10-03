@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
 import { EQUIPMENT_SLOTS, ITEM_DATABASE, lineageForEquippedItem, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS, relicIsUnlocked } from '@mmo-idle/shared';
-import { equipmentAtom, inventoryAtom, itemUpgradesAtom, playerNodeIdAtom, playerTierAtom } from '../../hud/atoms';
+import { equipmentAtom, inventoryAtom, playerNodeIdAtom, playerTierAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
 import { ItemIcon } from '../ItemIcon';
 import type { ComparePin } from './useFocus';
@@ -17,7 +17,6 @@ interface Props {
 
 export function BackpackGrid({ compare }: Props) {
   const inventory    = useAtomValue(inventoryAtom);
-  const itemUpgrades = useAtomValue(itemUpgradesAtom);
   const equipment    = useAtomValue(equipmentAtom);
   const playerTier = useAtomValue(playerTierAtom);
   const playerNodeId = useAtomValue(playerNodeIdAtom);
@@ -145,7 +144,6 @@ export function BackpackGrid({ compare }: Props) {
             const isShown  = !!defId && compare.shown === defId;
             const isPinned = !!defId && compare.pinned === defId;
             const color     = def ? tierColor(def.tier) : null;
-            const plus      = defId ? (itemUpgrades[defId] ?? 0) : 0;
             const relicLocked = def?.slot === 'relic'
               && !relicIsUnlocked(playerTier, playerNodeId === TEST_ROOM_NODE_ID);
 
@@ -179,7 +177,7 @@ export function BackpackGrid({ compare }: Props) {
                       }
                     </span>
                     <span className="inv-item-slot__name">
-                      {def.name}{plus > 0 ? ` +${plus}` : ''}
+                      {def.name}
                     </span>
                   </>
                 )}

@@ -63,7 +63,7 @@ interface CostDisplayProps {
   essences: Record<EssenceType, number>;
 }
 
-/** Every price in the game — gear, upgrades, techniques — renders through this. */
+/** Every price in the game — gear, techniques — renders through this. */
 export function CostDisplay({ cost, essences }: CostDisplayProps) {
   const entries = (Object.entries(cost) as [EssenceType, number][])
     .map(([type, amount]) => ({

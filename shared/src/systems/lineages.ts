@@ -1,9 +1,9 @@
 /**
  * Lineage tree rules — the shared authority (progression rework Phase 1a).
  *
- * These are to the lineage tree what `checkUpgrade`/`checkEvolve` are to the
- * +N ladder: pure functions the SERVER applies and the CLIENT gates buttons with,
- * so the two can never disagree. Nothing here mutates; the Phase 1b handlers in
+ * Pure functions the SERVER applies and the CLIENT gates buttons with, so the
+ * two can never disagree (the arrangement the retired +N ladder and evolve path
+ * had with `checkUpgrade`/`checkEvolve`). Nothing here mutates; the Phase 1b handlers in
  * `server/src/systems/player/economy/lineages.ts` validate with these, then spend
  * and mutate.
  *

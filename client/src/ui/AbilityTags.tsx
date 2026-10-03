@@ -1,4 +1,4 @@
-import { ABILITY_TAG_INFO, equipmentAbilityTags, itemMechanicEffectsAt, type AbilityTag, type ItemDefinition } from '@mmo-idle/shared';
+import { ABILITY_TAG_INFO, equipmentAbilityTags, type AbilityTag, type ItemDefinition } from '@mmo-idle/shared';
 import './describe/detailLines.css';
 
 export function AbilityTags({ tags }: { tags: readonly AbilityTag[] }) {
@@ -8,6 +8,7 @@ export function AbilityTags({ tags }: { tags: readonly AbilityTag[] }) {
   </div>;
 }
 
-export function EquipmentAbilityTags({ item, plus = 0 }: { item: ItemDefinition; plus?: number }) {
-  return <AbilityTags tags={equipmentAbilityTags(itemMechanicEffectsAt(item, plus))} />;
+/** An item's tags, read off its authored effects: there is no `+N` on top (design §24.5). */
+export function EquipmentAbilityTags({ item }: { item: ItemDefinition }) {
+  return <AbilityTags tags={equipmentAbilityTags({ ...item.mechanicEffects })} />;
 }

@@ -1,16 +1,18 @@
 /**
- * One rule for four slots (design §24.5): the evolve path is retired on every
- * slot, and an armour, charm or boots item of tier ≥ 2 is a plain recipe, crafted
- * at its biome level for essence — never evolved from the item below it. A
- * weapon's tier-2+ forms stay what they were: opened at the lineage gate only
+ * One rule for four slots (design §24.5): the +N ladder and the evolve path are
+ * retired on every slot. An item is crafted at full power, a stale `+N` adds
+ * nothing, and an armour, charm or boots item of tier ≥ 2 is a plain recipe,
+ * crafted at its biome level for essence — never evolved from the item below it.
+ * A weapon's tier-2+ forms stay what they were: opened at the lineage gate only
  * (review finding B4), never crafted and never evolved.
  *
  * Run: node --conditions=development --import tsx test/slotRetirement.test.ts
  */
 import {
   BIOME_START_TIER_BY_GROUP, EVOLUTION_RETIRED_REASON, GAME_CONFIG, ITEM_DATABASE,
-  RECIPE_DATABASE, TEST_ROOM_NODE_ID, baseRecoveryForTier, biomeLevelCap, checkEvolve,
-  checkReconstruct, emptyEquipment, isGatedLineageForm, isLineageParked, lineageForRecipeId,
+  RECIPE_DATABASE, TEST_ROOM_NODE_ID, UPGRADES_RETIRED_REASON, baseRecoveryForTier,
+  biomeLevelCap, checkEvolve, checkReconstruct, checkUpgrade, emptyEquipment, getMaxUpgrade,
+  isGatedLineageForm, isLineageParked, lineageForRecipeId,
 } from '@mmo-idle/shared';
 import type { EquipmentSlot, EssenceType, Recipe } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
@@ -18,6 +20,8 @@ import { World } from '../src/world/World';
 import { craftRecipe } from '../src/systems/player/economy/crafting';
 import { equipItem } from '../src/systems/player/economy/inventory';
 import { evolveItem } from '../src/systems/player/economy/itemEvolution';
+import { upgradeItem } from '../src/systems/player/economy/itemUpgrade';
+import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 import { checkRecipeUnlocks } from '../src/systems/player/progression/rewards';
 
 function assert(condition: unknown, message: string): void {
@@ -59,6 +63,63 @@ const spawn = (opts: { essence?: number; nodeId?: string } = {}) => {
   const id = `retire-${serial++}`;
   return world.attachPlayerEntity(makeSlices(id, opts), id);
 };
+
+// ─── The +N ladder refuses every slot ────────────────────────────────────────
+
+for (const item of ITEM_DATABASE.values()) {
+  assert(getMaxUpgrade(item) === 0, `${item.id}: no item has a ladder`);
+  const check = checkUpgrade({
+    item, currentPlus: 0, biomeLevel: 99,
+    essences: { red: 1e9, blue: 1e9, green: 1e9, yellow: 1e9, purple: 1e9 }, globalMastery: 999,
+  });
+  assert(!check.ok && check.reason === UPGRADES_RETIRED_REASON, `${item.id}: upgrade refused, got ${JSON.stringify(check)}`);
+}
+
+{
+  // One held, worn item per gear slot, rich, at max levels, in the open world
+  // and in the test room: the server refuses, spends nothing, writes no level.
+  const bySlot: Record<string, string> = {
+    weapon: 'iron-broadsword', armor: 'plains-vest-t1', recovery: 'forest-charm-t1', mobility: 'mountain-boots-t1',
+  };
+  for (const slot of GEAR_SLOTS) {
+    const itemId = bySlot[slot]!;
+    assert(ITEM_DATABASE.get(itemId)?.slot === slot, `fixture: ${itemId} is a ${slot}`);
+    for (const nodeId of ['node-t1-forest-01', TEST_ROOM_NODE_ID]) {
+      const p = spawn({ essence: 1e6, nodeId });
+      for (const group of ['plains', 'forest', 'mountain']) p.tracksProgression.biomeLevel[group] = 99;
+      p.holdsInventory.inventory.push(itemId);
+      assert(equipItem(world, p, itemId), `fixture: wears ${itemId}`);
+      const before = JSON.stringify([p.holdsInventory, p.tracksProgression]);
+      const result = upgradeItem(world, p, itemId);
+      assert(
+        !result.success && result.reason === UPGRADES_RETIRED_REASON && result.newLevel === 0,
+        `${slot} ${itemId} @${nodeId}: upgrade refused, got ${JSON.stringify(result)}`,
+      );
+      assert(JSON.stringify([p.holdsInventory, p.tracksProgression]) === before, `${itemId}: a refusal changes nothing`);
+    }
+  }
+}
+
+{
+  // A stale `+N` a save still holds adds nothing at recalc, on any slot. (The
+  // hydration refund drops it; this is the belt to that braces — after the
+  // ladder fold, a live +5 bonus would double the item's old +5 power.)
+  const kit = ['flash-rapier', 'forest-vest-t1', 'forest-charm-t1', 'forest-boots-t1'];
+  const statsOf = (plus: number) => {
+    const p = spawn();
+    p.holdsInventory.inventory.push(...kit);
+    for (const id of kit) {
+      assert(equipItem(world, p, id), `fixture: wears ${id}`);
+      if (plus > 0) p.holdsInventory.itemUpgrades[id] = plus;
+    }
+    recalculatePlayerEntityStats(world, p);
+    return JSON.stringify([
+      p.dealsDamage, p.mitigatesDamage, p.evadesHits, p.performsAttack, p.hasHealth.maxHp,
+      p.hasHealth.recovery, p.hasPosition.speed, p.usesSkills.passives,
+    ]);
+  };
+  assert(statsOf(5) === statsOf(0), 'a +5 entry on every slot changes no stat and no passive');
+}
 
 // ─── `evolvesFrom` survives only as the weapon form graph ────────────────────
 //

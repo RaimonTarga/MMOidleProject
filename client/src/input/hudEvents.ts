@@ -34,7 +34,6 @@ import {
   sendTeleportToNode,
   sendUnequip,
   sendUnlockSkill,
-  sendUpgradeItem,
   sendLineageUnlockCard,
   sendLineageSetActive,
   sendLineageUnlockForm,
@@ -162,11 +161,6 @@ export function attachHudEvents(scene: GameScene): () => void {
   intents.on("activateDungeonAltar", () => {
     if (isDeathOverlayActive()) return;
     sendActivateDungeonAltar(scene.socket);
-  });
-
-  intents.on("upgradeItem", (itemId) => {
-    if (isDeathOverlayActive()) return;
-    sendUpgradeItem(scene.socket, itemId);
   });
 
   intents.on("lineageUnlockCard", (payload) => {

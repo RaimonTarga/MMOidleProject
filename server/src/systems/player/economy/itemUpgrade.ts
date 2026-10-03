@@ -1,16 +1,6 @@
-import {
-  ITEM_DATABASE,
-  TEST_ROOM_NODE_ID,
-  checkUpgrade,
-  getMaxUpgrade,
-  globalMastery,
-  upgradeCostFor,
-} from '@mmo-idle/shared';
-import type { EssenceType } from '@mmo-idle/shared';
+import { ITEM_DATABASE, UPGRADES_RETIRED_REASON } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
 import type { PlayerEntity } from '../../../ecs/entity';
-import { recalculatePlayerEntityStats } from '../../../ecs/playerEntityFormulas';
-import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 
 export interface UpgradeResult {
   success: boolean;
@@ -19,63 +9,21 @@ export interface UpgradeResult {
   newLevel: number;
 }
 
+/**
+ * Take an item one `+N` step higher — RETIRED on every slot (design §24.5).
+ *
+ * Weapons left the ladder in progression rework Phase 2b; armour, charm and boots
+ * left it in the course correction, their +1..+5 totals folded into base stats so
+ * an item is crafted at full power. One rule now: refused, nothing spent, no
+ * level written. The socket event stays wired so an old client gets a reason
+ * rather than silence.
+ */
 export function upgradeItem(
-  world: World,
+  _world: World,
   entity: PlayerEntity,
   itemId: string,
 ): UpgradeResult {
-  const inv = entity.holdsInventory;
-  const current = inv.itemUpgrades[itemId] ?? 0;
-  const fail = (reason: string): UpgradeResult => ({ success: false, reason, itemId, newLevel: current });
-
-  const def = ITEM_DATABASE.get(itemId);
-  if (!def) return fail('Unknown item.');
-
-  const owned =
-    inv.inventory.includes(itemId) ||
-    Object.values(inv.equipment).includes(itemId);
-  if (!owned) return fail("You don't own this item.");
-
-  const isTestRoom = entity.hasPosition.nodeId === TEST_ROOM_NODE_ID;
-  const biomeLevel = def.biomeGroup
-    ? (entity.tracksProgression.biomeLevel[def.biomeGroup] ?? 0)
-    : 0;
-
-  // Test room ignores biome-level + essence gates (mirrors craftRecipe behaviour).
-  if (!isTestRoom) {
-    const check = checkUpgrade({
-      item: def,
-      currentPlus: current,
-      biomeLevel,
-      essences: entity.tracksProgression.essences,
-      globalMastery: globalMastery(entity.tracksProgression.biomeLevel),
-      t1Plus5EssenceCostMultiplier:
-        world.t1EconomyConfigForPlayer(entity.isPlayer.id).t1Plus5EssenceCostMultiplier,
-    });
-    if (!check.ok) return fail(check.reason ?? 'Cannot upgrade.');
-  } else if (current >= getMaxUpgrade(def)) {
-    return fail('Already at maximum upgrade.');
-  }
-
-  const targetPlus = current + 1;
-  const cost = upgradeCostFor(
-    def,
-    targetPlus,
-    world.t1EconomyConfigForPlayer(entity.isPlayer.id).t1Plus5EssenceCostMultiplier,
-  );
-  if (!cost && !isTestRoom) return fail('This item cannot be upgraded.');
-
-  if (!isTestRoom && cost) {
-    for (const [type, amount] of Object.entries(cost)) {
-      entity.tracksProgression.essences[type as EssenceType] =
-        (entity.tracksProgression.essences[type as EssenceType] ?? 0) - (amount ?? 0);
-    }
-    markSliceDirty(world, entity, 'tracksProgression');
-  }
-
-  inv.itemUpgrades = { ...inv.itemUpgrades, [itemId]: targetPlus };
-  markSliceDirty(world, entity, 'holdsInventory');
-  recalculatePlayerEntityStats(world, entity);
-
-  return { success: true, itemId, newLevel: targetPlus };
+  const current = entity.holdsInventory.itemUpgrades[itemId] ?? 0;
+  if (!ITEM_DATABASE.has(itemId)) return { success: false, reason: 'Unknown item.', itemId, newLevel: current };
+  return { success: false, reason: UPGRADES_RETIRED_REASON, itemId, newLevel: current };
 }

@@ -118,11 +118,6 @@ export const hudBus = {
     intents.emit('craftRecipe', recipeId);
   },
 
-  /** Called by the Upgrade tab — GameScene picks this up and emits the socket event. */
-  requestUpgradeItem(itemId: string): void {
-    intents.emit('upgradeItem', itemId);
-  },
-
   /** Called by LineageTreePanel — buy a card. Permanent; costs essence + lane shards. */
   requestLineageUnlockCard(lineageId: string, cardId: string): void {
     intents.emit('lineageUnlockCard', { lineageId, cardId });

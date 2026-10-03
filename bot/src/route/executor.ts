@@ -1130,9 +1130,25 @@ export class RouteExecutor {
     recorder.emit({ kind: "unequip", atMs: recorder.now(), slot, definitionId });
   }
 
+  /**
+   * `upgrade` is a RETIRED step kind (design §24.5): no item has a +N ladder,
+   * `getMaxUpgrade` is 0 everywhere and the server refuses every upgrade. A
+   * legacy route's step is therefore skipped, with a `retired-step` record; the
+   * clamp below would reach the same `target <= 0` return, so the body after it
+   * is kept only for the day a ladder exists again.
+   */
   private async doUpgrade(step: Extract<RouteStep, { type: "upgrade" }>): Promise<void> {
     const { obs, intents, recorder } = this.deps;
     const recipe = RECIPE_DATABASE.get(step.definitionId);
+    if (obs.maxUpgradeFor(step.definitionId) <= 0) {
+      recorder.emit({
+        kind: "build-change",
+        atMs: recorder.now(),
+        system: "retired-step",
+        detail: { step: "upgrade", definitionId: step.definitionId, toPlus: step.toPlus, skipped: true },
+      });
+      return;
+    }
     let target = Math.min(
       this.deps.policy.upgradeTarget(step.toPlus),
       obs.maxUpgradeFor(step.definitionId),

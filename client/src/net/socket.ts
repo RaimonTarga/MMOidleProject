@@ -52,7 +52,6 @@ export interface SocketHandlers {
   onStanceCraftResult(result: { recipeId: string; success: boolean; reason?: string }): void;
   onRiteCraftResult(result: { recipeId: string; success: boolean; reason?: string }): void;
   onBuildLoadoutResult(result: { system: "abilities" | "runes" | "stances" | "rites"; success: boolean; reason?: string }): void;
-  onUpgradeResult(result: { success: boolean; reason?: string; itemId: string; newLevel: number }): void;
   onLineageResult(result: {
     success: boolean;
     reason?: string;
@@ -104,7 +103,6 @@ export function wireSocketHandlers(
   socket.on('stance:craftResult', (r) => h.onStanceCraftResult(r));
   socket.on('rite:craftResult', (r) => h.onRiteCraftResult(r));
   socket.on('build:loadoutResult', (r) => h.onBuildLoadoutResult(r));
-  socket.on('inventory:upgradeResult', (r) => h.onUpgradeResult(r));
   socket.on('lineage:result', (r) => h.onLineageResult(r));
   socket.on('ability:nodeResult', (r) => h.onAbilityNodeResult(r));
   socket.on('player:died', (p) => h.onPlayerDied(p));
@@ -139,7 +137,6 @@ export function wireSocketHandlers(
     socket.off('stance:craftResult');
     socket.off('rite:craftResult');
     socket.off('build:loadoutResult');
-    socket.off('inventory:upgradeResult');
     socket.off('lineage:result');
     socket.off('player:died');
     socket.off('player:ascended');

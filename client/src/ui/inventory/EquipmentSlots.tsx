@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
 import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS, coreEligibilityLabel, coreIsActive, isRestrictedCore, lineageForEquippedItem, relicIsUnlocked } from '@mmo-idle/shared';
-import { equipmentAtom, itemUpgradesAtom, lineagesAtom, playerNodeIdAtom, playerTierAtom, selectedRangeAtom } from '../../hud/atoms';
+import { equipmentAtom, lineagesAtom, playerNodeIdAtom, playerTierAtom, selectedRangeAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
 import { lineageDisplayName } from '../lineage/lineageDisplayName';
 import { ItemIcon } from '../ItemIcon';
@@ -15,7 +15,6 @@ interface Props {
 
 export function EquipmentSlots({ compare, onOpenLineage }: Props) {
   const equipment = useAtomValue(equipmentAtom);
-  const itemUpgrades = useAtomValue(itemUpgradesAtom);
   const lineages = useAtomValue(lineagesAtom);
   const selectedRange = useAtomValue(selectedRangeAtom);
   const playerTier = useAtomValue(playerTierAtom);
@@ -32,7 +31,6 @@ export function EquipmentSlots({ compare, onOpenLineage }: Props) {
           const isShown = !!defId && compare.shown === defId;
           const isPinned = !!defId && compare.pinned === defId;
           const color = filled ? tierColor(def.tier) : null;
-          const plus = defId ? (itemUpgrades[defId] ?? 0) : 0;
           const coreInactive = filled && slot === 'core'
             && isRestrictedCore(def.coreEligibility)
             && !coreIsActive(def.coreEligibility, selectedRange);
@@ -96,7 +94,7 @@ export function EquipmentSlots({ compare, onOpenLineage }: Props) {
                 </span>
                 {filled && (
                   <span className="inv-equip-slot__name">
-                    {def.name}{plus > 0 ? ` +${plus}` : ''}
+                    {def.name}
                   </span>
                 )}
               </span>

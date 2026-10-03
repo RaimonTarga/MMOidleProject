@@ -148,10 +148,6 @@ export function sendCraftRecipe(socket: GameSocket, recipeId: string): void {
   socket.emit('crafting:craftRecipe', recipeId);
 }
 
-export function sendUpgradeItem(socket: GameSocket, itemId: string): void {
-  socket.emit('inventory:upgradeItem', itemId);
-}
-
 // ── Lineage trees (progression rework Phase 1) ──────────────────────────────
 
 export function sendLineageUnlockCard(

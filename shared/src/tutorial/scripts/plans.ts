@@ -7,8 +7,9 @@ import type { TutorialMovement } from './runes';
  *
  * Differences from the bot routes, all deliberate:
  * - Only two bosses, `TUTORIAL_SEALS` (two seals promote to Tier 2).
- * - No opportunistic upgrades: each upgrade names the level the leg's Global
- *   Mastery already allows, so a resumed guide never chases a moving target.
+ * - No upgrade beats: the +N ladder is retired on every slot (design §24.5) and
+ *   an item is crafted at its old +5 power, so the kit the bot took to +5 is the
+ *   plain crafted kit here.
  */
 
 export type T1Biome = 'plains' | 'forest' | 'swamp' | 'mountain' | 'cave';
@@ -29,9 +30,7 @@ export type PlanItem =
   | { piece: string }
   /** Fight until it can be made, then craft it (worn later). */
   | { craft: string }
-  | { equip: string[] }
-  /** Upgrade each item to the given level. `say` replaces the routine opening line. */
-  | { upgrade: Array<[definitionId: string, toPlus: number]>; say?: string };
+  | { equip: string[] };
 
 export interface BiomePlan {
   before?: PlanItem[];
@@ -58,9 +57,6 @@ export interface TutorialClassPlan {
 const PLAINS: BiomePlan = {
   before: [{ piece: 'iron-broadsword' }, { piece: 'plains-vest-t1' }],
   after: [{ piece: 'plains-charm-t1' }, { piece: 'plains-boots-t1' }],
-  afterMax: [{
-    upgrade: [['plains-vest-t1', 1], ['plains-charm-t1', 1], ['plains-boots-t1', 1]],
-  }],
 };
 
 function durableMelee(): Record<T1Biome, BiomePlan> {
@@ -68,24 +64,12 @@ function durableMelee(): Record<T1Biome, BiomePlan> {
     plains: PLAINS,
     forest: {
       before: [{ piece: 'flash-rapier' }],
-      afterMax: [{
-        upgrade: [['plains-vest-t1', 2], ['plains-charm-t1', 2], ['plains-boots-t1', 2]],
-      }],
     },
     swamp: {
       after: [{ piece: 'swamp-charm-t1' }],
-      afterMax: [{
-        upgrade: [['swamp-charm-t1', 3], ['plains-vest-t1', 3], ['plains-boots-t1', 3]],
-      }],
     },
     mountain: {
       after: [{ piece: 'mountain-vest-t1' }],
-      afterMax: [{
-        upgrade: [
-          ['mountain-vest-t1', 4], ['swamp-charm-t1', 4],
-          ['plains-vest-t1', 4], ['plains-boots-t1', 4],
-        ],
-      }],
     },
     cave: {
       before: [
@@ -95,12 +79,6 @@ function durableMelee(): Record<T1Biome, BiomePlan> {
       after: [
         { equip: ['chaotic-axe'] },
       ],
-      afterMax: [{
-        upgrade: [
-          ['plains-vest-t1', 5], ['mountain-vest-t1', 5],
-          ['swamp-charm-t1', 5], ['plains-boots-t1', 5],
-        ],
-      }],
     },
   };
 }
@@ -110,34 +88,16 @@ function slinger(): Record<T1Biome, BiomePlan> {
     plains: PLAINS,
     forest: {
       before: [{ piece: 'flash-rapier' }, { piece: 'forest-vest-t1' }],
-      afterMax: [{
-        upgrade: [['forest-vest-t1', 2], ['plains-charm-t1', 2], ['plains-boots-t1', 2]],
-      }],
     },
     swamp: {
       after: [{ piece: 'swamp-charm-t1' }, { craft: 'ashbrand-blade' }],
-      afterMax: [{
-        upgrade: [
-          ['swamp-charm-t1', 3], ['forest-vest-t1', 3], ['plains-boots-t1', 3],
-        ],
-      }],
     },
-    mountain: {
-      afterMax: [{
-        upgrade: [
-          ['forest-vest-t1', 4],
-          ['swamp-charm-t1', 4], ['plains-boots-t1', 4],
-        ],
-      }],
-    },
+    mountain: {},
     cave: {
       before: [{ equip: ['flash-rapier', 'forest-vest-t1', 'swamp-charm-t1', 'plains-boots-t1'] }],
       after: [{ equip: ['ashbrand-blade'] }],
       // The bot also crafts a Mountain vest here, but only for the Mountain,
       // Swamp and Cave bosses, which the guide does not fight.
-      afterMax: [{
-        upgrade: [['forest-vest-t1', 5], ['swamp-charm-t1', 5], ['plains-boots-t1', 5]],
-      }],
     },
   };
 }
@@ -146,30 +106,9 @@ function apprentice(): Record<T1Biome, BiomePlan> {
   const plan = durableMelee();
   plan.swamp = {
     after: [{ piece: 'swamp-vest-t1' }, { piece: 'swamp-charm-t1' }],
-    afterMax: [{
-      upgrade: [
-        ['swamp-vest-t1', 3], ['swamp-charm-t1', 3],
-        ['plains-vest-t1', 3], ['plains-boots-t1', 3],
-      ],
-    }],
   };
   plan.mountain = {
     after: [{ piece: 'mountain-vest-t1' }],
-    afterMax: [{
-      upgrade: [
-        ['mountain-vest-t1', 4], ['swamp-vest-t1', 4],
-        ['swamp-charm-t1', 4], ['plains-boots-t1', 4],
-      ],
-    }],
-  };
-  plan.cave = {
-    ...plan.cave,
-    afterMax: [{
-      upgrade: [
-        ['plains-vest-t1', 5], ['mountain-vest-t1', 5],
-        ['swamp-vest-t1', 5], ['swamp-charm-t1', 5], ['plains-boots-t1', 5],
-      ],
-    }],
   };
   return plan;
 }

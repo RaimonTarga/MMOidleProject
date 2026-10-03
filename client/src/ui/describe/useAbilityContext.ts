@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai';
-import { ITEM_DATABASE, coreIsActive, coreEligibilityLabel, itemMechanicEffectsAt } from '@mmo-idle/shared';
+import { ITEM_DATABASE, coreIsActive, coreEligibilityLabel } from '@mmo-idle/shared';
 import {
   attackAtom,
   attackRangeAtom,
@@ -7,7 +7,7 @@ import {
   passivesAtom,
   playerTierAtom,
   combatArchetypeAtom,
-  equipmentAtom, itemUpgradesAtom, selectedRangeAtom,
+  equipmentAtom, selectedRangeAtom,
 } from '../../hud/atoms';
 import type { AbilityContext } from './abilityText';
 
@@ -22,15 +22,13 @@ import type { AbilityContext } from './abilityText';
  */
 export function useAbilityContext(): AbilityContext {
   const equipment = useAtomValue(equipmentAtom);
-  const upgrades = useAtomValue(itemUpgradesAtom);
   const range = useAtomValue(selectedRangeAtom);
   return {
     equipmentSources: Object.values(equipment).flatMap(id => {
       const item = id ? ITEM_DATABASE.get(id) : undefined;
       if (!item) return [];
-      const plus = upgrades[item.id] ?? 0;
-      const effects = itemMechanicEffectsAt(item, plus);
-      return [{ id: item.id, name: `${item.name}${plus > 0 ? ` +${plus}` : ''}`, effects,
+      const effects = { ...item.mechanicEffects };
+      return [{ id: item.id, name: item.name, effects,
         inactiveReason: item.slot === 'core' && !coreIsActive(item.coreEligibility, range) ? coreEligibilityLabel(item.coreEligibility) : undefined }];
     }),
     playerTier: useAtomValue(playerTierAtom),
