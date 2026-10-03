@@ -1,9 +1,12 @@
 # Lineage Trees — Current State
 
-**Audited:** 2026-10-03 (the course-correction run, design §24: the T1 lean and verb, one
-shard per node, non-weapon trees parked, the ladder retired on every slot, the weapon page
-and the rhythm readout — report:
-[`briefs/course-correction-report-2026-10-03.md`](briefs/course-correction-report-2026-10-03.md)).
+**Audited:** 2026-10-03, twice: the course-correction run (design §24: the T1 lean and
+verb, one shard per node, non-weapon trees parked, the ladder retired on every slot, the
+weapon page and the rhythm readout — report:
+[`briefs/course-correction-report-2026-10-03.md`](briefs/course-correction-report-2026-10-03.md)),
+then the verbs-that-fire run (design §24.9: leans seed their condition, the Empowered cap,
+T2+ bands compose, the tutorial on the fighting weapon — report:
+[`briefs/verbs-that-fire-report-2026-10-03.md`](briefs/verbs-that-fire-report-2026-10-03.md)).
 Earlier audit 2026-10-01 (run 3: keystones, T3/T4 bands, defensive lineages, ability
 nodes, re-homed forms, T2 amplifiers, band collapse).
 
@@ -121,6 +124,14 @@ buyable (to change which lane absorbs) but is no longer selectable
 buyable and selectable. The panel always shows one lit band and a dashed "Nothing beyond
 this band yet" placeholder where the next tier's cards don't exist yet.
 
+**Which lean a collapsed band leaves behind (verbs-that-fire B).** The lean is
+`active.stat` of any tier, so a collapsed T1 lean the save still points at keeps naming
+the payload until a T2 lean is slotted, and above T2 no band has a stat row, so the lane
+carried through the T2 gate stays the lean. A composed payload's SIZE comes from the
+**verb's** tier, not the lean's: a T1 verb reslotted under the T2 form composes with the T2
+lean at T1 size, and the T2 amplifier (which modifies the T2 verb) does nothing while it is
+slotted. Nothing a gate does shrinks a slotted card.
+
 **Which biome a band gates on — the door biome (design §21, 2026-10-01).** A band of
 tier N asks for levels in the biome of the form worn at tier N, its **door biome**, never
 in the lineage's `homeBiome`. The home biome is only ever the T1 door, so gating every band
@@ -177,15 +188,22 @@ the packets at resolve time:
   that lane's hand-authored **pure** pair. No lean active → the verb's own pure pair (the
   composed own-lane reading is degenerate for Empowered: "when your mechanic fires, the hit
   counts as your mechanic firing"). The lean is whichever owned card sits in the active
-  `stat` row, at any tier. Legacy payoff cards (every T2+ card) author their own
-  trigger/payoff and never compose.
+  `stat` row, at any tier. Every live weapon band's payoff row, T1 and T2, is verbs (§3b);
+  only the parked non-weapon trees still author their own trigger/payoff.
 - **Sentences are generated, never hand-typed per pair** (`sentences.ts`): subject moments
   read "X <payload>.", clause moments "X, the hit <payload>.", and same lane / no lean reads
   the pure sentence. The phrases are templates whose numbers come from the magnitude table,
   so a number change rewrites the sentence. `cardSentence(card, progress)` and
   `composedSentence(lineage, progress)` are what the page renders; a lean card's sentence is
   its stat line. `composeVerb(...).needs === 'slow'` marks a Control verb with no hold
-  source.
+  source — empty once the Control lean is active, since the lean is a hold source.
+  Capped moments read "(every N s at most)"; the Technique payload reads "refunds a third
+  of your Technique cooldowns", which is true at a hit moment too.
+- **Caveats are data** (`PacketHalves.momentCaveat`, `verbNote` in `weaponPageModel.ts`): a
+  verb card shows at most one caveat line — "needs a slow" (a Control verb with no hold
+  source), "your mechanic has no hit yet" (the Slinger's Empowered verb when its payload
+  needs the hit: `big-hit`, `mechanic-proxy`, `heal-and-load`; a reload has no hit, a
+  known asymmetry, design §24.9) or "weak on bosses" (Kill chain).
 - **Numbers** (`PACKET_HALF_NUMBERS` in `magnitudes.ts`, all PROVISIONAL and the
   designer's): payloads are PER FIRING — event-shaped and NOT divided by the trigger rate
   (§24.1: the 4–6 s cadence and the caps carry the budget).
@@ -193,12 +211,41 @@ the packets at resolve time:
 | Packet | Moment (verb) | Payload (lean) | Pure pair (same lane, or no lean) | Lean stat (T1) |
 |---|---|---|---|---|
 | Tempo | `hit-nth` n = 6 (landed swings) | `echo-hit` 1.0: a whole second swing through the proc seam, carrying on-hit | the same | attack speed +9% |
-| Affliction | `hit-afflicted`, cap 5000 ms | lineage bleed 1.0 × the hit over 4 s | `redose`: 1.0 × what its DoTs still owe, over 4 s | DoT potency +10% (`dotPotencyPct` → `dot.mechanic-mult`) |
+| Affliction | `hit-afflicted`, cap 5000 ms | lineage bleed 1.0 × the hit over 4 s; ADDS to a heavy bleed still owed when a composed verb fires it | `redose`: 1.0 × what its DoTs still owe, over 4 s | DoT potency +10% (`dotPotencyPct` → `dot.mechanic-mult` AND a light bleed on every hit, below) |
 | Engagement | `first-hit`, per body | `big-hit` ×2 | the same | Attack +3 |
-| Empowered | `mechanic-fired` | `mechanic-proxy` (the class's own multiplier; 1.5 for dot, summoner and non-Duelist reload) | `big-hit` ×1.5 on the mechanic's hit | attack +9% |
-| Control | `hit-held` (slowed, rooted, chilled or frozen), cap 5000 ms | `root` 2000 ms | `stun` 1500 ms | Attack +3 |
-| Kill chain | `kill` + carry (the next landed hit after a kill) | `heal-and-load`: heal 10% of max HP, the hit ×1.5 | the same | move speed +11 |
-| Technique | `technique-cast` | refund ⅓ of that Technique's cooldown | refund ½ | Technique power +9% |
+| Empowered | `mechanic-fired`, cap 4000 ms | `mechanic-proxy` (the class's own multiplier; 1.5 for dot, summoner and non-Duelist reload) | `big-hit` ×1.5 on the mechanic's hit | attack +9% |
+| Control | `hit-held` (slowed, rooted, chilled, frozen or stunned — a knockdown is held), cap 5000 ms | `root` 2000 ms | `stun` 1500 ms | `slowOnHit` 15% (a slow on every hit, below) |
+| Kill chain | `kill` + carry (the next landed hit after a kill) | `heal-and-load`: heal 10% of max HP, the hit ×1.5 | the same ("Your next hit after a kill heals a tenth of your pool and lands loaded (+50%).") | move speed +11 |
+| Technique | `technique-cast` | refund ⅓ of the Technique cooldowns | refund ½ | Technique power +9% |
+
+- **Leans seed their lane's condition (design §24.9, verbs-that-fire A).** The two
+  conditional moments look for a state on the target, and before this no T1 kit supplied
+  either for five classes of six (Control fired 0 times in 2,880 matrix runs). The lane's
+  own lean is now that source, for every class, through one listener,
+  `server/src/systems/combat/leanConditions.ts` (registered in `combatBootstrap` right after
+  the card runtime), which reads two passives the stat rebuild writes (`stats.ts`):
+  - **Affliction** — `dotPotencyPct` still feeds `dot.mechanic-mult` and now also writes
+    `shared.bleed-on-hit-pct`: every landed hit ADDS its share (0.10 at T1, scaled by tier;
+    of the hit as it was before any empowered multiplier, `hitBasis`) to a light bleed on
+    its own id, `lineage.lean-bleed`, spread over the longer of 4 s or what it has left; the
+    tick clock is never reset. It sits in the bleed driver's id list and the lineage DoT
+    family, so the Affliction moment, the redose, Contagion and Detonate all see it, and the
+    heavy payload (`LINEAGE_BLEED_ID`) and the light one never overwrite each other. The
+    Apprentice gets both effects (the multiplier scales its DoT, the bleed its hit).
+  - **Control** — a new stat key, `slowOnHit` (Control's `scalingStat`; `attack` was a
+    placeholder), writes `shared.slow-on-hit-pct`: every landed hit slows by 15% through
+    `applyMonsterSlow` (max-wins), for the longer of 1.5 s or the wielder's swing interval +
+    500 ms (`LEAN_CONDITION_NUMBERS.control.swingBridgeMs`) — a Heavy Hammer swings slower
+    than 1.5 s. Only the depth scales with tier (0.15 / 0.173 / 0.198 / 0.225); the window
+    never does. Control immunity refuses the root and stun payloads, not a slow.
+  - Both respect `evadeBlocksDebuffs`, both still apply on a chaotic miss (the dead swing
+    "still applies on-hit effects"), and both are live wherever the form is worn — an
+    absorbed T1 lean still slows (but `needs` reads only the active lean).
+  - `monsterIsHeld` (`status/monsterControl.ts`) counts a stun; a boss's own pattern stagger
+    is not counted.
+  - Pinned by `server/test/leanConditions.test.ts` (a Striker fires Venom Point at the cap
+    on a real 600 ms cadence; a Hammer Striker with no range node fires Pinned) and
+    `server/test/empoweredCap.test.ts` (a real Conduit: 161 cycles in 40 s, 11 firings).
 
 - **Caps and latches** (`server/src/systems/combat/lineageCards.ts`, keys in
   `lineageKeys.ts`): a capped moment sets `lineage.cap.<cardId>` when its payoff lands;
@@ -222,6 +269,44 @@ the packets at resolve time:
   the mechanic.
 - **One multiplier per hit:** big-hit and the loaded hit fold into
   `ctx.metadata.empoweredMultiplier`, like `damage-window`.
+
+## 3b. T2+ bands compose too (design §24.9, verbs-that-fire B)
+
+The fifteen weapon T2 payoff cards author no trigger and no payoff any more, so they are
+verbs (card ids unchanged). `composeVerb(verb, lean, tier)` uses the same halves and the
+same `PACKET_HALF_NUMBERS` as T1; **the tier multiplies the payload's size, never the
+moment**, so the cadence stays 4–6 s and the caps stay 5 s / 4 s.
+
+- **Size** (`PAYLOAD_SIZE`, `scalePayloadSize` in `magnitudes.ts`), multiplied by
+  `verbTierScalar(tier)` = `TIER_SCALAR.fraction` (1 / 1.15 / 1.32 / 1.5 — every payload is
+  already relative to something that grows with the tier, so the `absolute` column would
+  double-dip): a `share` is multiplied (echo, heavy bleed, re-dose, heal, refund; heal and
+  refund capped at 1), a `bonus` multiplies only what is above 1 (lunge ×2 → ×2.15, crash
+  ×1.5 → ×1.575, the Kill-chain load with its heal), a `duration` lengthens (root 2 → 2.3 s,
+  knockdown 1.5 → 1.7 s, rounded to the 100 ms tick), and the `proxy` carries `bonusScale`
+  on the class mechanic's own bonus (`applyMechanicProxy`). All PROVISIONAL.
+- **The amplifier moves one axis of the COMPOSED pair** (`composedAmplifierMove`), by
+  `ROW_SCALAR.amplifier` (+60%): frequency (`quickenMoment`: a count of 6 → 4, never below
+  every 2nd hit; a cap 5 s → 3.1 s), targets, duration (`lengthenPayload`; a bleed keeps its
+  tick rate, so its total grows) or size. On a pair the `trigger` axis means frequency; the
+  amplifier's own authored trigger is not read. **An axis the active pair does not have
+  moves its size instead**, so an amplifier never costs and does nothing
+  (`coverage.test.ts` checks every live amplifier against every lean). +60% of a per-firing
+  size is large (×2.15 lunge → ×2.84): a designer number.
+- The page labels rows Lean / Verb only where the band composes (`bandComposes`,
+  `rowLabel`; every live weapon band does), and an amplifier tile says what it changes on
+  the player's current pair ("Deep Bloodletting can fire every 3.1 s (was every 5 s).") or,
+  when its axis is missing, what it does instead.
+- The T3 keystone and T4 cross rows are unchanged in kind.
+- The T2 instrument is the boss lab one tier up (`_t1BossPlan.ts --matrix=composition
+  --tier=2 [--leans]`): the band-2 form with its T2 lean and verb against the same form
+  with no cards, the tutorial kit's T2 items, the five T1 biomes' T2 bosses.
+  [`reports/verbs-that-fire/t2-matrix.md`](../reports/verbs-that-fire/t2-matrix.md): on the
+  Rapier and Broadsword the verb's own share is at least its T1 share in 16 of 18 pairs
+  (the two short by 0.3–0.4 pp, inside the lab's noise); every whole pair that reads lower
+  at T2 loses it in the LEAN (the Rapier's Tempo lean is worth 0 at T2 to the tick
+  quantisation; the Broadsword's move-speed lean is −0.8% on a boss). Every T2 number is at
+  least its T1 number by construction (`composition.test.ts`, all 45 T2 pairs).
 
 ## 4. Keystones (design §4, amended 2026-10-01)
 
@@ -475,6 +560,9 @@ active card per owned row plus the worn form's capstone.
   designer call). Wiring lives in `server/src/systems/combat/lineageCards.ts`; `standing`/
   `pulse` run off `updateLineageCards(world, dt)` from `World.tick` since they have no
   listener seam to ride.
+- The two condition-seeding leans are not cards: `leanConditions.ts` reads the passives
+  the stat rebuild writes (`shared.bleed-on-hit-pct`, `shared.slow-on-hit-pct`) on every
+  landed hit, so they push no `card-fx` (§3a).
 - Defensive cards carry a `face` and pay `OFF_FACE_SCALAR` off their frame's native face
   (§1); weapon cards carry none and are frame-neutral.
 - Each application pushes one `card-fx` event (with the firing card's `cardId`, the
@@ -499,15 +587,24 @@ active card per owned row plus the worn form's capstone.
   the card already has, re-scopes a `first-hit` from once per engagement to once per body.
   So an amplifier never resolves as a payoff row of its own, which is what keeps "one
   multiplier per hit" true of an amplified build. `applyAmplifiedAxis` is shared with the
-  ability-node amplifier (§19) so there is one copy of the arithmetic.
+  ability-node amplifier (§19) so there is one copy of the arithmetic. Those legacy axis
+  meanings now apply only to parked data; a weapon amplifier moves an axis of the composed
+  pair (§3b).
 - All fifteen defensive lineages are PROVISIONAL — design §17 is itself unapproved — and
   PARKED (§2).
 - Every T1 lean/verb number (`PACKET_HALF_NUMBERS`, the lean `STAT_UNIT`s) is PROVISIONAL;
   the course-correction report lists each with its reason.
-- The Affliction lean (`dotPotencyPct` → `dot.mechanic-mult`) moves a number only for the
-  DoT root; the lineage bleed/poison payloads do not read it.
-- T2+ cards keep the old per-pull resolution, so they read small next to the T1
-  event-shaped verbs (Running Riposte's echo is 6.7% of a hit).
+- Off-lane conditional pairs still never fire for a class with no source of the
+  condition, by design: the Tempo or Engagement lean on the Rapier's Affliction verb for a
+  non-DoT class, the Empowered or Engagement lean on a Control verb. The page says "needs a
+  slow" for Control; there is no "needs an affliction" note, because whether a verb has an
+  affliction source depends on the weapon and the class (the Ashbrand Dagger and the
+  Apprentice afflict on their own).
+- The Mid range's at-bay slow (20% / 1.2 s) wears off before a Heavy Hammer's next swing,
+  so §24.2's "the Mid range makes Control reliable" does not hold on the Hammer; only the
+  Control lean's slow bridges the swing.
+- Attack timing is quantised to the 10 Hz tick (design §24.9, open): the Rapier's Tempo
+  lean is worth 0 to three classes at T1 and to every class measured at T2.
 - All T3/T4 family and blend data behind the shard economy is PROVISIONAL — see
   [`variants-current-state.md`](variants-current-state.md).
 - The T3 path `packet` tags are PROVISIONAL labels, not a class-path rewrite.
@@ -533,7 +630,9 @@ active card per owned row plus the worn form's capstone.
   (portrait, capstone pips, what it opens, pay buttons); a materials column that says where
   each shard drops. Card states come only from the shared `check*` functions. Parked slots
   show no entry. A purchase auto-activates only into an empty row server-side, so the page
-  (and the tutorial) send `lineage:setActive` after a buy.
+  (and the tutorial) send `lineage:setActive` after a buy. A verb card carries at most one
+  caveat line (§3a); an amplifier tile reads what it does to the current pair (§3b). The
+  Empowered ring is a cap clock since the 4 s cap.
 - **The rhythm readout** (`client/src/hud/RhythmReadout.tsx`, `rhythmReadoutModel.ts`):
   at most three rings near the HP bar — one per active triggered card (k/n toward a
   `hit-nth`, a clock for a capped moment, ✦/— for a per-body latch or a kill carry, a pulse
