@@ -83,7 +83,10 @@ const VOLCANIC_T3_BLENDS: readonly NodeBlend[] = [
 const SWAMP_T3_BLENDS: readonly NodeBlend[] = [
   { 'swamp-mire': 0.70, 'swamp-coven': 0.20, 'swamp-stalker': 0.10 },
   { 'swamp-coven': 0.70, 'swamp-stalker': 0.20, 'swamp-mire': 0.10 },
-  { 'swamp-stalker': 0.70, 'swamp-mire': 0.20, 'swamp-coven': 0.10 },
+  // 03 — Mire territory, not Stalker (verbs-that-fire C, PROVISIONAL): no Stalker body
+  // lives at T3 (mud-toad is T1, mire-stalker T2), so the node spawned Mire 7 /
+  // Coven 3 while paying Bone. Spawns unchanged.
+  { 'swamp-mire': 0.70, 'swamp-coven': 0.30 },
   { 'swamp-mire': 0.45, 'swamp-coven': 0.45, 'swamp-stalker': 0.10 },
   { 'swamp-mire': 0.34, 'swamp-coven': 0.33, 'swamp-stalker': 0.33 },
   { 'swamp-coven': 0.55, 'swamp-stalker': 0.30, 'swamp-mire': 0.15 },
