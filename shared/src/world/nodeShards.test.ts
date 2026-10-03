@@ -119,7 +119,6 @@ const UNPAYABLE_AT_HOME = new Set<string>();
  * call. Checked both ways: the list cannot outlive a fix nor hide a new gap.
  */
 const UNFIELDED_TERRITORIES = new Set<string>([
-  'node-t4-mountain-02',
 ]);
 
 for (const node of WORLD_NODE_LIST) {
