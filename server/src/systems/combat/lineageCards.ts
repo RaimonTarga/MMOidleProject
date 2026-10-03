@@ -515,9 +515,10 @@ function applyPayoff(site: PayoffSite, firing: LineageFiring): CardFxDraft | nul
       // The hit COUNTS AS the class mechanic firing (design §24.2, rule 3): the
       // root's own empowered multiplier and `mechanicConsumed`, never
       // `mechanic-fired`, never a frame loop, never the root's pending charge.
-      // `magnitude` is only the fallback for a root with no multiplier mechanic.
+      // `magnitude` is only the fallback for a root with no multiplier mechanic;
+      // `bonusScale` is a T2+ verb's (or an amplifier's) multiple of its bonus.
       if (!liveExchange(world, ctx)) return null;
-      if (applyMechanicProxy(world, ctx, magnitude) <= 0) return null;
+      if (applyMechanicProxy(world, ctx, magnitude, firing.payoff.bonusScale ?? 1) <= 0) return null;
       pushClientEffect(ctx, lineagePayloadHitFx(firing.fx));
       return { fx: firing.fx, targetId: ctx.defender.isMonster.id, targetPos: { ...ctx.defender.hasPosition.current } };
     }

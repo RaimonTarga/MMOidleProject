@@ -146,7 +146,7 @@ for (const lineage of LINEAGE_DATABASE.values()) {
   }
 }
 
-// ── The T2 band: legacy rows read from their resolved numbers ────────────────
+// ── The T2 band composes too (design §24.9): Lean / Verb / Amplifier ─────────
 {
   const progress = tree({
     ownedCards: ['rapier-t1-tempo-stat', 'rapier-t1-tempo-payoff'],
@@ -162,10 +162,32 @@ for (const lineage of LINEAGE_DATABASE.values()) {
   // The collapsed band's verb stays a wardrobe: owned and active.
   assert.equal(find(collapsed, 'rapier-t1-tempo-payoff').state, 'active');
   assert.deepEqual(lit.rows.map((r) => r.row), ['stat', 'payoff', 'amplifier']);
-  assert.match(find(lit, 'rapier-t2-tempo-payoff').sentence, /^Every 3rd hit lands again at [\d.]+% strength\.$/);
+  // The rows compose, so they read Lean and Verb at T2 as at T1.
+  assert.deepEqual(lit.rows.map((r) => r.title), ['Tier 2 · Lean', 'Tier 2 · Verb', 'Tier 2 · Amplifier']);
+  // A T2 verb reads the generated composed sentence with the T2 numbers — here
+  // with the lean carried up through the gate (Quick Wrist, absorbed: Tempo).
+  assert.equal(find(lit, 'rapier-t2-tempo-payoff').sentence, verbSentence('tempo', 'tempo', 2));
+  assert.equal(find(lit, 'rapier-t2-tempo-payoff').sentence, 'Every 6th hit strikes again at 115% strength.');
+  assert.equal(find(lit, 'rapier-t2-engagement-payoff').sentence, verbSentence('engagement', 'tempo', 2));
+  // The amplifier says what it changes on the pair the player has right now.
   assert.equal(find(lit, 'rapier-t2-tempo-amplifier').sentence, 'Running Riposte also lands on a second body.');
-  assert.equal(find(lit, 'rapier-t2-engagement-amplifier').sentence, 'Opening Gambit fires on each new target, not once a fight.');
-  assert.equal(find(lit, 'rapier-t2-affliction-amplifier').sentence, 'Deep Bloodletting also fires on a kill.');
+  assert.equal(find(lit, 'rapier-t2-affliction-amplifier').sentence, 'Deep Bloodletting can fire every 3.1 s (was every 5 s).');
+  // An axis the pair does not have: it says so, and what it does instead.
+  assert.equal(
+    find(lit, 'rapier-t2-engagement-amplifier').sentence,
+    'Its moment cannot come round sooner, so Opening Gambit lands bigger: 184% of the hit (was 115% of the hit).',
+  );
+  // With a lean whose payload lands on no body, the 'targets' amplifier grows the lunge.
+  const lunge = tree({ ...progress, ownedCards: [...progress.ownedCards, 'rapier-t2-engagement-stat'],
+    active: { ...progress.active, stat: 'rapier-t2-engagement-stat' } });
+  const [collapsedLunge, litLunge] = pageBands({ lineage: rapier, progress: lunge, wallet: wallet({ biomeLevels: { forest: 9 } }) });
+  assert.equal(find(litLunge!, 'rapier-t2-tempo-payoff').sentence, 'Every 6th hit is a lunge for 2.15× damage.');
+  assert.equal(
+    find(litLunge!, 'rapier-t2-tempo-amplifier').sentence,
+    'Its payload lands on no body, so Running Riposte lands bigger: ×2.84 (was ×2.15).',
+  );
+  // The collapsed band's verb, reslotted under the T2 form, reads its OWN tier's numbers.
+  assert.equal(find(collapsedLunge!, 'rapier-t1-tempo-payoff').sentence, 'Every 6th hit is a lunge for double damage.');
   // An absorbed stat card cannot be swapped back in, so a buy does not chase it.
   assert.equal(activateAfterBuy(rapier, progress, card(rapier, 'rapier-t1-engagement-stat')), false);
   assert.equal(activateAfterBuy(rapier, progress, card(rapier, 'rapier-t2-engagement-stat')), true);

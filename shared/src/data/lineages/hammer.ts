@@ -116,6 +116,8 @@ export const HAMMER_LINEAGE: LineageDefinition = {
     },
 
     // ── T2 band (design §4): stat (L2), payoff (L3), amplifier (L5) ──────────
+    // A lean and a verb that compose exactly like T1 (design §24.9), the verb
+    // paying its payload at T2 size; the amplifier moves one axis of that pair.
     {
       id: 'hammer-t2-empowered-stat', lineageId: 'hammer', tier: 2, row: 'stat', lane: 'empowered',
       name: 'Full Overhead', description: 'Everything above you, and the roof besides.',
@@ -135,17 +137,17 @@ export const HAMMER_LINEAGE: LineageDefinition = {
     {
       id: 'hammer-t2-empowered-payoff', lineageId: 'hammer', tier: 2, row: 'payoff', lane: 'empowered',
       name: 'Deeper Sunder', description: 'Your mechanic caves the plating in further than it used to.',
-      fx: 'empowered.plating-crack', trigger: 'mechanic-fired', payoff: 'plating-shred',
+      fx: 'empowered.plating-crack',
     },
     {
       id: 'hammer-t2-control-payoff', lineageId: 'hammer', tier: 2, row: 'payoff', lane: 'control',
       name: 'Worse Hobble', description: 'Every third hit leaves the target dragging harder.',
-      fx: 'control.frost-drag', trigger: 'hit-nth', payoff: 'slow',
+      fx: 'control.frost-drag',
     },
     {
       id: 'hammer-t2-engagement-payoff', lineageId: 'hammer', tier: 2, row: 'payoff', lane: 'engagement',
       name: 'Firmer Feet', description: 'Opening a fight braced turns aside more of the first exchange.',
-      fx: 'engagement.brace-sparks', trigger: 'first-hit', payoff: 'engagement-dr',
+      fx: 'engagement.brace-sparks',
     },
 
     // Amplifiers modify this tier's own payoff card, not the T1 one (design §4).

@@ -121,6 +121,8 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
     },
 
     // ── T2 band (design §4): stat (L2), payoff (L3), amplifier (L5) ──────────
+    // A lean and a verb that compose exactly like T1 (design §24.9), the verb
+    // paying its payload at T2 size; the amplifier moves one axis of that pair.
     {
       id: 'broadsword-t2-kill-chain-stat', lineageId: 'broadsword', tier: 2, row: 'stat', lane: 'kill-chain',
       name: 'Longer Warpath', description: 'The ground between one body and the next keeps growing.',
@@ -140,17 +142,17 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
     {
       id: 'broadsword-t2-kill-chain-payoff', lineageId: 'broadsword', tier: 2, row: 'payoff', lane: 'kill-chain',
       name: 'Greater Momentum', description: 'A kill hurries the next swing more than it used to.',
-      fx: 'kill-chain.kill-pulse', trigger: 'kill', payoff: 'speed-window',
+      fx: 'kill-chain.kill-pulse',
     },
     {
       id: 'broadsword-t2-empowered-payoff', lineageId: 'broadsword', tier: 2, row: 'payoff', lane: 'empowered',
       name: 'Widen the Gap', description: 'Your mechanic leaves the target open for longer.',
-      fx: 'empowered.weak-point', trigger: 'mechanic-fired', payoff: 'vulnerability',
+      fx: 'empowered.weak-point',
     },
     {
       id: 'broadsword-t2-technique-payoff', lineageId: 'broadsword', tier: 2, row: 'payoff', lane: 'technique',
       name: 'Opening Form', description: 'A form that lands leaves the next one loaded.',
-      fx: 'technique.cast-flare', trigger: 'technique-cast', payoff: 'technique-window',
+      fx: 'technique.cast-flare',
     },
 
     // Amplifiers modify this tier's own payoff card, not the T1 one (design §4).

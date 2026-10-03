@@ -14,7 +14,7 @@ import {
   gateBiomeLevel, gateCapstoneAmount, gateEssenceCost, gateShardCost,
   LINEAGE_SWITCH_DISCOUNT, PACKET_HALF_NUMBERS, lineageMasteryLevelForGate,
   lineageMasteryLevelForRow, payoffValue, rowBiomeLevel, rowEssenceCost, rowShardCost,
-  statRowValue, triggerNForLane,
+  scalePayloadSize, statRowValue, triggerNForLane, verbTierScalar,
 } from './magnitudes';
 import type { PacketPayloadNumbers } from './magnitudes';
 import type {
@@ -121,11 +121,11 @@ export function resolveLineageCard(
     return resolved;
   }
 
-  // A T1 verb (design §24.2) resolved on its own has no lean to compose with, so
-  // it reads its lane's PURE pair — exactly what it does in play with no lean
-  // active. `resolveLineageCards` re-composes it against the player's lean.
+  // A verb (design §24.2, §24.9) resolved on its own has no lean to compose with,
+  // so it reads its lane's PURE pair at its own tier — exactly what it does in play
+  // with no lean active. `resolveLineageCards` re-composes it against the lean.
   if (isVerbCard(card)) {
-    applyComposition(resolved, composeVerb(card.lane));
+    applyComposition(resolved, composeVerb(card.lane, undefined, card.tier));
     return resolved;
   }
 
@@ -201,13 +201,13 @@ export function formGateMastery(form: LineageForm): number {
   return lineageMasteryLevelForGate(form.tier - 1);
 }
 
-// ─── The T1 lean and verb (design §24.2) ─────────────────────────────────────
+// ─── The lean and verb (design §24.2; T2+ bands compose too, §24.9) ──────────
 
 /**
- * A T1 VERB: a `payoff`-row card authored with neither a trigger nor a payoff.
- * It carries only its lane; the moment comes from that lane's packet and the
- * payload from the active lean's. Every legacy payoff-row card authors both and
- * is never a verb.
+ * A VERB: a `payoff`-row card authored with neither a trigger nor a payoff. It
+ * carries only its lane; the moment comes from that lane's packet and the payload
+ * from the active lean's, sized by the verb's own tier. Every weapon band's payoff
+ * row (T1 and T2) is verbs; a payoff-row card that authors both is never a verb.
  */
 export function isVerbCard(card: Pick<LineageCard, 'row' | 'trigger' | 'payoff'>): boolean {
   return card.row === 'payoff' && card.trigger === undefined && card.payoff === undefined;
@@ -233,31 +233,41 @@ export function packetMoment(id: PacketId): PacketMoment | undefined {
   return moment;
 }
 
-function payoffFrom(kind: PayoffKind, numbers: PacketPayloadNumbers): LineagePayoff {
+/**
+ * A half's payload with its numbers, at `tier`: the T1 numbers from
+ * `PACKET_HALF_NUMBERS` with their SIZE multiplied by the verb's tier scalar
+ * (design §24.9: the same table, scaled by tier — `scalePayloadSize`). Tier 1 is
+ * the table verbatim.
+ */
+function payoffFrom(kind: PayoffKind, numbers: PacketPayloadNumbers, tier: number): LineagePayoff {
   const payoff: LineagePayoff = { kind, magnitude: numbers.magnitude };
   if (numbers.durationMs !== undefined) payoff.durationMs = numbers.durationMs;
   if (numbers.loadMultiplier !== undefined) payoff.loadMultiplier = numbers.loadMultiplier;
+  scalePayloadSize(payoff, verbTierScalar(tier));
   return payoff;
 }
 
-/** The payload a lean of this lane hands a verb of ANOTHER lane, per firing. */
-export function packetPayload(id: PacketId): LineagePayoff | undefined {
+/**
+ * The payload a lean of this lane hands a verb of ANOTHER lane, per firing, at the
+ * verb's `tier` (default 1).
+ */
+export function packetPayload(id: PacketId, tier = 1): LineagePayoff | undefined {
   const kind = packetHalves(id)?.payload;
   const numbers = PACKET_HALF_NUMBERS[id]?.payload;
-  return kind && numbers ? payoffFrom(kind, numbers) : undefined;
+  return kind && numbers ? payoffFrom(kind, numbers, tier) : undefined;
 }
 
 /**
- * The packet's PURE pair: its own moment and its pure payload. Used when the lean
- * is the verb's own lane, and when no lean is active (design §24.2: "a verb alone
- * never does nothing").
+ * The packet's PURE pair: its own moment and its pure payload, at the verb's `tier`
+ * (default 1). Used when the lean is the verb's own lane, and when no lean is active
+ * (design §24.2: "a verb alone never does nothing"). The moment never scales.
  */
-export function packetPurePair(id: PacketId): { trigger: PacketMoment; payoff: LineagePayoff } | undefined {
+export function packetPurePair(id: PacketId, tier = 1): { trigger: PacketMoment; payoff: LineagePayoff } | undefined {
   const trigger = packetMoment(id);
   const kind = packetHalves(id)?.pure.payload;
   const numbers = PACKET_HALF_NUMBERS[id]?.pure;
   if (!trigger || !kind || !numbers) return undefined;
-  return { trigger, payoff: payoffFrom(kind, numbers) };
+  return { trigger, payoff: payoffFrom(kind, numbers, tier) };
 }
 
 /** What one verb does with one lean (or none). */
@@ -269,26 +279,34 @@ export interface VerbComposition extends LineageComposition {
 }
 
 /**
- * Compose a verb of `verbLane` with a lean of `leanLane` (design §24.2).
+ * Compose a verb of `verbLane` with a lean of `leanLane` (design §24.2), at the
+ * verb's `tier` (design §24.9: T2+ bands compose too).
  *
  * Another lane's lean: the verb's moment, the lean's payload. The same lane, or no
- * lean: the verb lane's pure pair. Resolve time only — the combat runtime sees an
- * ordinary trigger and payoff and knows nothing of halves.
+ * lean: the verb lane's pure pair. The tier scales the payload's SIZE and never the
+ * moment, so a T2 verb is its T1 sentence with bigger numbers. Resolve time only —
+ * the combat runtime sees an ordinary trigger and payoff and knows nothing of halves.
+ *
+ * WHOSE TIER: the verb's. The verb is the card that fires, so its purchase sets the
+ * payload's size whichever band the lean came from — a T1 verb slotted under a T2
+ * form (a collapsed band is a wardrobe, design §4) pays T1 numbers with the T2
+ * lean's payload, and a T2 verb pays T2 numbers with a lean carried up through the
+ * gate. Nothing the gate does makes a slotted card smaller.
  *
  * NO COMPOSITION RECURSES. The one payload that "counts as the mechanic"
  * (`mechanic-proxy`) never reaches the mechanic moment: Empowered × Empowered is
  * pure (a bigger mechanic hit), and the proxy never emits `mechanic-fired`
  * anyway (rule 3). `composition.test.ts` pins both halves of that.
  */
-export function composeVerb(verbLane: PacketId, leanLane?: PacketId): VerbComposition | undefined {
+export function composeVerb(verbLane: PacketId, leanLane?: PacketId, tier = 1): VerbComposition | undefined {
   const verbHalves = packetHalves(verbLane);
-  const pure = packetPurePair(verbLane);
+  const pure = packetPurePair(verbLane, tier);
   if (!verbHalves || !pure) return undefined;
   const needs = verbHalves.moment.kind === 'hit-held' ? { needs: 'slow' as const } : {};
 
   if (leanLane && leanLane !== verbLane) {
     const leanHalves = packetHalves(leanLane);
-    const payoff = packetPayload(leanLane);
+    const payoff = packetPayload(leanLane, tier);
     if (leanHalves && payoff) {
       return {
         verbLane, leanLane, pure: false, ...needs,

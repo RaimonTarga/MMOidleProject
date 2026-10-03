@@ -11,13 +11,15 @@
  *   same lane / none the packet's pure sentence      Every 6th hit strikes twice.
  *
  * The phrases are templates on `PacketDefinition.halves` (`packets.ts`); the
- * numbers come from `PACKET_HALF_NUMBERS` (`magnitudes.ts`). This file only turns
- * numbers into words.
+ * numbers come from `PACKET_HALF_NUMBERS` (`magnitudes.ts`), sized by the verb's
+ * tier (design §24.9: a T2+ verb reads its T1 sentence with its tier's numbers).
+ * This file only turns numbers into words, so the same functions render an
+ * amplified pair from its amplified numbers (`compositionSentence`).
  */
-import { PACKET_HALF_NUMBERS, isFractionalStat } from './magnitudes';
+import { isFractionalStat } from './magnitudes';
 import type { PacketMomentNumbers, PacketPayloadNumbers } from './magnitudes';
 import { packetHalves } from './packets';
-import { composeVerb } from './resolve';
+import { composeVerb, packetMoment, packetPayload, packetPurePair } from './resolve';
 import type { LineageStatEffects, LineageStatKey, PacketId } from './types';
 
 // ─── Numbers into words ──────────────────────────────────────────────────────
@@ -100,7 +102,11 @@ function redose(share: number): string {
   return `adds ${pct(share)} to`;
 }
 
-/** Every slot a template may name, from one half's numbers. */
+/**
+ * Every slot a template may name, from one half's numbers. A resolved
+ * `LineageTrigger` / `LineagePayoff` is accepted as it stands (their number
+ * fields are these), so a composed or amplified pair renders from its own numbers.
+ */
 function slotsFor(
   moment: PacketMomentNumbers | undefined,
   payload: PacketPayloadNumbers | undefined,
@@ -133,47 +139,92 @@ function fill(template: string, slots: Record<string, string | undefined>): stri
   });
 }
 
+/**
+ * The one payload whose phrase quotes no number: "counts as your class mechanic
+ * firing" is categorical, and its size is the class's own multiplier. Above T1 (or
+ * amplified) it lands at a multiple of that bonus (`bonusScale`), which the
+ * sentence says rather than hides.
+ */
+function proxySuffix(payload: { kind?: string; bonusScale?: number } | undefined): string {
+  const scale = payload?.kind === 'mechanic-proxy' ? payload.bonusScale ?? 1 : 1;
+  return scale > 1 + 1e-6 ? ` with a ${pct(scale - 1)} bigger bonus` : '';
+}
+
 // ─── The halves, rendered ────────────────────────────────────────────────────
 
-/** A packet's moment phrase with its numbers filled in, e.g. "Every 6th hit". */
-export function momentText(id: PacketId): string | undefined {
-  const halves = packetHalves(id);
-  const numbers = PACKET_HALF_NUMBERS[id];
-  if (!halves || !numbers) return undefined;
-  return fill(halves.momentPhrase.text, slotsFor(numbers.moment, undefined));
-}
-
-/** A packet's payload phrase with its numbers filled in, e.g. "lands twice". */
-export function payloadText(id: PacketId): string | undefined {
-  const halves = packetHalves(id);
-  const numbers = PACKET_HALF_NUMBERS[id];
-  if (!halves || !numbers) return undefined;
-  return fill(halves.payloadPhrase, slotsFor(numbers.moment, numbers.payload));
-}
-
-/** A packet's pure sentence with its numbers filled in. */
-export function pureSentenceText(id: PacketId): string | undefined {
-  const halves = packetHalves(id);
-  const numbers = PACKET_HALF_NUMBERS[id];
-  if (!halves || !numbers) return undefined;
-  return fill(halves.pureSentence, slotsFor(numbers.moment, numbers.pure));
+/** The numbers a pair renders from: its moment and its payload, as resolved. */
+export interface SentenceNumbers {
+  trigger: PacketMomentNumbers;
+  payoff: PacketPayloadNumbers & { kind?: string; bonusScale?: number };
 }
 
 /**
- * The sentence a verb of `verbLane` reads with a lean of `leanLane` (or none) —
- * design §24.2's grammar. Undefined only for a lane with no halves.
+ * A packet's moment phrase with its numbers filled in, e.g. "Every 6th hit" — the
+ * packet's own moment, or an explicit one (an amplified pair's quicker moment).
  */
-export function verbSentence(verbLane: PacketId, leanLane?: PacketId): string | undefined {
-  const composed = composeVerb(verbLane, leanLane);
-  if (!composed) return undefined;
-  if (composed.pure || !composed.leanLane) return pureSentenceText(verbLane);
-  const halves = packetHalves(verbLane);
-  const moment = momentText(verbLane);
-  const payload = payloadText(composed.leanLane);
+export function momentText(id: PacketId, moment: PacketMomentNumbers | undefined = packetMoment(id)): string | undefined {
+  const halves = packetHalves(id);
+  if (!halves || !moment) return undefined;
+  return fill(halves.momentPhrase.text, slotsFor(moment, undefined));
+}
+
+/**
+ * A packet's payload phrase with its numbers filled in, e.g. "lands twice" — at a
+ * verb's `tier` (default 1), or from explicit `numbers` (an amplified pair).
+ */
+export function payloadText(
+  id: PacketId,
+  tier = 1,
+  numbers: SentenceNumbers['payoff'] | undefined = packetPayload(id, tier),
+): string | undefined {
+  const halves = packetHalves(id);
+  if (!halves || !numbers) return undefined;
+  return fill(halves.payloadPhrase, slotsFor(packetMoment(id), numbers)) + proxySuffix(numbers);
+}
+
+/**
+ * A packet's pure sentence with its numbers filled in, at a verb's `tier`
+ * (default 1), or from explicit `numbers` (an amplified pair).
+ */
+export function pureSentenceText(
+  id: PacketId,
+  tier = 1,
+  numbers: SentenceNumbers | undefined = packetPurePair(id, tier),
+): string | undefined {
+  const halves = packetHalves(id);
+  if (!halves || !numbers) return undefined;
+  return fill(halves.pureSentence, slotsFor(numbers.trigger, numbers.payoff));
+}
+
+/**
+ * A composed pair as its sentence, from the pair's OWN numbers — design §24.2's
+ * grammar. `verbSentence` is this over `composeVerb`; the page calls it directly
+ * with an amplified pair's numbers, so an amplifier's tile reads the very sentence
+ * the verb will read with it active.
+ */
+export function compositionSentence(composed: SentenceNumbers & {
+  verbLane: PacketId;
+  leanLane?: PacketId;
+  pure: boolean;
+}): string | undefined {
+  if (composed.pure || !composed.leanLane) return pureSentenceText(composed.verbLane, 1, composed);
+  const halves = packetHalves(composed.verbLane);
+  const moment = momentText(composed.verbLane, composed.trigger);
+  const payload = payloadText(composed.leanLane, 1, composed.payoff);
   if (!halves || moment === undefined || payload === undefined) return undefined;
   return halves.momentPhrase.kind === 'clause'
     ? `${moment}, the hit ${payload}.`
     : `${moment} ${payload}.`;
+}
+
+/**
+ * The sentence a verb of `verbLane` reads with a lean of `leanLane` (or none) at
+ * the verb's `tier` (default 1) — design §24.2's grammar with the tier's numbers
+ * (§24.9). Undefined only for a lane with no halves.
+ */
+export function verbSentence(verbLane: PacketId, leanLane?: PacketId, tier = 1): string | undefined {
+  const composed = composeVerb(verbLane, leanLane, tier);
+  return composed ? compositionSentence(composed) : undefined;
 }
 
 // ─── The lean: a stat line ───────────────────────────────────────────────────

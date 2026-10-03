@@ -27,17 +27,19 @@ import {
 } from '../data/lineages';
 import { capstoneMaterialName } from '../data/lineages/capstones';
 import {
-  ROW_SCALAR, lineageMasteryLevelForRow, rowsForTier, tierHasRow,
+  ROW_SCALAR, lengthenPayload, lineageMasteryLevelForRow, quickenMoment, rowsForTier,
+  scalePayloadSize, tierHasRow,
 } from '../data/lineages/magnitudes';
 import {
   applyComposition, composeVerb, formGateBiomeLevel, formGateMastery, isVerbCard,
   lineageCardCost, lineageGateCost, resolveLineageCapstone, resolveLineageCard,
 } from '../data/lineages/resolve';
 import { statLine, verbSentence } from '../data/lineages/sentences';
+import { payoffLandsOnTarget } from '../data/lineages/types';
 import type {
   AmplifiedAxis, DefensiveFace, LineageCard, LineageDefinition, LineageForm,
   LineagePayoff, LineageProgress, LineageProgressMap, LineageStatEffects,
-  PacketId, PayoffKind, ResolvedLineageCapstone, ResolvedLineageCard, RowKind,
+  LineageTrigger, PacketId, PayoffKind, ResolvedLineageCapstone, ResolvedLineageCard, RowKind,
 } from '../data/lineages/types';
 
 export interface LineageCheck {
@@ -469,7 +471,7 @@ export function resolveLineageCards(
   return composeAmplifiers(out);
 }
 
-// ─── The T1 lean and verb compose (design §24.2) ─────────────────────────────
+// ─── The lean and verb compose, at every weapon band (design §24.2, §24.9) ───
 
 /**
  * The lane of the active LEAN: the owned card in the active stat row, of any tier.
@@ -477,7 +479,11 @@ export function resolveLineageCards(
  *
  * A collapsed band's stat card still counts when the save points `active.stat` at
  * it: the lane identity carries up through the gate (design §4), and the player
- * changes it by slotting the current tier's stat row.
+ * changes it by slotting the current tier's stat row. Its NUMBER is in the worn
+ * form by then (`absorbedStatCards` follows this same lane); only its lane is read
+ * here, because the payload's size is the VERB's tier (`composeVerb`). Above T2 no
+ * band authors a stat row, so the lane carried through the T2 gate is the lean
+ * from there on (clearing the row reads every verb pure).
  */
 export function leanLaneFor(lineage: LineageDefinition, progress: LineageProgress): PacketId | undefined {
   const cardId = progress.active.stat;
@@ -488,13 +494,13 @@ export function leanLaneFor(lineage: LineageDefinition, progress: LineageProgres
 /**
  * Re-compose every active VERB against the active lean, in place: the verb's
  * moment with the lean's payload, or the verb lane's pure pair for the same lane
- * or no lean. Legacy payoff cards (they author their own trigger and payoff)
- * are untouched, as are amplifiers, keystones and cross rows.
+ * or no lean, sized by the verb's own tier. Legacy payoff cards (they author their
+ * own trigger and payoff) are untouched, as are amplifiers, keystones and cross rows.
  */
 function composeVerbs(cards: ResolvedLineageCard[], leanLane: PacketId | undefined): void {
   for (const resolved of cards) {
     if (!isVerbCard(resolved.card)) continue;
-    applyComposition(resolved, composeVerb(resolved.card.lane, leanLane));
+    applyComposition(resolved, composeVerb(resolved.card.lane, leanLane, resolved.card.tier));
   }
 }
 
@@ -507,15 +513,16 @@ export function composedSentence(lineage: LineageDefinition, progress: LineagePr
   if (!verbId || !progress.ownedCards.includes(verbId)) return undefined;
   const verb = lineage.cards.find((c) => c.id === verbId);
   if (!verb || !isVerbCard(verb)) return undefined;
-  return verbSentence(verb.lane, leanLaneFor(lineage, progress));
+  return verbSentence(verb.lane, leanLaneFor(lineage, progress), verb.tier);
 }
 
 /**
  * One card as one sentence (design §24.6, rule 5: no flavour text rendered).
  *
- *  - A stat card (the LEAN at T1): its resolved stat line, "+9% attack speed.".
- *  - A T1 VERB: the sentence it reads with the player's active lean RIGHT NOW,
- *    owned or not — a verb tile re-renders when the lean changes.
+ *  - A stat card (the LEAN): its resolved stat line, "+9% attack speed.".
+ *  - A VERB (any tier): the sentence it reads with the player's active lean RIGHT
+ *    NOW, with its own tier's numbers, owned or not — a verb tile re-renders when
+ *    the lean changes.
  *
  * Undefined for every other row (legacy payoff, amplifier, keystone, cross),
  * which the tree still renders from `description` and resolved numbers.
@@ -524,8 +531,16 @@ export function cardSentence(card: LineageCard, progress: LineageProgress): stri
   const lineage = LINEAGE_DATABASE.get(card.lineageId);
   if (!lineage) return undefined;
   if (card.row === 'stat') return statLine(resolveLineageCardFor(lineage, progress, card).statEffects);
-  if (isVerbCard(card)) return verbSentence(card.lane, leanLaneFor(lineage, progress));
+  if (isVerbCard(card)) return verbSentence(card.lane, leanLaneFor(lineage, progress), card.tier);
   return undefined;
+}
+
+/**
+ * Does this band's lean and verb compose (design §24.9: the rows read "Lean" and
+ * "Verb" only where they do)? True when the band's payoff row is verbs.
+ */
+export function bandComposes(lineage: LineageDefinition, tier: number): boolean {
+  return cardsForTier(lineage, tier).some((c) => isVerbCard(c));
 }
 
 // ─── The amplifier row modifies a payoff; it does not add one (design §4) ────
@@ -604,11 +619,84 @@ export function applyAmplifiedAxis(
   }
 }
 
+// ─── The amplifier on a COMPOSED pair (design §24.9) ─────────────────────────
+
+/**
+ * What an amplifier of `axis` actually moves on a composed pair — the pair's
+ * four axes are frequency, targets, duration and size (see `AmplifiedAxis`):
+ *
+ *  - `trigger`  → `frequency` when the moment has a count or a cap to shorten;
+ *  - `targets`  → `targets` when the payload lands on a body;
+ *  - `duration` → `duration` when the payload holds for a time;
+ *  - otherwise, and always for `magnitude`, → `size`.
+ *
+ * THE FALLBACK IS THE RULE THAT MAKES A ROW OF AMPLIFIERS SAFE TO COMPOSE: which
+ * payload a verb pays is the lean's choice, so an amplifier authored for one
+ * payload meets three. One that met a pair without its axis used to do nothing
+ * and still charge for it; here it makes the pair bigger instead, and the page
+ * says so (`composedAmplifierMove` is what it reads).
+ */
+export type ComposedAmplifierMove = 'frequency' | 'targets' | 'duration' | 'size';
+
+export function composedAmplifierMove(
+  trigger: Pick<LineageTrigger, 'kind' | 'n' | 'capMs'>,
+  payoff: Pick<LineagePayoff, 'kind' | 'durationMs'>,
+  axis: AmplifiedAxis | undefined,
+  boost: number = ROW_SCALAR.amplifier,
+): ComposedAmplifierMove {
+  switch (axis) {
+    case 'trigger':
+      return quickenMoment(trigger, 1 + boost) ? 'frequency' : 'size';
+    case 'targets':
+      return payoffLandsOnTarget(payoff.kind) ? 'targets' : 'size';
+    case 'duration':
+      return (payoff.durationMs ?? 0) > 0 ? 'duration' : 'size';
+    default:
+      return 'size';
+  }
+}
+
+/**
+ * Move one axis of a COMPOSED pair, in place, by `boost` — the amplifier row on a
+ * verb (design §24.9). Returns what it moved. The authored amplifier's own
+ * trigger and payoff are not read: on a pair, the moment is the verb's and the
+ * payload the lean's.
+ */
+export function applyComposedAmplifier(
+  target: Pick<ResolvedLineageCard, 'trigger' | 'payoff'>,
+  axis: AmplifiedAxis | undefined,
+  boost: number = ROW_SCALAR.amplifier,
+): ComposedAmplifierMove | undefined {
+  const { trigger, payoff } = target;
+  if (!trigger || !payoff) return undefined;
+  const move = composedAmplifierMove(trigger, payoff, axis, boost);
+  switch (move) {
+    case 'frequency':
+      target.trigger = quickenMoment(trigger, 1 + boost) ?? trigger;
+      break;
+    case 'targets':
+      payoff.extraTargets = (payoff.extraTargets ?? 0) + 1;
+      break;
+    case 'duration':
+      lengthenPayload(payoff, 1 + boost);
+      break;
+    case 'size':
+      scalePayloadSize(payoff, 1 + boost);
+      break;
+  }
+  return move;
+}
+
 /** Move one axis of `target`'s payoff by the amplifier row's scalar. */
 function applyAmplification(target: ResolvedLineageCard, amp: ResolvedLineageCard): void {
   const payoff = target.payoff;
   if (!payoff) return;
   const boost = ROW_SCALAR.amplifier;
+  // A verb's pair is the player's composition, not the author's (design §24.9).
+  if (target.composition) {
+    applyComposedAmplifier(target, amp.card.amplifies, boost);
+    return;
+  }
   switch (amp.card.amplifies) {
     case 'duration':
     case 'magnitude':
