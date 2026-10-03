@@ -34,6 +34,7 @@ import type {
   UsesReload,
   UsesSkills,
   IsDead,
+  ShowsRhythm,
 } from "../components";
 import type { SubVariant } from "../skillTree";
 import type { CombatArchetype } from "../types/combat";
@@ -107,6 +108,9 @@ export const NETWORKED_PLAYER_KEYS = [
   "isChanneling",
   "summonsMinions",
   "isDead",
+  // The rhythm readout (design §24.6): present only while the player has a
+  // triggered lineage card, written on change. Not a spectator key.
+  "showsRhythm",
 ] as const;
 
 export const NETWORKED_MONSTER_KEYS = [
@@ -181,6 +185,7 @@ export interface NetworkedEntity {
   usesReload?: UsesReload;
   isChanneling?: IsChanneling;
   isDead?: IsDead;
+  showsRhythm?: ShowsRhythm;
   hasAwareness?: HasAwareness;
   spectatorPlayer?: SpectatorPlayer;
 }

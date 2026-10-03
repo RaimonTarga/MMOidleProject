@@ -3,9 +3,11 @@ import { intents } from './intents';
 
 type RecipeUnlockListener = (name: string, biomeGroup: string) => void;
 type TacticalViewListener = (enabled: boolean) => void;
+type CardFiredListener = (cardId: string) => void;
 
 const recipeUnlockListeners = new Set<RecipeUnlockListener>();
 const tacticalViewListeners = new Set<TacticalViewListener>();
+const cardFiredListeners = new Set<CardFiredListener>();
 
 export const hudBus = {
   /** Called by HUD components — GameScene listens for the resulting CustomEvent. */
@@ -236,5 +238,19 @@ export const hudBus = {
 
   notifyTacticalView(enabled: boolean): void {
     for (const fn of tacticalViewListeners) fn(enabled);
+  },
+
+  /**
+   * One of the OWN player's cards just paid out (its `card-fx` named it) — the
+   * rhythm readout pulses that card's ring. Presentation only: the counters the
+   * rings show still come off the server's `ShowsRhythm` slice.
+   */
+  notifyCardFired(cardId: string): void {
+    for (const fn of cardFiredListeners) fn(cardId);
+  },
+
+  subscribeCardFired(fn: CardFiredListener): () => void {
+    cardFiredListeners.add(fn);
+    return () => cardFiredListeners.delete(fn);
   },
 };

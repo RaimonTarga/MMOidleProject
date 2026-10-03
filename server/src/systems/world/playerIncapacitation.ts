@@ -91,6 +91,9 @@ export function killPlayer(
   detachComponent(world, entity, "hasAlignment");
   detachComponent(world, entity, "inAcChargePhase");
   detachComponent(world, entity, "inAcDischarge");
+  // The card cache went with `resetTracksCombat`, so there is no rhythm to show;
+  // the respawn's recalc re-attaches the readout.
+  detachComponent(world, entity, "showsRhythm");
 
   for (const e of world.aggroedMonsters) {
     if (

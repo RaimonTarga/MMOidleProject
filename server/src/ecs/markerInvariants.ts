@@ -1,9 +1,11 @@
 import {
   ABILITY_ROOT_EFFECT_ID,
   ABILITY_SLOW_EFFECT_ID,
+  getLineageRuntime,
   getStatusEffect,
   getStatusEffects,
   isMonsterDotStatusEffectId,
+  rhythmFirings,
   BURN_FAMILY,
 } from "@mmo-idle/shared";
 import {
@@ -98,6 +100,15 @@ const ARCHETYPE_SLICE_CHECKS: ArchetypeSliceCheck[] = [
     slice: "summonsMinions",
     shouldBePresent: (entity) => entity.usesSkills?.combatArchetype === "summoner",
     label: "summoner archetype",
+  },
+  {
+    // The rhythm readout follows the resolved card cache (design §24.6).
+    slice: "showsRhythm",
+    shouldBePresent: (entity) => {
+      const runtime = entity.tracksCombat ? getLineageRuntime(entity.tracksCombat) : undefined;
+      return runtime !== undefined && rhythmFirings(runtime).length > 0;
+    },
+    label: "triggered lineage card",
   },
 ];
 

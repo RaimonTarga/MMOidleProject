@@ -1,7 +1,7 @@
 import { resolveFinalDamageMultipliers } from '../systems/finalDamage';
 import { resolveLaserProfile } from '../systems/laserProfile';
 import type { EquipmentMap, EssenceType } from "../items";
-import type { HasAutoIntent, HasEmote, HasStatus, PartyMember, TargetStatusView } from "../components";
+import type { HasAutoIntent, HasEmote, HasStatus, PartyMember, ShowsRhythm, TargetStatusView } from "../components";
 import type { PassiveMap } from "../passives";
 import type { LineageProgressMap, PacketId } from "../data/lineages/types";
 import type { AbilityNodeProgressMap } from "../data/abilityNodes/types";
@@ -158,6 +158,12 @@ export interface PlayerView {
   activeEffects?: Record<string, number>;
   activeEffectFrames?: Record<string, number>;
   activeBuffs: PlayerBuff[];
+  /**
+   * The rhythm readout's moment state (`ShowsRhythm.moments`), keyed by card or
+   * capstone id. Absent while the player has no triggered lineage card — the
+   * slice's presence, carried through.
+   */
+  rhythm?: ShowsRhythm['moments'];
   questProgress: Record<string, number>;
   playerTier: number;
   bossesCleared: string[];
@@ -467,6 +473,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     activeEffects: entity.hasStatus?.activeEffects,
     activeEffectFrames: entity.hasStatus?.activeEffectFrames,
     activeBuffs: entity.hasStatus?.activeBuffs ?? [],
+    ...(entity.showsRhythm ? { rhythm: entity.showsRhythm.moments } : {}),
     questProgress: progression.questProgress,
     playerTier: progression.playerTier,
     bossesCleared: progression.bossesCleared ?? [],

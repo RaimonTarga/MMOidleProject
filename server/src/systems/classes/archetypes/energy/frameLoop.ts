@@ -268,7 +268,9 @@ export const ENERGY_FRAME_BUFFS = [
       id:          'energy-frame-overcharge',
       label:       'Over',
       stacks,
-      durationPct: -1,
+      // A bank reports its FILL here, like the cadence and cooldown banks: the
+      // rhythm readout's frame ring draws it (design §24.6).
+      durationPct: Math.min(100, (stacks / max) * 100),
       color:       '#aa88ff',
       logDetail:   `+${pct}% discharge damage banked`,
       values:      [

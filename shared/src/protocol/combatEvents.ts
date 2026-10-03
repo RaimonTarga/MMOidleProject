@@ -307,8 +307,13 @@ type CombatEventPayload =
   //
   // The client draws one handler per `LineageFxKey` in `render/combatFx.ts`,
   // keyed by the lane grammar (design §8). An unknown key draws nothing.
+  //
+  // `cardId` names the card or worn capstone that fired (design §24.6, W2-B): the
+  // rhythm readout pulses that card's ring and floats its NAME over the player.
+  // Absent on a firing that is not a card's — an ability node's payoff, a
+  // keystone's chain link — which draws its fx and no word.
   | { kind: 'card-fx'; playerId: string; fx: LineageFxKey; pos: Vec2;
-      targetId?: string; targetPos?: Vec2; stacks?: number }
+      targetId?: string; targetPos?: Vec2; stacks?: number; cardId?: string }
   // A frame loop's BANK changed — progression rework Phase 3, design §10.
   //
   // Heavy frames build charge on every regular hit and spend it on the mechanic,

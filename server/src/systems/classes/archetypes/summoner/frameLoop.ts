@@ -280,7 +280,9 @@ export const SUMMONER_FRAME_BUFFS = [
       id:          'summoner-frame-link',
       label:       'Link',
       stacks,
-      durationPct: -1,
+      // A bank reports its FILL here, like the cadence and cooldown banks: the
+      // rhythm readout's frame ring draws it (design §24.6).
+      durationPct: Math.min(100, (stacks / max) * 100),
       color:       '#cc99ff',
       logDetail:   `${slam} banked for the next linked slam`,
       values:      [
