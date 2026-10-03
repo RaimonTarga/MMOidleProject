@@ -15,6 +15,11 @@
  *   tsx scripts/_t1BossPlan.ts --out=plan.json [--cand=base] [--seeds=20] [--fixed]
  *                              [--classes=striker,squire] [--bosses=crag-behemoth]
  *                              [--armor=forest-vest-t1]
+ *   tsx scripts/_t1BossPlan.ts --out=plan.json --matrix=composition [--seeds=10]
+ *                              [--weapons=rapier,axe] [--classes=...] [--bosses=...]
+ *
+ * `--matrix=composition` is the course-correction lean × verb matrix (W3-A): see the
+ * block that builds it below.
  *
  * `--armor` is a DIAGNOSTIC, not a candidate: it replaces the per-boss armour every
  * class wears, to price the tutorial's armour choice against a boss nerf. It exists
@@ -30,6 +35,7 @@
 import assert from 'node:assert/strict';
 import { writeFileSync } from 'node:fs';
 import { ITEM_DATABASE, TUTORIAL_CLASS_PLANS, tutorialRunes, T1_BIOME_ORDER, type T1Biome } from '@mmo-idle/shared';
+import { compositionPairs, t1FormOf, weaponLineages } from '../bench/lineage/compositionPairs';
 
 const args = Object.fromEntries(process.argv.slice(2).map((s) => {
   const i = s.indexOf('=');
@@ -169,9 +175,56 @@ const nSeeds = Number(args.seeds ?? SEEDS.length);
 assert(nSeeds >= 1 && nSeeds <= SEEDS.length, `seeds must be 1..${SEEDS.length}`);
 const onlyClasses = args.classes?.split(',');
 const onlyBosses = args.bosses?.split(',');
+const onlyWeapons = args.weapons?.split(',');
 if (args.armor) assert(ITEM_DATABASE.get(args.armor)?.slot === 'armor', `--armor=${args.armor} is not armour`);
 
 const rows: unknown[] = [];
+
+/**
+ * `--matrix=composition` (course-correction W3-A): the lean × verb composition
+ * matrix. Every live weapon lineage's nine T1 pairs plus its no-band control
+ * (`bench/lineage/compositionPairs.ts`), on every tutorial class, against every
+ * boss, with the class's tutorial boss kit EXCEPT the weapon, which is the
+ * lineage's T1 form — a lineage pays only while its own form is worn, so the pair
+ * is measured on a character wearing it, against the same character with the form
+ * and no cards. The lab buys the band through the real economy handler.
+ *
+ * Row ids are `cmp-<lineage>-<lean>×<verb>|<class>|<boss>|<seed>` (the control is
+ * `cmp-<lineage>-control|...`), so `_t1BossMatrix.ts` groups each pair as one
+ * candidate. Rows are `compact`: the matrix is ~15k fights and the per-second HP
+ * track is not what it reads. `--seeds` defaults to 10 here.
+ */
+if (args.matrix === 'composition') {
+  const seeds = SEEDS.slice(0, Number(args.seeds ?? 10));
+  for (const cls of TUTORIAL_CLASS_PLANS) {
+    const name = cls.className.toLowerCase();
+    if (onlyClasses && !onlyClasses.includes(name)) continue;
+    for (const lineage of weaponLineages()) {
+      if (onlyWeapons && !onlyWeapons.includes(lineage.id)) continue;
+      const form = t1FormOf(lineage);
+      for (const pair of compositionPairs(lineage)) {
+        for (const biome of T1_BIOME_ORDER) {
+          const boss = BOSS_BY_BIOME[biome];
+          if (onlyBosses && !onlyBosses.includes(boss)) continue;
+          const kit = { ...kitFor(cls, biome), weapon: form };
+          for (const seed of seeds) {
+            rows.push({
+              id: `cmp-${lineage.id}-${pair.label}|${name}|${boss}|${seed}`,
+              boss, cls: name, seed, tier: 1, upgrade: 5, jitter: true, compact: true,
+              ...kit,
+              rules: tutorialRunes(cls.movement, 'final', cls.classRoot),
+              lineage: lineage.id, lean: pair.leanCardId, verb: pair.verbCardId,
+            });
+          }
+        }
+      }
+    }
+  }
+  writeFileSync(args.out!, JSON.stringify(rows));
+  console.log(`composition matrix: ${rows.length} rows -> ${args.out}`);
+  process.exit(0);
+}
+
 for (const cls of TUTORIAL_CLASS_PLANS) {
   const name = cls.className.toLowerCase();
   if (onlyClasses && !onlyClasses.includes(name)) continue;

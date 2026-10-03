@@ -431,3 +431,11 @@ lane out-uplift the punished lane, and by what margin (reported, never threshold
 - The lane matrix (`server/bench/lineageLaneMatrix.ts`) prints the floor per tier and per
   packet; `LANE_SHARD`/`LANE_SHARDS` split it across processes and `LANE_REPLAY=a,b,...`
   merges the shards' rows back into one report.
+- **The composition matrix** measures every weapon's nine T1 pairs (plus a no-band control)
+  on all six tutorial classes with two instruments: the boss lab
+  (`server/scripts/_t1BossPlan.ts --matrix=composition`, bought through the real economy in
+  `_t1BossLab.ts`) and the lane bench (`server/bench/compositionLanes.ts`, home-biome
+  family-dominated nodes). `server/bench/compositionReport.ts` writes
+  `reports/course-correction/composition-matrix.md`: per weapon a 3 × 3 lean × verb grid of
+  median uplift and verb firings per minute, per-class rows, the floor and the outliers
+  (above 1.5× / below 0.9× of the median), never-fired verbs, refusals and deaths.
