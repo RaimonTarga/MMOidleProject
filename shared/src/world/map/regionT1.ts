@@ -29,6 +29,19 @@ import { buildRegionNodes } from './authoring';
  * first, so no sanctuary-adjacent node opens with a biome's worst concentration. Each
  * list below records its own arrival order.
  *
+ * Arrival orders are the bot's (nearest uncleared by BFS over `worldNodeExits`, ties
+ * N > S > E > W), from where the T1 routes and the guide ENTER the biome: they walk
+ * Plains > Forest > Swamp > Mountain > Cave (`T1_PROGRESSION_ORDER`, `T1_BIOME_ORDER`).
+ * For Plains, Forest and Mountain that order is the same from the Clearing. The guide
+ * breaks hop ties alphabetically instead (`tutorialNodeFor`), which differs only at
+ * Forest's second arrival (03, not 05) and for a Swamp entered from the Clearing.
+ * Cave's order is not curated yet (it is entered from the Mountain, and its two
+ * mixed blends happen to arrive first by the bot's rule).
+ *
+ * The order also decides each node's SHARD (design §24.3: a node pays its dominant
+ * family's shard), so a reorder is a currency move — re-run every test that reads
+ * blends, families or spawns (review B5), not only this region's.
+ *
  * ⚠ KNOWN GAP (Phase 2a): the T1 monster pools field only one or two of each
  * biome's three families — the rest of each family's mobs are authored into the
  * T2/T3 pools of the same biome. Spawning therefore resolves a blend against the
@@ -76,12 +89,20 @@ const CAVE_BLENDS: readonly NodeBlend[] = [
   { 'cave-brood': 0.34, 'cave-brute': 0.33, 'cave-deep': 0.33 },
 ];
 
+// Arrives 02 > 01 > 04 > 03 > 05, entered from the Forest (the guide and the T1
+// routes come here straight from the Forest leg; bot and guide agree on this order).
+// Re-ordered for review P17, which found the first arrival a pure. Pures outward by
+// pull radius, the T1 entry-pressure pass's lever: mire (Ooze, 165, slow, the
+// baseline poison), stalker (Toad, 180), then coven last — the Hexer is ranged with
+// the widest pull (210) and a telegraphed slow. From the CLEARING (a respawn) the
+// order is 03 > 04 > 05 > 01 > 02 (guide: 03 > 02 > 01 > 04 > 05), so a walk back
+// from a death meets the pures first; 03 is the mildest-but-one of them.
 const SWAMP_BLENDS: readonly NodeBlend[] = [
-  { 'swamp-mire': 0.70, 'swamp-coven': 0.20, 'swamp-stalker': 0.10 },
-  { 'swamp-coven': 0.70, 'swamp-stalker': 0.20, 'swamp-mire': 0.10 },
-  { 'swamp-stalker': 0.70, 'swamp-mire': 0.20, 'swamp-coven': 0.10 },
-  { 'swamp-mire': 0.45, 'swamp-coven': 0.45, 'swamp-stalker': 0.10 },
-  { 'swamp-mire': 0.34, 'swamp-coven': 0.33, 'swamp-stalker': 0.33 },
+  { 'swamp-mire': 0.45, 'swamp-coven': 0.45, 'swamp-stalker': 0.10 },     // 01, 2nd
+  { 'swamp-mire': 0.34, 'swamp-coven': 0.33, 'swamp-stalker': 0.33 },     // 02, 1st
+  { 'swamp-stalker': 0.70, 'swamp-mire': 0.20, 'swamp-coven': 0.10 },     // 03, 4th
+  { 'swamp-mire': 0.70, 'swamp-coven': 0.20, 'swamp-stalker': 0.10 },     // 04, 3rd
+  { 'swamp-coven': 0.70, 'swamp-stalker': 0.20, 'swamp-mire': 0.10 },     // 05, 5th
 ];
 
 export const REGION_T1_NODES = buildRegionNodes({
