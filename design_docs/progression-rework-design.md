@@ -1312,3 +1312,40 @@ inherits 24.1's shape rule for its bespoke keystones.
 
 Mockup → the designer approves → one run (data, runtime seam, page, readout, bench floor,
 tutorial kit) → second playtest. The ability run (§22) follows the second playtest.
+
+
+### 24.9 After the course-correction run (decided 2026-10-03)
+
+The run (docs/briefs/course-correction-report-2026-10-03.md, merged 2bb1a8af) implemented
+§24 and found that 13 of the 45 lean × verb pairs sit under the viability floor because
+their verb cannot fire at T1, not because a number is small. The decisions:
+
+- **Leans seed their lane's condition.** A lane's lean is its POTENCY stat, and for the two
+  conditional lanes that stat is the condition's source: the **Affliction lean puts a light
+  bleed on every hit** (DoT potency, expressed for a class with no DoT as a small on-hit
+  conversion to bleed), so the Affliction moment has something to find and the lean moves a
+  number for all six classes rather than one; the **Control lean puts a short weak slow on
+  every hit** (the honest Control stat; `attack` was a placeholder), so the Control moment
+  can fire without the Mid range. **A knockdown counts as held.** The Mid range at T3 and
+  the Apprentice's afflictions make the same moments fire without the lean. This is 24.1's
+  "synergy buys reliability" with the lane itself as the first source of reliability.
+- **Kill chain stays a farm lane for now.** The boss fallback (each quarter of a boss's
+  health lost counts as a kill) is liked but needs the boss HP bar to show quarters first;
+  parked in future-plans. Until then the page says the lane is weak on bosses.
+- **The Slinger's Empowered verb at T1 is a known asymmetry.** A reload has no hit, so a
+  hit-shaped payload does not land until the T3 paths give the Slinger empowered effects.
+  Not patched; the page shows it ("your mechanic has no hit yet"). The Empowered moment
+  gets the same rate cap as Affliction and Control so the Conduit's cycle fires it at the
+  cap, not 25–40 times a minute.
+- **The tutorial teaches the tree on the weapon the class fights with** (the Axe for the
+  melee plans, the Dagger for the Slinger), because keeping the Rapier through the seals
+  costs the Striker half its Razorback wins. The T1 verb's mastery gate is lowered so the
+  verb lands in the Forest (Forest 4; the designer sets the Global Mastery value). The
+  tutorial gets its own careful pass; this is the minimum change.
+- **T2+ bands compose too.** The amplifier row moves an axis of the composed pair and the
+  T2+ numbers follow 24.1's shape rule; a gate must never make the cards read smaller.
+- **Open, the designer's:** attack-timing tick quantisation (carry the remainder across
+  ticks, which moves every attack-speed number, or accept that the Tempo lean is worth 0
+  to three classes on the Rapier); the ten numbers the report lists as picks; the eight
+  T2–T4 nodes that pay a family they cannot field; the vocabulary over §6's caps (raise the
+  caps or consolidate in the ability pass).

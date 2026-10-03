@@ -317,3 +317,7 @@ fields), so the tool can build fake views rather than run combat. Not started.
 ## Ability variation row (parked 2026-10-02)
 
 Weighed in the ability pass review (design §22.10) as the way to make an ability's T2 row feel different rather than bigger: the amplifier becomes a *variation* of the execution shape, keyed by shape and shared by every ability of that shape (an armed rider lingers for two hits; a cast becomes a line, an area or a held charge; a Guard is shared with summons or party; a reposition arms the next hit). About 12–15 modules for all 19 abilities. Parked because it overlaps the keystones (Whirlwind is "cast becomes a channel") and has to be designed together with them, and because the amplifier axis would need a new home. Revisit after the 38 keystone verbs have been played.
+
+## Kill chain boss quarters (parked 2026-10-03)
+
+The Kill chain moment fires on a kill, so it is weak on bosses by identity. Liked idea: each quarter of a boss's health lost counts as a kill (four firings a fight, still event-shaped). Needs the boss HP bar to show the quarters first, so the player can see the moment coming. Design §24.9.
