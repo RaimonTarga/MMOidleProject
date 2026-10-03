@@ -1,22 +1,18 @@
-// Single source of truth for rendering item stats, mechanic effects, and upgrade
-// diffs across the crafting panels (Forge / Upgrade / Biome) and the inventory
-// StatSheet. Keeps stat labels/formatters and the mechanic-effect vocabulary in
-// one place so every surface reads the same way.
+// Single source of truth for rendering item stats and mechanic effects across
+// the crafting panels and the inventory StatSheet. Keeps stat labels/formatters
+// and the mechanic-effect vocabulary in one place so every surface reads the
+// same way.
 
-import type { ItemDefinition, ResolvedRelicProfile } from '@mmo-idle/shared';
+import type { ResolvedRelicProfile } from '@mmo-idle/shared';
 import {
   BURN_FAMILY,
-  ITEM_DATABASE, RECIPE_DATABASE,
-  effectiveAttacksPerSecond,
   isCompanionMechanic, mechanicLabelOrKey,
-  upgradeMechanicEffectsTotal, upgradeStatBonusTotal,
 } from '@mmo-idle/shared';
 
 // ─── Small format helpers ──────────────────────────────────────────────────────
 
 const signed = (n: number): string => `${n >= 0 ? '+' : ''}${n}`;
 const round1 = (n: number): number => Math.round(n * 10) / 10;
-const round2 = (n: number): number => Math.round(n * 100) / 100;
 
 // ─── Stat metadata (covers every ItemStats key) ────────────────────────────────
 
@@ -114,7 +110,7 @@ const MECHANIC_FMT: Record<string, (v: number) => string> = {
   'mobility.slow-resistance':         pct,
   'defense.evade-mitigation':         pct,
   // A potency SCALE on Recovery skills, written as a fraction with no `-pct` to
-  // say so; without this it reached the upgrade and evolution diffs as "0.1".
+  // say so; without this it reached the effect lists as "0.1".
   'defense.recovery-skill-potency':   pct,
   'defense.absorb-guard-bonus-pct':   pct,
   'guard.cleanse-pulse':             v => (v > 0 ? 'on' : 'off'),
@@ -177,76 +173,6 @@ export function describeMechanicDelta(key: string, from: number, to: number): st
   const m = mechanicMeta(key);
   if (from === 0) return `${m.label} ${m.fmt(to)}`;
   return `${m.label} ${m.fmt(from)} → ${m.fmt(to)}`;
-}
-
-// ─── Upgrade diff ──────────────────────────────────────────────────────────────
-
-export interface UpgradeDiffRow {
-  label: string;
-  from: string;
-  to: string;
-  /** Signed delta for stat rows; absent for mechanic rows. */
-  delta?: string;
-  up: boolean;
-}
-
-/**
- * Computes the per-stat and per-mechanic changes between `currentPlus` and
- * `currentPlus + 1`, layered on the item's base values. Returns one row per
- * changed stat/mechanic — the real "what this upgrade does" list (works for
- * primary stats, secondary stats, and charm/armor mechanic effects alike).
- */
-export function computeUpgradeDiff(def: ItemDefinition, currentPlus: number): UpgradeDiffRow[] {
-  const rows: UpgradeDiffRow[] = [];
-
-  // Attacks per second. A weapon lineage may spend upgrade budget on cadence
-  // instead of Attack, and that has to read as a real upgrade row.
-  const curAps  = effectiveAttacksPerSecond(def, currentPlus);
-  const nextAps = effectiveAttacksPerSecond(def, currentPlus + 1);
-  if (curAps !== undefined && nextAps !== undefined && nextAps !== curAps) {
-    rows.push({
-      label: 'APS',
-      from: String(round2(curAps)),
-      to:   String(round2(nextAps)),
-      delta: `${nextAps >= curAps ? '+' : ''}${round2(nextAps - curAps)}`,
-      up: nextAps > curAps,
-    });
-  }
-
-  // Direct stats
-  const curStats  = upgradeStatBonusTotal(def, currentPlus);
-  const nextStats = upgradeStatBonusTotal(def, currentPlus + 1);
-  for (const key of new Set([...Object.keys(curStats), ...Object.keys(nextStats)])) {
-    const delta = (nextStats[key] ?? 0) - (curStats[key] ?? 0);
-    if (delta === 0) continue;
-    const base = def.statModifiers[key] ?? 0;
-    const m = statMeta(key);
-    rows.push({
-      label: m.label,
-      from: m.fmt(base + (curStats[key] ?? 0)),
-      to:   m.fmt(base + (nextStats[key] ?? 0)),
-      delta: m.fmtDelta(delta),
-      up: delta > 0,
-    });
-  }
-
-  // Mechanic effects
-  const curMech  = upgradeMechanicEffectsTotal(def, currentPlus);
-  const nextMech = upgradeMechanicEffectsTotal(def, currentPlus + 1);
-  for (const key of new Set([...Object.keys(curMech), ...Object.keys(nextMech)])) {
-    const delta = (nextMech[key] ?? 0) - (curMech[key] ?? 0);
-    if (delta === 0) continue;
-    const base = (def.mechanicEffects as Record<string, number> | undefined)?.[key] ?? 0;
-    const m = mechanicMeta(key);
-    rows.push({
-      label: m.label,
-      from: m.fmt(base + (curMech[key] ?? 0)),
-      to:   m.fmt(base + (nextMech[key] ?? 0)),
-      up: delta > 0,
-    });
-  }
-
-  return rows;
 }
 
 // ─── Mechanic-effect prose (full sentences for tooltips / effect lists) ─────────
@@ -753,170 +679,4 @@ export function formatWeaponEffects(weaponId: string): string[] {
   }
 
   return lines;
-}
-
-// ─── Evolution diff ────────────────────────────────────────────────────────────
-//
-// An evolution is not an upgrade step, so it cannot reuse `computeUpgradeDiff`:
-// it compares two DIFFERENT definitions, each at its own +level, and a lineage
-// branch is allowed to trade one stat away for another. Nothing here ranks a
-// change as better or worse — that judgement belongs to the player.
-
-export interface EvolutionDiffRow {
-  key: string;
-  label: string;
-  from: string;
-  to: string;
-  /** Signed delta. Stat/APS rows only; a mechanic row's units rarely add up. */
-  delta?: string;
-}
-
-export interface EvolutionDiff {
-  /** Values that exist on both sides and moved. */
-  rows: EvolutionDiffRow[];
-  /** Effects the evolved item has and the predecessor does not, as prose. */
-  gains: string[];
-  /** Effects the predecessor has and the evolved item does not, as prose. */
-  losses: string[];
-}
-
-/** Where an item's numbers actually stand at `plus`: authored base + banked steps. */
-function itemValuesAt(def: ItemDefinition, plus: number) {
-  const stats: Record<string, number> = { ...def.statModifiers };
-  for (const [k, v] of Object.entries(upgradeStatBonusTotal(def, plus))) {
-    stats[k] = (stats[k] ?? 0) + v;
-  }
-  const mechanics: Record<string, number> = { ...(def.mechanicEffects as Record<string, number> | undefined ?? {}) };
-  for (const [k, v] of Object.entries(upgradeMechanicEffectsTotal(def, plus))) {
-    mechanics[k] = (mechanics[k] ?? 0) + v;
-  }
-  return { stats, mechanics, aps: effectiveAttacksPerSecond(def, plus) };
-}
-
-/**
- * A weapon's reservoir DoT as one line. The profile lives on the RECIPE (the
- * item definition deliberately drops it — see itemDatabase.ts), so presence is
- * read from there rather than inferred from a mechanic key that doesn't exist.
- */
-function reservoirLine(recipeId: string): string | null {
-  const dot = RECIPE_DATABASE.get(recipeId)?.weaponDot;
-  if (!dot) return null;
-  return `Hits feed a ${dot.element} damage-over-time reservoir`;
-}
-
-/**
- * What changes when `fromId` at `fromPlus` becomes `toId` at `toPlus`.
- *
- * Both sides are resolved the way the game resolves them — authored values plus
- * the upgrade steps banked at that +level — because evolution weighs a
- * predecessor the player has INVESTED IN against a fresh item. The predecessor's
- * upgrades do not transfer: `evolveItem` grants the evolved definition and
- * leaves `itemUpgrades` untouched, so `toPlus` is whatever the account already
- * holds for that definition (normally 0).
- *
- * Rows whose two sides FORMAT identically are dropped: "32% → 32%" is noise, not
- * a difference the player can act on.
- */
-export function computeEvolutionDiff(
-  fromId: string,
-  fromPlus: number,
-  toId: string,
-  toPlus: number,
-): EvolutionDiff | null {
-  const fromDef = ITEM_DATABASE.get(fromId);
-  const toDef = ITEM_DATABASE.get(toId);
-  if (!fromDef || !toDef) return null;
-
-  const before = itemValuesAt(fromDef, fromPlus);
-  const after = itemValuesAt(toDef, toPlus);
-  const rows: EvolutionDiffRow[] = [];
-
-  // Cadence first: on a weapon it is half of what the swing is worth, and a
-  // branch that buys on-hit damage with cadence has to say so.
-  if (before.aps !== undefined && after.aps !== undefined && before.aps !== after.aps) {
-    const from = String(round2(before.aps));
-    const to = String(round2(after.aps));
-    if (from !== to) {
-      const delta = round2(after.aps - before.aps);
-      rows.push({ key: 'aps', label: 'APS', from, to, delta: `${delta >= 0 ? '+' : ''}${delta}` });
-    }
-  }
-
-  for (const key of orderedStatKeys([...Object.keys(before.stats), ...Object.keys(after.stats)])) {
-    const a = before.stats[key] ?? 0;
-    const b = after.stats[key] ?? 0;
-    if (a === b) continue;
-    const m = statMeta(key);
-    const from = m.fmt(a);
-    const to = m.fmt(b);
-    if (from === to) continue;
-    rows.push({ key, label: m.label, from, to, delta: m.fmtDelta(b - a) });
-  }
-
-  // Mechanics split three ways. Something that arrives or leaves outright is
-  // described as prose — "18% of damage taken becomes healing over time" — by
-  // the same formatter the item's own effect list uses, so the preview never
-  // grows a second vocabulary for the same effect.
-  const gained: Record<string, number> = {};
-  const lost: Record<string, number> = {};
-  const mechanicKeys = new Set([...Object.keys(before.mechanics), ...Object.keys(after.mechanics)]);
-  for (const key of mechanicKeys) {
-    const a = before.mechanics[key] ?? 0;
-    const b = after.mechanics[key] ?? 0;
-    if (a === b) continue;
-    if (a === 0) gained[key] = b;
-    else if (b === 0) lost[key] = a;
-    else {
-      const m = mechanicMeta(key);
-      const from = m.fmt(a);
-      const to = m.fmt(b);
-      if (from === to) continue;
-      rows.push({ key, label: m.label, from, to });
-    }
-  }
-
-  // A companion key (an interval, a cap) has no sentence of its own; alone it
-  // would render as a bare "Pulse duration 4s" under a Gains heading, which
-  // reads as a new effect when it is a detail of an existing one. Only promote
-  // a cluster to prose when a real effect leads it.
-  const gains = leadsWithEffect(gained) ? formatMechanicEffects(gained) : [];
-  const losses = leadsWithEffect(lost) ? formatMechanicEffects(lost) : [];
-  if (!leadsWithEffect(gained)) demoteToRows(gained, before.mechanics, after.mechanics, rows);
-  if (!leadsWithEffect(lost)) demoteToRows(lost, before.mechanics, after.mechanics, rows);
-
-  // Reservoir DoT is a whole weapon identity, and it is authored outside
-  // mechanicEffects, so presence changes are folded in by hand.
-  const fromReservoir = reservoirLine(fromId);
-  const toReservoir = reservoirLine(toId);
-  if (toReservoir && toReservoir !== fromReservoir) gains.push(toReservoir);
-  if (fromReservoir && fromReservoir !== toReservoir) losses.push(fromReservoir);
-
-  return { rows, gains, losses };
-}
-
-/** True when a changed cluster contains at least one effect that owns a sentence. */
-function leadsWithEffect(cluster: Record<string, number>): boolean {
-  return Object.keys(cluster).some((key) => !isCompanionMechanic(key));
-}
-
-function demoteToRows(
-  cluster: Record<string, number>,
-  before: Record<string, number>,
-  after: Record<string, number>,
-  rows: EvolutionDiffRow[],
-): void {
-  for (const key of Object.keys(cluster)) {
-    const m = mechanicMeta(key);
-    const from = m.fmt(before[key] ?? 0);
-    const to = m.fmt(after[key] ?? 0);
-    if (from === to) continue;
-    rows.push({ key, label: m.label, from, to });
-  }
-}
-
-function orderedStatKeys(keys: string[]): string[] {
-  return [...new Set(keys)].sort((a, b) => {
-    const ia = STAT_ORDER.indexOf(a), ib = STAT_ORDER.indexOf(b);
-    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
-  });
 }

@@ -33,7 +33,6 @@ import {
   buildOpenAtom,
   buildPanelTabAtom,
   clearDeathOverlay,
-  craftTabAtom,
   deathOverlayAtom,
   dungeonAtom,
   lineageTreeSlotAtom,
@@ -313,35 +312,6 @@ async function equip(definitionId: string, beat: TutorialBeat, signal: AbortSign
   const worn = await waitAlive((v) => v.equipment[item.slot] === definitionId, signal, ACTION_TIMEOUT_MS);
   if (!worn) throw new TutorialStop(`${item.name} was not equipped. Press Next to try again.`, 'error');
   // The pressed button now reads Unequip; do not leave the ring on it.
-  store.set(tutorialHighlightAtom, null);
-}
-
-async function upgrade(
-  step: Extract<TutorialStep, { type: 'upgrade' }>,
-  beat: TutorialBeat,
-  signal: AbortSignal,
-): Promise<void> {
-  const item = ITEM_DATABASE.get(step.definitionId);
-  if (!item) throw new TutorialStop(`Unknown item ${step.definitionId}.`, 'error');
-  const plus = () => requireView().itemUpgrades[step.definitionId] ?? 0;
-  if (plus() >= step.toPlus) return;
-
-  report(beat, 'working');
-  if (store.get(craftTabAtom) !== 'upgrade') {
-    closePrimaryOverlays();
-    await point(TUTORIAL_ANCHORS.menuUpgrade, signal);
-    store.set(craftTabAtom, 'upgrade');
-  }
-  store.set(tutorialFocusAtom, { surface: 'upgrade', definitionId: step.definitionId });
-  await point(TUTORIAL_ANCHORS.upgradeRow(step.definitionId), signal);
-  while (plus() < step.toPlus) {
-    const before = plus();
-    await point(TUTORIAL_ANCHORS.upgradeAction, signal);
-    await pressPointed(signal);
-    hudBus.requestUpgradeItem(step.definitionId);
-    const done = await waitAlive((v) => (v.itemUpgrades[step.definitionId] ?? 0) > before, signal, ACTION_TIMEOUT_MS);
-    if (!done) throw new TutorialStop(`The ${item.name} upgrade did not go through. Press Next to try again.`, 'error');
-  }
   store.set(tutorialHighlightAtom, null);
 }
 
@@ -751,8 +721,6 @@ async function performStep(
     case 'equip':
       for (const id of step.definitionIds) await equip(id, beat, signal);
       return;
-    case 'upgrade':
-      return upgrade(step, beat, signal);
     case 'configureRunes':
       return configureRunes(step, beat, signal);
     case 'craftRune':

@@ -14,7 +14,7 @@ import type { EssenceType } from '@mmo-idle/shared';
  * `d5f7494b`), one entry per `+1..+5` step, essence-only (catalyst costs were
  * already essence-free on every weapon by the time this table was captured —
  * see commit `f165a8b3`). It exists ONLY to compute a one-time refund during
- * playerRepo hydration (`refundWeaponUpgradeEssence`) and must never be read for
+ * playerRepo hydration (`refundRetiredUpgradeEssence`) and must never be read for
  * anything else: it does not track balance changes to non-weapon recipes, and a
  * new weapon added after this phase has no entry (and therefore refunds nothing,
  * which is correct — it was never on the old ladder to begin with).

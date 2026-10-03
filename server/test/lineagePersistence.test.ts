@@ -20,7 +20,7 @@ import {
   listAccountCharacters,
   listCharacters,
   loadCharacter,
-  refundWeaponUpgradeEssence,
+  refundRetiredUpgradeEssence,
   sanitizeCapstoneWallet,
   sanitizeShardWallet,
   type DB,
@@ -159,8 +159,8 @@ function legacySave(id: string): PersistedPlayerSlices {
 
 // ─── A GRANT inside hydration, on paths that throw the slices away ───────────
 //
-// `refundWeaponUpgradeEssence` is the one hydration transform that is not a pure
-// read: it hands back the essence the retired weapon +N ladder cost and logs that it
+// `refundRetiredUpgradeEssence` is the one hydration transform that is not a pure
+// read: it hands back the essence the retired +N ladders cost and logs that it
 // did. It ran inside `hydratePlayerSlices`, which also backs two READ-ONLY listings
 // — the lobby's `listAccountCharacters` and the admin tab's `listCharacters` — so the
 // grant was logged on every lobby load and then discarded, and the admin tab
@@ -207,7 +207,7 @@ async function refundStaysOnTheLoadPath(): Promise<void> {
   // legacy save carries flash-rapier+3, which the frozen table prices at 150 green.
   const probe = legacySave('p-refund-probe');
   const held = totalEssence(probe.tracksProgression.essences);
-  refundWeaponUpgradeEssence('p-refund-probe', probe.holdsInventory, probe.tracksProgression.essences);
+  refundRetiredUpgradeEssence('p-refund-probe', probe.holdsInventory, probe.tracksProgression.essences);
   assert(
     totalEssence(probe.tracksProgression.essences) > held,
     'the fixture must hold a refundable weapon upgrade',
@@ -219,7 +219,7 @@ async function refundStaysOnTheLoadPath(): Promise<void> {
 
   const refundLogs: string[] = [];
   const unsubscribe = subscribeAdminLogs((entry) => {
-    if (entry.message.includes('refunded weapon upgrade essence')) refundLogs.push(entry.message);
+    if (/refunded (weapon|gear) upgrade essence/.test(entry.message)) refundLogs.push(entry.message);
   });
 
   const lobby = await listAccountCharacters(stubDb([storedRow('p-refund-lobby')]), 'acct-refund');

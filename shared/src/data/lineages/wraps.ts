@@ -15,6 +15,8 @@ import { packetDefaultFace } from './packets';
 export const WRAPS_LINEAGE: LineageDefinition = {
   id: 'wraps',
   slot: 'mobility',
+  // Parked for the second playtest (design §24.5): data kept, tree unreachable.
+  parked: true,
   homeBiome: 'forest',
   lanes: ['engagement', 'tempo', 'affliction'],
 

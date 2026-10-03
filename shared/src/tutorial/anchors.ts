@@ -9,7 +9,6 @@ export const TUTORIAL_ANCHORS = {
   menuPassiveTree: 'menu.passive-tree',
   menuInventory: 'menu.inventory',
   menuCrafting: 'menu.crafting',
-  menuUpgrade: 'menu.upgrade',
   menuAbilities: 'menu.abilities',
   menuRunes: 'menu.runes',
   menuMap: 'menu.map',
@@ -17,7 +16,6 @@ export const TUTORIAL_ANCHORS = {
   classConfirm: 'skills.confirm',
   makeAction: 'make.action',
   inventoryAction: 'inventory.action',
-  upgradeAction: 'upgrade.action',
   runesBoard: 'runes.board',
   altar: 'dungeon.altar',
   respawn: 'death.respawn',
@@ -29,7 +27,6 @@ export const TUTORIAL_ANCHORS = {
   lineageCard: (cardId: string) => `lineage.card:${cardId}`,
   /** One form at a band's gate: pressing it pays the gate, or wears it. */
   lineageForm: (recipeId: string) => `lineage.form:${recipeId}`,
-  upgradeRow: (definitionId: string) => `upgrade.row:${definitionId}`,
   abilityAttune: (abilityId: string) => `abilities.attune:${abilityId}`,
   /** "Use default timing" under an attuned ability: adds its reference Rune. */
   abilityTiming: (abilityId: string) => `abilities.timing:${abilityId}`,

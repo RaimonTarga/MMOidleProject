@@ -58,6 +58,22 @@ export function lineageDefinition(id: string): LineageDefinition | undefined {
   return LINEAGE_DATABASE.get(id);
 }
 
+/**
+ * Is this tree parked (design §24.5)? A parked lineage keeps its data and is
+ * unreachable everywhere: no page entry, nothing purchasable, nothing resolved
+ * at runtime, no tree created for it, and its forms are plain recipes. Every
+ * armour, charm and boots lineage is parked for the second playtest.
+ */
+export function isLineageParked(lineage: Pick<LineageDefinition, 'parked'> | string | undefined): boolean {
+  const def = typeof lineage === 'string' ? LINEAGE_DATABASE.get(lineage) : lineage;
+  return def?.parked === true;
+}
+
+/** The lineages a player can actually reach — every one that is not parked. */
+export function liveLineages(): LineageDefinition[] {
+  return [...LINEAGE_DATABASE.values()].filter((l) => !isLineageParked(l));
+}
+
 /** Every lineage that fills `slot`. The slot holds the lineage, not an item. */
 export function lineagesForSlot(slot: EquipmentSlot): LineageDefinition[] {
   return [...LINEAGE_DATABASE.values()].filter((l) => l.slot === slot);
@@ -83,11 +99,16 @@ export function lineageForm(lineageId: string, recipeId: string): LineageForm | 
  * A form that is opened at its lineage's gate (tier >= 2), never crafted. The
  * re-homed doors have no `evolvesFrom`, so the crafting guard and the Make tab
  * need this rather than the recipe graph (review finding B4, 2026-10-02).
+ *
+ * A PARKED lineage's forms are not gated: with its tree unreachable they are
+ * plain recipes, crafted at their biome level like any other item (design
+ * §24.5 — "a T2 vest is a plain recipe gated by biome level"). One check, read
+ * by the server's craft guard and the Make tab alike.
  */
 export function isGatedLineageForm(recipeId: string): boolean {
   for (const lineage of LINEAGE_DATABASE.values()) {
     const form = lineage.forms.find((f) => f.recipeId === recipeId);
-    if (form) return form.tier > 1;
+    if (form) return form.tier > 1 && !isLineageParked(lineage);
   }
   return false;
 }

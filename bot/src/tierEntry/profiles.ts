@@ -97,11 +97,10 @@ function buildProfile(route: Route, economy: EntryEconomyMode): TierEntryProfile
       if (recipe && !knownRites.includes(recipe.riteId)) knownRites.push(recipe.riteId);
     }
   }
+  // The +N ladder is retired on every slot (design §24.5): the executor skips a
+  // route's `upgrade` steps, so the entry state declares no level for them — the
+  // crafted item IS the full-power item.
   const itemUpgrades: Record<string, number> = {};
-  for (const step of steps) {
-    if (step.type !== "upgrade") continue;
-    itemUpgrades[step.definitionId] = Math.max(itemUpgrades[step.definitionId] ?? 0, step.toPlus);
-  }
 
   const t1Nodes = Object.entries(NODE_BIOMES)
     .filter(([, info]) => T1_BIOMES.includes(info.biomeGroup as (typeof T1_BIOMES)[number]) && info.biomeTier === 1)
@@ -470,12 +469,6 @@ function laneReferenceProfile(reference: LineageLaneReference): TierEntryProfile
   // upgrade steps at all, so +0 is their only legal level.)
   const itemUpgrades: Record<string, number> = { ...base.itemUpgrades };
   for (const id of [reference.baseForm, reference.wornForm]) itemUpgrades[id] = 0;
-  if (reference.bandTier === 2) {
-    for (const slot of ["armor", "recovery", "mobility"] as const) {
-      const id = gear[slot];
-      if (id && id !== base.equipment[slot]) itemUpgrades[id] = T2_GEAR_PLUS;
-    }
-  }
   // `upgrade-refers-to-owned-item`: the band-1 manifest records a +N for items the
   // route crafted and this build no longer carries in either place.
   for (const id of Object.keys(itemUpgrades)) {
@@ -514,17 +507,9 @@ function laneReferenceProfile(reference: LineageLaneReference): TierEntryProfile
 /** Biomes the Tier-2 region adds on top of the five T1 ones. */
 const T2_BIOMES = ["jungle", "desert"] as const;
 
-/**
- * Upgrade level the band-2 armour / charm / boots are carried at.
- *
- * +5, the same ceiling the band-1 references carry their T1 set at, so the gear
- * is a tier up and not also an upgrade step behind. A tier-2 item's +5 needs its
- * recipe group at level 10 and a Global Mastery ceiling of +5; the band-2 manifest
- * sits at level 12 in all five T1 groups and Global Mastery 72, so both are met
- * with room to spare. `validateProfile` checks exactly this, and the test below
- * runs it over every band-2 row.
- */
-const T2_GEAR_PLUS = 5;
+// The band-2 armour / charm / boots carry no upgrade level: the +N ladder is
+// retired on every slot (design §24.5) and a crafted item is at its old +5
+// power. (They were carried at +5 while the ladder lived, to match the band-1 set.)
 
 /**
  * The band-1 (T1-complete) manifest raised to the state the Tier-2 gate hands
@@ -858,12 +843,6 @@ function frameReferenceProfile(reference: LineageFrameReference): TierEntryProfi
   ])];
   const itemUpgrades: Record<string, number> = { ...base.itemUpgrades };
   for (const id of [reference.baseForm, reference.wornForm]) itemUpgrades[id] = 0;
-  if (reference.bandTier === 2) {
-    for (const slot of ["armor", "recovery", "mobility"] as const) {
-      const id = gear[slot];
-      if (id && id !== base.equipment[slot]) itemUpgrades[id] = T2_GEAR_PLUS;
-    }
-  }
   for (const id of Object.keys(itemUpgrades)) {
     if (!worn.has(id) && !inventory.includes(id)) delete itemUpgrades[id];
   }

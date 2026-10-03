@@ -42,7 +42,6 @@ export const volcanicRecipeEntries = [
     // every hit taken adds a stack and heavy hits do not crack it. 2026-09-26 armor
     // niches: this replaced hardening (plating per second, cracked by big hits), which
     // fought the Volcano's Heat — late in a long fight hits grow and cracked it.
-    evolvesFrom: 'plains-vest-t2',
     cost: { red: 120, yellow: 30 }, stats: {"maxHp": 150, "plating": 5, "damageReduction": 0.14}, // family-tag: inherits plains-vest-t2's Alacrity (plating answers frequent light hits)
     reconstructCost: { red: 420, yellow: 105 },
     mechanicEffects: {"defense.hit-plating-per-stack": 1, "defense.hit-plating-max-stacks": 10, "defense.hit-plating-duration-ms": 3000},
@@ -64,7 +63,6 @@ export const volcanicRecipeEntries = [
     recipeGroup: 'volcanic', requiredBiomeLevel: 3, slot: 'recovery',
     // CROSS-BIOME LINEAGE: evolves from the Plains charm (Stalwart Heart). Identical
     // `defense.recovery-on-kill-pct` key, extended with an always-active half.
-    evolvesFrom: 'plains-charm-t2',
     cost: { red: 75, yellow: 25 }, stats: { recovery: 50.4 }, // family-tag: inherits plains-charm-t2's Alacrity
     reconstructCost: { red: 263, yellow: 88 },
     mechanicEffects: { 'defense.recovery-active-pct': 0.06, 'defense.recovery-on-kill-pct': 0.04 },
@@ -143,7 +141,6 @@ export const volcanicRecipeEntries = [
   ['volcanic-vest-t4', {
     id: 'volcanic-vest-t4', name: 'Pyroclasm Mantle',
     recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'armor',
-    evolvesFrom: 'volcanic-vest-t3',
     cost: { red: 220, yellow: 55 }, stats: {"maxHp": 288, "plating": 8, "damageReduction": 0.18}, // family-tag: reactive-plating armor → Alacrity
     reconstructCost: { red: 770, yellow: 193 },
     mechanicEffects: {"defense.hit-plating-per-stack": 1, "defense.hit-plating-max-stacks": 16, "defense.hit-plating-duration-ms": 3000},
@@ -162,7 +159,6 @@ export const volcanicRecipeEntries = [
   ['volcanic-vest-t4-lavatempered', {
     id: 'volcanic-vest-t4-lavatempered', name: 'Lava-Tempered Hide',
     recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'armor',
-    evolvesFrom: 'volcanic-vest-t3',
     cost: { red: 220, yellow: 55 }, stats: {"maxHp": 288, "plating": 8, "damageReduction": 0.18}, // family-tag: reactive-plating armor → Alacrity
     reconstructCost: { red: 770, yellow: 193 },
     // † overheal-ward-pct: overheal from always-active Recovery becomes a temporary ward.
@@ -183,7 +179,6 @@ export const volcanicRecipeEntries = [
   ['volcanic-charm-t4', {
     id: 'volcanic-charm-t4', name: 'Inferno Heart',
     recipeGroup: 'volcanic', requiredBiomeLevel: 9, slot: 'recovery',
-    evolvesFrom: 'volcanic-charm-t3',
     cost: { red: 200, yellow: 50 }, stats: { recovery: 115.4 }, // family-tag: on-kill Recovery charm → Alacrity
     reconstructCost: { red: 700, yellow: 175 },
     mechanicEffects: { 'defense.recovery-active-pct': 0.10, 'defense.recovery-on-kill-pct': 0.08 },
@@ -203,7 +198,6 @@ export const volcanicRecipeEntries = [
   ['volcanic-boots-t4', {
     id: 'volcanic-boots-t4', name: 'Pyroclast Treads',
     recipeGroup: 'volcanic', requiredBiomeLevel: 10, slot: 'mobility',
-    evolvesFrom: 'volcanic-boots-t3',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 50->105 (+5: 128->128).
     cost: { red: 163 }, stats: { speed: 105 }, tier: 4, // family-tag: volcanic passive-speed mobility → Swarming
     reconstructCost: { red: 571 },

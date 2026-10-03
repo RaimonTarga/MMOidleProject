@@ -6,6 +6,7 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type {
   AdminCharacterRecord,
   CharacterSummary,
+  EquipmentSlot,
   EssenceType,
   HasHealth,
   HasPosition,
@@ -43,6 +44,7 @@ import type { PlayerEntity } from '../ecs/entity';
 import { accounts, characters, sessions } from './schema';
 import type * as schema from './schema';
 import { weaponUpgradeRefundFor } from './weaponUpgradeRefund';
+import { gearUpgradeRefundFor } from './gearUpgradeRefund';
 import { log } from '../log';
 
 export type DB = NodePgDatabase<typeof schema>;
@@ -450,41 +452,68 @@ export async function listCharacters(db: DB): Promise<AdminCharacterRecord[]> {
 
 type CharacterRow = typeof characters.$inferSelect;
 
+/** One retired ladder's refund: which slots it covered and its frozen price table. */
+interface RetiredLadder {
+  slots: ReadonlySet<EquipmentSlot>;
+  refundFor: (itemId: string, plus: number) => Partial<Record<EssenceType, number>>;
+  message: string;
+}
+
 /**
- * Progression rework Phase 2b: the weapon +N ladder is gone (the lineage tree
- * owns weapon progression), so a save written before this phase can still hold
- * `itemUpgrades` entries for weapon-slot items that are now unspendable data.
- * Refund the essence those levels cost (see `weaponUpgradeRefund.ts` for the
- * frozen authored-cost table) and drop the entry. Non-weapon `itemUpgrades`
- * entries are untouched — armor/recovery/mobility keep their ladder.
+ * The +N ladders, retired one slot group at a time: weapons in progression
+ * rework Phase 2b (`weaponUpgradeRefund.ts`), armour/charm/boots in the course
+ * correction (design §24.5, `gearUpgradeRefund.ts`). Both tables are frozen
+ * authored-cost records; the recipe ladders they priced no longer exist.
+ */
+const RETIRED_LADDERS: readonly RetiredLadder[] = [
+  {
+    slots: new Set<EquipmentSlot>(['weapon']),
+    refundFor: weaponUpgradeRefundFor,
+    message: 'progression rework: refunded weapon upgrade essence',
+  },
+  {
+    slots: new Set<EquipmentSlot>(['armor', 'recovery', 'mobility']),
+    refundFor: gearUpgradeRefundFor,
+    message: 'course correction: refunded gear upgrade essence',
+  },
+];
+
+/**
+ * The +N ladder is retired on every slot (weapons in Phase 2b, armour, charm and
+ * boots in design §24.5), so a save written before can still hold `itemUpgrades`
+ * entries that are now unspendable data — and that the stat rebuild no longer
+ * reads. Refund the essence those levels cost (the frozen authored-cost tables)
+ * and drop the entry; the item itself is kept. Same rule for both tables: an
+ * entry of +1 or more on an item of a retired slot is paid out and removed; a +0
+ * entry is left alone.
  *
  * Idempotent and self-healing like every other hydration transform in this
- * file: a save with no weapon `itemUpgrades` entries left (the common case
- * after the first load post-migration) does nothing.
+ * file: a save with no such entries left (the common case after the first load
+ * post-migration) does nothing.
  */
-export function refundWeaponUpgradeEssence(
+export function refundRetiredUpgradeEssence(
   characterId: string,
   inv: HoldsInventory,
   essences: Record<EssenceType, number>,
 ): void {
-  const refundTotal: Partial<Record<EssenceType, number>> = {};
-  const refundedItems: string[] = [];
-  for (const [itemId, plus] of Object.entries(inv.itemUpgrades)) {
-    if (!plus || plus <= 0) continue;
-    if (ITEM_DATABASE.get(itemId)?.slot !== 'weapon') continue;
-    const refund = weaponUpgradeRefundFor(itemId, plus);
-    for (const [type, amount] of Object.entries(refund) as [EssenceType, number][]) {
-      essences[type] = (essences[type] ?? 0) + (amount ?? 0);
-      refundTotal[type] = (refundTotal[type] ?? 0) + (amount ?? 0);
+  for (const ladder of RETIRED_LADDERS) {
+    const refundTotal: Partial<Record<EssenceType, number>> = {};
+    const refundedItems: string[] = [];
+    for (const [itemId, plus] of Object.entries(inv.itemUpgrades)) {
+      if (!plus || plus <= 0) continue;
+      const slot = ITEM_DATABASE.get(itemId)?.slot;
+      if (!slot || !ladder.slots.has(slot)) continue;
+      const refund = ladder.refundFor(itemId, plus);
+      for (const [type, amount] of Object.entries(refund) as [EssenceType, number][]) {
+        essences[type] = (essences[type] ?? 0) + (amount ?? 0);
+        refundTotal[type] = (refundTotal[type] ?? 0) + (amount ?? 0);
+      }
+      refundedItems.push(`${itemId}+${plus}`);
+      delete inv.itemUpgrades[itemId];
     }
-    refundedItems.push(`${itemId}+${plus}`);
-    delete inv.itemUpgrades[itemId];
-  }
-  if (refundedItems.length > 0) {
-    log.info(
-      { characterId, refundedItems, refundTotal },
-      'progression rework: refunded weapon upgrade essence',
-    );
+    if (refundedItems.length > 0) {
+      log.info({ characterId, refundedItems, refundTotal }, ladder.message);
+    }
   }
 }
 
@@ -594,7 +623,7 @@ export function migrateLegacyRecipeIds(ids: readonly string[] | undefined): stri
  * Read a stored row into slices.
  *
  * Every transform in here is a pure, idempotent read EXCEPT the retired
- * weapon-upgrade refund, which GRANTS essence and logs that it did — and this
+ * upgrade-ladder refund, which GRANTS essence and logs that it did — and this
  * function also backs two read-only listings (`listAccountCharacters` for the lobby
  * and `listCharacters` for the admin tab), which throw the slices away. Run there,
  * the refund logged a grant on every lobby load and persisted nothing, and the admin
@@ -625,12 +654,13 @@ function hydratePlayerSlices(
   // migration or a dev reset bypassed it.
   delete (tracksProgression as { catalysts?: unknown }).catalysts;
   delete (tracksProgression as { catalystProgress?: unknown }).catalystProgress;
-  // Progression rework Phase 2b: refund and drop any weapon-slot itemUpgrades
-  // entry the old +N ladder left behind. Mutates holdsInventory.itemUpgrades and
-  // tracksProgression.essences in place; see weaponUpgradeRefund.ts. A GRANT, so
-  // only for the load path that keeps it — see this function's docblock.
+  // The +N ladder is retired on every slot: refund and drop any itemUpgrades
+  // entry it left behind (weapons since Phase 2b, armour/charm/boots since design
+  // §24.5). Mutates holdsInventory.itemUpgrades and tracksProgression.essences in
+  // place; see weaponUpgradeRefund.ts and gearUpgradeRefund.ts. A GRANT, so only
+  // for the load path that keeps it — see this function's docblock.
   if (options.grantRetiredRefunds) {
-    refundWeaponUpgradeEssence(row.id, holdsInventory, tracksProgression.essences);
+    refundRetiredUpgradeEssence(row.id, holdsInventory, tracksProgression.essences);
   }
   tracksProgression.unlockedRecipes = migrateLegacyRecipeIds(tracksProgression.unlockedRecipes);
   const hasPosition = parseSlice<HasPosition>(row.hasPosition);

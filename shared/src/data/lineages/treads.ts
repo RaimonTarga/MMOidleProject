@@ -14,6 +14,8 @@ import { packetDefaultFace } from './packets';
 export const TREADS_LINEAGE: LineageDefinition = {
   id: 'treads',
   slot: 'mobility',
+  // Parked for the second playtest (design §24.5): data kept, tree unreachable.
+  parked: true,
   homeBiome: 'mountain',
   lanes: ['engagement', 'empowered', 'control'],
 

@@ -37,10 +37,13 @@ import {
   lineageBandBiome,
   lineageCardPrice,
   lineageCardTie,
+  isLineageParked,
   lineageEssenceType,
-  lineageForRecipeId,
+  lineageForEquippedItem,
   lineageGateCost,
+  lineagesForSlot,
   packetDefinition,
+  PARKED_LINEAGE_REASON,
   resolveLineageCapstone,
   resolveLineageCardFor,
   rowsForTier,
@@ -672,7 +675,10 @@ export function LineageTreePanel({ slot, onClose }: Props) {
   }, []);
 
   const wornRecipeId = equipment[slot];
-  const lineage = wornRecipeId ? lineageForRecipeId(wornRecipeId) : undefined;
+  // A parked lineage (design §24.5) opens no tree, even for a save that still
+  // holds one: the slot reads as having no tree yet.
+  const lineage = lineageForEquippedItem(wornRecipeId);
+  const slotParked = lineagesForSlot(slot).every((l) => isLineageParked(l));
 
   const name = lineage ? lineageDisplayName(lineage) : SLOT_LABELS[slot];
 
@@ -681,7 +687,9 @@ export function LineageTreePanel({ slot, onClose }: Props) {
       <GameDialog size="standard" className="lineage-tree-dialog" onClose={onClose}>
         <DialogHeader title={name} closeLabel={`Close ${name.toLowerCase()}`} />
         <div className="lin-empty">
-          Craft a {SLOT_LABELS[slot].toLowerCase()} from the Make tab to start its tree.
+          {slotParked
+            ? PARKED_LINEAGE_REASON
+            : `Craft a ${SLOT_LABELS[slot].toLowerCase()} from the Make tab to start its tree.`}
         </div>
       </GameDialog>
     );

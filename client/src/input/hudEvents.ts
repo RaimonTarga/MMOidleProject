@@ -3,7 +3,6 @@ import { hudBus } from "../hudBus";
 import { intents as intentBus, type IntentMap } from "../intents";
 import {
   sendCraftRecipe,
-  sendEvolveItem,
   sendCraftRuneRecipe,
   sendCraftAbilityRecipe,
   sendSetAbilityLoadout,
@@ -35,7 +34,6 @@ import {
   sendTeleportToNode,
   sendUnequip,
   sendUnlockSkill,
-  sendUpgradeItem,
   sendLineageUnlockCard,
   sendLineageSetActive,
   sendLineageUnlockForm,
@@ -105,11 +103,6 @@ export function attachHudEvents(scene: GameScene): () => void {
     sendCraftRecipe(scene.socket, recipeId);
   });
 
-  intents.on("evolveItem", (payload) => {
-    if (isDeathOverlayActive()) return;
-    sendEvolveItem(scene.socket, payload);
-  });
-
   intents.on("craftRuneRecipe", (recipeId) => {
     if (isDeathOverlayActive()) return;
     sendCraftRuneRecipe(scene.socket, recipeId);
@@ -168,11 +161,6 @@ export function attachHudEvents(scene: GameScene): () => void {
   intents.on("activateDungeonAltar", () => {
     if (isDeathOverlayActive()) return;
     sendActivateDungeonAltar(scene.socket);
-  });
-
-  intents.on("upgradeItem", (itemId) => {
-    if (isDeathOverlayActive()) return;
-    sendUpgradeItem(scene.socket, itemId);
   });
 
   intents.on("lineageUnlockCard", (payload) => {

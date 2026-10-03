@@ -1,6 +1,5 @@
 import {
   ITEM_DATABASE,
-  itemMechanicEffectsAt,
   previewEquipmentStats,
   relicRatingsFromPassives,
   resolveRelicComparison,
@@ -138,11 +137,12 @@ function direction(def: SheetRowDef, before: number, after: number): -1 | 0 | 1 
   return (def.lowerIsBetter ? -d : d) > 0 ? 1 : -1;
 }
 
-function itemLines(defId: string, plus: number) {
+/** An item's own effect lines. There is no `+N` on top: the ladder is retired (design §24.5). */
+function itemLines(defId: string) {
   const def = ITEM_DATABASE.get(defId);
   if (!def) return { keyed: [], weapon: [] as string[] };
   return {
-    keyed: formatMechanicEffectEntries(itemMechanicEffectsAt(def, plus)),
+    keyed: formatMechanicEffectEntries({ ...def.mechanicEffects }),
     weapon: def.slot === 'weapon' ? formatWeaponEffects(def.id) : [],
   };
 }
@@ -173,8 +173,7 @@ export function buildStatSheet(build: StatSheetBuild, defId: string | null): Sta
   const effects: SheetEffects = { counted: [], uncounted: [], notes: [], lost: [] };
   let relicRows: RelicProfileRow[] = [];
   if (def && slot) {
-    const plus = build.itemUpgrades[def.id] ?? 0;
-    const lines = itemLines(def.id, plus);
+    const lines = itemLines(def.id);
     // Measured in the state where the item is worn: drop one line's keys and see
     // whether anything the sheet reports moves.
     const buildWithItem = { ...build, equipment: withItem };
@@ -192,7 +191,7 @@ export function buildStatSheet(build: StatSheetBuild, defId: string | null): Sta
 
     if (mode === 'swap' && build.equipment[slot]) {
       const wornId = build.equipment[slot]!;
-      const worn = itemLines(wornId, build.itemUpgrades[wornId] ?? 0);
+      const worn = itemLines(wornId);
       const mine = new Set([...lines.keyed.map((entry) => entry.text), ...lines.weapon]);
       effects.lost = [...worn.keyed.map((entry) => entry.text), ...worn.weapon].filter((text) => !mine.has(text));
     }

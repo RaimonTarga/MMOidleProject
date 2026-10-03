@@ -1,4 +1,4 @@
-import type { AbilityNodeRow, AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, EvolveMode, RowKind, StanceSlot, Vec2 } from '@mmo-idle/shared';
+import type { AbilityNodeRow, AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, RowKind, StanceSlot, Vec2 } from '@mmo-idle/shared';
 import { intents } from './intents';
 
 type RecipeUnlockListener = (name: string, biomeGroup: string) => void;
@@ -116,16 +116,6 @@ export const hudBus = {
   /** Called by CraftingPanel — GameScene picks this up and emits the socket event. */
   requestCraftRecipe(recipeId: string): void {
     intents.emit('craftRecipe', recipeId);
-  },
-
-  /** Called by the Forge tab for evolved recipes — evolve (consume +3 predecessor) or reconstruct. */
-  requestEvolveItem(recipeId: string, mode: EvolveMode): void {
-    intents.emit('evolveItem', { recipeId, mode });
-  },
-
-  /** Called by the Upgrade tab — GameScene picks this up and emits the socket event. */
-  requestUpgradeItem(itemId: string): void {
-    intents.emit('upgradeItem', itemId);
   },
 
   /** Called by LineageTreePanel — buy a card. Permanent; costs essence + lane shards. */

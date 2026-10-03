@@ -143,7 +143,6 @@ export const swampRecipeEntries = [
   ['swamp-vest-t2', {
     id: 'swamp-vest-t2', name: 'Bog Wrappings',
     recipeGroup: 'swamp', requiredBiomeLevel: 8, slot: 'armor',
-    evolvesFrom: 'swamp-vest-t1',
     cost: { purple: 54 }, stats: {"maxHp": 58, "damageReduction": 0.08}, // family-tag: dot-resistance armor → Fortified
     reconstructCost: { purple: 189 },
     // hit-to-DoT is the T2+ specialisation of this lineage: deliberately held out
@@ -168,7 +167,6 @@ export const swampRecipeEntries = [
   ['swamp-charm-t2', {
     id: 'swamp-charm-t2', name: 'Bog Eye',
     recipeGroup: 'swamp', requiredBiomeLevel: 9, slot: 'recovery',
-    evolvesFrom: 'swamp-charm-t1',
     cost: { purple: 44 }, stats: { recovery: 11.1 }, // family-tag: attrition-Recovery charm → Fortified
     reconstructCost: { purple: 154 },
     mechanicEffects: {
@@ -193,7 +191,6 @@ export const swampRecipeEntries = [
   ['swamp-boots-t2', {
     id: 'swamp-boots-t2', name: 'Wetland Wraps',
     recipeGroup: 'swamp', requiredBiomeLevel: 10, slot: 'mobility',
-    evolvesFrom: 'swamp-boots-t1',
     cost: { purple: 44 }, stats: { speed: 32 }, tier: 2, // family-tag: swamp mobility → Fortified
     reconstructCost: { purple: 154 },
     mechanicEffects: { 'mobility.slow-resistance': 0.45 },
@@ -236,7 +233,6 @@ export const swampRecipeEntries = [
     // PURE purple by design, not by omission: a Swamp item borrowing purple from
     // Swamp is not a hybrid, so there is nothing to splash. (Debuff resistance moved
     // to the Trench carapace on 2026-09-26; this lineage owns damage over time.)
-    evolvesFrom: 'swamp-vest-t2',
     cost: { purple: 140 }, stats: {"maxHp": 158, "damageReduction": 0.14}, // family-tag: dot-resistance armor → Fortified
     reconstructCost: { purple: 490 },
     mechanicEffects: {"defense.dot-resistance": 0.35, "defense.hit-to-dot-pct": 0.2},
@@ -259,7 +255,6 @@ export const swampRecipeEntries = [
     // PURE purple by design: the recovery pulse is Swamp-native — nothing is borrowed
     // from another biome's mechanic, so the hybrid rule ("splash = the colour of the
     // borrowed mechanic") produces no splash here.
-    evolvesFrom: 'swamp-charm-t2',
     cost: { purple: 100 }, stats: { recovery: 37 }, // family-tag: attrition-Recovery charm → Fortified
     reconstructCost: { purple: 350 },
     mechanicEffects: {
@@ -283,7 +278,6 @@ export const swampRecipeEntries = [
   ['swamp-boots-t3', {
     id: 'swamp-boots-t3', name: 'Mire Striders',
     recipeGroup: 'swamp', requiredBiomeLevel: 16, slot: 'mobility',
-    evolvesFrom: 'swamp-boots-t2',
     cost: { purple: 100 }, stats: { speed: 58 }, tier: 3, // family-tag: swamp mobility → Fortified
     reconstructCost: { purple: 350 },
     mechanicEffects: { 'mobility.slow-resistance': 0.62 },

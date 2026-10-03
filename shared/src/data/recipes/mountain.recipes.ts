@@ -149,7 +149,6 @@ export const mountainRecipeEntries = [
   ['mountain-vest-t2', {
     id: 'mountain-vest-t2', name: 'Iron Crusader Plate',
     recipeGroup: 'mountain', requiredBiomeLevel: 8, slot: 'armor',
-    evolvesFrom: 'mountain-vest-t1',
     cost: { blue: 52 }, stats: {"maxHp": 66, "plating": 1, "damageReduction": 0.08}, // family-tag: Guard-amplifying plate → Heavy
     reconstructCost: { blue: 182 },
     mechanicEffects: {"guard.potency-pct": 0.2},
@@ -169,7 +168,6 @@ export const mountainRecipeEntries = [
   ['mountain-charm-t2', {
     id: 'mountain-charm-t2', name: 'Iron Bulwark',
     recipeGroup: 'mountain', requiredBiomeLevel: 9, slot: 'recovery',
-    evolvesFrom: 'mountain-charm-t1',
     cost: { blue: 42 }, stats: { recovery: 6.4 }, // family-tag: barrier pool (anti-spike) → Heavy
     reconstructCost: { blue: 147 },
     mechanicEffects: { 'defense.barrier-pct': 0.20, 'guard.barrier-refill-pct': 0.15 },
@@ -189,7 +187,6 @@ export const mountainRecipeEntries = [
   ['mountain-boots-t2', {
     id: 'mountain-boots-t2', name: 'Mountain Stride',
     recipeGroup: 'mountain', requiredBiomeLevel: 10, slot: 'mobility',
-    evolvesFrom: 'mountain-boots-t1',
     cost: { blue: 42 }, stats: { speed: 29 }, tier: 2, // family-tag: gap-closer boots serve the heavy-hit identity → Heavy
     reconstructCost: { blue: 147 },
     mechanicEffects: { 'mobility.approach-speed-pct': 0.65 },
@@ -228,7 +225,6 @@ export const mountainRecipeEntries = [
   ['mountain-vest-t3', {
     id: 'mountain-vest-t3', name: 'Summit Aegis',
     recipeGroup: 'mountain', requiredBiomeLevel: 14, slot: 'armor',
-    evolvesFrom: 'mountain-vest-t2',
     cost: { blue: 116, red: 29 }, stats: {"maxHp": 180, "plating": 2, "damageReduction": 0.17}, // family-tag: Guard-amplifying plate → Heavy
     reconstructCost: { blue: 406, red: 102 },
     mechanicEffects: {"guard.potency-pct": 0.25},
@@ -247,7 +243,6 @@ export const mountainRecipeEntries = [
   ['mountain-charm-t3', {
     id: 'mountain-charm-t3', name: 'Bastion Heart',
     recipeGroup: 'mountain', requiredBiomeLevel: 15, slot: 'recovery',
-    evolvesFrom: 'mountain-charm-t2',
     cost: { blue: 100, red: 25 }, stats: { recovery: 19.2 }, // family-tag: barrier pool (anti-spike) → Heavy
     reconstructCost: { blue: 350, red: 88 },
     mechanicEffects: { 'defense.barrier-pct': 0.28, 'guard.barrier-refill-pct': 0.20 },
@@ -266,7 +261,6 @@ export const mountainRecipeEntries = [
   ['mountain-boots-t3', {
     id: 'mountain-boots-t3', name: 'Peak Stride',
     recipeGroup: 'mountain', requiredBiomeLevel: 16, slot: 'mobility',
-    evolvesFrom: 'mountain-boots-t2',
     cost: { blue: 100 }, stats: { speed: 52 }, tier: 3, // family-tag: gap-closer boots → Heavy
     reconstructCost: { blue: 350 },
     mechanicEffects: { 'mobility.approach-speed-pct': 0.95 },
@@ -321,7 +315,6 @@ export const mountainRecipeEntries = [
   ['mountain-vest-t4', {
     id: 'mountain-vest-t4', name: "Titan's Keep",
     recipeGroup: 'mountain', requiredBiomeLevel: 20, slot: 'armor',
-    evolvesFrom: 'mountain-vest-t3',
     cost: { blue: 256, red: 64 }, stats: {"maxHp": 346, "plating": 3, "damageReduction": 0.21}, // family-tag: capstone Guard plate → Heavy
     reconstructCost: { blue: 896, red: 224 },
     // Timed Guard potency replaces the former cap-triggered barrier refill.
@@ -342,7 +335,6 @@ export const mountainRecipeEntries = [
   ['mountain-vest-t4-stormwall', {
     id: 'mountain-vest-t4-stormwall', name: 'Stormwall Plate',
     recipeGroup: 'mountain', requiredBiomeLevel: 20, slot: 'armor',
-    evolvesFrom: 'mountain-vest-t3',
     cost: { blue: 256, red: 64 }, stats: {"maxHp": 346, "plating": 3, "damageReduction": 0.21}, // family-tag: capstone anti-spike plate → Heavy
     reconstructCost: { blue: 896, red: 224 },
     // † barrier-break-hp-recovery-pct: when the barrier is emptied, recover 30% of
@@ -363,7 +355,6 @@ export const mountainRecipeEntries = [
   ['mountain-charm-t4', {
     id: 'mountain-charm-t4', name: 'Fortress Heart',
     recipeGroup: 'mountain', requiredBiomeLevel: 21, slot: 'recovery',
-    evolvesFrom: 'mountain-charm-t3',
     cost: { blue: 220, red: 30 }, stats: { recovery: 55 }, // family-tag: barrier pool (anti-spike) → Heavy
     reconstructCost: { blue: 770, red: 105 },
     mechanicEffects: { 'defense.barrier-pct': 0.36, 'guard.barrier-refill-pct': 0.30 },
@@ -383,7 +374,6 @@ export const mountainRecipeEntries = [
   ['mountain-charm-t4-shieldmend', {
     id: 'mountain-charm-t4-shieldmend', name: 'Shieldmend Ward',
     recipeGroup: 'mountain', requiredBiomeLevel: 21, slot: 'recovery',
-    evolvesFrom: 'mountain-charm-t3',
     cost: { blue: 220, red: 30 }, stats: { recovery: 55 }, // family-tag: barrier-break survival → Heavy
     reconstructCost: { blue: 770, red: 105 },
     // † barrier-break-heal-pct: when the barrier is emptied, heal 25% of its max
@@ -408,7 +398,6 @@ export const mountainRecipeEntries = [
   ['mountain-boots-t4', {
     id: 'mountain-boots-t4', name: 'Vanguard Stride',
     recipeGroup: 'mountain', requiredBiomeLevel: 22, slot: 'mobility',
-    evolvesFrom: 'mountain-boots-t3',
     cost: { blue: 220 }, stats: { speed: 93 }, tier: 4, // family-tag: gap-closer boots → Heavy
     reconstructCost: { blue: 770 },
     mechanicEffects: { 'mobility.approach-speed-pct': 1.25 },

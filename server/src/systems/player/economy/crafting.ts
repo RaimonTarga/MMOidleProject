@@ -25,14 +25,12 @@ export function craftRecipe(
 ): CraftResult {
   const recipe = RECIPE_DATABASE.get(recipeId);
   if (!recipe) return { success: false, reason: "Unknown recipe." };
-  // Evolved recipes are crafted via the evolve/reconstruct path, not plain crafting
-  // (which would skip consuming the +3 predecessor). See economy/itemEvolution.ts.
-  if (recipe.evolvesFrom) {
-    return { success: false, reason: "This item must be evolved or reconstructed." };
-  }
-  // A lineage's tier-2+ form is opened at its gate (boss capstone + shards), never
-  // crafted for essence — the re-homed doors carry no `evolvesFrom`, so the check
-  // above does not catch them (design §5: the boss is the only way up).
+  // A live lineage's tier-2+ form is opened at its gate (boss capstone + shards),
+  // never crafted for essence (design §5: the boss is the only way up; review B4).
+  // One shared check, the one the Make tab reads; `evolvesFrom` survives on weapon
+  // forms only and every one of them is a gated form (pinned by
+  // `slotRetirement.test.ts`). A PARKED lineage's T2+ items are plain recipes,
+  // crafted below at their biome level (design §24.5).
   if (isGatedLineageForm(recipe.id)) {
     return { success: false, reason: "This form is opened at its lineage's gate." };
   }

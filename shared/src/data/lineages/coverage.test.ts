@@ -27,7 +27,7 @@ import { MONSTER_DATABASE } from '../../monsterDatabase';
 import { CAPSTONE_MATERIALS } from './capstones';
 import {
   LINEAGE_DATABASE, cardsForTier, formsAtGate, lineageForCardId, lineageForRecipeId,
-  lineagesForSlot, lineagesWithLane,
+  lineagesForSlot, lineagesWithLane, liveLineages,
 } from './index';
 import { PACKET_DEFINITIONS, packetDefaultFace, packetHalves, packetScalingStat } from './packets';
 import {
@@ -255,7 +255,11 @@ for (const [key, lineage] of LINEAGE_DATABASE) {
 // eight packets), not two per slot" — because "any slot may complete a packet"
 // (design §7) is what makes borrowing a sibling slot legal.
 
-const SLOTS_AUTHORED = [...new Set([...LINEAGE_DATABASE.values()].map((l) => l.slot))];
+// Coverage is a rule about trees a player can REACH, so it reads the live
+// lineages: every armour, charm and boots tree is parked (design §24.5), which
+// leaves no non-weapon slot authored and skips the §17 block below until they
+// return. Their data stays, and the structural rules above still walk it.
+const SLOTS_AUTHORED = [...new Set(liveLineages().map((l) => l.slot))];
 const NON_WEAPON_SLOTS_AUTHORED = SLOTS_AUTHORED.filter((slot) => slot !== 'weapon');
 
 /**
@@ -587,8 +591,14 @@ for (const lineage of LINEAGE_DATABASE.values()) {
 // `server/src/systems/combat/keystones/`, which `shared/` cannot import (package
 // boundary), so this asserts against the closed `PACKET_IDS` list instead; the
 // conductor reconciles with W1-A's actual registry at merge.
+//
+// Live lineages only. This is where review finding P4 bit (78 non-weapon T3/T4
+// cards authored on trees with no form to open their band); it is MOOT while
+// those trees are parked (design §24.5) — nothing on a parked tree is buyable at
+// all. When the trees return, P4's rule comes back with them: every authored
+// card's tier must be ≤ the highest gate-reachable form tier of its lineage.
 
-for (const lineage of LINEAGE_DATABASE.values()) {
+for (const lineage of liveLineages()) {
   const keystoneCards = lineage.cards.filter((c) => c.tier === 3 && c.row === 'keystone');
   const crossCards = lineage.cards.filter((c) => c.tier === 4 && c.row === 'cross');
 

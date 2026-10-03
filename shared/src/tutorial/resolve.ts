@@ -132,9 +132,6 @@ export function stepSatisfied(step: TutorialStep, view: TutorialView, later: Lat
           (next.type === 'equip' && next.definitionIds.includes(worn))
           || (next.type === 'wearForm' && next.recipeId === worn));
       });
-    case 'upgrade':
-      return viewHasItem(view, step.definitionId)
-        && (view.itemUpgrades[step.definitionId] ?? 0) >= step.toPlus;
     case 'configureRunes':
       return loadoutIncludes(view.runesEquipped, step.rules)
         || later.some((next) => next.type === 'configureRunes' && loadoutIncludes(view.runesEquipped, next.rules));

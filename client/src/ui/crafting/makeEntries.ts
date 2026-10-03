@@ -97,7 +97,7 @@ function gearEntries(sources: MakeSources): MakeEntry[] {
   for (const recipe of RECIPE_DATABASE.values()) {
     const unlocked = sources.isTestRoom || sources.unlockedRecipeIds.includes(recipe.id);
     // Crafted gear leaves the make list entirely — it is managed from Inventory
-    // and Upgrade after that, never re-made here.
+    // after that, never re-made here.
     if (sources.ownedGearIds.has(recipe.id)) continue;
 
     entries.push({

@@ -3,15 +3,16 @@
 //   P1 — `mechanicConsumed` is the "the class mechanic spent its charge" flag;
 //        `empoweredAttack` alone (crit styling on several T3 paths) must not fire
 //        the energy mechanic-fired emitter.
-//   P3 — evolving an EQUIPPED non-weapon form moves the lineage's worn form with
-//        the slot, so the tree stays lit.
+//   P3 — evolving an EQUIPPED non-weapon form moved the slot without the tree.
+//        Moot since design §24.5: the armour, charm and boots trees are parked,
+//        so changing what a non-weapon slot wears touches no tree at all.
 // (P7 lives in abilityControl.test.ts, P2 in lineagePlatingStack.test.ts.)
 //
 // Run: node --conditions=development --import tsx test/lineageReviewFollowups.test.ts
 
 import {
-  GAME_CONFIG, LINEAGE_DATABASE, RECIPE_DATABASE, baseRecoveryForTier, emptyEquipment,
-  initUsesEnergy, requiredPlusFor, resolveLineageCard, setLineageRuntime,
+  GAME_CONFIG, LINEAGE_DATABASE, PARKED_LINEAGE_REASON, baseRecoveryForTier, emptyEquipment,
+  initUsesEnergy, resolveLineageCard, setLineageRuntime,
 } from '@mmo-idle/shared';
 import type { LineageRuntime } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
@@ -20,7 +21,6 @@ import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { attachComponent } from '../src/ecs/markerHelpers';
 import { emitCombatEvent, type CombatContext } from '../src/systems/combat/engine/combatPipeline';
 import { equipItem } from '../src/systems/player/economy/inventory';
-import { evolveItem } from '../src/systems/player/economy/itemEvolution';
 import { unlockLineageCard } from '../src/systems/player/economy/lineages';
 
 function assert(condition: unknown, message: string): void {
@@ -90,28 +90,19 @@ initCombatSystems();
     'a hit on which the mechanic spent its charge fires the mechanic-fired card once');
 }
 
-// ─── P3: evolving the equipped vest keeps the bindings tree lit ──────────────
+// ─── P3 is moot: a parked slot has no tree to go dark ────────────────────────
 
 {
   const world = new World();
-  const recipe = RECIPE_DATABASE.get('forest-vest-t2')!;
-  assert(recipe.evolvesFrom === 'forest-vest-t1', 'fixture: the Forest vest evolves from its T1');
-  const player = world.attachPlayerEntity(makeSlices('p3', ['forest-vest-t1']), 'p3');
-  player.tracksProgression.unlockedRecipes.push(recipe.id);
-  player.holdsInventory.itemUpgrades['forest-vest-t1'] = requiredPlusFor(recipe);
+  const player = world.attachPlayerEntity(makeSlices('p3', ['forest-vest-t1', 'forest-vest-t2']), 'p3');
   assert(equipItem(world, player, 'forest-vest-t1'), 'fixture: wears the T1 vest');
-  const lineage = LINEAGE_DATABASE.get('bindings')!;
-  const card = lineage.cards.find((c) => c.id === 'bindings-t1-tempo-payoff')!;
+  const card = LINEAGE_DATABASE.get('bindings')!.cards.find((c) => c.id === 'bindings-t1-tempo-payoff')!;
   const bought = unlockLineageCard(world, player, 'bindings', card.id);
-  assert(bought.success, `fixture: bought a bindings card: ${bought.reason}`);
-  assert(player.holdsInventory.lineages?.bindings?.wornForm === 'forest-vest-t1', 'fixture: the T1 vest is the worn form');
+  assert(!bought.success && bought.reason === PARKED_LINEAGE_REASON, `the bindings tree is parked, got ${bought.reason}`);
 
-  const evolved = evolveItem(world, player, recipe.id, 'evolve');
-  assert(evolved.success, `evolve succeeds: ${evolved.reason}`);
-  assert(player.holdsInventory.equipment.armor === recipe.id, 'the slot moved to the T2 vest');
-  const tree = player.holdsInventory.lineages?.bindings;
-  assert(tree?.wornForm === recipe.id, `the worn form followed the slot, got ${tree?.wornForm}`);
-  assert(tree?.ownedForms.includes(recipe.id), 'and the evolved form is owned');
+  assert(equipItem(world, player, 'forest-vest-t2'), 'the T2 vest is worn like any item');
+  assert(player.holdsInventory.equipment.armor === 'forest-vest-t2', 'the slot holds the T2 vest');
+  assert(player.holdsInventory.lineages?.bindings === undefined, 'and no bindings tree was ever created');
 }
 
 console.log('lineageReviewFollowups: ok');

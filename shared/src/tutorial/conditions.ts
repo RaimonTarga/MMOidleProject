@@ -1,4 +1,5 @@
 import { capstoneMaterialName } from '../data/lineages/capstones';
+import { isGatedLineageForm } from '../data/lineages';
 import { shardName } from '../data/lineages/packets';
 import { RECIPE_DATABASE } from '../data/recipes';
 import { ITEM_DATABASE } from '../itemDatabase';
@@ -6,13 +7,7 @@ import { ESSENCE_LABELS, type EssenceType } from '../items';
 import type { PlayerView } from '../protocol/views';
 import { QUEST_DATABASE } from '../quests/questDatabase';
 import { bossClearKey } from '../systems/biomeProgress';
-import {
-  getMaxUpgrade,
-  requiredBiomeLevelForUpgrade,
-  upgradeCeilingFromGlobalMastery,
-  upgradeCostFor,
-} from '../systems/itemUpgrades';
-import type { TutorialCondition, TutorialProgressRef, TutorialUpgradeTarget } from './types';
+import type { TutorialCondition, TutorialProgressRef } from './types';
 
 /** The slice of the local player's view the guide reads. Both the client and the bot compose a full `PlayerView`. */
 export type TutorialView = Pick<
@@ -81,50 +76,6 @@ export function viewCanAffordRecipe(view: TutorialView, recipeId: string): boole
   return true;
 }
 
-export interface RemainingUpgradeCost {
-  /** Every remaining level is open (owned item, Global Mastery, biome level, not past max). */
-  gatesOpen: boolean;
-  essence: Partial<Record<EssenceType, number>>;
-}
-
-/** What is still to pay to take every item from its current level to its target. */
-export function remainingUpgradeCost(
-  view: Pick<TutorialView, 'inventory' | 'equipment' | 'itemUpgrades' | 'globalMastery' | 'biomeLevel'>,
-  items: readonly TutorialUpgradeTarget[],
-): RemainingUpgradeCost {
-  const out: RemainingUpgradeCost = { gatesOpen: true, essence: {} };
-  for (const target of items) {
-    const item = ITEM_DATABASE.get(target.definitionId);
-    const current = view.itemUpgrades[target.definitionId] ?? 0;
-    if (current >= target.toPlus) continue;
-    if (!item || !item.biomeGroup || !viewHasItem(view, target.definitionId)) {
-      out.gatesOpen = false;
-      continue;
-    }
-    if (target.toPlus > getMaxUpgrade(item)
-      || target.toPlus > upgradeCeilingFromGlobalMastery(view.globalMastery, item.tier)) {
-      out.gatesOpen = false;
-    }
-    for (let plus = current + 1; plus <= target.toPlus; plus += 1) {
-      if ((view.biomeLevel[item.biomeGroup] ?? 0) < requiredBiomeLevelForUpgrade(item, plus)) out.gatesOpen = false;
-      for (const [type, amount] of Object.entries(upgradeCostFor(item, plus) ?? {})) {
-        const key = type as EssenceType;
-        out.essence[key] = (out.essence[key] ?? 0) + (amount ?? 0);
-      }
-    }
-  }
-  return out;
-}
-
-export function viewCanAffordUpgrades(view: TutorialView, items: readonly TutorialUpgradeTarget[]): boolean {
-  const remaining = remainingUpgradeCost(view, items);
-  if (!remaining.gatesOpen) return false;
-  for (const [type, amount] of Object.entries(remaining.essence)) {
-    if ((view.essences[type as EssenceType] ?? 0) < (amount ?? 0)) return false;
-  }
-  return true;
-}
-
 export function evaluateTutorialCondition(condition: TutorialCondition, view: TutorialView): boolean {
   switch (condition.type) {
     case 'playerTierAtLeast':
@@ -141,8 +92,10 @@ export function evaluateTutorialCondition(condition: TutorialCondition, view: Tu
       return view.unlockedRecipes.includes(condition.recipeId);
     case 'canCraft': {
       const recipe = RECIPE_DATABASE.get(condition.recipeId);
+      // The server's craft guard: a live lineage's tier-2+ form is opened at its
+      // gate, never crafted (review B4).
       return !!recipe
-        && !recipe.evolvesFrom
+        && !isGatedLineageForm(recipe.id)
         && view.unlockedRecipes.includes(condition.recipeId)
         && viewCanAffordRecipe(view, condition.recipeId);
     }
@@ -150,9 +103,6 @@ export function evaluateTutorialCondition(condition: TutorialCondition, view: Tu
       return viewHasItem(view, condition.definitionId);
     case 'equipped':
       return Object.values(view.equipment).includes(condition.definitionId);
-    case 'itemAtLeastPlus':
-      return viewHasItem(view, condition.definitionId)
-        && (view.itemUpgrades[condition.definitionId] ?? 0) >= condition.plus;
     case 'abilityKnown':
       return view.knownAbilities.includes(condition.abilityId);
     case 'runeRecipeCrafted':
@@ -169,8 +119,6 @@ export function evaluateTutorialCondition(condition: TutorialCondition, view: Tu
       return viewOwnsLineageForm(view, condition.lineageId, condition.recipeId);
     case 'lineageFormWorn':
       return viewWearsLineageForm(view, condition.lineageId, condition.recipeId);
-    case 'canAffordUpgrades':
-      return viewCanAffordUpgrades(view, condition.items);
     case 'allOf':
       return condition.of.every((c) => evaluateTutorialCondition(c, view));
     case 'anyOf':
@@ -232,11 +180,5 @@ export function tutorialProgress(ref: TutorialProgressRef, view: TutorialView): 
         target: ref.amount,
         label: capstoneMaterialName(ref.biome),
       }];
-    case 'upgradeCost': {
-      const remaining = remainingUpgradeCost(view, ref.items);
-      return Object.entries(remaining.essence)
-        .filter(([, amount]) => (amount ?? 0) > 0)
-        .map(([type, amount]) => essenceProgress(view, type as EssenceType, amount ?? 0));
-    }
   }
 }

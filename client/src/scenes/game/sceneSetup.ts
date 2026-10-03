@@ -788,11 +788,6 @@ function connectSocket(scene: GameScene): () => void {
     onBuildLoadoutResult: (result) => {
       window.dispatchEvent(new CustomEvent("hud:loadoutResult", { detail: result }));
     },
-    onUpgradeResult: (result) => {
-      window.dispatchEvent(
-        new CustomEvent("hud:upgradeResult", { detail: result }),
-      );
-    },
     onLineageResult: (result) => {
       window.dispatchEvent(
         new CustomEvent("hud:lineageResult", { detail: result }),

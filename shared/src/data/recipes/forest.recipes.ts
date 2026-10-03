@@ -158,7 +158,6 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
   ['forest-vest-t2', {
     id: 'forest-vest-t2', name: 'Phantom Bindings',
     recipeGroup: 'forest', requiredBiomeLevel: 8, slot: 'armor',
-    evolvesFrom: 'forest-vest-t1',
     cost: { green: 48, yellow: 12 }, stats: {"maxHp": 52, "evasion": 0.34, "damageReduction": 0.04}, tier: 2, // family-tag: evasion armor answers frequent light hits → Alacrity
     reconstructCost: { green: 168, yellow: 42 },
     icon: 'items/armor/phantom-bindings.png',
@@ -180,7 +179,6 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
   ['forest-charm-t2', {
     id: 'forest-charm-t2', name: 'Ancient Heartroot Amulet',
     recipeGroup: 'forest', requiredBiomeLevel: 9, slot: 'recovery',
-    evolvesFrom: 'forest-charm-t1',
     cost: { green: 50 }, stats: { recovery: 13.4 }, tier: 2,
     reconstructCost: { green: 175 }, // family-tag: recovery charm → Alacrity
     mechanicEffects: { 'defense.recovery-skill-potency': 0.18 },
@@ -199,7 +197,6 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
   ['forest-boots-t2', {
     id: 'forest-boots-t2', name: 'Windstep Wraps',
     recipeGroup: 'forest', requiredBiomeLevel: 10, slot: 'mobility',
-    evolvesFrom: 'forest-boots-t1',
     cost: { green: 40 }, stats: { speed: 40 }, tier: 2,
     reconstructCost: { green: 140 }, // family-tag: forest mobility → Alacrity
     mechanicEffects: { 'mobility.ooc-speed-pct': 0.40 },

@@ -1,4 +1,14 @@
-import type { EquipmentSlot, EquippedRule, EssenceType, EvolveMode, PacketId, RowKind, TierCheckpointKind, TutorialUpgradeTarget } from "@mmo-idle/shared";
+import type { EquipmentSlot, EquippedRule, EssenceType, EvolveMode, PacketId, RowKind, TierCheckpointKind } from "@mmo-idle/shared";
+
+/**
+ * One planned item level inside a legacy `canAffordUpgrades` condition. The +N
+ * ladder is retired on every slot (design §24.5); the shape stays so the old
+ * route definitions still type-check, and the condition always holds.
+ */
+export interface UpgradeTarget {
+  definitionId: string;
+  toPlus: number;
+}
 import type { DesiredBuild } from "../loadout/loadout";
 
 /**
@@ -51,7 +61,7 @@ export type Condition =
   // Guided-tutorial vocabulary (shared/src/tutorial/types.ts), so tutorial scripts run as routes.
   | { type: "classSelected" }
   | { type: "runeRecipeCrafted"; recipeId: string }
-  | { type: "canAffordUpgrades"; items: TutorialUpgradeTarget[] }
+  | { type: "canAffordUpgrades"; items: UpgradeTarget[] }
   | { type: "elapsedMs"; ms: number }
   | { type: "allOf"; of: Condition[] }
   | { type: "anyOf"; of: Condition[] }

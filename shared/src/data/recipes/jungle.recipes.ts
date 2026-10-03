@@ -109,7 +109,6 @@ mechanicEffects: {"defense.evade-mitigation": 0.2, "defense.dot-resistance": 0.1
   ['jungle-vest-t3', {
     id: 'jungle-vest-t3', name: 'Wildgrowth Weave',
     recipeGroup: 'jungle', requiredBiomeLevel: 8, slot: 'armor',
-    evolvesFrom: 'jungle-vest-t2',
     cost: { green: 90, yellow: 30 }, stats: {"maxHp": 143, "evasion": 0.32, "damageReduction": 0.07}, // family-tag: evasion armor → Alacrity
     reconstructCost: { green: 315, yellow: 105 },
     tier: 3,
@@ -133,7 +132,6 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     // PURE green by design: the ramping-Recovery foundation is the Forest→Jungle
     // inheritance and green followed it, so mechanic and home colour are the same
     // colour — there is nothing left to splash.
-    evolvesFrom: 'jungle-charm-t2',
     cost: { green: 100 }, stats: { recovery: 50.4 }, // family-tag: jungle recovery → Alacrity
     reconstructCost: { green: 350 },
     mechanicEffects: {
@@ -157,7 +155,6 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
   ['jungle-boots-t3', {
     id: 'jungle-boots-t3', name: 'Canopy Striders',
     recipeGroup: 'jungle', requiredBiomeLevel: 10, slot: 'mobility',
-    evolvesFrom: 'jungle-boots-t2',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 44->68 (+5: 88->88).
     cost: { green: 90 }, stats: { speed: 68 }, tier: 3, // family-tag: jungle mobility → Alacrity
     reconstructCost: { green: 315 },
@@ -193,7 +190,6 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
   ['jungle-vest-t4', {
     id: 'jungle-vest-t4', name: 'Primal Canopy',
     recipeGroup: 'jungle', requiredBiomeLevel: 14, slot: 'armor',
-    evolvesFrom: 'jungle-vest-t3',
     cost: { green: 220, yellow: 55 }, stats: {"maxHp": 274, "evasion": 0.36, "damageReduction": 0.1}, // family-tag: evasion armor → Alacrity
     reconstructCost: { green: 770, yellow: 193 },
     // Bonus evade-mitigation: increases the fraction of damage avoided on an evade
@@ -214,7 +210,6 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
   ['jungle-charm-t4', {
     id: 'jungle-charm-t4', name: 'Ancient Canopy',
     recipeGroup: 'jungle', requiredBiomeLevel: 15, slot: 'recovery',
-    evolvesFrom: 'jungle-charm-t3',
     cost: { green: 200 }, stats: { recovery: 115.4 }, // family-tag: jungle recovery → Alacrity
     reconstructCost: { green: 700 },
     mechanicEffects: {
@@ -236,7 +231,6 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
   ['jungle-charm-t4-overgrowth', {
     id: 'jungle-charm-t4-overgrowth', name: 'Overgrowth Pulse',
     recipeGroup: 'jungle', requiredBiomeLevel: 15, slot: 'recovery',
-    evolvesFrom: 'jungle-charm-t3',
     cost: { green: 200 }, stats: { recovery: 115.4 }, // family-tag: jungle recovery → Alacrity
     reconstructCost: { green: 700 },
     // † overheal-ward-pct: regen beyond max HP converts to a temporary ward.
@@ -264,7 +258,6 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
   ['jungle-boots-t4', {
     id: 'jungle-boots-t4', name: 'Warpath Treads',
     recipeGroup: 'jungle', requiredBiomeLevel: 16, slot: 'mobility',
-    evolvesFrom: 'jungle-boots-t3',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 66->97 (+5: 120->120).
     cost: { green: 198 }, stats: { speed: 97 }, tier: 4, // family-tag: jungle mobility → Alacrity
     reconstructCost: { green: 693 },

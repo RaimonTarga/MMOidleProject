@@ -15,6 +15,8 @@ import { packetDefaultFace } from './packets';
 export const WING_LINEAGE: LineageDefinition = {
   id: 'wing',
   slot: 'mobility',
+  // Parked for the second playtest (design §24.5): data kept, tree unreachable.
+  parked: true,
   homeBiome: 'cave',
   lanes: ['engagement', 'kill-chain', 'control'],
 

@@ -152,7 +152,6 @@ mechanicEffects: {},
   ['plains-vest-t2', {
     id: 'plains-vest-t2', name: 'Enduring Robe',
     recipeGroup: 'plains', requiredBiomeLevel: 8, slot: 'armor',
-    evolvesFrom: 'plains-vest-t1',
     cost: { yellow: 60 }, stats: {"maxHp": 50, "plating": 5, "damageReduction": 0.08}, tier: 2, // family-tag: plating answers frequent light hits → Alacrity
     reconstructCost: { yellow: 210 },
     icon: 'items/armor/enduring-robe.png',
@@ -173,7 +172,6 @@ mechanicEffects: {},
   ['plains-charm-t2', {
     id: 'plains-charm-t2', name: 'Stalwart Heart',
     recipeGroup: 'plains', requiredBiomeLevel: 9, slot: 'recovery',
-    evolvesFrom: 'plains-charm-t1',
     cost: { yellow: 50 }, stats: { recovery: 6.4 }, // family-tag: on-kill Recovery answers swarm attrition → Alacrity
     reconstructCost: { yellow: 175 },
     mechanicEffects: { 'defense.recovery-on-kill-pct': 0.32, 'defense.recovery-on-kill-ms': 4000 },
@@ -193,7 +191,6 @@ mechanicEffects: {},
   ['plains-boots-t2', {
     id: 'plains-boots-t2', name: 'Gale Boots',
     recipeGroup: 'plains', requiredBiomeLevel: 10, slot: 'mobility',
-    evolvesFrom: 'plains-boots-t1',
     cost: { yellow: 40 }, stats: { speed: 32 }, tier: 2, // family-tag: plains speed → Alacrity
     reconstructCost: { yellow: 140 },
     mechanicEffects: { 'mobility.kill-speed-pct': 0.45, 'mobility.kill-speed-ms': 3000 },

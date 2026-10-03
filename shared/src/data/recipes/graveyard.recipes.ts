@@ -37,7 +37,6 @@ export const graveyardRecipeEntries = [
   ['graveyard-vest-t4', {
     id: 'graveyard-vest-t4', name: 'Plaguebound Mantle',
     recipeGroup: 'graveyard', requiredBiomeLevel: 2, slot: 'armor',
-    evolvesFrom: 'swamp-vest-t3',
     cost: { purple: 220 }, stats: {"maxHp": 302, "damageReduction": 0.18}, // family-tag: dot-resistance armor (Swamp inheritance) → Fortified
     reconstructCost: { purple: 770 },
     // 2026-09-26 armor niches: the pure Swamp continuation — resist damage over
@@ -59,7 +58,6 @@ export const graveyardRecipeEntries = [
   ['graveyard-vest-t4-debtward', {
     id: 'graveyard-vest-t4-debtward', name: 'Grave Ward',
     recipeGroup: 'graveyard', requiredBiomeLevel: 2, slot: 'armor',
-    evolvesFrom: 'swamp-vest-t3',
     cost: { purple: 220 }, stats: {"maxHp": 302, "damageReduction": 0.18}, // family-tag: dot-resistance armor (Swamp inheritance) → Fortified
     reconstructCost: { purple: 770 },
     // Debt specialist: larger deferral, less resistance than the Mantle.
@@ -80,7 +78,6 @@ export const graveyardRecipeEntries = [
   ['graveyard-charm-t4', {
     id: 'graveyard-charm-t4', name: 'Necrotic Pulse',
     recipeGroup: 'graveyard', requiredBiomeLevel: 3, slot: 'recovery',
-    evolvesFrom: 'swamp-charm-t3',
     cost: { purple: 150 }, stats: { recovery: 115.4 }, // family-tag: recovery-pulse charm (Swamp inheritance) → Fortified
     reconstructCost: { purple: 525 },
     mechanicEffects: { 'defense.recovery-pulse-pct': 0.11, 'defense.recovery-pulse-interval-ms': 6000, 'guard.cleanse-pulse': 1 },
@@ -99,7 +96,6 @@ export const graveyardRecipeEntries = [
   ['graveyard-charm-t4-gravetide', {
     id: 'graveyard-charm-t4-gravetide', name: 'Grave-Tide Pulse',
     recipeGroup: 'graveyard', requiredBiomeLevel: 3, slot: 'recovery',
-    evolvesFrom: 'swamp-charm-t3',
     cost: { purple: 150 }, stats: { recovery: 115.4 }, // family-tag: recovery-pulse charm (Swamp inheritance) → Fortified
     reconstructCost: { purple: 525 },
     // Combined: slower burst, compensated by a baseline in-combat trickle.

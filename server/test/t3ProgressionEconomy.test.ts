@@ -25,8 +25,6 @@ import {
   upgradeCeilingFromGlobalMastery,
   MAX_UPGRADE,
   checkEvolve,
-  requiredPlusFor,
-  EVOLUTION_REQUIRED_PLUS,
   ESSENCE_TYPES,
 } from "@mmo-idle/shared";
 import type { EssenceType } from "@mmo-idle/shared";
@@ -188,7 +186,12 @@ assert(BIOME_LEVELS_PER_TIER === 6, "BIOME_LEVELS_PER_TIER pin");
 // 2. T2 → T3 lineage
 // ═══════════════════════════════════════════════════════════════════════════
 
-/** The 22 approved lineages: 20 continuing-biome + 2 Plains→Volcanic cross-biome. */
+/**
+ * The approved T2→T3 successions: 20 continuing-biome + 3 cross-biome. Since
+ * design §24.5 only the WEAPON rows are a predecessor link (`evolvesFrom`, the
+ * form graph the weapon trees were authored from); the armour, charm and boots
+ * rows are plain recipes that follow their T2 item with no link.
+ */
 const T3_LINEAGES: Array<{ t2: string; t3: string }> = [
   { t2: "quake-hammer", t3: "mountain-avalanche-maul" },
   { t2: "mountain-vest-t2", t3: "mountain-vest-t3" },
@@ -234,19 +237,15 @@ const T3_GEAR = [...RECIPE_DATABASE.values()].filter(
 );
 
 assert(T3_GEAR.length === 30, `30 T3 gear items expected, got ${T3_GEAR.length}`);
-// Designer decision 2026-09-04 returned the gate to +3 (see
-// shared/src/systems/evolution.ts and
-// docs/briefs/t2-bossless-progression-campaign-2026-09-03.md section 12): the
-// canonical T1 routes were never updated for +5, so it taxed genuinely-invested
-// predecessors rather than rewarding commitment.
-assert(EVOLUTION_REQUIRED_PLUS === 3, "evolution requires a +3 predecessor (reverted from +5)");
 
-// 2a. Exactly the 23 approved lineages exist, by id.
+const isWeaponRow = ({ t3 }: { t3: string }) => RECIPE_DATABASE.get(t3)?.slot === "weapon";
+
+// 2a. The predecessor links that remain are exactly the approved WEAPON rows.
 {
   const live = T3_GEAR.filter((r) => r.evolvesFrom).map((r) => `${r.evolvesFrom}->${r.id}`).sort();
-  const want = T3_LINEAGES.map((l) => `${l.t2}->${l.t3}`).sort();
-  assert(live.length === 23, `exactly 23 T3 lineages expected, got ${live.length}`);
-  assert(JSON.stringify(live) === JSON.stringify(want), `T3 lineage map mismatch:\n live ${live}\n want ${want}`);
+  const want = T3_LINEAGES.filter(isWeaponRow).map((l) => `${l.t2}->${l.t3}`).sort();
+  assert(T3_LINEAGES.length === 23, `exactly 23 T3 successions expected, got ${T3_LINEAGES.length}`);
+  assert(JSON.stringify(live) === JSON.stringify(want), `T3 weapon link mismatch:\n live ${live}\n want ${want}`);
 }
 
 for (const { t2, t3 } of T3_LINEAGES) {
@@ -254,11 +253,13 @@ for (const { t2, t3 } of T3_LINEAGES) {
   const recipe = RECIPE_DATABASE.get(t3);
   assert(!!pred, `${t2}: predecessor must exist`);
   assert(!!recipe, `${t3}: recipe must exist`);
-  assert(recipe!.evolvesFrom === t2, `${t3}: must evolve from ${t2}`);
-  assert(requiredPlusFor(recipe!) === 3, `${t3}: evolution must require +3`);
   assert(pred!.tier === recipe!.tier - 1, `${t3}: predecessor must sit exactly one tier below`);
   assert(pred!.slot === recipe!.slot, `${t3}: predecessor must occupy the same slot`);
-  assert(!!recipe!.reconstructCost, `${t3}: an evolved recipe needs a reconstruct path`);
+  if (recipe!.slot === "weapon") {
+    assert(recipe!.evolvesFrom === t2, `${t3}: the weapon form graph names ${t2}`);
+  } else {
+    assert(recipe!.evolvesFrom === undefined, `${t3}: a plain recipe has no predecessor link`);
+  }
 }
 
 // 2b. Genuinely-new T3 items carry no lineage at all.
@@ -268,7 +269,7 @@ for (const id of T3_NEW_ITEMS) {
   assert(recipe!.evolvesFrom === undefined, `${id}: must have NO predecessor`);
   assert(recipe!.reconstructCost === undefined, `${id}: must have NO reconstruct cost`);
 }
-assert(T3_GEAR.filter((r) => !r.evolvesFrom).length === T3_NEW_ITEMS.length, "23 + 7 must account for all 30");
+assert(T3_LINEAGES.length + T3_NEW_ITEMS.length === T3_GEAR.length, "23 + 7 must account for all 30");
 
 // 2c. The confirmed dead ends: nothing anywhere points back at them.
 for (const dead of DEAD_END_T2_IDS) {
@@ -289,12 +290,10 @@ for (const recipe of RECIPE_DATABASE.values()) {
   }
 }
 
-// 2e. Weapon evolution is rejected outright (Phase 2b, Override A: a weapon's
-//     power track is its lineage tree). Non-weapon lineages keep the +2/+3 gate
-//     shape — one step below cannot evolve, the gate itself can — spot-checked
-//     on the cross-biome Plains→Volcanic handoff.
-//     (Was +4/+5; the gate returned to +3 on 2026-09-04, so this is +2/+3. The
-//     SHAPE is the invariant, not the literal levels.)
+// 2e. Evolution is retired on every slot: weapons in Phase 2b (a weapon's power
+//     track is its lineage tree), armour/charm/boots in design §24.5 (their T3s
+//     are plain recipes) — spot-checked on a weapon and on the cross-biome
+//     Plains→Volcanic handoff, at any predecessor level.
 {
   const recipe = RECIPE_DATABASE.get("mountain-avalanche-maul")!;
   for (const plus of [2, 3]) {
@@ -310,20 +309,18 @@ for (const { t2, t3 } of [
   { t2: "plains-charm-t2", t3: "volcanic-charm-t3" },
 ]) {
   const recipe = RECIPE_DATABASE.get(t3)!;
-  const notReady = checkEvolve({
-    recipe, inventory: [t2], itemUpgrades: { [t2]: 2 },
-    essences: fullEssences(),
-  });
-  assert(!notReady.ok, `${t3}: a +2 ${t2} must NOT evolve`);
-  const ready = checkEvolve({
-    recipe, inventory: [t2], itemUpgrades: { [t2]: 3 },
-    essences: fullEssences(),
-  });
-  assert(ready.ok, `${t3}: a +3 ${t2} must evolve (got: ${ready.reason})`);
+  for (const plus of [2, 3, 5]) {
+    const check = checkEvolve({
+      recipe, inventory: [t2], itemUpgrades: { [t2]: plus },
+      essences: fullEssences(),
+    });
+    assert(!check.ok, `${t3}: a +${plus} ${t2} must NOT evolve (the path is retired)`);
+  }
 }
 
-// 2f. Reconstruction is 3.5x the evolve essence, per colour. The catalyst leg
-// of this rule (RETIRED, Phase 2b) is gone with the wallet.
+// 2f. Reconstruction was 3.5x the evolve essence, per colour, on the recipes
+// that keep a predecessor link (the weapon forms; the path itself is retired).
+// The catalyst leg of this rule (RETIRED, Phase 2b) is gone with the wallet.
 for (const recipe of T3_GEAR) {
   if (!recipe.evolvesFrom) continue;
   const recon = recipe.reconstructCost!;

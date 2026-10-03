@@ -15,6 +15,8 @@ import { packetDefaultFace } from './packets';
 export const STONE_LINEAGE: LineageDefinition = {
   id: 'stone',
   slot: 'recovery',
+  // Parked for the second playtest (design §24.5): data kept, tree unreachable.
+  parked: true,
   homeBiome: 'plains',
   lanes: ['kill-chain', 'tempo', 'engagement'],
 

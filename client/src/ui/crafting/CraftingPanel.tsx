@@ -1,6 +1,5 @@
 import { useAtomValue } from 'jotai';
 import { MakeTab } from './MakeTab';
-import { UpgradeTab } from './UpgradeTab';
 import { playerIdAtom } from '../../hud/atoms';
 import { DialogHeader, GameDialog } from '../../hud/primitives';
 import { GameIcon } from '../GameIcon';
@@ -8,11 +7,11 @@ import { craftingSectionIconSource, type CraftingSectionIcon } from '../systemIc
 import '../crafting.css';
 
 /**
- * Crafting and Upgrade are separate top-level destinations. They retain one
- * shell because they share connection state and layout, but there is no hidden
- * tab switcher: opening a destination lands directly on the requested job.
+ * Crafting is one destination: the Make browser. The Upgrade destination that
+ * shared this shell is gone with the +N ladder, retired on every slot (design
+ * §24.5) — an item is crafted at full power.
  */
-export type CraftTab = 'make' | 'upgrade';
+export type CraftTab = 'make';
 
 interface Props {
   tab: CraftTab;
@@ -21,8 +20,8 @@ interface Props {
 
 export function CraftingPanel({ tab, onClose }: Props) {
   const playerId = useAtomValue(playerIdAtom);
-  const title = tab === 'make' ? 'Crafting' : 'Upgrade';
-  const icon: CraftingSectionIcon = tab === 'make' ? 'forge' : 'upgrade';
+  const title = 'Crafting';
+  const icon: CraftingSectionIcon = 'forge';
 
   return (
     <GameDialog size="wide" className="crafting-dialog" onClose={onClose}>
@@ -39,13 +38,13 @@ export function CraftingPanel({ tab, onClose }: Props) {
         closeLabel={`Close ${title.toLowerCase()}`}
       />
 
-      {/* Crafting owns its recipe-list scroll while Upgrade scrolls as one page. */}
+      {/* Crafting owns its recipe-list scroll. */}
       <div
         id={`craft-panel-${tab}`}
         className={`crafting-dialog__content crafting-dialog__content--${tab}`}
       >
         {playerId ? (
-          tab === 'make' ? <MakeTab /> : <UpgradeTab />
+          <MakeTab />
         ) : (
           <div className="craft-empty">Not connected.</div>
         )}

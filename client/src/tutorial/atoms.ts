@@ -13,8 +13,7 @@ export const tutorialPressAtom = atom(0);
  */
 export type TutorialFocus =
   | { surface: 'make'; entryKey: string }
-  | { surface: 'inventory'; definitionId: string }
-  | { surface: 'upgrade'; definitionId: string };
+  | { surface: 'inventory'; definitionId: string };
 
 export const tutorialFocusAtom = atom<TutorialFocus | null>(null);
 
