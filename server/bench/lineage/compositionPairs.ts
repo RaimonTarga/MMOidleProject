@@ -112,3 +112,21 @@ export function compositionPairs(lineage: LineageDefinition, tier = 1): Composit
   });
   return pairs;
 }
+
+/**
+ * The band's three LEANS alone — a lean slotted, no verb (`<lean>×none`). Not
+ * matrix cells: the decomposition rows for the T2 report (verbs-that-fire B). A
+ * pair's uplift minus its lean's uplift alone is what the VERB's payload adds on
+ * top of the lean's stat, which is the half of a pair a tier's verb numbers move.
+ */
+export function leanOnlyPairs(lineage: LineageDefinition, tier = 1): CompositionPair[] {
+  return lineage.lanes.map((lean) => ({
+    lineageId: lineage.id,
+    lean,
+    verb: null,
+    leanCardId: bandCard(lineage, 'stat', lean, tier),
+    verbCardId: null,
+    label: pairLabel(lean, null),
+    pure: false,
+  }));
+}

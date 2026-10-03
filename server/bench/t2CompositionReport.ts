@@ -25,6 +25,15 @@
  * the per-firing size at each tier. A pair whose T2 median reads below its T1
  * median is flagged; the reason goes in `--findings`.
  *
+ * THE VERB'S OWN SHARE. A pair is a lean (a stat) and a verb (a payload). The
+ * tier's verb numbers move only the second half; the lean's stat was tier-scaled
+ * before this run and is subject to the 10 Hz attack-timing quantisation (design
+ * §24.9's open call). When the boss rows carry lean-ALONE rows
+ * (`_t1BossPlan.ts --leans`, labelled `<lean>×none`), the report also reads the
+ * verb's own share — the pair's uplift minus its lean's uplift alone, per class,
+ * then the median over classes — at each tier, which is what "the T2 verb reads at
+ * least as large as the T1 verb" compares once the lean is taken out.
+ *
  *   node --conditions=development --import tsx bench/t2CompositionReport.ts \
  *     [--t1boss=../reports/course-correction/matrix-boss.jsonl] \
  *     [--t2boss=../reports/verbs-that-fire/t2-matrix.jsonl] \
@@ -83,9 +92,12 @@ function bossKey(row: BossRow): { lineage: string; pair: string } {
   return { lineage: row.lineage ?? lineage!, pair: rest.join('-') };
 }
 
-const t2Boss = readJsonl<BossRow>(paths.t2boss).filter((r) => !r.error && r.id.startsWith('cmpt2-'));
+// This run's file carries its T2 rows AND any T1 rows it measured itself (the T1
+// leans alone); the T1 pairs and controls come from the course-correction matrix.
+const ownRows = readJsonl<BossRow>(paths.t2boss);
+const t2Boss = ownRows.filter((r) => !r.error && r.id.startsWith('cmpt2-'));
 const weapons = [...new Set(t2Boss.map((r) => bossKey(r).lineage))].sort();
-const t1Boss = readJsonl<BossRow>(paths.t1boss)
+const t1Boss = [...readJsonl<BossRow>(paths.t1boss), ...ownRows]
   .filter((r) => !r.error && r.id.startsWith('cmp-') && weapons.includes(bossKey(r).lineage));
 const laneTier = (r: LaneRow): number => r.tier ?? (r.cellId?.startsWith('cmpt2-') ? 2 : 1);
 const t2Lanes = readJsonl<LaneRow>(paths.t2lanes).filter((r) => laneTier(r) === 2);
@@ -107,9 +119,11 @@ function bossCells(rows: BossRow[]): Cells {
   const mean = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / Math.max(1, xs.length);
   for (const w of weapons) {
     const bosses = [...new Set(rows.filter((r) => bossKey(r).lineage === w).map((r) => r.boss))];
+    const labels = [...new Set(rows.filter((r) => bossKey(r).lineage === w).map((r) => bossKey(r).pair))]
+      .filter((label) => label !== 'control');
     for (const cls of CLASSES) {
-      for (const pair of compositionPairs(LINEAGE_DATABASE.get(w)!)) {
-        if (pair.label === 'control') continue;
+      for (const label of labels) {
+        const pair = { label };
         const uplifts: number[] = [];
         let fires = 0; let ms = 0; let n = 0; let wins = 0;
         const refusals = new Set<string>();
@@ -195,6 +209,9 @@ function sizeFigure(p: LineagePayoff): string {
 interface Comparison {
   weapon: string; pair: string; lean: PacketId; verb: PacketId;
   t1: number | null; t2: number | null; delta: number | null;
+  /** The verb's own share (pair − lean alone), median over classes; null without lean rows. */
+  verbT1: number | null; verbT2: number | null;
+  verbClassesAtLeast: number; verbClassesMeasured: number;
   classesAtLeast: number; classesMeasured: number;
   t1Fires: number | null; t2Fires: number | null;
   size: string; payload: string;
@@ -210,11 +227,22 @@ function compare(t1: Cells, t2: Cells): Comparison[] {
       const both = per.filter((x) => x.a?.uplift != null && x.b?.uplift != null);
       const t1u = medianOf(per.flatMap((x) => (x.a?.uplift == null ? [] : [x.a.uplift])));
       const t2u = medianOf(per.flatMap((x) => (x.b?.uplift == null ? [] : [x.b.uplift])));
+      const share = (cells: Cells, cls: string): number | null => {
+        const p = cells.get(k(w, cls, pair.label))?.uplift;
+        const lean = cells.get(k(w, cls, `${pair.lean}×none`))?.uplift;
+        return p == null || lean == null ? null : p - lean;
+      };
+      const shares = CLASSES.map((cls) => ({ a: share(t1, cls), b: share(t2, cls) }));
+      const sharesBoth = shares.filter((x) => x.a !== null && x.b !== null);
       const c1 = composeVerb(pair.verb!, pair.lean!, 1)!;
       const c2 = composeVerb(pair.verb!, pair.lean!, 2)!;
       out.push({
         weapon: w, pair: pair.label, lean: pair.lean!, verb: pair.verb!,
         t1: t1u, t2: t2u, delta: t1u !== null && t2u !== null ? t2u - t1u : null,
+        verbT1: medianOf(shares.flatMap((x) => (x.a === null ? [] : [x.a]))),
+        verbT2: medianOf(shares.flatMap((x) => (x.b === null ? [] : [x.b]))),
+        verbClassesAtLeast: sharesBoth.filter((x) => x.b! >= x.a! - 1e-9).length,
+        verbClassesMeasured: sharesBoth.length,
         classesAtLeast: both.filter((x) => x.b!.uplift! >= x.a!.uplift! - 1e-9).length,
         classesMeasured: both.length,
         t1Fires: medianOf(per.flatMap((x) => (x.a?.firesPerMin == null ? [] : [x.a.firesPerMin]))),
@@ -275,15 +303,37 @@ for (const inst of instruments) {
   for (const w of weapons) {
     const form1 = bandFormOf(LINEAGE_DATABASE.get(w)!, 1);
     const form2 = bandFormOf(LINEAGE_DATABASE.get(w)!, 2);
+    const withShares = rows.some((r) => r.weapon === w && r.verbClassesMeasured > 0);
     push(
       `### ${w[0]!.toUpperCase()}${w.slice(1)} — ${ITEM_DATABASE.get(form1)?.name ?? form1} (T1) → ${ITEM_DATABASE.get(form2)?.name ?? form2} (T2)`,
       '',
-      '| lean × verb | payload | T1 uplift | T2 uplift | Δ | ≥ in | T1 fires/min | T2 fires/min | size T1 → T2 |',
-      '|---|---|---:|---:|---:|---:|---:|---:|---|',
+      `| lean × verb | payload | T1 uplift | T2 uplift | Δ | ≥ in |${withShares ? ' verb share T1 → T2 | verb ≥ in |' : ''} T1 fires/min | T2 fires/min | size T1 → T2 |`,
+      `|---|---|---:|---:|---:|---:|${withShares ? '---:|---:|' : ''}---:|---:|---|`,
       ...rows.filter((r) => r.weapon === w).map((r) =>
-        `| ${r.pair}${r.lean === r.verb ? ' (pure)' : ''} | ${r.payload} | ${pct(r.t1)} | ${pct(r.t2)} | ${pp(r.delta)}${r.delta !== null && r.delta < 0 ? ' ⚑' : ''} | ${r.classesAtLeast}/${r.classesMeasured} | ${num(r.t1Fires)} | ${num(r.t2Fires)} | ${r.size} |`),
+        `| ${r.pair}${r.lean === r.verb ? ' (pure)' : ''} | ${r.payload} | ${pct(r.t1)} | ${pct(r.t2)} | ${pp(r.delta)}${r.delta !== null && r.delta < 0 ? ' ⚑' : ''} | ${r.classesAtLeast}/${r.classesMeasured} |`
+        + (withShares
+          ? ` ${pct(r.verbT1)} → ${pct(r.verbT2)}${r.verbT1 !== null && r.verbT2 !== null && r.verbT2 < r.verbT1 ? ' ⚑' : ''} | ${r.verbClassesAtLeast}/${r.verbClassesMeasured} |`
+          : '')
+        + ` ${num(r.t1Fires)} | ${num(r.t2Fires)} | ${r.size} |`),
       '',
     );
+    if (withShares) {
+      const lineage = LINEAGE_DATABASE.get(w)!;
+      push(
+        `**The leans alone** (${inst.name}; the lean slotted, no verb; median over classes, then per class T1 → T2):`,
+        '',
+        `| lean | T1 alone | T2 alone | ${CLASSES.join(' | ')} |`,
+        `|---|---:|---:|${CLASSES.map(() => '---:').join('|')}|`,
+        ...lineage.lanes.map((lean) => {
+          const label = `${lean}×none`;
+          const a = CLASSES.map((cls) => inst.t1.get(k(w, cls, label))?.uplift ?? null);
+          const b = CLASSES.map((cls) => inst.t2.get(k(w, cls, label))?.uplift ?? null);
+          const med = (xs: (number | null)[]) => medianOf(xs.flatMap((x) => (x === null ? [] : [x])));
+          return `| ${lean} | ${pct(med(a))} | ${pct(med(b))} | ${CLASSES.map((_, i) => `${pct(a[i], 0)} → ${pct(b[i], 0)}`).join(' | ')} |`;
+        }),
+        '',
+      );
+    }
     const pairs = compositionPairs(LINEAGE_DATABASE.get(w)!).filter((p) => p.label !== 'control');
     push(
       `<details><summary>${inst.name}, ${w}: per class (T1 uplift → T2 uplift${inst.name === 'boss lab' ? '; T2 wins' : ''})</summary>`,

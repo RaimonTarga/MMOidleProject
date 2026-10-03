@@ -17,7 +17,7 @@
  *                              [--armor=forest-vest-t1]
  *   tsx scripts/_t1BossPlan.ts --out=plan.json --matrix=composition [--seeds=10]
  *                              [--weapons=rapier,axe] [--classes=...] [--bosses=...]
- *                              [--tier=2]
+ *                              [--tier=2] [--leans]
  *
  * `--matrix=composition` is the course-correction lean × verb matrix (W3-A): see the
  * block that builds it below. `--tier=2` is its T2 instrument (verbs-that-fire B).
@@ -36,7 +36,7 @@
 import assert from 'node:assert/strict';
 import { writeFileSync } from 'node:fs';
 import { ITEM_DATABASE, LINEAGE_DATABASE, TUTORIAL_CLASS_PLANS, tutorialRunes, T1_BIOME_ORDER, type T1Biome } from '@mmo-idle/shared';
-import { bandFormOf, compositionPairs, weaponLineages } from '../bench/lineage/compositionPairs';
+import { bandFormOf, compositionPairs, leanOnlyPairs, weaponLineages } from '../bench/lineage/compositionPairs';
 
 const args = Object.fromEntries(process.argv.slice(2).map((s) => {
   const i = s.indexOf('=');
@@ -244,7 +244,9 @@ if (args.matrix === 'composition') {
     for (const lineage of weaponLineages()) {
       if (onlyWeapons && !onlyWeapons.includes(lineage.id)) continue;
       const form = bandFormOf(lineage, tier);
-      for (const pair of compositionPairs(lineage, tier)) {
+      // `--leans`: the band's three leans ALONE (no verb, no control) — the
+      // decomposition rows `t2CompositionReport.ts` reads the verb's own share from.
+      for (const pair of args.leans ? leanOnlyPairs(lineage, tier) : compositionPairs(lineage, tier)) {
         for (const biome of T1_BIOME_ORDER) {
           const boss = bossOf[biome];
           if (onlyBosses && !onlyBosses.includes(boss)) continue;
