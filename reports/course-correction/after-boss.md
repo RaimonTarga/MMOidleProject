@@ -40,12 +40,12 @@ This is within the lab's resolution (±16 points at 95% on a 30-seed cell) and i
 ladder as a pct-only `+0.10` the way it used to resolve (0.45) — balance numbers are the
 designer's, so nothing was changed here.
 
-**The tutorial kit WITH its lean + verb: not run.** The tutorial plan buys one lineage card,
-the Rapier's lean Quick Wrist (`rapier-t1-tempo-stat`), and no verb; every melee boss kit
-then wears the Chaotic Axe and the Slinger the Ashbrand Blade, so that lean is inert in
-every boss fight. W3-B is rewriting the tutorial (lean at Forest 2, verb at Forest 4, the
-Rapier kept worn); the composition matrix (`composition-matrix.md`) measures every pair on
-these kits meanwhile.
+**The tutorial kit WITH its own lean + verb: a no-op in the lab, so it is not a table.**
+W3-B's tutorial (`feat/cc-tutorial`) buys a lean and a verb on the RAPIER for every class, but
+every boss kit (`bossKit`) still wears the Chaotic Axe or the Poison Dagger, and a lineage pays
+only while its own form is worn — the two cards are inert in every seal and gate fight, so "the
+tutorial kit with its purchase" is exactly the table above. What the bought pair WOULD do with the
+Rapier kept on is the labelled DIAGNOSTIC at the end of this page.
 
 ## After (900 fights)
 
@@ -101,3 +101,72 @@ Losses (boss % left, median / worst) and median TTK on wins:
 | striker / Toadeater | 97% 29/30 -> 90% 27/30 | 55.8s -> 55.3s | 2.7% -> 2.2% | 30/30 |
 | striker / Behemoth | 77% 23/30 -> 77% 23/30 | 68.5s -> 68.5s | 4.5% -> 4.5% | 30/30 |
 | striker / Broodmother | 100% 30/30 -> 100% 30/30 | 57.9s -> 57.9s | - -> - | 30/30 |
+
+## DIAGNOSTIC — the tutorial's Rapier pair, with the Rapier kept on (not the tutorial kit)
+
+The baseline plan with ONE change: the weapon is the Flash Rapier, fought twice — with no cards,
+and with the class's own tutorial lean + verb (W3-B's `weaponCards`: Striker, Slinger, Conduit
+Quick Wrist → Opening Lunge; Squire, Spirit Keen Edge → Flurry; Apprentice Envenomed → Opening
+Lunge), bought through the real economy. 1,800 fights (6 classes × 5 bosses × 30 seeds × 2), 6
+shards, 159 s; rows in `diag-tutorial-rapier-boss.jsonl`
+(`_t1BossPlan.ts --matrix=tutorial-rapier`). Columns are win rate · median TTK on wins.
+
+| class | pair (lean × verb) | boss | Axe/Dagger kit (baseline) | Rapier, no cards | Rapier + the pair | DPS: pair vs Rapier no-band | verb fires/min |
+|---|---|---|---|---|---|---:|---:|
+| striker | tempo×engagement | Razorback | 90% · 45.6s | 30% · 38.2s | 40% · 36.3s | +3.4% | 4.4 |
+| striker | tempo×engagement | Greatbear | 100% · 31.1s | 100% · 24.8s | 100% · 24.8s | +2.1% | 2.4 |
+| striker | tempo×engagement | Toadeater | 90% · 55.3s | 100% · 46.5s | 100% · 45.9s | +1.6% | 1.3 |
+| striker | tempo×engagement | Behemoth | 77% · 68.5s | 100% · 50.7s | 100% · 50.6s | +1.6% | 1.2 |
+| striker | tempo×engagement | Broodmother | 100% · 57.9s | 100% · 52.4s | 100% · 51.1s | +1.5% | 1.2 |
+| squire | engagement×tempo | Razorback | 100% · 52.8s | 93% · 50.2s | 100% · 39.2s | +27.0% | 11.7 |
+| squire | engagement×tempo | Greatbear | 100% · 37.8s | 100% · 31.9s | 100% · 26.3s | +23.3% | 11.4 |
+| squire | engagement×tempo | Toadeater | 87% · 59.1s | 97% · 56.9s | 100% · 44.6s | +29.2% | 8.2 |
+| squire | engagement×tempo | Behemoth | 100% · 76.1s | 100% · 73.1s | 100% · 56.6s | +28.5% | 7.6 |
+| squire | engagement×tempo | Broodmother | 100% · 63.5s | 100% · 65.5s | 100% · 49.5s | +31.9% | 9.7 |
+| slinger | tempo×engagement | Razorback | 100% · 46.0s | 100% · 48.7s | 100% · 44.9s | +7.5% | 8.4 |
+| slinger | tempo×engagement | Greatbear | 100% · 27.4s | 100% · 29.2s | 100% · 28.9s | +1.0% | 2.1 |
+| slinger | tempo×engagement | Toadeater | 100% · 34.6s | 93% · 38.5s | 100% · 38.2s | +0.6% | 1.6 |
+| slinger | tempo×engagement | Behemoth | 100% · 47.4s | 100% · 51.0s | 100% · 50.7s | +0.5% | 1.2 |
+| slinger | tempo×engagement | Broodmother | 100% · 41.9s | 100% · 51.9s | 100% · 51.0s | +1.1% | 1.2 |
+| spirit | engagement×tempo | Razorback | 100% · 49.7s | 100% · 41.9s | 100% · 29.9s | +37.7% | 15.8 |
+| spirit | engagement×tempo | Greatbear | 100% · 31.6s | 100% · 25.0s | 100% · 19.0s | +32.3% | 15.8 |
+| spirit | engagement×tempo | Toadeater | 87% · 41.9s | 100% · 33.3s | 100% · 25.0s | +34.4% | 14.4 |
+| spirit | engagement×tempo | Behemoth | 100% · 53.7s | 100% · 44.7s | 100% · 33.1s | +35.3% | 12.7 |
+| spirit | engagement×tempo | Broodmother | 100% · 48.5s | 100% · 41.1s | 100% · 30.7s | +32.8% | 15.5 |
+| apprentice | affliction×engagement | Razorback | 100% · 44.7s | 80% · 50.8s | 73% · 50.0s | +1.7% | 8.5 |
+| apprentice | affliction×engagement | Greatbear | 97% · 31.8s | 47% · 34.8s | 77% · 34.2s | +0.9% | 1.8 |
+| apprentice | affliction×engagement | Toadeater | 100% · 40.3s | 100% · 46.4s | 100% · 46.1s | +1.0% | 1.3 |
+| apprentice | affliction×engagement | Behemoth | 100% · 49.4s | 100% · 56.9s | 100% · 56.9s | +0.9% | 1.1 |
+| apprentice | affliction×engagement | Broodmother | 100% · 44.8s | 100% · 52.4s | 100% · 52.2s | +0.7% | 1.1 |
+| conduit | tempo×engagement | Razorback | 100% · 53.2s | 100% · 75.2s | 100% · 62.6s | +20.5% | 7.7 |
+| conduit | tempo×engagement | Greatbear | 100% · 31.7s | 97% · 37.7s | 100% · 33.7s | +11.7% | 1.8 |
+| conduit | tempo×engagement | Toadeater | 100% · 37.7s | 0% · - | 100% · 39.0s | +13.8% | 1.5 |
+| conduit | tempo×engagement | Behemoth | 100% · 75.1s | 100% · 93.0s | 100% · 86.5s | +7.2% | 0.7 |
+| conduit | tempo×engagement | Broodmother | 100% · 56.3s | 100% · 86.0s | 100% · 75.4s | +14.1% | 0.8 |
+
+Per class, all five bosses (win rate · median TTK on wins):
+
+| class | Axe/Dagger kit | Rapier, no cards | Rapier + the pair | refusals |
+|---|---|---|---|---|
+| striker | 91% · 55.1s | 86% · 49.2s | 88% · 48.1s | none |
+| squire | 97% · 59.1s | 98% · 57.1s | 100% · 44.6s | none |
+| slinger | 100% · 41.9s | 99% · 48.8s | 100% · 44.9s | none |
+| spirit | 97% · 48.5s | 100% · 41.1s | 100% · 29.9s | none |
+| apprentice | 99% · 44.6s | 85% · 51.0s | 90% · 50.1s | none |
+| conduit | 100% · 52.9s | 79% · 82.1s | 100% · 62.6s | none |
+
+**Reading it.** Keen Edge × Flurry (every 6th hit a ×2 lunge) is the one pick that pays in a boss
+fight: Squire +23–32% DPS, Spirit +32–38%, both 100% on every boss. The "speed opener" (Quick
+Wrist × Opening Lunge) pays once per BODY, so on a boss it fires 1–2 times a minute and is worth
++0.5–3% outside the Razorback's adds — and Quick Wrist itself is worth exactly 0 to the Striker
+and the Slinger on this weapon (their attack interval does not cross a 100 ms tick; see
+`composition-matrix.md`, "quantised to the 10 Hz tick"). On the Conduit the same pair is worth
++7–20%, because its Rapier interval does cross a tick. The Apprentice's Envenomed lean adds DoT
+potency, but Opening Lunge's payload with that lean is the heavy bleed once per body: +1%.
+
+**And the Rapier is not the Axe.** Kept on for the seals, it costs the Striker the Razorback
+(90% on the Axe kit → 30–40% on the Rapier), the Apprentice the Greatbear (97% → 47% bare, 77%
+with its pair) and the Conduit time everywhere (median TTK 53 s → 63–82 s; its bare-Rapier
+Toadeater lost 30 of 30). Whether the guide keeps the Rapier worn for the gate (review P9) is
+the designer's call; this is the price list.
+

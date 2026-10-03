@@ -225,6 +225,57 @@ if (args.matrix === 'composition') {
   process.exit(0);
 }
 
+/**
+ * `--matrix=tutorial-rapier` — a DIAGNOSTIC, not the tutorial kit (course-correction
+ * W3-A item 4). The tutorial (W3-B) buys a lean and a verb on the Rapier, but every
+ * boss kit wears the Chaotic Axe or the Poison Dagger, and a lineage pays only while
+ * its own form is worn — so in the seal and gate fights those two cards do nothing.
+ * This plan is the baseline plan with ONE change, the Rapier swapped in as the
+ * weapon, run twice: with the class's own tutorial lean + verb (`diag-rapier-<pair>`)
+ * and with no cards (`diag-rapier-control`) — what the bought pair would do in those
+ * fights if the guide kept the Rapier on.
+ *
+ * The picks mirror `weaponCards` in W3-B's `TUTORIAL_CLASS_PLANS`
+ * (feat/cc-tutorial, `shared/src/tutorial/scripts/plans.ts`), which this branch
+ * does not have yet; read them from there once merged.
+ */
+const TUTORIAL_RAPIER_PAIRS: Record<string, { lean: string; verb: string; label: string }> = {
+  striker: { lean: 'rapier-t1-tempo-stat', verb: 'rapier-t1-engagement-payoff', label: 'tempo×engagement' },
+  squire: { lean: 'rapier-t1-engagement-stat', verb: 'rapier-t1-tempo-payoff', label: 'engagement×tempo' },
+  slinger: { lean: 'rapier-t1-tempo-stat', verb: 'rapier-t1-engagement-payoff', label: 'tempo×engagement' },
+  spirit: { lean: 'rapier-t1-engagement-stat', verb: 'rapier-t1-tempo-payoff', label: 'engagement×tempo' },
+  apprentice: { lean: 'rapier-t1-affliction-stat', verb: 'rapier-t1-engagement-payoff', label: 'affliction×engagement' },
+  conduit: { lean: 'rapier-t1-tempo-stat', verb: 'rapier-t1-engagement-payoff', label: 'tempo×engagement' },
+};
+if (args.matrix === 'tutorial-rapier') {
+  const seeds = SEEDS.slice(0, nSeeds);
+  for (const cls of TUTORIAL_CLASS_PLANS) {
+    const name = cls.className.toLowerCase();
+    if (onlyClasses && !onlyClasses.includes(name)) continue;
+    const pick = TUTORIAL_RAPIER_PAIRS[name];
+    assert(pick, `${name}: no tutorial Rapier pair`);
+    for (const withCards of [true, false]) {
+      for (const biome of T1_BIOME_ORDER) {
+        const boss = BOSS_BY_BIOME[biome];
+        if (onlyBosses && !onlyBosses.includes(boss)) continue;
+        const kit = { ...kitFor(cls, biome), weapon: 'flash-rapier' };
+        for (const seed of seeds) {
+          rows.push({
+            id: `diag-rapier-${withCards ? pick.label : 'control'}|${name}|${boss}|${seed}`,
+            boss, cls: name, seed, tier: 1, upgrade: 5, jitter: true, compact: true,
+            ...kit,
+            rules: tutorialRunes(cls.movement, 'final', cls.classRoot),
+            lineage: 'rapier', lean: withCards ? pick.lean : null, verb: withCards ? pick.verb : null,
+          });
+        }
+      }
+    }
+  }
+  writeFileSync(args.out!, JSON.stringify(rows));
+  console.log(`tutorial-rapier diagnostic: ${rows.length} rows -> ${args.out}`);
+  process.exit(0);
+}
+
 for (const cls of TUTORIAL_CLASS_PLANS) {
   const name = cls.className.toLowerCase();
   if (onlyClasses && !onlyClasses.includes(name)) continue;
