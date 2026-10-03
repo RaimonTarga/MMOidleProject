@@ -411,3 +411,23 @@ pacing finding and a harness defect: at T1 the **payoff** row sits at Global Mas
 currency is held, and `doUnlockCard`'s `farmBlocked` only names a stall for "this packet
 has no T1 shard source" — a Global-Mastery shortfall the farm node cannot fix farms
 silently forever instead of raising a named stall. Neither is a card-runtime defect.
+
+## 14. The bench criterion — a viability floor (design §24.1, course-correction 2026-10-03)
+
+**The criterion is a FLOOR, not a band.** No lane (or lean × verb pair) below **0.9× the
+median uplift of its tier**, per instrument; a lane above the median is a reading, never a
+failure. It retires design §18.9's "median ±3 percentage points, absolute" (which had
+itself replaced §9's "±10% of the tier median"): a similarity band balanced every card to be
+indistinguishable from its neighbours, which §24.1 calls imperceptible by construction.
+The **ordinal encounter check is unchanged** — on a family's own node, does the favoured
+lane out-uplift the punished lane, and by what margin (reported, never thresholded).
+
+- Arithmetic: `server/bench/lineage/viabilityFloor.ts` (`viabilityFloor`, `floorFor`), one
+  implementation for every instrument; the ordinal check is `lineage/encounterOrdinal.ts`.
+  Both are pinned on synthetic rows by `server/test/viabilityFloor.test.ts`.
+- A non-positive tier median is reported as such ("the lanes collectively buy nothing
+  here"); the floor is then read as a tenth of the median's size below it, so the median
+  lane never fails its own floor (a bench pick, flagged for the designer).
+- The lane matrix (`server/bench/lineageLaneMatrix.ts`) prints the floor per tier and per
+  packet; `LANE_SHARD`/`LANE_SHARDS` split it across processes and `LANE_REPLAY=a,b,...`
+  merges the shards' rows back into one report.
