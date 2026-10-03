@@ -1007,10 +1007,20 @@ export function registerLineageIncomingCards(): void {
   registerBarrierBreak();
 }
 
-/** `hit-nth` — every nth landed hit, counted per card. */
+/**
+ * `hit-nth` — every nth LANDED hit, counted per card.
+ *
+ * A chaotic miss is not a landed hit: it neither advances the counter nor fires
+ * it, exactly as the kill carry treats it. The Chaotic Axe whiffs on a fixed
+ * schedule (every 3rd swing), and with the Tempo moment's n = 6 counting swings
+ * put EVERY firing on a whiff — the hit-shaped payloads refused it and the echo
+ * echoed a miss. The counter is untouched on a whiff, so the rhythm readout
+ * (which copies this counter) has nothing to re-sync either.
+ */
 function registerHitNth(): void {
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
+    if (ctx.metadata['chaoticMiss']) return;
     const player = ctx.attacker;
     if (!hasLineageRuntime(player)) return;
     const firings = firingsFor(player, 'hit-nth');
