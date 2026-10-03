@@ -34,7 +34,7 @@
  */
 import assert from 'node:assert/strict';
 import { writeFileSync } from 'node:fs';
-import { ITEM_DATABASE, TUTORIAL_CLASS_PLANS, tutorialRunes, T1_BIOME_ORDER, type T1Biome } from '@mmo-idle/shared';
+import { ITEM_DATABASE, LINEAGE_DATABASE, TUTORIAL_CLASS_PLANS, tutorialRunes, T1_BIOME_ORDER, type T1Biome } from '@mmo-idle/shared';
 import { compositionPairs, t1FormOf, weaponLineages } from '../bench/lineage/compositionPairs';
 
 const args = Object.fromEntries(process.argv.slice(2).map((s) => {
@@ -239,21 +239,19 @@ if (args.matrix === 'composition') {
  * (feat/cc-tutorial, `shared/src/tutorial/scripts/plans.ts`), which this branch
  * does not have yet; read them from there once merged.
  */
-const TUTORIAL_RAPIER_PAIRS: Record<string, { lean: string; verb: string; label: string }> = {
-  striker: { lean: 'rapier-t1-tempo-stat', verb: 'rapier-t1-engagement-payoff', label: 'tempo×engagement' },
-  squire: { lean: 'rapier-t1-engagement-stat', verb: 'rapier-t1-tempo-payoff', label: 'engagement×tempo' },
-  slinger: { lean: 'rapier-t1-tempo-stat', verb: 'rapier-t1-engagement-payoff', label: 'tempo×engagement' },
-  spirit: { lean: 'rapier-t1-engagement-stat', verb: 'rapier-t1-tempo-payoff', label: 'engagement×tempo' },
-  apprentice: { lean: 'rapier-t1-affliction-stat', verb: 'rapier-t1-engagement-payoff', label: 'affliction×engagement' },
-  conduit: { lean: 'rapier-t1-tempo-stat', verb: 'rapier-t1-engagement-payoff', label: 'tempo×engagement' },
-};
+// The tutorial's own pair per class, read from the plan it teaches
+// (`TUTORIAL_CLASS_PLANS[*].weaponCards`, course-correction W3-B) rather than copied,
+// so a change of pick moves the diagnostic with it. The label is the two lanes.
+const laneOfCard = (cardId: string): string =>
+  LINEAGE_DATABASE.get('rapier')?.cards.find((c) => c.id === cardId)?.lane ?? cardId;
 if (args.matrix === 'tutorial-rapier') {
   const seeds = SEEDS.slice(0, nSeeds);
   for (const cls of TUTORIAL_CLASS_PLANS) {
     const name = cls.className.toLowerCase();
     if (onlyClasses && !onlyClasses.includes(name)) continue;
-    const pick = TUTORIAL_RAPIER_PAIRS[name];
-    assert(pick, `${name}: no tutorial Rapier pair`);
+    const cards = cls.weaponCards;
+    assert(cards, `${name}: no tutorial Rapier pair`);
+    const pick = { ...cards, label: `${laneOfCard(cards.lean)}×${laneOfCard(cards.verb)}` };
     for (const withCards of [true, false]) {
       for (const biome of T1_BIOME_ORDER) {
         const boss = BOSS_BY_BIOME[biome];
