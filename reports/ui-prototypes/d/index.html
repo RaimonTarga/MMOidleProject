@@ -1,0 +1,1758 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dense Sidebar · D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;700;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* ── Tokens: the mockup's palette plus the client's HUD materials ─────────── */
+:root{
+  --bg:#14120f; --panel:#1d1a16; --panel2:#24201a; --ctrl:#2a2620; --inset:#0b0a08;
+  --ink:#ece4d4; --ink2:#cfc5b2; --muted:#958a75; --dim:#5f574a;
+  --gold:#d9b25c; --gold2:#f0cf7a;
+  --edge:#3b352b; --edge2:#5f5341; --edgeD:#070605;
+  --danger:#e4705e; --ok:#7fd48f; --rot:#b98ae0;
+  --sans:'IBM Plex Sans',system-ui,sans-serif;
+  --sc:'Alegreya SC',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --display:'Cinzel','Palatino Linotype',Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#0a0908;color:var(--ink);font-family:var(--sans);overflow:hidden}
+button{font:inherit;color:inherit}
+img.px{image-rendering:pixelated}
+
+/* ── Prototype chrome (outside the game frame) ─────────────────────────────── */
+#app{display:flex;flex-direction:column;height:100%}
+#bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:8px 14px;background:#12100d;border-bottom:1px solid #2c271f;font-size:12px}
+#bar .brand{font:700 15px var(--sc);color:var(--gold);letter-spacing:.04em;white-space:nowrap}
+#bar .brand b{display:inline-grid;place-items:center;width:22px;height:22px;margin-right:6px;border:1px solid var(--gold);color:var(--gold2);font-family:var(--display)}
+.grp{display:flex;gap:2px;background:#0b0a08;border:1px solid #2c271f;padding:2px}
+.tb{padding:5px 10px;border:0;background:transparent;color:#b8ad98;cursor:pointer;white-space:nowrap;border-radius:2px}
+.tb:hover{background:#221e18;color:var(--ink)}
+.tb.on{background:#3a3223;color:var(--gold2);box-shadow:inset 0 0 0 1px #6b5a36}
+.tb[disabled]{opacity:.4;cursor:default}
+.tb.solo{border:1px solid #2c271f;background:#0b0a08}
+.ctl-note{color:#8f8571;font-size:11px}
+.ctl-count{font:600 12px var(--mono);color:var(--gold2);padding:0 6px}
+#main{flex:1;display:flex;min-height:0}
+#stage{flex:1;position:relative;min-width:0;display:flex;align-items:center;justify-content:center;padding:12px;background:radial-gradient(ellipse at 50% 40%,#17140f,#0a0908 70%)}
+#frameWrap{position:relative;flex:none;box-shadow:0 0 0 1px #2c271f,0 20px 60px rgba(0,0,0,.6)}
+#frame{position:absolute;left:0;top:0;transform-origin:0 0;overflow:hidden;background:var(--bg);font-family:var(--sans);color:var(--ink);user-select:none}
+#aside{width:330px;flex:none;overflow:auto;padding:14px 16px 24px;background:#100e0b;border-left:1px solid #2c271f;font-size:12.5px;line-height:1.5;color:#c9bfab}
+#aside h2{font:700 16px var(--sc);color:var(--gold);margin-bottom:6px;letter-spacing:.03em}
+#aside h3{font:700 12px var(--sc);color:var(--gold2);margin:14px 0 4px;letter-spacing:.08em}
+#aside p{margin-bottom:7px}
+#aside ol{padding-left:18px}
+#aside li{margin-bottom:3px}
+#aside .meter{display:flex;justify-content:space-between;align-items:baseline;padding:5px 8px;margin-top:4px;background:#1a1712;border:1px solid #2c271f}
+#aside .meter b{font:600 15px var(--mono);color:var(--gold2)}
+#aside .q{color:var(--ink);font-style:italic}
+#aside .k{color:var(--gold2)}
+#aside small{color:#8f8571}
+body.embed #bar,body.embed #aside{display:none}
+body.embed #stage{padding:0;background:#000}
+body.embed #frameWrap{box-shadow:none}
+@media (max-width:1100px){#aside{display:none}}
+
+/* ── Frame: shared game furniture ─────────────────────────────────────────── */
+.v-desktop{width:1280px;height:720px}
+.v-portrait{width:390px;height:844px}
+.rail{position:absolute;top:0;bottom:0;width:260px;background:linear-gradient(90deg,rgba(255,240,200,.025),transparent 8%,transparent 92%,rgba(0,0,0,.3)),linear-gradient(135deg,#1a1712,#110f0c 40%,#0e0c0a);overflow:hidden}
+.rail-l{left:0;border-right:1px solid #050403;box-shadow:inset -1px 0 #2d2820}
+.rail-r{right:0;border-left:1px solid #050403;box-shadow:inset 1px 0 #2d2820;padding:8px;display:flex;flex-direction:column;gap:7px}
+.canvas{position:absolute;left:260px;right:260px;top:0;bottom:0;overflow:hidden;background:#0d0f0a}
+.panel{background:linear-gradient(180deg,#25211a,#1d1a15 60%,#191612);border:1px solid var(--edgeD);border-top-color:#4a4134;border-left-color:#3d362b;box-shadow:inset 0 0 0 1px rgba(255,240,200,.025),0 2px 5px rgba(0,0,0,.35)}
+.ptitle{display:flex;align-items:center;justify-content:space-between;height:24px;padding:0 8px;font:700 11.5px/1 var(--sc);letter-spacing:.1em;color:var(--gold);background:linear-gradient(90deg,rgba(0,0,0,.25),rgba(255,240,200,.03),rgba(0,0,0,.25));border-bottom:1px solid #0a0907}
+
+/* Right rail: guide, behaviour, navigation (the client's shell, unchanged but for Gear) */
+.guide{padding-bottom:8px}
+.guide .chap{margin:7px 9px 4px;font:600 9.5px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.guide .line{margin:0 9px;font-size:12px;line-height:1.45;color:var(--ink)}
+.guide .line + .line{margin-top:6px}
+.guide .line.check{color:var(--ink2);font-size:11.5px}
+.guide .line.check::before{content:'✓ ';color:var(--ok)}
+.guide .acts{display:flex;gap:6px;margin:9px 9px 0}
+.guide .route{display:flex;gap:3px;margin:8px 9px 0}
+.guide .route i{flex:1;height:4px;background:#3a3328}
+.guide .route i.done{background:var(--gold)}
+.guide.collapsed .line,.guide.collapsed .acts{display:none}
+.gbtn{padding:5px 12px;border:1px solid #6b5a36;background:linear-gradient(#3a3223,#2c261b);color:var(--gold2);font-size:11.5px;font-weight:600;cursor:pointer}
+.gbtn.ghost{border-color:var(--edge2);background:#221e18;color:var(--ink2)}
+.stopbtn{font:500 10px var(--sans);letter-spacing:.04em;color:var(--muted);background:none;border:0;text-transform:none}
+.behav{padding:8px}
+.autobar{display:flex;align-items:center;justify-content:space-between;padding:7px 9px;border:1px solid #3a5a3a;background:#14201a;font-size:12px;font-weight:600;color:#bfe6c4}
+.autobar b{font-family:var(--mono);color:var(--ok)}
+.nav{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:6px}
+.navb{position:relative;display:flex;align-items:center;gap:7px;height:36px;padding:0 8px;border:1px solid #0c0a07;border-top-color:#4a4134;border-left-color:#3d362b;background:linear-gradient(#2c271f,#221e18);font-size:11.5px;color:var(--ink2);cursor:pointer;text-align:left}
+.navb .ic{width:20px;text-align:center;color:var(--gold);font-size:14px}
+.navb .ic img{width:20px;height:20px;display:block}
+.navb:hover,.navb.on{border-color:#6b5a36;color:var(--gold2)}
+.navb.on{background:linear-gradient(#3a3223,#2a241a)}
+.navb .badge{position:absolute;top:4px;right:5px;width:8px;height:8px;border-radius:50%;background:var(--gold2);box-shadow:0 0 6px var(--gold)}
+.navb.press{transform:translateY(1px);filter:brightness(1.3)}
+
+/* Canvas overlays (shell): biome XP top-right, Auto Combat bottom-centre */
+.xpbar{position:absolute;top:12px;right:12px;width:230px;padding:7px 9px;background:rgba(20,18,13,.94);border:1px solid #3b352b;border-right-color:#070605;border-bottom-color:#070605;font:600 10.5px var(--mono);color:var(--ink2);z-index:12}
+.xpbar .hd{display:flex;justify-content:space-between;margin-bottom:4px}
+.xpbar .tr{height:6px;background:#0b0a08;border:1px solid #333}
+.xpbar .tr i{display:block;height:100%;width:62%;background:linear-gradient(90deg,#6b8f3a,#9be564)}
+.autoc{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:8px 16px;background:linear-gradient(#2c271f,#1f1b15);border:2px solid #4a4134;border-right-color:#0c0a07;border-bottom-color:#0c0a07;font:600 12px var(--mono);color:var(--gold);z-index:12}
+.autoc b{color:var(--ok)}
+.toastline{position:absolute;left:50%;bottom:70px;transform:translateX(-50%);max-width:520px;padding:8px 14px;background:var(--inset);border:1px solid var(--gold);color:var(--ink);font-size:12.5px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.55);z-index:45;pointer-events:none;opacity:0;transition:opacity .2s}
+.toastline.show{opacity:1}
+.toastline.warn{border-color:var(--danger)}
+.toastline.proto{border-style:dashed;border-color:#8f8571;color:#cfc5b2;font-style:italic}
+
+/* ── THE COLUMN (thesis D): fixed sections, fixed order, fixed row heights ── */
+.col{display:flex;flex-direction:column;gap:6px;padding:8px}
+.sec{position:relative;flex:none;padding:0 7px 7px}
+.sec-h{display:flex;align-items:center;justify-content:space-between;height:23px;margin:0 -7px 0;padding:0 8px;font:700 11.5px/1 var(--sc);letter-spacing:.12em;color:var(--gold);background:linear-gradient(90deg,rgba(0,0,0,.28),rgba(255,240,200,.035),rgba(0,0,0,.28));border-bottom:1px solid #0a0907}
+.sec-h .ix{font:600 9px var(--mono);color:#7d7058;letter-spacing:0;margin-right:6px}
+.sec-link{border:1px solid #5a4b30;background:#2a241a;color:var(--gold2);font:600 9.5px var(--sans);letter-spacing:.06em;padding:2px 7px;cursor:pointer;text-transform:uppercase}
+.sec-link:hover,.sec-link.on{background:#3a3223;border-color:var(--gold)}
+/* YOU */
+.you{height:84px}
+.you .nm{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px;font:700 14px var(--sc);color:#9fe0a8}
+.you .nm span{font:600 11.5px var(--mono);color:var(--ink)}
+.hpbar{position:relative;height:12px;margin-top:4px;background:#0b0a08;border:1px solid #3a342a;overflow:hidden}
+.hpbar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(#5ee36a,#2fa23d);transition:width .18s linear}
+.hpbar.hurt i{background:linear-gradient(#ff8a6a,#d9442f)}
+.you .st{display:flex;gap:10px;margin-top:6px;font:500 10.5px var(--mono);color:var(--muted)}
+.you .st b{color:var(--ink2);font-weight:600}
+/* WEAPON */
+.wpn{display:flex;align-items:center;gap:8px;height:36px;margin-top:5px;cursor:pointer}
+.wpn .ic{width:34px;height:34px;display:grid;place-items:center;background:var(--inset);border:1px solid #4a4134}
+.wpn .ic img{width:32px;height:32px}
+.wpn b{display:block;font:700 13.5px/1.1 var(--sc);color:var(--gold2)}
+.wpn small{display:block;font-size:10px;color:var(--muted);letter-spacing:.04em}
+.crow{position:relative;margin-top:5px;padding:4px 6px 5px 10px;background:var(--ctrl);border:1px solid #3a342a;overflow:hidden}
+.crow::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lane,#4a4236)}
+.crow-lean{height:66px}
+.crow-verb{height:82px}
+.crow-verb .crow-k,.crow-verb .crow-n{padding-right:58px}
+.crow-k{display:block;height:12px;font:600 8.5px/12px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:#857a65}
+.crow-n{display:block;height:16px;font:700 13.5px/16px var(--sc);color:var(--lane,var(--dim));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crow-s{display:block;font:400 11px/14px var(--sans);color:var(--ink2)}
+.crow-lean .crow-s{height:28px}
+.crow-verb .crow-s{height:42px}
+.crow.empty .crow-n{color:var(--dim)}
+.crow.empty .crow-s{color:var(--dim);font-style:italic}
+.crow.filled{animation:fillslot 1.1s ease-out}
+@keyframes fillslot{0%{background:#4a3f22;box-shadow:inset 0 0 0 1px var(--gold2)}100%{background:var(--ctrl);box-shadow:none}}
+.crow.fire{box-shadow:inset 0 0 0 1px var(--lane),0 0 14px -2px var(--lane)}
+.crow.fire .crow-n{text-shadow:0 0 8px var(--lane)}
+.crow.teach{outline:2px solid var(--gold2);outline-offset:1px;animation:teachpulse 1.2s ease-in-out infinite}
+@keyframes teachpulse{50%{outline-color:rgba(240,207,122,.35)}}
+.h-moment,.h-payload,.h-whole{color:color-mix(in srgb,var(--hc) 80%,var(--ink))}
+.crow .glyph{position:absolute;right:36px;top:9px;width:18px;height:18px;padding:1px;border-radius:3px;background:#0b0a08;border:1px solid #4a4134;z-index:2}
+/* the verb's clock: the rhythm ring, moved into its row */
+.ring{position:absolute;right:5px;top:3px;width:27px;height:27px}
+.ring svg{width:100%;height:100%;overflow:visible;display:block}
+.ring .tr{fill:rgba(10,9,7,.8);stroke:rgba(255,255,255,.12);stroke-width:4}
+.ring .fl{fill:none;stroke:var(--rc,var(--gold));stroke-width:4;transform:rotate(-90deg);transform-origin:20px 20px}
+.ring .rt{position:absolute;inset:0;display:grid;place-items:center;font:600 10px/1 var(--mono);color:var(--ink)}
+.ring.ready .rt{font-size:14px;color:var(--rc)}
+.ring.ready svg{filter:drop-shadow(0 0 3px var(--rc))}
+.ring.ghost{opacity:.22;filter:grayscale(1)}
+.ring.flash::after{content:'';position:absolute;inset:-3px;border-radius:50%;box-shadow:0 0 0 2px var(--rc),0 0 14px 3px var(--rc);opacity:var(--fo,0)}
+/* TARGET */
+.tgt{height:136px}
+.tg-head{display:flex;justify-content:space-between;align-items:baseline;height:17px;margin-top:5px;font-size:12px}
+.tg-head .n{font-weight:600;color:var(--ink)}
+.tg-head .n.none{color:var(--dim);font-weight:400;font-style:italic}
+.tg-head .h{font:500 10.5px var(--mono);color:var(--muted)}
+.tgbar{height:6px;margin:2px 0 5px;background:#0b0a08;border:1px solid #333}
+.tgbar i{display:block;height:100%;background:#7aa83f;transition:width .15s linear}
+.fx{position:relative;display:grid;grid-template-columns:22px 1fr auto;align-items:center;column-gap:7px;height:22px;margin-top:2px;padding:0 6px 0 3px;background:rgba(0,0,0,.18);border:1px solid #2c271f;transition:opacity .15s}
+.fx::before{content:'';position:absolute;left:-1px;top:3px;bottom:3px;width:3px;background:var(--src,transparent)}
+.fx img{width:18px;height:18px;display:block;border-radius:3px}
+.fx .l{font-size:11.5px;font-weight:600;color:var(--fc,var(--ink))}
+.fx .v{font:600 12px var(--mono);color:var(--ink);white-space:nowrap}
+.fx .v small{font:500 9px var(--sans);color:var(--muted);margin-left:3px;letter-spacing:.04em}
+.fx .v .ba{color:var(--gold2)}
+.fx .t{position:absolute;left:0;bottom:-1px;height:2px;background:var(--fc,#888);opacity:.8}
+.fx.off{background:transparent;border-color:#221e18}
+.fx.off img{opacity:.16;filter:grayscale(1)}
+.fx.off .l,.fx.off .v,.fx.off .t{visibility:hidden}
+.fx.jump{background:rgba(155,229,100,.18)}
+/* HERE */
+.here{height:84px}
+.here .node{margin-top:6px;height:17px;font:700 13px/17px var(--sc);color:var(--ink)}
+.here .terr{display:flex;align-items:center;gap:6px;height:20px;font-size:11.5px;color:var(--ink2)}
+.here .terr img{width:16px;height:16px}
+.here .terr strong{color:#f0d6a7;font-weight:600}
+.here .mix{height:15px;font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.here.fresh{animation:fresh 1.6s ease-out}
+@keyframes fresh{0%{box-shadow:inset 0 0 0 1px var(--gold2),0 0 16px -4px var(--gold)}100%{box-shadow:none}}
+/* PURSE */
+.purse{height:82px}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:6px}
+.pc{position:relative;display:flex;align-items:center;gap:4px;height:22px;padding:0 5px;background:rgba(0,0,0,.22);border:1px solid #2c271f;font-size:10.5px;color:var(--ink2);white-space:nowrap;overflow:hidden}
+.pc img{width:15px;height:15px;flex:none}
+.pc .orb{width:11px;height:11px;flex:none;border-radius:50%;background:radial-gradient(circle at 35% 35%,#e3c6ff,var(--rot) 55%,#4a2a66);margin:0 2px}
+.pc .gl{width:11px;height:11px;flex:none;border-radius:2px 6px 2px 6px;background:radial-gradient(circle at 40% 40%,#b9d98a,#4f6d2c);margin:0 2px}
+.pc b{margin-left:auto;font:600 11px var(--mono);color:var(--ink)}
+.pc.herec{border-color:var(--c);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 40%,transparent)}
+.pc.herec::after{content:'';position:absolute;right:0;top:0;border:5px solid transparent;border-top-color:var(--c);border-right-color:var(--c)}
+.pc.gain{background:color-mix(in srgb,var(--c) 22%,transparent)}
+.pc.gain .pw{font:600 10px var(--mono);color:var(--c)}
+/* shell remnants under the column */
+.rest{margin:0 8px;display:flex;flex-direction:column;gap:5px}
+.rest div{height:24px;padding:0 8px;display:flex;align-items:center;justify-content:space-between;font:700 11px var(--sc);letter-spacing:.1em;color:#8b7c5c}
+/* Grid view: draw the fixed slots */
+.show-grid [data-slot]{outline:1px dashed rgba(240,207,122,.55);outline-offset:-1px}
+.show-grid .sec[data-slot]::after{top:4px;bottom:auto;right:56px}
+.show-grid [data-slot]::after{content:attr(data-slot);position:absolute;right:2px;bottom:1px;font:600 8px var(--mono);color:rgba(240,207,122,.85);background:rgba(0,0,0,.7);padding:0 3px;pointer-events:none;z-index:3}
+
+/* ── The world (bodies and their fx; illustrative, sim-driven) ─────────────── */
+.world{position:absolute;inset:0;overflow:hidden;background:
+  radial-gradient(ellipse 22% 13% at 18% 76%,rgba(16,30,24,.95),rgba(16,30,24,0) 70%),
+  radial-gradient(ellipse 18% 10% at 82% 22%,rgba(16,30,24,.9),rgba(16,30,24,0) 70%),
+  radial-gradient(ellipse 30% 16% at 70% 88%,rgba(18,34,26,.8),rgba(18,34,26,0) 70%),
+  radial-gradient(ellipse 14% 8% at 30% 18%,rgba(14,28,22,.85),rgba(14,28,22,0) 70%),
+  radial-gradient(ellipse 60% 50% at 50% 55%,#33331f,#262718 60%,#1b1c13)}
+.world::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(rgba(130,140,80,.16) 1px,transparent 1.7px),radial-gradient(rgba(10,14,8,.4) 1.5px,transparent 2.2px);background-size:26px 26px,37px 37px;background-position:0 0,13px 9px}
+.pool{position:absolute;border-radius:50%;background:radial-gradient(ellipse at 50% 45%,rgba(10,22,22,.96),rgba(18,36,32,.85) 55%,rgba(40,52,30,0) 72%);box-shadow:inset 0 3px 8px rgba(140,180,140,.10)}
+.stone{position:absolute;width:14px;height:9px;border-radius:50% 50% 40% 40%;background:linear-gradient(#5b5a48,#33332a);box-shadow:0 2px 0 rgba(0,0,0,.4)}
+.world::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 75% 70% at 50% 52%,transparent 55%,rgba(0,0,0,.55))}
+.reed{position:absolute;width:14px;height:22px;background:linear-gradient(90deg,transparent 2px,#4f5a2c 2px,#4f5a2c 3px,transparent 3px,transparent 6px,#5d6a33 6px,#5d6a33 7px,transparent 7px,transparent 10px,#46512a 10px,#46512a 11px,transparent 11px);opacity:.75}
+.bd{position:absolute;width:0;height:0}
+.bd > *{position:absolute;pointer-events:none}
+.bd .sh{left:-26px;top:-9px;width:52px;height:16px;border-radius:50%;background:rgba(0,0,0,.45)}
+.bd .pud{left:-34px;top:-12px;width:68px;height:22px;border-radius:50%;background:radial-gradient(ellipse,rgba(155,229,100,.55),rgba(90,160,50,.25) 60%,transparent 72%);opacity:0}
+.bd .slw{left:-36px;top:-13px;width:72px;height:24px;border-radius:50%;background:radial-gradient(ellipse,rgba(143,184,255,.4),transparent 70%);opacity:0}
+.bd .tgr{left:-34px;top:-12px;width:68px;height:24px;border-radius:50%;border:2px dashed rgba(240,120,90,.85);opacity:0}
+.bd .rt{left:-38px;top:-15px;width:76px;height:28px;opacity:0}
+.bd .rt svg{width:100%;height:100%;overflow:visible}
+.bd .im{left:-48px;top:-92px;width:96px;height:96px;transform-origin:50% 100%}
+.bd .blob{left:-26px;top:-38px;width:52px;height:38px;border-radius:50% 50% 42% 42%/62% 62% 38% 38%;transform-origin:50% 100%;box-shadow:inset -6px -6px 0 rgba(0,0,0,.25),inset 5px 5px 0 rgba(255,255,255,.08)}
+.bd .blob::before,.bd .blob::after{content:'';position:absolute;top:9px;width:7px;height:7px;border-radius:50%;background:#e8e2a0;box-shadow:inset 2px 2px 0 #222}
+.bd .blob::before{left:12px}.bd .blob::after{right:12px}
+.bd .hpo{left:-22px;top:-100px;width:44px;height:5px;background:rgba(0,0,0,.75);border:1px solid rgba(0,0,0,.9)}
+.bd .hpo i{display:block;height:100%;background:#d14b3a}
+.bd.player .hpo i{background:#5ee36a}
+.bd .sg{left:-44px;top:calc(var(--head) / 2 - 44px);width:88px;height:88px;border-radius:50%;border:4px solid rgba(155,229,100,.95);box-shadow:0 0 18px rgba(155,229,100,.7),inset 0 0 14px rgba(155,229,100,.5);opacity:0}
+.bd .gy{left:-26px;top:calc(var(--head) - 50px);width:52px;height:calc(50px - var(--head));border-radius:40% 40% 50% 50%;background:linear-gradient(0deg,rgba(155,229,100,.0),rgba(155,229,100,.55) 40%,rgba(200,255,160,.0));opacity:0;transform-origin:50% 100%}
+.bd .drops{left:-60px;top:calc(var(--head) - 40px);width:120px;height:120px}
+.bd .drops i{position:absolute;width:8px;height:11px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#a8f070;box-shadow:0 0 8px #9be564}
+.bd .pin{left:-46px;top:calc(var(--head) / 2 - 40px);width:92px;height:80px;border-radius:50%;border:3px solid rgba(143,184,255,.95);box-shadow:0 0 14px rgba(143,184,255,.6);opacity:0}
+.proj{position:absolute;width:18px;height:3px;background:linear-gradient(90deg,transparent,#e7e3d2 40%,#fff);border-radius:2px;opacity:0;pointer-events:none;z-index:6;transform-origin:50% 50%}
+.dmgs{position:absolute;inset:0;pointer-events:none;z-index:7}
+.dm{position:absolute;transform:translate(-50%,-50%);font:700 13px var(--mono);color:#f2eee2;text-shadow:1px 1px 0 #000,-1px 0 0 #000,0 -1px 0 #000;white-space:nowrap}
+.dm.pz{color:#a7ef72;font-size:12px}
+.dm.ph{color:#ff8a76}
+.dm.big{font-size:16px}
+
+/* Arrival banner (the client's AreaInformation, as it is) */
+.arrival{position:absolute;top:36%;left:50%;transform:translate(-50%,-50%);width:min(560px,94%);padding:18px 20px;text-align:center;background:linear-gradient(90deg,transparent,rgba(16,17,22,.86) 18%,rgba(16,17,22,.86) 82%,transparent);color:#eee4d1;text-shadow:0 2px 4px #000;z-index:20;pointer-events:none}
+.arrival::before,.arrival::after{content:'';display:block;height:1px;background:linear-gradient(90deg,transparent,#ab9271,transparent)}
+.arrival::before{margin-bottom:12px}.arrival::after{margin-top:12px}
+.arrival .eb{color:#c9b58f;text-transform:uppercase;font-size:10px;letter-spacing:.2em;margin-bottom:6px}
+.arrival h2{font:500 34px/1.15 Georgia,'Times New Roman',serif;letter-spacing:.045em;margin-bottom:6px}
+.arrival .md{font-size:13px;color:#d4cbbb}
+.arrival .terr{margin:10px auto 0;font-size:13px;color:#d9d1c3;display:flex;align-items:center;justify-content:center;gap:6px}
+.arrival .terr strong{color:#f0d6a7}
+.arrival .terr img{width:16px;height:16px}
+
+/* ── Dialogs: Gear tab and the weapon page ────────────────────────────────── */
+.dlg-layer{position:absolute;left:260px;top:0;right:0;bottom:0;z-index:40}
+.dlg-back{position:absolute;inset:0;background:rgba(5,4,3,.66)}
+.dlg{position:absolute;display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--edge2);box-shadow:0 18px 50px rgba(0,0,0,.65)}
+.dlg-tb{flex:none;height:36px;display:flex;align-items:center;justify-content:space-between;padding:0 8px 0 14px;border-bottom:1px solid #0a0907;background:linear-gradient(#2a251d,#1d1a15)}
+.dlg-tb h2{font:700 15px var(--sc);letter-spacing:.06em;color:var(--gold2)}
+.dlg-tb .sub{font:600 10px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-left:12px}
+.dlg-x{width:28px;height:28px;border:1px solid var(--edge2);background:#221e18;color:var(--ink2);cursor:pointer;font-size:15px}
+/* Gear */
+.gear{left:50%;top:70px;width:560px;transform:translateX(-50%)}
+.gear-list{padding:12px;display:flex;flex-direction:column;gap:6px}
+.gitem{display:grid;grid-template-columns:48px 1fr auto;align-items:center;gap:12px;padding:8px 10px;background:var(--ctrl);border:1px solid #3a342a;text-align:left;width:100%}
+.gitem .ic{width:44px;height:44px;display:grid;place-items:center;background:var(--inset);border:1px solid #4a4134}
+.gitem .ic img{width:40px;height:40px}
+.gitem .nm{font:700 14px var(--sc);color:var(--ink)}
+.gitem .mt{font-size:11px;color:var(--muted);margin-top:1px}
+.gitem .sm{font-size:11px;color:var(--ink2);margin-top:2px}
+.gitem.weapon{border-color:#6b5a36;cursor:pointer;background:linear-gradient(90deg,rgba(217,178,92,.10),var(--ctrl) 60%)}
+.gitem.weapon:hover,.gitem.weapon.hover{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+.gitem.weapon .nm{color:var(--gold2)}
+.gitem .go{font:600 11px var(--sans);letter-spacing:.04em;color:var(--gold2);padding:6px 10px;border:1px solid #6b5a36;background:#2c261b;white-space:nowrap}
+.gitem.plain{opacity:.72;cursor:default}
+.gitem .plaintag{font:600 9.5px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:4px 8px;border:1px dashed #4a4236}
+.gear-sec{font:600 9.5px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:6px 2px 0}
+/* Page */
+.page{left:10px;top:10px;right:10px;bottom:10px}
+.pg-scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:#5f5341 transparent}
+.pg-grid{display:grid;grid-template-columns:minmax(0,1fr) 236px;gap:14px;padding:8px 14px 10px}
+.pg-main{display:flex;flex-direction:column;gap:7px;min-width:0}
+.pg-side{display:flex;flex-direction:column;gap:10px;min-width:0}
+.form{display:grid;grid-template-columns:54px 1fr;gap:12px;align-items:center;padding:6px 10px;border:1px solid #3a342a;background:linear-gradient(180deg,rgba(217,178,92,.07),transparent 70%),#1f1c17}
+.form .art{width:54px;height:54px;display:grid;place-items:center;background:var(--inset);border:1px solid #63553e}
+.form .art img{width:48px;height:48px}
+.form .eb{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.form h3{font:700 19px/1.1 var(--display);color:var(--gold2);margin:0 0 1px}
+.form .meta{font-size:11px;color:var(--muted)}
+.form .lanes{display:flex;gap:6px;margin-top:4px}
+.lanechip{padding:1px 8px;border:1px solid var(--lane);border-radius:999px;color:var(--lane);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.grp-h{display:flex;align-items:baseline;gap:10px;margin:2px 0 4px;padding-left:2px}
+.grp-h h4{font:700 13px var(--sc);letter-spacing:.05em;color:var(--ink)}
+.grp-h span{font-size:11px;color:var(--muted)}
+.row{position:relative;display:grid;grid-template-columns:12px 138px minmax(0,1fr) 128px 62px;align-items:center;column-gap:10px;width:100%;height:42px;margin-bottom:4px;padding:3px 8px 3px 12px;background:var(--ctrl);border:1px solid #3a342a;text-align:left;cursor:pointer}
+.row.verb{height:50px}
+.row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lane)}
+.row:hover,.row.hover{border-color:var(--lane);box-shadow:0 0 0 1px color-mix(in srgb,var(--lane) 45%,transparent)}
+.row .rd{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--lane);opacity:.8}
+.row .nm{font:700 13.5px/1.15 var(--sc);color:var(--lane)}
+.row .note{display:inline-block;margin-top:3px;padding:0 5px;border:1px dashed var(--lane);color:var(--lane);font:600 8.5px/14px var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.row .sn{font-size:11.5px;line-height:15px;color:var(--ink2)}
+.row .cs{display:flex;flex-direction:column;align-items:flex-end;gap:1px;font-size:11px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.chips{display:flex;gap:4px}
+.chip b{font-weight:600;color:var(--ink)}
+.chip.short,.chip.short b,.chip.short span{color:var(--danger)!important}
+.req{font-size:10px;color:var(--muted)}
+.req.unmet{color:var(--danger)}
+.stc{justify-self:end;font:700 9.5px var(--sans);letter-spacing:.1em;text-transform:uppercase;padding:4px 7px;border:1px solid transparent;white-space:nowrap}
+.stc.active{color:var(--gold2);border-color:#6b5a36;background:#2c261b}
+.stc.buy{color:#1b160d;background:linear-gradient(#f0cf7a,#c99d45);border-color:#f0cf7a}
+.stc.short{color:var(--muted);border-color:#3a342a}
+.stc.owned{color:var(--ink2);border-color:#4a4236}
+.row.active{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold);background:color-mix(in srgb,var(--gold) 8%,var(--ctrl))}
+.row.active .rd{background:var(--lane);box-shadow:0 0 6px var(--lane);opacity:1}
+.row.short .sn{color:var(--muted)}
+.row.preview{border-color:var(--pl);box-shadow:0 0 0 1px color-mix(in srgb,var(--pl) 40%,transparent),0 0 12px color-mix(in srgb,var(--pl) 22%,transparent)}
+.row.guide-ring{outline:2px solid var(--gold2);outline-offset:2px;animation:teachpulse 1.2s ease-in-out infinite}
+.row .pv{display:none}
+.t2{padding:5px 10px 6px;border:1px solid #2f2a22;background:#191612;opacity:.62}
+.t2 .grp-h{margin:0 0 4px}
+.t2 .ln{display:grid;grid-template-columns:128px 1fr;gap:8px;font-size:11px;line-height:17px}
+.t2 .ln span:first-child{color:var(--muted);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase}
+.t2 .ln i{font-style:normal;color:var(--lane);font-family:var(--sc);font-weight:700;font-size:12px}
+.t2 .ln i + i::before{content:' · ';color:var(--dim)}
+.gate{display:grid;grid-template-columns:54px minmax(0,1fr) 168px;gap:12px;align-items:center;padding:7px 11px;border:1px solid var(--gold);background:linear-gradient(180deg,rgba(217,178,92,.09),transparent 80%),#1f1c17}
+.gate .por{width:54px;height:54px;border-radius:50%;overflow:hidden;border:1px solid var(--gold);background:var(--inset);display:grid;place-items:center}
+.gate .por img{width:72px;height:72px}
+.gate h4{font:700 14px var(--sc);color:var(--gold2)}
+.gate p{font-size:11.5px;line-height:1.4;color:var(--ink);margin:2px 0}
+.gate .pr{display:flex;align-items:center;gap:8px;font-size:10.5px;color:var(--muted)}
+.pips{display:inline-flex;gap:3px}
+.pips i{width:10px;height:10px;border:1px solid var(--gold)}
+.pips i.f{background:var(--gold2)}
+.door{display:flex;flex-direction:column;gap:3px}
+.door .dn{font:700 12px var(--sc);color:var(--ink)}
+.door button{padding:6px 10px;border:1px solid #63553e;background:#2a261f;color:var(--dim);font-weight:700;font-size:11.5px;cursor:not-allowed}
+.door small{font-size:10px;color:var(--danger)}
+.side{padding:9px 10px;border:1px solid #3a342a;background:#1f1c17}
+.side h4{font:700 12.5px var(--sc);color:var(--gold2);margin-bottom:5px;letter-spacing:.04em}
+.sheet{display:flex;flex-direction:column;gap:1px;font-size:11.5px}
+.sheet div{display:flex;justify-content:space-between;padding:2px 4px;margin:0 -4px}
+.sheet dt{color:var(--muted)}
+.sheet dd{color:var(--ink);font-variant-numeric:tabular-nums}
+.sheet .mv{background:rgba(217,178,92,.12)}
+.sheet .mv dt{color:var(--ink)}
+.sheet s{color:var(--dim)}
+.sheet .up{color:var(--ok);font-weight:700}
+.wnote{margin-top:6px;padding-left:7px;border-left:2px solid var(--gold);font-size:10.5px;line-height:1.4;color:var(--muted)}
+.wnote.live{color:var(--ink2)}
+.mats{list-style:none;display:flex;flex-direction:column;gap:7px;font-size:11px}
+.mats li{display:grid;grid-template-columns:16px 1fr auto;gap:7px;align-items:start}
+.mats img{width:16px;height:16px}
+.mats .mn{color:var(--ink)}
+.mats small{display:block;font-size:10px;line-height:1.35;color:var(--muted)}
+.mats b{font:600 11px var(--mono)}
+.side .hint{font-size:10px;color:var(--dim);margin-top:5px;font-style:italic}
+.pg-toast{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);max-width:min(520px,calc(100% - 32px));padding:8px 14px;border:1px solid var(--gold);background:var(--inset);box-shadow:0 8px 24px rgba(0,0,0,.55);font-size:12.5px;line-height:1.4;color:var(--ink);opacity:0;transition:opacity .2s;pointer-events:none;z-index:5}
+.pg-toast.show{opacity:1}
+.pg-toast.warn{border-color:var(--danger)}
+.pg-toast.proto{border-style:dashed;border-color:#8f8571;color:#cfc5b2;font-style:italic}
+
+/* ── First-time overlay and teaching tether ───────────────────────────────── */
+.ovl{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:80}
+#frame.counting *{pointer-events:auto!important}
+#frame.counting .ovl,#frame.counting .ovl *,#frame.counting .tether,#frame.counting .tether *{pointer-events:none!important}
+.tether{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:60}
+
+/* ── Portrait (390 × 844): the phone shell, the spine and the drawer ──────── */
+.v-portrait .dlg-layer{left:0}
+.mtop{position:absolute;left:0;right:0;top:0;height:54px;padding:5px 10px;background:rgba(14,12,9,.97);border-bottom:1px solid #3a342a;z-index:30;font-family:var(--mono)}
+.mtop .r1{display:flex;align-items:center;gap:7px;height:22px}
+.mtop .dot{width:7px;height:7px;border-radius:50%;background:#55cc77}
+.mtop .nm{font:700 12px var(--sc);color:#9fe0a8}
+.mtop .hpbar{flex:1;margin:0;height:9px}
+.mtop .hp{font-size:9.5px;color:var(--ink2)}
+.mtop .zn{font-size:9.5px;color:var(--gold)}
+.mtop .r2{display:flex;align-items:center;gap:7px;height:18px;margin-top:3px}
+.mtop .stance{font-size:8.5px;font-weight:700;color:var(--dim);border:1px solid #3a342a;padding:1px 5px}
+.mworld{position:absolute;left:0;right:0;top:54px;bottom:86px;overflow:hidden}
+.mbottom{position:absolute;left:0;right:0;bottom:0;height:86px;background:rgba(14,12,9,.97);border-top:1px solid #3e3a30;z-index:30}
+.mbottom .mxp{height:30px;padding:5px 10px 0;border-bottom:1px solid rgba(100,88,60,.4);font:600 9px var(--mono);color:var(--ink2)}
+.mbottom .mxp .hd{display:flex;justify-content:space-between;margin-bottom:3px}
+.mbottom .mxp .tr{height:5px;background:#0b0a08;border:1px solid #333}
+.mbottom .mxp .tr i{display:block;height:100%;width:62%;background:linear-gradient(90deg,#6b8f3a,#9be564)}
+.mtabs{display:flex;height:56px}
+.mtab{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;background:none;color:var(--muted);font:600 8px var(--mono);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.mtab .ic{font-size:17px;line-height:1;color:#b8ad98;height:20px;display:grid;place-items:center}
+.mtab .ic img{width:20px;height:20px}
+.mtab.on{color:var(--gold2)}
+.mtab.on .ic{filter:drop-shadow(0 0 6px var(--gold))}
+.mtab .badge{position:absolute;top:7px;right:calc(50% - 15px);width:7px;height:7px;border-radius:50%;background:var(--gold2);box-shadow:0 0 6px var(--gold)}
+.mtab.press{filter:brightness(1.5)}
+.mauto{position:absolute;right:54px;bottom:12px;width:58px;height:58px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#14201a;border:2px solid #3a5a3a;color:var(--ok);font:600 8.5px var(--mono);letter-spacing:.08em;z-index:25;box-shadow:0 3px 12px rgba(0,0,0,.5)}
+.mauto span{font-size:15px}
+.mquest{position:absolute;right:65px;bottom:80px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#221e18;border:2px solid #4a4134;color:#dfa844;font:700 17px var(--mono);z-index:25}
+.mguide{position:absolute;left:8px;top:8px;right:54px;padding:6px 9px 7px;background:rgba(20,18,14,.93);border:1px solid #4a4134;z-index:22}
+.mguide .hd{display:flex;justify-content:space-between;font:700 10px var(--sc);letter-spacing:.12em;color:var(--gold)}
+.mguide .hd span:last-child{font:600 9px var(--sans);letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.mguide .line{margin-top:3px;font-size:11.5px;line-height:1.4;color:var(--ink)}
+.mguide .line.check{font-size:11px;color:var(--ink2)}
+.mguide .line.check::before{content:'✓ ';color:var(--ok)}
+.mguide.collapsed .line{display:none}
+/* The spine: the closed drawer keeps the column's order as one glyph per fact */
+.spine{position:absolute;right:0;top:86px;width:46px;bottom:84px;display:flex;flex-direction:column;background:linear-gradient(90deg,rgba(10,9,7,.88),rgba(18,16,12,.95));border:1px solid #3e3a30;border-right:0;z-index:24;cursor:pointer}
+.spine .ss{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 0;border-bottom:1px solid #2f2a22}
+.spine .ss:last-of-type{border-bottom:0}
+.spine .cap{font:600 7px var(--mono);letter-spacing:.08em;color:#7d7058;text-transform:uppercase}
+.spine .wic{width:30px;height:30px;display:grid;place-items:center;background:var(--inset);border:1px solid #4a4134}
+.spine .wic img{width:28px;height:28px}
+.spine .lp{width:30px;height:4px;background:var(--lane,#3a342a)}
+.spine .ring{position:relative;right:auto;top:auto;width:32px;height:32px}
+.spine .sfx{position:relative;width:34px;height:40px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:1px;padding-top:2px;border:1px solid #2c271f;background:rgba(0,0,0,.25)}
+.spine .sfx::before{content:'';position:absolute;left:-1px;top:3px;bottom:3px;width:2px;background:var(--src,transparent)}
+.spine .sfx img{width:20px;height:20px;border-radius:3px}
+.spine .sfx b{font:600 10px/1 var(--mono);color:var(--ink)}
+.spine .sfx .t{position:absolute;left:0;bottom:0;height:2px;background:var(--fc,#888)}
+.spine .sfx.off{border-color:#211d17;background:transparent}
+.spine .sfx.off img{opacity:.15;filter:grayscale(1)}
+.spine .sfx.off b,.spine .sfx.off .t{visibility:hidden}
+.spine .sfx.jump{background:rgba(155,229,100,.2)}
+.spine .shic{width:22px;height:22px}
+.spine .pc2{display:flex;flex-direction:column;align-items:center;gap:1px;font:600 10px var(--mono);color:var(--ink)}
+.spine .pc2 img{width:18px;height:18px}
+.spine .grip{margin-top:auto;padding:8px 0 10px;text-align:center;font:700 16px var(--sans);color:var(--gold)}
+.spine .ring.teach{outline:2px solid var(--gold2);outline-offset:3px;border-radius:50%;animation:teachpulse 1.2s ease-in-out infinite}
+.spine.fresh .ss.here{animation:fresh 1.6s ease-out}
+.drawer{position:absolute;top:54px;bottom:86px;right:0;width:304px;background:linear-gradient(135deg,#1a1712,#110f0c 40%,#0e0c0a);border-left:1px solid #4a4134;box-shadow:-12px 0 30px rgba(0,0,0,.6);z-index:35;transform:translateX(100%);transition:transform .28s ease}
+.drawer.open{transform:translateX(0)}
+.drawer:not(.open) .dclose{visibility:hidden}
+.drawer .dclose{position:absolute;left:-30px;top:50%;transform:translateY(-50%);width:30px;height:64px;border:1px solid #4a4134;border-right:0;background:#1a1712;color:var(--gold);font-size:16px;cursor:pointer}
+.drawer .col{padding:7px 8px}
+.mtap{position:absolute;inset:0;z-index:34;background:rgba(0,0,0,.25)}
+/* Portrait Gear sheet and page */
+.v-portrait .gear{left:0;right:0;top:auto;bottom:0;width:auto;transform:none;border-left:0;border-right:0;border-bottom:0}
+.v-portrait .gear-list{padding:10px 10px 18px}
+.v-portrait .gitem{grid-template-columns:44px 1fr auto;gap:10px;padding:8px}
+.v-portrait .gitem .go{padding:8px 10px}
+.v-portrait .page{left:0;top:0;right:0;bottom:0;border:0}
+.v-portrait .pg-grid{grid-template-columns:minmax(0,1fr);padding:10px 10px 90px;gap:10px}
+.v-portrait .row{display:block;height:auto;min-height:0;padding:7px 9px 8px 13px}
+.v-portrait .row .rd{position:absolute;left:12px;top:11px}
+.v-portrait .row .nmw{padding-left:18px;padding-right:70px}
+.v-portrait .row .stc{position:absolute;right:8px;top:6px}
+.v-portrait .row .sn{display:block;margin-top:3px;font-size:12px;line-height:16px}
+.v-portrait .row .cs{flex-direction:row;justify-content:space-between;align-items:center;margin-top:5px}
+.v-portrait .row .pv{display:inline-flex;align-items:center;gap:4px;padding:5px 9px;border:1px solid #5a4b30;background:#2a241a;color:var(--gold2);font:600 10px var(--sans);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.v-portrait .row .pv.on{background:var(--gold);color:#1b160d}
+.v-portrait .t2 .ln{grid-template-columns:1fr}
+.v-portrait .gate{grid-template-columns:52px minmax(0,1fr)}
+.v-portrait .gate .por{width:52px;height:52px}
+.v-portrait .gate .door{grid-column:1/-1}
+.v-portrait .form{grid-template-columns:56px 1fr}
+.v-portrait .form .art{width:56px;height:56px}
+.v-portrait .form h3{font-size:19px}
+.pvbar{position:absolute;left:0;right:0;bottom:0;padding:8px 12px 10px;background:rgba(14,12,9,.98);border-top:1px solid var(--pl,#6b5a36);font-size:11.5px;z-index:6;display:none}
+.pvbar.show{display:block}
+.pvbar .ttl{font:700 10px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--pl)}
+.pvbar .chg{margin-top:3px;font:600 12px var(--mono);color:var(--ink)}
+.pvbar .chg .up{color:var(--ok)}
+.v-portrait .pg-toast{bottom:16px}
+.v-portrait .arrival{left:calc(50% - 24px);width:calc(100% - 60px);padding:14px 10px}
+.v-portrait .arrival h2{font-size:26px}
+.v-portrait .arrival .terr{font-size:12px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="bar"></div>
+  <div id="main">
+    <div id="stage"><div id="frameWrap"><div id="frame"></div></div></div>
+    <aside id="aside"></aside>
+  </div>
+</div>
+<script src="../data.js"></script>
+<script>
+'use strict';
+/* =============================================================================
+   Thesis D — The dense sidebar.
+   A classic MMO side column, always visible on desktop and a drawer on portrait:
+   You · Weapon (lean, verb + its clock) · Target (three fixed effect homes) ·
+   Here (the node's territory and shard) · Purse. Fixed sections, fixed order,
+   fixed row heights: nothing reflows when a verb fires or a badge appears.
+   Every name, sentence, cost, colour and number comes from window.UI_PROTO_DATA.
+   ========================================================================== */
+const D = window.UI_PROTO_DATA;
+const DS = D.daggerScenes, PK = D.packets;
+const A = p => (p ? '../../../' + p : '');
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const $ = (sel, root) => (root || document).querySelector(sel);
+const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
+
+/* ── Data lookups ──────────────────────────────────────────────────────────── */
+const PAGES = Object.fromEntries(DS.pages.map(p => [p.key, p]));
+const NODE = Object.fromEntries(D.nodes.map(n => [n.id, n]));
+const FAMS = Object.fromEntries(D.families.swamp.map(f => [f.id, f]));
+const ALL_MON = D.families.swamp.flatMap(f => f.monsters);
+const MON_BY_NAME = Object.fromEntries(ALL_MON.map(m => [m.name, m]));
+const OOZE = ALL_MON.find(m => m.id === 'bog-slime');
+const DAG = D.weapons.find(w => w.lineageId === 'dagger');
+const WDOT = DAG.t1Form.weaponDot;
+const GEAR = DS.gear;
+const WEAPON = GEAR.find(g => g.hasPage);
+const BEAT_SAY = DS.tutorialBeats.find(b => b.id === 'card:dagger-t1-affliction-payoff');
+const LESSON = BEAT_SAY.lesson;
+const CONCEPTS = BEAT_SAY.teaches.map(k => DS.tutorialConcepts[k]);
+const ST = id => D.statuses.target.find(s => s.id === id);
+const POISON = ST('poison-dagger-burn'), SLOWED = ST('ability-slowed'), ROOTED = ST('ability-rooted');
+const DEBUFF_ICONS = D.statuses.playerDebuffIcons;
+const MARK = D.rhythm.marks;
+const HOME_NODE = 'node-t1-swamp-04';
+const NODE_PICK = ['node-t1-swamp-04', 'node-t1-swamp-02', 'node-t1-swamp-05'];
+const t1Band = pg => pg.bands.find(b => b.tier === 1);
+const rowOf = (pg, row) => t1Band(pg).rows.find(r => r.row === row);
+const allCards = pg => pg.bands.flatMap(b => b.rows.flatMap(r => r.cards));
+const cardOf = (pg, id) => allCards(pg).find(c => c.id === id);
+const activeLean = pg => (pg.progress.active.stat ? cardOf(pg, pg.progress.active.stat) : null);
+const activeVerb = pg => (pg.progress.active.payoff ? cardOf(pg, pg.progress.active.payoff) : null);
+const comp = (verbId, leanId) => DS.compositionsT1Slinger.find(c => c.verbId === verbId && c.leanId === (leanId || null));
+const ITW_ID = 'dagger-t1-affliction-payoff';
+const COMP_PURE = comp(ITW_ID, 'dagger-t1-affliction-stat');
+const COMP_ROOT = comp(ITW_ID, 'dagger-t1-control-stat');
+const matOf = (pg, key) => pg.materials.find(m => m.key === key);
+
+/* The prototype combat rule (SCENES.md), built from the export's numbers.
+   Illustrative UI motion, NOT the server's DoT formula. */
+const ATK = DS.playerStats.attack;                 // 26
+const SWING_MS = 500;                              // 1.98 swings/s, rounded per SCENES.md
+const PER_HIT_POISON = ATK * WDOT.convPct;         // 13: the Dagger's reservoir
+const LEAN_BLEED = 0.10;                           // SCENES.md: Coated Edge's light bleed ("a tenth"), fed into the one Poison record
+const TICK_MS = WDOT.tickIntervalMs;               // 1000
+const START_HP = 171;                              // SCENES.md frame
+const MAX_HP = DS.playerStats.maxHp;               // 193
+
+/* Split a verb sentence into its moment half and payload half, using the
+   packet's own moment template (no retyping): the two-colour sentence. */
+function halves(sentence, verbLane, momentColor, payloadColor) {
+  const whole = [{ t: sentence, c: momentColor, r: 'whole' }];
+  if (!verbLane || !momentColor || momentColor === payloadColor) return whole;
+  const mp = PK[verbLane].momentPhrase;
+  const m = sentence.match(new RegExp('^' + mp.text.split(/\{[a-zA-Z]+\}/).map(reEsc).join('(.+?)')));
+  if (!m) return whole;
+  let cut = m[0].length;
+  if (sentence[cut] === ',') cut += 1;
+  return [{ t: sentence.slice(0, cut), c: momentColor, r: 'moment' }, { t: sentence.slice(cut), c: payloadColor, r: 'payload' }];
+}
+const halvesHTML = parts => parts.map(p => `<span class="h-${p.r}" style="--hc:${p.c || 'var(--ink2)'}">${esc(p.t)}</span>`).join('');
+function verbSentenceHTML(verbCard, leanId) {
+  const c = comp(verbCard.id, leanId);
+  if (!c) return esc(verbCard.sentence);
+  return halvesHTML(halves(c.sentence, c.verbLane, c.momentColor, c.payloadColor));
+}
+
+/* ── State ─────────────────────────────────────────────────────────────────── */
+const S = {
+  scene: 1, view: 'desktop', first: false, embed: false, grid: false,
+  open: 'none',            // scenes 1/2: 'none' | 'gear' | 'page'
+  bought: false,           // scenes 1/2: Into the Wound bought
+  hoverLean: null,         // desktop lean preview
+  previewLean: null,       // portrait lean preview (tap control)
+  mode: 'pure',            // scene 3: 'pure' | 'composed'
+  auto: false,             // scenes 3/4: auto-play
+  node: HOME_NODE,         // scene 5
+  arrivedAt: 0,            // scene 5 (wall ms)
+  drawer: false,           // portrait drawer
+  justFilled: false,
+};
+let toast = null;          // {text, kind, at, where}
+
+/* ── The fight (deterministic, event-driven) ──────────────────────────────── */
+const SIM = {
+  reset(mode) {
+    this.mode = mode; this.t = 0; this.php = START_HP; this.cap = 0; this.n = 0;
+    this.firings = []; this.hits = []; this.ticks = []; this.pHits = []; this.kills = [];
+    this.nextSwing = 0; this.respawnAt = null; this.wave = 0; this.spawn(0, 0);
+  },
+  spawn(t, swingAt) {
+    this.wave++;
+    const born = this.wave === 1 ? t - 1000 : t;   // the first pull is already standing there
+    const mk = (id, atk) => ({ id, hp: OOZE.hp, max: OOZE.hp, owed: 0, nextTick: null, slowUntil: -1, rootUntil: -1, dead: false, deadAt: null, nextAtk: t + atk, spawnAt: born, surgeAt: -1e9, rootAt: -1e9 });
+    this.mobs = [mk('A', 900), mk('B', 1500)];
+    this.nextSwing = swingAt;
+  },
+  target() { return this.mobs.find(m => !m.dead) || null; },
+  advanceTo(T) {
+    for (let guard = 0; guard < 20000; guard++) {
+      let next = Infinity;
+      if (this.respawnAt != null) next = this.respawnAt;
+      else {
+        if (this.target()) next = Math.min(next, this.nextSwing);
+        for (const m of this.mobs) if (!m.dead) { if (m.nextTick != null) next = Math.min(next, m.nextTick); next = Math.min(next, m.nextAtk); }
+      }
+      if (!(next <= T)) break;
+      this.t = next;
+      if (this.respawnAt != null) { this.respawnAt = null; this.php = START_HP; this.spawn(next, next + 300); continue; }
+      for (const m of this.mobs) if (!m.dead && m.nextTick != null && m.nextTick <= next) this.tick(m, next);
+      for (const m of this.mobs) if (!m.dead && m.nextAtk <= next) this.mobAttack(m, next);
+      if (this.nextSwing <= next && this.target()) this.swing(next);
+    }
+    this.t = T;
+    const old = T - 3000;
+    for (const k of ['hits', 'ticks', 'pHits']) if (this[k].length > 60) this[k] = this[k].filter(e => e.t > old);
+  },
+  swing(t) {
+    const m = this.target();
+    const before = m.owed;
+    m.hp -= ATK; this.hits.push({ t, id: m.id, v: ATK });
+    m.owed += PER_HIT_POISON + (this.mode === 'pure' ? ATK * LEAN_BLEED : 0);
+    if (m.nextTick == null) m.nextTick = t + TICK_MS;
+    if (this.mode === 'composed') m.slowUntil = t + SWING_MS;          // Tendon Cut: slowed until the next swing
+    if (before > 0 && t >= this.cap) {                                 // the moment: a hit on an afflicted target, clock clear
+      this.n++; this.cap = t + COMP_PURE.trigger.capMs;
+      if (this.mode === 'pure') {                                      // the re-dose: adds what it still owes
+        const b = m.owed; m.owed += m.owed * COMP_PURE.payoff.magnitude; m.surgeAt = t;
+        this.firings.push({ t, n: this.n, id: m.id, before: b, after: m.owed });
+      } else {                                                         // composed: root 2 s
+        m.rootUntil = t + COMP_ROOT.payoff.durationMs; m.rootAt = t;
+        this.firings.push({ t, n: this.n, id: m.id });
+      }
+    }
+    if (m.hp <= 0) this.kill(m, t);
+    this.nextSwing = t + SWING_MS;
+  },
+  tick(m, t) {
+    const d = Math.min(m.owed, Math.ceil(m.owed / 4));
+    m.hp -= d; m.owed -= d; this.ticks.push({ t, id: m.id, v: d });
+    if (m.owed < 0.5) { m.owed = 0; m.nextTick = null; } else m.nextTick = t + TICK_MS;
+    if (m.hp <= 0) this.kill(m, t);
+  },
+  mobAttack(m, t) {
+    this.php = Math.max(1, this.php - OOZE.attack);
+    this.pHits.push({ t, id: m.id, v: OOZE.attack });
+    m.nextAtk = t + OOZE.attackCooldownMs;
+  },
+  kill(m, t) {
+    m.dead = true; m.deadAt = t; m.owed = 0; m.nextTick = null; m.slowUntil = -1; m.rootUntil = -1;
+    this.kills.push({ t, id: m.id });
+    if (this.mobs.every(x => x.dead)) this.respawnAt = t + 1300;
+  },
+  lastFiring() { return this.firings.length ? this.firings[this.firings.length - 1] : null; },
+};
+SIM.reset('pure');
+let simPlaying = false, simStopAt = Infinity, lastWall = 0;
+
+/* ── Scene context: which page model each scene reads ─────────────────────── */
+function ctxPage() {
+  if (S.scene === 1 || S.scene === 2) return S.bought ? PAGES['scene2-after-buy'] : PAGES.scene2;
+  if (S.scene === 3 && S.mode === 'composed') return PAGES['scene3-composed'];
+  return PAGES['scene2-after-buy'];
+}
+const inCombat = () => S.scene === 3 || S.scene === 4;
+const ctxNode = () => NODE[S.scene === 5 ? S.node : HOME_NODE];
+
+/* =============================================================================
+   THE COLUMN
+   ========================================================================== */
+function youHTML() {
+  return `<section class="sec panel you" data-slot="You">
+    <h4 class="sec-h"><span><span class="ix">I</span>You</span><span style="font:600 9.5px var(--sans);letter-spacing:.06em;color:var(--muted)">Tier ${PAGES.scene2.wallet.playerTier}</span></h4>
+    <div class="nm">${esc(DS.className)}<span data-live="php">${START_HP} / ${MAX_HP}</span></div>
+    <div class="hpbar" data-live="phpbar"><i style="width:${(START_HP / MAX_HP) * 100}%"></i></div>
+    <div class="st"><span>DPS <b>${esc(DS.playerStats.dps)}</b></span><span><b>${DS.playerStats.attacksPerSecond.toFixed(2)}</b>/s</span><span>Atk <b>${ATK}</b></span></div>
+  </section>`;
+}
+
+function weaponSecHTML(pg, where) {
+  const lean = activeLean(pg), verb = activeVerb(pg);
+  const lr = rowOf(pg, 'stat'), vr = rowOf(pg, 'payoff');
+  const c = verb ? comp(verb.id, lean && lean.id) : null;
+  const pageOn = S.open === 'page';
+  const ringHTML = verb
+    ? `<div class="ring ready" data-live="ring" style="--rc:${c.momentColor}" data-fact="ring" ${firstAttr('ring')}><svg viewBox="0 0 40 40"><circle class="tr" cx="20" cy="20" r="16"/><circle class="fl" cx="20" cy="20" r="16" stroke-dasharray="100.5" stroke-dashoffset="0"/></svg><span class="rt">${MARK.ready}</span></div>
+       <img class="glyph px" src="${A(c.ringGlyph)}" alt="" title="payload">`
+    : `<div class="ring ghost"><svg viewBox="0 0 40 40"><circle class="tr" cx="20" cy="20" r="16"/></svg></div>`;
+  return `<section class="sec panel" data-slot="Weapon">
+    <h4 class="sec-h"><span><span class="ix">II</span>Weapon</span><button class="sec-link${pageOn ? ' on' : ''}" data-act="open-page" ${firstAttr('colpage')}>Page ›</button></h4>
+    <div class="wpn" data-act="open-page" data-slot="Form" ${firstAttr('colweapon')}><div class="ic"><img class="px" src="${A(pg.header.iconArt)}" alt=""></div>
+      <div><b data-fact="name">${esc(pg.header.name)}</b><small>Tier ${WEAPON.tier} · ${esc(DAG.homeBiomeName)}</small></div></div>
+    <div class="crow crow-lean" data-slot="Lean" style="--lane:${lean ? lean.laneColor : '#4a4236'}" ${firstAttr('leanrow')}>
+      <span class="crow-k">${esc(lr.title)}</span>
+      <span class="crow-n" data-fact="name">${lean ? esc(lean.name) : '—'}</span>
+      <span class="crow-s" data-fact="sentence">${lean ? esc(lean.sentence) : esc(lr.question)}</span>
+    </div>
+    <div class="crow crow-verb${verb ? '' : ' empty'}${S.justFilled ? ' filled' : ''}" data-slot="Verb" data-live="verbrow" style="--lane:${verb ? verb.laneColor : '#4a4236'}" ${firstAttr('verbrow')}>
+      <span class="crow-k">${esc(vr.title)}</span>
+      <span class="crow-n"${verb ? ' data-fact="name"' : ''}>${verb ? esc(verb.name) : '—'}</span>
+      <span class="crow-s" data-fact="${verb ? 'sentence' : 'teach'}">${verb ? halvesHTML(halves(c.sentence, c.verbLane, c.momentColor, c.payloadColor)) : esc(vr.question)}</span>
+      ${ringHTML}
+    </div>
+  </section>`;
+}
+
+function fxRowHTML(kind, where) {
+  const meta = {
+    dot: { icon: POISON.icon, label: POISON.label, color: POISON.color, help: POISON.help && POISON.help.help, slot: 'Owes' },
+    slow: { icon: DEBUFF_ICONS.slow, label: SLOWED.prettified, color: '#8fb8ff', help: null, slot: 'Slowed' },
+    hold: { icon: DEBUFF_ICONS.root, label: ROOTED.prettified, color: '#8fb8ff', help: null, slot: 'Held' },
+  }[kind];
+  return `<div class="fx off" data-live="fx-${kind}" data-slot="${meta.slot}" style="--fc:${meta.color}" ${meta.help ? `title="${esc(meta.help)}"` : ''} ${firstAttr('fx-' + kind)}>
+    <img class="px" src="${A(meta.icon)}" alt=""><span class="l">${esc(meta.label)}</span><span class="v"></span><i class="t"></i></div>`;
+}
+
+function targetSecHTML() {
+  return `<section class="sec panel tgt" data-slot="Target">
+    <h4 class="sec-h"><span><span class="ix">III</span>Target</span></h4>
+    <div class="tg-head"><span class="n none" data-live="tgname">—</span><span class="h" data-live="tghp"></span></div>
+    <div class="tgbar"><i data-live="tgbar" style="width:0%"></i></div>
+    ${fxRowHTML('dot')}${fxRowHTML('slow')}${fxRowHTML('hold')}
+  </section>`;
+}
+
+function hereLines(node) {
+  const label = node.mapTileLabel;                    // the map's own label, split at its first " · "
+  const cut = label.indexOf(' · ');
+  const name = cut > 0 ? label.slice(0, cut) : node.displayName;
+  const rest = cut > 0 ? label.slice(cut + 3) : '';
+  const terr = node.arrival.return ? node.arrival.return.territory : '';
+  const restHTML = rest.startsWith(terr) && terr ? `<strong>${esc(terr)}</strong>${esc(rest.slice(terr.length))}` : esc(rest);
+  const mix = Object.entries(node.resolvedShares || {}).sort((a, b) => b[1] - a[1])
+    .map(([fid, share]) => `${(node.fieldedByFamily[fid] || []).join(', ')} ${Math.round(share * 100)}%`).join(' · ');
+  return { name, restHTML, mix };
+}
+
+function hereSecHTML(node) {
+  const h = hereLines(node);
+  return `<section class="sec panel here" data-slot="Here" data-live="here" ${firstAttr('here')}>
+    <h4 class="sec-h"><span><span class="ix">IV</span>Here</span></h4>
+    <div class="node">${esc(h.name)}</div>
+    <div class="terr" data-fact="shard"><img class="px" src="${A(PK[node.shard].shardIcon)}" alt="">${h.restHTML}</div>
+    <div class="mix" title="${esc(h.mix)}">${esc(h.mix)}</div>
+  </section>`;
+}
+
+function purseSecHTML(pg, node) {
+  const cells = [];
+  for (const m of pg.materials) {
+    if (m.kind === 'shard') {
+      const here = node && node.shard === m.key;
+      cells.push(`<div class="pc${here ? ' herec' : ''}" style="--c:${m.color}" title="${esc(m.name)} · ${esc(m.where)}" data-fact="shard" data-live="pc-${m.key}" ${here ? firstAttr('pursehere') : ''}><img class="px" src="${A(PK[m.key].shardIcon)}" alt=""><span class="pw" data-w="${esc(PK[m.key].shardWord)}">${esc(PK[m.key].shardWord)}</span><b>${m.held}</b></div>`);
+    }
+  }
+  const rot = matOf(pg, 'purple');
+  const cap = pg.materials.find(m => m.kind === 'capstone');
+  const gate = pg.gates[0];
+  cells.push(`<div class="pc" style="--c:var(--rot)" title="${esc(rot.name)}" data-fact="shard"><span class="orb"></span><span>${esc(D.weapons.find(w => w.lineageId === 'dagger').essence.label)}</span><b>${rot.held}</b></div>`);
+  cells.push(`<div class="pc" style="grid-column:span 2;--c:var(--gold)" title="${esc(cap.name)} · ${esc(cap.where)}" data-fact="shard"><span class="gl"></span><span>${esc(cap.name)}</span><b>${cap.held}/${gate.pips.length}</b></div>`);
+  return `<section class="sec panel purse" data-slot="Purse">
+    <h4 class="sec-h"><span><span class="ix">V</span>Purse</span></h4>
+    <div class="pgrid">${cells.join('')}</div>
+  </section>`;
+}
+
+function columnHTML(where) {
+  const pg = ctxPage(), node = ctxNode();
+  return `<div class="col">
+    ${where === 'desktop' ? youHTML() : ''}
+    ${weaponSecHTML(pg, where)}
+    ${targetSecHTML()}
+    ${hereSecHTML(node)}
+    ${purseSecHTML(pg, node)}
+  </div>`;
+}
+
+/* ── The spine: the closed drawer, the column's order one glyph per fact ──── */
+function spineHTML() {
+  const pg = ctxPage(), node = ctxNode();
+  const lean = activeLean(pg), verb = activeVerb(pg);
+  const c = verb ? comp(verb.id, lean && lean.id) : null;
+  const nodeMat = matOf(pg, node.shard);
+  const fx = (kind, icon, color) => `<div class="sfx off" data-live="sfx-${kind}" style="--fc:${color}" ${firstAttr('sfx-' + kind)}><img class="px" src="${A(icon)}" alt=""><b></b><i class="t"></i></div>`;
+  return `<div class="spine" data-act="drawer-open" ${firstAttr('spine')}>
+    <div class="ss" ${firstAttr('spinewpn')}>
+      <span class="cap">Wpn</span>
+      <div class="wic"><img class="px" src="${A(pg.header.iconArt)}" alt=""></div>
+      <i class="lp" style="--lane:${lean ? lean.laneColor : '#3a342a'}" title="${lean ? esc(lean.name) : ''}"${lean ? ' data-fact="state"' : ''}></i>
+      ${verb ? `<div class="ring ready" data-live="ring" style="--rc:${c.momentColor}" data-fact="ring" ${firstAttr('ring')}><svg viewBox="0 0 40 40"><circle class="tr" cx="20" cy="20" r="16"/><circle class="fl" cx="20" cy="20" r="16" stroke-dasharray="100.5" stroke-dashoffset="0"/></svg><span class="rt">${MARK.ready}</span></div>` : `<div class="ring ghost"><svg viewBox="0 0 40 40"><circle class="tr" cx="20" cy="20" r="16"/></svg></div>`}
+    </div>
+    <div class="ss">
+      <span class="cap">Tgt</span>
+      ${fx('dot', POISON.icon, POISON.color)}${fx('slow', DEBUFF_ICONS.slow, '#8fb8ff')}${fx('hold', DEBUFF_ICONS.root, '#8fb8ff')}
+    </div>
+    <div class="ss here" ${firstAttr('spinehere')}>
+      <span class="cap">Here</span>
+      <img class="shic px" src="${A(PK[node.shard].shardIcon)}" alt="" title="${esc(node.mapTileLabel)}" data-fact="shard">
+    </div>
+    <div class="ss">
+      <span class="cap">Purse</span>
+      <div class="pc2" data-fact="shard" data-live="spc"><img class="px" src="${A(PK[node.shard].shardIcon)}" alt="">${nodeMat ? nodeMat.held : 0}</div>
+    </div>
+    <div class="grip">‹</div>
+  </div>`;
+}
+
+/* =============================================================================
+   SHELL PIECES (the client's furniture, kept as the real HUD lays it out)
+   ========================================================================== */
+function guideHTML(where) {
+  let lines = [], collapsed = false, chapter = BEAT_SAY.chapter;
+  if (S.scene === 1 || S.scene === 2) lines = [`<p class="line" data-fact="teach" ${firstAttr('guide')}>${esc(BEAT_SAY.say)}</p>`];
+  else if (S.scene === 4) {
+    const n = SIM.n;
+    if (n <= 1) lines = [`<p class="line" data-fact="teach" data-live="guideline" ${firstAttr('guide')}>${esc(LESSON.read)}</p>`];
+    else if (n === 2) lines = [`<p class="line" data-fact="teach" data-live="guideline" ${firstAttr('guide')}>${esc(LESSON.ring)}</p>`];
+    else if (n === 3) lines = CONCEPTS.map((cpt, i) => `<p class="line check" data-fact="teach" ${i === 0 ? firstAttr('guide') : ''}>${esc(cpt.name)}</p>`);
+    else collapsed = true;
+  } else collapsed = true;
+  const steps = DS.tutorialBeats.map((b, i) => `<i class="${i < 3 || (S.scene >= 3) ? 'done' : ''}"></i>`).join('');
+  if (where === 'portrait') {
+    return `<div class="mguide${collapsed ? ' collapsed' : ''}" data-live="guide"><div class="hd"><span>Guide</span><span>${esc(chapter)}</span></div>${lines.join('')}</div>`;
+  }
+  return `<div class="panel guide${collapsed ? ' collapsed' : ''}" data-live="guide">
+    <div class="ptitle"><span>Guide</span><button class="stopbtn">Stop</button></div>
+    <div class="route">${steps}</div>
+    <div class="chap">${esc(chapter)}</div>
+    ${lines.join('')}
+    <div class="acts"><button class="gbtn">Next</button></div>
+  </div>`;
+}
+
+function rightRailHTML() {
+  const gearBadge = (S.scene === 1 || S.scene === 2) && !S.bought;
+  const navs = [['Passive Tree', '✦'], ['Abilities', '⚡'], ['Stances', '⛨'], ['Rites', '☉'], ['Runes', 'ᚱ'], ['Inventory', '▣'], ['Gear', null], ['Crafting', '⚒'], ['Map', '⌖'], ['Settings', '⚙']];
+  const nav = navs.map(([label, ic]) => {
+    if (label === 'Gear') {
+      return `<button class="navb${S.open === 'gear' || S.open === 'page' ? ' on' : ''}" data-act="open-gear" ${firstAttr('gearbtn')}${gearBadge ? ' data-fact="state" title="A card is affordable"' : ''}><span class="ic"><img class="px" src="${A(WEAPON.iconArt)}" alt=""></span>Gear${gearBadge ? '<span class="badge"></span>' : ''}</button>`;
+    }
+    return `<button class="navb"><span class="ic">${ic}</span>${label}</button>`;
+  }).join('');
+  return `<div class="rail rail-r">
+    ${guideHTML('desktop')}
+    <div class="panel behav"><div class="autobar"><span>Auto Combat</span><b>${inCombat() ? 'ON' : 'OFF'}</b></div></div>
+    <div class="panel"><div class="ptitle"><span>Character</span></div><nav class="nav">${nav}</nav></div>
+  </div>`;
+}
+
+function xpHTML() {
+  const lv = ctxPage().wallet.biomeLevels.swamp;
+  return `<div class="xpbar"><div class="hd"><span>${esc(NODE[HOME_NODE].biomeName)} · Lv ${lv}</span><span>T${NODE[HOME_NODE].tier}</span></div><div class="tr"><i></i></div></div>`;
+}
+
+/* ── The world ─────────────────────────────────────────────────────────────── */
+function worldGeom() {
+  if (S.view === 'desktop') return { size: 96, P: [300, 440], A: [425, 418], B: [462, 505], idle: [[560, 250], [640, 360], [180, 210]] };
+  return { size: 84, P: [118, 430], A: [214, 410], B: [236, 492], idle: [[250, 250], [70, 590], [270, 600]] };
+}
+/* Where each 64 px sprite's body starts and ends (its PNG alpha box), so feet sit on the anchor. */
+const SPRITE_BOX = { 'reload.png': [2, 62], 'swampslime.png': [14, 50], 'fen-hexer.png': [1, 62] };
+function spriteBox(art, size) {
+  const b = art ? SPRITE_BOX[art.split('/').pop()] || [0, 60] : null;
+  return b ? { top: -size * b[1] / 64, head: -size * (b[1] - b[0]) / 64 } : { top: 0, head: -38 };
+}
+function bodyHTML(id, kind, x, y, extra) {
+  const size = worldGeom().size;
+  const bx = spriteBox(kind.art, size);
+  const img = kind.art ? `<img class="im px" src="${A(kind.art)}" alt="" style="left:${-size / 2}px;top:${bx.top}px;width:${size}px;height:${size}px" ${firstAttr('body-' + id)}>`
+    : `<div class="blob" style="background:${kind.color}" ${firstAttr('body-' + id)}></div>`;
+  return `<div class="bd ${extra || ''}" data-body="${id}" data-head="${bx.head}" style="left:${x}px;top:${y}px;--head:${bx.head}px">
+    <div class="sh"></div><div class="pud"></div><div class="slw"></div><div class="tgr"></div>
+    <div class="rt"><svg viewBox="0 0 76 28"><ellipse cx="38" cy="14" rx="34" ry="11" fill="none" stroke="#8fb8ff" stroke-width="2.5"/><path d="M10 6 L14 20 M28 2 L30 22 M48 2 L46 22 M66 6 L62 20" stroke="#8fb8ff" stroke-width="3" stroke-linecap="round"/></svg></div>
+    <div class="gy"></div>${img}<div class="drops"></div><div class="sg"></div><div class="pin"></div>
+    <div class="hpo" style="top:${bx.head - 10}px"><i style="width:100%"></i></div>
+  </div>`;
+}
+function worldHTML() {
+  const g = worldGeom();
+  const reeds = (S.view === 'desktop' ? [[80, 120], [690, 160], [120, 600], [600, 640], [360, 120], [700, 520], [40, 400]] : [[30, 120], [300, 150], [40, 640], [310, 380], [160, 610]])
+    .map(([x, y]) => `<div class="reed" style="left:${x}px;top:${y}px"></div>`).join('');
+  const pools = (S.view === 'desktop' ? [[40, 470, 200, 80], [500, 70, 220, 64], [560, 600, 170, 56], [150, 150, 120, 40]] : [[0, 280, 130, 48], [200, 620, 150, 44], [150, 90, 110, 36]])
+    .map(([x, y, w, h]) => `<div class="pool" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px"></div>`).join('');
+  const stones = (S.view === 'desktop' ? [[250, 300], [700, 300], [330, 640], [90, 330], [610, 210]] : [[40, 420], [300, 300], [120, 690]])
+    .map(([x, y]) => `<div class="stone" style="left:${x}px;top:${y}px"></div>`).join('');
+  let bodies = bodyHTML('P', { art: D.art.slingerSprite }, g.P[0], g.P[1], 'player');
+  if (inCombat()) {
+    const ooze = { art: D.art.monsters[OOZE.id], color: OOZE.color };
+    bodies += bodyHTML('A', ooze, g.A[0], g.A[1]) + bodyHTML('B', ooze, g.B[0], g.B[1]);
+  } else if (S.scene === 5) {
+    bodies += rosterBodies(g);
+  } else {
+    const ooze = { art: D.art.monsters[OOZE.id], color: OOZE.color };
+    bodies += g.idle.slice(0, 2).map((p, i) => bodyHTML('I' + i, ooze, p[0], p[1])).join('');
+  }
+  return `<div class="world" data-live="world">${pools}${stones}${reeds}${bodies}<div class="proj" data-live="proj"></div><div class="dmgs" data-live="dmgs"></div></div>`;
+}
+function rosterBodies(g) {
+  const node = NODE[S.node];
+  const spots = S.view === 'desktop'
+    ? [[470, 430], [590, 500], [410, 610], [640, 390], [670, 640], [540, 620], [560, 120]]
+    : [[230, 480], [150, 600], [280, 560], [80, 520], [215, 660], [285, 380], [60, 650]];
+  return node.spawnCycle.slice(0, 7).map((fid, i) => {
+    const name = (node.fieldedByFamily[fid] || [])[0];
+    const m = MON_BY_NAME[name];
+    return bodyHTML('R' + i, { art: D.art.monsters[m.id], color: m.color }, spots[i][0], spots[i][1], 'roster');
+  }).join('');
+}
+
+function arrivalHTML() {
+  const node = NODE[S.node];
+  const kind = S.node === HOME_NODE ? 'discovery' : 'newNode';
+  const line = node.arrival[kind];
+  return `<div class="arrival" data-live="arrival" data-dur="${D.arrival.durationsMs[kind === 'newNode' ? 'new-node' : 'discovery']}">
+    ${kind === 'discovery' ? '<div class="eb">New territory</div>' : ''}
+    <h2>${esc(node.displayName)}</h2>
+    <div class="md">${esc(node.biomeName)} · Tier ${node.tier}</div>
+    <div class="terr" data-fact="shard" ${firstAttr('banner')}><img class="px" src="${A(PK[line.shard].shardIcon)}" alt=""><strong>${esc(line.territory)}</strong><span> · ${esc(line.detail)}</span></div>
+  </div>`;
+}
+
+/* =============================================================================
+   GEAR TAB AND WEAPON PAGE
+   ========================================================================== */
+const STAT_LABEL = Object.fromEntries(PAGES.scene2.statSheet.rows.map(r => [r.key, r.label]));
+function statLine(mods) {
+  return Object.entries(mods).map(([k, v]) => {
+    const label = STAT_LABEL[k] || (k === 'evasion' ? 'Evasion' : k);
+    const val = (k === 'evasion' || k === 'damageReduction') ? Math.round(v * 100) + '%' : '+' + v;
+    return `${label} ${val}`;
+  }).join(' · ');
+}
+const SLOT_LABEL = { weapon: 'Weapon', armor: 'Armor', recovery: 'Recovery', mobility: 'Boots' };   // client SLOT_LABELS
+const biomeName = b => (D.nodes.find(n => n.biome === b) || {}).biomeName || b;
+function gearHTML() {
+  const items = GEAR.map(g => {
+    const meta = `${SLOT_LABEL[g.slot]} · Tier ${g.tier} · ${esc(biomeName(g.biome))}`;
+    if (g.hasPage) {
+      return `<button class="gitem weapon" data-act="open-page" data-fact="state" ${firstAttr('gearweapon')}><span class="ic"><img class="px" src="${A(g.iconArt)}" alt=""></span>
+        <span><span class="nm">${esc(g.name)}</span><span class="mt" style="display:block">${meta}</span><span class="sm" style="display:block">${statLine(g.statModifiers)}</span></span>
+        <span class="go">Weapon page ›</span></button>`;
+    }
+    return `<div class="gitem plain" ${g.slot === 'armor' ? firstAttr('gearplain') : ''}><span class="ic"><img class="px" src="${A(g.iconArt)}" alt=""></span>
+      <span><span class="nm">${esc(g.name)}</span><span class="mt" style="display:block">${meta}</span><span class="sm" style="display:block">${statLine(g.statModifiers)}</span></span>
+      <span class="plaintag" data-fact="state">Plain item</span></div>`;
+  });
+  return `<div class="dlg-back" data-act="close"></div>
+  <div class="dlg gear" role="dialog" aria-label="Gear">
+    <div class="dlg-tb"><h2>Gear</h2><button class="dlg-x" data-act="close">×</button></div>
+    <div class="gear-list">${items[0]}<div style="height:4px"></div>${items.slice(1).join('')}</div>
+  </div>`;
+}
+
+function chipsHTML(card) {
+  if (!card.chips.length) return '';
+  return `<span class="chips">${card.chips.map(ch => `<span class="chip${ch.short ? ' short' : ''}" title="${esc(ch.title)}" data-fact="cost"><b>${ch.amount}</b> <span style="color:${ch.color || 'var(--rot)'}">${esc(ch.word)}</span></span>`).join('')}</span>`;
+}
+function stateCell(card) {
+  const map = { active: 'active', buy: 'buy', short: 'short', owned: 'owned', locked: 'short' };
+  const word = card.state === 'buy' ? 'Buy' : card.state === 'active' ? card.tag : card.state === 'owned' ? 'Owned' : card.state;
+  return `<span class="stc ${map[card.state] || ''}" data-fact="state">${esc(word)}</span>`;
+}
+/* A verb's caveat re-reads with the lean, like its sentence (from the composition row). */
+function verbNote(verbCard, leanId) { const c = comp(verbCard.id, leanId); return c ? c.note : verbCard.note; }
+const noteHTML = note => (note ? `<br><span class="note" data-fact="note">${esc(note)}</span>` : '');
+function cardRowHTML(card, pg, isVerb) {
+  const lean = activeLean(pg);
+  const sentence = isVerb ? verbSentenceHTML(card, lean && lean.id) : esc(card.sentence);
+  const ring = (S.scene === 1 || S.scene === 2) && !S.bought && card.id === ITW_ID && S.open === 'page' ? ' guide-ring' : '';
+  const first = card.id === ITW_ID ? firstAttr('itw') : card.id === 'dagger-t1-affliction-stat' ? firstAttr('coated') : '';
+  const pv = !isVerb ? `<span class="pv${S.previewLean === card.id ? ' on' : ''}" data-act="preview" data-lean="${card.id}" ${card.id === 'dagger-t1-control-stat' ? firstAttr('pv-tendon') : ''}>◉ Preview</span>` : '';
+  return `<button class="row${isVerb ? ' verb' : ''} ${card.state}${ring}" style="--lane:${card.laneColor}" data-act="press" data-card="${card.id}" ${!isVerb ? `data-lean="${card.id}"` : `data-verb="${card.id}"`} ${first}>
+    <span class="rd"></span>
+    <span class="nmw"><span class="nm" data-fact="name">${esc(card.name)}</span><span class="notew">${noteHTML(isVerb ? verbNote(card, lean && lean.id) : card.note)}</span></span>
+    <span class="sn" data-fact="sentence" data-sentence="${card.id}">${sentence}</span>
+    <span class="cs">${chipsHTML(card)}${card.requirement ? `<span class="req${card.requirement.met ? '' : ' unmet'}" data-fact="req">${esc(card.requirement.text)}</span>` : ''}${pv}</span>
+    ${stateCell(card)}
+  </button>`;
+}
+function pageHTML() {
+  const pg = ctxPage(), h = pg.header, portrait = S.view === 'portrait';
+  const t1 = t1Band(pg);
+  const groups = t1.rows.map(r => `<div><div class="grp-h"><h4>${esc(r.title)}</h4><span data-fact="teach">${esc(r.question)}</span></div>
+    ${r.cards.map(c => cardRowHTML(c, pg, r.row === 'payoff')).join('')}</div>`).join('');
+  const t2 = pg.bands.find(b => b.tier === 2);
+  const t2HTML = t2 ? `<div class="t2"><div class="grp-h"><h4>Tier 2</h4><span data-fact="state">${esc(t2.rows[0].question)}</span></div>
+    ${t2.rows.map(r => `<div class="ln"><span>${esc(r.title)}</span><span>${r.cards.map(c => `<i style="--lane:${c.laneColor}" title="${esc(c.sentence)}" data-fact="name">${esc(c.name)}</i>`).join('')}</span></div>`).join('')}</div>` : '';
+  const g = pg.gates[0];
+  const gate = `<section class="gate"><div class="por"><img class="px" src="${A(D.art.bosses[g.biome])}" alt=""></div>
+    <div><h4 data-fact="gate">The gate: ${esc(g.bossName)}</h4><p data-fact="gate">${esc(g.sentence)}</p>
+    <div class="pr"><span class="pips" data-fact="gate">${g.pips.map(f => `<i class="${f ? 'f' : ''}"></i>`).join('')}</span><span data-fact="gate">${esc(g.progressLine)}</span></div></div>
+    ${g.doors.map(d => `<div class="door"><span class="dn" data-fact="gate">${esc(d.name)}</span><button disabled>${esc(d.label)}</button><small data-fact="req">${esc(d.reason)}</small></div>`).join('')}</section>`;
+  const mats = pg.materials.filter(m => m.where || portrait).map(m => {
+    const icon = m.kind === 'shard' ? `<img class="px" src="${A(PK[m.key].shardIcon)}" alt="">` : m.kind === 'essence' ? '<span class="orb" style="display:block;width:12px;height:12px;margin:2px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#e3c6ff,var(--rot) 55%,#4a2a66)"></span>' : '<span style="display:block;width:12px;height:12px;margin:2px;border-radius:2px 6px 2px 6px;background:radial-gradient(circle at 40% 40%,#b9d98a,#4f6d2c)"></span>';
+    return `<li>${icon}<span><span class="mn">${esc(m.name)}</span>${m.where ? `<small data-fact="where">${esc(m.where)}</small>` : ''}</span>${portrait ? `<b data-fact="shard">${m.held}</b>` : ''}</li>`;
+  }).join('');
+  return `<div class="dlg-back" data-act="close"></div>
+  <div class="dlg page" role="dialog" aria-label="Weapon page">
+    <div class="dlg-tb"><div style="display:flex;align-items:baseline"><h2>${esc(h.name)}</h2><span class="sub">Weapon page</span></div><button class="dlg-x" data-act="close">×</button></div>
+    <div class="pg-scroll"><div class="pg-grid">
+      <div class="pg-main">
+        <header class="form"><div class="art"><img class="px" src="${A(h.iconArt)}" alt=""></div>
+          <div><div class="eb">${esc(h.eyebrow)}</div><h3 data-fact="name">${esc(h.name)}</h3><div class="meta">${esc(h.meta)}</div>
+          <div class="lanes">${h.lanes.map(l => `<span class="lanechip" style="--lane:${l.color}" data-fact="lane">${esc(l.name)}</span>`).join('')}</div></div></header>
+        ${groups}${t2HTML}${gate}
+      </div>
+      <aside class="pg-side">
+        <section class="side" data-live="sheet">${sheetHTML(null)}</section>
+        <section class="side"><h4>${portrait ? 'Materials' : 'Where shards drop'}</h4><ul class="mats">${mats}</ul>${portrait ? '' : '<div class="hint">Counts live in your Purse, left.</div>'}</section>
+      </aside>
+    </div></div>
+    <div class="pvbar" data-live="pvbar"></div>
+    <div class="pg-toast" data-live="pgtoast"></div>
+  </div>`;
+}
+function sheetHTML(leanId) {
+  const pg = ctxPage();
+  const sheet = leanId ? pg.leanHover[leanId] : pg.statSheet;
+  const rows = sheet.rows.map(r => r.after
+    ? `<div class="mv" data-fact="sheet"><dt>${esc(r.label)}</dt><dd><s>${esc(r.before)}</s> → <span class="up">${esc(r.after)}</span></dd></div>`
+    : `<div><dt>${esc(r.label)}</dt><dd>${esc(r.before)}</dd></div>`).join('');
+  return `<h4>Stat sheet</h4><dl class="sheet">${rows}</dl><p class="wnote${leanId ? ' live' : ''}" data-fact="teach">${esc(sheet.note)}</p>`;
+}
+
+/* Lean preview: the sheet shows before → after; every verb re-reads with that lean. */
+function applyPreview(leanId) {
+  const pg = ctxPage();
+  const frame = $('#frame');
+  const lean = leanId ? cardOf(pg, leanId) : null;
+  for (const row of $$('.row[data-verb]', frame)) {
+    const vid = row.getAttribute('data-verb');
+    const card = cardOf(pg, vid);
+    const sn = $('.sn', row);
+    const readLean = leanId || (activeLean(pg) && activeLean(pg).id);
+    sn.innerHTML = verbSentenceHTML(card, readLean);
+    $('.notew', row).innerHTML = noteHTML(verbNote(card, readLean));
+    row.classList.toggle('preview', !!leanId);
+    if (lean) row.style.setProperty('--pl', lean.laneColor);
+  }
+  for (const row of $$('.row[data-lean]', frame)) row.classList.toggle('hover', row.getAttribute('data-lean') === leanId);
+  const sheet = $('[data-live="sheet"]', frame);
+  if (sheet) sheet.innerHTML = sheetHTML(leanId);
+  const bar = $('[data-live="pvbar"]', frame);
+  if (bar) {
+    if (leanId && S.view === 'portrait') {
+      const hov = pg.leanHover[leanId];
+      const moved = hov.rows.filter(r => r.after);
+      bar.style.setProperty('--pl', lean.laneColor);
+      bar.innerHTML = `<div class="ttl">◉ ${esc(lean.name)}</div>${moved.length ? moved.map(r => `<div class="chg" data-fact="sheet">${esc(r.label)} ${esc(r.before)} → <span class="up">${esc(r.after)}</span></div>`).join('') : ''}<div class="wnote live" data-fact="teach">${esc(hov.note)}</div>`;
+      bar.classList.add('show');
+    } else { bar.classList.remove('show'); bar.innerHTML = ''; }
+  }
+  for (const pv of $$('.pv', frame)) pv.classList.toggle('on', pv.getAttribute('data-lean') === leanId);
+}
+
+/* =============================================================================
+   FIRST-TIME MARKERS: which three elements, per scene and state
+   ========================================================================== */
+function firstPlan() {
+  const p = S.view === 'portrait';
+  switch (S.scene) {
+    case 1:
+      if (S.open === 'gear') return ['gearweapon', 'gearplain', p ? 'spinewpn' : 'colweapon'];
+      if (S.open === 'page') return S.bought ? [p ? 'itw' : 'verbrow', 'toast', 'itw'] : ['itw', 'coated', p ? 'pv-tendon' : 'verbrow'];
+      return ['guide', 'gearbtn', p ? 'spinewpn' : 'verbrow'];
+    case 2:
+      if (S.open !== 'page') return ['guide', 'gearbtn', p ? 'spinewpn' : 'verbrow'];
+      return S.bought ? [p ? 'itw' : 'verbrow', 'toast', 'itw'] : ['itw', 'coated', p ? 'pv-tendon' : 'verbrow'];
+    case 3: return ['ring', 'body-' + curTargetId(), p ? 'sfx-' + (S.mode === 'composed' ? 'hold' : 'dot') : 'fx-' + (S.mode === 'composed' ? 'hold' : 'dot')];
+    case 4: return SIM.n <= 3 ? ['body-' + curTargetId(), p ? 'ring' : 'verbrow', 'guide'] : ['body-' + curTargetId(), 'ring', p ? 'sfx-dot' : 'fx-dot'];
+    case 5: return ['banner', p ? 'spinehere' : 'here', p ? 'body-R0' : 'pursehere'];
+  }
+  return [];
+}
+function curTargetId() { const f = SIM.lastFiring(); const t = SIM.target(); return t ? t.id : (f ? f.id : 'A'); }
+function firstAttr(key) { return `data-fk="${key}"`; }
+function firstTargets() {
+  const keys = firstPlan();
+  return keys.map(k => {
+    if (k === 'toast') return $('[data-live="pgtoast"].show', $('#frame')) || $('[data-live="toastline"].show', $('#frame'));
+    if (k === 'itw-cost') { const r = $('.row[data-card="' + ITW_ID + '"] .cs', $('#frame')); return r; }
+    const els = $$(`[data-fk="${k}"]`, $('#frame')).filter(visible);
+    return els[0] || null;
+  });
+}
+function visible(el) {
+  if (!el || !el.getClientRects().length) return false;
+  const cs = getComputedStyle(el);
+  if (cs.visibility === 'hidden' || +cs.opacity < 0.05) return false;
+  const r = el.getBoundingClientRect(), fr = $('#frame').getBoundingClientRect();
+  return r.right > fr.left && r.left < fr.right && r.bottom > fr.top && r.top < fr.bottom && r.width > 0;
+}
+
+/* =============================================================================
+   BUILD (structure) and PAINT (live cells, every frame)
+   ========================================================================== */
+const FW = () => (S.view === 'desktop' ? 1280 : 390);
+const FH = () => (S.view === 'desktop' ? 720 : 844);
+
+function build() {
+  const fr = $('#frame');
+  fr.className = (S.view === 'desktop' ? 'v-desktop' : 'v-portrait') + (S.grid ? ' show-grid' : '');
+  const dialog = S.open === 'gear' ? gearHTML() : S.open === 'page' ? pageHTML() : '';
+  const banner = S.scene === 5 ? arrivalHTML() : '';
+  if (S.view === 'desktop') {
+    fr.innerHTML = `
+      <div class="rail rail-l" data-live="railL">${columnHTML('desktop')}
+        <div class="rest"><div class="panel"><span>Combat log</span><span>▸</span></div><div class="panel"><span>Bestiary</span><span>▸</span></div></div></div>
+      <div class="canvas">${worldHTML()}${xpHTML()}<div class="autoc">Auto Combat <b>${inCombat() ? 'ON' : 'OFF'}</b></div>${banner}<div class="toastline" data-live="toastline"></div></div>
+      ${rightRailHTML()}
+      ${dialog ? `<div class="dlg-layer">${dialog}</div>` : ''}
+      <svg class="tether" data-live="tether"></svg><svg class="ovl" data-live="ovl"></svg>`;
+  } else {
+    const tabs = [['Stats', '▤'], ['Skills', '✦'], ['Bag', '▣'], ['Gear', null], ['Craft', '⚒'], ['Map', '⌖'], ['More', '☰']].map(([l, ic]) => l === 'Gear'
+      ? `<button class="mtab${S.open !== 'none' ? ' on' : ''}" data-act="open-gear" ${firstAttr('gearbtn')}${(S.scene <= 2 && !S.bought) ? ' data-fact="state"' : ''}><span class="ic"><img class="px" src="${A(WEAPON.iconArt)}" alt=""></span>Gear${(S.scene <= 2 && !S.bought) ? '<span class="badge"></span>' : ''}</button>`
+      : `<button class="mtab"><span class="ic">${ic}</span>${l}</button>`).join('');
+    const lv = ctxPage().wallet.biomeLevels.swamp;
+    fr.innerHTML = `
+      <div class="mtop"><div class="r1"><span class="dot"></span><span class="nm">${esc(DS.className)}</span><div class="hpbar" data-live="phpbar"><i style="width:${(START_HP / MAX_HP) * 100}%"></i></div><span class="hp" data-live="php">${START_HP}/${MAX_HP}</span><span class="zn">${esc(NODE[HOME_NODE].biomeName)} T${NODE[HOME_NODE].tier}</span></div>
+        <div class="r2"><span class="stance">No stance</span></div></div>
+      <div class="mworld">${worldHTML()}${guideHTML('portrait')}${banner}
+        <button class="mquest">!</button><button class="mauto"><span>${inCombat() ? '❚❚' : '▶'}</span>AUTO</button>
+        ${spineHTML()}
+        <div class="mtap" data-act="drawer-close" style="display:${S.drawer ? 'block' : 'none'}"></div>
+        <div class="toastline" data-live="toastline" style="bottom:90px;max-width:300px"></div></div>
+      <div class="drawer${S.drawer ? ' open' : ''}" data-live="drawer"><button class="dclose" data-act="drawer-close">›</button>${columnHTML('drawer')}</div>
+      <div class="mbottom"><div class="mxp"><div class="hd"><span>${esc(NODE[HOME_NODE].biomeName)} · Lv ${lv}</span><span>T${NODE[HOME_NODE].tier}</span></div><div class="tr"><i></i></div></div><nav class="mtabs">${tabs}</nav></div>
+      ${dialog ? `<div class="dlg-layer">${dialog}</div>` : ''}
+      <svg class="tether" data-live="tether"></svg><svg class="ovl" data-live="ovl"></svg>`;
+  }
+  S.justFilled = false;
+  if (S.open === 'page') applyPreview(S.view === 'desktop' ? S.hoverLean : S.previewLean);
+  renderToast();
+  fit();
+  paint(true);
+}
+
+/* Live-cell writer: also records which cells moved (the motion budget meter). */
+const moved = new Map();
+function setText(el, v) { if (el && el.textContent !== String(v)) { el.textContent = v; moved.set(el, performance.now()); } }
+function setHTML(el, v) { if (el && el.__h !== v) { el.innerHTML = v; el.__h = v; moved.set(el, performance.now()); } }
+function setCls(el, c, on) { if (el && el.classList.contains(c) !== !!on) { el.classList.toggle(c, !!on); moved.set(el, performance.now()); } }
+
+function paint(force) {
+  const fr = $('#frame');
+  if (!fr.firstElementChild) return;
+  const combat = inCombat();
+  const t = SIM.t;
+  const tgt = combat ? SIM.target() : null;
+  // the last target that matters for the column: current, or the one that just died
+  const shown = tgt || (combat ? SIM.mobs.slice().sort((a, b) => (b.deadAt || 0) - (a.deadAt || 0))[0] : null);
+  const showLive = shown && (!shown.dead || t - shown.deadAt < 700);
+
+  /* YOU */
+  const php = combat ? SIM.php : START_HP;
+  for (const el of $$('[data-live="php"]', fr)) setText(el, S.view === 'desktop' ? `${Math.ceil(php)} / ${MAX_HP}` : `${Math.ceil(php)}/${MAX_HP}`);
+  for (const el of $$('[data-live="phpbar"]', fr)) {
+    el.firstElementChild.style.width = (php / MAX_HP) * 100 + '%';
+    const hurt = combat && SIM.pHits.some(h => t - h.t >= 0 && t - h.t < 180);
+    setCls(el, 'hurt', hurt);
+  }
+
+  /* WEAPON: the verb's clock */
+  const lastF = combat ? SIM.lastFiring() : null;
+  for (const ring of $$('[data-live="ring"]', fr)) {
+    let rem = combat ? Math.max(0, SIM.cap - t) : 0;
+    const fill = rem > 0 ? 1 - rem / COMP_PURE.trigger.capMs : 1;
+    $('.fl', ring).setAttribute('stroke-dashoffset', String(100.5 * (1 - fill)));
+    setText($('.rt', ring), rem > 0 ? (rem / 1000).toFixed(1) : MARK.ready);
+    setCls(ring, 'ready', rem <= 0);
+    const since = lastF ? t - lastF.t : 1e9;
+    ring.classList.toggle('flash', since >= 0 && since < 600);
+    ring.style.setProperty('--fo', since >= 0 && since < 600 ? String(1 - since / 600) : '0');
+    const teach = S.scene === 4 && SIM.n <= 3 && !(SIM.n === 3 && since > 1800) && S.view === 'portrait';
+    ring.classList.toggle('teach', teach);
+  }
+  for (const vr of $$('[data-live="verbrow"]', fr)) {
+    const since = lastF ? t - lastF.t : 1e9;
+    setCls(vr, 'fire', combat && since >= 0 && since < 700);
+    const teach = S.scene === 4 && SIM.n <= 3 && !(SIM.n === 3 && since > 1800);
+    vr.classList.toggle('teach', teach);
+  }
+
+  /* TARGET: three fixed homes */
+  for (const el of $$('[data-live="tgname"]', fr)) {
+    setText(el, showLive ? OOZE.name : '—');
+    el.classList.toggle('none', !showLive);
+  }
+  for (const el of $$('[data-live="tghp"]', fr)) setText(el, showLive ? `${Math.max(0, Math.ceil(shown.hp))} / ${shown.max}` : '');
+  for (const el of $$('[data-live="tgbar"]', fr)) el.style.width = showLive ? Math.max(0, shown.hp / shown.max) * 100 + '%' : '0%';
+  const live = showLive && !shown.dead ? shown : null;
+  const teachF = S.scene === 4 && lastF && lastF.n <= 3 && t - lastF.t >= 0 && t - lastF.t < 1600 && lastF.before != null;
+  const dotOn = !!(live && live.owed > 0);
+  const slowOn = !!(live && t < live.slowUntil);
+  const holdOn = !!(live && t < live.rootUntil);
+  const jump = lastF && t - lastF.t >= 0 && t - lastF.t < 600 && live && lastF.id === live.id;
+  for (const el of $$('[data-live="fx-dot"]', fr)) {
+    setCls(el, 'off', !dotOn); el.toggleAttribute('data-fact', dotOn); if (dotOn) el.setAttribute('data-fact', 'badge');
+    el.style.setProperty('--src', dotOn ? COMP_PURE.momentColor : 'transparent');
+    const v = $('.v', el);
+    if (dotOn) setHTML(v, teachF ? `<span class="ba">${Math.round(lastF.before)} → ${Math.round(lastF.after)}</span><small>owed</small>` : `${Math.round(live.owed)}<small>owed</small>`);
+    el.classList.toggle('jump', !!(jump && S.mode === 'pure'));
+    $('.t', el).style.width = dotOn ? Math.min(100, live.owed / 1.6) + '%' : '0';
+  }
+  for (const el of $$('[data-live="fx-slow"]', fr)) {
+    setCls(el, 'off', !slowOn); el.toggleAttribute('data-fact', slowOn); if (slowOn) el.setAttribute('data-fact', 'badge');
+    el.style.setProperty('--src', slowOn ? '#8fb8ff' : 'transparent');
+    $('.t', el).style.width = slowOn ? ((live.slowUntil - t) / SWING_MS) * 100 + '%' : '0';
+  }
+  for (const el of $$('[data-live="fx-hold"]', fr)) {
+    setCls(el, 'off', !holdOn); el.toggleAttribute('data-fact', holdOn); if (holdOn) el.setAttribute('data-fact', 'badge');
+    el.style.setProperty('--src', holdOn ? COMP_ROOT.payloadColor : 'transparent');
+    if (holdOn) setText($('.v', el), ((live.rootUntil - t) / 1000).toFixed(1) + ' s');
+    $('.t', el).style.width = holdOn ? ((live.rootUntil - t) / COMP_ROOT.payoff.durationMs) * 100 + '%' : '0';
+  }
+  // the spine's copies of the same three homes
+  for (const el of $$('[data-live="sfx-dot"]', fr)) {
+    setCls(el, 'off', !dotOn); el.toggleAttribute('data-fact', dotOn); if (dotOn) el.setAttribute('data-fact', 'badge');
+    el.style.setProperty('--src', dotOn ? COMP_PURE.momentColor : 'transparent');
+    if (dotOn) setText($('b', el), Math.round(teachF ? lastF.after : live.owed));
+    el.classList.toggle('jump', !!(jump && S.mode === 'pure'));
+  }
+  for (const el of $$('[data-live="sfx-slow"]', fr)) {
+    setCls(el, 'off', !slowOn); el.toggleAttribute('data-fact', slowOn); if (slowOn) el.setAttribute('data-fact', 'badge');
+    $('.t', el).style.width = slowOn ? ((live.slowUntil - t) / SWING_MS) * 100 + '%' : '0';
+  }
+  for (const el of $$('[data-live="sfx-hold"]', fr)) {
+    setCls(el, 'off', !holdOn); el.toggleAttribute('data-fact', holdOn); if (holdOn) el.setAttribute('data-fact', 'badge');
+    if (holdOn) setText($('b', el), ((live.rootUntil - t) / 1000).toFixed(1));
+    $('.t', el).style.width = holdOn ? ((live.rootUntil - t) / COMP_ROOT.payoff.durationMs) * 100 + '%' : '0';
+  }
+
+  /* PURSE: a kill pays the node's shard (amount per kill not in the export: [n]) */
+  const node = ctxNode();
+  const lastKill = combat && SIM.kills.length ? SIM.kills[SIM.kills.length - 1] : null;
+  const gain = lastKill && t - lastKill.t >= 0 && t - lastKill.t < 1200;
+  for (const el of $$(`[data-live="pc-${node.shard}"]`, fr)) {
+    el.classList.toggle('gain', !!gain);
+    const w = $('.pw', el);
+    if (w) setText(w, gain ? '+[n]' : w.getAttribute('data-w'));
+  }
+
+  /* WORLD */
+  paintWorld();
+  /* GUIDE (scene 4 changes its line with the firing count) */
+  if (S.scene === 4) {
+    const key = SIM.n <= 1 ? 'r' : SIM.n === 2 ? 'g' : SIM.n === 3 ? 'c' : 'x';
+    if (fr.__guideKey !== key) { fr.__guideKey = key; const g = $('[data-live="guide"]', fr); if (g) g.outerHTML = guideHTML(S.view === 'desktop' ? 'desktop' : 'portrait'); }
+  }
+  paintTether();
+  paintArrival();
+  paintFirst();
+}
+
+function bob(m, t) {
+  // Normal squash; slowed: half the speed; rooted: frozen with a tremble.
+  if (t < m.rootUntil) return { sy: 1, dx: Math.sin(t / 22) * 1.2 };
+  const period = t < m.slowUntil ? 1700 : 850;
+  return { sy: 1 + 0.06 * Math.sin((t / period) * Math.PI * 2 + (m.id === 'B' ? 1.7 : 0)), dx: 0 };
+}
+function paintWorld() {
+  const fr = $('#frame');
+  const world = $('[data-live="world"]', fr);
+  if (!world) return;
+  const g = worldGeom();
+  const now = performance.now();
+  const combat = inCombat();
+  const t = combat ? SIM.t : now;
+  const playerEl = $('[data-body="P"]', world);
+  // player
+  if (playerEl) {
+    const hurt = combat && SIM.pHits.some(h => t - h.t >= 0 && t - h.t < 150);
+    const im = $('.im', playerEl);
+    if (im) im.style.filter = hurt ? 'drop-shadow(0 0 6px #ff4a3a) brightness(1.25)' : 'none';
+    let px = g.P[0];
+    if (S.scene === 5) { const k = Math.min(1, (now - S.arrivedAt) / 900); px = g.P[0] - 90 * (1 - k); }
+    playerEl.style.left = px + 'px';
+    const hpo = $('.hpo i', playerEl); if (hpo) hpo.style.width = ((combat ? SIM.php : START_HP) / MAX_HP) * 100 + '%';
+  }
+  if (!combat) {
+    for (const el of $$('.bd:not(.player)', world)) {
+      const k = el.getAttribute('data-body');
+      const ph = (k.charCodeAt(1) || 0) * 0.9;
+      const sy = 1 + 0.05 * Math.sin(now / 850 * Math.PI * 2 + ph);
+      const im = $('.im', el) || $('.blob', el);
+      if (im) im.style.transform = `scaleY(${sy}) scaleX(${2 - sy})`;
+    }
+    $('[data-live="proj"]', world).style.opacity = 0;
+    $('[data-live="dmgs"]', world).innerHTML = '';
+    return;
+  }
+  const tgt = SIM.target();
+  for (const m of SIM.mobs) {
+    const el = $(`[data-body="${m.id}"]`, world);
+    if (!el) continue;
+    const base = m.id === 'A' ? g.A : g.B;
+    const b = bob(m, t);
+    const atk = SIM.pHits.find(h => h.id === m.id && t - h.t >= 0 && t - h.t < 220);
+    const lunge = atk ? Math.sin(((t - atk.t) / 220) * Math.PI) * -14 : 0;
+    const appear = Math.min(1, Math.max(0, (t - m.spawnAt) / 400));
+    const fade = m.dead ? Math.max(0, 1 - (t - m.deadAt) / 600) : 1;
+    el.style.left = base[0] + lunge + b.dx + 'px';
+    el.style.top = base[1] + (m.dead ? (t - m.deadAt) / 30 : 0) + 'px';
+    el.style.opacity = String(Math.min(appear, fade));
+    const im = $('.im', el);
+    const hit = SIM.hits.find(h => h.id === m.id && t - h.t >= 0 && t - h.t < 90);
+    const poisonA = Math.min(1, m.owed / 90);
+    const surge = t - m.surgeAt >= 0 && t - m.surgeAt < 900 ? 1 - (t - m.surgeAt) / 900 : 0;
+    const rooted = t < m.rootUntil;
+    if (im) {
+      im.style.transform = `scaleY(${b.sy}) scaleX(${2 - b.sy})`;
+      const glow = poisonA > 0 ? `drop-shadow(0 0 ${3 + poisonA * 7 + surge * 10}px rgba(155,229,100,${0.35 + poisonA * 0.4 + surge * 0.25}))` : '';
+      im.style.filter = [hit ? 'brightness(1.45)' : '', glow, rooted ? 'saturate(.55) hue-rotate(40deg) brightness(.9)' : ''].join(' ').trim() || 'none';
+    }
+    $('.pud', el).style.opacity = String(Math.min(1, poisonA * 0.9 + surge));
+    $('.pud', el).style.transform = `scale(${0.7 + poisonA * 0.5 + surge * 0.6})`;
+    $('.slw', el).style.opacity = t < m.slowUntil ? '1' : '0';
+    $('.tgr', el).style.opacity = tgt && tgt.id === m.id ? '1' : '0';
+    $('.rt', el).style.opacity = rooted ? '1' : '0';
+    const pinK = t - m.rootAt >= 0 && t - m.rootAt < 500 ? (t - m.rootAt) / 500 : -1;
+    const pin = $('.pin', el);
+    pin.style.opacity = pinK >= 0 ? String(1 - pinK) : '0';
+    pin.style.transform = pinK >= 0 ? `scale(${1.6 - pinK * 0.7})` : 'scale(1)';
+    const sg = $('.sg', el);
+    sg.style.opacity = surge > 0 ? String(surge) : '0';
+    sg.style.transform = `scale(${0.45 + (1 - surge) * 1.5})`;
+    // the re-dose: droplets thrown up out of the body
+    const drops = $('.drops', el);
+    const gy = $('.gy', el);
+    gy.style.opacity = surge > 0.45 ? String((surge - 0.45) / 0.55) : '0';
+    gy.style.transform = `scaleY(${0.4 + (1 - surge) * 1.2})`;
+    if (surge > 0) {
+      const k = 1 - surge;
+      drops.innerHTML = [0, 1, 2, 3, 4, 5, 6, 7, 8].map(i => {
+        const ang = -Math.PI / 2 + (i - 4) * 0.36;
+        const r = 10 + k * 62;
+        const x = 56 + Math.cos(ang) * r, y = 52 + Math.sin(ang) * r + k * k * 70;
+        return `<i style="left:${x}px;top:${y}px;opacity:${Math.min(1, surge * 1.4)}"></i>`;
+      }).join('');
+    } else if (poisonA > 0 && !m.dead) {
+      const k = (t % 900) / 900;
+      drops.innerHTML = `<i style="left:${50 + (m.id === 'A' ? -6 : 8)}px;top:${46 + k * 30}px;opacity:${(1 - k) * poisonA};transform:scale(.6)"></i>`;
+    } else drops.innerHTML = '';
+    const hpo = $('.hpo i', el); if (hpo) hpo.style.width = Math.max(0, m.hp / m.max) * 100 + '%';
+  }
+  // the thrown blade, just before each swing lands
+  const proj = $('[data-live="proj"]', world);
+  const until = SIM.nextSwing - t;
+  if (tgt && until >= 0 && until < 150 && SIM.respawnAt == null) {
+    const k = 1 - until / 150;
+    const base = tgt.id === 'A' ? g.A : g.B;
+    const x0 = g.P[0] + 18, y0 = g.P[1] - g.size * 0.55, x1 = base[0] - 6, y1 = base[1] - g.size * 0.35;
+    const ang = Math.atan2(y1 - y0, x1 - x0);
+    proj.style.opacity = '1';
+    proj.style.left = x0 + (x1 - x0) * k - 9 + 'px';
+    proj.style.top = y0 + (y1 - y0) * k + 'px';
+    proj.style.transform = `rotate(${ang}rad)`;
+  } else proj.style.opacity = '0';
+  // small damage numbers (the shell's)
+  const dm = [];
+  for (const h of SIM.hits) { const age = t - h.t; if (age >= 0 && age < 650) { const base = h.id === 'A' ? g.A : g.B; dm.push(`<div class="dm" style="left:${base[0] + 14}px;top:${base[1] - g.size - 4 - age / 25}px;opacity:${1 - age / 650}">${h.v}</div>`); } }
+  for (const h of SIM.ticks) { const age = t - h.t; if (age >= 0 && age < 800) { const base = h.id === 'A' ? g.A : g.B; dm.push(`<div class="dm pz" style="left:${base[0] - 16}px;top:${base[1] - g.size + 10 - age / 30}px;opacity:${1 - age / 800}">${Math.round(h.v)}</div>`); } }
+  for (const h of SIM.pHits) { const age = t - h.t; if (age >= 0 && age < 700) dm.push(`<div class="dm ph" style="left:${g.P[0] - 10}px;top:${g.P[1] - g.size - 2 - age / 28}px;opacity:${1 - age / 700}">-${h.v}</div>`); }
+  $('[data-live="dmgs"]', world).innerHTML = dm.join('');
+}
+
+/* Scene 4 teaching: a tether from the verb's clock to the body it just changed. */
+function paintTether() {
+  const fr = $('#frame');
+  const svg = $('[data-live="tether"]', fr);
+  if (!svg) return;
+  svg.setAttribute('viewBox', `0 0 ${FW()} ${FH()}`);
+  const f = SIM.lastFiring();
+  const age = f ? SIM.t - f.t : 1e9;
+  if (S.scene !== 4 || !f || f.n > 3 || age < 0 || age > 1500 || (S.view === 'portrait' && S.drawer)) { if (svg.__on) { svg.innerHTML = ''; svg.__on = false; } return; }
+  const from = $$('[data-live="ring"]', fr).filter(visible)[0];
+  const body = $(`[data-body="${f.id}"] .im`, fr) || $(`[data-body="${f.id}"] .blob`, fr);
+  if (!from || !body) return;
+  const a = rel(from), b = rel(body);
+  const leftward = b.x + b.w / 2 < a.x;            // portrait: the spine sits right of the fight
+  const x0 = leftward ? a.x - 2 : a.x + a.w + 2, y0 = a.y + a.h / 2, x1 = b.x + b.w / 2, y1 = b.y + b.h * 0.62;
+  const k = Math.min(1, age / 350), fade = age > 1100 ? 1 - (age - 1100) / 400 : 1;
+  const cx = (x0 + x1) / 2, cy = Math.min(y0, y1) - 60;
+  svg.innerHTML = `<path d="M${x0} ${y0} Q${cx} ${cy} ${x1} ${y1}" fill="none" stroke="#f0cf7a" stroke-width="2.5" stroke-dasharray="6 5" pathLength="100" style="stroke-dasharray:${k * 100} 100;opacity:${fade}" />
+    <circle cx="${x1}" cy="${y1}" r="${10 + k * 8}" fill="none" stroke="#f0cf7a" stroke-width="2" opacity="${fade * k}"/>`;
+  svg.__on = true;
+}
+function rel(el) {
+  const fr = $('#frame').getBoundingClientRect(), r = el.getBoundingClientRect(), s = scale;
+  return { x: (r.left - fr.left) / s, y: (r.top - fr.top) / s, w: r.width / s, h: r.height / s };
+}
+
+/* Scene 5: the banner holds per arrival kind, then fades (the client's timing). */
+function paintArrival() {
+  const el = $('[data-live="arrival"]', $('#frame'));
+  if (!el) return;
+  const dur = +el.getAttribute('data-dur');
+  const age = performance.now() - S.arrivedAt;
+  const k = age / dur;
+  const op = k < 0 ? 0 : k < 0.1 ? k / 0.1 : k < 0.76 ? 1 : k < 1 ? 1 - (k - 0.76) / 0.24 : 0;
+  el.style.opacity = String(op);
+  el.style.visibility = op > 0.02 ? 'visible' : 'hidden';
+}
+
+/* First-time: three numbered markers, everything else dimmed. */
+function paintFirst() {
+  const svg = $('[data-live="ovl"]', $('#frame'));
+  if (!svg) return;
+  if (!S.first) { if (svg.__on) { svg.innerHTML = ''; svg.__on = false; } return; }
+  const W = FW(), H = FH();
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const targets = firstTargets();
+  const holes = [], marks = [];
+  targets.forEach((el, i) => {
+    if (!el || !visible(el)) return;
+    const r = rel(el);
+    const pad = 4;
+    const x = Math.max(1, r.x - pad), y = Math.max(1, r.y - pad), w = Math.min(W - x - 1, r.w + pad * 2), h = Math.min(H - y - 1, r.h + pad * 2);
+    holes.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="5" fill="#000"/>`);
+    const mx = Math.min(W - 16, Math.max(16, x - 2)), my = Math.min(H - 16, Math.max(16, y - 2));
+    marks.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="5" fill="none" stroke="#f0cf7a" stroke-width="2"/>
+      <circle cx="${mx}" cy="${my}" r="14" fill="#f0cf7a" stroke="#1b160d" stroke-width="2"/><text x="${mx}" y="${my + 5}" text-anchor="middle" font-family="Cinzel,Georgia,serif" font-weight="700" font-size="16" fill="#1b160d">${i + 1}</text>`);
+  });
+  svg.innerHTML = `<defs><mask id="fm"><rect width="${W}" height="${H}" fill="#fff"/>${holes.join('')}</mask></defs>
+    <rect width="${W}" height="${H}" fill="rgba(4,3,2,.74)" mask="url(#fm)"/>${marks.join('')}`;
+  svg.__on = true;
+}
+
+/* ── Toasts ─────────────────────────────────────────────────────────────────── */
+function showToast(text, kind) { toast = { text, kind: kind || 'ok', at: performance.now() }; renderToast(); }
+function renderToast() {
+  const fr = $('#frame');
+  const onPage = S.open === 'page';
+  const el = onPage ? $('[data-live="pgtoast"]', fr) : $('[data-live="toastline"]', fr);
+  for (const other of $$('[data-live="pgtoast"],[data-live="toastline"]', fr)) if (other !== el) other.classList.remove('show');
+  if (!el) return;
+  const alive = toast && performance.now() - toast.at < 2800;
+  el.className = (onPage ? 'pg-toast' : 'toastline') + (alive ? ' show' : '') + (alive && toast.kind !== 'ok' ? ' ' + toast.kind : '');
+  if (alive) { el.textContent = toast.text; el.setAttribute('data-fact', 'toast'); } else el.removeAttribute('data-fact');
+}
+
+/* =============================================================================
+   INTERACTION
+   ========================================================================== */
+function act(name, el) {
+  switch (name) {
+    case 'open-gear': S.open = S.open === 'gear' ? 'none' : 'gear'; build(); break;
+    case 'open-page': S.open = 'page'; S.drawer = false; if (S.scene !== 1 && S.scene !== 2) { S.open = 'none'; protoNote('In this scene the page is scene 2; use the scene switcher.'); return; } build(); break;
+    case 'close': S.open = 'none'; S.hoverLean = null; S.previewLean = null; build(); break;
+    case 'drawer-open': if (S.view === 'portrait') setDrawer(true); break;
+    case 'drawer-close': setDrawer(false); break;
+    case 'preview': { const id = el.getAttribute('data-lean'); S.previewLean = S.previewLean === id ? null : id; applyPreview(S.previewLean); break; }
+    case 'press': pressCard(el.getAttribute('data-card')); break;
+  }
+}
+function pressCard(id) {
+  const pg = ctxPage();
+  const card = cardOf(pg, id);
+  if (!card) return;
+  if (card.action === 'toast' && card.reason) { showToast(card.reason, 'warn'); return; }
+  if (card.state === 'buy' && id === ITW_ID) {
+    S.bought = true; S.justFilled = true; S.hoverLean = null; S.previewLean = null;
+    build();
+    showToast(DS.toasts.buyVerb, 'ok');
+    return;
+  }
+  if (card.state === 'buy') { protoNote('Prototype: only Into the Wound’s purchase is wired (SCENES.md). Hover or preview this lean instead.'); return; }
+}
+function setDrawer(open) {
+  S.drawer = open;
+  const fr = $('#frame');
+  const dr = $('[data-live="drawer"]', fr), tap = $('.mtap', fr);
+  if (dr) dr.classList.toggle('open', open);
+  if (tap) tap.style.display = open ? 'block' : 'none';
+  renderBar();
+}
+function protoNote(text) { toast = { text, kind: 'proto', at: performance.now() }; renderToast(); }
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-act]');
+  if (!t || !$('#frame').contains(t)) return;
+  e.stopPropagation();
+  const name = t.getAttribute('data-act');
+  if (name === 'preview') { e.preventDefault(); act('preview', t); return; }
+  act(name, t);
+});
+document.addEventListener('mouseover', e => {
+  if (S.view !== 'desktop' || S.open !== 'page' || S.embed) return;
+  const row = e.target.closest && e.target.closest('.row[data-lean]');
+  const id = row ? row.getAttribute('data-lean') : null;
+  if (id !== S.hoverLean) { S.hoverLean = id; applyPreview(id); }
+});
+
+/* =============================================================================
+   SCENE CONTROLS, HASH, SCALE, LOOP, EMBED DIRECTOR
+   ========================================================================== */
+const SCENES = [
+  [1, 'Finding the tree'], [2, 'The weapon page'], [3, 'A fight'], [4, 'First firings'], [5, 'The node'],
+];
+function enterScene() {
+  S.open = S.scene === 2 ? 'page' : 'none';
+  S.bought = false; S.hoverLean = null; S.previewLean = null; S.drawer = false; toast = null;
+  simPlaying = false; simStopAt = Infinity;
+  if (S.scene === 3) { SIM.reset(S.mode); }
+  if (S.scene === 4) { S.mode = 'pure'; SIM.reset('pure'); }
+  if (S.scene === 5) { S.node = HOME_NODE; S.arrivedAt = performance.now(); }
+  director.start();
+  build(); renderBar(); renderAside();
+}
+function readHash() {
+  const h = new URLSearchParams(location.hash.replace(/^#/, ''));
+  const sc = Math.min(5, Math.max(1, parseInt(h.get('scene') || '1', 10) || 1));
+  const view = h.get('view') === 'portrait' ? 'portrait' : 'desktop';
+  const first = h.get('first') === '1';
+  const embed = h.get('embed') === '1';
+  const sceneChanged = sc !== S.scene || embed !== S.embed || !readHash.done;
+  const viewChanged = view !== S.view;
+  S.scene = sc; S.view = view; S.first = first; S.embed = embed;
+  document.body.classList.toggle('embed', embed);
+  readHash.done = true;
+  if (sceneChanged || viewChanged) enterScene(); else { build(); renderBar(); renderAside(); }
+}
+function setHash(patch) {
+  const cur = { scene: S.scene, view: S.view, first: S.first ? 1 : 0, embed: S.embed ? 1 : 0, ...patch };
+  location.hash = `scene=${cur.scene}&view=${cur.view}&first=${cur.first}&embed=${cur.embed}`;
+}
+window.addEventListener('hashchange', readHash);
+
+function renderBar() {
+  const bar = $('#bar');
+  const sceneBtns = SCENES.map(([n, label]) => `<button class="tb${S.scene === n ? ' on' : ''}" data-bar="scene" data-v="${n}">${n} · ${label}</button>`).join('');
+  let ctl = '';
+  if (S.scene === 1) ctl = `<button class="tb solo" data-bar="reset">Reset</button><span class="ctl-note">Press Gear, then the Poison Dagger.</span>`;
+  if (S.scene === 2) ctl = `<button class="tb solo" data-bar="reset">Reset page</button><span class="ctl-note">${S.view === 'desktop' ? 'Hover a lean; press a card.' : 'Tap ◉ Preview on a lean; tap a card.'}</span>`;
+  if (S.scene === 3) ctl = `<div class="grp"><button class="tb${S.mode === 'pure' ? ' on' : ''}" data-bar="mode" data-v="pure">Pure pair</button><button class="tb${S.mode === 'composed' ? ' on' : ''}" data-bar="mode" data-v="composed">Composed pair</button></div>
+    <button class="tb solo" data-bar="hit">Land a hit</button><button class="tb solo${S.auto ? ' on' : ''}" data-bar="auto">${S.auto ? '❚❚ Pause' : '▶ Auto-play'}</button>
+    <div class="grp"><button class="tb" data-bar="kf" data-v="coming">Coming</button><button class="tb" data-bar="kf" data-v="landed">Landed</button><button class="tb" data-bar="kf" data-v="lasting">Lasting</button></div>`;
+  if (S.scene === 4) ctl = `<button class="tb solo" data-bar="fire">Fire again</button><span class="ctl-count" data-live-bar="count">Firing #${SIM.n}</span><span class="ctl-note" data-live-bar="teach">${SIM.n === 0 ? 'bought, never fired' : SIM.n <= 3 ? 'teaching ' + SIM.n + ' of 3' : 'teaching over'}</span><button class="tb solo" data-bar="reset">Reset</button>`;
+  if (S.scene === 5) ctl = `<button class="tb solo" data-bar="arrive">Arrive</button><div class="grp">${NODE_PICK.map(id => `<button class="tb${S.node === id ? ' on' : ''}" data-bar="node" data-v="${id}">${esc(NODE[id].displayName)}</button>`).join('')}</div>`;
+  if (S.view === 'portrait' && S.scene !== 2) ctl += `<button class="tb solo${S.drawer ? ' on' : ''}" data-bar="drawer">${S.drawer ? 'Close drawer' : 'Open drawer'}</button>`;
+  bar.innerHTML = `<div class="brand"><b>D</b>The dense sidebar</div>
+    <div class="grp">${sceneBtns}</div>
+    <div class="grp"><button class="tb${S.view === 'desktop' ? ' on' : ''}" data-bar="view" data-v="desktop">Desktop</button><button class="tb${S.view === 'portrait' ? ' on' : ''}" data-bar="view" data-v="portrait">Portrait</button></div>
+    <button class="tb solo${S.first ? ' on' : ''}" data-bar="first">First-time</button>
+    <button class="tb solo${S.grid ? ' on' : ''}" data-bar="grid" title="Outline the column's fixed slots">Slots</button>
+    ${ctl}`;
+}
+$('#bar').addEventListener('click', e => {
+  const b = e.target.closest('[data-bar]');
+  if (!b) return;
+  const k = b.getAttribute('data-bar'), v = b.getAttribute('data-v');
+  if (k === 'scene') return setHash({ scene: +v });
+  if (k === 'view') return setHash({ view: v });
+  if (k === 'first') return setHash({ first: S.first ? 0 : 1 });
+  if (k === 'grid') { S.grid = !S.grid; build(); renderBar(); return; }
+  if (k === 'reset') { enterScene(); return; }
+  if (k === 'drawer') { setDrawer(!S.drawer); return; }
+  if (k === 'mode') { S.mode = v; SIM.reset(v); simPlaying = S.auto; simStopAt = Infinity; build(); renderBar(); renderAside(); return; }
+  if (k === 'hit') { S.auto = false; playUntil(nextSwingTime() + 260); renderBar(); return; }
+  if (k === 'auto') { S.auto = !S.auto; simPlaying = S.auto; simStopAt = Infinity; renderBar(); return; }
+  if (k === 'kf') { S.auto = false; jumpKey(v); renderBar(); return; }
+  if (k === 'fire') { fireAgain(); return; }
+  if (k === 'arrive') { arrive(S.node); return; }
+  if (k === 'node') { arrive(v); return; }
+});
+
+function nextSwingTime() { if (SIM.respawnAt != null) return SIM.respawnAt + 300; return SIM.nextSwing; }
+function playUntil(T) { simPlaying = true; simStopAt = T; }
+/* Key frames: re-simulate from zero (deterministic) to the exact moment. */
+function keyTimes(mode) {
+  SIM.reset(mode); SIM.advanceTo(12000);
+  const f2 = SIM.firings[1];
+  return { coming: f2.t - 500, landed: f2.t + 250, lasting: f2.t + 1000 };
+}
+function jumpKey(k, mode) {
+  if (mode) S.mode = mode;
+  const kt = keyTimes(mode || S.mode);
+  SIM.reset(mode || S.mode); SIM.advanceTo(kt[k]);
+  simPlaying = false; simStopAt = Infinity;
+  build();
+}
+/* Scene 4: run quickly to just before the next firing, then play it in real time. */
+function fireAgain() {
+  const target = SIM.n + 1;
+  const probe = Object.create(SIM);            // the fight is deterministic: replay it from zero
+  probe.reset(SIM.mode);
+  let tt = 0;
+  while (probe.n < target && tt < SIM.t + 60000) { tt += 100; probe.advanceTo(tt); }
+  const ft = probe.firings.find(f => f.n === target);
+  if (!ft) return;
+  SIM.advanceTo(Math.max(SIM.t, ft.t - 450));
+  playUntil(ft.t + 1500);
+  renderBar(); build();
+}
+function arrive(id) { S.node = id; S.arrivedAt = performance.now(); build(); renderBar(); renderAside(); flashHere(); }
+function flashHere() {
+  for (const el of $$('[data-live="here"]', $('#frame'))) { el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh'); }
+  const sp = $('.spine', $('#frame')); if (sp) { sp.classList.remove('fresh'); void sp.offsetWidth; sp.classList.add('fresh'); }
+}
+
+/* Embed: each scene plays its own interaction on a loop. */
+const director = {
+  steps: null, t0: 0, idx: 0, loop: 0,
+  start() {
+    this.steps = null;
+    if (!S.embed) return;
+    const p = S.view === 'portrait';
+    const sc = S.scene;
+    const hover = (sel, on) => { const el = $(sel, $('#frame')); if (el) el.classList.toggle('hover', on); };
+    const press = sel => { const el = $(sel, $('#frame')); if (el) { el.classList.add('press'); setTimeout(() => el.classList.remove('press'), 180); } };
+    if (sc === 1) this.steps = [
+      [0, () => { S.open = 'none'; S.bought = false; build(); }],
+      [1700, () => press('[data-act="open-gear"]')],
+      [1900, () => act('open-gear')],
+      [3400, () => hover('.gitem.weapon', true)],
+      [4300, () => { S.open = 'page'; build(); }],
+      [8800, null]];
+    if (sc === 2) this.steps = [
+      [0, () => { S.open = 'page'; S.bought = false; S.hoverLean = null; S.previewLean = null; toast = null; build(); }],
+      [1500, () => { if (p) { S.previewLean = 'dagger-t1-control-stat'; } else S.hoverLean = 'dagger-t1-control-stat'; applyPreview('dagger-t1-control-stat'); }],
+      [4000, () => { if (p) { S.previewLean = 'dagger-t1-kill-chain-stat'; } else S.hoverLean = 'dagger-t1-kill-chain-stat'; applyPreview('dagger-t1-kill-chain-stat'); }],
+      [6300, () => { S.hoverLean = null; S.previewLean = null; applyPreview(null); }],
+      [6900, () => pressCard('dagger-t1-kill-chain-stat')],
+      [9600, () => pressCard(ITW_ID)],
+      [14000, null]];
+    if (sc === 3) this.steps = [
+      [0, () => { S.mode = (this.loop % 2 === 0) ? 'pure' : 'composed'; SIM.reset(S.mode); simPlaying = true; simStopAt = Infinity; build(); }],
+      [9600, null]];
+    if (sc === 4) this.steps = [
+      [0, () => { SIM.reset('pure'); simPlaying = false; build(); }],
+      [1600, () => { simPlaying = true; simStopAt = 18500; }],
+      [21000, null]];
+    if (sc === 5) this.steps = p ? [
+      [0, () => arrive(NODE_PICK[0])],
+      [5200, () => setDrawer(true)],
+      [7600, () => setDrawer(false)],
+      [8000, () => arrive(NODE_PICK[1])],
+      [11800, () => arrive(NODE_PICK[2])],
+      [15600, null]] : [
+      [0, () => arrive(NODE_PICK[0])],
+      [6200, () => arrive(NODE_PICK[1])],
+      [10400, () => arrive(NODE_PICK[2])],
+      [14600, null]];
+    this.t0 = performance.now(); this.idx = 0; this.loop = 0;
+  },
+  tick(now) {
+    if (!this.steps) return;
+    const el = now - this.t0;
+    while (this.idx < this.steps.length && el >= this.steps[this.idx][0]) {
+      const fn = this.steps[this.idx][1];
+      if (!fn) { this.loop++; this.t0 = now; this.idx = 0; return; }
+      fn(); this.idx++;
+    }
+  },
+};
+
+/* Scale the fixed-size frame to fit, never reflowing it. */
+let scale = 1;
+function fit() {
+  const st = $('#stage');
+  const pad = S.embed ? 0 : 24;
+  const W = FW(), H = FH();
+  const aw = st.clientWidth - pad, ah = st.clientHeight - pad;
+  scale = Math.max(0.1, Math.min(aw / W, ah / H, S.embed ? 4 : 1.5));
+  const fr = $('#frame');
+  fr.style.width = W + 'px'; fr.style.height = H + 'px';
+  fr.style.transform = `scale(${scale})`;
+  const wrap = $('#frameWrap');
+  wrap.style.width = W * scale + 'px'; wrap.style.height = H * scale + 'px';
+}
+window.addEventListener('resize', () => { fit(); });
+
+/* The aside: what to look at, the column's order, and two live meters. */
+function renderAside() {
+  const q = {
+    1: ['Where does the player go to see their cards?', 'Out of combat. The cards are already in view: section II of the left column always shows the active lean and the verb slot (empty until bought). The Gear entry in the menu lists the worn items, weapon first; the three plain items say so and lead nowhere. The Poison Dagger opens its page. The column’s own <span class="k">Page ›</span> is a second door.'],
+    2: ['What does the page say about the Poison Dagger at Tier 1?', 'The page is the same row grammar as the column: lane bar, name, sentence, cost, state. Hover a lean (desktop) or tap ◉ Preview (portrait): the sheet shows before → after and each verb re-reads with that lean in two colours. Buy Into the Wound and watch its row in the column fill without moving anything. Counts are not repeated on the page: they live in the Purse, left.'],
+    3: ['Coming, landed, lasting: where do the three facts live?', 'Coming: the clock at the right of the Verb row (II). Landed: the body (the poison surges / the ooze is pinned) and the row flashes. Lasting: the Target section (III), three fixed homes: what it owes, how it is slowed, how it is held. Switch to the composed pair to see the two-colour sentence in the Verb row.'],
+    4: ['What teaches the player, and when does it stop?', 'For the first three firings of a newly bought card: the Verb row is ringed, a tether runs from its clock to the body it changed, the Poison home shows before → after, and the guide reads the lesson. From firing #4 the column just keeps its state. Nothing in the column moves to teach.'],
+    5: ['Before the first kill: which family lives here, what does it pay?', 'The banner names the territory and the shard for a few seconds; section IV keeps the same words for as long as you stay, with the roster and its real shares beneath, and the Purse marks the shard this node pays. Try Sunkroot Bog (34/33/33) for the every-node-fields-everything problem.'],
+  }[S.scene];
+  $('#aside').innerHTML = `<h2>D · The dense sidebar</h2>
+    <p>A classic MMO side column, always on screen on desktop, a drawer on the phone. Five sections in a fixed order with fixed row heights: the eye learns where each fact lives because nothing ever moves.</p>
+    <h3>The column, top to bottom</h3>
+    <ol><li><b>You</b> · health, the thing you watch most.</li><li><b>Weapon</b> · the lean, then the verb with its clock.</li><li><b>Target</b> · three homes: owes, slowed, held.</li><li><b>Here</b> · the node, its territory, its shard.</li><li><b>Purse</b> · what you hold; this node’s shard marked.</li></ol>
+    <p><small>Read it as a sentence: you, wielding this, do that to it, here, for this.</small></p>
+    <h3>Scene ${S.scene}</h3>
+    <p class="q">${q[0]}</p><p>${q[1]}</p>
+    ${S.view === 'portrait' ? '<p><span class="k">On the phone</span> the column is a drawer. Closed, a 46 px spine on the right edge keeps the same order, one glyph per fact: weapon (lean colour, verb clock), target (three homes), here (the shard), purse (this node’s shard). The words are gone until you tap the spine.</p>' : ''}
+    <h3>Meters</h3>
+    <div class="meter"><span>Card facts on screen</span><b id="mFacts">0</b></div>
+    <div class="meter"><span>Card cells that changed in the last second</span><b id="mMoved">0</b></div>
+    <p style="margin-top:8px"><small>The combat numbers follow SCENES.md’s illustrative rule, not the server’s DoT formula. “Slots” outlines the column’s fixed homes.</small></p>`;
+}
+
+/* Fact counter: every visible, uncovered element tagged data-fact. */
+function countFacts() {
+  const fr = $('#frame');
+  fr.classList.add('counting');
+  try { return countFactsInner(fr); } finally { fr.classList.remove('counting'); }
+}
+function countFactsInner(fr) {
+  const out = { total: 0, byKind: {}, list: [] };
+  for (const el of $$('[data-fact]', fr)) {
+    if (!visible(el)) continue;
+    const r = el.getBoundingClientRect();
+    const pts = [[r.left + r.width / 2, r.top + r.height / 2], [r.left + 3, r.top + 3], [r.right - 3, r.bottom - 3]];
+    const seen = pts.some(([x, y]) => { const top = document.elementFromPoint(x, y); return top && (el === top || el.contains(top) || top.contains(el)); });
+    if (!seen) continue;
+    const k = el.getAttribute('data-fact');
+    out.total++; out.byKind[k] = (out.byKind[k] || 0) + 1;
+    out.list.push(k + ': ' + (el.getAttribute('title') && k === 'badge' ? '' : '') + el.textContent.replace(/\s+/g, ' ').trim().slice(0, 70));
+  }
+  return out;
+}
+/* Test hooks (used by the verification script; harmless in the page). */
+function atFiring(n, offset) {
+  SIM.reset(S.mode); let tt = 0;
+  while (SIM.n < n && tt < 60000) { tt += 100; SIM.advanceTo(tt); }
+  const f = SIM.firings.find(x => x.n === n);
+  SIM.reset(S.mode); SIM.advanceTo(f.t + offset);
+  simPlaying = false; simStopAt = Infinity; build(); renderBar();
+  return f.t;
+}
+window.__proto = { S, SIM, countFacts, build, jumpKey, enterScene, fireAgain, arrive, act, pressCard, applyPreview, keyTimes, atFiring, director, setDrawer, renderBar };
+
+let lastMeter = 0;
+function loop(now) {
+  const dt = Math.min(100, now - (lastWall || now));
+  lastWall = now;
+  director.tick(now);
+  if (inCombat() && simPlaying) {
+    let T = SIM.t + dt;
+    if (T >= simStopAt) { T = simStopAt; simPlaying = S.auto; simStopAt = Infinity; }
+    const nBefore = SIM.n;
+    SIM.advanceTo(T);
+    if (S.scene === 4 && SIM.n !== nBefore) renderBar();
+  }
+  if (toast && now - toast.at > 2800) { toast = null; renderToast(); }
+  paint(false);
+  if (now - lastMeter > 400 && !S.embed) {
+    lastMeter = now;
+    const mf = $('#mFacts'), mm = $('#mMoved');
+    if (mf) mf.textContent = countFacts().total;
+    if (mm) {
+      let c = 0;
+      for (const [el, at] of moved) {
+        if (now - at >= 1000 || !el.isConnected) { moved.delete(el); continue; }
+        const live = el.closest('[data-live]');
+        const key = live ? live.getAttribute('data-live') : '';
+        if (/^(php|phpbar|tghp|tgname|world|dmgs|guide)/.test(key)) continue;   // shell, not card cells
+        if (visible(el)) c++;
+      }
+      mm.textContent = c;
+    }
+  }
+  requestAnimationFrame(loop);
+}
+
+readHash();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

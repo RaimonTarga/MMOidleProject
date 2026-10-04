@@ -1,5 +1,9 @@
 # UI prototypes run — brief (2026-10-04, overnight)
 
+**Status:** DONE 2026-10-05 on `design/ui-prototypes` (not merged). Report:
+[ui-prototypes-report-2026-10-04.md](ui-prototypes-report-2026-10-04.md); comparison page:
+`reports/ui-prototypes/index.html`. This brief is now evidence of what the run was asked to do.
+
 Five interactive HTML prototypes of the lineage UI, each built from a different design
 thesis, plus one comparison page. The designer picks one in the morning and reuses
 elements from the others. **Nothing in this run touches game code.** It produces files

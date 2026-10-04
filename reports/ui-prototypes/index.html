@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UI Prototypes Compared</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* The comparison page: every scene of every prototype as a live iframe, the thesis under
+   each, then the reviewer's matrix. Dark like the game the prototypes mock. */
+:root{
+  color-scheme:dark;
+  --bg:#14120f; --panel:#1d1a16; --panel2:#24201b; --line:#3a332b; --line2:#4d4437;
+  --ink:#ece4d4; --ink2:#a99e8a; --ink3:#6f6656; --gold:#d9b25c; --gold2:#8a6d2b;
+  --yes:#9be564; --partly:#e8c15a; --no:#e07a5f;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 "IBM Plex Sans",system-ui,sans-serif;padding:16px 16px 64px}
+h1,h2,h3{font-family:"Alegreya SC","IBM Plex Sans",serif;font-weight:500;margin:0;text-wrap:balance}
+a{color:var(--gold)}
+.wrap{max-width:1600px;margin:0 auto;display:grid;gap:18px}
+.top{display:grid;gap:6px}
+.top h1{font-size:24px;color:var(--gold)}
+.top p{margin:0;color:var(--ink2);max-width:90ch}
+.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2)}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--line)}
+.group{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.group .lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-right:4px}
+.btn{background:var(--panel2);border:1px solid var(--line);color:var(--ink2);padding:6px 11px;border-radius:4px;font:inherit;font-size:13px;cursor:pointer}
+.btn:hover{border-color:var(--line2);color:var(--ink)}
+.btn[aria-pressed="true"]{color:var(--gold);border-color:var(--gold2)}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.scene-q{color:var(--ink2);margin:0;max-width:110ch}
+.scene-q b{color:var(--ink)}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(var(--cols,2),minmax(0,1fr))}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto 1fr;overflow:hidden;min-width:0}
+.card header{display:flex;justify-content:space-between;align-items:baseline;gap:4px 8px;flex-wrap:wrap;padding:10px 12px;border-bottom:1px solid var(--line)}
+.card header h2{font-size:16px;min-width:0}
+.card header h2 .letter{color:var(--gold);margin-right:6px}
+.card header a{font-size:12px;white-space:nowrap}
+.frame{position:relative;background:#000;aspect-ratio:var(--aspect,16/9)}
+.frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.under{padding:10px 12px;display:grid;gap:8px;align-content:start}
+.thesis{margin:0;color:var(--ink2);font-size:13px}
+.stats{display:flex;gap:6px;flex-wrap:wrap}
+.pill{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line2);color:var(--ink2);white-space:nowrap}
+.pill b{color:var(--ink);font-weight:600}
+.v-yes{border-color:var(--yes);color:var(--yes)}
+.v-partly{border-color:var(--partly);color:var(--partly)}
+.v-no{border-color:var(--no);color:var(--no)}
+.why{margin:0;font-size:12px;color:var(--ink3)}
+.crit{margin:0;font-size:13px;color:var(--ink);border-left:3px solid var(--gold2);padding-left:8px}
+section.matrix{display:grid;gap:10px}
+section.matrix h2{font-size:20px;color:var(--gold)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;min-width:1560px;font-size:13px}
+th,td{min-width:150px}
+th:first-child,td:first-child{min-width:110px}
+th:nth-last-child(2),td:nth-last-child(2){min-width:240px}
+th:last-child,td:last-child{min-width:300px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);background:var(--panel2);font-weight:500}
+td.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+td .why{display:block;margin-top:2px}
+tr:last-child td{border-bottom:0}
+.note{color:var(--ink3);font-size:12px;margin:0}
+.lists{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.lists .panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+.lists h3{font-size:15px;color:var(--gold);margin-bottom:6px}
+.lists ul{margin:0;padding-left:18px;display:grid;gap:5px;color:var(--ink2)}
+.lists li b{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="eyebrow">MMO Idle · lineage UI · five theses, five scenes · 2026-10-04</div>
+    <h1>UI prototypes, side by side</h1>
+    <p id="intro"></p>
+  </div>
+
+  <div class="bar" role="toolbar" aria-label="Comparison controls">
+    <div class="group" id="scenes"><span class="lbl">Scene</span></div>
+    <div class="group" id="views"><span class="lbl">View</span></div>
+    <div class="group" id="firsts"><span class="lbl">First-time</span></div>
+    <div class="group" id="colsg"><span class="lbl">Columns</span></div>
+  </div>
+
+  <p class="scene-q" id="sceneq"></p>
+  <div class="grid" id="grid"></div>
+
+  <section class="matrix" aria-labelledby="mx">
+    <h2 id="mx">The matrix</h2>
+    <p class="note" id="mxnote"></p>
+    <div class="tablewrap"><table id="matrix"></table></div>
+  </section>
+
+  <section class="lists" id="lists"></section>
+</div>
+
+<script>
+// ─── Review data (the conductor's; filled after the builds) ──────────────────
+const Y = 'yes', P = 'partly', N = 'no';
+const s = (facts, d, p, why) => ({ facts, sound: { d, p }, why });
+const REVIEW = {
+  intro: 'Five interactive prototypes of the lineage UI, each built by a separate builder from one design thesis, against the same five scenes (<a href="SCENES.md">SCENES.md</a>) and the same data export (<a href="data.json">data.json</a>, generated from the client\'s own models). Each frame below is the prototype itself, live, in its <code>embed</code> mode: it plays the scene on a loop. "Open interactive" opens it with its own controls. The report is <a href="../../docs/briefs/ui-prototypes-report-2026-10-04.md">docs/briefs/ui-prototypes-report-2026-10-04.md</a>.',
+  matrixNote: 'Facts are card-related facts on screen at the scene\'s key frames, counted by each builder with every occurrence counted (duplication is the thing measured), desktop / portrait. Scene 3 is coming·landed·lasting for the pure pair | the composed pair; scene 4 is firing #1 → firing #4. The counts are self-reported and not perfectly comparable: B, D and E keep the client\'s shard counts on the desktop HUD (4–5 facts in every frame), A and C took them off. "Sound off" is the reviewer\'s verdict per view (D desktop, P phone): can the three facts of the scene be read from the picture alone?',
+  prototypes: {
+    a: {
+      scenes: {
+        1: s('7 / 5', Y, Y, 'Text: the Gear tab is a Gear | Make strip where Upgrade was.'),
+        2: s('81 / 41', Y, Y, 'Text, plus a ring mark on every verb card and a looping fx preview of the active pair.'),
+        3: s('D 5·7·6 | 8·8·9 · P 4·6·5 | 7·7·8', Y, P, 'A ring with a "coming" state for the last second, and strong re-dose and root fx on desktop. On a phone the fx only read at the assumed 0.72 fight camera.'),
+        4: s('10 → 6 / 9 → 5', P, P, 'A teaching line at the ring for the first three on-screen firings, then nothing names the card.'),
+        5: s('6 / 5', P, P, 'The banner for 5 s; after that only the shard popping off each kill.'),
+      },
+      portrait: { verdict: 'good', cls: Y, why: 'One 48 px ring top-right and nothing else; the body fx need a closer fight camera (0.72 against the client\'s 0.4 floor).' },
+      files: ['RhythmReadout.tsx (+model, css)', 'new TeachingLine.tsx', 'cardWord.ts (retired)', 'lineagePayloadFx.ts', 'auraDefs.ts', 'lineagePayloadStates.ts', 'cameraZoom.ts', 'TargetFrame.tsx', 'targetStatusMeta.ts', 'statusHelp.ts', 'MaterialsPanel.tsx', 'MenuButtons.tsx', 'MobileHUD.tsx', 'CraftingPanel.tsx', 'MakeTab.tsx', 'new GearTab.tsx', 'LineageTreePanel.tsx', 'weaponPageModel.ts', 'weaponPage.css', 'tutorial/director.ts', '+ shared sentence halves'],
+      fileCount: '≈22 (2 new)',
+      critique: 'The quietest fight of the five (2–3 card facts on the HUD) and the nearest to §24.6 as written. It gets there by forgetting: after the third firing nothing names the card, the lean has no presence in a fight, and on a phone it only works with a camera change the thesis does not own.',
+    },
+    b: {
+      scenes: {
+        1: s('10 / 10', Y, Y, 'Text; the two HUD cards are already a door to the page.'),
+        2: s('58 / 28', Y, Y, 'Text; the hand stays in view under the page and the bought card animates into it.'),
+        3: s('D 13·16·13 | 15·19·17 · P 9·12·9 | 11·15·13', P, P, '"Coming" is a fuse on a card at the bottom edge, out of the fight\'s eye path. The ✦ ready mark rarely shows, because the 5 s cap ends on a swing. Landed and lasting read.'),
+        4: s('21 → 16 / 17 → 12', Y, Y, 'The verb card rises with a thread to the body it hit on firings #1–#3; from #4 it lights in place, still carrying its name and sentence.'),
+        5: s('14 / 10', P, P, 'The banner, and the HUD cards of the node\'s shard colour glint, a link from place to card. The family is gone after 5 s.'),
+      },
+      portrait: { verdict: 'tight', cls: P, why: 'The hand is 107 px, about 24% of the screen with the tab bar; no room for a third card or the frame ring.' },
+      files: ['new CardHand.tsx (replaces RhythmReadout)', 'cardHandModel.ts', 'cardHand.css', 'cardWord.ts', 'new cardThread.ts', 'shared sentences.ts (sentence parts)', 'weaponPageModel.ts', 'LineageTreePanel.tsx', 'weaponPage.css', 'MenuButtons.tsx', 'new GearPanel.tsx', 'MobileHUD.tsx', 'BuffBar.tsx', 'TargetFrame.tsx', 'targetStatusMeta.ts', 'statusHelp.ts', 'tutorial director + TutorialPanel', 'shared tutorial script', 'MakeTab.tsx', 'AreaInformation.tsx', 'client/index.html'],
+      fileCount: '≈22 (3 new)',
+      critique: 'The only design where the player always reads what they bought, and the best teaching moment of the five: the card rising with a thread to the body. But the sentence becomes wallpaper by the second minute. The hand costs a quarter of a phone with no room to grow, and its "coming" signal sits at the screen edge, away from the fight.',
+    },
+    c: {
+      scenes: {
+        1: s('4 / 3', Y, Y, 'Text; the Gear row says how many cards are buyable.'),
+        2: s('57 / 33 (118 whole page)', Y, Y, 'Text, plus the "In the fight" plate: the current pair drawn with the glow, mark and badge the world uses.'),
+        3: s('D 6·5·5 | 9·9·9 · P 5·4·4 | 8·8·8', P, P, 'Landed and lasting read on the body. "Coming" is a blade glow a few pixels wide, readable on a phone only at C\'s 1.0 fight camera.'),
+        4: s('8 → 5 / 7 → 4', P, P, 'The floating word over the target for #1–#3, then the body alone: it shows that something fired, not which card.'),
+        5: s('3 / 2', P, P, 'The banner; Venom crystals in the ground keep naming the shard (assumed art); nothing keeps the family.'),
+      },
+      portrait: { verdict: 'good', cls: Y, why: 'Nothing on the HUD at all, but the whole thesis rests on a closer fight camera (1.0 against today\'s 0.4 floor).' },
+      files: ['RhythmReadout.tsx (deleted)', 'rhythmReadoutModel.ts', 'BuffBar.tsx', 'TargetFrame.tsx + css', 'targetStatusMeta.ts', 'statusHelp.ts', 'cardWord.ts', 'new worldBadges.ts', 'new weaponCharge.ts', 'render/players.ts', 'new groundMark.ts', 'lineagePayloadFx.ts', 'lineagePayloadStates.ts', 'auraDefs.ts', 'cameraZoom.ts', 'LineageTreePanel.tsx', 'weaponPage.css', 'weaponPageModel.ts', 'new PairPlate.tsx', 'new GearPanel.tsx', 'MenuButtons.tsx', 'MaterialsPanel.tsx', 'MobileHUD.tsx', 'MakeTab.tsx', 'tutorial director + TutorialPanel', 'shared tutorial script', 'new nodeShardProps.ts + art'],
+      fileCount: '≈29 (6 new) + art',
+      critique: 'The best weapon page (its plate teaches the world\'s visual vocabulary) and the cleanest HUD. It is also the thesis most at the mercy of sprite size, needs a new phone camera to work at all, and cannot say which card is talking once a second verb, a frame window or an amplifier shares the blade.',
+    },
+    d: {
+      scenes: {
+        1: s('14 / 4', Y, Y, 'Text; the column\'s Weapon section is also a door to the page.'),
+        2: s('72 / 42', Y, Y, 'Text. The most compact page: one row per card, so Tier 1, a collapsed Tier 2 and the gate fit on one screen.'),
+        3: s('D 13·13·13 | 14·15·15 · P 5·5·5 | 6·7·7', Y, P, 'Fixed homes read on desktop (Target: owes / slowed / held), though the 27 px clock is 350–450 px from the bodies. The phone spine keeps icons and numbers, no words.'),
+        4: s('14 → 13 / 6 → 5', Y, P, 'The verb row flashes with a tether to the body for #1–#3 and keeps its name; the closed phone spine has no names.'),
+        5: s('13 / 5', Y, P, 'The banner, plus a permanent Here section: territory, shard, roster shares. On a phone, a shard icon.'),
+      },
+      portrait: { verdict: 'poor', cls: N, why: 'Closed, a 46 px icon spine without words; open, the drawer covers the fight. The phone loses the thesis.' },
+      files: ['client/index.html', 'HUD.tsx (LeftSidebar)', 'new hud/column/ (LineageColumn.tsx, columnModel.ts, column.css)', 'StatPanel.tsx', 'StatPlate.tsx', 'RhythmReadout.tsx + model', 'TargetFrame.tsx + css', 'targetStatusMeta.ts', 'statusHelp.ts', 'cardWord.ts', 'MaterialsPanel.tsx', 'MenuButtons.tsx', 'new GearPanel.tsx', 'LineageTreePanel.tsx', 'weaponPage.css', 'GameDialog primitive', 'weaponPageModel.ts', 'MobileHUD.tsx', 'areaInformationModel.ts', 'TutorialPanel.tsx', 'TutorialHighlight.tsx', 'tutorial director'],
+      fileCount: '≈26 (4 new)',
+      critique: 'The most information with the least motion on desktop. Its Target section (owes, slowed, held: three fixed homes) is the best answer to the debuff complaint, and its page is the most compact. But it is the overload the designer complained about, made tidy; 12 card facts sit on the HUD from the first minute, and on a phone the thesis collapses into an icon spine or a drawer over the fight.',
+    },
+    e: {
+      scenes: {
+        1: s('7 / 1', Y, Y, 'Text.'),
+        2: s('69 / 31', Y, Y, 'Text, plus a beat line on every verb card drawn like the HUD strip, so the strip is learnt on the page (no legend for it yet).'),
+        3: s('D 10·10·9 | 11·13·11 · P 6·6·5 | 7·9·7', P, Y, 'The only design that marks which hit will fire. On a phone it is the top bar\'s second row and reads well; on desktop it is a 220 px strip in the left rail, in the corner of the eye.'),
+        4: s('15 → 10 / 11 → 6', P, P, 'A caption on the strip for #1–#3, then the strip\'s burst alone: nothing names the card.'),
+        5: s('6 / 2', P, P, 'The banner; out of combat the strip previews the node\'s spawn order as silhouettes; the family is only on the banner.'),
+      },
+      portrait: { verdict: 'good', cls: Y, why: 'The strip as the top bar\'s second row is the best phone home any thesis found for a rhythm element.' },
+      files: ['new BeatStrip.tsx (replaces RhythmReadout)', 'beatStripModel.ts', 'beatStrip.css', 'StatPlate.tsx', 'StatPanel.tsx', 'client/index.html', 'main.ts', 'MobileHUD.tsx', 'MenuButtons.tsx', 'new GearTab.tsx', 'LineageTreePanel.tsx', 'weaponPageModel.ts', 'weaponPage.css', 'cardWord.ts (removed)', 'combatFx.ts', 'BuffBar.tsx', 'targetStatusMeta.ts', 'statusHelp.ts', 'areaInformationModel.ts', 'shared anchors.ts, concepts.ts, classScript.ts', 'tutorial director', '+ node spawn order to the client'],
+      fileCount: '≈24 (2 new)',
+      critique: 'The only design that tells the player which hit will fire, and the best phone placement of the five. But it forecasts only the hit-grid moments: the class-mechanic verb that the Striker and the Squire are taught is a log on the strip, not a forecast. It trusts a swing clock that the real Slinger\'s reload breaks, and on desktop it is a strip in the corner of the eye.',
+    },
+  },
+  reuse: [
+    '<b>The two-colour sentence</b>: the moment half in the verb\'s lane colour, the payload half in the lean\'s. All five built it; all five split the string, so ship the halves from shared (<code>composedSentence</code> parts), never parse text.',
+    '<b>B\'s teaching thread</b>: on firings #1–#3 the card (or ring, or row) sends a line to the body it hit, then stops. Counted only when the fight was on screen (A\'s rule).',
+    '<b>C\'s "In the fight" plate</b> on the weapon page: the current pair drawn with the world\'s own glow, mark and badge, re-reading under the lean preview.',
+    '<b>E\'s beat line on verb cards</b>: the page teaches the HUD element\'s grammar before the fight. It works for a ring as well as a strip.',
+    '<b>D\'s Target section</b>: three fixed homes (owes / slowed / held) for a target\'s card-caused state. It is the one-DoT rule\'s target frame, and it never reflows.',
+    '<b>D\'s compact row layout</b> for the page: Tier 1, a collapsed Tier 2 and the gate on one screen.',
+    '<b>A\'s "coming" state</b>: the last second of a cap clock brightens and pulses. B found the reason: with a 500 ms swing and a 5 s cap, the ✦ ready state almost never shows, so the clock IS the forecast.',
+    '<b>E\'s phone placement</b>: the rhythm element as the second row of the top bar, beside the HP bar.',
+    '<b>Node identity</b>: D\'s permanent territory line; B\'s glint of the cards whose shard this node pays; E\'s spawn-order silhouettes before the first pull.',
+    '<b>A phone lean preview</b>: a ◉ Preview toggle with a pinned diff bar (A, C, D), since a phone has no hover.',
+    '<b>A Gear-row badge</b>: "N cards you can buy" on the weapon row (C, D).',
+  ],
+  unsolved: [
+    '<b>The lean in a fight.</b> No thesis gives the lean a combat presence beyond a status. Coated Edge folds into the Poison badge, and Silent Step shows nowhere. Whether a stat card needs one is open.',
+    '<b>A conditional verb that is ready but cannot fire.</b> Into the Wound needs an afflicted target, and Easy Prey with no slow never fires. Every thesis shows "ready" the same way whether or not the condition holds; only the page caveat says why nothing happens. E\'s underline comes closest.',
+    '<b>Moments off the hit grid.</b> A class-mechanic, Technique, kill or opener moment cannot be forecast, only stamped. Two of the six tutorial picks (Striker and Squire, Cleaving Blow) are mechanic moments.',
+    '<b>More than one verb.</b> Nobody prototyped a T2 amplifier, a frame ring and a verb together. A\'s rings are unnamed, B\'s hand has no room, C cannot say which card is talking, and D\'s rows and E\'s strips multiply.',
+    '<b>Nodes that look alike.</b> After the banner, only D keeps the family on screen, and no UI makes Sunkroot Bog (34/33/33) feel different from Blackwater Crown (70/20/10). That is the roster rule\'s job (mockup rule 4), the designer\'s call.',
+    '<b>Phones need a camera decision.</b> Every body-first payoff (A, C, and the fx in all five) is too small at today\'s 0.4 zoom floor, where a body is about 26 px.',
+    '<b>Memory.</b> Nothing records what fired while the player was not watching, which is most of the time in an idle game.',
+    '<b>Teaching state.</b> "The first three firings of a new card" needs a persisted per-character counter, and the tutorial\'s ring line needs new copy in every non-ring thesis.',
+  ],
+};
+
+const PROTOTYPES = [
+  { x: 'a', name: 'Nothing but the ring', thesis: 'The HUD shows one ring per active verb and nothing else about cards. Every other fact lives on the page or the target. Teaching is one transient line of text, three times, then never. The bet: the body fx alone carry the payoff.' },
+  { x: 'b', name: 'The card is the HUD', thesis: 'The active lean and verb sit on the HUD as two small cards that light when they fire; no rings. The sentence the player bought is always on screen. The bet: players read the thing they chose, not an abstraction of it.' },
+  { x: 'c', name: 'Body first, book second', thesis: 'No HUD element for cards at all. Anticipation and payoff are in the world: the weapon\'s glow builds, the ground marks, the target\'s badge grows. The page is a book the player opens from a tab. The bet: §24.1 taken literally.' },
+  { x: 'd', name: 'The dense sidebar', thesis: 'A classic MMO side panel, always visible on desktop, a drawer on portrait: cards, their state, the target\'s effects, the node\'s shard, in one ordered column. The bet: density is fine when it is ordered and never moves.' },
+  { x: 'e', name: 'The beat strip', thesis: 'A horizontal strip near the HP bar showing the next few hits as ticks, the one that fires the verb marked, the lane colour on it; fired hits scroll off. No rings, no callouts. The bet: rhythm reads better as a line than a circle.' },
+];
+
+const SCENES = [
+  { n: 1, name: 'Finding the tree', q: 'Where does the player go to see their cards? <b>Key frame:</b> the Gear tab open, before the weapon is pressed.' },
+  { n: 2, name: 'The weapon page', q: 'The Poison Dagger at Tier 1: lean row, verb row, the locked Tier 2 rows, the gate. Press Into the Wound to buy it. <b>Key frame:</b> the page as it opens.' },
+  { n: 3, name: 'A fight', q: 'Three facts to place: <b>the verb is coming</b>, <b>the verb landed</b>, <b>the lasting state on the target</b>. The embed loops the pure pair (Coated Edge + Into the Wound) and the composed pair (Tendon Cut + Into the Wound) against two Mire Oozes.' },
+  { n: 4, name: 'First firings', q: 'A new card\'s first firings: what teaches the player what just happened, and when it stops teaching. <b>Key frames:</b> firing #1 and firing #4.' },
+  { n: 5, name: 'The node', q: 'Arriving in Blackwater Crown (Mire territory, Venom Shards): what tells the player which family lives here and which shard it pays, before the first kill.' },
+];
+
+const VIEWS = [
+  { key: 'desktop', label: 'Desktop 1280', aspect: '16/9', cols: 2 },
+  { key: 'portrait', label: 'Portrait 390', aspect: '390/844', cols: 5 },
+];
+
+// ─── State, from and to the hash ─────────────────────────────────────────────
+const state = { scene: 1, view: 'desktop', first: 0, cols: 2 };
+function readHash() {
+  const p = new URLSearchParams(location.hash.slice(1));
+  const n = Number(p.get('scene'));
+  if (n >= 1 && n <= 5) state.scene = n;
+  if (p.get('view') === 'portrait' || p.get('view') === 'desktop') state.view = p.get('view');
+  state.first = p.get('first') === '1' ? 1 : 0;
+  const c = Number(p.get('cols'));
+  state.cols = c >= 1 && c <= 5 ? c : VIEWS.find((v) => v.key === state.view).cols;
+}
+function writeHash() {
+  history.replaceState(null, '', `#scene=${state.scene}&view=${state.view}&first=${state.first}&cols=${state.cols}`);
+}
+
+// ─── Controls ────────────────────────────────────────────────────────────────
+function button(label, pressed, onClick, title) {
+  const b = document.createElement('button');
+  b.className = 'btn';
+  b.type = 'button';
+  b.textContent = label;
+  if (title) b.title = title;
+  b.setAttribute('aria-pressed', String(pressed));
+  b.addEventListener('click', onClick);
+  return b;
+}
+function renderControls() {
+  const fill = (id, items) => {
+    const g = document.getElementById(id);
+    g.querySelectorAll('button').forEach((b) => b.remove());
+    items.forEach((b) => g.appendChild(b));
+  };
+  fill('scenes', SCENES.map((s) => button(`${s.n} · ${s.name}`, state.scene === s.n, () => { state.scene = s.n; update(); })));
+  fill('views', VIEWS.map((v) => button(v.label, state.view === v.key, () => { state.view = v.key; state.cols = v.cols; update(); })));
+  fill('firsts', [
+    button('Off', !state.first, () => { state.first = 0; update(); }),
+    button('On', !!state.first, () => { state.first = 1; update(); }, 'Each prototype overlays what the eye should land on first, second, third'),
+  ]);
+  fill('colsg', [1, 2, 3, 5].map((c) => button(String(c), state.cols === c, () => { state.cols = c; update(); })));
+}
+
+// ─── The grid of live iframes ────────────────────────────────────────────────
+function pill(text, cls) {
+  const s = document.createElement('span');
+  s.className = `pill ${cls || ''}`;
+  s.innerHTML = text;
+  return s;
+}
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  const view = VIEWS.find((v) => v.key === state.view);
+  grid.style.setProperty('--cols', state.cols);
+  grid.innerHTML = '';
+  const scene = SCENES[state.scene - 1];
+  document.getElementById('sceneq').innerHTML = `<b>Scene ${scene.n} · ${scene.name}.</b> ${scene.q}`;
+  for (const p of PROTOTYPES) {
+    const r = REVIEW.prototypes[p.x] || {};
+    const sc = (r.scenes && r.scenes[state.scene]) || {};
+    const card = document.createElement('article');
+    card.className = 'card';
+    const hash = `scene=${state.scene}&view=${state.view}&first=${state.first}&embed=1`;
+    const full = `${p.x}/index.html#scene=${state.scene}&view=${state.view}&first=${state.first}&embed=0`;
+    card.innerHTML = `
+      <header><h2><span class="letter">${p.x.toUpperCase()}</span>${p.name}</h2>
+        <a href="${full}" target="_blank" rel="noopener">Open interactive ↗</a></header>
+      <div class="frame" style="--aspect:${view.aspect}">
+        <iframe title="Prototype ${p.x.toUpperCase()}, scene ${state.scene}, ${state.view}" loading="lazy" src="${p.x}/index.html#${hash}"></iframe>
+      </div>
+      <div class="under"></div>`;
+    const under = card.querySelector('.under');
+    const thesis = document.createElement('p');
+    thesis.className = 'thesis';
+    thesis.textContent = p.thesis;
+    under.appendChild(thesis);
+    const stats = document.createElement('div');
+    stats.className = 'stats';
+    if (sc.facts !== undefined) stats.appendChild(pill(`card facts <b>${sc.facts}</b>`));
+    if (sc.sound) {
+      const verdict = state.view === 'portrait' ? sc.sound.p : sc.sound.d;
+      stats.appendChild(pill(`sound off, ${state.view === 'portrait' ? 'phone' : 'desktop'}: <b>${verdict}</b>`, `v-${verdict}`));
+    }
+    if (stats.children.length) under.appendChild(stats);
+    if (sc.why) {
+      const why = document.createElement('p');
+      why.className = 'why';
+      why.textContent = sc.why;
+      under.appendChild(why);
+    }
+    if (r.critique) {
+      const c = document.createElement('p');
+      c.className = 'crit';
+      c.textContent = r.critique;
+      under.appendChild(c);
+    }
+    grid.appendChild(card);
+  }
+}
+
+// ─── The matrix ──────────────────────────────────────────────────────────────
+function renderMatrix() {
+  document.getElementById('mxnote').textContent = REVIEW.matrixNote;
+  const t = document.getElementById('matrix');
+  const head = `<tr><th>Prototype</th>${SCENES.map((s) => `<th>${s.n} · ${s.name}<br>facts · sound off</th>`).join('')}
+    <th>Portrait fit</th><th>Client files touched</th><th>Reviewer's critique</th></tr>`;
+  const rows = PROTOTYPES.map((p) => {
+    const r = REVIEW.prototypes[p.x] || {};
+    const cells = SCENES.map((s) => {
+      const sc = (r.scenes && r.scenes[s.n]) || {};
+      const facts = sc.facts !== undefined ? String(sc.facts) : '—';
+      const sound = sc.sound
+        ? `<span class="pill v-${sc.sound.d}">D ${sc.sound.d}</span> <span class="pill v-${sc.sound.p}">P ${sc.sound.p}</span>` : '';
+      return `<td><div class="num" style="text-align:left">${facts}</div><div style="margin-top:4px">${sound}</div>${sc.why ? `<span class="why">${sc.why}</span>` : ''}</td>`;
+    }).join('');
+    const fit = r.portrait ? `<span class="pill v-${r.portrait.cls}">${r.portrait.verdict}</span><span class="why">${r.portrait.why || ''}</span>` : '—';
+    const files = r.files ? `<b>${r.fileCount || r.files.length}</b><span class="why">${r.files.join(', ')}</span>` : '—';
+    return `<tr><td><b>${p.x.toUpperCase()} · ${p.name}</b></td>${cells}<td>${fit}</td><td>${files}</td><td>${r.critique || '—'}</td></tr>`;
+  }).join('');
+  t.innerHTML = head + rows;
+}
+
+function renderLists() {
+  const el = document.getElementById('lists');
+  const block = (title, items) => items.length
+    ? `<div class="panel"><h3>${title}</h3><ul>${items.map((i) => `<li>${i}</li>`).join('')}</ul></div>` : '';
+  el.innerHTML = block('Worth reusing across theses', REVIEW.reuse) + block('What no thesis solved', REVIEW.unsolved);
+}
+
+function update() {
+  writeHash();
+  renderControls();
+  renderGrid();
+}
+
+readHash();
+document.getElementById('intro').innerHTML = REVIEW.intro;
+renderMatrix();
+renderLists();
+update();
+window.addEventListener('hashchange', () => { readHash(); renderControls(); renderGrid(); });
+</script>
+</body>
+</html>

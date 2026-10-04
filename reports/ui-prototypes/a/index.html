@@ -1,0 +1,1766 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nothing but the Ring</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Prototype A — "Nothing but the ring". Palette: client/src/ui/lineage/weaponPage.css,
+   client/src/hud/primitives/tokens.css and the mockup's tokens. */
+:root {
+  --bg: #14120f; --panel: #1d1a16; --ink: #ece4d4; --gold: #d9b25c;
+  --rail: rgba(14, 12, 9, 0.97); --hud-panel: #221f18; --control: #2a2720; --inset: #080706;
+  --edge-light: #3e3a30; --edge-medium: #63553e; --edge-strong: #75664d; --edge-dark: #0c0a07;
+  --divider: rgba(100, 88, 60, 0.4);
+  --primary: #c8a860; --primary-strong: #e0c070;
+  --text: #ccc5b4; --muted: #8a806c; --dim: #524a3f; --success: #55cc77; --danger: #cc4433;
+  --display: 'Cinzel', 'Palatino Linotype', Georgia, serif;
+  --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: #0b0a08; color: var(--ink); font-family: var(--sans); }
+button { font: inherit; color: inherit; }
+
+/* ── Prototype chrome (outside the frame) ──────────────────────────────── */
+#app { display: flex; flex-direction: column; height: 100%; }
+#bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 8px 14px; border-bottom: 1px solid #2b261d; background: #110f0c; }
+#bar h1 { margin: 0 8px 0 0; font: 600 14px/1.2 var(--display); color: var(--gold); letter-spacing: .04em; }
+#bar h1 small { display: block; font: 500 10px var(--mono); color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.seg { display: inline-flex; border: 1px solid #3a3226; border-radius: 3px; overflow: hidden; }
+.seg button { background: #191612; border: 0; border-right: 1px solid #3a3226; padding: 6px 10px; font: 500 12px var(--sans); color: var(--text); cursor: pointer; }
+.seg button:last-child { border-right: 0; }
+.seg button.on { background: #3a3020; color: var(--primary-strong); }
+.seg button:hover { background: #2a241b; }
+.chk { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text); cursor: pointer; user-select: none; }
+.chk input { accent-color: var(--gold); }
+#main { flex: 1; display: flex; min-height: 0; }
+#stage { flex: 1; position: relative; min-width: 0; overflow: hidden; }
+#frame-wrap { position: absolute; }
+#frame { position: absolute; left: 0; top: 0; transform-origin: 0 0; overflow: hidden; background: var(--bg); box-shadow: 0 0 0 1px #2c261d, 0 10px 40px rgba(0,0,0,.6); }
+#panel { width: 340px; flex: none; overflow-y: auto; border-left: 1px solid #2b261d; background: #110f0c; padding: 16px; font-size: 13px; line-height: 1.5; color: var(--text); }
+#panel h2 { margin: 0 0 4px; font: 600 16px var(--display); color: var(--primary-strong); }
+#panel .q { margin: 0 0 12px; color: var(--muted); font-style: italic; }
+#panel h3 { margin: 16px 0 6px; font: 600 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+#panel p { margin: 0 0 8px; }
+#panel .ctl { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 10px; }
+#panel .ctl button { background: #231e17; border: 1px solid #4a3f2e; border-radius: 3px; padding: 6px 10px; cursor: pointer; font-size: 12px; color: var(--ink); }
+#panel .ctl button:hover { border-color: var(--gold); }
+#panel .ctl button.on { background: #3a3020; border-color: var(--gold); color: var(--primary-strong); }
+#panel .ctl button.primary { background: #3d3220; border-color: var(--gold); color: var(--primary-strong); font-weight: 600; }
+#panel .readout { font: 12px var(--mono); color: var(--ink); background: #0b0a08; border: 1px solid #2b261d; padding: 8px 10px; white-space: pre-line; }
+#panel .fine { font-size: 11.5px; color: var(--muted); }
+body.embed #bar, body.embed #panel { display: none; }
+body.embed { background: var(--bg); }
+@media (max-width: 960px) { #main { flex-direction: column; } #panel { width: auto; max-height: 38vh; border-left: 0; border-top: 1px solid #2b261d; } }
+
+/* ── The frame ─────────────────────────────────────────────────────────── */
+.fr { position: absolute; inset: 0; font-family: var(--mono); color: var(--text); }
+.fr canvas.world { position: absolute; image-rendering: pixelated; }
+img.px { image-rendering: pixelated; }
+
+/* Desktop shell: rail | game | rail (client/index.html + hud/rail.css). */
+.d-rail { position: absolute; top: 0; bottom: 0; width: 232px; padding: 8px; display: flex; flex-direction: column; gap: 7px;
+  background: linear-gradient(135deg, #1a1712, #0e0c09 36%, #0b0a07); box-shadow: inset 0 0 0 1px rgba(0,0,0,.72); }
+.d-rail.l { left: 0; border-right: 1px solid rgba(50,50,80,.6); }
+.d-rail.r { right: 0; border-left: 1px solid rgba(50,50,80,.6); }
+.d-game { position: absolute; left: 232px; top: 0; width: 816px; height: 720px; overflow: hidden; background: #2a2e1e; }
+.pn { background: linear-gradient(180deg, #27231b, #221f18 56%, #1b1813); border: 1px solid var(--edge-dark); border-top-color: var(--edge-light); border-left-color: var(--edge-light); padding: 8px 10px; }
+.pt { display: flex; justify-content: space-between; align-items: center; font: 600 11px var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--primary-strong); }
+.pt span, .pt button { font: 500 10px var(--mono); letter-spacing: .04em; text-transform: none; color: var(--muted); background: none; border: 0; padding: 0; }
+.pt.sub { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--divider); }
+.char-name { display: flex; align-items: center; gap: 6px; margin: 8px 0 6px; font: 600 12px var(--mono); color: var(--ink); }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: #3bd16f; box-shadow: 0 0 5px #3bd16f; }
+.hp-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
+.hp-row b { color: var(--ink); font-weight: 600; }
+.hpbar { height: 9px; margin: 3px 0 8px; background: #0a0907; border: 1px solid #000; position: relative; }
+.hpbar i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(180deg, #5af06a, #2fb84a); transition: width .18s linear; }
+.dps { display: flex; align-items: baseline; gap: 7px; padding: 6px 0; border-top: 1px solid var(--divider); }
+.dps img { width: 16px; height: 16px; align-self: center; }
+.dps b { font: 600 20px var(--mono); color: var(--primary-strong); }
+.dps small { color: var(--muted); font-size: 11px; }
+.dps em { margin-left: auto; font: 600 9px var(--mono); color: var(--muted); font-style: normal; letter-spacing: .1em; }
+.sgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 8px; padding-top: 6px; border-top: 1px solid var(--divider); font-size: 11px; color: var(--ink); }
+.sgrid span { display: flex; align-items: center; gap: 5px; }
+.sgrid img { width: 13px; height: 13px; }
+.ltabs { display: flex; gap: 4px; margin-top: 7px; }
+.ltabs b { flex: 1; text-align: center; font: 500 9px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--edge-light); padding: 4px 0; background: #1a1712; }
+.guide p { margin: 6px 0 8px; font: 12px/1.5 var(--sans); color: var(--ink); }
+.guide .chap { margin-top: 6px; font: 600 9px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.guide .next { width: 100%; padding: 6px; border: 1px solid var(--primary-strong); background: #3a3020; color: var(--primary-strong); font: 600 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.guide.collapsed { padding: 6px 10px; }
+.navgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 8px; background: linear-gradient(180deg, #27231b, #1b1813); border: 1px solid var(--edge-dark); border-top-color: var(--edge-light); }
+.nb { display: flex; align-items: center; gap: 7px; padding: 7px 7px; border: 1px solid var(--edge-light); background: #1f1c16; font: 500 11px var(--mono); color: var(--text); cursor: pointer; text-align: left; position: relative; }
+.nb img { width: 22px; height: 22px; flex: none; }
+.nb:hover { border-color: var(--primary); color: var(--ink); }
+.nb.on { border-color: var(--primary-strong); background: #2e281c; color: var(--primary-strong); }
+.erow { display: flex; align-items: center; gap: 8px; margin-top: 7px; font-size: 12px; }
+.erow i { width: 9px; height: 9px; transform: rotate(45deg); background: #b066e0; }
+.erow b { margin-left: auto; color: #c58fff; }
+
+/* Game-area overlays. */
+.bxp { position: absolute; top: 12px; right: 12px; width: 206px; padding: 7px 10px; background: rgba(16,14,11,.88); border: 1px solid #3a3326; }
+.bxp div { display: flex; justify-content: space-between; font: 600 10px var(--mono); letter-spacing: .1em; color: var(--muted); }
+.bxp b { color: var(--primary-strong); }
+.bxp i { display: block; height: 4px; margin-top: 5px; background: #0a0907; position: relative; }
+.bxp i::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 46%; background: #8c6bd6; }
+.auto { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; padding: 10px 18px; background: linear-gradient(180deg, #3a3129, #241e19); border: 1px solid #6a5a44; font: 600 11px var(--mono); letter-spacing: .14em; color: var(--text); }
+.auto b { padding-left: 12px; border-left: 1px solid #6a5a44; color: #6fe08a; font-size: 14px; }
+
+/* Target frame (client/src/hud/targetFrame.css). */
+.tf { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 320px; padding: 8px 12px 9px; background: rgba(20,18,13,.94); border: 1px solid #3e3a30; border-right-color: #0c0a07; border-bottom-color: #0c0a07; box-shadow: 2px 2px 8px rgba(0,0,0,.6); }
+.tf-name { text-align: center; font: 700 14px var(--mono); color: var(--text); margin-bottom: 5px; }
+.tf-track { position: relative; height: 18px; border-radius: 5px; background: rgba(0,0,0,.55); border: 1px solid rgba(255,255,255,.12); overflow: hidden; }
+.tf-track i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; background: linear-gradient(180deg, #57e05a, #33b13a); }
+.tf-track span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 700 11px var(--mono); color: #fff; text-shadow: 1px 1px 0 #000, -1px 0 0 #000; }
+.tf-stats { margin-top: 5px; text-align: center; font: 600 10px var(--mono); color: var(--muted); letter-spacing: .06em; }
+.tf-tiles { display: flex; justify-content: center; gap: 10px; margin-top: 7px; min-height: 0; }
+.tf-tiles:empty { display: none; }
+.tile { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 58px; }
+.ti { position: relative; width: 32px; height: 32px; border-radius: 3px; background: #11161d; border: 1px solid rgba(255,255,255,.18); overflow: hidden; }
+.ti img { width: 100%; height: 100%; image-rendering: pixelated; }
+.ti .sw { position: absolute; inset: 0; }
+.ti .st { position: absolute; right: 1px; bottom: 0; font: 700 11px var(--mono); color: #fff; text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000; line-height: 1; padding: 1px; }
+.tl { font: 700 9px var(--mono); letter-spacing: .02em; white-space: nowrap; }
+.tile.jump .ti { animation: tilejump .5s ease-out; }
+@keyframes tilejump { 0% { transform: scale(1.35); box-shadow: 0 0 12px #9be564; } 100% { transform: scale(1); } }
+
+/* THE RING — the only card element on the HUD (thesis A). */
+.ring { position: absolute; width: var(--rs); height: var(--rs); --rs: 56px; pointer-events: auto; cursor: help; }
+.ring svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.ring .plate { fill: rgba(10,9,7,.82); stroke: rgba(255,255,255,.10); stroke-width: 6; }
+.ring .arc { fill: none; stroke: var(--lane); stroke-width: 6; stroke-linecap: butt; opacity: .55; }
+.ring .glint { fill: #fff; opacity: 0; }
+.ring .txt { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 700 15px var(--mono); color: var(--ink); text-shadow: 0 1px 0 #000, 0 0 4px #000; }
+.ring .badge { position: absolute; right: -5px; bottom: -5px; width: 24px; height: 24px; border-radius: 50%; background: #0b0a08; border: 1.5px solid var(--pay); display: grid; place-items: center; opacity: .8; }
+.ring .badge canvas { width: 16px; height: 16px; image-rendering: pixelated; }
+.ring .flash { position: absolute; inset: -2px; border-radius: 50%; box-shadow: 0 0 0 3px var(--lane), 0 0 18px 4px var(--lane); opacity: 0; pointer-events: none; }
+.ring .spend { position: absolute; inset: 8px; border-radius: 50%; background: radial-gradient(circle, #fff 0, var(--lane) 40%, transparent 70%); opacity: 0; pointer-events: none; }
+.ring .hl { position: absolute; inset: -9px; border-radius: 50%; border: 2px solid var(--primary-strong); box-shadow: 0 0 12px rgba(224,192,112,.7); opacity: 0; pointer-events: none; }
+.ring.coming .arc { opacity: 1; filter: drop-shadow(0 0 3px var(--lane)); }
+.ring.coming .txt { color: var(--lane); }
+.ring.coming .glint { opacity: 1; }
+.ring.coming svg { animation: tighten .5s ease-in-out infinite; }
+@keyframes tighten { 50% { transform: scale(1.07); } }
+.ring.ready .arc { opacity: 1; filter: drop-shadow(0 0 4px var(--lane)) drop-shadow(0 0 8px var(--lane)); animation: breathe 2.2s ease-in-out infinite; }
+.ring.ready .txt { color: var(--lane); font-size: 24px; }
+.ring.ready .badge { opacity: 1; }
+@keyframes breathe { 50% { filter: drop-shadow(0 0 2px var(--lane)); } }
+.d-game .ring { left: 14px; top: 49px; }
+.ring-tip { position: absolute; z-index: 30; max-width: 300px; padding: 10px 12px; background: #15130f; border: 1px solid var(--edge-medium); box-shadow: 0 8px 24px rgba(0,0,0,.6); font: 12px/1.45 var(--sans); color: var(--ink); pointer-events: none; }
+.ring-tip b { display: block; font: 600 14px var(--display); margin-bottom: 4px; }
+.ring-tip small { display: block; margin-top: 6px; font: 600 10px var(--mono); color: var(--muted); letter-spacing: .05em; text-transform: uppercase; }
+
+/* The teaching line: one transient line, first three firings, then never. */
+.teach { position: absolute; display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 8px; padding: 8px 14px 9px; background: linear-gradient(90deg, rgba(12,11,8,.95), rgba(12,11,8,.88)); border: 1px solid color-mix(in srgb, var(--lane) 55%, #000); border-left: 3px solid var(--lane); box-shadow: 0 6px 20px rgba(0,0,0,.55), 0 0 18px color-mix(in srgb, var(--lane) 18%, transparent); font: 13px/1.4 var(--sans); color: var(--ink); opacity: 0; pointer-events: none; }
+.teach b { font: 700 14px var(--display); color: var(--lane); text-shadow: 0 0 8px color-mix(in srgb, var(--lane) 45%, transparent); }
+.teach::before { content: ''; position: absolute; width: 2px; background: linear-gradient(var(--lane), color-mix(in srgb, var(--lane) 30%, transparent)); }
+.d-game .teach { left: 14px; top: 140px; max-width: 560px; }
+.d-game .teach::before { left: 25px; top: -36px; height: 35px; }
+.mv .teach { right: 8px; top: 186px; max-width: 374px; padding: 7px 11px 8px; font-size: 12.5px; }
+.mv .teach::before { right: 21px; top: -62px; height: 61px; }
+
+/* Arrival banner (client/src/hud/areaInformation.css). */
+.arrival { position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); width: min(580px, 94%); padding: 20px 22px; text-align: center; background: linear-gradient(90deg, transparent, #101116d9 18%, #101116d9 82%, transparent); font-family: ui-sans-serif, system-ui, sans-serif; color: #eee4d1; text-shadow: 0 2px 4px #000; pointer-events: none; opacity: 0; }
+.arrival::before, .arrival::after { content: ''; display: block; height: 1px; background: linear-gradient(90deg, transparent, #ab9271, transparent); }
+.arrival::before { margin-bottom: 13px; } .arrival::after { margin-top: 13px; }
+.arrival .eb { color: #c9b58f; text-transform: uppercase; font-size: 10px; letter-spacing: .2em; margin-bottom: 7px; }
+.arrival h2 { margin: 0 0 7px; font: 500 34px/1.15 Georgia, 'Times New Roman', serif; letter-spacing: .045em; }
+.arrival .md { font-size: 13px; color: #d4cbbb; }
+.arrival .terr { display: inline-flex; align-items: center; gap: 6px; margin: 10px auto 0; font-size: 13.5px; line-height: 1.5; color: #d9d1c3; }
+.arrival .terr strong { color: #f0d6a7; }
+.arrival .terr img { width: 18px; height: 18px; }
+.mv .arrival { top: 34%; padding: 13px 12px; }
+.mv .arrival h2 { font-size: 26px; }
+.mv .arrival .terr { font-size: 12px; }
+
+/* Dialogs. */
+.backdrop { position: absolute; inset: 0; background: rgba(5,4,3,.6); }
+.dlg { position: absolute; display: flex; flex-direction: column; background: #191611; border: 1px solid var(--edge-medium); box-shadow: 0 18px 60px rgba(0,0,0,.75); font-family: var(--sans); color: var(--ink); }
+.dlg-head { display: flex; align-items: center; gap: 12px; padding: 0 0 0 16px; height: 48px; flex: none; border-bottom: 1px solid var(--edge-light); background: linear-gradient(180deg, #24201a, #1a1712); }
+.dlg-head .barx { width: 3px; height: 24px; background: var(--primary-strong); }
+.dlg-head h2 { flex: 1; margin: 0; font: 600 15px var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--primary-strong); }
+.dlg-head .sub { font: 500 10px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.dlg-head .x { width: 48px; height: 48px; border: 0; border-left: 1px solid var(--edge-light); background: transparent; color: var(--text); font-size: 20px; cursor: pointer; }
+.dlg-head .back { border: 1px solid var(--edge-light); background: #211d17; color: var(--text); font: 500 11px var(--mono); padding: 5px 9px; cursor: pointer; }
+.dlg-tabs { display: flex; gap: 0; padding: 0 16px; border-bottom: 1px solid var(--edge-light); flex: none; }
+.dlg-tabs button { border: 0; border-bottom: 2px solid transparent; background: none; padding: 10px 16px 9px; font: 600 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); cursor: pointer; }
+.dlg-tabs button.on { color: var(--primary-strong); border-bottom-color: var(--primary-strong); }
+
+/* Gear tab. */
+.gear-list { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+.gl-h { font: 600 10px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 4px 0 0; }
+.g-row { display: grid; grid-template-columns: 52px 1fr auto; gap: 12px; align-items: center; padding: 10px 12px; border: 1px solid var(--edge-light); background: var(--control); text-align: left; }
+.g-row .art { width: 52px; height: 52px; display: grid; place-items: center; background: var(--inset); border: 1px solid var(--edge-medium); }
+.g-row .art img { width: 40px; height: 40px; }
+.g-row .t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.g-row small { font: 500 10px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.g-row b { font: 600 16px var(--display); color: var(--ink); }
+.g-row em { font: 12px var(--mono); font-style: normal; color: var(--text); }
+.g-row.weapon { cursor: pointer; border-color: color-mix(in srgb, var(--primary) 60%, var(--edge-light)); background: linear-gradient(90deg, rgba(200,168,96,.12), var(--control) 60%); padding: 14px 12px; }
+.g-row.weapon:hover { border-color: var(--primary-strong); box-shadow: 0 0 0 1px rgba(224,192,112,.35); }
+.g-row.weapon b { color: var(--primary-strong); font-size: 19px; }
+.g-row .go { padding: 8px 14px; border: 1px solid var(--primary-strong); background: #3a3020; color: var(--primary-strong); font: 600 12px var(--mono); letter-spacing: .04em; white-space: nowrap; }
+.g-row.plain { opacity: .78; cursor: default; }
+.g-row.plain b { font-size: 14px; color: var(--text); }
+.g-row .plainchip { padding: 3px 8px; border: 1px dashed var(--edge-medium); color: var(--muted); font: 500 10px var(--mono); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+.map-grid { padding: 14px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; overflow-y: auto; }
+.mv .map-grid { grid-template-columns: 1fr; }
+.map-tile { position: relative; display: flex; align-items: center; gap: 9px; padding: 14px 12px; border: 1px solid var(--edge-light); border-left: 4px solid var(--sc); background: linear-gradient(90deg, color-mix(in srgb, var(--sc) 12%, var(--control)), var(--control) 70%); font: 12.5px/1.4 var(--sans); color: var(--ink); }
+.map-tile.here { border-color: var(--primary-strong); border-left-color: var(--sc); box-shadow: inset 0 0 0 1px var(--primary-strong); }
+.map-tile em { position: absolute; right: 8px; top: 4px; font: 600 8.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--primary-strong); font-style: normal; }
+.make-stub { padding: 30px 16px; color: var(--muted); font-size: 13px; }
+
+/* The weapon page (weaponPage.css, extended for thesis A). */
+.wp-scroll { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #4a3f2e transparent; }
+.wp-grid { display: grid; grid-template-columns: minmax(0, 1fr) 292px; gap: 16px; padding: 14px 16px 18px; align-items: start; }
+.wp-main { display: flex; flex-direction: column; gap: 13px; min-width: 0; }
+.wp-side { position: sticky; top: 0; display: flex; flex-direction: column; gap: 12px; }
+.wp-form { display: grid; grid-template-columns: 84px 1fr; gap: 14px; align-items: center; padding: 11px; border: 1px solid var(--edge-light); background: linear-gradient(180deg, rgba(200,168,96,.07), transparent 70%), var(--hud-panel); }
+.wp-form .art { width: 84px; height: 84px; display: grid; place-items: center; border: 1px solid var(--edge-medium); background: var(--inset); }
+.wp-form .art img { width: 64px; height: 64px; }
+.wp-eb { font: 500 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.wp-name { margin: 2px 0; font: 600 22px var(--display); color: var(--primary-strong); }
+.wp-meta { font: 11px var(--mono); color: var(--muted); }
+.wp-lanes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+.wp-lane { padding: 2px 9px; border: 1px solid var(--lane); border-radius: 999px; color: var(--lane); font: 700 9.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.wp-row { display: flex; flex-direction: column; gap: 7px; }
+.wp-rh { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 12px; }
+.wp-rh h3 { margin: 0; font: 600 14px var(--display); color: var(--ink); }
+.wp-rh span { font: 11px var(--mono); color: var(--muted); }
+.wp-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.wp-card { position: relative; display: flex; flex-direction: column; gap: 5px; min-width: 0; min-height: 96px; padding: 10px 11px 9px; border: 1px solid var(--edge-light); border-top: 3px solid var(--lane); background: var(--control); text-align: left; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.wp-card:hover { border-color: var(--lane); border-top-color: var(--lane); box-shadow: 0 0 0 1px color-mix(in srgb, var(--lane) 45%, transparent); }
+.wp-card .nm { display: flex; align-items: center; gap: 7px; padding-right: 58px; font: 600 14.5px/1.2 var(--display); color: var(--lane); }
+.wp-card .sn { flex: 1; font: 12.5px/1.45 var(--sans); color: var(--ink); }
+.wp-card .sn .m1 { color: var(--mc); } .wp-card .sn .p1 { color: var(--pc); }
+.wp-card .tag { position: absolute; top: 7px; right: 8px; max-width: 46%; text-align: right; font: 600 8.5px/1.2 var(--mono); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.wp-card .tag.on { color: var(--primary-strong); }
+.wp-card .note[hidden] { display: none; }
+.wp-card .note { align-self: flex-start; padding: 1px 6px; border: 1px dashed var(--lane); color: var(--lane); font: 600 9.5px var(--mono); letter-spacing: .04em; text-transform: uppercase; }
+.wp-card .ft { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 2px 8px; font: 11px var(--mono); }
+.wp-card .cost { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0 4px; color: var(--ink); }
+.wp-card .cost img { width: 13px; height: 13px; vertical-align: -2px; }
+.wp-card .cost .sep { color: var(--dim); }
+.wp-card .short { color: #e06a55; }
+.wp-card .req { color: var(--muted); }
+.wp-card .req.unmet { color: #e06a55; }
+.wp-card .buy { padding: 1px 7px; border: 1px solid var(--primary-strong); color: var(--primary-strong); font: 700 9.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.wp-card.st-owned { border-color: color-mix(in srgb, var(--primary) 45%, var(--edge-light)); border-top-color: var(--lane); background: color-mix(in srgb, var(--primary) 6%, var(--control)); }
+.wp-card.st-active { border-color: var(--primary-strong); border-top-color: var(--lane); background: color-mix(in srgb, var(--primary) 9%, var(--control)); box-shadow: inset 0 0 0 1px var(--primary-strong); }
+.wp-card.st-short .sn, .wp-card.st-locked .sn { color: var(--muted); }
+.wp-card.st-locked { cursor: default; }
+.wp-card.preview { border-color: color-mix(in srgb, var(--lane) 70%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--lane) 35%, transparent), 0 0 14px color-mix(in srgb, var(--lane) 25%, transparent); }
+.wp-card.preview .sn { color: var(--ink); }
+.wp-card .rmark { flex: none; width: 18px; height: 18px; }
+.wp-card .vig { position: absolute; right: 6px; bottom: 22px; width: 96px; height: 56px; border: 1px solid var(--edge-light); background: #1d2116; image-rendering: pixelated; }
+.wp-card.has-vig .sn { padding-right: 104px; min-height: 56px; }
+.wp-card .pv { position: absolute; right: 8px; bottom: 8px; display: none; }
+.wp-locked { opacity: .45; filter: saturate(.35); }
+.wp-locked .wp-card { min-height: 0; cursor: default; }
+details.t2 > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; padding: 9px 12px; border: 1px solid var(--divider); background: var(--hud-panel); font: 12px var(--mono); color: var(--text); }
+details.t2 > summary::-webkit-details-marker { display: none; }
+details.t2 > summary span { color: var(--muted); }
+details.t2[open] > summary { margin-bottom: 10px; }
+details.t2 .wp-row + .wp-row { margin-top: 12px; }
+.wp-gate { display: grid; grid-template-columns: 64px 1fr auto; gap: 14px; align-items: center; padding: 14px; border: 1px solid var(--primary); background: linear-gradient(180deg, rgba(200,168,96,.09), transparent 80%), var(--hud-panel); }
+.wp-gate .pt2 { width: 64px; height: 64px; border-radius: 50%; border: 1px solid var(--primary); background: var(--inset); overflow: hidden; display: grid; place-items: center; }
+.wp-gate .pt2 img { width: 80px; height: 80px; }
+.wp-gate h3 { margin: 0 0 5px; font: 600 15px var(--display); color: var(--primary-strong); }
+.wp-gate p { margin: 0 0 6px; font: 12px/1.45 var(--sans); }
+.wp-gate .pr { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font: 11px var(--mono); color: var(--muted); }
+.pips { display: inline-flex; gap: 4px; } .pips i { width: 11px; height: 11px; border: 1px solid var(--primary); }
+.pips i.on { background: var(--primary-strong); }
+.door { display: flex; flex-direction: column; gap: 4px; max-width: 200px; }
+.door b { font: 600 13px var(--display); color: var(--ink); }
+.door button { padding: 8px 14px; border: 1px solid var(--edge-medium); background: var(--control); color: var(--dim); font: 700 12px var(--mono); cursor: not-allowed; }
+.door small { font: 10px var(--mono); color: var(--muted); }
+.wp-pn { display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid var(--edge-light); background: var(--hud-panel); }
+.wp-pn h3 { margin: 0; font: 600 13px var(--display); color: var(--primary-strong); }
+.sheet-rows { display: flex; flex-direction: column; gap: 3px; margin: 0; font: 12px var(--mono); }
+.sheet-rows div { display: flex; justify-content: space-between; gap: 8px; padding: 2px 4px; margin: 0 -4px; }
+.sheet-rows dt { color: var(--muted); } .sheet-rows dd { margin: 0; color: var(--ink); }
+.sheet-rows .mv { background: rgba(200,168,96,.12); } .sheet-rows .mv dt { color: var(--ink); }
+.sheet-rows s { color: var(--dim); } .sheet-rows .up { color: var(--success); font-weight: 700; }
+.wp-note { margin: 0; padding-left: 8px; border-left: 2px solid var(--primary); font: 10.5px/1.45 var(--mono); color: var(--muted); }
+.mats { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; font-size: 12px; }
+.mats li { display: grid; grid-template-columns: 18px 1fr auto; gap: 8px; align-items: baseline; }
+.mats img { width: 16px; height: 16px; align-self: center; }
+.mats .ess { width: 10px; height: 10px; margin: 0 3px; transform: rotate(45deg); background: #b066e0; align-self: center; }
+.mats .cap { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--primary); align-self: center; }
+.mats span { display: flex; flex-direction: column; gap: 1px; min-width: 0; color: var(--ink); }
+.mats small { font: 10px/1.35 var(--mono); color: var(--muted); }
+.mats b { font: 600 12px var(--mono); }
+.toast { position: absolute; left: 50%; bottom: 18px; z-index: 5; transform: translateX(-50%); max-width: calc(100% - 32px); padding: 9px 15px; border: 1px solid var(--primary); background: #0d0c0a; box-shadow: 0 8px 24px rgba(0,0,0,.6); font: 13px/1.4 var(--sans); color: var(--ink); pointer-events: none; animation: toastin .2s ease-out; }
+.toast.warn { border-color: #d0573f; }
+@keyframes toastin { from { opacity: 0; transform: translate(-50%, 8px); } }
+.inline-diff { padding: 9px 11px; border: 1px solid color-mix(in srgb, var(--lane) 60%, transparent); background: #16130f; font: 12px var(--mono); }
+.inline-diff b { color: var(--lane); font: 600 12px var(--display); }
+
+/* Portrait shell (client/src/hud/MobileHUD.tsx). */
+.m { position: absolute; inset: 0; }
+.m-top { position: absolute; left: 0; right: 0; top: 0; height: 64px; padding: 8px 10px 0; background: linear-gradient(180deg, rgba(12,11,9,.97), rgba(12,11,9,.9)); border-bottom: 1px solid #2c271e; }
+.m-r1 { display: flex; align-items: center; gap: 7px; font: 600 12px var(--mono); }
+.m-r1 .nm { color: #6fe08a; }
+.m-hp { flex: 1; height: 9px; background: #0a0907; border: 1px solid #000; position: relative; }
+.m-hp i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(180deg, #5af06a, #2fb84a); }
+.m-r1 .hpt { font: 600 11px var(--mono); color: var(--ink); }
+.m-r1 .zn { font: 600 11px var(--mono); color: var(--primary-strong); }
+.m-r2 { display: flex; align-items: center; gap: 8px; margin-top: 8px; font: 11px var(--mono); color: var(--muted); }
+.m-r2 .chip { padding: 2px 7px; border: 1px solid var(--edge-light); background: #1a1712; color: var(--text); }
+.mv .ring { right: 8px; top: 74px; --rs: 48px; }
+.mv .tf { top: 72px; left: 10px; transform: none; width: 312px; padding: 6px 10px 6px; }
+.mv .tf-stats { display: none; }
+.mv .tf-tiles { margin-top: 5px; gap: 8px; }
+.mv .ti { width: 26px; height: 26px; }
+.mv .ti .st { font-size: 10px; }
+.mv .tf-name { font-size: 13px; margin-bottom: 4px; }
+.mv .tf-track { height: 16px; }
+.mv .tile { width: 54px; }
+.m-quest { position: absolute; left: 12px; bottom: 132px; width: 46px; height: 46px; border-radius: 50%; border: 2px solid #8a7246; background: radial-gradient(circle at 40% 35%, #4a3a22, #241c12); color: #f0c873; font: 700 22px var(--display); cursor: pointer; }
+.m-auto { position: absolute; right: 12px; bottom: 112px; width: 78px; height: 78px; border-radius: 50%; border: 2px solid #3d5a40; background: radial-gradient(circle at 40% 35%, #263a29, #111a12); color: #6fe08a; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font: 700 11px var(--mono); letter-spacing: .1em; }
+.m-auto span { font-size: 16px; letter-spacing: 0; }
+.m-guide { position: absolute; left: 10px; right: 96px; bottom: 186px; padding: 9px 11px; background: rgba(24,21,16,.97); border: 1px solid var(--edge-medium); border-left: 3px solid var(--primary-strong); box-shadow: 0 6px 18px rgba(0,0,0,.55); font: 12.5px/1.45 var(--sans); color: var(--ink); }
+.m-guide .chap { font: 600 9px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+.m-guide::after { content: ''; position: absolute; left: 22px; bottom: -8px; width: 12px; height: 12px; background: rgba(24,21,16,.97); border-right: 1px solid var(--edge-medium); border-bottom: 1px solid var(--edge-medium); transform: rotate(45deg); }
+.m-bottom { position: absolute; left: 0; right: 0; bottom: 0; background: #0f0d0a; border-top: 1px solid #2c271e; }
+.m-bxp { padding: 6px 12px 7px; }
+.m-bxp div { display: flex; justify-content: space-between; font: 600 10px var(--mono); letter-spacing: .12em; color: var(--muted); }
+.m-bxp b { color: var(--primary-strong); }
+.m-bxp i { display: block; height: 5px; margin-top: 5px; background: #0a0907; position: relative; }
+.m-bxp i::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 46%; background: #8c6bd6; }
+.m-tabs { display: grid; grid-template-columns: repeat(6, 1fr); border-top: 1px solid #2c271e; }
+.m-tab { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 0 10px; border: 0; background: none; font: 600 9px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); cursor: pointer; position: relative; }
+.m-tab img { width: 24px; height: 24px; }
+.m-tab .gl { width: 24px; height: 24px; display: grid; place-items: center; font-size: 18px; color: var(--text); }
+.m-tab.on { color: var(--primary-strong); background: #1c1812; }
+.m-tab.on::before { content: ''; position: absolute; top: -1px; left: 12px; right: 12px; height: 2px; background: var(--primary-strong); }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; top: 150px; display: flex; flex-direction: column; background: #191611; border-top: 1px solid var(--edge-medium); border-radius: 12px 12px 0 0; box-shadow: 0 -12px 40px rgba(0,0,0,.6); font-family: var(--sans); }
+.sheet .handle { width: 44px; height: 4px; border-radius: 2px; background: #4a3f2e; margin: 8px auto 2px; flex: none; }
+.sheet .dlg-head { border-radius: 12px 12px 0 0; background: none; }
+.mv .g-row { grid-template-columns: 48px 1fr; }
+.mv .g-row .art { width: 48px; height: 48px; }
+.mv .g-row .go { grid-column: 1 / -1; text-align: center; padding: 11px; font-size: 13px; }
+.mv .g-row .plainchip { grid-column: 2; justify-self: start; }
+.mv .page-full { position: absolute; inset: 0; z-index: 8; display: flex; flex-direction: column; background: #191611; font-family: var(--sans); }
+.mv .wp-grid { grid-template-columns: 1fr; padding: 12px; gap: 12px; }
+.mv .wp-side { position: static; }
+.mv .wp-cards { grid-template-columns: 1fr; gap: 8px; }
+.mv .wp-card { min-height: 0; padding: 10px 11px 10px; }
+.mv .wp-card .pv { display: inline-flex; align-items: center; gap: 5px; padding: 5px 9px; border: 1px solid var(--edge-medium); background: #1c1914; font: 600 10px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--text); cursor: pointer; }
+.mv .wp-card .pv.on { border-color: var(--lane); color: var(--lane); }
+.mv .wp-card.lean .ft { padding-right: 96px; min-height: 26px; }
+.mv .wp-form { grid-template-columns: 64px 1fr; gap: 10px; padding: 10px; align-items: start; }
+.mv .wp-form .art { width: 64px; height: 64px; } .mv .wp-form .art img { width: 48px; height: 48px; }
+.mv .wp-name { font-size: 19px; }
+.mv .wp-gate { grid-template-columns: 52px 1fr; }
+.mv .wp-gate .pt2 { width: 52px; height: 52px; }
+.mv .door { grid-column: 1 / -1; max-width: none; }
+
+/* The simulated tap (embed autoplay) and first-time overlay. */
+.tap { position: absolute; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; border: 2px solid #fff; background: rgba(255,255,255,.18); pointer-events: none; z-index: 60; animation: tap .55s ease-out forwards; }
+@keyframes tap { 0% { transform: scale(.5); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+.fto { position: absolute; inset: 0; z-index: 50; pointer-events: none; }
+.fto .num { position: absolute; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; background: var(--primary-strong); color: #1a1408; display: grid; place-items: center; font: 700 16px var(--display); box-shadow: 0 0 0 3px #1a1408, 0 0 16px rgba(224,192,112,.8); }
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="bar">
+    <h1>Prototype A · Nothing but the ring<small>one ring per active verb · every other fact on the page or the target</small></h1>
+    <div class="seg" id="sceneSeg"></div>
+    <div class="seg" id="viewSeg"></div>
+    <label class="chk"><input type="checkbox" id="firstChk"> First-time player</label>
+  </header>
+  <div id="main">
+    <div id="stage"><div id="frame-wrap"><div id="frame"></div></div></div>
+    <aside id="panel"></aside>
+  </div>
+</div>
+<script src="../data.js"></script>
+<script>
+'use strict';
+/* ════════════════════════════════════════════════════════════════════════
+   DATA — every name, sentence, cost, colour and number comes from the export.
+   ════════════════════════════════════════════════════════════════════════ */
+const D = window.UI_PROTO_DATA;
+const DS = D.daggerScenes;
+const P = D.packets;
+const A = (p) => (p ? '../../../' + p : null);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const pageBy = (k) => DS.pages.find((p) => p.key === k);
+const statusById = (id) => D.statuses.target.find((s) => s.id === id);
+const comps = DS.compositionsT1Slinger;
+const comp = (verbId, leanId) => comps.find((c) => c.verbId === verbId && c.leanId === leanId);
+const BEAT = DS.tutorialBeats.find((b) => b.id === 'card:dagger-t1-affliction-payoff');
+const DAGGER = D.weapons.find((w) => w.lineageId === 'dagger');
+const WDOT = DAGGER.t1Form.weaponDot;
+const PS = DS.playerStats;
+const SWAMP_MONSTERS = D.families.swamp.flatMap((f) => f.monsters.map((m) => ({ ...m, family: f })));
+const OOZE = SWAMP_MONSTERS.find((m) => m.id === 'bog-slime');
+const VERB_ID = 'dagger-t1-affliction-payoff';
+const LEAN_AFF = 'dagger-t1-affliction-stat';
+const LEAN_CTL = 'dagger-t1-control-stat';
+const PURE = comp(VERB_ID, LEAN_AFF);
+const COMPOSED = comp(VERB_ID, LEAN_CTL);
+const VERB_CARD = pageBy('scene2').bands[0].rows[1].cards[0];
+const POISON = statusById('poison-dagger-burn');
+const SLOWED = statusById('ability-slowed');
+const ROOTED = statusById('ability-rooted');
+const BLACKWATER = 'node-t1-swamp-04';
+const NODE_IDS = ['node-t1-swamp-04', 'node-t1-swamp-02', 'node-t1-swamp-05'];
+const nodeBy = (id) => D.nodes.find((n) => n.id === id);
+
+/* The prototype combat rule (SCENES.md): a UI rule built from the export's
+   numbers, not the server's DoT formula. */
+const RULE = {
+  swingMs: 500,                                   // 1.98 swings/s, rounded per SCENES
+  attack: PS.attack,                              // 26
+  dose: PS.attack * WDOT.convPct,                 // 13: the Dagger's reservoir
+  leanBleed: PS.attack * 0.10,                    // 2.6: Coated Edge's "a tenth" (SCENES)
+  tickMs: WDOT.tickIntervalMs,                    // 1000
+  capMs: PURE.trigger.capMs,                      // 5000
+  rootMs: COMPOSED.payoff.durationMs,             // 2000
+  slowPct: 0.15,                                  // Tendon Cut's 15% (SCENES)
+  oozeHp: OOZE.hp, oozeAtk: OOZE.attack, oozeCd: OOZE.attackCooldownMs,
+  hp0: 171, maxHp: PS.maxHp,
+};
+
+/* Art not carried by the export: the client's own environment and menu icons. */
+const ENV = 'client/public/assets/environment/swamp/';
+const ICONS = 'client/public/assets/concept-icons/';
+const ART = {
+  wang: ENV + 'ground-bogpool-wang.png',
+  props: ['bogleaf-clump.png', 'bogleaf-clump-variant-2.png', 'sedge-tuft.png', 'sedge-tuft-variant-2.png', 'dead-reed-scatter.png', 'dead-reed-scatter-variant-2.png', 'moss-clumps.png'].map((f) => ENV + f),
+  stump: ENV + 'rotted-root-crown.png',
+  menu: (n) => ICONS + 'menu/' + n + '.png',
+  stat: (n) => ICONS + 'stats/' + n + '.png',
+};
+
+/* ════════════════════════════════════════════════════════════════════════
+   IMAGES
+   ════════════════════════════════════════════════════════════════════════ */
+const IMG = {};
+function img(path) {
+  if (!path) return null;
+  if (!IMG[path]) {
+    const i = new Image();
+    i.onload = () => { groundCache.clear(); paintGlyphs(); };
+    i.src = A(path);
+    IMG[path] = i;
+  }
+  return IMG[path];
+}
+const ok = (i) => i && i.complete && i.naturalWidth > 0;
+[ART.wang, ART.stump, ...ART.props, D.art.slingerSprite, ...Object.values(D.art.monsters), D.art.bosses.swamp, P.affliction.shardIcon].forEach(img);
+
+/* A payload glyph tinted to the payload's lane colour (the ring's badge). */
+function paintGlyphs() {
+  document.querySelectorAll('canvas[data-glyph]').forEach((c) => {
+    const im = img(c.dataset.glyph);
+    if (!ok(im)) return;
+    const g = c.getContext('2d');
+    g.clearRect(0, 0, c.width, c.height);
+    g.imageSmoothingEnabled = false;
+    g.globalCompositeOperation = 'source-over';
+    g.drawImage(im, 0, 0, c.width, c.height);
+    g.globalCompositeOperation = 'source-in';
+    g.fillStyle = c.dataset.color;
+    g.fillRect(0, 0, c.width, c.height);
+    g.globalCompositeOperation = 'source-over';
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   STATE + HASH CONTRACT  (#scene=1..5&view=desktop|portrait&first=0|1&embed=0|1)
+   ════════════════════════════════════════════════════════════════════════ */
+const S = { scene: 1, view: 'desktop', first: false, embed: false };
+let SC = {};          // the current scene's state
+let sceneGen = 0;     // bumped on every scene entry; timers from an older entry never run
+const sceneTimers = new Set();
+function later(fn, ms) {
+  const gen = sceneGen;
+  const id = setTimeout(() => { sceneTimers.delete(id); if (gen === sceneGen) fn(); }, ms);
+  sceneTimers.add(id);
+  return id;
+}
+function clearSceneTimers() { sceneGen++; for (const id of sceneTimers) clearTimeout(id); sceneTimers.clear(); }
+let director = null;  // embed autoplay
+const SCENES = [
+  { n: 1, short: 'Finding the tree', q: 'Where does the player go to see their cards?' },
+  { n: 2, short: 'The weapon page', q: 'What does the page say about the Poison Dagger at Tier 1?' },
+  { n: 3, short: 'A fight', q: 'Where do three facts live: the verb is coming, the verb landed, and the lasting state on the target?' },
+  { n: 4, short: 'First firings', q: 'What teaches the player what just happened, and when does it stop?' },
+  { n: 5, short: 'The node', q: 'Arriving in a Swamp node, what tells the player which family lives here and which shard it pays, before the first kill?' },
+];
+function readHash() {
+  const h = new URLSearchParams(location.hash.replace(/^#/, ''));
+  S.scene = Math.min(5, Math.max(1, parseInt(h.get('scene'), 10) || 1));
+  S.view = h.get('view') === 'portrait' ? 'portrait' : 'desktop';
+  S.first = h.get('first') === '1';
+  S.embed = h.get('embed') === '1';
+}
+function hashString() { return `#scene=${S.scene}&view=${S.view}&first=${S.first ? 1 : 0}&embed=${S.embed ? 1 : 0}`; }
+function go(patch) {
+  Object.assign(S, patch);
+  const h = hashString();
+  if (location.hash !== h) location.hash = h; else enterScene();
+}
+window.addEventListener('hashchange', () => { readHash(); enterScene(); });
+
+/* ════════════════════════════════════════════════════════════════════════
+   GEOMETRY — desktop 1280×720 (rails 232 | game 816 | 232), portrait 390×844.
+   World zoom: desktop 1 (the client's 1:1); portrait 0.6 (see NOTES: the
+   client's 0.4 floor is too small for bodies to carry a payoff).
+   ════════════════════════════════════════════════════════════════════════ */
+const VIEW = {
+  desktop: { w: 1280, h: 720, cw: 816, ch: 720, cx: 232, ox: 300, oy: 440, z: 1, k: 1 },
+  portrait: { w: 390, h: 844, cw: 390, ch: 844, cx: 0, ox: 58, oy: 500, z: 0.72, k: 1.3 },
+};
+const V = () => VIEW[S.view];
+const isM = () => S.view === 'portrait';
+
+/* ════════════════════════════════════════════════════════════════════════
+   THE FIGHT SIMULATION — deterministic, 50 ms steps, precomputed so any
+   moment can be drawn exactly (key frames, stepping, screenshots).
+   ════════════════════════════════════════════════════════════════════════ */
+const STEP = 50, MELEE = 56, SPEED = 40;
+function simulate(mode, waves) {
+  const frames = [], events = [], firings = [];
+  let t = 0, readyAt = 0, wave = 0, hp = RULE.hp0, tgt = 0, waveEnd = null, nextImpact = RULE.swingMs;
+  const mk = (w, id, x, y) => ({ id: w + id, label: id, x, y, hp: RULE.oozeHp, owed: 0, tickAt: null, alive: true, deadAt: null, slowUntil: -1, rootUntil: -1, nextAtk: null, x0: x });
+  let oozes = [mk(0, 'A', 140, 30), mk(0, 'B', 380, -44)];
+  const snap = () => frames.push({ t, hp, readyAt, tgt: oozes[tgt] && oozes[tgt].alive ? oozes[tgt].id : null, wave,
+    oozes: oozes.map((o) => ({ id: o.id, label: o.label, x: o.x, y: o.y, hp: o.hp, owed: o.owed, alive: o.alive, deadAt: o.deadAt, slowUntil: o.slowUntil, rootUntil: o.rootUntil })) });
+  for (let guard = 0; guard < 4000; guard++) {
+    if (waveEnd !== null && t >= waveEnd + 1500) {
+      wave++;
+      if (wave >= waves) { snap(); break; }
+      oozes = [mk(wave, 'A', 140, 30), mk(wave, 'B', 380, -44)];
+      tgt = 0; waveEnd = null; hp = RULE.hp0; nextImpact = t + RULE.swingMs;
+      events.push({ t, type: 'spawn' });
+    }
+    if (t > 0) {
+      for (const o of oozes) {                          // movement
+        if (!o.alive || o.x <= MELEE) continue;
+        let v = SPEED;
+        if (t < o.slowUntil) v *= 1 - RULE.slowPct;
+        if (t < o.rootUntil) v = 0;
+        o.x = Math.max(MELEE, o.x - v * STEP / 1000);
+      }
+      for (const o of oozes) {                          // the record ticks a quarter of what it owes
+        if (!o.alive || o.tickAt === null || t < o.tickAt) continue;
+        const d = Math.min(Math.ceil(o.owed / 4), o.owed);
+        o.owed -= d; o.hp -= d; o.tickAt += RULE.tickMs;
+        events.push({ t, type: 'tick', id: o.id, d: Math.round(d) });
+        if (o.owed <= 0.001) { o.owed = 0; o.tickAt = null; }
+        if (o.hp <= 0) { o.alive = false; o.deadAt = t; events.push({ t, type: 'death', id: o.id }); }
+      }
+      if (waveEnd === null && t >= nextImpact) {        // a swing lands
+        while (tgt < oozes.length && !oozes[tgt].alive) tgt++;
+        const o = oozes[tgt];
+        if (o) {
+          events.push({ t: t - 150, type: 'throw', id: o.id });
+          const afflicted = o.owed > 0;
+          o.hp -= RULE.attack;
+          o.owed += RULE.dose + (mode === 'pure' ? RULE.leanBleed : 0);
+          if (o.tickAt === null) o.tickAt = t + RULE.tickMs;
+          if (mode === 'composed') o.slowUntil = t + RULE.swingMs;
+          events.push({ t, type: 'hit', id: o.id, d: RULE.attack });
+          if (afflicted && t >= readyAt) {
+            const before = o.owed;
+            if (mode === 'pure') o.owed *= 2; else o.rootUntil = t + RULE.rootMs;
+            readyAt = t + RULE.capMs;
+            firings.push(t);
+            events.push({ t, type: 'fire', id: o.id, mode, before, after: o.owed, n: firings.length });
+          }
+          if (o.hp <= 0) { o.alive = false; o.deadAt = t; events.push({ t, type: 'death', id: o.id }); }
+        }
+        nextImpact += RULE.swingMs;
+      }
+      for (const o of oozes) {                          // the oozes hit back
+        if (!o.alive || o.x > MELEE + 0.01) continue;
+        if (o.nextAtk === null) o.nextAtk = t + 300;
+        if (t >= o.nextAtk) { hp -= RULE.oozeAtk; o.nextAtk += RULE.oozeCd; events.push({ t, type: 'oozeAtk', id: o.id, d: RULE.oozeAtk }); }
+      }
+      while (tgt < oozes.length && !oozes[tgt].alive) tgt++;
+      if (waveEnd === null && tgt >= oozes.length) waveEnd = t;
+    }
+    snap();
+    t += STEP;
+  }
+  events.sort((a, b) => a.t - b.t);
+  return { frames, events, firings, end: frames[frames.length - 1].t, mode };
+}
+const SIM = { pure: simulate('pure', 1), composed: simulate('composed', 1), teach: simulate('pure', 5) };
+
+function frameAt(sim, t) {
+  const i = Math.max(0, Math.min(sim.frames.length - 1, Math.floor(t / STEP)));
+  const a = sim.frames[i], b = sim.frames[Math.min(sim.frames.length - 1, i + 1)];
+  const f = (t - a.t) / STEP;
+  return { ...a, t, oozes: a.oozes.map((o, j) => {
+    const ob = b.oozes[j] && b.oozes[j].id === o.id ? b.oozes[j] : o;
+    return { ...o, x: o.x + (ob.x - o.x) * Math.max(0, Math.min(1, f)) };
+  }) };
+}
+const lastEvent = (sim, t, type, pred) => { let r = null; for (const e of sim.events) { if (e.t > t) break; if (e.type === type && (!pred || pred(e))) r = e; } return r; };
+const eventsIn = (sim, t, ms) => sim.events.filter((e) => e.t <= t && t - e.t < ms);
+
+/* ════════════════════════════════════════════════════════════════════════
+   GROUND — the swamp's own wang sheet (corner bits NW1 NE2 SW4 SE8), its
+   T1 tint (biomeTint.ts: 0x24301f @ 0.26) and its props.
+   ════════════════════════════════════════════════════════════════════════ */
+function hash(x, y, s) {
+  let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263) + Math.imul(s | 0, 1442695041)) | 0;
+  h = Math.imul(h ^ (h >>> 13), 1274126177); h ^= h >>> 16;
+  return (h >>> 0) / 4294967296;
+}
+function vnoise(x, y, s) {
+  const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
+  const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+  const a = hash(xi, yi, s), b = hash(xi + 1, yi, s), c = hash(xi, yi + 1, s), d = hash(xi + 1, yi + 1, s);
+  return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+}
+/* Bog water by global tile vertex, so bodies can be kept out of it. */
+function waterAt(I, J, seed) {
+  const wx = I * 64, wy = J * 64;
+  if (wy > -150 && wy < 130 && wx > -230 && wx < 520) return false;     // the fight lane stays dry
+  return vnoise(I * 0.42, J * 0.42, seed) > 0.56;
+}
+function onWater(x, y, seed) {
+  const I = Math.floor(x / 64), J = Math.floor(y / 64);
+  return waterAt(I, J, seed) || waterAt(I + 1, J, seed) || waterAt(I, J + 1, seed) || waterAt(I + 1, J + 1, seed);
+}
+function dryNear(x, y, seed) {
+  if (!onWater(x, y, seed)) return [x, y];
+  for (let r = 1; r <= 4; r++) for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]]) {
+    const nx = x + dx * r * 48, ny = y + dy * r * 48;
+    if (!onWater(nx, ny, seed)) return [nx, ny];
+  }
+  return [x, y];
+}
+const groundCache = new Map();
+function ground(seed) {
+  const vw = V(); const key = S.view + '|' + seed;
+  if (groundCache.has(key)) return groundCache.get(key);
+  const sheet = img(ART.wang);
+  if (!ok(sheet)) return null;
+  const T = 64;
+  const wx0 = Math.floor(-vw.ox / vw.z / T) - 1, wy0 = Math.floor(-vw.oy / vw.z / T) - 1;
+  const nx = Math.ceil(vw.cw / vw.z / T) + 3, ny = Math.ceil(vw.ch / vw.z / T) + 3;
+  const c = document.createElement('canvas'); c.width = nx * T; c.height = ny * T;
+  const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
+  const water = (i, j) => waterAt(wx0 + i, wy0 + j, seed);
+  for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+    const idx = (water(i, j) ? 1 : 0) + (water(i + 1, j) ? 2 : 0) + (water(i, j + 1) ? 4 : 0) + (water(i + 1, j + 1) ? 8 : 0);
+    g.drawImage(sheet, (idx % 4) * T, Math.floor(idx / 4) * T, T, T, i * T, j * T, T, T);
+  }
+  for (let n = 0; n < 34; n++) {                          // props, never in the fight lane
+    const px = hash(n, 7, seed) * nx * T, py = hash(n, 13, seed) * ny * T;
+    const wx = wx0 * T + px, wy = wy0 * T + py;
+    if (wy > -170 && wy < 150 && wx > -250 && wx < 540) continue;
+    const i = Math.floor(px / T), j = Math.floor(py / T);
+    if (water(i, j) || water(i + 1, j) || water(i, j + 1) || water(i + 1, j + 1)) continue;
+    const big = hash(n, 3, seed) < 0.1;
+    const im = img(big ? ART.stump : ART.props[Math.floor(hash(n, 5, seed) * ART.props.length)]);
+    if (ok(im)) { const s = big ? 96 : 64; g.drawImage(im, px - s / 2, py - s * 0.8, s, s); }
+  }
+  g.fillStyle = 'rgba(36,48,31,0.26)'; g.fillRect(0, 0, c.width, c.height);
+  const out = { c, wx0: wx0 * T, wy0: wy0 * T };
+  groundCache.set(key, out);
+  return out;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   WORLD RENDERING (canvas)
+   ════════════════════════════════════════════════════════════════════════ */
+let ctx = null, canvas = null;
+const W2S = (x, y) => { const v = V(); return [v.ox + x * v.z, v.oy + y * v.z]; };
+const ease = (p) => 1 - (1 - p) * (1 - p);
+const clamp01 = (x) => Math.max(0, Math.min(1, x));
+const hexA = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; };
+const LIGHT = (hex, f) => { const n = parseInt(hex.slice(1), 16); const m = (c) => Math.round(c + (255 - c) * f); return `rgb(${m(n >> 16)},${m((n >> 8) & 255)},${m(n & 255)})`; };
+const LIGHTHEX = (hex, f) => { const n = parseInt(hex.slice(1), 16); const m = (c) => Math.round(c + (255 - c) * f).toString(16).padStart(2, '0'); return '#' + m(n >> 16) + m((n >> 8) & 255) + m(n & 255); };
+const AFF = P.affliction.color, CTL = P.control.color;
+
+function ellipse(g, x, y, rx, ry, fill, stroke, lw) {
+  g.beginPath(); g.ellipse(x, y, Math.max(0.1, rx), Math.max(0.1, ry), 0, 0, Math.PI * 2);
+  if (fill) { g.fillStyle = fill; g.fill(); }
+  if (stroke) { g.strokeStyle = stroke; g.lineWidth = lw || 1; g.stroke(); }
+}
+function sprite(g, path, x, y, size, o = {}) {
+  const im = img(path);
+  g.save(); g.globalAlpha = o.alpha ?? 1; g.translate(x, y);
+  if (o.skew) g.transform(1, 0, o.skew, 1, 0, 0);       // feet stay put, the top leans
+  g.scale(o.sx ?? 1, o.sy ?? 1);
+  if (ok(im)) g.drawImage(im, -size / 2, -size * 0.94, size, size);
+  g.restore();
+}
+function plainBody(g, color, x, y, size, o = {}) {
+  /* The Mud Toad has no art in the export: a plain shape, said so in NOTES. */
+  g.save(); g.globalAlpha = o.alpha ?? 1; g.translate(x, y); g.scale(o.sx ?? 1, o.sy ?? 1);
+  ellipse(g, 0, -size * 0.2, size * 0.3, size * 0.2, color, '#1c2010', 2);
+  ellipse(g, -size * 0.1, -size * 0.36, size * 0.05, size * 0.05, '#e8e2a0');
+  ellipse(g, size * 0.1, -size * 0.36, size * 0.05, size * 0.05, '#e8e2a0');
+  g.restore();
+}
+function text(g, s, x, y, color, size, weight = 700, align = 'center', font = 'IBM Plex Mono', alpha = 1) {
+  if (alpha <= 0) return;
+  g.save(); g.globalAlpha = alpha;
+  g.font = `${weight} ${size}px "${font}", monospace`; g.textAlign = align; g.textBaseline = 'alphabetic';
+  g.lineJoin = 'round'; g.lineWidth = Math.max(2, size / 3.5); g.strokeStyle = 'rgba(0,0,0,.9)'; g.strokeText(s, x, y);
+  g.fillStyle = color; g.fillText(s, x, y);
+  g.restore();
+}
+function plate(g, name, x, top, frac, color, nameColor) {
+  const m = isM();
+  const w = m ? 30 : 40, fs = m ? 8 : 10;
+  text(g, name, x, top - 9, nameColor, fs, 600);
+  g.fillStyle = 'rgba(0,0,0,.75)'; g.fillRect(x - w / 2 - 1, top - 6, w + 2, 5);
+  g.fillStyle = color; g.fillRect(x - w / 2, top - 5, w * clamp01(frac), 3);
+}
+function teardrop(g, x, y, r, fill, stroke) {
+  g.beginPath(); g.moveTo(x, y - r * 1.9);
+  g.bezierCurveTo(x + r * 0.2, y - r * 1.2, x + r, y - r * 0.6, x + r, y);
+  g.arc(x, y, r, 0, Math.PI); g.bezierCurveTo(x - r, y - r * 0.6, x - r * 0.2, y - r * 1.2, x, y - r * 1.9);
+  g.fillStyle = fill; g.fill(); if (stroke) { g.lineWidth = Math.max(1, r * 0.35); g.strokeStyle = stroke; g.stroke(); }
+}
+
+/* Poison owed, drawn ON the body: a row of venom pips above the nameplate, one
+   per hit's worth of dose. The re-dose splits every pip in two. */
+function pipUnit(mode) { return RULE.dose + (mode === 'pure' ? RULE.leanBleed : 0); }
+const PIP_SP = 9, PIP_R = 3.3;
+function pipX(cx, i, n, k) { return cx + (i - (n - 1) / 2) * PIP_SP * k; }
+function pipRow(g, cx, top, n, k, o = {}) {
+  const perRow = 10, rows = Math.ceil(n / perRow);
+  for (let i = 0; i < n; i++) {
+    const row = Math.floor(i / perRow), inRow = Math.min(perRow, n - row * perRow);
+    const x = pipX(cx, i % perRow, inRow, k), y = top - (rows - 1 - row) * 10 * k;
+    teardrop(g, x, y, PIP_R * k * (o.scale ?? 1), o.fill ?? AFF, '#142408');
+  }
+}
+function pipSplit(g, cx, top, n0, u, k) {
+  /* 0..300 ms: every pip pops and becomes two, flying to the doubled row. */
+  const n1 = n0 * 2, p = ease(clamp01(u / 300)), pop = Math.sin(clamp01(u / 300) * Math.PI);
+  if (u < 120) for (let i = 0; i < n0; i++) ellipse(g, pipX(cx, i, n0, k), top - 3 * k, 9 * k * (u / 120), 9 * k * (u / 120), hexA('#ffffff', 0.7 * (1 - u / 120)));
+  for (let i = 0; i < n0; i++) {
+    const x0 = pipX(cx, i, n0, k);
+    for (const s of [0, 1]) {
+      const x1 = pipX(cx, i * 2 + s, n1, k);
+      teardrop(g, x0 + (x1 - x0) * p, top - pop * 12 * k, PIP_R * k * (1 + 0.8 * pop), pop > 0.2 ? LIGHT(AFF, 0.45 * pop) : AFF, '#142408');
+    }
+  }
+}
+/* The lasting look: venom drips off the body, more of them the more it owes. */
+function drips(g, cx, cy, feetY, owed, t, k, seed, z) {
+  const n = Math.min(8, Math.ceil(owed / 16));
+  for (let i = 0; i < n; i++) {
+    const per = 760 + hash(i, 3, seed) * 320, ph = ((t + hash(i, 9, seed) * per) % per) / per;
+    const x = cx + (hash(i, 17, seed) - 0.5) * 38 * z, y0 = cy - 6 * z + (hash(i, 23, seed) - 0.5) * 14 * z;
+    const y = y0 + (feetY - y0) * ph * ph;
+    if (ph < 0.9) teardrop(g, x, y, 2.5 * k, hexA(AFF, 0.95 - ph * 0.35), '#142408');
+    else ellipse(g, x, feetY - 1, 9 * k * (ph - 0.88) * 8, 2.2 * k * (ph - 0.88) * 8, null, hexA(AFF, 0.8 * (1 - ph) * 8), 1.2 * k);
+  }
+}
+/* RE-DOSE SURGE (affliction.double-dose). Drawn in (0–150 ms), then the dose
+   doubles where you can see it: a flash, a venom geyser out of the body, two
+   ground rings, the body squashed flat, every pip popping in two; then a green
+   haze while the heavier drip takes over. */
+function fxSurge(g, cx, cy, fy, u, k) {
+  if (u < 0 || u > 1000) return;
+  if (u < 160) {                                         // drawn in
+    const p = u / 160;
+    for (let i = 0; i < 14; i++) {
+      const a = (i / 14) * Math.PI * 2 + 0.4, r = (1 - ease(p)) * 62 * k;
+      ellipse(g, cx + Math.cos(a) * r, cy + Math.sin(a) * r * 0.7, 3 * k, 3 * k, hexA(AFF, 0.35 + 0.65 * p));
+    }
+  }
+  if (u >= 300 && u < 1000) {                            // haze
+    const p = (u - 300) / 700;
+    const grd = g.createRadialGradient(cx, cy, 0, cx, cy, 58 * k);
+    grd.addColorStop(0, hexA(AFF, 0.32 * (1 - p))); grd.addColorStop(1, hexA(AFF, 0));
+    g.fillStyle = grd; g.beginPath(); g.arc(cx, cy, 58 * k, 0, Math.PI * 2); g.fill();
+  }
+  for (const [d, rmax, w] of [[150, 96, 6], [250, 62, 4]]) {   // ground rings at the feet
+    if (u < d || u > d + 650) continue;
+    const p = (u - d) / 650;
+    ellipse(g, cx, fy, (14 + rmax * ease(p)) * k, (5 + rmax * 0.34 * ease(p)) * k, null, hexA(AFF, 0.95 * (1 - p)), (w * (1 - p) + 0.8) * k);
+  }
+  if (u >= 150 && u < 380) {                             // the flash
+    const p = (u - 150) / 230;
+    const grd = g.createRadialGradient(cx, cy, 0, cx, cy, 40 * k);
+    grd.addColorStop(0, `rgba(240,255,220,${0.9 * (1 - p)})`); grd.addColorStop(0.45, hexA(AFF, 0.75 * (1 - p))); grd.addColorStop(1, hexA(AFF, 0));
+    g.fillStyle = grd; g.beginPath(); g.arc(cx, cy, 40 * k, 0, Math.PI * 2); g.fill();
+  }
+  if (u >= 150 && u < 990) {                             // the geyser
+    const s = (u - 150) / 840;
+    for (let i = 0; i < 22; i++) {
+      const delay = hash(i, 4, 9) * 0.12, q = s - delay; if (q <= 0) continue;
+      const vx = (hash(i, 1, 5) - 0.5) * 150 * k, vy = -(150 + 120 * hash(i, 2, 5)) * k;
+      const x = cx + vx * q, y = cy - 8 * k + vy * q + 330 * k * q * q;
+      if (y > fy + 2) continue;
+      teardrop(g, x, y, (2.6 + 1.4 * hash(i, 6, 5)) * k, hexA(i % 3 ? AFF : LIGHTHEX(AFF, 0.5), 1 - q * 0.6), '#142408');
+    }
+  }
+}
+/* ROOT (control.shackle): chains fly in and lock the feet, pegs are driven,
+   the body strains against them, then the shackle breaks. */
+function shackleGeo(fx, fy, z, k) { const kk = Math.max(z, k * 0.9); return { x: fx, y: fy - 3 * z, rx: 38 * kk, ry: 13 * kk }; }
+const PEGS = [[-1.75, 0.1], [1.75, 0.1], [-1.05, 1.35], [1.05, 1.35]];
+function shackle(g, fx, fy, z, k, half, pull = 0, alpha = 1) {
+  const s = shackleGeo(fx, fy, z, k);
+  g.save(); g.globalAlpha = alpha;
+  if (half === 'back') {                                 // a cold glow on the ground under the hold
+    ellipse(g, s.x, s.y + 2 * k, s.rx * 1.9, s.ry * 2.1, hexA(CTL, 0.16 + 0.08 * Math.sin(performance.now() / 160)));
+  }
+  const start = half === 'back' ? Math.PI : 0, end = half === 'back' ? Math.PI * 2 : Math.PI;
+  g.beginPath(); g.ellipse(s.x, s.y, s.rx, s.ry, 0, start, end);
+  g.lineWidth = 8 * k; g.strokeStyle = '#232a3b'; g.stroke();
+  g.lineWidth = 3 * k; g.strokeStyle = LIGHT(CTL, 0.3); g.stroke();
+  if (half === 'front') {
+    for (const [px, py] of PEGS) {                       // chain links to each peg, then the peg
+      const ax = s.x + px * s.rx * 0.62, ay = s.y + py * s.ry * 0.62;
+      const bx = s.x + px * s.rx, by = s.y + py * s.ry + 5 * k;
+      const taut = px > 0 ? pull : 0;                    // the far side's chains go taut as it lunges
+      for (let i = 0; i <= 3; i++) {
+        const f = i / 3, sag = (1 - taut) * Math.sin(f * Math.PI) * 4 * k;
+        ellipse(g, ax + (bx - ax) * f, ay + (by - ay) * f + sag, 3.8 * k, 2.4 * k, null, i % 2 ? '#9aa6bd' : LIGHT(CTL, 0.25), 1.8 * k);
+      }
+      g.fillStyle = '#161922'; g.fillRect(bx - 3 * k, by - 11 * k, 6 * k, 13 * k);
+      g.fillStyle = CTL; g.fillRect(bx - 4.5 * k, by - 13 * k, 9 * k, 3.5 * k);
+    }
+  }
+  g.restore();
+}
+function fxClamp(g, fx, fy, u, z, k) {
+  const s = shackleGeo(fx, fy, z, k);
+  if (u >= 0 && u < 170) {                              // two chain halves fly in from the sides
+    const p = ease(u / 170);
+    for (const side of [-1, 1]) {
+      const x = s.x + side * s.rx * 2.6 * (1 - p);
+      g.beginPath(); g.ellipse(x, s.y, s.rx * 0.9, s.ry, 0, side < 0 ? Math.PI * 0.5 : -Math.PI * 0.5, side < 0 ? Math.PI * 1.5 : Math.PI * 0.5);
+      g.lineWidth = 8 * k; g.strokeStyle = '#232a3b'; g.stroke(); g.lineWidth = 3 * k; g.strokeStyle = LIGHT(CTL, 0.4); g.stroke();
+    }
+  }
+  if (u >= 150 && u < 650) {                            // the lock: a blue clang ring, dust where the pegs bite
+    const p = (u - 150) / 500;
+    ellipse(g, s.x, s.y, s.rx * (1 + 1.1 * ease(p)), s.ry * (1 + 1.1 * ease(p)), null, hexA(LIGHTHEX(CTL, 0.3), 1 - p), (6 * (1 - p) + 0.6) * k);
+    if (p < 0.3) ellipse(g, s.x, s.y - 18 * k, 26 * k * (1 - p), 26 * k * (1 - p), hexA('#dfe9ff', 0.45 * (1 - p / 0.3)));
+    for (const [px, py] of PEGS) {
+      const bx = s.x + px * s.rx, by = s.y + py * s.ry + 5 * k;
+      for (let i = 0; i < 4; i++) ellipse(g, bx + (i - 1.5) * 5 * k * (1 + p), by - p * 8 * k, 3.5 * k * (1 - p), 2.4 * k * (1 - p), `rgba(170,160,125,${0.7 * (1 - p)})`);
+    }
+  }
+}
+function fxBreak(g, fx, fy, u, z, k) {
+  if (u < 0 || u > 480) return;
+  const s = shackleGeo(fx, fy, z, k), p = u / 480;
+  ellipse(g, s.x, s.y, s.rx * (1 + 0.6 * p), s.ry * (1 + 0.6 * p), null, hexA(CTL, 0.8 * (1 - p)), 3 * k * (1 - p) + 0.5);
+  for (let i = 0; i < 10; i++) {
+    const a = (i / 10) * Math.PI * 2, d = (s.rx + 40 * k * ease(p));
+    ellipse(g, s.x + Math.cos(a) * d, s.y + Math.sin(a) * d * 0.4 - 20 * k * Math.sin(p * Math.PI), 3.2 * k, 2 * k, null, `rgba(138,150,173,${1 - p})`, 1.5 * k);
+  }
+}
+function slowLook(g, cx, cy, t, k, z) {
+  for (let i = 0; i < 3; i++) {
+    const y = cy - 8 * z + i * 8 * z, ph = ((t / 300) + i * 0.33) % 1;
+    g.strokeStyle = hexA(CTL, 0.55 * (1 - ph)); g.lineWidth = 2 * k;
+    g.beginPath(); g.moveTo(cx + 24 * z + ph * 10 * k, y); g.lineTo(cx + 24 * z + (12 + ph * 14) * k, y); g.stroke();
+  }
+}
+function dagger(g, x0, y0, x1, y1, p, k) {
+  const x = x0 + (x1 - x0) * p, y = y0 + (y1 - y0) * p - Math.sin(p * Math.PI) * 10 * k;
+  g.save(); g.translate(x, y); g.rotate(Math.atan2(y1 - y0, x1 - x0) + p * 9);
+  g.fillStyle = '#d8dde6'; g.fillRect(-6 * k, -1.2 * k, 9 * k, 2.4 * k);
+  g.fillStyle = AFF; g.fillRect(3 * k, -1.2 * k, 3 * k, 2.4 * k);
+  g.fillStyle = '#4a2f5c'; g.fillRect(-8 * k, -1.8 * k, 3 * k, 3.6 * k);
+  g.restore();
+}
+
+/* The fight scene, drawn at sim time t. */
+function drawFight(sim, t, opts = {}) {
+  const vw = V(), g = ctx, z = vw.z, k = vw.z * vw.k, m = isM();
+  const fr = frameAt(sim, t);
+  const unit = pipUnit(sim.mode);
+  drawGround(1);
+  const [sx, sy] = W2S(0, 0);
+  const ents = [];
+  const hitBy = (id, ms) => eventsIn(sim, t, ms).filter((e) => e.type === 'hit' && e.id === id);
+  for (const o of fr.oozes) {
+    if (!o.alive && (o.deadAt === null || t - o.deadAt > 600)) continue;
+    ents.push({ y: o.y, draw: () => drawOoze(sim, fr, o, t) });
+  }
+  ents.push({ y: 0, draw: () => {
+    const hurt = eventsIn(sim, t, 180).some((e) => e.type === 'oozeAtk');
+    const throwing = eventsIn(sim, t, 140).some((e) => e.type === 'throw');
+    const shake = hurt ? Math.sin(t / 15) * 1.5 : 0;
+    ellipse(g, sx, sy, 15 * z, 5 * z, 'rgba(0,0,0,.38)');
+    sprite(g, D.art.slingerSprite, sx + shake + (throwing ? 2 * z : 0), sy, 64 * z, { sy: 1 + Math.sin(t / 260) * 0.012 });
+    if (hurt) ellipse(g, sx, sy - 26 * z, 15 * z, 22 * z, 'rgba(220,40,30,.28)');
+    plate(g, DS.className, sx, sy - 58 * z, fr.hp / RULE.maxHp, '#4be36a', '#f2f2f2');
+  } });
+  ents.sort((a, b) => a.y - b.y).forEach((e) => e.draw());
+
+  // projectiles, sparks, numbers, shard pops
+  for (const e of eventsIn(sim, t, 1000)) {
+    const u = t - e.t, o = fr.oozes.find((q) => q.id === e.id);
+    if (e.type === 'throw' && u < 150 && o) {
+      const [ox, oy] = W2S(o.x, o.y);
+      dagger(g, sx + 8 * z, sy - 30 * z, ox, oy - 18 * z, u / 150, k);
+    }
+    if (e.type === 'hit' && o) {
+      const [ox, oy] = W2S(o.x, o.y);
+      if (u < 110) { g.strokeStyle = `rgba(255,255,255,${1 - u / 110})`; g.lineWidth = 2 * k; for (let i = 0; i < 4; i++) { const a = i * Math.PI / 2 + 0.6; g.beginPath(); g.moveTo(ox + Math.cos(a) * 4 * k, oy - 18 * z + Math.sin(a) * 4 * k); g.lineTo(ox + Math.cos(a) * 11 * k, oy - 18 * z + Math.sin(a) * 11 * k); g.stroke(); } }
+      if (u < 650) text(g, String(e.d), ox + 30 * z + hash(e.t, 1, 1) * 6, oy - 26 * z - 20 * ease(u / 650), '#ffffff', m ? 10 : 12, 700, 'left', undefined, 1 - clamp01((u - 350) / 300));
+    }
+    if (e.type === 'tick' && u < 700 && o) {
+      const [ox, oy] = W2S(o.x, o.y);
+      text(g, String(e.d), ox - 30 * z - hash(e.t, 2, 2) * 6, oy - 14 * z - 18 * ease(u / 700), AFF, m ? 9 : 11, 700, 'right', undefined, 1 - clamp01((u - 400) / 300));
+    }
+    if (e.type === 'oozeAtk' && u < 700) text(g, String(e.d), sx - 22 * z, sy - 24 * z - 18 * ease(u / 700), '#ff5a46', m ? 10 : 12, 700, 'right', undefined, 1 - clamp01((u - 400) / 300));
+    if (e.type === 'death' && u >= 200 && u < 900) {
+      const dead = sim.frames[Math.floor(e.t / STEP)].oozes.find((q) => q.id === e.id);
+      if (dead) {
+        const [ox, oy] = W2S(dead.x, dead.y), p = (u - 200) / 700;
+        const x = p < 0.3 ? ox : ox + (sx - ox) * ease((p - 0.3) / 0.7);
+        const y = p < 0.3 ? oy - 20 * z - 26 * (p / 0.3) : (oy - 46 * z) + (sy - 30 * z - (oy - 46 * z)) * ease((p - 0.3) / 0.7);
+        const im = img(P.affliction.shardIcon), s = m ? 14 : 18;
+        if (ok(im)) { g.save(); g.imageSmoothingEnabled = false; g.drawImage(im, x - s / 2, y - s / 2, s, s); g.restore(); }
+      }
+    }
+  }
+  if (opts.after) opts.after(fr);
+  return fr;
+}
+function drawOoze(sim, fr, o, t) {
+  const vw = V(), g = ctx, z = vw.z, k = vw.z * vw.k;
+  const [fx, fy0] = W2S(o.x, o.y);
+  let fy = fy0, sxs = 1, sys = 1, ox = 0, alpha = 1, skew = 0;
+  const moving = o.alive && o.x > MELEE + 0.5 && t >= o.rootUntil;
+  const slowed = t < o.slowUntil, rooted = t < o.rootUntil;
+  const bob = Math.sin(t / (slowed ? 230 : 180) + o.y);
+  sys = 1 + 0.05 * bob; sxs = 1 - 0.03 * bob;
+  if (moving) fy -= Math.abs(Math.sin(t / (slowed ? 210 : 170))) * 3 * z;
+  const hit = eventsIn(sim, t, 130).find((e) => e.type === 'hit' && e.id === o.id);
+  if (hit) { sys *= 0.88; sxs *= 1.08; }
+  const fire = eventsIn(sim, t, 1600).find((e) => e.type === 'fire' && e.id === o.id);
+  if (fire && sim.mode === 'pure') {                     // swells as the dose is drawn in, then is squashed flat
+    const u = t - fire.t;
+    if (u < 150) { const p = u / 150; sys *= 1 + 0.16 * p; sxs *= 1 - 0.08 * p; }
+    else if (u < 700) { const p = (u - 150) / 550, e = Math.sin(p * Math.PI) * (1 - p * 0.5); sys *= 1.16 - 0.16 * p - 0.42 * e; sxs *= 0.92 + 0.08 * p + 0.38 * e; }
+  }
+  const atk = eventsIn(sim, t, 320).find((e) => e.type === 'oozeAtk' && e.id === o.id);
+  if (atk) ox -= Math.sin(clamp01((t - atk.t) / 320) * Math.PI) * 12 * z;
+  let pull = 0;
+  if (rooted) {                                          // straining against the chains: feet pinned, top lunging
+    const ph = ((t - (o.rootUntil - RULE.rootMs)) % 650) / 650;
+    pull = ph < 0.3 ? Math.sin((ph / 0.3) * Math.PI / 2) : Math.cos(((ph - 0.3) / 0.7) * Math.PI / 2);
+    skew = 0.42 * pull; sxs *= 1 + 0.1 * pull; sys *= 1 - 0.08 * pull;
+  }
+  if (!o.alive) { const p = clamp01((t - o.deadAt) / 500); sys *= 1 - 0.8 * p; sxs *= 1 + 0.3 * p; alpha = 1 - p; }
+  const cx = fx + ox, cy = fy - 20 * z;
+  if (fr.tgt === o.id && o.alive) ellipse(g, fx, fy0 + 1, 27 * z, 9 * z, null, 'rgba(230,50,40,.95)', 2.2);
+  ellipse(g, fx, fy0, 24 * z, 7 * z, `rgba(0,0,0,${0.35 * alpha})`);
+  if (rooted && o.alive) shackle(g, fx, fy0, z, k, 'back', pull);
+  if (slowed && o.alive && !rooted) slowLook(g, cx, cy, t, k, z);
+  sprite(g, D.art.monsters['bog-slime'], cx, fy, 64 * z, { sx: sxs, sy: sys, alpha, skew });
+  if (rooted && o.alive) shackle(g, fx, fy0, z, k, 'front', pull);
+  if (fire && sim.mode === 'composed') fxClamp(g, fx, fy0, t - fire.t, z, k);
+  const lastRoot = lastEvent(sim, t, 'fire', (e) => e.id === o.id && e.mode === 'composed');
+  if (lastRoot && o.alive) fxBreak(g, fx, fy0, t - (lastRoot.t + RULE.rootMs), z, k);
+  if (!o.alive) return;
+  if (o.owed > 0) drips(g, cx, cy, fy0, o.owed, t, k, o.x0 + (o.label === 'A' ? 1 : 2), z);
+  const top = fy0 - 58 * z;
+  plate(g, OOZE.name, fx, top, o.hp / RULE.oozeHp, '#e04a3a', '#f0a0a0');
+  const pipTop = top - 13 - 7 * k;
+  const unit = pipUnit(sim.mode);
+  if (fire && sim.mode === 'pure' && t - fire.t < 450) {
+    const u = t - fire.t, n0 = Math.max(1, Math.round(fire.before / unit));
+    if (u < 150) pipRow(g, fx, pipTop + 5 * (u / 150) * k, n0, k, { scale: 1 - 0.25 * (u / 150) });
+    else pipSplit(g, fx, pipTop, n0, u - 150, k);
+  } else if (o.owed > 0) {
+    pipRow(g, fx, pipTop, Math.max(1, Math.round(o.owed / unit)), k);
+  }
+  if (fire && sim.mode === 'pure') fxSurge(g, cx, cy, fy0, t - fire.t, k);
+}
+function drawGround(seed) {
+  const vw = V(), g = ctx, gr = ground(seed);
+  g.fillStyle = '#3b3f27'; g.fillRect(0, 0, vw.cw, vw.ch);
+  if (gr) {
+    g.save(); g.imageSmoothingEnabled = false;
+    g.drawImage(gr.c, vw.ox + gr.wx0 * vw.z, vw.oy + gr.wy0 * vw.z, gr.c.width * vw.z, gr.c.height * vw.z);
+    g.restore();
+  }
+  const vg = g.createRadialGradient(vw.cw / 2, vw.ch / 2, Math.min(vw.cw, vw.ch) * 0.35, vw.cw / 2, vw.ch / 2, Math.max(vw.cw, vw.ch) * 0.75);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.42)');
+  g.fillStyle = vg; g.fillRect(0, 0, vw.cw, vw.ch);
+}
+
+/* Idle world (scenes 1, 2, 5): the Slinger and a node's bodies, out of combat. */
+const SLOTS = {
+  desktop: [[200, -150], [330, 40], [470, -90], [150, 160], [520, 150], [300, -250], [-150, 170], [600, -10]],
+  portrait: [[180, -330], [330, -160], [90, -560], [260, 230], [380, 380], [40, 330], [250, -470], [220, -720]],
+};
+function bodiesFor(nodeId, seed) {
+  const n = nodeBy(nodeId);
+  return n.spawnCycle.slice(0, 7).map((fam, i) => {
+    const name = n.fieldedByFamily[fam][0];
+    const mon = SWAMP_MONSTERS.find((q) => q.name === name);
+    const [x, y] = dryNear(SLOTS[S.view][i][0], SLOTS[S.view][i][1], seed);
+    return { name, mon, art: D.art.monsters[mon.id] ?? null, x, y, seed: i };
+  });
+}
+function drawIdle(nodeId, t, opts = {}) {
+  const g = ctx, z = V().z;
+  drawGround(opts.seed ?? 1);
+  const ents = bodiesFor(nodeId, opts.seed ?? 1).map((b) => ({ y: b.y, draw: () => {
+    const dx = Math.sin(t / 1400 + b.seed * 2) * 14, dy = Math.cos(t / 1900 + b.seed) * 6;
+    const [fx, fy] = W2S(b.x + dx, b.y + dy);
+    const bob = Math.sin(t / 200 + b.seed);
+    ellipse(g, fx, fy, 22 * z, 7 * z, 'rgba(0,0,0,.35)');
+    if (b.art) sprite(g, b.art, fx, fy, 64 * z, { sy: 1 + 0.04 * bob, sx: 1 - 0.02 * bob });
+    else plainBody(g, b.mon.color, fx, fy, 64 * z, { sy: 1 + 0.04 * bob });
+    plate(g, b.name, fx, fy - 58 * z, 1, '#e04a3a', '#f0a0a0');
+  } }));
+  const walk = opts.walkIn ? clamp01(t / 1200) : 1;
+  ents.push({ y: 0, draw: () => {
+    const [sx, sy] = W2S(-240 * (1 - ease(walk)), 0);
+    const step = walk < 1 ? Math.abs(Math.sin(t / 110)) * 2 : 0;
+    ellipse(g, sx, sy, 15 * z, 5 * z, 'rgba(0,0,0,.38)');
+    sprite(g, D.art.slingerSprite, sx, sy - step, 64 * z, { sy: 1 + Math.sin(t / 260) * 0.012 });
+    plate(g, DS.className, sx, sy - 58 * z, RULE.hp0 / RULE.maxHp, '#4be36a', '#f2f2f2');
+  } });
+  ents.sort((a, b) => a.y - b.y).forEach((e) => e.draw());
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   HUD SHELL
+   ════════════════════════════════════════════════════════════════════════ */
+function wallet(stage) { return pageBy(stage === 'pre' ? 'scene2' : 'scene2-after-buy').wallet; }
+function desktopShell(o) {
+  const sheet = pageBy('scene2').statSheet.rows;
+  const v = (key) => sheet.find((r) => r.key === key).before;
+  const navs = [
+    ['passive', 'Passive Tree', A(ART.menu('passive-tree'))], ['gear', 'Gear', A(DS.gear[0].iconArt)],
+    ['inv', 'Inventory', A(ART.menu('inventory'))], ['craft', 'Crafting', A(ART.menu('crafting'))],
+    ['runes', 'Runes', A(ART.menu('runes'))], ['map', 'Map', A(ART.menu('map'))],
+    ['mastery', 'Mastery', A(ART.menu('mastery'))], ['settings', 'Settings', A(ART.menu('settings'))],
+  ];
+  const guide = o.guide
+    ? `<div class="pn guide" id="guide"><div class="pt">Guide <button>Stop</button></div><div class="chap">${esc(BEAT.chapter)}</div><p id="guide-line">${esc(o.guide)}</p><button class="next">Next</button></div>`
+    : `<div class="pn guide collapsed"><div class="pt">Guide <span>${esc(BEAT.chapter)} ▸</span></div></div>`;
+  return `
+  <aside class="d-rail l">
+    <div class="pn">
+      <div class="pt">Character <span>▸</span></div>
+      <div class="char-name"><span class="dot"></span>${esc(DS.className)}</div>
+      <div class="hp-row"><span>HP</span><b id="hp-text">${RULE.hp0} / ${RULE.maxHp}</b></div>
+      <div class="hpbar"><i id="hp-fill" style="width:${(RULE.hp0 / RULE.maxHp) * 100}%"></i></div>
+      <div class="dps"><img class="px" src="${A(ART.stat('dps'))}" alt=""><b>${esc(v('dps'))}</b><small>${esc(v('attacksPerSecond'))}</small><em>DPS</em></div>
+      <div class="sgrid">
+        <span><img class="px" src="${A(ART.stat('attack'))}" alt="">${esc(v('attack'))}</span>
+        <span><img class="px" src="${A(ART.stat('speed'))}" alt="">${esc(v('speed'))}</span>
+        <span><img class="px" src="${A(ART.stat('reduction'))}" alt="">${esc(v('damageReduction'))}</span>
+        <span><img class="px" src="${A(ART.stat('regen'))}" alt="">${esc(v('recovery'))}</span>
+      </div>
+    </div>
+    <div class="pn"><div class="pt">Party <span>Solo ▸</span></div><div class="pt sub">Nearby <span>None ▸</span></div></div>
+    <div class="pn"><div class="pt">Combat log <span>▾</span></div><div class="ltabs"><b>Outcomes</b><b>Combat</b><b>Recovery</b></div></div>
+    <div class="pn"><div class="pt">Bestiary <span>${esc(nodeBy(BLACKWATER).biomeName)} ▾</span></div></div>
+  </aside>
+  <section class="d-game" id="game">
+    <canvas class="world" id="world" width="816" height="720"></canvas>
+    <div class="bxp"><div><span>${esc(nodeBy(BLACKWATER).biomeName.toUpperCase())} T1</span><b>Lv ${wallet('pre').biomeLevels.swamp}</b></div><i></i></div>
+    ${o.ring ? ringHTML(o.ring) : ''}
+    ${o.tf ? tfHTML() : ''}
+    ${o.teach ? teachHTML(o.teach) : ''}
+    ${o.banner ? '<div class="arrival" id="banner"></div>' : ''}
+    <div class="auto">AUTO COMBAT <b>ON</b></div>
+  </section>
+  <aside class="d-rail r">
+    ${guide}
+    <nav class="navgrid">${navs.map(([id, label, icon]) => `<button class="nb${o.navOn === id ? ' on' : ''}" id="nav-${id}" data-nav="${id}"><img class="px" src="${icon}" alt="">${label}</button>`).join('')}</nav>
+    <div class="pn"><div class="pt">Essence</div><div class="erow"><i></i>${esc(DAGGER.essence.label)}<b>${wallet(o.walletStage).essences.purple}</b></div></div>
+  </aside>`;
+}
+function portraitShell(o) {
+  const tabs = [['stats', 'Stats', null, '▤'], ['skills', 'Skills', A(ART.menu('passive-tree'))], ['bag', 'Bag', A(ART.menu('inventory'))],
+    ['gear', 'Gear', A(DS.gear[0].iconArt)], ['map', 'Map', A(ART.menu('map'))], ['more', 'More', null, '☰']];
+  return `
+  <div class="m">
+    <canvas class="world" id="world" width="390" height="844" style="left:0;top:0"></canvas>
+    <div class="m-top">
+      <div class="m-r1"><span class="dot"></span><span class="nm">${esc(DS.className)}</span><div class="m-hp"><i id="hp-fill" style="width:${(RULE.hp0 / RULE.maxHp) * 100}%"></i></div><span class="hpt" id="hp-text">${RULE.hp0}/${RULE.maxHp}</span><span class="zn">${esc(nodeBy(BLACKWATER).biomeName)} T1</span></div>
+      <div class="m-r2"><span class="chip">No stance</span><span>${esc(DS.className)}</span></div>
+    </div>
+    ${o.ring ? ringHTML(o.ring) : ''}
+    ${o.tf ? tfHTML() : ''}
+    ${o.teach ? teachHTML(o.teach) : ''}
+    ${o.banner ? '<div class="arrival" id="banner"></div>' : ''}
+    ${o.guide ? `<div class="m-guide" id="guide"><div class="chap">Guide · ${esc(BEAT.chapter)}</div><span id="guide-line">${esc(o.guide)}</span></div>` : ''}
+    <button class="m-quest" aria-label="Guide">!</button>
+    <div class="m-auto"><span>❚❚</span>AUTO</div>
+    <div class="m-bottom">
+      <div class="m-bxp"><div><span>${esc(nodeBy(BLACKWATER).biomeName.toUpperCase())} T1 &nbsp;<b>Lv ${wallet('pre').biomeLevels.swamp}</b></span><span></span></div><i></i></div>
+      <nav class="m-tabs">${tabs.map(([id, label, icon, glyph]) => `<button class="m-tab${o.navOn === id ? ' on' : ''}" id="nav-${id}" data-nav="${id}">${icon ? `<img class="px" src="${icon}" alt="">` : `<span class="gl">${glyph}</span>`}${label}</button>`).join('')}</nav>
+    </div>
+  </div>`;
+}
+
+/* ── The ring ───────────────────────────────────────────────────────────── */
+const RING_R = 25, RING_C = 2 * Math.PI * RING_R;
+function ringHTML(r) {
+  return `<div class="ring ready" id="ring" style="--lane:${r.momentColor};--pay:${r.payloadColor}" role="img" aria-label="${esc(r.verbName)}">
+    <svg viewBox="0 0 60 60"><circle class="plate" cx="30" cy="30" r="${RING_R}"/><circle class="arc" id="ring-arc" cx="30" cy="30" r="${RING_R}" stroke-dasharray="${RING_C}" stroke-dashoffset="0" transform="rotate(-90 30 30)"/><circle class="glint" id="ring-glint" cx="30" cy="5" r="3.2"/></svg>
+    <span class="txt" id="ring-txt">${esc(D.rhythm.marks.ready)}</span>
+    <span class="badge"><canvas width="32" height="32" data-glyph="${esc(r.ringGlyph)}" data-color="${r.payloadColor}"></canvas></span>
+    <span class="flash" id="ring-flash"></span><span class="spend" id="ring-spend"></span><span class="hl" id="ring-hl"></span>
+  </div>`;
+}
+const secs = (ms) => { const s = Math.ceil(Math.max(0, ms) / 100) / 10; return s < 10 ? s.toFixed(1) : String(Math.ceil(s)); };
+function updateRing(readyAt, t, lastFireT, teachOn) {
+  const el = document.getElementById('ring'); if (!el) return;
+  const r = readyAt - t;
+  const kind = r <= 0 ? 'ready' : r <= 1000 ? 'coming' : 'clock';
+  const fill = r <= 0 ? 1 : 1 - r / RULE.capMs;
+  el.className = 'ring ' + kind;
+  document.getElementById('ring-arc').setAttribute('stroke-dashoffset', String(RING_C * (1 - fill)));
+  document.getElementById('ring-txt').textContent = r <= 0 ? D.rhythm.marks.ready : secs(r);
+  const a = -Math.PI / 2 + fill * Math.PI * 2;
+  const gl = document.getElementById('ring-glint'); gl.setAttribute('cx', String(30 + Math.cos(a) * RING_R)); gl.setAttribute('cy', String(30 + Math.sin(a) * RING_R));
+  const since = -r;                                      // the one-shot flash when it becomes ready
+  const fl = document.getElementById('ring-flash');
+  if (readyAt > 0 && since >= 0 && since < 560) { const p = since / 560; fl.style.opacity = String(1 - p); fl.style.transform = `scale(${0.9 + 0.6 * p})`; }
+  else fl.style.opacity = '0';
+  const sp = document.getElementById('ring-spend');       // the spend when it fires
+  const u = lastFireT === null ? 9999 : t - lastFireT;
+  if (u >= 0 && u < 320) { const p = u / 320; sp.style.opacity = String(1 - p); sp.style.transform = `scale(${1.3 - 0.9 * p})`; }
+  else sp.style.opacity = '0';
+  const hl = document.getElementById('ring-hl');
+  hl.style.opacity = teachOn ? String(0.55 + 0.45 * Math.sin(performance.now() / 180)) : '0';
+}
+
+/* ── The target frame ───────────────────────────────────────────────────── */
+function tfHTML() {
+  return `<div class="tf" id="tf"><div class="tf-name">${esc(OOZE.name)}</div><div class="tf-track"><i id="tf-fill" style="width:100%"></i><span id="tf-hp">${RULE.oozeHp} / ${RULE.oozeHp}</span></div><div class="tf-stats">ATK ${OOZE.attack}</div><div class="tf-tiles" id="tf-tiles"></div></div>`;
+}
+let tilesKey = '';
+function tileHTML(k, st, icon, num, sweep) {
+  return `<div class="tile" data-k="${k}"><div class="ti" style="box-shadow:0 0 8px ${st.color}66"><img src="${A(icon)}" alt="">${sweep ? '<div class="sw"></div>' : ''}${num !== null ? `<span class="st">${num}</span>` : ''}</div><span class="tl" style="color:${st.color}">${esc(st.label)}</span></div>`;
+}
+function updateTF(sim, fr, t) {
+  const el = document.getElementById('tf'); if (!el) return;
+  const o = fr.oozes.find((q) => q.id === fr.tgt);
+  if (!o) { el.style.visibility = 'hidden'; return; }
+  el.style.visibility = 'visible';
+  document.getElementById('tf-fill').style.width = `${clamp01(o.hp / RULE.oozeHp) * 100}%`;
+  document.getElementById('tf-hp').textContent = `${Math.max(0, Math.round(o.hp))} / ${RULE.oozeHp}`;
+  const tiles = [];
+  if (o.owed > 0) tiles.push('poison');
+  if (t < o.slowUntil) tiles.push('slow');
+  if (t < o.rootUntil) tiles.push('root');
+  const key = tiles.join(',');
+  const box = document.getElementById('tf-tiles');
+  if (key !== tilesKey || !box.children.length && tiles.length) {
+    tilesKey = key;
+    box.innerHTML = tiles.map((k) => k === 'poison' ? tileHTML(k, POISON, POISON.icon, Math.round(o.owed), false)
+      : k === 'slow' ? tileHTML(k, SLOWED, D.statuses.playerDebuffIcons.slow, null, false)
+      : tileHTML(k, ROOTED, D.statuses.playerDebuffIcons.root, null, true)).join('');
+  }
+  const pn = box.querySelector('[data-k="poison"] .st'); if (pn) pn.textContent = String(Math.round(o.owed));
+  const pt = box.querySelector('[data-k="poison"]');
+  if (pt) { const f = eventsIn(sim, t, 500).find((e) => e.type === 'fire' && e.id === o.id && e.mode === 'pure'); pt.classList.toggle('jump', !!f); }
+  const sw = box.querySelector('[data-k="root"] .sw');
+  if (sw) { const el2 = clamp01(1 - (o.rootUntil - t) / RULE.rootMs) * 100; sw.style.background = `conic-gradient(from -90deg, rgba(0,0,0,.66) ${el2}%, transparent ${el2}%)`; }
+}
+
+/* ── The teaching line ──────────────────────────────────────────────────── */
+function sentenceSplit(sentence, momentLane) {
+  const tpl = P[momentLane] && P[momentLane].momentPhrase && P[momentLane].momentPhrase.text;
+  if (!tpl) return null;
+  const re = tpl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\\\{\w+\\\}/g, '.+?');
+  const m = sentence.match(new RegExp('^(' + re + ')(,?\\s)([\\s\\S]*)$'));
+  return m ? [m[1], m[2], m[3]] : null;
+}
+/* A sentence in two colours when its moment and payload come from two lanes. */
+function sentenceHTML(c) {
+  if (!c || c.pure || c.momentColor === c.payloadColor) return esc(c ? c.sentence : '');
+  const sp = sentenceSplit(c.sentence, c.verbLane);
+  if (!sp) return esc(c.sentence);
+  return `<span class="m1" style="color:${c.momentColor}">${esc(sp[0])}</span>${esc(sp[1])}<span class="p1" style="color:${c.payloadColor}">${esc(sp[2])}</span>`;
+}
+function teachHTML(c) {
+  return `<div class="teach" id="teach" style="--lane:${c.momentColor}"><b>${esc(c.verbName)}</b><span>${sentenceHTML(c)}</span></div>`;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   GEAR TAB + WEAPON PAGE
+   ════════════════════════════════════════════════════════════════════════ */
+const SLOT_LABEL = { weapon: 'Weapon', armor: 'Armour', recovery: 'Charm', mobility: 'Boots' };
+const STAT_LABEL = { attack: (v) => `Attack +${v}`, maxHp: (v) => `Health +${v}`, evasion: (v) => `Evasion ${Math.round(v * 100)}%`, damageReduction: (v) => `DR ${Math.round(v * 100)}%`, recovery: (v) => `Recovery +${v}`, speed: (v) => `Move speed +${v}` };
+const statLine = (it) => Object.entries(it.statModifiers).map(([k, v]) => (STAT_LABEL[k] ? STAT_LABEL[k](v) : `${k} ${v}`)).join(' · ');
+function gearBody() {
+  const [weapon, ...plain] = DS.gear;
+  const hdr = pageBy('scene2').header;
+  return `<div class="dlg-tabs"><button class="on">Gear</button><button id="make-tab">Make</button></div>
+  <div class="gear-list" id="gear-list">
+    <div class="gl-h">Weapon</div>
+    <button class="g-row weapon" id="gear-weapon"><span class="art"><img class="px" src="${A(weapon.iconArt)}" alt=""></span><span class="t"><small>${esc(hdr.eyebrow)}</small><b>${esc(weapon.name)}</b><em>${esc(statLine(weapon))}</em></span><span class="go">Open page ›</span></button>
+    <div class="gl-h">Worn</div>
+    <div id="gear-plain" style="display:flex;flex-direction:column;gap:8px">
+    ${plain.map((it) => `<div class="g-row plain"><span class="art"><img class="px" src="${A(it.iconArt)}" alt=""></span><span class="t"><small>${SLOT_LABEL[it.slot]} · Tier ${it.tier}</small><b>${esc(it.name)}</b><em>${esc(statLine(it))}</em></span><span class="plainchip">Plain item</span></div>`).join('')}
+    </div>
+  </div>`;
+}
+function gearHTML() {
+  if (isM()) return `<div class="backdrop"></div><div class="sheet" id="gear-dlg"><div class="handle"></div><div class="dlg-head"><span class="barx"></span><h2>Gear</h2><button class="x" data-close="gear">×</button></div>${gearBody()}</div>`;
+  return `<div class="backdrop"></div><div class="dlg" id="gear-dlg" style="left:310px;top:96px;width:660px;height:500px"><div class="dlg-head"><span class="barx"></span><h2>Gear</h2><span class="sub">worn items · the weapon first</span><button class="x" data-close="gear">×</button></div>${gearBody()}</div>`;
+}
+
+function chipHTML(ch) {
+  const icon = ch.kind === 'shard' ? `<img class="px" src="${A(P[ch.key].shardIcon)}" alt="">` : '';
+  const st = ch.short ? 'short' : '';
+  return `<span class="${st}" title="${esc(ch.title)}"${!ch.short && ch.color ? ` style="color:${ch.color}"` : ''}>${icon}${ch.amount} ${esc(ch.word)}</span>`;
+}
+function ringMark(lane) {
+  /* The HUD ring in miniature: a full ring, its ✦ ready mark in the middle. */
+  return `<svg class="rmark" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#0b0a08" stroke="${lane}" stroke-width="2.4"/><path d="M10 4.6 L11.3 8.7 L15.4 10 L11.3 11.3 L10 15.4 L8.7 11.3 L4.6 10 L8.7 8.7 Z" fill="${lane}"/></svg>`;
+}
+/* Which composition a verb card reads with: the hovered lean, else the active one. */
+function verbComp(page, card, leanId) {
+  const lean = leanId ?? page.progress.active.stat ?? null;
+  return comps.find((c) => c.verbId === card.id && c.leanId === lean) || null;
+}
+/* A verb's caveat re-reads with the previewed lean (its composition row's note);
+   with no preview it is the page's own. */
+function verbNote(page, card, leanId) {
+  if (!leanId || leanId === page.progress.active.stat) return card.note;
+  const c = verbComp(page, card, leanId);
+  return c ? c.note : card.note;
+}
+function cardHTML(page, card, ctx) {
+  const isVerb = card.row === 'payoff' && card.tier === 1;
+  const isLean = card.isLean && card.tier === 1;
+  let sentence = esc(card.sentence);
+  let note = card.note;
+  if (isVerb) { const c = verbComp(page, card, ctx.lean); if (c) sentence = sentenceHTML(c); note = verbNote(page, card, ctx.lean); }
+  const tag = card.tag ? `<span class="tag${card.state === 'active' ? ' on' : ''}">${esc(card.tag)}</span>` : '';
+  const chips = card.chips.length ? `<span class="cost">${card.chips.map(chipHTML).join('<span class="sep">·</span>')}</span>` : '<span></span>';
+  const req = card.requirement ? `<span class="req${card.requirement.met ? '' : ' unmet'}">${esc(card.requirement.text)}</span>` : '';
+  const buy = card.action === 'buy' ? '<span class="buy">Buy</span>' : '';
+  const vig = isVerb && card.state === 'active' ? `<canvas class="vig" width="96" height="56" data-vig="${page.progress.active.stat === LEAN_CTL ? 'composed' : 'pure'}"></canvas>` : '';
+  const preview = isLean && card.state !== 'active' ? `<button class="pv${ctx.lean === card.id ? ' on' : ''}" data-preview="${card.id}">◉ Preview</button>` : '';
+  const cls = ['wp-card', 'st-' + card.state, isLean ? 'lean' : '', isVerb ? 'verb' : '', vig ? 'has-vig' : '', isVerb && ctx.lean && ctx.lean !== page.progress.active.stat ? 'preview' : ''].join(' ');
+  return `<div class="${cls}" style="--lane:${card.laneColor}" data-card="${card.id}" role="button" tabindex="0" aria-label="${esc(card.accessibleName)}">
+    ${tag}<span class="nm">${isVerb ? ringMark(card.laneColor) : ''}${esc(card.name)}</span>
+    <span class="sn" data-sn="${card.id}">${sentence}</span>
+    ${isVerb ? `<span class="note" data-note="${card.id}"${note ? '' : ' hidden'}>${esc(note || '')}</span>` : card.note ? `<span class="note">${esc(card.note)}</span>` : ''}
+    <span class="ft">${chips}<span style="display:inline-flex;gap:8px;align-items:center">${req}${buy}</span></span>${vig}${preview}
+  </div>`;
+}
+function rowHTML(page, row, ctx) {
+  return `<div class="wp-row" data-row="${row.tier}-${row.row}"><div class="wp-rh"><h3>${esc(row.title)}</h3><span>${esc(row.question)}</span></div>
+    <div class="wp-cards">${row.cards.map((c) => cardHTML(page, c, ctx)).join('')}</div>${row.tier === 1 && row.row === 'stat' ? '<div id="inline-diff"></div>' : ''}</div>`;
+}
+function sheetHTML(page, lean) {
+  const sheet = lean && page.leanHover[lean] ? page.leanHover[lean] : page.statSheet;
+  return `<h3>Stat sheet</h3><dl class="sheet-rows">${sheet.rows.map((r) => r.after && r.direction
+    ? `<div class="mv"><dt>${esc(r.label)}</dt><dd><s>${esc(r.before)}</s> → <span class="up">${esc(r.after)}</span></dd></div>`
+    : `<div><dt>${esc(r.label)}</dt><dd>${esc(r.before)}</dd></div>`).join('')}</dl><p class="wp-note">${esc(sheet.note)}</p>`;
+}
+function inlineDiffHTML(page, lean) {
+  if (!lean || !page.leanHover[lean]) return '';
+  const card = page.bands[0].rows[0].cards.find((c) => c.id === lean);
+  const h = page.leanHover[lean];
+  const moving = h.rows.filter((r) => r.after && r.direction);
+  return `<div class="inline-diff" style="--lane:${card.laneColor}"><b>${esc(card.name)}</b> · ${moving.length
+    ? moving.map((r) => `${esc(r.label)} <s style="color:var(--dim)">${esc(r.before)}</s> → <span style="color:var(--success);font-weight:700">${esc(r.after)}</span>`).join(' · ')
+    : esc(h.note)}</div>`;
+}
+function matsHTML(page) {
+  return `<h3>Materials</h3><ul class="mats" id="mats">${page.materials.map((m) => {
+    const icon = m.kind === 'shard' ? `<img class="px" src="${A(P[m.key].shardIcon)}" alt="">` : m.kind === 'essence' ? '<i class="ess"></i>' : '<i class="cap"></i>';
+    return `<li data-mat="${m.key}">${icon}<span${m.color ? ` style="color:${m.color}"` : ''}>${esc(m.name)}${m.where ? `<small>${esc(m.where)}</small>` : ''}</span><b>${m.held}</b></li>`;
+  }).join('')}</ul>`;
+}
+function gateHTML(page) {
+  return page.gates.map((g) => `<div class="wp-gate" id="gate"><span class="pt2"><img class="px" src="${A(D.art.bosses[g.biome])}" alt=""></span>
+    <div><h3>${esc(g.bossName)}</h3><p>${esc(g.sentence)}</p><div class="pr"><span class="pips">${g.pips.map((p) => `<i class="${p ? 'on' : ''}"></i>`).join('')}</span>${esc(g.progressLine)}</div></div>
+    <div class="door">${g.doors.map((d) => `<b>${esc(d.name)}</b><button disabled>${esc(d.label)}</button><small>${esc(d.reason)}</small>`).join('')}</div></div>`).join('');
+}
+function pageHTML(key, ctx) {
+  const page = pageBy(key), h = page.header, m = isM();
+  const t1 = page.bands[0], t2 = page.bands[1];
+  const head = `<div class="dlg-head"><span class="barx"></span>${m ? '' : '<button class="back" data-back="gear">‹ Gear</button>'}<h2>${esc(h.name)}</h2><span class="sub">Weapon page</span><button class="x" data-close="page">×</button></div>`;
+  const form = `<div class="wp-form" id="wp-form"><span class="art"><img class="px" src="${A(h.iconArt)}" alt=""></span><div><div class="wp-eb">${esc(h.eyebrow)}</div><div class="wp-name">${esc(h.name)}</div><div class="wp-meta">${esc(h.meta)}</div><div class="wp-lanes" id="wp-lanes">${h.lanes.map((l) => `<span class="wp-lane" style="--lane:${l.color}">${esc(l.name)}</span>`).join('')}</div></div></div>`;
+  const t1rows = t1.rows.map((r) => rowHTML(page, r, ctx)).join('');
+  const t2rows = m
+    ? `<details class="t2 wp-locked"><summary>${t2.rows.map((r) => esc(r.title)).join(' · ')} ▸<span></span></summary>${t2.rows.map((r) => rowHTML(page, r, ctx)).join('')}</details>`
+    : `<div class="wp-locked" style="display:flex;flex-direction:column;gap:13px">${t2.rows.map((r) => rowHTML(page, r, ctx)).join('')}</div>`;
+  const side = `<div class="wp-pn" id="wp-sheet">${sheetHTML(page, ctx.lean)}</div><div class="wp-pn">${matsHTML(page)}</div>`;
+  const body = `<div class="wp-scroll" id="wp-scroll"><div class="wp-grid"><div class="wp-main">${form}${t1rows}${m ? '' : t2rows}${m ? '' : gateHTML(page)}${m ? t2rows + gateHTML(page) : ''}</div><div class="wp-side">${side}</div></div></div>`;
+  if (m) return `<div class="page-full" id="page-dlg">${head}${body}<div id="toast-slot"></div></div>`;
+  return `<div class="backdrop"></div><div class="dlg" id="page-dlg" style="left:40px;top:20px;width:1200px;height:680px">${head}${body}<div id="toast-slot"></div></div>`;
+}
+/* Lean preview without rebuilding the page (keeps the scroll). */
+function applyPreview(key, lean) {
+  const page = pageBy(key);
+  for (const card of page.bands[0].rows[1].cards) {
+    const sn = document.querySelector(`[data-sn="${card.id}"]`); if (!sn) continue;
+    const c = verbComp(page, card, lean);
+    if (c) sn.innerHTML = sentenceHTML(c);
+    const nt = document.querySelector(`[data-note="${card.id}"]`), note = verbNote(page, card, lean);
+    if (nt) { nt.textContent = note || ''; nt.hidden = !note; }
+    sn.parentElement.classList.toggle('preview', !!lean && lean !== page.progress.active.stat);
+  }
+  const sh = document.getElementById('wp-sheet'); if (sh) sh.innerHTML = sheetHTML(page, lean);
+  const idf = document.getElementById('inline-diff'); if (idf) idf.innerHTML = isM() ? inlineDiffHTML(page, lean) : '';
+  document.querySelectorAll('[data-preview]').forEach((b) => b.classList.toggle('on', b.dataset.preview === lean));
+}
+let toastTimer = null;
+function toast(msg, warn) {
+  const slot = document.getElementById('toast-slot'); if (!slot) return;
+  slot.innerHTML = `<div class="toast${warn ? ' warn' : ''}">${esc(msg)}</div>`;
+  clearTimeout(toastTimer); toastTimer = later(() => { const sl = document.getElementById('toast-slot'); if (sl) sl.innerHTML = ''; }, 2800);
+}
+function wirePage(key, onBuy) {
+  const dlg = document.getElementById('page-dlg'); if (!dlg) return;
+  const page = pageBy(key);
+  const all = page.bands.flatMap((b) => b.rows.flatMap((r) => r.cards));
+  dlg.querySelectorAll('[data-card]').forEach((el) => {
+    const card = all.find((c) => c.id === el.dataset.card);
+    el.addEventListener('click', (ev) => {
+      if (ev.target.closest('[data-preview]')) return;
+      pressCard(key, card, onBuy);
+    });
+    if (card.isLean && card.tier === 1 && !isM()) {
+      el.addEventListener('mouseenter', () => { SC.lean = card.id; applyPreview(key, card.id); });
+      el.addEventListener('mouseleave', () => { SC.lean = null; applyPreview(key, null); });
+    }
+  });
+  dlg.querySelectorAll('[data-preview]').forEach((b) => b.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    SC.lean = SC.lean === b.dataset.preview ? null : b.dataset.preview;
+    applyPreview(key, SC.lean);
+  }));
+}
+function pressCard(key, card, onBuy) {
+  if (card.action === 'buy' && card.id === VERB_ID && onBuy) { onBuy(); return; }
+  /* The export has no page state for Tendon Cut bought before Into the Wound, so in the
+     prototype pressing it previews the lean (stat sheet + every verb re-read) instead. */
+  if (card.action === 'buy' && card.id === LEAN_CTL) { if (isM()) { SC.lean = SC.lean === LEAN_CTL ? null : LEAN_CTL; applyPreview(key, SC.lean); } return; }
+  if (card.action === 'toast' && card.reason) { toast(card.reason, true); return; }
+}
+
+/* ── The page's fx preview: what the body will show (thesis A's lesson that
+   never stops: the page keeps it after the HUD has stopped teaching). ───── */
+function drawVignettes(now) {
+  document.querySelectorAll('canvas[data-vig]').forEach((c) => {
+    const g = c.getContext('2d'), mode = c.dataset.vig, W = c.width, H = c.height;
+    g.imageSmoothingEnabled = false;
+    g.fillStyle = '#3d4229'; g.fillRect(0, 0, W, H);
+    g.fillStyle = 'rgba(36,48,31,.4)'; g.fillRect(0, 0, W, H);
+    const T = 2600, u = now % T, z = 0.62, k = 0.75;
+    const fx = mode === 'composed' ? 70 - Math.min(u, 900) * 0.022 : 56, fy = 48;
+    ellipse(g, fx, fy, 15, 4.5, 'rgba(0,0,0,.35)');
+    const fireAt = 900, held = mode === 'composed' && u >= fireAt && u < 2200;
+    const pull = held ? Math.max(0, Math.sin(((u - fireAt) % 650) / 650 * Math.PI)) : 0;
+    if (held) shackle(g, fx, fy, z, k, 'back', pull);
+    const im = img(D.art.monsters['bog-slime']);
+    const sq = mode === 'pure' && u > fireAt + 150 && u < fireAt + 600 ? Math.sin(((u - fireAt - 150) / 450) * Math.PI) : 0;
+    if (ok(im)) { g.save(); g.translate(fx, fy); g.transform(1, 0, 0.4 * pull, 1, 0, 0); g.scale(1 + 0.3 * sq + 0.1 * pull, 1 - 0.35 * sq); g.drawImage(im, -20, -38, 40, 40); g.restore(); }
+    if (held) shackle(g, fx, fy, z, k, 'front', pull);
+    if (mode === 'composed') { fxClamp(g, fx, fy, u - fireAt, z, k); fxBreak(g, fx, fy, u - 2200, z, k); }
+    if (mode === 'pure') {
+      const n0 = 2, top = 9;
+      if (u < fireAt) pipRow(g, fx, top, n0, k);
+      else if (u < fireAt + 150) pipRow(g, fx, top + 3 * ((u - fireAt) / 150), n0, k);
+      else if (u < fireAt + 410) pipSplit(g, fx, top, n0, u - fireAt - 150, k);
+      else pipRow(g, fx, top, n0 * 2, k);
+      fxSurge(g, fx, fy - 14, fy, u - fireAt, k * 0.6);
+    }
+    // a dagger lands at the firing moment
+    if (u > fireAt - 150 && u < fireAt) dagger(g, 4, 30, fx, fy - 14, (u - fireAt + 150) / 150, k);
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   SCENES
+   ════════════════════════════════════════════════════════════════════════ */
+function shell(o) { return isM() ? portraitShell(o) : desktopShell(o); }
+function setFrame(html) {
+  const vw = V(), fr = document.getElementById('frame');
+  fr.style.width = vw.w + 'px'; fr.style.height = vw.h + 'px';
+  fr.innerHTML = `<div class="fr ${isM() ? 'mv' : 'dv'}">${html}</div><div class="fto" id="fto"></div>`;
+  canvas = document.getElementById('world'); ctx = canvas ? canvas.getContext('2d') : null;
+  if (ctx) ctx.imageSmoothingEnabled = false;
+  tilesKey = '';
+  paintGlyphs(); fit(); wireRingTip();
+}
+function wireRingTip() {
+  const ring = document.getElementById('ring'); if (!ring) return;
+  const show = () => {
+    const c = SC.ringComp; if (!c) return;
+    let tip = document.getElementById('ring-tip');
+    if (!tip) { tip = document.createElement('div'); tip.id = 'ring-tip'; tip.className = 'ring-tip'; ring.parentElement.appendChild(tip); }
+    tip.innerHTML = `<b style="color:${c.momentColor}">${esc(c.verbName)}</b>${sentenceHTML(c)}<small>${ringStateWords()}</small>`;
+    const r = ring.offsetLeft, tp = ring.offsetTop + ring.offsetHeight + 12;
+    if (isM()) { tip.style.right = '8px'; tip.style.left = 'auto'; } else tip.style.left = r + 'px';
+    tip.style.top = tp + 'px';
+  };
+  const hide = () => { const tip = document.getElementById('ring-tip'); if (tip) tip.remove(); };
+  if (isM()) ring.addEventListener('click', () => { if (document.getElementById('ring-tip')) hide(); else { show(); later(hide, 2600); } });
+  else { ring.addEventListener('mouseenter', show); ring.addEventListener('mouseleave', hide); }
+}
+function ringStateWords() {
+  const el = document.getElementById('ring'); if (!el) return '';
+  const txt = document.getElementById('ring-txt').textContent;
+  return el.classList.contains('ready') ? 'Ready' : `Ready again in ${txt} s`;
+}
+function panel(html) { document.getElementById('panel').innerHTML = html; }
+function onClick(id, fn) { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); }
+function tapAt(el) {
+  if (!el) return;
+  const fr = document.getElementById('frame'), r = el.getBoundingClientRect(), f = fr.getBoundingClientRect(), s = scale();
+  const d = document.createElement('div'); d.className = 'tap';
+  d.style.left = ((r.left + r.width / 2 - f.left) / s) + 'px'; d.style.top = ((r.top + r.height / 2 - f.top) / s) + 'px';
+  fr.appendChild(d); setTimeout(() => d.remove(), 600);
+}
+const AFTER_BUY = pageBy('scene2-after-buy');
+
+/* ── Scene 1: finding the tree ──────────────────────────────────────────── */
+const scene1 = {
+  init() { SC = { step: 'hud', t: 0 }; },
+  keyframe() { SC.step = 'gear'; },
+  build() {
+    const gearOpen = SC.step === 'gear';
+    let html = shell({ guide: BEAT.say, navOn: gearOpen ? 'gear' : null, walletStage: 'pre' });
+    if (gearOpen) html += gearHTML();
+    if (SC.step === 'page') html += pageHTML('scene2', { lean: null });
+    setFrame(html);
+    onClick('nav-gear', () => { SC.step = SC.step === 'gear' ? 'hud' : 'gear'; this.build(); });
+    onClick('gear-weapon', () => { SC.step = 'page'; this.build(); });
+    document.querySelectorAll('[data-close="gear"]').forEach((b) => b.addEventListener('click', () => { SC.step = 'hud'; this.build(); }));
+    document.querySelectorAll('[data-close="page"],[data-back="gear"]').forEach((b) => b.addEventListener('click', () => { SC.step = 'gear'; this.build(); }));
+    onClick('make-tab', () => { const l = document.getElementById('gear-list'); if (l) l.innerHTML = '<div class="make-stub">Make — the crafting browser, unchanged by this thesis.</div>'; });
+    if (SC.step === 'page') wirePage('scene2', null);
+    panel(`<h2>1 · Finding the tree</h2><p class="q">${esc(SCENES[0].q)}</p>
+      <h3>Try it</h3><p>${isM() ? 'Tap <b>Gear</b> in the bottom bar' : 'Click <b>Gear</b> in the right rail'}, then press the <b>Poison Dagger</b>.</p>
+      <div class="ctl"><button id="p-hud" class="${SC.step === 'hud' ? 'on' : ''}">HUD</button><button id="p-gear" class="${SC.step === 'gear' ? 'on' : ''}">Gear tab (key frame)</button><button id="p-page" class="${SC.step === 'page' ? 'on' : ''}">The page</button></div>
+      <h3>Thesis A here</h3><p>Out of combat the HUD carries no card fact at all: no verb is owned yet, so there is no ring, and the rail's materials panel shows essence only (shards live on the page, the banner and the map). The guide line is the one card sentence on screen.</p>
+      <p>The Gear tab sits where Crafting's Upgrade tab was: worn items, the weapon first and lit; the three plain items say so and lead nowhere.</p>`);
+    onClick('p-hud', () => { SC.step = 'hud'; this.build(); });
+    onClick('p-gear', () => { SC.step = 'gear'; this.build(); });
+    onClick('p-page', () => { SC.step = 'page'; this.build(); });
+  },
+  frame(dt) { SC.t += dt; if (ctx) drawIdle(BLACKWATER, SC.t, { seed: 1 }); drawVignettes(performance.now()); },
+  marks() {
+    if (SC.step !== 'gear') return [];
+    return [['gear-weapon', 1], ['gear-plain', 2], [isM() ? 'nav-gear' : 'guide-line', 3]];
+  },
+  autoplay() {
+    return [[0, () => { SC.step = 'hud'; this.build(); }], [1500, () => tapAt(document.getElementById('nav-gear'))], [1750, () => { SC.step = 'gear'; this.build(); }],
+      [4300, () => tapAt(document.getElementById('gear-weapon'))], [4550, () => { SC.step = 'page'; this.build(); }], [8200, () => {}]];
+  },
+};
+
+/* ── Scene 2: the weapon page ───────────────────────────────────────────── */
+const scene2 = {
+  init() { SC = { bought: false, lean: null, t: 0 }; },
+  keyframe() { SC.bought = false; SC.lean = null; },
+  key() { return SC.bought ? 'scene2-after-buy' : 'scene2'; },
+  build() {
+    const key = this.key();
+    setFrame(shell({ guide: BEAT.say, navOn: 'gear', walletStage: SC.bought ? 'post' : 'pre' }) + pageHTML(key, { lean: SC.lean }));
+    wirePage(key, () => { SC.bought = true; SC.lean = null; this.build(); toast(DS.toasts.buyVerb); });
+    document.querySelectorAll('[data-close="page"],[data-back="gear"]').forEach((b) => b.addEventListener('click', () => { this.build(); }));
+    if (SC.lean) applyPreview(key, SC.lean);
+    panel(`<h2>2 · The weapon page</h2><p class="q">${esc(SCENES[1].q)}</p>
+      <h3>Try it</h3><p>Press <b>Into the Wound</b> to buy it. Press a short card (Silent Step, Easy Prey, Next Throat) for its reason. ${isM() ? 'Tap <b>◉ Preview</b> on a lean' : 'Hover a lean'} to re-read every verb with it and see the stat sheet move.</p>
+      <div class="ctl"><button id="p-reset">Reset (key frame)</button><button id="p-prev-ctl">Preview Tendon Cut</button><button id="p-prev-ks">Preview Silent Step</button><button id="p-buy" class="primary">Buy Into the Wound</button></div>
+      <h3>Thesis A here</h3><p>The page holds everything the HUD gave up. Every verb carries a small ring mark: the ring it will put by your HP bar. Verb sentences are drawn in two colours whenever moment and payload come from two lanes (Easy Prey and Next Throat already are; hover Tendon Cut and Into the Wound turns green → blue).</p>
+      <p>After the purchase the active verb shows a looping preview of its body fx — the lesson the HUD stops giving after three firings stays here.</p>
+      <p class="fine">No lean ranks: see NOTES.md for how six steps per tier would read. For the Slinger only Silent Step moves the sheet (Move speed); Tendon Cut's note says nothing moves.</p>`);
+    onClick('p-reset', () => { this.init(); this.build(); });
+    onClick('p-prev-ctl', () => { SC.lean = SC.lean === LEAN_CTL ? null : LEAN_CTL; applyPreview(this.key(), SC.lean); });
+    onClick('p-prev-ks', () => { SC.lean = SC.lean === 'dagger-t1-kill-chain-stat' ? null : 'dagger-t1-kill-chain-stat'; applyPreview(this.key(), SC.lean); });
+    onClick('p-buy', () => { if (!SC.bought) { SC.bought = true; SC.lean = null; this.build(); toast(DS.toasts.buyVerb); } });
+  },
+  frame(dt) { SC.t += dt; if (ctx) drawIdle(BLACKWATER, SC.t, { seed: 1 }); drawVignettes(performance.now()); },
+  marks() {
+    if (SC.bought) return [];
+    return [[`[data-card="${VERB_ID}"]`, 1], [`[data-card="${LEAN_AFF}"]`, 2], [isM() ? 'wp-lanes' : '[data-mat="affliction"]', 3]];
+  },
+  autoplay() {
+    const card = (id) => document.querySelector(`[data-card="${id}"]`);
+    return [[0, () => { this.init(); this.build(); }],
+      [1600, () => { const el = isM() ? document.querySelector(`[data-preview="${LEAN_CTL}"]`) : card(LEAN_CTL); tapAt(el); SC.lean = LEAN_CTL; applyPreview(this.key(), LEAN_CTL); }],
+      [4800, () => { SC.lean = null; applyPreview(this.key(), null); }],
+      [5400, () => { tapAt(card('dagger-t1-kill-chain-stat')); pressCard('scene2', pageBy('scene2').bands[0].rows[0].cards[2]); }],
+      [8000, () => { tapAt(card(VERB_ID)); }],
+      [8200, () => { SC.bought = true; this.build(); toast(DS.toasts.buyVerb); }],
+      [12500, () => {}]];
+  },
+};
+
+/* ── Scenes 3 and 4: the fight ──────────────────────────────────────────── */
+function fightShell(c, teach) {
+  return shell({ ring: c, tf: true, teach: teach ? c : null, navOn: null, walletStage: 'post' });
+}
+function fightFrame(sim, t, teachN) {
+  const fr = drawFight(sim, t);
+  const lf = lastEvent(sim, t, 'fire');
+  const teaching = teachN && lf && lf.n <= teachN && t - lf.t < 3400 ? lf : null;
+  updateRing(fr.readyAt, t, lf ? lf.t : null, !!teaching);
+  updateTF(sim, fr, t);
+  const hpT = document.getElementById('hp-text'), hpF = document.getElementById('hp-fill');
+  if (hpT) hpT.textContent = isM() ? `${fr.hp}/${RULE.maxHp}` : `${fr.hp} / ${RULE.maxHp}`;
+  if (hpF) hpF.style.width = `${(fr.hp / RULE.maxHp) * 100}%`;
+  const te = document.getElementById('teach');
+  if (te) {
+    const u = teaching ? t - teaching.t : -1;
+    te.style.opacity = teaching ? String(Math.min(clamp01((u - 250) / 220), clamp01((3400 - u) / 400))) : '0';
+    te.style.transform = teaching ? `translateY(${(1 - clamp01((u - 250) / 220)) * -8}px)` : '';
+  }
+  if (teaching) {                                         // a spark ties the body to the ring
+    const u = t - teaching.t;
+    if (u > 120 && u < 700) {
+      const o = fr.oozes.find((q) => q.id === teaching.id) || frameAt(sim, teaching.t).oozes.find((q) => q.id === teaching.id);
+      const ring = document.getElementById('ring');
+      if (o && ring) {
+        const [ox, oy] = W2S(o.x, o.y);
+        const rx = ring.offsetLeft + ring.offsetWidth / 2, ry = ring.offsetTop + ring.offsetHeight / 2;
+        const p = ease((u - 120) / 580), sx0 = ox, sy0 = oy - 30 * V().z;
+        for (let i = 0; i < 6; i++) {
+          const q = Math.max(0, p - i * 0.04);
+          const x = sx0 + (rx - sx0) * q, y = sy0 + (ry - sy0) * q - Math.sin(q * Math.PI) * 60;
+          ellipse(ctx, x, y, (5 - i * 0.7) * V().k, (5 - i * 0.7) * V().k, hexA(teaching.mode === 'composed' ? COMPOSED.momentColor : AFF, 1 - i * 0.15));
+        }
+      }
+    }
+  }
+  return fr;
+}
+function keyTimes(sim) {
+  const f2 = sim.firings[1], f1 = sim.firings[0];
+  return { coming: f1 + RULE.capMs - 500, landed: f2 + 260, lasting: f2 + 1000 };
+}
+const scene3 = {
+  init() { SC = { mode: 'pure', t: 0, playing: false, showPage: false }; },
+  keyframe() { SC.mode = 'pure'; SC.t = keyTimes(SIM.pure).landed; SC.playing = false; },
+  sim() { return SIM[SC.mode]; },
+  comp() { return SC.mode === 'pure' ? PURE : COMPOSED; },
+  build() {
+    const c = this.comp(); SC.ringComp = c;
+    let html = fightShell(c, false);
+    if (SC.showPage) html += pageHTML(SC.mode === 'pure' ? 'scene2-after-buy' : 'scene3-composed', { lean: null });
+    setFrame(html);
+    if (SC.showPage) {
+      wirePage(SC.mode === 'pure' ? 'scene2-after-buy' : 'scene3-composed', null);
+      document.querySelectorAll('[data-close="page"],[data-back="gear"]').forEach((b) => b.addEventListener('click', () => { SC.showPage = false; this.build(); }));
+    }
+    onClick('nav-gear', () => { SC.showPage = true; SC.playing = false; this.build(); });
+    const kt = keyTimes(this.sim());
+    panel(`<h2>3 · A fight</h2><p class="q">${esc(SCENES[2].q)}</p>
+      <h3>Pair</h3><div class="ctl"><button id="p-pure" class="${SC.mode === 'pure' ? 'on' : ''}">Pure · Coated Edge + Into the Wound</button><button id="p-comp" class="${SC.mode === 'composed' ? 'on' : ''}">Composed · Tendon Cut + Into the Wound</button></div>
+      <h3>Play</h3><div class="ctl"><button id="p-hit" class="primary">Land a hit</button><button id="p-auto" class="${SC.playing ? 'on' : ''}">${SC.playing ? 'Pause' : 'Auto-play'}</button><button id="p-restart">Restart</button></div>
+      <h3>Key frames (second firing)</h3><div class="ctl"><button id="k-coming">Coming</button><button id="k-landed">Landed</button><button id="k-lasting">Lasting</button><button id="p-page">${SC.showPage ? 'Close the page' : 'Open the page'}</button></div>
+      <div class="readout" id="readout"></div>
+      <h3>Thesis A here</h3><p><b>Coming:</b> only the ring by the HP bar — a counting clock, brighter for its last second, then ✦ with a flash. <b>Landed:</b> only the body — the poison pips over the ooze split in two and venom bursts (pure), or chains clamp its feet and it strains, stopped short (composed). <b>Lasting:</b> only the target — one Poison badge counting damage still owed${SC.mode === 'composed' ? ', plus Hamstrung and Bound with their icons' : ''}, and the pips on the body.</p>
+      <p>No floating word, no proc icon, no callout. The two-colour sentence lives on the page (open it) and in the ring's ${isM() ? 'tap' : 'hover'} card; the ring itself is the moment's green with the payload's ${SC.mode === 'composed' ? 'blue root' : 'green drop'} glyph.</p>
+      <p class="fine">Prototype combat rule, illustrative: 26 per swing every 500 ms, 13 poison per hit (+2.6 with Coated Edge) into one record that ticks a quarter of what it owes each second. Not the server's DoT formula.</p>`);
+    onClick('p-pure', () => { SC.mode = 'pure'; SC.t = 0; this.build(); });
+    onClick('p-comp', () => { SC.mode = 'composed'; SC.t = 0; this.build(); });
+    onClick('p-hit', () => { SC.playing = false; const n = this.sim().events.find((e) => e.type === 'hit' && e.t > SC.t + 1); SC.t = n ? n.t + 220 : 0; this.build(); });
+    onClick('p-auto', () => { SC.playing = !SC.playing; this.build(); });
+    onClick('p-restart', () => { SC.t = 0; this.build(); });
+    onClick('k-coming', () => { SC.playing = false; SC.t = kt.coming; this.build(); });
+    onClick('k-landed', () => { SC.playing = false; SC.t = kt.landed; this.build(); });
+    onClick('k-lasting', () => { SC.playing = false; SC.t = kt.lasting; this.build(); });
+    onClick('p-page', () => { SC.showPage = !SC.showPage; SC.playing = false; this.build(); });
+  },
+  frame(dt) {
+    const sim = this.sim();
+    if (SC.playing) { SC.t += dt; if (SC.t > sim.end) { SC.t = 0; if (S.embed) { SC.mode = SC.mode === 'pure' ? 'composed' : 'pure'; this.build(); } } }
+    if (ctx) { const fr = fightFrame(sim, SC.t, 0); SC.fr = fr; }
+    drawVignettes(performance.now());
+    const ro = document.getElementById('readout');
+    if (ro && SC.fr) { const r = SC.fr.readyAt - SC.t; ro.textContent = `t = ${(SC.t / 1000).toFixed(2)} s · ${SC.mode}\nring: ${r <= 0 ? 'ready ✦' : 'clock ' + secs(r) + ' s'}\nSlinger HP ${SC.fr.hp} / ${RULE.maxHp}`; }
+  },
+  marks() {
+    const fr = frameAt(this.sim(), SC.t), o = fr.oozes.find((q) => q.id === fr.tgt) || fr.oozes.find((q) => q.alive);
+    const marks = [];
+    if (o) { const [x, y] = W2S(o.x, o.y); marks.push([{ x: V().cx + x - 44 * V().z * V().k, y: y - 104 * V().z, w: 88 * V().z * V().k, h: 112 * V().z }, 1]); }
+    marks.push(['ring', 2], ['[data-k="poison"]', 3]);
+    return marks;
+  },
+  autoplay() { return [[0, () => { SC.playing = true; SC.t = 0; }]]; },
+};
+const scene4 = {
+  init() { SC = { n: 0, t: 600, playing: false, until: null }; },
+  keyframe() { SC.n = 1; SC.t = SIM.teach.firings[0] + 700; SC.playing = false; SC.until = null; },
+  build() {
+    SC.ringComp = PURE;
+    setFrame(fightShell(PURE, true));
+    const f = SIM.teach.firings;
+    panel(`<h2>4 · A new card's first firings</h2><p class="q">${esc(SCENES[3].q)}</p>
+      <h3>Step</h3><div class="ctl"><button id="p-fire" class="primary">Fire again ›</button><button id="p-back">‹ Back</button><button id="p-reset">Before #1</button></div>
+      <div class="ctl">${[1, 2, 3, 4].map((n) => `<button id="p-f${n}" class="${SC.n === n ? 'on' : ''}">#${n}</button>`).join('')}</div>
+      <div class="readout" id="readout"></div>
+      <h3>The rule</h3><p>A newly bought verb — or an owned verb whose lean just changed, since its sentence changed — shows <b>one line</b> beside its ring on its <b>first three firings</b>: its name and its sentence, in the lane's colours. A spark runs from the body to the ring as the line slides out, and the ring wears the guide's gold highlight for that moment. Firing #4 onwards: nothing but the ring and the body. No floating word, ever.</p>
+      <p>Because this is an idle game, a firing only counts toward the three if the fight was on screen when it landed (tab visible, no full-screen panel open): a player who was away still gets all three lessons.</p>
+      <p>The guide's ring lesson (“${esc(BEAT.lesson.ring)}”) is folded into the line: it is shown at the ring, at the moment the ring starts counting, instead of in the guide panel out of combat.</p>`);
+    const step = (n) => { if (n < 1) { this.init(); this.build(); return; } SC.n = Math.min(n, f.length); SC.t = f[SC.n - 1] - 500; SC.playing = true; SC.until = f[SC.n - 1] + 1200; this.build(); };
+    onClick('p-fire', () => step(SC.n + 1));
+    onClick('p-back', () => step(SC.n - 1));
+    onClick('p-reset', () => { this.init(); this.build(); });
+    [1, 2, 3, 4].forEach((n) => onClick('p-f' + n, () => step(n)));
+    this.step = step;
+  },
+  frame(dt) {
+    const sim = SIM.teach;
+    if (SC.playing) { SC.t += dt; if (SC.until !== null && SC.t >= SC.until) { SC.t = SC.until; SC.playing = false; if (S.embed) later(() => this.step(SC.n >= 4 ? 1 : SC.n + 1), 900); } }
+    if (ctx) SC.fr = fightFrame(sim, SC.t, 3);
+    const ro = document.getElementById('readout');
+    if (ro) ro.textContent = SC.n === 0 ? 'Bought a few seconds ago. Never fired.\nRing: ready ✦' : `Firing #${SC.n}\n${SC.n <= 3 ? `Teaching line: shown (${SC.n} of 3)` : 'Teaching over: ring + body only'}`;
+  },
+  marks() {
+    const sim = SIM.teach, fr = frameAt(sim, SC.t), lf = lastEvent(sim, SC.t, 'fire');
+    const o = lf ? fr.oozes.find((q) => q.id === lf.id) : null;
+    const body = o ? (() => { const [x, y] = W2S(o.x, o.y); return { x: V().cx + x - 44 * V().z * V().k, y: y - 104 * V().z, w: 88 * V().z * V().k, h: 112 * V().z }; })() : null;
+    if (SC.n >= 1 && SC.n <= 3) return [['teach', 1], [body, 2], ['ring', 3]];
+    return [[body, 1], ['ring', 2], ['[data-k="poison"]', 3]];
+  },
+  autoplay() { return [[0, () => { this.step(1); }]]; },
+};
+
+/* ── Scene 5: the node ──────────────────────────────────────────────────── */
+/* The map: where the node's shard lives after the banner fades (mapTileLabel). */
+function mapHTML(here) {
+  const nodes = D.nodes.filter((n) => n.biome === 'swamp');
+  const tiles = nodes.map((n) => {
+    const icon = n.shard ? `<img class="px" src="${A(P[n.shard].shardIcon)}" alt="" style="width:18px;height:18px">` : '';
+    return `<div class="map-tile${n.id === here ? ' here' : ''}" style="--sc:${n.shardColor || '#63553e'}">${icon}<span>${esc(n.mapTileLabel)}</span>${n.id === here ? '<em>you are here</em>' : ''}</div>`;
+  }).join('');
+  const box = isM() ? 'left:10px;right:10px;top:150px;bottom:120px' : 'left:330px;top:110px;width:620px;height:470px';
+  return `<div class="backdrop"></div><div class="dlg" id="map-dlg" style="${box}"><div class="dlg-head"><span class="barx"></span><h2>Map · ${esc(nodes[0].biomeName)}</h2><button class="x" data-close="map">×</button></div><div class="map-grid">${tiles}</div></div>`;
+}
+const scene5 = {
+  init() { SC = { node: BLACKWATER, t: 0 }; },
+  keyframe() { SC.node = BLACKWATER; SC.t = 1000; SC.frozen = true; },
+  build() {
+    SC.ringComp = PURE;
+    setFrame(shell({ ring: PURE, banner: true, navOn: SC.map ? 'map' : null, walletStage: 'post' }) + (SC.map ? mapHTML(SC.node) : ''));
+    const n = nodeBy(SC.node), a = n.arrival.discovery;
+    onClick('nav-map', () => { SC.map = !SC.map; this.build(); });
+    document.querySelectorAll('[data-close="map"]').forEach((b) => b.addEventListener('click', () => { SC.map = false; this.build(); }));
+    document.getElementById('banner').innerHTML = `<div class="eb">New territory</div><h2>${esc(n.displayName)}</h2><div class="md">${esc(n.biomeName)} · Tier ${n.tier}</div><div class="terr" id="terr"><img class="px" src="${A(P[a.shard].shardIcon)}" alt=""><strong>${esc(a.territory)}</strong><span> · ${esc(a.detail)}</span></div>`;
+    const share = (id) => Object.entries(nodeBy(id).resolvedShares).map(([f, s]) => `${D.families.swamp.find((x) => x.id === f).name} ${Math.round(s * 100)}%`).join(' · ');
+    panel(`<h2>5 · The node</h2><p class="q">${esc(SCENES[4].q)}</p>
+      <h3>Node</h3><div class="ctl">${NODE_IDS.map((id) => `<button data-node="${id}" class="${SC.node === id ? 'on' : ''}">${esc(nodeBy(id).displayName)}</button>`).join('')}</div>
+      <div class="ctl"><button id="p-arrive" class="primary">Arrive</button><button id="p-key">1 s after arriving (key frame)</button><button id="p-map" class="${SC.map ? 'on' : ''}">Open the map</button></div>
+      <div class="readout">${esc(n.mapTileLabel)}\n${esc(share(SC.node))}\nfielded: ${Object.values(n.fieldedByFamily).map((v) => v.join(', ')).join(' · ')}</div>
+      <h3>Thesis A here</h3><p>The arrival banner names the family and the shard for ${D.arrival.durationsMs.discovery / 1000} s (discovery). Then nothing on the HUD does: the ring is the only card element, and the node's shard is not one. It lives on the map tile (“${esc(n.mapTileLabel)}”) and the page's materials list; in a fight, the shard each kill pays pops off the body and flies to you.</p>
+      <p class="fine">Real blends: Sunkroot Bog fields everything at 34/33/33 and still reads “Mire territory”. The Mud Toad has no art in the export, so it is a plain shape.</p>`);
+    document.querySelectorAll('[data-node]').forEach((b) => b.addEventListener('click', () => { SC.node = b.dataset.node; SC.t = 0; SC.frozen = false; this.build(); }));
+    onClick('p-arrive', () => { SC.t = 0; SC.frozen = false; this.build(); });
+    onClick('p-key', () => { SC.t = 1000; SC.frozen = true; SC.map = false; this.build(); });
+    onClick('p-map', () => { SC.map = !SC.map; this.build(); });
+  },
+  frame(dt) {
+    if (!SC.frozen) SC.t += dt;
+    if (ctx) drawIdle(SC.node, SC.t, { seed: NODE_IDS.indexOf(SC.node) + 3, walkIn: true });
+    updateRing(0, SC.t, null, false);
+    const b = document.getElementById('banner'), dur = D.arrival.durationsMs.discovery;
+    if (b) { const p = SC.t / dur; b.style.opacity = String(p < 0.1 ? p / 0.1 : p <= 0.76 ? 1 : Math.max(0, 1 - (p - 0.76) / 0.24)); }
+  },
+  marks() {
+    const bodies = bodiesFor(SC.node, NODE_IDS.indexOf(SC.node) + 3).filter((b) => b.name === nodeBy(SC.node).fieldedByFamily[nodeBy(SC.node).family.id][0]).filter((b) => { const br = rectOf('banner'); if (!br) return true; const [x, y] = W2S(b.x, b.y); const sx = V().cx + x; return !(sx > br.x && sx < br.x + br.w && y - 70 * V().z < br.y + br.h && y > br.y); })
+      .sort((a, b) => Math.hypot(a.x, a.y) - Math.hypot(b.x, b.y)).slice(0, 1);
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    for (const b of bodies) { const [x, y] = W2S(b.x, b.y); x0 = Math.min(x0, x - 34 * V().z); x1 = Math.max(x1, x + 34 * V().z); y0 = Math.min(y0, y - 80 * V().z); y1 = Math.max(y1, y + 8); }
+    return [['terr', 1], [{ x: V().cx + x0, y: y0, w: x1 - x0, h: y1 - y0 }, 2], ['nav-map', 3]];
+  },
+  autoplay() {
+    return [[0, () => { SC.node = NODE_IDS[0]; SC.t = 0; this.build(); }], [6200, () => { SC.node = NODE_IDS[1]; SC.t = 0; this.build(); }], [12400, () => { SC.node = NODE_IDS[2]; SC.t = 0; this.build(); }], [18600, () => {}]];
+  },
+};
+const SCN = { 1: scene1, 2: scene2, 3: scene3, 4: scene4, 5: scene5 };
+
+/* ════════════════════════════════════════════════════════════════════════
+   FIRST-TIME OVERLAY — three numbered markers, everything else dimmed.
+   ════════════════════════════════════════════════════════════════════════ */
+function rectOf(target) {
+  if (!target) return null;
+  if (typeof target === 'object' && 'x' in target) return target;
+  const el = target.startsWith('[') ? document.querySelector('#frame ' + target) : document.getElementById(target);
+  if (!el) return null;
+  const f = document.getElementById('frame').getBoundingClientRect(), r = el.getBoundingClientRect(), s = scale();
+  return { x: (r.left - f.left) / s, y: (r.top - f.top) / s, w: r.width / s, h: r.height / s };
+}
+function renderFTO() {
+  const box = document.getElementById('fto'); if (!box) return;
+  if (!S.first) { box.innerHTML = ''; return; }
+  const vw = V();
+  const marks = (SCN[S.scene].marks() || []).map(([t, n]) => ({ r: rectOf(t), n })).filter((m) => m.r);
+  const pad = 6;
+  box.innerHTML = `<svg width="${vw.w}" height="${vw.h}" style="position:absolute;inset:0"><defs><mask id="ftm"><rect width="100%" height="100%" fill="#fff"/>${marks.map((m) => `<rect x="${m.r.x - pad}" y="${m.r.y - pad}" width="${m.r.w + pad * 2}" height="${m.r.h + pad * 2}" rx="6" fill="#000"/>`).join('')}</mask></defs>
+    <rect width="100%" height="100%" fill="rgba(6,5,4,.74)" mask="url(#ftm)"/>${marks.map((m) => `<rect x="${m.r.x - pad}" y="${m.r.y - pad}" width="${m.r.w + pad * 2}" height="${m.r.h + pad * 2}" rx="6" fill="none" stroke="#e0c070" stroke-width="2"/>`).join('')}</svg>
+    ${marks.map((m) => `<div class="num" style="left:${Math.max(16, m.r.x - pad)}px;top:${Math.max(16, m.r.y - pad)}px">${m.n}</div>`).join('')}`;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   CHROME, SCALING, LOOP
+   ════════════════════════════════════════════════════════════════════════ */
+function scale() { return parseFloat(document.getElementById('frame').dataset.scale || '1'); }
+function fit() {
+  const st = document.getElementById('stage'), vw = V(), wrap = document.getElementById('frame-wrap'), fr = document.getElementById('frame');
+  const pad = S.embed ? 0 : 20;
+  const s = Math.min((st.clientWidth - pad * 2) / vw.w, (st.clientHeight - pad * 2) / vw.h);
+  fr.style.transform = `scale(${s})`; fr.dataset.scale = String(s);
+  wrap.style.width = vw.w * s + 'px'; wrap.style.height = vw.h * s + 'px';
+  wrap.style.left = (st.clientWidth - vw.w * s) / 2 + 'px'; wrap.style.top = (st.clientHeight - vw.h * s) / 2 + 'px';
+}
+window.addEventListener('resize', () => { fit(); renderFTO(); });
+function chrome() {
+  document.body.classList.toggle('embed', S.embed);
+  document.getElementById('sceneSeg').innerHTML = SCENES.map((s) => `<button data-s="${s.n}" class="${S.scene === s.n ? 'on' : ''}">${s.n} · ${s.short}</button>`).join('');
+  document.getElementById('viewSeg').innerHTML = ['desktop', 'portrait'].map((v) => `<button data-v="${v}" class="${S.view === v ? 'on' : ''}">${v === 'desktop' ? 'Desktop 1280×720' : 'Portrait 390×844'}</button>`).join('');
+  document.querySelectorAll('[data-s]').forEach((b) => b.addEventListener('click', () => go({ scene: +b.dataset.s })));
+  document.querySelectorAll('[data-v]').forEach((b) => b.addEventListener('click', () => go({ view: b.dataset.v })));
+  const chk = document.getElementById('firstChk'); chk.checked = S.first; chk.onchange = () => go({ first: chk.checked });
+}
+function enterScene() {
+  chrome();
+  const sc = SCN[S.scene];
+  director = null;
+  clearSceneTimers();
+  sc.init();
+  if (S.first) sc.keyframe();
+  sc.build();
+  sc.frame(0);
+  later(() => { renderFTO(); }, 60);
+  if (S.embed && !S.first) { const steps = sc.autoplay(); const len = steps[steps.length - 1][0]; director = { steps, len, start: performance.now(), i: 0 }; }
+}
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min(100, now - last); last = now;
+  if (director) {
+    const e = now - director.start;
+    while (director && director.i < director.steps.length && director.steps[director.i][0] <= e) director.steps[director.i++][1]();
+    if (director && director.len > 0 && e >= director.len) { director.start = now; director.i = 0; }
+  }
+  const sc = SCN[S.scene];
+  try { sc.frame(S.first ? 0 : dt); } catch (err) { console.error(err); }
+  requestAnimationFrame(loop);
+}
+readHash();
+enterScene();
+requestAnimationFrame(loop);
+window.__proto = { S, SIM, go, keyTimes, get SC() { return SC; }, rebuild: () => SCN[S.scene].build(), stopDirector: () => { director = null; } };
+</script>
+</body>
+</html>
