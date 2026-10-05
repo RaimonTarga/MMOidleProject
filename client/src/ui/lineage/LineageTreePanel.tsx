@@ -342,7 +342,8 @@ function LeanCardView({
             aria-disabled={rank.next.action !== 'buy' ? true : undefined}
             title={rank.next.reason ?? `Rank ${rankNumeral(rank.next.rank)}: ${rank.next.sentence ?? ''}`}
             onMouseEnter={hoverable && rankPreview ? () => onPreview(rankPreview) : undefined}
-            onMouseLeave={hoverable ? () => onPreview(null) : undefined}
+            // Still over the card: back to the card's own preview.
+            onMouseLeave={hoverable ? () => onPreview(leanPreview) : undefined}
             onFocus={hoverable && rankPreview ? () => onPreview(rankPreview) : undefined}
             onBlur={hoverable ? () => onPreview(null) : undefined}
             onClick={pressRank}
