@@ -1499,7 +1499,13 @@ From the five-thesis prototype run (docs/briefs/ui-prototypes-report-2026-10-04.
 - **The skin is a later track.** The UI grows from bare stone at T1 to ornament, gems and
   light with ascension (future-plans, "tier-evolving UI"). It is skinned after the layout
   is fixed, never before; a T1 and a T4 skin of the same screen are designed first to prove
-  the arc does not overwhelm.
+  the arc does not overwhelm. **The image (the designer's, 2026-10-05):** at the start you
+  are a wandering soul, a common spirit with no remarkable quality; each tier is an ascent
+  into a more powerful realm, and by T8 (not built) you are a demi-god. The UI is the
+  measure of that: what frames the game says what you have become. Rules for the ornament:
+  it lives on panels and frames, never over the field; motion is minor and never
+  distracting (a thin light along a panel edge, not a flash across the screen); generated
+  ornament art (PixelLab or other) is unproven for style match and is not assumed.
 
 ### 26.5 Calls from the runs
 
