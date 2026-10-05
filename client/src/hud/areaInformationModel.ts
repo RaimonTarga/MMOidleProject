@@ -39,6 +39,31 @@ export function arrivalTerritoryLine(
   };
 }
 
+/**
+ * The territory line that STAYS on screen (design §26.4, thesis D's permanent
+ * "Here" line): the node's name, its dominant family and the one shard every
+ * kill pays — "Mire territory · every kill pays Venom". Null where the node has
+ * no blend (dungeon, sanctuary, the Clearing), like the arrival line.
+ */
+export function territoryHereLine(nodeId: string): {
+  name: string;
+  territory: string;
+  shard: PacketId;
+  /** "Venom": the shard's word, the mockup's short form. */
+  shardWord: string;
+} | null {
+  const info = NODE_BIOMES[nodeId];
+  const family = nodeFamily(nodeId);
+  const shard = nodeShard(nodeId);
+  if (!info || !family || !shard) return null;
+  return {
+    name: info.displayName,
+    territory: `${family.name} territory`,
+    shard,
+    shardWord: shardName(shard).replace(/ Shard$/, ''),
+  };
+}
+
 // At baseline movement speed this gives several seconds of notice before crossing.
 export const EXIT_PREVIEW_SHOW_DISTANCE = 460;
 export const EXIT_PREVIEW_HIDE_DISTANCE = 560;

@@ -36,6 +36,11 @@ export interface PlateCrown {
   pendingHeal: number;
   /** Hover-tooltip plumbing for the HP readout, owned by the caller. */
   hpTip?: { handlers: HTMLAttributes<HTMLElement>; node: ReactNode };
+  /**
+   * What sits beside the HP bar (design §26.4): the rhythm readout's rings and
+   * the player's statuses. Drawn under the health conduits, inside the crown.
+   */
+  beside?: ReactNode;
 }
 
 /** Health is the one bar whose colour carries meaning beyond its fill. */
@@ -132,6 +137,7 @@ function Crown({ crown }: { crown: PlateCrown }) {
               : `Barrier ${Math.ceil(crown.barrier)} of ${crown.barrierMax}`}
           />
         )}
+        {crown.beside}
       </div>
     </div>
   );

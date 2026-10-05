@@ -2,14 +2,14 @@ import { useEffect, useId, useRef, useState, type CSSProperties } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import {
   AREA_DANGER_LABELS, areaDanger, BIOME_DATABASE, type AreaDanger,
-  NODE_BIOMES, type NodeBiomeInfo, type NodeGateEntity,
+  NODE_BIOMES, packetDefinition, type NodeBiomeInfo, type NodeGateEntity,
 } from '@mmo-idle/shared';
 import { UIIcon } from '../ui/UIIcon';
 import { DUNGEON_ICON } from '../ui/map/constants';
 import { ShardIcon } from '../ui/map/ShardIcon';
 import { deathOverlayAtom, hpAtom, nodeLoadingAtom, playerNodeIdAtom, playerPosAtom, statusAtom, tabResyncAtom } from './atoms';
 import { areaArrivalAtom } from './areaInformationState';
-import { arrivalTerritoryLine, nearbyExits } from './areaInformationModel';
+import { arrivalTerritoryLine, nearbyExits, territoryHereLine } from './areaInformationModel';
 import './areaInformation.css';
 
 const ARROWS = { north: '↑', south: '↓', east: '→', west: '←' };
@@ -105,7 +105,19 @@ export function AreaInformation() {
   // The node's territory and the one shard every kill in it pays (design §24.3).
   const territoryLine = info && arrival ? arrivalTerritoryLine(nodeId, arrival.kind) : null;
   const visibleExits = exits.filter(exit => exit.nodeId === nodeId && exit.exitNodeId && NODE_BIOMES[exit.exitNodeId]);
+  // Design §26.4: the family and the shard STAY on screen (thesis D's territory
+  // line), not only on arrival. Hidden while the arrival banner says it louder.
+  const here = !info ? territoryHereLine(nodeId) : null;
+  const hereColor = here ? packetDefinition(here.shard)?.color : undefined;
   return <>
+    {here && <div className="area-here" aria-label={`${here.name}: ${here.territory}, every kill pays ${here.shardWord}`}
+      style={hereColor ? { '--here-lane': hereColor } as CSSProperties : undefined}>
+      <span className="area-here__name">{here.name}</span>
+      <span className="area-here__line">
+        <ShardIcon packet={here.shard} size={12} />
+        {here.territory} · every kill pays <b>{here.shardWord}</b>
+      </span>
+    </div>}
     {info && arrival && <section key={arrival.startedAt} className={`area-arrival area-arrival--${arrival.kind}`}
       style={{ '--arrival-duration': `${arrival.duration}ms` } as CSSProperties} role="status" aria-live="polite">
       {arrival.kind === 'discovery' && <div className="area-arrival__eyebrow">New territory</div>}

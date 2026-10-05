@@ -23,6 +23,14 @@ import "./statusFeedback.css";
 const ICON_SIZE = 52;
 /** Critical debuffs sit a size up so they are the first thing the eye lands on. */
 const CRITICAL_ICON_SIZE = 62;
+/**
+ * The desktop rail row under the HP bar (design §26.4: the proc-icon strip over
+ * the field is removed; the player's statuses stay, small, beside the HP bar,
+ * their words in the tooltip). Critical debuffs keep their size step and halo.
+ */
+const RAIL_ICON_SIZE = 26;
+const RAIL_CRITICAL_ICON_SIZE = 34;
+const RAIL_SLOT_GAP = 4;
 /** Stack count at which a surge debuff's resting glow is at full heat. */
 const SURGE_FULL_STACKS = 10;
 /** Shatter shards, as outward directions in degrees. */
@@ -75,16 +83,20 @@ interface BuffIconProps {
    */
   ended?: { reason: EndReason; burst?: number };
   fx?: BuffTileFx;
+  /** The rail row: small tiles, no printed label (the tooltip names it). */
+  rail?: boolean;
 }
 
-function BuffIcon({ buff, interactive, stripProps, ghost, onGhostDone, ended, fx }: BuffIconProps) {
+function BuffIcon({ buff, interactive, stripProps, ghost, onGhostDone, ended, fx, rail = false }: BuffIconProps) {
   // Only on a pointer device. There is no hover on touch, so taking pointer
   // events there would buy nothing and cost a tap into the world wherever a buff
   // happens to be sitting. The tooltip itself belongs to the bar (see
   // `useStatusStrip`), so it survives this tile changing, moving or ending.
   const live = interactive && !ghost;
   const critical = CRITICAL_BUFF_IDS.has(buff.id);
-  const size = critical ? CRITICAL_ICON_SIZE : ICON_SIZE;
+  const size = rail
+    ? (critical ? RAIL_CRITICAL_ICON_SIZE : RAIL_ICON_SIZE)
+    : (critical ? CRITICAL_ICON_SIZE : ICON_SIZE);
   const shapeStyle = SHAPE_STYLE[buff.shape];
   const icon = statusIconSource(buff.iconKey, buff.instanceKey);
   const hasArt = icon !== null;
@@ -238,13 +250,13 @@ function BuffIcon({ buff, interactive, stripProps, ghost, onGhostDone, ended, fx
               position: "absolute",
               bottom: -1,
               right: -3,
-              minWidth: 16,
-              height: 16,
-              padding: "0 3px",
+              minWidth: rail ? 12 : 16,
+              height: rail ? 12 : 16,
+              padding: rail ? "0 2px" : "0 3px",
               borderRadius: 8,
               background: "rgba(0,0,0,0.78)",
               border: "1px solid rgba(255,255,255,0.55)",
-              fontSize: 12,
+              fontSize: rail ? 9 : 12,
               fontWeight: "bold",
               fontFamily: "monospace",
               color: "#fff",
@@ -263,8 +275,9 @@ function BuffIcon({ buff, interactive, stripProps, ghost, onGhostDone, ended, fx
       </div>
 
       {/* Short label. A critical one sits on a dark pill so it stays legible
-          over pale ground — it is the one label that must never be missed. */}
-      <span
+          over pale ground — it is the one label that must never be missed.
+          The rail row prints none: its tooltip names the status. */}
+      {!rail && <span
         className={critical ? "buff-critical-label" : undefined}
         style={{
           fontSize: critical ? 11 : 10,
@@ -277,12 +290,28 @@ function BuffIcon({ buff, interactive, stripProps, ghost, onGhostDone, ended, fx
         }}
       >
         {buff.label}
-      </span>
+      </span>}
     </div>
   );
 }
 
-export function BuffBar() {
+/**
+ * The player's own statuses.
+ *
+ * Design §26.4 removes the proc-icon strip that sat over the top-left of the
+ * field (52 px tiles with printed labels, where card and boot procs flashed): on
+ * desktop the statuses now live as a small row beside the HP bar, in the
+ * Character panel (`placement="rail"`), words in the tooltip. The phone keeps its
+ * scaled row at the bottom-left of the field (`placement="field"`, mounted in
+ * `#buff-overlay`). Each placement renders only on its own layout.
+ */
+export function BuffBar({ placement = "field" }: { placement?: "field" | "rail" }) {
+  const isMobile = useIsMobile();
+  if ((placement === "field") !== isMobile) return null;
+  return <BuffStrip rail={placement === "rail"} />;
+}
+
+function BuffStrip({ rail }: { rail: boolean }) {
   const buffs = useAtomValue(activeBuffsAtom);
   const lastCleanseAt = useAtomValue(lastCleanseAtAtom);
   const isMobile = useIsMobile();
@@ -364,8 +393,17 @@ export function BuffBar() {
 
   return (
     <div
-      className="buff-bar-root"
-      style={{
+      className={rail ? "buff-bar-rail" : "buff-bar-root"}
+      style={rail ? {
+        position: "relative",
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: RAIL_SLOT_GAP,
+        alignItems: "center",
+        pointerEvents: "none",
+        minWidth: 0,
+      } : {
         position: "absolute",
         top: 12,
         left: 12,
@@ -387,6 +425,7 @@ export function BuffBar() {
           onGhostDone={ghost ? () => dropGhost(ghost.key, ghost.at) : undefined}
           ended={ended}
           fx={ghost || ended ? undefined : fx.get(key)}
+          rail={rail}
         />
       ))}
       {strip.node}

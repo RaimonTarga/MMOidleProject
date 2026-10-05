@@ -19,13 +19,16 @@ import {
   passivesAtom,
   rhythmAtom,
   selectedSubVariantAtom,
+  targetFrameAtom,
 } from './atoms';
 import { hudBus } from '../hudBus';
 import { hudServerNow } from './hudServerClock';
 import {
+  awayText,
   deriveRhythmRings,
   newlyReady,
   readoutBuffIds,
+  ringState,
   ringStateText,
   type RhythmInput,
   type RhythmRing,
@@ -58,6 +61,7 @@ function useRhythmBase(): Omit<RhythmInput, 'serverNow' | 'firedRecently'> {
   const attackTargetId = useAtomValue(attackTargetIdAtom);
   const buffs = useAtomValue(activeBuffsAtom);
   const passives = useAtomValue(passivesAtom);
+  const target = useAtomValue(targetFrameAtom);
   const firings = useMemo(
     () => rhythmFirings(resolveActiveLineages(
       { equipment, lineages },
@@ -65,7 +69,14 @@ function useRhythmBase(): Omit<RhythmInput, 'serverNow' | 'firedRecently'> {
     )),
     [equipment, lineages, subVariant],
   );
-  return { firings, moments, attackTargetId, buffs, passives };
+  // The blocked state reads the CURRENT target's statuses (design §26.4).
+  const statusKey = target ? target.statuses.map((s) => s.id).join('|') : null;
+  const targetStatusIds = useMemo(
+    () => (target ? target.statuses.map((s) => s.id) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [statusKey],
+  );
+  return { firings, moments, attackTargetId, buffs, passives, targetStatusIds };
 }
 
 /**
@@ -82,6 +93,8 @@ export function useReadoutBuffIds(): ReadonlySet<string> {
 }
 
 function cardTooltip(ring: RhythmRing, lineages: LineageProgressMap, buffs: readonly PlayerBuff[]): TooltipCardContent {
+  const away = awayText(ring);
+  const awayRow = away ? [{ key: 'away', label: 'Away', value: away }] : [];
   if (!ring.firing) {
     // The frame ring explains itself with its container's own copy and values.
     const buff = ring.buffId ? buffs.find((b) => b.id === ring.buffId) : undefined;
@@ -102,11 +115,12 @@ function cardTooltip(ring: RhythmRing, lineages: LineageProgressMap, buffs: read
   const body = card && progress ? cardSentence(card, progress) : undefined;
   const window = ring.buffId ? buffs.find((b) => b.id === ring.buffId) : undefined;
   return {
-    title: ring.label,
+    title: ring.name,
     kicker: 'Rhythm',
     ...(body ? { body } : {}),
     current: [
       { key: 'state', label: 'Now', value: ringStateText(ring) },
+      ...awayRow,
       ...(window?.values ?? []).map((value, index) => ({
         key: `window:${index}`, label: value.label, value: value.value, good: value.good,
       })),
@@ -126,20 +140,23 @@ function Ring({
   tooltip: TooltipCardContent;
 }) {
   const { handlers, node } = useHoverTooltip(interactive ? <TooltipCard content={tooltip} /> : undefined);
+  const state = ringState(ring);
   const className = [
     'rhythm-ring',
-    ring.ready ? 'rhythm-ring--ready' : '',
+    `rhythm-ring--${state}`,
     ring.windowing ? 'rhythm-ring--window' : '',
     `rhythm-ring--${ring.kind}`,
   ].filter(Boolean).join(' ');
+  const away = awayText(ring);
   return (
     <div
       className={className}
       style={{ ['--ring-color' as string]: ring.color, pointerEvents: interactive ? 'auto' : 'none' }}
       role="img"
-      aria-label={`${ring.label}: ${ringStateText(ring)}`}
+      aria-label={`${ring.name}: ${ringStateText(ring)}${away ? `. ${away}` : ''}`}
       tabIndex={interactive ? 0 : undefined}
       data-rhythm-ring={ring.key}
+      data-ring-state={state}
       // The guide's verb lesson rings this (a card ring's key is its card id).
       data-tutorial-anchor={TUTORIAL_ANCHORS.rhythmRing(ring.key)}
       {...handlers}
@@ -152,12 +169,16 @@ function Ring({
             cx="20"
             cy="20"
             r={R}
-            strokeDasharray={CIRCUMFERENCE}
-            strokeDashoffset={CIRCUMFERENCE * (1 - ring.fill)}
+            strokeDasharray={ring.blocked ? undefined : CIRCUMFERENCE}
+            strokeDashoffset={ring.blocked ? undefined : CIRCUMFERENCE * (1 - ring.fill)}
             transform="rotate(-90 20 20)"
           />
         </svg>
         <span className="rhythm-ring__count">{ring.text}</span>
+        {/* The away count: what fired while the fight was off screen. */}
+        {ring.away > 0 && (
+          <span className="rhythm-ring__away" aria-hidden="true">+{ring.away > 99 ? '99' : ring.away}</span>
+        )}
         {/* Keyed by its counter: a new flash remounts it and the one-shot replays. */}
         {flash > 0 && <span key={flash} className="rhythm-ring__flash" aria-hidden="true" />}
       </div>
@@ -173,15 +194,22 @@ function Ring({
 }
 
 /**
- * The rhythm readout (design §24.6): one ring per active triggered card plus the
- * frame's window or bank, at most three. A ring fills toward its payoff and
- * flashes when ready. Not buff tiles.
+ * The rhythm readout (design §24.6, §26.4): one ring per active triggered card
+ * plus the frame's window or bank, at most three, each NAMED (the verb's short
+ * name under it). A ring counts toward its moment, brightens in the clock's last
+ * second, shows ready, goes dashed when the moment's condition is missing on the
+ * target, and carries the count of firings the player did not see. Not buff tiles.
+ *
+ * Placement (design §26.4: "beside the HP bar"): `rail` sits under the HP bar in
+ * the desktop Character panel; `compact` is the phone top strip's second row
+ * (prototype E's placement).
  */
-export function RhythmReadout({ compact = false }: { compact?: boolean }) {
+export function RhythmReadout({ placement }: { placement: 'rail' | 'compact' }) {
   const base = useRhythmBase();
   const lineages = useAtomValue(lineagesAtom);
   const death = useAtomValue(deathOverlayAtom);
   const isMobile = useIsMobile();
+  const compact = placement === 'compact';
   const interactive = !isMobile && !compact;
 
   // Cards that fired a beat ago: a pulse ring lights for that beat.
@@ -232,7 +260,7 @@ export function RhythmReadout({ compact = false }: { compact?: boolean }) {
   if (death.active || rings.length === 0) return null;
 
   return (
-    <div className={`rhythm-readout${compact ? ' rhythm-readout--compact' : ''}`}>
+    <div className={`rhythm-readout rhythm-readout--${placement}`}>
       {rings.map((ring) => (
         <Ring
           key={ring.key}
