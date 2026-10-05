@@ -1,3 +1,5 @@
+> ARCHIVED — implemented; live state in [guided-tutorial-current-state.md](../guided-tutorial-current-state.md).
+
 # Guided Tier-1 Tutorial — Plan
 
 **Status:** ACTIVE PLAN — Phases 1–4 built on `feat/guided-tutorial` (2026-09-29),
