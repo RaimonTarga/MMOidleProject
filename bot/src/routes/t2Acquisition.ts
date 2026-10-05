@@ -1,4 +1,9 @@
-import { RECIPE_DATABASE, lineageForRecipeId, type TierEntryProfile } from "@mmo-idle/shared";
+import {
+  RECIPE_DATABASE,
+  baseFormRecipeId,
+  lineageForRecipeId,
+  type TierEntryProfile,
+} from "@mmo-idle/shared";
 import type { RouteStep } from "../route/types";
 import { t2, type T2BiomeGroup } from "./t2Common";
 
@@ -24,8 +29,19 @@ export function planAcquisition(_profile: TierEntryProfile, recipeId: string): A
 export function obtainSteps(group: T2BiomeGroup, plan: AcquisitionPlan): RouteStep[] {
   const at = t2(group);
   switch (plan.path) {
-    case "form":
-      return [{ type: "unlockForm", lineageId: plan.lineageId!, recipeId: plan.recipeId, farmAt: at }];
+    case "form": {
+      // A gate opens only from the form one tier below it, and a T2 route may
+      // adopt a lineage its T1 kit never held (the Squire's hammer). The base
+      // form is a plain T1 craft; `doCraft` skips it when it is already owned.
+      const lineage = lineageForRecipeId(plan.recipeId);
+      const base = lineage ? baseFormRecipeId(lineage) : undefined;
+      return [
+        ...(base && base !== plan.recipeId
+          ? [{ type: "craft" as const, recipeIds: [base], farmAt: at }]
+          : []),
+        { type: "unlockForm", lineageId: plan.lineageId!, recipeId: plan.recipeId, farmAt: at },
+      ];
+    }
     case "craft":
       return [
         { type: "farm", at, until: { type: "recipeUnlocked", recipeId: plan.recipeId } },

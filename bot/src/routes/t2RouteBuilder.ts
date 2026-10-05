@@ -1,5 +1,6 @@
 import {
   SKILL_TREE,
+  lineageForRecipeId,
   maxGlobalMasteryAtTier,
 } from "@mmo-idle/shared";
 import type { TierCheckpointKind, TierEntryProfile } from "@mmo-idle/shared";
@@ -93,17 +94,48 @@ function branchStep(classRoot: string, branch: T2Branch): RouteStep {
   };
 }
 
+interface BiomeLegSteps {
+  /** The leg's acquisitions, at the top of the leg. */
+  now: RouteStep[];
+  /**
+   * Acquisitions whose gate is paid in THIS biome's own Tier-2 boss capstone
+   * (a form of a biome that debuts at T2: Desert, Jungle). They can only come
+   * after the leg's `attemptBoss`; a bossless route records them as retired.
+   */
+  afterBoss: RouteStep[];
+}
+
+/** Whether a weapon form's gate capstone comes from a boss the profile has not cleared. */
+function gateNeedsThisLegsBoss(acquisition: AcquisitionPlan, group: T2BiomeGroup, profile: TierEntryProfile): boolean {
+  if (acquisition.path !== "form") return false;
+  const form = lineageForRecipeId(acquisition.recipeId)?.forms.find((f) => f.recipeId === acquisition.recipeId);
+  if (!form || form.biome !== group) return false;
+  return !(profile.bossesCleared ?? []).some((key) => key.split(":")[0] === form.biome);
+}
+
 function biomeLegSteps(
   plan: T2ClassPlan,
   group: T2BiomeGroup,
   profile: TierEntryProfile,
-): RouteStep[] {
+  bossless: boolean,
+): BiomeLegSteps {
   const biomePlan = plan.biomes[group];
-  if (!biomePlan) return [];
-  const steps: RouteStep[] = [];
+  if (!biomePlan) return { now: [], afterBoss: [] };
+  const now: RouteStep[] = [];
+  const afterBoss: RouteStep[] = [];
 
   for (const recipeId of biomePlan.adopt ?? []) {
     const acquisition = planAcquisition(profile, recipeId);
+    const deferred = gateNeedsThisLegsBoss(acquisition, group, profile);
+    if (deferred && bossless) {
+      now.push({
+        type: "milestone",
+        id: `retired:${recipeId}`,
+        label: `the ${recipeId} gate is paid in this biome's T2 boss capstone, which a bossless route never earns`,
+      });
+      continue;
+    }
+    const steps = deferred ? afterBoss : now;
     steps.push(...obtainSteps(group, acquisition));
     // Only wear it if the game could actually hand it over. An unreachable item
     // must not produce an `equip` step -- that would stall the run on a piece the
@@ -117,8 +149,15 @@ function biomeLegSteps(
     }
   }
   for (const recipeId of biomePlan.craftOnly ?? []) {
-    steps.push(...obtainSteps(group, planAcquisition(profile, recipeId)));
+    const acquisition = planAcquisition(profile, recipeId);
+    const deferred = gateNeedsThisLegsBoss(acquisition, group, profile);
+    if (deferred && bossless) {
+      now.push({ type: "milestone", id: `retired:${recipeId}`, label: `the ${recipeId} gate needs this biome's T2 boss` });
+      continue;
+    }
+    (deferred ? afterBoss : now).push(...obtainSteps(group, acquisition));
   }
+  const steps = now;
 
   // A skip is authored as a telemetry milestone rather than as nothing at all.
   // "0/18 adoption" and "nobody could afford it" are different findings, and
@@ -127,7 +166,7 @@ function biomeLegSteps(
     steps.push({ type: "milestone", id: `skip:${recipeId}`, label: `deliberately skip ${recipeId}` });
   }
 
-  return steps;
+  return { now, afterBoss };
 }
 
 function learnAbilitySteps(group: T2BiomeGroup, plan: T2ClassPlan): RouteStep[] {
@@ -420,7 +459,8 @@ function buildT2Route(config: T2RouteConfig): Route {
     }
     steps.push(...buildCoreAcquisitionSteps(group, config.skipCoreIds));
     steps.push(...farmCoreEquipSteps(group, plan));
-    steps.push(...biomeLegSteps(plan, group, profile));
+    const leg = biomeLegSteps(plan, group, profile, bossless);
+    steps.push(...leg.now);
     if (group === progressionOrder[0]) {
       for (const assertion of config.treatmentAssertions ?? []) {
         steps.push({
@@ -462,6 +502,8 @@ function buildT2Route(config: T2RouteConfig): Route {
       steps.push(...bossLoadoutSteps(group));
       steps.push({ type: "attemptBoss", biomeGroup: group, tier: 2, maxAttempts: 4 });
       steps.push({ type: "milestone", id: `${group}-t2-boss-attempted` });
+      // Forms gated on this biome's own T2 boss capstone come after the fight.
+      steps.push(...leg.afterBoss);
       bossesAttempted += 1;
       // Three seals is the Tier-2 advancement requirement, so the earliest the
       // branch can possibly be affordable is right after the third boss step.
