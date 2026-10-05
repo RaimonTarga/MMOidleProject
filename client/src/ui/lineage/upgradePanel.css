@@ -87,7 +87,8 @@
 
 @media (max-width: 480px) {
   .up-item { grid-template-columns: 40px minmax(0, 1fr); }
-  .up-item__state { grid-column: 2; flex-direction: row-reverse; justify-content: flex-end; align-items: center; gap: 8px; }
+  .up-item__state { grid-column: 2; flex-direction: row-reverse; flex-wrap: wrap-reverse; justify-content: flex-end; align-items: center; gap: 4px 8px; min-width: 0; }
+  .up-item__badge { white-space: normal; }
 }
 
 /* The page brings its own padding and scroller. */

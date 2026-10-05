@@ -58,6 +58,7 @@ import {
   rowsForTier,
   shardName,
   statRowIsCollapsed,
+  weaponReservoirNoun,
   wornFormTier,
   type CombatArchetype,
   type EquipmentPreviewInput,
@@ -741,6 +742,12 @@ const PAGE_STAT_DEFS: readonly PageStatDef[] = [
     value: (p, sub) => resolveDotClassProfile(p.passives, sub).dotMechanicMultiplier,
     fmt: (v) => `×${trimmed(v, 2)}`, neutral: 0, pinned: true, onlyFor: 'dot',
   },
+  // The Effect lean on a weapon with a reservoir (design §26.2): it multiplies
+  // what the reservoir banks. Labelled by the reservoir's own noun ("Poison").
+  {
+    key: 'reservoirPotency', label: 'Reservoir potency', value: (p) => p.passives['weapon.reservoir-potency-pct'] ?? 0,
+    fmt: (v) => `+${pct(v)}`, neutral: 0,
+  },
   {
     key: 'techniquePower', label: 'Technique power', value: (p) => p.passives['technique.power-pct'] ?? 0,
     fmt: (v) => `+${pct(v)}`, neutral: 0,
@@ -820,8 +827,9 @@ export function pageStatSheet(params: {
     const changed = Math.abs(after - before) > EPS;
     if (changed) moved = true;
     const better = def.lowerIsBetter ? after < before : after > before;
+    const noun = def.key === 'reservoirPotency' ? weaponReservoirNoun(lineage, progress, Math.max(1, wornFormTier(lineage, progress))) : undefined;
     rows.push({
-      key: def.key, label: def.label, before: def.fmt(before),
+      key: def.key, label: noun ? `${noun.charAt(0).toUpperCase()}${noun.slice(1)} potency` : def.label, before: def.fmt(before),
       ...(changed ? { after: def.fmt(after) } : {}),
       direction: changed ? (better ? 1 : -1) : 0,
     });

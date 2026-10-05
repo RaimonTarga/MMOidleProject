@@ -119,8 +119,9 @@ const wallet: LineageWallet = {
   assert.ok(!entries.some((e) => e.slot === 'relic'), 'an empty relic slot is left out');
   assert.ok(entries.every((e) => e.kind === 'page' || buyableTotal(e.buyable) === 0), 'only the page sells');
 
-  assert.equal(buyableBadge({ ranks: 1, cards: 2, gate: false }), '1 rank to buy');
-  assert.equal(buyableBadge({ ranks: 0, cards: 2, gate: true }), '2 cards to buy');
+  assert.equal(buyableBadge({ ranks: 1, cards: 0, gate: false }), '1 rank to buy');
+  assert.equal(buyableBadge({ ranks: 1, cards: 2, gate: false }), '1 rank · 2 cards to buy', 'the badge splits the menu count by kind');
+  assert.equal(buyableBadge({ ranks: 0, cards: 2, gate: true }), '2 cards to buy · gate ready');
   assert.equal(buyableBadge({ ranks: 0, cards: 0, gate: true }), 'gate ready');
   assert.equal(buyableBadge({ ranks: 0, cards: 0, gate: false }), undefined);
 }

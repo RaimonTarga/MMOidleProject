@@ -128,12 +128,18 @@ export function buyableOnPage(
   return { ranks, cards: unowned, gate };
 }
 
-/** "1 rank to buy", "2 cards to buy", "gate ready", or undefined. */
+/**
+ * "1 rank to buy", "1 rank · 2 cards to buy", "gate ready", or undefined — the
+ * same total the menu entry counts, split by kind.
+ */
 export function buyableBadge(count: BuyableCount): string | undefined {
-  if (count.ranks > 0) return `${count.ranks} rank${count.ranks === 1 ? '' : 's'} to buy`;
-  if (count.cards > 0) return `${count.cards} card${count.cards === 1 ? '' : 's'} to buy`;
-  if (count.gate) return 'gate ready';
-  return undefined;
+  const parts = [
+    count.ranks > 0 ? `${count.ranks} rank${count.ranks === 1 ? '' : 's'}` : undefined,
+    count.cards > 0 ? `${count.cards} card${count.cards === 1 ? '' : 's'}` : undefined,
+  ].filter(Boolean);
+  const buy = parts.length > 0 ? `${parts.join(' · ')} to buy` : undefined;
+  if (buy && count.gate) return `${buy} · gate ready`;
+  return buy ?? (count.gate ? 'gate ready' : undefined);
 }
 
 /** The number the menu entry's badge shows: everything there is to buy, the gate as one. */
