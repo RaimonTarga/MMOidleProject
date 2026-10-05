@@ -63,6 +63,8 @@ export const BUFF_IDS = [
   // Any boss mechanic debuff (shared/src/systems/bossDebuffs.ts), labelled per id.
   'debuff-boss',
   'debuff-swamp-rot',
+  // Standing in a volcanic lava pool (node feature `lava-burn`).
+  'debuff-lava-burn',
   'debuff-sun-mark',
   'debuff-volcanic-heat',
   'debuff-tundra-chill',

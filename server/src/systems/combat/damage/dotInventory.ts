@@ -150,6 +150,24 @@ export function playerDotsOnMonster(
 }
 
 /**
+ * What one damage-over-time record on `monster` still owes, whoever owns it — the
+ * target frame's "owes" number (design §26.2). Undefined when no family owns the
+ * effect (it is not a DoT), or its owner is no longer in the world to describe it.
+ */
+export function dotOwedOnMonster(
+  world: World,
+  monster: MonsterEntity,
+  effect: StatusEffect,
+): number | undefined {
+  const family = _families.find((f) => f.owns(effect));
+  if (!family) return undefined;
+  const owner = world.getPlayerEntity(effect.sourceId);
+  if (!owner) return undefined;
+  const described = family.describe({ world, owner, monster, effect });
+  return described ? Math.max(0, Math.round(described.remainingDamage)) : 0;
+}
+
+/**
  * True when any stacking DoT this player owns on the monster sits at its own
  * ceiling. Drives the `target-max-stacks` rune condition.
  */

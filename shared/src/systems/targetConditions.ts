@@ -83,6 +83,19 @@ export function isHoldStatusId(id: string): boolean {
 }
 
 /**
+ * Server bookkeeping a monster carries that is not an effect a player reads: the
+ * Effigy pair's per-owner link record (`frame.summoner.link.<ownerId>`, restated
+ * from the summoner frame loop — the status-registry test pins the spelling), whose
+ * bank the player's own `summoner-frame-link` tile already shows. The target
+ * mirror leaves these out, so the frame never shows a badge with no meaning.
+ */
+const TARGET_HIDDEN_STATUS_PREFIXES: readonly string[] = ['frame.summoner.link.'];
+
+export function isTargetHiddenStatusId(id: string): boolean {
+  return TARGET_HIDDEN_STATUS_PREFIXES.some((prefix) => id.startsWith(prefix));
+}
+
+/**
  * Is this status a damage-over-time record — the Affliction moment's condition?
  * Exactly the families the server's DoT inventory owns: the class DoT (with
  * Permafrost), Conflagration, every weapon reservoir, and the one lineage bleed.

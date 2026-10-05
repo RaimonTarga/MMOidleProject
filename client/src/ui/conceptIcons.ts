@@ -231,6 +231,7 @@ const DEBUFF_IDS = new Set([
   'debuff-poison',
   'debuff-frost-ramp',
   'debuff-frozen',
+  'debuff-lava-burn',
   'debuff-plating-shred',
   'debuff-root',
   'debuff-slow',
@@ -265,6 +266,9 @@ const TARGET_BUFF_ICON_IDS = new Set([
 // registry. Its icon is still authored in the normal status-debuff directory.
 const TARGET_DEBUFF_ICON_IDS = new Set([
   'shatter-vulnerable',
+  // The boss Rend art (claw wounds), reused as the one lineage bleed's own icon
+  // (design §26.2) through `TARGET_STATUS_ALIASES`.
+  'boss-rend',
 ]);
 
 function source(directory: string, id: string, revision?: string): AssetIconSource {
@@ -361,6 +365,8 @@ const BUFF_ABILITY_ICON_ALIASES: Record<string, string> = {
  */
 const DEBUFF_BUFF_DIR_ICON_ALIASES: Record<string, string> = {
   'debuff-frozen': 'dot-frozen',
+  // Standing in lava is a burn: the fire/Conflagration tile, until it has its own.
+  'debuff-lava-burn': 'dot-conflag',
 };
 
 /**
@@ -376,6 +382,8 @@ const MONSTER_DOT_ICON_ALIASES: Record<string, string> = {
   'monster-dot:mire-gorged-venom': 'dot-gorged-venom',
   'monster-dot:rot-spore-plague': 'dot-rot-spores',
   'monster-dot:venomous-bite': 'dot-venomous-bite',
+  // The Graveyard Hound's plague is decay, not poison: the rot-spore tile.
+  'monster-dot:hound-plague': 'dot-rot-spores',
 };
 
 const MONSTER_DOT_ART_ICON_IDS = new Set([
@@ -438,11 +446,16 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'dot-smolder': 'dot-conflag',
   'dot-conf': 'dot-conflag',
   slow: 'debuff-slow',
-  root: 'debuff-root',
   'plating-shred': 'debuff-plating-shred',
   'reload-suppress-shred': 'debuff-plating-shred',
   'ability-slowed': 'hamstring',
   'ability-rooted': 'binding-strike',
+  // The lineage cards' own records (design §26.2): the one bleed, and the
+  // Control lean's slow and root drawn as the generic slow and snare, not as the
+  // Hamstring and Binding Strike ability art.
+  'lineage.bleed': 'boss-rend',
+  'lineage.hobbled': 'debuff-slow',
+  'lineage.pinned': 'debuff-root',
   stunned: 'debuff-stunned',
   'stun-immune': 'break-free',
   'canopy-chameleon-barrage': 'thorn-spitter-barrage',
@@ -457,15 +470,16 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'magma-obsidian-shell': 'obsidian-shell',
   'cadence-hemorrhage': 'debuff-dot',
   'energy-storm': 'energy-storm',
+  'energy-ci-tag': 'energy-ac-charge',
+  'death-mark': 'reload-snipe-ready',
   brittle: 'dot-frostbite',
+  'dr-shatter': 'shatter-vulnerable',
   'poison-dagger-burn': 'debuff-poison',
   'swamp-mirebrand-burn': 'debuff-poison',
   'swamp-blightbrand-burn': 'debuff-poison',
   'cinderbrand-burn': 'dot-conflag',
   'tundra-rimebrand-burn': 'dot-chill',
   'rimebrand-burn': 'dot-chill',
-  'void-corruption': 'debuff-swamp-rot',
-  vuln: 'expose-weakness',
   vulnerability: 'expose-weakness',
   'expose-weakness': 'expose-weakness',
   'summoner-harried': 'summoner-harrier-brood',
@@ -477,10 +491,8 @@ const BOSS_EFFECT_ALIASES: Record<string, string> = {
   enrage: 'cadence-rampage',
   regen: 'boss-regen',
   shield: 'defense-absorb',
-  summon: 'summoner-grand-ritual',
-  'stat-buff': 'energy-overcharge',
+  harvest: 'necrotic-surge',
   morph: 'summoner-volatile-brood',
-  slam: 'cadence-aftershock',
   'bestial-frenzy': 'cadence-rampage',
   'stat-buff-attack': 'energy-overcharge',
   'stat-buff-speed': 'mob-haste',
@@ -490,12 +502,8 @@ const BOSS_EFFECT_ALIASES: Record<string, string> = {
   'stat-buff-evasion': 'mob-sprint',
   'relentless-pursuit': 'mob-haste',
   'crag-rush': 'mob-haste',
-  'cinder-fury': 'cadence-rampage',
   'earthshaker-rush': 'mob-haste',
-  sandsurge: 'mob-haste',
-  'caldera-fury': 'cadence-rampage',
   cornered: 'boss-cornered',
-  'blood-in-the-water': 'mob-haste',
   'charge-instinct': 'mob-haste',
   'escape-instinct': 'mob-haste',
   'boss-stunned': 'debuff-stunned',

@@ -164,6 +164,10 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
     "magma-molten-guard": "Molten Guard",
     "magma-obsidian-shell": "Obsidian Shell",
     "shatter-vulnerable": "Shatter Window",
+    // The lineage cards' own records (design §26.2): never an ability's name.
+    "lineage.bleed": "Bleed",
+    "lineage.hobbled": "Hobbled",
+    "lineage.pinned": "Pinned",
   };
   for (const [id, title] of Object.entries(targetLabels)) {
     assert(targetStatusHelp(id)?.title === title, `${id} needs its authored target title`);
@@ -172,15 +176,16 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
   assert(targetStatusHelp("barrier:boss-pattern")?.title === "Barrier", "source-owned barriers need authored target copy");
   assert(targetStatusIconSource("barrier:boss-pattern") !== null, "source-owned barriers need a target-frame icon resolver");
 
+  // The boss effects a live producer emits (the status registry audit,
+  // 2026-10-05, retired the copy of Cinder Fury, Sandsurge, Caldera Fury and Blood
+  // in the Water: no boss emits them any more).
   const namedBosses = [
     "relentless-pursuit",
     "crag-rush",
-    "cinder-fury",
     "earthshaker-rush",
-    "sandsurge",
     "bestial-frenzy",
-    "caldera-fury",
-    "blood-in-the-water",
+    "cornered",
+    "harvest",
   ];
   for (const id of namedBosses) {
     assert(bossEffectHelp(id)?.title !== undefined, `${id} needs authored boss-effect copy`);
