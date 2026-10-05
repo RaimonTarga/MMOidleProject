@@ -15,16 +15,7 @@
    18 rows) to show Light / Balanced / Heavy uplift. Approved as its own follow-up task;
    it roughly triples the run.
 # Progression Rework — Design Bible
-11. **Band gating follows the worn form (2026-10-01).** A band of tier N gates on the biome
-   of the form worn at tier N, its door biome, not the lineage's home biome. The Rapier's T3
-   band is earned in the Jungle. Without this every T3/T4 card on a lineage whose home
-   biome retires (Plains and Forest at T2, Cave at T3) was unreachable.
-12. **Monster pass delegated (2026-10-01).** The run-3 proposal table is applied by run 4,
-   one provisional commit per family, for the designer to revert row by row. Families must
-   carry the stats their contracts name: `dotResistance` was on no monster, `evasion` on two.
-   Locked comments in monster files lose to a family contract and are rewritten.
-13. **Consort loop decided: "the line holds."** Formation plating and DR while all five
-   slots live; a death breaks it; a reconstruction restores it. Frame brief §1 is closed.
+
 
 **Status:** design authority, drafted 2026-09-30 from the post-v0.6.2 playtest review.
 **Scope:** item lineage trees, biome variants and materials, frame loops, range nodes,
@@ -631,6 +622,17 @@ Answers to the report's open design questions. Locked unless marked otherwise.
     so it needs three new reference profiles per root (18 rows in
     `bot/src/tierEntry/profiles.ts`) and roughly triples a 35-minute run. Deliberately
     deferred out of the 2026-10-01 day run rather than approximated.
+
+11. **Band gating follows the worn form (2026-10-01).** A band of tier N gates on the biome
+   of the form worn at tier N, its door biome, not the lineage's home biome. The Rapier's T3
+   band is earned in the Jungle. Without this every T3/T4 card on a lineage whose home
+   biome retires (Plains and Forest at T2, Cave at T3) was unreachable.
+12. **Monster pass delegated (2026-10-01).** The run-3 proposal table is applied by run 4,
+   one provisional commit per family, for the designer to revert row by row. Families must
+   carry the stats their contracts name: `dotResistance` was on no monster, `evasion` on two.
+   Locked comments in monster files lose to a family contract and are rewritten.
+13. **Consort loop decided: "the line holds."** Formation plating and DR while all five
+   slots live; a death breaks it; a reconstruction restores it. Frame brief §1 is closed.
 
 ---
 

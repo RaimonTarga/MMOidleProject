@@ -164,6 +164,8 @@ The flat files in design_docs/ are the design and architecture source set:
 
 - [architecture.md](../design_docs/architecture.md)
 - [design-bible.md](../design_docs/design-bible.md)
+- [Progression rework design](../design_docs/progression-rework-design.md) — design authority;
+  the worn-form band gate, delegated monster pass and Consort loop decisions are §18.11–§18.13.
 - [game-overview.md](../design_docs/game-overview.md)
 - [economy-philosophy.md](../design_docs/economy-philosophy.md)
 - [player-power-curve.md](../design_docs/player-power-curve.md)
