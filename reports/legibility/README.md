@@ -18,3 +18,14 @@ Reproduce from `server/`: generate the plan with `_t1BossPlan.ts --out=<plan>`, 
 `_t1BossLab.ts --plan=<plan> --out=<jsonl> --hitboxes=../reports/progression-phase0/hitboxes.json --shard=i --shards=N`
 per shard; render with `scripts/_t1BossMatrix.ts <jsonl> --md` and
 `bench/compositionReport.ts --boss=<jsonl> --lanes=/dev/null --out=<md>`.
+
+## After, wave 1 (feat/legibility `8deb861d`: A + B + C merged; D is UI-only)
+
+| file | plan | rows | wall |
+|---|---|---:|---:|
+| `after-base.jsonl` | the same no-band plan (the plan file regenerates byte-identical) | 900 | 74 s, 3 shards |
+| `after-composition.jsonl` / `.md` | `--matrix=composition --seeds=10`: per weapon 3 leans × 3 ranks with the one fixed verb, the verb alone, and the control | 16,500 | 1,215 s, 4 shards |
+
+**No-band identity:** the 900 after rows equal the 900 before rows once `wallMs` is removed
+(sorted, compared line for line) — a character with no cards fights exactly as on develop.
+0 error rows in either file.
