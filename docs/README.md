@@ -184,6 +184,7 @@ Use the current-state table above and the source when they conflict.
 
 ## Historical material and archive lifecycle
 
+- [Status registry audit (2026-10-05)](briefs/status-registry-audit-2026-10-05.md) — raw player/monster ids, HUD projections, presentation gaps, slow/root clocks, and the rerunnable source extractor.
 - [Archive guide](archive/README.md) explains how completed plans and
   handoffs are moved without losing provenance.
 - [Briefs and evidence](briefs/README.md) explains the active/history split for
