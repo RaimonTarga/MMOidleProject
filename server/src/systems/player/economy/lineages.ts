@@ -19,8 +19,11 @@ import {
   checkWearForm,
   globalMastery,
   isLineageParked,
+  isRankedCard,
   lineageCardPrice,
   lineageGateCost,
+  maxCardRank,
+  nextCardRank,
   statRowIsCollapsed,
 } from '@mmo-idle/shared';
 import type {
@@ -118,7 +121,14 @@ function spend(world: World, entity: PlayerEntity, cost: LineageCost, capstone?:
 
 // ─── The four handlers ───────────────────────────────────────────────────────
 
-/** Buy a card. Permanent, and the only one of the four that costs materials. */
+/**
+ * Buy a card. Permanent, and the only one of the four that costs materials.
+ *
+ * A RANKED card (the T1 lean trio, design §26.1) is bought one rank at a time
+ * through this same intent (`lineage:unlockCard { cardId }`): the first purchase
+ * owns it at rank I, each further one buys the NEXT rank — its own Global Mastery
+ * gate and price, checked by `checkUnlockCard` — and leaves the active rows alone.
+ */
 export function unlockLineageCard(
   world: World,
   entity: PlayerEntity,
@@ -139,12 +149,17 @@ export function unlockLineageCard(
 
   let paid = { essenceSpent: 0, shardsSpent: 0, capstonesSpent: 0 };
   if (!wallet.isTestRoom) {
-    const { cost } = lineageCardPrice({ lineage, card, lineages: entity.holdsInventory.lineages });
+    const { cost } = lineageCardPrice({ lineage, card, lineages: entity.holdsInventory.lineages, progress });
     paid = costTotals(cost);
     spend(world, entity, cost);
   }
 
   writeLineageProgress(world, entity, lineageId, progress, (current) => {
+    const rank = nextCardRank(current, card) ?? maxCardRank(card);
+    const ranks = isRankedCard(card) ? { ...(current.ranks ?? {}), [cardId]: rank } : current.ranks;
+    // A rank-up: the card is owned already, so ownership and the rows stay as
+    // they are — only the rank moves.
+    if (current.ownedCards.includes(cardId)) return { ...current, ...(ranks ? { ranks } : {}) };
     const ownedCards = [...current.ownedCards, cardId];
     // A row the player has nothing in yet activates the card they just bought;
     // a row already filled is left alone, because swapping is their choice.
@@ -161,7 +176,7 @@ export function unlockLineageCard(
       && checkSetActive({ lineage, progress: { ...current, ownedCards }, row: card.row, cardId }).ok
       ? { ...current.active, [card.row]: cardId }
       : current.active;
-    return { ...current, ownedCards, active };
+    return { ...current, ownedCards, active, ...(ranks ? { ranks } : {}) };
   });
   recalculatePlayerEntityStats(world, entity);
   world.gameplay?.lineage(entity, 'lineage.card-unlocked', {

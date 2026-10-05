@@ -122,6 +122,12 @@ export interface TargetStatusView {
    * that is already on the server — see `buildTargetStatus`.
    */
   values?: StatusValue[];
+  /**
+   * Damage this record still owes, for a damage-over-time record (design §26.2:
+   * the target frame's badge is "what is owed"). The server's DoT inventory
+   * estimate, vulnerability included. Omitted for anything that is not a DoT.
+   */
+  owed?: number;
 }
 
 /** Client-facing status overlay and buff slice. */

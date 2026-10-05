@@ -99,6 +99,25 @@ function spawn(id: string, weapon: string, lineageId: string, cardIds: string[])
   return player;
 }
 
+/**
+ * As `spawn`, wearing the lineage's T2 form. Since design §26.1 (legibility run) a
+ * weapon's T1 band has one verb, its own; the other verbs, and a lean of another
+ * lane composing with them, are T2 cards.
+ */
+function spawnT2(id: string, t1Form: string, t2Form: string, lineageId: string, cardIds: string[]): PlayerEntity {
+  const slices = makeSlices(id, t1Form);
+  slices.holdsInventory.inventory = [t1Form, t2Form];
+  const player = world.attachPlayerEntity(slices, id);
+  equipItem(world, player, t1Form);
+  equipItem(world, player, t2Form);
+  for (const cardId of cardIds) {
+    const bought = unlockLineageCard(world, player, lineageId, cardId);
+    assert(bought.success, `${cardId}: ${bought.reason}`);
+  }
+  world.takeNodeEvents(NODE);
+  return player;
+}
+
 let nextX = 500;
 function monster(): MonsterEntity {
   nextX += 400;
@@ -138,7 +157,7 @@ const FLURRY = 'rapier-t1-tempo-payoff';
 // ── Presence: attached only while a triggered card is in play ────────────────
 
 {
-  const player = spawn('rhy-presence', 'flash-rapier', 'rapier', ['rapier-t1-tempo-stat']);
+  const player = spawn('rhy-presence', 'flash-rapier', 'rapier', ['rapier-t1-speed']);
   assert(player.showsRhythm === undefined, 'a lean alone is a stat — no rhythm, no slice');
 
   assert(unlockLineageCard(world, player, 'rapier', FLURRY).success, 'Flurry bought');
@@ -154,7 +173,7 @@ const FLURRY = 'rapier-t1-tempo-payoff';
 // ── hit-nth: Flurry counts 1..5, fires on the 6th, resets ────────────────────
 
 {
-  const player = spawn('rhy-flurry', 'flash-rapier', 'rapier', ['rapier-t1-tempo-stat', FLURRY]);
+  const player = spawn('rhy-flurry', 'flash-rapier', 'rapier', ['rapier-t1-speed', FLURRY]);
   const target = monster();
   setAttackTarget(world, player, target.isMonster.id);
   world.takeNodeEvents(NODE);
@@ -193,10 +212,11 @@ const FLURRY = 'rapier-t1-tempo-payoff';
 // ── A capped Affliction verb exposes its cap ─────────────────────────────────
 
 {
-  // Keen Edge + Venom Point: a hit on an afflicted target (once every 5 s) is a
-  // lunge. The DoT root afflicts on its own hits.
-  const VENOM_POINT = 'rapier-t1-affliction-payoff';
-  const player = spawn('rhy-cap', 'flash-rapier', 'rapier', ['rapier-t1-engagement-stat', VENOM_POINT]);
+  // The Engagement lean + the Affliction verb (the T2 band: Honed Further + Deep
+  // Bloodletting): a hit on an afflicted target (once every 5 s) is a lunge. The
+  // DoT root afflicts on its own hits.
+  const VENOM_POINT = 'rapier-t2-affliction-payoff';
+  const player = spawnT2('rhy-cap', 'flash-rapier', 'gale-needle', 'rapier', ['rapier-t2-engagement-stat', VENOM_POINT]);
   attachComponent(world, player, 'appliesDots', initAppliesDots());
   const target = monster();
 
@@ -218,7 +238,9 @@ const FLURRY = 'rapier-t1-tempo-payoff';
   assert(rhythmWrites === writesBefore + 1, `the cap is written once, got ${rhythmWrites - writesBefore}`);
 
   for (let i = 0; i < 4; i++) fullHit(player, target);
-  assert(cardFx().length === 0, 'the cap holds');
+  // Only the verb's own firings: the Gale Needle's capstone (Gale Wake) answers the
+  // DoT root's mechanic on its own clock and is not this moment.
+  assert(cardFx().filter((e) => e.cardId === VENOM_POINT).length === 0, 'the cap holds');
   assert(rhythmWrites === writesBefore + 1, 'and its clock is never re-sent while it runs');
 
   tickCooldowns(player.tracksCombat, 5_000);
@@ -230,8 +252,8 @@ const FLURRY = 'rapier-t1-tempo-payoff';
 // ── first-hit per body: the spent list ───────────────────────────────────────
 
 {
-  const OPENING_LUNGE = 'rapier-t1-engagement-payoff';
-  const player = spawn('rhy-lunge', 'flash-rapier', 'rapier', [OPENING_LUNGE]);
+  const OPENING_LUNGE = 'rapier-t2-engagement-payoff';
+  const player = spawnT2('rhy-lunge', 'flash-rapier', 'gale-needle', 'rapier', [OPENING_LUNGE]);
   const a = monster();
   const b = monster();
   assert(player.showsRhythm!.moments[OPENING_LUNGE]?.spentOn === undefined, 'nothing spent yet');
@@ -255,8 +277,8 @@ const FLURRY = 'rapier-t1-tempo-payoff';
 // ── kill carry: armed between the kill and the next landed hit ───────────────
 
 {
-  const CARRY = 'axe-t1-kill-chain-payoff';
-  const player = spawn('rhy-carry', 'chaotic-axe', 'axe', [CARRY]);
+  const CARRY = 'axe-t2-kill-chain-payoff';
+  const player = spawnT2('rhy-carry', 'chaotic-axe', 'ruinous-axe', 'axe', [CARRY]);
   const target = monster();
   assert(player.showsRhythm!.moments[CARRY]?.armed === undefined, 'nothing armed before a kill');
   kill(player, monster());

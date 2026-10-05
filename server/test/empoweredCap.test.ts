@@ -11,6 +11,10 @@
  * Driven through the real `runFormationAttack` with real summons, so what is
  * pinned is the cycle feeding the cap, not a hand-built `mechanic-fired`.
  *
+ * On the Hammer's T2 Empowered verb (Deeper Sunder, worn on the Quake Hammer): since
+ * design §26.1 (legibility run) the Hammer's one T1 verb is its Control verb, so its
+ * Empowered verb is first bought at T2. The cap is the same at every tier.
+ *
  * Run: node --conditions=development --import tsx test/empoweredCap.test.ts
  */
 import {
@@ -55,7 +59,7 @@ const slices: PersistedPlayerSlices = {
     essences: { red: 99_999, blue: 99_999, green: 99_999, yellow: 99_999, purple: 99_999 },
     shards: { empowered: 999, control: 999, engagement: 999 },
     capstones: {},
-    biomeXP: {}, biomeLevel: { plains: 6, forest: 6, mountain: 6, swamp: 6, cave: 6 },
+    biomeXP: {}, biomeLevel: { plains: 12, forest: 12, mountain: 12, swamp: 12, cave: 12 },
     unlockedRecipes: [], questProgress: {}, playerTier: 2, currentSkillTier: 0,
     bossesCleared: [], clearedNodes: [],
     runesOwned: [], runeRecipesCrafted: [], runesEquipped: [],
@@ -63,24 +67,25 @@ const slices: PersistedPlayerSlices = {
     knownStances: [], equippedStances: { default: null }, activeStance: null,
     knownRites: [], equippedRites: [],
   },
-  holdsInventory: { inventory: ['heavy-hammer'], equipment: { ...emptyEquipment() }, itemUpgrades: {} },
+  holdsInventory: { inventory: ['heavy-hammer', 'quake-hammer'], equipment: { ...emptyEquipment() }, itemUpgrades: {} },
   usesSkills: {
     unlockedSkills: [], passives: {}, selectedClass: null,
     selectedSubVariant: null, selectedRange: null, combatArchetype: null,
   },
 };
 
-const VERB = 'hammer-t1-empowered-payoff'; // Crash Down
+const VERB = 'hammer-t2-empowered-payoff'; // Deeper Sunder
 const CAP_MS = PACKET_HALF_NUMBERS.empowered?.moment.capMs ?? 0;
 assert(CAP_MS === 4_000, `the Empowered moment is capped at 4 s (PROVISIONAL), got ${CAP_MS}`);
 
 const player = world.attachPlayerEntity(slices, 'cap-conduit');
 assert(unlockSkill(world, player, 'summoner-root'), 'a real Conduit');
 assert(equipItem(world, player, 'heavy-hammer'), 'wears the Hammer');
+assert(equipItem(world, player, 'quake-hammer'), 'wears its T2 form');
 const bought = unlockLineageCard(world, player, 'hammer', VERB);
 assert(bought.success, `${VERB}: ${bought.reason}`);
 const verb = getLineageRuntime(player.tracksCombat)?.cards.find((c) => c.card.id === VERB);
-assert(verb?.trigger?.kind === 'mechanic-fired' && verb.trigger.capMs === CAP_MS, 'Crash Down: the mechanic moment, capped');
+assert(verb?.trigger?.kind === 'mechanic-fired' && verb.trigger.capMs === CAP_MS, 'Deeper Sunder: the mechanic moment, capped');
 
 recalculatePlayerEntityStats(world, player);
 updateSummonerArchetype(world, 0, 1_000);
@@ -121,5 +126,5 @@ for (let i = 1; i < firedAt.length; i++) {
 }
 assert(firedAt.length === Math.floor(DURATION / CAP_MS) + 1,
   `${cycles} cycles in ${DURATION / 1000} s pay ${Math.floor(DURATION / CAP_MS) + 1} times at the cap, got ${firedAt.length}`);
-console.log(`  conduit  cycles ${cycles}  Crash Down fired ${firedAt.length} (cap ${CAP_MS} ms)`);
+console.log(`  conduit  cycles ${cycles}  Deeper Sunder fired ${firedAt.length} (cap ${CAP_MS} ms)`);
 console.log('empoweredCap: ok');

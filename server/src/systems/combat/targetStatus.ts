@@ -1,14 +1,16 @@
 import {
   DAMAGE_TAKEN_PCT_KEY,
+  isTargetHiddenStatusId,
   weaponDotProfileForEffect,
   SUMMONER_CHORUS_EFFECT_ID,
   SUMMONER_HARRIER_EFFECT_ID,
   type StatusEffect,
   type StatusValue,
   type TargetStatusView,
-  type TracksCombat,
 } from '@mmo-idle/shared';
+import type { MonsterEntity } from '../../ecs/entity';
 import type { World } from '../../world/World';
+import { dotOwedOnMonster } from './damage/dotInventory';
 
 // Mirrors the full debuff list of each player's current displayed target onto the
 // monster's networked hasStatus.targetStatus, so the HUD target frame can show
@@ -27,7 +29,7 @@ export function mirrorTargetStatus(world: World): void {
     const monster = world.getMonsterEntity(targetId);
     if (!monster?.hasStatus || !monster.tracksCombat) continue;
     nowTargeted.add(targetId);
-    monster.hasStatus.targetStatus = buildTargetStatus(monster.tracksCombat);
+    monster.hasStatus.targetStatus = buildTargetStatus(world, monster);
   }
 
   // Clear lists left on monsters that are no longer anyone's target.
@@ -43,10 +45,12 @@ export function mirrorTargetStatus(world: World): void {
   for (const id of nowTargeted) lastTargeted.add(id);
 }
 
-function buildTargetStatus(tracksCombat: TracksCombat): TargetStatusView[] {
+function buildTargetStatus(world: World, monster: MonsterEntity): TargetStatusView[] {
   const out: TargetStatusView[] = [];
-  for (const fx of tracksCombat.statusEffects) {
+  for (const fx of monster.tracksCombat.statusEffects) {
     if (fx.remainingMs === 0) continue; // expired this tick
+    // Bookkeeping, not an effect (the Effigy link record): no badge.
+    if (isTargetHiddenStatusId(fx.id)) continue;
     const weaponDotProfile = weaponDotProfileForEffect(fx.id);
     const aggregateSummonerEffect = fx.id === SUMMONER_HARRIER_EFFECT_ID
       || fx.id === SUMMONER_CHORUS_EFFECT_ID;
@@ -59,12 +63,16 @@ function buildTargetStatus(tracksCombat: TracksCombat): TargetStatusView[] {
       existing.totalMs = Math.max(existing.totalMs, fx.data.totalMs ?? 0);
       continue;
     }
+    // What a damage-over-time record still owes: the target frame's "owes"
+    // number (design §26.2), from the same DoT inventory Detonate bills from.
+    const owed = dotOwedOnMonster(world, monster, fx);
     out.push({
       id: fx.id,
       stacks: weaponDotProfile ? Math.max(0, Math.round(fx.data.pool ?? 0)) : fx.stacks,
       remainingMs: fx.remainingMs,
       totalMs: fx.data.totalMs ?? 0,
-      values: statusValues(fx, weaponDotProfile !== undefined),
+      values: statusValues(fx, weaponDotProfile !== undefined, owed),
+      ...(owed !== undefined ? { owed } : {}),
     });
   }
   return out;
@@ -77,13 +85,16 @@ function buildTargetStatus(tracksCombat: TracksCombat): TargetStatusView[] {
  * every targeted monster. Effects not listed here still get a name, a stack count
  * and a clock from the fields above, plus authored explanatory copy on the client.
  */
-function statusValues(fx: StatusEffect, weaponReservoir: boolean): StatusValue[] | undefined {
+function statusValues(fx: StatusEffect, weaponReservoir: boolean, owed?: number): StatusValue[] | undefined {
   const values: StatusValue[] = [];
   const perStack = fx.data.damagePerStack;
   if (weaponReservoir) {
     const pool = Math.max(0, Math.round(fx.data.pool ?? 0));
     values.push({ label: 'Stored damage', value: String(pool), good: true });
-  } else if (perStack !== undefined && perStack > 0) {
+  } else if (owed !== undefined) {
+    values.push({ label: 'Damage still owed', value: String(owed), good: true });
+  }
+  if (!weaponReservoir && perStack !== undefined && perStack > 0) {
     values.push({ label: 'Damage per stack', value: `${Math.round(perStack)} per tick`, good: true });
     values.push({ label: 'Damage per tick', value: String(Math.round(perStack * fx.stacks)), good: true });
   }

@@ -13,6 +13,7 @@ import {
   TUNDRA_CHILL_EFFECT_ID,
   CAVE_LOCKDOWN_EFFECT_ID,
   FROZEN_STATUS_ID,
+  STUN_STATUS_ID,
   SUNDERED_EFFECT_ID,
   PLATING_SHRED_EFFECT_ID,
   BOSS_DEBUFF_KEY,
@@ -154,6 +155,39 @@ const DEBUFF_BUFFS = [
     },
     { category: "neutral", shape: "diamond", color: "#cfefff", label: "Frozen" },
   ),
+  // A stun on YOU (status registry audit, 2026-10-05: `applyStun` has player call
+  // sites, but no tile ever projected it). Published under the display id the
+  // client already orders as critical and reads for the stun presentation
+  // (`deltaApplier.collectHardControlled`), with `speedMult: 0` for the same
+  // reason `debuff-frozen` publishes it: a stun roots the player, and the
+  // own-player prediction stops on a zero multiplier.
+  defineBuff(
+    "debuff-stunned",
+    ({ playerCs, world }) => {
+      if (!playerCs) return null;
+      const stun = getStatusEffect(playerCs, STUN_STATUS_ID);
+      if (!stun || stun.remainingMs <= 0) return null;
+      const totalMs = stun.data["totalMs"] ?? stun.remainingMs;
+      const source = world.getMonsterEntity(stun.sourceId);
+      return {
+        id: "debuff-stunned",
+        label: "Stunned",
+        stacks: 1,
+        durationPct: totalMs > 0 ? (stun.remainingMs / totalMs) * 100 : -1,
+        speedMult: 0,
+        color: "#ffdd44",
+        logSourceName: source?.isMonster.name ?? "Monster debuff",
+        logSourceSide: "enemy",
+        logDetail: "movement and attacks disabled",
+        remainingMs: stun.remainingMs,
+        values: [
+          { label: "Movement and attacks", value: "disabled", good: false },
+          { label: "Duration", value: `${(stun.remainingMs / 1000).toFixed(1)}s`, good: false },
+        ],
+      };
+    },
+    { category: "neutral", shape: "diamond", color: "#ffdd44", label: "Stunned" },
+  ),
   defineBuff(
     "debuff-frost-ramp",
     ({ player, playerCs, world }) => {
@@ -251,6 +285,37 @@ const DEBUFF_BUFFS = [
       };
     },
     { category: "neutral", shape: "diamond", color: "#88bb44", label: "Rot" },
+  ),
+  // Lava: the volcanic pools' burn, the same node-feature damage shape as swamp
+  // rot (status registry audit, 2026-10-05: it dealt damage with no tile).
+  defineBuff(
+    "debuff-lava-burn",
+    ({ playerCs }) => {
+      if (!playerCs) return null;
+      const burn = getStatusEffect(playerCs, "lava-burn");
+      if (!burn || burn.stacks <= 0) return null;
+      const perStack = Math.round(burn.data["damagePerStack"] ?? 0);
+      return {
+        id: "debuff-lava-burn",
+        label: "Lava",
+        stacks: burn.stacks,
+        durationPct:
+          burn.remainingMs > 0
+            ? (burn.remainingMs / Math.max(1, burn.data["totalMs"] ?? burn.remainingMs)) * 100
+            : -1,
+        color: "#ff6a2a",
+        logSourceName: "Lava",
+        logSourceSide: "enemy",
+        logDetail: `${perStack} dmg/stack per tick`,
+        remainingMs: burn.remainingMs,
+        values: [
+          { label: "Stacks", value: String(burn.stacks) },
+          { label: "Damage per stack", value: `${perStack} per tick`, good: false },
+          { label: "Damage per tick", value: `${perStack * burn.stacks}`, good: false },
+        ],
+      };
+    },
+    { category: "neutral", shape: "diamond", color: "#ff6a2a", label: "Lava" },
   ),
   defineBuff(
     "debuff-sun-mark",

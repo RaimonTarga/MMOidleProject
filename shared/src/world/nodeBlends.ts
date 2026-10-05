@@ -134,7 +134,7 @@ const familyByNode = new Map<string, FamilyDefinition | undefined>();
 /**
  * The family a node is categorised under: its AUTHORED blend's dominant family —
  * the largest share, ties broken in family-table order (`dominantBlendFamily`, the
- * one definition; the 45/45 nodes rely on the tie-break). Undefined for a node
+ * one definition; the T2 45/45 nodes rely on the tie-break). Undefined for a node
  * with no blend: dungeons, sanctuaries and the Clearing.
  *
  * Authored, not resolved, on purpose: a node's identity is what the map author
@@ -178,6 +178,29 @@ export function nodesPayingShard(biomeGroup: string, tier: number, packet: Packe
     .filter((node) => nodeShard(node.id) === packet)
     .map((node) => node.id)
     .sort();
+}
+
+// ── Rosters (design §26.3) ───────────────────────────────────────────────────
+
+/**
+ * Tiers whose blends are authored as ROSTERS (design §26.3): a normal node fields
+ * its dominant family and at most one guest, except one crossroads per biome that
+ * fields all three. T1 only in the legibility run; the T2–T4 blends are still
+ * proportions over three families and are a follow-up.
+ */
+export const ROSTER_TIERS: ReadonlySet<number> = new Set([1]);
+
+/**
+ * True for a crossroads: a normal node of a roster tier whose authored blend fields
+ * three families (`regionT1.ts`: one per biome, the cell the dungeon is entered
+ * from). It pays its by-a-hair leader's shard like any node (`nodeShard`;
+ * PROVISIONAL — §26.3 leaves "one shard or a roll per kill" open). False for every
+ * node outside a roster tier, where a three-family blend is the normal shape.
+ */
+export function isCrossroadsNode(nodeId: string): boolean {
+  const node = WORLD_NODES.get(nodeId);
+  if (!node?.blend || node.kind !== 'normal' || !ROSTER_TIERS.has(node.biomeTier)) return false;
+  return blendEntries(node.blend).length >= 3;
 }
 
 /**

@@ -9,13 +9,22 @@
  * lane now puts its condition on every landed hit, for every class:
  *
  *   Affliction lean  that share of the hit (as it was before any empowered
- *                    multiplier — one multiplier per hit) is ADDED to a light
- *                    lineage bleed over `LEAN_CONDITION_NUMBERS.affliction`.
- *   Control lean     the target is slowed by that fraction, through
- *                    `applyMonsterSlow` (max-wins: never weakens or shortens a
- *                    stronger slow), for `LEAN_CONDITION_NUMBERS.control` or one of
- *                    the wielder's own swings and a beat, whichever is longer — a
- *                    Heavy Hammer swings slower than the authored 1.5 s.
+ *                    multiplier — one multiplier per hit) is ADDED to the one
+ *                    lineage bleed, `lineage.bleed`, over
+ *                    `LEAN_CONDITION_NUMBERS.affliction`. On a weapon that owns a
+ *                    reservoir there is no share to add (design §26.2): the stat
+ *                    fold turned the lean into the reservoir's potency instead,
+ *                    and the reservoir already afflicts every hit it converts.
+ *   Control lean     the target is "Hobbled" (`lineage.hobbled`) by that fraction,
+ *                    through `applyMonsterSlow` (max-wins: never weakens or
+ *                    shortens a stronger Hobbled), for
+ *                    `LEAN_CONDITION_NUMBERS.control` or one of the wielder's own
+ *                    swings and a beat, whichever is longer — a Heavy Hammer swings
+ *                    slower than the authored 1.5 s. Its own id rather than
+ *                    Hamstring's, so the target frame names the card's slow and not
+ *                    an ability the player may not have; the reconciler takes the
+ *                    strongest slow across both ids, as it always took the
+ *                    strongest across sources.
  *
  * A slow is the ladder's bottom rung and enters a monster the way every other
  * slow does (Hamstring, the at-bay slow): control immunity refuses the ROOT and
@@ -35,16 +44,13 @@
  */
 import {
   LEAN_CONDITION_NUMBERS,
-  getStatusEffect,
+  LINEAGE_SLOW_STATUS_ID,
   lineageUnit,
 } from '@mmo-idle/shared';
-import type { MonsterEntity, PlayerEntity } from '../../ecs/entity';
-import type { World } from '../../world/World';
-import { attachMarker } from '../../ecs/markerHelpers';
+import type { PlayerEntity } from '../../ecs/entity';
 import { registerCombatListener } from './engine/combatPipeline';
-import { applyPlayerDebuff } from '../classes/shared/applyPlayerDebuff';
 import { evadeBlocksDebuffs } from '../defense/mitigation/evasion';
-import { LEAN_BLEED_ID } from './damage/bleedIds';
+import { addLineageAffliction } from './damage/lineageAffliction';
 import { hitBasis } from './lineageCards';
 import { applyMonsterSlow } from './status/monsterControl';
 
@@ -58,43 +64,6 @@ export function leanSlowMs(player: PlayerEntity): number {
   const authored = numbers?.durationMs ?? 0;
   const bridged = player.performsAttack.attackCooldown + (numbers?.swingBridgeMs ?? 0);
   return Math.max(authored, bridged);
-}
-
-/**
- * ADD `amount` to the lean's light bleed on `target`, spread over at least one
- * application's ticks.
- *
- * A reservoir, never a refresh: what the bleed still owes is kept and the new
- * share joins it, re-spread over the longer of what it had left and one
- * application's window. So a stream of hits delivers exactly its shares (a refresh
- * would deliver one tick's worth per hit and drop the rest), and the bleed drains
- * one window after the last hit. The tick clock is left running: re-arming it on
- * every hit would postpone the tick forever under a fast weapon. The per-tick
- * value is kept fractional; the tick driver rounds what it deals.
- */
-function addLeanBleed(world: World, player: PlayerEntity, target: MonsterEntity, amount: number): void {
-  if (!(amount > 0)) return;
-  const tickMs = lineageUnit('bleedTickMs');
-  const windowMs = LEAN_CONDITION_NUMBERS.affliction?.durationMs ?? tickMs;
-  const windowTicks = Math.max(1, Math.round(windowMs / tickMs));
-  const prior = getStatusEffect(target.tracksCombat, LEAN_BLEED_ID);
-  const priorTicks = prior ? Math.max(0, prior.stacks) : 0;
-  const priorOwed = priorTicks * Math.max(0, prior?.data.damagePerTick ?? 0);
-  const ticks = Math.max(windowTicks, priorTicks);
-  const perTick = (priorOwed + amount) / ticks;
-  const bleed = applyPlayerDebuff(player, target.tracksCombat, {
-    id: LEAN_BLEED_ID,
-    instanced: false,
-    remainingMs: -1,
-    sourceId: player.isPlayer.id,
-    data: { damagePerTick: perTick, nextTickIn: tickMs, tickIntervalMs: tickMs, bleedMode: 0 },
-  });
-  bleed.data.damagePerTick = perTick;
-  bleed.data.tickIntervalMs = tickMs;
-  bleed.data.bleedMode = 0;
-  if (!(bleed.data.nextTickIn > 0)) bleed.data.nextTickIn = tickMs;
-  bleed.stacks = ticks;
-  attachMarker(world, target, 'hasHemorrhage');
 }
 
 /**
@@ -113,7 +82,12 @@ export function registerLeanConditions(): void {
     if (evadeBlocksDebuffs(ctx)) return;
     const target = ctx.defender;
     if (target.hasHealth.hp <= 0 || !world.hasMonster(target.isMonster.id)) return;
-    if (bleedShare > 0) addLeanBleed(world, player, target, hitBasis(player, ctx) * bleedShare);
-    if (slowPct > 0) applyMonsterSlow(world, target, slowPct, leanSlowMs(player), player.isPlayer.id);
+    if (bleedShare > 0) {
+      const windowMs = LEAN_CONDITION_NUMBERS.affliction?.durationMs ?? lineageUnit('bleedTickMs');
+      addLineageAffliction(world, player, target, hitBasis(player, ctx) * bleedShare, windowMs);
+    }
+    if (slowPct > 0) {
+      applyMonsterSlow(world, target, slowPct, leanSlowMs(player), player.isPlayer.id, LINEAGE_SLOW_STATUS_ID);
+    }
   });
 }

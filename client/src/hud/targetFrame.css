@@ -250,3 +250,113 @@
   filter: grayscale(0.85);
   transition: opacity 240ms ease-out, filter 240ms ease-out;
 }
+
+/* The three fixed homes (design §26.4): what the target OWES, how it is SLOWED,
+   how it is HELD. Three equal cells that are always drawn — an empty home keeps
+   its ghost — so a badge appearing or wearing off never moves anything else. */
+.tf-homes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.tf-home {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 38px;
+  min-width: 0;
+  padding: 2px 4px 3px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.tf-home--empty { background: transparent; border-color: rgba(255, 255, 255, 0.05); }
+
+.tf-home__caption {
+  font-size: 8px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hud-text-muted);
+}
+
+.tf-home--empty .tf-home__caption { opacity: 0.55; }
+
+/* The ghost: where a badge will sit, so the empty home reads as a home. */
+.tf-home__ghost {
+  display: block;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  border-radius: 3px;
+}
+
+.tf-home__badge {
+  position: relative;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 4px;
+  height: 20px;
+  pointer-events: auto; /* the badge's tooltip */
+}
+
+.tf-home__icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #11161d;
+  box-shadow: 0 0 6px color-mix(in srgb, var(--tf-badge-color, #888) 45%, transparent);
+}
+
+.tf-home__name {
+  overflow: hidden;
+  font-size: 9px;
+  font-weight: bold;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--tf-badge-color, var(--hud-text));
+  text-shadow: 1px 1px 0 #000;
+}
+
+.tf-home__value {
+  font-size: 10px;
+  font-weight: bold;
+  color: #fff;
+  white-space: nowrap;
+  text-shadow: 1px 1px 0 #000, -1px 0 0 #000;
+}
+
+/* A hold's clock along the badge's foot. */
+.tf-home__clock {
+  position: absolute;
+  left: 22px;
+  bottom: -1px;
+  height: 2px;
+  background: var(--tf-badge-color, #888);
+  opacity: 0.8;
+}
+
+.tf-home__badge--ended {
+  opacity: 0.4;
+  filter: grayscale(0.85);
+  transition: opacity 240ms ease-out, filter 240ms ease-out;
+}
+
+@media (max-width: 1100px) {
+  .tf-homes { gap: 3px; margin-top: 5px; }
+  .tf-home { min-height: 32px; padding: 2px 3px; }
+  .tf-home__caption { font-size: 7px; }
+  /* On a phone the badge is the icon and the number; the name is in its card. */
+  .tf-home__badge { grid-template-columns: 16px auto; column-gap: 3px; height: 18px; }
+  .tf-home__name { display: none; }
+  .tf-home__icon, .tf-home__ghost { width: 16px; height: 16px; }
+  .tf-home__value { font-size: 9px; }
+  .tf-home__clock { left: 19px; }
+}

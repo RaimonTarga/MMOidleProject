@@ -216,15 +216,19 @@ const rows: unknown[] = [];
 
 /**
  * `--matrix=composition` (course-correction W3-A): the lean × verb composition
- * matrix. Every live weapon lineage's nine T1 pairs plus its no-band control
- * (`bench/lineage/compositionPairs.ts`), on every tutorial class, against every
+ * matrix. Every live weapon lineage's T1 rows plus its no-band control
+ * (`bench/lineage/compositionPairs.ts`) — since design §26.1 (legibility run) those
+ * are the lean trio × three ranks × the weapon's one verb (9), the verb alone, and
+ * the control: 11 rows per weapon — on every tutorial class, against every
  * boss, with the class's tutorial boss kit EXCEPT the weapon, which is the
  * lineage's T1 form — a lineage pays only while its own form is worn, so the pair
  * is measured on a character wearing it, against the same character with the form
  * and no cards. The lab buys the band through the real economy handler.
  *
- * Row ids are `cmp-<lineage>-<lean>×<verb>|<class>|<boss>|<seed>` (the control is
- * `cmp-<lineage>-control|...`), so `_t1BossMatrix.ts` groups each pair as one
+ * Row ids are `cmp-<lineage>-<kind>-<rank>×<verb>|<class>|<boss>|<seed>` at T1
+ * (`cmp-<lineage>-none×<verb>|...` for the verb alone, `cmp-<lineage>-control|...`
+ * for the control; `leanRank` on the row is how many times the lab buys the lean),
+ * `cmp-<lineage>-<lean>×<verb>|...` at T2, so `_t1BossMatrix.ts` groups each pair as one
  * candidate. Rows are `compact`: the matrix is ~15k fights and the per-second HP
  * track is not what it reads. `--seeds` defaults to 10 here.
  *
@@ -266,6 +270,7 @@ if (args.matrix === 'composition') {
               ...kit,
               rules: tutorialRunes(cls.movement, 'final', cls.classRoot),
               lineage: lineage.id, lean: pair.leanCardId, verb: pair.verbCardId,
+              ...(pair.leanRank !== null ? { leanRank: pair.leanRank } : {}),
             });
           }
         }

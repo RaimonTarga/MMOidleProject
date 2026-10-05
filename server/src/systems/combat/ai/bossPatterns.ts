@@ -55,7 +55,7 @@ import { distanceSq } from '@mmo-idle/shared';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import { hasIndependentRoot, setRooted } from '../../world/rooted';
 import {
-  ABILITY_ROOT_EFFECT_ID,
+  MONSTER_ROOT_STATUS_IDS,
   ambientRampStatus,
   BOSS_DEBUFF_KEY,
   DEBUFF_DURATION_PCT_KEY,
@@ -1660,9 +1660,11 @@ function stopPatternOnControl(
   return true;
 }
 
-/** A player root (Binding Strike) is holding this monster — not a scripted hold. */
+/** A player root (Binding Strike, the Control payload's Pinned) is holding this monster — not a scripted hold. */
 function monsterHasAbilityRoot(monster: MonsterEntity): boolean {
-  return (getStatusEffect(monster.tracksCombat, ABILITY_ROOT_EFFECT_ID)?.remainingMs ?? 0) > 0;
+  return MONSTER_ROOT_STATUS_IDS.some(
+    (id) => (getStatusEffect(monster.tracksCombat, id)?.remainingMs ?? 0) > 0,
+  );
 }
 
 function finishStep(

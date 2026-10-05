@@ -28,6 +28,7 @@ export const SURGE_DEBUFF_IDS: ReadonlySet<BuffId> = new Set<BuffId>([
   "debuff-volcanic-heat",
   "debuff-tundra-chill",
   "debuff-swamp-rot",
+  "debuff-lava-burn",
   "debuff-frost-ramp",
   "debuff-sundered",
   "debuff-plating-shred",

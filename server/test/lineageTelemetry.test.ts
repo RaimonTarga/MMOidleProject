@@ -27,8 +27,10 @@ import {
   unlockLineageForm,
 } from '../src/systems/player/economy/lineages';
 
-const TEMPO_STAT = 'rapier-t1-tempo-stat';
-const AFFLICTION_STAT = 'rapier-t1-affliction-stat';
+// The T1 lean trio (design §26.1): Effect is paid in the Tempo lane, Attack in the
+// Affliction lane (their colours and shards).
+const TEMPO_STAT = 'rapier-t1-effect';
+const AFFLICTION_STAT = 'rapier-t1-attack';
 const TEMPO_PAYOFF = 'rapier-t1-tempo-payoff';
 
 function main(): void {
@@ -81,6 +83,16 @@ function main(): void {
   assert.equal(first.essenceSpent, rowEssenceCost(1, 'stat'), 'records the essence actually paid');
   assert.equal(first.shardsSpent, rowShardCost(1, 'stat'), 'records the shards actually paid');
   assert.equal(first.capstonesSpent, 0, 'a card is not a gate');
+
+  // ── A rank-up is a purchase of the same card (design §26.1) ─────────────────
+  now += 1_000;
+  assert(unlockLineageCard(world, player, 'rapier', TEMPO_STAT).success, 'buys the lean rank II');
+  const rankUp = lastLineage();
+  assert.equal(rankUp.event, 'lineage.card-unlocked');
+  assert.equal(rankUp.cardId, TEMPO_STAT);
+  assert.equal(rankUp.ownedCards, 1, 'a rank-up owns no new card');
+  assert.equal(rankUp.essenceSpent, Math.round(rowEssenceCost(1, 'stat') * 1.5), 'records the rank II essence');
+  assert.equal(rankUp.firstOfSession, false, 'a rank-up is not the first card');
 
   // ── A second purchase is not "first" any more ───────────────────────────────
   now += 2_000;

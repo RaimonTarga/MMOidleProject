@@ -54,7 +54,7 @@ import {
   emitCombatEvent, type CombatContext,
 } from '../src/systems/combat/engine/combatPipeline';
 import { emitMechanicFired } from '../src/systems/combat/engine/mechanicFired';
-import { LINEAGE_BLEED_ID, LINEAGE_POISON_ID } from '../src/systems/combat/damage/bleedIds';
+import { LINEAGE_BLEED_ID } from '../src/systems/combat/damage/bleedIds';
 import {
   lineagePlatingStackFraction, onLineageGuardCast, updateLineageCards,
 } from '../src/systems/combat/lineageCards';
@@ -822,8 +822,10 @@ function withWindowFromGuard(id: string): PlayerEntity {
   const target = monster(680);
 
   hit(player, target);
-  const stack = getStatusEffect(target.tracksCombat, LINEAGE_POISON_ID);
-  assert(stack !== undefined, 'poison-stack should apply the lineage poison');
+  // One DoT record per weapon (design §26.2): with no reservoir weapon, the
+  // poison ADDS to the one lineage bleed rather than a record of its own.
+  const stack = getStatusEffect(target.tracksCombat, LINEAGE_BLEED_ID);
+  assert(stack !== undefined, 'poison-stack should add to the lineage bleed');
   assert(
     getStatusEffect(target.tracksCombat, 'dot') === undefined,
     "a card poison must not write the player's class DoT record",
@@ -831,7 +833,7 @@ function withWindowFromGuard(id: string): PlayerEntity {
   assert((stack?.data.damagePerTick ?? 0) > 0, 'a stack with no damage is not a stack');
   const events = cardFx();
   assert(events.length === 1, 'one stack applied is one effect');
-  assert(events[0].stacks === stack?.stacks, 'a counting payoff reports its stack count');
+  assert((events[0].durationMs ?? 0) > 0, 'the payoff reports how long the record now holds');
 
   // A neighbour within reach receives a share of what the first target carries.
   const neighbour = world.createMonster(NODE, 'plains-slime', {
@@ -857,7 +859,7 @@ function withWindowFromGuard(id: string): PlayerEntity {
     damage: 1, platingMult: 1, drPierce: 0, cancelled: false, metadata: {},
   } as unknown as CombatContext, world);
   assert(
-    getStatusEffect(neighbour!.tracksCombat, LINEAGE_POISON_ID) !== undefined,
+    getStatusEffect(neighbour!.tracksCombat, LINEAGE_BLEED_ID) !== undefined,
     'contagion should copy the affliction onto a neighbour',
   );
   const spread = cardFx();
@@ -966,11 +968,11 @@ function withWindowFromGuard(id: string): PlayerEntity {
 
   hit(player, target);
   assert(
-    getStatusEffect(target.tracksCombat, LINEAGE_POISON_ID) !== undefined,
+    getStatusEffect(target.tracksCombat, LINEAGE_BLEED_ID) !== undefined,
     'the primary must still take the payoff',
   );
   assert(
-    getStatusEffect(neighbour.tracksCombat, LINEAGE_POISON_ID) !== undefined,
+    getStatusEffect(neighbour.tracksCombat, LINEAGE_BLEED_ID) !== undefined,
     'an extra target must take the SAME payoff on a neighbour',
   );
   assert(

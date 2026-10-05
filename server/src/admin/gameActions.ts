@@ -483,6 +483,8 @@ export function applyTierEntryProfile(
       ownedCards: [...new Set([...born.ownedCards, ...declared.ownedCards])],
       active: { ...born.active, ...declared.active },
       ownedForms: [...new Set([...born.ownedForms, ...declared.ownedForms])],
+      // A declared rank (design §26.1) is the rank the profile bought.
+      ...(born.ranks || declared.ranks ? { ranks: { ...born.ranks, ...declared.ranks } } : {}),
     };
   }
   syncArchetypeSlices(world, player);

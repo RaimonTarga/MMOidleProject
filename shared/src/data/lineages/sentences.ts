@@ -182,6 +182,27 @@ export function payloadText(
   return fill(halves.payloadPhrase, slotsFor(packetMoment(id), numbers)) + proxySuffix(numbers);
 }
 
+/** Where a pure sentence's moment ends (`PacketHalves.pureSentence`). Never rendered. */
+const PURE_SPLIT = ' | ';
+
+/**
+ * A packet's pure sentence in its two halves, numbers filled in: `moment` is the
+ * opener ("Every 6th hit"), `payload` the rest ("strikes twice."). Joined with a
+ * space they are {@link pureSentenceText}.
+ */
+export function pureSentenceParts(
+  id: PacketId,
+  tier = 1,
+  numbers: SentenceNumbers | undefined = packetPurePair(id, tier),
+): { moment: string; payload: string } | undefined {
+  const halves = packetHalves(id);
+  if (!halves || !numbers) return undefined;
+  const filled = fill(halves.pureSentence, slotsFor(numbers.trigger, numbers.payoff));
+  const at = filled.indexOf(PURE_SPLIT);
+  if (at < 0) return { moment: '', payload: filled };
+  return { moment: filled.slice(0, at), payload: filled.slice(at + PURE_SPLIT.length) };
+}
+
 /**
  * A packet's pure sentence with its numbers filled in, at a verb's `tier`
  * (default 1), or from explicit `numbers` (an amplified pair).
@@ -191,9 +212,61 @@ export function pureSentenceText(
   tier = 1,
   numbers: SentenceNumbers | undefined = packetPurePair(id, tier),
 ): string | undefined {
-  const halves = packetHalves(id);
-  if (!halves || !numbers) return undefined;
-  return fill(halves.pureSentence, slotsFor(numbers.trigger, numbers.payoff));
+  const parts = pureSentenceParts(id, tier, numbers);
+  return parts ? joinParts(parts) : undefined;
+}
+
+/**
+ * A composed sentence's two halves, for the page's two-colour sentence (design
+ * §26.4) — so the client never parses text to find them.
+ *
+ *  - `moment`      the opener: the VERB's moment ("Every 6th hit", or "When a
+ *                  Technique lands," for a clause moment, comma included);
+ *  - `payload`     the rest, full stop included ("lands twice.", "the hit lands
+ *                  twice.");
+ *  - `momentLane`  the colour of the opener: the verb's lane;
+ *  - `payloadLane` the colour of the rest: the lean's lane, or the verb's own on a
+ *                  pure pair (same lane, or no lane-naming lean);
+ *  - `pure`        the hand-authored pure sentence was used.
+ *
+ * `moment + ' ' + payload` is the sentence, always (`compositionSentence`).
+ */
+export interface ComposedSentenceParts {
+  moment: string;
+  payload: string;
+  momentLane: PacketId;
+  payloadLane: PacketId;
+  pure: boolean;
+}
+
+function joinParts(parts: { moment: string; payload: string }): string {
+  return parts.moment ? `${parts.moment} ${parts.payload}` : parts.payload;
+}
+
+/** {@link compositionSentence}, in its two halves. */
+export function compositionParts(composed: SentenceNumbers & {
+  verbLane: PacketId;
+  leanLane?: PacketId;
+  pure: boolean;
+}): ComposedSentenceParts | undefined {
+  if (composed.pure || !composed.leanLane) {
+    const parts = pureSentenceParts(composed.verbLane, 1, composed);
+    return parts && {
+      ...parts, momentLane: composed.verbLane, payloadLane: composed.verbLane, pure: true,
+    };
+  }
+  const halves = packetHalves(composed.verbLane);
+  const moment = momentText(composed.verbLane, composed.trigger);
+  const payload = payloadText(composed.leanLane, 1, composed.payoff);
+  if (!halves || moment === undefined || payload === undefined) return undefined;
+  const clause = halves.momentPhrase.kind === 'clause';
+  return {
+    moment: clause ? `${moment},` : moment,
+    payload: clause ? `the hit ${payload}.` : `${payload}.`,
+    momentLane: composed.verbLane,
+    payloadLane: composed.leanLane,
+    pure: false,
+  };
 }
 
 /**
@@ -207,14 +280,8 @@ export function compositionSentence(composed: SentenceNumbers & {
   leanLane?: PacketId;
   pure: boolean;
 }): string | undefined {
-  if (composed.pure || !composed.leanLane) return pureSentenceText(composed.verbLane, 1, composed);
-  const halves = packetHalves(composed.verbLane);
-  const moment = momentText(composed.verbLane, composed.trigger);
-  const payload = payloadText(composed.leanLane, 1, composed.payoff);
-  if (!halves || moment === undefined || payload === undefined) return undefined;
-  return halves.momentPhrase.kind === 'clause'
-    ? `${moment}, the hit ${payload}.`
-    : `${moment} ${payload}.`;
+  const parts = compositionParts(composed);
+  return parts ? joinParts(parts) : undefined;
 }
 
 /**
@@ -243,6 +310,7 @@ const STAT_LINE_LABEL: Record<LineageStatKey, string> = {
   techniquePowerPct: 'Technique power',
   dotPotencyPct: 'DoT potency',
   slowOnHit: 'slow on hit',
+  payloadScale: 'payload size',
 };
 
 /**
@@ -275,4 +343,52 @@ export function statLine(
   if (form) return form(value);
   const amount = isFractionalStat(key) ? pct(value) : trimmed(value);
   return `+${amount} ${STAT_LINE_LABEL[key] ?? key}.`;
+}
+
+// ─── The T1 Effect lean: the weapon's own mechanic (design §26.1) ────────────
+
+/**
+ * What a payload is called when an Effect lean makes it bigger — the noun of the
+ * thing the player watches grow, never the lane's name.
+ */
+const PAYLOAD_NOUN: Partial<Record<PacketId, string>> = {
+  tempo: 'second strike',
+  technique: 'refund',
+  affliction: 'dose',
+  engagement: 'lunge',
+  empowered: 'mechanic hit',
+  control: 'hold',
+  'kill-chain': 'heal and load',
+};
+
+/**
+ * A lean's line when it is the weapon's own mechanic made stronger (design §26.1:
+ * "Effect is the weapon's own mechanic made stronger"), which names that mechanic
+ * rather than a stat:
+ *
+ *   dotPotencyPct  on a weapon with its own RESERVOIR (`reservoir`: the worn form's
+ *                  `weaponDot` noun, e.g. "poison" on the Dagger's forms): "Your
+ *                  poison is +10% stronger." — design §26.2: the lean amplifies the
+ *                  reservoir and never adds a bleed record, so the line promises no
+ *                  bleed. On any other weapon it is the stat line, which does.
+ *   slowOnHit      the slow's own line ("Every hit slows its target by 10% …").
+ *   payloadScale   "+10% to Flurry's second strike." — the fixed verb's payload,
+ *                  by its noun (`verbName` is the verb card's name).
+ *
+ * Anything else reads as its stat line.
+ */
+export function effectLeanLine(
+  effects: LineageStatEffects | undefined,
+  context: { lane: PacketId; verbName?: string; reservoir?: string },
+  length: 'sentence' | 'short' = 'sentence',
+): string | undefined {
+  const entry = Object.entries(effects ?? {})[0] as [LineageStatKey, number] | undefined;
+  if (!entry) return undefined;
+  const [key, value] = entry;
+  if (key === 'dotPotencyPct' && context.reservoir) return `Your ${context.reservoir} is +${pct(value)} stronger.`;
+  if (key === 'payloadScale') {
+    const owner = context.verbName ? `${context.verbName}'s` : 'your verb\'s';
+    return `+${pct(value)} to ${owner} ${PAYLOAD_NOUN[context.lane] ?? 'payoff'}.`;
+  }
+  return statLine(effects, length);
 }
