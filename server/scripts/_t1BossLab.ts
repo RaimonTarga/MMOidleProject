@@ -82,6 +82,12 @@ interface Row {
   lineage?: string;
   lean?: string | null;
   verb?: string | null;
+  /**
+   * A RANKED lean's rank (design §26.1, legibility run): the lab buys `lean` this
+   * many times through the real handler — each purchase of an owned ranked card
+   * buys its next rank, with that rank's own gate and price. Absent = once.
+   */
+  leanRank?: number | null;
   /** Drop the per-second HP track and the loadout from the result (matrix runs). */
   compact?: boolean;
 }
@@ -108,6 +114,11 @@ function buyBand(world: World, bot: PlayerEntity, row: Row): string[] {
   if (!tree) refusals.push(`no tree: wearing ${bot.holdsInventory.equipment.weapon} opened no ${row.lineage} tree`);
   else if (tree.wornForm !== row.weapon) refusals.push(`worn form is ${tree.wornForm}, not ${row.weapon}`);
   const cardIds = [row.lean, row.verb].filter((id): id is string => !!id);
+  // The purchases: the lean once per rank (its next rank each time), then the verb.
+  const purchases = [
+    ...(row.lean ? Array.from({ length: Math.max(1, row.leanRank ?? 1) }, () => row.lean!) : []),
+    ...(row.verb ? [row.verb] : []),
+  ];
   const savedEssences = { ...p.essences };
   for (const type of ESSENCE_TYPES) p.essences[type] = MATRIX_ESSENCE;
   for (const cardId of cardIds) {
@@ -115,7 +126,7 @@ function buyBand(world: World, bot: PlayerEntity, row: Row): string[] {
     assert(card, `${row.id}: ${cardId} is not a card of ${row.lineage}`);
     p.shards[card.lane] = MATRIX_SHARDS;
   }
-  for (const cardId of cardIds) {
+  for (const cardId of purchases) {
     const bought = unlockLineageCard(world, bot, row.lineage, cardId);
     if (!bought.success) refusals.push(`unlockCard ${cardId}: ${bought.reason}`);
   }
@@ -133,6 +144,10 @@ function buyBand(world: World, bot: PlayerEntity, row: Row): string[] {
   for (const cardId of cardIds) {
     const card = lineage.cards.find((c) => c.id === cardId)!;
     if (live?.active[card.row] !== cardId) refusals.push(`${cardId} is not the live ${card.row} card (${live?.active[card.row] ?? 'none'})`);
+  }
+  if (row.lean && (row.leanRank ?? 1) > 1) {
+    const owned = live?.ranks?.[row.lean] ?? (live?.ownedCards.includes(row.lean) ? 1 : 0);
+    if (owned !== row.leanRank) refusals.push(`${row.lean} is at rank ${owned}, not ${row.leanRank}`);
   }
   return refusals;
 }
@@ -568,7 +583,7 @@ function run(row: Row) {
       world.pendingDeaths = [];
     }
     const band = row.lineage
-      ? { lineage: row.lineage, lean: row.lean ?? null, verb: row.verb ?? null, refusals, fxByCard,
+      ? { lineage: row.lineage, lean: row.lean ?? null, verb: row.verb ?? null, leanRank: row.leanRank ?? null, refusals, fxByCard,
         verbFires: row.verb ? fxByCard[row.verb] ?? 0 : 0 }
       : {};
     if (row.compact) {

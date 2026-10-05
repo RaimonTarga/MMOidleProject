@@ -63,37 +63,37 @@ export const AXE_LINEAGE: LineageDefinition = {
   ],
 
   cards: [
+    // ── T1 lean row (design §26.1): Attack, Speed, Effect, three ranks each ──
+    // The lane is the card's colour and its shard (PROVISIONAL, legibility run:
+    // Effect takes the fixed verb's lane, Attack takes Empowered where the weapon
+    // has it, Speed takes the remaining lane, so all three home shards buy
+    // something at T1).
+    // The Axe has no mechanic of its own, so Effect is the size of Chopping
+    // Rhythm's second swing.
     {
-      id: 'axe-t1-tempo-stat', lineageId: 'axe', tier: 1, row: 'stat', lane: 'tempo',
-      name: 'Loose Grip', description: 'Let the head do the work and it comes back faster.',
-      fx: 'tempo.trail',
+      id: 'axe-t1-attack', lineageId: 'axe', tier: 1, row: 'stat', lane: 'empowered',
+      leanKind: 'attack', statKey: 'attackPct',
+      name: 'Attack', description: 'A longer arc, and everything in it.',
+      fx: 'empowered.trail',
     },
     {
-      id: 'axe-t1-kill-chain-stat', lineageId: 'axe', tier: 1, row: 'stat', lane: 'kill-chain',
-      name: 'Bloodscent', description: 'You move differently once something has gone down.',
+      id: 'axe-t1-speed', lineageId: 'axe', tier: 1, row: 'stat', lane: 'kill-chain',
+      leanKind: 'speed', statKey: 'attackSpeedPct',
+      name: 'Speed', description: 'Let the head do the work and it comes back faster.',
       fx: 'kill-chain.trail',
     },
     {
-      id: 'axe-t1-empowered-stat', lineageId: 'axe', tier: 1, row: 'stat', lane: 'empowered',
-      name: 'Hewing Arc', description: 'A longer arc, and everything in it.',
-      fx: 'empowered.trail',
+      id: 'axe-t1-effect', lineageId: 'axe', tier: 1, row: 'stat', lane: 'tempo',
+      leanKind: 'effect', statKey: 'payloadScale',
+      name: 'Effect', description: 'The swing that keeps going keeps more of its weight.',
+      fx: 'tempo.trail',
     },
 
-    // ── T1 verb row (§24.2): a moment; the lean above decides what happens ───
+    // ── T1 verb (design §26.1): ONE, the weapon's own — bought, never chosen ──
     {
       id: 'axe-t1-tempo-payoff', lineageId: 'axe', tier: 1, row: 'payoff', lane: 'tempo',
       name: 'Chopping Rhythm', description: "A woodcutter's count, and every so often the axe keeps going.",
       fx: 'tempo.ghost-strike',
-    },
-    {
-      id: 'axe-t1-kill-chain-payoff', lineageId: 'axe', tier: 1, row: 'payoff', lane: 'kill-chain',
-      name: 'Next Head', description: 'The swing after a kill is already looking for the next neck.',
-      fx: 'kill-chain.kill-pulse',
-    },
-    {
-      id: 'axe-t1-empowered-payoff', lineageId: 'axe', tier: 1, row: 'payoff', lane: 'empowered',
-      name: 'Cleaving Blow', description: 'When the mechanic fires, the axe goes all the way through.',
-      fx: 'empowered.weak-point',
     },
 
     // ── T2 band (design §4): stat (L2), payoff (L3), amplifier (L5) ──────────

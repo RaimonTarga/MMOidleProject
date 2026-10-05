@@ -11,8 +11,9 @@ import { BIOME_PRIMARY_ESSENCE } from '../../items';
 import type { EssenceType } from '../../items';
 import { packetHalves, packetScalingStat } from './packets';
 import {
-  gateBiomeLevel, gateCapstoneAmount, gateEssenceCost, gateShardCost,
-  LINEAGE_SWITCH_DISCOUNT, PACKET_HALF_NUMBERS, lineageMasteryLevelForGate,
+  MAX_LEAN_RANK, clampLeanRank, gateBiomeLevel, gateCapstoneAmount, gateEssenceCost, gateShardCost,
+  LINEAGE_SWITCH_DISCOUNT, PACKET_HALF_NUMBERS, leanRankEssenceCost, leanRankMastery,
+  leanRankShardCost, leanRankValue, lineageMasteryLevelForGate,
   lineageMasteryLevelForRow, payoffValue, rowBiomeLevel, rowEssenceCost, rowShardCost,
   scalePayloadSize, statRowValue, triggerNForLane, verbTierScalar,
 } from './magnitudes';
@@ -42,6 +43,40 @@ export interface ResolveOptions {
    * file only turns a biome into a number.
    */
   bandBiome?: string;
+  /**
+   * A RANKED card only (the T1 lean trio, design §26.1): the rank to resolve at —
+   * its value, its Global Mastery gate, and the price of BUYING that rank. Clamped
+   * to 1..`MAX_LEAN_RANK`; omitted means rank I. Ignored on an unranked card.
+   */
+  rank?: number;
+}
+
+// ─── Ranks (design §26.1) ────────────────────────────────────────────────────
+
+/** Is this card RANKED — one of the T1 lean trio, bought one rank at a time? */
+export function isRankedCard(card: Pick<LineageCard, 'leanKind'>): boolean {
+  return card.leanKind !== undefined;
+}
+
+/** A card's highest rank: `MAX_LEAN_RANK` for a ranked card, 1 for every other. */
+export function maxCardRank(card: Pick<LineageCard, 'leanKind'>): number {
+  return isRankedCard(card) ? MAX_LEAN_RANK : 1;
+}
+
+/**
+ * The PAYLOAD lane a lean names — the lane whose packet payload a verb delivers
+ * while this card is the active lean (design §24.2), or undefined for none.
+ *
+ * A lane-named lean (every T2 lean) names its own lane. The T1 trio's `lane` is
+ * colour and currency only (design §26.1): an Attack or Speed lean names NO
+ * payload, so the fixed verb reads its pure pair under it — an Attack lean never
+ * turns the Dagger's verb into an Empowered payload — and an Effect lean names its
+ * lane, which is the fixed verb's own, so the verb also reads its pure pair and
+ * the Effect's rank scales what the Effect scales.
+ */
+export function leanPayloadLane(card: Pick<LineageCard, 'lane' | 'leanKind'>): PacketId | undefined {
+  if (card.leanKind === 'attack' || card.leanKind === 'speed') return undefined;
+  return card.lane;
 }
 
 /**
@@ -84,16 +119,24 @@ function applyDiscount(amount: number, discounted: boolean | undefined): number 
   return Math.max(1, Math.ceil(amount * LINEAGE_SWITCH_DISCOUNT));
 }
 
-/** What a card costs, in the lineage's essence and its own lane's shard. */
+/**
+ * What a card costs, in the lineage's essence and its own lane's shard. A ranked
+ * card costs the price of BUYING `options.rank` (default rank I): the same essence
+ * and the same shard at every rank, scaled by `LEAN_RANK_PRICE_SCALE`.
+ */
 export function lineageCardCost(
   card: LineageCard,
   lineage: Pick<LineageDefinition, 'homeBiome'>,
   options: ResolveOptions = {},
 ): LineageCost {
   const essenceType = lineageEssenceType(lineage);
+  const ranked = isRankedCard(card);
+  const rank = clampLeanRank(options.rank ?? 1);
+  const essence = ranked ? leanRankEssenceCost(card.tier, card.row, rank) : rowEssenceCost(card.tier, card.row);
+  const shards = ranked ? leanRankShardCost(card.tier, card.row, rank) : rowShardCost(card.tier, card.row);
   return {
-    essence: { [essenceType]: applyDiscount(rowEssenceCost(card.tier, card.row), options.discounted) },
-    shards: { [card.lane]: applyDiscount(rowShardCost(card.tier, card.row), options.discounted) },
+    essence: { [essenceType]: applyDiscount(essence, options.discounted) },
+    shards: { [card.lane]: applyDiscount(shards, options.discounted) },
   };
 }
 
@@ -117,6 +160,17 @@ export function resolveLineageCard(
 
   if (card.row === 'stat') {
     const key = cardStatKey(card);
+    if (card.leanKind) {
+      // A RANKED lean (design §26.1): its number is its kind's, not its lane's —
+      // the lane is colour and currency only — and the rank moves the number, the
+      // Global Mastery gate and the price together.
+      const rank = clampLeanRank(options.rank ?? 1);
+      resolved.statEffects = { [key]: leanRankValue(card.leanKind, key, rank, card.tier) } as LineageStatEffects;
+      resolved.requiredGlobalMastery = leanRankMastery(card.tier, card.row, rank);
+      resolved.rank = rank;
+      resolved.maxRank = MAX_LEAN_RANK;
+      return resolved;
+    }
     resolved.statEffects = { [key]: statRowValue({ statKey: key, ...scale }) } as LineageStatEffects;
     return resolved;
   }

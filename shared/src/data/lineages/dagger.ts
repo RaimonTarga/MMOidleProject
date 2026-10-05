@@ -82,37 +82,34 @@ export const DAGGER_LINEAGE: LineageDefinition = {
   ],
 
   cards: [
+    // ── T1 lean row (design §26.1): Attack, Speed, Effect, three ranks each ──
+    // The lane is the card's colour and its shard (PROVISIONAL, legibility run:
+    // Effect takes the fixed verb's lane, Attack the next, Speed the last, so all
+    // three Swamp shards buy something at T1). Effect is the Dagger's own poison.
     {
-      id: 'dagger-t1-affliction-stat', lineageId: 'dagger', tier: 1, row: 'stat', lane: 'affliction',
-      name: 'Coated Edge', description: 'Re-dipped between fights, and sometimes during.',
-      fx: 'affliction.trail',
-    },
-    {
-      id: 'dagger-t1-control-stat', lineageId: 'dagger', tier: 1, row: 'stat', lane: 'control',
-      name: 'Tendon Cut', description: 'You are not aiming for the vitals.',
+      id: 'dagger-t1-attack', lineageId: 'dagger', tier: 1, row: 'stat', lane: 'control',
+      leanKind: 'attack', statKey: 'attackPct',
+      name: 'Attack', description: 'The cut goes in deeper.',
       fx: 'control.trail',
     },
     {
-      id: 'dagger-t1-kill-chain-stat', lineageId: 'dagger', tier: 1, row: 'stat', lane: 'kill-chain',
-      name: 'Silent Step', description: 'Gone before the body finishes falling.',
+      id: 'dagger-t1-speed', lineageId: 'dagger', tier: 1, row: 'stat', lane: 'kill-chain',
+      leanKind: 'speed', statKey: 'attackSpeedPct',
+      name: 'Speed', description: 'The cuts come closer together.',
       fx: 'kill-chain.trail',
     },
+    {
+      id: 'dagger-t1-effect', lineageId: 'dagger', tier: 1, row: 'stat', lane: 'affliction',
+      leanKind: 'effect', statKey: 'dotPotencyPct',
+      name: 'Effect', description: 'Re-dipped between fights, and sometimes during.',
+      fx: 'affliction.trail',
+    },
 
-    // ── T1 verb row (§24.2): a moment; the lean above decides what happens ───
+    // ── T1 verb (design §26.1): ONE, the weapon's own — bought, never chosen ──
     {
       id: 'dagger-t1-affliction-payoff', lineageId: 'dagger', tier: 1, row: 'payoff', lane: 'affliction',
       name: 'Into the Wound', description: 'The blade goes back into what is already poisoned.',
       fx: 'affliction.venom-pips',
-    },
-    {
-      id: 'dagger-t1-control-payoff', lineageId: 'dagger', tier: 1, row: 'payoff', lane: 'control',
-      name: 'Easy Prey', description: 'A target that cannot run cannot slip the second cut either.',
-      fx: 'control.frost-drag',
-    },
-    {
-      id: 'dagger-t1-kill-chain-payoff', lineageId: 'dagger', tier: 1, row: 'payoff', lane: 'kill-chain',
-      name: 'Next Throat', description: 'The cut after a kill is quicker than the first.',
-      fx: 'kill-chain.spread-arc',
     },
 
     // ── T2 band (design §4): stat (L2), payoff (L3), amplifier (L5) ──────────

@@ -6,6 +6,12 @@
  *   B. MECHANIC-PROXY NEVER EMITS MECHANIC-FIRED — on every class root.
  *   C. AFFLICTION VERB ON AN APPRENTICE — fires at the cap, not per hit.
  *
+ * Since design §26.1 (legibility run) the T1 band is the ranked lean trio and the
+ * weapon's ONE verb, so a pair of two different lanes exists only at T2: A3 (the
+ * Control lean's root on another verb) and C (the Affliction verb) moved to the
+ * T2 band of the same weapon, wearing its T2 form; A keeps the Hammer's own T1
+ * verb, Easy Prey, under its Speed lean (no slow) and its Effect lean (the slow).
+ *
  * A and C buy their cards through the real economy (`unlockLineageCard`) and swing
  * the real attack (`runPlayerAttack`). B needs every root's own loop running, so it
  * fights a real T1 node with the lane bench's reference character
@@ -60,7 +66,8 @@ import { prepareLaneBot } from '../bench/lineage/laneBot';
 import { setupArena, teardownArena } from '../bench/balance/arena';
 import { reviveInFarmNode } from '../bench/balance/runFarm';
 import { createFarmWorld } from '../bench/balance/worldFactory';
-import { compositionPairs, t1FormOf, weaponLineages } from '../bench/lineage/compositionPairs';
+import { compositionPairs, pairPurchases, t1FormOf, weaponLineages } from '../bench/lineage/compositionPairs';
+import { composeVerb, WEAPON_PACKET_IDS } from '@mmo-idle/shared';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -73,7 +80,8 @@ let clock = 1_000_000;
 const realNow = Date.now;
 Date.now = () => clock;
 
-function makeSlices(id: string): PersistedPlayerSlices {
+/** `level` is every T1 biome's level: 6 (Global Mastery 30) is T1 complete, 12 reaches the T2 band. */
+function makeSlices(id: string, level = 6): PersistedPlayerSlices {
   return {
     isPlayer: { id, name: id },
     hasPosition: { current: { x: 400, y: 400 }, nodeId: NODE, speed: GAME_CONFIG.PLAYER_SPEED },
@@ -89,7 +97,7 @@ function makeSlices(id: string): PersistedPlayerSlices {
         tempo: 999, affliction: 999, engagement: 999, empowered: 999, control: 999, 'kill-chain': 999, technique: 999,
       },
       capstones: {},
-      biomeXP: {}, biomeLevel: { plains: 6, forest: 6, mountain: 6, swamp: 6, cave: 6 },
+      biomeXP: {}, biomeLevel: { plains: level, forest: level, mountain: level, swamp: level, cave: level },
       unlockedRecipes: [], questProgress: {}, playerTier: 2, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [],
       runesOwned: [], runeRecipesCrafted: [], runesEquipped: [],
@@ -112,6 +120,28 @@ function wielder(id: string, weapon: string, lineageId: string, cardIds: string[
   const player = world.attachPlayerEntity(slices, id);
   if (classRoot) assert(unlockSkill(world, player, classRoot), `${id}: ${classRoot} unlocks`);
   assert(equipItem(world, player, weapon), `${id}: wears ${weapon}`);
+  for (const cardId of cardIds) {
+    const bought = unlockLineageCard(world, player, lineageId, cardId);
+    assert(bought.success, `${id}: ${cardId}: ${bought.reason}`);
+  }
+  world.takeNodeEvents(NODE);
+  return player;
+}
+
+/**
+ * A player wearing the lineage's T2 form, with T2 cards bought through the economy
+ * (design §26.1: two lanes compose from T2 on). The base form is worn first, which
+ * opens the tree; equipping the T2 form records it owned and worn.
+ */
+function wielderT2(
+  id: string, t1Form: string, t2Form: string, lineageId: string, cardIds: string[], classRoot?: string,
+): PlayerEntity {
+  const slices = makeSlices(id, 12);
+  slices.holdsInventory.inventory = [t1Form, t2Form];
+  const player = world.attachPlayerEntity(slices, id);
+  if (classRoot) assert(unlockSkill(world, player, classRoot), `${id}: ${classRoot} unlocks`);
+  assert(equipItem(world, player, t1Form), `${id}: wears ${t1Form}`);
+  assert(equipItem(world, player, t2Form), `${id}: wears ${t2Form}`);
   for (const cardId of cardIds) {
     const bought = unlockLineageCard(world, player, lineageId, cardId);
     assert(bought.success, `${id}: ${cardId}: ${bought.reason}`);
@@ -176,31 +206,44 @@ function assertCapped(label: string, firedAt: number[], capMs: number, stepMs: n
 // ══ A. CONTROL LEAN × CONTROL VERB — the hold loop stays under the cap ═══════════
 
 {
-  // Structurally: no T1 composition puts a HOLD on the Control moment. A lean of
-  // another lane brings its own payload (none of which holds); the Control lean on
-  // the Control verb is the pure pair, the knockdown.
+  // Structurally: no composition puts a HOLD on the Control moment. At T2 a lean of
+  // another lane brings its own payload (none of which holds) and the Control lean
+  // on the Control verb is the pure pair, the knockdown; at T1 every row of the
+  // Hammer's Control verb (each lean at each rank, and the verb alone) is the pure
+  // pair, bought through the economy at its rank.
+  for (let tier = 1; tier <= 2; tier++) {
+    for (const lean of [undefined, ...WEAPON_PACKET_IDS]) {
+      const composed = composeVerb('control', lean, tier)!;
+      assert(composed.trigger.kind === 'hit-held' && !['root', 'slow'].includes(composed.payoff.kind),
+        `T${tier} ${lean ?? 'no lean'} × control: a ${composed.payoff.kind} payload on the Control moment would hold its own target`);
+    }
+  }
   for (const lineage of weaponLineages()) {
     if (!lineage.lanes.includes('control')) continue;
     for (const pair of compositionPairs(lineage)) {
       if (pair.verb !== 'control') continue;
-      const player = wielder(`ctl-struct-${lineage.id}-${pair.label}`, t1FormOf(lineage), lineage.id,
-        [pair.leanCardId!, pair.verbCardId!]);
+      const player = wielder(`ctl-struct-${lineage.id}-${pair.label}`, t1FormOf(lineage), lineage.id, pairPurchases(pair));
       const verb = getLineageRuntime(player.tracksCombat)?.cards.find((c) => c.card.id === pair.verbCardId);
       assert(verb?.trigger?.kind === 'hit-held' && verb.trigger.capMs === 5_000, `${lineage.id} ${pair.label}: the Control moment, capped at 5 s`);
       assert(verb?.payoff && !['root', 'slow'].includes(verb.payoff.kind),
         `${lineage.id} ${pair.label}: a ${verb?.payoff?.kind} payload on the Control moment would hold its own target`);
       if (pair.pure) assert(verb?.payoff?.kind === 'stun', `${lineage.id}: the pure Control pair is the knockdown`);
+      if (pair.leanRank !== null) {
+        const tree = player.holdsInventory.lineages?.[lineage.id];
+        assert(tree?.ranks?.[pair.leanCardId!] === pair.leanRank, `${lineage.id} ${pair.label}: bought at rank ${pair.leanRank}`);
+      }
     }
   }
 
-  const LEAN = 'hammer-t1-control-stat';
+  // The Hammer's Effect lean IS its slow (design §26.1); its verb is Easy Prey.
+  const LEAN = 'hammer-t1-effect';
   const VERB = 'hammer-t1-control-payoff';
   const STEP = 500;
 
-  // A1. Another lean, no slow source: the Control verb never fires ("needs a
-  // slow"), and nothing holds the target.
+  // A1. A lean that slows nothing (Speed), no slow source: the Control verb never
+  // fires ("needs a slow"), and nothing holds the target.
   {
-    const player = wielder('ctl-free', 'heavy-hammer', 'hammer', ['hammer-t1-empowered-stat', VERB]);
+    const player = wielder('ctl-free', 'heavy-hammer', 'hammer', ['hammer-t1-speed', VERB]);
     const target = dummy();
     const { firedAt } = fight(player, target, VERB, 30_000, STEP, () => {
       assert(!monsterIsHeld(target), 'nothing on a free target holds it');
@@ -234,21 +277,24 @@ function assertCapped(label: string, firedAt: number[], capMs: number, stepMs: n
       `${swings} held hits over ${DURATION / 1000} s fire ${Math.floor(DURATION / 5_000) + 1} times at the cap, got ${firedAt.length}`);
   }
 
-  // A3. The Control LEAN on another verb: its root DOES hold the target — and
-  // with no Control moment in play, the hold feeds nothing. Engagement's opener
-  // latches per body, so one body is rooted once however long the fight.
+  // A3. The Control LEAN on another verb (T2, the first band where two lanes
+  // compose): its root DOES hold the target — and with no Control moment in play,
+  // the hold feeds nothing. Engagement's opener latches per body, so one body is
+  // rooted once however long the fight.
   {
-    const player = wielder('ctl-root-opener', 'heavy-hammer', 'hammer', [LEAN, 'hammer-t1-engagement-payoff']);
-    const verb = getLineageRuntime(player.tracksCombat)?.cards.find((c) => c.card.id === 'hammer-t1-engagement-payoff');
+    const OPENER = 'hammer-t2-engagement-payoff';
+    const player = wielderT2('ctl-root-opener', 'heavy-hammer', 'quake-hammer', 'hammer',
+      ['hammer-t2-control-stat', OPENER]);
+    const verb = getLineageRuntime(player.tracksCombat)?.cards.find((c) => c.card.id === OPENER);
     assert(verb?.trigger?.kind === 'first-hit' && verb.payoff?.kind === 'root', 'Control lean × Engagement verb: the opener roots');
     const target = dummy();
-    const first = swing(player, target, 'hammer-t1-engagement-payoff');
+    const first = swing(player, target, OPENER);
     assert(first.length === 1 && first[0].fx === 'control.shackle', 'the first hit on the body roots it (the shackle)');
     assert(monsterIsHeld(target), 'and the root makes the target held');
-    const { firedAt } = fight(player, target, 'hammer-t1-engagement-payoff', 30_000, STEP);
+    const { firedAt } = fight(player, target, OPENER, 30_000, STEP);
     assert(firedAt.length === 0, `one body is one opening: the root never re-fires on it, got ${firedAt.length}`);
     const second = dummy();
-    assert(swing(player, second, 'hammer-t1-engagement-payoff').length === 1, 'a new body is a new opening');
+    assert(swing(player, second, OPENER).length === 1, 'a new body is a new opening');
   }
 }
 
@@ -359,21 +405,24 @@ function assertCapped(label: string, firedAt: number[], capMs: number, stepMs: n
 // The DoT root afflicts with every hit, so "a hit on a target you have already
 // afflicted" is true from the second hit on. Synergy buys reliability, never rate
 // (§24.2 rule 2): it fires at the 5 s cap, reliably, and never per hit — with the
-// verb's own pure payload (the redose) and with a lean's (Quick Wrist's echo).
+// verb's own pure payload (the redose) and with a lean's (the Tempo lean's echo).
+// On the Rapier's T2 Affliction verb, Deep Bloodletting: since design §26.1 the T1
+// band has one verb per weapon, and an Affliction verb under another lane's lean
+// is a T2 pair.
 
 {
-  const VERB = 'rapier-t1-affliction-payoff'; // Venom Point
+  const VERB = 'rapier-t2-affliction-payoff'; // Deep Bloodletting
   const STEP = 600;
   const DURATION = 60_000;
   const PER_CAP = Math.ceil(5_000 / STEP) * STEP; // the first swing the cap allows
   for (const [label, lean, payload] of [
     ['pure (redose)', null, 'redose'],
-    ['Quick Wrist (echo)', 'rapier-t1-tempo-stat', 'echo-hit'],
+    ["Fencer's Cadence (echo)", 'rapier-t2-tempo-stat', 'echo-hit'],
   ] as const) {
-    const player = wielder(`afl-${payload}`, 'flash-rapier', 'rapier', [...(lean ? [lean] : []), VERB], 'dot-root');
+    const player = wielderT2(`afl-${payload}`, 'flash-rapier', 'gale-needle', 'rapier', [...(lean ? [lean] : []), VERB], 'dot-root');
     assert(player.appliesDots !== undefined, 'a real Apprentice: the DoT root is attached');
     const verb = getLineageRuntime(player.tracksCombat)?.cards.find((c) => c.card.id === VERB);
-    assert(verb?.trigger?.kind === 'hit-afflicted' && verb.trigger.capMs === 5_000, 'Venom Point: the Affliction moment, capped at 5 s');
+    assert(verb?.trigger?.kind === 'hit-afflicted' && verb.trigger.capMs === 5_000, 'Deep Bloodletting: the Affliction moment, capped at 5 s');
     assert(verb?.payoff?.kind === payload, `${label}: the payload is ${payload}, got ${verb?.payoff?.kind}`);
     const target = dummy();
     const { firedAt, swings } = fight(player, target, VERB, DURATION, STEP);

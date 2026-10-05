@@ -2,7 +2,8 @@
  * The lean × verb composition matrix on the LANE BENCH (course-correction W3-A,
  * design §24.1–§24.2).
  *
- * Every weapon lineage's nine T1 pairs (`lineage/compositionPairs.ts`) plus its
+ * Every weapon lineage's T1 rows (`lineage/compositionPairs.ts`: since design §26.1
+ * the lean trio × three ranks × the weapon's one verb, and the verb alone) plus its
  * no-band control, worn by each of the six classes, farming the weapon's HOME
  * biome's family-dominated nodes (the `LANE_OWN_NODES=1` set within the home
  * biome — the nodes whose shards buy the weapon's band). One row per
@@ -15,7 +16,8 @@
  * is the only variable; the control wears the form with no cards, which is what
  * a pair's uplift is read against (`compositionReport.ts`). The band is bought
  * through the real economy handler by `prepareLaneBot` — a lean in one lane and a
- * verb in another — and a refusal is recorded, never faked.
+ * verb in another; a RANKED lean is bought once per rank (`pairPurchases`, each
+ * purchase its next rank) — and a refusal is recorded, never faked.
  *
  * Every class may wear every T1 weapon: `equipItem` has no class or range gate,
  * and a weapon carries no attack range of its own (ranged classes stay ranged by
@@ -63,6 +65,7 @@ import {
   CLASS_BY_ROOT,
   bandFormOf,
   compositionPairs,
+  pairPurchases,
   t1FormOf,
   weaponLineages,
   type CompositionPair,
@@ -113,7 +116,9 @@ function references(tier: BandTier): Array<{ reference: CompositionReference; pr
       const frame = canonicalFrame(classRoot, tier);
       for (const pair of compositionPairs(lineage, tier)) {
         const profileId = `${prefix}-${lineage.id}-${className}-${pair.label}`;
-        const cardIds = [pair.leanCardId, pair.verbCardId].filter((id): id is string => id !== null);
+        // Purchases in order (the lean once per rank); slotted once each.
+        const cardIds = pairPurchases(pair);
+        const activeCardIds = [pair.leanCardId, pair.verbCardId].filter((id): id is string => id !== null);
         out.push({
           profile: compositionProfile(classRoot, form, profileId, tier),
           reference: {
@@ -129,7 +134,7 @@ function references(tier: BandTier): Array<{ reference: CompositionReference; pr
             wornForm: form,
             homeBiome: lineage.homeBiome,
             cardIds,
-            activeCardIds: cardIds,
+            activeCardIds,
             shardsUnobtainableAtT1: false,
             pair,
             className,
@@ -151,6 +156,8 @@ export interface CompositionLaneRow {
   pair: string;
   lean: PacketId | null;
   verb: PacketId | null;
+  /** A ranked lean's rank (design §26.1); absent on a T2 or lean-less row. */
+  leanRank?: number;
   nodeId: string;
   seed: number;
   kills: number;
@@ -233,6 +240,7 @@ async function main(): Promise<void> {
         pair: reference.pair.label,
         lean: reference.pair.lean,
         verb: reference.pair.verb,
+        ...(reference.pair.leanRank !== null ? { leanRank: reference.pair.leanRank } : {}),
         nodeId: node.nodeId,
         seed,
         kills: row.kills,

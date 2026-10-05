@@ -177,3 +177,4 @@ export * from './magnitudes';
 export * from './resolve';
 export * from './capstones';
 export * from './sentences';
+export * from './retired';
