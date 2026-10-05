@@ -214,7 +214,7 @@ export function standardMilestones(bossKit: readonly string[]) {
     { id: "gm-30-all-maxed", when: { type: "globalMasteryAtLeast" as const, value: 30 } },
     ...bossKit.map((definitionId) => ({
       id: `${definitionId}-plus-5`,
-      when: { type: "itemAtLeastPlus" as const, definitionId, plus: 5 },
+      when: { type: "hasItem" as const, definitionId },
     })),
   ];
 }

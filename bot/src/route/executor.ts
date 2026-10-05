@@ -206,6 +206,7 @@ export class RouteExecutor {
 
   /** Run the whole route. A capped boss step is recorded and yields to the next step. */
   async run(): Promise<void> {
+    if (this.deps.route.retired) throw new BuildError("ROUTE_LOGIC_FAILURE", `retired: ${this.deps.route.retired}`);
     await this.runSteps(this.deps.route.steps);
   }
 

@@ -40,6 +40,7 @@ function rowsToCache(rows: HitboxRow[]): Map<string, HitboxDef> {
 async function bakeHitboxRows(
   atlasPngPath: string,
   atlasJsonPath: string,
+  writeShadows = true,
 ): Promise<HitboxArtifact> {
   const { createHash } = await import('crypto');
   const {
@@ -55,7 +56,7 @@ async function bakeHitboxRows(
   const rows = main.rows;
   const shadowDefs = main.shadowDefs;
 
-  writeShadowDefsFile(atlasJsonPath, atlasHash, shadowDefs);
+  if (writeShadows) writeShadowDefsFile(atlasJsonPath, atlasHash, shadowDefs);
 
   return { atlasHash, bakedAt: Date.now(), rows };
 }
@@ -72,9 +73,9 @@ export async function initHitboxCache(
   return cache;
 }
 
-export async function writeHitboxArtifact(outPath = artifactPath()): Promise<string> {
+export async function writeHitboxArtifact(outPath = artifactPath(), writeShadows = true): Promise<string> {
   const { atlasPng, atlasJson } = getAtlasPaths();
-  const artifact = await bakeHitboxRows(atlasPng, atlasJson);
+  const artifact = await bakeHitboxRows(atlasPng, atlasJson, writeShadows);
   mkdirSync(path.dirname(outPath), { recursive: true });
   writeFileSync(outPath, `${JSON.stringify(artifact)}\n`, 'utf8');
   return outPath;

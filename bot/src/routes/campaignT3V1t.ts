@@ -14,7 +14,7 @@ export const CAMPAIGN_T3_V1T: Route = {
   stopOnFirstDeath: true, suppressTransitCombat: true,
   progressionEntry: { boundaryId: 'v1s-pursuit-prepared', nodeId: hub.nodeId, tier: 3,
     revisionPolicy: 'explicit-current-revision', prerequisites: [recovered, { type: 'not', of: victory },
-      { type: 'equipped', definitionId: 'desert-boots-t2' }, { type: 'itemAtLeastPlus', definitionId: 'desert-boots-t2', plus: 5 },
+      { type: 'equipped', definitionId: 'desert-boots-t2' }, { type: 'hasItem', definitionId: 'desert-boots-t2' },
       { type: 'abilityKnown', abilityId: 'hamstring' }] },
   description: 'Prepared Wisp pursuit kit: ordinary Volcano guardian clear and one boss attempt, then recovered return if victorious. No farming prefix or purchases.',
   steps: [

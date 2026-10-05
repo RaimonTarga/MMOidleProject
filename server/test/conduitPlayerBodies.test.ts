@@ -30,7 +30,7 @@ const SPECS: Array<{ label: string; specId: string; frame: string; expected: str
   { label: 'Idolwright', specId: 'summoner-heavy-t3-c',    frame: 'heavy',    expected: 'sprites/classes/heavy_summoner_t3c.png' },
 ];
 
-const atlasPath = resolve(import.meta.dirname, '../../client/public/assets/sprites.json');
+const atlasPath = resolve(__dirname, '../../client/public/assets/sprites.json');
 interface AtlasJson {
   textures: Array<{ frames: Array<{ filename: string }> }>;
 }

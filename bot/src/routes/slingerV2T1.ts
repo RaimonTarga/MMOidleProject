@@ -91,10 +91,6 @@ export const SLINGER_V2_T1: Route = {
     ...getPiece(biome("plains"), "plains-boots-t1"),
 
     maxOut("plains"),
-    { type: "upgrade", definitionId: "iron-broadsword", toPlus: 1, farmAt: biome("plains") },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 1, farmAt: biome("plains") },
-    { type: "upgrade", definitionId: "plains-charm-t1", toPlus: 1, farmAt: biome("plains") },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 1, farmAt: biome("plains") },
     { type: "milestone", id: "plains-maxed" },
 
     // ── Forest: the interim weapon, Shaded Bindings, first Guard -> +2 ───────
@@ -104,10 +100,6 @@ export const SLINGER_V2_T1: Route = {
     learnSecondWind(),
 
     maxOut("forest"),
-    { type: "upgrade", definitionId: "flash-rapier", toPlus: 2, farmAt: biome("forest") },
-    { type: "upgrade", definitionId: "forest-vest-t1", toPlus: 2, farmAt: biome("forest") },
-    { type: "upgrade", definitionId: "plains-charm-t1", toPlus: 2 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 2 },
     { type: "milestone", id: "forest-maxed" },
 
     // ── Swamp: Cleanse, Murk Eye, commit to the Poison Dagger -> +3 ──────────
@@ -117,10 +109,6 @@ export const SLINGER_V2_T1: Route = {
     ...getPiece(biome("swamp"), "ashbrand-blade"),
 
     maxOut("swamp"),
-    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 3, farmAt: biome("swamp") },
-    { type: "upgrade", definitionId: "ashbrand-blade", toPlus: 3, farmAt: biome("swamp") },
-    { type: "upgrade", definitionId: "forest-vest-t1", toPlus: 3 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 3 },
     { type: "milestone", id: "swamp-maxed" },
 
     // ── Mountain: Brace (farming only), orbit rune -> +4 (4th leg) ───────────
@@ -135,10 +123,6 @@ export const SLINGER_V2_T1: Route = {
     { type: "configureRunes", rules: RUNES_ORBIT, label: "kite with orbit" },
 
     maxOut("mountain"),
-    { type: "upgrade", definitionId: "ashbrand-blade", toPlus: 4, farmAt: biome("swamp"), opportunistic: true },
-    { type: "upgrade", definitionId: "forest-vest-t1", toPlus: 4 },
-    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 4 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 4 },
     { type: "milestone", id: "mountain-maxed" },
 
     // ── Cave: Expose Weakness -> GM 30 ────────────────────────────────────────
@@ -148,10 +132,6 @@ export const SLINGER_V2_T1: Route = {
     maxOut("cave"),
     { type: "milestone", id: "all-biomes-maxed" },
 
-    { type: "upgrade", definitionId: "ashbrand-blade", toPlus: 5, farmAt: biome("swamp") },
-    { type: "upgrade", definitionId: "forest-vest-t1", toPlus: 5 },
-    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 5 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 5 },
     { type: "milestone", id: "gear-plus-5" },
 
     // ── The boss gauntlet: Shaded Bindings everywhere, Second Wind on the two

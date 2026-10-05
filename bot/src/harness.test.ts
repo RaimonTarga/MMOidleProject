@@ -820,7 +820,16 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
     // which only that boss drops. Both are statically checkable, and both are
     // the kind of mistake that would otherwise burn a whole live run.
     const bestFormTier = new Map<string, number>();
-    const bossesFought = new Set<string>();
+    // A tier-entry character has fought every boss its profile records as
+    // cleared (`<group>:<tier>`), so a T2 route may pay a gate in a T1 boss's
+    // capstone without re-fighting it. Live, the executor still demands the
+    // capstone material itself; the entry profile's wallet carries essences only,
+    // so a live unlock from a snapshot is a prerequisite failure, not a route bug.
+    const bossesFought = new Set<string>(
+      (entry?.bossesCleared ?? [])
+        .map((key) => key.split(":")[0])
+        .filter((group): group is string => !!group),
+    );
     const noteForm = (lineageId: string, tier: number): void => {
       bestFormTier.set(lineageId, Math.max(bestFormTier.get(lineageId) ?? 0, tier));
     };

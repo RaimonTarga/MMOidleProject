@@ -29,8 +29,8 @@ for (const [index, candidate] of CAMPAIGN_CAVE_RECOVERY_ROUTES.entries()) {
   assert.deepEqual(final.build.abilities.guards, index === 0 ? ["second-wind", "cleanse"] : ["second-wind", "brace", "cleanse"]);
   const craftIndex = candidate.steps.findIndex(s => s.type === "craft" && s.recipeIds.includes("cave-charm-t1"));
   const upgradeIndex = candidate.steps.findIndex(s => s.type === "upgrade" && s.definitionId === "cave-charm-t1");
-  assert(craftIndex >= 0 && upgradeIndex > craftIndex, "new recovery is earned before upgrading");
-  assert(candidate.steps.some(s => s.type === "assert" && s.condition.type === "itemAtLeastPlus" && s.condition.definitionId === "cave-charm-t1" && s.condition.plus === 5));
+  assert(craftIndex >= 0 && upgradeIndex === -1, "new recovery is crafted at full power");
+  assert(candidate.steps.some(s => s.type === "assert" && s.condition.type === "hasItem" && s.condition.definitionId === "cave-charm-t1"));
   if (index === 1) assert(candidate.steps.some(s => s.type === "learnAbility" && s.abilityId === "brace" && s.attune === false));
   assert.deepEqual(candidate.steps.at(-1), { type: "attemptBoss", biomeGroup: "cave", tier: 1, maxAttempts: 1, label: `v1h:${index === 0 ? "dual" : "triple"}-cave-charm:attempt` });
 }
@@ -42,13 +42,13 @@ for (const night of CAMPAIGN_NIGHT_BOSSES) {
   const config = night.steps.find(s => s.type === "configureBuild");
   assert(config?.type === "configureBuild");
   assert(buildRP(config.build).total <= runeBudgetForGlobalMastery(30));
-  assert(night.steps.some(s => s.type === "assert" && s.condition.type === "itemAtLeastPlus" && s.condition.definitionId === "mountain-vest-t1" && s.condition.plus === 5));
+  assert(night.steps.some(s => s.type === "assert" && s.condition.type === "hasItem" && s.condition.definitionId === "mountain-vest-t1"));
 }
 assert.equal(entry.steps.some(s => s.type === "farm"), false, "encounter entry never repeats the acquisition route");
 assert.equal(entry.steps.filter(s => s.type === "attemptBoss").length, 1);
 assert.deepEqual(entry.steps.at(-1), { type: "attemptBoss", biomeGroup: "plains", tier: 1, maxAttempts: 1, label: "v1e:plains-attempt" });
 assert(entry.steps.some(s => s.type === "assert" && s.condition.type === "equipped" && s.condition.definitionId === "plains-charm-t1"));
-assert(entry.steps.some(s => s.type === "assert" && s.condition.type === "itemAtLeastPlus" && s.condition.definitionId === "plains-charm-t1" && s.condition.plus === 5));
+assert(entry.steps.some(s => s.type === "assert" && s.condition.type === "hasItem" && s.condition.definitionId === "plains-charm-t1"));
 
 // Keep an inherited full-gauntlet route from expanding this experiment or
 // importing its post-second-seal frame into a pre-seal character.
@@ -76,8 +76,4 @@ assert.deepEqual(preparation.completion, { type: "allOf", of: repair.steps.filte
 assert.deepEqual(repair.steps.filter(s => s.type === "assert"), route.steps.filter(s => s.type === "assert"));
 assert.deepEqual(repair.steps.filter(s => s.type === "configureBuild").map(s => s.build), [build]);
 assert.equal(repair.steps.some(s => s.type === "learnAbility" && s.abilityId === "expose-weakness" && s.attune !== false), false);
-// chaotic-axe (weapon) is excluded: weapons are off the +N ladder entirely
-// (Phase 2b, Override A), so routes no longer author an upgrade step for it.
-for (const item of ["plains-vest-t1", "swamp-charm-t1", "plains-boots-t1"]) {
-  assert(repair.steps.some(s => s.type === "upgrade" && s.definitionId === item && s.toPlus === 5));
-}
+assert(repair.steps.every(s => s.type !== "upgrade"), "every slot is full power without upgrades");

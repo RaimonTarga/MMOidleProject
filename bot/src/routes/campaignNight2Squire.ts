@@ -12,15 +12,14 @@ const clear = { type: "bossCleared" as const, biomeGroup: "plains", tier: 2 };
 const prep: RouteStep[] = [
   { type: "assert", condition: allOf({ type: "playerTierAtLeast", tier: 2 }, { type: "not", of: { type: "playerTierAtLeast", tier: 3 } }, { type: "frameSelected", frameId: "cooldown-heavy" }, { type: "globalMasteryAtLeast", value: 72 }, { type: "not", of: clear }) },
   ...T2_PROGRESSION_ORDER.map(biomeGroup => ({ type: "assert" as const, condition: { type: "biomeLevelAtLeast" as const, biomeGroup, level: t2MaxLevel(biomeGroup) } })),
-  ...kit.map(definitionId => ({ type: "assert" as const, condition: { type: "itemAtLeastPlus" as const, definitionId, plus: 4 } })),
+  ...kit.map(definitionId => ({ type: "assert" as const, condition: { type: "hasItem" as const, definitionId } })),
   { type: "assert", condition: { type: "equipped", definitionId: "core-tempered" } },
   { type: "craftStance", recipeId: "stance-recipe-defensive", farmAt: { kind: "biome", biomeGroup: "plains", tier: 2 } },
   { type: "configureBuild", build: { ...build, abilities: { techniques: ["sweep"], guards: ["second-wind"] } }, label: "night2:squire:preparation" },
   { type: "equip", definitionIds: ["quake-hammer", "mountain-vest-t2", "plains-charm-t2", "plains-boots-t2"] },
   { type: "learnAbility", recipeId: "ability-recipe-brace", abilityId: "brace", slot: "guard", attune: false, farmAt: { kind: "biome", biomeGroup: "mountain", tier: 2 } },
   { type: "configureBuild", build, label: "night2:squire:dual-guard" },
-  ...kit.map(definitionId => ({ type: "upgrade" as const, definitionId, toPlus: 5, farmForMissingResources: true, farmAt: { kind: "biome" as const, biomeGroup: "plains", tier: 2 } })),
-  ...kit.map(definitionId => ({ type: "assert" as const, condition: { type: "itemAtLeastPlus" as const, definitionId, plus: 5 } })),
+  ...kit.map(definitionId => ({ type: "assert" as const, condition: { type: "hasItem" as const, definitionId } })),
   { type: "travel", to: { kind: "node", nodeId: "node-t2-sanctuary" } },
 ];
 

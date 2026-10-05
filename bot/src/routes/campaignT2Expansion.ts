@@ -28,11 +28,9 @@ export const CAMPAIGN_T2_EXPANSION_ROUTES: Route[] = [
   if (group === "swamp") preparation.push(
     { type: "learnAbility", recipeId: "ability-recipe-cleanse", abilityId: "cleanse", slot: "guard", attune: false,
       farmAt: { kind: "biome", biomeGroup: "swamp", tier: 2 } },
-    { type: "evolveItem", recipeId: "swamp-charm-t2", mode: "reconstruct",
+    { type: "craft", recipeIds: ["swamp-charm-t2"],
       farmAt: { kind: "biome", biomeGroup: "swamp", tier: 2, modifier: "fortified" } },
-    { type: "upgrade", definitionId: "swamp-charm-t2", toPlus: 5, farmForMissingResources: true,
-      farmAt: { kind: "biome", biomeGroup: "swamp", tier: 2, modifier: "fortified" } },
-    { type: "assert", condition: { type: "itemAtLeastPlus", definitionId: "swamp-charm-t2", plus: 5 } },
+    { type: "assert", condition: { type: "hasItem", definitionId: "swamp-charm-t2" } },
   );
   return {
     ...source, id: `spirit-campaign-${group}-${charm}-v1j`, version: "1.0.0",
@@ -40,7 +38,7 @@ export const CAMPAIGN_T2_EXPANSION_ROUTES: Route[] = [
     steps: [...preparation,
       { type: "equip", definitionIds: [charm] },
       { type: "assert", condition: { type: "equipped", definitionId: charm } },
-      { type: "assert", condition: { type: "itemAtLeastPlus", definitionId: charm, plus: 5 } },
+      { type: "assert", condition: { type: "hasItem", definitionId: charm } },
       { type: "configureBuild", build, label: `${tag}:build` },
       { type: "milestone", id: `${tag}:ready` },
       { type: "attemptBoss", biomeGroup: group, tier: 2, maxAttempts: 1, label: `${tag}:attempt` }],

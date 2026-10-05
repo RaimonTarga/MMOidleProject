@@ -15,7 +15,6 @@ export function caveRecoveryRoute(tripleGuard: boolean): Route {
       ...structuredClone(entryGates), ...checkItem("mountain-vest-t1", false),
       { type: "configureBuild", build: structuredClone(CAMPAIGN_PLAINS_T1_BUILD), label: `v1h:${tag}:preparation` },
       { type: "craft", recipeIds: ["cave-charm-t1"], farmAt: { kind: "biome", biomeGroup: "cave", tier: 1 } },
-      { type: "upgrade", definitionId: "cave-charm-t1", toPlus: 5, farmAt: { kind: "biome", biomeGroup: "cave", tier: 1 } },
       ...(tripleGuard ? [{ type: "learnAbility" as const, recipeId: "ability-recipe-brace", abilityId: "brace", slot: "guard" as const, attune: false,
         farmAt: { kind: "biome" as const, biomeGroup: "mountain", tier: 1 } }] : []),
       { type: "equip", definitionIds: ["mountain-vest-t1", "cave-charm-t1"] },
@@ -31,7 +30,7 @@ export function caveRecoveryRoute(tripleGuard: boolean): Route {
 const importedKit = ["chaotic-axe", "plains-vest-t1", "swamp-charm-t1", "plains-boots-t1"];
 const checkItem = (definitionId: string, equipped = true): RouteStep[] => [
   ...(equipped ? [{ type: "assert" as const, condition: { type: "equipped" as const, definitionId } }] : []),
-  { type: "assert", condition: { type: "itemAtLeastPlus", definitionId, plus: 5 } },
+  { type: "assert", condition: { type: "hasItem", definitionId } },
 ];
 const entryGates: RouteStep[] = [
   { type: "assert", condition: { type: "not", of: { type: "playerTierAtLeast", tier: 2 } } },
@@ -48,12 +47,11 @@ export const CAMPAIGN_NIGHT_KIT: Route = {
   description: "Earn Mountain armor +5 from the V1d state, retaining its equipped kit; no boss.",
   steps: [
     ...structuredClone(entryGates),
-    { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 5 },
     { type: "configureBuild", build: structuredClone(CAMPAIGN_PLAINS_T1_BUILD), label: "night:kit-build" },
     { type: "milestone", id: "night:kit-ready" },
     ...checkItem("mountain-vest-t1", false),
   ],
-  completion: { type: "itemAtLeastPlus", definitionId: "mountain-vest-t1", plus: 5 }, milestones: [],
+  completion: { type: "hasItem", definitionId: "mountain-vest-t1" }, milestones: [],
 };
 
 export const CAMPAIGN_NIGHT_BOSSES: Route[] = ["plains", "forest", "swamp", "mountain", "cave"].map(group => {
@@ -67,7 +65,6 @@ export const CAMPAIGN_NIGHT_BOSSES: Route[] = ["plains", "forest", "swamp", "mou
     description: `Independent earned-state ${group} T1 probe; exact +5 kit, one dungeon cycle.`,
     steps: [
       ...structuredClone(entryGates), ...checkItem("mountain-vest-t1", false),
-      ...(group === "plains" ? [{ type: "upgrade" as const, definitionId: charm, toPlus: 5 }] : []),
       { type: "equip", definitionIds: [armor, charm] },
       ...checkItem(armor), ...checkItem(charm),
       { type: "configureBuild", build, label: `night:${group}:build` },

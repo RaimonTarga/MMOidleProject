@@ -1,5 +1,6 @@
 import {
   SKILL_TREE,
+  lineageForRecipeId,
   maxGlobalMasteryAtTier,
 } from "@mmo-idle/shared";
 import type { TierCheckpointKind, TierEntryProfile } from "@mmo-idle/shared";
@@ -93,30 +94,70 @@ function branchStep(classRoot: string, branch: T2Branch): RouteStep {
   };
 }
 
+interface BiomeLegSteps {
+  /** The leg's acquisitions, at the top of the leg. */
+  now: RouteStep[];
+  /**
+   * Acquisitions whose gate is paid in THIS biome's own Tier-2 boss capstone
+   * (a form of a biome that debuts at T2: Desert, Jungle). They can only come
+   * after the leg's `attemptBoss`; a bossless route records them as retired.
+   */
+  afterBoss: RouteStep[];
+}
+
+/** Whether a weapon form's gate capstone comes from a boss the profile has not cleared. */
+function gateNeedsThisLegsBoss(acquisition: AcquisitionPlan, group: T2BiomeGroup, profile: TierEntryProfile): boolean {
+  if (acquisition.path !== "form") return false;
+  const form = lineageForRecipeId(acquisition.recipeId)?.forms.find((f) => f.recipeId === acquisition.recipeId);
+  if (!form || form.biome !== group) return false;
+  return !(profile.bossesCleared ?? []).some((key) => key.split(":")[0] === form.biome);
+}
+
 function biomeLegSteps(
   plan: T2ClassPlan,
   group: T2BiomeGroup,
   profile: TierEntryProfile,
-  adopted: string[],
-): RouteStep[] {
+  bossless: boolean,
+): BiomeLegSteps {
   const biomePlan = plan.biomes[group];
-  if (!biomePlan) return [];
-  const steps: RouteStep[] = [];
+  if (!biomePlan) return { now: [], afterBoss: [] };
+  const now: RouteStep[] = [];
+  const afterBoss: RouteStep[] = [];
 
   for (const recipeId of biomePlan.adopt ?? []) {
     const acquisition = planAcquisition(profile, recipeId);
+    const deferred = gateNeedsThisLegsBoss(acquisition, group, profile);
+    if (deferred && bossless) {
+      now.push({
+        type: "milestone",
+        id: `retired:${recipeId}`,
+        label: `the ${recipeId} gate is paid in this biome's T2 boss capstone, which a bossless route never earns`,
+      });
+      continue;
+    }
+    const steps = deferred ? afterBoss : now;
     steps.push(...obtainSteps(group, acquisition));
     // Only wear it if the game could actually hand it over. An unreachable item
     // must not produce an `equip` step -- that would stall the run on a piece the
     // template can never own, and hide the real finding behind a timeout.
     if (acquisition.path !== "unreachable") {
-      steps.push({ type: "equip", definitionIds: [recipeId] });
-      adopted.push(recipeId);
+      if (acquisition.path === "form") {
+        steps.push({ type: "wearForm", lineageId: acquisition.lineageId!, recipeId });
+      } else {
+        steps.push({ type: "equip", definitionIds: [recipeId] });
+      }
     }
   }
   for (const recipeId of biomePlan.craftOnly ?? []) {
-    steps.push(...obtainSteps(group, planAcquisition(profile, recipeId)));
+    const acquisition = planAcquisition(profile, recipeId);
+    const deferred = gateNeedsThisLegsBoss(acquisition, group, profile);
+    if (deferred && bossless) {
+      now.push({ type: "milestone", id: `retired:${recipeId}`, label: `the ${recipeId} gate needs this biome's T2 boss` });
+      continue;
+    }
+    (deferred ? afterBoss : now).push(...obtainSteps(group, acquisition));
   }
+  const steps = now;
 
   // A skip is authored as a telemetry milestone rather than as nothing at all.
   // "0/18 adoption" and "nobody could afford it" are different findings, and
@@ -125,7 +166,7 @@ function biomeLegSteps(
     steps.push({ type: "milestone", id: `skip:${recipeId}`, label: `deliberately skip ${recipeId}` });
   }
 
-  return steps;
+  return { now, afterBoss };
 }
 
 function learnAbilitySteps(group: T2BiomeGroup, plan: T2ClassPlan): RouteStep[] {
@@ -141,27 +182,6 @@ function learnAbilitySteps(group: T2BiomeGroup, plan: T2ClassPlan): RouteStep[] 
       label: `learn ${learn.abilityId} (replaces the single ${learn.slot} slot)`,
     },
   ];
-}
-
-/**
- * Upgrade what the Global Mastery ceiling currently allows, and move on.
- *
- * Always `opportunistic`. The Tier-2 ceiling is +0 until Global Mastery 42 and
- * only reaches +5 at GM 72 (every one of the seven biomes at its cap), so a
- * fixed `toPlus` target would park the bot in a biome waiting for headroom that
- * only arrives by farming a DIFFERENT one. A real player upgrades what it can
- * afford and keeps going.
- */
-function opportunisticUpgrades(worn: readonly string[], group: T2BiomeGroup): RouteStep[] {
-  return worn.map((definitionId) => ({
-    type: "upgrade" as const,
-    definitionId,
-    toPlus: 5,
-    farmAt: t2(group),
-    opportunistic: true,
-    farmForMissingResources: true,
-    label: `upgrade ${definitionId} as far as Global Mastery allows`,
-  }));
 }
 
 /**
@@ -360,10 +380,6 @@ export interface T2RouteConfig {
  * carryover biomes at 12, plus Jungle and Desert at 6 -- they FIRST APPEAR at
  * Tier 2, so their own caps are half the others'). Entry is GM 30.
  *
- * It is also the threshold that governs the Tier-2 item upgrade ceiling: +0
- * until GM 42, +5 only at GM 72. So "mastered the tier" and "can finally reach
- * +5 on tier gear" are the same moment, which is what makes it the right place
- * to stop a progression run.
  */
 export const T2_BOSSLESS_MASTERY_TARGET = maxGlobalMasteryAtTier(2);
 
@@ -391,10 +407,7 @@ function buildT2Route(config: T2RouteConfig): Route {
   const progressionOrder = T2_PROGRESSION_ORDER.slice(startIndex, stopIndex + 1);
   const terminalGroup = progressionOrder[progressionOrder.length - 1];
   if (!terminalGroup) throw new Error("T2 route has no biome legs");
-  // Everything the class is currently wearing, so upgrade steps target the live
-  // kit rather than a guess. Seeded empty: the Tier-1 kit arrives with the
-  // template and is upgraded no further (its ceiling is already +5 at GM 30).
-  const worn: string[] = [];
+
 
   steps.push(
     {
@@ -446,9 +459,8 @@ function buildT2Route(config: T2RouteConfig): Route {
     }
     steps.push(...buildCoreAcquisitionSteps(group, config.skipCoreIds));
     steps.push(...farmCoreEquipSteps(group, plan));
-    const adopted: string[] = [];
-    steps.push(...biomeLegSteps(plan, group, profile, adopted));
-    for (const id of adopted) if (!worn.includes(id)) worn.push(id);
+    const leg = biomeLegSteps(plan, group, profile, bossless);
+    steps.push(...leg.now);
     if (group === progressionOrder[0]) {
       for (const assertion of config.treatmentAssertions ?? []) {
         steps.push({
@@ -486,11 +498,12 @@ function buildT2Route(config: T2RouteConfig): Route {
       label: `farm ${group} T2 to level ${maxLevel}`,
     });
     steps.push({ type: "milestone", id: `${group}-t2-maxed` });
-    steps.push(...opportunisticUpgrades(worn, group));
     if (!bossless) {
       steps.push(...bossLoadoutSteps(group));
       steps.push({ type: "attemptBoss", biomeGroup: group, tier: 2, maxAttempts: 4 });
       steps.push({ type: "milestone", id: `${group}-t2-boss-attempted` });
+      // Forms gated on this biome's own T2 boss capstone come after the fight.
+      steps.push(...leg.afterBoss);
       bossesAttempted += 1;
       // Three seals is the Tier-2 advancement requirement, so the earliest the
       // branch can possibly be affordable is right after the third boss step.

@@ -136,7 +136,7 @@ const mountainReturnEntry: Route["progressionEntry"] = {
     { type: "bossCleared", biomeGroup: "mountain", tier: 4 },
     ...["mountain-vest-t4", "mountain-charm-t4"].flatMap((definitionId) => [
       { type: "equipped" as const, definitionId },
-      { type: "itemAtLeastPlus" as const, definitionId, plus: 2 },
+      { type: "hasItem" as const, definitionId },
     ]),
   ],
 };
@@ -252,7 +252,7 @@ export const CAMPAIGN_T4_VOLCANO_DIAGNOSTIC: Route = {
       { type: "globalMasteryAtLeast", value: 132 },
       ...["mountain-vest-t4", "mountain-charm-t4"].flatMap((definitionId) => [
         { type: "equipped" as const, definitionId },
-        { type: "itemAtLeastPlus" as const, definitionId, plus: 2 },
+        { type: "hasItem" as const, definitionId },
       ]),
       { type: "not", of: { type: "bossCleared" as const, biomeGroup: "mountain", tier: 4 } },
     ],

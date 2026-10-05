@@ -240,6 +240,8 @@ export type StepOutcome =
   | { status: "failed"; reason: string };
 
 export interface Route {
+  /** A preserved historical route that cannot be executed under live mechanics. */
+  retired?: string;
   id: string;
   version: string;
   /** Class root this route is authored for, e.g. `cadence-root`. */

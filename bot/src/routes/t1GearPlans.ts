@@ -18,16 +18,10 @@ const COMMON_PLAINS_AFTER_SHARED: RouteStep[] = [
 ];
 
 const COMMON_PLAINS_AFTER_MAX: RouteStep[] = [
-  { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 1, farmAt: biome("plains") },
-  { type: "upgrade", definitionId: "plains-charm-t1", toPlus: 1, farmAt: biome("plains") },
-  { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 1, farmAt: biome("plains") },
 ];
 
 function commonForestAfterMax(): RouteStep[] {
   return [
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 2 },
-    { type: "upgrade", definitionId: "plains-charm-t1", toPlus: 2 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 2 },
   ];
 }
 
@@ -45,18 +39,11 @@ export function durableMeleeProgression(): T1ProgressionPlan {
     swamp: {
       afterShared: getPiece(biome("swamp"), "swamp-charm-t1"),
       afterMax: [
-        { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 3, farmAt: biome("swamp") },
-        { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 3 },
-        { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 3 },
       ],
     },
     mountain: {
       afterShared: getPiece(biome("mountain"), "mountain-vest-t1"),
       afterMax: [
-        { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 4, farmAt: biome("mountain") },
-        { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 4 },
-        { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 4 },
-        { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 4 },
       ],
     },
     cave: {
@@ -82,10 +69,6 @@ export function durableMeleeProgression(): T1ProgressionPlan {
         { type: "equip", definitionIds: ["chaotic-axe"], label: "switch to the Chaotic Axe" },
       ],
       afterMax: [
-        { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 5 },
-        { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 5 },
-        { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 5 },
-        { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 5 },
         { type: "milestone", id: "gear-plus-5" },
       ],
     },
@@ -113,9 +96,6 @@ export const DURABLE_MELEE_BOSS_GEAR: T1BossGearPlan = {
 export function genericRangedProgression(): T1ProgressionPlan {
   const plan = durableMeleeProgression();
   plan.swamp.afterMax = [
-    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 3, farmAt: biome("swamp") },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 3 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 3 },
   ];
   return plan;
 }
@@ -133,9 +113,6 @@ export function slingerProgression(): T1ProgressionPlan {
         ...getPiece(biome("forest"), "forest-vest-t1"),
       ],
       afterMax: [
-        { type: "upgrade", definitionId: "forest-vest-t1", toPlus: 2, farmAt: biome("forest") },
-        { type: "upgrade", definitionId: "plains-charm-t1", toPlus: 2 },
-        { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 2 },
       ],
     },
     swamp: {
@@ -145,16 +122,10 @@ export function slingerProgression(): T1ProgressionPlan {
         { type: "equip", definitionIds: ["flash-rapier"], label: "keep the rapier active" },
       ],
       afterMax: [
-        { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 3, farmAt: biome("swamp") },
-        { type: "upgrade", definitionId: "forest-vest-t1", toPlus: 3 },
-        { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 3 },
       ],
     },
     mountain: {
       afterMax: [
-        { type: "upgrade", definitionId: "forest-vest-t1", toPlus: 4 },
-        { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 4 },
-        { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 4 },
       ],
     },
     cave: {
@@ -175,10 +146,6 @@ export function slingerProgression(): T1ProgressionPlan {
       ],
       afterMax: [
         ...getPiece(biome("mountain"), "mountain-vest-t1"),
-        { type: "upgrade", definitionId: "forest-vest-t1", toPlus: 5 },
-        { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 5, farmAt: biome("mountain") },
-        { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 5 },
-        { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 5 },
         { type: "milestone", id: "gear-plus-5" },
       ],
     },
@@ -210,23 +177,10 @@ export function apprenticeProgression(): T1ProgressionPlan {
     ...getPiece(biome("swamp"), "swamp-charm-t1"),
   ];
   plan.swamp.afterMax = [
-    { type: "upgrade", definitionId: "swamp-vest-t1", toPlus: 3, farmAt: biome("swamp") },
-    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 3 },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 3 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 3 },
   ];
   plan.mountain.afterMax = [
-    { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 4, farmAt: biome("mountain") },
-    { type: "upgrade", definitionId: "swamp-vest-t1", toPlus: 4 },
-    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 4 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 4 },
   ];
   plan.cave.afterMax = [
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 5 },
-    { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 5 },
-    { type: "upgrade", definitionId: "swamp-vest-t1", toPlus: 5, farmAt: biome("swamp") },
-    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 5 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 5 },
     { type: "milestone", id: "gear-plus-5" },
   ];
   return plan;

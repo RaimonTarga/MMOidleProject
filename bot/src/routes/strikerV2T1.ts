@@ -88,10 +88,6 @@ export const STRIKER_V2_T1: Route = {
     learnSweep(),
 
     maxOut("plains"),
-    { type: "upgrade", definitionId: "iron-broadsword", toPlus: 1, farmAt: biome("plains") },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 1, farmAt: biome("plains") },
-    { type: "upgrade", definitionId: "plains-charm-t1", toPlus: 1, farmAt: biome("plains") },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 1, farmAt: biome("plains") },
     { type: "milestone", id: "plains-maxed" },
 
     // ── Forest: the fast weapon and the first real Guard -> +2 ───────────────
@@ -100,10 +96,6 @@ export const STRIKER_V2_T1: Route = {
     learnSecondWind(),
 
     maxOut("forest"),
-    { type: "upgrade", definitionId: "flash-rapier", toPlus: 2, farmAt: biome("forest") },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 2 },
-    { type: "upgrade", definitionId: "plains-charm-t1", toPlus: 2 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 2 },
     { type: "milestone", id: "forest-maxed" },
 
     // ── Swamp: Cleanse, the charm -> +3 (3rd leg) ─────────────────────────────
@@ -112,11 +104,6 @@ export const STRIKER_V2_T1: Route = {
     ...getPiece(biome("swamp"), "swamp-charm-t1"),
 
     maxOut("swamp"),
-    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 3, farmAt: biome("swamp") },
-    { type: "upgrade", definitionId: "flash-rapier", toPlus: 3 },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 3 },
-    { type: "upgrade", definitionId: "plains-charm-t1", toPlus: 3 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 3 },
     { type: "milestone", id: "swamp-maxed" },
 
     // ── Mountain: Brace (farming only), the plate -> +4 (4th leg) ────────────
@@ -125,11 +112,6 @@ export const STRIKER_V2_T1: Route = {
     ...getPiece(biome("mountain"), "mountain-vest-t1"),
 
     maxOut("mountain"),
-    { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 4, farmAt: biome("mountain") },
-    { type: "upgrade", definitionId: "flash-rapier", toPlus: 4 },
-    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 4 },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 4 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 4 },
     { type: "milestone", id: "mountain-maxed" },
 
     // ── Cave: the Chaotic Axe and Expose Weakness -> GM 30 ───────────────────
@@ -143,23 +125,11 @@ export const STRIKER_V2_T1: Route = {
     { type: "craft", recipeIds: ["chaotic-axe"], farmAt: biome("cave") },
     learnExposeWeakness(),
 
-    {
-      type: "upgrade",
-      definitionId: "chaotic-axe",
-      toPlus: 4,
-      farmAt: biome("cave"),
-      opportunistic: true,
-    },
     { type: "equip", definitionIds: ["chaotic-axe"], label: "switch to the Chaotic Axe" },
 
     maxOut("cave"),
     { type: "milestone", id: "all-biomes-maxed" },
 
-    { type: "upgrade", definitionId: "chaotic-axe", toPlus: 5, farmAt: biome("cave") },
-    { type: "upgrade", definitionId: "plains-vest-t1", toPlus: 5 },
-    { type: "upgrade", definitionId: "mountain-vest-t1", toPlus: 5 },
-    { type: "upgrade", definitionId: "swamp-charm-t1", toPlus: 5 },
-    { type: "upgrade", definitionId: "plains-boots-t1", toPlus: 5 },
     { type: "milestone", id: "gear-plus-5" },
 
     // ── The boss gauntlet: Second Wind on the two hardest hitters ────────────

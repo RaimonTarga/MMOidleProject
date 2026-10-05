@@ -32,7 +32,7 @@
  *    ANYWHERE: it lives in this process and the assertion below proves it landed.
  *
  * 2. THE READING IS ONE LANE AGAINST ONE LANE, NOT A RANKING. The family's favoured
- *    lane (`FamilyDefinition.drops`, which design §18.7 settles IS the definition of
+ *    lane (`nodeShard(nodeId)`, the node-paid lane, which is the definition of
  *    "favours") against the lane it declares it punishes. A margin between two
  *    quantities has a variance this instrument can estimate; a rank among six does
  *    not.
@@ -112,6 +112,7 @@ import {
   WORLD_NODE_LIST,
   blendEntries,
   nodeSpawnBlend,
+  nodeShard,
   type FamilyId,
   type NodeBlend,
   type PacketId,
@@ -123,6 +124,7 @@ import {
   type BandTier,
   type LineageLaneReference,
 } from '../../bot/src/tierEntry/profiles';
+import { shardKillCounter } from './lineage/shardAccounting';
 import { setupArena, teardownArena } from './balance/arena';
 import { reviveInFarmNode } from './balance/runFarm';
 import { createFarmWorld } from './balance/worldFactory';
@@ -315,7 +317,7 @@ function forceHost(
     tier,
     authored,
     mobs: [...mobs],
-    favoured: def.drops,
+    favoured: nodeShard(host.id)!,
     punished: def.punishes,
   };
 }
@@ -335,6 +337,8 @@ interface Row {
   /** The fixed target, and the count actually reached (a final tick may overshoot). */
   killTarget: number;
   kills: number;
+  /** Normal kills by node-paid shard; absent in historical replays. */
+  killsByShard?: Partial<Record<PacketId, number>>;
   reachedTarget: boolean;
   /** Sim ms elapsed when the run stopped, and engaged ms inside it. */
   simMs: number;
@@ -379,7 +383,10 @@ function measure(
   let damageDealt = 0;
   let damageTaken = 0;
   const fx: Record<string, number> = {};
+  const killsByShard: Partial<Record<PacketId, number>> = {};
+  const countShardKill = shardKillCounter(killsByShard);
   const onKill: CombatEventHandler = (ctx) => {
+    countShardKill(ctx);
     if (ctx.defenderType === 'monster') kills += 1;
   };
   const onDealt: CombatEventHandler = (ctx) => {
@@ -420,6 +427,7 @@ function measure(
       seed,
       killTarget,
       kills,
+      killsByShard,
       reachedTarget: kills >= killTarget,
       simMs: now,
       engagedMs,
@@ -919,7 +927,7 @@ async function main(): Promise<void> {
     '',
     'This instrument answers one question per family: **does the family reward the',
     'lane it declares it favours more than the lane it declares it punishes, on an',
-    'encounter made entirely of its own bodies?** `FamilyDefinition.drops` IS the',
+    'encounter made entirely of its own bodies?** `nodeShard(nodeId)` IS the',
     'definition of "favours" (design §18.7), so a family that does not is a',
     'monster-shape finding, not a magnitude to tune.',
     '',
@@ -1100,8 +1108,24 @@ async function main(): Promise<void> {
     })(),
   ].join('\n');
 
+  const shardAccountingTable = [
+    '', '## Node shard kill accounting', '',
+    'Normal kills attributed by nodeShard; these counts exclude synthetic starting wallets and reward multipliers.', '',
+    '| node | shard | counted kills |', '|---|---|---:|',
+    ...nodes.flatMap(node => {
+      const totals: Partial<Record<PacketId, number>> = {};
+      for (const row of rows.filter(row => row.nodeId === node.nodeId)) {
+        for (const [packet, count] of Object.entries(row.killsByShard ?? {})) {
+          const key = packet as PacketId;
+          totals[key] = (totals[key] ?? 0) + count;
+        }
+      }
+      return Object.entries(totals).map(([packet, count]) => `| ${node.nodeId} | ${packet} | ${count} |`);
+    }),
+  ].join('\n');
+
   const base = process.env.FAM_REPORT ?? 'family-contracts';
-  writeFileSync(resolve(out, `${base}.md`), `${md}\n`);
+  writeFileSync(resolve(out, `${base}.md`), `${md}\n${shardAccountingTable}\n`);
   writeFileSync(resolve(out, `${base}.json`), `${JSON.stringify({
     schema: 1,
     killTarget, capMs, seeds, tiers, allLanes,
