@@ -16,6 +16,7 @@
  *  - **One row, one active card.** A row is a choice, not a shopping list.
  */
 import { ESSENCE_LABELS } from '../items';
+import { RETIRED_LINEAGE_CARDS } from '../data/lineages/retired';
 import { BIOME_DATABASE } from '../biomeDatabase';
 import { shardName } from '../data/lineages/packets';
 import type { EquipmentSlot, EssenceType } from '../items';
@@ -27,14 +28,17 @@ import {
 } from '../data/lineages';
 import { capstoneMaterialName } from '../data/lineages/capstones';
 import {
-  ROW_SCALAR, lengthenPayload, lineageMasteryLevelForRow, quickenMoment, rowsForTier,
-  scalePayloadSize, tierHasRow,
+  ROW_SCALAR, clampLeanRank, lengthenPayload, lineageMasteryLevelForRow, quickenMoment, rankNumeral,
+  rowsForTier, scalePayloadSize, tierHasRow,
 } from '../data/lineages/magnitudes';
 import {
-  applyComposition, composeVerb, formGateBiomeLevel, formGateMastery, isVerbCard,
-  lineageCardCost, lineageGateCost, resolveLineageCapstone, resolveLineageCard,
+  applyComposition, cardStatKey, composeVerb, formGateBiomeLevel, formGateMastery, isRankedCard,
+  isVerbCard, leanPayloadLane, lineageCardCost, lineageGateCost, maxCardRank, resolveLineageCapstone,
+  resolveLineageCard,
 } from '../data/lineages/resolve';
-import { statLine, verbSentence } from '../data/lineages/sentences';
+import type { VerbComposition } from '../data/lineages/resolve';
+import { compositionParts, effectLeanLine, statLine } from '../data/lineages/sentences';
+import type { ComposedSentenceParts } from '../data/lineages/sentences';
 import { payoffLandsOnTarget } from '../data/lineages/types';
 import type {
   AmplifiedAxis, DefensiveFace, LineageCard, LineageDefinition, LineageForm,
@@ -119,7 +123,7 @@ export function normalizeLineageProgressMap(
 
     const knownCards = new Set(lineage.cards.map((c) => c.id));
     const knownForms = new Set(lineage.forms.map((f) => f.recipeId));
-    const ownedCards = (raw.ownedCards ?? []).filter((id) => knownCards.has(id));
+    const ownedCards = [...new Set((raw.ownedCards ?? []).filter((id) => knownCards.has(id)))];
     const ownedForms = (raw.ownedForms ?? []).filter((id) => knownForms.has(id));
 
     const active: Partial<Record<RowKind, string>> = {};
@@ -136,10 +140,55 @@ export function normalizeLineageProgressMap(
       ? raw.wornForm
       : (ownedForms[0] ?? '');
 
-    out[lineageId] = { ownedCards, active, ownedForms, wornForm };
+    // Ranks (design §26.1): every OWNED ranked card carries its rank, a missing
+    // one normalised to I and anything out of the table clamped into it; a rank
+    // for a card the save does not own, or one that is not ranked, is dropped.
+    const ranks: Record<string, number> = {};
+    for (const id of ownedCards) {
+      const card = lineage.cards.find((c) => c.id === id);
+      if (!card || !isRankedCard(card)) continue;
+      const stored = raw.ranks?.[id];
+      ranks[id] = clampLeanRank(typeof stored === 'number' ? stored : 1);
+    }
+
+    out[lineageId] = {
+      ownedCards, active, ownedForms, wornForm,
+      ...(Object.keys(ranks).length > 0 ? { ranks } : {}),
+    };
   }
   return out;
 }
+
+// ─── Ranks (design §26.1) ────────────────────────────────────────────────────
+
+/**
+ * The rank the player owns of a card: 0 when not owned, else its rank (≥ 1). An
+ * unranked owned card is rank 1; a ranked one with no stored rank is rank 1 too
+ * (hydration writes it in, but a tree built in memory may not have).
+ */
+export function cardRank(
+  progress: Pick<LineageProgress, 'ownedCards' | 'ranks'> | undefined,
+  cardId: string,
+): number {
+  if (!progress?.ownedCards.includes(cardId)) return 0;
+  return clampLeanRank(progress.ranks?.[cardId] ?? 1);
+}
+
+/**
+ * The rank buying this card would give: 1 for an unowned card, the next rank for
+ * an owned ranked card below its max, undefined when there is nothing left to buy
+ * (an owned unranked card, or a ranked one at its max).
+ */
+export function nextCardRank(
+  progress: Pick<LineageProgress, 'ownedCards' | 'ranks'> | undefined,
+  card: Pick<LineageCard, 'id' | 'leanKind'>,
+): number | undefined {
+  const current = cardRank(progress, card.id);
+  if (current === 0) return 1;
+  return current < maxCardRank(card) ? current + 1 : undefined;
+}
+
+export { isRankedCard, maxCardRank, rankNumeral };
 
 /**
  * The player's tree for a lineage, or an untouched one. Never returns undefined,
@@ -203,14 +252,37 @@ export function lineageBandBiome(
  */
 export function resolveLineageCardFor(
   lineage: LineageDefinition,
-  progress: Pick<LineageProgress, 'wornForm' | 'ownedForms'>,
+  progress: Pick<LineageProgress, 'wornForm' | 'ownedForms'> & Partial<Pick<LineageProgress, 'ownedCards' | 'ranks'>>,
   card: LineageCard,
-  options: { frameFace?: DefensiveFace; discounted?: boolean } = {},
+  options: { frameFace?: DefensiveFace; discounted?: boolean; rank?: number } = {},
 ): ResolvedLineageCard {
   return resolveLineageCard(card, lineage, {
     ...options,
+    // A ranked card resolves at the rank the player OWNS (rank I when they own
+    // none) unless the caller names one — the purchase check names the NEXT rank.
+    rank: options.rank ?? ownedRankOf(progress, card.id),
     bandBiome: lineageBandBiome(lineage, progress, card.tier),
   });
+}
+
+function ownedRankOf(progress: Partial<Pick<LineageProgress, 'ownedCards' | 'ranks'>>, cardId: string): number {
+  if (progress.ownedCards && !progress.ownedCards.includes(cardId)) return 1;
+  return clampLeanRank(progress.ranks?.[cardId] ?? 1);
+}
+
+/**
+ * A card resolved at a given rank (design §26.1): its value, its sentence numbers,
+ * its Global Mastery gate, and the cost of BUYING that rank. For the page's rank
+ * preview and price tag. An unranked card ignores `rank`.
+ */
+export function resolveLineageCardAtRank(
+  lineage: LineageDefinition,
+  progress: Pick<LineageProgress, 'wornForm' | 'ownedForms'> & Partial<Pick<LineageProgress, 'ownedCards' | 'ranks'>>,
+  card: LineageCard,
+  rank: number,
+  options: { frameFace?: DefensiveFace; discounted?: boolean } = {},
+): ResolvedLineageCard {
+  return resolveLineageCardFor(lineage, progress, card, { ...options, rank });
 }
 
 /**
@@ -303,7 +375,14 @@ export function checkUnlockCard(params: {
   if (isLineageParked(lineage)) return PARKED;
   if (card.lineageId !== lineage.id) return { ok: false, reason: 'That card belongs to another lineage.' };
   if (!lineage.cards.some((c) => c.id === card.id)) return { ok: false, reason: 'Unknown card.' };
-  if (progress.ownedCards.includes(card.id)) return { ok: false, reason: 'Already owned.' };
+  // An owned RANKED card is bought again for its next rank (design §26.1); every
+  // other owned card, and a ranked one at its max, has nothing left to buy.
+  const rank = nextCardRank(progress, card);
+  if (rank === undefined) {
+    return isRankedCard(card)
+      ? { ok: false, reason: `Already at rank ${rankNumeral(maxCardRank(card))}.` }
+      : { ok: false, reason: 'Already owned.' };
+  }
   if (!lineage.lanes.includes(card.lane)) return { ok: false, reason: 'That lane is not on this lineage.' };
 
   // A band opens by wearing a form of that tier — the gate IS the band's key.
@@ -321,7 +400,7 @@ export function checkUnlockCard(params: {
   if (wallet.isTestRoom) return OK;
 
   const discounted = lineageSwitchDiscount({ card, slot: lineage.slot, lineages });
-  const resolved = resolveLineageCardFor(lineage, progress, card, { discounted });
+  const resolved = resolveLineageCardFor(lineage, progress, card, { discounted, rank });
 
   // The band gates on its door biome, not on the home biome (design §21), so the
   // level AND the biome it is read in both come off the resolved card.
@@ -467,7 +546,7 @@ export function resolveLineageCards(
     if (statRowIsCollapsed(lineage, progress, card)) continue;
     out.push(resolveLineageCardFor(lineage, progress, card, { frameFace }));
   }
-  composeVerbs(out, leanLaneFor(lineage, progress));
+  composeVerbs(out, lineage, progress);
   return composeAmplifiers(out);
 }
 
@@ -488,50 +567,170 @@ export function resolveLineageCards(
 export function leanLaneFor(lineage: LineageDefinition, progress: LineageProgress): PacketId | undefined {
   const cardId = progress.active.stat;
   if (!cardId || !progress.ownedCards.includes(cardId)) return undefined;
-  return lineage.cards.find((c) => c.id === cardId && c.row === 'stat')?.lane;
+  const card = lineage.cards.find((c) => c.id === cardId && c.row === 'stat');
+  // The T1 trio's lane is colour and currency (design §26.1): an Attack or Speed
+  // lean names no payload, an Effect lean names the fixed verb's own lane.
+  return card ? leanPayloadLane(card) : undefined;
+}
+
+/**
+ * The payload SCALES the lineage's leans put on its verbs (design §26.1: "on a
+ * weapon with no mechanic of its own, Effect is the size of the verb's payload"),
+ * keyed by the lane whose packet payload they scale — the Effect card's own lane.
+ *
+ * Read from the same two places every lean pays from: the active stat card while
+ * its band is lit, and the stat cards a collapsed band absorbed into the worn form
+ * (`absorbedStatCards`), each at the rank the player owns. So an Effect lean the
+ * T2 gate absorbed keeps making that payload bigger — a gate never makes a card
+ * read smaller — wherever the payload lands: the pure pair of a verb of its lane,
+ * or that lane's payload on a verb its lean composes with.
+ */
+export function lineagePayloadScales(
+  lineage: LineageDefinition,
+  progress: LineageProgress,
+): Partial<Record<PacketId, number>> {
+  const out: Partial<Record<PacketId, number>> = {};
+  const add = (card: LineageCard): void => {
+    if (cardStatKey(card) !== 'payloadScale') return;
+    const value = resolveLineageCardFor(lineage, progress, card).statEffects?.payloadScale ?? 0;
+    if (value > 0) out[card.lane] = (out[card.lane] ?? 0) + value;
+  };
+  const activeId = progress.active.stat;
+  const active = activeId && progress.ownedCards.includes(activeId)
+    ? lineage.cards.find((c) => c.id === activeId && c.row === 'stat')
+    : undefined;
+  if (active && !statRowIsCollapsed(lineage, progress, active)) add(active);
+  for (const card of absorbedStatCards(lineage, progress)) add(card);
+  return out;
+}
+
+/**
+ * `composeVerb`, then the payload scale of the payload's lane (design §26.1). The
+ * payload's lane is the verb's own on a pure pair, the lean's otherwise.
+ */
+function composeScaled(
+  verbLane: PacketId,
+  leanLane: PacketId | undefined,
+  tier: number,
+  scales: Partial<Record<PacketId, number>>,
+): VerbComposition | undefined {
+  const composed = composeVerb(verbLane, leanLane, tier);
+  if (!composed) return undefined;
+  const payloadLane = composed.pure ? composed.verbLane : composed.leanLane;
+  const scale = payloadLane ? scales[payloadLane] ?? 0 : 0;
+  if (scale > 0) scalePayloadSize(composed.payoff, 1 + scale);
+  return composed;
 }
 
 /**
  * Re-compose every active VERB against the active lean, in place: the verb's
  * moment with the lean's payload, or the verb lane's pure pair for the same lane
- * or no lean, sized by the verb's own tier. Legacy payoff cards (they author their
- * own trigger and payoff) are untouched, as are amplifiers, keystones and cross rows.
+ * or no lane-naming lean, sized by the verb's own tier and by the payload scale
+ * an Effect lean puts on it. Legacy payoff cards (they author their own trigger
+ * and payoff) are untouched, as are amplifiers, keystones and cross rows.
  */
-function composeVerbs(cards: ResolvedLineageCard[], leanLane: PacketId | undefined): void {
+function composeVerbs(cards: ResolvedLineageCard[], lineage: LineageDefinition, progress: LineageProgress): void {
+  const leanLane = leanLaneFor(lineage, progress);
+  const scales = lineagePayloadScales(lineage, progress);
   for (const resolved of cards) {
     if (!isVerbCard(resolved.card)) continue;
-    applyComposition(resolved, composeVerb(resolved.card.lane, leanLane, resolved.card.tier));
+    applyComposition(resolved, composeScaled(resolved.card.lane, leanLane, resolved.card.tier, scales));
   }
+}
+
+/** A preview of the lean (design §26.4: the plate re-reads under a rank preview). */
+export interface ComposedSentenceOptions {
+  /**
+   * Read as if this owned-or-not stat card were the active lean (null: no lean).
+   * Omitted: the active lean.
+   */
+  leanId?: string | null;
+  /** Read the lean (the previewed one, else the active one) at this rank. */
+  rank?: number;
+}
+
+function previewProgress(progress: LineageProgress, options: ComposedSentenceOptions): LineageProgress {
+  if (options.leanId === undefined && options.rank === undefined) return progress;
+  const active = { ...progress.active };
+  const ownedCards = [...progress.ownedCards];
+  const ranks = { ...(progress.ranks ?? {}) };
+  if (options.leanId === null) delete active.stat;
+  else if (options.leanId !== undefined) {
+    active.stat = options.leanId;
+    if (!ownedCards.includes(options.leanId)) ownedCards.push(options.leanId);
+  }
+  const leanId = active.stat;
+  if (options.rank !== undefined && leanId) ranks[leanId] = clampLeanRank(options.rank);
+  return { ...progress, active, ownedCards, ranks };
+}
+
+/**
+ * The active verb's sentence in its two halves, with the active lean (or a
+ * previewed one) — `{ moment, payload, momentLane, payloadLane, pure }` for the
+ * page's two-colour sentence (design §26.4), so the client never parses text.
+ * Undefined when no verb is active. `composedSentence` is these joined.
+ */
+export function composedSentenceParts(
+  lineage: LineageDefinition,
+  progress: LineageProgress,
+  options: ComposedSentenceOptions = {},
+): ComposedSentenceParts | undefined {
+  const verbId = progress.active.payoff;
+  if (!verbId || !progress.ownedCards.includes(verbId)) return undefined;
+  const verb = lineage.cards.find((c) => c.id === verbId);
+  if (!verb || !isVerbCard(verb)) return undefined;
+  const view = previewProgress(progress, options);
+  const composed = composeScaled(verb.lane, leanLaneFor(lineage, view), verb.tier, lineagePayloadScales(lineage, view));
+  return composed ? compositionParts(composed) : undefined;
 }
 
 /**
  * The sentence the lineage's active verb reads right now, with the active lean —
  * or undefined when no verb is active (design §24.2).
  */
-export function composedSentence(lineage: LineageDefinition, progress: LineageProgress): string | undefined {
-  const verbId = progress.active.payoff;
-  if (!verbId || !progress.ownedCards.includes(verbId)) return undefined;
-  const verb = lineage.cards.find((c) => c.id === verbId);
-  if (!verb || !isVerbCard(verb)) return undefined;
-  return verbSentence(verb.lane, leanLaneFor(lineage, progress), verb.tier);
+export function composedSentence(
+  lineage: LineageDefinition,
+  progress: LineageProgress,
+  options: ComposedSentenceOptions = {},
+): string | undefined {
+  const parts = composedSentenceParts(lineage, progress, options);
+  if (!parts) return undefined;
+  return parts.moment ? `${parts.moment} ${parts.payload}` : parts.payload;
 }
 
 /**
  * One card as one sentence (design §24.6, rule 5: no flavour text rendered).
  *
- *  - A stat card (the LEAN): its resolved stat line, "+9% attack speed.".
+ *  - A stat card (the LEAN): its resolved stat line, "+9% attack speed.", at the
+ *    rank the player owns (rank I when they own none), or at `options.rank` for a
+ *    preview. A T1 EFFECT lean names the weapon's mechanic instead of a stat
+ *    ("+10% poison potency.", "+10% to Flurry's second strike.").
  *  - A VERB (any tier): the sentence it reads with the player's active lean RIGHT
- *    NOW, with its own tier's numbers, owned or not — a verb tile re-renders when
- *    the lean changes.
+ *    NOW, with its own tier's numbers and the payload scale an Effect lean puts
+ *    on it, owned or not — a verb tile re-renders when the lean changes.
  *
  * Undefined for every other row (legacy payoff, amplifier, keystone, cross),
  * which the tree still renders from `description` and resolved numbers.
  */
-export function cardSentence(card: LineageCard, progress: LineageProgress): string | undefined {
+export function cardSentence(
+  card: LineageCard,
+  progress: LineageProgress,
+  options: { rank?: number } = {},
+): string | undefined {
   const lineage = LINEAGE_DATABASE.get(card.lineageId);
   if (!lineage) return undefined;
-  if (card.row === 'stat') return statLine(resolveLineageCardFor(lineage, progress, card).statEffects);
-  if (isVerbCard(card)) return verbSentence(card.lane, leanLaneFor(lineage, progress), card.tier);
+  if (card.row === 'stat') {
+    const resolved = resolveLineageCardFor(lineage, progress, card, { rank: options.rank });
+    if (card.leanKind !== 'effect') return statLine(resolved.statEffects);
+    const verb = lineage.cards.find((c) => c.tier === card.tier && c.row === 'payoff' && c.lane === card.lane);
+    return effectLeanLine(resolved.statEffects, { lane: card.lane, verbName: verb?.name });
+  }
+  if (isVerbCard(card)) {
+    const composed = composeScaled(card.lane, leanLaneFor(lineage, progress), card.tier, lineagePayloadScales(lineage, progress));
+    if (!composed) return undefined;
+    const parts = compositionParts(composed);
+    return parts && (parts.moment ? `${parts.moment} ${parts.payload}` : parts.payload);
+  }
   return undefined;
 }
 
@@ -836,6 +1035,10 @@ export function resolveActiveLineages(
   const statEffects: LineageStatEffects = {};
   const addStats = (resolved: ResolvedLineageCard): void => {
     for (const [key, value] of Object.entries(resolved.statEffects ?? {}) as [keyof LineageStatEffects, number][]) {
+      // A payload scale is not a character stat (design §26.1): it is already in
+      // the verb's resolved payload (`lineagePayloadScales`), and the stat rebuild
+      // must never see it.
+      if (key === 'payloadScale') continue;
       statEffects[key] = (statEffects[key] ?? 0) + value;
     }
   };
@@ -922,14 +1125,75 @@ export function bandContents(lineage: LineageDefinition, tier: number): {
   return { cards: cardsForTier(lineage, tier), gateForms: formsAtGate(lineage, tier) };
 }
 
-/** What a card would cost right now, discount included. For the UI's price tag. */
+/**
+ * What a card would cost right now, discount included. For the UI's price tag and
+ * the server's spend. A ranked card is priced at the rank buying it would give —
+ * `rank` when named, else the NEXT rank of `progress` (rank I with no progress, and
+ * the max rank's own price when there is nothing left to buy).
+ */
 export function lineageCardPrice(params: {
   lineage: LineageDefinition;
   card: LineageCard;
   lineages?: LineageProgressMap;
+  progress?: Pick<LineageProgress, 'ownedCards' | 'ranks'>;
+  rank?: number;
 }) {
   const discounted = lineageSwitchDiscount({
     card: params.card, slot: params.lineage.slot, lineages: params.lineages,
   });
-  return { cost: lineageCardCost(params.card, params.lineage, { discounted }), discounted };
+  const rank = params.rank
+    ?? (params.progress ? nextCardRank(params.progress, params.card) ?? maxCardRank(params.card) : 1);
+  return { cost: lineageCardCost(params.card, params.lineage, { discounted, rank }), discounted, rank };
+}
+
+// ─── Retired cards: the save refund (design §26.1) ───────────────────────────
+
+/** What a save's retired cards are worth, and which they were. */
+export interface RetiredCardRefund {
+  cardIds: string[];
+  essence: Partial<Record<EssenceType, number>>;
+  shards: Partial<Record<PacketId, number>>;
+}
+
+/**
+ * The refund a STORED (pre-normalisation) lineage map is owed for the cards
+ * design §26.1 retired from the T1 band (`RETIRED_LINEAGE_CARDS`): each owned
+ * retired card's T1 row price, at TODAY's table and undiscounted — what a save
+ * paid (full, or the half-price switch discount) was never recorded, so the
+ * player-favourable price is the one returned.
+ *
+ * Pure and total: it never throws on a malformed save and mutates nothing. The
+ * ids themselves are dropped by `normalizeLineageProgressMap` (unknown card ids,
+ * and any active row pointing at one), so once a normalised tree is saved the
+ * refund finds nothing — idempotent across loads.
+ */
+export function retiredLineageCardRefund(
+  stored: Partial<Record<string, Partial<LineageProgress>>> | undefined,
+): RetiredCardRefund {
+  const out: RetiredCardRefund = { cardIds: [], essence: {}, shards: {} };
+  if (!stored || typeof stored !== 'object') return out;
+  for (const [lineageId, raw] of Object.entries(stored)) {
+    const lineage = LINEAGE_DATABASE.get(lineageId);
+    const owned: unknown[] = raw && Array.isArray(raw.ownedCards) ? raw.ownedCards : [];
+    if (!lineage) continue;
+    for (const id of new Set(owned)) {
+      const retired = typeof id === 'string' ? RETIRED_LINEAGE_CARDS.get(id) : undefined;
+      if (typeof id !== 'string' || !retired || retired.lineageId !== lineageId) continue;
+      // Still a live card of the lineage would mean it was never retired.
+      if (lineage.cards.some((c) => c.id === id)) continue;
+      const shape: LineageCard = {
+        id, lineageId, tier: 1, row: retired.row, lane: retired.lane,
+        name: retired.name, description: '', fx: `${retired.lane}.trail` as LineageCard['fx'],
+      };
+      const cost = lineageCardCost(shape, lineage);
+      for (const [type, amount] of Object.entries(cost.essence) as [EssenceType, number][]) {
+        out.essence[type] = (out.essence[type] ?? 0) + amount;
+      }
+      for (const [packet, amount] of Object.entries(cost.shards) as [PacketId, number][]) {
+        out.shards[packet] = (out.shards[packet] ?? 0) + amount;
+      }
+      out.cardIds.push(id);
+    }
+  }
+  return out;
 }

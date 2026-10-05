@@ -5,9 +5,9 @@
  * Lanes: Tempo / Affliction / Engagement. Derived from the weapon it already is:
  * 1.50 aps, the Jungle on-hit successor in the same family, a duelist's opener.
  *
- * The T1 band is three leans (stat row, L2), three verbs (payoff row, L4; design
- * §24.2 — a verb's moment composes with the active lean's payload), and a gate (L6)
- * with two doors — Gale Needle through the Forest boss, Stinger Rapier through
+ * The T1 band is the lean trio (Attack, Speed, Effect, three ranks each, from L2),
+ * the weapon's own verb (Flurry, L4; design §26.1 — the other two verbs and the
+ * composition grammar open at T2), and a gate (L6) with two doors — Gale Needle through the Forest boss, Stinger Rapier through
  * the Jungle boss. Both can be owned; swapping the worn form is free.
  *
  * NO NUMBERS LIVE HERE. Magnitudes, durations, costs and unlock levels all come
@@ -74,40 +74,37 @@ export const RAPIER_LINEAGE: LineageDefinition = {
   ],
 
   cards: [
-    // ── T1 lean row (L2): a stat move that also names a payload (§24.2) ──────
+    // ── T1 lean row (design §26.1): Attack, Speed, Effect, three ranks each ──
+    // The lane is the card's colour and its shard (PROVISIONAL, legibility run:
+    // Effect takes the fixed verb's lane, Attack the first remaining one, Speed the
+    // last). The Rapier has no mechanic of its own, so Effect is the size of
+    // Flurry's second strike.
     {
-      id: 'rapier-t1-tempo-stat', lineageId: 'rapier', tier: 1, row: 'stat', lane: 'tempo',
-      name: 'Quick Wrist', description: 'The blade never quite stops moving.',
-      fx: 'tempo.trail',
-    },
-    {
-      id: 'rapier-t1-affliction-stat', lineageId: 'rapier', tier: 1, row: 'stat', lane: 'affliction',
-      name: 'Envenomed', description: 'Something on the edge that the forest brewed.',
+      id: 'rapier-t1-attack', lineageId: 'rapier', tier: 1, row: 'stat', lane: 'affliction',
+      leanKind: 'attack', statKey: 'attackPct',
+      name: 'Attack', description: 'Honed for the one thrust that decides a duel.',
       fx: 'affliction.trail',
     },
     {
-      id: 'rapier-t1-engagement-stat', lineageId: 'rapier', tier: 1, row: 'stat', lane: 'engagement',
-      name: 'Keen Edge', description: 'Honed for the one thrust that decides a duel.',
+      id: 'rapier-t1-speed', lineageId: 'rapier', tier: 1, row: 'stat', lane: 'engagement',
+      leanKind: 'speed', statKey: 'attackSpeedPct',
+      name: 'Speed', description: 'The blade never quite stops moving.',
       fx: 'engagement.trail',
     },
+    {
+      id: 'rapier-t1-effect', lineageId: 'rapier', tier: 1, row: 'stat', lane: 'tempo',
+      leanKind: 'effect', statKey: 'payloadScale',
+      name: 'Effect', description: 'The second thrust arrives with more of the first behind it.',
+      fx: 'tempo.trail',
+    },
 
-    // ── T1 verb row (L4): a moment; the lean decides what happens (§24.2) ────
-    // No trigger, no payoff: the moment is the lane's packet's, the payload the
-    // active lean's (`composeVerb`). Names from the approved weapon-page mockup.
+    // ── T1 verb (design §26.1): ONE, the weapon's own — bought, never chosen ──
+    // No trigger, no payoff: the moment and the pure payload are the Tempo
+    // packet's (`composeVerb`). Name from the approved weapon-page mockup.
     {
       id: 'rapier-t1-tempo-payoff', lineageId: 'rapier', tier: 1, row: 'payoff', lane: 'tempo',
       name: 'Flurry', description: 'Every so often the wrist runs a beat ahead of the count.',
       fx: 'tempo.ghost-strike',
-    },
-    {
-      id: 'rapier-t1-affliction-payoff', lineageId: 'rapier', tier: 1, row: 'payoff', lane: 'affliction',
-      name: 'Venom Point', description: 'The point finds the wound it already opened.',
-      fx: 'affliction.bleed-pips',
-    },
-    {
-      id: 'rapier-t1-engagement-payoff', lineageId: 'rapier', tier: 1, row: 'payoff', lane: 'engagement',
-      name: 'Opening Lunge', description: 'The first thrust at each new opponent comes from further out.',
-      fx: 'engagement.opening-flash',
     },
 
     // ── T2 band (design §13): stat (L2), payoff (L3), amplifier (L5) ─────────

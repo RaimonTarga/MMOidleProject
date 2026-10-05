@@ -9,15 +9,19 @@
  * the table and this suite still passes.
  */
 import { LINEAGE_DATABASE } from '../data/lineages';
-import { gateCapstoneAmount, gateEssenceCost, gateShardCost, rowBiomeLevel } from '../data/lineages/magnitudes';
+import {
+  MAX_LEAN_RANK, gateCapstoneAmount, gateEssenceCost, gateShardCost, lineageMasteryLevelForRow, rowBiomeLevel,
+  rowEssenceCost, rowShardCost,
+} from '../data/lineages/magnitudes';
 import { lineageCardCost } from '../data/lineages/resolve';
 import type { LineageProgressMap } from '../data/lineages/types';
 import { emptyEquipment } from '../items';
 import type { EquipmentMap } from '../items';
 import {
-  baseFormRecipeId, checkSetActive, checkUnlockCard, checkUnlockForm, checkWearForm,
-  emptyLineageProgress, lineageBandBiome, lineageProgressFor, lineageSwitchDiscount,
-  normalizeLineageProgressMap, resolveActiveLineages, resolveLineageCardFor, wornFormTier,
+  baseFormRecipeId, cardRank, checkSetActive, checkUnlockCard, checkUnlockForm, checkWearForm,
+  emptyLineageProgress, lineageBandBiome, lineageCardPrice, lineageProgressFor, lineageSwitchDiscount,
+  maxCardRank, nextCardRank, normalizeLineageProgressMap, resolveActiveLineages, resolveLineageCardAtRank,
+  resolveLineageCardFor, retiredLineageCardRefund, wornFormTier,
 } from './lineages';
 import type { LineageWallet } from './lineages';
 
@@ -29,7 +33,8 @@ const rapier = LINEAGE_DATABASE.get('rapier')!;
 const broadsword = LINEAGE_DATABASE.get('broadsword')!;
 assert(!!rapier && !!broadsword, 'fixtures missing');
 
-const statCard = rapier.cards.find((c) => c.id === 'rapier-t1-tempo-stat')!;
+// The Speed lean: a ranked T1 card whose stat is attack speed (design §26.1).
+const statCard = rapier.cards.find((c) => c.id === 'rapier-t1-speed')!;
 const payoffCard = rapier.cards.find((c) => c.id === 'rapier-t1-tempo-payoff')!;
 const galeNeedle = rapier.forms.find((f) => f.recipeId === 'gale-needle')!;
 
@@ -56,9 +61,9 @@ function richWallet(overrides: Partial<LineageWallet> = {}): LineageWallet {
   const ok = checkUnlockCard({ lineage: rapier, card: statCard, progress, wallet: richWallet() });
   assert(ok.ok, `buying a T1 stat row should be legal: ${ok.reason}`);
 
-  // Already owned.
-  const owned = { ...progress, ownedCards: [statCard.id] };
-  assert(!checkUnlockCard({ lineage: rapier, card: statCard, progress: owned, wallet: richWallet() }).ok,
+  // Already owned (an unranked card; a ranked one buys its next rank — below).
+  const owned = { ...progress, ownedCards: [payoffCard.id] };
+  assert(!checkUnlockCard({ lineage: rapier, card: payoffCard, progress: owned, wallet: richWallet() }).ok,
     'a card cannot be bought twice');
 
   // Biome level gates WHEN.
@@ -110,7 +115,7 @@ function richWallet(overrides: Partial<LineageWallet> = {}): LineageWallet {
 {
   const lineages: LineageProgressMap = {
     broadsword: {
-      ownedCards: ['broadsword-t1-technique-stat'], active: {},
+      ownedCards: ['broadsword-t1-effect'], active: {},
       ownedForms: ['iron-broadsword'], wornForm: 'iron-broadsword',
     },
   };
@@ -226,6 +231,126 @@ function richWallet(overrides: Partial<LineageWallet> = {}): LineageWallet {
   const untouched = lineageProgressFor(undefined, 'rapier');
   assert(untouched.ownedCards.length === 0 && untouched.wornForm === '',
     'an untouched tree reads as empty rather than undefined');
+}
+
+// ─── Ranks: the T1 lean trio is bought a rank at a time (design §26.1) ──────
+
+{
+  const fresh = emptyLineageProgress(rapier);
+  assert(cardRank(fresh, statCard.id) === 0 && nextCardRank(fresh, statCard) === 1, 'an unowned card is rank 0, buys rank I');
+  assert(maxCardRank(statCard) === MAX_LEAN_RANK && maxCardRank(payoffCard) === 1, 'the trio has three ranks; a verb one');
+
+  const leanGate = lineageMasteryLevelForRow(1, 'stat');
+  const atRank = (rank: number) => resolveLineageCardAtRank(rapier, fresh, statCard, rank);
+  assert(atRank(1).requiredGlobalMastery === leanGate, 'rank I is at the lean gate');
+  assert(atRank(2).requiredGlobalMastery === leanGate + 4, 'rank II is at the lean gate + 4');
+  assert(atRank(3).requiredGlobalMastery === leanGate + 8, 'rank III is at the lean gate + 8');
+  assert(atRank(1).statEffects?.attackSpeedPct === 0.08 && atRank(2).statEffects?.attackSpeedPct === 0.12
+    && atRank(3).statEffects?.attackSpeedPct === 0.16, 'Speed is +8% / +12% / +16%');
+  assert(atRank(2).cost.essence.green === Math.round(rowEssenceCost(1, 'stat') * 1.5)
+    && atRank(3).cost.shards.engagement === rowShardCost(1, 'stat') * 2, 'rank prices ×1.5 and ×2, same essence and shard');
+
+  // Owned at rank I: the purchase check is for rank II — its gate and its cost.
+  const one = { ...fresh, ownedCards: [statCard.id], ranks: { [statCard.id]: 1 } };
+  assert(cardRank(one, statCard.id) === 1 && nextCardRank(one, statCard) === 2, 'owned at I buys II');
+  assert(checkUnlockCard({ lineage: rapier, card: statCard, progress: one, wallet: richWallet() }).ok,
+    'an owned ranked card below its max is buyable again');
+  const gmTooLow = checkUnlockCard({
+    lineage: rapier, card: statCard, progress: one, wallet: richWallet({ globalMastery: leanGate + 3 }),
+  });
+  assert(!gmTooLow.ok && gmTooLow.reason!.includes(`Global Mastery ${leanGate + 4}`), `rank II gates on +4: ${gmTooLow.reason}`);
+  const priceTwo = lineageCardPrice({ lineage: rapier, card: statCard, progress: one });
+  assert(priceTwo.rank === 2 && priceTwo.cost.essence.green === atRank(2).cost.essence.green, 'the price tag is rank II');
+  const shortForTwo = checkUnlockCard({
+    lineage: rapier, card: statCard, progress: one,
+    wallet: richWallet({ shards: { engagement: rowShardCost(1, 'stat') } }),
+  });
+  assert(!shortForTwo.ok && /Spark Shard/.test(shortForTwo.reason!), `rank II costs more shards than rank I: ${shortForTwo.reason}`);
+
+  // A missing rank on an owned ranked card reads as rank I.
+  assert(cardRank({ ownedCards: [statCard.id] }, statCard.id) === 1, 'no stored rank = rank I');
+
+  // At the max the card refuses.
+  const three = { ...one, ranks: { [statCard.id]: 3 } };
+  const maxed = checkUnlockCard({ lineage: rapier, card: statCard, progress: three, wallet: richWallet() });
+  assert(!maxed.ok && maxed.reason === 'Already at rank III.', `at rank III: ${maxed.reason}`);
+  assert(nextCardRank(three, statCard) === undefined, 'nothing left to buy at rank III');
+  // An unranked card is still bought once.
+  const verbOwned = { ...fresh, ownedCards: [payoffCard.id] };
+  const again = checkUnlockCard({ lineage: rapier, card: payoffCard, progress: verbOwned, wallet: richWallet() });
+  assert(!again.ok && again.reason === 'Already owned.', 'a verb is bought once');
+
+  // The runtime reads the owned rank.
+  const worn = resolveActiveLineages({
+    equipment: { ...emptyEquipment(), weapon: 'flash-rapier' },
+    lineages: { rapier: { ...three, active: { stat: statCard.id } } },
+  });
+  assert(worn.statEffects.attackSpeedPct === 0.16, `the owned rank III pays out: ${worn.statEffects.attackSpeedPct}`);
+  // …and so does the band-collapse absorption under a T2 form (design §4).
+  const t2Lean = rapier.cards.find((c) => c.tier === 2 && c.row === 'stat' && c.lane === statCard.lane)!;
+  const absorbed = resolveActiveLineages({
+    equipment: { ...emptyEquipment(), weapon: 'gale-needle' },
+    lineages: {
+      rapier: {
+        ownedCards: [statCard.id, t2Lean.id], active: { stat: t2Lean.id },
+        ownedForms: ['flash-rapier', 'gale-needle'], wornForm: 'gale-needle', ranks: { [statCard.id]: 2 },
+      },
+    },
+  });
+  assert(absorbed.absorbed.length === 1 && absorbed.absorbed[0]!.card.id === statCard.id
+    && absorbed.absorbed[0]!.rank === 2 && absorbed.absorbed[0]!.statEffects?.attackSpeedPct === 0.12,
+  'the T2 gate absorbs the T1 lean at the rank the player owns');
+}
+
+// ─── Hydration: ranks normalise in, retired cards refund (design §26.1) ──────
+
+{
+  const effect = rapier.cards.find((c) => c.id === 'rapier-t1-effect')!;
+  const hydrated = normalizeLineageProgressMap({
+    rapier: {
+      ownedCards: [statCard.id, effect.id, payoffCard.id, statCard.id],
+      active: { stat: statCard.id },
+      ownedForms: ['flash-rapier'], wornForm: 'flash-rapier',
+      // Effect has no stored rank; a rank for an unowned card and one for an
+      // unranked card are dropped; an out-of-table rank is clamped.
+      ranks: { [statCard.id]: 9, 'rapier-t1-attack': 2, [payoffCard.id]: 2 },
+    },
+  });
+  const r = hydrated.rapier!;
+  assert(r.ownedCards.length === 3, 'a card owned twice is owned once');
+  assert(r.ranks?.[statCard.id] === MAX_LEAN_RANK, 'an out-of-table rank is clamped');
+  assert(r.ranks?.[effect.id] === 1, 'an owned ranked card with no rank hydrates at rank I');
+  assert(r.ranks?.['rapier-t1-attack'] === undefined, 'a rank for an unowned card is dropped');
+  assert(r.ranks?.[payoffCard.id] === undefined, 'an unranked card carries no rank');
+  const plain = normalizeLineageProgressMap({ rapier: { ownedCards: [payoffCard.id], active: {}, ownedForms: [], wornForm: '' } });
+  assert(plain.rapier!.ranks === undefined, 'a tree with no ranked card carries no ranks');
+
+  // A save from before design §26.1: its retired T1 cards drop out and are refunded
+  // at today's T1 row price, in the lineage's essence and each card's own shard.
+  const old = {
+    rapier: {
+      ownedCards: ['rapier-t1-tempo-stat', 'rapier-t1-affliction-payoff', 'rapier-t1-tempo-payoff', 'rapier-t1-tempo-stat'],
+      active: { stat: 'rapier-t1-tempo-stat', payoff: 'rapier-t1-affliction-payoff' },
+      ownedForms: ['flash-rapier'], wornForm: 'flash-rapier',
+    },
+    axe: { ownedCards: ['axe-t1-empowered-payoff', 'rapier-t1-engagement-stat'], active: {}, ownedForms: [], wornForm: '' },
+    broken: { ownedCards: 'not-an-array' } as unknown as Record<string, never>,
+  };
+  const refund = retiredLineageCardRefund(old);
+  assert(refund.cardIds.sort().join(',') === ['axe-t1-empowered-payoff', 'rapier-t1-affliction-payoff', 'rapier-t1-tempo-stat'].sort().join(','),
+    `refunds each retired card once, of its own lineage only: ${refund.cardIds.join(',')}`);
+  assert(refund.essence.green === rowEssenceCost(1, 'stat') + rowEssenceCost(1, 'payoff'), `rapier essence ${refund.essence.green}`);
+  assert((refund.essence.purple ?? refund.essence.red ?? refund.essence.blue ?? refund.essence.yellow ?? 0) > 0,
+    `the Axe's essence ${JSON.stringify(refund.essence)}`);
+  assert(refund.shards.tempo === rowShardCost(1, 'stat') && refund.shards.affliction === rowShardCost(1, 'payoff')
+    && refund.shards.empowered === rowShardCost(1, 'payoff'), `shards ${JSON.stringify(refund.shards)}`);
+  const migrated = normalizeLineageProgressMap(old);
+  assert(migrated.rapier!.ownedCards.join(',') === 'rapier-t1-tempo-payoff', 'the kept fixed verb survives, the rest drop');
+  assert(migrated.rapier!.active.stat === undefined && migrated.rapier!.active.payoff === undefined,
+    'no active row points at a retired card');
+  // Idempotent: the normalised save owes nothing more.
+  assert(retiredLineageCardRefund(migrated).cardIds.length === 0, 'a migrated save is refunded once');
+  assert(retiredLineageCardRefund(undefined).cardIds.length === 0, 'no save, no refund');
 }
 
 // ─── Resolution: only a WORN lineage contributes ─────────────────────────────

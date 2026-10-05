@@ -344,7 +344,21 @@ export type LineageStatKey =
    * `fraction` column climbs it; its duration is `LEAN_CONDITION_NUMBERS`' and
    * does not climb. Folds into the `shared.slow-on-hit-pct` passive.
    */
-  | 'slowOnHit';
+  | 'slowOnHit'
+  /**
+   * The T1 EFFECT lean on a weapon with no mechanic of its own (design §26.1: "On
+   * a weapon with no mechanic of its own (the Rapier, the Axe), Effect is the size
+   * of the verb's payload"; the brief adds the Broadsword's Technique refund). A
+   * fraction: the payload of the card's OWN lane's packet — the pure pair of the
+   * weapon's fixed verb, or that packet's payload on any verb the lane's lean
+   * composes with — is scaled by `1 + payloadScale` through `scalePayloadSize`
+   * (`magnitudes.ts`), the same arithmetic a tier or a size amplifier uses.
+   *
+   * NOT a character stat: it is applied at resolve time to the verb
+   * (`resolveLineageCards`) and never reaches the stat rebuild —
+   * `resolveActiveLineages` keeps it out of the summed `statEffects` bag.
+   */
+  | 'payloadScale';
 
 /**
  * What a resolved stat row contributes. Folds into passives at recalc through the
@@ -358,7 +372,29 @@ export type LineageStatKey =
 export type LineageStatEffects =
   Partial<Pick<ItemStats, 'attack' | 'onHitDamage' | 'plating' | 'damageReduction' | 'evasion' | 'maxHp' | 'recovery' | 'speed'>>
   & Partial<Pick<StatEffects, 'attackPct' | 'attackSpeedPct'>>
-  & { techniquePowerPct?: number; dotPotencyPct?: number; slowOnHit?: number };
+  & { techniquePowerPct?: number; dotPotencyPct?: number; slowOnHit?: number; payloadScale?: number };
+
+// ─── The T1 lean trio (design §26.1) ─────────────────────────────────────────
+
+/**
+ * Which of the T1 lean row's three generic cards a card is (design §26.1: "The T1
+ * lean row offers Attack, Speed and Effect, the same three on every weapon, so a
+ * new player reads the row without knowing what a lane is").
+ *
+ *  - `attack`  attack %;
+ *  - `speed`   attack speed %;
+ *  - `effect`  the weapon's own mechanic made stronger — the Dagger's poison
+ *              potency, the Hammer's slow, and on a weapon with no mechanic of its
+ *              own the size of the fixed verb's payload (`payloadScale`).
+ *
+ * A card with a `leanKind` is RANKED (three ranks, bought one at a time; see
+ * `LEAN_RANK_*` in `magnitudes.ts`). Its `lane` is its COLOUR and CURRENCY only:
+ * an Attack or Speed lean names NO payload lane, so the fixed verb reads its pure
+ * pair under it; an Effect lean names the verb's own lane (`leanPayloadLane`).
+ */
+export type LeanKind = 'attack' | 'speed' | 'effect';
+
+export const LEAN_KINDS: readonly LeanKind[] = ['attack', 'speed', 'effect'] as const;
 
 // ─── Visual signatures (design §8) ───────────────────────────────────────────
 
@@ -499,6 +535,12 @@ export interface LineageCard {
   fx: LineageFxKey;
   /** `stat` rows only: the stat this lane scales. */
   statKey?: LineageStatKey;
+  /**
+   * The T1 lean trio only (design §26.1): which of Attack, Speed and Effect this
+   * card is. Its presence makes the card RANKED; its number comes from
+   * `LEAN_RANK_ONE` and the rank tables, never from the lane. See {@link LeanKind}.
+   */
+  leanKind?: LeanKind;
   /**
    * Every row but `stat`: when it fires — EXCEPT a verb (design §24.2, §24.9).
    *
@@ -693,6 +735,14 @@ export interface ResolvedLineageCard {
   payoffFx?: LineageFxKey;
   /** Set on a verb (any tier): which halves produced its trigger and payoff. */
   composition?: LineageComposition;
+  /**
+   * A RANKED card only (the T1 lean trio, design §26.1): the rank its numbers,
+   * Global Mastery gate and cost were resolved at. The cost is the price of BUYING
+   * that rank. Absent on an unranked card (every card but the trio).
+   */
+  rank?: number;
+  /** A ranked card only: its highest rank (`MAX_LEAN_RANK`). Absent = unranked (1). */
+  maxRank?: number;
 }
 
 /**
@@ -745,6 +795,12 @@ export interface LineageProgress {
   ownedForms: string[];
   /** Recipe id of the worn form. `equipment[slot]` mirrors it. */
   wornForm: string;
+  /**
+   * Rank bought per RANKED card (the T1 lean trio, design §26.1). Key absent on an
+   * owned ranked card = rank 1 (hydration normalises it in). Never present for an
+   * unowned card, nor for an unranked one. Read through `cardRank`, never raw.
+   */
+  ranks?: Record<string, number>;
 }
 
 /** Keyed by lineage id. */

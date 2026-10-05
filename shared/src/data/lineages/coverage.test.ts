@@ -31,11 +31,14 @@ import {
 } from './index';
 import { PACKET_DEFINITIONS, packetDefaultFace, packetHalves, packetScalingStat } from './packets';
 import {
-  GATE_LOCAL_LEVEL, MAX_LINEAGE_TIER, rowBiomeLevel, rowsForTier, tierHasRow,
+  GATE_LOCAL_LEVEL, LEAN_RANK_ONE, LEAN_RANK_PRICE_SCALE, LEAN_RANK_VALUE_SCALE, MAX_LEAN_RANK,
+  MAX_LINEAGE_TIER, rowBiomeLevel, rowEssenceCost, rowShardCost, rowsForTier, tierHasRow,
 } from './magnitudes';
 import {
-  bandBiomeLevel, composeVerb, isVerbCard, lineageGateCost, resolveLineageCapstone, resolveLineageCard,
+  bandBiomeLevel, composeVerb, isRankedCard, isVerbCard, lineageGateCost, maxCardRank,
+  resolveLineageCapstone, resolveLineageCard,
 } from './resolve';
+import { RETIRED_LINEAGE_CARDS } from './retired';
 import { applyComposedAmplifier } from '../../systems/lineages';
 import {
   AMPLIFIED_AXES, LINEAGE_FX_KEYS, PACKET_IDS, PAYOFF_KINDS, ROW_KINDS,
@@ -54,7 +57,7 @@ const PAYOFF_IS_TIMED: ReadonlySet<string> = new Set([
   'technique-window',
   'evasion-window',
 ]);
-import type { LineageFxKey, PacketId } from './types';
+import type { LeanKind, LineageFxKey, LineageStatKey, PacketId } from './types';
 
 function assert(cond: boolean, msg: string): void {
   if (!cond) throw new Error(msg);
@@ -252,10 +255,15 @@ for (const [key, lineage] of LINEAGE_DATABASE) {
   // ahead of Phase 5's stat/payoff/amplifier rows at those tiers. So the full
   // "every row this tier has" rule applies at T1/T2 only; T3/T4 are checked for
   // just the row this phase actually authors.
+  //
+  // A weapon's T1 PAYOFF row is the one exception (design §26.1: "T1 deepens; T2
+  // branches"): it is one card, the weapon's own verb, so only its lane has one.
+  // The T1 band's own shape is pinned in section 1b below.
   const tiers = new Set(lineage.cards.map((c) => c.tier));
   for (const tier of tiers) {
     const rows = tier <= 2
       ? rowsForTier(tier).filter((row) => lineage.slot === 'weapon' || row !== 'stat')
+        .filter((row) => !(lineage.slot === 'weapon' && tier === 1 && row === 'payoff'))
       : tier === 3 ? ['keystone' as const] : ['cross' as const];
     for (const lane of lineage.lanes) {
       for (const row of rows) {
@@ -273,6 +281,147 @@ for (const [key, lineage] of LINEAGE_DATABASE) {
       }
     }
   }
+}
+
+// ─── 1b. The T1 weapon band after design §26.1 ───────────────────────────────
+//
+// "The T1 band is one lean row and one verb, and the verb is not a choice: it is
+// the weapon's identity." The lean row is Attack, Speed and Effect — the same three
+// on every weapon — each RANKED; the payoff row is ONE verb, the weapon's own. The
+// lane of a T1 lean is its colour and its shard only (PROVISIONAL rule, legibility
+// run): Effect takes the fixed verb's lane, Attack takes Empowered where the weapon
+// has it (else the first lane left), Speed takes Tempo where the weapon has it
+// (else the lane left) — so all three of the home biome's shards buy something.
+
+/** The fixed verb per weapon (design §26.1; the brief's names). */
+const FIXED_VERBS: Record<string, { id: string; name: string; lane: PacketId }> = {
+  dagger: { id: 'dagger-t1-affliction-payoff', name: 'Into the Wound', lane: 'affliction' },
+  rapier: { id: 'rapier-t1-tempo-payoff', name: 'Flurry', lane: 'tempo' },
+  hammer: { id: 'hammer-t1-control-payoff', name: 'Easy Prey', lane: 'control' },
+  axe: { id: 'axe-t1-tempo-payoff', name: 'Chopping Rhythm', lane: 'tempo' },
+  broadsword: { id: 'broadsword-t1-technique-payoff', name: 'Set Piece', lane: 'technique' },
+};
+
+/** Effect is the weapon's own mechanic (design §26.1). */
+const EFFECT_STAT: Record<string, LineageStatKey> = {
+  dagger: 'dotPotencyPct', // the reservoir's poison
+  hammer: 'slowOnHit', // the slow's depth, the verb's source
+  rapier: 'payloadScale', // no mechanic of its own: Flurry's second strike
+  axe: 'payloadScale', // no mechanic of its own: Chopping Rhythm's second swing
+  broadsword: 'payloadScale', // the Technique refund Set Piece pays
+};
+const KIND_STAT: Record<Exclude<LeanKind, 'effect'>, LineageStatKey> = {
+  attack: 'attackPct',
+  speed: 'attackSpeedPct',
+};
+
+let t1Weapons = 0;
+for (const lineage of liveLineages().filter((l) => l.slot === 'weapon')) {
+  t1Weapons += 1;
+  const band = lineage.cards.filter((c) => c.tier === 1);
+  const leans = band.filter((c) => c.row === 'stat');
+  const verbs = band.filter((c) => c.row === 'payoff');
+  check(band.length === 4, `${lineage.id}: the T1 band is three leans and one verb, got ${band.length} cards`);
+  check(leans.length === 3, `${lineage.id}: three T1 leans, got ${leans.length}`);
+
+  // The fixed verb: one, a VERB, the brief's card and name.
+  const fixed = FIXED_VERBS[lineage.id];
+  check(!!fixed, `${lineage.id}: no fixed verb listed for this weapon`);
+  check(verbs.length === 1, `${lineage.id}: the T1 payoff row is ONE verb (design §26.1), got ${verbs.length}`);
+  const verb = verbs[0];
+  if (fixed && verb) {
+    check(verb.id === fixed.id, `${lineage.id}: the fixed verb is '${fixed.id}' (its id kept), got '${verb.id}'`);
+    check(verb.name === fixed.name, `${lineage.id}: the fixed verb reads '${fixed.name}', got '${verb.name}'`);
+    check(verb.lane === fixed.lane, `${lineage.id}: the fixed verb is the ${fixed.lane} verb`);
+    check(isVerbCard(verb), `${verb.id}: the fixed verb is a VERB (no trigger, no payoff)`);
+  }
+
+  // The trio: one of each kind, ranked, three distinct lanes that ARE the weapon's.
+  const byKind = new Map<LeanKind, typeof leans[number]>();
+  for (const lean of leans) {
+    check(isRankedCard(lean), `${lean.id}: a T1 lean is one of the ranked trio`);
+    check(maxCardRank(lean) === MAX_LEAN_RANK, `${lean.id}: ${MAX_LEAN_RANK} ranks`);
+    if (lean.leanKind) {
+      check(!byKind.has(lean.leanKind), `${lineage.id}: two '${lean.leanKind}' leans`);
+      byKind.set(lean.leanKind, lean);
+      check(lean.id === `${lineage.id}-t1-${lean.leanKind}`, `${lean.id}: the trio's id is <weapon>-t1-<kind>`);
+      const label = lean.leanKind[0]!.toUpperCase() + lean.leanKind.slice(1);
+      check(lean.name === label, `${lean.id}: reads '${label}', got '${lean.name}'`);
+    }
+  }
+  check(new Set(leans.map((c) => c.lane)).size === 3, `${lineage.id}: the trio takes three different lanes`);
+  check(lineage.lanes.every((lane) => leans.some((c) => c.lane === lane)), `${lineage.id}: the trio covers all three lanes`);
+
+  const attack = byKind.get('attack');
+  const speed = byKind.get('speed');
+  const effect = byKind.get('effect');
+  check(!!attack && !!speed && !!effect, `${lineage.id}: Attack, Speed and Effect`);
+  if (attack) check(attack.statKey === KIND_STAT.attack, `${attack.id}: Attack is attack %`);
+  if (speed) check(speed.statKey === KIND_STAT.speed, `${speed.id}: Speed is attack speed %`);
+  if (effect) {
+    check(effect.statKey === EFFECT_STAT[lineage.id], `${effect.id}: Effect is ${EFFECT_STAT[lineage.id]}, got ${effect.statKey}`);
+    check(effect.lane === verb?.lane, `${effect.id}: Effect takes the fixed verb's lane (its shard and colour)`);
+  }
+  // The shard rule (PROVISIONAL): Attack → Empowered if present, Speed → Tempo if
+  // present, each else the first lane still free in matrix order.
+  if (attack && speed && effect) {
+    const free = lineage.lanes.filter((lane) => lane !== effect.lane);
+    const attackLane = free.includes('empowered') ? 'empowered' : free[0];
+    check(attack.lane === attackLane, `${attack.id}: Attack takes '${attackLane}', got '${attack.lane}'`);
+    const left = free.filter((lane) => lane !== attackLane);
+    const speedLane = left.includes('tempo') ? 'tempo' : left[0];
+    check(speed.lane === speedLane, `${speed.id}: Speed takes '${speedLane}', got '${speed.lane}'`);
+  }
+
+  // Every rank resolves: rank I is the kind's number, each rank above adds half of
+  // rank I again, the price climbs in the SAME essence and the SAME shard.
+  for (const lean of leans) {
+    if (!lean.leanKind) continue;
+    for (let rank = 1; rank <= MAX_LEAN_RANK; rank++) {
+      const resolved = resolveLineageCard(lean, lineage, { rank });
+      const entries = Object.entries(resolved.statEffects ?? {});
+      const expected = Math.round(LEAN_RANK_ONE[lean.leanKind] * LEAN_RANK_VALUE_SCALE[rank - 1]! * 1000) / 1000;
+      check(entries.length === 1 && entries[0]![0] === lean.statKey && Math.abs(entries[0]![1] - expected) < 1e-9,
+        `${lean.id} rank ${rank}: ${JSON.stringify(resolved.statEffects)}, expected ${lean.statKey} ${expected}`);
+      check(resolved.rank === rank && resolved.maxRank === MAX_LEAN_RANK, `${lean.id} rank ${rank}: rank recorded`);
+      const essence = Object.values(resolved.cost.essence);
+      const shards = Object.entries(resolved.cost.shards);
+      check(essence[0] === Math.round(rowEssenceCost(1, 'stat') * LEAN_RANK_PRICE_SCALE[rank - 1]!),
+        `${lean.id} rank ${rank}: essence ${essence[0]}`);
+      check(shards.length === 1 && shards[0]![0] === lean.lane
+        && shards[0]![1] === Math.round(rowShardCost(1, 'stat') * LEAN_RANK_PRICE_SCALE[rank - 1]!),
+      `${lean.id} rank ${rank}: shards ${JSON.stringify(resolved.cost.shards)} in its own lane`);
+    }
+    const one = resolveLineageCard(lean, lineage, { rank: 1 });
+    const three = resolveLineageCard(lean, lineage, { rank: 3 });
+    check(Math.abs((Object.values(three.statEffects!)[0]!) - 2 * Object.values(one.statEffects!)[0]!) < 1e-9,
+      `${lean.id}: rank III is twice rank I`);
+  }
+}
+check(t1Weapons === 5, `five live weapon lineages carry the T1 trio, got ${t1Weapons}`);
+
+// Only the T1 weapon leans are ranked; every other card is bought once.
+for (const lineage of LINEAGE_DATABASE.values()) {
+  for (const card of lineage.cards) {
+    if (!isRankedCard(card)) {
+      check(maxCardRank(card) === 1, `${card.id}: an unranked card has one rank`);
+      continue;
+    }
+    check(lineage.slot === 'weapon' && card.tier === 1 && card.row === 'stat',
+      `${card.id}: only a T1 weapon lean is ranked (design §26.1)`);
+  }
+}
+
+// The retired T1 cards (design §26.1) are gone from the data and priced for the
+// save refund: every one names a live weapon lineage, one of its lanes, and an id
+// that no live card reuses.
+check(RETIRED_LINEAGE_CARDS.size === 25, `five weapons × (three leans + two verbs) retired, got ${RETIRED_LINEAGE_CARDS.size}`);
+for (const [id, retired] of RETIRED_LINEAGE_CARDS) {
+  const lineage = LINEAGE_DATABASE.get(retired.lineageId);
+  check(!!lineage && lineage.slot === 'weapon', `${id}: retired from a weapon lineage`);
+  check(!lineageForCardId(id), `${id}: a retired id is still a live card`);
+  check(!!lineage?.lanes.includes(retired.lane), `${id}: retired lane '${retired.lane}' is not on ${retired.lineageId}`);
+  check(id === `${retired.lineageId}-t1-${retired.lane}-${retired.row}`, `${id}: the id is its shape`);
 }
 
 // ─── 2. Coverage (design §9, §17) ────────────────────────────────────────────
@@ -504,9 +653,12 @@ for (const lineage of LINEAGE_DATABASE.values()) {
       const effects = resolved.statEffects ?? {};
       const entries = Object.entries(effects);
       check(entries.length === 1, `${card.id}: a stat row scales exactly one stat`);
+      // A ranked T1 lean scales its KIND's stat (section 1b); its lane is colour
+      // and currency only. Every other stat row scales its lane's stat.
+      const expectedStat = isRankedCard(card) ? card.statKey : packetScalingStat(card.lane);
       check(
-        entries[0]?.[0] === packetScalingStat(card.lane),
-        `${card.id}: scales '${entries[0]?.[0]}' but its lane scales '${packetScalingStat(card.lane)}'`,
+        entries[0]?.[0] === expectedStat,
+        `${card.id}: scales '${entries[0]?.[0]}' but should scale '${expectedStat}'`,
       );
       check(Number.isFinite(entries[0]?.[1]) && (entries[0]?.[1] ?? 0) > 0, `${card.id}: stat row resolved to ${entries[0]?.[1]}`);
       check(!resolved.payoff, `${card.id}: a stat row has no payoff`);
@@ -553,8 +705,8 @@ check(
   'Phase 4 authors five lineages per non-weapon slot (design §17)',
 );
 check(
-  cardsForTier(LINEAGE_DATABASE.get('rapier')!, 1).length === 6,
-  'the rapier T1 band is three stat rows and three payoff rows (design §13)',
+  cardsForTier(LINEAGE_DATABASE.get('rapier')!, 1).length === 4,
+  'the rapier T1 band is the lean trio and its one verb (design §26.1)',
 );
 check(
   cardsForTier(LINEAGE_DATABASE.get('robe')!, 1).length === 3,
