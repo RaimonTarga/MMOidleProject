@@ -67,7 +67,14 @@ export interface PacketHalves {
   momentPhrase: { text: string; kind: 'subject' | 'clause' };
   /** The payload as a predicate: what the hit, or the moment, does. */
   payloadPhrase: string;
-  /** The one hand-authored sentence per packet: the pure pair (design §24.2). */
+  /**
+   * The one hand-authored sentence per packet: the pure pair (design §24.2).
+   *
+   * One ` | ` marks where its MOMENT ends and its payload begins (legibility run,
+   * design §26.4: the page colours the two halves of a sentence, and never parses
+   * text to find them). The marker is never rendered: `pureSentenceText` joins the
+   * halves with a space and `pureSentenceParts` returns them apart.
+   */
   pureSentence: string;
   /**
    * What this lane's MOMENT cannot reach, as the short note the weapon page shows
@@ -130,7 +137,7 @@ const packetEntries: [PacketId, PacketDefinition][] = [
       pure: { payload: 'echo-hit', fx: 'tempo.ghost-strike' },
       momentPhrase: { text: 'Every {nth} hit', kind: 'subject' },
       payloadPhrase: 'lands {times}',
-      pureSentence: 'Every {nth} hit strikes {times}.',
+      pureSentence: 'Every {nth} hit | strikes {times}.',
     },
   }],
   ['empowered', {
@@ -149,7 +156,7 @@ const packetEntries: [PacketId, PacketDefinition][] = [
       pure: { payload: 'big-hit', fx: 'empowered.crash' },
       momentPhrase: { text: 'When your class mechanic fires (every {cap} at most)', kind: 'clause' },
       payloadPhrase: 'counts as your class mechanic firing',
-      pureSentence: 'Your mechanic hits {asHard} as hard.',
+      pureSentence: 'Your mechanic | hits {asHard} as hard.',
     },
   }],
   ['affliction', {
@@ -169,7 +176,7 @@ const packetEntries: [PacketId, PacketDefinition][] = [
         kind: 'subject',
       },
       payloadPhrase: 'leaves a heavy poison or bleed, {swing} over {duration}',
-      pureSentence: 'Hitting an afflicted target {redose} its affliction.',
+      pureSentence: 'Hitting an afflicted target | {redose} its affliction.',
     },
   }],
   ['control', {
@@ -189,7 +196,7 @@ const packetEntries: [PacketId, PacketDefinition][] = [
         kind: 'subject',
       },
       payloadPhrase: 'roots the target for {duration}',
-      pureSentence: 'Hitting a held target knocks it down for {duration}.',
+      pureSentence: 'Hitting a held target | knocks it down for {duration}.',
     },
   }],
   ['kill-chain', {
@@ -208,7 +215,7 @@ const packetEntries: [PacketId, PacketDefinition][] = [
       payloadPhrase: 'heals {shareOf} your pool and lands loaded ({loadPct})',
       // The heal lands with the next hit, not the kill (course-correction report
       // item 20), so the pure sentence says when it happens.
-      pureSentence: 'Your next hit after a kill heals {shareOf} your pool and lands loaded ({loadPct}).',
+      pureSentence: 'Your next hit after a kill | heals {shareOf} your pool and lands loaded ({loadPct}).',
       momentCaveat: 'weak on bosses',
     },
   }],
@@ -224,7 +231,7 @@ const packetEntries: [PacketId, PacketDefinition][] = [
       pure: { payload: 'big-hit', fx: 'engagement.lunge' },
       momentPhrase: { text: 'Your first hit on each new target', kind: 'subject' },
       payloadPhrase: 'is a lunge for {mult} damage',
-      pureSentence: 'Your first hit on each target is a lunge for {mult} damage.',
+      pureSentence: 'Your first hit on each target | is a lunge for {mult} damage.',
     },
   }],
   ['bulwark', {
@@ -263,7 +270,7 @@ const packetEntries: [PacketId, PacketDefinition][] = [
       // Technique verb is the pure pair), where no Technique landed — so it
       // refunds every Technique's cooldown, as the runtime does, never "that" one.
       payloadPhrase: 'refunds {shareOf} your Technique cooldowns',
-      pureSentence: 'A landed Technique refunds {shareOf} its cooldown.',
+      pureSentence: 'A landed Technique | refunds {shareOf} its cooldown.',
     },
   }],
 ];

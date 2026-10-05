@@ -27,6 +27,8 @@ const INFRASTRUCTURE = new Set([
   'index.ts', 'capstones.ts',
   // Turns the magnitude table's numbers into words (design §24.2) — no card.
   'sentences.ts',
+  // The retired T1 cards' shapes, for the save refund (design §26.1) — no live card.
+  'retired.ts',
 ]);
 
 const cardFiles = readdirSync(LINEAGE_DIR).filter(

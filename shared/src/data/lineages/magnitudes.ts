@@ -22,7 +22,7 @@
 import { BIOME_LEVELS_PER_TIER, GAME_CONFIG } from '../../config/gameConfig';
 import { globalMasteryRequiredForUpgrade, MAX_UPGRADE } from '../../systems/itemUpgrades';
 import type {
-  DefensiveFace, LineageStatKey, PacketId, PayoffKind, RowKind, TriggerKind,
+  DefensiveFace, LeanKind, LineageStatKey, PacketId, PayoffKind, RowKind, TriggerKind,
 } from './types';
 
 // ─── The three scalars ───────────────────────────────────────────────────────
@@ -167,12 +167,17 @@ export const STAT_UNIT: Record<LineageStatKey, number> = {
   techniquePowerPct: 0.09,
   dotPotencyPct: 0.10,
   slowOnHit: 0.15,
+  // The unit a lane-scaled `payloadScale` row would take. No card resolves through
+  // it today: the only `payloadScale` cards are the T1 Effect leans, which are
+  // RANKED and read `LEAN_RANK_ONE` instead. Kept at the Effect's own number so the
+  // two cannot read differently if a lane lean ever scales a payload.
+  payloadScale: 0.10,
 };
 
 /** Stats that are fractions and keep three decimals; everything else is an integer. */
 const FRACTIONAL_STATS: ReadonlySet<LineageStatKey> = new Set<LineageStatKey>([
   'damageReduction', 'evasion', 'attackPct', 'attackSpeedPct', 'techniquePowerPct',
-  'dotPotencyPct', 'slowOnHit',
+  'dotPotencyPct', 'slowOnHit', 'payloadScale',
 ]);
 
 /** Whether a stat row's value is a fraction (shown as a percentage). */
@@ -855,6 +860,75 @@ export const GATE_CAPSTONE_AMOUNT: Record<number, number> = {
   4: 5,
 };
 
+// ─── The T1 lean trio's ranks (design §26.1) ─────────────────────────────────
+//
+// "T1 deepens; T2 branches." The T1 lean row is Attack, Speed and Effect, each a
+// stat with THREE ranks bought one at a time: "the T1 steps are therefore form,
+// lean I, II, III, verb, gate: six, as the ladder had, with the number in the
+// sentence growing where the player can see it". Every number below is
+// PROVISIONAL (legibility run, designer's number) and revertable per row.
+
+/** Ranks a ranked card (the T1 lean trio) has. */
+export const MAX_LEAN_RANK = 3;
+
+/**
+ * A lean's value at rank I, per kind — a FRACTION of the stat the card names
+ * (`statKey`): attack % for Attack, attack speed % for Speed, and for Effect the
+ * weapon's own mechanic (the Dagger's DoT potency, the Hammer's slow depth, the
+ * fixed verb's payload size on the Rapier, Axe and Broadsword).
+ */
+export const LEAN_RANK_ONE: Readonly<Record<LeanKind, number>> = {
+  attack: 0.08, // PROVISIONAL (legibility run, designer's number): +8% attack
+  speed: 0.08, // PROVISIONAL (legibility run, designer's number): +8% attack speed
+  effect: 0.10, // PROVISIONAL (legibility run, designer's number): +10% of the weapon's mechanic
+};
+
+/**
+ * What each rank is worth, as a multiple of rank I: "each further rank adds half
+ * of rank I again (rank III = 2× rank I)". Index = rank − 1.
+ */
+export const LEAN_RANK_VALUE_SCALE: readonly number[] = [
+  1, // rank I — PROVISIONAL (legibility run, designer's number)
+  1.5, // rank II — PROVISIONAL (legibility run, designer's number)
+  2, // rank III — PROVISIONAL (legibility run, designer's number)
+];
+
+/**
+ * Global Mastery each rank asks for ON TOP of the T1 lean gate
+ * (`lineageMasteryLevelForRow(1, 'stat')`, Global Mastery 6): "rank I at the lean
+ * gate and the next two later in the tier … the lean gate, +4 and +8". So 6 / 10 /
+ * 14: rank II opens with the verb (Global Mastery 10, design §24.9), rank III half
+ * way to the T1 gate's 30. Index = rank − 1. `reachability.test.ts` keeps these
+ * non-decreasing and rank III at or under the tier's gate.
+ */
+export const LEAN_RANK_MASTERY_OFFSET: readonly number[] = [
+  0, // rank I — PROVISIONAL (legibility run, designer's number)
+  4, // rank II — PROVISIONAL (legibility run, designer's number)
+  8, // rank III — PROVISIONAL (legibility run, designer's number)
+];
+
+/**
+ * What BUYING each rank costs, as a multiple of the stat row's price (essence and
+ * shards alike, in the same essence and the same shard as rank I): "rank I
+ * today's lean cost; II and III ×1.5 and ×2". At T1 that is 30 / 45 / 60 essence
+ * and 3 / 5 / 6 shards (4.5 rounds to 5). Index = rank − 1.
+ */
+export const LEAN_RANK_PRICE_SCALE: readonly number[] = [
+  1, // rank I — PROVISIONAL (legibility run, designer's number)
+  1.5, // rank II — PROVISIONAL (legibility run, designer's number)
+  2, // rank III — PROVISIONAL (legibility run, designer's number)
+];
+
+/** A rank clamped into the table: 1..{@link MAX_LEAN_RANK}. */
+export function clampLeanRank(rank: number): number {
+  return Math.min(MAX_LEAN_RANK, Math.max(1, Math.floor(Number.isFinite(rank) ? rank : 1)));
+}
+
+/** "I", "II", "III" — how a rank reads on the page and in a refusal. */
+export function rankNumeral(rank: number): string {
+  return ['I', 'II', 'III', 'IV', 'V'][Math.max(1, Math.floor(rank)) - 1] ?? String(rank);
+}
+
 // ─── Resolution helpers ──────────────────────────────────────────────────────
 
 export function clampTier(tier: number): number {
@@ -959,6 +1033,31 @@ export function gateShardCost(tier: number): number {
 
 export function gateCapstoneAmount(tier: number): number {
   return GATE_CAPSTONE_AMOUNT[clampTier(tier)] ?? 1;
+}
+
+/**
+ * A ranked lean's value at `rank`: rank I's number for its kind, times the rank's
+ * scale, times the tier's `fraction` column (1 at T1 — the trio is a T1 row, the
+ * column is here so a ranked row elsewhere would climb like every percentage).
+ */
+export function leanRankValue(kind: LeanKind, statKey: LineageStatKey, rank: number, tier = 1): number {
+  const scale = LEAN_RANK_VALUE_SCALE[clampLeanRank(rank) - 1] ?? 1;
+  return quantizeStat(statKey, LEAN_RANK_ONE[kind] * scale * tierScalar(tier, 'fraction'));
+}
+
+/** Global Mastery a ranked card's `rank` asks for: its row's gate plus the rank's offset. */
+export function leanRankMastery(tier: number, row: RowKind, rank: number): number {
+  return lineageMasteryLevelForRow(tier, row) + (LEAN_RANK_MASTERY_OFFSET[clampLeanRank(rank) - 1] ?? 0);
+}
+
+/** Essence BUYING `rank` of a ranked card costs, before any lineage-switch discount. */
+export function leanRankEssenceCost(tier: number, row: RowKind, rank: number): number {
+  return Math.round(rowEssenceCost(tier, row) * (LEAN_RANK_PRICE_SCALE[clampLeanRank(rank) - 1] ?? 1));
+}
+
+/** Shards BUYING `rank` of a ranked card costs, before any lineage-switch discount. */
+export function leanRankShardCost(tier: number, row: RowKind, rank: number): number {
+  return Math.round(rowShardCost(tier, row) * (LEAN_RANK_PRICE_SCALE[clampLeanRank(rank) - 1] ?? 1));
 }
 
 /**

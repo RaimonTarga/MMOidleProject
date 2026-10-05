@@ -637,19 +637,18 @@ function kill(player: PlayerEntity, defender: MonsterEntity): void {
   const player = world.attachPlayerEntity(slices, 'cmp-e2e');
   equipItem(world, player, 'flash-rapier');
 
-  for (const cardId of ['rapier-t1-affliction-stat', 'rapier-t1-tempo-payoff']) {
+  // Design §26.1 (legibility run): the T1 band is the ranked lean trio and the
+  // weapon's ONE verb. The Attack lean is paid in Venom Shards (its colour) but
+  // names no payload, so Flurry reads its own pure pair under it.
+  for (const cardId of ['rapier-t1-attack', 'rapier-t1-tempo-payoff']) {
     const bought = unlockLineageCard(world, player, 'rapier', cardId);
     assert(bought.success, `${cardId}: ${bought.reason}`);
   }
   const flurry = getLineageRuntime(player.tracksCombat)?.cards.find((c) => c.card.id === 'rapier-t1-tempo-payoff');
   assert(flurry?.trigger?.kind === 'hit-nth' && flurry.trigger.n === 6, 'Flurry fires on every 6th hit');
-  assert(flurry?.payoff?.kind === 'hemorrhage' && flurry.payoff.magnitude === 1, 'with Envenomed, it leaves the heavy bleed');
-  assert(flurry?.payoffFx === 'affliction.heavy-drip', 'and draws the Affliction payload');
-  // The Affliction lean is DoT potency, folded into the DoT root's multiplier on
-  // top of its base even when no frame authored one (a frameless player reads
-  // the profile's base, never 0.10 alone).
-  const mult = player.usesSkills.passives['dot.mechanic-mult'] ?? 0;
-  assert(Math.abs(mult - 1.3) < 1e-9, `DoT potency adds +0.10 onto the 1.2 base, got ${mult}`);
+  assert(flurry?.payoff?.kind === 'echo-hit' && flurry.payoff.magnitude === 1 && flurry.composition?.pure === true,
+    'under the Attack lean, Flurry strikes twice — its own pure pair');
+  assert(flurry?.payoffFx === 'tempo.ghost-strike', 'and draws its own payload');
 
   const target = world.createMonster(NODE, 'plains-slime', { x: 430, y: 400 })!;
   target.hasHealth.maxHp = 100_000;
@@ -661,18 +660,23 @@ function kill(player: PlayerEntity, defender: MonsterEntity): void {
     aggroSource: { id: player.isPlayer.id, kind: 'player' },
   });
   for (let i = 0; i < 5; i++) swing();
-  // The lean's light bleed shares the heavy one's record (design §26.2), so the
-  // record exists from the first hit; the heavy payload is the 6th hit's firing.
-  assert(!cardFx().some((e) => e.fx === 'affliction.heavy-drip'), 'nothing before the 6th hit');
+  assert(!cardFx().some((e) => e.cardId === 'rapier-t1-tempo-payoff'), 'nothing before the 6th hit');
   swing();
-  assert(getStatusEffect(target.tracksCombat, LINEAGE_BLEED_ID) !== undefined, 'the 6th hit leaves the heavy bleed');
-  assert(cardFx().some((e) => e.fx === 'affliction.heavy-drip'), 'drawn as the heavy drip');
+  assert(cardFx().some((e) => e.cardId === 'rapier-t1-tempo-payoff' && e.fx === 'tempo.ghost-strike'),
+    'the 6th hit strikes twice, drawn as the ghost strike');
 
-  // Swap the lean to the verb's own lane: the pair turns pure, no re-purchase.
-  assert(unlockLineageCard(world, player, 'rapier', 'rapier-t1-tempo-stat').success, 'Quick Wrist bought');
-  assert(setLineageActive(world, player, 'rapier', 'stat', 'rapier-t1-tempo-stat').success, 'Quick Wrist slotted');
-  const pure = getLineageRuntime(player.tracksCombat)?.cards.find((c) => c.card.id === 'rapier-t1-tempo-payoff');
-  assert(pure?.payoff?.kind === 'echo-hit' && pure.composition?.pure === true, 'Quick Wrist + Flurry is the pure pair');
+  // The Effect lean is Flurry's own: bought to rank II through the same intent and
+  // slotted, Flurry's second strike is half again of rank I bigger — no re-purchase
+  // of the verb, the same moment.
+  assert(unlockLineageCard(world, player, 'rapier', 'rapier-t1-effect').success, 'Effect rank I bought');
+  assert(unlockLineageCard(world, player, 'rapier', 'rapier-t1-effect').success, 'Effect rank II bought');
+  assert(setLineageActive(world, player, 'rapier', 'stat', 'rapier-t1-effect').success, 'Effect slotted');
+  const scaled = getLineageRuntime(player.tracksCombat)?.cards.find((c) => c.card.id === 'rapier-t1-tempo-payoff');
+  assert(scaled?.payoff?.kind === 'echo-hit' && scaled.payoff.magnitude === 1.15 && scaled.composition?.pure === true,
+    `Effect II + Flurry: the second strike lands at 115%, got ${scaled?.payoff?.magnitude}`);
+  assert(scaled?.trigger?.kind === 'hit-nth' && scaled.trigger.n === 6, 'on the same moment');
+  // The payload scale is the verb's, never a character stat.
+  assert(!Object.keys(player.usesSkills.passives).some((key) => /payload/i.test(key)), 'no payload-scale passive');
 }
 
 // ── T2 end to end (design §24.9): the T2 band composes and amplifies ─────────
@@ -696,6 +700,13 @@ function kill(player: PlayerEntity, defender: MonsterEntity): void {
   }
   const cards = getLineageRuntime(player.tracksCombat)?.cards ?? [];
   assert(!cards.some((c) => c.card.row === 'amplifier'), 'the amplifier is folded, never a card');
+  // The Affliction lean is DoT potency, folded into the DoT root's multiplier on
+  // top of its base even when no frame authored one (a frameless player reads
+  // the profile's base, never the lean alone). Moved here from the T1 block: since
+  // design §26.1 the lane leans are the T2 lean row.
+  const potency = cards.find((c) => c.card.id === 'rapier-t2-affliction-stat')?.statEffects?.dotPotencyPct ?? 0;
+  const mult = player.usesSkills.passives['dot.mechanic-mult'] ?? 0;
+  assert(potency > 0 && Math.abs(mult - (1.2 + potency)) < 1e-9, `DoT potency adds +${potency} onto the 1.2 base, got ${mult}`);
   const riposte = cards.find((c) => c.card.id === 'rapier-t2-tempo-payoff');
   assert(riposte?.composition?.leanLane === 'affliction', 'Running Riposte composes with Deeper Brew');
   assert(riposte?.trigger?.kind === 'hit-nth' && riposte.trigger.n === 6, 'on the Tempo moment, every 6th hit, as at T1');

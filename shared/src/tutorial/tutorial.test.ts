@@ -3,7 +3,7 @@ import { ABILITY_RECIPE_DATABASE } from '../abilityRecipes';
 import { globalMastery } from '../config/gameConfig';
 import { LINEAGE_DATABASE, lineageForRecipeId } from '../data/lineages';
 import { GATE_CAPSTONE_AMOUNT } from '../data/lineages/magnitudes';
-import { isVerbCard, resolveLineageCard } from '../data/lineages/resolve';
+import { isVerbCard, leanPayloadLane, resolveLineageCard } from '../data/lineages/resolve';
 import { verbSentence } from '../data/lineages/sentences';
 import type { LineageProgressMap } from '../data/lineages/types';
 import { cardSentence } from '../systems/lineages';
@@ -583,8 +583,10 @@ for (const plan of TUTORIAL_CLASS_PLANS) {
   const verb = lineage.cards.find((c) => c.id === plan.weaponCards.verb);
   assert(!!lean && lean.tier === 1 && lean.row === 'stat', `${plan.className}: the lean is a tier-1 stat card`);
   assert(!!verb && verb.tier === 1 && isVerbCard(verb), `${plan.className}: the verb is a tier-1 verb`);
-  const sentence = verbSentence(verb!.lane, lean!.lane)!;
-  const pure = lean!.lane === verb!.lane;
+  // The lean's PAYLOAD lane (design §26.1: a T1 Attack or Speed lean names none).
+  const leanLane = leanPayloadLane(lean!);
+  const sentence = verbSentence(verb!.lane, leanLane)!;
+  const pure = leanLane === undefined || leanLane === verb!.lane;
   if (!pure) assert(sentence !== verbSentence(verb!.lane), `${plan.className}: the lean does not change what ${verb!.name} says`);
   const script = tutorialScriptFor(plan.classRoot);
   const buy = script.beats.find((b) => b.id === `card:${verb!.id}`);

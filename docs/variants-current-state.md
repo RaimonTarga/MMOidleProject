@@ -82,6 +82,27 @@ Every T1 blend now **resolves exactly as authored** (see §3) and `UNSOURCED_FAM
 is **empty**: `desert-stalker`, the last entry on that list, is sourced now that Desert's
 T3+ pool fields a Stalker member.
 
+### 2a. T1 nodes are rosters (design §26.3, legibility run 2026-10-05)
+
+A 70/20/10 node and a 45/45/10 node were indistinguishable by eye, so every T1 normal
+node now fields its dominant family and **at most one guest**, and one node per biome,
+the **crossroads**, fields all three. Shapes (`regionT1.ts` header): a pure `{A: 1}`; a
+pair `{A: 0.7, B: 0.3}`, or `{A: 0.6, B: 0.4}` on a biome's two doors (first two
+arrivals, the roster form of the entry-pressure rule "mixed blends first"); the
+crossroads `{A: .34, B: .33, C: .33}` on the cell the dungeon is entered from (the -01
+cell in every biome; Mountain and Cave have two dungeon cells and the crossroads is the
+one met last). A biome's heaviest family (Plains Swarm, Forest Pack, Mountain Ridge, Cave
+Brute, Swamp Coven) is never a pure. Every family leads a node that is not the
+crossroads, and no two nodes of a biome share a roster. Node count and ids unchanged.
+
+Currency: every node kept its dominant (and shard) except `node-t1-mountain-03`, Crag →
+Ridge (Anvil → Shackle), so the Ridge kept a territory when its old ridge-70 cell became
+the crossroads. The crossroads pays its by-a-hair leader's shard — the family that led
+the cell before, so no crossroads changed currency. **PROVISIONAL**: §26.3 leaves "one
+shard or a roll per kill" open. `isCrossroadsNode` / `ROSTER_TIERS` (`nodeBlends.ts`)
+name the shape; T2–T4 blends are still three-family proportions (follow-up). Full
+before → after table: `reports/legibility/rosters.md`.
+
 ## 3. Spawning (`shared/src/systems/world/spawning/` and `families/index.ts`)
 
 A blend governs **which family spawns next**, not population size — headcount and the
@@ -211,6 +232,8 @@ thirty-spawn world run per tier asserting the resolved composition matches the a
 blend within one mob per ten slots; its "every family a tier's blends name leads a node"
 rule counts only the families the tier's pool fields. `server/test/lineageMaterials.test.ts`
 covers the family partition (every `FAMILY_BIOMES` biome, every tier) and the
-`UNSOURCED_FAMILIES` tripwire. `shared/src/world/nodeShards.test.ts` covers the node rule:
+`UNSOURCED_FAMILIES` tripwire. `shared/src/world/nodeRosters.test.ts` covers the T1 roster
+shapes, the crossroads (one per biome, on the dungeon, met last), territories, roster
+variety, and the spawner seam on a pure and a pair. `shared/src/world/nodeShards.test.ts` covers the node rule:
 one shard per node, its leader's `drops`, and a leader the node's tier pool fields. Blend shape and coverage are also folded into `validateWorldMap`, so a
 malformed blend fails dev boot rather than shipping silently.

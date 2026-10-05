@@ -92,7 +92,11 @@ for (const ref of LINEAGE_LANE_REFERENCES) {
   for (const cardId of ref.cardIds) {
     const card = LINEAGE_DATABASE.get(ref.lineageId)!.cards.find((c) => c.id === cardId)!;
     assert(tree.active[card.row] === cardId, `${ref.profileId}: ${cardId} is the active ${card.row}`);
-    assert(card.tier === 1 && card.lane === ref.lane, `${ref.profileId}: ${cardId} is a T1 card of its lane`);
+    // Design §26.1 (legibility run): the T1 payoff row is ONE verb, the weapon's own,
+    // so a lane reference runs its lane's lean with that verb.
+    const theVerb = card.row === 'payoff'
+      && LINEAGE_DATABASE.get(ref.lineageId)!.cards.filter((c) => c.tier === 1 && c.row === 'payoff').length === 1;
+    assert(card.tier === 1 && (card.lane === ref.lane || theVerb), `${ref.profileId}: ${cardId} is a T1 card of its lane`);
   }
   if (!ref.lane) {
     assert(ref.cardIds.length === 0 && Object.keys(tree.active).length === 0,
@@ -398,8 +402,10 @@ for (const ref of LINEAGE_LANE_REFERENCES_T2) {
   // is inside the worn form now (design §4 band collapse), which is why it is still
   // owned and no longer active.
   const expectedOwned = [
+    // The T1 payoff row is the weapon's one verb (design §26.1, legibility run).
     ...rowsForTier(1).map((row) =>
-      lineage.cards.find((c) => c.tier === 1 && c.row === row && c.lane === ref.lane)!.id),
+      (lineage.cards.find((c) => c.tier === 1 && c.row === row && c.lane === ref.lane)
+        ?? lineage.cards.find((c) => c.tier === 1 && c.row === row))!.id),
     ...rowsForTier(2).map((row) =>
       lineage.cards.find((c) => c.tier === 2 && c.row === row && c.lane === ref.lane)!.id),
   ];

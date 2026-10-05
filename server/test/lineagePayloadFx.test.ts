@@ -201,16 +201,19 @@ const clientSrc = (rel: string): string => readFileSync(join(__dirname, '../../c
 }
 
 // ── The loaded carry ─────────────────────────────────────────────────────────
+// On the Axe's T2 band, worn on the Ruinous Axe: since design §26.1 (legibility
+// run) the Axe's one T1 verb is its Tempo verb, and its Kill-chain verb and the
+// lane leans that compose with it are T2 cards.
 {
   resetLastingForTests();
   const axe = (active: Record<string, string>, owned = Object.values(active)): Pick<PlayerView, 'equipment' | 'lineages'> => ({
-    equipment: { ...emptyEquipment(), weapon: 'chaotic-axe' },
-    lineages: { axe: { ownedCards: owned, active, ownedForms: ['chaotic-axe'], wornForm: 'chaotic-axe' } },
+    equipment: { ...emptyEquipment(), weapon: 'ruinous-axe' },
+    lineages: { axe: { ownedCards: owned, active, ownedForms: ['chaotic-axe', 'ruinous-axe'], wornForm: 'ruinous-axe' } },
   });
-  const pure = axe({ payoff: 'axe-t1-kill-chain-payoff' });
-  const lean = axe({ payoff: 'axe-t1-kill-chain-payoff', stat: 'axe-t1-kill-chain-stat' });
-  const echo = axe({ payoff: 'axe-t1-kill-chain-payoff', stat: 'axe-t1-tempo-stat' });
-  const nth = axe({ payoff: 'axe-t1-tempo-payoff', stat: 'axe-t1-kill-chain-stat' });
+  const pure = axe({ payoff: 'axe-t2-kill-chain-payoff' });
+  const lean = axe({ payoff: 'axe-t2-kill-chain-payoff', stat: 'axe-t2-kill-chain-stat' });
+  const echo = axe({ payoff: 'axe-t2-kill-chain-payoff', stat: 'axe-t2-tempo-stat' });
+  const nth = axe({ payoff: 'axe-t2-tempo-payoff', stat: 'axe-t2-kill-chain-stat' });
   assert(composesLoadedCarry(pure), 'a Kill-chain verb alone lands its next hit after a kill loaded');
   assert(composesLoadedCarry(lean), 'and with its own lean (the pure pair)');
   assert(!composesLoadedCarry(echo), 'with the Tempo lean the carried hit lands twice instead: nothing loaded');

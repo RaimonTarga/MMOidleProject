@@ -87,33 +87,32 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
   ],
 
   cards: [
+    // ── T1 lean row (design §26.1): Attack, Speed, Effect, three ranks each ──
+    // The lane is the card's colour and its shard (PROVISIONAL, legibility run:
+    // Effect takes the fixed verb's lane, Attack takes Empowered where the weapon
+    // has it, Speed takes the remaining lane, so all three home shards buy
+    // something at T1).
+    // Effect is the Broadsword's own: the Technique refund Set Piece pays.
     {
-      id: 'broadsword-t1-kill-chain-stat', lineageId: 'broadsword', tier: 1, row: 'stat', lane: 'kill-chain',
-      name: 'Warpath', description: 'Ground covered between one body and the next.',
-      fx: 'kill-chain.trail',
-    },
-    {
-      id: 'broadsword-t1-empowered-stat', lineageId: 'broadsword', tier: 1, row: 'stat', lane: 'empowered',
-      name: 'Weight Behind It', description: 'The whole shoulder goes into the swing.',
+      id: 'broadsword-t1-attack', lineageId: 'broadsword', tier: 1, row: 'stat', lane: 'empowered',
+      leanKind: 'attack', statKey: 'attackPct',
+      name: 'Attack', description: 'The whole shoulder goes into the swing.',
       fx: 'empowered.trail',
     },
     {
-      id: 'broadsword-t1-technique-stat', lineageId: 'broadsword', tier: 1, row: 'stat', lane: 'technique',
-      name: 'Drilled Form', description: 'Ten thousand repetitions, no wasted motion.',
+      id: 'broadsword-t1-speed', lineageId: 'broadsword', tier: 1, row: 'stat', lane: 'kill-chain',
+      leanKind: 'speed', statKey: 'attackSpeedPct',
+      name: 'Speed', description: 'Less time between one body and the next.',
+      fx: 'kill-chain.trail',
+    },
+    {
+      id: 'broadsword-t1-effect', lineageId: 'broadsword', tier: 1, row: 'stat', lane: 'technique',
+      leanKind: 'effect', statKey: 'payloadScale',
+      name: 'Effect', description: 'Ten thousand repetitions, no wasted motion.',
       fx: 'technique.trail',
     },
 
-    // ── T1 verb row (§24.2): a moment; the lean above decides what happens ───
-    {
-      id: 'broadsword-t1-kill-chain-payoff', lineageId: 'broadsword', tier: 1, row: 'payoff', lane: 'kill-chain',
-      name: 'Onward', description: 'The swing after a kill is already on its way.',
-      fx: 'kill-chain.kill-pulse',
-    },
-    {
-      id: 'broadsword-t1-empowered-payoff', lineageId: 'broadsword', tier: 1, row: 'payoff', lane: 'empowered',
-      name: 'Crowning Blow', description: 'When the training pays out, the blade goes with it.',
-      fx: 'empowered.weak-point',
-    },
+    // ── T1 verb (design §26.1): ONE, the weapon's own — bought, never chosen ──
     {
       id: 'broadsword-t1-technique-payoff', lineageId: 'broadsword', tier: 1, row: 'payoff', lane: 'technique',
       name: 'Set Piece', description: 'A drilled form that lands is a beat the next one builds on.',

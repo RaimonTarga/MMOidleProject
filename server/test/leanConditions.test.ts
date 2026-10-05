@@ -27,12 +27,19 @@
  *   E. THE HEAVY PAYLOAD. Every heavy bleed — composed or a legacy card — adds
  *      to what the one record still owes (an event per firing).
  *
+ * Since design §26.1 (legibility run) the T1 band is the ranked lean trio and the
+ * weapon's one verb: the Hammer's Effect lean IS its slow and Easy Prey its verb
+ * (D), and the lane-named Affliction lean is a T2 card, so A and C wear the Rapier's
+ * T2 form (Deeper Brew, Deep Bloodletting). Values are read off the resolved cards.
+ *
  * Run: node --conditions=development --import tsx test/leanConditions.test.ts
  */
 import {
   ABILITY_SLOW_EFFECT_ID,
   LINEAGE_SLOW_STATUS_ID,
   GAME_CONFIG,
+  LINEAGE_DATABASE,
+  resolveLineageCardFor,
   baseRecoveryForTier,
   dotClassProfileForSubVariant,
   emptyEquipment,
@@ -73,7 +80,8 @@ let clock = 1_000_000;
 const realNow = Date.now;
 Date.now = () => clock;
 
-function makeSlices(id: string): PersistedPlayerSlices {
+/** `level` is every T1 biome's level: 6 (Global Mastery 30) is T1 complete, 12 reaches the T2 band. */
+function makeSlices(id: string, level = 6): PersistedPlayerSlices {
   return {
     isPlayer: { id, name: id },
     hasPosition: { current: { x: 400, y: 400 }, nodeId: NODE, speed: GAME_CONFIG.PLAYER_SPEED },
@@ -89,7 +97,7 @@ function makeSlices(id: string): PersistedPlayerSlices {
         tempo: 999, affliction: 999, engagement: 999, empowered: 999, control: 999, 'kill-chain': 999, technique: 999,
       },
       capstones: {},
-      biomeXP: {}, biomeLevel: { plains: 6, forest: 6, mountain: 6, swamp: 6, cave: 6 },
+      biomeXP: {}, biomeLevel: { plains: level, forest: level, mountain: level, swamp: level, cave: level },
       unlockedRecipes: [], questProgress: {}, playerTier: 2, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [],
       runesOwned: [], runeRecipesCrafted: [], runesEquipped: [],
@@ -118,6 +126,32 @@ function wielder(id: string, weapon: string, lineageId: string, cardIds: string[
   }
   world.takeNodeEvents(NODE);
   return player;
+}
+
+/** As `wielder`, wearing the lineage's T2 form (its band opens two-lane leans). */
+function wielderT2(
+  id: string, t1Form: string, t2Form: string, lineageId: string, cardIds: string[], classRoot?: string,
+): PlayerEntity {
+  const slices = makeSlices(id, 12);
+  slices.holdsInventory.inventory = [t1Form, t2Form];
+  const player = world.attachPlayerEntity(slices, id);
+  if (classRoot) assert(unlockSkill(world, player, classRoot), `${id}: ${classRoot} unlocks`);
+  assert(equipItem(world, player, t1Form), `${id}: wears ${t1Form}`);
+  assert(equipItem(world, player, t2Form), `${id}: wears ${t2Form}`);
+  for (const cardId of cardIds) {
+    const bought = unlockLineageCard(world, player, lineageId, cardId);
+    assert(bought.success, `${id}: ${cardId}: ${bought.reason}`);
+  }
+  world.takeNodeEvents(NODE);
+  return player;
+}
+
+/** A card's resolved stat value on this player's tree. */
+function leanValue(player: PlayerEntity, lineageId: string, cardId: string): number {
+  const lineage = LINEAGE_DATABASE.get(lineageId)!;
+  const card = lineage.cards.find((c) => c.id === cardId)!;
+  const progress = player.holdsInventory.lineages![lineageId]!;
+  return Object.values(resolveLineageCardFor(lineage, progress, card).statEffects ?? {})[0] ?? 0;
 }
 
 let nextX = 600;
@@ -158,16 +192,16 @@ const near = (a: number, b: number): boolean => Math.abs(a - b) < 1e-6;
 // ══ A. THE AFFLICTION LEAN ON A STRIKER — the Affliction moment fires ═════════
 
 {
-  const LEAN = 'rapier-t1-affliction-stat'; // Envenomed
-  const VERB = 'rapier-t1-affliction-payoff'; // Venom Point
-  const player = wielder('lean-afl-striker', 'flash-rapier', 'rapier', [LEAN, VERB], 'cadence-root');
+  const LEAN = 'rapier-t2-affliction-stat'; // Deeper Brew
+  const VERB = 'rapier-t2-affliction-payoff'; // Deep Bloodletting
+  const player = wielderT2('lean-afl-striker', 'flash-rapier', 'gale-needle', 'rapier', [LEAN, VERB], 'cadence-root');
   assert(player.usesSkills.combatArchetype === 'cadence' && player.appliesDots === undefined,
     'a real Striker, with no DoT of its own');
   const share = player.usesSkills.passives['shared.bleed-on-hit-pct'] ?? 0;
-  assert(near(share, 0.1), `the lean's DoT potency is also the on-hit bleed share, got ${share}`);
+  assert(near(share, leanValue(player, 'rapier', LEAN)), `the lean's DoT potency is also the on-hit bleed share, got ${share}`);
   const verb = getLineageRuntime(player.tracksCombat)?.cards.find((c) => c.card.id === VERB);
-  assert(verb?.trigger?.kind === 'hit-afflicted' && verb.trigger.capMs === 5_000, 'Venom Point: the Affliction moment, capped');
-  assert(verb?.payoff?.kind === 'redose', 'Envenomed on Venom Point is the pure pair (the re-dose)');
+  assert(verb?.trigger?.kind === 'hit-afflicted' && verb.trigger.capMs === 5_000, 'Deep Bloodletting: the Affliction moment, capped');
+  assert(verb?.payoff?.kind === 'redose', 'Deeper Brew on Deep Bloodletting is the pure pair (the re-dose)');
 
   const target = dummy();
   const first = swing(player, target, VERB);
@@ -191,8 +225,8 @@ const near = (a: number, b: number): boolean => Math.abs(a - b) < 1e-6;
     const gap = firedAt[i] - firedAt[i - 1];
     assert(gap >= 5_000 && gap < 5_000 + STEP, `fires at the 5 s cap, reliably (gap ${gap})`);
   }
-  assert(firedAt.length >= 5, `a Striker's Venom Point fires through a 30 s fight: ${firedAt.length} of ${swings} swings`);
-  console.log(`  A striker  step ${STEP} ms  swings ${swings}  Venom Point fired ${firedAt.length}`);
+  assert(firedAt.length >= 5, `a Striker's Deep Bloodletting fires through a 30 s fight: ${firedAt.length} of ${swings} swings`);
+  console.log(`  A striker  step ${STEP} ms  swings ${swings}  Deep Bloodletting fired ${firedAt.length}`);
 }
 
 // ══ B. THE LIGHT BLEED'S RULES ═════════════════════════════════════════════════
@@ -304,18 +338,19 @@ function hit(player: PlayerEntity, defender: MonsterEntity, damage: number, meta
 // ══ D. THE CONTROL LEAN ON A HAMMER STRIKER, NO MID RANGE ══════════════════════
 
 {
-  const LEAN = 'hammer-t1-control-stat'; // Crushing Weight
-  const VERB = 'hammer-t1-control-payoff'; // Pinned
+  const LEAN = 'hammer-t1-effect'; // the Hammer's Effect: its slow
+  const VERB = 'hammer-t1-control-payoff'; // Easy Prey
   const player = wielder('lean-ctl-striker', 'heavy-hammer', 'hammer', [LEAN, VERB], 'cadence-root');
   assert(player.usesSkills.combatArchetype === 'cadence', 'a real Striker');
   assert(player.usesSkills.selectedRange === null, 'with no range node: no at-bay slow to borrow');
   const slow = player.usesSkills.passives['shared.slow-on-hit-pct'] ?? 0;
-  assert(near(slow, 0.15), `the Control lean is a 15% slow on hit, got ${slow}`);
+  const SLOW = leanValue(player, 'hammer', LEAN);
+  assert(SLOW > 0 && near(slow, SLOW), `the Effect lean is a ${SLOW * 100}% slow on hit, got ${slow}`);
   assert(player.dealsDamage.attack === wielder('lean-ctl-attack', 'heavy-hammer', 'hammer', [], 'cadence-root').dealsDamage.attack,
     'and no longer the placeholder +3 Attack');
   const verb = getLineageRuntime(player.tracksCombat)?.cards.find((c) => c.card.id === VERB);
-  assert(verb?.trigger?.kind === 'hit-held' && verb.trigger.capMs === 5_000, 'Pinned: the Control moment, capped');
-  assert(verb?.payoff?.kind === 'stun', 'Crushing Weight on Pinned is the pure pair (the knockdown)');
+  assert(verb?.trigger?.kind === 'hit-held' && verb.trigger.capMs === 5_000, 'Easy Prey: the Control moment, capped');
+  assert(verb?.payoff?.kind === 'stun', 'the Effect lean on Easy Prey is the pure pair (the knockdown)');
 
   // The slow outlasts the Hammer's own swing, so the next swing finds it.
   const STEP = realStep(player);
@@ -325,7 +360,7 @@ function hit(player: PlayerEntity, defender: MonsterEntity, damage: number, meta
   const target = dummy();
   assert(swing(player, target, VERB).length === 0, 'the first hit lands on a free target');
   const laid = getStatusEffect(target.tracksCombat, LINEAGE_SLOW_STATUS_ID);
-  assert(laid !== undefined && near(laid.data['moveSlowPct'] ?? 0, 0.15), 'and leaves the 15% slow, "Hobbled"');
+  assert(laid !== undefined && near(laid.data['moveSlowPct'] ?? 0, SLOW), 'and leaves the lean slow, "Hobbled"');
   assert(getStatusEffect(target.tracksCombat, ABILITY_SLOW_EFFECT_ID) === undefined,
     'on its own id, not Hamstring\'s');
   assert((laid?.data['totalMs'] ?? 0) === leanSlowMs(player), 'with the clock the buff UI needs');
@@ -348,8 +383,8 @@ function hit(player: PlayerEntity, defender: MonsterEntity, damage: number, meta
     const gap = firedAt[i] - firedAt[i - 1];
     assert(gap >= 5_000 && gap < 5_000 + STEP, `fires at the 5 s cap, never chaining (gap ${gap})`);
   }
-  assert(firedAt.length >= 5, `a Hammer Striker's Pinned fires through a 30 s fight: ${firedAt.length} of ${swings} swings`);
-  console.log(`  D hammer striker  step ${STEP} ms  slow ${leanSlowMs(player)} ms  swings ${swings}  Pinned fired ${firedAt.length}`);
+  assert(firedAt.length >= 5, `a Hammer Striker's Easy Prey fires through a 30 s fight: ${firedAt.length} of ${swings} swings`);
+  console.log(`  D hammer striker  step ${STEP} ms  slow ${leanSlowMs(player)} ms  swings ${swings}  Easy Prey fired ${firedAt.length}`);
 }
 
 {
@@ -388,7 +423,7 @@ function hit(player: PlayerEntity, defender: MonsterEntity, damage: number, meta
   // A control-immune boss takes the slow like any slow, and refuses the
   // knockdown it feeds — the immunity holds where control enters.
   const pinned = wielder('lean-ctl-immune', 'heavy-hammer', 'hammer',
-    ['hammer-t1-control-stat', 'hammer-t1-control-payoff'], 'cadence-root');
+    ['hammer-t1-effect', 'hammer-t1-control-payoff'], 'cadence-root');
   const boss = world.createMonster(NODE, 'cinder-shell-magma-salamander', { x: nextX += 500, y: 400 })!;
   boss.hasHealth.maxHp = 10_000_000;
   boss.hasHealth.hp = 10_000_000;
@@ -440,20 +475,24 @@ function hit(player: PlayerEntity, defender: MonsterEntity, damage: number, meta
 // ══ C. THE APPRENTICE — DoT potency still feeds its DoT ════════════════════════
 
 {
-  const player = wielder('lean-afl-apprentice', 'flash-rapier', 'rapier', ['rapier-t1-affliction-stat'], 'dot-root');
+  const player = wielderT2('lean-afl-apprentice', 'flash-rapier', 'gale-needle', 'rapier', ['rapier-t2-affliction-stat'], 'dot-root');
   assert(player.appliesDots !== undefined, 'a real Apprentice');
+  const potency = leanValue(player, 'rapier', 'rapier-t2-affliction-stat');
   const base = dotClassProfileForSubVariant(player.usesSkills.selectedSubVariant).dotMechanicMultiplier;
   const mult = player.usesSkills.passives['dot.mechanic-mult'] ?? 0;
-  assert(near(mult, base + 0.1), `DoT potency adds +0.10 onto the root's ${base}, got ${mult}`);
-  assert(near(player.usesSkills.passives['shared.bleed-on-hit-pct'] ?? 0, 0.1),
+  assert(potency > 0 && near(mult, base + potency), `DoT potency adds +${potency} onto the root's ${base}, got ${mult}`);
+  assert(near(player.usesSkills.passives['shared.bleed-on-hit-pct'] ?? 0, potency),
     'and the same stat bleeds its hit: the two halves partition the DoT root\'s damage');
 
   // On a weapon that owns a reservoir (design §26.2) the lean is that reservoir's
   // potency, and seeds no second record.
-  const dagger = wielder('lean-afl-dagger', 'ashbrand-blade', 'dagger', ['dagger-t1-affliction-stat'], 'dot-root');
+  // The Dagger's T1 Effect lean is that potency (design §26.1).
+  const dagger = wielder('lean-afl-dagger', 'ashbrand-blade', 'dagger', ['dagger-t1-effect'], 'dot-root');
+  const effect = leanValue(dagger, 'dagger', 'dagger-t1-effect');
+  const daggerBase = dotClassProfileForSubVariant(dagger.usesSkills.selectedSubVariant).dotMechanicMultiplier;
   const daggerMult = dagger.usesSkills.passives['dot.mechanic-mult'] ?? 0;
-  assert(near(daggerMult, base + 0.1), `on the Dagger too, DoT potency feeds the class DoT, got ${daggerMult}`);
-  assert(near(dagger.usesSkills.passives['weapon.reservoir-potency-pct'] ?? 0, 0.1), 'and the reservoir banks a tenth more');
+  assert(effect > 0 && near(daggerMult, daggerBase + effect), `on the Dagger too, DoT potency feeds the class DoT, got ${daggerMult}`);
+  assert(near(dagger.usesSkills.passives['weapon.reservoir-potency-pct'] ?? 0, effect), 'and the reservoir banks that much more');
   assert((dagger.usesSkills.passives['shared.bleed-on-hit-pct'] ?? 0) === 0, 'and no light bleed is seeded');
 }
 

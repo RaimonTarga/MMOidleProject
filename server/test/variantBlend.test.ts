@@ -24,8 +24,10 @@
  * Run: node --conditions=development --import tsx test/variantBlend.test.ts
  */
 import {
+  BIOME_DATABASE,
   BLEND_SPAWN_SLOTS,
   FAMILY_DATABASE,
+  MONSTER_DATABASE,
   NODE_BLENDS,
   T1_BIOME_ORDER,
   WORLD_NODE_LIST,
@@ -34,6 +36,7 @@ import {
   blendSpawnCycle,
   blendSpawnPick,
   familyForMonster,
+  isCrossroadsNode,
   nodeSpawnBlend,
   validateWorldMap,
   worldNodeExits,
@@ -165,16 +168,20 @@ assert(problems.length === 0, `blend authoring failures:\n  ${problems.join('\n 
 
 // ─── T1 arrival order: the first two arrivals are mixed ──────────────────────
 //
-// `regionT1.ts` ("ORDER IS DISTANCE") puts each biome's two MIXED blends (no family
-// at 60% or more) on the first two nodes a player meets, so no biome opens on its
-// worst concentration — and since design §24.3 the order also decides which node
-// pays which shard. Asserted as the rule, from where the T1 routes and the guide
+// `regionT1.ts` ("ORDER IS DISTANCE") puts each biome's MIXED nodes on the first two
+// nodes a player meets (its doors), so no biome opens on its worst concentration —
+// and since design §24.3 the order also decides which node pays which shard. Since
+// the roster pass (design §26.3, legibility run) "mixed" is the roster form: a door
+// fields at least two families (a pair or the crossroads, never a pure) and its
+// leader takes at most six spawns in ten (the 60/40 door pair; the old rule was "no
+// family at 60% or more" over three-family proportions, which a roster of a leader
+// and one guest cannot meet). Asserted as the rule, from where the T1 routes and the guide
 // actually enter each biome (the previous biome of T1_BIOME_ORDER, every node of
 // it; Plains from the Clearing), with the bot's resolver (nearest uncleared by BFS
 // over worldNodeExits, ties N > S > E > W). Not as node ids: a reorder that keeps
 // the rule must pass, one that breaks it must fail (review B5, P17).
 {
-  const MIXED_MAX_SHARE = 0.6;
+  const DOOR_MAX_SHARE = 0.6;
   /** The bot's next node: BFS layers, neighbours in N > S > E > W order. */
   const nextArrival = (from: string, pool: readonly string[]): string | undefined => {
     const targets = new Set(pool);
@@ -209,10 +216,15 @@ assert(problems.length === 0, `blend authoring failures:\n  ${problems.join('\n 
       for (let arrival = 1; arrival <= 2; arrival += 1) {
         const node = nextArrival(at, remaining);
         assert(node, `${biome}: nothing reachable from ${at}`);
-        const top = Math.max(...blendEntries(NODE_BLENDS[node] ?? {}).map((e) => e.share));
+        const shares = blendEntries(NODE_BLENDS[node] ?? {});
+        const top = Math.max(...shares.map((e) => e.share));
         check(
-          top < MIXED_MAX_SHARE,
-          `${biome} entered from ${entry}: arrival ${arrival} is ${node}, a ${Math.round(top * 100)}% pure`,
+          shares.length >= 2,
+          `${biome} entered from ${entry}: arrival ${arrival} is ${node}, a pure`,
+        );
+        check(
+          top <= DOOR_MAX_SHARE + 1e-9,
+          `${biome} entered from ${entry}: arrival ${arrival} is ${node}, led at ${Math.round(top * 100)}%`,
         );
         remaining.splice(remaining.indexOf(node), 1);
         at = node;
@@ -335,50 +347,67 @@ assert(problems.length === 0, `blend resolution failures:\n  ${problems.join('\n
 
 // ─── The server spawns it ────────────────────────────────────────────────────
 
-// Plains 01 is 70/20/10 Herd-led, and neither of the mobs its tier can field is
-// a pack alpha, so entity headcount equals pick count. (On a node whose dominant
-// family has an alpha, one pick fields a whole pack and the family's HEADCOUNT
-// runs ahead of its share — that is the pack system, not the blend.)
+// The live spawner on the three roster shapes (design §26.3): a pure, a pair and
+// the crossroads, all in the Plains, chosen by shape rather than by id (review B5).
+// None of the mobs Plains T1 can field is a pack alpha, so entity headcount equals
+// pick count. (On a node whose dominant family has an alpha, one pick fields a whole
+// pack and the family's HEADCOUNT runs ahead of its share — that is the pack system,
+// not the blend.) The node must field exactly its own families, cycle for cycle: a
+// one- or two-family blend never falls back to the biome's whole pool.
 {
-  const nodeId = 'node-t1-plains-01';
-  const resolved = nodeSpawnBlend(nodeId)!;
-  const world = new World();
-  resetBlendCursors(world);
-  const spawns = BLEND_SPAWN_SLOTS * 3;
-  let placed = 0;
-  for (let i = 0; i < spawns; i += 1) if (spawnMonster(world, nodeId)) placed += 1;
-  assert(placed === spawns, `only ${placed} of ${spawns} spawns were placed`);
-
-  const live = [...world.monsterEntities].filter(
-    (mob) => mob.hasPosition.nodeId === nodeId,
+  const plains = WORLD_NODE_LIST.filter(
+    (node) => node.biomeGroup === 'plains' && node.biomeTier === 1 && node.kind === 'normal',
   );
-  assert(live.length === spawns, `${live.length} monsters in the node, expected ${spawns}`);
+  const byShape = (families: number) => plains.find(
+    (node) => blendEntries(node.blend ?? {}).length === families,
+  )?.id;
+  const shapes = [
+    { label: 'pure', nodeId: byShape(1) },
+    { label: 'pair', nodeId: byShape(2) },
+    { label: 'crossroads', nodeId: plains.find((node) => isCrossroadsNode(node.id))?.id },
+  ];
+  for (const id of BIOME_DATABASE.get('plains')?.monsterPoolByTier[1] ?? []) {
+    assert(MONSTER_DATABASE.get(id)?.pack?.role !== 'alpha', `fixture: Plains T1 ${id} is a pack alpha`);
+  }
 
-  const byFamily = countFamilies(
-    live.map((mob) => familyForMonster(mob.isMonster.monsterTypeId)?.id as FamilyId),
-  );
-  for (const [family] of byFamily) {
+  for (const { label, nodeId } of shapes) {
+    assert(nodeId, `fixture: a T1 Plains ${label} node`);
+    const resolved = nodeSpawnBlend(nodeId)!;
+    const world = new World();
+    resetBlendCursors(world);
+    const spawns = BLEND_SPAWN_SLOTS * 3;
+    let placed = 0;
+    for (let i = 0; i < spawns; i += 1) if (spawnMonster(world, nodeId)) placed += 1;
+    assert(placed === spawns, `${nodeId} (${label}): only ${placed} of ${spawns} spawns were placed`);
+
+    const live = [...world.monsterEntities].filter(
+      (mob) => mob.hasPosition.nodeId === nodeId,
+    );
+    assert(live.length === spawns, `${nodeId} (${label}): ${live.length} monsters in the node, expected ${spawns}`);
+
+    const byFamily = countFamilies(
+      live.map((mob) => familyForMonster(mob.isMonster.monsterTypeId)?.id as FamilyId),
+    );
+    for (const [family] of byFamily) {
+      assert(
+        resolved.poolByFamily.has(family),
+        `${nodeId} (${label}) spawned ${family}, which its blend does not name`,
+      );
+    }
+    // Exactly three cycles of the authored roster: a pure is 30 of one family, a
+    // 60/40 pair 18/12, a 70/30 pair 21/9, the 34/33/33 crossroads 12/9/9.
+    const cycleCounts = countFamilies(resolved.cycle);
     assert(
-      resolved.poolByFamily.has(family),
-      `${nodeId} spawned ${family}, which its blend does not name`,
+      byFamily.size === cycleCounts.size
+        && [...cycleCounts].every(([family, count]) => byFamily.get(family) === count * 3),
+      `${nodeId} (${label}): expected ${[...cycleCounts].map(([f, c]) => `${f}=${c * 3}`).join(' ')}, `
+        + `got ${[...byFamily.entries()].map(([f, c]) => `${f}=${c}`).join(' ')}`,
+    );
+    assert(
+      byFamily.size === (label === 'pure' ? 1 : label === 'pair' ? 2 : 3),
+      `${nodeId} (${label}): fielded ${byFamily.size} families`,
     );
   }
-  for (const { family, share } of blendEntries(resolved.shares)) {
-    const expected = share * spawns;
-    const actual = byFamily.get(family) ?? 0;
-    assert(
-      Math.abs(actual - expected) <= spawns / BLEND_SPAWN_SLOTS,
-      `${nodeId}: ${family} spawned ${actual} of ${spawns}, wanted ${expected.toFixed(1)}`,
-    );
-  }
-  // 70/20/10 with all three Plains families fielded at T1 (Sky's Grass Kite landed
-  // 2026-10-01) is exactly 7/2/1 per cycle: 21 Herd / 6 Swarm / 3 Sky over 30.
-  assert(
-    (byFamily.get('plains-herd') ?? 0) === 21
-      && (byFamily.get('plains-swarm') ?? 0) === 6
-      && (byFamily.get('plains-sky') ?? 0) === 3,
-    `expected 21 Herd / 6 Swarm / 3 Sky, got ${[...byFamily.entries()].map(([f, c]) => `${f}=${c}`).join(' ')}`,
-  );
 }
 
 // Cursors are per world, so a bench never inherits the live sim's position and

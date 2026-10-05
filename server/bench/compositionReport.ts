@@ -4,8 +4,11 @@
  * Reads the two instruments' rows and writes `composition-matrix.md`:
  *
  *   - the boss lab (`scripts/_t1BossLab.ts` over `_t1BossPlan.ts --matrix=composition`):
- *     every weapon's nine T1 pairs + its no-band control, six tutorial classes, five
- *     T1 bosses, ten seeds;
+ *     every weapon's T1 rows + its no-band control, six tutorial classes, five T1
+ *     bosses, ten seeds. Since design §26.1 (legibility run) a weapon's T1 rows are
+ *     its lean trio × three ranks × its one verb, plus the verb alone; rows written
+ *     before that are the old nine lean × verb pairs (read them with a checkout of
+ *     that age — a label this build does not enumerate is not reported);
  *   - the lane bench (`bench/compositionLanes.ts`): the same pairs and classes on the
  *     weapon's home-biome family-dominated nodes, ten seeds.
  *
@@ -33,7 +36,9 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { ITEM_DATABASE, PACKET_DEFINITIONS, type PacketId } from '@mmo-idle/shared';
-import { CLASS_BY_ROOT, compositionPairs, t1FormOf, weaponLineages } from './lineage/compositionPairs';
+import {
+  CLASS_BY_ROOT, bandIsRanked, compositionPairs, rankedPairLabel, t1FormOf, weaponLineages,
+} from './lineage/compositionPairs';
 import { medianOf, viabilityFloor } from './lineage/viabilityFloor';
 
 const args = Object.fromEntries(process.argv.slice(2).map((s) => {
@@ -303,6 +308,26 @@ for (const lineage of weaponLineages()) {
   push(`## ${title} (\`${form}\`, home ${lineage.homeBiome}) — lanes ${lanes.map((l) => `${l} (${shard(l)})`).join(', ')}`, '');
   for (const inst of instruments) {
     const readings = pairReadings(inst.cells).filter((r) => r.weapon === lineage.id);
+    if (bandIsRanked(lineage)) {
+      // Design §26.1: the lean trio by rank, with the weapon's one verb; the verb
+      // alone below it. Every row reads the verb's pure pair.
+      const verbLane = compositionPairs(lineage).find((p) => p.verb !== null)!.verb!;
+      const cell = (label: string): string => {
+        const r = readings.find((x) => x.pair === label);
+        return r ? `${pct(r.uplift)} · ${num(r.firesPerMin)}` : '—';
+      };
+      push(
+        `**${inst.name}** — median uplift over the six classes · verb fires/min (rows: lean; columns: rank; verb: ${verbLane})`,
+        '',
+        '| lean ↓ / rank → | I | II | III |',
+        '|---|---:|---:|---:|',
+        ...(['attack', 'speed', 'effect'] as const).map((kind) =>
+          `| **${kind}** | ${[1, 2, 3].map((rank) => cell(rankedPairLabel(kind, rank, verbLane))).join(' | ')} |`),
+        `| *verb alone* | ${cell(`none×${verbLane}`)} | | |`,
+        '',
+      );
+      continue;
+    }
     push(
       `**${inst.name}** — median uplift over the six classes · verb fires/min (rows: lean; columns: verb)`,
       '',

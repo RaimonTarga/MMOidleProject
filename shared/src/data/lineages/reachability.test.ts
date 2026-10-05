@@ -37,9 +37,12 @@ import {
 } from '../../config/gameConfig';
 import { liveLineages } from './index';
 import {
-  MAX_LINEAGE_TIER, lineageMasteryLevelForGate, lineageMasteryLevelForRow, rowsForTier,
+  LEAN_RANK_MASTERY_OFFSET, MAX_LEAN_RANK, MAX_LINEAGE_TIER, lineageMasteryLevelForGate,
+  lineageMasteryLevelForRow, rowsForTier,
 } from './magnitudes';
-import { bandBiomeFloor, bandBiomeLevel, formGateBiomeLevel } from './resolve';
+import {
+  bandBiomeFloor, bandBiomeLevel, formGateBiomeLevel, isRankedCard, maxCardRank, resolveLineageCard,
+} from './resolve';
 
 const problems: string[] = [];
 function check(cond: boolean, msg: string): void {
@@ -184,6 +187,36 @@ for (let tier = 1; tier <= MAX_LINEAGE_TIER; tier++) {
     previous = gm;
   }
 }
+// Ranks (design §26.1): a ranked card's rank gates climb and never drop within its
+// tier, rank I is its row's gate, the top rank asks no more than the tier's gate
+// (so every rank is buyable before the boss), and no rank asks for mastery the
+// tier below already held. Walked off the real cards, so a ranked row authored
+// anywhere is held to it.
+let rankedWalked = 0;
+for (const lineage of liveLineages()) {
+  for (const card of lineage.cards.filter((c) => isRankedCard(c))) {
+    rankedWalked += 1;
+    const gate = lineageMasteryLevelForGate(card.tier);
+    let previous = 0;
+    for (let rank = 1; rank <= maxCardRank(card); rank++) {
+      const gm = resolveLineageCard(card, lineage, { rank }).requiredGlobalMastery;
+      if (rank === 1) {
+        check(gm === lineageMasteryLevelForRow(card.tier, card.row), `${card.id}: rank I is at its row's gate`);
+      }
+      check(gm >= previous, `${card.id}: rank ${rank} asks Global Mastery ${gm}, below rank ${rank - 1}'s ${previous}`);
+      check(gm <= gate, `${card.id}: rank ${rank} asks Global Mastery ${gm}, above the T${card.tier} gate's ${gate}`);
+      check(gm > maxGlobalMasteryAtTier(card.tier - 1), `${card.id}: rank ${rank} asks mastery already held at T${card.tier - 1}`);
+      previous = gm;
+    }
+  }
+}
+assert(rankedWalked === 15, `fixture: five weapons × the lean trio are ranked, walked ${rankedWalked}`);
+// The provisional ladder: the lean gate, +4 and +8 (6 / 10 / 14 at T1).
+assert(
+  LEAN_RANK_MASTERY_OFFSET.join('/') === '0/4/8' && LEAN_RANK_MASTERY_OFFSET.length === MAX_LEAN_RANK,
+  `the rank gates are the lean gate, +4 and +8 (PROVISIONAL), got ${LEAN_RANK_MASTERY_OFFSET.join('/')}`,
+);
+
 for (const lineage of liveLineages()) {
   const verbLevel = bandBiomeLevel(1, 'payoff', lineage.homeBiome);
   const oneZoneBehind = biomeLevelCap(1, 'plains') + verbLevel;

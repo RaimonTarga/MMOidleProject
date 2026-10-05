@@ -4,7 +4,7 @@ import { biomeLevelCap } from '../../config/gameConfig';
 import { LINEAGE_DATABASE } from '../../data/lineages';
 import { capstoneMaterialName } from '../../data/lineages/capstones';
 import { shardName } from '../../data/lineages/packets';
-import { isVerbCard, lineageGateCost, packetMoment, resolveLineageCard } from '../../data/lineages/resolve';
+import { isVerbCard, leanPayloadLane, lineageGateCost, packetMoment, resolveLineageCard } from '../../data/lineages/resolve';
 import { statLine, verbSentence } from '../../data/lineages/sentences';
 import type {
   LineageCard,
@@ -643,16 +643,21 @@ class ScriptBuilder {
     const lean = this.weaponCard(this.plan.weaponCards.lean).card;
     const { lineage, card } = this.weaponCard(this.plan.weaponCards.verb);
     if (!isVerbCard(card) || card.tier !== 1) throw new Error(`${this.plan.className}: ${card.id} is not a tier-1 verb`);
-    const sentence = verbSentence(card.lane, lean.lane);
+    // The lean's PAYLOAD lane, not its colour (design §26.1): the T1 Attack and
+    // Speed leans name none, so the weapon's verb reads its own pure sentence.
+    const leanLane = leanPayloadLane(lean);
+    const sentence = verbSentence(card.lane, leanLane);
     if (!sentence) throw new Error(`${this.plan.className}: ${card.id} has no sentence with ${lean.id}`);
     const weapon = name(lineage.forms[0].recipeId);
     const home = BIOME_NAME[lineage.homeBiome as T1Biome] ?? lineage.homeBiome;
     // A lean of the verb's own lane reads that lane's pure sentence (design §24.2):
     // the lean did not rewrite the verb, it is the same colour, so the lesson says
     // so rather than claiming the lean "chose" it.
-    const why = lean.lane === card.lane
-      ? `${lean.name} is the same colour, so this is that colour's own move.`
-      : `Your lean, ${lean.name}, chose that.`;
+    const why = leanLane === undefined
+      ? `${lean.name} is a stat, so this is the ${weapon}'s own move.`
+      : leanLane === card.lane
+        ? `${lean.name} is the same colour, so this is that colour's own move.`
+        : `Your lean, ${lean.name}, chose that.`;
     this.cardBeats(chapter, card.id, {
       farm: (shard, territory) => `${opened} opens row two of the ${weapon}'s page: the verb, what the weapon does. ${card.name} costs ${shard}s from ${home}'s ${territory} territory.`,
       buy: `Buy ${card.name}. A verb is a moment in the fight, and your lean decides what happens at that moment.`,

@@ -26,6 +26,7 @@
 import {
   ABILITY_DATABASE,
   GAME_CONFIG,
+  cardRank,
   STARTER_RUNE_IDS,
   applyStatusEffect,
   baseRecoveryForTier,
@@ -273,39 +274,45 @@ const near = (a: number, b: number): boolean => Math.abs(a - b) < 1e-6;
 
 // ══ B. THE DAGGER, REAL ECONOMY — one record, the weapon's own ════════════════
 
-{
-  const LEAN = 'dagger-t1-affliction-stat'; // DoT potency, the Effect lean on the Dagger
+for (const rank of [1, 3]) {
+  // The Dagger's T1 Effect lean is DoT potency (design §26.1) and its fixed verb
+  // Into the Wound. Bought through the real economy, at rank I and at rank III
+  // (buying the card again buys its next rank): whatever the rank, the target
+  // carries exactly one damage-over-time record — the Poison Dagger's own.
+  const LEAN = 'dagger-t1-effect';
   const VERB = 'dagger-t1-affliction-payoff'; // Into the Wound
   const player = wielder({
-    id: 'dot-dagger', weapon: 'ashbrand-blade', lineageId: 'dagger', cardIds: [LEAN, VERB], classRoot: 'cadence-root',
+    id: `dot-dagger-r${rank}`, weapon: 'ashbrand-blade', lineageId: 'dagger',
+    cardIds: [...Array(rank).fill(LEAN), VERB], classRoot: 'cadence-root',
   });
+  assert(cardRank(player.holdsInventory.lineages!.dagger!, LEAN) === rank, `the Effect lean is at rank ${rank}`);
   assert(player.usesSkills.combatArchetype === 'cadence' && player.appliesDots === undefined,
     'a Striker: no class DoT, so the reservoir is the only affliction in play');
   assert((player.usesSkills.passives['shared.bleed-on-hit-pct'] ?? 0) === 0, 'the lean seeds no light bleed on a reservoir weapon');
   assert((player.usesSkills.passives['weapon.reservoir-potency-pct'] ?? 0) > 0, 'it raises the reservoir instead');
   const verb = getLineageRuntime(player.tracksCombat)?.cards.find((c) => c.card.id === VERB);
   assert(verb?.trigger?.kind === 'hit-afflicted', 'Into the Wound: the Affliction moment');
-  assert(verb?.payoff?.kind === 'redose', 'with the Affliction lean, the re-dose');
+  assert(verb?.payoff?.kind === 'redose', 'with the Effect lean, the re-dose');
 
   const target = monster();
   assert(swing(player, target).every((e) => e.cardId !== VERB), 'the first swing is not on an afflicted target');
   const pool1 = getStatusEffect(target.tracksCombat, 'poison-dagger-burn')?.data.pool ?? 0;
-  assert(pool1 > 0, 'the first swing fills the Poison Dagger\'s reservoir');
+  assert(pool1 > 0, "the first swing fills the Poison Dagger's reservoir");
   assert(lineageRecords(target).length === 0, 'and leaves no lineage record');
 
   const fired = swing(player, target).filter((e) => e.cardId === VERB);
   assert(fired.length === 1, `the second swing finds the poison and re-doses, got ${fired.length} firings`);
   const pool2 = getStatusEffect(target.tracksCombat, 'poison-dagger-burn')?.data.pool ?? 0;
   assert(pool2 > pool1 * 2.5, `the re-dose ADDS to the reservoir (a feed alone doubles it): ${pool1} -> ${pool2}`);
-  assert(fired[0].durationMs === 4_500, 'the firing reports the reservoir\'s drain window');
+  assert(fired[0].durationMs === 4_500, "the firing reports the reservoir's drain window");
 
   for (let i = 0; i < 8; i++) swing(player, target);
   const dots = playerDotsOnMonster(world, player, target);
   assert(dots.length === 1 && dots[0].effect.id === 'poison-dagger-burn',
-    `exactly ONE damage-over-time record, the weapon's reservoir: ${dots.map((d) => d.effect.id).join(', ')}`);
-  assert(afflictions(target).length === 1, `one affliction id on the target: ${afflictions(target).join(', ')}`);
-  assert(lineageRecords(target).length === 0, `no lineage.* record, ever: ${lineageRecords(target).join(', ')}`);
-  noRetiredIds(target, 'B');
+    `rank ${rank}: exactly ONE damage-over-time record, the weapon's reservoir: ${dots.map((d) => d.effect.id).join(', ')}`);
+  assert(afflictions(target).length === 1, `rank ${rank}: one affliction id on the target: ${afflictions(target).join(', ')}`);
+  assert(lineageRecords(target).length === 0, `rank ${rank}: no lineage.* record, ever: ${lineageRecords(target).join(', ')}`);
+  noRetiredIds(target, `B rank ${rank}`);
 }
 
 // ══ C. THE DAGGER, EVERY PAYLOAD ADDS TO THE RESERVOIR ═══════════════════════

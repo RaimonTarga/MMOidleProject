@@ -4,8 +4,13 @@
  * Split out of `lineages.ts` so the ordinary equip path can call it without
  * importing the handlers, which import the equip path back.
  */
-import { LINEAGE_DATABASE, baseFormRecipeId, emptyLineageProgress, isLineageParked, lineageForRecipeId } from '@mmo-idle/shared';
-import type { LineageDefinition, LineageProgress } from '@mmo-idle/shared';
+import {
+  LINEAGE_DATABASE, baseFormRecipeId, emptyLineageProgress, isLineageParked, lineageForRecipeId,
+  retiredLineageCardRefund,
+} from '@mmo-idle/shared';
+import type {
+  EssenceType, LineageDefinition, LineageProgress, PacketId, RetiredCardRefund, TracksProgression,
+} from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
 import type { PlayerEntity } from '../../../ecs/entity';
 import { mutateSlice } from '../../../ecs/dirtyHelpers';
@@ -115,6 +120,8 @@ export function syncLineagesFromInventory(world: World, entity: PlayerEntity): v
           active: existing?.active ?? {},
           ownedForms: [...new Set([...(existing?.ownedForms ?? []), ...held])],
           wornForm: worn,
+          // Ranks ride along untouched (design §26.1): a form sync never costs a rank.
+          ...(existing?.ranks ? { ranks: existing.ranks } : {}),
         },
       };
     });
@@ -149,7 +156,49 @@ export function syncWornFormFromEquipment(
         active: existing?.active ?? {},
         ownedForms: [...new Set([...(existing?.ownedForms ?? []), recipeId])],
         wornForm: recipeId,
+        ...(existing?.ranks ? { ranks: existing.ranks } : {}),
       },
     };
   });
+}
+
+/**
+ * Refund the T1 cards design §26.1 retired (legibility run, 2026-10-05), on load.
+ *
+ * The lane leans (`<weapon>-t1-<lane>-stat`) and the two non-fixed T1 verbs per
+ * weapon left the band; production saves own them. `stored` is the save's lineage
+ * map as WRITTEN (before `normalizeLineageProgressMap`, which drops the unknown ids
+ * and any active row pointing at one), and every owned retired card is paid back
+ * into `progression` at today's T1 row price, undiscounted: essence of the
+ * lineage's home biome and the card's own lane's shard (`retiredLineageCardRefund`).
+ *
+ * The same contract as the retired upgrade ladder's refund
+ * (`refundRetiredUpgradeEssence`): a GRANT, so only the load path that hands the
+ * slices to a live entity runs it (`hydratePlayerSlices` with `grantRetiredRefunds`,
+ * which also logs what it returns), and that entity is saved with both the credited
+ * wallets and the normalised tree. Idempotent: a save written after the first load
+ * holds no retired id, so a second load refunds nothing. Never throws: a save it
+ * cannot read refunds nothing.
+ *
+ * Mutates `progression`'s essence and shard wallets in place; returns the refund.
+ */
+export function refundRetiredLineageCards(
+  stored: Partial<Record<string, Partial<LineageProgress>>> | undefined,
+  progression: Pick<TracksProgression, 'essences'> & { shards?: Partial<Record<PacketId, number>> },
+): RetiredCardRefund {
+  let refund: RetiredCardRefund;
+  try {
+    refund = retiredLineageCardRefund(stored);
+  } catch {
+    return { cardIds: [], essence: {}, shards: {} };
+  }
+  if (refund.cardIds.length === 0) return refund;
+  for (const [type, amount] of Object.entries(refund.essence) as [EssenceType, number][]) {
+    progression.essences[type] = (progression.essences[type] ?? 0) + amount;
+  }
+  const shards = progression.shards ?? (progression.shards = {});
+  for (const [packet, amount] of Object.entries(refund.shards) as [PacketId, number][]) {
+    shards[packet] = (shards[packet] ?? 0) + amount;
+  }
+  return refund;
 }
