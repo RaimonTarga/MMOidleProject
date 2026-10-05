@@ -1,6 +1,6 @@
 # System Rework — Current Status
 
-**Audited:** 2026-10-01 (progression rework rows refreshed for run 3)
+**Audited:** 2026-10-01 (progression rework rows refreshed for run 3); tutorial row refreshed 2026-10-05
 
 This is the compact scoreboard for the post-T4 system rework. The old
 implementation ledger and change log are preserved in
@@ -26,6 +26,7 @@ does not replace the individual current-state records; it points to them.
 | Monster combat | T1–T4 combat identity/rework shipped; numerical tuning is separate | [monster-combat-rework-current-state.md](monster-combat-rework-current-state.md) |
 | Boss encounters and dungeons | T1–T4 structure shipped; cleanup/tuning remains bounded work | [boss-encounter-rework-current-state.md](boss-encounter-rework-current-state.md), [dungeon-current-state.md](dungeon-current-state.md) |
 | Sparse regions and node modifiers | T1–T4 registry shipped; modifier gameplay math REMOVED 2026-10-01, survives only as node authoring identity; every normal node of the eleven monster-bearing biomes (T1 25, T2 37, T3 38, T4 38 = 138 nodes) now carries a family blend instead, all PROVISIONAL at T3/T4 and at Mountain/Cave/Swamp | [variants-current-state.md](variants-current-state.md), [archive/node-modifiers-current-state.md](archive/node-modifiers-current-state.md), [map-variety-plan.md](map-variety-plan.md) |
+| Guided T1 tutorial | Shipped in v0.6.2; current lean/verb/gate lessons implemented, all six routes complete in the recorded 2026-10-04 1x sweep; farewell real-client validation remains open | [guided-tutorial-current-state.md](guided-tutorial-current-state.md) |
 | Authentication and characters | Guest, Discord linking, character roster, and admin token boundary shipped | [auth-and-characters-current-state.md](auth-and-characters-current-state.md) |
 | Bot and telemetry instrumentation | Available; evidence semantics remain part of every experiment | [bot-experience-command-center.md](bot-experience-command-center.md), [gameplay-telemetry-current-state.md](gameplay-telemetry-current-state.md) |
 

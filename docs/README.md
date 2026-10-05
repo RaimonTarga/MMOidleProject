@@ -1,6 +1,7 @@
 # Documentation Index
 
 **Last audited:** 2026-10-01
+**Lifecycle refreshed:** 2026-10-05 (tutorial fold and shipped-plan review)
 
 This is the navigation page for documentation that is useful in the current
 repository. It is deliberately not a dump of every dated report. Source code
@@ -83,6 +84,7 @@ because it is detailed.
 | --- | --- |
 | Authentication and characters | [auth-and-characters-current-state.md](auth-and-characters-current-state.md) |
 | Audio | [audio-current-state.md](audio-current-state.md) |
+| Guided T1 tutorial | [guided-tutorial-current-state.md](guided-tutorial-current-state.md) |
 | Combat animation (mobs and players) | [combat-animation-current-state.md](combat-animation-current-state.md) |
 | Landing cinematic | [landing-cinematic-current-state.md](landing-cinematic-current-state.md) |
 | Player sprites | [player-sprites-current-state.md](player-sprites-current-state.md) |
@@ -119,7 +121,6 @@ behavior.
   authority is
   [`design_docs/progression-rework-design.md`](../design_docs/progression-rework-design.md).
 - [Ability pass run brief](briefs/ability-pass-run-2026-10-02.md) — the run that implements design §22 (roster 22 → 17, ability keystone + cross rows, five T3 path re-homes); starts after the T1 boss pass merges; T1 lab DPS held within ±5%.
-- [Guided T1 tutorial plan](guided-tutorial-plan.md) — optional desktop guide that plays Tier 1 beat by beat from bot-validated scripts; Phase 1 in progress.
 - [Release v0.6 record](briefs/release-v0.6-2026-09-28.md) — what shipped in v0.6, merged branches, save policy, bandwidth changes, validation and the deploy check.
 - [T4 power curve review](archive/briefs/t4-power-curve-review-2026-09-27.md) — ARCHIVED 2026-09-27: done; report in `reports/t4-power-curve-2026-09-27/REVIEW.md`, live state in [tier-balance-current-state.md](tier-balance-current-state.md) §6–7.
 - [Boss lineage art list](briefs/boss-lineage-art-list-2026-09-27.md) — icons and ground textures the boss lineages borrow art for, with target paths and wiring.
@@ -129,15 +130,15 @@ behavior.
 - [Non-weapon ladder fold report](briefs/cc-fold-report-2026-10-03.md) — W1-D evidence: all 86 original +5 totals, per-field before/after values, and validation.
 - [T1 boss pass report](briefs/t1-boss-pass-report-2026-10-02.md) — COMPLETE 2026-10-02: three T1 boss rows moved (Behemoth attack, Greatbear HP+attack, Toadeater HP) so every class beats every T1 boss on the guide's kit; second seal stays Mountain. Two findings outlive the numbers: a solo T1 boss fight was deterministic (24 of 30 cells), and the Behemoth/Broodmother are a 10x melee/ranged split rather than a difficulty.
 - [Boss redesign implementation plan](boss-encounter-redesign-implementation-plan-2026-09-04.md)
-  — the remaining cleanup/tuning handoff after the shipped phases.
+  — IN PROGRESS: the remaining Phase 8 cleanup/tuning handoff after the shipped phases.
 - [Core rework design/balance handoff](core-rework-design-balance-handoff.md) —
   approved direction for a future Core pass; implementation is not implied.
-- [Map variety design](map-variety-plan.md) — locked region design vocabulary;
-  its node-modifier vocabulary is superseded for T1 by family blends, see
-  [variants-current-state.md](variants-current-state.md).
-- [Terrain variance plan](terrain-variance-plan.md) — parked terrain work.
-- [UI redesign plan](ui-redesign-plan.md) — presentation work and review
-  history; verify implementation against client code.
+- [Map variety design](map-variety-plan.md) — living region design authority;
+  retained until its region-layout/mask rules have a complete current-state successor.
+  Family blends are in [variants-current-state.md](variants-current-state.md).
+- [Terrain variance plan](terrain-variance-plan.md) — own status remains IN PROGRESS.
+- [UI redesign plan](ui-redesign-plan.md) — approved for incremental implementation;
+  presentation work and review history, not a fully shipped plan.
 - [Stance future design notes](stances-future-design-notes.md) — unimplemented
   design ideas only.
 - [Named progression checkpoints](named-progression-checkpoints.md) —
@@ -164,6 +165,8 @@ The flat files in design_docs/ are the design and architecture source set:
 
 - [architecture.md](../design_docs/architecture.md)
 - [design-bible.md](../design_docs/design-bible.md)
+- [Progression rework design](../design_docs/progression-rework-design.md) — design authority;
+  the worn-form band gate, delegated monster pass and Consort loop decisions are §18.11–§18.13.
 - [game-overview.md](../design_docs/game-overview.md)
 - [economy-philosophy.md](../design_docs/economy-philosophy.md)
 - [player-power-curve.md](../design_docs/player-power-curve.md)
@@ -184,6 +187,10 @@ Use the current-state table above and the source when they conflict.
 
 ## Historical material and archive lifecycle
 
+- [Guided T1 tutorial plan](archive/guided-tutorial-plan.md) — implemented; live behavior and
+  validation records are in [guided-tutorial-current-state.md](guided-tutorial-current-state.md).
+- [Docs fold report](briefs/docs-fold-report-2026-10-05.md) — tutorial fold, verbatim
+  progression amendments, conditional duplicate proof and retained-plan inventory.
 - [Archive guide](archive/README.md) explains how completed plans and
   handoffs are moved without losing provenance.
 - [Briefs and evidence](briefs/README.md) explains the active/history split for
