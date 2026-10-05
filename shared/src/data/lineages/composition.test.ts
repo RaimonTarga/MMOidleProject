@@ -448,6 +448,28 @@ assert(t1Cells === 45, `five weapons × three leans × three ranks, got ${t1Cell
   assert(underSpeed.composition?.needs === 'slow', 'Easy Prey under Speed needs a slow');
 }
 
+// The Effect's payload scale survives the gate (a gate never makes a card read
+// smaller): absorbed into the T2 form, the rank the player owns still scales its
+// lane's payload — the T2 verb's pure echo, and that payload on another T2 verb.
+{
+  const rapierT2 = LINEAGE_DATABASE.get('rapier')!;
+  const tree: LineageProgress = {
+    ownedCards: ['rapier-t1-effect', 'rapier-t2-tempo-payoff'],
+    active: { stat: 'rapier-t1-effect', payoff: 'rapier-t2-tempo-payoff' },
+    ownedForms: ['flash-rapier', 'gale-needle'], wornForm: 'gale-needle',
+    ranks: { 'rapier-t1-effect': 2 },
+  };
+  const verb = resolveLineageCards(rapierT2, tree).find((c) => c.card.id === 'rapier-t2-tempo-payoff')!;
+  const expected = { ...packetPurePair('tempo', 2)!.payoff };
+  scalePayloadSize(expected, 1.15);
+  assert(JSON.stringify(verb.payoff) === JSON.stringify(expected),
+    `the absorbed Effect II scales the T2 echo: ${JSON.stringify(verb.payoff)} ≠ ${JSON.stringify(expected)}`);
+  assert(verb.payoff!.magnitude > packetPurePair('tempo', 2)!.payoff.magnitude, 'bigger than the bare T2 echo');
+  const active = resolveActiveLineages({ equipment: { ...emptyEquipment(), weapon: 'gale-needle' }, lineages: { rapier: tree } });
+  assert(active.absorbed.length === 1 && active.absorbed[0]!.rank === 2, 'absorbed at the owned rank');
+  assert(active.statEffects.payloadScale === undefined, 'and still never a character stat');
+}
+
 // The two-colour halves of every composed sentence join to it, at every tier.
 for (const verb of WEAPON_PACKET_IDS) {
   for (const lean of [undefined, ...WEAPON_PACKET_IDS]) {

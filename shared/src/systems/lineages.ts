@@ -123,11 +123,15 @@ export function normalizeLineageProgressMap(
 
     const knownCards = new Set(lineage.cards.map((c) => c.id));
     const knownForms = new Set(lineage.forms.map((f) => f.recipeId));
-    const ownedCards = [...new Set((raw.ownedCards ?? []).filter((id) => knownCards.has(id)))];
-    const ownedForms = (raw.ownedForms ?? []).filter((id) => knownForms.has(id));
+    // A save is untrusted shape: anything that is not the list or map it should be
+    // reads as empty rather than throwing the whole load.
+    const list = (value: unknown): string[] => (Array.isArray(value) ? value.filter((id) => typeof id === 'string') : []);
+    const ownedCards = [...new Set(list(raw.ownedCards).filter((id) => knownCards.has(id)))];
+    const ownedForms = list(raw.ownedForms).filter((id) => knownForms.has(id));
 
     const active: Partial<Record<RowKind, string>> = {};
-    for (const [row, cardId] of Object.entries(raw.active ?? {}) as [RowKind, string][]) {
+    const storedActive = raw.active && typeof raw.active === 'object' ? raw.active : {};
+    for (const [row, cardId] of Object.entries(storedActive) as [RowKind, string][]) {
       const card = lineage.cards.find((c) => c.id === cardId);
       if (card && card.row === row && ownedCards.includes(cardId)) active[row] = cardId;
     }
@@ -136,7 +140,7 @@ export function normalizeLineageProgressMap(
     // holds it (`syncLineagesFromInventory` on attach, craft and equip), and a tree
     // with no owned form stays empty — pushing the base form on every load was
     // review finding B1 (2026-10-02): a free T1 item per lineage per relog.
-    const wornForm = raw.wornForm && ownedForms.includes(raw.wornForm)
+    const wornForm = typeof raw.wornForm === 'string' && ownedForms.includes(raw.wornForm)
       ? raw.wornForm
       : (ownedForms[0] ?? '');
 
@@ -147,7 +151,7 @@ export function normalizeLineageProgressMap(
     for (const id of ownedCards) {
       const card = lineage.cards.find((c) => c.id === id);
       if (!card || !isRankedCard(card)) continue;
-      const stored = raw.ranks?.[id];
+      const stored = raw.ranks && typeof raw.ranks === 'object' ? raw.ranks[id] : undefined;
       ranks[id] = clampLeanRank(typeof stored === 'number' ? stored : 1);
     }
 
