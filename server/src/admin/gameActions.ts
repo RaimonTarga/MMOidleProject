@@ -513,7 +513,7 @@ export function equipPhaseTester(world: World, player: PlayerEntity): GameAction
 /**
  * Dev-only room clear: remove every non-boss monster standing in `nodeId`.
  *
- * This is a despawn, not a kill — no rewards, no quest/catalyst credit, no kill
+ * This is a despawn, not a kill — no rewards, no quest credit, no kill
  * log — so using it to skip a fight cannot contaminate an economy or playtest
  * run. Bosses are deliberately spared: the whole point is to strip the dungeon
  * guard (or an overworld node's trash) and then fight the boss on its own.

@@ -190,10 +190,6 @@ mechanicEffects: {},
   // Their Stance answers arrive earlier in each biome; the economy is authored in
   // the owning recipe files without changing any Core mechanics.
   //
-  // Cores are OFF the +N upgrade track. They grow by EVOLVING into one of several
-  // named branches at the next tier — one evolve, one decision. Every core therefore
-  // carries a `lineageId` for those future branches to hang from.
-  //
   // Core mechanics are unchanged by the 2026-09-04 reward-placement pass. The T2
   // economy intentionally makes these late-biome capstones a deliberate save.
   //

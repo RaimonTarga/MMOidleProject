@@ -112,8 +112,7 @@
 
 /* ── Wallet summary ──────────────────────────────────────────────────────────
    Chip presentation itself lives in materialChip.css; this only frames the
-   strip. Essence and catalyst balances are separated by a hairline so the two
-   wallets stay distinguishable at a glance. */
+   strip. */
 .craft-wallet {
   margin-bottom: 14px;
   padding: 8px 10px;
@@ -1628,9 +1627,6 @@
   font-size: 10px;
 }
 
-/* Weapon tier-2+ forms point at the lineage tree instead of an Evolve/Craft
-   button (progression rework Phase 1 — the old evolve path stays for the
-   slots whose trees have not shipped yet). */
 .make-detail__lineage-note {
   margin-top: 12px;
   padding: 9px 11px;

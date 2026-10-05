@@ -3,8 +3,7 @@ import type { Recipe } from './types';
 // ─────────────────────────────────────────────────────────────────────────
 // CLEARING (T0 tutorial). Source: design_docs/T1_ITEM_NUMERICAL_BASELINE.md §4.
 //
-// FIXED-POWER EQUIPMENT. The tutorial set is deliberately OFF the +0…+5 track:
-// `upgrades: []` makes getMaxUpgrade() return 0, so crafting/upgrade refuse it.
+// FIXED-POWER EQUIPMENT.
 // Its job is literacy — teach the four slots, make the Clearing trivial once
 // assembled, and hand the player enough shell to get a foothold in early Plains.
 // It is meant to be replaced wholesale by T1 specialist gear, not invested in.

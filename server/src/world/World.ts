@@ -259,8 +259,8 @@ export class World {
   /** Player IDs whose quest completion advanced their tier. Drained by the server loop. */
   pendingAscensions: string[] = [];
   /**
-   * Dev-only multiplier on everything a kill pays out (essence, biome XP,
-   * catalyst progress, boss catalyst bundle). Server-global and runtime-only: it
+   * Dev-only multiplier on everything a kill pays out (essence and biome XP).
+   * Server-global and runtime-only: it
    * is never persisted, so a restart returns to shipped rates. Set from the
    * in-game debug panel, or seeded from DEBUG_REWARD_MULT for headless runs.
    */

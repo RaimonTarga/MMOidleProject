@@ -27,9 +27,6 @@ import type { Recipe } from './types';
 
 export const forestRecipeEntries = [
   // ── Rapier lineage (system rework Step 6 worked example) ───────────────────
-  // Flash Rapier (base) → Gale Needle. Evolve consumes
-  // the +3 predecessor; reconstruction skips the chain for a higher cost.
-  //
   // The rapier is the one lineage that spends part of its UPGRADE budget on
   // cadence rather than Attack (`attacksPerSecond` deltas on the steps), because
   // cadence is the identity: it adds little Attack of its own and instead
@@ -107,12 +104,8 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
 
   // ── T2 — Rapier lineage evolved forms (system rework Step 6) ───────────────
   // Gale Needle = the evolution of Flash Rapier.
-  // Evolve consumes the predecessor at +3; reconstruct skips it for a higher cost.
   // T2 economy pass (2026-08-29): normalized off the old doubling-to-+5 curve
   // (was 1,920 total) into the normal T2 specialist-weapon band (~1,000 total).
-  // Evolution costs no catalyst (§2/§7); catalysts moved to +4/+5 only (§8).
-  // Evolution requires flash-rapier at +EVOLUTION_REQUIRED_PLUS, which returned
-  // to +3 on 2026-09-04 (see shared/src/systems/evolution.ts for rationale).
   ['gale-needle', {
     id: 'gale-needle', name: 'Gale Needle',
     recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'weapon',
@@ -131,9 +124,6 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
   // on-hit rapier. Saves that hold it are migrated to Gale Needle on load
   // (LEGACY_ITEM_IDS in server/src/db/playerRepo.ts).
 
-  // T2 economy pass (2026-08-29): now an EVOLUTION of forest-vest-t1 (Shaded
-  // Bindings) at +3 — see §5/§6/§7. Evolve pays no catalyst; reconstruct (no
-  // predecessor) costs ~3.5x essence + 2 alacrity. Catalysts moved to +4/+5.
   ['forest-vest-t2', {
     id: 'forest-vest-t2', name: 'Phantom Bindings',
     recipeGroup: 'forest', requiredBiomeLevel: 8, slot: 'armor',
