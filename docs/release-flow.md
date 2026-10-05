@@ -60,6 +60,33 @@ config does not prove that a friend's deployment is connected. A Git push can be
 with user authorization when that access is unavailable; report the public response without
 claiming to know its underlying failure cause.
 
+## Backups
+
+Set `LOG_DATABASE_URL`, then run `pnpm logdb:backup --dry-run` and
+`pnpm logdb:backup`. The script uses `pg_dump` custom format with gzip compression,
+writes an ISO-timestamped dump to `LOGDB_BACKUP_DIR` (default `./backups/logdb`),
+and prunes only its own timestamped dumps older than `LOGDB_BACKUP_KEEP_DAYS`
+(default 14), after the new dump succeeds. A failed dump exits nonzero and skips pruning.
+Keep the backup directory outside source control; dumps contain database contents.
+
+Restore into an already-created empty database with
+`pnpm logdb:restore --file <dump> --to <postgresql-url> --dry-run`, then the same
+command with `--yes`. Restore uses one transaction and stops on error; it does
+not create or drop a database. PostgreSQL client tools must be on PATH. On local
+Docker Desktop, `--docker-container mmo-logdb` uses the compose container's
+tools and reaches localhost URLs through `host.docker.internal` with their
+published ports. Credentials are omitted from progress output.
+
+`pnpm db:inventory` prints matching `gamedb%`/`logdb%` databases on the local
+game PostgreSQL cluster at `localhost:5432`, sizes, current-session activity and
+review labels. Its `--dry-run` prints the query. `pg_stat_database` has no last-use
+timestamp; activity comes from currently visible `pg_stat_activity` sessions,
+so missing activity is not evidence a database is unused. The separate compose
+logdb cluster at `localhost:5433` is outside this inventory. It never drops a database.
+
+Scheduling these scripts, off-host storage, restore rehearsals, and Railway's
+own volume backups remain operator responsibilities.
+
 ## Data policy
 
 For retained production saves, back up both databases and rehearse migration/restore before
