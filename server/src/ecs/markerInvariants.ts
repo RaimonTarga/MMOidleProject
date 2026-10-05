@@ -1,6 +1,8 @@
 import {
   ABILITY_ROOT_EFFECT_ID,
   ABILITY_SLOW_EFFECT_ID,
+  MONSTER_ROOT_STATUS_IDS,
+  MONSTER_SLOW_STATUS_IDS,
   getLineageRuntime,
   getStatusEffect,
   getStatusEffects,
@@ -51,8 +53,19 @@ const MONSTER_MARKER_CHECKS: MarkerCheck[] = [
   { marker: "hasConflagration", effectId: "dot-conf" },
   { marker: "hasChill", effectId: "dot-chill" },
   { marker: "hasFrozen", effectId: "dot-frozen" },
-  { marker: "hasAbilitySlow", effectId: ABILITY_SLOW_EFFECT_ID },
-  { marker: "hasAbilityRoot", effectId: ABILITY_ROOT_EFFECT_ID },
+  {
+    // One marker per control rung, whichever id carries it: Hamstring's slow or
+    // the Control lean's Hobbled; Binding Strike's root or the Control payload's
+    // Pinned (design §26.2).
+    marker: "hasAbilitySlow",
+    effectId: ABILITY_SLOW_EFFECT_ID,
+    hasEffect: (state) => MONSTER_SLOW_STATUS_IDS.some((id) => !!getStatusEffect(state, id)),
+  },
+  {
+    marker: "hasAbilityRoot",
+    effectId: ABILITY_ROOT_EFFECT_ID,
+    hasEffect: (state) => MONSTER_ROOT_STATUS_IDS.some((id) => !!getStatusEffect(state, id)),
+  },
   { marker: "hasSmolder", effectId: "dot-smolder" },
   { marker: "hasEntropy", effectId: ENT_DOT_FX },
   {

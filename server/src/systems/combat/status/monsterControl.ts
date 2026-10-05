@@ -17,9 +17,12 @@
 import {
   ABILITY_ROOT_EFFECT_ID,
   ABILITY_SLOW_EFFECT_ID,
+  MONSTER_ROOT_STATUS_IDS,
+  MONSTER_SLOW_STATUS_IDS,
   applyStatusEffect,
   getFlag,
   getStatusEffect,
+  isHoldStatusId,
   setFlag,
 } from "@mmo-idle/shared";
 import type { MonsterEntity } from "../../../ecs/entity";
@@ -27,7 +30,7 @@ import { attachMarker, detachMarker } from "../../../ecs/markerHelpers";
 import type { World } from "../../../world/World";
 import { setRooted } from "../../world/rooted";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
-import { isMonsterStunned, STUN_EFFECT } from "./stun";
+import { isMonsterStunned } from "./stun";
 import { monsterIgnoresControl } from "./controlImmunity";
 import { CHILL_EFFECT, FROZEN_EFFECT } from "../../classes/archetypes/dot/t3/core/constants";
 import {
@@ -46,6 +49,11 @@ const OWNS_ROOT_FLAG = "abilityOwnsRoot";
  * Slow is deliberately NOT a soft root: the target still attacks, still casts,
  * and still closes — just more slowly. It exists for kiting, for maintaining
  * range, and for catching something that is running away.
+ *
+ * `effectId` names the slow on the target frame: Hamstring's (`ability-slowed`,
+ * the default) or the Control lean's "Hobbled" (`lineage.hobbled`). Every id in
+ * `MONSTER_SLOW_STATUS_IDS` is the same rung — the reconciler below takes the
+ * strongest across them, as it takes the strongest across every other source.
  */
 export function applyMonsterSlow(
   world: World,
@@ -53,18 +61,19 @@ export function applyMonsterSlow(
   slowPct: number,
   durationMs: number,
   sourceId: string,
+  effectId: string = ABILITY_SLOW_EFFECT_ID,
 ): void {
   if (slowPct <= 0 || durationMs <= 0) return;
   // Max wins on both axes (review finding P7, 2026-10-02): a plain refresh kept
   // the OLD record's data and overwrote its clock, so a 20%/1.2 s at-bay tap
   // landing on a 40%/3 s Hamstring left the slow at 20% with a clock reading
   // 250%, then cut it back to 1.2 s on the next tap.
-  const prior = getStatusEffect(monster.tracksCombat, ABILITY_SLOW_EFFECT_ID);
+  const prior = getStatusEffect(monster.tracksCombat, effectId);
   const pct = Math.max(slowPct, prior?.data['moveSlowPct'] ?? 0);
   const remainingMs = Math.max(durationMs, prior?.remainingMs ?? 0);
   const totalMs = Math.max(durationMs, prior?.data['totalMs'] ?? 0, remainingMs);
   const effect = applyStatusEffect(monster.tracksCombat, {
-    id: ABILITY_SLOW_EFFECT_ID,
+    id: effectId,
     maxStacks: 1,
     remainingMs,
     refreshable: true,
@@ -85,18 +94,24 @@ export function applyMonsterSlow(
  * inside its reach and still resolves non-movement actions. That distinction is
  * the whole reason root sits between slow and stun on the ladder, so nothing
  * here may reach for `cannotAttack`.
+ *
+ * `effectId` names the root on the target frame: Binding Strike's
+ * (`ability-rooted`, the default) or the Control payload's "Pinned"
+ * (`lineage.pinned`). Every id in `MONSTER_ROOT_STATUS_IDS` is the same rung: the
+ * root holds while any of them is live, under the same ownership rules.
  */
 export function applyMonsterRoot(
   world: World,
   monster: MonsterEntity,
   durationMs: number,
   sourceId: string,
+  effectId: string = ABILITY_ROOT_EFFECT_ID,
 ): void {
   if (durationMs <= 0) return;
   // Plated / control-immune bosses refuse the root (see controlImmunity.ts).
   if (monsterIgnoresControl(monster)) return;
   applyStatusEffect(monster.tracksCombat, {
-    id: ABILITY_ROOT_EFFECT_ID,
+    id: effectId,
     maxStacks: 1,
     remainingMs: durationMs,
     refreshable: true,
@@ -118,21 +133,24 @@ export function applyMonsterRoot(
  * Read off the live status records rather than the reconciled
  * `monsterMoveSpeedMult`, which only catches up on the next control pass: a slow
  * that landed earlier in this tick already holds the body. Every rung of the
- * ladder counts — an ability, at-bay or lean slow, a chill, a freeze, the root,
- * and the stun, which is also what the Control payload's knockdown is. A boss
- * that roots ITSELF for a scripted phase is not held by anyone, so the script's
- * `isRooted` alone does not count, and neither does a pattern's own recovery.
+ * ladder counts — an ability, at-bay or lean slow (Hamstrung, Hobbled), a chill,
+ * a freeze, the root (Bound, Pinned), and the stun, which is also what the
+ * Control payload's knockdown is. The list is shared (`isHoldStatusId`), so the
+ * HUD's "held" and this one can never disagree. A boss that roots ITSELF for a
+ * scripted phase is not held by anyone, so the script's `isRooted` alone does not
+ * count, and neither does a pattern's own recovery.
  */
 export function monsterIsHeld(monster: MonsterEntity): boolean {
-  const live = (id: string): boolean => {
-    const effect = getStatusEffect(monster.tracksCombat, id);
-    return effect !== undefined && effect.remainingMs !== 0;
-  };
-  return live(ABILITY_SLOW_EFFECT_ID)
-    || live(ABILITY_ROOT_EFFECT_ID)
-    || live(CHILL_EFFECT)
-    || live(FROZEN_EFFECT)
-    || live(STUN_EFFECT);
+  return monster.tracksCombat.statusEffects.some(
+    (effect) => effect.remainingMs !== 0 && isHoldStatusId(effect.id),
+  );
+}
+
+/** A live root of any id on this monster: Binding Strike's or the Control payload's. */
+export function monsterHasLiveRoot(monster: MonsterEntity): boolean {
+  return MONSTER_ROOT_STATUS_IDS.some(
+    (id) => (getStatusEffect(monster.tracksCombat, id)?.remainingMs ?? 0) > 0,
+  );
 }
 
 interface SlowTotals {
@@ -186,16 +204,20 @@ export function updateMonsterSlows(world: World): void {
   }
 
   for (const entity of world.abilitySlowedMonsters) {
-    const effect = getStatusEffect(entity.tracksCombat, ABILITY_SLOW_EFFECT_ID);
-    if (!effect) {
-      detachMarker(world, entity, "hasAbilitySlow");
-      continue;
+    // Every slow id is the same rung (Hamstring's, the lean's Hobbled): the
+    // strongest of them wins, like every other source here.
+    let slowed = false;
+    for (const id of MONSTER_SLOW_STATUS_IDS) {
+      const effect = getStatusEffect(entity.tracksCombat, id);
+      if (!effect) continue;
+      slowed = true;
+      record(
+        entity,
+        Math.max(0, effect.data.moveSlowPct ?? 0),
+        Math.max(0, effect.data.attackSlowPct ?? 0),
+      );
     }
-    record(
-      entity,
-      Math.max(0, effect.data.moveSlowPct ?? 0),
-      Math.max(0, effect.data.attackSlowPct ?? 0),
-    );
+    if (!slowed) detachMarker(world, entity, "hasAbilitySlow");
   }
 
   for (const { entity, move, attack } of totals.values()) {
@@ -257,8 +279,7 @@ function writeSlowMultipliers(
  */
 function updateMonsterRoots(world: World): void {
   for (const entity of world.abilityRootedMonsters) {
-    const effect = getStatusEffect(entity.tracksCombat, ABILITY_ROOT_EFFECT_ID);
-    if (effect && effect.remainingMs > 0) continue;
+    if (monsterHasLiveRoot(entity)) continue;
     detachMarker(world, entity, "hasAbilityRoot");
     if (getFlag(entity.tracksCombat, OWNS_ROOT_FLAG)) {
       setRooted(world, entity, false);
