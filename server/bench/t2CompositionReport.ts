@@ -49,6 +49,9 @@ import {
   type LineagePayoff, type PacketId,
 } from '@mmo-idle/shared';
 import { CLASS_BY_ROOT, bandFormOf, compositionPairs } from './lineage/compositionPairs';
+// The pairs are ENUMERATED at T2 (design §26.1, legibility run): the T1 band is the
+// ranked lean trio now, so the nine lean × verb labels exist at T2 only — the same
+// labels the pre-§26.1 T1 rows this report compares against were filed under.
 import { medianOf } from './lineage/viabilityFloor';
 
 const args = Object.fromEntries(process.argv.slice(2).map((s) => {
@@ -161,7 +164,7 @@ function laneCells(rows: LaneRow[]): Cells {
   for (const w of weapons) {
     const nodes = [...new Set(rows.filter((r) => r.lineageId === w).map((r) => r.nodeId))];
     for (const cls of CLASSES) {
-      for (const pair of compositionPairs(LINEAGE_DATABASE.get(w)!)) {
+      for (const pair of compositionPairs(LINEAGE_DATABASE.get(w)!, 2)) {
         if (pair.label === 'control') continue;
         const uplifts: number[] = [];
         let fires = 0; let ms = 0; let n = 0;
@@ -221,7 +224,7 @@ function compare(t1: Cells, t2: Cells): Comparison[] {
   const out: Comparison[] = [];
   for (const w of weapons) {
     const lineage = LINEAGE_DATABASE.get(w)!;
-    for (const pair of compositionPairs(lineage)) {
+    for (const pair of compositionPairs(lineage, 2)) {
       if (pair.label === 'control') continue;
       const per = CLASSES.map((cls) => ({ a: t1.get(k(w, cls, pair.label)), b: t2.get(k(w, cls, pair.label)) }));
       const both = per.filter((x) => x.a?.uplift != null && x.b?.uplift != null);
@@ -343,7 +346,7 @@ for (const inst of instruments) {
         '',
       );
     }
-    const pairs = compositionPairs(LINEAGE_DATABASE.get(w)!).filter((p) => p.label !== 'control');
+    const pairs = compositionPairs(LINEAGE_DATABASE.get(w)!, 2).filter((p) => p.label !== 'control');
     push(
       `<details><summary>${inst.name}, ${w}: per class (T1 uplift → T2 uplift${inst.name === 'boss lab' ? '; T2 wins' : ''})</summary>`,
       '',
