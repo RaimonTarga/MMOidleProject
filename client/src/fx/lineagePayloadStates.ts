@@ -26,15 +26,24 @@
  * A body that leaves the view (death, node change) is forgotten through
  * `destroyEntity`, which plays the cancel.
  */
-import type { MonsterView, PlayerView } from '@mmo-idle/shared';
+import {
+  LINEAGE_ROOT_STATUS_ID,
+  isAfflictionStatusId,
+  type MonsterView,
+  type PlayerView,
+} from '@mmo-idle/shared';
 import { composesLoadedCarry, type PayloadLasting } from './lineagePayloadModel';
 
 /** Playback delay (250 ms) plus two 5 Hz broadcast intervals. */
 export const EARLY_END_SLACK_MS = 650;
 
-/** The server status ids the mirrored target list names for two of the looks. */
-export const ROOT_STATUS_ID = 'ability-rooted';
-export const LINEAGE_BLEED_STATUS_ID = 'lineage.hemorrhage';
+/**
+ * The server status the mirrored target list names for the shackle: the Control
+ * payload's root, "Pinned" (design §26.2). The drip has no single id: the heavy
+ * bleed adds to the weapon's ONE damage-over-time record — its reservoir, or the
+ * lineage bleed — so it holds while the target carries an affliction.
+ */
+export const ROOT_STATUS_ID = LINEAGE_ROOT_STATUS_ID;
 
 export interface LastingRecord {
   kind: PayloadLasting;
@@ -124,8 +133,10 @@ export function serverHolds(kind: PayloadLasting, view: MonsterView | PlayerView
     case 'drip': {
       const list = (view as MonsterView).targetStatus;
       if (!list || list.length === 0) return undefined;
-      const id = kind === 'shackle' ? ROOT_STATUS_ID : LINEAGE_BLEED_STATUS_ID;
-      return list.some((status) => status.id === id && status.remainingMs !== 0);
+      const holds = kind === 'shackle'
+        ? (id: string) => id === ROOT_STATUS_ID
+        : isAfflictionStatusId;
+      return list.some((status) => holds(status.id) && status.remainingMs !== 0);
     }
     case 'loaded':
       return undefined;

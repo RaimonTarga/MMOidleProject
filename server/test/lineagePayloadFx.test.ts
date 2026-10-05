@@ -145,8 +145,9 @@ const clientSrc = (rel: string): string => readFileSync(join(__dirname, '../../c
 {
   resetLastingForTests();
   const mob = (extra: Partial<MonsterView> = {}): MonsterView => ({ id: 'mob-1', ...extra }) as MonsterView;
-  const rooted = { id: 'ability-rooted', stacks: 1, remainingMs: 1_800, totalMs: 2_000 };
-  const other = { id: 'lineage.hemorrhage', stacks: 4, remainingMs: 3_000, totalMs: 0 };
+  // The Control payload's root is "Pinned" (design §26.2); a bleed is not a root.
+  const rooted = { id: 'lineage.pinned', stacks: 1, remainingMs: 1_800, totalMs: 2_000 };
+  const other = { id: 'lineage.bleed', stacks: 4, remainingMs: 3_000, totalMs: 0 };
 
   startLasting('mob-1', 'shackle', 1_000, 2_000);
   assert(lastingActive('mob-1', 'shackle', mob(), 1_500), 'held while its clock runs (untargeted: the clock is trusted)');
@@ -175,6 +176,15 @@ const clientSrc = (rel: string): string => readFileSync(join(__dirname, '../../c
   startLasting('mob-2', 'drip', 1_000, 1_000, 2);
   const drip = lastingRecord('mob-2', 'drip');
   assert(drip?.endsAt === 4_000 && drip.intensity === 2, 'a refresh keeps the later end and the heavier intensity');
+
+  // The drip holds while the weapon's ONE damage-over-time record does (design
+  // §26.2): the lineage bleed, or — on a Poison Dagger — the reservoir the heavy
+  // bleed topped up. A root is not an affliction.
+  startLasting('mob-6', 'drip', 0, 4_000);
+  const m6 = (list: MonsterView['targetStatus']) => ({ id: 'mob-6', targetStatus: list }) as MonsterView;
+  const poison = { id: 'poison-dagger-burn', stacks: 120, remainingMs: 4_000, totalMs: 0 };
+  assert(lastingActive('mob-6', 'drip', m6([poison]), 100), 'a reservoir carries the drip');
+  assert(!lastingActive('mob-6', 'drip', m6([rooted]), 1_000), 'the affliction gone early ends it');
 
   // The knockdown reads `hardControlled`, broadcast for every monster.
   startLasting('mob-3', 'knockdown', 0, 1_500);

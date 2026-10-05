@@ -21,6 +21,7 @@ import { summonerSpecializationFor } from '../data/summoner';
 import { SLINGER_DIRECT_ATTACK_EFFECTIVENESS } from './classSecondaryDamage';
 import { defensiveFaceForSubVariant, resolveActiveLineages } from './lineages';
 import { dotClassProfileForSubVariant } from './dotClassProfile';
+import { weaponDotProfileForWeapon } from './weaponFamilies';
 
 /**
  * Map a raw evasion rating (Σ 1/N across all evasion sources) to a deterministic
@@ -360,12 +361,21 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     // (`shared.bleed-on-hit-pct`, read by the server's lean-condition listener).
     // For the DoT root the two halves partition its damage — the multiplier
     // scales its DoT, the bleed scales its hit — so neither counts twice.
+    //
+    // ONE DoT RECORD PER WEAPON (design §26.2): a weapon that owns a reservoir
+    // (`weaponDot`: the Poison Dagger, the Mirebrand, ...) is amplified, never
+    // joined. There the stat multiplies what the reservoir banks
+    // (`weapon.reservoir-potency-pct`, read by `feedWeaponReservoir`) and writes NO
+    // light bleed — the reservoir already afflicts every hit it converts, so the
+    // Affliction moment has its condition without a second record on the target.
     if (stat === 'dotPotencyPct') {
       const base = p.usesSkills.passives['dot.mechanic-mult']
         ?? dotClassProfileForSubVariant(p.usesSkills.selectedSubVariant).dotMechanicMultiplier;
       p.usesSkills.passives['dot.mechanic-mult'] = base + value;
-      p.usesSkills.passives['shared.bleed-on-hit-pct'] =
-        (p.usesSkills.passives['shared.bleed-on-hit-pct'] ?? 0) + value;
+      const weaponId = p.holdsInventory.equipment.weapon;
+      const ownsReservoir = !!weaponId && weaponDotProfileForWeapon(weaponId) !== undefined;
+      const seedKey = ownsReservoir ? 'weapon.reservoir-potency-pct' : 'shared.bleed-on-hit-pct';
+      p.usesSkills.passives[seedKey] = (p.usesSkills.passives[seedKey] ?? 0) + value;
       continue;
     }
     // The Control lean (design §24.9) is the same shape: a passive the server's

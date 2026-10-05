@@ -24,7 +24,7 @@
  */
 import {
   ABILITY_DATABASE,
-  ABILITY_ROOT_EFFECT_ID,
+  LINEAGE_ROOT_STATUS_ID,
   GAME_CONFIG,
   baseRecoveryForTier,
   emptyEquipment,
@@ -388,7 +388,7 @@ const proxyCard = (): ResolvedLineageCard => verb({
   })]);
   const target = monster();
   hit(player, target);
-  const root = getStatusEffect(target.tracksCombat, ABILITY_ROOT_EFFECT_ID);
+  const root = getStatusEffect(target.tracksCombat, LINEAGE_ROOT_STATUS_ID);
   assert(root?.data['totalMs'] === 2_000, 'a 2 s root, with the clock the buff UI needs');
   assert(target.isRooted !== undefined, 'the body is rooted');
   assert(cardFx().length === 1, 'one shackle');
@@ -396,7 +396,7 @@ const proxyCard = (): ResolvedLineageCard => verb({
   const immune = monster('cinder-shell-magma-salamander');
   assert(monsterIgnoresControl(immune), 'the test boss really is control-immune');
   hit(player, immune);
-  assert(getStatusEffect(immune.tracksCombat, ABILITY_ROOT_EFFECT_ID) === undefined, 'an immune boss refuses the root');
+  assert(getStatusEffect(immune.tracksCombat, LINEAGE_ROOT_STATUS_ID) === undefined, 'an immune boss refuses the root');
   assert(cardFx().length === 0, 'and a refused root draws nothing');
 
   hit(player, monster(), { evadeBlocksDebuffs: true });
@@ -661,7 +661,9 @@ function kill(player: PlayerEntity, defender: MonsterEntity): void {
     aggroSource: { id: player.isPlayer.id, kind: 'player' },
   });
   for (let i = 0; i < 5; i++) swing();
-  assert(getStatusEffect(target.tracksCombat, LINEAGE_BLEED_ID) === undefined, 'nothing before the 6th hit');
+  // The lean's light bleed shares the heavy one's record (design §26.2), so the
+  // record exists from the first hit; the heavy payload is the 6th hit's firing.
+  assert(!cardFx().some((e) => e.fx === 'affliction.heavy-drip'), 'nothing before the 6th hit');
   swing();
   assert(getStatusEffect(target.tracksCombat, LINEAGE_BLEED_ID) !== undefined, 'the 6th hit leaves the heavy bleed');
   assert(cardFx().some((e) => e.fx === 'affliction.heavy-drip'), 'drawn as the heavy drip');
@@ -711,7 +713,8 @@ function kill(player: PlayerEntity, defender: MonsterEntity): void {
     aggroSource: { id: player.isPlayer.id, kind: 'player' },
   });
   for (let i = 0; i < 5; i++) swing();
-  assert(getStatusEffect(target.tracksCombat, LINEAGE_BLEED_ID) === undefined, 'nothing before the 6th hit');
+  // As at T1: the lean's light bleed shares the one record (design §26.2).
+  assert(!cardFx().some((e) => e.fx === 'affliction.heavy-drip'), 'nothing before the 6th hit');
   swing();
   assert(getStatusEffect(target.tracksCombat, LINEAGE_BLEED_ID) !== undefined, 'the 6th hit bleeds the target');
   assert(getStatusEffect(neighbour.tracksCombat, LINEAGE_BLEED_ID) !== undefined, 'and the body beside it');

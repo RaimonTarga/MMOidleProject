@@ -570,8 +570,14 @@ export const SHARED_KEYS = [
   // The Affliction lean's seeded condition (design §24.9): the share of every
   // landed hit (as it was before any empowered multiplier) added to a light
   // lineage bleed. Written by the lineage stat fold (`dotPotencyPct`), read by
-  // `server/src/systems/combat/leanConditions.ts`.
+  // `server/src/systems/combat/leanConditions.ts`. Never written on a weapon that
+  // owns a reservoir (design §26.2) — see `weapon.reservoir-potency-pct`.
   'shared.bleed-on-hit-pct',
+  // The Affliction lean on a weapon that owns a reservoir (design §26.2: one DoT
+  // record per weapon): the fraction more the reservoir banks from each converted
+  // hit. Written by the lineage stat fold (`dotPotencyPct`) instead of the light
+  // bleed, read by `server/src/systems/combat/damage/weaponReservoir.ts`.
+  'weapon.reservoir-potency-pct',
   // The Control lean's seeded condition (design §24.9): every landed hit slows its
   // target by this fraction of its move speed, briefly (max-wins with every other
   // slow). Written by the lineage stat fold (`slowOnHit`), read by
