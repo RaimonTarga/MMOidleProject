@@ -1400,3 +1400,124 @@ below the bar, the channel is wrong, not the melee row.
 
 The same rule reads forward: a slow boss at any tier that cannot touch an orbiter is
 missing its reach, and the fix is a reach channel in the boss's own idiom, never speed.
+
+**Status (2026-10-05): parked.** The channel was built and measured
+(docs/briefs/boss-reach-report-2026-10-03.md, branch `feat/boss-reach`, unmerged): no
+candidate in the grid meets the criterion. Rockfall is decided by the dodge, not the share,
+and every rock that lands on an orbiter also lands on the melee chasing back after the
+Crag Charge; Tremor is refunded by the Spirit's barrier unless its cadence beats the
+barrier's delay, and then it grinds the Conduit's summons. Three calls are open and the
+designer has parked them past the UI run: a gate that knows a chase from an orbit; the
+Tremor cadence and a rule for summons; and whether "incoming" means HP damage or
+pre-barrier pressure. The two bosses stay kiteable in the next patch.
+
+---
+
+## 26. After the second playtest: deepen, not branch (decided 2026-10-05)
+
+The second playtest (2026-10-04) found the verbs firing and the system working as
+intended, and the texture still wrong in a different way: the UI overloaded, three steps
+per tier where the ladder had six, three records of damage-over-time on one target, nodes
+that look alike, and nine choices in the Forest for a player who has not yet seen one card
+fire. The playtest's own conclusion was that none of this is the mechanic. The decisions
+below keep the mechanic and change what T1 asks, what the weapon does with it, and how it
+is shown. Where they supersede §24, they say so.
+
+### 26.1 The T1 band is a lean with ranks and the weapon's own verb
+
+**T1 deepens; T2 branches.** The T1 band is one lean row and one verb, and the verb is not
+a choice: it is **the weapon's identity**, the thing the weapon already does, made into a
+moment. The Poison Dagger re-doses its poison. The Flash Rapier strikes twice. The Heavy
+Hammer knocks down. The Chaotic Axe and the Iron Broadsword keep the verbs their lanes
+already crown (§24.2's pure sentences for Tempo and Technique). The player buys it once, at
+the Forest-4 Global Mastery gate (§24.9), and from then on watches it fire. The other two
+verbs of the weapon's lane matrix, and with them the composition grammar of §24.2, **open
+at the T2 gate**. Nothing in §24.2 is retired: the verbs, the payloads, the moments, the
+caps, the generated sentences and the composition matrix all stand. What moves is when the
+player is asked to choose among them.
+
+**The T1 lean row offers Attack, Speed and Effect**, the same three on every weapon, so a
+new player reads the row without knowing what a lane is. Each is a stat with **three
+ranks**, paid in the node's shard and essence, rank I at the lean gate and the next two
+later in the tier (the Global Mastery values are the designer's; provisional: the lean
+gate, +4 and +8). The T1 steps are therefore form, lean I, II, III, verb, gate: six, as the
+ladder had, with the number in the sentence growing where the player can see it.
+
+- **Attack** and **Speed** are what they say, in the lane colours of Empowered and Tempo
+  where the weapon crowns them.
+- **Effect is the weapon's own mechanic made stronger**: poison potency on the Dagger, the
+  slow's depth on the Hammer, the Technique refund on the Broadsword. §24.9's rule that the
+  lean seeds its lane's condition is preserved by this: the Effect lean is that seed. On a
+  weapon with no mechanic of its own (the Rapier, the Axe), Effect is the size of the verb's
+  payload.
+- The lane-named leans of §24.2 (Tempo, Affliction, Engagement, Control, Kill chain,
+  Technique, Empowered) are the T2 lean row, where they pay the three verbs' payloads as
+  §24.2 describes. The T1 Effect lean pays the T1 verb's payload the same way, so the
+  composition rule holds at T1 with one pair instead of nine.
+
+This amends §0's "complexity is front-loaded to T1" to: **identity is front-loaded to T1;
+choice opens at T2.** The tutorial loses a decision and keeps the moment. The composition
+matrix stays the balance instrument; its pairs exist a tier later.
+
+### 26.2 One damage-over-time record per weapon
+
+**A weapon that already afflicts is amplified, never joined.** If the weapon owns a
+reservoir (the Poison Dagger's and the Mirebrand's poison), the Effect lean raises that
+reservoir's potency and the Affliction verb re-doses that reservoir. There is no second
+record, no second icon, no second number. A weapon with no DoT of its own that takes an
+Affliction card gets **one** seeded bleed id, with its own icon, label and help, and the
+heavy and light bleeds of §24.9 collapse into that one record (both are reservoirs every hit
+adds to). The target shows one badge per effect: what is owed, how long. This supersedes
+the two-id split the verbs-that-fire run introduced; its refresh-versus-reservoir reason is
+answered by making both reservoirs.
+
+### 26.3 Nodes are rosters, not proportions
+
+**A node fields its dominant family and at most one guest family.** One node per biome,
+placed before the dungeon, is the crossroads that fields all three. The node pays its
+dominant's shard (§24.3 unchanged). A 70/20/10 node and a 45/45/10 node were
+indistinguishable by eye; a roster is read from the bodies in front of the player, which is
+what §24.1 asks of everything else. Blend data only; the family contracts and the lane
+bench re-read the blends. Whether the crossroads pays one shard or rolls per kill is open.
+
+### 26.4 How it is shown (supersedes §24.6 where they differ)
+
+From the five-thesis prototype run (docs/briefs/ui-prototypes-report-2026-10-04.md):
+
+- **The fight HUD is nearly empty.** One ring per active verb, beside the HP bar. The
+  body shows the payoff. The target shows one badge per effect with an icon and the number
+  owed. The floating word plays for a newly bought card's first three firings, as
+  teaching, and then never. The proc-icon strip is removed. Each fact has one channel.
+- **The Upgrade panel.** The old Upgrade tab's slot, named Upgrade, opens on the five worn
+  items. The weapon opens its page; a plain item says it is a plain item. The page keeps
+  §24.6's rows, lanes as colours and one sentence per card, and gains the ranks.
+- **A Stats panel of its own**, in the dense ordered layout of the prototype run's thesis
+  D, with the lean's contribution marked. Nothing expands on the left any more.
+- **Panels may be dense; the HUD may not.** The prototypes' lesson, stated as a rule.
+- **The skin is a later track.** The UI grows from bare stone at T1 to ornament, gems and
+  light with ascension (future-plans, "tier-evolving UI"). It is skinned after the layout
+  is fixed, never before; a T1 and a T4 skin of the same screen are designed first to prove
+  the arc does not overwhelm.
+
+### 26.5 Calls from the runs
+
+- **The Conduit's summons and the Tempo moment.** A minion hit advances the hit counter by
+  one over the number of live summons, so one count is "all my summons have hit once".
+  With six summons, the 6th-hit verb needs six rounds. The Conduit fires at a cadence like
+  everyone else's, and the summons remain its attacks.
+- **Off-lane leans on conditional verbs (T2).** When the verb choice opens at T2, a
+  Control or Affliction verb under a lean of another lane fires only if something else
+  supplies the condition. This is accepted and **shown**: the page's caveat ("needs a
+  slow", "needs an affliction") is computed from the loadout, not written on the card,
+  because Hamstring, the Mid range, the Apprentice's afflictions and the weapon's own
+  reservoir all count as sources. A verb with a source shows no caveat.
+- **Boss reach** is parked (§25 status).
+- **Tick quantisation** of attack timing stays the designer's open call.
+
+### 26.6 Order
+
+Composite mockup of §26.4 on real data (T1 stone skin and a T4 skin of the same screen) →
+the designer refines it → one run: §26.1–26.3 data and runtime, the status registry
+(docs/briefs/status-registry-audit-2026-10-05.md) with §26.2, the HUD and panels, the
+tutorial following §26.1 once → third playtest → the ability pass (§22) → the simplified
+tutorial on a frozen T1 → the skin track.
