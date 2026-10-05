@@ -52,6 +52,7 @@ import {
   resolveDotClassProfile,
   resolveLineageCardFor,
   resolveLineageCards,
+  rhythmShape,
   rowLabel,
   rowsForTier,
   shardName,
@@ -76,6 +77,14 @@ import {
   type SubVariant,
   type TriggerKind,
 } from '@mmo-idle/shared';
+import {
+  cardRank,
+  cardSentenceAt,
+  composedParts,
+  maxCardRank,
+  resolveCardAtRank,
+  type SentenceParts,
+} from './legibilityContracts';
 
 // ─── Small formatting ────────────────────────────────────────────────────────
 
@@ -781,8 +790,10 @@ export function pageStatSheet(params: {
   /** Every lean of the lit band, for the stable row set. */
   leanIds: readonly string[];
   hoveredLeanId?: string | null;
+  /** A preview tree to read "after" from instead (a rank about to be bought). */
+  previewProgress?: LineageProgress | null;
 }): PageStatSheet {
-  const { build, lineages, lineage, progress, leanIds, hoveredLeanId } = params;
+  const { build, lineages, lineage, progress, leanIds, hoveredLeanId, previewProgress } = params;
   const withTree = (tree: LineageProgress): LineageProgressMap => ({ ...lineages, [lineage.id]: tree });
   const now = previewEquipmentStats({ ...build, lineages: withTree(progress) });
   const previewOf = (leanId: string): Preview | null => {
@@ -790,7 +801,9 @@ export function pageStatSheet(params: {
     return clone ? previewEquipmentStats({ ...build, lineages: withTree(clone) }) : null;
   };
   const options = leanIds.map(previewOf).filter((p): p is Preview => !!p);
-  const hovered = hoveredLeanId ? previewOf(hoveredLeanId) : null;
+  const hovered = previewProgress
+    ? previewEquipmentStats({ ...build, lineages: withTree(previewProgress) })
+    : hoveredLeanId ? previewOf(hoveredLeanId) : null;
   const archetype = build.usesSkills.combatArchetype;
   const sub = build.usesSkills.selectedSubVariant;
 
@@ -1061,4 +1074,207 @@ export function successToast(pending: PendingIntent): string {
 export function activateAfterBuy(lineage: LineageDefinition, progress: LineageProgress, card: LineageCard): boolean {
   const owned: LineageProgress = { ...progress, ownedCards: [...progress.ownedCards, card.id] };
   return checkSetActive({ lineage, progress: owned, row: card.row, cardId: card.id }).ok;
+}
+
+// ─── Ranks, the plate, the beat (design §26.1, §26.4; legibility run D) ──────
+//
+// The rank reads go through `legibilityContracts.ts` (Contract 1, agent A): one
+// file to rewire when the shared rank API lands.
+
+/** I, II, III. */
+export function rankNumeral(n: number): string {
+  return ['', 'I', 'II', 'III', 'IV', 'V'][n] ?? String(n);
+}
+
+/** A lean's rank control: pips, the next rank's price and gate, and what pressing it does. */
+export interface LeanRankModel {
+  /** The owned rank; 0 when the card is not owned. */
+  rank: number;
+  maxRank: number;
+  /** One per rank, filled up to the owned rank. */
+  pips: boolean[];
+  /** "II of III", "not taken", or undefined for an unranked card. */
+  rankText?: string;
+  /** The next rank, while there is one to buy (rank I for an unowned card). */
+  next?: {
+    rank: number;
+    chips: CostChip[];
+    requirement: Requirement;
+    /** `buy`: the shared check passes; `toast`: it refuses, and `reason` says why. */
+    action: 'buy' | 'toast';
+    reason?: string;
+    /** "Rank up", "Buy". */
+    label: string;
+    /** The card's sentence at that rank: what the rank-up control previews. */
+    sentence?: string;
+  };
+}
+
+export function leanRankModel(params: {
+  lineage: LineageDefinition;
+  card: LineageCard;
+  progress: LineageProgress;
+  wallet: LineageWallet;
+  lineages?: LineageProgressMap;
+}): LeanRankModel {
+  const { lineage, card, progress, wallet, lineages } = params;
+  const maxRank = maxCardRank(card);
+  const rank = cardRank(progress, card.id);
+  const pips = Array.from({ length: maxRank }, (_, i) => i < rank);
+  const rankText = maxRank > 1
+    ? (rank > 0 ? `${rankNumeral(rank)} of ${rankNumeral(maxRank)}` : 'not taken')
+    : undefined;
+  if (rank >= maxRank) return { rank, maxRank, pips, ...(rankText ? { rankText } : {}) };
+
+  const nextRank = rank + 1;
+  const resolved = resolveCardAtRank(lineage, progress, card, nextRank);
+  // Rank I is the card's price as today (switch discount and all); a higher rank
+  // is what the resolver says buying THAT rank costs (Contract 1).
+  const cost = rank === 0 ? lineageCardPrice({ lineage, card, lineages }).cost : resolved.cost;
+  const chips = costChips(cost, wallet);
+  const check = checkUnlockCard({ lineage, card, progress, wallet, lineages });
+  const reason = check.ok ? undefined
+    : checkUnlockCard({ lineage, card, progress, wallet: richWallet(wallet), lineages }).ok
+      ? shortToast(chips, check.reason) : check.reason;
+  return {
+    rank, maxRank, pips, ...(rankText ? { rankText } : {}),
+    next: {
+      rank: nextRank,
+      chips,
+      requirement: cardRequirement(resolved, wallet),
+      action: check.ok ? 'buy' : 'toast',
+      ...(reason ? { reason } : {}),
+      label: rank === 0 ? 'Buy' : 'Rank up',
+      sentence: cardSentenceAt(card, progress, nextRank),
+    },
+  };
+}
+
+/**
+ * The player's tree with `card` owned, active in its row and at `rank` — a CLONE
+ * for the rank preview (the stat sheet's "after", the plate's sentence). Display
+ * only; nothing is sent.
+ */
+export function previewRankProgress(progress: LineageProgress, card: LineageCard, rank: number): LineageProgress {
+  const ranks = { ...((progress as LineageProgress & { ranks?: Record<string, number> }).ranks ?? {}), [card.id]: rank };
+  return {
+    ...progress,
+    ownedCards: progress.ownedCards.includes(card.id) ? [...progress.ownedCards] : [...progress.ownedCards, card.id],
+    active: { ...progress.active, [card.row]: card.id },
+    ranks,
+  } as LineageProgress;
+}
+
+/** The "In the fight" plate (prototype C): the active lean and the active verb, as the fight reads them. */
+export interface FightPlate {
+  lean?: { name: string; sentence: string; color: string; rank?: string };
+  verb?: {
+    name: string;
+    parts: SentenceParts;
+    momentColor: string;
+    payloadColor: string;
+    note?: string;
+  };
+  /** What the plate says before anything is bought. */
+  empty?: string;
+}
+
+export const FIGHT_PLATE_EMPTY = 'Nothing yet. Buy a lean and the verb, and this is what your weapon does in a fight.';
+
+/**
+ * The plate reads the tree it is given — the real one, or a preview clone (a
+ * hovered lean, a rank about to be bought) — so it re-reads under the preview
+ * exactly like the verb cards. The verb's sentence comes in its two halves from
+ * shared (`composedSentenceParts`), never split from text.
+ */
+export function fightPlate(params: {
+  lineage: LineageDefinition;
+  progress: LineageProgress;
+  archetype?: CombatArchetype | null;
+  /** The lean rank a rank preview reads at. */
+  rank?: number;
+}): FightPlate {
+  const { lineage, progress } = params;
+  const plate: FightPlate = {};
+  const leanId = progress.active.stat;
+  const lean = leanId && progress.ownedCards.includes(leanId) ? lineage.cards.find((c) => c.id === leanId) : undefined;
+  if (lean) {
+    const rank = params.rank ?? cardRank(progress, lean.id);
+    const max = maxCardRank(lean);
+    plate.lean = {
+      name: lean.name,
+      sentence: cardSentenceAt(lean, progress, params.rank) ?? pageCardSentence(lineage, lean, progress),
+      color: laneColor(lean.lane),
+      ...(max > 1 ? { rank: `rank ${rankNumeral(rank)}` } : {}),
+    };
+  }
+  const verbId = progress.active.payoff;
+  const verb = verbId && progress.ownedCards.includes(verbId) ? lineage.cards.find((c) => c.id === verbId) : undefined;
+  const parts = verb ? composedParts(lineage, progress, params.rank !== undefined ? { rank: params.rank } : undefined) : undefined;
+  if (verb && parts) {
+    const note = verbNote(lineage, verb, progress, params.archetype);
+    plate.verb = {
+      name: verb.name, parts,
+      momentColor: laneColor(parts.momentLane), payloadColor: laneColor(parts.payloadLane),
+      ...(note ? { note } : {}),
+    };
+  }
+  if (!plate.lean && !plate.verb) plate.empty = FIGHT_PLATE_EMPTY;
+  return plate;
+}
+
+/**
+ * A verb card's beat line (prototype E): the HUD ring's grammar, taught on the
+ * page before the fight. From the verb's COMPOSED moment, the same one the
+ * server fires and the ring counts.
+ */
+export type VerbBeat =
+  | { kind: 'count'; n: number }
+  | { kind: 'cap'; seconds: number; condition?: 'afflicted' | 'held' }
+  | { kind: 'latch'; perTarget: boolean }
+  | { kind: 'carry' }
+  | { kind: 'pulse'; text: string };
+
+export function verbBeat(lineage: LineageDefinition, progress: LineageProgress, card: LineageCard): VerbBeat | undefined {
+  if (!isVerbCard(card)) return undefined;
+  const composed = composeVerb(card.lane, leanLaneFor(lineage, progress), card.tier);
+  if (!composed) return undefined;
+  const { perTarget, ...trigger } = composed.trigger;
+  const condition = trigger.kind === 'hit-afflicted' ? 'afflicted' as const
+    : trigger.kind === 'hit-held' ? 'held' as const : undefined;
+  switch (rhythmShape(trigger, perTarget === true)) {
+    case 'count': return { kind: 'count', n: Math.round(trigger.n ?? 2) };
+    case 'cap': return { kind: 'cap', seconds: Math.round((trigger.capMs ?? 0) / 100) / 10, ...(condition ? { condition } : {}) };
+    case 'latch-body': return { kind: 'latch', perTarget: true };
+    case 'latch-engagement': return { kind: 'latch', perTarget: false };
+    case 'carry': return { kind: 'carry' };
+    default:
+      return {
+        kind: 'pulse',
+        text: trigger.kind === 'mechanic-fired' ? 'when your mechanic fires'
+          : trigger.kind === 'technique-cast' ? 'when a Technique lands' : 'on its moment',
+      };
+  }
+}
+
+/** The beat line in words, under the drawing and for its accessible label. */
+export function beatText(beat: VerbBeat): string {
+  switch (beat.kind) {
+    case 'count': return `Every ${ordinal(beat.n)} hit fires it.`;
+    case 'cap': return beat.condition
+      ? `A hit on a${beat.condition === 'afflicted' ? 'n afflicted' : ' held'} target fires it, then it rests ${trimmed(beat.seconds)} s.`
+      : `It fires, then rests ${trimmed(beat.seconds)} s.`;
+    case 'latch': return beat.perTarget ? 'Your first hit on each target fires it.' : 'Your first hit in a fight fires it.';
+    case 'carry': return 'A kill loads it; the next hit fires it.';
+    case 'pulse': return `It fires ${beat.text}.`;
+  }
+}
+
+/**
+ * The locked next band's VERBS only — the mockup's "Tier 2 · the choice" row:
+ * three verbs, dimmed, before the player can choose among them.
+ */
+export function lockedChoiceRow(band: PageBand): PageRow | undefined {
+  if (band.mode !== 'locked') return undefined;
+  return band.rows.find((row) => row.row === 'payoff');
 }

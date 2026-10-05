@@ -11,6 +11,7 @@ import {
   releaseAnnouncementAtom,
   settingsOpenAtom,
   skillTreeOpenAtom,
+  statsOpenAtom,
 } from '../hud/atoms';
 import type { BuildPanelTab } from '../hud/atoms';
 
@@ -20,6 +21,8 @@ export type PrimaryOverlay =
   | 'mastery'
   | 'inventory'
   | 'crafting'
+  | 'upgrade'
+  | 'stats'
   | 'map'
   | 'quests'
   | 'settings';
@@ -31,7 +34,9 @@ function primaryOverlayIsOpen(overlay: PrimaryOverlay): boolean {
     case 'build': return store.get(buildOpenAtom);
     case 'mastery': return store.get(masteryOpenAtom);
     case 'inventory': return store.get(inventoryOpenAtom);
-    case 'crafting': return store.get(craftTabAtom) !== null;
+    case 'crafting': return store.get(craftTabAtom) === 'make';
+    case 'upgrade': return store.get(craftTabAtom) === 'upgrade';
+    case 'stats': return store.get(statsOpenAtom);
     case 'map': return store.get(mapOpenAtom);
     case 'quests': return store.get(questOpenAtom);
     case 'settings': return store.get(settingsOpenAtom);
@@ -45,6 +50,7 @@ export function closePrimaryOverlays(): void {
   store.set(masteryOpenAtom, false);
   store.set(inventoryOpenAtom, false);
   store.set(craftTabAtom, null);
+  store.set(statsOpenAtom, false);
   store.set(mapOpenAtom, false);
   store.set(questOpenAtom, false);
   store.set(settingsOpenAtom, false);
@@ -60,6 +66,8 @@ export function openPrimaryOverlay(overlay: PrimaryOverlay): void {
     case 'mastery': store.set(masteryOpenAtom, true); break;
     case 'inventory': store.set(inventoryOpenAtom, true); break;
     case 'crafting': store.set(craftTabAtom, 'make'); break;
+    case 'upgrade': store.set(craftTabAtom, 'upgrade'); break;
+    case 'stats': store.set(statsOpenAtom, true); break;
     case 'map': store.set(mapOpenAtom, true); break;
     case 'quests': store.set(questOpenAtom, true); break;
     case 'settings': store.set(settingsOpenAtom, true); break;
@@ -110,6 +118,10 @@ export function closeTopmostOverlay(): void {
   }
   if (store.get(craftTabAtom)) {
     store.set(craftTabAtom, null);
+    return;
+  }
+  if (store.get(statsOpenAtom)) {
+    store.set(statsOpenAtom, false);
     return;
   }
   if (store.get(buildOpenAtom)) {

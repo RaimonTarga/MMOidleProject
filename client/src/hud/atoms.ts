@@ -487,7 +487,13 @@ export const inventoryOpenAtom = atom<boolean>(false);
  */
 export const lineageTreeSlotAtom = atom<EquipmentSlot | null>(null);
 export const mapOpenAtom = atom<boolean>(false);
-export const craftTabAtom = atom<'make' | null>(null);
+/**
+ * The crafting shell's destination: Make, or Upgrade (design §26.4: the old
+ * Upgrade slot, now the worn items and the weapon's page).
+ */
+export const craftTabAtom = atom<'make' | 'upgrade' | null>(null);
+/** The Stats panel (design §26.4: a panel of its own; nothing expands on the left). */
+export const statsOpenAtom = atom<boolean>(false);
 export const questOpenAtom = atom<boolean>(false);
 export const settingsOpenAtom = atom<boolean>(false);
 export const debugPanelOpenAtom = atom<boolean>(false);
