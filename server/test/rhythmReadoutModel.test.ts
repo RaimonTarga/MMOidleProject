@@ -64,22 +64,27 @@ function buff(id: string, over: Partial<PlayerBuff> = {}): PlayerBuff {
 }
 
 const FLURRY = "rapier-t1-tempo-payoff";
-const VENOM_POINT = "rapier-t1-affliction-payoff";
-const OPENING_LUNGE = "rapier-t1-engagement-payoff";
+// Since design §26.1 (legibility run) the Rapier's one T1 verb is Flurry; its
+// Affliction and Engagement verbs (and a lean of another lane composing with a
+// verb) are T2 cards, read on the Gale Needle with the verb's own firing only.
+const VENOM_POINT = "rapier-t2-affliction-payoff";
+const OPENING_LUNGE = "rapier-t2-engagement-payoff";
+const t2Verb = (payoff: string, stat?: string): RhythmFiring[] =>
+  rapierFirings({ payoff, ...(stat ? { stat } : {}) }, "gale-needle").filter((f) => f.key === payoff);
 
 // ── Which cards get a ring ────────────────────────────────────────────────────
 {
-  assert(rapierFirings({ stat: "rapier-t1-tempo-stat" }).length === 0, "a lean alone has no rhythm");
-  const [flurry] = rapierFirings({ stat: "rapier-t1-tempo-stat", payoff: FLURRY });
+  assert(rapierFirings({ stat: "rapier-t1-speed" }).length === 0, "a lean alone has no rhythm");
+  const [flurry] = rapierFirings({ stat: "rapier-t1-speed", payoff: FLURRY });
   assert(flurry?.key === FLURRY && flurry.name === "Flurry", "the verb is the ring, named for the card");
   assert(flurry.shape === "count" && flurry.trigger.n === 6, "Flurry counts toward its 6th hit");
   assert(flurry.lane === "tempo" && flurry.payloadLane === "tempo", "pure: its own lane, its own payload");
-  const [composed] = rapierFirings({ stat: "rapier-t1-affliction-stat", payoff: FLURRY });
-  assert(composed.payloadLane === "affliction", "with Envenomed, the payload (and its glyph key) is Affliction's");
+  const [composed] = t2Verb("rapier-t2-tempo-payoff", "rapier-t2-affliction-stat");
+  assert(composed.payloadLane === "affliction", "with Deeper Brew, the payload (and its glyph key) is Affliction's");
   assert(composed.lane === "tempo", "but the ring stays in the verb's lane colour");
 
-  assert(rapierFirings({ payoff: VENOM_POINT })[0]?.shape === "cap", "the Affliction moment is capped");
-  assert(rapierFirings({ payoff: OPENING_LUNGE })[0]?.shape === "latch-body", "the Engagement moment latches per body");
+  assert(t2Verb(VENOM_POINT)[0]?.shape === "cap", "the Affliction moment is capped");
+  assert(t2Verb(OPENING_LUNGE)[0]?.shape === "latch-body", "the Engagement moment latches per body");
 
   // A worn T2 form adds its capstone, ranked after the verb.
   const withCapstone = rapierFirings({ payoff: FLURRY }, "gale-needle");
@@ -105,7 +110,7 @@ const OPENING_LUNGE = "rapier-t1-engagement-payoff";
 
 // ── cap: ready, or the cap's clock against the server clock ──────────────────
 {
-  const firings = rapierFirings({ payoff: VENOM_POINT });
+  const firings = t2Verb(VENOM_POINT);
   const now = 1_000_000;
   const cooling = deriveRhythmRings(input({ firings, serverNow: now, moments: { [VENOM_POINT]: { capUntil: now + 2_000 } } }))[0];
   assert(!cooling.ready && cooling.text === "2.0", `a running cap shows its seconds, got ${cooling.text}`);
@@ -119,7 +124,7 @@ const OPENING_LUNGE = "rapier-t1-engagement-payoff";
 
 // ── latch per body: ready for the CURRENT target until spent ─────────────────
 {
-  const firings = rapierFirings({ payoff: OPENING_LUNGE });
+  const firings = t2Verb(OPENING_LUNGE);
   const moments = { [OPENING_LUNGE]: { spentOn: ["m1"] } };
   const spent = deriveRhythmRings(input({ firings, moments, attackTargetId: "m1" }))[0];
   assert(!spent.ready && spent.text === SPENT_MARK && spent.fill === 0, "spent on this target");
@@ -132,7 +137,7 @@ const OPENING_LUNGE = "rapier-t1-engagement-payoff";
 // ── carry and pulse ──────────────────────────────────────────────────────────
 {
   const carry: RhythmFiring = {
-    key: "axe-t1-kill-chain-payoff", name: "Next Head", lane: "kill-chain",
+    key: "axe-t2-kill-chain-payoff", name: "Deeper Frenzy", lane: "kill-chain",
     trigger: { kind: "kill", carry: true }, shape: "carry", payoff: "heal-and-load",
     payloadLane: "kill-chain", source: "card",
   };
