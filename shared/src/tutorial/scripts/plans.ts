@@ -88,24 +88,25 @@ export interface TutorialClassPlan {
  * The Axe's and the Dagger's three leans and three verbs (`data/lineages/axe.ts`,
  * `dagger.ts`), by lane. Named here only to keep the class table readable.
  */
+// Legibility run (design §26.1), ID SUBSTITUTION ONLY: the T1 band is the lean trio
+// (Attack / Speed / Effect) and the weapon's one verb, so each retired lean maps to
+// the trio card that carries its stat (Loose Grip → Speed, Hewing Arc → Attack,
+// Coated Edge → Effect) and each retired verb to the weapon's own (Cleaving Blow →
+// Chopping Rhythm). The picks and their notes below are wave 2's (E) to redo.
 const AXE = {
   lineageId: 'axe',
-  looseGrip: 'axe-t1-tempo-stat',
-  bloodscent: 'axe-t1-kill-chain-stat',
-  hewingArc: 'axe-t1-empowered-stat',
+  attack: 'axe-t1-attack',
+  speed: 'axe-t1-speed',
+  effect: 'axe-t1-effect',
   choppingRhythm: 'axe-t1-tempo-payoff',
-  nextHead: 'axe-t1-kill-chain-payoff',
-  cleavingBlow: 'axe-t1-empowered-payoff',
 } as const;
 
 const DAGGER = {
   lineageId: 'dagger',
-  coatedEdge: 'dagger-t1-affliction-stat',
-  tendonCut: 'dagger-t1-control-stat',
-  silentStep: 'dagger-t1-kill-chain-stat',
+  attack: 'dagger-t1-attack',
+  speed: 'dagger-t1-speed',
+  effect: 'dagger-t1-effect',
   intoTheWound: 'dagger-t1-affliction-payoff',
-  easyPrey: 'dagger-t1-control-payoff',
-  nextThroat: 'dagger-t1-kill-chain-payoff',
 } as const;
 
 const PLAINS: BiomePlan = {
@@ -208,7 +209,7 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     bosses: DEFAULT_BOSSES,
     // +31.2%, 10.2 fires/min: the finisher every 5th swing is its mechanic, and
     // "the hit lands twice" doubles it; attack speed brings it round sooner.
-    weaponCards: { lineageId: AXE.lineageId, lean: AXE.looseGrip, verb: AXE.cleavingBlow },
+    weaponCards: { lineageId: AXE.lineageId, lean: AXE.speed, verb: AXE.choppingRhythm },
   },
   {
     classRoot: 'cooldown-root',
@@ -219,7 +220,7 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     bosses: DEFAULT_BOSSES,
     // +25.4%, 6.6 fires/min (pure Empowered: "Your mechanic hits half again as hard"):
     // the slowest hands and the biggest timed execution.
-    weaponCards: { lineageId: AXE.lineageId, lean: AXE.hewingArc, verb: AXE.cleavingBlow },
+    weaponCards: { lineageId: AXE.lineageId, lean: AXE.attack, verb: AXE.choppingRhythm },
   },
   {
     classRoot: 'reload-root',
@@ -231,7 +232,7 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     // +42.8%, 11.6 fires/min (pure Affliction: "Hitting an afflicted target doubles
     // its affliction"): the Dagger's poison and the lean's bleed are always on the
     // target, so the moment fires at its cap. Every other Dagger pair is within ±3%.
-    weaponCards: { lineageId: DAGGER.lineageId, lean: DAGGER.coatedEdge, verb: DAGGER.intoTheWound },
+    weaponCards: { lineageId: DAGGER.lineageId, lean: DAGGER.effect, verb: DAGGER.intoTheWound },
   },
   {
     classRoot: 'energy-root',
@@ -243,7 +244,7 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     // +24.8%, 7.3 fires/min (pure Tempo: "Every 6th hit strikes twice"). Tied on the
     // median with Loose Grip → Cleaving Blow (both +24.8%, the same Greatbear reading);
     // broken by the mean over the five bosses, +23.7% against +22.7%.
-    weaponCards: { lineageId: AXE.lineageId, lean: AXE.looseGrip, verb: AXE.choppingRhythm },
+    weaponCards: { lineageId: AXE.lineageId, lean: AXE.speed, verb: AXE.choppingRhythm },
   },
   {
     classRoot: 'dot-root',
@@ -255,7 +256,7 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     // +14.0%, 6.0 fires/min ("Every 6th hit counts as your class mechanic firing"):
     // Cleaving Blow on Hewing Arc never fired for it in the lab, so the six-count
     // carries its mechanic instead.
-    weaponCards: { lineageId: AXE.lineageId, lean: AXE.hewingArc, verb: AXE.choppingRhythm },
+    weaponCards: { lineageId: AXE.lineageId, lean: AXE.attack, verb: AXE.choppingRhythm },
   },
   {
     classRoot: 'summoner-root',
@@ -266,6 +267,6 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     bosses: DEFAULT_BOSSES,
     // +17.0%, 26.9 fires/min (pure Tempo): four summons' hits fill the six-count fast;
     // its Empowered verb fell to +7.4% under the 4 s cap.
-    weaponCards: { lineageId: AXE.lineageId, lean: AXE.looseGrip, verb: AXE.choppingRhythm },
+    weaponCards: { lineageId: AXE.lineageId, lean: AXE.speed, verb: AXE.choppingRhythm },
   },
 ];
