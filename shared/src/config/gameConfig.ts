@@ -215,7 +215,7 @@ export const GAME_CONFIG = {
   /**
    * Per-biome multiplier on biomeXp, stacked on BIOME_XP_REWARD_MULT_BY_TIER.
    * Keyed by biomeTier, then biomeGroup; a missing entry is 1. Mastery XP only:
-   * essence and catalyst payouts ignore it. It evens out biome throughput, so each
+   * essence payouts ignore it. It evens out biome throughput, so each
    * biome's segment lands near its tier target (T2 15 / T3 30 / T4 60 min).
    * T2/T3 factors are the bot-median time over target (six classes); T4 factors put
    * the Striker reference near 55 min. Factors below 1 slow a biome without raising
@@ -236,18 +236,6 @@ export const GAME_CONFIG = {
   BIOME_ESSENCE_TIER_MULT: [
     1.0, 2.0, 0.85, 0.70, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55,
   ] as unknown as readonly number[],
-  // ── Biome catalysts ─────────────────────────────────────────────────────────
-  /**
-   * Accumulated kill-weight (Σ monster `catalystWeight`) required to mint one
-   * biome catalyst in every tier.
-   */
-  CATALYST_PROGRESS_PER_UNIT: 100,
-  /**
-   * Per-tier multiplier on catalyst kill-weight. T1 grants half progress while
-   * retaining the universal 100-point mint threshold, keeping the player-facing
-   * meter consistent without changing its intended catalyst pace.
-   */
-  CATALYST_PROGRESS_REWARD_MULT_BY_TIER: { 1: 0.5 } as Readonly<Record<number, number>>,
 } as const;
 
 /**
@@ -288,19 +276,9 @@ export function poolFactorForTier(playerTier: number | undefined): number {
   return factors[index];
 }
 
-/** Universal kill-weight required to mint one catalyst. */
-export function catalystProgressPerUnit(): number {
-  return GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT;
-}
-
-/** Tier-specific scalar applied to a monster's catalyst kill-weight. */
-export function catalystProgressRewardMult(biomeTier: number): number {
-  return GAME_CONFIG.CATALYST_PROGRESS_REWARD_MULT_BY_TIER[biomeTier] ?? 1;
-}
-
 // ── Dev reward multiplier ─────────────────────────────────────────────────────
 // A dev-only, server-global scalar on everything a kill is worth (essence, biome
-// XP, and catalyst progress) so a balance/playtest cycle can reach late content
+// XP) so a balance/playtest cycle can reach late content
 // without farming it. 1 = shipped rates; it is the only value production ever
 // runs at, because the debug handler that changes it is registered under IS_DEV.
 export const DEBUG_REWARD_MULT_DEFAULT = 1;

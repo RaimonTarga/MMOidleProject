@@ -88,16 +88,10 @@ export interface Recipe {
   /** Lineage this recipe belongs to (e.g. `"rapier"`). Shared by base + all branches. */
   lineageId?: string;
   /**
-   * Predecessor recipe id this evolves from. Present ⇒ this is an EVOLVED recipe:
-   * craftable by consuming the predecessor at +{@link EVOLUTION_REQUIRED_PLUS}
-   * (paying `cost`), or by reconstruction (paying `reconstructCost`).
+   * Predecessor recipe id this evolves from.
    * Sibling recipes sharing an `evolvesFrom` are alternate branches.
    */
   evolvesFrom?: string;
-  /**
-   * Reconstruction (skip-the-chain) essence cost — higher than the evolution `cost`,
-   * needs no predecessor. Only meaningful on evolved recipes. Absent ⇒ no reconstruct path.
-   */
   reconstructCost?: Partial<Record<EssenceType, number>>;
   // ── Cores (system rework Step 9) ────────────────────────────────────────────
   /**

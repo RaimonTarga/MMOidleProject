@@ -187,8 +187,8 @@ export interface ServerToClientEvents {
   /** Player-facing release notes for versions newer than the player's previous login. */
   "game:updateAnnouncement": (payload: ReleaseAnnouncementPayload) => void;
   /**
-   * Dev-only: the server-global kill-reward multiplier (essence, biome XP and
-   * catalyst progress). Sent on connect and to every client whenever it changes,
+   * Dev-only: the server-global kill-reward multiplier (essence and biome XP).
+   * Sent on connect and to every client whenever it changes,
    * so the debug panel always shows server truth. Never emitted in production.
    */
   "debug:rewardMultiplier": (multiplier: number) => void;
@@ -287,12 +287,7 @@ export interface ClientToServerEvents {
   "inventory:unequip": (slot: EquipmentSlot) => void;
   /** Attempt to craft a recipe by ID. Server validates and applies. */
   "crafting:craftRecipe": (recipeId: string) => void;
-  /**
-   * Attempt to evolve/reconstruct into an evolved recipe (system rework Step 6).
-   * `evolve` consumes the +3 predecessor; `reconstruct` skips it for a higher cost.
-   */
   "crafting:evolveItem": (payload: { recipeId: string; mode: EvolveMode }) => void;
-  /** Attempt to upgrade an owned item by ID (+1). Server validates and applies. */
   "inventory:upgradeItem": (itemId: string) => void;
   // ── Lineage trees (progression rework Phase 1) ─────────────────────────────
   /** Buy a card. Permanent; costs essence and the card's own lane shard. */

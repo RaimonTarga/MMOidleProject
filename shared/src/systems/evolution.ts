@@ -21,16 +21,7 @@ import type { Recipe } from '../data/recipes/types';
 /** Retired with the path; kept for the legacy bot route builders (see above). */
 export const EVOLUTION_REQUIRED_PLUS = 3;
 
-/** Retired with the path; kept for the legacy bot route builders (see above). */
-export function requiredPlusFor(recipe: Recipe): number {
-  return recipe.slot === 'core' || recipe.slot === 'relic' ? 0 : EVOLUTION_REQUIRED_PLUS;
-}
-
 export type EvolveMode = 'evolve' | 'reconstruct';
-
-export function isEvolvedRecipe(recipe: Recipe): boolean {
-  return recipe.evolvesFrom !== undefined;
-}
 
 export interface EvolveCheck {
   ok: boolean;
