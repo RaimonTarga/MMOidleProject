@@ -19,8 +19,10 @@ import {
   RECIPE_DATABASE,
   defensiveFaceForSubVariant,
   lineageForEquippedItem,
+  lineagePayloadScales,
   packetDefinition,
   previewEquipmentStats,
+  rankNumeral,
   resolveActiveLineages,
   resolveDotClassProfile,
   rhythmFirings,
@@ -124,6 +126,9 @@ const ROWS: readonly RowDef[] = [
     value: (p, input) => resolveDotClassProfile(p.passives, input.build.usesSkills.selectedSubVariant).dotMechanicMultiplier,
     fmt: (v) => `×${trimmed(v, 2)}`, delta: points, pinned: true,
   },
+  // The Effect lean on a weapon with a reservoir (design §26.2): it amplifies
+  // what the reservoir banks (`weapon.reservoir-potency-pct`), never joins it.
+  { key: 'reservoirPotency', label: 'Reservoir potency', group: 'offence', value: (p) => p.passives['weapon.reservoir-potency-pct'] ?? 0, fmt: (v) => signed(pct(v)), delta: points, neutral: 0 },
   { key: 'bleedOnHit', label: 'Bleed per hit', group: 'offence', value: (p) => p.passives['shared.bleed-on-hit-pct'] ?? 0, fmt: (v) => pct(v), delta: points, neutral: 0 },
   { key: 'slowOnHit', label: 'Slow on hit', group: 'offence', value: (p) => p.passives['shared.slow-on-hit-pct'] ?? 0, fmt: (v) => pct(v), delta: points, neutral: 0 },
   { key: 'techniquePower', label: 'Technique power', group: 'offence', value: (p) => p.passives['technique.power-pct'] ?? 0, fmt: (v) => signed(pct(v)), delta: points, neutral: 0 },
@@ -153,9 +158,6 @@ const GROUP_ORDER: readonly StatsGroupKey[] = ['offence', 'defence', 'recovery',
 
 /** Slots in the order their sources are named. */
 const SLOTS: readonly EquipmentSlot[] = ['weapon', 'armor', 'recovery', 'mobility', 'core', 'relic'];
-
-const RANK_NUMERALS = ['', 'I', 'II', 'III', 'IV', 'V'];
-export const rankNumeral = (n: number): string => RANK_NUMERALS[n] ?? String(n);
 
 // ─── The lean ────────────────────────────────────────────────────────────────
 
@@ -270,6 +272,8 @@ export function buildStatsPanel(input: StatsPanelInput): StatsPanelData {
     const element = reservoir.element === 'poison' ? 'Poison' : reservoir.element === 'fire' ? 'Burn'
       : reservoir.element === 'frost' ? 'Chill' : 'Reservoir';
     const share = reservoir.convPct;
+    const potency = rows.get('offence')!.find((r) => r.key === 'reservoirPotency');
+    if (potency) potency.label = `${element} potency`;
     rows.get('offence')!.push({
       key: 'reservoir',
       label: `${element} per hit`,
@@ -288,12 +292,25 @@ export function buildStatsPanel(input: StatsPanelInput): StatsPanelData {
     { equipment: build.equipment, lineages: build.lineages },
     defensiveFaceForSubVariant(build.usesSkills.selectedSubVariant),
   ));
+  // The payload SCALE an Effect lean puts on a verb (design §26.1: on a weapon
+  // with no mechanic of its own, Effect is the size of the verb's payload).
+  const weaponLineage = lineageForEquippedItem(build.equipment.weapon);
+  const weaponProgress = weaponLineage ? build.lineages?.[weaponLineage.id] : undefined;
+  const scales = weaponLineage && weaponProgress ? lineagePayloadScales(weaponLineage, weaponProgress) : {};
   for (const firing of firings) {
+    const sources: StatsSource[] = [{ kind: 'rule', label: cadenceText(firing), color: packetDefinition(firing.lane)?.color }];
+    const scale = firing.source === 'card' ? scales[firing.payloadLane] ?? 0 : 0;
+    if (scale > EPS) {
+      const fromLean = lean?.card.statKey === 'payloadScale' && lean.card.lane === firing.payloadLane;
+      sources.push(fromLean
+        ? { kind: 'lean', label: `payload · ${leanLabel(lean!)}`, amount: signed(pct(scale)), color: leanColor }
+        : { kind: 'rule', label: `payload ${signed(pct(scale))} · your form` });
+    }
     rows.get('rhythm')!.push({
       key: `verb:${firing.key}`,
       label: firing.name,
       value: firing.source === 'capstone' ? 'capstone' : 'verb',
-      sources: [{ kind: 'rule', label: cadenceText(firing), color: packetDefinition(firing.lane)?.color }],
+      sources,
     });
   }
 

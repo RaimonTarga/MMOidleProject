@@ -11,14 +11,12 @@
  *   - the "In the fight" plate: the lean and the verb, the verb in two halves;
  *   - a verb's beat line from its composed moment; the locked T2 choice row.
  *
- * Ranks are read through `legibilityContracts.ts` (Contract 1). Until agent A's
- * rank API lands the lean trio is built here by marking the T1 leans as ranked
- * (`leanKind`), so the page's rank logic is pinned whichever side lands first.
+ * Ranks are read through `legibilityContracts.ts` (Contract 1, the shared rank
+ * API); the T1 lean trio (`<weapon>-t1-attack|speed|effect`) carries `leanKind`.
  */
 import assert from 'node:assert/strict';
 import {
-  LINEAGE_DATABASE, emptyEquipment, type LineageCard, type LineageDefinition, type LineageProgress,
-  type LineageWallet,
+  LINEAGE_DATABASE, composedSentence, emptyEquipment, type LineageProgress, type LineageWallet,
 } from '@mmo-idle/shared';
 import {
   FIGHT_PLATE_EMPTY, beatText, fightPlate, leanRankModel, lockedChoiceRow, pageBands, previewRankProgress, verbBeat,
@@ -28,27 +26,16 @@ import {
 } from '../../client/src/ui/lineage/upgradeListModel';
 import { cardRank, maxCardRank } from '../../client/src/ui/lineage/legibilityContracts';
 
-const base = LINEAGE_DATABASE.get('dagger')!;
-const KINDS = ['attack', 'speed', 'effect'] as const;
-const t1Leans = base.cards.filter((c) => c.tier === 1 && c.row === 'stat');
-// The T1 lean trio, ranked (Contract 1's `leanKind`); A's data carries it itself.
-const dagger: LineageDefinition = {
-  ...base,
-  cards: base.cards.map((c) => {
-    const i = t1Leans.indexOf(c);
-    return i >= 0 && !(c as LineageCard & { leanKind?: string }).leanKind
-      ? ({ ...c, leanKind: KINDS[i % 3] } as LineageCard)
-      : c;
-  }),
-};
-const lean = dagger.cards.find((c) => c.tier === 1 && c.row === 'stat')!;
-const verb = dagger.cards.find((c) => c.tier === 1 && c.row === 'payoff' && c.lane === 'affliction')
-  ?? dagger.cards.find((c) => c.tier === 1 && c.row === 'payoff')!;
+const dagger = LINEAGE_DATABASE.get('dagger')!;
+const lean = dagger.cards.find((c) => c.id === 'dagger-t1-effect')!;
+const verb = dagger.cards.find((c) => c.tier === 1 && c.row === 'payoff')!;
 const BASE_FORM = dagger.forms.find((f) => f.tier === 1)!.recipeId;
+assert.equal(lean.leanKind, 'effect', 'fixture: the Dagger\'s Effect lean');
+assert.equal(dagger.cards.filter((c) => c.tier === 1 && c.row === 'payoff').length, 1, 'fixture: one fixed T1 verb');
 
-const tree = (over: Partial<LineageProgress> & { ranks?: Record<string, number> } = {}): LineageProgress => ({
+const tree = (over: Partial<LineageProgress> = {}): LineageProgress => ({
   ownedCards: [], active: {}, ownedForms: [BASE_FORM], wornForm: BASE_FORM, ...over,
-} as LineageProgress);
+});
 
 const wallet: LineageWallet = {
   essences: { purple: 5_000 },
@@ -69,6 +56,9 @@ const wallet: LineageWallet = {
   assert.equal(unowned.next?.rank, 1);
   assert.equal(unowned.next?.label, 'Buy', 'an unowned lean is bought, not ranked up');
   assert.ok(unowned.next!.chips.length > 0, 'and shows its price');
+  const price = (m: typeof unowned) => m.next!.chips.map((c) => [c.kind, c.amount]);
+  // PROVISIONAL rank prices (A's table): 30 / 45 / 60 essence, 3 / 5 / 6 shards of the card's lane.
+  assert.deepEqual(price(unowned), [['essence', 30], ['shard', 3]], 'rank I: 30 essence, 3 shards');
 
   const owned = tree({ ownedCards: [lean.id], active: { stat: lean.id }, ranks: { [lean.id]: 2 } });
   assert.equal(cardRank(owned, lean.id), 2, 'the owned rank is read from progress.ranks');
@@ -77,6 +67,10 @@ const wallet: LineageWallet = {
   assert.equal(mid.rankText, 'II of III');
   assert.equal(mid.next?.rank, 3);
   assert.equal(mid.next?.label, 'Rank up');
+  assert.deepEqual(price(mid), [['essence', 60], ['shard', 6]], 'rank III: 60 essence, 6 shards');
+  const one = leanRankModel({ lineage: dagger, card: lean, progress: tree({ ownedCards: [lean.id], active: { stat: lean.id } }), wallet });
+  assert.deepEqual(price(one), [['essence', 45], ['shard', 5]], 'rank II: 45 essence, 5 shards');
+  assert.ok(mid.next?.sentence?.includes('20%'), 'the Rank-up control previews rank III\'s number (+20%)');
   assert.ok(mid.next?.action === 'buy' || mid.next?.action === 'toast', 'the control follows the shared check');
   if (mid.next?.action === 'toast') assert.ok(mid.next.reason, 'and a refusal says why');
 
@@ -91,9 +85,9 @@ const wallet: LineageWallet = {
   assert.equal(capped.rankText, 'III of III');
   assert.equal(capped.next, undefined, 'nothing to buy past rank III');
 
-  const preview = previewRankProgress(owned, lean, 3) as LineageProgress & { ranks?: Record<string, number> };
+  const preview = previewRankProgress(owned, lean, 3);
   assert.equal(preview.ranks?.[lean.id], 3, 'the rank preview is a clone at the next rank');
-  assert.equal((owned as LineageProgress & { ranks?: Record<string, number> }).ranks?.[lean.id], 2, 'the real tree is untouched');
+  assert.equal(owned.ranks?.[lean.id], 2, 'the real tree is untouched');
   assert.equal(preview.active.stat, lean.id);
 }
 
@@ -145,6 +139,12 @@ const wallet: LineageWallet = {
   assert.ok(plate.verb!.parts.moment.length > 0, 'the moment half');
   assert.ok(plate.verb!.momentColor.startsWith('#') && plate.verb!.payloadColor.startsWith('#'), 'two colours');
   assert.ok(!plate.verb!.parts.moment.includes('undefined') && !plate.verb!.parts.payload.includes('undefined'));
+  const { moment, payload } = plate.verb!.parts;
+  const joined = moment ? `${moment} ${payload}` : payload;
+  assert.equal(joined, composedSentence(dagger, owned), 'the two halves are the sentence');
+  assert.ok(plate.lean!.sentence.includes('10%'), 'rank I reads +10%');
+  const ranked = fightPlate({ lineage: dagger, progress: previewRankProgress(owned, lean, 3), rank: 3 });
+  assert.ok(ranked.lean!.sentence.includes('20%') && ranked.lean!.rank === 'rank III', 'the plate re-reads under a rank preview');
 }
 
 // ── The verb's beat line; the locked T2 choice ───────────────────────────────

@@ -18,8 +18,8 @@ import { buildStatsPanel, cadenceText } from '../../client/src/ui/stats/statsPan
 
 const dagger = LINEAGE_DATABASE.get('dagger')!;
 const BASE_FORM = dagger.forms.find((f) => f.tier === 1)!.recipeId;
-const lean = dagger.cards.find((c) => c.tier === 1 && c.row === 'stat' && c.lane === 'affliction')
-  ?? dagger.cards.find((c) => c.tier === 1 && c.row === 'stat')!;
+// The Dagger's Effect lean: it amplifies the Poison Dagger's own reservoir (§26.2).
+const lean = dagger.cards.find((c) => c.id === 'dagger-t1-effect')!;
 const verb = dagger.cards.find((c) => c.tier === 1 && c.row === 'payoff')!;
 
 const build = (over: Partial<EquipmentPreviewInput> = {}): EquipmentPreviewInput => ({
@@ -80,7 +80,18 @@ const row = (data: ReturnType<typeof buildStatsPanel>, key: string) => {
   assert.equal(data.lean?.color, laneColor, 'in its lane colour');
   const leanShares = data.groups.flatMap((g) => g.rows).flatMap((r) => r.sources).filter((s) => s.kind === 'lean');
   assert.ok(leanShares.length > 0, 'the lean moves at least one number, and says so');
-  assert.ok(leanShares.every((s) => s.color === laneColor && s.label.startsWith(lean.name)), 'its share in its lane colour');
+  assert.ok(leanShares.every((s) => s.color === laneColor && s.label.includes(lean.name)), 'its share in its lane colour');
+  const potency = row(data, 'reservoirPotency')!;
+  assert.equal(potency.label, 'Poison potency', 'the Effect lean reads as the reservoir it amplifies');
+  assert.equal(potency.value, '+10%', 'rank I: +10% (PROVISIONAL, A\'s table)');
+  assert.deepEqual(potency.sources.map((s) => [s.kind, s.amount]), [['lean', '+10%']], 'all of it the lean\'s');
+  assert.equal(row(data, 'bleedOnHit'), undefined, 'a reservoir weapon writes no light bleed (one DoT record)');
+  const rankIII = buildStatsPanel({ build: build({ lineages: { dagger: {
+    ownedCards: [lean.id, verb.id], active: { stat: lean.id, payoff: verb.id },
+    ownedForms: [BASE_FORM], wornForm: BASE_FORM, ranks: { [lean.id]: 3 },
+  } } }) });
+  assert.equal(row(rankIII, 'reservoirPotency')?.value, '+20%', 'rank III: +20%');
+  assert.equal(rankIII.lean?.rank, 'rank III of III');
 
   // No lean: no lean line, no lean share.
   const bare = buildStatsPanel({ build: build({ lineages: {} }) });
@@ -102,6 +113,27 @@ const row = (data: ReturnType<typeof buildStatsPanel>, key: string) => {
   assert.ok(verbRow, 'the active verb has a rhythm row');
   assert.equal(verbRow!.label, verb.name);
   assert.ok(verbRow!.sources[0].label.length > 0, 'saying how often it can fire');
+
+  // On a weapon with no mechanic of its own, Effect is the verb's payload size.
+  const rapier = LINEAGE_DATABASE.get('rapier')!;
+  const rapierForm = rapier.forms.find((f) => f.tier === 1)!.recipeId;
+  const effect = rapier.cards.find((c) => c.id === 'rapier-t1-effect')!;
+  const flurry = rapier.cards.find((c) => c.tier === 1 && c.row === 'payoff')!;
+  const rapierData = buildStatsPanel({ build: build({
+    usesSkills: {
+      unlockedSkills: ['cadence-root'], passives: {}, selectedClass: 'cadence-root',
+      selectedSubVariant: null, selectedRange: null, combatArchetype: 'cadence' as CombatArchetype,
+    },
+    equipment: { ...emptyEquipment(), weapon: rapierForm },
+    lineages: { rapier: {
+      ownedCards: [effect.id, flurry.id], active: { stat: effect.id, payoff: flurry.id },
+      ownedForms: [rapierForm], wornForm: rapierForm,
+    } },
+  }) });
+  const flurryRow = row(rapierData, `verb:${flurry.id}`)!;
+  const payload = flurryRow.sources.find((s) => s.kind === 'lean');
+  assert.ok(payload && payload.amount === '+10%' && payload.label.includes(effect.name),
+    `the Rapier's Effect lean shows as the verb's payload share, got ${JSON.stringify(flurryRow.sources)}`);
 
   assert.equal(cadenceText({
     key: 'x', name: 'X', lane: 'tempo', trigger: { kind: 'hit-nth', n: 6 }, shape: 'count',

@@ -49,6 +49,7 @@ import {
   packetHalves,
   payloadSize,
   previewEquipmentStats,
+  rankNumeral,
   resolveDotClassProfile,
   resolveLineageCardFor,
   resolveLineageCards,
@@ -1078,13 +1079,10 @@ export function activateAfterBuy(lineage: LineageDefinition, progress: LineagePr
 
 // ─── Ranks, the plate, the beat (design §26.1, §26.4; legibility run D) ──────
 //
-// The rank reads go through `legibilityContracts.ts` (Contract 1, agent A): one
-// file to rewire when the shared rank API lands.
+// The rank reads go through `legibilityContracts.ts` (Contract 1, agent A).
 
-/** I, II, III. */
-export function rankNumeral(n: number): string {
-  return ['', 'I', 'II', 'III', 'IV', 'V'][n] ?? String(n);
-}
+/** I, II, III — the shared numeral, so the page and a refusal read alike. */
+export { rankNumeral };
 
 /** A lean's rank control: pips, the next rank's price and gate, and what pressing it does. */
 export interface LeanRankModel {
@@ -1128,9 +1126,8 @@ export function leanRankModel(params: {
 
   const nextRank = rank + 1;
   const resolved = resolveCardAtRank(lineage, progress, card, nextRank);
-  // Rank I is the card's price as today (switch discount and all); a higher rank
-  // is what the resolver says buying THAT rank costs (Contract 1).
-  const cost = rank === 0 ? lineageCardPrice({ lineage, card, lineages }).cost : resolved.cost;
+  // The shared price of the NEXT rank (switch discount and all, Contract 1).
+  const { cost } = lineageCardPrice({ lineage, card, lineages, progress, rank: nextRank });
   const chips = costChips(cost, wallet);
   const check = checkUnlockCard({ lineage, card, progress, wallet, lineages });
   const reason = check.ok ? undefined
@@ -1156,13 +1153,12 @@ export function leanRankModel(params: {
  * only; nothing is sent.
  */
 export function previewRankProgress(progress: LineageProgress, card: LineageCard, rank: number): LineageProgress {
-  const ranks = { ...((progress as LineageProgress & { ranks?: Record<string, number> }).ranks ?? {}), [card.id]: rank };
   return {
     ...progress,
     ownedCards: progress.ownedCards.includes(card.id) ? [...progress.ownedCards] : [...progress.ownedCards, card.id],
     active: { ...progress.active, [card.row]: card.id },
-    ranks,
-  } as LineageProgress;
+    ranks: { ...(progress.ranks ?? {}), [card.id]: rank },
+  };
 }
 
 /** The "In the fight" plate (prototype C): the active lean and the active verb, as the fight reads them. */
