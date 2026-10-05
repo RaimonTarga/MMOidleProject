@@ -1,0 +1,1889 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beat Strip Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;700&family=Cinzel:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ───────────── Tokens: the client's (weaponPage.css / hud tokens) and the mockup's ───────────── */
+:root {
+  --bg: #14120f; --panel: #1d1a16; --ink: #ece4d4; --gold: #d9b25c;
+  --hud-panel: #221f18; --hud-control: #2a2720; --hud-inset: #080706;
+  --edge-light: #3e3a30; --edge-medium: #63553e; --edge-dark: #0e0c09;
+  --primary: #c8a860; --primary-strong: #e0c070;
+  --text: #d2cbbb; --muted: #9a8f7a; --dim: #706758; --success: #65d184; --danger: #ef7463;
+  --display: 'Alegreya SC', 'Cinzel', Georgia, serif;
+  --body: 'IBM Plex Sans', system-ui, 'Segoe UI', sans-serif;
+  --word: 'Cinzel', 'Palatino Linotype', Georgia, serif;
+  --bar-h: 44px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { background: #0b0a08; color: var(--text); font-family: var(--body); overflow: hidden; }
+button { font: inherit; color: inherit; }
+img.px, image { image-rendering: pixelated; }
+
+/* ───────────── Prototype chrome (outside the game frame) ───────────── */
+#bar { height: var(--bar-h); display: flex; align-items: center; gap: 10px; padding: 0 12px; background: #11100d; border-bottom: 1px solid #2c2820; white-space: nowrap; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+#bar::-webkit-scrollbar { display: none; }
+.brand { display: flex; align-items: baseline; gap: 6px; font-family: var(--display); color: var(--primary-strong); font-size: 15px; }
+.brand b { display: inline-grid; place-items: center; width: 22px; height: 22px; border: 1px solid var(--primary); color: var(--primary-strong); font-size: 13px; }
+.brand span { font-family: var(--body); color: var(--muted); font-size: 11px; }
+.seg { display: inline-flex; border: 1px solid #3a342a; }
+.seg button { background: #1a1813; border: 0; border-right: 1px solid #3a342a; padding: 5px 9px; font-size: 12px; color: var(--muted); cursor: pointer; }
+.seg button:last-child { border-right: 0; }
+.seg button.on { background: #3a3122; color: var(--primary-strong); }
+.seg button:hover { color: var(--ink); }
+.tbtn { background: #1a1813; border: 1px solid #3a342a; padding: 5px 9px; font-size: 12px; color: var(--muted); cursor: pointer; }
+.tbtn.on, .tbtn:hover { color: var(--primary-strong); border-color: var(--primary); }
+#controls { min-height: 38px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 6px 12px; background: #15130f; border-bottom: 1px solid #2c2820; font-size: 12px; }
+#controls .lbl { color: var(--dim); text-transform: uppercase; letter-spacing: .08em; font-size: 10px; }
+#controls .count { color: var(--primary-strong); font-family: var(--display); font-size: 14px; min-width: 88px; }
+#controls .sep { width: 1px; height: 20px; background: #3a342a; }
+#explain { padding: 6px 12px 7px; font-size: 12px; line-height: 1.45; color: var(--muted); background: #121110; border-bottom: 1px solid #2c2820; }
+#explain b { color: var(--text); font-weight: 600; }
+#stage { position: absolute; left: 0; right: 0; bottom: 0; display: grid; place-items: center; overflow: hidden; }
+#frameWrap { position: relative; }
+#frame { position: absolute; left: 0; top: 0; transform-origin: 0 0; overflow: hidden; background: #000; box-shadow: 0 0 0 1px #2c2820, 0 10px 40px rgba(0,0,0,.6); }
+body.embed #bar, body.embed #controls, body.embed #explain, body.embed #drawer { display: none !important; }
+body.embed #frame { box-shadow: none; }
+
+/* Reference drawer: the strip's other moment shapes */
+#drawer { position: fixed; right: 0; top: var(--bar-h); bottom: 0; width: min(560px, 100vw); background: #12110e; border-left: 1px solid #3a342a; box-shadow: -10px 0 40px rgba(0,0,0,.6); transform: translateX(105%); transition: transform .25s ease; z-index: 50; overflow-y: auto; padding: 14px 16px 30px; }
+#drawer.open { transform: none; }
+#drawer h2 { font-family: var(--display); color: var(--primary-strong); font-size: 18px; margin-bottom: 4px; }
+#drawer > p { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 12px; }
+.shape { border: 1px solid var(--edge-light); background: var(--hud-panel); padding: 10px 12px 12px; margin-bottom: 12px; }
+.shape-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+.shape-head b { font-family: var(--display); font-size: 15px; }
+.shape-head span { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: .08em; }
+.shape .sent { font-size: 12.5px; color: var(--text); margin-bottom: 8px; line-height: 1.4; }
+.shape .how { font-size: 11.5px; color: var(--muted); line-height: 1.5; margin-top: 8px; }
+.shape .how em { color: var(--danger); font-style: normal; font-weight: 600; }
+.shape .strip { width: 100%; }
+#drawer .close { position: absolute; right: 12px; top: 12px; }
+
+/* ───────────── The game frame ───────────── */
+.frame { font-family: var(--body); color: var(--text); user-select: none; }
+.canvas { position: absolute; overflow: hidden; background: #0c0e08; isolation: isolate; z-index: 1; }
+.desktop .canvas { left: 260px; right: 260px; top: 0; bottom: 0; }
+.portrait .canvas { inset: 0; }
+
+/* The world: the real swamp ground, tinted, with props and bodies */
+.world { position: absolute; inset: 0; z-index: 0; background-image: url('../../../client/public/assets/biome_swamp.png'); background-size: 560px; background-color: #8c9a62; background-blend-mode: multiply; }
+.world::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 55%, transparent 45%, rgba(0,0,0,.55) 100%); z-index: 5; }
+.pool { position: absolute; border-radius: 50%; background: radial-gradient(ellipse at 40% 35%, rgba(70,90,60,.55), rgba(12,18,10,.92) 70%); box-shadow: inset 0 2px 8px rgba(0,0,0,.6), 0 0 0 2px rgba(60,48,30,.5); }
+.prop { position: absolute; image-rendering: pixelated; transform-origin: 50% 100%; pointer-events: none; }
+.body { position: absolute; transform-origin: 50% 100%; pointer-events: none; }
+.body .shadow { position: absolute; left: 50%; bottom: -4px; width: 60%; height: 12px; transform: translateX(-50%); border-radius: 50%; background: rgba(0,0,0,.45); }
+.body .spr { position: absolute; left: 0; bottom: 0; width: 100%; height: 100%; image-rendering: pixelated; transform-origin: 50% 100%; }
+.body .wob { position: absolute; inset: 0; transform-origin: 50% 100%; animation: wob 1.1s ease-in-out infinite; }
+.body.slowed .wob { animation-duration: 2.4s; }
+.body.rooted .wob { animation-play-state: paused; }
+.body .bob { position: absolute; inset: 0; animation: bob 1.6s ease-in-out infinite; }
+@keyframes wob { 0%,100% { transform: scale(1, 1) translateX(0); } 25% { transform: scale(1.06, .93) translateX(-3px); } 50% { transform: scale(.97, 1.04) translateX(0); } 75% { transform: scale(1.05, .95) translateX(3px); } }
+@keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+.blob { position: absolute; left: 14%; right: 14%; bottom: 0; height: 62%; border-radius: 50% 50% 42% 42%; border: 2px solid rgba(0,0,0,.55); box-shadow: inset 0 -6px 0 rgba(0,0,0,.18); }
+.blob::before, .blob::after { content: ''; position: absolute; top: 22%; width: 13%; height: 16%; border-radius: 50%; background: #e8e2c8; box-shadow: inset 2px 0 0 #222; }
+.blob::before { left: 26%; } .blob::after { right: 26%; }
+.hpmini { position: absolute; left: 22%; right: 22%; top: -8px; height: 4px; background: rgba(0,0,0,.6); border: 1px solid rgba(0,0,0,.7); }
+.hpmini i { display: block; height: 100%; background: #c84a3a; }
+.fx { position: absolute; inset: 0; pointer-events: none; z-index: 2000; }
+.fx.under { z-index: 0; }
+.fx .corpse { position: absolute; image-rendering: pixelated; transform: translate(-50%, -78%); }
+.fx .dmg { position: absolute; font: 700 13px var(--body); color: #f1ead8; text-shadow: 0 1px 0 #000, 0 0 3px #000; transform: translate(-50%, -100%); white-space: nowrap; }
+.fx .dmg.p { color: #ff8a76; }
+.fx .dmg.dot { color: #9fd977; font-size: 11px; }
+.fx .proj { position: absolute; height: 2px; background: linear-gradient(90deg, transparent, #f4ecd8); transform-origin: 0 50%; border-radius: 2px; box-shadow: 0 0 4px rgba(255,250,230,.7); }
+.fx .drop { position: absolute; width: 5px; height: 7px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: #9be564; box-shadow: 0 0 5px #9be564; }
+.fx .splash { position: absolute; border-radius: 50%; border: 2px solid #9be564; background: radial-gradient(ellipse, rgba(155,229,100,.35), transparent 70%); transform: translate(-50%, -50%); }
+.fx .shackle { position: absolute; border-radius: 50%; border: 3px solid #8fb8ff; box-shadow: 0 0 8px #8fb8ff, inset 0 0 6px rgba(143,184,255,.5); transform: translate(-50%, -50%); }
+.fx .chain { position: absolute; height: 2px; background: repeating-linear-gradient(90deg, #cfe0ff 0 4px, transparent 4px 6px); transform-origin: 0 50%; opacity: .9; }
+.fx .mist { position: absolute; border-radius: 50%; background: radial-gradient(ellipse, rgba(143,184,255,.4), transparent 70%); transform: translate(-50%, -50%); }
+.fx .loot { position: absolute; width: 22px; height: 22px; image-rendering: pixelated; transform: translate(-50%, -50%); filter: drop-shadow(0 0 4px rgba(155,229,100,.8)); }
+.body.hurt .spr { filter: brightness(1.32); }
+.body.surge .spr { filter: drop-shadow(0 0 7px #9be564) drop-shadow(0 0 2px #d6ffb5) saturate(1.5) brightness(1.25); }
+.body.phurt .spr { filter: drop-shadow(0 0 4px #ff5a4a) sepia(.5) hue-rotate(-30deg) saturate(2.4); }
+.body.target-ring::before { content: ''; position: absolute; left: 50%; bottom: -8px; width: 76%; height: 16px; transform: translateX(-50%); border-radius: 50%; border: 2px solid rgba(255,90,70,.75); }
+
+/* ───────────── HUD panels (HudPanel / sidebar look) ───────────── */
+.rail { position: absolute; top: 0; bottom: 0; width: 260px; background: #13110d; padding: 8px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; z-index: 6; }
+.rail-left { left: 0; border-right: 1px solid rgba(50,50,80,.6); }
+.rail-right { right: 0; border-left: 1px solid rgba(50,50,80,.6); }
+.hpanel { background: var(--hud-panel); border: 1px solid var(--edge-light); padding: 9px 10px 10px; position: relative; }
+.ptitle { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--display); color: var(--primary-strong); font-size: 14px; letter-spacing: .02em; }
+.ptitle small { font-family: var(--body); font-size: 10px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.crown { display: flex; align-items: center; gap: 7px; margin-top: 8px; }
+.sdot { width: 7px; height: 7px; border-radius: 50%; background: #55cc77; box-shadow: 0 0 5px #55cc77; flex: none; }
+.pname { font-weight: 700; color: var(--ink); font-size: 13px; }
+.pclass { margin-left: auto; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.hp { position: relative; height: 16px; margin-top: 6px; background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.12); border-radius: 3px; overflow: hidden; }
+.hp .fill { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(180deg, #5bf05b, #2fb52f); transition: width .18s linear; }
+.hp .txt { position: absolute; inset: 0; display: grid; place-items: center; font: 700 10.5px var(--body); color: #fff; text-shadow: 1px 1px 0 #000, -1px 0 0 #000; }
+.plate { margin-top: 9px; border-top: 1px solid var(--edge-light); padding-top: 8px; display: grid; gap: 6px; }
+.plate .head { display: flex; align-items: center; gap: 6px; }
+.plate .head img { width: 18px; height: 18px; }
+.plate .head b { font-size: 17px; color: var(--ink); }
+.plate .head small { color: var(--muted); font-size: 11px; }
+.plate .head span { margin-left: auto; font-size: 9.5px; color: var(--muted); letter-spacing: .1em; }
+.plate .cells { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.plate .cell { display: flex; align-items: center; gap: 3px; background: var(--hud-inset); border: 1px solid var(--edge-light); padding: 3px 4px; font-size: 11px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.plate .cell img { width: 13px; height: 13px; }
+.slimp { padding: 7px 10px; }
+.slimp .ptitle { font-size: 13px; color: var(--muted); }
+
+/* Guide card (TutorialPanel) */
+.guide .chap { font-size: 10px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; margin-top: 6px; }
+.guide .gline { font-size: 12px; line-height: 1.45; color: var(--text); margin-top: 6px; }
+.guide .gline.copy { border: 1px dashed var(--edge-medium); padding: 5px 7px; color: var(--muted); }
+.guide .gline.copy em { font-style: normal; color: var(--primary); font-size: 10px; letter-spacing: .06em; }
+.guide .done { color: var(--success); font-size: 11px; margin-top: 6px; }
+.guide.collapsed .gline, .guide.collapsed .chap { display: none; }
+.ringed { position: relative; }
+.ringed::after { content: ''; position: absolute; inset: -4px; border: 2px solid #ffd76a; border-radius: 5px; box-shadow: 0 0 0 2px rgba(0,0,0,.6), 0 0 14px 3px rgba(255,200,80,.6); animation: ringp 1.1s ease-in-out infinite; pointer-events: none; z-index: 3; }
+@keyframes ringp { 0%,100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+
+/* Right-rail navigation (RightNavButton) */
+.rnav { display: flex; flex-direction: column; gap: 3px; }
+.rnav button { display: flex; align-items: center; gap: 9px; width: 100%; padding: 6px 8px; background: var(--hud-control); border: 1px solid var(--edge-light); border-left: 2px solid transparent; cursor: pointer; font-size: 12.5px; color: var(--text); text-align: left; }
+.rnav button img { width: 20px; height: 20px; }
+.rnav button:hover { border-color: var(--edge-medium); color: var(--ink); }
+.rnav button.on { border-left-color: var(--primary-strong); background: #342d20; color: var(--primary-strong); }
+.rnav button.gear { font-weight: 600; }
+.rnav .pip { margin-left: auto; width: 7px; height: 7px; border-radius: 50%; background: var(--success); box-shadow: 0 0 5px var(--success); }
+
+/* Materials (collapsed chip strip) */
+.chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px 2px 3px; background: var(--hud-inset); border: 1px solid var(--edge-light); font-size: 11px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.chip img { width: 16px; height: 16px; }
+.chip .sw { width: 12px; height: 12px; border-radius: 2px; margin-left: 2px; }
+
+/* Canvas overlays: target frame, biome XP, auto */
+.tf { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); width: 300px; padding: 8px 12px 9px; background: rgba(20,18,13,.94); border: 1px solid var(--edge-light); border-right-color: var(--edge-dark); border-bottom-color: var(--edge-dark); box-shadow: 2px 2px 8px rgba(0,0,0,.6); z-index: 8; display: none; }
+.tf.on { display: block; }
+.tf .nm { text-align: center; font-weight: 700; font-size: 13.5px; color: var(--ink); margin-bottom: 5px; }
+.tf .tr { position: relative; height: 17px; border-radius: 4px; background: rgba(0,0,0,.55); border: 1px solid rgba(255,255,255,.12); overflow: hidden; }
+.tf .tr i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(180deg, #d4553f, #8e2a1d); transition: width .18s linear; }
+.tf .tr span { position: absolute; inset: 0; display: grid; place-items: center; font: 700 10.5px var(--body); color: #fff; text-shadow: 1px 1px 0 #000; }
+.tf .st { text-align: center; font-size: 10px; color: var(--muted); margin-top: 4px; }
+.tf .st b { color: var(--text); }
+.tf .tiles { display: flex; justify-content: center; gap: 8px; margin-top: 7px; min-height: 44px; }
+.tile { display: flex; flex-direction: column; align-items: center; gap: 2px; position: relative; pointer-events: auto; cursor: help; }
+.tile .ic { position: relative; width: 28px; height: 28px; background: #11161d; border-radius: 3px; overflow: hidden; }
+.tile .ic img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+.tile .ic .sw { position: absolute; inset: 0; }
+.tile .ic b { position: absolute; right: 1px; bottom: 0; font: 700 10px var(--body); color: #fff; text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000; }
+.tile .lb { font-size: 9.5px; font-weight: 600; }
+.tile.pop .ic { animation: tpop .45s ease-out; }
+@keyframes tpop { 0% { transform: scale(1.5); filter: brightness(2); } 100% { transform: scale(1); } }
+.bxp { position: absolute; top: 12px; right: 12px; width: 190px; padding: 6px 9px 7px; background: rgba(20,18,13,.94); border: 1px solid var(--edge-light); z-index: 7; font-size: 10.5px; color: var(--muted); }
+.bxp .h { display: flex; justify-content: space-between; } .bxp .h b { color: var(--ink); }
+.bxp .t { height: 5px; margin-top: 4px; background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.08); }
+.bxp .t i { display: block; height: 100%; width: 0; background: #7c5ab8; }
+.autob { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); width: 196px; min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 10px; background: #1d2a17; border: 1px solid #4f7a3a; color: #bfe7a8; font-weight: 600; font-size: 13px; z-index: 7; box-shadow: 0 0 12px rgba(80,160,60,.3); }
+.autob b { font-size: 11px; background: #3f7a2c; color: #fff; padding: 1px 6px; }
+
+/* Arrival banner (AreaInformation) */
+.banner { position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); width: min(560px, 94%); padding: 18px 20px; text-align: center; background: linear-gradient(90deg, transparent, rgba(16,17,22,.86) 18%, rgba(16,17,22,.86) 82%, transparent); color: #eee4d1; text-shadow: 0 2px 4px #000; z-index: 9; pointer-events: none; opacity: 0; }
+.banner::before, .banner::after { content: ''; display: block; height: 1px; background: linear-gradient(90deg, transparent, #ab9271, transparent); }
+.banner::before { margin-bottom: 12px; } .banner::after { margin-top: 12px; }
+.banner .eb { color: #c9b58f; text-transform: uppercase; font-size: 10px; letter-spacing: .2em; margin-bottom: 6px; }
+.banner h2 { font-family: var(--word); font-size: 32px; font-weight: 600; letter-spacing: .04em; margin-bottom: 6px; }
+.banner .meta { font-size: 13px; color: #d4cbbb; }
+.banner .terr { margin: 10px auto 0; font-size: 14px; color: #d9d1c3; display: block; padding: 3px 8px; line-height: 1.45; }
+.banner .terr img { width: 20px; height: 20px; vertical-align: -4px; margin-right: 6px; }
+.banner .terr strong { color: #f0d6a7; }
+.portrait .banner { top: 36%; padding: 13px 12px; }
+.portrait .banner h2 { font-size: 25px; }
+.portrait .banner .terr { font-size: 12.5px; }
+
+/* ───────────── The beat strip (thesis E) ───────────── */
+.strip { position: relative; margin-top: 7px; background: linear-gradient(180deg, #0b0a08, #100e0b); border: 1px solid var(--edge-light); border-radius: 3px; cursor: default; pointer-events: auto; }
+.strip svg { display: block; }
+.strip .shead { display: none; align-items: center; gap: 6px; padding: 5px 7px 0; font-family: var(--display); font-size: 13px; }
+.strip .shead .pips { margin-left: auto; display: inline-flex; gap: 3px; }
+.strip .shead .pips i { width: 7px; height: 7px; transform: rotate(45deg); border: 1px solid currentColor; }
+.strip .shead .pips i.f { background: currentColor; }
+.strip .scap { display: none; padding: 1px 7px 6px; font-size: 11.5px; line-height: 1.4; color: var(--text); }
+.strip.teach .shead, .strip.teach .scap { display: flex; }
+.strip.teach .scap { display: block; }
+.strip.teach { border-color: var(--edge-medium); box-shadow: 0 0 0 1px rgba(0,0,0,.4), 0 4px 18px rgba(0,0,0,.5); }
+.strip .scap.flash { animation: capflash .8s ease-out; }
+@keyframes capflash { 0% { background: rgba(155,229,100,.32); } 100% { background: transparent; } }
+.strip.fold .shead, .strip.fold .scap { animation: fold .6s ease forwards; }
+@keyframes fold { to { opacity: 0; } }
+.tip { position: absolute; z-index: 40; width: 240px; padding: 9px 11px; background: #17150f; border: 1px solid var(--edge-medium); box-shadow: 0 8px 24px rgba(0,0,0,.6); font-size: 12px; line-height: 1.45; color: var(--text); pointer-events: none; }
+.tip b { display: block; font-family: var(--display); font-size: 14px; margin-bottom: 3px; }
+.tip small { display: block; color: var(--muted); font-size: 10.5px; margin-top: 5px; }
+
+/* ───────────── Portrait shell (MobileHUD) ───────────── */
+.mtop { position: absolute; top: 0; left: 0; right: 0; z-index: 10; background: rgba(17,15,12,.96); border-bottom: 1px solid var(--edge-light); padding: 6px 8px 7px; }
+.mrow { display: flex; align-items: center; gap: 7px; }
+.mrow .hp { flex: 1; margin-top: 0; height: 15px; }
+.mrow .zone { font-size: 10px; color: var(--muted); }
+.mtop .strip { margin-top: 6px; }
+.portrait .tf { top: 108px; width: 230px; padding: 6px 10px 7px; }
+.portrait .tf .st { display: none; }
+.portrait .tf .tiles { gap: 6px; min-height: 38px; }
+.portrait .tile .ic { width: 24px; height: 24px; }
+.portrait .tf .nm { font-size: 12.5px; }
+.mguide { position: absolute; left: 10px; right: 10px; top: 106px; z-index: 9; background: rgba(34,31,24,.96); border: 1px solid var(--edge-light); padding: 8px 10px; }
+.mguide .ptitle { font-size: 13px; }
+.mguide .gline { font-size: 12px; line-height: 1.45; margin-top: 5px; }
+.mguide .gline.copy { border: 1px dashed var(--edge-medium); padding: 5px 7px; color: var(--muted); }
+.mguide .gline.copy em { font-style: normal; color: var(--primary); font-size: 10px; letter-spacing: .06em; }
+.mguide.collapsed .gline, .mguide.collapsed .chap { display: none; }
+.mguide .chap { font-size: 10px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; margin-top: 4px; }
+.mguide .done { color: var(--success); font-size: 11px; margin-top: 4px; }
+.mauto { position: absolute; right: 12px; bottom: 112px; width: 56px; height: 56px; border-radius: 50%; background: #1d2a17; border: 2px solid #4f7a3a; color: #bfe7a8; display: grid; place-items: center; font-size: 9px; font-weight: 700; z-index: 10; box-shadow: 0 0 12px rgba(80,160,60,.35); }
+.mauto span { font-size: 15px; line-height: 1; }
+.mquest { position: absolute; left: 12px; bottom: 112px; width: 44px; height: 44px; border-radius: 50%; background: #2a2416; border: 2px solid var(--primary); color: var(--primary-strong); font: 700 20px var(--display); z-index: 10; }
+.mbottom { position: absolute; left: 0; right: 0; bottom: 0; z-index: 10; background: rgba(17,15,12,.97); border-top: 1px solid var(--edge-light); }
+.mbottom .bxp { position: static; width: auto; border: 0; border-bottom: 1px solid var(--edge-light); background: transparent; padding: 5px 12px 6px; }
+.mtabs { display: flex; }
+.mtabs button { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 1px 7px; min-height: 54px; background: none; border: 0; color: var(--muted); font-size: 10px; cursor: pointer; position: relative; }
+.mtabs button img { width: 22px; height: 22px; }
+.mtabs button .gl { width: 22px; height: 22px; display: grid; place-items: center; font-size: 17px; }
+.mtabs button.on { color: var(--primary-strong); }
+.mtabs button.on::before { content: ''; position: absolute; top: 0; left: 18%; right: 18%; height: 2px; background: var(--primary-strong); }
+
+/* ───────────── Dialogs: Gear, the weapon page, toasts ───────────── */
+.dlg-layer { position: absolute; inset: 0; z-index: 20; pointer-events: none; }
+.dlg-layer > * { pointer-events: auto; }
+.backdrop { position: absolute; inset: 0; background: rgba(4,3,2,.55); }
+.desktop .backdrop.canvas-only { left: 260px; right: 260px; }
+.dlg { position: absolute; background: var(--panel); border: 1px solid var(--edge-medium); box-shadow: 0 18px 60px rgba(0,0,0,.75); display: flex; flex-direction: column; }
+.dlg-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--edge-light); background: linear-gradient(180deg, rgba(200,168,96,.08), transparent); }
+.dlg-head h1 { font-family: var(--display); font-weight: 700; font-size: 18px; color: var(--primary-strong); letter-spacing: .02em; }
+.dlg-head img { width: 24px; height: 24px; }
+.dlg-head .sub { color: var(--muted); font-size: 11px; letter-spacing: .5px; text-transform: uppercase; }
+.dlg-head .x { margin-left: auto; width: 30px; height: 30px; background: var(--hud-control); border: 1px solid var(--edge-light); color: var(--muted); cursor: pointer; font-size: 14px; }
+.dlg-head .x:hover { color: var(--ink); border-color: var(--edge-medium); }
+.dlg.gear { left: 50%; top: 50%; transform: translate(-50%, -50%); width: 560px; }
+.desktop .dlg.gear { left: calc(50% - 0px); }
+.gear-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.grow { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 12px; background: var(--hud-control); border: 1px solid var(--edge-light); text-align: left; }
+.grow .gi { width: 56px; height: 56px; display: grid; place-items: center; background: var(--hud-inset); border: 1px solid var(--edge-light); }
+.grow .gi img { width: 48px; height: 48px; image-rendering: pixelated; }
+.grow .gn { font-family: var(--display); font-size: 16px; color: var(--ink); }
+.grow .gs { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.grow .gc { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+.grow .gc span { font-size: 10.5px; padding: 1px 7px; border: 1px solid var(--lane); color: var(--lane); }
+.grow .gc span.empty { border-style: dashed; border-color: var(--edge-medium); color: var(--dim); }
+.grow.weapon { cursor: pointer; border-color: color-mix(in srgb, var(--primary) 50%, var(--edge-light)); background: linear-gradient(90deg, rgba(200,168,96,.08), transparent 60%), var(--hud-control); }
+.grow.weapon:hover, .grow.weapon.press { border-color: var(--primary-strong); box-shadow: inset 0 0 0 1px var(--primary-strong); }
+.grow .go { color: var(--primary-strong); font-weight: 600; font-size: 12px; white-space: nowrap; }
+.grow.plain { opacity: .78; }
+.grow .plainlbl { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: .08em; white-space: nowrap; }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--panel); border-top: 1px solid var(--edge-medium); box-shadow: 0 -12px 40px rgba(0,0,0,.7); border-radius: 10px 10px 0 0; }
+.portrait .dlg-layer.sheeted { bottom: 86px; }
+.sheet .grip { width: 44px; height: 4px; border-radius: 2px; background: var(--edge-medium); margin: 8px auto 2px; }
+.portrait .gear-list { padding: 10px 10px 14px; }
+.portrait .grow { grid-template-columns: 48px minmax(0, 1fr); padding: 9px 10px; }
+.portrait .grow .gi { width: 48px; height: 48px; } .portrait .grow .gi img { width: 40px; height: 40px; }
+.portrait .grow .go, .portrait .grow .plainlbl { grid-column: 2; }
+
+.dlg.page { left: 50%; top: 18px; bottom: 18px; transform: translateX(-50%); width: 1080px; }
+.portrait .dlg.page { inset: 0; width: auto; transform: none; border: 0; }
+.wp-scroll { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: var(--edge-medium) transparent; }
+.wp-grid { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; padding: 16px; align-items: start; }
+.portrait .wp-grid { grid-template-columns: minmax(0, 1fr); padding: 12px; gap: 12px; }
+.wp-main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.wp-side { position: sticky; top: 0; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.portrait .wp-side { position: static; }
+.wp-form { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 14px; align-items: center; padding: 12px; border: 1px solid var(--edge-light); background: linear-gradient(180deg, rgba(200,168,96,.07), transparent 70%), var(--hud-panel); }
+.portrait .wp-form { grid-template-columns: 64px minmax(0, 1fr); gap: 10px; padding: 10px; }
+.wp-art { width: 96px; height: 96px; display: grid; place-items: center; border: 1px solid var(--edge-medium); background: var(--hud-inset); }
+.wp-art img { width: 84px; height: 84px; image-rendering: pixelated; }
+.portrait .wp-art { width: 64px; height: 64px; } .portrait .wp-art img { width: 56px; height: 56px; }
+.wp-eyebrow { color: var(--muted); font-size: 10px; letter-spacing: .8px; text-transform: uppercase; }
+.wp-name { font-family: var(--display); color: var(--primary-strong); font-size: 24px; line-height: 1.1; font-weight: 700; }
+.portrait .wp-name { font-size: 20px; }
+.wp-meta { color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.wp-lanes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+.wp-lane { padding: 2px 9px; border: 1px solid var(--lane); border-radius: 999px; color: var(--lane); font-size: 9.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; }
+.wp-band { display: flex; flex-direction: column; gap: 14px; }
+.wp-row { display: flex; flex-direction: column; gap: 8px; }
+.wp-row-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 12px; }
+.wp-row-head h3 { font-family: var(--display); font-size: 15px; color: var(--text); font-weight: 700; }
+.wp-row-head span { color: var(--muted); font-size: 11px; }
+.wp-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.portrait .wp-cards { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.wp-row.locked { opacity: .45; filter: saturate(.35); }
+.card { position: relative; display: flex; flex-direction: column; gap: 5px; min-width: 0; min-height: 92px; padding: 10px 11px 9px; border: 1px solid var(--edge-light); border-top: 3px solid var(--lane); background: var(--hud-control); text-align: left; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.card:hover:not(:disabled), .card.hov { border-color: var(--lane); border-top-color: var(--lane); box-shadow: 0 0 0 1px color-mix(in srgb, var(--lane) 45%, transparent); }
+.card:disabled { cursor: default; }
+.card .cn { padding-right: 64px; color: var(--lane); font-family: var(--display); font-weight: 700; font-size: 15px; line-height: 1.15; }
+.card .cs { flex: 1; color: var(--text); font-size: 12px; line-height: 1.4; }
+.card .ct { position: absolute; top: 6px; right: 7px; max-width: 60%; color: var(--muted); font-size: 8.5px; letter-spacing: .5px; line-height: 1.2; text-align: right; text-transform: uppercase; }
+.card .ct.act { color: var(--primary-strong); font-weight: 700; }
+.card .cnote { align-self: flex-start; padding: 1px 6px; border: 1px dashed var(--lane); color: var(--lane); font-size: 9.5px; letter-spacing: .4px; text-transform: uppercase; }
+.card .cf { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 8px; font-size: 11px; font-variant-numeric: tabular-nums; }
+.card .cost { display: inline-flex; flex-wrap: wrap; gap: 0 4px; color: var(--text); }
+.card .sep { margin-right: 4px; color: var(--dim); }
+.card .chipx.short, .card .chipx.short .w { color: var(--danger) !important; }
+.card .req { color: var(--muted); } .card .req.unmet { color: var(--danger); }
+.card.owned { border-color: color-mix(in srgb, var(--primary) 45%, var(--edge-light)); border-top-color: var(--lane); background: color-mix(in srgb, var(--primary) 6%, var(--hud-control)); }
+.card.active { border-color: var(--primary-strong); border-top-color: var(--lane); background: color-mix(in srgb, var(--primary) 9%, var(--hud-control)); box-shadow: inset 0 0 0 1px var(--primary-strong); }
+.card.short .cs, .card.locked .cs { color: var(--muted); }
+.card.preview { border-color: color-mix(in srgb, var(--lane) 70%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--lane) 35%, transparent), 0 0 12px color-mix(in srgb, var(--lane) 22%, transparent); }
+.card.preview .cs { color: var(--text); }
+.card.justbought { animation: bought 1.2s ease-out; }
+@keyframes bought { 0% { box-shadow: inset 0 0 0 1px var(--primary-strong), 0 0 0 4px rgba(224,192,112,.7), 0 0 30px rgba(224,192,112,.6); } 100% { box-shadow: inset 0 0 0 1px var(--primary-strong); } }
+.card .beat { margin: 1px 0 2px; }
+.card .beat svg { display: block; width: 100%; height: 24px; }
+.card .pv { margin-left: auto; font-size: 10px; padding: 3px 9px; background: var(--hud-inset); border: 1px solid var(--edge-medium); color: var(--muted); }
+.card .pv.on { color: var(--primary-strong); border-color: var(--primary-strong); }
+.pvsheet { border: 1px solid var(--edge-light); background: var(--hud-panel); padding: 8px 10px; font-size: 11.5px; }
+.wp-gate { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px; border: 1px solid var(--primary); background: linear-gradient(180deg, rgba(200,168,96,.09), transparent 80%), var(--hud-panel); }
+.portrait .wp-gate { grid-template-columns: 52px minmax(0, 1fr); }
+.wp-portrait { width: 64px; height: 64px; display: grid; place-items: center; border: 1px solid var(--primary); border-radius: 50%; background: var(--hud-inset); overflow: hidden; }
+.wp-portrait img { width: 60px; height: 60px; image-rendering: pixelated; }
+.portrait .wp-portrait { width: 52px; height: 52px; } .portrait .wp-portrait img { width: 48px; height: 48px; }
+.wp-gate h3 { font-family: var(--display); color: var(--primary-strong); font-size: 16px; }
+.wp-gate p { color: var(--text); font-size: 12px; line-height: 1.45; margin-top: 4px; }
+.wp-gate .prog { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; color: var(--muted); font-size: 11px; margin-top: 6px; }
+.pips { display: inline-flex; gap: 4px; } .pips i { width: 11px; height: 11px; border: 1px solid var(--primary); } .pips i.f { background: var(--primary-strong); }
+.doors { display: flex; flex-direction: column; gap: 3px; max-width: 220px; }
+.portrait .doors { grid-column: 1 / -1; max-width: none; }
+.doors button { padding: 8px 14px; border: 1px solid var(--edge-medium); background: var(--hud-control); color: var(--dim); font-weight: 700; font-size: 12px; cursor: not-allowed; }
+.doors small { color: var(--muted); font-size: 10px; }
+.wp-panel { display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid var(--edge-light); background: var(--hud-panel); }
+.wp-panel h3 { font-family: var(--display); color: var(--primary-strong); font-size: 14px; }
+.sheetdl { display: flex; flex-direction: column; gap: 3px; font-size: 12px; }
+.sheetdl div { display: flex; justify-content: space-between; gap: 8px; padding: 2px 4px; margin: 0 -4px; }
+.sheetdl dt { color: var(--muted); } .sheetdl dd { color: var(--text); font-variant-numeric: tabular-nums; }
+.sheetdl div.mv { background: rgba(200,168,96,.1); } .sheetdl div.mv dt { color: var(--text); }
+.sheetdl s { color: var(--dim); } .sheetdl .up { color: var(--success); font-weight: 700; }
+.wp-note { padding-left: 8px; border-left: 2px solid var(--primary); color: var(--muted); font-size: 10.5px; line-height: 1.45; }
+.mats { list-style: none; display: flex; flex-direction: column; gap: 7px; font-size: 12px; }
+.mats li { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; gap: 8px; align-items: baseline; }
+.mats li img, .mats li .sw { width: 18px; height: 18px; align-self: center; }
+.mats li .sw { border-radius: 3px; border: 1px solid rgba(0,0,0,.6); }
+.mats .mn { display: flex; flex-direction: column; gap: 1px; min-width: 0; color: var(--text); }
+.mats .mn small { color: var(--dim); font-size: 10px; line-height: 1.35; }
+.mats b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.wp-toast { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); max-width: min(520px, calc(100% - 32px)); padding: 9px 14px; border: 1px solid var(--primary); background: #0d0c09; box-shadow: 0 8px 24px rgba(0,0,0,.55); color: var(--text); font-size: 12.5px; line-height: 1.4; pointer-events: none; z-index: 5; animation: toastin .2s ease-out; }
+.wp-toast.warn { border-color: var(--danger); }
+@keyframes toastin { from { opacity: 0; transform: translate(-50%, 8px); } }
+.sm { color: var(--moment); } .sp { color: var(--payload); }
+
+/* First-time overlay */
+.ft-layer { position: absolute; inset: 0; z-index: 100; pointer-events: none; display: none; }
+.ft-layer.on { display: block; }
+.ft-layer svg { position: absolute; inset: 0; }
+.ft-num { font: 700 15px var(--body); fill: #1a1408; }
+</style>
+</head>
+<body>
+<header id="bar">
+  <div class="brand"><b>E</b>The beat strip<span>one line under the health bar: your next hits as ticks, the verb's hit marked</span></div>
+  <nav class="seg" id="sceneSeg"></nav>
+  <nav class="seg" id="viewSeg"><button data-view="desktop">Desktop 1280×720</button><button data-view="portrait">Portrait 390×844</button></nav>
+  <button class="tbtn" id="firstBtn">First-time view</button>
+  <button class="tbtn" id="shapesBtn">Strip shapes</button>
+</header>
+<div id="controls"></div>
+<div id="explain"></div>
+<main id="stage"><div id="frameWrap"><div id="frame" class="frame"></div></div></main>
+<aside id="drawer" aria-label="How the strip reads other moment shapes">
+  <button class="tbtn close" id="drawerClose">Close</button>
+  <h2>Strip shapes</h2>
+  <p>A strip that only works for one moment shape is not a HUD. These are the same strip drawn for the other shapes in the export (<code>ringShape</code>), each running a toy fight: one swing every 0.5 s, a kill every few swings. The sentences are the export's; the notes under each are mine.</p>
+  <div id="shapes"></div>
+</aside>
+
+<script src="../data.js"></script>
+<script>
+'use strict';
+/* ════════════════════════════════════════════════════════════════════════════
+   0. Data — every name, sentence, cost, colour and number on a card, badge,
+   banner or toast comes from window.UI_PROTO_DATA (../data.js).
+   ════════════════════════════════════════════════════════════════════════════ */
+const D = window.UI_PROTO_DATA;
+const ART = (p) => (p ? '../../../' + p : null);
+const PAGES = Object.fromEntries(D.daggerScenes.pages.map((p) => [p.key, p]));
+const COMPS1 = D.daggerScenes.compositionsT1Slinger;
+const COMPS2 = D.daggerScenes.compositionsT2Slinger;
+const P = D.packets;
+const STATS = D.daggerScenes.playerStats;
+const GEAR = D.daggerScenes.gear;
+const TOASTS = D.daggerScenes.toasts;
+const DAGGER = D.weapons.find((w) => w.lineageId === 'dagger');
+const STATUS = Object.fromEntries(D.statuses.target.map((s) => [s.id, s]));
+const BEAT = D.daggerScenes.tutorialBeats.find((b) => b.id === 'card:dagger-t1-affliction-payoff');
+const CONCEPTS = D.daggerScenes.tutorialConcepts;
+const MARKS = D.rhythm.marks;
+const SWAMP = D.families.swamp;
+const NODES = Object.fromEntries(D.nodes.map((n) => [n.id, n]));
+const IW = 'dagger-t1-affliction-payoff', CE = 'dagger-t1-affliction-stat', TC = 'dagger-t1-control-stat';
+const compFor = (leanId, verbId) => COMPS1.find((c) => c.leanId === leanId && c.verbId === verbId);
+const PURE = compFor(CE, IW), COMPOSED = compFor(TC, IW);
+const MONSTERS = Object.fromEntries(SWAMP.flatMap((f) => f.monsters.map((m) => [m.id, { ...m, family: f.id }])));
+const MONSTER_BY_NAME = Object.fromEntries(Object.values(MONSTERS).map((m) => [m.name, m]));
+const OOZE = MONSTERS['bog-slime'];
+const FAMILY = Object.fromEntries(SWAMP.map((f) => [f.id, f]));
+const HOME = NODES['node-t1-swamp-04'];
+const sheetRow = (key) => PAGES.scene2.statSheet.rows.find((r) => r.key === key);
+const CORPSE = '../../../client/public/assets/corpses/ooze-residue-remains.png';
+const ICON = {
+  dps: '../../../client/public/assets/concept-icons/stats/dps.png',
+  attack: '../../../client/public/assets/concept-icons/stats/attack.png',
+  reduction: '../../../client/public/assets/concept-icons/stats/reduction.png',
+  regen: '../../../client/public/assets/concept-icons/stats/regen.png',
+  speed: '../../../client/public/assets/concept-icons/stats/speed.png',
+  menu: (n) => `../../../client/public/assets/concept-icons/menu/${n}.png`,
+  env: (n) => `../../../client/public/assets/environment/swamp/${n}.png`,
+};
+
+/* The combat rule of SCENES.md: an illustrative UI rule built from the export's
+   numbers, NOT the server's DoT formula. */
+const SWING_MS = 500;                                  // SCENES.md: 1.98/s → one swing every 500 ms
+const ATTACK = STATS.attack;                           // 26
+const DOSE = ATTACK * DAGGER.t1Form.weaponDot.convPct; // 13: the Dagger's reservoir
+const LEAN_BLEED_SHARE = 0.10;                         // SCENES.md: Coated Edge's light bleed, 26 × 0.10
+const DOT_TICK_MS = DAGGER.t1Form.weaponDot.tickIntervalMs; // 1000
+const START_HP = 171;                                  // SCENES.md: 171 / 193 in every combat scene
+
+/* ════════════════════════════════════════════════════════════════════════════
+   1. Small helpers
+   ════════════════════════════════════════════════════════════════════════════ */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const keepUnits = (t) => String(t).replace(/(\d) (s)(?=\W|$)/g, '$1 $2');
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const ease = (p) => 1 - (1 - p) * (1 - p);
+const laneOf = (lane) => P[lane];
+const capWord = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
+/** A composed sentence in two colours: the moment half, then the payload half.
+ *  The split point is found from the payload phrase in the export, never retyped. */
+function sentenceHTML(comp, sentence) {
+  const text = keepUnits(sentence ?? comp.sentence);
+  if (!comp || comp.pure) return esc(text);
+  const phrase = P[comp.payloadLane].payloadPhrase.split('{')[0].trim();
+  const i = text.indexOf(phrase);
+  if (i <= 0) return esc(text);
+  return `<span class="two" style="--moment:${comp.momentColor};--payload:${comp.payloadColor}"><span class="sm">${esc(text.slice(0, i))}</span><span class="sp">${esc(text.slice(i))}</span></span>`;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   2. State and the URL hash (#scene=1..5&view=desktop|portrait&first=0|1&embed=0|1)
+   ════════════════════════════════════════════════════════════════════════════ */
+const S = {
+  scene: 1, view: 'desktop', first: false, embed: false, kf: null, pair: 'pure', nodeId: HOME.id,
+  t: 0, playing: false, stopAt: null, TL: null, gearOpen: false, pageOpen: false, pageKey: 'scene2',
+  preview: null, toast: null, toastUntil: 0, justBought: null, script: 0, loops: 0, tip: null,
+  s4step: 0, arrivalAt: 0,
+};
+const DIMS = { desktop: [1280, 720], portrait: [390, 844] };
+
+function readHash() {
+  const h = new URLSearchParams(location.hash.slice(1));
+  const n = (k, d) => (h.has(k) ? h.get(k) : d);
+  return {
+    scene: clamp(parseInt(n('scene', '1'), 10) || 1, 1, 5),
+    view: n('view', 'desktop') === 'portrait' ? 'portrait' : 'desktop',
+    first: n('first', '0') === '1',
+    embed: n('embed', '0') === '1',
+    kf: h.get('kf'),
+    pair: h.get('pair') === 'composed' ? 'composed' : null,
+    node: h.get('node'),
+  };
+}
+function writeHash(patch) {
+  const cur = readHash();
+  const next = { ...cur, ...patch };
+  const parts = [`scene=${next.scene}`, `view=${next.view}`, `first=${next.first ? 1 : 0}`, `embed=${next.embed ? 1 : 0}`];
+  if (next.kf) parts.push(`kf=${next.kf}`);
+  if (next.pair) parts.push(`pair=${next.pair}`);
+  if (next.node) parts.push(`node=${next.node}`);
+  const h = '#' + parts.join('&');
+  if (h !== location.hash) location.hash = h;
+}
+function applyHash() {
+  const h = readHash();
+  const sceneChanged = h.scene !== S.scene || h.view !== S.view || !S.built || h.embed !== S.embed || h.kf !== S.kfApplied || (h.pair && h.pair !== S.pair) || (h.node && h.node !== S.nodeId);
+  S.first = h.first;
+  S.embed = h.embed;
+  document.body.classList.toggle('embed', S.embed);
+  if (sceneChanged) {
+    S.scene = h.scene; S.view = h.view; S.kf = h.kf; S.kfApplied = h.kf;
+    if (h.pair) S.pair = h.pair; else if (S.scene !== 3) S.pair = 'pure';
+    if (h.node && NODES[h.node]) S.nodeId = h.node;
+    enterScene();
+  } else if (S.first && S.scene === 1 && !S.gearOpen && !S.pageOpen) { S.gearOpen = true; renderDialogs(); }
+  syncChrome();
+  fit();
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   3. The fight: a deterministic 10 Hz timeline built from the combat rule.
+   Seeking = reading the snapshot at t; nothing predicts from the future.
+   ════════════════════════════════════════════════════════════════════════════ */
+function buildTimeline({ mode, pulls }) {
+  const comp = mode === 'composed' ? COMPOSED : PURE;
+  const CAP = comp.trigger.capMs;
+  const PRE = 800;
+  const mobs = [], events = [], snaps = [];
+  let php = START_HP, capUntil = -1e9, lastFire = null, nextSwing = 0, fired = 0, curPull = 0, tEnd = null;
+  const meta = {};
+  function addPull(k, engageT) {
+    for (let j = 0; j < 2; j++) {
+      const m = { id: `m${k * 2 + j}`, pull: k, slot: j, hp: OOZE.hp, owed: 0, tickAt: null, alive: true, deadAt: null,
+        engageT, arriveT: k === 0 ? -1e9 : engageT - 1300, atkAt: engageT + (j === 0 ? 900 : 1900), slowUntil: -1e9, rootUntil: -1e9 };
+      mobs.push(m);
+      meta[m.id] = { pull: k, slot: j, engageT: m.engageT, arriveT: m.arriveT, name: OOZE.name };
+    }
+  }
+  function kill(m, t) { m.alive = false; m.deadAt = t; meta[m.id].deadAt = t; events.push({ k: 'kill', t, m: m.id }); }
+  addPull(0, 0);
+  for (let t = -PRE; t <= 40000; t += 100) {
+    for (const m of mobs) {
+      if (!m.alive || m.tickAt === null || t < m.tickAt) continue;
+      if (m.owed > 0.05) {
+        const d = Math.ceil(m.owed / 4);
+        m.owed = Math.max(0, m.owed - d); m.hp -= d;
+        events.push({ k: 'dot', t, m: m.id, d });
+      }
+      m.tickAt += DOT_TICK_MS;
+      if (m.hp <= 0) kill(m, t);
+    }
+    for (const m of mobs) {
+      if (!m.alive || t < m.engageT || t < m.atkAt) continue;
+      php -= OOZE.attack;
+      events.push({ k: 'matk', t, m: m.id, d: OOZE.attack, rooted: t < m.rootUntil });
+      m.atkAt += OOZE.attackCooldownMs;
+    }
+    const target = mobs.find((m) => m.alive && m.pull === curPull && t >= m.engageT);
+    if (target && t >= nextSwing) {
+      const afflicted = target.owed > 0.05;
+      target.hp -= ATTACK;
+      target.owed += DOSE + (mode === 'pure' ? ATTACK * LEAN_BLEED_SHARE : 0);
+      if (target.tickAt === null) target.tickAt = t + DOT_TICK_MS;
+      if (mode === 'composed') target.slowUntil = t + SWING_MS;
+      let fire = null;
+      if (afflicted && t >= capUntil) {
+        const before = target.owed;
+        if (comp.payoff.kind === 'redose') target.owed += target.owed * comp.payoff.magnitude;
+        if (comp.payoff.kind === 'root') target.rootUntil = t + comp.payoff.durationMs;
+        capUntil = t + CAP; lastFire = t; fired += 1;
+        fire = { k: 'fire', t, m: target.id, n: fired, before, after: target.owed, kind: comp.payoff.kind };
+      }
+      events.push({ k: 'swing', t, m: target.id, seed: !afflicted, fired: !!fire, d: ATTACK });
+      if (fire) events.push(fire);
+      nextSwing = t + SWING_MS;
+      if (target.hp <= 0) kill(target, t);
+    }
+    if (!mobs.some((m) => m.alive && m.pull === curPull)) {
+      const lastDeath = Math.max(...mobs.filter((m) => m.pull === curPull).map((m) => m.deadAt));
+      if (curPull + 1 < pulls) {
+        const eng = Math.ceil((lastDeath + 1500) / 100) * 100;
+        addPull(curPull + 1, eng);
+        nextSwing = eng;
+        events.push({ k: 'pull', t: lastDeath, pull: curPull + 1, engageT: eng });
+        curPull += 1;
+      } else if (tEnd === null) tEnd = lastDeath + 1700;
+    }
+    const inGap = !mobs.some((m) => m.alive && m.pull === curPull && t >= m.engageT);
+    if (inGap && t > 0) php = Math.min(STATS.maxHp, php + 1.25); // out of combat: Recovery 12.5/s
+    snaps.push({
+      t, php, capUntil, lastFire, nextSwing, fired, curPull, inGap,
+      mobs: mobs.map((m) => ({ id: m.id, hp: Math.max(0, m.hp), owed: m.owed, alive: m.alive, slowed: t < m.slowUntil, rootUntil: m.rootUntil, engageT: m.engageT })),
+    });
+    if (tEnd !== null && t >= tEnd) break;
+  }
+  const fires = events.filter((e) => e.k === 'fire');
+  return { mode, comp, CAP, PRE, events, snaps, meta, tEnd, fires };
+}
+function snapAt(TL, t) {
+  const i = clamp(Math.floor((t + TL.PRE) / 100), 0, TL.snaps.length - 1);
+  return TL.snaps[i];
+}
+function currentTarget(TL, snap, t, lead = 0) {
+  return snap.mobs.find((m) => m.alive && TL.meta[m.id].pull === snap.curPull && t >= m.engageT - lead) || null;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   4. The beat strip. One SVG line: the node's shard at the left (its key),
+   then past hits, the now-line, and the next hits. The hit that will fire the
+   verb carries a diamond in the verb's colours; a hatched band is the verb
+   resting; the underline is "the target is afflicted". Kills drop a seam.
+   ════════════════════════════════════════════════════════════════════════════ */
+const STRIP_GEOM = {
+  desktop: { W: 220, H: 56, keyW: 26, pastMs: 1100, pxPerMs: 0.041 },
+  portrait: { W: 372, H: 54, keyW: 30, pastMs: 1200, pxPerMs: 0.070 },
+};
+function geomFor(view, W) {
+  const g = { ...STRIP_GEOM[view] };
+  if (W) { const k = W / g.W; g.W = W; g.pxPerMs *= k; }
+  g.playX = g.keyW + g.pastMs * g.pxPerMs;
+  g.futureMs = (g.W - g.playX) / g.pxPerMs;
+  return g;
+}
+let uidN = 0;
+function stripSVG(m) {
+  const { W, H, keyW, playX } = m.g;
+  const uid = m.uid;
+  const yMid = Math.round(H / 2) + 3, tick = 8, condY = H - 7;
+  const hatch = (c) => `${uid}h${c.slice(1)}`;
+  const colours = new Set(m.band ? [m.band.color] : []);
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true"><defs>`;
+  s += `<clipPath id="${uid}c"><rect x="${keyW + 1}" y="0" width="${W - keyW - 1}" height="${H}"/></clipPath>`;
+  s += `<filter id="${uid}b" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3.2"/></filter>`;
+  for (const c of colours) s += `<pattern id="${hatch(c)}" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="${c}" fill-opacity=".07"/><rect width="2" height="6" fill="${c}" fill-opacity=".28"/></pattern>`;
+  s += `</defs>`;
+  // the key: this node's shard, the currency every kill on this line pays
+  if (m.key) {
+    const ka = m.key.alpha ?? 1, kx = m.key.dx ?? 0;
+    s += `<g data-fact="shard" data-what="strip-key" data-ft="strip-key" opacity="${ka}"><rect x="${2 + kx}" y="${yMid - 12}" width="${keyW - 5}" height="24" rx="3" fill="${m.key.color}" fill-opacity=".10" stroke="${m.key.color}" stroke-opacity=".35"/><image href="${m.key.icon}" x="${4 + kx}" y="${yMid - 10}" width="${keyW - 9}" height="${keyW - 9}" style="image-rendering:pixelated"/></g>`;
+  }
+  s += `<line x1="${keyW}" x2="${keyW}" y1="6" y2="${H - 4}" stroke="#3e3a30"/>`;
+  s += `<g clip-path="url(#${uid}c)">`;
+  s += `<line x1="${keyW}" x2="${W}" y1="${yMid}" y2="${yMid}" stroke="#ece4d4" stroke-opacity=".08"/>`;
+  if (m.band) {
+    const x0 = Math.max(keyW, m.band.x0), x1 = m.band.x1;
+    if (x1 > keyW) {
+      s += `<g data-fact="strip" data-what="band"><rect x="${x0}" y="${yMid - 13}" width="${Math.max(0, x1 - x0)}" height="26" fill="url(#${hatch(m.band.color)})"/>`;
+      if (x1 < W) s += `<line x1="${x1}" x2="${x1}" y1="${yMid - 13}" y2="${yMid + 13}" stroke="${m.band.color}" stroke-width="2" stroke-opacity=".9"/>`;
+      s += `</g>`;
+    }
+  }
+  if (m.cond.length) {
+    s += `<g data-fact="strip" data-what="condition">`;
+    for (const c of m.cond) s += `<rect x="${c.x0}" y="${condY}" width="${Math.max(0, c.x1 - c.x0)}" height="2.5" rx="1" fill="${c.color}" fill-opacity="${c.future ? 0.55 : 0.9}"/>`;
+    s += `</g>`;
+  }
+  for (const sm of m.seams) {
+    s += `<g ${sm.icon ? 'data-fact="shard" data-what="seam"' : ''}><line x1="${sm.x}" x2="${sm.x}" y1="${yMid - 13}" y2="${H - 3}" stroke="#ece4d4" stroke-opacity=".5" stroke-dasharray="2 2"/>`;
+    if (sm.icon) s += `<image href="${sm.icon}" x="${sm.x - 6}" y="2" width="12" height="12" style="image-rendering:pixelated"/>`;
+    s += `</g>`;
+  }
+  for (const tk of m.ticks) {
+    const op = tk.past ? 0.28 : 0.68;
+    s += `<line x1="${tk.x}" x2="${tk.x}" y1="${yMid - tick}" y2="${yMid + tick}" stroke="#ece4d4" stroke-opacity="${tk.seed ? op * 0.75 : op}" stroke-width="2"${tk.seed ? ' stroke-dasharray="2 2"' : ''}/>`;
+  }
+  for (const p of m.pulls || []) {
+    s += `<g opacity="${p.alpha ?? 1}">`;
+    if (p.sprite) s += `<image href="${p.sprite}" x="${p.x - p.size / 2}" y="${yMid - p.size / 2 - 1}" width="${p.size}" height="${p.size}" style="image-rendering:pixelated"/>`;
+    else s += `<ellipse cx="${p.x}" cy="${yMid + 2}" rx="${p.size * 0.36}" ry="${p.size * 0.26}" fill="${p.color}" stroke="#000" stroke-opacity=".6"/>`;
+    s += `</g>`;
+  }
+  for (const mk of m.markers) {
+    const r = 6.5 + (mk.prox || 0) * 2.5;
+    const a = mk.past ? 0.55 : 1;
+    s += `<g data-fact="strip" data-what="${mk.past ? 'fired' : 'marker'}" ${mk.past ? '' : 'data-ft="strip-marker"'} opacity="${a}">`;
+    if (!mk.past && mk.prox > 0) s += `<circle cx="${mk.x}" cy="${yMid}" r="${9 + mk.prox * 5}" fill="${mk.momentColor}" fill-opacity="${0.25 + mk.prox * 0.4}" filter="url(#${uid}b)"/>`;
+    if (mk.mark) {
+      // parked: the moment cannot be placed on the line yet (rhythm.marks: — waiting, • pulse)
+      const R = 8;
+      s += `<path d="M${mk.x} ${yMid - R}L${mk.x - R} ${yMid}L${mk.x} ${yMid + R}L${mk.x + R} ${yMid}Z" fill="#0b0a08" stroke="${mk.momentColor}" stroke-width="1.6" stroke-dasharray="3 2"/>`;
+      s += `<text x="${mk.x}" y="${yMid + 4}" text-anchor="middle" font-size="12" font-weight="700" fill="${mk.momentColor}">${mk.mark}</text></g>`;
+      continue;
+    }
+    s += `<line x1="${mk.x}" x2="${mk.x}" y1="${yMid - 13}" y2="${yMid + 13}" stroke="${mk.momentColor}" stroke-width="2"/>`;
+    s += `<path d="M${mk.x} ${yMid - r}L${mk.x - r} ${yMid}L${mk.x} ${yMid + r}Z" fill="${mk.momentColor}"/>`;
+    s += `<path d="M${mk.x} ${yMid - r}L${mk.x + r} ${yMid}L${mk.x} ${yMid + r}Z" fill="${mk.payloadColor}"/>`;
+    s += `<path d="M${mk.x} ${yMid - r}L${mk.x - r} ${yMid}L${mk.x} ${yMid + r}L${mk.x + r} ${yMid}Z" fill="none" stroke="#0b0a08" stroke-width="1.2"/>`;
+    if (mk.glyph) s += `<image href="${mk.glyph}" x="${mk.x - 7}" y="1" width="14" height="14" style="image-rendering:pixelated"/>`;
+    s += `</g>`;
+  }
+  for (const b of m.bursts) {
+    const p = b.p, r = 9 + 22 * ease(p);
+    s += `<g data-fact="strip" data-what="landed" opacity="${1 - p}"><rect x="${playX - 10 - 14 * p}" y="2" width="${20 + 28 * p}" height="${H - 4}" fill="${b.color}" fill-opacity=".28"/>`;
+    s += `<path d="M${playX} ${yMid - r}L${playX - r} ${yMid}L${playX} ${yMid + r}L${playX + r} ${yMid}Z" fill="none" stroke="${b.color}" stroke-width="${3 - 2 * p}"/>`;
+    s += `<path d="M${playX} ${yMid - r * 0.6}L${playX - r * 0.6} ${yMid}L${playX} ${yMid + r * 0.6}L${playX + r * 0.6} ${yMid}Z" fill="none" stroke="${b.payload}" stroke-width="${2 - p}"/></g>`;
+  }
+  s += `</g>`;
+  const hot = m.hot;
+  s += `<g>${hot ? `<line x1="${playX}" x2="${playX}" y1="9" y2="${H - 3}" stroke="${hot}" stroke-width="5" stroke-opacity=".35" filter="url(#${uid}b)"/>` : ''}`;
+  s += `<line x1="${playX}" x2="${playX}" y1="10" y2="${H - 3}" stroke="${hot || '#d9b25c'}" stroke-width="2"/>`;
+  s += `<path d="M${playX - 5} 6L${playX + 5} 6L${playX} 12Z" fill="${hot || '#d9b25c'}"/></g>`;
+  s += `</svg>`;
+  return s;
+}
+
+/** The strip during a fight, read from the timeline at time t. */
+function fightStripModel(TL, t, g, uid, node) {
+  const snap = snapAt(TL, t);
+  const comp = TL.comp;
+  const xOf = (tt) => g.playX + (tt - t) * g.pxPerMs;
+  const tMin = t - g.pastMs - 200, tMax = t + g.futureMs + 200;
+  const m = { g, uid, ticks: [], cond: [], markers: [], bursts: [], seams: [], pulls: [], band: null, hot: null,
+    key: { icon: ART(P[node.shard].shardIcon), color: node.shardColor } };
+  // past: what happened
+  for (const e of TL.events) {
+    if (e.t > t || e.t < tMin) continue;
+    if (e.k === 'swing') m.ticks.push({ x: xOf(e.t), past: true, seed: e.seed });
+    if (e.k === 'fire') m.markers.push({ x: xOf(e.t), past: true, momentColor: comp.momentColor, payloadColor: comp.payloadColor, glyph: ART(comp.ringGlyph) });
+    if (e.k === 'kill') m.seams.push({ x: xOf(e.t), icon: null });
+  }
+  for (const f of TL.fires) {
+    const age = t - f.t;
+    if (age >= 0 && age < 700) m.bursts.push({ p: age / 700, color: comp.momentColor, payload: comp.payloadColor });
+  }
+  // the afflicted underline, past: each target from its first hit to its death
+  const firstHit = {};
+  for (const e of TL.events) if (e.k === 'swing' && !(e.m in firstHit)) firstHit[e.m] = e.t;
+  for (const [id, t0] of Object.entries(firstHit)) {
+    if (t0 > t) continue;
+    const end = Math.min(t, TL.meta[id].deadAt ?? Infinity);
+    if (end < tMin) continue;
+    m.cond.push({ x0: xOf(t0), x1: xOf(end), color: comp.momentColor });
+  }
+  // the resting band: from the last firing to the moment the clock clears
+  if (snap.lastFire !== null && snap.capUntil > tMin) m.band = { x0: xOf(snap.lastFire), x1: xOf(snap.capUntil), color: comp.momentColor };
+  // future: predicted from what is known NOW (the swing clock, the cap clock, the target's state)
+  // the target auto-combat is about to swing at counts: its first hits are already on the line
+  const tgt = currentTarget(TL, snap, t, 900);
+  if (tgt) {
+    let cap = snap.capUntil;
+    let first = snap.nextSwing;
+    if (first <= t) first += SWING_MS * Math.ceil((t - first + 1) / SWING_MS);
+    const fresh = tgt.owed <= 0.05;
+    if (!fresh) m.cond.push({ x0: g.playX, x1: g.W + 4, color: comp.momentColor, future: true });
+    for (let k = 0; ; k++) {
+      const tt = first + k * SWING_MS;
+      if (tt > tMax) break;
+      const seed = fresh && k === 0;
+      if (fresh && k === 0) m.cond.push({ x0: xOf(tt), x1: g.W + 4, color: comp.momentColor, future: true });
+      const fires = !seed && tt >= cap;
+      if (fires) {
+        cap = tt + TL.CAP;
+        const lead = tt - t;
+        const prox = clamp(1 - lead / 1500, 0, 1);
+        m.markers.push({ x: xOf(tt), past: false, prox, momentColor: comp.momentColor, payloadColor: comp.payloadColor, glyph: ART(comp.ringGlyph) });
+        if (k === 0 && lead < 650) m.hot = comp.momentColor;
+      } else m.ticks.push({ x: xOf(tt), past: false, seed });
+    }
+  } else if (snap.inGap) {
+    // between pulls: the next bodies wait at the right end of the line
+    const pull = TL.events.find((e) => e.k === 'pull' && e.t <= t && e.engageT > t);
+    if (pull) {
+      const left = pull.engageT - t;
+      for (let j = 0; j < 2; j++) m.pulls.push({ x: xOf(pull.engageT) + j * 14, sprite: ART(D.art.monsters[OOZE.id]), size: 18, alpha: 0.9 });
+      void left;
+    }
+  }
+  return m;
+}
+
+/** The strip out of combat: the node's key, then its next pulls (spawnCycle). */
+function pullStripModel(node, g, uid, since) {
+  const age = since === undefined ? 99999 : since;
+  const m = { g, uid, ticks: [], cond: [], markers: [], bursts: [], seams: [], band: null, hot: null, pulls: [],
+    key: { icon: ART(P[node.shard].shardIcon), color: node.shardColor, alpha: clamp(age / 500, 0, 1), dx: (1 - ease(clamp(age / 500, 0, 1))) * -14 } };
+  const step = g.W > 300 ? 31 : 21, size = g.W > 300 ? 24 : 18;
+  const cycle = node.spawnCycle || [];
+  let x = g.playX + step * 0.75, i = 0;
+  while (x < g.W - size * 0.4 && i < cycle.length) {
+    const fam = cycle[i];
+    const mon = MONSTER_BY_NAME[(node.fieldedByFamily[fam] || [])[0]];
+    const a = clamp((age - 300 - i * 90) / 260, 0, 1);
+    m.pulls.push({ x: x + (1 - ease(a)) * 30, sprite: mon ? ART(D.art.monsters[mon.id]) : null, color: mon ? mon.color : '#888', size, alpha: a * (i === 0 ? 1 : 0.82) });
+    x += step; i += 1;
+  }
+  return m;
+}
+
+/** The small static beat line on a verb card: the moment's shape, drawn with
+ *  the same marks as the HUD strip (twelve hits, one every 0.5 s). */
+function cardBeatSVG(comp, uid) {
+  const W = 220, H = 24, y = 12, n = 12, x0 = 8, dx = (W - 16) / (n - 1);
+  const X = (i) => x0 + i * dx;
+  const kind = comp.trigger.kind;
+  const mc = comp.momentColor, pc = comp.payloadColor;
+  let s = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMinYMid meet"><defs><pattern id="${uid}h" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="5" fill="${mc}" fill-opacity=".06"/><rect width="1.6" height="5" fill="${mc}" fill-opacity=".3"/></pattern></defs>`;
+  s += `<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="#ece4d4" stroke-opacity=".08"/>`;
+  const marks = new Set();
+  let cond = null, band = null, seam = null;
+  if (kind === 'hit-afflicted' || kind === 'hit-held') {
+    if (comp.needs !== 'slow') { cond = 0; marks.add(1); marks.add(11); band = [1, 11]; }
+  } else if (kind === 'kill') { seam = 5.5; marks.add(6); }
+  else if (kind === 'hit-nth') { const k = comp.trigger.n; for (let i = k - 1; i < n; i += k) marks.add(i); }
+  else if (kind === 'first-hit') { seam = 5.5; marks.add(6); marks.add(0); }
+  if (band) s += `<rect x="${X(band[0])}" y="${y - 9}" width="${X(band[1]) - X(band[0])}" height="18" fill="url(#${uid}h)"/>`;
+  if (cond !== null) s += `<rect x="${X(cond) - 2}" y="${H - 3}" width="${W - X(cond) - 4}" height="2" rx="1" fill="${mc}" fill-opacity=".85"/>`;
+  if (seam !== null) s += `<line x1="${X(seam)}" x2="${X(seam)}" y1="2" y2="${H - 1}" stroke="#ece4d4" stroke-opacity=".55" stroke-dasharray="2 2"/>`;
+  for (let i = 0; i < n; i++) {
+    if (marks.has(i)) {
+      const r = 5.5, x = X(i);
+      s += `<path d="M${x} ${y - r}L${x - r} ${y}L${x} ${y + r}Z" fill="${mc}"/><path d="M${x} ${y - r}L${x + r} ${y}L${x} ${y + r}Z" fill="${pc}"/>`;
+    } else {
+      const seed = cond === 0 && i === 0;
+      s += `<line x1="${X(i)}" x2="${X(i)}" y1="${y - 5}" y2="${y + 5}" stroke="#ece4d4" stroke-opacity="${seed ? 0.45 : 0.55}" stroke-width="1.6"${seed ? ' stroke-dasharray="2 1.5"' : ''}/>`;
+    }
+  }
+  return s + `</svg>`;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   5. The frame shells: the client's desktop (rail | canvas | rail) and the
+   phone (top strip, canvas, tab bar). Only the strip is thesis E's.
+   ════════════════════════════════════════════════════════════════════════════ */
+function statCells() {
+  const cell = (icon, key) => `<span class="cell"><img class="px" src="${icon}" alt="">${esc(sheetRow(key).before)}</span>`;
+  return `<div class="plate"><div class="head"><img class="px" src="${ICON.dps}" alt=""><b>${esc(sheetRow('dps').before)}</b><small>${esc(sheetRow('attacksPerSecond').before)}</small><span>DPS</span></div>
+    <div class="cells">${cell(ICON.attack, 'attack')}${cell(ICON.reduction, 'damageReduction')}${cell(ICON.regen, 'recovery')}${cell(ICON.speed, 'speed')}</div></div>`;
+}
+function navHTML() {
+  const b = (key, label, icon, extra = '') => `<button data-nav="${key}" class="${extra}"><img class="px" src="${icon}" alt="">${label}</button>`;
+  return `<nav class="rnav" id="rnav">
+    ${b('tree', 'Passive Tree', ICON.menu('passive-tree'))}
+    ${b('abilities', 'Abilities', ICON.menu('loadout'))}
+    ${b('runes', 'Runes', ICON.menu('runes'))}
+    ${b('inventory', 'Inventory', ICON.menu('inventory'))}
+    <button data-nav="gear" class="gear" data-ft="gear-entry"><img class="px" src="${ICON.menu('upgrade')}" alt="">Gear</button>
+    ${b('crafting', 'Crafting', ICON.menu('crafting'))}
+    ${b('map', 'Map', ICON.menu('map'))}
+    ${b('settings', 'Settings', ICON.menu('settings'))}
+  </nav>`;
+}
+function matsChips(pageKey) {
+  const pg = PAGES[pageKey];
+  return pg.materials.filter((l) => l.kind !== 'capstone').map((l) => {
+    const icon = l.kind === 'shard' ? ART(P[l.key].shardIcon) : null;
+    return `<span class="chip" data-fact="${l.kind === 'shard' ? 'shard' : 'material'}" title="${esc(l.name)}">${icon ? `<img class="px" src="${icon}" alt="">` : '<i class="sw" style="background:#7c5ab8"></i>'}${l.held}</span>`;
+  }).join('');
+}
+function desktopShell() {
+  return `
+  <div class="rail rail-left">
+    <section class="hpanel char">
+      <div class="ptitle">Character <small>▾</small></div>
+      <div class="crown"><span class="sdot"></span><span class="pname">${esc(D.daggerScenes.className)}</span><span class="pclass">Swamp ${PAGES.scene2.wallet.biomeLevels.swamp}</span></div>
+      <div class="hp" id="hp"><div class="fill"></div><span class="txt"></span></div>
+      <div class="strip" id="strip"><div class="shead" id="shead"></div><div class="svgwrap"></div><div class="scap" id="scap"></div></div>
+      ${statCells()}
+    </section>
+    <section class="hpanel slimp"><div class="ptitle">Combat Log <small>▸</small></div></section>
+    <section class="hpanel slimp"><div class="ptitle">Bestiary <small>▸</small></div></section>
+  </div>
+  <div class="canvas" id="canvas">
+    <div class="world" id="world"></div>
+    <div class="tf" id="tf"></div>
+    <div class="bxp"><div class="h"><span><b>${esc(HOME.biomeName)}</b> mastery</span><span>Lv ${PAGES.scene2.wallet.biomeLevels.swamp}</span></div><div class="t"><i></i></div></div>
+    <div class="autob">Auto Combat <b>ON</b></div>
+    <div class="banner" id="banner"></div>
+  </div>
+  <div class="rail rail-right">
+    <section class="hpanel guide" id="guide"></section>
+    ${navHTML()}
+    <section class="hpanel"><div class="ptitle">Materials <small>▸</small></div><div class="chips" id="matsChips">${matsChips(S.pageKey)}</div></section>
+  </div>
+  <div class="dlg-layer" id="dlg"></div>
+  <div class="ft-layer" id="ft"></div>`;
+}
+function portraitShell() {
+  const tab = (key, label, icon, glyph) => `<button data-tab="${key}" ${key === 'gear' ? 'data-ft="gear-entry"' : ''}>${icon ? `<img class="px" src="${icon}" alt="">` : `<span class="gl">${glyph}</span>`}${label}</button>`;
+  return `
+  <div class="canvas" id="canvas"><div class="world" id="world"></div><div class="banner" id="banner"></div></div>
+  <div class="mtop">
+    <div class="mrow"><span class="sdot"></span><span class="pname">${esc(D.daggerScenes.className)}</span><div class="hp" id="hp"><div class="fill"></div><span class="txt"></span></div><span class="zone">${esc(HOME.biomeName)} T${HOME.tier}</span></div>
+    <div class="strip" id="strip"><div class="shead" id="shead"></div><div class="svgwrap"></div><div class="scap" id="scap"></div></div>
+  </div>
+  <div class="tf" id="tf"></div>
+  <div class="mguide" id="guide"></div>
+  <button class="mquest" aria-label="Current quest">!</button>
+  <button class="mauto" aria-label="Auto combat"><span>❚❚</span>AUTO</button>
+  <div class="mbottom">
+    <div class="bxp"><div class="h"><span><b>${esc(HOME.biomeName)}</b> mastery</span><span>Lv ${PAGES.scene2.wallet.biomeLevels.swamp}</span></div><div class="t"><i></i></div></div>
+    <nav class="mtabs" id="mtabs">
+      ${tab('stats', 'Stats', ICON.dps)}${tab('skills', 'Skills', ICON.menu('passive-tree'))}${tab('bag', 'Bag', ICON.menu('inventory'))}${tab('gear', 'Gear', ICON.menu('upgrade'))}${tab('craft', 'Craft', ICON.menu('crafting'))}${tab('map', 'Map', ICON.menu('map'))}${tab('more', 'More', null, '☰')}
+    </nav>
+  </div>
+  <div class="dlg-layer" id="dlg"></div>
+  <div class="ft-layer" id="ft"></div>`;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   6. The world: ground, props, bodies, and the fx a firing leaves on a body.
+   ════════════════════════════════════════════════════════════════════════════ */
+const LAYOUT = {
+  desktop: { W: 760, H: 720, slinger: [235, 455], slots: [[462, 412], [512, 520]], scale: 1.75, enterX: 860,
+    props: [['rotted-root-crown', 70, 250, 1.6], ['bogleaf-clump', 660, 250, 1.5], ['sedge-tuft', 120, 640, 1.4], ['moss-clumps', 640, 655, 1.4], ['dead-reed-scatter', 360, 640, 1.3], ['sedge-tuft', 700, 470, 1.1], ['bogleaf-clump', 40, 470, 1.2]],
+    pools: [[300, 250, 150, 52], [610, 600, 120, 40], [90, 560, 90, 30]] },
+  portrait: { W: 390, H: 844, slinger: [100, 525], slots: [[250, 470], [292, 585]], scale: 1.4, enterX: 470,
+    props: [['rotted-root-crown', 330, 330, 1.25], ['bogleaf-clump', 50, 360, 1.2], ['sedge-tuft', 60, 700, 1.1], ['moss-clumps', 330, 720, 1.1], ['dead-reed-scatter', 190, 395, 1.0]],
+    pools: [[190, 330, 110, 40], [80, 650, 70, 26]] },
+};
+const NODE_BODIES = {
+  desktop: [[430, 490], [540, 478], [650, 482], [470, 590], [585, 585], [688, 572], [380, 610], [545, 690], [655, 680], [702, 668]],
+  portrait: [[215, 505], [300, 495], [362, 548], [250, 588], [330, 628], [175, 642], [290, 702], [140, 716], [222, 745], [366, 482]],
+};
+function bodyEl(id, sprite, color, size) {
+  const d = document.createElement('div');
+  d.className = 'body'; d.dataset.id = id;
+  d.style.width = d.style.height = size + 'px';
+  d.innerHTML = `<div class="shadow"></div><div class="bob"><div class="wob">${sprite ? `<img class="spr" src="${sprite}" alt="">` : `<div class="blob" style="background:${color}"></div>`}</div></div>`;
+  return d;
+}
+function placeBody(el, x, y, extra = '') {
+  el.style.left = (x - el.offsetWidth / 2) + 'px';
+  el.style.top = (y - el.offsetHeight) + 'px';
+  el.style.transform = extra;
+}
+function buildWorld() {
+  const L = LAYOUT[S.view];
+  const w = $('#world');
+  let html = '';
+  for (const [x, y, rw, rh] of L.pools) html += `<div class="pool" style="left:${x - rw / 2}px;top:${y - rh / 2}px;width:${rw}px;height:${rh}px"></div>`;
+  for (const [n, x, y, k] of L.props) html += `<img class="prop" src="${ICON.env(n)}" style="left:${x - 48 * k}px;top:${y - 96 * k}px;width:${96 * k}px;height:${96 * k}px" alt="">`;
+  html += `<div class="fx under" id="under"></div><div id="bodies"></div><div class="fx" id="fx"></div>`;
+  w.innerHTML = html;
+  W.bodies = $('#bodies'); W.fx = $('#fx'); W.under = $('#under'); W.mobs = {}; W.slinger = null;
+}
+const W = { bodies: null, fx: null, under: null, mobs: {}, slinger: null };
+function ensureSlinger() {
+  if (W.slinger) return W.slinger;
+  const L = LAYOUT[S.view];
+  const el = bodyEl('slinger', ART(D.art.slingerSprite), null, Math.round(64 * L.scale));
+  el.querySelector('.wob').style.animation = 'none';
+  W.bodies.appendChild(el);
+  W.slinger = el;
+  return el;
+}
+
+/** Render the fight at time t (positions, hits, the firing's fx on the body). */
+function renderFightWorld(TL, t) {
+  const L = LAYOUT[S.view];
+  const snap = snapAt(TL, t);
+  const sl = ensureSlinger();
+  const [sx, sy] = L.slinger;
+  const recentSwing = TL.events.filter((e) => e.k === 'swing' && e.t <= t && t - e.t < 160).pop();
+  const nudge = recentSwing ? Math.sin(Math.PI * (t - recentSwing.t) / 160) * 5 : 0;
+  placeBody(sl, sx + nudge, sy);
+  const hurt = TL.events.some((e) => e.k === 'matk' && e.t <= t && t - e.t < 220);
+  sl.classList.toggle('phurt', hurt);
+  const tgt = currentTarget(TL, snap, t);
+  let fx = '', under = '';
+  const size = Math.round(64 * L.scale);
+  for (const ms of snap.mobs) {
+    const meta = TL.meta[ms.id];
+    let el = W.mobs[ms.id];
+    if (!el) { el = bodyEl(ms.id, ART(D.art.monsters[OOZE.id]), OOZE.color, size); el.dataset.ft = 'target-body'; W.bodies.appendChild(el); W.mobs[ms.id] = el; el.insertAdjacentHTML('beforeend', '<div class="hpmini"><i></i></div>'); }
+    const [bx, by] = L.slots[meta.slot];
+    let x = bx, y = by, op = 1;
+    if (t < meta.engageT && meta.arriveT > -1e8) {
+      const p = clamp((t - meta.arriveT) / (meta.engageT - meta.arriveT), 0, 1);
+      x = L.enterX + (bx - L.enterX) * ease(p);
+    }
+    if (meta.deadAt !== undefined && t >= meta.deadAt) { op = clamp(1 - (t - meta.deadAt) / 700, 0, 1); y += (1 - op) * 8; }
+    const atk = TL.events.filter((e) => e.k === 'matk' && e.m === ms.id && e.t <= t && t - e.t < 320).pop();
+    let lunge = 0, squash = '';
+    if (atk) { const p = (t - atk.t) / 320; if (atk.rooted) squash = ` scale(${1 + 0.08 * Math.sin(Math.PI * p)}, ${1 - 0.08 * Math.sin(Math.PI * p)})`; else lunge = -Math.sin(Math.PI * p) * 16; }
+    const rooted = t < ms.rootUntil && ms.alive;
+    const shake = rooted ? Math.sin(t / 28) * 1.2 : 0;
+    placeBody(el, x + lunge + shake, y, squash);
+    el.style.opacity = op;
+    el.style.display = op <= 0 || (t < meta.arriveT) ? 'none' : '';
+    el.style.zIndex = Math.round(y);
+    el.classList.toggle('slowed', ms.slowed && ms.alive);
+    el.classList.toggle('rooted', rooted);
+    el.classList.toggle('target-ring', !!tgt && tgt.id === ms.id);
+    const hit = TL.events.some((e) => e.k === 'swing' && e.m === ms.id && e.t < t && t - e.t < 90);
+    el.classList.toggle('hurt', hit);
+    const fire = TL.fires.filter((f) => f.m === ms.id && f.t <= t && t - f.t < 650).pop();
+    el.classList.toggle('surge', !!fire && fire.kind === 'redose');
+    el.querySelector('.hpmini i').style.width = (100 * ms.hp / OOZE.hp) + '%';
+    el.querySelector('.hpmini').style.display = ms.alive ? '' : 'none';
+    const cx = x + lunge, feet = y, mid = y - size * 0.32;
+    // projectile from the Slinger to this body
+    const sw = TL.events.filter((e) => e.k === 'swing' && e.m === ms.id && e.t <= t + 150 && e.t > t - 10).pop();
+    if (sw) {
+      const p = clamp(1 - (sw.t - t) / 150, 0, 1);
+      const x0 = sx + 22, y0 = sy - size * 0.5, x1 = cx - 10, y1 = mid;
+      const px = x0 + (x1 - x0) * p, py = y0 + (y1 - y0) * p, ang = Math.atan2(y1 - y0, x1 - x0);
+      fx += `<div class="proj" style="left:${px - 22 * Math.cos(ang)}px;top:${py - 22 * Math.sin(ang)}px;width:22px;transform:rotate(${ang}rad)"></div>`;
+    }
+    // re-dose: the poison visibly surges on the body, and keeps dripping while heavy
+    if (meta.deadAt !== undefined && t >= meta.deadAt) {
+      const a = clamp((t - meta.deadAt - 250) / 500, 0, 1) * 0.92;
+      under += `<img class="corpse" src="${CORPSE}" style="left:${bx}px;top:${by}px;width:${size * 0.82}px;height:${size * 0.82}px;opacity:${a}" alt="">`;
+    }
+    if (fire && fire.kind === 'redose') {
+      const p = (t - fire.t) / 650;
+      under += `<div class="splash" style="left:${cx}px;top:${feet - 4}px;width:${40 + 90 * ease(p)}px;height:${14 + 30 * ease(p)}px;opacity:${1 - p}"></div>`;
+      for (let i = 0; i < 10; i++) {
+        const a = (i / 10) * Math.PI * 2 + 0.3, r = 18 + 46 * ease(p);
+        fx += `<div class="drop" style="left:${cx + Math.cos(a) * r}px;top:${mid + Math.sin(a) * r * 0.7 + 30 * p * p}px;opacity:${1 - p}"></div>`;
+      }
+    }
+    if (ms.alive && TL.mode === 'pure' && ms.owed > 30) {
+      const n = Math.min(5, Math.floor(ms.owed / 22));
+      for (let i = 0; i < n; i++) {
+        const ph = ((t + i * 211) % 760) / 760;
+        fx += `<div class="drop" style="left:${cx - size * 0.22 + ((i * 37) % (size * 0.44))}px;top:${mid + ph * size * 0.36}px;opacity:${0.9 - ph * 0.7};transform:scale(${0.7 + (i % 2) * 0.3})"></div>`;
+      }
+    }
+    // the Control lean's slow: a faint blue drag at the feet
+    if (ms.slowed && ms.alive && !rooted) under += `<div class="mist" style="left:${cx}px;top:${feet}px;width:${size * 0.9}px;height:20px"></div>`;
+    // root: shackles clamp the body to the ground for 2 s
+    if (rooted) {
+      const fr = TL.fires.filter((f) => f.m === ms.id && f.t <= t).pop();
+      const age = fr ? t - fr.t : 999;
+      const k = age < 160 ? 1.7 - 0.7 * (age / 160) : 1;
+      const left = ms.rootUntil - t;
+      const op2 = left < 300 ? left / 300 : 1;
+      fx += `<div class="shackle" style="left:${cx}px;top:${feet - 2}px;width:${size * 0.82 * k}px;height:${22 * k}px;opacity:${op2}"></div>`;
+      fx += `<div class="shackle" style="left:${cx}px;top:${feet - 14}px;width:${size * 0.6 * k}px;height:${16 * k}px;opacity:${op2 * 0.8}"></div>`;
+      for (const [dx2, dy2, len, ang] of [[-0.42, 0, 26, 2.8], [0.42, 0, 26, 0.35], [-0.2, 4, 20, 2.2], [0.22, 4, 20, 0.9]]) {
+        fx += `<div class="chain" style="left:${cx + dx2 * size}px;top:${feet + dy2}px;width:${len}px;transform:rotate(${ang}rad);opacity:${op2}"></div>`;
+      }
+    }
+    // a kill drops the node's shard from the body
+    if (meta.deadAt !== undefined && t >= meta.deadAt && t - meta.deadAt < 1300) {
+      const p = (t - meta.deadAt) / 1300;
+      const node = NODES[S.nodeId];
+      fx += `<img class="loot" data-fact="shard" data-what="drop" src="${ART(P[node.shard].shardIcon)}" style="left:${cx}px;top:${mid - 40 * ease(p)}px;opacity:${p < 0.7 ? 1 : (1 - p) / 0.3}" alt="">`;
+    }
+  }
+  // numbers: a hit, a tick, an ooze's swing on the Slinger
+  for (const e of TL.events) {
+    if (e.t > t || t - e.t > 750) continue;
+    const p = (t - e.t) / 750;
+    if (e.k === 'swing' || e.k === 'dot') {
+      const ms = snap.mobs.find((m) => m.id === e.m); if (!ms) continue;
+      const [bx, by] = L.slots[TL.meta[e.m].slot];
+      fx += `<div class="dmg ${e.k === 'dot' ? 'dot' : ''}" style="left:${bx + (e.k === 'dot' ? 22 : -14)}px;top:${by - size * 0.85 - 26 * ease(p)}px;opacity:${1 - p * p}">${e.d}</div>`;
+    }
+    if (e.k === 'matk') fx += `<div class="dmg p" style="left:${sx}px;top:${sy - size - 20 * ease(p)}px;opacity:${1 - p * p}">${e.d}</div>`;
+  }
+  W.fx.innerHTML = fx;
+  W.under.innerHTML = under;
+}
+
+/** The node at rest: the Slinger and the node's bodies, from its spawn order. */
+function renderNodeWorld(node, t, entering) {
+  const L = LAYOUT[S.view];
+  const sl = ensureSlinger();
+  const [sx, sy] = L.slinger;
+  const p = entering ? clamp(t / 1200, 0, 1) : 1;
+  placeBody(sl, -40 + (sx + 40) * ease(p), sy, '');
+  const pos = NODE_BODIES[S.view];
+  const size = Math.round(64 * L.scale * 0.9);
+  if (!W.nodeKey || W.nodeKey !== node.id) {
+    for (const el of Object.values(W.mobs)) el.remove();
+    W.mobs = {}; W.nodeKey = node.id;
+    node.spawnCycle.forEach((fam, i) => {
+      const mon = MONSTER_BY_NAME[(node.fieldedByFamily[fam] || [])[0]];
+      const el = bodyEl('n' + i, mon ? ART(D.art.monsters[mon.id]) : null, mon ? mon.color : '#777', size);
+      el.dataset.ft = 'bodies';
+      el.querySelector('.wob').style.animationDelay = (-i * 0.37) + 's';
+      el.querySelector('.bob').style.animationDelay = (-i * 0.23) + 's';
+      W.bodies.appendChild(el); W.mobs['n' + i] = el;
+      const [x, y] = pos[i % pos.length];
+      placeBody(el, x, y); el.style.zIndex = y;
+    });
+  }
+  W.fx.innerHTML = '';
+  if (W.under) W.under.innerHTML = '';
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   7. HUD pieces: HP, the target frame (one badge per DoT record), the guide.
+   ════════════════════════════════════════════════════════════════════════════ */
+function setHP(hp) {
+  const el = $('#hp'); if (!el) return;
+  const pct = 100 * hp / STATS.maxHp;
+  el.querySelector('.fill').style.width = pct + '%';
+  el.querySelector('.fill').style.background = pct > 50 ? 'linear-gradient(180deg,#5bf05b,#2fb52f)' : pct > 25 ? 'linear-gradient(180deg,#f2bb3a,#c88a14)' : 'linear-gradient(180deg,#f2553a,#b52f1e)';
+  el.querySelector('.txt').textContent = `${Math.ceil(hp)} / ${STATS.maxHp}`;
+}
+function tileHTML(statusId, value, totalMs, leftMs, pop) {
+  const st = STATUS[statusId];
+  const sweep = totalMs ? `<div class="sw" style="background:conic-gradient(from -90deg, rgba(0,0,0,.66) ${100 - 100 * leftMs / totalMs}%, transparent 0)"></div>` : '';
+  return `<div class="tile ${pop ? 'pop' : ''}" data-fact="badge" data-status="${statusId}" ${statusId === 'poison-dagger-burn' ? 'data-ft="badge-poison"' : ''} style="--c:${st.color}">
+    <div class="ic" style="box-shadow:0 0 8px ${st.color}66"><img src="${ART(st.icon)}" alt="">${sweep}${value !== null ? `<b>${value}</b>` : ''}</div>
+    <span class="lb" style="color:${st.color}">${esc(st.label)}</span></div>`;
+}
+function renderTargetFrame(TL, t) {
+  const tf = $('#tf');
+  const snap = snapAt(TL, t);
+  let tgt = currentTarget(TL, snap, t);
+  if (!tgt) {
+    // linger on the one that just died
+    const k = TL.events.filter((e) => e.k === 'kill' && e.t <= t && t - e.t < 500).pop();
+    if (k) tgt = snap.mobs.find((m) => m.id === k.m);
+  }
+  if (!tgt) { tf.classList.remove('on'); return; }
+  tf.classList.add('on');
+  let tiles = '';
+  if (tgt.owed > 0.05 && tgt.alive) {
+    const pop = TL.fires.some((f) => f.m === tgt.id && f.kind === 'redose' && f.t <= t && t - f.t < 450);
+    tiles += tileHTML('poison-dagger-burn', Math.round(tgt.owed), 0, 0, pop);
+  }
+  if (tgt.slowed && tgt.alive) tiles += tileHTML('ability-slowed', null, 0, 0, false);
+  if (t < tgt.rootUntil && tgt.alive) {
+    const pop = TL.fires.some((f) => f.m === tgt.id && f.t <= t && t - f.t < 450);
+    tiles += tileHTML('ability-rooted', null, TL.comp.payoff.durationMs, tgt.rootUntil - t, pop);
+  }
+  const key = `${tgt.id}|${Math.round(tgt.hp)}|${tiles}`;
+  if (tf.dataset.key === key) return;
+  tf.dataset.key = key;
+  tf.innerHTML = `<div class="nm">${esc(OOZE.name)}</div><div class="tr"><i style="width:${100 * tgt.hp / OOZE.hp}%"></i><span>${Math.ceil(tgt.hp)} / ${OOZE.hp}</span></div>
+    <div class="st">Atk <b>${OOZE.attack}</b> · every <b>${(OOZE.attackCooldownMs / 1000).toFixed(1)} s</b></div><div class="tiles">${tiles}</div>`;
+}
+function guideHTML(mode) {
+  // mode: 'say' (scene 1), 'lesson' (scene 4, teaching), 'done', 'collapsed'
+  const title = `<div class="ptitle">Guide <small>${esc(BEAT.chapter)}</small></div>`;
+  if (mode === 'say') return `${title}<p class="gline" data-fact="teach" data-ft="guide-say">${esc(BEAT.say)}</p>`;
+  if (mode === 'lesson') return `${title}<p class="gline" data-fact="teach" data-ft="guide-lesson">${esc(BEAT.lesson.read)}</p>
+    <p class="gline copy" data-fact="teach"><em>[COPY — NOT IN EXPORT]</em> ${esc(STRIP_LESSON)}</p>`;
+  if (mode === 'done') return `<div class="ptitle">Guide <small>${esc(BEAT.chapter)} ✓</small></div>`;
+  return title;
+}
+/* The export's lesson.ring line describes a ring, which this thesis does not
+   have. The strip needs its own line; this is a placeholder, listed in NOTES. */
+const STRIP_LESSON = 'The diamond on the line under your health bar is the hit Into the Wound will land on.';
+function setGuide(mode) {
+  const g = $('#guide'); if (!g) return;
+  if (g.dataset.mode === mode) return;
+  g.dataset.mode = mode;
+  g.className = (S.view === 'desktop' ? 'hpanel guide' : 'mguide') + (mode === 'collapsed' ? ' collapsed' : '');
+  g.innerHTML = guideHTML(mode);
+  if (S.view === 'portrait') g.style.display = mode === 'collapsed' || mode === 'done' ? 'none' : '';
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   8. The HUD strip: draws one of the models above, plus the teaching caption.
+   ════════════════════════════════════════════════════════════════════════════ */
+function stripWidth() { return S.view === 'desktop' ? STRIP_GEOM.desktop.W : STRIP_GEOM.portrait.W; }
+function drawHudStrip(model, teach) {
+  const host = $('#strip'); if (!host) return;
+  host.querySelector('.svgwrap').innerHTML = stripSVG(model);
+  const head = $('#shead'), cap = $('#scap');
+  if (teach) {
+    host.classList.add('teach');
+    host.dataset.ft = 'strip-caption';
+    host.classList.toggle('fold', !!teach.folding);
+    const c = teach.comp;
+    const pips = [0, 1, 2].map((i) => `<i class="${i < teach.seen ? 'f' : ''}"></i>`).join('');
+    const hk = `${c.verbId}|${c.leanId}|${teach.seen}`;
+    if (head.dataset.k !== hk) {
+      head.dataset.k = hk;
+      head.innerHTML = `<span data-fact="name" style="color:${P[c.verbLane].color}">${esc(c.verbName)}</span>${teach.once ? '' : `<span class="pips" data-fact="teach" style="color:${P[c.verbLane].color}" title="Teaching: first three firings">${pips}</span>`}`;
+      cap.innerHTML = `<span data-fact="sentence">${sentenceHTML(c)}</span>`;
+    }
+    if (teach.flash) { cap.classList.remove('flash'); void cap.offsetWidth; cap.classList.add('flash'); }
+  } else {
+    host.classList.remove('teach', 'fold');
+    delete host.dataset.ft;
+    head.dataset.k = '';
+  }
+}
+function stripTipHTML(comp) {
+  if (!comp) {
+    const node = NODES[S.nodeId];
+    return `<b style="color:${node.shardColor}">${esc(node.arrival.newNode.territory)}</b>${esc(capWord(node.arrival.newNode.detail))}.`;
+  }
+  return `<b style="color:${P[comp.verbLane].color}">${esc(comp.verbName)}</b>${sentenceHTML(comp)}`;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   9. The weapon page (LineageTreePanel), from daggerScenes.pages[key].
+   ════════════════════════════════════════════════════════════════════════════ */
+function verbComp(card, pg, previewLean) {
+  const lean = previewLean || pg.progress.active.stat || null;
+  if (card.tier === 1) return compFor(lean, card.id) || null;
+  const leanLane = lean ? COMPS1.find((c) => c.leanId === lean)?.leanLane : null;
+  return COMPS2.find((c) => c.verbId === card.id && c.leanLane === leanLane) || null;
+}
+function cardHTML(card, pg, previewLean) {
+  const verb = card.row === 'payoff';
+  const comp = verb ? verbComp(card, pg, previewLean) : null;
+  const previewing = verb && previewLean && card.state !== 'locked';
+  const sentence = previewing && comp ? comp.sentence : card.sentence;
+  const note = previewing && comp ? comp.note : card.note;
+  const locked = card.state === 'locked';
+  const cls = ['card', card.state, previewing ? 'preview' : '', S.justBought === card.id ? 'justbought' : ''].join(' ');
+  const ft = card.id === IW ? 'data-ft="card-iw"' : card.id === CE ? 'data-ft="card-ce"' : '';
+  const chips = card.chips.map((c, i) => `<span class="chipx ${c.short && !locked ? 'short' : ''}" data-fact="cost" title="${esc(c.title)}">${i > 0 ? '<span class="sep">·</span>' : ''}${c.amount} <span class="w" style="${c.color ? `color:${c.color}` : ''}">${esc(c.word)}</span></span>`).join('');
+  const beat = verb && card.tier === 1 && comp ? `<div class="beat" data-fact="strip" data-what="card-beat" ${card.id === IW ? 'data-ft="strip-iw"' : ''}>${cardBeatSVG(comp, 'cb' + card.id.replace(/\W/g, '') + (uidN++))}</div>` : '';
+  const pv = S.view === 'portrait' && card.isLean && !locked ? `<span class="pv ${S.preview === card.id ? 'on' : ''}" data-preview="${card.id}">${S.preview === card.id ? 'Previewing' : 'Preview'}</span>` : '';
+  const sentHTML = comp && verb ? sentenceHTML(comp, sentence) : esc(keepUnits(sentence));
+  return `<button class="${cls}" style="--lane:${card.laneColor}" data-card="${card.id}" ${locked ? 'disabled' : ''} ${ft} aria-label="${esc(card.accessibleName)}">
+    ${card.tag ? `<span class="ct ${card.state === 'active' ? 'act' : ''}" data-fact="state">${esc(card.tag)}</span>` : ''}
+    <span class="cn" data-fact="name">${esc(card.name)}</span>
+    <span class="cs" data-fact="sentence">${sentHTML}</span>
+    ${note ? `<span class="cnote" data-fact="note">${esc(note)}</span>` : ''}
+    ${beat}
+    ${(card.chips.length || card.requirement || pv) ? `<span class="cf"><span class="cost">${chips}</span>${card.requirement ? `<span class="req ${card.requirement.met || locked ? '' : 'unmet'}" data-fact="req">${esc(card.requirement.text)}</span>` : ''}${pv}</span>` : ''}
+  </button>`;
+}
+function sheetHTML(pg, previewLean) {
+  const sheet = previewLean ? pg.leanHover[previewLean] : pg.statSheet;
+  return `<h3>Stat sheet</h3><dl class="sheetdl">${sheet.rows.map((r) => `<div class="${r.after ? 'mv' : ''}"><dt>${esc(r.label)}</dt><dd>${r.after ? `<s>${esc(r.before)}</s> <span class="up">→ ${esc(r.after)}</span>` : esc(r.before)}</dd></div>`).join('')}</dl><p class="wp-note" data-fact="teach">${esc(sheet.note)}</p>`;
+}
+function pageHTML() {
+  const pg = PAGES[S.pageKey];
+  const h = pg.header;
+  const pv = S.preview;
+  const rows = pg.bands.map((b) => `<div class="wp-band">${b.rows.map((r) => `
+    <section class="wp-row ${r.locked ? 'locked' : ''}" data-row="${b.tier}-${r.row}">
+      <div class="wp-row-head"><h3>${esc(r.title)}</h3><span data-fact="row">${esc(r.question)}</span></div>
+      <div class="wp-cards">${r.cards.map((c) => cardHTML(c, pg, pv)).join('')}</div>
+      ${S.view === 'portrait' && r.row === 'stat' && b.tier === 1 && pv ? `<div class="pvsheet">${sheetHTML(pg, pv)}</div>` : ''}
+    </section>`).join('')}</div>`).join('');
+  const gates = pg.gates.map((g) => `
+    <section class="wp-gate"><div class="wp-portrait"><img src="${ART(D.art.bosses[g.biome])}" alt=""></div>
+      <div><h3>The gate: ${esc(g.bossName)}</h3><p data-fact="gate">${esc(g.sentence)}</p>
+        <div class="prog"><span class="pips" data-fact="gate">${g.pips.map((f) => `<i class="${f ? 'f' : ''}"></i>`).join('')}</span><span data-fact="gate">${esc(g.progressLine)}</span></div></div>
+      <div class="doors">${g.doors.map((d) => `<button disabled title="${esc(d.reason)}">${esc(d.label)}</button>${d.reason ? `<small data-fact="req">${esc(d.reason)}</small>` : ''}`).join('')}</div>
+    </section>`).join('');
+  const mats = pg.materials.map((l) => {
+    const icon = l.kind === 'shard' ? `<img class="px" src="${ART(P[l.key].shardIcon)}" alt="">` : l.kind === 'capstone' ? `<img class="px" src="${ART(D.art.bosses[l.key])}" alt="">` : `<i class="sw" style="background:#7c5ab8"></i>`;
+    return `<li>${icon}<span class="mn"><span data-fact="${l.kind === 'shard' ? 'shard' : 'material'}" style="${l.color ? `color:${l.color}` : ''}">${esc(l.name)}</span>${l.where ? `<small data-fact="where">${esc(l.where)}</small>` : ''}</span><b data-fact="count">${l.held}</b></li>`;
+  }).join('');
+  return `
+  <div class="dlg-head"><h1>${esc(h.name)}</h1><span class="sub">Weapon page</span><button class="x" data-close="page" aria-label="Close the page">✕</button></div>
+  <div class="wp-scroll" id="wpScroll"><div class="wp-grid">
+    <div class="wp-main">
+      <header class="wp-form"><div class="wp-art"><img src="${ART(h.iconArt)}" alt=""></div>
+        <div><div class="wp-eyebrow">${esc(h.eyebrow)}</div><div class="wp-name">${esc(h.name)}</div><div class="wp-meta">${esc(h.meta)}</div>
+        <div class="wp-lanes">${h.lanes.map((l) => `<span class="wp-lane" data-fact="lane" style="--lane:${l.color}">${esc(l.name)}</span>`).join('')}</div></div></header>
+      ${rows}
+      ${gates}
+    </div>
+    <aside class="wp-side"><section class="wp-panel" id="wpSheet">${sheetHTML(pg, S.view === 'desktop' ? pv : null)}</section><section class="wp-panel"><h3>Materials</h3><ul class="mats">${mats}</ul></section></aside>
+  </div></div>
+  ${S.toast && performance.now() < S.toastUntil ? `<div class="wp-toast ${S.toast.warn ? 'warn' : ''}" data-fact="toast">${esc(S.toast.text)}</div>` : ''}`;
+}
+function openPage(key) {
+  S.pageOpen = true; S.gearOpen = false;
+  if (key) S.pageKey = key;
+  renderDialogs();
+}
+function closeDialogs() { S.pageOpen = false; S.gearOpen = false; S.preview = null; renderDialogs(); }
+function toast(text, warn) {
+  S.toast = { text, warn }; S.toastUntil = performance.now() + 3200;
+  if (S.pageOpen) renderDialogs(true);
+  setTimeout(() => { if (performance.now() >= S.toastUntil && S.pageOpen) renderDialogs(true); }, 3300);
+}
+function pressCard(id) {
+  const pg = PAGES[S.pageKey];
+  const card = pg.bands.flatMap((b) => b.rows.flatMap((r) => r.cards)).find((c) => c.id === id);
+  if (!card) return;
+  if (card.action === 'buy' && card.id === IW && S.pageKey === 'scene2') {
+    S.pageKey = 'scene2-after-buy'; S.justBought = IW; S.preview = null;
+    toast(TOASTS.buyVerb, false);
+    renderDialogs(true);
+    setTimeout(() => { S.justBought = null; }, 1300);
+  } else if (card.action === 'buy') {
+    toast(TOASTS.buyLean, false);
+  } else if (card.action === 'toast' && card.reason) {
+    toast(card.reason, true);
+  } else if (card.action === 'activate') {
+    S.pageKey = 'scene2-after-buy'; renderDialogs(true);
+  }
+}
+function setPreview(id) {
+  if (S.preview === id) return;
+  S.preview = id;
+  const pg = PAGES[S.pageKey];
+  if (!S.pageOpen) return;
+  // update the verb cards and the sheet in place, so the hovered lean keeps its hover
+  for (const b of pg.bands) for (const r of b.rows) {
+    if (r.row === 'stat') continue;
+    for (const c of r.cards) {
+      const el = $(`[data-card="${c.id}"]`); if (!el) continue;
+      const tmp = document.createElement('div'); tmp.innerHTML = cardHTML(c, pg, id).trim();
+      el.replaceWith(tmp.firstElementChild);
+    }
+  }
+  if (S.view === 'desktop') $('#wpSheet').innerHTML = sheetHTML(pg, id);
+  else renderDialogs(true);
+  $$('.card').forEach((el) => el.classList.toggle('hov', el.dataset.card === id));
+}
+
+/* Gear: the worn items, the weapon first; plain items say so and go nowhere. */
+const STAT_LABEL = { attack: 'Attack', maxHp: 'Health', damageReduction: 'Damage reduction', recovery: 'Recovery', speed: 'Move speed' };
+const SLOT_LABEL = { weapon: 'Weapon', armor: 'Armor', recovery: 'Recovery', mobility: 'Boots' };
+function statLine(mods) {
+  return Object.entries(mods).map(([k, v]) => {
+    const label = STAT_LABEL[k] || sheetRow(k)?.label || capWord(k);
+    const val = v < 1 && v > 0 ? `+${Math.round(v * 100)}%` : `+${v}`;
+    return `${val} ${label}`;
+  }).join(' · ');
+}
+function gearHTML() {
+  const pg = PAGES[S.pageKey];
+  const act = pg.progress.active;
+  const cardName = (id) => pg.bands.flatMap((b) => b.rows.flatMap((r) => r.cards)).find((c) => c.id === id);
+  const rows = GEAR.map((g) => {
+    if (g.hasPage) {
+      const lean = cardName(act.stat), verb = act.payoff ? cardName(act.payoff) : null;
+      return `<button class="grow weapon ${S.pressDagger ? 'press' : ''}" data-open="page" data-ft="gear-dagger">
+        <span class="gi"><img src="${ART(g.iconArt)}" alt=""></span>
+        <span><span class="gn" style="display:block">${esc(g.name)}</span><span class="gs" style="display:block">${esc(pg.header.eyebrow)}</span>
+        <span class="gc">${lean ? `<span data-fact="name" style="--lane:${lean.laneColor}">${esc(lean.name)}</span>` : ''}${verb ? `<span data-fact="name" style="--lane:${verb.laneColor}">${esc(verb.name)}</span>` : `<span class="empty">${esc(pg.bands[0].rows[1].title.split('·')[1].trim())} —</span>`}</span></span>
+        <span class="go">Open page ›</span></button>`;
+    }
+    return `<div class="grow plain"><span class="gi"><img src="${ART(g.iconArt)}" alt=""></span>
+      <span><span class="gn" style="display:block">${esc(g.name)}</span><span class="gs" style="display:block">${SLOT_LABEL[g.slot]} · ${esc(statLine(g.statModifiers))}</span></span>
+      <span class="plainlbl">Plain item · no page</span></div>`;
+  }).join('');
+  if (S.view === 'desktop') {
+    return `<div class="backdrop canvas-only" data-close="gear"></div><div class="dlg gear"><div class="dlg-head"><img class="px" src="${ICON.menu('upgrade')}" alt=""><h1>Gear</h1><span class="sub">Worn items</span><button class="x" data-close="gear" aria-label="Close gear">✕</button></div><div class="gear-list">${rows}</div></div>`;
+  }
+  return `<div class="backdrop" data-close="gear"></div><div class="sheet"><div class="grip"></div><div class="dlg-head"><img class="px" src="${ICON.menu('upgrade')}" alt=""><h1>Gear</h1><span class="sub">Worn items</span><button class="x" data-close="gear" aria-label="Close gear">✕</button></div><div class="gear-list">${rows}</div></div>`;
+}
+function renderDialogs(keepScroll) {
+  const dlg = $('#dlg'); if (!dlg) return;
+  const scroll = keepScroll && $('#wpScroll') ? $('#wpScroll').scrollTop : 0;
+  if (S.pageOpen) dlg.innerHTML = `<div class="backdrop" data-close="page"></div><div class="dlg page">${pageHTML()}</div>`;
+  else if (S.gearOpen) dlg.innerHTML = gearHTML();
+  else dlg.innerHTML = '';
+  dlg.classList.toggle('sheeted', S.gearOpen && !S.pageOpen);
+  if (keepScroll && $('#wpScroll')) $('#wpScroll').scrollTop = scroll;
+  $$('[data-nav="gear"], [data-tab="gear"]').forEach((b) => b.classList.toggle('on', S.gearOpen || S.pageOpen));
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   10. Scenes
+   ════════════════════════════════════════════════════════════════════════════ */
+const SCENES = {
+  1: { name: 'Finding the tree', q: 'Where does the player go to see their cards?' },
+  2: { name: 'The weapon page', q: 'What does the page say about the Poison Dagger at Tier 1?' },
+  3: { name: 'A fight', q: 'Where do three facts live: the verb is coming, the verb landed, the lasting state on the target?' },
+  4: { name: 'First firings', q: 'What teaches the player what just happened, and when does it stop?' },
+  5: { name: 'The node', q: 'Arriving in a Swamp node, what names the family and the shard before the first kill?' },
+};
+const EXPLAIN = {
+  1: '<b>The Gear tab is the front door</b>: the right rail on desktop, the bottom bar on a phone. It lists what you wear, the weapon first; only the weapon opens a page. Out of combat the strip under the health bar idles: the node\'s shard sits at its left end and the next pulls line up to the right.',
+  2: '<b>The client\'s page, plus one thing</b>: every Tier 1 verb card carries a small beat line of its moment, drawn with the same marks as the HUD strip, so the strip is learnt here first. Hover a lean (on a phone, tap Preview) and the verbs re-read, sentences and beat lines both. Press Into the Wound to buy it; press a short card for its reason.',
+  3: '<b>One line under the health bar.</b> Ticks are your next hits, one every 0.5 s; the gold notch is now; fired hits scroll off left. The hatched band is Into the Wound resting (5 s); the underline means "the target is afflicted"; the diamond sits on the first hit that has both. A fresh Ooze’s first hit only afflicts it (a dashed tick; the underline starts after it), so the diamond never sits on it: watch the opening and the switch to the second Ooze. The landing is a burst on the strip and a surge (or shackles) on the body; the badge keeps the lasting state. Illustrative combat rule from SCENES.md, not the server\'s DoT formula.',
+  4: '<b>The strip teaches, then goes quiet.</b> A newly bought card\'s strip carries a caption (its name, three pips, its sentence) that flashes on each firing; after the third firing it folds away for good, and the guide closes its lesson. No floating word, no callout. Step through the firings with Fire again.',
+  5: '<b>The banner names the family and the shard; the strip keeps saying it after the banner fades.</b> The node\'s shard is the strip\'s left end, like a key signature, and the next pulls (the node\'s spawn order) line up to its right, so a 70% Mire node reads as a line of Oozes and a 34/33/33 node as a mixed line. Real blends; no roster rule assumed.',
+};
+
+function enterScene() {
+  S.built = true;
+  const [w, h] = DIMS[S.view];
+  const F = $('#frame');
+  F.className = 'frame ' + S.view;
+  F.style.width = w + 'px'; F.style.height = h + 'px';
+  S.pageKey = { 1: 'scene2', 2: 'scene2', 3: S.pair === 'composed' ? 'scene3-composed' : 'scene2-after-buy', 4: 'scene2-after-buy', 5: 'scene2-after-buy' }[S.scene];
+  F.innerHTML = S.view === 'desktop' ? desktopShell() : portraitShell();
+  buildWorld();
+  W.nodeKey = null;
+  S.gearOpen = false; S.pageOpen = false; S.preview = null; S.toast = null; S.pressDagger = false;
+  S.playing = false; S.stopAt = null; S.t = 0; S.script = 0; S.loops = 0; S.tip = null;
+  if (S.scene !== 5) S.nodeId = HOME.id;
+  wireFrame();
+  const sc = S.scene;
+  if (sc === 1) {
+    setGuide('say');
+    if (S.kf === 'gear' || S.first) S.gearOpen = true;
+    renderDialogs();
+    drawIdleStrip();
+  }
+  if (sc === 2) {
+    setGuide('collapsed');
+    openPage('scene2');
+    drawIdleStrip();
+  }
+  if (sc === 3) {
+    setGuide('collapsed');
+    S.TL = buildTimeline({ mode: S.pair, pulls: 1 });
+    S.t = -S.TL.PRE;
+    S.playing = true;
+    if (S.kf) { const f = S.TL.fires[1]; const k = KF3(f)[S.kf]; if (k !== undefined) { S.t = k; S.playing = false; } }
+  }
+  if (sc === 4) {
+    S.TL = buildTimeline({ mode: 'pure', pulls: 2 });
+    S.t = -S.TL.PRE;
+    S.playing = S.embed;
+    S.s4step = 0;
+    if (S.kf) { const n = parseInt(S.kf, 10); const f = S.TL.fires[n - 1]; if (f) { S.t = f.t + 80; S.s4step = n; } }
+  }
+  if (sc === 5) {
+    setGuide('collapsed');
+    S.t = 0; S.playing = true;
+    if (S.kf === 'arrive') { S.t = 1000; S.playing = false; }
+  }
+  buildControls();
+  renderScene(0);
+}
+/* scene 3's key frames, around the second firing (the one after the clock):
+   coming = just under half a second before the clock clears, the target afflicted. */
+const KF3 = (f) => ({ coming: f.t - 400, landed: f.t + 80, lasting: f.t + 1000 });
+function drawIdleStrip(since) {
+  drawHudStrip(pullStripModel(NODES[S.nodeId], geomFor(S.view), 'hs', since), null);
+}
+
+/* the teaching state of scene 4 (and the once-caption after a lean swap in 3b) */
+function teachState(TL, t) {
+  const snap = snapAt(TL, t);
+  const fires = TL.fires;
+  if (S.scene === 4) {
+    const third = fires[2];
+    if (snap.fired < 3) return { comp: TL.comp, seen: snap.fired, flash: fires.some((f) => f.t <= t && t - f.t < 60) };
+    if (third && t - third.t < 1800) return { comp: TL.comp, seen: 3, folding: t - third.t > 1200, flash: false };
+    return null;
+  }
+  if (S.scene === 3 && TL.mode === 'composed') {
+    const first = fires[0];
+    if (snap.fired < 1) return { comp: TL.comp, seen: 0, once: true };
+    if (first && t - first.t < 2600) return { comp: TL.comp, seen: 1, once: true, folding: t - first.t > 2000, flash: t - first.t < 60 };
+  }
+  return null;
+}
+
+function renderScene(dt) {
+  const sc = S.scene;
+  // the guide's highlight: scene 1 points at the Gear entry; scene 4 points at the strip until the first firing lands
+  $$('[data-nav="gear"], [data-tab="gear"]').forEach((b) => b.classList.toggle('ringed', sc === 1 && !S.gearOpen && !S.pageOpen && !S.first));
+  if (sc === 1 || sc === 2) {
+    setHP(START_HP);
+    renderNodeWorld(NODES[S.nodeId], 9999, false);
+    $('#tf') && $('#tf').classList.remove('on');
+  }
+  if (sc === 3 || sc === 4) {
+    const TL = S.TL, t = S.t;
+    const snap = snapAt(TL, t);
+    setHP(snap.php);
+    renderFightWorld(TL, t);
+    renderTargetFrame(TL, t);
+    const g = geomFor(S.view);
+    const model = snap.inGap && !currentTarget(TL, snap, t) && !TL.events.some((e) => e.k === 'pull' && e.t <= t && e.engageT > t)
+      ? fightStripModel(TL, t, g, 'hs', NODES[S.nodeId]) : fightStripModel(TL, t, g, 'hs', NODES[S.nodeId]);
+    drawHudStrip(model, teachState(TL, t));
+    const f1 = TL.fires[0];
+    $('#strip').classList.toggle('ringed', sc === 4 && !S.first && (snap.fired < 1 || (f1 && t - f1.t < 900)));
+    if (sc === 4) {
+      const fired = snap.fired;
+      const third = TL.fires[2];
+      setGuide(fired < 3 || (third && t - third.t < 1800) ? 'lesson' : 'done');
+      const n = Math.max(fired, 0);
+      const cnt = $('#fcount'); if (cnt) cnt.textContent = n ? `Firing #${n}` : 'Not fired yet';
+    }
+  }
+  if (sc === 5) {
+    const node = NODES[S.nodeId];
+    const t = S.t;
+    setHP(START_HP);
+    renderNodeWorld(node, t, true);
+    $('#tf').classList.remove('on');
+    drawHudStrip(pullStripModel(node, geomFor(S.view), 'hs', t), null);
+    const b = $('#banner');
+    const dur = D.arrival.durationsMs.discovery;
+    const op = t < 0 ? 0 : t < 400 ? t / 400 : t < dur - 600 ? 1 : clamp((dur - t) / 600, 0, 1);
+    const k = `${node.id}`;
+    if (b.dataset.k !== k) {
+      b.dataset.k = k;
+      const a = node.arrival.discovery;
+      b.innerHTML = `<div class="eb">${esc(capWord(Object.keys(D.arrival.durationsMs)[0]))}</div><h2>${esc(node.displayName)}</h2><div class="meta">${esc(node.biomeName)} · Tier ${node.tier}</div>
+        <div class="terr" data-ft="banner-territory" data-fact="where"><img class="px" src="${ART(P[a.shard].shardIcon)}" alt=""><strong>${esc(a.territory)}</strong><span> · ${esc(a.detail)}</span></div>`;
+    }
+    b.style.opacity = op;
+  }
+  if (S.view === 'portrait') {
+    // the phone stacks top-down: the top strip (HP + beat strip), the target frame, the guide
+    const top = $('.mtop').offsetHeight, tf = $('#tf'), g = $('#guide');
+    tf.style.top = (top + 6) + 'px';
+    if (g) g.style.top = (top + 6 + (tf.classList.contains('on') ? tf.offsetHeight + 6 : 0)) + 'px';
+  }
+  if (S.first) drawFirstTime(); else { const ft = $('#ft'); if (ft) ft.classList.remove('on'); }
+  if (S.tip) placeTip();
+}
+
+/* embed=1: each scene plays its own interaction on a loop */
+function embedScript(dt) {
+  const sc = S.scene;
+  S.script += dt;
+  const s = S.script;
+  if (sc === 1) {
+    const phase = s < 1600 ? 0 : s < 3600 ? 1 : s < 4100 ? 2 : s < 7600 ? 3 : 4;
+    if (phase !== S.phase) {
+      S.phase = phase;
+      if (phase === 0) { S.gearOpen = false; S.pageOpen = false; S.pressDagger = false; renderDialogs(); }
+      if (phase === 1) { S.gearOpen = true; renderDialogs(); }
+      if (phase === 2) { S.pressDagger = true; renderDialogs(); }
+      if (phase === 3) { S.pressDagger = false; openPage('scene2'); }
+      if (phase === 4) { S.script = 0; S.phase = -1; }
+    }
+  }
+  if (sc === 2) {
+    const phase = s < 1400 ? 0 : s < 3800 ? 1 : s < 5600 ? 2 : s < 6000 ? 3 : s < 8400 ? 4 : s < 12600 ? 5 : 6;
+    if (phase !== S.phase) {
+      S.phase = phase;
+      if (phase === 0) { S.pageKey = 'scene2'; S.preview = null; S.toast = null; openPage('scene2'); }
+      if (phase === 1) setPreview(TC);
+      if (phase === 2) setPreview('dagger-t1-kill-chain-stat');
+      if (phase === 3) { setPreview(null); $$('.card').forEach((el) => el.classList.remove('hov')); }
+      if (phase === 4) pressCard('dagger-t1-kill-chain-stat');
+      if (phase === 5) pressCard(IW);
+      if (phase === 6) { S.script = 0; S.phase = -1; }
+    }
+  }
+  if (sc === 5 && S.t > 6800) {
+    const ids = ['node-t1-swamp-04', 'node-t1-swamp-02', 'node-t1-swamp-05'];
+    S.nodeId = ids[(ids.indexOf(S.nodeId) + 1) % ids.length];
+    S.t = 0; buildControls();
+  }
+}
+
+function step(dt) {
+  if (S.embed && (S.scene === 1 || S.scene === 2)) embedScript(dt);
+  if ((S.scene === 3 || S.scene === 4) && S.playing && !S.pageOpen) {
+    S.t += dt;
+    if (S.stopAt !== null && S.t >= S.stopAt) { S.t = S.stopAt; S.playing = false; S.stopAt = null; syncPlay(); }
+    const end = S.scene === 4 && !S.embed ? S.TL.fires[3].t + 2600 : S.TL.tEnd;
+    if (S.t >= end) {
+      if (S.scene === 3 && S.embed) { S.pair = S.pair === 'pure' ? 'composed' : 'pure'; S.TL = buildTimeline({ mode: S.pair, pulls: 1 }); S.pageKey = S.pair === 'composed' ? 'scene3-composed' : 'scene2-after-buy'; if ($('#matsChips')) $('#matsChips').innerHTML = matsChips(S.pageKey); W.bodies.innerHTML = ''; W.mobs = {}; W.slinger = null; syncPair(); }
+      if (S.scene === 4 && !S.embed) { S.playing = false; S.t = end; syncPlay(); }
+      else { S.t = -S.TL.PRE; W.bodies.innerHTML = ''; W.mobs = {}; W.slinger = null; }
+    }
+  }
+  if (S.scene === 5 && S.playing) {
+    S.t += dt;
+    if (S.embed) embedScript(dt);
+    else if (S.t > 6500) { S.t = 6500; }
+  }
+  renderScene(dt);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   11. Controls outside the frame
+   ════════════════════════════════════════════════════════════════════════════ */
+function buildControls() {
+  const c = $('#controls');
+  const sc = S.scene;
+  let h = `<span class="lbl">Scene ${sc}</span><span style="color:var(--text)">${esc(SCENES[sc].q)}</span><span class="sep"></span>`;
+  if (sc === 1) h += `<button class="tbtn" id="cGear">Open the Gear tab</button><button class="tbtn" id="cReset">Back to the HUD</button>`;
+  if (sc === 2) h += `<button class="tbtn" id="cReset2">Reset the page (before the purchase)</button><span class="lbl">Try: hover a lean · press Into the Wound · press Silent Step</span>`;
+  if (sc === 3) {
+    h += `<nav class="seg"><button data-pair="pure" class="${S.pair === 'pure' ? 'on' : ''}">Pure: Coated Edge + Into the Wound</button><button data-pair="composed" class="${S.pair === 'composed' ? 'on' : ''}">Composed: Tendon Cut + Into the Wound</button></nav>`;
+    h += `<button class="tbtn" id="cHit">Land a hit</button><button class="tbtn" id="cPlay"></button><span class="sep"></span><span class="lbl">Key frames</span><nav class="seg"><button data-kf="coming">Coming</button><button data-kf="landed">Landed</button><button data-kf="lasting">Lasting</button></nav><button class="tbtn" id="cRestart">Restart</button>`;
+  }
+  if (sc === 4) {
+    h += `<button class="tbtn" id="cFire">Fire again</button><span class="count" id="fcount">Not fired yet</span><span class="lbl">Key frames</span><nav class="seg"><button data-f="1">#1</button><button data-f="2">#2</button><button data-f="3">#3</button><button data-f="4">#4</button></nav><button class="tbtn" id="cPlay"></button><button class="tbtn" id="cRestart">Restart</button>`;
+  }
+  if (sc === 5) {
+    h += `<button class="tbtn" id="cArrive">Arrive</button><span class="lbl">Node</span><nav class="seg">${['node-t1-swamp-04', 'node-t1-swamp-02', 'node-t1-swamp-05'].map((id) => `<button data-node="${id}" class="${S.nodeId === id ? 'on' : ''}" title="${esc(NODES[id].mapTileLabel)}">${esc(NODES[id].displayName)}</button>`).join('')}</nav><span class="lbl" id="tileLbl">Map tile: ${esc(NODES[S.nodeId].mapTileLabel)}</span>`;
+  }
+  c.innerHTML = h;
+  $('#explain').innerHTML = EXPLAIN[sc];
+  syncPlay();
+  const on = (id, f) => { const e = $('#' + id); if (e) e.onclick = f; };
+  on('cGear', () => { S.gearOpen = true; S.pageOpen = false; renderDialogs(); });
+  on('cReset', () => { closeDialogs(); });
+  on('cReset2', () => { S.pageKey = 'scene2'; S.preview = null; S.toast = null; openPage('scene2'); });
+  on('cHit', () => {
+    const snap = snapAt(S.TL, S.t);
+    let next = snap.nextSwing; if (next <= S.t) next += SWING_MS;
+    const tgt = currentTarget(S.TL, snap, S.t);
+    if (!tgt) { const p = S.TL.events.find((e) => e.k === 'pull' && e.engageT > S.t); next = p ? p.engageT : -S.TL.PRE; if (!p) { S.t = -S.TL.PRE; } }
+    S.stopAt = next + 120; S.playing = true; syncPlay();
+  });
+  on('cPlay', () => { S.playing = !S.playing; S.stopAt = null; syncPlay(); });
+  on('cRestart', () => { S.t = -S.TL.PRE; S.s4step = 0; W.bodies.innerHTML = ''; W.mobs = {}; W.slinger = null; S.playing = S.scene === 3; S.stopAt = null; syncPlay(); });
+  on('cFire', () => {
+    const snap = snapAt(S.TL, S.t);
+    const n = Math.min(snap.fired + 1, S.TL.fires.length);
+    const f = S.TL.fires[n - 1];
+    if (!f || snap.fired >= 4) { S.t = -S.TL.PRE; W.bodies.innerHTML = ''; W.mobs = {}; W.slinger = null; }
+    const target = S.TL.fires[Math.min(snapAt(S.TL, S.t).fired, 3)];
+    S.t = Math.max(S.t, target.t - 1700); S.stopAt = target.t + 900; S.playing = true; syncPlay();
+  });
+  $$('[data-pair]', c).forEach((b) => b.onclick = () => { S.pair = b.dataset.pair; S.kf = null; S.kfApplied = null; writeHash({ pair: S.pair, kf: null }); enterScene(); });
+  $$('[data-kf]', c).forEach((b) => b.onclick = () => { const f = S.TL.fires[1]; S.t = KF3(f)[b.dataset.kf]; S.playing = false; S.stopAt = null; syncPlay(); });
+  $$('[data-f]', c).forEach((b) => b.onclick = () => { const f = S.TL.fires[+b.dataset.f - 1]; S.t = f.t + 80; S.playing = false; S.stopAt = null; syncPlay(); });
+  on('cArrive', () => { S.t = 0; S.playing = true; });
+  $$('[data-node]', c).forEach((b) => b.onclick = () => { S.nodeId = b.dataset.node; S.t = 0; S.playing = true; buildControls(); });
+}
+function syncPlay() { const b = $('#cPlay'); if (b) b.textContent = S.playing && S.stopAt === null ? 'Pause auto-play' : 'Auto-play'; }
+function syncPair() { $$('[data-pair]').forEach((b) => b.classList.toggle('on', b.dataset.pair === S.pair)); }
+function syncChrome() {
+  const seg = $('#sceneSeg');
+  if (!seg.children.length) seg.innerHTML = [1, 2, 3, 4, 5].map((n) => `<button data-scene="${n}">${n} · ${SCENES[n].name}</button>`).join('');
+  $$('#sceneSeg button').forEach((b) => b.classList.toggle('on', +b.dataset.scene === S.scene));
+  $$('#viewSeg button').forEach((b) => b.classList.toggle('on', b.dataset.view === S.view));
+  $('#firstBtn').classList.toggle('on', S.first);
+}
+
+/* wiring inside the frame */
+function wireFrame() {
+  const F = $('#frame');
+  F.onclick = (e) => {
+    const nav = e.target.closest('[data-nav="gear"], [data-tab="gear"]');
+    if (nav) { if (S.gearOpen || S.pageOpen) closeDialogs(); else { S.gearOpen = true; renderDialogs(); } return; }
+    const close = e.target.closest('[data-close]');
+    if (close && (close.classList.contains('x') || close.classList.contains('backdrop'))) { closeDialogs(); if (S.scene === 2) setTimeout(() => openPage(), 0); return; }
+    const open = e.target.closest('[data-open="page"]');
+    if (open) { openPage(); return; }
+    const pv = e.target.closest('[data-preview]');
+    if (pv) { e.stopPropagation(); setPreview(S.preview === pv.dataset.preview ? null : pv.dataset.preview); return; }
+    const card = e.target.closest('[data-card]');
+    if (card && !card.disabled) { pressCard(card.dataset.card); return; }
+    const strip = e.target.closest('#strip');
+    if (strip && S.view === 'portrait') { S.tip = S.tip ? null : 'strip'; if (!S.tip) removeTip(); return; }
+    const tile = e.target.closest('.tile');
+    if (tile && S.view === 'portrait') { S.tip = S.tip ? null : 'tile:' + tile.dataset.status; if (!S.tip) removeTip(); return; }
+    if (S.tip) { S.tip = null; removeTip(); }
+  };
+  F.onmouseover = (e) => {
+    if (S.view !== 'desktop') return;
+    const card = e.target.closest('.card');
+    if (card && S.pageOpen) {
+      const pg = PAGES[S.pageKey];
+      const c = pg.bands[0].rows[0].cards.find((x) => x.id === card.dataset.card);
+      if (c) setPreview(c.id);
+    }
+    if (e.target.closest('#strip')) S.tip = 'strip';
+    const tile = e.target.closest('.tile'); if (tile) S.tip = 'tile:' + tile.dataset.status;
+  };
+  F.onmouseout = (e) => {
+    if (S.view !== 'desktop') return;
+    const card = e.target.closest('.card');
+    if (card && S.pageOpen && !card.contains(e.relatedTarget)) {
+      const pg = PAGES[S.pageKey];
+      if (pg.bands[0].rows[0].cards.some((x) => x.id === card.dataset.card)) { setPreview(null); $$('.card').forEach((el) => el.classList.remove('hov')); }
+    }
+    if ((e.target.closest('#strip') && !e.relatedTarget?.closest?.('#strip')) || (e.target.closest('.tile') && !e.relatedTarget?.closest?.('.tile'))) { S.tip = null; removeTip(); }
+  };
+}
+function placeTip() {
+  const F = $('#frame');
+  let tip = $('#tip');
+  if (!tip) { tip = document.createElement('div'); tip.id = 'tip'; tip.className = 'tip'; F.appendChild(tip); }
+  const sc = F.getBoundingClientRect(), scale = sc.width / DIMS[S.view][0];
+  let html = '', anchor = null;
+  if (S.tip === 'strip') {
+    const comp = (S.scene === 3 || S.scene === 4) ? S.TL.comp : null;
+    html = stripTipHTML(comp); anchor = $('#strip');
+  } else if (S.tip && S.tip.startsWith('tile:')) {
+    const st = STATUS[S.tip.slice(5)];
+    if (st && st.help) html = `<b style="color:${st.color}">${esc(st.help.title)}</b>${esc(st.help.help)}`;
+    anchor = $(`.tile[data-status="${S.tip.slice(5)}"]`);
+  }
+  if (!anchor || !html) { removeTip(); return; }
+  if (tip.dataset.h !== html) { tip.innerHTML = html; tip.dataset.h = html; }
+  const r = anchor.getBoundingClientRect();
+  let x = (r.left - sc.left) / scale, y = (r.bottom - sc.top) / scale + 6;
+  if (S.view === 'desktop' && S.tip === 'strip') { x = (r.right - sc.left) / scale + 8; y = (r.top - sc.top) / scale; }
+  x = clamp(x, 6, DIMS[S.view][0] - 250);
+  tip.style.left = x + 'px'; tip.style.top = y + 'px';
+}
+function removeTip() { const t = $('#tip'); if (t) t.remove(); }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   12. First-time view: three numbered marks, everything else dimmed.
+   ════════════════════════════════════════════════════════════════════════════ */
+const FIRST = {
+  1: [['[data-ft="guide-say"]'], ['[data-ft="gear-entry"]'], ['[data-ft="gear-dagger"]']],
+  '1p': [['[data-ft="gear-entry"]'], ['[data-ft="gear-dagger"]'], ['.grow.plain']],
+  2: [['[data-ft="card-iw"]'], ['[data-ft="strip-iw"]'], ['[data-ft="card-ce"]']],
+  3: [['[data-ft="strip-marker"]', '#strip'], ['.body.target-ring', '[data-ft="target-body"]'], ['[data-ft="badge-poison"]', '#tf']],
+  4: [['.body.target-ring', '[data-ft="target-body"]'], ['[data-ft="strip-caption"]', '#strip'], ['[data-ft="guide-lesson"]', '[data-ft="badge-poison"]']],
+  5: [['[data-ft="banner-territory"]'], ['[data-ft="bodies"]'], ['[data-ft="strip-key"]']],
+};
+function drawFirstTime() {
+  const F = $('#frame'), ft = $('#ft');
+  if (!ft) return;
+  ft.classList.add('on');
+  const fr = F.getBoundingClientRect();
+  const [w, h] = DIMS[S.view];
+  const k = fr.width / w;
+  const rects = [];
+  for (const sels of FIRST[S.scene === 1 && S.view === 'portrait' ? '1p' : S.scene]) {
+    let r = null;
+    for (const sel of sels) {
+      const els = $$(sel, F).filter((e) => { const b = e.getBoundingClientRect(); return b.width > 0 && b.height > 0 && getComputedStyle(e).display !== 'none' && e.closest('.ft-layer') === null; });
+      if (!els.length) continue;
+      const bs = els.map((e) => e.getBoundingClientRect());
+      r = { l: Math.min(...bs.map((b) => b.left)), t: Math.min(...bs.map((b) => b.top)), r: Math.max(...bs.map((b) => b.right)), b: Math.max(...bs.map((b) => b.bottom)) };
+      break;
+    }
+    if (r) {
+      const pad = 5;
+      rects.push({ x: (r.l - fr.left) / k - pad, y: (r.t - fr.top) / k - pad, w: (r.r - r.l) / k + pad * 2, h: (r.b - r.t) / k + pad * 2 });
+    } else rects.push(null);
+  }
+  let path = `M0 0H${w}V${h}H0Z`;
+  for (const r of rects) if (r) path += `M${r.x} ${r.y}v${r.h}h${r.w}v${-r.h}Z`;
+  let s = `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><path d="${path}" fill="rgba(4,3,2,.72)" fill-rule="evenodd"/>`;
+  rects.forEach((r, i) => {
+    if (!r) return;
+    s += `<rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" rx="5" fill="none" stroke="#ffd76a" stroke-width="2.5"/>`;
+    const cx = clamp(r.x - 4, 14, w - 14), cy = clamp(r.y - 4, 14, h - 14);
+    s += `<circle cx="${cx}" cy="${cy}" r="13" fill="#ffd76a" stroke="#1a1408" stroke-width="2"/><text class="ft-num" x="${cx}" y="${cy + 5}" text-anchor="middle">${i + 1}</text>`;
+  });
+  ft.innerHTML = s + '</svg>';
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   13. The reference drawer: the same strip for count, latch-body, carry, pulse.
+   ════════════════════════════════════════════════════════════════════════════ */
+function toyComp(lineage, verbName, leanName) {
+  return D.weapons.find((w) => w.lineageId === lineage).compositionsT1.find((c) => c.verbName === verbName && (c.leanName ?? null) === leanName);
+}
+const SHAPES = [
+  { comp: () => PURE, weapon: 'Poison Dagger', how: 'The hatched band is the 5 s rest; the underline is the condition (the target is afflicted). The diamond sits on the first hit that has both. The strip does not know when the kill will land, so it assumes the target lives; when a kill lands while the clock is already clear, the diamond jumps one tick later (the new target’s first hit, dashed, only afflicts it) and the underline restarts after it. That jump is the unmet condition, said on the line.' },
+  { comp: () => toyComp('axe', 'Chopping Rhythm', 'Loose Grip'), weapon: 'Chaotic Axe', how: 'The strip\'s home ground: every sixth tick carries the diamond, so the count is the spacing and no number is needed. Two diamonds are often on screen at once. A target change does not reset it.' },
+  { comp: () => toyComp('rapier', 'Opening Lunge', 'Keen Edge'), weapon: 'Rapier', how: 'The moment is "the first hit after a target change", and the strip cannot know when the kill lands. While the target lives, the diamond waits parked at the right end with the spent mark; when the kill lands, a seam drops and the diamond snaps onto the very next tick. <em>One swing of warning, not four seconds.</em>' },
+  { comp: () => toyComp('dagger', 'Next Throat', 'Coated Edge'), weapon: 'Poison Dagger', how: 'Armed by a kill, spent by the next hit: same reading as the opener, with the two colours (Kill Chain moment, Affliction payload). A kill-estimate (target health ÷ hit damage) could place a ghost diamond earlier; it would be wrong whenever a DoT or an ally finishes the target, so it is not drawn. <em>Weak where the cards are weak: bosses rarely die.</em>' },
+  { comp: () => toyComp('broadsword', 'Set Piece', null), weapon: 'Iron Broadsword', how: '<em>Where the thesis breaks.</em> A Technique lands on its own cooldown, not on the hit grid, so the strip can only stamp the diamond when it happens (the pulse mark sits parked meanwhile). The same is true of the Empowered moment, which fires when the class mechanic fires. For these the strip is a log, not a forecast.' },
+];
+function toyModel(shape, t, g, uid) {
+  // A toy fight: one swing every 0.5 s, each target dies on its 7th swing, a
+  // Technique lands at fixed times. The PAST is what happened; the FUTURE is
+  // predicted from what is known now, never from the kills still to come.
+  const comp = shape.comp();
+  const kind = comp.trigger.kind;
+  const LIFE = 7;
+  const xOf = (tt) => g.playX + (tt - t) * g.pxPerMs;
+  const m = { g, uid, ticks: [], cond: [], markers: [], bursts: [], seams: [], pulls: [], band: null, hot: null, key: null };
+  const tgtOf = (i) => Math.floor(i / LIFE);            // swing index -> target index
+  const first = (i) => i % LIFE === 0;                  // first swing on its target
+  const tEnd = t + g.futureMs + 300, tStart = t - g.pastMs - 300;
+  const nowI = Math.floor(t / SWING_MS);                // the last swing that has landed
+  const techAt = [1300, 4700, 6100, 9900, 13100, 15900];
+  const mk = (tt, past, extra = {}) => ({ x: xOf(tt), past, prox: past ? 0 : clamp(1 - (tt - t) / 1500, 0, 1), momentColor: comp.momentColor, payloadColor: comp.payloadColor, glyph: ART(comp.ringGlyph), ...extra });
+  // history
+  const fired = new Set();
+  let cap = -1e9;
+  for (let i = 0; i <= nowI; i++) {
+    const tt = i * SWING_MS;
+    if (kind === 'hit-nth' && (i + 1) % comp.trigger.n === 0) fired.add(i);
+    if (kind === 'hit-afflicted' && !first(i) && tt >= cap) { fired.add(i); cap = tt + comp.trigger.capMs; }
+    if ((kind === 'first-hit' || kind === 'kill') && first(i) && i > 0) fired.add(i);
+  }
+  for (let i = Math.max(0, Math.floor(tStart / SWING_MS)); i <= nowI; i++) {
+    const tt = i * SWING_MS;
+    if (fired.has(i)) m.markers.push(mk(tt, true));
+    else m.ticks.push({ x: xOf(tt), past: true, seed: kind === 'hit-afflicted' && first(i) });
+    if (i % LIFE === LIFE - 1) m.seams.push({ x: xOf(tt + 1), icon: null });
+    const age = t - tt; if (fired.has(i) && age < 700) m.bursts.push({ p: age / 700, color: comp.momentColor, payload: comp.payloadColor });
+  }
+  if (kind === 'technique-cast') for (const tt of techAt) {
+    if (tt <= t && tt > tStart) m.markers.push(mk(tt, true, { glyph: null }));
+    if (tt <= t && t - tt < 700) m.bursts.push({ p: (t - tt) / 700, color: comp.momentColor, payload: comp.payloadColor });
+  }
+  // the future, from what is known now: the swing clock, the cap clock, the current target
+  const curT = tgtOf(nowI + 1);                          // who the next swing hits
+  const justKilled = first(nowI + 1);                    // the next swing opens a new target
+  let fcap = cap, nextMarked = null;
+  for (let i = nowI + 1; i * SWING_MS <= tEnd; i++) {
+    const tt = i * SWING_MS;
+    let fires = false, seed = false;
+    if (kind === 'hit-nth') fires = (i + 1) % comp.trigger.n === 0;
+    if (kind === 'hit-afflicted') { seed = justKilled && i === nowI + 1; if (!seed && tt >= fcap) { fires = true; fcap = tt + comp.trigger.capMs; } }
+    if ((kind === 'first-hit' || kind === 'kill') && justKilled && i === nowI + 1) fires = true;
+    if (fires) { m.markers.push(mk(tt, false)); if (nextMarked === null) nextMarked = i; }
+    else m.ticks.push({ x: xOf(tt), past: false, seed });
+  }
+  if (nextMarked === nowI + 1 && (nextMarked * SWING_MS - t) < 650) m.hot = comp.momentColor;
+  // the kill-armed and Technique moments cannot be placed ahead: the diamond waits parked
+  if ((kind === 'first-hit' || kind === 'kill' || kind === 'technique-cast') && nextMarked === null) {
+    m.markers.push({ x: g.W - 12, past: false, prox: 0, momentColor: comp.momentColor, payloadColor: comp.payloadColor, glyph: null, mark: kind === 'technique-cast' ? MARKS.pulse : MARKS.spent });
+  }
+  if (kind === 'hit-afflicted') {
+    let last = null; for (const i of fired) last = i;
+    if (last !== null) m.band = { x0: xOf(last * SWING_MS), x1: xOf(last * SWING_MS + comp.trigger.capMs), color: comp.momentColor };
+    // the afflicted underline: past targets from their first hit to their death; the current one onwards
+    for (let k = Math.max(0, tgtOf(Math.floor(tStart / SWING_MS))); k <= curT; k++) {
+      const a = k * LIFE * SWING_MS, z = (k * LIFE + LIFE - 1) * SWING_MS;
+      if (k < curT) m.cond.push({ x0: xOf(a), x1: xOf(Math.min(z, t)), color: comp.momentColor });
+      else if (justKilled) m.cond.push({ x0: xOf((nowI + 1) * SWING_MS), x1: g.W + 4, color: comp.momentColor, future: true });
+      else { m.cond.push({ x0: xOf(a), x1: g.playX, color: comp.momentColor }); m.cond.push({ x0: g.playX, x1: g.W + 4, color: comp.momentColor, future: true }); }
+    }
+  }
+  return m;
+}
+function buildShapes() {
+  $('#shapes').innerHTML = SHAPES.map((sh, i) => {
+    const c = sh.comp();
+    return `<div class="shape"><div class="shape-head"><b style="color:${P[c.verbLane].color}">${esc(c.verbName)}</b><span>${esc(c.ringShape)} · ${esc(sh.weapon)}${c.leanName ? ' · with ' + esc(c.leanName) : ' · no lean'}</span></div>
+      <div class="sent">${sentenceHTML(c)}</div><div class="strip" id="shape${i}"></div><div class="how">${sh.how}</div></div>`;
+  }).join('');
+}
+function drawShapes(now) {
+  if (!$('#drawer').classList.contains('open')) return;
+  SHAPES.forEach((sh, i) => {
+    const host = $('#shape' + i); if (!host) return;
+    const Wd = Math.max(300, Math.floor(host.clientWidth) - 2);
+    const g = geomFor('portrait', Wd);
+    const t = (now % 15000) + 2000;
+    host.innerHTML = stripSVG(toyModel(sh, t, g, 'sh' + i));
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   14. Fit, loop, boot
+   ════════════════════════════════════════════════════════════════════════════ */
+function fit() {
+  const top = S.embed ? 0 : $('#bar').offsetHeight + $('#controls').offsetHeight + $('#explain').offsetHeight;
+  const stage = $('#stage');
+  stage.style.top = top + 'px';
+  const [w, h] = DIMS[S.view];
+  const pad = S.embed ? 0 : 16;
+  const k = Math.min((window.innerWidth - pad * 2) / w, (window.innerHeight - top - pad * 2) / h, S.embed ? 4 : 1.25);
+  $('#frame').style.transform = `scale(${k})`;
+  $('#frameWrap').style.width = (w * k) + 'px';
+  $('#frameWrap').style.height = (h * k) + 'px';
+}
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min(50, now - last); last = now;
+  try { step(dt); } catch (err) { console.error(err); }
+  drawShapes(now);
+  requestAnimationFrame(loop);
+}
+function boot() {
+  $('#viewSeg').onclick = (e) => { const b = e.target.closest('[data-view]'); if (b) writeHash({ view: b.dataset.view, kf: null }); };
+  $('#sceneSeg').onclick = (e) => { const b = e.target.closest('[data-scene]'); if (b) writeHash({ scene: +b.dataset.scene, kf: null, pair: null, node: null }); };
+  $('#firstBtn').onclick = () => writeHash({ first: !S.first });
+  $('#shapesBtn').onclick = () => { $('#drawer').classList.toggle('open'); $('#shapesBtn').classList.toggle('on'); };
+  $('#drawerClose').onclick = () => { $('#drawer').classList.remove('open'); $('#shapesBtn').classList.remove('on'); };
+  buildShapes();
+  window.addEventListener('hashchange', applyHash);
+  window.addEventListener('resize', fit);
+  applyHash();
+  requestAnimationFrame(loop);
+}
+
+/* For the fact table in NOTES.md: count the card-related facts on screen. */
+window.__countFacts = function () {
+  const F = $('#frame'); const fr = F.getBoundingClientRect();
+  const out = {}; const list = [];
+  // anything under a dialog's backdrop is not on screen for this count
+  const occluders = $$('.backdrop, .dlg, .sheet', F).map((o) => ({ o, r: o.getBoundingClientRect() }));
+  for (const el of $$('[data-fact]', F)) {
+    const r = el.getBoundingClientRect();
+    const cx = (r.left + r.right) / 2, cy = (r.top + r.bottom) / 2;
+    if (occluders.some(({ o, r: q }) => !o.contains(el) && !el.closest('.dlg, .sheet') && cx > q.left && cx < q.right && cy > q.top && cy < q.bottom)) continue;
+    if (r.width === 0 && r.height === 0) continue;
+    if (r.right < fr.left + 1 || r.left > fr.right - 1 || r.bottom < fr.top + 1 || r.top > fr.bottom - 1) continue;
+    let vis = true, op = 1, n = el;
+    while (n && n !== F) {
+      if (n.nodeType === 1) {
+        const cs = getComputedStyle(n);
+        if (cs.display === 'none' || cs.visibility === 'hidden') { vis = false; break; }
+        op *= parseFloat(cs.opacity || '1');
+        if (n.getAttribute && n.getAttribute('opacity')) op *= parseFloat(n.getAttribute('opacity'));
+        if (n !== el && (cs.overflowY === 'auto' || cs.overflowY === 'hidden' || cs.overflow === 'hidden')) {
+          const pr = n.getBoundingClientRect();
+          if (r.bottom < pr.top + 2 || r.top > pr.bottom - 2) { vis = false; break; }
+        }
+      }
+      n = n.parentNode;
+    }
+    if (!vis || op < 0.12) continue;
+    if (el.parentElement && el.parentElement.closest('[data-fact]') && el.parentElement.closest('[data-fact]') !== el) continue;
+    const k = el.dataset.fact + (el.dataset.what ? ':' + el.dataset.what : '');
+    out[k] = (out[k] || 0) + 1;
+    list.push(k + ' — ' + (el.textContent || el.getAttribute('data-status') || '').trim().slice(0, 70));
+    void cx;
+  }
+  return { total: list.length, byKind: out, list };
+};
+boot();
+</script>
+</body>
+</html>
