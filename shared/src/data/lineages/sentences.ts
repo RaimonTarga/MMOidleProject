@@ -362,12 +362,15 @@ const PAYLOAD_NOUN: Partial<Record<PacketId, string>> = {
 };
 
 /**
- * The line of a T1 EFFECT lean (design §26.1: "Effect is the weapon's own mechanic
- * made stronger"), which names that mechanic rather than a stat:
+ * A lean's line when it is the weapon's own mechanic made stronger (design §26.1:
+ * "Effect is the weapon's own mechanic made stronger"), which names that mechanic
+ * rather than a stat:
  *
- *   dotPotencyPct  "+10% poison potency."  — the reservoir weapon's poison (the
- *                  Dagger). Its seed is the weapon's own reservoir (design §26.2),
- *                  so the line does not promise a bleed on every hit.
+ *   dotPotencyPct  on a weapon with its own RESERVOIR (`reservoir`: the worn form's
+ *                  `weaponDot` noun, e.g. "poison" on the Dagger's forms): "Your
+ *                  poison is +10% stronger." — design §26.2: the lean amplifies the
+ *                  reservoir and never adds a bleed record, so the line promises no
+ *                  bleed. On any other weapon it is the stat line, which does.
  *   slowOnHit      the slow's own line ("Every hit slows its target by 10% …").
  *   payloadScale   "+10% to Flurry's second strike." — the fixed verb's payload,
  *                  by its noun (`verbName` is the verb card's name).
@@ -376,13 +379,13 @@ const PAYLOAD_NOUN: Partial<Record<PacketId, string>> = {
  */
 export function effectLeanLine(
   effects: LineageStatEffects | undefined,
-  context: { lane: PacketId; verbName?: string },
+  context: { lane: PacketId; verbName?: string; reservoir?: string },
   length: 'sentence' | 'short' = 'sentence',
 ): string | undefined {
   const entry = Object.entries(effects ?? {})[0] as [LineageStatKey, number] | undefined;
   if (!entry) return undefined;
   const [key, value] = entry;
-  if (key === 'dotPotencyPct') return `+${pct(value)} poison potency.`;
+  if (key === 'dotPotencyPct' && context.reservoir) return `Your ${context.reservoir} is +${pct(value)} stronger.`;
   if (key === 'payloadScale') {
     const owner = context.verbName ? `${context.verbName}'s` : 'your verb\'s';
     return `+${pct(value)} to ${owner} ${PAYLOAD_NOUN[context.lane] ?? 'payoff'}.`;

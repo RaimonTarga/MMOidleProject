@@ -367,7 +367,8 @@ for (const lineage of lineagesForSlot('weapon')) {
         `${label}: "${sentence}"`);
       // A lean's own line, at its rank.
       const line = cardSentence(lean, tree);
-      assert(typeof line === 'string' && line.startsWith('+') !== (cardStatKey(lean) === 'slowOnHit') && line.endsWith('.'),
+      // A stat line ("+8% Attack."), the slow's line, or a reservoir's ("Your poison …").
+      assert(typeof line === 'string' && /^(\+|Every hit |Your )/.test(line) && line.endsWith('.'),
         `${label}: lean line "${line}"`);
       assert(cardSentence(lean, tree, { rank: 1 }) === cardSentence(lean, { ...tree, ranks: { [lean.id]: 1 } }),
         `${label}: a rank preview reads as that rank`);
@@ -424,7 +425,15 @@ assert(t1Cells === 45, `five weapons × three leans × three ranks, got ${t1Cell
     ownedCards: [leanId, 'dagger-t1-affliction-payoff'], active: { stat: leanId, payoff: 'dagger-t1-affliction-payoff' },
     ownedForms: ['ashbrand-blade'], wornForm: 'ashbrand-blade',
   });
-  assert(cardSentence(dEffect, dTree(dEffect.id)) === '+10% poison potency.', `${cardSentence(dEffect, dTree(dEffect.id))}`);
+  // The Dagger owns a reservoir (its poison): its DoT-potency leans amplify it and
+  // never promise a bleed (design §26.2); a weapon with none keeps the bleed line.
+  assert(cardSentence(dEffect, dTree(dEffect.id)) === 'Your poison is +10% stronger.', `${cardSentence(dEffect, dTree(dEffect.id))}`);
+  const twiceCoated = dagger.cards.find((c) => c.id === 'dagger-t2-affliction-stat')!;
+  const mire: LineageProgress = { ownedCards: [], active: {}, ownedForms: ['ashbrand-blade', 'swamp-mirebrand'], wornForm: 'swamp-mirebrand' };
+  assert(cardSentence(twiceCoated, mire) === 'Your poison is +11.5% stronger.', `Twice-Coated: ${cardSentence(twiceCoated, mire)}`);
+  const deeperBrew = LINEAGE_DATABASE.get('rapier')!.cards.find((c) => c.id === 'rapier-t2-affliction-stat')!;
+  const needle: LineageProgress = { ownedCards: [], active: {}, ownedForms: ['flash-rapier', 'gale-needle'], wornForm: 'gale-needle' };
+  assert(/bleeds/.test(cardSentence(deeperBrew, needle) ?? ''), `Deeper Brew (no reservoir) keeps the bleed: ${cardSentence(deeperBrew, needle)}`);
   // An Attack lean never turns the Dagger's verb into another lane's payload.
   assert(dAttack.lane === 'control' && leanLaneFor(dagger, dTree(dAttack.id)) === undefined, 'the Dagger Attack names no payload');
   assert(composedSentence(dagger, dTree(dAttack.id)) === 'Hitting an afflicted target doubles its affliction.',

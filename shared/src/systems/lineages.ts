@@ -17,6 +17,7 @@
  */
 import { ESSENCE_LABELS } from '../items';
 import { RETIRED_LINEAGE_CARDS } from '../data/lineages/retired';
+import { RECIPE_DATABASE } from '../data/recipes';
 import { BIOME_DATABASE } from '../biomeDatabase';
 import { shardName } from '../data/lineages/packets';
 import type { EquipmentSlot, EssenceType } from '../items';
@@ -725,9 +726,12 @@ export function cardSentence(
   if (!lineage) return undefined;
   if (card.row === 'stat') {
     const resolved = resolveLineageCardFor(lineage, progress, card, { rank: options.rank });
-    if (card.leanKind !== 'effect') return statLine(resolved.statEffects);
-    const verb = lineage.cards.find((c) => c.tier === card.tier && c.row === 'payoff' && c.lane === card.lane);
-    return effectLeanLine(resolved.statEffects, { lane: card.lane, verbName: verb?.name });
+    const verb = card.leanKind === 'effect'
+      ? lineage.cards.find((c) => c.tier === card.tier && c.row === 'payoff' && c.lane === card.lane)
+      : undefined;
+    return effectLeanLine(resolved.statEffects, {
+      lane: card.lane, verbName: verb?.name, reservoir: weaponReservoirNoun(lineage, progress, card.tier),
+    });
   }
   if (isVerbCard(card)) {
     const composed = composeScaled(card.lane, leanLaneFor(lineage, progress), card.tier, lineagePayloadScales(lineage, progress));
@@ -736,6 +740,26 @@ export function cardSentence(
     return parts && (parts.moment ? `${parts.moment} ${parts.payload}` : parts.payload);
   }
   return undefined;
+}
+
+/** What a weapon's own damage-over-time reservoir is called, by its element. */
+const RESERVOIR_NOUN: Partial<Record<string, string>> = { poison: 'poison', frost: 'frost', fire: 'burn' };
+
+/**
+ * The reservoir a lean of this band amplifies, as the player's noun ("poison"), or
+ * undefined for a weapon with none (design §26.2: a weapon that already afflicts —
+ * its form authors a `weaponDot` — is amplified, never joined). Read off the worn
+ * form when it is this lineage's, else the band's first authored form.
+ */
+export function weaponReservoirNoun(
+  lineage: LineageDefinition,
+  progress: Pick<LineageProgress, 'wornForm'>,
+  tier: number,
+): string | undefined {
+  const worn = lineage.forms.some((f) => f.recipeId === progress.wornForm) ? progress.wornForm : undefined;
+  const recipeId = worn ?? lineage.forms.find((f) => f.tier === tier)?.recipeId;
+  const dot = recipeId ? RECIPE_DATABASE.get(recipeId)?.weaponDot : undefined;
+  return dot ? RESERVOIR_NOUN[dot.element] ?? 'affliction' : undefined;
 }
 
 /**
