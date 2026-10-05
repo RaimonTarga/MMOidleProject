@@ -74,6 +74,7 @@ import { stopEntity } from "../systems/world/movement";
 import { applyManualMoveIntent } from "../systems/world/manualMove";
 import { setAggroTarget, setAttackTarget } from "../systems/combat/ai/targeting";
 import { clearEngagement } from "../systems/combat/ai/engagement";
+import { setFightOnScreen } from "../systems/combat/rhythmReadout";
 import { attachComponent, detachComponent } from "../ecs/markerHelpers";
 import {
   applySummonerCommand,
@@ -380,6 +381,9 @@ export function registerPlayerHandlers(
     if (typeof active !== "boolean") return;
     if (active) inactiveSockets.delete(socket.id);
     else inactiveSockets.add(socket.id);
+    // The teaching counter and the ring's away count read this (design §26.4).
+    const p = world.getPlayerEntity(socket.id);
+    if (p) setFightOnScreen(world, p, active);
     adminControls.emitPlayerSummaries();
   });
 

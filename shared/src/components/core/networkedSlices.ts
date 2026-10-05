@@ -363,6 +363,17 @@ export interface TracksProgression {
    * lineage tree (design §5).
    */
   capstones: Record<string, number>;
+  /**
+   * The teaching counter (design §26.4, legibility run Contract 2): per card or
+   * capstone id, how many of its firings the player has been SHOWN — counted only
+   * while the client reported the fight on screen — capped at
+   * `CARD_TEACHING_FIRINGS`. The floating word plays for a firing the server marks
+   * as teaching (`card-fx.teach`), so a card names itself for its first three
+   * on-screen firings and then never again. Server-written only; optional for
+   * save compatibility (hydration normalises absent to `{}`); wiped with the rest
+   * of progression by `resetPlayerProgress`.
+   */
+  cardFiringsTaught?: Record<string, number>;
   biomeXP: Record<string, number>;
   biomeLevel: Record<string, number>;
   unlockedRecipes: string[];

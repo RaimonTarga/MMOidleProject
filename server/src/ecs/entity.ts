@@ -91,6 +91,18 @@ export interface FightsWhileTraveling {
   startedAtMs: number;
 }
 
+/**
+ * Server-only marker (design §26.4, legibility run Contract 2): the player's client
+ * reported the fight OFF screen — a hidden tab (`player:setActive false`). While
+ * present, a card firing does not teach (the floating word would play to nobody)
+ * and counts toward the ring's away count instead. Presence is the signal: a
+ * player with no client at all (a bench, a test) is never away.
+ */
+export interface IsAway {
+  /** Server time the client went away. */
+  sinceMs: number;
+}
+
 /** Server-only marker: auto-combat has temporarily yielded to survival movement. */
 export interface IsFleeing {
   phase: "out" | "recover" | "return";
@@ -338,6 +350,8 @@ export interface ServerEntity {
   fightsWhileTraveling?: FightsWhileTraveling;
   hasMovePath?: HasMovePath;
   isFleeing?: IsFleeing;
+  /** Server-only: the client is not showing the fight (see `IsAway`). */
+  isAway?: IsAway;
   /** Server-only movement owner for one live Step Back response. */
   evadesTelegraphs?: EvadesTelegraphs;
 

@@ -25,6 +25,30 @@ import type {
 export const RHYTHM_MAX_RINGS = 3;
 
 /**
+ * How many on-screen firings of a card teach it (design §26.4: "the floating word
+ * plays for a newly bought card's first three firings, as teaching, and then
+ * never"). PROVISIONAL (legibility run, designer's number).
+ */
+export const CARD_TEACHING_FIRINGS = 3;
+
+/**
+ * A persisted `TracksProgression.cardFiringsTaught` as the runtime reads it: an
+ * absent or malformed map is `{}`, every count is a whole number in
+ * `0..CARD_TEACHING_FIRINGS`, and zero entries are dropped. Unknown card ids are
+ * kept (a re-homed or renamed card simply never fires under that id again).
+ */
+export function normalizeFiringsTaught(raw: unknown): Record<string, number> {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
+  const out: Record<string, number> = {};
+  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
+    if (typeof value !== 'number' || !Number.isFinite(value)) continue;
+    const count = Math.max(0, Math.min(CARD_TEACHING_FIRINGS, Math.floor(value)));
+    if (count > 0) out[key] = count;
+  }
+  return out;
+}
+
+/**
  * How a ring reads its moment, from the trigger's shape (never from its lane):
  *
  *  - `count`            `hit-nth` with n > 1: hits toward the payoff, "3/6".
