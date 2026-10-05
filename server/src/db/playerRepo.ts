@@ -46,6 +46,7 @@ import type * as schema from './schema';
 import { weaponUpgradeRefundFor } from './weaponUpgradeRefund';
 import { gearUpgradeRefundFor } from './gearUpgradeRefund';
 import { log } from '../log';
+import { refundRetiredLineageCards } from '../systems/player/economy/lineageSync';
 
 export type DB = NodePgDatabase<typeof schema>;
 
@@ -661,6 +662,19 @@ function hydratePlayerSlices(
   // for the load path that keeps it — see this function's docblock.
   if (options.grantRetiredRefunds) {
     refundRetiredUpgradeEssence(row.id, holdsInventory, tracksProgression.essences);
+    // The T1 cards design §26.1 retired (legibility run): read off the save as
+    // WRITTEN, because `normalizeLineageProgressMap` above already dropped their
+    // ids from the live tree. See `refundRetiredLineageCards`.
+    const refund = refundRetiredLineageCards(
+      parseSlice<HoldsInventory>(row.holdsInventory).lineages,
+      tracksProgression,
+    );
+    if (refund.cardIds.length > 0) {
+      log.info(
+        { characterId: row.id, refundedCards: refund.cardIds, essence: refund.essence, shards: refund.shards },
+        'legibility run: refunded retired T1 lineage cards',
+      );
+    }
   }
   tracksProgression.unlockedRecipes = migrateLegacyRecipeIds(tracksProgression.unlockedRecipes);
   const hasPosition = parseSlice<HasPosition>(row.hasPosition);
