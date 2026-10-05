@@ -20,6 +20,11 @@ import { cardWordFor } from '../hud/rhythmReadoutModel';
  * stacking a column of names. The own player's firing also pulses that card's
  * ring on the rhythm readout (`hudBus.notifyCardFired`).
  *
+ * TEACHING ONLY (design §26.4, legibility run). The word plays for a card's first
+ * three firings the player saw, then never: the SERVER counts them (persisted per
+ * character, only while the fight is on screen) and marks those firings
+ * `card-fx.teach`. The client just obeys the flag; it keeps no count of its own.
+ *
  * The caller has already checked `shouldRunClientFx()`, so nothing here is ever
  * started in a hidden tab, where a queued tween would play out on return.
  */
@@ -54,6 +59,8 @@ export function playCardWord(
 ): void {
   if (ev.cardId && ev.playerId === scene.myId) hudBus.notifyCardFired(ev.cardId);
 
+  // Past its three teaching firings a card shows its payoff on the body alone.
+  if (!ev.teach) return;
   const word = cardWordFor(ev.cardId);
   if (!word) return;
   const start = anchorOf(state, ev.playerId);

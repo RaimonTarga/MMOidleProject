@@ -1,0 +1,95 @@
+/* The Upgrade panel (design §26.4; the composite mockup's "Worn items", Stone
+   skin). The page inside it is weaponPage.css. */
+
+.up-root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.up-tabs { padding: 8px 16px 0; }
+
+.up-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px 16px;
+  overflow-y: auto;
+}
+
+.up-item {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 7px 9px;
+  border: 1px solid var(--hud-edge-light);
+  background: var(--hud-material-control);
+  color: var(--hud-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.up-item:hover:not(:disabled),
+.up-item:focus-visible {
+  border-color: var(--hud-primary);
+  box-shadow: inset 0 0 0 1px var(--hud-primary);
+  outline: none;
+}
+.up-item:disabled { cursor: default; }
+.up-item--plain, .up-item--empty { background: var(--hud-material-panel); }
+
+.up-item__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--hud-edge-medium);
+  background: var(--hud-material-inset);
+}
+.up-item__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.up-item__name {
+  color: var(--hud-text);
+  font-family: var(--hud-font-display);
+  font-weight: var(--hud-font-display-weight);
+  font-size: 13px;
+}
+.up-item--page .up-item__name { color: var(--hud-primary-strong); }
+.up-item__sub { color: var(--hud-text-muted); font-size: 11.5px; overflow-wrap: anywhere; }
+
+.up-item__state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  color: var(--hud-text-dim);
+  font-size: 11px;
+}
+.up-item__badge {
+  color: var(--hud-success);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.up-item__plain { color: var(--hud-text-dim); font-size: 11px; white-space: nowrap; }
+
+.up-steps { display: inline-flex; gap: 3px; }
+.up-steps i {
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--hud-primary);
+}
+.up-steps i.is-on { background: var(--hud-primary-strong); }
+.up-steps i.is-next { border-color: var(--hud-success); }
+
+.up-note { margin: 4px 0 0; color: var(--hud-text-dim); font-size: 11px; }
+
+@media (max-width: 480px) {
+  .up-item { grid-template-columns: 40px minmax(0, 1fr); }
+  .up-item__state { grid-column: 2; flex-direction: row-reverse; flex-wrap: wrap-reverse; justify-content: flex-end; align-items: center; gap: 4px 8px; min-width: 0; }
+  .up-item__badge { white-space: normal; }
+}
+
+/* The page brings its own padding and scroller. */
+.crafting-dialog__content.crafting-dialog__content--upgrade { padding: 0; }

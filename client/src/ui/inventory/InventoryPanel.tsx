@@ -65,7 +65,7 @@ export function InventoryPanel({ onClose }: Props) {
                 controls="inventory-stats"
                 onSelect={() => setSection('stats')}
               >
-                Stats
+                Compare
               </DialogTab>
             </DialogTabs>
           )}

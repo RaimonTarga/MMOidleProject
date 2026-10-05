@@ -34,6 +34,7 @@ import {
   CAPSTONE_MATERIALS,
   normalizeLineageProgressMap,
   normalizeAbilityNodeProgressMap,
+  normalizeFiringsTaught,
   CLEARING_NODE_ID,
   WORLD_NODES,
   buildCharacterSummary,
@@ -717,6 +718,9 @@ function hydratePlayerSlices(
       // ids, unknown option ids and active rows pointing at something unowned
       // are dropped, so a save written before an offer changed loads clean.
       abilityNodes: normalizeAbilityNodeProgressMap(tracksProgression.abilityNodes),
+      // The teaching counter (design §26.4). Absent from every save written before
+      // the legibility run; counts clamp to 0..3.
+      cardFiringsTaught: normalizeFiringsTaught(tracksProgression.cardFiringsTaught),
       ...attunement,
     },
     holdsInventory,

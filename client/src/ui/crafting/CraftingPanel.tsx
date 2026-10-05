@@ -4,14 +4,16 @@ import { playerIdAtom } from '../../hud/atoms';
 import { DialogHeader, GameDialog } from '../../hud/primitives';
 import { GameIcon } from '../GameIcon';
 import { craftingSectionIconSource, type CraftingSectionIcon } from '../systemIcons';
+import { UpgradeTab } from '../lineage/UpgradePanel';
 import '../crafting.css';
 
 /**
- * Crafting is one destination: the Make browser. The Upgrade destination that
- * shared this shell is gone with the +N ladder, retired on every slot (design
- * §24.5) — an item is crafted at full power.
+ * The crafting shell's two destinations, each its own menu entry: Make (the
+ * recipe browser) and Upgrade. The +N ladder that Upgrade used to hold is
+ * retired on every slot (design §24.5); since design §26.4 the Upgrade slot
+ * opens on the worn items, and the weapon opens its page there.
  */
-export type CraftTab = 'make';
+export type CraftTab = 'make' | 'upgrade';
 
 interface Props {
   tab: CraftTab;
@@ -20,11 +22,15 @@ interface Props {
 
 export function CraftingPanel({ tab, onClose }: Props) {
   const playerId = useAtomValue(playerIdAtom);
-  const title = 'Crafting';
-  const icon: CraftingSectionIcon = 'forge';
+  const title = tab === 'upgrade' ? 'Upgrade' : 'Crafting';
+  const icon: CraftingSectionIcon = tab === 'upgrade' ? 'upgrade' : 'forge';
 
   return (
-    <GameDialog size="wide" className="crafting-dialog" onClose={onClose}>
+    <GameDialog
+      size="wide"
+      className={tab === 'upgrade' ? 'crafting-dialog upgrade-dialog weapon-page-dialog' : 'crafting-dialog'}
+      onClose={onClose}
+    >
       <DialogHeader
         title={title}
         icon={
@@ -38,15 +44,17 @@ export function CraftingPanel({ tab, onClose }: Props) {
         closeLabel={`Close ${title.toLowerCase()}`}
       />
 
-      {/* Crafting owns its recipe-list scroll. */}
+      {/* Crafting owns its recipe-list scroll; the Upgrade page owns its own. */}
       <div
         id={`craft-panel-${tab}`}
         className={`crafting-dialog__content crafting-dialog__content--${tab}`}
       >
-        {playerId ? (
-          <MakeTab />
-        ) : (
+        {!playerId ? (
           <div className="craft-empty">Not connected.</div>
+        ) : tab === 'upgrade' ? (
+          <UpgradeTab />
+        ) : (
+          <MakeTab />
         )}
       </div>
     </GameDialog>

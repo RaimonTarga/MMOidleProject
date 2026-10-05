@@ -7,6 +7,8 @@ import {
   type EquipmentSlot,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
+import { togglePrimaryOverlay } from '../../input/overlayStack';
+import { useIsMobile } from '../../hud/useIsMobile';
 import {
   activeStanceAtom, equippedRitesAtom, equipmentAtom, itemUpgradesAtom, passivesAtom,
   combatArchetypeAtom, selectedRangeAtom, selectedSubVariantAtom, playerTierAtom,
@@ -21,10 +23,11 @@ interface Props { compare: ComparePin }
 const pctChange = (before: number, after: number) => (before > 0 ? ((after - before) / before) * 100 : 0);
 
 /**
- * The inventory's reference sheet. Nothing selected: your character. A bag
- * item: what equipping it would change. An equipped item: what it gives you.
- * Rows never appear or vanish while comparing, and every effect says whether
- * the numbers above account for it.
+ * The inventory's comparison column. A bag item: what equipping it would
+ * change. An equipped item: what it gives you. Rows never appear or vanish while
+ * comparing, and every effect says whether the numbers above account for it.
+ * Nothing selected: a pointer to the Stats panel, which owns the character sheet
+ * since design §26.4.
  */
 export function StatSheet({ compare }: Props) {
   const equipment = useAtomValue(equipmentAtom);
@@ -42,6 +45,8 @@ export function StatSheet({ compare }: Props) {
   const playerNodeId = useAtomValue(playerNodeIdAtom);
   const lineages = useAtomValue(lineagesAtom);
   const hpFraction = hp / Math.max(1, maxHp);
+  // The Stats panel is a desktop menu entry; the phone's is its Stats tab.
+  const isMobile = useIsMobile();
 
   const defId = compare.shown && ITEM_DATABASE.has(compare.shown) ? compare.shown : null;
   const sheet = useMemo(() => buildStatSheet({
@@ -62,6 +67,31 @@ export function StatSheet({ compare }: Props) {
     if (!def || !slot) return;
     if (sheet.mode === 'contribution') hudBus.requestUnequipItem(slot);
     else hudBus.requestEquipItem(def.id);
+  }
+
+  // Design §26.4: the character sheet left the inventory for the Stats panel.
+  // With nothing picked, this column only says how to compare and where your
+  // numbers live; the comparison and its Equip button stay.
+  if (!def) {
+    return (
+      <div className="inv-stat-sheet inv-stat-sheet--idle" key="character">
+        <div className="inv-stat-sheet__item-header">
+          <div className="inv-stat-sheet__item-row">
+            <span className="inv-stat-sheet__item-name">Compare</span>
+          </div>
+          <div className="inv-sheet__versus">Click an item to see what it would change, and to equip it.</div>
+        </div>
+        <div className="inv-stat-sheet__footer">
+          {isMobile
+            ? <span className="inv-stat-sheet__hint">Your full numbers are under the Stats tab.</span>
+            : (
+              <button type="button" className="inv-stat-sheet__btn" onClick={() => togglePrimaryOverlay('stats')}>
+                Open your Stats
+              </button>
+            )}
+        </div>
+      </div>
+    );
   }
 
   return (

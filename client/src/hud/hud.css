@@ -12,7 +12,6 @@
 #right-sidebar > *,
 #mobile-hud > *,
 #buff-overlay > *,
-#rhythm-overlay > *,
 #ability-overlay > *,
 #target-frame-overlay > *,
 #dungeon-altar-overlay > *,
@@ -1966,7 +1965,8 @@
   .buff-bar-root {
     position: fixed !important;
     top: auto !important;
-    bottom: calc(var(--mhud-bottom-h, 56px) + env(safe-area-inset-bottom, 0px) + 12px) !important;
+    /* Above the territory line (areaInformation.css, design §26.4). */
+    bottom: calc(var(--mhud-bottom-h, 56px) + env(safe-area-inset-bottom, 0px) + 44px) !important;
     left: 6px !important;
     right: auto !important;
     transform: scale(0.6);

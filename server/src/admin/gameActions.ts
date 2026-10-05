@@ -131,6 +131,8 @@ export function resetPlayerProgress(world: World, player: PlayerEntity): GameAct
   player.holdsInventory.lineages = {};
   player.tracksProgression.shards = {};
   player.tracksProgression.capstones = {};
+  // A wiped character is taught its cards again (design §26.4).
+  player.tracksProgression.cardFiringsTaught = {};
   player.usesAutocombat.auto = false;
   clearAutoTraversePath(world, player);
 

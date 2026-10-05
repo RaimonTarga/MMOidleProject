@@ -106,7 +106,7 @@ import {
   abilityCooldownKey, publishAbilityCooldown, techniqueCooldownMs,
 } from '../player/abilities/abilityCooldowns';
 import { ENGAGEMENT_CD, capCd, carryFlag, firstHitFlag, nthCounter } from './lineageKeys';
-import { syncRhythmReadout, type OpenerSpent } from './rhythmReadout';
+import { noteCardFiring, syncRhythmReadout, type OpenerSpent } from './rhythmReadout';
 
 // ── Authored units ───────────────────────────────────────────────────────────
 //
@@ -883,6 +883,9 @@ function fire(site: PayoffSite, firings: readonly LineageFiring[]): number {
       syncRhythmReadout(site.world, site.player);
     }
     applied++;
+    // Teaching and the away count (legibility run, D's one hook): the readout
+    // cannot see a pulse firing on its own, so every firing reports here.
+    const teach = firing.cardId !== undefined && noteCardFiring(site.world, site.player, firing.cardId);
     site.world.pushEvent(site.player.hasPosition.nodeId, {
       kind: 'card-fx',
       playerId: site.player.isPlayer.id,
@@ -894,6 +897,7 @@ function fire(site: PayoffSite, firings: readonly LineageFiring[]): number {
       ...(firing.cardId !== undefined ? { cardId: firing.cardId } : {}),
       ...(drawn.durationMs !== undefined ? { durationMs: drawn.durationMs } : {}),
       ...(drawn.abilityIds !== undefined ? { abilityIds: drawn.abilityIds } : {}),
+      ...(teach ? { teach: true as const } : {}),
     });
   }
   return applied;
