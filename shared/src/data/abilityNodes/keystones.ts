@@ -149,7 +149,7 @@ const trioEntries: [string, Trio][] = [
   ['slam', [
     verb('slam', 1, 'aftershock', 'Aftershock',
       'The ground erupts again at the same spot one second later.',
-      'empowered.quake-ring', 'echo-hit', { paysShare: true }),
+      'empowered.quake-ring', 'echo-hit', { paysShare: true, live: true }),
     verb('slam', 2, 'tremor', 'Tremor',
       'Every body the Slam hits is staggered.',
       'control.knockdown', 'stun', { delivery: DB }),

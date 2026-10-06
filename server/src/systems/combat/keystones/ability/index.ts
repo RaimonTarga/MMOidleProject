@@ -9,7 +9,9 @@
  * | Ability | Verb | Seam it reuses |
  * |---|---|---|
  * | Sweep | Whirlwind | the channelled beam's tick machinery + applyPlayerAoe around the owner |
+ * | Slam | Aftershock | one delayed applyPlayerAoe at the resolved cast position, the rank's radius |
  */
 export * from './registry';
 export * from './scheduledHits';
 export { WHIRLWIND_KEYSTONE } from './whirlwind';
+export { AFTERSHOCK_KEYSTONE } from './aftershock';

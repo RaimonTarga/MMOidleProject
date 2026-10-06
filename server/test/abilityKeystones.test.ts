@@ -411,4 +411,72 @@ function attackLedger(player: PlayerEntity): string {
   assert(name === 'Bleeding Whirlwind of Many I, with Echoes', `the full name, got ${name}`);
 }
 
+// ─── Slam · AFTERSHOCK: the ground erupts again at the same spot ─────────────
+
+{
+  const slam = ABILITY_DATABASE.get('slam')!;
+  const slamEffect = resolveAbilityEffect(slam, { playerTier: 4 });
+  if (slamEffect.kind !== 'cast-strike') throw new Error('Slam is a cast strike');
+  const radius = slamEffect.radius ?? 1;
+
+  // The second eruption lands at the RESOLVED cast position, a beat later, on
+  // whatever stands there then — and it is never an attack.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-aftershock', {
+      abilityId: 'slam', nodes: rows('slam', { packet: 'empowered', keystone: 'aftershock' }),
+    });
+    const target = spawnMonster(world, 430);
+    const spot = { ...target.hasPosition.current };
+    assert(beginAbilityCast(world, player, slam, 1_000), 'the Slam cast begins');
+    updateAbilityCasts(world, player.isCastingAbility!.endsAt);
+    assert(target.hasHealth.hp < target.hasHealth.maxHp, 'Slam itself landed');
+    const pending = pendingKeystoneHits(player, 'aftershock');
+    assert(pending.length === 1, `one aftershock per Slam, got ${pending.length}`);
+    assert(pending[0]!.at?.x === spot.x && pending[0]!.at?.y === spot.y, 'scheduled at the resolved cast position');
+    assert(pending[0]!.radius === radius, "at the rank's own radius");
+
+    // The target walks off; a body arrives on the cracked ground.
+    target.hasPosition.current = { x: spot.x + radius * 5, y: spot.y };
+    const arrival = spawnMonster(world, spot.x, spot.y + radius * 0.4);
+    world.takeNodeEvents(NODE);
+    const ledger = attackLedger(player);
+    const targetBefore = target.hasHealth.hp;
+    updateScheduledKeystoneHits(world, pending[0]!.dueInMs - 1);
+    assert(arrival.hasHealth.hp === arrival.hasHealth.maxHp, 'nothing before the beat');
+    updateScheduledKeystoneHits(world, 1);
+    assert(arrival.hasHealth.hp < arrival.hasHealth.maxHp, 'the ground erupts under whatever stands there now');
+    assert(target.hasHealth.hp === targetBefore, 'the body that walked away is not followed');
+    const events = world.takeNodeEvents(NODE);
+    const erupted = events.filter((e): e is CardFx => e.kind === 'card-fx' && e.fx === ABILITY_KEYSTONE_DEFINITIONS.get('aftershock')!.fx);
+    assert(
+      erupted.length === 1 && erupted[0]!.targetPos?.x === spot.x,
+      'one card-fx for the eruption, drawn at the spot',
+    );
+    assert(
+      events.some((e) => e.kind === 'player-aoe-footprint' && e.radius === radius && e.pos.x === spot.x),
+      'the footprint is the ground it covered',
+    );
+    assert(!player.schedulesKeystoneHits, 'nothing left pending');
+    assert(attackLedger(player) === ledger, 'an eruption is never an attack: no attack event, no hit counter');
+  }
+
+  // On a Conduit the cast is one physical summon's — and so is its one aftershock.
+  {
+    const world = new World();
+    const { player, minions } = conduit(world, 'ks-aftershock-conduit', 'slam',
+      rows('slam', { packet: 'empowered', keystone: 'aftershock' }));
+    const caster = minions[0]!;
+    const target = spawnMonster(world, caster.hasPosition.current.x + 24, caster.hasPosition.current.y);
+    setAttackTarget(world, caster, target.isMonster.id);
+    assert(beginAbilityCast(world, player, slam, 1_000), 'the Conduit begins its Slam');
+    assert(player.isCastingAbility?.casterMinionId === caster.entityId, 'through one physical summon');
+    updateAbilityCasts(world, player.isCastingAbility!.endsAt);
+    assert(
+      pendingKeystoneHits(player, 'aftershock').length === 1,
+      `one aftershock per cast, never one per formation body (${minions.length} summons)`,
+    );
+  }
+}
+
 console.log('abilityKeystones: ok');
