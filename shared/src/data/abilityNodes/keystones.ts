@@ -138,7 +138,7 @@ const trioEntries: [string, Trio][] = [
   ['charge', [
     verb('charge', 1, 'breakthrough', 'Breakthrough',
       'Arriving staggers the target.',
-      'control.knockdown', 'stun', { delivery: DB }),
+      'control.knockdown', 'stun', { delivery: DB, live: true }),
     verb('charge', 2, 'rebound', 'Rebound',
       'If the Charge kills, the rush continues to the next body in reach and lands there.',
       'engagement.lunge', 'echo-hit', { delivery: DB }),

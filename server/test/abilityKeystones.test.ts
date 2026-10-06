@@ -46,13 +46,16 @@ import { setAttackTarget } from '../src/systems/combat/ai/targeting';
 import { refreshAbilityNodeRuntime } from '../src/systems/combat/abilityNodes';
 import { ABILITY_KEYSTONE_MODULES } from '../src/systems/combat/keystones';
 import { armTechnique } from '../src/systems/player/abilities/abilityArming';
-import { beginAbilityCast, updateAbilityCasts } from '../src/systems/player/abilities/abilityCasting';
+import { beginAbilityCast, updateAbilityCasts, updateAbilityCharges } from '../src/systems/player/abilities/abilityCasting';
+import { updateMovement } from '../src/systems/world/movement';
+import { STUN_EFFECT } from '../src/systems/combat/status/stun';
 import { runFormationAttack } from '../src/systems/classes/archetypes/summoner/formationAttack';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
 import {
   abilityDisplayName,
   abilityNodeNameParts,
   getCooldown,
+  getStatusEffect,
   resolveAbilityEffect,
 } from '@mmo-idle/shared';
 import { registerCombatListener } from '../src/systems/combat/engine/combatPipeline';
@@ -475,6 +478,101 @@ function attackLedger(player: PlayerEntity): string {
     assert(
       pendingKeystoneHits(player, 'aftershock').length === 1,
       `one aftershock per cast, never one per formation body (${minions.length} summons)`,
+    );
+  }
+}
+
+// ─── Charge · BREAKTHROUGH: arriving staggers the target ─────────────────────
+
+{
+  const charge = ABILITY_DATABASE.get('charge')!;
+  const BREAKTHROUGH_FX = ABILITY_KEYSTONE_DEFINITIONS.get('breakthrough')!.fx;
+  const stunnedBy = (monster: MonsterEntity, playerId: string): boolean => {
+    const stun = getStatusEffect(monster.tracksCombat, STUN_EFFECT);
+    return !!stun && stun.remainingMs > 0 && stun.sourceId === playerId;
+  };
+
+  // The whole lifecycle: wind up, rush, arrive — and the arrival blow staggers.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-breakthrough', {
+      abilityId: 'charge', nodes: rows('charge', { packet: 'engagement', keystone: 'breakthrough' }), x: 200,
+    });
+    const target = spawnMonster(world, 360);
+    setAttackTarget(world, player, target.isMonster.id);
+    const t0 = 1_000_000;
+    assert(beginAbilityCast(world, player, charge, t0), 'Charge winds up');
+    updateAbilityCasts(world, player.isCastingAbility!.endsAt);
+    assert(player.isChargingAbility !== undefined, 'the wind-up becomes a rush');
+    let now = t0 + 1_000;
+    for (let step = 0; step < 40 && !player.hasArmedAbility; step++) {
+      updateAbilityCharges(world, now);
+      updateMovement(world, 100, now);
+      now += 100;
+    }
+    assert(player.hasArmedAbility?.abilityId === 'charge', 'contact arms the arrival blow');
+    assert(!stunnedBy(target, player.isPlayer.id), 'nothing staggers before the blow lands');
+    world.takeNodeEvents(NODE);
+    const outcome = runPlayerAttack(world, player, target, now, {
+      attackOrigin: player.hasPosition.current,
+      aggroSource: { id: player.isPlayer.id, kind: 'player' },
+    });
+    assert(outcome === 'hit', 'the arrival blow lands');
+    assert(stunnedBy(target, player.isPlayer.id), 'arriving staggers the target');
+    const drawn = cardFx(world).filter((e) => e.fx === BREAKTHROUGH_FX);
+    assert(
+      drawn.length === 1 && drawn[0]!.targetId === target.isMonster.id && (drawn[0]!.durationMs ?? 0) > 0,
+      'one card-fx on the staggered body, with the hold as applied',
+    );
+  }
+
+  // The ladder's own rules: post-stun immunity; a dodged arrival staggers nothing.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-breakthrough-rules', {
+      abilityId: 'charge', nodes: rows('charge', { packet: 'engagement', keystone: 'breakthrough' }),
+    });
+    const target = spawnMonster(world, 430);
+    armTechnique(world, player, 'charge');
+    hit(world, player, target);
+    assert(stunnedBy(target, player.isPlayer.id), 'the arrival staggers');
+    world.takeNodeEvents(NODE);
+    armTechnique(world, player, 'charge');
+    hit(world, player, target);
+    assert(
+      cardFx(world).every((e) => e.fx !== BREAKTHROUGH_FX),
+      'post-stun immunity: a second arrival inside it staggers nothing and draws nothing',
+    );
+
+    const dodger = spawnMonster(world, 470);
+    armTechnique(world, player, 'charge');
+    hit(world, player, dodger, { evadeBlocksDebuffs: true });
+    assert(!stunnedBy(dodger, player.isPlayer.id), 'a dodged arrival lands no stagger');
+  }
+
+  // On a Conduit the summons rush, and the one that arrives delivers it.
+  {
+    const world = new World();
+    const { player, minions } = conduit(world, 'ks-breakthrough-conduit', 'charge',
+      rows('charge', { packet: 'engagement', keystone: 'breakthrough' }));
+    const arriving = minions[1]!;
+    const target = spawnMonster(world, arriving.hasPosition.current.x + 24, arriving.hasPosition.current.y);
+    armTechnique(world, player, 'charge');
+    runFormationAttack(world, player, arriving, target, 5_000);
+    assert(stunnedBy(target, player.isPlayer.id), 'the arriving summon staggers the target');
+    const drawn = cardFx(world).filter((e) => e.fx === BREAKTHROUGH_FX);
+    assert(
+      drawn.length === 1
+        && drawn[0]!.pos.x === arriving.hasPosition.current.x
+        && drawn[0]!.pos.y === arriving.hasPosition.current.y,
+      'drawn from the delivering body, not the owner',
+    );
+    for (const minion of minions) {
+      if (minion !== arriving) runFormationAttack(world, player, minion, target, 5_100);
+    }
+    assert(
+      cardFx(world).every((e) => e.fx !== BREAKTHROUGH_FX),
+      'once per Charge: the other deliveries stagger nothing more',
     );
   }
 }
