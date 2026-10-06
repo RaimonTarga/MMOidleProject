@@ -68,7 +68,11 @@ export const t3CombatEntriesA = [
     classId: 'cadence-root', subVariantId: 'balanced',
     parent: 'cadence-balanced', children: [],
     description: 'Each finisher banks 30% of its damage into a Verdict — a stored pool of execution power that persists across targets. When a target\'s remaining health is at or below your Verdict, your finisher executes it instantly and spends the pool.',
-    packet: 'affliction', // PROVISIONAL (run 3 W1-B, design §4)
+    // Design §22.5 (2026-10-02): retagged Empowered, no effect change. The Verdict is
+    // banked from and spent by the FINISHER, so it pays out on the class mechanic —
+    // the Empowered lane's moment. Nothing in it reads or applies a DoT, which is
+    // why the provisional Affliction tag (run 3 W1-B) did not fit.
+    packet: 'empowered',
     cost: 1, statEffects: {},
     mechanicEffects: { 'cadence.detonation': 1, 'cadence.verdict-bank-pct': 0.30 },
   }],
