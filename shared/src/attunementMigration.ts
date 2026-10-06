@@ -1,6 +1,66 @@
-import { currentAbilityId, normalizeAttunedAbilities, validAbilityIds } from "./abilities";
+import { currentAbilityId, isRetiredAbilityId, normalizeAttunedAbilities, validAbilityIds } from "./abilities";
 import { NO_STANCE_ID, validStanceIds } from "./stances";
 import { isRuneRuleCompatible, normalizeRuneLoadout, type EquippedRule } from "./runeDatabase";
+import { normalizeAbilityNodeProgressMap } from "./systems/abilityNodes";
+import type { AbilityNodeProgress, AbilityNodeProgressMap } from "./data/abilityNodes/types";
+
+type StoredAbilityNodes = Partial<Record<string, Partial<AbilityNodeProgress>>>;
+
+/**
+ * What a save still holds for the abilities the ability pass CUT (design §22.2,
+ * `RETIRED_ABILITY_IDS`): learned, attuned, wired by a `use-ability` Rune rule,
+ * or with node progress. `migrateAttunement` drops all of it silently; the load
+ * path reads this first so it can log one line per character that had any.
+ * Ids are reported as the save spelled them (a renamed id that resolves to a cut
+ * one, `heavy-strike`, is reported as written).
+ */
+export interface RetiredAbilityEntries {
+  known: string[];
+  attuned: string[];
+  wired: string[];
+  nodes: string[];
+}
+
+export function retiredAbilityEntries(raw: {
+  attunedAbilities?: unknown; equippedAbilities?: unknown;
+  knownAbilities?: string[];
+  runesEquipped?: EquippedRule[];
+  abilityNodes?: StoredAbilityNodes;
+}): RetiredAbilityEntries {
+  const retired = (id: unknown): id is string => typeof id === "string" && isRetiredAbilityId(id);
+  const source = (raw.attunedAbilities ?? raw.equippedAbilities ?? {}) as {
+    techniques?: unknown[]; guards?: unknown[]; technique?: unknown; guard?: unknown;
+  };
+  const attunedRaw = [
+    ...(Array.isArray(source.techniques) ? source.techniques : [source.technique]),
+    ...(Array.isArray(source.guards) ? source.guards : [source.guard]),
+  ];
+  const rules = Array.isArray(raw.runesEquipped) ? raw.runesEquipped : [];
+  return {
+    known: [...new Set((raw.knownAbilities ?? []).filter(retired))],
+    attuned: [...new Set(attunedRaw.filter(retired))],
+    wired: [...new Set(rules.flatMap((rule) =>
+      rule?.actionId === "use-ability" && retired(rule.targetAbilityId) ? [rule.targetAbilityId] : []))],
+    nodes: Object.keys(raw.abilityNodes ?? {}).filter(retired),
+  };
+}
+
+/** True when {@link retiredAbilityEntries} found anything to drop. */
+export function hasRetiredAbilityEntries(entries: RetiredAbilityEntries): boolean {
+  return entries.known.length + entries.attuned.length + entries.wired.length + entries.nodes.length > 0;
+}
+
+/**
+ * Node progress with every cut ability's tree dropped, then normalized the way
+ * every load normalizes it (unknown options and stale active rows go too), so a
+ * caller that spreads this over an already-normalized map loses nothing.
+ */
+function migrateAbilityNodes(stored: StoredAbilityNodes | undefined): AbilityNodeProgressMap {
+  const kept = Object.fromEntries(
+    Object.entries(stored ?? {}).filter(([abilityId]) => !isRetiredAbilityId(abilityId)),
+  );
+  return normalizeAbilityNodeProgressMap(kept);
+}
 
 /** The only reader of retired ability slot addressing. Never used by live combat. */
 export function migrateAttunement(raw: {
@@ -8,6 +68,7 @@ export function migrateAttunement(raw: {
   knownAbilities?: string[]; knownStances?: string[]; attunedStances?: string[];
   equippedStances?: { default?: string | null; reactive?: string | null };
   runesEquipped?: EquippedRule[];
+  abilityNodes?: StoredAbilityNodes;
 }) {
   const knownAbilities = validAbilityIds(raw.knownAbilities ?? []);
   const knownStances = validStanceIds(raw.knownStances ?? []);
@@ -36,11 +97,20 @@ export function migrateAttunement(raw: {
       const targetAbilityId = bindings[rule.actionId];
       return targetAbilityId ? [{ conditionId: rule.conditionId, actionId: "use-ability", targetAbilityId }] : [];
     }
-    if (rule.actionId === "use-ability" && typeof rule.targetAbilityId === "string") return [{ ...rule, targetAbilityId: currentAbilityId(rule.targetAbilityId) }];
+    if (rule.actionId === "use-ability" && typeof rule.targetAbilityId === "string") {
+      // A rule wiring a CUT ability goes with the ability (design §22.2).
+      if (isRetiredAbilityId(rule.targetAbilityId)) return [];
+      return [{ ...rule, targetAbilityId: currentAbilityId(rule.targetAbilityId) }];
+    }
     if (rule.actionId === "switch-stance" && !rule.targetStanceId && raw.equippedStances?.reactive) return [{ ...rule, targetStanceId: raw.equippedStances.reactive }];
     return [rule];
   });
   const attunedStances = validStanceIds(legacy ? [defaults, ...rules.filter(r => r.actionId === "switch-stance" && isRuneRuleCompatible(r)).map(r => r.targetStanceId)].filter((id): id is string => !!id && id !== NO_STANCE_ID) : raw.attunedStances ?? []).filter(id => knownStances.includes(id));
   const defaultStance = defaults && attunedStances.includes(defaults) ? defaults : null;
-  return { knownAbilities, knownStances, attunedAbilities, attunedStances, equippedStances: { default: defaultStance }, activeStance: defaultStance, runesEquipped: normalizeRuneLoadout(rules) };
+  return {
+    knownAbilities, knownStances, attunedAbilities, attunedStances,
+    equippedStances: { default: defaultStance }, activeStance: defaultStance,
+    runesEquipped: normalizeRuneLoadout(rules),
+    abilityNodes: migrateAbilityNodes(raw.abilityNodes),
+  };
 }

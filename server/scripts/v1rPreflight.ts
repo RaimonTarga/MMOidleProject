@@ -36,7 +36,7 @@ for (const [arm, build] of Object.entries(V1R_BUILDS)) {
   const player = world.getPlayerEntity(id)!;
   if (arm === 'focus') assert(craftRuneRecipe(world, player, 'rune-recipe-focus-lowest-hp').success);
   if (arm === 'pursuit') {
-    assert(craftAbilityRecipe(world, player, 'ability-recipe-hamstring').success);
+    assert(craftAbilityRecipe(world, player, 'ability-recipe-binding-strike').success);
     assert(craftRecipe(world, player, 'desert-boots-t2').success);
     for (let plus = 1; plus <= 5; plus++) assert(upgradeItem(world, player, 'desert-boots-t2').success, `Boots +${plus}`);
     assert(equipItem(world, player, 'desert-boots-t2'));

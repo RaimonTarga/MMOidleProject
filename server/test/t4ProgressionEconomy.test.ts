@@ -246,12 +246,12 @@ for (const id of HYBRID_IDS) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 9. Abilities: exact costs 300/320/380/420, no catalysts, gates/effects unchanged
+// 9. Abilities: exact costs 300/380/420, no catalysts, gates/effects unchanged
+//    (Snipe, 320, re-homed to T2 Desert 3 by the ability pass, design §22.8)
 // ═══════════════════════════════════════════════════════════════════════════
 
 const EXPECTED_ABILITIES: Record<string, { color: string; amount: number; group: string; level: number }> = {
   "ability-recipe-disengage": { color: "green", amount: 300, group: "trench", level: 3 },
-  "ability-recipe-snipe": { color: "purple", amount: 320, group: "graveyard", level: 3 },
   "ability-recipe-recuperate": { color: "green", amount: 380, group: "trench", level: 5 },
   "ability-recipe-stunning-strike": { color: "purple", amount: 420, group: "graveyard", level: 5 },
 };

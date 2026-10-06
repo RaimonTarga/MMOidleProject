@@ -63,7 +63,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'ability-bramble': b('Bramble', 'Thorned plating: you gain flat plating and return damage to anything that hits you, for the duration.'),
   'ability-second-wind': b('Recovery skill', 'A Recovery window is open — a share of your Recovery rate is switched on, healing you over the duration. What that converts to in HP depends on your Recovery stat.'),
   'ability-second-wind-2': b('Recovery skill', 'Your second Recovery window is open. Second Wind (strong and short) and Recuperate (weak and long) can be held together and run independently.'),
-  'ability-frenzy': b('Frenzy', 'Your attack speed is raised for the window.'),
+  'ability-sidestep': b('Sidestep', 'You slipped aside: for the window, a chance to dodge each hit outright on top of whatever your gear gives you, and a burst of move speed that ends with it.'),
   'ability-imbue': b('Imbued', 'Lightning is stored in your hands. Each attack that lands spends one charge and carries bonus damage with it. There is no timer — the charges wait as long as you need them to, and the number on the tile is how many attacks are left.'),
   'ability-control-resist': b('Unbound', 'You broke free, and incoming control is shortened for a moment afterward so you are not immediately re-caught.'),
 
@@ -216,7 +216,6 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   brittle: d('Brittle', 'Each Brittle stack can strip the target’s flat plating and damage reduction, so more of your hits get through.'),
   'dr-shatter': d('Shattered', 'Brittle has been stacked to its shatter threshold: the target’s damage reduction is stripped to nothing for the window. Plating still applies, but the percentage reduction is gone.'),
   vulnerability: d('Vulnerable', 'The target takes amplified damage from every source while this holds.'),
-  'expose-weakness': d('Exposed', 'Your Technique has opened the target up: it takes increased damage from everything, your party included, for the duration.'),
   'summoner-harried': d('Accused', 'Your summons have marked this target. What deepens it is the number of DISTINCT summons on it, not how often they hit.'),
   'summoner-withering-chorus': d('Chorus', 'Each distinct summon voice on the target deepens the affliction.'),
   'enemy-barrier': { title: 'Barrier', kind: 'buff', help: 'A temporary absorb shell is protecting this monster. Damage drains the shell before health; when a reforming clock is shown, sustained pressure is what keeps it broken.' },

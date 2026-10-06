@@ -116,7 +116,7 @@ function drainBarrier(p: ReturnType<typeof withCharm>) {
   const p = withCharm("jungle-charm-t4", "brace");
   fire();
   assert.equal(getResource(p.tracksCombat, "recovery.rampMs"), p.usesSkills.passives["guard.recovery-ramp-advance-ms"], "Brace advances the ramp");
-  const t = withCharm("jungle-charm-t4", "frenzy", "techniques");
+  const t = withCharm("jungle-charm-t4", "imbue-lightning", "techniques");
   fire();
   assert.equal(getResource(t.tracksCombat, "recovery.rampMs"), 0, "a Technique never triggers a charm hook");
 }

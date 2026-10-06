@@ -6,7 +6,7 @@
  *      carries no damage-reduction rider;
  *   2. Break Free fires WHILE hard-controlled — the one trigger that has to work
  *      when the player cannot act — and its resistance shortens the next stun;
- *   3. Frenzy's attack speed lives in a status effect, never in `attackCooldown`;
+ *   3. (retired with Frenzy, design §22.2);
  *   4. two Recovery Guards run on independent sources, so the strong/short one
  *      cannot ride the weak/long one's window;
  *   5. an ability's ENGAGEMENT RANGE lets a cast open on something the player
@@ -17,7 +17,6 @@
 import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   ABILITY_CONTROL_RESIST_EFFECT_ID,
-  ABILITY_FRENZY_EFFECT_ID,
   GAME_CONFIG,
   STARTER_RUNE_IDS,
   applyStatusEffect,
@@ -43,7 +42,6 @@ import { syncPlayerControlLockout } from "../src/systems/combat/status/playerCon
 import { ABILITY_DATABASE } from "@mmo-idle/shared";
 import { World } from "../src/world/World";
 import { takeWorldLogEvents } from "../src/world/worldLog";
-import { mirrorHpForecast } from "../src/systems/defense/core/hpForecast";
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -233,74 +231,9 @@ initCombatSystems();
   );
 }
 
-// ── 3. Frenzy never writes the attack-cooldown stat ──────────────────────────
-
-{
-  const world = new World();
-  const player = world.attachPlayerEntity(
-    makePlayerSlices("frenzy-player", ["frenzy"], []),
-    "frenzy-player",
-  );
-  player.usesAutocombat.auto = true;
-  const target = world.createMonster("node-5-5", "plains-slime", { x: 410, y: 400 });
-  if (!target) throw new Error("failed to create target");
-  setAttackTarget(world, player, target.isMonster.id);
-
-  const baseCd = player.performsAttack.attackCooldown;
-  fireWithReferenceWiring(world, Date.now());
-
-  const buff = getStatusEffect(player.tracksCombat, ABILITY_FRENZY_EFFECT_ID);
-  assert(!!buff, "Frenzy should apply its attack-speed window");
-  assert(buff!.data["attackSpeedPct"] > 0, "the window must carry its magnitude");
-  // The Zealot's Frenzy mutates attackCooldown from a cached base. A second
-  // mutator would read that output as ITS clean base and the two would ratchet
-  // the cooldown toward zero, so this one stays a read at the cadence gate.
-  assert(
-    player.performsAttack.attackCooldown === baseCd,
-    "Frenzy must not write the attack-cooldown stat",
-  );
-  // An instant Technique is self-facing: it must not occupy the armed channel.
-  assert(
-    player.hasArmedAbility === undefined,
-    "an instant Technique must not arm the next attack",
-  );
-
-  // The window's LENGTH must reach the client. Frenzy's mechanics were always
-  // correct, but its only in-world cue was a ~300 ms burst standing in for a
-  // four-second buff, so the ability read as doing nothing at all. The client
-  // cannot resolve an authored rank, so the duration rides the event.
-  // The STAT SHEET must move too. Temporary haste is deliberately never written
-  // into `attackCooldown`, so the HUD reads a mirrored multiplier instead — and
-  // when that mirror did not exist, the Attack Speed row showed base cadence
-  // forever and Frenzy looked like it did nothing at all. This is the assertion
-  // that keeps the gate and the display reading the same number.
-  assert(
-    player.performsAttack.attackCooldown === baseCd,
-    "the base cadence stat must still be untouched",
-  );
-  mirrorHpForecast(world);
-  const cadence = player.hasStatus?.attackCadenceMult ?? 1;
-  assert(
-    cadence < 1,
-    `Frenzy must show up in the mirrored cadence multiplier (got ${cadence})`,
-  );
-  const expected = 1 / (1 + buff!.data["attackSpeedPct"]!);
-  assert(
-    Math.abs(cadence - expected) < 0.0001,
-    `the mirror must match the gate's own maths (got ${cadence}, expected ${expected})`,
-  );
-
-  const events = world.takeNodeEvents("node-5-5");
-  const armed = events.find(
-    (e) => e.kind === "player-technique-armed" && e.ability === "frenzy",
-  );
-  assert(!!armed, "firing Frenzy must announce itself to the node");
-  assert(
-    armed!.kind === "player-technique-armed" &&
-      armed!.durationMs === buff!.data["totalMs"],
-    "the armed event must carry the real window length for the sustained FX",
-  );
-}
+// ── 3. (retired) ─────────────────────────────────────────────────────────────
+// Frenzy's attack-speed window was pinned here until the ability pass cut Frenzy
+// (design §22.2: Tempo and Kill chain `speed-window` payoffs own the job).
 
 // ── 4. Two Recovery Guards, two independent windows ──────────────────────────
 
@@ -378,14 +311,14 @@ initCombatSystems();
   // walk with the fight, because auto-movement is rune-driven.
   const world2 = new World();
   const player2 = world2.attachPlayerEntity(
-    makePlayerSlices("power-player", ["power-strike"], []),
+    makePlayerSlices("power-player", ["slam"], []),
     "power-player",
   );
   const near = world2.createMonster("node-5-5", "plains-slime", { x: 410, y: 400 });
   if (!near) throw new Error("failed to create target");
   assert(
-    beginAbilityCast(world2, player2, ABILITY_DATABASE.get("power-strike")!, 1_000),
-    "Power Strike should open on an adjacent target",
+    beginAbilityCast(world2, player2, ABILITY_DATABASE.get("slam")!, 1_000),
+    "Slam should open on an adjacent target",
   );
   assert(
     !holdsPositionWhileCasting(player2),

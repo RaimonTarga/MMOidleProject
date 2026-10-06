@@ -121,3 +121,17 @@ export function startTechniqueCooldown(
     refundMs > 0 ? Math.min(TECHNIQUE_TEMPO_MIN_CYCLE_MS, cooldownMs) : 0,
   );
 }
+
+/**
+ * A Technique that earned its WHOLE cooldown back (a Cull kill, design §22.8):
+ * ready again now. Published like every other cooldown change the client could
+ * not predict.
+ */
+export function refundTechniqueCooldown(
+  world: World,
+  player: PlayerEntity,
+  ability: AbilityDef,
+): void {
+  setCooldown(player.tracksCombat, abilityCooldownKey(ability.id), 0);
+  publishAbilityCooldown(world, player, ability.id, 0, techniqueCooldownMs(player, ability));
+}

@@ -144,7 +144,7 @@ async function main() {
     const initial = observedBuild(obs.requireSelf());
     const empty: DesiredBuild = { abilities: { techniques: [], guards: [] }, runeRules: [], stances: { attuned: [], default: null }, rites: [] };
     await applyBuild(empty, control);
-    const abilities: DesiredBuild = { ...empty, abilities: { techniques: ["sweep", "expose-weakness"], guards: ["second-wind"] } };
+    const abilities: DesiredBuild = { ...empty, abilities: { techniques: ["sweep", "slam"], guards: ["second-wind"] } };
     await applyBuild(abilities, control);
     // applyBuild wires each attuned ability's reference Rune rule.
     assert.equal(buildKey(observedBuild(obs.requireSelf())),

@@ -30,7 +30,7 @@ export const CAMPAIGN_READINESS_ROUTES: Route[] = CAMPAIGN_PROFILES.map(profile 
     { type: "configureBuild", build: structuredClone(profile.bossCandidate), label: `${profile.id}: boss configuration only` },
     // The final assertion keeps completion from skipping the preceding build
     // edits if stance acquisition already took Plains past level 8.
-    { type: "assert", condition: { type: "abilityEquipped", abilityId: "expose-weakness" },
+    { type: "assert", condition: { type: "abilityEquipped", abilityId: "slam" },
       message: "readiness ended after exact boss-candidate configuration" },
   );
   return {

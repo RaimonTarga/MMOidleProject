@@ -46,7 +46,7 @@ const ESCORTS={'bone-crawler':{hp:1235,attack:85},'plague-hound':{hp:1901,attack
   assert.equal(a.activeStance,d.stance,`${ready.cell}: applied stance != declared`);
   assert.equal(d.runeRules.length,5,`${ready.cell}: reference carries five rules`);
   assert.equal(a.runesEquipped.length,5,`${ready.cell}: applied rules != declared`);
-  assert.deepEqual(d.abilities.techniques,['expose-weakness'],`${ready.cell}: technique drift`);
+  assert.deepEqual(d.abilities.techniques,['slam'],`${ready.cell}: technique drift`);
   assert.deepEqual(d.abilities.guards,['second-wind','brace'],`${ready.cell}: guard drift`);
   assert(ready.runicPoints.cost<=ready.runicPoints.budget,
    `${ready.cell}: ${ready.runicPoints.cost} RP against ${ready.runicPoints.budget}`);

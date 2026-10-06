@@ -5,7 +5,7 @@ import type { DesiredBuild } from "../loadout/loadout";
 /** Travel remains 28RP; fixed encounters use all31RP at the GM78 entry budget. */
 export const V1P_TUNDRA_BUILD: DesiredBuild = {
   ...NIGHT2_TRAVEL_BUILD,
-  abilities: { techniques: ["sweep", "hamstring"], guards: ["second-wind", "brace"] },
+  abilities: { techniques: ["sweep", "binding-strike"], guards: ["second-wind", "brace"] },
   runeRules: NIGHT2_TRAVEL_BUILD.runeRules.filter(r => r.conditionId !== "while-traveling"),
 };
 const sanctuary = { kind: "node" as const, nodeId: "node-t3-sanctuary" };
@@ -19,7 +19,7 @@ export const CAMPAIGN_T3_V1P_TUNDRA: Route = {
   description: "Earn Hamstring and Desert Boots+5, then qualify Wisp counterplay in natural Tundra farming and recovered return.",
   steps: [
     { type: "configureBuild", build: NIGHT2_TRAVEL_BUILD },
-    { type: "learnAbility", recipeId: "ability-recipe-hamstring", abilityId: "hamstring", slot: "technique", attune: false,
+    { type: "learnAbility", recipeId: "ability-recipe-binding-strike", abilityId: "binding-strike", slot: "technique", attune: false,
       farmAt: { kind: "biome", biomeGroup: "jungle", tier: 2 }, stepTimeoutMs: 300_000 },
     { type: "craft", recipeIds: ["desert-boots-t2"],
       farmAt: { kind: "biome", biomeGroup: "desert", tier: 2 }, stepTimeoutMs: 300_000 },

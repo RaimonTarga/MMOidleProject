@@ -51,7 +51,7 @@ function slices(id: string, abilityId: string): PersistedPlayerSlices {
 initCombatSystems();
 
 // One per offensive execution shape a Conduit can press from the hotbar.
-for (const abilityId of ['sweep', 'quick-strike', 'hamstring', 'power-strike', 'charge']) {
+for (const abilityId of ['sweep', 'binding-strike', 'slam', 'charge']) {
   const world = new World();
   const id = `manual-${abilityId}`;
   const player = world.attachPlayerEntity(slices(id, abilityId), id);

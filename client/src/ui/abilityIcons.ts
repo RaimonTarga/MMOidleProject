@@ -9,7 +9,6 @@ import { conceptAbilityIconSource } from "./conceptIcons";
  */
 const APPROVED_ABILITY_ICON_FRAMES = new Map<string, string>([
   ["sweep", "UI_icons/abilities/sweep.png"],
-  ["expose-weakness", "UI_icons/abilities/expose-weakness.png"],
   ["cleanse", "UI_icons/abilities/cleanse.png"],
   ["brace", "UI_icons/abilities/brace.png"],
 ]);

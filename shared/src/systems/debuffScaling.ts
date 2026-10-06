@@ -51,8 +51,6 @@ export interface ScalableDebuff {
 export const SCALABLE_DEBUFFS: Readonly<Record<string, ScalableDebuff>> = {
   // Cadence Cursed Finale + the Plague Axe dead swing.
   'vulnerability':   { fields: { damageMultiplier: 'multiplier' } },
-  // Expose Weakness (Technique ability).
-  'expose-weakness': { fields: { damageTakenPct: 'fraction' } },
   // Frost brittle + the weapon brittle shred. Both are per-stack armour strip.
   'brittle':         { fields: { platingPerStack: 'fraction', drPerStack: 'fraction' } },
   // Weapon brittle-shatter DR strip — a pure window, no magnitude of its own.

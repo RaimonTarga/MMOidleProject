@@ -20,7 +20,7 @@
 import {
   ABILITY_CONTROL_RESIST_EFFECT_ID,
   ABILITY_DATABASE,
-  ABILITY_FRENZY_EFFECT_ID,
+  ABILITY_SIDESTEP_EFFECT_ID,
   CHARGE_MIN_GAP_PX,
   GAME_CONFIG,
   abilityActsWhileControlled,
@@ -37,10 +37,11 @@ import {
   resolveAbilityEffect,
   resolveAbilityEffectWithPassives,
   setCooldown,
+  sidestepWindow,
   type AbilityDef,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
-import type { PlayerEntity } from "../../../ecs/entity";
+import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import { getAbilityRuneTargets, getTimedAbilityRuneTargets } from "../../combat/ai/runeConfig";
 import {
   activePlayerRoots,
@@ -59,6 +60,8 @@ import { beginAbilityCast } from "./abilityCasting";
 import { applyBrambleGuard } from "./abilityBramble";
 import { abilityTarget, gapToTarget } from "./abilityTargeting";
 import { armTechnique } from "./abilityArming";
+import { afflictionTechniqueHasWork } from "./abilityAffliction";
+import { applyImbueWindow } from "./abilityImbue";
 import { usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
 import { formationChargeHasGap } from "./formationCharge";
 import { actorFromPlayer } from "../../../world/worldLogActors";
@@ -126,8 +129,8 @@ export function updateAbilityFiring(world: World, now: number): void {
     // priority — and stop at the first one that CLAIMS the channel, so
     // arbitration is deterministic when several rune conditions go valid at once.
     //
-    // An `instant` Technique (Frenzy) is self-facing and claims nothing, so it
-    // neither blocks nor is blocked by an armed charge sitting on the channel.
+    // An `instant` Technique (Imbue Lightning) is self-facing and claims nothing,
+    // so it neither blocks nor is blocked by an armed charge sitting on the channel.
     let offensiveClaimed = false;
     for (const abilityId of techniques) {
       if (offensiveClaimed && ABILITY_DATABASE.get(abilityId)?.shape !== "instant") continue;
@@ -334,8 +337,8 @@ function maybeFireTechnique(
   ) return DECLINED_TECHNIQUE;
 
   // A self-facing offensive buff is not an attack: it neither waits for the
-  // armed/cast channel nor occupies it, so Frenzy can go up while Quick Strike
-  // is still waiting for a hit to consume it.
+  // armed/cast channel nor occupies it, so Imbue Lightning can open its window
+  // while Sweep is still waiting for a hit to consume it.
   if (ability.shape === "instant") {
     if (getCooldown(player.tracksCombat, cdKey) > 0) return DECLINED_TECHNIQUE;
     if (!options.manual && !autoFireGateOpen(world, player, ability)) return DECLINED_TECHNIQUE;
@@ -347,16 +350,12 @@ function maybeFireTechnique(
     startTechniqueCooldown(world, player, ability);
     // An instant Technique resolves the moment it fires, so firing IS landing.
     onTechniqueResolved(world, player, ability);
-    // Carry the window length so the client can sustain an in-world cue for the
-    // ability's REAL duration. Resolved here rather than looked up client-side
-    // because the authored rank is the server's to interpret.
-    const windowEffect = resolveTechniqueEffect(player, ability);
+    // Imbue's window is spent in hits, not seconds, so the event carries no
+    // `durationMs`: a timed cue would lie about how long it lasts.
     world.pushEvent(player.hasPosition.nodeId, {
       kind: "player-technique-armed",
       playerId: player.isPlayer.id,
       ability: abilityId,
-      durationMs:
-        windowEffect.kind === "attack-speed" ? windowEffect.durationMs : undefined,
     });
     return { activated: true, claimed: false };
   }
@@ -445,6 +444,11 @@ function maybeFireTechnique(
     return { activated: true, claimed: true };
   }
 
+  // Armed Contagion declines to arm with nothing to spread or nowhere to spread
+  // it — the rule the cast had before its wind-up, now before the arming (a
+  // situational Technique never burns its cooldown on nothing).
+  if (!armedTechniqueHasWork(world, player, ability, options.currentTargetOnly)) return DECLINED_TECHNIQUE;
+
   armTechnique(world, player, abilityId);
   startTechniqueCooldown(world, player, ability);
 
@@ -489,13 +493,8 @@ function resolveTechniqueEffect(player: PlayerEntity, ability: AbilityDef) {
 }
 
 /**
- * Instant Techniques — today, Frenzy.
- *
- * The attack-speed window is stored as a STATUS EFFECT and read at the attack
- * cadence gate (`combat.ts`), never written into `performsAttack.attackCooldown`.
- * Mutating the stat is how the Zealot Frenzy works, and two mutators that each
- * cache "the clean base" would ratchet against each other; the frost-ramp slow
- * already proved the multiplier-at-the-gate shape is the safe one.
+ * Instant Techniques — today, Imbue Lightning (instant since the ability pass,
+ * design §22.9): the charge window opens the moment it is activated.
  */
 function applyInstantTechnique(
   world: World,
@@ -503,15 +502,34 @@ function applyInstantTechnique(
   ability: AbilityDef,
 ): void {
   const effect = resolveTechniqueEffect(player, ability);
-  if (effect.kind !== "attack-speed") return;
-  applyStatusEffect(player.tracksCombat, {
-    id: ABILITY_FRENZY_EFFECT_ID,
-    maxStacks: 1,
-    remainingMs: effect.durationMs,
-    refreshable: true,
-    sourceId: player.isPlayer.id,
-    data: { totalMs: effect.durationMs, attackSpeedPct: effect.attackSpeedPct },
-  });
+  if (effect.kind === "imbue") applyImbueWindow(world, player, ability);
+}
+
+/**
+ * Whether an ARMED Technique has something to act on before it arms. Only armed
+ * Contagion is situational: with no afflictions on the target, or no body to
+ * spread them to, the spread would be a cooldown spent on nothing.
+ */
+function armedTechniqueHasWork(
+  world: World,
+  player: PlayerEntity,
+  ability: AbilityDef,
+  currentTargetOnly = false,
+): boolean {
+  if (resolveTechniqueEffect(player, ability).kind !== "spread-dots") return true;
+  // The rider lands on whatever the next hit strikes: the player's own target,
+  // or — for a Conduit, whose summons deliver it — any summon's engaged target.
+  const candidates: MonsterEntity[] = [];
+  const own = abilityTarget(world, player, ability, currentTargetOnly);
+  if (own) candidates.push(own);
+  if (usesSummonTechniques(player)) {
+    for (const id of player.summonsMinions?.minionIds ?? []) {
+      const targetId = world.getMinionEntity(id)?.hasAttackTarget?.targetId;
+      const target = targetId ? world.getMonsterEntity(targetId) : undefined;
+      if (target && target.hasPosition.nodeId === player.hasPosition.nodeId) candidates.push(target);
+    }
+  }
+  return candidates.some((target) => afflictionTechniqueHasWork(world, player, ability, target));
 }
 
 /** Returns true when the Guard activated (and therefore claimed the window). */
@@ -529,7 +547,7 @@ function maybeFireGuard(
   // One activation per decision window — ongoing buffs still overlap freely.
   if (getCooldown(player.tracksCombat, GUARD_WINDOW_KEY) > 0) return false;
   if (fctx.hardControlled && !abilityActsWhileControlled(ability)) return false;
-  if (!guardEffectCanFire(player, ability, fctx)) return false;
+  if (!guardEffectCanFire(world, player, ability, fctx)) return false;
   if (!manual && !autoFireGateOpen(world, player, ability)) return false;
 
   // Charm Guard-ability amplifiers. Only present while an amplifying charm is
@@ -598,6 +616,8 @@ function applyGuardEffect(
     applyGuardHeal(player, ability, effect.recoveryPct, effect.durationMs);
   } else if (effect.kind === "bramble") {
     applyBrambleGuard(player, effect.platingBonus, effect.reflectFlat, effect.durationMs);
+  } else if (effect.kind === "dodge-window") {
+    applySidestep(player, ability);
   }
   // Technique effect kinds are ignored here — they are applied on the offensive
   // channel, never as a Guard immediate.
@@ -650,11 +670,15 @@ function applyBreakFree(
 }
 
 function guardEffectCanFire(
+  world: World,
   player: PlayerEntity,
   ability: AbilityDef,
   fctx: FireContext,
 ): boolean {
   const effect = abilityRankAt(ability, player.tracksProgression.playerTier).effect;
+  // Sidestep dodges what is about to hit you: with nothing in reach there is
+  // nothing to dodge, and the window would be a cooldown spent on air.
+  if (effect.kind === "dodge-window") return sidestepHasThreat(world, player);
   if (effect.kind === "heal") {
     return player.hasHealth.hp < player.hasHealth.maxHp - 0.5;
   }
@@ -663,6 +687,43 @@ function guardEffectCanFire(
   if (effect.kind === "break-free") return fctx.controlled;
   if (effect.kind === "cleanse") return fctx.hasHarmfulDebuff;
   return true;
+}
+
+/**
+ * Something Sidestep could dodge: a living monster in the player's node within
+ * the player's own reach. Reach rather than aggro, so a ranged build fighting at
+ * range still has something to step away from, and an empty field has nothing.
+ */
+function sidestepHasThreat(world: World, player: PlayerEntity): boolean {
+  return world.collision.bestTargetInReach(
+    player,
+    world.monsterEntitiesInNode(player.hasPosition.nodeId),
+    player.performsAttack.attackRange,
+  ) !== null;
+}
+
+/**
+ * Sidestep (design §22.8): an evasion window and a move-speed burst on ONE
+ * status, so the burst ends exactly when the window does. Both magnitudes come
+ * from the lineage magnitude table (`sidestepWindow`); the evade is rolled by
+ * `defense/mitigation/evasion.ts` beside any `evasion-window` payoff, and the
+ * speed is a movement layer in `world/movement.ts`.
+ */
+function applySidestep(player: PlayerEntity, ability: AbilityDef): void {
+  const window = sidestepWindow(ability, player.tracksProgression.playerTier);
+  if (window.durationMs <= 0) return;
+  applyStatusEffect(player.tracksCombat, {
+    id: ABILITY_SIDESTEP_EFFECT_ID,
+    maxStacks: 1,
+    remainingMs: window.durationMs,
+    refreshable: true,
+    sourceId: player.isPlayer.id,
+    data: {
+      totalMs: window.durationMs,
+      evasionPct: window.evasionPct,
+      moveSpeedPct: window.moveSpeedPct,
+    },
+  });
 }
 
 /**

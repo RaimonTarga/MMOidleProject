@@ -3,7 +3,7 @@ import type { Route, RouteStep } from "../route/types";
 import { t2Runes, t2MaxLevel, T2_PROGRESSION_ORDER } from "./t2Common";
 
 export const spiritBossBuild = (technique: string): DesiredBuild => ({
-  abilities: { techniques: technique === "sweep" ? ["sweep", "expose-weakness"] : [technique],
+  abilities: { techniques: technique === "sweep" ? ["sweep", "slam"] : [technique],
     guards: technique === "sweep" ? ["second-wind"] : ["second-wind", "brace"] },
   runeRules: t2Runes("ranged-orbit"),
   stances: { attuned: ["defensive-stance"], default: "defensive-stance" }, rites: [],
@@ -13,7 +13,7 @@ export const spiritBossBuild = (technique: string): DesiredBuild => ({
 export const CAMPAIGN_T2_BOSS_ROUTES: Route[] = [
   { group: "plains", weapon: "ruinous-axe", technique: "sweep" },
   { group: "plains", weapon: "gale-needle", technique: "sweep" },
-  { group: "forest", weapon: "ruinous-axe", technique: "expose-weakness" },
+  { group: "forest", weapon: "ruinous-axe", technique: "slam" },
 ].map(({ group, weapon, technique }) => {
   const tag = `v1i:spirit:${group}:${weapon}`;
   const kit = [weapon, "cave-vest-t2", "mountain-charm-t2", "plains-boots-t2"];

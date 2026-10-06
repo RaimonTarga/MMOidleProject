@@ -84,9 +84,9 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
       runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [],
       runesEquipped: [],
-      knownAbilities: ["hamstring", "power-strike", "snipe", "frenzy", "brace"],
+      knownAbilities: ["binding-strike", "slam", "snipe", "imbue-lightning", "brace"],
       attunedAbilities: {
-        techniques: ["hamstring", "power-strike", "snipe", "frenzy"],
+        techniques: ["binding-strike", "slam", "snipe", "imbue-lightning"],
         guards: ["brace"],
       },
       knownStances: ["offensive-stance", "defensive-stance", "tanking-stance"],
@@ -214,7 +214,7 @@ initCombatSystems();
 {
   const world = new World();
   const player = world.attachPlayerEntity(makePlayerSlices("ability-auto-ownership"), "ability-auto-ownership");
-  player.tracksProgression.attunedAbilities = { techniques: ["frenzy"], guards: [] };
+  player.tracksProgression.attunedAbilities = { techniques: ["imbue-lightning"], guards: [] };
   wireReferenceAbilities(player);
   const target = world.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 });
   if (!target) throw new Error("auto ownership target setup failed");
@@ -222,14 +222,14 @@ initCombatSystems();
 
   fireAbilities(world, 900);
   assert(
-    getCooldown(player.tracksCombat, abilityCooldownKey("frenzy")) === 0,
+    getCooldown(player.tracksCombat, abilityCooldownKey("imbue-lightning")) === 0,
     "Auto-off must suppress automatic ability activation",
   );
 
   player.fightsWhileTraveling = { startedAtMs: 901 };
   fireAbilities(world, 901);
   assert(
-    getCooldown(player.tracksCombat, abilityCooldownKey("frenzy")) > 0,
+    getCooldown(player.tracksCombat, abilityCooldownKey("imbue-lightning")) > 0,
     "Fight Back must grant automatic ability authority while travel combat is active",
   );
 }
@@ -240,19 +240,19 @@ initCombatSystems();
 {
   const world = new World();
   const player = world.attachPlayerEntity(makePlayerSlices("manual-instant"), "manual-instant");
-  assert(requestManualAbilityUse(world, player, "frenzy", 1_000).success, "valid attuned manual ability should fire");
-  const cooldown = getCooldown(player.tracksCombat, abilityCooldownKey("frenzy"));
+  assert(requestManualAbilityUse(world, player, "imbue-lightning", 1_000).success, "valid attuned manual ability should fire");
+  const cooldown = getCooldown(player.tracksCombat, abilityCooldownKey("imbue-lightning"));
   assert(cooldown > 0, "manual activation should use the normal per-ability cooldown");
-  const queued = requestManualAbilityUse(world, player, "frenzy", 1_001);
+  const queued = requestManualAbilityUse(world, player, "imbue-lightning", 1_001);
   assert(queued.success && queued.state === "queued", "a cooldown-blocked press should queue");
-  assert(player.queuesAbilities?.abilityIds.includes("frenzy"), "queued state should be authoritative runtime data");
-  assert(composePlayerView(player)?.queuedAbilityIds.includes("frenzy"), "queued state should reach the player's network view");
-  assert(getCooldown(player.tracksCombat, abilityCooldownKey("frenzy")) === cooldown, "queueing must not rewrite cooldown");
-  const cancelled = requestManualAbilityUse(world, player, "frenzy", 1_002);
+  assert(player.queuesAbilities?.abilityIds.includes("imbue-lightning"), "queued state should be authoritative runtime data");
+  assert(composePlayerView(player)?.queuedAbilityIds.includes("imbue-lightning"), "queued state should reach the player's network view");
+  assert(getCooldown(player.tracksCombat, abilityCooldownKey("imbue-lightning")) === cooldown, "queueing must not rewrite cooldown");
+  const cancelled = requestManualAbilityUse(world, player, "imbue-lightning", 1_002);
   assert(cancelled.success && cancelled.state === "cancelled", "pressing a queued ability should cancel it");
   assert(!player.queuesAbilities, "cancelled ability should leave no queued runtime state");
 
-  assert(requestManualAbilityUse(world, player, "frenzy", 1_003).state === "queued", "ability should be queueable again");
+  assert(requestManualAbilityUse(world, player, "imbue-lightning", 1_003).state === "queued", "ability should be queueable again");
   updateCombatState(world, cooldown);
   fireAbilities(world, 1_003 + cooldown);
   assert(!player.queuesAbilities, "successful queued activation must consume the queue entry");
@@ -273,15 +273,15 @@ initCombatSystems();
   const player = world.attachPlayerEntity(makePlayerSlices("manual-target"), "manual-target");
   const target = world.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 });
   if (!target) throw new Error("target setup failed");
-  const waiting = requestManualAbilityUse(world, player, "hamstring", 2_000);
+  const waiting = requestManualAbilityUse(world, player, "binding-strike", 2_000);
   assert(waiting.success && waiting.state === "queued", "targetless manual ability should wait rather than acquire a fallback");
   setAttackTarget(world, player, target.isMonster.id);
   fireAbilities(world, 2_001);
-  assert(player.hasArmedAbility?.abilityId === "hamstring", "manual Technique should use the normal armed channel");
+  assert(player.hasArmedAbility?.abilityId === "binding-strike", "manual Technique should use the normal armed channel");
   assert(!player.queuesAbilities, "queued target-dependent ability should clear after activation");
-  const blocked = requestManualAbilityUse(world, player, "power-strike", 2_002);
+  const blocked = requestManualAbilityUse(world, player, "slam", 2_002);
   assert(blocked.success && blocked.state === "queued", "shared Technique arbitration should leave the later request queued");
-  assert(requestManualAbilityUse(world, player, "power-strike", 2_003).state === "cancelled", "queued arbitration wait should be cancellable");
+  assert(requestManualAbilityUse(world, player, "slam", 2_003).state === "cancelled", "queued arbitration wait should be cancellable");
 }
 
 // Manual casts retain their authored wind-up, current-target lock, lost-target
@@ -292,7 +292,7 @@ initCombatSystems();
   const target = world.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 });
   if (!target) throw new Error("cast target setup failed");
   setAttackTarget(world, player, target.isMonster.id);
-  const ability = ABILITY_DATABASE.get("power-strike")!;
+  const ability = ABILITY_DATABASE.get("slam")!;
   const castMs = abilityCastMs(ability, player.tracksProgression.playerTier);
   const hpBefore = target.hasHealth.hp;
   assert(requestManualAbilityUse(world, player, ability.id, 3_000).success, "manual cast should start");

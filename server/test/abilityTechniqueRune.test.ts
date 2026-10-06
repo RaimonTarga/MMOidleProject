@@ -1,11 +1,9 @@
 import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
-  ABILITY_EXPOSE_WEAKNESS_FX,
-  EXPOSE_WEAKNESS_EFFECT_ID,
+  ABILITY_SWEEP_FX,
   GAME_CONFIG,
   STARTER_RUNE_IDS,
   emptyEquipment,
-  getStatusEffect,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
@@ -22,7 +20,7 @@ function assert(condition: unknown, message: string): void {
 }
 
 function makePlayerSlices(
-  abilityId = "expose-weakness",
+  abilityId = "sweep",
   playerId = "technique-rune-player",
 ): PersistedPlayerSlices {
   return {
@@ -101,13 +99,15 @@ setAttackTarget(world, player, target.isMonster.id);
 updateRuneDerivedConfig(world, 1_000);
 updateAbilityFiring(world, Date.now());
 
+// The armed Technique here is Sweep (Expose Weakness carried this test until the
+// ability pass cut it, design §22.2; its own debuff assertions went with it).
 assert(
-  player.hasArmedAbility?.abilityId === "expose-weakness",
-  "In Combat -> Fire Technique should arm Expose Weakness when off cooldown",
+  player.hasArmedAbility?.abilityId === "sweep",
+  "In Combat -> Fire Technique should arm Sweep when off cooldown",
 );
 assert(
   takeWorldLogEvents(world, player.isPlayer.id).some(
-    (event) => event.kind === "ability-activation" && event.abilityId === "expose-weakness",
+    (event) => event.kind === "ability-activation" && event.abilityId === "sweep",
   ),
   "Technique activation should reach bot-visible telemetry",
 );
@@ -118,20 +118,15 @@ const outcome = runPlayerAttack(world, player, target, 1_100, {
   attackOrigin: player.hasPosition.current,
   aggroSource: { id: player.isPlayer.id, kind: "player" },
 });
-assert(outcome === "hit" || outcome === "killed", "armed Expose Weakness attack should land");
+assert(outcome === "hit" || outcome === "killed", "armed Sweep attack should land");
 assert(player.hasArmedAbility === undefined, "Technique should be consumed by the hit");
 
+// Sweep's cleave splashes the bodies AROUND the target; the target itself takes
+// the ordinary swing.
 const dealt = hpBefore - Math.max(0, target.hasHealth.hp);
 assert(
-  dealt === Math.round(baseDamage * 1.15),
-  `Expose Weakness I should increase its landed hit by 15% (${dealt} !== ${Math.round(baseDamage * 1.15)})`,
-);
-
-const exposed = getStatusEffect(target.tracksCombat, EXPOSE_WEAKNESS_EFFECT_ID);
-assert(!!exposed, "Expose Weakness should apply its target debuff");
-assert(
-  exposed!.remainingMs === 4000 && exposed!.data.damageTakenPct === 0.15,
-  "Expose Weakness I should last 4s and increase damage taken by 15%",
+  dealt === baseDamage,
+  `the armed Sweep hit should land the ordinary swing on its target (${dealt} !== ${baseDamage})`,
 );
 
 const hit = world
@@ -139,8 +134,8 @@ const hit = world
   .find((event) => event.kind === "player-hit");
 assert(!!hit && hit.kind === "player-hit", "expected a player-hit event");
 assert(
-  hit!.effects?.includes(ABILITY_EXPOSE_WEAKNESS_FX),
-  "Expose Weakness should tag the hit so the client plays its Technique FX",
+  hit!.effects?.includes(ABILITY_SWEEP_FX),
+  "Sweep should tag the hit so the client plays its Technique FX",
 );
 
 updateRuneDerivedConfig(world, 1_200);
@@ -171,16 +166,16 @@ assert(
 // instead: the swing's damage is computed after that stage, which would discard
 // the scaling and leave only the metadata.
 //
-// Quick Strike, not Expose Weakness: Expose Weakness pays its 15% as a `damage-
-// taken` DEBUFF on the target, which never reaches `addEmpoweredDamage` at all.
-// Quick Strike is a true `empower` rider (`damageMult`), which is the path under
-// test. Its multiplier is never hardcoded here — the control run below measures
-// what the rider is worth, so the ability's balance can move freely.
+// Binding Strike: its root rider carries a true hit multiplier (`damageMult`)
+// through `addEmpoweredDamage`, which is the path under test (Quick Strike's
+// `empower` rider carried this until the ability pass cut it, design §22.2). Its
+// multiplier is never hardcoded here — the control run below measures what the
+// rider is worth, so the ability's balance can move freely.
 const BIG_ATTACK = 1000;
 
 function armedRun(playerId: string, withWindow: boolean): { base: number; dealt: number } {
   const w = new World();
-  const p = w.attachPlayerEntity(makePlayerSlices("quick-strike", playerId), playerId);
+  const p = w.attachPlayerEntity(makePlayerSlices("binding-strike", playerId), playerId);
   p.usesAutocombat.auto = true;
   const t = w.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 });
   if (!t) throw new Error("failed to create the rider target");
@@ -193,8 +188,8 @@ function armedRun(playerId: string, withWindow: boolean): { base: number; dealt:
   updateRuneDerivedConfig(w, 1_000);
   updateAbilityFiring(w, Date.now());
   assert(
-    p.hasArmedAbility?.abilityId === "quick-strike",
-    `${playerId}: Quick Strike should be armed before the hit`,
+    p.hasArmedAbility?.abilityId === "binding-strike",
+    `${playerId}: Binding Strike should be armed before the hit`,
   );
 
   // A big swing on purpose: compounding and adding differ by

@@ -37,7 +37,7 @@ export const FAST_PASS_CELLS: Night5Cell[] = FAST_PASS_BOSSES.flatMap(s => SURVE
       treatment: 'authored-source', targetTypes: setting === 'boss' ? [s.boss] : [],
       upgradeLevel: 5, stance: 'offensive-stance',
       // Built-in triggers and production formation/DoT/clip adapters do delivery.
-      abilities: { techniques: s.tier === 2 ? ['expose-weakness'] : s.tier === 3 ? ['frenzy', 'expose-weakness'] : ['frenzy', 'expose-weakness', 'sweep'],
+      abilities: { techniques: s.tier === 2 ? ['slam'] : s.tier === 3 ? ['imbue-lightning', 'slam'] : ['imbue-lightning', 'slam', 'sweep'],
         guards: s.tier === 2 ? ['second-wind', 'brace'] : ['second-wind', 'brace', 'cleanse'] },
       runeRules: [
         { conditionId: 'always', actionId: 'auto-path-enemy' },

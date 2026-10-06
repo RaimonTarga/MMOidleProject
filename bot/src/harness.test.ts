@@ -1058,7 +1058,7 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
       (step) =>
         (step.type === "farm" &&
           step.until.type === "recipeUnlocked" &&
-          step.until.recipeId === "ability-recipe-power-strike") ||
+          step.until.recipeId === "ability-recipe-slam") ||
         (step.type === "repeatUntil" && hasPowerStrikeItemRecipeWait(step.steps)),
     );
   assert(

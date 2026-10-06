@@ -39,7 +39,7 @@ assert.equal(restored.view.globalMastery, 132);
 assert.equal(restored.view.skillPoints,0);
 assert(restored.view.unlockedSkills.includes('energy-heavy-t3-a'));
 assert.equal(restored.view.equipment.relic,null);
-assert(restored.view.knownAbilities.includes('expose-weakness'));
+assert(restored.view.knownAbilities.includes('slam'));
 assert(restored.view.bossesCleared.includes('mountain:4'));
 assert(!restored.view.bossesCleared.includes('volcanic:4'));
 for (const id of ['mountain-vest-t4','mountain-charm-t4']) assert.equal(restored.view.itemUpgrades[id],2);
@@ -69,9 +69,9 @@ for(const [i,r] of CAMPAIGN_T4_VOLCANO_FINISH_ROUTES.entries()) {
   const c=VOLCANO_FINISH_CASES[i];
   assert.equal(ROUTES.get(r.id), r);
   assert.equal(r.progressionEntry?.boundaryId, 'night3-mountain-control-r1-returned');
-  const fight = r.steps.find(s=>s.type==='configureBuild' && s.build.abilities?.techniques.includes('frenzy'));
+  const fight = r.steps.find(s=>s.type==='configureBuild' && s.build.abilities?.techniques.includes('imbue-lightning'));
   assert(fight?.type==='configureBuild');
-  assert.equal(fight.build.abilities!.techniques.includes('expose-weakness'), c.expose);
+  assert.equal(fight.build.abilities!.techniques.includes('slam'), c.expose);
   assert.equal(buildRP(fight.build).total, c.expose ? 42 : 35);
 
   const path = [route.progressionEntry!.nodeId, ...r.steps.filter(s=>s.type==='travel').map(s=>s.to.kind==='node'?s.to.nodeId:'')];

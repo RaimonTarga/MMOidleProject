@@ -185,7 +185,7 @@ export function referencePackageCells(opts: {
       treatment: opts.treatmentFor(c.name),
       targetTypes: [opts.bossId],
       stance: 'defensive-stance',
-      abilities: { techniques: ['expose-weakness'], guards: [...guards] },
+      abilities: { techniques: ['slam'], guards: [...guards] },
       runeRules: [
         { conditionId: 'always', actionId: 'auto-path-enemy' },
         { conditionId: 'inside-telegraph', actionId: 'step-back' },
@@ -296,7 +296,7 @@ export function assertBoss1Definitions(): void {
   for (const c of tcCells) {
     assert.equal(c.isDungeon, true, `${c.id}: must target the dungeon encounter`);
     assert.equal(c.stance, 'defensive-stance', `${c.id}: reference shape is the defensive stance`);
-    assert.deepEqual(c.abilities, { techniques: ['expose-weakness'], guards: ['second-wind', 'brace'] },
+    assert.deepEqual(c.abilities, { techniques: ['slam'], guards: ['second-wind', 'brace'] },
       `${c.id}: reference ability shape drift`);
     assert.equal(c.runeRules?.length, 5, `${c.id}: reference carries five behaviour rules`);
     assert.equal(c.upgradeLevel, 5, `${c.id}: upgrade level drift`);

@@ -189,4 +189,39 @@ node (`abilityNode` / `ABILITY_NODE` / `ability-node` appear only in `server/src
 
 ## Rerun (W1-A, with Slam in place of Expose Weakness)
 
-See README.md §5.
+The same 78 boss5 tier-3/4 reference rows (same seeds, same plan, regenerated on
+`feat/ability-roster`: `plan-boss5-w1a.json` differs from `plan-boss5-t34.json` in the
+`techniques` column only, `expose-weakness` → `slam`), beside W0's "after"
+(`stacking-boss5-after.jsonl`). A MEASUREMENT, not a target: the parity rule is T1's, and
+Slam's ranks III/IV (2.0 / 2.25, the T3/T4 ranks) were not touched. 182 s at 3 shards,
+0 error rows. Every cell: `w1a-boss5-cells.md`; table: `w1a-boss5.md`.
+
+| candidate | n | dps W0 (Expose Weakness) | dps W1-A (Slam) | Δdps | win W0 | win W1-A | Δwin |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| boss5-t3 | 42 | 105.9 | 97.2 | -8.3% | 60% | 50% | -9.5pt |
+| boss5-t4 | 36 | 286.5 | 240.2 | -16.2% | 89% | 78% | -11.1pt |
+
+Per class (pooled over the bosses; single seed per cell):
+
+| tier | class | dps W0 | dps W1-A | Δdps | wins W0 → W1-A |
+|---|---|---:|---:|---:|---|
+| T3 | striker | 106.5 | 85.6 | -19.6% | 4/7 → 2/7 |
+| T3 | squire | 98.7 | 97.4 | -1.2% | 4/7 → 4/7 |
+| T3 | slinger | 123.0 | 99.7 | -19.0% | 5/7 → 4/7 |
+| T3 | spirit | 100.6 | 94.0 | -6.6% | 6/7 → 5/7 |
+| T3 | apprentice | 126.2 | 119.6 | -5.2% | 3/7 → 3/7 |
+| T3 | conduit | 80.6 | 86.7 | +7.7% | 3/7 → 3/7 |
+| T4 | striker | 295.6 | 239.0 | -19.2% | 5/6 → 5/6 |
+| T4 | squire | 293.0 | 290.8 | -0.7% | 6/6 → 6/6 |
+| T4 | slinger | 252.6 | 205.1 | -18.8% | 6/6 → 5/6 |
+| T4 | spirit | 236.8 | 131.6 | -44.4% | 5/6 → 3/6 |
+| T4 | apprentice | 397.3 | 349.7 | -12.0% | 5/6 → 4/6 |
+| T4 | conduit | 244.1 | 224.9 | -7.8% | 5/6 → 5/6 |
+
+Reading: at T3/T4 Expose Weakness's flat +17.5–20% damage-taken window was worth more than
+a 2.0–2.25× cast on a 10 s cooldown that halts attacking for 1.6 s, for every class but the
+Squire and (at T3) the Conduit — the same cadence split the T1 ladder shows, larger here
+because Slam's later ranks were authored as Power Strike's half and Expose Weakness's ranks
+grew. The Spirit at T4 (-44%) is the outlier to look at first. Whether the T3/T4 reference
+package should wear Slam at all, and Slam's ranks II–IV, are the designer's calls (this run
+moves no number but rank I).

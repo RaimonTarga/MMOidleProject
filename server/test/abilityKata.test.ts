@@ -42,7 +42,7 @@ function slices(id: string, weapon: string | null): PersistedPlayerSlices {
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier: 4, currentSkillTier: 4, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
-      knownAbilities: ["power-strike"], attunedAbilities: { techniques: ["power-strike"], guards: [] },
+      knownAbilities: ["slam"], attunedAbilities: { techniques: ["slam"], guards: [] },
       knownStances: [], equippedStances: { default: null }, activeStance: null, knownRites: [], equippedRites: [],
     },
     holdsInventory: {
@@ -96,9 +96,9 @@ initCombatSystems();
   const damages: number[] = [];
   const stacksAfter: number[] = [];
   for (let i = 0; i < 5; i++) {
-    setCooldown(player.tracksCombat, abilityCooldownKey("power-strike"), 0);
+    setCooldown(player.tracksCombat, abilityCooldownKey("slam"), 0);
     fireWithReferenceWiring(world, now);
-    assert(player.isCastingAbility?.abilityId === "power-strike", `cast ${i + 1} must begin`);
+    assert(player.isCastingAbility?.abilityId === "slam", `cast ${i + 1} must begin`);
     const before = target.hasHealth.hp;
     now += player.isCastingAbility!.castMs;
     updateAbilityCasts(world, now);
@@ -110,7 +110,7 @@ initCombatSystems();
   assert(damages[0] > 0 && damages[0] === damages[1] && damages[1] === damages[2],
     `the first three strikes are ordinary (${damages.join(", ")})`);
   assert(stacksAfter.slice(0, 3).join(",") === "1,2,3", `stacks build 1,2,3 (got ${stacksAfter.join(",")})`);
-  // Power Strike's payload multiplier is a Technique Power field: +80% power -> 1.8x.
+  // Slam's payload multiplier is a Technique Power field: +80% power -> 1.8x.
   assert(Math.abs(damages[3] - damages[0] * (1 + KATA)) <= 2,
     `the fourth strike lands with +${KATA * 100}% Technique Power (${damages[3]} vs ${damages[0]})`);
   assert(stacksAfter[3] === 0, "the empowered strike spends the stacks");

@@ -4,7 +4,7 @@
  * WHAT THIS PINS. Not balance — every magnitude comes from the table and moves
  * with every tuning pass. What it pins is:
  *
- *   - the TABLE is legal: 22 trees, three options a row, a Technique restricted
+ *   - the TABLE is legal: 19 trees, three options a row, a Technique restricted
  *     to offensive packets paying offensive payoffs, a Guard to the three
  *     defensive faces paying defensive ones, every option with a declared fx,
  *     and no numeric literal anywhere in the authored file;
@@ -78,15 +78,18 @@ import {
   abilityNodeVisibleOptions,
   abilityCastMs,
   castWindupMs,
+  getCooldown,
   ladderMasteryLevelForRow,
   nodePayoffAxes,
   nodePayoffAxis,
   payoffValue,
   rowEssenceCost,
   rowShardCost,
+  setCooldown,
   type AbilityNodeRow,
 } from '@mmo-idle/shared';
 import { onAbilityNodeTechniqueLanded } from '../src/systems/combat/abilityNodes';
+import { abilityCooldownKey } from '../src/systems/player/abilities/abilityCooldowns';
 import { beginAbilityCast, castWindupFor } from '../src/systems/player/abilities/abilityCasting';
 
 function assert(condition: unknown, message: string): void {
@@ -102,7 +105,7 @@ const NODE = 'node-5-5';
     ABILITY_NODE_DATABASE.size === ABILITY_DATABASE.size,
     `every ability needs a node tree — ${ABILITY_NODE_DATABASE.size} of ${ABILITY_DATABASE.size}`,
   );
-  assert(ABILITY_NODE_DATABASE.size === 22, `the roster is 22 abilities, got ${ABILITY_NODE_DATABASE.size}`);
+  assert(ABILITY_NODE_DATABASE.size === 19, `the roster is 19 abilities, got ${ABILITY_NODE_DATABASE.size}`);
 
   const problems: string[] = [];
   for (const [abilityId, tree] of ABILITY_NODE_DATABASE) {
@@ -1067,26 +1070,36 @@ function richWallet(abilityId: string): AbilityNodeWallet {
     knownAbilities: ['charge'],
     abilityNodes: { charge: { owned: [CHARGE_KILL_CHAIN], active: { packet: CHARGE_KILL_CHAIN } } },
   });
+  // Charge's Kill chain route pays part of its own cooldown back on the kill
+  // (design §22.10, W1-A's offer change): attuned, with its cooldown running as
+  // a live activation leaves it, so the refund has something to move.
+  player.tracksProgression.attunedAbilities.techniques = ['charge'];
+  const CHARGE_CD = abilityCooldownKey('charge');
+  const coolDown = () => setCooldown(player.tracksCombat, CHARGE_CD, 10_000);
 
   // A landing that does not kill pays nothing.
   const survivor = monster(2600);
   armTechnique(world, player, 'charge');
+  coolDown();
   hit(player, survivor);
   assert(cardFx().length === 0, 'a Kill chain route pays nothing on a landing');
 
   // The landing whose exchange kills pays on that exchange's own kill.
   const victim = monster(2700);
   armTechnique(world, player, 'charge');
+  coolDown();
   const ctx = hit(player, victim);
   assert(cardFx().length === 0, 'not on the landing, even of the hit that will kill');
   victim.hasHealth.hp = 0;
   emitCombatEvent('onKill', ctx, world);
   const paid = cardFx();
   assert(paid.length === 1 && paid[0].fx === 'kill-chain.kill-pulse', `the kill pays once, got ${paid.map((e) => e.fx).join()}`);
+  assert(getCooldown(player.tracksCombat, CHARGE_CD) < 10_000, 'and the kill paid part of the cooldown back');
 
   // Some other exchange's kill does not pay it.
   const bystander = monster(2750);
   armTechnique(world, player, 'charge');
+  coolDown();
   hit(player, bystander);
   const other = monster(2780);
   other.hasHealth.hp = 0;
@@ -1099,8 +1112,10 @@ function richWallet(abilityId: string): AbilityNodeWallet {
   // No exchange (a cast's payload): a resolution that left its target dead is the kill.
   const dead = monster(2800);
   dead.hasHealth.hp = 0;
+  coolDown();
   onAbilityNodeTechniqueLanded(world, player, charge, { target: dead });
   assert(cardFx().length === 1, 'a cast that killed pays on the kill');
+  coolDown();
   onAbilityNodeTechniqueLanded(world, player, charge, { target: monster(2900) });
   assert(cardFx().length === 0, 'a cast that did not kill pays nothing');
 }

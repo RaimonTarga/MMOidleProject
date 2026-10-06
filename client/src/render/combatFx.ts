@@ -1,10 +1,7 @@
 import { spawnEssenceMotes } from '../fx/essenceMotes';
 import {
   ABILITY_BINDING_STRIKE_FX,
-  ABILITY_EXPOSE_WEAKNESS_FX,
-  ABILITY_HAMSTRING_FX,
   ABILITY_IMBUE_FX,
-  ABILITY_QUICK_STRIKE_FX,
   ABILITY_DATABASE,
   ABILITY_SWEEP_FX,
   ABILITY_TECHNIQUE_FIRED_FX,
@@ -199,14 +196,12 @@ import {
 } from "../fx/beastBosses";
 import { bossBiome } from "../fx/bossBiome";
 import { fxSweep } from "../fx/sweep";
-import { fxExposeWeakness } from "../fx/heavyStrike";
 import { fxBrace } from "../fx/brace";
 import { fxSecondWind } from "../fx/secondWind";
 import { fxEndure } from "../fx/endure";
 import { fxBreakFree } from "../fx/breakFree";
 import { fxRecuperate } from "../fx/recuperate";
 import { fxBramble } from "../fx/bramble";
-import { fxFrenzy } from "../fx/frenzy";
 import { fxContagion } from "../fx/contagion";
 import { fxDetonate } from "../fx/detonate";
 import {
@@ -219,10 +214,7 @@ import {
   startAllyAoeFootprint,
 } from "../fx/allyAoeFootprint";
 import { fxImbueCast, fxImbueCrackle } from "../fx/imbueLightning";
-import { fxHamstring } from "../fx/hamstring";
 import { fxBindingStrike } from "../fx/bindingStrike";
-import { fxQuickStrike } from "../fx/quickStrike";
-import { fxPowerStrike } from "../fx/powerStrike";
 import { fxSnipe } from "../fx/snipe";
 import { fxStunningStrike } from "../fx/stunningStrike";
 import { fxCharge, fxDisengage } from "../fx/reposition";
@@ -1279,9 +1271,9 @@ const GUARD_FX_BY_ABILITY: Record<
 
 /**
  * Self-facing TECHNIQUE FX, keyed by ability id. A Technique is usually
- * enemy-facing, but an instant offensive self-buff (Frenzy) has no target to
- * draw on — it plays on the caster, exactly like a Guard, and still belongs to
- * the Technique slot.
+ * enemy-facing, but an instant offensive self-buff (Imbue Lightning, instant
+ * since the ability pass) has no target to draw on — it plays on the caster,
+ * exactly like a Guard, and still belongs to the Technique slot.
  */
 const TECHNIQUE_SELF_FX_BY_ABILITY: Record<
   string,
@@ -1295,7 +1287,9 @@ const TECHNIQUE_SELF_FX_BY_ABILITY: Record<
     },
   ) => void
 > = {
-  frenzy: fxFrenzy,
+  // The loud arrival of the charge window, now on activation rather than at the
+  // end of a wind-up; the quiet per-hit crackle is `ABILITY_IMBUE_FX` below.
+  "imbue-lightning": (scene, x, y) => fxImbueCast(scene, x, y),
 };
 
 /**
@@ -1307,22 +1301,18 @@ const CAST_FX_BY_ABILITY: Record<
   string,
   (scene: GameScene, from: Vec2, to: Vec2) => void
 > = {
-  "power-strike": (scene, _from, to) => fxPowerStrike(scene, to.x, to.y),
   // Slam reuses the boss ground-slam: it is already the game's "an area just got
   // hit" vocabulary (cracks, expanding shock rings, debris), it takes the kill
   // radius as an argument so the FX lands exactly on the circle the server
   // damaged, and reusing it means a player reads a Slam the same way they have
   // been reading telegraphed AoE since Mountain. Radius comes from the authored
   // rank rather than a client constant, so the ring can never drift from the
-  // damage. The stone `impact` palette keeps it distinct from Power Strike's
-  // single-target flash.
+  // damage. The stone `impact` palette reads as earth, not a weapon flash.
   slam: (scene, _from, to) => fxSlam(scene, to.x, to.y, slamRadius(), "impact"),
   "stunning-strike": (scene, _from, to) => fxStunningStrike(scene, to.x, to.y),
   // Snipe is the one cast whose FX needs BOTH points: the distance crossed is
   // the ability, and an impact alone would not show it.
   snipe: (scene, from, to) => fxSnipe(scene, from.x, from.y, to.x, to.y),
-  // A self-cast resolves on the caster, so both endpoints are the player.
-  "imbue-lightning": (scene, from) => fxImbueCast(scene, from.x, from.y),
 };
 
 /** Slam's authored impact radius — the same number the server damages with. */
@@ -1360,10 +1350,7 @@ const RECALL_CALLOUT_COLOR = "#9cd2ff";
 
 const TECHNIQUE_CONSUMED_TAGS = [
   ABILITY_SWEEP_FX,
-  ABILITY_EXPOSE_WEAKNESS_FX,
-  ABILITY_HAMSTRING_FX,
   ABILITY_BINDING_STRIKE_FX,
-  ABILITY_QUICK_STRIKE_FX,
   ABILITY_IMBUE_FX,
   ABILITY_TECHNIQUE_FIRED_FX,
 ];
@@ -2052,7 +2039,7 @@ export function dispatchCombatEvent(
         // above would otherwise sit there until some unrelated hit cleared it.
         const selfFx = TECHNIQUE_SELF_FX_BY_ABILITY[ev.ability];
         if (selfFx) {
-          // `durationMs` lets a window-opening Technique (Frenzy) sustain an
+          // `durationMs` lets a timed window-opening Technique sustain an
           // in-world cue for as long as the buff actually lasts, and `follow`
           // keeps that cue on the sprite while the player moves — a one-shot
           // burst at the fire position would be left behind immediately.
@@ -2238,8 +2225,7 @@ export function dispatchCombatEvent(
       if (ev.fired) {
         notifyAbilityCooldownStarted(ev.ability);
         notifyAbilityFired(ev.ability);
-        const cue = ev.ability === 'slam' ? 'slam' : ev.ability === 'snipe' ? 'shot'
-          : ev.ability === 'imbue-lightning' ? 'spirit-empowered' : 'striker-empowered';
+        const cue = ev.ability === 'slam' ? 'slam' : ev.ability === 'snipe' ? 'shot' : 'striker-empowered';
         playSfx(cue);
       }
     }
@@ -2585,22 +2571,8 @@ function runFxForAttackStyle(
       fxSweep(scene, from.x, from.y, to.x, to.y, ev.empowered);
       continue;
     }
-    if (effectId === ABILITY_EXPOSE_WEAKNESS_FX) {
-      // Expose Weakness: target-marking impact cue plus a Technique HUD-icon pulse.
-      fxExposeWeakness(scene, to.x, to.y, ev.empowered);
-      continue;
-    }
-    if (effectId === ABILITY_HAMSTRING_FX) {
-      // Played low, at the legs — the slow is what the ability bought.
-      fxHamstring(scene, to.x, to.y, ev.empowered);
-      continue;
-    }
     if (effectId === ABILITY_BINDING_STRIKE_FX) {
       fxBindingStrike(scene, to.x, to.y, ev.empowered);
-      continue;
-    }
-    if (effectId === ABILITY_QUICK_STRIKE_FX) {
-      fxQuickStrike(scene, to.x, to.y, ev.empowered);
       continue;
     }
     if (effectId === ABILITY_IMBUE_FX) {

@@ -5,9 +5,9 @@ import { V1U_BOSS_BUILD } from './campaignT3V1u';
 import { V1U2_TRAVEL_BUILD } from './campaignT3V1u2';
 
 export const V1V_BOSS_BUILD: DesiredBuild = { ...V1U_BOSS_BUILD,
-  abilities: { techniques: ['frenzy', 'hamstring'], guards: ['second-wind', 'brace', 'cleanse', 'break-free'] } };
+  abilities: { techniques: ['imbue-lightning', 'binding-strike'], guards: ['second-wind', 'brace', 'cleanse', 'break-free'] } };
 export const V1V_TRAVEL_BUILD: DesiredBuild = { ...V1U2_TRAVEL_BUILD,
-  abilities: { techniques: ['sweep', 'hamstring'], guards: ['second-wind', 'brace', 'cleanse', 'break-free'] } };
+  abilities: { techniques: ['sweep', 'binding-strike'], guards: ['second-wind', 'brace', 'cleanse', 'break-free'] } };
 export const V1V_PATH = ['node-t3-sanctuary', 'node-t3-swamp-05', 'node-t3-swamp-04',
   'node-t3-desert-05', 'node-t3-cave-05', 'node-t3-cave-04', 'node-t3-mountain-02',
   'node-t3-mountain-01', 'node-t3-mountain-05', 'node-t3-tundra-dungeon'];

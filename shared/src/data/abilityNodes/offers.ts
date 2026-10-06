@@ -5,17 +5,20 @@
  * A row is three (lane, payoff) pairs and a sentence saying why those three.
  * Everything else about a node — its name, its blurb, its fx, its amplifier
  * axis, its price, its unlock — is derived in `index.ts` and `resolve.ts`, which
- * is what makes this a *generic* tree keyed to packets rather than 22 bespoke
+ * is what makes this a *generic* tree keyed to packets rather than 19 bespoke
  * ability trees.
  *
  * THE TWO RULES THE TABLE OBEYS.
  *
  *  - **A Technique offers three of the offensive packets**, fitted to what the
- *    ability already does, paying that packet's offensive payoff. Six abilities
- *    offer Technique (design §22): Sweep, Slam, Snipe, Stunning Strike, Binding
- *    Strike and Detonate, each trading away its least characteristic route. On a
- *    Technique that node means "landing this ability refunds part of its own
- *    cooldown", which is why it fits the shapes whose whole cost IS the cooldown.
+ *    ability already does, paying that packet's offensive payoff. After the ability
+ *    pass's second review (design §22.10) the Technique refund sits on Sweep,
+ *    Slam, Stunning Strike, Detonate and Cull, each trading away its least
+ *    characteristic route. On a Technique that node means "landing this ability
+ *    refunds part of its own cooldown", which is why it fits the shapes whose
+ *    whole cost IS the cooldown. A Kill chain offer on a Technique fires on the
+ *    KILL its hit makes (§22.10): Charge, Contagion, Disengage and Snipe pay it as
+ *    that cooldown refund, and Cull, which refunds natively, as a speed window.
  *  - **A Guard offers the three defensive faces** — one `avoid`, one `sustain`,
  *    one `endure` — paying that face's defensive payoff, so defence never scales
  *    with offence. The avoid-face packets are Tempo, Engagement and Control; the
@@ -31,9 +34,9 @@
  *    endure's plating stack, rather than differing only in lane, shard and fx;
  *    Tempo and Control keep `engagement-dr`.
  *
- * A payoff a node fires NEVER duplicates the ability's own job: Expose Weakness
- * already brands, so its Empowered option strips plating instead; Contagion
- * already spreads, so its Affliction option seeds a fresh stack. A node that
+ * A payoff a node fires NEVER duplicates the ability's own job: Contagion
+ * already spreads, so its Affliction option seeds a fresh stack; Cull already
+ * refunds on a kill, so its Kill chain option opens a speed window instead. A node that
  * simply did the ability louder would be a number, and numbers are what the old
  * system had too many of.
  */
@@ -59,45 +62,23 @@ const offerEntries: [string, AbilityPacketOffers][] = [
     ['technique', 'technique-refund'],
   ]],
 
-  // Power Strike is the committed single-target blow. A burst wants the brand it
-  // leaves behind, the stagger that buys the next one, or the window it opens.
-  ['power-strike', [
-    ['empowered', 'vulnerability'],
-    ['control', 'slow'],
-    ['engagement', 'damage-window'],
-  ]],
-
-  // Expose Weakness IS the brand, so Empowered strips plating instead of branding
-  // twice. The other two are the other ways to make a target softer.
-  ['expose-weakness', [
-    ['empowered', 'plating-shred'],
-    ['affliction', 'hemorrhage'],
-    ['engagement', 'damage-window'],
-  ]],
-
-  // Hamstring is the control ability, and gets design §19's own illustration:
-  // Control, Tempo, Engagement.
-  ['hamstring', [
-    ['control', 'slow'],
-    ['tempo', 'echo-hit'],
-    ['engagement', 'damage-window'],
-  ]],
-
   // Charge is a gap-closer: an opener first, a blow second. The rush is the
-  // opening, the weight of it brands, and closing keeps you moving.
+  // opening, the weight of it brands, and a rush that kills is ready sooner for
+  // the next body (Kill chain, on the kill: design §22.10).
   ['charge', [
     ['engagement', 'damage-window'],
     ['empowered', 'vulnerability'],
-    ['kill-chain', 'speed-window'],
+    ['kill-chain', 'technique-refund'],
   ]],
 
   // Contagion already spreads what the target carries, so its Affliction option
-  // seeds a NEW stack rather than spreading harder. Chill what it touches, or
-  // speed on to the next body.
+  // seeds a NEW stack rather than spreading harder. Chill what it touches, or —
+  // when the hit that spreads it kills — have it back sooner (Kill chain, on the
+  // kill: design §22.10).
   ['contagion', [
     ['affliction', 'poison-stack'],
     ['control', 'slow'],
-    ['kill-chain', 'speed-window'],
+    ['kill-chain', 'technique-refund'],
   ]],
 
   // Slam is the heavy area blow: it cracks armour, it staggers, or it comes back
@@ -110,55 +91,42 @@ const offerEntries: [string, AbilityPacketOffers][] = [
     ['technique', 'technique-refund'],
   ]],
 
-  // Binding Strike is pure setup. The node is what you do with a pinned target —
-  // or, on the Technique route, how soon you can pin the next one.
+  // Binding Strike is pure setup. The node is what you do with a pinned target:
+  // drag it further, brand it, or bleed it where it stands (design §22.10 swapped
+  // the Technique refund for the bleed — a rooted body bleeds).
   ['binding-strike', [
     ['control', 'slow'],
     ['empowered', 'vulnerability'],
-    ['technique', 'technique-refund'],
-  ]],
-
-  // Frenzy is a tempo window. It pays in extra swings, in more pace, or in a
-  // damage window layered over the speed it already bought.
-  ['frenzy', [
-    ['tempo', 'echo-hit'],
-    ['kill-chain', 'speed-window'],
-    ['engagement', 'damage-window'],
-  ]],
-
-  // Quick Strike is the cheapest, most frequent rider in the roster, which makes
-  // it the best carrier for the per-hit lanes.
-  ['quick-strike', [
-    ['tempo', 'echo-hit'],
-    ['engagement', 'damage-window'],
     ['affliction', 'hemorrhage'],
   ]],
 
   // Detonate spends everything the target was carrying, so its three routes are
-  // what you get for spending it: the bleed re-opens the wound, the brand makes
-  // the next one worse, or the detonation pays its own long cooldown back — the
-  // one ability in the roster where a refund is the obvious want.
+  // what you get for spending it: the bleed re-opens the wound, the chill leaves
+  // the emptied body dragging (design §22.10 swapped the brand for it), or the
+  // detonation pays its own long cooldown back — the one ability in the roster
+  // where a refund is the obvious want.
   ['detonate', [
     ['affliction', 'hemorrhage'],
-    ['empowered', 'vulnerability'],
+    ['control', 'slow'],
     ['technique', 'technique-refund'],
   ]],
 
   // Disengage is a re-opening: breaking contact resets the fight's first beat,
-  // buys tempo, or leaves something floundering behind you.
+  // leaves something floundering behind you, or — when the body you broke from
+  // dies — is ready again sooner (Kill chain, on the kill: design §22.10).
   ['disengage', [
     ['engagement', 'damage-window'],
-    ['kill-chain', 'speed-window'],
+    ['kill-chain', 'technique-refund'],
     ['control', 'slow'],
   ]],
 
   // Snipe is one deliberate shot from outside reach: the brand, the opening, or
-  // the second shot — a marksman's route is to be ready again before the target
-  // has closed.
+  // the second shot — a marksman's route is to be ready again when the shot
+  // kills (design §22.10 moved the refund to Kill chain, on the kill).
   ['snipe', [
     ['empowered', 'vulnerability'],
     ['engagement', 'damage-window'],
-    ['technique', 'technique-refund'],
+    ['kill-chain', 'technique-refund'],
   ]],
 
   // Stunning Strike is the roster's hardest control. Control deepens it, Empowered
@@ -176,6 +144,16 @@ const offerEntries: [string, AbilityPacketOffers][] = [
     ['tempo', 'echo-hit'],
     ['affliction', 'poison-stack'],
     ['empowered', 'vulnerability'],
+  ]],
+
+  // Cull is the kill-shaped Technique (design §22.8). It already refunds itself
+  // on a kill, so its Kill chain route opens a speed window on the kill instead;
+  // the brand softens the next body for it, and the Technique route pays part of
+  // its cooldown back on a landing that does not kill.
+  ['cull', [
+    ['kill-chain', 'speed-window'],
+    ['empowered', 'vulnerability'],
+    ['technique', 'technique-refund'],
   ]],
 
   // ── Guards: the three defensive faces ─────────────────────────────────────
@@ -223,6 +201,14 @@ const offerEntries: [string, AbilityPacketOffers][] = [
     ['bulwark', 'plating-stack'],
   ]],
 
+  // Sidestep is the Avoid Guard (design §22.8): the dodge window deepens, a
+  // dodge mends, or the plate it leaves catches the hit that lands after.
+  ['sidestep', [
+    ['engagement', 'evasion-window'],
+    ['kill-chain', 'recovery-window'],
+    ['bulwark', 'plating-stack'],
+  ]],
+
   // Break Free answers control, so its Avoid face is the Control lane — the one
   // place a defensive Control card is the thematic answer to Control.
   ['break-free', [
@@ -242,3 +228,106 @@ const offerEntries: [string, AbilityPacketOffers][] = [
 
 export const ABILITY_PACKET_OFFERS: Map<string, AbilityPacketOffers> =
   new Map<string, AbilityPacketOffers>(offerEntries);
+
+// ─── Fire-shapes (design §22.10, LOCKED 2026-10-02) ─────────────────────────
+//
+// WHERE AND WHEN an ability's packet payoff fires. Same payoffs, same
+// magnitudes; this is where Brace and Endure stop being the same card. Kept in
+// its own table keyed by ability id rather than as a fourth column of the offer
+// tuples, so the offer rows above stay (lane, payoff) pairs and nothing that
+// reads them changes shape.
+
+/** The closed list of fire-shapes (design §22.10). Nothing else may appear. */
+export type AbilityFireShape =
+  | 'on land'
+  | 'on every body hit'
+  | 'on each hit of a window'
+  | 'on the kill'
+  | 'on cast'
+  | 'per hit absorbed'
+  | 'per hit dodged'
+  | 'per tick while active'
+  | 'on strip'
+  | 'on the break';
+
+/**
+ * The existing trigger seams (design §22.10: "every entry maps to an existing
+ * trigger seam"). A fire-shape with no seam would be a defect to report, never
+ * a new primitive.
+ */
+export type AbilityFireSeam =
+  | 'hit' | 'kill' | 'guard-cast' | 'hit-taken' | 'evade' | 'pulse' | 'cleanse' | 'break-free';
+
+/** Which seam each fire-shape rides. */
+export const ABILITY_FIRE_SHAPE_SEAM: Record<AbilityFireShape, AbilityFireSeam> = {
+  'on land': 'hit',
+  'on every body hit': 'hit',
+  'on each hit of a window': 'hit',
+  'on the kill': 'kill',
+  'on cast': 'guard-cast',
+  'per hit absorbed': 'hit-taken',
+  'per hit dodged': 'evade',
+  'per tick while active': 'pulse',
+  'on strip': 'cleanse',
+  'on the break': 'break-free',
+};
+
+/** One row of the fire-shape table: the closed-list value and the table's own words. */
+export interface AbilityFireShapeRow {
+  fire: AbilityFireShape;
+  /** The §22.10 table's sentence for the ability, exactly as written. */
+  reads: string;
+}
+
+const fireShapeEntries: [string, AbilityFireShapeRow][] = [
+  ['sweep', { fire: 'on every body hit', reads: 'on every body the cleave hits' }],
+  ['charge', { fire: 'on land', reads: 'on the first body the rush touches, and the target on arrival' }],
+  ['slam', { fire: 'on every body hit', reads: 'on every body the Slam hits' }],
+  ['second-wind', { fire: 'on cast', reads: 'on cast' }],
+  ['cleanse', { fire: 'on strip', reads: 'on strip, sized by what it removed' }],
+  ['brace', { fire: 'per hit absorbed', reads: 'per hit absorbed while Braced' }],
+  ['sidestep', { fire: 'per hit dodged', reads: 'per hit dodged during the window' }],
+  ['binding-strike', { fire: 'on land', reads: 'on the rooted body' }],
+  ['contagion', { fire: 'on every body hit', reads: 'on every body the spread reaches' }],
+  ['snipe', { fire: 'on land', reads: 'on the shot body' }],
+  // Thorns strike back when you are hit: the hit-taken seam, the closed list's
+  // "per hit absorbed".
+  ['bramble-guard', { fire: 'per hit absorbed', reads: 'per thorn hit' }],
+  ['endure', { fire: 'per tick while active', reads: 'per tick while held' }],
+  ['imbue-lightning', { fire: 'on each hit of a window', reads: 'on each imbued hit' }],
+  ['detonate', { fire: 'on land', reads: 'on the detonated body' }],
+  ['cull', { fire: 'on land', reads: 'on the struck body' }],
+  ['break-free', { fire: 'on the break', reads: 'on the break' }],
+  ['disengage', { fire: 'on land', reads: 'on the body you broke from' }],
+  ['stunning-strike', { fire: 'on land', reads: 'on the stunned body' }],
+  ['recuperate', { fire: 'per tick while active', reads: 'per tick of the mend' }],
+];
+
+export const ABILITY_FIRE_SHAPES: Map<string, AbilityFireShapeRow> =
+  new Map<string, AbilityFireShapeRow>(fireShapeEntries);
+
+/**
+ * The Kill chain offers tagged with the `kill` trigger (design §22.10: "Kill chain
+ * routes fire on the kill"): a Kill chain offer on a TECHNIQUE fires when the
+ * ability's hit kills, not when it lands. Charge, Contagion, Disengage and Snipe
+ * pay it as a partial cooldown refund; Cull, which refunds natively, as a speed
+ * window. The Guards' Kill chain offers (a Recovery window on Second Wind,
+ * Bramble Guard, Endure, Sidestep) keep their Guard's own fire-shape: a Guard
+ * cast kills nothing.
+ *
+ * The data record only: the runtime that fires a Technique's Kill chain offer on
+ * the kill keys on (Technique, lane `kill-chain`) generically.
+ */
+export const ABILITY_KILL_TRIGGER_OFFERS: ReadonlySet<string> = new Set<string>([
+  'charge', 'contagion', 'disengage', 'snipe', 'cull',
+]);
+
+/**
+ * The fire-shape of one offer: the Kill chain override for a tagged ability's
+ * Kill chain offer, otherwise the ability's own row. Undefined for an ability
+ * with no row (the table test refuses that).
+ */
+export function abilityOfferFireShape(abilityId: string, lane: PacketId): AbilityFireShape | undefined {
+  if (lane === 'kill-chain' && ABILITY_KILL_TRIGGER_OFFERS.has(abilityId)) return 'on the kill';
+  return ABILITY_FIRE_SHAPES.get(abilityId)?.fire;
+}

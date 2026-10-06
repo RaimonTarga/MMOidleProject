@@ -56,7 +56,8 @@ assertBossReferenceDefinitions();
     'Case A gear drift');
   assert(a.stance === BOSSREF_A_STANCE && a.stance === 'defensive-stance', 'Case A stance drift');
   assert(JSON.stringify(a.abilities) === JSON.stringify(BOSSREF_A_ABILITIES), 'Case A ability drift');
-  assert(a.abilities!.techniques.includes('expose-weakness'), 'Case A must carry Expose Weakness');
+  // Slam since the ability pass cut Expose Weakness (design §22.2).
+  assert(a.abilities!.techniques.includes('slam'), 'Case A must carry Slam');
   assert(a.abilities!.guards.includes('second-wind') && a.abilities!.guards.includes('brace'),
     'Case A must carry Second Wind and Brace');
   assert(a.runeRules!.length === 5, `Case A must carry 5 rune rules, got ${a.runeRules!.length}`);
@@ -79,7 +80,9 @@ assertBossReferenceDefinitions();
   assert(Array.isArray(b.runeRules) && b.runeRules.length === 0,
     'Case B must equip NO rune rules — that is the legacy package, not an omission');
   assert(JSON.stringify(BOSSREF_B_RULES) === '[]', 'the legacy rule set must stay empty');
-  assert(b.abilities!.techniques.length + b.abilities!.guards.length === 6,
+  // 5 since the ability pass reshaped the T2 roster (design §22.2: Hamstring cut,
+  // Charge and Slam to T1, Binding Strike and Snipe to T2); the round-robin is derived.
+  assert(b.abilities!.techniques.length + b.abilities!.guards.length === 5,
     'Case B must carry the full canonical round-robin ability set');
   assert(!b.abilities!.guards.includes('second-wind') && !b.abilities!.guards.includes('brace'),
     'Case B is expected to carry neither Second Wind nor Brace');
@@ -97,7 +100,9 @@ assertBossReferenceDefinitions();
   const aCost = bossReferenceRpCost(a), bCost = bossReferenceRpCost(b);
   assert(aCost <= budget, `Case A costs ${aCost} RP against ${budget}`);
   assert(bCost <= budget, `Case B costs ${bCost} RP against ${budget}`);
-  assert(bCost === budget, `Case B is expected to spend the whole budget, got ${bCost}/${budget}`);
+  // The derived round-robin spent the whole 30 RP until the ability pass reshaped the
+  // T2 roster (design §22.2); its five abilities now leave 2 RP no next pick fits.
+  assert(bCost === budget - 2, `Case B is expected to spend 28 of the budget, got ${bCost}/${budget}`);
 
   // The hybrid the work order explicitly warned about: Case B's abilities and
   // stance with Case A's rules on top. It must NOT fit.

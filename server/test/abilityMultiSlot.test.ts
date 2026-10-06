@@ -65,9 +65,9 @@ function makePlayerSlices(): PersistedPlayerSlices {
       runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [],
       runesEquipped: [],
-      knownAbilities: ["sweep", "expose-weakness", "brace", "cleanse", "endure"],
+      knownAbilities: ["sweep", "binding-strike", "brace", "cleanse", "endure"],
       attunedAbilities: {
-        techniques: ["sweep", "expose-weakness"],
+        techniques: ["sweep", "binding-strike"],
         guards: ["brace", "endure"],
       },
       knownStances: [],
@@ -103,10 +103,13 @@ assert(
   "the legacy `guard` field should migrate into the guards list",
 );
 
+// Both shipped renames now resolve to an ability the ability pass CUT (design
+// §22.2): heavy-strike -> expose-weakness, charged-strike -> power-strike. The
+// rename still applies, and the cut id then drops like any unknown one.
 const renamed = normalizeAttunedAbilities({ technique: "heavy-strike", guard: null });
 assert(
-  renamed.techniques[0] === "expose-weakness",
-  "a renamed ability id should map forward on migration, not be dropped",
+  renamed.techniques.length === 0,
+  "a renamed id that resolves to a cut ability must drop, not survive",
 );
 
 const dirty = normalizeAttunedAbilities({
@@ -150,7 +153,7 @@ assert(
   "the FIRST Technique in loadout order should win arbitration",
 );
 assert(
-  getCooldown(player.tracksCombat, abilityCooldownKey("expose-weakness")) === 0,
+  getCooldown(player.tracksCombat, abilityCooldownKey("binding-strike")) === 0,
   "the losing Technique must not be put on cooldown — it stays eligible",
 );
 
@@ -165,7 +168,7 @@ assert(
 world.ecs.removeComponent(player, "hasArmedAbility");
 fireWithReferenceWiring(world, Date.now());
 assert(
-  player.hasArmedAbility?.abilityId === "expose-weakness",
+  player.hasArmedAbility?.abilityId === "binding-strike",
   "once the first Technique is cooling, the second should arm",
 );
 
