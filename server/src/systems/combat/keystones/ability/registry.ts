@@ -134,6 +134,20 @@ export function onAbilityKeystoneResolved(
   _modules.get(keystoneId)?.onResolved?.(world, player, ability, site);
 }
 
+/**
+ * The hit a share-paying verb takes its share OF: the resolving exchange as it
+ * was BEFORE any empowered multiplier (`ctx.metadata.empoweredMultiplier`), the
+ * basis every Technique rider and lineage payoff takes — so one multiplier per
+ * hit holds (design §6) and a finisher never silently scales a keystone too.
+ * With no exchange, or a Conduit summon's (an `owner` verb resolves on the owner),
+ * the owner's Attack — what the magnitude table's flat column is seeded against.
+ */
+export function keystoneHitBasis(player: PlayerEntity, ctx?: CombatContext): number {
+  if (!ctx || ctx.formation) return Math.max(1, Math.round(player.dealsDamage.attack));
+  const empowered = Number(ctx.metadata['empoweredMultiplier'] ?? 1);
+  return Math.max(1, Math.round(empowered > 1 ? ctx.damage / empowered : ctx.damage));
+}
+
 // ── The delivery body (design §22.10) ────────────────────────────────────────
 
 /**

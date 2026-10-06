@@ -49,6 +49,18 @@ import { armTechnique } from '../src/systems/player/abilities/abilityArming';
 import { beginAbilityCast, updateAbilityCasts } from '../src/systems/player/abilities/abilityCasting';
 import { runFormationAttack } from '../src/systems/classes/archetypes/summoner/formationAttack';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
+import {
+  abilityDisplayName,
+  abilityNodeNameParts,
+  getCooldown,
+  resolveAbilityEffect,
+} from '@mmo-idle/shared';
+import { registerCombatListener } from '../src/systems/combat/engine/combatPipeline';
+import { pendingKeystoneHits, updateScheduledKeystoneHits } from '../src/systems/combat/keystones';
+import { applyStun } from '../src/systems/combat/status/stun';
+import { runPlayerAttack } from '../src/systems/combat/engine/combat';
+import { updateReloadArchetype } from '../src/systems/classes/archetypes/reload/reloadPrototype';
+import { abilityCooldownKey } from '../src/systems/player/abilities/abilityCooldowns';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -113,6 +125,9 @@ function slices(id: string, opts: PlayerOptions): PersistedPlayerSlices {
 /** A player with one ability and its node rows, its runtime refreshed. */
 function spawnPlayer(world: World, id: string, opts: PlayerOptions): PlayerEntity {
   const player = world.attachPlayerEntity(slices(id, opts), id);
+  // Attach recalculates the passives from skills and gear, so a fixture's own
+  // passives are written back after it, before the archetype slices read them.
+  Object.assign(player.usesSkills.passives, opts.passives ?? {});
   if (opts.archetype) syncArchetypeSlices(world, player);
   player.dealsDamage.attack = 100;
   refreshAbilityNodeRuntime(player);
@@ -203,6 +218,28 @@ function conduit(world: World, id: string, abilityId: string, nodes?: AbilityNod
   return { player, minions };
 }
 
+/**
+ * Every ATTACK event a player's exchanges emit, counted: a keystone area hit must
+ * add none (it is no attack-equivalent for Sweep's Tempo, which listens on
+ * `afterHit`, and never advances the weapon verb's `hit-nth` counter, which
+ * listens on `onHit`).
+ */
+const attackEvents = new Map<string, number>();
+for (const phase of ['onHit', 'afterHit'] as const) {
+  registerCombatListener(phase, (ctx) => {
+    if (ctx.attackerType !== 'player') return;
+    const id = ctx.attacker.isPlayer.id;
+    attackEvents.set(id, (attackEvents.get(id) ?? 0) + 1);
+  });
+}
+const attackEventsOf = (player: PlayerEntity): number => attackEvents.get(player.isPlayer.id) ?? 0;
+
+/** Everything about a player a keystone area hit must leave untouched. */
+function attackLedger(player: PlayerEntity): string {
+  const cs = player.tracksCombat;
+  return JSON.stringify({ attacks: attackEventsOf(player), counters: cs.counters, resources: cs.resources });
+}
+
 // ─── The registry: live verbs and modules move together ──────────────────────
 
 {
@@ -271,6 +308,107 @@ function conduit(world: World, id: string, abilityId: string, nodes?: AbilityNod
     echoes === 1 && bleeds === 1,
     `the formation pays each node payoff once across ${minions.length} deliveries, got ${echoes} echoes and ${bleeds} bleeds`,
   );
+}
+
+// ─── Sweep · WHIRLWIND: a one-second spin that cleaves every tick ────────────
+
+{
+  const sweep = ABILITY_DATABASE.get('sweep')!;
+  const sweepEffect = resolveAbilityEffect(sweep, { playerTier: 4 });
+  if (sweepEffect.kind !== 'cleave') throw new Error('Sweep is a cleave');
+  const radius = sweepEffect.radius;
+
+  // The spin lands, tick by tick, around the owner — and is never an attack.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-whirlwind', {
+      abilityId: 'sweep', nodes: rows('sweep', { packet: 'tempo', keystone: 'whirlwind' }),
+    });
+    const primary = spawnMonster(world, 430);
+    // Inside the spin around the player, well outside the cleave around the primary.
+    const around = spawnMonster(world, 400 - radius * 0.6, 400);
+    const outside = spawnMonster(world, 400 + radius * 4, 400);
+    armTechnique(world, player, 'sweep');
+    hit(world, player, primary);
+
+    const spin = pendingKeystoneHits(player, 'whirlwind');
+    assert(spin.length >= 2, `the spin schedules its ticks, got ${spin.length}`);
+    const started = cardFx(world).filter((e) => e.fx === ABILITY_KEYSTONE_DEFINITIONS.get('whirlwind')!.fx);
+    assert(started.length === 1 && (started[0]!.durationMs ?? 0) > 0, 'one card-fx for the spin, with its length');
+
+    const ledger = attackLedger(player);
+    const before = around.hasHealth.hp;
+    updateScheduledKeystoneHits(world, spin[0]!.dueInMs - 1);
+    assert(around.hasHealth.hp === before, 'nothing before the first tick');
+    updateScheduledKeystoneHits(world, 1);
+    const afterFirst = around.hasHealth.hp;
+    assert(afterFirst < before, 'the first tick cleaves a body around the spinning player');
+    const footprints = world.takeNodeEvents(NODE).filter((e) => e.kind === 'player-aoe-footprint');
+    assert(footprints.length === 1, 'each tick draws the ground it covered');
+    for (let i = 0; i < 20 && player.schedulesKeystoneHits; i++) updateScheduledKeystoneHits(world, 100);
+    assert(around.hasHealth.hp < afterFirst, 'and cleaves again on the next tick');
+    assert(player.schedulesKeystoneHits === undefined, 'the spin ends: nothing left pending');
+    assert(outside.hasHealth.hp === outside.hasHealth.maxHp, 'only what is inside the spin is hit');
+    assert(
+      attackLedger(player) === ledger,
+      'a spin tick is never an attack: no attack event, no hit counter, no Tempo progress',
+    );
+  }
+
+  // Hard control breaks the spin like a cast; a dodged swing starts none.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-whirlwind-cc', {
+      abilityId: 'sweep', nodes: rows('sweep', { packet: 'tempo', keystone: 'whirlwind' }),
+    });
+    const primary = spawnMonster(world, 430);
+    const around = spawnMonster(world, 400 - radius * 0.6, 400);
+    armTechnique(world, player, 'sweep');
+    hit(world, player, primary);
+    assert(pendingKeystoneHits(player, 'whirlwind').length > 0, 'the spin started');
+    applyStun(player.tracksCombat, 2_000, 'test-stun');
+    const before = around.hasHealth.hp;
+    updateScheduledKeystoneHits(world, 2_000);
+    assert(around.hasHealth.hp === before && !player.schedulesKeystoneHits, 'a stun ends the spin');
+
+    player.tracksCombat.statusEffects = [];
+    armTechnique(world, player, 'sweep');
+    hit(world, player, primary, { evadeBlocksDebuffs: true });
+    assert(pendingKeystoneHits(player, 'whirlwind').length === 0, 'a dodged swing starts no spin');
+  }
+
+  // Reload: the clip's first shot spends the armed Sweep, so the spin starts once
+  // per Sweep — never once per bullet.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-whirlwind-reload', {
+      abilityId: 'sweep',
+      nodes: rows('sweep', { packet: 'tempo', keystone: 'whirlwind' }),
+      archetype: 'reload', subVariant: 'balanced', tier: 1,
+      passives: { 'reload.max-ammo': 4 },
+    });
+    updateReloadArchetype(world, 0);
+    assert(player.usesReload?.ammo === 4, 'a four-round clip');
+    player.dealsDamage.attack = 100;
+    const primary = spawnMonster(world, 430);
+    armTechnique(world, player, 'sweep');
+    let spins = 0;
+    for (let shot = 0; shot < 4; shot++) {
+      const outcome = runPlayerAttack(world, player, primary, 1_100 + shot, {
+        attackOrigin: player.hasPosition.current,
+        aggroSource: { id: player.isPlayer.id, kind: 'player' },
+      });
+      assert(outcome === 'hit', `shot ${shot + 1} lands`);
+      spins += cardFx(world).filter((e) => e.fx === ABILITY_KEYSTONE_DEFINITIONS.get('whirlwind')!.fx).length;
+    }
+    assert(spins === 1, `one spin for the whole clip, got ${spins}`);
+  }
+
+  // The keystone renames the ability (design §22.10).
+  const name = abilityDisplayName(sweep, sweep.tier, abilityNodeNameParts('sweep', rows('sweep', {
+    packet: 'affliction', amplifier: 'targets', keystone: 'whirlwind', cross: 'tempo',
+  })));
+  assert(name === 'Bleeding Whirlwind of Many I, with Echoes', `the full name, got ${name}`);
 }
 
 console.log('abilityKeystones: ok');

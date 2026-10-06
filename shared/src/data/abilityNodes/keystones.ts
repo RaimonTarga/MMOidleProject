@@ -126,7 +126,7 @@ const trioEntries: [string, Trio][] = [
   ['sweep', [
     verb('sweep', 1, 'whirlwind', 'Whirlwind',
       'Sweep becomes a one-second spin that cleaves every tick.',
-      'tempo.gale-wake', 'echo-hit', { paysShare: true }),
+      'tempo.gale-wake', 'echo-hit', { paysShare: true, live: true }),
     verb('sweep', 2, 'reap', 'Reap',
       'A Sweep kill cleaves again from the body it killed.',
       'kill-chain.spread-arc', 'echo-hit', { delivery: DB }),

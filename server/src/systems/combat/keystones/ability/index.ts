@@ -8,6 +8,8 @@
  *
  * | Ability | Verb | Seam it reuses |
  * |---|---|---|
+ * | Sweep | Whirlwind | the channelled beam's tick machinery + applyPlayerAoe around the owner |
  */
 export * from './registry';
 export * from './scheduledHits';
+export { WHIRLWIND_KEYSTONE } from './whirlwind';
