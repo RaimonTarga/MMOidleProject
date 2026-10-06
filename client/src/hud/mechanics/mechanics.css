@@ -613,6 +613,20 @@
   border-bottom: 1px solid #08090a;
 }
 
+/* Rounds a Duelist's kill chain has loaded past the clip's size (design §22.5). */
+.mechanic-ammo-chamber__overflow {
+  position: absolute;
+  z-index: 2;
+  right: 8px;
+  bottom: 6px;
+  color: var(--hud-primary-strong);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 0 4px rgba(240, 217, 146, 0.6);
+}
+
 .mechanic-reload {
   position: relative;
   z-index: 1;

@@ -1,15 +1,10 @@
 import { applyStatusEffect } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
-import { markSliceDirty } from '../../../../../../ecs/dirtyHelpers';
 import {
-  DEFAULT_HAIR_TRIGGER_MAX,
-  DEFAULT_HAIR_TRIGGER_PCT,
-  EXPLODING_CLIP_CLIENT_EFFECT,
   ALT_ONHIT_CLIENT_EFFECT,
   ALT_CADENCE_ATTACK_MULT,
   ALT_CADENCE_ONHIT_MULT,
 } from '../core/constants';
-import { playerMechanicBuffMagnitude } from '../../../../shared/applyPlayerMechanicBuff';
 
 function usesStandardMagazine(passives: Record<string, number | undefined>): boolean {
   if ((passives['reload.laser'] ?? 0) > 0) return false;
@@ -19,7 +14,7 @@ function usesStandardMagazine(passives: Record<string, number | undefined>): boo
 }
 
 export function registerReloadLightT3(): void {
-  registerCombatListener('onHit', (ctx, world) => {
+  registerCombatListener('onHit', (ctx) => {
     if (ctx.attackerType !== 'player') return;
     if (ctx.defenderType !== 'monster') return;
 
@@ -51,60 +46,5 @@ export function registerReloadLightT3(): void {
         ctx.metadata['clientEffects'] = effects;
       }
     }
-
-    const blunderbuss = (passives['reload.blunderbuss'] ?? 0) > 0;
-    const isLastPellet = blunderbuss
-      ? ctx.metadata['blunderbussLastPellet'] === true
-      : reload.ammo === 0;
-
-    if ((passives['reload.exploding-clip'] ?? 0) > 0 && isLastPellet) {
-      // The damage multiplier and AoE splash are handled by the empowered system:
-      // the last bullet is armed empowered in reloadPrototype.beforeAttack, so the
-      // empowered multiplier (reload.empowered-mult) scales the hit and combat.ts
-      // applies the standard empowered AoE. Here we only tag the red Duelist shot FX.
-      const existing = ctx.metadata['clientEffects'];
-      const effects = Array.isArray(existing)
-        ? existing.filter((e): e is string => typeof e === 'string')
-        : [];
-      effects.push(EXPLODING_CLIP_CLIENT_EFFECT);
-      ctx.metadata['clientEffects'] = effects;
-      ctx.metadata['reloadExplodingClip'] = true;
-    }
-
-    if ((passives['reload.hair-trigger'] ?? 0) <= 0) return;
-
-    // THE FRAME OWNS THE RAMP (progression rework Phase 3). Artillerist authors
-    // `reload.frame-ramp-pct-per-shot`, and its ramp has no cap below the clip
-    // length, where Warmonger's caps at 15 stacks on a 40-round clip. Both write
-    // `clipSpeedStacks` and `performsAttack.attackCooldown`, so they must never run
-    // together — the frame wins and the path defers. Warmonger's data stays authored
-    // on the node; its agreed re-home ("half the ramp carries through a reload") is a
-    // T3-review item, noted in docs/progression-rework-plan.md.
-    if ((passives['reload.frame-ramp-pct-per-shot'] ?? 0) > 0) return;
-
-    if (reload.clipBaseAttackCooldownMs === 0) {
-      reload.clipBaseAttackCooldownMs = player.performsAttack.attackCooldown;
-    }
-
-    const maxStacks = Math.round(
-      passives['reload.hair-trigger-max-stacks'] ?? DEFAULT_HAIR_TRIGGER_MAX,
-    );
-    if (reload.clipSpeedStacks >= maxStacks) return;
-
-    reload.clipSpeedStacks++;
-    const pct = playerMechanicBuffMagnitude(
-      player,
-      'reload-hair-trigger',
-      'attackSpeedPctPerShot',
-      passives['reload.hair-trigger-pct-per-shot'] ?? DEFAULT_HAIR_TRIGGER_PCT,
-    );
-    player.performsAttack.attackCooldown = Math.max(
-      200,
-      Math.round(
-        reload.clipBaseAttackCooldownMs / (1 + reload.clipSpeedStacks * pct),
-      ),
-    );
-    markSliceDirty(world, player, 'usesReload');
-    markSliceDirty(world, player, 'performsAttack');
   });
 }

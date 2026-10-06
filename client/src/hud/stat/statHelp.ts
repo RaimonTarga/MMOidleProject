@@ -163,6 +163,8 @@ export const STAT_HELP: Record<string, string> = {
   'reload.alternating-cadence': 'Shots alternate: even shots hit for attack damage, odd shots for on-hit damage.',
   'reload.momentum': 'Each reload stacks attack speed and shortens the next reload. Stacks decay out of combat.',
   'reload.cannon': 'Every shot banks damage into a pool; reloading charges, then fires the whole pool as one burst.',
+  'reload.kill-chain': 'Every kill loads a round on top of your clip, even past its size, until you next reload.',
+  'reload.ramp-carry-pct': 'The share of your attack-speed ramp a reload keeps instead of resetting it.',
 
   // ── Energy (charge on hits, spend on a discharge) ───────────────────────────
   'energy.per-hit': 'Energy gained per landed hit.',

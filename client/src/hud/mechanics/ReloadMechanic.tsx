@@ -33,7 +33,7 @@ function AmmoPolygon({ ammo, max }: { ammo: number; max: number }) {
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
     ) return;
 
-    if (before === 0 && ammo === max && max > 0) {
+    if (before === 0 && ammo >= max && max > 0) {
       setRefilling(true);
       const timeout = window.setTimeout(() => setRefilling(false), 720);
       return () => window.clearTimeout(timeout);
@@ -48,6 +48,10 @@ function AmmoPolygon({ ammo, max }: { ammo: number; max: number }) {
   if (max < 3) return null;
 
   const spent = Math.max(0, Math.min(max, max - ammo));
+  // A Duelist's kill chain loads rounds past the clip's size (design §22.5). The
+  // wheel has one chamber per authored round, so the rounds above it read as a
+  // "+N" tally beside the wheel instead of being clamped away.
+  const overflow = Math.max(0, ammo - max);
   const stepDegrees = 360 / max;
   const rotation = -spent * stepDegrees;
   const geometry = ammoGeometry(max);
@@ -105,6 +109,9 @@ function AmmoPolygon({ ammo, max }: { ammo: number; max: number }) {
         <path className="mechanic-reload__top-guide" d="M31.5 2.5 35 6l3.5-3.5" />
         <circle className="mechanic-reload__impact" cx="35" cy="35" r="29" />
       </svg>
+      {overflow > 0 && (
+        <span className="mechanic-ammo-chamber__overflow" aria-hidden="true">+{overflow}</span>
+      )}
     </div>
   );
 }

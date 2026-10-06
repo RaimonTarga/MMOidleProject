@@ -338,24 +338,25 @@ function fireShot(player: PlayerEntity, target: MonsterEntity): CombatContext {
   );
 }
 
-// ── Warmonger: the frame owns the ramp, the path defers ──────────────────────
+// ── Warmonger: the frame's ramp is the only ramp ─────────────────────────────
 //
-// `reload-heavy-t3-b` still authors `reload.hair-trigger` (15 stacks on a 40-round
-// clip). Both ramps write `clipSpeedStacks` and the attack cooldown, so if the path
-// still ran the stacks would double per shot and stall at its own cap.
+// `reload-heavy-t3-b` used to author a capped ramp of its own (Hair Trigger, 15
+// stacks on a 40-round clip). The T3 review retired it and re-homed the path onto
+// the frame's ramp (design §22.5); the carry through a reload is pinned in
+// `t3SlingerPaths.test.ts`. Pinned here: one writer per shot, past the old cap.
 
 {
   const player = frame('fl-warmonger', 'reload', 'reload-root', 'heavy', ['reload-heavy-t3-b']);
   const target = punchbag(560);
   const reload = player.usesReload!;
   const passives = player.usesSkills.passives;
-  const pathCap = Math.round(passives['reload.hair-trigger-max-stacks'] ?? 0);
+  const pathCap = 15; // the retired Hair Trigger's cap
 
   assert(
-    (passives['reload.hair-trigger'] ?? 0) > 0,
-    'Warmonger\'s authored ramp data must stay on the node — only the runtime defers',
+    (passives['reload.hair-trigger'] ?? 0) === 0,
+    'Warmonger no longer authors a ramp of its own — the frame\'s is the only one',
   );
-  assert(pathCap > 0 && pathCap < reload.ammoMax, 'Warmonger\'s cap should sit below its own clip');
+  assert(pathCap < reload.ammoMax, 'the retired cap sat below Warmonger\'s own clip');
 
   for (let shot = 1; shot <= pathCap + 3; shot++) {
     fireShot(player, target);
