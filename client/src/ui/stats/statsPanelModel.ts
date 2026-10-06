@@ -16,6 +16,7 @@
 import {
   GAME_CONFIG,
   ITEM_DATABASE,
+  TECHNIQUE_CAST_SPEED_CAP,
   RECIPE_DATABASE,
   defensiveFaceForSubVariant,
   lineageForEquippedItem,
@@ -133,6 +134,10 @@ const ROWS: readonly RowDef[] = [
   { key: 'bleedOnHit', label: 'Bleed per hit', group: 'offence', value: (p) => p.passives['shared.bleed-on-hit-pct'] ?? 0, fmt: (v) => pct(v), delta: points, neutral: 0 },
   { key: 'slowOnHit', label: 'Slow on hit', group: 'offence', value: (p) => p.passives['shared.slow-on-hit-pct'] ?? 0, fmt: (v) => pct(v), delta: points, neutral: 0 },
   { key: 'techniquePower', label: 'Technique power', group: 'offence', value: (p) => p.passives['technique.power-pct'] ?? 0, fmt: (v) => signed(pct(v)), delta: points, neutral: 0 },
+  // The Technique lane's own second number (design §22.9: "cast speed is the
+  // Technique lane's stat ... shown beside Technique Power"), capped as the cast
+  // lifecycle caps it, so the sheet never promises a wind-up the server refuses.
+  { key: 'castSpeed', label: 'Cast speed', group: 'offence', value: (p) => Math.min(TECHNIQUE_CAST_SPEED_CAP, p.passives['technique.cast-speed-pct'] ?? 0), fmt: (v) => signed(pct(v)), delta: points, neutral: 0 },
   { key: 'attackRange', label: 'Range', group: 'offence', value: (p) => p.stats.attackRange, fmt: (v) => trimmed(v), delta: flat(), pinned: true },
   // ── Defence ──
   { key: 'maxHp', label: 'Health', group: 'defence', value: (p) => p.stats.maxHp, fmt: (v) => trimmed(v), delta: flat(), pinned: true },

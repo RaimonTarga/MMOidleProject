@@ -294,9 +294,16 @@ export function payoffLandsOnTarget(kind: PayoffKind): boolean {
  *  - `duration`  the payload holds longer, for one with a duration; else → size.
  *  - `magnitude` the size: the share, the multiplier's bonus, or a binary
  *                payload's hold (`PAYLOAD_SIZE` in `magnitudes.ts`).
+ *
+ * `cast` (design §22.9: "a shorter wind-up") is an ABILITY amplifier's axis only:
+ * it moves the ability's own wind-up through `technique.cast-speed-pct`'s capped
+ * sum, never a payoff, and is offered only on a cast-shaped ability. A lineage
+ * card has no wind-up to shorten, so it is not in {@link AMPLIFIED_AXES} — the
+ * list `coverage.test.ts` holds every authored amplifier CARD to.
  */
-export type AmplifiedAxis = 'duration' | 'magnitude' | 'targets' | 'trigger';
+export type AmplifiedAxis = 'duration' | 'magnitude' | 'targets' | 'trigger' | 'cast';
 
+/** The axes a lineage amplifier CARD may name. `cast` is an ability node's only. */
 export const AMPLIFIED_AXES: readonly AmplifiedAxis[] = [
   'duration', 'magnitude', 'targets', 'trigger',
 ] as const;

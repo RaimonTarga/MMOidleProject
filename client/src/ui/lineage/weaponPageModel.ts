@@ -14,6 +14,7 @@
  * on a detached copy. A preview is display only: nothing is sent.
  */
 import {
+  TECHNIQUE_CAST_SPEED_CAP,
   BIOME_DATABASE,
   CAPSTONE_MATERIALS,
   DUNGEON_DEFS,
@@ -759,6 +760,13 @@ const PAGE_STAT_DEFS: readonly PageStatDef[] = [
   },
   {
     key: 'techniquePower', label: 'Technique power', value: (p) => p.passives['technique.power-pct'] ?? 0,
+    fmt: (v) => `+${pct(v)}`, neutral: 0,
+  },
+  // Beside Technique power, as the Technique lane's own number (design §22.9: the
+  // tree says which lane makes casts fast). Capped as the cast lifecycle caps it.
+  {
+    key: 'castSpeed', label: 'Cast speed',
+    value: (p) => Math.min(TECHNIQUE_CAST_SPEED_CAP, p.passives['technique.cast-speed-pct'] ?? 0),
     fmt: (v) => `+${pct(v)}`, neutral: 0,
   },
   { key: 'maxHp', label: 'Health', value: (p) => p.stats.maxHp, fmt: (v) => trimmed(v, 0), neutral: 0, pinned: true },

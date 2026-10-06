@@ -1,9 +1,9 @@
 import { useId, useState } from "react";
 import { LoadoutFeedback } from "./LoadoutFeedback";
 import { useAtomValue } from "jotai";
-import { ABILITY_DATABASE, CONDITION_DATABASE, TUTORIAL_ANCHORS, abilityBlurbAt, abilityDisplayName, attunedAbilityIds, attunedForFamily, referenceAbilityRule, runeRuleCost, runicPointLoadoutCost, runeBudgetForGlobalMastery } from "@mmo-idle/shared";
+import { ABILITY_DATABASE, CONDITION_DATABASE, TUTORIAL_ANCHORS, abilityBlurbAt, abilityDisplayName, abilityNodeCastSpeedFor, abilityNodeNameParts, attunedAbilityIds, attunedForFamily, referenceAbilityRule, runeRuleCost, runicPointLoadoutCost, runeBudgetForGlobalMastery } from "@mmo-idle/shared";
 import { hudBus } from "../hudBus";
-import { attunedAbilitiesAtom, knownAbilitiesAtom, playerTierAtom, runesEquippedAtom, equippedRitesAtom, attunedStancesAtom, globalMasteryAtom, passivesAtom, attackAtom, maxHpAtom, attackRangeAtom, combatArchetypeAtom } from "../hud/atoms";
+import { abilityNodesAtom, attunedAbilitiesAtom, knownAbilitiesAtom, playerTierAtom, runesEquippedAtom, equippedRitesAtom, attunedStancesAtom, globalMasteryAtom, passivesAtom, attackAtom, maxHpAtom, attackRangeAtom, combatArchetypeAtom } from "../hud/atoms";
 import { abilityTiming } from "./describe/abilityTiming";
 import { describeAbility } from "./describe/abilityText";
 import { AbilityDetails } from "./AbilityDetails";
@@ -21,6 +21,7 @@ export function AbilitiesPanelContent() {
   const rites = useAtomValue(equippedRitesAtom);
   const stances = useAtomValue(attunedStancesAtom);
   const tier = useAtomValue(playerTierAtom);
+  const nodes = useAtomValue(abilityNodesAtom);
   const combatArchetype = useAtomValue(combatArchetypeAtom);
   const context = { playerTier: tier, passives: useAtomValue(passivesAtom), combatArchetype, attack: useAtomValue(attackAtom), maxHp: useAtomValue(maxHpAtom), attackRange: useAtomValue(attackRangeAtom) };
   const budget = runeBudgetForGlobalMastery(useAtomValue(globalMasteryAtom));
@@ -49,8 +50,10 @@ export function AbilitiesPanelContent() {
         const nextRules = rules.filter(r => r.actionId !== "use-ability" || r.targetAbilityId !== id || !isAttuned);
         const nextSpent = runicPointLoadoutCost({ rules: nextRules, rites, stances, abilities: next });
         const timing = abilityTiming(ability, abilities, rules);
-        const described = describeAbility(ability, context);
-        const name = abilityDisplayName(ability, tier);
+        // The node rows deepen the name and the wind-up (design §22.7, §22.9): the
+        // same shared reads the server's cast lifecycle and the tree use.
+        const described = describeAbility(ability, { ...context, nodeCastSpeedPct: abilityNodeCastSpeedFor(id, nodes[id]) });
+        const name = abilityDisplayName(ability, tier, abilityNodeNameParts(id, nodes[id]));
         const blocked = !isAttuned && nextSpent > budget;
         // One-click wiring that reproduces the timing abilities had before they
         // lost their built-in triggers. Only attuned abilities can be named by a rule.

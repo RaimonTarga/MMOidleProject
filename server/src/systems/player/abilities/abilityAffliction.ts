@@ -33,6 +33,7 @@ import { recordWorldLogEvent } from "../../../world/worldLog";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 import { techniquePowerPctFor } from "./abilityKata";
+import { onAbilityKeystoneInfected } from "../../combat/keystones/ability/registry";
 
 /** Resolve an ability's effect through the shared Technique Power seam. */
 function afflictionEffect(
@@ -185,6 +186,10 @@ export function resolveContagion(
     for (const entry of entries) {
       copyPlayerDotOnto(world, player, victim, entry);
     }
+    // The spread has written onto this body: a live keystone verb may care (the
+    // Outbreak tag, design §22.4). Here, where the copy lands, not in the cast
+    // lifecycle, so the hook holds whatever shape delivers the spread.
+    onAbilityKeystoneInfected(world, player, ability, victim);
     for (const element of elements) {
       links.push({ to: { ...victim.hasPosition.current }, element });
     }

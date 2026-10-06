@@ -1,4 +1,5 @@
 import {
+  TECHNIQUE_CAST_SPEED_CAP,
   TECHNIQUE_TEMPO_MIN_CYCLE_MS,
   abilityCastMs,
   abilityCooldownMs,
@@ -40,8 +41,8 @@ import {
  * Equipment modifiers use the same shared resolver as authoritative firing.
  */
 
-/** Mirrors CAST_SPEED_CAP in abilityCasting.ts. */
-const CAST_SPEED_CAP = 0.6;
+/** The server's cap on every cast-speed source combined (design §22.9). */
+const CAST_SPEED_CAP = TECHNIQUE_CAST_SPEED_CAP;
 
 export interface AbilityContext {
   equipmentSources?: { id: string; name: string; effects: Record<string, number>; inactiveReason?: string }[];
@@ -55,6 +56,11 @@ export interface AbilityContext {
   maxHp?: number;
   /** Current attack range, for showing what an ability's reach adds up to. */
   attackRange?: number;
+  /**
+   * Cast speed this ability's own nodes add (the amplifier's 'cast' axis, design
+   * §22.9). It joins 'technique.cast-speed-pct' in ONE capped sum, as on the server.
+   */
+  nodeCastSpeedPct?: number;
 }
 
 export interface AbilityLine {
@@ -476,7 +482,8 @@ function timingLines(ability: AbilityDef, context: AbilityContext): AbilityLine[
   if (windsUp && authoredCast > 0) {
     const castReduction = Math.min(
       CAST_SPEED_CAP,
-      Math.max(0, context.passives['technique.cast-speed-pct'] ?? 0),
+      Math.max(0, context.passives['technique.cast-speed-pct'] ?? 0)
+        + Math.max(0, context.nodeCastSpeedPct ?? 0),
     );
     lines.push({
       key: 'cast',

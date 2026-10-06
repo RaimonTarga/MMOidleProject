@@ -80,6 +80,7 @@ import { updateLairDrags } from "../systems/combat/damage/lairDrag";
 import { updateMonsterSlows } from "../systems/combat/status/monsterControl";
 import { syncPlayerBuffs } from "../systems/combat/buffs/buffSync";
 import { updateLineageCards } from '../systems/combat/lineageCards';
+import { updateScheduledKeystoneHits } from '../systems/combat/keystones/ability/scheduledHits';
 import { mirrorHpForecast } from "../systems/defense/core/hpForecast";
 import {
   createMonster as createMonsterInWorld,
@@ -460,6 +461,9 @@ export class World {
     // before combat resolves.
     updateAbilityCasts(this, now);
     updateAbilityCharges(this, now);
+    // Ability keystone area hits that land later (Whirlwind's spin, Aftershock):
+    // after the casts, so a hit that comes due this tick lands before combat.
+    updateScheduledKeystoneHits(this, dt);
     updateStanceSwitch(this, dt, now);
     updateKnockback(this, dt);
     // With knockback, and for the same reason: a component that owns one monster's

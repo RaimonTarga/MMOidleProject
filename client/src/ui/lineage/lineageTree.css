@@ -20,6 +20,11 @@
   align-items: stretch;
 }
 
+/* An ability amplifier row on a cast offers a fourth axis, "a shorter wind-up"
+   (design §22.9): the row takes four columns rather than wrapping a card under
+   its own label. */
+.lin-row--wide { grid-template-columns: 70px repeat(4, minmax(0, 1fr)); }
+
 .lin-row__label {
   display: grid;
   align-content: center;
@@ -110,6 +115,7 @@
 
 @media (max-width: 480px) {
   .lin-row { grid-template-columns: 46px repeat(3, minmax(64px, 1fr)); gap: 5px; }
+  .lin-row--wide { grid-template-columns: 46px repeat(4, minmax(56px, 1fr)); }
   .lin-card { min-height: 64px; padding: 6px; }
   .lin-card__name { font-size: 10px; }
   .lin-card__desc { font-size: 9px; }

@@ -47,6 +47,7 @@ import {
 } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
+import { registerAbilityKeystones } from './ability/registry';
 
 /**
  * One keystone's runtime. `register` is optional because only some rules are
@@ -102,6 +103,10 @@ export function registerKeystones(): void {
   if (_registered) return;
   _registered = true;
   for (const lane of PACKET_IDS) _modules.get(lane)?.register?.();
+  // The ABILITY keystone verbs (design §22.4) ride the same call, so the one
+  // bootstrap that arms the lane rules arms the ability rules too — live server
+  // and bench alike.
+  registerAbilityKeystones();
 }
 
 /** Test/bench escape hatch — never call from game code. */

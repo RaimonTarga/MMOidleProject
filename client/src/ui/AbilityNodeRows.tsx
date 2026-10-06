@@ -1,11 +1,20 @@
 /**
- * The two ability-node rows, on the Abilities panel (design §19).
+ * The four ability-node rows, on the Abilities panel (design §19, §22).
  *
  * Rendered with the lineage card shell and the lineage lane grid, deliberately:
- * a node row IS a lineage row — three options, one lane colour each, one active
- * at a time — and a player who has learned the tree in one panel should not have
- * to learn it again in the other. The CSS is `lineageTree.css`'s `.lin-row` /
- * `.lin-card`, not a copy of it.
+ * a node row IS a lineage row — options, one lane colour each, one active at a
+ * time — and a player who has learned the tree in one panel should not have to
+ * learn it again in the other. The CSS is `lineageTree.css`'s `.lin-row` /
+ * `.lin-card`, not a copy of it. Same card grammar as the weapon page since
+ * §26.4: one sentence per card, no flavour text, lane colours on the packet
+ * route's cards (the trio colours are the weapon page's T1 leans only and never
+ * apply here).
+ *
+ *   Packet     what it also does — three offers
+ *   Amplifier  every axis of the ACTIVE route (§22.10), the default first
+ *   Keystone   the ability's three verbs (§22.11); a verb whose server rule has
+ *              not landed is a silhouette — dimmed, never sold
+ *   Cross      the other two offers, borrowed at the cross scalar
  *
  * Gating is the SHARED check (`checkUnlockAbilityNode`, `checkSetAbilityNode`),
  * the same functions the server applies, so a button that is live here is a
@@ -14,13 +23,19 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import {
+  ABILITY_NODE_ROWS,
   TEST_ROOM_NODE_ID,
+  abilityKeystoneDefinition,
   abilityNodeDescription,
   abilityNodeName,
   abilityNodeProgressFor,
   abilityNodeTreeFor,
+  abilityNodeVisibleOptions,
   checkSetAbilityNode,
   checkUnlockAbilityNode,
+  isKeystoneSilhouette,
+  KEYSTONE_NOT_YET_REASON,
+  nodeAxisLabel,
   packetDefaultFace,
   packetDefinition,
   resolveAbilityNodeOption,
@@ -46,10 +61,14 @@ import './lineage/lineageTree.css';
 const ROW_LABEL: Record<AbilityNodeRow, string> = {
   packet: 'Packet',
   amplifier: 'Amplifier',
+  keystone: 'Keystone',
+  cross: 'Cross',
 };
 const ROW_HINT: Record<AbilityNodeRow, string> = {
   packet: 'what it also does',
-  amplifier: 'deepens that packet',
+  amplifier: 'how that route fires',
+  keystone: 'what it becomes',
+  cross: 'what it borrows',
 };
 
 const RESULT_NOTICE_MS = 3200;
@@ -62,6 +81,13 @@ function round1(n: number): number {
 function formatPayoff(payoff: LineagePayoff): string {
   const pct = `${round1(payoff.magnitude * 100)}%`;
   return payoff.durationMs ? `${pct} for ${(payoff.durationMs / 1000).toFixed(1)}s` : pct;
+}
+
+/** The card's name: the lane for a route, the axis for an amplifier, the verb for a keystone. */
+function optionName(option: AbilityNodeOption): string {
+  if (option.row === 'amplifier') return nodeAxisLabel(option.amplifies ?? 'duration');
+  if (option.row === 'keystone') return abilityKeystoneDefinition(option.keystone ?? '')?.name ?? 'Keystone';
+  return abilityNodeName(option);
 }
 
 export function AbilityNodeRows({ ability }: { ability: AbilityDef }) {
@@ -103,10 +129,13 @@ export function AbilityNodeRows({ ability }: { ability: AbilityDef }) {
   };
 
   function tile(option: AbilityNodeOption) {
-    const resolved = resolveAbilityNodeOption(option);
+    const resolved = resolveAbilityNodeOption(option, progress);
     const laneColor = packetDefinition(option.lane)?.color ?? '#a99e8a';
     const owned = progress.owned.includes(option.id);
     const active = progress.active[option.row] === option.id;
+    // A designed verb with no server rule yet: shown so the choice is visible from
+    // the start (design §22.11), never sold.
+    const silhouette = isKeystoneSilhouette(option);
     const buy = checkUnlockAbilityNode({ option, progress, wallet });
     const slot = owned && !active
       ? checkSetAbilityNode({ abilityId: ability.id, progress, row: option.row, optionId: option.id })
@@ -115,23 +144,27 @@ export function AbilityNodeRows({ ability }: { ability: AbilityDef }) {
 
     const state: CardShellState = active
       ? 'active'
-      : owned ? 'owned' : masteryLocked ? 'locked' : 'available';
-    const reason = masteryLocked
-      ? `Requires Global Mastery ${resolved.requiredGlobalMastery}.`
-      : (!owned && !buy.ok) ? buy.reason
-        : (slot && !slot.ok) ? slot.reason : undefined;
+      : owned ? 'owned' : (masteryLocked || silhouette) ? 'locked' : 'available';
+    const reason = silhouette ? KEYSTONE_NOT_YET_REASON
+      : masteryLocked ? `Requires Global Mastery ${resolved.requiredGlobalMastery}.`
+        : (!owned && !buy.ok) ? buy.reason
+          : (slot && !slot.ok) ? slot.reason : undefined;
 
-    // The modified packet node sits directly above in the same lane column, so
-    // the amplifier's tick always points at the truth.
+    // An amplifier names the route it modifies. With a packet slotted the row
+    // shows only that route's axes, so a tick to the tile above would point at
+    // the wrong column — name it instead.
     const modified = option.modifies
       ? tree!.options.find((o) => o.id === option.modifies)
+      : undefined;
+    const tie = modified
+      ? { adjacent: !progress.active.packet, name: abilityNodeName(modified) }
       : undefined;
 
     return (
       <LineageCardShell
         key={option.id}
         laneColor={laneColor}
-        name={abilityNodeName(option)}
+        name={optionName(option)}
         description={
           <>
             {abilityNodeDescription(option)}
@@ -139,13 +172,14 @@ export function AbilityNodeRows({ ability }: { ability: AbilityDef }) {
           </>
         }
         state={state}
-        tie={modified ? { adjacent: true, name: abilityNodeName(modified) } : undefined}
-        cost={!owned ? <CostChips cost={resolved.cost} wallet={wallet} /> : undefined}
-        note={tree!.family === 'guard' ? `${packetDefaultFace(option.lane)} face` : undefined}
-        disabled={masteryLocked || (!owned && !buy.ok) || (owned && !active && slot !== null && !slot.ok)}
+        tie={tie}
+        cost={!owned && !silhouette ? <CostChips cost={resolved.cost} wallet={wallet} /> : undefined}
+        note={silhouette ? 'not yet'
+          : tree!.family === 'guard' && option.row !== 'keystone' ? `${packetDefaultFace(option.lane)} face` : undefined}
+        disabled={silhouette || masteryLocked || (!owned && !buy.ok) || (owned && !active && slot !== null && !slot.ok)}
         title={reason}
         onClick={() => {
-          if (masteryLocked) return;
+          if (silhouette || masteryLocked) return;
           if (!owned) {
             if (buy.ok) hudBus.requestAbilityUnlockNode(ability.id, option.id);
             return;
@@ -166,15 +200,24 @@ export function AbilityNodeRows({ ability }: { ability: AbilityDef }) {
         </span>
       </div>
       {notice && <div className="lin-toast" role="status">{notice}</div>}
-      {(['packet', 'amplifier'] as const).map((row) => (
-        <div key={row} className="lin-row">
-          <div className="lin-row__label">
-            <b>{ROW_LABEL[row]}</b>
-            <span>{ROW_HINT[row]} · T{tree.rowTier[row]}</span>
+      {ABILITY_NODE_ROWS.map((row) => {
+        const options = abilityNodeVisibleOptions(tree, row, progress);
+        if (options.length === 0) return null;
+        const own = tree.rowOwnTier[row];
+        const band = tree.rowTier[row];
+        return (
+          <div key={row} className={`lin-row${options.length > 3 ? ' lin-row--wide' : ''}`}>
+            <div
+              className="lin-row__label"
+              title={own > band ? `A Tier ${own} row, bought in the Tier ${band} band until Tier ${own} opens.` : undefined}
+            >
+              <b>{ROW_LABEL[row]}</b>
+              <span>{ROW_HINT[row]} · T{band}</span>
+            </div>
+            {options.map(tile)}
           </div>
-          {tree.options.filter((o) => o.row === row).map(tile)}
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

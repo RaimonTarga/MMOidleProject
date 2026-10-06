@@ -438,6 +438,26 @@ export function abilityCastMs(ability: AbilityDef, playerTier: number): number {
 }
 
 /**
+ * The most a wind-up can be shortened, against EVERY source combined (design
+ * §22.9: "the 60% cap holds against every source combined"): the weapon's
+ * `technique.cast-speed-pct`, and an ability amplifier's `cast` axis. The
+ * telegraph is the cost that makes Technique Power on casts a fair trade, so a
+ * cast never collapses into an instant — it never drops below 40% of its wind-up.
+ */
+export const TECHNIQUE_CAST_SPEED_CAP = 0.6;
+
+/**
+ * A wind-up after cast speed: every source's fraction SUMMED, then capped once at
+ * {@link TECHNIQUE_CAST_SPEED_CAP}, then applied once — the server's cast
+ * lifecycle and the client's ability text both read this, so they cannot disagree.
+ */
+export function castWindupMs(authoredMs: number, ...castSpeedPcts: number[]): number {
+  if (!(authoredMs > 0)) return 0;
+  const total = castSpeedPcts.reduce((sum, pct) => sum + Math.max(0, pct || 0), 0);
+  return Math.max(1, Math.round(authoredMs * (1 - Math.min(TECHNIQUE_CAST_SPEED_CAP, total))));
+}
+
+/**
  * Extra engagement reach at this player's rank. See {@link AbilityRank.rangeBonus}.
  */
 export function abilityRangeBonus(ability: AbilityDef, playerTier: number): number {
@@ -451,9 +471,29 @@ export function abilityRankNumeral(rank: number): string {
   return ROMAN[rank - 1] ?? String(rank);
 }
 
-/** Display name including the rank numeral, e.g. `Sweep III`. */
-export function abilityDisplayName(ability: AbilityDef, playerTier: number): string {
-  return `${ability.name} ${abilityRankNumeral(abilityRankNumber(ability, playerTier))}`;
+/**
+ * The words an ability's node rows lend its name (design §22.7, grammar §22.10):
+ * the packet's adjective, the amplifier's "of X", the keystone's noun (which
+ * replaces the ability's own) and the cross's "with Y". Derived from the payoff
+ * or the axis, never authored per ability — `abilityNodeNameParts` builds them.
+ */
+export interface AbilityNameParts {
+  adjective?: string;
+  noun?: string;
+  of?: string;
+  with?: string;
+}
+
+/**
+ * Display name including the rank numeral, e.g. `Sweep III` — and, with the node
+ * rows' words, *Bleeding Whirlwind of Many III, with Echoes*: adjective, noun (the
+ * keystone's, else the ability's), "of X", the numeral after the name, then the
+ * cross's ", with Y". No parts, no change: `Sweep III`.
+ */
+export function abilityDisplayName(ability: AbilityDef, playerTier: number, parts: AbilityNameParts = {}): string {
+  const head = [parts.adjective, parts.noun ?? ability.name, parts.of].filter(Boolean).join(" ");
+  const numeral = abilityRankNumeral(abilityRankNumber(ability, playerTier));
+  return `${head} ${numeral}${parts.with ? `, ${parts.with}` : ""}`;
 }
 
 /**
