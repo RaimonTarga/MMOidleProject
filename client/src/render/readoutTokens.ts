@@ -156,3 +156,107 @@ export const BAR_TOKENS = {
   /** The enemy shell band: height and gap above the bar (world px). */
   enemyShell: { height: 2, gap: 1 },
 };
+
+/** The HUD readouts (DOM): the boss frame, the target frame's bar, the vitals. */
+export type ReadoutBarSize = 'boss' | 'target' | 'vitals' | 'strip';
+
+export const FRAME_TOKENS = {
+  /** One bar module, every DOM use: height and inside-number size by use. */
+  bar: {
+    height: { boss: 16, target: 14, vitals: 12, strip: 10 } satisfies Record<ReadoutBarSize, number>,
+    numberPx: { boss: 11, target: 10, vitals: 10, strip: 8 } satisfies Record<ReadoutBarSize, number>,
+    trough: 'rgba(0, 0, 0, 0.55)',
+    edge: 'rgba(255, 255, 255, 0.14)',
+    number: '#ffffff',
+    /** The fill smooths the 5 Hz broadcast; the chip does the rest. */
+    fillMs: 180,
+    /** A shell narrower than this share of the bar still shows a sliver. */
+    absorbMinShare: 0.04,
+  },
+  /**
+   * The boss bar's quarter markers (the Kill chain's four firings, future-plans): the
+   * boundaries already LOST are lit, the next one is white, so the third lit pip says
+   * the fourth firing is next.
+   */
+  quarter: {
+    lost: '#f0c35a',
+    next: '#ffffff',
+    tick: 'rgba(0, 0, 0, 0.6)',
+    lostTrough: 'rgba(240, 195, 90, 0.13)',
+    pipEmpty: '#6d6553',
+    tickPx: 2,
+  },
+  /** The boss's cast / telegraph line. */
+  cast: {
+    fill: '#ff8f6b',
+    trough: 'rgba(255, 143, 107, 0.18)',
+    label: '#ffb6a0',
+    /** Its next hit is empowered (the server's `primed` mirror). Not gold: gold is the player's crit. */
+    primed: '#ff5a3c',
+    /** Keep a finished cast up this long waiting for its cast-end. */
+    graceMs: 250,
+  },
+  boss: {
+    edge: 'rgba(200, 70, 70, 0.5)',
+    shadow: 'rgba(120, 20, 20, 0.45)',
+    tag: '#ff8a8a',
+    tagBg: 'rgba(180, 30, 30, 0.25)',
+    /** Desktop frame: width and the fixed height the target frame steps under. */
+    width: 440,
+    heightPx: 70,
+    /** Phone: the top strip's row, the ring row's height. */
+    rowPx: 26,
+  },
+  /** The elite mark: the overhead outline's yellow (render/monsters.ts ELITE_OUTLINE). */
+  elite: { tag: '#ffdd33', edge: 'rgba(255, 221, 51, 0.4)' },
+  portrait: { px: 38, phonePx: 26, bg: '#11161d' },
+  /** Low health on the vitals: a steady edge glow at a quarter. No flash, no pulse. */
+  lowHealth: { at: 0.25, glow: '#ff2a2a', glowPx: 8 },
+  /** Frames stay up this long after their subject clears, faded. */
+  linger: { ms: 800, staleOpacity: 0.55 },
+};
+
+/**
+ * The tokens as CSS custom properties, set on each readout's root so its stylesheet
+ * draws from the same source as the Phaser bars.
+ */
+export function readoutCssVars(): Record<string, string> {
+  const f = FRAME_TOKENS;
+  const sizes: Record<string, string> = {};
+  for (const [size, px] of Object.entries(f.bar.height)) sizes[`--ro-h-${size}`] = `${px}px`;
+  for (const [size, px] of Object.entries(f.bar.numberPx)) sizes[`--ro-num-${size}`] = `${px}px`;
+  return {
+    ...sizes,
+    '--ro-trough': f.bar.trough,
+    '--ro-edge': f.bar.edge,
+    '--ro-number': f.bar.number,
+    '--ro-fill-ms': `${f.bar.fillMs}ms`,
+    '--ro-chip': BAR_TOKENS.color.chip,
+    '--ro-chip-alpha': String(BAR_TOKENS.alpha.chip),
+    '--ro-absorb': BAR_TOKENS.color.absorbEnemy,
+    '--ro-q-lost': f.quarter.lost,
+    '--ro-q-next': f.quarter.next,
+    '--ro-q-tick': f.quarter.tick,
+    '--ro-q-trough': f.quarter.lostTrough,
+    '--ro-q-pip-empty': f.quarter.pipEmpty,
+    '--ro-q-tick-px': `${f.quarter.tickPx}px`,
+    '--ro-segment': BAR_TOKENS.color.segment,
+    '--ro-cast-fill': f.cast.fill,
+    '--ro-cast-trough': f.cast.trough,
+    '--ro-cast-label': f.cast.label,
+    '--ro-cast-primed': f.cast.primed,
+    '--ro-boss-edge': f.boss.edge,
+    '--ro-boss-shadow': f.boss.shadow,
+    '--ro-boss-tag': f.boss.tag,
+    '--ro-boss-tag-bg': f.boss.tagBg,
+    '--ro-boss-width': `${f.boss.width}px`,
+    '--ro-boss-h': `${f.boss.heightPx}px`,
+    '--ro-boss-row': `${f.boss.rowPx}px`,
+    '--ro-elite-tag': f.elite.tag,
+    '--ro-elite-edge': f.elite.edge,
+    '--ro-portrait-bg': f.portrait.bg,
+    '--ro-low-glow': f.lowHealth.glow,
+    '--ro-low-glow-px': `${f.lowHealth.glowPx}px`,
+    '--ro-stale': String(f.linger.staleOpacity),
+  };
+}

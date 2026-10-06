@@ -4,7 +4,7 @@
  * cut and how its chip drains. No Phaser, no React, so every rule is testable without a
  * renderer.
  */
-import { BAR_TOKENS, NUMBER_TOKENS, type BodySizeClass, type NumberBand } from './readoutTokens';
+import { BAR_TOKENS, FRAME_TOKENS, NUMBER_TOKENS, type BodySizeClass, type NumberBand } from './readoutTokens';
 
 const BANDS = NUMBER_TOKENS.bands;
 const BAND_ORDER: readonly NumberBand[] = BANDS.map((b) => b.band);
@@ -215,4 +215,44 @@ export function chipAdvance(chip: ChipState | undefined, fill: number, now: numb
   const caughtUp = cur <= chip.to + 1e-9;
   if (fill < chip.to && (caughtUp || chip.to - fill >= BAR_TOKENS.chip.reholdShare)) return { from: cur, to: fill, at: now };
   return { from: cur, to: fill, at: now - BAR_TOKENS.chip.holdMs };
+}
+
+// ── The boss bar's quarters ─────────────────────────────────────────────────
+
+export interface QuarterMarker {
+  /** Where the boundary sits on the bar, as a fraction of max HP. */
+  at: number;
+  /** The boss has fallen below it. */
+  lost: boolean;
+  /** The boundary it will cross next. */
+  next: boolean;
+}
+
+export interface QuarterModel {
+  /** Quarters lost, 0-4 (4 only at zero HP: the fourth firing is the kill). */
+  lost: number;
+  /** The three inner boundaries (75 / 50 / 25 %). */
+  markers: QuarterMarker[];
+}
+
+/** The quarters a boss has LOST, and which boundary comes next. */
+export function quarterModel(hp: number, maxHp: number): QuarterModel {
+  const f = maxHp > 0 ? Math.max(0, Math.min(1, hp / maxHp)) : 0;
+  const lost = f <= 0 ? 4 : Math.min(3, Math.floor((1 - f) * 4 + 1e-9));
+  return {
+    lost,
+    markers: [0.75, 0.5, 0.25].map((at, i) => ({ at, lost: i < lost, next: i === lost })),
+  };
+}
+
+/**
+ * Where an absorb band sits on a bar (percent): it starts where health ends — it is
+ * the layer damage chews through first — and slides back inside the bar when it would
+ * run off the end, so a shielded body at full HP still shows its shell.
+ */
+export function absorbBand(hpFraction: number, absorbFraction: number): { left: number; width: number } | null {
+  if (!(absorbFraction > 0)) return null;
+  const width = Math.max(FRAME_TOKENS.bar.absorbMinShare, Math.min(1, absorbFraction)) * 100;
+  const left = Math.max(0, Math.min(Math.max(0, Math.min(1, hpFraction)) * 100, 100 - width));
+  return { left, width };
 }

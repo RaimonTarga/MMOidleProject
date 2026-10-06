@@ -6,6 +6,8 @@ import { statusMeta, bossEffectMeta } from './targetStatusMeta';
 import { GameIcon } from '../ui/GameIcon';
 import { bossEffectIconSource, targetStatusIconSource } from '../ui/conceptIcons';
 import { TARGET_HOMES, homeBadgeNumber, targetHomeOf, type TargetHome } from './targetHomes';
+import { BossFrameView, useLingeringBoss } from './BossFrame';
+import { useIsMobile } from './useIsMobile';
 
 // The base DoT stack ('dot') tile should reflect YOUR chosen element instead of a
 // fixed green — green (poison/light), red (fire/balanced), light-blue (frost/heavy).
@@ -237,7 +239,23 @@ function buildTiles(
   ];
 }
 
+/**
+ * The target frame, and on desktop the boss frame above it (combat readout run, item
+ * 4): the two share the top centre, so they are drawn together and the target frame
+ * steps under a boss frame that is up. The phone draws its boss row in the top strip.
+ */
 export function TargetFrame() {
+  const isMobile = useIsMobile();
+  const boss = useLingeringBoss();
+  return (
+    <>
+      {!isMobile && <BossFrameView boss={boss.shown} stale={boss.stale} placement="top" />}
+      <TargetFrameBody bossId={boss.shown?.id ?? null} underBoss={!isMobile && boss.shown !== null} />
+    </>
+  );
+}
+
+function TargetFrameBody({ bossId, underBoss }: { bossId: string | null; underBoss: boolean }) {
   const live = useAtomValue(targetFrameAtom);
   const combatArchetype = useAtomValue(combatArchetypeAtom);
   const passives = useAtomValue(passivesAtom);
@@ -245,7 +263,11 @@ export function TargetFrame() {
   const [shown, setShown] = useState<TargetFrameData | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const tiles = shown ? buildTiles(shown, combatArchetype, passives, subVariant) : [];
+  // A boss frame for this same body owns its name, bar and phase: one channel per fact.
+  const bossOwnsHead = shown !== null && shown.id === bossId;
+  const tiles = shown
+    ? buildTiles(shown, combatArchetype, passives, subVariant).filter((t) => !(bossOwnsHead && t.key === PHASE_TILE_KEY))
+    : [];
   // The strip owns hover inspection so a card survives its status ending or its
   // neighbours reflowing. A new target is a new strip. The three homes ride the
   // same strip, so a badge that ends while its card is open is held too.
@@ -295,7 +317,8 @@ export function TargetFrame() {
   const others = strip.entries.filter(({ item }) => item.home === undefined);
 
   return (
-    <div className={`target-frame${stale ? ' target-frame--stale' : ''}${shown.isBoss ? ' target-frame--boss' : ''}`}>
+    <div className={`target-frame${stale ? ' target-frame--stale' : ''}${shown.isBoss ? ' target-frame--boss' : ''}${underBoss ? ' target-frame--under-boss' : ''}`}>
+      {!bossOwnsHead && <>
       <div className="target-frame__name-row">
         <span className="target-frame__name">{shown.name}</span>
         {shown.isBoss && <span className="target-frame__boss-tag">BOSS</span>}
@@ -316,6 +339,7 @@ export function TargetFrame() {
         )}
         <span className="target-frame__hp-text">{Math.ceil(shown.hp)} / {shown.maxHp}</span>
       </div>
+      </>}
 
       <div className="target-frame__stats">
         <span>ATK <b>{shown.attack}</b></span>

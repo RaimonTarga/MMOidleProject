@@ -15,6 +15,7 @@ import { useUpgradeBadge } from '../ui/lineage/useUpgradeList';
 import { BiomeXpBar } from './BiomeXpBar';
 import { ArchetypeMechanics } from './stat/mechanics';
 import { RhythmReadout } from './RhythmReadout';
+import { BossFrame } from './BossFrame';
 import { NODE_BIOMES, BIOME_DATABASE, stanceDef } from '@mmo-idle/shared';
 import { SettingsPanel } from './settings/SettingsPanel';
 import { CharacterSelectPrompt } from './CharacterSelectPrompt';
@@ -350,6 +351,9 @@ function MobileHUDContent() {
           <span className="mhud-hp__text">{nodeId ? `${Math.ceil(hp)}/${maxHp}` : '—'}</span>
           {zoneLabel && <span className="mhud-top__zone">{zoneLabel}</span>}
         </div>
+
+        {/* The boss row: under the vitals, the ring row's height (combat readout). */}
+        <BossFrame placement="strip" />
 
         <div className="mhud-context">
           {/* The rhythm readout: the top strip's second row, beside the HP bar

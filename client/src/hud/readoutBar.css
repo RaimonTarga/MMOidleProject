@@ -1,0 +1,108 @@
+/* The readout's one DOM bar (ReadoutBar.tsx). Every colour and size is a --ro-*
+   custom property set from render/readoutTokens.ts; nothing here is a raw value
+   that the skin track would need to find. Structure only — no ornament. */
+.ro-bar {
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--ro-trough);
+  border: 1px solid var(--ro-edge);
+  font-family: monospace;
+}
+.ro-bar--boss { height: var(--ro-h-boss); }
+.ro-bar--target { height: var(--ro-h-target); }
+.ro-bar--vitals { height: var(--ro-h-vitals); }
+.ro-bar--strip { height: var(--ro-h-strip); }
+
+.ro-bar > i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: block;
+}
+
+.ro-bar__fill {
+  left: 0;
+  transition: width var(--ro-fill-ms) linear, background 0.25s;
+}
+
+/* The chip: what the last hit took, held for a beat and drained (useDamageChip). */
+.ro-bar__chip {
+  background: var(--ro-chip);
+  opacity: var(--ro-chip-alpha);
+}
+
+/* Absorb rides OVER the fill, hatched with a bright leading edge so a shell is never
+   read as a third health colour. */
+.ro-bar__absorb {
+  box-sizing: border-box;
+  border-left: 2px solid rgba(232, 251, 255, 0.95);
+  background:
+    repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.26) 0 3px, transparent 3px 7px),
+    linear-gradient(180deg, color-mix(in srgb, var(--ro-absorb) 70%, #fff), color-mix(in srgb, var(--ro-absorb) 70%, #000));
+  transition: left var(--ro-fill-ms) linear, width var(--ro-fill-ms) linear;
+}
+
+/* Quarter markers: the lost ones lit and their trough tinted, the next one white. */
+.ro-bar__lost {
+  width: 25%;
+  background: var(--ro-q-trough);
+}
+.ro-bar__q {
+  width: 1px;
+  transform: translateX(-50%);
+  background: var(--ro-q-tick);
+}
+.ro-bar__q--lost { width: var(--ro-q-tick-px); background: var(--ro-q-lost); }
+.ro-bar__q--next { width: var(--ro-q-tick-px); background: var(--ro-q-next); }
+.ro-bar__seg {
+  width: 1px;
+  background: var(--ro-segment);
+  opacity: 0.7;
+}
+
+.ro-bar__num {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  line-height: 1;
+  color: var(--ro-number);
+  text-shadow: 1px 1px 0 #000, -1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000;
+  pointer-events: none;
+}
+.ro-bar--boss .ro-bar__num { font-size: var(--ro-num-boss); }
+.ro-bar--target .ro-bar__num { font-size: var(--ro-num-target); }
+.ro-bar--vitals .ro-bar__num { font-size: var(--ro-num-vitals); }
+.ro-bar--strip .ro-bar__num { font-size: var(--ro-num-strip); }
+
+/* Low health on the vitals: a steady edge glow. No flash, no pulse. */
+.ro-bar--low {
+  box-shadow: 0 0 0 1px var(--ro-low-glow), 0 0 var(--ro-low-glow-px) var(--ro-low-glow);
+}
+
+/* The quarters lost, as pips. */
+.ro-pips {
+  display: inline-flex;
+  gap: 3px;
+  flex: 0 0 auto;
+}
+.ro-pips i {
+  display: block;
+  width: 6px;
+  height: 6px;
+  transform: rotate(45deg);
+  border: 1px solid var(--ro-q-pip-empty);
+}
+.ro-pips i.is-lost {
+  background: var(--ro-q-lost);
+  border-color: var(--ro-q-lost);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ro-bar__fill,
+  .ro-bar__absorb { transition: none; }
+}

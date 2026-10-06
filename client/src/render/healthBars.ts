@@ -4,6 +4,7 @@ import type { GameScene } from '../scenes/GameScene';
 import { DEPTH } from './depth';
 import { monsterSpriteSize } from './monsterSize';
 import { BAR_TOKENS } from './readoutTokens';
+import { publishBossFrame } from '../hud/bossFrameState';
 import {
   bodySizeClass, chipAdvance, chipValue, colorInt, healthColor, segmentMarks, type ChipState,
 } from './readoutModel';
@@ -161,6 +162,8 @@ export function drawHealthBars(state: RenderState, now = performance.now()): voi
     hpBar.lineStyle(1, COLOR.outline, BAR_TOKENS.alpha.outline);
     hpBar.strokeRect(left - 0.5, barY - 0.5, w + 1, h + 1);
   }
+  // The boss frame reads the same views on the same beat (hud/bossFrameState.ts).
+  publishBossFrame(state);
 }
 
 export function destroyHpBar(state: RenderState, id: string): void {

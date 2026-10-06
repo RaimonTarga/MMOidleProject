@@ -1,0 +1,161 @@
+/* The boss frame (BossFrame.tsx). Colours and sizes are --ro-* tokens from
+   render/readoutTokens.ts; structure only, no ornament (design §26.4). */
+
+/* ── Desktop: top centre, under nothing ─────────────────────────────────── */
+.boss-frame {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  width: var(--ro-boss-width);
+  max-width: 86vw;
+  height: var(--ro-boss-h);
+  padding: 6px 10px 7px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-radius: 2px;
+  background: rgba(20, 18, 13, 0.94);
+  border: 1px solid var(--ro-boss-edge);
+  box-shadow: 0 4px 22px var(--ro-boss-shadow);
+  font-family: monospace;
+  pointer-events: none;
+  z-index: 11;
+}
+.boss-frame--stale,
+.boss-row--stale { opacity: var(--ro-stale); }
+
+.boss-frame__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 18px;
+}
+.boss-frame__name {
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: bold;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--hud-text);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+.boss-frame__tag {
+  flex: 0 0 auto;
+  padding: 1px 5px;
+  border: 1px solid var(--ro-boss-edge);
+  border-radius: 2px;
+  background: var(--ro-boss-tag-bg);
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  color: var(--ro-boss-tag);
+}
+.boss-frame__spacer { flex: 1; }
+
+.boss-frame__phase {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  pointer-events: auto; /* its card */
+}
+.boss-frame__phase-icon {
+  display: block;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--ro-portrait-bg);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--boss-phase-color, #ffcc55) 45%, transparent);
+  line-height: 0;
+}
+.boss-frame__phase-name {
+  font-size: 9px;
+  font-weight: bold;
+  white-space: nowrap;
+  color: var(--boss-phase-color, #ffcc55);
+  text-shadow: 1px 1px 0 #000;
+}
+
+/* ── The cast / telegraph line ───────────────────────────────────────────── */
+.boss-cast {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 11px;
+}
+.boss-cast__label {
+  flex: 0 0 auto;
+  min-width: 72px;
+  max-width: 160px;
+  overflow: hidden;
+  font-size: 9px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--ro-cast-label);
+}
+.boss-cast__track {
+  position: relative;
+  flex: 1;
+  height: 3px;
+  overflow: hidden;
+  background: var(--ro-cast-trough);
+}
+.boss-cast__fill {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background: var(--ro-cast-fill);
+  transform-origin: left center;
+  animation-name: boss-cast-fill;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+.boss-cast__fill--primed {
+  background: var(--ro-cast-primed);
+  animation: none;
+}
+.is-primed .boss-cast__label { color: var(--ro-cast-primed); }
+@keyframes boss-cast-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* The target frame steps under the boss frame while one is up (TargetFrame.tsx). */
+.target-frame--under-boss { top: calc(14px + var(--ro-boss-h) + 8px); }
+
+/* ── Phone: the top strip's row under the vitals ────────────────────────── */
+.boss-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  height: var(--ro-boss-row);
+}
+.boss-row__name {
+  flex: 0 1 auto;
+  max-width: 96px;
+  overflow: hidden;
+  font-size: 10px;
+  font-weight: bold;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--hud-text);
+}
+.boss-row__bars {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.boss-cast--compact { height: 2px; }
+.boss-cast--compact .boss-cast__track { height: 2px; }
+
+/* The strip grows by the boss row; every overlay offset from --mhud-top-h follows. */
+:root:has(.boss-row) { --mhud-top-h: calc(52px + 28px); }
+
+@media (prefers-reduced-motion: reduce) {
+  /* The cast line is information, not decoration: it still fills, but steps. */
+  .boss-cast__fill { animation-timing-function: steps(8, end); }
+}

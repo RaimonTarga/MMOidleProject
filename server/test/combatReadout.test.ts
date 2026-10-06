@@ -1,16 +1,19 @@
 /**
  * The combat readout's pure rules (docs/briefs/combat-readout-run-2026-10-06.md):
  * band selection by share, DoT coalescing, the lane stack's cap, the bar's size class
- * and chip. No balance numbers.
+ * and chip, quarter markers, the boss frame's model. No balance numbers.
  * Pure modules only (this file is typechecked by tsconfig.test.json); the style and
  * wiring checks that need client render state live in combatText.test.ts.
  */
 import assert from 'node:assert/strict';
-import { BAR_TOKENS, NUMBER_TOKENS } from '../../client/src/render/readoutTokens';
+import { BAR_TOKENS, FRAME_TOKENS, NUMBER_TOKENS, readoutCssVars } from '../../client/src/render/readoutTokens';
 import {
-  DotCoalescer, LaneStack, bodySizeClass, chipActive, chipAdvance, chipValue, colorInt, healthColor,
-  numberBandFor, segmentMarks, shiftBand, type ChipState,
+  DotCoalescer, LaneStack, absorbBand, bodySizeClass, chipActive, chipAdvance, chipValue, colorInt, healthColor,
+  numberBandFor, quarterModel, segmentMarks, shiftBand, type ChipState,
 } from '../../client/src/render/readoutModel';
+import {
+  bossFrameEqual, bossFrameModel, liveCast, pickBoss, type BossFrameSource,
+} from '../../client/src/hud/bossFrameModel';
 
 // ── Band by share ────────────────────────────────────────────────────────────
 {
@@ -126,6 +129,67 @@ function floater(height = 10) {
   assert.equal(chipValue(e, t + 50 + holdMs), chipValue(d, t + 50), 'a big drop restarts the hold');
 }
 
+// ── Quarter markers from (hp, maxHp) ─────────────────────────────────────────
+{
+  const at = (hp: number) => quarterModel(hp, 2100);
+  assert.equal(at(2100).lost, 0);
+  assert.deepEqual(at(2100).markers.map(m => [m.lost, m.next]), [[false, true], [false, false], [false, false]],
+    'full: the 75 % boundary is next');
+  assert.equal(at(1575).lost, 1, 'exactly 75 % has lost the first quarter');
+  assert.equal(at(1576).lost, 0);
+  assert.equal(at(1112).lost, 1, 'the Behemoth at 53 %');
+  assert.deepEqual(at(1112).markers.map(m => [m.lost, m.next]), [[true, false], [false, true], [false, false]]);
+  assert.equal(at(420).lost, 3, 'three lit: the fourth firing is next');
+  assert.equal(at(420).markers.every(m => m.lost), true);
+  assert.equal(at(420).markers.some(m => m.next), false, 'past the last inner boundary only the kill is next');
+  assert.equal(at(1).lost, 3);
+  assert.equal(at(0).lost, 4, 'the fourth quarter is lost only at zero');
+  assert.equal(quarterModel(10, 0).lost, 4, 'no pool reads as empty');
+}
+
+// ── The absorb band ──────────────────────────────────────────────────────────
+{
+  assert.equal(absorbBand(0.5, 0), null);
+  assert.deepEqual(absorbBand(0.5, 0.2), { left: 50, width: 20 }, 'starts where health ends');
+  assert.deepEqual(absorbBand(1, 0.2), { left: 80, width: 20 }, 'slides back inside at full HP');
+  assert.equal(absorbBand(0.5, 0.001)!.width, FRAME_TOKENS.bar.absorbMinShare * 100, 'a tiny shell keeps a sliver');
+}
+
+// ── The boss frame's model from the view ─────────────────────────────────────
+{
+  const boss = (over: Partial<BossFrameSource> = {}): BossFrameSource => ({
+    id: 'b', name: 'Crag Behemoth', monsterTypeId: 'crag-behemoth', nodeId: 'n', hp: 1112, maxHp: 2100,
+    isBoss: true, attackTargetId: null, ...over,
+  });
+  const viewer = { id: 'p', nodeId: 'n', attackTargetId: null as string | null };
+  assert.equal(pickBoss([boss()], viewer), null, 'a boss neither targeted nor aggroed shows no frame');
+  assert.equal(pickBoss([boss()], { ...viewer, attackTargetId: 'b' })?.reason, 'target');
+  assert.equal(pickBoss([boss({ attackTargetId: 'p' })], viewer)?.reason, 'aggro', 'a boss with aggro on the player');
+  assert.equal(pickBoss([boss({ attackTargetId: 'other' })], viewer), null, 'aggro on someone else is not enough');
+  assert.equal(pickBoss([boss({ attackTargetId: 'p', nodeId: 'elsewhere' })], viewer), null, 'only on the player node');
+  assert.equal(pickBoss([boss({ attackTargetId: 'p', hp: 0 })], viewer), null, 'a dead boss shows no frame');
+  assert.equal(pickBoss([boss({ attackTargetId: 'p', isBoss: false })], viewer), null, 'an elite is not a boss');
+  const two = pickBoss([boss({ id: 'b2', attackTargetId: 'p' }), boss({ id: 'b1' })], { ...viewer, attackTargetId: 'b1' });
+  assert.equal(two?.boss.id, 'b1', 'the target wins over another boss with aggro');
+
+  const cast = { label: 'Crag Charge', startedAt: 1000, castMs: 2400 };
+  const m = bossFrameModel(boss({ enemyBarrier: { amount: 300, maxAmount: 400 } as never, bossPhase: 'Stampede', primed: true }),
+    'target', 2, cast, 2000);
+  assert.equal(m.absorb, 300);
+  assert.equal(m.phase, 'Stampede');
+  assert.equal(m.primed, true);
+  assert.equal(m.tier, 2);
+  assert.deepEqual(m.cast, cast);
+  assert.equal(bossFrameModel(boss(), 'aggro', 1, undefined, 0).phase, null);
+  assert.equal(bossFrameModel(boss({ enemyBarrier: { amount: -5, maxAmount: 10 } as never }), 'aggro', 1, undefined, 0).absorb, 0);
+  assert.equal(liveCast(cast, 1000 + 2400 + FRAME_TOKENS.cast.graceMs), cast, 'a finished cast waits briefly for its end');
+  assert.equal(liveCast(cast, 1000 + 2400 + FRAME_TOKENS.cast.graceMs + 1), null, '...then clears');
+  assert.equal(bossFrameEqual(m, { ...m }), true);
+  assert.equal(bossFrameEqual(m, { ...m, hp: m.hp - 1 }), false);
+  assert.equal(bossFrameEqual(m, { ...m, cast: null }), false);
+  assert.equal(bossFrameEqual(null, null), true);
+}
+
 // ── The tokens module's shape ────────────────────────────────────────────────
 {
   const bands = NUMBER_TOKENS.bands;
@@ -144,5 +208,13 @@ function floater(height = 10) {
   assert(NUMBER_TOKENS.motion.dot.risePx < NUMBER_TOKENS.motion.hit.risePx, 'a DoT tick rises small');
   assert(NUMBER_TOKENS.lane.cap >= 1 && NUMBER_TOKENS.dotWindowMs > 0);
   assert(NUMBER_TOKENS.screenFloor > 0 && NUMBER_TOKENS.screenFloor <= 1);
+  const vars = readoutCssVars();
+  for (const [name, value] of Object.entries(vars)) {
+    assert(name.startsWith('--ro-'), `css var ${name} is namespaced`);
+    assert(value.length > 0, `css var ${name} has a value`);
+  }
+  for (const size of Object.keys(FRAME_TOKENS.bar.height)) assert(vars[`--ro-h-${size}`] && vars[`--ro-num-${size}`]);
+  assert(FRAME_TOKENS.cast.primed !== NUMBER_TOKENS.crit.color, 'the primed line is not crit gold');
+  assert(FRAME_TOKENS.lowHealth.at > 0 && FRAME_TOKENS.lowHealth.at < 0.5);
 }
 console.log('combatReadout.test.ts: ok');
