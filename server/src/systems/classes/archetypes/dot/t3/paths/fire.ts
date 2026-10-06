@@ -6,13 +6,11 @@ import { DOT_EFFECT_ID, SMOLDER_EFFECT, CONF_EFFECT_ID } from '../core/constants
 import { hasPassive, markMonsterDot, clearMonsterDot } from '../core/helpers';
 import type { DotT3PathContext } from './_types';
 import {
-  FTF_STACKS_PER_HIT, FTF_DMG_MULT, FTF_BONUS_MULT,
+  FTF_STACKS_PER_HIT, FTF_DMG_MULT,
   CONF_TICK_MS, CONF_DMG_FACTOR,
   IGNITION_VALUE_MULT,
 } from './_constants';
 import { CONF_TICKS } from '../core/constants';
-import { DOT_MAXSTACK_BURST_FX } from '@mmo-idle/shared';
-import { pushClientEffect } from '../../../../../combat/engine/combatPipeline';
 
 /**
  * Ignition (Balanced).
@@ -69,9 +67,17 @@ export function tryIgnition(pc: DotT3PathContext): boolean {
 }
 
 /**
- * Fan the Flames (Balanced).
- * Applies 2 stacks/hit at 50% damage. Hitting at max stacks deals a
- * bonus = maxStacks × basePerStack × 3 instead of refreshing.
+ * Pyromancer (Balanced) — the stack half, Fan the Flames (design §22.5).
+ *
+ * Every hit lays `stacks-per-hit` burn stacks at the path's reduced per-stack
+ * value, up to the cap. A hit into a full bar lays one application, which
+ * `applyStatusEffect` turns into a pure refresh: the burn stays lit at max for as
+ * long as the player keeps hitting, which is where the payoff lives.
+ *
+ * There is no max-stack direct bonus any more — the Ember Mage frame owns
+ * "intensifies" (frameLoop.ts) and the path no longer duplicates it. The payoff,
+ * Radiant, is on the TICK (`ticks/radiant.ts`), so this hit handler knows nothing
+ * about it.
  */
 export function tryFanTheFlames(pc: DotT3PathContext): boolean {
   if (!hasPassive(pc.player, 'dot.fan-the-flames')) return false;
@@ -79,34 +85,25 @@ export function tryFanTheFlames(pc: DotT3PathContext): boolean {
   const passives = player.usesSkills.passives;
   const stacksPerHit = Math.max(1, Math.round(passives['dot.fan-the-flames-stacks-per-hit'] ?? FTF_STACKS_PER_HIT));
   const stackDamageMult = Math.max(0, passives['dot.fan-the-flames-stack-damage-mult'] ?? FTF_DMG_MULT);
-  const maxStackBonusMult = Math.max(0, passives['dot.fan-the-flames-max-stack-bonus-mult'] ?? FTF_BONUS_MULT);
 
   const ftfDmg        = dmgPerStack * stackDamageMult;
   const currentStacks = getTotalStacks(monsterState, DOT_EFFECT_ID);
-  if (currentStacks >= maxStacks) {
-    ctx.damage += Math.floor(maxStacks * dmgPerStack * maxStackBonusMult);
-    // Aesthetic-only crit on the full-stack bonus hit (yellow "!").
-    ctx.metadata['empoweredAttack'] = true;
-    // The bar being full is the whole mechanic; give it a tell.
-    pushClientEffect(ctx, DOT_MAXSTACK_BURST_FX);
-  } else {
-    const toApply = Math.min(stacksPerHit, maxStacks - currentStacks);
-    let ftfEff = applyStatusEffect(monsterState, {
+  const toApply = Math.max(1, Math.min(stacksPerHit, maxStacks - currentStacks));
+  let ftfEff = applyStatusEffect(monsterState, {
+    id: DOT_EFFECT_ID, maxStacks, instanced: false,
+    sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
+    data: { damagePerStack: ftfDmg, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
+  });
+  for (let i = 1; i < toApply; i++) {
+    ftfEff = applyStatusEffect(monsterState, {
       id: DOT_EFFECT_ID, maxStacks, instanced: false,
       sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
       data: { damagePerStack: ftfDmg, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
     });
-    for (let i = 1; i < toApply; i++) {
-      ftfEff = applyStatusEffect(monsterState, {
-        id: DOT_EFFECT_ID, maxStacks, instanced: false,
-        sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
-        data: { damagePerStack: ftfDmg, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
-      });
-    }
-    ftfEff.data.damagePerStack = ftfDmg;
-    ftfEff.data.tickIntervalMs = tickIntervalMs;
-    ftfEff.data.tickOnExpire = 1;
   }
+  ftfEff.data.damagePerStack = ftfDmg;
+  ftfEff.data.tickIntervalMs = tickIntervalMs;
+  ftfEff.data.tickOnExpire = 1;
   markMonsterDot(world, monster);
   ctx.metadata['dotHandled'] = true;
   return true;

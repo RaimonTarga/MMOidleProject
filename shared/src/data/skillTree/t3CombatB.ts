@@ -211,15 +211,20 @@ export const t3CombatEntriesB = [
     id: 'dot-balanced-t3-a', name: 'Pyromancer', tier: 3,
     classId: 'dot-root', subVariantId: 'balanced',
     parent: 'dot-balanced', children: [],
-    description: 'Each hit applies 2 burn stacks instead of 1, but each stack deals 55% of normal tick damage. Hitting a target already at max stacks deals bonus direct damage equal to 1.5× the max-stack DoT damage.',
-    packet: 'affliction', // PROVISIONAL (run 3 W1-B, design §4)
+    description: 'Each hit applies 2 burn stacks instead of 1, but each stack deals 55% of normal tick damage. Radiant: while a target is at max burn stacks, each of its burn ticks also strikes every adjacent enemy for the tick\'s damage. The radiated fire is damage over time (it ignores plating), applies no stacks and spreads nothing.',
+    // Design §22.5 (T3 path review, locked 2026-10-02). The old max-stack direct
+    // bonus duplicated the Ember Mage frame's "intensifies" (frameLoop.ts) and is
+    // gone; the payoff is Radiant, which moves DAMAGE, never stacks — unlike the
+    // Warlock range node, Contagion and the Outbreak keystone, which all move stacks.
+    packet: 'affliction',
     cost: 1, statEffects: {},
     mechanicEffects: {
       'dot.fan-the-flames': 1,
       'dot.fan-the-flames-stacks-per-hit': 2,
-      // 2026-09-28 T4 outlier pass: 0.4 -> 0.55 and 1.25x -> 1.5x (0.79x the median spec on live T4 bosses).
+      // 2026-09-28 T4 outlier pass: 0.4 -> 0.55, measured beside the since-removed
+      // 1.5x max-stack bonus (0.79x the median spec on live T4 bosses then).
       'dot.fan-the-flames-stack-damage-mult': 0.55,
-      'dot.fan-the-flames-max-stack-bonus-mult': 1.5,
+      'dot.radiant': 1,
     },
   }],
   ['dot-balanced-t3-b', {

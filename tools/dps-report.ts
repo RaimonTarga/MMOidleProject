@@ -1037,10 +1037,10 @@ function estimateClassDamage(
     if ((p['dot.fan-the-flames'] ?? 0) > 0) {
       const stackDamageMult = Math.max(0, p['dot.fan-the-flames-stack-damage-mult'] ?? 0.5);
       const stacksPerHit = Math.max(1, Math.round(p['dot.fan-the-flames-stacks-per-hit'] ?? 2));
-      const bonusMult = Math.max(0, p['dot.fan-the-flames-max-stack-bonus-mult'] ?? 2);
       dotPerSec *= stackDamageMult;
-      classMechanicPerSec += maxStacks * dmgPerStack * bonusMult * effectiveHitRate;
-      notes.push(`${stacksPerHit} burn stacks/hit at ${Math.round(stackDamageMult * 100)}% value; max-stack bonus ${bonusMult}x`);
+      // Radiant (design §22.5) strikes the bodies ADJACENT to a max-burn target, so
+      // it adds nothing to this single-target figure.
+      notes.push(`${stacksPerHit} burn stacks/hit at ${Math.round(stackDamageMult * 100)}% value; Radiant splash not modelled (single target)`);
     }
 
     if ((p['dot.ignition'] ?? 0) > 0) {
