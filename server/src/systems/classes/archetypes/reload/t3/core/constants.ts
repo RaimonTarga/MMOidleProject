@@ -15,7 +15,6 @@ export const SERVER_TICK_MS = 100;
 export const DEATH_MARK_EFFECT_ID = 'death-mark';
 export const SUPPRESS_SHRED_EFFECT_ID = 'reload-suppress-shred';
 export const COVER_FIRE_EFFECT_ID = 'reload-cover-fire';
-export const EXPLODING_CLIP_CLIENT_EFFECT = 'reload-exploding-clip';
 export const ALT_ONHIT_CLIENT_EFFECT = 'reload-alt-onhit';
 
 export const DEFAULT_EXPLODING_CLIP_MULT = 3.5;

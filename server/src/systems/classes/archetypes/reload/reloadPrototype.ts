@@ -1,5 +1,5 @@
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
-import { registerEmpoweredMultiplier, setEmpoweredAttack } from '../../../combat/engine/empoweredAttacks';
+import { registerEmpoweredMultiplier } from '../../../combat/engine/empoweredAttacks';
 import type { World } from '../../../../world/World';
 import { getFlag, relicRatingsFromPassives, resolveReloadRelicProfile, resetCounter } from '@mmo-idle/shared';
 import { isPlayerActivelyInCombat } from '../../../combat/ai/engagement';
@@ -36,8 +36,11 @@ export function updateReloadArchetype(world: World, dt: number): void {
     if (reload.ammoMax !== maxAmmo) {
       const isFirstInit = reload.ammoMax === 0;
       reload.ammoMax = maxAmmo;
-      if (isFirstInit || reload.ammo > maxAmmo) {
-        reload.ammo = maxAmmo;
+      // A Duelist's kill chain may hold rounds past the clip's size; a resize clamps
+      // to the grown clip, never strips the chain's rounds (0 for everyone else).
+      const ceiling = maxAmmo + reload.chainRounds;
+      if (isFirstInit || reload.ammo > ceiling) {
+        reload.ammo = ceiling;
       }
     }
 
@@ -73,17 +76,18 @@ export function updateReloadArchetype(world: World, dt: number): void {
 
 export function initReloadArchetype(): void {
   // Register the empowered multiplier FIRST so it runs before the T3 onHit hooks.
-  // Only Duelist (exploding-clip) arms an empowered attack — on the clip's last
-  // bullet (see beforeAttack below) — so this is inert for every other reload spec.
-  // Reads the multiplier from the node (reload.empowered-mult) and layers the
-  // universal empowered bonuses (shared.empowered-mult-add, weapon.empowered-mult-bonus).
+  // No reload path arms an empowered attack of its own since the T3 review retired
+  // the Duelist's exploding last bullet (design §22.5); the layer stays for anything
+  // else that arms one. Reads the multiplier from the node (reload.empowered-mult)
+  // and layers the universal empowered bonuses (shared.empowered-mult-add,
+  // weapon.empowered-mult-bonus).
   registerEmpoweredMultiplier(DEFAULT_EXPLODING_CLIP_MULT, {
     attackerType:  'player',
     attackerSlice: 'usesReload',
     passiveKey:    'reload.empowered-mult',
-    // `mechanic-proxy` (design §24.2): only the Duelist authors this multiplier,
-    // so only the Duelist's proxy uses it; every other reload spec has no
-    // damage-multiplier mechanic and takes the proxy's fallback.
+    // `mechanic-proxy` (design §24.2): a proxy uses this multiplier only where a
+    // node authors it — none does now — so every reload spec takes the proxy's
+    // fallback rather than a multiplier its class never fires.
     proxyRequiresPassive: true,
   });
 
@@ -125,6 +129,10 @@ export function initReloadArchetype(): void {
     // Class adapters can key off the authoritative ammo pipeline instead of
     // naming weapon paths. Follow-up Blunderbuss pellets are still shots from
     // this clip; Laser ticks never pass this ammo gate and therefore stay out.
+    // `reloadClipSize` is the AUTHORED clip, never the one a Duelist's kill chain
+    // has grown: Tempo's attack-equivalents and Sweep's clip budget normalise by it,
+    // so a kill's extra round is one more shot worth 1/ammoMax of an attack, never
+    // a reason to shrink every other shot's share.
     ctx.metadata['reloadClipShot'] = true;
     ctx.metadata['reloadClipSize'] = Math.max(1, reload.ammoMax);
 
@@ -169,15 +177,14 @@ export function initReloadArchetype(): void {
     // (Phase 3). Deliberately NOT re-derived downstream from `ammoMax - ammo`: the
     // Blunderbuss branch above empties the clip in one beat and returns before here,
     // so a volley pellet carries no clip position and the frame loop skips it.
-    ctx.metadata['reloadClipIndex'] = Math.max(1, reload.ammoMax - reload.ammo);
+    // The clip a Duelist's kill chain has grown is `ammoMax + chainRounds` rounds
+    // long, so a kill's round extends the clip rather than re-arming an opener.
+    ctx.metadata['reloadClipIndex'] = Math.max(
+      1,
+      reload.ammoMax + reload.chainRounds - reload.ammo,
+    );
 
     if (reload.ammo === 0) {
-      // Duelist: the bullet that empties the clip fires as an empowered attack.
-      // Arm it here (beforeAttack) so the empowered multiplier consumes it at onHit
-      // — this also drives the empowered AoE splash and the yellow "!" damage style.
-      if ((passives['reload.exploding-clip'] ?? 0) > 0) {
-        setEmpoweredAttack(world, entity);
-      }
       const reloadTimeMs = resolveReloadTimeMs(entity);
       startReloadTimer(world, entity, reloadTimeMs);
       ctx.metadata['pendingReloadStart'] = true;

@@ -7,6 +7,12 @@ export interface UsesReload {
   reloadingMs: number;
   /** Full duration captured when the current reload began; 0 while idle. */
   reloadDurationMs: number;
+  /**
+   * Duelist (design §22.5, Kill chain): rounds the current kill chain has loaded on
+   * top of the authored clip, so `ammo` may sit above `ammoMax` by up to this many.
+   * Starting a reload dumps them; 0 for every other spec.
+   */
+  chainRounds: number;
   /** Hair Trigger / Chain Gun: attack-speed stacks built during current clip. */
   clipSpeedStacks: number;
   /** Hair Trigger / Chain Gun: attack cooldown captured on first shot of clip (0 = not yet set). */
@@ -40,6 +46,7 @@ export function initUsesReload(args: { ammoMax: number }): UsesReload {
     laserOverheated: false,
     reloadingMs:     0,
     reloadDurationMs: 0,
+    chainRounds:     0,
     clipSpeedStacks: 0,
     clipBaseAttackCooldownMs: 0,
     momentumStacks:  0,

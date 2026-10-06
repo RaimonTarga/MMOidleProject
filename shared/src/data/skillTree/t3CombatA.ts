@@ -232,10 +232,15 @@ export const t3CombatEntriesA = [
     id: 'reload-light-t3-a', name: 'Duelist', tier: 3,
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-light', children: [],
-    description: 'The last bullet of every clip fires as an empowered shot (3.5×) with a splash — and like all empowered attacks, it scales with empowered-damage gear and passives.',
-    packet: 'empowered', // PROVISIONAL (run 3 W1-B, design §4)
+    description: 'Kill chain: every kill loads one round on top of your clip, even past its size, until you next reload — a long chain is a long clip, and the ammo counter climbs past its maximum. Reloading returns the clip to its authored size; a kill that readies the reload (Refund) refills the clip and still adds the round. Your openers stay the first two rounds of a fresh clip.',
+    // Design §22.5 (T3 path review): re-homed from Empowered. Its last-bullet
+    // payoff duplicated the Marksman frame's end-of-clip and its splash the
+    // Shockwave keystone; Kill chain had one path. Distinct from Refund, which
+    // readies the mechanic (completes the reload) — this grows the clip.
+    packet: 'kill-chain',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'reload.exploding-clip': 1, 'reload.empowered-mult': 3.5, 'reload.max-ammo': +1 },
+    // Rounds per kill: a shape constant (one), not a tuning number.
+    mechanicEffects: { 'reload.kill-chain': 1 },
   }],
   ['reload-light-t3-b', {
     id: 'reload-light-t3-b', name: 'Desperado', tier: 3,

@@ -260,8 +260,9 @@ export const COOLDOWN_KEYS = [
 export const RELOAD_KEYS = [
   'reload.max-ammo',
   'reload.reload-time-ms',
-  // Duelist: the last bullet of a clip fires as an empowered attack at this
-  // multiplier (so shared.empowered-mult-add / weapon.empowered-mult-bonus apply).
+  // The reload root's empowered multiplier (shared.empowered-mult-add /
+  // weapon.empowered-mult-bonus apply on top). No path authors it since the T3
+  // review retired the Duelist's exploding last bullet (design §22.5).
   'reload.empowered-mult',
   'reload.laser',
   'reload.laser-damage-per-tick-pct',
@@ -277,6 +278,7 @@ export const RELOAD_KEYS = [
   // HP fraction at/above which a target counts as "full HP" for the snipe bonus.
   'reload.snipe-fullhp-threshold',
   'reload.gatling',
+  // Retired by the T3 review (design §22.5): no node authors the exploding clip.
   'reload.exploding-clip',
   'reload.exploding-clip-mult',
   'reload.exploding-aoe-mult',
@@ -324,6 +326,10 @@ export const RELOAD_KEYS = [
   'reload.cannon-damage-per-shot',
   // Fraction of the reload spent charging before the cannon fires.
   'reload.cannon-charge-fraction',
+  // ── T3 path review (design §22.5) ──────────────────────────────────────────
+  // Duelist (light, Kill chain): every kill loads this many rounds on top of the
+  // clip, past its size, until the next reload starts.
+  'reload.kill-chain',
   // ── Frame loop (progression rework Phase 3) ────────────────────────────────
   // The Slinger's loop is WHERE IN THE CLIP the payoff lives
   // (docs/briefs/frame-loops-2026-10-01.md §1). Authored on the frame nodes, so

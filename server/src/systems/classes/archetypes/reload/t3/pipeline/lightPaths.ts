@@ -4,7 +4,6 @@ import { markSliceDirty } from '../../../../../../ecs/dirtyHelpers';
 import {
   DEFAULT_HAIR_TRIGGER_MAX,
   DEFAULT_HAIR_TRIGGER_PCT,
-  EXPLODING_CLIP_CLIENT_EFFECT,
   ALT_ONHIT_CLIENT_EFFECT,
   ALT_CADENCE_ATTACK_MULT,
   ALT_CADENCE_ONHIT_MULT,
@@ -50,25 +49,6 @@ export function registerReloadLightT3(): void {
         effects.push(ALT_ONHIT_CLIENT_EFFECT);
         ctx.metadata['clientEffects'] = effects;
       }
-    }
-
-    const blunderbuss = (passives['reload.blunderbuss'] ?? 0) > 0;
-    const isLastPellet = blunderbuss
-      ? ctx.metadata['blunderbussLastPellet'] === true
-      : reload.ammo === 0;
-
-    if ((passives['reload.exploding-clip'] ?? 0) > 0 && isLastPellet) {
-      // The damage multiplier and AoE splash are handled by the empowered system:
-      // the last bullet is armed empowered in reloadPrototype.beforeAttack, so the
-      // empowered multiplier (reload.empowered-mult) scales the hit and combat.ts
-      // applies the standard empowered AoE. Here we only tag the red Duelist shot FX.
-      const existing = ctx.metadata['clientEffects'];
-      const effects = Array.isArray(existing)
-        ? existing.filter((e): e is string => typeof e === 'string')
-        : [];
-      effects.push(EXPLODING_CLIP_CLIENT_EFFECT);
-      ctx.metadata['clientEffects'] = effects;
-      ctx.metadata['reloadExplodingClip'] = true;
     }
 
     if ((passives['reload.hair-trigger'] ?? 0) <= 0) return;

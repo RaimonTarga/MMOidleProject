@@ -66,6 +66,9 @@ export function startReloadTimer(
   if (!player.usesReload) return;
   const reload = player.usesReload;
   reload.ammo = 0;
+  // A reload dumps the clip, and with it any rounds a Duelist's kill chain loaded
+  // past its size: the chain ends here (design §22.5).
+  reload.chainRounds = 0;
   reload.reloadingMs = reloadMs;
   reload.reloadDurationMs = reloadMs;
   _reloadStartEmitted.delete(player);
@@ -106,8 +109,9 @@ export function requestManualReload(
   }
 
   const reload = player.usesReload;
-  // The Laser path replaces magazines with heat. A full magazine or an active
-  // reload likewise has nothing for another manual request to change.
+  // The Laser path replaces magazines with heat. A full magazine (or a Duelist's
+  // clip a kill chain has loaded past its size) or an active reload likewise has
+  // nothing for another manual request to change.
   if (
     (player.usesSkills.passives['reload.laser'] ?? 0) > 0
     || reload.reloadingMs > 0
@@ -124,7 +128,16 @@ export function requestManualReload(
 export function completeReload(world: World, player: PlayerEntity): void {
   if (!player.usesReload) return;
   const reload = player.usesReload;
-  reload.ammo = reload.ammoMax;
+  // A clip the TIMER brought back is the authored clip: a round a Duelist's kill
+  // earned while the reload ran (the last round's kill) is forfeit. A clip something
+  // READIED — the Kill chain keystone Refund, mid-clip or cutting a reload short —
+  // keeps the chain's rounds on top of the refill (design §22.5: the refill AND the
+  // round). Read here, before the timer is cleared, so the result does not depend on
+  // whether the Duelist's kill listener ran before or after Refund's. `chainRounds`
+  // is 0 for every spec but the Duelist, so everyone else refills to `ammoMax`.
+  const readied = reload.reloadingMs > 0 || reload.ammo > 0;
+  if (!readied) reload.chainRounds = 0;
+  reload.ammo = reload.ammoMax + reload.chainRounds;
   reload.reloadingMs = 0;
   reload.reloadDurationMs = 0;
   _reloadStartEmitted.delete(player);
