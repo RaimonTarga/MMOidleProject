@@ -29,3 +29,22 @@ per shard; render with `scripts/_t1BossMatrix.ts <jsonl> --md` and
 **No-band identity:** the 900 after rows equal the 900 before rows once `wallMs` is removed
 (sorted, compared line for line) — a character with no cards fights exactly as on develop.
 0 error rows in either file.
+
+## Final (feat/legibility `b6d3b130`: waves 1 and 2 merged)
+
+| file | plan | rows | wall |
+|---|---|---:|---:|
+| `final-base.jsonl` | the no-band plan again | 900 | 109 s, 3 shards |
+| `final-tutorial-pair.jsonl` / `.md` | `--matrix=tutorial-pair --seeds=30`: the guide's kit with Effect at rank III and the weapon's verb (the plan now carries `leanRank`), and a no-card control | 1,800 | 186 s, 3 shards |
+
+**No-band identity holds at the final tip** (900/900 rows equal to `before-base.jsonl`,
+`wallMs` removed). 0 error rows.
+
+## Other evidence
+
+- `rosters.md` — wave 1 C: the T1 node table before → after, the one currency move, the
+  spawner verification and the T1 family-contract bench.
+- `sweep-1x.md` / `.json` — wave 2 E: the canonical 1x six-class tutorial sweep.
+- `screens/` — wave 1 D: desktop 1440×900 and portrait 390×844 shots of every view (ring
+  states and their targets staged by holding the client's atoms; the away count and the
+  target badges from real fights).
