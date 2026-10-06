@@ -387,7 +387,7 @@ const SECOND_WIND = ABILITY_DATABASE.get('second-wind')!;
 assert(SWEEP?.shape === 'armed' && SWEEP.slot === 'technique', 'fixture: Sweep is an armed Technique');
 assert(SLAM?.shape === 'cast' && SLAM.slot === 'technique', 'fixture: Slam is a cast Technique');
 assert(SNIPE?.shape === 'cast' && SNIPE.slot === 'technique', 'fixture: Snipe is a cast Technique');
-assert(IMBUE?.shape === 'self-cast' && IMBUE.slot === 'technique', 'fixture: Imbue is a self-cast Technique');
+assert(IMBUE?.shape === 'instant' && IMBUE.slot === 'technique', 'fixture: Imbue is an instant Technique (design §22.9)');
 assert(SECOND_WIND?.slot === 'guard', 'fixture: Second Wind is a Guard');
 
 /** A sturdy body at an absolute position on the test node. */
@@ -467,7 +467,7 @@ const deliveries = (): SeenHit[] => hits.filter((h) => h.metadata['destroyerDeli
   assert(fires.length === 0, 'nothing announced the mechanic');
   assert(getFrameCharge(player.tracksCombat, 'cooldown') > 0, 'the Bulwark bank still fills while it waits');
 
-  // A Technique with no target — Imbue's self-cast — has no shape to carry it.
+  // A Technique with no target — Imbue's instant (design §22.9) — has no shape to carry it.
   onTechniqueResolved(world, player, IMBUE, { now });
   assert(player.hasEmpoweredAttack !== undefined, 'a targetless Technique leaves it primed');
   // A Guard never fires it.

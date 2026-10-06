@@ -125,7 +125,6 @@ const STATUS_HELP: Record<string, StatusHelp> = {
 
   // -- Reload ----------------------------------------------------------------
   'reload-snipe-ready': m('Snipe', 'Your next shot lands for a multiplier against a target still at full health.'),
-  'reload-hair-trigger': m('Hair trigger', 'Rounds spent this magazine raise your attack speed.'),
   'reload-cover-fire': m('Cover fire', 'You take reduced damage while reloading — the downtime stops being a hole in your defense.'),
   'reload-momentum': m('Momentum', 'Each completed reload grants a stack that raises attack speed and shortens reload time. Stacks persist through combat and decay slowly out of combat.'),
   'reload-cannon': m('Cannon', 'Shots stored to fire mid-reload, so the magazine break is not silent.'),

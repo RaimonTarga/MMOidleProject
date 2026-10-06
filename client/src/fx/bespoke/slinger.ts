@@ -192,7 +192,7 @@ export const SLINGER_PATHS: PathTable = {
   // every shot of the ramp; the reload ends it with a roar.
   'reload-heavy-t3-b': {
     hit: (h) => {
-      const ramp = Math.min(20, buffStacks(h.player, 'reload-hair-trigger'));
+      const ramp = Math.min(20, buffStacks(h.player, 'reload-frame-ramp'));
       const heat = ramp / 20;
       const g = h.scene.add.graphics({ x: h.from.x, y: h.from.y + 14 }).setDepth(DEPTH.SPRITE - 1);
       g.fillStyle(0xff3b2f, 0.08 + 0.22 * heat);

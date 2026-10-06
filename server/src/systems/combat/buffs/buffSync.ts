@@ -895,8 +895,6 @@ function buffEffectText(buff: PlayerBuff): string {
       return "+DoT damage taken";
     case "reload-snipe-ready":
       return "next shot empowered";
-    case "reload-hair-trigger":
-      return "+attack speed";
     case "reload-cover-fire":
       return "damage reduction while reloading";
     case "debuff-slow":
