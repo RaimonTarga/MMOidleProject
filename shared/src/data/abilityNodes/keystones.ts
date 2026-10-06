@@ -161,7 +161,7 @@ const trioEntries: [string, Trio][] = [
   ['binding-strike', [
     verb('binding-strike', 1, 'dragnet', 'Dragnet',
       'The root takes every body adjacent to the target.',
-      'control.shackle', 'root', { delivery: DB }),
+      'control.shackle', 'root', { delivery: DB, live: true }),
     verb('binding-strike', 2, 'impale', 'Impale',
       'A rooted target cannot attack you while you stand at max reach.',
       'control.keystone', 'root'),

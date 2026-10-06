@@ -23,6 +23,7 @@
  */
 import {
   ABILITY_DATABASE,
+  ABILITY_ROOT_EFFECT_ID,
   ABILITY_KEYSTONE_DEFINITIONS,
   GAME_CONFIG,
   STARTER_RUNE_IDS,
@@ -53,6 +54,7 @@ import { addLineageAffliction } from '../src/systems/combat/damage/lineageAfflic
 import { LINEAGE_BLEED_ID } from '../src/systems/combat/damage/bleedIds';
 import { resolveContagion } from '../src/systems/player/abilities/abilityAffliction';
 import { outbreakTagged } from '../src/systems/combat/keystones';
+import { monsterIsHeld } from '../src/systems/combat/status/monsterControl';
 import { runFormationAttack } from '../src/systems/classes/archetypes/summoner/formationAttack';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
 import {
@@ -667,6 +669,49 @@ function attackLedger(player: PlayerEntity): string {
   addLineageAffliction(world, plain, plainSource, 600, 4_000);
   resolveContagion(world, plain, contagion, plainSource);
   assert(dotsOf(plainVictim, plain).length > 0 && !outbreakTagged(plainVictim, plain), 'no verb, no tag');
+}
+
+// ─── Binding Strike · DRAGNET: the root takes every body adjacent to the target ─
+
+{
+  const bindingStrike = ABILITY_DATABASE.get('binding-strike')!;
+  const effect = resolveAbilityEffect(bindingStrike, { playerTier: 4 });
+  if (effect.kind !== 'root-strike') throw new Error('Binding Strike is a root strike');
+  const DRAGNET_FX = ABILITY_KEYSTONE_DEFINITIONS.get('dragnet')!.fx;
+  const rootedBy = (monster: MonsterEntity, playerId: string): number => {
+    const root = getStatusEffect(monster.tracksCombat, ABILITY_ROOT_EFFECT_ID);
+    return root && root.remainingMs > 0 && root.sourceId === playerId ? root.remainingMs : 0;
+  };
+
+  const world = new World();
+  const player = spawnPlayer(world, 'ks-dragnet', {
+    abilityId: 'binding-strike', nodes: rows('binding-strike', { packet: 'control', keystone: 'dragnet' }),
+  });
+  const target = spawnMonster(world, 600);
+  const left = spawnMonster(world, 520);
+  const below = spawnMonster(world, 600, 480);
+  const far = spawnMonster(world, 1_200);
+  armTechnique(world, player, 'binding-strike');
+  hit(world, player, target);
+
+  assert(rootedBy(target, player.isPlayer.id) > 0, 'Binding Strike roots its target');
+  for (const [label, body] of [['left', left], ['below', below]] as const) {
+    assert(rootedBy(body, player.isPlayer.id) === effect.rootMs, `the net takes the ${label} body, for the same duration`);
+    assert(monsterIsHeld(body), `a netted body is held for the Control verb (${label})`);
+  }
+  assert(rootedBy(far, player.isPlayer.id) === 0, 'only adjacent bodies');
+  const drawn = cardFx(world).filter((e) => e.fx === DRAGNET_FX);
+  assert(
+    drawn.length === 2 && new Set(drawn.map((e) => e.targetId)).size === 2,
+    `each adjacent body once, one card-fx each, got ${drawn.length}`,
+  );
+
+  // A dodged strike casts no net.
+  const dodged = spawnMonster(world, 2_000);
+  const beside = spawnMonster(world, 2_080);
+  armTechnique(world, player, 'binding-strike');
+  hit(world, player, dodged, { evadeBlocksDebuffs: true });
+  assert(rootedBy(beside, player.isPlayer.id) === 0, 'a dodged strike nets nothing');
 }
 
 console.log('abilityKeystones: ok');
