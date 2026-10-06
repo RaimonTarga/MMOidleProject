@@ -66,6 +66,16 @@ export interface AbilityKeystoneModule {
     ability: AbilityDef,
     site: TechniqueResolutionSite,
   ) => void;
+  /**
+   * The ability just wrote its afflictions onto `victim` (Contagion's spread, at
+   * the seam where the copy lands) with this verb live. Called once per victim.
+   */
+  onInfected?: (
+    world: World,
+    player: PlayerEntity,
+    ability: AbilityDef,
+    victim: MonsterEntity,
+  ) => void;
 }
 
 const _modules = new Map<string, AbilityKeystoneModule>();
@@ -132,6 +142,23 @@ export function onAbilityKeystoneResolved(
   const keystoneId = getAbilityKeystoneRuntime(player.tracksCombat)?.[ability.id]?.keystoneId;
   if (!keystoneId) return;
   _modules.get(keystoneId)?.onResolved?.(world, player, ability, site);
+}
+
+/**
+ * An ability's spread just landed its copy on `victim`: run the live verb that
+ * cares (design §22.4's Outbreak tags what Contagion infected). Called from the
+ * seam where the spread WRITES — `resolveContagion`'s victim loop — rather than
+ * from the cast lifecycle, so it holds whatever shape delivers the spread.
+ */
+export function onAbilityKeystoneInfected(
+  world: World,
+  player: PlayerEntity,
+  ability: AbilityDef,
+  victim: MonsterEntity,
+): void {
+  const keystoneId = getAbilityKeystoneRuntime(player.tracksCombat)?.[ability.id]?.keystoneId;
+  if (!keystoneId) return;
+  _modules.get(keystoneId)?.onInfected?.(world, player, ability, victim);
 }
 
 /**

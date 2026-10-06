@@ -11,9 +11,11 @@
  * | Sweep | Whirlwind | the channelled beam's tick machinery + applyPlayerAoe around the owner |
  * | Slam | Aftershock | one delayed applyPlayerAoe at the resolved cast position, the rank's radius |
  * | Charge | Breakthrough | the control ladder's shortest rung (applyStun, ladderStunMs) on the arrival blow |
+ * | Contagion | Outbreak | the affliction toolkit: a tag where resolveContagion writes, copyPlayerDotOnto on the tagged body's onKill |
  */
 export * from './registry';
 export * from './scheduledHits';
 export { WHIRLWIND_KEYSTONE } from './whirlwind';
 export { AFTERSHOCK_KEYSTONE } from './aftershock';
 export { BREAKTHROUGH_KEYSTONE } from './breakthrough';
+export { OUTBREAK_KEYSTONE, outbreakTag, outbreakTagged } from './outbreak';

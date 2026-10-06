@@ -49,6 +49,10 @@ import { armTechnique } from '../src/systems/player/abilities/abilityArming';
 import { beginAbilityCast, updateAbilityCasts, updateAbilityCharges } from '../src/systems/player/abilities/abilityCasting';
 import { updateMovement } from '../src/systems/world/movement';
 import { STUN_EFFECT } from '../src/systems/combat/status/stun';
+import { addLineageAffliction } from '../src/systems/combat/damage/lineageAffliction';
+import { LINEAGE_BLEED_ID } from '../src/systems/combat/damage/bleedIds';
+import { resolveContagion } from '../src/systems/player/abilities/abilityAffliction';
+import { outbreakTagged } from '../src/systems/combat/keystones';
 import { runFormationAttack } from '../src/systems/classes/archetypes/summoner/formationAttack';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
 import {
@@ -575,6 +579,94 @@ function attackLedger(player: PlayerEntity): string {
       'once per Charge: the other deliveries stagger nothing more',
     );
   }
+}
+
+// ─── Contagion · OUTBREAK: an infected body passes its afflictions on when it dies ─
+
+{
+  const contagion = ABILITY_DATABASE.get('contagion')!;
+  const OUTBREAK_FX = ABILITY_KEYSTONE_DEFINITIONS.get('outbreak')!.fx;
+  /** The ids of `player`'s damage-over-time records on `monster`. */
+  const dotsOf = (monster: MonsterEntity, player: PlayerEntity): string[] =>
+    monster.tracksCombat.statusEffects
+      .filter((effect) => effect.sourceId === player.isPlayer.id && effect.remainingMs !== 0)
+      .map((effect) => effect.id);
+  const killed = (world: World, killer: PlayerEntity, monster: MonsterEntity): void => {
+    monster.hasHealth.hp = 0;
+    emitCombatEvent('onKill', {
+      attacker: killer, attackerType: 'player', defender: monster, defenderType: 'monster',
+      damage: 1, platingMult: 1, drPierce: 0, cancelled: false, metadata: {},
+    } as unknown as CombatContext, world);
+  };
+
+  const world = new World();
+  const player = spawnPlayer(world, 'ks-outbreak', {
+    abilityId: 'contagion', nodes: rows('contagion', { packet: 'affliction', keystone: 'outbreak' }),
+  });
+  // Geometry: the victim inside Contagion's reach from the source; the neighbour
+  // outside it, but next to the victim.
+  const source = spawnMonster(world, 600);
+  const victim = spawnMonster(world, 750);
+  const neighbour = spawnMonster(world, 850);
+  const beyond = spawnMonster(world, 2_000);
+  // The weapon's ONE damage-over-time record (design §26.2): no reservoir here, so
+  // the one lineage bleed.
+  assert(addLineageAffliction(world, player, source, 600, 4_000)?.record === 'bleed', 'the source bleeds');
+  const record = dotsOf(source, player);
+  assert(record.length === 1 && record[0] === LINEAGE_BLEED_ID, `one record on the source, got ${record.join()}`);
+
+  // Drive the spread through the seam that writes it.
+  resolveContagion(world, player, contagion, source);
+  assert(dotsOf(victim, player).includes(LINEAGE_BLEED_ID), 'Contagion infected the victim');
+  assert(outbreakTagged(victim, player), 'and tagged it');
+  assert(dotsOf(neighbour, player).length === 0, 'the neighbour is outside Contagion\'s own reach');
+  assert(!outbreakTagged(source, player), 'the source carried its afflictions; Contagion did not infect it');
+  world.takeNodeEvents(NODE);
+
+  // The victim dies: its afflictions pass to its nearest neighbour, once.
+  killed(world, player, victim);
+  assert(
+    dotsOf(neighbour, player).join() === LINEAGE_BLEED_ID,
+    `the neighbour now carries the one record and nothing else, got ${dotsOf(neighbour, player).join()}`,
+  );
+  assert(dotsOf(beyond, player).length === 0, 'only the nearest neighbour, only within reach');
+  const events = world.takeNodeEvents(NODE);
+  assert(
+    events.filter((e) => e.kind === 'card-fx' && e.fx === OUTBREAK_FX).length === 1,
+    'one card-fx for the outbreak',
+  );
+  assert(events.some((e) => e.kind === 'dot-spread'), "Contagion's own tendril draws the spread");
+  assert(!outbreakTagged(victim, player), 'the tag is spent: a body spreads once');
+  assert(!outbreakTagged(neighbour, player), 'a body an Outbreak infected is not tagged');
+
+  // No chain: the neighbour dies, and nothing moves on from it.
+  const next = spawnMonster(world, 900);
+  killed(world, player, neighbour);
+  assert(dotsOf(next, player).length === 0, 'an Outbreak-infected body passes nothing on');
+
+  // Ownership: whoever lands the killing blow, the infecting player's afflictions pass.
+  const other = spawnPlayer(world, 'ks-outbreak-other', { abilityId: 'sweep' });
+  const host = spawnMonster(world, 1_300);
+  // Outside Contagion's reach from the seed, and the host's NEAREST neighbour.
+  const near = spawnMonster(world, 1_400);
+  addLineageAffliction(world, player, host, 600, 4_000);
+  const seed = spawnMonster(world, 1_150);
+  addLineageAffliction(world, player, seed, 600, 4_000);
+  resolveContagion(world, player, contagion, seed);
+  assert(outbreakTagged(host, player), 'the host was infected and tagged');
+  assert(dotsOf(near, player).length === 0, "the host's neighbour is clean before the host dies");
+  killed(world, other, host);
+  assert(dotsOf(near, player).includes(LINEAGE_BLEED_ID), "another player's kill still passes the infector's afflictions");
+
+  // Without the verb, Contagion tags nothing.
+  const plain = spawnPlayer(world, 'ks-outbreak-plain', {
+    abilityId: 'contagion', nodes: rows('contagion', { packet: 'affliction' }),
+  });
+  const plainSource = spawnMonster(world, 3_000);
+  const plainVictim = spawnMonster(world, 3_100);
+  addLineageAffliction(world, plain, plainSource, 600, 4_000);
+  resolveContagion(world, plain, contagion, plainSource);
+  assert(dotsOf(plainVictim, plain).length > 0 && !outbreakTagged(plainVictim, plain), 'no verb, no tag');
 }
 
 console.log('abilityKeystones: ok');

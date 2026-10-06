@@ -172,7 +172,7 @@ const trioEntries: [string, Trio][] = [
   ['contagion', [
     verb('contagion', 1, 'outbreak', 'Outbreak',
       'A body Contagion infected passes its afflictions to its nearest neighbour when it dies.',
-      'affliction.stinger-echo', 'contagion', { delivery: DB }),
+      'affliction.stinger-echo', 'contagion', { delivery: DB, live: true }),
     verb('contagion', 2, 'carrier', 'Carrier',
       'Afflicted bodies infect what touches them.',
       'affliction.spore-veil', 'contagion', { delivery: DB }),
