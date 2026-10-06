@@ -221,11 +221,17 @@ export const FRAME_TOKENS = {
   linger: { ms: 800, staleOpacity: 0.55 },
 };
 
+let cssVars: Record<string, string> | null = null;
+
 /**
  * The tokens as CSS custom properties, set on each readout's root so its stylesheet
- * draws from the same source as the Phaser bars.
+ * draws from the same source as the Phaser bars. Built once: the tokens are static.
  */
 export function readoutCssVars(): Record<string, string> {
+  return cssVars ??= buildCssVars();
+}
+
+function buildCssVars(): Record<string, string> {
   const f = FRAME_TOKENS;
   const sizes: Record<string, string> = {};
   for (const [size, px] of Object.entries(f.bar.height)) sizes[`--ro-h-${size}`] = `${px}px`;

@@ -345,6 +345,7 @@ function TargetFrameBody({ bossId, underBoss }: { bossId: string | null; underBo
             </div>
             <ReadoutBar
               size="target"
+              subject={shown.id}
               hp={shown.hp}
               maxHp={shown.maxHp}
               absorb={shieldAmount}

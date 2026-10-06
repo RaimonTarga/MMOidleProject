@@ -108,7 +108,7 @@ export function BossFrameView({ boss: shown, stale, placement }: {
         <PhaseTile boss={shown} compact />
         <span className="boss-row__name">{shown.name}</span>
         <div className="boss-row__bars">
-          <ReadoutBar size="strip" hp={shown.hp} maxHp={shown.maxHp} absorb={shown.absorb} quarters label={hpLabel} ariaLabel={ariaHp} />
+          <ReadoutBar size="strip" subject={shown.id} hp={shown.hp} maxHp={shown.maxHp} absorb={shown.absorb} quarters label={hpLabel} ariaLabel={ariaHp} />
           <CastLine cast={shown.cast} primed={shown.primed} compact />
         </div>
         <QuarterPips hp={shown.hp} maxHp={shown.maxHp} />
@@ -125,7 +125,7 @@ export function BossFrameView({ boss: shown, stale, placement }: {
         <span className="boss-frame__spacer" />
         <QuarterPips hp={shown.hp} maxHp={shown.maxHp} />
       </div>
-      <ReadoutBar size="boss" hp={shown.hp} maxHp={shown.maxHp} absorb={shown.absorb} quarters label={hpLabel} ariaLabel={ariaHp} />
+      <ReadoutBar size="boss" subject={shown.id} hp={shown.hp} maxHp={shown.maxHp} absorb={shown.absorb} quarters label={hpLabel} ariaLabel={ariaHp} />
       <CastLine cast={shown.cast} primed={shown.primed} compact={false} />
     </div>
   );

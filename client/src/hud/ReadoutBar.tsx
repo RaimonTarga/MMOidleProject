@@ -12,12 +12,18 @@ function prefersReducedMotion(): boolean {
 
 /**
  * The damage chip for a DOM bar, on the same model as the overhead bars: it holds
- * the last hit for a beat, then drains. Reduced motion: it holds, then snaps.
+ * the last hit for a beat, then drains. Reduced motion: it holds, then snaps. A new
+ * `subject` (another target) starts clean, so a switch never reads as damage.
  */
-export function useDamageChip(fraction: number): number {
+export function useDamageChip(fraction: number, subject?: string | null): number {
   const chip = useRef<ChipState | undefined>(undefined);
+  const lastSubject = useRef(subject);
   const [shown, setShown] = useState(fraction);
   useEffect(() => {
+    if (lastSubject.current !== subject) {
+      lastSubject.current = subject;
+      chip.current = undefined;
+    }
     chip.current = chipAdvance(chip.current, fraction, performance.now());
     let raf = 0;
     const step = (): void => {
@@ -31,7 +37,7 @@ export function useDamageChip(fraction: number): number {
     };
     step();
     return () => cancelAnimationFrame(raf);
-  }, [fraction]);
+  }, [fraction, subject]);
   return Math.max(shown, fraction);
 }
 
@@ -51,6 +57,8 @@ export interface ReadoutBarProps {
   layers?: ReactNode;
   /** The vitals' low-health edge glow. */
   lowHealth?: boolean;
+  /** Who the bar is for: a change resets the chip (a new target is not a hit). */
+  subject?: string | null;
   ariaLabel?: string;
   className?: string;
 }
@@ -62,9 +70,10 @@ export interface ReadoutBarProps {
  */
 export function ReadoutBar({
   size, hp, maxHp, absorb = 0, quarters = false, segments = false, label, layers, lowHealth = false, ariaLabel, className,
+  subject,
 }: ReadoutBarProps) {
   const fraction = maxHp > 0 ? Math.max(0, Math.min(1, hp / maxHp)) : 0;
-  const chip = useDamageChip(fraction);
+  const chip = useDamageChip(fraction, subject);
   const band = absorbBand(fraction, maxHp > 0 ? absorb / maxHp : 0);
   const q = quarters ? quarterModel(hp, maxHp) : null;
   return (
