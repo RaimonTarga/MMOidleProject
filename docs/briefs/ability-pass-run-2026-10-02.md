@@ -1,110 +1,174 @@
-# Ability pass — run brief: roster cuts, re-homes, ability keystones, T3 path re-homes (2026-10-02)
+# Ability pass — run brief: roster cuts, re-homes, ability keystones, T3 path re-homes (designed 2026-10-02, revised 2026-10-06 for design §26)
 
-**Read by:** the conductor session. Paste the "Conductor prompt" into a fresh session in
-`../mmo-lineages` on `feat/lineage-data-model` **at or after the merge of
-`balance/t1-boss-pass`** (`docs/briefs/t1-boss-pass-2026-10-02.md` step 9) plus the docs
-commit that carries this brief. The run does not start before that merge: its hard
-constraint is measured against the boss pass's numbers.
-**Authority:** `design_docs/progression-rework-design.md` §22 (as expanded 2026-10-02; §22.1–§22.6
-are the decisions, all locked with the designer), §4, §6, §19; `docs/briefs/frame-loops-2026-10-01.md`
-§1 (the frame containers the T3 re-homes must not duplicate); `docs/abilities-current-state.md`
-(the shipped ability system, including reference wiring and pricing);
-`shared/src/data/abilityNodes/` (the generic node tree the keystone and cross rows extend);
-`docs/briefs/t1-boss-pass-report-2026-10-02.md` (the boss pass's numbers and the abilities
-its tuning leaned on).
+**Revision 2026-10-06.** The design (§22, locked 2026-10-02) is unchanged. What changed
+underneath it: the legibility run (design §26, merged `d593ceea`) made the T1 band a ranked
+Attack/Speed/Effect lean and the weapon's own fixed verb, collapsed every weapon to one
+damage-over-time record, and rewrote the tutorial beats; the post-run calls (§26.5,
+2026-10-06) added the Hammer verb's own slow, the trio colours and the Effect parity
+number. This brief now runs **off `develop`**, takes its baseline on today's tutorial kit,
+and also measures the T3/T4 damage change the legibility run left unmeasured. Everything
+else is the 2026-10-02 text with the paths and the kit edits corrected. Where this brief
+and the 2026-10-02 design-session notes differ, this brief wins.
+
+**Read by:** the conductor session. Paste the "Conductor prompt" into a fresh session
+opened in `../mmo-lin-w2c` (clean, on `feat/legibility`, merged); it branches
+`feat/ability-pass` off `develop` at or after `6ea13a91` (the Effect parity commit; check
+`git log --oneline -1 develop`).
+**Authority:** `design_docs/progression-rework-design.md` §22 (§22.1–§22.11, all locked
+with the designer), §4, §6, §19, **§26 (read last: what the T1 band is now)**;
+`docs/briefs/frame-loops-2026-10-01.md` §1 (the frame containers the T3 re-homes must not
+duplicate); `docs/abilities-current-state.md` (the shipped ability system, including
+reference wiring and pricing); `shared/src/data/abilityNodes/` (the generic node tree the
+keystone and cross rows extend); `docs/lineages-current-state.md` §3a (the band the kit
+wears); `docs/guided-tutorial-current-state.md` (the beats the kit edit lands in);
+`docs/briefs/legibility-report-2026-10-05.md` ("The tutorial kit" and "Not verified: T3/T4
+balance").
 **Goal:** after this run the roster is eleven Techniques and eight Guards (§22.2 with the
 §22.8 additions Sidestep and Cull, Snipe at T2), casts follow the §22.9 rule, every
-survivor has four node rows (packet, amplifier with a cast axis, keystone, cross) with its bespoke keystone
-verb live in combat (§22.4), the offers table carries the Stunning Strike swap (§22.3), the
-five T3 paths are re-homed and Justicar retagged (§22.5), names, icons and animations deepen with the rows (§22.7), the tutorial kit wears Slam and
-teaches Charge at the Cave, and the T1 lab matrix is within ±5% of the baseline taken at
-the start of the run.
+survivor has four node rows (packet, amplifier with a cast axis, keystone, cross) with its
+bespoke keystone verb live in combat (§22.4), the offers table carries the Stunning Strike
+swap (§22.3), the five T3 paths are re-homed and Justicar retagged (§22.5), names, icons
+and animations deepen with the rows (§22.7), the tutorial kit wears Slam and teaches
+Charge at the Cave, and the T1 lab matrix is within ±5% of the baseline taken at the start
+of the run.
 
 **Hard constraint (the whole run is judged on it):** net reference-wiring DPS at T1 stays
 within **±5% per class per T1 boss** of the baseline, measured by
-`server/scripts/_t1BossLab.ts` (its `dps` column, mean over the same ≥10 seeds, the boss
-pass's plan rows with today's tutorial kit). The baseline is taken in wave 0 on the
-merged boss-pass tip; the check is re-run after every wave merge and in wave 3. A wave
-that breaks it is not merged until it is back inside.
+`server/scripts/_t1BossLab.ts` (its `dps` column, mean over the same ≥10 seeds, the
+**tutorial-pair plan at the guide's lean rank** — the kit a character pays the gate with
+since §26: the Effect lean at rank III and the weapon's own verb on the fighting weapon,
+`_t1BossPlan.ts --matrix=tutorial-pair --seeds=30`, the legibility run's
+`reports/legibility/final-tutorial-pair.jsonl` is the shape). The baseline is taken in
+wave 0 on develop; the check is re-run after every wave merge and in wave 3. A wave that
+breaks it is not merged until it is back inside.
 
 **Load-bearing abilities (measured by the boss pass, report §10, after the tuned rows):**
 zeroing Second Wind's `recoveryPct` takes the Striker from 77–100% to 0% on four of five
 T1 bosses and the Squire to 0–43%; zeroing Expose Weakness's `damageTakenPct` takes the
 Striker's Greatbear from 100% to 0%; zeroing Sweep's `splashPct` takes the Striker's
 Razorback from 90% to 3%. The three boss rows adopted on 2026-10-02 were tuned with these
-three effects as they stand. Whatever this run does to those abilities (rename, re-home,
-new keystone), their rank-0 effect values and their presence in the tutorial kit at the
-seals and gate must not go down. If one must, the boss rows are re-measured on the lab
-and the matrix is in this run's report, not left for the next one.
+three effects as they stand; the legibility kit (Effect III + verb) wins every T1 boss at
+≥97% on top of them. Whatever this run does to those abilities (rename, re-home, new
+keystone), their rank-0 effect values and their presence in the tutorial kit at the seals
+and gate must not go down. If one must, the boss rows are re-measured on the lab and the
+matrix is in this run's report, not left for the next one.
 
-**Not in scope:** magnitudes (`magnitudes.ts`, `ABILITY_NODE_SHARE`, `ROW_SCALAR`),
-except the one Slam rank I value the parity rule produces; lineage cards; monster rows;
-Recovery; the tutorial beyond the kit table and the Cave recipe line; T2+ boss numbers;
-the keystone alternates (appendix, for the next pass); anything that needs the designer
-in the room.
+**What §26 changes for this run (and what it does not):**
+- The T1 band is NOT this run's: no lineage card, lean, rank, verb, `LEAN_*` table, status
+  id, ring, panel or roster changes. Lanes still exist (the T2 choice row and the ability
+  node tree are keyed to packets), so "an ability that is a lane's payoff is cut" (§22.1)
+  reads exactly as before.
+- The tutorial script now carries the lean, verb and rank beats inside the home leg; the
+  Cave learns its Technique **at the leg's end, after the biome is maxed** (the Rune-budget
+  reason in `classScript.ts`), not at Cave 3. The kit edit (W1-A) swaps the recipe id and
+  its copy in that beat and in `plans.ts`'s boss kits, and moves nothing else.
+- Hamstring is cut (§22.2). The Control lean's slow already has its own status id
+  (`lineage.hobbled`, §24.9/§26) and the T2 "needs a slow" caveat is computed from the
+  loadout, so the cut changes no lineage copy; W1-A greps the status help for Hamstring's
+  tile and removes only the ability's own entry.
+- The legibility run changed two runtime rules above T2 without measuring them:
+  `poison-stack` now adds one application per firing where it stacked, and a standalone
+  `hemorrhage` adds where it refreshed. That lowers some T3/T4 Dagger and Rapier capstones,
+  Plague Dose and the Affliction ability nodes. **Wave 0 measures it** (below) so the
+  designer sees the before/after once, in this run's report; this run does not retune it.
+
+**Not in scope:** magnitudes (`magnitudes.ts`, `ABILITY_NODE_SHARE`, `ROW_SCALAR`,
+every `LEAN_*` table), except the one Slam rank I value the parity rule produces; lineage
+cards and the §26 band; monster rows; Recovery; the tutorial beyond the kit table and the
+Cave recipe line; T2+ boss numbers; the keystone alternates (appendix, for the next pass);
+the Ornate skin; anything that needs the designer in the room.
 
 ---
 
 ## Conductor prompt
 
 ```
-You are the conductor for an implementation run. Working directory is ../mmo-lineages on
-branch feat/lineage-data-model, which must already contain the merge of
-balance/t1-boss-pass (check `git log --merges -5`; if it is not there, stop and say so).
-Read docs/briefs/ability-pass-run-2026-10-02.md in full, then
-design_docs/progression-rework-design.md §22 (all subsections), §4, §6, §19,
-docs/briefs/frame-loops-2026-10-01.md §1, docs/abilities-current-state.md, and
-docs/briefs/t1-boss-pass-report-2026-10-02.md.
+You are the conductor for an implementation run. Open this session in ../mmo-lin-w2c;
+run pwd and git status: you must be there, clean, on feat/legibility. Then
+`git checkout -b feat/ability-pass develop` (develop at or after 6ea13a91; check
+`git log --oneline -1 develop`). Read docs/briefs/ability-pass-run-2026-10-02.md in full
+(the 2026-10-06 revision), then design_docs/progression-rework-design.md §22 (all
+subsections), §4, §6, §19 and §26, docs/briefs/frame-loops-2026-10-01.md §1,
+docs/abilities-current-state.md, docs/lineages-current-state.md §3a,
+docs/guided-tutorial-current-state.md, and docs/briefs/legibility-report-2026-10-05.md.
 
 Run the waves in the brief: one subagent per task, the brief's prompt verbatim, the model
 it names, its own worktree. The ../mmo-lin-w1a, w1b, w1c, w1d2, w2a, w2b worktrees exist
-with node_modules junctioned and @mmo-idle/* repointed; ../mmo-lin-w2c too once
-design/ability-pass has been merged or its session has ended. Reuse them with fresh
-branches after a clean typecheck, as runs 3 and 4 did. Never install. Tasks of a wave run
-in parallel; merge each wave into feat/lineage-data-model in the brief's order; resolve
-conflicts yourself with a real three-way merge (never a regex over conflict markers; read
-the WHOLE merge output, not its tail); run `pnpm typecheck` and `pnpm test` before the
-next wave, and the parity check (wave 0's script) after every wave merge. A failing task
-gets up to an hour of your fixing, otherwise stays unmerged and is recorded. If a rate
-limit cuts a wave, resume from the task-branch commits; never redo committed work.
+with node_modules junctioned and @mmo-idle/* repointed; all are clean on merged branches
+(w2b may hold untracked shard logs under reports/legibility/ — leave them). NEVER use
+../mmo-lineages (it holds the parked feat/boss-reach). Reuse the worktrees with fresh
+branches off feat/ability-pass after `git status` and `git branch --show-current`, as the
+legibility run did. Never install. Tasks of a wave run in parallel; merge each wave into
+feat/ability-pass in the brief's order; resolve conflicts yourself with a real three-way
+merge (never a regex over conflict markers; read the WHOLE merge output, not its tail);
+run `pnpm typecheck` and `pnpm test` before the next wave, and the parity check (wave 0's
+script) after every wave merge. A failing task gets up to an hour of your fixing,
+otherwise stays unmerged and is recorded. If a rate limit cuts a wave, resume from the
+task-branch commits; never redo committed work.
 
 Hard rules for you and every subagent:
 - Never install anything. Never push. Never rebase, reset --hard, force, or amend. Commit
   often; attribution line from the session's system reminder.
 - Strip carriage returns only from files you touch, before committing.
-- No Postgres/Redis in tests. No Docker in this run.
-- No magnitude, lane budget, monster, boss or Recovery number moves. The ONE number this
-  run authors is Slam rank I (W1-A), and only through the parity procedure.
+- No Postgres/Redis in tests. No Docker in this run. One dev server + one game DB per bot
+  arm if a live check is ever needed (ports 4301+); none is planned.
+- No magnitude, lane budget, lineage, monster, boss or Recovery number moves. The ONE
+  number this run authors is Slam rank I (W1-A), and only through the parity procedure.
 - Player ability ids and monster ids collide by name ('frenzy' is also a monster buff,
   'power-strike' a monster attack style): a cut touches player ability data, recipes,
-  nodes, wiring, tutorial and tests that attune the ability — never a monster file.
+  nodes, wiring, tutorial, bench specs and tests that attune the ability — never a monster file.
 - Code on the branch wins over any sketch; record divergences in the report.
 
-Finish by writing docs/briefs/ability-pass-report-<date>.md in the brief's report format,
-commit it, stop. No PR.
+Finish with the full suite and typecheck on feat/ability-pass, merge it into develop
+(--no-ff, no push) ONLY if the parity constraint holds in wave 3, write
+docs/briefs/ability-pass-report-<date>.md in the brief's report format, commit it, stop.
+If parity does not hold, leave the branch unmerged and say so in the report.
 ```
 
 ---
 
 ## Wave 0 — baseline (one task, serial, before anything else)
 
-### W0 — T1 lab baseline and the parity script · model: sonnet
+### W0 — T1 lab baseline, the parity script, and the T3/T4 before/after · model: opus
 
 ```
-On a branch feat/ability-pass-baseline off feat/lineage-data-model, take the reference
-the whole run is judged against. (1) Find the lab plan the boss pass committed under
-reports/t1-boss-pass/ (six classes × five T1 bosses, each class in its tutorial boss kit
-from shared/src/tutorial/scripts/plans.ts, ≥ 10 seeds per cell). Copy it to
-reports/ability-pass/plan-baseline.json unchanged, and run
-`tsx server/scripts/_t1BossLab.ts --plan=... --out=reports/ability-pass/baseline.jsonl
---hitboxes=<the path the boss pass used>` on the current tip. (2) Write
-server/scripts/_abilityPassParity.ts (underscore: a throwaway, outside the suite) that
-reads two of the lab's JSONL files, groups by (cls, boss), prints mean dps, mean dps8, win
-rate and fight count per cell for both files and the % delta of mean dps, and exits
-non-zero if any cell's dps delta is outside ±5% or any cell has fewer than 10 fights. Run
-it baseline-vs-baseline to prove it reads the format. (3) Record in
-reports/ability-pass/README.md the tip hash, the plan, the seeds, and the exact commands,
-so every later wave reruns the same thing. Commit. Report the baseline matrix.
+On a branch feat/ability-pass-baseline off feat/ability-pass, take the references the whole
+run is judged against.
+
+(1) T1 baseline. Generate the tutorial-pair plan on the current tip:
+`tsx server/scripts/_t1BossPlan.ts --out=reports/ability-pass/plan-baseline.json
+--matrix=tutorial-pair --seeds=30` (six classes × five T1 bosses, each class in its
+tutorial boss kit from shared/src/tutorial/scripts/plans.ts with the guide's lean at its
+rank and the weapon's own verb — the legibility run's final-tutorial-pair plan is the
+shape; confirm the plan carries `leanRank`). Run
+`tsx server/scripts/_t1BossLab.ts --plan=reports/ability-pass/plan-baseline.json
+--out=reports/ability-pass/baseline.jsonl --hitboxes=<the path reports/legibility/README.md
+names>`. The matrix must reproduce reports/legibility/final-tutorial-pair.jsonl cell for
+cell (same tip, same seeds): if it does not, stop and report the drift before anything
+else runs.
+
+(2) The parity script. Write server/scripts/_abilityPassParity.ts (underscore: a
+throwaway, outside the suite) that reads two of the lab's JSONL files, groups by (cls,
+boss), prints mean dps, mean dps8, win rate and fight count per cell for both files and the
+% delta of mean dps, and exits non-zero if any cell's dps delta is outside ±5% or any cell
+has fewer than 10 fights. Run it baseline-vs-baseline to prove it reads the format.
+
+(3) The T3/T4 before/after of the legibility run's stacking change. "Before" is develop's
+first parent of the legibility merge, 7360e3b0; "after" is the current tip. Run on both,
+same seeds, three instruments: (a) the T2 boss lab, `_t1BossPlan.ts --matrix=composition
+--tier=2 --seeds=10` for the Rapier and Dagger only (the two weapons whose capstones the
+change touches); (b) `pnpm bench:balance` with server/bench/balance/boss5Spec.ts (its tier-3
+and tier-4 reference rows; note it attunes 'expose-weakness', which W1-A cuts — this
+baseline is taken before W1-A, and W1-A switches the spec to Slam with a re-run); (c) the
+ability-node Affliction rows at T3 and T4 through whichever bench lineage/laneMeasure
+exposes for ability nodes, or, if none does, say so and stop at (a) and (b). Produce
+reports/ability-pass/stacking-before.jsonl / -after.jsonl per instrument and a
+stacking.md table: per (class, boss or node) the DPS delta and win-rate delta. This is a
+MEASUREMENT for the designer; change nothing.
+
+(4) Record in reports/ability-pass/README.md the tip hash, the plans, the seeds, and the
+exact commands, so every later wave reruns the same thing. Commit. Report the baseline
+matrix and the stacking table.
 ```
 
 Merge W0 before wave 1 starts. Every later task that says "parity check" means: rerun the
@@ -120,26 +184,28 @@ Merge order: **W1-B, W1-A, W1-C, W1-D, W1-E, W1-F.** W1-B lands the node-row
 infrastructure first so W1-A's `abilityNodes.test.ts` edits merge onto it. W1-D and W1-E
 both edit `shared/src/data/skillTree/t3CombatA.ts` in different path blocks: keep both
 sides. W1-A and W1-C both edit `offers.ts`: W1-A removes entries, W1-C changes one; keep
-both.
+both. Worktrees: W1-A w1a, W1-B w1b, W1-C w1c, W1-D w1d2, W1-E w2a, W1-F w2b.
 
 ### W1-A — roster cuts, re-homes, the kit, Slam parity · model: opus
 
 ```
-On a branch feat/ability-roster off feat/lineage-data-model, apply design §22.2 exactly.
+On a branch feat/ability-roster off feat/ability-pass, apply design §22.2 exactly.
 
 Cuts (player ability data only; see the conductor's id-collision rule): remove Expose
 Weakness, Power Strike, Hamstring, Frenzy and Quick Strike from shared/src/abilities.ts,
 their recipes from shared/src/abilityRecipes.ts, their rows from
 shared/src/data/abilityNodes/offers.ts, their reference-wiring rows from
-shared/src/abilityWiring.ts, any ability-icon allowlist entries, and any client fx case
-that only they used. Then grep every package for the five ids and fix each hit that
-refers to the PLAYER ability: tests that attune them (server/test/*, including the
-durability and boss-reference suites), bench specs (server/bench/balance/*Spec.ts,
-poolRaise.ts uses 'frenzy'), the bot's build tables, and the tutorial. A bench or test
-that attuned a cut ability as "a generic Technique" attunes Slam (casts) or Sweep (armed)
-instead; one that tested the cut ability's own mechanic is deleted with a one-line note
-in the commit. Monster files, boss patterns, monster buff ids and combat-event kinds that
-share the name are NOT touched.
+shared/src/abilityWiring.ts, any ability-icon allowlist entries, any client fx case that
+only they used, and Hamstring's OWN status tile/help (client/src/hud/statusHelp.ts,
+targetStatusMeta.ts) — the lineage slow `lineage.hobbled` and the ability-node slow keep
+theirs; the status registry test (zero gaps) must stay green. Then grep every package for
+the five ids and fix each hit that refers to the PLAYER ability: tests that attune them
+(server/test/*, including the durability and boss-reference suites), bench specs
+(server/bench/balance/*Spec.ts — boss5Spec.ts tier-3/4 rows and poolRaise.ts use them),
+the bot's build tables, and the tutorial. A bench or test that attuned a cut ability as "a
+generic Technique" attunes Slam (casts) or Sweep (armed) instead; one that tested the cut
+ability's own mechanic is deleted with a one-line note in the commit. Monster files, boss
+patterns, monster buff ids and combat-event kinds that share the name are NOT touched.
 
 Re-homes (design §22.2 roster table): Slam → T1 Mountain level 5 (it absorbs Power
 Strike: author a rank I at T1 that is the single-target-leaning rank, keeping the T2
@@ -156,23 +222,30 @@ Saves: extend shared/src/attunementMigration.ts so a save that knows, attunes, w
 drops those entries silently and logs one line per character; `attunement.test.ts` pins
 it. A re-homed ability keeps its id, so nothing else migrates.
 
-Tutorial: in shared/src/tutorial/scripts/plans.ts the boss kits for forest, mountain,
-swamp and cave swap technique 'expose-weakness' → 'slam' (plains keeps 'sweep'); in
-classScript.ts the Cave beat learns 'ability-recipe-charge' instead of
-expose-weakness, with its one-line copy rewritten for Charge ("Learn Charge: it closes
-the gap and lands the first blow"). `tutorialAnchors.test.ts` and the tutorial suites
-stay green.
+Tutorial (design §26 beats are NOT yours; touch only these two things): in
+shared/src/tutorial/scripts/plans.ts the boss kits for forest, mountain, swamp and cave
+swap technique 'expose-weakness' → 'slam' (plains keeps 'sweep'); in classScript.ts the
+Cave leg's end-of-leg learn (`this.learn(chapter, 'ability-recipe-expose-weakness',
+'technique')`, after the biome is maxed — keep that position and its Rune-budget comment)
+learns 'ability-recipe-charge' instead, with its one-line copy in the learn table
+rewritten for Charge ("Learn Charge: it closes the gap and lands the first blow"). The
+lean, verb and rank beats, their order and their levels do not move; the first-hour
+checklist (≤ 2 new ideas per level) must still hold — `tutorial.test.ts`,
+`tutorialAnchors.test.ts` and the tutorial suites stay green; the bot's
+tutorialRoutes.ts learns Charge where it learned Expose Weakness.
 
 Slam parity (the run's hard constraint, design §22.1 last bullet and §22.2): with the kit
-swapped, rerun the wave-0 lab plan and the parity script. Slam rank I's damageMult (and
-only that field; cooldown 10 s and cast 1600 ms stay as Power Strike had them) is the one
-number you may move, via the lab's `ap` override on the same seeds until every (cls,
-boss) cell's mean dps is within ±5% of baseline.jsonl; then commit that value as the
-authored rank I. Expect something between Slam's old 1.75× and Power Strike's 3.0×.
-Record each candidate's matrix under reports/ability-pass/w1a-slam-<mult>.jsonl and the
-final one as reports/ability-pass/w1a.jsonl. If no single value brings every cell inside,
-stop at the value that minimises the worst cell, commit it, and report the cells outside
-with their deltas — do not touch any other number.
+swapped, regenerate the tutorial-pair plan (the kit column changed) and rerun the lab and
+the parity script against baseline.jsonl. Slam rank I's damageMult (and only that field;
+cooldown 10 s and cast 1600 ms stay as Power Strike had them) is the one number you may
+move, via the lab's `ap` override on the same seeds until every (cls, boss) cell's mean
+dps is within ±5% of baseline.jsonl; then commit that value as the authored rank I.
+Expect something between Slam's old 1.75× and Power Strike's 3.0×. Record each
+candidate's matrix under reports/ability-pass/w1a-slam-<mult>.jsonl and the final one as
+reports/ability-pass/w1a.jsonl. If no single value brings every cell inside, stop at the
+value that minimises the worst cell, commit it, and report the cells outside with their
+deltas — do not touch any other number. Also rerun boss5Spec's tier-3/4 rows with Slam
+in place of Expose Weakness and put the table beside W0's stacking table.
 
 Additions and reshapes (design §22.8, §22.9): re-home Snipe to T2 Desert 3 with an
 authored rank II-equivalent at T2 (its +300 reach, hold-position and the T4 ranks stay).
@@ -192,7 +265,10 @@ on a kill; Technique Power scales the strike; the threshold curve is the rank's 
 Neither enters the tutorial kit. Add abilityCull.test.ts (multiplier rises as health
 falls; a kill refunds) and abilitySidestep.test.ts (window opens, speed burst ends with
 it, no fire out of combat); extend abilityAffliction.test.ts for armed Contagion and
-abilityImbue's suite for instant Imbue.
+abilityImbue's suite for instant Imbue. Contagion and the Affliction nodes read the ONE
+damage-over-time record per weapon (design §26.2, `lineage.bleed` or the weapon's own
+reservoir): a test that armed Contagion spreads the reservoir's owed poison from a
+Poison Dagger and the single bleed from a Rapier.
 Second review (design §22.10): apply the three revised offers (Binding Strike
 Affliction hemorrhage instead of the Technique refund; Snipe Kill chain technique-refund
 on kill instead of the Technique refund; Detonate Control slow instead of the Empowered
@@ -212,7 +288,7 @@ matrix and the Slam value.
 ### W1-B — keystone and cross rows for ability nodes, plus five Technique keystones · model: opus
 
 ```
-On a branch feat/ability-keystone-rows off feat/lineage-data-model, extend the generic
+On a branch feat/ability-keystone-rows off feat/ability-pass, extend the generic
 ability node tree (shared/src/data/abilityNodes/, server/src/systems/combat/abilityNodes.ts,
 server/src/systems/player/economy/abilityNodes.ts, client/src/ui/AbilityNodeRows.tsx) with
 two rows, per design §22.1:
@@ -232,13 +308,17 @@ two rows, per design §22.1:
   packet offers at ROW_SCALAR.cross, one option per non-active offer, exactly as a
   lineage cross row borrows a second lane. It needs no new runtime: it is a second
   packet-row payoff at the cross scalar.
-- Row tiers: `abilityNodeRowTier` becomes home + {0,1,2,3} clamped at 4 (design §22.1).
-  `AbilityNodeRow` and `ABILITY_NODE_ROWS` gain the two members; persisted
+- Row tiers: `abilityNodeRowTier` becomes home + {0,1,2,3} (design §22.1, no clamp per
+  §22.10). `AbilityNodeRow` and `ABILITY_NODE_ROWS` gain the two members; persisted
   `AbilityNodeProgress.active` already keys by row.
-- UI: the Abilities panel shows the two new rows in the same card grammar; the keystone
-  card shows the rule sentence; the cross card the borrowed packet's name at the cross
-  scalar. HUD: a keystone that opens a window or a stack uses the existing lineage card-fx
-  and buff-bar seams (`card-fx` events, buff ids), never a per-tick boolean.
+- UI: the Abilities panel shows the two new rows in the same card grammar as the weapon
+  page since §26.4 (one sentence per card, no flavour text rendered, lane colours on
+  packet rows; the trio colours are the weapon page's T1 leans only and never apply here);
+  the keystone card shows the rule sentence; the cross card the borrowed packet's name at
+  the cross scalar. HUD: a keystone that opens a window or a stack uses the existing
+  lineage card-fx and buff-bar seams (`card-fx` events, buff ids with label, help, badge
+  and icon — the status registry test fails CI on an id without them), never a per-tick
+  boolean. The rhythm ring is the weapon verb's; a keystone never adds a ring.
 - Cast axis (design §22.9): `AmplifiedAxis` gains `cast` ("shorter wind-up"), offered by
   `nodePayoffAxis` only when the ability's shape is `cast` (or `charge`); it applies
   through the existing `technique.cast-speed-pct` path so the 60% cap holds against every
@@ -248,15 +328,20 @@ two rows, per design §22.1:
 - Second review (design §22.10) applies to every row above: tiers are home + N with NO
   clamp (rows above the current cap fold into the cap band and unfold when the tier
   ships; owned stays owned); the keystone row holds up to THREE options (design §22.11), of
-  which only the first verb of each trio is authored this run (the second and third verbs are a later
-  wave into the same row; the panel shows the unauthored two as silhouettes); the amplifier offers every axis on the active route (second body, longer
-  window, bigger payoff, and the cast axis on casts), `nodePayoffAxis` is the default
-  only; a Kill chain packet option on a Technique fires on the kill its hit makes, not on
-  landing (W1-A tags those offers); `AbilityKeystoneDefinition` carries `delivery:
-  'owner' | 'delivering-body' | 'formation'` and the module resolves on that body (Reload:
-  keystone echoes are first-hit-only; a node payoff on a Conduit cast resolves ONCE per cast through the one physical summon, never per formation body, and a formation rider's node payoff shares the rider's normalised budget — test both); display names follow the §22.10 grammar through
-  `abilityDisplayName` (adjective from the payoff, "of X" from the axis, the keystone's
-  noun, ", with Y" from the cross).
+  which only the first verb of each trio is authored this run (the second and third verbs
+  are a later wave into the same row; the panel shows the unauthored two as silhouettes);
+  the amplifier offers every axis on the active route (second body, longer window, bigger
+  payoff, and the cast axis on casts), `nodePayoffAxis` is the default only; a Kill chain
+  packet option on a Technique fires on the kill its hit makes, not on landing (W1-A tags
+  those offers); `AbilityKeystoneDefinition` carries `delivery: 'owner' |
+  'delivering-body' | 'formation'` and the module resolves on that body (Reload: keystone
+  echoes are first-hit-only; a node payoff on a Conduit cast resolves ONCE per cast through
+  the one physical summon, never per formation body, and a formation rider's node payoff
+  shares the rider's normalised budget — test both; a Conduit's summon hits advance the
+  weapon's hit counter by one over the live summons since §26.5 — keystones never touch
+  that counter); display names follow the §22.10 grammar through `abilityDisplayName`
+  (adjective from the payoff, "of X" from the axis, the keystone's noun, ", with Y" from
+  the cross).
 
 Then implement the first five Technique keystones from design §22.4, each its own module,
 each with a wiring smoke test in a new server/test/abilityKeystones.test.ts (attach, tick,
@@ -271,20 +356,23 @@ never a balance number):
     arrival; on a Conduit, the summon that arrives delivers it). Trample is dropped (design §22.11).
   Contagion OUTBREAK — a body Contagion infected passes its afflictions to its nearest
     neighbour when it dies (tag the infected bodies; on their kill event spread once via
-    the affliction toolkit; a body infected by an Outbreak does not re-tag).
+    the affliction toolkit; a body infected by an Outbreak does not re-tag; what it spreads
+    is the one record per weapon of §26.2).
   Binding Strike DRAGNET — the root takes every body adjacent to the target (the root
-    writer in monsterControl, same duration, each adjacent body once).
+    writer in monsterControl, same duration, each adjacent body once; a rooted body counts
+    as held for the Control verb like any root).
 Every on-hit application early-returns on evadeBlocksDebuffs(ctx); one multiplier per hit
-holds; an area hit of a keystone never counts as an attack-equivalent for Sweep Tempo.
-abilityNodes.test.ts gains the row-tier table and the cross derivation; keystones.test.ts
-(lineage) is untouched. Related tests + typecheck; strip CR; commit in steps (rows /
-cross / each keystone). Report the fx keys you reused and any seam you could not reuse.
+holds; an area hit of a keystone never counts as an attack-equivalent for Sweep Tempo nor
+advances the weapon verb's hit counter. abilityNodes.test.ts gains the row-tier table and
+the cross derivation; keystones.test.ts (lineage) is untouched. Related tests + typecheck;
+strip CR; commit in steps (rows / cross / each keystone). Report the fx keys you reused
+and any seam you could not reuse.
 ```
 
 ### W1-C — the Stunning Strike offer swap and the offer coverage test · model: sonnet
 
 ```
-On a branch feat/ability-offer-coverage off feat/lineage-data-model, apply design §22.3:
+On a branch feat/ability-offer-coverage off feat/ability-pass, apply design §22.3:
 in shared/src/data/abilityNodes/offers.ts Stunning Strike offers
 ['control','slow'], ['tempo','echo-hit'], ['technique','technique-refund'], with the
 comment rewritten (a stunned target eats a second hit). Add to abilityNodes.test.ts a
@@ -300,7 +388,7 @@ ABILITY_NODE_FX). Related tests + typecheck; strip CR; commit.
 ### W1-D — Squire paths: Reverb, Destroyer; Justicar retag · model: opus
 
 ```
-On a branch feat/t3-squire-paths off feat/lineage-data-model, apply design §22.5 for the
+On a branch feat/t3-squire-paths off feat/ability-pass, apply design §22.5 for the
 Squire (cooldown root) in shared/src/data/skillTree/t3CombatA.ts and
 server/src/systems/classes/archetypes/cooldown/:
 
@@ -308,8 +396,9 @@ Reverb (cooldown-balanced-t3-a): remove the bank. The execution lands now and la
 again at half strength when its cooldown reaches the halfway mark, on whatever the
 player is hitting then (if nothing is in reach at that moment the echo is lost, not
 held). Tag stays 'empowered'. The echo is an empowered hit through the normal pipeline so
-on-hit and empowered gear apply; one multiplier per hit; HUD a clock on the buff bar
-through the existing frame-window seam.
+on-hit and empowered gear apply; one multiplier per hit; it records `mechanicConsumed`
+like every mechanic hit so the Empowered moment and its 4 s cap see it once; HUD a clock
+on the buff bar through the existing frame-window seam.
 
 Destroyer (cooldown-heavy-t3-b): retag 'technique'. Regular hits deal normal damage
 again (delete the no-damage mechanicEffect and the 5 s cooldown override). When the
@@ -336,7 +425,7 @@ path. Report any seam the frame brief's containers already occupied.
 ### W1-E — Slinger paths: Duelist, Warmonger · model: opus
 
 ```
-On a branch feat/t3-slinger-paths off feat/lineage-data-model, apply design §22.5 for
+On a branch feat/t3-slinger-paths off feat/ability-pass, apply design §22.5 for
 the Slinger (reload root) in shared/src/data/skillTree/t3CombatA.ts and
 server/src/systems/classes/archetypes/reload/:
 
@@ -366,7 +455,7 @@ commit per path.
 ### W1-F — Apprentice path: Pyromancer Radiant · model: opus
 
 ```
-On a branch feat/t3-pyromancer off feat/lineage-data-model, apply design §22.5 for
+On a branch feat/t3-pyromancer off feat/ability-pass, apply design §22.5 for
 Pyromancer (dot-balanced-t3-a) in shared/src/data/skillTree/t3CombatB.ts and
 server/src/systems/classes/archetypes/dot/. Keep two stacks per hit at 55%. Remove the
 max-stack direct-damage bonus (the Ember Mage frame owns "intensifies", frameLoop.ts).
@@ -392,12 +481,12 @@ owns them, so the only expected movement is W1-A's; any other movement is a defe
 
 Merge order: **W2-A, W2-B, W2-D, W2-C.** W2-A and W2-B both append to
 `shared/src/data/abilityNodes/keystones.ts` and `server/test/abilityKeystones.test.ts`:
-keep both sides.
+keep both sides. Worktrees: W2-A w1a, W2-B w1b, W2-C w1c, W2-D w1d2.
 
 ### W2-A — the remaining five Technique keystones · model: opus
 
 ```
-On a branch feat/ability-keystones-2 off feat/lineage-data-model, implement the remaining
+On a branch feat/ability-keystones-2 off feat/ability-pass, implement the remaining
 Technique keystones of design §22.4 and §22.8 on the rows W1-B landed, one module each under
 server/src/systems/combat/keystones/ability/, one wiring smoke test each in
 server/test/abilityKeystones.test.ts:
@@ -421,14 +510,15 @@ server/test/abilityKeystones.test.ts:
     Reaction spends afflictions, Harvest spends health — write the test that a body both
     could take is taken once).
 Same rules as W1-B: evadeBlocksDebuffs on every application, one multiplier per hit,
-keystone area hits are not attack-equivalents, fx through existing card-fx keys. Related
-tests + typecheck; strip CR; commit per keystone.
+keystone area hits are not attack-equivalents and never advance the weapon verb's hit
+counter, fx through existing card-fx keys, every new status id registered with label,
+help, badge and icon. Related tests + typecheck; strip CR; commit per keystone.
 ```
 
 ### W2-B — the seven Guard keystones · model: opus
 
 ```
-On a branch feat/guard-keystones off feat/lineage-data-model, implement the Guard
+On a branch feat/guard-keystones off feat/ability-pass, implement the Guard
 keystones of design §22.4 and §22.8 on the rows W1-B landed, one module each, one wiring smoke test
 each in server/test/abilityKeystones.test.ts. Defence never scales with offence and a
 Guard never deals damage: these grant immunity, control the attacker, or share a mend.
@@ -441,7 +531,8 @@ Guard never deals damage: these grant immunity, control the attacker, or share a
   Brace RIPOSTE — a melee hit absorbed while Braced staggers the attacker (the control
     ladder's shortest rung on the attacker, once per attacker per Brace).
   Bramble Guard ENTANGLE — a body that hits you while brambled is slowed (monsterControl
-    movement slow, totalMs in the status data for the buff clock).
+    movement slow, totalMs in the status data for the buff clock; it counts as held for
+    the Control verb like every slow).
   Endure UNYIELDING — you cannot be hard-controlled while Endure is up (the player hard-
     control list's appliers early-return; roots too; an existing control is not removed).
   Break Free BACKLASH — breaking free staggers every adjacent body (shortest rung, each
@@ -453,28 +544,32 @@ Guard never deals damage: these grant immunity, control the attacker, or share a
     resolves to, via setAttackTarget/setAggroTarget; one afterimage at a time; it takes
     no damage and deals none; struck = the attacker's next hit resolves on it, then it
     clears and the monster re-acquires).
-Related tests + typecheck; strip CR; commit per keystone.
+Every new status id registered with label, help, badge and icon. Related tests +
+typecheck; strip CR; commit per keystone.
 ```
 
 ### W2-C — docs and the panel copy · model: sonnet
 
 ```
-On a branch feat/ability-pass-docs off feat/lineage-data-model (after W1 merged), bring
-the living docs to the code: docs/abilities-current-state.md (roster 17, the node rows now
+On a branch feat/ability-pass-docs off feat/ability-pass (after W1 merged), bring
+the living docs to the code: docs/abilities-current-state.md (roster 19, the node rows now
 four with their tier rule, the keystone table with a pointer to design §22.4, the kit and
-Cave beat change, the migration rule for cut abilities), docs/lineages-current-state.md if
-it describes the ability node rows, docs/skill-tree or class current-state doc for the
-five re-homed paths and the Justicar retag, docs/guided-tutorial-plan.md for the kit
-swap, and docs/README.md for anything new. Check every ability id in client copy
-(client/src/hud/statusHelp.ts, client/src/ui/conceptIcons.ts, shared/src/data/mechanicLabels.ts, the tutorial copy) and the admin
-character tab for the five cut ids. Do not write what the code does not do; if W2-A/W2-B
-are not merged yet, document the rows and point at §22.4 for the verbs. Strip CR; commit.
+Cave beat change, the migration rule for cut abilities), docs/lineages-current-state.md
+where it describes the ability node rows (§7) and the one-DoT rule's readers (§11),
+docs/skill-tree or class current-state doc for the five re-homed paths and the Justicar
+retag, docs/guided-tutorial-current-state.md for the kit swap and the Charge beat,
+docs/system-rework-status.md's Abilities row, and docs/README.md for anything new. Check
+every ability id in client copy (client/src/hud/statusHelp.ts,
+client/src/ui/conceptIcons.ts, shared/src/data/mechanicLabels.ts, the tutorial copy) and
+the admin character tab for the five cut ids. Do not write what the code does not do; if
+W2-A/W2-B are not merged yet, document the rows and point at §22.4 for the verbs. Strip
+CR; commit.
 ```
 
 ### W2-D — flavor progression: names, composed icons, keystone animations · model: opus
 
 ```
-On a branch feat/ability-flavor off feat/lineage-data-model (after W1 merged), implement
+On a branch feat/ability-flavor off feat/ability-pass (after W1 merged), implement
 design §22.7 so that an ability's identity deepens with its rows:
 
 Names: a shared helper (shared/src/data/abilityNodes/flavor.ts) derives the display name
@@ -493,7 +588,8 @@ amplifier = a small axis overlay glyph; keystone = a border treatment plus, wher
 §22.4's rule has a silhouette (spin, line, fork, shell), a second glyph layered over the
 base from the existing concept/lane icon set. No new PNGs; never edit packed atlases.
 The composition is a pure function of (ability, active rows) and is unit-tested at the
-shared level for the layer list it emits.
+shared level for the layer list it emits. Nothing here is the Ornate skin (design
+§26.4's later track): no frames, gems or light passes.
 
 Animation: the packet row already draws the lane's fx (ABILITY_NODE_FX); the amplifier
 scales or extends it (longer trail, second echo) through the same card-fx event with the
@@ -502,7 +598,9 @@ keystone id, in the premium grammar of docs/combat-animation-current-state.md (r
 wind-up, visible payoff, lasting mark where the rule leaves one: Aftershock's cracked
 ground, Vanish's fading outline, Riposte's stagger flash, Shared Breath's pulse down the
 formation). Server emits the keystone's event through world.pushEvent with the keystone
-id; no per-tick booleans. Guards use the face grammar (blur / pulse-shell / chips).
+id; no per-tick booleans. Guards use the face grammar (blur / pulse-shell / chips). The
+floating word stays the weapon verb's teaching channel (§26.4): keystones never add a
+callout.
 
 Scope: all 19 abilities' names and icons; keystone animations for every keystone merged
 by the time you start (W1-B's five at least; add the rest if W2-A/W2-B have merged, else
@@ -518,14 +616,18 @@ After the wave-2 merge: `pnpm typecheck`, `pnpm test`, parity check
 
 ## Wave 3 — conductor
 
-1. Final parity: rerun the lab plan on the tip, `reports/ability-pass/final.jsonl`, the
-   parity script against `baseline.jsonl`. Every cell inside ±5% or the report says which
-   are not and by how much. Also report win rate per cell next to the boss pass's own
-   matrix, so the designer sees whether the kit swap moved any pairing across the 70%
-   floor.
-2. `pnpm typecheck` (all packages, plus `typecheck:bench` and `typecheck:test`), `pnpm
-   test`; record N/N and the time.
-3. Report (format below). Commit it. Stop.
+1. Final parity: regenerate the tutorial-pair plan on the tip and run the lab,
+   `reports/ability-pass/final.jsonl`, the parity script against `baseline.jsonl`. Every
+   cell inside ±5% or the report says which are not and by how much. Also report win rate
+   per cell next to the legibility report's tutorial-kit table, so the designer sees
+   whether the kit swap moved any pairing across the 70% floor.
+2. The no-card identity: the legibility run's `plan-base.json` (no band) on the tip
+   against `reports/legibility/final-base.jsonl` — a character with no cards and no
+   changed ability must be byte-identical; a diff is a defect to explain.
+3. `pnpm typecheck` (all packages, plus `typecheck:bench` and `typecheck:test`), `pnpm
+   test`; record N/N and the time (the legibility baseline is 389/389).
+4. Merge `feat/ability-pass` → develop (--no-ff, no push) only if 1 holds. Report (format
+   below). Commit it. Stop.
 
 ---
 
@@ -536,20 +638,24 @@ After the wave-2 merge: `pnpm typecheck`, `pnpm test`, parity check
   (migration of cut ids), `coverage.test.ts` (unchanged), `keystones.test.ts` (unchanged),
   new `abilityKeystones.test.ts` (17 wiring smokes), `t3PacketTags.test.ts`,
   `skillTreeMechanicCopy.test.ts`, `frameLoops.test.ts` / `frameLoopsRanged.test.ts` or
-  the new per-root path tests, `tutorialAnchors.test.ts`, `abilitySlam.test.ts` (Slam at
-  T1 rank I), `abilityCharge.test.ts` (Charge at T1), new `abilityCull.test.ts` and
-  `abilitySidestep.test.ts`, armed Contagion and instant Imbue in their suites, every durability and boss-reference
-  suite that attuned a cut ability.
+  the new per-root path tests, `tutorial.test.ts`, `tutorialAnchors.test.ts`, the status
+  registry zero-gap test, `lineageDots.test.ts` (one record per weapon, unchanged),
+  `abilitySlam.test.ts` (Slam at T1 rank I), `abilityCharge.test.ts` (Charge at T1), new
+  `abilityCull.test.ts` and `abilitySidestep.test.ts`, armed Contagion and instant Imbue
+  in their suites, every durability and boss-reference suite and bench spec that attuned a
+  cut ability.
 - Each task: related tests + `pnpm typecheck` before commit; the conductor runs the full
-  suite after each wave merge (`pnpm test`, ~4–6 min).
+  suite after each wave merge (`pnpm test`, ~5–6 min).
 
 ## Report format
 
 ```
 # Ability pass report — <date>
-## Branch state (hash; merged/unmerged per task; typecheck; suite N/N and time)
+## Branch state (hash; merged/unmerged per task; typecheck; suite N/N and time; merged to develop or not and why)
 ## Parity: baseline vs final matrix (cls × boss: mean dps, Δ%, win rate), the Slam rank I
-   value and its candidate ladder, any cell outside ±5% with the reason
+   value and its candidate ladder, any cell outside ±5% with the reason; the no-card identity
+## The T3/T4 stacking before/after (W0's table, and W1-A's rerun with Slam) — a measurement
+   for the designer, with the rows that moved most and why
 ## What to playtest (the 17 verbs: where each unlocks, what to look for; the kit swap;
    Charge at the Cave; the five path changes)
 ## Divergences from the brief
@@ -558,7 +664,7 @@ After the wave-2 merge: `pnpm typecheck`, `pnpm test`, parity check
 ## T3 paths: per path the old and new description, the tag, the test
 ## Code review (a self-review pass over the merged diff: every hook early-returns on
    evadeBlocksDebuffs, no second multiplier on one hit, no per-tick HUD booleans, no
-   number outside Slam rank I)
+   number outside Slam rank I, no keystone touching the weapon verb's counter or ring)
 ## Open for the designer (names to confirm; alternates not taken; anything provisional)
 ```
 
