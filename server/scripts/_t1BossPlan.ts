@@ -319,6 +319,9 @@ if (args.matrix === 'tutorial-pair') {
             ...kit,
             rules: tutorialRunes(cls.movement, 'final', cls.classRoot),
             lineage: lineage.id, lean: withCards ? pick.lean : null, verb: withCards ? pick.verb : null,
+            // The rank the guide takes its lean to (design §26.1; III since the
+            // legibility run), so the lab fights the kit the gate is paid with.
+            leanRank: withCards ? cards.leanRank ?? null : null,
           });
         }
       }
