@@ -1,9 +1,10 @@
 /**
  * The combat readout's rules, as pure functions over `readoutTokens.ts`: which band a
- * number draws at, how DoT ticks coalesce, how a target's floaters stack. No Phaser, no
- * React, so every rule is testable without a renderer.
+ * number draws at, how DoT ticks coalesce, how a target's floaters stack, how a bar is
+ * cut and how its chip drains. No Phaser, no React, so every rule is testable without a
+ * renderer.
  */
-import { NUMBER_TOKENS, type NumberBand } from './readoutTokens';
+import { BAR_TOKENS, NUMBER_TOKENS, type BodySizeClass, type NumberBand } from './readoutTokens';
 
 const BANDS = NUMBER_TOKENS.bands;
 const BAND_ORDER: readonly NumberBand[] = BANDS.map((b) => b.band);
@@ -150,4 +151,68 @@ export class LaneStack<F extends LaneFloater> {
       lift += f.height + this.gap;
     }
   }
+}
+
+// ── Bars ────────────────────────────────────────────────────────────────────
+
+/** The size class an overhead bar is cut to, from the displayed body size. */
+export function bodySizeClass(displayPx: number, isBoss: boolean): BodySizeClass {
+  if (isBoss) return 'boss';
+  if (displayPx < BAR_TOKENS.sizeClassPx.small) return 'small';
+  if (displayPx >= BAR_TOKENS.sizeClassPx.large) return 'large';
+  return 'medium';
+}
+
+/** Health colour by thirds of the pool. */
+export function healthColor(fraction: number): string {
+  const { high, mid } = BAR_TOKENS.thirds;
+  return fraction > high ? BAR_TOKENS.color.high : fraction > mid ? BAR_TOKENS.color.mid : BAR_TOKENS.color.low;
+}
+
+/** '#rrggbb' as the 0xRRGGBB number Phaser's Graphics take. */
+export function colorInt(hex: string): number {
+  return Number.parseInt(hex.slice(1), 16);
+}
+
+/** Where the segment marks sit on a marked (elite or boss) bar, as fractions. */
+export function segmentMarks(): number[] {
+  const marks: number[] = [];
+  for (let f = BAR_TOKENS.segmentEvery; f < 1 - 1e-9; f += BAR_TOKENS.segmentEvery) marks.push(Math.round(f * 1e6) / 1e6);
+  return marks;
+}
+
+/** The damage chip: it drains from `from` to `to`, holding at `from` until `at + holdMs`. */
+export interface ChipState {
+  from: number;
+  to: number;
+  at: number;
+}
+
+/** The chip's fraction at `now`. */
+export function chipValue(chip: ChipState, now: number): number {
+  const { holdMs, drainMs } = BAR_TOKENS.chip;
+  const dt = now - chip.at;
+  if (dt <= holdMs) return chip.from;
+  const k = Math.min(1, (dt - holdMs) / drainMs);
+  return chip.from + (chip.to - chip.from) * k * k;
+}
+
+/** True while the chip still shows something above the fill. */
+export function chipActive(chip: ChipState, now: number): boolean {
+  return chipValue(chip, now) > chip.to + 1e-6;
+}
+
+/**
+ * Advance the chip to a new fill fraction. A heal or a caught-up chip snaps to the
+ * fill; a fresh hit holds the old value for a beat; a small drop while the chip is
+ * still out keeps it draining from where it is, so a 0.5 s DoT never pins it.
+ */
+export function chipAdvance(chip: ChipState | undefined, fill: number, now: number): ChipState {
+  if (!chip) return { from: fill, to: fill, at: now };
+  const cur = chipValue(chip, now);
+  if (fill >= cur) return { from: fill, to: fill, at: now };
+  if (fill === chip.to) return chip;
+  const caughtUp = cur <= chip.to + 1e-9;
+  if (fill < chip.to && (caughtUp || chip.to - fill >= BAR_TOKENS.chip.reholdShare)) return { from: cur, to: fill, at: now };
+  return { from: cur, to: fill, at: now - BAR_TOKENS.chip.holdMs };
 }

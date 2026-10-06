@@ -114,3 +114,45 @@ export const NUMBER_TOKENS = {
    */
   screenFloor: 0.85,
 };
+
+/** Body size classes the overhead bars are cut to. */
+export type BodySizeClass = 'small' | 'medium' | 'large' | 'boss';
+
+export const BAR_TOKENS = {
+  /** Overhead bar width (world px) by body size class. */
+  width: { small: 24, medium: 32, large: 44, boss: 72 } satisfies Record<BodySizeClass, number>,
+  height: { small: 4, medium: 4, large: 4, boss: 5 } satisfies Record<BodySizeClass, number>,
+  /** Minions and summons: a slimmer bar. */
+  minion: { width: 24, height: 2 },
+  /** Displayed body size (world px): below `small` is small, from `large` up is large. */
+  sizeClassPx: { small: 60, large: 80 },
+  /** Health colour by thirds: above `high` / above `mid` / below. */
+  thirds: { high: 0.5, mid: 0.25 },
+  color: {
+    high: '#44ee44',
+    mid: '#eeaa22',
+    low: '#ee3322',
+    trough: '#1a1a1a',
+    outline: '#000000',
+    /** The damage chip: the last hit, held for a beat and drained. */
+    chip: '#fff1cf',
+    /** A player's barrier and wards: one band riding the fill. */
+    absorbPlayer: '#44ccdd',
+    /** An enemy shell: its own band above the bar. */
+    absorbEnemy: '#55d9f2',
+    absorbEnemyTrough: '#102d38',
+    segment: '#000000',
+  },
+  alpha: { outline: 0.75, chip: 0.9, absorbPlayer: 0.9, absorbEnemy: 0.95, segment: 0.7 },
+  /**
+   * The chip holds `holdMs` after a fresh hit, then drains in `drainMs`. A drop of at
+   * least `reholdShare` of the pool (or any drop onto a caught-up chip) restarts the
+   * hold; a smaller one while the chip is out (a DoT tick) only keeps it draining.
+   */
+  chip: { holdMs: 400, drainMs: 500, reholdShare: 0.04 },
+  /** Elites and bosses: a thin segment at every quarter of the bar. */
+  segmentEvery: 0.25,
+  segmentPx: 1,
+  /** The enemy shell band: height and gap above the bar (world px). */
+  enemyShell: { height: 2, gap: 1 },
+};

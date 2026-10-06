@@ -1,12 +1,16 @@
 /**
  * The combat readout's pure rules (docs/briefs/combat-readout-run-2026-10-06.md):
- * band selection by share, DoT coalescing, the lane stack's cap. No balance numbers.
+ * band selection by share, DoT coalescing, the lane stack's cap, the bar's size class
+ * and chip. No balance numbers.
  * Pure modules only (this file is typechecked by tsconfig.test.json); the style and
  * wiring checks that need client render state live in combatText.test.ts.
  */
 import assert from 'node:assert/strict';
-import { NUMBER_TOKENS } from '../../client/src/render/readoutTokens';
-import { DotCoalescer, LaneStack, numberBandFor, shiftBand } from '../../client/src/render/readoutModel';
+import { BAR_TOKENS, NUMBER_TOKENS } from '../../client/src/render/readoutTokens';
+import {
+  DotCoalescer, LaneStack, bodySizeClass, chipActive, chipAdvance, chipValue, colorInt, healthColor,
+  numberBandFor, segmentMarks, shiftBand, type ChipState,
+} from '../../client/src/render/readoutModel';
 
 // ── Band by share ────────────────────────────────────────────────────────────
 {
@@ -72,6 +76,54 @@ function floater(height = 10) {
   assert.deepEqual(lanes.lifts('m'), [0, 12]);
   lanes.clear();
   assert(d.destroyed && c.destroyed);
+}
+
+// ── Overhead bars: size class, thirds, segments ─────────────────────────────
+{
+  const { small, large } = BAR_TOKENS.sizeClassPx;
+  assert.equal(bodySizeClass(64 * 0.85, false), 'small', 'a Grass Kite (scale 0.85) is small');
+  assert.equal(bodySizeClass(64, false), 'medium');
+  assert.equal(bodySizeClass(small, false), 'medium', 'the small threshold is exclusive');
+  assert.equal(bodySizeClass(large, false), 'large');
+  assert.equal(bodySizeClass(32, true), 'boss', 'a boss is a boss whatever its size');
+  const w = BAR_TOKENS.width;
+  assert(w.small < w.medium && w.medium < w.large && w.large < w.boss, 'widths grow with the body');
+  assert(BAR_TOKENS.minion.height < BAR_TOKENS.height.medium, 'summons draw a slimmer bar');
+  assert.equal(healthColor(1), BAR_TOKENS.color.high);
+  assert.equal(healthColor(BAR_TOKENS.thirds.high), BAR_TOKENS.color.mid, 'exactly half is no longer "high"');
+  assert.equal(healthColor(0.3), BAR_TOKENS.color.mid);
+  assert.equal(healthColor(0.1), BAR_TOKENS.color.low);
+  assert.deepEqual(segmentMarks(), [0.25, 0.5, 0.75]);
+  assert.equal(colorInt('#44ee44'), 0x44ee44);
+}
+
+// ── The chip's decay ─────────────────────────────────────────────────────────
+{
+  const { holdMs, drainMs, reholdShare } = BAR_TOKENS.chip;
+  let c: ChipState = chipAdvance(undefined, 1, 0);
+  assert.equal(chipActive(c, 0), false, 'a fresh bar has no chip');
+  c = chipAdvance(c, 0.6, 100);
+  assert.equal(chipValue(c, 100), 1, 'the chip holds the old value...');
+  assert.equal(chipValue(c, 100 + holdMs), 1, '...for the whole hold');
+  const mid = chipValue(c, 100 + holdMs + drainMs / 2);
+  assert(mid < 1 && mid > 0.6, 'then drains');
+  assert.equal(chipValue(c, 100 + holdMs + drainMs), 0.6, 'and lands on the fill');
+  assert.equal(chipActive(c, 100 + holdMs + drainMs + 1), false);
+  // A heal to or above the chip snaps it to the fill; one below it drains toward the new fill.
+  assert.equal(chipValue(chipAdvance(c, 1, 200), 200), 1);
+  const healed = chipAdvance(c, 0.9, 200);
+  assert.equal(chipValue(healed, 200), 1, 'no jump');
+  assert.equal(chipValue(healed, 200 + drainMs), 0.9);
+  // A small drop while the chip is out keeps it draining instead of re-holding.
+  let d = chipAdvance(chipAdvance(undefined, 1, 0), 0.8, 0);
+  const t = holdMs + drainMs / 2;
+  const before = chipValue(d, t);
+  d = chipAdvance(d, 0.8 - reholdShare / 2, t);
+  assert.equal(chipValue(d, t), before, 'no jump at the moment of the small drop');
+  assert(chipValue(d, t + 50) < before, 'and it keeps draining — a 0.5 s DoT never pins it');
+  // A fresh hit of at least reholdShare holds again from where the chip is.
+  const e = chipAdvance(d, 0.5, t + 50);
+  assert.equal(chipValue(e, t + 50 + holdMs), chipValue(d, t + 50), 'a big drop restarts the hold');
 }
 
 // ── The tokens module's shape ────────────────────────────────────────────────
