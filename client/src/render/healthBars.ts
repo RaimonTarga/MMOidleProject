@@ -6,7 +6,7 @@ import { monsterSpriteSize } from './monsterSize';
 import { BAR_TOKENS } from './readoutTokens';
 import { publishBossFrame } from '../hud/bossFrameState';
 import {
-  bodySizeClass, chipAdvance, chipValue, colorInt, healthColor, segmentMarks, type ChipState,
+  barHeightAtZoom, bodySizeClass, chipAdvance, chipValue, colorInt, healthColor, segmentMarks, type ChipState,
 } from './readoutModel';
 
 /** The bar tokens as the numbers Phaser's Graphics take. */
@@ -26,6 +26,7 @@ interface BarShape {
 interface BarDrawn {
   x: number;
   y: number;
+  zoom: number;
   fillPx: number;
   chipPx: number;
   shieldPx: number;
@@ -94,7 +95,13 @@ export function drawHealthBars(state: RenderState, now = performance.now()): voi
     const chip = chipAdvance(rt.chips.get(id), hpPct, now);
     rt.chips.set(id, chip);
     const shape = barShape(state, id);
-    const { width: w, height: h } = shape;
+    // At the phone camera floor the bar keeps a screen-px thickness, outline and
+    // segment; its width stays world-relative so it still reads against the body.
+    const zoom = hpBar.scene?.cameras?.main?.zoom || 1;
+    const screenPx = zoom < 1 ? 1 / zoom : 1;
+    const w = shape.width;
+    const h = barHeightAtZoom(shape.height, zoom);
+    const hairline = BAR_TOKENS.screenFloor.hairline * screenPx;
 
     // Barrier and wards share one absorb band on the HP fill — overhead bars are
     // too narrow to split them. An enemy shell is its own band above the bar.
@@ -116,11 +123,11 @@ export function drawHealthBars(state: RenderState, now = performance.now()): voi
     const color = colorInt(healthColor(hpPct));
     const prev = rt.drawn.get(id);
     if (
-      prev && prev.x === sprite.x && prev.y === barY && prev.fillPx === fillPx && prev.chipPx === chipPx &&
+      prev && prev.x === sprite.x && prev.y === barY && prev.zoom === zoom && prev.fillPx === fillPx && prev.chipPx === chipPx &&
       prev.shieldPx === shieldPx && prev.width === w && prev.height === h && prev.marked === shape.marked &&
       prev.color === color
     ) continue;
-    rt.drawn.set(id, { x: sprite.x, y: barY, fillPx, chipPx, shieldPx, width: w, height: h, marked: shape.marked, color });
+    rt.drawn.set(id, { x: sprite.x, y: barY, zoom, fillPx, chipPx, shieldPx, width: w, height: h, marked: shape.marked, color });
 
     const left = sprite.x - w / 2;
     hpBar.setDepth(DEPTH.UI + sprite.y);
@@ -145,13 +152,14 @@ export function drawHealthBars(state: RenderState, now = performance.now()): voi
 
     if (shape.marked) {
       hpBar.fillStyle(COLOR.segment, BAR_TOKENS.alpha.segment);
-      for (const mark of SEGMENTS) hpBar.fillRect(Math.round(left + w * mark), barY, BAR_TOKENS.segmentPx, h);
+      for (const mark of SEGMENTS) hpBar.fillRect(Math.round(left + w * mark), barY, Math.max(BAR_TOKENS.segmentPx, hairline), h);
     }
 
     if (kind === 'monster' && shieldPx > 0) {
       // Enemy absorb is a separate band rather than an HP overlay: at full HP an
       // active shell must still be obvious, and draining it should read cleanly.
-      const { height: bandH, gap } = BAR_TOKENS.enemyShell;
+      const bandH = Math.max(BAR_TOKENS.enemyShell.height, zoom < 1 ? BAR_TOKENS.screenFloor.shell * screenPx : 0);
+      const gap = Math.max(BAR_TOKENS.enemyShell.gap, zoom < 1 ? hairline : 0);
       const bandY = barY - gap - bandH;
       hpBar.fillStyle(COLOR.absorbEnemyTrough, BAR_TOKENS.alpha.absorbEnemy);
       hpBar.fillRect(left, bandY, w, bandH);
@@ -159,8 +167,8 @@ export function drawHealthBars(state: RenderState, now = performance.now()): voi
       hpBar.fillRect(left, bandY, shieldPx, bandH);
     }
 
-    hpBar.lineStyle(1, COLOR.outline, BAR_TOKENS.alpha.outline);
-    hpBar.strokeRect(left - 0.5, barY - 0.5, w + 1, h + 1);
+    hpBar.lineStyle(hairline, COLOR.outline, BAR_TOKENS.alpha.outline);
+    hpBar.strokeRect(left - hairline / 2, barY - hairline / 2, w + hairline, h + hairline);
   }
   // The boss frame reads the same views on the same beat (hud/bossFrameState.ts).
   publishBossFrame(state);

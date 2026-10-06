@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { BAR_TOKENS, FRAME_TOKENS, NUMBER_TOKENS, readoutCssVars } from '../../client/src/render/readoutTokens';
 import {
   DotCoalescer, LaneStack, absorbBand, bodySizeClass, chipActive, chipAdvance, chipValue, colorInt, healthColor,
-  numberBandFor, quarterModel, segmentMarks, shiftBand, type ChipState,
+  barHeightAtZoom, numberBandFor, numberScreenScale, quarterModel, segmentMarks, shiftBand, type ChipState,
 } from '../../client/src/render/readoutModel';
 import {
   bossFrameEqual, bossFrameModel, liveCast, pickBoss, type BossFrameSource,
@@ -188,6 +188,19 @@ function floater(height = 10) {
   assert.equal(bossFrameEqual(m, { ...m, hp: m.hp - 1 }), false);
   assert.equal(bossFrameEqual(m, { ...m, cast: null }), false);
   assert.equal(bossFrameEqual(null, null), true);
+}
+
+// ── The phone camera floor ───────────────────────────────────────────────────
+{
+  assert.equal(numberScreenScale(1), 1, 'desktop numbers are unchanged');
+  assert.equal(numberScreenScale(0), 1, 'a missing zoom is treated as 1');
+  const floor = 0.4;
+  const s = numberScreenScale(floor);
+  assert(Math.abs(s * floor - NUMBER_TOKENS.screenFloor) < 1e-9, 'at the floor a number keeps screenFloor of its screen size');
+  assert.equal(numberScreenScale(0.9), 1, 'near zoom 1 the world size already reads');
+  assert.equal(barHeightAtZoom(4, 1), 4);
+  assert(Math.abs(barHeightAtZoom(4, floor) * floor - BAR_TOKENS.screenFloor.height) < 1e-9, 'a bar keeps its screen thickness at the floor');
+  assert.equal(barHeightAtZoom(10, 0.9), 10, 'a bar already thick enough is untouched');
 }
 
 // ── The tokens module's shape ────────────────────────────────────────────────

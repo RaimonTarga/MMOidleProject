@@ -256,3 +256,21 @@ export function absorbBand(hpFraction: number, absorbFraction: number): { left: 
   const left = Math.max(0, Math.min(Math.max(0, Math.min(1, hpFraction)) * 100, 100 - width));
   return { left, width };
 }
+
+// ── The phone camera floor ──────────────────────────────────────────────────
+
+/**
+ * World-space scale for a damage number at camera `zoom`: 1 at zoom 1; below it,
+ * enough to keep the number's SCREEN size at `screenFloor` of its desktop size, so
+ * it reads at the 0.4 floor without changing the camera (design §26.4 open item).
+ */
+export function numberScreenScale(zoom: number): number {
+  const z = zoom > 0 ? zoom : 1;
+  return z < 1 ? Math.max(z, NUMBER_TOKENS.screenFloor) / z : 1;
+}
+
+/** An overhead bar's height in world px at camera `zoom`: never below its screen floor. */
+export function barHeightAtZoom(height: number, zoom: number): number {
+  const z = zoom > 0 ? zoom : 1;
+  return z < 1 ? Math.max(height, BAR_TOKENS.screenFloor.height / z) : height;
+}

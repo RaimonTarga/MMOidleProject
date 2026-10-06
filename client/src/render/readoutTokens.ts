@@ -155,6 +155,11 @@ export const BAR_TOKENS = {
   segmentPx: 1,
   /** The enemy shell band: height and gap above the bar (world px). */
   enemyShell: { height: 2, gap: 1 },
+  /**
+   * Phone camera floor: below zoom 1 a bar keeps these SCREEN sizes (its width stays
+   * body-relative), so a 4 px bar does not draw 1.6 px tall at the 0.4 floor.
+   */
+  screenFloor: { height: 3, shell: 2, hairline: 1 },
 };
 
 /** The HUD readouts (DOM): the boss frame, the target frame's bar, the vitals. */

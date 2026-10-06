@@ -3,7 +3,7 @@ import type { GameScene } from '../scenes/GameScene';
 import { shouldRunClientFx } from './guard';
 import { DEPTH } from '../render/depth';
 import { NUMBER_TOKENS, type NumberBand, type NumberMotion } from '../render/readoutTokens';
-import type { LaneFloater } from '../render/readoutModel';
+import { numberScreenScale, type LaneFloater } from '../render/readoutModel';
 
 type ParticleConfig = Phaser.Types.GameObjects.Particles.ParticleEmitterConfig;
 
@@ -202,8 +202,7 @@ export function spawnDamageNumber(
   style?: DamageNumberStyle,
 ): DamageNumberHandle | null {
   if (!shouldRunClientFx()) return null;
-  const zoom = scene.cameras.main.zoom || 1;
-  const screenScale = zoom < 1 ? Math.max(zoom, NUMBER_TOKENS.screenFloor) / zoom : 1;
+  const screenScale = numberScreenScale(scene.cameras.main.zoom);
   const motion = NUMBER_TOKENS.motion[style?.motion ?? 'hit'];
   const reduced = prefersReducedMotion();
   const sizePx = (style?.sizePx ?? NUMBER_TOKENS.bands[1].sizePx) * screenScale;
