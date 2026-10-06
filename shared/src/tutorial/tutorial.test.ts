@@ -1,12 +1,11 @@
 import { ABILITY_DATABASE } from '../abilities';
 import { ABILITY_RECIPE_DATABASE } from '../abilityRecipes';
-import { globalMastery } from '../config/gameConfig';
+import { biomeLevelCap, globalMastery } from '../config/gameConfig';
 import { LINEAGE_DATABASE, lineageForRecipeId } from '../data/lineages';
 import { GATE_CAPSTONE_AMOUNT } from '../data/lineages/magnitudes';
-import { isVerbCard, leanPayloadLane, resolveLineageCard } from '../data/lineages/resolve';
-import { verbSentence } from '../data/lineages/sentences';
-import type { LineageProgressMap } from '../data/lineages/types';
-import { cardSentence } from '../systems/lineages';
+import { isRankedCard, isVerbCard, maxCardRank, resolveLineageCard } from '../data/lineages/resolve';
+import type { LineageProgress, LineageProgressMap } from '../data/lineages/types';
+import { cardRank, cardSentence } from '../systems/lineages';
 import { RECIPE_DATABASE } from '../data/recipes';
 import { ITEM_DATABASE } from '../itemDatabase';
 import { emptyEquipment, type EssenceType } from '../items';
@@ -231,7 +230,11 @@ for (const plan of TUTORIAL_CLASS_PLANS) {
         case 'unlockCard': {
           const lineage = LINEAGE_DATABASE.get(step.lineageId);
           assert(!!lineage, `${where}: unknown lineage ${step.lineageId}`);
-          assert(lineage!.cards.some((c) => c.id === step.cardId), `${where}: unknown card ${step.cardId}`);
+          const card = lineage!.cards.find((c) => c.id === step.cardId);
+          assert(!!card, `${where}: unknown card ${step.cardId}`);
+          if (step.rank !== undefined) {
+            assert(step.rank >= 1 && step.rank <= maxCardRank(card!), `${where}: ${step.cardId} has no rank ${step.rank}`);
+          }
           break;
         }
         case 'setActive': {
@@ -385,21 +388,28 @@ function simulate(plan: (typeof TUTORIAL_CLASS_PLANS)[number]): void {
           assert(wieldsFormOf(v, lineage.id),
             `${script.id}/${beat.id}: buys ${step.cardId} while wearing ${v.equipment[lineage.slot]}, not the ${lineage.id}`);
           const card = lineage.cards.find((c) => c.id === step.cardId)!;
-          // The beat sits where the card's own gates are open (W2-A: the T1 verb
-          // row needs Global Mastery 18 as well as Forest 4).
-          const gates = resolveLineageCard(card, lineage);
+          // One rank per purchase, as the server sells them (design §26.1: the same
+          // intent buys an owned ranked card's NEXT rank).
+          const rank = step.rank ?? 1;
+          assert(rank === cardRank(progress, card.id) + 1,
+            `${script.id}/${beat.id}: buys rank ${rank} of ${card.id} at rank ${cardRank(progress, card.id)}`);
+          // The beat sits where the card's own gates are open AT THAT RANK (the T1
+          // verb row at Global Mastery 10 as well as its zone's level 4; lean ranks
+          // II and III at Global Mastery 10 and 14).
+          const gates = resolveLineageCard(card, lineage, { rank });
           assert((v.biomeLevel[gates.requiredBiomeGroup] ?? 0) >= gates.requiredBiomeLevel,
             `${script.id}/${beat.id}: ${card.id} needs ${gates.requiredBiomeGroup} ${gates.requiredBiomeLevel}`);
           assert(v.globalMastery >= gates.requiredGlobalMastery,
-            `${script.id}/${beat.id}: ${card.id} needs Global Mastery ${gates.requiredGlobalMastery}, the guide is at ${v.globalMastery}`);
+            `${script.id}/${beat.id}: ${card.id} rank ${rank} needs Global Mastery ${gates.requiredGlobalMastery}, the guide is at ${v.globalMastery}`);
           set({
             lineages: {
               ...v.lineages,
               [step.lineageId]: {
                 ...progress!,
-                ownedCards: [...progress!.ownedCards, step.cardId],
+                ownedCards: rank === 1 ? [...progress!.ownedCards, step.cardId] : progress!.ownedCards,
                 // Buying into an empty row activates it, server-side.
                 active: { ...progress!.active, [card.row]: progress!.active[card.row] ?? step.cardId },
+                ...(isRankedCard(card) ? { ranks: { ...progress!.ranks, [card.id]: rank } } : {}),
               },
             },
           });
@@ -503,8 +513,8 @@ function simulate(plan: (typeof TUTORIAL_CLASS_PLANS)[number]): void {
   assert(v.playerTier === 2, `${script.id}: ends at Tier 2`);
   assert(v.globalMastery === 30, `${script.id}: reaches Global Mastery 30 before the bosses (got ${v.globalMastery})`);
 
-  // The weapon-page lessons actually land: a lean and a verb bought and active,
-  // a gate paid, the form worn.
+  // The weapon-page lessons actually land: a lean (at the plan's rank) and a verb
+  // bought and active, a gate paid, the form worn.
   const taught = Object.entries(v.lineages).filter(([, p]) => p.ownedCards.length > 0);
   assert(taught.length === 1, `${script.id}: exactly one lineage is taught (got ${taught.length})`);
   const [lineageId, progress] = taught[0];
@@ -518,6 +528,8 @@ function simulate(plan: (typeof TUTORIAL_CLASS_PLANS)[number]): void {
       && progress.ownedCards.includes(plan.weaponCards.verb),
     `${script.id}: two cards, the plan's lean and verb (got ${progress.ownedCards.join(', ')})`,
   );
+  assert(cardRank(progress, plan.weaponCards.lean) === plan.weaponCards.leanRank,
+    `${script.id}: the lean ends at rank ${cardRank(progress, plan.weaponCards.lean)}, not the plan's ${plan.weaponCards.leanRank}`);
   assert(progress.active.stat === plan.weaponCards.lean, `${script.id}: the lean ends up active`);
   assert(progress.active.payoff === plan.weaponCards.verb, `${script.id}: the verb ends up active`);
   const gated = LINEAGE_DATABASE.get(lineageId)!.forms.find((f) => f.recipeId === progress.wornForm)!;
@@ -540,19 +552,24 @@ for (const plan of TUTORIAL_CLASS_PLANS) simulate(plan);
  * pays the card's shard, and the line must use the shard's own name.
  */
 {
-  // Every class, both purchases: each card has a shards beat naming where its shard drops.
+  // Every class, every purchase: each card (and each rank) has a shards beat naming
+  // where its shard drops.
   const named = new Set<string>();
   for (const plan of TUTORIAL_CLASS_PLANS) {
     const script = tutorialScriptFor(plan.classRoot);
     const cards = script.beats
       .flatMap((b) => b.steps)
       .filter((s): s is Extract<TutorialStep, { type: 'unlockCard' }> => s.type === 'unlockCard');
-    assert(cards.map((c) => c.cardId).join() === [plan.weaponCards.lean, plan.weaponCards.verb].join(),
-      `${script.id}: buys the lean, then the verb, and nothing else`);
+    // Design §26.1: lean I, the verb, then the lean's ranks — and nothing else.
+    const { lean, verb, leanRank } = plan.weaponCards;
+    const expected = [`${lean}@1`, `${verb}@1`, ...Array.from({ length: leanRank - 1 }, (_, i) => `${lean}@${i + 2}`)];
+    assert(cards.map((c) => `${c.cardId}@${c.rank ?? 1}`).join() === expected.join(),
+      `${script.id}: buys ${expected.join(', ')} (got ${cards.map((c) => `${c.cardId}@${c.rank ?? 1}`).join(', ')})`);
     for (const step of cards) {
       const lineage = LINEAGE_DATABASE.get(step.lineageId)!;
       const lane = lineage.cards.find((c) => c.id === step.cardId)!.lane;
-      const beat = script.beats.find((b) => b.id === `shards:${step.cardId}`);
+      const suffix = (step.rank ?? 1) > 1 ? `:rank-${step.rank}` : '';
+      const beat = script.beats.find((b) => b.id === `shards:${step.cardId}${suffix}`);
       assert(!!beat, `${script.id}: no shards beat for ${step.cardId}`);
       const territories = nodesPayingShard(lineage.homeBiome, 1, lane).map((id) => nodeFamily(id)?.name);
       assert(territories.length > 0, `no ${lineage.homeBiome} node pays the ${lane} shard ${step.cardId} costs`);
@@ -567,42 +584,112 @@ for (const plan of TUTORIAL_CLASS_PLANS) simulate(plan);
   assert(named.size > 0, 'no shards line names a territory');
 }
 
-// ── The two purchases compose (design §24.2) ────────────────────────────────
+// ── The weapon page reads as the page does (design §26.1) ───────────────────
 /**
- * The lesson quotes the sentence the pair reads, from the shared generator and
- * identical to what the page shows (`cardSentence`), never typed: the composed
- * one when the lean is another lane (and then the lean must visibly change it),
- * the lane's pure sentence when it is the same lane — the pick is the boss-lab
- * matrix's (design §24.9), which may be a pure pair, and then the lesson says the
- * two are one colour instead of claiming the lean rewrote the verb.
+ * The T1 band is a lean with ranks and the weapon's own verb: no pair to choose.
+ * The lessons quote what the page shows (`cardSentence`, never typed), name the
+ * lean and the weapon's own verb, and never promise that a lean choice rewrites
+ * the verb at T1 (Attack and Speed are plain stats; Effect makes the weapon's own
+ * move stronger). Rank II reads the number before and after.
  */
 for (const plan of TUTORIAL_CLASS_PLANS) {
   const lineage = LINEAGE_DATABASE.get(plan.weaponCards.lineageId)!;
   const base = lineage.forms.find((f) => f.tier === 1)!.recipeId;
   const lean = lineage.cards.find((c) => c.id === plan.weaponCards.lean);
   const verb = lineage.cards.find((c) => c.id === plan.weaponCards.verb);
-  assert(!!lean && lean.tier === 1 && lean.row === 'stat', `${plan.className}: the lean is a tier-1 stat card`);
+  assert(!!lean && lean.tier === 1 && lean.row === 'stat' && isRankedCard(lean),
+    `${plan.className}: the lean is a tier-1 ranked lean (Attack / Speed / Effect)`);
   assert(!!verb && verb.tier === 1 && isVerbCard(verb), `${plan.className}: the verb is a tier-1 verb`);
-  // The lean's PAYLOAD lane (design §26.1: a T1 Attack or Speed lean names none).
-  const leanLane = leanPayloadLane(lean!);
-  const sentence = verbSentence(verb!.lane, leanLane)!;
-  const pure = leanLane === undefined || leanLane === verb!.lane;
-  if (!pure) assert(sentence !== verbSentence(verb!.lane), `${plan.className}: the lean does not change what ${verb!.name} says`);
+  // The weapon's ONE verb: the guide never picks among verbs at T1.
+  assert(lineage.cards.filter((c) => c.tier === 1 && c.row === 'payoff').map((c) => c.id).join() === verb!.id,
+    `${plan.className}: ${verb!.name} is not the ${lineage.id}'s one T1 verb`);
+  assert(plan.weaponCards.leanRank >= 1 && plan.weaponCards.leanRank <= maxCardRank(lean!),
+    `${plan.className}: no rank ${plan.weaponCards.leanRank} on ${lean!.name}`);
+  const tree = (leanRank: number, withVerb: boolean): LineageProgress => ({
+    ownedCards: withVerb ? [lean!.id, verb!.id] : [lean!.id],
+    active: withVerb ? { stat: lean!.id, payoff: verb!.id } : { stat: lean!.id },
+    ownedForms: [base],
+    wornForm: base,
+    ranks: { [lean!.id]: leanRank },
+  });
   const script = tutorialScriptFor(plan.classRoot);
-  const buy = script.beats.find((b) => b.id === `card:${verb!.id}`);
+  const say = (id: string) => script.beats.find((b) => b.id === id);
+  const allLines = script.beats.flatMap((b) => [b.say, b.waiting, b.lesson?.read, b.lesson?.ring])
+    .filter((line): line is string => line !== undefined);
+  for (const line of allLines) {
+    assert(!/chose that|lean decides|your lean, /i.test(line), `${script.id}: promises a lean choice rewrites the verb: "${line}"`);
+  }
+
+  // Lean I: names the lean, says what kind of thing it is, and reads its sentence.
+  const leanBuy = say(`card:${lean!.id}`);
+  assert(!!leanBuy && leanBuy.say.includes(`Buy ${lean!.name}`), `${plan.className}: the lean line must name ${lean!.name}`);
+  assert(leanBuy!.say.includes(lean!.leanKind === 'effect' ? "weapon's own move stronger" : 'plain stat'),
+    `${plan.className}: the lean line must say what ${lean!.name} is: "${leanBuy!.say}"`);
+  assert(leanBuy!.lesson?.read.includes(`“${cardSentence(lean!, tree(1, false))}”`) === true,
+    `${plan.className}: the lean lesson must quote its page sentence`);
+
+  // The verb: the weapon's own move, its sentence with the lean at rank I, its ring.
+  const sentence = cardSentence(verb!, tree(1, true))!;
+  const buy = say(`card:${verb!.id}`);
   assert(!!buy?.lesson, `${plan.className}: the verb purchase has no lesson`);
+  assert(buy!.say.includes(verb!.name) && buy!.say.includes('own move'), `${plan.className}: the verb line must name the weapon's own move: "${buy!.say}"`);
   assert(buy!.lesson!.cardId === verb!.id, `${plan.className}: the lesson points at another card`);
   assert(buy!.lesson!.read.includes(`“${sentence}”`), `${plan.className}: the lesson must quote "${sentence}"`);
   assert(buy!.lesson!.read.includes(lean!.name), `${plan.className}: the lesson must name the lean`);
-  assert(buy!.lesson!.read.includes('chose that') === !pure,
-    `${plan.className}: a ${pure ? 'pure' : 'composed'} pair's lesson ${pure ? 'claims the lean rewrote the verb' : 'does not say the lean chose it'}`);
-  assert(!!buy!.lesson!.ring && buy!.lesson!.ring.includes(verb!.name), `${plan.className}: the lesson must point at the verb's ring`);
-  assert(cardSentence(verb!, {
-    ownedCards: [lean!.id, verb!.id], active: { stat: lean!.id, payoff: verb!.id }, ownedForms: [base], wornForm: base,
-  }) === sentence, `${plan.className}: the page shows a different sentence than the lesson quotes`);
-  // The verb comes after the lean.
+  assert(!!buy!.lesson!.ring && buy!.lesson!.ring.includes(verb!.name) && buy!.lesson!.ring.includes('under your health bar'),
+    `${plan.className}: the lesson must point at the verb's ring under the health bar`);
+  if (lean!.leanKind === 'effect' && lineage.id === 'axe') {
+    // The Effect lean visibly sizes the Axe's move ("strikes twice" → "strikes again at 110%").
+    assert(sentence !== cardSentence(verb!, { ...tree(1, true), ownedCards: [verb!.id], active: { payoff: verb!.id } }),
+      `${plan.className}: Effect does not change what ${verb!.name} says`);
+  }
+
+  // The ranks: one per beat after the verb, each quoting the page at its rank.
   const order = script.beats.map((b) => b.id);
-  assert(order.indexOf(`card:${lean!.id}`) < order.indexOf(`card:${verb!.id}`), `${plan.className}: the verb before the lean`);
+  const rankIds = Array.from({ length: plan.weaponCards.leanRank - 1 }, (_, i) => `card:${lean!.id}:rank-${i + 2}`);
+  const sequence = [`card:${lean!.id}`, `card:${verb!.id}`, ...rankIds].map((id) => order.indexOf(id));
+  assert(sequence.every((at, i) => at >= 0 && (i === 0 || at > sequence[i - 1]!)),
+    `${plan.className}: the page is bought lean I, verb, then ranks in order (${sequence.join(', ')})`);
+  if (plan.weaponCards.leanRank >= 2) {
+    const two = say(`card:${lean!.id}:rank-2`)!;
+    assert(two.lesson?.read.includes(`“${cardSentence(lean!, tree(2, true))}”`) === true
+      && two.lesson.read.includes(`“${cardSentence(lean!, tree(1, true))}”`),
+    `${plan.className}: the rank II lesson must read the number after and before`);
+    assert(two.lesson!.cardId === lean!.id, `${plan.className}: the rank II lesson points at another card`);
+  }
+  for (let rank = 3; rank <= plan.weaponCards.leanRank; rank += 1) {
+    assert(say(`card:${lean!.id}:rank-${rank}`)!.say.includes(`“${cardSentence(lean!, tree(rank, true))}”`),
+      `${plan.className}: the rank ${rank} line must quote its page sentence`);
+  }
+}
+
+// ── Resume across ranks ──────────────────────────────────────────────────────
+/**
+ * A rank is part of the beat's state: owning the lean at rank I leaves the rank-II
+ * beat to do, and the rank-II beat is done only at rank II or above (a player who
+ * ranked up by hand is never sent back).
+ */
+for (const plan of TUTORIAL_CLASS_PLANS) {
+  if (plan.weaponCards.leanRank < 2) continue;
+  const script = tutorialScriptFor(plan.classRoot);
+  const { lineageId, lean, verb } = plan.weaponCards;
+  const lineage = LINEAGE_DATABASE.get(lineageId)!;
+  const base = lineage.forms.find((f) => f.tier === 1)!.recipeId;
+  const rankTwo = script.beats.find((b) => b.id === `card:${lean}:rank-2`)!;
+  const at = (rank: number) => view({
+    playerTier: 1,
+    selectedClass: plan.classRoot,
+    biomeLevel: { clearing: 4, [lineage.homeBiome]: 5 },
+    equipment: { ...emptyEquipment(), weapon: base },
+    lineages: {
+      [lineageId]: {
+        ownedCards: [lean, verb], active: { stat: lean, payoff: verb }, ownedForms: [base], wornForm: base, ranks: { [lean]: rank },
+      },
+    },
+  });
+  assert(nextStepOf(script, rankTwo, at(1))?.type === 'unlockCard', `${plan.className}: rank I leaves the rank-II purchase to do`);
+  assert(nextStepOf(script, rankTwo, at(2)) === null, `${plan.className}: rank II finishes the rank-II beat`);
+  assert(nextStepOf(script, rankTwo, at(3)) === null, `${plan.className}: rank III is past the rank-II beat`);
 }
 
 // ── A purchase into a row the player already filled ─────────────────────────
@@ -670,7 +757,9 @@ for (const plan of TUTORIAL_CLASS_PLANS) {
     assert(concepts.length <= TUTORIAL_CONCEPTS_PER_LEVEL,
       `${script.id}: ${level} introduces ${concepts.length} ideas (${concepts.join(', ')})`);
   }
-  for (const concept of ['weapon-page', 'shards', 'lean', 'verb', 'rhythm-ring', 'gate'] as const) {
+  const concepts = ['weapon-page', 'shards', 'lean', 'verb', 'rhythm-ring', 'gate'] as TutorialConceptId[];
+  if (plan.weaponCards.leanRank >= 2) concepts.push('lean-rank');
+  for (const concept of concepts) {
     assert(seen.has(concept), `${script.id}: never teaches ${concept}`);
   }
   // Each card is bought on the level its own row opens at in the weapon's home zone
@@ -682,6 +771,17 @@ for (const plan of TUTORIAL_CLASS_PLANS) {
     const card = lineage.cards.find((c) => c.id === cardId)!;
     const opens = `${zone} ${resolveLineageCard(card, lineage).requiredBiomeLevel}`;
     assert(levelOf(`card:${cardId}`) === opens, `${script.id}: ${card.name} is bought at ${levelOf(`card:${cardId}`)}, not ${opens}`);
+  }
+  // Design §26.1 in the leg: rank II the level after the verb's (that level already
+  // carries the verb and its ring), rank III at the leg's end.
+  const verbLevel = resolveLineageCard(lineage.cards.find((c) => c.id === plan.weaponCards.verb)!, lineage).requiredBiomeLevel;
+  if (plan.weaponCards.leanRank >= 2) {
+    const at = levelOf(`card:${plan.weaponCards.lean}:rank-2`);
+    assert(at === `${zone} ${verbLevel + 1}`, `${script.id}: rank II is bought at ${at}, not ${zone} ${verbLevel + 1}`);
+  }
+  if (plan.weaponCards.leanRank >= 3) {
+    const at = levelOf(`card:${plan.weaponCards.lean}:rank-3`);
+    assert(at === `${zone} ${biomeLevelCap(1, lineage.homeBiome)}`, `${script.id}: rank III is bought at ${at}, not the ${zone} leg's end`);
   }
 }
 for (const [id, concept] of Object.entries(TUTORIAL_CONCEPTS) as [TutorialConceptId, TutorialConcept][]) {

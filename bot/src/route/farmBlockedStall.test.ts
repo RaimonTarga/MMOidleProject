@@ -202,7 +202,7 @@ async function farmBlockedRaisesIt(): Promise<void> {
   await assert.rejects(
     api.farmBlocked(
       PLAINS_NODE,
-      "card:rapier-t1-affliction-stat",
+      "card:rapier-t1-effect",
       () => false,
       () => [{ kind: "globalMastery", current: 30, required: 35, missing: 5 }],
       // The lineage steps' own flag: it must not suppress this stall.
@@ -212,7 +212,7 @@ async function farmBlockedRaisesIt(): Promise<void> {
       const message = (error as Error).message;
       assert.match(
         message,
-        /^card:rapier-t1-affliction-stat cannot be farmed at node-t1-plains-01: it needs 5 more Global Mastery/,
+        /^card:rapier-t1-effect cannot be farmed at node-t1-plains-01: it needs 5 more Global Mastery/,
         `named stall, got: ${message}`,
       );
       return true;
@@ -232,7 +232,7 @@ async function farmBlockedRaisesIt(): Promise<void> {
   await assert.rejects(
     api.farmBlocked(
       PLAINS_NODE,
-      "card:rapier-t1-tempo-stat",
+      "card:rapier-t1-speed",
       () => false,
       () => [{ kind: "essence", essence: "yellow", current: 0, required: 400, missing: 400 }],
       true,

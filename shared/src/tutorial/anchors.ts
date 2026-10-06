@@ -25,9 +25,11 @@ export const TUTORIAL_ANCHORS = {
   equipmentSlot: (slot: string) => `inventory.slot:${slot}`,
   /** One card in a lineage tree: pressing it buys it, or makes it active. */
   lineageCard: (cardId: string) => `lineage.card:${cardId}`,
+  /** An owned lean's "Rank up" on the weapon page: pressing it buys the next rank (design §26.1). */
+  lineageRankUp: (cardId: string) => `lineage.rank:${cardId}`,
   /** One form at a band's gate: pressing it pays the gate, or wears it. */
   lineageForm: (recipeId: string) => `lineage.form:${recipeId}`,
-  /** One ring of the rhythm readout near the HP bar, keyed like the ring (a card id). */
+  /** One ring of the rhythm readout under the HP bar, keyed like the ring (a card id). */
   rhythmRing: (ringKey: string) => `hud.rhythm:${ringKey}`,
   abilityAttune: (abilityId: string) => `abilities.attune:${abilityId}`,
   /** "Use default timing" under an attuned ability: adds its reference Rune. */

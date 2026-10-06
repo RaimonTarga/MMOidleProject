@@ -6,6 +6,7 @@ import {
   RECIPE_DATABASE,
   SKILL_TREE,
   biomeLevelCap,
+  cardRank,
   globalMasteryRequiredForUpgrade,
   maxGlobalMasteryAtTier,
   nodeFamily,
@@ -88,7 +89,9 @@ export function evaluate(condition: Condition, ctx: ConditionContext): boolean {
     case "capstoneAtLeast":
       return (obs.self?.capstones[condition.biome] ?? 0) >= condition.amount;
     case "lineageCardOwned":
-      return obs.self?.lineages[condition.lineageId]?.ownedCards.includes(condition.cardId) ?? false;
+      // `cardRank` is 0 for an unowned card and ≥ 1 for an owned one (a ranked
+      // card's bought rank; an unranked card is rank I).
+      return cardRank(obs.self?.lineages[condition.lineageId], condition.cardId) >= Math.max(1, condition.rank ?? 1);
     case "lineageFormOwned":
       return obs.self?.lineages[condition.lineageId]?.ownedForms.includes(condition.recipeId) ?? false;
     case "lineageFormWorn":
@@ -157,7 +160,7 @@ export function describe(condition: Condition): string {
     case "capstoneAtLeast":
       return `${condition.biome} capstones >= ${condition.amount}`;
     case "lineageCardOwned":
-      return `${condition.lineageId} card ${condition.cardId} owned`;
+      return `${condition.lineageId} card ${condition.cardId} owned${(condition.rank ?? 1) > 1 ? ` at rank ${condition.rank}` : ""}`;
     case "lineageFormOwned":
       return `${condition.lineageId} form ${condition.recipeId} owned`;
     case "lineageFormWorn":

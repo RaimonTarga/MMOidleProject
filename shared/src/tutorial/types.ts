@@ -47,7 +47,11 @@ export type TutorialCondition =
   | { type: 'shardAtLeast'; packet: PacketId; amount: number }
   /** A biome boss's capstone material — the only thing a boss kill mints. */
   | { type: 'capstoneAtLeast'; biome: string; amount: number }
-  | { type: 'lineageCardOwned'; lineageId: string; cardId: string }
+  /**
+   * The card is owned; with `rank`, owned at that rank or above (a RANKED card, the
+   * T1 lean trio: design §26.1). A rank is never lost, so this stays monotone.
+   */
+  | { type: 'lineageCardOwned'; lineageId: string; cardId: string; rank?: number }
   | { type: 'lineageFormOwned'; lineageId: string; recipeId: string }
   | { type: 'lineageFormWorn'; lineageId: string; recipeId: string }
   | { type: 'allOf'; of: TutorialCondition[] }
@@ -75,8 +79,12 @@ export type TutorialStep =
    * WORN — holding the form is what opens the weapon page (`checkUnlockCard`).
    * Buying activates the card only into an EMPTY row (server-side), so every
    * purchase beat follows it with a `setActive` for the same card.
+   *
+   * `rank` (a RANKED card, the T1 lean trio: design §26.1): buy ranks until the
+   * card is owned at this one. The same intent buys the next rank of an owned
+   * ranked card (the page's Rank up); omitted means owning the card (rank I).
    */
-  | { type: 'unlockCard'; lineageId: string; cardId: string }
+  | { type: 'unlockCard'; lineageId: string; cardId: string; rank?: number }
   /**
    * Make an owned card the active one of its row. Free. A no-op right after a
    * purchase into an empty row; the swap a player who already filled the row
@@ -147,7 +155,7 @@ export interface TutorialLesson {
   cardId: string;
   /** The line while the ring rests on the bought card ("look at what it says now"). */
   read: string;
-  /** The line while the ring rests on the card's readout ring, near the HP bar. */
+  /** The line while the ring rests on the card's ring, under the HP bar (design §26.4). */
   ring?: string;
 }
 
