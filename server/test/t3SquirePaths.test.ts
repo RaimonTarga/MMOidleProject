@@ -7,6 +7,15 @@
  *             held, when nothing is in reach. The echo is a mechanic hit
  *             (`mechanicConsumed`, one `mechanic-fired`) that never restarts the
  *             recharge and never spends an execution that is already waiting.
+ *   Destroyer the execution is delivered by the player's Techniques: primed, it
+ *             waits through ordinary (damaging) regular hits; the next Technique
+ *             that LANDS fires it with its shape — the armed hit itself (Sweep
+ *             cleaves it), a cast's target or area (Slam's circle, Snipe's
+ *             range). An evaded armed hit did not land, so it stays primed. With
+ *             the Signature keystone too, the one execution counts once.
+ *
+ * The Techniques used are the ones the ability pass keeps (Sweep armed, Slam and
+ * Snipe cast; Imbue as the targetless self-cast).
  *
  * WHAT THIS PINS is the wiring and the shape, never a balance number: every
  * magnitude is read off `SKILL_TREE` or resolved through the same function the
@@ -15,12 +24,18 @@
  * Run: node --conditions=development --import tsx test/t3SquirePaths.test.ts
  */
 import {
+  ABILITY_DATABASE,
   GAME_CONFIG,
+  KEYSTONE_DEFINITIONS,
   SKILL_TREE,
   baseRecoveryForTier,
   emptyEquipment,
+  keystoneFxKey,
   mergePassives,
+  setCounter,
+  setLineageRuntime,
   type CombatEvent,
+  type ResolvedLineageCard,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import type { MonsterEntity, PlayerEntity } from '../src/ecs/entity';
@@ -48,6 +63,12 @@ import {
   reverbEchoPending,
 } from '../src/systems/classes/archetypes/cooldown/t3/core/selectors';
 import { updateReverbEcho } from '../src/systems/classes/archetypes/cooldown/t3/ticks/balanced/reverbEcho';
+import { attachComponent } from '../src/ecs/markerHelpers';
+import { armTechnique } from '../src/systems/player/abilities/abilityArming';
+import { updateAbilityCasts } from '../src/systems/player/abilities/abilityCasting';
+import { castStrikeArea, resolveCastPayload } from '../src/systems/player/abilities/abilityEffects';
+import { onTechniqueResolved } from '../src/systems/combat/techniqueResolved';
+import { MONSTER_EVADE_ACC } from '../src/systems/defense/mitigation/evasion';
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -353,6 +374,290 @@ const REVERB = 'cooldown-balanced-t3-a';
   assert(executions.length >= 2, `the live loop fires executions, got ${executions.length}`);
   assert(echoes.length >= 2, `and each one echoes at the halfway mark, got ${echoes.length}`);
   assert(echoes.length <= executions.length, 'never more echoes than executions');
+}
+
+// ══ Destroyer ════════════════════════════════════════════════════════════════
+
+const DESTROYER = 'cooldown-heavy-t3-b';
+const SWEEP = ABILITY_DATABASE.get('sweep')!;
+const SLAM = ABILITY_DATABASE.get('slam')!;
+const SNIPE = ABILITY_DATABASE.get('snipe')!;
+const IMBUE = ABILITY_DATABASE.get('imbue-lightning')!;
+const SECOND_WIND = ABILITY_DATABASE.get('second-wind')!;
+assert(SWEEP?.shape === 'armed' && SWEEP.slot === 'technique', 'fixture: Sweep is an armed Technique');
+assert(SLAM?.shape === 'cast' && SLAM.slot === 'technique', 'fixture: Slam is a cast Technique');
+assert(SNIPE?.shape === 'cast' && SNIPE.slot === 'technique', 'fixture: Snipe is a cast Technique');
+assert(IMBUE?.shape === 'self-cast' && IMBUE.slot === 'technique', 'fixture: Imbue is a self-cast Technique');
+assert(SECOND_WIND?.slot === 'guard', 'fixture: Second Wind is a Guard');
+
+/** A sturdy body at an absolute position on the test node. */
+function bodyAt(x: number, y: number, typeId = 'plains-slime'): MonsterEntity {
+  const m = world.createMonster(NODE, typeId, { x, y });
+  if (!m) throw new Error(`failed to spawn ${typeId}`);
+  m.hasHealth.maxHp = 1_000_000;
+  m.hasHealth.hp = 1_000_000;
+  return m;
+}
+
+/** A finished wind-up, resolved by the real cast loop on this tick. */
+function castNow(player: PlayerEntity, abilityId: string, target: MonsterEntity): void {
+  now += 100;
+  attachComponent(world, player, 'isCastingAbility', {
+    abilityId, endsAt: now - 1, castMs: 1000, targetId: target.isMonster.id,
+  });
+  updateAbilityCasts(world, now);
+  assert(player.isCastingAbility === undefined, `${abilityId}: the cast should have resolved`);
+}
+
+/** The Signature keystone, seeded the way keystones.test.ts seeds it. */
+function signatureCard(): ResolvedLineageCard {
+  const definition = KEYSTONE_DEFINITIONS.get('technique')!;
+  const payoffKind = definition.payoff ?? 'echo-hit';
+  return {
+    card: {
+      id: 'seed-keystone-technique', lineageId: 'rapier', tier: 3, row: 'keystone', lane: 'technique',
+      name: definition.name, description: definition.rule,
+      fx: keystoneFxKey('technique'), trigger: 'hit-nth', payoff: payoffKind,
+    },
+    requiredBiomeGroup: 'forest', requiredBiomeLevel: 14, requiredGlobalMastery: 0,
+    cost: { essence: {}, shards: {} },
+    trigger: { kind: 'hit-nth', n: 1 },
+    payoff: { kind: payoffKind, magnitude: 0.5 },
+  };
+}
+
+const deliveries = (): SeenHit[] => hits.filter((h) => h.metadata['destroyerDelivery'] === true);
+
+// ── Destroyer: the node ──────────────────────────────────────────────────────
+
+{
+  const node = SKILL_TREE.get(DESTROYER)!;
+  const effects = node.mechanicEffects as Record<string, number>;
+  assert(node.packet === 'technique', `Destroyer is the Technique lane's path (design §22.5), got ${node.packet}`);
+  assert(effects['cooldown.technique-execution'] > 0, 'Destroyer authors its rule key');
+  assert(!('cooldown.singular-extraction' in effects), 'the no-damage rule is gone');
+  assert(!('cooldown.empowered-cd-ms' in effects), 'the 5 s recharge override is gone');
+  assert(!('cooldown.singular-no-target-ms' in effects), 'the out-of-combat priming (Always First) is gone');
+}
+
+// ── Destroyer: regular hits deal normal damage and never spend it ────────────
+
+{
+  const player = spawn('sq-destroyer-regular', 'cooldown-heavy', DESTROYER);
+  assert(
+    resolveExecutionCooldownMs(player) === authored('cooldown-heavy', 'cooldown.empowered-cd-ms'),
+    "the recharge is the heavy frame's own again",
+  );
+  const target = monster(player);
+  hits.length = 0;
+  swing(player, target);
+  const plain = hits[0].damage;
+  assert(plain > 0, 'a regular hit deals damage again');
+
+  setEmpoweredAttack(world, player); // primed
+  hits.length = 0;
+  fires.length = 0;
+  for (let i = 0; i < 3; i++) swing(player, target);
+  assert(hits.length === 3, 'fixture: three regular swings');
+  assert(
+    hits.every((h) => h.damage === plain && h.metadata['mechanicConsumed'] !== true),
+    `a primed Destroyer's regular hits are ordinary hits, got ${hits.map((h) => h.damage).join(', ')} against ${plain}`,
+  );
+  assert(player.hasEmpoweredAttack !== undefined, 'and the execution waits, primed');
+  assert(fires.length === 0, 'nothing announced the mechanic');
+  assert(getFrameCharge(player.tracksCombat, 'cooldown') > 0, 'the Bulwark bank still fills while it waits');
+
+  // A Technique with no target — Imbue's self-cast — has no shape to carry it.
+  onTechniqueResolved(world, player, IMBUE, { now });
+  assert(player.hasEmpoweredAttack !== undefined, 'a targetless Technique leaves it primed');
+  // A Guard never fires it.
+  onTechniqueResolved(world, player, SECOND_WIND, { target, now });
+  assert(player.hasEmpoweredAttack !== undefined, 'a Guard never fires it');
+  assert(deliveries().length === 0, 'and neither delivered anything');
+}
+
+// ── Destroyer: an armed Technique lands it on the armed hit ──────────────────
+
+{
+  const player = spawn('sq-destroyer-armed', 'cooldown-heavy', DESTROYER);
+  const target = monster(player);
+  const neighbour = bodyAt(target.hasPosition.current.x + 40, target.hasPosition.current.y + 20);
+  const cycleMs = resolveExecutionCooldownMs(player);
+  const rootMult = proxyEmpoweredMultiplier(world, player)!;
+  assert(
+    rootMult === authored('cooldown-heavy', 'cooldown.empowered-mult') + authored(DESTROYER, 'cooldown.empowered-mult'),
+    `the execution is the root's own: frame + the path's authored delta, got ${rootMult}`,
+  );
+
+  setEmpoweredAttack(world, player);
+  armTechnique(world, player, 'sweep');
+  const neighbourHp = neighbour.hasHealth.hp;
+  hits.length = 0;
+  fires.length = 0;
+  swing(player, target);
+  const armed = hits.find((h) => h.targetId === target.isMonster.id);
+  assert(armed?.metadata['mechanicConsumed'] === true, 'the armed hit IS the execution');
+  assert(Number(armed.metadata['empoweredMultiplier']) === rootMult, `at the root's multiplier (empty bank), got ${String(armed.metadata['empoweredMultiplier'])}`);
+  assert(player.hasEmpoweredAttack === undefined, 'the execution is spent');
+  assert(player.hasArmedAbility === undefined, 'and the Technique landed');
+  assert(fires.length === 1, `one execution, one mechanic-fired, got ${fires.length}`);
+  assert(player.usesCooldown!.executionCooldownMs === cycleMs, 'the execution restarts the recharge');
+  assert(neighbour.hasHealth.hp < neighbourHp, "Sweep's shape: the cleave carries the execution to the neighbour");
+}
+
+// ── Destroyer: an evaded armed hit did not land — the execution stays primed ─
+
+{
+  const player = spawn('sq-destroyer-evaded', 'cooldown-heavy', DESTROYER);
+  const wolf = bodyAt(player.hasPosition.current.x + 24, player.hasPosition.current.y, 'wolf');
+  // The dodge clock is deterministic: one more swing tips it over.
+  setCounter(wolf.tracksCombat, MONSTER_EVADE_ACC, 0.99);
+
+  setEmpoweredAttack(world, player);
+  armTechnique(world, player, 'sweep');
+  hits.length = 0;
+  fires.length = 0;
+  swing(player, wolf);
+  const evaded = hits.find((h) => h.targetId === wolf.isMonster.id);
+  assert(evaded?.metadata['evaded'] === true, 'fixture: the armed hit was evaded');
+  assert(evaded.metadata['mechanicConsumed'] !== true, 'an evaded hit is not the execution');
+  assert(player.hasEmpoweredAttack !== undefined, 'the execution stays primed for the next Technique');
+  assert(fires.length === 0, 'and nothing was announced');
+  assert(player.hasArmedAbility === undefined, 'the Technique itself was spent by its own rules');
+
+  armTechnique(world, player, 'sweep');
+  hits.length = 0;
+  swing(player, wolf);
+  const landed = hits.find((h) => h.targetId === wolf.isMonster.id);
+  assert(landed?.metadata['evaded'] !== true && landed?.metadata['mechanicConsumed'] === true,
+    'the next Technique that lands fires it');
+  assert(player.hasEmpoweredAttack === undefined, 'and spends it');
+}
+
+// ── Destroyer: a cast lands it on the cast's target and across Slam's area ───
+
+{
+  const player = spawn('sq-destroyer-slam', 'cooldown-heavy', DESTROYER);
+  const a = monster(player);
+  const radius = castStrikeArea(player, SLAM);
+  assert(radius !== undefined && radius > 60, `fixture: Slam strikes an area, got ${String(radius)}`);
+  const b = bodyAt(a.hasPosition.current.x + 50, a.hasPosition.current.y + 20);
+  const c = bodyAt(a.hasPosition.current.x + radius + 400, a.hasPosition.current.y);
+  const loss = (m: MonsterEntity, before: number): number => before - m.hasHealth.hp;
+
+  // Control: nothing primed, so Slam is only Slam.
+  let hpA = a.hasHealth.hp, hpB = b.hasHealth.hp, hpC = c.hasHealth.hp;
+  hits.length = 0;
+  castNow(player, 'slam', a);
+  const slamOnB = loss(b, hpB);
+  assert(slamOnB > 0, "fixture: B stands in Slam's circle");
+  assert(loss(c, hpC) === 0, "fixture: C stands outside Slam's circle");
+  assert(deliveries().length === 0, 'nothing primed, nothing delivered');
+  const slamOnA = loss(a, hpA);
+
+  // Primed: the same Slam delivers the execution.
+  setEmpoweredAttack(world, player);
+  hpA = a.hasHealth.hp; hpB = b.hasHealth.hp; hpC = c.hasHealth.hp;
+  hits.length = 0;
+  fires.length = 0;
+  castNow(player, 'slam', a);
+  const delivered = deliveries();
+  assert(delivered.length === 1, `the cast delivers the execution once, got ${delivered.length}`);
+  assert(delivered[0].targetId === a.isMonster.id, "on the cast's own target");
+  assert(delivered[0].metadata['mechanicConsumed'] === true, 'as the execution, through the pipeline');
+  assert(delivered[0].metadata['evaded'] !== true, 'a cast-delivered execution is never dodged');
+  assert(player.hasEmpoweredAttack === undefined, 'spent');
+  assert(fires.length === 1, `one execution, one mechanic-fired, got ${fires.length}`);
+  assert(loss(a, hpA) > slamOnA, 'the target takes Slam and the execution');
+  assert(loss(b, hpB) > slamOnB, "Slam's shape: the execution reaches every body in the circle");
+  assert(loss(c, hpC) === 0, 'and nothing outside it');
+}
+
+// ── Destroyer: a single-target cast lands it from range (Snipe) ──────────────
+
+{
+  const player = spawn('sq-destroyer-snipe', 'cooldown-heavy', DESTROYER);
+  const far = bodyAt(player.hasPosition.current.x + 320, player.hasPosition.current.y);
+  const beside = bodyAt(far.hasPosition.current.x + 30, far.hasPosition.current.y);
+  assert(
+    !world.collision.canReach(player, far, player.performsAttack.attackRange),
+    "fixture: the target stands outside the player's own reach",
+  );
+  assert(castStrikeArea(player, SNIPE) === undefined, 'fixture: Snipe strikes one target');
+
+  setEmpoweredAttack(world, player);
+  const besideHp = beside.hasHealth.hp;
+  hits.length = 0;
+  now += 100;
+  resolveCastPayload(world, player, SNIPE, far);
+  onTechniqueResolved(world, player, SNIPE, { target: far, now });
+  const delivered = deliveries();
+  assert(delivered.length === 1 && delivered[0].targetId === far.isMonster.id, "the execution lands on Snipe's target, from range");
+  assert(player.hasEmpoweredAttack === undefined, 'spent');
+  assert(beside.hasHealth.hp === besideHp, 'a single-target cast carries no area');
+}
+
+// ── Destroyer + Signature: the one execution fires once and counts once ──────
+
+{
+  const player = spawn('sq-destroyer-signature', 'cooldown-heavy', DESTROYER);
+  setLineageRuntime(player.tracksCombat, { cards: [signatureCard()], capstones: [] });
+  const target = monster(player);
+
+  // Armed.
+  setEmpoweredAttack(world, player);
+  armTechnique(world, player, 'sweep');
+  hits.length = 0;
+  fires.length = 0;
+  swing(player, target);
+  assert(hits.filter((h) => h.metadata['mechanicConsumed'] === true).length === 1, 'armed: one execution');
+  assert(fires.length === 1, `armed: it counts once with Signature, got ${fires.length}`);
+
+  // Cast.
+  setEmpoweredAttack(world, player);
+  hits.length = 0;
+  fires.length = 0;
+  castNow(player, 'slam', target);
+  assert(deliveries().length === 1, 'cast: one execution');
+  assert(fires.length === 1, `cast: it counts once with Signature, got ${fires.length}`);
+
+  // Control: nothing primed — Signature alone still counts the cast.
+  hits.length = 0;
+  fires.length = 0;
+  castNow(player, 'slam', target);
+  assert(deliveries().length === 0 && fires.length === 1, 'unprimed, Signature counts the cast on its own');
+}
+
+// ── Destroyer: wired into the live tick ──────────────────────────────────────
+//
+// Bought through the recalc, swinging through the combat loop with no Technique
+// to carry it: the execution comes up, waits primed, and the swings stay ordinary.
+
+{
+  const live = new World();
+  const slices = makeSlices('sq-destroyer-live');
+  slices.hasPosition.nodeId = 'node-clearing';
+  slices.hasHealth.hp = slices.hasHealth.maxHp = 1_000_000;
+  slices.usesSkills = {
+    unlockedSkills: ['cooldown-root', 'cooldown-heavy', DESTROYER],
+    passives: {}, selectedClass: 'cooldown-root',
+    selectedSubVariant: 'heavy', selectedRange: null, combatArchetype: 'cooldown',
+  };
+  const player = live.attachPlayerEntity(slices, 'sq-destroyer-live');
+  syncArchetypeSlices(live, player);
+  recalculatePlayerEntityStats(live, player);
+  assert(player.usesSkills.passives['cooldown.technique-execution'] === 1, 'the recalc folds the rule key in');
+  const target = live.createMonster('node-clearing', 'plains-slime', { x: 420, y: 400 });
+  if (!target) throw new Error('failed to spawn a target');
+  target.hasHealth.hp = target.hasHealth.maxHp = 10_000_000;
+
+  hits.length = 0;
+  let t = 0;
+  for (let i = 0; i < 140; i++) { t += 100; live.tick(100, t); } // 14 s: past one recharge
+  const mine = hits.filter((h) => h.attackerId === 'sq-destroyer-live');
+  assert(mine.length > 0 && mine.every((h) => h.damage > 0), 'the swings land and deal damage');
+  assert(mine.every((h) => h.metadata['mechanicConsumed'] !== true), 'no swing spent the execution');
+  assert(player.hasEmpoweredAttack !== undefined, 'the execution came up and waits, primed');
 }
 
 console.log('t3SquirePaths.test.ts: ok');

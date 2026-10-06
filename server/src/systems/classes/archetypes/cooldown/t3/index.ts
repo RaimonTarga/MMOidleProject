@@ -7,7 +7,6 @@ import { registerReverbEcho } from './pipeline/reverbEcho';
 import { updateOverdrive } from './ticks/light/overdrive';
 import { updateBattery } from './ticks/balanced/battery';
 import { updateReverbEcho } from './ticks/balanced/reverbEcho';
-import { updateSingularExtraction } from './ticks/heavy/singularExtraction';
 import { updateChanneledBeam } from './ticks/heavy/channeledBeam';
 import { registerCooldownDamageTracking, updateCooldownState } from './ticks/cooldownState';
 
@@ -40,7 +39,6 @@ export function updateCooldownT3(world: World, dt: number, now: number): void {
   updateOverdrive(world, dt);
   updateBattery(world, dt);
   updateReverbEcho(world, now);
-  updateSingularExtraction(world, dt);
   updateChanneledBeam(world, dt, now);
   updateCooldownState(world, dt);
 }

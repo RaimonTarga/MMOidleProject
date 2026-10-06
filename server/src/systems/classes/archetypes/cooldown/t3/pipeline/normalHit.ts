@@ -11,8 +11,6 @@ import {
   ETERNAL_CHARGE_DURATION_MS,
   EC_CHARGE_FX, BAT_CHARGE_FX,
 } from '../core/constants';
-import { COOLDOWN_HOLLOW_FX } from '@mmo-idle/shared';
-import { pushClientEffect } from '../../../../../combat/engine/combatPipeline';
 
 /**
  * onHit listener for cooldown T3 normal (non-empowered) attacks. All paths are
@@ -21,7 +19,6 @@ import { pushClientEffect } from '../../../../../combat/engine/combatPipeline';
  *   1. Eternal Cycle      — bank one flat-damage stack per attack (spent on execution).
  *   2. Battery            — flat bonus from accumulated stacks.
  *   3. Patience Paid      — ramp regular-attack damage with the uninterrupted CD.
- *   4. Singular Extraction — zero direct damage (on-hit/charm still fire).
  */
 export function registerNormalHit(): void {
   registerCombatListener('onHit', (ctx, _world) => {
@@ -59,13 +56,6 @@ export function registerNormalHit(): void {
     if (hasPassive(player, 'cooldown.patience-paid')) {
       const ramp = rampFactorFor(cd, player);
       if (ramp > 0) ctx.damage = Math.round(ctx.damage * (1 + ramp * patienceAttackMax(player)));
-    }
-
-    if (hasPassive(player, 'cooldown.singular-extraction')) {
-      ctx.damage = 0;
-      // On-hit gear still fires on these swings, so the client must draw
-      // SOMETHING — just not the full slam it was drawing for zero damage.
-      pushClientEffect(ctx, COOLDOWN_HOLLOW_FX);
     }
   });
 }

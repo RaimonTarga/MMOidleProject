@@ -218,12 +218,18 @@ export const t3CombatEntriesA = [
     id: 'cooldown-heavy-t3-b', name: 'Destroyer', tier: 3,
     classId: 'cooldown-root', subVariantId: 'heavy',
     parent: 'cooldown-heavy', children: [],
-    description: 'Normal attacks deal no damage. Your execution fires on a greatly shortened cooldown (5s) and hits harder (3× instead of the tier\'s 2.5×). On-hit gear and charm triggers still fire on regular attacks. Out of combat, your execution stays primed — the first strike on a new target is an execution.',
-    packet: 'engagement', // PROVISIONAL (run 3 W1-B, design §4)
+    description: 'Your execution is delivered by your Techniques. When it is ready it waits, primed, and the next Technique you land fires it with that Technique\'s shape: an armed Technique lands it on the armed hit; a cast lands it on the cast\'s target — across Slam\'s whole area, from Snipe\'s range. It hits harder (3× instead of the tier\'s 2.5×). Your regular attacks deal their normal damage and never spend it, and a Guard never fires it.',
+    // Design §22.5 (2026-10-02): the old path (normals deal no damage, a 5 s
+    // execution, the first strike on a new target is an execution) duplicated the
+    // Engagement keystone Always First; it is now the Technique lane's path.
+    // Distinct from the Signature keystone: Signature makes a landed Technique COUNT
+    // as the mechanic; here the mechanic RIDES the Technique.
+    // The recharge is the heavy frame's own again (the 5 s override is gone); the
+    // −0.5 multiplier delta is kept as authored (3.5 − 0.5 = 3.0×, above the other
+    // heavy paths' 2.5×) — no number moved in the re-home.
+    packet: 'technique',
     cost: 1, statEffects: {},
-    // Heavy frame is 8000ms / 3.5×; deltas land it at 5000ms / 3.0× (3.5 − 0.5).
-    // 2026-09-28 T4 outlier pass: cooldown 4000 -> 5000 ms (1.39x the median spec on live T4 bosses).
-    mechanicEffects: { 'cooldown.singular-extraction': 1, 'cooldown.empowered-cd-ms': -3000, 'cooldown.empowered-mult': -0.5, 'cooldown.singular-no-target-ms': 4000 },
+    mechanicEffects: { 'cooldown.technique-execution': 1, 'cooldown.empowered-mult': -0.5 },
   }],
   ['cooldown-heavy-t3-c', {
     id: 'cooldown-heavy-t3-c', name: 'Devout Priest', tier: 3,

@@ -34,12 +34,6 @@ export const ENTROPY_BASE_DMG    = 5;    // base damage per tick at full HP
 export const ENTROPY_DURATION_MS = 8_000;
 export const ENTROPY_TICK_MS     = 1_000;
 
-// Singular Extraction (cooldown-heavy-T3-b)
-// Fallback default; live value authored on the node (cooldown.singular-no-target-ms).
-// The node also applies the CD (-4000ms) and the +1.5× empowered-mult delta that
-// lands the heavy frame (9000ms / 3.5×) at 4000ms / 5.0×.
-export const SINGULAR_NO_TARGET_MS = 4_000; // ms without a target before CD resets
-
 // ── T4 specs (placeholder constants — replaced at the balance pass) ───────────
 
 // Rupture (cooldown-light-T3-c)

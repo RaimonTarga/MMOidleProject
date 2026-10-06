@@ -266,7 +266,7 @@ export function updateAbilityCasts(world: World, now: number): void {
       // its share off: a resolution that runs before the cooldown is charged
       // reads zero and refunds nothing. Same ordering as the armed path.
       startTechniqueCooldown(world, player, ability);
-      onTechniqueResolved(world, player, ability, { target });
+      onTechniqueResolved(world, player, ability, { target, now });
     }
     world.pushEvent(player.hasPosition.nodeId, {
       kind: "player-cast-end",

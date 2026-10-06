@@ -192,7 +192,10 @@ export const COOLDOWN_KEYS = [
   'cooldown.battery-damage-per-stack',
   'cooldown.alignment',
   'cooldown.entropy-collapse',
-  'cooldown.singular-extraction',
+  // Destroyer (heavy, design §22.5): the execution is delivered by the player's
+  // Techniques — primed, it waits for the next Technique that lands and fires with
+  // that Technique's shape (the armed hit; a cast's target or area).
+  'cooldown.technique-execution',
   'cooldown.channeled-beam',
   // Devout Priest: damage per beam tick = player.attack × this (authored on the node).
   'cooldown.channeled-beam-mult',
@@ -225,8 +228,6 @@ export const COOLDOWN_KEYS = [
   // Sunderer: post-execution window (ms) + the plating multiplier applied during it.
   'cooldown.rupture-window-ms',
   'cooldown.rupture-window-plating-mult',
-  // Destroyer: ms without a target before the primed execution cooldown resets.
-  'cooldown.singular-no-target-ms',
   // Devout Priest: holy-beam channel duration and per-tick interval (ms).
   'cooldown.beam-duration-ms',
   'cooldown.beam-tick-ms',
