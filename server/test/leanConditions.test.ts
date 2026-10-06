@@ -37,6 +37,7 @@
 import {
   ABILITY_SLOW_EFFECT_ID,
   LINEAGE_SLOW_STATUS_ID,
+  VERB_SEED_SLOW_PCT,
   GAME_CONFIG,
   LINEAGE_DATABASE,
   resolveLineageCardFor,
@@ -385,6 +386,43 @@ function hit(player: PlayerEntity, defender: MonsterEntity, damage: number, meta
   }
   assert(firedAt.length >= 5, `a Hammer Striker's Easy Prey fires through a 30 s fight: ${firedAt.length} of ${swings} swings`);
   console.log(`  D hammer striker  step ${STEP} ms  slow ${leanSlowMs(player)} ms  swings ${swings}  Easy Prey fired ${firedAt.length}`);
+}
+
+// ══ F. THE HAMMER'S FIXED VERB SEEDS ITS OWN SLOW (design §26.5, 2026-10-06) ═══
+// Under the Attack lean nothing slows — and Easy Prey still fires, because a fixed
+// T1 verb carries a light version of its own condition (`seeds: 'slow'`,
+// `VERB_SEED_SLOW_PCT`). The Effect lean's deeper slow wins where both apply.
+
+{
+  const VERB = 'hammer-t1-control-payoff';
+  const player = wielder('verb-seed-striker', 'heavy-hammer', 'hammer', ['hammer-t1-attack', VERB], 'cadence-root');
+  assert((player.usesSkills.passives['shared.slow-on-hit-pct'] ?? 0) === 0, 'the Attack lean slows nothing');
+  const verb = getLineageRuntime(player.tracksCombat)?.cards.find((c) => c.card.id === VERB);
+  assert(verb?.card.seeds === 'slow' && verb.trigger?.kind === 'hit-held', 'Easy Prey seeds its own hold');
+  const STEP = realStep(player);
+
+  const target = dummy();
+  assert(swing(player, target, VERB).length === 0, 'the first hit lands on a free target');
+  const laid = getStatusEffect(target.tracksCombat, LINEAGE_SLOW_STATUS_ID);
+  assert(laid !== undefined && near(laid.data['moveSlowPct'] ?? 0, VERB_SEED_SLOW_PCT),
+    `and leaves the verb's own light slow (${VERB_SEED_SLOW_PCT}), got ${laid?.data['moveSlowPct']}`);
+  assert((laid?.data['totalMs'] ?? 0) === leanSlowMs(player), 'on the lean seed\'s window');
+
+  clock += STEP;
+  tickCooldowns(player.tracksCombat, STEP);
+  tickStatusEffectDurations(target.tracksCombat, STEP);
+  const fx = swing(player, target, VERB);
+  assert(fx.length > 0 && fx[0].fx === 'control.knockdown', 'the second swing finds the target held and knocks it down');
+
+  // With the Effect lean the deeper slow wins (max-wins), never the lighter seed.
+  const deep = wielder('verb-seed-effect', 'heavy-hammer', 'hammer', ['hammer-t1-effect', VERB], 'cadence-root');
+  const DEEP = leanValue(deep, 'hammer', 'hammer-t1-effect');
+  assert(DEEP >= VERB_SEED_SLOW_PCT, `Effect rank I (${DEEP}) is at least the seed (${VERB_SEED_SLOW_PCT})`);
+  const t2 = dummy();
+  swing(deep, t2, VERB);
+  const deepLaid = getStatusEffect(t2.tracksCombat, LINEAGE_SLOW_STATUS_ID);
+  assert(deepLaid !== undefined && near(deepLaid.data['moveSlowPct'] ?? 0, DEEP), 'the Effect lean\'s slow is what lands');
+  console.log(`  F hammer attack-lean  seed ${VERB_SEED_SLOW_PCT}  effect ${DEEP}  Easy Prey fires on swing 2`);
 }
 
 {

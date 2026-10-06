@@ -179,7 +179,7 @@ export function resolveLineageCard(
   // so it reads its lane's PURE pair at its own tier — exactly what it does in play
   // with no lean active. `resolveLineageCards` re-composes it against the lean.
   if (isVerbCard(card)) {
-    applyComposition(resolved, composeVerb(card.lane, undefined, card.tier));
+    applyComposition(resolved, composeVerb(card.lane, undefined, card.tier, card.seeds === 'slow'));
     return resolved;
   }
 
@@ -352,15 +352,22 @@ export interface VerbComposition extends LineageComposition {
  * pure (a bigger mechanic hit), and the proxy never emits `mechanic-fired`
  * anyway (rule 3). `composition.test.ts` pins both halves of that.
  */
-export function composeVerb(verbLane: PacketId, leanLane?: PacketId, tier = 1): VerbComposition | undefined {
+export function composeVerb(
+  verbLane: PacketId,
+  leanLane?: PacketId,
+  tier = 1,
+  /** The verb card seeds its own hold (`LineageCard.seeds === 'slow'`, design §26.5). */
+  verbSeedsHold = false,
+): VerbComposition | undefined {
   const verbHalves = packetHalves(verbLane);
   const pure = packetPurePair(verbLane, tier);
   if (!verbHalves || !pure) return undefined;
   // The Control moment needs a held target. A lean whose stat slows on every hit
-  // (the Control lean, design §24.9) is that hold's source, so with it active the
-  // verb needs nothing; with any other lean, or none, the page says "needs a slow".
+  // (the Control lean, design §24.9) is that hold's source, and a fixed verb that
+  // seeds its own slow (§26.5) is another; with either the verb needs nothing.
+  // With any other lean, or none, the page says "needs a slow".
   const leanHolds = leanLane !== undefined && packetScalingStat(leanLane) === 'slowOnHit';
-  const needs = verbHalves.moment.kind === 'hit-held' && !leanHolds ? { needs: 'slow' as const } : {};
+  const needs = verbHalves.moment.kind === 'hit-held' && !leanHolds && !verbSeedsHold ? { needs: 'slow' as const } : {};
 
   if (leanLane && leanLane !== verbLane) {
     const leanHalves = packetHalves(leanLane);

@@ -240,15 +240,18 @@ function assertCapped(label: string, firedAt: number[], capMs: number, stepMs: n
   const VERB = 'hammer-t1-control-payoff';
   const STEP = 500;
 
-  // A1. A lean that slows nothing (Speed), no slow source: the Control verb never
-  // fires ("needs a slow"), and nothing holds the target.
+  // A1. A lean that slows nothing (Speed): the fixed verb seeds its OWN light
+  // slow (design §26.5, 2026-10-06), so the second swing finds a held target and
+  // Easy Prey fires at its cap under every lean.
   {
     const player = wielder('ctl-free', 'heavy-hammer', 'hammer', ['hammer-t1-speed', VERB]);
+    assert((player.usesSkills.passives['shared.slow-on-hit-pct'] ?? 0) === 0, 'the Speed lean slows nothing');
     const target = dummy();
-    const { firedAt } = fight(player, target, VERB, 30_000, STEP, () => {
-      assert(!monsterIsHeld(target), 'nothing on a free target holds it');
-    });
-    assert(firedAt.length === 0, `with no slow source the Control verb never fires, got ${firedAt.length}`);
+    const { firedAt } = fight(player, target, VERB, 30_000, STEP, () => {});
+    assert(firedAt.length > 0, 'the verb\'s own seed holds the target and the Control verb fires');
+    for (let i = 1; i < firedAt.length; i++) {
+      assert(firedAt[i] - firedAt[i - 1] >= 5_000, `at the 5 s cap, never chaining (gap ${firedAt[i] - firedAt[i - 1]})`);
+    }
   }
 
   // A1b. The pure pair seeds its own hold (design §24.9): the Control lean's slow

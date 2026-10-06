@@ -618,8 +618,9 @@ function composeScaled(
   leanLane: PacketId | undefined,
   tier: number,
   scales: Partial<Record<PacketId, number>>,
+  verbSeedsHold = false,
 ): VerbComposition | undefined {
-  const composed = composeVerb(verbLane, leanLane, tier);
+  const composed = composeVerb(verbLane, leanLane, tier, verbSeedsHold);
   if (!composed) return undefined;
   const payloadLane = composed.pure ? composed.verbLane : composed.leanLane;
   const scale = payloadLane ? scales[payloadLane] ?? 0 : 0;
@@ -639,7 +640,7 @@ function composeVerbs(cards: ResolvedLineageCard[], lineage: LineageDefinition, 
   const scales = lineagePayloadScales(lineage, progress);
   for (const resolved of cards) {
     if (!isVerbCard(resolved.card)) continue;
-    applyComposition(resolved, composeScaled(resolved.card.lane, leanLane, resolved.card.tier, scales));
+    applyComposition(resolved, composeScaled(resolved.card.lane, leanLane, resolved.card.tier, scales, resolved.card.seeds === 'slow'));
   }
 }
 
@@ -685,7 +686,7 @@ export function composedSentenceParts(
   const verb = lineage.cards.find((c) => c.id === verbId);
   if (!verb || !isVerbCard(verb)) return undefined;
   const view = previewProgress(progress, options);
-  const composed = composeScaled(verb.lane, leanLaneFor(lineage, view), verb.tier, lineagePayloadScales(lineage, view));
+  const composed = composeScaled(verb.lane, leanLaneFor(lineage, view), verb.tier, lineagePayloadScales(lineage, view), verb.seeds === 'slow');
   return composed ? compositionParts(composed) : undefined;
 }
 
@@ -734,7 +735,7 @@ export function cardSentence(
     });
   }
   if (isVerbCard(card)) {
-    const composed = composeScaled(card.lane, leanLaneFor(lineage, progress), card.tier, lineagePayloadScales(lineage, progress));
+    const composed = composeScaled(card.lane, leanLaneFor(lineage, progress), card.tier, lineagePayloadScales(lineage, progress), card.seeds === 'slow');
     if (!composed) return undefined;
     const parts = compositionParts(composed);
     return parts && (parts.moment ? `${parts.moment} ${parts.payload}` : parts.payload);

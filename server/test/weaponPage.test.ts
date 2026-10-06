@@ -13,8 +13,8 @@
  */
 import assert from 'node:assert/strict';
 import {
-  LINEAGE_DATABASE, ROW_LABELS, emptyEquipment, isLineageParked, keystoneDefinition, pureSentenceText,
-  shardName, verbSentence, type CombatArchetype, type LineageDefinition, type LineageProgress,
+  LEAN_COLORS, LINEAGE_DATABASE, ROW_LABELS, emptyEquipment, isLineageParked, keystoneDefinition, packetDefinition,
+  pureSentenceText, shardName, verbSentence, type CombatArchetype, type LineageDefinition, type LineageProgress,
   type LineageWallet,
 } from '@mmo-idle/shared';
 import {
@@ -138,23 +138,40 @@ const find = (band: PageBand, id: string): PageCardModel => {
   assert.deepEqual(keen.chips, []);
 }
 
-// ── Control verbs say "needs a slow" (§24.2) ─────────────────────────────────
+// ── Control verbs say "needs a slow" (§24.2) — but a fixed T1 verb seeds its own (§26.5)
 {
-  // The Hammer's Attack lean names no payload and slows nothing: Easy Prey, the
-  // Hammer's own Control verb, reads its pure pair and needs a slow.
+  // The Hammer's Attack lean names no payload and slows nothing — and Easy Prey,
+  // the Hammer's own fixed verb, hobbles on every hit itself (`seeds: 'slow'`,
+  // design §26.5, 2026-10-06), so it needs nothing under any lean.
   const progress: LineageProgress = {
     ownedCards: ['hammer-t1-attack', 'hammer-t1-control-payoff'],
     active: { stat: 'hammer-t1-attack', payoff: 'hammer-t1-control-payoff' },
     ownedForms: ['heavy-hammer'], wornForm: 'heavy-hammer',
   };
   const verb = pageCard({ lineage: hammer, card: card(hammer, 'hammer-t1-control-payoff'), progress, wallet: wallet() });
-  assert.equal(verb.needsSlow, true);
-  assert.equal(verb.note, 'needs a slow');
+  assert.equal(verb.needsSlow, false, 'a fixed verb that seeds its own hold never needs a slow');
+  assert.equal(verb.note, undefined);
   assert.equal(verb.state, 'active');
-  assert.match(verb.accessibleName, /Needs a slow\./);
+  assert.doesNotMatch(verb.accessibleName, /Needs a slow/);
   assert.equal(verb.sentence, verbSentence('control'));
   const other = pageCard({ lineage: hammer, card: card(hammer, 'hammer-t2-engagement-payoff'), progress, wallet: wallet() });
   assert.equal(other.needsSlow, false);
+  // The T2 choice row never seeds: a T2 Control verb under a non-Control lean still says so.
+  const t2: LineageProgress = {
+    ownedCards: ['hammer-t2-empowered-stat', 'hammer-t2-control-payoff'],
+    active: { stat: 'hammer-t2-empowered-stat', payoff: 'hammer-t2-control-payoff' },
+    ownedForms: ['heavy-hammer', 'quake-hammer'], wornForm: 'quake-hammer',
+  };
+  const t2verb = pageCard({ lineage: hammer, card: card(hammer, 'hammer-t2-control-payoff'), progress: t2, wallet: wallet() });
+  assert.equal(t2verb.needsSlow, true, 'the T2 Control verb under the Empowered lean needs a slow');
+  assert.equal(t2verb.note, 'needs a slow');
+
+  // Lean cards wear the trio's own colours (design §26.4), never the shard's lane.
+  for (const kind of ['attack', 'speed', 'effect'] as const) {
+    const leanCard = pageCard({ lineage: hammer, card: card(hammer, `hammer-t1-${kind}`), progress, wallet: wallet() });
+    assert.equal(leanCard.laneColor, LEAN_COLORS[kind], `${kind} lean in the trio's ${kind} colour`);
+  }
+  assert.equal(verb.laneColor, packetDefinition('control')!.color, 'the verb keeps its lane colour');
 
   // With the Effect lean active the lean IS the hold source (design §24.9, §26.1).
   const seeded: LineageProgress = {

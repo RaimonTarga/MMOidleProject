@@ -396,6 +396,18 @@ export type LeanKind = 'attack' | 'speed' | 'effect';
 
 export const LEAN_KINDS: readonly LeanKind[] = ['attack', 'speed', 'effect'] as const;
 
+/**
+ * The lean trio's OWN colours (design §26.4, decided 2026-10-06): the same three
+ * on every weapon, so the T1 row reads without lane vocabulary. A lean's `lane`
+ * stays its currency (the shard in the cost line) and is never its colour; lane
+ * colours belong to verbs and to the T2 lane leans.
+ */
+export const LEAN_COLORS: Readonly<Record<LeanKind, string>> = {
+  attack: '#e6c46a', // warm gold
+  speed: '#bcd3e8', // pale steel
+  effect: '#efe6cf', // ivory
+};
+
 // ─── Visual signatures (design §8) ───────────────────────────────────────────
 
 /**
@@ -541,6 +553,15 @@ export interface LineageCard {
    * `LEAN_RANK_ONE` and the rank tables, never from the lane. See {@link LeanKind}.
    */
   leanKind?: LeanKind;
+  /**
+   * A fixed T1 verb whose moment is conditional (design §26.5, decided
+   * 2026-10-06): the verb carries a LIGHT version of its own condition, so it
+   * fires under every lean. `'slow'`: each landed hit hobbles the target by
+   * `VERB_SEED_SLOW_PCT` (max-wins with the Effect lean's deeper slow), through
+   * the same listener as the lean seed. The T2 choice row never seeds: there the
+   * page shows "needs a slow" (§26.5).
+   */
+  seeds?: 'slow';
   /**
    * Every row but `stat`: when it fires — EXCEPT a verb (design §24.2, §24.9).
    *

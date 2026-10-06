@@ -530,6 +530,14 @@ export const LEAN_CONDITION_NUMBERS: Partial<Record<PacketId, LeanConditionNumbe
   'control': { durationMs: 1_500, swingBridgeMs: 500 },
 };
 
+/**
+ * The slow a fixed verb that `seeds: 'slow'` lays on every landed hit (design
+ * §26.5, 2026-10-06; the Hammer's Easy Prey). PROVISIONAL, the designer's: equal
+ * to the Effect lean at rank I, so Effect reads as "deeper", never as "the only
+ * lean the verb works with". Same window as the lean seed (`leanSlowMs`).
+ */
+export const VERB_SEED_SLOW_PCT = 0.10;
+
 // ─── T2+ verbs compose too (design §24.9) ────────────────────────────────────
 //
 // PACKET_HALF_NUMBERS is the T1 column. A T2+ band is a lean and a verb exactly like

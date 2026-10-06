@@ -11,7 +11,7 @@
  */
 import assert from 'node:assert/strict';
 import {
-  LINEAGE_DATABASE, emptyEquipment, packetDefinition, previewEquipmentStats, type CombatArchetype,
+  LEAN_COLORS, LINEAGE_DATABASE, emptyEquipment, packetDefinition, previewEquipmentStats, type CombatArchetype,
   type EquipmentPreviewInput,
 } from '@mmo-idle/shared';
 import { buildStatsPanel, cadenceText } from '../../client/src/ui/stats/statsPanelModel';
@@ -76,8 +76,10 @@ const row = (data: ReturnType<typeof buildStatsPanel>, key: string) => {
   assert.ok(health.sources.some((s) => s.kind === 'base'), 'and the base it started from');
 
   assert.equal(data.lean?.name, lean.name, 'the active lean is named at the top');
-  const laneColor = packetDefinition(lean.lane)!.color;
-  assert.equal(data.lean?.color, laneColor, 'in its lane colour');
+  // The trio's own colour (design §26.4, 2026-10-06), not the shard's lane.
+  const laneColor = LEAN_COLORS[lean.leanKind!];
+  assert.notEqual(laneColor, packetDefinition(lean.lane)!.color, 'the trio colour is not the lane colour');
+  assert.equal(data.lean?.color, laneColor, 'in the trio colour');
   const leanShares = data.groups.flatMap((g) => g.rows).flatMap((r) => r.sources).filter((s) => s.kind === 'lean');
   assert.ok(leanShares.length > 0, 'the lean moves at least one number, and says so');
   assert.ok(leanShares.every((s) => s.color === laneColor && s.label.includes(lean.name)), 'its share in its lane colour');

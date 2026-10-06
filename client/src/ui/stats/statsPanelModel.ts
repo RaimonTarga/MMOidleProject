@@ -20,6 +20,7 @@ import {
   defensiveFaceForSubVariant,
   lineageForEquippedItem,
   lineagePayloadScales,
+  LEAN_COLORS,
   packetDefinition,
   previewEquipmentStats,
   rankNumeral,
@@ -225,7 +226,10 @@ export function buildStatsPanel(input: StatsPanelInput): StatsPanelData {
   const { build } = input;
   const full = previewEquipmentStats(build);
   const lean = activeWeaponLean(build);
-  const leanColor = lean ? packetDefinition(lean.card.lane)?.color ?? '#a99e8a' : undefined;
+  // The lean trio's own colour (design §26.4), not the shard's lane.
+  const leanColor = lean
+    ? (lean.card.leanKind ? LEAN_COLORS[lean.card.leanKind] : packetDefinition(lean.card.lane)?.color ?? '#a99e8a')
+    : undefined;
   const noLean = lean ? previewEquipmentStats(withoutLean(build, lean)) : undefined;
   const withoutSlot = new Map<EquipmentSlot, Preview>();
   for (const slot of SLOTS) {

@@ -45,6 +45,8 @@
 import {
   LEAN_CONDITION_NUMBERS,
   LINEAGE_SLOW_STATUS_ID,
+  VERB_SEED_SLOW_PCT,
+  getLineageRuntime,
   lineageUnit,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../ecs/entity';
@@ -77,7 +79,16 @@ export function registerLeanConditions(): void {
     if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
     const player = ctx.attacker;
     const bleedShare = player.usesSkills.passives['shared.bleed-on-hit-pct'] ?? 0;
-    const slowPct = player.usesSkills.passives['shared.slow-on-hit-pct'] ?? 0;
+    // A fixed verb that seeds its own hold (design §26.5: the Hammer's Easy
+    // Prey) lays the light slow under every lean; the Effect lean's deeper slow
+    // wins where both apply (max-wins). This runs AFTER the card runtime's
+    // `hit-held` check, so this hit's seed counts for the next swing, not itself.
+    const verbSeeds = getLineageRuntime(player.tracksCombat)?.cards
+      .some((c) => c.card.row === 'payoff' && c.card.seeds === 'slow') === true;
+    const slowPct = Math.max(
+      player.usesSkills.passives['shared.slow-on-hit-pct'] ?? 0,
+      verbSeeds ? VERB_SEED_SLOW_PCT : 0,
+    );
     if (bleedShare <= 0 && slowPct <= 0) return;
     if (evadeBlocksDebuffs(ctx)) return;
     const target = ctx.defender;

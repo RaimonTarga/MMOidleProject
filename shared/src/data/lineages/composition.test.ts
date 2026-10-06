@@ -446,15 +446,25 @@ assert(t1Cells === 45, `five weapons × three leans × three ranks, got ${t1Cell
   assert(easyPrey.name === 'Easy Prey', 'the Hammer verb is Easy Prey');
   assert(cardSentence(hEffect, { ownedCards: [], active: {}, ownedForms: ['heavy-hammer'], wornForm: 'heavy-hammer' })
     === 'Every hit slows its target by 10% until your next swing.', 'the Hammer Effect is its slow');
-  // The Hammer's Effect is the verb's hold source; under Speed the page says it needs one.
+  // The Hammer's Effect is the verb's hold source — and so is the verb itself: a
+  // fixed T1 verb seeds its own light slow (design §26.5, 2026-10-06), so Easy
+  // Prey needs nothing under any lean. The T2 Control verb does not seed.
   const hTree = (leanId: string): LineageProgress => ({
     ownedCards: [leanId, easyPrey.id], active: { stat: leanId, payoff: easyPrey.id },
     ownedForms: ['heavy-hammer'], wornForm: 'heavy-hammer',
   });
   const underEffect = resolveLineageCards(hammer, hTree(hEffect.id)).find((c) => c.card.id === easyPrey.id)!;
   const underSpeed = resolveLineageCards(hammer, hTree(hSpeed.id)).find((c) => c.card.id === easyPrey.id)!;
+  assert(easyPrey.seeds === 'slow', 'Easy Prey seeds its own hold');
   assert(underEffect.composition?.needs === undefined, 'Easy Prey under Effect needs nothing (the lean slows)');
-  assert(underSpeed.composition?.needs === 'slow', 'Easy Prey under Speed needs a slow');
+  assert(underSpeed.composition?.needs === undefined, 'Easy Prey under Speed needs nothing (the verb seeds)');
+  const t2Tree: LineageProgress = {
+    ownedCards: ['hammer-t2-empowered-stat', 'hammer-t2-control-payoff'],
+    active: { stat: 'hammer-t2-empowered-stat', payoff: 'hammer-t2-control-payoff' },
+    ownedForms: ['heavy-hammer', 'quake-hammer'], wornForm: 'quake-hammer',
+  };
+  const t2Verb = resolveLineageCards(hammer, t2Tree).find((c) => c.card.id === 'hammer-t2-control-payoff')!;
+  assert(t2Verb.composition?.needs === 'slow', 'the T2 Control verb under an off-lane lean still needs a slow');
 }
 
 // The Effect's payload scale survives the gate (a gate never makes a card read

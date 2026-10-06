@@ -209,7 +209,10 @@ row of three generic cards and ONE verb:
   gate's 30) and home-biome level 2 at every rank. Price: 30 / 45 / 60 home essence and
   3 / 5 / 6 shards (`LEAN_RANK_PRICE_SCALE` 1 / 1.5 / 2). All PROVISIONAL, the designer's.
 - **Which shard** (PROVISIONAL, the conductor's rule): each lean takes one of the weapon's
-  three lanes as its colour AND its currency — Effect the verb's lane, Attack Empowered if
+  three lanes as its CURRENCY only — its colour is the trio's own (`LEAN_COLORS`, design
+  §26.4 decided 2026-10-06: Attack warm gold, Speed pale steel, Effect ivory, the same on
+  every weapon; `cardColor` in `weaponPageModel.ts` and the Stats panel read it, the shard
+  shows in the cost line) — Effect the verb's lane, Attack Empowered if
   the weapon has it, Speed Tempo if it has it, the rest filling in lane order — so all three
   home-biome shards buy something at T1. Dagger: Attack Shackle, Speed Bone, Effect Venom;
   Rapier: Attack Venom, Speed Spark, Effect Gale; Hammer: Attack Anvil, Speed Spark, Effect
@@ -312,11 +315,16 @@ T2 it is the band's grammar. A verb is authored with **no trigger and no payoff*
     ends with exactly its reservoir, the Rapier's T2 Affliction lean with exactly
     `lineage.bleed`) and `server/test/empoweredCap.test.ts` (a real Conduit on the Hammer's
     T2 Empowered verb).
-  - **At T1 the Hammer's verb needs its Effect lean.** Easy Prey fires only on a held
-    target; Attack and Speed slow nothing, so without the Effect lean (or a slow from the
-    class: the Mid range at T3, Hamstring, a chill) it never fires — 0 firings for all six
-    classes in the legibility matrix. The page says "needs a slow". A designer call
-    (legibility report).
+  - **A fixed T1 verb seeds its own condition** (design §26.5, decided 2026-10-06). The
+    legibility matrix found Easy Prey firing under the Effect lean only (0 firings under
+    Attack and Speed for all six classes). Now `LineageCard.seeds: 'slow'` on the Hammer's
+    verb makes the lean-condition listener lay `VERB_SEED_SLOW_PCT` (0.10, PROVISIONAL)
+    on every landed hit whatever the lean, max-wins against the Effect lean's deeper slow,
+    on the same window as the lean seed; it runs after the `hit-held` check so a hit's own
+    seed counts for the next swing. `composeVerb(..., verbSeedsHold)` drops the "needs a
+    slow" caveat for a seeding verb; the T2 choice row never seeds and keeps the caveat.
+    Pinned by `leanConditions.test.ts` F, `compositionPairs.test.ts` A1,
+    `composition.test.ts` and `weaponPage.test.ts`.
 
 - **Caps and latches** (`server/src/systems/combat/lineageCards.ts`, keys in
   `lineageKeys.ts`): a capped moment sets `lineage.cap.<cardId>` when its payoff lands;

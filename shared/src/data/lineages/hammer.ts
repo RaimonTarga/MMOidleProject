@@ -114,6 +114,11 @@ export const HAMMER_LINEAGE: LineageDefinition = {
       id: 'hammer-t1-control-payoff', lineageId: 'hammer', tier: 1, row: 'payoff', lane: 'control',
       name: 'Easy Prey', description: 'Something that cannot get away is something you can hit properly.',
       fx: 'control.frost-drag',
+      // A fixed verb must fire under every lean (design §26.5, 2026-10-06): the
+      // Hammer's own weight hobbles a little on every hit, so Easy Prey finds a
+      // held target from the second swing whether the lean is Attack, Speed or
+      // Effect. Effect still deepens the slow (max-wins).
+      seeds: 'slow',
     },
 
     // ── T2 band (design §4): stat (L2), payoff (L3), amplifier (L5) ──────────

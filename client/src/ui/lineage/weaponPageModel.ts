@@ -45,6 +45,7 @@ import {
   lineageGateCost,
   nodeFamily,
   nodesPayingShard,
+  LEAN_COLORS,
   packetDefinition,
   packetHalves,
   payloadSize,
@@ -130,6 +131,14 @@ export function biomeDisplayName(group: string): string {
 
 export function laneColor(lane: PacketId): string {
   return packetDefinition(lane)?.color ?? FALLBACK_LANE_COLOR;
+}
+
+/**
+ * A card's colour: the lean trio's own (`LEAN_COLORS`, design §26.4), else its
+ * lane's. A lean's lane is its currency, shown in the cost line, never its colour.
+ */
+export function cardColor(card: Pick<LineageCard, 'lane' | 'leanKind'>): string {
+  return card.leanKind ? LEAN_COLORS[card.leanKind] : laneColor(card.lane);
 }
 
 /** "Gale Shard" → "Gale": the cost chip's short word (the mockup's "4 Gale"). */
@@ -371,7 +380,7 @@ export function pageCardSentence(lineage: LineageDefinition, card: LineageCard, 
 /** A Control verb's moment needs a slowed or rooted target the tree may not supply (§24.2). */
 export function verbNeedsSlow(lineage: LineageDefinition, card: LineageCard, progress: LineageProgress): boolean {
   if (!isVerbCard(card)) return false;
-  return composeVerb(card.lane, leanLaneFor(lineage, progress))?.needs === 'slow';
+  return composeVerb(card.lane, leanLaneFor(lineage, progress), card.tier, card.seeds === 'slow')?.needs === 'slow';
 }
 
 export const NEEDS_SLOW_NOTE = 'needs a slow';
@@ -408,7 +417,7 @@ export function verbNote(
   archetype?: CombatArchetype | null,
 ): string | undefined {
   if (!isVerbCard(card)) return undefined;
-  const composed = composeVerb(card.lane, leanLaneFor(lineage, progress));
+  const composed = composeVerb(card.lane, leanLaneFor(lineage, progress), card.tier, card.seeds === 'slow');
   if (!composed) return undefined;
   if (composed.needs === 'slow') return NEEDS_SLOW_NOTE;
   if (archetype && MECHANIC_WITHOUT_HIT.has(archetype)
@@ -570,7 +579,7 @@ export function pageCard(params: {
   const note = verbNote(lineage, card, params.sentenceProgress ?? progress, params.archetype);
   const owned = progress.ownedCards.includes(card.id);
   const base = {
-    card, laneColor: laneColor(card.lane), sentence, needsSlow,
+    card, laneColor: cardColor(card), sentence, needsSlow,
     ...(note ? { note } : {}),
     isLean: card.row === 'stat', chips: [] as CostChip[],
   };
@@ -1208,7 +1217,7 @@ export function fightPlate(params: {
     plate.lean = {
       name: lean.name,
       sentence: cardSentenceAt(lean, progress, params.rank) ?? pageCardSentence(lineage, lean, progress),
-      color: laneColor(lean.lane),
+      color: cardColor(lean),
       ...(max > 1 ? { rank: `rank ${rankNumeral(rank)}` } : {}),
     };
   }
@@ -1241,7 +1250,7 @@ export type VerbBeat =
 
 export function verbBeat(lineage: LineageDefinition, progress: LineageProgress, card: LineageCard): VerbBeat | undefined {
   if (!isVerbCard(card)) return undefined;
-  const composed = composeVerb(card.lane, leanLaneFor(lineage, progress), card.tier);
+  const composed = composeVerb(card.lane, leanLaneFor(lineage, progress), card.tier, card.seeds === 'slow');
   if (!composed) return undefined;
   const { perTarget, ...trigger } = composed.trigger;
   const condition = trigger.kind === 'hit-afflicted' ? 'afflicted' as const

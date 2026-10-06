@@ -1522,6 +1522,28 @@ From the five-thesis prototype run (docs/briefs/ui-prototypes-report-2026-10-04.
 - **Boss reach** is parked (§25 status).
 - **Tick quantisation** of attack timing stays the designer's open call.
 
+**After the legibility run (decided 2026-10-06):**
+
+- **A fixed T1 verb seeds its own condition.** The run found the Hammer's Easy Prey firing
+  only under the Effect lean, because only Effect slows. A fixed verb that works with one
+  lean of three breaks "a verb alone never does nothing", so a conditional fixed verb
+  carries a light version of its condition (`seeds: 'slow'`; the Hammer's own weight
+  hobbles a little on every hit, `VERB_SEED_SLOW_PCT`, provisional, equal to Effect rank I).
+  Effect still deepens it (max-wins). The T2 choice row never seeds: there the "needs a
+  slow" caveat of the bullet above applies.
+- **Lean cards wear the trio's own colours** (`LEAN_COLORS`): Attack, Speed and Effect are
+  the same three colours on every weapon. The shard a lean costs is its currency, shown in
+  the cost line, never its colour. The run had coloured leans by their shard, which made the
+  Rapier's Attack Affliction-green and put the lane vocabulary back into the row that
+  exists to avoid it.
+- **Effect parity.** On the Rapier, Axe and Broadsword, Effect scales a per-firing payload
+  and reads at a third of Attack. The rule stands; the number is wrong: Effect's payload
+  scale on those three weapons is raised until rank I Effect matches rank I Attack on the
+  boss lab (a lab pass, docs/briefs/effect-parity-lab-2026-10-06.md), and the tutorial
+  keeps teaching Effect.
+- **Confirmed as the run chose them:** ranks gate on Global Mastery only; retired T1 cards
+  refund at today's full price; the Hammer's verb is Easy Prey.
+
 ### 26.6 Order
 
 Composite mockup of §26.4 on real data (T1 stone skin and a T4 skin of the same screen) →
