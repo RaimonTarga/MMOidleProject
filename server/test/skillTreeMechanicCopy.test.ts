@@ -49,7 +49,7 @@ const requiredFragments: Record<string, string[]> = {
   "reload-balanced-t3-b": ["22% of normal attack damage"],
   "energy-heavy-t3-a": ["20 energy per hit"],
   "dot-light-t3-b": ["1.5s live total"],
-  "dot-balanced-t3-a": ["1.5× the max-stack DoT damage"],
+  "dot-balanced-t3-a": ["2 burn stacks", "55% of normal tick damage", "Radiant", "applies no stacks"],
   "dot-heavy-t3-c": ["0.75× frost multiplier"],
 };
 

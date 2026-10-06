@@ -15,7 +15,11 @@ import type { LineageFxKey } from '../data/lineages/types';
 
 // ── tier-4 path thresholds ─────────────────────────────────────────────────
 
-/** Pyromancer: a hit landing on an already-full stack bar pays out as direct damage. */
+/**
+ * Was Pyromancer's max-stack direct-bonus hit. Design §22.5 removed that bonus
+ * (Radiant, the new payoff, lives on the burn TICK and has no hit to ride), so the
+ * server no longer pushes this id; the client still draws it if one arrives.
+ */
 export const DOT_MAXSTACK_BURST_FX = 'dot-maxstack-burst';
 /** Icebreaker: max frost stacks flip conversion off — the shell breaks outward. */
 export const DOT_RIMESHATTER_FX = 'dot-rimeshatter';

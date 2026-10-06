@@ -469,7 +469,10 @@ export const DOT_KEYS = [
   'dot.eternal-doom-max-stacks',
   'dot.fan-the-flames-stacks-per-hit',
   'dot.fan-the-flames-stack-damage-mult',
-  'dot.fan-the-flames-max-stack-bonus-mult',
+  // Pyromancer's payoff (design §22.5): a burn tick on a target at max stacks
+  // also strikes every adjacent body for the tick. Presence-gated; its reach is
+  // the lineage adjacency unit, so the key carries no number of its own.
+  'dot.radiant',
   'dot.ignition-stack-damage-mult',
   'dot.conflagration-ticks',
   'dot.conflagration-tick-ms',
