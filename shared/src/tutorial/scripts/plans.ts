@@ -10,10 +10,11 @@ import type { TutorialMovement } from './runes';
  * - No upgrade beats: the +N ladder is retired on every slot (design §24.5) and
  *   an item is crafted at its old +5 power, so the kit the bot took to +5 is the
  *   plain crafted kit here.
- * - Two weapon-page purchases, a lean and a verb (`weaponCards`), on the weapon
- *   the class FIGHTS with (design §24.9): so that weapon is worn from where it is
- *   crafted — the Chaotic Axe from the Cave's first level, the Slinger's Poison
- *   Dagger from the Swamp's — rather than swapped in late as the bot does.
+ * - The weapon page (`weaponCards`): the lean, the weapon's own verb and the lean's
+ *   ranks (design §26.1), on the weapon the class FIGHTS with (design §24.9): so
+ *   that weapon is worn from where it is crafted — the Chaotic Axe from the Cave's
+ *   first level, the Slinger's Poison Dagger from the Swamp's — rather than
+ *   swapped in late as the bot does.
  * - The Slinger's Forest armor waits for Forest 3 (`atLevel`).
  */
 
@@ -54,22 +55,25 @@ export interface BossPlan {
 }
 
 /**
- * The two purchases of the T1 band (design §24.2) on the page of the weapon the
- * class fights with (design §24.9): a LEAN (row 1, its home zone's level 2) and a
- * VERB (row 2, the zone's level 4 and the row's Global Mastery). The lineage is
- * the boss kit's weapon's, so the pair is live in every seal and gate fight
- * (`tutorial.test.ts` holds the plan to that), and the gate the last chapter pays
- * is the same weapon's.
- *
- * Each class's pair is the one with the best boss-lab uplift for that class on
- * that weapon whose verb FIRES for it (verb firings > 0) — the composition matrix,
- * `reports/verbs-that-fire/` — so a pick may be a same-lane (pure) pair, which reads
- * its lane's own sentence.
+ * The T1 band (design §26.1: "T1 deepens; T2 branches") on the page of the weapon
+ * the class fights with (design §24.9): a LEAN of the Attack / Speed / Effect trio
+ * (row 1, its home zone's level 2), the weapon's ONE verb (row 2, the zone's level 4
+ * and the row's Global Mastery — not a choice, the weapon's own move), then the
+ * lean's further ranks. The lineage is the boss kit's weapon's, so the band is live
+ * in every seal and gate fight (`tutorial.test.ts` holds the plan to that), and the
+ * gate the last chapter pays is the same weapon's.
  */
 export interface TutorialWeaponCards {
   lineageId: string;
+  /** One of the weapon's ranked T1 leans (`<weapon>-t1-attack|speed|effect`). */
   lean: string;
+  /** The weapon's one T1 verb. */
   verb: string;
+  /**
+   * The rank the guide takes the lean to (1..3): rank II one level after the verb,
+   * rank III at the home leg's end, each where its Global Mastery gate is held.
+   */
+  leanRank: number;
 }
 
 export interface TutorialClassPlan {
@@ -85,14 +89,10 @@ export interface TutorialClassPlan {
 }
 
 /**
- * The Axe's and the Dagger's three leans and three verbs (`data/lineages/axe.ts`,
- * `dagger.ts`), by lane. Named here only to keep the class table readable.
+ * The Axe's and the Dagger's T1 band (`data/lineages/axe.ts`, `dagger.ts`, design
+ * §26.1): the lean trio, Attack / Speed / Effect, and the weapon's one verb. Named
+ * here only to keep the class table readable.
  */
-// Legibility run (design §26.1), ID SUBSTITUTION ONLY: the T1 band is the lean trio
-// (Attack / Speed / Effect) and the weapon's one verb, so each retired lean maps to
-// the trio card that carries its stat (Loose Grip → Speed, Hewing Arc → Attack,
-// Coated Edge → Effect) and each retired verb to the weapon's own (Cleaving Blow →
-// Chopping Rhythm). The picks and their notes below are wave 2's (E) to redo.
 const AXE = {
   lineageId: 'axe',
   attack: 'axe-t1-attack',
@@ -192,13 +192,30 @@ function withArmor(bosses: Record<T1Biome, BossPlan>, armor: string): Record<T1B
 }
 
 /*
- * The picks (`weaponCards`), PROVISIONAL and the designer's to change: per class,
- * the boss-lab composition matrix's best pair on the class's own boss weapon among
- * the pairs whose verb fired for that class (verbs-that-fire rerun at 57916b52, five
- * T1 bosses × 10 seeds; `server/scripts/_vfTutorialPicks.ts`, table in
- * reports/verbs-that-fire/tutorial-picks.md). Uplift is boss DPS over the same class
- * on the same Axe/Dagger with no cards, median over the bosses; per pick below.
+ * The picks (`weaponCards`), PROVISIONAL and the designer's to change. Design §26.1
+ * leaves the guide no pair to pick: the verb is the weapon's own, and the lesson
+ * names the EFFECT lean, the weapon's own move made stronger (the legibility run's
+ * brief), taken to rank III because the home leg holds rank III's Global Mastery 14
+ * long before the gate. Attack and Speed are plain stats and are not taught.
+ *
+ * What the choice costs, per class (boss lab, legibility run after wave 1 at
+ * `8deb861d`, reports/legibility/after-composition.md: boss DPS over the same class on
+ * the same weapon with no cards, median over the five T1 bosses, 10 seeds; I / III =
+ * rank). On the Chaotic Axe Effect is the weakest lean for every class — it scales
+ * Chopping Rhythm's second strike, which is a sixth of the hits — so a designer who
+ * wants the strongest guide would switch the five Axe plans to the lean named per
+ * class. On the Poison Dagger the three are within ~2 pp at rank I and Effect leads
+ * at rank III.
  */
+/** The rank the guide takes its lean to: III, inside the home leg (GM 14 is held there). */
+const LEAN_RANK = 3;
+const AXE_BAND: TutorialWeaponCards = {
+  lineageId: AXE.lineageId, lean: AXE.effect, verb: AXE.choppingRhythm, leanRank: LEAN_RANK,
+};
+const DAGGER_BAND: TutorialWeaponCards = {
+  lineageId: DAGGER.lineageId, lean: DAGGER.effect, verb: DAGGER.intoTheWound, leanRank: LEAN_RANK,
+};
+
 export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
   {
     classRoot: 'cadence-root',
@@ -207,9 +224,9 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     biomes: durableMelee(),
     bossKit: MELEE_KIT,
     bosses: DEFAULT_BOSSES,
-    // +31.2%, 10.2 fires/min: the finisher every 5th swing is its mechanic, and
-    // "the hit lands twice" doubles it; attack speed brings it round sooner.
-    weaponCards: { lineageId: AXE.lineageId, lean: AXE.speed, verb: AXE.choppingRhythm },
+    // Effect +11.6% / +12.9% (I / III); best: Speed +24.5% at I (flat to III),
+    // Attack +28.1% at III. The verb alone: +10.2%.
+    weaponCards: AXE_BAND,
   },
   {
     classRoot: 'cooldown-root',
@@ -218,9 +235,9 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     biomes: durableMelee(),
     bossKit: MELEE_KIT,
     bosses: DEFAULT_BOSSES,
-    // +25.4%, 6.6 fires/min (pure Empowered: "Your mechanic hits half again as hard"):
-    // the slowest hands and the biggest timed execution.
-    weaponCards: { lineageId: AXE.lineageId, lean: AXE.attack, verb: AXE.choppingRhythm },
+    // Effect +10.7% / +12.1%; best: Speed +18.4% at I (Attack +18.3%), Speed +29.2%
+    // at III. The verb alone: +9.7%.
+    weaponCards: AXE_BAND,
   },
   {
     classRoot: 'reload-root',
@@ -229,10 +246,10 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     biomes: slinger(),
     bossKit: ['ashbrand-blade', 'swamp-charm-t1', 'plains-boots-t1'],
     bosses: withArmor(DEFAULT_BOSSES, 'forest-vest-t1'),
-    // +42.8%, 11.6 fires/min (pure Affliction: "Hitting an afflicted target doubles
-    // its affliction"): the Dagger's poison and the lean's bleed are always on the
-    // target, so the moment fires at its cap. Every other Dagger pair is within ±3%.
-    weaponCards: { lineageId: DAGGER.lineageId, lean: DAGGER.effect, verb: DAGGER.intoTheWound },
+    // Effect +50.5% / +58.4% ("Your poison is +10% stronger", and Into the Wound
+    // re-doses that poison: design §26.2); best: Attack +52.3% at I, Effect itself at
+    // III. The verb alone: +46.3%.
+    weaponCards: DAGGER_BAND,
   },
   {
     classRoot: 'energy-root',
@@ -241,10 +258,9 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     biomes: durableMelee(),
     bossKit: MELEE_KIT,
     bosses: DEFAULT_BOSSES,
-    // +24.8%, 7.3 fires/min (pure Tempo: "Every 6th hit strikes twice"). Tied on the
-    // median with Loose Grip → Cleaving Blow (both +24.8%, the same Greatbear reading);
-    // broken by the mean over the five bosses, +23.7% against +22.7%.
-    weaponCards: { lineageId: AXE.lineageId, lean: AXE.speed, verb: AXE.choppingRhythm },
+    // Effect +13.9% / +15.6%; best: Speed +24.8% at I (flat to III), Attack +28.0% at
+    // III. The verb alone: +12.5%.
+    weaponCards: AXE_BAND,
   },
   {
     classRoot: 'dot-root',
@@ -253,10 +269,9 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     biomes: apprentice(),
     bossKit: MELEE_KIT,
     bosses: { ...DEFAULT_BOSSES, swamp: { ...DEFAULT_BOSSES.swamp, armor: 'swamp-vest-t1' } },
-    // +14.0%, 6.0 fires/min ("Every 6th hit counts as your class mechanic firing"):
-    // Cleaving Blow on Hewing Arc never fired for it in the lab, so the six-count
-    // carries its mechanic instead.
-    weaponCards: { lineageId: AXE.lineageId, lean: AXE.attack, verb: AXE.choppingRhythm },
+    // Effect +5.1% / +5.8%; best: Attack +16.4% at I, +18.9% at III. The verb alone:
+    // +4.6%.
+    weaponCards: AXE_BAND,
   },
   {
     classRoot: 'summoner-root',
@@ -265,8 +280,8 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     biomes: durableMelee(),
     bossKit: MELEE_KIT,
     bosses: DEFAULT_BOSSES,
-    // +17.0%, 26.9 fires/min (pure Tempo): four summons' hits fill the six-count fast;
-    // its Empowered verb fell to +7.4% under the 4 s cap.
-    weaponCards: { lineageId: AXE.lineageId, lean: AXE.speed, verb: AXE.choppingRhythm },
+    // Effect +17.5% / +19.9%; best: Attack +24.0% at I, +36.9% at III. The verb alone:
+    // +17.0% (four summons fill the six-count fast).
+    weaponCards: AXE_BAND,
   },
 ];

@@ -85,7 +85,11 @@ export const TUTORIAL_ROUTES: readonly Route[] = TUTORIAL_CLASS_PLANS.map((plan)
   const gatePaid: Condition[] = gate
     ? [{ type: "lineageFormWorn", lineageId: gate.lineageId, recipeId: gate.recipeId }]
     : [];
-  const [leanCard, verbCard] = cardsOf(script);
+  const purchases = cardsOf(script);
+  const [leanCard, verbCard] = purchases;
+  // The lean's further ranks (design §26.1), each its own milestone so the sweep
+  // times them: `lean-rank-2`, `lean-rank-3`.
+  const rankUps = purchases.filter((p) => (p.rank ?? 1) > 1);
   return {
     id: tutorialRouteId(plan.className),
     // 1.2.0: the weapon page's lean AND verb (design §24.2), each bought with
@@ -94,9 +98,11 @@ export const TUTORIAL_ROUTES: readonly Route[] = TUTORIAL_CLASS_PLANS.map((plan)
     // 1.4.0: the lean and verb move to the boss weapon's page (the Chaotic Axe, the
     // Slinger's Poison Dagger), worn from where it is made; the gate is that
     // weapon's, paid with its home boss's capstones (design §24.9).
-    version: "1.4.0",
+    // 1.5.0: design §26.1 — the Effect lean (rank I), the weapon's one verb, then
+    // the lean's ranks II and III, each `unlockCard` with its `rank`.
+    version: "1.5.0",
     classRoot: plan.classRoot,
-    description: `Guided Tier-1 tutorial for the ${plan.className}: every T1 zone to Global Mastery 30 with the ${plan.weaponCards.lineageId}'s lean and verb, the ${TUTORIAL_SEALS.join(" and ")} seals, then that weapon's tier-1 gate.`,
+    description: `Guided Tier-1 tutorial for the ${plan.className}: every T1 zone to Global Mastery 30 with the ${plan.weaponCards.lineageId}'s lean (to rank ${plan.weaponCards.leanRank}) and its verb, the ${TUTORIAL_SEALS.join(" and ")} seals, then that weapon's tier-1 gate.`,
     steps: script.beats.flatMap((beat) =>
       beat.steps.map((step): RouteStep => ({ ...toRouteStep(step, plan.classRoot), label: `${beat.id}: ${step.type}` }))),
     completion: { type: "allOf", of: [...sealsCleared, ...gatePaid] },
@@ -109,13 +115,17 @@ export const TUTORIAL_ROUTES: readonly Route[] = TUTORIAL_CLASS_PLANS.map((plan)
       { id: "gm-30-all-maxed", when: { type: "globalMasteryAtLeast", value: 30 } },
       { id: "first-seal", when: { type: "bossCleared", biomeGroup: TUTORIAL_SEALS[0], tier: 1 } },
       { id: "tier-2-reached", when: { type: "playerTierAtLeast", tier: 2 } },
-      // The two purchases, timed: the lean (row 1) and the verb (row 2).
+      // The purchases, timed: the lean (row 1), the verb (row 2), the lean's ranks.
       ...(leanCard
-        ? [{ id: "first-lineage-card", when: { type: "lineageCardOwned" as const, ...leanCard } }]
+        ? [{ id: "first-lineage-card", when: { type: "lineageCardOwned" as const, lineageId: leanCard.lineageId, cardId: leanCard.cardId } }]
         : []),
       ...(verbCard
-        ? [{ id: "verb-card", when: { type: "lineageCardOwned" as const, ...verbCard } }]
+        ? [{ id: "verb-card", when: { type: "lineageCardOwned" as const, lineageId: verbCard.lineageId, cardId: verbCard.cardId } }]
         : []),
+      ...rankUps.map((p) => ({
+        id: `lean-rank-${p.rank}`,
+        when: { type: "lineageCardOwned" as const, lineageId: p.lineageId, cardId: p.cardId, rank: p.rank },
+      })),
       ...(gate
         ? [{
           id: "gate-paid",
@@ -126,12 +136,12 @@ export const TUTORIAL_ROUTES: readonly Route[] = TUTORIAL_CLASS_PLANS.map((plan)
   };
 });
 
-/** The cards the script buys, in order, for the milestones that time the lessons. */
-function cardsOf(script: TutorialScript): { lineageId: string; cardId: string }[] {
+/** The cards (and ranks) the script buys, in order, for the milestones that time the lessons. */
+function cardsOf(script: TutorialScript): { lineageId: string; cardId: string; rank?: number }[] {
   return script.beats
     .flatMap((beat) => beat.steps)
     .filter((step): step is Extract<TutorialStep, { type: "unlockCard" }> => step.type === "unlockCard")
-    .map(({ lineageId, cardId }) => ({ lineageId, cardId }));
+    .map(({ lineageId, cardId, rank }) => ({ lineageId, cardId, ...(rank !== undefined ? { rank } : {}) }));
 }
 
 export const TUTORIAL_ROUTE_IDS: readonly string[] = TUTORIAL_ROUTES.map((route) => route.id);
