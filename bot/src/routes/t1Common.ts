@@ -13,8 +13,8 @@ import { allOf, type NodeRef, type RouteStep } from "../route/types";
  * Swamp -> Mountain -> Cave -> all five bosses. This SWAPS Swamp and Mountain
  * from the original spine (Plains -> Forest -> Mountain -> Swamp -> Cave) --
  * Cleanse is learned at Swamp L3 (3rd leg); Mountain uses its available
- * movement tools, Step Back is learned at Cave L2, and Expose Weakness caps it
- * off at Cave. Upgrade targets follow leg position:
+ * movement tools, Step Back is learned at Cave L2, and Slam (Expose Weakness
+ * until the ability pass cut it, design §22.2) caps it off at Cave. Upgrade targets follow leg position:
  * Plains -> +1 (GM6), Forest -> +2 (GM12), Swamp -> +3 (GM18),
  * Mountain -> +4 (GM24), Cave -> +5 (GM30).
  */
@@ -134,15 +134,20 @@ export function restoreSecondWind(): RouteStep {
   };
 }
 
-/** Learn Expose Weakness at Cave L3, replacing Sweep for the rest of the run. */
-export function learnExposeWeakness(): RouteStep {
+/**
+ * Learn Slam during the Cave leg, replacing Sweep for the rest of the run. Expose
+ * Weakness held this step (at Cave L3) until the ability pass cut it and the boss
+ * kits wore Slam in its place (design §22.2); Slam's recipe is the Mountain's (L5),
+ * mastered by then.
+ */
+export function learnSlam(): RouteStep {
   return {
     type: "learnAbility",
-    recipeId: "ability-recipe-expose-weakness",
-    abilityId: "expose-weakness",
+    recipeId: "ability-recipe-slam",
+    abilityId: "slam",
     slot: "technique",
-    farmAt: biome("cave"),
-    label: "learn Expose Weakness (replaces Sweep)",
+    farmAt: biome("mountain"),
+    label: "learn Slam (replaces Sweep)",
   };
 }
 

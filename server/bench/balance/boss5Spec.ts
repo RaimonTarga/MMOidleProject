@@ -165,7 +165,8 @@ export const BOSS5_ROSTER: Boss5Boss[] = BOSS5_ACTIVE_ROSTER
 /**
  * The tier-legal reference package, per tier.
  *
- * Boss1-Boss4 all ran ONE shape: defensive stance, `expose-weakness`, the ordered
+ * Boss1-Boss4 all ran ONE shape: defensive stance, `expose-weakness` (Slam since the
+ * ability pass cut it, design §22.2: the T3/T4 rows attune `slam`), the ordered
  * Guard pair `['second-wind','brace']`, five ordered behaviour rules, +5 items. That
  * shape is T2's. Carrying it to another tier unchecked is exactly the assumption the
  * work order forbids -- and at T1 it is not merely doubtful, it is ILLEGAL:
@@ -228,7 +229,7 @@ export const BOSS5_TIER_REFERENCE: Record<number, Boss5TierReference> = {
       + 'what the Boss1-Boss4 rows are built on) and the technique is dropped.',
   },
   3: {
-    tier: 3, stance: 'defensive-stance', techniques: ['expose-weakness'], guards: REFERENCE_GUARDS,
+    tier: 3, stance: 'defensive-stance', techniques: ['slam'], guards: REFERENCE_GUARDS,
     kit: {
       armor: 'mountain-vest-t3', recovery: 'mountain-charm-t3',
       mobility: 'mountain-boots-t3', core: 'core-tempered',
@@ -236,7 +237,7 @@ export const BOSS5_TIER_REFERENCE: Record<number, Boss5TierReference> = {
     note: 'The T2 reference shape entire, on T3 weapons, the fixed kit, the core and the range node.',
   },
   4: {
-    tier: 4, stance: 'defensive-stance', techniques: ['expose-weakness'], guards: REFERENCE_GUARDS,
+    tier: 4, stance: 'defensive-stance', techniques: ['slam'], guards: REFERENCE_GUARDS,
     kit: {
       armor: 'mountain-vest-t4', recovery: 'mountain-charm-t4',
       mobility: 'mountain-boots-t4', core: 'core-tempered', relic: 'relic-colossus-heart',

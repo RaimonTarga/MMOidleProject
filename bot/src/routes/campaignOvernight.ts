@@ -58,7 +58,7 @@ export const CAMPAIGN_NIGHT_BOSSES: Route[] = ["plains", "forest", "swamp", "mou
   const armor = ["plains", "forest"].includes(group) ? "plains-vest-t1" : "mountain-vest-t1";
   const charm = group === "plains" ? "plains-charm-t1" : "swamp-charm-t1";
   const build = structuredClone(CAMPAIGN_PLAINS_T1_BUILD);
-  build.abilities = { techniques: [group === "plains" ? "sweep" : "expose-weakness"], guards: [group === "swamp" ? "cleanse" : "second-wind"] };
+  build.abilities = { techniques: [group === "plains" ? "sweep" : "slam"], guards: [group === "swamp" ? "cleanse" : "second-wind"] };
   return {
     id: `striker-campaign-night-${group}-t1`, version: "1.0.0", classRoot: "cadence-root",
     startsFromTierEntry: 1, suppressTransitCombat: true,
@@ -67,6 +67,10 @@ export const CAMPAIGN_NIGHT_BOSSES: Route[] = ["plains", "forest", "swamp", "mou
       ...structuredClone(entryGates), ...checkItem("mountain-vest-t1", false),
       { type: "equip", definitionIds: [armor, charm] },
       ...checkItem(armor), ...checkItem(charm),
+      // Slam took Expose Weakness's place in the T1 boss kits (the ability pass,
+      // design §22.2); the earned state predates it, so it is learned here.
+      ...(group === "plains" ? [] : [{ type: "learnAbility" as const, recipeId: "ability-recipe-slam", abilityId: "slam",
+        slot: "technique" as const, attune: false, farmAt: { kind: "biome" as const, biomeGroup: "mountain", tier: 1 } }]),
       { type: "configureBuild", build, label: `night:${group}:build` },
       { type: "milestone", id: `night:${group}:ready` },
       { type: "attemptBoss", biomeGroup: group, tier: 1, maxAttempts: 1, label: `night:${group}:attempt` },

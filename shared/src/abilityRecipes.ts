@@ -48,6 +48,11 @@ export interface AbilityRecipe {
 // is preserved; Disengage sits lowest as the game's only Trench escape tool (the
 // same "required counterplay prices lowest" reasoning as T3's Break Free), Stunning
 // Strike sits highest as the most build-warping hard CC of the four.
+//
+// The ability pass (design §22.2, §22.8, 2026-10-06) cut five abilities and moved
+// five more. A re-homed recipe takes the slot it moves into — biome, level, the
+// biome's essence colour AND the price the economy passes set for that slot — so
+// no price was invented; the two additions are marked PROVISIONAL where they are.
 const recipes: AbilityRecipe[] = [
   // ── T1: the fundamentals ───────────────────────────────────────────────────
   {
@@ -79,6 +84,20 @@ const recipes: AbilityRecipe[] = [
     cost: { green: 25 },
   },
   {
+    id: "ability-recipe-sidestep",
+    name: "Sidestep",
+    description: "Learn the Sidestep guard: slip aside, hard to hit and quick on your feet for a moment.",
+    abilityId: "sidestep",
+    tier: 1,
+    // The ability pass (design §22.8): the Avoid Guard. Forest is the biome of
+    // frequent small hits from things that dart in and out, so dodging the next
+    // few is its second answer, staggered after Second Wind (L2) at the band's
+    // own level 5. PROVISIONAL price: Brace's, the other burst Guard.
+    recipeGroup: "forest",
+    requiredBiomeLevel: 5,
+    cost: { green: 45 },
+  },
+  {
     id: "ability-recipe-cleanse",
     name: "Cleanse",
     description: "Learn the Cleanse guard: strip the affliction that is eating you.",
@@ -104,27 +123,30 @@ const recipes: AbilityRecipe[] = [
     cost: { blue: 45 },
   },
   {
-    id: "ability-recipe-power-strike",
-    name: "Power Strike",
-    description: "Learn Power Strike: wind up a heavy blow that hard control can interrupt.",
-    abilityId: "power-strike",
+    id: "ability-recipe-slam",
+    name: "Slam",
+    description:
+      "Learn Slam: wind up and drive the blow into the ground, striking everything around the impact.",
+    abilityId: "slam",
     tier: 1,
     // Mountain again, later in its band — the biome that taught you to READ a
-    // wind-up is the one that teaches you to perform one.
+    // wind-up (Brace, L3) is the one that teaches you to perform one. The ability
+    // pass (design §22.2) merged Power Strike into Slam and re-homed Slam here
+    // from Mountain 9 (its T2 band), into Power Strike's slot and at its price.
     recipeGroup: "mountain",
     requiredBiomeLevel: 5,
     cost: { blue: 190 },
   },
   {
-    id: "ability-recipe-expose-weakness",
-    name: "Expose Weakness",
-    description: "Learn the Expose Weakness technique: make a target take increased damage.",
-    abilityId: "expose-weakness",
+    id: "ability-recipe-charge",
+    name: "Charge",
+    description: "Learn Charge: close the gap instantly and land an empowered blow.",
+    abilityId: "charge",
     tier: 1,
-    // Cave is few-but-elite — killing the big one faster is the answer. This is
-    // a strong single-target Technique, NOT mandatory Cave counterplay (that's
-    // %DR/Absorb/Careful Pulling/HP-Below-25%) — priced above the mandatory
-    // tier accordingly, 2026-08-28.
+    // Cave is few-but-elite — closing on the one that matters is the problem. The
+    // ability pass (design §22.2) re-homed Charge here from Desert 3 (T2), into
+    // Expose Weakness's slot and at its price; the tutorial teaches it at the end
+    // of the Cave leg.
     recipeGroup: "cave",
     requiredBiomeLevel: 3,
     cost: { red: 85 },
@@ -132,14 +154,14 @@ const recipes: AbilityRecipe[] = [
 
   // ── T2: positioning, soft control, sustained mitigation ────────────────────
   {
-    id: "ability-recipe-hamstring",
-    name: "Hamstring",
-    description: "Learn Hamstring: arm your next attack to cripple the target's stride.",
-    abilityId: "hamstring",
+    id: "ability-recipe-binding-strike",
+    name: "Binding Strike",
+    description: "Learn Binding Strike: arm your next attack to pin the target where it stands.",
+    abilityId: "binding-strike",
     tier: 2,
-    // Jungle swarms and chases — taking the legs out of the chase is the answer.
-    // T2 economy pass (2026-08-29): cost dropped from 320 to match the T1
-    // mandatory-counterplay philosophy (essence-only, no post-unlock grind).
+    // Jungle swarms and chases — pinning the chaser is the answer. The ability pass
+    // (design §22.2) re-homed Binding Strike here from Tundra 3 (T3), into the cut
+    // Hamstring's slot and at its price: the root is the T2 control.
     recipeGroup: "jungle",
     requiredBiomeLevel: 3,
     cost: { green: 70 },
@@ -151,19 +173,22 @@ const recipes: AbilityRecipe[] = [
     abilityId: "bramble-guard",
     tier: 2,
     // Jungle again: high density plus an aggressive on-hit profile.
-    // T2 economy pass (2026-08-29): cost dropped from 380, same rationale as Hamstring.
+    // T2 economy pass (2026-08-29): cost dropped from 380 to match the T1
+    // mandatory-counterplay philosophy (essence-only, no post-unlock grind).
     recipeGroup: "jungle",
     requiredBiomeLevel: 5,
     cost: { green: 90 },
   },
   {
-    id: "ability-recipe-charge",
-    name: "Charge",
-    description: "Learn Charge: close the gap instantly and land an empowered blow.",
-    abilityId: "charge",
+    id: "ability-recipe-snipe",
+    name: "Snipe",
+    description: "Learn Snipe: a deliberate shot lined up far outside your usual reach.",
+    abilityId: "snipe",
     tier: 2,
-    // Desert: the low-density standoff biome, where closing distance is the problem.
-    // T2 economy pass (2026-08-29): cost dropped from 320, same rationale as Hamstring.
+    // Desert: the low-density standoff biome, whose open sightlines make
+    // extraordinary range legible. The ability pass (design §22.8) re-homed Snipe
+    // here from Graveyard 3 (T4), into Charge's old slot and at its price: the
+    // ranged opener arrives at T2, as melee's Charge arrives at T1.
     recipeGroup: "desert",
     requiredBiomeLevel: 3,
     cost: { yellow: 70 },
@@ -175,7 +200,8 @@ const recipes: AbilityRecipe[] = [
     abilityId: "endure",
     tier: 2,
     // Desert grinds rather than spikes — a long window beats a short one.
-    // T2 economy pass (2026-08-29): cost dropped from 380, same rationale as Hamstring.
+    // T2 economy pass (2026-08-29): cost dropped from 380, same rationale as
+    // Bramble Guard.
     recipeGroup: "desert",
     requiredBiomeLevel: 5,
     cost: { yellow: 90 },
@@ -185,7 +211,7 @@ const recipes: AbilityRecipe[] = [
     id: "ability-recipe-contagion",
     name: "Contagion",
     description:
-      "Learn Contagion: cast a target's afflictions outward onto the enemies around it.",
+      "Learn Contagion: your next attack spreads a target's afflictions onto the enemies around it.",
     abilityId: "contagion",
     tier: 2,
     // The swamp is the game's attrition-by-DoT biome and where the brand weapons
@@ -201,51 +227,26 @@ const recipes: AbilityRecipe[] = [
     // Swamp's T2 band is biome levels 7–12, so the band's own level 3 is 9.
     recipeGroup: "swamp",
     requiredBiomeLevel: 9,
-    // T2 ability band is 70–90 (Hamstring/Charge 70 as mandatory counterplay,
+    // T2 ability band is 70–90 (Binding Strike/Snipe 70 as mandatory counterplay,
     // Bramble Guard/Endure 90). Contagion sits at the top of it: strong and
     // broadly useful, but worth nothing to a build carrying no damage over time,
     // so it is priced as an optional power tool rather than as required counterplay.
     cost: { purple: 90 },
   },
 
-  {
-    id: "ability-recipe-slam",
-    name: "Slam",
-    description:
-      "Learn Slam: wind up and drive the blow into the ground, striking everything around the impact.",
-    abilityId: "slam",
-    tier: 2,
-    // MOUNTAIN, the same deliberate deviation Contagion makes in the swamp: every
-    // other T2 ability lives in jungle or desert, but Slam is homed by THEME.
-    // Mountain is the game's wind-up biome — Brace (L3) teaches you to READ a
-    // telegraph, Power Strike (L5) teaches you to PERFORM one — so the tier that
-    // widens that blow into an area belongs there and nowhere else. Mountain has
-    // nodes at T1-T4, so nothing is re-homed and no band is reshuffled to fit it.
-    //
-    // Mountain's T2 band is biome levels 7-12, so the band's own level 3 is 9 —
-    // exactly the placement rule every other ability follows, and the same level
-    // Contagion sits at in the swamp's T2 band.
-    recipeGroup: "mountain",
-    requiredBiomeLevel: 9,
-    // Top of the T2 ability band (70-90). Slam is an optional power tool rather
-    // than required counterplay — a single-target build loses nothing by
-    // skipping it — so it is priced with Bramble Guard / Endure / Contagion and
-    // not with the mandatory 70s.
-    cost: { blue: 90 },
-  },
-
   // ── T3: tempo, and hard movement/control counterplay ───────────────────────
   {
-    id: "ability-recipe-binding-strike",
-    name: "Binding Strike",
-    description: "Learn Binding Strike: arm your next attack to pin the target where it stands.",
-    abilityId: "binding-strike",
+    id: "ability-recipe-cull",
+    name: "Cull",
+    description: "Learn Cull: a finishing blow that hits harder the weaker the target is.",
+    abilityId: "cull",
     tier: 3,
-    // Tundra is where the ground fights you — pinning something is the answer.
+    // Tundra is where fights grind down — finishing the worn-down is the answer.
+    // The ability pass (design §22.8) homed Cull in the slot Binding Strike
+    // vacated, at its price (T3 economy pass: 150, an important Technique that
+    // must be affordable on arrival).
     recipeGroup: "tundra",
     requiredBiomeLevel: 3,
-    // T3 economy pass: 650 → 150. Ordinary/important counterplay Technique; must be
-    // affordable the first time Tundra roots you.
     cost: { blue: 150 },
   },
   {
@@ -262,29 +263,19 @@ const recipes: AbilityRecipe[] = [
     cost: { blue: 190 },
   },
   {
-    id: "ability-recipe-frenzy",
-    name: "Frenzy",
-    description: "Learn Frenzy: a short, furious window of raw attack speed.",
-    abilityId: "frenzy",
+    id: "ability-recipe-imbue-lightning",
+    name: "Imbue Lightning",
+    description:
+      "Learn Imbue Lightning: charge your hands so your next few strikes land with the storm.",
+    abilityId: "imbue-lightning",
     tier: 3,
-    // Volcano rewards burning a fight down before the ambient ramp burns you.
+    // Volcano rewards burning a fight down before the ambient ramp burns you, and
+    // a window that waits for your hits is worth most where every hit counts. The
+    // ability pass (design §22.2) re-homed Imbue Lightning here from Jungle 15
+    // (T4), into the cut Frenzy's slot and at its price.
     recipeGroup: "volcanic",
     requiredBiomeLevel: 3,
-    // T3 economy pass: 650 → 175. Broadly useful but optional; a small premium over
-    // the pure counterplay tools.
     cost: { red: 175 },
-  },
-  {
-    id: "ability-recipe-quick-strike",
-    name: "Quick Strike",
-    description: "Learn Quick Strike: a small, fast opening that is almost always ready.",
-    abilityId: "quick-strike",
-    tier: 3,
-    recipeGroup: "volcanic",
-    requiredBiomeLevel: 5,
-    // T3 economy pass: 760 → 210. Genuinely optional specialised filler, so the
-    // priciest of the four.
-    cost: { red: 210 },
   },
   {
     id: "ability-recipe-detonate",
@@ -328,42 +319,16 @@ const recipes: AbilityRecipe[] = [
     cost: { green: 380 },
   },
   {
-    id: "ability-recipe-snipe",
-    name: "Snipe",
-    description: "Learn Snipe: a deliberate shot lined up far outside your usual reach.",
-    abilityId: "snipe",
-    tier: 4,
-    // The Wasteland's open sightlines are what make extraordinary range legible.
-    recipeGroup: "graveyard",
-    requiredBiomeLevel: 3,
-    cost: { purple: 320 },
-  },
-  {
     id: "ability-recipe-stunning-strike",
     name: "Stunning Strike",
     description: "Learn Stunning Strike: a committed blow that puts the target on the floor.",
     abilityId: "stunning-strike",
     tier: 4,
+    // The Wasteland keeps Stunning Strike at its own level 5 after Snipe's
+    // re-home (design §22.8).
     recipeGroup: "graveyard",
     requiredBiomeLevel: 5,
     cost: { purple: 420 },
-  },
-  {
-    id: "ability-recipe-imbue-lightning",
-    name: "Imbue Lightning",
-    description:
-      "Learn Imbue Lightning: charge your hands so your next few strikes land with the storm.",
-    abilityId: "imbue-lightning",
-    tier: 4,
-    // The jungle's T4 band is biome levels 13–18 (it debuts at T2), so the band's
-    // own level 3 is 15. Homed here because the jungle is the density-and-tempo
-    // biome: a charge window that does not expire is worth most where fights are
-    // fast, frequent, and interrupted by the next pack.
-    recipeGroup: "jungle",
-    requiredBiomeLevel: 15,
-    // Mid-band T4 pricing, between Disengage (300) and Snipe (320): a strong
-    // generic damage window, but one that asks you to spend a slot on setup.
-    cost: { green: 320 },
   },
 ];
 

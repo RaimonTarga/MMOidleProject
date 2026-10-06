@@ -4,8 +4,8 @@
  *
  * Two semantic families: a **Technique** (the offensive/tactical active) and a
  * **Guard** (the defensive/recovery/status active). Mobility is a TAG, never a
- * family. A Technique does NOT have to be enemy-facing: Frenzy is an instant
- * self-buff and is still a Technique, because its job is offense.
+ * family. A Technique does NOT have to be enemy-facing: Imbue Lightning is an
+ * instant self-buff and is still a Technique, because its job is offense.
  *
  * State (the learned pool + ordered attunements) lives on `TracksProgression`, exactly
  * like runes — abilities are build/loadout data, not a recalculated component.
@@ -124,16 +124,15 @@ export function abilityActsWhileControlled(ability: AbilityDef): boolean {
  *   {@link TECHNIQUE_TEMPO_MIN_CYCLE_MS} after its last activation). Absent =
  *   no Tempo, which is how Sweep I stays the simple teaching rank; a `0` would
  *   be encoding absence as a number and is rejected by `validateAbilities`.
- * - `empower`: Technique rider — the armed next attack hits for `damageMult`×
- *   damage (single-target; no splash).
- * - `cast-strike`: casted Technique payload. Unlike `empower` — which rides the
- *   NEXT attack — this resolves on its own when the wind-up completes, dealing
+ * - `cast-strike`: casted Technique payload. Unlike an armed rider — which rides
+ *   the NEXT attack — this resolves on its own when the wind-up completes, dealing
  *   `damageMult` × the player's attack. `radius` > 0 makes it AoE around the
  *   target; `stunMs` > 0 hard-controls the target on resolve (Stunning Strike).
- * - `expose-weakness`: Technique rider — the target takes `damageTakenPct` more
- *   damage from everyone for `durationMs`.
- * - `slow-strike`: Technique rider — a modest damage bump plus a SLOW. The
- *   target still attacks and casts; only its movement suffers.
+ * - `execute-strike`: casted Technique payload (Cull) — a single-target strike
+ *   whose multiplier RISES as the target's health share falls: `damageMult` at
+ *   or above `thresholdPct` of max HP, climbing linearly to `executeMult` at
+ *   zero. A kill refunds the ability's own cooldown. The curve is the rank's
+ *   shape; Technique Power scales both ends of it, never the threshold.
  * - `root-strike`: Technique rider — a modest damage bump plus a ROOT. The target
  *   cannot move but may still attack anything already in its reach.
  * - `reposition`: resolves by MOVING the player `distance` px toward
@@ -151,11 +150,14 @@ export function abilityActsWhileControlled(ability: AbilityDef): boolean {
  * - `heal`: Guard Recovery access — switches on `recoveryPct` of the player's
  *   Recovery RATE for `durationMs` (antiheal applies). NOT a flat % of max HP,
  *   so investing in Recovery gear makes the button better.
- * - `attack-speed`: Technique instant — a pure attack-speed window (Frenzy).
- *   Deliberately grants attack speed and NOTHING else.
+ * - `dodge-window`: Guard immediate (Sidestep) — an evasion window plus a short
+ *   move-speed burst that ends with it. It authors NO number: both magnitudes
+ *   and the window come from the lineage magnitude table's units
+ *   (`evasion-window`, and `speed-window`'s magnitude for the burst) at the
+ *   rank's tier, so the ability file holds only the rank shape.
  * - `break-free`: Guard immediate — removes the current hard control, optionally
  *   followed by `controlResistPct` control resistance for `controlResistMs`.
- * - `spread-dots`: casted Technique payload (Contagion) — COPIES every
+ * - `spread-dots`: armed Technique rider (Contagion) — your next hit COPIES every
  *   damage-over-time the player owns on the target onto up to `maxTargets`
  *   other enemies within `radius`. The original keeps its own; copies carry full
  *   stacks and the full reservoir pool, so `maxTargets` is the only thing
@@ -167,24 +169,27 @@ export function abilityActsWhileControlled(ability: AbilityDef): boolean {
  *   stacks, Permafrost, Conflagration) times `classDotMult`. Single-target on purpose: the multiplier is the
  *   payoff, and splashing it would make Contagion→Detonate one AoE nuke rather
  *   than a two-cast combo.
- * - `imbue`: self-cast Technique payload (Imbue Lightning) — a charge-based
- *   on-hit window. Adds `onHitDamage` to each landed hit and spends one of
- *   `charges` per hit. NO duration: it waits as long as it takes, which is what
- *   makes it a deliberate pre-load rather than a race against a timer.
+ * - `imbue`: instant Technique payload (Imbue Lightning) — a charge-based
+ *   on-hit window that opens on activation. Adds `onHitDamage` to each landed hit
+ *   and spends one of `charges` per hit. NO duration: it waits as long as it
+ *   takes, which is what makes it a deliberate pre-load rather than a race
+ *   against a timer.
+ *
+ * The ability pass (design §22.2) retired `empower` (Quick Strike),
+ * `expose-weakness`, `slow-strike` (Hamstring) and `attack-speed` (Frenzy) with
+ * the abilities that were their only users.
  */
 export type AbilityEffectSpec =
   | { kind: "cleave"; splashPct: number; radius: number; tempoRefundMs?: number }
-  | { kind: "empower"; damageMult: number }
   | { kind: "cast-strike"; damageMult: number; radius?: number; stunMs?: number }
-  | { kind: "expose-weakness"; damageTakenPct: number; durationMs: number }
-  | { kind: "slow-strike"; damageMult: number; slowPct: number; slowDurationMs: number }
+  | { kind: "execute-strike"; damageMult: number; executeMult: number; thresholdPct: number }
   | { kind: "root-strike"; damageMult: number; rootMs: number }
   | { kind: "reposition"; distance: number; toward: boolean; empowerMult?: number }
   | { kind: "bramble"; platingBonus: number; reflectFlat: number; durationMs: number }
   | { kind: "damage-reduction"; drPct: number; durationMs: number; knockbackResistPct?: number }
   | { kind: "cleanse"; stacks: number; debuffs: number }
   | { kind: "heal"; recoveryPct: number; durationMs: number }
-  | { kind: "attack-speed"; attackSpeedPct: number; durationMs: number }
+  | { kind: "dodge-window" }
   | { kind: "break-free"; controlResistPct?: number; controlResistMs?: number }
   | { kind: "spread-dots"; radius: number; maxTargets: number }
   | { kind: "detonate-dots"; detonateMult: number; classDotMult: number }
@@ -290,13 +295,23 @@ export function recoveryEffectIdForAbility(abilityId: string): AbilityRecoveryEf
 /** Second Wind effect identity. */
 export const ABILITY_SECOND_WIND_EFFECT_ID = ABILITY_RECOVERY_EFFECT_IDS[0];
 
-/** Frenzy's attack-speed window (read at the attack-cadence gate, never a stat write). */
-export const ABILITY_FRENZY_EFFECT_ID = "ability-frenzy";
+/**
+ * Sidestep's window: an evasion bonus and a move-speed burst on ONE status, so
+ * the burst ends exactly when the window does (one clock, one tile). Read by the
+ * player evade roll (`defense/mitigation/evasion.ts`) and the movement speed
+ * layers (`world/movement.ts`).
+ */
+export const ABILITY_SIDESTEP_EFFECT_ID = "ability-sidestep";
 
 /** Break Free's post-escape control resistance. */
 export const ABILITY_CONTROL_RESIST_EFFECT_ID = "ability-control-resist";
 
-/** Hamstring's slow on a monster. */
+/**
+ * The default ability-family slow on a monster. Hamstring, its first writer, was
+ * cut by the ability pass (design §22.2); the id is kept because the lineage
+ * `slow` payoff (and so every ability-node slow) and the Mid range at-bay slow
+ * still write it (`applyMonsterSlow`'s default).
+ */
 export const ABILITY_SLOW_EFFECT_ID = "ability-slowed";
 
 /** Binding Strike's root on a monster. */
@@ -309,18 +324,13 @@ export const ABILITY_ROOT_EFFECT_ID = "ability-rooted";
  * client FX dispatcher agree on the strings.
  */
 export const ABILITY_SWEEP_FX = "ability-sweep";
-export const ABILITY_EXPOSE_WEAKNESS_FX = "ability-expose-weakness";
-export const ABILITY_HAMSTRING_FX = "ability-hamstring";
 export const ABILITY_BINDING_STRIKE_FX = "ability-binding-strike";
-export const ABILITY_QUICK_STRIKE_FX = "ability-quick-strike";
 
 /**
  * Generic client-effect tag for Techniques that do not need bespoke in-world FX.
  * The client uses it to pulse the Technique HUD icon and start the cooldown sweep.
  */
 export const ABILITY_TECHNIQUE_FIRED_FX = "ability-technique-fired";
-
-export const EXPOSE_WEAKNESS_EFFECT_ID = "expose-weakness";
 
 /**
  * Imbue Lightning's charge-based on-hit window.
@@ -463,17 +473,17 @@ export function abilityDisplayName(ability: AbilityDef, playerTier: number): str
  * Authored explicitly per kind rather than as a blanket multiplier — adding an
  * effect kind means deciding this deliberately. Defensive/utility Guard effects
  * are absent by design: Guard potency is a separate stat family and the budgets
- * must not leak. Control durations, dash distances, Snipe's range and Expose
- * Weakness's vulnerability are absent for the same reason — a damage stat must
- * not buy control or reach.
+ * must not leak. Control durations, dash distances and Snipe's range are absent
+ * for the same reason — a damage stat must not buy control or reach.
  */
 export const TECHNIQUE_POWER_FIELDS: Partial<
   Record<AbilityEffectSpec["kind"], readonly string[]>
 > = {
   cleave: ["splashPct"],
   "cast-strike": ["damageMult"],
-  empower: ["damageMult"],
-  "slow-strike": ["damageMult"], // NOT slowPct / slowDurationMs
+  // Both ends of Cull's curve scale; the threshold where it starts to climb is
+  // the rank's shape, not a payload, so a damage stat never moves it.
+  "execute-strike": ["damageMult", "executeMult"],
   "root-strike": ["damageMult"], // NOT rootMs
   // Only the strike rider — Technique Power must never lengthen a dash.
   reposition: ["empowerMult"],
@@ -488,7 +498,8 @@ export const TECHNIQUE_POWER_FIELDS: Partial<
   // `spread-dots` is absent on purpose — `radius` is reach and `maxTargets` is
   // breadth, and Technique Power buys neither (same rule that keeps it off
   // Snipe's range and every control duration).
-  // `bramble`, `attack-speed`, `expose-weakness` are absent on purpose.
+  // `bramble` and `dodge-window` are absent on purpose (Guards never scale with
+  // Technique Power).
 };
 
 /**
@@ -507,9 +518,7 @@ export const ABILITY_MULTIHIT_MODE: Record<
   cleave: "distribute",
   // A cast is a single deliberate action — never once per bullet.
   "cast-strike": "first-hit",
-  empower: "first-hit",
-  "expose-weakness": "first-hit",
-  "slow-strike": "first-hit",
+  "execute-strike": "first-hit",
   "root-strike": "first-hit",
   // A dash happens once; a reflect window is a state, not a per-bullet payload.
   reposition: "first-hit",
@@ -517,10 +526,10 @@ export const ABILITY_MULTIHIT_MODE: Record<
   "damage-reduction": "first-hit",
   cleanse: "first-hit",
   heal: "first-hit",
-  "attack-speed": "first-hit",
+  "dodge-window": "first-hit",
   "break-free": "first-hit",
-  // A cast is one deliberate action. Spreading or detonating once per bullet
-  // would let a magazine copy the same DoTs five times over.
+  // Spreading or detonating once per bullet would let a magazine copy the same
+  // DoTs five times over: armed Contagion lands on the clip's first hit only.
   "spread-dots": "first-hit",
   "detonate-dots": "first-hit",
   // Imbue is a window, not a payload — it is never armed onto an attack cycle,
@@ -530,17 +539,18 @@ export const ABILITY_MULTIHIT_MODE: Record<
 
 // ── The roster ───────────────────────────────────────────────────────────────
 //
-// 21 authored abilities across T1-T4. Technique and Guard are semantic families;
-// all attuned tools reserve RP, without family capacity caps.
+// 19 authored abilities across T1-T4 (the ability pass, design §22.2 and §22.8:
+// 11 Techniques, 8 Guards). Technique and Guard are semantic families; all
+// attuned tools reserve RP, without family capacity caps.
 //
 // ALL NUMBERS ARE FIRST-PASS SEEDS. They express relative roles and give the
 // simulation a coherent starting point; the balance pass owns the values.
 
 const abilities: AbilityDef[] = [
   // ── T1: the fundamentals ───────────────────────────────────────────────────
-  // Three Techniques (distribute damage / amplify damage / deal burst) and three
-  // Guards (prevent / recover / remove), so the first tier teaches the whole
-  // decision space before adding a single new verb.
+  // Three Techniques (distribute damage / close the gap / deal burst) and four
+  // Guards (recover / remove / endure / avoid), so the first tier teaches the
+  // whole decision space before adding a single new verb.
   {
     id: "sweep",
     attunementCost: 4,
@@ -663,84 +673,6 @@ const abilities: AbilityDef[] = [
     ],
   },
   {
-    id: "power-strike",
-    attunementCost: 4,
-    name: "Power Strike",
-    slot: "technique",
-    shape: "cast",
-    tags: [],
-    blurb: "Wind up a devastating blow. You stop attacking while it charges — and hard control breaks it.",
-    tier: 1,
-    icon: "power-strike",
-    // THE REFERENCE ALL-DAMAGE CAST. Every other cast Technique spends part of
-    // its budget on range or control and must therefore deal less than this at
-    // comparable progression. Its only axis is damage, so that is the only axis
-    // its ranks touch.
-    ranks: [
-      { effect: { kind: "cast-strike", damageMult: 3.0 }, cooldownMs: 10000, castMs: 1600 },
-      { effect: { kind: "cast-strike", damageMult: 3.5 }, cooldownMs: 10000, castMs: 1600 },
-      { effect: { kind: "cast-strike", damageMult: 4.0 }, cooldownMs: 10000, castMs: 1600 },
-      { effect: { kind: "cast-strike", damageMult: 4.5 }, cooldownMs: 10000, castMs: 1600 },
-    ],
-  },
-  {
-    id: "expose-weakness",
-    attunementCost: 5,
-    name: "Expose Weakness",
-    slot: "technique",
-    shape: "armed",
-    tags: [],
-    blurb: "Arms your next attack to expose the target, increasing all damage it takes.",
-    tier: 1,
-    icon: "expose-weakness",
-    // Vulnerability is capped EARLY and deliberately: a multiplicative
-    // damage-taken effect scales with the whole build and with every other
-    // attacker, so once it reaches its band the next rank buys uptime instead.
-    ranks: [
-      { effect: { kind: "expose-weakness", damageTakenPct: 0.15, durationMs: 4000 }, cooldownMs: 12000 },
-      { effect: { kind: "expose-weakness", damageTakenPct: 0.175, durationMs: 4000 }, cooldownMs: 12000 },
-      { effect: { kind: "expose-weakness", damageTakenPct: 0.2, durationMs: 4000 }, cooldownMs: 12000 },
-      { effect: { kind: "expose-weakness", damageTakenPct: 0.2, durationMs: 5000 }, cooldownMs: 12000 },
-    ],
-  },
-
-  // ── T2: positioning, soft control, sustained mitigation ────────────────────
-  {
-    id: "hamstring",
-    attunementCost: 2,
-    name: "Hamstring",
-    slot: "technique",
-    shape: "armed",
-    tags: ["control"],
-    blurb: "Arms your next attack to cripple the target's stride.",
-    tier: 2,
-    icon: "hamstring",
-    // Rung one of the control ladder: movement slowed, actions untouched. The
-    // control eats most of the power budget, which is why the damage rider sits
-    // far below Power Strike.
-    ranks: [
-      { effect: { kind: "slow-strike", damageMult: 1.15, slowPct: 0.4, slowDurationMs: 3000 }, cooldownMs: 6000 },
-      { effect: { kind: "slow-strike", damageMult: 1.2, slowPct: 0.45, slowDurationMs: 3500 }, cooldownMs: 6000 },
-      { effect: { kind: "slow-strike", damageMult: 1.25, slowPct: 0.5, slowDurationMs: 4000 }, cooldownMs: 5500 },
-    ],
-  },
-  {
-    id: "bramble-guard",
-    attunementCost: 2,
-    name: "Bramble Guard",
-    slot: "guard",
-    shape: "instant",
-    tags: ["mitigation"],
-    blurb: "Harden your skin with thorns — gain armor and injure attackers who strike you.",
-    tier: 2,
-    icon: "bramble-guard",
-    ranks: [
-      { effect: { kind: "bramble", platingBonus: 6, reflectFlat: 6, durationMs: 5000 }, cooldownMs: 12000 },
-      { effect: { kind: "bramble", platingBonus: 8, reflectFlat: 10, durationMs: 5000 }, cooldownMs: 12000 },
-      { effect: { kind: "bramble", platingBonus: 10, reflectFlat: 14, durationMs: 5000 }, cooldownMs: 12000 },
-    ],
-  },
-  {
     id: "charge",
     attunementCost: 3,
     name: "Charge",
@@ -748,12 +680,25 @@ const abilities: AbilityDef[] = [
     shape: "charge",
     tags: ["mobility"],
     blurb: "Wind up, then surge across the gap and land the next blow with the weight of the rush.",
-    tier: 2,
+    tier: 1,
     icon: "charge",
+    // Re-homed from T2 Desert 3 to T1 Cave 3 by the ability pass (design §22.2):
+    // the tutorial teaches it at the Cave in Expose Weakness's old place. Rank I is
+    // the new T1 rank and copies the T2 rank's numbers (no new number); ranks
+    // II–IV are the old T2–T4 ranks, unchanged and not re-indexed.
+    //
     // Distance never scales — the movement itself is part of the budget, and a
     // longer dash is not a "deeper" ability. Ranks buy the strike rider, then
     // frequency.
     ranks: [
+      {
+        effect: { kind: "reposition", distance: 300, toward: true, empowerMult: 2.2 },
+        cooldownMs: 9000,
+        castMs: 400,
+        chargeSpeedMult: 4,
+        chargeMaxMs: 1500,
+        rangeBonus: 300,
+      },
       {
         effect: { kind: "reposition", distance: 300, toward: true, empowerMult: 2.2 },
         cooldownMs: 9000,
@@ -781,6 +726,119 @@ const abilities: AbilityDef[] = [
     ],
   },
   {
+    id: "slam",
+    attunementCost: 4,
+    name: "Slam",
+    slot: "technique",
+    shape: "cast",
+    tags: [],
+    blurb:
+      "Wind up and drive the blow into the ground, striking everything around the impact. You stop attacking while it charges — and hard control breaks it.",
+    tier: 1,
+    lineageId: "slam",
+    icon: "slam",
+    // THE BURST CAST (design §22.2, ability pass 2026-10-06): Slam absorbed Power
+    // Strike and re-homed from T2 Mountain 9 to T1 Mountain 5, Power Strike's
+    // slot. Rank I is the new T1 rank and the single-target-leaning one: the
+    // biggest multiplier per body, still cast with Slam's radius. Its damageMult
+    // is the one number the ability pass authored, by the lab's parity rule
+    // (§22.1: the T1 boss kits swapped Expose Weakness for Slam, and every class
+    // must hold its T1 boss DPS within ±5%; reports/ability-pass/). Its cooldown
+    // and wind-up are Power Strike's. Ranks II–IV are the old T2–T4 ranks,
+    // unchanged and not re-indexed.
+    //
+    // It favours heavy, slow builds WITHOUT ever asking about attack speed:
+    // it scales from Attack, its wind-up ignores attack cadence, and casting
+    // stops ordinary attacking — so the faster the build, the more real damage
+    // the 1.6 s commitment costs it. No inverse-speed multiplier, no weapon
+    // tags, no cadence query. Cast speed still shortens the wind-up through the
+    // ordinary `technique.cast-speed-pct` seam, which is a separate, intended
+    // synergy.
+    //
+    // The radius is authored and NEVER scales: `TECHNIQUE_POWER_FIELDS` lists
+    // only `damageMult` for `cast-strike`, so a damage stat can never buy reach
+    // — the same rule that keeps Technique Power off Snipe's range. Held flat
+    // across ranks for the first implementation; breadth is the identity, and
+    // widening it is a balance decision to make against measured data.
+    ranks: [
+      // Rank I: PLACEHOLDER (a copy of rank II) until the parity run authors it.
+      { effect: { kind: "cast-strike", damageMult: 1.75, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
+      { effect: { kind: "cast-strike", damageMult: 1.75, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
+      { effect: { kind: "cast-strike", damageMult: 2.0, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
+      { effect: { kind: "cast-strike", damageMult: 2.25, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
+    ],
+  },
+  {
+    id: "sidestep",
+    // PROVISIONAL: priced like Brace, the other burst Guard (net of its In
+    // Combat reference wiring, abilityWiring.ts).
+    attunementCost: 3,
+    name: "Sidestep",
+    slot: "guard",
+    shape: "instant",
+    tags: ["mobility"],
+    blurb: "Slip aside — for a moment you are hard to hit and quick on your feet.",
+    tier: 1,
+    icon: "sidestep",
+    // THE AVOID GUARD (design §22.8). Second Wind and Recuperate are Sustain;
+    // Brace, Endure and Bramble Guard are Endure; Cleanse and Break Free are
+    // removal — so a Light-frame player had no Guard of their own. It is not
+    // Disengage: Disengage moves you out of contact, Sidestep stays and dodges.
+    //
+    // NO NUMBER IN THIS FILE beyond the rank shape: the evasion window and the
+    // move-speed burst both come from the lineage magnitude table's units at the
+    // rank's tier (`sidestepWindow` in abilityMagnitudes.ts), so the window is the
+    // `evasion-window` payoff's own and the burst ends with it. The cooldown is
+    // Brace's (PROVISIONAL). Situational: it does not fire with nothing in reach.
+    ranks: [
+      { effect: { kind: "dodge-window" }, cooldownMs: 10000 },
+      { effect: { kind: "dodge-window" }, cooldownMs: 10000 },
+      { effect: { kind: "dodge-window" }, cooldownMs: 10000 },
+      { effect: { kind: "dodge-window" }, cooldownMs: 10000 },
+    ],
+  },
+
+  // ── T2: positioning, soft control, sustained mitigation ────────────────────
+  {
+    id: "binding-strike",
+    attunementCost: 2,
+    name: "Binding Strike",
+    slot: "technique",
+    shape: "armed",
+    tags: ["control"],
+    blurb: "Arms your next attack to pin the target where it stands.",
+    tier: 2,
+    icon: "binding-strike",
+    // Re-homed from T3 Tundra 3 to T2 Jungle 3 by the ability pass (design §22.2),
+    // Hamstring's slot: the root is the T2 control. Rank I is the new T2 rank and
+    // copies the old T3 rank's numbers; ranks II–III are the old T3–T4 ranks.
+    //
+    // Rung two of the ladder. Root stops MOVEMENT only: a rooted monster still
+    // swings at anything already in its reach. That is what keeps root
+    // structurally distinct from stun rather than a weaker number of it.
+    ranks: [
+      { effect: { kind: "root-strike", damageMult: 1.2, rootMs: 1500 }, cooldownMs: 8000 },
+      { effect: { kind: "root-strike", damageMult: 1.2, rootMs: 1500 }, cooldownMs: 8000 },
+      { effect: { kind: "root-strike", damageMult: 1.3, rootMs: 2000 }, cooldownMs: 8000 },
+    ],
+  },
+  {
+    id: "bramble-guard",
+    attunementCost: 2,
+    name: "Bramble Guard",
+    slot: "guard",
+    shape: "instant",
+    tags: ["mitigation"],
+    blurb: "Harden your skin with thorns — gain armor and injure attackers who strike you.",
+    tier: 2,
+    icon: "bramble-guard",
+    ranks: [
+      { effect: { kind: "bramble", platingBonus: 6, reflectFlat: 6, durationMs: 5000 }, cooldownMs: 12000 },
+      { effect: { kind: "bramble", platingBonus: 8, reflectFlat: 10, durationMs: 5000 }, cooldownMs: 12000 },
+      { effect: { kind: "bramble", platingBonus: 10, reflectFlat: 14, durationMs: 5000 }, cooldownMs: 12000 },
+    ],
+  },
+  {
     id: "endure",
     attunementCost: 4,
     name: "Endure",
@@ -805,13 +863,19 @@ const abilities: AbilityDef[] = [
     attunementCost: 5,
     name: "Contagion",
     slot: "technique",
-    shape: "cast",
+    shape: "armed",
     tags: [],
     blurb:
-      "Cast the target's afflictions outward — every burn, poison and frost you put on it takes hold in the enemies around it.",
+      "Arms your next attack to spread the target's afflictions outward — every burn, poison and frost you put on it takes hold in the enemies around it.",
     tier: 2,
     lineageId: "affliction",
     icon: "contagion",
+    // ARMED since the ability pass (design §22.9: a cast iff the ability deals its
+    // own damage). Contagion deals none, so it waits for your next hit instead of
+    // winding up, and spreads what THAT hit's target carries. On a Conduit it
+    // rides the formation-rider adapter Sweep uses: the first summon hit that
+    // lands it spreads once.
+    //
     // NOT called "Spread": the rune catalog already ships an action displayed as
     // "Spread DoTs" (the Multidot targeting behavior), and two unrelated things
     // wearing one name in the same build UI is a support ticket waiting to happen.
@@ -828,71 +892,88 @@ const abilities: AbilityDef[] = [
     // Learn to spread first, learn to cash in second. Each tool then competes
     // with the rest of the attuned build for RP.
     ranks: [
-      { effect: { kind: "spread-dots", radius: 120, maxTargets: 5 }, cooldownMs: 14000, castMs: 1000 },
-      { effect: { kind: "spread-dots", radius: 150, maxTargets: 6 }, cooldownMs: 12000, castMs: 1000 },
-      { effect: { kind: "spread-dots", radius: 180, maxTargets: 7 }, cooldownMs: 9000, castMs: 1000 },
+      { effect: { kind: "spread-dots", radius: 120, maxTargets: 5 }, cooldownMs: 14000 },
+      { effect: { kind: "spread-dots", radius: 150, maxTargets: 6 }, cooldownMs: 12000 },
+      { effect: { kind: "spread-dots", radius: 180, maxTargets: 7 }, cooldownMs: 9000 },
     ],
   },
 
   {
-    id: "slam",
-    attunementCost: 4,
-    name: "Slam",
+    id: "snipe",
+    attunementCost: 3,
+    name: "Snipe",
     slot: "technique",
     shape: "cast",
     tags: [],
-    blurb:
-      "Wind up and drive the blow into the ground, striking everything around the impact. You stop attacking while it charges — and hard control breaks it.",
+    blurb: "Line up a deliberate shot from far outside your usual reach.",
     tier: 2,
-    lineageId: "slam",
-    icon: "slam",
-    // POWER STRIKE'S AoE COUNTERPART, NOT ITS REPLACEMENT. Both stay learnable,
-    // attunable and useful at the same time; the RP budget is the only thing
-    // that makes them compete.
+    icon: "snipe",
+    // Re-homed from T4 Graveyard 3 to T2 Desert 3 by the ability pass (design
+    // §22.8, Charge's old slot): Snipe is the ranged opener, and a ranged build had
+    // none until the last tier while melee had Charge at T1. Rank I is the new T2
+    // rank and copies the T4 rank's numbers; the T4 rank stays as rank II (read at
+    // T3 and T4). Its +300 reach and hold-position are unchanged.
     //
-    // The relationship is arithmetic and deliberate: Slam deals exactly HALF
-    // Power Strike's multiplier per target at the same tier (T2 1.75 vs 3.5,
-    // T3 2.0 vs 4.0, T4 2.25 vs 4.5). One target is a clear loss, two targets
-    // is a wash on raw Attack multiple, three or more is a clear win. That
-    // crossover is the whole decision, so it must survive every later tier.
-    //
-    // It favours heavy, slow builds WITHOUT ever asking about attack speed:
-    // it scales from Attack, its wind-up ignores attack cadence, and casting
-    // stops ordinary attacking — so the faster the build, the more real damage
-    // the 1.6 s commitment costs it. No inverse-speed multiplier, no weapon
-    // tags, no cadence query. Cast speed still shortens the wind-up through the
-    // ordinary `technique.cast-speed-pct` seam, which is a separate, intended
-    // synergy.
-    //
-    // The radius is authored and NEVER scales: `TECHNIQUE_POWER_FIELDS` lists
-    // only `damageMult` for `cast-strike`, so a damage stat can never buy reach
-    // — the same rule that keeps Technique Power off Snipe's range. Held flat
-    // across ranks for the first implementation; breadth is the identity, and
-    // widening it is a balance decision to make against measured data.
+    // Less damage than Power Strike IV on purpose: part of the budget is spent on
+    // extraordinary range. `rangeBonus` extends the ABILITY only, so a melee
+    // character gains a ranged tool without becoming a ranged basic-attacker.
     ranks: [
-      { effect: { kind: "cast-strike", damageMult: 1.75, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
-      { effect: { kind: "cast-strike", damageMult: 2.0, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
-      { effect: { kind: "cast-strike", damageMult: 2.25, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
+      {
+        effect: { kind: "cast-strike", damageMult: 3.0 },
+        cooldownMs: 12000,
+        castMs: 2000,
+        rangeBonus: 300,
+      },
+      {
+        effect: { kind: "cast-strike", damageMult: 3.0 },
+        cooldownMs: 12000,
+        castMs: 2000,
+        rangeBonus: 300,
+      },
     ],
   },
 
   // ── T3: tempo, and hard movement/control counterplay ───────────────────────
   {
-    id: "binding-strike",
-    attunementCost: 2,
-    name: "Binding Strike",
+    id: "imbue-lightning",
+    attunementCost: 4,
+    name: "Imbue Lightning",
     slot: "technique",
-    shape: "armed",
-    tags: ["control"],
-    blurb: "Arms your next attack to pin the target where it stands.",
+    shape: "instant",
+    tags: ["offensive-buff"],
+    blurb:
+      "Call the storm into your hands. Your next few strikes land with it — however long they take to land.",
     tier: 3,
-    icon: "binding-strike",
-    // Rung two of the ladder. Root stops MOVEMENT only: a rooted monster still
-    // swings at anything already in its reach. That is what keeps root
-    // structurally distinct from stun rather than a weaker number of it.
+    lineageId: "imbue",
+    icon: "imbue-lightning",
+    // The ability pass (design §22.2, §22.9) re-homed it from T4 Jungle 15 to T3
+    // Volcanic 3 (Frenzy's slot) and made it INSTANT: a self-buff needs no
+    // telegraph, so the charge window opens the moment it is activated, and like
+    // every instant Technique it neither claims nor waits for the offensive
+    // channel. Rank I is the new T3 rank and copies the T4 rank's numbers.
+    //
+    // The first CHARGE-based window in the roster.
+    //
+    // Charges rather than seconds is the whole identity. Every other offensive
+    // window in the game (the stance windows, Overdrive) races a clock,
+    // which punishes exactly the builds that attack slowly and rewards the ones
+    // that were already fastest. A charge window pays the same to everyone: five
+    // hits are five hits whether they take three seconds or ten. The cost of
+    // that fairness is the half-second tell and a cooldown you cannot shorten by
+    // fighting faster.
+    //
+    // `onHitDamage` is authored FLAT (the designer's call), which means it is
+    // Technique Power — not tiering — that keeps it alive past T4. Revisit the
+    // seed alongside T5 on-hit gear.
     ranks: [
-      { effect: { kind: "root-strike", damageMult: 1.2, rootMs: 1500 }, cooldownMs: 8000 },
-      { effect: { kind: "root-strike", damageMult: 1.3, rootMs: 2000 }, cooldownMs: 8000 },
+      {
+        effect: { kind: "imbue", onHitDamage: 45, charges: 5, element: "lightning" },
+        cooldownMs: 9000,
+      },
+      {
+        effect: { kind: "imbue", onHitDamage: 45, charges: 5, element: "lightning" },
+        cooldownMs: 9000,
+      },
     ],
   },
   {
@@ -910,42 +991,6 @@ const abilities: AbilityDef[] = [
     ranks: [
       { effect: { kind: "break-free" }, cooldownMs: 14000 },
       { effect: { kind: "break-free", controlResistPct: 0.5, controlResistMs: 3000 }, cooldownMs: 12000 },
-    ],
-  },
-  {
-    id: "frenzy",
-    attunementCost: 4,
-    name: "Frenzy",
-    slot: "technique",
-    shape: "instant",
-    tags: ["offensive-buff"],
-    blurb: "Cut loose — your hands move faster for a few furious seconds.",
-    tier: 3,
-    icon: "frenzy",
-    // ATTACK SPEED ONLY. No damage, no crit, no on-hit, no movement. Attack speed
-    // already interacts with every class engine — basic attacks, on-hit procs,
-    // energy generation, cadence, DoT application — and that is identity enough.
-    ranks: [
-      { effect: { kind: "attack-speed", attackSpeedPct: 0.3, durationMs: 4000 }, cooldownMs: 10000 },
-      { effect: { kind: "attack-speed", attackSpeedPct: 0.35, durationMs: 5000 }, cooldownMs: 10000 },
-    ],
-  },
-  {
-    id: "quick-strike",
-    attunementCost: 3,
-    name: "Quick Strike",
-    slot: "technique",
-    shape: "armed",
-    tags: [],
-    blurb: "A small, fast opening — nothing special, and always ready.",
-    tier: 3,
-    icon: "quick-strike",
-    // The "spam skill" archetype, deliberately much weaker per activation than a
-    // normal Technique. Its value is FREQUENCY, which is what makes it the build
-    // option for anything that cares about how often you use a Technique.
-    ranks: [
-      { effect: { kind: "empower", damageMult: 1.25 }, cooldownMs: 3000 },
-      { effect: { kind: "empower", damageMult: 1.3 }, cooldownMs: 2500 },
     ],
   },
   {
@@ -979,6 +1024,42 @@ const abilities: AbilityDef[] = [
     ranks: [
       { effect: { kind: "detonate-dots", detonateMult: 3.6, classDotMult: 2.0 }, cooldownMs: 15000, castMs: 1200 },
       { effect: { kind: "detonate-dots", detonateMult: 4.0, classDotMult: 2.0 }, cooldownMs: 12000, castMs: 1200 },
+    ],
+  },
+  {
+    id: "cull",
+    // PROVISIONAL: priced like Power Strike was (net of its In Combat reference
+    // wiring, abilityWiring.ts).
+    attunementCost: 4,
+    name: "Cull",
+    slot: "technique",
+    shape: "cast",
+    tags: [],
+    blurb: "Wind up a finishing blow that hits harder the weaker the target is. A kill readies it again.",
+    tier: 3,
+    icon: "cull",
+    // THE KILL-SHAPED TECHNIQUE (design §22.8): no ability was kill-shaped although
+    // Kill chain is a lane on three lineages. A cast, because it deals its own
+    // damage (§22.9), scaled by Technique Power.
+    //
+    // The curve IS the rank's shape: `damageMult` at or above `thresholdPct` of the
+    // target's max HP, climbing linearly to `executeMult` at zero. A kill refunds
+    // Cull's own cooldown (abilityCasting.ts). PROVISIONAL numbers, borrowed rather
+    // than invented: the top of the curve is Slam's per-body multiple at the same
+    // tier and the bottom is the retired Power Strike's single-target one (T3 2.0 →
+    // 4.0, T4 2.25 → 4.5), starting at half health; the cooldown and wind-up are
+    // Power Strike's.
+    ranks: [
+      {
+        effect: { kind: "execute-strike", damageMult: 2.0, executeMult: 4.0, thresholdPct: 0.5 },
+        cooldownMs: 10000,
+        castMs: 1600,
+      },
+      {
+        effect: { kind: "execute-strike", damageMult: 2.25, executeMult: 4.5, thresholdPct: 0.5 },
+        cooldownMs: 10000,
+        castMs: 1600,
+      },
     ],
   },
 
@@ -1019,28 +1100,6 @@ const abilities: AbilityDef[] = [
     ],
   },
   {
-    id: "snipe",
-    attunementCost: 3,
-    name: "Snipe",
-    slot: "technique",
-    shape: "cast",
-    tags: [],
-    blurb: "Line up a deliberate shot from far outside your usual reach.",
-    tier: 4,
-    icon: "snipe",
-    // Less damage than Power Strike IV on purpose: part of the budget is spent on
-    // extraordinary range. `rangeBonus` extends the ABILITY only, so a melee
-    // character gains a ranged tool without becoming a ranged basic-attacker.
-    ranks: [
-      {
-        effect: { kind: "cast-strike", damageMult: 3.0 },
-        cooldownMs: 12000,
-        castMs: 2000,
-        rangeBonus: 300,
-      },
-    ],
-  },
-  {
     id: "stunning-strike",
     attunementCost: 4,
     name: "Stunning Strike",
@@ -1058,39 +1117,6 @@ const abilities: AbilityDef[] = [
         effect: { kind: "cast-strike", damageMult: 2.3, stunMs: 1500 },
         cooldownMs: 14000,
         castMs: 1500,
-      },
-    ],
-  },
-  {
-    id: "imbue-lightning",
-    attunementCost: 4,
-    name: "Imbue Lightning",
-    slot: "technique",
-    shape: "self-cast",
-    tags: ["offensive-buff"],
-    blurb:
-      "Call the storm into your hands. Your next few strikes land with it — however long they take to land.",
-    tier: 4,
-    lineageId: "imbue",
-    icon: "imbue-lightning",
-    // The first `self-cast`, and the first CHARGE-based window in the roster.
-    //
-    // Charges rather than seconds is the whole identity. Every other offensive
-    // window in the game (Frenzy, the stance windows, Overdrive) races a clock,
-    // which punishes exactly the builds that attack slowly and rewards the ones
-    // that were already fastest. A charge window pays the same to everyone: five
-    // hits are five hits whether they take three seconds or ten. The cost of
-    // that fairness is the half-second tell and a cooldown you cannot shorten by
-    // fighting faster.
-    //
-    // `onHitDamage` is authored FLAT (the designer's call), which means it is
-    // Technique Power — not tiering — that keeps it alive past T4. Revisit the
-    // seed alongside T5 on-hit gear.
-    ranks: [
-      {
-        effect: { kind: "imbue", onHitDamage: 45, charges: 5, element: "lightning" },
-        cooldownMs: 9000,
-        castMs: 500,
       },
     ],
   },
@@ -1127,12 +1153,40 @@ export const RENAMED_ABILITY_IDS: Record<string, string> = {
   // Charged Strike became the T1 Mountain **Power Strike** lineage: the same
   // wind-up-then-deliver cast, re-homed a tier earlier as the reference
   // all-damage cast. Saves that learned it keep it.
+  //
+  // Both targets were later CUT (the ability pass, below), so these two renames
+  // now resolve to a retired id and drop with it — kept, because removing an
+  // entry would let a renamed id slip past the retirement as an unknown one.
   "charged-strike": "power-strike",
 };
 
 /** Map a persisted id through {@link RENAMED_ABILITY_IDS}. */
 export function currentAbilityId(id: string): string {
   return RENAMED_ABILITY_IDS[id] ?? id;
+}
+
+/**
+ * Player abilities the ability pass CUT (design §22.2, 2026-10-02): each one's
+ * job moved to a lane payoff, and Power Strike merged into Slam. A save that still
+ * names one — known, attuned, wired by a `use-ability` Rune rule, or holding node
+ * progress — drops it on load (`attunementMigration.ts`), and the load logs one
+ * line per character. Additive-only, like {@link RENAMED_ABILITY_IDS}.
+ *
+ * PLAYER ability ids only. Several share a name with a monster id ('frenzy' is a
+ * boss buff and an fx, 'power-strike' a monster attack style); nothing here
+ * touches those.
+ */
+export const RETIRED_ABILITY_IDS: readonly string[] = [
+  "expose-weakness",
+  "power-strike",
+  "hamstring",
+  "frenzy",
+  "quick-strike",
+];
+
+/** True when a persisted ability id (after renames) names a cut ability. */
+export function isRetiredAbilityId(id: string): boolean {
+  return RETIRED_ABILITY_IDS.includes(currentAbilityId(id));
 }
 
 /**
@@ -1239,6 +1293,16 @@ export function validateAbilities(): string[] {
         errors.push(`${label} changes effect kind ${kind} -> ${rank.effect.kind}.`);
       }
       if (rank.cooldownMs <= 0) errors.push(`${label} has a non-positive cooldown.`);
+      // Cull's curve must climb: a threshold outside (0, 1] or an execute end
+      // below the base would make "hits harder the lower the target" false.
+      if (rank.effect.kind === "execute-strike") {
+        if (!(rank.effect.thresholdPct > 0 && rank.effect.thresholdPct <= 1)) {
+          errors.push(`${label} authors an execute threshold outside (0, 1].`);
+        }
+        if (!(rank.effect.executeMult >= rank.effect.damageMult)) {
+          errors.push(`${label} authors an execute curve that falls as health falls.`);
+        }
+      }
       // Absence gates Tempo; an authored 0 would be encoding "no Tempo" as a
       // number, which is exactly the shape the component rules forbid.
       if (rank.effect.kind === "cleave" && rank.effect.tempoRefundMs !== undefined) {

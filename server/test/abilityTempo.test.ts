@@ -307,8 +307,8 @@ initCombatSystems();
   );
 }
 
-// 3c. Cast payloads (Slam, Power Strike) pay nothing.
-for (const castId of ["slam", "power-strike"]) {
+// 3c. Cast payloads (Slam, Cull) pay nothing.
+for (const castId of ["slam", "cull"]) {
   const { world, player } = spawn(`tempo-cast-${castId}`, {
     techniques: ["sweep", castId],
   });

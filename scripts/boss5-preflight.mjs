@@ -112,7 +112,7 @@ for(const BLOCK of BOSS5_BLOCKS){
 
   // ── THE TIER-LEGAL REFERENCE SHAPE, as declared for this tier.
   const ref=BLOCK.kind==='cave-refinement'
-   ? {stance:'defensive-stance',techniques:['expose-weakness']}
+   ? {stance:'defensive-stance',techniques:['slam']}
    : BOSS5_TIER_REFERENCE[BLOCK.tier];
   assert.equal(d.stance,ref.stance,`${ready.cell}: stance is not the tier reference (${ref.stance})`);
   assert.deepEqual(d.abilities.techniques,ref.techniques,

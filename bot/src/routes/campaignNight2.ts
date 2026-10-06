@@ -14,7 +14,7 @@ export const CAMPAIGN_NIGHT2_ROUTES: Route[] = ["cave-control", "cave-telegraph-
     }
     if (step.type === "configureBuild" && step.label?.endsWith(":build")) {
       return { ...step, label: `${tag}:build`, build: { ...step.build,
-        abilities: group === "jungle" ? { techniques: ["hamstring"], guards: ["second-wind", "brace"] } : step.build.abilities,
+        abilities: group === "jungle" ? { techniques: ["binding-strike"], guards: ["second-wind", "brace"] } : step.build.abilities,
         runeRules: [...step.build.runeRules, ...(arm === "cave-telegraph-brace"
           ? [{ conditionId: "inside-telegraph", actionId: "use-ability", targetAbilityId: "brace" }] : [])],
       } };
@@ -27,7 +27,7 @@ export const CAMPAIGN_NIGHT2_ROUTES: Route[] = ["cave-control", "cave-telegraph-
     return step;
   });
   if (group === "jungle") steps.splice(steps.length - 5, 0, {
-    type: "learnAbility", recipeId: "ability-recipe-hamstring", abilityId: "hamstring", slot: "technique", attune: false,
+    type: "learnAbility", recipeId: "ability-recipe-binding-strike", abilityId: "binding-strike", slot: "technique", attune: false,
     farmAt: { kind: "biome", biomeGroup: "jungle", tier: 2 },
   });
   return { ...cave, id: `spirit-${arm}-t2-night2`, version: "1.0.0",

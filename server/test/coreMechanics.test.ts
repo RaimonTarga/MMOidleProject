@@ -54,13 +54,13 @@ const cfg = (over: Partial<StatusEffectConfig>): StatusEffectConfig => ({
 // A `fraction` field holds the magnitude directly.
 {
   const out = scaleDebuffConfig(
-    cfg({ id: "expose-weakness", data: { damageTakenPct: 0.2 } }),
+    cfg({ id: "dot-frostbite", data: { dotTakenPerStack: 0.2 } }),
     1,
     1.5,
   );
   assert(
-    Math.abs((out.data!.damageTakenPct) - 0.3) < 1e-9,
-    `fraction field should scale directly: got ${out.data!.damageTakenPct}`,
+    Math.abs((out.data!.dotTakenPerStack) - 0.3) < 1e-9,
+    `fraction field should scale directly: got ${out.data!.dotTakenPerStack}`,
   );
 }
 

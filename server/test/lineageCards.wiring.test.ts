@@ -625,14 +625,14 @@ function withSweepOnCooldown(
   // shapes — the ones the bench's reference wiring attunes — worked, so nothing
   // measured it. Driven here through `beginAbilityCast` + `updateAbilityCasts` so
   // the ordering is what is under test, not the helper.
-  const CAST = ABILITY_DATABASE.get('power-strike');
-  assert(CAST?.shape === 'cast', 'power-strike should be the cast-shape Technique');
+  const CAST = ABILITY_DATABASE.get('slam');
+  assert(CAST?.shape === 'cast', 'slam should be the cast-shape Technique');
   const player = spawn('lc-tech-refund-cast', [seededCard({
     trigger: { kind: 'technique-cast' },
     payoff: { kind: 'technique-refund', magnitude: 0.25 },
     fx: 'technique.cast-flare', lane: 'technique',
   })]);
-  player.tracksProgression.attunedAbilities.techniques = ['power-strike'];
+  player.tracksProgression.attunedAbilities.techniques = ['slam'];
   const target = monster(560);
   setAttackTarget(world, player, target.isMonster.id);
 
@@ -640,7 +640,7 @@ function withSweepOnCooldown(
   updateAbilityCasts(world, 1_000 + 60_000); // well past the wind-up
 
   assert(cardFx().length === 1, 'a resolved cast Technique should fire the card once');
-  const left = getCooldown(player.tracksCombat, abilityCooldownKey('power-strike'));
+  const left = getCooldown(player.tracksCombat, abilityCooldownKey('slam'));
   assert(left > 0, 'the cast should be on cooldown after it resolves');
   const full = CAST!.ranks[0]!.cooldownMs;
   assert(

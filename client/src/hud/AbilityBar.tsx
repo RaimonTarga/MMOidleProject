@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useAtomValue } from "jotai";
 import {
-  ABILITY_FRENZY_EFFECT_ID,
+  ABILITY_IMBUE_EFFECT_ID,
+  ABILITY_SIDESTEP_EFFECT_ID,
   NO_STANCE_ID,
   STANCE_SWITCH_COOLDOWN_MS,
   abilityCooldownMs,
@@ -618,9 +619,10 @@ export function AbilityBar() {
         slot === "guard"
           ? buffById.get(guardEffectIdForAbility(ability.id) ?? "") ??
             buffById.get(recoveryEffectIdForAbility(ability.id) ?? "") ??
-            (ability.id === "bramble-guard" ? buffById.get("ability-bramble") : undefined)
+            (ability.id === "bramble-guard" ? buffById.get("ability-bramble") : undefined) ??
+            (ability.id === "sidestep" ? buffById.get(ABILITY_SIDESTEP_EFFECT_ID) : undefined)
           : ability.shape === "instant"
-            ? buffById.get(ABILITY_FRENZY_EFFECT_ID)
+            ? buffById.get(ABILITY_IMBUE_EFFECT_ID)
             : undefined;
       const activePct = activeBuff && activeBuff.durationPct >= 0
         ? activeBuff.durationPct

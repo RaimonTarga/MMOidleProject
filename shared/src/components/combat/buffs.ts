@@ -112,7 +112,8 @@ export const BUFF_IDS = [
   // equipped together, so they need independent windows and tiles.
   'ability-second-wind',
   'ability-second-wind-2',
-  'ability-frenzy',
+  // Sidestep's window (design §22.8): evade chance and move speed on one clock.
+  'ability-sidestep',
   // Imbue Lightning's charge window. Not timed — the badge IS the state, so it
   // is one of the few buffs that must show its count even at one.
   'ability-imbue',

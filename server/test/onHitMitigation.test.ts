@@ -72,7 +72,7 @@ function damage(onHit: number, plating: number, dr: number, mode = 'normal', cat
     player.usesSkills.passives['cadence.empowered-mult'] = 3;
     setEmpoweredAttack(world, player);
   }
-  if (mode === 'power-strike') resolveCastPayload(world, player, ABILITY_DATABASE.get('power-strike')!, target);
+  if (mode === 'slam') resolveCastPayload(world, player, ABILITY_DATABASE.get('slam')!, target);
   else if (mode === 'laser') {
     player.usesSkills.passives['reload.laser'] = 1;
     player.usesSkills.passives['reload.laser-damage-per-tick-pct'] = 1;
@@ -87,7 +87,7 @@ for (const [plating, dr, expected] of [[40, 0.5, 40], [110, 0.5, 5], [140, 0.5, 
 for (const mode of ['normal', 'empowered', 'laser']) {
   eq(damage(20, 40, 0.5, mode) - damage(0, 40, 0.5, mode), 10, `${mode}: DR halves flat bonus without empowered scaling`);
 }
-eq(damage(20, 40, 0.5, 'power-strike'), damage(0, 40, 0.5, 'power-strike'), 'Power Strike is an independent cast and does not multiply on-hit');
+eq(damage(20, 40, 0.5, 'slam'), damage(0, 40, 0.5, 'slam'), 'Slam is an independent cast and does not multiply on-hit');
 eq(damage(20, 40, 0.5, 'normal', 1), 50, 'Catalyst scales the bonus before defenses');
 eq(mitigateOnHitDamage(20, 100, 110, 0.5), 4, 'remaining plating absorbs part of on-hit; the existing glancing floor is paid once');
 for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy', 'summoner']) {

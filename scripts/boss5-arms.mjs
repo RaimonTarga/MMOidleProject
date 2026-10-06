@@ -81,8 +81,8 @@ export const BOSS5_GUARDS = ['second-wind', 'brace'];
  */
 export const BOSS5_TIER_REFERENCE = {
  1: {stance: null, techniques: []},
- 3: {stance: 'defensive-stance', techniques: ['expose-weakness']},
- 4: {stance: 'defensive-stance', techniques: ['expose-weakness']},
+ 3: {stance: 'defensive-stance', techniques: ['slam']},
+ 4: {stance: 'defensive-stance', techniques: ['slam']},
 };
 
 /** The root a cell id names. Cell ids end in the root name. */

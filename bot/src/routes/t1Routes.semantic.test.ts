@@ -303,12 +303,14 @@ for (const route of T1_CONTROLLED_ROUTES) {
   const sweepAt = result.learnedAt.get("sweep");
   assert(sweepAt?.biomeLevels.plains === 2, `${route.id}: Sweep learned at Plains L2`);
   assert(result.bosses[0]?.technique === "sweep", `${route.id}: Plains boss exercises Sweep`);
-  const exposeAt = result.learnedAt.get("expose-weakness");
-  assert(exposeAt?.biomeLevels.cave === 3, `${route.id}: Expose Weakness learned at Cave L3`);
+  // Slam replaced Expose Weakness in the boss kits (design §22.2); its recipe is
+  // Mountain L5, learned during the Cave leg.
+  const slamAt = result.learnedAt.get("slam");
+  assert((slamAt?.biomeLevels.mountain ?? 0) >= 5, `${route.id}: Slam learned at Mountain L5+`);
 
   for (const boss of result.bosses) {
     assert(boss.gm === 30, `${route.id}: ${boss.biomeGroup} boss starts at GM30`);
-    const expectedTechnique = boss.biomeGroup === "plains" ? "sweep" : "expose-weakness";
+    const expectedTechnique = boss.biomeGroup === "plains" ? "sweep" : "slam";
     assert(boss.technique === expectedTechnique, `${route.id}: ${boss.biomeGroup} Technique`);
     const fireGuard = hasRule(boss.rules, "target-casting", "use-ability");
     assert(fireGuard === (boss.guard === "brace"), `${route.id}: fire-guard iff Brace at ${boss.biomeGroup}`);

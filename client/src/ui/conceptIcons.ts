@@ -15,11 +15,12 @@ const ABILITY_IDS = new Set([
   'detonate',
   'disengage',
   'endure',
+  // Expose Weakness and Hamstring were cut by the ability pass (design §22.2);
+  // their art stays because statuses still borrow it (`vulnerability` and the
+  // `ability-slowed` slow, TARGET_STATUS_ALIASES below).
   'expose-weakness',
-  'frenzy',
   'hamstring',
   'imbue-lightning',
-  'quick-strike',
   'recuperate',
   'second-wind',
   'slam',
@@ -29,14 +30,10 @@ const ABILITY_IDS = new Set([
 ]);
 
 /**
- * Ability ids whose art lives under an older filename. Power Strike is the T1
- * Mountain re-home of Charged Strike — the same wind-up-and-deliver cast — so it
- * keeps the art rather than falling back to a placeholder while a redraw waits
- * in the manifest.
+ * Ability ids whose art lives under an older filename. Empty since the ability
+ * pass cut Power Strike (it wore Charged Strike's art); kept as the seam.
  */
-const ABILITY_ICON_ALIASES: Record<string, string> = {
-  'power-strike': 'charged-strike',
-};
+const ABILITY_ICON_ALIASES: Record<string, string> = {};
 
 const CONDITION_IDS = new Set([
   'always',
@@ -119,12 +116,12 @@ const RITE_IDS = new Set([
 const BUFF_IDS = new Set([
   'ability-bramble',
   'ability-control-resist',
-  'ability-frenzy',
   'ability-guard',
   'ability-guard-2',
   'ability-imbue',
   'ability-second-wind',
   'ability-second-wind-2',
+  'ability-sidestep',
   'boss-regen',
   'cadence-accelerando',
   'cadence-aftershock',
@@ -345,16 +342,19 @@ const BUFF_ICON_ALIASES: Record<string, string> = {
   'summoner-frame-frenzy': 'summoner-coordinated-hunt',
   'summoner-frame-line': 'summoner-colossus',
   'summoner-frame-link': 'summoner-battle-bond',
+  // Sidestep has no art yet: its window is the evasion window, so it borrows the
+  // lineage Slip tile until its own icon is generated.
+  'ability-sidestep': 'lineage-evasion',
 };
 
 const BUFF_ABILITY_ICON_ALIASES: Record<string, string> = {
   'ability-control-resist': 'break-free',
-  'ability-frenzy': 'frenzy',
   'ability-imbue': 'imbue-lightning',
   'ability-second-wind': 'second-wind',
   'ability-second-wind-2': 'second-wind',
-  // Kata builds toward an empowered Technique; Power Strike is the Technique it most often empowers.
-  kata: 'power-strike',
+  // Kata builds toward an empowered Technique: the wind-up-and-deliver art (Charged
+  // Strike's, which Power Strike wore before the ability pass cut it into Slam).
+  kata: 'charged-strike',
 };
 
 /**
@@ -481,7 +481,6 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'tundra-rimebrand-burn': 'dot-chill',
   'rimebrand-burn': 'dot-chill',
   vulnerability: 'expose-weakness',
-  'expose-weakness': 'expose-weakness',
   'summoner-harried': 'summoner-harrier-brood',
   'summoner-withering-chorus': 'summoner-withering-chorus',
   'enemy-barrier': 'defense-absorb',

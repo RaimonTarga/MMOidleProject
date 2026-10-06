@@ -84,7 +84,7 @@ const pool = (m: ReturnType<typeof monsterAt>) =>
 initCombatSystems();
 
 // ── 1. A cast strike converts, exactly like a swing ─────────────────────────
-for (const abilityId of ["power-strike", "slam"]) {
+for (const abilityId of ["slam", "cull"]) {
   const ability = ABILITY_DATABASE.get(abilityId)!;
   const withWeapon = spawn(`${abilityId}-dot`, [abilityId], WEAPON);
   const bare = spawn(`${abilityId}-bare`, [abilityId], null);
@@ -134,9 +134,9 @@ for (const abilityId of ["power-strike", "slam"]) {
 
 // ── 4. Detonate does not refill what it consumes ────────────────────────────
 {
-  const { world, player } = spawn("detonate-dot", ["power-strike", "detonate"], WEAPON);
+  const { world, player } = spawn("detonate-dot", ["slam", "detonate"], WEAPON);
   const target = monsterAt(world, 430);
-  resolveCastPayload(world, player, ABILITY_DATABASE.get("power-strike")!, target);
+  resolveCastPayload(world, player, ABILITY_DATABASE.get("slam")!, target);
   assert(pool(target) > 0, "setup: the reservoir must be primed");
   resolveCastPayload(world, player, ABILITY_DATABASE.get("detonate")!, target);
   assert(pool(target) === 0 && target.hasWeaponDot === undefined, "Detonate consumes the reservoir and does not refill it");

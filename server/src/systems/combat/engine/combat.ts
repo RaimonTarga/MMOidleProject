@@ -7,7 +7,6 @@ import { prepareWeaponDeadSwing, commitWeaponDeadSwing } from './weaponDeadSwing
 import { pushDamageEvent } from '../damage/damageEvent';
 import type { World } from "../../../world/World";
 import {
-  ABILITY_FRENZY_EFFECT_ID,
   ABILITY_GUARD_EFFECT_IDS,
   applyStatusEffect,
   GAME_CONFIG,

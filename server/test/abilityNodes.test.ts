@@ -4,7 +4,7 @@
  * WHAT THIS PINS. Not balance — every magnitude comes from the table and moves
  * with every tuning pass. What it pins is:
  *
- *   - the TABLE is legal: 22 trees, three options a row, a Technique restricted
+ *   - the TABLE is legal: 19 trees, three options a row, a Technique restricted
  *     to offensive packets paying offensive payoffs, a Guard to the three
  *     defensive faces paying defensive ones, every option with a declared fx,
  *     and no numeric literal anywhere in the authored file;
@@ -71,7 +71,7 @@ const NODE = 'node-5-5';
     ABILITY_NODE_DATABASE.size === ABILITY_DATABASE.size,
     `every ability needs a node tree — ${ABILITY_NODE_DATABASE.size} of ${ABILITY_DATABASE.size}`,
   );
-  assert(ABILITY_NODE_DATABASE.size === 22, `the roster is 22 abilities, got ${ABILITY_NODE_DATABASE.size}`);
+  assert(ABILITY_NODE_DATABASE.size === 19, `the roster is 19 abilities, got ${ABILITY_NODE_DATABASE.size}`);
 
   const problems: string[] = [];
   for (const [abilityId, tree] of ABILITY_NODE_DATABASE) {

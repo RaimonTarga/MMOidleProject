@@ -12,7 +12,7 @@ export const CAMPAIGN_T2_EXPANSION_ROUTES: Route[] = [
 ].map(({ group, charm }) => {
   const tag = `v1j:spirit:${group}:${charm}`;
   const build: DesiredBuild = {
-    abilities: { techniques: ["expose-weakness"], guards: group === "swamp" ? ["second-wind", "cleanse"] : ["second-wind", "brace"] },
+    abilities: { techniques: ["slam"], guards: group === "swamp" ? ["second-wind", "cleanse"] : ["second-wind", "brace"] },
     runeRules: t2Runes("ranged-orbit"),
     stances: { attuned: ["defensive-stance"], default: "defensive-stance" }, rites: [],
   };

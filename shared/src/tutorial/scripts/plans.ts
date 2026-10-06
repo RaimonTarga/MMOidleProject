@@ -178,10 +178,13 @@ const MELEE_KIT = ['chaotic-axe', 'swamp-charm-t1', 'plains-boots-t1'];
 /** The bot's dodge-profile boss matrix (t1RouteBuilder DODGE_BOSS_ABILITIES + armorByBoss). */
 const DEFAULT_BOSSES: Record<T1Biome, BossPlan> = {
   plains: { armor: 'plains-vest-t1', technique: 'sweep', guard: 'second-wind' },
-  forest: { armor: 'plains-vest-t1', technique: 'expose-weakness', guard: 'second-wind' },
-  mountain: { armor: 'mountain-vest-t1', technique: 'expose-weakness', guard: 'second-wind' },
-  swamp: { armor: 'mountain-vest-t1', technique: 'expose-weakness', guard: 'cleanse' },
-  cave: { armor: 'mountain-vest-t1', technique: 'expose-weakness', guard: 'second-wind' },
+  // Slam took Expose Weakness's place in the four single-boss kits (the ability
+  // pass, design §22.2: Expose Weakness is cut, and Slam rank I is authored so the
+  // T1 boss lab holds every class within ±5% of the old kit). Plains keeps Sweep.
+  forest: { armor: 'plains-vest-t1', technique: 'slam', guard: 'second-wind' },
+  mountain: { armor: 'mountain-vest-t1', technique: 'slam', guard: 'second-wind' },
+  swamp: { armor: 'mountain-vest-t1', technique: 'slam', guard: 'cleanse' },
+  cave: { armor: 'mountain-vest-t1', technique: 'slam', guard: 'second-wind' },
 };
 
 /** Slinger never makes the Mountain vest (see its Cave plan), so it keeps its evasion armor. */

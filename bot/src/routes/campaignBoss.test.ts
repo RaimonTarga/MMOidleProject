@@ -75,5 +75,5 @@ assert.deepEqual(preparation.steps.filter(s => s.type === "configureBuild").map(
 assert.deepEqual(preparation.completion, { type: "allOf", of: repair.steps.filter(s => s.type === "assert").map(s => s.condition) });
 assert.deepEqual(repair.steps.filter(s => s.type === "assert"), route.steps.filter(s => s.type === "assert"));
 assert.deepEqual(repair.steps.filter(s => s.type === "configureBuild").map(s => s.build), [build]);
-assert.equal(repair.steps.some(s => s.type === "learnAbility" && s.abilityId === "expose-weakness" && s.attune !== false), false);
+assert.equal(repair.steps.some(s => s.type === "learnAbility" && s.abilityId === "slam" && s.attune !== false), false);
 assert(repair.steps.every(s => s.type !== "upgrade"), "every slot is full power without upgrades");

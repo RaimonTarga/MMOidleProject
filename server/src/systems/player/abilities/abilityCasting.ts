@@ -34,7 +34,7 @@ import type { PlayerEntity } from "../../../ecs/entity";
 import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import { isHardControlled } from "../../combat/status/playerHardControl";
 import { setEntityMotion, stopEntity } from "../../world/movement";
-import { startTechniqueCooldown } from "./abilityCooldowns";
+import { refundTechniqueCooldown, startTechniqueCooldown } from "./abilityCooldowns";
 import { onTechniqueResolved } from "../../combat/techniqueResolved";
 import {
   castFootprintRadius,
@@ -261,12 +261,15 @@ export function updateAbilityCasts(world: World, now: number): void {
       }
       startTechniqueCooldown(world, player, ability);
     } else {
-      resolveCastPayload(world, player, ability, target);
+      const refundsItself = resolveCastPayload(world, player, ability, target);
       // Cooldown first, so `technique-refund` has a remaining cooldown to take
       // its share off: a resolution that runs before the cooldown is charged
       // reads zero and refunds nothing. Same ordering as the armed path.
       startTechniqueCooldown(world, player, ability);
       onTechniqueResolved(world, player, ability, { target });
+      // A Cull kill hands Cull its own cooldown back (design §22.8): charged above
+      // like every resolve, then refunded, so the HUD hears both samples.
+      if (refundsItself) refundTechniqueCooldown(world, player, ability);
     }
     world.pushEvent(player.hasPosition.nodeId, {
       kind: "player-cast-end",

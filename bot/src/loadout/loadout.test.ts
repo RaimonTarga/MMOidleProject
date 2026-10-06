@@ -15,12 +15,12 @@ assert.equal(validateBuild({ ...empty, rites: ["swift-repose"] }, { ...self, kno
 assert.equal(validateBuild({ ...empty, stances: { attuned: [], default: "offensive-stance" } }, self)[0].code, "MALFORMED_BUILD");
 assert.equal(validateBuild({ ...empty, runeRules: [{ conditionId: "always", actionId: "use-ability", targetAbilityId: "sweep" }] }, self)[0].code, "MALFORMED_BUILD");
 assert.equal(validateBuild({ ...empty, runeRules: [{ conditionId: "always", actionId: "switch-stance", targetStanceId: "offensive-stance" }] }, self)[0].code, "MALFORMED_BUILD");
-const two = { ...empty, abilities: { techniques: ["sweep", "expose-weakness"], guards: [] } };
+const two = { ...empty, abilities: { techniques: ["sweep", "slam"], guards: [] } };
 assert.deepEqual(validateBuild(two, self), []);
-assert.notEqual(buildKey(two), buildKey({ ...two, abilities: { techniques: ["expose-weakness", "sweep"], guards: [] } }));
+assert.notEqual(buildKey(two), buildKey({ ...two, abilities: { techniques: ["slam", "sweep"], guards: [] } }));
 assert.notEqual(buildKey(two), buildKey(empty), "clearing is never a subset match");
 assert.equal(runeLoadoutsEqual([{ conditionId: "always", actionId: "use-ability", targetAbilityId: "sweep" }],
-  [{ conditionId: "always", actionId: "use-ability", targetAbilityId: "expose-weakness" }]), false);
+  [{ conditionId: "always", actionId: "use-ability", targetAbilityId: "slam" }]), false);
 const over = { ...two, runeRules: Array.from({ length: 40 }, () => ({ conditionId: "always", actionId: "use-ability", targetAbilityId: "sweep" })) };
 assert(validateBuild(over, self).some(issue => issue.code === "INSUFFICIENT_RP"));
 console.log("loadout.test.ts: ok");

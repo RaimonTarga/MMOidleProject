@@ -19,7 +19,6 @@
  */
 import {
   FROST_RAMP_EFFECT_ID,
-  ABILITY_FRENZY_EFFECT_ID,
   getStatusEffect,
   frostRampAtkSlowPct,
   ambientRampAttackSlowPct,
@@ -48,19 +47,14 @@ export function attackSlowMult(cs: TracksCombat): number {
 /**
  * Total temporary HASTE bonus, as a fraction (0.3 = +30% attack speed).
  *
- * Frenzy, the stance-owned windows (Reaper momentum, Powering Up's released
- * charge) and a lineage card's `speed-window` SUM rather than multiply: they are
- * all "+X% attack speed" promises, and the shared accumulator semantics say those
- * add.
+ * The stance-owned windows (Reaper momentum, Powering Up's released charge) and
+ * a lineage card's `speed-window` SUM rather than multiply: they are all "+X%
+ * attack speed" promises, and the shared accumulator semantics say those add.
+ * (The Frenzy ability's window summed here too until the ability pass cut it,
+ * design §22.2: Tempo and Kill chain `speed-window` payoffs own that job now.)
  */
 export function attackHasteBonus(cs: TracksCombat): number {
-  const frenzy = getStatusEffect(cs, ABILITY_FRENZY_EFFECT_ID);
-  const frenzyPct =
-    frenzy && frenzy.remainingMs > 0
-      ? Math.max(0, frenzy.data["attackSpeedPct"] ?? 0)
-      : 0;
-  return frenzyPct
-    + Math.max(0, stanceAttackSpeedBonus(cs))
+  return Math.max(0, stanceAttackSpeedBonus(cs))
     + Math.max(0, lineageSpeedWindowBonus(cs));
 }
 

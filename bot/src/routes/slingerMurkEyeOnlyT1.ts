@@ -7,7 +7,7 @@ import {
   getPiece,
   learnBrace,
   learnCleanse,
-  learnExposeWeakness,
+  learnSlam,
   learnSecondWind,
   learnSweep,
   maxOut,
@@ -124,7 +124,7 @@ export const SLINGER_MURKEYEONLY_T1: Route = {
       definitionIds: ["flash-rapier", "forest-vest-t1", "swamp-charm-t1", "plains-boots-t1"],
       label: "standing kit: forest weapon, forest armor, swamp charm",
     },
-    learnExposeWeakness(),
+    learnSlam(),
 
     { type: "equip", definitionIds: ["ashbrand-blade"], label: "switch to the Poison Dagger" },
 
@@ -149,7 +149,7 @@ export const SLINGER_MURKEYEONLY_T1: Route = {
       wornKit: ["ashbrand-blade", "swamp-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES_FULL,
       armor: "forest-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "second-wind",
     }),
     ...bossFight({
@@ -157,7 +157,7 @@ export const SLINGER_MURKEYEONLY_T1: Route = {
       wornKit: ["ashbrand-blade", "swamp-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES_FULL,
       armor: "mountain-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "brace",
     }),
     ...bossFight({
@@ -165,7 +165,7 @@ export const SLINGER_MURKEYEONLY_T1: Route = {
       wornKit: ["ashbrand-blade", "swamp-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES_FULL,
       armor: "mountain-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "cleanse",
     }),
     ...bossFight({
@@ -173,7 +173,7 @@ export const SLINGER_MURKEYEONLY_T1: Route = {
       wornKit: ["ashbrand-blade", "swamp-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES_FULL,
       armor: "mountain-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "brace",
     }),
   ] satisfies RouteStep[],

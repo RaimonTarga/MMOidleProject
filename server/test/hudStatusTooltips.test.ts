@@ -141,7 +141,7 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
   assert(prettifyStatusId("debuff-frost-ramp") === "Frost Ramp", "prettify should drop the namespace");
   assert(prettifyStatusId("mob-sprint") === "Sprint", "prettify should drop the mobility namespace");
   assert(
-    targetStatusHelp("expose-weakness") !== undefined,
+    targetStatusHelp("ability-rooted") !== undefined,
     "the ability debuff on a monster must be explained on the target frame",
   );
   // A mechanic with only a player-side entry still resolves through the target

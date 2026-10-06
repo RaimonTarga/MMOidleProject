@@ -24,12 +24,12 @@ const CASES={
  'bossref-timberclaw-a-historical':{
   treatment:'historical-success', stance:'defensive-stance', rules:5, rp:28,
   weapon:'ruinous-axe', armor:'cave-vest-t2', recovery:'mountain-charm-t2', mobility:'plains-boots-t2',
-  techniques:['expose-weakness'], guards:['second-wind','brace'],
+  techniques:['slam'], guards:['second-wind','brace'],
  },
  'bossref-timberclaw-b-legacy':{
   treatment:'legacy-benchmark', stance:'offensive-stance', rules:0, rp:30,
   weapon:'gale-needle', armor:'forest-vest-t2', recovery:'forest-charm-t2', mobility:'forest-boots-t2',
-  techniques:['charge','contagion','hamstring'], guards:['bramble-guard','endure','cleanse'],
+  techniques:['charge','contagion','binding-strike'], guards:['bramble-guard','endure','cleanse'],
  },
 };
 

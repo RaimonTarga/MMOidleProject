@@ -14,9 +14,9 @@ const paths = {
 };
 export const V1W_CASES = Object.entries(paths).map(([group, path]) => {
   const build: DesiredBuild = group === 'swamp' ? { ...V1V_BOSS_BUILD,
-    abilities: { techniques: ['frenzy', 'sweep'], guards: ['second-wind', 'brace', 'cleanse'] } }
+    abilities: { techniques: ['imbue-lightning', 'sweep'], guards: ['second-wind', 'brace', 'cleanse'] } }
     : group === 'jungle' ? { ...V1V_BOSS_BUILD,
-      abilities: { techniques: ['frenzy', 'sweep', 'hamstring'], guards: ['second-wind', 'cleanse'] } }
+      abilities: { techniques: ['imbue-lightning', 'sweep', 'binding-strike'], guards: ['second-wind', 'cleanse'] } }
     : V1V_BOSS_BUILD;
   return { group, path, build };
 });

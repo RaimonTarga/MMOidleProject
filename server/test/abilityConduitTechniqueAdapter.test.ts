@@ -1,7 +1,6 @@
 /** Focused server-authoritative coverage for Conduit's formation Technique adapter. */
 import {
   ABILITY_DATABASE,
-  ABILITY_FRENZY_EFFECT_ID,
   ABILITY_IMBUE_EFFECT_ID,
   ABILITY_SWEEP_FX,
   GAME_CONFIG,
@@ -24,7 +23,6 @@ import { updateAbilityCasts, updateAbilityCharges, cancelAbilityCast } from '../
 import { runPlayerAttack } from '../src/systems/combat/engine/combat';
 import { updateMovement } from '../src/systems/world/movement';
 import { abilityCooldownKey } from '../src/systems/player/abilities/abilityCooldowns';
-import { attackCadenceMult } from '../src/systems/combat/engine/attackCadence';
 import { takeWorldLogEvents } from '../src/world/worldLog';
 import { World } from '../src/world/World';
 
@@ -273,10 +271,11 @@ for (const expectation of [
   );
 }
 
-// The adapter is armed-Technique-generic: Quick Strike's +25% budget is spread
-// over the same four summon deliveries instead of being copied four times.
+// The adapter is armed-Technique-generic: Binding Strike's +20% hit rider is
+// spread over the same four summon deliveries instead of being copied four times.
+// (Quick Strike carried this case until the ability pass cut it, design §22.2.)
 {
-  const { world, player, minions } = setup('conduit-quick-strike', 'quick-strike', 3);
+  const { world, player, minions } = setup('conduit-binding-strike', 'binding-strike', 2);
   const primary = createMonster(world, 430);
   const hpBefore = primary.hasHealth.hp;
 
@@ -286,10 +285,10 @@ for (const expectation of [
   }
 
   // Four ordinary root contributions total 100. The normalized Technique adds
-  // one +25 budget (integer shares 6, 6, 6, 7 via the carried remainder).
+  // one +20 budget (integer shares of 5 each).
   assert(
-    hpBefore - primary.hasHealth.hp === 125,
-    'Quick Strike should total 100 base formation damage plus one normalized +25 rider',
+    hpBefore - primary.hasHealth.hp === 120,
+    'Binding Strike should total 100 base formation damage plus one normalized +20 rider',
   );
   assert(
     player.hasFormationTechnique === undefined,
@@ -466,7 +465,7 @@ for (const champion of [false, true]) for (const ability of ABILITY_DATABASE.val
 
 // Champion must not borrow its bonded summon's reach to cast remotely.
 {
-  const { world, player } = setup('champion-owner-reach', 'power-strike', 3);
+  const { world, player } = setup('champion-owner-reach', 'slam', 3);
   player.usesSkills.unlockedSkills = ['summoner-root', 'summoner-heavy', 'summoner-heavy-t3-b'];
   player.usesSkills.selectedSubVariant = 'heavy';
   syncArchetypeSlices(world, player);
@@ -537,7 +536,7 @@ for (const interruption of ['expiry', 'owner-death', 'target-death', 'rooted-sum
 // A chosen caster alone stops attacking; other summons keep fighting. Invalid
 // physical casters/targets abort without charging cooldown or handing off.
 for (const loss of ['dead-caster', 'missing-caster', 'range', 'node', 'stun', 'dead-target', 'owner-stun'] as const) {
-  const { world, player, minions } = setup(`cast-abort-${loss}`, 'power-strike', 1);
+  const { world, player, minions } = setup(`cast-abort-${loss}`, 'slam', 1);
   const target = createMonster(world, 650);
   for (const minion of minions) {
     minion.hasPosition.current = { x: 630, y: 400 };
@@ -562,7 +561,7 @@ for (const loss of ['dead-caster', 'missing-caster', 'range', 'node', 'stun', 'd
   }
   updateAbilityCasts(world, castEnd);
   assert(!player.isCastingAbility, `${loss} must abort the summon cast`);
-  assert(getCooldown(player.tracksCombat, abilityCooldownKey('power-strike')) === 0,
+  assert(getCooldown(player.tracksCombat, abilityCooldownKey('slam')) === 0,
     `${loss} must not consume cooldown`);
   assert(world.takeNodeEvents('node-5-5').some(e => e.kind === 'player-cast-end'
     && !e.fired && e.casterMinionId === minions[0]!.entityId), `${loss} must end that summon's telegraph`);
@@ -570,7 +569,7 @@ for (const loss of ['dead-caster', 'missing-caster', 'range', 'node', 'stun', 'd
 
 // Real tick ordering must take a remote summon cast all the way to resolution.
 {
-  const { world, player, minions } = setup('summon-cast-world-tick', 'power-strike', 1);
+  const { world, player, minions } = setup('summon-cast-world-tick', 'slam', 1);
   player.hasPosition.speed = 0; // Keep the owner out of reach throughout the fixture.
   createMonster(world, 650);
   for (const minion of minions) minion.hasPosition.current = { x: 630, y: 400 };
@@ -580,29 +579,37 @@ for (const loss of ['dead-caster', 'missing-caster', 'range', 'node', 'stun', 'd
     events.push(...world.takeNodeEvents('node-5-5'));
   }
   assert(player.hasAttackTarget === undefined, 'owner must never need a direct attack target');
-  assert(events.some(e => e.kind === 'player-cast-end' && e.ability === 'power-strike'
+  assert(events.some(e => e.kind === 'player-cast-end' && e.ability === 'slam'
     && e.fired && !!e.casterMinionId), 'World.tick must resolve an automatically delegated cast');
 }
 
-// Frenzy must change actual summon attack timing, not merely light its HUD buff.
+// Armed Contagion rides the formation-rider adapter Sweep uses (design §22.11:
+// "Contagion, now armed, rides the formation rider adapter Sweep already uses").
+// A spread copies FULL stacks, so it is not divided into shares: the FIRST summon
+// hit spreads once, and the later deliveries spend their share carrying nothing.
 {
-  const { world, player, minions } = setup('auto-frenzy-cadence', 'frenzy', 3);
-  createMonster(world, 650);
-  for (const minion of minions) {
-    minion.hasPosition.current = { x: 630, y: 400 };
-    minion.performsAttack.lastAttackAt = 1_000;
+  const { world, player, minions } = setup('conduit-contagion', 'contagion', 2);
+  const primary = createMonster(world, 430);
+  const neighbour = createMonster(world, 470);
+  applyStatusEffect(primary.tracksCombat, {
+    id: 'dot', remainingMs: 4_500, maxStacks: 6, refreshable: true,
+    sourceId: player.isPlayer.id,
+    data: { damagePerStack: 10, nextTickIn: 1_000, tickIntervalMs: 1_000 },
+  });
+  armAgainst(world, player.isPlayer.id, primary.isMonster.id, 2_000);
+  assert(player.hasFormationTechnique?.abilityId === 'contagion',
+    'Contagion should arm one formation Technique, like Sweep');
+  world.takeNodeEvents('node-5-5');
+  runFormationAttack(world, player, minions[0]!, primary, 2_100);
+  assert(!!getStatusEffect(neighbour.tracksCombat, 'dot'),
+    'the first summon hit must spread the target\'s affliction to its neighbour');
+  for (let index = 1; index < minions.length; index++) {
+    runFormationAttack(world, player, minions[index]!, primary, 2_100 + index);
   }
-  updateSummonerArchetype(world, 0, 1_000);
-  fireWithReferenceWiring(world, 1_000);
-  assert(!!getStatusEffect(player.tracksCombat, ABILITY_FRENZY_EFFECT_ID), 'Frenzy must activate');
-  const baseCooldown = minions[0]!.performsAttack.attackCooldown;
-  const hastedAttackAt = 1_000 + Math.ceil(baseCooldown * attackCadenceMult(player.tracksCombat));
-  assert(hastedAttackAt < 1_000 + baseCooldown, 'fixture must test before the unhasted attack');
-  updateSummonerArchetype(world, 0, hastedAttackAt);
-  assert(minions.every(m => m.performsAttack.lastAttackAt === hastedAttackAt),
-    'Frenzy must accelerate each summon using the owner haste');
-  assert(minions.every(m => m.performsAttack.attackCooldown === baseCooldown),
-    'temporary haste must not mutate the base cooldown');
+  const spreads = world.takeNodeEvents('node-5-5').filter((event) => event.kind === 'dot-spread');
+  assert(spreads.length === 1, `armed Contagion must spread once per Technique, not once per summon (got ${spreads.length})`);
+  assert(player.hasFormationTechnique === undefined,
+    'every snapshotted summon must still spend its delivery');
 }
 
 console.log('abilityConduitTechniqueAdapter.test.ts: ok');

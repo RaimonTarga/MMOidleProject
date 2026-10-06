@@ -10,7 +10,7 @@ export const V1U2_PRE_TUNDRA_UPGRADES: RouteStep[] = V1U_FINAL_UPGRADES.map(step
 
 const hub = 'node-t3-sanctuary';
 export const V1U2_TRAVEL_BUILD: DesiredBuild = { ...NIGHT2_TRAVEL_BUILD,
-  abilities: { techniques: ['sweep', 'hamstring'], guards: ['second-wind', 'brace'] } };
+  abilities: { techniques: ['sweep', 'binding-strike'], guards: ['second-wind', 'brace'] } };
 // Every hop is adjacent, in both directions. Do not replace with biome pick:first.
 export const V1U2_PATHS = {
   jungle: [hub, 'node-t3-jungle-05'],

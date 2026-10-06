@@ -47,6 +47,9 @@ export const ABILITY_NODE_FX: Map<string, LineageFxKey> = new Map<string, Lineag
   ['kill-chain/speed-window', 'kill-chain.kill-pulse'],
   ['engagement/damage-window', 'engagement.opening-flash'],
   ['technique/technique-refund', 'technique.cast-flare'],
+  // A Technique's Kill chain refund (design §22.10) fires on the kill, so it
+  // draws the kill lane's own pulse rather than the Technique flare.
+  ['kill-chain/technique-refund', 'kill-chain.kill-pulse'],
   // Defensive faces — what a Guard node draws. One per packet, from design §8's
   // face list: Avoid = a blur, Sustain = a pulse or a ward shell, Endure = chips.
   ['tempo/engagement-dr', 'tempo.evasive-blur'],

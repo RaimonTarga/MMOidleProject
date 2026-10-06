@@ -28,7 +28,7 @@ for (const [i, route] of CAMPAIGN_NIGHT2_ROUTES.entries()) {
   assert.equal(route.steps.filter(s => s.type === "attemptBoss").length, 1);
   assert(route.steps.filter(s => s.type === "attemptBoss").every(s => s.maxAttempts === 1));
   assert.deepEqual(route.steps.at(-2)?.requires, route.completion);
-  if (i === 2) assert(route.steps.findIndex(s => s.type === "learnAbility" && s.abilityId === "hamstring") < route.steps.indexOf(final));
+  if (i === 2) assert(route.steps.findIndex(s => s.type === "learnAbility" && s.abilityId === "binding-strike") < route.steps.indexOf(final));
 }
 const [nightControl, nightReactive] = CAMPAIGN_NIGHT2_ROUTES;
 const preparationOnly = (route: typeof nightControl) => route.steps.slice(0, -5);
@@ -58,7 +58,8 @@ for (const route of CAMPAIGN_T2_EXPANSION_ROUTES) {
   const finalBuild = route.steps.filter(s => s.type === "configureBuild").at(-1)!;
   assert(finalBuild.type === "configureBuild");
   const swamp = route.id.includes("swamp-");
-  assert.equal(buildRP(finalBuild.build).total, swamp ? 26 : 28);
+  // 26 : 28 until the ability pass swapped Expose Weakness (5 RP) for Slam (4 RP).
+  assert.equal(buildRP(finalBuild.build).total, swamp ? 25 : 27);
   assert.equal(route.steps.filter(s => s.type === "milestone").length, 1);
   const target = route.steps.at(-1);
   assert(target?.type === "attemptBoss");
@@ -79,7 +80,8 @@ for (const route of CAMPAIGN_T2_V1K_ROUTES) {
     if (step.type === "configureBuild") assert(buildRP(step.build).total <= 30);
   }
   const finalBuild = route.steps.filter(s => s.type === "configureBuild").at(-1)!;
-  assert.equal(buildRP(finalBuild.build).total, route.id.includes("-cave-cave-") ? 24 : 26);
+  // 24 : 26 until the ability pass swapped Expose Weakness (5 RP) for Slam (4 RP).
+  assert.equal(buildRP(finalBuild.build).total, route.id.includes("-cave-cave-") ? 24 : 25);
   assert.equal(route.steps.at(-1)?.type, "assert");
   const observation = route.steps.at(-2);
   assert(observation?.type === "farm" && observation.observeForMs === 20_000 && observation.stepTimeoutMs === 60_000);

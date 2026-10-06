@@ -1,4 +1,5 @@
 import {
+  ABILITY_SIDESTEP_EFFECT_ID,
   LAIR_DRAG_ROOT_EFFECT_ID,
   advanceMotion,
   buildNavGrid,
@@ -490,6 +491,11 @@ function playerSpeedMults(
   // normal position speed. This lets stat recalculation and ordinary movement
   // resume cleanly once the charge component detaches.
   if (player.isChargingAbility) mults.push(Math.max(0, player.isChargingAbility.speedMult));
+
+  // Sidestep's burst (design §22.8) rides its window's status, so it ends exactly
+  // when the evasion window does.
+  const sidestep = getStatusEffect(cs, ABILITY_SIDESTEP_EFFECT_ID);
+  if (sidestep && sidestep.remainingMs > 0) mults.push(1 + Math.max(0, sidestep.data['moveSpeedPct'] ?? 0));
 
   mults.push(bootSpeedMultiplier(world, player, now));
   return mults;

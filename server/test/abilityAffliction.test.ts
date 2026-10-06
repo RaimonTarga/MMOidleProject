@@ -18,6 +18,8 @@ import {
   GAME_CONFIG,
   STARTER_RUNE_IDS,
   applyStatusEffect,
+  LINEAGE_BLEED_STATUS_ID,
+  weaponDotProfileForWeapon,
   emptyEquipment,
   emptyAttunedAbilities,
   getStatusEffect,
@@ -44,6 +46,7 @@ import { applyImbueWindow } from "../src/systems/player/abilities/abilityImbue";
 import { runPlayerAttack } from "../src/systems/combat/engine/combat";
 import { emitCombatEvent } from "../src/systems/combat/engine/combatPipeline";
 import { syncPlayerBuffs } from "../src/systems/combat/buffs/buffSync";
+import { syncArchetypeSlices } from "../src/ecs/archetypeSliceSync";
 import { World } from "../src/world/World";
 import type { MonsterEntity, PlayerEntity } from "../src/ecs/entity";
 
@@ -378,220 +381,124 @@ console.log("affliction: Contagion copies at full strength, capped, original ret
 }
 console.log("affliction: Contagion's target cap follows the authored rank");
 
-// ── 3c. The wind-up broadcasts the footprint the spread will cover ──────────
+// ── 3c. Contagion is ARMED (design §22.9) ─────────────────────────────────
 //
-// Contagion spends a full second deciding which neighbours inherit the target's
-// afflictions, and the client draws that circle for the whole wind-up. The
-// drawing is only honest if it is the circle the spread actually queries, so the
-// radius travels on `player-cast-start` rather than being re-derived in the UI —
-// and these assertions are what stop the two from ever parting company.
+// Contagion deals no damage of its own, so since the ability pass it is an armed
+// rider rather than a cast: firing it arms the next attack (no wind-up, no cast
+// bar), and the hit that lands spreads what ITS target carries. (Its wind-up
+// footprint and cast-cancellation pins went with the cast.)
 
-/** The spread radius the caster's live rank resolves to. */
-function contagionRadius(playerTier: number): number {
-  const effect = resolveAbilityEffect(ABILITY_DATABASE.get("contagion")!, {
-    playerTier,
-  });
-  if (effect.kind !== "spread-dots") throw new Error("contagion is not a spread");
-  return effect.radius;
-}
-
-function castStarts(world: World) {
-  return world
-    .takeNodeEvents(NODE)
-    .flatMap((event) => (event.kind === "player-cast-start" ? [event] : []));
-}
-
-function castEnds(world: World) {
-  return world
-    .takeNodeEvents(NODE)
-    .flatMap((event) => (event.kind === "player-cast-end" ? [event] : []));
-}
-
-/** Arm and begin a Contagion cast on an afflicted `primary`. */
-function beginContagion(
-  world: World,
-  player: PlayerEntity,
-  primary: MonsterEntity,
-): void {
+{
+  const { world, player } = setup(["contagion"]);
+  const primary = spawn(world, 405, 400);
+  const neighbour = spawn(world, 450, 400);
+  paintClassDot(primary, player.isPlayer.id, 3);
   setAttackTarget(world, player, primary.isMonster.id);
   player.usesAutocombat.auto = true;
   world.takeNodeEvents(NODE);
+
   fireWithReferenceWiring(world, 2_000_000);
-}
-
-{
-  const { world, player } = setup(["contagion"]);
-  const primary = spawn(world, 405, 400);
-  paintClassDot(primary, "afflictor", 4, { maxStacks: 6 });
-
-  // THE EDGE TEST. A monster exactly on the drawn rim inherits the afflictions;
-  // one pixel further out does not. This is the whole promise the indicator
-  // makes. Only two candidates are placed, which is comfortably under the cap at
-  // any rank, so what is being measured here is the RADIUS and not the target
-  // limit - the two must stay independently testable.
-  const radius = contagionRadius(player.tracksProgression.playerTier);
-  const onRim = spawn(world, 405 + radius, 400);
-  const pastRim = spawn(world, 405 + radius + 1, 400);
-
-  beginContagion(world, player, primary);
-
-  const starts = castStarts(world);
-  assert(starts.length === 1, `one wind-up should announce itself, got ${starts.length}`);
-  const start = starts[0]!;
-  assert(start.ability === "contagion", "the fixture should be casting Contagion");
+  assert(player.hasArmedAbility?.abilityId === "contagion", "Contagion must ARM the next attack");
+  assert(player.isCastingAbility === undefined, "an armed Contagion must not wind up");
   assert(
-    start.aoeRadius === radius,
-    `the wind-up must carry Contagion's authored spread radius (${radius}), got ${String(
-      start.aoeRadius,
-    )}`,
+    !world.takeNodeEvents(NODE).some((event) => event.kind === "player-cast-start"),
+    "an armed Contagion announces no cast",
   );
-  // The indicator is centred on the AFFLICTED SOURCE, because that is the origin
-  // the spread radiates from — so the event has to name it.
-  assert(
-    start.targetId === primary.isMonster.id,
-    "the wind-up must name the afflicted monster the footprint is centred on",
-  );
-  assert(
-    start.castMs === player.isCastingAbility!.castMs,
-    "the footprint's countdown must run on the same clock as the cast",
-  );
+  assert(getStatusEffect(neighbour.tracksCombat, "dot") === undefined, "nothing spreads before the hit lands");
 
-  updateAbilityCasts(world, 2_000_000 + player.isCastingAbility!.castMs);
-  assert(
-    getStatusEffect(onRim.tracksCombat, "dot") !== undefined,
-    "a monster standing exactly on the drawn rim must actually be infected",
-  );
-  assert(
-    getStatusEffect(pastRim.tracksCombat, "dot") === undefined,
-    "a monster outside the drawn rim must inherit nothing",
-  );
-
-  const ends = castEnds(world);
-  assert(
-    ends.length === 1 && ends[0]!.fired,
-    "a resolved cast must emit the end event the client clears the footprint on",
-  );
-}
-console.log("affliction: Contagion's wind-up carries the spread radius it resolves with");
-
-// The footprint follows the SOURCE. The client redraws it against that monster's
-// live position every frame, which is only honest because the server resolves the
-// spread around wherever the source has walked to by the time the cast ends —
-// never around a snapshot taken when it started.
-{
-  const { world, player } = setup(["contagion"]);
-  const primary = spawn(world, 405, 400);
-  paintClassDot(primary, "afflictor", 4, { maxStacks: 6 });
-
-  const radius = contagionRadius(player.tracksProgression.playerTier);
-  // Sits outside the circle drawn at the start, and inside the circle drawn once
-  // the source has walked toward it.
-  const drifter = spawn(world, 405 + radius + 40, 400);
-  // Keeps the cast legal to begin: something must be in radius at arm time.
-  const anchorVictim = spawn(world, 415, 400);
-
-  beginContagion(world, player, primary);
-  assert(castStarts(world).length === 1, "the wind-up should have announced itself");
-  assert(
-    getStatusEffect(drifter.tracksCombat, "dot") === undefined,
-    "the drifter starts outside the footprint",
-  );
-
-  primary.hasPosition.current.x += 60;
-  updateAbilityCasts(world, 2_000_000 + player.isCastingAbility!.castMs);
-
-  assert(
-    getStatusEffect(drifter.tracksCombat, "dot") !== undefined,
-    "the spread must resolve around the source's CURRENT position, which is what " +
-      "makes a footprint that tracks the source honest",
-  );
-  assert(
-    getStatusEffect(anchorVictim.tracksCombat, "dot") !== undefined,
-    "the anchor victim is still well inside the moved circle",
-  );
-}
-console.log("affliction: Contagion resolves around the source's live position");
-
-// An INTERRUPTED wind-up must clear the footprint just as surely as a resolved
-// one — a stale circle would promise a spread that is never coming.
-{
-  const { world, player } = setup(["contagion"]);
-  const primary = spawn(world, 405, 400);
-  spawn(world, 415, 400);
-  paintClassDot(primary, "afflictor", 4, { maxStacks: 6 });
-  beginContagion(world, player, primary);
-  assert(castStarts(world).length === 1, "the wind-up should have announced itself");
-
-  applyStatusEffect(player.tracksCombat, {
-    id: STUN_EFFECT,
-    maxStacks: 1,
-    refreshable: true,
-    remainingMs: 2_000,
-    sourceId: primary.isMonster.id,
-    data: { totalMs: 2_000 },
+  runPlayerAttack(world, player, primary, 2_000_100, {
+    attackOrigin: { ...player.hasPosition.current },
+    aggroSource: { id: player.isPlayer.id, kind: "player" },
   });
-  updateAbilityCasts(world, 2_000_010);
-  const ends = castEnds(world);
+  assert(player.hasArmedAbility === undefined, "the landing hit consumes the armed Contagion");
+  assert(getStatusEffect(neighbour.tracksCombat, "dot") !== undefined,
+    "the hit that lands it must spread the target's affliction to its neighbour");
   assert(
-    ends.length === 1 && ends[0]!.fired === false,
-    "an interrupted wind-up must still emit the end event that clears the footprint",
+    world.takeNodeEvents(NODE).some((event) => event.kind === "dot-spread"),
+    "the spread announces its links for the client",
   );
 }
+console.log("affliction: Contagion arms the next hit and that hit spreads");
 
-// Losing the source clears it too — the footprint is centred on that monster, so
-// there is nothing left to draw it on.
+// Armed Contagion keeps the situational rule the cast had: with nothing to spread,
+// it declines to arm instead of burning its cooldown.
 {
   const { world, player } = setup(["contagion"]);
-  const primary = spawn(world, 405, 400);
-  spawn(world, 415, 400);
-  paintClassDot(primary, "afflictor", 4, { maxStacks: 6 });
-  beginContagion(world, player, primary);
-  assert(castStarts(world).length === 1, "the wind-up should have announced itself");
-
-  world.removeMonsterEntity(primary.isMonster.id);
-  updateAbilityCasts(world, 2_000_010);
-  const ends = castEnds(world);
+  const clean = spawn(world, 405, 400);
+  spawn(world, 450, 400);
+  setAttackTarget(world, player, clean.isMonster.id);
+  player.usesAutocombat.auto = true;
+  fireWithReferenceWiring(world, 2_000_000);
+  assert(player.hasArmedAbility === undefined, "an unafflicted target must not arm Contagion");
   assert(
-    ends.length === 1 && ends[0]!.fired === false,
-    "losing the source mid-wind-up must clear the footprint",
+    (player.tracksCombat.cooldowns["ability.cd.contagion"] ?? 0) <= 0,
+    "a declined Contagion must not start its cooldown",
   );
 }
+console.log("affliction: armed Contagion declines with nothing to spread");
 
-// Dying mid-wind-up clears it as well. The cast loop only walks LIVE players, so
-// without the explicit cancel the footprint would be left drawing over a corpse.
+// The ONE damage-over-time record per weapon (design §26.2): armed Contagion
+// spreads the Poison Dagger's reservoir (its owed poison) and a Rapier's single
+// lineage bleed, each as the record it is — no second record appears.
+{
+  const DAGGER = "ashbrand-blade";
+  const profile = weaponDotProfileForWeapon(DAGGER);
+  assert(!!profile, `${DAGGER} must own a reservoir`);
+  const { world, player } = setup(["contagion"]);
+  player.holdsInventory.equipment.weapon = DAGGER;
+  syncArchetypeSlices(world, player);
+  const primary = spawn(world, 405, 400);
+  const neighbour = spawn(world, 450, 400);
+  setAttackTarget(world, player, primary.isMonster.id);
+  player.usesAutocombat.auto = true;
+  const attackOpts = {
+    attackOrigin: { ...player.hasPosition.current },
+    aggroSource: { id: player.isPlayer.id, kind: "player" as const },
+  };
+  // An ordinary hit fills the dagger's reservoir on the target.
+  runPlayerAttack(world, player, primary, 2_000_000, attackOpts);
+  const owed = getStatusEffect(primary.tracksCombat, profile!.effectId);
+  assert(!!owed && (owed.data["pool"] ?? 0) > 0, "the dagger's hit must fill its reservoir");
+  fireWithReferenceWiring(world, 2_000_100);
+  assert(player.hasArmedAbility?.abilityId === "contagion", "Contagion arms against the poisoned target");
+  runPlayerAttack(world, player, primary, 2_001_000, attackOpts);
+  const spread = getStatusEffect(neighbour.tracksCombat, profile!.effectId);
+  assert(!!spread && (spread.data["pool"] ?? 0) > 0,
+    "armed Contagion must spread the reservoir's owed poison to the neighbour");
+  assert(
+    playerDotsOnMonster(world, player, neighbour).length === 1,
+    "the neighbour carries ONE record — the reservoir — not a second poison",
+  );
+}
 {
   const { world, player } = setup(["contagion"]);
+  player.holdsInventory.equipment.weapon = "flash-rapier";
+  syncArchetypeSlices(world, player);
   const primary = spawn(world, 405, 400);
-  const victim = spawn(world, 415, 400);
-  paintClassDot(primary, "afflictor", 4, { maxStacks: 6 });
-  beginContagion(world, player, primary);
-  assert(castStarts(world).length === 1, "the wind-up should have announced itself");
-
-  world.killPlayer(player.isPlayer.id, {
-    kind: "melee",
-    damage: 1,
-    killer: {
-      monsterTypeId: primary.isMonster.monsterTypeId,
-      monsterName: "Contagion Source",
-      isBoss: false,
-      nodeId: NODE,
-    },
+  const neighbour = spawn(world, 450, 400);
+  // The Rapier owns no reservoir: its Affliction band writes the ONE lineage
+  // bleed, which every source adds to. Painted as that record.
+  applyStatusEffect(primary.tracksCombat, {
+    id: LINEAGE_BLEED_STATUS_ID, maxStacks: 0, refreshable: true, remainingMs: -1,
+    sourceId: player.isPlayer.id, data: { damagePerTick: 6, nextTickIn: 1000, tickIntervalMs: 1000 },
   });
+  getStatusEffect(primary.tracksCombat, LINEAGE_BLEED_STATUS_ID)!.stacks = 4;
+  setAttackTarget(world, player, primary.isMonster.id);
+  player.usesAutocombat.auto = true;
+  fireWithReferenceWiring(world, 2_000_000);
+  assert(player.hasArmedAbility?.abilityId === "contagion", "Contagion arms against the bleeding target");
+  runPlayerAttack(world, player, primary, 2_000_100, {
+    attackOrigin: { ...player.hasPosition.current },
+    aggroSource: { id: player.isPlayer.id, kind: "player" },
+  });
+  const bleed = getStatusEffect(neighbour.tracksCombat, LINEAGE_BLEED_STATUS_ID);
+  assert(!!bleed && bleed.stacks > 0, "armed Contagion must spread the Rapier's single bleed");
   assert(
-    player.isCastingAbility === undefined,
-    "death must drop the wind-up rather than leaving it attached across the respawn",
-  );
-  const ends = castEnds(world);
-  assert(
-    ends.length === 1 && ends[0]!.fired === false,
-    "dying mid-wind-up must emit the end event that clears the footprint",
-  );
-  assert(
-    getStatusEffect(victim.tracksCombat, "dot") === undefined,
-    "a cast the caster did not live to finish spreads nothing",
+    playerDotsOnMonster(world, player, neighbour).every((entry) => entry.effect.id === LINEAGE_BLEED_STATUS_ID),
+    "the neighbour carries the one bleed record and nothing else",
   );
 }
-console.log("affliction: every Contagion cancellation path announces the end");
+console.log("affliction: armed Contagion spreads the one record per weapon (reservoir, bleed)");
 
 // ── 4. A Contagion copy never WEAKENS an existing affliction ────────────────
 
@@ -918,5 +825,32 @@ console.log("affliction: Imbue Lightning spends one charge per hit and then clos
   assert(!noTile(), "the tile must clear once the last charge is spent");
 }
 console.log("affliction: Imbue Lightning projects a charge-counting buff tile");
+
+// ── 9. Imbue Lightning is INSTANT (design §22.9) ────────────────────────────
+//
+// A self-buff needs no telegraph: the charge window opens the moment it is
+// activated — no wind-up, no cast bar — and, like every instant Technique, it
+// neither claims nor waits for the offensive channel.
+{
+  const { world, player } = setup(["sweep", "imbue-lightning"]);
+  const target = spawn(world, 405, 400);
+  setAttackTarget(world, player, target.isMonster.id);
+  player.usesAutocombat.auto = true;
+  world.takeNodeEvents(NODE);
+  fireWithReferenceWiring(world, 3_000_000);
+  assert(player.isCastingAbility === undefined, "an instant Imbue must not wind up");
+  assert(getStatusEffect(player.tracksCombat, ABILITY_IMBUE_EFFECT_ID) !== undefined,
+    "the charge window opens on activation");
+  assert((player.tracksCombat.cooldowns["ability.cd.imbue-lightning"] ?? 0) > 0,
+    "activation starts Imbue's cooldown");
+  assert(player.hasArmedAbility?.abilityId === "sweep",
+    "Imbue claims no channel: Sweep still arms on the same decision");
+  const events = world.takeNodeEvents(NODE);
+  assert(!events.some((event) => event.kind === "player-cast-start"), "an instant Imbue announces no cast");
+  const armed = events.find((event) => event.kind === "player-technique-armed" && event.ability === "imbue-lightning");
+  assert(armed?.kind === "player-technique-armed" && armed.durationMs === undefined,
+    "the activation announces itself with no timer (the window is spent in hits)");
+}
+console.log("affliction: Imbue Lightning opens its window instantly and claims no channel");
 
 console.log("abilityAffliction: ok");

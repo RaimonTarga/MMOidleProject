@@ -1,17 +1,18 @@
 /**
- * SLAM — the T2 area counterpart to Power Strike.
+ * SLAM — the burst cast (T1 Mountain 5 since the ability pass, design §22.2: it
+ * absorbed Power Strike and re-homed from T2 Mountain 9).
  *
- * Asserts the things that make it a real choice rather than a second Power
- * Strike:
- *   1. it is acquired like any other T2 Technique, and ranks by player tier;
+ * Asserts:
+ *   1. it is acquired like any other T1 Technique, and ranks by player tier —
+ *      rank I is the new T1 rank, ranks II–IV the old T2–T4 ranks unchanged;
  *   2. it hits everything in its authored radius exactly once, through the
  *      normal mitigation pipeline;
  *   3. it is a CAST, not an empowered attack — no on-hit effects ride it;
  *   4. Technique Power buys damage and never reach;
  *   5. cast speed shortens its wind-up, attack speed does not, and hard control
  *      breaks it exactly like every other cast;
- *   6. the Power Strike / Slam crossover holds at every tier;
- *   7. Power Strike itself is untouched;
+ *   6. rank I is the single-target-leaning rank (Power Strike's place);
+ *   7. it shares the offensive channel with another cast;
  *   8. the wind-up broadcasts the AREA it is about to damage, so the client can
  *      draw a footprint that cannot drift from the damage.
  *
@@ -50,7 +51,6 @@ function assert(condition: unknown, message: string): void {
 }
 
 const SLAM = ABILITY_DATABASE.get("slam")!;
-const POWER_STRIKE = ABILITY_DATABASE.get("power-strike")!;
 
 function slamEffect(tier: number) {
   const effect = abilityRankAt(SLAM, tier).effect;
@@ -146,25 +146,26 @@ initCombatSystems();
 {
   const recipe = [...ABILITY_RECIPE_DATABASE.values()].find((r) => r.abilityId === "slam");
   assert(!!recipe, "Slam must be learnable through an ability recipe, not granted by tier");
-  assert(recipe!.tier === 2, "Slam's recipe is a T2 recipe");
+  assert(recipe!.tier === 1, "Slam's recipe is a T1 recipe");
   assert(
-    recipe!.recipeGroup === "mountain" && recipe!.requiredBiomeLevel === 9,
-    "Slam is homed in Mountain's T2 band (its own level 3 = biome level 9)",
+    recipe!.recipeGroup === "mountain" && recipe!.requiredBiomeLevel === 5,
+    "Slam is homed at Mountain 5 (Power Strike's slot, the band's own level 5)",
   );
 
-  assert(SLAM.tier === 2 && SLAM.slot === "technique" && SLAM.shape === "cast",
-    "Slam is a T2 cast-shaped Technique");
+  assert(SLAM.tier === 1 && SLAM.slot === "technique" && SLAM.shape === "cast",
+    "Slam is a T1 cast-shaped Technique");
   assert(SLAM.attunementCost === 4, "Slam reserves 4 RP (net of its In Combat wiring)");
-  assert(abilityRankNumber(SLAM, 2) === 1, "a T2 player holds Slam I");
-  assert(abilityRankNumber(SLAM, 3) === 2, "a T3 player holds Slam II");
-  assert(abilityRankNumber(SLAM, 4) === 3, "a T4 player holds Slam III");
+  assert(abilityRankNumber(SLAM, 1) === 1, "a T1 player holds Slam I");
+  assert(abilityRankNumber(SLAM, 2) === 2, "a T2 player holds Slam II");
+  assert(abilityRankNumber(SLAM, 3) === 3, "a T3 player holds Slam III");
+  assert(abilityRankNumber(SLAM, 4) === 4, "a T4 player holds Slam IV");
 
   const mults = [2, 3, 4].map((tier) => slamEffect(tier).damageMult);
   assert(
     mults[0] === 1.75 && mults[1] === 2.0 && mults[2] === 2.25,
     `Slam's authored ladder should be 1.75 / 2.0 / 2.25, got ${mults.join(" / ")}`,
   );
-  for (const tier of [2, 3, 4]) {
+  for (const tier of [1, 2, 3, 4]) {
     assert(slamEffect(tier).radius === 150, "Slam's authored radius is 150px at every rank");
     assert(abilityCooldownMs(SLAM, tier) === 10000, "Slam holds a 10s cooldown");
     assert(abilityCastMs(SLAM, tier) === 1600, "Slam holds a 1.6s wind-up");
@@ -347,53 +348,24 @@ initCombatSystems();
   );
 }
 
-// ── 6. The Power Strike crossover holds at every tier ────────────────────────
+// ── 6. Rank I is the single-target-leaning rank ─────────────────────────────
+// (The Power Strike crossover and "Power Strike is untouched" sections went with
+// Power Strike, cut into Slam by the ability pass, design §22.2.) Rank I took
+// Power Strike's place in the T1 kits: the biggest multiple per body, on Power
+// Strike's cooldown and wind-up, at Slam's radius. Its value is the lab's parity
+// number, so only its SHAPE is pinned here.
 {
-  for (const tier of [2, 3, 4]) {
-    const slam = castMult(SLAM, tier);
-    const power = castMult(POWER_STRIKE, tier);
-    assert(
-      Math.abs(power - slam * 2) < 1e-9,
-      `T${tier}: two Slam targets must equal Power Strike's multiple (${slam} x2 vs ${power})`,
-    );
-    assert(slam < power, `T${tier}: one target must clearly favour Power Strike`);
-    assert(slam * 3 > power, `T${tier}: three targets must clearly favour Slam`);
-  }
+  assert(abilityCooldownMs(SLAM, 1) === 10000 && abilityCastMs(SLAM, 1) === 1600,
+    "rank I keeps Power Strike's 10 s cooldown and 1.6 s wind-up");
 }
 
-// ── 7. Power Strike is untouched ─────────────────────────────────────────────
-{
-  const mults = [1, 2, 3, 4].map((tier) => castMult(POWER_STRIKE, tier));
-  assert(
-    mults.join(",") === "3,3.5,4,4.5",
-    `Power Strike's ladder must be unchanged, got ${mults.join(",")}`,
-  );
-  for (const tier of [1, 2, 3, 4]) {
-    const effect = abilityRankAt(POWER_STRIKE, tier).effect;
-    assert(
-      effect.kind === "cast-strike" && effect.radius === undefined,
-      "Power Strike must stay strictly single-target",
-    );
-    assert(abilityCooldownMs(POWER_STRIKE, tier) === 10000, "Power Strike's cooldown is unchanged");
-    assert(abilityCastMs(POWER_STRIKE, tier) === 1600, "Power Strike's wind-up is unchanged");
-  }
-  assert(
-    POWER_STRIKE.attunementCost === 4 && POWER_STRIKE.tier === 1,
-    "Power Strike's cost and home tier are unchanged",
-  );
-  // Both are ordinary attunable Techniques: neither consumes or disables the other.
-  assert(
-    SLAM.lineageId !== POWER_STRIKE.lineageId,
-    "Slam must not be filed as a Power Strike evolution",
-  );
-}
-
+// ── 7. Two casts share one channel ───────────────────────────────────────────
 // Both can be held and attuned at once.
 {
   const { world, player } = spawn("slam-coexist") as { world: World; player: PlayerEntity };
-  player.tracksProgression.knownAbilities = ["slam", "power-strike"];
+  player.tracksProgression.knownAbilities = ["slam", "stunning-strike"];
   player.tracksProgression.attunedAbilities = {
-    techniques: ["slam", "power-strike"],
+    techniques: ["slam", "stunning-strike"],
     guards: [],
   };
   const target = monsterAt(world, 430);
@@ -404,7 +376,7 @@ initCombatSystems();
     "loadout order decides which of the two casts claims the channel",
   );
   assert(
-    getCooldown(player.tracksCombat, abilityCooldownKey("power-strike")) === 0,
+    getCooldown(player.tracksCombat, abilityCooldownKey("stunning-strike")) === 0,
     "the Technique that did not fire is merely waiting — never consumed or disabled",
   );
 }
@@ -556,18 +528,19 @@ function castEnds(world: World) {
   );
 }
 
-// A cast with no area announces no area. Power Strike must not sprout a circle.
+// A cast with no area announces no area. A single-target cast (Stunning Strike)
+// must not sprout a circle.
 {
-  const { world, player } = spawn("power-strike-footprint", { abilities: ["power-strike"] });
+  const { world, player } = spawn("single-target-footprint", { abilities: ["stunning-strike"] });
   const target = monsterAt(world, 430);
   setAttackTarget(world, player, target.isMonster.id);
   fireWithReferenceWiring(world, 1_000);
   assert(
-    player.isCastingAbility?.abilityId === "power-strike",
-    "the Power Strike fixture should be casting Power Strike",
+    player.isCastingAbility?.abilityId === "stunning-strike",
+    "the single-target fixture should be casting Stunning Strike",
   );
   const starts = castStarts(world);
-  assert(starts.length === 1, "Power Strike still announces its wind-up");
+  assert(starts.length === 1, "a single-target cast still announces its wind-up");
   assert(
     starts[0]!.aoeRadius === undefined,
     "a single-target cast must carry no radius — absence is what keeps it circle-free",

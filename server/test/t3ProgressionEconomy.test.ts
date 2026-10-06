@@ -366,10 +366,12 @@ for (const recipe of T3_GEAR) {
 
 {
   const ABILITIES: Array<{ id: string; group: string; level: number; type: EssenceType; cost: number }> = [
-    { id: "ability-recipe-binding-strike", group: "tundra", level: 3, type: "blue", cost: 150 },
-    { id: "ability-recipe-frenzy", group: "volcanic", level: 3, type: "red", cost: 175 },
+    // The ability pass (design §22.2, §22.8): Cull takes Binding Strike's old slot
+    // and Imbue Lightning the cut Frenzy's, at those slots' prices; Quick Strike's
+    // Volcanic 5 slot is empty.
+    { id: "ability-recipe-cull", group: "tundra", level: 3, type: "blue", cost: 150 },
+    { id: "ability-recipe-imbue-lightning", group: "volcanic", level: 3, type: "red", cost: 175 },
     { id: "ability-recipe-break-free", group: "tundra", level: 5, type: "blue", cost: 190 },
-    { id: "ability-recipe-quick-strike", group: "volcanic", level: 5, type: "red", cost: 210 },
   ];
   for (const spec of ABILITIES) {
     const recipe = ABILITY_RECIPE_DATABASE.get(spec.id);

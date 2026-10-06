@@ -8,6 +8,7 @@ import { sealsHeldAtTier, sealsRequiredForTier } from "../systems/tierAdvancemen
 import { SKILL_TREE } from "../skillTree";
 import { ITEM_DATABASE } from "../itemDatabase";
 import { getMaxUpgrade } from "../systems/itemUpgrades";
+import { isRetiredAbilityId } from "../abilities";
 
 /** Versioned JSON contract written by a canonical T1 route at A/B boundaries. */
 export const T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION = 1 as const;
@@ -332,13 +333,18 @@ export function tierEntryProfileFromT1Snapshot(
     inventory: [...state.inventory],
     equipment: { ...state.equipment },
     itemUpgrades: importableItemUpgrades,
-    knownAbilities: [...state.knownAbilities],
+    // The abilities the ability pass CUT (design §22.2) drop from a snapshot the
+    // way they drop from every save (`attunementMigration.ts`): known, attuned,
+    // and the `use-ability` rules that wire them. Lossless for everything else.
+    knownAbilities: state.knownAbilities.filter((id) => !isRetiredAbilityId(id)),
     attunedAbilities: {
-      techniques: [...state.attunedAbilities.techniques],
-      guards: [...state.attunedAbilities.guards],
+      techniques: state.attunedAbilities.techniques.filter((id) => !isRetiredAbilityId(id)),
+      guards: state.attunedAbilities.guards.filter((id) => !isRetiredAbilityId(id)),
     },
     runeRecipesCrafted: [...state.runeRecipesCrafted],
-    runesEquipped: state.runesEquipped.map((rule) => ({ ...rule })),
+    runesEquipped: state.runesEquipped
+      .filter((rule) => !(rule.actionId === "use-ability" && rule.targetAbilityId && isRetiredAbilityId(rule.targetAbilityId)))
+      .map((rule) => ({ ...rule })),
     knownStances: [...state.knownStances],
     attunedStances: [...(state.attunedStances ?? [])],
     equippedStances: { ...state.equippedStances },

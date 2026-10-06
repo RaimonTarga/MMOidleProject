@@ -13,6 +13,7 @@ export * from './runeRecipes';
 export * from './abilities';
 export * from './abilityWiring';
 export * from './abilityRecipes';
+export * from './abilityMagnitudes';
 export * from './stances';
 export * from './stanceRecipes';
 export * from './rites';

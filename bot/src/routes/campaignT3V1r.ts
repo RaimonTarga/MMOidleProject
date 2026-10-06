@@ -25,7 +25,7 @@ export const CAMPAIGN_T3_V1R_ROUTES: Route[] = Object.entries(V1R_BUILDS).map(([
     { type: 'configureBuild', build: NIGHT2_TRAVEL_BUILD },
     ...(arm === 'focus' ? [{ type: 'craftRune' as const, recipeId: 'rune-recipe-focus-lowest-hp', stepTimeoutMs: 15000 }] : []),
     ...(arm === 'pursuit' ? [
-      { type: 'learnAbility' as const, recipeId: 'ability-recipe-hamstring', abilityId: 'hamstring', slot: 'technique' as const, attune: false, stepTimeoutMs: 15000 },
+      { type: 'learnAbility' as const, recipeId: 'ability-recipe-binding-strike', abilityId: 'binding-strike', slot: 'technique' as const, attune: false, stepTimeoutMs: 15000 },
       { type: 'assert' as const, condition: { type: 'canCraft' as const, recipeId: 'desert-boots-t2' } },
       { type: 'craft' as const, recipeIds: ['desert-boots-t2'], stepTimeoutMs: 15000 },
       { type: 'equip' as const, definitionIds: ['desert-boots-t2'] },
