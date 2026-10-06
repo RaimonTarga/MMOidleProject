@@ -24,6 +24,12 @@
  * the fight minimum, missing from one file, or any row carrying a lab `error`;
  * 2 a read or format error (missing file, unparseable line, row without id/cls/boss/
  * dps/won, no rows at all).
+ *
+ * `--identity` is the other question (the no-card check, e.g. wave 3's no-band plan
+ * against reports/legibility/final-base.jsonl): are the two files the SAME fights,
+ * row for row, once `wallMs` (wall-clock time) is dropped and both are sorted? It
+ * prints the count of equal / differing / one-sided rows by candidate label and exits
+ * 0 identical, 1 not, 2 on a read error. No table, no gate.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 
@@ -75,6 +81,41 @@ function readLab(path: string): Read {
 }
 
 const [pathA, pathB] = files as [string, string];
+
+if (opts.identity) {
+  const canon = (path: string): Map<string, string> => {
+    let text: string;
+    try { text = readFileSync(path, 'utf8'); } catch (e) { formatError(`cannot read ${path}: ${(e as Error).message}`); }
+    const out = new Map<string, string>();
+    text.split('\n').forEach((line, i) => {
+      if (!line.trim()) return;
+      let r: Record<string, unknown>;
+      try { r = JSON.parse(line) as Record<string, unknown>; } catch { formatError(`${path}:${i + 1}: not JSON`); }
+      if (typeof r.id !== 'string') formatError(`${path}:${i + 1}: row has no id`);
+      if (out.has(r.id)) formatError(`${path}: duplicate row id ${r.id}`);
+      delete r.wallMs;
+      out.set(r.id, JSON.stringify(r));
+    });
+    return out;
+  };
+  const a = canon(pathA), b = canon(pathB);
+  const tally = new Map<string, { same: number; differ: number; onlyA: number; onlyB: number }>();
+  const t = (id: string) => { const c = id.split('|')[0]!; return tally.get(c) ?? tally.set(c, { same: 0, differ: 0, onlyA: 0, onlyB: 0 }).get(c)!; };
+  const firstDiffs: string[] = [];
+  for (const [id, row] of a) {
+    const other = b.get(id);
+    if (other === undefined) t(id).onlyA++;
+    else if (other === row) t(id).same++;
+    else { t(id).differ++; if (firstDiffs.length < 5) firstDiffs.push(id); }
+  }
+  for (const id of b.keys()) if (!a.has(id)) t(id).onlyB++;
+  for (const [c, n] of tally) console.log(`${c.padEnd(32)} same ${n.same}  differ ${n.differ}  only-A ${n.onlyA}  only-B ${n.onlyB}`);
+  for (const id of firstDiffs) console.log(`differs: ${id}`);
+  const ok = [...tally.values()].every((n) => n.differ === 0 && n.onlyA === 0 && n.onlyB === 0);
+  console.log(`${pathA} (${a.size} rows) vs ${pathB} (${b.size} rows), wallMs dropped: ${ok ? 'IDENTICAL' : 'NOT IDENTICAL'}`);
+  process.exit(ok ? 0 : 1);
+}
+
 const A = readLab(pathA), B = readLab(pathB);
 
 interface Stat { n: number; dps: number; dps8: number | null; win: number }
