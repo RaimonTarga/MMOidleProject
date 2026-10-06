@@ -355,6 +355,10 @@ initCombatSystems();
 // Strike's cooldown and wind-up, at Slam's radius. Its value is the lab's parity
 // number, so only its SHAPE is pinned here.
 {
+  assert(
+    slamEffect(1).damageMult > slamEffect(2).damageMult,
+    `rank I must lean single-target: its multiple above rank II's (${slamEffect(1).damageMult} vs ${slamEffect(2).damageMult})`,
+  );
   assert(abilityCooldownMs(SLAM, 1) === 10000 && abilityCastMs(SLAM, 1) === 1600,
     "rank I keeps Power Strike's 10 s cooldown and 1.6 s wind-up");
 }

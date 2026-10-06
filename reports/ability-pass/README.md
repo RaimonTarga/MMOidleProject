@@ -182,6 +182,37 @@ column should change), and the table above puts it beside W0's `stacking-boss5-a
 `--mid=<file>` adds a three-way split; `--moved-only` lists only the rows that moved;
 `--cells-md=<file>` writes every cell to a second file.
 
+## 6. W1-A — the Slam rank I parity number (branch `feat/ability-roster`)
+
+The kit column of the tutorial-pair plan changed (Expose Weakness → Slam on the Greatbear,
+Toadeater, Behemoth and Broodmother; Plains keeps Sweep), so the plan was regenerated on
+the branch: `plan-w1a.json` differs from `plan-baseline.json` in `techniques` only, on
+exactly those 1,440 rows. Candidates ran §3's commands with the `ap` override
+`{"slam": {"field": "damageMult", "values": [<rank I>, 1.75, 2.0, 2.25]}}` on every row:
+
+| file | Slam rank I | worst kit cell | kit cells outside ±5% |
+|---|---:|---|---:|
+| `w1a-slam-1.75.jsonl` | 1.75 | striker Behemoth -13.9% | 14 |
+| `w1a-slam-2.15.jsonl` | 2.15 | striker Behemoth -10.1% | 11 |
+| `w1a-slam-2.2.jsonl` | **2.2** | conduit Behemoth +8.9% | 12 |
+| `w1a-slam-2.25.jsonl` | 2.25 | conduit Behemoth +9.3% | 13 |
+| `w1a-slam-2.4.jsonl` | 2.4 | squire Greatbear +12.1% | 10 |
+
+**No single value brings every cell inside ±5%**: the Slinger, Spirit and Striker cells
+fall and the Conduit, Apprentice and Squire cells rise together as the multiplier moves
+(a ~17 pp spread at every candidate; Slam's value tracks attack cadence, and a Conduit
+casts through one summon while the others keep swinging, where Expose Weakness paid every
+class the same share). Per the brief, the committed value is the one that minimises the
+worst cell: **2.2** (worst +8.9%, the Conduit on the Behemoth; the Striker on the Behemoth
+-8.1%). `w1a.jsonl` is the authored run (no override) on the branch's final code and is
+IDENTICAL to `w1a-slam-2.2.jsonl` (1,800/1,800, `--identity`), so nothing else in the
+branch moved a T1 kit fight; every Razorback cell is ±0.0% at every candidate. Matrix:
+`w1a-parity.md` (kit and control cells), `w1a.md`; the per-cell ladder:
+`w1a-ladder.md`. The candidate plans are not kept (plan + override).
+
+The boss5 tier-3/4 rerun with Slam in place of Expose Weakness is in `stacking.md`
+("Rerun"), `w1a-boss5.md` and `w1a-boss5-cells.md` (plan `plan-boss5-w1a.json`).
+
 ## Commits
 
 Branch `feat/ability-pass-baseline` off `feat/ability-pass` (`e56d530e`). Nothing was

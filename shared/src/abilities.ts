@@ -761,8 +761,11 @@ const abilities: AbilityDef[] = [
     // across ranks for the first implementation; breadth is the identity, and
     // widening it is a balance decision to make against measured data.
     ranks: [
-      // Rank I: PLACEHOLDER (a copy of rank II) until the parity run authors it.
-      { effect: { kind: "cast-strike", damageMult: 1.75, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
+      // Rank I: 2.2, the parity value (W1-A ladder 1.75 / 2.15 / 2.2 / 2.25 / 2.4 on the
+      // tutorial-pair lab, 30 seeds; 2.2 minimises the worst cell, +8.9% on the
+      // Conduit's Behemoth — no single value holds every class inside ±5%;
+      // reports/ability-pass/README.md §6 and w1a-ladder.md).
+      { effect: { kind: "cast-strike", damageMult: 2.2, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
       { effect: { kind: "cast-strike", damageMult: 1.75, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
       { effect: { kind: "cast-strike", damageMult: 2.0, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
       { effect: { kind: "cast-strike", damageMult: 2.25, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
