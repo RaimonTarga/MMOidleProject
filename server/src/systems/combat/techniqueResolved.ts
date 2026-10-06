@@ -33,7 +33,7 @@ import type { MonsterEntity, PlayerEntity } from '../../ecs/entity';
 import type { World } from '../../world/World';
 import type { CombatContext } from './engine/combatPipeline';
 import { onAbilityNodeTechniqueLanded } from './abilityNodes';
-import { signatureOnTechniqueResolved } from './keystones';
+import { onAbilityKeystoneResolved, signatureOnTechniqueResolved } from './keystones';
 import { consumeTechniqueWindow, onLineageTechniqueCast } from './lineageCards';
 
 /**
@@ -46,7 +46,10 @@ import { consumeTechniqueWindow, onLineageTechniqueCast } from './lineageCards';
  *     dividing by `empoweredMultiplier` — so the fold has to be in place before
  *     the rider reads it, or the two would compound (design §6, one multiplier
  *     per hit).
- *  2. **The ability node's payoff** (design §19).
+ *  2. **The ability node's payoff** (design §19), then **the ability's keystone
+ *     verb** (design §22.4) — the ability's own rows, before anything a lineage
+ *     hangs off the moment. A verb runs once per resolution, which is what makes a
+ *     Reload clip's keystone first-hit-only and a Conduit cast's once per cast.
  *  3. **The `technique-cast` lineage cards** (design §22). After the window is
  *     spent, so a card that OPENS a window does not have it eaten by the same
  *     cast that opened it.
@@ -65,6 +68,7 @@ export function onTechniqueResolved(
   if (ability.slot !== 'technique') return;
   if (site.ctx) consumeTechniqueWindow(player, site.ctx);
   onAbilityNodeTechniqueLanded(world, player, ability, site);
+  onAbilityKeystoneResolved(world, player, ability, site);
   onLineageTechniqueCast(world, player, { ...site, abilityId: ability.id });
   signatureOnTechniqueResolved(world, player, site);
 }

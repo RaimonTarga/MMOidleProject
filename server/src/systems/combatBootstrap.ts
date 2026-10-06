@@ -18,6 +18,7 @@ import { initPlayerAmplifiers } from "./combat/damage/playerAmplifiers";
 import { initStanceCombatEffects } from "./player/stances/stanceSwitch";
 import { initBossPatternCombat } from "./combat/engine/patternCombat";
 import { registerLineageCards, registerLineageIncomingCards } from "./combat/lineageCards";
+import { registerAbilityNodeKillChain } from "./combat/abilityNodes";
 import { registerLeanConditions } from "./combat/leanConditions";
 import { initRangeMechanics } from "./combat/rangeMechanics";
 
@@ -66,6 +67,10 @@ export function initCombatSystems(): void {
   // `empoweredMultiplier` by the time a card reads the hit it is scaling off —
   // one multiplier per hit depends on that order.
   withCombatRegistrationLabel('registerLineageCards', registerLineageCards);
+  // Ability nodes (design §22.10): a Kill chain route on a Technique pays on the
+  // kill its hit makes, not on landing — an onKill listener beside the card
+  // runtime it dispatches through.
+  withCombatRegistrationLabel('registerAbilityNodeKillChain', registerAbilityNodeKillChain);
   // The leans that seed their lane's condition (design §24.9): the Affliction
   // lean's light bleed and the Control lean's slow on every landed hit. After
   // the card runtime for the same

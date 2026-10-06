@@ -26,6 +26,7 @@ import {
   abilityCastMs,
   abilityRankAt,
   abilityRangeBonus,
+  castWindupMs,
   resolveAbilityEffect,
   type AbilityDef,
 } from "@mmo-idle/shared";
@@ -50,6 +51,7 @@ import { armTechnique } from "./abilityArming";
 import { usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
 import { beginFormationCharge, cancelFormationCharge, formationChargeMinions, updateFormationCharge } from "./formationCharge";
 import { techniquePowerPctFor } from "./abilityKata";
+import { abilityNodeCastSpeedPctFor } from "../../combat/abilityNodes";
 
 /**
  * Begin a wind-up. Returns true when the cast started (claiming the offensive
@@ -88,7 +90,7 @@ export function beginAbilityCast(
   // firing with nowhere to go.
   if (!afflictionTechniqueHasWork(world, player, ability, target)) return false;
 
-  const effectiveMs = Math.max(1, Math.round(castMs * castSpeedMult(player)));
+  const effectiveMs = castWindupFor(player, ability, castMs);
   attachComponent(world, player, "isCastingAbility", {
     abilityId: ability.id,
     endsAt: now + effectiveMs,
@@ -137,7 +139,7 @@ function beginSelfCast(
   castMs: number,
   now: number,
 ): boolean {
-  const effectiveMs = Math.max(1, Math.round(castMs * castSpeedMult(player)));
+  const effectiveMs = castWindupFor(player, ability, castMs);
   attachComponent(world, player, "isCastingAbility", {
     abilityId: ability.id,
     endsAt: now + effectiveMs,
@@ -170,15 +172,19 @@ export function holdsPositionWhileCasting(player: PlayerEntity): boolean {
 }
 
 /**
- * `technique.cast-speed-pct` shortens the wind-up. Capped so a cast can never
- * collapse to an instant — the telegraph IS the cost that makes Technique Power
- * on casts a fair trade.
+ * The wind-up after cast speed. `technique.cast-speed-pct` (the weapon's — the
+ * Technique lane's own number, design §22.9) and the ability amplifier's `cast`
+ * axis are SUMMED and capped once at `TECHNIQUE_CAST_SPEED_CAP` (`castWindupMs`),
+ * so a cast can never collapse to an instant whichever sources stack — the
+ * telegraph IS the cost that makes Technique Power on casts a fair trade, and no
+ * combination of them shortens one below 40% of its authored wind-up.
  */
-const CAST_SPEED_CAP = 0.6;
-
-function castSpeedMult(player: PlayerEntity): number {
-  const pct = player.usesSkills.passives["technique.cast-speed-pct"] ?? 0;
-  return 1 - Math.min(CAST_SPEED_CAP, Math.max(0, pct));
+export function castWindupFor(player: PlayerEntity, ability: AbilityDef, authoredMs: number): number {
+  return castWindupMs(
+    authoredMs,
+    player.usesSkills.passives["technique.cast-speed-pct"] ?? 0,
+    abilityNodeCastSpeedPctFor(player, ability.id),
+  );
 }
 
 /**
