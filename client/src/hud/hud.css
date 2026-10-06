@@ -441,10 +441,6 @@
   bottom: 0;
   transition: width 0.3s ease, left 0.3s ease, background 0.4s ease;
 }
-.hp-layer--hp {
-  left: 0;
-  border-radius: 3px 0 0 3px;
-}
 /* Pending damage-over-time — hatched red eating the right edge of current HP. */
 .hp-layer--dot {
   background: repeating-linear-gradient(45deg, #e04545, #e04545 4px, #b62b2b 4px, #b62b2b 8px);
@@ -485,15 +481,6 @@
   animation: shield-shimmer 0.7s ease-in-out infinite alternate;
 }
 
-/* Wards cap the HP track like the desktop plate does — they have no fixed
-   ceiling of their own, so they are measured against max HP. */
-.hp-layer--ward {
-  top: 0;
-  bottom: auto;
-  height: 2px;
-  background: #bfe6ff;
-  box-shadow: 0 0 4px rgba(191, 230, 255, 0.55);
-}
 
 .hp-bar-fill {
   height: 100%;
@@ -2030,13 +2017,6 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-}
-.mhud-hp .hp-bar-track { margin-top: 0; height: 9px; }
-
-.mhud-hp__text {
-  color: var(--hud-text-muted);
-  font-size: 9px;
-  flex-shrink: 0;
 }
 
 .mhud-top__zone {

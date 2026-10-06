@@ -2,7 +2,9 @@ import type { HTMLAttributes, ReactNode } from 'react';
 import { GameIcon, type IconSource } from '../../ui/GameIcon';
 import { useHoverTooltip } from '../primitives/HelpTooltip';
 import { useChangeFlash } from '../primitives/useChangeFlash';
-import { GradientConduit, type ConduitRamp } from '../primitives/GradientConduit';
+import { GradientConduit } from '../primitives/GradientConduit';
+import { ReadoutBar } from '../ReadoutBar';
+import { FRAME_TOKENS } from '../../render/readoutTokens';
 import './statPlate.css';
 
 /**
@@ -43,13 +45,6 @@ export interface PlateCrown {
   beside?: ReactNode;
 }
 
-/** Health is the one bar whose colour carries meaning beyond its fill. */
-function hpRamp(fraction: number): ConduitRamp {
-  if (fraction > 0.5) return 'vital';
-  if (fraction > 0.25) return 'caution';
-  return 'critical';
-}
-
 function Crown({ crown }: { crown: PlateCrown }) {
   const max = Math.max(0, crown.maxHp);
   const pct = (value: number) => (max > 0 ? Math.min(100, Math.max(0, (value / max) * 100)) : 0);
@@ -60,11 +55,12 @@ function Crown({ crown }: { crown: PlateCrown }) {
   const dotPct = Math.min(hpPct, pct(crown.incomingDot));
   const safePct = Math.max(0, hpPct - dotPct);
   const healPct = Math.min(100 - hpPct, pct(crown.pendingHeal));
-  // The capping band is WARDS only. The barrier has its own conduit below, on
-  // its own scale, so drawing it here as well said the same thing twice; wards
-  // have no ceiling of their own and this band is their only reading.
-  const wardPct = pct(crown.ward);
+  // The absorb band is WARDS only. The barrier has its own conduit below, on its
+  // own scale, so drawing it here as well said the same thing twice; wards have
+  // no ceiling of their own and this band is their only reading.
   const barrierFill = crown.barrierMax > 0 ? crown.barrier / crown.barrierMax : 0;
+  const hpText = `${Math.ceil(crown.hp)} / ${crown.maxHp}`;
+  const low = max > 0 && crown.hp > 0 && crown.hp / max <= FRAME_TOKENS.lowHealth.at;
 
   return (
     <div className="stat-crown">
@@ -75,55 +71,54 @@ function Crown({ crown }: { crown: PlateCrown }) {
           <span className={`status-dot ${crown.status}`} title={crown.status} />
         </div>
 
-        <div className="stat-crown__readout" {...(crown.hpTip?.handlers ?? {})}>
-          <span className="stat-crown__hp">
-            {Math.ceil(crown.hp)}<span className="stat-crown__max"> / {crown.maxHp}</span>
-          </span>
-          {crown.barrierMax > 0 && (
-            <span className="stat-crown__barrier-read" title="Barrier — absorbed before health">
-              {Math.ceil(crown.barrier)}<span className="stat-crown__max"> / {crown.barrierMax}</span>
-            </span>
-          )}
-          {crown.ward > 0 && (
-            <span className="stat-crown__shield" title="Ward — absorbed before health">
-              +{Math.ceil(crown.ward)}
-            </span>
-          )}
+        {(crown.barrierMax > 0 || crown.ward > 0) && (
+          <div className="stat-crown__readout">
+            {crown.barrierMax > 0 && (
+              <span className="stat-crown__barrier-read" title="Barrier — absorbed before health">
+                {Math.ceil(crown.barrier)}<span className="stat-crown__max"> / {crown.barrierMax}</span>
+              </span>
+            )}
+            {crown.ward > 0 && (
+              <span className="stat-crown__shield" title="Ward — absorbed before health">
+                +{Math.ceil(crown.ward)}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* The vitals (combat readout run, item 6): the same bar as the target and
+            boss frames — the chip, the absorb band, the number inside — plus the
+            pending DoT and regen layers, and a steady edge glow at a quarter. */}
+        <div className="stat-crown__track" {...(crown.hpTip?.handlers ?? {})}>
+          <ReadoutBar
+            size="vitals"
+            hp={crown.hp}
+            maxHp={crown.maxHp}
+            absorb={crown.ward}
+            label={hpText}
+            lowHealth={low}
+            ariaLabel={crown.ward > 0
+              ? `Health ${Math.ceil(crown.hp)} of ${crown.maxHp}, plus ${Math.ceil(crown.ward)} warded`
+              : `Health ${Math.ceil(crown.hp)} of ${crown.maxHp}`}
+            layers={
+              <>
+                {healPct > 0 && (
+                  <i
+                    className="stat-crown__layer stat-crown__layer--regen"
+                    style={{ left: `${hpPct}%`, width: `${healPct}%` }}
+                  />
+                )}
+                {dotPct > 0 && (
+                  <i
+                    className="stat-crown__layer stat-crown__layer--dot"
+                    style={{ left: `${safePct}%`, width: `${dotPct}%` }}
+                  />
+                )}
+              </>
+            }
+          />
           {crown.hpTip?.node}
         </div>
-
-        <GradientConduit
-          className="stat-crown__track"
-          fraction={safePct / 100}
-          ramp={hpRamp(hpPct / 100)}
-          height={9}
-          label={`Health ${Math.ceil(crown.hp)} of ${crown.maxHp}`}
-          valueText={crown.ward > 0
-            ? `${Math.ceil(crown.hp)} of ${crown.maxHp}, plus ${Math.ceil(crown.ward)} warded`
-            : `${Math.ceil(crown.hp)} of ${crown.maxHp}`}
-          layers={
-            <>
-              {healPct > 0 && (
-                <span
-                  className="stat-crown__layer stat-crown__layer--regen"
-                  style={{ left: `${hpPct}%`, width: `${healPct}%` }}
-                />
-              )}
-              {dotPct > 0 && (
-                <span
-                  className="stat-crown__layer stat-crown__layer--dot"
-                  style={{ left: `${safePct}%`, width: `${dotPct}%` }}
-                />
-              )}
-              {wardPct > 0 && (
-                <span
-                  className="stat-crown__layer stat-crown__layer--shield"
-                  style={{ width: `${wardPct}%` }}
-                />
-              )}
-            </>
-          }
-        />
 
         {crown.barrierMax > 0 && (
           <GradientConduit

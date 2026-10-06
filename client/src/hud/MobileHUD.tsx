@@ -16,6 +16,8 @@ import { BiomeXpBar } from './BiomeXpBar';
 import { ArchetypeMechanics } from './stat/mechanics';
 import { RhythmReadout } from './RhythmReadout';
 import { BossFrame } from './BossFrame';
+import { ReadoutBar } from './ReadoutBar';
+import { FRAME_TOKENS } from '../render/readoutTokens';
 import { NODE_BIOMES, BIOME_DATABASE, stanceDef } from '@mmo-idle/shared';
 import { SettingsPanel } from './settings/SettingsPanel';
 import { CharacterSelectPrompt } from './CharacterSelectPrompt';
@@ -125,18 +127,17 @@ function MobileHUDContent() {
   const newRecipes = useNewEntries('craft', playerId, eligibleRecipeKeys);
   const upgradeBadge = useUpgradeBadge();
 
-  // ── HP-bar layers (all as % of maxHp), mirroring the desktop StatPanel ──
+  // ── HP-bar layers (all as % of maxHp), mirroring the desktop crown ──
   const hpPct       = maxHp > 0 ? (hp / maxHp) * 100 : 0;
-  const hpBarColor  = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
   // The barrier strip runs on its OWN scale (fraction of the pool), so an empty
   // barrier still shows the pool that is missing. Wards, which have no fixed
-  // ceiling, stay a capping band measured against max HP like the other layers.
+  // ceiling, are the bar's absorb band, measured against max HP.
   const barrierPct  = barrierMax > 0 ? Math.min(100, (barrier / barrierMax) * 100) : 0;
   const totalWard   = wards.reduce((s, w) => s + w.amount, 0);
-  const wardPct     = maxHp > 0 ? Math.min(100, (totalWard / maxHp) * 100) : 0;
   const dotPct      = maxHp > 0 ? Math.min(hpPct, (incomingDot / maxHp) * 100) : 0;
   const safePct     = Math.max(0, hpPct - dotPct);
   const healPct     = maxHp > 0 ? Math.min(100 - hpPct, (pendingHeal / maxHp) * 100) : 0;
+  const lowHealth   = maxHp > 0 && hp > 0 && hp / maxHp <= FRAME_TOKENS.lowHealth.at;
 
   const zoneLabel = (() => {
     if (!nodeId) return null;
@@ -335,20 +336,28 @@ function MobileHUDContent() {
                 <div className="hp-shield-strip__fill" style={{ width: `${barrierPct}%` }} />
               </div>
             )}
-            <div className="hp-bar-track">
-              {wardPct > 0 && (
-                <div className="hp-layer hp-layer--ward" style={{ width: `${wardPct}%` }} />
-              )}
-              {healPct > 0 && (
-                <div className="hp-layer hp-layer--regen" style={{ left: `${hpPct}%`, width: `${healPct}%` }} />
-              )}
-              <div className="hp-layer hp-layer--hp" style={{ width: `${safePct}%`, background: hpBarColor }} />
-              {dotPct > 0 && (
-                <div className="hp-layer hp-layer--dot" style={{ left: `${safePct}%`, width: `${dotPct}%` }} />
-              )}
-            </div>
+            {/* The vitals (combat readout run, item 6): the shared readout bar — the
+                chip, the wards' absorb band, the number inside, the low-health glow. */}
+            <ReadoutBar
+              size="vitals"
+              hp={hp}
+              maxHp={maxHp}
+              absorb={totalWard}
+              label={nodeId ? `${Math.ceil(hp)} / ${maxHp}` : '—'}
+              lowHealth={lowHealth}
+              ariaLabel={`Health ${Math.ceil(hp)} of ${maxHp}`}
+              layers={
+                <>
+                  {healPct > 0 && (
+                    <i className="hp-layer hp-layer--regen" style={{ left: `${hpPct}%`, width: `${healPct}%` }} />
+                  )}
+                  {dotPct > 0 && (
+                    <i className="hp-layer hp-layer--dot" style={{ left: `${safePct}%`, width: `${dotPct}%` }} />
+                  )}
+                </>
+              }
+            />
           </div>
-          <span className="mhud-hp__text">{nodeId ? `${Math.ceil(hp)}/${maxHp}` : '—'}</span>
           {zoneLabel && <span className="mhud-top__zone">{zoneLabel}</span>}
         </div>
 
