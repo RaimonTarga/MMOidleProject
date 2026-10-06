@@ -74,4 +74,23 @@ function floater(height = 10) {
   assert(d.destroyed && c.destroyed);
 }
 
+// ── The tokens module's shape ────────────────────────────────────────────────
+{
+  const bands = NUMBER_TOKENS.bands;
+  assert.equal(bands[0].minShare, 0, 'the lowest band catches every hit');
+  for (let i = 1; i < bands.length; i++) {
+    assert(bands[i].minShare > bands[i - 1].minShare, 'bands ascend by share');
+    assert(bands[i].sizePx > bands[i - 1].sizePx, 'bands ascend by size');
+  }
+  assert(bands.some(b => b.band === NUMBER_TOKENS.dotMaxBand));
+  assert(bands.some(b => b.band === NUMBER_TOKENS.unknownShareBand));
+  const hex = /^#[0-9a-f]{6}$/i;
+  const numberColors = [...Object.values(NUMBER_TOKENS.color), ...Object.values(NUMBER_TOKENS.element), NUMBER_TOKENS.crit.color];
+  for (const c of numberColors) assert.match(c, hex);
+  assert.equal(numberColors.filter(c => c === NUMBER_TOKENS.crit.color).length, 1, 'the crit gold is no other kind of number colour');
+  for (const m of Object.values(NUMBER_TOKENS.motion)) assert(m.lifeMs > m.popMs && m.popScale >= 1 && m.risePx >= 0);
+  assert(NUMBER_TOKENS.motion.dot.risePx < NUMBER_TOKENS.motion.hit.risePx, 'a DoT tick rises small');
+  assert(NUMBER_TOKENS.lane.cap >= 1 && NUMBER_TOKENS.dotWindowMs > 0);
+  assert(NUMBER_TOKENS.screenFloor > 0 && NUMBER_TOKENS.screenFloor <= 1);
+}
 console.log('combatReadout.test.ts: ok');

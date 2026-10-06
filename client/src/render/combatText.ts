@@ -71,6 +71,7 @@ export function prepareCombatText(
 }
 
 type TextState = Pick<RenderState, 'sprite' | 'spriteMeta' | 'kind' | 'ownId' | 'view'>;
+type BodySprite = NonNullable<ReturnType<RenderState['sprite']['get']>>;
 /** Draws one number; returns the floater so the lane can stack it (anything else is ignored). */
 export type SpawnNumber = (
   pos: Vec2, offset: number, amount: number, color: string, style?: DamageNumberStyle,
@@ -148,7 +149,45 @@ function drawEntries(entries: readonly CombatTextEntry[], state: TextState, spaw
       entry.amount, resolved.color, resolved.style,
     );
     if (isLaneFloater(floater)) rt.lanes.push(entry.targetId, floater);
+    // The crit look's body flash: the player's own empowered hit on a monster.
+    if (sprite && resolved.style?.motion === 'crit' && kind === 'monster' && !entry.shield) flashBody(sprite);
   }
+}
+
+const flashing = new WeakSet<object>();
+
+function prefersReducedMotion(): boolean {
+  return typeof window !== 'undefined'
+    && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
+}
+
+/**
+ * A short white flash over the struck body: a tint-filled copy that fades in
+ * `bodyFlashMs`, so the sprite's own tint (elite outline, colour) is never touched.
+ * One at a time per body; skipped under reduced motion and for untextured bodies.
+ */
+function flashBody(sprite: BodySprite): void {
+  if (prefersReducedMotion() || flashing.has(sprite) || !sprite.scene || !('texture' in sprite)) return;
+  const body = sprite as Phaser.GameObjects.Image;
+  const scene = body.scene;
+  const crit = NUMBER_TOKENS.crit;
+  const ghost = scene.add
+    .image(body.x, body.y, body.texture.key, body.frame.name)
+    .setOrigin(body.originX, body.originY)
+    .setScale(body.scaleX, body.scaleY)
+    .setFlip(body.flipX, body.flipY)
+    .setRotation(body.rotation)
+    .setDepth(body.depth + 0.5)
+    .setTintFill(0xffffff)
+    .setAlpha(crit.bodyFlashAlpha);
+  flashing.add(sprite);
+  scene.tweens.add({
+    targets: ghost,
+    alpha: 0,
+    duration: crit.bodyFlashMs,
+    ease: 'Quad.easeIn',
+    onComplete: () => { ghost.destroy(); flashing.delete(sprite); },
+  });
 }
 
 /**

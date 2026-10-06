@@ -159,4 +159,35 @@ function floater(height = 10) {
   assert.equal(out.length, 2, 'a window from the old node never draws in the new one');
 }
 
+// ── The crit look is one look ────────────────────────────────────────────────
+{
+  const base = { hasDirectHit: true, empowered: false, execution: false };
+  const share = { amount: 15, maxHp: 160 };
+  const crit = resolveMonsterDamageStyle({ ...base, empowered: true }, share);
+  assert.equal(crit.color, NUMBER_TOKENS.crit.color);
+  assert.equal(crit.style?.suffix, NUMBER_TOKENS.crit.suffix);
+  assert.equal(crit.style?.motion, 'crit');
+  assert.equal(crit.style?.band, 'heavy', 'a crit moves up one band (15 of 160 is a "hit")');
+  assert.equal(resolveMonsterDamageStyle({ ...base, execution: true }, share).color, NUMBER_TOKENS.crit.color);
+  const fireCrit = resolveMonsterDamageStyle({ ...base, hasDirectHit: false, empowered: true, dotElement: 'fire' }, share);
+  assert.equal(fireCrit.color, NUMBER_TOKENS.element.fire, 'an elemental crit keeps its element colour');
+  assert.equal(fireCrit.style?.band, 'heavy', '...with the crit size');
+  assert.equal(fireCrit.style?.symbol, ELEMENT_STYLE.fire.symbol);
+  // Nothing else is gold.
+  const others = [
+    resolveMonsterDamageStyle(base, share),
+    resolveMonsterDamageStyle({ ...base, capped: true, empowered: true }, share),
+    resolveMonsterDamageStyle({ ...base, evadedPartial: true }, share),
+    resolveMonsterDamageStyle({ ...base, hasDirectHit: false, isDot: true }, share),
+    ...(['poison', 'fire', 'frost', 'lightning', 'bleed', 'doom'] as const).map(dotElement =>
+      resolveMonsterDamageStyle({ ...base, hasDirectHit: false, isDot: true, dotElement }, share)),
+    resolvePlayerDamageStyle({ ...base, empowered: true }, NUMBER_TOKENS.color.takenOwn, share),
+    resolvePlayerDamageStyle(base, NUMBER_TOKENS.color.takenOther, share),
+    resolveShieldDamageStyle(share),
+  ];
+  for (const look of others) assert.notEqual(look.color, NUMBER_TOKENS.crit.color, 'gold means crit and nothing else');
+  const incomingCrit = resolvePlayerDamageStyle({ ...base, empowered: true }, NUMBER_TOKENS.color.takenOwn, share);
+  assert.equal(incomingCrit.style?.motion, 'crit', 'an incoming crit is larger...');
+  assert.equal(incomingCrit.color, NUMBER_TOKENS.color.takenOwn, '...in the damage-taken colour');
+}
 console.log('combatText.test.ts: ok');

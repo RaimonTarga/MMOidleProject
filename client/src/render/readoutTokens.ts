@@ -75,6 +75,18 @@ export const NUMBER_TOKENS = {
     bleed: '#ec4b40',
     doom: '#9d4dff',
   } satisfies Record<DamageElement, string>,
+  /**
+   * The crit look is one look: an `empowered` (or execution) hit moves up the band
+   * ladder, draws gold with a '!' and flashes the body. Nothing else is gold. An
+   * elemental crit keeps its element's colour and takes only the size and the flash.
+   */
+  crit: {
+    color: '#ffd23f',
+    bandSteps: 1,
+    suffix: '!',
+    bodyFlashMs: 110,
+    bodyFlashAlpha: 0.85,
+  },
   glyph: {
     shield: '🛡',
     capped: '▼',
