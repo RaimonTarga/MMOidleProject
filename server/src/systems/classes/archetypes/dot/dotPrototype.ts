@@ -1,5 +1,4 @@
-import { outgoingFinalDamage, incomingFinalDamage } from '../../../combat/damage/finalDamage';
-import { mitigatePlayerTickOnMonster } from '../../../combat/damage/monsterTickMitigation';
+import { incomingFinalDamage } from '../../../combat/damage/finalDamage';
 import { GAME_CONFIG, resolveDotStackCap } from '@mmo-idle/shared';
 import {
   MONSTER_DATABASE,
@@ -26,10 +25,8 @@ import { initDotFrameLoop } from "./frameLoop";
 import {
   initDotT3,
   computeEternalDoomDamage,
-  getSmolderMult,
-  getFrozenMult,
-  getFrostbiteDotTakenMult,
 } from "./t3";
+import { classDotTickDamage } from "./tickDamage";
 import type { DeathCause } from "@mmo-idle/shared";
 import type { MonsterEntity, PlayerEntity } from "../../../../ecs/entity";
 import type { World } from "../../../../world/World";
@@ -65,7 +62,6 @@ import {
   actorFromSourceId,
 } from "../../../../world/worldLogActors";
 import { isInvulnerableMonster, isInvulnerablePlayer } from "../../../combat/invulnerability";
-import { applyMonsterDamageTakenDebuffs } from "../../shared/debuffs";
 import { drainWards } from "../../../defense/barrier/wards";
 import { drainBarrier, stampBarrierDamage } from "../../../defense/barrier/barrier";
 import { DOT_EFFECT_ID } from "./t3/core/constants";
@@ -208,7 +204,7 @@ export function updateDotArchetype(world: World, dt: number): void {
     effect.data.nextTickIn -= dt;
     if (effect.data.nextTickIn > 0) continue;
 
-    let damage = effect.data.isEternalDoom
+    const rawTick = effect.data.isEternalDoom
       ? computeEternalDoomDamage(
           effect.stacks,
           effect.data.damagePerStack,
@@ -216,13 +212,7 @@ export function updateDotArchetype(world: World, dt: number): void {
           effect.data.edDiminishRate,
         )
       : computeScaledDotDamage(effect);
-    damage = mitigatePlayerTickOnMonster(entity, damage, 'dot');
-
-    // Apply DoT vulnerability effects to DoT ticks.
-    damage = Math.max(1, Math.round(damage * getSmolderMult(state) * getFrozenMult(state) * getFrostbiteDotTakenMult(state)));
-    damage = Math.max(1, applyMonsterDamageTakenDebuffs(state, damage));
-
-    damage = outgoingFinalDamage(world, effect.sourceId, damage);
+    const damage = classDotTickDamage(world, entity, effect.sourceId, rawTick);
     const source = actorFromSourceId(world, effect.sourceId);
     recordMonsterDamagedByPlayer(
       world,
