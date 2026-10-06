@@ -161,12 +161,13 @@ const offerEntries: [string, AbilityPacketOffers][] = [
     ['technique', 'technique-refund'],
   ]],
 
-  // Stunning Strike is the roster's hardest control. Control deepens it, Empowered
-  // cashes a target that is on the floor, and Technique is the lock-down route:
-  // the shorter the cooldown, the less of the fight is spent standing up.
+  // Stunning Strike is the roster's hardest control. Control deepens it, Tempo
+  // exploits it (a stunned target eats a second hit), and Technique is the
+  // lock-down route: the shorter the cooldown, the less of the fight is spent
+  // standing up.
   ['stunning-strike', [
     ['control', 'slow'],
-    ['empowered', 'plating-shred'],
+    ['tempo', 'echo-hit'],
     ['technique', 'technique-refund'],
   ]],
 

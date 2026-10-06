@@ -31,6 +31,7 @@ import {
   DEFENSIVE_NODE_PAYOFFS,
   GAME_CONFIG,
   OFFENSIVE_NODE_PAYOFFS,
+  PACKET_DEFINITIONS,
   PAYOFF_UNIT,
   WEAPON_PACKET_IDS,
   abilityNodeFx,
@@ -630,6 +631,55 @@ const braceWard = braceTree.options.find((o) => o.id === BRACE_WARD)!;
     loaded.tracksCombat.abilityNodeRuntime?.sweep?.option.id === SWEEP_TEMPO,
     'the runtime is rebuilt from the persisted slice',
   );
+}
+
+// ─── Offer coverage over the surviving roster (design §22.2, §22.3, §22.8) ────
+// Independent of the ability pass's merge order: it names the final roster and
+// filters the LIVE offers to the ids present, so it holds before and after the
+// cuts land. Every offensive packet must sit on at least three Technique packet
+// rows, and every Guard row must be one avoid, one sustain, one endure face.
+{
+  const TECHNIQUE_IDS = [
+    'sweep', 'charge', 'slam', 'binding-strike', 'contagion', 'snipe',
+    'imbue-lightning', 'detonate', 'cull', 'disengage', 'stunning-strike',
+  ];
+  const GUARD_IDS = [
+    'second-wind', 'cleanse', 'brace', 'sidestep', 'bramble-guard', 'endure',
+    'break-free', 'recuperate',
+  ];
+  const offensivePackets = [...PACKET_DEFINITIONS.values()]
+    .filter((d) => d.weaponEligible)
+    .map((d) => d.id);
+  const rowsOf = (id: string) =>
+    ABILITY_NODE_DATABASE.get(id)?.options.filter((o) => o.row === 'packet') ?? [];
+
+  const problems: string[] = [];
+  const counts = new Map<string, number>(offensivePackets.map((p) => [p, 0]));
+  const presentTechniques = TECHNIQUE_IDS.filter((id) => ABILITY_NODE_DATABASE.has(id));
+  for (const id of presentTechniques) {
+    const rows = rowsOf(id);
+    if (rows.length !== 3) problems.push(`${id}: ${rows.length} packet offers, want 3`);
+    for (const row of rows) counts.set(row.lane, (counts.get(row.lane) ?? 0) + 1);
+  }
+  for (const [packet, n] of counts) {
+    if (n < 3) problems.push(`offensive packet '${packet}' is on ${n} Technique rows, want at least 3`);
+  }
+  const countLine = [...counts].map(([p, n]) => `${p} ${n}`).join(', ');
+
+  const presentGuards = GUARD_IDS.filter((id) => ABILITY_NODE_DATABASE.has(id));
+  for (const id of presentGuards) {
+    const rows = rowsOf(id);
+    if (rows.length !== 3) problems.push(`${id}: ${rows.length} packet offers, want 3`);
+    const faces = rows.map((o) => packetDefaultFace(o.lane)).sort().join('/');
+    if (faces !== 'avoid/endure/sustain') problems.push(`${id}: Guard faces are ${faces}, want avoid/endure/sustain`);
+  }
+
+  assert(
+    problems.length === 0,
+    `offer coverage over ${presentTechniques.length} Techniques and ${presentGuards.length} Guards ` +
+      `(${countLine}): ${problems.join('; ')}`,
+  );
+  console.log(`abilityNodes coverage: ${presentTechniques.length} Techniques (${countLine}); ${presentGuards.length} Guards one avoid/sustain/endure each`);
 }
 
 console.log('abilityNodes: ok');
