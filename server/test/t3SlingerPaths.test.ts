@@ -6,6 +6,11 @@
  *              size, until the next reload; a reload returns the authored clip.
  *              Distinct from the Kill chain keystone Refund (a kill completes the
  *              reload): with Refund the Duelist gets the refill AND the round.
+ *   Warmonger  Tempo. The Artillerist frame owns the per-clip ramp; a reload now
+ *              HALVES it instead of resetting it, so a sustained fight climbs past
+ *              what one clip reaches, and the barrel glow holds at the carried
+ *              value through the reload. The halving is paid once per reload,
+ *              however the clip comes back (a Refund kill included).
  *
  * WHAT THIS PINS. The rule's wiring and its bounds, through the real ammo pipeline
  * (`beforeAttack` spends the round and tags its clip position, `afterHit` runs the
@@ -23,6 +28,7 @@ import {
   keystoneFxKey,
   setFlag,
   setLineageRuntime,
+  type CombatEvent,
   type ResolvedLineageCard,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
@@ -36,6 +42,10 @@ import { refundMechanic } from '../src/systems/combat/keystones';
 import { RUNE_TACTICAL_RELOAD_FLAG } from '../src/systems/combat/ai/runeConfig';
 import { updateReloadArchetype } from '../src/systems/classes/archetypes/reload/reloadPrototype';
 import { requestManualReload } from '../src/systems/classes/archetypes/reload/reloadLifecycle';
+import {
+  reloadFrameRampCap,
+  reloadRampCarry,
+} from '../src/systems/classes/archetypes/reload/frameLoop';
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -418,6 +428,187 @@ const DUELIST = 'reload-light-t3-a';
   kill(player, target);
   assert(ammoOf(player) === before, 'a kill loads no round without the Duelist path');
   assert(chainOf(player) === 0, 'and starts no chain');
+}
+
+// ── Warmonger: the node ──────────────────────────────────────────────────────
+
+const WARMONGER = 'reload-heavy-t3-b';
+{
+  const node = SKILL_TREE.get(WARMONGER);
+  assert(node, 'the Warmonger node must exist');
+  assert(node.packet === 'tempo', `Warmonger keeps the Tempo tag (design §22.5), got '${node.packet}'`);
+  const effects = (node.mechanicEffects ?? {}) as Record<string, number>;
+  assert(effects['reload.ramp-carry-pct'] === 0.5, 'Warmonger authors the carry at a half');
+  for (const key of ['reload.hair-trigger', 'reload.hair-trigger-pct-per-shot', 'reload.hair-trigger-max-stacks']) {
+    assert(effects[key] === undefined, `the path's own ramp is retired: ${key} must be gone`);
+  }
+}
+
+/** Every shot of the clip but the last, fired whole (the ramp climbs, nothing reloads). */
+function fireAllButLast(player: PlayerEntity, target: MonsterEntity): void {
+  while (ammoOf(player) > 1) fireShot(player, target);
+}
+
+function stacksOf(player: PlayerEntity): number {
+  return player.usesReload!.clipSpeedStacks;
+}
+
+function frameCharges(playerId: string): Array<Extract<CombatEvent, { kind: 'frame-charge' }>> {
+  return world.takeNodeEvents(NODE).filter(
+    (e): e is Extract<CombatEvent, { kind: 'frame-charge' }> =>
+      e.kind === 'frame-charge' && e.playerId === playerId,
+  );
+}
+
+// ── Warmonger: a reload halves the ramp, the glow holds, the climb goes on ───
+
+{
+  const player = slinger('t3s-warmonger', 'heavy', [WARMONGER]);
+  const target = punchbag(700);
+  const reload = player.usesReload!;
+  const passives = player.usesSkills.passives;
+  const perShot = passives['reload.frame-ramp-pct-per-shot'] ?? 0;
+  const topMult = passives['reload.frame-ramp-top-mult'] ?? 0;
+  const clip = reload.ammoMax;
+  const carry = reloadRampCarry(player);
+  const cap = reloadFrameRampCap(player);
+
+  assert(perShot > 0 && topMult > 1, 'the ramp\'s numbers are the Artillerist frame\'s');
+  close(carry, 0.5, 'the carry is the node\'s half');
+  assert(cap === Math.round(clip / (1 - carry)), `the ramp tops out where a sustained fight settles (${clip / (1 - carry)}), got ${cap}`);
+  assert(cap > clip, 'so the ramp has room above one clip');
+
+  const baseCooldown = player.performsAttack.attackCooldown;
+  fireAllButLast(player, target);
+  const last = landShot(player, target);
+  const preReload = stacksOf(player);
+  assert(preReload === clip, `one clip climbs one stack a shot: ${clip}, got ${preReload}`);
+  assert(reload.reloadingMs > 0, 'the clip ran dry and started the reload');
+
+  // The reload-start hooks run on the last shot's tail.
+  world.takeNodeEvents(NODE);
+  finishShot(last);
+  const carried = stacksOf(player);
+  assert(
+    carried === Math.floor(preReload * carry),
+    `a reload halves the ramp: ${preReload} → ${Math.floor(preReload * carry)}, got ${carried}`,
+  );
+  assert(carried > 0, 'the ramp is carried, not reset');
+  const glow = frameCharges('t3s-warmonger');
+  assert(glow.length === 1, `the reload is one glow beat, got ${glow.length}`);
+  assert(
+    glow[0]!.stacks === carried && glow[0]!.max === cap,
+    `the barrel glow holds at the carried ${carried}/${cap} (not the spend), got ${glow[0]!.stacks}/${glow[0]!.max}`,
+  );
+  close(player.performsAttack.attackCooldown, baseCooldown, 'the base cadence is handed back while reloading');
+
+  finishReload(player);
+  assert(stacksOf(player) === carried, `completing the reload must not halve again, got ${stacksOf(player)}`);
+  close(player.performsAttack.attackCooldown, baseCooldown, 'the next clip starts off the live base, not a ramped one');
+
+  // The next clip starts where the carry left it, and keeps climbing.
+  const first = fireShot(player, target);
+  close(
+    Number(first.metadata['empoweredMultiplier'] ?? 1),
+    1 + (topMult - 1) * (carried / cap),
+    'the first round of the next clip already rides the carried ramp',
+  );
+  assert(stacksOf(player) === carried + 1, `the climb continues from the carry, got ${stacksOf(player)}`);
+  close(
+    player.performsAttack.attackCooldown,
+    Math.max(200, Math.round(baseCooldown / (1 + (carried + 1) * perShot))),
+    'the cadence is re-derived from the live base at the carried stacks plus the shot',
+  );
+  fireAllButLast(player, target);
+  landShot(player, target);
+  assert(
+    stacksOf(player) === carried + clip,
+    `a second clip climbs past what one clip reaches: ${carried + clip}, got ${stacksOf(player)}`,
+  );
+  assert(stacksOf(player) > clip, 'a sustained fight outclimbs a single clip');
+}
+
+// ── Warmonger: a sustained fight settles under the ramp's cap ────────────────
+
+{
+  const player = slinger('t3s-warmonger-sustained', 'heavy', [WARMONGER]);
+  const target = punchbag(720);
+  const cap = reloadFrameRampCap(player);
+  const tops: number[] = [];
+  for (let clipNo = 0; clipNo < 8; clipNo++) {
+    fireAllButLast(player, target);
+    const last = landShot(player, target);
+    tops.push(stacksOf(player));
+    finishShot(last);
+    finishReload(player);
+  }
+  for (let i = 1; i < tops.length; i++) {
+    assert(tops[i]! >= tops[i - 1]!, `each clip tops out at least as high as the last: ${tops.join(', ')}`);
+  }
+  assert(tops[tops.length - 1]! > tops[0]!, `the climb is sustained across clips: ${tops.join(', ')}`);
+  assert(tops.every((top) => top <= cap), `nothing climbs past the cap of ${cap}: ${tops.join(', ')}`);
+}
+
+// ── Warmonger with Refund: one halving per reload, however it completes ──────
+
+{
+  // Mid-clip: a kill completes the reload without a reload ever starting. The
+  // carry is paid on the completion — once.
+  const player = slinger('t3s-warmonger-refund', 'heavy', [WARMONGER]);
+  withRefund(player);
+  const target = punchbag(740);
+  const reload = player.usesReload!;
+  const carry = reloadRampCarry(player);
+  const baseCooldown = player.performsAttack.attackCooldown;
+
+  for (let shot = 0; shot < 10; shot++) fireShot(player, target);
+  assert(stacksOf(player) === 10, `ten shots, ten stacks, got ${stacksOf(player)}`);
+  kill(player, target);
+  assert(reload.reloadingMs === 0 && ammoOf(player) === reload.ammoMax, 'Refund completed the reload');
+  assert(
+    stacksOf(player) === Math.floor(10 * carry),
+    `a Refund reload halves the ramp once: ${Math.floor(10 * carry)}, got ${stacksOf(player)}`,
+  );
+  close(player.performsAttack.attackCooldown, baseCooldown, 'and hands back the base, so the next clip cannot compound');
+  fireShot(player, target);
+  assert(stacksOf(player) === Math.floor(10 * carry) + 1, 'the climb continues from the carry');
+
+  // The last round's own kill: the reload had started (and halved the ramp); Refund
+  // cuts it short. Halving again would be the double count.
+  fireAllButLast(player, target);
+  const last = landShot(player, target);
+  const preReload = stacksOf(player);
+  finishShot(last);
+  const carried = stacksOf(player);
+  assert(carried === Math.floor(preReload * carry), 'the started reload halved the ramp');
+  kill(player, target);
+  assert(reload.reloadingMs === 0, 'Refund cut the reload short');
+  assert(
+    stacksOf(player) === carried,
+    `a Refund completing a started reload must not halve again: ${carried}, got ${stacksOf(player)}`,
+  );
+}
+
+{
+  // The Artillerist alone (no carry) through a Refund kill: the ramp resets, as any
+  // reload resets it, and the next clip ramps off the live base, not a ramped one.
+  const player = slinger('t3s-artillerist-refund', 'heavy', []);
+  withRefund(player);
+  const target = punchbag(760);
+  const perShot = player.usesSkills.passives['reload.frame-ramp-pct-per-shot'] ?? 0;
+  const baseCooldown = player.performsAttack.attackCooldown;
+  assert(reloadRampCarry(player) === 0, 'the frame alone carries nothing');
+
+  for (let shot = 0; shot < 6; shot++) fireShot(player, target);
+  kill(player, target);
+  assert(stacksOf(player) === 0, `a Refund reload resets the Artillerist ramp, got ${stacksOf(player)}`);
+  close(player.performsAttack.attackCooldown, baseCooldown, 'and hands the base cadence back');
+  fireShot(player, target);
+  close(
+    player.performsAttack.attackCooldown,
+    Math.max(200, Math.round(baseCooldown / (1 + perShot))),
+    'the next clip\'s first stack ramps off the live base — no compounding',
+  );
 }
 
 console.log('t3SlingerPaths: ok');

@@ -339,13 +339,17 @@ export const t3CombatEntriesA = [
     id: 'reload-heavy-t3-b', name: 'Warmonger', tier: 3,
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-heavy', children: [],
-    description: 'Attack speed ramps up with every shot fired through the high-capacity clip, resetting on reload.',
-    packet: 'tempo', // PROVISIONAL (run 3 W1-B, design §4)
+    description: 'Tempo: a reload halves your ramp instead of resetting it, so a sustained fight climbs past what one clip reaches — toward twice a clip\'s worth of attack speed, with the ramp\'s top damage waiting up there. The barrel glow holds at the carried charge while you reload. Carries 20 extra rounds (a 40-round clip).',
+    // Design §22.5 (T3 path review): Tempo kept. The Artillerist frame now owns
+    // the per-clip ramp (frame brief §1), so the path's own capped ramp (Hair
+    // Trigger) is retired and the path re-homed onto the frame's: half of the
+    // ramp carries through a reload, and a per-clip climb becomes a sustained one.
+    packet: 'tempo',
     cost: 1, statEffects: {},
+    // The carry is a shape constant (half), not a tuning number; the ramp's own
+    // numbers are the frame's (`reload.frame-ramp-*`).
     mechanicEffects: {
-      'reload.hair-trigger': 1,
-      'reload.hair-trigger-pct-per-shot': 0.04,
-      'reload.hair-trigger-max-stacks': 15,
+      'reload.ramp-carry-pct': 0.5,
       'reload.max-ammo': +20,
     },
   }],

@@ -13,9 +13,9 @@ export interface UsesReload {
    * Starting a reload dumps them; 0 for every other spec.
    */
   chainRounds: number;
-  /** Hair Trigger / Chain Gun: attack-speed stacks built during current clip. */
+  /** Artillerist ramp: attack-speed stacks built across the clip (Warmonger carries a share through a reload). */
   clipSpeedStacks: number;
-  /** Hair Trigger / Chain Gun: attack cooldown captured on first shot of clip (0 = not yet set). */
+  /** Artillerist ramp: attack cooldown captured on the clip's first ramped shot (0 = not yet set). */
   clipBaseAttackCooldownMs: number;
   // ── T4 spec runtime state ──────────────────────────────────────────────────
   /** Momentum: reload-stacked attack-speed stacks (decays out of combat). */

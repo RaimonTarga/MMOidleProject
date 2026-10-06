@@ -16,9 +16,20 @@ import {
 
 const RELOAD_TIME_MS = 1600;
 
+/** What an `onComplete` hook learns about the reload that just completed. */
+export interface ReloadCompletion {
+  /**
+   * The `onStart` hooks already ran for this reload. False when the clip came back
+   * without a reload ever starting — the Kill chain keystone Refund completing a
+   * clip mid-way — so a hook that does its work at the start (the Artillerist
+   * ramp's reset, Warmonger's carry) does it here instead, and exactly once.
+   */
+  startHooksRan: boolean;
+}
+
 export interface ReloadLifecycleHook {
   onStart?(world: World, player: PlayerEntity): void;
-  onComplete?(world: World, player: PlayerEntity): void;
+  onComplete?(world: World, player: PlayerEntity, completion: ReloadCompletion): void;
 }
 
 const _hooks: ReloadLifecycleHook[] = [];
@@ -140,10 +151,11 @@ export function completeReload(world: World, player: PlayerEntity): void {
   reload.ammo = reload.ammoMax + reload.chainRounds;
   reload.reloadingMs = 0;
   reload.reloadDurationMs = 0;
+  const completion: ReloadCompletion = { startHooksRan: _reloadStartEmitted.has(player) };
   _reloadStartEmitted.delete(player);
   markSliceDirty(world, player, 'usesReload');
   for (const hook of _hooks) {
-    hook.onComplete?.(world, player);
+    hook.onComplete?.(world, player, completion);
   }
   // `mechanic-fired` (progression rework 1c): the clip coming back IS reload's
   // moment. No `ctx` — a reload completes on a timer, not on an attack, so there

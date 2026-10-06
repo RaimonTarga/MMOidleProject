@@ -16,13 +16,12 @@
  * Technique rider reading that number still sees one honest figure and nothing writes
  * a second multiplier key.
  *
- * WARMONGER. `reload-heavy-t3-b` authors a capped ramp of its own
- * (`reload.hair-trigger*`, max 15 stacks on a 40-round clip). The frame now owns the
- * ramp, so the FRAME WINS: the path's data stays authored, and its runtime handler in
- * `t3/pipeline/lightPaths.ts` defers while `reload.frame-ramp-pct-per-shot` is
- * present, which keeps exactly one writer of `clipSpeedStacks` per shot. The agreed
- * re-home — half the ramp carries through a reload — is a T3-review item and is NOT
- * designed here (see the Phase 3 progress note in `docs/progression-rework-plan.md`).
+ * WARMONGER (`reload-heavy-t3-b`, design §22.5). The frame owns the ramp; the path
+ * no longer authors one of its own. It authors `reload.ramp-carry-pct` (half): a
+ * reload keeps that share of the ramp instead of resetting it, so a sustained fight
+ * climbs past what one clip reaches and the barrel glow holds through the reload at
+ * the carried value. The reload's toll on the ramp is paid exactly ONCE per reload,
+ * whichever way the clip comes back (`settleRampForReload`).
  */
 import type { PlayerEntity } from '../../../../ecs/entity';
 import type { World } from '../../../../world/World';
@@ -32,8 +31,14 @@ import { isMechanicProxy } from '../../../combat/engine/empoweredAttacks';
 import { defineBuff, type BuffDescriptor } from '../../../combat/buffs/descriptor';
 import { registerReloadLifecycleHook } from './reloadLifecycle';
 
-/** Shortest cooldown the ramp may produce, mirroring the Hair Trigger floor. */
+/** Shortest cooldown the ramp may produce, mirroring the old Hair Trigger floor. */
 const RAMP_COOLDOWN_FLOOR_MS = 200;
+
+/**
+ * Highest share of the ramp a reload may keep. The ramp's ceiling is
+ * `clip / (1 − carry)`, so a carry of 1 would make it endless; Warmonger authors 0.5.
+ */
+const MAX_RAMP_CARRY = 0.9;
 
 /** True when this Slinger's frame owns the clip-long ramp (Artillerist). */
 export function hasReloadFrameRamp(player: PlayerEntity): boolean {
@@ -41,15 +46,31 @@ export function hasReloadFrameRamp(player: PlayerEntity): boolean {
 }
 
 /**
- * The ramp's cap, in stacks.
+ * The share of the ramp a reload keeps: 0 resets it, as the Artillerist frame
+ * alone does; Warmonger's `reload.ramp-carry-pct` keeps half (design §22.5).
+ */
+export function reloadRampCarry(player: PlayerEntity): number {
+  const carry = player.usesSkills.passives['reload.ramp-carry-pct'] ?? 0;
+  return Math.min(MAX_RAMP_CARRY, Math.max(0, carry));
+}
+
+/**
+ * The ramp's cap, in stacks — the TOP the damage ramp, the buff tile and the barrel
+ * glow measure against.
  *
- * The brief's rule is "no early cap": the cap IS the clip length, so the whole
- * magazine is the climb and the reload is the only thing that ends it. Derived from
- * the live clip so a `reload.max-ammo` node (Warmonger adds +20) lengthens the ramp
- * with the clip instead of leaving a dead tail.
+ * The brief's rule is "no early cap". With no carry the cap IS the clip length, so
+ * the whole magazine is the climb and the reload is the only thing that ends it.
+ * Derived from the live clip so a `reload.max-ammo` node (Warmonger adds +20)
+ * lengthens the ramp with the clip instead of leaving a dead tail.
+ *
+ * With Warmonger's carry a sustained fight climbs past one clip's worth, and the
+ * climb settles where a reload's loss equals one clip's gain: `clip / (1 − carry)`,
+ * twice the clip at a half carry. That ceiling is the cap — derived from the clip
+ * and the carry, no new number — so nothing stops the climb before the carry does.
  */
 export function reloadFrameRampCap(player: PlayerEntity): number {
-  return Math.max(1, Math.round(player.usesReload?.ammoMax ?? 1));
+  const clip = Math.max(1, Math.round(player.usesReload?.ammoMax ?? 1));
+  return Math.max(1, Math.round(clip / (1 - reloadRampCarry(player))));
 }
 
 /**
@@ -86,25 +107,35 @@ export function reloadFramePositionMult(
   return 1;
 }
 
-/** Reset the ramp and hand the base cadence back. Shared by the reload hooks. */
-function clearRamp(world: World, player: PlayerEntity): void {
+/**
+ * A reload's toll on the ramp. Called ONCE per reload by the hooks below.
+ *
+ * Without a carry it resets the ramp (the Artillerist's reload is the cool-down);
+ * with Warmonger's it keeps `floor(stacks × carry)`, so the barrel glow holds at the
+ * carried value through the reload. Either way the base cadence is handed back while
+ * the reload runs, and the next clip re-derives its speed from the live base on its
+ * first shot, at the carried stacks plus that shot — never off a ramped number.
+ */
+function settleRampForReload(world: World, player: PlayerEntity): void {
   const reload = player.usesReload;
   if (!reload) return;
-  // A reload with nothing on the ramp (a manual reload on a fresh clip, a tactical
-  // reload out of combat) is not a change, and `frame-charge` is a per-change beat
-  // broadcast to the whole node — it does not get to fire for a no-op.
-  const hadRamp = reload.clipSpeedStacks > 0;
-  reload.clipSpeedStacks = 0;
+  const before = reload.clipSpeedStacks;
+  const carried = Math.floor(before * reloadRampCarry(player));
+  reload.clipSpeedStacks = carried;
   if (reload.clipBaseAttackCooldownMs > 0) {
     player.performsAttack.attackCooldown = reload.clipBaseAttackCooldownMs;
     markSliceDirty(world, player, 'performsAttack');
   }
   markSliceDirty(world, player, 'usesReload');
-  if (!hadRamp) return;
+  // A reload that leaves the ramp where it was (nothing on it: a manual reload on a
+  // fresh clip, a tactical reload out of combat) is not a change, and `frame-charge`
+  // is a per-change beat broadcast to the whole node — it does not get to fire for a
+  // no-op. `stacks: 0` is the glow's spend; a carried value eases it down instead.
+  if (carried === before) return;
   world.pushEvent(player.hasPosition.nodeId, {
     kind: 'frame-charge',
     playerId: player.isPlayer.id,
-    stacks: 0,
+    stacks: carried,
     max: reloadFrameRampCap(player),
   });
 }
@@ -178,11 +209,17 @@ export function registerReloadFrameLoop(): void {
 
   registerReloadLifecycleHook({
     onStart(world, player) {
-      if (hasReloadFrameRamp(player)) clearRamp(world, player);
+      // At the start, so the glow holds at the carried value WHILE the reload runs.
+      if (hasReloadFrameRamp(player)) settleRampForReload(world, player);
     },
-    onComplete(world, player) {
+    onComplete(world, player, completion) {
       if (!player.usesReload) return;
       if (!hasReloadFrameRamp(player)) return;
+      // A clip that came back without a reload ever starting (the Kill chain keystone
+      // Refund, mid-clip) still pays the reload's toll — here, once. A reload whose
+      // start hooks ran (the timer, R, the tactical rune, or Refund cutting a started
+      // reload short) already paid it, and paying again would halve the carry twice.
+      if (!completion.startHooksRan) settleRampForReload(world, player);
       // Drop the captured base so the next clip re-reads the live cadence (a recalc
       // or a stance change between clips must not be ramped off a stale number).
       player.usesReload.clipBaseAttackCooldownMs = 0;
