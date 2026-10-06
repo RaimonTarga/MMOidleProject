@@ -190,7 +190,8 @@ export function abilityNodeDescription(option: AbilityNodeOption): string {
     case 'keystone':
       return abilityKeystoneDefinition(option.keystone ?? '')?.rule ?? 'A keystone verb.';
     case 'cross':
-      return `Borrowed at half strength: this ability ${nodePayoffBlurb(option.payoff)}`;
+      // The resolved number (at the cross scalar) is appended by the panel, never written here.
+      return `Borrowed: this ability ${nodePayoffBlurb(option.payoff)}`;
     default:
       return `This ability ${nodePayoffBlurb(option.payoff)}`;
   }
