@@ -20,102 +20,84 @@
 }
 
 .target-frame--boss {
-  border-color: rgba(200, 70, 70, 0.5);
-  box-shadow: 0 4px 22px rgba(120, 20, 20, 0.45);
+  border-color: var(--ro-boss-edge);
+  box-shadow: 0 4px 22px var(--ro-boss-shadow);
 }
 
-.target-frame--stale { opacity: 0.55; }
+.target-frame--stale { opacity: var(--ro-stale); }
 
-.target-frame__name-row {
+.target-frame--elite { border-color: var(--ro-elite-edge); }
+
+/* The head (combat readout run, item 5): the portrait slot (the monster's atlas
+   frame, no new art), then the name row over the readout bar (hud/ReadoutBar.tsx,
+   which draws the chip, the absorb band and the number the same way as the boss
+   frame and the vitals). Readout colours are --ro-* tokens set on the root. */
+.tf-head {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 8px;
-  margin-bottom: 5px;
+}
+
+.tf-portrait {
+  flex: 0 0 auto;
+  display: block;
+  padding: 1px;
+  border: 1px solid #000;
+  border-radius: 2px;
+  background: var(--ro-portrait-bg);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  line-height: 0;
+}
+
+.tf-head__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.tf-head__name-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+  margin-bottom: 3px;
 }
 
 .target-frame__name {
-  font-size: 14px;
+  overflow: hidden;
+  font-size: 13px;
   font-weight: bold;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   color: var(--hud-text);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
-.target-frame__boss-tag {
+.tf-head__tier {
+  flex: 0 0 auto;
+  font-size: 9px;
+  color: var(--hud-text-muted);
+}
+
+.tf-mark {
+  flex: 0 0 auto;
+  padding: 1px 4px;
+  border: 1px solid;
+  border-radius: 2px;
   font-size: 8px;
   font-weight: bold;
   letter-spacing: 0.1em;
-  color: #ff8a8a;
-  background: rgba(180, 30, 30, 0.25);
-  border: 1px solid rgba(200, 60, 60, 0.45);
-  border-radius: 3px;
-  padding: 1px 5px;
 }
+.tf-mark--elite { color: var(--ro-elite-tag); border-color: var(--ro-elite-edge); }
+.tf-mark--boss { color: var(--ro-boss-tag); border-color: var(--ro-boss-edge); background: var(--ro-boss-tag-bg); }
 
-/* HP bar — width transitions to smooth the 5 Hz broadcast cadence. */
-.target-frame__track {
-  position: relative;
-  height: 18px;
-  border-radius: 5px;
-  background: rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  overflow: hidden;
-}
-
-.target-frame__fill {
-  height: 100%;
-  border-radius: 4px;
-  transition: width 0.18s linear, background 0.25s;
-}
-
-.target-frame__hp-text {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: bold;
-  color: #fff;
-  text-shadow: 1px 1px 0 #000, -1px 0 0 #000, 0 -1px 0 #000;
-}
-
-/* Enemy absorb — an overlay inside the HP track, in the cyan the overhead bars
-   already use for absorb. It is laid OVER the health fill rather than blended
-   with it: a translucent cyan on green muds to a teal that reads as a third
-   health colour. The hatch and the bright leading edge are what keep a shell
-   from ever being mistaken for health. Only drawn while absorb is actually up. */
-.target-frame__shield {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  box-sizing: border-box;
-  border-left: 2px solid rgba(232, 251, 255, 0.95);
-  background:
-    repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.26) 0 3px, transparent 3px 7px),
-    linear-gradient(180deg, #7fe6ff, #2ba8ca);
-  box-shadow: 0 0 7px rgba(85, 217, 242, 0.6), inset 0 0 0 1px rgba(10, 40, 50, 0.35);
-  transition: left 0.18s linear, width 0.18s linear;
-}
-
-/* Absorb readout sits at the right end of the track — a fixed home clear of the
-   centred current/max text, whatever width the shell happens to be. */
-.target-frame__shield-amount {
-  position: absolute;
-  top: 50%;
-  right: 4px;
-  transform: translateY(-50%);
-  padding: 1px 3px;
-  border-radius: 2px;
-  /* Rides its own dark pill: the readout's home is fixed at the right end, so it
-     lands on the cyan hatch or on the empty trough depending on the shell's
-     width, and cyan-on-cyan is unreadable without it. */
-  background: rgba(6, 20, 26, 0.82);
+/* The shell's absorb, at the end of the name row (the bar draws its band). */
+.tf-head__absorb {
+  margin-left: auto;
+  flex: 0 0 auto;
   font-size: 9px;
   font-weight: bold;
-  line-height: 1;
-  color: #9fe9ff;
-  pointer-events: none;
+  color: var(--ro-absorb);
+  text-shadow: 1px 1px 0 #000;
 }
 
 .target-frame__stats {
@@ -217,15 +199,9 @@
     padding: 6px 10px 7px;
   }
 
-  .target-frame__name-row { margin-bottom: 4px; }
-  .target-frame__name { font-size: 13px; }
-
-  /* Thinner HP bar */
-  .target-frame__track { height: 13px; }
-  .target-frame__hp-text { font-size: 10px; }
-
-  /* Absorb readout shrinks with the bar it rides on */
-  .target-frame__shield-amount { font-size: 8px; right: 3px; padding: 1px 2px; }
+  .tf-head { gap: 6px; }
+  .tf-head__name-row { margin-bottom: 2px; }
+  .target-frame__name { font-size: 12px; }
 
   /* Enemy atk/plating isn't actionable mid-combat — drop it on phones */
   .target-frame__stats { display: none; }

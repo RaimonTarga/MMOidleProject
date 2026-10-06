@@ -1,13 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { dotElementForPlayer, weaponDotProfileForEffect, type StatusValue } from '@mmo-idle/shared';
-import { targetFrameAtom, combatArchetypeAtom, passivesAtom, selectedSubVariantAtom, type TargetFrameData } from './atoms';
+import { MONSTER_DATABASE, NODE_BIOMES, dotElementForPlayer, weaponDotProfileForEffect, type StatusValue } from '@mmo-idle/shared';
+import { targetFrameAtom, combatArchetypeAtom, passivesAtom, playerNodeIdAtom, selectedSubVariantAtom, type TargetFrameData } from './atoms';
 import { statusMeta, bossEffectMeta } from './targetStatusMeta';
 import { GameIcon } from '../ui/GameIcon';
 import { bossEffectIconSource, targetStatusIconSource } from '../ui/conceptIcons';
 import { TARGET_HOMES, homeBadgeNumber, targetHomeOf, type TargetHome } from './targetHomes';
 import { BossFrameView, useLingeringBoss } from './BossFrame';
 import { useIsMobile } from './useIsMobile';
+import { ReadoutBar } from './ReadoutBar';
+import { MonsterSprite } from './bestiary/MonsterSprite';
+import { FRAME_TOKENS, readoutCssVars } from '../render/readoutTokens';
 
 // The base DoT stack ('dot') tile should reflect YOUR chosen element instead of a
 // fixed green — green (poison/light), red (fire/balanced), light-blue (frost/heavy).
@@ -23,7 +26,7 @@ import './targetFrame.css';
 
 // Keep the frame up briefly after the target dies/clears so fast auto-retargeting
 // doesn't strobe it.
-const LINGER_MS = 800;
+const LINGER_MS = FRAME_TOKENS.linger.ms;
 
 interface TileData {
   key: string;
@@ -260,6 +263,8 @@ function TargetFrameBody({ bossId, underBoss }: { bossId: string | null; underBo
   const combatArchetype = useAtomValue(combatArchetypeAtom);
   const passives = useAtomValue(passivesAtom);
   const subVariant = useAtomValue(selectedSubVariantAtom);
+  const nodeId = useAtomValue(playerNodeIdAtom);
+  const isMobile = useIsMobile();
   const [shown, setShown] = useState<TargetFrameData | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -294,52 +299,63 @@ function TargetFrameBody({ bossId, underBoss }: { bossId: string | null; underBo
 
   if (!shown) return null;
 
-  const hpPct = shown.maxHp > 0 ? Math.max(0, Math.min(100, (shown.hp / shown.maxHp) * 100)) : 0;
-  const hpColor = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
   const stale = !live; // lingering after death/clear
 
   // Active absorb only: amount 0 is a broken barrier reforming, and the Reforming
   // tile already owns that clock — the bar must never show absorb that isn't there.
+  // The band is sized against max HP: "how much of this pool is shielded".
   const shieldAmount = Math.max(0, shown.enemyBarrier?.amount ?? 0);
-  // Sized against max HP so the band answers "how much of this enemy's health
-  // pool is shielded", the same question the HP fill answers. A tiny shell still
-  // gets a visible sliver rather than rounding away to nothing.
-  const shieldPct = shieldAmount > 0 && shown.maxHp > 0
-    ? Math.max(4, Math.min(100, (shieldAmount / shown.maxHp) * 100))
-    : 0;
-  // The shell starts where health ends — it is the layer damage chews through
-  // first — and slides back inside the bar when it would run off the end, so a
-  // shielded enemy at full HP still shows its shell instead of nothing.
-  const shieldLeft = Math.max(0, Math.min(hpPct, 100 - shieldPct));
+  const def = shown.monsterTypeId ? MONSTER_DATABASE.get(shown.monsterTypeId) : undefined;
+  const elite = def?.elite === true;
+  // The target is always on the player's node (deltaApplier), so its tier is the node's.
+  const tier = nodeId ? NODE_BIOMES[nodeId]?.biomeTier : undefined;
+  const hpText = `${Math.ceil(shown.hp)} / ${shown.maxHp}`;
 
   const homed = (home: TargetHome): StripEntry<TileData>[] =>
     strip.entries.filter(({ item }) => item.home === home);
   const others = strip.entries.filter(({ item }) => item.home === undefined);
 
   return (
-    <div className={`target-frame${stale ? ' target-frame--stale' : ''}${shown.isBoss ? ' target-frame--boss' : ''}${underBoss ? ' target-frame--under-boss' : ''}`}>
-      {!bossOwnsHead && <>
-      <div className="target-frame__name-row">
-        <span className="target-frame__name">{shown.name}</span>
-        {shown.isBoss && <span className="target-frame__boss-tag">BOSS</span>}
-      </div>
-
-      <div className="target-frame__track">
-        <div className="target-frame__fill" style={{ width: `${hpPct}%`, background: hpColor }} />
-        {shieldPct > 0 && (
-          <>
-            <div
-              className="target-frame__shield"
-              style={{ left: `${shieldLeft}%`, width: `${shieldPct}%` }}
-              role="img"
-              aria-label={`Barrier absorbing ${Math.round(shieldAmount)}`}
+    <div
+      className={`target-frame${stale ? ' target-frame--stale' : ''}${shown.isBoss ? ' target-frame--boss' : ''}${elite ? ' target-frame--elite' : ''}${underBoss ? ' target-frame--under-boss' : ''}`}
+      style={readoutCssVars() as React.CSSProperties}
+    >
+      {/* The chrome (combat readout run, item 5): portrait slot, name and tier, the
+          readout bar with its number and chip, the elite / boss marks. */}
+      {!bossOwnsHead && (
+        <div className="tf-head">
+          {shown.monsterTypeId && (
+            <span className="tf-portrait" aria-hidden="true">
+              <MonsterSprite
+                monsterTypeId={shown.monsterTypeId}
+                size={isMobile ? FRAME_TOKENS.portrait.phonePx : FRAME_TOKENS.portrait.px}
+                fallbackColor={def?.color ?? 0x555555}
+              />
+            </span>
+          )}
+          <div className="tf-head__body">
+            <div className="tf-head__name-row">
+              <span className="target-frame__name">{shown.name}</span>
+              {tier !== undefined && <span className="tf-head__tier">T{tier}</span>}
+              {elite && <span className="tf-mark tf-mark--elite">ELITE</span>}
+              {shown.isBoss && <span className="tf-mark tf-mark--boss">BOSS</span>}
+              {shieldAmount > 0 && (
+                <span className="tf-head__absorb" title="Barrier — absorbed before health">+{Math.round(shieldAmount)}</span>
+              )}
+            </div>
+            <ReadoutBar
+              size="target"
+              hp={shown.hp}
+              maxHp={shown.maxHp}
+              absorb={shieldAmount}
+              segments={elite}
+              quarters={shown.isBoss}
+              label={hpText}
+              ariaLabel={`${shown.name}: ${hpText}${shieldAmount > 0 ? `, barrier absorbing ${Math.round(shieldAmount)}` : ''}`}
             />
-            <span className="target-frame__shield-amount">{Math.round(shieldAmount)}</span>
-          </>
-        )}
-        <span className="target-frame__hp-text">{Math.ceil(shown.hp)} / {shown.maxHp}</span>
-      </div>
-      </>}
+          </div>
+        </div>
+      )}
 
       <div className="target-frame__stats">
         <span>ATK <b>{shown.attack}</b></span>
