@@ -145,7 +145,7 @@ export function stepSatisfied(step: TutorialStep, view: TutorialView, later: Lat
         (next.type === 'learnAbility' || next.type === 'setAbilities') && abilityLoadoutMatches(next, view));
     }
     case 'unlockCard':
-      return viewOwnsLineageCard(view, step.lineageId, step.cardId);
+      return viewOwnsLineageCard(view, step.lineageId, step.cardId, step.rank);
     case 'setActive':
       return view.lineages[step.lineageId]?.active[step.row] === step.cardId;
     case 'unlockForm':

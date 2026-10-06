@@ -339,6 +339,7 @@ function LeanCardView({
           <button
             type="button"
             className={`wp-rankbtn${rank.next.action === 'buy' ? ' wp-rankbtn--ready' : ''}${isPreviewed && previewed?.kind === 'rank' ? ' is-previewing' : ''}`}
+            data-tutorial-anchor={TUTORIAL_ANCHORS.lineageRankUp(card.id)}
             aria-disabled={rank.next.action !== 'buy' ? true : undefined}
             title={rank.next.reason ?? `Rank ${rankNumeral(rank.next.rank)}: ${rank.next.sentence ?? ''}`}
             onMouseEnter={hoverable && rankPreview ? () => onPreview(rankPreview) : undefined}

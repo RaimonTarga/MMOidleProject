@@ -11,6 +11,7 @@ import {
   TUTORIAL_ANCHORS,
   abilityLoadoutFor,
   attunedAbilityIds,
+  cardRank,
   composeRuneEdit,
   evaluateTutorialCondition,
   referenceAbilityRule,
@@ -339,22 +340,33 @@ async function openLineageTree(
   store.set(lineageTreeSlotAtom, lineage.slot);
 }
 
+/**
+ * Buy a card, or — with `rank` — rank an owned lean up to it (design §26.1): the
+ * page's "Rank up" sends the same `lineage:unlockCard` for the next rank, so the
+ * ring moves to that button once the card is owned. One rank per press, each
+ * confirmed by the server's delta before the next.
+ */
 async function unlockCard(
   step: Extract<TutorialStep, { type: 'unlockCard' }>,
   beat: TutorialBeat,
   signal: AbortSignal,
 ): Promise<void> {
-  const owned = (v: PlayerView) => v.lineages[step.lineageId]?.ownedCards.includes(step.cardId) ?? false;
-  if (owned(requireView())) return;
-  await openLineageTree(step.lineageId, beat, signal);
-  await point(TUTORIAL_ANCHORS.lineageCard(step.cardId), signal);
-  await pressPointed(signal);
-  hudBus.requestLineageUnlockCard(step.lineageId, step.cardId);
-  const bought = await waitAlive(owned, signal, ACTION_TIMEOUT_MS);
-  if (!bought) throw new TutorialStop('The card was not bought. Press Next to try again.', 'error');
-  // Buying into an empty row activates it server-side; the button now reads
-  // "active", so the ring must not stay on it.
-  store.set(tutorialHighlightAtom, null);
+  const target = Math.max(1, step.rank ?? 1);
+  const rankOf = (v: PlayerView) => cardRank(v.lineages[step.lineageId], step.cardId);
+  while (rankOf(requireView()) < target) {
+    const buying = rankOf(requireView()) + 1;
+    await openLineageTree(step.lineageId, beat, signal);
+    await point(buying > 1 ? TUTORIAL_ANCHORS.lineageRankUp(step.cardId) : TUTORIAL_ANCHORS.lineageCard(step.cardId), signal);
+    await pressPointed(signal);
+    hudBus.requestLineageUnlockCard(step.lineageId, step.cardId);
+    const bought = await waitAlive((v) => rankOf(v) >= buying, signal, ACTION_TIMEOUT_MS);
+    if (!bought) {
+      throw new TutorialStop(buying > 1 ? 'The rank was not bought. Press Next to try again.' : 'The card was not bought. Press Next to try again.', 'error');
+    }
+    // Buying into an empty row activates it server-side; the button now reads
+    // "active" (or the next rank), so the ring must not stay on it.
+    store.set(tutorialHighlightAtom, null);
+  }
 }
 
 /**
@@ -384,8 +396,8 @@ const READ_MS = 5_000;
 /**
  * A beat's lesson, after its steps are done (shared `TutorialBeat.lesson`): the
  * ring rests on the card the beat bought while its line reads out what the card
- * now says, then — with the page closed — on that card's ring on the rhythm
- * readout by the HP bar. Nothing is pressed and nothing is sent.
+ * now says, then — with the page closed — on that card's ring under the HP bar
+ * (design §26.4). Nothing is pressed and nothing is sent.
  *
  * By now the panel has moved on to the next beat (the purchase made this one
  * done); `TutorialPanel` shows a finished beat's `working` message for exactly
@@ -403,7 +415,7 @@ async function playLesson(beat: TutorialBeat, signal: AbortSignal): Promise<void
   store.set(tutorialHighlightAtom, TUTORIAL_ANCHORS.lineageCard(lesson.cardId));
   await pause(READ_MS, signal);
   if (lesson.ring) {
-    // The page is a dialog over the HUD; the readout sits by the HP bar under it.
+    // The page is a dialog over the HUD; the ring sits under the HP bar beneath it.
     store.set(lineageTreeSlotAtom, null);
     report(beat, 'working', lesson.ring);
     store.set(tutorialHighlightAtom, TUTORIAL_ANCHORS.rhythmRing(lesson.cardId));
