@@ -1,6 +1,10 @@
 # Lineage Trees — Current State
 
-**Audited:** 2026-10-03, twice: the course-correction run (design §24: the T1 lean and
+**Audited:** 2026-10-06, the legibility run (design §26: the T1 band is a ranked lean trio
+and the weapon's own verb, one damage-over-time record per weapon, T1 nodes as rosters, the
+HUD and panels — report:
+[`briefs/legibility-report-2026-10-05.md`](briefs/legibility-report-2026-10-05.md); §3a and
+§16 below). Before that 2026-10-03, twice: the course-correction run (design §24: the T1 lean and
 verb, one shard per node, non-weapon trees parked, the ladder retired on every slot, the
 weapon page and the rhythm readout — report:
 [`briefs/course-correction-report-2026-10-03.md`](briefs/course-correction-report-2026-10-03.md)),
@@ -11,8 +15,8 @@ Earlier audit 2026-10-01 (run 3: keystones, T3/T4 bands, defensive lineages, abi
 nodes, re-homed forms, T2 amplifiers, band collapse).
 
 **Design authority:** [`design_docs/progression-rework-design.md`](../design_docs/progression-rework-design.md)
-§2–9, §18, §19, §21, §23, §24 (§24 supersedes §18.9's ±3pp band, and §17's non-weapon
-trees while they are parked). **History:** [`archive/progression-rework-plan.md`](archive/progression-rework-plan.md)
+§2–9, §18, §19, §21, §23, §24, §26 (§26 supersedes §24 where they differ; §24 supersedes
+§18.9's ±3pp band, and §17's non-weapon trees while they are parked). **History:** [`archive/progression-rework-plan.md`](archive/progression-rework-plan.md)
 §1–§5 and their progress notes are the detailed build log, including every divergence from
 the original sketch; read the code where this page and that history disagree.
 
@@ -183,13 +187,55 @@ No magnitude moved for any of this: `magnitudes.ts` is untouched, and
 `shared/src/data/lineages/reachability.test.ts` walks every lineage × tier × form with no
 allowlist to assert each band is finishable behind its own door, at that band's own tier.
 
-## 3a. The T1 band is a lean and a verb, and they compose (design §24.2)
+## 3a. The T1 band is a ranked lean and the weapon's own verb; T2 composes (design §26.1, §24.2)
 
-A weapon's T1 band is three **lean** cards (`<weapon>-t1-<lane>-stat`) and three **verb**
-cards (`<weapon>-t1-<lane>-payoff`). The card ids did not change, so saves, the tutorial
-and the bot routes kept working. A lean is the lane's scaling stat (`packetScalingStat`); a
-verb is authored with **no trigger and no payoff** (`isVerbCard`), because both come from
-the packets at resolve time:
+**T1 deepens; T2 branches (legibility run, 2026-10-05).** A weapon's T1 band is ONE lean
+row of three generic cards and ONE verb:
+
+- **The lean trio** — `<weapon>-t1-attack`, `<weapon>-t1-speed`, `<weapon>-t1-effect`, named
+  "Attack", "Speed", "Effect" on every weapon (`LineageCard.leanKind`). Attack is attack %,
+  Speed attack speed %, and Effect the weapon's own mechanic made stronger: poison potency
+  on the Dagger (its reservoir, §26.2), the slow on hit on the Hammer (the seed of its verb's
+  condition), and on the Rapier, Axe and Broadsword the size of the verb's payload
+  (`payloadScale`, a resolve-time stat that never reaches the stat rebuild; the Flurry /
+  Chopping Rhythm echo, the Set Piece refund). An absorbed Effect keeps scaling its own
+  lane's payload above the T2 gate (`lineagePayloadScales`).
+- **Three ranks per lean** (`MAX_LEAN_RANK`, `LineageProgress.ranks`; an owned ranked card
+  with no entry is rank I, `normalizeLineageProgressMap`). `lineage:unlockCard` on an owned
+  ranked card buys the NEXT rank (`checkUnlockCard`, `nextCardRank`; "Already at rank III."
+  at the cap). Values rank I / II / III: Attack and Speed +8 / +12 / +16%, Effect +10 /
+  +15 / +20% (`LEAN_RANK_ONE` × `LEAN_RANK_VALUE_SCALE` 1 / 1.5 / 2). Gates: Global Mastery
+  6 / 10 / 14 (the lean row's gate + `LEAN_RANK_MASTERY_OFFSET` 0 / 4 / 8; all under the T1
+  gate's 30) and home-biome level 2 at every rank. Price: 30 / 45 / 60 home essence and
+  3 / 5 / 6 shards (`LEAN_RANK_PRICE_SCALE` 1 / 1.5 / 2). All PROVISIONAL, the designer's.
+- **Which shard** (PROVISIONAL, the conductor's rule): each lean takes one of the weapon's
+  three lanes as its colour AND its currency — Effect the verb's lane, Attack Empowered if
+  the weapon has it, Speed Tempo if it has it, the rest filling in lane order — so all three
+  home-biome shards buy something at T1. Dagger: Attack Shackle, Speed Bone, Effect Venom;
+  Rapier: Attack Venom, Speed Spark, Effect Gale; Hammer: Attack Anvil, Speed Spark, Effect
+  Shackle; Axe: Attack Anvil, Speed Bone, Effect Gale; Broadsword: Attack Anvil, Speed Bone,
+  Effect Sigil.
+- **The verb is the weapon's identity, not a choice** (card ids unchanged, still Global
+  Mastery 10): Dagger *Into the Wound* (`dagger-t1-affliction-payoff`, the Affliction pure
+  pair: re-doses the reservoir), Rapier *Flurry* and Axe *Chopping Rhythm* (Tempo pure: every
+  6th hit strikes twice), Hammer *Easy Prey* (`hammer-t1-control-payoff`, renamed from
+  Pinned: Control pure, a held target is knocked down), Broadsword *Set Piece* (Technique
+  pure: a landed Technique refunds half its cooldown).
+- **At T1 the pair is always pure.** `leanPayloadLane` gives Attack and Speed NO payload
+  lane and Effect the verb's own, so `composeVerb` (unchanged) always reads the verb's pure
+  pair; Effect then scales it. The composition grammar below, and the choice among a lane's
+  three verbs, open at the T2 gate, where the existing T2 stat row (the three lane leans at
+  T2 size) and the three T2 verbs compose exactly as before.
+- **Retired T1 cards** (`shared/src/data/lineages/retired.ts`, 25 ids: the old lane-named
+  T1 leans and each weapon's two non-fixed T1 verbs) are dropped from the save on
+  `loadCharacter` and refunded at today's full T1 price, in the lineage's essence and the
+  card's own lane shard (`retiredLineageCardRefund`; idempotent, logged once; a dangling
+  `active` pointer is cleared). What a save actually paid was never recorded, so the refund
+  errs in the player's favour. `server/test/lineageRetiredCards.test.ts`.
+
+The rest of this section is the composition machinery: at T1 it produces the pure pair; at
+T2 it is the band's grammar. A verb is authored with **no trigger and no payoff**
+(`isVerbCard`), because both come from the packets at resolve time:
 
 - **The rule** (`composeVerb`, called from `resolveLineageCards`): the active verb fires its
   packet's **moment**; what happens is the active lean's packet **payload**. Same lane →
@@ -201,9 +247,14 @@ the packets at resolve time:
 - **Sentences are generated, never hand-typed per pair** (`sentences.ts`): subject moments
   read "X <payload>.", clause moments "X, the hit <payload>.", and same lane / no lean reads
   the pure sentence. The phrases are templates whose numbers come from the magnitude table,
-  so a number change rewrites the sentence. `cardSentence(card, progress)` and
-  `composedSentence(lineage, progress)` are what the page renders; a lean card's sentence is
-  its stat line. `composeVerb(...).needs === 'slow'` marks a Control verb with no hold
+  so a number change rewrites the sentence. `cardSentence(card, progress, { rank })` and
+  `composedSentence(lineage, progress, { leanId, rank })` are what the page renders (the
+  options preview another lean or rank); `composedSentenceParts` returns the two halves
+  (`moment`, `payload`, their lanes) for the two-colour sentence, and `moment + ' ' +
+  payload` always equals the sentence (a pure sentence carries a never-rendered ' | ' split
+  marker in `packets.ts`). A lean card's sentence is its stat line; a DoT-potency lean on a
+  weapon with a reservoir reads "Your poison is +10% stronger." (`weaponReservoirNoun`), not
+  a bleed. `composeVerb(...).needs === 'slow'` marks a Control verb with no hold
   source — empty once the Control lean is active, since the lean is a hold source.
   Capped moments read "(every N s at most)"; the Technique payload reads "refunds a third
   of your Technique cooldowns", which is true at a hit moment too.
@@ -216,10 +267,10 @@ the packets at resolve time:
   designer's): payloads are PER FIRING — event-shaped and NOT divided by the trigger rate
   (§24.1: the 4–6 s cadence and the caps carry the budget).
 
-| Packet | Moment (verb) | Payload (lean) | Pure pair (same lane, or no lean) | Lean stat (T1) |
+| Packet | Moment (verb) | Payload (lean) | Pure pair (same lane, or no lean) | Lane lean stat (T1 size; since §26 the T2 stat row, scaled by tier) |
 |---|---|---|---|---|
 | Tempo | `hit-nth` n = 6 (landed swings) | `echo-hit` 1.0: a whole second swing through the proc seam, carrying on-hit | the same | attack speed +9% |
-| Affliction | `hit-afflicted`, cap 5000 ms | lineage bleed 1.0 × the hit over 4 s; ADDS to a heavy bleed still owed when a composed verb fires it | `redose`: 1.0 × what its DoTs still owe, over 4 s | DoT potency +10% (`dotPotencyPct` → `dot.mechanic-mult` AND a light bleed on every hit, below) |
+| Affliction | `hit-afflicted`, cap 5000 ms | bleed 1.0 × the hit over 4 s, ADDED to the one record (`lineage.bleed`, or the weapon's reservoir, §11a) | `redose`: 1.0 × what its DoTs still owe, over 4 s, added to that same record | DoT potency +10% (`dotPotencyPct` → `dot.mechanic-mult` AND a light bleed on every hit, below; on a reservoir weapon the reservoir's potency instead) |
 | Engagement | `first-hit`, per body | `big-hit` ×2 | the same | Attack +3 |
 | Empowered | `mechanic-fired`, cap 4000 ms | `mechanic-proxy` (the class's own multiplier; 1.5 for dot, summoner and non-Duelist reload) | `big-hit` ×1.5 on the mechanic's hit | attack +9% |
 | Control | `hit-held` (slowed, rooted, chilled, frozen or stunned — a knockdown is held), cap 5000 ms | `root` 2000 ms | `stun` 1500 ms | `slowOnHit` 15% (a slow on every hit, below) |
@@ -232,28 +283,40 @@ the packets at resolve time:
   own lean is now that source, for every class, through one listener,
   `server/src/systems/combat/leanConditions.ts` (registered in `combatBootstrap` right after
   the card runtime), which reads two passives the stat rebuild writes (`stats.ts`):
-  - **Affliction** — `dotPotencyPct` still feeds `dot.mechanic-mult` and now also writes
-    `shared.bleed-on-hit-pct`: every landed hit ADDS its share (0.10 at T1, scaled by tier;
-    of the hit as it was before any empowered multiplier, `hitBasis`) to a light bleed on
-    its own id, `lineage.lean-bleed`, spread over the longer of 4 s or what it has left; the
-    tick clock is never reset. It sits in the bleed driver's id list and the lineage DoT
-    family, so the Affliction moment, the redose, Contagion and Detonate all see it, and the
-    heavy payload (`LINEAGE_BLEED_ID`) and the light one never overwrite each other. The
-    Apprentice gets both effects (the multiplier scales its DoT, the bleed its hit).
-  - **Control** — a new stat key, `slowOnHit` (Control's `scalingStat`; `attack` was a
-    placeholder), writes `shared.slow-on-hit-pct`: every landed hit slows by 15% through
-    `applyMonsterSlow` (max-wins), for the longer of 1.5 s or the wielder's swing interval +
-    500 ms (`LEAN_CONDITION_NUMBERS.control.swingBridgeMs`) — a Heavy Hammer swings slower
-    than 1.5 s. Only the depth scales with tier (0.15 / 0.173 / 0.198 / 0.225); the window
-    never does. Control immunity refuses the root and stun payloads, not a slow.
+  - **Affliction** — `dotPotencyPct` still feeds `dot.mechanic-mult`. On a weapon with NO
+    reservoir it also writes `shared.bleed-on-hit-pct`: every landed hit ADDS its share
+    (0.10 at T1, scaled by tier; of the hit as it was before any empowered multiplier,
+    `hitBasis`) to the one lineage bleed, `lineage.bleed`, spread over the longer of 4 s or
+    what it has left; the tick clock is never reset. On a weapon that owns a reservoir
+    (`weaponDot`: the Ashbrand / Poison Dagger, the Mirebrand) it writes
+    `weapon.reservoir-potency-pct` instead, which `feedWeaponReservoir` multiplies into what
+    each converted hit banks, and no lineage record is ever created (design §26.2, §11a).
+    The Apprentice gets both effects (the multiplier scales its DoT, the bleed its hit).
+  - **Control** — `slowOnHit` (Control's `scalingStat`; the Hammer's Effect lean at T1, 10 /
+    15 / 20% by rank) writes `shared.slow-on-hit-pct`: every landed hit slows the target,
+    "Hobbled" (`lineage.hobbled`, its own id since the legibility run, not Hamstring's
+    `ability-slowed`), through `applyMonsterSlow` (max-wins; the reconciler takes the
+    strongest slow across both ids), for the longer of 1.5 s or the wielder's swing interval
+    + 500 ms (`LEAN_CONDITION_NUMBERS.control.swingBridgeMs`) — a Heavy Hammer swings slower
+    than 1.5 s. Only the depth scales with tier; the window never does. Control immunity
+    refuses the root ("Pinned", `lineage.pinned`) and stun payloads, not a slow.
   - Both respect `evadeBlocksDebuffs`, both still apply on a chaotic miss (the dead swing
     "still applies on-hit effects"), and both are live wherever the form is worn — an
     absorbed T1 lean still slows (but `needs` reads only the active lean).
   - `monsterIsHeld` (`status/monsterControl.ts`) counts a stun; a boss's own pattern stagger
     is not counted.
-  - Pinned by `server/test/leanConditions.test.ts` (a Striker fires Venom Point at the cap
-    on a real 600 ms cadence; a Hammer Striker with no range node fires Pinned) and
-    `server/test/empoweredCap.test.ts` (a real Conduit: 161 cycles in 40 s, 11 firings).
+  - Pinned by `server/test/leanConditions.test.ts` (the Affliction cases on the Rapier's T2
+    cards; a Hammer Striker with the Effect lean and no range node fires Easy Prey, and the
+    slow lands as Hobbled; the Dagger's Effect writes the reservoir's potency and no bleed),
+    `server/test/lineageDots.test.ts` (one record per weapon: the Dagger at rank I and III
+    ends with exactly its reservoir, the Rapier's T2 Affliction lean with exactly
+    `lineage.bleed`) and `server/test/empoweredCap.test.ts` (a real Conduit on the Hammer's
+    T2 Empowered verb).
+  - **At T1 the Hammer's verb needs its Effect lean.** Easy Prey fires only on a held
+    target; Attack and Speed slow nothing, so without the Effect lean (or a slow from the
+    class: the Mid range at T3, Hamstring, a chill) it never fires — 0 firings for all six
+    classes in the legibility matrix. The page says "needs a slow". A designer call
+    (legibility report).
 
 - **Caps and latches** (`server/src/systems/combat/lineageCards.ts`, keys in
   `lineageKeys.ts`): a capped moment sets `lineage.cap.<cardId>` when its payoff lands;
@@ -584,6 +647,59 @@ active card per owned row plus the worn form's capstone.
   in the archived plan); amplification reads as a bigger/second-target draw of the same
   key, not a new effect.
 
+## 11a. One damage-over-time record per weapon (design §26.2, legibility run)
+
+**A weapon that already afflicts is amplified, never joined.** Every lineage affliction —
+the composed heavy bleed, the Affliction re-dose, `poison-stack`, a standalone
+`hemorrhage` — goes through one routing point,
+`server/src/systems/combat/damage/lineageAffliction.ts` (`addLineageAffliction`,
+`addLineageBleed`):
+
+- **On a weapon with a reservoir** (`weaponDot`), it ADDS to that reservoir (what it still
+  owes) and restarts its drain window. No `lineage.*` record is ever created; the target
+  shows one poison record. The Effect / Affliction lean's `dotPotencyPct` becomes
+  `weapon.reservoir-potency-pct` (§3a).
+- **On any other weapon**, it adds to the ONE lineage bleed, `lineage.bleed`, without
+  resetting the tick clock. The old ids `lineage.hemorrhage` (heavy, refreshed),
+  `lineage.lean-bleed` (light) and `lineage.poison` (`poison-stack`'s own stacking record)
+  are gone; all three were collapsed into it. `lineage.poison` had live writers (the
+  Dagger's Numbing Dose and Cinderbrand capstones, its T4 Plague Dose, the Rapier's
+  Venomthorn capstone, the ability-node Affliction options).
+- Every reader sees the one id: the bleed driver, the DoT inventory family, the Affliction
+  moment's "afflicted" test, the re-dose, Contagion and Detonate.
+- **Two behaviour changes, PROVISIONAL:** a `poison-stack` firing now adds what one
+  application promises (its share of the hit × the window ÷ the class DoT's tick) instead of
+  stacking toward the class cap, which lowers the T3/T4 Dagger and Rapier capstones, Plague
+  Dose and the ability nodes for builds that fired it faster than its window; and a
+  standalone `hemorrhage` (the Plague Fang capstone, the Rapier's T4 cross) adds where it
+  used to refresh.
+
+**The status registry** (`shared/src/systems/targetConditions.ts` and the client's
+`targetStatusMeta.ts`, `statusHelp.ts`, `statusTooltips.ts`, `conceptIcons.ts`):
+
+- The Control lean's slow is "Hobbled" (`lineage.hobbled`) and the Control payload's root
+  "Pinned" (`lineage.pinned`), each its own id with its own help, instead of borrowing
+  Hamstring's "Hamstrung" (`ability-slowed`) and Binding Strike's "Bound"
+  (`ability-rooted`). They sit on the same ladder rungs (`MONSTER_SLOW_STATUS_IDS`,
+  `MONSTER_ROOT_STATUS_IDS`, `monsterHasLiveRoot`, `monsterIsHeld`). The `slow` payoff, the
+  ability-node slows and the T3 Control keystone's root still use the ability ids.
+- `isAfflictionStatusId` (the class DoT, Conflagration, every weapon reservoir,
+  `lineage.bleed`) and `isHoldStatusId` (both slows, chill, both roots, frozen, stunned)
+  are the shared classification the client's ring reads for its *blocked* state (§16).
+- `stunned` has a player tile (projected through the `debuff-stunned` display id); lava
+  has one (`debuff-lava-burn`); the dead entries `root`, `vuln`, `void-corruption` and
+  dead boss copy are gone; the Effigy link record is hidden from the target mirror.
+- **Zero open gaps, pinned.** The audit is a library (`server/scripts/statusAudit.ts`, CLI
+  `_statusAudit.ts`): 28 gaps before, 0 open after, 6 accepted with reasons in
+  `ACCEPTED_GAPS` (internal latches, two unused icon keys, `cooldown-temporal-ext`, whose
+  mechanic has no writer — a designer question). `server/test/statusRegistry.test.ts` fails
+  CI on any new status id without label, help, badge and icon, a stale acceptance, or an
+  unexplained dynamic id.
+- **The target frame** (`client/src/hud/TargetFrame.tsx`, `targetHomes.ts`) draws three
+  fixed homes that never reflow — Owes, Slowed, Held — one badge per effect with the
+  registry's icon and the damage still owed (`TargetStatusView.owed`, filled server-side
+  by `dotOwedOnMonster`) or the seconds left.
+
 ## 12. Known limitations
 
 - The T2 amplifier row **is** wired, and its numbers are the open question rather than
@@ -600,9 +716,18 @@ active card per owned row plus the worn form's capstone.
   pair (§3b).
 - All fifteen defensive lineages are PROVISIONAL — design §17 is itself unapproved — and
   PARKED (§2).
-- Every T1 lean/verb number (`PACKET_HALF_NUMBERS`, the lean `STAT_UNIT`s) is PROVISIONAL;
-  the course-correction report lists each with its reason.
-- Off-lane conditional pairs still never fire for a class with no source of the
+- Every T1 lean/verb number (`PACKET_HALF_NUMBERS`, the lane-lean `STAT_UNIT`s, the
+  `LEAN_RANK_*` tables, the shard-per-lean rule) is PROVISIONAL; the course-correction and
+  legibility reports list each with its reason.
+- **What the legibility matrix measured on the new band** (boss lab, 16,500 fights,
+  `reports/legibility/after-composition.md`): the median pair is +15.8% over no cards; the
+  Effect lean is the weakest of the three on the Rapier, the Axe and the Broadsword (+10% of
+  a per-firing payload against +8% on every hit: Axe Effect I +12.8% vs Speed I +21.4%,
+  Broadsword Effect ≈ the verb alone); the Dagger's verb alone is +42.8% (its re-dose of the
+  reservoir; the same pair read +42.0% before the run); the Hammer's verb never fires under
+  Attack or Speed and is worth survival, not DPS, under Effect. Several Speed ranks read the
+  same uplift (I = II = III for some classes): the tick quantisation below.
+- Off-lane conditional pairs (T2 since §26.1) still never fire for a class with no source of the
   condition, by design: the Tempo or Engagement lean on the Rapier's Affliction verb for a
   non-DoT class, the Empowered or Engagement lean on a Control verb. The page says "needs a
   slow" for Control; there is no "needs an affliction" note, because whether a verb has an
@@ -627,6 +752,12 @@ active card per owned row plus the worn form's capstone.
   (variants-current-state §4); which shards those doors should pay is the designer's.
 
 ## 13. The weapon page and the rhythm readout (design §24.6)
+
+**Superseded in part by §16 (design §26.4, legibility run):** the page now lives in the
+Upgrade panel and shows lean ranks, the "In the fight" plate and the locked T2 choice; the
+readout's rings are named, sit under the HP bar and have five states; the floating word is
+teaching-only; the proc strip is gone. What follows is still true where §16 does not say
+otherwise.
 
 - **The page** (`client/src/ui/lineage/LineageTreePanel.tsx`, the pure
   `weaponPageModel.ts`, `weaponPage.css`): reached by clicking the equipped weapon; the
@@ -717,3 +848,89 @@ lane out-uplift the punished lane, and by what margin (reported, never threshold
 - **DPS is the only metric the floor reads.** The Control pure pair's value on a boss is
   survival (the Hammer's win rate against the no-card control +16 pp, the Dagger's +12 pp),
   which the floor does not see; the run report carries the win-rate column per pair.
+- **Since design §26.1 the T1 matrix is lean × rank × the one verb** (legibility run):
+  per weapon 3 leans × 3 ranks with the weapon's fixed verb, the verb alone and the no-band
+  control — 11 rows × 6 classes × 5 bosses × 10 seeds = 16,500 boss-lab fights
+  (`compositionPairs.ts`, `_t1BossPlan.ts --matrix=composition`, `compositionReport.ts`
+  tables T1 as lean × rank). The T2 instrument keeps its 45 pairs. Latest:
+  [`reports/legibility/after-composition.md`](../reports/legibility/after-composition.md)
+  (boss lab only; the lane bench was not rerun).
+
+## 16. The HUD and the panels (design §26.4, legibility run 2026-10-05)
+
+**The rule: panels may be dense; the HUD may not.** Each fact has one channel. Screenshots
+(desktop 1440×900 and portrait 390×844) are in
+[`reports/legibility/screens/`](../reports/legibility/screens/).
+
+- **The ring** (`client/src/hud/RhythmReadout.tsx`, `rhythmReadoutModel.ts`,
+  `rhythmReadout.css`): one ring per active verb, **named** (the verb's short name under the
+  dial, "Wound" for Into the Wound; the full name in the tooltip). On desktop it sits under
+  the HP bar inside the left rail's Character panel (`StatPlate`'s `beside` slot); on a phone
+  it is the top strip's second row. The old floating `#rhythm-overlay` mount is gone. Five
+  states: **clock** (a count or a cap clock), **coming** (the last second of a cap
+  brightens and pulses — with a 500 ms swing and a 5 s cap the moment fires on the first
+  swing after the cap clears, so the clock IS the forecast), **ready**, **blocked** (dashed,
+  "–": a `hit-afflicted` verb whose current target has no affliction, a `hit-held` verb
+  whose target is not held — derived client-side from the target's networked statuses with
+  the shared `isAfflictionStatusId` / `isHoldStatusId`, §11a; no target, nothing blocked)
+  and **rest**. An **away count** "+N" on the dial counts firings while the player was not
+  watching, until the next watched firing.
+- **The proc strip is off the field.** The desktop buff bar's 52 px labelled tiles over the
+  field's top-left (the playtest's "top-left proc icons are extra bloat") are replaced by a
+  26 px status row beside the HP bar, words in the tooltip; critical debuffs keep their size
+  and halo. On a phone the scaled row stays at the field's bottom-left.
+- **The floating word teaches, then never plays** (`client/src/fx/cardWord.ts`): only on a
+  `card-fx` event the server marks `teach: true`. The server counts a card's first
+  `CARD_TEACHING_FIRINGS` (3, PROVISIONAL) WATCHED firings in the persisted
+  `TracksProgression.cardFiringsTaught` (hydrated by `normalizeFiringsTaught`, clamped 0–3,
+  wiped by `resetPlayerProgress`). "Watched" is the server-only `isAway` marker that
+  `player:setActive` attaches and detaches (`setFightOnScreen`; a character loaded while
+  its tab is hidden starts away; a player with no client — benches, tests — is never away).
+  A firing while away never teaches and adds one to `ShowsRhythm.moments[key].away`
+  (runtime only); a watched firing clears it. The hook is `noteCardFiring` in
+  `lineageCards.ts`'s `fire()`, because `syncRhythmReadout` cannot see pulse firings on its
+  own. Limit: "watched" is tab visibility only — a full-screen panel over the fight still
+  counts as watching.
+- **The Upgrade panel** (`client/src/ui/lineage/UpgradePanel.tsx`, `upgradeListModel.ts`,
+  `useUpgradeList.ts`; the crafting dialog's `'upgrade'` tab; a rail entry "Upgrade" with a
+  count badge and a row in the phone's More sheet): opens on the worn items, weapon first,
+  with the step pips (form · lean I · II · III · verb · gate) and a "1 rank · 2 cards to buy"
+  badge from the shared checks; armour, charm and boots say "plain item". The weapon opens
+  its page in the panel; clicking the equipped weapon still opens the standalone dialog.
+- **The weapon page** (`LineageTreePanel.tsx` exports `WeaponPage`; `weaponPageModel.ts`,
+  `weaponPage.css`): the band's steps line; the **"In the fight" plate** — the lean's
+  sentence and the verb's in two colours from `composedSentenceParts`, re-reading under a
+  lean hover or a rank preview; the lean cards with rank pips ("II of III"), the next rank's
+  price (`lineageCardPrice({ progress, rank })`), a Rank up control (hover previews the
+  plate and the stat sheet) and "swap free"; the verb card with its mini ring and a beat
+  line drawn from the composed moment; the Tier 2 choice row (the band's three verbs,
+  dimmed, locked); the gate. On a phone a ◉ Preview toggle pins a diff bar ("Effect rank III
+  · Poison potency +15% → +20%"). The page's contract reads go through one file,
+  `client/src/ui/lineage/legibilityContracts.ts`.
+- **The Stats panel** (`client/src/ui/stats/StatsPanel.tsx`, `statsPanelModel.ts`,
+  `stats.css`; a rail entry "Stats", the Character panel's title, the phone's Stats tab):
+  thesis D's dense ordered layout — offence, defence, recovery, movement & rhythm. Every
+  value is `previewEquipmentStats`; each number's source is found by ablation (with minus
+  without that item or lean) and the lean's share is drawn in its lane colour (the Dagger's
+  Effect on "Poison potency"; an Effect payload share on its verb's rhythm row). Rites and
+  passives moved here. **Nothing expands on the left any more**: the Character panel lost
+  its expanding details, and the inventory's stat sheet lost its character-sheet mode (with
+  nothing selected it points to Stats); its item comparison stays, because it holds the only
+  Equip / Unequip button and the tutorial's `inventoryAction` anchor (the phone tab is
+  "Compare").
+- **The territory line stays** (`client/src/hud/AreaInformation.tsx`,
+  `areaInformationModel.ts` `territoryHereLine`): the node's name and "Mire territory ·
+  every kill pays Venom" stay on screen, not only on arrival — top-left on desktop, bottom-
+  left when the field is under 860 px (clear of the target frame), above the XP bar on a
+  phone, hidden while the arrival banner shows. T1 nodes are rosters (a leader and at most
+  one guest; one crossroads per biome — `variants-current-state.md` §2a), so the bodies in
+  front of the player and this line agree.
+- **The target frame's three homes** (Owes / Slowed / Held) are §11a's.
+- Tests: `rhythmReadoutModel` (the five states), `cardTeaching` (three watched firings
+  teach then never, the away count, the save round trip, reset), `weaponPageRanks` (rank
+  prices, Effect values, steps, the plate's halves), `statsPanel`, `weaponPage`.
+- **Not in this run:** the Ornate skin and every ornament (the later skin track, design
+  §26.4); the phone camera floor (0.4 draws a 64 px body at ~26 px).
+- **Known gap:** a target's status list carries every player's effects with no owner, while
+  the server's Affliction moment counts only the player's own DoTs, so in a party the
+  client-derived *blocked* state can disagree with the server.

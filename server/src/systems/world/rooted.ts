@@ -1,4 +1,4 @@
-import { ABILITY_ROOT_EFFECT_ID, getFlag, getStatusEffect, setFlag } from '@mmo-idle/shared';
+import { MONSTER_ROOT_STATUS_IDS, getFlag, getStatusEffect, setFlag } from '@mmo-idle/shared';
 import type { World } from "../../world/World";
 import type { ServerEntity } from "../../ecs/entity";
 import { isMonsterEntity } from "../../ecs/entity";
@@ -29,8 +29,9 @@ export function setRooted(
   }
 
   if (isMonsterEntity(entity) &&
-      (getStatusEffect(entity.tracksCombat, ABILITY_ROOT_EFFECT_ID)?.remainingMs ?? 0) > 0) {
-    // The scripted hold ended, but Binding Strike still owns its remaining time.
+      MONSTER_ROOT_STATUS_IDS.some((id) => (getStatusEffect(entity.tracksCombat, id)?.remainingMs ?? 0) > 0)) {
+    // The scripted hold ended, but a player root (Binding Strike's, or the
+    // Control payload's Pinned) still owns its remaining time.
     setFlag(entity.tracksCombat, 'abilityOwnsRoot', true);
     return;
   }

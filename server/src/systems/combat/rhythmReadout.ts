@@ -22,6 +22,7 @@
  * client derives which ring to draw from the same shared function.
  */
 import {
+  CARD_TEACHING_FIRINGS,
   RHYTHM_SPENT_ON_MAX,
   getCooldown,
   getCounter,
@@ -110,7 +111,7 @@ function momentFor(
 function sameMoment(a: RhythmMoment | undefined, b: RhythmMoment): boolean {
   if (!a) return false;
   if (a.count !== b.count || a.capUntil !== b.capUntil || a.armed !== b.armed) return false;
-  if (a.spentUntil !== b.spentUntil) return false;
+  if (a.spentUntil !== b.spentUntil || a.away !== b.away) return false;
   const x = a.spentOn ?? [];
   const y = b.spentOn ?? [];
   return x.length === y.length && x.every((id, i) => id === y[i]);
@@ -147,7 +148,11 @@ export function syncRhythmReadout(
   const now = Date.now();
   const moments: Record<string, RhythmMoment> = {};
   for (const firing of firings) {
-    moments[firing.key] = momentFor(player, firing, prev[firing.key], now, spent);
+    const moment = momentFor(player, firing, prev[firing.key], now, spent);
+    // The away count is not a counter the runtime keeps: it rides on the moment
+    // from the firing that set it until the next on-screen firing clears it.
+    const away = prev[firing.key]?.away;
+    moments[firing.key] = away ? { ...moment, away } : moment;
   }
   if (!player.showsRhythm) {
     const slice: ShowsRhythm = { moments };
@@ -157,4 +162,50 @@ export function syncRhythmReadout(
   if (sameMoments(prev, moments)) return;
   player.showsRhythm.moments = moments;
   markSliceDirty(world, player, 'showsRhythm');
+}
+
+// ── Teaching and the away count (design §26.4, legibility run Contract 2) ─────
+
+/**
+ * The client says whether it is showing the fight (`player:setActive`, the hidden
+ * tab). Off screen attaches the server-only `isAway` marker; on screen detaches
+ * it. Presence is the signal — a player with no client (a bench, a test) is never
+ * away, so it is taught as if watching.
+ */
+export function setFightOnScreen(world: World, player: PlayerEntity, onScreen: boolean): void {
+  if (onScreen) detachComponent(world, player, 'isAway');
+  else if (!player.isAway) attachComponent(world, player, 'isAway', { sinceMs: Date.now() });
+}
+
+/**
+ * One firing of a card or worn capstone (`key`) that actually paid out. Called
+ * from `lineageCards.ts`'s `fire()` — the one place every firing passes — right
+ * before its `card-fx` is pushed. Returns whether this firing TEACHES; the client
+ * floats the card's name only then:
+ *
+ *  - off screen (`isAway`): never teaches; the ring's away count for the card goes
+ *    up by one (written once, on the moment the ring already carries);
+ *  - on screen: clears the card's away count, and teaches while the persisted
+ *    `cardFiringsTaught[key]` is below {@link CARD_TEACHING_FIRINGS}, counting it.
+ *    After the third on-screen firing, never again.
+ */
+export function noteCardFiring(world: World, player: PlayerEntity, key: string): boolean {
+  const moment = player.showsRhythm?.moments[key];
+  if (player.isAway) {
+    if (moment) {
+      moment.away = (moment.away ?? 0) + 1;
+      markSliceDirty(world, player, 'showsRhythm');
+    }
+    return false;
+  }
+  if (moment?.away !== undefined) {
+    delete moment.away;
+    markSliceDirty(world, player, 'showsRhythm');
+  }
+  const taught = player.tracksProgression.cardFiringsTaught ?? {};
+  const seen = taught[key] ?? 0;
+  if (seen >= CARD_TEACHING_FIRINGS) return false;
+  player.tracksProgression.cardFiringsTaught = { ...taught, [key]: seen + 1 };
+  markSliceDirty(world, player, 'tracksProgression');
+  return true;
 }

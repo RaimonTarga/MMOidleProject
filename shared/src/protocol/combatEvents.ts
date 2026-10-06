@@ -320,9 +320,14 @@ type CombatEventPayload =
   //                 its tick interval. Absent for an instant payload.
   //   `abilityIds`  `technique-refund` only: the Techniques whose cooldown the
   //                 refund actually moved (the HUD flashes those tiles).
+  //
+  // `teach` (design §26.4, legibility run Contract 2) marks a firing that TEACHES:
+  // one of the card's first three firings the player saw on screen (the server's
+  // `cardFiringsTaught` counter). The client floats the card's name only on such a
+  // firing; every other firing shows the body fx alone. Absent = do not teach.
   | { kind: 'card-fx'; playerId: string; fx: LineageFxKey; pos: Vec2;
       targetId?: string; targetPos?: Vec2; stacks?: number; cardId?: string;
-      durationMs?: number; abilityIds?: string[] }
+      durationMs?: number; abilityIds?: string[]; teach?: true }
   // A Kill-chain carry that will land LOADED was armed or spent (design §24.2:
   // "a kill heals a tenth of your pool and loads your next hit").
   //

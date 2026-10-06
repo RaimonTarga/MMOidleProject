@@ -20,12 +20,16 @@ import {
   absorbedStatCards,
   bandBiomeLevel,
   baseRecoveryForTier,
+  cardRank,
   emptyEquipment,
   lineageBandBiome,
   lineageCardPrice,
   lineageCardTie,
   lineageGateCost,
+  lineageMasteryLevelForRow,
+  resolveActiveLineages,
   resolveLineageCard,
+  resolveLineageCardAtRank,
   rowBiomeLevel,
   rowsForTier,
 } from '@mmo-idle/shared';
@@ -45,10 +49,11 @@ function assert(condition: unknown, message: string): void {
 }
 
 const rapier = LINEAGE_DATABASE.get('rapier')!;
-const statCard = rapier.cards.find((c) => c.id === 'rapier-t1-tempo-stat')!;
+/** The Speed lean (design §26.1): attack speed, ranked, paid in its lane's shard. */
+const statCard = rapier.cards.find((c) => c.id === 'rapier-t1-speed')!;
 const payoffCard = rapier.cards.find((c) => c.id === 'rapier-t1-tempo-payoff')!;
-/** The Engagement stat row: flat attack, so a fold is an exact delta to compare. */
-const engagementStat = rapier.cards.find((c) => c.id === 'rapier-t1-engagement-stat')!;
+/** The Attack lean: attack %, so a fold reads off the stat bag and the attack stat. */
+const attackStat = rapier.cards.find((c) => c.id === 'rapier-t1-attack')!;
 const galeNeedle = rapier.forms.find((f) => f.recipeId === 'gale-needle')!;
 
 /** A character who already holds the crafted base form and can afford anything. */
@@ -127,7 +132,8 @@ const walletTotal = (p: PlayerEntity): number =>
   const { world, player } = spawn('p-buy');
   const { cost } = lineageCardPrice({ lineage: rapier, card: statCard });
   const greenBefore = player.tracksProgression.essences.green;
-  const tempoBefore = player.tracksProgression.shards.tempo ?? 0;
+  const lane = statCard.lane;
+  const shardBefore = player.tracksProgression.shards[lane] ?? 0;
 
   const result = unlockLineageCard(world, player, 'rapier', statCard.id);
   assert(result.success, `buying should succeed: ${result.reason}`);
@@ -138,18 +144,73 @@ const walletTotal = (p: PlayerEntity): number =>
     'essence spent must equal the resolved cost',
   );
   assert(
-    (player.tracksProgression.shards.tempo ?? 0) === tempoBefore - (cost.shards.tempo ?? 0),
+    (player.tracksProgression.shards[lane] ?? 0) === shardBefore - (cost.shards[lane] ?? 0),
     'shards spent must equal the resolved cost',
   );
   const tree = player.holdsInventory.lineages!.rapier!;
   assert(tree.ownedCards.includes(statCard.id), 'the card is owned');
   assert(tree.active.stat === statCard.id, 'the first card into an empty row activates itself');
+  assert(cardRank(tree, statCard.id) === 1 && tree.ranks?.[statCard.id] === 1, 'bought at rank I');
 
-  // Buying it twice is refused and costs nothing.
+  // An unranked card bought twice is refused and costs nothing.
+  assert(unlockLineageCard(world, player, 'rapier', payoffCard.id).success, 'fixture: the verb is bought');
   const before = walletTotal(player);
-  const again = unlockLineageCard(world, player, 'rapier', statCard.id);
-  assert(!again.success, 'a card cannot be bought twice');
+  const again = unlockLineageCard(world, player, 'rapier', payoffCard.id);
+  assert(!again.success && again.reason === 'Already owned.', 'a card cannot be bought twice');
   assert(walletTotal(player) === before, 'a refused purchase spends nothing');
+}
+
+// ─── A ranked lean buys its NEXT rank through the same intent (design §26.1) ──
+//
+// `lineage:unlockCard { cardId }` on an owned ranked card buys the next rank: its
+// own Global Mastery gate, its own price (×1.5, ×2) in the SAME essence and the
+// SAME shard, the rows left alone, and a refusal at rank III that spends nothing.
+
+{
+  const { world, player } = spawn('p-ranks');
+  const lane = statCard.lane;
+  assert(unlockLineageCard(world, player, 'rapier', statCard.id).success, 'rank I');
+  const cooldownI = player.performsAttack.attackCooldown;
+  for (const rank of [2, 3]) {
+    const price = lineageCardPrice({ lineage: rapier, card: statCard, progress: player.holdsInventory.lineages!.rapier! });
+    assert(price.rank === rank, `the price tag is for rank ${rank}, got ${price.rank}`);
+    assert(price.cost.essence.green === resolveLineageCardAtRank(rapier, player.holdsInventory.lineages!.rapier!, statCard, rank).cost.essence.green,
+      `the price of rank ${rank} is the card resolved at rank ${rank}`);
+    const green = player.tracksProgression.essences.green;
+    const shards = player.tracksProgression.shards[lane] ?? 0;
+    const bought = unlockLineageCard(world, player, 'rapier', statCard.id);
+    assert(bought.success, `rank ${rank}: ${bought.reason}`);
+    assert(green - player.tracksProgression.essences.green === price.cost.essence.green, `rank ${rank} spends its essence`);
+    assert(shards - (player.tracksProgression.shards[lane] ?? 0) === price.cost.shards[lane], `rank ${rank} spends its own lane's shard`);
+    const tree = player.holdsInventory.lineages!.rapier!;
+    assert(tree.ranks?.[statCard.id] === rank && cardRank(tree, statCard.id) === rank, `the tree holds rank ${rank}`);
+    assert(tree.ownedCards.filter((id) => id === statCard.id).length === 1, 'still owned once');
+    assert(tree.active.stat === statCard.id, 'a rank-up leaves the row as it was');
+  }
+  assert(player.performsAttack.attackCooldown < cooldownI, 'rank III swings faster than rank I');
+  const before = walletTotal(player);
+  const maxed = unlockLineageCard(world, player, 'rapier', statCard.id);
+  assert(!maxed.success && maxed.reason === 'Already at rank III.', `at rank III: ${maxed.reason}`);
+  assert(walletTotal(player) === before, 'the refusal spends nothing');
+
+  // A rank-up never moves the active row: with another lean slotted, buying the
+  // Speed lean's next rank keeps the slotted lean slotted.
+  const { world: w2, player: p2 } = spawn('p-ranks-rows');
+  unlockLineageCard(w2, p2, 'rapier', statCard.id);
+  unlockLineageCard(w2, p2, 'rapier', attackStat.id);
+  setLineageActive(w2, p2, 'rapier', 'stat', attackStat.id);
+  assert(unlockLineageCard(w2, p2, 'rapier', statCard.id).success, 'rank II of the unslotted lean');
+  assert(p2.holdsInventory.lineages!.rapier!.active.stat === attackStat.id, 'the slotted lean stays slotted');
+
+  // Each rank gates on its own Global Mastery: the lean gate, +4, +8.
+  const { world: w3, player: p3 } = spawn('p-ranks-gm');
+  p3.tracksProgression.biomeLevel = { forest: lineageMasteryLevelForRow(1, 'stat') + 3 };
+  assert(unlockLineageCard(w3, p3, 'rapier', statCard.id).success, 'rank I at the lean gate');
+  const early = unlockLineageCard(w3, p3, 'rapier', statCard.id);
+  assert(!early.success && early.reason === `Requires Global Mastery ${lineageMasteryLevelForRow(1, 'stat') + 4}.`,
+    `rank II waits for the lean gate + 4: ${early.reason}`);
+  p3.tracksProgression.biomeLevel = { forest: lineageMasteryLevelForRow(1, 'stat') + 4 };
+  assert(unlockLineageCard(w3, p3, 'rapier', statCard.id).success, 'rank II at the lean gate + 4');
 }
 
 // A refused purchase — too poor — spends nothing and owns nothing.
@@ -217,7 +278,7 @@ const walletTotal = (p: PlayerEntity): number =>
   player.holdsInventory.lineages = {
     ...player.holdsInventory.lineages,
     broadsword: {
-      ownedCards: ['broadsword-t1-technique-stat'], active: {},
+      ownedCards: ['broadsword-t1-effect'], active: {},
       ownedForms: ['iron-broadsword'], wornForm: 'iron-broadsword',
     },
   };
@@ -374,46 +435,51 @@ assert(
 // the collapsed card, not again on the next recalc — and that only the STAT row is
 // retired: the collapsed band's payoff row is a wardrobe to reslot from.
 
-/** Climb to the tier-2 Gale Needle, optionally owning the T1 stat row first. */
+/**
+ * Climb to the tier-2 Gale Needle, optionally owning the T1 Attack lean first — at
+ * rank II, so the fold is also the OWNED rank's (design §26.1).
+ */
 function wearT2(id: string, opts: { withStatCard: boolean }): { world: World; player: PlayerEntity } {
   const { world, player } = spawn(id);
-  if (opts.withStatCard) unlockLineageCard(world, player, 'rapier', engagementStat.id);
+  if (opts.withStatCard) {
+    unlockLineageCard(world, player, 'rapier', attackStat.id);
+    unlockLineageCard(world, player, 'rapier', attackStat.id);
+  }
   unlockLineageForm(world, player, 'rapier', 'gale-needle');
   wearLineageForm(world, player, 'rapier', 'gale-needle');
   return { world, player };
 }
 
 {
-  // The absorbed row is worth what the slotted row was: resolve it once here and
-  // compare every delta against that, never against a literal.
-  const absorbedAttack = resolveLineageCard(engagementStat, rapier).statEffects!.attack!;
-  assert(absorbedAttack > 0, 'fixture: the engagement stat row should grant flat attack');
+  // The absorbed row is worth what the slotted row was at the rank the player
+  // owns: resolve it once here and compare the stat bag against that.
+  const absorbedPct = resolveLineageCard(attackStat, rapier, { rank: 2 }).statEffects!.attackPct!;
+  assert(absorbedPct > 0, 'fixture: the Attack lean grants attack %');
+  const bag = (p: PlayerEntity) => resolveActiveLineages(p.holdsInventory).statEffects;
 
   // At tier 1 it is an ordinary slotted stat row.
   const { world, player } = spawn('p-absorb-t1');
   const attackBare = player.dealsDamage.attack;
-  unlockLineageCard(world, player, 'rapier', engagementStat.id);
-  assert(
-    player.dealsDamage.attack === attackBare + absorbedAttack,
-    `a slotted stat row should add exactly ${absorbedAttack}`,
-  );
+  unlockLineageCard(world, player, 'rapier', attackStat.id);
+  unlockLineageCard(world, player, 'rapier', attackStat.id);
+  assert(player.dealsDamage.attack > attackBare, 'a slotted Attack lean raises attack');
+  assert(bag(player).attackPct === absorbedPct, `a slotted stat row pays exactly its rank's ${absorbedPct}`);
 
   // Now wear the tier-2 form. Compare against a twin who never bought the card,
   // so the new form's own base stats cancel out of the comparison.
   const owner = wearT2('p-absorb-owner', { withStatCard: true });
   const twin = wearT2('p-absorb-twin', { withStatCard: false });
-  assert(
-    owner.player.dealsDamage.attack - twin.player.dealsDamage.attack === absorbedAttack,
-    'the absorbed stat row must still be worth exactly its resolved value',
-  );
+  assert(owner.player.dealsDamage.attack > twin.player.dealsDamage.attack, 'the absorbed row still raises attack');
+  assert(bag(owner.player).attackPct === absorbedPct && bag(twin.player).attackPct === undefined,
+    'the absorbed stat row must still be worth exactly its resolved value, at the owned rank');
 
   const tree = owner.player.holdsInventory.lineages!.rapier!;
   assert(
-    tree.active.stat === engagementStat.id,
+    tree.active.stat === attackStat.id,
     'fixture: the collapsed card is still the one the tree has slotted',
   );
   assert(
-    absorbedStatCards(rapier, tree).map((c) => c.id).join() === engagementStat.id,
+    absorbedStatCards(rapier, tree).map((c) => c.id).join() === attackStat.id,
     'exactly one card is absorbed, and it is that one',
   );
 
@@ -433,17 +499,14 @@ function wearT2(id: string, opts: { withStatCard: boolean }): { world: World; pl
     owner.player.dealsDamage.attack === absorbedTotal,
     'recalculating twice must not double the absorbed row',
   );
-  assert(
-    owner.player.dealsDamage.attack - twin.player.dealsDamage.attack === absorbedAttack,
-    'and the twin comparison still holds after the recalcs',
-  );
+  assert(bag(owner.player).attackPct === absorbedPct, 'and the bag still holds it once after the recalcs');
 }
 
 // The stat row of a collapsed band is unselectable; its payoff row is not.
 {
   const { world, player } = wearT2('p-collapse-rows', { withStatCard: true });
 
-  const reslotStat = setLineageActive(world, player, 'rapier', 'stat', engagementStat.id);
+  const reslotStat = setLineageActive(world, player, 'rapier', 'stat', attackStat.id);
   assert(!reslotStat.success, 'a collapsed stat row cannot be slotted again');
   assert(
     /already part of your form/i.test(reslotStat.reason ?? ''),
@@ -465,7 +528,7 @@ function wearT2(id: string, opts: { withStatCard: boolean }): { world: World; pl
 // the form being WORN, so wearing the old form back un-folds it.
 {
   const { world, player } = spawn('p-absorb-unworn');
-  unlockLineageCard(world, player, 'rapier', engagementStat.id);
+  unlockLineageCard(world, player, 'rapier', attackStat.id);
   const slottedAttack = player.dealsDamage.attack;
   unlockLineageForm(world, player, 'rapier', 'gale-needle');
   assert(
@@ -473,15 +536,15 @@ function wearT2(id: string, opts: { withStatCard: boolean }): { world: World; pl
     'buying the form must not absorb anything on its own',
   );
   assert(
-    setLineageActive(world, player, 'rapier', 'stat', engagementStat.id).success,
+    setLineageActive(world, player, 'rapier', 'stat', attackStat.id).success,
     'and the stat row is still selectable at tier 1',
   );
 
   wearLineageForm(world, player, 'rapier', 'gale-needle');
-  assert(!setLineageActive(world, player, 'rapier', 'stat', engagementStat.id).success, 'collapsed at tier 2');
+  assert(!setLineageActive(world, player, 'rapier', 'stat', attackStat.id).success, 'collapsed at tier 2');
   wearLineageForm(world, player, 'rapier', 'flash-rapier');
   assert(
-    setLineageActive(world, player, 'rapier', 'stat', engagementStat.id).success,
+    setLineageActive(world, player, 'rapier', 'stat', attackStat.id).success,
     'and selectable again once the tier-1 form is worn back',
   );
   assert(

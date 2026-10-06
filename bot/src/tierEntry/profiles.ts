@@ -324,7 +324,11 @@ export const LANES_WITHOUT_T1_SHARD_SOURCE: readonly PacketId[] = [];
 
 function laneCardIds(lineage: LineageDefinition, lane: PacketId, tier = 1): string[] {
   return rowsForTier(tier).map((row) => {
-    const card = lineage.cards.find((c) => c.tier === tier && c.row === row && c.lane === lane);
+    const inRow = lineage.cards.filter((c) => c.tier === tier && c.row === row);
+    // Design §26.1 (legibility run): a T1 payoff row is ONE verb, the weapon's own,
+    // so every lane's T1 reference runs its lane's lean with that verb. Wave 2 (E)
+    // reworks the lane references properly; this keeps them buildable meanwhile.
+    const card = inRow.find((c) => c.lane === lane) ?? (inRow.length === 1 ? inRow[0] : undefined);
     if (!card) throw new Error(`${lineage.id}: no T${tier} ${row} card on lane ${lane}`);
     return card.id;
   });

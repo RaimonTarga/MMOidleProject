@@ -82,37 +82,38 @@ export const HAMMER_LINEAGE: LineageDefinition = {
   ],
 
   cards: [
+    // ── T1 lean row (design §26.1): Attack, Speed, Effect, three ranks each ──
+    // The lane is the card's colour and its shard (PROVISIONAL, legibility run:
+    // Effect takes the fixed verb's lane, Attack takes Empowered where the weapon
+    // has it, Speed takes the remaining lane, so all three home shards buy
+    // something at T1).
+    // Effect is the Hammer's own slow: its depth, and the verb's source.
     {
-      id: 'hammer-t1-empowered-stat', lineageId: 'hammer', tier: 1, row: 'stat', lane: 'empowered',
-      name: 'Overhead', description: 'Everything above you becomes part of the blow.',
+      id: 'hammer-t1-attack', lineageId: 'hammer', tier: 1, row: 'stat', lane: 'empowered',
+      leanKind: 'attack', statKey: 'attackPct',
+      name: 'Attack', description: 'Everything above you becomes part of the blow.',
       fx: 'empowered.trail',
     },
     {
-      id: 'hammer-t1-control-stat', lineageId: 'hammer', tier: 1, row: 'stat', lane: 'control',
-      name: 'Crushing Weight', description: 'Heavy enough that being hit changes your plans.',
-      fx: 'control.trail',
-    },
-    {
-      id: 'hammer-t1-engagement-stat', lineageId: 'hammer', tier: 1, row: 'stat', lane: 'engagement',
-      name: 'Closing Stride', description: 'The last three steps are the loud ones.',
+      id: 'hammer-t1-speed', lineageId: 'hammer', tier: 1, row: 'stat', lane: 'engagement',
+      leanKind: 'speed', statKey: 'attackSpeedPct',
+      name: 'Speed', description: 'The head comes round again sooner than it has any right to.',
       fx: 'engagement.trail',
     },
-
-    // ── T1 verb row (§24.2): a moment; the lean above decides what happens ───
     {
-      id: 'hammer-t1-empowered-payoff', lineageId: 'hammer', tier: 1, row: 'payoff', lane: 'empowered',
-      name: 'Crash Down', description: 'When the mechanic lands, the whole weight comes down behind it.',
-      fx: 'empowered.plating-crack',
+      id: 'hammer-t1-effect', lineageId: 'hammer', tier: 1, row: 'stat', lane: 'control',
+      leanKind: 'effect', statKey: 'slowOnHit',
+      name: 'Effect', description: 'Heavy enough that being hit changes your plans.',
+      fx: 'control.trail',
     },
+
+    // ── T1 verb (design §26.1): ONE, the weapon's own — bought, never chosen ──
+    // Renamed from "Pinned" (legibility run): "Pinned" is the Control root's
+    // status label now, and this is the brief's name for the Hammer's verb.
     {
       id: 'hammer-t1-control-payoff', lineageId: 'hammer', tier: 1, row: 'payoff', lane: 'control',
-      name: 'Pinned', description: 'Something that cannot get away is something you can hit properly.',
+      name: 'Easy Prey', description: 'Something that cannot get away is something you can hit properly.',
       fx: 'control.frost-drag',
-    },
-    {
-      id: 'hammer-t1-engagement-payoff', lineageId: 'hammer', tier: 1, row: 'payoff', lane: 'engagement',
-      name: 'Doorbreaker', description: 'The first blow on each new body is the one that breaks the door.',
-      fx: 'engagement.brace-sparks',
     },
 
     // ── T2 band (design §4): stat (L2), payoff (L3), amplifier (L5) ──────────

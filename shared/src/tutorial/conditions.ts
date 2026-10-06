@@ -3,6 +3,7 @@ import { isGatedLineageForm } from '../data/lineages';
 import { shardName } from '../data/lineages/packets';
 import { RECIPE_DATABASE } from '../data/recipes';
 import { ITEM_DATABASE } from '../itemDatabase';
+import { cardRank } from '../systems/lineages';
 import { ESSENCE_LABELS, type EssenceType } from '../items';
 import type { PlayerView } from '../protocol/views';
 import { QUEST_DATABASE } from '../quests/questDatabase';
@@ -42,13 +43,18 @@ export function viewHasItem(view: Pick<TutorialView, 'inventory' | 'equipment'>,
     || Object.values(view.equipment).some((id) => id === definitionId);
 }
 
-/** "Owned is forever": a bought card never un-buys, so this is monotone. */
+/**
+ * "Owned is forever": a bought card never un-buys and a bought rank never drops,
+ * so this is monotone. With `rank`, owned at that rank or above (a RANKED card,
+ * the T1 lean trio: design §26.1); an owned unranked card is rank I.
+ */
 export function viewOwnsLineageCard(
   view: Pick<TutorialView, 'lineages'>,
   lineageId: string,
   cardId: string,
+  rank = 1,
 ): boolean {
-  return view.lineages[lineageId]?.ownedCards.includes(cardId) ?? false;
+  return cardRank(view.lineages[lineageId], cardId) >= Math.max(1, rank);
 }
 
 export function viewOwnsLineageForm(
@@ -114,7 +120,7 @@ export function evaluateTutorialCondition(condition: TutorialCondition, view: Tu
     case 'capstoneAtLeast':
       return (view.capstones[condition.biome] ?? 0) >= condition.amount;
     case 'lineageCardOwned':
-      return viewOwnsLineageCard(view, condition.lineageId, condition.cardId);
+      return viewOwnsLineageCard(view, condition.lineageId, condition.cardId, condition.rank);
     case 'lineageFormOwned':
       return viewOwnsLineageForm(view, condition.lineageId, condition.recipeId);
     case 'lineageFormWorn':

@@ -55,7 +55,8 @@ export type Condition =
   // Lineage trees: the two kill-driven wallets, and what they have already bought.
   | { type: "shardAtLeast"; packet: PacketId; amount: number }
   | { type: "capstoneAtLeast"; biome: string; amount: number }
-  | { type: "lineageCardOwned"; lineageId: string; cardId: string }
+  /** With `rank`: owned at that rank or above (a RANKED card, the T1 lean trio; design §26.1). */
+  | { type: "lineageCardOwned"; lineageId: string; cardId: string; rank?: number }
   | { type: "lineageFormOwned"; lineageId: string; recipeId: string }
   | { type: "lineageFormWorn"; lineageId: string; recipeId: string }
   // Guided-tutorial vocabulary (shared/src/tutorial/types.ts), so tutorial scripts run as routes.
@@ -167,8 +168,13 @@ export type StepBody =
    *
    * Buying a card into an EMPTY row also activates it (the server does that), so
    * a route that only ever owns one card per row needs no `setActive` at all.
+   *
+   * `rank` (a RANKED card, the T1 lean trio: design §26.1): buy ranks, one at a
+   * time and each priced and gated at its own rank, until the card is owned at
+   * this one. The same intent buys an owned ranked card's next rank. Omitted
+   * means owning the card (rank I).
    */
-  | { type: "unlockCard"; lineageId: string; cardId: string; farmAt?: NodeRef }
+  | { type: "unlockCard"; lineageId: string; cardId: string; rank?: number; farmAt?: NodeRef }
   /**
    * Choose which owned card is active for a row, or clear the row with `null`.
    * Free and instant — this is the swap the lane matrix measures, and the step a

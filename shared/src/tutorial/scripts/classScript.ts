@@ -5,11 +5,11 @@ import { LINEAGE_DATABASE } from '../../data/lineages';
 import { capstoneMaterialName } from '../../data/lineages/capstones';
 import { shardName } from '../../data/lineages/packets';
 import { isVerbCard, lineageGateCost, packetMoment, resolveLineageCard } from '../../data/lineages/resolve';
-import { statLine, verbSentence } from '../../data/lineages/sentences';
 import type {
   LineageCard,
   LineageCost,
   LineageDefinition,
+  LineageProgress,
   PacketId,
   ResolvedLineageCard,
 } from '../../data/lineages/types';
@@ -17,6 +17,7 @@ import { RECIPE_DATABASE } from '../../data/recipes';
 import { ITEM_DATABASE } from '../../itemDatabase';
 import type { EssenceType } from '../../items';
 import { RUNE_RECIPE_DATABASE } from '../../runeRecipes';
+import { cardSentence, maxCardRank, rankNumeral, weaponReservoirNoun } from '../../systems/lineages';
 import { nodeFamily, nodesPayingShard } from '../../world/nodeBlends';
 import type { TutorialConceptId } from '../concepts';
 import type {
@@ -193,19 +194,23 @@ const LEARN_REASON: Record<string, string> = {
 };
 
 /**
- * The weapon page the guide teaches (design §24.2, §24.6, §24.9).
+ * The weapon page the guide teaches (design §26.1, §26.4, §24.9).
  *
  * The page is the one of the weapon the class FIGHTS with — the Chaotic Axe for
  * five plans, the Poison Dagger for the Slinger (`TutorialClassPlan.weaponCards`)
  * — worn from where it is crafted in its home zone, so the lessons land where the
- * weapon is earned and the bought pair is live in every seal and gate fight (a
- * lineage pays only while its own form is worn: design §23):
+ * weapon is earned and the bought band is live in every seal and gate fight (a
+ * lineage pays only while its own form is worn: design §23). Design §26.1 once:
  *
- *  1. the LEAN, row 1, at its home zone's level — a stat, and the payload it names;
- *  2. the VERB, row 2, as soon as its gates open — a moment, and the lesson is the
- *     sentence the pair now reads plus the ring on the rhythm readout that counts
- *     toward it;
- *  3. after the seals, the gate that turns the same weapon into its tier-2 form,
+ *  1. the LEAN, row 1, at its home zone's level 2 — Effect, the weapon's own move
+ *     made stronger (Attack and Speed are plain stats);
+ *  2. the VERB, row 2, as soon as its gates open (the zone's level 4) — the
+ *     weapon's own move, not a choice; the lesson is the sentence it now reads plus
+ *     its ring under the HP bar;
+ *  3. the lean's RANK II one level later (the verb's level already carries two
+ *     ideas), and rank III at the home leg's end — the number in the sentence
+ *     growing where the player can see it;
+ *  4. after the seals, the gate that turns the same weapon into its tier-2 form,
  *     paid with its home boss's capstones.
  */
 function tutorialLineage(plan: TutorialClassPlan): LineageDefinition {
@@ -239,21 +244,32 @@ function ordinal(n: number): string {
   }
 }
 
+/** A weapon reservoir's noun as the target's state ("poison" → "poisoned"). */
+const AFFLICTED_WORD: Record<string, string> = { poison: 'poisoned', burn: 'burning', frost: 'chilled' };
+
 /**
- * What a verb's ring on the rhythm readout does, in words, read off the verb's
- * own moment (`packetMoment`), so a moment change rewrites the line.
+ * What a verb's ring under the HP bar does, in words, read off the verb's own
+ * moment (`packetMoment`), so a moment change rewrites the line. The ring's states
+ * are D's (design §26.4): it counts (a clock), brightens when the moment is coming,
+ * lights when ready, and is dashed — blocked — while a conditional moment's target
+ * lacks its condition (`reservoir`: the weapon's own affliction, which is what the
+ * Dagger's target carries).
  */
-function ringPhrase(card: LineageCard): string {
+function ringPhrase(card: LineageCard, reservoir: string | undefined): string {
   const moment = packetMoment(card.lane);
   switch (moment?.kind) {
     case 'hit-nth':
-      return `fills one hit at a time and fires on the ${ordinal(moment.n ?? 1)}`;
+      return `counts your hits, lights when the next one pays, and fires on the ${ordinal(moment.n ?? 1)}`;
     case 'first-hit':
       return moment.perTarget
         ? 'stays lit until your first hit on a target spends it'
         : 'stays lit until your first hit of a fight spends it';
     case 'kill':
       return 'lights on a kill, for the next hit';
+    case 'hit-afflicted':
+      return `counts down, lights when it is ready, and is dashed while the target is not ${AFFLICTED_WORD[reservoir ?? ''] ?? 'afflicted'}`;
+    case 'hit-held':
+      return 'counts down, lights when it is ready, and is dashed while the target is not held';
     default:
       return moment?.capMs ? 'shows the wait until it can fire again' : 'shows when it is ready';
   }
@@ -536,8 +552,11 @@ class ScriptBuilder {
     }
   }
 
-  /** One of this class's two weapon-page cards, resolved, and the territory that pays its shard. */
-  private weaponCard(cardId: string): {
+  /**
+   * One of this class's weapon-page cards resolved at `rank` (the T1 lean trio is
+   * bought one rank at a time: design §26.1), and the territory that pays its shard.
+   */
+  private weaponCard(cardId: string, rank = 1): {
     lineage: LineageDefinition;
     card: LineageCard;
     resolved: ResolvedLineageCard;
@@ -546,7 +565,7 @@ class ScriptBuilder {
     const lineage = tutorialLineage(this.plan);
     const card = lineage.cards.find((c) => c.id === cardId);
     if (!card) throw new Error(`${this.plan.className}: unknown ${lineage.id} card ${cardId}`);
-    const resolved = resolveLineageCard(card, lineage);
+    const resolved = resolveLineageCard(card, lineage, { rank });
     // Where it drops, read off the node rule rather than hand-written (design
     // §24.3): every kill in a node pays its dominant family's shard, so the line
     // names that family's territory — the word the map and the arrival banner use.
@@ -558,14 +577,40 @@ class ScriptBuilder {
   }
 
   /**
+   * What a card says on the page (`cardSentence`, the page's own call) with this
+   * plan's lean owned at `leanRank` and, when `withVerb`, the verb owned too, both
+   * active — the tree the player holds at that point of the script.
+   */
+  private pageSentence(card: LineageCard, leanRank: number, withVerb: boolean): string {
+    const lineage = tutorialLineage(this.plan);
+    const base = lineage.forms[0].recipeId;
+    const { lean, verb } = this.plan.weaponCards;
+    const progress: LineageProgress = {
+      ownedCards: withVerb ? [lean, verb] : [lean],
+      active: withVerb ? { stat: lean, payoff: verb } : { stat: lean },
+      ownedForms: [base],
+      wornForm: base,
+      ranks: { [lean]: leanRank },
+    };
+    const sentence = cardSentence(card, progress);
+    if (!sentence) throw new Error(`${this.plan.className}: ${card.id} reads no sentence`);
+    return sentence;
+  }
+
+  /**
    * One weapon-page purchase as two beats, like every paid action: the shards
    * that pay for it, farmed in the territory that pays them, then the buy.
    *
    * The farm beat is skipped automatically when the wallet already covers it, so
-   * the buy beat's own line stands on its own. The buy is followed by a
+   * the buy beat's own line stands on its own. A first purchase is followed by a
    * `setActive` for the same card: the server activates a purchase only into an
    * EMPTY row, and a player who opted in mid-Tier-1 may have filled it by hand
    * (the weapon page sends the same intent after a buy).
+   *
+   * `rank` > 1 buys that rank of an owned ranked card (the page's Rank up; the
+   * same intent), priced and gated at that rank; `atLevel` holds the beat back to
+   * a later level of the home zone than the card needs (the first-hour
+   * checklist's pacing, like `PlanItem.atLevel`).
    */
   private cardBeats(
     chapter: string,
@@ -573,17 +618,23 @@ class ScriptBuilder {
     lines: { farm: (shard: string, territory: string) => string; buy: string },
     teaches: { farm: TutorialConceptId[]; buy: TutorialConceptId[] },
     lesson?: TutorialLesson,
+    options: { rank?: number; atLevel?: number } = {},
   ): void {
-    const { lineage, card, resolved, territory } = this.weaponCard(cardId);
-    const owned: TutorialCondition = { type: 'lineageCardOwned', lineageId: lineage.id, cardId: card.id };
+    const rank = options.rank ?? 1;
+    const { lineage, card, resolved, territory } = this.weaponCard(cardId, rank);
+    const owned: TutorialCondition = {
+      type: 'lineageCardOwned', lineageId: lineage.id, cardId: card.id, ...(rank > 1 ? { rank } : {}),
+    };
     const shard = shardName(card.lane);
+    const level = Math.max(resolved.requiredBiomeLevel, options.atLevel ?? 0);
+    const suffix = rank > 1 ? `:rank-${rank}` : '';
     this.push(teaching({
-      id: `shards:${card.id}`,
+      id: `shards:${card.id}${suffix}`,
       chapter,
       say: lines.farm(shard, territory),
       waiting: `Fighting in ${territory} territory for ${shard}s.`,
       progress: [
-        { type: 'biomeLevel', biomeGroup: lineage.homeBiome, level: resolved.requiredBiomeLevel },
+        { type: 'biomeLevel', biomeGroup: lineage.homeBiome, level },
         ...lineageCostProgress(resolved.cost),
       ],
       steps: [{
@@ -596,7 +647,7 @@ class ScriptBuilder {
           of: [owned, {
             type: 'allOf',
             of: [
-              { type: 'biomeLevelAtLeast', biomeGroup: lineage.homeBiome, level: resolved.requiredBiomeLevel },
+              { type: 'biomeLevelAtLeast', biomeGroup: lineage.homeBiome, level },
               { type: 'globalMasteryAtLeast', value: resolved.requiredGlobalMastery },
               ...lineageCostConditions(resolved.cost),
             ],
@@ -605,35 +656,51 @@ class ScriptBuilder {
       }],
     }, teaches.farm));
     this.push(teaching({
-      id: `card:${card.id}`,
+      id: `card:${card.id}${suffix}`,
       chapter,
       say: lines.buy,
-      steps: [
-        { type: 'unlockCard', lineageId: lineage.id, cardId: card.id },
-        { type: 'setActive', lineageId: lineage.id, row: card.row, cardId: card.id },
-      ],
+      steps: rank > 1
+        // A rank-up: the card is already the active lean (its first purchase saw to it).
+        ? [{ type: 'unlockCard', lineageId: lineage.id, cardId: card.id, rank }]
+        : [
+          { type: 'unlockCard', lineageId: lineage.id, cardId: card.id },
+          { type: 'setActive', lineageId: lineage.id, row: card.row, cardId: card.id },
+        ],
       ...(lesson ? { lesson } : {}),
     }, teaches.buy));
   }
 
-  /** Row 1, the lean: at its own level of the weapon's home zone, with the weapon in hand. */
+  /**
+   * Row 1, the lean, rank I: at its own level of the weapon's home zone, with the
+   * weapon in hand. Design §26.1: Attack, Speed and Effect on every weapon, and the
+   * guide names Effect — the weapon's own move made stronger. It never promises
+   * that a lean choice changes the verb: Attack and Speed are plain stats.
+   */
   leanLesson(chapter: string): void {
-    const { lineage, card, resolved } = this.weaponCard(this.plan.weaponCards.lean);
-    if (card.row !== 'stat' || card.tier !== 1) throw new Error(`${this.plan.className}: ${card.id} is not a tier-1 lean`);
+    const { lineage, card } = this.weaponCard(this.plan.weaponCards.lean);
+    if (card.row !== 'stat' || card.tier !== 1 || !card.leanKind) {
+      throw new Error(`${this.plan.className}: ${card.id} is not a tier-1 ranked lean`);
+    }
     const weapon = name(lineage.forms[0].recipeId);
-    const stat = statLine(resolved.statEffects, 'short')?.replace(/\.$/, '');
-    if (!stat) throw new Error(`${this.plan.className}: ${card.id} resolves to no stat`);
+    const reads = this.pageSentence(card, 1, false);
+    const plain = card.leanKind === 'effect'
+      ? `Attack and Speed are plain stats; ${card.name} makes the weapon's own move stronger.`
+      : `${card.name} is a plain stat.`;
     this.cardBeats(chapter, card.id, {
       farm: (shard, territory) => `The ${weapon} has a page of its own, and its first card is paid in ${shard}s. Every kill in ${territory} territory pays them; the map names each node's territory.`,
-      buy: `Open the ${weapon}'s page and buy ${card.name}. Row one is the lean, a stat while the ${weapon} is worn (${stat}); one lean is active at a time.`,
-    }, { farm: ['weapon-page', 'shards'], buy: ['lean'] });
+      buy: `Buy ${card.name}, row one of the ${weapon}'s page: the lean, one active at a time. ${plain}`,
+    }, { farm: ['weapon-page', 'shards'], buy: ['lean'] }, {
+      lineageId: lineage.id,
+      cardId: card.id,
+      read: `Look at what ${card.name} says: “${reads}”`,
+    });
   }
 
   /**
    * Row 2, the verb: the first moment both its gates are open, with the weapon
-   * still in hand. The lesson is the sentence the pair now reads — generated from
-   * the two halves (`verbSentence`, the same call the page's `cardSentence` makes),
-   * never typed here — then the ring that counts toward it (design §24.2, §24.6).
+   * still in hand. Design §26.1: the weapon's own move, not a choice. The lesson
+   * is the sentence it now reads with the lean — the page's own `cardSentence`,
+   * never typed here — then its ring under the HP bar (design §26.4).
    *
    * `opened` is what opened row two, for the farm line: the zone level when the
    * verb lands inside its home leg ("Cave 4"), else the mastered-zone count whose
@@ -643,27 +710,59 @@ class ScriptBuilder {
     const lean = this.weaponCard(this.plan.weaponCards.lean).card;
     const { lineage, card } = this.weaponCard(this.plan.weaponCards.verb);
     if (!isVerbCard(card) || card.tier !== 1) throw new Error(`${this.plan.className}: ${card.id} is not a tier-1 verb`);
-    const sentence = verbSentence(card.lane, lean.lane);
-    if (!sentence) throw new Error(`${this.plan.className}: ${card.id} has no sentence with ${lean.id}`);
     const weapon = name(lineage.forms[0].recipeId);
     const home = BIOME_NAME[lineage.homeBiome as T1Biome] ?? lineage.homeBiome;
-    // A lean of the verb's own lane reads that lane's pure sentence (design §24.2):
-    // the lean did not rewrite the verb, it is the same colour, so the lesson says
-    // so rather than claiming the lean "chose" it.
-    const why = lean.lane === card.lane
-      ? `${lean.name} is the same colour, so this is that colour's own move.`
-      : `Your lean, ${lean.name}, chose that.`;
+    const base = lineage.forms[0].recipeId;
+    const reservoir = weaponReservoirNoun(lineage, { wornForm: base }, 1);
+    // The lean is at rank I here: its further ranks come after the verb.
+    const sentence = this.pageSentence(card, 1, true);
+    const bare = cardSentence(card, { ownedCards: [card.id], active: { payoff: card.id }, ownedForms: [base], wornForm: base });
+    // What the lean did to the sentence, said plainly (design §26.1): an Effect lean
+    // sizes the move (the Axe's second strike) or strengthens what the move works on
+    // (the Dagger's poison); an Attack or Speed lean is a stat and changes nothing.
+    const why = lean.leanKind === 'effect'
+      ? sentence !== bare
+        ? `${lean.name} made that stronger; its ranks add more.`
+        : reservoir
+          ? `${lean.name} makes your ${reservoir} stronger, and that is what it works on.`
+          : `${lean.name} makes it stronger; its ranks add more.`
+      : `${lean.name} is a plain stat; it does not change the move.`;
     this.cardBeats(chapter, card.id, {
       farm: (shard, territory) => `${opened} opens row two of the ${weapon}'s page: the verb, what the weapon does. ${card.name} costs ${shard}s from ${home}'s ${territory} territory.`,
-      buy: `Buy ${card.name}. A verb is a moment in the fight, and your lean decides what happens at that moment.`,
+      buy: `Buy ${card.name}, the ${weapon}'s own move: a moment in the fight that comes round on its own.`,
       // The verb's idea rides on the BUY line: the leg's kills often pay for the
       // verb already, and then its farm beat is skipped and never shown.
     }, { farm: [], buy: ['verb', 'rhythm-ring'] }, {
       lineageId: lineage.id,
       cardId: card.id,
       read: `Look at what ${card.name} says now: “${sentence}” ${why}`,
-      ring: `In a fight, ${card.name}'s ring by your health bar ${ringPhrase(card)}.`,
+      ring: `In a fight, ${card.name}'s ring under your health bar ${ringPhrase(card, reservoir)}.`,
     });
+  }
+
+  /**
+   * The lean's next rank (design §26.1: "the number in the sentence growing where
+   * the player can see it"). Ranks follow the verb (`build`), so the page reads
+   * with both. Rank II introduces ranks on its buy line, and its lesson reads the
+   * number before and after; rank III is the same idea again.
+   */
+  rankLesson(chapter: string, rank: number, atLevel?: number): void {
+    const { lineage, card } = this.weaponCard(this.plan.weaponCards.lean, rank);
+    const weapon = name(lineage.forms[0].recipeId);
+    const now = this.pageSentence(card, rank, true);
+    const before = this.pageSentence(card, rank - 1, true);
+    const numeral = rankNumeral(rank);
+    const last = rank >= maxCardRank(card);
+    this.cardBeats(chapter, card.id, {
+      farm: (shard, territory) => `Next: ${card.name} rank ${numeral}${last ? ', the last at this tier' : ''}, paid in ${shard}s from ${territory} territory.`,
+      buy: rank === 2
+        ? `Rank ${card.name} up to II on the ${weapon}'s page. A lean has three ranks, and each one makes its number bigger.`
+        : `Rank ${card.name} up to ${numeral}${last ? ', the last rank at this tier' : ''}: “${now}”`,
+    }, { farm: [], buy: rank === 2 ? ['lean-rank'] : [] }, rank === 2 ? {
+      lineageId: lineage.id,
+      cardId: card.id,
+      read: `Look at ${card.name} now: “${now}” It was “${before}”`,
+    } : undefined, { rank, ...(atLevel !== undefined ? { atLevel } : {}) });
   }
 
   /**
@@ -788,6 +887,18 @@ class ScriptBuilder {
     const mastered: T1Biome[] = [];
     const masteryOf = (zones: readonly T1Biome[]) => zones.reduce((sum, zone) => sum + biomeLevelCap(1, zone), 0);
     let verbTaught = false;
+    // The lean's further ranks (design §26.1), after the verb, each where its
+    // Global Mastery gate (6 / 10 / 14) is held.
+    const leanRank = Math.min(this.plan.weaponCards.leanRank, maxCardRank(this.weaponCard(this.plan.weaponCards.lean).card));
+    let rankTaught = 1;
+    const ranksHeld = (chapter: string, upTo: number, gm: number, atLevel?: number) => {
+      while (rankTaught < Math.min(upTo, leanRank)) {
+        const next = rankTaught + 1;
+        if (gm < this.weaponCard(this.plan.weaponCards.lean, next).resolved.requiredGlobalMastery) return;
+        this.rankLesson(chapter, next, atLevel);
+        rankTaught = next;
+      }
+    };
     for (const biome of T1_BIOME_ORDER) {
       const chapter = CHAPTER[biome];
       const biomePlan = this.plan.biomes[biome];
@@ -825,6 +936,13 @@ class ScriptBuilder {
         && masteryOf(mastered) + verb.requiredBiomeLevel >= verb.requiredGlobalMastery) {
         this.verbLesson(chapter, `${ZONE_WORD[home] ?? home} ${verb.requiredBiomeLevel}`);
         verbTaught = true;
+        // Rank II one level after the verb: the verb's level already introduces two
+        // ideas (the verb and its ring), and the rank is a third (the first-hour
+        // checklist). Past the zone's cap it waits for the leg's end below.
+        const rankTwoLevel = verb.requiredBiomeLevel + 1;
+        if (rankTwoLevel <= biomeLevelCap(1, home)) {
+          ranksHeld(chapter, 2, masteryOf(mastered) + rankTwoLevel, rankTwoLevel);
+        }
       }
       this.maxOut(chapter, biome);
       mastered.push(biome);
@@ -838,12 +956,16 @@ class ScriptBuilder {
         this.verbLesson(chapter, `${zones} zones mastered`);
         verbTaught = true;
       }
+      // The ranks still to buy, at the home leg's end (rank III), or the first leg
+      // end after it whose Global Mastery holds them.
+      if (verbTaught && mastered.includes(home)) ranksHeld(chapter, leanRank, masteryOf(mastered));
       // The bot learns it at Cave 3, but with Step Back and two abilities the
       // build only fits the Rune budget of a fully mastered Tier 1 (GM 30).
       if (biome === 'cave') this.learn(chapter, 'ability-recipe-expose-weakness', 'technique');
       this.items(chapter, biome, biomePlan.afterMax);
     }
     if (!verbTaught) throw new Error(`${this.plan.className}: the verb's gates never open inside Tier 1`);
+    if (rankTaught < leanRank) throw new Error(`${this.plan.className}: the lean's rank ${rankTaught + 1} never opens inside Tier 1`);
     this.bosses();
     this.gate();
     return this.beats;

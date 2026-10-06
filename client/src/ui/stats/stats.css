@@ -1,0 +1,149 @@
+/* The Stats panel (design §26.4; thesis D's dense ordered layout, the composite
+   mockup's Stone skin). Dense is allowed here: panels may be dense, the HUD may
+   not. `--lane` is the lean's lane colour (packetDefinition(lane).color). */
+
+.game-dialog__panel.stats-dialog {
+  max-width: min(860px, calc((100vw - 32px) / var(--ui-font-scale, 1)));
+}
+
+.sp-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.sp-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px 16px;
+  container-type: inline-size;
+}
+
+.sp-empty {
+  padding: 20px;
+  color: var(--hud-text-muted);
+}
+
+/* The lean, named once, in its lane colour. */
+.sp-lean {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--hud-edge-divider);
+  border-left: 3px solid var(--lane);
+  background: var(--hud-material-inset);
+  font-size: 12px;
+  color: var(--hud-text);
+}
+.sp-lean__tag {
+  color: var(--hud-text-dim);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.sp-lean b {
+  color: var(--lane);
+  font-family: var(--hud-font-display);
+  font-weight: var(--hud-font-display-weight);
+}
+.sp-lean__rank {
+  color: var(--hud-text-muted);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 10px;
+}
+.sp-lean__sentence {
+  flex-basis: 100%;
+  color: var(--hud-text-muted);
+}
+
+.sp-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  align-items: start;
+}
+@container (max-width: 560px) {
+  .sp-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+.sp-group {
+  padding: 8px 10px 6px;
+  border: 1px solid var(--hud-edge-divider);
+  background: var(--hud-material-panel);
+}
+.sp-group h3 {
+  margin: 0 0 4px;
+  color: var(--hud-primary);
+  font-family: var(--hud-font-display);
+  font-weight: var(--hud-font-display-weight);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* One row: the stat, its number, where the number comes from. Rows never move. */
+.sp-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: 'k v' 's s';
+  column-gap: 8px;
+  padding: 4px 0;
+  border-top: 1px solid var(--hud-edge-divider);
+  font-size: 12px;
+  line-height: 1.3;
+}
+.sp-row:first-of-type { border-top: 0; }
+.sp-row__k { grid-area: k; color: var(--hud-text-muted); min-width: 0; }
+.sp-row__v {
+  grid-area: v;
+  color: var(--hud-text);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.sp-row__src {
+  grid-area: s;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 2px 8px;
+  min-width: 0;
+}
+.sp-row__src:empty { display: none; }
+
+.sp-src {
+  color: var(--hud-text-dim);
+  font-size: 10.5px;
+  white-space: nowrap;
+}
+.sp-src b {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-weight: 600;
+  color: var(--hud-text-muted);
+}
+/* The lean's share: its lane colour (the mockup's "+20% Effect II"). */
+.sp-src--lean,
+.sp-src--lean b { color: var(--lane); }
+.sp-src--rule { white-space: normal; text-align: right; }
+.sp-src--rule[style] { color: var(--lane); }
+
+.sp-note {
+  margin: 0;
+  color: var(--hud-text-dim);
+  font-size: 11px;
+}
+
+.sp-more {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px 16px;
+  padding-top: 6px;
+  border-top: 1px solid var(--hud-edge-divider);
+}
+.sp-more .stat-section { margin: 0; }

@@ -756,11 +756,11 @@ function MakeDetail({
       )}
 
       {isGatedForm ? (
-        // Tier-2+ weapon forms are bought at the previous band's gate, in the
-        // lineage tree — not crafted here (design §5).
+        // Tier-2+ weapon forms are bought at the previous band's gate, on the
+        // weapon's page — not crafted here (design §5, §26.4).
         <div className="make-detail__lineage-note">
-          Tier {recipe!.tier}+ forms are unlocked from the item's lineage tree.
-          Open it from the matching slot in your Equipment panel.
+          Tier {recipe!.tier} forms open at the gate on your weapon's page.
+          Find it under Upgrade, or click your equipped weapon in the Inventory.
         </div>
       ) : (
         <div className="make-detail__actions">

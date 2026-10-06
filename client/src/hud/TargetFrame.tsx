@@ -5,6 +5,7 @@ import { targetFrameAtom, combatArchetypeAtom, passivesAtom, selectedSubVariantA
 import { statusMeta, bossEffectMeta } from './targetStatusMeta';
 import { GameIcon } from '../ui/GameIcon';
 import { bossEffectIconSource, targetStatusIconSource } from '../ui/conceptIcons';
+import { TARGET_HOMES, homeBadgeNumber, targetHomeOf, type TargetHome } from './targetHomes';
 
 // The base DoT stack ('dot') tile should reflect YOUR chosen element instead of a
 // fixed green — green (poison/light), red (fire/balanced), light-blue (frost/heavy).
@@ -14,7 +15,7 @@ const DOT_ELEMENT_COLOR: Record<string, string> = {
   frost:  '#6fd0ff',
   doom:   '#9d4dff',
 };
-import { TooltipCard, useStatusStrip, type StripTileProps } from './primitives';
+import { TooltipCard, useStatusStrip, type StripEntry, type StripTileProps } from './primitives';
 import { bossEffectTooltipContent, bossPhaseTooltipContent, targetStatusTooltipContent } from './statusTooltips';
 import './targetFrame.css';
 
@@ -33,6 +34,10 @@ interface TileData {
   iconId?: string;
   /** Server-resolved magnitudes, when this effect publishes any. */
   values?: StatusValue[];
+  /** Damage still owed, for a damage-over-time record (the server's DoT inventory). */
+  owed?: number;
+  /** Which fixed home the tile lives in; absent for the ordinary strip below. */
+  home?: TargetHome;
 }
 
 const DOT_ELEMENT_ICON: Record<string, string> = {
@@ -120,6 +125,42 @@ function StatusTile({
   );
 }
 
+/**
+ * One effect in its home: the registry's icon, its name, and the one number that
+ * matters — what it still owes, or how long it holds. A hold also draws its clock
+ * as a thin bar along the badge's foot.
+ */
+function HomeBadge({ tile, ended, stripProps }: {
+  tile: TileData;
+  ended: boolean;
+  stripProps: StripTileProps | Record<string, never>;
+}) {
+  const home = tile.home!;
+  const icon = targetStatusIconSource(tile.iconId ?? tile.id);
+  const number = homeBadgeNumber(home, tile);
+  const clockPct = home !== 'owes' && tile.remainingMs > 0 && tile.totalMs > 0
+    ? Math.max(0, Math.min(100, (tile.remainingMs / tile.totalMs) * 100))
+    : -1;
+  const unit = home === 'owes' ? 'damage owed' : 'left';
+  return (
+    <div
+      className={`tf-home__badge${ended ? ' tf-home__badge--ended' : ''}`}
+      style={{ '--tf-badge-color': tile.color } as React.CSSProperties}
+      tabIndex={0}
+      role="img"
+      aria-label={`${tile.label}${number ? `, ${number} ${unit}` : ''}${ended ? ', ended' : ''}`}
+      {...stripProps}
+    >
+      <span className="tf-home__icon">
+        <GameIcon source={icon} size={18} fit="cover" fallback={null} decorative />
+      </span>
+      <span className="tf-home__name">{tile.label}</span>
+      <span className="tf-home__value">{number}</span>
+      {clockPct >= 0 && <i className="tf-home__clock" style={{ width: `${clockPct}%` }} />}
+    </div>
+  );
+}
+
 function buildTiles(
   shown: TargetFrameData,
   combatArchetype: string | null,
@@ -159,6 +200,8 @@ function buildTiles(
         remainingMs: s.remainingMs,
         totalMs: s.totalMs,
         values: s.values,
+        owed: s.owed,
+        home: targetHomeOf(s.id),
       };
     }),
     ...(shown.isBoss
@@ -204,7 +247,8 @@ export function TargetFrame() {
 
   const tiles = shown ? buildTiles(shown, combatArchetype, passives, subVariant) : [];
   // The strip owns hover inspection so a card survives its status ending or its
-  // neighbours reflowing. A new target is a new strip.
+  // neighbours reflowing. A new target is a new strip. The three homes ride the
+  // same strip, so a badge that ends while its card is open is held too.
   const strip = useStatusStrip({
     items: tiles,
     keyOf: (t) => t.key,
@@ -246,6 +290,10 @@ export function TargetFrame() {
   // shielded enemy at full HP still shows its shell instead of nothing.
   const shieldLeft = Math.max(0, Math.min(hpPct, 100 - shieldPct));
 
+  const homed = (home: TargetHome): StripEntry<TileData>[] =>
+    strip.entries.filter(({ item }) => item.home === home);
+  const others = strip.entries.filter(({ item }) => item.home === undefined);
+
   return (
     <div className={`target-frame${stale ? ' target-frame--stale' : ''}${shown.isBoss ? ' target-frame--boss' : ''}`}>
       <div className="target-frame__name-row">
@@ -275,9 +323,27 @@ export function TargetFrame() {
         <span>PLT <b>{shown.plating}</b></span>
       </div>
 
-      {strip.entries.length > 0 && (
+      {/* The three fixed homes (design §26.4): always drawn, so nothing reflows
+          when a poison lands or a slow wears off. One badge per effect. */}
+      <div className="tf-homes">
+        {TARGET_HOMES.map(({ home, caption }) => {
+          const entries = homed(home);
+          return (
+            <div key={home} className={`tf-home tf-home--${home}${entries.length === 0 ? ' tf-home--empty' : ''}`}>
+              <span className="tf-home__caption">{caption}</span>
+              {entries.length === 0
+                ? <span className="tf-home__ghost" aria-hidden="true" />
+                : entries.map(({ key, item, ended }) => (
+                  <HomeBadge key={key} tile={item} ended={ended} stripProps={strip.tileProps(key)} />
+                ))}
+            </div>
+          );
+        })}
+      </div>
+
+      {others.length > 0 && (
         <div className="target-frame__tiles">
-          {strip.entries.map(({ key, item: t, ended }) => (
+          {others.map(({ key, item: t, ended }) => (
             <StatusTile
               key={key}
               label={t.label}

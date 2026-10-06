@@ -131,6 +131,8 @@ export function resetPlayerProgress(world: World, player: PlayerEntity): GameAct
   player.holdsInventory.lineages = {};
   player.tracksProgression.shards = {};
   player.tracksProgression.capstones = {};
+  // A wiped character is taught its cards again (design §26.4).
+  player.tracksProgression.cardFiringsTaught = {};
   player.usesAutocombat.auto = false;
   clearAutoTraversePath(world, player);
 
@@ -481,6 +483,8 @@ export function applyTierEntryProfile(
       ownedCards: [...new Set([...born.ownedCards, ...declared.ownedCards])],
       active: { ...born.active, ...declared.active },
       ownedForms: [...new Set([...born.ownedForms, ...declared.ownedForms])],
+      // A declared rank (design §26.1) is the rank the profile bought.
+      ...(born.ranks || declared.ranks ? { ranks: { ...born.ranks, ...declared.ranks } } : {}),
     };
   }
   syncArchetypeSlices(world, player);

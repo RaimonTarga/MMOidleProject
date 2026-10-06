@@ -13,8 +13,11 @@
  *
  *   - 24 swings whiff exactly 8 times (the schedule is what the test assumes);
  *   - the verb fires on the 6th and 12th LANDED swing — twice, never on a whiff;
- *   - with a hit-shaped payload (Hewing Arc's `mechanic-proxy`) it now PAYS, where
- *     before every firing was a whiff the payload refused;
+ *   - with a hit-shaped payload (the Empowered lean's `mechanic-proxy`) it now PAYS,
+ *     where before every firing was a whiff the payload refused. Since design §26.1
+ *     (legibility run) that pair is a T2 composition — the T1 band's leans name no
+ *     other lane's payload — and the T2 Axe whiffs on another schedule, so the pair
+ *     is composed at its T1 numbers and seeded onto the T1 Axe's own verb;
  *   - the counter the rhythm readout shows is the counter the server keeps
  *     (16 landed swings → 4 toward the next firing), on both.
  *
@@ -30,7 +33,11 @@
  */
 import {
   GAME_CONFIG,
+  LINEAGE_DATABASE,
+  applyComposition,
   applyStatusEffect,
+  composeVerb,
+  resolveLineageCard,
   baseRecoveryForTier,
   emptyEquipment,
   getCounter,
@@ -179,15 +186,21 @@ function checkReadout(player: PlayerEntity, label: string): void {
   checkReadout(player, 'pure');
 }
 
-// ── A hit-shaped payload: Hewing Arc × Chopping Rhythm (mechanic-proxy) ──────
+// ── A hit-shaped payload: the Empowered lean × Chopping Rhythm (mechanic-proxy) ──
 //
 // The payload refuses a whiff (`liveExchange`), so before the fix this pair drew
-// NOTHING in 24 swings: all four firings were whiffs.
+// NOTHING in 24 swings: all four firings were whiffs. The pair is composed by the
+// real `composeVerb` onto the real Chopping Rhythm card and seeded on its runtime
+// (design §26.1: an Empowered payload on the Tempo verb is a T2 pair now).
 
 {
-  const player = axeWielder('chaos-proxy', ['axe-t1-empowered-stat', VERB]);
+  const player = axeWielder('chaos-proxy', [VERB]);
+  const axe = LINEAGE_DATABASE.get('axe')!;
+  const composedVerb = resolveLineageCard(axe.cards.find((c) => c.id === VERB)!, axe);
+  applyComposition(composedVerb, composeVerb('tempo', 'empowered', 1));
+  setLineageRuntime(player.tracksCombat, { cards: [composedVerb], capstones: [] });
   const resolved = getLineageRuntime(player.tracksCombat)?.cards.find((c) => c.card.id === VERB);
-  assert(resolved?.payoff?.kind === 'mechanic-proxy', 'with Hewing Arc, the 6th hit counts as the mechanic');
+  assert(resolved?.payoff?.kind === 'mechanic-proxy', 'with the Empowered lean, the 6th hit counts as the mechanic');
 
   const log = swingAt(player, 1_500);
   assert(

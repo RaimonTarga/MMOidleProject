@@ -26,7 +26,8 @@
  */
 import {
   ABILITY_ROOT_EFFECT_ID,
-  ABILITY_SLOW_EFFECT_ID,
+  MONSTER_ROOT_STATUS_IDS,
+  MONSTER_SLOW_STATUS_IDS,
   getFlag,
   getStatusEffect,
   lineageUnit,
@@ -81,7 +82,10 @@ function climb(world: World, player: PlayerEntity, target: MonsterEntity): void 
   const playerId = player.isPlayer.id;
   const cs = target.tracksCombat;
 
-  if (ownedEffect(target, ABILITY_ROOT_EFFECT_ID, playerId)) {
+  // Each rung is read across every id that carries it (design §26.2): the
+  // Control lean's slow is "Hobbled" and the Control payload's root "Pinned", on
+  // their own ids, and both are still this player's slow and root to climb from.
+  if (ownedAny(target, MONSTER_ROOT_STATUS_IDS, playerId)) {
     if (getFlag(cs, rungFlag('stun', playerId))) return; // already climbed this far
     if (!applyStun(cs, lineageUnit('ladderStunMs'), playerId)) return;
     setFlag(cs, rungFlag('stun', playerId), true);
@@ -89,7 +93,7 @@ function climb(world: World, player: PlayerEntity, target: MonsterEntity): void 
     return;
   }
 
-  if (ownedEffect(target, ABILITY_SLOW_EFFECT_ID, playerId)) {
+  if (ownedAny(target, MONSTER_SLOW_STATUS_IDS, playerId)) {
     if (getFlag(cs, rungFlag('root', playerId))) return;
     applyMonsterRoot(world, target, lineageUnit('ladderRootMs'), playerId);
     // `applyMonsterRoot` refuses a control-immune target silently, so confirm the
@@ -114,4 +118,9 @@ function ownedEffect(
   const effect = getStatusEffect(target.tracksCombat, id);
   if (!effect || effect.remainingMs === 0) return undefined;
   return effect.sourceId === playerId ? effect : undefined;
+}
+
+/** {@link ownedEffect} across every id of one control rung. */
+function ownedAny(target: MonsterEntity, ids: readonly string[], playerId: string): boolean {
+  return ids.some((id) => ownedEffect(target, id, playerId) !== undefined);
 }

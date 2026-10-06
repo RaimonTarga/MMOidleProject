@@ -7,7 +7,9 @@ import { GameIcon, type IconSource } from "../ui/GameIcon";
 import { hudBus } from "../hudBus";
 import { SkillTreePanel } from "../ui/SkillTreePanel";
 import { BuildPanel } from "../ui/BuildPanel";
-import { buildSectionIconSource, menuIconSource } from "../ui/systemIcons";
+import { buildSectionIconSource, menuIconSource, statIconSource } from "../ui/systemIcons";
+import { StatsPanel } from "../ui/stats/StatsPanel";
+import { useUpgradeBadge } from "../ui/lineage/useUpgradeList";
 import { MasteryPanel } from "../ui/MasteryPanel";
 import { InventoryPanel } from "../ui/InventoryPanel";
 import { LineageTreePanel } from "../ui/lineage/LineageTreePanel";
@@ -63,6 +65,7 @@ import {
   settingsOpenAtom,
   skillPointsAtom,
   skillTreeOpenAtom,
+  statsOpenAtom,
   type BuildPanelTab,
 } from "./atoms";
 import "./hud.css";
@@ -157,6 +160,9 @@ export function RightSidebar() {
   const [invOpen, setInvOpen] = useAtom(inventoryOpenAtom);
   const [lineageSlot, setLineageSlot] = useAtom(lineageTreeSlotAtom);
   const [craftTab, setCraftTab] = useAtom(craftTabAtom);
+  const [statsOpen, setStatsOpen] = useAtom(statsOpenAtom);
+  // Ranks and cards the player can buy right now on the worn weapon's page.
+  const upgradeBadge = useUpgradeBadge();
   const buildTab = useAtomValue(buildPanelTabAtom);
   const [mapOpen, setMapOpen] = useAtom(mapOpenAtom);
   const [mapHighlightNodes, setMapHighlightNodes] = useAtom(mapHighlightNodesAtom);
@@ -204,7 +210,7 @@ export function RightSidebar() {
     { tab: "runes", label: "Runes", gate: "loadout" },
   ];
 
-  const toggleCraftDestination = (tab: 'make') => {
+  const toggleCraftDestination = (tab: 'make' | 'upgrade') => {
     if (craftTab === tab) {
       closePrimaryOverlays();
       return;
@@ -295,6 +301,26 @@ export function RightSidebar() {
             }}
           />
         )}
+        {/* Design §26.4: the old Upgrade slot, now the worn items and the
+            weapon's page, with a count of ranks the player can buy. */}
+        {visibility.crafting && (
+          <RightNavButton
+            label="Upgrade"
+            icon={menuIconSource("upgrade")}
+            selected={craftTab === "upgrade"}
+            disabled={dead}
+            badge={upgradeBadge > 0}
+            badgeCount={upgradeBadge}
+            unlockSystems={["crafting"]}
+            onClick={() => toggleCraftDestination("upgrade")}
+          />
+        )}
+        <RightNavButton
+          label="Stats"
+          icon={statIconSource("dps")}
+          selected={statsOpen}
+          onClick={() => togglePrimaryOverlay("stats")}
+        />
         {visibility.map && (
           <RightNavButton
             label="Map"
@@ -336,6 +362,7 @@ export function RightSidebar() {
           onClose={() => setCraftTab(null)}
         />
       )}
+      {statsOpen && <StatsPanel onClose={() => setStatsOpen(false)} />}
       {mapOpen && (
         <MapPanel
           highlightNodes={mapHighlightNodes}

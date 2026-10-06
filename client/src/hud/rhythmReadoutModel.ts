@@ -19,6 +19,7 @@ import {
   type RhythmMoment,
   type RhythmShape,
 } from '@mmo-idle/shared';
+import { isAfflictionStatusId, isHoldStatusId } from '../ui/lineage/legibilityContracts';
 
 /** The frame ring's colour: the gold of the mockup, not a lane's. */
 export const FRAME_RING_COLOR = '#d9b25c';
@@ -31,6 +32,44 @@ export const READY_MARK = '✦';
 export const SPENT_MARK = '—';
 /** A resting pulse ring: the server keeps no count toward its moment. */
 export const PULSE_MARK = '•';
+/** A blocked ring: its moment's condition is absent on the current target. */
+export const BLOCKED_MARK = '–';
+
+/**
+ * A clock's last stretch, in ms: the ring brightens and pulses (prototype A's
+ * "coming" state). With a 5 s cap and a 0.5 s swing the moment fires on the first
+ * swing after the cap clears, so the ready ✦ barely shows — the clock IS the
+ * forecast, and its last second is the one to watch.
+ */
+export const COMING_MS = 1_000;
+
+/**
+ * The ring's state in one word (design §26.4, the composite mockup):
+ *  - `clock`   counting toward the moment (a cap's seconds, k/n hits);
+ *  - `coming`  the clock's last second, brightened;
+ *  - `ready`   the next qualifying hit pays (or a window is running);
+ *  - `blocked` dashed: the moment's condition is absent on the current target
+ *              (no affliction for a `hit-afflicted` verb, nothing held for `hit-held`);
+ *  - `rest`    a pulse or a spent latch with nothing to count.
+ * The fifth fact, the away count, rides on any of them (`RhythmRing.away`).
+ */
+export type RingState = 'clock' | 'coming' | 'ready' | 'blocked' | 'rest';
+
+/** Function words a verb's short name drops ("Into the Wound" → "Wound"). */
+const NAME_FILLERS = new Set(['into', 'the', 'a', 'an', 'of', 'on', 'at', 'to', 'in']);
+const SHORT_NAME_MAX = 11;
+
+/**
+ * The verb's short name under its ring (the mockup's "Wound"): its name without
+ * leading function words, or its last word when that is still too long for the
+ * ring. A one-word name stays whole.
+ */
+export function ringShortName(name: string): string {
+  const words = name.trim().split(/\s+/);
+  while (words.length > 1 && NAME_FILLERS.has(words[0].toLowerCase())) words.shift();
+  const joined = words.join(' ');
+  return joined.length <= SHORT_NAME_MAX ? joined : words[words.length - 1];
+}
 
 // ── Payload glyphs (W1-E, designer-approved 2026-10-03) ─────────────────────
 //
@@ -84,8 +123,10 @@ export interface RhythmRing {
   /** Card or capstone id, or `frame`. */
   key: string;
   kind: RhythmShape | 'frame';
-  /** The card's name, or "Frame". */
+  /** The short name under the ring ("Wound"), or "Frame". */
   label: string;
+  /** The card's full name ("Into the Wound"), for the tooltip and the accessible label. */
+  name: string;
   /** The card's lane colour (`packetDefinition(lane).color`), or the frame's gold. */
   color: string;
   /** 0..1 — how much of the ring is drawn. */
@@ -96,6 +137,12 @@ export interface RhythmRing {
   ready: boolean;
   /** A payoff window is running and the ring is draining with it. */
   windowing: boolean;
+  /** The clock's last second (`COMING_MS`): brightened. */
+  coming: boolean;
+  /** The moment's condition is absent on the current target: dashed, not ready. */
+  blocked: boolean;
+  /** Firings while the player was away; shown until the card's next on-screen firing. */
+  away: number;
   /**
    * Milliseconds until this ring changes with nothing new from the server (a cap
    * clearing, a latch re-arming) — the component's cue to keep re-rendering.
@@ -126,6 +173,11 @@ export interface RhythmInput {
   passives: Readonly<Record<string, number>>;
   /** Cards whose payoff fired a moment ago — a pulse ring lights for that beat. */
   firedRecently?: ReadonlySet<string>;
+  /**
+   * The current target's networked status ids (`targetFrameAtom`), for the
+   * blocked state. Absent or null with no target: nothing to be blocked by.
+   */
+  targetStatusIds?: readonly string[] | null;
 }
 
 const clamp01 = (value: number): number => Math.max(0, Math.min(1, value));
@@ -148,18 +200,36 @@ function liveWindow(buff: PlayerBuff | undefined): buff is PlayerBuff {
   return buff !== undefined && buff.durationPct > 0;
 }
 
+/**
+ * Is the moment's CONDITION absent on the current target? Only the two
+ * conditional moments have one (`hit-afflicted`, `hit-held`), and only a target
+ * can lack it: with no target the ring is not blocked by anything. Derived from
+ * the target's networked statuses with the shared classifiers (Contract 3).
+ */
+export function momentBlocked(firing: RhythmFiring, targetStatusIds: readonly string[] | null | undefined): boolean {
+  if (!targetStatusIds) return false;
+  const holds = firing.trigger.kind === 'hit-afflicted' ? isAfflictionStatusId
+    : firing.trigger.kind === 'hit-held' ? isHoldStatusId
+      : undefined;
+  return holds !== undefined && !targetStatusIds.some(holds);
+}
+
 function cardRing(firing: RhythmFiring, input: RhythmInput): RhythmRing {
   const moment = input.moments?.[firing.key] ?? {};
   const windowId = lineageWindowBuffId(firing.payoff);
   const base = {
     key: firing.key,
     kind: firing.shape,
-    label: firing.name,
+    label: ringShortName(firing.name),
+    name: firing.name,
     color: laneColor(firing.lane),
     owns: windowId ? [windowId] : [],
     firing,
     glyph: RHYTHM_PAYLOAD_GLYPHS[firing.payloadLane] ?? null,
     windowing: false,
+    coming: false,
+    blocked: false,
+    away: Math.max(0, moment.away ?? 0),
   } satisfies Partial<RhythmRing>;
 
   // A timed payoff that is running owns the ring until it closes: the payoff is
@@ -174,6 +244,11 @@ function cardRing(firing: RhythmFiring, input: RhythmInput): RhythmRing {
       windowing: true,
       buffId: window.id,
     };
+  }
+
+  // Nothing to fire on: the condition is missing, whatever the clock says.
+  if (momentBlocked(firing, input.targetStatusIds)) {
+    return { ...base, fill: 1, text: BLOCKED_MARK, ready: false, blocked: true };
   }
 
   const now = input.serverNow;
@@ -194,6 +269,7 @@ function cardRing(firing: RhythmFiring, input: RhythmInput): RhythmRing {
           fill: clamp01(1 - left / capMs),
           text: seconds(left),
           ready: false,
+          coming: left <= COMING_MS,
           clockMs: left,
         };
       }
@@ -209,7 +285,7 @@ function cardRing(firing: RhythmFiring, input: RhythmInput): RhythmRing {
     case 'latch-engagement': {
       const left = moment.spentUntil !== undefined && now !== undefined ? moment.spentUntil - now : 0;
       return left > 0
-        ? { ...base, fill: 0, text: SPENT_MARK, ready: false, clockMs: left }
+        ? { ...base, fill: 0, text: SPENT_MARK, ready: false, coming: left <= COMING_MS, clockMs: left }
         : { ...base, fill: 1, text: READY_MARK, ready: true };
     }
     case 'carry':
@@ -236,10 +312,14 @@ function frameRing(input: RhythmInput): RhythmRing | undefined {
     key: 'frame',
     kind: 'frame' as const,
     label: FRAME_RING_LABEL,
+    name: FRAME_RING_LABEL,
     color: FRAME_RING_COLOR,
     owns: [...FRAME_WINDOW_BUFF_IDS, ...FRAME_BANK_BUFF_IDS],
     glyph: null,
     windowing: false,
+    coming: false,
+    blocked: false,
+    away: 0,
   } satisfies Partial<RhythmRing>;
 
   // The window is the frame's payoff running; it outranks the bank it was paid from.
@@ -286,9 +366,30 @@ export function newlyReady(
   return rings.filter((ring) => ring.ready && previous.get(ring.key) === false).map((ring) => ring.key);
 }
 
+/** The ring's state in one word — what the CSS draws (see {@link RingState}). */
+export function ringState(ring: RhythmRing): RingState {
+  if (ring.blocked) return 'blocked';
+  if (ring.ready) return 'ready';
+  if (ring.coming) return 'coming';
+  if ((ring.clockMs ?? 0) > 0 || ring.kind === 'count' || ring.kind === 'frame') return 'clock';
+  return 'rest';
+}
+
+/** "2 fired while you were away", or undefined with none. */
+export function awayText(ring: RhythmRing): string | undefined {
+  if (ring.away <= 0) return undefined;
+  return `${ring.away === 1 ? 'Fired once' : `Fired ${ring.away} times`} while you were away`;
+}
+
 /** The ring's state in words, for its tooltip and its accessible label. */
 export function ringStateText(ring: RhythmRing): string {
+  if (ring.blocked) {
+    return ring.firing?.trigger.kind === 'hit-held'
+      ? 'Waiting: this target is not held'
+      : 'Waiting: this target is not afflicted';
+  }
   if (ring.windowing) return `Running, ${ring.text} s left`;
+  if (ring.coming) return ring.kind === 'cap' ? `Coming: ready in ${ring.text} s` : 'Coming: ready in a moment';
   switch (ring.kind) {
     case 'count':
       return ring.ready ? 'The next hit pays' : `${ring.text} hits`;

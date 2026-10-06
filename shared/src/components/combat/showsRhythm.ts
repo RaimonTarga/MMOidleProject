@@ -40,6 +40,14 @@ export interface RhythmMoment {
    * it is rewritten per hit while spent. Absent means armed.
    */
   spentUntil?: number;
+  /**
+   * The AWAY COUNT (design §26.4, legibility run Contract 2): how many times this
+   * card fired while the player's client was not showing the fight (a hidden tab).
+   * The ring shows it until the card's next on-screen firing, which clears it.
+   * Written once per firing it counts, never per tick; runtime only, so a
+   * respawn or a recalc that drops the card forgets it. Absent = 0.
+   */
+  away?: number;
 }
 
 export interface ShowsRhythm {

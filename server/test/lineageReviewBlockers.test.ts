@@ -80,7 +80,7 @@ initCombatSystems();
   // The lineage the player DOES hold still opens on its first purchase.
   equipItem(world, player, 'flash-rapier');
   const rapier = LINEAGE_DATABASE.get('rapier')!;
-  const rapierStat = rapier.cards.find((c) => c.id === 'rapier-t1-tempo-stat')!;
+  const rapierStat = rapier.cards.find((c) => c.id === 'rapier-t1-speed')!;
   const ok = unlockLineageCard(world, player, 'rapier', rapierStat.id);
   assert(ok.success, `the held lineage still buys: ${ok.reason}`);
   assert(player.holdsInventory.lineages?.rapier?.ownedForms.includes('flash-rapier'), 'the held base form is owned');

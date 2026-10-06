@@ -189,6 +189,19 @@
   min-width: 0;
 }
 
+/* Beside the HP bar (design §26.4): the named rings, then the player's statuses
+   as a small row. Empty (no verb, no status) it takes no height. */
+.stat-crown__beside {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  margin-top: 6px;
+}
+.stat-crown__beside:empty {
+  display: none;
+}
+
 /* Geometry lives in the shared `.crest-diamond` primitive. 32 is a clean 2:1
    downscale of the 64px source and stays under the 0.59 ceiling. */
 /* Qualified with `.crest-diamond` so the override beats the primitive's own

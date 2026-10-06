@@ -40,7 +40,7 @@ import {
 } from "../../classes/archetypes/dot/t3/core/selectors";
 import { applyMonsterDamageTakenDebuffs } from "../../classes/shared/debuffs";
 import { dotElementForSource } from "./dotTickEvent";
-import { LEAN_BLEED_ID, LINEAGE_BLEED_ID, LINEAGE_POISON_ID } from "./bleedIds";
+import { LINEAGE_BLEED_ID } from "./bleedIds";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 
@@ -147,6 +147,24 @@ export function playerDotsOnMonster(
     out.push({ effect, familyId: family.id, ...described });
   }
   return out;
+}
+
+/**
+ * What one damage-over-time record on `monster` still owes, whoever owns it — the
+ * target frame's "owes" number (design §26.2). Undefined when no family owns the
+ * effect (it is not a DoT), or its owner is no longer in the world to describe it.
+ */
+export function dotOwedOnMonster(
+  world: World,
+  monster: MonsterEntity,
+  effect: StatusEffect,
+): number | undefined {
+  const family = _families.find((f) => f.owns(effect));
+  if (!family) return undefined;
+  const owner = world.getPlayerEntity(effect.sourceId);
+  if (!owner) return undefined;
+  const described = family.describe({ world, owner, monster, effect });
+  return described ? Math.max(0, Math.round(described.remainingDamage)) : 0;
 }
 
 /**
@@ -324,22 +342,20 @@ const WEAPON_RESERVOIR_FAMILY: DotFamily = {
  * load-bearing — keep it anyway.
  */
 /**
- * A lineage card's own damage-over-time payoffs (design §18.1). Separate ids from
- * the cadence root's bleed, ticked by the same driver, and described here so
- * Contagion, Detonate and the stack-count rune condition see them like any other
- * DoT and sum the sources.
+ * The ONE lineage bleed (design §26.2), `lineage.bleed`: the record every lineage
+ * damage-over-time source adds to on a weapon with no reservoir of its own — the
+ * Affliction lean's light bleed, the heavy payload, the re-dose, `poison-stack`.
+ * A separate id from the cadence root's bleed, ticked by the same driver, and
+ * described here so the Affliction moment finds it, and a re-dose, Contagion,
+ * Detonate and the stack-count rune condition count it like any other DoT.
  *
- * Two shapes behind one family, told apart by `bleedMode`: a `hemorrhage` spends
- * one stack per tick and is permanent until spent, so its stack count IS its
- * remaining ticks; a `poison-stack` multiplies the tick by its stacks and ends
- * with its timer. The Affliction lean's light bleed (design §24.9) is the first
- * shape under its own id, so it afflicts — the Affliction moment finds it — and
- * a re-dose, Contagion or Detonate counts it like any other bleed.
+ * It spends one stack per tick and is permanent until spent, so its stack count
+ * IS its remaining ticks. (The `intensity` shape — stacks multiplying the tick —
+ * is still read for safety but no longer written: `poison-stack` adds too.)
  */
 const LINEAGE_BLEED_FAMILY: DotFamily = {
   id: "lineage-bleed",
-  owns: (effect) =>
-    effect.id === LINEAGE_BLEED_ID || effect.id === LINEAGE_POISON_ID || effect.id === LEAN_BLEED_ID,
+  owns: (effect) => effect.id === LINEAGE_BLEED_ID,
   describe({ world, monster, effect }) {
     if (effect.stacks <= 0) return null;
     const intensity = effect.data["bleedMode"] === 1;

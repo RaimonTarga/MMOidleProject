@@ -1,23 +1,31 @@
 /**
- * The weapon page (design §24.6; the approved "weapon page" mockup).
+ * The weapon page (design §24.6, §26.1, §26.4; the approved composite mockup,
+ * Stone skin).
  *
- * Reached by clicking the equipped weapon. Reads top to bottom: the form you are
- * growing, one row per tier — a choice of three cards in three lane colours, one
- * lit — and the gate at the bottom. Beside it, the real stat sheet (a lean shows
- * before → after on hover) and the materials, with where each shard drops.
+ * Reached two ways: clicking the equipped weapon (its own dialog,
+ * `LineageTreePanel`), and the Upgrade panel's worn-items list (the same page
+ * inside that panel, `WeaponPage`). Reads top to bottom:
+ *
+ *  1. the form — the thing you are growing — and the band's steps
+ *     (form · lean I · II · III · verb · gate at T1);
+ *  2. "In the fight" (prototype C's plate): the active lean and the active verb
+ *     as one reading, the verb in its two colours, re-reading under any preview;
+ *  3. the lean row: Attack / Speed / Effect with rank pips, the number at the
+ *     owned rank, the next rank's price and a rank-up control (swap is free);
+ *  4. the verb: the weapon's own, with a mini ring and its beat line (the HUD
+ *     ring's grammar, taught before the fight);
+ *  5. the next band's choice, locked: its three verbs, dimmed;
+ *  6. the gate: boss portrait, capstone pips, what it opens, the pay button.
  *
  * A card is one sentence and no flavour text. Every decision about what a card
- * or a door may do comes from a SHARED check through `weaponPageModel.ts`; this
- * file only lays the model out and sends intents through `hudBus`.
- *
- * The export keeps its old name: both HUD shells mount it from
- * `lineageTreeSlotAtom`, and the tutorial director opens it the same way.
+ * or a door may do comes from a SHARED check through `weaponPageModel.ts`; the
+ * rank reads go through `legibilityContracts.ts`. This file only lays the model
+ * out and sends intents through `hudBus`.
  */
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { useAtomValue } from 'jotai';
-import type { EquipmentSlot, EssenceType, LineageProgress, LineageWallet, PacketId } from '@mmo-idle/shared';
+import type { EquipmentSlot, EssenceType, LineageCard, LineageProgress, PacketId } from '@mmo-idle/shared';
 import {
-  TEST_ROOM_NODE_ID,
   TUTORIAL_ANCHORS,
   PARKED_LINEAGE_REASON,
   emptyLineageProgress,
@@ -29,56 +37,58 @@ import {
 import { hudBus } from '../../hudBus';
 import {
   activeStanceAtom,
-  biomeLevelAtom,
-  capstonesAtom,
   combatArchetypeAtom,
   equipmentAtom,
   equippedRitesAtom,
-  essencesAtom,
-  globalMasteryAtom,
   hpAtom,
   itemUpgradesAtom,
   lineagesAtom,
   maxHpAtom,
   passivesAtom,
-  playerNodeIdAtom,
   playerTierAtom,
   selectedRangeAtom,
   selectedSubVariantAtom,
-  shardsAtom,
   unlockedSkillsAtom,
 } from '../../hud/atoms';
 import { DialogHeader, GameDialog } from '../../hud/primitives';
 import { MonsterSprite } from '../../hud/bestiary/MonsterSprite';
+import { useIsMobile } from '../../hud/useIsMobile';
 import { SLOT_LABELS } from '../crafting/common';
 import { GameIcon } from '../GameIcon';
 import { ItemIcon } from '../ItemIcon';
 import { materialIconSource, type MaterialRef } from '../MaterialChip';
 import { lineageDisplayName } from './lineageDisplayName';
+import { bandSteps, type StepPip } from './upgradeListModel';
+import { useLineageWallet } from './useUpgradeList';
 import {
   activateAfterBuy,
+  beatText,
+  fightPlate,
   formHeader,
   gateBlocks,
+  leanRankModel,
+  lockedChoiceRow,
   materialLines,
   pageBands,
   pageStatSheet,
   previewLeanProgress,
+  previewRankProgress,
+  rankNumeral,
   successToast,
+  verbBeat,
+  type FightPlate,
   type FormHeader,
   type GateBlock,
+  type LeanRankModel,
   type MaterialLine,
   type PageBand,
   type PageCardModel,
   type PageRow,
   type PageStatSheet,
   type PendingIntent,
+  type VerbBeat,
 } from './weaponPageModel';
 import './weaponPage.css';
-
-interface Props {
-  slot: EquipmentSlot;
-  onClose: () => void;
-}
 
 const NOTICE_MS = 3200;
 
@@ -86,9 +96,12 @@ type LaneStyle = CSSProperties & { '--lane': string };
 const laneStyle = (color: string): LaneStyle => ({ '--lane': color });
 
 /** Keep "5 s" together when a sentence wraps. Presentation only. */
-const keepUnits = (text: string): string => text.replace(/(\d) (s)(?=\W|$)/g, '$1\u00a0$2');
+const keepUnits = (text: string): string => text.replace(/(\d) (s)(?=\W|$)/g, '$1 $2');
 
-// ── The form header ──────────────────────────────────────────────────────────
+/** What the page is previewing: a lean swapped in, or a lean's next rank. Display only. */
+type Preview = { kind: 'lean'; cardId: string } | { kind: 'rank'; cardId: string; rank: number } | null;
+
+// ── The form header and its steps ────────────────────────────────────────────
 
 function FormHeaderView({ header, onWear }: { header: FormHeader; onWear: (recipeId: string, name: string) => void }) {
   return (
@@ -100,11 +113,6 @@ function FormHeaderView({ header, onWear }: { header: FormHeader; onWear: (recip
         <div className="wp-form__eyebrow">{header.eyebrow}</div>
         <h2 className="wp-form__name">{header.name}</h2>
         <div className="wp-form__meta">{header.meta}</div>
-        <div className="wp-form__lanes">
-          {header.lanes.map((lane) => (
-            <span key={lane.lane} className="wp-lane" style={laneStyle(lane.color)}>{lane.name}</span>
-          ))}
-        </div>
         {header.alsoOwned.length > 0 && (
           <div className="wp-form__also">
             <span>Also yours:</span>
@@ -128,18 +136,103 @@ function FormHeaderView({ header, onWear }: { header: FormHeader; onWear: (recip
   );
 }
 
-// ── A card ───────────────────────────────────────────────────────────────────
+function StepsLine({ steps }: { steps: StepPip[] }) {
+  return (
+    <ol className="wp-steps" aria-label="This band's steps">
+      {steps.map((step, i) => (
+        <li
+          key={`${step.label}:${i}`}
+          className={`wp-step${step.done ? ' wp-step--done' : ''}${step.next ? ' wp-step--next' : ''}`}
+          aria-label={`${step.label}${step.done ? ', done' : step.next ? ', next' : ''}`}
+        >
+          {i > 0 && <span className="wp-step__arrow" aria-hidden="true">→</span>}
+          <span className="wp-step__pill">{step.label}</span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+// ── "In the fight" ───────────────────────────────────────────────────────────
+
+function FightPlateView({ plate, previewing }: { plate: FightPlate; previewing: boolean }) {
+  return (
+    <section className={`wp-plate${previewing ? ' wp-plate--preview' : ''}`} aria-label="In the fight">
+      <span className="wp-plate__label">In the fight{previewing ? ' · preview' : ''}</span>
+      {plate.empty && <p className="wp-plate__empty">{plate.empty}</p>}
+      {(plate.lean || plate.verb) && (
+        <p className="wp-plate__sent">
+          {plate.lean && (
+            <span className="wp-plate__lean" style={laneStyle(plate.lean.color)}>
+              {keepUnits(plate.lean.sentence)}
+            </span>
+          )}
+          {plate.lean && plate.verb && ' '}
+          {plate.verb && (
+            <>
+              <span className="wp-plate__moment" style={laneStyle(plate.verb.momentColor)}>
+                {keepUnits(plate.verb.parts.moment)}
+              </span>
+              {plate.verb.parts.payload && (
+                <>
+                  {' '}
+                  <span className="wp-plate__payload" style={laneStyle(plate.verb.payloadColor)}>
+                    {keepUnits(plate.verb.parts.payload)}
+                  </span>
+                </>
+              )}
+            </>
+          )}
+        </p>
+      )}
+      {plate.verb?.note && <span className="wp-plate__note">{plate.verb.note}</span>}
+      {(plate.lean || plate.verb) && (
+        <span className="wp-plate__who">
+          {[plate.lean && `${plate.lean.name}${plate.lean.rank ? ` (${plate.lean.rank})` : ''}`, plate.verb?.name]
+            .filter(Boolean).join(' · ')}
+        </span>
+      )}
+    </section>
+  );
+}
+
+// ── Cost chips and the requirement (shared by every card) ────────────────────
+
+function CostLine({ model, locked }: { model: Pick<PageCardModel, 'chips' | 'requirement'>; locked?: boolean }) {
+  const { chips, requirement } = model;
+  if (chips.length === 0 && !requirement) return null;
+  return (
+    <span className="wp-card__foot">
+      <span className="wp-card__cost">
+        {chips.map((chip, i) => (
+          <span key={`${chip.kind}:${chip.key}`} className={`wp-chip${chip.short && !locked ? ' wp-chip--short' : ''}`} title={chip.title}>
+            {i > 0 && <span className="wp-chip__sep" aria-hidden="true">·</span>}
+            {chip.amount}{' '}
+            <span className="wp-chip__word" style={chip.color ? { color: chip.color } : undefined}>{chip.word}</span>
+          </span>
+        ))}
+      </span>
+      {requirement && (
+        <span className={`wp-card__req${requirement.met || locked ? '' : ' wp-card__req--unmet'}`}>
+          {requirement.text}
+        </span>
+      )}
+    </span>
+  );
+}
+
+// ── A generic card (the T2+ rows, the locked choice) ─────────────────────────
 
 function CardView({
   model, previewing, onPress, onPreview,
 }: {
   model: PageCardModel;
-  /** A lean is hovered and this verb's sentence is showing the result. */
+  /** A lean is previewed and this verb's sentence is showing the result. */
   previewing: boolean;
   onPress: (model: PageCardModel) => void;
   onPreview: (leanId: string | null) => void;
 }) {
-  const { card, state, tag, chips, requirement } = model;
+  const { card, state, tag } = model;
   const refusing = model.action === 'toast' || model.action === 'none';
   const preview = model.isLean ? () => onPreview(card.id) : undefined;
   const unpreview = model.isLean ? () => onPreview(null) : undefined;
@@ -163,66 +256,260 @@ function CardView({
       <span className="wp-card__name">{card.name}</span>
       <span className="wp-card__sentence">{keepUnits(model.sentence)}</span>
       {model.note && <span className="wp-card__needs">{model.note}</span>}
-      {(chips.length > 0 || requirement) && (
-        <span className="wp-card__foot">
+      <CostLine model={model} locked={state === 'locked'} />
+    </button>
+  );
+}
+
+// ── A lean, with its ranks ───────────────────────────────────────────────────
+
+function LeanCardView({
+  model, rank, previewMode, previewed, onPress, onRankUp, onPreview,
+}: {
+  model: PageCardModel;
+  rank: LeanRankModel;
+  previewMode: boolean;
+  previewed: Preview;
+  onPress: (model: PageCardModel) => void;
+  onRankUp: (model: PageCardModel, rank: LeanRankModel) => void;
+  onPreview: (preview: Preview) => void;
+}) {
+  const { card, state } = model;
+  const ranked = rank.maxRank > 1;
+  const owned = rank.rank > 0;
+  // Hover (or the phone's preview mode) swaps this lean into the reading.
+  const leanPreview: Preview = { kind: 'lean', cardId: card.id };
+  const rankPreview: Preview = rank.next && owned ? { kind: 'rank', cardId: card.id, rank: rank.next.rank } : null;
+  const isPreviewed = previewed?.cardId === card.id;
+  const pressCard = () => {
+    if (previewMode) { onPreview(isPreviewed && previewed?.kind === 'lean' ? null : leanPreview); return; }
+    onPress(model);
+  };
+  const pressRank = () => {
+    if (!rankPreview) return;
+    if (previewMode) { onPreview(isPreviewed && previewed?.kind === 'rank' ? null : rankPreview); return; }
+    onRankUp(model, rank);
+  };
+  const hoverable = !previewMode;
+  const nameRank = ranked && owned ? `rank ${rankNumeral(rank.rank)}` : undefined;
+  return (
+    <div
+      className={`wp-card wp-card--lean wp-card--${state}${isPreviewed ? ' wp-card--preview' : ''}`}
+      style={laneStyle(model.laneColor)}
+      onMouseEnter={hoverable ? () => onPreview(leanPreview) : undefined}
+      onMouseLeave={hoverable ? () => onPreview(null) : undefined}
+    >
+      <button
+        type="button"
+        className="wp-card__press"
+        data-tutorial-anchor={TUTORIAL_ANCHORS.lineageCard(card.id)}
+        aria-label={model.accessibleName}
+        aria-disabled={model.action === 'toast' || model.action === 'none' ? true : undefined}
+        title={model.reason}
+        onFocus={hoverable ? () => onPreview(leanPreview) : undefined}
+        onBlur={hoverable ? () => onPreview(null) : undefined}
+        onClick={pressCard}
+      >
+        {model.tag && <span className={`wp-card__tag${state === 'active' ? ' wp-card__tag--active' : ''}`}>{model.tag}</span>}
+        <span className="wp-card__name">
+          {card.name}
+          {nameRank && <small className="wp-card__rank">{nameRank}</small>}
+        </span>
+        <span className="wp-card__sentence">{keepUnits(model.sentence)}</span>
+      </button>
+      {ranked && (
+        <span className="wp-ranks" aria-label={`Rank ${rank.rankText ?? ''}`}>
+          {rank.pips.map((on, i) => <i key={i} className={on ? 'is-on' : undefined} />)}
+          <small>{rank.rankText}</small>
+        </span>
+      )}
+      {owned && rank.next ? (
+        <span className="wp-card__foot wp-card__foot--rank">
           <span className="wp-card__cost">
-            {chips.map((chip, i) => (
-              <span key={`${chip.kind}:${chip.key}`} className={`wp-chip${chip.short && state !== 'locked' ? ' wp-chip--short' : ''}`} title={chip.title}>
+            <span className="wp-rank-label">Rank {rankNumeral(rank.next.rank)}:</span>
+            {rank.next.chips.map((chip, i) => (
+              <span key={`${chip.kind}:${chip.key}`} className={`wp-chip${chip.short ? ' wp-chip--short' : ''}`} title={chip.title}>
                 {i > 0 && <span className="wp-chip__sep" aria-hidden="true">·</span>}
                 {chip.amount}{' '}
                 <span className="wp-chip__word" style={chip.color ? { color: chip.color } : undefined}>{chip.word}</span>
               </span>
             ))}
+            {!rank.next.requirement.met && <span className="wp-card__req wp-card__req--unmet">{rank.next.requirement.text}</span>}
           </span>
-          {requirement && (
-            <span className={`wp-card__req${requirement.met || state === 'locked' ? '' : ' wp-card__req--unmet'}`}>
-              {requirement.text}
-            </span>
-          )}
+          <button
+            type="button"
+            className={`wp-rankbtn${rank.next.action === 'buy' ? ' wp-rankbtn--ready' : ''}${isPreviewed && previewed?.kind === 'rank' ? ' is-previewing' : ''}`}
+            data-tutorial-anchor={TUTORIAL_ANCHORS.lineageRankUp(card.id)}
+            aria-disabled={rank.next.action !== 'buy' ? true : undefined}
+            title={rank.next.reason ?? `Rank ${rankNumeral(rank.next.rank)}: ${rank.next.sentence ?? ''}`}
+            onMouseEnter={hoverable && rankPreview ? () => onPreview(rankPreview) : undefined}
+            // Still over the card: back to the card's own preview.
+            onMouseLeave={hoverable ? () => onPreview(leanPreview) : undefined}
+            onFocus={hoverable && rankPreview ? () => onPreview(rankPreview) : undefined}
+            onBlur={hoverable ? () => onPreview(null) : undefined}
+            onClick={pressRank}
+          >
+            {previewMode ? '◉ Rank up' : 'Rank up'}
+          </button>
         </span>
+      ) : owned ? (
+        <span className="wp-card__foot">
+          <span className="wp-card__req">{ranked ? 'Rank III is the cap at this tier.' : ''}</span>
+          {state === 'owned' && <span className="wp-card__swap">swap free</span>}
+        </span>
+      ) : (
+        <CostLine model={model} />
       )}
+    </div>
+  );
+}
+
+// ── The verb: its card, mini ring and beat line ──────────────────────────────
+
+function BeatLine({ beat, color }: { beat: VerbBeat; color: string }) {
+  const marks: Array<'tick' | 'fire' | 'rest' | 'kill'> = (() => {
+    switch (beat.kind) {
+      case 'count': return [...Array.from({ length: Math.max(1, beat.n - 1) }, () => 'tick' as const), 'fire'];
+      case 'cap': return ['fire', 'rest'];
+      case 'latch': return ['fire', 'tick', 'tick', 'tick'];
+      case 'carry': return ['kill', 'fire'];
+      default: return ['fire'];
+    }
+  })();
+  return (
+    <span className="wp-beat" style={laneStyle(color)} role="img" aria-label={beatText(beat)}>
+      <span className="wp-beat__line" aria-hidden="true">
+        {marks.map((mark, i) => (
+          <i key={i} className={`wp-beat__${mark}`}>
+            {mark === 'rest' && beat.kind === 'cap' ? `${beat.seconds} s` : null}
+          </i>
+        ))}
+      </span>
+      <small>{beatText(beat)}</small>
+    </span>
+  );
+}
+
+function VerbCardView({
+  model, beat, previewing, onPress,
+}: {
+  model: PageCardModel;
+  beat?: VerbBeat;
+  previewing: boolean;
+  onPress: (model: PageCardModel) => void;
+}) {
+  const { card, state } = model;
+  return (
+    <button
+      type="button"
+      className={`wp-verb wp-card--${state}${previewing ? ' wp-card--preview' : ''}`}
+      style={laneStyle(model.laneColor)}
+      data-tutorial-anchor={TUTORIAL_ANCHORS.lineageCard(card.id)}
+      aria-label={model.accessibleName}
+      aria-disabled={model.action === 'toast' || model.action === 'none' ? true : undefined}
+      title={model.reason}
+      onClick={() => onPress(model)}
+    >
+      <span className="wp-verb__body">
+        {model.tag && <span className={`wp-card__tag${state === 'active' ? ' wp-card__tag--active' : ''}`}>{model.tag}</span>}
+        <span className="wp-verb__name">{card.name}</span>
+        <span className="wp-card__sentence">{keepUnits(model.sentence)}</span>
+        {model.note && <span className="wp-card__needs">{model.note}</span>}
+        {beat && <BeatLine beat={beat} color={model.laneColor} />}
+        <CostLine model={model} />
+      </span>
+      {/* The ring this verb puts beside your HP bar, at rest: ready. */}
+      <span className="wp-mini-ring" aria-hidden="true">
+        <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" /></svg>
+        <b>✦</b>
+      </span>
     </button>
   );
 }
 
-// ── A row, a band ────────────────────────────────────────────────────────────
+// ── Rows ─────────────────────────────────────────────────────────────────────
 
-function RowView({ row, previewActive, onPress, onPreview }: {
-  row: PageRow;
-  previewActive: boolean;
+interface RowHandlers {
   onPress: (model: PageCardModel) => void;
-  onPreview: (leanId: string | null) => void;
+  onRankUp: (model: PageCardModel, rank: LeanRankModel) => void;
+  onPreview: (preview: Preview) => void;
+}
+
+function RowView({
+  row, ctx, previewed, previewMode, onTogglePreviewMode, handlers, rankOf, beatOf,
+}: {
+  row: PageRow;
+  ctx: { verbPreview: boolean };
+  previewed: Preview;
+  previewMode: boolean;
+  onTogglePreviewMode?: () => void;
+  handlers: RowHandlers;
+  rankOf: (card: LineageCard) => LeanRankModel;
+  beatOf: (card: LineageCard) => VerbBeat | undefined;
 }) {
+  const isLeanRow = row.row === 'stat' && !row.locked;
+  const isVerbRow = row.row === 'payoff' && !row.locked && row.cards.every((c) => isVerbCard(c.card));
   return (
     <section className={`wp-row${row.locked ? ' wp-row--locked' : ''}`} aria-label={row.title}>
       <div className="wp-row__head">
         <h3>{row.title}</h3>
         <span>{row.question}</span>
+        {isLeanRow && onTogglePreviewMode && (
+          <button
+            type="button"
+            className={`wp-preview-toggle${previewMode ? ' is-on' : ''}`}
+            aria-pressed={previewMode}
+            onClick={onTogglePreviewMode}
+          >
+            ◉ Preview
+          </button>
+        )}
       </div>
-      <div className="wp-row__cards">
-        {row.cards.map((model) => (
-          <CardView
-            key={model.card.id}
-            model={model}
-            previewing={previewActive && isVerbCard(model.card)}
-            onPress={onPress}
-            onPreview={onPreview}
-          />
-        ))}
+      <div className={`wp-row__cards${isVerbRow && row.cards.length === 1 ? ' wp-row__cards--one' : ''}`}>
+        {row.cards.map((model) => {
+          if (isLeanRow) {
+            return (
+              <LeanCardView
+                key={model.card.id}
+                model={model}
+                rank={rankOf(model.card)}
+                previewMode={previewMode}
+                previewed={previewed}
+                onPress={handlers.onPress}
+                onRankUp={handlers.onRankUp}
+                onPreview={handlers.onPreview}
+              />
+            );
+          }
+          if (isVerbRow) {
+            return (
+              <VerbCardView
+                key={model.card.id}
+                model={model}
+                beat={beatOf(model.card)}
+                previewing={ctx.verbPreview}
+                onPress={handlers.onPress}
+              />
+            );
+          }
+          return (
+            <CardView
+              key={model.card.id}
+              model={model}
+              previewing={ctx.verbPreview && isVerbCard(model.card)}
+              onPress={handlers.onPress}
+              onPreview={(leanId) => handlers.onPreview(leanId ? { kind: 'lean', cardId: leanId } : null)}
+            />
+          );
+        })}
       </div>
     </section>
   );
 }
 
-function BandView({ band, previewActive, onPress, onPreview }: {
-  band: PageBand;
-  previewActive: boolean;
-  onPress: (model: PageCardModel) => void;
-  onPreview: (leanId: string | null) => void;
-}) {
-  const rows = band.rows.map((row) => (
-    <RowView key={row.row} row={row} previewActive={previewActive} onPress={onPress} onPreview={onPreview} />
-  ));
+function BandView(props: Omit<Parameters<typeof RowView>[0], 'row'> & { band: PageBand }) {
+  const { band, ...rest } = props;
+  const rows = band.rows.map((row) => <RowView key={row.row} row={row} {...rest} />);
   if (band.mode === 'absent') {
     return <div className="wp-band wp-band--absent">Tier {band.tier} · Nothing beyond this band yet.</div>;
   }
@@ -236,6 +523,19 @@ function BandView({ band, previewActive, onPress, onPreview }: {
         </summary>
         <div className="wp-band__rows">{rows}</div>
       </details>
+    );
+  }
+  if (band.mode === 'locked') {
+    // The mockup's "Tier 2 · the choice": the next band's verbs only, dimmed.
+    const choice = lockedChoiceRow(band);
+    if (!choice) return null;
+    return (
+      <div className="wp-band wp-band--locked">
+        <RowView
+          {...rest}
+          row={{ ...choice, title: `Tier ${band.tier} · The choice`, question: `Opens at the gate: three verbs, three lane leans, and they compose.` }}
+        />
+      </div>
     );
   }
   return <div className={`wp-band wp-band--${band.mode}`}>{rows}</div>;
@@ -345,20 +645,39 @@ function MaterialsView({ lines }: { lines: MaterialLine[] }) {
   );
 }
 
+/** The phone's pinned diff bar (no hover on a phone): what the preview changes. */
+function DiffBar({ sheet, label, onClose }: { sheet: PageStatSheet; label: string; onClose: () => void }) {
+  const moving = sheet.rows.filter((row) => row.after);
+  return (
+    <div className="wp-diffbar" role="status">
+      <span className="wp-diffbar__label">◉ {label}</span>
+      <span className="wp-diffbar__rows">
+        {moving.length === 0
+          ? <span>{sheet.note}</span>
+          : moving.map((row) => (
+            <span key={row.key}>
+              {row.label} <s>{row.before}</s>{' '}
+              <b className={row.direction > 0 ? 'wp-sheet__up' : 'wp-sheet__down'}>→ {row.after}</b>
+            </span>
+          ))}
+      </span>
+      <button type="button" className="wp-diffbar__close" onClick={onClose}>Done</button>
+    </div>
+  );
+}
+
 // ── The page ─────────────────────────────────────────────────────────────────
 
-export function LineageTreePanel({ slot, onClose }: Props) {
+/**
+ * The page's body for one slot. Mounted by `LineageTreePanel` (its own dialog)
+ * and by the Upgrade panel (inside it). Owns the toast and the preview.
+ */
+export function WeaponPage({ slot }: { slot: EquipmentSlot }) {
   const equipment = useAtomValue(equipmentAtom);
   const lineages = useAtomValue(lineagesAtom);
-  const essences = useAtomValue(essencesAtom);
-  const shards = useAtomValue(shardsAtom);
-  const capstones = useAtomValue(capstonesAtom);
-  const biomeLevel = useAtomValue(biomeLevelAtom);
-  const globalMastery = useAtomValue(globalMasteryAtom);
   const playerTier = useAtomValue(playerTierAtom);
-  const playerNodeId = useAtomValue(playerNodeIdAtom);
-  // The stat preview's inputs: exactly what the inventory's stat sheet feeds the
-  // shared stat formula.
+  // The stat preview's inputs: exactly what the Stats panel feeds the shared
+  // stat formula.
   const itemUpgrades = useAtomValue(itemUpgradesAtom);
   const passives = useAtomValue(passivesAtom);
   const combatArchetype = useAtomValue(combatArchetypeAtom);
@@ -369,9 +688,11 @@ export function LineageTreePanel({ slot, onClose }: Props) {
   const equippedRites = useAtomValue(equippedRitesAtom);
   const hp = useAtomValue(hpAtom);
   const maxHp = useAtomValue(maxHpAtom);
-  const isTestRoom = playerNodeId === TEST_ROOM_NODE_ID;
+  const isMobile = useIsMobile();
+  const wallet = useLineageWallet();
 
-  const [hoveredLean, setHoveredLean] = useState<string | null>(null);
+  const [preview, setPreview] = useState<Preview>(null);
+  const [previewMode, setPreviewMode] = useState(false);
   const [notice, setNotice] = useState<{ text: string; tone: 'ok' | 'warn' } | null>(null);
   const noticeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pending = useRef<PendingIntent | null>(null);
@@ -385,9 +706,6 @@ export function LineageTreePanel({ slot, onClose }: Props) {
   const progress: LineageProgress | null = useMemo(() => (lineage
     ? stored ?? emptyLineageProgress(lineage, wornRecipeId ?? undefined)
     : null), [lineage, stored, wornRecipeId]);
-  const wallet: LineageWallet = useMemo(() => ({
-    essences, shards, capstones, biomeLevels: biomeLevel, globalMastery, playerTier, isTestRoom,
-  }), [essences, shards, capstones, biomeLevel, globalMastery, playerTier, isTestRoom]);
 
   function show(text: string, tone: 'ok' | 'warn') {
     if (noticeTimer.current) clearTimeout(noticeTimer.current);
@@ -423,15 +741,22 @@ export function LineageTreePanel({ slot, onClose }: Props) {
     return () => window.removeEventListener('hud:lineageResult', handler);
   }, [lineageId]);
   useEffect(() => () => { if (noticeTimer.current) clearTimeout(noticeTimer.current); }, []);
+  // A purchase or a swap changes what a preview would show: drop it.
+  useEffect(() => { setPreview(null); }, [stored]);
 
-  const preview = useMemo(
-    () => (lineage && progress && hoveredLean ? previewLeanProgress(lineage, progress, hoveredLean) : null),
-    [lineage, progress, hoveredLean],
-  );
+  // The tree the page READS: the real one, or the preview clone.
+  const previewTree = useMemo(() => {
+    if (!lineage || !progress || !preview) return null;
+    const card = lineage.cards.find((c) => c.id === preview.cardId);
+    if (!card) return null;
+    return preview.kind === 'lean'
+      ? previewLeanProgress(lineage, progress, preview.cardId)
+      : previewRankProgress(progress, card, preview.rank);
+  }, [lineage, progress, preview]);
 
   const bands = useMemo(() => (lineage && progress
-    ? pageBands({ lineage, progress, wallet, lineages, sentenceProgress: preview ?? undefined, archetype: combatArchetype })
-    : []), [lineage, progress, wallet, lineages, preview, combatArchetype]);
+    ? pageBands({ lineage, progress, wallet, lineages, sentenceProgress: previewTree ?? undefined, archetype: combatArchetype })
+    : []), [lineage, progress, wallet, lineages, previewTree, combatArchetype]);
   const leanIds = useMemo(() => bands
     .filter((band) => band.mode === 'lit')
     .flatMap((band) => band.rows.filter((row) => row.row === 'stat').flatMap((row) => row.cards.map((c) => c.card.id))),
@@ -447,21 +772,18 @@ export function LineageTreePanel({ slot, onClose }: Props) {
         },
         equipment, itemUpgrades, playerTier, activeStance, equippedRites, hpFraction,
       },
-      lineages, lineage, progress, leanIds, hoveredLeanId: hoveredLean,
+      lineages, lineage, progress, leanIds, previewProgress: previewTree,
     })
-    : null), [lineage, progress, lineages, leanIds, hoveredLean, unlockedSkills, passives, combatArchetype,
+    : null), [lineage, progress, lineages, leanIds, previewTree, unlockedSkills, passives, combatArchetype,
     selectedSubVariant, selectedRange, equipment, itemUpgrades, playerTier, activeStance, equippedRites, hpFraction]);
 
   if (!lineage || !progress || !sheet) {
     const slotParked = lineagesForSlot(slot).every((l) => isLineageParked(l));
     const title = SLOT_LABELS[slot] ?? slot;
     return (
-      <GameDialog size="standard" className="weapon-page-dialog" onClose={onClose}>
-        <DialogHeader title={title} closeLabel={`Close ${title.toLowerCase()}`} />
-        <div className="wp-empty">
-          {slotParked ? PARKED_LINEAGE_REASON : `Craft a ${title.toLowerCase()} from the Make tab to start its page.`}
-        </div>
-      </GameDialog>
+      <div className="wp-empty">
+        {slotParked ? PARKED_LINEAGE_REASON : `Craft a ${title.toLowerCase()} from the Make tab to start its page.`}
+      </div>
     );
   }
 
@@ -470,7 +792,13 @@ export function LineageTreePanel({ slot, onClose }: Props) {
   const header = formHeader({ lineage: live, progress: tree, wallet, attack: sheet.attack, attacksPerSecond: sheet.attacksPerSecond });
   const gates = gateBlocks({ lineage: live, progress: tree, wallet });
   const materials = materialLines({ lineage: live, progress: tree, wallet });
-  const name = lineageDisplayName(live);
+  const steps = bandSteps(live, tree);
+  const plate = fightPlate({
+    lineage: live,
+    progress: previewTree ?? tree,
+    archetype: combatArchetype,
+    ...(preview?.kind === 'rank' ? { rank: preview.rank } : {}),
+  });
 
   function onPress(model: PageCardModel) {
     const { card } = model;
@@ -488,6 +816,21 @@ export function LineageTreePanel({ slot, onClose }: Props) {
     }
   }
 
+  function onRankUp(model: PageCardModel, rank: LeanRankModel) {
+    const next = rank.next;
+    if (!next) return;
+    if (next.action !== 'buy') {
+      if (next.reason) show(next.reason, 'warn');
+      return;
+    }
+    // Contract 1: `lineage:unlockCard` on an owned ranked card buys its next rank.
+    pending.current = {
+      action: 'unlockCard', cardId: model.card.id, row: model.card.row,
+      name: `${model.card.name} rank ${rankNumeral(next.rank)}`, thenActivate: false,
+    };
+    hudBus.requestLineageUnlockCard(live.id, model.card.id);
+  }
+
   function onWear(recipeId: string, formName: string) {
     pending.current = { action: 'wearForm', recipeId, name: formName };
     hudBus.requestLineageWearForm(live.id, recipeId);
@@ -502,25 +845,36 @@ export function LineageTreePanel({ slot, onClose }: Props) {
     }
   }
 
+  const rankOf = (card: LineageCard) => leanRankModel({ lineage: live, card, progress: tree, wallet, lineages });
+  const beatOf = (card: LineageCard) => verbBeat(live, previewTree ?? tree, card);
+  const previewCard = preview ? live.cards.find((c) => c.id === preview.cardId) : undefined;
+  const previewLabel = preview?.kind === 'rank' && previewCard
+    ? `${previewCard.name} rank ${rankNumeral(preview.rank)}`
+    : previewCard ? `${previewCard.name} swapped in` : '';
+
   return (
-    <GameDialog size="wide" className="weapon-page-dialog" onClose={onClose}>
-      <DialogHeader
-        title={name}
-        closeLabel={`Close the ${name} page`}
-        actions={<span className="wp-sub">{SLOT_LABELS[slot]} page</span>}
-      />
+    <div className="wp-page">
       {notice && <div className={`wp-toast wp-toast--${notice.tone}`} role="status">{notice.text}</div>}
       <div className="wp-scroll">
         <div className="wp-grid">
           <div className="wp-main">
             <FormHeaderView header={header} onWear={onWear} />
+            <StepsLine steps={steps} />
+            <FightPlateView plate={plate} previewing={!!previewTree} />
             {bands.map((band) => (
               <BandView
                 key={`${band.tier}:${band.mode}`}
                 band={band}
-                previewActive={!!preview}
-                onPress={onPress}
-                onPreview={setHoveredLean}
+                ctx={{ verbPreview: !!previewTree }}
+                previewed={preview}
+                previewMode={previewMode}
+                onTogglePreviewMode={isMobile ? () => {
+                  setPreviewMode((on) => !on);
+                  setPreview(null);
+                } : undefined}
+                handlers={{ onPress, onRankUp, onPreview: setPreview }}
+                rankOf={rankOf}
+                beatOf={beatOf}
               />
             ))}
             {gates.map((gate) => <GateView key={gate.biome} gate={gate} onDoor={onDoor} />)}
@@ -531,6 +885,30 @@ export function LineageTreePanel({ slot, onClose }: Props) {
           </aside>
         </div>
       </div>
+      {previewMode && preview && (
+        <DiffBar sheet={sheet} label={previewLabel} onClose={() => { setPreview(null); setPreviewMode(false); }} />
+      )}
+    </div>
+  );
+}
+
+/**
+ * The page as its own dialog — what clicking the equipped weapon opens. Both HUD
+ * shells mount it from `lineageTreeSlotAtom`, and the tutorial director opens it
+ * the same way; the export keeps its old name for them.
+ */
+export function LineageTreePanel({ slot, onClose }: { slot: EquipmentSlot; onClose: () => void }) {
+  const equipment = useAtomValue(equipmentAtom);
+  const lineage = lineageForEquippedItem(equipment[slot]);
+  const title = lineage ? lineageDisplayName(lineage) : SLOT_LABELS[slot] ?? slot;
+  return (
+    <GameDialog size={lineage ? 'wide' : 'standard'} className="weapon-page-dialog" onClose={onClose}>
+      <DialogHeader
+        title={title}
+        closeLabel={`Close the ${title} page`}
+        actions={<span className="wp-sub">{SLOT_LABELS[slot]} page</span>}
+      />
+      <WeaponPage slot={slot} />
     </GameDialog>
   );
 }

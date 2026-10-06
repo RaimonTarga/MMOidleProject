@@ -442,3 +442,237 @@
 @media (prefers-reduced-motion: reduce) {
   .wp-card { transition: none; }
 }
+
+/* ══ Legibility run (design §26.4; the composite mockup, Stone skin) ═════════ */
+
+/* The page body, inside its own dialog or inside the Upgrade panel. */
+.wp-page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* The band's steps: form · lean I · II · III · verb · gate. */
+.wp-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.wp-step { display: inline-flex; align-items: center; gap: 4px; }
+.wp-step__arrow { color: var(--hud-text-dim); font-size: 11px; }
+.wp-step__pill {
+  padding: 2px 8px;
+  border: 1px solid var(--hud-edge-medium);
+  color: var(--hud-text-muted);
+  font-family: var(--hud-font-display);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+.wp-step--done .wp-step__pill { border-color: var(--hud-primary); color: var(--hud-primary-strong); }
+.wp-step--next .wp-step__pill { border-color: var(--hud-success); color: var(--hud-success); }
+
+/* "In the fight" (prototype C): the active pair as the fight reads it. */
+.wp-plate {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--hud-edge-light);
+  background: var(--hud-material-inset);
+}
+.wp-plate--preview { border-color: var(--hud-primary); }
+.wp-plate__label {
+  color: var(--hud-text-dim);
+  font-family: var(--hud-font-display);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.wp-plate__sent { margin: 0; color: var(--hud-text); font-size: 13.5px; line-height: 1.5; }
+.wp-plate__lean { color: var(--hud-text); border-bottom: 1px dotted var(--lane); }
+/* The two-colour sentence: the moment in the verb's lane, the payload in the lean's. */
+.wp-plate__moment { color: color-mix(in srgb, var(--lane) 70%, var(--hud-text)); }
+.wp-plate__payload { color: var(--lane); font-weight: 600; }
+.wp-plate__empty { margin: 0; color: var(--hud-text-muted); font-size: 12px; }
+.wp-plate__note {
+  align-self: flex-start;
+  padding: 1px 6px;
+  border: 1px dashed var(--hud-text-muted);
+  color: var(--hud-text-muted);
+  font-size: 9.5px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+.wp-plate__who { color: var(--hud-text-dim); font-size: 10.5px; }
+
+/* A lean card: a container (its press target, its pips, its rank-up control). */
+.wp-card--lean { cursor: default; }
+.wp-card__press {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.wp-card__press:focus-visible { outline: 1px solid var(--lane); outline-offset: 2px; }
+.wp-card__press[aria-disabled="true"] { cursor: help; }
+.wp-card__rank {
+  margin-left: 6px;
+  color: var(--hud-text-muted);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0;
+}
+.wp-ranks { display: flex; align-items: center; gap: 3px; }
+.wp-ranks i {
+  width: 16px;
+  height: 5px;
+  border: 1px solid var(--lane);
+  opacity: 0.5;
+}
+.wp-ranks i.is-on { background: var(--lane); opacity: 1; }
+.wp-ranks small {
+  margin-left: 4px;
+  color: var(--hud-text-muted);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 10px;
+}
+.wp-card__foot--rank { align-items: center; }
+.wp-rank-label { color: var(--hud-text-muted); margin-right: 4px; }
+.wp-rankbtn {
+  padding: 2px 8px;
+  border: 1px solid var(--hud-edge-medium);
+  background: transparent;
+  color: var(--hud-text-muted);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 10px;
+  cursor: pointer;
+}
+.wp-rankbtn--ready { border-color: var(--hud-success); color: var(--hud-success); }
+.wp-rankbtn:hover, .wp-rankbtn:focus-visible, .wp-rankbtn.is-previewing { border-color: var(--hud-primary); color: var(--hud-primary-strong); outline: none; }
+.wp-rankbtn[aria-disabled="true"] { cursor: help; }
+.wp-card__swap { color: var(--hud-text-muted); font-size: 10.5px; }
+
+/* The verb: its own card, a mini ring and its beat line. */
+.wp-row__cards--one { grid-template-columns: minmax(0, 1fr); }
+.wp-verb {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+  padding: 10px 11px;
+  border: 1px solid var(--hud-edge-light);
+  border-left: 4px solid var(--lane);
+  background: var(--hud-material-control);
+  color: var(--hud-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.wp-verb:hover, .wp-verb:focus-visible { border-color: var(--lane); outline: none; }
+.wp-verb[aria-disabled="true"] { cursor: help; }
+.wp-verb.wp-card--active { box-shadow: inset 0 0 0 1px var(--hud-primary-strong); border-left-color: var(--lane); }
+.wp-verb__body { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.wp-verb__name {
+  padding-right: 48px;
+  color: var(--lane);
+  font-family: var(--hud-font-display);
+  font-weight: var(--hud-font-display-weight);
+  font-size: 14px;
+}
+.wp-mini-ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+}
+.wp-mini-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 0 4px var(--lane)); }
+.wp-mini-ring circle { fill: rgba(10, 9, 7, 0.85); stroke: var(--lane); stroke-width: 4; }
+.wp-mini-ring b { position: relative; color: var(--lane); font-size: 13px; }
+
+/* The beat line (prototype E): the ring's grammar before the fight. */
+.wp-beat { display: flex; flex-direction: column; gap: 3px; }
+.wp-beat__line { display: flex; align-items: center; gap: 4px; height: 12px; }
+.wp-beat__line i { display: inline-block; flex: none; }
+.wp-beat__tick { width: 2px; height: 8px; background: var(--hud-text-dim); }
+.wp-beat__kill { width: 8px; height: 8px; border: 1px solid var(--hud-danger); transform: rotate(45deg); }
+.wp-beat__fire {
+  width: 9px;
+  height: 9px;
+  background: var(--lane);
+  transform: rotate(45deg);
+  box-shadow: 0 0 5px var(--lane);
+}
+.wp-beat__rest {
+  min-width: 56px;
+  height: 8px;
+  padding: 0 4px;
+  border: 1px solid color-mix(in srgb, var(--lane) 60%, transparent);
+  background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--lane) 35%, transparent) 0 3px, transparent 3px 6px);
+  color: var(--hud-text-muted);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 8px;
+  font-style: normal;
+  line-height: 8px;
+  text-align: center;
+}
+.wp-beat small { color: var(--hud-text-muted); font-size: 10.5px; }
+
+/* The next band's choice, locked and dimmed. */
+.wp-band--locked .wp-row { opacity: 0.5; filter: saturate(0.4); }
+
+/* The phone's lean preview: a toggle on the lean row and a pinned diff bar. */
+.wp-preview-toggle {
+  margin-left: auto;
+  padding: 2px 8px;
+  border: 1px solid var(--hud-edge-medium);
+  background: var(--hud-material-control);
+  color: var(--hud-text-muted);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.wp-preview-toggle.is-on { border-color: var(--hud-primary); color: var(--hud-primary-strong); }
+.wp-diffbar {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  padding: 8px 12px;
+  border-top: 1px solid var(--hud-primary);
+  background: var(--hud-material-inset);
+  font-size: 11.5px;
+}
+.wp-diffbar__label { color: var(--hud-primary-strong); font-weight: 700; }
+.wp-diffbar__rows { display: flex; flex-wrap: wrap; gap: 2px 10px; flex: 1; min-width: 0; color: var(--hud-text-muted); }
+.wp-diffbar__rows s { color: var(--hud-text-dim); }
+.wp-diffbar__close {
+  padding: 3px 10px;
+  border: 1px solid var(--hud-edge-medium);
+  background: var(--hud-material-control);
+  color: var(--hud-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wp-mini-ring svg { filter: none; }
+}

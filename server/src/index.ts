@@ -67,6 +67,7 @@ import {
   assertNetworkedComponentInvariants,
 } from "./ecs/markerInvariants";
 import { syncArchetypeSlices } from "./ecs/archetypeSliceSync";
+import { setFightOnScreen } from "./systems/combat/rhythmReadout";
 import { recalculatePlayerEntityStats } from "./ecs/playerEntityFormulas";
 import { thawNode } from "./world/nodeLifecycle";
 import { ensurePopulation, ensureBoss } from "./systems/world/spawning";
@@ -753,6 +754,8 @@ async function boot(): Promise<void> {
 
         session.characterId = characterId;
         const entity = world.attachPlayerEntity(player, socket.id);
+        // A tab that went hidden before this character loaded is already away.
+        if (inactiveSockets.has(socket.id)) setFightOnScreen(world, entity, false);
         syncArchetypeSlices(world, entity);
         recalculatePlayerEntityStats(world, entity);
         syncArchetypeSlices(world, entity);

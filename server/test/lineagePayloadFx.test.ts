@@ -145,8 +145,9 @@ const clientSrc = (rel: string): string => readFileSync(join(__dirname, '../../c
 {
   resetLastingForTests();
   const mob = (extra: Partial<MonsterView> = {}): MonsterView => ({ id: 'mob-1', ...extra }) as MonsterView;
-  const rooted = { id: 'ability-rooted', stacks: 1, remainingMs: 1_800, totalMs: 2_000 };
-  const other = { id: 'lineage.hemorrhage', stacks: 4, remainingMs: 3_000, totalMs: 0 };
+  // The Control payload's root is "Pinned" (design §26.2); a bleed is not a root.
+  const rooted = { id: 'lineage.pinned', stacks: 1, remainingMs: 1_800, totalMs: 2_000 };
+  const other = { id: 'lineage.bleed', stacks: 4, remainingMs: 3_000, totalMs: 0 };
 
   startLasting('mob-1', 'shackle', 1_000, 2_000);
   assert(lastingActive('mob-1', 'shackle', mob(), 1_500), 'held while its clock runs (untargeted: the clock is trusted)');
@@ -176,6 +177,15 @@ const clientSrc = (rel: string): string => readFileSync(join(__dirname, '../../c
   const drip = lastingRecord('mob-2', 'drip');
   assert(drip?.endsAt === 4_000 && drip.intensity === 2, 'a refresh keeps the later end and the heavier intensity');
 
+  // The drip holds while the weapon's ONE damage-over-time record does (design
+  // §26.2): the lineage bleed, or — on a Poison Dagger — the reservoir the heavy
+  // bleed topped up. A root is not an affliction.
+  startLasting('mob-6', 'drip', 0, 4_000);
+  const m6 = (list: MonsterView['targetStatus']) => ({ id: 'mob-6', targetStatus: list }) as MonsterView;
+  const poison = { id: 'poison-dagger-burn', stacks: 120, remainingMs: 4_000, totalMs: 0 };
+  assert(lastingActive('mob-6', 'drip', m6([poison]), 100), 'a reservoir carries the drip');
+  assert(!lastingActive('mob-6', 'drip', m6([rooted]), 1_000), 'the affliction gone early ends it');
+
   // The knockdown reads `hardControlled`, broadcast for every monster.
   startLasting('mob-3', 'knockdown', 0, 1_500);
   const m3 = (held: boolean) => ({ id: 'mob-3', hardControlled: held }) as unknown as MonsterView;
@@ -191,16 +201,19 @@ const clientSrc = (rel: string): string => readFileSync(join(__dirname, '../../c
 }
 
 // ── The loaded carry ─────────────────────────────────────────────────────────
+// On the Axe's T2 band, worn on the Ruinous Axe: since design §26.1 (legibility
+// run) the Axe's one T1 verb is its Tempo verb, and its Kill-chain verb and the
+// lane leans that compose with it are T2 cards.
 {
   resetLastingForTests();
   const axe = (active: Record<string, string>, owned = Object.values(active)): Pick<PlayerView, 'equipment' | 'lineages'> => ({
-    equipment: { ...emptyEquipment(), weapon: 'chaotic-axe' },
-    lineages: { axe: { ownedCards: owned, active, ownedForms: ['chaotic-axe'], wornForm: 'chaotic-axe' } },
+    equipment: { ...emptyEquipment(), weapon: 'ruinous-axe' },
+    lineages: { axe: { ownedCards: owned, active, ownedForms: ['chaotic-axe', 'ruinous-axe'], wornForm: 'ruinous-axe' } },
   });
-  const pure = axe({ payoff: 'axe-t1-kill-chain-payoff' });
-  const lean = axe({ payoff: 'axe-t1-kill-chain-payoff', stat: 'axe-t1-kill-chain-stat' });
-  const echo = axe({ payoff: 'axe-t1-kill-chain-payoff', stat: 'axe-t1-tempo-stat' });
-  const nth = axe({ payoff: 'axe-t1-tempo-payoff', stat: 'axe-t1-kill-chain-stat' });
+  const pure = axe({ payoff: 'axe-t2-kill-chain-payoff' });
+  const lean = axe({ payoff: 'axe-t2-kill-chain-payoff', stat: 'axe-t2-kill-chain-stat' });
+  const echo = axe({ payoff: 'axe-t2-kill-chain-payoff', stat: 'axe-t2-tempo-stat' });
+  const nth = axe({ payoff: 'axe-t2-tempo-payoff', stat: 'axe-t2-kill-chain-stat' });
   assert(composesLoadedCarry(pure), 'a Kill-chain verb alone lands its next hit after a kill loaded');
   assert(composesLoadedCarry(lean), 'and with its own lean (the pure pair)');
   assert(!composesLoadedCarry(echo), 'with the Tempo lean the carried hit lands twice instead: nothing loaded');

@@ -65,8 +65,8 @@ assert.ok(omitted.stats.dps < plain.stats.dps, 'omitting the core final-damage k
     ...build({ weapon: 'flash-rapier' }),
     lineages: {
       rapier: {
-        ownedCards: ['rapier-t1-tempo-stat'],
-        active: { stat: 'rapier-t1-tempo-stat' },
+        ownedCards: ['rapier-t1-speed'],
+        active: { stat: 'rapier-t1-speed' },
         ownedForms: ['flash-rapier'],
         wornForm: 'flash-rapier',
       },

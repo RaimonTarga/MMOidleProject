@@ -43,7 +43,7 @@
  */
 import {
   ABILITY_DATABASE,
-  ABILITY_ROOT_EFFECT_ID,
+  LINEAGE_ROOT_STATUS_ID,
   applyStatusEffect,
   lineagePayloadHitFx,
   payoffLandsOnTarget,
@@ -79,11 +79,10 @@ import {
 } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../ecs/entity';
 import type { World } from '../../world/World';
-import { attachMarker } from '../../ecs/markerHelpers';
 import { pushClientEffect, registerCombatListener, type CombatContext } from './engine/combatPipeline';
 import { registerMechanicFiredListener } from './engine/mechanicFired';
-import { applyPlayerDebuff, playerDebuffConfig } from '../classes/shared/applyPlayerDebuff';
-import { LINEAGE_BLEED_ID, LINEAGE_POISON_ID } from './damage/bleedIds';
+import { playerDebuffConfig } from '../classes/shared/applyPlayerDebuff';
+import { addLineageAffliction } from './damage/lineageAffliction';
 import { applyPlayerProcDamage } from './damage/procDamage';
 import { applyMonsterRoot, applyMonsterSlow, monsterIsHeld } from './status/monsterControl';
 import { applyMechanicProxy } from './engine/empoweredAttacks';
@@ -107,7 +106,7 @@ import {
   abilityCooldownKey, publishAbilityCooldown, techniqueCooldownMs,
 } from '../player/abilities/abilityCooldowns';
 import { ENGAGEMENT_CD, capCd, carryFlag, firstHitFlag, nthCounter } from './lineageKeys';
-import { syncRhythmReadout, type OpenerSpent } from './rhythmReadout';
+import { noteCardFiring, syncRhythmReadout, type OpenerSpent } from './rhythmReadout';
 
 // ── Authored units ───────────────────────────────────────────────────────────
 //
@@ -290,38 +289,6 @@ export function hitBasis(player: PlayerEntity, ctx?: CombatContext): number {
 function echoOnHit(player: PlayerEntity, ctx?: CombatContext): number {
   const onHit = ctx ? playerOnHitDamage(ctx) : player.dealsDamage.onHitDamage;
   return Math.max(0, onHit);
-}
-
-/**
- * Write the lineage bleed (`LINEAGE_BLEED_ID`, its own id per design §18.1) as
- * `ticks` ticks of `perTick`. Ordinary refresh: this application's numbers win.
- * A caller that must ADD to what is already ticking (`redose`) folds the old
- * remainder into `perTick` itself.
- */
-function writeLineageBleed(
-  world: World,
-  player: PlayerEntity,
-  target: MonsterEntity,
-  perTick: number,
-  ticks: number,
-): void {
-  const tickMs = BLEED_TICK_MS;
-  const bleed = applyPlayerDebuff(player, target.tracksCombat, {
-    id: LINEAGE_BLEED_ID,
-    instanced: false,
-    remainingMs: -1,
-    sourceId: player.isPlayer.id,
-    data: {
-      damagePerTick: perTick, nextTickIn: tickMs, tickIntervalMs: tickMs,
-      bleedMode: 0,
-    },
-  });
-  bleed.data.damagePerTick = perTick;
-  bleed.data.tickIntervalMs = tickMs;
-  bleed.data.bleedMode = 0;
-  if (!(bleed.data.nextTickIn > 0)) bleed.data.nextTickIn = tickMs;
-  bleed.stacks = ticks;
-  attachMarker(world, target, 'hasHemorrhage');
 }
 
 // ── The payoff dispatch ──────────────────────────────────────────────────────
@@ -658,25 +625,18 @@ function applyOnTarget(
     }
 
     case 'hemorrhage': {
-      // Its OWN id (design §18.1), ticked by the same bleed driver as the cadence
-      // root's. Sharing `cadence-hemorrhage` meant the first source owned the
-      // per-tick damage, and the "take the better of both" guard against that was
-      // a ratchet: one big hit's bleed maintained forever by chip hits. Ordinary
-      // refresh — this application's numbers win, the window restarts.
-      //
-      // EXCEPT a composed T1 payload (design §24.1): an event, "a whole swing over
-      // 4 s" PER FIRING, so what the previous firing still owes joins this one
-      // instead of being cut — a Tempo verb on a fast Rapier fires every ~3.6 s,
-      // inside the 4 s window, and refresh dropped a quarter of every payload. Not
-      // a ratchet: the total owed is the sum of the firings, and it runs out.
-      const ticks = Math.max(1, Math.round((durationMs ?? BLEED_TICK_MS) / BLEED_TICK_MS));
-      const prior = firing.composed ? getStatusEffect(target.tracksCombat, LINEAGE_BLEED_ID) : undefined;
-      const priorTicks = prior && prior.data.bleedMode === 0 ? Math.max(0, prior.stacks) : 0;
-      const priorOwed = priorTicks * Math.max(0, prior?.data.damagePerTick ?? 0);
-      const spread = Math.max(ticks, priorTicks);
-      const perTick = Math.max(1, Math.round((hitBasis(player, ctx) * magnitude + priorOwed) / spread));
-      writeLineageBleed(world, player, target, perTick, spread);
-      return { ...landed, durationMs: spread * BLEED_TICK_MS };
+      // The heavy bleed: "a whole swing over 4 s" PER FIRING. ONE DoT RECORD PER
+      // WEAPON (design §26.2): it ADDS what it owes to the weapon's own reservoir
+      // when the weapon has one, else to the one lineage bleed — a reservoir every
+      // source adds to, so a firing inside the previous one's window never cuts
+      // what that one still owes (a Tempo verb on a fast Rapier fires every
+      // ~3.6 s, inside the 4 s window). Not a ratchet: the total owed is the sum
+      // of the firings, and it runs out. (Before §26.2 a legacy card refreshed;
+      // every lineage DoT now adds.)
+      const added = addLineageAffliction(
+        world, player, target, hitBasis(player, ctx) * magnitude, durationMs ?? BLEED_TICK_MS,
+      );
+      return added ? { ...landed, durationMs: added.durationMs } : null;
     }
 
     case 'redose': {
@@ -684,28 +644,27 @@ function applyOnTarget(
       // doubles its affliction". Contagion's copier cannot do it — copying a DoT
       // onto the body that already carries it merges to the same stacks — so this
       // ADDS `magnitude` × what every one of this player's DoTs on the target
-      // still owes (the DoT inventory's own estimate, every family counted) to the
-      // lineage bleed, on top of whatever that bleed still had to tick.
+      // still owes (the DoT inventory's own estimate, every family counted). It
+      // re-doses the weapon's own reservoir when there is one — the Poison
+      // Dagger's poison grows, no second record (design §26.2) — else the one
+      // lineage bleed.
       const owed = playerDotsOnMonster(world, player, target)
         .reduce((sum, entry) => sum + Math.max(0, entry.remainingDamage), 0);
       const extra = owed * Math.max(0, magnitude);
       if (!(extra >= 1)) return null;
-      const prior = getStatusEffect(target.tracksCombat, LINEAGE_BLEED_ID);
-      const priorTicks = prior && prior.data.bleedMode === 0 ? Math.max(0, prior.stacks) : 0;
-      const priorOwed = priorTicks * Math.max(0, prior?.data.damagePerTick ?? 0);
-      const ticks = Math.max(1, priorTicks, Math.round((durationMs ?? BLEED_TICK_MS) / BLEED_TICK_MS));
-      const perTick = Math.max(1, Math.round((priorOwed + extra) / ticks));
-      writeLineageBleed(world, player, target, perTick, ticks);
-      return { ...landed, durationMs: ticks * BLEED_TICK_MS };
+      const added = addLineageAffliction(world, player, target, extra, durationMs ?? BLEED_TICK_MS);
+      return added ? { ...landed, durationMs: added.durationMs } : null;
     }
 
     case 'root': {
       // Control's payload: the control ladder's root rung, through the one
       // function that owns it — a control-immune boss refuses it, and a refused
-      // root must not draw an effect that says it landed.
+      // root must not draw an effect that says it landed. Its own id, "Pinned"
+      // (design §26.2), so the target frame names the card's root rather than
+      // Binding Strike's; the rung, its ownership and its immunity are shared.
       if (monsterIgnoresControl(target)) return null;
-      applyMonsterRoot(world, target, durationMs ?? 0, sourceId);
-      const root = getStatusEffect(target.tracksCombat, ABILITY_ROOT_EFFECT_ID);
+      applyMonsterRoot(world, target, durationMs ?? 0, sourceId, LINEAGE_ROOT_STATUS_ID);
+      const root = getStatusEffect(target.tracksCombat, LINEAGE_ROOT_STATUS_ID);
       if (!root || root.remainingMs === 0) return null;
       // The root as it stands now (a longer one already running keeps its clock),
       // so the shackle the client draws breaks when this root does.
@@ -713,37 +672,26 @@ function applyOnTarget(
     }
 
     case 'poison-stack': {
-      // Its OWN id (design §18.1) rather than a stack on the player's class DoT,
-      // whose `damagePerStack` the first writer owned. Stacks are INTENSITY here —
-      // they multiply the tick and expire with the timer — so repeated hits make
-      // the poison harder, not merely longer. The cap and tick interval still come
-      // from the player's own DoT profile, so a class that ticks faster poisons
-      // faster.
+      // Once its own intensity record (`lineage.poison`); since design §26.2 it is
+      // one more source of the weapon's ONE DoT record, like the heavy bleed:
+      // what one application promises — `magnitude` of the hit per tick, for its
+      // window on the player's own DoT tick clock — is ADDED to the reservoir or
+      // the lineage bleed.
+      //
+      // PROVISIONAL (legibility run, designer's number): the intensity model let
+      // overlapping applications stack the per-tick rate up to the class DoT's cap
+      // and refresh the whole stack; an add delivers exactly what each firing
+      // promised. Lower for a build that fired it faster than its window.
       const profile = resolveDotClassProfile(
         player.usesSkills.passives,
         player.usesSkills.selectedSubVariant,
       );
-      const damagePerStack = Math.max(1, Math.round(hitBasis(player, ctx) * magnitude));
-      const poison = applyPlayerDebuff(player, target.tracksCombat, {
-        id: LINEAGE_POISON_ID,
-        instanced: false,
-        maxStacks: profile.maxStacks,
-        refreshable: true,
-        remainingMs: durationMs ?? profile.durationMs,
-        sourceId,
-        data: {
-          damagePerTick: damagePerStack,
-          nextTickIn: profile.tickIntervalMs,
-          tickIntervalMs: profile.tickIntervalMs,
-          bleedMode: 1,
-        },
-      });
-      poison.data.damagePerTick = damagePerStack;
-      poison.data.tickIntervalMs = profile.tickIntervalMs;
-      poison.data.bleedMode = 1;
-      if (!(poison.data.nextTickIn > 0)) poison.data.nextTickIn = profile.tickIntervalMs;
-      attachMarker(world, target, 'hasHemorrhage');
-      return { ...landed, stacks: poison.stacks };
+      const windowMs = durationMs ?? profile.durationMs;
+      const ticks = Math.max(1, Math.round(windowMs / Math.max(1, profile.tickIntervalMs)));
+      const added = addLineageAffliction(
+        world, player, target, hitBasis(player, ctx) * magnitude * ticks, windowMs,
+      );
+      return added ? { ...landed, durationMs: added.durationMs } : null;
     }
 
     case 'slow':
@@ -935,6 +883,9 @@ function fire(site: PayoffSite, firings: readonly LineageFiring[]): number {
       syncRhythmReadout(site.world, site.player);
     }
     applied++;
+    // Teaching and the away count (legibility run, D's one hook): the readout
+    // cannot see a pulse firing on its own, so every firing reports here.
+    const teach = firing.cardId !== undefined && noteCardFiring(site.world, site.player, firing.cardId);
     site.world.pushEvent(site.player.hasPosition.nodeId, {
       kind: 'card-fx',
       playerId: site.player.isPlayer.id,
@@ -946,6 +897,7 @@ function fire(site: PayoffSite, firings: readonly LineageFiring[]): number {
       ...(firing.cardId !== undefined ? { cardId: firing.cardId } : {}),
       ...(drawn.durationMs !== undefined ? { durationMs: drawn.durationMs } : {}),
       ...(drawn.abilityIds !== undefined ? { abilityIds: drawn.abilityIds } : {}),
+      ...(teach ? { teach: true as const } : {}),
     });
   }
   return applied;

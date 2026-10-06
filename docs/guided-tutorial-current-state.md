@@ -1,14 +1,16 @@
 # Guided Tier-1 Tutorial — Current State
 
-**Audited:** 2026-10-05 against the checked-in tutorial scripts, director and panel.
-**Status:** shipped in v0.6.2; the course-correction (2026-10-03) and verbs-that-fire
-(2026-10-04, design §24.9) updates are implemented. The guide teaches the lean, verb and
-gate on the weapon each class fights with. The original plan is preserved at
-[archive/guided-tutorial-plan.md](archive/guided-tutorial-plan.md).
+**Audited:** 2026-10-06 against the checked-in tutorial scripts, director and panel (the
+legibility run, design §26.1).
+**Status:** shipped in v0.6.2; the course-correction (2026-10-03), verbs-that-fire
+(2026-10-04, design §24.9) and legibility (2026-10-06, design §26.1) updates are
+implemented. The guide teaches the Effect lean and its ranks, the weapon's own verb and the
+gate on the weapon each class fights with — no pair to choose. The original plan is
+preserved at [archive/guided-tutorial-plan.md](archive/guided-tutorial-plan.md).
 
 The validation records below retain their original revisions, dates, results and
 canonical/non-canonical limits. Earlier kits and findings are history; the latest
-verbs-that-fire record describes the current route. This fold adds no new play evidence.
+legibility record (route v1.5.0) describes the current route.
 
 ## What it is
 
@@ -194,9 +196,33 @@ configs (Striker/Squire durable melee, Slinger, Spirit/Conduit, Apprentice), wit
   beats and the one-card lesson: Striker 78, Squire 78, Spirit 81, Conduit 81,
   Apprentice 83, Slinger 85.)
 
-### The weapon-page lessons (verbs-that-fire, 2026-10-04; course correction 2026-10-03)
+### The weapon-page lessons (legibility, 2026-10-06; verbs-that-fire 2026-10-04; course correction 2026-10-03)
 
-Design §24.2 makes the T1 band two rows, a **lean** (row 1: a stat, and the payload it
+**Since design §26.1 (legibility run) the T1 band asks no pair choice.** Its lean row is
+Attack, Speed and Effect with three ranks each, and its verb is the weapon's own
+(`docs/lineages-current-state.md` §3a). The guide teaches it once: the **Effect** lean
+(the weapon's own move made stronger; Attack and Speed are plain stats and are not taught)
+at rank I, the weapon's **one verb**, then Effect's **ranks II and III**, each rank a
+`card:<lean>:rank-N` beat that presses Rank up (`lineageRankUp` anchor) and buys ONE rank
+(`unlockCard`/`lineageCardOwned` take a `rank`, checked with `cardRank`). No copy says a
+lean choice changes the verb at T1 (`tutorial.test.ts` enforces it). Route
+`tutorial-<class>-t1` is v1.5.0, with milestones `lean-rank-2` and `lean-rank-3`.
+
+| Beat | Where (Axe plans / Slinger) | What it does |
+|---|---|---|
+| `shards:<weapon>-t1-effect` | Cave 1 / Swamp 1 | the weapon page; every kill pays its territory's shard |
+| `card:<weapon>-t1-effect` | Cave 2 / Swamp 2 | "Buy Effect, row one of the Chaotic Axe's page: the lean, one active at a time. Attack and Speed are plain stats; Effect makes the weapon's own move stronger." + a read of its sentence |
+| `card:<verb>` | Cave 4 / Swamp 4 | "Buy Chopping Rhythm, the Chaotic Axe's own move…"; the lesson quotes the page ("Every 6th hit strikes again at 110% strength."; the Slinger's "Hitting an afflicted target doubles its affliction."), then the ring "under your health bar" |
+| `card:<weapon>-t1-effect:rank-2` | Cave 5 / Swamp 5 | "Rank Effect up to II… A lean has three ranks, and each one makes its number bigger." — the number after and before |
+| `card:<weapon>-t1-effect:rank-3` | Cave 6 / Swamp 6 | the last rank at this tier ("+20% to Chopping Rhythm's second strike") |
+
+Rank II is one level after the verb because Cave 4 / Swamp 4 already carries two ideas (the
+verb and its ring); rank III's Global Mastery 14 is held from the leg's start, so it closes
+the leg. Beats: Striker 63, Squire 63, Slinger 66, Spirit 66, Apprentice 68, Conduit 66.
+The rest of this section is the verbs-that-fire structure the lesson still sits in (the
+weapon, the gate chapter); its lean/verb picks table is history.
+
+Design §24.2 made the T1 band two rows, a **lean** (row 1: a stat, and the payload it
 names) and a **verb** (row 2: a moment), and the verb's sentence is generated from the
 two. The guide teaches exactly that, **on the weapon the class fights with** (design
 §24.9): the Chaotic Axe for the Striker, Squire, Spirit, Apprentice and Conduit plans, the
@@ -237,7 +263,25 @@ whose cards stay with their weapon. The cost is that the page now arrives later:
 Cave leg for five plans (Global Mastery 24–30) and the Swamp leg for the Slinger (12–18),
 against the Forest leg (6–12) before.
 
-**Which lean and verb** is per class (`TutorialClassPlan.weaponCards`): on the class's own
+**Which lean, since §26.1** (`plans.ts` `AXE_BAND` / `DAGGER_BAND`, PROVISIONAL): Effect to
+rank III for every class (`leanRank: 3`), the weapon's own verb — the brief's call. What it
+costs (boss lab, `reports/legibility/after-composition.md`, rank I / rank III; DPS over the
+same class with no cards): on the Chaotic Axe Effect is the WEAKEST lean for every class —
+it scales only Chopping Rhythm's second strike, a sixth of the hits.
+
+| Class | Effect I / III | Best lean (I / III) | Verb alone |
+|---|---|---|---|
+| Striker | +11.6 / +12.9% | Speed +24.5% / Attack +28.1% | +10.2% |
+| Squire | +10.7 / +12.1% | Speed +18.4% / Speed +29.2% | +9.7% |
+| Slinger (Dagger) | +50.5 / +58.4% | Attack +52.3% / Effect itself | +46.3% |
+| Spirit | +13.9 / +15.6% | Speed +24.8% / Attack +28.0% | +12.5% |
+| Apprentice | +5.1 / +5.8% | Attack +16.4% / +18.9% | +4.6% |
+| Conduit | +17.5 / +19.9% | Attack +24.0% / +36.9% | +17.0% |
+
+Switching a plan's lean is one line (`AXE_BAND.lean`); the copy and tests follow the lean's
+kind. The verbs-that-fire picks below are history.
+
+**Which lean and verb (verbs-that-fire, history)** was per class (`TutorialClassPlan.weaponCards`): on the class's own
 boss weapon, the pair with the best boss-lab uplift among those whose verb FIRES for that
 class (verb firings > 0), read off the verbs-that-fire composition matrix (5 bosses × 10
 seeds per pair, at `57916b52`; `server/scripts/_vfTutorialPicks.ts` prints the table). A
@@ -322,23 +366,25 @@ those.
 |  |  | An ability fires from a Rune | "Use default timing" under the ability |  |
 | Plains 4 | `max:plains` | Zone mastery opens recipes | the Mastery level bar on the guide card | all |
 | Forest 2 | `learn:ability-recipe-second-wind` | A Guard rescues you mid-fight | the Abilities tab, Attune | all |
-| Forest 3 | `craft:forest-vest-t1` | Evasion: harder to hit | the Evasion row of the stat sheet | Slinger |
+| Forest 3 | `craft:forest-vest-t1` | Evasion: harder to hit | the Evasion row of the Stats panel | Slinger |
 | Swamp 0 | `farm:rune-recipe-avoid-hazards` (Slinger: `farm:ashbrand-blade`) | Poison keeps hurting after the hit | the poison tile on the buff bar | all |
 | Swamp 1 | `shards:<lean>` | A weapon has a page of cards | the weapon page, opened from the equipped weapon | Slinger |
 |  |  | Every kill pays its territory's shard | the arrival banner and the map ("Mire territory · Venom Shards") |  |
-| Swamp 2 | `card:<lean>` | Row 1, the lean: a stat while the form is worn, one active | the lean card's sentence and the stat sheet beside it | Slinger |
+| Swamp 2 | `card:<lean>` | Row 1, the lean: Attack, Speed or Effect while the weapon is worn, one active | the lean card's sentence on the weapon page, and its share in the Stats panel | Slinger |
 | Swamp 2 | `rune:rune-recipe-avoid-hazards` | Hazard ground hurts, and a Rune walks around it | the hazard patches on the Swamp floor | all |
 | Swamp 3 | `learn:ability-recipe-cleanse` | Abilities are swapped to fit the zone | the Abilities tab, Unattune then Attune | all |
-| Swamp 4 | `card:<verb>` | Row 2, the verb: a moment, and the lean decides what happens then | the verb card's sentence on the weapon page, ringed | Slinger |
-|  |  | A ring by the health bar shows the verb coming | the verb's ring on the rhythm readout, ringed |  |
+| Swamp 4 | `card:<verb>` | Row 2, the verb: the weapon's own move, a moment in the fight | the verb card's sentence on the weapon page, ringed | Slinger |
+|  |  | A ring under your health bar shows the verb coming | the verb's named ring under the health bar (counts, brightens when coming, lights when ready, dashed when it needs a poisoned or held target, +N for missed firings) |  |
+| Swamp 5 | `card:<lean>:rank-2` | A lean has three ranks, and each makes its number bigger | the rank pips and Rank up on the lean card, and the number in its sentence | Slinger |
 | Mountain 3 | `rune:rune-recipe-keep-distance` | Orbit: circle out of reach while attacking | the Runes board | Slinger, Spirit, Apprentice, Conduit |
 | Cave 0 | `farm:chaotic-axe` (Slinger: `farm:rune-recipe-step-back`) | A wound-up hit can be dodged | the cast bar over a monster winding up | all |
 | Cave 1 | `shards:<lean>` | A weapon has a page of cards | the weapon page, opened from the equipped weapon | all but the Slinger |
 |  |  | Every kill pays its territory's shard | the arrival banner and the map ("Brood territory · Gale Shards") |  |
-| Cave 2 | `card:<lean>` | Row 1, the lean: a stat while the form is worn, one active | the lean card's sentence and the stat sheet beside it | all but the Slinger |
+| Cave 2 | `card:<lean>` | Row 1, the lean: Attack, Speed or Effect while the weapon is worn, one active | the lean card's sentence on the weapon page, and its share in the Stats panel | all but the Slinger |
 | Cave 2 | `rune:rune-recipe-step-back` | Step Back dodges a wound-up hit | Step Back at the top of the Runes board | all |
-| Cave 4 | `card:<verb>` | Row 2, the verb: a moment, and the lean decides what happens then | the verb card's sentence on the weapon page, ringed | all but the Slinger |
-|  |  | A ring by the health bar shows the verb coming | the verb's ring on the rhythm readout, ringed |  |
+| Cave 4 | `card:<verb>` | Row 2, the verb: the weapon's own move, a moment in the fight | the verb card's sentence on the weapon page, ringed | all but the Slinger |
+|  |  | A ring under your health bar shows the verb coming | the verb's named ring under the health bar (counts, brightens when coming, lights when ready, dashed when it needs a poisoned or held target, +N for missed firings) |  |
+| Cave 5 | `card:<lean>:rank-2` | A lean has three ranks, and each makes its number bigger | the rank pips and Rank up on the lean card, and the number in its sentence | all but the Slinger |
 | The Seals | `boss-prep:plains` | Two boss seals open Tier 2 | the tier-up after the second seal | all |
 | The Seals | `boss:plains` | Clear the guard, then wake the boss at its altar | the altar button, ringed | all |
 | The Gate | `capstone:<form>` | Only the boss drops the gate's capstone | the capstone pips on the gate block | all |
@@ -379,6 +425,15 @@ is already met is skipped and never shown at all.
   the lean beside Step Back at Cave 2 (beside Avoid Hazards at the Slinger's Swamp 2): two
   ideas each, inside the rule. The Forest now introduces one idea, the Guard (two for the
   Slinger, whose armor's evasion stays held at Forest 3).
+
+- **Legibility (2026-10-06, design §26.1).** The lean and its ranks: Effect I beside Step
+  Back at Cave 2 (Avoid Hazards at the Slinger's Swamp 2), the verb and its ring at Cave 4 /
+  Swamp 4, and the new idea *lean ranks* one level later (Cave 5 / Swamp 5) because Cave 4
+  already carries two; rank III (Cave 6 / Swamp 6) introduces nothing. Measured on the 1x
+  sweep: no level over two ideas for any class; the Squire never saw two farm lines (the
+  Cave's telegraphs intro and the page + shards line), because it fought through cave-05 on
+  its way to the Mountain and arrived with both farms already met — the farm-line caveat
+  above, left for the tutorial's next pass.
 
 **Measured on the 1x sweep** (rev `1297b206`, before the opening change; the opening was
 smoke-measured separately on the new revision): see "2026-10-03 — the course-correction
@@ -825,6 +880,36 @@ Squire 2.1 min later). The twelve deaths are all the gate's second round (two pe
 before), now the Cave and Swamp dungeons' guard or a boss woken seconds after the previous win.
 The first-hour checklist held as measured. The box ran at 100% CPU for the first 24 min (the
 servers at 8.7 Hz, 9.2 Hz after).
+
+### 2026-10-06 — the legibility 1x sweep
+
+The script after design §26.1 (revision `b5bfd7d6`, route v1.5.0): the Effect lean at rank I
+(Cave 2 / Swamp 2), the weapon's one verb (Cave 4 / the Slinger's Swamp 5), Effect ranks II
+and III (Cave 5–6 / Swamp 6), the gate paid on the same weapon. 1x and untainted, one
+server and one game database per class (ports 4301–4306, `gamedb_lg1`…`gamedb_lg6`, left in
+place), bots launched directly, servers at 9.17 Hz. Full ledger:
+`reports/legibility/sweep-1x.md` (+ `.json`, script `server/scripts/_lgTutorialSweep.ts`).
+
+| Class | beats | Effect I | verb | Effect III | Plains | Mountain | gate boss | gate paid | deaths |
+|---|---|---|---|---|---|---|---|---|---|
+| Striker | 63/63 | 26m55s | 28m03s | 29m21s | 1/1 | **1/3** | Cave 3/5 | 66m04s | 4 |
+| Squire | 63/63 | 26m20s | 27m59s | 29m12s | 1/1 | 1/1 | Cave 3/5 | 64m01s | 2 |
+| Slinger | 66/66 | 16m36s | 19m38s | 21m06s | 1/1 | 1/1 | Swamp 3/5 | 57m45s | 2 |
+| Spirit | 66/66 | 24m11s | 25m02s | 25m47s | 1/1 | 1/1 | Cave 3/5 | 51m29s | 3 |
+| Apprentice | 68/68 | 33m27s | 34m52s | 36m38s | 1/1 | 1/1 | Cave 3/5 | 68m58s | 2 |
+| Conduit | 66/66 | 24m13s | 25m22s | 26m23s | 1/1 | 1/1 | Cave 3/5 | 55m05s | 2 |
+
+**All six complete the whole script, gate paid; no beat ended anything but `done`.** Every
+seal and gate fight was fought at Effect III, and **the verb fired in all 30 boss wins** (4–5
+a fight for five classes, 19–23 for the Conduit). The gate is paid 0–4.8 min later than the
+verbs-that-fire sweep (the ranks' farms are 0.5–1.5 min of it; one replica per class). **The
+Striker's Mountain seal regressed to 1/3** (lost with the Crag Behemoth at 7% and 1%), the
+course-correction sweep's shape: Effect is the Striker's weakest Axe lean (+12.9% at III vs
+Attack +28.1%), a designer call, not retuned. **The Forest's higher entry pressure** (the T1
+rosters: forest-04 Pack picks 4 → 6 in 10) did no harm: 0 Forest deaths, the leg's time
+within −54 s / +19 s, though moments with three or more attackers roughly doubled for the
+Striker, Squire and Spirit. The extra deaths are the Striker's two Mountain losses and one
+Spirit death to Swamp poison before the band.
 
 ## Findings and their history
 

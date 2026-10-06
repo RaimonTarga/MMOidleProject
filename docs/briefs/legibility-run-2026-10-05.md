@@ -1,5 +1,8 @@
 # Legibility run — brief (2026-10-05)
 
+**Status: COMPLETE 2026-10-06, merged to develop.** Report:
+[`legibility-report-2026-10-05.md`](legibility-report-2026-10-05.md).
+
 Implements design **§26** (progression-rework-design.md): T1 deepens and T2 branches
 (§26.1), one damage-over-time record per weapon (§26.2), nodes as rosters (§26.3), the
 HUD and panels (§26.4), the run calls (§26.5). The composite mockup is the visual target:

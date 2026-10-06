@@ -1,25 +1,24 @@
-import { useId, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { estimatePlayerDps, formatRecoveryRate, playerMoveSpeedMult, resolveEmpoweredMultiplier, resolveOnHitDamage, riteDef } from '@mmo-idle/shared';
-import { DefensePassivesSection, MobilityPassivesSection, StatRow } from './components';
+import { estimatePlayerDps, formatRecoveryRate, playerMoveSpeedMult, resolveEmpoweredMultiplier, resolveOnHitDamage } from '@mmo-idle/shared';
 import { ArchetypeMechanics } from './mechanics';
 import { useHoverTooltip } from './tooltip';
 import { STAT_HELP } from './statHelp';
 import { StatPlate } from './StatPlate';
-import { DisclosureHeader, HudPanel } from '../primitives';
+import { HudPanel } from '../primitives';
 import { useIsMobile } from '../useIsMobile';
+import { RhythmReadout } from '../RhythmReadout';
+import { BuffBar } from '../BuffBar';
+import { togglePrimaryOverlay } from '../../input/overlayStack';
 import { statIconSource } from '../../ui/systemIcons';
 import {
   attackAtom,
   attackCooldownAtom,
   attackCadenceMultAtom,
   finalDamageDealtMultAtom,
-  finalDamageTakenMultAtom,
   attackRangeAtom,
   combatArchetypeAtom,
   damageReductionAtom,
   equipmentAtom,
-  equippedRitesAtom,
   dodgeRateAtom,
   evadeMitigationAtom,
   hpAtom,
@@ -47,8 +46,6 @@ import {
   statusAtom,
 } from '../atoms';
 
-const CHARACTER_EXPANDED_STORAGE_KEY = 'mmo_idle.desktop.character_expanded';
-
 /**
  * The commissioned stat glyphs (§15 of the UI redesign plan), which are what let
  * this panel drop its word labels. Attack speed is deliberately absent — the set
@@ -66,19 +63,22 @@ const STAT_GLYPH = {
   speed: statIconSource('speed'),
 };
 
-function readCharacterExpandedPreference(): boolean {
-  try {
-    if (typeof window === 'undefined') return false;
-    return window.localStorage.getItem(CHARACTER_EXPANDED_STORAGE_KEY) === 'true';
-  } catch {
-    return false;
-  }
+/**
+ * What sits beside the HP bar on desktop (design §26.4): the rhythm readout's
+ * named rings and the player's statuses as a small row. The phone draws its own
+ * (the top strip's second row and the field's bottom-left).
+ */
+function BesideHp() {
+  return (
+    <div className="stat-crown__beside">
+      <RhythmReadout placement="rail" />
+      <BuffBar placement="rail" />
+    </div>
+  );
 }
 
 export function StatPanel() {
-  const [expanded, setExpanded] = useState(readCharacterExpandedPreference);
   const isMobile = useIsMobile();
-  const characterDetailsId = useId();
   const hpTip = useHoverTooltip(STAT_HELP.hp);
   const playerId = useAtomValue(playerIdAtom);
   const status = useAtomValue(statusAtom);
@@ -99,7 +99,6 @@ export function StatPanel() {
   const attackCooldown = useAtomValue(attackCooldownAtom);
   const attackCadenceMult = useAtomValue(attackCadenceMultAtom);
   const finalDamageDealtMult = useAtomValue(finalDamageDealtMultAtom);
-  const finalDamageTakenMult = useAtomValue(finalDamageTakenMultAtom);
   const attackRange = useAtomValue(attackRangeAtom);
   const baseSpeed = useAtomValue(speedAtom);
   const activeBuffs = useAtomValue(activeBuffsAtom);
@@ -115,11 +114,6 @@ export function StatPanel() {
   const selectedRange = useAtomValue(selectedRangeAtom);
   const unlockedSkills = useAtomValue(unlockedSkillsAtom);
   const summonActiveCount = useAtomValue(summonActiveCountAtom);
-  const equippedRites = useAtomValue(equippedRitesAtom);
-  const equippedRiteDefs = equippedRites.flatMap((id) => {
-    const def = riteDef(id);
-    return def ? [def] : [];
-  });
   const player = playerId
     ? {
       name,
@@ -241,31 +235,22 @@ export function StatPanel() {
     </>
   ) : undefined;
 
-  const toggleExpanded = () => {
-    setExpanded((value) => {
-      const next = !value;
-      try {
-        window.localStorage.setItem(CHARACTER_EXPANDED_STORAGE_KEY, String(next));
-      } catch {
-        // Keep the disclosure usable even when browser storage is unavailable.
-      }
-      return next;
-    });
-  };
-
   return (
     <HudPanel className="sidebar-panel character-panel">
-      <DisclosureHeader
-        className="panel-title panel-title--collapsible"
-        title="Character"
-        // No summary: the chevron and aria-expanded already say this opens, and
-        // the copy that used to sit here squeezed the title until "Character"
-        // broke mid-word against the rail's 45% label cap.
-        label={expanded ? 'Hide detailed character stats' : 'Show detailed character stats'}
-        expanded={expanded}
-        controls={characterDetailsId}
-        onToggle={toggleExpanded}
-      />
+      {/* Design §26.4: nothing expands on the left any more. The detailed,
+          sourced sheet is the Stats panel; the title opens it. */}
+      <button
+        type="button"
+        className="disclosure-header panel-title panel-title--collapsible"
+        aria-label="Open the Stats panel"
+        onClick={() => togglePrimaryOverlay('stats')}
+      >
+        <span className="disclosure-header__title">Character</span>
+        <span className="disclosure-header__summary">
+          <span>Stats</span>
+          <span className="disclosure-header__chevron" aria-hidden="true">▶</span>
+        </span>
+      </button>
 
       {/* One engraved plate for the whole readout. Each figure labels itself,
           and a bar appears only where the value has a real 0-100% ceiling. */}
@@ -283,6 +268,7 @@ export function StatPanel() {
             incomingDot: player.incomingDot,
             pendingHeal: player.pendingHeal,
             hpTip,
+            beside: isMobile ? undefined : <BesideHp />,
           }}
           // DPS is the headline because it is the one stat that already folds the
           // others together, and APS rides with it rather than taking a cell:
@@ -384,85 +370,6 @@ export function StatPanel() {
             ],
           ]}
         />
-      )}
-
-      {expanded && (
-        <div id={characterDetailsId} className="character-panel__details">
-          {/* The plates already carry every headline number, so the expand is
-              the explained reference: what a stat means, and the detail a
-              plate has no room for. */}
-          <div className="stat-section">
-            <div className="stat-section-title">Offense</div>
-            <StatRow label="Attack" value={player?.attack ?? '—'} help={STAT_HELP.attack} />
-            <StatRow label="DPS" value={dps} help={STAT_HELP.dps} />
-            <StatRow label="Final damage dealt" value={`×${finalDamageDealtMult.toFixed(2)}`} help="Core and stance multiplier on direct, on-hit, summon and damage-over-time output. Included in DPS." />
-
-            <StatRow
-              label="Attack Speed"
-              value={
-                player
-                  ? cadenceTag
-                    // Show the base too, so a buffed number is legible as "this
-                    // is temporary" rather than as a permanently changed stat.
-                    ? `${aps} APS (${cdSec}s) ${cadenceTag} · base ${baseAps}`
-                    : `${aps} APS (${cdSec}s)`
-                  : '—'
-              }
-              help={STAT_HELP.atkSpeed}
-            />
-            {player && effectiveOnHit > 0 && (
-              <StatRow
-                label="On-Hit Dmg"
-                // Same "show the boosted number, base kept legible" convention
-                // as Attack Speed above.
-                value={onHitBonusTag ? `+${effectiveOnHit} (${onHitBonusTag}) · base +${player.onHitDamage}` : `+${effectiveOnHit}`}
-                help={STAT_HELP.onHitDamage}
-              />
-            )}
-            {empMult && (
-              <StatRow label="Empowered" value={`×${empMult.effective.toFixed(2)}`} help={empMultTip} />
-            )}
-            <StatRow label="Range" value={player ? `${player.attackRange}` : '—'} help={STAT_HELP.attackRange} />
-          </div>
-          <div className="stat-section">
-            <div className="stat-section-title">Defense & Recovery</div>
-            <StatRow label="Final damage taken" value={`×${finalDamageTakenMult.toFixed(2)}`} help="Core and stance multiplier after normal mitigation. Below ×1 means less damage taken; above ×1 means more. Does not reduce self-damage costs or deferred damage twice." />
-        <StatRow label="Plating" value={player?.plating ?? '—'} help={STAT_HELP.plating} />
-            <StatRow
-              label="Damage Reduction"
-              value={player ? `${Math.round(player.damageReduction * 100)}%` : '—'}
-              help={STAT_HELP.damageReduction}
-            />
-            <StatRow label="Recovery" value={player ? `${formatRecoveryRate(player.recovery)} HP/s` : '—'} help={STAT_HELP.recovery} />
-          </div>
-
-          {player && player.dodgeRate > 0 && (
-            <div className="stat-section">
-              <div className="stat-section-title">Evasion</div>
-              <StatRow label="Dodge rate" value={`${Math.round(player.dodgeRate * 100)}%`} help={STAT_HELP.dodgeRate} />
-              <StatRow label="Damage avoided" value={`${Math.round(player.evadeMitigation * 100)}% per dodge`} help={STAT_HELP.evadeMitigation} />
-            </div>
-          )}
-          <div className="stat-section">
-            <div className="stat-section-title">Movement</div>
-            <StatRow label="Move Speed" value={player ? `${player.speed}` : '—'} help={STAT_HELP.speed} />
-          </div>
-          <div className="stat-section">
-            <div className="stat-section-title">Rites</div>
-            {equippedRiteDefs.length > 0 ? equippedRiteDefs.map((rite) => (
-              <StatRow
-                key={rite.id}
-                label={rite.name}
-                value={`${rite.runeCost} RP`}
-                help={rite.blurb}
-              />
-            )) : (
-              <StatRow label="Equipped" value="None" dim />
-            )}
-          </div>
-          {player && <DefensePassivesSection passives={player.passives ?? {}} />}
-          {player && <MobilityPassivesSection passives={player.passives ?? {}} />}
-        </div>
       )}
 
       {/* Per-archetype mechanic bars (shared with the mobile HUD) */}

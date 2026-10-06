@@ -15,6 +15,12 @@
  *   5. `resolveLineageCards` re-composes an active verb against the active lean,
  *      and the sentence helpers the page reads (`cardSentence`,
  *      `composedSentence`) agree with it;
+ *   6. the T1 band after design §26.1: three RANKED leans (Attack, Speed, Effect)
+ *      and ONE verb, the weapon's own. Every weapon × lean × rank (5 × 3 × 3 = 45
+ *      cells) composes with the fixed verb: an Attack or Speed lean names no
+ *      payload (the verb reads its pure pair at its base size), an Effect lean
+ *      names the verb's own lane and, where Effect is the payload's size, scales it
+ *      by the rank; the two-colour halves join to the sentence;
  *   7. T2+ bands compose too (design §24.9): every weapon band above T1 that
  *      authors a payoff row is three verbs; all nine pairs produce a sentence with
  *      the tier's numbers, and resolve on the SAME moment as their T1 pair with a
@@ -23,14 +29,24 @@
  *
  * Run: node --conditions=development --import tsx shared/src/data/lineages/composition.test.ts
  */
-import { bandComposes, cardSentence, composedSentence, resolveLineageCards } from '../../systems/lineages';
+import {
+  bandComposes, cardSentence, composedSentence, composedSentenceParts, leanLaneFor, lineagePayloadScales,
+  resolveActiveLineages, resolveLineageCards,
+} from '../../systems/lineages';
+import { emptyEquipment } from '../../items';
 import { LINEAGE_DATABASE, lineagesForSlot } from './index';
 import { PACKET_DEFINITIONS, packetHalves } from './packets';
-import { LEAN_CONDITION_NUMBERS, PACKET_HALF_NUMBERS, STAT_UNIT, payloadSize, quickenMoment, verbTierScalar } from './magnitudes';
 import {
-  composeVerb, isVerbCard, packetMoment, packetPayload, packetPurePair, resolveLineageCard,
+  LEAN_CONDITION_NUMBERS, LEAN_RANK_ONE, LEAN_RANK_VALUE_SCALE, MAX_LEAN_RANK, PACKET_HALF_NUMBERS, STAT_UNIT,
+  payloadSize, quickenMoment, scalePayloadSize, statRowValue, verbTierScalar,
+} from './magnitudes';
+import {
+  cardStatKey, composeVerb, isVerbCard, leanPayloadLane, packetMoment, packetPayload, packetPurePair,
+  resolveLineageCard,
 } from './resolve';
-import { momentText, payloadText, pureSentenceText, statLine, verbSentence } from './sentences';
+import {
+  compositionParts, momentText, payloadText, pureSentenceParts, pureSentenceText, statLine, verbSentence,
+} from './sentences';
 import { PACKET_IDS, PLAIN_ROW_LABELS, ROW_LABELS, WEAPON_PACKET_IDS, rowLabel } from './types';
 import type { LineageCard, LineageDefinition, LineagePayoff, LineageProgress, PacketId } from './types';
 
@@ -289,59 +305,197 @@ for (const card of rapier.cards.filter((c) => c.tier === 1 && c.row === 'stat'))
 // The labels the page reads for the two T1 rows.
 assert(ROW_LABELS.stat === 'Lean' && ROW_LABELS.payoff === 'Verb', 'the T1 rows read Lean and Verb');
 
-// ── 6. The five T1 weapon bands are three leans and three verbs ──────────────
+// ── 6. The five T1 weapon bands: the ranked trio and the weapon's own verb ───
 
+let t1Cells = 0;
 for (const lineage of lineagesForSlot('weapon')) {
   const band = lineage.cards.filter((c) => c.tier === 1);
-  for (const lane of lineage.lanes) {
-    const leans = band.filter((c) => c.lane === lane && c.row === 'stat');
-    const verbs = band.filter((c) => c.lane === lane && c.row === 'payoff');
-    assert(leans.length === 1, `${lineage.id}: one ${lane} lean`);
-    assert(verbs.length === 1 && isVerbCard(verbs[0]!), `${lineage.id}: one ${lane} VERB, authored with no trigger/payoff`);
-    // Ids are unchanged so saves, the tutorial and the bot routes keep working.
-    assert(leans[0]!.id === `${lineage.id}-t1-${lane}-stat`, `${lineage.id}: the ${lane} lean keeps its id`);
-    assert(verbs[0]!.id === `${lineage.id}-t1-${lane}-payoff`, `${lineage.id}: the ${lane} verb keeps its id`);
-  }
-  assert(band.length === 6, `${lineage.id}: the T1 band is six cards, got ${band.length}`);
+  const verbs = band.filter((c) => c.row === 'payoff');
+  const leans = band.filter((c) => c.row === 'stat');
+  assert(verbs.length === 1 && isVerbCard(verbs[0]!), `${lineage.id}: ONE T1 verb, authored with no trigger/payoff`);
+  assert(leans.length === 3 && leans.every((c) => c.leanKind), `${lineage.id}: three ranked T1 leans`);
+  const verb = verbs[0]!;
   // Above T1, a payoff row is verbs too (design §24.9); no other row is.
   for (const card of lineage.cards.filter((c) => c.tier > 1)) {
     assert(isVerbCard(card) === (card.row === 'payoff'), `${card.id}: a weapon band's payoff row, and only it, is verbs`);
   }
 
-  // Every lean × verb, through the real cards and a real progress: the verb's
-  // sentence follows the active lean, three of nine read pure.
   const base = lineage.forms.find((f) => f.tier === 1)!.recipeId;
-  let pure = 0;
-  for (const verbLane of lineage.lanes) {
-    const verbCardReal = band.find((c) => c.lane === verbLane && c.row === 'payoff')!;
-    for (const leanLane of lineage.lanes) {
-      const leanCardReal = band.find((c) => c.lane === leanLane && c.row === 'stat')!;
+  const pure = packetPurePair(verb.lane, 1)!;
+  for (const lean of leans) {
+    // The lean's PAYLOAD lane: none for Attack and Speed, the verb's own for Effect.
+    const payloadLane = leanPayloadLane(lean);
+    assert(lean.leanKind === 'effect' ? payloadLane === verb.lane : payloadLane === undefined,
+      `${lean.id}: ${lean.leanKind} names ${payloadLane ?? 'no'} payload lane`);
+    for (let rank = 1; rank <= MAX_LEAN_RANK; rank++) {
+      t1Cells += 1;
+      const label = `${lineage.id} ${lean.leanKind} rank ${rank} × ${verb.id}`;
       const tree: LineageProgress = {
-        ownedCards: [leanCardReal.id, verbCardReal.id],
-        active: { stat: leanCardReal.id, payoff: verbCardReal.id },
+        ownedCards: [lean.id, verb.id],
+        active: { stat: lean.id, payoff: verb.id },
         ownedForms: [base], wornForm: base,
+        ranks: { [lean.id]: rank },
       };
-      const sentence = cardSentence(verbCardReal, tree);
-      assert(sentence === verbSentence(verbLane, leanLane), `${verbCardReal.id} with ${leanLane}: cardSentence`);
-      assert(composedSentence(lineage, tree) === sentence, `${lineage.id}: composedSentence is the active verb's`);
-      if (sentence === pureSentenceText(verbLane)) pure += 1;
-      const resolved = resolveLineageCards(lineage, tree).find((c) => c.card.id === verbCardReal.id)!;
-      assert(resolved.composition?.leanLane === leanLane, `${verbCardReal.id}: composed against ${leanLane}`);
+      assert(leanLaneFor(lineage, tree) === payloadLane, `${label}: leanLaneFor`);
+      const resolved = resolveLineageCards(lineage, tree);
+      const resolvedVerb = resolved.find((c) => c.card.id === verb.id)!;
+      const resolvedLean = resolved.find((c) => c.card.id === lean.id)!;
+      // The verb fires its own moment and reads its PURE pair under every T1 lean.
+      assert(resolvedVerb.composition?.pure === true && resolvedVerb.composition.verbLane === verb.lane,
+        `${label}: the fixed verb reads its pure pair`);
+      assert(resolvedVerb.trigger?.kind === pure.trigger.kind && resolvedVerb.trigger.n === pure.trigger.n
+        && resolvedVerb.trigger.capMs === pure.trigger.capMs, `${label}: the verb's own moment`);
+      assert(resolvedVerb.payoff?.kind === pure.payoff.kind, `${label}: the verb's own pure payload`);
+      // The lean resolves at its rank: rank I's number times the rank's scale.
+      const value = Object.values(resolvedLean.statEffects ?? {})[0]!;
+      const expected = Math.round(LEAN_RANK_ONE[lean.leanKind!] * LEAN_RANK_VALUE_SCALE[rank - 1]! * 1000) / 1000;
+      assert(Math.abs(value - expected) < 1e-9 && resolvedLean.rank === rank, `${label}: lean value ${value} ≠ ${expected}`);
+      // An Effect that IS the payload's size scales the verb's payload by the rank;
+      // every other lean leaves the payload at its base size.
+      const scaled = { ...pure.payoff };
+      if (cardStatKey(lean) === 'payloadScale') scalePayloadSize(scaled, 1 + expected);
+      assert(JSON.stringify(resolvedVerb.payoff) === JSON.stringify(scaled),
+        `${label}: payload ${JSON.stringify(resolvedVerb.payoff)} ≠ ${JSON.stringify(scaled)}`);
+      // The sentence follows the numbers, and the halves join to it.
+      const sentence = cardSentence(verb, tree);
+      const parts = composedSentenceParts(lineage, tree);
+      assert(parts !== undefined && parts.pure && parts.momentLane === verb.lane && parts.payloadLane === verb.lane,
+        `${label}: the halves are the verb's lane, pure`);
+      assert(composedSentence(lineage, tree) === sentence && `${parts!.moment} ${parts!.payload}` === sentence,
+        `${label}: the halves join to "${sentence}"`);
+      assert(sentence === pureSentenceText(verb.lane, 1, { trigger: pure.trigger, payoff: scaled }),
+        `${label}: "${sentence}"`);
+      // A lean's own line, at its rank.
+      const line = cardSentence(lean, tree);
+      // A stat line ("+8% Attack."), the slow's line, or a reservoir's ("Your poison …").
+      assert(typeof line === 'string' && /^(\+|Every hit |Your )/.test(line) && line.endsWith('.'),
+        `${label}: lean line "${line}"`);
+      assert(cardSentence(lean, tree, { rank: 1 }) === cardSentence(lean, { ...tree, ranks: { [lean.id]: 1 } }),
+        `${label}: a rank preview reads as that rank`);
+      // The payload scale is never a character stat.
+      const active = resolveActiveLineages({ equipment: { ...emptyEquipment(), weapon: base }, lineages: { [lineage.id]: tree } });
+      assert(active.statEffects.payloadScale === undefined, `${label}: payloadScale never reaches the stat rebuild`);
     }
   }
-  assert(pure === 3, `${lineage.id}: three of nine real pairs read pure, got ${pure}`);
+}
+assert(t1Cells === 45, `five weapons × three leans × three ranks, got ${t1Cells}`);
+
+// The numbers the page reads, at today's provisional values (design §26.1).
+{
+  const rapier1 = LINEAGE_DATABASE.get('rapier')!;
+  const tree = (leanId: string, rank: number): LineageProgress => ({
+    ownedCards: [leanId, 'rapier-t1-tempo-payoff'], active: { stat: leanId, payoff: 'rapier-t1-tempo-payoff' },
+    ownedForms: ['flash-rapier'], wornForm: 'flash-rapier', ranks: { [leanId]: rank },
+  });
+  const effect = rapier1.cards.find((c) => c.id === 'rapier-t1-effect')!;
+  const attack = rapier1.cards.find((c) => c.id === 'rapier-t1-attack')!;
+  const speed = rapier1.cards.find((c) => c.id === 'rapier-t1-speed')!;
+  assert(cardSentence(effect, tree(effect.id, 1)) === "+10% to Flurry's second strike.", `${cardSentence(effect, tree(effect.id, 1))}`);
+  assert(cardSentence(effect, tree(effect.id, 3)) === "+20% to Flurry's second strike.", 'Effect rank III');
+  assert(cardSentence(attack, tree(attack.id, 2)) === '+12% Attack.', `${cardSentence(attack, tree(attack.id, 2))}`);
+  assert(cardSentence(speed, tree(speed.id, 3)) === '+16% attack speed.', `${cardSentence(speed, tree(speed.id, 3))}`);
+  assert(composedSentence(rapier1, tree(effect.id, 2)) === 'Every 6th hit strikes again at 115% strength.',
+    `Flurry under Effect II: ${composedSentence(rapier1, tree(effect.id, 2))}`);
+  assert(composedSentence(rapier1, tree(attack.id, 3)) === 'Every 6th hit strikes twice.', 'Flurry under Attack III');
+  // The plate's preview: the same tree read at another rank, or under another lean.
+  assert(composedSentence(rapier1, tree(effect.id, 1), { rank: 3 }) === 'Every 6th hit strikes again at 120% strength.',
+    'a rank preview re-reads the plate');
+  assert(composedSentence(rapier1, tree(attack.id, 1), { leanId: effect.id, rank: 2 })
+    === 'Every 6th hit strikes again at 115% strength.', 'a lean preview re-reads the plate');
+  assert(composedSentence(rapier1, tree(effect.id, 3), { leanId: null }) === 'Every 6th hit strikes twice.',
+    'previewing no lean reads the base pair');
+  const scales = lineagePayloadScales(rapier1, tree(effect.id, 2));
+  assert(scales.tempo === 0.15 && Object.keys(scales).length === 1, `scales ${JSON.stringify(scales)}`);
+
+  const broadsword = LINEAGE_DATABASE.get('broadsword')!;
+  const bEffect = broadsword.cards.find((c) => c.id === 'broadsword-t1-effect')!;
+  const bTree: LineageProgress = {
+    ownedCards: [bEffect.id, 'broadsword-t1-technique-payoff'],
+    active: { stat: bEffect.id, payoff: 'broadsword-t1-technique-payoff' },
+    ownedForms: ['iron-broadsword'], wornForm: 'iron-broadsword', ranks: { [bEffect.id]: 1 },
+  };
+  assert(cardSentence(bEffect, bTree) === "+10% to Set Piece's refund.", `${cardSentence(bEffect, bTree)}`);
+  assert(composedSentence(broadsword, bTree) === 'A landed Technique refunds 55% of its cooldown.',
+    `Set Piece under Effect I: ${composedSentence(broadsword, bTree)}`);
+
+  const dagger = LINEAGE_DATABASE.get('dagger')!;
+  const dEffect = dagger.cards.find((c) => c.id === 'dagger-t1-effect')!;
+  const dAttack = dagger.cards.find((c) => c.id === 'dagger-t1-attack')!;
+  const dTree = (leanId: string): LineageProgress => ({
+    ownedCards: [leanId, 'dagger-t1-affliction-payoff'], active: { stat: leanId, payoff: 'dagger-t1-affliction-payoff' },
+    ownedForms: ['ashbrand-blade'], wornForm: 'ashbrand-blade',
+  });
+  // The Dagger owns a reservoir (its poison): its DoT-potency leans amplify it and
+  // never promise a bleed (design §26.2); a weapon with none keeps the bleed line.
+  assert(cardSentence(dEffect, dTree(dEffect.id)) === 'Your poison is +10% stronger.', `${cardSentence(dEffect, dTree(dEffect.id))}`);
+  const twiceCoated = dagger.cards.find((c) => c.id === 'dagger-t2-affliction-stat')!;
+  const mire: LineageProgress = { ownedCards: [], active: {}, ownedForms: ['ashbrand-blade', 'swamp-mirebrand'], wornForm: 'swamp-mirebrand' };
+  assert(cardSentence(twiceCoated, mire) === 'Your poison is +11.5% stronger.', `Twice-Coated: ${cardSentence(twiceCoated, mire)}`);
+  const deeperBrew = LINEAGE_DATABASE.get('rapier')!.cards.find((c) => c.id === 'rapier-t2-affliction-stat')!;
+  const needle: LineageProgress = { ownedCards: [], active: {}, ownedForms: ['flash-rapier', 'gale-needle'], wornForm: 'gale-needle' };
+  assert(/bleeds/.test(cardSentence(deeperBrew, needle) ?? ''), `Deeper Brew (no reservoir) keeps the bleed: ${cardSentence(deeperBrew, needle)}`);
+  // An Attack lean never turns the Dagger's verb into another lane's payload.
+  assert(dAttack.lane === 'control' && leanLaneFor(dagger, dTree(dAttack.id)) === undefined, 'the Dagger Attack names no payload');
+  assert(composedSentence(dagger, dTree(dAttack.id)) === 'Hitting an afflicted target doubles its affliction.',
+    `Into the Wound under Attack: ${composedSentence(dagger, dTree(dAttack.id))}`);
+
+  const hammer = LINEAGE_DATABASE.get('hammer')!;
+  const hEffect = hammer.cards.find((c) => c.id === 'hammer-t1-effect')!;
+  const hSpeed = hammer.cards.find((c) => c.id === 'hammer-t1-speed')!;
+  const easyPrey = hammer.cards.find((c) => c.id === 'hammer-t1-control-payoff')!;
+  assert(easyPrey.name === 'Easy Prey', 'the Hammer verb is Easy Prey');
+  assert(cardSentence(hEffect, { ownedCards: [], active: {}, ownedForms: ['heavy-hammer'], wornForm: 'heavy-hammer' })
+    === 'Every hit slows its target by 10% until your next swing.', 'the Hammer Effect is its slow');
+  // The Hammer's Effect is the verb's hold source; under Speed the page says it needs one.
+  const hTree = (leanId: string): LineageProgress => ({
+    ownedCards: [leanId, easyPrey.id], active: { stat: leanId, payoff: easyPrey.id },
+    ownedForms: ['heavy-hammer'], wornForm: 'heavy-hammer',
+  });
+  const underEffect = resolveLineageCards(hammer, hTree(hEffect.id)).find((c) => c.card.id === easyPrey.id)!;
+  const underSpeed = resolveLineageCards(hammer, hTree(hSpeed.id)).find((c) => c.card.id === easyPrey.id)!;
+  assert(underEffect.composition?.needs === undefined, 'Easy Prey under Effect needs nothing (the lean slows)');
+  assert(underSpeed.composition?.needs === 'slow', 'Easy Prey under Speed needs a slow');
 }
 
-// The Rapier's names are the approved weapon-page mockup's.
+// The Effect's payload scale survives the gate (a gate never makes a card read
+// smaller): absorbed into the T2 form, the rank the player owns still scales its
+// lane's payload — the T2 verb's pure echo, and that payload on another T2 verb.
 {
-  const names = Object.fromEntries(rapier.cards.filter((c) => c.tier === 1).map((c) => [c.id, c.name]));
-  assert(names['rapier-t1-tempo-stat'] === 'Quick Wrist', 'Rapier tempo lean');
-  assert(names['rapier-t1-affliction-stat'] === 'Envenomed', 'Rapier affliction lean');
-  assert(names['rapier-t1-engagement-stat'] === 'Keen Edge', 'Rapier engagement lean');
-  assert(names['rapier-t1-tempo-payoff'] === 'Flurry', 'Rapier tempo verb');
-  assert(names['rapier-t1-affliction-payoff'] === 'Venom Point', 'Rapier affliction verb');
-  assert(names['rapier-t1-engagement-payoff'] === 'Opening Lunge', 'Rapier engagement verb');
+  const rapierT2 = LINEAGE_DATABASE.get('rapier')!;
+  const tree: LineageProgress = {
+    ownedCards: ['rapier-t1-effect', 'rapier-t2-tempo-payoff'],
+    active: { stat: 'rapier-t1-effect', payoff: 'rapier-t2-tempo-payoff' },
+    ownedForms: ['flash-rapier', 'gale-needle'], wornForm: 'gale-needle',
+    ranks: { 'rapier-t1-effect': 2 },
+  };
+  const verb = resolveLineageCards(rapierT2, tree).find((c) => c.card.id === 'rapier-t2-tempo-payoff')!;
+  const expected = { ...packetPurePair('tempo', 2)!.payoff };
+  scalePayloadSize(expected, 1.15);
+  assert(JSON.stringify(verb.payoff) === JSON.stringify(expected),
+    `the absorbed Effect II scales the T2 echo: ${JSON.stringify(verb.payoff)} ≠ ${JSON.stringify(expected)}`);
+  assert(verb.payoff!.magnitude > packetPurePair('tempo', 2)!.payoff.magnitude, 'bigger than the bare T2 echo');
+  const active = resolveActiveLineages({ equipment: { ...emptyEquipment(), weapon: 'gale-needle' }, lineages: { rapier: tree } });
+  assert(active.absorbed.length === 1 && active.absorbed[0]!.rank === 2, 'absorbed at the owned rank');
+  assert(active.statEffects.payloadScale === undefined, 'and still never a character stat');
 }
+
+// The two-colour halves of every composed sentence join to it, at every tier.
+for (const verb of WEAPON_PACKET_IDS) {
+  for (const lean of [undefined, ...WEAPON_PACKET_IDS]) {
+    const composed = composeVerb(verb, lean)!;
+    const parts = compositionParts(composed)!;
+    const sentence = verbSentence(verb, lean)!;
+    assert(`${parts.moment} ${parts.payload}` === sentence, `${verb}×${lean ?? 'none'}: halves "${parts.moment}" + "${parts.payload}"`);
+    assert(parts.momentLane === verb, `${verb}×${lean ?? 'none'}: the moment is the verb's colour`);
+    assert(parts.payloadLane === (composed.pure ? verb : lean), `${verb}×${lean ?? 'none'}: the payload is the lean's colour`);
+    assert(!/[|]/.test(sentence) && parts.moment.length > 0 && parts.payload.endsWith('.'),
+      `${verb}×${lean ?? 'none'}: the split marker never renders`);
+  }
+  const pureParts = pureSentenceParts(verb)!;
+  assert(pureParts.moment.length > 0, `${verb}: the pure sentence authors its split`);
+}
+assert(compositionParts(composeVerb('technique', 'tempo')!)!.moment === 'When a Technique lands,',
+  'a clause moment keeps its comma in the moment half');
 
 // A verb the player owns with NO lean slotted reads, and fires, its pure pair.
 {
@@ -383,9 +537,9 @@ for (const lineage of lineagesForSlot('weapon')) {
     let pure = 0;
     for (const verbLane of lineage.lanes) {
       const verbCard = band.find((c) => c.lane === verbLane && c.row === 'payoff');
-      const t1Verb = lineage.cards.find((c) => c.tier === 1 && c.lane === verbLane && c.row === 'payoff');
       assert(verbCard && isVerbCard(verbCard), `${lineage.id} T${tier}: one ${verbLane} VERB`);
-      assert(t1Verb, `${lineage.id}: a T1 ${verbLane} verb to compare against`);
+      // Compared against the T1 PAIR (the packet's T1 numbers), not a T1 card: only
+      // one verb per weapon is a T1 card since design §26.1.
       for (const leanLane of [undefined, ...lineage.lanes]) {
         const t1 = composeVerb(verbLane, leanLane, 1)!;
         const tn = composeVerb(verbLane, leanLane, tier)!;
@@ -477,16 +631,18 @@ for (const [verb, lean, expected] of T2_SHEET) {
 
 {
   // The T2 leans, including the two that SEED a condition (wave-1 A): every T2
-  // lean's stat is at least its T1 lean's (the depth climbs with the tier), while
-  // the condition's own duration is a shape and never does.
+  // lean is its lane's LANE lean (design §26.1: "the lane-named leans … are the T2
+  // lean row"), and its stat is at least that lane's T1 unit (the depth climbs with
+  // the tier), while the condition's own duration is a shape and never does.
   for (const lineage of lineagesForSlot('weapon')) {
     for (const lane of lineage.lanes) {
-      const t1 = lineage.cards.find((c) => c.tier === 1 && c.row === 'stat' && c.lane === lane)!;
       const t2 = lineage.cards.find((c) => c.tier === 2 && c.row === 'stat' && c.lane === lane)!;
-      const a = Object.entries(resolveLineageCard(t1, lineage).statEffects ?? {});
+      assert(!t2.leanKind, `${t2.id}: a T2 lean is lane-named, not one of the ranked trio`);
       const b = Object.entries(resolveLineageCard(t2, lineage).statEffects ?? {});
-      assert(a.length === 1 && b.length === 1 && a[0]![0] === b[0]![0], `${lineage.id} ${lane}: the T2 lean scales the T1 lean's stat`);
-      assert(b[0]![1] >= a[0]![1], `${lineage.id} ${lane}: T2 lean ${b[0]![1]} < T1 ${a[0]![1]}`);
+      const key = cardStatKey(t2);
+      const t1Unit = statRowValue({ statKey: key, tier: 1, lane });
+      assert(b.length === 1 && b[0]![0] === key, `${lineage.id} ${lane}: the T2 lean scales its lane's stat`);
+      assert(b[0]![1] >= t1Unit, `${lineage.id} ${lane}: T2 lean ${b[0]![1]} < its lane's T1 unit ${t1Unit}`);
     }
   }
   assert(LEAN_CONDITION_NUMBERS.control?.durationMs === 1_500 && LEAN_CONDITION_NUMBERS.affliction?.durationMs === 4_000,

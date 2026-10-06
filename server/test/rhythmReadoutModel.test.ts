@@ -24,13 +24,18 @@ import {
   type RhythmFiring,
 } from "@mmo-idle/shared";
 import {
+  BLOCKED_MARK,
   FRAME_RING_COLOR,
   READY_MARK,
   SPENT_MARK,
+  awayText,
   cardWordFor,
   deriveRhythmRings,
   newlyReady,
   readoutBuffIds,
+  ringShortName,
+  ringState,
+  ringStateText,
   type RhythmInput,
 } from "../../client/src/hud/rhythmReadoutModel";
 
@@ -64,22 +69,27 @@ function buff(id: string, over: Partial<PlayerBuff> = {}): PlayerBuff {
 }
 
 const FLURRY = "rapier-t1-tempo-payoff";
-const VENOM_POINT = "rapier-t1-affliction-payoff";
-const OPENING_LUNGE = "rapier-t1-engagement-payoff";
+// Since design §26.1 (legibility run) the Rapier's one T1 verb is Flurry; its
+// Affliction and Engagement verbs (and a lean of another lane composing with a
+// verb) are T2 cards, read on the Gale Needle with the verb's own firing only.
+const VENOM_POINT = "rapier-t2-affliction-payoff";
+const OPENING_LUNGE = "rapier-t2-engagement-payoff";
+const t2Verb = (payoff: string, stat?: string): RhythmFiring[] =>
+  rapierFirings({ payoff, ...(stat ? { stat } : {}) }, "gale-needle").filter((f) => f.key === payoff);
 
 // ── Which cards get a ring ────────────────────────────────────────────────────
 {
-  assert(rapierFirings({ stat: "rapier-t1-tempo-stat" }).length === 0, "a lean alone has no rhythm");
-  const [flurry] = rapierFirings({ stat: "rapier-t1-tempo-stat", payoff: FLURRY });
+  assert(rapierFirings({ stat: "rapier-t1-speed" }).length === 0, "a lean alone has no rhythm");
+  const [flurry] = rapierFirings({ stat: "rapier-t1-speed", payoff: FLURRY });
   assert(flurry?.key === FLURRY && flurry.name === "Flurry", "the verb is the ring, named for the card");
   assert(flurry.shape === "count" && flurry.trigger.n === 6, "Flurry counts toward its 6th hit");
   assert(flurry.lane === "tempo" && flurry.payloadLane === "tempo", "pure: its own lane, its own payload");
-  const [composed] = rapierFirings({ stat: "rapier-t1-affliction-stat", payoff: FLURRY });
-  assert(composed.payloadLane === "affliction", "with Envenomed, the payload (and its glyph key) is Affliction's");
+  const [composed] = t2Verb("rapier-t2-tempo-payoff", "rapier-t2-affliction-stat");
+  assert(composed.payloadLane === "affliction", "with Deeper Brew, the payload (and its glyph key) is Affliction's");
   assert(composed.lane === "tempo", "but the ring stays in the verb's lane colour");
 
-  assert(rapierFirings({ payoff: VENOM_POINT })[0]?.shape === "cap", "the Affliction moment is capped");
-  assert(rapierFirings({ payoff: OPENING_LUNGE })[0]?.shape === "latch-body", "the Engagement moment latches per body");
+  assert(t2Verb(VENOM_POINT)[0]?.shape === "cap", "the Affliction moment is capped");
+  assert(t2Verb(OPENING_LUNGE)[0]?.shape === "latch-body", "the Engagement moment latches per body");
 
   // A worn T2 form adds its capstone, ranked after the verb.
   const withCapstone = rapierFirings({ payoff: FLURRY }, "gale-needle");
@@ -105,7 +115,7 @@ const OPENING_LUNGE = "rapier-t1-engagement-payoff";
 
 // ── cap: ready, or the cap's clock against the server clock ──────────────────
 {
-  const firings = rapierFirings({ payoff: VENOM_POINT });
+  const firings = t2Verb(VENOM_POINT);
   const now = 1_000_000;
   const cooling = deriveRhythmRings(input({ firings, serverNow: now, moments: { [VENOM_POINT]: { capUntil: now + 2_000 } } }))[0];
   assert(!cooling.ready && cooling.text === "2.0", `a running cap shows its seconds, got ${cooling.text}`);
@@ -119,7 +129,7 @@ const OPENING_LUNGE = "rapier-t1-engagement-payoff";
 
 // ── latch per body: ready for the CURRENT target until spent ─────────────────
 {
-  const firings = rapierFirings({ payoff: OPENING_LUNGE });
+  const firings = t2Verb(OPENING_LUNGE);
   const moments = { [OPENING_LUNGE]: { spentOn: ["m1"] } };
   const spent = deriveRhythmRings(input({ firings, moments, attackTargetId: "m1" }))[0];
   assert(!spent.ready && spent.text === SPENT_MARK && spent.fill === 0, "spent on this target");
@@ -132,7 +142,7 @@ const OPENING_LUNGE = "rapier-t1-engagement-payoff";
 // ── carry and pulse ──────────────────────────────────────────────────────────
 {
   const carry: RhythmFiring = {
-    key: "axe-t1-kill-chain-payoff", name: "Next Head", lane: "kill-chain",
+    key: "axe-t2-kill-chain-payoff", name: "Deeper Frenzy", lane: "kill-chain",
     trigger: { kind: "kill", carry: true }, shape: "carry", payoff: "heal-and-load",
     payloadLane: "kill-chain", source: "card",
   };
@@ -206,6 +216,66 @@ const OPENING_LUNGE = "rapier-t1-engagement-payoff";
   assert(newlyReady(prev, five).join() === FLURRY, "4 → 5 of 6 becomes ready: one flash");
   assert(newlyReady(new Map(five.map((r) => [r.key, r.ready])), five).length === 0, "staying ready does not flash again");
   assert(newlyReady(new Map(), five).length === 0, "a ring seen for the first time does not flash");
+}
+
+// ── The five states (design §26.4): clock, coming, ready, blocked, away ──────
+// Synthetic firings, so the states are pinned whatever the card data says.
+{
+  const afflicted: RhythmFiring = {
+    key: "test-into-the-wound", name: "Into the Wound", lane: "affliction",
+    trigger: { kind: "hit-afflicted", capMs: 5_000 }, shape: "cap", payoff: "redose",
+    payloadLane: "affliction", source: "card",
+  };
+  const held: RhythmFiring = {
+    key: "test-easy-prey", name: "Easy Prey", lane: "control",
+    trigger: { kind: "hit-held", capMs: 5_000 }, shape: "cap", payoff: "stun",
+    payloadLane: "control", source: "card",
+  };
+  const now = 1_000_000;
+  const ring = (firing: RhythmFiring, over: Partial<RhythmInput>) =>
+    deriveRhythmRings(input({ firings: [firing], serverNow: now, ...over }))[0];
+
+  // Named: the short name under the ring, the full name for the tooltip.
+  const named = ring(afflicted, {});
+  assert(named.label === "Wound" && named.name === "Into the Wound", `short name 'Wound', got '${named.label}'`);
+  assert(ringShortName("Easy Prey") === "Easy Prey" && ringShortName("Chopping Rhythm") === "Rhythm"
+    && ringShortName("Flurry") === "Flurry", "short names keep a short name whole, else its last word");
+
+  // clock: a running cap, more than a second out.
+  const clock = ring(afflicted, { moments: { [afflicted.key]: { capUntil: now + 3_000 } }, targetStatusIds: ["poison-dagger-burn"] });
+  assert(ringState(clock) === "clock" && !clock.coming && clock.text === "3.0", `clock, got ${ringState(clock)}`);
+
+  // coming: the clock's last second brightens.
+  const coming = ring(afflicted, { moments: { [afflicted.key]: { capUntil: now + 800 } }, targetStatusIds: ["poison-dagger-burn"] });
+  assert(ringState(coming) === "coming" && coming.coming && coming.text === "0.8", `coming, got ${ringState(coming)}`);
+  assert(/coming/i.test(ringStateText(coming)), "and says so");
+
+  // ready: the cap has cleared and the target carries an affliction.
+  const ready = ring(afflicted, { moments: { [afflicted.key]: {} }, targetStatusIds: ["lineage.bleed"] });
+  assert(ringState(ready) === "ready" && ready.ready && ready.text === READY_MARK, `ready, got ${ringState(ready)}`);
+
+  // blocked: the condition is absent on the current target — dashed, never ready.
+  const blocked = ring(afflicted, { moments: { [afflicted.key]: {} }, targetStatusIds: ["ability-slowed"] });
+  assert(ringState(blocked) === "blocked" && blocked.blocked && !blocked.ready && blocked.text === BLOCKED_MARK,
+    `an afflicted-moment verb on an un-afflicted target is blocked, got ${ringState(blocked)}`);
+  assert(/not afflicted/.test(ringStateText(blocked)), "and the tooltip says why");
+  const heldBlocked = ring(held, { moments: { [held.key]: {} }, targetStatusIds: ["poison-dagger-burn"] });
+  assert(ringState(heldBlocked) === "blocked" && /not held/.test(ringStateText(heldBlocked)), "a held-moment verb waits for a hold");
+  const heldReady = ring(held, { moments: { [held.key]: {} }, targetStatusIds: ["ability-slowed"] });
+  assert(ringState(heldReady) === "ready", "a slowed target unblocks it");
+  const noTarget = ring(afflicted, { moments: { [afflicted.key]: {} }, targetStatusIds: null });
+  assert(ringState(noTarget) === "ready", "with no target nothing blocks the ring");
+  const flurry = deriveRhythmRings(input({ firings: rapierFirings({ payoff: FLURRY }), targetStatusIds: [] }))[0];
+  assert(!flurry.blocked, "an unconditional moment is never blocked");
+  assert(!newlyReady(new Map([[afflicted.key, false]]), [blocked]).length, "a blocked ring never flashes ready");
+
+  // away: firings while the tab was hidden, on whatever state the ring is in.
+  const away = ring(afflicted, { moments: { [afflicted.key]: { capUntil: now + 3_000, away: 2 } }, targetStatusIds: ["dot"] });
+  assert(away.away === 2 && ringState(away) === "clock", "the away count rides on the clock");
+  assert(awayText(away) === "Fired 2 times while you were away", `away text, got ${awayText(away)}`);
+  assert(awayText(ready) === undefined && ready.away === 0, "no away count, no away text");
+  const frame = deriveRhythmRings(input({ buffs: [buff("frame-charge", { stacks: 1, durationPct: 25 })] }))[0];
+  assert(frame.away === 0 && !frame.blocked && ringState(frame) === "clock", "the frame ring keeps its bank, never blocked");
 }
 
 // ── the floating word ────────────────────────────────────────────────────────

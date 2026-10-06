@@ -13,29 +13,30 @@
  * enumerates them so Contagion, Detonate and the stack-count rune condition see
  * them and sum the sources.
  *
+ * ONE LINEAGE BLEED (design §26.2). The verbs-that-fire run split the lineage
+ * bleed in two — the heavy payload refreshed, the Affliction lean's light bleed
+ * was a reservoir — and `poison-stack` kept a third record of its own. A target
+ * showed up to three records for one weapon. They are now ONE id,
+ * {@link LINEAGE_BLEED_ID}, a reservoir every source ADDS to
+ * (`lineageAffliction.ts`), and on a weapon that owns a reservoir of its own none
+ * of them is written at all: they add to that reservoir instead.
+ *
  * A leaf module so the tick driver, the marker invariants and the card runtime can
  * all import it without a cycle.
  */
+import { LINEAGE_BLEED_STATUS_ID } from '@mmo-idle/shared';
 
 /** The cadence root's Hemorrhage, stacks = remaining ticks. */
 export const CADENCE_BLEED_ID = 'cadence-hemorrhage';
 
-/** A lineage card's `hemorrhage` payoff, stacks = remaining ticks. */
-export const LINEAGE_BLEED_ID = 'lineage.hemorrhage';
-
-/** A lineage card's `poison-stack` payoff, stacks = intensity. */
-export const LINEAGE_POISON_ID = 'lineage.poison';
-
 /**
- * The Affliction LEAN's light bleed (design §24.9), stacks = remaining ticks.
- *
- * Its own id rather than `LINEAGE_BLEED_ID` so the two never meet: the heavy
- * payload keeps its ordinary-refresh rule (`lineageDots.test.ts`) and the client's
- * heavy-drip look keeps reading only the heavy record, while this one is a
- * reservoir every landed hit ADDS to — a light bleed never overwrites, truncates
- * or extends a heavy one that is still owed, and the heavy one never erases it.
+ * THE lineage bleed (design §26.2), stacks = remaining ticks. Every lineage
+ * damage-over-time source on a weapon with no reservoir — the Affliction lean's
+ * light bleed, the heavy `hemorrhage` payload, the `redose`, `poison-stack` —
+ * adds what it owes to this one record. Retired ids: `lineage.hemorrhage`,
+ * `lineage.lean-bleed`, `lineage.poison`.
  */
-export const LEAN_BLEED_ID = 'lineage.lean-bleed';
+export const LINEAGE_BLEED_ID = LINEAGE_BLEED_STATUS_ID;
 
 /**
  * How a bleed's `stacks` field behaves, carried in the effect's own data under
@@ -44,15 +45,15 @@ export const LEAN_BLEED_ID = 'lineage.lean-bleed';
  * - `ticks` — one stack is one remaining tick; the driver consumes one per tick
  *   and the effect is pruned at zero. The target frame reads it as a countdown.
  * - `intensity` — stacks multiply the per-tick damage and are not consumed; the
- *   effect ends when `remainingMs` runs out, like any other timed debuff.
+ *   effect ends when `remainingMs` runs out, like any other timed debuff. No
+ *   current writer: `poison-stack` was its only one, and since design §26.2 it
+ *   adds to the one reservoir like every other lineage DoT.
  */
 export type BleedMode = 'ticks' | 'intensity';
 
 export const BLEED_EFFECT_IDS: readonly string[] = [
   CADENCE_BLEED_ID,
   LINEAGE_BLEED_ID,
-  LINEAGE_POISON_ID,
-  LEAN_BLEED_ID,
 ];
 
 /** Whether this monster state carries any bleed the driver owns. */

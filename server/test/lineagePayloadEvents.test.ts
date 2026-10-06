@@ -18,7 +18,7 @@
 import {
   ABILITY_DATABASE,
   ABILITY_CONTROL_RESIST_EFFECT_ID,
-  ABILITY_ROOT_EFFECT_ID,
+  LINEAGE_ROOT_STATUS_ID,
   GAME_CONFIG,
   applyStatusEffect,
   baseRecoveryForTier,
@@ -199,7 +199,7 @@ const EVERY_HIT: LineageTrigger = { kind: 'hit-nth', n: 1 };
   const target = monster();
   hit(player, target);
   const fx = cardFxOf(events());
-  const root = getStatusEffect(target.tracksCombat, ABILITY_ROOT_EFFECT_ID);
+  const root = getStatusEffect(target.tracksCombat, LINEAGE_ROOT_STATUS_ID);
   assert(fx.length === 1 && fx[0].durationMs === 2_000 && root?.remainingMs === 2_000, 'the shackle holds the root\'s 2 s');
 }
 
