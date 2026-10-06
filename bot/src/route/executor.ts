@@ -19,7 +19,10 @@ import {
   capstoneMaterialName,
   formGateBiomeLevel,
   formGateMastery,
+  cardRank,
   lineageCardPrice,
+  maxCardRank,
+  rankNumeral,
   lineageGateCost,
   resolveLineageCard,
   NODE_BIOMES,
@@ -1443,68 +1446,80 @@ export class RouteExecutor {
     if (!lineage) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown lineage in route", { step });
     const card = lineage.cards.find((c) => c.id === step.cardId);
     if (!card) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown lineage card in route", { step });
-    if (obs.self?.lineages[step.lineageId]?.ownedCards.includes(step.cardId)) return;
+    // A RANKED card (the T1 lean trio, design §26.1) is bought one rank at a time
+    // through the same intent, each rank priced and gated at its own rank; every
+    // other card has one rank, and owning it is the end.
+    const target = Math.min(Math.max(1, step.rank ?? 1), maxCardRank(card));
+    const owned = (): number => cardRank(obs.self?.lineages[step.lineageId], step.cardId);
+    if (owned() >= target) return;
 
     const farmNode = this.lineageFarmNode(step.farmAt, lineage.homeBiome, card.lane);
 
-    const missing = (): Record<string, number> => {
-      const out: Record<string, number> = {};
-      const self = obs.self;
-      const { cost } = lineageCardPrice({ lineage, card, lineages: self?.lineages });
-      for (const [type, amount] of Object.entries(cost.essence)) {
-        const short = (amount ?? 0) - obs.essence(type as EssenceType);
-        if (short > 0) out[`essence.${type}`] = short;
-      }
-      for (const [packet, amount] of Object.entries(cost.shards)) {
-        const short = (amount ?? 0) - (self?.shards[packet as PacketId] ?? 0);
-        if (short > 0) out[`shard.${packet}`] = short;
-      }
-      // The band's own gates. Both are biome mastery, which is why one farm loop
-      // answers them: the row's level in the home biome, and the account-wide GM
-      // band the +1..+5 ladder already uses.
-      const resolved = resolveLineageCard(card, lineage);
-      const levelShort = resolved.requiredBiomeLevel - obs.biomeLevel(lineage.homeBiome);
-      if (levelShort > 0) out[`biomeLevel.${lineage.homeBiome}`] = levelShort;
-      const gmShort = resolved.requiredGlobalMastery - (self?.globalMastery ?? 0);
-      if (gmShort > 0) out.globalMasteryNeeded = gmShort;
-      return out;
-    };
+    while (owned() < target) {
+      const buying = owned() + 1;
+      const what = buying > 1 ? `card:${step.cardId}:rank-${buying}` : `card:${step.cardId}`;
+      const missing = (): Record<string, number> => {
+        const out: Record<string, number> = {};
+        const self = obs.self;
+        const { cost } = lineageCardPrice({ lineage, card, lineages: self?.lineages, rank: buying });
+        for (const [type, amount] of Object.entries(cost.essence)) {
+          const short = (amount ?? 0) - obs.essence(type as EssenceType);
+          if (short > 0) out[`essence.${type}`] = short;
+        }
+        for (const [packet, amount] of Object.entries(cost.shards)) {
+          const short = (amount ?? 0) - (self?.shards[packet as PacketId] ?? 0);
+          if (short > 0) out[`shard.${packet}`] = short;
+        }
+        // The band's own gates. Both are biome mastery, which is why one farm loop
+        // answers them: the row's level in the home biome, and the account-wide GM
+        // band (a rank's own: design §26.1 puts ranks II and III 4 and 8 above the lean).
+        const resolved = resolveLineageCard(card, lineage, { rank: buying });
+        const levelShort = resolved.requiredBiomeLevel - obs.biomeLevel(lineage.homeBiome);
+        if (levelShort > 0) out[`biomeLevel.${lineage.homeBiome}`] = levelShort;
+        const gmShort = resolved.requiredGlobalMastery - (self?.globalMastery ?? 0);
+        if (gmShort > 0) out.globalMasteryNeeded = gmShort;
+        return out;
+      };
 
-    if (Object.keys(missing()).length > 0) {
-      if (!farmNode) {
-        const bossBiomes = bossBiomesDroppingShardAtTier1(card.lane);
-        throw new StallError(
-          bossBiomes.length > 0
-            ? `no tier-1 node pays the ${card.lane} shard: it drops only from the `
-              + `${bossBiomes.join("/")} boss, and this route has no boss step for it`
-            : `no tier-1 node pays the ${card.lane} shard this card costs`,
-          { step, missing: missing() },
+      if (Object.keys(missing()).length > 0) {
+        if (!farmNode) {
+          const bossBiomes = bossBiomesDroppingShardAtTier1(card.lane);
+          throw new StallError(
+            bossBiomes.length > 0
+              ? `no tier-1 node pays the ${card.lane} shard: it drops only from the `
+                + `${bossBiomes.join("/")} boss, and this route has no boss step for it`
+              : `no tier-1 node pays the ${card.lane} shard this card costs`,
+            { step, missing: missing() },
+          );
+        }
+        await this.farmBlocked(
+          farmNode,
+          what,
+          () => Object.keys(missing()).length === 0,
+          () => missingToReasons(missing(), obs),
+          true,
         );
       }
-      await this.farmBlocked(
-        farmNode,
-        `card:${step.cardId}`,
-        () => Object.keys(missing()).length === 0,
-        () => missingToReasons(missing(), obs),
-        true,
+
+      const result = await this.mutate(() => intents.unlockLineageCard(step.lineageId, step.cardId));
+      if (!result.success) {
+        throw new StallError(`lineage card rejected: ${result.reason ?? "unknown"}`, { step, rank: buying });
+      }
+      await this.waitUntil(
+        () => owned() >= buying,
+        { timeoutMs: 30_000, what: buying > 1 ? `${step.cardId} rank ${rankNumeral(buying)}` : `${step.cardId} owned` },
       );
-    }
 
-    const result = await this.mutate(() => intents.unlockLineageCard(step.lineageId, step.cardId));
-    if (!result.success) {
-      throw new StallError(`lineage card rejected: ${result.reason ?? "unknown"}`, { step });
+      recorder.emit({
+        kind: "build-change",
+        atMs: recorder.now(),
+        system: "lineage-card",
+        detail: {
+          lineageId: step.lineageId, cardId: step.cardId, lane: card.lane, row: card.row,
+          ...(maxCardRank(card) > 1 ? { rank: buying } : {}),
+        },
+      });
     }
-    await this.waitUntil(
-      () => obs.self?.lineages[step.lineageId]?.ownedCards.includes(step.cardId) ?? false,
-      { timeoutMs: 30_000, what: `${step.cardId} owned` },
-    );
-
-    recorder.emit({
-      kind: "build-change",
-      atMs: recorder.now(),
-      system: "lineage-card",
-      detail: { lineageId: step.lineageId, cardId: step.cardId, lane: card.lane, row: card.row },
-    });
   }
 
   /**
@@ -2741,7 +2756,7 @@ function defaultLabel(step: RouteStep): string {
     case "craftRune":
       return `craft rune ${step.recipeId}`;
     case "unlockCard":
-      return `buy card ${step.cardId}`;
+      return `buy card ${step.cardId}${(step.rank ?? 1) > 1 ? ` to rank ${step.rank}` : ""}`;
     case "setActive":
       return `activate ${step.lineageId} ${step.row} = ${step.cardId ?? "none"}`;
     case "unlockForm":
