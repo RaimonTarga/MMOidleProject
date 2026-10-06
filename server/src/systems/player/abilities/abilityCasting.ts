@@ -272,7 +272,7 @@ export function updateAbilityCasts(world: World, now: number): void {
       // its share off: a resolution that runs before the cooldown is charged
       // reads zero and refunds nothing. Same ordering as the armed path.
       startTechniqueCooldown(world, player, ability);
-      onTechniqueResolved(world, player, ability, { target });
+      onTechniqueResolved(world, player, ability, { target, now });
       // A Cull kill hands Cull its own cooldown back (design §22.8): charged above
       // like every resolve, then refunded, so the HUD hears both samples.
       if (refundsItself) refundTechniqueCooldown(world, player, ability);

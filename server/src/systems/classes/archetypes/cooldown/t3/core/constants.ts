@@ -34,12 +34,6 @@ export const ENTROPY_BASE_DMG    = 5;    // base damage per tick at full HP
 export const ENTROPY_DURATION_MS = 8_000;
 export const ENTROPY_TICK_MS     = 1_000;
 
-// Singular Extraction (cooldown-heavy-T3-b)
-// Fallback default; live value authored on the node (cooldown.singular-no-target-ms).
-// The node also applies the CD (-4000ms) and the +1.5× empowered-mult delta that
-// lands the heavy frame (9000ms / 3.5×) at 4000ms / 5.0×.
-export const SINGULAR_NO_TARGET_MS = 4_000; // ms without a target before CD resets
-
 // ── T4 specs (placeholder constants — replaced at the balance pass) ───────────
 
 // Rupture (cooldown-light-T3-c)
@@ -47,8 +41,11 @@ export const RUPTURE_WINDOW_MS      = 2_000; // post-execution 50%-bypass window
 export const RUPTURE_WINDOW_PLATING_MULT = 0.5; // plating multiplier during the window
 export const RUPTURE_DR_PIERCE      = 0.10;  // window: fraction of target DR ignored (node: cooldown.rupture-dr-pierce)
 
-// Reverb (cooldown-balanced-T3-a)
-export const REVERB_BONUS_PER_ATTACK = 0.04; // +4% next-execution damage per attack landed
+// Reverb (cooldown-balanced-T3-a): the execution echoes when its recharge reaches
+// the halfway mark (design §22.5). This share is the design's geometry, not a
+// tuning number; the echo's STRENGTH is authored on the node
+// (`cooldown.reverb-echo-strength`) and deliberately has no fallback here.
+export const REVERB_ECHO_AT_SHARE = 0.5; // of the live recharge still to run
 
 // Patience Paid (cooldown-balanced-T3-c)
 export const PATIENCE_PAID_RAMP_MS  = 7_000; // natural CD; ramp caps here
@@ -68,4 +65,5 @@ export const BEAM_DMG_PER_TICK_MULT = 1.0; // damage per tick = player.attack ×
 export const EC_CHARGE_FX  = 'eternal-cycle-charge';     // per-player charge stacks
 export const TE_BUFF_FX    = 'temporal-extension-buff';  // per-player buff w/ duration / flat damage
 export const BAT_CHARGE_FX = 'battery-charge';           // per-player charge stacks
+export const REVERB_ECHO_FX = 'reverb-echo';             // per-player: an execution echo is due
 export const ENT_DOT_FX    = 'entropy-collapse-dot';     // per-monster DoT

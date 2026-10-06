@@ -239,6 +239,17 @@ function castStrikeFootprintRadius(effect: AbilityEffectSpec): number | undefine
 }
 
 /**
+ * The area a caster's live rank of a `cast-strike` lands on — `undefined` for a
+ * single-target strike (Snipe) and for every other payload (Contagion's spread
+ * is its own, not a strike's). For a blow that RIDES the cast, so it covers
+ * exactly the strike's circle from the one definition above: the Squire's
+ * Destroyer execution across Slam's area (design §22.5).
+ */
+export function castStrikeArea(player: PlayerEntity, ability: AbilityDef): number | undefined {
+  return castStrikeFootprintRadius(techniqueEffect(player, ability));
+}
+
+/**
  * The ground footprint a caster's live rank of `ability` will act on, for the
  * client's wind-up indicator — `undefined` when the cast has no area at all.
  *

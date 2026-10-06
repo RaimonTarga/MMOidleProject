@@ -10,7 +10,7 @@ import {
   getVengeanceDamage,
   getVengeanceBonus,
   getAlignmentPct,
-  getChannelingRemainingPct,
+  getChannelingRemainingPct, getReverbEchoClock, reverbEchoStrength,
   rampFactorFor,
   patienceAttackMax,
   patienceExecutionMax,
@@ -100,13 +100,24 @@ export const COOLDOWN_T3_BUFFS = [
       ? { id: 'cooldown-alignment', label: 'Algn', stacks: 1, durationPct: pct, color: '#cc44ff', logDetail: `+${attackSpeedPct}% attack speed`, values: [{ label: 'Attack speed', value: `+${attackSpeedPct}%`, good: true }] }
       : null;
   }, COOLDOWN_OPTS),
+  // Reverb's echo is a CLOCK, drawn the way the frame window's is (`durationPct`
+  // from a remaining/total pair plus the real `remainingMs`): it runs from the
+  // execution to the halfway mark of the recharge, where the echo lands.
   defineBuff('cooldown-reverb', ({ player }) => {
-    const stored = player.usesCooldown?.reverbStoredBonus ?? 0;
-    if (stored <= 0) return null;
-    const pct = Math.round(stored * 100);
-    // Stack badge doubles as the locked-in bonus % for the next execution.
-    return { id: 'cooldown-reverb', label: 'Reverb', stacks: pct, durationPct: -1, color: '#9b6bff', logDetail: `next execution +${pct}% damage`, values: [{ label: 'Next execution', value: `+${pct}% damage`, good: true }] };
-  }, COOLDOWN_OPTS),
+    const clock = getReverbEchoClock(player);
+    if (!clock) return null;
+    const strengthPct = Math.round(reverbEchoStrength(player) * 100);
+    return {
+      id: 'cooldown-reverb',
+      label: 'Reverb',
+      stacks: 1,
+      durationPct: (clock.remainingMs / clock.totalMs) * 100,
+      remainingMs: clock.remainingMs,
+      color: '#9b6bff',
+      logDetail: `the execution echoes at ${strengthPct}% strength when its recharge is half done`,
+      values: [{ label: 'Echo strength', value: `${strengthPct}% of the execution`, good: true }],
+    };
+  }, { ...COOLDOWN_OPTS, shape: 'circle' }),
   defineBuff('cooldown-rupture', ({ player }) => {
     const pct = getRupturePct(player);
     const platingMult = player.usesSkills.passives['cooldown.rupture-window-plating-mult'] ?? RUPTURE_WINDOW_PLATING_MULT;

@@ -6,10 +6,11 @@ import {
   type UsesCooldown,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../../../../ecs/entity';
+import { resolveExecutionCooldownMs } from '../../cooldownPrototype';
 import {
   OVERDRIVE_BUFF_MS, ALIGNMENT_BUFF_MS, TEMPORAL_MAX_MS,
   PATIENCE_PAID_RAMP_MS, RUPTURE_WINDOW_MS,
-  EC_CHARGE_FX, TE_BUFF_FX, BAT_CHARGE_FX,
+  EC_CHARGE_FX, TE_BUFF_FX, BAT_CHARGE_FX, REVERB_ECHO_FX, REVERB_ECHO_AT_SHARE,
   ETERNAL_CYCLE_FLAT_PER_STACK, ETERNAL_CYCLE_UNLOCK_TIER,
   BATTERY_ATK_PER_STACK, PATIENCE_PAID_ATK_MAX, PATIENCE_PAID_EXEC_MAX,
   VENGEANCE_MULTIPLIER, VENGEANCE_FLOOR,
@@ -101,6 +102,45 @@ export function getVengeanceBonus(player: PlayerEntity): number {
   const mult  = player.usesSkills.passives['cooldown.vengeance-mult']  ?? VENGEANCE_MULTIPLIER;
   const floor = player.usesSkills.passives['cooldown.vengeance-floor'] ?? VENGEANCE_FLOOR;
   return Math.max(floor, Math.round((player.usesCooldown?.vengeanceDamageTaken ?? 0) * mult));
+}
+
+/**
+ * Reverb: the share of the execution's own multiplier its echo lands at — the
+ * node's `cooldown.reverb-echo-strength`, with no fallback (no node, no echo).
+ */
+export function reverbEchoStrength(player: PlayerEntity): number {
+  return Math.max(0, player.usesSkills.passives['cooldown.reverb-echo-strength'] ?? 0);
+}
+
+/**
+ * Reverb: the recharge still to run at the moment the echo is due — the halfway
+ * mark of the LIVE cycle, so whatever changes the recharge (a frame, a relic)
+ * moves the echo with it.
+ */
+export function reverbEchoDueAtMs(player: PlayerEntity): number {
+  return resolveExecutionCooldownMs(player) * REVERB_ECHO_AT_SHARE;
+}
+
+/** Reverb: whether an echo is waiting for the halfway mark. */
+export function reverbEchoPending(player: PlayerEntity): boolean {
+  return getStatusEffect(player.tracksCombat, REVERB_ECHO_FX) !== undefined;
+}
+
+/**
+ * Reverb's clock for the buff bar: how long until the pending echo lands, out of
+ * the half-cycle it waits. Read off the recharge timer itself rather than kept as
+ * a second countdown, so a refund that shortens the recharge (the Knight window,
+ * a Refund kill) moves the clock and the echo together. Null when none is due.
+ */
+export function getReverbEchoClock(
+  player: PlayerEntity,
+): { remainingMs: number; totalMs: number } | null {
+  const cd = player.usesCooldown;
+  if (!cd || !getStatusEffect(player.tracksCombat, REVERB_ECHO_FX)) return null;
+  const dueAtMs = reverbEchoDueAtMs(player);
+  const totalMs = Math.max(1, resolveExecutionCooldownMs(player) - dueAtMs);
+  const remainingMs = Math.max(0, Math.min(totalMs, cd.executionCooldownMs - dueAtMs));
+  return { remainingMs, totalMs };
 }
 
 export function getAlignmentPct(player: PlayerEntity): number {

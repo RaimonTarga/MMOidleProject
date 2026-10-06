@@ -35,6 +35,7 @@ import type { CombatContext } from './engine/combatPipeline';
 import { onAbilityNodeTechniqueLanded } from './abilityNodes';
 import { onAbilityKeystoneResolved, signatureOnTechniqueResolved } from './keystones';
 import { consumeTechniqueWindow, onLineageTechniqueCast } from './lineageCards';
+import { destroyerOnTechniqueResolved } from '../classes/archetypes/cooldown/t3/pipeline/destroyer';
 
 /**
  * A Technique resolved. Fires everything hung off that moment, in the one order
@@ -53,22 +54,32 @@ import { consumeTechniqueWindow, onLineageTechniqueCast } from './lineageCards';
  *  3. **The `technique-cast` lineage cards** (design §22). After the window is
  *     spent, so a card that OPENS a window does not have it eaten by the same
  *     cast that opened it.
- *  4. **The Signature keystone** (design §22) — this Technique counts as the class
+ *  4. **The Squire's Destroyer** (design §22.5) — a cast delivers the primed
+ *     execution to its target or area. (An armed shape already carried it on its
+ *     own hit, decided before the root's multiplier: `t3/pipeline/destroyer.ts`.)
+ *     After the Technique's own payoffs, like the Signature keystone, because the
+ *     execution announces `mechanic-fired` too.
+ *  5. **The Signature keystone** (design §22) — this Technique counts as the class
  *     mechanic firing. Last, because `mechanic-fired` is a louder event than any
  *     one lane: it fires every `mechanic-fired` card the player owns, on any
  *     lineage, and it must see the Technique's own payoffs already applied rather
- *     than racing them.
+ *     than racing them. Skipped when the Destroyer just delivered the execution on
+ *     this cast: the one execution fires once and counts once.
+ *
+ * `now` is the tick's clock, passed by a resolution that may land an attack of
+ * its own (the cast loop's, for the Destroyer's delivery).
  */
 export function onTechniqueResolved(
   world: World,
   player: PlayerEntity,
   ability: AbilityDef,
-  site: { ctx?: CombatContext; target?: MonsterEntity } = {},
+  site: { ctx?: CombatContext; target?: MonsterEntity; now?: number } = {},
 ): void {
   if (ability.slot !== 'technique') return;
   if (site.ctx) consumeTechniqueWindow(player, site.ctx);
   onAbilityNodeTechniqueLanded(world, player, ability, site);
   onAbilityKeystoneResolved(world, player, ability, site);
   onLineageTechniqueCast(world, player, { ...site, abilityId: ability.id });
-  signatureOnTechniqueResolved(world, player, site);
+  const delivered = destroyerOnTechniqueResolved(world, player, ability, site);
+  if (!delivered) signatureOnTechniqueResolved(world, player, site);
 }
