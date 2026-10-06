@@ -892,6 +892,19 @@ export const LEAN_RANK_ONE: Readonly<Record<LeanKind, number>> = {
 };
 
 /**
+ * Effect's rank-I number where the weapon has no mechanic of its own and Effect
+ * scales the fixed verb's PAYLOAD instead (`payloadScale`: the Rapier's and Axe's
+ * echo, the Broadsword's refund). Design §26.5 (2026-10-06): a per-firing payload
+ * fires about one swing in six, so +10% on it reads at a third of Attack's +8% on
+ * every swing (legibility matrix: Broadsword +5.8% vs +11.8%, Rapier +14.4% vs
+ * +19.4%, Axe +12.8% vs +19.1%, with the verb alone at +5.1 / +13.0 / +11.4%).
+ * PROVISIONAL, the designer's: 0.50 — rank I makes the echo half again as big,
+ * rank III doubles it. One number for the three weapons; the matrix re-measures it
+ * in the next run's baseline, and the designer edits it here.
+ */
+export const LEAN_RANK_ONE_PAYLOAD_SCALE = 0.50;
+
+/**
  * What each rank is worth, as a multiple of rank I: "each further rank adds half
  * of rank I again (rank III = 2× rank I)". Index = rank − 1.
  */
@@ -1050,7 +1063,8 @@ export function gateCapstoneAmount(tier: number): number {
  */
 export function leanRankValue(kind: LeanKind, statKey: LineageStatKey, rank: number, tier = 1): number {
   const scale = LEAN_RANK_VALUE_SCALE[clampLeanRank(rank) - 1] ?? 1;
-  return quantizeStat(statKey, LEAN_RANK_ONE[kind] * scale * tierScalar(tier, 'fraction'));
+  const rankOne = kind === 'effect' && statKey === 'payloadScale' ? LEAN_RANK_ONE_PAYLOAD_SCALE : LEAN_RANK_ONE[kind];
+  return quantizeStat(statKey, rankOne * scale * tierScalar(tier, 'fraction'));
 }
 
 /** Global Mastery a ranked card's `rank` asks for: its row's gate plus the rank's offset. */

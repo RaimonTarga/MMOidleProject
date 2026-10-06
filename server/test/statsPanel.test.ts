@@ -134,7 +134,8 @@ const row = (data: ReturnType<typeof buildStatsPanel>, key: string) => {
   }) });
   const flurryRow = row(rapierData, `verb:${flurry.id}`)!;
   const payload = flurryRow.sources.find((s) => s.kind === 'lean');
-  assert.ok(payload && payload.amount === '+10%' && payload.label.includes(effect.name),
+  // +50% at rank I on a payload-scale weapon (design §26.5, parity with Attack).
+  assert.ok(payload && payload.amount === '+50%' && payload.label.includes(effect.name),
     `the Rapier's Effect lean shows as the verb's payload share, got ${JSON.stringify(flurryRow.sources)}`);
 
   assert.equal(cadenceText({

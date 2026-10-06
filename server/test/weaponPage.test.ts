@@ -123,7 +123,8 @@ const find = (band: PageBand, id: string): PageCardModel => {
   assert.equal(preview.active.stat, 'rapier-t1-effect');
   assert.ok(!progress.ownedCards.includes('rapier-t1-effect'), 'the real tree is untouched');
   const [previewed] = pageBands({ lineage: rapier, progress, wallet: wallet(), sentenceProgress: preview });
-  assert.equal(find(previewed, 'rapier-t1-tempo-payoff').sentence, 'Every 6th hit strikes again at 110% strength.');
+  // Effect on a payload (no mechanic of its own) is +50% at rank I (design §26.5, parity with Attack).
+  assert.equal(find(previewed, 'rapier-t1-tempo-payoff').sentence, 'Every 6th hit strikes again at 150% strength.');
   // The cards' states still read the real tree.
   assert.equal(find(previewed, 'rapier-t1-effect').state, 'buy');
 
@@ -256,17 +257,17 @@ for (const lineage of LINEAGE_DATABASE.values()) {
   assert.deepEqual(lit.rows.map((r) => r.title), ['Tier 2 · Lean', 'Tier 2 · Verb', 'Tier 2 · Amplifier']);
   // A T2 verb reads the generated composed sentence with the T2 numbers — here
   // with the lean carried up through the gate (the Effect, absorbed: Tempo), whose
-  // payload scale (+10% at rank I) the absorbed Effect keeps paying: 1.15 × 1.1.
-  assert.equal(find(lit, 'rapier-t2-tempo-payoff').sentence, 'Every 6th hit strikes again at 126.5% strength.');
+  // payload scale (+50% at rank I, design §26.5) the absorbed Effect keeps paying: 1.15 × 1.5.
+  assert.equal(find(lit, 'rapier-t2-tempo-payoff').sentence, 'Every 6th hit strikes again at 172.5% strength.');
   assert.equal(find(lit, 'rapier-t2-engagement-payoff').sentence,
-    'Your first hit on each new target lands again at 126.5% strength.');
+    'Your first hit on each new target lands again at 172.5% strength.');
   // The amplifier says what it changes on the pair the player has right now.
   assert.equal(find(lit, 'rapier-t2-tempo-amplifier').sentence, 'Running Riposte also lands on a second body.');
   assert.equal(find(lit, 'rapier-t2-affliction-amplifier').sentence, 'Deep Bloodletting can fire every 3.1 s (was every 5 s).');
   // An axis the pair does not have: it says so, and what it does instead.
   assert.equal(
     find(lit, 'rapier-t2-engagement-amplifier').sentence,
-    'Its moment cannot come round sooner, so Opening Gambit lands bigger: 202.4% of the hit (was 126.5% of the hit).',
+    'Its moment cannot come round sooner, so Opening Gambit lands bigger: 276% of the hit (was 172.5% of the hit).',
   );
   // With a lean whose payload lands on no body, the 'targets' amplifier grows the lunge.
   const lunge = tree({ ...progress, ownedCards: [...progress.ownedCards, 'rapier-t2-engagement-stat'],

@@ -1537,10 +1537,11 @@ From the five-thesis prototype run (docs/briefs/ui-prototypes-report-2026-10-04.
   Rapier's Attack Affliction-green and put the lane vocabulary back into the row that
   exists to avoid it.
 - **Effect parity.** On the Rapier, Axe and Broadsword, Effect scales a per-firing payload
-  and reads at a third of Attack. The rule stands; the number is wrong: Effect's payload
-  scale on those three weapons is raised until rank I Effect matches rank I Attack on the
-  boss lab (a lab pass, docs/briefs/effect-parity-lab-2026-10-06.md), and the tutorial
-  keeps teaching Effect.
+  and reads at a third of Attack. The rule stands; the number is wrong, and it is one
+  number: `LEAN_RANK_ONE_PAYLOAD_SCALE` (0.50, provisional, the designer's) replaces the
+  0.10 on those three weapons, so rank I makes the echo half again as big and rank III
+  doubles it. The next run's baseline re-measures it; no lab pass of its own (a
+  per-weapon solve was judged over-engineering). The tutorial keeps teaching Effect.
 - **Confirmed as the run chose them:** ranks gate on Global Mastery only; retired T1 cards
   refund at today's full price; the Hammer's verb is Easy Prey.
 

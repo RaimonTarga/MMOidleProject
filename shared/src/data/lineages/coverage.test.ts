@@ -31,7 +31,7 @@ import {
 } from './index';
 import { PACKET_DEFINITIONS, packetDefaultFace, packetHalves, packetScalingStat } from './packets';
 import {
-  GATE_LOCAL_LEVEL, LEAN_RANK_ONE, LEAN_RANK_PRICE_SCALE, LEAN_RANK_VALUE_SCALE, MAX_LEAN_RANK,
+  GATE_LOCAL_LEVEL, LEAN_RANK_ONE, LEAN_RANK_ONE_PAYLOAD_SCALE, LEAN_RANK_PRICE_SCALE, LEAN_RANK_VALUE_SCALE, MAX_LEAN_RANK,
   MAX_LINEAGE_TIER, rowBiomeLevel, rowEssenceCost, rowShardCost, rowsForTier, tierHasRow,
 } from './magnitudes';
 import {
@@ -380,7 +380,9 @@ for (const lineage of liveLineages().filter((l) => l.slot === 'weapon')) {
     for (let rank = 1; rank <= MAX_LEAN_RANK; rank++) {
       const resolved = resolveLineageCard(lean, lineage, { rank });
       const entries = Object.entries(resolved.statEffects ?? {});
-      const expected = Math.round(LEAN_RANK_ONE[lean.leanKind] * LEAN_RANK_VALUE_SCALE[rank - 1]! * 1000) / 1000;
+      // Effect on a payload-scale weapon reads its own rank-I number (design §26.5).
+      const rankOne = lean.leanKind === 'effect' && lean.statKey === 'payloadScale' ? LEAN_RANK_ONE_PAYLOAD_SCALE : LEAN_RANK_ONE[lean.leanKind];
+      const expected = Math.round(rankOne * LEAN_RANK_VALUE_SCALE[rank - 1]! * 1000) / 1000;
       check(entries.length === 1 && entries[0]![0] === lean.statKey && Math.abs(entries[0]![1] - expected) < 1e-9,
         `${lean.id} rank ${rank}: ${JSON.stringify(resolved.statEffects)}, expected ${lean.statKey} ${expected}`);
       check(resolved.rank === rank && resolved.maxRank === MAX_LEAN_RANK, `${lean.id} rank ${rank}: rank recorded`);

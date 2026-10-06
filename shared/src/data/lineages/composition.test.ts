@@ -37,7 +37,7 @@ import { emptyEquipment } from '../../items';
 import { LINEAGE_DATABASE, lineagesForSlot } from './index';
 import { PACKET_DEFINITIONS, packetHalves } from './packets';
 import {
-  LEAN_CONDITION_NUMBERS, LEAN_RANK_ONE, LEAN_RANK_VALUE_SCALE, MAX_LEAN_RANK, PACKET_HALF_NUMBERS, STAT_UNIT,
+  LEAN_CONDITION_NUMBERS, LEAN_RANK_ONE, LEAN_RANK_ONE_PAYLOAD_SCALE, LEAN_RANK_VALUE_SCALE, MAX_LEAN_RANK, PACKET_HALF_NUMBERS, STAT_UNIT,
   payloadSize, quickenMoment, scalePayloadSize, statRowValue, verbTierScalar,
 } from './magnitudes';
 import {
@@ -348,7 +348,11 @@ for (const lineage of lineagesForSlot('weapon')) {
       assert(resolvedVerb.payoff?.kind === pure.payoff.kind, `${label}: the verb's own pure payload`);
       // The lean resolves at its rank: rank I's number times the rank's scale.
       const value = Object.values(resolvedLean.statEffects ?? {})[0]!;
-      const expected = Math.round(LEAN_RANK_ONE[lean.leanKind!] * LEAN_RANK_VALUE_SCALE[rank - 1]! * 1000) / 1000;
+      // An Effect that scales the verb's payload (no mechanic of its own) reads its
+      // own rank-I number (design §26.5, parity with Attack); every other lean reads the trio's.
+      const rankOne = lean.leanKind === 'effect' && cardStatKey(lean) === 'payloadScale'
+        ? LEAN_RANK_ONE_PAYLOAD_SCALE : LEAN_RANK_ONE[lean.leanKind!];
+      const expected = Math.round(rankOne * LEAN_RANK_VALUE_SCALE[rank - 1]! * 1000) / 1000;
       assert(Math.abs(value - expected) < 1e-9 && resolvedLean.rank === rank, `${label}: lean value ${value} ≠ ${expected}`);
       // An Effect that IS the payload's size scales the verb's payload by the rank;
       // every other lean leaves the payload at its base size.
@@ -390,22 +394,23 @@ assert(t1Cells === 45, `five weapons × three leans × three ranks, got ${t1Cell
   const effect = rapier1.cards.find((c) => c.id === 'rapier-t1-effect')!;
   const attack = rapier1.cards.find((c) => c.id === 'rapier-t1-attack')!;
   const speed = rapier1.cards.find((c) => c.id === 'rapier-t1-speed')!;
-  assert(cardSentence(effect, tree(effect.id, 1)) === "+10% to Flurry's second strike.", `${cardSentence(effect, tree(effect.id, 1))}`);
-  assert(cardSentence(effect, tree(effect.id, 3)) === "+20% to Flurry's second strike.", 'Effect rank III');
+  // +50% at rank I on a payload-scale weapon (design §26.5, parity with Attack); rank III doubles it.
+  assert(cardSentence(effect, tree(effect.id, 1)) === "+50% to Flurry's second strike.", `${cardSentence(effect, tree(effect.id, 1))}`);
+  assert(cardSentence(effect, tree(effect.id, 3)) === "+100% to Flurry's second strike.", 'Effect rank III');
   assert(cardSentence(attack, tree(attack.id, 2)) === '+12% Attack.', `${cardSentence(attack, tree(attack.id, 2))}`);
   assert(cardSentence(speed, tree(speed.id, 3)) === '+16% attack speed.', `${cardSentence(speed, tree(speed.id, 3))}`);
-  assert(composedSentence(rapier1, tree(effect.id, 2)) === 'Every 6th hit strikes again at 115% strength.',
+  assert(composedSentence(rapier1, tree(effect.id, 2)) === 'Every 6th hit strikes again at 175% strength.',
     `Flurry under Effect II: ${composedSentence(rapier1, tree(effect.id, 2))}`);
   assert(composedSentence(rapier1, tree(attack.id, 3)) === 'Every 6th hit strikes twice.', 'Flurry under Attack III');
   // The plate's preview: the same tree read at another rank, or under another lean.
-  assert(composedSentence(rapier1, tree(effect.id, 1), { rank: 3 }) === 'Every 6th hit strikes again at 120% strength.',
+  assert(composedSentence(rapier1, tree(effect.id, 1), { rank: 3 }) === 'Every 6th hit strikes again at 200% strength.',
     'a rank preview re-reads the plate');
   assert(composedSentence(rapier1, tree(attack.id, 1), { leanId: effect.id, rank: 2 })
-    === 'Every 6th hit strikes again at 115% strength.', 'a lean preview re-reads the plate');
+    === 'Every 6th hit strikes again at 175% strength.', 'a lean preview re-reads the plate');
   assert(composedSentence(rapier1, tree(effect.id, 3), { leanId: null }) === 'Every 6th hit strikes twice.',
     'previewing no lean reads the base pair');
   const scales = lineagePayloadScales(rapier1, tree(effect.id, 2));
-  assert(scales.tempo === 0.15 && Object.keys(scales).length === 1, `scales ${JSON.stringify(scales)}`);
+  assert(scales.tempo === 0.75 && Object.keys(scales).length === 1, `scales ${JSON.stringify(scales)}`); // rank II: 0.5 × 1.5
 
   const broadsword = LINEAGE_DATABASE.get('broadsword')!;
   const bEffect = broadsword.cards.find((c) => c.id === 'broadsword-t1-effect')!;
@@ -414,8 +419,8 @@ assert(t1Cells === 45, `five weapons × three leans × three ranks, got ${t1Cell
     active: { stat: bEffect.id, payoff: 'broadsword-t1-technique-payoff' },
     ownedForms: ['iron-broadsword'], wornForm: 'iron-broadsword', ranks: { [bEffect.id]: 1 },
   };
-  assert(cardSentence(bEffect, bTree) === "+10% to Set Piece's refund.", `${cardSentence(bEffect, bTree)}`);
-  assert(composedSentence(broadsword, bTree) === 'A landed Technique refunds 55% of its cooldown.',
+  assert(cardSentence(bEffect, bTree) === "+50% to Set Piece's refund.", `${cardSentence(bEffect, bTree)}`);
+  assert(composedSentence(broadsword, bTree) === 'A landed Technique refunds three quarters of its cooldown.',
     `Set Piece under Effect I: ${composedSentence(broadsword, bTree)}`);
 
   const dagger = LINEAGE_DATABASE.get('dagger')!;
@@ -480,7 +485,7 @@ assert(t1Cells === 45, `five weapons × three leans × three ranks, got ${t1Cell
   };
   const verb = resolveLineageCards(rapierT2, tree).find((c) => c.card.id === 'rapier-t2-tempo-payoff')!;
   const expected = { ...packetPurePair('tempo', 2)!.payoff };
-  scalePayloadSize(expected, 1.15);
+  scalePayloadSize(expected, 1 + LEAN_RANK_ONE_PAYLOAD_SCALE * LEAN_RANK_VALUE_SCALE[1]!); // Effect II: 0.5 × 1.5
   assert(JSON.stringify(verb.payoff) === JSON.stringify(expected),
     `the absorbed Effect II scales the T2 echo: ${JSON.stringify(verb.payoff)} ≠ ${JSON.stringify(expected)}`);
   assert(verb.payoff!.magnitude > packetPurePair('tempo', 2)!.payoff.magnitude, 'bigger than the bare T2 echo');
