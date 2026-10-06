@@ -2,9 +2,11 @@ import type { CombatEvent, Vec2 } from '@mmo-idle/shared';
 import type { DamageNumberHint, RenderState } from './state';
 import type { DamageNumberStyle } from '../fx/particles';
 import {
-  resolveMonsterDamageStyle, resolvePlayerDamageStyle,
-  SHIELD_DAMAGE_COLOR, SHIELD_DAMAGE_SYMBOL,
+  resolveMonsterDamageStyle, resolvePlayerDamageStyle, resolveShieldDamageStyle,
+  type DamageNumberShare,
 } from './damageNumberStyle';
+import { NUMBER_TOKENS } from './readoutTokens';
+import { DotCoalescer, LaneStack, type LaneFloater } from './readoutModel';
 
 export interface CombatTextEntry {
   targetId: string;
@@ -13,6 +15,12 @@ export interface CombatTextEntry {
   targetKind?: 'player' | 'monster' | 'minion';
   hint: DamageNumberHint;
   shield?: boolean;
+  /**
+   * The target's max HP when the entry was captured. A number's size is its share
+   * of this pool, and a buffered hit or a coalesced DoT can draw after the target's
+   * view is gone.
+   */
+  maxHp?: number;
 }
 
 export interface CombatTextBatch {
@@ -62,32 +70,134 @@ export function prepareCombatText(
   return batch;
 }
 
-type TextState = Pick<RenderState, 'sprite' | 'spriteMeta' | 'kind' | 'ownId'>;
-type SpawnNumber = (pos: Vec2, offset: number, amount: number, color: string, style?: DamageNumberStyle) => void;
+type TextState = Pick<RenderState, 'sprite' | 'spriteMeta' | 'kind' | 'ownId' | 'view'>;
+/** Draws one number; returns the floater so the lane can stack it (anything else is ignored). */
+export type SpawnNumber = (
+  pos: Vec2, offset: number, amount: number, color: string, style?: DamageNumberStyle,
+) => unknown;
 
-/** Called before removals. Spatial staggering needs no delayed callbacks/history. */
-export function renderCombatText(batch: CombatTextBatch, state: TextState, spawn: SpawnNumber): void {
-  const slots = new Map<string, number>();
-  let rendered = 0;
-  for (const entry of batch.entries) {
+function isLaneFloater(value: unknown): value is LaneFloater {
+  return typeof value === 'object' && value !== null && typeof (value as LaneFloater).setLift === 'function';
+}
+
+/** Per-scene cosmetic state: the open DoT windows and every target's lane. */
+interface TextRuntime {
+  dots: DotCoalescer<CombatTextEntry>;
+  lanes: LaneStack<LaneFloater>;
+  nodeId?: string;
+}
+
+const runtimes = new WeakMap<object, TextRuntime>();
+
+function runtimeFor(state: object): TextRuntime {
+  let rt = runtimes.get(state);
+  if (!rt) {
+    rt = { dots: new DotCoalescer(), lanes: new LaneStack() };
+    runtimes.set(state, rt);
+  }
+  return rt;
+}
+
+/** One DoT window per target, element and absorbed-or-not: each keeps its own colour. */
+function dotKey(entry: CombatTextEntry): string {
+  return `${entry.targetId}|${entry.hint.dotElement ?? ''}|${entry.shield ? 's' : 'h'}`;
+}
+
+function maxHpOf(state: TextState, entry: CombatTextEntry): number | undefined {
+  return entry.maxHp ?? state.view.get(entry.targetId)?.maxHp;
+}
+
+function takenColor(kind: 'player' | 'minion', own: boolean): string {
+  if (kind === 'minion') return NUMBER_TOKENS.color.takenMinion;
+  return own ? NUMBER_TOKENS.color.takenOwn : NUMBER_TOKENS.color.takenOther;
+}
+
+/**
+ * Draw now: per target only the newest `lane.cap` can survive the lane, so the rest
+ * of a burst is never spawned, and the whole draw is bounded by `batchCap`. Cosmetic
+ * overload is dropped, never deferred into later fights.
+ */
+function drawEntries(entries: readonly CombatTextEntry[], state: TextState, spawn: SpawnNumber, rt: TextRuntime): void {
+  const perTarget = new Map<string, number>();
+  const kept: CombatTextEntry[] = [];
+  for (let i = entries.length - 1; i >= 0; i--) {
+    const entry = entries[i];
+    const n = perTarget.get(entry.targetId) ?? 0;
+    if (n >= NUMBER_TOKENS.lane.cap) continue;
+    perTarget.set(entry.targetId, n + 1);
+    kept.push(entry);
+  }
+  kept.reverse();
+  let started = 0;
+  for (const entry of kept) {
+    if (started >= NUMBER_TOKENS.batchCap) break;
     const sprite = state.sprite.get(entry.targetId);
     const pos = sprite ? { x: sprite.x, y: sprite.y } : entry.targetPos;
     if (!pos) continue;
-    const slot = slots.get(entry.targetId) ?? 0;
-    // Cosmetic overload is dropped, never deferred into subsequent fights.
-    if (slot >= 12 || rendered >= 120) continue;
-    slots.set(entry.targetId, slot + 1);
-    rendered++;
+    started++;
     const kind = state.kind.get(entry.targetId) ?? entry.targetKind;
+    const share: DamageNumberShare = { amount: entry.amount, maxHp: maxHpOf(state, entry) };
     const resolved = entry.shield
-      ? { color: SHIELD_DAMAGE_COLOR, style: { symbol: SHIELD_DAMAGE_SYMBOL } }
+      ? resolveShieldDamageStyle(share, entry.hint.isDot)
       : kind === 'player' || kind === 'minion'
-        ? resolvePlayerDamageStyle(entry.hint, kind === 'minion' ? '#ffd1d1' : entry.targetId === state.ownId ? '#ff4444' : '#ff8844')
-        : resolveMonsterDamageStyle(entry.hint);
-    spawn(
-      { x: pos.x + Math.floor(slot / 6) * 48, y: pos.y - (slot % 6) * 26 },
+        ? resolvePlayerDamageStyle(entry.hint, takenColor(kind, entry.targetId === state.ownId), share)
+        : resolveMonsterDamageStyle(entry.hint, share);
+    const floater = spawn(
+      pos,
       state.spriteMeta.get(entry.targetId)?.barOffsetY ?? 40,
       entry.amount, resolved.color, resolved.style,
     );
+    if (isLaneFloater(floater)) rt.lanes.push(entry.targetId, floater);
   }
+}
+
+/**
+ * Called before removals. Direct hits draw now; DoT ticks join their target's open
+ * window and draw as one number when it closes (`flushCombatText`).
+ */
+export function renderCombatText(
+  batch: CombatTextBatch,
+  state: TextState,
+  spawn: SpawnNumber,
+  now = performance.now(),
+): void {
+  const rt = runtimeFor(state);
+  const direct: CombatTextEntry[] = [];
+  for (const entry of batch.entries) {
+    if (!entry.hint.isDot) { direct.push(entry); continue; }
+    // Capture the pool now: the window can close after the target is gone.
+    const sprite = state.sprite.get(entry.targetId);
+    rt.dots.add(dotKey(entry), {
+      ...entry,
+      maxHp: maxHpOf(state, entry),
+      targetPos: sprite ? { x: sprite.x, y: sprite.y } : entry.targetPos,
+      targetKind: state.kind.get(entry.targetId) ?? entry.targetKind,
+    }, now);
+  }
+  if (direct.length > 0) drawEntries(direct, state, spawn, rt);
+}
+
+/** Every frame: draw the DoT windows that have closed, forget expired lanes. */
+export function flushCombatText(state: TextState, spawn: SpawnNumber, now = performance.now()): void {
+  const rt = runtimes.get(state);
+  if (!rt) return;
+  rt.lanes.prune();
+  if (rt.dots.size === 0) return;
+  const ready = rt.dots.flush(now);
+  if (ready.length > 0) drawEntries(ready, state, spawn, rt);
+}
+
+/** Drop every pending window and live floater (hidden tab, resync). */
+export function resetCombatText(state: object): void {
+  const rt = runtimes.get(state);
+  if (!rt) return;
+  rt.dots.reset();
+  rt.lanes.clear();
+}
+
+/** A node change takes nothing with it: windows from the old node never draw here. */
+export function noteCombatTextNode(state: object, nodeId: string): void {
+  const rt = runtimeFor(state);
+  if (rt.nodeId !== undefined && rt.nodeId !== nodeId) resetCombatText(state);
+  rt.nodeId = nodeId;
 }

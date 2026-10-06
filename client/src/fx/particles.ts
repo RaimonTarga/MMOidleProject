@@ -2,6 +2,8 @@ import { EFFECT_BY_ID, EFFECT_DEFS, EFFECT_FRAME_COUNT, EFFECT_GRID, type Vec2 }
 import type { GameScene } from '../scenes/GameScene';
 import { shouldRunClientFx } from './guard';
 import { DEPTH } from '../render/depth';
+import { NUMBER_TOKENS, type NumberBand, type NumberMotion } from '../render/readoutTokens';
+import type { LaneFloater } from '../render/readoutModel';
 
 type ParticleConfig = Phaser.Types.GameObjects.Particles.ParticleEmitterConfig;
 
@@ -166,14 +168,31 @@ export function playOneShotEffect(scene: GameScene, id: string, pos: Vec2, opts?
 }
 
 export interface DamageNumberStyle {
-  /** Font size in px (default 14). */
+  /** Font size in screen px at camera zoom 1 (default: the "hit" band). */
   sizePx?: number;
   /** Trailing string appended after the amount (e.g. '!' for crits). */
   suffix?: string;
   /** Trailing glyph/symbol appended after the suffix (e.g. element marker). */
   symbol?: string;
+  /** How it moves: a hit pops and drifts, a crit pops harder, a DoT rises steadily. */
+  motion?: NumberMotion;
+  /** The share band it was sized by (informational; the size is `sizePx`). */
+  band?: NumberBand;
 }
 
+/** A live damage number, for the target's lane stack (render/readoutModel.ts). */
+export type DamageNumberHandle = LaneFloater;
+
+function prefersReducedMotion(): boolean {
+  return typeof window !== 'undefined'
+    && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
+}
+
+/**
+ * One damage number: sized by its band, moved by its kind, stacked by the caller's
+ * lane. At the phone camera floor it keeps its SCREEN size (x `screenFloor`) rather
+ * than shrinking with the world. Reduced motion: no pop, no rise, only the fade.
+ */
 export function spawnDamageNumber(
   scene: GameScene,
   pos: Vec2,
@@ -181,29 +200,68 @@ export function spawnDamageNumber(
   amount: number,
   color: string,
   style?: DamageNumberStyle,
-): void {
-  if (!shouldRunClientFx()) return;
-  const jitter = (Math.random() - 0.5) * 18;
-  const startY = pos.y - barOffsetY - 6;
+): DamageNumberHandle | null {
+  if (!shouldRunClientFx()) return null;
+  const zoom = scene.cameras.main.zoom || 1;
+  const screenScale = zoom < 1 ? Math.max(zoom, NUMBER_TOKENS.screenFloor) / zoom : 1;
+  const motion = NUMBER_TOKENS.motion[style?.motion ?? 'hit'];
+  const reduced = prefersReducedMotion();
+  const sizePx = (style?.sizePx ?? NUMBER_TOKENS.bands[1].sizePx) * screenScale;
+  const baseY = pos.y - barOffsetY - 6 * screenScale;
   const label = `${amount}${style?.suffix ?? ''}${style?.symbol ?? ''}`;
   const text = scene.add
-    .text(pos.x + jitter, startY, label, {
+    .text(pos.x, baseY, label, {
       color,
-      fontSize: `${style?.sizePx ?? 14}px`,
+      fontSize: `${Math.round(sizePx)}px`,
       fontFamily: 'monospace',
       fontStyle: 'bold',
-      stroke: '#000000',
-      strokeThickness: 3,
+      stroke: NUMBER_TOKENS.color.outline,
+      strokeThickness: NUMBER_TOKENS.stroke.px * screenScale,
     })
     .setDepth(DEPTH.FX)
     .setOrigin(0.5, 1);
 
+  const live = { lift: 0, rise: 0, alive: true };
+  let liftTween: Phaser.Tweens.Tween | null = null;
+  const place = (): void => { if (live.alive) text.y = baseY - live.lift - live.rise; };
+  const destroy = (): void => {
+    if (!live.alive) return;
+    live.alive = false;
+    scene.tweens.killTweensOf(live);
+    scene.tweens.killTweensOf(text);
+    text.destroy();
+  };
+
+  if (!reduced && motion.popMs > 0) {
+    text.setScale(motion.popScale);
+    scene.tweens.add({ targets: text, scale: 1, duration: motion.popMs, ease: 'Quad.easeOut' });
+  }
+  scene.tweens.add({
+    targets: live,
+    rise: reduced ? 0 : motion.risePx * screenScale,
+    duration: motion.lifeMs,
+    ease: motion.ease,
+    onUpdate: place,
+  });
   scene.tweens.add({
     targets: text,
-    y: startY - 40,
     alpha: 0,
-    duration: 900,
-    ease: 'Power2',
-    onComplete: () => text.destroy(),
+    delay: motion.lifeMs * (1 - NUMBER_TOKENS.fadeTail),
+    duration: motion.lifeMs * NUMBER_TOKENS.fadeTail,
+    onComplete: destroy,
   });
+
+  return {
+    height: text.height,
+    isAlive: () => live.alive,
+    setLift(lift: number) {
+      if (!live.alive || lift === live.lift) return;
+      liftTween?.stop();
+      if (reduced) { live.lift = lift; place(); return; }
+      liftTween = scene.tweens.add({
+        targets: live, lift, duration: NUMBER_TOKENS.lane.liftMs, ease: 'Quad.easeOut', onUpdate: place,
+      });
+    },
+    destroy,
+  };
 }

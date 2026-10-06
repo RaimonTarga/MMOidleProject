@@ -1,10 +1,13 @@
-import type { CombatEvent, DeltaSnapshot, PlayerView } from '@mmo-idle/shared';
+import type { CombatEvent, DeltaSnapshot, PlayerView, Vec2 } from '@mmo-idle/shared';
 import type { GameScene } from '../scenes/GameScene';
 import type { RenderState } from './state';
 import { capturePlayerAttack, dispatchCombatEvent, type PlayerAttackPresentation } from './combatFx';
-import { prepareCombatText, renderCombatText, type CombatTextBatch } from './combatText';
+import {
+  flushCombatText, noteCombatTextNode, prepareCombatText, renderCombatText, resetCombatText,
+  type CombatTextBatch,
+} from './combatText';
 import { shouldRunClientFx } from '../fx/guard';
-import { spawnDamageNumber } from '../fx/particles';
+import { spawnDamageNumber, type DamageNumberStyle } from '../fx/particles';
 import { fxBossDeath, fxMobDeath } from '../fx/monsterDeath';
 import { playSfx } from '../audio/audioEngine';
 import { PAYLOAD_FX, hitPresentationDelayMs, isPayloadFx } from '../fx/lineagePayloadModel';
@@ -18,6 +21,8 @@ export type CombatPlaybackItem =
   | { kind: 'death'; play: () => void };
 
 export function beginCombatPlayback(state: RenderState, snapshot: DeltaSnapshot, stateSync: boolean): boolean {
+  noteCombatTextNode(state, snapshot.nodeId);
+  if (stateSync) resetCombatText(state);
   if (stateSync || !shouldRunClientFx() || !Number.isFinite(snapshot.serverTime)) {
     state.combatPlayback.reset();
     return false;
@@ -65,9 +70,12 @@ export function queuePlayerAttack(state: RenderState, event: CombatEvent): boole
   const presentation = capturePlayerAttack(state, event);
   if (!presentation || !isBufferedPlayer(presentation.player, event)) return false;
   const text = prepareCombatText([event]);
+  // The pool is read now: the hit can draw after its target's view is gone.
+  const maxHp = state.view.get(event.targetId)?.maxHp;
   for (const entry of text.entries) {
     entry.targetPos = presentation.to;
     entry.targetKind = 'monster';
+    entry.maxHp = maxHp;
   }
   // A lineage payload's OWN hit is presented as the payload: the echo a beat after
   // the hit it echoes, the lunge's hit at the end of its dash. A kill plays no
@@ -106,13 +114,16 @@ export function queueCombatDeath(state: RenderState, scene: GameScene, id: strin
 
 /** One bounded drain per frame; simultaneous hits share the existing text budget. */
 export function stepCombatPlayback(state: RenderState, scene: GameScene): void {
-  if (!shouldRunClientFx()) { state.combatPlayback.reset(); return; }
+  if (!shouldRunClientFx()) { state.combatPlayback.reset(); resetCombatText(state); return; }
+  const spawn = (pos: Vec2, offset: number, amount: number, color: string, style?: DamageNumberStyle) =>
+    spawnDamageNumber(scene, pos, offset, amount, color, style);
+  // DoT windows close on the frame clock, buffered or not.
+  flushCombatText(state, spawn);
   const ready = state.combatPlayback.drain(performance.now());
   if (ready.length === 0) return;
   const text: CombatTextBatch = { entries: [] };
   for (const item of ready) if (item.kind === 'attack') text.entries.push(...item.text.entries);
-  renderCombatText(text, state, (pos, offset, amount, color, style) =>
-    spawnDamageNumber(scene, pos, offset, amount, color, style));
+  renderCombatText(text, state, spawn);
   for (const item of ready) {
     if (item.kind === 'death') item.play();
     else if (item.kind === 'reward' || item.kind === 'payload') dispatchCombatEvent(state, item.event, scene);
