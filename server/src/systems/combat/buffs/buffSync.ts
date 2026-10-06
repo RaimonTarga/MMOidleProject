@@ -866,7 +866,7 @@ function buffEffectText(buff: PlayerBuff): string {
     case "cooldown-battery":
       return "+execution damage";
     case "cooldown-reverb":
-      return "next execution empowered";
+      return "execution echo due";
     case "cooldown-alignment":
       return "+attack speed";
     case "cooldown-rupture":

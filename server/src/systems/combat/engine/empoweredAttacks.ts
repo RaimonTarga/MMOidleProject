@@ -25,6 +25,12 @@ export function isEmpoweredAttack(entity: ServerEntity): boolean {
 }
 
 /**
+ * `ctx.metadata` key: this hit must not spend the attacker's pending empowered
+ * charge. See the hold in {@link registerEmpoweredMultiplier}.
+ */
+export const HOLD_EMPOWERED_ATTACK = 'holdEmpoweredAttack';
+
+/**
  * If the entity is currently empowered, consume the flag and return true.
  * Returns false (and makes no change) if the entity was not empowered.
  * Designed for single-use: empowerment is spent exactly once.
@@ -192,6 +198,14 @@ export function registerEmpoweredMultiplier(
     // multiply, don't set empoweredAttack metadata (which would restart cooldowns and
     // mark the hit empowered). The charge stays armed for the next real hit.
     if (ctx.metadata['chaoticMiss']) return;
+
+    // A HELD hit leaves a pending charge exactly where it is, like a chaotic miss
+    // does: the hit is not the one that delivers the mechanic. Set in
+    // `beforeAttack` (or on a hit the root runs itself) by a mechanic that decides
+    // WHICH hit spends its charge — the Squire's Destroyer, whose primed execution
+    // waits for a Technique, and Reverb's echo, which must never spend an
+    // execution that is already waiting (design §22.5).
+    if (ctx.metadata[HOLD_EMPOWERED_ATTACK]) return;
 
     if (!consumeEmpoweredAttack(world, ctx.attacker)) return;
 

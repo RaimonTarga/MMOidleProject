@@ -141,7 +141,7 @@ export const STAT_HELP: Record<string, string> = {
   'cooldown.channeled-beam': 'The execution becomes a channelled beam that ticks damage over its duration.',
   'cooldown.channeled-beam-mult': 'Damage per beam tick, as a multiple of your attack.',
   'cooldown.rupture': 'Executions bypass the target’s plating, and briefly weaken it against your regular attacks too.',
-  'cooldown.reverb': 'Regular attacks landed between executions charge the next execution.',
+  'cooldown.reverb': 'Your execution lands again at half strength when its recharge is half done.',
   'cooldown.patience-paid': 'An uninterrupted cooldown ramps both your attack and your execution damage.',
   'cooldown.vengeance': 'Damage taken since your last execution is paid back into the next one.',
 

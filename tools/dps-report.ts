@@ -814,8 +814,11 @@ function estimateClassDamage(
       notes.push(`stalwart linear ramp averaged; ${Math.round(attackMax * 100)}% attack/${Math.round(executionMax * 100)}% execution caps`);
     }
     if ((p['cooldown.reverb'] ?? 0) > 0) {
-      classMechanicPerSec += exec * Math.floor(cdSec * hitRate) * (p['cooldown.reverb-bonus-per-attack'] ?? 0.04) * execRate;
-      notes.push('reverb next-window bonus estimated');
+      // Design §22.5: one echo per execution at the halfway mark, at the authored
+      // share of the execution. Assumes a target is always in reach then.
+      const strength = Math.max(0, p['cooldown.reverb-echo-strength'] ?? 0);
+      classMechanicPerSec += exec * strength * execRate;
+      notes.push(`reverb echo at ${Math.round(strength * 100)}% of the execution, target assumed in reach`);
     }
     if ((p['cooldown.vengeance'] ?? 0) > 0) {
       classMechanicPerSec += (p['cooldown.vengeance-floor'] ?? 30) * execRate;

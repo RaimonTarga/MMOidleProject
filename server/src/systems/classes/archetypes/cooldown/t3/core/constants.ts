@@ -47,8 +47,11 @@ export const RUPTURE_WINDOW_MS      = 2_000; // post-execution 50%-bypass window
 export const RUPTURE_WINDOW_PLATING_MULT = 0.5; // plating multiplier during the window
 export const RUPTURE_DR_PIERCE      = 0.10;  // window: fraction of target DR ignored (node: cooldown.rupture-dr-pierce)
 
-// Reverb (cooldown-balanced-T3-a)
-export const REVERB_BONUS_PER_ATTACK = 0.04; // +4% next-execution damage per attack landed
+// Reverb (cooldown-balanced-T3-a): the execution echoes when its recharge reaches
+// the halfway mark (design §22.5). This share is the design's geometry, not a
+// tuning number; the echo's STRENGTH is authored on the node
+// (`cooldown.reverb-echo-strength`) and deliberately has no fallback here.
+export const REVERB_ECHO_AT_SHARE = 0.5; // of the live recharge still to run
 
 // Patience Paid (cooldown-balanced-T3-c)
 export const PATIENCE_PAID_RAMP_MS  = 7_000; // natural CD; ramp caps here
@@ -68,4 +71,5 @@ export const BEAM_DMG_PER_TICK_MULT = 1.0; // damage per tick = player.attack ×
 export const EC_CHARGE_FX  = 'eternal-cycle-charge';     // per-player charge stacks
 export const TE_BUFF_FX    = 'temporal-extension-buff';  // per-player buff w/ duration / flat damage
 export const BAT_CHARGE_FX = 'battery-charge';           // per-player charge stacks
+export const REVERB_ECHO_FX = 'reverb-echo';             // per-player: an execution echo is due
 export const ENT_DOT_FX    = 'entropy-collapse-dot';     // per-monster DoT

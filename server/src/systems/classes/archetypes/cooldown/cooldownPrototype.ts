@@ -3,6 +3,7 @@ import { setEmpoweredAttack, isEmpoweredAttack, isMechanicProxy, registerEmpower
 import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
 import { initCooldownFrameLoop } from './frameLoop';
 import { initCooldownT3 } from './t3';
+import { isReverbEcho } from './t3/pipeline/reverbEcho';
 import type { World } from '../../../../world/World';
 import { relicRatingsFromPassives, resolveCooldownRelicProfile } from '@mmo-idle/shared';
 
@@ -115,6 +116,15 @@ export function initCooldownArchetype(): void {
     // Query by component presence, not by combatArchetype string.
     const entity = ctx.attacker;
     if (!entity?.usesCooldown) return;
+
+    // Reverb's echo (design §22.5) is the execution landing AGAIN, not the root
+    // spending its charge: it announces the mechanic — once, through the exchange
+    // latch, from this one emitter — but the recharge it lands halfway through
+    // runs on untouched.
+    if (isReverbEcho(ctx)) {
+      emitMechanicFired(world, entity, ctx);
+      return;
+    }
 
     const cd     = entity.usesCooldown;
 

@@ -92,7 +92,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'cooldown-eternal-charge': m('Eternal charge', 'Each regular attack banks a stack and gains the current bonus. Your next execution adds the full bank again, then clears it.'),
   'cooldown-temporal-ext': m('Temporal extension', 'Flat bonus damage added to every on-hit for the window.'),
   'cooldown-battery': m('Battery', 'Stored charge raising both your attack damage and your execution damage.'),
-  'cooldown-reverb': m('Reverb', 'Your next execution lands for a percentage more.'),
+  'cooldown-reverb': m('Reverb', 'Your execution echoes. The clock runs to the halfway mark of its recharge, where it lands again at half strength on whatever you are hitting. With nothing in reach then, the echo is lost.'),
   'cooldown-alignment': m('Alignment', 'An attack-speed window opened by lining your cooldowns up.'),
   'cooldown-rupture': m('Rupture', 'Your regular attacks bypass a share of the target’s plating and damage reduction while it holds.'),
   'cooldown-vengeance': m('Vengeance', 'Damage you have taken is stored and paid back through your next execution.'),

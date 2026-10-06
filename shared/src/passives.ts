@@ -205,9 +205,11 @@ export const COOLDOWN_KEYS = [
   // Rupture (light): execution bypasses plating; brief window bypasses 50% on regulars.
   'cooldown.rupture',
   'cooldown.rupture-dr-pierce',
-  // Reverb (balanced): attacks-between-executions charge the NEXT execution.
+  // Reverb (balanced, design §22.5): the execution echoes — it lands again when its
+  // recharge reaches the halfway mark, at `echo-strength` × the execution's own
+  // multiplier, on whatever the player is hitting then (nothing in reach: lost).
   'cooldown.reverb',
-  'cooldown.reverb-bonus-per-attack',
+  'cooldown.reverb-echo-strength',
   // Patience Paid (balanced): uninterrupted CD ramps attack + execution damage.
   'cooldown.patience-paid',
   'cooldown.patience-ramp-ms',

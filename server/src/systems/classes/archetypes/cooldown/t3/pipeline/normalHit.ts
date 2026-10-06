@@ -21,8 +21,7 @@ import { pushClientEffect } from '../../../../../combat/engine/combatPipeline';
  *   1. Eternal Cycle      — bank one flat-damage stack per attack (spent on execution).
  *   2. Battery            — flat bonus from accumulated stacks.
  *   3. Patience Paid      — ramp regular-attack damage with the uninterrupted CD.
- *   4. Reverb             — count attacks landed this CD window.
- *   5. Singular Extraction — zero direct damage (on-hit/charm still fire).
+ *   4. Singular Extraction — zero direct damage (on-hit/charm still fire).
  */
 export function registerNormalHit(): void {
   registerCombatListener('onHit', (ctx, _world) => {
@@ -60,10 +59,6 @@ export function registerNormalHit(): void {
     if (hasPassive(player, 'cooldown.patience-paid')) {
       const ramp = rampFactorFor(cd, player);
       if (ramp > 0) ctx.damage = Math.round(ctx.damage * (1 + ramp * patienceAttackMax(player)));
-    }
-
-    if (hasPassive(player, 'cooldown.reverb')) {
-      cd.reverbAttackCount++;
     }
 
     if (hasPassive(player, 'cooldown.singular-extraction')) {

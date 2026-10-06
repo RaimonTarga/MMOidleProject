@@ -3,8 +3,10 @@ import { registerBeforeAttack } from './pipeline/beforeAttack';
 import { registerEmpoweredHit } from './pipeline/empoweredHit';
 import { registerNormalHit } from './pipeline/normalHit';
 import { registerPostEmpoweredHit } from './pipeline/postEmpoweredHit';
+import { registerReverbEcho } from './pipeline/reverbEcho';
 import { updateOverdrive } from './ticks/light/overdrive';
 import { updateBattery } from './ticks/balanced/battery';
+import { updateReverbEcho } from './ticks/balanced/reverbEcho';
 import { updateSingularExtraction } from './ticks/heavy/singularExtraction';
 import { updateChanneledBeam } from './ticks/heavy/channeledBeam';
 import { registerCooldownDamageTracking, updateCooldownState } from './ticks/cooldownState';
@@ -15,12 +17,15 @@ import { registerCooldownDamageTracking, updateCooldownState } from './ticks/coo
  *
  * Registration order:
  *   1. beforeAttack       — suppress standard empowered mult for replacement paths
- *   2. onHit (empowered)  — each path's unique empowered effect
- *   3. onHit (normal)     — every non-empowered path
- *   4. onHit (empowered)  — battery bonus + alignment buff after the empowered hit
+ *   2. onHit (echo)       — Reverb's echo takes its multiplier, so every later
+ *                           listener reads it as an empowered hit
+ *   3. onHit (empowered)  — each path's unique empowered effect
+ *   4. onHit (normal)     — every non-empowered path
+ *   5. onHit (empowered)  — battery bonus + alignment buff after the empowered hit
  */
 export function initCooldownT3(): void {
   registerBeforeAttack();
+  registerReverbEcho();
   registerEmpoweredHit();
   registerNormalHit();
   registerPostEmpoweredHit();
@@ -34,6 +39,7 @@ export function initCooldownT3(): void {
 export function updateCooldownT3(world: World, dt: number, now: number): void {
   updateOverdrive(world, dt);
   updateBattery(world, dt);
+  updateReverbEcho(world, now);
   updateSingularExtraction(world, dt);
   updateChanneledBeam(world, dt, now);
   updateCooldownState(world, dt);

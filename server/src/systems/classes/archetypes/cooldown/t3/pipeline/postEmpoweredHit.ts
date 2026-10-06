@@ -8,13 +8,14 @@ import {
   rampFactorFor,
 } from '../core/selectors';
 import {
-  REVERB_BONUS_PER_ATTACK,
   VENGEANCE_MULTIPLIER, VENGEANCE_FLOOR,
   RUPTURE_WINDOW_MS,
   BAT_CHARGE_FX, EC_CHARGE_FX,
 } from '../core/constants';
 import { COOLDOWN_SUNDER_FX } from '@mmo-idle/shared';
 import { pushClientEffect } from '../../../../../combat/engine/combatPipeline';
+import { isMechanicProxy } from '../../../../../combat/engine/empoweredAttacks';
+import { isReverbEcho, openReverbEcho } from './reverbEcho';
 
 /**
  * Second onHit listener for empowered (execution) attacks — runs after
@@ -23,7 +24,7 @@ import { pushClientEffect } from '../../../../../combat/engine/combatPipeline';
  *
  *   - Eternal Cycle  : add banked flat stacks, then clear them.
  *   - Battery        : add stack bonus, then clear.
- *   - Reverb         : apply the bonus charged by the PRIOR window, then recharge.
+ *   - Reverb         : the execution marks its echo due at the halfway mark.
  *   - Patience Paid  : amplify by the uninterrupted-cooldown ramp.
  *   - Vengeance      : add a portion of damage taken since the last execution (floored).
  *   - Rupture        : arm the post-execution plating-bypass window.
@@ -56,14 +57,15 @@ export function registerPostEmpoweredHit(): void {
       cd.batteryTimerAcc = 0;
     }
 
-    if (hasPassive(player, 'cooldown.reverb')) {
-      // Apply the bonus charged by the previous window, then recharge from this one.
-      if (cd.reverbStoredBonus > 0) {
-        ctx.damage = Math.round(ctx.damage * (1 + cd.reverbStoredBonus));
-      }
-      const perAttack = player.usesSkills.passives['cooldown.reverb-bonus-per-attack'] ?? REVERB_BONUS_PER_ATTACK;
-      cd.reverbStoredBonus = cd.reverbAttackCount * perAttack;
-      cd.reverbAttackCount = 0;
+    // Only the execution SPENDING its charge opens an echo: never the echo itself
+    // (an echo of an echo would chain forever), never a proxied hit.
+    if (
+      hasPassive(player, 'cooldown.reverb')
+      && ctx.metadata['mechanicConsumed'] === true
+      && !isReverbEcho(ctx)
+      && !isMechanicProxy(ctx)
+    ) {
+      openReverbEcho(player);
     }
 
     if (hasPassive(player, 'cooldown.patience-paid')) {

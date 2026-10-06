@@ -161,10 +161,15 @@ export const t3CombatEntriesA = [
     id: 'cooldown-balanced-t3-a', name: 'Reverb', tier: 3,
     classId: 'cooldown-root', subVariantId: 'balanced',
     parent: 'cooldown-balanced', children: [],
-    description: 'The attacks you land during one cooldown window charge your NEXT execution: each attack adds bonus damage to the following execution (the current one fires normally). The charge resets each execution.',
-    packet: 'empowered', // PROVISIONAL (run 3 W1-B, design §4)
+    description: 'Your execution echoes: it lands now, and lands again at half strength when its recharge reaches the halfway mark, on whatever you are hitting then. If nothing is in reach at that moment, the echo is lost, not held. The echo is an execution hit in every other way — on-hit and empowered gear apply, and it counts as your mechanic firing — but it never restarts the recharge. A second beat on the clock: no bank, no window.',
+    // Design §22.5 (2026-10-02): the old "attacks bank into the next execution"
+    // duplicated the Squire heavy frame's bank, so the path became an echo on the
+    // execution's own clock. `reverb-echo-strength` is the design's "half strength"
+    // — a shape constant, authored here rather than in the runtime — applied to the
+    // execution's own multiplier as the root resolves it (one multiplier per hit).
+    packet: 'empowered',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'cooldown.reverb': 1, 'cooldown.reverb-bonus-per-attack': 0.05 },
+    mechanicEffects: { 'cooldown.reverb': 1, 'cooldown.reverb-echo-strength': 0.5 },
   }],
   ['cooldown-balanced-t3-b', {
     id: 'cooldown-balanced-t3-b', name: 'Dynamo', tier: 3,
