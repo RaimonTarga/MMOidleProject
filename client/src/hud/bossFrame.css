@@ -121,8 +121,9 @@
   to { transform: scaleX(1); }
 }
 
-/* The target frame steps under the boss frame while one is up (TargetFrame.tsx). */
-.target-frame--under-boss { top: calc(14px + var(--ro-boss-h) + 8px); }
+/* The target frame steps under the boss frame while one is up (TargetFrame.tsx).
+   Two classes: targetFrame.css loads after this sheet and sets `top` on one. */
+.target-frame.target-frame--under-boss { top: calc(14px + var(--ro-boss-h) + 8px); }
 
 /* ── Phone: the top strip's row under the vitals ────────────────────────── */
 .boss-row {
