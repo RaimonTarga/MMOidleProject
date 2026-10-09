@@ -1229,6 +1229,87 @@ function immunity(scene: GameScene, ev: CardFxEvent): void {
   if (isOwn(scene, ev)) impact(scene, 'light', start);
 }
 
+// ── Recuperate · OVERFLOW — healing past full becomes a ward ─────────────────
+
+/**
+ * The Sustain face's shell, as the mend overflows it. One event per ward raised,
+ * never per top-up. WIND-UP: the heal rises up the body like a level filling, to
+ * the brim. PAYOFF: it spills over the top and sets into a round ward bubble
+ * round the body with a chime. LASTING MARK: the bubble holds for the ward's
+ * window (`durationMs`), its highlight turning slowly, then thins away. (Immunity
+ * is the hex lattice; Overflow the round, filled bubble — one key, two shells.)
+ */
+function overflow(scene: GameScene, ev: CardFxEvent): void {
+  const id = ev.playerId;
+  const start = spriteAt(scene, id);
+  if (!start) return;
+  const color = verbColor(ev);
+  const heal = 0x8de28a;
+  const { k, sparks } = sizeOf(scene, ev);
+  const sprite = scene.state.sprite.get(id);
+  const h = (sprite?.displayHeight ?? 48) * k;
+  const r = Math.max(24, (sprite?.displayWidth ?? 40) * 0.66) * k;
+
+  // The level rising up the body to the brim.
+  const level = scene.add.graphics().setDepth(DEPTH.FX);
+  const t = { p: 0 };
+  scene.tweens.add({
+    targets: t, p: 1, duration: 200, ease: 'Sine.easeIn',
+    onUpdate: () => {
+      const at = spriteAt(scene, id);
+      if (!at || !level.active) return;
+      level.clear();
+      const top = at.y + h * 0.45 - h * 0.95 * t.p;
+      level.fillStyle(heal, 0.28);
+      level.fillRect(at.x - r * 0.55, top, r * 1.1, at.y + h * 0.45 - top);
+      level.lineStyle(2, lighten(heal, 0.4), 0.9);
+      level.lineBetween(at.x - r * 0.55, top, at.x + r * 0.55, top);
+    },
+    onComplete: () => fading(scene, level, 160),
+  });
+
+  // Spilling over the top, setting into the ward.
+  scene.time.delayedCall(200, () => {
+    if (document.hidden) return;
+    const at = spriteAt(scene, id) ?? start;
+    burstFx(scene, 'ptx-dot', at.x, at.y - h * 0.5, count(10, sparks), 520, {
+      tint: [heal, lighten(color, 0.4)], speed: { min: 50, max: 130 }, angle: { min: 200, max: 340 },
+      scale: { start: 0.8, end: 0.3 }, alpha: { start: 1, end: 0 }, gravityY: 260,
+    });
+    const bubble = scene.add.graphics({ x: at.x, y: at.y - 6 }).setDepth(DEPTH.FX);
+    bubble.fillStyle(color, 0.2);
+    bubble.fillCircle(0, 0, r);
+    bubble.lineStyle(2.5, lighten(color, 0.4), 0.95);
+    bubble.strokeCircle(0, 0, r);
+    bubble.setScale(0.3);
+    scene.tweens.add({
+      targets: bubble, scaleX: 1, scaleY: 1, duration: 180, ease: 'Back.easeOut',
+      onComplete: () => fading(scene, bubble, 220),
+    });
+    ring(scene, at.x, at.y - 6, lighten(color, 0.6), { from: r * 0.9, scale: 1.5, width: 2, ms: 320 });
+    if (isOwn(scene, ev)) impact(scene, 'light', at);
+  });
+
+  // The ward holds for its window.
+  const holdMs = Math.max(300, (ev.durationMs ?? 0) - 380);
+  scene.time.delayedCall(380, () => {
+    if (document.hidden) return;
+    followBody(scene, id, holdMs, DEPTH.FX - 1, (g, at, p) => {
+      const fade = 1 - Math.max(0, p - 0.8) / 0.2;
+      g.fillStyle(color, 0.1 * fade);
+      g.fillCircle(at.x, at.y - 6, r);
+      g.lineStyle(2, lighten(color, 0.3), 0.4 * fade);
+      g.strokeCircle(at.x, at.y - 6, r);
+      // The highlight turning round the bubble.
+      const a = -Math.PI * 0.75 + p * holdMs / 900;
+      g.lineStyle(2.5, 0xffffff, 0.45 * fade);
+      g.beginPath();
+      g.arc(at.x, at.y - 6, r * 0.82, a, a + 0.7);
+      g.strokePath();
+    });
+  });
+}
+
 // ── The table ────────────────────────────────────────────────────────────────
 
 /** The bespoke animations, by verb id. Kept in step with `KEYSTONE_ANIMATED`. */
@@ -1246,6 +1327,7 @@ const KEYSTONE_ANIMATIONS: Record<string, KeystoneAnimation> = {
   harvest: harvest,
   'shared-breath': sharedBreath,
   immunity: immunity,
+  overflow: overflow,
 };
 
 /**
