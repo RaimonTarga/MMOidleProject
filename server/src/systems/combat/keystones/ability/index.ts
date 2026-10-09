@@ -33,6 +33,7 @@
  * | Cleanse | Immunity | the stripped status ids as refused kinds on ability-immunity (the ward unit's window); the debuff writers refuse through playerRefusesStatus |
  * | Second Wind | Shared Breath | the Recovery engine's skill source on each same-node InParty member at the owner's fraction; summons mended in the summoner's per-tick owner-to-summon pass |
  * | Recuperate | Overflow | an overheal sink on applyHealToPlayer's overheal-ward hook: while the mend runs, the spill tops up one ward to the ward payoff's cap |
+ * | Sidestep | Flow | the evade seam (onDamageTaken) while Sidestep's window is up: a dodge winds the window back to the evasion-window unit Sidestep reads; the first hit that lands removes it |
  */
 export * from './registry';
 export * from './scheduledHits';
@@ -56,4 +57,5 @@ export { UNYIELDING_KEYSTONE } from './unyielding';
 export { IMMUNITY_KEYSTONE } from './immunity';
 export { SHARED_BREATH_KEYSTONE, mendSummonWithOwner } from './sharedBreath';
 export { OVERFLOW_KEYSTONE, overflowWardOf } from './overflow';
+export { FLOW_KEYSTONE } from './flow';
 export { guardKeystoneMagnitude, payoffWindowMs } from './guardValues';

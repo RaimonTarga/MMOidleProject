@@ -1673,4 +1673,99 @@ const stunnedBy = (monster: MonsterEntity, sourceId: string): boolean => {
   }
 }
 
+// ─── Sidestep · FLOW: every dodge in the window extends it; the first that lands ends it ─
+
+import { ABILITY_SIDESTEP_EFFECT_ID, sidestepWindow } from '@mmo-idle/shared';
+import { makeCombatContext } from '../src/systems/combat/engine/combatPipeline';
+
+{
+  const sidestep = ABILITY_DATABASE.get('sidestep')!;
+  const windowOf = (player: PlayerEntity) => getStatusEffect(player.tracksCombat, ABILITY_SIDESTEP_EFFECT_ID);
+  const up = (player: PlayerEntity): boolean => (windowOf(player)?.remainingMs ?? 0) > 0;
+  /** One incoming direct hit, through the phase the evade seam rides; a graze when `dodge`. */
+  const incoming = (world: World, monster: MonsterEntity, player: PlayerEntity, dodge: boolean): void => {
+    const ctx = makeCombatContext(monster, 'monster', player, 'player');
+    ctx.damage = 30;
+    if (dodge) Object.assign(ctx.metadata, { evaded: true, evadeMitigation: 0.5 });
+    emitCombatEvent('onDamageTaken', ctx, world);
+  };
+  const flowFx = (fx: CardFx[]): CardFx[] => fx.filter((e) => e.keystone === 'flow');
+  /** The Engagement packet's own "per hit dodged" payoff (no keystone on it). */
+  const nodeFx = (fx: CardFx[]): CardFx[] => fx.filter((e) => e.keystone === undefined);
+
+  /** A player who has just Sidestepped, a body in reach, the Engagement packet on. */
+  const scene = (id: string, withVerb: boolean) => {
+    const world = new World();
+    const player = spawnPlayer(world, id, {
+      abilityId: 'sidestep',
+      nodes: rows('sidestep', { packet: 'engagement', ...(withVerb ? { keystone: 'flow' } : {}) }),
+    });
+    const attacker = spawnMonster(world, 430);
+    world.takeNodeEvents(NODE);
+    fireGuard(world, player, 'sidestep');
+    world.takeNodeEvents(NODE);
+    const unitMs = sidestepWindow(sidestep, player.tracksProgression.playerTier).durationMs;
+    assert(unitMs > 0 && windowOf(player)?.remainingMs === unitMs, 'fixture: the window is up at the evasion-window unit');
+    return { world, player, attacker, unitMs };
+  };
+
+  {
+    const { world, player, attacker, unitMs } = scene('ks-flow', true);
+    // Run the window nearly out, then dodge.
+    updateCombatState(world, unitMs - 200);
+    assert(up(player) && windowOf(player)!.remainingMs <= 200, 'fixture: the window is nearly spent');
+    incoming(world, attacker, player, true);
+    assert(windowOf(player)!.remainingMs === unitMs, 'a dodge winds the window back to a full unit');
+    assert(windowOf(player)!.data['totalMs'] === unitMs, 'and the buff clock reads full again');
+    let fx = cardFx(world);
+    assert(flowFx(fx).length === 1 && flowFx(fx)[0]!.durationMs === unitMs,
+      'one card-fx per dodge, carrying the window as it now stands');
+    assert(nodeFx(fx).length === 1, "the packet's per-hit-dodged route fires on the same dodge");
+
+    // Past the cast's own clock: the window is still up, and the node still pays per dodge.
+    updateCombatState(world, 400);
+    assert(up(player), 'the extended window outlives the cast’s own clock');
+    incoming(world, attacker, player, true);
+    fx = cardFx(world);
+    assert(nodeFx(fx).length === 1, 'a dodge in the extended window still fires the node');
+    assert(flowFx(fx).length === 1 && windowOf(player)!.remainingMs === unitMs, 'and extends it again');
+
+    // A DoT tick is neither: it moves nothing.
+    updateCombatState(world, 100);
+    const before = windowOf(player)!.remainingMs;
+    const tick = makeCombatContext(attacker, 'monster', player, 'player');
+    tick.damage = 5;
+    tick.metadata['isDot'] = true;
+    emitCombatEvent('onDamageTaken', tick, world);
+    assert(up(player) && windowOf(player)!.remainingMs === before, 'a damage-over-time tick neither extends nor ends it');
+    world.takeNodeEvents(NODE);
+
+    // The first hit that lands ends it — the real exchange, which rolls the evade.
+    const hp = player.hasHealth.hp;
+    assert(runMonsterAttack(world, attacker, player, 2_000_000) === 'hit', 'the blow resolves');
+    assert(player.hasHealth.hp < hp, 'fixture: the blow landed (no dodge)');
+    assert(!windowOf(player), 'the first hit that lands ends the window, and the speed burst with it');
+    fx = cardFx(world);
+    assert(flowFx(fx).length === 1 && flowFx(fx)[0]!.durationMs === 0, 'one card-fx as it snaps (durationMs 0)');
+    assert(nodeFx(fx).length === 0, 'a landed hit fires no per-hit-dodged node');
+
+    // After it: nothing to extend, nothing to pay.
+    incoming(world, attacker, player, true);
+    assert(!windowOf(player), 'a dodge after the window does not bring it back');
+    assert(cardFx(world).length === 0, 'and fires neither the verb nor the node');
+  }
+
+  // Without the verb, a dodge extends nothing and a landed hit ends nothing.
+  {
+    const { world, player, attacker, unitMs } = scene('ks-flow-off', false);
+    updateCombatState(world, unitMs - 200);
+    incoming(world, attacker, player, true);
+    assert(windowOf(player)!.remainingMs <= 200, 'no verb: a dodge does not extend the window');
+    assert(nodeFx(cardFx(world)).length === 1, 'the node still fires per dodge');
+    incoming(world, attacker, player, false);
+    assert(up(player), 'no verb: a landed hit does not end the window');
+    assert(flowFx(cardFx(world)).length === 0, 'no verb, nothing drawn');
+  }
+}
+
 console.log('abilityKeystones: ok');

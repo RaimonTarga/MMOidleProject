@@ -755,8 +755,9 @@ authored rank itself.
 
 ## Known gaps
 
-- **Ability keystones:** the second and third verb of every trio, and Sidestep's
-  Afterimage, are silhouettes (see the verb table). The ability pass is implemented on
+- **Ability keystones:** the second and third verb of every trio are silhouettes
+  (Sidestep's Afterimage, now its second, waits on a decoy target kind; see the verb
+  table). The ability pass is implemented on
   `feat/ability-pass` and NOT merged to develop; its T1 parity constraint (±5% per class
   per T1 boss) fails structurally: the best Slam rank I leaves 12 of 30 kit cells outside
   ±5%, the worst at +8.9%. It awaits the designer.
@@ -886,7 +887,9 @@ fx key, delivery body, `live`); the server owns behaviour, one module per verb u
 that landed the ability on a Conduit; the owner everywhere else) or `formation`. The
 trios (three verbs each, 57 in all, pick one at home + 2) are in design §22.11; a verb
 with no module is `live: false`, shown as a silhouette and refused at purchase
-(`abilityKeystones.test.ts` keeps the two in step). **18 of the 19 first verbs are live:**
+(`abilityKeystones.test.ts` keeps the two in step). **All 19 first verbs are live** (design
+§22.12 made Flow Sidestep's first verb, ahead of Afterimage, which needs a decoy target kind
+the game does not have):
 
 | Ability | Verb | Delivery | Seam it rides | Status / marker |
 |---|---|---|---|---|
@@ -908,7 +911,7 @@ with no module is `live: false`, shown as a silhouette and refused at purchase
 | Cleanse | Immunity | owner | each stripped status id becomes a refused kind for the ward unit's window | `ability-immunity` |
 | Second Wind | Shared Breath | formation | the Recovery engine's skill source on same-node party members; summons mended in the summoner's owner-to-summon pass | none |
 | Recuperate | Overflow | owner | the overheal-ward hook on `applyHealToPlayer`: spill tops up one ward to the ward payoff's cap | none |
-| Sidestep | Afterimage | n/a | **SILHOUETTE, not live**: a decoy target the attacker keeps swinging at needs a primitive the game does not have | n/a |
+| Sidestep | Flow | owner | the evade seam (`onDamageTaken`) while Sidestep's window is up: a dodge (a graze counts) winds the window back to the `evasion-window` unit Sidestep reads (`sidestepWindow`; a refresh, never a stack); the first hit that lands removes it, the speed burst with it | `ability-sidestep` (its own window) |
 
 Verb magnitudes that are shares of a hit (`paysShare`) resolve from the magnitude table
 at `ROW_SCALAR.keystone`; the few timings (Whirlwind's one-second spin, Aftershock's
@@ -926,7 +929,7 @@ composed at runtime from existing concept art by `abilityIconLayers` (base glyph
 frame for the packet; cross edge; keystone border plus a silhouette glyph; amplifier
 axis glyph), drawn by `client/src/ui/ComposedAbilityIcon.tsx`, with no new PNG. Every
 live keystone owns one bespoke animation keyed by its id
-(`client/src/fx/abilityKeystoneFx.ts`; Afterimage, not live, is the one keyed stub); the
+(`client/src/fx/abilityKeystoneFx.ts`; no first verb is a stub any more); the
 table is in [`combat-animation-current-state.md`](combat-animation-current-state.md).
 
 ### Fire-shapes as implemented (design §22.10)

@@ -40,8 +40,8 @@ import { payloadFlair } from './lineagePayloadModel';
 import { drawPayloadFx, laneColor } from './lineagePayloadFx';
 import { lastingRecord } from './lineagePayloadStates';
 import {
-  AFTERSHOCK_MARK_MS, DRAGNET_BATCH_MS, DRAGNET_FLIGHT_MS, OUTBREAK_MARK_MS, OUTBREAK_SWELL_MS,
-  WHIRLWIND_COIL_MS,
+  AFTERSHOCK_MARK_MS, DRAGNET_BATCH_MS, DRAGNET_FLIGHT_MS, FLOW_BRIGHT_MS, FLOW_TRAIL_MS,
+  OUTBREAK_MARK_MS, OUTBREAK_SWELL_MS, WHIRLWIND_COIL_MS,
 } from './abilityKeystoneModel';
 
 type CardFxEvent = Extract<CombatEvent, { kind: 'card-fx' }>;
@@ -1622,6 +1622,168 @@ function unyielding(scene: GameScene, ev: CardFxEvent): void {
   });
 }
 
+// ── Sidestep · FLOW — every dodge extends the window; the first hit that lands ends it ─
+
+/** One player's live Flow ring: the window's clock as the server last set it. */
+interface FlowRing {
+  g: Phaser.GameObjects.Graphics;
+  /** `performance.now()` the window runs out at, per the last dodge's `durationMs`. */
+  endsAt: number;
+  totalMs: number;
+  /** When the ring last flared (a dodge). */
+  brightAt: number;
+  /** The two streams' angle round the ring, advanced each frame. */
+  phase: number;
+  lastAt: number;
+  color: number;
+  k: number;
+}
+const flowRings = new Map<string, FlowRing>();
+
+/** The ring's ellipse at a body's feet. */
+function flowEllipse(at: P, body: { displayWidth: number; displayHeight: number }, k: number): { cx: number; cy: number; rx: number; ry: number } {
+  const rx = Math.max(20, body.displayWidth * 0.62) * k;
+  return { cx: at.x, cy: at.y + body.displayHeight * 0.42, rx, ry: rx * 0.36 };
+}
+
+/**
+ * The Avoid face's blur, held as a window. One event per dodge that extended the
+ * window (`durationMs` = the window as it now stands) and one for the hit that
+ * ended it (`durationMs: 0`).
+ *
+ * A DODGE: the body slips aside, leaning away from the attacker and leaving a
+ * fading after-trail of itself; the window's ring at its feet flares bright and
+ * its clock is full again (the first dodge draws the ring in). LASTING MARK: the
+ * ring holds for the server's clock, two streams running round it, dimming as the
+ * window runs down and flaring on every dodge. THE ENDING HIT: the ring snaps —
+ * a white flash, shards flung outward, the body jolted.
+ */
+function flow(scene: GameScene, ev: CardFxEvent): void {
+  const id = ev.playerId;
+  const start = spriteAt(scene, id);
+  if (!start) return;
+  const sprite = scene.state.sprite.get(id);
+  const body = { displayWidth: sprite?.displayWidth ?? 40, displayHeight: sprite?.displayHeight ?? 48 };
+  if ((ev.durationMs ?? 0) <= 0) {
+    flowSnap(scene, ev, start, body);
+    return;
+  }
+  const color = verbColor(ev);
+  const { k, sparks } = sizeOf(scene, ev);
+  const now = performance.now();
+
+  // The slip: a lean away from the blow, and the after-trail left behind.
+  const from = spriteAt(scene, ev.targetId);
+  const away = from ? Math.sign(start.x - from.x) || 1 : 1;
+  posePath(scene, id, [
+    { rot: 0.14 * away, sx: 0.94, ms: 70, ease: 'Quad.easeOut' },
+    { rot: 0, sx: 1, ms: 220, ease: 'Sine.easeOut' },
+  ]);
+  afterimages(scene, id, { count: 3, everyMs: 35, tint: color, alpha: 0.4, fadeMs: FLOW_TRAIL_MS });
+  burstFx(scene, 'ptx-spark', start.x - away * 10, start.y, count(5, sparks), 320, {
+    tint: [lighten(color, 0.5), color], speed: { min: 60, max: 140 },
+    angle: away > 0 ? { min: 160, max: 200 } : { min: -20, max: 20 },
+    scale: { start: 0.5, end: 0 }, alpha: { start: 0.8, end: 0 },
+  });
+
+  // The window's ring: flared and full again.
+  const live = flowRings.get(id);
+  if (live && live.g.active) {
+    live.endsAt = now + (ev.durationMs ?? 0);
+    live.totalMs = ev.durationMs ?? 0;
+    live.brightAt = now;
+    return;
+  }
+  if (document.hidden) return;
+  const ring: FlowRing = {
+    g: scene.add.graphics().setDepth(DEPTH.SPRITE - 1),
+    endsAt: now + (ev.durationMs ?? 0),
+    totalMs: ev.durationMs ?? 0,
+    brightAt: now,
+    phase: 0,
+    lastAt: now,
+    color,
+    k,
+  };
+  flowRings.set(id, ring);
+  const t = { p: 0 };
+  scene.tweens.add({
+    targets: t, p: 1, duration: 1_000, repeat: -1,
+    onUpdate: (tween) => {
+      const at = spriteAt(scene, id);
+      const clock = performance.now();
+      if (!at || !ring.g.active || clock >= ring.endsAt || flowRings.get(id) !== ring) {
+        tween.stop();
+        ring.g.destroy();
+        if (flowRings.get(id) === ring) flowRings.delete(id);
+        return;
+      }
+      const current = scene.state.sprite.get(id);
+      const e = flowEllipse(at, { displayWidth: current?.displayWidth ?? 40, displayHeight: current?.displayHeight ?? 48 }, ring.k);
+      const left = ring.totalMs > 0 ? Math.max(0, Math.min(1, (ring.endsAt - clock) / ring.totalMs)) : 0;
+      const bright = Math.max(0, 1 - (clock - ring.brightAt) / FLOW_BRIGHT_MS);
+      ring.phase += (clock - ring.lastAt) * (0.004 + 0.01 * bright);
+      ring.lastAt = clock;
+      const g = ring.g;
+      g.clear();
+      g.lineStyle(2 + 2 * bright, lighten(ring.color, 0.55 * bright), Math.min(1, 0.2 + 0.4 * left + 0.4 * bright));
+      g.strokeEllipse(e.cx, e.cy, e.rx * 2, e.ry * 2);
+      // Two streams running round it: the window flowing on, quicker as it flares.
+      g.lineStyle(2.5, lighten(ring.color, 0.6), (0.3 + 0.55 * bright) * (0.35 + 0.65 * left));
+      for (let s = 0; s < 2; s++) {
+        const a0 = ring.phase + s * Math.PI;
+        g.beginPath();
+        for (let i = 0; i <= 8; i++) {
+          const a = a0 + i * 0.11;
+          const x = e.cx + Math.cos(a) * e.rx;
+          const y = e.cy + Math.sin(a) * e.ry;
+          if (i === 0) g.moveTo(x, y);
+          else g.lineTo(x, y);
+        }
+        g.strokePath();
+      }
+    },
+  });
+}
+
+/** The hit that landed: the ring snaps — a flash, its shards flung out, the body jolted. */
+function flowSnap(scene: GameScene, ev: CardFxEvent, at: P, body: { displayWidth: number; displayHeight: number }): void {
+  const id = ev.playerId;
+  const live = flowRings.get(id);
+  if (live) {
+    live.g.destroy();
+    flowRings.delete(id);
+  }
+  const color = live?.color ?? verbColor(ev);
+  const k = live?.k ?? sizeOf(scene, ev).k;
+  const e = flowEllipse(at, body, k);
+
+  const flash = scene.add.graphics().setDepth(DEPTH.FX);
+  flash.lineStyle(3, 0xffffff, 0.95);
+  flash.strokeEllipse(e.cx, e.cy, e.rx * 2, e.ry * 2);
+  fading(scene, flash, 150);
+  const shards = 8;
+  for (let i = 0; i < shards; i++) {
+    const a = (i / shards) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
+    const shard = scene.add.graphics({ x: e.cx + Math.cos(a) * e.rx, y: e.cy + Math.sin(a) * e.ry })
+      .setDepth(DEPTH.FX).setRotation(a + Math.PI / 2);
+    shard.lineStyle(2.5, lighten(color, 0.3), 1);
+    shard.lineBetween(-5 * k, 0, 5 * k, 0);
+    scene.tweens.add({
+      targets: shard,
+      x: shard.x + Math.cos(a) * 28 * k, y: shard.y + Math.sin(a) * 12 * k,
+      rotation: shard.rotation + (Math.random() - 0.5) * 2, alpha: 0,
+      duration: 320, ease: 'Cubic.easeOut',
+      onComplete: () => shard.destroy(),
+    });
+  }
+  posePath(scene, id, [
+    { sx: 1.08, sy: 0.92, ms: 60 },
+    { sx: 1, sy: 1, ms: 200, ease: 'Back.easeOut' },
+  ]);
+  if (isOwn(scene, ev)) impact(scene, 'light', at);
+}
+
 // ── The table ────────────────────────────────────────────────────────────────
 
 /** The bespoke animations, by verb id. Kept in step with `KEYSTONE_ANIMATED`. */
@@ -1644,6 +1806,7 @@ const KEYSTONE_ANIMATIONS: Record<string, KeystoneAnimation> = {
   backlash: backlash,
   entangle: entangle,
   unyielding: unyielding,
+  flow: flow,
 };
 
 /**
