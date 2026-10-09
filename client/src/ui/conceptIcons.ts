@@ -456,6 +456,8 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'lineage.bleed': 'boss-rend',
   'lineage.hobbled': 'debuff-slow',
   'lineage.pinned': 'debuff-root',
+  // Entangle (Bramble Guard's keystone) wears the Guard that laid it, as Bound wears Binding Strike.
+  'ability-entangled': 'bramble-guard',
   stunned: 'debuff-stunned',
   'stun-immune': 'break-free',
   'canopy-chameleon-barrage': 'thorn-spitter-barrage',

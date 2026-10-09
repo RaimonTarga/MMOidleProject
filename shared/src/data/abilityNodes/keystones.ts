@@ -295,7 +295,7 @@ const trioEntries: [string, Trio][] = [
   ['bramble-guard', [
     verb('bramble-guard', 1, 'entangle', 'Entangle',
       'A body that hits you while brambled is slowed.',
-      'control.frost-drag', 'slow'),
+      'control.frost-drag', 'slow', { live: true }),
     verb('bramble-guard', 2, 'thicket', 'Thicket',
       'Thorns also hit every body adjacent to the attacker.',
       'control.mire-grasp', 'plating-stack'),

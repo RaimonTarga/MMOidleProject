@@ -722,6 +722,7 @@ function attackLedger(player: PlayerEntity): string {
 import { requestManualAbilityUse } from '../src/systems/player/abilities/abilityFiring';
 import { syncPlayerControlLockout } from '../src/systems/combat/status/playerControlLockout';
 import { runMonsterAttack } from '../src/systems/combat/engine/combat';
+import { ABILITY_ENTANGLE_EFFECT_ID } from '@mmo-idle/shared';
 
 /** Fire a Guard the way a hotkey press does; asserts it activated. */
 function fireGuard(world: World, player: PlayerEntity, abilityId: string, now = 1_000_000): void {
@@ -842,6 +843,48 @@ const stunnedBy = (monster: MonsterEntity, sourceId: string): boolean => {
   } as unknown as CombatContext, world);
   assert(!stunnedBy(dodged, player.isPlayer.id), 'a dodged blow is not riposted');
   assert(healthOf(bodies) === before, 'a Guard verb deals no damage');
+}
+
+// ─── Bramble Guard · ENTANGLE: a body that hits you while brambled is slowed ─
+
+{
+  const ENTANGLE_FX = ABILITY_KEYSTONE_DEFINITIONS.get('entangle')!.fx;
+  /** One world: a brambled player (with or without the verb) takes one melee blow. */
+  const blow = (id: string, keystone?: string) => {
+    const world = new World();
+    const player = spawnPlayer(world, id, {
+      abilityId: 'bramble-guard', nodes: rows('bramble-guard', { packet: 'tempo', ...(keystone ? { keystone } : {}) }),
+    });
+    const brute = spawnMonster(world, 430);
+    const bystander = spawnMonster(world, 470, 460);
+    fireGuard(world, player, 'bramble-guard');
+    world.takeNodeEvents(NODE);
+    assert(runMonsterAttack(world, brute, player, 1_000_100) === 'hit', 'the blow lands');
+    return { world, player, brute, bystander };
+  };
+
+  const { world, player, brute, bystander } = blow('ks-entangle', 'entangle');
+  const slow = getStatusEffect(brute.tracksCombat, ABILITY_ENTANGLE_EFFECT_ID);
+  assert(slow !== undefined && (slow.data['moveSlowPct'] ?? 0) > 0 && slow.remainingMs > 0,
+    'a body that hits you while brambled is slowed');
+  assert((slow!.data['totalMs'] ?? 0) > 0, 'with totalMs in its data for the buff clock');
+  assert(slow!.sourceId === player.isPlayer.id, 'owned by the brambled player');
+  assert(monsterIsHeld(brute), 'an entangled body counts as held for the Control verb');
+  assert(!getStatusEffect(bystander.tracksCombat, ABILITY_ENTANGLE_EFFECT_ID), 'a body that did not hit is not');
+  const drawn = cardFx(world).filter((e) => e.fx === ENTANGLE_FX);
+  assert(drawn.length === 1 && drawn[0]!.targetId === brute.isMonster.id && (drawn[0]!.durationMs ?? 0) > 0,
+    'one card-fx on the entangled body, with the hold as applied');
+
+  // The slow is all it adds: the thorns bite the same with or without the verb.
+  const plain = blow('ks-entangle-off');
+  assert(!getStatusEffect(plain.brute.tracksCombat, ABILITY_ENTANGLE_EFFECT_ID), 'no verb, no slow');
+  assert(plain.brute.hasHealth.hp === brute.hasHealth.hp, 'a Guard verb deals no damage (only the thorns bite)');
+
+  // Not brambled, nothing entangles: the bramble runs out, the next blow lands free.
+  player.tracksCombat.statusEffects = player.tracksCombat.statusEffects.filter((e) => e.id !== 'ability-bramble');
+  bystander.tracksCombat.statusEffects = [];
+  runMonsterAttack(world, bystander, player, 1_000_200);
+  assert(!getStatusEffect(bystander.tracksCombat, ABILITY_ENTANGLE_EFFECT_ID), 'no bramble, no entangle');
 }
 
 console.log('abilityKeystones: ok');

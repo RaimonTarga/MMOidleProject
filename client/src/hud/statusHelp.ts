@@ -202,6 +202,8 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   'lineage.bleed': d('Bleed', 'Your weapon’s cards have opened a wound. Every Affliction card on a weapon with no poison of its own adds to this one bleed, which ticks past the target’s plating at half its damage reduction. The number is the damage it still owes.'),
   'lineage.hobbled': d('Hobbled', 'Your weapon drags at the target’s stride with every hit: it moves slower, but still attacks and casts. A hobbled target counts as held for the cards that need one.'),
   'lineage.pinned': d('Pinned', 'A card has pinned the target where it stands: it cannot reposition, but still attacks anything already in reach. A pinned target counts as held.'),
+  // Bramble Guard's Entangle keystone (design §22.4): the slow on whatever hit a brambled player.
+  'ability-entangled': d('Entangled', 'It struck you through your brambles and the thorns caught its stride: it moves slower, but still attacks and casts. An entangled target counts as held for the cards that need one.'),
   'death-mark': d('Death Mark', 'Your shots are stacking marks on the target. Your next reload detonates them a beat later, each mark adding to the blast.'),
   'energy-ci-tag': d('Induction', 'Cascading Induction: your regular hits land almost nothing but charge the target. Your next discharge grows with every charge stored here, then spends them all.'),
   stunned: d('Stunned', 'The target cannot move or act until this hard-control window ends. This is the control applied by Stunning Strike or a frost shatter; slow resistance does not help.'),

@@ -22,6 +22,7 @@
  * |---|---|---|
  * | Break Free | Backlash | the control ladder's shortest rung (applyStun, ladderStunMs) on every body adjacent to the player |
  * | Brace | Riposte | an afterHit listener on a melee hit taken while Braced; the shortest rung on the attacker, once per attacker per Brace |
+ * | Bramble Guard | Entangle | the thorns' own afterHit moment; applyMonsterSlow on the attacker under its own slow id (ability-entangled), the slow payoff off the table |
  */
 export * from './registry';
 export * from './scheduledHits';
@@ -33,3 +34,5 @@ export { OUTBREAK_KEYSTONE, outbreakTag, outbreakTagged } from './outbreak';
 export { DRAGNET_KEYSTONE } from './dragnet';
 export { BACKLASH_KEYSTONE } from './backlash';
 export { RIPOSTE_KEYSTONE } from './riposte';
+export { ENTANGLE_KEYSTONE } from './entangle';
+export { guardKeystoneMagnitude, payoffWindowMs } from './guardValues';

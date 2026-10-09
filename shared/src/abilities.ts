@@ -318,6 +318,14 @@ export const ABILITY_SLOW_EFFECT_ID = "ability-slowed";
 export const ABILITY_ROOT_EFFECT_ID = "ability-rooted";
 
 /**
+ * Bramble Guard's Entangle keystone (design §22.4): the slow on a body that hit a
+ * brambled player. Its own id ("Entangled") rather than the shared ability slow,
+ * whose copy still names a cut ability; one of `MONSTER_SLOW_STATUS_IDS`, so it is
+ * the same rung as every slow.
+ */
+export const ABILITY_ENTANGLE_EFFECT_ID = "ability-entangled";
+
+/**
  * Client-effect tags stamped on a `player-hit` event so the client can overlay
  * the right in-world FX on top of the normal attack FX and pulse the HUD icon.
  * Shared so the server (which stamps `ctx.metadata.clientEffects`) and the
