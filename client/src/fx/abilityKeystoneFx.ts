@@ -23,21 +23,24 @@ import {
   abilityKeystoneUnit,
   resolveAbilityEffect,
   type CombatEvent,
+  type MonsterView,
   type PacketId,
   type PlayerView,
 } from '@mmo-idle/shared';
 import type { GameScene } from '../scenes/GameScene';
 import { DEPTH } from '../render/depth';
 import { nodeToScene } from '../render/sceneCoords';
-import { bodyPose, releasePose, tweenPose } from './bodyPose';
-import { debrisKick, drawCracks, dustCloud, inhale, ring } from './bossKit';
+import { bodyPose, posePath, releasePose, tweenPose } from './bodyPose';
+import { debrisKick, drawCracks, dustCloud, inhale, lob, ring } from './bossKit';
 import { burstFx } from './particles';
 import { impact } from './impactFeel';
 import { attackFlairOf } from './attackFlair';
 import { payloadFlair } from './lineagePayloadModel';
 import { drawPayloadFx, laneColor } from './lineagePayloadFx';
 import { lastingRecord } from './lineagePayloadStates';
-import { AFTERSHOCK_MARK_MS, WHIRLWIND_COIL_MS } from './abilityKeystoneModel';
+import {
+  AFTERSHOCK_MARK_MS, OUTBREAK_MARK_MS, OUTBREAK_SWELL_MS, WHIRLWIND_COIL_MS,
+} from './abilityKeystoneModel';
 
 type CardFxEvent = Extract<CombatEvent, { kind: 'card-fx' }>;
 type KeystoneAnimation = (scene: GameScene, ev: CardFxEvent) => void;
@@ -425,6 +428,90 @@ function breakthrough(scene: GameScene, ev: CardFxEvent): void {
   if (isOwn(scene, ev)) impact(scene, 'medium', to);
 }
 
+// ── Contagion · OUTBREAK — a body it infected passes its afflictions on ──────
+
+/**
+ * WIND-UP: the infected corpse swells, the air drawn into it. PAYOFF: it bursts —
+ * spores thrown up, and a glob of what it carried lobbed onto its nearest living
+ * neighbour, which flinches under the splat (Contagion's own tendril, the
+ * `dot-spread` event, draws the element beside it). LASTING MARK: a miasma pool
+ * where the body died, bubbling, fading over `OUTBREAK_MARK_MS`.
+ */
+function outbreak(scene: GameScene, ev: CardFxEvent): void {
+  const corpse = nodeToScene(ev.pos.x, ev.pos.y);
+  const color = verbColor(ev);
+  const dark = 0x3e5a24;
+  const { k, sparks } = sizeOf(scene, ev);
+
+  // The swell.
+  const pod = scene.add.graphics({ x: corpse.x, y: corpse.y - 8 }).setDepth(DEPTH.FX);
+  pod.fillStyle(color, 0.55);
+  pod.fillCircle(0, 0, 10 * k);
+  pod.lineStyle(2, lighten(color, 0.4), 0.9);
+  pod.strokeCircle(0, 0, 10 * k);
+  pod.setScale(0.4);
+  inhale(scene, corpse.x, corpse.y - 8, [color, dark], 34 * k, OUTBREAK_SWELL_MS);
+  scene.tweens.add({
+    targets: pod, scaleX: 1.35, scaleY: 1.25, duration: OUTBREAK_SWELL_MS, ease: 'Quad.easeIn',
+    onComplete: () => {
+      pod.destroy();
+      if (document.hidden) return;
+      // The burst.
+      ring(scene, corpse.x, corpse.y - 8, color, { from: 10 * k, scale: 3.4, width: 3, ms: 360 });
+      burstFx(scene, 'ptx-dot', corpse.x, corpse.y - 8, count(16, sparks), 820, {
+        tint: [color, dark, lighten(color, 0.4)], speed: { min: 40, max: 150 }, angle: { min: 200, max: 340 },
+        scale: { start: 1.1, end: 1.8 }, alpha: { start: 0.8, end: 0 }, gravityY: -20,
+      });
+      // The glob, lobbed onto the neighbour.
+      const target = spriteAt(scene, ev.targetId) ?? (ev.targetPos ? nodeToScene(ev.targetPos.x, ev.targetPos.y) : undefined);
+      if (target) {
+        lob(scene, { x: corpse.x, y: corpse.y - 8 }, { x: target.x, y: target.y - 6 }, 260, 34 * k, (g) => {
+          g.fillStyle(color, 0.95);
+          g.fillCircle(0, 0, 5.5 * k);
+          g.fillStyle(lighten(color, 0.6), 0.9);
+          g.fillCircle(-1.5, -1.5, 2 * k);
+        }, () => {
+          if (document.hidden) return;
+          const at = spriteAt(scene, ev.targetId) ?? target;
+          const splat = scene.add.graphics({ x: at.x, y: at.y - 4 }).setDepth(DEPTH.FX);
+          splat.fillStyle(color, 0.8);
+          for (let i = 0; i < 6; i++) {
+            const a = (i / 6) * Math.PI * 2;
+            splat.fillCircle(Math.cos(a) * 7 * k, Math.sin(a) * 5 * k, 3 * k);
+          }
+          splat.fillCircle(0, 0, 6 * k);
+          fading(scene, splat, 420, { scaleX: 1.6, scaleY: 1.4 });
+          if (ev.targetId && !(scene.state.view.get(ev.targetId) as MonsterView | undefined)?.isBoss) {
+            posePath(scene, ev.targetId, [
+              { sx: 0.9, sy: 1.1, ms: 60 },
+              { sx: 1.06, sy: 0.95, ms: 80 },
+              { sx: 1, sy: 1, ms: 240, ease: 'Back.easeOut' },
+            ]);
+          }
+        });
+      }
+      // The lasting mark: a miasma pool where the body fell.
+      const pool = scene.add.graphics({ x: corpse.x, y: corpse.y + 12 }).setDepth(DEPTH.SPRITE - 1);
+      pool.fillStyle(dark, 0.45);
+      pool.fillEllipse(0, 0, 54 * k, 20 * k);
+      pool.fillStyle(color, 0.3);
+      pool.fillEllipse(0, 0, 38 * k, 13 * k);
+      pool.setScale(0.3);
+      scene.tweens.add({ targets: pool, scaleX: 1, scaleY: 1, duration: 260, ease: 'Back.easeOut' });
+      fading(scene, pool, OUTBREAK_MARK_MS * 0.5, {}, OUTBREAK_MARK_MS * 0.5);
+      for (let i = 0; i < 4; i++) {
+        scene.time.delayedCall(300 + i * 420, () => {
+          if (document.hidden) return;
+          burstFx(scene, 'ptx-dot', corpse.x + (Math.random() - 0.5) * 30 * k, corpse.y + 10, 2, 700, {
+            tint: [color, lighten(color, 0.3)], speed: { min: 6, max: 18 }, angle: { min: 250, max: 290 },
+            scale: { start: 0.6, end: 1.1 }, alpha: { start: 0.7, end: 0 }, gravityY: -30,
+          });
+        });
+      }
+    },
+  });
+}
+
 // ── The table ────────────────────────────────────────────────────────────────
 
 /** The bespoke animations, by verb id. Kept in step with `KEYSTONE_ANIMATED`. */
@@ -432,6 +519,7 @@ const KEYSTONE_ANIMATIONS: Record<string, KeystoneAnimation> = {
   whirlwind: whirlwind,
   aftershock: aftershock,
   breakthrough: breakthrough,
+  outbreak: outbreak,
 };
 
 /**
