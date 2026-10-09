@@ -275,7 +275,7 @@ T2 it is the band's grammar. A verb is authored with **no trigger and no payoff*
 | Tempo | `hit-nth` n = 6 (landed swings) | `echo-hit` 1.0: a whole second swing through the proc seam, carrying on-hit | the same | attack speed +9% |
 | Affliction | `hit-afflicted`, cap 5000 ms | bleed 1.0 × the hit over 4 s, ADDED to the one record (`lineage.bleed`, or the weapon's reservoir, §11a) | `redose`: 1.0 × what its DoTs still owe, over 4 s, added to that same record | DoT potency +10% (`dotPotencyPct` → `dot.mechanic-mult` AND a light bleed on every hit, below; on a reservoir weapon the reservoir's potency instead) |
 | Engagement | `first-hit`, per body | `big-hit` ×2 | the same | Attack +3 |
-| Empowered | `mechanic-fired`, cap 4000 ms | `mechanic-proxy` (the class's own multiplier; 1.5 for dot, summoner and every reload spec, since the T3 review retired the Duelist's exploding clip, design §22.5) | `big-hit` ×1.5 on the mechanic's hit | attack +9% |
+| Empowered | `mechanic-fired`, cap 4000 ms | `mechanic-proxy` (the class's own multiplier; the Duelist's ×3.5 from `reload.mechanic-proxy-mult`, a key only the proxy reads, design §22.12; 1.5 for dot, summoner and every other reload spec) | `big-hit` ×1.5 on the mechanic's hit | attack +9% |
 | Control | `hit-held` (slowed, rooted, chilled, frozen or stunned — a knockdown is held), cap 5000 ms | `root` 2000 ms | `stun` 1500 ms | `slowOnHit` 15% (a slow on every hit, below) |
 | Kill chain | `kill` + carry (the next landed hit after a kill) | `heal-and-load`: heal 10% of max HP, the hit ×1.5 | the same ("Your next hit after a kill heals a tenth of your pool and lands loaded (+50%).") | move speed +11 |
 | Technique | `technique-cast` | refund ⅓ of the Technique cooldowns | refund ½ | Technique power +9% |

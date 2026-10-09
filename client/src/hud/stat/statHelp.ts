@@ -161,6 +161,7 @@ export const STAT_HELP: Record<string, string> = {
   'reload.momentum': 'Each reload stacks attack speed and shortens the next reload. Stacks decay out of combat.',
   'reload.cannon': 'Every shot banks damage into a pool; reloading charges, then fires the whole pool as one burst.',
   'reload.kill-chain': 'Every kill loads a round on top of your clip, even past its size, until you next reload.',
+  'reload.mechanic-proxy-mult': 'The multiplier a hit lands at when an Empowered card makes it count as your class mechanic.',
   'reload.ramp-carry-pct': 'The share of your attack-speed ramp a reload keeps instead of resetting it.',
 
   // ── Energy (charge on hits, spend on a discharge) ───────────────────────────

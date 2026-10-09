@@ -218,18 +218,18 @@ export const t3CombatEntriesA = [
     id: 'cooldown-heavy-t3-b', name: 'Destroyer', tier: 3,
     classId: 'cooldown-root', subVariantId: 'heavy',
     parent: 'cooldown-heavy', children: [],
-    description: 'Your execution is delivered by your Techniques. When it is ready it waits, primed, and the next Technique you land fires it with that Technique\'s shape: an armed Technique lands it on the armed hit; a cast lands it on the cast\'s target — across Slam\'s whole area, from Snipe\'s range. It hits harder (3× instead of the tier\'s 2.5×). Your regular attacks deal their normal damage and never spend it, and a Guard never fires it.',
+    description: 'Your execution is delivered by your Techniques. When it is ready it waits, primed, and the next Technique you land fires it with that Technique\'s shape: an armed Technique lands it on the armed hit; a cast lands it on the cast\'s target — across Slam\'s whole area, from Snipe\'s range. It lands at the frame\'s own ×3.5 (the other heavy paths drop to 2.5×), and the bank your regular hits fill while it waits grows it from there. Your regular attacks deal their normal damage and never spend it, and a Guard never fires it.',
     // Design §22.5 (2026-10-02): the old path (normals deal no damage, a 5 s
     // execution, the first strike on a new target is an execution) duplicated the
     // Engagement keystone Always First; it is now the Technique lane's path.
     // Distinct from the Signature keystone: Signature makes a landed Technique COUNT
     // as the mechanic; here the mechanic RIDES the Technique.
-    // The recharge is the heavy frame's own again (the 5 s override is gone); the
-    // −0.5 multiplier delta is kept as authored (3.5 − 0.5 = 3.0×, above the other
-    // heavy paths' 2.5×) — no number moved in the re-home.
+    // The recharge is the heavy frame's own again (the 5 s override is gone), and so
+    // is the multiplier (design §22.12): the path's −0.5 delta is dropped, so the
+    // delivered execution is the Bulwark frame's ×3.5 and the bank takes it above.
     packet: 'technique',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'cooldown.technique-execution': 1, 'cooldown.empowered-mult': -0.5 },
+    mechanicEffects: { 'cooldown.technique-execution': 1 },
   }],
   ['cooldown-heavy-t3-c', {
     id: 'cooldown-heavy-t3-c', name: 'Devout Priest', tier: 3,
@@ -247,7 +247,7 @@ export const t3CombatEntriesA = [
     id: 'reload-light-t3-a', name: 'Duelist', tier: 3,
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-light', children: [],
-    description: 'Kill chain: every kill loads one round on top of your clip, even past its size, until you next reload — a long chain is a long clip, and the ammo counter climbs past its maximum. Reloading returns the clip to its authored size; a kill that readies the reload (Refund) refills the clip and still adds the round. Your openers stay the first two rounds of a fresh clip.',
+    description: 'Kill chain: every kill loads one round on top of your clip, even past its size, until you next reload — a long chain is a long clip, and the ammo counter climbs past its maximum. Reloading returns the clip to its authored size; a kill that readies the reload (Refund) refills the clip and still adds the round. Your openers stay the first two rounds of a fresh clip. A hit an Empowered card makes count as your mechanic lands at ×3.5.',
     // Design §22.5 (T3 path review): re-homed from Empowered. Its last-bullet
     // payoff duplicated the Marksman frame's end-of-clip and its splash the
     // Shockwave keystone; Kill chain had one path. Distinct from Refund, which
@@ -255,7 +255,11 @@ export const t3CombatEntriesA = [
     packet: 'kill-chain',
     cost: 1, statEffects: {},
     // Rounds per kill: a shape constant (one), not a tuning number.
-    mechanicEffects: { 'reload.kill-chain': 1 },
+    // Design §22.12: the Empowered `mechanic-proxy` is ×3.5 again (the retired
+    // last bullet's number), on a key only the proxy reads — never
+    // `reload.empowered-mult`, so no real shot (the Scout's openers) and no HUD or
+    // DPS reader moves.
+    mechanicEffects: { 'reload.kill-chain': 1, 'reload.mechanic-proxy-mult': 3.5 },
   }],
   ['reload-light-t3-b', {
     id: 'reload-light-t3-b', name: 'Desperado', tier: 3,
@@ -354,11 +358,13 @@ export const t3CombatEntriesA = [
     id: 'reload-heavy-t3-b', name: 'Warmonger', tier: 3,
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-heavy', children: [],
-    description: 'Tempo: a reload halves your ramp instead of resetting it, so a sustained fight climbs past what one clip reaches — toward twice a clip\'s worth of attack speed, with the ramp\'s top damage waiting up there. The barrel glow holds at the carried charge while you reload. Carries 20 extra rounds (a 40-round clip).',
+    description: 'Tempo: a reload halves your ramp instead of resetting it. Your first clip climbs exactly as the frame\'s does, to the top damage at the clip\'s end; every clip after starts from the carried half, so it reaches that top sooner, and only your attack speed keeps climbing past one clip — toward twice a clip\'s worth in a sustained fight. The barrel glow holds at the carried charge while you reload. Carries 20 extra rounds (a 40-round clip).',
     // Design §22.5 (T3 path review): Tempo kept. The Artillerist frame now owns
     // the per-clip ramp (frame brief §1), so the path's own capped ramp (Hair
     // Trigger) is retired and the path re-homed onto the frame's: half of the
     // ramp carries through a reload, and a per-clip climb becomes a sustained one.
+    // Design §22.12: the top damage and the glow measure against ONE clip, so the
+    // first clip is the Artillerist's own; only the attack-speed climb carries past.
     packet: 'tempo',
     cost: 1, statEffects: {},
     // The carry is a shape constant (half), not a tuning number; the ramp's own

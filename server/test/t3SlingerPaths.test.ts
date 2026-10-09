@@ -7,10 +7,12 @@
  *              Distinct from the Kill chain keystone Refund (a kill completes the
  *              reload): with Refund the Duelist gets the refill AND the round.
  *   Warmonger  Tempo. The Artillerist frame owns the per-clip ramp; a reload now
- *              HALVES it instead of resetting it, so a sustained fight climbs past
- *              what one clip reaches, and the barrel glow holds at the carried
- *              value through the reload. The halving is paid once per reload,
- *              however the clip comes back (a Refund kill included).
+ *              HALVES it instead of resetting it, and the barrel glow holds at the
+ *              carried value through the reload. The top damage and the glow
+ *              measure against ONE clip (design §22.12), so the first clip is the
+ *              Artillerist's own; only the attack speed climbs past one clip in a
+ *              sustained fight. The halving is paid once per reload, however the
+ *              clip comes back (a Refund kill included).
  *
  * WHAT THIS PINS. The rule's wiring and its bounds, through the real ammo pipeline
  * (`beforeAttack` spends the round and tags its clip position, `afterHit` runs the
@@ -26,6 +28,7 @@ import {
   composePlayerView,
   emptyEquipment,
   keystoneFxKey,
+  resolveEmpoweredMultiplier,
   setFlag,
   setLineageRuntime,
   type CombatEvent,
@@ -38,12 +41,15 @@ import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { emitCombatEvent, type CombatContext } from '../src/systems/combat/engine/combatPipeline';
+import { proxyEmpoweredMultiplier } from '../src/systems/combat/engine/empoweredAttacks';
 import { refundMechanic } from '../src/systems/combat/keystones';
 import { RUNE_TACTICAL_RELOAD_FLAG } from '../src/systems/combat/ai/runeConfig';
 import { updateReloadArchetype } from '../src/systems/classes/archetypes/reload/reloadPrototype';
 import { requestManualReload } from '../src/systems/classes/archetypes/reload/reloadLifecycle';
 import {
   reloadFrameRampCap,
+  reloadFrameRampFill,
+  reloadFramePositionMult,
   reloadRampCarry,
 } from '../src/systems/classes/archetypes/reload/frameLoop';
 
@@ -214,6 +220,71 @@ const DUELIST = 'reload-light-t3-a';
   assert(effects['reload.exploding-clip'] === undefined, 'the exploding last bullet is retired');
   assert(effects['reload.empowered-mult'] === undefined, 'the last-bullet multiplier is retired');
   assert(effects['reload.max-ammo'] === undefined, 'the +1 round is retired: the clip grows with kills');
+  assert(
+    effects['reload.mechanic-proxy-mult'] === 3.5,
+    'the Empowered proxy is ×3.5 again, on a key only the proxy reads (design §22.12)',
+  );
+}
+
+// ── Duelist: an Empowered-lane proxy lands at ×3.5; the openers do not move ──
+
+{
+  const duelist = slinger('t3s-duelist-proxy', 'light', [DUELIST]);
+  const scout = slinger('t3s-scout-proxy', 'light', []);
+  assert(proxyEmpoweredMultiplier(world, duelist) === 3.5, `the Duelist's proxy is ×3.5, got ${proxyEmpoweredMultiplier(world, duelist)}`);
+  assert(
+    proxyEmpoweredMultiplier(world, scout) === undefined,
+    'a reload spec without the key has no multiplier to proxy (it takes the table\'s fallback)',
+  );
+  assert(
+    resolveEmpoweredMultiplier(duelist.usesSkills.passives, 'reload') === null,
+    'the HUD and the Stats panel\'s DPS estimate still see no empowered reload shot (no ×3.5 last round)',
+  );
+
+  // The openers: a whole fresh clip on each, round for round the Scout frame's own —
+  // the proxy's key arms nothing and folds into no real shot.
+  const duelistTarget = punchbag(780);
+  const scoutTarget = punchbag(800);
+  const clip = duelist.usesReload!.ammoMax;
+  const duelistMults: number[] = [];
+  const scoutMults: number[] = [];
+  for (let round = 1; round <= clip; round++) {
+    const duelistShot = fireShot(duelist, duelistTarget);
+    assert(duelistShot.metadata['mechanicConsumed'] !== true, `round ${round}: no real empowered shot fired`);
+    duelistMults.push(empoweredMult(duelistShot));
+    scoutMults.push(empoweredMult(fireShot(scout, scoutTarget)));
+  }
+  const openerMult = duelist.usesSkills.passives['reload.frame-opener-mult'] ?? 0;
+  assert(openerMult === 1.3, `fixture: the Scout frame's openers are ×1.3, got ${openerMult}`);
+  assert(
+    duelistMults.every((mult, i) => mult === scoutMults[i] && mult === (i < 2 ? openerMult : 1)),
+    `the Duelist's clip is the Scout's, openers and all: ${duelistMults.join(', ')} against ${scoutMults.join(', ')}`,
+  );
+  assert(duelist.hasEmpoweredAttack === undefined, 'and no empowered flag is armed');
+  finishReload(duelist);
+
+  // An Empowered-lane `mechanic-proxy` through the real card seam, on a round past
+  // the openers, lands at ×3.5.
+  for (let round = 1; round <= 2; round++) fireShot(duelist, duelistTarget);
+  const proxyCard: ResolvedLineageCard = {
+    card: {
+      id: 'seed-proxy-duelist', lineageId: 'rapier', tier: 1, row: 'payoff', lane: 'empowered',
+      name: 'Seeded proxy', description: '', fx: 'empowered.mechanic-flash',
+    },
+    requiredBiomeGroup: 'forest', requiredBiomeLevel: 4, requiredGlobalMastery: 0,
+    cost: { essence: {}, shards: {} },
+    trigger: { kind: 'hit-nth', n: 1 },
+    payoff: { kind: 'mechanic-proxy', magnitude: 1.5 },
+    payoffFx: 'empowered.mechanic-flash',
+    composition: { verbLane: 'empowered', pure: false },
+  };
+  setLineageRuntime(duelist.tracksCombat, { cards: [proxyCard], capstones: [] });
+  const proxied = fireShot(duelist, duelistTarget);
+  assert(proxied.metadata['mechanicProxy'] === true, 'fixture: the seeded card proxied the hit');
+  close(empoweredMult(proxied), 3.5, 'the Duelist\'s Empowered proxy lands at ×3.5');
+  assert(proxied.damage === Math.floor(BASE_DAMAGE * 3.5), `and the hit carries it, got ${proxied.damage}`);
+  assert(duelist.hasEmpoweredAttack === undefined, 'a proxy neither arms nor spends the root\'s charge');
+  setLineageRuntime(duelist.tracksCombat, { cards: [], capstones: [] });
 }
 
 // ── Duelist: the clip grows by one per kill, past max, and the HUD sees it ───
@@ -475,18 +546,38 @@ function frameCharges(playerId: string): Array<Extract<CombatEvent, { kind: 'fra
 
   assert(perShot > 0 && topMult > 1, 'the ramp\'s numbers are the Artillerist frame\'s');
   close(carry, 0.5, 'the carry is the node\'s half');
-  assert(cap === Math.round(clip / (1 - carry)), `the ramp tops out where a sustained fight settles (${clip / (1 - carry)}), got ${cap}`);
-  assert(cap > clip, 'so the ramp has room above one clip');
+  assert(cap === Math.round(clip / (1 - carry)), `the attack-speed climb tops out where a sustained fight settles (${clip / (1 - carry)}), got ${cap}`);
+  assert(cap > clip, 'so the attack speed has room above one clip');
 
+  // The first clip is exactly the Artillerist frame's (design §22.12): the damage
+  // rides stacks over ONE clip, never over the carried ceiling, and the glow beats
+  // against the clip too.
   const baseCooldown = player.performsAttack.attackCooldown;
-  fireAllButLast(player, target);
+  world.takeNodeEvents(NODE);
+  const firstClip: number[] = [];
+  while (ammoOf(player) > 1) firstClip.push(empoweredMult(fireShot(player, target)));
   const last = landShot(player, target);
+  firstClip.push(empoweredMult(last));
+  assert(firstClip.length === clip, `fixture: one whole clip, got ${firstClip.length} shots`);
+  firstClip.forEach((mult, i) => close(
+    mult, 1 + (topMult - 1) * (i / clip),
+    `first clip, round ${i + 1}: the frame's own ramp over one clip`,
+  ));
   const preReload = stacksOf(player);
   assert(preReload === clip, `one clip climbs one stack a shot: ${clip}, got ${preReload}`);
+  close(reloadFrameRampFill(player), 1, 'at the clip\'s end the ramp is full');
+  close(
+    reloadFramePositionMult(player, 1, clip), topMult,
+    `so the clip's end holds the frame's top damage (×${topMult}), as the Artillerist's does`,
+  );
+  const climb = frameCharges('t3s-warmonger');
+  assert(
+    climb.length === clip && climb.every((e, i) => e.stacks === i + 1 && e.max === clip),
+    `the glow climbs a beat a shot toward one clip, got ${climb.map((e) => `${e.stacks}/${e.max}`).join(' ')}`,
+  );
   assert(reload.reloadingMs > 0, 'the clip ran dry and started the reload');
 
   // The reload-start hooks run on the last shot's tail.
-  world.takeNodeEvents(NODE);
   finishShot(last);
   const carried = stacksOf(player);
   assert(
@@ -497,8 +588,8 @@ function frameCharges(playerId: string): Array<Extract<CombatEvent, { kind: 'fra
   const glow = frameCharges('t3s-warmonger');
   assert(glow.length === 1, `the reload is one glow beat, got ${glow.length}`);
   assert(
-    glow[0]!.stacks === carried && glow[0]!.max === cap,
-    `the barrel glow holds at the carried ${carried}/${cap} (not the spend), got ${glow[0]!.stacks}/${glow[0]!.max}`,
+    glow[0]!.stacks === carried && glow[0]!.max === clip,
+    `the barrel glow holds at the carried ${carried}/${clip} (not the spend), got ${glow[0]!.stacks}/${glow[0]!.max}`,
   );
   close(player.performsAttack.attackCooldown, baseCooldown, 'the base cadence is handed back while reloading');
 
@@ -509,9 +600,9 @@ function frameCharges(playerId: string): Array<Extract<CombatEvent, { kind: 'fra
   // The next clip starts where the carry left it, and keeps climbing.
   const first = fireShot(player, target);
   close(
-    Number(first.metadata['empoweredMultiplier'] ?? 1),
-    1 + (topMult - 1) * (carried / cap),
-    'the first round of the next clip already rides the carried ramp',
+    empoweredMult(first),
+    1 + (topMult - 1) * (carried / clip),
+    'the first round of the next clip already rides the carried ramp, measured against one clip',
   );
   assert(stacksOf(player) === carried + 1, `the climb continues from the carry, got ${stacksOf(player)}`);
   close(
@@ -519,25 +610,51 @@ function frameCharges(playerId: string): Array<Extract<CombatEvent, { kind: 'fra
     Math.max(200, Math.round(baseCooldown / (1 + (carried + 1) * perShot))),
     'the cadence is re-derived from the live base at the carried stacks plus the shot',
   );
-  fireAllButLast(player, target);
-  landShot(player, target);
+  world.takeNodeEvents(NODE);
+  const secondClip: number[] = [];
+  while (ammoOf(player) > 1) secondClip.push(empoweredMult(fireShot(player, target)));
+  secondClip.push(empoweredMult(landShot(player, target)));
   assert(
     stacksOf(player) === carried + clip,
-    `a second clip climbs past what one clip reaches: ${carried + clip}, got ${stacksOf(player)}`,
+    `a second clip's attack speed climbs past what one clip reaches: ${carried + clip}, got ${stacksOf(player)}`,
   );
   assert(stacksOf(player) > clip, 'a sustained fight outclimbs a single clip');
+  close(
+    player.performsAttack.attackCooldown,
+    Math.max(200, Math.round(baseCooldown / (1 + (carried + clip) * perShot))),
+    'the attack speed rides every stack past one clip',
+  );
+  assert(
+    secondClip.every((mult) => mult <= topMult + 1e-9),
+    `the damage never passes the frame's top (×${topMult}), got up to ×${Math.max(...secondClip)}`,
+  );
+  close(secondClip[secondClip.length - 1]!, topMult, 'past one clip the damage holds at the top');
+  const pastTop = frameCharges('t3s-warmonger');
+  assert(
+    pastTop.every((e) => e.max === clip && e.stacks <= clip),
+    'the glow never passes full',
+  );
+  assert(
+    pastTop.length === clip - (carried + 1),
+    `the glow beats only while it moves: ${clip - carried - 1} beats up to full, none past it, got ${pastTop.length}`,
+  );
 }
 
-// ── Warmonger: a sustained fight settles under the ramp's cap ────────────────
+// ── Warmonger: a sustained fight settles under the attack-speed cap ──────────
 
 {
   const player = slinger('t3s-warmonger-sustained', 'heavy', [WARMONGER]);
   const target = punchbag(720);
   const cap = reloadFrameRampCap(player);
+  const clip = player.usesReload!.ammoMax;
+  const topMult = player.usesSkills.passives['reload.frame-ramp-top-mult'] ?? 0;
   const tops: number[] = [];
+  let maxMult = 0;
+  world.takeNodeEvents(NODE);
   for (let clipNo = 0; clipNo < 8; clipNo++) {
-    fireAllButLast(player, target);
+    while (ammoOf(player) > 1) maxMult = Math.max(maxMult, empoweredMult(fireShot(player, target)));
     const last = landShot(player, target);
+    maxMult = Math.max(maxMult, empoweredMult(last));
     tops.push(stacksOf(player));
     finishShot(last);
     finishReload(player);
@@ -546,7 +663,13 @@ function frameCharges(playerId: string): Array<Extract<CombatEvent, { kind: 'fra
     assert(tops[i]! >= tops[i - 1]!, `each clip tops out at least as high as the last: ${tops.join(', ')}`);
   }
   assert(tops[tops.length - 1]! > tops[0]!, `the climb is sustained across clips: ${tops.join(', ')}`);
+  assert(tops[tops.length - 1]! > clip, `the attack speed climbs past one clip: ${tops.join(', ')}`);
   assert(tops.every((top) => top <= cap), `nothing climbs past the cap of ${cap}: ${tops.join(', ')}`);
+  close(maxMult, topMult, `and the damage tops out at the frame's ×${topMult}, never above it`);
+  assert(
+    frameCharges('t3s-warmonger-sustained').every((e) => e.max === clip && e.stacks <= clip),
+    'the glow measures against one clip throughout',
+  );
 }
 
 // ── Warmonger with Refund: one halving per reload, however it completes ──────

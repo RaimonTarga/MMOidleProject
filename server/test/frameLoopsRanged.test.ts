@@ -343,26 +343,35 @@ function fireShot(player: PlayerEntity, target: MonsterEntity): CombatContext {
 // `reload-heavy-t3-b` used to author a capped ramp of its own (Hair Trigger, 15
 // stacks on a 40-round clip). The T3 review retired it and re-homed the path onto
 // the frame's ramp (design §22.5); the carry through a reload is pinned in
-// `t3SlingerPaths.test.ts`. Pinned here: one writer per shot, past the old cap.
+// `t3SlingerPaths.test.ts`. Pinned here: one writer per shot, past the old cap, and
+// the damage measured against ONE clip, as the frame's is (design §22.12) — the
+// carried ceiling (`reloadFrameRampCap`, twice the clip) is the attack speed's only.
 
 {
   const player = frame('fl-warmonger', 'reload', 'reload-root', 'heavy', ['reload-heavy-t3-b']);
   const target = punchbag(560);
   const reload = player.usesReload!;
   const passives = player.usesSkills.passives;
+  const topMult = passives['reload.frame-ramp-top-mult'] ?? 0;
+  const clip = reload.ammoMax;
   const pathCap = 15; // the retired Hair Trigger's cap
 
   assert(
     (passives['reload.hair-trigger'] ?? 0) === 0,
     'Warmonger no longer authors a ramp of its own — the frame\'s is the only one',
   );
-  assert(pathCap < reload.ammoMax, 'the retired cap sat below Warmonger\'s own clip');
+  assert(pathCap < clip, 'the retired cap sat below Warmonger\'s own clip');
+  assert(reloadFrameRampCap(player) > clip, 'fixture: the attack-speed ceiling sits above one clip');
 
   for (let shot = 1; shot <= pathCap + 3; shot++) {
-    fireShot(player, target);
+    const mult = empoweredMult(fireShot(player, target));
     assert(
       reload.clipSpeedStacks === shot,
       `one writer per shot: shot ${shot} should leave ${shot} stacks, got ${reload.clipSpeedStacks}`,
+    );
+    close(
+      mult, 1 + (topMult - 1) * ((shot - 1) / clip),
+      `shot ${shot}: the damage rides stacks over one clip (${clip}), not over the carried ceiling`,
     );
   }
   assert(

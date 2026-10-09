@@ -68,7 +68,8 @@ quietly doubled the stack count); its resolved numbers are unchanged from before
 frame shipped. **Pyromancer (T3) overlapped Ember Mage's effect; the ability pass closed
 it** (design §22.5, Radiant): the path's own max-stack direct bonus is gone (the frame
 owns "intensifies"), and a burn tick at max stacks also strikes every adjacent body as
-damage over time. Venomslinger's and Winter Warden's re-homes remain a T3-class-review
+damage over time; a hit at max burn does not refresh the burn (design §22.12), so Radiant
+fires while the stacks last. Venomslinger's and Winter Warden's re-homes remain a T3-class-review
 item (see §5).
 
 ### Slinger (reload) — by clip position
@@ -77,14 +78,17 @@ item (see §5).
 |---|---|---|
 | Scout (light, 5-round clip) | start | `reload.frame-opener-rounds` 2 at `reload.frame-opener-mult` 1.3: the first two rounds of a fresh clip are empowered |
 | Marksman (balanced, 10) | end | `reload.frame-last-round-mult` 2.2: the last round of the clip is the big one |
-| Artillerist (heavy, 20) | across | `reload.frame-ramp-pct-per-shot` 0.02, uncapped below the clip length; `reload.frame-ramp-top-mult` 1.3 proportional damage at the top (`1 + (top−1) × stacks/cap`) |
+| Artillerist (heavy, 20) | across | `reload.frame-ramp-pct-per-shot` 0.02, uncapped below the clip length; `reload.frame-ramp-top-mult` 1.3 proportional damage at the top (`1 + (top−1) × min(1, stacks/clip)`) |
 
 A Blunderbuss volley has no clip position and is skipped by the whole loop (its shots
 carry no `reloadClipIndex`), so Marksman's last-round multiplier cannot fire on a pellet.
 **Warmonger (T3)** no longer authors a ramp of its own: the frame owns it, and the path
 authors `reload.ramp-carry-pct` 0.5 (design §22.5, the ability pass), so a reload keeps
-half the ramp instead of resetting it and a sustained fight climbs past one clip (the
-barrel glow holds at the carried value). The carry is capped at 0.9 in code, and the
+half the ramp instead of resetting it (the barrel glow holds at the carried value). The
+top damage, the `reload-frame-ramp` tile's fill and the glow measure against ONE clip
+(`reloadFrameRampFill`, design §22.12), so the first clip is exactly the Artillerist's
+(×1.3 at its end); only the attack-speed climb carries past it, to `clip / (1 − carry)`
+(`reloadFrameRampCap`, twice the clip). The carry is capped at 0.9 in code, and the
 toll is paid once per reload (`frameLoop.ts`, `settleRampForReload`).
 
 ### Spirit (energy) — by shape

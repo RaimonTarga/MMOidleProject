@@ -211,11 +211,13 @@ export const t3CombatEntriesB = [
     id: 'dot-balanced-t3-a', name: 'Pyromancer', tier: 3,
     classId: 'dot-root', subVariantId: 'balanced',
     parent: 'dot-balanced', children: [],
-    description: 'Each hit applies 2 burn stacks instead of 1, but each stack deals 55% of normal tick damage. Radiant: while a target is at max burn stacks, each of its burn ticks also strikes every adjacent enemy for the tick\'s damage. The radiated fire is damage over time (it ignores plating), applies no stacks and spreads nothing.',
+    description: 'Each hit applies 2 burn stacks instead of 1, but each stack deals 55% of normal tick damage. A hit on a target already at max burn adds nothing and does not refresh the burn, so a full burn runs its course. Radiant: while a target is at max burn stacks, each of its burn ticks also strikes every adjacent enemy for the tick\'s damage. The radiated fire is damage over time (it ignores plating), applies no stacks and spreads nothing.',
     // Design §22.5 (T3 path review, locked 2026-10-02). The old max-stack direct
     // bonus duplicated the Ember Mage frame's "intensifies" (frameLoop.ts) and is
     // gone; the payoff is Radiant, which moves DAMAGE, never stacks — unlike the
     // Warlock range node, Contagion and the Outbreak keystone, which all move stacks.
+    // Design §22.12: a hit at max burn does not refresh it (the old path's rule), so
+    // Radiant fires while the stacks last.
     packet: 'affliction',
     cost: 1, statEffects: {},
     mechanicEffects: {

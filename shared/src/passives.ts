@@ -267,6 +267,11 @@ export const RELOAD_KEYS = [
   // weapon.empowered-mult-bonus apply on top). No path authors it since the T3
   // review retired the Duelist's exploding last bullet (design §22.5).
   'reload.empowered-mult',
+  // The multiplier an Empowered `mechanic-proxy` lands at on this reload spec, read
+  // by the proxy ONLY (the live empowered hit and the HUD/DPS readers keep reading
+  // `reload.empowered-mult`). The Duelist authors 3.5 (design §22.12); every other
+  // reload spec takes the proxy's fallback.
+  'reload.mechanic-proxy-mult',
   'reload.laser',
   'reload.laser-damage-per-tick-pct',
   'reload.laser-heat-per-tick',
