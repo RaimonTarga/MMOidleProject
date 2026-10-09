@@ -90,28 +90,32 @@ assert(
 
 const slam = ABILITY_DATABASE.get("slam")!;
 assert(abilityCastMs(slam, 1) > 0, "a cast must declare a wind-up");
+// Above rank I the wind-up is not a progression track; rank I's is the T1 parity
+// number, solved with its multiple (design §22.12), never longer than the rest.
 assert(
-  abilityCastMs(slam, 4) === abilityCastMs(slam, 1),
-  "Slam's wind-up is not a progression track",
+  abilityCastMs(slam, 2) === abilityCastMs(slam, 3) && abilityCastMs(slam, 3) === abilityCastMs(slam, 4),
+  "Slam's wind-up is not a progression track above rank I",
 );
+assert(abilityCastMs(slam, 1) <= abilityCastMs(slam, 2), "Slam rank I never winds up longer than rank II");
 
 // ── 3b. A re-home adds exactly one rank at the new home (the ability pass) ───
 //
 // Design §22.2/§22.8: an ability's ranks are authored per tier from its home
 // tier, so moving it to an earlier tier adds ONE rank there and re-indexes
 // nothing else — a player at the old home tier and above reads exactly the rank
-// they read before the move. Pinned by value at the old tiers.
+// they read before the move. Pinned by value at the old tiers. (Slam's ranks
+// II–IV were re-authored afterwards by design §22.12, 2.45 / 2.7 / 2.95, so a
+// tier-up never weakens it; still not re-indexed.)
 const castDamageAt = (id: string, tier: number): number => {
   const effect = abilityRankAt(ABILITY_DATABASE.get(id)!, tier).effect;
   return effect.kind === "cast-strike" ? effect.damageMult : NaN;
 };
 assert(slam.tier === 1 && abilityMaxRank(slam) === 4, "Slam re-homes to T1 with one added rank");
 assert(
-  castDamageAt("slam", 2) === 1.75 && castDamageAt("slam", 3) === 2.0 && castDamageAt("slam", 4) === 2.25,
-  "Slam's old T2–T4 ranks are untouched and not re-indexed",
+  castDamageAt("slam", 2) === 2.45 && castDamageAt("slam", 3) === 2.7 && castDamageAt("slam", 4) === 2.95,
+  "Slam's T2–T4 ranks are design §22.12's 2.45 / 2.7 / 2.95, not re-indexed",
 );
-assert(abilityCooldownMs(slam, 1) === 10000 && abilityCastMs(slam, 1) === 1600,
-  "Slam rank I keeps Power Strike's cooldown and wind-up");
+assert(abilityCooldownMs(slam, 1) === 10000, "Slam rank I keeps Power Strike's cooldown");
 const chargeAt = (tier: number): number => {
   const effect = abilityRankAt(ABILITY_DATABASE.get("charge")!, tier).effect;
   return effect.kind === "reposition" ? effect.empowerMult ?? NaN : NaN;

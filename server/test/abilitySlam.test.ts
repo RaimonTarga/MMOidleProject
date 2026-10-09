@@ -4,14 +4,14 @@
  *
  * Asserts:
  *   1. it is acquired like any other T1 Technique, and ranks by player tier —
- *      rank I is the new T1 rank, ranks II–IV the old T2–T4 ranks unchanged;
+ *      rank I is the new T1 rank, ranks II–IV 2.45 / 2.7 / 2.95 (design §22.12);
  *   2. it hits everything in its authored radius exactly once, through the
  *      normal mitigation pipeline;
  *   3. it is a CAST, not an empowered attack — no on-hit effects ride it;
  *   4. Technique Power buys damage and never reach;
  *   5. cast speed shortens its wind-up, attack speed does not, and hard control
  *      breaks it exactly like every other cast;
- *   6. rank I is the single-target-leaning rank (Power Strike's place);
+ *   6. it never weakens on tier-up: no rank's multiple falls below the last;
  *   7. it shares the offensive channel with another cast;
  *   8. the wind-up broadcasts the AREA it is about to damage, so the client can
  *      draw a footprint that cannot drift from the damage.
@@ -162,13 +162,17 @@ initCombatSystems();
 
   const mults = [2, 3, 4].map((tier) => slamEffect(tier).damageMult);
   assert(
-    mults[0] === 1.75 && mults[1] === 2.0 && mults[2] === 2.25,
-    `Slam's authored ladder should be 1.75 / 2.0 / 2.25, got ${mults.join(" / ")}`,
+    mults[0] === 2.45 && mults[1] === 2.7 && mults[2] === 2.95,
+    `Slam's authored ladder should be 2.45 / 2.7 / 2.95, got ${mults.join(" / ")}`,
   );
   for (const tier of [1, 2, 3, 4]) {
     assert(slamEffect(tier).radius === 150, "Slam's authored radius is 150px at every rank");
     assert(abilityCooldownMs(SLAM, tier) === 10000, "Slam holds a 10s cooldown");
-    assert(abilityCastMs(SLAM, tier) === 1600, "Slam holds a 1.6s wind-up");
+  }
+  // Rank I's wind-up is the lab's parity number (design §22.12), pinned in §6 by
+  // shape only; ranks II–IV keep the 1.6 s wind-up.
+  for (const tier of [2, 3, 4]) {
+    assert(abilityCastMs(SLAM, tier) === 1600, "Slam ranks II–IV hold a 1.6s wind-up");
   }
   assert(
     (slamEffect(2)!.radius ?? 0) > 90,
@@ -193,10 +197,10 @@ initCombatSystems();
   const before = [target, inside, outside].map((m) => m.hasHealth.hp);
   resolveCastPayload(world, player, SLAM, target);
 
-  const expected = Math.round(player.dealsDamage.attack * 1.75);
+  const expected = Math.round(player.dealsDamage.attack * 2.45);
   assert(
     before[0]! - target.hasHealth.hp === expected,
-    `the primary should take attack x1.75 (${expected}), got ${before[0]! - target.hasHealth.hp}`,
+    `the primary should take attack x2.45 (${expected}), got ${before[0]! - target.hasHealth.hp}`,
   );
   assert(
     before[1]! - inside.hasHealth.hp === expected - 20,
@@ -228,7 +232,7 @@ initCombatSystems();
   resolveCastPayload(world, player, SLAM, target);
 
   assert(
-    before - target.hasHealth.hp === Math.round(player.dealsDamage.attack * 1.75),
+    before - target.hasHealth.hp === Math.round(player.dealsDamage.attack * 2.45),
     "Slam's damage is its own payload — flat on-hit damage must not be added to it",
   );
   assert(
@@ -242,7 +246,7 @@ initCombatSystems();
   const powered = resolveAbilityEffect(SLAM, { playerTier: 2, techniquePowerPct: 0.5 });
   assert(powered.kind === "cast-strike", "Slam stays a cast-strike under Technique Power");
   assert(
-    powered.kind === "cast-strike" && Math.abs(powered.damageMult - 1.75 * 1.5) < 1e-9,
+    powered.kind === "cast-strike" && Math.abs(powered.damageMult - 2.45 * 1.5) < 1e-9,
     "Technique Power must scale Slam's damage multiplier",
   );
   assert(
@@ -257,7 +261,7 @@ initCombatSystems();
   const before = target.hasHealth.hp;
   resolveCastPayload(world, player, SLAM, target);
   assert(
-    before - target.hasHealth.hp === Math.round(100 * 1.75 * 1.5),
+    before - target.hasHealth.hp === Math.round(100 * 2.45 * 1.5),
     "the live payload should carry Technique Power",
   );
   assert(
@@ -348,19 +352,29 @@ initCombatSystems();
   );
 }
 
-// ── 6. Rank I is the single-target-leaning rank ─────────────────────────────
+// ── 6. Slam never weakens on tier-up ────────────────────────────────────────
 // (The Power Strike crossover and "Power Strike is untouched" sections went with
-// Power Strike, cut into Slam by the ability pass, design §22.2.) Rank I took
-// Power Strike's place in the T1 kits: the biggest multiple per body, on Power
-// Strike's cooldown and wind-up, at Slam's radius. Its value is the lab's parity
-// number, so only its SHAPE is pinned here.
+// Power Strike, cut into Slam by the ability pass, design §22.2.) Design §22.12
+// retired rank I's "single-target lean" (a multiple above rank II's): a player
+// who tiers up must never read a smaller Slam. Rank I's multiple and wind-up
+// are the lab's parity pair, so only their SHAPE is pinned here.
 {
+  for (let tier = 1; tier < SLAM.ranks.length; tier++) {
+    const here = slamEffect(tier).damageMult;
+    const next = slamEffect(tier + 1).damageMult;
+    assert(
+      next >= here,
+      `Slam's multiple must never fall from rank ${tier} to rank ${tier + 1} (${here} -> ${next})`,
+    );
+  }
+  assert(abilityCooldownMs(SLAM, 1) === 10000, "rank I keeps Power Strike's 10 s cooldown");
+  // Rank I stays a cast (§22.9): its wind-up is solved between Charge's, the
+  // shortest authored player wind-up, and the 1.6 s of the ranks above it.
+  const chargeWindup = abilityCastMs(ABILITY_DATABASE.get("charge")!, 1);
   assert(
-    slamEffect(1).damageMult > slamEffect(2).damageMult,
-    `rank I must lean single-target: its multiple above rank II's (${slamEffect(1).damageMult} vs ${slamEffect(2).damageMult})`,
+    abilityCastMs(SLAM, 1) >= chargeWindup && abilityCastMs(SLAM, 1) <= abilityCastMs(SLAM, 2),
+    `rank I's wind-up must sit between Charge's ${chargeWindup} ms and rank II's (got ${abilityCastMs(SLAM, 1)})`,
   );
-  assert(abilityCooldownMs(SLAM, 1) === 10000 && abilityCastMs(SLAM, 1) === 1600,
-    "rank I keeps Power Strike's 10 s cooldown and 1.6 s wind-up");
 }
 
 // ── 7. Two casts share one channel ───────────────────────────────────────────

@@ -1,0 +1,4130 @@
+[
+ {
+  "id": "boss5-t3|striker|deep-core-burrow-gorger|99011",
+  "boss": "deep-core-burrow-gorger",
+  "cls": "striker",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-cinderlash",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-cave",
+  "boss5SkillPath": [
+   "cadence-root",
+   "cadence-balanced",
+   "cadence-range-close"
+  ]
+ },
+ {
+  "id": "boss5-t3|squire|deep-core-burrow-gorger|99011",
+  "boss": "deep-core-burrow-gorger",
+  "cls": "squire",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "mountain-avalanche-maul",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-cave",
+  "boss5SkillPath": [
+   "cooldown-root",
+   "cooldown-balanced",
+   "cooldown-range-close"
+  ]
+ },
+ {
+  "id": "boss5-t3|apprentice|deep-core-burrow-gorger|99011",
+  "boss": "deep-core-burrow-gorger",
+  "cls": "apprentice",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-cave",
+  "boss5SkillPath": [
+   "dot-root",
+   "dot-balanced",
+   "dot-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|slinger|deep-core-burrow-gorger|99011",
+  "boss": "deep-core-burrow-gorger",
+  "cls": "slinger",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-venomthorn-rapier",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-cave",
+  "boss5SkillPath": [
+   "reload-root",
+   "reload-balanced",
+   "reload-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|conduit|deep-core-burrow-gorger|99011",
+  "boss": "deep-core-burrow-gorger",
+  "cls": "conduit",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-cave",
+  "boss5SkillPath": [
+   "summoner-root",
+   "summoner-balanced",
+   "summoner-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|spirit|deep-core-burrow-gorger|99011",
+  "boss": "deep-core-burrow-gorger",
+  "cls": "spirit",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-cave",
+  "boss5SkillPath": [
+   "energy-root",
+   "energy-balanced",
+   "energy-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|striker|dune-carapace-monarch|99011",
+  "boss": "dune-carapace-monarch",
+  "cls": "striker",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-cinderlash",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-desert",
+  "boss5SkillPath": [
+   "cadence-root",
+   "cadence-balanced",
+   "cadence-range-close"
+  ]
+ },
+ {
+  "id": "boss5-t3|squire|dune-carapace-monarch|99011",
+  "boss": "dune-carapace-monarch",
+  "cls": "squire",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "mountain-avalanche-maul",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-desert",
+  "boss5SkillPath": [
+   "cooldown-root",
+   "cooldown-balanced",
+   "cooldown-range-close"
+  ]
+ },
+ {
+  "id": "boss5-t3|apprentice|dune-carapace-monarch|99011",
+  "boss": "dune-carapace-monarch",
+  "cls": "apprentice",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-desert",
+  "boss5SkillPath": [
+   "dot-root",
+   "dot-balanced",
+   "dot-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|slinger|dune-carapace-monarch|99011",
+  "boss": "dune-carapace-monarch",
+  "cls": "slinger",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-venomthorn-rapier",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-desert",
+  "boss5SkillPath": [
+   "reload-root",
+   "reload-balanced",
+   "reload-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|conduit|dune-carapace-monarch|99011",
+  "boss": "dune-carapace-monarch",
+  "cls": "conduit",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-desert",
+  "boss5SkillPath": [
+   "summoner-root",
+   "summoner-balanced",
+   "summoner-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|spirit|dune-carapace-monarch|99011",
+  "boss": "dune-carapace-monarch",
+  "cls": "spirit",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-desert",
+  "boss5SkillPath": [
+   "energy-root",
+   "energy-balanced",
+   "energy-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|striker|apex-bramble-slasher|99011",
+  "boss": "apex-bramble-slasher",
+  "cls": "striker",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-cinderlash",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-jungle",
+  "boss5SkillPath": [
+   "cadence-root",
+   "cadence-balanced",
+   "cadence-range-close"
+  ]
+ },
+ {
+  "id": "boss5-t3|squire|apex-bramble-slasher|99011",
+  "boss": "apex-bramble-slasher",
+  "cls": "squire",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "mountain-avalanche-maul",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-jungle",
+  "boss5SkillPath": [
+   "cooldown-root",
+   "cooldown-balanced",
+   "cooldown-range-close"
+  ]
+ },
+ {
+  "id": "boss5-t3|apprentice|apex-bramble-slasher|99011",
+  "boss": "apex-bramble-slasher",
+  "cls": "apprentice",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-jungle",
+  "boss5SkillPath": [
+   "dot-root",
+   "dot-balanced",
+   "dot-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|slinger|apex-bramble-slasher|99011",
+  "boss": "apex-bramble-slasher",
+  "cls": "slinger",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-venomthorn-rapier",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-jungle",
+  "boss5SkillPath": [
+   "reload-root",
+   "reload-balanced",
+   "reload-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|conduit|apex-bramble-slasher|99011",
+  "boss": "apex-bramble-slasher",
+  "cls": "conduit",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-jungle",
+  "boss5SkillPath": [
+   "summoner-root",
+   "summoner-balanced",
+   "summoner-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|spirit|apex-bramble-slasher|99011",
+  "boss": "apex-bramble-slasher",
+  "cls": "spirit",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-jungle",
+  "boss5SkillPath": [
+   "energy-root",
+   "energy-balanced",
+   "energy-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|striker|crag-gorged-horn-behemoth|99011",
+  "boss": "crag-gorged-horn-behemoth",
+  "cls": "striker",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-cinderlash",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-mountain",
+  "boss5SkillPath": [
+   "cadence-root",
+   "cadence-balanced",
+   "cadence-range-close"
+  ]
+ },
+ {
+  "id": "boss5-t3|squire|crag-gorged-horn-behemoth|99011",
+  "boss": "crag-gorged-horn-behemoth",
+  "cls": "squire",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "mountain-avalanche-maul",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-mountain",
+  "boss5SkillPath": [
+   "cooldown-root",
+   "cooldown-balanced",
+   "cooldown-range-close"
+  ]
+ },
+ {
+  "id": "boss5-t3|apprentice|crag-gorged-horn-behemoth|99011",
+  "boss": "crag-gorged-horn-behemoth",
+  "cls": "apprentice",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-mountain",
+  "boss5SkillPath": [
+   "dot-root",
+   "dot-balanced",
+   "dot-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|slinger|crag-gorged-horn-behemoth|99011",
+  "boss": "crag-gorged-horn-behemoth",
+  "cls": "slinger",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-venomthorn-rapier",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-mountain",
+  "boss5SkillPath": [
+   "reload-root",
+   "reload-balanced",
+   "reload-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|conduit|crag-gorged-horn-behemoth|99011",
+  "boss": "crag-gorged-horn-behemoth",
+  "cls": "conduit",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-mountain",
+  "boss5SkillPath": [
+   "summoner-root",
+   "summoner-balanced",
+   "summoner-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|spirit|crag-gorged-horn-behemoth|99011",
+  "boss": "crag-gorged-horn-behemoth",
+  "cls": "spirit",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-mountain",
+  "boss5SkillPath": [
+   "energy-root",
+   "energy-balanced",
+   "energy-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|striker|rot-spore-croc-behemoth|99011",
+  "boss": "rot-spore-croc-behemoth",
+  "cls": "striker",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-cinderlash",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-swamp",
+  "boss5SkillPath": [
+   "cadence-root",
+   "cadence-balanced",
+   "cadence-range-close"
+  ]
+ },
+ {
+  "id": "boss5-t3|squire|rot-spore-croc-behemoth|99011",
+  "boss": "rot-spore-croc-behemoth",
+  "cls": "squire",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "mountain-avalanche-maul",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-swamp",
+  "boss5SkillPath": [
+   "cooldown-root",
+   "cooldown-balanced",
+   "cooldown-range-close"
+  ]
+ },
+ {
+  "id": "boss5-t3|apprentice|rot-spore-croc-behemoth|99011",
+  "boss": "rot-spore-croc-behemoth",
+  "cls": "apprentice",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-swamp",
+  "boss5SkillPath": [
+   "dot-root",
+   "dot-balanced",
+   "dot-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|slinger|rot-spore-croc-behemoth|99011",
+  "boss": "rot-spore-croc-behemoth",
+  "cls": "slinger",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-venomthorn-rapier",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-swamp",
+  "boss5SkillPath": [
+   "reload-root",
+   "reload-balanced",
+   "reload-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|conduit|rot-spore-croc-behemoth|99011",
+  "boss": "rot-spore-croc-behemoth",
+  "cls": "conduit",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-swamp",
+  "boss5SkillPath": [
+   "summoner-root",
+   "summoner-balanced",
+   "summoner-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|spirit|rot-spore-croc-behemoth|99011",
+  "boss": "rot-spore-croc-behemoth",
+  "cls": "spirit",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-swamp",
+  "boss5SkillPath": [
+   "energy-root",
+   "energy-balanced",
+   "energy-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|striker|frost-plated-rime-mammoth|99011",
+  "boss": "frost-plated-rime-mammoth",
+  "cls": "striker",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-cinderlash",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-tundra",
+  "boss5SkillPath": [
+   "cadence-root",
+   "cadence-balanced",
+   "cadence-range-close"
+  ]
+ },
+ {
+  "id": "boss5-t3|squire|frost-plated-rime-mammoth|99011",
+  "boss": "frost-plated-rime-mammoth",
+  "cls": "squire",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "mountain-avalanche-maul",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-tundra",
+  "boss5SkillPath": [
+   "cooldown-root",
+   "cooldown-balanced",
+   "cooldown-range-close"
+  ]
+ },
+ {
+  "id": "boss5-t3|apprentice|frost-plated-rime-mammoth|99011",
+  "boss": "frost-plated-rime-mammoth",
+  "cls": "apprentice",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-tundra",
+  "boss5SkillPath": [
+   "dot-root",
+   "dot-balanced",
+   "dot-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|slinger|frost-plated-rime-mammoth|99011",
+  "boss": "frost-plated-rime-mammoth",
+  "cls": "slinger",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-venomthorn-rapier",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-tundra",
+  "boss5SkillPath": [
+   "reload-root",
+   "reload-balanced",
+   "reload-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|conduit|frost-plated-rime-mammoth|99011",
+  "boss": "frost-plated-rime-mammoth",
+  "cls": "conduit",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-tundra",
+  "boss5SkillPath": [
+   "summoner-root",
+   "summoner-balanced",
+   "summoner-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|spirit|frost-plated-rime-mammoth|99011",
+  "boss": "frost-plated-rime-mammoth",
+  "cls": "spirit",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-tundra",
+  "boss5SkillPath": [
+   "energy-root",
+   "energy-balanced",
+   "energy-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|striker|cinder-shell-magma-salamander|99011",
+  "boss": "cinder-shell-magma-salamander",
+  "cls": "striker",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-cinderlash",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-volcanic",
+  "boss5SkillPath": [
+   "cadence-root",
+   "cadence-balanced",
+   "cadence-range-close"
+  ]
+ },
+ {
+  "id": "boss5-t3|squire|cinder-shell-magma-salamander|99011",
+  "boss": "cinder-shell-magma-salamander",
+  "cls": "squire",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "mountain-avalanche-maul",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-volcanic",
+  "boss5SkillPath": [
+   "cooldown-root",
+   "cooldown-balanced",
+   "cooldown-range-close"
+  ]
+ },
+ {
+  "id": "boss5-t3|apprentice|cinder-shell-magma-salamander|99011",
+  "boss": "cinder-shell-magma-salamander",
+  "cls": "apprentice",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-volcanic",
+  "boss5SkillPath": [
+   "dot-root",
+   "dot-balanced",
+   "dot-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|slinger|cinder-shell-magma-salamander|99011",
+  "boss": "cinder-shell-magma-salamander",
+  "cls": "slinger",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-venomthorn-rapier",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-volcanic",
+  "boss5SkillPath": [
+   "reload-root",
+   "reload-balanced",
+   "reload-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|conduit|cinder-shell-magma-salamander|99011",
+  "boss": "cinder-shell-magma-salamander",
+  "cls": "conduit",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-volcanic",
+  "boss5SkillPath": [
+   "summoner-root",
+   "summoner-balanced",
+   "summoner-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t3|spirit|cinder-shell-magma-salamander|99011",
+  "boss": "cinder-shell-magma-salamander",
+  "cls": "spirit",
+  "seed": 99011,
+  "tier": 3,
+  "upgrade": 5,
+  "capMs": 600000,
+  "stance": "defensive-stance",
+  "weapon": "cave-cataclysm-axe",
+  "armor": "mountain-vest-t3",
+  "charm": "mountain-charm-t3",
+  "boots": "mountain-boots-t3",
+  "core": "core-tempered",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t3-volcanic",
+  "boss5SkillPath": [
+   "energy-root",
+   "energy-balanced",
+   "energy-range-mid"
+  ]
+ },
+ {
+  "id": "boss5-t4|striker|dune-throne-sovereign|99011",
+  "boss": "dune-throne-sovereign",
+  "cls": "striker",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-eruption-lash",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-desert",
+  "boss5SkillPath": [
+   "cadence-root",
+   "cadence-balanced",
+   "cadence-range-close",
+   "cadence-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|squire|dune-throne-sovereign|99011",
+  "boss": "dune-throne-sovereign",
+  "cls": "squire",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "mountain-warmaul",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-desert",
+  "boss5SkillPath": [
+   "cooldown-root",
+   "cooldown-balanced",
+   "cooldown-range-close",
+   "cooldown-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|apprentice|dune-throne-sovereign|99011",
+  "boss": "dune-throne-sovereign",
+  "cls": "apprentice",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "graveyard-plague-axe",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-desert",
+  "boss5SkillPath": [
+   "dot-root",
+   "dot-balanced",
+   "dot-range-mid",
+   "dot-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|slinger|dune-throne-sovereign|99011",
+  "boss": "dune-throne-sovereign",
+  "cls": "slinger",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-deathfang-rapier",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-desert",
+  "boss5SkillPath": [
+   "reload-root",
+   "reload-balanced",
+   "reload-range-mid",
+   "reload-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|conduit|dune-throne-sovereign|99011",
+  "boss": "dune-throne-sovereign",
+  "cls": "conduit",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-deathfang-rapier",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-desert",
+  "boss5SkillPath": [
+   "summoner-root",
+   "summoner-balanced",
+   "summoner-range-mid",
+   "summoner-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|spirit|dune-throne-sovereign|99011",
+  "boss": "dune-throne-sovereign",
+  "cls": "spirit",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-eruption-lash",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-desert",
+  "boss5SkillPath": [
+   "energy-root",
+   "energy-balanced",
+   "energy-range-mid",
+   "energy-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|striker|verdant-crown-predator|99011",
+  "boss": "verdant-crown-predator",
+  "cls": "striker",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-eruption-lash",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-jungle",
+  "boss5SkillPath": [
+   "cadence-root",
+   "cadence-balanced",
+   "cadence-range-close",
+   "cadence-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|squire|verdant-crown-predator|99011",
+  "boss": "verdant-crown-predator",
+  "cls": "squire",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "mountain-warmaul",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-jungle",
+  "boss5SkillPath": [
+   "cooldown-root",
+   "cooldown-balanced",
+   "cooldown-range-close",
+   "cooldown-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|apprentice|verdant-crown-predator|99011",
+  "boss": "verdant-crown-predator",
+  "cls": "apprentice",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "graveyard-plague-axe",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-jungle",
+  "boss5SkillPath": [
+   "dot-root",
+   "dot-balanced",
+   "dot-range-mid",
+   "dot-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|slinger|verdant-crown-predator|99011",
+  "boss": "verdant-crown-predator",
+  "cls": "slinger",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-deathfang-rapier",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-jungle",
+  "boss5SkillPath": [
+   "reload-root",
+   "reload-balanced",
+   "reload-range-mid",
+   "reload-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|conduit|verdant-crown-predator|99011",
+  "boss": "verdant-crown-predator",
+  "cls": "conduit",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-deathfang-rapier",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-jungle",
+  "boss5SkillPath": [
+   "summoner-root",
+   "summoner-balanced",
+   "summoner-range-mid",
+   "summoner-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|spirit|verdant-crown-predator|99011",
+  "boss": "verdant-crown-predator",
+  "cls": "spirit",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-eruption-lash",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-jungle",
+  "boss5SkillPath": [
+   "energy-root",
+   "energy-balanced",
+   "energy-range-mid",
+   "energy-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|striker|iron-crest-titan|99011",
+  "boss": "iron-crest-titan",
+  "cls": "striker",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-eruption-lash",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-mountain",
+  "boss5SkillPath": [
+   "cadence-root",
+   "cadence-balanced",
+   "cadence-range-close",
+   "cadence-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|squire|iron-crest-titan|99011",
+  "boss": "iron-crest-titan",
+  "cls": "squire",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "mountain-warmaul",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-mountain",
+  "boss5SkillPath": [
+   "cooldown-root",
+   "cooldown-balanced",
+   "cooldown-range-close",
+   "cooldown-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|apprentice|iron-crest-titan|99011",
+  "boss": "iron-crest-titan",
+  "cls": "apprentice",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "graveyard-plague-axe",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-mountain",
+  "boss5SkillPath": [
+   "dot-root",
+   "dot-balanced",
+   "dot-range-mid",
+   "dot-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|slinger|iron-crest-titan|99011",
+  "boss": "iron-crest-titan",
+  "cls": "slinger",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-deathfang-rapier",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-mountain",
+  "boss5SkillPath": [
+   "reload-root",
+   "reload-balanced",
+   "reload-range-mid",
+   "reload-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|conduit|iron-crest-titan|99011",
+  "boss": "iron-crest-titan",
+  "cls": "conduit",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-deathfang-rapier",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-mountain",
+  "boss5SkillPath": [
+   "summoner-root",
+   "summoner-balanced",
+   "summoner-range-mid",
+   "summoner-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|spirit|iron-crest-titan|99011",
+  "boss": "iron-crest-titan",
+  "cls": "spirit",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-eruption-lash",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-mountain",
+  "boss5SkillPath": [
+   "energy-root",
+   "energy-balanced",
+   "energy-range-mid",
+   "energy-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|striker|elder-trench-serpent|99011",
+  "boss": "elder-trench-serpent",
+  "cls": "striker",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-eruption-lash",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-trench",
+  "boss5SkillPath": [
+   "cadence-root",
+   "cadence-balanced",
+   "cadence-range-close",
+   "cadence-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|squire|elder-trench-serpent|99011",
+  "boss": "elder-trench-serpent",
+  "cls": "squire",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "mountain-warmaul",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-trench",
+  "boss5SkillPath": [
+   "cooldown-root",
+   "cooldown-balanced",
+   "cooldown-range-close",
+   "cooldown-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|apprentice|elder-trench-serpent|99011",
+  "boss": "elder-trench-serpent",
+  "cls": "apprentice",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "graveyard-plague-axe",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-trench",
+  "boss5SkillPath": [
+   "dot-root",
+   "dot-balanced",
+   "dot-range-mid",
+   "dot-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|slinger|elder-trench-serpent|99011",
+  "boss": "elder-trench-serpent",
+  "cls": "slinger",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-deathfang-rapier",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-trench",
+  "boss5SkillPath": [
+   "reload-root",
+   "reload-balanced",
+   "reload-range-mid",
+   "reload-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|conduit|elder-trench-serpent|99011",
+  "boss": "elder-trench-serpent",
+  "cls": "conduit",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-deathfang-rapier",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-trench",
+  "boss5SkillPath": [
+   "summoner-root",
+   "summoner-balanced",
+   "summoner-range-mid",
+   "summoner-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|spirit|elder-trench-serpent|99011",
+  "boss": "elder-trench-serpent",
+  "cls": "spirit",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-eruption-lash",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-trench",
+  "boss5SkillPath": [
+   "energy-root",
+   "energy-balanced",
+   "energy-range-mid",
+   "energy-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|striker|glacial-patriarch|99011",
+  "boss": "glacial-patriarch",
+  "cls": "striker",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-eruption-lash",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-tundra",
+  "boss5SkillPath": [
+   "cadence-root",
+   "cadence-balanced",
+   "cadence-range-close",
+   "cadence-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|squire|glacial-patriarch|99011",
+  "boss": "glacial-patriarch",
+  "cls": "squire",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "mountain-warmaul",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-tundra",
+  "boss5SkillPath": [
+   "cooldown-root",
+   "cooldown-balanced",
+   "cooldown-range-close",
+   "cooldown-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|apprentice|glacial-patriarch|99011",
+  "boss": "glacial-patriarch",
+  "cls": "apprentice",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "graveyard-plague-axe",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-tundra",
+  "boss5SkillPath": [
+   "dot-root",
+   "dot-balanced",
+   "dot-range-mid",
+   "dot-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|slinger|glacial-patriarch|99011",
+  "boss": "glacial-patriarch",
+  "cls": "slinger",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-deathfang-rapier",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-tundra",
+  "boss5SkillPath": [
+   "reload-root",
+   "reload-balanced",
+   "reload-range-mid",
+   "reload-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|conduit|glacial-patriarch|99011",
+  "boss": "glacial-patriarch",
+  "cls": "conduit",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-deathfang-rapier",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-tundra",
+  "boss5SkillPath": [
+   "summoner-root",
+   "summoner-balanced",
+   "summoner-range-mid",
+   "summoner-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|spirit|glacial-patriarch|99011",
+  "boss": "glacial-patriarch",
+  "cls": "spirit",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-eruption-lash",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-tundra",
+  "boss5SkillPath": [
+   "energy-root",
+   "energy-balanced",
+   "energy-range-mid",
+   "energy-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|striker|caldera-sovereign|99011",
+  "boss": "caldera-sovereign",
+  "cls": "striker",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-eruption-lash",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-volcanic",
+  "boss5SkillPath": [
+   "cadence-root",
+   "cadence-balanced",
+   "cadence-range-close",
+   "cadence-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|squire|caldera-sovereign|99011",
+  "boss": "caldera-sovereign",
+  "cls": "squire",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "mountain-warmaul",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "chase-enemy"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-volcanic",
+  "boss5SkillPath": [
+   "cooldown-root",
+   "cooldown-balanced",
+   "cooldown-range-close",
+   "cooldown-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|apprentice|caldera-sovereign|99011",
+  "boss": "caldera-sovereign",
+  "cls": "apprentice",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "graveyard-plague-axe",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-volcanic",
+  "boss5SkillPath": [
+   "dot-root",
+   "dot-balanced",
+   "dot-range-mid",
+   "dot-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|slinger|caldera-sovereign|99011",
+  "boss": "caldera-sovereign",
+  "cls": "slinger",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-deathfang-rapier",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-volcanic",
+  "boss5SkillPath": [
+   "reload-root",
+   "reload-balanced",
+   "reload-range-mid",
+   "reload-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|conduit|caldera-sovereign|99011",
+  "boss": "caldera-sovereign",
+  "cls": "conduit",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "jungle-deathfang-rapier",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-volcanic",
+  "boss5SkillPath": [
+   "summoner-root",
+   "summoner-balanced",
+   "summoner-range-mid",
+   "summoner-balanced-t3-a"
+  ]
+ },
+ {
+  "id": "boss5-t4|spirit|caldera-sovereign|99011",
+  "boss": "caldera-sovereign",
+  "cls": "spirit",
+  "seed": 99011,
+  "tier": 4,
+  "upgrade": 5,
+  "capMs": 900000,
+  "stance": "defensive-stance",
+  "weapon": "volcanic-eruption-lash",
+  "armor": "mountain-vest-t4",
+  "charm": "mountain-charm-t4",
+  "boots": "mountain-boots-t4",
+  "core": "core-tempered",
+  "relic": "relic-colossus-heart",
+  "techniques": [
+   "slam"
+  ],
+  "guards": [
+   "second-wind",
+   "brace"
+  ],
+  "rules": [
+   {
+    "conditionId": "always",
+    "actionId": "auto-path-enemy"
+   },
+   {
+    "conditionId": "inside-telegraph",
+    "actionId": "step-back"
+   },
+   {
+    "conditionId": "in-combat",
+    "actionId": "orbit"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "avoid-hazards"
+   },
+   {
+    "conditionId": "always",
+    "actionId": "wait-for-regen"
+   }
+  ],
+  "frame": "balanced",
+  "spec": "a",
+  "boss5Block": "t4-volcanic",
+  "boss5SkillPath": [
+   "energy-root",
+   "energy-balanced",
+   "energy-range-mid",
+   "energy-balanced-t3-a"
+  ]
+ }
+]
