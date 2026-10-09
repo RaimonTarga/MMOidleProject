@@ -458,10 +458,14 @@ function fireGuardShape(
   if (!runtime) return 0;
   let fired = 0;
   for (const abilityId of Object.keys(runtime)) {
+    // The table and the window first: this runs on every incoming hit, so nothing
+    // is resolved for a Guard whose row says otherwise or whose window is down. (A
+    // Guard is never kill-tagged, so every route of it shares its row's shape.)
+    if (ABILITY_FIRE_SHAPES.get(abilityId)?.fire !== shape) continue;
     const ability = ABILITY_DATABASE.get(abilityId);
-    if (!ability || ability.slot !== 'guard') continue;
+    if (!ability || ability.slot !== 'guard' || !guardWindowUp(player, ability)) continue;
     const payoffs = withShape(payoffsFor(player, abilityId), shape);
-    if (payoffs.length === 0 || !guardWindowUp(player, ability)) continue;
+    if (payoffs.length === 0) continue;
     fired += fireLineagePayoffs(world, player, payoffs, target ? { target } : {});
   }
   return fired;
