@@ -78,9 +78,11 @@ export interface EmpoweredMultiplierOptions {
   /**
    * `mechanic-proxy` (design §24.2) only: use this registration for a proxy ONLY
    * when the player's `passiveKey` is authored. For a root whose registration is a
-   * SPEC's mechanic rather than the root's — reload's is the Duelist's exploding
-   * clip — every other spec has no damage-multiplier mechanic to proxy, so it gets
-   * the proxy's fallback instead of a multiplier its class never fires.
+   * SPEC's mechanic rather than the root's — reload's registration was the Duelist's
+   * exploding clip, retired by the T3 review (design §22.5) — a spec with no
+   * damage-multiplier mechanic to proxy gets the proxy's fallback instead of a
+   * multiplier its class never fires. Today no reload node authors the key, so
+   * every reload spec takes the fallback.
    */
   proxyRequiresPassive?: boolean;
 }
@@ -244,7 +246,7 @@ export function registerEmpoweredMultiplier(
 /**
  * The empowered multiplier this player's root would land a real mechanic hit at,
  * or undefined when the root has no damage-multiplier mechanic to proxy (the DoT
- * root, the summoner, a reload spec other than the Duelist).
+ * root, the summoner, and every reload spec since the exploding clip was retired).
  */
 export function proxyEmpoweredMultiplier(world: World, player: PlayerEntity): number | undefined {
   for (const registration of _registrations) {

@@ -27,8 +27,9 @@ const BASE_KEY: Record<EmpoweredArchetype, keyof PassiveMap & string> = {
   cadence:  'cadence.empowered-mult',
   cooldown: 'cooldown.empowered-mult',
   energy:   'energy.empowered-mult',
-  // Reload only has an empowered attack via Duelist (last-bullet); the key is
-  // absent for every other reload spec, so the resolver returns null for them.
+  // No reload path authors this key since the T3 review retired the Duelist's
+  // exploding last bullet (design §22.5), so the resolver returns null for every
+  // reload spec; the layer stays for any future empowered reload attack.
   reload:   'reload.empowered-mult',
 };
 
