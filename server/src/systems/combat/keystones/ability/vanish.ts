@@ -17,7 +17,8 @@
  *  - THE NEXT HIT: the player's next landed attack (`onHit`, their own swing —
  *    not a summon's blow) clears the mark. So does the out-of-combat reset
  *    (`onCombatEnded`), which bounds a mark the player never spends: Vanish is
- *    for breaking contact in a fight, never a stealth walk across the map.
+ *    for breaking contact in a fight, never a stealth walk across the map — the
+ *    vanish itself marks the player engaged, so that reset always comes.
  *
  * BOSSES (the designer's to confirm): a boss, a boss's add and a dungeon guardian
  * neither drop the player nor are kept from finding them (`vanishMark.ts`) —
@@ -38,6 +39,7 @@ import type { MonsterEntity, PlayerEntity } from '../../../../ecs/entity';
 import type { World } from '../../../../world/World';
 import { registerCombatListener } from '../../engine/combatPipeline';
 import { setAggroTarget, setAttackTarget } from '../../ai/targeting';
+import { markEngaged } from '../../ai/engagement';
 import { abilityEngagementRange } from '../../../player/abilities/abilityTargeting';
 import { defineAbilityKeystone, pushAbilityKeystoneFx } from './registry';
 import { VANISH_FLAG, monsterSeesThroughVanish, playerVanished } from './vanishMark';
@@ -86,6 +88,9 @@ export const VANISH_KEYSTONE = defineAbilityKeystone({
     }
 
     setFlag(player.tracksCombat, VANISH_FLAG, true);
+    // Breaking contact is a fight's beat: the engagement clock restarts here, so
+    // the out-of-combat reset that ends an unspent mark is always coming.
+    markEngaged(world, player, now);
     pushAbilityKeystoneFx(world, player, definition, { pos: from });
   },
   register: () => {
