@@ -183,7 +183,7 @@ const trioEntries: [string, Trio][] = [
   ['snipe', [
     verb('snipe', 1, 'pierce', 'Pierce',
       'The shot passes through its target and hits everything in line behind it.',
-      'tempo.ruin-afterimage', 'echo-hit', { delivery: DB, paysShare: true }),
+      'tempo.ruin-afterimage', 'echo-hit', { delivery: DB, paysShare: true, live: true }),
     verb('snipe', 2, 'mark', 'Mark',
       'The sniped body takes your next Technique as if from max reach.',
       'empowered.weak-point', 'vulnerability'),

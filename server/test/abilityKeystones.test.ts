@@ -799,4 +799,96 @@ function attackLedger(player: PlayerEntity): string {
   }
 }
 
+// ─── Snipe · PIERCE: the shot passes through its target and hits everything behind it ─
+
+{
+  const snipe = ABILITY_DATABASE.get('snipe')!;
+  const PIERCE_FX = ABILITY_KEYSTONE_DEFINITIONS.get('pierce')!.fx;
+  const lost = (monster: MonsterEntity): number => monster.hasHealth.maxHp - monster.hasHealth.hp;
+
+  // The line from the shooter through the target, on to the shot's reach.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-pierce', {
+      abilityId: 'snipe', nodes: rows('snipe', { packet: 'kill-chain', keystone: 'pierce' }),
+    });
+    const target = spawnMonster(world, 600);
+    const between = spawnMonster(world, 500);
+    const behind = spawnMonster(world, 680);
+    const further = spawnMonster(world, 740);
+    // Behind the target, in line, but past Snipe's reach of the shooter.
+    const pastReach = spawnMonster(world, 800);
+    const offLine = spawnMonster(world, 680, 520);
+    setAttackTarget(world, player, target.isMonster.id);
+    assert(beginAbilityCast(world, player, snipe, 1_000), 'Snipe winds up');
+    world.takeNodeEvents(NODE);
+    const ledger = attackLedger(player);
+    updateAbilityCasts(world, player.isCastingAbility!.endsAt);
+
+    assert(lost(target) > 0, 'the shot lands on its target');
+    assert(lost(behind) > 0 && lost(further) > 0, 'and passes through, hitting everything in line behind it');
+    assert(lost(behind) === lost(further), 'each body once, for the same share of the shot');
+    assert(lost(between) === 0, 'a body between the shooter and the target is not hit: the line starts at the target');
+    assert(lost(pastReach) === 0, "only as far as the shot's reach");
+    assert(lost(offLine) === 0, 'only what stands in line');
+    const drawn = cardFx(world).filter((e) => e.fx === PIERCE_FX);
+    assert(
+      drawn.length === 1 && drawn[0]!.pos.x === 400 && drawn[0]!.targetPos?.x === further.hasPosition.current.x,
+      'one card-fx per shot, from the shooter to the farthest body it reached',
+    );
+    assert(attackLedger(player) === ledger, 'a pierced body is never an attack: no attack event, no hit counter');
+
+    // Nothing behind, nothing drawn.
+    const lone = new World();
+    const alone = spawnPlayer(lone, 'ks-pierce-alone', {
+      abilityId: 'snipe', nodes: rows('snipe', { packet: 'kill-chain', keystone: 'pierce' }),
+    });
+    const only = spawnMonster(lone, 600);
+    setAttackTarget(lone, alone, only.isMonster.id);
+    assert(beginAbilityCast(lone, alone, snipe, 1_000), 'Snipe winds up');
+    updateAbilityCasts(lone, alone.isCastingAbility!.endsAt);
+    assert(
+      lone.takeNodeEvents(NODE).every((e) => e.kind !== 'card-fx' || e.fx !== PIERCE_FX),
+      'a shot with nothing behind its target draws nothing',
+    );
+  }
+
+  // On a Conduit the line runs from the physical summon that cast it.
+  {
+    const world = new World();
+    const { player, minions } = conduit(world, 'ks-pierce-conduit', 'snipe',
+      rows('snipe', { packet: 'kill-chain', keystone: 'pierce' }));
+    const caster = minions[0]!;
+    const c = { ...caster.hasPosition.current };
+    // The owner stands well off the summon's line of fire.
+    player.hasPosition.current = { x: c.x + 40, y: c.y - 200 };
+    const target = spawnMonster(world, c.x + 120, c.y);
+    setAttackTarget(world, caster, target.isMonster.id);
+    // Behind the target on the line FROM THE SUMMON.
+    const summonsLine = spawnMonster(world, c.x + 220, c.y);
+    // Behind the target on the line from the OWNER: what an owner-delivered shot would hit.
+    const p = player.hasPosition.current;
+    const ownerDx = target.hasPosition.current.x - p.x;
+    const ownerDy = target.hasPosition.current.y - p.y;
+    const ownerLength = Math.hypot(ownerDx, ownerDy);
+    const ownersLine = spawnMonster(
+      world,
+      target.hasPosition.current.x + (ownerDx / ownerLength) * 100,
+      target.hasPosition.current.y + (ownerDy / ownerLength) * 100,
+    );
+    assert(Math.abs(ownersLine.hasPosition.current.y - c.y) > 60, 'fixture: the two lines part');
+    assert(beginAbilityCast(world, player, snipe, 1_000), 'the Conduit begins its Snipe');
+    assert(player.isCastingAbility?.casterMinionId === caster.entityId, 'through one physical summon');
+    world.takeNodeEvents(NODE);
+    updateAbilityCasts(world, player.isCastingAbility!.endsAt);
+    assert(lost(summonsLine) > 0, "the shot pierces along the summon's line");
+    assert(lost(ownersLine) === 0, "not along the owner's");
+    const drawn = cardFx(world).filter((e) => e.fx === PIERCE_FX);
+    assert(
+      drawn.length === 1 && drawn[0]!.pos.x === c.x && drawn[0]!.pos.y === c.y,
+      `one pierce per cast, drawn from the delivering summon (${minions.length} summons)`,
+    );
+  }
+}
+
 console.log('abilityKeystones: ok');
