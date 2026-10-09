@@ -16,7 +16,9 @@
  *    writers' one admission check (`playerRefusesStatus` /
  *    `playerRefusesAffliction` in `debuffGuard.ts`): `applyResistedPlayerDebuff`,
  *    `applyMonsterDotToPlayer`, the monster-ability rider writer, the plating
- *    shred applier and the on-hit Sun Mark.
+ *    shred applier and the on-hit Sun Mark, and the boss appliers (design §22.12:
+ *    the pattern `apply-status` step, the contact slow, ground-zone hazards, the
+ *    room debuff).
  *
  * THE WINDOW. Immunity's own payoff (`cleanse`) is binary and has no window, so
  * the "few seconds" reuse an existing unit rather than mint one: the `ward` payoff

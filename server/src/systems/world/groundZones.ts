@@ -20,7 +20,7 @@ import {
 import type { World } from '../../world/World';
 import { markSliceDirty } from '../../ecs/dirtyHelpers';
 import { isInvulnerablePlayer } from '../combat/invulnerability';
-import { applyResistedPlayerDebuff } from '../combat/status/debuffGuard';
+import { applyResistedPlayerDebuff, playerRefusesStatus } from '../combat/status/debuffGuard';
 import { recordWorldLogEvent } from '../../world/worldLog';
 import { actorFromPlayer } from '../../world/worldLogActors';
 import { buildSimpleBreakdown, recordPlayerDamaged } from '../../world/worldLogCombat';
@@ -561,36 +561,46 @@ function tickToxicPool(
       recordHazardContact(world, nodeId, pool, player.isPlayer.id, 'enter', contact, now);
     }
 
+    // THE GUARD KEYSTONES (design §22.12): the hazard's slow and sunder pass the same
+    // refusal gate as every other player debuff writer — Immunity refuses the kind its
+    // Cleanse stripped (`slow`, `sundered`), Unyielding a zero-speed slow. The room
+    // reapplies these every tick, so each reapply is refused while the gate stands.
     if (pool.slowSpeedMult !== undefined && pool.slowSpeedMult < 1) {
       contact.harmfulEffects.add('slow');
-      applyStatusEffect(player.tracksCombat, {
-        id: 'slow',
-        maxStacks: 1,
-        remainingMs: HAZARD_SLOW_REFRESH_MS,
-        refreshable: true,
-        sourceId: `ground-zone:${pool.id}`,
-        data: {
-          speedMult: pool.slowSpeedMult,
-          totalMs: HAZARD_SLOW_REFRESH_MS,
-          isGroundZone: 1,
-        },
-      });
+      const data = {
+        speedMult: pool.slowSpeedMult,
+        totalMs: HAZARD_SLOW_REFRESH_MS,
+        isGroundZone: 1,
+      };
+      if (!playerRefusesStatus(player, 'slow', data)) {
+        applyStatusEffect(player.tracksCombat, {
+          id: 'slow',
+          maxStacks: 1,
+          remainingMs: HAZARD_SLOW_REFRESH_MS,
+          refreshable: true,
+          sourceId: `ground-zone:${pool.id}`,
+          data,
+        });
+      }
     }
 
     if (pool.vulnerability && pool.vulnerability.damageTakenPct > 0) {
       contact.harmfulEffects.add(SUNDERED_EFFECT_ID);
-      applyStatusEffect(player.tracksCombat, {
-        id: SUNDERED_EFFECT_ID,
-        maxStacks: 1,
-        remainingMs: pool.vulnerability.durationMs,
-        refreshable: true,
-        sourceId: `ground-zone:${pool.id}`,
-        data: {
-          [DAMAGE_TAKEN_PCT_KEY]: pool.vulnerability.damageTakenPct,
-          totalMs: pool.vulnerability.durationMs,
-          isGroundZone: 1,
-        },
-      });
+      const data = {
+        [DAMAGE_TAKEN_PCT_KEY]: pool.vulnerability.damageTakenPct,
+        totalMs: pool.vulnerability.durationMs,
+        isGroundZone: 1,
+      };
+      if (!playerRefusesStatus(player, SUNDERED_EFFECT_ID, data)) {
+        applyStatusEffect(player.tracksCombat, {
+          id: SUNDERED_EFFECT_ID,
+          maxStacks: 1,
+          remainingMs: pool.vulnerability.durationMs,
+          refreshable: true,
+          sourceId: `ground-zone:${pool.id}`,
+          data,
+        });
+      }
     }
 
     if (pool.snare && !isInvulnerablePlayer(player)) {

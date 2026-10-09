@@ -42,6 +42,7 @@ import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import { setEntityMotion, stopEntity } from "../../world/movement";
 import { resolveObstaclesForNode } from "../../world/nodeFeatures";
 import { harmfulStatusDurationMult } from '../status/harmfulStatus';
+import { playerRefusesStatus } from '../status/debuffGuard';
 import { setAggroTarget, setAttackTarget } from "./targeting";
 import { packFollowDestination } from "./packs";
 import { abortMonsterCast } from "../engine/combat";
@@ -493,10 +494,15 @@ export function updateMonsters(world: World, dt: number, now: number) {
               const rootMs = Math.round(
                 monsterDef.engageSequence.rootMs * harmfulStatusDurationMult(target.entity),
               );
-              applyStatusEffect(target.entity.tracksCombat, {
-                id: 'slow', maxStacks: 1, remainingMs: rootMs, refreshable: true,
-                sourceId: e.isMonster.id, data: { speedMult: 0, totalMs: rootMs },
-              });
+              const data = { speedMult: 0, totalMs: rootMs };
+              // THE GUARD KEYSTONES (design §22.12): a root, so Unyielding refuses
+              // it (and Immunity a stripped `slow`); the dive still lands.
+              if (!playerRefusesStatus(target.entity, 'slow', data)) {
+                applyStatusEffect(target.entity.tracksCombat, {
+                  id: 'slow', maxStacks: 1, remainingMs: rootMs, refreshable: true,
+                  sourceId: e.isMonster.id, data,
+                });
+              }
             } else {
               armEngageSequenceLandingAttack(e, monsterDef.engageSequence.damageMultiplier);
             }

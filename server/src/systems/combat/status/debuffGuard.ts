@@ -16,8 +16,11 @@ import { refusesHardControl } from './playerHardControl';
  * THE ADMISSION CHECK for a harmful status on its way onto a player: the keystone
  * refusals (design §22.4), asked by the common writers — `applyResistedPlayerDebuff`,
  * the monster-ability rider writer, `applyMonsterDotToPlayer`, the plating-shred
- * applier and the Sun Mark — so a refusal source only has to apply its status, and
- * no applier restates the rule.
+ * applier and the Sun Mark — and by the boss appliers that write their own status
+ * (design §22.12: the pattern `apply-status` step, the burrow's contact slow, the
+ * ground-zone hazard's slow and sunder, the boss room debuff, the engage sequence's
+ * landing root) — so a refusal source only has to apply its status, and no applier
+ * restates the rule.
  *
  *  - Unyielding (Endure): hard control and roots — a zero-speed slow is hard
  *    control by `statusPolicyFor` — are refused while it stands. Stuns are refused

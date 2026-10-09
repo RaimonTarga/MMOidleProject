@@ -56,6 +56,7 @@ import { publishFaultLineBurst, publishToxicPool } from '../../world/groundZones
 import { stokeAmbientRamp } from '../../world/nodeFeatures';
 import { countRaisedBy, raiseCorpsesBurst } from './raiseDead';
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
+import { playerRefusesStatus } from '../status/debuffGuard';
 import { hasIndependentRoot, setRooted } from '../../world/rooted';
 import { bossAdds } from './bossAdds';
 
@@ -363,13 +364,18 @@ function tickRoomDebuffs(state: ScriptsBoss, monster: MonsterEntity, world: Worl
     room.timerMs -= dt;
     if (room.timerMs > 0) continue;
     for (const player of world.livePlayersInNode(monster.hasPosition.nodeId)) {
+      const data = { [BOSS_DEBUFF_KEY]: 1, ...room.data, ...(room.durationMs > 0 ? { totalMs: room.durationMs } : {}) };
+      // THE GUARD KEYSTONES (design §22.12): a room stack passes the same refusal gate
+      // as every other player debuff writer (Immunity's stripped kind, Unyielding's
+      // control). Today's ramps are uncleansable and not control, so it never refuses.
+      if (playerRefusesStatus(player, room.effectId, data)) continue;
       const effect = applyStatusEffect(player.tracksCombat, {
         id: room.effectId,
         maxStacks: room.maxStacks,
         remainingMs: room.durationMs,
         refreshable: true,
         sourceId: monster.isMonster.id,
-        data: { [BOSS_DEBUFF_KEY]: 1, ...room.data, ...(room.durationMs > 0 ? { totalMs: room.durationMs } : {}) },
+        data,
       });
       // A lasting ramp: a re-applied effect keeps its data, so refresh the payload.
       Object.assign(effect.data, room.data);
