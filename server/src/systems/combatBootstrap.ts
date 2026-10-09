@@ -18,7 +18,7 @@ import { initPlayerAmplifiers } from "./combat/damage/playerAmplifiers";
 import { initStanceCombatEffects } from "./player/stances/stanceSwitch";
 import { initBossPatternCombat } from "./combat/engine/patternCombat";
 import { registerLineageCards, registerLineageIncomingCards } from "./combat/lineageCards";
-import { registerAbilityNodeKillChain } from "./combat/abilityNodes";
+import { registerAbilityNodeIncoming, registerAbilityNodeKillChain } from "./combat/abilityNodes";
 import { registerLeanConditions } from "./combat/leanConditions";
 import { initRangeMechanics } from "./combat/rangeMechanics";
 
@@ -98,6 +98,10 @@ export function initCombatSystems(): void {
   // here rather than with the rest so `hit-taken` sees the damage that
   // actually landed and `barrier-break` can see the break at all.
   withCombatRegistrationLabel('registerLineageIncomingCards', registerLineageIncomingCards);
+  // The ability nodes' Guard fire-shapes that answer an incoming hit (design
+  // §22.10: per hit absorbed, per hit dodged), on the same seams and for the same
+  // reason: what the hit did is only known after defense has run.
+  withCombatRegistrationLabel('registerAbilityNodeIncoming', registerAbilityNodeIncoming);
   // Vulnerability/debuff multipliers applied on damage taken.
   initDebuffMechanics();
   // Cancels attacks against invulnerable entities (dormant/phased bosses).

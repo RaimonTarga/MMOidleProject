@@ -14,11 +14,13 @@
  */
 import {
   ABILITY_DATABASE,
+  ABILITY_SIDESTEP_EFFECT_ID,
   GAME_CONFIG,
   STARTER_RUNE_IDS,
   abilityNodeId,
   baseRecoveryForTier,
   emptyEquipment,
+  getStatusEffect,
   packetMoment,
   resolveAbilityEffect,
   type AbilityNodeProgress,
@@ -32,7 +34,7 @@ import type { MinionEntity, MonsterEntity, PlayerEntity } from '../src/ecs/entit
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { World } from '../src/world/World';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
-import { emitCombatEvent, type CombatContext } from '../src/systems/combat/engine/combatPipeline';
+import { emitCombatEvent, makeCombatContext, type CombatContext } from '../src/systems/combat/engine/combatPipeline';
 import { setAttackTarget } from '../src/systems/combat/ai/targeting';
 import { refreshAbilityNodeRuntime } from '../src/systems/combat/abilityNodes';
 import { armTechnique } from '../src/systems/player/abilities/abilityArming';
@@ -43,6 +45,7 @@ import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summo
 import { applyImbueWindow, imbueChargesRemaining } from '../src/systems/player/abilities/abilityImbue';
 import { onTechniqueResolved } from '../src/systems/combat/techniqueResolved';
 import { updateCombatState } from '../src/systems/combat/engine/combatState';
+import { requestManualAbilityUse } from '../src/systems/player/abilities/abilityFiring';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -393,6 +396,118 @@ function idsOf(...monsters: MonsterEntity[]): string {
   updateCombatState(world, capMs);
   hit(world, player, target);
   assert(cardFx(world).length === 0, 'a hit with no charge left fires no node');
+}
+
+// ═══ Guards: per hit absorbed, per hit dodged ═══════════════════════════════
+
+/** One incoming monster hit on `player`, through the `onDamageTaken` phase. */
+function incoming(
+  world: World,
+  monster: MonsterEntity,
+  player: PlayerEntity,
+  metadata: Record<string, unknown> = {},
+  damage = 50,
+): CombatContext {
+  const ctx = makeCombatContext(monster, 'monster', player, 'player');
+  ctx.damage = damage;
+  Object.assign(ctx.metadata, metadata);
+  emitCombatEvent('onDamageTaken', ctx, world);
+  return ctx;
+}
+
+/** Cast a Guard the way a hotbar press does — its own effect, then `onGuardFired`. */
+function castGuard(world: World, player: PlayerEntity, abilityId: string): void {
+  const result = requestManualAbilityUse(world, player, abilityId, 1_000);
+  assert(result.state === 'activated', `fixture: ${abilityId} must activate, got ${result.state} (${result.reason ?? ''})`);
+}
+
+// ─── Brace: per hit absorbed while Braced, each firing under its lane's cap ──
+
+{
+  const world = new World();
+  const player = spawnPlayer(world, 'fs-brace', {
+    abilityId: 'brace', nodes: rows('brace', { packet: 'barrier-tempo', cross: 'control' }),
+  });
+  const attacker = spawnMonster(world, 440);
+  world.takeNodeEvents(NODE);
+  const controlCap = packetMoment('control')?.capMs ?? 0;
+  assert(controlCap > 0, 'the Control moment carries a rate cap');
+
+  castGuard(world, player, 'brace');
+  assert(cardFx(world).length === 0, 'Brace fires nothing on its cast: it pays per hit absorbed');
+
+  incoming(world, attacker, player);
+  incoming(world, attacker, player);
+  const fired = cardFx(world);
+  const wards = fired.filter((e) => e.fx === 'barrier-tempo.ward-shell');
+  const braced = fired.filter((e) => e.fx === 'control.chill-blur');
+  assert(wards.length === 2, `2 hits absorbed while Braced give 2 firings of an uncapped lane, got ${wards.length}`);
+  assert(braced.length === 1, `and the Control cross pays once per its ${controlCap} ms cap, got ${braced.length}`);
+
+  // A dodge outright is no hit absorbed.
+  incoming(world, attacker, player, { evaded: true, evadeMitigation: 1 });
+  assert(cardFx(world).length === 0, 'a hit dodged outright is not absorbed');
+  // A DoT tick is no hit.
+  incoming(world, attacker, player, { isDot: true });
+  assert(cardFx(world).length === 0, 'a damage-over-time tick is not a hit');
+
+  // The window drops: nothing more.
+  const brace = resolveAbilityEffect(ABILITY_DATABASE.get('brace')!, { playerTier: 4 });
+  if (brace.kind !== 'damage-reduction') throw new Error('Brace is a damage reduction');
+  updateCombatState(world, brace.durationMs + controlCap);
+  incoming(world, attacker, player);
+  assert(cardFx(world).length === 0, 'a hit after the window fires nothing');
+}
+
+// ─── Bramble Guard: per thorn hit — each hit taken while brambled ────────────
+
+{
+  const world = new World();
+  const player = spawnPlayer(world, 'fs-bramble', {
+    abilityId: 'bramble-guard', nodes: rows('bramble-guard', { packet: 'bulwark' }),
+  });
+  const attacker = spawnMonster(world, 440);
+  world.takeNodeEvents(NODE);
+
+  incoming(world, attacker, player);
+  assert(cardFx(world).length === 0, 'unbrambled, a hit fires nothing');
+
+  castGuard(world, player, 'bramble-guard');
+  assert(cardFx(world).length === 0, 'Bramble Guard fires nothing on its cast');
+  incoming(world, attacker, player);
+  const fired = cardFx(world).filter((e) => e.fx === 'bulwark.plating-chip');
+  assert(fired.length === 1, `a thorn hit gives one firing, got ${fired.length}`);
+}
+
+// ─── Sidestep: per hit dodged during the window ──────────────────────────────
+
+{
+  const world = new World();
+  const player = spawnPlayer(world, 'fs-sidestep', {
+    abilityId: 'sidestep', nodes: rows('sidestep', { packet: 'engagement' }),
+  });
+  // Something in reach to step away from (Sidestep's own firing gate).
+  const attacker = spawnMonster(world, 430);
+  world.takeNodeEvents(NODE);
+
+  // A dodge before the window: nothing.
+  incoming(world, attacker, player, { evaded: true, evadeMitigation: 0.5 });
+  assert(cardFx(world).length === 0, 'a dodge outside the window fires nothing');
+
+  castGuard(world, player, 'sidestep');
+  assert(cardFx(world).length === 0, 'Sidestep fires nothing on its cast');
+  incoming(world, attacker, player, { evaded: true, evadeMitigation: 0.5 });
+  const fired = cardFx(world).filter((e) => e.fx === 'engagement.brace-sparks');
+  assert(fired.length === 1, `a dodge in the window gives one firing, got ${fired.length}`);
+  incoming(world, attacker, player);
+  assert(cardFx(world).length === 0, 'a hit that was not dodged fires nothing');
+
+  // The window runs out: a dodge after it fires nothing.
+  const window = getStatusEffect(player.tracksCombat, ABILITY_SIDESTEP_EFFECT_ID);
+  if (!window || window.remainingMs <= 0) throw new Error('the window is up');
+  updateCombatState(world, window.remainingMs);
+  incoming(world, attacker, player, { evaded: true, evadeMitigation: 0.5 });
+  assert(cardFx(world).length === 0, 'a dodge after the window fires nothing');
 }
 
 console.log('abilityFireShapesRuntime: ok');

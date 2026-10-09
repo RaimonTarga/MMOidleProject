@@ -26,6 +26,18 @@
  *                           (`onAbilityNodeWindowHit`, from Imbue's consumer)
  *   on the kill             a Kill chain route on a Technique, on the kill its hit
  *                           makes (below)
+ *   on cast / on the break  the Guard's cast (`onAbilityNodeGuardCast`, from
+ *                           `onGuardFired`): Second Wind, and Break Free, whose
+ *                           cast IS the break (it only fires while held)
+ *   per hit absorbed        each direct hit not dodged outright while the
+ *                           Guard's own window is up — Brace's DR, Bramble's
+ *                           thorns — on the hit-taken seam, after defense
+ *   per hit dodged          each successful evade roll while Sidestep's window is
+ *                           up, on the evade seam (a graze counts, as it does
+ *                           for an `evade` card)
+ *
+ * A Guard's payoff is a defensive face's and never deals damage; the shape only
+ * moves the moment it is granted.
  *
  * THE RATE CAP. A shape that fires more than once per cast — per hit of a
  * window, per hit absorbed, per hit dodged, per tick while active — must not
@@ -55,9 +67,14 @@
  * area reached rolled no evade of its own to refuse it.
  */
 import {
+  ABILITY_DATABASE,
+  ABILITY_SIDESTEP_EFFECT_ID,
   abilityOfferFireShape,
   getAbilityNodeRuntime,
+  getStatusEffect,
+  guardEffectIdForAbility,
   packetMoment,
+  recoveryEffectIdForAbility,
   resolveActiveAbilityKeystones,
   resolveActiveAbilityNodes,
   setAbilityKeystoneRuntime,
@@ -76,6 +93,8 @@ import type { MonsterEntity, PlayerEntity } from '../../ecs/entity';
 import type { World } from '../../world/World';
 import { registerCombatListener, type CombatContext } from './engine/combatPipeline';
 import { fireLineagePayoffs, type ExternalLineagePayoff } from './lineageCards';
+import { evadeFullyAvoided, evadeMitigationOf } from '../defense/mitigation/evasion';
+import { BRAMBLE_EFFECT_ID } from '../player/abilities/abilityBramble';
 
 /**
  * Re-resolve the player's ability nodes and keystones. Called from
@@ -315,9 +334,21 @@ export function registerAbilityNodeKillChain(): void {
 }
 
 /**
- * A Guard cast. No exchange to ride, so the payoff's basis is the player's own
- * Attack — which is what the magnitude table's flat column is seeded against —
- * and the target, if a defensive payoff needed one, is the live attack target.
+ * The Guard shapes its cast never pays: each has its own seam and fires there
+ * while the Guard's window is up.
+ */
+const GUARD_NOT_AT_CAST: ReadonlySet<AbilityFireShape> = new Set<AbilityFireShape>([
+  'per hit absorbed',
+  'per hit dodged',
+]);
+
+/**
+ * A Guard cast. Fires the routes that pay on cast (Second Wind) or on the break
+ * (Break Free, whose cast is the break) — every other Guard pays on its own seam
+ * while its window is up. No exchange to ride, so the payoff's basis is the
+ * player's own Attack — which is what the magnitude table's flat column is
+ * seeded against — and the target, if a defensive payoff needed one, is the live
+ * attack target.
  */
 export function onAbilityNodeGuardCast(
   world: World,
@@ -325,7 +356,87 @@ export function onAbilityNodeGuardCast(
   ability: AbilityDef,
 ): void {
   if (ability.slot !== 'guard') return;
-  const payoffs = payoffsFor(player, ability.id).map((entry) => entry.payoff);
+  const payoffs = payoffsFor(player, ability.id)
+    .filter((entry) => !GUARD_NOT_AT_CAST.has(entry.shape))
+    .map((entry) => entry.payoff);
   if (payoffs.length === 0) return;
   fireLineagePayoffs(world, player, payoffs);
+}
+
+/**
+ * The status that IS a Guard's window — the one its effect applies and its buff
+ * tile reads — keyed on the effect kind, exactly as `applyGuardEffect` dispatches.
+ * Undefined for a Guard with no window (Cleanse, Break Free: an instant).
+ */
+function guardWindowEffectId(ability: AbilityDef): string | undefined {
+  switch (ability.ranks[0].effect.kind) {
+    case 'damage-reduction': return guardEffectIdForAbility(ability.id);
+    case 'heal': return recoveryEffectIdForAbility(ability.id);
+    case 'bramble': return BRAMBLE_EFFECT_ID;
+    case 'dodge-window': return ABILITY_SIDESTEP_EFFECT_ID;
+    default: return undefined;
+  }
+}
+
+/** Whether `ability`'s own window is up on `player` right now. */
+function guardWindowUp(player: PlayerEntity, ability: AbilityDef): boolean {
+  const id = guardWindowEffectId(ability);
+  if (!id) return false;
+  const effect = getStatusEffect(player.tracksCombat, id);
+  return effect !== undefined && effect.remainingMs > 0;
+}
+
+/**
+ * Fire every Guard route on `shape` whose Guard's window is up — one firing per
+ * Guard per call, each payoff under its lane's cap. `target` is whatever the
+ * moment answers (the attacker), for a payoff that wanted one; a Guard's never do.
+ */
+function fireGuardShape(
+  world: World,
+  player: PlayerEntity,
+  shape: AbilityFireShape,
+  target?: MonsterEntity,
+): number {
+  const runtime = getAbilityNodeRuntime(player.tracksCombat);
+  if (!runtime) return 0;
+  let fired = 0;
+  for (const abilityId of Object.keys(runtime)) {
+    const ability = ABILITY_DATABASE.get(abilityId);
+    if (!ability || ability.slot !== 'guard') continue;
+    const payoffs = withShape(payoffsFor(player, abilityId), shape);
+    if (payoffs.length === 0 || !guardWindowUp(player, ability)) continue;
+    fired += fireLineagePayoffs(world, player, payoffs, target ? { target } : {});
+  }
+  return fired;
+}
+
+/**
+ * The two Guard fire-shapes that answer an incoming hit (design §22.10), as
+ * listeners of their own on the seams the lineage `hit-taken` and `evade`
+ * triggers ride:
+ *
+ *  - per hit absorbed: a DIRECT hit (never a DoT tick) that was not dodged
+ *    outright, while the Guard's window is up — Brace, Bramble Guard. One
+ *    deliberate difference from a `hit-taken` card, which also wants
+ *    `ctx.damage > 0` after defense: a hit the Guard's own ward (or the barrier)
+ *    swallowed whole was ABSORBED, which is the whole of this shape — counting
+ *    only what got through would make Brace's ward route stop its own next
+ *    firing.
+ *  - per hit dodged: the player's evade roll succeeded (a graze included, as for
+ *    an `evade` card) while the Guard's window is up — Sidestep.
+ *
+ * Registered from `initCombatSystems()` AFTER the defense systems, as
+ * `registerLineageIncomingCards` is, so the evade has been applied by then.
+ */
+export function registerAbilityNodeIncoming(): void {
+  registerCombatListener('onDamageTaken', (ctx, world) => {
+    if (ctx.defenderType !== 'player' || ctx.cancelled) return;
+    if (ctx.metadata['isDot']) return; // a tick is no hit to absorb or dodge
+    const attacker = ctx.attackerType === 'monster' ? ctx.attacker : undefined;
+    if (ctx.metadata['evaded'] === true && evadeMitigationOf(ctx) > 0) {
+      fireGuardShape(world, ctx.defender, 'per hit dodged', attacker);
+    }
+    if (evadeFullyAvoided(ctx)) return;
+    fireGuardShape(world, ctx.defender, 'per hit absorbed', attacker);
+  });
 }
