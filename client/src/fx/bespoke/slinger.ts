@@ -1,9 +1,9 @@
 /**
  * SLINGER (reload) specializations — the magazine class, so these read the clip,
  * the reload, and what each shot banks. Melter, Sniper and Blunderbuss replace
- * their attack in combatFx; Duelist's last bullet, Dualslinger's odd round, the
- * Bounty hunter's detonation and the Cannoneer's blast keep their own cues there,
- * and the layers here add the build-up those payoffs were missing.
+ * their attack in combatFx; Dualslinger's odd round, the Bounty hunter's
+ * detonation and the Cannoneer's blast keep their own cues there, and the layers
+ * here add the build-up those payoffs were missing.
  */
 import type { GameScene } from '../../scenes/GameScene';
 import { DEPTH } from '../../render/depth';
@@ -119,24 +119,45 @@ function cylinder(scene: GameScene, at: P, lit: number, spin: number, k: number)
 }
 
 export const SLINGER_PATHS: PathTable = {
-  // Duelist — the last bullet glints in the chamber before it fires (the shot
-  // itself is the existing red exploding round).
+  // Duelist — Kill chain (design §22.5): every kill loads one round past the
+  // clip until the next reload. On the kill a brass round slides up into the
+  // chamber beside the gun with a click, and the rounds riding past the clip show
+  // as a row of brass pips (the HUD's ammo counter reads "+N"). Mid-reload the
+  // round is owed rather than loaded, so nothing chambers.
   'reload-light-t3-a': {
-    hit: (h) => {
-      if ((h.player.ammoCount ?? 0) !== 1) return;
-      const g = h.scene.add.graphics({ x: h.from.x + 10, y: h.from.y - 10 }).setDepth(DEPTH.FX + 1);
-      g.fillStyle(0xff3322, 1);
-      g.fillCircle(0, 0, 3);
-      g.lineStyle(1.5, 0xffe2c0, 1);
-      for (let i = 0; i < 4; i++) {
-        const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
-        g.lineBetween(Math.cos(a) * 4, Math.sin(a) * 4, Math.cos(a) * 11, Math.sin(a) * 11);
-      }
-      g.setScale(0.4);
-      h.scene.tweens.add({
-        targets: g, scaleX: 1.2, scaleY: 1.2, rotation: 0.8, duration: 200, ease: 'Back.easeOut',
-        onComplete: () => fadeOut(h.scene, g, 300, 200),
+    kill: (k) => {
+      if ((k.player.reloadRemainingMs ?? 0) > 0) return;
+      const brass = 0xd8a040;
+      const at = { x: k.at.x + 16, y: k.at.y - 18 };
+      const round = k.scene.add.graphics({ x: at.x, y: at.y + 16 }).setDepth(DEPTH.FX + 1);
+      round.fillStyle(brass, 1);
+      round.fillRect(-2.5, -4, 5, 9);
+      round.fillStyle(0xffe0a0, 1);
+      round.fillTriangle(-2.5, -4, 2.5, -4, 0, -9);
+      round.setAlpha(0);
+      k.scene.tweens.add({
+        targets: round, y: at.y, alpha: 1, duration: 150, ease: 'Cubic.easeOut',
+        onComplete: () => {
+          // The click: a glint where it seats.
+          const click = k.scene.add.graphics({ x: at.x, y: at.y - 4 }).setDepth(DEPTH.FX + 1);
+          click.lineStyle(1.5, 0xffffff, 1);
+          for (let i = 0; i < 4; i++) {
+            const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
+            click.lineBetween(Math.cos(a) * 3, Math.sin(a) * 3, Math.cos(a) * 8, Math.sin(a) * 8);
+          }
+          fadeOut(k.scene, click, 200, 0, 1.4);
+          fadeOut(k.scene, round, 260, 160);
+        },
       });
+      const past = Math.max(1, Math.min(6, (k.player.ammoCount ?? 0) - (k.player.ammoMax ?? 0)));
+      const pips = k.scene.add.graphics({ x: at.x + 9, y: at.y - 2 }).setDepth(DEPTH.FX + 1);
+      for (let i = 0; i < past; i++) {
+        pips.fillStyle(i === past - 1 ? 0xffe0a0 : brass, 1);
+        pips.fillCircle(i * 5, 0, 1.8);
+      }
+      pips.setAlpha(0);
+      k.scene.tweens.add({ targets: pips, alpha: 1, duration: 120, delay: 150 });
+      fadeOut(k.scene, pips, 260, 520);
     },
   },
 

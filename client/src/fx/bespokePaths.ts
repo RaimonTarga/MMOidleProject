@@ -17,7 +17,7 @@ import { SLINGER_PATHS } from './bespoke/slinger';
 import { SPIRIT_PATHS } from './bespoke/spirit';
 import { APPRENTICE_PATHS } from './bespoke/apprentice';
 
-export type { BespokeHit, BespokeReload, BespokePath } from './bespoke/kit';
+export type { BespokeHit, BespokeKill, BespokeReload, BespokePath } from './bespoke/kit';
 
 const BESPOKE_PATHS: PathTable = {
   ...STRIKER_PATHS,

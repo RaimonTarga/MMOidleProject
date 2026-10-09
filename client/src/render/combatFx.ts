@@ -70,7 +70,7 @@ import { fxSiegeBlow } from "../fx/siegeBlow";
 import { fxPikeBrace } from "../fx/pikeBrace";
 import { fxSquireSlam } from "../fx/squireSlam";
 import { fxImpact } from "../fx/impact";
-import { fxGunshot, fxDuelistShot, fxDeathMarkBlast } from "../fx/gunshot";
+import { fxGunshot, fxDeathMarkBlast } from "../fx/gunshot";
 import { fxBoulder } from "../fx/boulder";
 import { fxArrow } from "../fx/arrow";
 import { fxBite } from "../fx/bite";
@@ -387,7 +387,6 @@ const AFTERSHOCK_CLIENT_EFFECT = "aftershock";
 const SWIFTBLADE_CLIENT_EFFECT = "swiftblade";
 const CHANNEL_BEAM_CLIENT_EFFECT = "channel-beam";
 const HOLY_FLASH_CLIENT_EFFECT = "holy-flash";
-const EXPLODING_CLIP_CLIENT_EFFECT = "reload-exploding-clip";
 const ALT_ONHIT_CLIENT_EFFECT = "reload-alt-onhit";
 const DEATH_MARK_BLAST_CLIENT_EFFECT = "death-mark-blast";
 const CANNON_BLAST_CLIENT_EFFECT = "reload-cannon-blast";
@@ -2379,6 +2378,17 @@ export function dispatchCombatEvent(
       if (!killedBoss) playSfx(monsterDeathCue(presentation?.targetMonsterTypeId
         ?? state.entity.get(ev.targetId)?.isMonster?.monsterTypeId));
       spawnRewardFloaters(scene, ev, presentation?.to);
+      // A path whose kill is a beat of its own (Duelist: a round loads past the clip).
+      const killer = state.view.get(ev.playerId) as PlayerView | undefined;
+      const killerSprite = state.sprite.get(ev.playerId);
+      if (killer && killerSprite) {
+        const flair = attackFlairOf(killer);
+        if (flair.stage === 3) {
+          bespokePathFor(flair.specId)?.kill?.({
+            scene, player: killer, playerId: ev.playerId, at: { x: killerSprite.x, y: killerSprite.y },
+          });
+        }
+      }
     }
   }
 }
@@ -2398,7 +2408,6 @@ function runFxForAttackStyle(
   const isSwiftblade = ev.effects?.includes(SWIFTBLADE_CLIENT_EFFECT) ?? false;
   const isHolyBeam = ev.effects?.includes(CHANNEL_BEAM_CLIENT_EFFECT) ?? false;
   const isHolyFlash = ev.effects?.includes(HOLY_FLASH_CLIENT_EFFECT) ?? false;
-  const isDuelistShot = ev.effects?.includes(EXPLODING_CLIP_CLIENT_EFFECT) ?? false;
   const isAltShot = ev.effects?.includes(ALT_ONHIT_CLIENT_EFFECT) ?? false;
   const isDeathMarkBlast = ev.effects?.includes(DEATH_MARK_BLAST_CLIENT_EFFECT) ?? false;
   const isCannonBlast = ev.effects?.includes(CANNON_BLAST_CLIENT_EFFECT) ?? false;
@@ -2488,10 +2497,6 @@ function runFxForAttackStyle(
     // Execution "cast" that opens the channel — holy flash instead of melee lunge/ring.
     fxHolyFlash(scene, from.x, from.y);
     fxHolyFlash(scene, to.x, to.y, 0.8);
-  } else if (isDuelistShot) {
-    // Duelist last-bullet: red power shot + empowered ring (replaces the normal gunshot).
-    playEmpoweredRing(args);
-    fxDuelistShot(scene, from.x, from.y, to.x, to.y);
   } else if (isAltShot) {
     // Dualslinger on-hit (odd) round: the spiralling arcane round, the opposite of
     // its gold kinetic round (fx/bespoke/slinger.ts).
@@ -2585,7 +2590,6 @@ function runFxForAttackStyle(
     if (effectId === COOLDOWN_HOLLOW_FX) continue; // handled above
     if (effectId === CHANNEL_BEAM_CLIENT_EFFECT) continue; // handled above
     if (effectId === HOLY_FLASH_CLIENT_EFFECT) continue; // handled above
-    if (effectId === EXPLODING_CLIP_CLIENT_EFFECT) continue; // handled above
     if (effectId === ALT_ONHIT_CLIENT_EFFECT) continue; // handled above
     if (effectId === DEATH_MARK_BLAST_CLIENT_EFFECT) continue; // handled above
     if (effectId === CANNON_BLAST_CLIENT_EFFECT) continue; // handled above

@@ -9,7 +9,8 @@
  *   attack   replaces the ordinary hit's animation outright (Dualslinger's rounds);
  *   hit      a layer over an ordinary hit (the range attack still draws beneath);
  *   payoff   replaces the whole finisher / execution / discharge animation;
- *   reload   a beat on `player-reload-start` (Slinger paths).
+ *   reload   a beat on `player-reload-start` (Slinger paths);
+ *   kill     a beat on the player's own `player-kill` (Duelist's round loading).
  */
 import type { MonsterView, PlayerView } from '@mmo-idle/shared';
 import type { GameScene } from '../../scenes/GameScene';
@@ -40,11 +41,20 @@ export interface BespokeReload {
   at: P;
 }
 
+export interface BespokeKill {
+  scene: GameScene;
+  player: PlayerView;
+  playerId: string;
+  /** The killer's body. */
+  at: P;
+}
+
 export interface BespokePath {
   attack?(h: BespokeHit): void;
   hit?(h: BespokeHit): void;
   payoff?(h: BespokeHit): void;
   reload?(r: BespokeReload): void;
+  kill?(k: BespokeKill): void;
 }
 
 export type PathTable = Record<string, BespokePath>;
