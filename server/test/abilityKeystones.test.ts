@@ -1513,7 +1513,7 @@ import { joinParty } from '../src/systems/player/party/partySystem';
 import { activeRecoveryFraction, runRecovery } from '../src/systems/defense/regen/recovery';
 import { applyHealToPlayer } from '../src/systems/defense/regen/healing';
 import { updateWards } from '../src/systems/defense/barrier/wards';
-import { guardKeystoneMagnitude, overflowWardOf } from '../src/systems/combat/keystones';
+import { guardKeystoneMagnitude, overflowWardOf, payoffWindowMs } from '../src/systems/combat/keystones';
 import { applyResistedPlayerDebuff } from '../src/systems/combat/status/debuffGuard';
 import { beginEngageLock, engageSequenceHoldsAttack } from '../src/systems/combat/ai/engageSequence';
 import { syncPlayerBuffs } from '../src/systems/combat/buffs/buffSync';
@@ -1758,6 +1758,11 @@ const stunnedBy = (monster: MonsterEntity, sourceId: string): boolean => {
   assert(immunity !== undefined && immunity.remainingMs > 0 && (immunity.data['totalMs'] ?? 0) > 0,
     'Immunity stands, with a clock');
   assert(immunity!.data[abilityImmunityKindKey(venomId)] === 1, 'keyed by the stripped kind');
+  // Design §22.12: the window is the engagement-dr unit's 3 s, not the ward unit's.
+  const windowMs = payoffWindowMs('engagement-dr');
+  assert(windowMs === 3_000 && windowMs !== payoffWindowMs('ward'), 'fixture: the engagement-dr unit holds 3 s');
+  assert(immunity!.remainingMs === windowMs && immunity!.data['totalMs'] === windowMs,
+    `Immunity holds for the engagement-dr unit's window (${immunity!.remainingMs} ms)`);
   assert(cardFx(world).filter((e) => e.fx === IMMUNITY_FX).length === 1, 'one card-fx per activation');
 
   // The applier of that kind early-returns...
@@ -1774,8 +1779,11 @@ const stunnedBy = (monster: MonsterEntity, sourceId: string): boolean => {
   assert(player.hasStatus.activeBuffs?.some((buff) => buff.id === ABILITY_IMMUNITY_EFFECT_ID),
     'the Immunity tile is on the bar');
 
-  // When the window ends, the kind lands again.
-  player.tracksCombat.statusEffects = player.tracksCombat.statusEffects.filter((e) => e.id !== ABILITY_IMMUNITY_EFFECT_ID);
+  // Its clock runs: refused just inside the window, landing once it ends.
+  updateCombatState(world, windowMs - 100);
+  applyMonsterDotToPlayer(world, viper, player, venom);
+  assert(!has(player, venomId), 'still refused just inside the 3 s window');
+  updateCombatState(world, 100);
   applyMonsterDotToPlayer(world, viper, player, venom);
   assert(has(player, venomId), 'after the window the kind lands again');
 

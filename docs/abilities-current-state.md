@@ -908,7 +908,7 @@ the game does not have):
 | Brace | Riposte | owner | `afterHit` on a melee hit taken while Braced: shortest rung on the attacker, once per attacker per Brace | stun |
 | Bramble Guard | Entangle | owner | the thorns' `afterHit` moment: `applyMonsterSlow` under its own id | `ability-entangled` (a member of `MONSTER_SLOW_STATUS_IDS`) |
 | Endure | Unyielding | owner | `ability-unyielding` on Endure's clock; hard-control appliers refuse | `ability-unyielding` |
-| Cleanse | Immunity | owner | each stripped status id becomes a refused kind for the ward unit's window | `ability-immunity` |
+| Cleanse | Immunity | owner | each stripped status id becomes a refused kind for the `engagement-dr` unit's window, 3 s (design §22.12) | `ability-immunity` |
 | Second Wind | Shared Breath | formation | the Recovery engine's skill source on same-node party members; summons mended in the summoner's owner-to-summon pass | none |
 | Recuperate | Overflow | owner | the overheal-ward hook on `applyHealToPlayer`: ANY spill past full, mend or not (design §22.12; out-of-combat regen at full fills it before a pull, accepted), tops up one ward to the ward payoff's cap; spill at the cap keeps the full shell from lapsing | none |
 | Sidestep | Flow | owner | the evade seam (`onDamageTaken`) while Sidestep's window is up: a dodge (a graze counts) winds the window back to the `evasion-window` unit Sidestep reads (`sidestepWindow`; a refresh, never a stack); the first hit that lands removes it, the speed burst with it | `ability-sidestep` (its own window) |
