@@ -939,6 +939,70 @@ function relay(scene: GameScene, ev: CardFxEvent): void {
   });
 }
 
+// ── Imbue Lightning · FORK — every imbued hit arcs to the nearest other body ──
+
+/**
+ * One event per arc, from the body the imbued hit struck to the one it forked to.
+ * WIND-UP: static gathers on the struck body for a beat. PAYOFF: the bolt forks
+ * across — a main arc and a branch that splits off it and fizzles — flickering
+ * twice before it goes, and the body it reaches jolts in a flash. LASTING MARK:
+ * static crackles over that body for a moment after.
+ */
+function fork(scene: GameScene, ev: CardFxEvent): void {
+  const from = nodeToScene(ev.pos.x, ev.pos.y);
+  const color = verbColor(ev);
+  const pale = lighten(color, 0.6);
+  const { k, sparks } = sizeOf(scene, ev);
+  inhale(scene, from.x, from.y - 8, [pale, 0xffffff], 20 * k, 70);
+  scene.time.delayedCall(70, () => {
+    if (document.hidden) return;
+    const to = spriteAt(scene, ev.targetId) ?? eventPoint(ev);
+    const a = { x: from.x, y: from.y - 8 };
+    const b = { x: to.x, y: to.y - 8 };
+    const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    const side = Math.atan2(b.y - a.y, b.x - a.x) + (Math.random() < 0.5 ? 0.9 : -0.9);
+    const branch = { x: mid.x + Math.cos(side) * 26 * k, y: mid.y + Math.sin(side) * 20 * k };
+    const arc = scene.add.graphics().setDepth(DEPTH.FX + 1).setBlendMode(Phaser.BlendModes.ADD);
+    const strike = () => {
+      arc.clear();
+      bolt(arc, a, b, color, 4 * k, 12, 8);
+      bolt(arc, a, b, 0xffffff, 1.6, 12, 8);
+      bolt(arc, mid, branch, pale, 1.8, 6, 4);
+    };
+    strike();
+    scene.time.delayedCall(60, () => { if (arc.active) strike(); });
+    scene.time.delayedCall(120, () => { if (arc.active) strike(); });
+    fading(scene, arc, 120, {}, 160);
+    // The body it reaches jolts in the flash.
+    const flash = scene.add.graphics({ x: b.x, y: b.y }).setDepth(DEPTH.FX + 1);
+    flash.fillStyle(pale, 0.9);
+    flash.fillCircle(0, 0, 10 * k);
+    fading(scene, flash, 200, { scaleX: 2.2, scaleY: 2.2 });
+    if (ev.targetId && !(scene.state.view.get(ev.targetId) as MonsterView | undefined)?.isBoss) {
+      posePath(scene, ev.targetId, [
+        { sx: 0.92, sy: 1.08, ms: 50 },
+        { sx: 1.04, sy: 0.96, ms: 60 },
+        { sx: 1, sy: 1, ms: 200, ease: 'Back.easeOut' },
+      ]);
+    }
+    // The static left on it.
+    for (let i = 0; i < 3; i++) {
+      scene.time.delayedCall(160 + i * 150, () => {
+        if (document.hidden) return;
+        const at = spriteAt(scene, ev.targetId) ?? b;
+        const spark = scene.add.graphics().setDepth(DEPTH.FX).setBlendMode(Phaser.BlendModes.ADD);
+        const r = Math.random() * Math.PI * 2;
+        bolt(spark, { x: at.x, y: at.y - 10 }, { x: at.x + Math.cos(r) * 16 * k, y: at.y - 10 + Math.sin(r) * 12 * k }, pale, 1.2, 4, 3);
+        fading(scene, spark, 120);
+      });
+    }
+    burstFx(scene, 'ptx-spark', b.x, b.y, count(6, sparks), 280, {
+      tint: [pale, 0xffffff], speed: { min: 60, max: 160 }, angle: { min: 0, max: 360 },
+      scale: { start: 0.6, end: 0 }, alpha: { start: 1, end: 0 },
+    });
+  });
+}
+
 // ── The table ────────────────────────────────────────────────────────────────
 
 /** The bespoke animations, by verb id. Kept in step with `KEYSTONE_ANIMATED`. */
@@ -952,6 +1016,7 @@ const KEYSTONE_ANIMATIONS: Record<string, KeystoneAnimation> = {
   vanish: vanish,
   pierce: pierce,
   relay: relay,
+  fork: fork,
 };
 
 /**
