@@ -1373,6 +1373,59 @@ function riposte(scene: GameScene, ev: CardFxEvent): void {
   });
 }
 
+// ── Break Free · BACKLASH — breaking free staggers every adjacent body ───────
+
+/**
+ * One event per body staggered, drawn from the player outward. WIND-UP (once per
+ * break): the bonds on the player burst — shards of the hold thrown off as the
+ * body heaves up out of it. PAYOFF: a shockwave rolls out from the player, and each
+ * body it reaches, a beat apart down the batch, takes the stagger flash and is
+ * knocked off its feet for the stagger's clock. LASTING MARK: the dazed halo over
+ * each.
+ */
+function backlash(scene: GameScene, ev: CardFxEvent): void {
+  const id = ev.playerId;
+  const from = spriteAt(scene, id) ?? nodeToScene(ev.pos.x, ev.pos.y);
+  const color = verbColor(ev);
+  const bond = 0xd9c2ff;
+  const { k, sparks } = sizeOf(scene, ev);
+  const n = batchIndex(ev);
+  if (n === 0) {
+    // The hold bursts.
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2 + Math.random() * 0.3;
+      const shard = scene.add.graphics({ x: from.x, y: from.y - 6 }).setDepth(DEPTH.FX).setRotation(a);
+      shard.lineStyle(3, bond, 1);
+      shard.lineBetween(-5 * k, 0, 5 * k, 0);
+      shard.lineStyle(1.2, 0x4a3a5a, 1);
+      shard.strokeRect(-6 * k, -2, 12 * k, 4);
+      scene.tweens.add({
+        targets: shard, x: from.x + Math.cos(a) * 46 * k, y: from.y - 6 + Math.sin(a) * 30 * k, rotation: a + 5,
+        alpha: 0, duration: 420, ease: 'Cubic.easeOut', onComplete: () => shard.destroy(),
+      });
+    }
+    posePath(scene, id, [
+      { sy: 0.88, sx: 1.08, ms: 60 },
+      { sy: 1.12, sx: 0.92, lift: 6, ms: 110 },
+      { sy: 1, sx: 1, lift: 0, ms: 260, ease: 'Back.easeOut' },
+    ]);
+    ring(scene, from.x, from.y + 8, color, { from: 14 * k, scale: 4.2, width: 4, ms: 420, flat: true });
+    ring(scene, from.x, from.y - 4, bond, { from: 10 * k, scale: 3.2, width: 2.5, ms: 360 });
+    if (isOwn(scene, ev)) impact(scene, 'medium', from);
+  }
+  scene.time.delayedCall(60 + n * 40, () => {
+    if (document.hidden) return;
+    const at = spriteAt(scene, ev.targetId) ?? eventPoint(ev);
+    const push = scene.add.graphics().setDepth(DEPTH.FX);
+    push.lineStyle(3 * k, color, 0.6);
+    push.lineBetween(from.x, from.y, at.x, at.y);
+    fading(scene, push, 180);
+    staggerFlash(scene, ev.targetId, at, color, k, sparks);
+    drawPayloadFx(scene, ev, 'control.knockdown', 1);
+    if (ev.targetId) dazedHalo(scene, ev.targetId, ev.durationMs ?? 0, color, k);
+  });
+}
+
 // ── The table ────────────────────────────────────────────────────────────────
 
 /** The bespoke animations, by verb id. Kept in step with `KEYSTONE_ANIMATED`. */
@@ -1392,6 +1445,7 @@ const KEYSTONE_ANIMATIONS: Record<string, KeystoneAnimation> = {
   immunity: immunity,
   overflow: overflow,
   riposte: riposte,
+  backlash: backlash,
 };
 
 /**
