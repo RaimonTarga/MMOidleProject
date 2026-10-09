@@ -7,7 +7,8 @@ and `server/src/systems/combat/engine/monsterStateMirror.ts` (presentation state
 server publishes).
 **Tests:** `server/test/monsterStyleCoverage.test.ts`, `chargeOnAggroVisual.test.ts`,
 `monsterStateMirror.test.ts`, `plainsHawkDiveBomb.test.ts`, `attackProgression.test.ts`,
-`conduitPathFx.test.ts`, `lineagePayloadFx.test.ts`, `lineagePayloadEvents.test.ts`.
+`conduitPathFx.test.ts`, `lineagePayloadFx.test.ts`, `lineagePayloadEvents.test.ts`,
+`abilityFlavorFx.test.ts`.
 
 This page covers the premium animation pass that took the boss-lineage grammar to
 ordinary mobs and to player attacks and abilities. Boss animations are documented in
@@ -87,7 +88,9 @@ Every one of the 45 combat specializations is exactly one of:
   `spirit.ts`, `apprentice.ts` — registered in `bespokePaths.ts`, sharing
   `bespoke/kit.ts`. Hooks: `attack` (replaces the ordinary hit), `hit` (a layer over
   the range attack), `payoff` (replaces the finisher / execution / discharge; fires on
-  `empowered || execution`), `reload` (on `player-reload-start`). Each reads the path's
+  `empowered || execution`, with the hit's `effects` so Reverb tells its echo from its
+  execution), `reload` (on `player-reload-start`), `kill` (on the player's own
+  `player-kill`: the Duelist's round chambering past the clip). Each reads the path's
   own resource from the view: aura (`rampage-N`, `channel-N`, `surge`), `activeBuffs`
   stack counts (`cadence-crescendo` = %, `cadence-verdict` = HP, `cooldown-battery`,
   `reload-momentum`, …), combo / ammo / energy fields, or the TARGET's mirrored
@@ -98,10 +101,23 @@ Every one of the 45 combat specializations is exactly one of:
   Sniper, Blunderbuss.
 
 Several bespoke paths keep an older cue beside them: Hemomancer's `fxBleedOpen`,
-Duelist's red round, Dualslinger's blue round (`fxDualBlueRound`, called from the
-alt-shot branch; its gold round is the `attack` hook), Bounty hunter's detonation,
-Cannoneer's blast, Voidwalker's discharge, Destroyer's hollow taps, Devout Priest's
-holy channel, and the T3 threshold triggers (`fx/t4Triggers.ts`).
+Dualslinger's blue round (`fxDualBlueRound`, called from the alt-shot branch; its
+gold round is the `attack` hook), Bounty hunter's detonation, Cannoneer's blast,
+Voidwalker's discharge, Devout Priest's holy channel, and the T3 threshold triggers
+(`fx/t4Triggers.ts`).
+
+The five paths the ability pass re-homed (design §22.5) draw their new rules: Duelist
+chambers a round past the clip on a kill (the old last-bullet glint and red round are
+gone); Warmonger's war drum reads the Artillerist ramp's FILL (`reload-frame-ramp`'s
+`durationPct`, the ramp's cap being twice the clip); Pyromancer's Radiant is fire
+leaping from the burning body to each body its max-stack tick strikes
+(`fxRadiantArc`, on the struck body's `dot-tick`, whose `fromId` names the burning
+body; the old max-stack burst is gone); Reverb's hits hum while its echo is due,
+gathering as the `cooldown-reverb` clock runs down, and the echo (`reverb-echo` on its
+hit) is the bell answering, paler and half-sized; Destroyer's regular hits are
+ordinary (the hollow tap is gone) and smoulder at the weapon while the execution
+waits primed, and a cast-delivered execution draws the path's crater at the cast's
+target.
 
 Paths that read `targetStatus` depend on the server mirroring the target's status
 list, which it does for any monster that is somebody's attack target.
@@ -174,6 +190,38 @@ the refund, HUD first, stays immediate. Every payload takes the player's
 with stage and ascension, capped below a T3 specialization. The floating payoff WORD
 belongs to the rhythm readout (W2-B).
 
+## Ability flavor: amplifiers and keystones (ability pass W2-D, design §22.7)
+
+An ability's identity deepens with its node rows. Names and icons are the HUD's
+(`abilityDisplayName`, shared `abilityIconLayers`, client `ui/abilityIcons.ts`); the
+animation half is here.
+
+- **Packet row**: the lane's existing fx (`ABILITY_NODE_FX`), unchanged.
+- **Amplifier row**: the node's `card-fx` carries its `axis`, and `axisFx`
+  (`fx/abilityKeystoneModel.ts`) scales or extends the same lane fx: of Weight
+  (`magnitude`) draws it bigger, of Many (`targets`) a second echo a beat later, of
+  the Lingering (`duration`) a fading trail of two smaller repeats, of Haste (`cast`)
+  a quick double-tap. A T1 payload key grows instead of repeating (its poses would
+  replay).
+- **Keystone row**: every keystone `card-fx` carries the verb's id (`keystone`) and
+  draws from `pos`, the verb's delivery body (a Conduit's summon). `fx/abilityKeystoneFx.ts`
+  holds ONE bespoke animation per verb, keyed by id; a verb without one is a keyed
+  stub that draws its lane fx as before. A verb with a server wind-up pushes a
+  `windupMs` beat first (Aftershock), its payoff its own card-fx later. Keystones
+  carry no `cardId`, so they never float a word (design §26.4).
+
+| Verb | Wind-up | Payoff | Lasting mark |
+| --- | --- | --- | --- |
+| Whirlwind | the body coils, air drawn in | the body turns through its spin (width through zero, mirrored), two wind blades round it, a cleave ring on every server tick; a stun or freeze breaks it (blades scatter) | — |
+| Aftershock | the spot cracks, seams glowing hotter as a ring closes on it over the server's delay | rock and dust thrown up through the cracks, a flat shockwave, medium weight on your screen | the cracked ground cools to dark, then fades |
+| Breakthrough | the Charge's own rush | a contact starburst from the delivering body's side, a cone of force through the target, the knockdown payload held for the stagger's clock | a dazed halo of stars for that clock (`dazedHalo`, reusable by every stagger verb) |
+| Outbreak | the infected corpse swells | it bursts; a glob of what it carried is lobbed onto its nearest neighbour, which flinches | a bubbling miasma pool where it died |
+| Dragnet | a weighted net thrown from the delivering body, readable in flight | it spreads over each adjacent body, the shackle locks for the root's clock (less the flight), strands tie the bodies of one cast together | the shackle's held look until the root ends or breaks |
+
+The other first verbs (Chain Reaction, Vanish, Pierce, Relay, Fork, Harvest, Shared
+Breath, Immunity, Riposte, Entangle, Unyielding, Backlash, Overflow, Afterimage) are
+keyed stubs until their server modules land (`KEYSTONE_STUBS`).
+
 ## Guards (tests)
 
 - `monsterStyleCoverage` — every authored `attackStyle` is registered client-side and
@@ -188,6 +236,10 @@ belongs to the rhythm readout (W2-B).
   the lasting-state lifecycle; the loaded-carry guard; mid-weight flair.
   `lineagePayloadEvents` — the hit tags, applied durations, refund sample and
   `lineage-load` beats, through the real listeners.
+- `abilityFlavorFx` — a keystone's card-fx names its verb (Whirlwind's spin;
+  Aftershock's wind-up beat and eruption), a node payoff carries its amplifier's
+  axis, every first verb is animated or a stub exactly once, the animation table
+  and the model agree, every offered axis changes the draw.
 
 ## Open / deferred
 
