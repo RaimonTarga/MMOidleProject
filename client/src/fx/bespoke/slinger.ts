@@ -5,6 +5,7 @@
  * detonation and the Cannoneer's blast keep their own cues there, and the layers
  * here add the build-up those payoffs were missing.
  */
+import type { PlayerView } from '@mmo-idle/shared';
 import type { GameScene } from '../../scenes/GameScene';
 import { DEPTH } from '../../render/depth';
 import { burstFx } from '../particles';
@@ -12,6 +13,12 @@ import { drawSigil, ring } from '../bossKit';
 import { bolt, buffStacks, fadeOut, targetStacks, type P, type PathTable } from './kit';
 
 const head = (at: P): P => ({ x: at.x, y: at.y - 44 });
+
+/** The Artillerist ramp's fill, 0..1: the `reload-frame-ramp` tile reports it as `durationPct`. */
+function rampFill(player: PlayerView): number {
+  const ramp = (player.activeBuffs ?? []).find((b) => b.id === 'reload-frame-ramp');
+  return ramp ? Math.max(0, Math.min(1, (ramp.durationPct ?? 0) / 100)) : 0;
+}
 
 /**
  * DUALSLINGER's two rounds, drawn as opposites so the alternation reads at a glance:
@@ -209,12 +216,16 @@ export const SLINGER_PATHS: PathTable = {
     attack: (h) => fxDualGoldRound(h.scene, h.from, h.to, h.k),
   },
 
-  // Warmonger — rising fury: a war-drum aura on you beats faster and redder with
-  // every shot of the ramp; the reload ends it with a roar.
+  // Warmonger — rising fury: a war-drum aura on you beats faster and redder as
+  // the Artillerist ramp climbs; the reload roars, and half the ramp carries
+  // through it (design §22.5), so the drum picks up where the carry left it.
   'reload-heavy-t3-b': {
     hit: (h) => {
-      const ramp = Math.min(20, buffStacks(h.player, 'reload-frame-ramp'));
-      const heat = ramp / 20;
+      // The ramp's FILL (stacks over its cap), as the server projects it on the
+      // tile — never a fixed stack count: Warmonger's cap is twice its clip (80
+      // stacks on a 40-round clip), and a fixed 20-stack scale was white-hot a
+      // quarter of the way up.
+      const heat = rampFill(h.player);
       const g = h.scene.add.graphics({ x: h.from.x, y: h.from.y + 14 }).setDepth(DEPTH.SPRITE - 1);
       g.fillStyle(0xff3b2f, 0.08 + 0.22 * heat);
       g.fillEllipse(0, 0, (30 + 20 * heat) * h.k, (12 + 8 * heat) * h.k);
