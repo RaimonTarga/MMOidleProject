@@ -957,7 +957,7 @@ each shape to an existing trigger seam; the runtime is
 | per hit absorbed | Brace, Bramble Guard | hit-taken |
 | per hit dodged | Sidestep | evade |
 | per tick while active | Endure, Recuperate | pulse |
-| on strip | Cleanse | cleanse |
+| on strip (when it removed anything, once per cast; design §22.13) | Cleanse | cleanse |
 
 **Charge is the one exception.** The §22.10 row reads "on the first body the rush
 touches, and the target on arrival"; players move through monster bodies (they collide
@@ -977,9 +977,9 @@ the moment a payoff fires, never its rate:
    (shared `ON_TARGET_PAYOFF_KINDS`), and `landsOnBody` in `abilityNodes.ts` reads the
    same predicate, so there is no second list. On *every body hit* the self payoffs ride
    the exchange's own body (else the first); a Slam over four bodies refunds its cooldown
-   once. Cleanse's strip is one resolution too: it fires once per strip, not once per
-   affliction kind removed (every Guard offer is a self payoff, so "sized by what it
-   removed" now reads "fires when it removed anything").
+   once. Cleanse's strip is one resolution too: every route fires once per strip that
+   removed anything, never once per affliction kind removed (design §22.13 dropped "sized
+   by what it removed"; `onAbilityNodeStripped` has no per-kind loop).
 2. **A node's ward refreshes, not stacks.** A ward an ability node fires (packet or cross)
    carries the owner key `abilityNode.<abilityId>` (`abilityNodeOwner`); `applyWard`'s
    optional `owner` refreshes that owner's one live ward in place, topped up to the

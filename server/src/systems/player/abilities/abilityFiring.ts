@@ -578,8 +578,8 @@ function maybeFireGuard(
   }
 
   onGuardFired(world, player, ability);
-  // Cleanse's node fires on the strip, once per affliction kind it removed
-  // (design §22.10: "on strip, sized by what it removed").
+  // Cleanse's node fires on the strip, once when it removed anything
+  // (design §22.10 "on strip", as amended by §22.13).
   if (removedEffects) onAbilityNodeStripped(world, player, ability, removedEffects);
 
   setCooldown(player.tracksCombat, cdKey, guardCooldownMs(player, ability));

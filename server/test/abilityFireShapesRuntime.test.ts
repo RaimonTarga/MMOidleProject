@@ -49,7 +49,8 @@ import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { emitCombatEvent, makeCombatContext, type CombatContext } from '../src/systems/combat/engine/combatPipeline';
 import { setAttackTarget } from '../src/systems/combat/ai/targeting';
 import {
-  abilityNodeOwner, onAbilityNodeBodiesHit, refreshAbilityNodeRuntime, updateAbilityNodePulses,
+  abilityNodeOwner, onAbilityNodeBodiesHit, onAbilityNodeStripped, refreshAbilityNodeRuntime,
+  updateAbilityNodePulses,
 } from '../src/systems/combat/abilityNodes';
 import { abilityCooldownKey, techniqueCooldownMs } from '../src/systems/player/abilities/abilityCooldowns';
 import { applyWardPercent, ownedWardOf } from '../src/systems/defense/barrier/wards';
@@ -760,12 +761,13 @@ function pulseFor(world: World, ms: number, fx: string): number {
 
 // ═══ on strip ═══════════════════════════════════════════════════════════════
 
-// ─── Cleanse: on strip — a self payoff once per strip, whatever it removed ───
+// ─── Cleanse: on strip — once per strip that removed anything ────────────────
 
 {
-  // Every Cleanse offer lands on the player (a ward, a window, a plating stack),
-  // so design §22.12's "once per resolution" holds: one strip, one firing. A strip
-  // that removed nothing fires nothing.
+  // Design §22.13: Cleanse fires when it removed anything — "sized by what it
+  // removed" is dropped, so under §22.12's "once per resolution" one strip is one
+  // firing per route, however many kinds it removed. A strip that removed nothing
+  // fires nothing.
   const cleanse = resolveAbilityEffect(ABILITY_DATABASE.get('cleanse')!, { playerTier: 4 });
   if (cleanse.kind !== 'cleanse') throw new Error('Cleanse cleanses');
   assert(cleanse.debuffs >= 2, 'the fixture strips two kinds');
@@ -791,6 +793,35 @@ function pulseFor(world: World, ms: number, fx: string): number {
     for (const id of ids) {
       assert(getStatusEffect(player.tracksCombat, id) === undefined, `${id} was stripped`);
     }
+  }
+
+  // Both rows (packet and cross) fire once each on a strip of two kinds: nothing
+  // multiplies by the kinds removed.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'fs-cleanse-cross', {
+      abilityId: 'cleanse', nodes: rows('cleanse', { packet: 'barrier-tempo', cross: 'bulwark' }),
+    });
+    afflict(player, ['antiheal', 'slow']);
+    world.takeNodeEvents(NODE);
+    castGuard(world, player, 'cleanse');
+    const fired = cardFx(world);
+    assert(fired.length === 2, `a two-kind strip fires each of its two routes once, got ${fired.length}`);
+    assert(fired.filter((e) => e.fx === 'barrier-tempo.ward-shell').length === 1, 'the packet route once');
+  }
+
+  // The seam itself: an empty strip fires nothing; one that removed anything fires.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'fs-cleanse-empty', {
+      abilityId: 'cleanse', nodes: rows('cleanse', { packet: 'barrier-tempo' }),
+    });
+    const def = ABILITY_DATABASE.get('cleanse')!;
+    world.takeNodeEvents(NODE);
+    onAbilityNodeStripped(world, player, def, []);
+    assert(cardFx(world).length === 0, 'a strip that removed nothing fires nothing');
+    onAbilityNodeStripped(world, player, def, [{ effectId: 'antiheal' }, { effectId: 'slow' }, { effectId: 'slow' }]);
+    assert(cardFx(world).length === 1, 'a strip that removed anything fires once');
   }
 }
 
