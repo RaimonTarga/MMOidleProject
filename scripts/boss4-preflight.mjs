@@ -99,7 +99,7 @@ for(const BLOCK of BOSS4_BLOCKS){
   assert.equal(d.sources.abilities,'explicit',`${ready.cell}: the arm must state its abilities, never inherit a default`);
   assert.equal(d.runeRules.length,5,`${ready.cell}: reference carries five ordered rules`);
   assert.equal(d.runeRules[1].actionId,'step-back',`${ready.cell}: Step Back precedes the movement rule`);
-  assert.deepEqual(d.abilities.techniques,['expose-weakness'],`${ready.cell}: technique drift`);
+  assert.deepEqual(d.abilities.techniques,['slam'],`${ready.cell}: technique drift`);
   // The ORDERED Guard list carried from this block's Boss3 origin arm, declared and
   // applied. The shared declared-vs-applied checker compares ability SETS (it sorts),
   // which cannot see a swapped guard order — so both Boss4 scripts assert it directly.

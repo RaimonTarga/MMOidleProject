@@ -437,8 +437,8 @@ export interface PacketHalfNumbers {
  *               against 1–9 for every other root; 4 s is the fast end of §24.1's
  *               4–6 s cadence, so the cap binds the Conduit and nobody else);
  *               payload the class's own empowered multiplier (`magnitude` 1.5 is
- *               the fallback for a root with none — dot, summoner, non-Duelist
- *               reload); pure ×1.5 on the mechanic's hit ("half again")
+ *               the fallback for a root with none — dot, summoner, and every
+ *               reload spec but the Duelist, whose proxy is ×3.5, §22.12); pure ×1.5 on the mechanic's hit ("half again")
  *   control     moment capped at one per 5 s (§24.2);
  *               payload a 2 s root; pure a 1.5 s stun ("knocks it down")
  *   kill-chain  moment = the next landed hit after a kill;

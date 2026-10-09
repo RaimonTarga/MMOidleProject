@@ -36,10 +36,10 @@ export const IT_ATK_PER_STACK   = 2;     // flat damage bonus per stack on targe
 export const IT_SPEED_PER_STACK = 0.02;  // attackCooldown reduction per stack (2%)
 export const IT_SPEED_CAP       = 0.40;  // maximum 40% reduction
 
-// Balanced — Fan the Flames (dot-balanced-t3-a)
+// Balanced — Pyromancer's stack half, Fan the Flames (dot-balanced-t3-a). Its
+// payoff, Radiant, has no constant: its reach is LINEAGE_UNITS.contagionRadius.
 export const FTF_STACKS_PER_HIT = 2;
 export const FTF_DMG_MULT       = 0.5;
-export const FTF_BONUS_MULT     = 2;     // bonus = maxStacks × basePerStack × FTF_BONUS_MULT (was 3, OP)
 
 // Balanced — Conflagration (dot-balanced-t3-c)
 // Fast cadence: 10 ticks × 250ms (2.5s total) at factor 1 — same total damage and

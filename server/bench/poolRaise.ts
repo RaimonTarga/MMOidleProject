@@ -271,7 +271,7 @@ interface Prepared { bot: PlayerEntity; refusals: string[]; activeCards: number;
  */
 function referencePackage(tier: number, melee: boolean): { abilities: AttunedAbilities; stance: string | null; rules: EquippedRule[] } {
   const abilities: AttunedAbilities = {
-    techniques: [...(tier >= 3 ? ['frenzy'] : []), 'sweep'],
+    techniques: [...(tier >= 3 ? ['imbue-lightning'] : []), 'sweep'],
     guards: tier === 1 ? ['second-wind'] : ['second-wind', 'cleanse'],
   };
   const rules = withReferenceAbilityWiring([

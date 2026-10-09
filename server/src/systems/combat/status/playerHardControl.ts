@@ -8,7 +8,13 @@
  * ordinary debuffs and DoT stacks are Cleanse's job, and collapsing the two
  * would make Cleanse a universal answer and Break Free pointless.
  */
-import { CAVE_LOCKDOWN_EFFECT_ID, LAIR_DRAG_ROOT_EFFECT_ID, getStatusEffect, hasStatusEffect } from '@mmo-idle/shared';
+import {
+  ABILITY_UNYIELDING_EFFECT_ID,
+  CAVE_LOCKDOWN_EFFECT_ID,
+  LAIR_DRAG_ROOT_EFFECT_ID,
+  getStatusEffect,
+  hasStatusEffect,
+} from '@mmo-idle/shared';
 import type { TracksCombat } from '@mmo-idle/shared';
 import { FROZEN_EFFECT } from '../../classes/archetypes/dot/t3/core/constants';
 import { STUN_EFFECT } from './stun';
@@ -47,6 +53,21 @@ export function isPlayerControlled(player: { tracksCombat: TracksCombat; isRoote
   return isHardControlled(player.tracksCombat)
     || player.isRooted !== undefined
     || activePlayerRoots(player.tracksCombat).length > 0;
+}
+
+/**
+ * Whether NEW hard control or a root is refused on this player right now —
+ * Endure's Unyielding keystone (design §22.4), a status any future "cannot be
+ * controlled" source may apply too. Asked by the appliers, never by a cleanup:
+ * a control already on the player when it went up runs its course.
+ *
+ * The appliers that ask: `applyStun` (every stun; it reads the status itself, as
+ * this module imports `stun.ts`), `playerRefusesStatus` for the debuff writers
+ * (a zero-speed root is hard control by `statusPolicyFor`), the Cave lockdown
+ * (`beginEngageLock`) and the lair drag (`beginLairDrag`).
+ */
+export function refusesHardControl(cs: TracksCombat): boolean {
+  return hasStatusEffect(cs, ABILITY_UNYIELDING_EFFECT_ID);
 }
 
 /** The most severe hard control currently on the player, or null. */

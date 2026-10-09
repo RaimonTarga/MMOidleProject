@@ -31,6 +31,7 @@ import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import type { World } from "../../../world/World";
 import { canApplyPlayerDebuff } from "../status/debuffGuard";
+import { refusesHardControl } from "../status/playerHardControl";
 import { harmfulStatusDurationMult } from "../status/harmfulStatus";
 import { isMonsterFrozen } from "../../classes/archetypes/dot/t3/core/selectors";
 import { isMonsterStunned } from "../status/stun";
@@ -72,6 +73,9 @@ export function beginLairDrag(
   now: number,
 ): boolean {
   if (!canApplyPlayerDebuff(player)) return false;
+  // UNYIELDING (Endure's keystone, design §22.4): the haul owns a root, and a root
+  // is refused — so the bite simply lands, as below.
+  if (refusesHardControl(player.tracksCombat)) return false;
   // IMMOVABLE (design §4): the haul is a displacement in everything but its
   // implementation — it moves the player and roots them — so the Bulwark
   // keystone refuses it the way it refuses a knockback. Returning false means

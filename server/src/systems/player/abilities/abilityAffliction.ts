@@ -33,6 +33,7 @@ import { recordWorldLogEvent } from "../../../world/worldLog";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 import { techniquePowerPctFor } from "./abilityKata";
+import { onAbilityKeystoneInfected } from "../../combat/keystones/ability/registry";
 
 /** Resolve an ability's effect through the shared Technique Power seam. */
 function afflictionEffect(
@@ -159,21 +160,24 @@ function squaredGap(monster: MonsterEntity, origin: { x: number; y: number }): n
  * stacks and the full reservoir pool, so the target cap is the only bound on the
  * multiplication — which is exactly why the cap, not the radius, is the number
  * to tune.
+ *
+ * Returns the bodies the spread reached (empty when it reached none), so the
+ * ability node can fire on every one of them (design §22.10).
  */
 export function resolveContagion(
   world: World,
   player: PlayerEntity,
   ability: AbilityDef,
   target: MonsterEntity,
-): void {
+): MonsterEntity[] {
   const effect = afflictionEffect(player, ability);
-  if (effect.kind !== "spread-dots") return;
+  if (effect.kind !== "spread-dots") return [];
 
   const entries = spreadableDots(world, player, target);
-  if (entries.length === 0) return;
+  if (entries.length === 0) return [];
 
   const victims = contagionVictims(world, player, target, effect);
-  if (victims.length === 0) return;
+  if (victims.length === 0) return [];
 
   // One link per (victim × distinct element): a target carrying a burn and a
   // poison sends two differently-coloured tendrils to each new host, which is
@@ -185,6 +189,10 @@ export function resolveContagion(
     for (const entry of entries) {
       copyPlayerDotOnto(world, player, victim, entry);
     }
+    // The spread has written onto this body: a live keystone verb may care (the
+    // Outbreak tag, design §22.4). Here, where the copy lands, not in the cast
+    // lifecycle, so the hook holds whatever shape delivers the spread.
+    onAbilityKeystoneInfected(world, player, ability, victim);
     for (const element of elements) {
       links.push({ to: { ...victim.hasPosition.current }, element });
     }
@@ -215,6 +223,7 @@ export function resolveContagion(
       nodeId: player.hasPosition.nodeId,
     },
   );
+  return victims;
 }
 
 /**

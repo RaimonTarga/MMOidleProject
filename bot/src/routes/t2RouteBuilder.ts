@@ -254,7 +254,7 @@ function bossLoadoutSteps(group: T2BiomeGroup): RouteStep[] {
       type: "setAbilities",
       techniques: [techniqueFor("single-target")],
       guards: [guardFor(group)],
-      label: `${group} boss kit: single-target (expose-weakness / ${guardFor(group)})`,
+      label: `${group} boss kit: single-target (slam / ${guardFor(group)})`,
     },
     {
       type: "setDefaultStance",

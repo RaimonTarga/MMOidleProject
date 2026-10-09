@@ -20,62 +20,62 @@ const heavyWeapon = (tier: number) => ['','', 'quake-hammer', 'mountain-avalanch
 // T4 weapons on a 16-plating / 15% DR dummy, +5, Tempered core, Equilibrium relic)
 // and its better cast Technique (Apprentice: Power Strike vs Detonate). Replaces the
 // frame-default weapon picks, which predated the T1-T4 weapon normalization.
-const T4_MEASURED: Record<string, [weapon: string, cast: 'power-strike' | 'detonate']> = {
-  'cadence-balanced-t3-a': ['desert-sunmonk-warstaff', 'power-strike'],
-  'cadence-balanced-t3-b': ['tundra-glacial-rimebrand', 'power-strike'],
-  'cadence-balanced-t3-c': ['desert-sunmonk-warstaff', 'power-strike'],
-  'cadence-heavy-t3-a': ['mountain-warmaul', 'power-strike'],
-  'cadence-heavy-t3-b': ['mountain-warmaul', 'power-strike'],
-  'cadence-heavy-t3-c': ['mountain-warmaul', 'power-strike'],
-  'cadence-light-t3-a': ['tundra-glacial-rimebrand', 'power-strike'],
-  'cadence-light-t3-b': ['tundra-glacial-rimebrand', 'power-strike'],
-  'cadence-light-t3-c': ['mountain-warmaul', 'power-strike'],
-  'cooldown-balanced-t3-a': ['mountain-warmaul', 'power-strike'],
-  'cooldown-balanced-t3-b': ['tundra-glacial-rimebrand', 'power-strike'],
-  'cooldown-balanced-t3-c': ['mountain-warmaul', 'power-strike'],
-  'cooldown-heavy-t3-a': ['mountain-warmaul', 'power-strike'],
-  'cooldown-heavy-t3-b': ['mountain-warmaul', 'power-strike'],
-  'cooldown-heavy-t3-c': ['mountain-earthsunder-maul', 'power-strike'],
-  'cooldown-light-t3-a': ['tundra-glacial-rimebrand', 'power-strike'],
-  'cooldown-light-t3-b': ['tundra-glacial-rimebrand', 'power-strike'],
-  'cooldown-light-t3-c': ['tundra-glacial-rimebrand', 'power-strike'],
+const T4_MEASURED: Record<string, [weapon: string, cast: 'slam' | 'detonate']> = {
+  'cadence-balanced-t3-a': ['desert-sunmonk-warstaff', 'slam'],
+  'cadence-balanced-t3-b': ['tundra-glacial-rimebrand', 'slam'],
+  'cadence-balanced-t3-c': ['desert-sunmonk-warstaff', 'slam'],
+  'cadence-heavy-t3-a': ['mountain-warmaul', 'slam'],
+  'cadence-heavy-t3-b': ['mountain-warmaul', 'slam'],
+  'cadence-heavy-t3-c': ['mountain-warmaul', 'slam'],
+  'cadence-light-t3-a': ['tundra-glacial-rimebrand', 'slam'],
+  'cadence-light-t3-b': ['tundra-glacial-rimebrand', 'slam'],
+  'cadence-light-t3-c': ['mountain-warmaul', 'slam'],
+  'cooldown-balanced-t3-a': ['mountain-warmaul', 'slam'],
+  'cooldown-balanced-t3-b': ['tundra-glacial-rimebrand', 'slam'],
+  'cooldown-balanced-t3-c': ['mountain-warmaul', 'slam'],
+  'cooldown-heavy-t3-a': ['mountain-warmaul', 'slam'],
+  'cooldown-heavy-t3-b': ['mountain-warmaul', 'slam'],
+  'cooldown-heavy-t3-c': ['mountain-earthsunder-maul', 'slam'],
+  'cooldown-light-t3-a': ['tundra-glacial-rimebrand', 'slam'],
+  'cooldown-light-t3-b': ['tundra-glacial-rimebrand', 'slam'],
+  'cooldown-light-t3-c': ['tundra-glacial-rimebrand', 'slam'],
   'dot-balanced-t3-a': ['tundra-glacial-rimebrand', 'detonate'],
   'dot-balanced-t3-b': ['tundra-glacial-rimebrand', 'detonate'],
   'dot-balanced-t3-c': ['tundra-glacial-rimebrand', 'detonate'],
-  'dot-heavy-t3-a': ['mountain-earthsunder-maul', 'power-strike'],
+  'dot-heavy-t3-a': ['mountain-earthsunder-maul', 'slam'],
   'dot-heavy-t3-b': ['mountain-earthsunder-maul', 'detonate'],
   'dot-heavy-t3-c': ['mountain-earthsunder-maul', 'detonate'],
   'dot-light-t3-a': ['tundra-glacial-rimebrand', 'detonate'],
-  'dot-light-t3-b': ['graveyard-plague-axe', 'power-strike'],
-  'dot-light-t3-c': ['mountain-earthsunder-maul', 'power-strike'],
-  'energy-balanced-t3-a': ['desert-sunmonk-warstaff', 'power-strike'],
-  'energy-balanced-t3-b': ['desert-sunmonk-warstaff', 'power-strike'],
-  'energy-balanced-t3-c': ['desert-sunmonk-warstaff', 'power-strike'],
-  'energy-heavy-t3-a': ['graveyard-plague-axe', 'power-strike'],
-  'energy-heavy-t3-b': ['graveyard-plague-axe', 'power-strike'],
-  'energy-heavy-t3-c': ['graveyard-plague-axe', 'power-strike'],
-  'energy-light-t3-a': ['desert-sunmonk-warstaff', 'power-strike'],
-  'energy-light-t3-b': ['tundra-glacial-rimebrand', 'power-strike'],
-  'energy-light-t3-c': ['desert-sunmonk-warstaff', 'power-strike'],
-  'reload-balanced-t3-a': ['tundra-glacial-rimebrand', 'power-strike'],
-  'reload-balanced-t3-b': ['tundra-glacial-rimebrand', 'power-strike'],
-  'reload-balanced-t3-c': ['tundra-glacial-rimebrand', 'power-strike'],
-  'reload-heavy-t3-a': ['mountain-earthsunder-maul', 'power-strike'],
-  'reload-heavy-t3-b': ['tundra-glacial-rimebrand', 'power-strike'],
-  'reload-heavy-t3-c': ['tundra-glacial-rimebrand', 'power-strike'],
-  'reload-light-t3-a': ['tundra-glacial-rimebrand', 'power-strike'],
-  'reload-light-t3-b': ['tundra-glacial-rimebrand', 'power-strike'],
-  'reload-light-t3-c': ['mountain-earthsunder-maul', 'power-strike'],
+  'dot-light-t3-b': ['graveyard-plague-axe', 'slam'],
+  'dot-light-t3-c': ['mountain-earthsunder-maul', 'slam'],
+  'energy-balanced-t3-a': ['desert-sunmonk-warstaff', 'slam'],
+  'energy-balanced-t3-b': ['desert-sunmonk-warstaff', 'slam'],
+  'energy-balanced-t3-c': ['desert-sunmonk-warstaff', 'slam'],
+  'energy-heavy-t3-a': ['graveyard-plague-axe', 'slam'],
+  'energy-heavy-t3-b': ['graveyard-plague-axe', 'slam'],
+  'energy-heavy-t3-c': ['graveyard-plague-axe', 'slam'],
+  'energy-light-t3-a': ['desert-sunmonk-warstaff', 'slam'],
+  'energy-light-t3-b': ['tundra-glacial-rimebrand', 'slam'],
+  'energy-light-t3-c': ['desert-sunmonk-warstaff', 'slam'],
+  'reload-balanced-t3-a': ['tundra-glacial-rimebrand', 'slam'],
+  'reload-balanced-t3-b': ['tundra-glacial-rimebrand', 'slam'],
+  'reload-balanced-t3-c': ['tundra-glacial-rimebrand', 'slam'],
+  'reload-heavy-t3-a': ['mountain-earthsunder-maul', 'slam'],
+  'reload-heavy-t3-b': ['tundra-glacial-rimebrand', 'slam'],
+  'reload-heavy-t3-c': ['tundra-glacial-rimebrand', 'slam'],
+  'reload-light-t3-a': ['tundra-glacial-rimebrand', 'slam'],
+  'reload-light-t3-b': ['tundra-glacial-rimebrand', 'slam'],
+  'reload-light-t3-c': ['mountain-earthsunder-maul', 'slam'],
   // 2026-09-28 T4 Conduit pass: balanced/heavy paths measured the same way, on live T4
   // bosses (light paths keep Deathfang: fast bodies measured best on it). Frenzy adds
   // no attacks on these slow weapons, so the cast Technique replaces it, and Orbit is
   // dropped: a circling owner drags the boss away from its own summons.
-  'summoner-balanced-t3-a': ['graveyard-plague-axe', 'power-strike'],
-  'summoner-balanced-t3-b': ['mountain-earthsunder-maul', 'power-strike'],
-  'summoner-balanced-t3-c': ['mountain-earthsunder-maul', 'power-strike'],
-  'summoner-heavy-t3-a': ['mountain-earthsunder-maul', 'power-strike'],
-  'summoner-heavy-t3-b': ['graveyard-plague-axe', 'power-strike'],
-  'summoner-heavy-t3-c': ['mountain-earthsunder-maul', 'power-strike'],
+  'summoner-balanced-t3-a': ['graveyard-plague-axe', 'slam'],
+  'summoner-balanced-t3-b': ['mountain-earthsunder-maul', 'slam'],
+  'summoner-balanced-t3-c': ['mountain-earthsunder-maul', 'slam'],
+  'summoner-heavy-t3-a': ['mountain-earthsunder-maul', 'slam'],
+  'summoner-heavy-t3-b': ['graveyard-plague-axe', 'slam'],
+  'summoner-heavy-t3-c': ['mountain-earthsunder-maul', 'slam'],
 };
 
 function build(tier: number, root: typeof SURVEY_CLASSES[number], frame: BreadthCell['frame'], path: string | null, far = false): BreadthCell[] {
@@ -129,14 +129,16 @@ function build(tier: number, root: typeof SURVEY_CLASSES[number], frame: Breadth
     const slam = (root.name === 'squire' && frame !== 'light' && !onHitPath) || (root.name === 'apprentice' && frame !== 'light') || weapon === 'mountain-earthsunder-maul';
     if (role === 'farm') {
       const aoe = slam ? 'slam' : 'sweep';
-      cell.abilities!.techniques = tier === 2 ? [aoe] : tier === 3 ? [aoe, 'frenzy'] : [aoe, 'frenzy', 'expose-weakness'];
+      // The ability pass (design §22.2) cut Frenzy and Expose Weakness: Imbue
+      // Lightning took Frenzy's instant slot, Slam Expose Weakness's place.
+      cell.abilities!.techniques = tier === 2 ? [aoe] : tier === 3 ? [aoe, 'imbue-lightning'] : [...new Set([aoe, 'imbue-lightning', 'slam'])];
       notes.push(`${aoe} has first offensive priority; ${slam ? 'high Attack supports direct AoE burst' : 'multiple delivery opportunities support Sweep'}.`);
     }
-    // Frenzy adds no attacks on a 2 s+ swing, so non-Conduit T3/T4 cells take their
-    // cast Technique in that slot instead (same 2 RP wiring cost).
+    // Frenzy added no attacks on a 2 s+ swing, so non-Conduit T3/T4 cells take
+    // their cast Technique in its (now Imbue Lightning's) slot instead.
     if (tier >= 3 && (root.name !== 'conduit' || measured)) {
-      const cast = measured?.[1] ?? 'power-strike';
-      const techniques = cell.abilities!.techniques.filter(id => id !== 'frenzy');
+      const cast = measured?.[1] ?? 'slam';
+      const techniques = cell.abilities!.techniques.filter(id => id !== 'imbue-lightning');
       if (!techniques.includes(cast) && techniques.length < cell.abilities!.techniques.length) techniques.unshift(cast);
       cell.abilities!.techniques = techniques;
     }

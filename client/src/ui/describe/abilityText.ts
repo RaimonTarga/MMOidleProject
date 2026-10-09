@@ -1,4 +1,5 @@
 import {
+  TECHNIQUE_CAST_SPEED_CAP,
   TECHNIQUE_TEMPO_MIN_CYCLE_MS,
   abilityCastMs,
   abilityCooldownMs,
@@ -8,6 +9,7 @@ import {
   abilityRankNumber,
   abilityRankNumeral,
   resolveAbilityEffectWithPassives,
+  sidestepWindow,
   abilityCooldownReduction,
   abilityHasTag,
   abilityTags,
@@ -19,6 +21,7 @@ import {
   type AbilityDef,
   type AbilityEffectSpec,
   type CombatArchetype,
+  type AbilityNodeProgressMap,
 } from '@mmo-idle/shared';
 
 /**
@@ -40,8 +43,8 @@ import {
  * Equipment modifiers use the same shared resolver as authoritative firing.
  */
 
-/** Mirrors CAST_SPEED_CAP in abilityCasting.ts. */
-const CAST_SPEED_CAP = 0.6;
+/** The server's cap on every cast-speed source combined (design §22.9). */
+const CAST_SPEED_CAP = TECHNIQUE_CAST_SPEED_CAP;
 
 export interface AbilityContext {
   equipmentSources?: { id: string; name: string; effects: Record<string, number>; inactiveReason?: string }[];
@@ -55,6 +58,17 @@ export interface AbilityContext {
   maxHp?: number;
   /** Current attack range, for showing what an ability's reach adds up to. */
   attackRange?: number;
+  /**
+   * Cast speed this ability's own nodes add (the amplifier's 'cast' axis, design
+   * §22.9). It joins 'technique.cast-speed-pct' in ONE capped sum, as on the server.
+   */
+  nodeCastSpeedPct?: number;
+  /**
+   * The character's ability node rows, keyed by ability id: the words they lend
+   * the ability's NAME (design §22.7, through `abilityDisplayName`). Absent in a
+   * class-agnostic preview, which shows the plain name.
+   */
+  abilityNodes?: AbilityNodeProgressMap;
 }
 
 export interface AbilityLine {
@@ -125,7 +139,10 @@ const EFFECT_FIELDS: Record<string, EffectFieldMeta> = {
   // one attack is an implementation promise, not a number to read in a tooltip.
   tempoRefundMs: { label: 'Cooldown per attack landed', format: 'ms' },
   damageMult: { label: 'Damage', format: 'mult', absolute: damageFromAttack },
-  damageTakenPct: { label: 'Damage taken by target', format: 'pct' },
+  // Cull's curve (design §22.8): `damageMult` above the threshold, climbing to
+  // this at zero health.
+  executeMult: { label: 'Damage at zero health', format: 'mult', absolute: damageFromAttack },
+  thresholdPct: { label: 'Climbs below target health', format: 'pct' },
   durationMs: { label: 'Duration', format: 'ms' },
   distance: { label: 'Dash distance', format: 'px' },
   empowerMult: { label: 'Next attack', format: 'mult', absolute: damageFromAttack },
@@ -136,11 +153,8 @@ const EFFECT_FIELDS: Record<string, EffectFieldMeta> = {
   stacks: { label: 'Stacks removed', format: 'count' },
   debuffs: { label: 'Afflictions cleansed', format: 'count' },
   recoveryPct: { label: 'Recovery activated', format: 'pct' },
-  slowPct: { label: 'Movement slow', format: 'pct' },
-  slowDurationMs: { label: 'Slow duration', format: 'ms' },
   rootMs: { label: 'Root duration', format: 'ms' },
   stunMs: { label: 'Stun duration', format: 'ms' },
-  attackSpeedPct: { label: 'Attack speed', format: 'pct' },
   controlResistPct: { label: 'Control resistance', format: 'pct' },
   controlResistMs: { label: 'Resistance duration', format: 'ms' },
   maxTargets: { label: 'Enemies infected', format: 'count' },
@@ -157,17 +171,17 @@ const EFFECT_FIELDS: Record<string, EffectFieldMeta> = {
 /** Field order per effect kind — magnitude first, then the shape of the effect. */
 const EFFECT_FIELD_ORDER: Record<AbilityEffectSpec['kind'], string[]> = {
   cleave: ['splashPct', 'radius', 'tempoRefundMs'],
-  empower: ['damageMult'],
   'cast-strike': ['damageMult', 'stunMs', 'radius'],
-  'expose-weakness': ['damageTakenPct', 'durationMs'],
-  'slow-strike': ['damageMult', 'slowPct', 'slowDurationMs'],
+  'execute-strike': ['damageMult', 'executeMult', 'thresholdPct'],
   'root-strike': ['damageMult', 'rootMs'],
   reposition: ['distance', 'empowerMult'],
   bramble: ['platingBonus', 'reflectFlat', 'durationMs'],
   'damage-reduction': ['drPct', 'knockbackResistPct', 'durationMs'],
   cleanse: ['stacks', 'debuffs'],
   heal: ['recoveryPct', 'durationMs'],
-  'attack-speed': ['attackSpeedPct', 'durationMs'],
+  // Sidestep authors no field: its window is the magnitude table's, shown by
+  // `sidestepLines` from the same resolver the server applies.
+  'dodge-window': [],
   'break-free': ['controlResistPct', 'controlResistMs'],
   'spread-dots': ['maxTargets', 'radius'],
   'detonate-dots': ['detonateMult', 'classDotMult'],
@@ -259,24 +273,6 @@ const CLASS_SPECIFIC_COPY: Readonly<Record<string, readonly AbilityClassSpecific
       text: 'Each living summon snapshotted when Sweep arms delivers it once. The formation shares one normalized Sweep budget, so summons do not each deal a full Sweep; Battle Bond keeps the owner-delivered version.',
     },
   ],
-  'expose-weakness': [
-    {
-      className: 'Conduit',
-      text: 'On formation paths, each snapshotted summon can deliver the armed debuff once. The target receives one shared vulnerability window rather than a separate full ability per summon; Battle Bond keeps the owner-delivered version.',
-    },
-  ],
-  'hamstring': [
-    {
-      className: 'Conduit',
-      text: 'On formation paths, each snapshotted summon can deliver the slow once. The control lands on the struck target normally, while the damage rider is divided across the formation; Battle Bond keeps the owner-delivered version.',
-    },
-  ],
-  'power-strike': [
-    {
-      className: 'Conduit',
-      text: 'On formation paths, one living engaged summon performs the wind-up using your stats. The cast resolves as one full payload, not once per summon; if none is eligible, the owner casts normally. Battle Bond always uses the owner.',
-    },
-  ],
   charge: [
     {
       className: 'Conduit',
@@ -286,7 +282,7 @@ const CLASS_SPECIFIC_COPY: Readonly<Record<string, readonly AbilityClassSpecific
   contagion: [
     {
       className: 'Conduit',
-      text: 'On formation paths, one living engaged summon performs the wind-up, but the full spread still uses the owner’s DoTs and stats. It resolves once rather than once per summon; if none is eligible, the owner casts normally. Battle Bond always uses the owner.',
+      text: 'On formation paths, the formation carries the armed spread like Sweep: the first snapshotted summon hit that lands spreads the owner’s DoTs from its target, once, and the later summons carry nothing extra. Battle Bond keeps the owner-delivered version.',
     },
   ],
   slam: [
@@ -299,18 +295,6 @@ const CLASS_SPECIFIC_COPY: Readonly<Record<string, readonly AbilityClassSpecific
     {
       className: 'Conduit',
       text: 'On formation paths, each snapshotted summon can deliver the root once. The control lands on the struck target normally, while the damage rider is divided across the formation; Battle Bond keeps the owner-delivered version.',
-    },
-  ],
-  frenzy: [
-    {
-      className: 'Conduit',
-      text: 'The Conduit casts one owner buff. Summon attack timing reads that shared haste window, so it speeds the formation instead of creating a separate buff per summon.',
-    },
-  ],
-  'quick-strike': [
-    {
-      className: 'Conduit',
-      text: 'On formation paths, each snapshotted summon can deliver Quick Strike once. The empowered bonus is normalized across the formation, so the summons do not each add a full Quick Strike; Battle Bond keeps the owner-delivered version.',
     },
   ],
   detonate: [
@@ -338,7 +322,7 @@ const CLASS_SPECIFIC_COPY: Readonly<Record<string, readonly AbilityClassSpecific
     },
     {
       className: 'Conduit',
-      text: 'The Conduit casts one shared charge window. Owner and summon hits consume its charges one at a time, and summon bonus damage is formation-weighted; summons do not each receive a separate window.',
+      text: 'The Conduit opens one shared charge window. Owner and summon hits consume its charges one at a time, and summon bonus damage is formation-weighted; summons do not each receive a separate window.',
     },
   ],
 };
@@ -397,6 +381,7 @@ export function describeAbility(
     });
   }
 
+  if (authored.kind === 'dodge-window') lines.push(...sidestepLines(ability, context));
   lines.push(...reachLines(ability, context));
   lines.push(...timingLines(ability, context));
 
@@ -422,6 +407,20 @@ export function describeAbility(
  * reach, because that extra distance IS the ability — it is what makes a
  * gap-closer worth a slot and what lets a melee build hold a ranged tool.
  */
+/**
+ * Sidestep's window (design §22.8). The rank authors no field — the numbers are
+ * the lineage magnitude table's, so they come from the same `sidestepWindow`
+ * the server applies.
+ */
+function sidestepLines(ability: AbilityDef, context: AbilityContext): AbilityLine[] {
+  const window = sidestepWindow(ability, context.playerTier);
+  return [
+    { key: 'evasionPct', label: 'Evade chance', value: pct(window.evasionPct) },
+    { key: 'moveSpeedPct', label: 'Move speed', value: pct(window.moveSpeedPct) },
+    { key: 'durationMs', label: 'Window', value: seconds(window.durationMs) },
+  ];
+}
+
 function reachLines(ability: AbilityDef, context: AbilityContext): AbilityLine[] {
   const bonus = abilityRangeBonus(ability, context.playerTier);
   if (bonus <= 0) return [];
@@ -476,7 +475,8 @@ function timingLines(ability: AbilityDef, context: AbilityContext): AbilityLine[
   if (windsUp && authoredCast > 0) {
     const castReduction = Math.min(
       CAST_SPEED_CAP,
-      Math.max(0, context.passives['technique.cast-speed-pct'] ?? 0),
+      Math.max(0, context.passives['technique.cast-speed-pct'] ?? 0)
+        + Math.max(0, context.nodeCastSpeedPct ?? 0),
     );
     lines.push({
       key: 'cast',

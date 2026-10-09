@@ -38,3 +38,6 @@ export {
 } from './immovable';
 export { UNBROKEN_KEYSTONE, unbrokenHoldsRecharge } from './unbroken';
 export { SIGNATURE_KEYSTONE, signatureOnTechniqueResolved } from './signature';
+// The ABILITY keystone verbs (design §22.4, §22.11): the keystone row of the
+// ability node tree, one module per verb, on this registry's pattern.
+export * from './ability';

@@ -26,15 +26,16 @@ import {
   abilityCastMs,
   abilityRankAt,
   abilityRangeBonus,
+  castWindupMs,
   resolveAbilityEffect,
   type AbilityDef,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
-import type { PlayerEntity } from "../../../ecs/entity";
+import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import { isHardControlled } from "../../combat/status/playerHardControl";
 import { setEntityMotion, stopEntity } from "../../world/movement";
-import { startTechniqueCooldown } from "./abilityCooldowns";
+import { refundTechniqueCooldown, startTechniqueCooldown } from "./abilityCooldowns";
 import { onTechniqueResolved } from "../../combat/techniqueResolved";
 import {
   castFootprintRadius,
@@ -50,6 +51,7 @@ import { armTechnique } from "./abilityArming";
 import { usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
 import { beginFormationCharge, cancelFormationCharge, formationChargeMinions, updateFormationCharge } from "./formationCharge";
 import { techniquePowerPctFor } from "./abilityKata";
+import { abilityNodeCastSpeedPctFor, onAbilityNodeBodiesHit } from "../../combat/abilityNodes";
 
 /**
  * Begin a wind-up. Returns true when the cast started (claiming the offensive
@@ -88,7 +90,7 @@ export function beginAbilityCast(
   // firing with nowhere to go.
   if (!afflictionTechniqueHasWork(world, player, ability, target)) return false;
 
-  const effectiveMs = Math.max(1, Math.round(castMs * castSpeedMult(player)));
+  const effectiveMs = castWindupFor(player, ability, castMs);
   attachComponent(world, player, "isCastingAbility", {
     abilityId: ability.id,
     endsAt: now + effectiveMs,
@@ -137,7 +139,7 @@ function beginSelfCast(
   castMs: number,
   now: number,
 ): boolean {
-  const effectiveMs = Math.max(1, Math.round(castMs * castSpeedMult(player)));
+  const effectiveMs = castWindupFor(player, ability, castMs);
   attachComponent(world, player, "isCastingAbility", {
     abilityId: ability.id,
     endsAt: now + effectiveMs,
@@ -170,15 +172,19 @@ export function holdsPositionWhileCasting(player: PlayerEntity): boolean {
 }
 
 /**
- * `technique.cast-speed-pct` shortens the wind-up. Capped so a cast can never
- * collapse to an instant — the telegraph IS the cost that makes Technique Power
- * on casts a fair trade.
+ * The wind-up after cast speed. `technique.cast-speed-pct` (the weapon's — the
+ * Technique lane's own number, design §22.9) and the ability amplifier's `cast`
+ * axis are SUMMED and capped once at `TECHNIQUE_CAST_SPEED_CAP` (`castWindupMs`),
+ * so a cast can never collapse to an instant whichever sources stack — the
+ * telegraph IS the cost that makes Technique Power on casts a fair trade, and no
+ * combination of them shortens one below 40% of its authored wind-up.
  */
-const CAST_SPEED_CAP = 0.6;
-
-function castSpeedMult(player: PlayerEntity): number {
-  const pct = player.usesSkills.passives["technique.cast-speed-pct"] ?? 0;
-  return 1 - Math.min(CAST_SPEED_CAP, Math.max(0, pct));
+export function castWindupFor(player: PlayerEntity, ability: AbilityDef, authoredMs: number): number {
+  return castWindupMs(
+    authoredMs,
+    player.usesSkills.passives["technique.cast-speed-pct"] ?? 0,
+    abilityNodeCastSpeedPctFor(player, ability.id),
+  );
 }
 
 /**
@@ -261,12 +267,32 @@ export function updateAbilityCasts(world: World, now: number): void {
       }
       startTechniqueCooldown(world, player, ability);
     } else {
-      resolveCastPayload(world, player, ability, target);
+      // The share the payload FINDS the target at, read before it lands: Cull's
+      // Harvest chains on "the same health share" (design §22.8).
+      const targetHealthShare = target.hasHealth.maxHp > 0
+        ? target.hasHealth.hp / target.hasHealth.maxHp
+        : 1;
+      const struck: MonsterEntity[] = [];
+      const refundsItself = resolveCastPayload(world, player, ability, target, struck);
       // Cooldown first, so `technique-refund` has a remaining cooldown to take
       // its share off: a resolution that runs before the cooldown is charged
       // reads zero and refunds nothing. Same ordering as the armed path.
       startTechniqueCooldown(world, player, ability);
-      onTechniqueResolved(world, player, ability, { target });
+      onTechniqueResolved(world, player, ability, {
+        target,
+        now,
+        targetHealthShare,
+        // A Conduit cast's physical caster: the delivery body of the ability's
+        // keystone verb (design §22.10).
+        ...(casting.casterMinionId ? { casterMinionId: casting.casterMinionId } : {}),
+      });
+      // The node's "on every body hit" routes (Slam): once per body the circle
+      // struck. A Conduit's cast is its one physical summon's circle, so this is
+      // per body THAT cast hit, never per formation body (design §22.11).
+      onAbilityNodeBodiesHit(world, player, ability, struck);
+      // A Cull kill hands Cull its own cooldown back (design §22.8): charged above
+      // like every resolve, then refunded, so the HUD hears both samples.
+      if (refundsItself) refundTechniqueCooldown(world, player, ability);
     }
     world.pushEvent(player.hasPosition.nodeId, {
       kind: "player-cast-end",

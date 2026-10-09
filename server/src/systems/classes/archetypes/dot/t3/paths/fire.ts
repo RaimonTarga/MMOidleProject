@@ -6,13 +6,11 @@ import { DOT_EFFECT_ID, SMOLDER_EFFECT, CONF_EFFECT_ID } from '../core/constants
 import { hasPassive, markMonsterDot, clearMonsterDot } from '../core/helpers';
 import type { DotT3PathContext } from './_types';
 import {
-  FTF_STACKS_PER_HIT, FTF_DMG_MULT, FTF_BONUS_MULT,
+  FTF_STACKS_PER_HIT, FTF_DMG_MULT,
   CONF_TICK_MS, CONF_DMG_FACTOR,
   IGNITION_VALUE_MULT,
 } from './_constants';
 import { CONF_TICKS } from '../core/constants';
-import { DOT_MAXSTACK_BURST_FX } from '@mmo-idle/shared';
-import { pushClientEffect } from '../../../../../combat/engine/combatPipeline';
 
 /**
  * Ignition (Balanced).
@@ -69,9 +67,18 @@ export function tryIgnition(pc: DotT3PathContext): boolean {
 }
 
 /**
- * Fan the Flames (Balanced).
- * Applies 2 stacks/hit at 50% damage. Hitting at max stacks deals a
- * bonus = maxStacks × basePerStack × 3 instead of refreshing.
+ * Pyromancer (Balanced) — the stack half, Fan the Flames (design §22.5).
+ *
+ * Every hit below the cap lays `stacks-per-hit` burn stacks at the path's reduced
+ * per-stack value, up to the cap. A hit into a full bar lays nothing and refreshes
+ * nothing — the old path's rule, restored by design §22.12: the full burn runs
+ * down on its own clock, Radiant fires on its ticks while the stacks last, and
+ * once it lapses the hits build it back.
+ *
+ * There is no max-stack direct bonus any more — the Ember Mage frame owns
+ * "intensifies" (frameLoop.ts) and the path no longer duplicates it. The payoff,
+ * Radiant, is on the TICK (`ticks/radiant.ts`), so this hit handler knows nothing
+ * about it.
  */
 export function tryFanTheFlames(pc: DotT3PathContext): boolean {
   if (!hasPassive(pc.player, 'dot.fan-the-flames')) return false;
@@ -79,17 +86,10 @@ export function tryFanTheFlames(pc: DotT3PathContext): boolean {
   const passives = player.usesSkills.passives;
   const stacksPerHit = Math.max(1, Math.round(passives['dot.fan-the-flames-stacks-per-hit'] ?? FTF_STACKS_PER_HIT));
   const stackDamageMult = Math.max(0, passives['dot.fan-the-flames-stack-damage-mult'] ?? FTF_DMG_MULT);
-  const maxStackBonusMult = Math.max(0, passives['dot.fan-the-flames-max-stack-bonus-mult'] ?? FTF_BONUS_MULT);
 
   const ftfDmg        = dmgPerStack * stackDamageMult;
   const currentStacks = getTotalStacks(monsterState, DOT_EFFECT_ID);
-  if (currentStacks >= maxStacks) {
-    ctx.damage += Math.floor(maxStacks * dmgPerStack * maxStackBonusMult);
-    // Aesthetic-only crit on the full-stack bonus hit (yellow "!").
-    ctx.metadata['empoweredAttack'] = true;
-    // The bar being full is the whole mechanic; give it a tell.
-    pushClientEffect(ctx, DOT_MAXSTACK_BURST_FX);
-  } else {
+  if (currentStacks < maxStacks) {
     const toApply = Math.min(stacksPerHit, maxStacks - currentStacks);
     let ftfEff = applyStatusEffect(monsterState, {
       id: DOT_EFFECT_ID, maxStacks, instanced: false,

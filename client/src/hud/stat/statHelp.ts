@@ -141,7 +141,7 @@ export const STAT_HELP: Record<string, string> = {
   'cooldown.channeled-beam': 'The execution becomes a channelled beam that ticks damage over its duration.',
   'cooldown.channeled-beam-mult': 'Damage per beam tick, as a multiple of your attack.',
   'cooldown.rupture': 'Executions bypass the target’s plating, and briefly weaken it against your regular attacks too.',
-  'cooldown.reverb': 'Regular attacks landed between executions charge the next execution.',
+  'cooldown.reverb': 'Your execution lands again at half strength when its recharge is half done.',
   'cooldown.patience-paid': 'An uninterrupted cooldown ramps both your attack and your execution damage.',
   'cooldown.vengeance': 'Damage taken since your last execution is paid back into the next one.',
 
@@ -149,13 +149,10 @@ export const STAT_HELP: Record<string, string> = {
   'reload.max-ammo': 'Shots in your magazine before you must reload.',
   'reload.reload-time-ms': 'How long a reload takes. You do not attack while reloading.',
   'reload.reload-time-mult': 'Multiplies your reload time — below 1 is faster.',
-  'reload.empowered-mult': 'The last bullet in the magazine fires as an empowered shot at this multiplier.',
   'reload.laser': 'Continuous fire instead of discrete shots, managed by heat rather than ammo.',
   'reload.snipe': 'A fixed, slow firing cadence that ignores weapon attack speed — attack speed becomes damage instead.',
   'reload.snipe-fullhp-mult': 'Damage multiplier against targets still at (or near) full health.',
   'reload.gatling': 'Sustained fire that spins up the longer you keep shooting.',
-  'reload.exploding-clip': 'Emptying the magazine detonates the last shot in an area.',
-  'reload.hair-trigger': 'Each shot in a magazine fires faster than the last.',
   'reload.blunderbuss': 'Each volley fires multiple pellets in a spread, knocking targets back — and you with them.',
   'reload.death-mark': 'Shots stack a mark on the target that detonates for bonus damage.',
   'reload.suppressing-fire': 'Sustained fire shreds the target’s defenses as it stacks.',
@@ -163,6 +160,9 @@ export const STAT_HELP: Record<string, string> = {
   'reload.alternating-cadence': 'Shots alternate: even shots hit for attack damage, odd shots for on-hit damage.',
   'reload.momentum': 'Each reload stacks attack speed and shortens the next reload. Stacks decay out of combat.',
   'reload.cannon': 'Every shot banks damage into a pool; reloading charges, then fires the whole pool as one burst.',
+  'reload.kill-chain': 'Every kill loads a round on top of your clip, even past its size, until you next reload.',
+  'reload.mechanic-proxy-mult': 'The multiplier a hit lands at when an Empowered card makes it count as your class mechanic.',
+  'reload.ramp-carry-pct': 'The share of your attack-speed ramp a reload keeps instead of resetting it.',
 
   // ── Energy (charge on hits, spend on a discharge) ───────────────────────────
   'energy.per-hit': 'Energy gained per landed hit.',

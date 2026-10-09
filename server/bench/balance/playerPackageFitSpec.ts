@@ -10,7 +10,7 @@ export const PACKAGE_FIT_CELLS: Night5Cell[] = FAST_PASS_CELLS.map(original => {
   if (c.role === 'farm') {
     const aoe = ['squire', 'apprentice'].includes(c.className) ? 'slam' : 'sweep';
     c.abilities!.techniques = c.tier === 2 ? [aoe] : c.tier === 3
-      ? ['frenzy', aoe] : ['frenzy', aoe, 'expose-weakness'];
+      ? ['imbue-lightning', aoe] : [...new Set(['imbue-lightning', aoe, 'slam'])];
     // One focused behavior delta, confined to the failing T3 farming context.
     if (c.tier === 3 && c.className === 'conduit') {
       c.runeRules = c.runeRules!.filter(r => r.actionId !== 'orbit');
@@ -18,10 +18,11 @@ export const PACKAGE_FIT_CELLS: Night5Cell[] = FAST_PASS_CELLS.map(original => {
   } else {
     c.runeRules!.push({ conditionId: 'target-casting', actionId: 'use-ability', targetAbilityId: 'brace' });
     if (!['striker', 'squire'].includes(c.className)) {
-      // T2 needs one RP; Power Strike is the existing single-target cast option.
-      if (c.tier === 2) c.abilities!.techniques = ['power-strike'];
+      // T2 needs one RP; Slam (Power Strike until the ability pass merged it) is
+      // the existing single-target cast option.
+      if (c.tier === 2) c.abilities!.techniques = ['slam'];
       // T3 needs two RP. Keep the targeted offensive channel and all safety rules.
-      if (c.tier === 3) c.abilities!.techniques = ['expose-weakness'];
+      if (c.tier === 3) c.abilities!.techniques = ['slam'];
     }
   }
   return c;

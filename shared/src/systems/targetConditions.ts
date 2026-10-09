@@ -20,15 +20,15 @@
  *   `lineage.hobbled`  the Control lean's slow ("Hobbled").
  *   `lineage.pinned`   the Control payload's root ("Pinned").
  *
- * The last two have their own ids rather than Hamstring's `ability-slowed` and
- * Binding Strike's `ability-rooted`, whose labels ("Hamstrung", "Bound") and help
+ * The last two have their own ids rather than the ability slow `ability-slowed` and
+ * Binding Strike's `ability-rooted`, whose labels ("Slowed", "Bound") and help
  * name abilities the player may not have. They are the same ladder rungs: the
  * server's slow/root reconciler, the root ownership rules, the Control keystone's
  * ladder and boss control immunity all read both ids of a rung.
  *
  * Pure data and predicates — `shared/` owns no world state.
  */
-import { ABILITY_ROOT_EFFECT_ID, ABILITY_SLOW_EFFECT_ID } from '../abilities';
+import { ABILITY_ENTANGLE_EFFECT_ID, ABILITY_ROOT_EFFECT_ID, ABILITY_SLOW_EFFECT_ID } from '../abilities';
 import { FROZEN_STATUS_ID, STUN_STATUS_ID } from './statusPolicy';
 import { weaponDotProfileForEffect } from './weaponFamilies';
 
@@ -49,8 +49,13 @@ export const CLASS_DOT_STATUS_ID = 'dot';
 export const CONFLAGRATION_STATUS_ID = 'dot-conf';
 export const CHILL_STATUS_ID = 'dot-chill';
 
-/** Every id that is a SLOW on a monster: one rung of the control ladder. */
-export const MONSTER_SLOW_STATUS_IDS: readonly string[] = [ABILITY_SLOW_EFFECT_ID, LINEAGE_SLOW_STATUS_ID];
+/**
+ * Every id that is a SLOW on a monster: one rung of the control ladder. Bramble
+ * Guard's Entangle keystone writes its own ("Entangled", design §22.4).
+ */
+export const MONSTER_SLOW_STATUS_IDS: readonly string[] = [
+  ABILITY_SLOW_EFFECT_ID, LINEAGE_SLOW_STATUS_ID, ABILITY_ENTANGLE_EFFECT_ID,
+];
 /** Every id that is a ROOT on a monster: the middle rung. */
 export const MONSTER_ROOT_STATUS_IDS: readonly string[] = [ABILITY_ROOT_EFFECT_ID, LINEAGE_ROOT_STATUS_ID];
 

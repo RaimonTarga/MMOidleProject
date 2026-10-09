@@ -253,7 +253,7 @@ for (const route of T2_ROUTES) {
   // Every boss is fought single-target, whatever its biome's farm shape.
   const bossKits = steps.filter(
     (s): s is Extract<RouteStep, { type: "setAbilities" }> =>
-      s.type === "setAbilities" && s.techniques[0] === "expose-weakness",
+      s.type === "setAbilities" && s.techniques[0] === "slam",
   );
   assert(
     bossKits.length >= T2_PROGRESSION_ORDER.length,

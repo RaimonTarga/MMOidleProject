@@ -1,9 +1,11 @@
 /** Timed ability effects own stable identities and labels across attunement edits. */
 import {
   ABILITY_CONTROL_RESIST_EFFECT_ID,
-  ABILITY_FRENZY_EFFECT_ID,
   ABILITY_IMBUE_EFFECT_ID,
+  ABILITY_IMMUNITY_EFFECT_ID,
+  ABILITY_SIDESTEP_EFFECT_ID,
   ABILITY_GUARD_EFFECT_IDS,
+  ABILITY_UNYIELDING_EFFECT_ID,
   ABILITY_RECOVERY_EFFECT_IDS,
   abilityDef,
   getStatusEffect,
@@ -117,27 +119,33 @@ export const ABILITY_BUFFS = [
     },
     { category: "neutral", shape: "square", color: "#8fd48b", label: "Bramble" },
   ),
+  // Sidestep (design §22.8): the evasion window and the move-speed burst share
+  // one status and one clock, so one tile shows both.
   defineBuff(
-    ABILITY_FRENZY_EFFECT_ID,
+    ABILITY_SIDESTEP_EFFECT_ID,
     ({ playerCs }) => {
       if (!playerCs) return null;
-      const eff = getStatusEffect(playerCs, ABILITY_FRENZY_EFFECT_ID);
+      const eff = getStatusEffect(playerCs, ABILITY_SIDESTEP_EFFECT_ID);
       if (!eff || eff.remainingMs <= 0) return null;
-      const pct = Math.round((eff.data["attackSpeedPct"] ?? 0) * 100);
+      const evade = Math.round((eff.data["evasionPct"] ?? 0) * 100);
+      const speed = Math.round((eff.data["moveSpeedPct"] ?? 0) * 100);
       return {
-        id: ABILITY_FRENZY_EFFECT_ID,
-        label: "Frenzy",
+        id: ABILITY_SIDESTEP_EFFECT_ID,
+        label: "Sidestep",
         stacks: 1,
         durationPct: durationPct(eff.remainingMs, eff.data["totalMs"] ?? eff.remainingMs),
-        color: "#ff8a3d",
-        logSourceName: "Frenzy",
+        color: "#9fe6ff",
+        logSourceName: "Sidestep",
         logSourceSide: "ally",
-        logDetail: `+${pct}% attack speed`,
+        logDetail: `+${evade}% evade, +${speed}% move speed`,
         remainingMs: eff.remainingMs,
-        values: [{ label: "Attack speed", value: `+${pct}%`, good: true }],
+        values: [
+          { label: "Evade chance", value: `+${evade}%`, good: true },
+          { label: "Move speed", value: `+${speed}%`, good: true },
+        ],
       };
     },
-    { category: "neutral", shape: "circle", color: "#ff8a3d", label: "Frenzy" },
+    { category: "neutral", shape: "square", color: "#9fe6ff", label: "Sidestep" },
   ),
   defineBuff(
     ABILITY_IMBUE_EFFECT_ID,
@@ -169,7 +177,7 @@ export const ABILITY_BUFFS = [
         ],
       };
     },
-    // Circle, matching the other self-facing offensive windows (Frenzy, Unbound)
+    // Circle, matching the other self-facing windows (Unbound)
     // rather than the square defensive Guards. Violet matches the lightning
     // element colour in ELEMENT_STYLE and the in-world FX.
     { category: "neutral", shape: "circle", color: "#c77dff", label: "Imbued" },
@@ -195,5 +203,50 @@ export const ABILITY_BUFFS = [
       };
     },
     { category: "neutral", shape: "circle", color: "#d9c2ff", label: "Unbound" },
+  ),
+  // Cleanse's Immunity keystone (design §22.4): one tile, however many kinds it refuses.
+  defineBuff(
+    ABILITY_IMMUNITY_EFFECT_ID,
+    ({ playerCs }) => {
+      if (!playerCs) return null;
+      const eff = getStatusEffect(playerCs, ABILITY_IMMUNITY_EFFECT_ID);
+      if (!eff || eff.remainingMs <= 0) return null;
+      const kinds = Object.keys(eff.data).filter((key) => key.startsWith("kind:") && (eff.data[key] ?? 0) > 0).length;
+      return {
+        id: ABILITY_IMMUNITY_EFFECT_ID,
+        label: "Immunity",
+        stacks: 1,
+        durationPct: durationPct(eff.remainingMs, eff.data["totalMs"] ?? eff.remainingMs),
+        color: "#b8f0c8",
+        logSourceName: "Cleanse",
+        logSourceSide: "ally",
+        logDetail: `${kinds} stripped affliction${kinds === 1 ? "" : "s"} refused`,
+        remainingMs: eff.remainingMs,
+        values: [{ label: "Afflictions refused", value: String(kinds), good: true }],
+      };
+    },
+    { category: "neutral", shape: "square", color: "#b8f0c8", label: "Immunity" },
+  ),
+  // Endure's Unyielding keystone (design §22.4): one tile, on Endure's own clock.
+  defineBuff(
+    ABILITY_UNYIELDING_EFFECT_ID,
+    ({ playerCs }) => {
+      if (!playerCs) return null;
+      const eff = getStatusEffect(playerCs, ABILITY_UNYIELDING_EFFECT_ID);
+      if (!eff || eff.remainingMs <= 0) return null;
+      return {
+        id: ABILITY_UNYIELDING_EFFECT_ID,
+        label: "Unyielding",
+        stacks: 1,
+        durationPct: durationPct(eff.remainingMs, eff.data["totalMs"] ?? eff.remainingMs),
+        color: "#9ad0ff",
+        logSourceName: "Endure",
+        logSourceSide: "ally",
+        logDetail: "hard control and roots refused",
+        remainingMs: eff.remainingMs,
+        values: [{ label: "Hard control", value: "Refused", good: true }],
+      };
+    },
+    { category: "neutral", shape: "square", color: "#9ad0ff", label: "Unyielding" },
   ),
 ] as const satisfies readonly BuffDescriptor[];

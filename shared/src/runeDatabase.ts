@@ -62,8 +62,8 @@ export type RuneConditionId =
   // baseline). Pairs with Fire Technique to land your Technique on the empowered hit.
   | "before-empowered"
   // Active while your current attack target is an ELITE. Lets two equipped
-  // Techniques specialise against the same enemy — e.g. Expose Weakness to kill
-  // the elite faster vs. Stun Strike to control it (abilities evolution §9).
+  // Techniques specialise against the same enemy — e.g. Cull to kill
+  // the elite faster vs. Stunning Strike to control it (abilities evolution §9).
   | "target-elite"
   // Active while a STACKING damage-over-time you own on your current target sits
   // at its own ceiling. The affliction toolkit's timing condition: it is the

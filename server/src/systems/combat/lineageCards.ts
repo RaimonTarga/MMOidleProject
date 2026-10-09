@@ -68,6 +68,7 @@ import {
   setResource,
   LINEAGE_WINDOW_BUFF_IDS,
   PACKET_DEFINITIONS,
+  type AmplifiedAxis,
   type BuffId,
   type LineageFxKey,
   type LineagePayoff,
@@ -190,6 +191,10 @@ interface LineageFiring {
    * (design §24.6). An ability node's external payoff leaves it unset.
    */
   cardId?: string;
+  /** An ability node's amplifier axis, carried onto its `card-fx` (design §22.7). */
+  axis?: AmplifiedAxis;
+  /** An ability node's owner key: its `ward` refreshes the one ward it owns (design §22.12). */
+  owner?: string;
 }
 
 /**
@@ -417,7 +422,9 @@ function applyPayoff(site: PayoffSite, firing: LineageFiring): CardFxDraft | nul
       return { fx: firing.fx };
 
     case 'ward':
-      applyWardPercent(world, player, magnitude, durationMs ?? 0);
+      // An owned ward (an ability node's) refreshes the one ward its owner holds;
+      // a card's ward stacks, as it always has.
+      applyWardPercent(world, player, magnitude, durationMs ?? 0, firing.owner);
       applyTimedSelf(player.tracksCombat, kind, magnitude, durationMs, sourceId);
       return { fx: firing.fx };
 
@@ -898,6 +905,7 @@ function fire(site: PayoffSite, firings: readonly LineageFiring[]): number {
       ...(drawn.durationMs !== undefined ? { durationMs: drawn.durationMs } : {}),
       ...(drawn.abilityIds !== undefined ? { abilityIds: drawn.abilityIds } : {}),
       ...(teach ? { teach: true as const } : {}),
+      ...(firing.axis !== undefined ? { axis: firing.axis } : {}),
     });
   }
   return applied;
@@ -1346,6 +1354,22 @@ export interface ExternalLineagePayoff {
   key: string;
   fx: LineageFxKey;
   payoff: LineagePayoff;
+  /** The active amplifier's axis (an ability node's packet payoff), for its card-fx. */
+  axis?: AmplifiedAxis;
+  /**
+   * The rate cap of the moment this payoff rides — its packet's `capMs`, or for a
+   * Guard route whose packet has none an existing lane's (`abilityNodeRouteCapMs`,
+   * design §22.12) — applied per firing by {@link fire}, exactly as a card's: one
+   * landed firing per cap per `key`. Absent for a payoff that fires once per cast
+   * (design §22.10's per-hit, per-tick and on-strip fire-shapes carry it).
+   */
+  capMs?: number;
+  /**
+   * What owns what this payoff leaves standing on the player — an ability node's
+   * key. A `ward` with an owner refreshes the one ward that owner holds (topped
+   * up, its window renewed) instead of stacking a new one (design §22.12).
+   */
+  owner?: string;
 }
 
 /** Apply external payoffs. Returns how many actually did something. */
@@ -1362,11 +1386,14 @@ export function fireLineagePayoffs(
     payoffs.map((p) => ({
       key: p.key,
       fx: p.fx,
-      // A `fire` dispatch never reads the trigger — only `registerHitNth` does,
-      // and it builds its own. The kind that is true of an ability node is the
-      // one the magnitude table already prices it at (see `resolve.ts`).
-      trigger: { kind: 'guard-cast' as const },
+      // A `fire` dispatch reads only the trigger's `capMs` — the kind is
+      // `registerHitNth`'s business, and it builds its own. The kind that is true
+      // of an ability node is the one the magnitude table already prices it at
+      // (see `resolve.ts`).
+      trigger: { kind: 'guard-cast' as const, ...(p.capMs ? { capMs: p.capMs } : {}) },
       payoff: p.payoff,
+      ...(p.axis !== undefined ? { axis: p.axis } : {}),
+      ...(p.owner !== undefined ? { owner: p.owner } : {}),
     })),
   );
 }

@@ -1,7 +1,7 @@
 import type { EssenceType } from '../items';
 import type { Vec2 } from '../systems/spatial';
 import type { DamageElement } from '../systems/dotElements';
-import type { LineageFxKey } from '../data/lineages/types';
+import type { AmplifiedAxis, LineageFxKey } from '../data/lineages/types';
 
 /** Dedicated per-tick DoT animations (distinct from element damage-number styling). */
 export type DotTickFx = 'conflagration';
@@ -57,7 +57,10 @@ type CombatEventPayload =
   // damage-number styling) — e.g. Cinder Lord's Conflagration burns. Omitted for
   // plain DoT ticks, which only style the number by element. `sourceId` attributes
   // owned ticks so a player's mechanic HUD never reacts to another player's DoT.
-  | { kind: 'dot-tick'; targetId: string; targetPos: Vec2; amount: number; absorbed?: number; element: DamageElement; sourceType: DotTickSourceType; sourceId?: string; fx?: DotTickFx }
+  // `fromId` names the body the tick RADIATED from (Pyromancer's Radiant: a burn
+  // tick at max stacks strikes every adjacent body), so the client draws the fire
+  // leaping from that body to this one; absent on every ordinary tick.
+  | { kind: 'dot-tick'; targetId: string; targetPos: Vec2; amount: number; absorbed?: number; element: DamageElement; sourceType: DotTickSourceType; sourceId?: string; fx?: DotTickFx; fromId?: string }
   | { kind: 'monster-dodge'; monsterId: string; targetPos?: Vec2 }
   // Player attack whiffed (chaotic weapon family's every-Nth-hit miss). Direct
   // damage was zeroed but on-hit effects (DoT) still applied; renders a "MISS"
@@ -325,9 +328,24 @@ type CombatEventPayload =
   // one of the card's first three firings the player saw on screen (the server's
   // `cardFiringsTaught` counter). The client floats the card's name only on such a
   // firing; every other firing shows the body fx alone. Absent = do not teach.
+  //
+  // Three more serve the ability flavor (design §22.7, ability pass W2-D):
+  //   `keystone`  the ABILITY keystone verb that fired (its id, e.g. 'whirlwind').
+  //               The client keys the verb's own bespoke animation on it; `fx` stays
+  //               the lane grammar a client with no animation for the verb draws.
+  //               `pos` is the verb's DELIVERY BODY (design §22.10: the summon that
+  //               landed it on a Conduit), so the animation draws from there.
+  //               A verb that holds a window says when it ended early with
+  //               `durationMs: 0` (Flow: the hit that landed snaps the window).
+  //   `windupMs`  set on a keystone's WIND-UP beat only: its payoff lands this many
+  //               ms later (Aftershock's second eruption), with its own card-fx then.
+  //   `axis`      an ability node's active amplifier axis, on that node's payoff:
+  //               the client scales or extends the lane's fx by it (a bigger draw, a
+  //               second echo, a lingering trail). Absent with no amplifier.
   | { kind: 'card-fx'; playerId: string; fx: LineageFxKey; pos: Vec2;
       targetId?: string; targetPos?: Vec2; stacks?: number; cardId?: string;
-      durationMs?: number; abilityIds?: string[]; teach?: true }
+      durationMs?: number; abilityIds?: string[]; teach?: true;
+      keystone?: string; windupMs?: number; axis?: AmplifiedAxis }
   // A Kill-chain carry that will land LOADED was armed or spent (design §24.2:
   // "a kill heals a tenth of your pool and loads your next hit").
   //

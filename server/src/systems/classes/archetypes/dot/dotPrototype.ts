@@ -1,5 +1,4 @@
-import { outgoingFinalDamage, incomingFinalDamage } from '../../../combat/damage/finalDamage';
-import { mitigatePlayerTickOnMonster } from '../../../combat/damage/monsterTickMitigation';
+import { incomingFinalDamage } from '../../../combat/damage/finalDamage';
 import { GAME_CONFIG, resolveDotStackCap } from '@mmo-idle/shared';
 import {
   MONSTER_DATABASE,
@@ -26,10 +25,9 @@ import { initDotFrameLoop } from "./frameLoop";
 import {
   initDotT3,
   computeEternalDoomDamage,
-  getSmolderMult,
-  getFrozenMult,
-  getFrostbiteDotTakenMult,
 } from "./t3";
+import { radiateBurnTick } from "./t3/ticks/radiant";
+import { classDotTickDamage } from "./tickDamage";
 import type { DeathCause } from "@mmo-idle/shared";
 import type { MonsterEntity, PlayerEntity } from "../../../../ecs/entity";
 import type { World } from "../../../../world/World";
@@ -65,7 +63,6 @@ import {
   actorFromSourceId,
 } from "../../../../world/worldLogActors";
 import { isInvulnerableMonster, isInvulnerablePlayer } from "../../../combat/invulnerability";
-import { applyMonsterDamageTakenDebuffs } from "../../shared/debuffs";
 import { drainWards } from "../../../defense/barrier/wards";
 import { drainBarrier, stampBarrierDamage } from "../../../defense/barrier/barrier";
 import { DOT_EFFECT_ID } from "./t3/core/constants";
@@ -193,10 +190,20 @@ export function updateDotArchetype(world: World, dt: number): void {
     sourceId: string;
     damage: number;
   }> = [];
+  // Ids already queued to die this pass. Radiant (Pyromancer) can kill a body
+  // that has not ticked yet, or reach for one that already died to its own tick:
+  // either way it must be credited, rewarded and removed exactly once.
+  const dying = new Set<string>();
+  const queueKill = (monsterId: string, sourceId: string, damage: number): void => {
+    dying.add(monsterId);
+    monstersToKill.push({ monsterId, sourceId, damage });
+  };
+  const isDying = (monsterId: string): boolean => dying.has(monsterId);
 
   for (const entity of world.dottedMonsters) {
     const monsterId = entity.isMonster.id;
     const state = entity.tracksCombat;
+    if (dying.has(monsterId)) continue;
     if (isInvulnerableMonster(entity)) continue;
     const effect = getStatusEffects(state, DOT_EFFECT_ID)[0];
     if (!effect) {
@@ -208,7 +215,7 @@ export function updateDotArchetype(world: World, dt: number): void {
     effect.data.nextTickIn -= dt;
     if (effect.data.nextTickIn > 0) continue;
 
-    let damage = effect.data.isEternalDoom
+    const rawTick = effect.data.isEternalDoom
       ? computeEternalDoomDamage(
           effect.stacks,
           effect.data.damagePerStack,
@@ -216,13 +223,7 @@ export function updateDotArchetype(world: World, dt: number): void {
           effect.data.edDiminishRate,
         )
       : computeScaledDotDamage(effect);
-    damage = mitigatePlayerTickOnMonster(entity, damage, 'dot');
-
-    // Apply DoT vulnerability effects to DoT ticks.
-    damage = Math.max(1, Math.round(damage * getSmolderMult(state) * getFrozenMult(state) * getFrostbiteDotTakenMult(state)));
-    damage = Math.max(1, applyMonsterDamageTakenDebuffs(state, damage));
-
-    damage = outgoingFinalDamage(world, effect.sourceId, damage);
+    const damage = classDotTickDamage(world, entity, effect.sourceId, rawTick);
     const source = actorFromSourceId(world, effect.sourceId);
     recordMonsterDamagedByPlayer(
       world,
@@ -240,8 +241,13 @@ export function updateDotArchetype(world: World, dt: number): void {
       sourceId: effect.sourceId,
     });
 
+    // Pyromancer's Radiant: a tick at max burn also strikes the adjacent bodies.
+    // Read before the expiry branch below, so the last tick of a full burn radiates too.
+    radiateBurnTick(world, entity, effect, rawTick, isDying, (victim, dealt) =>
+      queueKill(victim.isMonster.id, effect.sourceId, dealt));
+
     if (entity.hasHealth.hp <= 0) {
-      monstersToKill.push({ monsterId, sourceId: effect.sourceId, damage });
+      queueKill(monsterId, effect.sourceId, damage);
     } else if (effect.remainingMs <= 0) {
       removeStatusEffect(state, DOT_EFFECT_ID);
       detachMarkerIfNoEffect(world, entity, "hasDot", state, DOT_EFFECT_ID);

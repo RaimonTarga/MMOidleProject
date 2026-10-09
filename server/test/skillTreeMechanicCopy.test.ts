@@ -44,12 +44,13 @@ const requiredFragments: Record<string, string[]> = {
 
   "cooldown-balanced-t3-b": ["32 flat damage"],
   "cooldown-heavy-t3-a": ["fixed 8s window"],
-  "cooldown-heavy-t3-b": ["5s", "3× instead of the tier"],
+  "cooldown-balanced-t3-a": ["half strength", "halfway mark", "lost"],
+  "cooldown-heavy-t3-b": ["delivered by your Techniques", "primed", "the frame's own ×3.5", "bank"],
   "reload-light-t3-c": ["at or above 95% health"],
   "reload-balanced-t3-b": ["22% of normal attack damage"],
   "energy-heavy-t3-a": ["20 energy per hit"],
   "dot-light-t3-b": ["1.5s live total"],
-  "dot-balanced-t3-a": ["1.5× the max-stack DoT damage"],
+  "dot-balanced-t3-a": ["2 burn stacks", "55% of normal tick damage", "Radiant", "applies no stacks"],
   "dot-heavy-t3-c": ["0.75× frost multiplier"],
 };
 

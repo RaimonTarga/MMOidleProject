@@ -4,6 +4,7 @@ import { registerGatlingKnockback } from './pipeline/gatlingKnockback';
 import { registerSnipeDamage } from './pipeline/snipeDamage';
 import { registerBlunderbussVolley } from './pipeline/blunderbuss';
 import { registerReloadLightT3 } from './pipeline/lightPaths';
+import { registerKillChainRounds } from './pipeline/killChain';
 import { registerReloadBalancedT3 } from './pipeline/balancedPaths';
 import { registerCoverFire } from './pipeline/coverFire';
 import { registerCannon, updateCannonFire } from './pipeline/cannon';
@@ -17,6 +18,7 @@ export function initReloadT3(): void {
   registerGatlingKnockback();
   registerBlunderbussVolley();
   registerReloadLightT3();
+  registerKillChainRounds();
   registerReloadBalancedT3();
   registerCoverFire();
   registerCannon();

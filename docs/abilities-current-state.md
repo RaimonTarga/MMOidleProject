@@ -5,12 +5,27 @@ Living truth for the active **Ability** system (Technique / Guard). Design autho
 `docs/archive/abilities-plan.md`, `docs/archive/abilities-evolution-implementation-plan.md`
 and `design_docs/archive/abilities-evolution-plan-updated.md`.
 
-**Shipped:** the full **T1–T4 roster of 22 abilities** on authored per-tier ranks, the
-control ladder (slow / root / stun), ability **engagement range**, the **affliction
-toolkit** (Contagion / Detonate, reading the shared DoT inventory), the **charge-based
-window** (Imbue Lightning, on the new `self-cast` shape), **Sweep Tempo** (T2+, on the
-shared attack-equivalent seam), **Slam** (the T2 area counterpart to Power Strike), and
-bespoke in-world FX for every ability.
+**Shipped:** the full **T1–T4 roster of 19 abilities** (11 Techniques, 8 Guards) on
+authored per-tier ranks, the control ladder (slow / root / stun), ability **engagement
+range**, the **affliction toolkit** (Contagion / Detonate, reading the shared DoT
+inventory), the **charge-based window** (Imbue Lightning, instant), **Sweep Tempo** (T2+, on
+the shared attack-equivalent seam), **Slam** (the T1 burst cast that absorbed Power
+Strike), and bespoke in-world FX for every ability except the two additions (Sidestep,
+Cull), which wear placeholder tiles and the generic fx until art is generated.
+
+**The ability pass (design §22.2, §22.8–§22.10; implemented 2026-10-06, W1-A of
+`docs/briefs/ability-pass-run-2026-10-02.md`)** cut Expose Weakness, Power Strike,
+Hamstring, Frenzy and Quick Strike (each one's job moved to a lane payoff; Power Strike
+merged into Slam), re-homed Slam (T1 Mountain 5), Charge (T1 Cave 3), Binding Strike (T2
+Jungle 3), Snipe (T2 Desert 3) and Imbue Lightning (T3 Volcanic 3), made Contagion
+**armed** and Imbue Lightning **instant** (§22.9: a cast iff the ability deals its own
+damage), and added **Sidestep** (T1 Forest 5, the Avoid Guard) and **Cull** (T3 Tundra 3,
+the kill-shaped cast). Each ability also has four node rows, all 19 first keystone verbs
+are live, the §22.10 fire-shapes are live under §22.12's rate guards, and five T3 paths were
+re-homed (W1-B/D/E/F, W2-A/B/E, and the designer's calls of design §22.12 in wave 4).
+**Merged to develop 2026-10-09; the T1 parity rule holds** (Slam rank I 1.2× on a 600 ms
+wind-up). See "The ability pass" below for saves, the tutorial kit, the Slam numbers, the
+keystone table and the fire-shape table.
 
 > **Name collision (kept distinct).** The passive talent tree (`UsesSkills`, `skillTree/`) is
 > class progression and is **untouched**. "Abilities" is the active system (Technique / Guard).
@@ -57,7 +72,7 @@ Helpers: `abilityRankAt`, `abilityRankNumber`, `abilityMaxRank`, `abilityCooldow
 **Every consumer must resolve effects through this.** Reading a rank's `effect` raw silently
 opts an ability out of Technique Power. It applies the authored rank, then Technique Power —
 only on fields listed in `TECHNIQUE_POWER_FIELDS`, i.e. offensive payloads. Control
-durations, dash distances, Snipe's reach and Expose Weakness's vulnerability are absent by
+durations, dash distances, Snipe's reach and Cull's threshold are absent by
 design: a damage stat must never buy control or range.
 
 `ABILITY_MULTIHIT_MODE` declares, per effect kind, whether a Reload magazine distributes the
@@ -95,7 +110,7 @@ engagementRange = player.attackRange + rank.rangeBonus
 - **Snipe** carries `rangeBonus: 300`: the cast opens on something the player cannot touch,
   and `holdsPositionWhileCasting` stops auto-combat closing for the wind-up — which is what
   makes it a standoff tool rather than a slow opener you immediately walk out of. Casts with
-  no range bonus (Power Strike, Stunning Strike) still walk with the fight.
+  no range bonus (Slam, Stunning Strike, Cull) still walk with the fight.
 
 The player's `attackRange` is **never modified**. A melee character equipping Snipe gains a
 ranged *tool*; their basic attacks stay melee.
@@ -112,13 +127,16 @@ before combat resolves.
 - **Techniques share ONE offensive channel** (`hasArmedAbility` and `isCastingAbility`,
   mutually exclusive and singular). The driver walks the list in order and stops at the first
   ability that CLAIMS the channel. A loser is *not* put on cooldown — it stays eligible.
-  An **`instant` Technique (Frenzy) claims nothing**: it is self-facing, so it neither blocks
-  nor is blocked by an armed charge sitting on the channel.
+  An **`instant` Technique (Imbue Lightning) claims nothing**: it is self-facing, so it
+  neither blocks nor is blocked by an armed charge sitting on the channel.
 - **Guards** activate independently but at most **one activation per decision window**
   (`ability.guard.window`, one tick). Already-active buffs layer freely.
 - **Situational Guards hold their cooldown**: Break Free will not fire with nothing holding
   the player, Cleanse will not fire with nothing to strip, a Recovery Guard will not fire at
-  full HP, and a reposition with nowhere to go declines rather than dashing into space.
+  full HP, Sidestep will not fire with no monster in the player's reach, and a reposition
+  with nowhere to go declines rather than dashing into space. Armed Contagion declines to
+  ARM with nothing to spread (or nobody to spread it to), the rule its cast had before the
+  wind-up.
 - **Abilities have no built-in trigger.** An ability auto-fires only while a `use-ability`
   Rune rule naming it (`targetAbilityId`) is active; active targets arbitrate in Rune order.
   With no rule it is manual-only (hotbar).
@@ -131,7 +149,7 @@ unwired ability offers a "Use default timing" button that equips this rule. `abi
 
 | Reference wiring | RP | Abilities |
 | --- | --- | --- |
-| In Combat → Use Ability | 2 | every Technique except Charge and Disengage; Second Wind, Brace, Endure, Recuperate (fire off cooldown — a default, not their old 50–70% thresholds) |
+| In Combat → Use Ability | 2 | every Technique except Charge and Disengage (Sweep, Slam, Binding Strike, Contagion, Snipe, Imbue Lightning, Detonate, Cull, Stunning Strike); Second Wind, Brace, Endure, Recuperate (fire off cooldown — a default, not their old 50–70% thresholds), Sidestep (its reach gate keeps it off an empty field) |
 | When Debuffed → Use Ability | 2 | Cleanse |
 | Surrounded → Use Ability | 3 | Bramble Guard |
 | When Controlled → Use Ability | 2 | Break Free |
@@ -155,27 +173,27 @@ for the owner's next hit, and Charge moves the owner. The bonded summon cannot
 consume an owner-armed Technique. The following formation rules apply to the
 other Summoner paths; self-buffs and Guards remain owner-cast on every path.
 
-- **Sweep, Expose Weakness, Hamstring, Binding Strike, Quick Strike:** the owner
-  arms one formation Technique; snapshotted summons deliver it through their hits.
-  Damage riders share one normalized budget rather than multiplying by body count.
-- **Power Strike, Slam, Snipe, Stunning Strike, Contagion, Detonate:** prefer one
+- **Sweep, Binding Strike, Contagion:** the owner arms one formation Technique;
+  snapshotted summons deliver it through their hits. Damage riders share one
+  normalized budget rather than multiplying by body count. Armed Contagion copies
+  full stacks, so it is not divisible: the FIRST summon hit spreads the owner's DoTs
+  from its target once, and the later deliveries carry nothing
+  (`abilityConduitTechniqueAdapter.test.ts`).
+- **Slam, Snipe, Stunning Strike, Detonate, Cull:** prefer one
   living engaged summon in slot order. That physical summon holds position and
   basic attacks during the wind-up; other summons continue attacking. Its range
   plus the ability's range bonus determines reach. The cast delivers one full
   payload using owner stats, with owner cooldown/control rules. Death, removal,
   hard control, range/node/leash loss, or a formation move command aborts without
   cooldown; replacements cannot inherit the cast. With no eligible summon, normal
-  owner targeting remains available. Contagion/Detonate still require owned DoTs
-  (and Contagion a recipient). Cast events identify the physical summon for FX.
-- **Frenzy:** the summoner owns the buff. Minion attack timing reads the owner's
-  temporary haste bonus, so the haste actually affects the formation;
-  the stored base cooldown is never mutated.
-- **Imbue Lightning:** the summoner performs the self-cast and owns the shared
+  owner targeting remains available. Detonate still requires owned DoTs. Cast
+  events identify the physical summon for FX.
+- **Imbue Lightning:** the summoner activates it (instant) and owns the shared
   charge window. Summon hits consume it; summons do not cast the buff individually.
   Each physical hit deliberately spends one whole charge while damage remains
   formation-weighted. The smaller burst on large formations is accepted; there
   is no fractional-charge adapter or extra per-summon charge pool.
-- **Second Wind, Recuperate, Brace, Endure, Cleanse, Break Free, Bramble Guard:**
+- **Second Wind, Recuperate, Brace, Endure, Cleanse, Break Free, Bramble Guard, Sidestep:**
   summoner-owned defenses, fired by Rune conditions on the owner's health, debuffs,
   hard control, or incoming aggro. They do not heal, cleanse, or shield each summon.
 - **Disengage:** moves the summoner away from a threat (fired by `Enemy in Contact`
@@ -193,12 +211,12 @@ other Summoner paths; self-buffs and Guards remain owner-cast on every path.
 
 | Shape | Mechanism | Worked by |
 |---|---|---|
-| `armed` | attaches `hasArmedAbility`; rider lands in `abilityEffects.ts` on the next hit | Sweep, Expose Weakness, Hamstring, Binding Strike, Quick Strike |
-| `cast` | attaches `isCastingAbility`; see below | Power Strike, Slam, Snipe, Stunning Strike |
+| `armed` | attaches `hasArmedAbility`; rider lands in `abilityEffects.ts` on the next hit | Sweep, Binding Strike, Contagion |
+| `cast` | attaches `isCastingAbility`; see below | Slam, Snipe, Stunning Strike, Detonate, Cull |
 | `charge` | winds up as a `cast`, then attaches `isChargingAbility` and **rushes** the target at `chargeSpeedMult` until contact, interruption or `chargeMaxMs`; hands the armed-hit rider back to the pipeline on arrival | Charge |
 | `reposition` | resolves immediately by moving the player; optionally also arms | Disengage |
-| `self-cast` | winds up like a `cast` but resolves on the PLAYER — no target to acquire and none to lose | Imbue Lightning |
-| `instant` | immediate self-facing effect | Brace, Cleanse, Second Wind, Bramble Guard, Endure, Break Free, Recuperate, **Frenzy (a Technique)** |
+| `self-cast` | winds up like a `cast` but resolves on the PLAYER — no target to acquire and none to lose | none since the ability pass (the shape stays supported) |
+| `instant` | immediate self-facing effect | Brace, Cleanse, Second Wind, Bramble Guard, Endure, Break Free, Recuperate, Sidestep, **Imbue Lightning (a Technique)** |
 
 ### Cast lifecycle — `abilityCasting.ts`
 Mirrors the proven monster `chargedAttack` machine: arm → wind-up → resolve, aborting on hard
@@ -220,7 +238,7 @@ numbers of one status:
 
 | Ability | Movement | Actions | Cast required | Cooldown profile |
 |---|---|---|---|---|
-| **Hamstring** | slowed | allowed | no | low |
+| **Slow** (the lineage `slow` payoff and ability-node slows, the Mid range at-bay tap; Hamstring until the ability pass cut it) | slowed | allowed | no | low |
 | **Binding Strike** | stopped | allowed | no | medium |
 | **Stunning Strike** | stopped | **stopped** | **yes** | high |
 
@@ -230,7 +248,7 @@ reconciler, the sources overwrote `hasPosition.speed` and `performsAttack.attack
 absolute values read back from `MONSTER_DATABASE`; two independent writers each treating the
 other's output as "the clean base" ratcheted against each other every tick. Every source
 registers here and `updateMonsterSlows` applies the **strongest of each axis** once per tick
-(never the sum — summing a chill onto a Hamstring would pin the target, and pinned is *root*,
+(never the sum — summing a chill onto a slow would pin the target, and pinned is *root*,
 a different rung with a different cost), restoring the database values when no source remains.
 `updateChillAndFreeze` was reduced to marker lifecycle only.
 
@@ -283,8 +301,8 @@ deliberately not interchangeable.
 
 | Stat | Touches | Never touches |
 |---|---|---|
-| Technique Power | Sweep splash, Power Strike / Slam / Snipe / Stunning Strike damage, Hamstring & Binding Strike hit riders, Charge's strike rider, Quick Strike | movement distance, slow/root/stun durations, Snipe's reach, Frenzy's duration, Expose Weakness's vulnerability |
-| `guard.potency-pct` / `guard.duration-pct` | Mitigation Guards: Brace/Endure DR and resistance, Bramble plating/reflect, plus buff duration | Cleanse counts, Break Free's discrete removal, Recovery skills |
+| Technique Power | Sweep splash, Slam / Snipe / Stunning Strike damage, both ends of Cull's curve, Binding Strike's hit rider, Charge's strike rider, Detonate's multipliers, Imbue's on-hit | movement distance, slow/root/stun durations, Snipe's reach, Cull's threshold, Contagion's breadth and reach |
+| `guard.potency-pct` / `guard.duration-pct` | Mitigation Guards: Brace/Endure DR and resistance, Bramble plating/reflect, plus buff duration | Cleanse counts, Break Free's discrete removal, Recovery skills, Sidestep (its window is the magnitude table's) |
 | `defense.recovery-skill-potency` | Second Wind, Recuperate (the `recovery` tag) | passive Recovery access, Barrier, Absorb, Cleanse, mitigation Guards |
 
 ---
@@ -302,7 +320,7 @@ forgets to set it cannot silently skip target validation.
 
 ---
 
-## Roster — 22 abilities, 15 Techniques + 7 Guards
+## Roster — 19 abilities, 11 Techniques + 8 Guards (the ability pass, 2026-10-06)
 
 The roster offers different offensive, positional, control and defensive roles. RP prices express opportunity cost.
 
@@ -310,16 +328,24 @@ Each ability is its biome's "answer tool", placed **mid-band** so the player mee
 challenge before earning the response. A biome owning two abilities staggers them at level 3
 and level 5 of its own native band.
 
-### T1 — the fundamentals (3 Techniques + 3 Guards)
-Teaches the whole decision space before adding a new verb: distribute damage / amplify damage
-/ deal burst, and prevent / recover / remove.
+A re-homed ability gained exactly ONE authored rank at its new home tier and re-indexed
+nothing: a player at the old home tier and above reads exactly the rank they read before.
+The new ranks copy the next rank's numbers (no new number), except Slam rank I, the one
+number the pass authored (see "The ability pass"). A re-homed recipe took the slot it moved
+into — biome, level, that biome's essence colour and the price the economy passes set for
+the slot. Sidestep's and Cull's prices and numbers are PROVISIONAL (marked in the code).
+
+### T1 — the fundamentals (3 Techniques + 4 Guards)
+Teaches the whole decision space before adding a new verb: distribute damage / close the
+gap / deal burst, and recover / remove / endure / avoid.
 
 | Ability | Slot / shape | Biome (level) | Job |
 |---|---|---|---|
 | **Sweep** | Technique / armed | Plains (2) | Next attack cleaves — the density answer (Tempo from rank II) |
-| **Expose Weakness** | Technique / armed | Cave (3) | Elite damage amplification |
-| **Power Strike** | Technique / **cast** | Mountain (5) | The reference all-damage cast |
-| **Second Wind** | Guard / instant | Forest (3) | Strong/short Recovery access |
+| **Charge** | Technique / charge | Cave (3) | Gap-closer with real extended reach (T2 Desert 3 before the pass) |
+| **Slam** | Technique / **cast** | Mountain (5) | The burst cast: rank I leans single-target (absorbed Power Strike; T2 Mountain 9 before) |
+| **Second Wind** | Guard / instant | Forest (2) | Strong/short Recovery access |
+| **Sidestep** | Guard / instant | Forest (5) | The Avoid Guard: an evasion window + a move-speed burst that ends with it (new) |
 | **Cleanse** | Guard / instant | Swamp (3) | Discrete affliction removal |
 | **Brace** | Guard / instant | Mountain (3) | Burst mitigation + knockback footing |
 
@@ -327,10 +353,9 @@ Teaches the whole decision space before adding a new verb: distribute damage / a
 
 | Ability | Slot / shape | Biome (level) | Job |
 |---|---|---|---|
-| **Hamstring** | Technique / armed | Jungle (3) | Slow — rung one of the ladder |
-| **Charge** | Technique / charge | Desert (3) | Gap-closer with real extended reach |
-| **Contagion** | Technique / **cast** | Swamp (9) | Copy afflictions outward — the DoT breadth answer |
-| **Slam** | Technique / **cast** | Mountain (9) | Power Strike's area counterpart — half the multiple, to everything nearby |
+| **Binding Strike** | Technique / armed | Jungle (3) | Root — the T2 control (T3 Tundra 3 before the pass) |
+| **Snipe** | Technique / **cast** | Desert (3) | The ranged opener, +300px reach (T4 Graveyard 3 before) |
+| **Contagion** | Technique / **armed** | Swamp (9) | Your next hit spreads the target's afflictions — the DoT breadth answer |
 | **Bramble Guard** | Guard / instant | Jungle (5) | Temporary plating + flat thorns |
 | **Endure** | Guard / instant | Desert (5) | Sustained mitigation (Brace's opposite) |
 
@@ -338,9 +363,8 @@ Teaches the whole decision space before adding a new verb: distribute damage / a
 
 | Ability | Slot / shape | Biome (level) | Job |
 |---|---|---|---|
-| **Binding Strike** | Technique / armed | Tundra (3) | Root — rung two |
-| **Frenzy** | Technique / **instant** | Volcanic (3) | Attack speed, and nothing else |
-| **Quick Strike** | Technique / armed | Volcanic (5) | The spam-technique archetype |
+| **Imbue Lightning** | Technique / **instant** | Volcanic (3) | A window spent in HITS, not seconds (T4 Jungle 15 before) |
+| **Cull** | Technique / **cast** | Tundra (3) | The kill-shaped strike: harder the lower the target; a kill refunds it (new) |
 | **Detonate** | Technique / **cast** | Swamp (17) | Cash afflictions in now, with a cut |
 | **Break Free** | Guard / instant | Tundra (5) | Hard-CC and root counter, fires while held |
 
@@ -350,10 +374,13 @@ Only rank I is authored: these debut at the end of the supplied biome map.
 | Ability | Slot / shape | Biome (level) | Job |
 |---|---|---|---|
 | **Disengage** | Technique / reposition | Trench (3) | Create distance |
-| **Snipe** | Technique / **cast** | Graveyard (3) | Long-range deliberate strike (+300px) |
 | **Stunning Strike** | Technique / **cast** | Graveyard (5) | Stun — rung three |
-| **Imbue Lightning** | Technique / **self-cast** | Jungle (15) | A window spent in HITS, not seconds |
 | **Recuperate** | Guard / instant | Trench (5) | Weak/long Recovery access |
+
+**Cut by the ability pass** (design §22.2; their jobs belong to lane payoffs now):
+Expose Weakness (the Empowered `vulnerability` payoff), Power Strike (merged into Slam),
+Hamstring (the Control `slow` payoff and the at-bay slow), Frenzy and Quick Strike (Tempo
+and Kill chain `speed-window` / per-hit payoffs, the light frames' windows).
 
 ### Sweep Tempo, and the attack-equivalent seam (2026-09-15)
 
@@ -396,7 +423,7 @@ normalized back down to its share of one:
 | Chaotic dead swing | 0 | Delivers nothing — same rule that stops it spending ammo |
 
 Most of the exclusion list is **free rather than filtered**: DoT ticks, Sweep's own splash,
-Slam's and Power Strike's cast payloads, thorns/retaliation and secondary proc damage all
+Slam's and Cull's cast payloads, thorns/retaliation and secondary proc damage all
 apply damage *without emitting an attack event at all* (they go through `applyPlayerAoe`,
 the DoT tick systems, or direct HP writes), so none can reach the seam even in principle. A
 single attack that splashes five monsters is still ONE event, so breadth never multiplies
@@ -427,13 +454,15 @@ Under auto-combat Sweep re-arms the tick it is ready, which restamps the ring, s
 as "came back early" rather than as a stall — but a manual player can see a still-sweeping
 ring on a Sweep that is actually ready. Making it exact needs live remaining-ms on the wire.
 
-### Slam — the area counterpart to Power Strike (2026-09-15)
+### Slam — the burst cast (T1 since the ability pass; first shipped 2026-09-15 at T2)
 
-A new T2 `cast` Technique, 6 RP, reusing the existing `cast-strike` effect and its
-AoE-radius support. Ranks: **1.75x / 2.0x / 2.25x** Attack at 150 px, 10 s cooldown,
-1.6 s wind-up, at player tiers 2 / 3 / 4.
+A `cast` Technique, 6 RP gross (4 + In Combat wiring), reusing the existing
+`cast-strike` effect and its AoE-radius support. Ranks: **2.2x** (rank I, T1 — the
+ability pass's parity number) / **1.75x / 2.0x / 2.25x** Attack (ranks II–IV, unchanged) at
+150 px, 10 s cooldown, 1.6 s wind-up. Rank I is the single-target-leaning rank in Power
+Strike's place; the history below is the T2 Slam's.
 
-The relationship with Power Strike is arithmetic and load-bearing: **Slam deals exactly half
+(Historical, until the ability pass merged Power Strike into Slam.) The relationship with Power Strike was arithmetic and load-bearing: **Slam deals exactly half
 Power Strike's multiplier per target at the same tier** (T2 1.75 vs 3.5, T3 2.0 vs 4.0, T4
 2.25 vs 4.5). One target clearly favours Power Strike, two targets tie on raw Attack
 multiple, three or more clearly favour Slam. That crossover must survive every later tier.
@@ -449,7 +478,8 @@ attunable at once, and only the RP budget makes them compete. Technique Power sc
 `damageMult` and never `radius` (the same rule that keeps it off Snipe's reach), so the
 radius is authored flat across all three ranks for this first pass.
 
-**Acquisition: Mountain, biome level 9** — its T2 band's own level 3, the same placement rule
+**Acquisition (historical; since the ability pass: Mountain 5, blue 190, Power Strike's slot):
+Mountain, biome level 9** — its T2 band's own level 3, the same placement rule
 every other ability follows and the same level Contagion sits at in the swamp's T2 band. It
 is a *theme* deviation of exactly the kind Contagion already makes: every other T2 ability
 lives in jungle or desert, but Mountain is the game's wind-up biome — Brace (L3) teaches you
@@ -470,20 +500,24 @@ generated and accepted.
 
 Every other ability sits in a biome its OWN tier introduces (T2 abilities in jungle/desert,
 T3 in tundra/volcanic, T4 in trench/graveyard). **Contagion (T2) and Detonate (T3) are
-deliberate exceptions, homed in the swamp by THEME**: the swamp is the game's
+deliberate exceptions, homed in the swamp by THEME** (and Slam and Charge, at T1, are in
+T1 biomes since the ability pass): the swamp is the game's
 attrition-by-damage-over-time biome and where the brand weapons live, so it is the one
 place a player has both the afflictions to manipulate and a reason to want them
-manipulated. Homing them in the tier's "correct" biome would be arbitrary. Imbue Lightning
-(T4, jungle) and **Slam (T2, mountain)** are the same kind of deliberate exception — each
-homed by theme in a biome that owns the idea rather than in the biome its tier introduces.
-**Designer's call.**
+manipulated. Homing them in the tier's "correct" biome would be arbitrary. (Imbue Lightning,
+T4 jungle, and Slam, T2 mountain, were the same kind of exception until the ability pass
+re-homed them to T3 Volcanic 3 and T1 Mountain 5.) **Designer's call.**
 
 The pair is split across TIERS rather than staggered inside one band: Contagion at swamp
 level 9 (its T2 band), Detonate at level 17 (its T3 band). That is load-bearing — T2 grants
 RP-based attunement; Contagion and Detonate compete with the rest of the active build for that budget.
 
 ### The affliction toolkit — `abilityAffliction.ts`
-Contagion and Detonate act on damage-over-time the player **already owns**. Neither knows
+Contagion and Detonate act on damage-over-time the player **already owns** — since design
+§26.2 that is ONE record per weapon (the weapon's reservoir, or the single `lineage.bleed`)
+plus the class families. Contagion is **armed** since the ability pass: firing it arms the
+next attack, and the hit that lands spreads what its target carries (no wind-up); Detonate
+stays a cast. Neither knows
 what a "poison" or a "reservoir" is: both read the **DoT inventory**
 (`server/src/systems/combat/damage/dotInventory.ts`, see
 `dot-systems-current-state.md`), which is the single seam that enumerates every DoT family.
@@ -508,8 +542,8 @@ condition — for free.
   corpse could be billed twice on the way out.
 - Both are **ownership-scoped by `sourceId`** — you act on your own damage over time and
   nobody else's.
-- Both **decline before the wind-up** when there is nothing to act on
-  (`afflictionTechniqueHasWork`), the same rule that stops Break Free firing while
+- Both **decline before they commit** — Contagion before it arms, Detonate before its
+  wind-up — when there is nothing to act on (`afflictionTechniqueHasWork`), the same rule that stops Break Free firing while
   uncontrolled. Detonate's 15 s cooldown is what makes this the difference between an
   ability and a trap.
 - A **permanent** DoT (Permafrost) owes unbounded damage, so "the rest of its duration" is
@@ -518,7 +552,9 @@ condition — for free.
   out-earn a timed DoT.
 
 ### Imbue Lightning — `abilityImbue.ts`
-A window spent in **charges, not seconds** (`remainingMs: -1`; `data.charges` counts down
+**Instant** since the ability pass (design §22.9: a self-buff needs no telegraph): the
+charge window opens on activation, and like every instant Technique it claims no
+channel. A window spent in **charges, not seconds** (`remainingMs: -1`; `data.charges` counts down
 on each landed hit). Every other offensive window in the game races a clock, which quietly
 pays the most to whoever was already attacking fastest; a charge window pays every build
 the same. **One charge per landed hit**, which for a Reload magazine means one per bullet —
@@ -558,9 +594,10 @@ The ability panel shows learned tools, RP prices and each ability's Rune timing 
 
 ### FX — one bespoke module per ability
 `client/src/fx/`, dispatched from `render/combatFx.ts` through four tables:
-`GUARD_FX_BY_ABILITY`, `TECHNIQUE_SELF_FX_BY_ABILITY` (Frenzy — a Technique with no target to
-draw on), `CAST_FX_BY_ABILITY`, `REPOSITION_FX_BY_ABILITY`, plus the on-hit rider tags in the
-`player-hit` effects loop.
+`GUARD_FX_BY_ABILITY`, `TECHNIQUE_SELF_FX_BY_ABILITY` (Imbue Lightning's arrival — a
+Technique with no target to draw on), `CAST_FX_BY_ABILITY`, `REPOSITION_FX_BY_ABILITY`, plus
+the on-hit rider tags in the `player-hit` effects loop. The cut abilities' fx modules
+(`heavyStrike`, `powerStrike`, `hamstring`, `frenzy`, `quickStrike`) went with them.
 
 The visual language carries the mechanics, so abilities that are easy to confuse read
 differently at a glance:
@@ -568,12 +605,9 @@ differently at a glance:
   modest/long.
 - **Binding Strike** plays at ground level (movement only); **Stunning Strike** plays at the
   head with circling stars (actions too).
-- **Hamstring** cuts low across the legs, never at chest height.
 - **Charge** is a hot forward trail ending in a braced landing; **Disengage** is its cold
   mirror, emphasising the space left behind.
 - **Snipe** draws the whole distance it crossed — the length of that tracer *is* the ability.
-- **Quick Strike** is deliberately the quietest FX in the set; at a 2.5 s cooldown a Sweep-
-  sized flourish would bury every other cue on screen.
 - **Contagion** draws one *sinuous* tendril per (victim × element), tinted from the shared
   `ELEMENT_STYLE` palette — spread a burn and a poison and you see an orange line and a
   green line reach each new host. Curved, not straight: a straight line reads as a
@@ -612,7 +646,7 @@ differently at a glance:
   that is accepted, because a wind-up that is usually right reads far better than a grey
   one that is never wrong.
 - **Imbue Lightning** has two separate cues, because it has two moments: a loud arrival on
-  the cast, and a much quieter per-hit crackle on the ATTACKER as each charge is spent (up
+  activation, and a much quieter per-hit crackle on the ATTACKER as each charge is spent (up
   to five in quick succession — at cast volume it would bury everything else). There is
   deliberately **no timed aura**: the window is spent in hits, so a fading ring would lie
   about how long it lasts.
@@ -621,8 +655,9 @@ differently at a glance:
 `dot-spread` (source point + one link per victim × element) and `dot-detonate` (impact
 point + dominant element). Both are needed because the copies and the consumed effects are
 **status effects — server-only state that is never networked**, so the client cannot
-reconstruct any of it from the delta. `player-technique-armed` also gained an optional
-`durationMs`, carried only by a window-opening instant Technique (Frenzy).
+reconstruct any of it from the delta. `player-technique-armed` also carries an optional
+`durationMs` for a TIMED window-opening instant Technique (Frenzy until the ability pass;
+none today — Imbue's window is spent in hits, so it sends none).
 
 ### Presentation fields the AoE seam needed
 Detonate resolves through `applyPlayerAoe`, which emits a plain `damage` event — there is
@@ -662,7 +697,7 @@ by the biomes it introduces before moving anything between tiers.
 
 ---
 
-## Frenzy — measured, and the finding is an AUTHORING one
+## Frenzy — measured, and the finding is an AUTHORING one (historical: Frenzy was cut by the ability pass)
 
 Reported as "does not grant attack speed, and has no animation". Both halves were
 investigated by ticking a real `World` rather than by reading the code.
@@ -721,30 +756,29 @@ authored rank itself.
 
 ## Known gaps
 
-- **Frenzy's window length is an open balance call** — see the measurement above. The
-  ability works, is now visible both in-world and on the stat sheet, and is still authored
-  too small to feel at slow attack speeds. That last part is a number, not a bug.
+- **Ability keystones:** the second and third verb of every trio are silhouettes
+  (Sidestep's Afterimage, now its second, waits on a decoy target kind; see the verb
+  table).
+- **Sidestep and Cull have no art** (the ability pass's additions): they render the
+  placeholder glyph, and Sidestep's buff tile borrows the lineage Slip (`lineage-evasion`)
+  art. Their prices and Cull's curve are PROVISIONAL.
 - **Icons for thirteen abilities are drafted but not generated.** Contagion, Detonate and
   Imbue Lightning were added to `art/manifests/ability-icons.json` as `status: "draft"`
   prompts (nothing generated, no credits spent) and render the placeholder glyph until
   generated and accepted in the gallery. The new `target-max-stacks` rune condition
   temporarily aliases to the `has-debuff` crest.
-- **Icons for ten earlier abilities are drafted but not generated.** `art/manifests/ability-icons.json`
-  carries `status: "draft"` prompts for power-strike, hamstring, endure, binding-strike,
-  break-free, frenzy, quick-strike, disengage, recuperate, snipe and stunning-strike; they are
-  not in the approved allowlist, so those abilities render the placeholder glyph until art is
-  generated and accepted in the gallery. Power Strike temporarily borrows the Charged Strike
-  art through `ABILITY_ICON_ALIASES` (same ability, re-homed a tier earlier).
+- **Icons for earlier abilities are drafted but not generated.** `art/manifests/ability-icons.json`
+  carries `status: "draft"` prompts for endure, binding-strike, break-free, disengage,
+  recuperate, snipe and stunning-strike (and for the cut power-strike, hamstring, frenzy and
+  quick-strike, now moot); they are not in the approved allowlist, so those abilities render
+  the placeholder glyph until art is generated and accepted in the gallery. The concept art
+  for the cut Expose Weakness and Hamstring stays in the concept set because statuses still
+  borrow it (`vulnerability`, the `ability-slowed` slow).
 - Ability **evolution presentation** (`lineageId` grouping in the panel) is not built — the
   field exists and Sweep and Slam each carry their own self-named lineage, but nothing
-  consumes it yet. Slam deliberately does NOT share Power Strike's grouping: nothing in the
-  code treats a lineage as exclusive today, but filing them together would read as an
-  evolution, and Slam replaces nothing.
-- **Slam has no icon art.** It is in neither the concept-icon set
-  (`client/public/assets/concept-icons/abilities/`) nor the approved atlas allowlist in
-  `abilityIcons.ts`, so it renders the placeholder glyph. Deliberately not aliased to Power
-  Strike's borrowed Charged Strike art — two abilities that must read as different choices
-  must not share a tile. Needs an `art/manifests/ability-icons.json` draft entry.
+  consumes it yet.
+- **Slam's concept icon** is in the concept-icon set (`client/public/assets/concept-icons/abilities/`);
+  the approved atlas allowlist in `abilityIcons.ts` does not list it.
 - **The Slinger's Tempo is quantized to whole clips.** One nominal magazine is one
   attack-equivalent, so the refund only lands when a clip completes. In the synthetic run a
   6-round and a 10-round Slinger both settled at a ~5.9 s Sweep cycle because exactly one
@@ -757,6 +791,264 @@ authored rank itself.
   is on you, which for a melee build is the whole fight — it will push them out of their own reach
   every 8s. That is now a visible wiring choice rather than a hidden trigger.
 - All numbers are first-pass seeds.
+
+## The ability pass (2026-10-06)
+
+Design §22 (§22.2 roster, §22.8 additions, §22.9 casts, §22.10 second review), run brief
+`docs/briefs/ability-pass-run-2026-10-02.md` (W1-A). What changed beyond the roster
+tables above:
+
+- **Saves.** `RETIRED_ABILITY_IDS` (`abilities.ts`) names the five cut ids.
+  `migrateAttunement` drops every known, attuned, wired (`use-ability` rules naming one)
+  or node-progress entry for them silently; `retiredAbilityEntries` reports what was
+  there, and the live load path (`playerRepo.ts`, the load that keeps the result) logs
+  one line per character that had any. A renamed id that resolves to a cut one
+  (`heavy-strike`, `charged-strike`) drops the same way. A re-homed ability keeps its id,
+  so nothing else migrates (`attunement.test.ts`).
+- **The tutorial kit.** `plans.ts`'s boss kits wear Slam where they wore Expose Weakness
+  (Forest, Mountain, Swamp, Cave; Plains keeps Sweep). The Cave leg's end-of-leg learn is
+  Charge, and Slam is learned right after it — nothing else would teach the Slam the
+  seals and the gate wear (`tutorial.test.ts` refuses a kit that attunes an unlearned
+  ability).
+- **Slam rank I = 1.2× on a 600 ms wind-up** (PROVISIONAL), solved on TWO numbers by the
+  T1 lab parity rule (§22.1: every class within ±5% of the old kit on every T1 boss; the
+  two-number rule is design §22.12). One multiplier could not hold it (W1-A: the best,
+  2.2 on Power Strike's 1.6 s, left 12 of 30 cells out): a wind-up's cost depends on the
+  attacker's cadence and the Conduit casts through one summon while the rest keep hitting.
+  A lower multiplier trims the Conduit; a shorter wind-up returns what the attackers lose
+  standing. 600 ms is the longest wind-up that passes (30/30 kit cells inside, worst −4.7%,
+  the Striker on the Greatbear; every kit cell still wins as before). Ranks II–IV are
+  2.45 / 2.7 / 2.95 on the 1.6 s wind-up (§22.12: Slam never weakens on tier-up), so rank II
+  is a big step (1.2 → 2.45, 0.6 s → 1.6 s). The ladders: `reports/ability-pass/w1a-ladder.md`
+  (one number) and `w4a-ladder.md` (two).
+- **Fire-shapes** (§22.10, LOCKED): `ABILITY_FIRE_SHAPES` in
+  `data/abilityNodes/offers.ts` says where and when each ability's packet payoff fires,
+  from the closed list, each shape mapped to an existing trigger seam
+  (`ABILITY_FIRE_SHAPE_SEAM`); `ABILITY_KILL_TRIGGER_OFFERS` tags the Technique Kill chain
+  offers (Charge, Contagion, Disengage, Snipe, Cull) as firing on the kill
+  (`abilityFireShapes.test.ts`). **Live** (W2-E, `server/src/systems/combat/abilityNodes.ts`;
+  `abilityFireShapesRuntime.test.ts`): packet and cross payoffs fire through each shape's
+  seam, same payoffs and shares —
+  - *on land* at the resolution (Binding Strike, Snipe, Detonate, Cull, Stunning Strike);
+    Disengage on the body it broke from (`departedFrom` on the resolution site); Charge on
+    its target on arrival only — the rush has no contact seam (players move through
+    monster bodies), so "the first body the rush touches" is not wired;
+  - *on every body hit* once per body: Sweep's cleave (first delivery on a formation),
+    Slam's circle (`applyPlayerAoe`'s victims; a Conduit's one summon cast), Contagion's
+    recipients after the copies land. The exchange's own body fires on the exchange; every
+    other body on the owner's Attack, with no evade of its own. Only a BODY payoff fires per
+    body: a self payoff (the Technique refund) fires once per resolution (design §22.12);
+  - *on each hit of a window*: each Imbue charge spent, on that hit's target;
+  - *on cast* (Second Wind) and *on the break* (Break Free) on guard-cast; *per hit
+    absorbed* (Brace, Bramble Guard: a direct hit not dodged outright while the window is
+    up) and *per hit dodged* (Sidestep) on their own `onDamageTaken` listener after
+    defense; *per tick while active* (Endure, Recuperate) once per pulse while the
+    window is up, from `World.tick`; *on strip* (Cleanse) once per strip that removed
+    anything.
+  - The three rate guards of design §22.12 ("fire-shapes keep their rate"): a self payoff
+    fires once per resolution; a node's ward refreshes the one ward it owns; every Guard
+    route on per hit absorbed, per hit dodged, per tick while active or on strip is capped
+    at its packet's `capMs`, else Control's 5 s. Imbue's window keeps its packet's own
+    `capMs` (Affliction 5 s, Empowered 4 s). Details and rates under "Fire-shapes as
+    implemented" below.
+  - Disengage's Kill chain route still never fires: nothing dies at a departure.
+- **Offers** (§22.10): Binding Strike's Technique refund became an Affliction bleed;
+  Snipe's Technique refund the Kill chain on-kill refund; Detonate's Empowered brand a
+  Control slow; Charge, Contagion and Disengage's Kill chain speed window the on-kill
+  refund; Cull's Kill chain offer is the speed window (it refunds natively).
+- **Statuses.** Expose Weakness's `expose-weakness` and Frenzy's `ability-frenzy` lost
+  their only writers and their registry entries. The `ability-slowed` id ("Slowed")
+  is KEPT: the lineage `slow` payoff (every ability-node slow) and the at-bay tap still
+  write it; it read "Hamstrung" until design §22.12 renamed it. Sidestep's `ability-sidestep`
+  carries the evasion window and the speed burst on one clock.
+
+### Node rows, the tier rule and the cast axis (design §22.1, §22.9, §22.10)
+
+Every one of the 19 abilities has a four-row node tree (`shared/src/data/abilityNodes/`;
+the data model and state are in `lineages-current-state.md` §7):
+
+| Row | Tier | What it does |
+|---|---|---|
+| packet | home + 0 | fires one of the ability's three offered payoffs at `ABILITY_NODE_SHARE.packet` |
+| amplifier | home + 1 | moves one axis of the active packet's route: a FREE choice among `targets`, `duration`, `magnitude` and, on a `cast` or `charge` ability, `cast` |
+| keystone | home + 2 | one of three bespoke verbs (table below), paid in the active packet's shard |
+| cross | home + 3 | borrows one of the OTHER two offers at `ROW_SCALAR.cross`; never the active packet's own lane |
+
+**The tier rule** (`abilityNodeRowTier`, `abilityNodeBandTier` in `resolve.ts`): a row's
+own tier is home + {0,1,2,3}, unclamped (a T1 ability reads 1/2/3/4, a T4 one 4/5/6/7).
+Nothing above `MAX_LINEAGE_TIER` (4) exists yet, so those rows FOLD into the T4 band
+(gated and priced there) and unfold, with no save touched, when a tier ships.
+
+**The cast axis.** An amplifier on a wind-up ability can shorten the wind-up instead of
+moving a payoff. Its size is derived, never authored: `abilityNodeCastSpeedPct()` =
+1 - 1/(1 + `ABILITY_NODE_SHARE.amplifier`). The cast lifecycle SUMS it with
+`technique.cast-speed-pct` and caps the total once at `TECHNIQUE_CAST_SPEED_CAP` (60%),
+so the cap holds against every source combined (`abilityCasting.ts`, through
+`abilityNodeCastSpeedPctFor`).
+
+### Keystones: the verb table (design §22.4, §22.11)
+
+Shared owns each verb's identity (`ABILITY_KEYSTONE_TRIOS` in `keystones.ts`: name, rule,
+fx key, delivery body, `live`); the server owns behaviour, one module per verb under
+`server/src/systems/combat/keystones/ability/` (header table in that folder's
+`index.ts`). **Delivery body**: `owner`, `delivering-body` (the summon or formation body
+that landed the ability on a Conduit; the owner everywhere else) or `formation`. The
+trios (three verbs each, 57 in all, pick one at home + 2) are in design §22.11; a verb
+with no module is `live: false`, shown as a silhouette and refused at purchase
+(`abilityKeystones.test.ts` keeps the two in step). **All 19 first verbs are live** (design
+§22.12 made Flow Sidestep's first verb, ahead of Afterimage, which needs a decoy target kind
+the game does not have):
+
+| Ability | Verb | Delivery | Seam it rides | Status / marker |
+|---|---|---|---|---|
+| Sweep | Whirlwind | owner | channelled-beam tick machinery + `applyPlayerAoe` around the owner, broken by hard control | none |
+| Slam | Aftershock | owner | one delayed `applyPlayerAoe` at the resolved cast position | none |
+| Charge | Breakthrough | delivering body | shortest control-ladder rung (`applyStun`) on the arrival blow | stun |
+| Binding Strike | Dragnet | delivering body | `applyMonsterRoot` on every body within `contagionRadius` of the target | root (`ability-rooted`) |
+| Contagion | Outbreak | delivering body | tags bodies Contagion copies onto; `copyPlayerDotOnto` on the tagged body's death | `keystone.outbreak.<id>` tag |
+| Detonate | Chain Reaction | delivering body | a Detonate kill runs `resolveDetonate` on every afflicted body in reach (no re-chain) | none |
+| Snipe | Pierce | delivering body | `applyPlayerAoeTo` on every body on the line behind the target, inside Snipe's reach | none |
+| Cull | Harvest | delivering body | a Cull kill re-strikes the nearest body below the same health share, while it kills, at most the lineage `chainMaxLinks` strikes (design §22.12) | none |
+| Imbue Lightning | Fork | delivering body | the charge consumer (`onChargeSpent`): each imbued hit arcs a share to the nearest other body | none |
+| Stunning Strike | Relay | delivering body | the landed stun is watched; at expiry `applyStun` jumps to the nearest body not yet stunned this fight | stun; per-fight set cleared out of combat |
+| Disengage | Vanish | owner | `setAggroTarget(null)` (and `abortMonsterCast`, a boss's pattern ended `target-lost`) on every monster near the departure point, bosses, boss adds and dungeon monsters included (design §22.12); nothing acquires the marked player until their next hit or the out-of-combat reset: the pull scan, the add mirroring and `bindBossAdd` / `inheritBossTarget` / raise-dead, the dungeon force-aggro, the fissure's victim pick. A dropped encounter body HOLDS (`holdsForVanished`): it stands, keeps its ramp, does not regen, runs its script, and takes the player back in the same aggro session when the mark clears; its adds hold with it | `keystone.vanish` flag; `holdsForVanished` on the monster |
+| Break Free | Backlash | owner | shortest stun rung on every body adjacent to the player | stun |
+| Brace | Riposte | owner | `afterHit` on a melee hit taken while Braced: shortest rung on the attacker, once per attacker per Brace | stun |
+| Bramble Guard | Entangle | owner | the thorns' `afterHit` moment: `applyMonsterSlow` under its own id | `ability-entangled` (a member of `MONSTER_SLOW_STATUS_IDS`) |
+| Endure | Unyielding | owner | `ability-unyielding` on Endure's clock; hard-control appliers refuse | `ability-unyielding` |
+| Cleanse | Immunity | owner | each stripped status id becomes a refused kind for the `engagement-dr` unit's window, 3 s (design §22.12) | `ability-immunity` |
+| Second Wind | Shared Breath | formation | the Recovery engine's skill source on same-node party members; summons mended in the summoner's owner-to-summon pass | none |
+| Recuperate | Overflow | owner | the overheal-ward hook on `applyHealToPlayer`: ANY spill past full, mend or not (design §22.12; out-of-combat regen at full fills it before a pull, accepted), tops up one ward to the ward payoff's cap; spill at the cap keeps the full shell from lapsing | none |
+| Sidestep | Flow | owner | the evade seam (`onDamageTaken`) while Sidestep's window is up: a dodge (a graze counts) winds the window back to the `evasion-window` unit Sidestep reads (`sidestepWindow`; a refresh, never a stack); the first hit that lands removes it, the speed burst with it | `ability-sidestep` (its own window) |
+
+Verb magnitudes that are shares of a hit (`paysShare`) resolve from the magnitude table
+at `ROW_SCALAR.keystone`; the few timings (Whirlwind's one-second spin, Aftershock's
+one-second delay) are `ABILITY_KEYSTONE_UNITS`, PROVISIONAL. The second and third verbs
+of each trio, and their designer notes ("probably broken", "watch for power"), are in
+design §22.11.
+
+**Names, icons and animations deepen with the rows** (design §22.7, grammar §22.10;
+W2-D). `abilityDisplayName(ability, tier, parts, form)` (`shared/src/abilities.ts`, on the
+grammar in `shared/src/data/abilityNodes/flavor.ts`) is the one entry point every naming surface
+reads (hotbar and mobile bar as the noun, the Abilities panel and tooltips as the full
+name with `abilityLineageLine` beneath a keystone's rename, the buff bar, the cast
+callout, the tutorial director): "Bleeding Whirlwind of Many I, with Echoes". The icon is
+composed at runtime from existing concept art by `abilityIconLayers` (base glyph; lane
+frame for the packet; cross edge; keystone border plus a silhouette glyph; amplifier
+axis glyph), drawn by `client/src/ui/ComposedAbilityIcon.tsx`, with no new PNG. Every
+live keystone owns one bespoke animation keyed by its id
+(`client/src/fx/abilityKeystoneFx.ts`; no first verb is a stub any more); the
+table is in [`combat-animation-current-state.md`](combat-animation-current-state.md).
+
+### Fire-shapes as implemented (design §22.10, §22.12)
+
+`ABILITY_FIRE_SHAPES` (`offers.ts`) is the closed table; `ABILITY_FIRE_SHAPE_SEAM` maps
+each shape to an existing trigger seam; the runtime is
+`server/src/systems/combat/abilityNodes.ts`.
+
+| Shape | Abilities | Seam |
+|---|---|---|
+| on land | Charge (see the exception), Binding Strike, Snipe, Detonate, Cull, Disengage, Stunning Strike | hit |
+| on every body hit | Sweep, Slam, Contagion | hit |
+| on each hit of a window | Imbue Lightning | hit |
+| on the kill | the Kill chain offer of Charge, Contagion, Disengage, Snipe and Cull (`ABILITY_KILL_TRIGGER_OFFERS`) | kill |
+| on cast | Second Wind | guard-cast |
+| on the break | Break Free | break-free |
+| per hit absorbed | Brace, Bramble Guard | hit-taken |
+| per hit dodged | Sidestep | evade |
+| per tick while active | Endure, Recuperate | pulse |
+| on strip | Cleanse | cleanse |
+
+**Charge is the one exception.** The §22.10 row reads "on the first body the rush
+touches, and the target on arrival"; players move through monster bodies (they collide
+only with terrain), so there is no contact seam and Charge fires on its TARGET on arrival
+only. Disengage fires on the body it broke from (`departedFrom`), and its Kill chain
+route never fires (nothing dies at a departure).
+
+**The three rate guards (design §22.12, "fire-shapes keep their rate").** The shapes move
+the moment a payoff fires, never its rate:
+
+1. **A self payoff fires once per resolution.** A payoff that lands on the player or on
+   the ability itself (Technique refund, speed/damage/Technique window, ward, plating
+   stack, Recovery window, damage reduction, evasion window) fires once however many
+   bodies the resolution hit; a payoff that lands on a body (bleed, poison, slow, brand,
+   plating shred, echo) still fires on each. The split is the resolver's own:
+   `applyPayoff` lands a payoff on a body exactly when `payoffLandsOnTarget(kind)`
+   (shared `ON_TARGET_PAYOFF_KINDS`), and `landsOnBody` in `abilityNodes.ts` reads the
+   same predicate, so there is no second list. On *every body hit* the self payoffs ride
+   the exchange's own body (else the first); a Slam over four bodies refunds its cooldown
+   once. Cleanse's strip is one resolution too: it fires once per strip, not once per
+   affliction kind removed (every Guard offer is a self payoff, so "sized by what it
+   removed" now reads "fires when it removed anything").
+2. **A node's ward refreshes, not stacks.** A ward an ability node fires (packet or cross)
+   carries the owner key `abilityNode.<abilityId>` (`abilityNodeOwner`); `applyWard`'s
+   optional `owner` refreshes that owner's one live ward in place, topped up to the
+   payoff's size (never shrunk) with its window renewed, and marks `holdsWards` dirty.
+   Ownership is a server-only `WeakMap` keyed by the ward object (`ownedWardOf`), never
+   on the networked `WardState`; a ward that broke, expired or went with a death is not
+   found again, so the next firing mints a fresh one. Every other source (lineage cards,
+   overheal, the Overflow keystone) passes no owner, so its wards stack as before.
+3. **Every per-hit and per-tick Guard route is capped.** The *per hit absorbed*, *per
+   hit dodged*, *per tick while active* and *on strip* routes always carry a `capMs`
+   (`abilityNodeRouteCapMs`): the packet's own where it has one (only Control's 5 s, on
+   Brace's damage-reduction route), otherwise the existing Control lane cap,
+   `PACKET_HALF_NUMBERS.control.moment.capMs` (5 s), read through `packetMoment('control')`
+   (`GUARD_FALLBACK_CAP_LANE`). So every Guard route fires at most once per 5 s per
+   (player, ability, route), applied by `fire()` on `capCd(<option id>)` exactly as for a
+   card. A per-tick pulse that every route's cap would refuse waits for the cap rather
+   than being spent, so Endure and Recuperate pulse every 5 s (the cap is longer than
+   the 4 s `pulseMs`). Imbue's *on each hit of a window* keeps its packet's own `capMs`
+   only (Affliction 5 s, Empowered 4 s; its Tempo echo is uncapped, as before).
+
+**Rates** (`server/test/_fireShapeRates.ts`: one monster hitting every 1.5 s through
+`runMonsterAttack` for a minute; *held* keeps the Guard's window up the whole minute,
+*duty* casts it on its own cooldown). Firings per minute, W2-E (`feat/ability-pass`
+9463f1d4) → with the guards:
+
+| Guard | Shape | Route(s) | Held | Duty | Casts/min, window up |
+|---|---|---|---|---|---|
+| Brace | per hit absorbed | Control / damage reduction | 10 → 10 | 6 → 6 | 6, 21 s |
+| Brace | per hit absorbed | Barrier tempo / ward; Bulwark / plating stack | 40 → 10 | 14 → 6 | 6, 21 s |
+| Bramble Guard | per hit absorbed | all three | 40 → 10 | 20 → 5 | 5, 25 s |
+| Sidestep | per hit dodged | Engagement / evasion window | 9 → 9 | 2 → 2 | 6, 15 s |
+| Sidestep | per hit dodged | Kill chain / Recovery; Bulwark / plating stack | 8 → 8 | 2 → 2 | 6, 15 s |
+| Endure | per tick while active | all three | 15 → 12 | 13 → 9 | 5, 44 s |
+| Recuperate | per tick while active | all three | 15 → 12 | 12 → 8 | 4, 40 s |
+| Second Wind | on cast | all three | — | 6 → 6 | 6 |
+| Cleanse | on strip (2 kinds per cast) | all three | — | 12 → 6 | 6 |
+| Break Free | on the break | all three | — | 5 → 5 | 5 |
+
+Duty cycle, every Guard now fires its node at or near its cast rate (5–9 a minute); held
+up the whole minute, at most 12 (the 5 s cap). Sidestep is unchanged: its 2.5 s window is
+shorter than the cap, and a dodge is rarer than a hit.
+
+### T3 path re-homes (design §22.5)
+
+Five T3 class paths moved onto the mechanics the ability pass and the frame loops gave
+them, and one was retagged (no effect change):
+
+| Path | Class | Now |
+|---|---|---|
+| Reverb | Squire (cooldown), packet Empowered | the execution lands again at half strength at the recharge's halfway mark, on whatever is in reach then (lost if nothing is); the bank is gone |
+| Destroyer | Squire (cooldown), packet **Technique** | the execution waits primed and rides the next Technique that lands, with that Technique's shape (an armed Technique's hit, a cast's target, Slam's whole area) at the Bulwark frame's own ×3.5 (the path's −0.5 dropped, design §22.12; the other heavy paths sit at 2.5×), and the bank the regular hits fill while it waits takes it above; regular hits deal damage again |
+| Justicar | Striker (cadence), retagged **Empowered** | unchanged: the Verdict is banked and spent by the finisher |
+| Duelist | Slinger (reload light), packet **Kill chain** | every kill loads a round past the clip until the next reload; the exploding last bullet and the +1 round are retired (`reload.exploding-clip` and `reload.empowered-mult` have no author); the Empowered `mechanic-proxy` is ×3.5 again (design §22.12) through `reload.mechanic-proxy-mult`, which only the proxy reads, so the Scout openers and the HUD/DPS readers do not move; every other reload spec takes the proxy's 1.5 fallback |
+| Warmonger | Slinger (reload heavy), packet Tempo | the Artillerist frame owns the ramp; `reload.ramp-carry-pct` 0.5 keeps half of it through a reload (`frames-current-state.md`); the top damage and the glow measure against one clip, so the first clip is the Artillerist's own, and only the attack-speed climb carries past it (design §22.12); Hair Trigger is retired |
+| Pyromancer | Apprentice (dot balanced), packet Affliction | 2 burn stacks at 55% each; a hit at max burn lays nothing and does not refresh the burn (design §22.12, the old path's rule), so Radiant fires while the stacks last; the max-stack direct bonus is gone (the Ember Mage frame owns it); Radiant: a burn tick at max stacks also strikes every adjacent body as damage over time (no plating, half DR, no stacks, never recurses) |
+
+The skill-tree data is `shared/src/data/skillTree/t3CombatA.ts` / `t3CombatB.ts`;
+tests `t3SquirePaths`, `t3SlingerPaths`, `t3ApprenticePaths`.
+
+### Migration of the cut abilities, in one place
+
+The five cut ids live in `RETIRED_ABILITY_IDS` (`shared/src/abilities.ts`). On load,
+`migrateAttunement` silently drops every known, attuned, wired (`use-ability` rule) or
+node-progress entry naming one, the load path logs one line per affected character, and a
+legacy rename that resolves to a cut id (`heavy-strike` to expose-weakness,
+`charged-strike` to power-strike) drops the same way. A re-homed ability keeps its id
+and its progress. Anything a cut ability produced that is still a live concept keeps its
+status id and art: `ability-slowed` ("Slowed", design §22.12) is written by the lineage `slow` payoff
+and the at-bay tap; its help text no longer names Hamstring.
 
 ## Ability tags and equipment modifiers (2026-09-13)
 

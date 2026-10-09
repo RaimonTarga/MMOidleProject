@@ -35,8 +35,9 @@ export const FARMING_SUSTAIN_CELLS: FarmingSustainCell[] = identities.flatMap(id
       // Covenanter has only four spare RP. One common optional attunement is
       // displaced in every arm, so the charm and policy factors stay separable.
       if (identityId === 'breadth-t4-conduit-heavy-a') {
-        cell.abilities!.techniques = cell.abilities!.techniques.filter(id => id !== 'expose-weakness');
-        cell.displacedAbility = 'expose-weakness';
+        // Slam since the ability pass cut Expose Weakness (design §22.2).
+        cell.abilities!.techniques = cell.abilities!.techniques.filter(id => id !== 'slam');
+        cell.displacedAbility = 'slam';
       }
       if (policy === 'recuperating') {
         cell.additionalStances = ['recuperating-stance'];

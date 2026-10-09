@@ -82,7 +82,7 @@ export const BOSSREF_A_GEAR = {
   mobility: 'plains-boots-t2', core: 'core-tempered',
 } as const;
 export const BOSSREF_A_ABILITIES: AttunedAbilities = {
-  techniques: ['expose-weakness'], guards: ['second-wind', 'brace'],
+  techniques: ['slam'], guards: ['second-wind', 'brace'],
 };
 export const BOSSREF_A_STANCE = 'defensive-stance';
 /** `t2Runes("ranged-orbit")`, in the route's order. Step Back must precede orbit. */

@@ -3,13 +3,11 @@ import { defineBuff, type BuffDescriptor } from '../../../../../combat/buffs/des
 import { getSnipeReady } from './selectors';
 import {
   COVER_FIRE_EFFECT_ID,
-  DEFAULT_HAIR_TRIGGER_PCT,
   DEFAULT_MOMENTUM_APS_PER_STACK,
   DEFAULT_MOMENTUM_RELOAD_REDUCTION,
   MOMENTUM_RELOAD_REDUCTION_FLOOR,
   DEFAULT_SNIPE_FULL_HP_MULT,
 } from './constants';
-import { playerMechanicBuffMagnitude } from '../../../../shared/applyPlayerMechanicBuff';
 
 export const RELOAD_T3_BUFFS = [
   defineBuff('reload-snipe-ready', ({ player, world }) => {
@@ -18,31 +16,6 @@ export const RELOAD_T3_BUFFS = [
     return getSnipeReady(player, world)
       ? { id: 'reload-snipe-ready', label: 'Snipe', stacks: 1, durationPct: -1, color: '#ffcc88', logDetail: `${fullHpMult}x damage vs full HP targets`, values: [{ label: 'Damage vs a full-HP target', value: `×${fullHpMult}`, good: true }] }
       : null;
-  }, { category: 'neutral', shape: 'square' }),
-
-  defineBuff('reload-hair-trigger', ({ player }) => {
-    if ((player.usesSkills.passives['reload.hair-trigger'] ?? 0) <= 0) return null;
-    // The Artillerist frame owns the ramp (Phase 3) and its own tile reports it.
-    // Two tiles over one `clipSpeedStacks` count would quote two different
-    // percentages for the same stacks.
-    if ((player.usesSkills.passives['reload.frame-ramp-pct-per-shot'] ?? 0) > 0) return null;
-    const stacks = player.usesReload?.clipSpeedStacks ?? 0;
-    if (stacks <= 0) return null;
-    const pct = playerMechanicBuffMagnitude(
-      player,
-      'reload-hair-trigger',
-      'attackSpeedPctPerShot',
-      player.usesSkills.passives['reload.hair-trigger-pct-per-shot'] ?? DEFAULT_HAIR_TRIGGER_PCT,
-    );
-    return {
-      id: 'reload-hair-trigger',
-      label: 'Rev',
-      stacks,
-      durationPct: -1,
-      color: '#ffaa44',
-      logDetail: `+${Math.round(stacks * pct * 100)}% attack speed`,
-      values: [{ label: 'Attack speed', value: `+${Math.round(stacks * pct * 100)}%`, good: true }],
-    };
   }, { category: 'neutral', shape: 'square' }),
 
   defineBuff('reload-momentum', ({ player }) => {

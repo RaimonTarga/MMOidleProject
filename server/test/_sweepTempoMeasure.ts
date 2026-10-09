@@ -205,7 +205,7 @@ measure("conduit 2-body (1.0s cycle)", 3, 1000, "summoner", undefined, "heavy");
 
 console.log("\nPOWER STRIKE vs SLAM — raw Attack multiple delivered per cast\n");
 const slam = ABILITY_DATABASE.get("slam")!;
-const power = ABILITY_DATABASE.get("power-strike")!;
+const power = ABILITY_DATABASE.get("slam")!;
 const mult = (ability: typeof slam, tier: number): number => {
   const effect = abilityRankAt(ability, tier).effect;
   return effect.kind === "cast-strike" ? effect.damageMult : 0;

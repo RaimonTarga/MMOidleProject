@@ -10,7 +10,7 @@ const recovered = { type: 'fullyRecovered' as const };
 const victory = { type: 'bossCleared' as const, biomeGroup: 'volcanic', tier: 3 };
 export const V1U_BOSS_BUILD: DesiredBuild = {
   ...V1P_TUNDRA_BUILD,
-  abilities: { techniques: ['frenzy', 'sweep', 'hamstring'], guards: ['second-wind', 'brace'] },
+  abilities: { techniques: ['imbue-lightning', 'sweep', 'binding-strike'], guards: ['second-wind', 'brace'] },
   stances: { attuned: ['offensive-stance'], default: 'offensive-stance' },
 };
 export const V1U_AFFLICTION_BUILD: DesiredBuild = {
@@ -24,7 +24,7 @@ const returnRested: RouteStep[] = [
   { type: 'farm', at: hub, until: recovered, observeForMs: 10000, stepTimeoutMs: 60000 },
 ];
 export const V1U_PURCHASES: RouteStep[] = [
-  { type: 'learnAbility', recipeId: 'ability-recipe-frenzy', abilityId: 'frenzy', slot: 'technique', attune: false },
+  { type: 'learnAbility', recipeId: 'ability-recipe-imbue-lightning', abilityId: 'imbue-lightning', slot: 'technique', attune: false },
   { type: 'craft', recipeIds: ['volcanic-cinderlash', 'core-accelerant'] },
   { type: 'craft', recipeIds: ['mountain-vest-t2'] },
   { type: 'craft', recipeIds: ['mountain-vest-t3'] },
@@ -40,7 +40,7 @@ const prepared = allOf(recovered, { type: 'not', of: victory },
     { type: 'equipped' as const, definitionId }, { type: 'hasItem' as const, definitionId },
   ]), { type: 'equipped', definitionId: 'core-accelerant' },
   { type: 'equipped', definitionId: 'desert-boots-t2' },
-  { type: 'abilityKnown', abilityId: 'frenzy' });
+  { type: 'abilityKnown', abilityId: 'imbue-lightning' });
 
 export const V1U_EARLY_MASTERY = [{ group: 'mountain', level: 18 }, { group: 'jungle', level: 12 }];
 export const V1U_LATE_MASTERY = [{ group: 'swamp', level: 18 }, { group: 'cave', level: 18 }, { group: 'desert', level: 12 }, { group: 'tundra', level: 6 }];

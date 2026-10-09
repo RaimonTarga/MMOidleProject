@@ -5,7 +5,7 @@ import {
   biome,
   clearingOpening,
   learnCleanse,
-  learnExposeWeakness,
+  learnSlam,
   learnSecondWind,
   learnSweep,
   maxOut,
@@ -117,10 +117,10 @@ const DODGE_BOSS_ABILITIES: Record<
   { technique: string; guard: string }
 > = {
   plains: { technique: "sweep", guard: "second-wind" },
-  forest: { technique: "expose-weakness", guard: "second-wind" },
-  mountain: { technique: "expose-weakness", guard: "second-wind" },
-  swamp: { technique: "expose-weakness", guard: "cleanse" },
-  cave: { technique: "expose-weakness", guard: "second-wind" },
+  forest: { technique: "slam", guard: "second-wind" },
+  mountain: { technique: "slam", guard: "second-wind" },
+  swamp: { technique: "slam", guard: "cleanse" },
+  cave: { technique: "slam", guard: "second-wind" },
 };
 
 const BRACE_BOSS_ABILITIES: Record<
@@ -128,8 +128,8 @@ const BRACE_BOSS_ABILITIES: Record<
   { technique: string; guard: string }
 > = {
   ...DODGE_BOSS_ABILITIES,
-  mountain: { technique: "expose-weakness", guard: "brace" },
-  cave: { technique: "expose-weakness", guard: "brace" },
+  mountain: { technique: "slam", guard: "brace" },
+  cave: { technique: "slam", guard: "brace" },
 };
 
 function biomeSharedSteps(config: T1RouteConfig, biomeGroup: T1BiomeGroup): RouteStep[] {
@@ -220,7 +220,7 @@ function biomeSharedSteps(config: T1RouteConfig, biomeGroup: T1BiomeGroup): Rout
       return steps;
     case "cave":
       if (config.bossDefenseProfile === "brace-tank") {
-        return [learnExposeWeakness()];
+        return [learnSlam()];
       }
 
       return [
@@ -239,7 +239,7 @@ function biomeSharedSteps(config: T1RouteConfig, biomeGroup: T1BiomeGroup): Rout
           ),
           label: "put Step Back ahead of chase or Orbit",
         },
-        learnExposeWeakness(),
+        learnSlam(),
       ];
   }
 }

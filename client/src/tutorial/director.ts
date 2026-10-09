@@ -9,7 +9,9 @@ import {
   ACTION_DATABASE,
   CONDITION_DATABASE,
   TUTORIAL_ANCHORS,
+  abilityDisplayName,
   abilityLoadoutFor,
+  abilityNodeNameParts,
   attunedAbilityIds,
   cardRank,
   composeRuneEdit,
@@ -472,8 +474,15 @@ async function sendRunes(rules: EquippedRule[], signal: AbortSignal): Promise<vo
   if (!set) throw new TutorialStop('The Runes did not change. Press Next to try again.', 'error');
 }
 
+/**
+ * An ability in the tutorial's running copy: its noun through the one entry point
+ * (design §22.7), so a character whose keystone renamed it reads that name here too.
+ */
 function abilityName(id: string): string {
-  return ABILITY_DATABASE.get(id)?.name ?? id;
+  const ability = ABILITY_DATABASE.get(id);
+  if (!ability) return id;
+  const view = store.get(localPlayerViewAtom);
+  return abilityDisplayName(ability, view?.playerTier ?? 0, abilityNodeNameParts(id, view?.abilityNodes?.[id]), 'plain');
 }
 
 function ruleLabel(rule: EquippedRule): string {

@@ -73,6 +73,11 @@ export interface PlayerAoeOptions {
 /**
  * Apply splash AoE damage from a player to all monsters within radius of a
  * center point, skipping any excluded monster (the primary target).
+ *
+ * Returns every body the area struck, as the query found them — a body it then
+ * killed included — so a caller whose payoff fires per body struck (an ability
+ * node's "on every body hit", design §22.10) reads the one answer the damage
+ * used rather than asking the circle a second time.
  */
 export function applyPlayerAoe(
   world: World,
@@ -84,15 +89,38 @@ export function applyPlayerAoe(
   physicalSource: "player" | "summon" = "player",
   flavor: PlayerAoeFlavor = {},
   options: PlayerAoeOptions = {},
+): MonsterEntity[] {
+  const victims = playerAoeTargets(world, attacker, center, radius, excludeId);
+  applyPlayerAoeTo(world, attacker, victims, baseDamage, physicalSource, flavor, options);
+  return victims;
+}
+
+/**
+ * The resolution half of {@link applyPlayerAoe}, on a victim list the caller
+ * already chose: the same plating, DR, damage-taken debuffs, reservoir feed, kill
+ * credit, rewards and world log, each victim once. For a payload whose area is
+ * not a circle — a keystone's line or its one chosen body (design §22.4's Pierce,
+ * Fork, Harvest) — so "each body once" holds exactly rather than by a 1-unit
+ * circle that can clip a body standing on top of another.
+ */
+export function applyPlayerAoeTo(
+  world: World,
+  attacker: PlayerEntity,
+  victims: readonly MonsterEntity[],
+  baseDamage: number,
+  physicalSource: "player" | "summon" = "player",
+  flavor: PlayerAoeFlavor = {},
+  options: PlayerAoeOptions = {},
 ): void {
   const toKill: Array<{ monster: MonsterEntity; damage: number }> = [];
   const attackerNodeId = attacker.hasPosition.nodeId;
   const attackerId = attacker.isPlayer.id;
   const source = actorFromPlayer(attacker);
 
-  const victims = playerAoeTargets(world, attacker, center, radius, excludeId);
-
-  for (const monster of victims) {
+  // Each victim once, and never an invulnerable one — what `playerAoeTargets`
+  // already guarantees for the circle, restated for a list built elsewhere.
+  for (const monster of new Set(victims)) {
+    if (isInvulnerableMonster(monster)) continue;
     // Gross, pre-mitigation — the same point a normal hit converts at in onHit.
     const grossDamage = options.feedsWeaponReservoir
       ? feedWeaponReservoir(world, attacker, monster, baseDamage)

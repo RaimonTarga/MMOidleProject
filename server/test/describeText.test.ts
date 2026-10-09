@@ -122,9 +122,9 @@ for (const combatArchetype of ["cadence", "cooldown", "energy", null] as const) 
   );
 }
 
-const powerStrikeAdapters = describeAbility(ABILITY_DATABASE.get("power-strike")!, { ...context, combatArchetype: "summoner" }).classSpecific;
+const castAdapters = describeAbility(ABILITY_DATABASE.get("stunning-strike")!, { ...context, combatArchetype: "summoner" }).classSpecific;
 assert(
-  powerStrikeAdapters.length === 1 && powerStrikeAdapters[0].className === "Conduit" && powerStrikeAdapters[0].text.includes("one full payload"),
+  castAdapters.length === 1 && castAdapters[0].className === "Conduit" && castAdapters[0].text.includes("one full payload"),
   "targeted casts must explain only the Conduit summon-cast adapter",
 );
 assert(

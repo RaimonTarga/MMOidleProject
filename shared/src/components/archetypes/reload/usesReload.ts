@@ -7,9 +7,15 @@ export interface UsesReload {
   reloadingMs: number;
   /** Full duration captured when the current reload began; 0 while idle. */
   reloadDurationMs: number;
-  /** Hair Trigger / Chain Gun: attack-speed stacks built during current clip. */
+  /**
+   * Duelist (design §22.5, Kill chain): rounds the current kill chain has loaded on
+   * top of the authored clip, so `ammo` may sit above `ammoMax` by up to this many.
+   * Starting a reload dumps them; 0 for every other spec.
+   */
+  chainRounds: number;
+  /** Artillerist ramp: attack-speed stacks built across the clip (Warmonger carries a share through a reload). */
   clipSpeedStacks: number;
-  /** Hair Trigger / Chain Gun: attack cooldown captured on first shot of clip (0 = not yet set). */
+  /** Artillerist ramp: attack cooldown captured on the clip's first ramped shot (0 = not yet set). */
   clipBaseAttackCooldownMs: number;
   // ── T4 spec runtime state ──────────────────────────────────────────────────
   /** Momentum: reload-stacked attack-speed stacks (decays out of combat). */
@@ -40,6 +46,7 @@ export function initUsesReload(args: { ammoMax: number }): UsesReload {
     laserOverheated: false,
     reloadingMs:     0,
     reloadDurationMs: 0,
+    chainRounds:     0,
     clipSpeedStacks: 0,
     clipBaseAttackCooldownMs: 0,
     momentumStacks:  0,

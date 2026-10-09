@@ -50,7 +50,7 @@ assert(abilityRankNumber(sweep, 0) === 1, "below the home tier clamps to rank I"
 assert(abilityRankNumber(sweep, -5) === 1, "a nonsense tier still clamps to rank I");
 
 const snipe = ABILITY_DATABASE.get("snipe")!;
-assert(abilityRankNumber(snipe, 1) === 1, "a T4 ability held below its home tier clamps to rank I");
+assert(abilityRankNumber(snipe, 1) === 1, "a T2 ability held below its home tier clamps to rank I");
 
 // ── 3. Every axis reads from the rank, not from a multiplier ─────────────────
 
@@ -88,12 +88,54 @@ assert(
   "a Tempo cooldown must sit above the minimum cycle, or Tempo does nothing",
 );
 
-const powerStrike = ABILITY_DATABASE.get("power-strike")!;
-assert(abilityCastMs(powerStrike, 1) > 0, "a cast must declare a wind-up");
+const slam = ABILITY_DATABASE.get("slam")!;
+assert(abilityCastMs(slam, 1) > 0, "a cast must declare a wind-up");
+// Above rank I the wind-up is not a progression track; rank I's is the T1 parity
+// number, solved with its multiple (design §22.12), never longer than the rest.
 assert(
-  abilityCastMs(powerStrike, 4) === abilityCastMs(powerStrike, 1),
-  "Power Strike's only axis is damage — its wind-up is not a progression track",
+  abilityCastMs(slam, 2) === abilityCastMs(slam, 3) && abilityCastMs(slam, 3) === abilityCastMs(slam, 4),
+  "Slam's wind-up is not a progression track above rank I",
 );
+assert(abilityCastMs(slam, 1) <= abilityCastMs(slam, 2), "Slam rank I never winds up longer than rank II");
+
+// ── 3b. A re-home adds exactly one rank at the new home (the ability pass) ───
+//
+// Design §22.2/§22.8: an ability's ranks are authored per tier from its home
+// tier, so moving it to an earlier tier adds ONE rank there and re-indexes
+// nothing else — a player at the old home tier and above reads exactly the rank
+// they read before the move. Pinned by value at the old tiers. (Slam's ranks
+// II–IV were re-authored afterwards by design §22.12, 2.45 / 2.7 / 2.95, so a
+// tier-up never weakens it; still not re-indexed.)
+const castDamageAt = (id: string, tier: number): number => {
+  const effect = abilityRankAt(ABILITY_DATABASE.get(id)!, tier).effect;
+  return effect.kind === "cast-strike" ? effect.damageMult : NaN;
+};
+assert(slam.tier === 1 && abilityMaxRank(slam) === 4, "Slam re-homes to T1 with one added rank");
+assert(
+  castDamageAt("slam", 2) === 2.45 && castDamageAt("slam", 3) === 2.7 && castDamageAt("slam", 4) === 2.95,
+  "Slam's T2–T4 ranks are design §22.12's 2.45 / 2.7 / 2.95, not re-indexed",
+);
+assert(abilityCooldownMs(slam, 1) === 10000, "Slam rank I keeps Power Strike's cooldown");
+const chargeAt = (tier: number): number => {
+  const effect = abilityRankAt(ABILITY_DATABASE.get("charge")!, tier).effect;
+  return effect.kind === "reposition" ? effect.empowerMult ?? NaN : NaN;
+};
+assert(ABILITY_DATABASE.get("charge")!.tier === 1, "Charge re-homes to T1");
+assert(chargeAt(2) === 2.2 && chargeAt(3) === 2.5 && chargeAt(4) === 2.8,
+  "Charge's old T2–T4 ranks are untouched");
+const rootAt = (tier: number): number => {
+  const effect = abilityRankAt(ABILITY_DATABASE.get("binding-strike")!, tier).effect;
+  return effect.kind === "root-strike" ? effect.rootMs : NaN;
+};
+assert(ABILITY_DATABASE.get("binding-strike")!.tier === 2, "Binding Strike re-homes to T2");
+assert(rootAt(3) === 1500 && rootAt(4) === 2000, "Binding Strike's old T3–T4 ranks are untouched");
+const imbue = ABILITY_DATABASE.get("imbue-lightning")!;
+assert(imbue.tier === 3 && imbue.shape === "instant", "Imbue Lightning re-homes to T3 and is instant");
+assert(abilityCastMs(imbue, 3) === 0 && abilityCastMs(imbue, 4) === 0, "an instant authors no wind-up");
+assert(snipe.tier === 2 && abilityRangeBonus(snipe, 2) === 300, "Snipe re-homes to T2 with its reach");
+assert(castDamageAt("snipe", 4) === 3.0, "Snipe's T4 rank is untouched");
+const contagion = ABILITY_DATABASE.get("contagion")!;
+assert(contagion.shape === "armed" && abilityCastMs(contagion, 2) === 0, "Contagion is armed, with no wind-up");
 
 // ── 4. Technique Power multiplies payload, never reach or control ────────────
 
@@ -107,17 +149,17 @@ assert(
   "Technique Power must NOT widen the splash radius",
 );
 
-const hamstring = ABILITY_DATABASE.get("hamstring")!;
-const poweredSlow = resolveAbilityEffect(hamstring, {
+const bindingStrike = ABILITY_DATABASE.get("binding-strike")!;
+const poweredRoot = resolveAbilityEffect(bindingStrike, {
   playerTier: 2,
   techniquePowerPct: 1,
 });
-assert(poweredSlow.kind === "slow-strike", "hamstring stays a slow-strike");
-if (poweredSlow.kind === "slow-strike") {
-  assert(poweredSlow.damageMult > 1.15, "Technique Power scales the hit rider");
+assert(poweredRoot.kind === "root-strike", "binding strike stays a root-strike");
+if (poweredRoot.kind === "root-strike") {
+  assert(poweredRoot.damageMult > 1.2, "Technique Power scales the hit rider");
   assert(
-    poweredSlow.slowPct === 0.4 && poweredSlow.slowDurationMs === 3000,
-    "a damage stat must never buy control strength or duration",
+    poweredRoot.rootMs === 1500,
+    "a damage stat must never buy control duration",
   );
 }
 

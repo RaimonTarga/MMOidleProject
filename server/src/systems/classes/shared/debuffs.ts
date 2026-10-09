@@ -1,5 +1,5 @@
 import { registerCombatListener } from '../../combat/engine/combatPipeline';
-import { EXPOSE_WEAKNESS_EFFECT_ID, getStatusEffect, type TracksCombat } from '@mmo-idle/shared';
+import { getStatusEffect, type TracksCombat } from '@mmo-idle/shared';
 
 /**
  * Register generic debuff listeners that modify incoming damage.
@@ -26,11 +26,6 @@ export function applyMonsterDamageTakenDebuffs(
   const vuln = getStatusEffect(monsterState, 'vulnerability');
   if (vuln) {
     next = Math.round(next * (vuln.data['damageMultiplier'] ?? 1));
-  }
-
-  const exposed = getStatusEffect(monsterState, EXPOSE_WEAKNESS_EFFECT_ID);
-  if (exposed) {
-    next = Math.round(next * (1 + Math.max(0, exposed.data['damageTakenPct'] ?? 0)));
   }
 
   return Math.max(0, next);

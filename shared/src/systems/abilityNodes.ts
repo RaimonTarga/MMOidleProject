@@ -1,5 +1,5 @@
 /**
- * Ability node rules — the shared authority (design §19).
+ * Ability node rules — the shared authority (design §19, §22).
  *
  * These are to ability nodes what `checkUnlockCard`/`checkSetActive` are to
  * lineage cards: pure functions the SERVER applies and the CLIENT gates buttons
@@ -20,15 +20,18 @@ import { ESSENCE_LABELS } from '../items';
 import { shardName } from '../data/lineages/packets';
 import type { EssenceType } from '../items';
 import {
-  ABILITY_NODE_DATABASE, abilityNodeOptionsForRow, abilityNodePayoff,
-  resolveAbilityNodeOption,
+  ABILITY_NODE_DATABASE, abilityKeystoneDefinition, abilityKeystoneShare,
+  abilityNodeCastSpeedPct, abilityNodeOptionsForRow, abilityNodePayoff,
+  activePacketLane, resolveAbilityNodeOption,
 } from '../data/abilityNodes';
 import type {
-  AbilityNodeDefinition, AbilityNodeOption, AbilityNodeProgress,
-  AbilityNodeProgressMap, AbilityNodeRow, ResolvedAbilityNodeOption,
+  AbilityKeystoneDefinition, AbilityNodeDefinition, AbilityNodeOption,
+  AbilityNodeProgress, AbilityNodeProgressMap, AbilityNodeRow,
+  ResolvedAbilityNodeOption,
 } from '../data/abilityNodes';
-import { ABILITY_NODE_SHARE } from '../data/lineages/magnitudes';
-import type { LineagePayoff, PacketId } from '../data/lineages/types';
+import { ABILITY_NODE_ROWS } from '../data/abilityNodes/types';
+import { ABILITY_NODE_SHARE, lengthenPayload, payloadSize } from '../data/lineages/magnitudes';
+import type { AmplifiedAxis, LineagePayoff, PacketId } from '../data/lineages/types';
 import { applyAmplifiedAxis } from './lineages';
 import type { LineageCheck, LineageWallet } from './lineages';
 
@@ -59,7 +62,12 @@ export function abilityNodeProgressFor(
  * that no longer exists.
  *
  * Absent from every save written before design §19 shipped, which is why this
- * needs no migration: an undefined map normalizes to an empty one.
+ * needs no migration: an undefined map normalizes to an empty one. The keystone
+ * and cross rows (design §22) and the amplifier's free axis (§22.10) need none
+ * either: a pre-§22 save holds only packet and amplifier ids, and every one of
+ * them still names the same option — an amplifier's DEFAULT axis keeps the bare
+ * `ability.amplifier.lane` id it always had (`abilityNodeId`), so an old save's
+ * amplifier is the same option moving the same axis it always moved.
  */
 export function normalizeAbilityNodeProgressMap(
   stored: Partial<Record<string, Partial<AbilityNodeProgress>>> | undefined,
@@ -117,6 +125,25 @@ export interface AbilityNodeWallet extends LineageWallet {
   knownAbilities?: readonly string[];
 }
 
+/** The refusal a designed-but-not-yet-built keystone verb gives (a silhouette). */
+export const KEYSTONE_NOT_YET_REASON = 'Not yet: this verb arrives in a later update.';
+
+/** The keystone verb an option names, when it is one. */
+export function keystoneOfOption(option: AbilityNodeOption): AbilityKeystoneDefinition | undefined {
+  return option.row === 'keystone' && option.keystone
+    ? abilityKeystoneDefinition(option.keystone)
+    : undefined;
+}
+
+/**
+ * Whether a keystone option is a SILHOUETTE: a designed verb whose server module
+ * has not landed (design §22.11: "the panel shows the unauthored two as
+ * silhouettes"). Never for sale.
+ */
+export function isKeystoneSilhouette(option: AbilityNodeOption): boolean {
+  return option.row === 'keystone' && !keystoneOfOption(option)?.live;
+}
+
 /**
  * Can the player BUY this option? Mastery gates *when*, materials gate *whether*
  * (design §4), and knowing the ability gates *at all*.
@@ -143,9 +170,22 @@ export function checkUnlockAbilityNode(params: {
     return { ok: false, reason: 'Buy that packet node first.' };
   }
 
+  // A keystone verb with no runtime behind it is a silhouette, never a no-op sale.
+  if (isKeystoneSilhouette(option)) return { ok: false, reason: KEYSTONE_NOT_YET_REASON };
+
+  // The keystone and cross rows build on the ACTIVE packet: the keystone is paid in
+  // its shard (design §22.1), and the cross row borrows one of the OTHER two offers.
+  if (option.row === 'keystone' || option.row === 'cross') {
+    const lane = activePacketLane(option.abilityId, progress);
+    if (!lane) return { ok: false, reason: 'Buy and slot a packet node first.' };
+    if (option.row === 'cross' && lane === option.lane) {
+      return { ok: false, reason: "That is your packet's own route: borrow one of the other two." };
+    }
+  }
+
   if (wallet.isTestRoom) return OK;
 
-  const resolved = resolveAbilityNodeOption(option);
+  const resolved = resolveAbilityNodeOption(option, progress);
   if (wallet.globalMastery !== undefined && wallet.globalMastery < resolved.requiredGlobalMastery) {
     return { ok: false, reason: `Requires Global Mastery ${resolved.requiredGlobalMastery}.` };
   }
@@ -179,7 +219,7 @@ export function checkSetAbilityNode(params: {
 
 /**
  * One ability's node firing: the payoff its active packet node pays, with its
- * active amplifier already folded in.
+ * active amplifier already folded in, and the cross row's borrowed payoff.
  *
  * Folding at resolve time is what keeps the combat runtime unchanged and keeps
  * design §6's "one multiplier per hit" true — the payoff's own numbers move,
@@ -193,6 +233,31 @@ export interface AbilityNodeFiring {
   payoff: LineagePayoff;
   /** The amplifier option folded in, when one was active and applicable. */
   amplifier?: AbilityNodeOption;
+  /**
+   * The amplifier's `cast` axis (design §22.9), as a cast-speed fraction that
+   * joins `technique.cast-speed-pct`'s capped sum. Absent unless that axis is the
+   * active amplifier on the active route.
+   */
+  castSpeedPct?: number;
+  /**
+   * The cross row (design §22.1): one of the ability's OTHER two offers at the
+   * cross scalar — "a second packet-row payoff at the cross scalar". Absent when
+   * no cross is active, or the active one is the packet's own lane.
+   */
+  cross?: { option: AbilityNodeOption; payoff: LineagePayoff };
+}
+
+/** Move one amplifier axis of an ability's payoff, in place. */
+function applyNodeAmplifier(payoff: LineagePayoff, axis: AmplifiedAxis): void {
+  const boost = ABILITY_NODE_SHARE.amplifier;
+  // A bleed lays a TOTAL out over its window, so a plain lengthen would thin the
+  // same total out — a "longer window" that does less. The composed-pair rule
+  // (`lengthenPayload`) holds its tick rate instead, so the total grows with it.
+  if (axis === 'duration' && payloadSize(payoff.kind).spread) {
+    lengthenPayload(payoff, 1 + boost);
+    return;
+  }
+  applyAmplifiedAxis(payoff, axis, boost);
 }
 
 /**
@@ -200,7 +265,8 @@ export interface AbilityNodeFiring {
  *
  * An amplifier slotted against a packet the player is not currently running
  * contributes nothing and says so by simply not appearing — a legal, useless
- * loadout, not an error, the same way a lineage amplifier behaves.
+ * loadout, not an error, the same way a lineage amplifier behaves. A cross slotted
+ * on the active packet's own lane is the same: inert, never the same payoff twice.
  */
 export function resolveAbilityNodeFiring(
   abilityId: string,
@@ -223,8 +289,18 @@ export function resolveAbilityNodeFiring(
     ? tree.options.find((o) => o.id === ampId && o.row === 'amplifier')
     : undefined;
   if (amplifier && amplifier.modifies === option.id && amplifier.amplifies) {
-    applyAmplifiedAxis(payoff, amplifier.amplifies, ABILITY_NODE_SHARE.amplifier);
+    if (amplifier.amplifies === 'cast') firing.castSpeedPct = abilityNodeCastSpeedPct();
+    else applyNodeAmplifier(payoff, amplifier.amplifies);
     firing.amplifier = amplifier;
+  }
+
+  const crossId = progress.active.cross;
+  const cross = crossId && progress.owned.includes(crossId)
+    ? tree.options.find((o) => o.id === crossId && o.row === 'cross')
+    : undefined;
+  if (cross && cross.lane !== option.lane) {
+    const crossPayoff = abilityNodePayoff(cross);
+    if (crossPayoff) firing.cross = { option: cross, payoff: crossPayoff };
   }
   return firing;
 }
@@ -242,16 +318,72 @@ export function resolveActiveAbilityNodes(
   return out;
 }
 
+/** One ability's live keystone verb: which, and the share it pays when it pays one. */
+export interface AbilityKeystoneFiring {
+  abilityId: string;
+  keystoneId: string;
+  option: AbilityNodeOption;
+  /** `paysShare` verbs only: the share of a hit, off the magnitude table. */
+  share?: number;
+}
+
+/**
+ * The ability's active keystone verb, or undefined. Only an OWNED, LIVE verb is a
+ * rule in play: a silhouette never is, even if a save somehow names one.
+ */
+export function resolveAbilityKeystone(
+  abilityId: string,
+  progress: AbilityNodeProgress,
+): AbilityKeystoneFiring | undefined {
+  const tree = ABILITY_NODE_DATABASE.get(abilityId);
+  const id = progress.active.keystone;
+  if (!tree || !id || !progress.owned.includes(id)) return undefined;
+  const option = tree.options.find((o) => o.id === id && o.row === 'keystone');
+  const verb = option ? keystoneOfOption(option) : undefined;
+  if (!option || !verb?.live) return undefined;
+  return {
+    abilityId,
+    keystoneId: verb.id,
+    option,
+    ...(verb.paysShare ? { share: abilityKeystoneShare(option, progress) } : {}),
+  };
+}
+
+/** Every ability on this player with a live keystone verb in play. */
+export function resolveActiveAbilityKeystones(
+  nodes: AbilityNodeProgressMap | undefined,
+): Map<string, AbilityKeystoneFiring> {
+  const out = new Map<string, AbilityKeystoneFiring>();
+  for (const [abilityId, progress] of Object.entries(nodes ?? {})) {
+    if (!progress) continue;
+    const firing = resolveAbilityKeystone(abilityId, progress);
+    if (firing) out.set(abilityId, firing);
+  }
+  return out;
+}
+
+/**
+ * The cast speed this ability's nodes add (the amplifier's `cast` axis), or 0 —
+ * for the client's wind-up line, which must read the same sum the server does.
+ */
+export function abilityNodeCastSpeedFor(
+  abilityId: string,
+  progress: AbilityNodeProgress | undefined,
+): number {
+  if (!progress) return 0;
+  return resolveAbilityNodeFiring(abilityId, progress)?.castSpeedPct ?? 0;
+}
+
 // ─── Authoring reads for the UI ──────────────────────────────────────────────
 
-/** Both rows of one ability's tree, resolved, in render order. */
+/** Every row of one ability's tree, resolved, in render order. */
 export function resolveAbilityNodeRows(tree: AbilityNodeDefinition): {
   row: AbilityNodeRow;
   options: ResolvedAbilityNodeOption[];
 }[] {
-  return (['packet', 'amplifier'] as const).map((row) => ({
+  return ABILITY_NODE_ROWS.map((row) => ({
     row,
-    options: abilityNodeOptionsForRow(tree, row).map(resolveAbilityNodeOption),
+    options: abilityNodeOptionsForRow(tree, row).map((option) => resolveAbilityNodeOption(option)),
   }));
 }
 

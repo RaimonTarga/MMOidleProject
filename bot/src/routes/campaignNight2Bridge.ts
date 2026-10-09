@@ -21,7 +21,7 @@ for (const [i, group] of groups.entries()) {
   steps.push(
     { type: "travel", to: { kind: "node", nodeId: "node-t2-sanctuary" }, requires },
     { type: "farm", at: { kind: "node", nodeId: "node-t2-sanctuary" }, until: { type: "fullyRecovered" }, stepTimeoutMs: 180_000, requires, label: `${tag}:recover` },
-    { type: "configureBuild", build: i === 0 ? spiritBossBuild("sweep") : i === 1 ? spiritBossBuild("expose-weakness") : desertBuild, requires, label: `${tag}:build` },
+    { type: "configureBuild", build: i === 0 ? spiritBossBuild("sweep") : i === 1 ? spiritBossBuild("slam") : desertBuild, requires, label: `${tag}:build` },
     { type: "milestone", id: `${tag}:ready`, requires },
     { type: "attemptBoss", biomeGroup: group, tier: 2, maxAttempts: 1, requires, label: `${tag}:attempt` },
   );

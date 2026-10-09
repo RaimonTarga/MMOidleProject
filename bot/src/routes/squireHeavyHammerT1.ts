@@ -7,7 +7,7 @@ import {
   getPiece,
   learnBrace,
   learnCleanse,
-  learnExposeWeakness,
+  learnSlam,
   learnSecondWind,
   learnSweep,
   maxOut,
@@ -117,7 +117,7 @@ export const SQUIRE_HEAVYHAMMER_T1: Route = {
     },
     { type: "farm", at: biome("cave"), until: { type: "recipeUnlocked", recipeId: "chaotic-axe" } },
     { type: "craft", recipeIds: ["chaotic-axe"], farmAt: biome("cave") },
-    learnExposeWeakness(),
+    learnSlam(),
 
     { type: "equip", definitionIds: ["chaotic-axe"], label: "switch to the Chaotic Axe" },
 
@@ -140,7 +140,7 @@ export const SQUIRE_HEAVYHAMMER_T1: Route = {
       wornKit: ["chaotic-axe", "swamp-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES_FULL,
       armor: "plains-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "second-wind",
     }),
     ...bossFight({
@@ -148,7 +148,7 @@ export const SQUIRE_HEAVYHAMMER_T1: Route = {
       wornKit: ["chaotic-axe", "swamp-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES_FULL,
       armor: "mountain-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "brace",
     }),
     ...bossFight({
@@ -156,7 +156,7 @@ export const SQUIRE_HEAVYHAMMER_T1: Route = {
       wornKit: ["chaotic-axe", "swamp-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES_FULL,
       armor: "mountain-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "cleanse",
     }),
     ...bossFight({
@@ -164,7 +164,7 @@ export const SQUIRE_HEAVYHAMMER_T1: Route = {
       wornKit: ["chaotic-axe", "swamp-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES_FULL,
       armor: "mountain-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "brace",
     }),
   ] satisfies RouteStep[],

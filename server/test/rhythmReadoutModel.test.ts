@@ -142,7 +142,7 @@ const t2Verb = (payoff: string, stat?: string): RhythmFiring[] =>
 // ── carry and pulse ──────────────────────────────────────────────────────────
 {
   const carry: RhythmFiring = {
-    key: "axe-t2-kill-chain-payoff", name: "Deeper Frenzy", lane: "kill-chain",
+    key: "axe-t2-kill-chain-payoff", name: "Deeper Fury", lane: "kill-chain",
     trigger: { kind: "kill", carry: true }, shape: "carry", payoff: "heal-and-load",
     payloadLane: "kill-chain", source: "card",
   };

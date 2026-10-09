@@ -26,9 +26,9 @@ export const CAMPAIGN_T4_VOLCANO_FINISH_ROUTES: Route[] = VOLCANO_FINISH_CASES.m
     ...reference.steps.map((step): RouteStep => {
       if (step.type === 'captureCheckpoint') return { ...step,
         boundaryId: `${c.id}-${step.boundaryId.endsWith('-ready') ? 'ready' : 'returned'}` };
-      if (c.expose && step.type === 'configureBuild' && step.build.abilities?.techniques.includes('frenzy')) {
+      if (c.expose && step.type === 'configureBuild' && step.build.abilities?.techniques.includes('imbue-lightning')) {
         return { ...step, build: { ...step.build, abilities: { ...step.build.abilities,
-          techniques: [...step.build.abilities.techniques, 'expose-weakness'] } } };
+          techniques: [...step.build.abilities.techniques, 'slam'] } } };
       }
       return step;
     }),

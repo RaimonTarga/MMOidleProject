@@ -93,7 +93,7 @@ export const T2_CLASS_PLANS: readonly T2ClassPlan[] = [
     frameId: "cadence-balanced",
     slug: "striker",
     movementProfile: "melee-chase",
-    technique: "expose-weakness",
+    technique: "slam",
     guard: "second-wind",
     hypothesis:
       "Striker takes Forest speed early and swaps to the Cave axe; Mountain armor loses to " +
@@ -143,7 +143,7 @@ export const T2_CLASS_PLANS: readonly T2ClassPlan[] = [
     frameId: "cooldown-heavy",
     slug: "squire",
     movementProfile: "melee-chase",
-    technique: "expose-weakness",
+    technique: "slam",
     // Second Wind, not Brace, and this is a deliberate control decision rather
     // than an oversight. The canonical `squire-t1` route is the dodge-counterplay
     // profile and never learns Brace, so no Tier-2 entry template knows it --
@@ -191,7 +191,7 @@ export const T2_CLASS_PLANS: readonly T2ClassPlan[] = [
     frameId: "dot-balanced",
     slug: "apprentice",
     movementProfile: "ranged-orbit",
-    technique: "expose-weakness",
+    technique: "slam",
     guard: "second-wind",
     hypothesis:
       "Apprentice wants the Swamp DoT weapon its whole mechanic is built on, Swamp armor for the " +
@@ -234,7 +234,7 @@ export const T2_CLASS_PLANS: readonly T2ClassPlan[] = [
     frameId: "reload-heavy",
     slug: "slinger",
     movementProfile: "ranged-orbit",
-    technique: "expose-weakness",
+    technique: "slam",
     guard: "second-wind",
     hypothesis:
       "Slinger is the clearest customer for the Jungle rapier: reload's half-damage/double-speed " +
@@ -273,7 +273,7 @@ export const T2_CLASS_PLANS: readonly T2ClassPlan[] = [
     frameId: "energy-heavy",
     slug: "spirit",
     movementProfile: "ranged-orbit",
-    technique: "expose-weakness",
+    technique: "slam",
     guard: "second-wind",
     hypothesis:
       "Spirit builds energy per hit, so it wants hit frequency early (Forest) and the Cave axe " +
@@ -313,7 +313,7 @@ export const T2_CLASS_PLANS: readonly T2ClassPlan[] = [
     frameId: "summoner-balanced",
     slug: "conduit",
     movementProfile: "ranged-orbit",
-    technique: "expose-weakness",
+    technique: "slam",
     guard: "second-wind",
     hypothesis:
       "OPEN QUESTION, held deliberately neutral. Conduit's damage runs through minions that " +

@@ -7,7 +7,7 @@ import {
   getPiece,
   learnBrace,
   learnCleanse,
-  learnExposeWeakness,
+  learnSlam,
   learnSecondWind,
   maxOut,
   standardCompletion,
@@ -127,7 +127,7 @@ export const SLINGER_V2_T1: Route = {
 
     // ── Cave: Expose Weakness -> GM 30 ────────────────────────────────────────
     { type: "travel", to: biome("cave") },
-    learnExposeWeakness(),
+    learnSlam(),
 
     maxOut("cave"),
     { type: "milestone", id: "all-biomes-maxed" },
@@ -141,7 +141,7 @@ export const SLINGER_V2_T1: Route = {
       wornKit: ["ashbrand-blade", "swamp-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES_ORBIT,
       armor: "forest-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "second-wind",
     }),
     ...bossFight({
@@ -149,7 +149,7 @@ export const SLINGER_V2_T1: Route = {
       wornKit: ["ashbrand-blade", "swamp-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES_ORBIT,
       armor: "forest-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "second-wind",
     }),
     ...bossFight({
@@ -157,7 +157,7 @@ export const SLINGER_V2_T1: Route = {
       wornKit: ["ashbrand-blade", "swamp-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES_ORBIT,
       armor: "forest-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "second-wind", // was brace
     }),
     ...bossFight({
@@ -165,7 +165,7 @@ export const SLINGER_V2_T1: Route = {
       wornKit: ["ashbrand-blade", "swamp-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES_ORBIT,
       armor: "forest-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "cleanse",
     }),
     ...bossFight({
@@ -173,7 +173,7 @@ export const SLINGER_V2_T1: Route = {
       wornKit: ["ashbrand-blade", "swamp-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES_ORBIT,
       armor: "forest-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "second-wind", // was brace
     }),
   ] satisfies RouteStep[],

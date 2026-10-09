@@ -45,7 +45,6 @@ export const BUFF_IDS = [
   'dot-frenzy',
   'dot-frostbite',
   'reload-snipe-ready',
-  'reload-hair-trigger',
   'reload-cover-fire',
   'reload-momentum',
   'reload-cannon',
@@ -112,11 +111,16 @@ export const BUFF_IDS = [
   // equipped together, so they need independent windows and tiles.
   'ability-second-wind',
   'ability-second-wind-2',
-  'ability-frenzy',
+  // Sidestep's window (design §22.8): evade chance and move speed on one clock.
+  'ability-sidestep',
   // Imbue Lightning's charge window. Not timed — the badge IS the state, so it
   // is one of the few buffs that must show its count even at one.
   'ability-imbue',
   'ability-control-resist',
+  // Endure's Unyielding keystone (design §22.4): no hard control lands while it stands.
+  'ability-unyielding',
+  // Cleanse's Immunity keystone (design §22.4): the stripped kinds cannot be reapplied.
+  'ability-immunity',
   // Mobility boots (see server/src/systems/world/mobility/mobilityBoots.ts)
   'mob-sprint',   // Forest — out-of-combat sprint
   'mob-haste',    // Plains — on-kill haste

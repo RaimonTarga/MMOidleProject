@@ -2,9 +2,9 @@
  * The control ladder, end to end.
  *
  * Slow / root / stun are three STRUCTURALLY different effects, not three
- * strengths of one status, and the whole roster leans on that: Hamstring is a
- * cheap low-cooldown Technique because it only degrades movement, Stunning
- * Strike is an expensive cast because it takes actions away. This asserts the
+ * strengths of one status, and the whole roster leans on that: a slow (the
+ * lineage `slow` payoff, the at-bay tap) only degrades movement, Binding Strike
+ * stops it, Stunning Strike is an expensive cast because it takes actions away. This asserts the
  * distinction actually exists at runtime rather than only in the design doc.
  *
  * Covers composed slow multipliers, actual movement, authored stat preservation,
@@ -100,35 +100,27 @@ function makePlayerSlices(id: string, abilities: string[]): PersistedPlayerSlice
 
 initCombatSystems();
 
-// ── 1. Hamstring: movement degraded, actions untouched ───────────────────────
+// ── 1. The slow rung: movement degraded, actions untouched ───────────────────
+// Hamstring armed this rung until the ability pass cut it (design §22.2); the
+// rung itself is still written by the lineage `slow` payoff and the at-bay tap,
+// through the same `applyMonsterSlow`, so it is applied directly here.
 
 {
   const world = new World();
   const player = world.attachPlayerEntity(
-    makePlayerSlices("hamstring-player", ["hamstring"]),
-    "hamstring-player",
+    makePlayerSlices("slow-player", []),
+    "slow-player",
   );
-  player.usesAutocombat.auto = true;
   const target = world.createMonster("node-5-5", "plains-slime", { x: 410, y: 400 });
   if (!target) throw new Error("failed to create target");
-  setAttackTarget(world, player, target.isMonster.id);
 
   const def = MONSTER_DATABASE.get(target.isMonster.monsterTypeId)!;
   const baseSpeed = def.stats.speed;
 
-  fireWithReferenceWiring(world, Date.now());
-  assert(
-    player.hasArmedAbility?.abilityId === "hamstring",
-    "Hamstring should arm the next attack",
-  );
-
-  runPlayerAttack(world, player, target, 1_000, {
-    attackOrigin: player.hasPosition.current,
-    aggroSource: { id: player.isPlayer.id, kind: "player" },
-  });
+  applyMonsterSlow(world, target, 0.4, 3000, player.isPlayer.id);
 
   const slow = getStatusEffect(target.tracksCombat, ABILITY_SLOW_EFFECT_ID);
-  assert(!!slow, "a landed Hamstring should apply the slow");
+  assert(!!slow, "an applied slow should carry its status");
   assert(target.hasAbilitySlow !== undefined, "the slow marker must be attached");
 
   updateMonsterSlows(world);
@@ -140,7 +132,7 @@ initCombatSystems();
   assert(
     target.hasStatus.monsterAttackCooldownMult === undefined &&
       monsterAttackCooldown(target) === baseAttackCooldown,
-    "Hamstring must not lengthen the target's attack cooldown",
+    "a slow must not lengthen the target's attack cooldown",
   );
   // The rung's whole identity: it is still allowed to fight back.
   assert(target.isRooted === undefined, "a SLOW must never root the target");
@@ -207,7 +199,7 @@ initCombatSystems();
 
 // ── 3. Strongest slow source ───────────────────────────────────────────
 // Two sources on one monster take the STRONGEST per axis, never the sum: adding
-// a 45% chill to a 50% Hamstring would pin the target in place, and "pinned in
+// a 45% chill to a 50% slow would pin the target in place, and "pinned in
 // place" is root — a different rung with a different cost.
 
 {
@@ -288,7 +280,7 @@ for (const speed of [0, 5, 200, 600]) {
       `slow must reduce actual movement at speed ${speed}: moved ${moved}`);
     assert(composeMonsterView(target)!.speed === speed * 0.5, "client speed agrees with movement");
     assert(target.hasPosition.speed === speed, "slow must not corrupt authored speed");
-    assert(monsterAttackCooldown(target) === 777, "Hamstring preserves authored cadence");
+    assert(monsterAttackCooldown(target) === 777, "a slow preserves authored cadence");
   }
   updateCombatState(world, 4100);
   updateMonsterSlows(world);
@@ -323,7 +315,7 @@ for (const speed of [0, 5, 200, 600]) {
   assert(target.hasStatus.monsterMoveSpeedMult === 0.5, "strongest source wins");
   updateCombatState(world, 600);
   updateMonsterSlows(world);
-  assert(target.hasStatus.monsterMoveSpeedMult === 0.7, "remaining chill survives Hamstring expiry");
+  assert(target.hasStatus.monsterMoveSpeedMult === 0.7, "remaining chill survives the slow's expiry");
 }
 
 // Root ownership survives either application order and either expiry order.

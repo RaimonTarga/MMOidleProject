@@ -22,18 +22,16 @@ import { attunedAbilityIds } from "./runicPoints";
 
 const REFERENCE_CONDITION: Record<string, RuneConditionId> = {
   sweep: "in-combat",
-  "power-strike": "in-combat",
-  "expose-weakness": "in-combat",
-  hamstring: "in-combat",
   contagion: "in-combat",
   slam: "in-combat",
   "binding-strike": "in-combat",
-  frenzy: "in-combat",
-  "quick-strike": "in-combat",
   detonate: "in-combat",
   snipe: "in-combat",
   "stunning-strike": "in-combat",
   "imbue-lightning": "in-combat",
+  // The ability pass's two additions (design §22.8), priced net of these rules
+  // like every other ability.
+  cull: "in-combat",
   // Charge fired on a spatial trigger that never required combat (it can open a
   // fight). Its gap gate supplies "a target worth closing on", so Always
   // reproduces it: it charges the next enemy as soon as one is in charge range.
@@ -45,6 +43,9 @@ const REFERENCE_CONDITION: Record<string, RuneConditionId> = {
   brace: "in-combat",
   endure: "in-combat",
   recuperate: "in-combat",
+  // Sidestep's situational gate (nothing in reach, no fire) keeps In Combat from
+  // spending it on an empty field.
+  sidestep: "in-combat",
   cleanse: "has-debuff",
   "bramble-guard": "n-aggro-3",
   "break-free": "controlled",

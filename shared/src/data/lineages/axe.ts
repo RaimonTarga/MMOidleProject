@@ -122,7 +122,7 @@ export const AXE_LINEAGE: LineageDefinition = {
     },
     {
       id: 'axe-t2-kill-chain-payoff', lineageId: 'axe', tier: 2, row: 'payoff', lane: 'kill-chain',
-      name: 'Deeper Frenzy', description: 'A kill puts the next swings on a faster clock than before.',
+      name: 'Deeper Fury', description: 'A kill puts the next swings on a faster clock than before.',
       fx: 'kill-chain.kill-pulse',
     },
     {

@@ -19,7 +19,7 @@ import {
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { applyMonsterDotToPlayer } from './monsterDot';
-import { resistedPlayerDebuffMagnitude } from './debuffGuard';
+import { playerRefusesAffliction, resistedPlayerDebuffMagnitude } from './debuffGuard';
 
 /**
  * Add `stacks` of corrosion, firing the threshold poison for every rung crossed.
@@ -39,6 +39,8 @@ export function applyPlatingShredStacks(
 ): void {
   const platingShred = def?.castsPlatingShred ?? def?.appliesPlatingShred;
   if (!platingShred) return;
+  // Cleanse's Immunity keystone (design §22.4): stripped corrosion does not come back.
+  if (playerRefusesAffliction(target, PLATING_SHRED_EFFECT_ID)) return;
 
   const deepen = monster.scriptsBoss?.shredOverride;
   const maxStacks = platingShred.maxStacks + (deepen?.maxStacksAdd ?? 0);

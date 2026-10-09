@@ -372,8 +372,9 @@ export const rootsAndFramesEntries = [
     cost: 1, statEffects: {"attackPct": 0.1, "maxHpPct": 0.14, "platingPct": 0.05, "attackSpeedPct": -0.04, "moveSpeedPct": -0.05},
     // Frame loop (Phase 3) — ACROSS the clip. The ramp's cap IS the clip length,
     // never below it, so the whole magazine is the climb and the reload is the
-    // reset. This ramp supersedes Warmonger's capped one at runtime (see
-    // `frameLoop.ts`); the path's re-home is a T3-review item.
+    // reset. Warmonger (T3) no longer authors a ramp of its own: it carries half
+    // of this one through a reload (`reload.ramp-carry-pct`, design §22.5; see
+    // `frameLoop.ts`).
     mechanicEffects: {"reload.max-ammo": 20, "reload.reload-time-ms": 3000, "reload.frame-ramp-pct-per-shot": 0.02, "reload.frame-ramp-top-mult": 1.3},
   }],
 

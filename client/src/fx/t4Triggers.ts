@@ -283,43 +283,6 @@ export function fxSunderShatter(scene: GameScene, x: number, y: number): void {
 // ── dot ────────────────────────────────────────────────────────────────────
 
 /**
- * Pyromancer — a hit landing on an already-maxed stack bar converts into bonus
- * DIRECT damage instead of another stack.
- *
- * Element-driven rather than fire-locked: the "the bar is full, this one hits
- * instead" moment is a shape any DoT path could want, so the colour comes from
- * the element. A full ring plus an inward snap says "capped", where an outward
- * burst would have read as another application.
- */
-export function fxMaxStackBurst(
-  scene: GameScene,
-  x: number,
-  y: number,
-  element: DamageElement,
-): void {
-  const color = elementColor(element);
-  flash(scene, x, y, color, 26, 0.7);
-  ring(scene, x, y, color, { start: 14, scale: 3.4, width: 3.5, durationMs: 300 });
-  shards(scene, x, y, {
-    count: 7,
-    color,
-    inward: true,
-    radius: 52,
-    length: 13,
-    width: 2.5,
-    durationMs: 240,
-  });
-  burstFx(scene, 'ptx-spark', x, y, 18, 420, {
-    tint: color,
-    speed: { min: 90, max: 260 },
-    angle: { min: 0, max: 360 },
-    scale: { start: 0.95, end: 0 },
-    alpha: { start: 1, end: 0 },
-    rotate: { min: 0, max: 360 },
-  });
-}
-
-/**
  * Icebreaker — at max frost stacks the conversion flips off: direct attacks land
  * at FULL damage and the target eats a DR debuff.
  *

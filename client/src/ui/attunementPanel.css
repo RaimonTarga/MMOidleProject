@@ -45,6 +45,8 @@
 .is-selected .ability-entry__icon { border-color: var(--hud-primary-strong); }
 .ability-entry__copy { flex: 1; min-width: 0; }
 .ability-entry__name { display: flex; align-items: center; flex-wrap: wrap; gap: 7px 12px; font-size: 13px; font-weight: bold; line-height: 1.4; }
+/* The ability a keystone renamed, under its new name (design §22.7). */
+.ability-entry__lineage { display: block; margin-top: 1px; font-size: 10px; font-style: italic; line-height: 1.3; color: var(--hud-text-muted); }
 .ability-entry__blurb { display: block; margin-top: 3px; font-size: 11px; line-height: 1.5; color: var(--hud-text-muted); }
 .ability-entry__disclosure { flex-shrink: 0; font-size: 10px; color: var(--hud-primary-strong); white-space: nowrap; }
 .ability-entry__disclosure > span { margin-left: 4px; font-size: 14px; }
@@ -113,6 +115,7 @@
   .ability-entry__copy { display: contents; }
   .ability-entry__icon { grid-column: 1; grid-row: 1; }
   .ability-entry__name { grid-column: 2; grid-row: 1; }
+  .ability-entry__lineage { grid-column: 2; margin: 0; }
   .ability-entry__blurb { grid-column: 1 / -1; margin: 0; }
   .ability-entry__disclosure { grid-column: 1 / -1; display: flex; align-items: center; min-height: 36px; }
   .attunement-control { position: absolute; bottom: 5px; right: 12px; margin: 0; }
