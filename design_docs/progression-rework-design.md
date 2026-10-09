@@ -1111,6 +1111,48 @@ getting too complex; the answer this design gives is §4's: one question per row
 screen never wider, and everything above T4 amplifies instead of branching. If the trios
 play as too much, the row shrinks to two before it shrinks to one.
 
+### 22.12 After the run: the designer's calls (decided 2026-10-09)
+
+The run (report `docs/briefs/ability-pass-report-2026-10-09.md`) built the pass and found
+that one Slam number cannot hold the T1 parity rule: a wind-up's cost depends on the
+attacker's cadence, and the Conduit casts through one summon while the rest keep hitting.
+Where these calls contradict an earlier subsection, they win.
+
+- **Parity is solved on two numbers.** Slam rank I authors its `damageMult` AND its
+  wind-up (`castMs`), solved together on the same lab and seeds until every T1 kit cell is
+  within ±5%. Lowering the multiplier trims the Conduit, which casts for free; shortening
+  the wind-up returns what the attackers lose while they stand. Rank I stays a cast (§22.9).
+- **Slam never weakens on tier-up.** Ranks II–IV are 2.45 / 2.7 / 2.95 (the old +0.25 per
+  tier, from rank I's 2.2). Their wind-up stays 1.6 s. This supersedes §22.2's "keeping the
+  T2 rank as rank II"; the half-of-Power-Strike relation of the old Slam is retired with
+  Power Strike.
+- **Sidestep ships Flow first.** Afterimage needs a decoy target kind the game does not
+  have; Flow (every hit dodged during the window extends it, the first that lands ends it)
+  becomes the live first verb, and Afterimage stays a silhouette in the same row.
+- **Fire-shapes keep their rate.** A payoff that lands on the player or on the ability
+  itself (a cooldown refund, a speed or damage window) fires once per resolution, whatever
+  the number of bodies hit; payoffs that land on a body still fire per body. A ward a node
+  fires refreshes the one ward that node owns instead of stacking a new one. Every per-hit
+  and per-tick Guard route carries a rate cap, the packet's own where it has one and an
+  existing lane cap otherwise.
+- **Charge fires on its target.** "The first body the rush touches" is dropped: a body
+  sweep is the primitive Trample was dropped over (§22.11).
+- **Boss mechanics respect the Guard keystones.** A boss pattern's status step, contact
+  slows, ground hazards and the boss room debuff pass the same player refusal gates as
+  every other applier, so Unyielding and Immunity hold against them. No boss number moves.
+- **Keystone readings.** Vanish works on bosses, boss adds and dungeon guardians too.
+  Harvest's chain is capped at the lineage `chainMaxLinks`. Overflow turns any overheal
+  into the ward, not only during Recuperate's mend. Immunity's window is the
+  `engagement-dr` unit's 3 s.
+- **Paths.** Destroyer's delivered execution is ×3.5 (the path's −0.5 is dropped: equal to
+  the frame, and banked charges take it above). Warmonger's top damage and glow measure
+  against one clip again; only the attack-speed climb carries past it. The Duelist's
+  Empowered proxy is ×3.5 again. A Pyromancer hit at max burn does not refresh the burn
+  (Radiant fires while the stacks last).
+- **Names.** The shared ability slow reads "Slowed"; the lineage cards that echoed cut
+  abilities become "Deeper Hobble", "Envenomed Hobble", "Hobbled Plague" (Dagger) and
+  "Deeper Fury" (Axe). The keystone names stay placeholders.
+
 ## 23. Forms are full power at the craft (locked 2026-10-02)
 
 Run 4's boss walls had one cause: retiring the +1..+5 ladder removed every weapon's ladder
