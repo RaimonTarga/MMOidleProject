@@ -1310,6 +1310,69 @@ function overflow(scene: GameScene, ev: CardFxEvent): void {
   });
 }
 
+// ── Brace · RIPOSTE — a melee hit absorbed while Braced staggers the attacker ─
+
+/** Plating chips struck off a body, thrown toward `dir` (radians). */
+function chips(scene: GameScene, at: P, dir: number, color: number, n: number, k: number): void {
+  for (let i = 0; i < n; i++) {
+    const a = dir + (Math.random() - 0.5) * 1.4;
+    const chip = scene.add.graphics({ x: at.x, y: at.y }).setDepth(DEPTH.FX).setRotation(a);
+    chip.fillStyle(i % 2 ? color : 0xb8c0c8, 1);
+    chip.fillRect(-3 * k, -2 * k, 6 * k, 4 * k);
+    chip.lineStyle(1, 0x3a4048, 1);
+    chip.strokeRect(-3 * k, -2 * k, 6 * k, 4 * k);
+    scene.tweens.add({
+      targets: chip, x: at.x + Math.cos(a) * 30 * k, y: at.y + Math.sin(a) * 20 * k + 10, rotation: a + 4, alpha: 0,
+      duration: 380, ease: 'Quad.easeOut', onComplete: () => chip.destroy(),
+    });
+  }
+}
+
+/**
+ * The Endure face's chips, at full size, answered by a stagger flash. One event
+ * per attacker staggered. WIND-UP: the blow is caught — the body sets back behind
+ * its guard and chips of plating fly off the side it struck. PAYOFF: the counter —
+ * a crescent snapped back at the attacker, the STAGGER FLASH on it, and it is
+ * knocked off its feet (the knockdown payload, for the stagger's clock).
+ * LASTING MARK: the dazed halo over the attacker for that clock.
+ */
+function riposte(scene: GameScene, ev: CardFxEvent): void {
+  const id = ev.playerId;
+  const from = spriteAt(scene, id) ?? nodeToScene(ev.pos.x, ev.pos.y);
+  const to = spriteAt(scene, ev.targetId) ?? eventPoint(ev);
+  const color = verbColor(ev);
+  const guard = 0x9cd2ff;
+  const { k, sparks } = sizeOf(scene, ev);
+  const angle = Math.atan2(to.y - from.y, to.x - from.x);
+  const side = Math.sign(to.x - from.x) || 1;
+
+  // The blow caught on the guard.
+  posePath(scene, id, [
+    { sx: 1.08, sy: 0.92, rot: -side * 0.1, ms: 70 },
+    { sx: 0.96, sy: 1.05, rot: side * 0.12, ms: 90 },
+    { sx: 1, sy: 1, rot: 0, ms: 240, ease: 'Back.easeOut' },
+  ]);
+  const face = { x: from.x + Math.cos(angle) * 14, y: from.y - 8 + Math.sin(angle) * 8 };
+  const shield = scene.add.graphics({ x: face.x, y: face.y }).setDepth(DEPTH.FX).setRotation(angle);
+  shield.lineStyle(4 * k, guard, 0.95);
+  shield.beginPath();
+  shield.arc(0, 0, 14 * k, -1.1, 1.1);
+  shield.strokePath();
+  fading(scene, shield, 220, { scaleX: 1.3, scaleY: 1.3 });
+  chips(scene, face, angle + Math.PI * 0.5 * side, guard, count(5, sparks), k);
+
+  // The counter.
+  scene.time.delayedCall(70, () => {
+    if (document.hidden) return;
+    const at = spriteAt(scene, ev.targetId) ?? to;
+    crescent(scene, at, angle + Math.PI / 2 - 0.4, 26 * k, 4.5 * k, 0xffffff, color, 120);
+    staggerFlash(scene, ev.targetId, at, color, k, sparks);
+    drawPayloadFx(scene, ev, 'control.knockdown', KEYSTONE_SIZE);
+    if (ev.targetId) dazedHalo(scene, ev.targetId, ev.durationMs ?? 0, color, k);
+    if (isOwn(scene, ev)) impact(scene, 'medium', at);
+  });
+}
+
 // ── The table ────────────────────────────────────────────────────────────────
 
 /** The bespoke animations, by verb id. Kept in step with `KEYSTONE_ANIMATED`. */
@@ -1328,6 +1391,7 @@ const KEYSTONE_ANIMATIONS: Record<string, KeystoneAnimation> = {
   'shared-breath': sharedBreath,
   immunity: immunity,
   overflow: overflow,
+  riposte: riposte,
 };
 
 /**
