@@ -14,20 +14,27 @@
  */
 import {
   ABILITY_DATABASE,
+  ABILITY_PACKET_OFFERS,
   ABILITY_SIDESTEP_EFFECT_ID,
   ABILITY_SLOW_EFFECT_ID,
   GAME_CONFIG,
   STARTER_RUNE_IDS,
+  abilityNodeFx,
   abilityNodeId,
+  abilityOfferFireShape,
   applyStatusEffect,
   baseRecoveryForTier,
   emptyEquipment,
+  getAbilityNodeRuntime,
+  getCooldown,
   getStatusEffect,
   guardEffectIdForAbility,
   lineageUnit,
   packetMoment,
+  payoffLandsOnTarget,
   recoveryEffectIdForAbility,
   resolveAbilityEffect,
+  setCooldown,
   type AbilityNodeProgress,
   type AmplifiedAxis,
   type CombatArchetype,
@@ -41,7 +48,13 @@ import { World } from '../src/world/World';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { emitCombatEvent, makeCombatContext, type CombatContext } from '../src/systems/combat/engine/combatPipeline';
 import { setAttackTarget } from '../src/systems/combat/ai/targeting';
-import { refreshAbilityNodeRuntime, updateAbilityNodePulses } from '../src/systems/combat/abilityNodes';
+import {
+  abilityNodeOwner, onAbilityNodeBodiesHit, refreshAbilityNodeRuntime, updateAbilityNodePulses,
+} from '../src/systems/combat/abilityNodes';
+import { abilityCooldownKey, techniqueCooldownMs } from '../src/systems/player/abilities/abilityCooldowns';
+import { applyWardPercent, ownedWardOf } from '../src/systems/defense/barrier/wards';
+import { capCd } from '../src/systems/combat/lineageKeys';
+import { BRAMBLE_EFFECT_ID } from '../src/systems/player/abilities/abilityBramble';
 import { armTechnique } from '../src/systems/player/abilities/abilityArming';
 import { beginAbilityCast, updateAbilityCasts } from '../src/systems/player/abilities/abilityCasting';
 import { addLineageAffliction } from '../src/systems/combat/damage/lineageAffliction';
@@ -233,6 +246,69 @@ function idsOf(...monsters: MonsterEntity[]): string {
   assert(!fired.some((e) => e.targetId === outside.isMonster.id), 'never on a body outside the circle');
 }
 
+// ─── Slam: a self payoff fires once per resolution, a body payoff per body ───
+
+{
+  // Design §22.12: "a payoff that lands on the player or on the ability itself
+  // fires once per resolution, whatever the number of bodies hit". The Technique
+  // refund lands on Slam's own cooldown; the Control slow lands on each body.
+  const world = new World();
+  const slam = ABILITY_DATABASE.get('slam')!;
+  const effect = resolveAbilityEffect(slam, { playerTier: 4 });
+  if (effect.kind !== 'cast-strike' || !effect.radius) throw new Error('Slam is an area cast strike');
+  const player = spawnPlayer(world, 'fs-slam-self', {
+    abilityId: 'slam', nodes: rows('slam', { packet: 'technique', cross: 'control' }),
+  });
+  const share = getAbilityNodeRuntime(player.tracksCombat)?.['slam']?.payoff.magnitude ?? 0;
+  assert(share > 0 && share < 1, `fixture: the refund is a share of the cooldown, got ${share}`);
+  const target = spawnMonster(world, 440);
+  const bodies = [
+    target,
+    spawnMonster(world, 440 + effect.radius * 0.3),
+    spawnMonster(world, 440 + effect.radius * 0.6),
+    spawnMonster(world, 440, 400 + effect.radius * 0.5),
+  ];
+  setAttackTarget(world, player, target.isMonster.id);
+  world.takeNodeEvents(NODE);
+
+  assert(beginAbilityCast(world, player, slam, 1_000), 'the Slam cast begins');
+  updateAbilityCasts(world, player.isCastingAbility!.endsAt);
+  const fired = cardFx(world);
+  const refunds = fired.filter((e) => e.fx === 'technique.cast-flare');
+  const slows = fired.filter((e) => e.fx === 'control.frost-drag');
+  assert(refunds.length === 1, `a Slam over 4 bodies refunds once, got ${refunds.length}`);
+  assert(slows.length === 4 && targetsOf(slows) === idsOf(...bodies), `and its body payoff fires on all 4, got ${slows.length}`);
+  // The cooldown took ONE share off, not four compounded.
+  const full = techniqueCooldownMs(player, slam);
+  const left = getCooldown(player.tracksCombat, abilityCooldownKey('slam'));
+  assert(Math.abs(left - full * (1 - share)) <= 1, `one refund of ${share} off ${full} ms leaves ${full * (1 - share)}, got ${left}`);
+}
+
+// ─── Every every-body-hit route: self once, body per body (the classification) ─
+
+{
+  // The resolver's own split (`payoffLandsOnTarget`), for every route an area
+  // Technique offers that fires on every body hit — four bodies, one resolution.
+  for (const abilityId of ['sweep', 'slam', 'contagion']) {
+    const ability = ABILITY_DATABASE.get(abilityId)!;
+    for (const [lane, payoff] of ABILITY_PACKET_OFFERS.get(abilityId)!) {
+      if (abilityOfferFireShape(abilityId, lane) !== 'on every body hit') continue;
+      const world = new World();
+      const player = spawnPlayer(world, `fs-split-${abilityId}-${lane}`, { abilityId, nodes: rows(abilityId, { packet: lane }) });
+      const bodies = [0, 1, 2, 3].map((i) => spawnMonster(world, 1_000 + i * 20));
+      // Something on each body for a DoT payoff to carry, and a running cooldown to refund.
+      for (const body of bodies) addLineageAffliction(world, player, body, 600, 4_000);
+      setCooldown(player.tracksCombat, abilityCooldownKey(abilityId), 10_000);
+      world.takeNodeEvents(NODE);
+      onAbilityNodeBodiesHit(world, player, ability, bodies);
+      const fx = abilityNodeFx(lane, payoff);
+      const fired = cardFx(world).filter((e) => e.fx === fx).length;
+      const want = payoffLandsOnTarget(payoff) ? bodies.length : 1;
+      assert(fired === want, `${abilityId} ${lane}/${payoff} over 4 bodies: ${want} firing(s), got ${fired}`);
+    }
+  }
+}
+
 // ─── Contagion: on every body the spread reaches ─────────────────────────────
 
 {
@@ -407,6 +483,16 @@ function idsOf(...monsters: MonsterEntity[]): string {
 
 // ═══ Guards: per hit absorbed, per hit dodged ═══════════════════════════════
 
+/**
+ * The cap a Guard route fires under (design §22.12), read straight off the packet
+ * table: the lane's own moment cap, else Control's — the existing lane cap the
+ * uncapped Guard lanes borrow.
+ */
+function guardRouteCap(lane: PacketId): number {
+  const own = packetMoment(lane)?.capMs ?? 0;
+  return own > 0 ? own : packetMoment('control')?.capMs ?? 0;
+}
+
 /** One incoming monster hit on `player`, through the `onDamageTaken` phase. */
 function incoming(
   world: World,
@@ -448,7 +534,9 @@ function castGuard(world: World, player: PlayerEntity, abilityId: string): void 
   const fired = cardFx(world);
   const wards = fired.filter((e) => e.fx === 'barrier-tempo.ward-shell');
   const braced = fired.filter((e) => e.fx === 'control.chill-blur');
-  assert(wards.length === 2, `2 hits absorbed while Braced give 2 firings of an uncapped lane, got ${wards.length}`);
+  // Design §22.12: every per-hit Guard route is capped — Barrier tempo has no cap
+  // of its own, so it borrows Control's.
+  assert(wards.length === 1, `2 hits absorbed inside one cap give 1 firing of the ward route, got ${wards.length}`);
   assert(braced.length === 1, `and the Control cross pays once per its ${controlCap} ms cap, got ${braced.length}`);
 
   // A dodge outright is no hit absorbed.
@@ -464,6 +552,51 @@ function castGuard(world: World, player: PlayerEntity, abilityId: string): void 
   updateCombatState(world, brace.durationMs + controlCap);
   incoming(world, attacker, player);
   assert(cardFx(world).length === 0, 'a hit after the window fires nothing');
+}
+
+// ─── Brace's ward: a node's ward refreshes the one ward it owns ──────────────
+
+{
+  // Design §22.12: "a ward a node fires refreshes the one ward that node owns
+  // instead of stacking a new one". Three firings, one ward — topped up to the
+  // payoff's size, its window renewed. Wards from other sources still stack.
+  const world = new World();
+  const player = spawnPlayer(world, 'fs-brace-ward', {
+    abilityId: 'brace', nodes: rows('brace', { packet: 'barrier-tempo' }),
+  });
+  const attacker = spawnMonster(world, 440);
+  world.takeNodeEvents(NODE);
+  const payoff = getAbilityNodeRuntime(player.tracksCombat)?.['brace']?.payoff;
+  if (!payoff || payoff.kind !== 'ward' || !payoff.durationMs) throw new Error("fixture: Brace's ward route");
+  const size = Math.round(player.hasHealth.maxHp * payoff.magnitude);
+  const capKey = capCd(abilityNodeId('brace', 'packet', 'barrier-tempo'));
+
+  castGuard(world, player, 'brace');
+  let fired = 0;
+  for (let i = 0; i < 3; i++) {
+    // This block pins the ward, not the rate cap: open the route's cap each hit.
+    setCooldown(player.tracksCombat, capKey, 0);
+    updateCombatState(world, 100);
+    incoming(world, attacker, player, {}, Math.round(size / 3));
+    fired += cardFx(world).filter((e) => e.fx === 'barrier-tempo.ward-shell').length;
+  }
+  assert(fired === 3, `fixture: Brace's ward route fired on 3 absorbed hits, got ${fired}`);
+  const wards = player.holdsWards?.wards ?? [];
+  const owned = ownedWardOf(player, abilityNodeOwner('brace'));
+  assert(wards.length === 1 && owned === wards[0], `3 firings leave ONE node ward, got ${wards.length}`);
+  assert(owned!.amount === size, `topped up to the payoff's size ${size} after the hit drained it, got ${owned!.amount}`);
+  assert(owned!.remainingMs === payoff.durationMs, `its window renewed to ${payoff.durationMs} ms, got ${owned!.remainingMs}`);
+
+  // Other ward sources are untouched: they stack beside it, and a node refresh
+  // leaves them alone.
+  applyWardPercent(world, player, payoff.magnitude, payoff.durationMs);
+  applyWardPercent(world, player, payoff.magnitude, payoff.durationMs);
+  assert(player.holdsWards!.wards.length === 3, 'two unowned wards stack beside the node ward');
+  setCooldown(player.tracksCombat, capKey, 0);
+  world.takeNodeEvents(NODE);
+  incoming(world, attacker, player, { evaded: true, evadeMitigation: 0.5 }, 1);
+  assert(cardFx(world).filter((e) => e.fx === 'barrier-tempo.ward-shell').length === 1, 'fixture: a graze is absorbed, the node fires');
+  assert(player.holdsWards!.wards.length === 3, 'a node refresh adds no ward and removes none');
 }
 
 // ─── Bramble Guard: per thorn hit — each hit taken while brambled ────────────
@@ -484,6 +617,45 @@ function castGuard(world: World, player: PlayerEntity, abilityId: string): void 
   incoming(world, attacker, player);
   const fired = cardFx(world).filter((e) => e.fx === 'bulwark.plating-chip');
   assert(fired.length === 1, `a thorn hit gives one firing, got ${fired.length}`);
+}
+
+// ─── Bramble Guard's three routes: at most once per cap window each ─────────
+
+{
+  // Design §22.12: "every per-hit and per-tick Guard route carries a rate cap,
+  // the packet's own where it has one and an existing lane cap otherwise". The
+  // thorns held up for 30 s, a hit every 1.5 s; each route on its own.
+  const SPAN = 30_000;
+  const EVERY = 1_500;
+  const TICK = 100;
+  for (const [lane, payoff] of ABILITY_PACKET_OFFERS.get('bramble-guard')!) {
+    const world = new World();
+    const player = spawnPlayer(world, `fs-bramble-cap-${lane}`, {
+      abilityId: 'bramble-guard', nodes: rows('bramble-guard', { packet: lane }),
+    });
+    const attacker = spawnMonster(world, 440);
+    world.takeNodeEvents(NODE);
+    const fx = abilityNodeFx(lane, payoff);
+    const cap = guardRouteCap(lane);
+    assert(cap > EVERY, `fixture: ${lane}'s cap outlasts the hit interval`);
+
+    castGuard(world, player, 'bramble-guard');
+    const at: number[] = [];
+    for (let t = 0; t < SPAN; t += TICK) {
+      const thorns = getStatusEffect(player.tracksCombat, BRAMBLE_EFFECT_ID);
+      if (!thorns) throw new Error('fixture: the thorns are up');
+      thorns.remainingMs = SPAN; // held up the whole span
+      if (t % EVERY === 0) incoming(world, attacker, player);
+      for (const e of cardFx(world)) if (e.fx === fx) at.push(t);
+      updateCombatState(world, TICK);
+    }
+    const hits = SPAN / EVERY;
+    assert(at.length >= 2 && at.length <= Math.ceil(SPAN / cap),
+      `bramble ${lane}/${payoff}: ${hits} hits fire at most once per ${cap} ms (≤ ${Math.ceil(SPAN / cap)}), got ${at.length}`);
+    for (let i = 1; i < at.length; i++) {
+      assert(at[i]! - at[i - 1]! >= cap, `bramble ${lane}/${payoff}: firings ${at[i - 1]} and ${at[i]} inside one ${cap} ms cap`);
+    }
+  }
 }
 
 // ─── Sidestep: per hit dodged during the window ──────────────────────────────
@@ -552,13 +724,17 @@ function pulseFor(world: World, ms: number, fx: string): number {
   const hold = getStatusEffect(player.tracksCombat, guardEffectIdForAbility('endure')!);
   if (!hold || hold.remainingMs <= 0) throw new Error('the hold is up');
   const heldMs = hold.remainingMs;
-  // The first pulse on the tick the hold comes up, then one per pulse while it holds.
+  // The first pulse on the tick the hold comes up, then one per pulse while it
+  // holds — under the route's cap (design §22.12): Bulwark has none of its own,
+  // so Control's, and a cap longer than the pulse sets the cadence.
+  const cadence = Math.max(PULSE, guardRouteCap('bulwark'));
+  assert(cadence > PULSE, 'fixture: the borrowed cap is longer than the pulse');
   updateAbilityNodePulses(world);
   let fired = cardFx(world).filter((e) => e.fx === 'bulwark.plating-chip').length;
   fired += pulseFor(world, heldMs, 'bulwark.plating-chip');
-  const expected = Math.ceil(heldMs / PULSE);
+  const expected = Math.ceil(heldMs / cadence);
   assert(expected >= 2, 'the fixture holds long enough for more than one pulse');
-  assert(fired === expected, `a ${heldMs} ms hold pulses ${expected} times at ${PULSE} ms, got ${fired}`);
+  assert(fired === expected, `a ${heldMs} ms hold pulses ${expected} times at ${cadence} ms, got ${fired}`);
   assert(pulseFor(world, PULSE * 3, 'bulwark.plating-chip') === 0, 'the pulses stop when the hold drops');
 }
 
@@ -578,14 +754,18 @@ function pulseFor(world: World, ms: number, fx: string): number {
   updateAbilityNodePulses(world);
   let fired = cardFx(world).filter((e) => e.fx === 'tempo.evasive-blur').length;
   fired += pulseFor(world, mendMs + lineageUnit('pulseMs'), 'tempo.evasive-blur');
-  assert(fired === Math.ceil(mendMs / lineageUnit('pulseMs')), `the mend pulses while it runs, got ${fired}`);
+  const cadence = Math.max(lineageUnit('pulseMs'), guardRouteCap('tempo'));
+  assert(fired === Math.ceil(mendMs / cadence), `the mend pulses every ${cadence} ms while it runs, got ${fired}`);
 }
 
 // ═══ on strip ═══════════════════════════════════════════════════════════════
 
-// ─── Cleanse: on strip, sized by what it removed — one firing per kind ───────
+// ─── Cleanse: on strip — a self payoff once per strip, whatever it removed ───
 
 {
+  // Every Cleanse offer lands on the player (a ward, a window, a plating stack),
+  // so design §22.12's "once per resolution" holds: one strip, one firing. A strip
+  // that removed nothing fires nothing.
   const cleanse = resolveAbilityEffect(ABILITY_DATABASE.get('cleanse')!, { playerTier: 4 });
   if (cleanse.kind !== 'cleanse') throw new Error('Cleanse cleanses');
   assert(cleanse.debuffs >= 2, 'the fixture strips two kinds');
@@ -606,8 +786,8 @@ function pulseFor(world: World, ms: number, fx: string): number {
     world.takeNodeEvents(NODE);
     castGuard(world, player, 'cleanse');
     const fired = cardFx(world).filter((e) => e.fx === 'barrier-tempo.ward-shell');
-    assert(fired.length === ids.length, `a Cleanse that strips ${label} gives ${ids.length} firings, got ${fired.length}`);
-    assert((player.holdsWards?.wards.length ?? 0) === ids.length, 'one ward per kind stripped');
+    assert(fired.length === 1, `a Cleanse that strips ${label} fires its self payoff once, got ${fired.length}`);
+    assert((player.holdsWards?.wards.length ?? 0) === 1, 'one ward per strip, not one per kind');
     for (const id of ids) {
       assert(getStatusEffect(player.tracksCombat, id) === undefined, `${id} was stripped`);
     }

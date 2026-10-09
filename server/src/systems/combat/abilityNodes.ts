@@ -23,7 +23,8 @@
  *                           arrival (its rush has no contact seam)
  *   on every body hit       once per body the ability's own area struck, from the
  *                           seam that resolved the area (`onAbilityNodeBodiesHit`:
- *                           Sweep's cleave, Slam's circle, Contagion's spread)
+ *                           Sweep's cleave, Slam's circle, Contagion's spread) —
+ *                           a body payoff only; a self payoff fires once (below)
  *   on each hit of a window once per charge a window spends, on that hit's target
  *                           (`onAbilityNodeWindowHit`, from Imbue's consumer)
  *   on the kill             a Kill chain route on a Technique, on the kill its hit
@@ -42,22 +43,44 @@
  *                           `pulse` cadence (`LINEAGE_UNITS.pulseMs`), counted
  *                           by a cooldown as a pulse card's is
  *                           (`updateAbilityNodePulses`, from `World.tick`)
- *   on strip                once per affliction kind a Cleanse removed
- *                           (`onAbilityNodeStripped`, from the Guard firing that
- *                           stripped them)
+ *   on strip                once per strip that removed anything (a body payoff
+ *                           once per affliction kind removed; no Guard offers
+ *                           one) — `onAbilityNodeStripped`, from the Guard
+ *                           firing that stripped them
+ *
+ * The four Guard shapes above that answer the fight (per hit absorbed, per hit
+ * dodged, per tick while active, on strip) fire under a rate cap (below).
  *
  * A Guard's payoff is a defensive face's and never deals damage; the shape only
  * moves the moment it is granted.
  *
- * THE RATE CAP. A shape that fires more than once per cast — per hit of a
- * window, per hit absorbed, per hit dodged, per tick while active — must not
- * escape the lane's existing rate cap (design §24.2: synergy buys reliability,
- * never rate). So each of its firings carries its packet moment's `capMs`
- * (`packetMoment(lane)`: Affliction and Control one per 5 s, Empowered one per
- * 4 s, the rest uncapped), and `fire()` applies it exactly as it does for a card:
- * one landed firing per cap per option. A shape that fires once per cast — on
- * land, on every body hit (one moment that lands on several bodies, like a
- * `targets` amplifier), on cast, on strip, on the break — carries none, as before.
+ * SELF PAYOFFS FIRE ONCE PER RESOLUTION (design §22.12, "fire-shapes keep their
+ * rate"). A payoff that lands on the player or on the ability itself — a cooldown
+ * refund, a speed, damage or Technique window, a ward, a plating stack — fires
+ * once per resolution however many bodies it hit; a payoff that lands on a body
+ * (a bleed, a slow, a brand, a plating shred, poison) still fires on each. The
+ * classification is the resolver's own: `applyPayoff` sends a payoff to the body
+ * exactly when `payoffLandsOnTarget(kind)` (shared `ON_TARGET_PAYOFF_KINDS`),
+ * and everything else resolves on the player (see {@link landsOnBody}).
+ *
+ * THE RATE CAP. A shape that fires more than once per cast must not escape a lane
+ * cap (design §24.2: synergy buys reliability, never rate). Each of its firings
+ * carries a `capMs`, and `fire()` applies it exactly as it does for a card: one
+ * landed firing per cap per option — per (player, ability, route).
+ *
+ *  - Every Guard route on per hit absorbed, per hit dodged, per tick while
+ *    active or on strip is capped (design §22.12): its packet moment's own
+ *    `capMs` where it has one (`packetMoment(lane)`: Affliction and Control one
+ *    per 5 s, Empowered one per 4 s), else Control's existing 5 s
+ *    ({@link GUARD_FALLBACK_CAP_LANE}). Brace's ward fires at most once per 5 s
+ *    however many hits it absorbs; a per-tick pulse the cap would refuse waits
+ *    for the cap rather than being spent, so Endure and Recuperate pulse every
+ *    5 s, not every 4.
+ *  - A Technique's window (on each hit of a window: Imbue) carries its packet's
+ *    own `capMs` only.
+ *  - A shape that fires once per cast — on land, on every body hit (one moment
+ *    that lands on several bodies, like a `targets` amplifier), on cast, on the
+ *    break — carries none.
  *
  * "Lands" is deliberately not "activates": an armed Technique activates when it
  * arms, which can be a swing before it touches anything, and a node that paid out
@@ -87,6 +110,7 @@ import {
   isCooldownActive,
   lineageUnit,
   packetMoment,
+  payoffLandsOnTarget,
   recoveryEffectIdForAbility,
   resolveActiveAbilityKeystones,
   resolveActiveAbilityNodes,
@@ -108,6 +132,7 @@ import type { MonsterEntity, PlayerEntity } from '../../ecs/entity';
 import type { World } from '../../world/World';
 import { registerCombatListener, type CombatContext } from './engine/combatPipeline';
 import { fireLineagePayoffs, type ExternalLineagePayoff } from './lineageCards';
+import { capCd } from './lineageKeys';
 import { evadeFullyAvoided, evadeMitigationOf } from '../defense/mitigation/evasion';
 import { BRAMBLE_EFFECT_ID } from '../player/abilities/abilityBramble';
 
@@ -156,19 +181,44 @@ interface NodePayoff {
 }
 
 /**
- * The fire-shapes that fire more than once per cast, so each firing carries the
- * lane's rate cap (see the module header).
+ * The Guard fire-shapes that answer the fight rather than the cast — per hit
+ * absorbed, per hit dodged, per tick while active, on strip — every route of
+ * which carries a rate cap (design §22.12; see the module header).
  */
-const CAPPED_SHAPES: ReadonlySet<AbilityFireShape> = new Set<AbilityFireShape>([
-  'on each hit of a window',
+const GUARD_RATE_SHAPES: ReadonlySet<AbilityFireShape> = new Set<AbilityFireShape>([
   'per hit absorbed',
   'per hit dodged',
   'per tick while active',
+  'on strip',
 ]);
 
 /**
+ * The lane whose EXISTING moment cap a Guard route borrows when its own packet has
+ * none (design §22.12: "an existing lane cap otherwise"): Control's one per 5 s
+ * (`PACKET_HALF_NUMBERS.control.moment.capMs`), the one capped lane a Guard
+ * offers (Brace's Control route already rides it per hit absorbed), so every route
+ * of a Guard fires at the same rate and differs only in what it does. Read from
+ * the table, never copied: move Control's cap and the Guard routes follow.
+ */
+const GUARD_FALLBACK_CAP_LANE: PacketId = 'control';
+
+/**
+ * The rate cap one route fires under, in ms (0 = uncapped):
+ *  - a Guard rate shape: its packet's own `capMs`, else the fallback lane's;
+ *  - a Technique's window (`on each hit of a window`): its packet's own `capMs`;
+ *  - every other shape fires once per cast and carries none.
+ */
+export function abilityNodeRouteCapMs(lane: PacketId, shape: AbilityFireShape): number {
+  const own = packetMoment(lane)?.capMs ?? 0;
+  if (GUARD_RATE_SHAPES.has(shape)) {
+    return own > 0 ? own : packetMoment(GUARD_FALLBACK_CAP_LANE)?.capMs ?? 0;
+  }
+  return shape === 'on each hit of a window' ? own : 0;
+}
+
+/**
  * One node payoff as the dispatcher wants it, or null when it has no declared fx.
- * A payoff on a capped shape carries its packet moment's `capMs`.
+ * A payoff on a capped route carries its cap ({@link abilityNodeRouteCapMs}).
  */
 function external(
   option: AbilityNodeOption,
@@ -178,17 +228,29 @@ function external(
 ): ExternalLineagePayoff | null {
   const fx = abilityNodeFx(option.lane, payoff.kind);
   if (!fx) return null;
-  const capMs = CAPPED_SHAPES.has(shape) ? packetMoment(option.lane)?.capMs ?? 0 : 0;
+  const capMs = abilityNodeRouteCapMs(option.lane, shape);
   // The payoff is cloned because the dispatcher mutates what it is handed (a
   // bleed rewrites `damagePerTick`, plating-stack stamps `perStackFraction`),
   // and the cache must survive the fight unchanged. The amplifier's axis rides
   // every firing's card-fx — per body, per hit, per pulse alike — so the client
-  // scales or extends the lane's fx by it (design §22.7).
+  // scales or extends the lane's fx by it (design §22.7). The owner is the
+  // ability's node, packet and cross alike: a ward it fires refreshes the one
+  // ward that node owns instead of stacking a new one (design §22.12).
   return {
     key: option.id, fx, payoff: { ...payoff },
+    owner: abilityNodeOwner(option.abilityId),
     ...(capMs > 0 ? { capMs } : {}),
     ...(axis ? { axis } : {}),
   };
+}
+
+/**
+ * The owner key of everything an ability's node leaves standing on the player —
+ * today its ward (`applyWard`'s `owner`). Per ABILITY, not per option: the packet
+ * and the cross row are one node, and an ability offers one ward route at most.
+ */
+export function abilityNodeOwner(abilityId: string): string {
+  return `abilityNode.${abilityId}`;
 }
 
 /**
@@ -220,6 +282,23 @@ function payoffsFor(player: PlayerEntity, abilityId: string): NodePayoff[] {
 /** The payoffs of `entries` that fire on `shape`. */
 function withShape(entries: readonly NodePayoff[], shape: AbilityFireShape): ExternalLineagePayoff[] {
   return entries.filter((entry) => entry.shape === shape).map((entry) => entry.payoff);
+}
+
+/**
+ * Whether a node payoff lands on a BODY rather than on the player or the ability
+ * itself (design §22.12). Not a list of its own: it is the very test the payoff
+ * resolver dispatches on — `applyPayoff` hands a payoff to `applyOnTarget` exactly
+ * when `payoffLandsOnTarget(kind)` — so a payoff kind can never be fired per body
+ * here and resolved on the player there. A self payoff fires once per resolution;
+ * a body payoff once per body.
+ */
+function landsOnBody(entry: ExternalLineagePayoff): boolean {
+  return payoffLandsOnTarget(entry.payoff.kind);
+}
+
+/** A fresh clone of each payoff: the dispatcher mutates what it is handed. */
+function cloned(payoffs: readonly ExternalLineagePayoff[]): ExternalLineagePayoff[] {
+  return payoffs.map((entry) => ({ ...entry, payoff: { ...entry.payoff } }));
 }
 
 /**
@@ -293,6 +372,11 @@ export function onAbilityNodeTechniqueLanded(
  * (design §22.10). One firing per body per resolution: a body listed twice
  * fires once. Every other route is the resolution's, so this fires nothing else.
  *
+ * Only a BODY payoff fires per body. A self payoff (a cooldown refund, a window:
+ * {@link landsOnBody}) fires ONCE for the whole area (design §22.12), on the
+ * exchange's own body when the exchange is among the bodies, else on the first
+ * — a Slam over four bodies refunds its cooldown once, never four times over.
+ *
  * Called from the seam that resolved the area, after the Technique's own
  * resolution (`onTechniqueResolved`), so a cooldown refund has a running
  * cooldown to take its share off. `exchange` is the hit that carried the area,
@@ -314,18 +398,22 @@ export function onAbilityNodeBodiesHit(
   if (ability.slot !== 'technique' || bodies.length === 0) return;
   const payoffs = withShape(payoffsFor(player, ability.id), 'on every body hit');
   if (payoffs.length === 0) return;
+  const perBody = payoffs.filter(landsOnBody);
   const seen = new Set<string>();
-  for (const body of bodies) {
-    if (seen.has(body.isMonster.id)) continue;
+  const unique = bodies.filter((body) => {
+    if (seen.has(body.isMonster.id)) return false;
     seen.add(body.isMonster.id);
-    const own = exchange?.defenderType === 'monster' && exchange.defender === body;
-    // Each body is its own application: a fresh clone per body, since the
-    // dispatcher mutates the payoff it is handed.
-    fireLineagePayoffs(
-      world, player,
-      payoffs.map((payoff) => ({ ...payoff, payoff: { ...payoff.payoff } })),
-      own ? { ctx: exchange, target: body } : { target: body },
-    );
+    return true;
+  });
+  const isOwn = (body: MonsterEntity): boolean =>
+    exchange?.defenderType === 'monster' && exchange.defender === body;
+  // The one body the self payoffs ride: the exchange's own, else the first.
+  const selfBody = unique.find(isOwn) ?? unique[0];
+  for (const body of unique) {
+    const now = body === selfBody ? payoffs : perBody;
+    if (now.length === 0) continue;
+    // Each body is its own application: a fresh clone per body.
+    fireLineagePayoffs(world, player, cloned(now), isOwn(body) ? { ctx: exchange, target: body } : { target: body });
   }
 }
 
@@ -404,12 +492,13 @@ export function onAbilityNodeGuardCast(
 
 /**
  * A Guard just STRIPPED afflictions off the player — Cleanse (design §22.10: "on
- * strip, sized by what it removed"). Its "on strip" routes fire once per
- * affliction KIND removed: the size is a count of firings, never a new number.
- * Each firing is its own application (a ward per kind; a window refreshed per
- * kind). A strip that removed nothing fires nothing — Cleanse only casts with
- * something harmful on the player, but a partial-only effect can leave the strip
- * empty.
+ * strip, sized by what it removed"). The size is a count of firings, never a new
+ * number: a BODY payoff fires once per affliction KIND removed. A self payoff —
+ * every Guard offer is one (a ward, a window, a plating stack) — fires once per
+ * strip (design §22.12: once per resolution), so a Cleanse that removed three
+ * kinds raises one ward, not three. A strip that removed nothing fires nothing —
+ * Cleanse only casts with something harmful on the player, but a partial-only
+ * effect can leave the strip empty.
  *
  * Called from the Guard firing that did the strip (`maybeFireGuard`), right after
  * `onGuardFired`.
@@ -425,9 +514,11 @@ export function onAbilityNodeStripped(
   if (kinds === 0) return;
   const payoffs = withShape(payoffsFor(player, ability.id), 'on strip');
   if (payoffs.length === 0) return;
+  const perKind = payoffs.filter(landsOnBody);
   for (let i = 0; i < kinds; i++) {
-    // A fresh clone per firing: the dispatcher mutates what it is handed.
-    fireLineagePayoffs(world, player, payoffs.map((entry) => ({ ...entry, payoff: { ...entry.payoff } })));
+    const now = i === 0 ? payoffs : perKind;
+    if (now.length === 0) break;
+    fireLineagePayoffs(world, player, cloned(now));
   }
 }
 
@@ -456,7 +547,7 @@ function guardWindowUp(player: PlayerEntity, ability: AbilityDef): boolean {
 
 /**
  * Fire every Guard route on `shape` whose Guard's window is up — one firing per
- * Guard per call, each payoff under its lane's cap. `target` is whatever the
+ * Guard per call, each payoff under its route's cap. `target` is whatever the
  * moment answers (the attacker), for a payoff that wanted one; a Guard's never do.
  */
 function fireGuardShape(
@@ -524,7 +615,8 @@ const pulseCd = (abilityId: string): string => `abilityNode.pulse.${abilityId}`;
  * node fires once per pulse — the first on the tick the window comes up, then
  * every `pulseMs` until it drops. No new clock: the lineage pulse's cadence,
  * counted by a cooldown exactly as `updateLineageCards` counts a pulse card's,
- * and each firing under its lane's cap.
+ * and each firing under its route's cap (design §22.12) — a cap longer than the
+ * pulse sets the cadence.
  *
  * Run once per world tick from `World.tick`, beside `updateLineageCards`.
  */
@@ -542,6 +634,10 @@ export function updateAbilityNodePulses(world: World): void {
       if (isCooldownActive(cs, pulseCd(abilityId))) continue;
       const payoffs = withShape(payoffsFor(player, abilityId), 'per tick while active');
       if (payoffs.length === 0) continue;
+      // A pulse every route's cap would refuse WAITS for the cap rather than being
+      // spent, so the cadence is the slower of the pulse and the cap — never a
+      // pulse lost to a cap that opens a tick later (design §22.12).
+      if (payoffs.every((entry) => (entry.capMs ?? 0) > 0 && isCooldownActive(cs, capCd(entry.key)))) continue;
       setCooldown(cs, pulseCd(abilityId), PULSE_MS);
       fireLineagePayoffs(world, player, payoffs);
     }

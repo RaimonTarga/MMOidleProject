@@ -533,8 +533,10 @@ are design §22.4 / §22.11).
   node path inherits the evade early-return, max-wins debuff records and the
   amplified-target spread. A node fires on the ability's **resolution**, not its
   activation; WHERE it fires is the ability's §22.10 fire-shape (live — see the
-  fire-shape table in `abilities-current-state.md`), and the per-hit and per-tick shapes
-  pay under their packet's `capMs`. A Technique's Kill chain offer fires on the kill.
+  fire-shape table in `abilities-current-state.md`), under §22.12's rate guards: a self
+  payoff fires once per resolution, a node's ward refreshes the one ward it owns, and
+  every per-hit, per-tick and on-strip Guard route pays under its packet's `capMs`, else
+  Control's 5 s. A Technique's Kill chain offer fires on the kill.
 - **Keystone verbs:** 18 of the 19 first verbs are live (11 Techniques, 7 Guards), one
   server module each under `server/src/systems/combat/keystones/ability/`. The second
   and third verbs of every trio and Sidestep's Afterimage (a decoy target needs a new
