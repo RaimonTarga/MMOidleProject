@@ -218,18 +218,18 @@ export const t3CombatEntriesA = [
     id: 'cooldown-heavy-t3-b', name: 'Destroyer', tier: 3,
     classId: 'cooldown-root', subVariantId: 'heavy',
     parent: 'cooldown-heavy', children: [],
-    description: 'Your execution is delivered by your Techniques. When it is ready it waits, primed, and the next Technique you land fires it with that Technique\'s shape: an armed Technique lands it on the armed hit; a cast lands it on the cast\'s target — across Slam\'s whole area, from Snipe\'s range. It hits harder (3× instead of the tier\'s 2.5×). Your regular attacks deal their normal damage and never spend it, and a Guard never fires it.',
+    description: 'Your execution is delivered by your Techniques. When it is ready it waits, primed, and the next Technique you land fires it with that Technique\'s shape: an armed Technique lands it on the armed hit; a cast lands it on the cast\'s target — across Slam\'s whole area, from Snipe\'s range. It lands at the frame\'s own ×3.5 (the other heavy paths drop to 2.5×), and the bank your regular hits fill while it waits grows it from there. Your regular attacks deal their normal damage and never spend it, and a Guard never fires it.',
     // Design §22.5 (2026-10-02): the old path (normals deal no damage, a 5 s
     // execution, the first strike on a new target is an execution) duplicated the
     // Engagement keystone Always First; it is now the Technique lane's path.
     // Distinct from the Signature keystone: Signature makes a landed Technique COUNT
     // as the mechanic; here the mechanic RIDES the Technique.
-    // The recharge is the heavy frame's own again (the 5 s override is gone); the
-    // −0.5 multiplier delta is kept as authored (3.5 − 0.5 = 3.0×, above the other
-    // heavy paths' 2.5×) — no number moved in the re-home.
+    // The recharge is the heavy frame's own again (the 5 s override is gone), and so
+    // is the multiplier (design §22.12): the path's −0.5 delta is dropped, so the
+    // delivered execution is the Bulwark frame's ×3.5 and the bank takes it above.
     packet: 'technique',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'cooldown.technique-execution': 1, 'cooldown.empowered-mult': -0.5 },
+    mechanicEffects: { 'cooldown.technique-execution': 1 },
   }],
   ['cooldown-heavy-t3-c', {
     id: 'cooldown-heavy-t3-c', name: 'Devout Priest', tier: 3,

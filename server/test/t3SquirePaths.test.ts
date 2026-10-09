@@ -441,6 +441,7 @@ const deliveries = (): SeenHit[] => hits.filter((h) => h.metadata['destroyerDeli
   assert(!('cooldown.singular-extraction' in effects), 'the no-damage rule is gone');
   assert(!('cooldown.empowered-cd-ms' in effects), 'the 5 s recharge override is gone');
   assert(!('cooldown.singular-no-target-ms' in effects), 'the out-of-combat priming (Always First) is gone');
+  assert(!('cooldown.empowered-mult' in effects), "the path's −0.5 is dropped: the execution is the frame's own (design §22.12)");
 }
 
 // ── Destroyer: regular hits deal normal damage and never spend it ────────────
@@ -488,8 +489,8 @@ const deliveries = (): SeenHit[] => hits.filter((h) => h.metadata['destroyerDeli
   const cycleMs = resolveExecutionCooldownMs(player);
   const rootMult = proxyEmpoweredMultiplier(world, player)!;
   assert(
-    rootMult === authored('cooldown-heavy', 'cooldown.empowered-mult') + authored(DESTROYER, 'cooldown.empowered-mult'),
-    `the execution is the root's own: frame + the path's authored delta, got ${rootMult}`,
+    rootMult === authored('cooldown-heavy', 'cooldown.empowered-mult') && rootMult === 3.5,
+    `the execution is the Bulwark frame's own ×3.5 (design §22.12), got ${rootMult}`,
   );
 
   setEmpoweredAttack(world, player);
@@ -506,6 +507,32 @@ const deliveries = (): SeenHit[] => hits.filter((h) => h.metadata['destroyerDeli
   assert(fires.length === 1, `one execution, one mechanic-fired, got ${fires.length}`);
   assert(player.usesCooldown!.executionCooldownMs === cycleMs, 'the execution restarts the recharge');
   assert(neighbour.hasHealth.hp < neighbourHp, "Sweep's shape: the cleave carries the execution to the neighbour");
+}
+
+// ── Destroyer: the bank the regular hits fill while it waits takes it above ×3.5 ─
+
+{
+  const player = spawn('sq-destroyer-bank', 'cooldown-heavy', DESTROYER);
+  const target = monster(player);
+  const rootMult = proxyEmpoweredMultiplier(world, player)!;
+  const perStack = authored('cooldown-heavy', 'cooldown.frame-charge-per-stack');
+
+  setEmpoweredAttack(world, player); // primed
+  for (let i = 0; i < 3; i++) swing(player, target);
+  const bank = getFrameCharge(player.tracksCombat, 'cooldown');
+  assert(bank === 3, `fixture: three regular hits bank three charges while it waits, got ${bank}`);
+
+  armTechnique(world, player, 'sweep');
+  hits.length = 0;
+  swing(player, target);
+  const delivered = hits.find((h) => h.targetId === target.isMonster.id);
+  assert(delivered?.metadata['mechanicConsumed'] === true, 'fixture: the armed hit delivers the execution');
+  const landed = Number(delivered.metadata['empoweredMultiplier']);
+  assert(
+    Math.abs(landed - (rootMult + bank * perStack)) < 1e-9 && landed > rootMult,
+    `the bank grows the delivered execution past the frame's ×${rootMult}: expected ×${rootMult + bank * perStack}, got ×${landed}`,
+  );
+  assert(getFrameCharge(player.tracksCombat, 'cooldown') === 0, 'and the execution spends the bank');
 }
 
 // ── Destroyer: an evaded armed hit did not land — the execution stays primed ─

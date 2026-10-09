@@ -45,7 +45,7 @@ const requiredFragments: Record<string, string[]> = {
   "cooldown-balanced-t3-b": ["32 flat damage"],
   "cooldown-heavy-t3-a": ["fixed 8s window"],
   "cooldown-balanced-t3-a": ["half strength", "halfway mark", "lost"],
-  "cooldown-heavy-t3-b": ["delivered by your Techniques", "primed", "3× instead of the tier"],
+  "cooldown-heavy-t3-b": ["delivered by your Techniques", "primed", "the frame's own ×3.5", "bank"],
   "reload-light-t3-c": ["at or above 95% health"],
   "reload-balanced-t3-b": ["22% of normal attack damage"],
   "energy-heavy-t3-a": ["20 energy per hit"],

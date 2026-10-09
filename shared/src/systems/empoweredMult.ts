@@ -8,8 +8,8 @@
  *   effective = (base + archetypeAdd + sharedAdd) × (1 + multBonus)
  *
  * where `base` is the frame/spec multiplier from the archetype's empowered-mult
- * passive (frames sum additively with spec deltas — e.g. heavy 3.0 + Destroyer
- * 2.0 = 5.0). Only cadence, cooldown and energy run an empowered multiplier;
+ * passive (frames sum additively with spec deltas — e.g. heavy 3.5 + Avenger
+ * −1 = 2.5). Only cadence, cooldown and energy run an empowered multiplier;
  * other archetypes return null.
  */
 import type { PassiveMap } from '../passives';

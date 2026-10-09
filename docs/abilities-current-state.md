@@ -963,7 +963,7 @@ them, and one was retagged (no effect change):
 | Path | Class | Now |
 |---|---|---|
 | Reverb | Squire (cooldown), packet Empowered | the execution lands again at half strength at the recharge's halfway mark, on whatever is in reach then (lost if nothing is); the bank is gone |
-| Destroyer | Squire (cooldown), packet **Technique** | the execution waits primed and rides the next Technique that lands, with that Technique's shape (an armed Technique's hit, a cast's target, Slam's whole area); 3x instead of the tier's 2.5x; regular hits deal damage again |
+| Destroyer | Squire (cooldown), packet **Technique** | the execution waits primed and rides the next Technique that lands, with that Technique's shape (an armed Technique's hit, a cast's target, Slam's whole area) at the Bulwark frame's own ×3.5 (the path's −0.5 dropped, design §22.12; the other heavy paths sit at 2.5×), and the bank the regular hits fill while it waits takes it above; regular hits deal damage again |
 | Justicar | Striker (cadence), retagged **Empowered** | unchanged: the Verdict is banked and spent by the finisher |
 | Duelist | Slinger (reload light), packet **Kill chain** | every kill loads a round past the clip until the next reload; the exploding last bullet and the +1 round are retired (`reload.exploding-clip` and `reload.empowered-mult` have no author, so the Empowered `mechanic-proxy` falls back to 1.5 for every reload spec) |
 | Warmonger | Slinger (reload heavy), packet Tempo | the Artillerist frame owns the ramp; `reload.ramp-carry-pct` 0.5 keeps half of it through a reload (`frames-current-state.md`); Hair Trigger is retired |
