@@ -183,12 +183,12 @@ configs (Striker/Squire durable melee, Slinger, Spirit/Conduit, Apprentice), wit
   (Expose Weakness was cut), followed at the same leg end by Slam, which the seal and
   gate kits wear and nothing else teaches. `flee` is dropped at the Step Back stage for the same
   reason (ranged builds would not fit even at GM 30).
-- **The kit swap (ability pass, design §22.2; `feat/ability-pass`, not merged to develop).**
+- **The kit swap (ability pass, design §22.2 and §22.12; merged to develop 2026-10-09).**
   `plans.ts`'s boss kits wear Slam where they wore Expose Weakness (Forest, Mountain,
-  Swamp and Cave; Plains keeps Sweep), and Slam rank I (2.2) is PROVISIONAL: it was
-  authored so the T1 boss lab holds every class within ±5% of the old kit, and that
-  constraint fails structurally (the best value leaves 12 of 30 kit cells outside ±5%,
-  worst +8.9%), so the number awaits the designer. The Cave leg's end learns Charge and
+  Swamp and Cave; Plains keeps Sweep), and Slam rank I (1.2× on a 600 ms wind-up,
+  PROVISIONAL) was solved on two numbers so the T1 boss lab holds every class within ±5%
+  of the old kit (30/30 kit cells inside, worst −4.7%; every kit cell wins as before; the
+  ladder is `reports/ability-pass/w4a-ladder.md`). The Cave leg's end learns Charge and
   then Slam (`classScript.ts`; `tutorial.test.ts` refuses a kit that attunes an unlearned
   ability). The lean, verb and rank beats are unchanged.
 - **Slinger** skips the bot's Mountain vest (only worn against the later bosses), and

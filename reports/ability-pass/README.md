@@ -255,6 +255,13 @@ same plan on this branch with `{"slam": {"field": "damageMult", "values": [1.2, 
 which separates the rank change (T3 +5.6%, T4 +5.1%) from the pass's own T4 path drift since
 W1-A's branch (the Reverb Squire and Pyromancer Apprentice rows; T4 Apprentice −40.5%).
 
+## 9. The final gate after wave 4 (the conductor, merged tip `5b7cbc0f`)
+
+| file | what | result |
+|---|---|---|
+| `plan-final-w4.json`, `final-w4.jsonl`, `final-w4-parity.md`, `final-w4.md` | §3 on the tip with every wave-4 branch merged | plan byte-identical to `plan-final.json`; matrix IDENTICAL to `w4a.jsonl` (1,800/1,800); **PARITY HOLDS, 30/30 kit cells inside ±5%, worst −4.7% (Striker, Greatbear)** |
+| `final-w4-base.jsonl`, `final-w4-base-identity.md` | §4, the frozen no-band plan | the 180 rows with unchanged abilities IDENTICAL to `reports/legibility/final-base.jsonl`; the 720 naming the cut Expose Weakness refused, as before |
+
 ## Commits
 
 Branch `feat/ability-pass-baseline` off `feat/ability-pass` (`e56d530e`). Nothing was

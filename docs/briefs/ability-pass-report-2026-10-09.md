@@ -5,6 +5,13 @@
 - **Evidence:** [`reports/ability-pass/`](../../reports/ability-pass/) (its `README.md` lists every file and how to rerun it)
 - **Run:** conductor in `../mmo-lin-w2c`, 2026-10-06 → 2026-10-09 (a usage limit stopped wave 2 on 2026-10-06 before any commit; resumed 2026-10-09, nothing lost)
 
+> **Update, same day (wave 4).** The designer took the open calls (design §22.12), and a
+> follow-up wave implemented them: Slam rank I solved on two numbers (**1.2× on a 600 ms
+> wind-up: 30/30 kit cells inside ±5%, worst −4.7%**), Flow for Sidestep (all 19 first
+> verbs live), the fire-shape rate guards, the boss gates, the path fixes and the renames.
+> **Parity holds; `feat/ability-pass` is merged to develop.** See "Addendum: wave 4" at the
+> end. The sections below are the record of waves 0–3 as they stood before those calls.
+
 ## Verdict
 
 **Everything in the brief is built, except one verb, and the branch is NOT merged to develop.**
@@ -454,3 +461,84 @@ I reviewed the merged diff myself, against the brief's checklist.
 11. **The trios' second and third verbs** (design §22.11) are designed and not built. They land in
     the same row as a follow-up wave. Momentum and Long Night carry the designer's "test first"
     flags.
+
+## Addendum: wave 4, the designer's calls (2026-10-09)
+
+The designer answered the open calls in one sitting; they are recorded as design §22.12
+(`cc620463`) and were built by a follow-up wave of five tasks off `9463f1d4` (§22.12 + the
+renames, committed by the conductor).
+
+### What was decided and what was built
+
+| Call (§22.12) | Built by | Merged | Result |
+|---|---|---|---|
+| Parity on two Slam numbers (rank I multiplier + wind-up) | W4-A, `w1a`, `feat/ap-slam-parity` | `e7f495fc` | **1.2× on 600 ms: 30/30 kit cells inside ±5%** |
+| Slam never weakens on tier-up: ranks II–IV 2.45 / 2.7 / 2.95 | W4-A | `e7f495fc` | a test pins that `damageMult` never falls rank to rank |
+| Sidestep ships Flow; Afterimage stays a silhouette | W4-B, `w1b`, `feat/ap-keystone-calls` | `5b7cbc0f` | all 19 first verbs live; Flow leads the trio |
+| Vanish works on bosses, adds and dungeon guardians | W4-B | `5b7cbc0f` | a server-only `holdsForVanished` hold keeps the script and the aggro session |
+| Harvest capped at `chainMaxLinks` (4); Overflow always on; Immunity 3 s | W4-B | `5b7cbc0f` | |
+| Fire-shapes keep their rate | W4-C, `w2a`, `feat/ap-fire-shape-rate` | `4c73531e` | self payoffs once per resolution; a node's ward refreshes its own; every per-hit/per-tick/on-strip Guard route capped (packet cap, else Control's 5 s) |
+| Boss mechanics pass the Guard gates | W4-D, `w1c`, `feat/ap-boss-gates` | `80602d53` | Deep Freeze, the stings, contact slows, ground hazards, room debuffs and a dive-bomb root refused under Unyielding/Immunity; T1 lab identical |
+| Destroyer ×3.5, Warmonger fill per clip, Duelist proxy ×3.5, Pyromancer no refresh | W4-E, `w1d2`, `feat/ap-path-calls` | `c72f6044` | the Duelist's ×3.5 is on its own proxy key, so its openers and the DPS estimate do not move |
+| Charge fires on its target | — | — | already the built behaviour |
+| Renames: "Slowed", Deeper Hobble, Envenomed Hobble, Hobbled Plague, Deeper Fury | conductor | `9463f1d4` | |
+
+### Parity, final (merged tip `5b7cbc0f`)
+
+The tip's matrix is IDENTICAL to W4-A's authored run (1,800/1,800): nothing else in wave 4
+moved a T1 cell. Kit cells, mean dps change from the baseline (Razorback ±0.0 everywhere):
+
+| class | Greatbear | Toadeater | Behemoth | Broodmother |
+|---|---:|---:|---:|---:|
+| Striker | −4.7% | −2.0% | −3.1% | −4.2% |
+| Squire | +0.4% | +4.6% | +0.4% | −0.8% |
+| Slinger | −4.5% | −4.4% | −0.2% | −2.0% |
+| Spirit | −3.8% | −2.5% | −2.4% | −3.4% |
+| Apprentice | +4.5% | +2.2% | +0.4% | +1.1% |
+| Conduit | −0.2% | +1.3% | +4.1% | +1.8% |
+
+Every kit cell wins 100% except the Striker's Razorback, 97% as in the baseline (the
+Striker's Behemoth, 97% at 2.2, is back to 100%). The no-card controls move −4.3% to +9.9%
+(the Conduit's Behemoth, +26.7% at 2.2). The two-number ladder (`w4a-ladder.md`): the
+wind-up closed the class spread from ~17 points at 1.6 s to ~9 at 600 ms; 600 ms is the
+longest that passes (at 700 ms one cell is always out, because the Striker's and
+Apprentice's equal Attack moves their cells in whole hit points). Tables:
+`final-w4-parity.md`, `w4a-parity.md`.
+
+**No-card identity:** the 180 rows whose abilities survive unchanged are identical to the
+legibility run's again (`final-w4-base.jsonl`). **Suite 401/401 (221 s), typecheck clean.**
+
+### T3/T4 with the new Slam ranks (W4-A's Rerun 2, a measurement)
+
+| tier | W0 (Expose Weakness) | W1-A (old Slam ranks) | tip, old ranks | W4-A (2.7 / 2.95) | wins W0 → W4-A |
+|---|---:|---:|---:|---:|---|
+| T3 | 105.9 | 97.2 | 97.2 | 102.6 | 25 → 22 / 42 |
+| T4 | 286.5 | 240.2 | 217.1 | 228.1 | 32 → 29 / 36 |
+
+The new ranks lift every class but the T3 Slinger. Against W0, the Striker and Slinger
+still trail 14–19% at both tiers and the T4 Spirit ~40%. The tip-with-old-ranks control
+shows a further T4 drop that is NOT Slam: the T4 Apprentice falls 349.7 → 207.9 dps
+(−40.5%) between W1-A's branch and the tip, from the pass's Pyromancer change (the 1.5×
+max-burn bonus hit is gone). That was measured before W4-E's "no refresh at max", which
+can only lower it further. Per class: `stacking.md` "Rerun 2".
+
+### New open calls for the designer
+
+1. **Slam's rank I → II step is big:** 1.2× / 0.6 s at T1, then 2.45× / 1.6 s at T2.
+2. **The T4 Pyromancer Apprentice lost ~40%** in the T3/T4 package (the max-burn bonus is
+   gone, and now the burn does not refresh at max). The Ember frame owns "intensifies";
+   is the path now too weak at T4?
+3. **Flow is a gamble on low evasion:** the window adds ~0.15 evasion, so the first hit
+   usually lands and ends it.
+4. **Cleanse's "sized by what it removed" is now inert:** every Guard offer is a self
+   payoff, so a strip fires once under the rate guard.
+5. **A Deep Freeze refused by Unyielding still spends the player's Chill and Frostbite**
+   (the precedent of every other refusal); a one-line move if the cold should be kept.
+6. **A Vanished player can keep a boss holding** as long as something else keeps them in
+   combat and they never attack; the script keeps running and their next hit ends it.
+7. **Not gated, environment:** terrain slows (Swamp rot pool, Jungle bush), Frost Nova's
+   ambient Chill ramp under Immunity, and an ordinary monster's rally handing a Vanished
+   player to allies.
+8. **Imbue's per-hit Tempo echo** is a Technique route and stays uncapped.
+9. `biomeEcology.test.ts` failed once under the lab's CPU load (a patrol sentinel did not
+   move; the test seeds its clock from `Date.now()`); it passes alone and in the final run.

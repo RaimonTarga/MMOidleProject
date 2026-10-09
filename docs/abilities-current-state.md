@@ -20,11 +20,12 @@ merged into Slam), re-homed Slam (T1 Mountain 5), Charge (T1 Cave 3), Binding St
 Jungle 3), Snipe (T2 Desert 3) and Imbue Lightning (T3 Volcanic 3), made Contagion
 **armed** and Imbue Lightning **instant** (§22.9: a cast iff the ability deals its own
 damage), and added **Sidestep** (T1 Forest 5, the Avoid Guard) and **Cull** (T3 Tundra 3,
-the kill-shaped cast). Each ability also has four node rows, 18 of the 19 first keystone
-verbs are live, the §22.10 fire-shapes are live, and five T3 paths were re-homed (W1-B/D/E/F,
-W2-A/B/E). **Implemented on `feat/ability-pass`, NOT merged to develop.** See "The ability
-pass" below for saves, the tutorial kit, the Slam parity number, the keystone table and the
-fire-shape table.
+the kill-shaped cast). Each ability also has four node rows, all 19 first keystone verbs
+are live, the §22.10 fire-shapes are live under §22.12's rate guards, and five T3 paths were
+re-homed (W1-B/D/E/F, W2-A/B/E, and the designer's calls of design §22.12 in wave 4).
+**Merged to develop 2026-10-09; the T1 parity rule holds** (Slam rank I 1.2× on a 600 ms
+wind-up). See "The ability pass" below for saves, the tutorial kit, the Slam numbers, the
+keystone table and the fire-shape table.
 
 > **Name collision (kept distinct).** The passive talent tree (`UsesSkills`, `skillTree/`) is
 > class progression and is **untouched**. "Abilities" is the active system (Technique / Guard).
@@ -757,10 +758,7 @@ authored rank itself.
 
 - **Ability keystones:** the second and third verb of every trio are silhouettes
   (Sidestep's Afterimage, now its second, waits on a decoy target kind; see the verb
-  table). The ability pass is implemented on
-  `feat/ability-pass` and NOT merged to develop; its T1 parity constraint (±5% per class
-  per T1 boss) fails structurally: the best Slam rank I leaves 12 of 30 kit cells outside
-  ±5%, the worst at +8.9%. It awaits the designer.
+  table).
 - **Sidestep and Cull have no art** (the ability pass's additions): they render the
   placeholder glyph, and Sidestep's buff tile borrows the lineage Slip (`lineage-evasion`)
   art. Their prices and Cull's curve are PROVISIONAL.
@@ -812,13 +810,17 @@ tables above:
   Charge, and Slam is learned right after it — nothing else would teach the Slam the
   seals and the gate wear (`tutorial.test.ts` refuses a kit that attunes an unlearned
   ability).
-- **Slam rank I = 2.2** — the one number the pass authored, by the T1 lab parity rule
-  (§22.1: every class within ±5% of the old kit on every T1 boss). No single value holds
-  every cell: the Slinger, Spirit and Striker lose ~5–8% and the Conduit, Apprentice and
-  Squire gain ~5–9% (Slam's value depends on attack cadence and on the Conduit casting
-  through one summon while the others keep attacking; Expose Weakness paid every class the
-  same share). 2.2 minimises the worst cell (+8.9%, Conduit on the Behemoth); the matrix and
-  the candidate ladder are `reports/ability-pass/w1a*.md`.
+- **Slam rank I = 1.2× on a 600 ms wind-up** (PROVISIONAL), solved on TWO numbers by the
+  T1 lab parity rule (§22.1: every class within ±5% of the old kit on every T1 boss; the
+  two-number rule is design §22.12). One multiplier could not hold it (W1-A: the best,
+  2.2 on Power Strike's 1.6 s, left 12 of 30 cells out): a wind-up's cost depends on the
+  attacker's cadence and the Conduit casts through one summon while the rest keep hitting.
+  A lower multiplier trims the Conduit; a shorter wind-up returns what the attackers lose
+  standing. 600 ms is the longest wind-up that passes (30/30 kit cells inside, worst −4.7%,
+  the Striker on the Greatbear; every kit cell still wins as before). Ranks II–IV are
+  2.45 / 2.7 / 2.95 on the 1.6 s wind-up (§22.12: Slam never weakens on tier-up), so rank II
+  is a big step (1.2 → 2.45, 0.6 s → 1.6 s). The ladders: `reports/ability-pass/w1a-ladder.md`
+  (one number) and `w4a-ladder.md` (two).
 - **Fire-shapes** (§22.10, LOCKED): `ABILITY_FIRE_SHAPES` in
   `data/abilityNodes/offers.ts` says where and when each ability's packet payoff fires,
   from the closed list, each shape mapped to an existing trigger seam
