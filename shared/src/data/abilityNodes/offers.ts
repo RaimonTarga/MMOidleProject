@@ -285,7 +285,9 @@ const fireShapeEntries: [string, AbilityFireShapeRow][] = [
   ['charge', { fire: 'on land', reads: 'on the first body the rush touches, and the target on arrival' }],
   ['slam', { fire: 'on every body hit', reads: 'on every body the Slam hits' }],
   ['second-wind', { fire: 'on cast', reads: 'on cast' }],
-  ['cleanse', { fire: 'on strip', reads: 'on strip, sized by what it removed' }],
+  // Fires when the strip removed anything, once per cast: design §22.13 dropped
+  // "sized by what it removed" (every Guard payoff fires once per cast, §22.12).
+  ['cleanse', { fire: 'on strip', reads: 'on strip' }],
   ['brace', { fire: 'per hit absorbed', reads: 'per hit absorbed while Braced' }],
   ['sidestep', { fire: 'per hit dodged', reads: 'per hit dodged during the window' }],
   ['binding-strike', { fire: 'on land', reads: 'on the rooted body' }],

@@ -18,7 +18,7 @@
  * | Cull | Harvest | a Cull kill re-strikes (Cull's own strike, applyPlayerAoeTo) the nearest body below the killed target's share, while it kills |
  * | Imbue Lightning | Fork | Imbue's charge consumer (onChargeSpent): each imbued hit arcs a share to the nearest other body |
  * | Stunning Strike | Relay | the landed stun is watched (tick); when it runs out applyStun jumps to the nearest body not stunned this fight |
- * | Disengage | Vanish | setAggroTarget(null) on every monster near the departure point, a boss included; nothing acquires the marked player until their next hit; a dropped boss, add or dungeon monster holds (holdsForVanished) and takes them back in the same aggro session |
+ * | Disengage | Vanish | setAggroTarget(null) on every monster near the departure point, a boss included; nothing acquires the marked player until their next hit; a dropped boss, add or dungeon monster holds (holdsForVanished) and takes them back in the same aggro session, at the latest after the out-of-combat reset window |
  *
  * The Guard verbs (design §22.4: immunity, control of the attacker, or a shared
  * mend — never damage) hang off the Guard's activation through `guardCast.ts`, or

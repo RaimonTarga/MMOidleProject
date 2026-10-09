@@ -43,10 +43,9 @@
  *                           `pulse` cadence (`LINEAGE_UNITS.pulseMs`), counted
  *                           by a cooldown as a pulse card's is
  *                           (`updateAbilityNodePulses`, from `World.tick`)
- *   on strip                once per strip that removed anything (a body payoff
- *                           once per affliction kind removed; no Guard offers
- *                           one) — `onAbilityNodeStripped`, from the Guard
- *                           firing that stripped them
+ *   on strip                once per strip that removed anything, whatever it
+ *                           removed (design §22.13) — `onAbilityNodeStripped`,
+ *                           from the Guard firing that stripped them
  *
  * The four Guard shapes above that answer the fight (per hit absorbed, per hit
  * dodged, per tick while active, on strip) fire under a rate cap (below).
@@ -491,14 +490,13 @@ export function onAbilityNodeGuardCast(
 }
 
 /**
- * A Guard just STRIPPED afflictions off the player — Cleanse (design §22.10: "on
- * strip, sized by what it removed"). The size is a count of firings, never a new
- * number: a BODY payoff fires once per affliction KIND removed. A self payoff —
- * every Guard offer is one (a ward, a window, a plating stack) — fires once per
- * strip (design §22.12: once per resolution), so a Cleanse that removed three
- * kinds raises one ward, not three. A strip that removed nothing fires nothing —
- * Cleanse only casts with something harmful on the player, but a partial-only
- * effect can leave the strip empty.
+ * A Guard just STRIPPED afflictions off the player — Cleanse (design §22.10 as
+ * amended by §22.13: "on strip", when it removed anything). The strip is one
+ * resolution, so every route fires once per strip however many kinds it removed
+ * (design §22.12: once per resolution; §22.13 dropped "sized by what it
+ * removed"). A Cleanse that removed three kinds raises one ward, not three. A
+ * strip that removed nothing fires nothing — Cleanse only casts with something
+ * harmful on the player, but a partial-only effect can leave the strip empty.
  *
  * Called from the Guard firing that did the strip (`maybeFireGuard`), right after
  * `onGuardFired`.
@@ -509,17 +507,10 @@ export function onAbilityNodeStripped(
   ability: AbilityDef,
   removed: readonly { effectId: string }[],
 ): void {
-  if (ability.slot !== 'guard') return;
-  const kinds = new Set(removed.map((entry) => entry.effectId)).size;
-  if (kinds === 0) return;
+  if (ability.slot !== 'guard' || removed.length === 0) return;
   const payoffs = withShape(payoffsFor(player, ability.id), 'on strip');
   if (payoffs.length === 0) return;
-  const perKind = payoffs.filter(landsOnBody);
-  for (let i = 0; i < kinds; i++) {
-    const now = i === 0 ? payoffs : perKind;
-    if (now.length === 0) break;
-    fireLineagePayoffs(world, player, cloned(now));
-  }
+  fireLineagePayoffs(world, player, payoffs);
 }
 
 /**

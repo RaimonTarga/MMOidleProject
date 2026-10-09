@@ -5,21 +5,23 @@
  *
  * The mark is server-only scratch on the player's `TracksCombat` (a flag, through
  * its helpers): set when Vanish breaks contact, cleared by the player's next
- * landed hit or the out-of-combat reset (`vanish.ts`), wiped with the rest of the
- * state on death.
+ * landed hit, the out-of-combat reset, or an encounter hold that ran the reset
+ * window (`vanish.ts`), wiped with the rest of the state on death.
  *
  * EVERY MONSTER RESPECTS IT (design §22.12: "Vanish works on bosses, boss adds and
  * dungeon guardians too"). Nothing ACQUIRES a vanished player — the pull scan, a
- * boss handing its target to its adds, a dungeon forcing aggro — and a script's
- * own victim pick passes over them. A monster that already held them out of
- * Vanish's reach keeps them, as before.
+ * boss handing its target to its adds, a dungeon forcing aggro, an ordinary
+ * monster's rally (design §22.13) — and a script's own victim pick passes over
+ * them. A monster that already held them out of Vanish's reach keeps them, as
+ * before, but never hands them on.
  *
  * AN ENCOUNTER HOLDS. A boss, a boss's add or a dungeon monster that Vanish
  * dropped does not go home: it HOLDS for the player (`holdsForVanished`) — it
  * stands, keeps its ramp, does not regenerate, runs its script — and takes them
- * back in the same aggro session once the mark clears, so a Vanish is a breather
- * and never an encounter reset or a wedge. An ordinary monster walks home as any
- * monster that lost its target does.
+ * back in the same aggro session once the mark clears, or once it has held for
+ * the out-of-combat reset window (design §22.13), which clears the mark — so a
+ * Vanish is a breather and never an encounter reset or a wedge. An ordinary
+ * monster walks home as any monster that lost its target does.
  */
 import { getFlag, type AggroTargetKind } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../../ecs/entity';

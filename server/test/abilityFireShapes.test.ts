@@ -62,7 +62,8 @@ const EXPECTED: Record<string, string> = {
   charge: 'on the first body the rush touches, and the target on arrival',
   slam: 'on every body the Slam hits',
   'second-wind': 'on cast',
-  cleanse: 'on strip, sized by what it removed',
+  // Amended by design §22.13: fires when it removed anything; the sizing is gone.
+  cleanse: 'on strip',
   brace: 'per hit absorbed while Braced',
   sidestep: 'per hit dodged during the window',
   'binding-strike': 'on the rooted body',

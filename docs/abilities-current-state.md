@@ -911,12 +911,12 @@ the game does not have):
 | Cull | Harvest | delivering body | a Cull kill re-strikes the nearest body below the same health share, while it kills, at most the lineage `chainMaxLinks` strikes (design §22.12) | none |
 | Imbue Lightning | Fork | delivering body | the charge consumer (`onChargeSpent`): each imbued hit arcs a share to the nearest other body | none |
 | Stunning Strike | Relay | delivering body | the landed stun is watched; at expiry `applyStun` jumps to the nearest body not yet stunned this fight | stun; per-fight set cleared out of combat |
-| Disengage | Vanish | owner | `setAggroTarget(null)` (and `abortMonsterCast`, a boss's pattern ended `target-lost`) on every monster near the departure point, bosses, boss adds and dungeon monsters included (design §22.12); nothing acquires the marked player until their next hit or the out-of-combat reset: the pull scan, the add mirroring and `bindBossAdd` / `inheritBossTarget` / raise-dead, the dungeon force-aggro, the fissure's victim pick. A dropped encounter body HOLDS (`holdsForVanished`): it stands, keeps its ramp, does not regen, runs its script, and takes the player back in the same aggro session when the mark clears; its adds hold with it | `keystone.vanish` flag; `holdsForVanished` on the monster |
+| Disengage | Vanish | owner | `setAggroTarget(null)` (and `abortMonsterCast`, a boss's pattern ended `target-lost`) on every monster near the departure point, bosses, boss adds and dungeon monsters included (design §22.12); nothing acquires the marked player until their next hit or the out-of-combat reset: the pull scan, the add mirroring and `bindBossAdd` / `inheritBossTarget` / raise-dead, the dungeon force-aggro, the fissure's victim pick, an ordinary monster's rally (`rallyNearbyMonsters`: it recruits nobody and is spent, design §22.13). A dropped encounter body HOLDS (`holdsForVanished`): it stands, keeps its ramp, does not regen, runs its script, and takes the player back in the same aggro session when the mark clears; its adds hold with it. A hold ends on a clock (design §22.13): once it has lasted the out-of-combat reset window (`outOfCombatResetMs`, the window `updateCombatTransitions` uses) it takes the player back the same way and clears the mark, even if the player never attacked | `keystone.vanish` flag; `holdsForVanished` on the monster |
 | Break Free | Backlash | owner | shortest stun rung on every body adjacent to the player | stun |
 | Brace | Riposte | owner | `afterHit` on a melee hit taken while Braced: shortest rung on the attacker, once per attacker per Brace | stun |
 | Bramble Guard | Entangle | owner | the thorns' `afterHit` moment: `applyMonsterSlow` under its own id | `ability-entangled` (a member of `MONSTER_SLOW_STATUS_IDS`) |
 | Endure | Unyielding | owner | `ability-unyielding` on Endure's clock; hard-control appliers refuse | `ability-unyielding` |
-| Cleanse | Immunity | owner | each stripped status id becomes a refused kind for the `engagement-dr` unit's window, 3 s (design §22.12) | `ability-immunity` |
+| Cleanse | Immunity | owner | each stripped status id becomes a refused kind for the `engagement-dr` unit's window, 3 s (design §22.12), refused at every player debuff writer (`playerRefusesStatus`): the boss appliers (§22.12) and the environment (§22.13): node-feature terrain slows under their own status id, and the room's ambient Chill ramp and Frost Nova's `addAmbientStacks` add no `tundra-chill` stack (the ramp banks no refused time) | `ability-immunity` |
 | Second Wind | Shared Breath | formation | the Recovery engine's skill source on same-node party members; summons mended in the summoner's owner-to-summon pass | none |
 | Recuperate | Overflow | owner | the overheal-ward hook on `applyHealToPlayer`: ANY spill past full, mend or not (design §22.12; out-of-combat regen at full fills it before a pull, accepted), tops up one ward to the ward payoff's cap; spill at the cap keeps the full shell from lapsing | none |
 | Sidestep | Flow | owner | the evade seam (`onDamageTaken`) while Sidestep's window is up: a dodge (a graze counts) winds the window back to the `evasion-window` unit Sidestep reads (`sidestepWindow`; a refresh, never a stack); the first hit that lands removes it, the speed burst with it | `ability-sidestep` (its own window) |
@@ -957,7 +957,7 @@ each shape to an existing trigger seam; the runtime is
 | per hit absorbed | Brace, Bramble Guard | hit-taken |
 | per hit dodged | Sidestep | evade |
 | per tick while active | Endure, Recuperate | pulse |
-| on strip | Cleanse | cleanse |
+| on strip (when it removed anything, once per cast; design §22.13) | Cleanse | cleanse |
 
 **Charge is the one exception.** The §22.10 row reads "on the first body the rush
 touches, and the target on arrival"; players move through monster bodies (they collide
@@ -977,9 +977,9 @@ the moment a payoff fires, never its rate:
    (shared `ON_TARGET_PAYOFF_KINDS`), and `landsOnBody` in `abilityNodes.ts` reads the
    same predicate, so there is no second list. On *every body hit* the self payoffs ride
    the exchange's own body (else the first); a Slam over four bodies refunds its cooldown
-   once. Cleanse's strip is one resolution too: it fires once per strip, not once per
-   affliction kind removed (every Guard offer is a self payoff, so "sized by what it
-   removed" now reads "fires when it removed anything").
+   once. Cleanse's strip is one resolution too: every route fires once per strip that
+   removed anything, never once per affliction kind removed (design §22.13 dropped "sized
+   by what it removed"; `onAbilityNodeStripped` has no per-kind loop).
 2. **A node's ward refreshes, not stacks.** A ward an ability node fires (packet or cross)
    carries the owner key `abilityNode.<abilityId>` (`abilityNodeOwner`); `applyWard`'s
    optional `owner` refreshes that owner's one live ward in place, topped up to the
