@@ -61,6 +61,7 @@ import {
   abilityDisplayName,
   abilityNodeNameParts,
   getStatusEffect,
+  lineageUnit,
   resolveAbilityEffect,
 } from '@mmo-idle/shared';
 import { registerCombatListener } from '../src/systems/combat/engine/combatPipeline';
@@ -1005,6 +1006,31 @@ function attackLedger(player: PlayerEntity): string {
     const events = cast(world, player, cull, stout);
     assert(stout.hasHealth.hp > 0 && low.hasHealth.hp === 50, 'a Cull that does not kill harvests nothing');
     assert(!events.some((e) => e.kind === 'card-fx' && e.fx === HARVEST_FX), 'and draws nothing');
+  }
+
+  // Capped at the lineage chainMaxLinks (design §22.12): a ring of low bodies
+  // that would keep dying is harvested that many times and no more.
+  {
+    const cap = lineageUnit('chainMaxLinks');
+    assert(cap >= 1, 'fixture: the lineage chain has a ceiling');
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-harvest-cap', {
+      abilityId: 'cull', nodes: rows('cull', { packet: 'technique', keystone: 'harvest' }),
+    });
+    player.performsAttack.attackRange = 150;
+    const first = body(world, 470, 400, 200, 1_000);
+    // Two more low bodies than the cap, all in reach, each one strike from dead.
+    const ring = Array.from({ length: cap + 2 }, (_, i) => {
+      const a = (i / (cap + 2)) * Math.PI * 2;
+      return body(world, 400 + Math.cos(a) * 90, 400 + Math.sin(a) * 90, 50, 1_000);
+    });
+    const events = cast(world, player, cull, first);
+    assert(!world.getMonsterEntity(first.isMonster.id), 'fixture: Cull killed its target');
+    const harvested = ring.filter((m) => !world.getMonsterEntity(m.isMonster.id));
+    assert(harvested.length === cap, `the harvest stops at the cap: ${harvested.length} of ${ring.length} struck, cap ${cap}`);
+    assert(ring.filter((m) => m.hasHealth.hp === 50).length === 2, 'the bodies past the cap are untouched');
+    assert(events.filter((e) => e.kind === 'card-fx' && e.fx === HARVEST_FX).length === cap,
+      'one card-fx per strike, the cap included');
   }
 
   // On a Conduit the summon that cast the kill harvests, from where it stands.
