@@ -722,7 +722,14 @@ function attackLedger(player: PlayerEntity): string {
 import { requestManualAbilityUse } from '../src/systems/player/abilities/abilityFiring';
 import { syncPlayerControlLockout } from '../src/systems/combat/status/playerControlLockout';
 import { runMonsterAttack } from '../src/systems/combat/engine/combat';
-import { ABILITY_ENTANGLE_EFFECT_ID, ABILITY_UNYIELDING_EFFECT_ID, CAVE_LOCKDOWN_EFFECT_ID } from '@mmo-idle/shared';
+import {
+  ABILITY_ENTANGLE_EFFECT_ID,
+  ABILITY_IMMUNITY_EFFECT_ID,
+  ABILITY_UNYIELDING_EFFECT_ID,
+  CAVE_LOCKDOWN_EFFECT_ID,
+  abilityImmunityKindKey,
+} from '@mmo-idle/shared';
+import { applyMonsterDotToPlayer } from '../src/systems/combat/status/monsterDot';
 import { applyResistedPlayerDebuff } from '../src/systems/combat/status/debuffGuard';
 import { beginEngageLock, engageSequenceHoldsAttack } from '../src/systems/combat/ai/engageSequence';
 import { syncPlayerBuffs } from '../src/systems/combat/buffs/buffSync';
@@ -942,6 +949,62 @@ const stunnedBy = (monster: MonsterEntity, sourceId: string): boolean => {
   });
   fireGuard(plainWorld, plain, 'endure');
   assert(applyStun(plain.tracksCombat, 1_500, 'a-mob'), 'no verb, no refusal');
+}
+
+// ─── Cleanse · IMMUNITY: the kind you stripped cannot be reapplied for a few seconds ─
+
+{
+  const IMMUNITY_FX = ABILITY_KEYSTONE_DEFINITIONS.get('immunity')!.fx;
+  const venom = { debuffId: 'ks-venom', damagePerStack: 4, maxStacks: 5, tickIntervalMs: 1_000, durationMs: 4_000 };
+  const venomId = 'monster-dot:ks-venom';
+  const has = (player: PlayerEntity, id: string): boolean => getStatusEffect(player.tracksCombat, id) !== undefined;
+
+  const world = new World();
+  const player = spawnPlayer(world, 'ks-immunity', {
+    abilityId: 'cleanse', nodes: rows('cleanse', { packet: 'engagement', keystone: 'immunity' }),
+  });
+  const viper = spawnMonster(world, 460);
+  applyMonsterDotToPlayer(world, viper, player, venom);
+  applyMonsterDotToPlayer(world, viper, player, venom);
+  assert(has(player, venomId), 'fixture: the venom is on the player');
+  world.takeNodeEvents(NODE);
+  fireGuard(world, player, 'cleanse');
+  assert(!has(player, venomId), 'Cleanse stripped the venom');
+  const immunity = getStatusEffect(player.tracksCombat, ABILITY_IMMUNITY_EFFECT_ID);
+  assert(immunity !== undefined && immunity.remainingMs > 0 && (immunity.data['totalMs'] ?? 0) > 0,
+    'Immunity stands, with a clock');
+  assert(immunity!.data[abilityImmunityKindKey(venomId)] === 1, 'keyed by the stripped kind');
+  assert(cardFx(world).filter((e) => e.fx === IMMUNITY_FX).length === 1, 'one card-fx per activation');
+
+  // The applier of that kind early-returns...
+  applyMonsterDotToPlayer(world, viper, player, venom);
+  assert(!has(player, venomId), 'the stripped kind cannot be reapplied');
+  // ...and every other kind still lands.
+  applyMonsterDotToPlayer(world, viper, player, { ...venom, debuffId: 'ks-other' });
+  assert(has(player, 'monster-dot:ks-other'), 'a different affliction still lands');
+  assert(applyResistedPlayerDebuff(player, {
+    id: 'antiheal', maxStacks: 1, remainingMs: 2_000, refreshable: true, sourceId: 'a-mob',
+    data: { reductionPerStack: 0.2, totalMs: 2_000 },
+  }) !== undefined, 'so does a debuff the Cleanse never touched');
+  syncPlayerBuffs(world, 1_000_100);
+  assert(player.hasStatus.activeBuffs?.some((buff) => buff.id === ABILITY_IMMUNITY_EFFECT_ID),
+    'the Immunity tile is on the bar');
+
+  // When the window ends, the kind lands again.
+  player.tracksCombat.statusEffects = player.tracksCombat.statusEffects.filter((e) => e.id !== ABILITY_IMMUNITY_EFFECT_ID);
+  applyMonsterDotToPlayer(world, viper, player, venom);
+  assert(has(player, venomId), 'after the window the kind lands again');
+
+  // Without the verb, a Cleanse refuses nothing afterwards.
+  const plainWorld = new World();
+  const plain = spawnPlayer(plainWorld, 'ks-immunity-off', {
+    abilityId: 'cleanse', nodes: rows('cleanse', { packet: 'engagement' }),
+  });
+  const plainViper = spawnMonster(plainWorld, 460);
+  applyMonsterDotToPlayer(plainWorld, plainViper, plain, venom);
+  fireGuard(plainWorld, plain, 'cleanse');
+  applyMonsterDotToPlayer(plainWorld, plainViper, plain, venom);
+  assert(has(plain, venomId), 'no verb, no immunity');
 }
 
 console.log('abilityKeystones: ok');

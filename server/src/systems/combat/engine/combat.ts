@@ -927,6 +927,7 @@ export function runMonsterAttack(
     mark &&
     ctx.metadata["sunMarkConsumed"] !== true &&
     canApplyPlayerDebuff(target) &&
+    !playerRefusesStatus(target, SUN_MARK_EFFECT_ID) &&
     !evadeBlocksDebuffs(ctx)
   ) {
     const fresh = !getStatusEffect(target.tracksCombat, SUN_MARK_EFFECT_ID);

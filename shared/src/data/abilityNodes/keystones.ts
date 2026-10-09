@@ -262,7 +262,7 @@ const trioEntries: [string, Trio][] = [
   ['cleanse', [
     verb('cleanse', 1, 'immunity', 'Immunity',
       'The affliction kind you stripped cannot be reapplied for a few seconds.',
-      'barrier-tempo.ward-shell', 'cleanse'),
+      'barrier-tempo.ward-shell', 'cleanse', { live: true }),
     verb('cleanse', 2, 'purge', 'Purge',
       'The stripped affliction is thrown back onto its applier.',
       'affliction.stinger-echo', 'cleanse'),

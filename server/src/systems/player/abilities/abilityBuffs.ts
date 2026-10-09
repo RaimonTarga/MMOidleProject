@@ -2,6 +2,7 @@
 import {
   ABILITY_CONTROL_RESIST_EFFECT_ID,
   ABILITY_IMBUE_EFFECT_ID,
+  ABILITY_IMMUNITY_EFFECT_ID,
   ABILITY_SIDESTEP_EFFECT_ID,
   ABILITY_GUARD_EFFECT_IDS,
   ABILITY_UNYIELDING_EFFECT_ID,
@@ -202,6 +203,29 @@ export const ABILITY_BUFFS = [
       };
     },
     { category: "neutral", shape: "circle", color: "#d9c2ff", label: "Unbound" },
+  ),
+  // Cleanse's Immunity keystone (design §22.4): one tile, however many kinds it refuses.
+  defineBuff(
+    ABILITY_IMMUNITY_EFFECT_ID,
+    ({ playerCs }) => {
+      if (!playerCs) return null;
+      const eff = getStatusEffect(playerCs, ABILITY_IMMUNITY_EFFECT_ID);
+      if (!eff || eff.remainingMs <= 0) return null;
+      const kinds = Object.keys(eff.data).filter((key) => key.startsWith("kind:") && (eff.data[key] ?? 0) > 0).length;
+      return {
+        id: ABILITY_IMMUNITY_EFFECT_ID,
+        label: "Immunity",
+        stacks: 1,
+        durationPct: durationPct(eff.remainingMs, eff.data["totalMs"] ?? eff.remainingMs),
+        color: "#b8f0c8",
+        logSourceName: "Cleanse",
+        logSourceSide: "ally",
+        logDetail: `${kinds} stripped affliction${kinds === 1 ? "" : "s"} refused`,
+        remainingMs: eff.remainingMs,
+        values: [{ label: "Afflictions refused", value: String(kinds), good: true }],
+      };
+    },
+    { category: "neutral", shape: "square", color: "#b8f0c8", label: "Immunity" },
   ),
   // Endure's Unyielding keystone (design §22.4): one tile, on Endure's own clock.
   defineBuff(

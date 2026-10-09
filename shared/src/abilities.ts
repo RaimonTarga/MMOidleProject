@@ -316,6 +316,20 @@ export const ABILITY_CONTROL_RESIST_EFFECT_ID = "ability-control-resist";
 export const ABILITY_UNYIELDING_EFFECT_ID = "ability-unyielding";
 
 /**
+ * Cleanse's Immunity keystone (design §22.4): the affliction kinds a Cleanse
+ * stripped cannot be reapplied while it stands. ONE status whatever was stripped:
+ * status data holds numbers only, so each refused kind (the stripped status id)
+ * is a KEY of its data, `abilityImmunityKindKey(kind)` = 1. Refused at the player
+ * debuff writers' admission check (`playerRefusesStatus`).
+ */
+export const ABILITY_IMMUNITY_EFFECT_ID = "ability-immunity";
+
+/** The data key that marks one refused affliction kind on the Immunity status. */
+export function abilityImmunityKindKey(kind: string): string {
+  return `kind:${kind}`;
+}
+
+/**
  * The default ability-family slow on a monster. Hamstring, its first writer, was
  * cut by the ability pass (design §22.2); the id is kept because the lineage
  * `slow` payoff (and so every ability-node slow) and the Mid range at-bay slow

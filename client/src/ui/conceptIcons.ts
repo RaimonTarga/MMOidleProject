@@ -119,6 +119,7 @@ const BUFF_IDS = new Set([
   'ability-guard',
   'ability-guard-2',
   'ability-imbue',
+  'ability-immunity',
   'ability-second-wind',
   'ability-second-wind-2',
   'ability-sidestep',
@@ -353,6 +354,8 @@ const BUFF_ABILITY_ICON_ALIASES: Record<string, string> = {
   'ability-imbue': 'imbue-lightning',
   'ability-second-wind': 'second-wind',
   'ability-second-wind-2': 'second-wind',
+  // Cleanse's Immunity keystone wears the Guard that earned it.
+  'ability-immunity': 'cleanse',
   // Endure's Unyielding keystone wears the Guard it rides on.
   'ability-unyielding': 'endure',
   // Kata builds toward an empowered Technique: the wind-up-and-deliver art (Charged
