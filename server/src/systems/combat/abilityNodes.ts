@@ -6,31 +6,44 @@
  * dispatcher — so every rule that runtime already enforces holds here without
  * being restated: the evade early-return on on-target payoffs, the max-wins
  * shared debuff records, `hitBasis`'s one-multiplier-per-hit basis, the
- * amplified second body, and exactly ONE `card-fx` per application that
- * actually did something. The cross row (design §22.1) is a second packet-row
- * payoff at the cross scalar through the same call — "it needs no new runtime".
+ * amplified second body, the per-firing rate cap, and exactly ONE `card-fx` per
+ * application that actually did something. The cross row (design §22.1) is a
+ * second packet-row payoff at the cross scalar through the same call — "it needs
+ * no new runtime".
  *
- * THE TWO MOMENTS. A Technique node fires when the Technique LANDS, a Guard node
- * when the Guard CASTS. "Lands" is deliberately not "activates": an armed
- * Technique activates when it arms, which can be a swing before it touches
- * anything, and a node that paid out on arming would pay out on a charge the
- * fight never consumed.
+ * WHERE AND WHEN: THE FIRE-SHAPE (design §22.10, LOCKED). Every ability's row in
+ * `ABILITY_FIRE_SHAPES` says where its packet and cross payoffs fire, from a
+ * closed list, each riding a seam that already existed. Same payoffs, same
+ * magnitudes — the shape only moves the moment:
  *
- * AND ONE EXCEPTION: KILL CHAIN FIRES ON THE KILL (design §22.10: "a Kill chain
- * offer on a Technique fires when the ability's hit kills, not when it lands").
- * Keyed on the LANE, so every Kill chain route on every Technique obeys it,
- * whatever its payoff: on an exchange the payoff waits on that exchange's own
- * `onKill`; on a cast (no exchange) it pays when the resolution left its target
- * dead. A landing that does not kill pays nothing.
+ *   on land                 the Technique's resolution, on its target
+ *                           (`onAbilityNodeTechniqueLanded`, from
+ *                           `combat/techniqueResolved.ts`)
+ *   on every body hit       once per body the ability's own area struck, from the
+ *                           seam that resolved the area (`onAbilityNodeBodiesHit`:
+ *                           Sweep's cleave, Slam's circle, Contagion's spread)
+ *   on the kill             a Kill chain route on a Technique, on the kill its hit
+ *                           makes (below)
  *
- * Neither hook is wired from here any more. Each sits behind the one seam its
- * side already has — `combat/techniqueResolved.ts` for a Technique (which knows
- * all five shapes' resolutions) and `onGuardFired` for a Guard — so "once per
- * landing" and "once per cast" are stated in one place each instead of in every
- * consumer. See `techniqueResolved.ts` for the shape table and for why the armed
- * family hooks `applyTechniqueRider` rather than the listener around it.
+ * "Lands" is deliberately not "activates": an armed Technique activates when it
+ * arms, which can be a swing before it touches anything, and a node that paid out
+ * on arming would pay out on a charge the fight never consumed.
+ *
+ * KILL CHAIN FIRES ON THE KILL (design §22.10: "a Kill chain offer on a Technique
+ * fires when the ability's hit kills, not when it lands"). Keyed on the shape
+ * table's override (`abilityOfferFireShape`), so every Kill chain route on every
+ * Technique obeys it, whatever its payoff: on an exchange the payoff waits on
+ * that exchange's own `onKill`; on a cast (no exchange) it pays when the
+ * resolution left its target dead. A landing that does not kill pays nothing.
+ *
+ * WHICH HIT A PAYOFF'S SHARE IS OF. The exchange's own body fires on the exchange
+ * — its share of that hit, its evade. Every other body fires without one: the
+ * owner's Attack is the basis (what the magnitude table's flat column is seeded
+ * against, and what a cast's area already used on every body), and a body the
+ * area reached rolled no evade of its own to refuse it.
  */
 import {
+  abilityOfferFireShape,
   getAbilityNodeRuntime,
   resolveActiveAbilityKeystones,
   resolveActiveAbilityNodes,
@@ -38,11 +51,13 @@ import {
   setAbilityNodeRuntime,
   abilityNodeFx,
   type AbilityDef,
+  type AbilityFireShape,
   type AbilityKeystoneRuntime,
   type AbilityNodeFiringCache,
   type AbilityNodeOption,
   type AbilityNodeRuntime,
   type LineagePayoff,
+  type PacketId,
 } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../ecs/entity';
 import type { World } from '../../world/World';
@@ -85,6 +100,13 @@ export function abilityNodeCastSpeedPctFor(player: PlayerEntity, abilityId: stri
   return getAbilityNodeRuntime(player.tracksCombat)?.[abilityId]?.castSpeedPct ?? 0;
 }
 
+/** One node payoff, with the fire-shape that says when it pays. */
+interface NodePayoff {
+  lane: PacketId;
+  shape: AbilityFireShape;
+  payoff: ExternalLineagePayoff;
+}
+
 /** One node payoff as the dispatcher wants it, or null when it has no declared fx. */
 function external(option: AbilityNodeOption, payoff: LineagePayoff): ExternalLineagePayoff | null {
   const fx = abilityNodeFx(option.lane, payoff.kind);
@@ -96,33 +118,54 @@ function external(option: AbilityNodeOption, payoff: LineagePayoff): ExternalLin
 }
 
 /**
- * The payoffs this ability's nodes pay — the packet's, then the cross row's — or
- * an empty list when the player has bought none.
+ * The payoffs this ability's nodes pay — the packet's, then the cross row's —
+ * each with its fire-shape, or an empty list when the player has bought none.
  *
  * A node with no declared fx is refused rather than drawn with someone else's
  * grammar: design §8's "one thing you can see" is a contract, and a silent
- * payoff would be the worst of both.
+ * payoff would be the worst of both. An ability with no fire-shape row (the
+ * table test refuses that) fires on land, as every node did before the shapes.
  */
-function payoffsFor(player: PlayerEntity, abilityId: string): Array<{ lane: string; payoff: ExternalLineagePayoff }> {
+function payoffsFor(player: PlayerEntity, abilityId: string): NodePayoff[] {
   const firing = getAbilityNodeRuntime(player.tracksCombat)?.[abilityId];
   if (!firing) return [];
-  const out: Array<{ lane: string; payoff: ExternalLineagePayoff }> = [];
-  const packet = external(firing.option, firing.payoff);
-  if (packet) out.push({ lane: firing.option.lane, payoff: packet });
-  if (firing.cross) {
-    const cross = external(firing.cross.option, firing.cross.payoff);
-    if (cross) out.push({ lane: firing.cross.option.lane, payoff: cross });
-  }
+  const out: NodePayoff[] = [];
+  const add = (option: AbilityNodeOption, payoff: LineagePayoff): void => {
+    const entry = external(option, payoff);
+    if (!entry) return;
+    out.push({
+      lane: option.lane,
+      shape: abilityOfferFireShape(abilityId, option.lane) ?? 'on land',
+      payoff: entry,
+    });
+  };
+  add(firing.option, firing.payoff);
+  if (firing.cross) add(firing.cross.option, firing.cross.payoff);
   return out;
 }
+
+/** The payoffs of `entries` that fire on `shape`. */
+function withShape(entries: readonly NodePayoff[], shape: AbilityFireShape): ExternalLineagePayoff[] {
+  return entries.filter((entry) => entry.shape === shape).map((entry) => entry.payoff);
+}
+
+/**
+ * The shapes a Technique's own resolution never pays: they have their own seam
+ * and fire there instead (an area's bodies, the kill).
+ */
+const NOT_AT_RESOLUTION: ReadonlySet<AbilityFireShape> = new Set<AbilityFireShape>([
+  'on every body hit',
+  'on the kill',
+]);
 
 /** Where a Kill chain node payoff waits for the kill its exchange makes. */
 const KILL_CHAIN_PENDING = 'abilityNodeKillChain';
 
 /**
- * A Technique resolved. Fires its node payoffs, on the exchange when there was
- * one so a payoff's share is taken off the hit that carried it — except a Kill
- * chain route, which waits for the kill (design §22.10).
+ * A Technique resolved. Fires its node payoffs that pay on land, on the exchange
+ * when there was one so a payoff's share is taken off the hit that carried it —
+ * and leaves a Kill chain route waiting for the kill (design §22.10). A route
+ * that fires on every body hit is the area's to fire ({@link onAbilityNodeBodiesHit}).
  *
  * Called from `onTechniqueResolved`, never directly.
  */
@@ -136,9 +179,8 @@ export function onAbilityNodeTechniqueLanded(
   const payoffs = payoffsFor(player, ability.id);
   if (payoffs.length === 0) return;
 
-  const now: ExternalLineagePayoff[] = [];
-  const onKill: ExternalLineagePayoff[] = [];
-  for (const entry of payoffs) (entry.lane === 'kill-chain' ? onKill : now).push(entry.payoff);
+  const now = payoffs.filter((entry) => !NOT_AT_RESOLUTION.has(entry.shape)).map((entry) => entry.payoff);
+  const onKill = withShape(payoffs, 'on the kill');
 
   if (now.length > 0) fireLineagePayoffs(world, player, now, site);
   if (onKill.length === 0) return;
@@ -154,6 +196,48 @@ export function onAbilityNodeTechniqueLanded(
   // dealt its damage, so a target it left dead is the kill it made.
   if (site.target && site.target.hasHealth.hp <= 0) {
     fireLineagePayoffs(world, player, onKill, { target: site.target });
+  }
+}
+
+/**
+ * A Technique's own AREA resolved on `bodies` — Sweep's cleave, Slam's circle,
+ * Contagion's spread — so its "on every body hit" routes fire once on each
+ * (design §22.10). One firing per body per resolution: a body listed twice
+ * fires once. Every other route is the resolution's, so this fires nothing else.
+ *
+ * Called from the seam that resolved the area, after the Technique's own
+ * resolution (`onTechniqueResolved`), so a cooldown refund has a running
+ * cooldown to take its share off. `exchange` is the hit that carried the area,
+ * when one did: its own body fires on it, every other body without one (see the
+ * module header).
+ *
+ * A Conduit's cast resolves through its one physical summon, so its circle is
+ * that cast's circle — once, never once per formation body (design §22.11). A
+ * formation rider calls this from its first delivery only, with that delivery's
+ * cleave.
+ */
+export function onAbilityNodeBodiesHit(
+  world: World,
+  player: PlayerEntity,
+  ability: AbilityDef,
+  bodies: readonly MonsterEntity[],
+  exchange?: CombatContext,
+): void {
+  if (ability.slot !== 'technique' || bodies.length === 0) return;
+  const payoffs = withShape(payoffsFor(player, ability.id), 'on every body hit');
+  if (payoffs.length === 0) return;
+  const seen = new Set<string>();
+  for (const body of bodies) {
+    if (seen.has(body.isMonster.id)) continue;
+    seen.add(body.isMonster.id);
+    const own = exchange?.defenderType === 'monster' && exchange.defender === body;
+    // Each body is its own application: a fresh clone per body, since the
+    // dispatcher mutates the payoff it is handed.
+    fireLineagePayoffs(
+      world, player,
+      payoffs.map((payoff) => ({ ...payoff, payoff: { ...payoff.payoff } })),
+      own ? { ctx: exchange, target: body } : { target: body },
+    );
   }
 }
 

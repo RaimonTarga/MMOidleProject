@@ -1346,6 +1346,13 @@ export interface ExternalLineagePayoff {
   key: string;
   fx: LineageFxKey;
   payoff: LineagePayoff;
+  /**
+   * The rate cap of the moment this payoff rides — its packet's `capMs` — applied
+   * per firing by {@link fire}, exactly as a card's: one landed firing per cap per
+   * `key`. Absent for a payoff that fires once per cast (design §22.10's per-hit
+   * and per-tick fire-shapes are the ones that carry it).
+   */
+  capMs?: number;
 }
 
 /** Apply external payoffs. Returns how many actually did something. */
@@ -1362,10 +1369,11 @@ export function fireLineagePayoffs(
     payoffs.map((p) => ({
       key: p.key,
       fx: p.fx,
-      // A `fire` dispatch never reads the trigger — only `registerHitNth` does,
-      // and it builds its own. The kind that is true of an ability node is the
-      // one the magnitude table already prices it at (see `resolve.ts`).
-      trigger: { kind: 'guard-cast' as const },
+      // A `fire` dispatch reads only the trigger's `capMs` — the kind is
+      // `registerHitNth`'s business, and it builds its own. The kind that is true
+      // of an ability node is the one the magnitude table already prices it at
+      // (see `resolve.ts`).
+      trigger: { kind: 'guard-cast' as const, ...(p.capMs ? { capMs: p.capMs } : {}) },
       payoff: p.payoff,
     })),
   );

@@ -488,7 +488,9 @@ const braceWard = braceTree.options.find((o) => o.id === BRACE_WARD)!;
     knownAbilities: ['sweep'],
     abilityNodes: { sweep: { owned: [SWEEP_TEMPO], active: { packet: SWEEP_TEMPO } } },
   });
-  const target = monster(470);
+  // Alone in Sweep's circle: the node fires on every body the cleave hits
+  // (design §22.10), so one body is one firing.
+  const target = monster(1100);
 
   // Arming is not landing: the charge is up, nothing has been struck.
   assert(cardFx().length === 0, 'spawning draws nothing');
@@ -520,7 +522,7 @@ const braceWard = braceTree.options.find((o) => o.id === BRACE_WARD)!;
       sweep: { owned: [SWEEP_TEMPO], active: { packet: SWEEP_TEMPO } },
     },
   });
-  const target = monster(480);
+  const target = monster(1300); // alone in Sweep's circle, as above
   const brace = ABILITY_DATABASE.get('brace')!;
   const secondWind = ABILITY_DATABASE.get('second-wind')!;
 
@@ -610,8 +612,12 @@ const braceWard = braceTree.options.find((o) => o.id === BRACE_WARD)!;
       },
     },
   });
-  const primary = monster(430);
-  const neighbour = world.createMonster(NODE, 'plains-slime', { x: 450, y: 400 })!;
+  // The neighbour stands outside Sweep's own circle (90) but inside the
+  // amplifier's reach (`contagionRadius`, 120): Sweep fires on every body its
+  // cleave hits (design §22.10), so a neighbour inside the cleave would be a
+  // second firing, not the amplified second body this block is about.
+  const primary = monster(1600);
+  const neighbour = world.createMonster(NODE, 'plains-slime', { x: 1705, y: 400 })!;
   neighbour.hasHealth.maxHp = 100_000;
   neighbour.hasHealth.hp = 100_000;
   world.takeNodeEvents(NODE);

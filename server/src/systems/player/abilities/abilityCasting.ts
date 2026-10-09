@@ -31,7 +31,7 @@ import {
   type AbilityDef,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
-import type { PlayerEntity } from "../../../ecs/entity";
+import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import { isHardControlled } from "../../combat/status/playerHardControl";
 import { setEntityMotion, stopEntity } from "../../world/movement";
@@ -51,7 +51,7 @@ import { armTechnique } from "./abilityArming";
 import { usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
 import { beginFormationCharge, cancelFormationCharge, formationChargeMinions, updateFormationCharge } from "./formationCharge";
 import { techniquePowerPctFor } from "./abilityKata";
-import { abilityNodeCastSpeedPctFor } from "../../combat/abilityNodes";
+import { abilityNodeCastSpeedPctFor, onAbilityNodeBodiesHit } from "../../combat/abilityNodes";
 
 /**
  * Begin a wind-up. Returns true when the cast started (claiming the offensive
@@ -267,12 +267,17 @@ export function updateAbilityCasts(world: World, now: number): void {
       }
       startTechniqueCooldown(world, player, ability);
     } else {
-      const refundsItself = resolveCastPayload(world, player, ability, target);
+      const struck: MonsterEntity[] = [];
+      const refundsItself = resolveCastPayload(world, player, ability, target, struck);
       // Cooldown first, so `technique-refund` has a remaining cooldown to take
       // its share off: a resolution that runs before the cooldown is charged
       // reads zero and refunds nothing. Same ordering as the armed path.
       startTechniqueCooldown(world, player, ability);
       onTechniqueResolved(world, player, ability, { target, now });
+      // The node's "on every body hit" routes (Slam): once per body the circle
+      // struck. A Conduit's cast is its one physical summon's circle, so this is
+      // per body THAT cast hit, never per formation body (design §22.11).
+      onAbilityNodeBodiesHit(world, player, ability, struck);
       // A Cull kill hands Cull its own cooldown back (design §22.8): charged above
       // like every resolve, then refunded, so the HUD hears both samples.
       if (refundsItself) refundTechniqueCooldown(world, player, ability);
