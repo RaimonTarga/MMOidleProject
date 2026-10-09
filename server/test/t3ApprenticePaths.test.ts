@@ -1,15 +1,16 @@
 /**
  * Apprentice T3 paths re-homed by the T3 path review (design §22.5) — Pyromancer.
  *
- * Pyromancer (dot-balanced-t3-a) keeps two burn stacks per hit at 55% and loses
- * the max-stack direct bonus (the Ember Mage frame owns "intensifies"). Its payoff
- * is RADIANT: a burn tick on a target at max stacks also strikes every adjacent
- * body for the tick's damage. What this file pins is the SHAPE, never a balance
- * number:
+ * Pyromancer (dot-balanced-t3-a) keeps two burn stacks per hit, each at full
+ * strength (design §22.13), and loses the max-stack direct bonus (the Ember Mage
+ * frame owns "intensifies"). Its payoff is RADIANT: a burn tick on a target at max
+ * stacks also strikes every adjacent body for the tick's damage. What this file
+ * pins is the SHAPE, never a balance number:
  *
- *   - the hit: two stacks per hit, and a hit into a full bar leaves the burn's
- *     clock alone (design §22.12) and adds no direct bonus of the path's own (only
- *     the frame's multiplier); Radiant fires on the ticks while the stacks last;
+ *   - the hit: two stacks per hit, each the Ember Mage frame's own stack, and a hit
+ *     into a full bar refreshes the burn's clock (design §22.13) and adds no direct
+ *     bonus of the path's own (only the frame's multiplier); steady hits keep the
+ *     bar full and Radiant firing, and an untouched full burn lapses on its clock;
  *   - at max a tick damages an adjacent body and lays no stack on it; below max it
  *     does not; a body out of reach is never touched;
  *   - the splash pays the DoT rules (no plating, half DR), so an adjacent body
@@ -113,6 +114,18 @@ function setup(): { world: World; player: PlayerEntity } {
   return { world, player };
 }
 
+/** The same Apprentice with the Ember Mage frame only (no T3 path). */
+function setupFrameOnly(): { world: World; player: PlayerEntity } {
+  const world = new World();
+  const player = world.attachPlayerEntity(makeSlices('ember'), 'ember');
+  player.usesSkills.combatArchetype = 'dot';
+  const frame = SKILL_TREE.get('dot-balanced')!;
+  player.usesSkills.selectedSubVariant = frame.subVariantId ?? null;
+  mergePassives(player.usesSkills.passives, frame.mechanicEffects);
+  syncArchetypeSlices(world, player);
+  return { world, player };
+}
+
 /** A sturdy body, so a splash in these shape tests never kills by accident. */
 function body(world: World, x: number, y: number): MonsterEntity {
   const m = world.createMonster(NODE, 'plains-slime', { x, y });
@@ -192,7 +205,7 @@ assert(
 );
 assert(SKILL_TREE.get(PYROMANCER)!.packet === 'affliction', 'Pyromancer stays an Affliction path');
 
-// ── The hit: two stacks; a full bar is left alone, with no bonus of its own ────
+// ── The hit: two full-strength stacks; a full bar is refreshed, with no bonus of its own ─
 {
   const { world, player } = setup();
   const target = body(world, 1000, 1000);
@@ -202,17 +215,33 @@ assert(SKILL_TREE.get(PYROMANCER)!.packet === 'affliction', 'Pyromancer stays an
     getTotalStacks(target.tracksCombat, 'dot') === STACKS_PER_HIT,
     `one hit lays ${STACKS_PER_HIT} burn stacks, got ${getTotalStacks(target.tracksCombat, 'dot')}`,
   );
+  // Full strength (design §22.13): a Pyromancer stack is the Ember Mage frame's own
+  // stack, so the path is the frame's burn ramped twice as fast.
+  {
+    const ember = setupFrameOnly();
+    const emberTarget = body(ember.world, 1000, 1000);
+    hit(ember.world, ember.player, emberTarget);
+    const emberStack = getStatusEffect(emberTarget.tracksCombat, 'dot')!.data.damagePerStack;
+    const pyroStack = getStatusEffect(target.tracksCombat, 'dot')!.data.damagePerStack;
+    assert(emberStack > 0, 'fixture: the frame-only hit lit a burn');
+    assert(
+      pyroStack === emberStack,
+      `a Pyromancer stack burns at the frame's full per-stack value: ${pyroStack} vs the frame's ${emberStack}`,
+    );
+  }
   const belowMaxDamage = first.damage;
   fillBurn(world, player, target);
 
   const effect = getStatusEffect(target.tracksCombat, 'dot')!;
+  const fullMs = effect.remainingMs;
+  assert(fullMs > 100, 'fixture: the filling hit lit the burn for its whole duration');
   effect.remainingMs = 100;
   const perStack = effect.data.damagePerStack;
   const atMax = hit(world, player, target);
   assert(getTotalStacks(target.tracksCombat, 'dot') === MAX_STACKS, 'a hit into a full bar keeps it at the cap');
   assert(
-    effect.remainingMs === 100,
-    `a hit at max leaves the burn's clock alone (design §22.12), remainingMs ${effect.remainingMs}`,
+    effect.remainingMs === fullMs,
+    `a hit at max refreshes the burn to its full ${fullMs} ms (design §22.13), remainingMs ${effect.remainingMs}`,
   );
   assert(effect.data.damagePerStack === perStack, 'and leaves its per-stack value alone');
   assert(atMax.metadata['empoweredAttack'] === undefined, 'the path no longer flags a max-stack bonus hit');
@@ -246,26 +275,28 @@ assert(SKILL_TREE.get(PYROMANCER)!.packet === 'affliction', 'Pyromancer stays an
   assert(seen.length === 0, `a tick is not a hit: no pipeline event may run, saw ${seen.map((s) => s.event).join(', ')}`);
 }
 
-// ── Radiant fires while the stacks last; hits at max never keep the burn alive ─
+// ── Steady hits keep the full bar lit and Radiant firing; untouched, it lapses ─
 {
   const { world, player } = setup();
   const burning = body(world, 1000, 1000);
   const adjacent = body(world, 1000 + REACH / 2, 1000);
   fillBurn(world, player, burning);
   const durationMs = getStatusEffect(burning.tracksCombat, 'dot')!.remainingMs;
-  assert(durationMs > 0, 'fixture: the filling hit lit the burn for its whole duration');
+  const tickMs = getStatusEffect(burning.tracksCombat, 'dot')!.data.tickIntervalMs;
+  assert(durationMs > 1000, 'fixture: the burn outlasts the once-a-second hits below');
 
   let radiant = 0;
   let elapsed = 0;
-  // Keep hitting the full bar once a second; the burn still runs out on its own
-  // clock. One 100 ms world step: the hit, the DoT pass, then the duration decay
-  // (the next step's top, `updateCombatState`).
-  while (getStatusEffect(burning.tracksCombat, 'dot') !== undefined && elapsed <= durationMs * 3) {
+  // Hit the full bar once a second for three of its durations: every hit refreshes
+  // the clock (design §22.13), so the bar never lapses. One 100 ms world step: the
+  // hit, the DoT pass, then the duration decay (the next step's top,
+  // `updateCombatState`).
+  const hitForMs = durationMs * 3;
+  while (elapsed < hitForMs) {
     if (elapsed % 1000 === 0) {
-      const before = getStatusEffect(burning.tracksCombat, 'dot')!.remainingMs;
       hit(world, player, burning);
       const after = getStatusEffect(burning.tracksCombat, 'dot')?.remainingMs;
-      assert(after === before, `t=${elapsed}: a hit at max leaves the burn's clock alone, ${before} → ${after}`);
+      assert(after === durationMs, `t=${elapsed}: a hit at max refreshes the burn to its full ${durationMs} ms, got ${after}`);
       assert(getTotalStacks(burning.tracksCombat, 'dot') === MAX_STACKS, `t=${elapsed}: the bar is still full`);
     }
     radiant += tick(world).get(adjacent.isMonster.id)?.length ?? 0;
@@ -273,10 +304,25 @@ assert(SKILL_TREE.get(PYROMANCER)!.packet === 'affliction', 'Pyromancer stays an
     updateCombatState(world, 100);
   }
   assert(
-    getStatusEffect(burning.tracksCombat, 'dot') === undefined && elapsed <= durationMs + 100,
-    `the full burn lapses within its own ${durationMs} ms, hits or no hits (took ${elapsed} ms)`,
+    getTotalStacks(burning.tracksCombat, 'dot') === MAX_STACKS,
+    `steady hits keep the bar full past its own ${durationMs} ms (hit for ${hitForMs} ms)`,
   );
-  assert(radiant >= 2, `Radiant fired on the burn's ticks while the stacks lasted, got ${radiant}`);
+  assert(
+    radiant >= Math.floor(hitForMs / tickMs) - 1,
+    `Radiant fired on every tick of the kept-lit burn: ${radiant} strikes over ${hitForMs} ms at ${tickMs} ms ticks`,
+  );
+
+  // Stop hitting: the full burn runs down on its own clock.
+  let idle = 0;
+  while (getStatusEffect(burning.tracksCombat, 'dot') !== undefined && idle <= durationMs * 2) {
+    tick(world);
+    idle += 100;
+    updateCombatState(world, 100);
+  }
+  assert(
+    getStatusEffect(burning.tracksCombat, 'dot') === undefined && idle <= durationMs + 100,
+    `an untouched full burn lapses within its own ${durationMs} ms (took ${idle} ms)`,
+  );
   hit(world, player, burning);
   assert(
     getTotalStacks(burning.tracksCombat, 'dot') === STACKS_PER_HIT,
@@ -404,13 +450,7 @@ for (const fragileIndex of [0, 1]) {
 
 // ── The gate is the path, not the element: the Ember Mage frame alone never radiates ──
 {
-  const world = new World();
-  const player = world.attachPlayerEntity(makeSlices('ember'), 'ember');
-  player.usesSkills.combatArchetype = 'dot';
-  const frame = SKILL_TREE.get('dot-balanced')!;
-  player.usesSkills.selectedSubVariant = frame.subVariantId ?? null;
-  mergePassives(player.usesSkills.passives, frame.mechanicEffects);
-  syncArchetypeSlices(world, player);
+  const { world, player } = setupFrameOnly();
   const burning = body(world, 1000, 1000);
   const adjacent = body(world, 1000 + REACH / 2, 1000);
   for (let i = 0; i < MAX_STACKS; i++) hit(world, player, burning);

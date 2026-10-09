@@ -90,13 +90,16 @@ assert(
 
 const slam = ABILITY_DATABASE.get("slam")!;
 assert(abilityCastMs(slam, 1) > 0, "a cast must declare a wind-up");
-// Above rank I the wind-up is not a progression track; rank I's is the T1 parity
-// number, solved with its multiple (design §22.12), never longer than the rest.
-assert(
-  abilityCastMs(slam, 2) === abilityCastMs(slam, 3) && abilityCastMs(slam, 3) === abilityCastMs(slam, 4),
-  "Slam's wind-up is not a progression track above rank I",
-);
-assert(abilityCastMs(slam, 1) <= abilityCastMs(slam, 2), "Slam rank I never winds up longer than rank II");
+// The wind-up is not a progression track: rank I's is the T1 parity number, solved
+// with its multiple (design §22.12), and every rank above carries it (design §22.13:
+// Slam is a 600 ms cast at every rank).
+for (const tier of [2, 3, 4]) {
+  assert(
+    abilityCastMs(slam, tier) === abilityCastMs(slam, 1),
+    `Slam rank ${tier} winds up exactly as long as rank I (got ${abilityCastMs(slam, tier)} vs ${abilityCastMs(slam, 1)})`,
+  );
+}
+assert(abilityCastMs(slam, 1) === 600, "Slam is a 600 ms cast (design §22.13)");
 
 // ── 3b. A re-home adds exactly one rank at the new home (the ability pass) ───
 //

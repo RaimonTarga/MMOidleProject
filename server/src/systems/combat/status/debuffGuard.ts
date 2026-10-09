@@ -19,8 +19,9 @@ import { refusesHardControl } from './playerHardControl';
  * applier and the Sun Mark — and by the boss appliers that write their own status
  * (design §22.12: the pattern `apply-status` step, the burrow's contact slow, the
  * ground-zone hazard's slow and sunder, the boss room debuff, the engage sequence's
- * landing root) — so a refusal source only has to apply its status, and no applier
- * restates the rule.
+ * landing root) and by the environment (design §22.13: node-feature terrain slows,
+ * the room's ambient ramp and Frost Nova's ramp stacks) — so a refusal source only
+ * has to apply its status, and no applier restates the rule.
  *
  *  - Unyielding (Endure): hard control and roots — a zero-speed slow is hard
  *    control by `statusPolicyFor` — are refused while it stands. Stuns are refused

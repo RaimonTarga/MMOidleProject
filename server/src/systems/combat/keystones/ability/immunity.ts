@@ -18,7 +18,9 @@
  *    `applyMonsterDotToPlayer`, the monster-ability rider writer, the plating
  *    shred applier and the on-hit Sun Mark, and the boss appliers (design §22.12:
  *    the pattern `apply-status` step, the contact slow, ground-zone hazards, the
- *    room debuff).
+ *    room debuff), and the environment (design §22.13: node-feature terrain
+ *    slows; the room's ambient Chill ramp and Frost Nova's `addAmbientStacks`
+ *    add no Chill stack).
  *
  * THE WINDOW. Immunity's own payoff (`cleanse`) is binary and has no window, so
  * the "few seconds" reuse an existing unit rather than mint one: the

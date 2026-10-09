@@ -7,7 +7,7 @@ import { nodeToSceneX, nodeToSceneY } from '../render/sceneCoords';
  * The ground footprint of a FRIENDLY area cast, drawn for the whole wind-up.
  *
  * ── Why this exists ────────────────────────────────────────────────────────
- * Slam commits 1.6 s to hitting everything in a circle, and until now nothing
+ * Slam commits its wind-up to hitting everything in a circle, and until now nothing
  * told the player where that circle was. The impact FX draws it — after the
  * decision is already made. An AoE whose area you only learn about once it has
  * resolved is an AoE you cannot position for, which is the entire skill of it.
@@ -37,7 +37,7 @@ import { nodeToSceneX, nodeToSceneY } from '../render/sceneCoords';
  * ── Why it tracks rather than being placed ─────────────────────────────────
  * The server resolves the payload at the TARGET's position at the moment the
  * cast completes (`resolveCastPayload`), not where the target stood when it
- * started — and 1.6 s is long enough to walk out of any snapshot. So this
+ * started — and a wind-up is long enough to walk out of any snapshot. So this
  * follows the live target every frame, exactly like Detonate's wind-up
  * ({@link drawDetonateWindups}): state keyed by CASTER (one cast in flight per
  * player, and `player-cast-end` reports the caster for both outcomes), redrawn

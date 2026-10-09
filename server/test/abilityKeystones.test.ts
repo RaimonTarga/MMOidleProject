@@ -75,7 +75,9 @@ import { requestManualAbilityUse } from '../src/systems/player/abilities/ability
 import { hasStatusEffect } from '@mmo-idle/shared';
 import { isStunImmune } from '../src/systems/combat/status/stun';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
-import { markEngaged, updateCombatTransitions } from '../src/systems/combat/ai/engagement';
+import {
+  markEngaged, outOfCombatResetMs, playerCombatPhase, updateCombatTransitions,
+} from '../src/systems/combat/ai/engagement';
 import { updateCombatState } from '../src/systems/combat/engine/combatState';
 import { relayCarriers, relayedThisFight, updateAbilityKeystones } from '../src/systems/combat/keystones';
 import { setFlag } from '@mmo-idle/shared';
@@ -1340,7 +1342,9 @@ import { getDungeonDef } from '@mmo-idle/shared';
     hunt(world, boss, player);
     bindBossAdd(world, boss, herd, 0);
     assert(aggroOn(herd, player), 'fixture: the herd fights the boss’s target');
-    updateBossScripts(world, 100);
+    // Three seconds into its fight, so the script's first call comes due inside the
+    // hold (which ends at the out-of-combat reset window, design §22.13).
+    for (let tick = 0; tick < 30; tick++) updateBossScripts(world, 100);
     assert(boss.isBossEngaged, 'fixture: the boss is engaged');
     // Above its 50% phase, and hurt, so a regen would show.
     boss.hasHealth.hp = Math.round(boss.hasHealth.maxHp * 0.6);
@@ -1355,12 +1359,14 @@ import { getDungeonDef } from '@mmo-idle/shared';
     assert(!aggroOn(boss, player) && !boss.hasAttackTarget, 'the boss drops the vanished player');
     assert(boss.holdsForVanished?.playerId === player.isPlayer.id, 'and holds for them');
 
-    // Eight seconds of its own clocks: the script, the pattern pass, the vanish
-    // tick, the AI (with the add mirroring), combat and the out-of-combat regen.
+    // Its own clocks for as long as a hold lasts (just short of the out-of-combat
+    // reset window, design §22.13): the script, the pattern pass, the vanish tick,
+    // the AI (with the add mirroring), combat and the out-of-combat regen.
     const stood = { ...boss.hasPosition.current };
     const calledBefore = boss.scriptsBoss!.spawnedAddIds?.length ?? 0;
+    const holdTicks = Math.ceil(outOfCombatResetMs(player) / 100) - 1;
     let now = 10_000;
-    for (let tick = 0; tick < 80; tick++) {
+    for (let tick = 0; tick < holdTicks; tick++) {
       now += 100;
       updateBossScripts(world, 100);
       updateBossPatterns(world, 100, now);
@@ -1405,13 +1411,16 @@ import { getDungeonDef } from '@mmo-idle/shared';
     hunt(world, near, player);
     hunt(world, boss, player);
     bindBossAdd(world, boss, herd, 0);
-    updateBossScripts(world, 100);
+    // Three seconds into the fight: the script's first call comes due inside the hold.
+    for (let tick = 0; tick < 30; tick++) updateBossScripts(world, 100);
 
     vanishFrom(world, player, near);
     assert(aggroOn(boss, player) && !boss.holdsForVanished, 'a boss out of reach keeps the player');
     assert(!aggroOn(herd, player) && herd.holdsForVanished, 'its add in reach drops them, and holds');
+    // For as long as the hold lasts: just short of the out-of-combat reset window.
+    const holdTicks = Math.ceil(outOfCombatResetMs(player) / 100) - 1;
     let now = 10_000;
-    for (let tick = 0; tick < 80; tick++) {
+    for (let tick = 0; tick < holdTicks; tick++) {
       now += 100;
       updateBossScripts(world, 100);
       updateAbilityKeystones(world, 100);
@@ -1487,6 +1496,48 @@ import { getDungeonDef } from '@mmo-idle/shared';
     tickDungeons(world, Date.now());
     assert(aggroOn(guardian, player) && !guardian.holdsForVanished, 'the guardian re-acquires the player');
     assert(guardian.hasAggroTarget!.sinceMs === session, 'in the same aggro session');
+  }
+
+  // A hold ends on a clock (design §22.13). A player kept in combat by something
+  // else — a monster out of Vanish's reach still on them — never reaches the
+  // out-of-combat reset, and here never attacks. The holding boss takes them back
+  // once the hold has lasted that reset window (`outOfCombatResetMs`, the window
+  // `updateCombatTransitions` ends a fight on), not before, in the same aggro
+  // session; the mark ends with it, so every other monster sees them again.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-vanish-clock', { abilityId: 'disengage', nodes: VANISH_ROWS });
+    const boss = world.createMonster(NODE, 'tusked-razorback', { x: 470, y: 400 })!;
+    boss.controlsMonster.spawn = { x: 470, y: 1_100 };
+    const keeper = spawnMonster(world, 1_500); // out of Disengage's reach of the departure point
+    hunt(world, boss, player, 500);
+    hunt(world, keeper, player);
+    const session = boss.hasAggroTarget!.sinceMs;
+
+    vanishFrom(world, player, boss);
+    assert(!aggroOn(boss, player) && boss.holdsForVanished?.playerId === player.isPlayer.id, 'fixture: the boss holds');
+    assert(aggroOn(keeper, player), 'fixture: a monster out of reach keeps the player in combat');
+
+    const windowMs = outOfCombatResetMs(player);
+    const step = 100;
+    let now = 10_000;
+    for (let held = step; held < windowMs; held += step) {
+      now += step;
+      updateAbilityKeystones(world, step);
+      updateCombatTransitions(world, now);
+    }
+    assert(playerCombatPhase(world, player, now) === 'ACTIVE', 'the player never left combat: no reset came');
+    assert(!boss.hasAggroTarget && boss.holdsForVanished, 'not before the window: the boss still holds');
+    assert(playerVanished(player), 'and the player is still hidden');
+    const lurker = spawnMonster(world, player.hasPosition.current.x, player.hasPosition.current.y - 70);
+    assert(selectMonsterAggroCandidate(world, lurker)?.entity !== player, 'fixture: a vanished player is not acquired');
+
+    updateAbilityKeystones(world, step);
+    assert(aggroOn(boss, player) && !boss.holdsForVanished, 'at the window the boss re-acquires the player');
+    assert(boss.hasAggroTarget!.sinceMs === session, 'in the same aggro session: the fight resumes, nothing restarts');
+    assert(!playerVanished(player), 'the mark ends with the hold');
+    const candidate = selectMonsterAggroCandidate(world, lurker);
+    assert(candidate?.kind === 'player' && candidate.entity === player, 'every other monster sees the player again');
   }
 }
 

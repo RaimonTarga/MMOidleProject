@@ -343,7 +343,7 @@ gap / deal burst, and recover / remove / endure / avoid.
 |---|---|---|---|
 | **Sweep** | Technique / armed | Plains (2) | Next attack cleaves — the density answer (Tempo from rank II) |
 | **Charge** | Technique / charge | Cave (3) | Gap-closer with real extended reach (T2 Desert 3 before the pass) |
-| **Slam** | Technique / **cast** | Mountain (5) | The burst cast: rank I leans single-target (absorbed Power Strike; T2 Mountain 9 before) |
+| **Slam** | Technique / **cast** | Mountain (5) | The burst cast: one 600 ms wind-up, everything in the circle (absorbed Power Strike; T2 Mountain 9 before) |
 | **Second Wind** | Guard / instant | Forest (2) | Strong/short Recovery access |
 | **Sidestep** | Guard / instant | Forest (5) | The Avoid Guard: an evasion window + a move-speed burst that ends with it (new) |
 | **Cleanse** | Guard / instant | Swamp (3) | Discrete affliction removal |
@@ -457,10 +457,11 @@ ring on a Sweep that is actually ready. Making it exact needs live remaining-ms 
 ### Slam — the burst cast (T1 since the ability pass; first shipped 2026-09-15 at T2)
 
 A `cast` Technique, 6 RP gross (4 + In Combat wiring), reusing the existing
-`cast-strike` effect and its AoE-radius support. Ranks: **2.2x** (rank I, T1 — the
-ability pass's parity number) / **1.75x / 2.0x / 2.25x** Attack (ranks II–IV, unchanged) at
-150 px, 10 s cooldown, 1.6 s wind-up. Rank I is the single-target-leaning rank in Power
-Strike's place; the history below is the T2 Slam's.
+`cast-strike` effect and its AoE-radius support. Ranks: **1.2x** (rank I, T1 — the
+ability pass's parity number) / **2.45x / 2.7x / 2.95x** Attack (ranks II–IV, design
+§22.12) at 150 px, 10 s cooldown, and a **600 ms wind-up at every rank** (rank I's parity
+wind-up, carried up by design §22.13). Rank I sits in Power Strike's place; the history
+below is the T2 Slam's.
 
 (Historical, until the ability pass merged Power Strike into Slam.) The relationship with Power Strike was arithmetic and load-bearing: **Slam deals exactly half
 Power Strike's multiplier per target at the same tier** (T2 1.75 vs 3.5, T3 2.0 vs 4.0, T4
@@ -470,7 +471,7 @@ multiple, three or more clearly favour Slam. That crossover must survive every l
 It favours heavy, slow builds **without ever asking about attack speed** — no inverse-speed
 multiplier, no weapon tags, no cadence query. It scales from Attack, its wind-up ignores
 attack cadence, and casting stops ordinary attacking, so the faster the build the more real
-damage the 1.6 s commitment costs it. `technique.cast-speed-pct` still shortens the wind-up
+damage the wind-up costs it. `technique.cast-speed-pct` still shortens the wind-up
 through the ordinary seam; that is a separate, intended synergy.
 
 Slam **does not** replace, consume, evolve or disable Power Strike — both stay learnable and
@@ -818,9 +819,12 @@ tables above:
   A lower multiplier trims the Conduit; a shorter wind-up returns what the attackers lose
   standing. 600 ms is the longest wind-up that passes (30/30 kit cells inside, worst −4.7%,
   the Striker on the Greatbear; every kit cell still wins as before). Ranks II–IV are
-  2.45 / 2.7 / 2.95 on the 1.6 s wind-up (§22.12: Slam never weakens on tier-up), so rank II
-  is a big step (1.2 → 2.45, 0.6 s → 1.6 s). The ladders: `reports/ability-pass/w1a-ladder.md`
-  (one number) and `w4a-ladder.md` (two).
+  2.45 / 2.7 / 2.95 (§22.12: Slam never weakens on tier-up) on rank I's 600 ms wind-up
+  (§22.13), so the tier-up step is the multiple alone (1.2 → 2.45). On §22.12's 1.6 s, rank II
+  added −0.8% to +1.9% over Sweep at T2 for the Striker, Slinger and Spirit and +23.8% for
+  the Conduit; on 600 ms every class gains +12.9% to +30.9% and the class spread narrows
+  (`reports/ability-pass/measure-slam-t2.md`, `measure-final-calls.md`). The ladders:
+  `reports/ability-pass/w1a-ladder.md` (one number) and `w4a-ladder.md` (two).
 - **Fire-shapes** (§22.10, LOCKED): `ABILITY_FIRE_SHAPES` in
   `data/abilityNodes/offers.ts` says where and when each ability's packet payoff fires,
   from the closed list, each shape mapped to an existing trigger seam
@@ -911,12 +915,12 @@ the game does not have):
 | Cull | Harvest | delivering body | a Cull kill re-strikes the nearest body below the same health share, while it kills, at most the lineage `chainMaxLinks` strikes (design §22.12) | none |
 | Imbue Lightning | Fork | delivering body | the charge consumer (`onChargeSpent`): each imbued hit arcs a share to the nearest other body | none |
 | Stunning Strike | Relay | delivering body | the landed stun is watched; at expiry `applyStun` jumps to the nearest body not yet stunned this fight | stun; per-fight set cleared out of combat |
-| Disengage | Vanish | owner | `setAggroTarget(null)` (and `abortMonsterCast`, a boss's pattern ended `target-lost`) on every monster near the departure point, bosses, boss adds and dungeon monsters included (design §22.12); nothing acquires the marked player until their next hit or the out-of-combat reset: the pull scan, the add mirroring and `bindBossAdd` / `inheritBossTarget` / raise-dead, the dungeon force-aggro, the fissure's victim pick. A dropped encounter body HOLDS (`holdsForVanished`): it stands, keeps its ramp, does not regen, runs its script, and takes the player back in the same aggro session when the mark clears; its adds hold with it | `keystone.vanish` flag; `holdsForVanished` on the monster |
+| Disengage | Vanish | owner | `setAggroTarget(null)` (and `abortMonsterCast`, a boss's pattern ended `target-lost`) on every monster near the departure point, bosses, boss adds and dungeon monsters included (design §22.12); nothing acquires the marked player until their next hit or the out-of-combat reset: the pull scan, the add mirroring and `bindBossAdd` / `inheritBossTarget` / raise-dead, the dungeon force-aggro, the fissure's victim pick, an ordinary monster's rally (`rallyNearbyMonsters`: it recruits nobody and is spent, design §22.13). A dropped encounter body HOLDS (`holdsForVanished`): it stands, keeps its ramp, does not regen, runs its script, and takes the player back in the same aggro session when the mark clears; its adds hold with it. A hold ends on a clock (design §22.13): once it has lasted the out-of-combat reset window (`outOfCombatResetMs`, the window `updateCombatTransitions` uses) it takes the player back the same way and clears the mark, even if the player never attacked | `keystone.vanish` flag; `holdsForVanished` on the monster |
 | Break Free | Backlash | owner | shortest stun rung on every body adjacent to the player | stun |
 | Brace | Riposte | owner | `afterHit` on a melee hit taken while Braced: shortest rung on the attacker, once per attacker per Brace | stun |
 | Bramble Guard | Entangle | owner | the thorns' `afterHit` moment: `applyMonsterSlow` under its own id | `ability-entangled` (a member of `MONSTER_SLOW_STATUS_IDS`) |
 | Endure | Unyielding | owner | `ability-unyielding` on Endure's clock; hard-control appliers refuse | `ability-unyielding` |
-| Cleanse | Immunity | owner | each stripped status id becomes a refused kind for the `engagement-dr` unit's window, 3 s (design §22.12) | `ability-immunity` |
+| Cleanse | Immunity | owner | each stripped status id becomes a refused kind for the `engagement-dr` unit's window, 3 s (design §22.12), refused at every player debuff writer (`playerRefusesStatus`): the boss appliers (§22.12) and the environment (§22.13): node-feature terrain slows under their own status id, and the room's ambient Chill ramp and Frost Nova's `addAmbientStacks` add no `tundra-chill` stack (the ramp banks no refused time) | `ability-immunity` |
 | Second Wind | Shared Breath | formation | the Recovery engine's skill source on same-node party members; summons mended in the summoner's owner-to-summon pass | none |
 | Recuperate | Overflow | owner | the overheal-ward hook on `applyHealToPlayer`: ANY spill past full, mend or not (design §22.12; out-of-combat regen at full fills it before a pull, accepted), tops up one ward to the ward payoff's cap; spill at the cap keeps the full shell from lapsing | none |
 | Sidestep | Flow | owner | the evade seam (`onDamageTaken`) while Sidestep's window is up: a dodge (a graze counts) winds the window back to the `evasion-window` unit Sidestep reads (`sidestepWindow`; a refresh, never a stack); the first hit that lands removes it, the speed burst with it | `ability-sidestep` (its own window) |
@@ -957,7 +961,7 @@ each shape to an existing trigger seam; the runtime is
 | per hit absorbed | Brace, Bramble Guard | hit-taken |
 | per hit dodged | Sidestep | evade |
 | per tick while active | Endure, Recuperate | pulse |
-| on strip | Cleanse | cleanse |
+| on strip (when it removed anything, once per cast; design §22.13) | Cleanse | cleanse |
 
 **Charge is the one exception.** The §22.10 row reads "on the first body the rush
 touches, and the target on arrival"; players move through monster bodies (they collide
@@ -977,9 +981,9 @@ the moment a payoff fires, never its rate:
    (shared `ON_TARGET_PAYOFF_KINDS`), and `landsOnBody` in `abilityNodes.ts` reads the
    same predicate, so there is no second list. On *every body hit* the self payoffs ride
    the exchange's own body (else the first); a Slam over four bodies refunds its cooldown
-   once. Cleanse's strip is one resolution too: it fires once per strip, not once per
-   affliction kind removed (every Guard offer is a self payoff, so "sized by what it
-   removed" now reads "fires when it removed anything").
+   once. Cleanse's strip is one resolution too: every route fires once per strip that
+   removed anything, never once per affliction kind removed (design §22.13 dropped "sized
+   by what it removed"; `onAbilityNodeStripped` has no per-kind loop).
 2. **A node's ward refreshes, not stacks.** A ward an ability node fires (packet or cross)
    carries the owner key `abilityNode.<abilityId>` (`abilityNodeOwner`); `applyWard`'s
    optional `owner` refreshes that owner's one live ward in place, topped up to the
@@ -1034,7 +1038,7 @@ them, and one was retagged (no effect change):
 | Justicar | Striker (cadence), retagged **Empowered** | unchanged: the Verdict is banked and spent by the finisher |
 | Duelist | Slinger (reload light), packet **Kill chain** | every kill loads a round past the clip until the next reload; the exploding last bullet and the +1 round are retired (`reload.exploding-clip` and `reload.empowered-mult` have no author); the Empowered `mechanic-proxy` is ×3.5 again (design §22.12) through `reload.mechanic-proxy-mult`, which only the proxy reads, so the Scout openers and the HUD/DPS readers do not move; every other reload spec takes the proxy's 1.5 fallback |
 | Warmonger | Slinger (reload heavy), packet Tempo | the Artillerist frame owns the ramp; `reload.ramp-carry-pct` 0.5 keeps half of it through a reload (`frames-current-state.md`); the top damage and the glow measure against one clip, so the first clip is the Artillerist's own, and only the attack-speed climb carries past it (design §22.12); Hair Trigger is retired |
-| Pyromancer | Apprentice (dot balanced), packet Affliction | 2 burn stacks at 55% each; a hit at max burn lays nothing and does not refresh the burn (design §22.12, the old path's rule), so Radiant fires while the stacks last; the max-stack direct bonus is gone (the Ember Mage frame owns it); Radiant: a burn tick at max stacks also strikes every adjacent body as damage over time (no plating, half DR, no stacks, never recurses) |
+| Pyromancer | Apprentice (dot balanced), packet Affliction | 2 burn stacks per hit at full strength (each the Ember Mage frame's own stack); a hit at max burn refreshes the burn (design §22.13, over §22.5's 55% and §22.12's "does not refresh"), so steady hits keep the bar full and Radiant firing — the frame's burn ramped twice as fast; the max-stack direct bonus is gone (the Ember Mage frame owns it); Radiant: a burn tick at max stacks also strikes every adjacent body as damage over time (no plating, half DR, no stacks, never recurses) |
 
 The skill-tree data is `shared/src/data/skillTree/t3CombatA.ts` / `t3CombatB.ts`;
 tests `t3SquirePaths`, `t3SlingerPaths`, `t3ApprenticePaths`.

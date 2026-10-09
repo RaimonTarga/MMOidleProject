@@ -262,6 +262,138 @@ W1-A's branch (the Reverb Squire and Pyromancer Apprentice rows; T4 Apprentice �
 | `plan-final-w4.json`, `final-w4.jsonl`, `final-w4-parity.md`, `final-w4.md` | §3 on the tip with every wave-4 branch merged | plan byte-identical to `plan-final.json`; matrix IDENTICAL to `w4a.jsonl` (1,800/1,800); **PARITY HOLDS, 30/30 kit cells inside ±5%, worst −4.7% (Striker, Greatbear)** |
 | `final-w4-base.jsonl`, `final-w4-base-identity.md` | §4, the frozen no-band plan | the 180 rows with unchanged abilities IDENTICAL to `reports/legibility/final-base.jsonl`; the 720 naming the cut Expose Weakness refused, as before |
 
+## 10. Design §22.13's two "measure before deciding" calls (branch `feat/ap-measure`)
+
+Off `feat/ability-pass-calls-2` (`12d2b1f1`). No game code or number changed. Two throwaway
+scripts: `server/scripts/_apMeasurePlans.ts`, which rewrites the existing generators' plans
+into one candidate label per arm, and `server/scripts/_apMeasureReport.ts`, which builds
+the tables. The lab gained one optional row field, `skillPath`, an explicit skill path used
+verbatim. Rows without it are derived exactly as before. It is the only way to state a T4
+character with no T3 path. All three runs went concurrently on this machine: 12 processes,
+6 cores, 0 error rows.
+
+| file | what | rows | wall |
+|---|---|---:|---:|
+| `plan-measure-slam-t2.json`, `measure-slam-t2.jsonl`, `measure-slam-t2.md`, `measure-slam-t2-cells.md` | (1) Slam's tier-up step at T2: the T2 composition matrix's no-card control rows (5 weapons × 6 classes × 5 T2 bosses × 10 seeds) with the Technique set to Sweep / Slam as authored / `ap` castMs 600 / `ap` 1.2× on castMs 600 | 6,000 | 925 s, 6 shards |
+| `plan-measure-pyro.json`, `measure-pyro.jsonl` | (2) the Apprentice's boss5 T3/T4 rows, 10 seeds (99011 + nine), fixed spawn: the Pyromancer, the frame alone, and every other dot T3 path with its frame | 930 | 793 s, 4 shards |
+| `plan-measure-pyro-old.json`, `measure-pyro-old.jsonl` | (2d) the balanced-frame arms at `e56d530e` with Slam held at the tip's numbers | 310 | 569 s, 2 shards |
+| `measure-pyromancer.md`, `measure-pyro-cells.md` | (2) the tables | | |
+
+From `server/` (`$SP` is any scratch directory; the two input plans regenerate in seconds
+and are not kept):
+
+```bash
+R=../reports/ability-pass
+# (1) Slam at T2
+node --conditions=development --import tsx scripts/_t1BossPlan.ts \
+  --out=$SP/plan-t2-composition.json --matrix=composition --tier=2 --seeds=10
+node --conditions=development --import tsx scripts/_apMeasurePlans.ts \
+  --slam-t2-from=$SP/plan-t2-composition.json --out=$R/plan-measure-slam-t2.json
+for i in 0 1 2 3 4 5; do
+  node --conditions=development --import tsx scripts/_t1BossLab.ts \
+    --plan=$R/plan-measure-slam-t2.json --out=$R/measure-slam-t2.shard$i.jsonl \
+    --hitboxes=../reports/progression-phase0/hitboxes.json --shard=$i --shards=6 &
+done; wait
+cat $R/measure-slam-t2.shard?.jsonl > $R/measure-slam-t2.jsonl   # then delete the shard files
+node --conditions=development --import tsx scripts/_apMeasureReport.ts \
+  --slam=$R/measure-slam-t2.jsonl --md=<tables.md> --cells-md=$R/measure-slam-t2-cells.md
+
+# (2) the Pyromancer
+node --conditions=development --import tsx scripts/_abilityPassStacking.ts --boss5-plan=$SP/plan-boss5.json
+#   (byte-identical to plan-boss5-w4a.json)
+node --conditions=development --import tsx scripts/_apMeasurePlans.ts \
+  --pyro-from=$SP/plan-boss5.json --out=$R/plan-measure-pyro.json
+node --conditions=development --import tsx scripts/_apMeasurePlans.ts \
+  --pyro-from=$SP/plan-boss5.json --out=$R/plan-measure-pyro-old.json --old
+# lab as above, 4 shards -> $R/measure-pyro.jsonl
+# (2d) on a detached checkout of e56d530e (below), from its server/, with this branch's
+#      _t1BossLab.ts copied in (the lab is otherwise identical on both commits):
+#      lab on plan-measure-pyro-old.json, 2 shards -> measure-pyro-old.jsonl
+node --conditions=development --import tsx scripts/_apMeasureReport.ts \
+  --pyro=$R/measure-pyro.jsonl --old=$R/measure-pyro-old.jsonl --w4a=$R/w4a-boss5.jsonl \
+  --md=<tables.md> --cells-md=$R/measure-pyro-cells.md
+```
+
+The `e56d530e` checkout is `git worktree add --detach
+C:/Users/osaif/AppData/Local/mmo-idle/ap-measure-e56d530e e56d530e`. It has no install:
+`node_modules/.pnpm` is junctioned to the donor store
+(`../mmo-lineages/node_modules/.pnpm`). `server/`, `bot/`, `client/` and `admin/` each get
+a `node_modules` of junctions copied from this worktree's, with `@mmo-idle/shared`
+repointed at the checkout's own `shared/`. A probe confirmed the checkout reads its own
+data (the old Pyromancer's `max-stack-bonus-mult`, the old Slam's three ranks at home tier
+2). The checkout is left in place, detached and uncommitted. To remove it, delete its
+junctions first (`rmdir` on a junction removes only the link), then the worktree.
+
+Checks: `e56d530e` fights the frame-alone, Firebrand, Cinder Lord and T3 rows identically
+to the tip (250/250 rows, `wallMs` dropped); only the Pyromancer rows differ. The tip's
+seed-99011 T3 rows equal `w4a-boss5.jsonl`'s. `tsc -p tsconfig.bench.json` (it includes the
+lab) is clean.
+
+## 11. The second round of calls (design §22.13, branch `feat/ap-calls-2-code`)
+
+| file | what | result |
+|---|---|---|
+| `calls2.jsonl` | §3 on the calls' code (Cleanse fires once on a strip, the Vanish hold's clock, the environment's Guard gates) | plan regenerated byte-identical to `plan-final-w4.json` (not kept); matrix IDENTICAL to `final-w4.jsonl` (1,800/1,800, `--identity`, 0 error rows; 104 s at 5 shards): the calls move no T1 fight |
+
+## 12. The final calls (design §22.13 "Decided after the measurements", branch `feat/ap-final-calls`)
+
+Off `feat/ability-pass-calls-2` (`c1470881`). Slam is a 600 ms cast at every rank
+(`6a884e58`); the Pyromancer's stacks are full strength and a hit at max refreshes the bar
+(`a89a9ab7`). Same plans, seeds and scripts as §10. Every plan the generators write
+regenerated byte-identical here: the tutorial-pair plan (= `plan-final-w4.json`),
+`plan-measure-slam-t2.json`, the boss5 plan (= `plan-boss5-w4a.json`) and
+`plan-measure-pyro.json`. 0 error rows everywhere. Readings: `measure-final-calls.md`.
+
+| file | what | result |
+|---|---|---|
+| `final-calls.jsonl` | §3, the T1 tutorial-pair lab (5 shards, ~120 s) | IDENTICAL to `final-w4.jsonl` (1,800/1,800, `--identity`): the calls move no T1 fight |
+| `final-calls-slam-t2.jsonl` | §10 (1)'s authored arm only (`t2s-slam-*`, 1,500 fights, no `ap`; 210 s at 6 shards) | IDENTICAL to X2's `t2s-slam600-*` rows of `measure-slam-t2.jsonl`, relabelled `t2s-slam600-` → `t2s-slam-` (1,500/1,500, `--identity`) |
+| `final-calls-boss5.jsonl`, `final-calls-boss5.md`, `final-calls-boss5-cells.md` | §5's boss5 T3/T4 rows, Rerun 3 (`stacking.md`); 149 s at 3 shards | against W4-A: T3 +11.0%, T4 +17.8% (the wind-up alone +11.0% / +13.1%) |
+| `final-calls-boss5-slam1600.jsonl` | the same plan with `{"slam": {"castMs": 1600}}` (the wind-up control); 79 s at 3 shards | equals `w4a-boss5.jsonl` on 72/78 rows; the six that differ are the T4 Pyromancer |
+| `final-calls-pyro.jsonl` | §10 (2)'s balanced-frame tip arms, 10 seeds: the T3 row and the T4 Pyromancer, frame alone, Firebrand, Cinder Lord (310 fights; 244 s at 3 shards) | Pyromancer +1.7% over the frame alone (−32.7% in X2's) |
+| `final-calls-pyro-slam1600.jsonl` | the T4 Pyromancer and frame alone with `{"slam": {"castMs": 1600}}` (120 fights; 73 s at 3 shards) | frame alone IDENTICAL to X2's `p-t4-ember` rows (60/60); Pyromancer +0.7% over it |
+| `measure-final-calls.md` | the tables (`_apMeasureReport.ts --final`) and the readings | |
+
+From `server/` (`$SP` is any scratch directory; the derived plans regenerate in seconds and
+are not kept):
+
+```bash
+R=../reports/ability-pass
+# the T1 identity: §3's commands with T=final-calls, then
+node --conditions=development --import tsx scripts/_abilityPassParity.ts $R/final-w4.jsonl $R/final-calls.jsonl --identity
+
+# the derived plans: rows of the committed plans, ids unchanged (--slam-cast-ms adds the ap override)
+P='node --conditions=development --import tsx scripts/_apMeasurePlans.ts'
+$P --select-from=$R/plan-measure-slam-t2.json --prefixes='t2s-slam-' --out=$SP/plan-fc-slam-t2.json
+$P --select-from=$R/plan-measure-pyro.json \
+  --prefixes='p-t3-ember|,p-t4-pyromancer|,p-t4-ember|,p-t4-firebrand|,p-t4-cinder-lord|' --out=$SP/plan-fc-pyro.json
+$P --select-from=$R/plan-measure-pyro.json --prefixes='p-t4-pyromancer|,p-t4-ember|' \
+  --slam-cast-ms=1600 --out=$SP/plan-fc-pyro-slam1600.json
+$P --select-from=$R/plan-boss5-w4a.json --prefixes='boss5-' --slam-cast-ms=1600 --out=$SP/plan-fc-boss5-slam1600.json
+# the lab, sharded as in §3: plan-fc-slam-t2 (6) -> final-calls-slam-t2.jsonl, plan-boss5-w4a.json (3)
+#   -> final-calls-boss5.jsonl, plan-fc-pyro (3) -> final-calls-pyro.jsonl, and the two
+#   slam1600 plans (3 each) -> final-calls-{pyro,boss5}-slam1600.jsonl
+
+# the Slam identity: X2's 600 ms arm, relabelled to the authored arm's ids
+grep '"id":"t2s-slam600-' $R/measure-slam-t2.jsonl | sed 's/"id":"t2s-slam600-/"id":"t2s-slam-/' > $SP/x2-slam600.jsonl
+node --conditions=development --import tsx scripts/_abilityPassParity.ts $SP/x2-slam600.jsonl $R/final-calls-slam-t2.jsonl --identity
+
+# the tables
+node --conditions=development --import tsx scripts/_abilityPassStacking.ts \
+  --before=$R/w4a-boss5.jsonl --mid=$R/final-calls-boss5-slam1600.jsonl --after=$R/final-calls-boss5.jsonl \
+  --title="boss5 T3/T4, Rerun 3: W4-A → tip with Slam held at 1.6 s → tip (Slam 600 ms every rank)" \
+  --md=$R/final-calls-boss5.md --cells-md=$R/final-calls-boss5-cells.md
+node --conditions=development --import tsx scripts/_apMeasureReport.ts --final \
+  --slam-now=$R/final-calls-slam-t2.jsonl --slam-x2=$R/measure-slam-t2.jsonl \
+  --pyro-now=$R/final-calls-pyro.jsonl --pyro-1600=$R/final-calls-pyro-slam1600.jsonl \
+  --pyro-x2=$R/measure-pyro.jsonl --pyro-old=$R/measure-pyro-old.jsonl \
+  --boss5-w0=$R/stacking-boss5-after.jsonl --boss5-w4a=$R/w4a-boss5.jsonl \
+  --boss5-1600=$R/final-calls-boss5-slam1600.jsonl --boss5-now=$R/final-calls-boss5.jsonl --md=<tables.md>
+```
+
+The old (e56d530e) Pyromancer is X2's `measure-pyro-old.jsonl`; the e56d530e checkout was
+not used again.
+
 ## Commits
 
 Branch `feat/ability-pass-baseline` off `feat/ability-pass` (`e56d530e`). Nothing was
