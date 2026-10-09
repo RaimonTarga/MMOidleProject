@@ -38,6 +38,12 @@ interface Row {
   debugEvents?: boolean; tier?: number; upgrade?: number; stance?: string | null;
   /** Class build: frame (default balanced), T4 spec letter (default a), range (default by class), core, relic. */
   frame?: 'light' | 'balanced' | 'heavy'; spec?: 'a' | 'b' | 'c'; range?: 'close' | 'mid' | 'far'; core?: string; relic?: string;
+  /**
+   * An explicit skill path, used verbatim instead of the frame/range/spec derivation
+   * (ability-pass measurements, 2026-10-09): the one build the derivation cannot state
+   * is a tier-4 character with NO T3 path (the frame alone). Absent = derived, as before.
+   */
+  skillPath?: string[];
   /** Weapon overrides for tuning: [+0, +5] endpoints; the whole delta rides on upgrade step 1. */
   /** Ability overrides: per-rank effect field values, plus cast/cooldown. */
   ap?: Record<string, { field?: string; values?: number[]; castMs?: number; cooldownMs?: number }>;
@@ -153,6 +159,7 @@ function buyBand(world: World, bot: PlayerEntity, row: Row): string[] {
 }
 
 function skillPathFor(row: Row, c: { prefix: string; melee: boolean }, tier: number): string[] {
+  if (row.skillPath) return [...row.skillPath];
   const frame = row.frame ?? 'balanced';
   const range = row.range ?? (c.melee ? 'close' : 'mid');
   return [`${c.prefix}-root`, ...(tier >= 2 ? [`${c.prefix}-${frame}`] : []), ...(tier >= 3 ? [`${c.prefix}-range-${range}`] : []), ...(tier >= 4 ? [`${c.prefix}-${frame}-t3-${row.spec ?? 'a'}`] : [])];
