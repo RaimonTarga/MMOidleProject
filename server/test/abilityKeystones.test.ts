@@ -719,7 +719,8 @@ function attackLedger(player: PlayerEntity): string {
 // activation path (`requestManualAbilityUse` → `maybeFireGuard`), so each verb is
 // exercised from the one seam it hangs off.
 
-import { requestManualAbilityUse } from '../src/systems/player/abilities/abilityFiring';
+// Aliased: W2-A's section imports the same function under its own name.
+import { requestManualAbilityUse as requestGuardUse } from '../src/systems/player/abilities/abilityFiring';
 import { syncPlayerControlLockout } from '../src/systems/combat/status/playerControlLockout';
 import { runMonsterAttack } from '../src/systems/combat/engine/combat';
 import {
@@ -740,7 +741,7 @@ import { syncPlayerBuffs } from '../src/systems/combat/buffs/buffSync';
 
 /** Fire a Guard the way a hotkey press does; asserts it activated. */
 function fireGuard(world: World, player: PlayerEntity, abilityId: string, now = 1_000_000): void {
-  const result = requestManualAbilityUse(world, player, abilityId, now);
+  const result = requestGuardUse(world, player, abilityId, now);
   assert(result.state === 'activated', `${abilityId} activates (${result.state}: ${result.reason ?? ''})`);
 }
 
