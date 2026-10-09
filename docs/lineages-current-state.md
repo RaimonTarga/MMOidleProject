@@ -275,7 +275,7 @@ T2 it is the band's grammar. A verb is authored with **no trigger and no payoff*
 | Tempo | `hit-nth` n = 6 (landed swings) | `echo-hit` 1.0: a whole second swing through the proc seam, carrying on-hit | the same | attack speed +9% |
 | Affliction | `hit-afflicted`, cap 5000 ms | bleed 1.0 × the hit over 4 s, ADDED to the one record (`lineage.bleed`, or the weapon's reservoir, §11a) | `redose`: 1.0 × what its DoTs still owe, over 4 s, added to that same record | DoT potency +10% (`dotPotencyPct` → `dot.mechanic-mult` AND a light bleed on every hit, below; on a reservoir weapon the reservoir's potency instead) |
 | Engagement | `first-hit`, per body | `big-hit` ×2 | the same | Attack +3 |
-| Empowered | `mechanic-fired`, cap 4000 ms | `mechanic-proxy` (the class's own multiplier; 1.5 for dot, summoner and non-Duelist reload) | `big-hit` ×1.5 on the mechanic's hit | attack +9% |
+| Empowered | `mechanic-fired`, cap 4000 ms | `mechanic-proxy` (the class's own multiplier; 1.5 for dot, summoner and every reload spec, since the T3 review retired the Duelist's exploding clip, design §22.5) | `big-hit` ×1.5 on the mechanic's hit | attack +9% |
 | Control | `hit-held` (slowed, rooted, chilled, frozen or stunned — a knockdown is held), cap 5000 ms | `root` 2000 ms | `stun` 1500 ms | `slowOnHit` 15% (a slow on every hit, below) |
 | Kill chain | `kill` + carry (the next landed hit after a kill) | `heal-and-load`: heal 10% of max HP, the hit ×1.5 | the same ("Your next hit after a kill heals a tenth of your pool and lands loaded (+50%).") | move speed +11 |
 | Technique | `technique-cast` | refund ⅓ of the Technique cooldowns | refund ½ | Technique power +9% |
@@ -443,8 +443,10 @@ weapon-eligible packet has at least one tagged path (tempo 15, empowered 20, aff
 13, control 2, kill-chain 1, engagement 3); `bulwark`/`barrier-tempo` have none by design
 (no class attack path should name a defensive-only lane). The T3 class paths themselves
 are reviewed as a whole after the rework — these tags are a label on existing paths, not
-a rewrite of them, and two T3 paths (Pyromancer, Warmonger) currently overlap their root's
-new frame loop; see [`frames-current-state.md`](frames-current-state.md) §3.
+a rewrite of them. The ability pass re-homed five (design §22.5; see
+[`abilities-current-state.md`](abilities-current-state.md) "T3 path re-homes"), which
+closed the Pyromancer and Warmonger overlaps with their root's frame loop; see
+[`frames-current-state.md`](frames-current-state.md) §3.
 
 ## 6. Re-homed forms
 
@@ -481,55 +483,68 @@ and Dagger) were authored straight from the existing `evolvesFrom` graph per des
 ("author the T3 and T4 forms now … with empty bands above T2 until Phase 5"), closing the
 reachability gap §2 describes.
 
-## 7. Ability nodes (design §19)
+## 7. Ability nodes (design §19, §22)
 
-A generic tree keyed to packets, not per-class trees, data-only: a **T1 packet node**
-(three options, one per packet fitted to the ability) and a **T2 amplifier node** (three
-options, one per chosen packet's axis) for all 22 abilities. A node means "this ability
-also fires the chosen packet's payoff at a share when it lands (Technique) or casts
-(Guard)", through the lineage payoff runtime — nodes decide *what* an ability does; runes
-still decide *when* it fires.
+A generic tree keyed to packets, not per-class trees: **four rows per ability, 19
+abilities** (the ability pass roster, `abilities-current-state.md`). A node means "this
+ability also fires the chosen packet's payoff at a share when it lands (Technique) or
+casts (Guard)", through the lineage payoff runtime. Nodes decide *what* an ability does;
+runes still decide *when* it fires. The keystone row is the one place a node is bespoke
+(the keystone table, fire-shapes, tier rule and cast axis are in
+[`abilities-current-state.md`](abilities-current-state.md) "The ability pass"; the verbs
+are design §22.4 / §22.11).
 
-- **Data:** `shared/src/data/abilityNodes/` — `offers.ts` is the only hand-authored table
-  (three `(lane, payoff)` pairs per ability plus a rationale sentence); the amplifier row,
-  option names, and fx keys are all GENERATED from it, not hand-written per ability.
-  Techniques offer three of the six offensive packets; Guards offer the three defensive
-  faces. **`speed-window` is deliberately not offered on a Guard's avoid face** — it would
-  give a Guard an attack-speed window, i.e. defence scaling offence, which the
-  ability-design axiom forbids. A consequence: a Guard's avoid and endure options differ
-  from each other only in lane/shard/fx, not in payoff kind, since the vocabulary has no
-  second avoid-face payoff — flagged as needing an `evasion-window` payoff if that row
-  should carry a real choice.
-- **Numbers:** `ABILITY_NODE_SHARE` in `magnitudes.ts` — `packet` 0.5 (fraction of a full
-  payoff row), `amplifier` 0.6 (seeded at the lineage amplifier's own scalar). Cost and
-  unlock reuse the lineage `payoff`/`amplifier` row costs; nothing new was added there.
-- **State:** `TracksProgression.abilityNodes: Record<abilityId, { owned: string[]; active:
-  Partial<Record<'packet' | 'amplifier', string>> }>` — optional, normalized at hydration
-  like `visitedNodes`, no migration. Unlock on the ability's own home-tier band with Global
-  Mastery, like a lineage row (the amplifier sits one band above the packet node, clamped
-  at T4); cost essence plus the packet's shard.
+| Row | Tier | What it is |
+|---|---|---|
+| **packet** | home | one of the ability's three offered `(lane, payoff)` pairs, at `ABILITY_NODE_SHARE.packet` |
+| **amplifier** | home + 1 | a free choice of axis on the active packet's route: second body, longer window, bigger payoff, and on a cast or charge a shorter wind-up (the `cast` axis) |
+| **keystone** | home + 2 | one of three bespoke verbs, paid in the active packet's shard |
+| **cross** | home + 3 | one of the OTHER two offers, borrowed at `ROW_SCALAR.cross` (derived, never authored; the packet's own lane is never borrowed) |
+
+- **Data:** `shared/src/data/abilityNodes/` — `offers.ts` (three pairs per ability, the
+  fire-shape table and the Kill chain kill-trigger set) and `keystones.ts` (the 19 trios,
+  57 verbs, each `live` or a silhouette) are the hand-authored tables; the amplifier and
+  cross rows, option names and fx keys are DERIVED (`index.ts`). Techniques offer three
+  of the six offensive packets; Guards offer the three defensive faces.
+  **`speed-window` is deliberately not offered on a Guard's avoid face** (defence
+  scaling offence is forbidden by the ability-design axioms). Binary payoffs (`stun`,
+  `cleanse`) are never offered as a "half" share. Names, icons and animations arrive
+  with the ability pass's W2-D (`shared/src/data/abilityNodes/flavor.ts`,
+  [`combat-animation-current-state.md`](combat-animation-current-state.md)); that pass
+  is not on `feat/ability-pass` yet, so they are not described here.
+- **Tier rule:** `abilityNodeRowTier(ability, row)` = home tier + 0/1/2/3, NOT clamped
+  (design §22.10): a T1 ability reads 1/2/3/4, a T2 one 2/3/4/5. Rows above
+  `MAX_LINEAGE_TIER` (4) FOLD into the T4 band today (`abilityNodeBandTier`: gated at
+  that band's unlock level for the row's kind, priced at that band) and unfold when the
+  tier ships; option ids carry no tier, so no save is touched.
+- **Numbers:** `ABILITY_NODE_SHARE` in `magnitudes.ts` — `packet` 0.5, `amplifier` 0.6;
+  keystones and crosses resolve at `ROW_SCALAR.keystone` / `ROW_SCALAR.cross`. Cost and
+  unlock reuse the lineage row costs. Unbenched.
+- **State:** `TracksProgression.abilityNodes: Record<abilityId, { owned: string[];
+  active: Partial<Record<'packet' | 'amplifier' | 'keystone' | 'cross', string>> }>` —
+  owned is forever, active is a free swap. An amplifier of a packet that is not active
+  does nothing, as a lineage amplifier; a cross on the active packet's own lane does
+  nothing.
 - **Protocol:** `ability:unlockNode` / `ability:setNode` (client→server),
   `ability:nodeResult` (server→client) — `shared/src/protocol/socketEvents.ts`. Server
   handlers: `server/src/systems/player/economy/abilityNodes.ts`. Runtime dispatch:
-  `server/src/systems/combat/abilityNodes.ts`, which reuses `fireLineagePayoffs` (split
-  out of `lineageCards.ts` as the one "apply a payoff, draw one card-fx" implementation,
-  so the node path inherits the evade early-return, max-wins debuff records, and the
-  amplified-target spread without restating any of them). A node fires on the ability's
-  **resolution** (landing/casting), not its activation — an armed Charge the fight never
-  consumed pays nothing. WHERE it fires is the ability's §22.10 fire-shape (live since the
-  ability pass, W2-E: on every body an area hit, per imbued hit, per hit absorbed or
-  dodged, per pulse while a Guard's window is up, per kind stripped — see
-  `abilities-current-state.md`), and the per-hit and per-tick shapes pay under their
-  packet's `capMs`.
+  `server/src/systems/combat/abilityNodes.ts`, which reuses `fireLineagePayoffs`, so the
+  node path inherits the evade early-return, max-wins debuff records and the
+  amplified-target spread. A node fires on the ability's **resolution**, not its
+  activation; WHERE it fires is the ability's §22.10 fire-shape (live — see the
+  fire-shape table in `abilities-current-state.md`), and the per-hit and per-tick shapes
+  pay under their packet's `capMs`. A Technique's Kill chain offer fires on the kill.
+- **Keystone verbs:** 18 of the 19 first verbs are live (11 Techniques, 7 Guards), one
+  server module each under `server/src/systems/combat/keystones/ability/`. The second
+  and third verbs of every trio and Sidestep's Afterimage (a decoy target needs a new
+  primitive) are silhouettes: shown on the row, refused by the purchase check.
 - **Client:** `client/src/ui/AbilityNodeRows.tsx` on the Abilities panel, the same card
   component the lineage tree uses.
-- Binary payoffs (`stun`, `cleanse`) are never offered — "half a stun" is no stun.
 
 **Not done / provisional:** `ABILITY_NODE_SHARE` is unbenched (a Guard node is a free
 extra defensive window on a cooldown the player already pays for — the first thing a
-bench should check); no keystone/cross row for abilities (deferred past the T3 class
-review, per §19); no gameplay-telemetry row for node unlocks/sets (the lineage handlers
-emit telemetry, the node handlers do not — no node event exists on the recorder yet).
+bench should check); no gameplay-telemetry row for node unlocks/sets (the lineage
+handlers emit telemetry, the node handlers do not).
 
 ## 8. Shared authority (`shared/src/systems/lineages.ts`)
 
@@ -678,7 +693,9 @@ the composed heavy bleed, the Affliction re-dose, `poison-stack`, a standalone
   Dagger's Numbing Dose and Cinderbrand capstones, its T4 Plague Dose, the Rapier's
   Venomthorn capstone, the ability-node Affliction options).
 - Every reader sees the one id: the bleed driver, the DoT inventory family, the Affliction
-  moment's "afflicted" test, the re-dose, Contagion and Detonate.
+  moment's "afflicted" test, the re-dose, Contagion and Detonate, and the ability pass's readers of the same record:
+  Outbreak (`copyPlayerDotOnto` on a tagged body's death), Chain Reaction (`resolveDetonate`
+  over every afflicted body in reach) and Pyromancer's Radiant (a burn tick at max stacks).
 - **Two behaviour changes, PROVISIONAL:** a `poison-stack` firing now adds what one
   application promises (its share of the hit × the window ÷ the class DoT's tick) instead of
   stacking toward the class cap, which lowers the T3/T4 Dagger and Rapier capstones, Plague
