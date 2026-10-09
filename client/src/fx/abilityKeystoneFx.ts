@@ -1426,6 +1426,124 @@ function backlash(scene: GameScene, ev: CardFxEvent): void {
   });
 }
 
+// ── Bramble Guard · ENTANGLE — a body that hits you while brambled is slowed ─
+
+/** A thorned vine from `a` to `b`, drawn to `p` of its length, waving with `phase`. */
+function vine(g: Phaser.GameObjects.Graphics, a: P, b: P, p: number, phase: number, k: number): void {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const nx = -dy / len;
+  const ny = dx / len;
+  const steps = 14;
+  const point = (t: number): P => {
+    const wave = Math.sin(t * Math.PI * 3 + phase) * 7 * k * (1 - t * 0.5);
+    return { x: a.x + dx * t + nx * wave, y: a.y + dy * t + ny * wave };
+  };
+  g.lineStyle(4 * k, 0x3e6b2a, 0.95);
+  g.beginPath();
+  for (let i = 0; i <= steps; i++) {
+    const q = point((i / steps) * p);
+    if (i === 0) g.moveTo(q.x, q.y);
+    else g.lineTo(q.x, q.y);
+  }
+  g.strokePath();
+  g.lineStyle(1.5, 0x9ad65a, 0.9);
+  g.beginPath();
+  for (let i = 0; i <= steps; i++) {
+    const q = point((i / steps) * p);
+    if (i === 0) g.moveTo(q.x, q.y);
+    else g.lineTo(q.x, q.y);
+  }
+  g.strokePath();
+  // Thorns along it.
+  g.fillStyle(0xc4e88a, 1);
+  for (let i = 1; i < steps; i += 2) {
+    const t = (i / steps) * p;
+    const q = point(t);
+    const s = i % 4 === 1 ? 1 : -1;
+    g.fillTriangle(q.x, q.y, q.x + nx * 5 * k * s + dx / len * 2, q.y + ny * 5 * k * s + dy / len * 2, q.x + dx / len * 4, q.y + dy / len * 4);
+  }
+}
+
+/** A coil of thorned vine round a body's feet. */
+function coil(g: Phaser.GameObjects.Graphics, at: P, rx: number, ry: number, alpha: number, spin: number, k: number): void {
+  g.lineStyle(3.5 * k, 0x3e6b2a, alpha);
+  g.strokeEllipse(at.x, at.y, rx * 2, ry * 2);
+  g.lineStyle(1.5, 0x9ad65a, alpha);
+  g.strokeEllipse(at.x, at.y, rx * 2, ry * 2);
+  g.fillStyle(0xc4e88a, alpha);
+  for (let i = 0; i < 8; i++) {
+    const a = spin + (i / 8) * Math.PI * 2;
+    const x = at.x + Math.cos(a) * rx;
+    const y = at.y + Math.sin(a) * ry;
+    g.fillTriangle(x - 2 * k, y, x + 2 * k, y, x, y - 6 * k);
+  }
+}
+
+/**
+ * The Endure face answered by the Control lane's hold. One event per attacker the
+ * thorns slowed. WIND-UP: thorns bristle round you at the blow. PAYOFF: a vine
+ * lashes out from you along the line of the hit and coils round the attacker's
+ * legs with a burst of thorns. LASTING MARK: the coil stays at its feet for the
+ * slow's clock (`durationMs`, as applied), tightening as it ends.
+ */
+function entangle(scene: GameScene, ev: CardFxEvent): void {
+  const id = ev.playerId;
+  const from = spriteAt(scene, id) ?? nodeToScene(ev.pos.x, ev.pos.y);
+  const { k, sparks } = sizeOf(scene, ev);
+  // The thorns bristle.
+  const bristle = scene.add.graphics({ x: from.x, y: from.y }).setDepth(DEPTH.FX);
+  bristle.fillStyle(0xc4e88a, 1);
+  for (let i = 0; i < 10; i++) {
+    const a = (i / 10) * Math.PI * 2;
+    const x = Math.cos(a) * 18 * k;
+    const y = Math.sin(a) * 22 * k;
+    bristle.fillTriangle(x - 2, y, x + 2, y, x * 1.4, y * 1.4);
+  }
+  bristle.setScale(0.5);
+  scene.tweens.add({
+    targets: bristle, scaleX: 1, scaleY: 1, duration: 90, ease: 'Back.easeOut',
+    onComplete: () => fading(scene, bristle, 220),
+  });
+
+  // The lash and the coil.
+  const lash = scene.add.graphics().setDepth(DEPTH.FX);
+  const t = { p: 0 };
+  scene.tweens.add({
+    targets: t, p: 1, duration: 150, delay: 60, ease: 'Quad.easeOut',
+    onUpdate: () => {
+      const to = spriteAt(scene, ev.targetId) ?? eventPoint(ev);
+      const here = spriteAt(scene, id) ?? from;
+      if (!lash.active) return;
+      lash.clear();
+      vine(lash, here, { x: to.x, y: to.y + 8 }, t.p, t.p * 4, k);
+    },
+    onComplete: () => {
+      fading(scene, lash, 200);
+      if (document.hidden) return;
+      const at = spriteAt(scene, ev.targetId) ?? eventPoint(ev);
+      burstFx(scene, 'ptx-spark', at.x, at.y + 8, count(8, sparks), 320, {
+        tint: [0xc4e88a, 0x9ad65a], speed: { min: 60, max: 160 }, angle: { min: 180, max: 360 },
+        scale: { start: 0.7, end: 0 }, alpha: { start: 1, end: 0 },
+      });
+      if (ev.targetId && !(scene.state.view.get(ev.targetId) as MonsterView | undefined)?.isBoss) {
+        posePath(scene, ev.targetId, [
+          { sy: 0.92, sx: 1.06, ms: 70 },
+          { sy: 1, sx: 1, ms: 220, ease: 'Back.easeOut' },
+        ]);
+      }
+      if (!ev.targetId) return;
+      const holdMs = Math.max(200, (ev.durationMs ?? 0) - 210);
+      followBody(scene, ev.targetId, holdMs, DEPTH.SPRITE - 1, (g, here, p, sprite) => {
+        const rx = Math.max(18, sprite.displayWidth * 0.5) * (1 - 0.15 * p);
+        const fade = 1 - Math.max(0, p - 0.85) / 0.15;
+        coil(g, { x: here.x, y: here.y + sprite.displayHeight * 0.42 }, rx, rx * 0.36, 0.9 * fade, p * 2, k);
+      });
+    },
+  });
+}
+
 // ── The table ────────────────────────────────────────────────────────────────
 
 /** The bespoke animations, by verb id. Kept in step with `KEYSTONE_ANIMATED`. */
@@ -1446,6 +1564,7 @@ const KEYSTONE_ANIMATIONS: Record<string, KeystoneAnimation> = {
   overflow: overflow,
   riposte: riposte,
   backlash: backlash,
+  entangle: entangle,
 };
 
 /**
