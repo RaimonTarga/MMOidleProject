@@ -54,6 +54,7 @@ import {
 import { abilityCooldownKey, techniqueCooldownMs } from '../src/systems/player/abilities/abilityCooldowns';
 import { applyWardPercent, ownedWardOf } from '../src/systems/defense/barrier/wards';
 import { capCd } from '../src/systems/combat/lineageKeys';
+import { BRAMBLE_EFFECT_ID } from '../src/systems/player/abilities/abilityBramble';
 import { armTechnique } from '../src/systems/player/abilities/abilityArming';
 import { beginAbilityCast, updateAbilityCasts } from '../src/systems/player/abilities/abilityCasting';
 import { addLineageAffliction } from '../src/systems/combat/damage/lineageAffliction';
@@ -482,6 +483,16 @@ function idsOf(...monsters: MonsterEntity[]): string {
 
 // ═══ Guards: per hit absorbed, per hit dodged ═══════════════════════════════
 
+/**
+ * The cap a Guard route fires under (design §22.12), read straight off the packet
+ * table: the lane's own moment cap, else Control's — the existing lane cap the
+ * uncapped Guard lanes borrow.
+ */
+function guardRouteCap(lane: PacketId): number {
+  const own = packetMoment(lane)?.capMs ?? 0;
+  return own > 0 ? own : packetMoment('control')?.capMs ?? 0;
+}
+
 /** One incoming monster hit on `player`, through the `onDamageTaken` phase. */
 function incoming(
   world: World,
@@ -523,7 +534,9 @@ function castGuard(world: World, player: PlayerEntity, abilityId: string): void 
   const fired = cardFx(world);
   const wards = fired.filter((e) => e.fx === 'barrier-tempo.ward-shell');
   const braced = fired.filter((e) => e.fx === 'control.chill-blur');
-  assert(wards.length === 2, `2 hits absorbed while Braced give 2 firings of an uncapped lane, got ${wards.length}`);
+  // Design §22.12: every per-hit Guard route is capped — Barrier tempo has no cap
+  // of its own, so it borrows Control's.
+  assert(wards.length === 1, `2 hits absorbed inside one cap give 1 firing of the ward route, got ${wards.length}`);
   assert(braced.length === 1, `and the Control cross pays once per its ${controlCap} ms cap, got ${braced.length}`);
 
   // A dodge outright is no hit absorbed.
@@ -606,6 +619,45 @@ function castGuard(world: World, player: PlayerEntity, abilityId: string): void 
   assert(fired.length === 1, `a thorn hit gives one firing, got ${fired.length}`);
 }
 
+// ─── Bramble Guard's three routes: at most once per cap window each ─────────
+
+{
+  // Design §22.12: "every per-hit and per-tick Guard route carries a rate cap,
+  // the packet's own where it has one and an existing lane cap otherwise". The
+  // thorns held up for 30 s, a hit every 1.5 s; each route on its own.
+  const SPAN = 30_000;
+  const EVERY = 1_500;
+  const TICK = 100;
+  for (const [lane, payoff] of ABILITY_PACKET_OFFERS.get('bramble-guard')!) {
+    const world = new World();
+    const player = spawnPlayer(world, `fs-bramble-cap-${lane}`, {
+      abilityId: 'bramble-guard', nodes: rows('bramble-guard', { packet: lane }),
+    });
+    const attacker = spawnMonster(world, 440);
+    world.takeNodeEvents(NODE);
+    const fx = abilityNodeFx(lane, payoff);
+    const cap = guardRouteCap(lane);
+    assert(cap > EVERY, `fixture: ${lane}'s cap outlasts the hit interval`);
+
+    castGuard(world, player, 'bramble-guard');
+    const at: number[] = [];
+    for (let t = 0; t < SPAN; t += TICK) {
+      const thorns = getStatusEffect(player.tracksCombat, BRAMBLE_EFFECT_ID);
+      if (!thorns) throw new Error('fixture: the thorns are up');
+      thorns.remainingMs = SPAN; // held up the whole span
+      if (t % EVERY === 0) incoming(world, attacker, player);
+      for (const e of cardFx(world)) if (e.fx === fx) at.push(t);
+      updateCombatState(world, TICK);
+    }
+    const hits = SPAN / EVERY;
+    assert(at.length >= 2 && at.length <= Math.ceil(SPAN / cap),
+      `bramble ${lane}/${payoff}: ${hits} hits fire at most once per ${cap} ms (≤ ${Math.ceil(SPAN / cap)}), got ${at.length}`);
+    for (let i = 1; i < at.length; i++) {
+      assert(at[i]! - at[i - 1]! >= cap, `bramble ${lane}/${payoff}: firings ${at[i - 1]} and ${at[i]} inside one ${cap} ms cap`);
+    }
+  }
+}
+
 // ─── Sidestep: per hit dodged during the window ──────────────────────────────
 
 {
@@ -672,13 +724,17 @@ function pulseFor(world: World, ms: number, fx: string): number {
   const hold = getStatusEffect(player.tracksCombat, guardEffectIdForAbility('endure')!);
   if (!hold || hold.remainingMs <= 0) throw new Error('the hold is up');
   const heldMs = hold.remainingMs;
-  // The first pulse on the tick the hold comes up, then one per pulse while it holds.
+  // The first pulse on the tick the hold comes up, then one per pulse while it
+  // holds — under the route's cap (design §22.12): Bulwark has none of its own,
+  // so Control's, and a cap longer than the pulse sets the cadence.
+  const cadence = Math.max(PULSE, guardRouteCap('bulwark'));
+  assert(cadence > PULSE, 'fixture: the borrowed cap is longer than the pulse');
   updateAbilityNodePulses(world);
   let fired = cardFx(world).filter((e) => e.fx === 'bulwark.plating-chip').length;
   fired += pulseFor(world, heldMs, 'bulwark.plating-chip');
-  const expected = Math.ceil(heldMs / PULSE);
+  const expected = Math.ceil(heldMs / cadence);
   assert(expected >= 2, 'the fixture holds long enough for more than one pulse');
-  assert(fired === expected, `a ${heldMs} ms hold pulses ${expected} times at ${PULSE} ms, got ${fired}`);
+  assert(fired === expected, `a ${heldMs} ms hold pulses ${expected} times at ${cadence} ms, got ${fired}`);
   assert(pulseFor(world, PULSE * 3, 'bulwark.plating-chip') === 0, 'the pulses stop when the hold drops');
 }
 
@@ -698,7 +754,8 @@ function pulseFor(world: World, ms: number, fx: string): number {
   updateAbilityNodePulses(world);
   let fired = cardFx(world).filter((e) => e.fx === 'tempo.evasive-blur').length;
   fired += pulseFor(world, mendMs + lineageUnit('pulseMs'), 'tempo.evasive-blur');
-  assert(fired === Math.ceil(mendMs / lineageUnit('pulseMs')), `the mend pulses while it runs, got ${fired}`);
+  const cadence = Math.max(lineageUnit('pulseMs'), guardRouteCap('tempo'));
+  assert(fired === Math.ceil(mendMs / cadence), `the mend pulses every ${cadence} ms while it runs, got ${fired}`);
 }
 
 // ═══ on strip ═══════════════════════════════════════════════════════════════

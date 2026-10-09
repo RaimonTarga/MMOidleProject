@@ -1357,10 +1357,11 @@ export interface ExternalLineagePayoff {
   /** The active amplifier's axis (an ability node's packet payoff), for its card-fx. */
   axis?: AmplifiedAxis;
   /**
-   * The rate cap of the moment this payoff rides — its packet's `capMs` — applied
-   * per firing by {@link fire}, exactly as a card's: one landed firing per cap per
-   * `key`. Absent for a payoff that fires once per cast (design §22.10's per-hit
-   * and per-tick fire-shapes are the ones that carry it).
+   * The rate cap of the moment this payoff rides — its packet's `capMs`, or for a
+   * Guard route whose packet has none an existing lane's (`abilityNodeRouteCapMs`,
+   * design §22.12) — applied per firing by {@link fire}, exactly as a card's: one
+   * landed firing per cap per `key`. Absent for a payoff that fires once per cast
+   * (design §22.10's per-hit, per-tick and on-strip fire-shapes carry it).
    */
   capMs?: number;
   /**

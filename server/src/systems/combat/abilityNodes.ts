@@ -43,9 +43,13 @@
  *                           `pulse` cadence (`LINEAGE_UNITS.pulseMs`), counted
  *                           by a cooldown as a pulse card's is
  *                           (`updateAbilityNodePulses`, from `World.tick`)
- *   on strip                once per affliction kind a Cleanse removed
- *                           (`onAbilityNodeStripped`, from the Guard firing that
- *                           stripped them)
+ *   on strip                once per strip that removed anything (a body payoff
+ *                           once per affliction kind removed; no Guard offers
+ *                           one) — `onAbilityNodeStripped`, from the Guard
+ *                           firing that stripped them
+ *
+ * The four Guard shapes above that answer the fight (per hit absorbed, per hit
+ * dodged, per tick while active, on strip) fire under a rate cap (below).
  *
  * A Guard's payoff is a defensive face's and never deals damage; the shape only
  * moves the moment it is granted.
@@ -59,15 +63,24 @@
  * exactly when `payoffLandsOnTarget(kind)` (shared `ON_TARGET_PAYOFF_KINDS`),
  * and everything else resolves on the player (see {@link landsOnBody}).
  *
- * THE RATE CAP. A shape that fires more than once per cast — per hit of a
- * window, per hit absorbed, per hit dodged, per tick while active — must not
- * escape the lane's existing rate cap (design §24.2: synergy buys reliability,
- * never rate). So each of its firings carries its packet moment's `capMs`
- * (`packetMoment(lane)`: Affliction and Control one per 5 s, Empowered one per
- * 4 s, the rest uncapped), and `fire()` applies it exactly as it does for a card:
- * one landed firing per cap per option. A shape that fires once per cast — on
- * land, on every body hit (one moment that lands on several bodies, like a
- * `targets` amplifier), on cast, on strip, on the break — carries none, as before.
+ * THE RATE CAP. A shape that fires more than once per cast must not escape a lane
+ * cap (design §24.2: synergy buys reliability, never rate). Each of its firings
+ * carries a `capMs`, and `fire()` applies it exactly as it does for a card: one
+ * landed firing per cap per option — per (player, ability, route).
+ *
+ *  - Every Guard route on per hit absorbed, per hit dodged, per tick while
+ *    active or on strip is capped (design §22.12): its packet moment's own
+ *    `capMs` where it has one (`packetMoment(lane)`: Affliction and Control one
+ *    per 5 s, Empowered one per 4 s), else Control's existing 5 s
+ *    ({@link GUARD_FALLBACK_CAP_LANE}). Brace's ward fires at most once per 5 s
+ *    however many hits it absorbs; a per-tick pulse the cap would refuse waits
+ *    for the cap rather than being spent, so Endure and Recuperate pulse every
+ *    5 s, not every 4.
+ *  - A Technique's window (on each hit of a window: Imbue) carries its packet's
+ *    own `capMs` only.
+ *  - A shape that fires once per cast — on land, on every body hit (one moment
+ *    that lands on several bodies, like a `targets` amplifier), on cast, on the
+ *    break — carries none.
  *
  * "Lands" is deliberately not "activates": an armed Technique activates when it
  * arms, which can be a swing before it touches anything, and a node that paid out
@@ -119,6 +132,7 @@ import type { MonsterEntity, PlayerEntity } from '../../ecs/entity';
 import type { World } from '../../world/World';
 import { registerCombatListener, type CombatContext } from './engine/combatPipeline';
 import { fireLineagePayoffs, type ExternalLineagePayoff } from './lineageCards';
+import { capCd } from './lineageKeys';
 import { evadeFullyAvoided, evadeMitigationOf } from '../defense/mitigation/evasion';
 import { BRAMBLE_EFFECT_ID } from '../player/abilities/abilityBramble';
 
@@ -167,19 +181,44 @@ interface NodePayoff {
 }
 
 /**
- * The fire-shapes that fire more than once per cast, so each firing carries the
- * lane's rate cap (see the module header).
+ * The Guard fire-shapes that answer the fight rather than the cast — per hit
+ * absorbed, per hit dodged, per tick while active, on strip — every route of
+ * which carries a rate cap (design §22.12; see the module header).
  */
-const CAPPED_SHAPES: ReadonlySet<AbilityFireShape> = new Set<AbilityFireShape>([
-  'on each hit of a window',
+const GUARD_RATE_SHAPES: ReadonlySet<AbilityFireShape> = new Set<AbilityFireShape>([
   'per hit absorbed',
   'per hit dodged',
   'per tick while active',
+  'on strip',
 ]);
 
 /**
+ * The lane whose EXISTING moment cap a Guard route borrows when its own packet has
+ * none (design §22.12: "an existing lane cap otherwise"): Control's one per 5 s
+ * (`PACKET_HALF_NUMBERS.control.moment.capMs`), the one capped lane a Guard
+ * offers (Brace's and Break Free's Control route already ride it), so every route
+ * of a Guard fires at the same rate and differs only in what it does. Read from
+ * the table, never copied: move Control's cap and the Guard routes follow.
+ */
+const GUARD_FALLBACK_CAP_LANE: PacketId = 'control';
+
+/**
+ * The rate cap one route fires under, in ms (0 = uncapped):
+ *  - a Guard rate shape: its packet's own `capMs`, else the fallback lane's;
+ *  - a Technique's window (`on each hit of a window`): its packet's own `capMs`;
+ *  - every other shape fires once per cast and carries none.
+ */
+export function abilityNodeRouteCapMs(lane: PacketId, shape: AbilityFireShape): number {
+  const own = packetMoment(lane)?.capMs ?? 0;
+  if (GUARD_RATE_SHAPES.has(shape)) {
+    return own > 0 ? own : packetMoment(GUARD_FALLBACK_CAP_LANE)?.capMs ?? 0;
+  }
+  return shape === 'on each hit of a window' ? own : 0;
+}
+
+/**
  * One node payoff as the dispatcher wants it, or null when it has no declared fx.
- * A payoff on a capped shape carries its packet moment's `capMs`.
+ * A payoff on a capped route carries its cap ({@link abilityNodeRouteCapMs}).
  */
 function external(
   option: AbilityNodeOption,
@@ -189,7 +228,7 @@ function external(
 ): ExternalLineagePayoff | null {
   const fx = abilityNodeFx(option.lane, payoff.kind);
   if (!fx) return null;
-  const capMs = CAPPED_SHAPES.has(shape) ? packetMoment(option.lane)?.capMs ?? 0 : 0;
+  const capMs = abilityNodeRouteCapMs(option.lane, shape);
   // The payoff is cloned because the dispatcher mutates what it is handed (a
   // bleed rewrites `damagePerTick`, plating-stack stamps `perStackFraction`),
   // and the cache must survive the fight unchanged. The amplifier's axis rides
@@ -508,7 +547,7 @@ function guardWindowUp(player: PlayerEntity, ability: AbilityDef): boolean {
 
 /**
  * Fire every Guard route on `shape` whose Guard's window is up — one firing per
- * Guard per call, each payoff under its lane's cap. `target` is whatever the
+ * Guard per call, each payoff under its route's cap. `target` is whatever the
  * moment answers (the attacker), for a payoff that wanted one; a Guard's never do.
  */
 function fireGuardShape(
@@ -576,7 +615,8 @@ const pulseCd = (abilityId: string): string => `abilityNode.pulse.${abilityId}`;
  * node fires once per pulse — the first on the tick the window comes up, then
  * every `pulseMs` until it drops. No new clock: the lineage pulse's cadence,
  * counted by a cooldown exactly as `updateLineageCards` counts a pulse card's,
- * and each firing under its lane's cap.
+ * and each firing under its route's cap (design §22.12) — a cap longer than the
+ * pulse sets the cadence.
  *
  * Run once per world tick from `World.tick`, beside `updateLineageCards`.
  */
@@ -594,6 +634,10 @@ export function updateAbilityNodePulses(world: World): void {
       if (isCooldownActive(cs, pulseCd(abilityId))) continue;
       const payoffs = withShape(payoffsFor(player, abilityId), 'per tick while active');
       if (payoffs.length === 0) continue;
+      // A pulse every route's cap would refuse WAITS for the cap rather than being
+      // spent, so the cadence is the slower of the pulse and the cap — never a
+      // pulse lost to a cap that opens a tick later (design §22.12).
+      if (payoffs.every((entry) => (entry.capMs ?? 0) > 0 && isCooldownActive(cs, capCd(entry.key)))) continue;
       setCooldown(cs, pulseCd(abilityId), PULSE_MS);
       fireLineagePayoffs(world, player, payoffs);
     }
