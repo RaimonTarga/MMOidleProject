@@ -891,4 +891,141 @@ function attackLedger(player: PlayerEntity): string {
   }
 }
 
+// ─── Cull · HARVEST: a Cull kill strikes the next body below the same share ──
+
+{
+  const cull = ABILITY_DATABASE.get('cull')!;
+  const detonate = ABILITY_DATABASE.get('detonate')!;
+  const HARVEST_FX = ABILITY_KEYSTONE_DEFINITIONS.get('harvest')!.fx;
+  const CHAIN_REACTION_FX = ABILITY_KEYSTONE_DEFINITIONS.get('chain-reaction')!.fx;
+  /** A body at `hp` of `maxHp`. */
+  const body = (world: World, x: number, y: number, hp: number, maxHp: number): MonsterEntity => {
+    const monster = spawnMonster(world, x, y);
+    monster.hasHealth.maxHp = maxHp;
+    monster.hasHealth.hp = hp;
+    return monster;
+  };
+  const bleeds = (monster: MonsterEntity, player: PlayerEntity): boolean =>
+    monster.tracksCombat.statusEffects.some(
+      (effect) => effect.id === LINEAGE_BLEED_ID && effect.sourceId === player.isPlayer.id && effect.remainingMs !== 0,
+    );
+  const hitsOn = (events: CombatEvent[], monster: MonsterEntity): number =>
+    events.filter((e) => e.kind === 'damage' && e.targetId === monster.isMonster.id).length;
+  const cast = (world: World, player: PlayerEntity, ability: typeof cull, target: MonsterEntity): CombatEvent[] => {
+    setAttackTarget(world, player, target.isMonster.id);
+    assert(beginAbilityCast(world, player, ability, 1_000), `${ability.name} winds up`);
+    world.takeNodeEvents(NODE);
+    updateAbilityCasts(world, player.isCastingAbility!.endsAt);
+    return world.takeNodeEvents(NODE);
+  };
+
+  // The harvest, and the one body Chain Reaction and Harvest could both take.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-harvest', {
+      abilityId: 'cull', nodes: rows('cull', { packet: 'technique', keystone: 'harvest' }),
+    });
+    // The same player also runs Detonate with Chain Reaction (two Technique slots at T3).
+    player.tracksProgression.knownAbilities.push('detonate');
+    player.tracksProgression.attunedAbilities.techniques.push('detonate');
+    player.tracksProgression.abilityNodes!['detonate'] = rows('detonate', { packet: 'technique', keystone: 'chain-reaction' });
+    refreshAbilityNodeRuntime(player);
+    player.performsAttack.attackRange = 150;
+
+    const first = body(world, 470, 400, 200, 1_000); // at a fifth: Cull kills it
+    const nearest = body(world, 400, 470, 50, 1_000); // below the share, killed in turn
+    const healthy = body(world, 340, 340, 90_000, 100_000); // nearer still, above the share
+    // Below the share, afflicted, and too stout to die: the one both verbs could take.
+    const both = body(world, 300, 400, 10_000, 100_000);
+    assert(addLineageAffliction(world, player, both, 600, 4_000), 'fixture: the shared body bleeds');
+    const afterStop = body(world, 400, 290, 50, 1_000); // low, but the harvest stopped first
+    const outOfReach = body(world, 900, 400, 50, 1_000);
+    const ledger = attackLedger(player);
+
+    const events = cast(world, player, cull, first);
+    assert(!world.getMonsterEntity(first.isMonster.id), 'Cull killed its target');
+    assert(!world.getMonsterEntity(nearest.isMonster.id), 'the harvest struck the nearest body below the share, and killed it');
+    assert(hitsOn(events, both) === 1, 'and kept going to the next, once');
+    assert(both.hasHealth.hp > 0, 'which survived: the harvest ends there');
+    assert(bleeds(both, player), 'Harvest spends health, never afflictions');
+    assert(afterStop.hasHealth.hp === 50, 'nothing after a strike that does not kill');
+    assert(healthy.hasHealth.hp === 90_000, 'a body above the share is never struck, however near');
+    assert(outOfReach.hasHealth.hp === 50, "only bodies in Cull's reach");
+    assert(
+      events.filter((e) => e.kind === 'card-fx' && e.fx === HARVEST_FX).length === 2,
+      'one card-fx per harvest strike',
+    );
+    assert(
+      !events.some((e) => e.kind === 'card-fx' && e.fx === CHAIN_REACTION_FX),
+      'a Cull kill sets off no Chain Reaction',
+    );
+    assert(attackLedger(player) === ledger, 'a harvest strike is never an attack: no attack event, no hit counter');
+
+    // A Detonate kill now: Chain Reaction takes the shared body ONCE (its
+    // afflictions), and Harvest does not (it is not a Cull kill).
+    const fuse = body(world, 470, 400, 1, 1_000);
+    addLineageAffliction(world, player, fuse, 600, 4_000);
+    const hpBefore = both.hasHealth.hp;
+    const burst = cast(world, player, detonate, fuse);
+    assert(!world.getMonsterEntity(fuse.isMonster.id), 'the Detonate killed its target');
+    assert(hitsOn(burst, both) === 1 && both.hasHealth.hp < hpBefore, 'the shared body is taken once, by the chain');
+    assert(!bleeds(both, player), 'its afflictions spent by the detonation');
+    assert(afterStop.hasHealth.hp === 50, 'Chain Reaction spends afflictions, never health: a clean low body is untouched');
+    assert(!burst.some((e) => e.kind === 'card-fx' && e.fx === HARVEST_FX), 'a Detonate kill harvests nothing');
+  }
+
+  // No kill, no harvest.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-harvest-nokill', {
+      abilityId: 'cull', nodes: rows('cull', { packet: 'technique', keystone: 'harvest' }),
+    });
+    player.performsAttack.attackRange = 150;
+    const stout = body(world, 470, 400, 50_000, 100_000);
+    const low = body(world, 400, 470, 50, 1_000);
+    const events = cast(world, player, cull, stout);
+    assert(stout.hasHealth.hp > 0 && low.hasHealth.hp === 50, 'a Cull that does not kill harvests nothing');
+    assert(!events.some((e) => e.kind === 'card-fx' && e.fx === HARVEST_FX), 'and draws nothing');
+  }
+
+  // On a Conduit the summon that cast the kill harvests, from where it stands.
+  {
+    const world = new World();
+    const { player, minions } = conduit(world, 'ks-harvest-conduit', 'cull',
+      rows('cull', { packet: 'technique', keystone: 'harvest' }));
+    const caster = minions[0]!;
+    caster.performsAttack.attackRange = 100;
+    player.performsAttack.attackRange = 150;
+    const c = { ...caster.hasPosition.current };
+    const gap = Math.hypot(c.x - player.hasPosition.current.x, c.y - player.hasPosition.current.y);
+    const u = gap > 1
+      ? { x: (c.x - player.hasPosition.current.x) / gap, y: (c.y - player.hasPosition.current.y) / gap }
+      : { x: 1, y: 0 };
+    // The owner steps back from its summon, inside the formation's leash.
+    player.hasPosition.current = { x: c.x - u.x * 200, y: c.y - u.y * 200 };
+    const p = { ...player.hasPosition.current };
+    const first = body(world, c.x + u.x * 70, c.y + u.y * 70, 200, 1_000);
+    // By the summon, on the far side from the owner.
+    const bySummon = body(world, c.x + u.x * 130 - u.y * 70, c.y + u.y * 130 + u.x * 70, 50, 1_000);
+    // By the owner, behind them: what an owner-delivered harvest would take.
+    const byOwner = body(world, p.x - u.x * 80, p.y - u.y * 80, 50, 1_000);
+    assert(world.collision.canReach(caster, bySummon, caster.performsAttack.attackRange), 'fixture: in the summon\'s reach');
+    assert(!world.collision.canReach(caster, byOwner, caster.performsAttack.attackRange), 'fixture: out of the summon\'s reach');
+    assert(world.collision.canReach(player, byOwner, player.performsAttack.attackRange), 'fixture: in the owner\'s reach');
+    setAttackTarget(world, caster, first.isMonster.id);
+    assert(beginAbilityCast(world, player, cull, 1_000), 'the Conduit begins its Cull');
+    assert(player.isCastingAbility?.casterMinionId === caster.entityId, 'through one physical summon');
+    world.takeNodeEvents(NODE);
+    updateAbilityCasts(world, player.isCastingAbility!.endsAt);
+    assert(!world.getMonsterEntity(first.isMonster.id), "the summon's Cull killed its target");
+    assert(!world.getMonsterEntity(bySummon.isMonster.id), 'the summon harvests the body by it');
+    assert(byOwner.hasHealth.hp === 50, "not the body by the owner: the harvest chains from the body that made the kill");
+    const drawn = cardFx(world).filter((e) => e.fx === HARVEST_FX);
+    assert(
+      drawn.length === 1 && drawn[0]!.pos.x === c.x && drawn[0]!.pos.y === c.y,
+      'drawn from the delivering summon',
+    );
+  }
+}
+
 console.log('abilityKeystones: ok');

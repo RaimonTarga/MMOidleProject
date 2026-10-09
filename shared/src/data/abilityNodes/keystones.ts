@@ -216,7 +216,7 @@ const trioEntries: [string, Trio][] = [
   ['cull', [
     verb('cull', 1, 'harvest', 'Harvest',
       'A Cull kill lands the same strike on the nearest body below the same health share, and keeps going while it keeps killing.',
-      'kill-chain.keystone', 'echo-hit', { delivery: DB }),
+      'kill-chain.keystone', 'echo-hit', { delivery: DB, live: true }),
     verb('cull', 2, 'death-sentence', 'Death Sentence',
       'A body Cull hits but does not kill is marked; your next kill of any body also kills it if it is below the threshold.',
       'empowered.weak-point', 'vulnerability'),

@@ -15,6 +15,7 @@
  * | Binding Strike | Dragnet | the root writer in monsterControl (applyMonsterRoot) on every body adjacent to the target |
  * | Detonate | Chain Reaction | a Detonate kill runs resolveDetonate once on every afflicted body in the cast's reach |
  * | Snipe | Pierce | applyPlayerAoeTo on every body the line from the delivering body through the target crosses behind it |
+ * | Cull | Harvest | a Cull kill re-strikes (Cull's own strike, applyPlayerAoeTo) the nearest body below the killed target's share, while it kills |
  */
 export * from './registry';
 export * from './scheduledHits';
@@ -25,3 +26,4 @@ export { OUTBREAK_KEYSTONE, outbreakTag, outbreakTagged } from './outbreak';
 export { DRAGNET_KEYSTONE } from './dragnet';
 export { CHAIN_REACTION_KEYSTONE } from './chainReaction';
 export { PIERCE_KEYSTONE } from './pierce';
+export { HARVEST_KEYSTONE } from './harvest';
