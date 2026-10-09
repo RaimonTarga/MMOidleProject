@@ -193,6 +193,8 @@ interface LineageFiring {
   cardId?: string;
   /** An ability node's amplifier axis, carried onto its `card-fx` (design §22.7). */
   axis?: AmplifiedAxis;
+  /** An ability node's owner key: its `ward` refreshes the one ward it owns (design §22.12). */
+  owner?: string;
 }
 
 /**
@@ -420,7 +422,9 @@ function applyPayoff(site: PayoffSite, firing: LineageFiring): CardFxDraft | nul
       return { fx: firing.fx };
 
     case 'ward':
-      applyWardPercent(world, player, magnitude, durationMs ?? 0);
+      // An owned ward (an ability node's) refreshes the one ward its owner holds;
+      // a card's ward stacks, as it always has.
+      applyWardPercent(world, player, magnitude, durationMs ?? 0, firing.owner);
       applyTimedSelf(player.tracksCombat, kind, magnitude, durationMs, sourceId);
       return { fx: firing.fx };
 
@@ -1359,6 +1363,12 @@ export interface ExternalLineagePayoff {
    * and per-tick fire-shapes are the ones that carry it).
    */
   capMs?: number;
+  /**
+   * What owns what this payoff leaves standing on the player — an ability node's
+   * key. A `ward` with an owner refreshes the one ward that owner holds (topped
+   * up, its window renewed) instead of stacking a new one (design §22.12).
+   */
+  owner?: string;
 }
 
 /** Apply external payoffs. Returns how many actually did something. */
@@ -1382,6 +1392,7 @@ export function fireLineagePayoffs(
       trigger: { kind: 'guard-cast' as const, ...(p.capMs ? { capMs: p.capMs } : {}) },
       payoff: p.payoff,
       ...(p.axis !== undefined ? { axis: p.axis } : {}),
+      ...(p.owner !== undefined ? { owner: p.owner } : {}),
     })),
   );
 }

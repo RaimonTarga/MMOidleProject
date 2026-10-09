@@ -48,8 +48,12 @@ import { World } from '../src/world/World';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { emitCombatEvent, makeCombatContext, type CombatContext } from '../src/systems/combat/engine/combatPipeline';
 import { setAttackTarget } from '../src/systems/combat/ai/targeting';
-import { onAbilityNodeBodiesHit, refreshAbilityNodeRuntime, updateAbilityNodePulses } from '../src/systems/combat/abilityNodes';
+import {
+  abilityNodeOwner, onAbilityNodeBodiesHit, refreshAbilityNodeRuntime, updateAbilityNodePulses,
+} from '../src/systems/combat/abilityNodes';
 import { abilityCooldownKey, techniqueCooldownMs } from '../src/systems/player/abilities/abilityCooldowns';
+import { applyWardPercent, ownedWardOf } from '../src/systems/defense/barrier/wards';
+import { capCd } from '../src/systems/combat/lineageKeys';
 import { armTechnique } from '../src/systems/player/abilities/abilityArming';
 import { beginAbilityCast, updateAbilityCasts } from '../src/systems/player/abilities/abilityCasting';
 import { addLineageAffliction } from '../src/systems/combat/damage/lineageAffliction';
@@ -535,6 +539,51 @@ function castGuard(world: World, player: PlayerEntity, abilityId: string): void 
   updateCombatState(world, brace.durationMs + controlCap);
   incoming(world, attacker, player);
   assert(cardFx(world).length === 0, 'a hit after the window fires nothing');
+}
+
+// ─── Brace's ward: a node's ward refreshes the one ward it owns ──────────────
+
+{
+  // Design §22.12: "a ward a node fires refreshes the one ward that node owns
+  // instead of stacking a new one". Three firings, one ward — topped up to the
+  // payoff's size, its window renewed. Wards from other sources still stack.
+  const world = new World();
+  const player = spawnPlayer(world, 'fs-brace-ward', {
+    abilityId: 'brace', nodes: rows('brace', { packet: 'barrier-tempo' }),
+  });
+  const attacker = spawnMonster(world, 440);
+  world.takeNodeEvents(NODE);
+  const payoff = getAbilityNodeRuntime(player.tracksCombat)?.['brace']?.payoff;
+  if (!payoff || payoff.kind !== 'ward' || !payoff.durationMs) throw new Error("fixture: Brace's ward route");
+  const size = Math.round(player.hasHealth.maxHp * payoff.magnitude);
+  const capKey = capCd(abilityNodeId('brace', 'packet', 'barrier-tempo'));
+
+  castGuard(world, player, 'brace');
+  let fired = 0;
+  for (let i = 0; i < 3; i++) {
+    // This block pins the ward, not the rate cap: open the route's cap each hit.
+    setCooldown(player.tracksCombat, capKey, 0);
+    updateCombatState(world, 100);
+    incoming(world, attacker, player, {}, Math.round(size / 3));
+    fired += cardFx(world).filter((e) => e.fx === 'barrier-tempo.ward-shell').length;
+  }
+  assert(fired === 3, `fixture: Brace's ward route fired on 3 absorbed hits, got ${fired}`);
+  const wards = player.holdsWards?.wards ?? [];
+  const owned = ownedWardOf(player, abilityNodeOwner('brace'));
+  assert(wards.length === 1 && owned === wards[0], `3 firings leave ONE node ward, got ${wards.length}`);
+  assert(owned!.amount === size, `topped up to the payoff's size ${size} after the hit drained it, got ${owned!.amount}`);
+  assert(owned!.remainingMs === payoff.durationMs, `its window renewed to ${payoff.durationMs} ms, got ${owned!.remainingMs}`);
+
+  // Other ward sources are untouched: they stack beside it, and a node refresh
+  // leaves them alone.
+  applyWardPercent(world, player, payoff.magnitude, payoff.durationMs);
+  applyWardPercent(world, player, payoff.magnitude, payoff.durationMs);
+  assert(player.holdsWards!.wards.length === 3, 'two unowned wards stack beside the node ward');
+  setCooldown(player.tracksCombat, capKey, 0);
+  world.takeNodeEvents(NODE);
+  incoming(world, attacker, player, { evaded: true, evadeMitigation: 0.5 }, 1);
+  assert(cardFx(world).filter((e) => e.fx === 'barrier-tempo.ward-shell').length === 1, 'fixture: a graze is absorbed, the node fires');
+  assert(player.holdsWards!.wards.length === 3, 'a node refresh adds no ward and removes none');
 }
 
 // ─── Bramble Guard: per thorn hit — each hit taken while brambled ────────────

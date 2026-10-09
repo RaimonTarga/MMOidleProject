@@ -194,12 +194,24 @@ function external(
   // bleed rewrites `damagePerTick`, plating-stack stamps `perStackFraction`),
   // and the cache must survive the fight unchanged. The amplifier's axis rides
   // every firing's card-fx — per body, per hit, per pulse alike — so the client
-  // scales or extends the lane's fx by it (design §22.7).
+  // scales or extends the lane's fx by it (design §22.7). The owner is the
+  // ability's node, packet and cross alike: a ward it fires refreshes the one
+  // ward that node owns instead of stacking a new one (design §22.12).
   return {
     key: option.id, fx, payoff: { ...payoff },
+    owner: abilityNodeOwner(option.abilityId),
     ...(capMs > 0 ? { capMs } : {}),
     ...(axis ? { axis } : {}),
   };
+}
+
+/**
+ * The owner key of everything an ability's node leaves standing on the player —
+ * today its ward (`applyWard`'s `owner`). Per ABILITY, not per option: the packet
+ * and the cross row are one node, and an ability offers one ward route at most.
+ */
+export function abilityNodeOwner(abilityId: string): string {
+  return `abilityNode.${abilityId}`;
 }
 
 /**
