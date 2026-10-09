@@ -20,7 +20,8 @@
  *  - On a Conduit the cast is delivered through one physical summon; the payload
  *    is the owner's, and so is the aftershock — once per cast, at the same spot.
  *  - Not an attack: an area payload, so no attack-equivalent and no hit counter.
- *  - One `card-fx` per application, when it erupts (`fxOnLand`).
+ *  - One `card-fx` per application, when it erupts (`fxOnLand`), and one wind-up
+ *    beat when it is scheduled (`windupMs`, the client's cracking-ground clock).
  */
 import {
   ABILITY_KEYSTONE_DEFINITIONS,
@@ -29,7 +30,7 @@ import {
 } from '@mmo-idle/shared';
 import { evadeBlocksDebuffs } from '../../../defense/mitigation/evasion';
 import { techniquePowerPctFor } from '../../../player/abilities/abilityKata';
-import { abilityKeystoneShareOf, defineAbilityKeystone } from './registry';
+import { abilityKeystoneShareOf, defineAbilityKeystone, pushAbilityKeystoneFx } from './registry';
 import { scheduleKeystoneHit } from './scheduledHits';
 
 const ID = 'aftershock';
@@ -54,10 +55,11 @@ export const AFTERSHOCK_KEYSTONE = defineAbilityKeystone({
     if (effect.kind !== 'cast-strike') return;
 
     const payload = Math.max(1, Math.round(player.dealsDamage.attack * effect.damageMult));
+    const delayMs = abilityKeystoneUnit('aftershockDelayMs');
     scheduleKeystoneHit(world, player, {
       keystoneId: ID,
       abilityId: ability.id,
-      dueInMs: abilityKeystoneUnit('aftershockDelayMs'),
+      dueInMs: delayMs,
       at: { ...at },
       nodeId: player.hasPosition.nodeId,
       // The single-target query reads a 1-unit circle, as `resolveCastPayload` does.
@@ -66,5 +68,9 @@ export const AFTERSHOCK_KEYSTONE = defineAbilityKeystone({
       interruptible: false,
       fxOnLand: definition.fx,
     });
+    // The wind-up beat (design §22.7's premium grammar): the ground starts to crack
+    // where the second eruption will come, a clock the player can read. Its payoff
+    // is the card-fx `fxOnLand` pushes when it erupts.
+    pushAbilityKeystoneFx(world, player, definition, { at: { ...at }, windupMs: delayMs });
   },
 });

@@ -68,6 +68,7 @@ import {
   setResource,
   LINEAGE_WINDOW_BUFF_IDS,
   PACKET_DEFINITIONS,
+  type AmplifiedAxis,
   type BuffId,
   type LineageFxKey,
   type LineagePayoff,
@@ -190,6 +191,8 @@ interface LineageFiring {
    * (design §24.6). An ability node's external payoff leaves it unset.
    */
   cardId?: string;
+  /** An ability node's amplifier axis, carried onto its `card-fx` (design §22.7). */
+  axis?: AmplifiedAxis;
 }
 
 /**
@@ -898,6 +901,7 @@ function fire(site: PayoffSite, firings: readonly LineageFiring[]): number {
       ...(drawn.durationMs !== undefined ? { durationMs: drawn.durationMs } : {}),
       ...(drawn.abilityIds !== undefined ? { abilityIds: drawn.abilityIds } : {}),
       ...(teach ? { teach: true as const } : {}),
+      ...(firing.axis !== undefined ? { axis: firing.axis } : {}),
     });
   }
   return applied;
@@ -1346,6 +1350,8 @@ export interface ExternalLineagePayoff {
   key: string;
   fx: LineageFxKey;
   payoff: LineagePayoff;
+  /** The active amplifier's axis (an ability node's packet payoff), for its card-fx. */
+  axis?: AmplifiedAxis;
 }
 
 /** Apply external payoffs. Returns how many actually did something. */
@@ -1367,6 +1373,7 @@ export function fireLineagePayoffs(
       // one the magnitude table already prices it at (see `resolve.ts`).
       trigger: { kind: 'guard-cast' as const },
       payoff: p.payoff,
+      ...(p.axis !== undefined ? { axis: p.axis } : {}),
     })),
   );
 }

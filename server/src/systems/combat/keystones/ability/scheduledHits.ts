@@ -64,6 +64,8 @@ function land(world: World, player: PlayerEntity, hit: ScheduledKeystoneHit): vo
       fx: hit.fxOnLand,
       pos: { ...player.hasPosition.current },
       targetPos: at,
+      // The verb that landed, for its bespoke animation's payoff (design §22.7).
+      keystone: hit.keystoneId,
     });
   }
   applyPlayerAoe(

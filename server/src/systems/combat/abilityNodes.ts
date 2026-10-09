@@ -42,6 +42,7 @@ import {
   type AbilityNodeFiringCache,
   type AbilityNodeOption,
   type AbilityNodeRuntime,
+  type AmplifiedAxis,
   type LineagePayoff,
 } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../ecs/entity';
@@ -62,6 +63,7 @@ export function refreshAbilityNodeRuntime(player: PlayerEntity): void {
     const cache: AbilityNodeFiringCache = { option: firing.option, payoff: firing.payoff };
     if (firing.cross) cache.cross = firing.cross;
     if (firing.castSpeedPct !== undefined) cache.castSpeedPct = firing.castSpeedPct;
+    if (firing.amplifier?.amplifies) cache.axis = firing.amplifier.amplifies;
     runtime[abilityId] = cache;
   }
   setAbilityNodeRuntime(player.tracksCombat, runtime);
@@ -86,13 +88,14 @@ export function abilityNodeCastSpeedPctFor(player: PlayerEntity, abilityId: stri
 }
 
 /** One node payoff as the dispatcher wants it, or null when it has no declared fx. */
-function external(option: AbilityNodeOption, payoff: LineagePayoff): ExternalLineagePayoff | null {
+function external(option: AbilityNodeOption, payoff: LineagePayoff, axis?: AmplifiedAxis): ExternalLineagePayoff | null {
   const fx = abilityNodeFx(option.lane, payoff.kind);
   if (!fx) return null;
   // The payoff is cloned because the dispatcher mutates what it is handed (a
   // bleed rewrites `damagePerTick`, plating-stack stamps `perStackFraction`),
-  // and the cache must survive the fight unchanged.
-  return { key: option.id, fx, payoff: { ...payoff } };
+  // and the cache must survive the fight unchanged. The amplifier's axis rides
+  // the card-fx so the client scales or extends the lane's fx by it (§22.7).
+  return { key: option.id, fx, payoff: { ...payoff }, ...(axis ? { axis } : {}) };
 }
 
 /**
@@ -107,7 +110,7 @@ function payoffsFor(player: PlayerEntity, abilityId: string): Array<{ lane: stri
   const firing = getAbilityNodeRuntime(player.tracksCombat)?.[abilityId];
   if (!firing) return [];
   const out: Array<{ lane: string; payoff: ExternalLineagePayoff }> = [];
-  const packet = external(firing.option, firing.payoff);
+  const packet = external(firing.option, firing.payoff, firing.axis);
   if (packet) out.push({ lane: firing.option.lane, payoff: packet });
   if (firing.cross) {
     const cross = external(firing.cross.option, firing.cross.payoff);

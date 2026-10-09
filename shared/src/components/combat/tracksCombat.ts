@@ -1,6 +1,6 @@
 import type { StatusEffect } from './effects';
 import type {
-  LineagePayoff, ResolvedLineageCapstone, ResolvedLineageCard,
+  AmplifiedAxis, LineagePayoff, ResolvedLineageCapstone, ResolvedLineageCard,
 } from '../../data/lineages/types';
 import type { AbilityNodeOption } from '../../data/abilityNodes/types';
 
@@ -32,6 +32,11 @@ export interface AbilityNodeFiringCache {
   cross?: { option: AbilityNodeOption; payoff: LineagePayoff };
   /** The amplifier's `cast` axis as a cast-speed fraction (design §22.9). */
   castSpeedPct?: number;
+  /**
+   * The active amplifier's axis, for the packet payoff's `card-fx` (design §22.7:
+   * the amplifier scales or extends the lane's fx). Absent with no amplifier.
+   */
+  axis?: AmplifiedAxis;
 }
 
 /**

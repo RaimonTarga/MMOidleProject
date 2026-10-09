@@ -128,12 +128,16 @@ function spriteOf(scene: GameScene, id: string | undefined) {
   return id ? scene.state.sprite.get(id) : undefined;
 }
 
-function bodiesFor(scene: GameScene, ev: CardFxEvent, fx: PayloadFxKey): Bodies {
+function bodiesFor(scene: GameScene, ev: CardFxEvent, fx: PayloadFxKey, scale = 1): Bodies {
   const state = scene.state;
   const player = state.view.get(ev.playerId) as PlayerView | undefined;
   const playerSprite = spriteOf(scene, ev.playerId);
   const targetSprite = spriteOf(scene, ev.targetId);
-  const from = playerSprite ? { x: playerSprite.x, y: playerSprite.y } : nodeToScene(ev.pos.x, ev.pos.y);
+  // A keystone's `pos` names its DELIVERY BODY (design §22.10: the summon that
+  // landed it on a Conduit), so the effect is drawn from there, not from the
+  // owner's sprite; any other payload's `pos` is the owner at push time, and the
+  // live sprite is the smoother read of the same body.
+  const from = deliveredFrom(ev) ?? (playerSprite ? { x: playerSprite.x, y: playerSprite.y } : nodeToScene(ev.pos.x, ev.pos.y));
   const to = targetSprite
     ? { x: targetSprite.x, y: targetSprite.y }
     : ev.targetPos ? nodeToScene(ev.targetPos.x, ev.targetPos.y) : from;
@@ -144,13 +148,21 @@ function bodiesFor(scene: GameScene, ev: CardFxEvent, fx: PayloadFxKey): Bodies 
     targetW: targetSprite?.displayWidth ?? 48,
     targetH: targetSprite?.displayHeight ?? 48,
     color: laneColor(laneOf(fx)),
-    k: flair.k,
+    k: flair.k * scale,
     sparks: flair.sparks,
     own: ev.playerId === state.ownId,
   };
 }
 
 const count = (base: number, sparks: number): number => Math.max(1, Math.round(base * sparks));
+
+/**
+ * Where a keystone's delivery body stood (its `pos`), when the event is a
+ * keystone's; undefined for every other payload, which is the owner's.
+ */
+function deliveredFrom(ev: CardFxEvent): P | undefined {
+  return ev.keystone ? nodeToScene(ev.pos.x, ev.pos.y) : undefined;
+}
 
 /** The weapon's spot in the player's hand, leaning toward what it hits. */
 function weaponPoint(b: Bodies): P {
@@ -177,9 +189,12 @@ function fading(scene: GameScene, g: Phaser.GameObjects.Graphics, ms: number, ex
 
 // ── The card-fx dispatch ─────────────────────────────────────────────────────
 
-/** Draw a payload's `card-fx` (the caller has checked `isPayloadFx`). */
-export function drawPayloadFx(scene: GameScene, ev: CardFxEvent, fx: PayloadFxKey): void {
-  const b = bodiesFor(scene, ev, fx);
+/**
+ * Draw a payload's `card-fx` (the caller has checked `isPayloadFx`), at `scale`
+ * (an ability amplifier's axis, design §22.7; 1 otherwise).
+ */
+export function drawPayloadFx(scene: GameScene, ev: CardFxEvent, fx: PayloadFxKey, scale = 1): void {
+  const b = bodiesFor(scene, ev, fx, scale);
   switch (fx) {
     case 'tempo.ghost-strike': return echoWindup(b);
     case 'engagement.lunge': return lungeDash(b);

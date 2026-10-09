@@ -229,6 +229,8 @@ import { fxDualBlueRound } from "../fx/bespoke/slinger";
 import { fxSwiftbladeStrike } from "../fx/bespoke/striker";
 import { championTether, fxSummonShatter } from "../fx/conduitPaths";
 import { abilityCallout, playAbilityRank } from "../fx/abilityRank";
+import { drawAbilityKeystoneFx } from "../fx/abilityKeystoneFx";
+import { axisFx } from "../fx/abilityKeystoneModel";
 import {
   fxCharnelMaul, fxConstrict, fxHindKick, fxOozeEngulf, fxSnap, fxSpiderFang, fxSting,
   fxStoneFist, fxTongueLash, fxWispTouch,
@@ -644,10 +646,40 @@ const warnedUnknownFx = new Set<string>();
  * resolved per event. There is nothing to add to this switch for an amplifier.
  */
 function fxLineageCard(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }): void {
+  // An ability keystone verb owns ONE bespoke animation, keyed by its id (design
+  // §22.7); a verb with none yet is a keyed stub and falls through to its lane fx.
+  if (drawAbilityKeystoneFx(scene, ev)) return;
+  // The amplifier scales or extends what the packet drew (design §22.7): the same
+  // lane fx, bigger, or repeated as a second echo or a lingering trail.
+  const axis = axisFx(ev.axis);
+  // A T1 payload is already a multi-beat animation (a second swing, a dash, a
+  // clamp): repeating it would replay the body's pose, so it grows instead.
+  const multiBeat = isPayloadFx(ev.fx);
+  if (multiBeat) {
+    drawLaneFx(scene, ev, axis.scale * (1 + 0.12 * axis.echoes));
+    return;
+  }
+  drawLaneFx(scene, ev, axis.scale);
+  let scale = axis.scale;
+  for (let i = 1; i <= axis.echoes; i++) {
+    scale *= axis.echoFalloff;
+    const echoScale = scale;
+    scene.time.delayedCall(axis.echoDelayMs * i, () => {
+      if (document.hidden) return;
+      drawLaneFx(scene, ev, echoScale);
+    });
+  }
+}
+
+/**
+ * One handler per `LineageFxKey`, drawn at `scale` (an ability amplifier's axis,
+ * 1 otherwise). See {@link fxLineageCard} for what calls it.
+ */
+function drawLaneFx(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }, scale = 1): void {
   // The T1 payloads (design §24.2, course-correction W2-C) each own a premium
   // effect of their own — lineagePayloadFx.ts. The rest keep the lane primitives.
   if (isPayloadFx(ev.fx)) {
-    drawPayloadFx(scene, ev, ev.fx);
+    drawPayloadFx(scene, ev, ev.fx, scale);
     return;
   }
   const pos = nodeToScene(ev.pos.x, ev.pos.y);
@@ -657,7 +689,7 @@ function fxLineageCard(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }):
   const live = ev.targetId ? spritePos(scene.state, ev.targetId) : null;
   const target = live ?? (ev.targetPos ? nodeToScene(ev.targetPos.x, ev.targetPos.y) : pos);
   const color = laneFxColor(ev.fx);
-  const amp = ampScale(ev.stacks);
+  const amp = ampScale(ev.stacks) * scale;
 
   switch (ev.fx) {
     // Payoff rows — a new on-screen event (design §8). `tempo.ghost-strike`
