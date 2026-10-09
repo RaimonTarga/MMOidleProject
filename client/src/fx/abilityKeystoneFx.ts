@@ -1069,6 +1069,83 @@ function harvest(scene: GameScene, ev: CardFxEvent): void {
   });
 }
 
+// ── Second Wind · SHARED BREATH — the mend runs on your formation and party ──
+
+/** Where the last pulse of a caster's batch landed, so the next runs on from it. */
+const breathChain = new Map<string, P>();
+/** The beat between one body of the formation and the next. */
+const BREATH_STEP_MS = 110;
+
+/**
+ * The Sustain face's pulse, at full size, running DOWN the formation (design
+ * §22.7). One event per body the mend reaches (party members, then summons), each
+ * at that body's position. WIND-UP: on the first, the owner draws breath — air
+ * gathered at the chest, a pulse ring off the body. PAYOFF: the pulse runs from
+ * body to body down the line, landing on each as a ring and rising crosses.
+ * LASTING MARK: while the shared mend runs (`durationMs`, as applied) each body
+ * breathes with it — a soft ring swelling and easing at its feet.
+ */
+function sharedBreath(scene: GameScene, ev: CardFxEvent): void {
+  const color = verbColor(ev);
+  const pale = lighten(color, 0.6);
+  const { k, sparks } = sizeOf(scene, ev);
+  const n = batchIndex(ev);
+  const owner = spriteAt(scene, ev.playerId) ?? nodeToScene(ev.pos.x, ev.pos.y);
+  if (n === 0) {
+    breathChain.set(ev.playerId, owner);
+    inhale(scene, owner.x, owner.y - 12, [color, pale], 30 * k, 140);
+    ring(scene, owner.x, owner.y + 8, color, { from: 12 * k, scale: 3, width: 3, ms: 420, flat: true });
+    posePath(scene, ev.playerId, [
+      { sy: 1.07, sx: 0.96, ms: 140 },
+      { sy: 1, sx: 1, ms: 260, ease: 'Back.easeOut' },
+    ]);
+  }
+  const target = eventPoint(ev);
+  const bodyId = bodyNear(scene, target, ['player', 'minion']);
+  const from = breathChain.get(ev.playerId) ?? owner;
+  breathChain.set(ev.playerId, target);
+
+  scene.time.delayedCall(140 + n * BREATH_STEP_MS, () => {
+    if (document.hidden) return;
+    const to = spriteAt(scene, bodyId) ?? target;
+    // The pulse running on: a bright mote along the line, a fading trail behind it.
+    const mote = scene.add.graphics({ x: from.x, y: from.y - 8 }).setDepth(DEPTH.FX + 1);
+    mote.fillStyle(pale, 1);
+    mote.fillCircle(0, 0, 4 * k);
+    mote.lineStyle(2, color, 0.9);
+    mote.strokeCircle(0, 0, 6.5 * k);
+    const trail = scene.add.graphics().setDepth(DEPTH.FX);
+    trail.lineStyle(3 * k, color, 0.35);
+    trail.lineBetween(from.x, from.y - 8, to.x, to.y - 8);
+    fading(scene, trail, 360);
+    scene.tweens.add({
+      targets: mote, x: to.x, y: to.y - 8, duration: BREATH_STEP_MS, ease: 'Sine.easeInOut',
+      onComplete: () => {
+        mote.destroy();
+        if (document.hidden) return;
+        ring(scene, to.x, to.y + 8, color, { from: 10 * k, scale: 2.8, width: 2.5, ms: 380, flat: true });
+        for (let i = 0; i < count(4, sparks); i++) {
+          const cross = scene.add.graphics({ x: to.x + (Math.random() - 0.5) * 20 * k, y: to.y + 6 }).setDepth(DEPTH.FX);
+          cross.fillStyle(i % 2 ? pale : color, 0.95);
+          cross.fillRect(-1.5, -4, 3, 8);
+          cross.fillRect(-4, -1.5, 8, 3);
+          fading(scene, cross, 560, { y: to.y - 36 * k }, i * 40);
+        }
+      },
+    });
+  });
+
+  // The body breathes with the shared mend while it runs.
+  if (bodyId && (ev.durationMs ?? 0) > 0) {
+    followBody(scene, bodyId, ev.durationMs ?? 0, DEPTH.SPRITE - 1, (g, at, p, sprite) => {
+      const breath = 0.5 + 0.5 * Math.sin(p * (ev.durationMs ?? 0) / 260);
+      const rx = Math.max(16, sprite.displayWidth * 0.45) * (0.9 + 0.15 * breath);
+      g.lineStyle(2, color, (0.18 + 0.22 * breath) * (1 - Math.max(0, p - 0.85) / 0.15));
+      g.strokeEllipse(at.x, at.y + sprite.displayHeight * 0.42, rx * 2, rx * 0.7);
+    });
+  }
+}
+
 // ── The table ────────────────────────────────────────────────────────────────
 
 /** The bespoke animations, by verb id. Kept in step with `KEYSTONE_ANIMATED`. */
@@ -1084,6 +1161,7 @@ const KEYSTONE_ANIMATIONS: Record<string, KeystoneAnimation> = {
   relay: relay,
   fork: fork,
   harvest: harvest,
+  'shared-breath': sharedBreath,
 };
 
 /**
