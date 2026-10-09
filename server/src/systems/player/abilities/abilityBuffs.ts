@@ -4,6 +4,7 @@ import {
   ABILITY_IMBUE_EFFECT_ID,
   ABILITY_SIDESTEP_EFFECT_ID,
   ABILITY_GUARD_EFFECT_IDS,
+  ABILITY_UNYIELDING_EFFECT_ID,
   ABILITY_RECOVERY_EFFECT_IDS,
   abilityDef,
   getStatusEffect,
@@ -201,5 +202,27 @@ export const ABILITY_BUFFS = [
       };
     },
     { category: "neutral", shape: "circle", color: "#d9c2ff", label: "Unbound" },
+  ),
+  // Endure's Unyielding keystone (design §22.4): one tile, on Endure's own clock.
+  defineBuff(
+    ABILITY_UNYIELDING_EFFECT_ID,
+    ({ playerCs }) => {
+      if (!playerCs) return null;
+      const eff = getStatusEffect(playerCs, ABILITY_UNYIELDING_EFFECT_ID);
+      if (!eff || eff.remainingMs <= 0) return null;
+      return {
+        id: ABILITY_UNYIELDING_EFFECT_ID,
+        label: "Unyielding",
+        stacks: 1,
+        durationPct: durationPct(eff.remainingMs, eff.data["totalMs"] ?? eff.remainingMs),
+        color: "#9ad0ff",
+        logSourceName: "Endure",
+        logSourceSide: "ally",
+        logDetail: "hard control and roots refused",
+        remainingMs: eff.remainingMs,
+        values: [{ label: "Hard control", value: "Refused", good: true }],
+      };
+    },
+    { category: "neutral", shape: "square", color: "#9ad0ff", label: "Unyielding" },
   ),
 ] as const satisfies readonly BuffDescriptor[];

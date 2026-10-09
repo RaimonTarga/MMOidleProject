@@ -307,6 +307,15 @@ export const ABILITY_SIDESTEP_EFFECT_ID = "ability-sidestep";
 export const ABILITY_CONTROL_RESIST_EFFECT_ID = "ability-control-resist";
 
 /**
+ * Endure's Unyielding keystone (design §22.4): while it stands, no hard control
+ * and no root lands on the player. A REFUSAL at the appliers (`applyStun`, the
+ * player debuff writers, the Cave lockdown, the lair drag) — an existing control
+ * is never removed by it. Generic on purpose: a future "cannot be controlled"
+ * source only has to apply this status.
+ */
+export const ABILITY_UNYIELDING_EFFECT_ID = "ability-unyielding";
+
+/**
  * The default ability-family slow on a monster. Hamstring, its first writer, was
  * cut by the ability pass (design §22.2); the id is kept because the lineage
  * `slow` payoff (and so every ability-node slow) and the Mid range at-bay slow

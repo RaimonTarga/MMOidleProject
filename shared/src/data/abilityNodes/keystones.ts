@@ -306,7 +306,7 @@ const trioEntries: [string, Trio][] = [
   ['endure', [
     verb('endure', 1, 'unyielding', 'Unyielding',
       'You cannot be hard-controlled while Endure is up.',
-      'bulwark.keystone', 'engagement-dr'),
+      'bulwark.keystone', 'engagement-dr', { live: true }),
     verb('endure', 2, 'second-skin', 'Second Skin',
       'The shell persists at half while you keep taking hits.',
       'bulwark.plating-chip', 'ward'),

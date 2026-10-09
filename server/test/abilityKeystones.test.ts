@@ -722,7 +722,10 @@ function attackLedger(player: PlayerEntity): string {
 import { requestManualAbilityUse } from '../src/systems/player/abilities/abilityFiring';
 import { syncPlayerControlLockout } from '../src/systems/combat/status/playerControlLockout';
 import { runMonsterAttack } from '../src/systems/combat/engine/combat';
-import { ABILITY_ENTANGLE_EFFECT_ID } from '@mmo-idle/shared';
+import { ABILITY_ENTANGLE_EFFECT_ID, ABILITY_UNYIELDING_EFFECT_ID, CAVE_LOCKDOWN_EFFECT_ID } from '@mmo-idle/shared';
+import { applyResistedPlayerDebuff } from '../src/systems/combat/status/debuffGuard';
+import { beginEngageLock, engageSequenceHoldsAttack } from '../src/systems/combat/ai/engageSequence';
+import { syncPlayerBuffs } from '../src/systems/combat/buffs/buffSync';
 
 /** Fire a Guard the way a hotkey press does; asserts it activated. */
 function fireGuard(world: World, player: PlayerEntity, abilityId: string, now = 1_000_000): void {
@@ -885,6 +888,60 @@ const stunnedBy = (monster: MonsterEntity, sourceId: string): boolean => {
   bystander.tracksCombat.statusEffects = [];
   runMonsterAttack(world, bystander, player, 1_000_200);
   assert(!getStatusEffect(bystander.tracksCombat, ABILITY_ENTANGLE_EFFECT_ID), 'no bramble, no entangle');
+}
+
+// ─── Endure · UNYIELDING: you cannot be hard-controlled while Endure is up ────
+
+{
+  const UNYIELDING_FX = ABILITY_KEYSTONE_DEFINITIONS.get('unyielding')!.fx;
+  const root = (player: PlayerEntity, speedMult = 0) => applyResistedPlayerDebuff(player, {
+    id: 'slow', maxStacks: 1, remainingMs: 2_000, refreshable: true, sourceId: 'a-mob',
+    data: { speedMult, totalMs: 2_000 },
+  });
+
+  const world = new World();
+  const player = spawnPlayer(world, 'ks-unyielding', {
+    abilityId: 'endure', nodes: rows('endure', { packet: 'engagement', keystone: 'unyielding' }),
+  });
+  const troll = spawnMonster(world, 460);
+  // A root already on the player before Endure goes up (a root does not stop a Guard).
+  assert(root(player) !== undefined, 'fixture: the root lands before Endure');
+  world.takeNodeEvents(NODE);
+  fireGuard(world, player, 'endure');
+  const endure = getStatusEffect(player.tracksCombat, 'ability-guard-2')!;
+  const unyielding = getStatusEffect(player.tracksCombat, ABILITY_UNYIELDING_EFFECT_ID);
+  assert(unyielding !== undefined && unyielding.remainingMs === endure.remainingMs,
+    'Unyielding stands on the clock of Endure itself');
+  assert(cardFx(world).filter((e) => e.fx === UNYIELDING_FX).length === 1, 'one card-fx per activation');
+  assert(getStatusEffect(player.tracksCombat, 'slow')?.data['speedMult'] === 0,
+    'an existing control is not removed');
+
+  // The appliers refuse: every stun, a zero-speed root, the Cave lockdown.
+  assert(!applyStun(player.tracksCombat, 1_500, troll.isMonster.id), 'a stun is refused');
+  assert(!getStatusEffect(player.tracksCombat, STUN_EFFECT) && !getStatusEffect(player.tracksCombat, 'stun-immune'),
+    'no stun and no post-stun ward for a stun that never landed');
+  player.tracksCombat.statusEffects = player.tracksCombat.statusEffects.filter((e) => e.id !== 'slow');
+  assert(root(player) === undefined && !getStatusEffect(player.tracksCombat, 'slow'), 'a root is refused');
+  beginEngageLock(world, troll, player, 1_500, 1_000_100);
+  assert(!getStatusEffect(player.tracksCombat, CAVE_LOCKDOWN_EFFECT_ID), 'the Cave lockdown is refused');
+  assert(engageSequenceHoldsAttack(troll), 'and the beat of the troll runs on');
+  assert(root(player, 0.5) !== undefined, 'a soft slow is not hard control: it still lands');
+  syncPlayerBuffs(world, 1_000_100);
+  assert(player.hasStatus.activeBuffs?.some((buff) => buff.id === ABILITY_UNYIELDING_EFFECT_ID),
+    'the Unyielding tile is on the bar');
+
+  // Endure down, the refusal goes with it.
+  player.tracksCombat.statusEffects = player.tracksCombat.statusEffects
+    .filter((e) => e.id !== 'ability-guard-2' && e.id !== ABILITY_UNYIELDING_EFFECT_ID);
+  assert(applyStun(player.tracksCombat, 1_500, troll.isMonster.id), 'once Endure is down, a stun lands');
+
+  // Without the verb, Endure refuses nothing.
+  const plainWorld = new World();
+  const plain = spawnPlayer(plainWorld, 'ks-unyielding-off', {
+    abilityId: 'endure', nodes: rows('endure', { packet: 'engagement' }),
+  });
+  fireGuard(plainWorld, plain, 'endure');
+  assert(applyStun(plain.tracksCombat, 1_500, 'a-mob'), 'no verb, no refusal');
 }
 
 console.log('abilityKeystones: ok');

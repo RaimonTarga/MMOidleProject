@@ -66,6 +66,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'ability-sidestep': b('Sidestep', 'You slipped aside: for the window, a chance to dodge each hit outright on top of whatever your gear gives you, and a burst of move speed that ends with it.'),
   'ability-imbue': b('Imbued', 'Lightning is stored in your hands. Each attack that lands spends one charge and carries bonus damage with it. There is no timer — the charges wait as long as you need them to, and the number on the tile is how many attacks are left.'),
   'ability-control-resist': b('Unbound', 'You broke free, and incoming control is shortened for a moment afterward so you are not immediately re-caught.'),
+  'ability-unyielding': b('Unyielding', 'While Endure holds, nothing can stun, freeze, lock down or root you: new hard control simply fails to land. Control already on you when Endure went up still runs its course.'),
 
   // -- Defense ---------------------------------------------------------------
   'defense-ward': b('Ward', 'A temporary pool that absorbs damage before your health does. Unlike your barrier it expires rather than recharging.'),

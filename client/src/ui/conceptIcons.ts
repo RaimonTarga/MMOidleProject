@@ -122,6 +122,7 @@ const BUFF_IDS = new Set([
   'ability-second-wind',
   'ability-second-wind-2',
   'ability-sidestep',
+  'ability-unyielding',
   'boss-regen',
   'cadence-accelerando',
   'cadence-aftershock',
@@ -352,6 +353,8 @@ const BUFF_ABILITY_ICON_ALIASES: Record<string, string> = {
   'ability-imbue': 'imbue-lightning',
   'ability-second-wind': 'second-wind',
   'ability-second-wind-2': 'second-wind',
+  // Endure's Unyielding keystone wears the Guard it rides on.
+  'ability-unyielding': 'endure',
   // Kata builds toward an empowered Technique: the wind-up-and-deliver art (Charged
   // Strike's, which Power Strike wore before the ability pass cut it into Slam).
   kata: 'charged-strike',

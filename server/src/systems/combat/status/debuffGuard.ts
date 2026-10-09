@@ -1,6 +1,32 @@
-import { applyStatusEffect, hasStatusEffect, type StatusEffectConfig } from '@mmo-idle/shared';
+import {
+  applyStatusEffect,
+  hasStatusEffect,
+  statusPolicyFor,
+  type StatusEffect,
+  type StatusEffectConfig,
+} from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
 import { getDebuffResistanceMult } from '../../defense/regen/healing';
+import { refusesHardControl } from './playerHardControl';
+
+/**
+ * THE ADMISSION CHECK for a harmful status on its way onto a player: the keystone
+ * refusals (design §22.4), asked by the common writers — `applyResistedPlayerDebuff`
+ * and the monster-ability rider writer — so a refusal source only has to apply its
+ * status, and no applier restates the rule.
+ *
+ *  - Unyielding (Endure): hard control and roots — a zero-speed slow is hard
+ *    control by `statusPolicyFor` — are refused while it stands. Stuns are refused
+ *    at `applyStun`, the one place a stun enters the world.
+ */
+export function playerRefusesStatus(
+  player: PlayerEntity,
+  id: string,
+  data: Record<string, number> = {},
+): boolean {
+  if (!player.tracksCombat) return false;
+  return statusPolicyFor(id, data).hardControl && refusesHardControl(player.tracksCombat);
+}
 
 /** Equipment resistance weakens monster-delivered non-DoT magnitudes only.
  * Durations, stack counts, roots and environmental ramps retain their own rules.
@@ -22,7 +48,8 @@ export function resistedPlayerDebuffMagnitude(player: PlayerEntity, key: string,
   }
 }
 
-export function applyResistedPlayerDebuff(player: PlayerEntity, config: StatusEffectConfig) {
+export function applyResistedPlayerDebuff(player: PlayerEntity, config: StatusEffectConfig): StatusEffect | undefined {
+  if (playerRefusesStatus(player, config.id, config.data)) return undefined;
   if (config.data?.isDot || config.data?.isAmbientRamp || config.data?.isNodeFeature || config.data?.isGroundZone) {
     return applyStatusEffect(player.tracksCombat, config);
   }
