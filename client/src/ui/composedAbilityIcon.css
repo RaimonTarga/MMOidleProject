@@ -1,0 +1,103 @@
+/* The composed ability icon (design §22.7): every layer is a colour or an existing
+   glyph placed over the base. Not the Ornate skin (design §26.4): no gems, no
+   light passes, no animated ornament. */
+
+.composed-ability-icon {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.composed-ability-icon__base {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.composed-ability-icon__base > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Packet row: the active lane's colour as a frame. Inset past the keystone's
+   border when there is one, so both read. */
+.composed-ability-icon__frame {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 2px var(--ability-frame),
+    inset 0 0 9px color-mix(in srgb, var(--ability-frame) 55%, transparent);
+  pointer-events: none;
+}
+
+.composed-ability-icon--keystone .composed-ability-icon__frame {
+  inset: 3px;
+}
+
+/* Cross row: the borrowed lane on the bottom edge, between the two corner glyphs. */
+.composed-ability-icon__edge {
+  position: absolute;
+  left: 30%;
+  right: 30%;
+  bottom: 1px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--ability-edge);
+  box-shadow: 0 0 4px var(--ability-edge);
+  pointer-events: none;
+}
+
+/* Keystone row: a border treatment in the verb's lane — a solid edge with four
+   squared corner ticks inside it (the glyph's corners are empty ground). */
+.composed-ability-icon__border {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  border: 2px solid var(--ability-border);
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+  background:
+    linear-gradient(var(--ability-border), var(--ability-border)) top left / 5px 5px no-repeat,
+    linear-gradient(var(--ability-border), var(--ability-border)) top right / 5px 5px no-repeat,
+    linear-gradient(var(--ability-border), var(--ability-border)) bottom left / 5px 5px no-repeat,
+    linear-gradient(var(--ability-border), var(--ability-border)) bottom right / 5px 5px no-repeat;
+}
+
+.composed-ability-icon__glyph {
+  position: absolute;
+  bottom: 2px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(10, 12, 16, 0.82);
+  pointer-events: none;
+}
+
+.composed-ability-icon__glyph > img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+/* The keystone's second glyph: the larger of the two, ringed in the verb's lane. */
+.composed-ability-icon__glyph--keystone {
+  left: 2px;
+  width: 48%;
+  height: 48%;
+  box-shadow: 0 0 0 1.5px var(--ability-border, #fff);
+}
+
+/* The amplifier's axis: a small overlay. */
+.composed-ability-icon__glyph--axis {
+  right: 2px;
+  width: 36%;
+  height: 36%;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.45);
+}

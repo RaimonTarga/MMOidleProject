@@ -18,6 +18,7 @@ import {
 } from "@mmo-idle/shared";
 import {
   abilityCastAtom,
+  abilityNodesAtom,
   abilityFiredAtAtom,
   abilityCooldownSampleAtom,
   abilityCooldownStartedAtAtom,
@@ -243,7 +244,8 @@ function AbilityIcon({
   };
   const { handlers, node } = useHoverTooltip(<TooltipCard content={abilityTooltipContent(ability, context, runtime)} />);
   const meta = SLOT_META[ability.slot];
-  const icon = abilityIconSource(ability);
+  // Composed with the rows (design §22.7): frame, edge, border and glyphs.
+  const icon = abilityIconSource(ability, useAtomValue(abilityNodesAtom)[ability.id]);
   // The rank numeral rides the tile because it is the same learned ability the
   // whole way up — a player needs to see that Sweep got deeper, not go looking
   // for a second Sweep. The hotbar shows the NOUN (design §22.10): a keystone's
@@ -389,7 +391,8 @@ function DesktopAbilityFamily({
   refunds,
 }: DesktopAbilityFamilyProps) {
   const meta = SLOT_META[ability.slot];
-  const icon = abilityIconSource(ability);
+  // Composed with the rows (design §22.7): frame, edge, border and glyphs.
+  const icon = abilityIconSource(ability, useAtomValue(abilityNodesAtom)[ability.id]);
   const name = useAbilityName(ability, "noun");
   const remainingPct = Math.max(0, Math.min(100, status.remainingFrac * 100));
   const remainingSeconds = Math.ceil(status.cooldownLeftMs / 1000);

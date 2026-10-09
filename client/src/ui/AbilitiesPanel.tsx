@@ -68,7 +68,7 @@ export function AbilitiesPanelContent() {
         return <article key={id} className={`ability-entry${isAttuned ? " is-attuned" : ""}${selected ? " is-selected" : ""}`}>
           <div className="ability-entry__top">
             <button type="button" className="ability-entry__select" aria-expanded={selected} aria-controls={`${panelId}-${id}`} aria-label={`${selected ? "Hide" : "Show"} ${name} details`} onClick={() => setSelectedId(selected ? null : id)}>
-              <span className="ability-entry__icon"><GameIcon source={abilityIconSource(ability)} size={40} decorative /></span>
+              <span className="ability-entry__icon"><GameIcon source={abilityIconSource(ability, nodes[id])} size={40} decorative /></span>
               <span className="ability-entry__copy">
                 <span className="ability-entry__name">{name}</span>
                 {lineage && <span className="ability-entry__lineage">{lineage}</span>}

@@ -27,7 +27,8 @@
  * gems, no light passes. A frame here is a lane's colour, never decoration.
  */
 import type { AbilityNameParts } from '../../abilities';
-import type { AmplifiedAxis, PayoffKind } from '../lineages/types';
+import { ABILITY_DATABASE } from '../../abilities';
+import type { AmplifiedAxis, PacketId, PayoffKind } from '../lineages/types';
 import { ABILITY_NODE_DATABASE } from './index';
 import { abilityKeystoneDefinition } from './keystones';
 import type { AbilityNodeOption, AbilityNodeProgress, AbilityNodeRow } from './types';
@@ -169,4 +170,107 @@ export function abilityNodeNameParts(
   const verb = rows.keystone?.keystone ? abilityKeystoneDefinition(rows.keystone.keystone) : undefined;
   if (verb) parts.noun = verb.name;
   return parts;
+}
+
+// ─── Icons compose with the rows (design §22.7) ──────────────────────────────
+
+/**
+ * The shape a keystone's second glyph shows — the closed list of silhouettes the
+ * first verbs' rules have (design §22.7: "where the keystone's silhouette differs
+ * from the base (a spin, a line, a fork), a second glyph layered over the base").
+ */
+export type AbilityKeystoneSilhouette =
+  | 'spin'      // the body turns: a cleave every tick
+  | 'quake'     // the ground goes again
+  | 'stagger'   // a body knocked off its rhythm (the control ladder's shortest rung)
+  | 'spread'    // what a body carried passes on
+  | 'net'       // the hold widens to the neighbours
+  | 'burst'     // a body goes off and takes its neighbours with it
+  | 'fade'      // you, gone from their eyes (an outline left behind)
+  | 'line'      // one shot, straight through
+  | 'jump'      // the effect hops body to body
+  | 'fork'      // a hit splits to a second body
+  | 'formation' // the mend runs down the line
+  | 'shell'     // nothing gets in
+  | 'snare'     // the attacker is held
+  | 'scythe';   // the harvest moves on
+
+/**
+ * The silhouette per keystone verb. The first verb of every trio (§22.4, §22.8,
+ * Breakthrough for Trample per §22.11) has one; the later verbs get theirs when
+ * their rules are implemented. A verb with no entry wears the border alone.
+ */
+export const ABILITY_KEYSTONE_SILHOUETTES: Map<string, AbilityKeystoneSilhouette> =
+  new Map<string, AbilityKeystoneSilhouette>([
+    // Techniques
+    ['whirlwind', 'spin'],
+    ['aftershock', 'quake'],
+    ['breakthrough', 'stagger'],
+    ['outbreak', 'spread'],
+    ['dragnet', 'net'],
+    ['chain-reaction', 'burst'],
+    ['vanish', 'fade'],
+    ['pierce', 'line'],
+    ['relay', 'jump'],
+    ['fork', 'fork'],
+    ['harvest', 'scythe'],
+    // Guards
+    ['shared-breath', 'formation'],
+    ['immunity', 'shell'],
+    ['riposte', 'stagger'],
+    ['entangle', 'snare'],
+    ['unyielding', 'shell'],
+    ['backlash', 'burst'],
+    ['overflow', 'shell'],
+    ['afterimage', 'fade'],
+  ]);
+
+/** A keystone verb's silhouette, or undefined when it wears the border alone. */
+export function abilityKeystoneSilhouette(keystoneId: string): AbilityKeystoneSilhouette | undefined {
+  return ABILITY_KEYSTONE_SILHOUETTES.get(keystoneId);
+}
+
+/**
+ * One layer of a composed ability icon, bottom to top. Each names WHAT the layer
+ * says (a lane, an axis, a verb); the client decides the art and the placement.
+ *
+ *  - `base`            the ability's own glyph (`ability.icon`, else its id);
+ *  - `lane-frame`      the packet row: the active lane's colour as a frame;
+ *  - `cross-edge`      the cross row: the borrowed lane's colour on one edge;
+ *  - `keystone-border` the keystone row: a border treatment in the verb's lane;
+ *  - `keystone-glyph`  the keystone's second glyph, where its rule has a silhouette;
+ *  - `axis-glyph`      the amplifier row: a small overlay glyph for its axis.
+ */
+export type AbilityIconLayer =
+  | { kind: 'base'; glyph: string }
+  | { kind: 'lane-frame'; lane: PacketId }
+  | { kind: 'cross-edge'; lane: PacketId }
+  | { kind: 'keystone-border'; lane: PacketId; keystone: string }
+  | { kind: 'keystone-glyph'; keystone: string; silhouette: AbilityKeystoneSilhouette }
+  | { kind: 'axis-glyph'; axis: AmplifiedAxis };
+
+/**
+ * The composed icon of an ability, as a layer list: a pure function of (ability,
+ * active rows), so the bar, the panel and a test all read the same answer. No
+ * rows: the base glyph alone. An unknown ability: an empty list.
+ */
+export function abilityIconLayers(
+  abilityId: string,
+  progress: AbilityNodeProgress | undefined,
+): AbilityIconLayer[] {
+  const ability = ABILITY_DATABASE.get(abilityId);
+  if (!ability) return [];
+  const layers: AbilityIconLayer[] = [{ kind: 'base', glyph: ability.icon?.trim() || ability.id }];
+  const rows = abilityActiveRows(abilityId, progress);
+  if (rows.packet) layers.push({ kind: 'lane-frame', lane: rows.packet.lane });
+  if (rows.cross) layers.push({ kind: 'cross-edge', lane: rows.cross.lane });
+  const keystoneId = rows.keystone?.keystone;
+  if (rows.keystone && keystoneId) {
+    // The keystone option's lane is the one its fx draws in — the colour its card wears.
+    layers.push({ kind: 'keystone-border', lane: rows.keystone.lane, keystone: keystoneId });
+    const silhouette = abilityKeystoneSilhouette(keystoneId);
+    if (silhouette) layers.push({ kind: 'keystone-glyph', keystone: keystoneId, silhouette });
+  }
+  if (rows.amplifier?.amplifies) layers.push({ kind: 'axis-glyph', axis: rows.amplifier.amplifies });
+  return layers;
 }
