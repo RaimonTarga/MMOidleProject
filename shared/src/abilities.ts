@@ -853,13 +853,13 @@ const abilities: AbilityDef[] = [
     // attackers lose while they stand. Rank I stays a cast (§22.9). Its cooldown
     // is Power Strike's. Ranks II–IV are 2.45 / 2.7 / 2.95 (design §22.12: Slam
     // never weakens on tier-up — the old +0.25 per tier, counted from W1-A's
-    // single-number rank I, 2.2), on the 1.6 s wind-up; the old half-of-Power-
-    // Strike relation went with Power Strike.
+    // single-number rank I, 2.2), on rank I's 0.6 s wind-up (design §22.13); the
+    // old half-of-Power-Strike relation went with Power Strike.
     //
     // It favours heavy, slow builds WITHOUT ever asking about attack speed:
     // it scales from Attack, its wind-up ignores attack cadence, and casting
     // stops ordinary attacking — so the faster the build, the more real damage
-    // the wind-up (0.6 s at rank I, 1.6 s after) costs it. No inverse-speed
+    // the wind-up (0.6 s at every rank) costs it. No inverse-speed
     // multiplier, no weapon tags, no cadence query. Cast speed still shortens the
     // wind-up through the ordinary `technique.cast-speed-pct` seam, which is a
     // separate, intended synergy.
@@ -877,10 +877,15 @@ const abilities: AbilityDef[] = [
       // Greatbear cells straddle ±5% at every rank I hit size; 1.18–1.20 pass at 0.6 s;
       // reports/ability-pass/README.md §8 and w4a-ladder.md.
       { effect: { kind: "cast-strike", damageMult: 1.2, radius: 150 }, cooldownMs: 10000, castMs: 600 },
-      // Ranks II–IV: design §22.12, +0.25 per tier; the wind-up stays 1.6 s.
-      { effect: { kind: "cast-strike", damageMult: 2.45, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
-      { effect: { kind: "cast-strike", damageMult: 2.7, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
-      { effect: { kind: "cast-strike", damageMult: 2.95, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
+      // Ranks II–IV: design §22.12, +0.25 per tier, on rank I's 0.6 s wind-up (design
+      // §22.13, superseding §22.12's 1.6 s). Measured at T2 (reports/ability-pass/
+      // measure-slam-t2.md, the T2 composition lab's no-card kit, 1,500 fights per
+      // arm): rank II on 1.6 s added −0.8% to +1.9% over Sweep for the Striker,
+      // Slinger and Spirit and +23.8% for the Conduit; on 0.6 s every class gains
+      // +12.9% to +30.9% over Sweep and the class spread narrows (25 → 18 points).
+      { effect: { kind: "cast-strike", damageMult: 2.45, radius: 150 }, cooldownMs: 10000, castMs: 600 },
+      { effect: { kind: "cast-strike", damageMult: 2.7, radius: 150 }, cooldownMs: 10000, castMs: 600 },
+      { effect: { kind: "cast-strike", damageMult: 2.95, radius: 150 }, cooldownMs: 10000, castMs: 600 },
     ],
   },
   {

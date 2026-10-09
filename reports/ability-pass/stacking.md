@@ -277,3 +277,54 @@ the Slinger still trail W0 by 14–19% at both tiers and the T4 Spirit by 40% (i
 fight, 3 → 2 of 6, while its dps rises 8.9%); the Squire and the T3 Conduit now beat W0. The
 T4 Apprentice's −40.5% from the path drift is the largest single move in this table and is not
 a Slam effect. Single seed: each cell is one fight.
+
+## Rerun 3 (Slam 600 ms every rank, design §22.13)
+
+The same 78 rows again (the plan regenerated on `feat/ap-final-calls`, byte-identical to
+`plan-boss5-w4a.json`, not kept), with design §22.13's Slam: ranks III/IV keep 2.7/2.95 and
+their wind-up goes 1.6 s → **600 ms** (rank I's; the 10 s cooldown unchanged). The branch also
+carries the calls-2 code (Cleanse once, the Vanish hold's clock, the environment's Guard gates)
+and the Pyromancer's full-strength stacks with the refresh at max. A MEASUREMENT, not a target.
+`final-calls-boss5.jsonl`, 149 s at 3 shards; 0 error rows.
+
+A control isolates the wind-up, as Rerun 2's did the ranks: the same plan on this branch with
+the lab's `ap` override holding Slam's wind-up at 1.6 s, `{"slam": {"castMs": 1600}}`
+(`final-calls-boss5-slam1600.jsonl`, 79 s at 3 shards, 0 error rows).
+
+- **W4-A → this tip, wind-up held at 1.6 s:** 6 of 78 rows move, the six T4 Apprentice rows
+  (`dot-balanced-t3-a`, the Pyromancer: 224.3 → 281.0 dps, +25.3%; 5 → 4 wins). The other 72
+  are identical to W4-A's (`--identity`), so the calls-2 code moves no boss5 fight.
+- **The wind-up itself** (1.6 s → 600 ms, same code): T3 **+11.0%** dps, T4 **+13.1%**; every
+  class rises, the Conduit least (T3 +2.0%, T4 +3.1%), the T4 Spirit most (+31.4%).
+
+Every cell: `final-calls-boss5-cells.md` (W4-A / tip at 1.6 s / Rerun 3); table:
+`final-calls-boss5.md`; the Pyromancer at 10 seeds: `measure-final-calls.md`.
+
+| candidate | n | dps W0 | dps W4-A | dps tip, Slam 1.6 s | dps Rerun 3 (600 ms) | Δ W4-A → tip 1.6 s | Δ wind-up (1.6 s → 600 ms) | Δ W4-A → Rerun 3 | Δ W0 → Rerun 3 | wins W0 → W4-A → tip 1.6 s → Rerun 3 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| boss5-t3 | 42 | 105.9 | 102.6 | 102.6 | 113.8 | 0.0% | +11.0% | +11.0% | +7.5% | 25 → 22 → 22 → 23 /42 |
+| boss5-t4 | 36 | 286.5 | 228.1 | 237.5 | 268.7 | +4.1% | +13.1% | +17.8% | −6.2% | 32 → 29 → 28 → 32 /36 |
+
+Per class (pooled over the bosses; single seed per cell):
+
+| tier | class | n | dps W0 | dps W4-A | dps tip, Slam 1.6 s | dps Rerun 3 (600 ms) | Δ W4-A → tip 1.6 s | Δ wind-up (1.6 s → 600 ms) | Δ W4-A → Rerun 3 | Δ W0 → Rerun 3 | wins W0 → W4-A → tip 1.6 s → Rerun 3 |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| T3 | striker | 7 | 106.5 | 91.5 | 91.5 | 103.0 | 0.0% | +12.5% | +12.5% | −3.2% | 4 → 3 → 3 → 3 /7 |
+| T3 | squire | 7 | 98.7 | 106.3 | 106.3 | 117.3 | 0.0% | +10.3% | +10.3% | +18.9% | 4 → 4 → 4 → 5 /7 |
+| T3 | slinger | 7 | 123.0 | 99.1 | 99.1 | 113.8 | 0.0% | +14.8% | +14.8% | −7.5% | 5 → 4 → 4 → 4 /7 |
+| T3 | spirit | 7 | 100.6 | 96.5 | 96.5 | 114.5 | 0.0% | +18.7% | +18.7% | +13.8% | 6 → 5 → 5 → 5 /7 |
+| T3 | apprentice | 7 | 126.2 | 125.6 | 125.6 | 136.0 | 0.0% | +8.3% | +8.3% | +7.8% | 3 → 3 → 3 → 3 /7 |
+| T3 | conduit | 7 | 80.6 | 96.4 | 96.4 | 98.4 | 0.0% | +2.0% | +2.0% | +22.1% | 3 → 3 → 3 → 3 /7 |
+| T4 | striker | 6 | 295.6 | 242.7 | 242.7 | 276.7 | 0.0% | +14.0% | +14.0% | −6.4% | 5 → 6 → 6 → 6 /6 |
+| T4 | squire | 6 | 293.0 | 316.2 | 316.2 | 346.6 | 0.0% | +9.6% | +9.6% | +18.3% | 6 → 6 → 6 → 6 /6 |
+| T4 | slinger | 6 | 252.6 | 207.9 | 207.9 | 235.9 | 0.0% | +13.5% | +13.5% | −6.6% | 6 → 5 → 5 → 5 /6 |
+| T4 | spirit | 6 | 236.8 | 143.3 | 143.3 | 188.3 | 0.0% | +31.4% | +31.4% | −20.5% | 5 → 2 → 2 → 5 /6 |
+| T4 | apprentice | 6 | 397.3 | 224.3 | 281.0 | 323.5 | +25.3% | +15.1% | +44.2% | −18.6% | 5 → 5 → 4 → 5 /6 |
+| T4 | conduit | 6 | 244.1 | 234.1 | 234.1 | 241.3 | 0.0% | +3.1% | +3.1% | −1.1% | 5 → 5 → 5 → 5 /6 |
+
+Reading: the 600 ms wind-up lifts both tiers by 11–13% and takes T4 from 28 to 32 wins of 36
+(the T4 Spirit 2 → 5, the T4 Apprentice 4 → 5, the T3 Squire 4 → 5). Against W0 (Expose
+Weakness, before the pass) T3 is now +7.5% and T4 −6.2% (W4-A: −3.2% and −20.4%). The Striker and
+the Slinger still trail W0 by 3–8% at both tiers, the T4 Spirit by 20.5% (from 39.5%) and the T4
+Apprentice by 18.6% (W0 wore the pre-pass Pyromancer and its 1.5× max-burn hit). The Squire and
+the T3 Conduit sit well above W0. Single seed: each cell is one fight.
