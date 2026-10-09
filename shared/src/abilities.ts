@@ -845,21 +845,24 @@ const abilities: AbilityDef[] = [
     // THE BURST CAST (design §22.2, ability pass 2026-10-06): Slam absorbed Power
     // Strike and re-homed from T2 Mountain 9 to T1 Mountain 5, Power Strike's
     // slot. Rank I is the new T1 rank, still cast with Slam's radius. Its
-    // damageMult is the number the ability pass authored, by the lab's parity rule
-    // (§22.1: the T1 boss kits swapped Expose Weakness for Slam, and every class
-    // must hold its T1 boss DPS within ±5%; reports/ability-pass/). Its cooldown
+    // damageMult AND its wind-up are the two numbers the ability pass authored,
+    // solved together by the lab's parity rule (§22.1/§22.12: the T1 boss kits
+    // swapped Expose Weakness for Slam, and every class must hold its T1 boss DPS
+    // within ±5%; reports/ability-pass/): a lower multiple trims the Conduit, which
+    // casts while its summon keeps hitting, and a shorter wind-up returns what the
+    // attackers lose while they stand. Rank I stays a cast (§22.9). Its cooldown
     // is Power Strike's. Ranks II–IV are 2.45 / 2.7 / 2.95 (design §22.12: Slam
-    // never weakens on tier-up — the old +0.25 per tier, counted from rank I's
-    // 2.2), on the 1.6 s wind-up; the old half-of-Power-Strike relation went with
-    // Power Strike.
+    // never weakens on tier-up — the old +0.25 per tier, counted from W1-A's
+    // single-number rank I, 2.2), on the 1.6 s wind-up; the old half-of-Power-
+    // Strike relation went with Power Strike.
     //
     // It favours heavy, slow builds WITHOUT ever asking about attack speed:
     // it scales from Attack, its wind-up ignores attack cadence, and casting
     // stops ordinary attacking — so the faster the build, the more real damage
-    // the 1.6 s commitment costs it. No inverse-speed multiplier, no weapon
-    // tags, no cadence query. Cast speed still shortens the wind-up through the
-    // ordinary `technique.cast-speed-pct` seam, which is a separate, intended
-    // synergy.
+    // the wind-up (0.6 s at rank I, 1.6 s after) costs it. No inverse-speed
+    // multiplier, no weapon tags, no cadence query. Cast speed still shortens the
+    // wind-up through the ordinary `technique.cast-speed-pct` seam, which is a
+    // separate, intended synergy.
     //
     // The radius is authored and NEVER scales: `TECHNIQUE_POWER_FIELDS` lists
     // only `damageMult` for `cast-strike`, so a damage stat can never buy reach
@@ -867,11 +870,13 @@ const abilities: AbilityDef[] = [
     // across ranks for the first implementation; breadth is the identity, and
     // widening it is a balance decision to make against measured data.
     ranks: [
-      // Rank I: 2.2, the parity value (W1-A ladder 1.75 / 2.15 / 2.2 / 2.25 / 2.4 on the
-      // tutorial-pair lab, 30 seeds; 2.2 minimises the worst cell, +8.9% on the
-      // Conduit's Behemoth — no single value holds every class inside ±5%;
-      // reports/ability-pass/README.md §6 and w1a-ladder.md).
-      { effect: { kind: "cast-strike", damageMult: 2.2, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
+      // Rank I: 1.2 on a 0.6 s wind-up, the parity pair (W4-A two-number ladder on the
+      // tutorial-pair lab, 30 seeds, castMs 1600 → 600 on the 100 ms tick grid; every
+      // T1 kit cell inside ±5%, worst −4.7% on the Striker's Greatbear). 0.6 s is the
+      // longest wind-up that passes: at 0.7 s the Striker's and the Apprentice's
+      // Greatbear cells straddle ±5% at every rank I hit size; 1.18–1.20 pass at 0.6 s;
+      // reports/ability-pass/README.md §8 and w4a-ladder.md.
+      { effect: { kind: "cast-strike", damageMult: 1.2, radius: 150 }, cooldownMs: 10000, castMs: 600 },
       // Ranks II–IV: design §22.12, +0.25 per tier; the wind-up stays 1.6 s.
       { effect: { kind: "cast-strike", damageMult: 2.45, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
       { effect: { kind: "cast-strike", damageMult: 2.7, radius: 150 }, cooldownMs: 10000, castMs: 1600 },

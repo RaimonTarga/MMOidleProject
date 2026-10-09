@@ -168,7 +168,11 @@ initCombatSystems();
   for (const tier of [1, 2, 3, 4]) {
     assert(slamEffect(tier).radius === 150, "Slam's authored radius is 150px at every rank");
     assert(abilityCooldownMs(SLAM, tier) === 10000, "Slam holds a 10s cooldown");
-    assert(abilityCastMs(SLAM, tier) === 1600, "Slam holds a 1.6s wind-up");
+  }
+  // Rank I's wind-up is the lab's parity number (design §22.12), pinned in §6 by
+  // shape only; ranks II–IV keep the 1.6 s wind-up.
+  for (const tier of [2, 3, 4]) {
+    assert(abilityCastMs(SLAM, tier) === 1600, "Slam ranks II–IV hold a 1.6s wind-up");
   }
   assert(
     (slamEffect(2)!.radius ?? 0) > 90,
@@ -352,8 +356,8 @@ initCombatSystems();
 // (The Power Strike crossover and "Power Strike is untouched" sections went with
 // Power Strike, cut into Slam by the ability pass, design §22.2.) Design §22.12
 // retired rank I's "single-target lean" (a multiple above rank II's): a player
-// who tiers up must never read a smaller Slam. Rank I's value is the lab's
-// parity number, so only this SHAPE is pinned for it, at every rank pair.
+// who tiers up must never read a smaller Slam. Rank I's multiple and wind-up
+// are the lab's parity pair, so only their SHAPE is pinned here.
 {
   for (let tier = 1; tier < SLAM.ranks.length; tier++) {
     const here = slamEffect(tier).damageMult;
@@ -363,8 +367,14 @@ initCombatSystems();
       `Slam's multiple must never fall from rank ${tier} to rank ${tier + 1} (${here} -> ${next})`,
     );
   }
-  assert(abilityCooldownMs(SLAM, 1) === 10000 && abilityCastMs(SLAM, 1) === 1600,
-    "rank I keeps Power Strike's 10 s cooldown and 1.6 s wind-up");
+  assert(abilityCooldownMs(SLAM, 1) === 10000, "rank I keeps Power Strike's 10 s cooldown");
+  // Rank I stays a cast (§22.9): its wind-up is solved between Charge's, the
+  // shortest authored player wind-up, and the 1.6 s of the ranks above it.
+  const chargeWindup = abilityCastMs(ABILITY_DATABASE.get("charge")!, 1);
+  assert(
+    abilityCastMs(SLAM, 1) >= chargeWindup && abilityCastMs(SLAM, 1) <= abilityCastMs(SLAM, 2),
+    `rank I's wind-up must sit between Charge's ${chargeWindup} ms and rank II's (got ${abilityCastMs(SLAM, 1)})`,
+  );
 }
 
 // ── 7. Two casts share one channel ───────────────────────────────────────────

@@ -90,10 +90,13 @@ assert(
 
 const slam = ABILITY_DATABASE.get("slam")!;
 assert(abilityCastMs(slam, 1) > 0, "a cast must declare a wind-up");
+// Above rank I the wind-up is not a progression track; rank I's is the T1 parity
+// number, solved with its multiple (design §22.12), never longer than the rest.
 assert(
-  abilityCastMs(slam, 4) === abilityCastMs(slam, 1),
-  "Slam's wind-up is not a progression track",
+  abilityCastMs(slam, 2) === abilityCastMs(slam, 3) && abilityCastMs(slam, 3) === abilityCastMs(slam, 4),
+  "Slam's wind-up is not a progression track above rank I",
 );
+assert(abilityCastMs(slam, 1) <= abilityCastMs(slam, 2), "Slam rank I never winds up longer than rank II");
 
 // ── 3b. A re-home adds exactly one rank at the new home (the ability pass) ───
 //
@@ -112,8 +115,7 @@ assert(
   castDamageAt("slam", 2) === 2.45 && castDamageAt("slam", 3) === 2.7 && castDamageAt("slam", 4) === 2.95,
   "Slam's T2–T4 ranks are design §22.12's 2.45 / 2.7 / 2.95, not re-indexed",
 );
-assert(abilityCooldownMs(slam, 1) === 10000 && abilityCastMs(slam, 1) === 1600,
-  "Slam rank I keeps Power Strike's cooldown and wind-up");
+assert(abilityCooldownMs(slam, 1) === 10000, "Slam rank I keeps Power Strike's cooldown");
 const chargeAt = (tier: number): number => {
   const effect = abilityRankAt(ABILITY_DATABASE.get("charge")!, tier).effect;
   return effect.kind === "reposition" ? effect.empowerMult ?? NaN : NaN;
