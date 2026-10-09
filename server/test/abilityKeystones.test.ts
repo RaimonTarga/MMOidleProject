@@ -68,6 +68,9 @@ import { pendingKeystoneHits, updateScheduledKeystoneHits } from '../src/systems
 import { applyStun } from '../src/systems/combat/status/stun';
 import { runPlayerAttack } from '../src/systems/combat/engine/combat';
 import { updateReloadArchetype } from '../src/systems/classes/archetypes/reload/reloadPrototype';
+// W2-A (the remaining Technique verbs).
+import { ABILITY_IMBUE_EFFECT_ID } from '@mmo-idle/shared';
+import { requestManualAbilityUse } from '../src/systems/player/abilities/abilityFiring';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -260,7 +263,9 @@ function attackLedger(player: PlayerEntity): string {
     const verb = ABILITY_KEYSTONE_DEFINITIONS.get(id);
     if (!verb?.live) problems.push(`${id}: a module for a verb that is not live`);
     if (!module.seam) problems.push(`${id}: name the seam the rule changes`);
-    if (!module.onResolved && !module.register) problems.push(`${id}: a module that hooks nothing`);
+    if (!module.onResolved && !module.register && !module.onInfected && !module.onChargeSpent && !module.tick) {
+      problems.push(`${id}: a module that hooks nothing`);
+    }
   }
   assert(problems.length === 0, `ability keystone registry:\n  ${problems.join('\n  ')}`);
 }
@@ -1024,6 +1029,78 @@ function attackLedger(player: PlayerEntity): string {
     assert(
       drawn.length === 1 && drawn[0]!.pos.x === c.x && drawn[0]!.pos.y === c.y,
       'drawn from the delivering summon',
+    );
+  }
+}
+
+// ─── Imbue Lightning · FORK: every imbued hit arcs to the nearest other body ──
+
+{
+  const FORK_FX = ABILITY_KEYSTONE_DEFINITIONS.get('fork')!.fx;
+  const charges = (player: PlayerEntity): number =>
+    getStatusEffect(player.tracksCombat, ABILITY_IMBUE_EFFECT_ID)?.data['charges'] ?? 0;
+
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-fork', {
+      abilityId: 'imbue-lightning', nodes: rows('imbue-lightning', { packet: 'empowered', keystone: 'fork' }),
+    });
+    const struck = spawnMonster(world, 600);
+    const nearest = spawnMonster(world, 680);
+    const second = spawnMonster(world, 600, 500); // also beside it, but farther
+    const far = spawnMonster(world, 900);
+    assert(requestManualAbilityUse(world, player, 'imbue-lightning', 1_000).success, 'the window opens');
+    const window = charges(player);
+    assert(window > 1, `a charge window, got ${window}`);
+    world.takeNodeEvents(NODE);
+
+    const attacks = attackEventsOf(player);
+    hit(world, player, struck);
+    assert(nearest.hasHealth.hp < nearest.hasHealth.maxHp, 'the imbued hit arcs to the nearest other body');
+    assert(second.hasHealth.hp === second.hasHealth.maxHp, 'only the nearest');
+    assert(far.hasHealth.hp === far.hasHealth.maxHp, 'and only a body beside the struck one');
+    assert(charges(player) === window - 1, 'the arc spends no extra charge');
+    assert(attackEventsOf(player) === attacks + 1, 'an arc is never an attack: no attack event, no hit counter');
+    const drawn = cardFx(world).filter((e) => e.fx === FORK_FX);
+    assert(
+      drawn.length === 1 && drawn[0]!.targetId === nearest.isMonster.id && drawn[0]!.pos.x === 600,
+      'one card-fx per arc, from the struck body to the one it reached',
+    );
+
+    // A dodged imbued hit arcs nowhere.
+    const before = nearest.hasHealth.hp;
+    hit(world, player, struck, { evadeBlocksDebuffs: true });
+    assert(nearest.hasHealth.hp === before, 'a dodged imbued hit does not arc');
+
+    // Every imbued hit arcs, and only imbued hits: spend the window out.
+    let arcs = 0;
+    while (charges(player) > 0) {
+      hit(world, player, struck);
+      arcs += cardFx(world).filter((e) => e.fx === FORK_FX).length;
+    }
+    assert(arcs === window - 2, `one arc per remaining charge, got ${arcs} of ${window - 2}`);
+    hit(world, player, struck);
+    assert(cardFx(world).every((e) => e.fx !== FORK_FX), 'a hit after the window arcs nowhere');
+  }
+
+  // On a Conduit a summon's imbued blow arcs from the body it struck, once.
+  {
+    const world = new World();
+    const { player, minions } = conduit(world, 'ks-fork-conduit', 'imbue-lightning',
+      rows('imbue-lightning', { packet: 'empowered', keystone: 'fork' }));
+    const striker = minions[0]!;
+    const struck = spawnMonster(world, striker.hasPosition.current.x + 24, striker.hasPosition.current.y);
+    const beside = spawnMonster(world, struck.hasPosition.current.x + 80, struck.hasPosition.current.y);
+    assert(requestManualAbilityUse(world, player, 'imbue-lightning', 1_000).success, 'the window opens');
+    const window = charges(player);
+    world.takeNodeEvents(NODE);
+    runFormationAttack(world, player, striker, struck, 5_000);
+    assert(beside.hasHealth.hp < beside.hasHealth.maxHp, "the summon's imbued blow arcs");
+    assert(charges(player) === window - 1, 'one charge, one arc');
+    const drawn = cardFx(world).filter((e) => e.fx === FORK_FX);
+    assert(
+      drawn.length === 1 && drawn[0]!.pos.x === struck.hasPosition.current.x,
+      'drawn from the body the summon struck',
     );
   }
 }

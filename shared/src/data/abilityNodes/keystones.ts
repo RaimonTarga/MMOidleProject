@@ -194,7 +194,7 @@ const trioEntries: [string, Trio][] = [
   ['imbue-lightning', [
     verb('imbue-lightning', 1, 'fork', 'Fork',
       'Every imbued hit arcs to the nearest other body.',
-      'kill-chain.spread-arc', 'echo-hit', { delivery: DB, paysShare: true }),
+      'kill-chain.spread-arc', 'echo-hit', { delivery: DB, paysShare: true, live: true }),
     verb('imbue-lightning', 2, 'static', 'Static',
       'An imbued hit that kills refunds its charge.',
       'technique.refund-flash', 'technique-refund'),

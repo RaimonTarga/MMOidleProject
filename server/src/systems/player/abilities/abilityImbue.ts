@@ -31,6 +31,7 @@ import type { CombatContext } from "../../combat/engine/combatPipeline";
 import type { PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 import { techniquePowerPctFor } from "./abilityKata";
+import { onAbilityKeystoneChargeSpent } from "../../combat/keystones/ability/registry";
 
 /**
  * Apply the window. Charges and magnitude both come from the authored rank, with
@@ -118,7 +119,7 @@ export function imbueOnHitBonus(cs: TracksCombat): number {
  * the charges it spends rather than five bullets riding one.
  */
 export function initImbueSystem(): void {
-  registerCombatListener("onHit", (ctx, _world) => {
+  registerCombatListener("onHit", (ctx, world) => {
     if (ctx.attackerType !== "player") return;
     if (ctx.defenderType !== "monster") return;
     // A chaotic-weapon whiff deals no damage and must not eat a charge — the
@@ -147,6 +148,10 @@ export function initImbueSystem(): void {
     }
 
     tagImbueHit(ctx);
+    // This hit is an imbued hit: a keystone verb that rides the window's hits
+    // (design §22.4's Fork) hangs off the charge it just spent — once per
+    // charge, whatever body delivered the hit.
+    onAbilityKeystoneChargeSpent(world, player, ctx);
   });
 }
 
