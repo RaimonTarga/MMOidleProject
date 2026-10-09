@@ -1258,4 +1258,419 @@ function attackLedger(player: PlayerEntity): string {
   assert(!playerVanished(player), 'a mark never spent ends with the fight');
 }
 
+// ═══ The Guard verbs (W2-B): immunity, control of the attacker, or a shared mend ═══
+//
+// A Guard keystone never deals damage (design §22.1): every block below also
+// checks that the bodies it touched lost no health. Guards fire through the real
+// activation path (`requestManualAbilityUse` → `maybeFireGuard`), so each verb is
+// exercised from the one seam it hangs off.
+
+// Aliased: W2-A's section imports the same function under its own name.
+import { requestManualAbilityUse as requestGuardUse } from '../src/systems/player/abilities/abilityFiring';
+import { syncPlayerControlLockout } from '../src/systems/combat/status/playerControlLockout';
+import { runMonsterAttack } from '../src/systems/combat/engine/combat';
+import {
+  ABILITY_ENTANGLE_EFFECT_ID,
+  ABILITY_IMMUNITY_EFFECT_ID,
+  ABILITY_UNYIELDING_EFFECT_ID,
+  CAVE_LOCKDOWN_EFFECT_ID,
+  abilityImmunityKindKey,
+} from '@mmo-idle/shared';
+import { applyMonsterDotToPlayer } from '../src/systems/combat/status/monsterDot';
+import { joinParty } from '../src/systems/player/party/partySystem';
+import { activeRecoveryFraction, runRecovery } from '../src/systems/defense/regen/recovery';
+import { applyHealToPlayer } from '../src/systems/defense/regen/healing';
+import { guardKeystoneMagnitude, overflowWardOf } from '../src/systems/combat/keystones';
+import { applyResistedPlayerDebuff } from '../src/systems/combat/status/debuffGuard';
+import { beginEngageLock, engageSequenceHoldsAttack } from '../src/systems/combat/ai/engageSequence';
+import { syncPlayerBuffs } from '../src/systems/combat/buffs/buffSync';
+
+/** Fire a Guard the way a hotkey press does; asserts it activated. */
+function fireGuard(world: World, player: PlayerEntity, abilityId: string, now = 1_000_000): void {
+  const result = requestGuardUse(world, player, abilityId, now);
+  assert(result.state === 'activated', `${abilityId} activates (${result.state}: ${result.reason ?? ''})`);
+}
+
+/** Every body's health, so a block can assert a Guard verb dealt no damage. */
+const healthOf = (bodies: MonsterEntity[]): string => bodies.map((b) => b.hasHealth.hp).join();
+
+/** Stunned by `sourceId`, right now. */
+const stunnedBy = (monster: MonsterEntity, sourceId: string): boolean => {
+  const stun = getStatusEffect(monster.tracksCombat, STUN_EFFECT);
+  return !!stun && stun.remainingMs > 0 && stun.sourceId === sourceId;
+};
+
+// ─── Break Free · BACKLASH: breaking free staggers every adjacent body ───────
+
+{
+  const BACKLASH_FX = ABILITY_KEYSTONE_DEFINITIONS.get('backlash')!.fx;
+  const held = (world: World, player: PlayerEntity): void => {
+    applyStun(player.tracksCombat, 2_000, 'a-boss');
+    syncPlayerControlLockout(world, player);
+  };
+
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-backlash', {
+      abilityId: 'break-free', nodes: rows('break-free', { packet: 'control', keystone: 'backlash' }),
+    });
+    const near = spawnMonster(world, 460);
+    const flank = spawnMonster(world, 420, 470);
+    const far = spawnMonster(world, 900);
+    const bodies = [near, flank, far];
+    const before = healthOf(bodies);
+    held(world, player);
+    world.takeNodeEvents(NODE);
+    fireGuard(world, player, 'break-free');
+    assert(!getStatusEffect(player.tracksCombat, STUN_EFFECT), 'Break Free broke the stun');
+    assert(stunnedBy(near, player.isPlayer.id) && stunnedBy(flank, player.isPlayer.id),
+      'breaking free staggers every adjacent body');
+    assert(!stunnedBy(far, player.isPlayer.id), 'a body out of reach is not staggered');
+    const drawn = cardFx(world).filter((e) => e.fx === BACKLASH_FX);
+    assert(
+      drawn.length === 2 && new Set(drawn.map((e) => e.targetId)).size === 2
+        && drawn.every((e) => (e.durationMs ?? 0) > 0),
+      `one card-fx per staggered body, each once, with the hold as applied (got ${drawn.length})`,
+    );
+    assert(healthOf(bodies) === before, 'a Guard verb deals no damage');
+  }
+
+  // Without the verb, Break Free breaks free and staggers nothing.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-backlash-off', {
+      abilityId: 'break-free', nodes: rows('break-free', { packet: 'control' }),
+    });
+    const near = spawnMonster(world, 460);
+    held(world, player);
+    fireGuard(world, player, 'break-free');
+    assert(!stunnedBy(near, player.isPlayer.id), 'no verb, no stagger');
+  }
+}
+
+// ─── Brace · RIPOSTE: a melee hit absorbed while Braced staggers the attacker ─
+
+{
+  const RIPOSTE_FX = ABILITY_KEYSTONE_DEFINITIONS.get('riposte')!.fx;
+  /** Clear a body's stagger and its post-stun ward, as if both had run out. */
+  const recover = (monster: MonsterEntity): void => {
+    monster.tracksCombat.statusEffects = monster.tracksCombat.statusEffects
+      .filter((effect) => effect.id !== STUN_EFFECT && effect.id !== 'stun-immune');
+  };
+  /** Ready every Guard again (cooldowns and the one-activation window). */
+  const rested = (player: PlayerEntity): void => { player.tracksCombat.cooldowns = {}; };
+
+  const world = new World();
+  const player = spawnPlayer(world, 'ks-riposte', {
+    abilityId: 'brace', nodes: rows('brace', { packet: 'control', keystone: 'riposte' }),
+  });
+  const brute = spawnMonster(world, 430);
+  const archer = spawnMonster(world, 380, 430);
+  archer.isMonster.isRanged = true;
+  const bodies = [brute, archer];
+  const before = healthOf(bodies);
+
+  // Not Braced: nothing to riposte with.
+  runMonsterAttack(world, brute, player, 1_000_000);
+  assert(!stunnedBy(brute, player.isPlayer.id), 'no Brace, no riposte');
+
+  fireGuard(world, player, 'brace');
+  world.takeNodeEvents(NODE);
+  assert(runMonsterAttack(world, brute, player, 1_000_100) === 'hit', 'the melee blow lands into the Brace');
+  assert(stunnedBy(brute, player.isPlayer.id), 'a melee hit absorbed while Braced staggers the attacker');
+  const drawn = cardFx(world).filter((e) => e.fx === RIPOSTE_FX);
+  assert(drawn.length === 1 && drawn[0]!.targetId === brute.isMonster.id && (drawn[0]!.durationMs ?? 0) > 0,
+    'one card-fx on the staggered attacker, with the hold as applied');
+
+  runMonsterAttack(world, archer, player, 1_000_200);
+  assert(!stunnedBy(archer, player.isPlayer.id), 'a ranged shot is not riposted');
+
+  // Once per attacker per Brace: the same body, its stagger and ward run out, is not
+  // staggered again by the same Brace...
+  recover(brute);
+  runMonsterAttack(world, brute, player, 1_000_300);
+  assert(!stunnedBy(brute, player.isPlayer.id), 'once per attacker per Brace');
+  // ...and a fresh Brace answers it again.
+  rested(player);
+  fireGuard(world, player, 'brace', 1_000_400);
+  runMonsterAttack(world, brute, player, 1_000_500);
+  assert(stunnedBy(brute, player.isPlayer.id), 'a fresh Brace ripostes the same attacker again');
+
+  // A blow dodged outright was not absorbed.
+  const dodged = spawnMonster(world, 440, 360);
+  emitCombatEvent('afterHit', {
+    attacker: dodged, attackerType: 'monster', defender: player, defenderType: 'player',
+    damage: 0, platingMult: 1, drPierce: 0, cancelled: false, metadata: { evaded: true, evadeFull: true },
+  } as unknown as CombatContext, world);
+  assert(!stunnedBy(dodged, player.isPlayer.id), 'a dodged blow is not riposted');
+  assert(healthOf(bodies) === before, 'a Guard verb deals no damage');
+}
+
+// ─── Bramble Guard · ENTANGLE: a body that hits you while brambled is slowed ─
+
+{
+  const ENTANGLE_FX = ABILITY_KEYSTONE_DEFINITIONS.get('entangle')!.fx;
+  /** One world: a brambled player (with or without the verb) takes one melee blow. */
+  const blow = (id: string, keystone?: string) => {
+    const world = new World();
+    const player = spawnPlayer(world, id, {
+      abilityId: 'bramble-guard', nodes: rows('bramble-guard', { packet: 'tempo', ...(keystone ? { keystone } : {}) }),
+    });
+    const brute = spawnMonster(world, 430);
+    const bystander = spawnMonster(world, 470, 460);
+    fireGuard(world, player, 'bramble-guard');
+    world.takeNodeEvents(NODE);
+    assert(runMonsterAttack(world, brute, player, 1_000_100) === 'hit', 'the blow lands');
+    return { world, player, brute, bystander };
+  };
+
+  const { world, player, brute, bystander } = blow('ks-entangle', 'entangle');
+  const slow = getStatusEffect(brute.tracksCombat, ABILITY_ENTANGLE_EFFECT_ID);
+  assert(slow !== undefined && (slow.data['moveSlowPct'] ?? 0) > 0 && slow.remainingMs > 0,
+    'a body that hits you while brambled is slowed');
+  assert((slow!.data['totalMs'] ?? 0) > 0, 'with totalMs in its data for the buff clock');
+  assert(slow!.sourceId === player.isPlayer.id, 'owned by the brambled player');
+  assert(monsterIsHeld(brute), 'an entangled body counts as held for the Control verb');
+  assert(!getStatusEffect(bystander.tracksCombat, ABILITY_ENTANGLE_EFFECT_ID), 'a body that did not hit is not');
+  const drawn = cardFx(world).filter((e) => e.fx === ENTANGLE_FX);
+  assert(drawn.length === 1 && drawn[0]!.targetId === brute.isMonster.id && (drawn[0]!.durationMs ?? 0) > 0,
+    'one card-fx on the entangled body, with the hold as applied');
+
+  // The slow is all it adds: the thorns bite the same with or without the verb.
+  const plain = blow('ks-entangle-off');
+  assert(!getStatusEffect(plain.brute.tracksCombat, ABILITY_ENTANGLE_EFFECT_ID), 'no verb, no slow');
+  assert(plain.brute.hasHealth.hp === brute.hasHealth.hp, 'a Guard verb deals no damage (only the thorns bite)');
+
+  // Not brambled, nothing entangles: the bramble runs out, the next blow lands free.
+  player.tracksCombat.statusEffects = player.tracksCombat.statusEffects.filter((e) => e.id !== 'ability-bramble');
+  bystander.tracksCombat.statusEffects = [];
+  runMonsterAttack(world, bystander, player, 1_000_200);
+  assert(!getStatusEffect(bystander.tracksCombat, ABILITY_ENTANGLE_EFFECT_ID), 'no bramble, no entangle');
+}
+
+// ─── Endure · UNYIELDING: you cannot be hard-controlled while Endure is up ────
+
+{
+  const UNYIELDING_FX = ABILITY_KEYSTONE_DEFINITIONS.get('unyielding')!.fx;
+  const root = (player: PlayerEntity, speedMult = 0) => applyResistedPlayerDebuff(player, {
+    id: 'slow', maxStacks: 1, remainingMs: 2_000, refreshable: true, sourceId: 'a-mob',
+    data: { speedMult, totalMs: 2_000 },
+  });
+
+  const world = new World();
+  const player = spawnPlayer(world, 'ks-unyielding', {
+    abilityId: 'endure', nodes: rows('endure', { packet: 'engagement', keystone: 'unyielding' }),
+  });
+  const troll = spawnMonster(world, 460);
+  // A root already on the player before Endure goes up (a root does not stop a Guard).
+  assert(root(player) !== undefined, 'fixture: the root lands before Endure');
+  world.takeNodeEvents(NODE);
+  fireGuard(world, player, 'endure');
+  const endure = getStatusEffect(player.tracksCombat, 'ability-guard-2')!;
+  const unyielding = getStatusEffect(player.tracksCombat, ABILITY_UNYIELDING_EFFECT_ID);
+  assert(unyielding !== undefined && unyielding.remainingMs === endure.remainingMs,
+    'Unyielding stands on the clock of Endure itself');
+  assert(cardFx(world).filter((e) => e.fx === UNYIELDING_FX).length === 1, 'one card-fx per activation');
+  assert(getStatusEffect(player.tracksCombat, 'slow')?.data['speedMult'] === 0,
+    'an existing control is not removed');
+
+  // The appliers refuse: every stun, a zero-speed root, the Cave lockdown.
+  assert(!applyStun(player.tracksCombat, 1_500, troll.isMonster.id), 'a stun is refused');
+  assert(!getStatusEffect(player.tracksCombat, STUN_EFFECT) && !getStatusEffect(player.tracksCombat, 'stun-immune'),
+    'no stun and no post-stun ward for a stun that never landed');
+  player.tracksCombat.statusEffects = player.tracksCombat.statusEffects.filter((e) => e.id !== 'slow');
+  assert(root(player) === undefined && !getStatusEffect(player.tracksCombat, 'slow'), 'a root is refused');
+  beginEngageLock(world, troll, player, 1_500, 1_000_100);
+  assert(!getStatusEffect(player.tracksCombat, CAVE_LOCKDOWN_EFFECT_ID), 'the Cave lockdown is refused');
+  assert(engageSequenceHoldsAttack(troll), 'and the beat of the troll runs on');
+  assert(root(player, 0.5) !== undefined, 'a soft slow is not hard control: it still lands');
+  syncPlayerBuffs(world, 1_000_100);
+  assert(player.hasStatus.activeBuffs?.some((buff) => buff.id === ABILITY_UNYIELDING_EFFECT_ID),
+    'the Unyielding tile is on the bar');
+
+  // Endure down, the refusal goes with it.
+  player.tracksCombat.statusEffects = player.tracksCombat.statusEffects
+    .filter((e) => e.id !== 'ability-guard-2' && e.id !== ABILITY_UNYIELDING_EFFECT_ID);
+  assert(applyStun(player.tracksCombat, 1_500, troll.isMonster.id), 'once Endure is down, a stun lands');
+
+  // Without the verb, Endure refuses nothing.
+  const plainWorld = new World();
+  const plain = spawnPlayer(plainWorld, 'ks-unyielding-off', {
+    abilityId: 'endure', nodes: rows('endure', { packet: 'engagement' }),
+  });
+  fireGuard(plainWorld, plain, 'endure');
+  assert(applyStun(plain.tracksCombat, 1_500, 'a-mob'), 'no verb, no refusal');
+}
+
+// ─── Cleanse · IMMUNITY: the kind you stripped cannot be reapplied for a few seconds ─
+
+{
+  const IMMUNITY_FX = ABILITY_KEYSTONE_DEFINITIONS.get('immunity')!.fx;
+  const venom = { debuffId: 'ks-venom', damagePerStack: 4, maxStacks: 5, tickIntervalMs: 1_000, durationMs: 4_000 };
+  const venomId = 'monster-dot:ks-venom';
+  const has = (player: PlayerEntity, id: string): boolean => getStatusEffect(player.tracksCombat, id) !== undefined;
+
+  const world = new World();
+  const player = spawnPlayer(world, 'ks-immunity', {
+    abilityId: 'cleanse', nodes: rows('cleanse', { packet: 'engagement', keystone: 'immunity' }),
+  });
+  const viper = spawnMonster(world, 460);
+  applyMonsterDotToPlayer(world, viper, player, venom);
+  applyMonsterDotToPlayer(world, viper, player, venom);
+  assert(has(player, venomId), 'fixture: the venom is on the player');
+  world.takeNodeEvents(NODE);
+  fireGuard(world, player, 'cleanse');
+  assert(!has(player, venomId), 'Cleanse stripped the venom');
+  const immunity = getStatusEffect(player.tracksCombat, ABILITY_IMMUNITY_EFFECT_ID);
+  assert(immunity !== undefined && immunity.remainingMs > 0 && (immunity.data['totalMs'] ?? 0) > 0,
+    'Immunity stands, with a clock');
+  assert(immunity!.data[abilityImmunityKindKey(venomId)] === 1, 'keyed by the stripped kind');
+  assert(cardFx(world).filter((e) => e.fx === IMMUNITY_FX).length === 1, 'one card-fx per activation');
+
+  // The applier of that kind early-returns...
+  applyMonsterDotToPlayer(world, viper, player, venom);
+  assert(!has(player, venomId), 'the stripped kind cannot be reapplied');
+  // ...and every other kind still lands.
+  applyMonsterDotToPlayer(world, viper, player, { ...venom, debuffId: 'ks-other' });
+  assert(has(player, 'monster-dot:ks-other'), 'a different affliction still lands');
+  assert(applyResistedPlayerDebuff(player, {
+    id: 'antiheal', maxStacks: 1, remainingMs: 2_000, refreshable: true, sourceId: 'a-mob',
+    data: { reductionPerStack: 0.2, totalMs: 2_000 },
+  }) !== undefined, 'so does a debuff the Cleanse never touched');
+  syncPlayerBuffs(world, 1_000_100);
+  assert(player.hasStatus.activeBuffs?.some((buff) => buff.id === ABILITY_IMMUNITY_EFFECT_ID),
+    'the Immunity tile is on the bar');
+
+  // When the window ends, the kind lands again.
+  player.tracksCombat.statusEffects = player.tracksCombat.statusEffects.filter((e) => e.id !== ABILITY_IMMUNITY_EFFECT_ID);
+  applyMonsterDotToPlayer(world, viper, player, venom);
+  assert(has(player, venomId), 'after the window the kind lands again');
+
+  // Without the verb, a Cleanse refuses nothing afterwards.
+  const plainWorld = new World();
+  const plain = spawnPlayer(plainWorld, 'ks-immunity-off', {
+    abilityId: 'cleanse', nodes: rows('cleanse', { packet: 'engagement' }),
+  });
+  const plainViper = spawnMonster(plainWorld, 460);
+  applyMonsterDotToPlayer(plainWorld, plainViper, plain, venom);
+  fireGuard(plainWorld, plain, 'cleanse');
+  applyMonsterDotToPlayer(plainWorld, plainViper, plain, venom);
+  assert(has(plain, venomId), 'no verb, no immunity');
+}
+
+// ─── Second Wind · SHARED BREATH: the mend runs on your summons and same-node party ─
+
+{
+  const SHARED_BREATH_FX = ABILITY_KEYSTONE_DEFINITIONS.get('shared-breath')!.fx;
+  // The Bulwark route, so the packet's own payoff never wears the verb's fx key.
+  const nodes = rows('second-wind', { packet: 'bulwark', keystone: 'shared-breath' });
+
+  /** A Conduit owner (hurt, so Second Wind fires), a party member here and one a node away. */
+  const scene = (id: string, withVerb: boolean) => {
+    const world = new World();
+    const { player: owner, minions } = conduit(world, id, 'second-wind',
+      withVerb ? nodes : rows('second-wind', { packet: 'bulwark' }));
+    owner.hasHealth.hp = Math.round(owner.hasHealth.maxHp / 2);
+    if (!((owner.hasHealth.recovery ?? 0) > 0)) owner.hasHealth.recovery = 10;
+    const ally = spawnPlayer(world, `${id}-ally`, { abilityId: 'brace' });
+    const away = spawnPlayer(world, `${id}-away`, { abilityId: 'brace' });
+    away.hasPosition.nodeId = 'node-5-6';
+    joinParty(world, ally, owner.isPlayer.id);
+    joinParty(world, away, owner.isPlayer.id);
+    assert(ally.inParty?.leaderId === owner.isPlayer.id && away.inParty?.leaderId === owner.isPlayer.id,
+      'fixture: one party');
+    // One summon hurt and engaged, so it is in combat.
+    const summon = minions[0]!;
+    const foe = spawnMonster(world, summon.hasPosition.current.x + 24, summon.hasPosition.current.y);
+    setAttackTarget(world, summon, foe.isMonster.id);
+    summon.hasHealth.hp = Math.round(summon.hasHealth.maxHp / 2);
+    world.takeNodeEvents(NODE);
+    fireGuard(world, owner, 'second-wind');
+    return { world, owner, minions, ally, away, summon };
+  };
+
+  {
+    const { world, owner, minions, ally, away, summon } = scene('ks-shared-breath', true);
+    const ownerFraction = getStatusEffect(owner.tracksCombat, 'ability-second-wind')!.data['recoveryPct']!;
+    assert(ownerFraction > 0, 'fixture: the owner mends');
+    assert(activeRecoveryFraction(ally, true) === ownerFraction,
+      'a same-node party member mends at the owner\u2019s fraction (the engine\u2019s skill source)');
+    assert(activeRecoveryFraction(away, true) === 0, 'a party member on another node does not');
+    const drawn = cardFx(world).filter((e) => e.fx === SHARED_BREATH_FX);
+    assert(drawn.length === 1 + minions.length,
+      `one card-fx per body the mend reaches (the ally and ${minions.length} summons), got ${drawn.length}`);
+
+    const before = summon.hasHealth.hp;
+    updateSummonerArchetype(world, 1_000, 1_000_100);
+    assert(summon.hasHealth.hp > before, 'a summon in combat mends while the owner\u2019s mend runs');
+  }
+
+  // Without the verb, Second Wind mends only its caster.
+  {
+    const { world, ally, summon } = scene('ks-shared-breath-off', false);
+    assert(activeRecoveryFraction(ally, true) === 0, 'no verb: the party is not mended');
+    const before = summon.hasHealth.hp;
+    updateSummonerArchetype(world, 1_000, 1_000_100);
+    assert(summon.hasHealth.hp === before, 'no verb: a summon in combat is not mended');
+  }
+}
+
+// ─── Recuperate · OVERFLOW: healing past full becomes a ward ──────────────────
+
+{
+  const OVERFLOW_FX = ABILITY_KEYSTONE_DEFINITIONS.get('overflow')!.fx;
+  const wardTotal = (player: PlayerEntity): number =>
+    (player.holdsWards?.wards ?? []).reduce((sum, ward) => sum + ward.amount, 0);
+
+  /** A player who has just fired Recuperate, then is topped back to full. */
+  const mending = (id: string, keystone?: string) => {
+    const world = new World();
+    const player = spawnPlayer(world, id, {
+      abilityId: 'recuperate', nodes: rows('recuperate', { packet: 'tempo', ...(keystone ? { keystone } : {}) }),
+    });
+    player.hasHealth.hp = player.hasHealth.maxHp - 20;
+    world.takeNodeEvents(NODE);
+    fireGuard(world, player, 'recuperate');
+    player.hasHealth.hp = player.hasHealth.maxHp;
+    return { world, player };
+  };
+
+  {
+    const { world, player } = mending('ks-overflow', 'overflow');
+    const cap = Math.round(player.hasHealth.maxHp * guardKeystoneMagnitude(player, 'overflow'));
+    assert(cap > 0, 'fixture: the ward has a cap off the table');
+    applyHealToPlayer(player, player.tracksCombat, 3, world);
+    const ward = overflowWardOf(player);
+    assert(ward !== undefined && ward.amount === 3 && ward.remainingMs > 0, 'healing past full becomes a ward');
+    assert(player.hasHealth.hp === player.hasHealth.maxHp, 'and the HP stays at full');
+    assert(cardFx(world).filter((e) => e.fx === OVERFLOW_FX).length === 1, 'one card-fx as the ward rises');
+    applyHealToPlayer(player, player.tracksCombat, 4, world);
+    assert(player.holdsWards!.wards.length === 1 && overflowWardOf(player)!.amount === 7,
+      'more spill tops up the one ward');
+    assert(cardFx(world).filter((e) => e.fx === OVERFLOW_FX).length === 0, 'a top-up draws nothing new');
+    applyHealToPlayer(player, player.tracksCombat, cap * 3, world);
+    assert(overflowWardOf(player)!.amount === cap, `the ward stops at its cap (${cap})`);
+
+    // The Recovery engine's own sub-1-HP slices at 10 Hz add up to a ward too.
+    const sliced = mending('ks-overflow-sliced', 'overflow');
+    sliced.player.hasHealth.recovery = 20;
+    for (let tick = 0; tick < 20; tick++) runRecovery(sliced.world, sliced.player, 100, true);
+    assert(wardTotal(sliced.player) >= 1, 'the mend\u2019s own ticks past full raise the ward');
+
+    // When the mend has run out, healing past full is just healing.
+    player.tracksCombat.statusEffects = player.tracksCombat.statusEffects.filter((e) => e.id !== 'ability-second-wind-2');
+    const before = wardTotal(player);
+    player.holdsWards!.wards = [];
+    applyHealToPlayer(player, player.tracksCombat, 10, world);
+    assert(wardTotal(player) === 0 && before === cap, 'no mend, no overflow');
+  }
+
+  // Without the verb, healing past full is just healing.
+  {
+    const { world, player } = mending('ks-overflow-off');
+    applyHealToPlayer(player, player.tracksCombat, 10, world);
+    assert(wardTotal(player) === 0, 'no verb, no ward');
+  }
+}
+
 console.log('abilityKeystones: ok');

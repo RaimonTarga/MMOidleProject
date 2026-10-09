@@ -119,9 +119,11 @@ const BUFF_IDS = new Set([
   'ability-guard',
   'ability-guard-2',
   'ability-imbue',
+  'ability-immunity',
   'ability-second-wind',
   'ability-second-wind-2',
   'ability-sidestep',
+  'ability-unyielding',
   'boss-regen',
   'cadence-accelerando',
   'cadence-aftershock',
@@ -352,6 +354,10 @@ const BUFF_ABILITY_ICON_ALIASES: Record<string, string> = {
   'ability-imbue': 'imbue-lightning',
   'ability-second-wind': 'second-wind',
   'ability-second-wind-2': 'second-wind',
+  // Cleanse's Immunity keystone wears the Guard that earned it.
+  'ability-immunity': 'cleanse',
+  // Endure's Unyielding keystone wears the Guard it rides on.
+  'ability-unyielding': 'endure',
   // Kata builds toward an empowered Technique: the wind-up-and-deliver art (Charged
   // Strike's, which Power Strike wore before the ability pass cut it into Slam).
   kata: 'charged-strike',
@@ -456,6 +462,8 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'lineage.bleed': 'boss-rend',
   'lineage.hobbled': 'debuff-slow',
   'lineage.pinned': 'debuff-root',
+  // Entangle (Bramble Guard's keystone) wears the Guard that laid it, as Bound wears Binding Strike.
+  'ability-entangled': 'bramble-guard',
   stunned: 'debuff-stunned',
   'stun-immune': 'break-free',
   'canopy-chameleon-barrage': 'thorn-spitter-barrage',

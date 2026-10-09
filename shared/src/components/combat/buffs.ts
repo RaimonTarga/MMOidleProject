@@ -117,6 +117,10 @@ export const BUFF_IDS = [
   // is one of the few buffs that must show its count even at one.
   'ability-imbue',
   'ability-control-resist',
+  // Endure's Unyielding keystone (design §22.4): no hard control lands while it stands.
+  'ability-unyielding',
+  // Cleanse's Immunity keystone (design §22.4): the stripped kinds cannot be reapplied.
+  'ability-immunity',
   // Mobility boots (see server/src/systems/world/mobility/mobilityBoots.ts)
   'mob-sprint',   // Forest — out-of-combat sprint
   'mob-haste',    // Plains — on-kill haste

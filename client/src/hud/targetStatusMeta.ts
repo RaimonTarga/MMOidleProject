@@ -22,6 +22,8 @@ const STATUS_META: Record<string, StatusMeta> = {
   'lineage.bleed':  { label: 'Bleed', color: '#d8423c' },
   'lineage.hobbled': { label: 'Hobbled', color: '#88aaff' },
   'lineage.pinned': { label: 'Pinned', color: '#aa77ee' },
+  // Bramble Guard's Entangle keystone (design §22.4): a slow, so the slow's blue.
+  'ability-entangled': { label: 'Entangled', color: '#88aaff' },
   stunned:         { label: 'Stunned', color: '#ffdd44' },
   'stun-immune':   { label: 'Stun ward', color: '#c6a8ff' },
   'enemy-barrier': { label: 'Barrier', color: '#5599ff' },

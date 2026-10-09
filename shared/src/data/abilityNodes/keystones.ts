@@ -251,7 +251,7 @@ const trioEntries: [string, Trio][] = [
   ['second-wind', [
     verb('second-wind', 1, 'shared-breath', 'Shared Breath',
       'The mend also runs on your summons and same-node party.',
-      'kill-chain.recovery-pulse', 'recovery-window', { delivery: 'formation' }),
+      'kill-chain.recovery-pulse', 'recovery-window', { delivery: 'formation', live: true }),
     verb('second-wind', 2, 'deep-breath', 'Deep Breath',
       'Nothing can hard-control you while the mend runs.',
       'bulwark.keystone', 'engagement-dr'),
@@ -262,7 +262,7 @@ const trioEntries: [string, Trio][] = [
   ['cleanse', [
     verb('cleanse', 1, 'immunity', 'Immunity',
       'The affliction kind you stripped cannot be reapplied for a few seconds.',
-      'barrier-tempo.ward-shell', 'cleanse'),
+      'barrier-tempo.ward-shell', 'cleanse', { live: true }),
     verb('cleanse', 2, 'purge', 'Purge',
       'The stripped affliction is thrown back onto its applier.',
       'affliction.stinger-echo', 'cleanse'),
@@ -273,7 +273,7 @@ const trioEntries: [string, Trio][] = [
   ['brace', [
     verb('brace', 1, 'riposte', 'Riposte',
       'A melee hit absorbed while Braced staggers the attacker.',
-      'control.knockdown', 'stun'),
+      'control.knockdown', 'stun', { live: true }),
     verb('brace', 2, 'set', 'Set',
       'Brace also roots you and doubles its footing.',
       'bulwark.keystone', 'plating-stack'),
@@ -295,7 +295,7 @@ const trioEntries: [string, Trio][] = [
   ['bramble-guard', [
     verb('bramble-guard', 1, 'entangle', 'Entangle',
       'A body that hits you while brambled is slowed.',
-      'control.frost-drag', 'slow'),
+      'control.frost-drag', 'slow', { live: true }),
     verb('bramble-guard', 2, 'thicket', 'Thicket',
       'Thorns also hit every body adjacent to the attacker.',
       'control.mire-grasp', 'plating-stack'),
@@ -306,7 +306,7 @@ const trioEntries: [string, Trio][] = [
   ['endure', [
     verb('endure', 1, 'unyielding', 'Unyielding',
       'You cannot be hard-controlled while Endure is up.',
-      'bulwark.keystone', 'engagement-dr'),
+      'bulwark.keystone', 'engagement-dr', { live: true }),
     verb('endure', 2, 'second-skin', 'Second Skin',
       'The shell persists at half while you keep taking hits.',
       'bulwark.plating-chip', 'ward'),
@@ -317,7 +317,7 @@ const trioEntries: [string, Trio][] = [
   ['break-free', [
     verb('break-free', 1, 'backlash', 'Backlash',
       'Breaking free staggers every adjacent body.',
-      'control.knockdown', 'stun'),
+      'control.knockdown', 'stun', { live: true }),
     verb('break-free', 2, 'slip', 'Slip',
       'You are untargetable for a moment after breaking free.',
       'engagement.sidestep-blur', 'evasion-window'),
@@ -328,7 +328,7 @@ const trioEntries: [string, Trio][] = [
   ['recuperate', [
     verb('recuperate', 1, 'overflow', 'Overflow',
       'Healing past full becomes a ward.',
-      'barrier-tempo.ward-shell', 'ward'),
+      'barrier-tempo.ward-shell', 'ward', { live: true }),
     verb('recuperate', 2, 'battle-rest', 'Battle Rest',
       'Recuperate mends at its full rate while you are hit.',
       'kill-chain.recovery-pulse', 'recovery-window'),

@@ -104,7 +104,7 @@ import {
   lungeSpecFor,
   performAmbushLunge,
 } from "../ai/ambushLunge";
-import { canApplyPlayerDebuff, applyResistedPlayerDebuff, resistedPlayerDebuffMagnitude } from "../status/debuffGuard";
+import { canApplyPlayerDebuff, applyResistedPlayerDebuff, playerRefusesStatus, resistedPlayerDebuffMagnitude } from "../status/debuffGuard";
 import { evadeBlocksDebuffs, monsterDodgeChance, rollMonsterDodge } from "../../defense/mitigation/evasion";
 import { isMonsterStunned, applyStun } from "../status/stun";
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
@@ -927,6 +927,7 @@ export function runMonsterAttack(
     mark &&
     ctx.metadata["sunMarkConsumed"] !== true &&
     canApplyPlayerDebuff(target) &&
+    !playerRefusesStatus(target, SUN_MARK_EFFECT_ID) &&
     !evadeBlocksDebuffs(ctx)
   ) {
     const fresh = !getStatusEffect(target.tracksCombat, SUN_MARK_EFFECT_ID);
@@ -1215,6 +1216,7 @@ function applyStrongestPlayerRider(
   value: number,
   harsher: (existing: number, incoming: number) => number,
 ): void {
+  if (playerRefusesStatus(target, id, { [key]: value })) return;
   value = resistedPlayerDebuffMagnitude(target, key, value);
   const effect = applyStatusEffect(target.tracksCombat, {
     id,

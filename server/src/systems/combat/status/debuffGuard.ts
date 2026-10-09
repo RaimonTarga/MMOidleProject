@@ -1,6 +1,50 @@
-import { applyStatusEffect, hasStatusEffect, type StatusEffectConfig } from '@mmo-idle/shared';
+import {
+  ABILITY_IMMUNITY_EFFECT_ID,
+  abilityImmunityKindKey,
+  applyStatusEffect,
+  getStatusEffect,
+  hasStatusEffect,
+  statusPolicyFor,
+  type StatusEffect,
+  type StatusEffectConfig,
+} from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
 import { getDebuffResistanceMult } from '../../defense/regen/healing';
+import { refusesHardControl } from './playerHardControl';
+
+/**
+ * THE ADMISSION CHECK for a harmful status on its way onto a player: the keystone
+ * refusals (design §22.4), asked by the common writers — `applyResistedPlayerDebuff`,
+ * the monster-ability rider writer, `applyMonsterDotToPlayer`, the plating-shred
+ * applier and the Sun Mark — so a refusal source only has to apply its status, and
+ * no applier restates the rule.
+ *
+ *  - Unyielding (Endure): hard control and roots — a zero-speed slow is hard
+ *    control by `statusPolicyFor` — are refused while it stands. Stuns are refused
+ *    at `applyStun`, the one place a stun enters the world.
+ *  - Immunity (Cleanse): the affliction kinds the Cleanse stripped are refused
+ *    while it stands ({@link playerRefusesAffliction}).
+ */
+export function playerRefusesStatus(
+  player: PlayerEntity,
+  id: string,
+  data: Record<string, number> = {},
+): boolean {
+  if (!player.tracksCombat) return false;
+  if (playerRefusesAffliction(player, id)) return true;
+  return statusPolicyFor(id, data).hardControl && refusesHardControl(player.tracksCombat);
+}
+
+/**
+ * Whether this affliction KIND — a player status id, exactly as Cleanse strips it
+ * (`slow`, `antiheal`, `sundered`, `monster-dot:<debuff>`, ...) — is refused right
+ * now by Cleanse's Immunity keystone.
+ */
+export function playerRefusesAffliction(player: PlayerEntity, kind: string): boolean {
+  if (!player.tracksCombat) return false;
+  const immunity = getStatusEffect(player.tracksCombat, ABILITY_IMMUNITY_EFFECT_ID);
+  return !!immunity && immunity.remainingMs !== 0 && (immunity.data[abilityImmunityKindKey(kind)] ?? 0) > 0;
+}
 
 /** Equipment resistance weakens monster-delivered non-DoT magnitudes only.
  * Durations, stack counts, roots and environmental ramps retain their own rules.
@@ -22,7 +66,8 @@ export function resistedPlayerDebuffMagnitude(player: PlayerEntity, key: string,
   }
 }
 
-export function applyResistedPlayerDebuff(player: PlayerEntity, config: StatusEffectConfig) {
+export function applyResistedPlayerDebuff(player: PlayerEntity, config: StatusEffectConfig): StatusEffect | undefined {
+  if (playerRefusesStatus(player, config.id, config.data)) return undefined;
   if (config.data?.isDot || config.data?.isAmbientRamp || config.data?.isNodeFeature || config.data?.isGroundZone) {
     return applyStatusEffect(player.tracksCombat, config);
   }
