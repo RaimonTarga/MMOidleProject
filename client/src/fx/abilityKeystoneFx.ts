@@ -740,6 +740,54 @@ function chainReaction(scene: GameScene, ev: CardFxEvent): void {
   });
 }
 
+// ── Disengage · VANISH — breaking contact drops you from their aggro ─────────
+
+/** How long the outline you left behind takes to fade. */
+const VANISH_OUTLINE_MS = 1_700;
+
+/**
+ * The Avoid face's blur, at full size. WIND-UP: Disengage's own leap away. PAYOFF:
+ * where you stood, smoke and an outline of your body — a ghost the monsters are
+ * still looking at — while the real body blurs off in afterimages. LASTING MARK:
+ * the outline flickers and thins over `VANISH_OUTLINE_MS`, drifting, then is
+ * gone; the mark itself stands until your next hit (server-only, never drawn as a
+ * per-tick state).
+ */
+function vanish(scene: GameScene, ev: CardFxEvent): void {
+  const left = nodeToScene(ev.pos.x, ev.pos.y);
+  const color = verbColor(ev);
+  const { k, sparks } = sizeOf(scene, ev);
+
+  // Smoke where you were.
+  burstFx(scene, 'ptx-mist', left.x, left.y, count(5, sparks), 900, {
+    tint: [0x5a5a6a, lighten(color, 0.3)], speed: { min: 10, max: 45 }, angle: { min: 0, max: 360 },
+    scale: { start: 0.7 * k, end: 1.6 * k }, alpha: { start: 0.55, end: 0 },
+  });
+  ring(scene, left.x, left.y + 10, color, { from: 12 * k, scale: 2.6, width: 2, ms: 420, flat: true, alpha: 0.6 });
+
+  // The outline left behind: the body's own frame, filled with the lane's colour.
+  const body = scene.state.sprite.get(ev.playerId);
+  if (body && 'texture' in body) {
+    const ghost = scene.add
+      .image(left.x, left.y, body.texture.key, body.frame.name)
+      .setScale(body.scaleX, body.scaleY)
+      .setFlipX(body.flipX)
+      .setDepth(body.depth - 0.01)
+      .setTintFill(color)
+      .setAlpha(0.6)
+      .setBlendMode(Phaser.BlendModes.ADD);
+    // A flicker, then the slow thinning out.
+    scene.tweens.add({ targets: ghost, alpha: 0.25, duration: 90, yoyo: true, repeat: 2 });
+    scene.tweens.add({
+      targets: ghost, alpha: 0, y: left.y - 8, scaleX: body.scaleX * 0.9,
+      duration: VANISH_OUTLINE_MS, delay: 540, ease: 'Sine.easeIn',
+      onComplete: () => ghost.destroy(),
+    });
+  }
+  // The real body slips away in a blur.
+  afterimages(scene, ev.playerId, { count: 4, everyMs: 40, tint: color, alpha: 0.35, fadeMs: 280 });
+}
+
 // ── The table ────────────────────────────────────────────────────────────────
 
 /** The bespoke animations, by verb id. Kept in step with `KEYSTONE_ANIMATED`. */
@@ -750,6 +798,7 @@ const KEYSTONE_ANIMATIONS: Record<string, KeystoneAnimation> = {
   outbreak: outbreak,
   dragnet: dragnet,
   'chain-reaction': chainReaction,
+  vanish: vanish,
 };
 
 /**
