@@ -14,7 +14,8 @@
  *  - WHILE IT STANDS: nothing acquires a vanished player — the pull scan
  *    (`selectMonsterAggroCandidate`, every ordinary monster, boss and pack
  *    coordinator), a boss handing its target to its adds, a dungeon forcing its
- *    monsters' aggro. What the player's own damage does is untouched: a body they
+ *    monsters' aggro, an ordinary monster's rally (`rallyNearbyMonsters`, design
+ *    §22.13). What the player's own damage does is untouched: a body they
  *    hurt still turns on them, as it always does.
  *  - THE NEXT HIT: the player's next landed attack (`onHit`, their own swing —
  *    not a summon's blow) clears the mark. So does the out-of-combat reset

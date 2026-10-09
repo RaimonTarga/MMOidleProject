@@ -2370,10 +2370,15 @@ function distinctDebuffs(player: PlayerEntity): number {
   ).length;
 }
 
-/** Push a player's ambient ramp (Tundra Chill) up by `stacks`, within its ceiling. */
+/**
+ * Push a player's ambient ramp (Tundra Chill) up by `stacks`, within its ceiling.
+ * THE GUARD KEYSTONES (design §22.13): no stack is added while Immunity holds the
+ * ramp's kind (the status id Cleanse strips it under) — the refusal only.
+ */
 function addAmbientStacks(player: PlayerEntity, stacks: number): void {
   const ramp = ambientRampStatus(player.tracksCombat);
   if (!ramp) return;
+  if (playerRefusesStatus(player, ramp.id, ramp.data)) return;
   const cap = ramp.data.maxStacks ?? 0;
   ramp.stacks = cap > 0 ? Math.min(cap, ramp.stacks + stacks) : ramp.stacks + stacks;
 }

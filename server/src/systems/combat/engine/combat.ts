@@ -108,6 +108,7 @@ import { canApplyPlayerDebuff, applyResistedPlayerDebuff, playerRefusesStatus, r
 import { evadeBlocksDebuffs, monsterDodgeChance, rollMonsterDodge } from "../../defense/mitigation/evasion";
 import { isMonsterStunned, applyStun } from "../status/stun";
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
+import { vanishedTarget } from '../keystones/ability/vanishMark';
 import { applyPlatingShredStacks } from '../status/platingShred';
 import { shellDamageMult } from '../ai/shellUp';
 import { renewPackPursuit, setAggroTarget, setAttackTarget } from "../ai/targeting";
@@ -1151,7 +1152,10 @@ function rallyNearbyMonsters(
 
   const radius = buff.radius ?? 0;
   const maxTargets = Math.max(0, Math.round(rally.maxTargets));
-  if (radius <= 0 || maxTargets <= 0) {
+  // VANISH (design §22.13): a rally never hands a Vanished player to its allies.
+  // The caster may still hold them (it stood out of Vanish's reach); its call
+  // recruits nobody and is spent, like every other refusal.
+  if (radius <= 0 || maxTargets <= 0 || vanishedTarget(world, aggro)) {
     if (rally.oncePerCombat !== false) {
       setCounter(monster.tracksCombat, CASTED_BUFF_RALLY_SESSION_KEY, sessionToken);
     }

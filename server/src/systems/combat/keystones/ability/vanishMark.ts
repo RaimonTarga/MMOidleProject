@@ -10,9 +10,10 @@
  *
  * EVERY MONSTER RESPECTS IT (design §22.12: "Vanish works on bosses, boss adds and
  * dungeon guardians too"). Nothing ACQUIRES a vanished player — the pull scan, a
- * boss handing its target to its adds, a dungeon forcing aggro — and a script's
- * own victim pick passes over them. A monster that already held them out of
- * Vanish's reach keeps them, as before.
+ * boss handing its target to its adds, a dungeon forcing aggro, an ordinary
+ * monster's rally (design §22.13) — and a script's own victim pick passes over
+ * them. A monster that already held them out of Vanish's reach keeps them, as
+ * before, but never hands them on.
  *
  * AN ENCOUNTER HOLDS. A boss, a boss's add or a dungeon monster that Vanish
  * dropped does not go home: it HOLDS for the player (`holdsForVanished`) — it
