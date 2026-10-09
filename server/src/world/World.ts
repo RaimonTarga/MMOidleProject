@@ -81,6 +81,7 @@ import { updateMonsterSlows } from "../systems/combat/status/monsterControl";
 import { syncPlayerBuffs } from "../systems/combat/buffs/buffSync";
 import { updateLineageCards } from '../systems/combat/lineageCards';
 import { updateScheduledKeystoneHits } from '../systems/combat/keystones/ability/scheduledHits';
+import { updateAbilityKeystones } from '../systems/combat/keystones/ability/registry';
 import { mirrorHpForecast } from "../systems/defense/core/hpForecast";
 import {
   createMonster as createMonsterInWorld,
@@ -464,6 +465,9 @@ export class World {
     // Ability keystone area hits that land later (Whirlwind's spin, Aftershock):
     // after the casts, so a hit that comes due this tick lands before combat.
     updateScheduledKeystoneHits(this, dt);
+    // Ability keystone verbs that wait on a clock they do not own (Relay: a stun
+    // running out, decayed by updateCombatState at the top of this tick).
+    updateAbilityKeystones(this, dt);
     updateStanceSwitch(this, dt, now);
     updateKnockback(this, dt);
     // With knockback, and for the same reason: a component that owns one monster's

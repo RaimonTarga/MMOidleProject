@@ -238,7 +238,7 @@ const trioEntries: [string, Trio][] = [
   ['stunning-strike', [
     verb('stunning-strike', 1, 'relay', 'Relay',
       'When the stun ends it jumps to the nearest body not yet stunned this fight.',
-      'control.keystone', 'stun', { delivery: DB }),
+      'control.keystone', 'stun', { delivery: DB, live: true }),
     verb('stunning-strike', 2, 'concussion', 'Concussion',
       'The stun lands on every body around the target, shorter.',
       'empowered.quake-ring', 'stun', { delivery: DB }),

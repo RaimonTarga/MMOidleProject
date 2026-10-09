@@ -71,6 +71,12 @@ import { updateReloadArchetype } from '../src/systems/classes/archetypes/reload/
 // W2-A (the remaining Technique verbs).
 import { ABILITY_IMBUE_EFFECT_ID } from '@mmo-idle/shared';
 import { requestManualAbilityUse } from '../src/systems/player/abilities/abilityFiring';
+import { hasStatusEffect } from '@mmo-idle/shared';
+import { isStunImmune } from '../src/systems/combat/status/stun';
+import { setAggroTarget } from '../src/systems/combat/ai/targeting';
+import { markEngaged, updateCombatTransitions } from '../src/systems/combat/ai/engagement';
+import { updateCombatState } from '../src/systems/combat/engine/combatState';
+import { relayCarriers, relayedThisFight, updateAbilityKeystones } from '../src/systems/combat/keystones';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -1103,6 +1109,75 @@ function attackLedger(player: PlayerEntity): string {
       'drawn from the body the summon struck',
     );
   }
+}
+
+// ─── Stunning Strike · RELAY: when the stun ends it jumps to the next body ───
+
+{
+  const stunningStrike = ABILITY_DATABASE.get('stunning-strike')!;
+  const RELAY_FX = ABILITY_KEYSTONE_DEFINITIONS.get('relay')!.fx;
+  const stunnedBy = (monster: MonsterEntity, player: PlayerEntity): boolean => {
+    const stun = getStatusEffect(monster.tracksCombat, STUN_EFFECT);
+    return !!stun && stun.remainingMs > 0 && stun.sourceId === player.isPlayer.id;
+  };
+  /** One logic tick of the two seams the relay lives between: the decay, then the keystones. */
+  const tick = (world: World, dt: number): void => {
+    updateCombatState(world, dt);
+    updateAbilityKeystones(world, dt);
+  };
+  /** Tick until `monster`'s stun has run out (and the tick that hands it on). */
+  const outlast = (world: World, monster: MonsterEntity): void => {
+    for (let i = 0; i < 100 && hasStatusEffect(monster.tracksCombat, STUN_EFFECT); i++) tick(world, 100);
+  };
+
+  const world = new World();
+  const player = spawnPlayer(world, 'ks-relay', {
+    abilityId: 'stunning-strike', nodes: rows('stunning-strike', { packet: 'technique', keystone: 'relay' }),
+  });
+  const first = spawnMonster(world, 460);
+  // Beside the first body; the second only beside the next one.
+  const next = spawnMonster(world, 540);
+  const last = spawnMonster(world, 600, 470);
+  const far = spawnMonster(world, 900);
+  setAttackTarget(world, player, first.isMonster.id);
+  assert(beginAbilityCast(world, player, stunningStrike, 1_000), 'Stunning Strike winds up');
+  updateAbilityCasts(world, player.isCastingAbility!.endsAt);
+  assert(stunnedBy(first, player), 'Stunning Strike stuns its target');
+  assert(relayedThisFight(player).has(first.isMonster.id), 'the first body joins the fight\'s set');
+  world.takeNodeEvents(NODE);
+  const ledger = attackLedger(player);
+
+  tick(world, 100);
+  assert(!stunnedBy(next, player), 'nothing jumps while the stun holds');
+
+  outlast(world, first);
+  assert(!stunnedBy(first, player), "the first body's stun has ended");
+  assert(isStunImmune(first.tracksCombat), 'and its post-stun immunity still stands');
+  assert(stunnedBy(next, player), 'the stun jumped to the nearest body');
+  assert(!stunnedBy(last, player) && !stunnedBy(far, player), 'only to the nearest');
+  const jumped = cardFx(world).filter((e) => e.fx === RELAY_FX);
+  assert(
+    jumped.length === 1 && jumped[0]!.targetId === next.isMonster.id
+      && jumped[0]!.pos.x === first.hasPosition.current.x && (jumped[0]!.durationMs ?? 0) > 0,
+    'one card-fx per jump, from the body it left, with the hold as applied',
+  );
+
+  outlast(world, next);
+  assert(stunnedBy(last, player), 'it keeps jumping: never back to a body stunned this fight');
+  outlast(world, last);
+  assert(relayCarriers(player).size === 0, 'with no body left to take it, the relay ends');
+  assert(!stunnedBy(far, player), 'and never reaches a body out of reach');
+  assert(attackLedger(player) === ledger, 'a relayed stun is never an attack: no attack event, no hit counter');
+
+  // The fight ends at the out-of-combat reset, and the set with it.
+  assert(relayedThisFight(player).size === 3, 'three bodies stunned this fight, each once');
+  setAttackTarget(world, player, null);
+  for (const monster of world.monsterEntitiesInNode(NODE)) {
+    if (monster.hasAggroTarget?.targetId === player.isPlayer.id) setAggroTarget(world, monster, null, 0);
+  }
+  markEngaged(world, player, 0);
+  updateCombatTransitions(world, 1_000_000);
+  assert(relayedThisFight(player).size === 0, "the fight's set clears when the fight ends");
 }
 
 console.log('abilityKeystones: ok');
