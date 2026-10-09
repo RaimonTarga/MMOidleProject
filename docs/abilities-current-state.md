@@ -755,8 +755,9 @@ authored rank itself.
 
 ## Known gaps
 
-- **Ability keystones:** the second and third verb of every trio, and Sidestep's
-  Afterimage, are silhouettes (see the verb table). The ability pass is implemented on
+- **Ability keystones:** the second and third verb of every trio are silhouettes
+  (Sidestep's Afterimage, now its second, waits on a decoy target kind; see the verb
+  table). The ability pass is implemented on
   `feat/ability-pass` and NOT merged to develop; its T1 parity constraint (±5% per class
   per T1 boss) fails structurally: the best Slam rank I leaves 12 of 30 kit cells outside
   ±5%, the worst at +8.9%. It awaits the designer.
@@ -892,7 +893,9 @@ fx key, delivery body, `live`); the server owns behaviour, one module per verb u
 that landed the ability on a Conduit; the owner everywhere else) or `formation`. The
 trios (three verbs each, 57 in all, pick one at home + 2) are in design §22.11; a verb
 with no module is `live: false`, shown as a silhouette and refused at purchase
-(`abilityKeystones.test.ts` keeps the two in step). **18 of the 19 first verbs are live:**
+(`abilityKeystones.test.ts` keeps the two in step). **All 19 first verbs are live** (design
+§22.12 made Flow Sidestep's first verb, ahead of Afterimage, which needs a decoy target kind
+the game does not have):
 
 | Ability | Verb | Delivery | Seam it rides | Status / marker |
 |---|---|---|---|---|
@@ -903,18 +906,18 @@ with no module is `live: false`, shown as a silhouette and refused at purchase
 | Contagion | Outbreak | delivering body | tags bodies Contagion copies onto; `copyPlayerDotOnto` on the tagged body's death | `keystone.outbreak.<id>` tag |
 | Detonate | Chain Reaction | delivering body | a Detonate kill runs `resolveDetonate` on every afflicted body in reach (no re-chain) | none |
 | Snipe | Pierce | delivering body | `applyPlayerAoeTo` on every body on the line behind the target, inside Snipe's reach | none |
-| Cull | Harvest | delivering body | a Cull kill re-strikes the nearest body below the same health share, while it kills | none |
+| Cull | Harvest | delivering body | a Cull kill re-strikes the nearest body below the same health share, while it kills, at most the lineage `chainMaxLinks` strikes (design §22.12) | none |
 | Imbue Lightning | Fork | delivering body | the charge consumer (`onChargeSpent`): each imbued hit arcs a share to the nearest other body | none |
 | Stunning Strike | Relay | delivering body | the landed stun is watched; at expiry `applyStun` jumps to the nearest body not yet stunned this fight | stun; per-fight set cleared out of combat |
-| Disengage | Vanish | owner | `setAggroTarget(null)` on nearby monsters; aggro selection skips the marked player until their next hit | `keystone.vanish` flag |
+| Disengage | Vanish | owner | `setAggroTarget(null)` (and `abortMonsterCast`, a boss's pattern ended `target-lost`) on every monster near the departure point, bosses, boss adds and dungeon monsters included (design §22.12); nothing acquires the marked player until their next hit or the out-of-combat reset: the pull scan, the add mirroring and `bindBossAdd` / `inheritBossTarget` / raise-dead, the dungeon force-aggro, the fissure's victim pick. A dropped encounter body HOLDS (`holdsForVanished`): it stands, keeps its ramp, does not regen, runs its script, and takes the player back in the same aggro session when the mark clears; its adds hold with it | `keystone.vanish` flag; `holdsForVanished` on the monster |
 | Break Free | Backlash | owner | shortest stun rung on every body adjacent to the player | stun |
 | Brace | Riposte | owner | `afterHit` on a melee hit taken while Braced: shortest rung on the attacker, once per attacker per Brace | stun |
 | Bramble Guard | Entangle | owner | the thorns' `afterHit` moment: `applyMonsterSlow` under its own id | `ability-entangled` (a member of `MONSTER_SLOW_STATUS_IDS`) |
 | Endure | Unyielding | owner | `ability-unyielding` on Endure's clock; hard-control appliers refuse | `ability-unyielding` |
-| Cleanse | Immunity | owner | each stripped status id becomes a refused kind for the ward unit's window | `ability-immunity` |
+| Cleanse | Immunity | owner | each stripped status id becomes a refused kind for the `engagement-dr` unit's window, 3 s (design §22.12) | `ability-immunity` |
 | Second Wind | Shared Breath | formation | the Recovery engine's skill source on same-node party members; summons mended in the summoner's owner-to-summon pass | none |
-| Recuperate | Overflow | owner | the overheal-ward hook on `applyHealToPlayer`: spill tops up one ward to the ward payoff's cap | none |
-| Sidestep | Afterimage | n/a | **SILHOUETTE, not live**: a decoy target the attacker keeps swinging at needs a primitive the game does not have | n/a |
+| Recuperate | Overflow | owner | the overheal-ward hook on `applyHealToPlayer`: ANY spill past full, mend or not (design §22.12; out-of-combat regen at full fills it before a pull, accepted), tops up one ward to the ward payoff's cap; spill at the cap keeps the full shell from lapsing | none |
+| Sidestep | Flow | owner | the evade seam (`onDamageTaken`) while Sidestep's window is up: a dodge (a graze counts) winds the window back to the `evasion-window` unit Sidestep reads (`sidestepWindow`; a refresh, never a stack); the first hit that lands removes it, the speed burst with it | `ability-sidestep` (its own window) |
 
 Verb magnitudes that are shares of a hit (`paysShare`) resolve from the magnitude table
 at `ROW_SCALAR.keystone`; the few timings (Whirlwind's one-second spin, Aftershock's
@@ -932,7 +935,7 @@ composed at runtime from existing concept art by `abilityIconLayers` (base glyph
 frame for the packet; cross edge; keystone border plus a silhouette glyph; amplifier
 axis glyph), drawn by `client/src/ui/ComposedAbilityIcon.tsx`, with no new PNG. Every
 live keystone owns one bespoke animation keyed by its id
-(`client/src/fx/abilityKeystoneFx.ts`; Afterimage, not live, is the one keyed stub); the
+(`client/src/fx/abilityKeystoneFx.ts`; no first verb is a stub any more); the
 table is in [`combat-animation-current-state.md`](combat-animation-current-state.md).
 
 ### Fire-shapes as implemented (design §22.10, §22.12)

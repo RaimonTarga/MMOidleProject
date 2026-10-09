@@ -537,10 +537,11 @@ are design §22.4 / §22.11).
   payoff fires once per resolution, a node's ward refreshes the one ward it owns, and
   every per-hit, per-tick and on-strip Guard route pays under its packet's `capMs`, else
   Control's 5 s. A Technique's Kill chain offer fires on the kill.
-- **Keystone verbs:** 18 of the 19 first verbs are live (11 Techniques, 7 Guards), one
-  server module each under `server/src/systems/combat/keystones/ability/`. The second
-  and third verbs of every trio and Sidestep's Afterimage (a decoy target needs a new
-  primitive) are silhouettes: shown on the row, refused by the purchase check.
+- **Keystone verbs:** all 19 first verbs are live (11 Techniques, 8 Guards), one
+  server module each under `server/src/systems/combat/keystones/ability/`; Sidestep's is
+  Flow (design §22.12). The second and third verbs of every trio, Afterimage among them
+  (a decoy target needs a new primitive), are silhouettes: shown on the row, refused by
+  the purchase check.
 - **Client:** `client/src/ui/AbilityNodeRows.tsx` on the Abilities panel, the same card
   component the lineage tree uses.
 

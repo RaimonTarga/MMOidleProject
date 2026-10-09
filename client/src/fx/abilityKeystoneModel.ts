@@ -34,9 +34,10 @@ export const KEYSTONE_ANIMATED: ReadonlySet<string> = new Set<string>([
   'backlash',
   'entangle',
   'unyielding',
+  'flow',
 ]);
 
-/** The first verbs (design §22.4, §22.8, §22.11) still drawn by the stub. */
+/** The first verbs (design §22.4, §22.8, §22.11, §22.12) still drawn by the stub. */
 export const KEYSTONE_STUBS: readonly string[] = [...ABILITY_KEYSTONE_DEFINITIONS.values()]
   .filter((verb) => verb.verb === 1 && !KEYSTONE_ANIMATED.has(verb.id))
   .map((verb) => verb.id);
@@ -93,3 +94,7 @@ export const OUTBREAK_MARK_MS = 2_400;
 export const DRAGNET_FLIGHT_MS = 170;
 /** Dragnet events for one cast arrive together: within this window they share one net. */
 export const DRAGNET_BATCH_MS = 80;
+/** Flow's ring flares on each dodge, settling back to its resting glow over this long. */
+export const FLOW_BRIGHT_MS = 380;
+/** Flow's after-trail: each dodge leaves ghosts of the body that fade over this long. */
+export const FLOW_TRAIL_MS = 360;

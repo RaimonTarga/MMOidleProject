@@ -231,13 +231,15 @@ animation half is here.
 | Backlash | the hold bursts into shards as the body heaves up | a shockwave rolls out; each adjacent body, a beat apart, takes the stagger flash and the knockdown | the dazed halo on each |
 | Entangle | thorns bristle round you at the blow | a vine lashes along the hit and coils round the attacker's legs with a burst of thorns | the coil at its feet for the slow's clock, tightening as it ends |
 | Unyielding | the body plants into its stance, dust at its feet | plates fly in and lock on with a heavy ring | the locked plates ring the feet, glinting in turn, dropping away at the end |
+| Flow | the body slips the blow, leaning away from the attacker | a fading after-trail of the body and a spark streak; the window's ring at the feet flares bright and its clock is full again (the first dodge draws it in) | the ring holds for the server's window, two streams running round it, dimming as it runs down; the hit that lands snaps it (`durationMs: 0`): a white flash, shards flung out, the body jolted |
 
 Shared keys are told apart by the verb id: Breakthrough, Riposte and Backlash all
 push `control.knockdown`; Immunity and Overflow `barrier-tempo.ward-shell`; Shared
 Breath `kill-chain.recovery-pulse` (also Second Wind's Kill-chain packet fx, which
-stays the lane's pulse). Afterimage, the one first verb not yet live (it needs a
-decoy primitive), is the only keyed stub (`KEYSTONE_STUBS`); the test refuses a
-live verb left as a stub.
+stays the lane's pulse). Every first verb is animated (design §22.12 made Flow
+Sidestep's first verb; Afterimage, now its second, is a silhouette), so
+`KEYSTONE_STUBS` is empty; the test refuses a live verb left as a stub. Flow's icon
+glyph is `stances/fleeting-stance` (silhouette `flow`).
 
 ## Guards (tests)
 

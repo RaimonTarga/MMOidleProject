@@ -21,10 +21,10 @@
  *    room debuff).
  *
  * THE WINDOW. Immunity's own payoff (`cleanse`) is binary and has no window, so
- * the "few seconds" reuse an existing unit rather than mint one: the `ward` payoff
- * unit's window — Immunity's card wears the ward shell (`barrier-tempo.ward-shell`)
- * and holds exactly as long as that shell does. Provisional, the designer's to
- * move; read off the magnitude table, never a literal here.
+ * the "few seconds" reuse an existing unit rather than mint one: the
+ * `engagement-dr` payoff unit's window, 3 s (design §22.12, the designer's call;
+ * it borrowed the ward unit's 5 s while provisional). Read off the magnitude
+ * table, never a literal here.
  *
  * A second Cleanse inside the window adds its kinds and restarts the clock (the
  * Cleanse cooldown is longer than the window, so this is rare). A Guard never
@@ -43,11 +43,11 @@ import { defineAbilityKeystone, pushAbilityKeystoneFx } from './registry';
 const ID = 'immunity';
 
 /** The unit Immunity's window reuses (see the file header). */
-const WINDOW_UNIT = 'ward' as const;
+const WINDOW_UNIT = 'engagement-dr' as const;
 
 export const IMMUNITY_KEYSTONE = defineAbilityKeystone({
   id: ID,
-  seam: 'Cleanse\'s activation records each stripped status id as a refused kind on ability-immunity, for the ward unit\'s window; the player debuff writers refuse that kind through playerRefusesStatus / playerRefusesAffliction',
+  seam: 'Cleanse\'s activation records each stripped status id as a refused kind on ability-immunity, for the engagement-dr unit\'s window (3 s); the player debuff writers refuse that kind through playerRefusesStatus / playerRefusesAffliction',
   register: () => {
     onGuardKeystoneCast(ID, (world, player, ability, removed) => {
       const definition = ABILITY_KEYSTONE_DEFINITIONS.get(ID);

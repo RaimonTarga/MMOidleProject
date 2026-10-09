@@ -17,6 +17,10 @@
  *
  * THE RULES IT KEEPS.
  *  - Each body once per Cull: the struck set includes the first kill.
+ *  - At most the lineage `chainMaxLinks` strikes per Cull (design §22.12), the
+ *    Tempo Chain's own ceiling: the rule's bounds (a strike that does not kill,
+ *    nothing low enough in reach) already end it, and the cap keeps a node of
+ *    low bodies from being one Cull's clear.
  *  - The bar is the FIRST kill's share for the whole harvest, so every strike is
  *    at least as sharp on the curve as the one that started it.
  *  - Harvest spends health and nothing else: it never reads or consumes an
@@ -31,6 +35,7 @@
  */
 import {
   ABILITY_KEYSTONE_DEFINITIONS,
+  lineageUnit,
   resolveAbilityEffect,
 } from '@mmo-idle/shared';
 import type { MonsterEntity } from '../../../../ecs/entity';
@@ -48,7 +53,7 @@ const healthShare = (monster: MonsterEntity): number =>
 
 export const HARVEST_KEYSTONE = defineAbilityKeystone({
   id: ID,
-  seam: 'a Cull kill: the delivering body strikes the nearest body in Cull\'s reach below the killed target\'s health share with Cull\'s own strike (applyPlayerAoeTo), again while it kills, each once',
+  seam: 'a Cull kill: the delivering body strikes the nearest body in Cull\'s reach below the killed target\'s health share with Cull\'s own strike (applyPlayerAoeTo), again while it kills, each once, at most the lineage chainMaxLinks strikes',
   onResolved: (world, player, ability, site) => {
     const definition = ABILITY_KEYSTONE_DEFINITIONS.get(ID);
     if (!definition || ability.id !== definition.abilityId) return;
@@ -65,7 +70,8 @@ export const HARVEST_KEYSTONE = defineAbilityKeystone({
 
     const body = deliveringBody(world, player, definition.delivery, site);
     const struck = new Set<string>([killed.isMonster.id]);
-    for (;;) {
+    const maxLinks = Math.max(0, Math.round(lineageUnit('chainMaxLinks')));
+    for (let link = 0; link < maxLinks; link++) {
       const next = nearestTo(
         body.hasPosition.current,
         bodiesInAbilityReach(world, player, body, ability, struck)

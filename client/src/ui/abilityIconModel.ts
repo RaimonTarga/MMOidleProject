@@ -74,6 +74,7 @@ export const KEYSTONE_GLYPHS: Readonly<Record<string, string>> = {
   unyielding: "statuses/buffs/defense-hardening", // shell: the plate
   backlash: "statuses/buffs/stance-release", // burst: the release
   overflow: "statuses/buffs/defense-absorb", // shell: the ward
+  flow: "stances/fleeting-stance", // flow: the streaming wing, a blur that carries on
   afterimage: "payloads/lands-twice", // fade: the doubled crescent, a second self
 };
 

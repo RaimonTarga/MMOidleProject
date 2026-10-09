@@ -193,12 +193,15 @@ export type AbilityKeystoneSilhouette =
   | 'formation' // the mend runs down the line
   | 'shell'     // nothing gets in
   | 'snare'     // the attacker is held
-  | 'scythe';   // the harvest moves on
+  | 'scythe'    // the harvest moves on
+  | 'flow';     // the window streams on through every dodge
 
 /**
  * The silhouette per keystone verb. The first verb of every trio (§22.4, §22.8,
- * Breakthrough for Trample per §22.11) has one; the later verbs get theirs when
- * their rules are implemented. A verb with no entry wears the border alone.
+ * Breakthrough for Trample per §22.11, Flow ahead of Afterimage per §22.12) has
+ * one; the later verbs get theirs when their rules are implemented (Afterimage
+ * keeps the one it was given as a first verb). A verb with no entry wears the
+ * border alone.
  */
 export const ABILITY_KEYSTONE_SILHOUETTES: Map<string, AbilityKeystoneSilhouette> =
   new Map<string, AbilityKeystoneSilhouette>([
@@ -222,6 +225,7 @@ export const ABILITY_KEYSTONE_SILHOUETTES: Map<string, AbilityKeystoneSilhouette
     ['unyielding', 'shell'],
     ['backlash', 'burst'],
     ['overflow', 'shell'],
+    ['flow', 'flow'],
     ['afterimage', 'fade'],
   ]);
 

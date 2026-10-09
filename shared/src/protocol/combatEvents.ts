@@ -335,6 +335,8 @@ type CombatEventPayload =
   //               the lane grammar a client with no animation for the verb draws.
   //               `pos` is the verb's DELIVERY BODY (design §22.10: the summon that
   //               landed it on a Conduit), so the animation draws from there.
+  //               A verb that holds a window says when it ended early with
+  //               `durationMs: 0` (Flow: the hit that landed snaps the window).
   //   `windupMs`  set on a keystone's WIND-UP beat only: its payoff lands this many
   //               ms later (Aftershock's second eruption), with its own card-fx then.
   //   `axis`      an ability node's active amplifier axis, on that node's payoff:

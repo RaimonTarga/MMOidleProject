@@ -118,8 +118,9 @@ const DB = 'delivering-body' as const;
 
 /**
  * The trios, in the §22.11 table's order. The first verb of each is §22.4's (with
- * Charge's Breakthrough in Trample's place: §22.11 dropped Trample). Delivery
- * bodies are the table's parentheses and §22.10's explicit calls.
+ * Charge's Breakthrough in Trample's place: §22.11 dropped Trample, and Sidestep's
+ * Flow ahead of Afterimage: §22.12 ships Flow first). Delivery bodies are the
+ * table's parentheses and §22.10's explicit calls.
  */
 const trioEntries: [string, Trio][] = [
   // ── Techniques ────────────────────────────────────────────────────────────
@@ -281,13 +282,16 @@ const trioEntries: [string, Trio][] = [
       'Your summons and same-node party share the reduction.',
       'bulwark.plating-chip', 'engagement-dr', { delivery: 'formation' }),
   ]],
+  // §22.12: Sidestep ships Flow first. Afterimage needs a decoy target kind the game
+  // does not have, so Flow leads the trio as the live verb (every reader that means
+  // "the verb this run ships" reads slot 1) and Afterimage stays a silhouette beside it.
   ['sidestep', [
-    verb('sidestep', 1, 'afterimage', 'Afterimage',
+    verb('sidestep', 1, 'flow', 'Flow',
+      'Every hit dodged during the window extends it; the first that lands ends it.',
+      'tempo.evasive-blur', 'evasion-window', { live: true }),
+    verb('sidestep', 2, 'afterimage', 'Afterimage',
       'A hit you dodge during the window leaves an afterimage the attacker keeps swinging at until it is struck.',
       'engagement.sidestep-blur', 'evasion-window'),
-    verb('sidestep', 2, 'flow', 'Flow',
-      'Every hit dodged during the window extends it; the first that lands ends it.',
-      'tempo.evasive-blur', 'evasion-window'),
     verb('sidestep', 3, 'grace', 'Grace',
       'Each dodge in the window also shakes off a slow or root on you.',
       'control.chill-blur', 'cleanse'),

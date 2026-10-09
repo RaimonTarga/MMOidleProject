@@ -18,7 +18,7 @@
  * | Cull | Harvest | a Cull kill re-strikes (Cull's own strike, applyPlayerAoeTo) the nearest body below the killed target's share, while it kills |
  * | Imbue Lightning | Fork | Imbue's charge consumer (onChargeSpent): each imbued hit arcs a share to the nearest other body |
  * | Stunning Strike | Relay | the landed stun is watched (tick); when it runs out applyStun jumps to the nearest body not stunned this fight |
- * | Disengage | Vanish | setAggroTarget(null) on every monster near the departure point; selectMonsterAggroCandidate skips the marked player until their next hit |
+ * | Disengage | Vanish | setAggroTarget(null) on every monster near the departure point, a boss included; nothing acquires the marked player until their next hit; a dropped boss, add or dungeon monster holds (holdsForVanished) and takes them back in the same aggro session |
  *
  * The Guard verbs (design §22.4: immunity, control of the attacker, or a shared
  * mend — never damage) hang off the Guard's activation through `guardCast.ts`, or
@@ -30,9 +30,10 @@
  * | Brace | Riposte | an afterHit listener on a melee hit taken while Braced; the shortest rung on the attacker, once per attacker per Brace |
  * | Bramble Guard | Entangle | the thorns' own afterHit moment; applyMonsterSlow on the attacker under its own slow id (ability-entangled), the slow payoff off the table |
  * | Endure | Unyielding | ability-unyielding on Endure's clock; the hard-control appliers refuse through refusesHardControl / playerRefusesStatus |
- * | Cleanse | Immunity | the stripped status ids as refused kinds on ability-immunity (the ward unit's window); the debuff writers refuse through playerRefusesStatus |
+ * | Cleanse | Immunity | the stripped status ids as refused kinds on ability-immunity (the engagement-dr unit's 3 s window); the debuff writers refuse through playerRefusesStatus |
  * | Second Wind | Shared Breath | the Recovery engine's skill source on each same-node InParty member at the owner's fraction; summons mended in the summoner's per-tick owner-to-summon pass |
- * | Recuperate | Overflow | an overheal sink on applyHealToPlayer's overheal-ward hook: while the mend runs, the spill tops up one ward to the ward payoff's cap |
+ * | Recuperate | Overflow | an overheal sink on applyHealToPlayer's overheal-ward hook: any spill past full, mend or not, tops up one ward to the ward payoff's cap |
+ * | Sidestep | Flow | the evade seam (onDamageTaken) while Sidestep's window is up: a dodge winds the window back to the evasion-window unit Sidestep reads; the first hit that lands removes it |
  */
 export * from './registry';
 export * from './scheduledHits';
@@ -48,7 +49,7 @@ export { HARVEST_KEYSTONE } from './harvest';
 export { FORK_KEYSTONE } from './fork';
 export { RELAY_KEYSTONE, relayCarriers, relayedThisFight } from './relay';
 export { VANISH_KEYSTONE } from './vanish';
-export { VANISH_FLAG, hiddenByVanish, monsterSeesThroughVanish, playerVanished } from './vanishMark';
+export { VANISH_FLAG, encounterMonster, holdsForVanished, playerVanished, vanishedTarget } from './vanishMark';
 export { BACKLASH_KEYSTONE } from './backlash';
 export { RIPOSTE_KEYSTONE } from './riposte';
 export { ENTANGLE_KEYSTONE } from './entangle';
@@ -56,4 +57,5 @@ export { UNYIELDING_KEYSTONE } from './unyielding';
 export { IMMUNITY_KEYSTONE } from './immunity';
 export { SHARED_BREATH_KEYSTONE, mendSummonWithOwner } from './sharedBreath';
 export { OVERFLOW_KEYSTONE, overflowWardOf } from './overflow';
+export { FLOW_KEYSTONE } from './flow';
 export { guardKeystoneMagnitude, payoffWindowMs } from './guardValues';

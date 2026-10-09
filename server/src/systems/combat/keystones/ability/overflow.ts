@@ -7,17 +7,19 @@
  *    heal passes through — which hands its overheal sinks the HP a heal spills
  *    past full that the `defense.overheal-ward-pct` passive did not already
  *    convert (so no spill becomes a ward twice).
- *  - WHEN: while Recuperate's mend runs (its `ability-second-wind-2` window). The
- *    verb is Recuperate's, and its fire-shape is "per tick of the mend"; healing
- *    past full outside the mend (out-of-combat regen at full HP, every tick)
- *    would otherwise hand every player a standing shell before each pull.
+ *  - WHEN: always (design §22.12: "Overflow turns any overheal into the ward, not
+ *    only during Recuperate's mend"). Any heal past full feeds it — the mend, a
+ *    Shared Breath, out-of-combat regen at full HP, which can fill the shell
+ *    before a pull: the designer accepted that. Recuperate's row is only where the
+ *    verb is bought.
  *  - THE WARD is the ward system's own (`applyWard`: absorbs before the barrier,
  *    expires on its clock, drained oldest-first). Overflow keeps ONE of them and
  *    tops it up — Recovery heals in sub-1-HP slices at 10 Hz, and a ward per
  *    slice would be a stack of crumbs — up to its cap: the `ward` payoff's
  *    magnitude (a fraction of max HP) off the magnitude table at the keystone row
  *    and the active packet's lane (`guardKeystoneMagnitude`), held for the ward
- *    unit's window, refreshed by each top-up. Spill past the cap is lost.
+ *    unit's window, refreshed by each top-up. Spill past the cap adds nothing; it
+ *    only keeps a full shell from lapsing.
  *
  * The ward reference lives in a WeakMap keyed by the player entity: runtime
  * only, never persisted, and a ward that expired, broke or went with a death is
@@ -29,8 +31,6 @@ import {
   ABILITY_KEYSTONE_DEFINITIONS,
   addResource,
   getResource,
-  getStatusEffect,
-  recoveryEffectIdForAbility,
   setResource,
   type WardState,
 } from '@mmo-idle/shared';
@@ -57,14 +57,12 @@ export function overflowWardOf(player: PlayerEntity): WardState | undefined {
 
 export const OVERFLOW_KEYSTONE = defineAbilityKeystone({
   id: ID,
-  seam: 'an overheal sink on applyHealToPlayer\'s overheal-ward hook: while Recuperate\'s mend runs, the spill tops up one ward, capped at the ward payoff\'s magnitude off the table at the keystone row, for the ward unit\'s window',
+  seam: 'an overheal sink on applyHealToPlayer\'s overheal-ward hook: any spill past full, mend or not, tops up one ward, capped at the ward payoff\'s magnitude off the table at the keystone row, for the ward unit\'s window',
   register: () => {
     registerOverhealSink((world, player, overheal) => {
       if (!abilityKeystoneLive(player, ID)) return;
       const definition = ABILITY_KEYSTONE_DEFINITIONS.get(ID);
-      const mendId = definition ? recoveryEffectIdForAbility(definition.abilityId) : undefined;
-      if (!definition || !mendId) return;
-      if ((getStatusEffect(player.tracksCombat, mendId)?.remainingMs ?? 0) <= 0) return;
+      if (!definition) return;
       const cap = Math.round(player.hasHealth.maxHp * guardKeystoneMagnitude(player, ID));
       const windowMs = payoffWindowMs(definition.payoff);
       if (!(cap > 0) || !(windowMs > 0)) return;
@@ -78,7 +76,18 @@ export const OVERFLOW_KEYSTONE = defineAbilityKeystone({
       const live = overflowWardOf(player);
       if (live) {
         const add = Math.min(whole, cap - live.amount);
-        if (add <= 0) return; // full: the spill is lost
+        if (add <= 0) {
+          // Full: the spill adds nothing, but it keeps the full shell standing.
+          // Always on, a player resting at full would otherwise watch the shell
+          // lapse and re-form (a fresh ward and card-fx) every window. Re-stamped
+          // once half its clock has run, so a regen trickle does not dirty the
+          // networked slice every tick.
+          if (live.remainingMs !== -1 && live.remainingMs < windowMs / 2) {
+            live.remainingMs = windowMs;
+            markSliceDirty(world, player, 'holdsWards');
+          }
+          return;
+        }
         live.amount += add;
         live.maxAmount = Math.max(live.maxAmount, live.amount);
         live.remainingMs = windowMs;
