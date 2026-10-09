@@ -1003,6 +1003,72 @@ function fork(scene: GameScene, ev: CardFxEvent): void {
   });
 }
 
+// ── Cull · HARVEST — a Cull kill lands the same strike on the next low body ──
+
+/** The beat between one reaped body and the next, down the chain. */
+const HARVEST_STEP_MS = 120;
+
+/**
+ * One event per body the harvest moves on to, from the delivering body, drawn
+ * before the strike that may kill it. Down the chain, link after link: WIND-UP —
+ * a pale scythe hangs over the next body, drawn back; PAYOFF — it reaps across
+ * in the lane's colour with a slash, and the body buckles. LASTING MARK: a wisp
+ * rising from what was reaped. The chain growing is the visible verb.
+ */
+function harvest(scene: GameScene, ev: CardFxEvent): void {
+  const color = verbColor(ev);
+  const pale = lighten(color, 0.65);
+  const { k, sparks } = sizeOf(scene, ev);
+  const n = batchIndex(ev);
+  const grow = 1 + Math.min(4, n) * 0.08;
+  scene.time.delayedCall(n * HARVEST_STEP_MS, () => {
+    if (document.hidden) return;
+    const from = nodeToScene(ev.pos.x, ev.pos.y);
+    const at = spriteAt(scene, ev.targetId) ?? eventPoint(ev);
+    // The reaper moves on: a ghost streak to the next body.
+    const streak = scene.add.graphics().setDepth(DEPTH.FX - 1);
+    streak.lineStyle(4 * k, color, 0.25);
+    streak.lineBetween(from.x, from.y - 10, at.x, at.y - 10);
+    fading(scene, streak, 220);
+    // The scythe drawn back over it…
+    const blade = scene.add.graphics({ x: at.x + 18 * k, y: at.y - 30 * k }).setDepth(DEPTH.FX + 1);
+    blade.lineStyle(3 * k * grow, pale, 0.95);
+    blade.beginPath();
+    blade.arc(0, 0, 16 * k * grow, Math.PI * 0.95, Math.PI * 1.6);
+    blade.strokePath();
+    blade.lineStyle(2, 0x5a4a3a, 0.95);
+    blade.lineBetween(0, 0, 10 * k, 22 * k);
+    blade.setAlpha(0).setRotation(-0.5);
+    scene.tweens.add({
+      targets: blade, alpha: 1, rotation: -0.9, duration: 80, ease: 'Quad.easeOut',
+      onComplete: () => {
+        blade.destroy();
+        if (document.hidden) return;
+        // …and reaping across.
+        crescent(scene, at, Math.PI * 0.75, 30 * k * grow, 5 * k * grow, 0xffffff, color, 140);
+        burstFx(scene, 'ptx-spark', at.x, at.y, count(8, sparks), 320, {
+          tint: [pale, color], speed: { min: 90, max: 220 }, angle: { min: 160, max: 260 },
+          scale: { start: 0.9, end: 0 }, alpha: { start: 1, end: 0 },
+        });
+        if (ev.targetId && !(scene.state.view.get(ev.targetId) as MonsterView | undefined)?.isBoss) {
+          posePath(scene, ev.targetId, [
+            { sx: 1.08, sy: 0.86, ms: 70 },
+            { sx: 1, sy: 1, ms: 260, ease: 'Back.easeOut' },
+          ]);
+        }
+        // The wisp of what was reaped.
+        for (let i = 0; i < 4; i++) {
+          const mote = scene.add.graphics({ x: at.x + (Math.random() - 0.5) * 16, y: at.y - 6 }).setDepth(DEPTH.FX);
+          mote.fillStyle(i % 2 ? pale : 0xffffff, 0.85);
+          mote.fillCircle(0, 0, 2.2 * k);
+          fading(scene, mote, 620, { y: at.y - 46 * k, x: at.x + (Math.random() - 0.5) * 24 }, i * 50);
+        }
+        if (isOwn(scene, ev)) impact(scene, n === 0 ? 'light' : 'medium', at);
+      },
+    });
+  });
+}
+
 // ── The table ────────────────────────────────────────────────────────────────
 
 /** The bespoke animations, by verb id. Kept in step with `KEYSTONE_ANIMATED`. */
@@ -1017,6 +1083,7 @@ const KEYSTONE_ANIMATIONS: Record<string, KeystoneAnimation> = {
   pierce: pierce,
   relay: relay,
   fork: fork,
+  harvest: harvest,
 };
 
 /**
