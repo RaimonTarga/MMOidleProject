@@ -69,10 +69,11 @@ export function tryIgnition(pc: DotT3PathContext): boolean {
 /**
  * Pyromancer (Balanced) — the stack half, Fan the Flames (design §22.5).
  *
- * Every hit lays `stacks-per-hit` burn stacks at the path's reduced per-stack
- * value, up to the cap. A hit into a full bar lays one application, which
- * `applyStatusEffect` turns into a pure refresh: the burn stays lit at max for as
- * long as the player keeps hitting, which is where the payoff lives.
+ * Every hit below the cap lays `stacks-per-hit` burn stacks at the path's reduced
+ * per-stack value, up to the cap. A hit into a full bar lays nothing and refreshes
+ * nothing — the old path's rule, restored by design §22.12: the full burn runs
+ * down on its own clock, Radiant fires on its ticks while the stacks last, and
+ * once it lapses the hits build it back.
  *
  * There is no max-stack direct bonus any more — the Ember Mage frame owns
  * "intensifies" (frameLoop.ts) and the path no longer duplicates it. The payoff,
@@ -88,22 +89,24 @@ export function tryFanTheFlames(pc: DotT3PathContext): boolean {
 
   const ftfDmg        = dmgPerStack * stackDamageMult;
   const currentStacks = getTotalStacks(monsterState, DOT_EFFECT_ID);
-  const toApply = Math.max(1, Math.min(stacksPerHit, maxStacks - currentStacks));
-  let ftfEff = applyStatusEffect(monsterState, {
-    id: DOT_EFFECT_ID, maxStacks, instanced: false,
-    sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
-    data: { damagePerStack: ftfDmg, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
-  });
-  for (let i = 1; i < toApply; i++) {
-    ftfEff = applyStatusEffect(monsterState, {
+  if (currentStacks < maxStacks) {
+    const toApply = Math.min(stacksPerHit, maxStacks - currentStacks);
+    let ftfEff = applyStatusEffect(monsterState, {
       id: DOT_EFFECT_ID, maxStacks, instanced: false,
       sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
       data: { damagePerStack: ftfDmg, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
     });
+    for (let i = 1; i < toApply; i++) {
+      ftfEff = applyStatusEffect(monsterState, {
+        id: DOT_EFFECT_ID, maxStacks, instanced: false,
+        sourceId: player.isPlayer.id, remainingMs: durationMs, refreshable: true,
+        data: { damagePerStack: ftfDmg, nextTickIn: tickIntervalMs, tickIntervalMs, tickOnExpire: 1 },
+      });
+    }
+    ftfEff.data.damagePerStack = ftfDmg;
+    ftfEff.data.tickIntervalMs = tickIntervalMs;
+    ftfEff.data.tickOnExpire = 1;
   }
-  ftfEff.data.damagePerStack = ftfDmg;
-  ftfEff.data.tickIntervalMs = tickIntervalMs;
-  ftfEff.data.tickOnExpire = 1;
   markMonsterDot(world, monster);
   ctx.metadata['dotHandled'] = true;
   return true;

@@ -68,7 +68,8 @@ quietly doubled the stack count); its resolved numbers are unchanged from before
 frame shipped. **Pyromancer (T3) overlapped Ember Mage's effect; the ability pass closed
 it** (design §22.5, Radiant): the path's own max-stack direct bonus is gone (the frame
 owns "intensifies"), and a burn tick at max stacks also strikes every adjacent body as
-damage over time. Venomslinger's and Winter Warden's re-homes remain a T3-class-review
+damage over time; a hit at max burn does not refresh the burn (design §22.12), so Radiant
+fires while the stacks last. Venomslinger's and Winter Warden's re-homes remain a T3-class-review
 item (see §5).
 
 ### Slinger (reload) — by clip position

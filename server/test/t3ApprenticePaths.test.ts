@@ -7,8 +7,9 @@
  * body for the tick's damage. What this file pins is the SHAPE, never a balance
  * number:
  *
- *   - the hit: two stacks per hit, and a hit into a full bar refreshes it and adds
- *     no direct bonus of the path's own (only the frame's multiplier);
+ *   - the hit: two stacks per hit, and a hit into a full bar leaves the burn's
+ *     clock alone (design §22.12) and adds no direct bonus of the path's own (only
+ *     the frame's multiplier); Radiant fires on the ticks while the stacks last;
  *   - at max a tick damages an adjacent body and lays no stack on it; below max it
  *     does not; a body out of reach is never touched;
  *   - the splash pays the DoT rules (no plating, half DR), so an adjacent body
@@ -45,6 +46,7 @@ import {
   type CombatEventName,
 } from '../src/systems/combat/engine/combatPipeline';
 import { updateDotArchetype } from '../src/systems/classes/archetypes/dot/dotPrototype';
+import { updateCombatState } from '../src/systems/combat/engine/combatState';
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -190,7 +192,7 @@ assert(
 );
 assert(SKILL_TREE.get(PYROMANCER)!.packet === 'affliction', 'Pyromancer stays an Affliction path');
 
-// ── The hit: two stacks, and a full bar is refreshed with no bonus of its own ──
+// ── The hit: two stacks; a full bar is left alone, with no bonus of its own ────
 {
   const { world, player } = setup();
   const target = body(world, 1000, 1000);
@@ -205,9 +207,14 @@ assert(SKILL_TREE.get(PYROMANCER)!.packet === 'affliction', 'Pyromancer stays an
 
   const effect = getStatusEffect(target.tracksCombat, 'dot')!;
   effect.remainingMs = 100;
+  const perStack = effect.data.damagePerStack;
   const atMax = hit(world, player, target);
   assert(getTotalStacks(target.tracksCombat, 'dot') === MAX_STACKS, 'a hit into a full bar keeps it at the cap');
-  assert(effect.remainingMs > 100, `a hit into a full bar refreshes the burn, remainingMs ${effect.remainingMs}`);
+  assert(
+    effect.remainingMs === 100,
+    `a hit at max leaves the burn's clock alone (design §22.12), remainingMs ${effect.remainingMs}`,
+  );
+  assert(effect.data.damagePerStack === perStack, 'and leaves its per-stack value alone');
   assert(atMax.metadata['empoweredAttack'] === undefined, 'the path no longer flags a max-stack bonus hit');
   const frameMult = authored('dot-balanced', 'dot.frame-max-stack-mult');
   assert(
@@ -237,6 +244,44 @@ assert(SKILL_TREE.get(PYROMANCER)!.packet === 'affliction', 'Pyromancer stays an
   assert(distant.hasHealth.hp === distantHp, 'a body out of reach is untouched');
   assert(!strikes.has(burning.isMonster.id), 'the burning body never strikes itself');
   assert(seen.length === 0, `a tick is not a hit: no pipeline event may run, saw ${seen.map((s) => s.event).join(', ')}`);
+}
+
+// ── Radiant fires while the stacks last; hits at max never keep the burn alive ─
+{
+  const { world, player } = setup();
+  const burning = body(world, 1000, 1000);
+  const adjacent = body(world, 1000 + REACH / 2, 1000);
+  fillBurn(world, player, burning);
+  const durationMs = getStatusEffect(burning.tracksCombat, 'dot')!.remainingMs;
+  assert(durationMs > 0, 'fixture: the filling hit lit the burn for its whole duration');
+
+  let radiant = 0;
+  let elapsed = 0;
+  // Keep hitting the full bar once a second; the burn still runs out on its own
+  // clock. One 100 ms world step: the hit, the DoT pass, then the duration decay
+  // (the next step's top, `updateCombatState`).
+  while (getStatusEffect(burning.tracksCombat, 'dot') !== undefined && elapsed <= durationMs * 3) {
+    if (elapsed % 1000 === 0) {
+      const before = getStatusEffect(burning.tracksCombat, 'dot')!.remainingMs;
+      hit(world, player, burning);
+      const after = getStatusEffect(burning.tracksCombat, 'dot')?.remainingMs;
+      assert(after === before, `t=${elapsed}: a hit at max leaves the burn's clock alone, ${before} → ${after}`);
+      assert(getTotalStacks(burning.tracksCombat, 'dot') === MAX_STACKS, `t=${elapsed}: the bar is still full`);
+    }
+    radiant += tick(world).get(adjacent.isMonster.id)?.length ?? 0;
+    elapsed += 100;
+    updateCombatState(world, 100);
+  }
+  assert(
+    getStatusEffect(burning.tracksCombat, 'dot') === undefined && elapsed <= durationMs + 100,
+    `the full burn lapses within its own ${durationMs} ms, hits or no hits (took ${elapsed} ms)`,
+  );
+  assert(radiant >= 2, `Radiant fired on the burn's ticks while the stacks lasted, got ${radiant}`);
+  hit(world, player, burning);
+  assert(
+    getTotalStacks(burning.tracksCombat, 'dot') === STACKS_PER_HIT,
+    'once it lapses, the next hit builds the burn again',
+  );
 }
 
 // ── Below max: the tick does not radiate ──────────────────────────────────────
