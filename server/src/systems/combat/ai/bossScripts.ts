@@ -58,6 +58,7 @@ import { countRaisedBy, raiseCorpsesBurst } from './raiseDead';
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
 import { hasIndependentRoot, setRooted } from '../../world/rooted';
 import { bossAdds } from './bossAdds';
+import { playerVanished, vanishedTarget } from '../keystones/ability/vanishMark';
 
 export type { ScriptsBoss, ActiveBossEffect } from '@mmo-idle/shared';
 export { initScriptsBoss } from '@mmo-idle/shared';
@@ -170,7 +171,9 @@ function tickVents(state: ScriptsBoss, monster: MonsterEntity, world: World): vo
   if (fissure && now >= fissure.nextAtMs) {
     fissure.nextAtMs = now + fissure.everyMs;
     const players = [...world.livePlayersInNode(monster.hasPosition.nodeId)];
-    const victim = players.find(p => p.isPlayer.id === monster.hasAggroTarget?.targetId) ?? players[0];
+    // Its target, else the first player Vanish (design §22.12) does not hide.
+    const victim = players.find(p => p.isPlayer.id === monster.hasAggroTarget?.targetId)
+      ?? players.find(p => !playerVanished(p));
     if (victim && state.vents.length < fissure.maxVents) {
       const vent = openVent(world, monster, clampToArena(monster, victim.hasPosition.current), rhythm.radius, rhythm.rampAccelMult, now);
       vent.nextEruptAtMs = now; // erupts this tick, behind its telegraph
@@ -591,7 +594,8 @@ function inheritBossTarget(world: World, boss: MonsterEntity, add: MonsterEntity
   add.hasAwareness.leashRange = boss.hasAwareness.leashRange;
 
   const aggroTarget = boss.hasAggroTarget;
-  if (!aggroTarget) return;
+  // A vanished player is never handed over (design §22.12): the sync holds the add.
+  if (!aggroTarget || vanishedTarget(world, aggroTarget)) return;
 
   setAggroTarget(
     world,

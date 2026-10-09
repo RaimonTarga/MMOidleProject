@@ -197,6 +197,8 @@ export class World {
   readonly weaponDotMonsters = this.monsterEntities.with("hasWeaponDot");
   readonly smolderMonsters = this.monsterEntities.with("hasSmolder");
   readonly dungeonMonsters = this.monsterEntities.with("tracksDungeon");
+  /** Encounter bodies holding for a player Disengage's Vanish hid (design §22.12). */
+  readonly vanishHoldingMonsters = this.monsterEntities.with("holdsForVanished");
 
   /**
    * Canonical player query. All required slice components are stamped together

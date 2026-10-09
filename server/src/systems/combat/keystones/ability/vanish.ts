@@ -6,24 +6,32 @@
  *  - THE BREAK: Disengage's resolution (the reposition branch hands it the
  *    departure point). Every monster within Disengage's reach of the point the
  *    player LEFT whose aggro is on the player drops it — `setAggroTarget(null)`
- *    and its attack target with it — and the player is marked (`vanishMark.ts`).
- *    A pack hunts as one, so a dropped member's pack drops the player too (its
- *    coordinator would otherwise hand the target straight back from the members
- *    outside reach).
- *  - WHILE IT STANDS: monster acquisition (`selectMonsterAggroCandidate`, the
- *    pull scan every ordinary monster and pack coordinator acquires through)
- *    skips a vanished player. What the player's own damage does is untouched: a
- *    body they hurt still turns on them, as it always does.
+ *    and its attack target with it, and whatever it was winding up at them
+ *    (`abortMonsterCast`; a boss's running pattern ends as on any target loss) —
+ *    and the player is marked (`vanishMark.ts`). A pack hunts as one, so a
+ *    dropped member's pack drops the player too (its coordinator would otherwise
+ *    hand the target straight back from the members outside reach).
+ *  - WHILE IT STANDS: nothing acquires a vanished player — the pull scan
+ *    (`selectMonsterAggroCandidate`, every ordinary monster, boss and pack
+ *    coordinator), a boss handing its target to its adds, a dungeon forcing its
+ *    monsters' aggro. What the player's own damage does is untouched: a body they
+ *    hurt still turns on them, as it always does.
  *  - THE NEXT HIT: the player's next landed attack (`onHit`, their own swing —
  *    not a summon's blow) clears the mark. So does the out-of-combat reset
  *    (`onCombatEnded`), which bounds a mark the player never spends: Vanish is
  *    for breaking contact in a fight, never a stealth walk across the map — the
  *    vanish itself marks the player engaged, so that reset always comes.
  *
- * BOSSES (the designer's to confirm): a boss, a boss's add and a dungeon guardian
- * neither drop the player nor are kept from finding them (`vanishMark.ts`) —
- * their targeting runs on a script's clock, and a target pulled out from under a
- * script is how an encounter resets or wedges.
+ * BOSSES, ADDS AND DUNGEONS (design §22.12: Vanish works on them too). They drop
+ * the player like anything else, but an encounter must neither reset nor wedge,
+ * so a dropped ENCOUNTER body (`encounterMonster`) HOLDS for the player
+ * (`holdsForVanished`): the AI keeps it where it stands with its ramp, the
+ * out-of-combat regen passes it by, its boss script runs on (`isBossEngaged`
+ * never comes off), and it may still take any other target in reach. The `tick`
+ * below ends the hold: when the mark clears it takes the player back in the SAME
+ * aggro session (so pattern clocks and openers carry on, nothing restarts); a
+ * player who left the node or died releases it to the ordinary rules; any target
+ * it found meanwhile ends it. Its adds hold with it (`syncBossSpawnedAddTarget`).
  *
  * Owner-delivered (§22.10): it is the player who vanishes, on a Conduit too —
  * the summons fight on and stay in the monsters' sight.
@@ -37,27 +45,45 @@ import {
 } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../../ecs/entity';
 import type { World } from '../../../../world/World';
+import { attachComponent, detachComponent } from '../../../../ecs/markerHelpers';
 import { registerCombatListener } from '../../engine/combatPipeline';
+import { abortMonsterCast } from '../../engine/combat';
 import { setAggroTarget, setAttackTarget } from '../../ai/targeting';
 import { markEngaged } from '../../ai/engagement';
+import { endPattern } from '../../ai/bossPatterns';
 import { abilityEngagementRange } from '../../../player/abilities/abilityTargeting';
 import { defineAbilityKeystone, pushAbilityKeystoneFx } from './registry';
-import { VANISH_FLAG, monsterSeesThroughVanish, playerVanished } from './vanishMark';
+import { VANISH_FLAG, encounterMonster, playerVanished } from './vanishMark';
 
 const ID = 'vanish';
 
 const aggroedOn = (monster: MonsterEntity, player: PlayerEntity): boolean =>
   monster.hasAggroTarget?.targetKind === 'player' && monster.hasAggroTarget.targetId === player.isPlayer.id;
 
-/** Drop `player` from `monster`'s aggro, and its swing with it. */
+/**
+ * Drop `player` from `monster`'s aggro, with its swing, its wind-up and (a boss)
+ * the pattern it was running at them. An encounter body holds for them instead of
+ * going home.
+ */
 function drop(world: World, monster: MonsterEntity, player: PlayerEntity, now: number): void {
+  const sinceMs = monster.hasAggroTarget?.sinceMs ?? now;
+  if (monster.runsBossPattern?.targetId === player.isPlayer.id) endPattern(world, monster, 'target-lost', now);
+  abortMonsterCast(world, monster);
   setAggroTarget(world, monster, null, now);
   if (monster.hasAttackTarget?.targetId === player.isPlayer.id) setAttackTarget(world, monster, null);
+  if (encounterMonster(monster)) {
+    attachComponent(world, monster, 'holdsForVanished', { playerId: player.isPlayer.id, sinceMs });
+  }
+}
+
+/** Put a re-acquired target back in the aggro session the hold began in (server-only slice). */
+function resumeSession(monster: MonsterEntity, sinceMs: number): void {
+  if (monster.hasAggroTarget) monster.hasAggroTarget.sinceMs = sinceMs;
 }
 
 export const VANISH_KEYSTONE = defineAbilityKeystone({
   id: ID,
-  seam: 'Disengage\'s resolution clears setAggroTarget on every monster in Disengage\'s reach of the departure point (and their packs) and marks the player; selectMonsterAggroCandidate skips a marked player; the next landed hit or the out-of-combat reset clears the mark; bosses, adds and dungeon guardians are exempt',
+  seam: 'Disengage\'s resolution clears setAggroTarget on every monster in Disengage\'s reach of the departure point (and their packs), aborting its wind-up or pattern, and marks the player; nothing acquires a marked player; a dropped boss, add or dungeon monster holds (holdsForVanished) and takes the player back in the same aggro session when the next landed hit or the out-of-combat reset clears the mark',
   onResolved: (world, player, ability, site) => {
     const definition = ABILITY_KEYSTONE_DEFINITIONS.get(ID);
     if (!definition || ability.id !== definition.abilityId) return;
@@ -71,7 +97,7 @@ export const VANISH_KEYSTONE = defineAbilityKeystone({
 
     const packs = new Set<string>();
     for (const monster of node) {
-      if (monsterSeesThroughVanish(monster) || !aggroedOn(monster, player)) continue;
+      if (!aggroedOn(monster, player)) continue;
       if (!world.collision.canReach(departed, monster, reach)) continue;
       drop(world, monster, player, now);
       if (monster.inPack) packs.add(monster.inPack.packId);
@@ -79,7 +105,7 @@ export const VANISH_KEYSTONE = defineAbilityKeystone({
     // A pack hunts as one: its members out of reach let go too, and its shared
     // target is cleared so the coordinator does not hand the player straight back.
     for (const monster of node) {
-      if (!monster.inPack || !packs.has(monster.inPack.packId) || monsterSeesThroughVanish(monster)) continue;
+      if (!monster.inPack || !packs.has(monster.inPack.packId)) continue;
       if (aggroedOn(monster, player)) drop(world, monster, player, now);
       const coordination = monster.inPack.coordination;
       if (coordination?.target?.kind === 'player' && coordination.target.id === player.isPlayer.id) {
@@ -101,6 +127,29 @@ export const VANISH_KEYSTONE = defineAbilityKeystone({
       if (ctx.metadata['chaoticMiss']) return; // a whiff is not a hit
       if (playerVanished(ctx.attacker)) setFlag(ctx.attacker.tracksCombat, VANISH_FLAG, false);
     });
+  },
+  // Every hold, every tick (live or not: a hold outlives a swapped-out verb).
+  tick: (world) => {
+    const now = Date.now();
+    for (const monster of [...world.vanishHoldingMonsters]) {
+      const hold = monster.holdsForVanished;
+      // It found another fight meanwhile (a summon, another player): that ends it.
+      if (monster.hasAggroTarget) {
+        detachComponent(world, monster, 'holdsForVanished');
+        continue;
+      }
+      const player = world.getPlayerEntity(hold.playerId);
+      // Gone from the fight: the ordinary rules take it, exactly as when a target leaves.
+      if (!player || player.isDead || player.hasPosition.nodeId !== monster.hasPosition.nodeId) {
+        detachComponent(world, monster, 'holdsForVanished');
+        continue;
+      }
+      if (playerVanished(player)) continue; // still hidden: hold
+      // The mark is gone: the fight resumes, it does not restart — the same session.
+      setAggroTarget(world, monster, { id: player.isPlayer.id, kind: 'player' }, now);
+      resumeSession(monster, hold.sinceMs);
+      detachComponent(world, monster, 'holdsForVanished');
+    }
   },
   onCombatEnded: (_world, player) => {
     if (playerVanished(player)) setFlag(player.tracksCombat, VANISH_FLAG, false);

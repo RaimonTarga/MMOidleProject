@@ -18,7 +18,7 @@
  * | Cull | Harvest | a Cull kill re-strikes (Cull's own strike, applyPlayerAoeTo) the nearest body below the killed target's share, while it kills |
  * | Imbue Lightning | Fork | Imbue's charge consumer (onChargeSpent): each imbued hit arcs a share to the nearest other body |
  * | Stunning Strike | Relay | the landed stun is watched (tick); when it runs out applyStun jumps to the nearest body not stunned this fight |
- * | Disengage | Vanish | setAggroTarget(null) on every monster near the departure point; selectMonsterAggroCandidate skips the marked player until their next hit |
+ * | Disengage | Vanish | setAggroTarget(null) on every monster near the departure point, a boss included; nothing acquires the marked player until their next hit; a dropped boss, add or dungeon monster holds (holdsForVanished) and takes them back in the same aggro session |
  *
  * The Guard verbs (design §22.4: immunity, control of the attacker, or a shared
  * mend — never damage) hang off the Guard's activation through `guardCast.ts`, or
@@ -49,7 +49,7 @@ export { HARVEST_KEYSTONE } from './harvest';
 export { FORK_KEYSTONE } from './fork';
 export { RELAY_KEYSTONE, relayCarriers, relayedThisFight } from './relay';
 export { VANISH_KEYSTONE } from './vanish';
-export { VANISH_FLAG, hiddenByVanish, monsterSeesThroughVanish, playerVanished } from './vanishMark';
+export { VANISH_FLAG, encounterMonster, holdsForVanished, playerVanished, vanishedTarget } from './vanishMark';
 export { BACKLASH_KEYSTONE } from './backlash';
 export { RIPOSTE_KEYSTONE } from './riposte';
 export { ENTANGLE_KEYSTONE } from './entangle';

@@ -105,6 +105,9 @@ interface PlayerOptions {
   selectedClass?: string | null;
   passives?: Record<string, number>;
   x?: number;
+  y?: number;
+  /** The node the player stands in; the shared fixture node by default. */
+  nodeId?: string;
 }
 
 function slices(id: string, opts: PlayerOptions): PersistedPlayerSlices {
@@ -112,7 +115,7 @@ function slices(id: string, opts: PlayerOptions): PersistedPlayerSlices {
   if (!ability) throw new Error(`fixture: unknown ability '${opts.abilityId}'`);
   return {
     isPlayer: { id, name: id },
-    hasPosition: { current: { x: opts.x ?? 400, y: 400 }, nodeId: NODE, speed: GAME_CONFIG.PLAYER_SPEED },
+    hasPosition: { current: { x: opts.x ?? 400, y: opts.y ?? 400 }, nodeId: opts.nodeId ?? NODE, speed: GAME_CONFIG.PLAYER_SPEED },
     hasHealth: { hp: GAME_CONFIG.PLAYER_MAX_HP, maxHp: GAME_CONFIG.PLAYER_MAX_HP, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0, skillPoints: 0,
@@ -152,7 +155,7 @@ function spawnPlayer(world: World, id: string, opts: PlayerOptions): PlayerEntit
   if (opts.archetype) syncArchetypeSlices(world, player);
   player.dealsDamage.attack = 100;
   refreshAbilityNodeRuntime(player);
-  world.takeNodeEvents(NODE);
+  world.takeNodeEvents(opts.nodeId ?? NODE);
   return player;
 }
 
@@ -1224,7 +1227,11 @@ function attackLedger(player: PlayerEntity): string {
   assert(player.hasPosition.current.x < from.x, 'the player moved away');
   assert(!aggroOn(contact, player) && !contact.hasAttackTarget, 'the body broken from drops the player');
   assert(aggroOn(far, player), 'a monster out of reach of the departure point keeps its aggro');
-  assert(aggroOn(boss, player), 'a boss keeps its target: its script owns it');
+  // Design §22.12: Vanish works on bosses too. A boss drops the player and, an
+  // encounter body, HOLDS for them rather than walking home (blocks below).
+  assert(!aggroOn(boss, player) && !boss.hasAttackTarget, 'a boss in reach drops the player too');
+  assert(boss.holdsForVanished?.playerId === player.isPlayer.id, 'and holds for them');
+  assert(!contact.holdsForVanished, 'an ordinary monster does not hold: it goes home as before');
   assert(
     !aggroOn(packNear, player) && !aggroOn(packFar, player) && coordination.target === undefined,
     'a pack hunts as one: a member near the break drops the player for the whole pack',
@@ -1233,19 +1240,21 @@ function attackLedger(player: PlayerEntity): string {
   const drawn = cardFx(world).filter((e) => e.fx === VANISH_FX);
   assert(drawn.length === 1 && drawn[0]!.pos.x === from.x, 'one card-fx, left at the departure point');
 
-  // While it stands, nothing re-acquires the player — but a boss still can.
+  // While it stands, nothing re-acquires the player — a boss included.
   const lurker = spawnMonster(world, player.hasPosition.current.x, player.hasPosition.current.y - 70);
   assert(!acquires(world, lurker, player), 'a monster in pull range does not acquire a vanished player');
   updatePacks(world, 2_000);
   assert(!aggroOn(packNear, player) && !aggroOn(packFar, player), 'nor does the pack, on its own clock');
   const sentinel = spawnMonster(world, player.hasPosition.current.x, player.hasPosition.current.y + 70);
   sentinel.isMonster.isBoss = true;
-  assert(acquires(world, sentinel, player), 'a boss sees through Vanish');
+  assert(!acquires(world, sentinel, player), 'nor does a boss');
 
   // The next landed hit ends it.
   hit(world, player, lurker);
   assert(!playerVanished(player), 'the first hit clears the mark');
   assert(acquires(world, lurker, player), 'and the player can be acquired again');
+  updateAbilityKeystones(world, 100);
+  assert(aggroOn(boss, player) && !boss.holdsForVanished, 'the holding boss takes the player back');
 
   // The out-of-combat reset ends one never spent.
   setFlag(player.tracksCombat, VANISH_FLAG, true);
@@ -1256,6 +1265,203 @@ function attackLedger(player: PlayerEntity): string {
   markEngaged(world, player, 0);
   updateCombatTransitions(world, 1_000_000);
   assert(!playerVanished(player), 'a mark never spent ends with the fight');
+}
+
+// ─── Disengage · VANISH on bosses, their adds and dungeons (design §22.12) ───
+//
+// Real encounters, through the systems that pick their targets on their own clock:
+// the AI (and the add mirroring in it), the boss script, the boss pattern, the
+// dungeon's force-aggro tick. A dropped encounter body holds — no walk home, no
+// regen, its script running on — and takes the player back, in the same aggro
+// session, once the player's next hit clears the mark.
+
+import { updateMonsters } from '../src/systems/combat/ai/ai';
+import { updateBossScripts } from '../src/systems/combat/ai/bossScripts';
+import { updateBossPatterns } from '../src/systems/combat/ai/bossPatterns';
+import { bindBossAdd } from '../src/systems/combat/ai/bossAdds';
+import { updateCombat } from '../src/systems/combat/engine/combat';
+import { activateDungeonAltar, ensureDungeon, tickDungeons } from '../src/systems/world/dungeons/dungeon';
+import { getDungeonDef } from '@mmo-idle/shared';
+
+{
+  const VANISH_ROWS = rows('disengage', { packet: 'engagement', keystone: 'vanish' });
+  const aggroOn = (monster: MonsterEntity, player: PlayerEntity): boolean =>
+    monster.hasAggroTarget?.targetKind === 'player' && monster.hasAggroTarget.targetId === player.isPlayer.id;
+  const hunt = (world: World, monster: MonsterEntity, player: PlayerEntity, now = 0): void => {
+    setAggroTarget(world, monster, { id: player.isPlayer.id, kind: 'player' }, now);
+    setAttackTarget(world, monster, player.isPlayer.id);
+  };
+  /** Break contact from `from` the way a hotkey press does. */
+  const vanishFrom = (world: World, player: PlayerEntity, from: MonsterEntity, now = 1_000): void => {
+    setAttackTarget(world, player, from.isMonster.id);
+    assert(requestManualAbilityUse(world, player, 'disengage', now).success, 'Disengage breaks contact');
+    assert(playerVanished(player), 'fixture: the player is vanished');
+    // The player stands idle from here: only the fixture's own hit spends the mark.
+    setAttackTarget(world, player, null);
+  };
+
+  // A T1 boss with its script: the Tusked Razorback, whose herd mirrors its target
+  // and whose script keeps calling more of it on a clock.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-vanish-razorback', { abilityId: 'disengage', nodes: VANISH_ROWS });
+    const boss = world.createMonster(NODE, 'tusked-razorback', { x: 470, y: 400 })!;
+    assert(boss?.scriptsBoss, 'fixture: a scripted boss');
+    // It chased the player here from its post: a boss that went home would walk off.
+    boss.controlsMonster.spawn = { x: 470, y: 1_100 };
+    // One of its herd, far off: out of Disengage's reach of the departure point.
+    const herd = world.createMonster(NODE, 'plains-slime', { x: 1_400, y: 900 })!;
+    hunt(world, boss, player);
+    bindBossAdd(world, boss, herd, 0);
+    assert(aggroOn(herd, player), 'fixture: the herd fights the boss’s target');
+    updateBossScripts(world, 100);
+    assert(boss.isBossEngaged, 'fixture: the boss is engaged');
+    // Above its 50% phase, and hurt, so a regen would show.
+    boss.hasHealth.hp = Math.round(boss.hasHealth.maxHp * 0.6);
+    const hp = boss.hasHealth.hp;
+    const session = boss.hasAggroTarget!.sinceMs;
+    // One AI tick: the boss is in its fight (attacking or chasing), not idling.
+    updateMonsters(world, 100, 9_000);
+    assert(['attacking', 'chasing'].includes(boss.hasAwareness.state), 'fixture: the boss is fighting');
+    world.takeNodeEvents(NODE);
+
+    vanishFrom(world, player, boss);
+    assert(!aggroOn(boss, player) && !boss.hasAttackTarget, 'the boss drops the vanished player');
+    assert(boss.holdsForVanished?.playerId === player.isPlayer.id, 'and holds for them');
+
+    // Eight seconds of its own clocks: the script, the pattern pass, the vanish
+    // tick, the AI (with the add mirroring), combat and the out-of-combat regen.
+    const stood = { ...boss.hasPosition.current };
+    const calledBefore = boss.scriptsBoss!.spawnedAddIds?.length ?? 0;
+    let now = 10_000;
+    for (let tick = 0; tick < 80; tick++) {
+      now += 100;
+      updateBossScripts(world, 100);
+      updateBossPatterns(world, 100, now);
+      updateAbilityKeystones(world, 100);
+      updateMonsters(world, 100, now);
+      updateMovement(world, 100, now);
+      updateCombat(world, 100, now);
+    }
+    assert(!boss.hasAggroTarget && boss.holdsForVanished, 'nothing hands the boss a vanished player back');
+    assert(!aggroOn(herd, player) && herd.holdsForVanished?.playerId === player.isPlayer.id,
+      'its herd, out of reach, lets go with it and holds too');
+    assert(boss.hasAwareness.state === 'idle'
+      && Math.hypot(boss.hasPosition.current.x - stood.x, boss.hasPosition.current.y - stood.y) < 1,
+      'the boss holds where it stood: no walk home');
+    assert(boss.hasHealth.hp === hp, `no regen: the encounter is not reset (${boss.hasHealth.hp} of ${hp})`);
+    assert(boss.isBossEngaged, 'it stays engaged');
+    const called = (boss.scriptsBoss!.spawnedAddIds ?? []).map((id) => world.getMonsterEntity(id)!);
+    assert(called.length > calledBefore, 'its script runs on with no target: the herd keeps coming');
+    assert(called.every((add) => !aggroOn(add, player) && add.holdsForVanished),
+      'a newly called add is never handed the vanished player: it holds with its boss');
+
+    // The player's next hit clears the mark; the next tick hands them back.
+    const lurker = spawnMonster(world, 300, 600);
+    hit(world, player, lurker);
+    assert(!playerVanished(player), 'the next hit clears the mark');
+    updateAbilityKeystones(world, 100);
+    assert(aggroOn(boss, player) && !boss.holdsForVanished, 'the boss re-acquires the player');
+    assert(boss.hasAggroTarget!.sinceMs === session, 'in the same aggro session: the fight resumes, nothing restarts');
+    updateMonsters(world, 100, now + 100);
+    assert(aggroOn(herd, player) && !herd.holdsForVanished, 'and its herd with it');
+  }
+
+  // A boss OUT of Vanish's reach keeps the player, as any monster out of reach does;
+  // its add in reach drops them. The add mirroring and the script's own calls must
+  // never hand the add (or a fresh one) the boss's vanished target.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-vanish-far-boss', { abilityId: 'disengage', nodes: VANISH_ROWS });
+    const near = spawnMonster(world, 470); // the body the player breaks from
+    const boss = world.createMonster(NODE, 'tusked-razorback', { x: 1_500, y: 400 })!;
+    const herd = world.createMonster(NODE, 'plains-slime', { x: 400, y: 470 })!; // by the player
+    hunt(world, near, player);
+    hunt(world, boss, player);
+    bindBossAdd(world, boss, herd, 0);
+    updateBossScripts(world, 100);
+
+    vanishFrom(world, player, near);
+    assert(aggroOn(boss, player) && !boss.holdsForVanished, 'a boss out of reach keeps the player');
+    assert(!aggroOn(herd, player) && herd.holdsForVanished, 'its add in reach drops them, and holds');
+    let now = 10_000;
+    for (let tick = 0; tick < 80; tick++) {
+      now += 100;
+      updateBossScripts(world, 100);
+      updateAbilityKeystones(world, 100);
+      updateMonsters(world, 100, now);
+    }
+    assert(!aggroOn(herd, player) && herd.holdsForVanished,
+      'the add mirroring never hands it the boss’s vanished target');
+    const called = (boss.scriptsBoss!.spawnedAddIds ?? []).map((id) => world.getMonsterEntity(id)!);
+    assert(called.length > 0, 'fixture: the script called its herd meanwhile');
+    assert(called.every((add) => !aggroOn(add, player) && add.holdsForVanished),
+      'nor is a newly called add handed it: it holds');
+
+    hit(world, player, near);
+    updateAbilityKeystones(world, 100);
+    updateMonsters(world, 100, now + 100);
+    assert([herd, ...called].every((add) => aggroOn(add, player) && !add.holdsForVanished),
+      'once the mark clears, the herd fights its boss’s target again');
+  }
+
+  // A T1 boss with a PATTERN: the Crag Behemoth's charge, which runs at its own
+  // target on its own clock, ends with the drop and does not re-arm on nobody.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-vanish-behemoth', { abilityId: 'disengage', nodes: VANISH_ROWS });
+    const boss = world.createMonster(NODE, 'crag-behemoth', { x: 470, y: 400 })!;
+    hunt(world, boss, player);
+    updateBossPatterns(world, 100, 10_000);
+    assert(boss.runsBossPattern?.targetId === player.isPlayer.id, 'fixture: the Crag Charge runs at the player');
+    vanishFrom(world, player, boss);
+    assert(!boss.runsBossPattern && !boss.hasAggroTarget, 'the drop ends the pattern it was running at them');
+    assert(!boss.cannotAttack, 'and releases what the pattern held');
+    assert(boss.holdsForVanished, 'the boss holds');
+    updateBossPatterns(world, 100, 30_000);
+    assert(!boss.runsBossPattern, 'no pattern arms with no target');
+    hit(world, player, spawnMonster(world, 300, 600));
+    updateAbilityKeystones(world, 100);
+    assert(aggroOn(boss, player), 'the next hit hands the player back');
+    updateBossPatterns(world, 100, 40_000);
+    assert(boss.runsBossPattern?.targetId === player.isPlayer.id, 'and its pattern clock carries on at them');
+  }
+
+  // A dungeon guardian, whose dungeon forces its aggro every tick.
+  {
+    const DUNGEON = 'node-t1-mountain-dungeon';
+    const def = getDungeonDef(DUNGEON)!;
+    const world = new World();
+    world.frozenNodes.delete(DUNGEON);
+    ensureDungeon(world, DUNGEON);
+    const player = spawnPlayer(world, 'ks-vanish-dungeon', {
+      abilityId: 'disengage', nodes: VANISH_ROWS, nodeId: DUNGEON, x: def.altar.x, y: def.altar.y,
+    });
+    assert(activateDungeonAltar(world, player), 'fixture: the altar wakes the guard');
+    const state = world.dungeons.get(DUNGEON)!;
+    const guardian = world.getMonsterEntity(state.guardianIds[0]!)!;
+    // At the player's side, in Disengage's reach.
+    guardian.hasPosition.current = { x: player.hasPosition.current.x + 60, y: player.hasPosition.current.y };
+    assert(aggroOn(guardian, player), 'fixture: the guardian is on the player');
+    const session = guardian.hasAggroTarget!.sinceMs;
+    updateMonsters(world, 100, 9_000);
+    assert(['attacking', 'chasing'].includes(guardian.hasAwareness.state), 'fixture: the guardian is fighting');
+
+    vanishFrom(world, player, guardian);
+    assert(!aggroOn(guardian, player) && guardian.holdsForVanished, 'the guardian drops the vanished player and holds');
+    tickDungeons(world, Date.now());
+    assert(!aggroOn(guardian, player), 'the dungeon’s force-aggro tick does not hand the player back');
+    assert(state.status === 'bossAwakening', 'and the trial does not reset');
+    updateMonsters(world, 100, 20_000);
+    assert(guardian.holdsForVanished && guardian.hasAwareness.state !== 'returning', 'it holds, it does not go home');
+
+    hit(world, player, guardian);
+    assert(!playerVanished(player), 'the next hit clears the mark');
+    updateAbilityKeystones(world, 100);
+    tickDungeons(world, Date.now());
+    assert(aggroOn(guardian, player) && !guardian.holdsForVanished, 'the guardian re-acquires the player');
+    assert(guardian.hasAggroTarget!.sinceMs === session, 'in the same aggro session');
+  }
 }
 
 // ═══ The Guard verbs (W2-B): immunity, control of the attacker, or a shared mend ═══

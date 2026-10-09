@@ -2826,6 +2826,8 @@ export function updateCombat(world: World, dt: number, now: number) {
     if (e.hasHealth.hp >= e.hasHealth.maxHp) continue;
     const ai = e.controlsMonster;
     if (e.hasAggroTarget) continue;
+    // An encounter holding for a vanished player is still in its fight (design §22.12).
+    if (e.holdsForVanished) continue;
     if (now - ai.lastAggroAt < GAME_CONFIG.MONSTER_REGEN_DELAY) continue;
     e.hasHealth.hp = Math.min(
       e.hasHealth.maxHp,

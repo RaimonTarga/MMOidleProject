@@ -22,6 +22,7 @@ import { staggerBoss } from './bossPatterns';
 import { isMonsterFrozen } from '../../classes/archetypes/dot/t3/core/selectors';
 import { chargedCastEndsAt } from '../engine/monsterMechanics';
 import { bindBossAdd } from './bossAdds';
+import { vanishedTarget } from '../keystones/ability/vanishMark';
 
 const SESSION_KEY = 'raiseDeadSession';
 const NEXT_RAISE_KEY = 'raiseDeadNextAt';
@@ -135,9 +136,10 @@ function raiseCorpse(
     });
   }
 
-  // It claws up already fighting whoever the necromancer is fighting.
+  // It claws up already fighting whoever the necromancer is fighting — never a
+  // player Vanish hides (design §22.12).
   const aggro = raiser.hasAggroTarget;
-  if (aggro) {
+  if (aggro && !vanishedTarget(world, aggro)) {
     setAggroTarget(world, risen, { id: aggro.targetId, kind: aggro.targetKind }, now);
     setAttackTarget(world, risen, aggro.targetId);
   }
