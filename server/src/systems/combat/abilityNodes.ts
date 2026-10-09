@@ -40,6 +40,9 @@
  *                           `pulse` cadence (`LINEAGE_UNITS.pulseMs`), counted
  *                           by a cooldown as a pulse card's is
  *                           (`updateAbilityNodePulses`, from `World.tick`)
+ *   on strip                once per affliction kind a Cleanse removed
+ *                           (`onAbilityNodeStripped`, from the Guard firing that
+ *                           stripped them)
  *
  * A Guard's payoff is a defensive face's and never deals damage; the shape only
  * moves the moment it is granted.
@@ -350,6 +353,7 @@ const GUARD_NOT_AT_CAST: ReadonlySet<AbilityFireShape> = new Set<AbilityFireShap
   'per hit absorbed',
   'per hit dodged',
   'per tick while active',
+  'on strip',
 ]);
 
 /**
@@ -371,6 +375,35 @@ export function onAbilityNodeGuardCast(
     .map((entry) => entry.payoff);
   if (payoffs.length === 0) return;
   fireLineagePayoffs(world, player, payoffs);
+}
+
+/**
+ * A Guard just STRIPPED afflictions off the player — Cleanse (design §22.10: "on
+ * strip, sized by what it removed"). Its "on strip" routes fire once per
+ * affliction KIND removed: the size is a count of firings, never a new number.
+ * Each firing is its own application (a ward per kind; a window refreshed per
+ * kind). A strip that removed nothing fires nothing — Cleanse only casts with
+ * something harmful on the player, but a partial-only effect can leave the strip
+ * empty.
+ *
+ * Called from the Guard firing that did the strip (`maybeFireGuard`), right after
+ * `onGuardFired`.
+ */
+export function onAbilityNodeStripped(
+  world: World,
+  player: PlayerEntity,
+  ability: AbilityDef,
+  removed: readonly { effectId: string }[],
+): void {
+  if (ability.slot !== 'guard') return;
+  const kinds = new Set(removed.map((entry) => entry.effectId)).size;
+  if (kinds === 0) return;
+  const payoffs = withShape(payoffsFor(player, ability.id), 'on strip');
+  if (payoffs.length === 0) return;
+  for (let i = 0; i < kinds; i++) {
+    // A fresh clone per firing: the dispatcher mutates what it is handed.
+    fireLineagePayoffs(world, player, payoffs.map((entry) => ({ ...entry, payoff: { ...entry.payoff } })));
+  }
 }
 
 /**

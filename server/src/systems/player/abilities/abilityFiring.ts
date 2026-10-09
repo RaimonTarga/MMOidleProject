@@ -54,6 +54,7 @@ import { cleansePlayerAfflictions, type RemovedEffect } from "../../combat/statu
 import { activateRecovery } from "../../defense/regen/recovery";
 import { onGuardFired } from "../../defense/charmHooks";
 import { onTechniqueResolved } from "../../combat/techniqueResolved";
+import { onAbilityNodeStripped } from "../../combat/abilityNodes";
 import { repositionPlayer } from "../../combat/damage/knockback";
 import { abilityCooldownKey, guardCooldownMs, startTechniqueCooldown } from "./abilityCooldowns";
 import { beginAbilityCast } from "./abilityCasting";
@@ -569,6 +570,9 @@ function maybeFireGuard(
   }
 
   onGuardFired(world, player, ability);
+  // Cleanse's node fires on the strip, once per affliction kind it removed
+  // (design §22.10: "on strip, sized by what it removed").
+  if (removedEffects) onAbilityNodeStripped(world, player, ability, removedEffects);
 
   setCooldown(player.tracksCombat, cdKey, guardCooldownMs(player, ability));
   setCooldown(player.tracksCombat, GUARD_WINDOW_KEY, GUARD_WINDOW_MS);

@@ -18,6 +18,7 @@ import {
   GAME_CONFIG,
   STARTER_RUNE_IDS,
   abilityNodeId,
+  applyStatusEffect,
   baseRecoveryForTier,
   emptyEquipment,
   getStatusEffect,
@@ -575,6 +576,39 @@ function pulseFor(world: World, ms: number, fx: string): number {
   let fired = cardFx(world).filter((e) => e.fx === 'tempo.evasive-blur').length;
   fired += pulseFor(world, mendMs + lineageUnit('pulseMs'), 'tempo.evasive-blur');
   assert(fired === Math.ceil(mendMs / lineageUnit('pulseMs')), `the mend pulses while it runs, got ${fired}`);
+}
+
+// ═══ on strip ═══════════════════════════════════════════════════════════════
+
+// ─── Cleanse: on strip, sized by what it removed — one firing per kind ───────
+
+{
+  const cleanse = resolveAbilityEffect(ABILITY_DATABASE.get('cleanse')!, { playerTier: 4 });
+  if (cleanse.kind !== 'cleanse') throw new Error('Cleanse cleanses');
+  assert(cleanse.debuffs >= 2, 'the fixture strips two kinds');
+  const afflict = (player: PlayerEntity, ids: readonly string[]): void => {
+    for (const id of ids) {
+      applyStatusEffect(player.tracksCombat, {
+        id, maxStacks: 1, remainingMs: 6_000, refreshable: true, sourceId: 'tester', data: {},
+      });
+    }
+  };
+
+  for (const [label, ids] of [['two kinds', ['antiheal', 'slow']], ['one kind', ['antiheal']]] as const) {
+    const world = new World();
+    const player = spawnPlayer(world, `fs-cleanse-${ids.length}`, {
+      abilityId: 'cleanse', nodes: rows('cleanse', { packet: 'barrier-tempo' }),
+    });
+    afflict(player, ids);
+    world.takeNodeEvents(NODE);
+    castGuard(world, player, 'cleanse');
+    const fired = cardFx(world).filter((e) => e.fx === 'barrier-tempo.ward-shell');
+    assert(fired.length === ids.length, `a Cleanse that strips ${label} gives ${ids.length} firings, got ${fired.length}`);
+    assert((player.holdsWards?.wards.length ?? 0) === ids.length, 'one ward per kind stripped');
+    for (const id of ids) {
+      assert(getStatusEffect(player.tracksCombat, id) === undefined, `${id} was stripped`);
+    }
+  }
 }
 
 console.log('abilityFireShapesRuntime: ok');
