@@ -1173,6 +1173,20 @@ The follow-up wave built §22.12 and merged the pass (report addendum). Its open
   never hands a Vanished player to its allies.
 - **Imbue's per-hit Tempo echo stays uncapped**: the window's charges bound it.
 
+**Decided after the measurements (same day; `reports/ability-pass/measure-*.md`):**
+
+- **Slam is a 600 ms cast at every rank.** At T2, rank II as authored (2.45× on 1.6 s) added
+  about nothing over Sweep for the Striker, Slinger and Spirit (−0.8% to +1.9%) while the
+  Conduit gained +24%; on 600 ms every class gains 13–31% and the class spread narrows.
+  Ranks II–IV keep 2.45 / 2.7 / 2.95 on rank I's 600 ms wind-up. This supersedes §22.12's
+  "their wind-up stays 1.6 s".
+- **The Pyromancer's stacks are full strength and a hit at max refreshes the bar.** It
+  measured 33% below its own frame at T4 (weakest of the nine Apprentice paths; +28% before
+  the pass): 55% stacks capped the full burn at 55% of the frame's, the bar lapsed without a
+  refresh, and Radiant pays nothing on a lone boss. Two stacks per hit at full strength and
+  the refresh make the path the frame's burn ramped twice as fast, with Radiant on top.
+  This supersedes §22.5's "keeps two stacks per hit at 55%" and §22.12's "does not refresh".
+
 ## 23. Forms are full power at the craft (locked 2026-10-02)
 
 Run 4's boss walls had one cause: retiring the +1..+5 ladder removed every weapon's ladder
