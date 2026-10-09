@@ -65,10 +65,11 @@ the bench found a rider compounding with a frame window — see §3).
 Winter Warden (T3) authors its `chill-*` keys as **deltas** on top of the frame's base,
 not independent absolutes (passives sum, so stacking two sets of absolutes would have
 quietly doubled the stack count); its resolved numbers are unchanged from before the
-frame shipped. **Pyromancer (T3) currently overlaps Ember Mage's new effect outright** —
-both the frame's max-stack bonus and the path's own payoff fire on the same condition.
-Not resolved here; it belongs to the T3 class review after the rework, alongside
-Venomslinger's and Winter Warden's re-homes (see §5).
+frame shipped. **Pyromancer (T3) overlapped Ember Mage's effect; the ability pass closed
+it** (design §22.5, Radiant): the path's own max-stack direct bonus is gone (the frame
+owns "intensifies"), and a burn tick at max stacks also strikes every adjacent body as
+damage over time. Venomslinger's and Winter Warden's re-homes remain a T3-class-review
+item (see §5).
 
 ### Slinger (reload) — by clip position
 
@@ -80,10 +81,11 @@ Venomslinger's and Winter Warden's re-homes (see §5).
 
 A Blunderbuss volley has no clip position and is skipped by the whole loop (its shots
 carry no `reloadClipIndex`), so Marksman's last-round multiplier cannot fire on a pellet.
-**Warmonger (T3)** keeps its own authored ramp data, but its runtime now **defers to the
-frame** — the frame's ramp wins outright (both would otherwise double-write the same
-stack field). The agreed re-home, "half the ramp carries through a reload" (a per-clip
-climb becoming a sustained one), is not designed yet; it is a T3-class-review item.
+**Warmonger (T3)** no longer authors a ramp of its own: the frame owns it, and the path
+authors `reload.ramp-carry-pct` 0.5 (design §22.5, the ability pass), so a reload keeps
+half the ramp instead of resetting it and a sustained fight climbs past one clip (the
+barrel glow holds at the carried value). The carry is capped at 0.9 in code, and the
+toll is paid once per reload (`frameLoop.ts`, `settleRampForReload`).
 
 ### Spirit (energy) — by shape
 
@@ -196,9 +198,9 @@ sharedDebuffRecord.ts` because Sentinel's vulnerability window is its second con
   `stun` unit. A standing condition's "uptime" is the share of the fight the formation is
   whole — the monsters set it, not the player — so it needs the bench more than a window
   does.
-- **Pyromancer/Ember Mage and Warmonger/Artillerist overlaps** (§2) are explicitly left
-  for the T3 class review, together with Venomslinger's and Winter Warden's planned
-  re-homes.
+- **Pyromancer/Ember Mage and Warmonger/Artillerist overlaps** (§2) were closed by the
+  ability pass (design §22.5); Venomslinger's and Winter Warden's planned re-homes are
+  still left for the T3 class review.
 - **No client renderer for `frame-charge`** and no authored HUD art for the new tiles
   (§3) — both are drawing-layer follow-ups, not data or runtime gaps.
 - **No bench pass.** Every magnitude above is a first-pass placeholder seeded off the

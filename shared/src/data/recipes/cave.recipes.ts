@@ -199,7 +199,7 @@ mechanicEffects: {},
 
   // ── Cores ───────────────────────────────────────────────────────────────────────
   // See the CORES header in plains.recipes.ts. Cave owns SINGLE-TARGET PRESSURE —
-  // it teaches Expose Weakness, so it is where the T2 capstone and elite-killer
+  // it teaches Charge (at the end of the T1 leg), so it is where the T2 capstone and elite-killer
   // core line live.
 
   // T2 premium capstone — Tempered: the balanced core is deliberately delayed

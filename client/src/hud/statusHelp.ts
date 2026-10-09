@@ -196,7 +196,7 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   'dot-smolder': d('Smolder', 'A slow burn on the target, ticking past its plating.'),
   'dot-conf': d('Conflagration', 'The target’s burn has caught properly and is running at an accelerated rate.'),
   slow: d('Slow', 'The target’s movement speed is cut, so it closes on you and repositions more slowly.'),
-  'ability-slowed': d('Hamstrung', 'Hamstring has crippled the target’s stride: movement is reduced, but its attack cadence is unchanged. It can still attack and cast; this is soft control, not a root or stun.'),
+  'ability-slowed': d('Hamstrung', 'An ability has crippled the target’s stride: movement is reduced, but its attack cadence is unchanged. It can still attack and cast; this is soft control, not a root or stun.'),
   'ability-rooted': d('Bound', 'Binding Strike has pinned the target in place. It can still attack anything already in reach, but cannot reposition until the bind ends.'),
   // The lineage cards' own records (design §26.2). One bleed for a weapon with no
   // poison of its own, and the Control lean's slow and root under their own names,

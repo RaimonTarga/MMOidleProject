@@ -20,8 +20,11 @@ merged into Slam), re-homed Slam (T1 Mountain 5), Charge (T1 Cave 3), Binding St
 Jungle 3), Snipe (T2 Desert 3) and Imbue Lightning (T3 Volcanic 3), made Contagion
 **armed** and Imbue Lightning **instant** (§22.9: a cast iff the ability deals its own
 damage), and added **Sidestep** (T1 Forest 5, the Avoid Guard) and **Cull** (T3 Tundra 3,
-the kill-shaped cast). See "The ability pass" below for saves, the tutorial kit and the
-Slam parity number.
+the kill-shaped cast). Each ability also has four node rows, 18 of the 19 first keystone
+verbs are live, the §22.10 fire-shapes are live, and five T3 paths were re-homed (W1-B/D/E/F,
+W2-A/B/E). **Implemented on `feat/ability-pass`, NOT merged to develop.** See "The ability
+pass" below for saves, the tutorial kit, the Slam parity number, the keystone table and the
+fire-shape table.
 
 > **Name collision (kept distinct).** The passive talent tree (`UsesSkills`, `skillTree/`) is
 > class progression and is **untouched**. "Abilities" is the active system (Technique / Guard).
@@ -752,6 +755,11 @@ authored rank itself.
 
 ## Known gaps
 
+- **Ability keystones:** the second and third verb of every trio, and Sidestep's
+  Afterimage, are silhouettes (see the verb table). The ability pass is implemented on
+  `feat/ability-pass` and NOT merged to develop; its T1 parity constraint (±5% per class
+  per T1 boss) fails structurally: the best Slam rank I leaves 12 of 30 kit cells outside
+  ±5%, the worst at +8.9%. It awaits the designer.
 - **Sidestep and Cull have no art** (the ability pass's additions): they render the
   placeholder glyph, and Sidestep's buff tile borrows the lineage Slip (`lineage-evasion`)
   art. Their prices and Cull's curve are PROVISIONAL.
@@ -844,6 +852,136 @@ tables above:
   is KEPT: the lineage `slow` payoff (every ability-node slow) and the at-bay tap still
   write it; renaming its copy is the designer's open call. Sidestep's `ability-sidestep`
   carries the evasion window and the speed burst on one clock.
+
+### Node rows, the tier rule and the cast axis (design §22.1, §22.9, §22.10)
+
+Every one of the 19 abilities has a four-row node tree (`shared/src/data/abilityNodes/`;
+the data model and state are in `lineages-current-state.md` §7):
+
+| Row | Tier | What it does |
+|---|---|---|
+| packet | home + 0 | fires one of the ability's three offered payoffs at `ABILITY_NODE_SHARE.packet` |
+| amplifier | home + 1 | moves one axis of the active packet's route: a FREE choice among `targets`, `duration`, `magnitude` and, on a `cast` or `charge` ability, `cast` |
+| keystone | home + 2 | one of three bespoke verbs (table below), paid in the active packet's shard |
+| cross | home + 3 | borrows one of the OTHER two offers at `ROW_SCALAR.cross`; never the active packet's own lane |
+
+**The tier rule** (`abilityNodeRowTier`, `abilityNodeBandTier` in `resolve.ts`): a row's
+own tier is home + {0,1,2,3}, unclamped (a T1 ability reads 1/2/3/4, a T4 one 4/5/6/7).
+Nothing above `MAX_LINEAGE_TIER` (4) exists yet, so those rows FOLD into the T4 band
+(gated and priced there) and unfold, with no save touched, when a tier ships.
+
+**The cast axis.** An amplifier on a wind-up ability can shorten the wind-up instead of
+moving a payoff. Its size is derived, never authored: `abilityNodeCastSpeedPct()` =
+1 - 1/(1 + `ABILITY_NODE_SHARE.amplifier`). The cast lifecycle SUMS it with
+`technique.cast-speed-pct` and caps the total once at `TECHNIQUE_CAST_SPEED_CAP` (60%),
+so the cap holds against every source combined (`abilityCasting.ts`, through
+`abilityNodeCastSpeedPctFor`).
+
+### Keystones: the verb table (design §22.4, §22.11)
+
+Shared owns each verb's identity (`ABILITY_KEYSTONE_TRIOS` in `keystones.ts`: name, rule,
+fx key, delivery body, `live`); the server owns behaviour, one module per verb under
+`server/src/systems/combat/keystones/ability/` (header table in that folder's
+`index.ts`). **Delivery body**: `owner`, `delivering-body` (the summon or formation body
+that landed the ability on a Conduit; the owner everywhere else) or `formation`. The
+trios (three verbs each, 57 in all, pick one at home + 2) are in design §22.11; a verb
+with no module is `live: false`, shown as a silhouette and refused at purchase
+(`abilityKeystones.test.ts` keeps the two in step). **18 of the 19 first verbs are live:**
+
+| Ability | Verb | Delivery | Seam it rides | Status / marker |
+|---|---|---|---|---|
+| Sweep | Whirlwind | owner | channelled-beam tick machinery + `applyPlayerAoe` around the owner, broken by hard control | none |
+| Slam | Aftershock | owner | one delayed `applyPlayerAoe` at the resolved cast position | none |
+| Charge | Breakthrough | delivering body | shortest control-ladder rung (`applyStun`) on the arrival blow | stun |
+| Binding Strike | Dragnet | delivering body | `applyMonsterRoot` on every body within `contagionRadius` of the target | root (`ability-rooted`) |
+| Contagion | Outbreak | delivering body | tags bodies Contagion copies onto; `copyPlayerDotOnto` on the tagged body's death | `keystone.outbreak.<id>` tag |
+| Detonate | Chain Reaction | delivering body | a Detonate kill runs `resolveDetonate` on every afflicted body in reach (no re-chain) | none |
+| Snipe | Pierce | delivering body | `applyPlayerAoeTo` on every body on the line behind the target, inside Snipe's reach | none |
+| Cull | Harvest | delivering body | a Cull kill re-strikes the nearest body below the same health share, while it kills | none |
+| Imbue Lightning | Fork | delivering body | the charge consumer (`onChargeSpent`): each imbued hit arcs a share to the nearest other body | none |
+| Stunning Strike | Relay | delivering body | the landed stun is watched; at expiry `applyStun` jumps to the nearest body not yet stunned this fight | stun; per-fight set cleared out of combat |
+| Disengage | Vanish | owner | `setAggroTarget(null)` on nearby monsters; aggro selection skips the marked player until their next hit | `keystone.vanish` flag |
+| Break Free | Backlash | owner | shortest stun rung on every body adjacent to the player | stun |
+| Brace | Riposte | owner | `afterHit` on a melee hit taken while Braced: shortest rung on the attacker, once per attacker per Brace | stun |
+| Bramble Guard | Entangle | owner | the thorns' `afterHit` moment: `applyMonsterSlow` under its own id | `ability-entangled` (a member of `MONSTER_SLOW_STATUS_IDS`) |
+| Endure | Unyielding | owner | `ability-unyielding` on Endure's clock; hard-control appliers refuse | `ability-unyielding` |
+| Cleanse | Immunity | owner | each stripped status id becomes a refused kind for the ward unit's window | `ability-immunity` |
+| Second Wind | Shared Breath | formation | the Recovery engine's skill source on same-node party members; summons mended in the summoner's owner-to-summon pass | none |
+| Recuperate | Overflow | owner | the overheal-ward hook on `applyHealToPlayer`: spill tops up one ward to the ward payoff's cap | none |
+| Sidestep | Afterimage | n/a | **SILHOUETTE, not live**: a decoy target the attacker keeps swinging at needs a primitive the game does not have | n/a |
+
+Verb magnitudes that are shares of a hit (`paysShare`) resolve from the magnitude table
+at `ROW_SCALAR.keystone`; the few timings (Whirlwind's one-second spin, Aftershock's
+one-second delay) are `ABILITY_KEYSTONE_UNITS`, PROVISIONAL. The second and third verbs
+of each trio, and their designer notes ("probably broken", "watch for power"), are in
+design §22.11.
+
+**Names, icons and animations deepen with the rows** (design §22.7, grammar §22.10;
+W2-D). `abilityDisplayName(ability, tier, parts, form)` (`shared/src/abilities.ts`, on the
+grammar in `shared/src/data/abilityNodes/flavor.ts`) is the one entry point every naming surface
+reads (hotbar and mobile bar as the noun, the Abilities panel and tooltips as the full
+name with `abilityLineageLine` beneath a keystone's rename, the buff bar, the cast
+callout, the tutorial director): "Bleeding Whirlwind of Many I, with Echoes". The icon is
+composed at runtime from existing concept art by `abilityIconLayers` (base glyph; lane
+frame for the packet; cross edge; keystone border plus a silhouette glyph; amplifier
+axis glyph), drawn by `client/src/ui/ComposedAbilityIcon.tsx`, with no new PNG. Every
+live keystone owns one bespoke animation keyed by its id
+(`client/src/fx/abilityKeystoneFx.ts`; Afterimage, not live, is the one keyed stub); the
+table is in [`combat-animation-current-state.md`](combat-animation-current-state.md).
+
+### Fire-shapes as implemented (design §22.10)
+
+`ABILITY_FIRE_SHAPES` (`offers.ts`) is the closed table; `ABILITY_FIRE_SHAPE_SEAM` maps
+each shape to an existing trigger seam; the runtime is
+`server/src/systems/combat/abilityNodes.ts`.
+
+| Shape | Abilities | Seam |
+|---|---|---|
+| on land | Charge (see the exception), Binding Strike, Snipe, Detonate, Cull, Disengage, Stunning Strike | hit |
+| on every body hit | Sweep, Slam, Contagion | hit |
+| on each hit of a window | Imbue Lightning | hit |
+| on the kill | the Kill chain offer of Charge, Contagion, Disengage, Snipe and Cull (`ABILITY_KILL_TRIGGER_OFFERS`) | kill |
+| on cast | Second Wind | guard-cast |
+| on the break | Break Free | break-free |
+| per hit absorbed | Brace, Bramble Guard | hit-taken |
+| per hit dodged | Sidestep | evade |
+| per tick while active | Endure, Recuperate | pulse |
+| on strip | Cleanse | cleanse |
+
+**Charge is the one exception.** The §22.10 row reads "on the first body the rush
+touches, and the target on arrival"; players move through monster bodies (they collide
+only with terrain), so there is no contact seam and Charge fires on its TARGET on arrival
+only. Disengage fires on the body it broke from (`departedFrom`), and its Kill chain
+route never fires (nothing dies at a departure). The per-hit and per-tick shapes carry
+their packet's `capMs` per firing.
+
+### T3 path re-homes (design §22.5)
+
+Five T3 class paths moved onto the mechanics the ability pass and the frame loops gave
+them, and one was retagged (no effect change):
+
+| Path | Class | Now |
+|---|---|---|
+| Reverb | Squire (cooldown), packet Empowered | the execution lands again at half strength at the recharge's halfway mark, on whatever is in reach then (lost if nothing is); the bank is gone |
+| Destroyer | Squire (cooldown), packet **Technique** | the execution waits primed and rides the next Technique that lands, with that Technique's shape (an armed Technique's hit, a cast's target, Slam's whole area); 3x instead of the tier's 2.5x; regular hits deal damage again |
+| Justicar | Striker (cadence), retagged **Empowered** | unchanged: the Verdict is banked and spent by the finisher |
+| Duelist | Slinger (reload light), packet **Kill chain** | every kill loads a round past the clip until the next reload; the exploding last bullet and the +1 round are retired (`reload.exploding-clip` and `reload.empowered-mult` have no author, so the Empowered `mechanic-proxy` falls back to 1.5 for every reload spec) |
+| Warmonger | Slinger (reload heavy), packet Tempo | the Artillerist frame owns the ramp; `reload.ramp-carry-pct` 0.5 keeps half of it through a reload (`frames-current-state.md`); Hair Trigger is retired |
+| Pyromancer | Apprentice (dot balanced), packet Affliction | 2 burn stacks at 55% each; the max-stack direct bonus is gone (the Ember Mage frame owns it); Radiant: a burn tick at max stacks also strikes every adjacent body as damage over time (no plating, half DR, no stacks, never recurses) |
+
+The skill-tree data is `shared/src/data/skillTree/t3CombatA.ts` / `t3CombatB.ts`;
+tests `t3SquirePaths`, `t3SlingerPaths`, `t3ApprenticePaths`.
+
+### Migration of the cut abilities, in one place
+
+The five cut ids live in `RETIRED_ABILITY_IDS` (`shared/src/abilities.ts`). On load,
+`migrateAttunement` silently drops every known, attuned, wired (`use-ability` rule) or
+node-progress entry naming one, the load path logs one line per affected character, and a
+legacy rename that resolves to a cut id (`heavy-strike` to expose-weakness,
+`charged-strike` to power-strike) drops the same way. A re-homed ability keeps its id
+and its progress. Anything a cut ability produced that is still a live concept keeps its
+status id and art: `ability-slowed` ("Hamstrung") is written by the lineage `slow` payoff
+and the at-bay tap; its help text no longer names Hamstring.
 
 ## Ability tags and equipment modifiers (2026-09-13)
 
