@@ -247,7 +247,7 @@ export const t3CombatEntriesA = [
     id: 'reload-light-t3-a', name: 'Duelist', tier: 3,
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-light', children: [],
-    description: 'Kill chain: every kill loads one round on top of your clip, even past its size, until you next reload — a long chain is a long clip, and the ammo counter climbs past its maximum. Reloading returns the clip to its authored size; a kill that readies the reload (Refund) refills the clip and still adds the round. Your openers stay the first two rounds of a fresh clip.',
+    description: 'Kill chain: every kill loads one round on top of your clip, even past its size, until you next reload — a long chain is a long clip, and the ammo counter climbs past its maximum. Reloading returns the clip to its authored size; a kill that readies the reload (Refund) refills the clip and still adds the round. Your openers stay the first two rounds of a fresh clip. A hit an Empowered card makes count as your mechanic lands at ×3.5.',
     // Design §22.5 (T3 path review): re-homed from Empowered. Its last-bullet
     // payoff duplicated the Marksman frame's end-of-clip and its splash the
     // Shockwave keystone; Kill chain had one path. Distinct from Refund, which
@@ -255,7 +255,11 @@ export const t3CombatEntriesA = [
     packet: 'kill-chain',
     cost: 1, statEffects: {},
     // Rounds per kill: a shape constant (one), not a tuning number.
-    mechanicEffects: { 'reload.kill-chain': 1 },
+    // Design §22.12: the Empowered `mechanic-proxy` is ×3.5 again (the retired
+    // last bullet's number), on a key only the proxy reads — never
+    // `reload.empowered-mult`, so no real shot (the Scout's openers) and no HUD or
+    // DPS reader moves.
+    mechanicEffects: { 'reload.kill-chain': 1, 'reload.mechanic-proxy-mult': 3.5 },
   }],
   ['reload-light-t3-b', {
     id: 'reload-light-t3-b', name: 'Desperado', tier: 3,

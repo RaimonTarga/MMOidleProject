@@ -28,6 +28,7 @@ import {
   composePlayerView,
   emptyEquipment,
   keystoneFxKey,
+  resolveEmpoweredMultiplier,
   setFlag,
   setLineageRuntime,
   type CombatEvent,
@@ -40,6 +41,7 @@ import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { emitCombatEvent, type CombatContext } from '../src/systems/combat/engine/combatPipeline';
+import { proxyEmpoweredMultiplier } from '../src/systems/combat/engine/empoweredAttacks';
 import { refundMechanic } from '../src/systems/combat/keystones';
 import { RUNE_TACTICAL_RELOAD_FLAG } from '../src/systems/combat/ai/runeConfig';
 import { updateReloadArchetype } from '../src/systems/classes/archetypes/reload/reloadPrototype';
@@ -218,6 +220,71 @@ const DUELIST = 'reload-light-t3-a';
   assert(effects['reload.exploding-clip'] === undefined, 'the exploding last bullet is retired');
   assert(effects['reload.empowered-mult'] === undefined, 'the last-bullet multiplier is retired');
   assert(effects['reload.max-ammo'] === undefined, 'the +1 round is retired: the clip grows with kills');
+  assert(
+    effects['reload.mechanic-proxy-mult'] === 3.5,
+    'the Empowered proxy is ×3.5 again, on a key only the proxy reads (design §22.12)',
+  );
+}
+
+// ── Duelist: an Empowered-lane proxy lands at ×3.5; the openers do not move ──
+
+{
+  const duelist = slinger('t3s-duelist-proxy', 'light', [DUELIST]);
+  const scout = slinger('t3s-scout-proxy', 'light', []);
+  assert(proxyEmpoweredMultiplier(world, duelist) === 3.5, `the Duelist's proxy is ×3.5, got ${proxyEmpoweredMultiplier(world, duelist)}`);
+  assert(
+    proxyEmpoweredMultiplier(world, scout) === undefined,
+    'a reload spec without the key has no multiplier to proxy (it takes the table\'s fallback)',
+  );
+  assert(
+    resolveEmpoweredMultiplier(duelist.usesSkills.passives, 'reload') === null,
+    'the HUD and the Stats panel\'s DPS estimate still see no empowered reload shot (no ×3.5 last round)',
+  );
+
+  // The openers: a whole fresh clip on each, round for round the Scout frame's own —
+  // the proxy's key arms nothing and folds into no real shot.
+  const duelistTarget = punchbag(780);
+  const scoutTarget = punchbag(800);
+  const clip = duelist.usesReload!.ammoMax;
+  const duelistMults: number[] = [];
+  const scoutMults: number[] = [];
+  for (let round = 1; round <= clip; round++) {
+    const duelistShot = fireShot(duelist, duelistTarget);
+    assert(duelistShot.metadata['mechanicConsumed'] !== true, `round ${round}: no real empowered shot fired`);
+    duelistMults.push(empoweredMult(duelistShot));
+    scoutMults.push(empoweredMult(fireShot(scout, scoutTarget)));
+  }
+  const openerMult = duelist.usesSkills.passives['reload.frame-opener-mult'] ?? 0;
+  assert(openerMult === 1.3, `fixture: the Scout frame's openers are ×1.3, got ${openerMult}`);
+  assert(
+    duelistMults.every((mult, i) => mult === scoutMults[i] && mult === (i < 2 ? openerMult : 1)),
+    `the Duelist's clip is the Scout's, openers and all: ${duelistMults.join(', ')} against ${scoutMults.join(', ')}`,
+  );
+  assert(duelist.hasEmpoweredAttack === undefined, 'and no empowered flag is armed');
+  finishReload(duelist);
+
+  // An Empowered-lane `mechanic-proxy` through the real card seam, on a round past
+  // the openers, lands at ×3.5.
+  for (let round = 1; round <= 2; round++) fireShot(duelist, duelistTarget);
+  const proxyCard: ResolvedLineageCard = {
+    card: {
+      id: 'seed-proxy-duelist', lineageId: 'rapier', tier: 1, row: 'payoff', lane: 'empowered',
+      name: 'Seeded proxy', description: '', fx: 'empowered.mechanic-flash',
+    },
+    requiredBiomeGroup: 'forest', requiredBiomeLevel: 4, requiredGlobalMastery: 0,
+    cost: { essence: {}, shards: {} },
+    trigger: { kind: 'hit-nth', n: 1 },
+    payoff: { kind: 'mechanic-proxy', magnitude: 1.5 },
+    payoffFx: 'empowered.mechanic-flash',
+    composition: { verbLane: 'empowered', pure: false },
+  };
+  setLineageRuntime(duelist.tracksCombat, { cards: [proxyCard], capstones: [] });
+  const proxied = fireShot(duelist, duelistTarget);
+  assert(proxied.metadata['mechanicProxy'] === true, 'fixture: the seeded card proxied the hit');
+  close(empoweredMult(proxied), 3.5, 'the Duelist\'s Empowered proxy lands at ×3.5');
+  assert(proxied.damage === Math.floor(BASE_DAMAGE * 3.5), `and the hit carries it, got ${proxied.damage}`);
+  assert(duelist.hasEmpoweredAttack === undefined, 'a proxy neither arms nor spends the root\'s charge');
+  setLineageRuntime(duelist.tracksCombat, { cards: [], capstones: [] });
 }
 
 // ── Duelist: the clip grows by one per kill, past max, and the HUD sees it ───

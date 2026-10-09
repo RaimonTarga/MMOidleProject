@@ -85,9 +85,12 @@ export function initReloadArchetype(): void {
     attackerType:  'player',
     attackerSlice: 'usesReload',
     passiveKey:    'reload.empowered-mult',
-    // `mechanic-proxy` (design §24.2): a proxy uses this multiplier only where a
-    // node authors it — none does now — so every reload spec takes the proxy's
-    // fallback rather than a multiplier its class never fires.
+    // `mechanic-proxy` (design §24.2): a proxy reads its OWN key, which only the
+    // Duelist authors (×3.5, design §22.12) — never `reload.empowered-mult`, so the
+    // proxy's size moves no real shot (none is armed empowered; the Scout's openers
+    // are the frame loop's fold) and no HUD or DPS reader. Every other reload spec
+    // takes the proxy's fallback rather than a multiplier its class never fires.
+    proxyPassiveKey: 'reload.mechanic-proxy-mult',
     proxyRequiresPassive: true,
   });
 
