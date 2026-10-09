@@ -231,6 +231,11 @@ const cardFx = (world: World): CardFx[] =>
     assert(keystoneHasAnimation(id), `${id} reads as animated`);
   }
   assert(!keystoneHasAnimation(undefined), 'no verb, no animation');
+  // Every verb with a server module draws its own animation; only a silhouette
+  // (a verb not yet live) may still be a stub.
+  for (const verb of ABILITY_KEYSTONE_DEFINITIONS.values()) {
+    if (verb.live) assert(KEYSTONE_ANIMATED.has(verb.id), `${verb.name} is live but still a stub`);
+  }
 
   // The animation table and the model's set agree (the module needs Phaser, so
   // its keys are read off the source, as attackProgression reads the bespoke paths).
