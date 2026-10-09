@@ -243,7 +243,7 @@ for (const monsterId of ['frost-plated-rime-mammoth', 'glacial-patriarch']) {
   const refused = sinkhole('immunity', (p) => raiseImmunity(p, 'slow'));
   assert(!refused.first && !refused.second, 'Immunity of the slow kind refuses the hazard slow, and its reapply');
   const open = sinkhole('open');
-  assert(open.first?.data['speedMult'] === pool.slowSpeedMult && open.first.data['isGroundZone'] === 1,
+  assert(open.first?.data['speedMult'] === pool.slowSpeedMult && open.first?.data['isGroundZone'] === 1,
     'without Immunity, the hazard slows as authored');
   const endured = sinkhole('unyielding', raiseUnyielding);
   assert(endured.first?.data['speedMult'] === pool.slowSpeedMult, 'Unyielding does not refuse a soft hazard slow');
