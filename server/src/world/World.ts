@@ -80,7 +80,9 @@ import { updateLairDrags } from "../systems/combat/damage/lairDrag";
 import { updateMonsterSlows } from "../systems/combat/status/monsterControl";
 import { syncPlayerBuffs } from "../systems/combat/buffs/buffSync";
 import { updateLineageCards } from '../systems/combat/lineageCards';
+import { updateAbilityNodePulses } from '../systems/combat/abilityNodes';
 import { updateScheduledKeystoneHits } from '../systems/combat/keystones/ability/scheduledHits';
+import { updateAbilityKeystones } from '../systems/combat/keystones/ability/registry';
 import { mirrorHpForecast } from "../systems/defense/core/hpForecast";
 import {
   createMonster as createMonsterInWorld,
@@ -464,6 +466,9 @@ export class World {
     // Ability keystone area hits that land later (Whirlwind's spin, Aftershock):
     // after the casts, so a hit that comes due this tick lands before combat.
     updateScheduledKeystoneHits(this, dt);
+    // Ability keystone verbs that wait on a clock they do not own (Relay: a stun
+    // running out, decayed by updateCombatState at the top of this tick).
+    updateAbilityKeystones(this, dt);
     updateStanceSwitch(this, dt, now);
     updateKnockback(this, dt);
     // With knockback, and for the same reason: a component that owns one monster's
@@ -493,6 +498,10 @@ export class World {
     // triggers that answer to time rather than to an event. Before the buff sync,
     // so a window opened this tick shows its clock on the same frame.
     updateLineageCards(this, dt);
+    // Ability nodes that fire per tick while a Guard's window is up (design
+    // §22.10: Endure, Recuperate), on the same pulse cadence and for the same
+    // reason: a window opened this tick shows its clock on the same frame.
+    updateAbilityNodePulses(this);
     syncPlayerBuffs(this, now);
     mirrorHpForecast(this);
     updateAutoIntent(this);

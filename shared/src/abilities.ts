@@ -307,6 +307,29 @@ export const ABILITY_SIDESTEP_EFFECT_ID = "ability-sidestep";
 export const ABILITY_CONTROL_RESIST_EFFECT_ID = "ability-control-resist";
 
 /**
+ * Endure's Unyielding keystone (design §22.4): while it stands, no hard control
+ * and no root lands on the player. A REFUSAL at the appliers (`applyStun`, the
+ * player debuff writers, the Cave lockdown, the lair drag) — an existing control
+ * is never removed by it. Generic on purpose: a future "cannot be controlled"
+ * source only has to apply this status.
+ */
+export const ABILITY_UNYIELDING_EFFECT_ID = "ability-unyielding";
+
+/**
+ * Cleanse's Immunity keystone (design §22.4): the affliction kinds a Cleanse
+ * stripped cannot be reapplied while it stands. ONE status whatever was stripped:
+ * status data holds numbers only, so each refused kind (the stripped status id)
+ * is a KEY of its data, `abilityImmunityKindKey(kind)` = 1. Refused at the player
+ * debuff writers' admission check (`playerRefusesStatus`).
+ */
+export const ABILITY_IMMUNITY_EFFECT_ID = "ability-immunity";
+
+/** The data key that marks one refused affliction kind on the Immunity status. */
+export function abilityImmunityKindKey(kind: string): string {
+  return `kind:${kind}`;
+}
+
+/**
  * The default ability-family slow on a monster. Hamstring, its first writer, was
  * cut by the ability pass (design §22.2); the id is kept because the lineage
  * `slow` payoff (and so every ability-node slow) and the Mid range at-bay slow
@@ -316,6 +339,14 @@ export const ABILITY_SLOW_EFFECT_ID = "ability-slowed";
 
 /** Binding Strike's root on a monster. */
 export const ABILITY_ROOT_EFFECT_ID = "ability-rooted";
+
+/**
+ * Bramble Guard's Entangle keystone (design §22.4): the slow on a body that hit a
+ * brambled player. Its own id ("Entangled") rather than the shared ability slow,
+ * whose copy still names a cut ability; one of `MONSTER_SLOW_STATUS_IDS`, so it is
+ * the same rung as every slow.
+ */
+export const ABILITY_ENTANGLE_EFFECT_ID = "ability-entangled";
 
 /**
  * Client-effect tags stamped on a `player-hit` event so the client can overlay

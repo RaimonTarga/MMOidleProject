@@ -12,6 +12,7 @@ import {
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { syncPlayerControlLockout } from '../status/playerControlLockout';
+import { refusesHardControl } from '../status/playerHardControl';
 
 type EngageStage = 'cast' | 'charge' | 'lock' | 'slam-ready' | 'done';
 
@@ -74,14 +75,18 @@ export function beginEngageLock(
   lockoutMs: number,
   now: number,
 ): void {
-  applyStatusEffect(player.tracksCombat, {
-    id: CAVE_LOCKDOWN_EFFECT_ID,
-    instanced: true,
-    remainingMs: lockoutMs,
-    sourceId: monster.isMonster.id,
-    data: { totalMs: lockoutMs, speedMult: 0 },
-  });
-  syncPlayerControlLockout(world, player);
+  // UNYIELDING (Endure's keystone, design §22.4) refuses the lock itself; the
+  // troll's own beat runs on unchanged, so the sequence still reaches its slam.
+  if (!refusesHardControl(player.tracksCombat)) {
+    applyStatusEffect(player.tracksCombat, {
+      id: CAVE_LOCKDOWN_EFFECT_ID,
+      instanced: true,
+      remainingMs: lockoutMs,
+      sourceId: monster.isMonster.id,
+      data: { totalMs: lockoutMs, speedMult: 0 },
+    });
+    syncPlayerControlLockout(world, player);
+  }
   setCounter(monster.tracksCombat, DEADLINE_KEY, now + lockoutMs);
   setString(monster.tracksCombat, STAGE_KEY, 'lock');
 }

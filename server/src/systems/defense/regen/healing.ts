@@ -29,6 +29,22 @@ function takeLoggableHeal(cs: TracksCombat, exactApplied: number): number {
 const OVERHEAL_WARD_MS = 6000;
 
 /**
+ * A consumer of the HP a heal spills past full, beside the overheal-ward passive
+ * (the "overheal-ward hook"). Handed only what the passive did not convert, so a
+ * spill is never turned into a ward twice. Registered once per process by the
+ * combat bootstrap's keystone registration (Recuperate's Overflow, design §22.4),
+ * so this module imports no keystone.
+ */
+export type OverhealSink = (world: World, player: PlayerEntity, overheal: number) => void;
+
+const overhealSinks: OverhealSink[] = [];
+
+/** Hang a consumer off the overheal hook. Called once per process. */
+export function registerOverhealSink(sink: OverhealSink): void {
+  overhealSinks.push(sink);
+}
+
+/**
  * Returns the healing multiplier for this entity (1 = full, 0.1 = hard floor).
  */
 export function getAntiHealMult(cs: TracksCombat): number {
@@ -79,6 +95,10 @@ export function applyHealToPlayer(
     const occupied=player.holdsWards?.wards.reduce((sum,w)=>sum+w.amount,0)??0;
     const headroom=capPct===undefined?Infinity:Math.max(0,maxHp*capPct-occupied);
     applyWard(world, player, Math.min(headroom,Math.round((raw - maxHp) * overhealPct)), OVERHEAL_WARD_MS);
+  }
+  if (world && raw > maxHp && overhealSinks.length > 0) {
+    const spill = (raw - maxHp) * (1 - Math.min(1, Math.max(0, overhealPct)));
+    if (spill > 0) for (const sink of overhealSinks) sink(world, player, spill);
   }
   if (world && player.hasHealth.hp > before) {
     markSliceDirty(world, player, 'hasHealth');

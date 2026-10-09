@@ -58,6 +58,7 @@ import type { World } from "../../../world/World";
 import type { WorldLogActor } from "@mmo-idle/shared";
 import { techniquePowerPctFor } from "./abilityKata";
 import { onTechniqueResolved } from "../../combat/techniqueResolved";
+import { onAbilityNodeBodiesHit } from "../../combat/abilityNodes";
 
 /** Reporting-only: Technique/Sweep adapter contribution for combat-run diagnostics. */
 function recordTechniqueAdapter(
@@ -324,12 +325,17 @@ function tagClientEffect(ctx: CombatContext, tag: string): void {
  * Returns true when the payload earned its OWN cooldown back (a Cull kill): the
  * cast driver charges the cooldown after the resolution and then refunds it, so
  * the refund is visible to the HUD as an ordinary cooldown sample.
+ *
+ * `struck`, when given, receives every body a strike's circle hit (Slam's area),
+ * so the cast driver can fire the ability node's "on every body hit" routes on
+ * them once the cooldown is running (design §22.10).
  */
 export function resolveCastPayload(
   world: World,
   player: PlayerEntity,
   ability: AbilityDef,
   target: MonsterEntity,
+  struck?: MonsterEntity[],
 ): boolean {
   const effect = techniqueEffect(player, ability);
 
@@ -357,9 +363,10 @@ export function resolveCastPayload(
   const radius = castStrikeFootprintRadius(effect) ?? 1;
   // A cast skips the attack pipeline, but it is still the wielder's damage: a
   // DoT-conversion weapon converts it the same way it converts a swing.
-  applyPlayerAoe(world, player, target.hasPosition.current, radius, damage, undefined, "player", {}, {
+  const hit = applyPlayerAoe(world, player, target.hasPosition.current, radius, damage, undefined, "player", {}, {
     feedsWeaponReservoir: true,
   });
+  struck?.push(...hit);
 
   // Stunning Strike: the control lands with the blow. Applied after the damage so
   // a killing blow doesn't spend the stun on a corpse, and through `applyStun` so
@@ -454,14 +461,31 @@ function applyTechniqueRider(
   // "ONCE PER LANDING" contract in `combat/techniqueResolved.ts`.
   // The FIRST delivery, not the last: the last pending body can die or forfeit
   // and never claim, which left the cast unresolved (review finding P8).
+  const effect = techniqueEffect(ctx.attacker, ability);
   if (!formationDelivery || formationDelivery.isFirstDelivery) {
     onTechniqueResolved(world, ctx.attacker, ability, {
       ctx,
       target: ctx.defender,
     });
+    // Sweep's node fires on every body its cleave hits (design §22.10): the
+    // struck body and the circle the cleave resolves around it — the same query
+    // every branch below uses, read once here so the Apprentice spread, the
+    // Slinger clip's first shot and a Conduit's first delivery all fire on the
+    // cleave that resolution made.
+    if (effect.kind === "cleave") {
+      onAbilityNodeBodiesHit(world, ctx.attacker, ability, [
+        ctx.defender,
+        ...playerAoeTargets(
+          world,
+          ctx.attacker,
+          ctx.defender.hasPosition.current,
+          effect.radius,
+          ctx.defender.isMonster.id,
+        ),
+      ], ctx);
+    }
   }
 
-  const effect = techniqueEffect(ctx.attacker, ability);
   const formationBasis = formationDelivery
     ? Math.max(1, Math.round(
       ctx.attacker.dealsDamage.attack * resolveSummonerProfile({
@@ -609,7 +633,10 @@ function applyTechniqueRider(
     tagClientEffect(ctx, ABILITY_TECHNIQUE_FIRED_FX);
     // A spread is a DoT applier: an evaded hit spreads nothing.
     if (evadeBlocksDebuffs(ctx)) return;
-    resolveContagion(world, ctx.attacker, ability, ctx.defender);
+    // Its node fires on every body the spread reached (design §22.10), after the
+    // copies landed: a seed laid before the copy would be max-merged away by it.
+    const reached = resolveContagion(world, ctx.attacker, ability, ctx.defender);
+    onAbilityNodeBodiesHit(world, ctx.attacker, ability, reached, ctx);
     return;
   }
 

@@ -8,6 +8,7 @@ import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import { attachMarker } from '../../../ecs/markerHelpers';
 import type { World } from '../../../world/World';
 import { harmfulStatusDurationMult, harmfulStatusPotencyMult } from './harmfulStatus';
+import { playerRefusesAffliction } from './debuffGuard';
 import { buildKillerFromMonster } from '../../world/deathCause';
 
 /** Apply one definition-shaped monster DoT stack through the canonical status path. */
@@ -19,6 +20,9 @@ export function applyMonsterDotToPlayer(
   abilityName?: string,
 ): void {
   const monsterDef = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
+  const debuff = resolveMonsterDotDebuff({ monster: monsterDef, dotEffect });
+  // Cleanse's Immunity keystone (design §22.4): a stripped kind does not come back.
+  if (playerRefusesAffliction(player, debuff.statusEffectId)) return;
   // Status resistance (mobility tenacity + the Warding posture) lands HERE, at the
   // single place a monster DoT enters a player, so no caller has to remember it.
   // Both halves apply: a resisted DoT ticks for less AND stops sooner.
@@ -30,7 +34,6 @@ export function applyMonsterDotToPlayer(
     1,
     Math.round(dotEffect.damagePerStack * harmfulStatusPotencyMult(player)),
   );
-  const debuff = resolveMonsterDotDebuff({ monster: monsterDef, dotEffect });
   const effect = applyStatusEffect(player.tracksCombat, {
     id: debuff.statusEffectId,
     maxStacks: dotEffect.maxStacks,

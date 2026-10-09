@@ -28,7 +28,7 @@
  * lane can never be fired by a defensive cast — design-bible §1's separated
  * budgets, enforced in one place instead of three.
  */
-import type { AbilityDef } from '@mmo-idle/shared';
+import type { AbilityDef, Vec2 } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../ecs/entity';
 import type { World } from '../../world/World';
 import type { CombatContext } from './engine/combatPipeline';
@@ -68,12 +68,29 @@ import { destroyerOnTechniqueResolved } from '../classes/archetypes/cooldown/t3/
  *
  * `now` is the tick's clock, passed by a resolution that may land an attack of
  * its own (the cast loop's, for the Destroyer's delivery).
+ *
+ * `departedFrom` is the body a backward reposition broke from (Disengage's
+ * threat). It is NOT a `target`: nothing was struck, so the Destroyer must not
+ * deliver an execution to it and a `technique-cast` card keeps its own read. Only
+ * the ability node reads it, for "on the body you broke from" (design §22.10).
  */
 export function onTechniqueResolved(
   world: World,
   player: PlayerEntity,
   ability: AbilityDef,
-  site: { ctx?: CombatContext; target?: MonsterEntity; now?: number } = {},
+  site: {
+    ctx?: CombatContext;
+    target?: MonsterEntity;
+    now?: number;
+    /** A Conduit cast's physical caster (the ability keystones' delivery body). */
+    casterMinionId?: string;
+    /** A reposition's departure point. */
+    from?: Vec2;
+    /** A cast's target's health share before its payload landed. */
+    targetHealthShare?: number;
+    /** The body a backward reposition broke from (see above; the ability node's read only). */
+    departedFrom?: MonsterEntity;
+  } = {},
 ): void {
   if (ability.slot !== 'technique') return;
   if (site.ctx) consumeTechniqueWindow(player, site.ctx);

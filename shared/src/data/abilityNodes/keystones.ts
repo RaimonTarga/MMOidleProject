@@ -183,7 +183,7 @@ const trioEntries: [string, Trio][] = [
   ['snipe', [
     verb('snipe', 1, 'pierce', 'Pierce',
       'The shot passes through its target and hits everything in line behind it.',
-      'tempo.ruin-afterimage', 'echo-hit', { delivery: DB, paysShare: true }),
+      'tempo.ruin-afterimage', 'echo-hit', { delivery: DB, paysShare: true, live: true }),
     verb('snipe', 2, 'mark', 'Mark',
       'The sniped body takes your next Technique as if from max reach.',
       'empowered.weak-point', 'vulnerability'),
@@ -194,7 +194,7 @@ const trioEntries: [string, Trio][] = [
   ['imbue-lightning', [
     verb('imbue-lightning', 1, 'fork', 'Fork',
       'Every imbued hit arcs to the nearest other body.',
-      'kill-chain.spread-arc', 'echo-hit', { delivery: DB, paysShare: true }),
+      'kill-chain.spread-arc', 'echo-hit', { delivery: DB, paysShare: true, live: true }),
     verb('imbue-lightning', 2, 'static', 'Static',
       'An imbued hit that kills refunds its charge.',
       'technique.refund-flash', 'technique-refund'),
@@ -205,7 +205,7 @@ const trioEntries: [string, Trio][] = [
   ['detonate', [
     verb('detonate', 1, 'chain-reaction', 'Chain Reaction',
       'A Detonate kill detonates every afflicted body in reach.',
-      'affliction.keystone', 'hemorrhage', { delivery: DB }),
+      'affliction.keystone', 'hemorrhage', { delivery: DB, live: true }),
     verb('detonate', 2, 'fuse', 'Fuse',
       'The detonation lands a second later, doubled on a body still afflicted.',
       'affliction.double-dose', 'hemorrhage', { delivery: DB }),
@@ -216,7 +216,7 @@ const trioEntries: [string, Trio][] = [
   ['cull', [
     verb('cull', 1, 'harvest', 'Harvest',
       'A Cull kill lands the same strike on the nearest body below the same health share, and keeps going while it keeps killing.',
-      'kill-chain.keystone', 'echo-hit', { delivery: DB }),
+      'kill-chain.keystone', 'echo-hit', { delivery: DB, live: true }),
     verb('cull', 2, 'death-sentence', 'Death Sentence',
       'A body Cull hits but does not kill is marked; your next kill of any body also kills it if it is below the threshold.',
       'empowered.weak-point', 'vulnerability'),
@@ -227,7 +227,7 @@ const trioEntries: [string, Trio][] = [
   ['disengage', [
     verb('disengage', 1, 'vanish', 'Vanish',
       "Breaking contact drops you from every nearby monster's aggro until your next hit.",
-      'engagement.sidestep-blur', 'evasion-window'),
+      'engagement.sidestep-blur', 'evasion-window', { live: true }),
     verb('disengage', 2, 'parting-shot', 'Parting Shot',
       'Disengage also arms your next hit as an opening strike.',
       'engagement.opening-flash', 'damage-window'),
@@ -238,7 +238,7 @@ const trioEntries: [string, Trio][] = [
   ['stunning-strike', [
     verb('stunning-strike', 1, 'relay', 'Relay',
       'When the stun ends it jumps to the nearest body not yet stunned this fight.',
-      'control.keystone', 'stun', { delivery: DB }),
+      'control.keystone', 'stun', { delivery: DB, live: true }),
     verb('stunning-strike', 2, 'concussion', 'Concussion',
       'The stun lands on every body around the target, shorter.',
       'empowered.quake-ring', 'stun', { delivery: DB }),
@@ -251,7 +251,7 @@ const trioEntries: [string, Trio][] = [
   ['second-wind', [
     verb('second-wind', 1, 'shared-breath', 'Shared Breath',
       'The mend also runs on your summons and same-node party.',
-      'kill-chain.recovery-pulse', 'recovery-window', { delivery: 'formation' }),
+      'kill-chain.recovery-pulse', 'recovery-window', { delivery: 'formation', live: true }),
     verb('second-wind', 2, 'deep-breath', 'Deep Breath',
       'Nothing can hard-control you while the mend runs.',
       'bulwark.keystone', 'engagement-dr'),
@@ -262,7 +262,7 @@ const trioEntries: [string, Trio][] = [
   ['cleanse', [
     verb('cleanse', 1, 'immunity', 'Immunity',
       'The affliction kind you stripped cannot be reapplied for a few seconds.',
-      'barrier-tempo.ward-shell', 'cleanse'),
+      'barrier-tempo.ward-shell', 'cleanse', { live: true }),
     verb('cleanse', 2, 'purge', 'Purge',
       'The stripped affliction is thrown back onto its applier.',
       'affliction.stinger-echo', 'cleanse'),
@@ -273,7 +273,7 @@ const trioEntries: [string, Trio][] = [
   ['brace', [
     verb('brace', 1, 'riposte', 'Riposte',
       'A melee hit absorbed while Braced staggers the attacker.',
-      'control.knockdown', 'stun'),
+      'control.knockdown', 'stun', { live: true }),
     verb('brace', 2, 'set', 'Set',
       'Brace also roots you and doubles its footing.',
       'bulwark.keystone', 'plating-stack'),
@@ -295,7 +295,7 @@ const trioEntries: [string, Trio][] = [
   ['bramble-guard', [
     verb('bramble-guard', 1, 'entangle', 'Entangle',
       'A body that hits you while brambled is slowed.',
-      'control.frost-drag', 'slow'),
+      'control.frost-drag', 'slow', { live: true }),
     verb('bramble-guard', 2, 'thicket', 'Thicket',
       'Thorns also hit every body adjacent to the attacker.',
       'control.mire-grasp', 'plating-stack'),
@@ -306,7 +306,7 @@ const trioEntries: [string, Trio][] = [
   ['endure', [
     verb('endure', 1, 'unyielding', 'Unyielding',
       'You cannot be hard-controlled while Endure is up.',
-      'bulwark.keystone', 'engagement-dr'),
+      'bulwark.keystone', 'engagement-dr', { live: true }),
     verb('endure', 2, 'second-skin', 'Second Skin',
       'The shell persists at half while you keep taking hits.',
       'bulwark.plating-chip', 'ward'),
@@ -317,7 +317,7 @@ const trioEntries: [string, Trio][] = [
   ['break-free', [
     verb('break-free', 1, 'backlash', 'Backlash',
       'Breaking free staggers every adjacent body.',
-      'control.knockdown', 'stun'),
+      'control.knockdown', 'stun', { live: true }),
     verb('break-free', 2, 'slip', 'Slip',
       'You are untargetable for a moment after breaking free.',
       'engagement.sidestep-blur', 'evasion-window'),
@@ -328,7 +328,7 @@ const trioEntries: [string, Trio][] = [
   ['recuperate', [
     verb('recuperate', 1, 'overflow', 'Overflow',
       'Healing past full becomes a ward.',
-      'barrier-tempo.ward-shell', 'ward'),
+      'barrier-tempo.ward-shell', 'ward', { live: true }),
     verb('recuperate', 2, 'battle-rest', 'Battle Rest',
       'Recuperate mends at its full rate while you are hit.',
       'kill-chain.recovery-pulse', 'recovery-window'),

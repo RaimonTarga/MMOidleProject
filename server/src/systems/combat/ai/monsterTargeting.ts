@@ -10,6 +10,7 @@ import type {
 } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 import { playerDetectionMult } from "../../world/mobility/mobilityBoots";
+import { hiddenByVanish } from "../keystones/ability/vanishMark";
 
 export type MonsterAggroCandidate =
   | { kind: "player"; entity: PlayerEntity }
@@ -61,6 +62,9 @@ function candidatesInPullRange(
   const candidates: ScoredCandidate[] = [];
 
   for (const player of world.livePlayersInNode(nodeId)) {
+    // Disengage's Vanish (design §22.4): a vanished player is not acquired until
+    // their next hit — unless a script owns this monster's targeting.
+    if (hiddenByVanish(player, monster)) continue;
     const effPull = pullRange * playerDetectionMult(player);
     const distSqToPlayer = distanceSq(player.hasPosition.current, monsterPos);
     if (distSqToPlayer >= effPull * effPull) continue;

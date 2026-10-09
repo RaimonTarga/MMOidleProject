@@ -37,7 +37,9 @@ import type { MonsterEntity, PlayerEntity } from '../src/ecs/entity';
 import { World } from '../src/world/World';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { emitCombatEvent, type CombatContext } from '../src/systems/combat/engine/combatPipeline';
-import { onAbilityNodeTechniqueLanded, refreshAbilityNodeRuntime } from '../src/systems/combat/abilityNodes';
+import {
+  onAbilityNodeBodiesHit, onAbilityNodeTechniqueLanded, refreshAbilityNodeRuntime,
+} from '../src/systems/combat/abilityNodes';
 import { ABILITY_KEYSTONE_MODULES, updateScheduledKeystoneHits } from '../src/systems/combat/keystones';
 import {
   KEYSTONE_ANIMATED,
@@ -170,23 +172,49 @@ const cardFx = (world: World): CardFx[] =>
 }
 
 // ─── An ability node's payoff carries its amplifier's axis ───────────────────
+//
+// On every fire-shape (design §22.10): Sweep's bleed on every body its cleave hit
+// (one card-fx per body), and Binding Strike's on the body it landed on.
 
 {
   const sweep = ABILITY_DATABASE.get('sweep')!;
+  const binding = ABILITY_DATABASE.get('binding-strike')!;
   for (const amplifier of [undefined, 'magnitude', 'targets'] as const) {
-    const world = new World();
-    const player = spawnPlayer(world, `fx-axis-${amplifier ?? 'none'}`, 'sweep',
-      rows('sweep', { packet: 'affliction', ...(amplifier ? { amplifier } : {}) }));
-    const target = spawnMonster(world, 430);
-    spawnMonster(world, 445); // a second body for the targets axis
-    const ctx = hitCtx(world, player, target);
-    world.takeNodeEvents(NODE);
-    onAbilityNodeTechniqueLanded(world, player, sweep, { ctx, target });
-    const drawn = cardFx(world);
-    assert(drawn.length > 0, `the bleed node draws (${amplifier ?? 'no amplifier'})`);
-    for (const e of drawn) {
-      assert(e.axis === amplifier, `the card-fx carries the amplifier's axis: wanted ${amplifier}, got ${e.axis}`);
-      assert(e.keystone === undefined, 'a node payoff is not a keystone');
+    const label = amplifier ?? 'no amplifier';
+    const check = (drawn: CardFx[], what: string): void => {
+      assert(drawn.length > 0, `${what} draws (${label})`);
+      for (const e of drawn) {
+        assert(e.axis === amplifier, `${what}: the card-fx carries the amplifier's axis: wanted ${amplifier}, got ${e.axis}`);
+        assert(e.keystone === undefined, `${what}: a node payoff is not a keystone`);
+      }
+    };
+
+    // Per body hit.
+    {
+      const world = new World();
+      const player = spawnPlayer(world, `fx-axis-sweep-${label}`, 'sweep',
+        rows('sweep', { packet: 'affliction', ...(amplifier ? { amplifier } : {}) }));
+      const target = spawnMonster(world, 430);
+      const second = spawnMonster(world, 445);
+      const ctx = hitCtx(world, player, target);
+      world.takeNodeEvents(NODE);
+      onAbilityNodeBodiesHit(world, player, sweep, [target, second], ctx);
+      const drawn = cardFx(world);
+      check(drawn, 'the bleed on every body the cleave hit');
+      assert(new Set(drawn.map((e) => e.targetId)).size >= 2, 'one per body');
+    }
+
+    // On land.
+    {
+      const world = new World();
+      const player = spawnPlayer(world, `fx-axis-binding-${label}`, 'binding-strike',
+        rows('binding-strike', { packet: 'affliction', ...(amplifier ? { amplifier } : {}) }));
+      const target = spawnMonster(world, 430);
+      spawnMonster(world, 445); // a second body for the targets axis
+      const ctx = hitCtx(world, player, target);
+      world.takeNodeEvents(NODE);
+      onAbilityNodeTechniqueLanded(world, player, binding, { ctx, target });
+      check(cardFx(world), 'the bleed on the rooted body');
     }
   }
 }
