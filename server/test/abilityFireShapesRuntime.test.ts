@@ -21,7 +21,10 @@ import {
   baseRecoveryForTier,
   emptyEquipment,
   getStatusEffect,
+  guardEffectIdForAbility,
+  lineageUnit,
   packetMoment,
+  recoveryEffectIdForAbility,
   resolveAbilityEffect,
   type AbilityNodeProgress,
   type AmplifiedAxis,
@@ -36,7 +39,7 @@ import { World } from '../src/world/World';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { emitCombatEvent, makeCombatContext, type CombatContext } from '../src/systems/combat/engine/combatPipeline';
 import { setAttackTarget } from '../src/systems/combat/ai/targeting';
-import { refreshAbilityNodeRuntime } from '../src/systems/combat/abilityNodes';
+import { refreshAbilityNodeRuntime, updateAbilityNodePulses } from '../src/systems/combat/abilityNodes';
 import { armTechnique } from '../src/systems/player/abilities/abilityArming';
 import { beginAbilityCast, updateAbilityCasts } from '../src/systems/player/abilities/abilityCasting';
 import { addLineageAffliction } from '../src/systems/combat/damage/lineageAffliction';
@@ -508,6 +511,70 @@ function castGuard(world: World, player: PlayerEntity, abilityId: string): void 
   updateCombatState(world, window.remainingMs);
   incoming(world, attacker, player, { evaded: true, evadeMitigation: 0.5 });
   assert(cardFx(world).length === 0, 'a dodge after the window fires nothing');
+}
+
+// ═══ per tick while active ══════════════════════════════════════════════════
+
+/**
+ * Step the clock in world ticks for `ms`, running the pulse driver after the
+ * decay as `World.tick` does, and return how many of the given fx fired.
+ */
+function pulseFor(world: World, ms: number, fx: string): number {
+  const TICK = 100;
+  let fired = 0;
+  for (let t = 0; t < ms; t += TICK) {
+    updateCombatState(world, TICK);
+    updateAbilityNodePulses(world);
+    fired += cardFx(world).filter((e) => e.fx === fx).length;
+  }
+  return fired;
+}
+
+// ─── Endure: per tick while held, and not once it drops ──────────────────────
+
+{
+  const world = new World();
+  const player = spawnPlayer(world, 'fs-endure', {
+    abilityId: 'endure', nodes: rows('endure', { packet: 'bulwark' }),
+  });
+  world.takeNodeEvents(NODE);
+  const PULSE = lineageUnit('pulseMs');
+
+  // Nothing pulses before the hold.
+  assert(pulseFor(world, PULSE * 2, 'bulwark.plating-chip') === 0, 'no hold, no pulse');
+
+  castGuard(world, player, 'endure');
+  assert(cardFx(world).length === 0, 'Endure fires nothing on its cast itself');
+  const hold = getStatusEffect(player.tracksCombat, guardEffectIdForAbility('endure')!);
+  if (!hold || hold.remainingMs <= 0) throw new Error('the hold is up');
+  const heldMs = hold.remainingMs;
+  // The first pulse on the tick the hold comes up, then one per pulse while it holds.
+  updateAbilityNodePulses(world);
+  let fired = cardFx(world).filter((e) => e.fx === 'bulwark.plating-chip').length;
+  fired += pulseFor(world, heldMs, 'bulwark.plating-chip');
+  const expected = Math.ceil(heldMs / PULSE);
+  assert(expected >= 2, 'the fixture holds long enough for more than one pulse');
+  assert(fired === expected, `a ${heldMs} ms hold pulses ${expected} times at ${PULSE} ms, got ${fired}`);
+  assert(pulseFor(world, PULSE * 3, 'bulwark.plating-chip') === 0, 'the pulses stop when the hold drops');
+}
+
+// ─── Recuperate: per tick of the mend ────────────────────────────────────────
+
+{
+  const world = new World();
+  const player = spawnPlayer(world, 'fs-recuperate', {
+    abilityId: 'recuperate', nodes: rows('recuperate', { packet: 'tempo' }),
+  });
+  player.hasHealth.hp = Math.round(player.hasHealth.maxHp / 2); // something to mend
+  world.takeNodeEvents(NODE);
+  castGuard(world, player, 'recuperate');
+  const mend = getStatusEffect(player.tracksCombat, recoveryEffectIdForAbility('recuperate')!);
+  if (!mend || mend.remainingMs <= 0) throw new Error('the mend is up');
+  const mendMs = mend.remainingMs;
+  updateAbilityNodePulses(world);
+  let fired = cardFx(world).filter((e) => e.fx === 'tempo.evasive-blur').length;
+  fired += pulseFor(world, mendMs + lineageUnit('pulseMs'), 'tempo.evasive-blur');
+  assert(fired === Math.ceil(mendMs / lineageUnit('pulseMs')), `the mend pulses while it runs, got ${fired}`);
 }
 
 console.log('abilityFireShapesRuntime: ok');

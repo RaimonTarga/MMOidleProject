@@ -35,6 +35,11 @@
  *   per hit dodged          each successful evade roll while Sidestep's window is
  *                           up, on the evade seam (a graze counts, as it does
  *                           for an `evade` card)
+ *   per tick while active   once per pulse while the Guard's window is up —
+ *                           Endure's hold, Recuperate's mend — on the lineage
+ *                           `pulse` cadence (`LINEAGE_UNITS.pulseMs`), counted
+ *                           by a cooldown as a pulse card's is
+ *                           (`updateAbilityNodePulses`, from `World.tick`)
  *
  * A Guard's payoff is a defensive face's and never deals damage; the shape only
  * moves the moment it is granted.
@@ -68,17 +73,21 @@
  */
 import {
   ABILITY_DATABASE,
+  ABILITY_FIRE_SHAPES,
   ABILITY_SIDESTEP_EFFECT_ID,
   abilityOfferFireShape,
   getAbilityNodeRuntime,
   getStatusEffect,
   guardEffectIdForAbility,
+  isCooldownActive,
+  lineageUnit,
   packetMoment,
   recoveryEffectIdForAbility,
   resolveActiveAbilityKeystones,
   resolveActiveAbilityNodes,
   setAbilityKeystoneRuntime,
   setAbilityNodeRuntime,
+  setCooldown,
   abilityNodeFx,
   type AbilityDef,
   type AbilityFireShape,
@@ -340,6 +349,7 @@ export function registerAbilityNodeKillChain(): void {
 const GUARD_NOT_AT_CAST: ReadonlySet<AbilityFireShape> = new Set<AbilityFireShape>([
   'per hit absorbed',
   'per hit dodged',
+  'per tick while active',
 ]);
 
 /**
@@ -439,4 +449,39 @@ export function registerAbilityNodeIncoming(): void {
     if (evadeFullyAvoided(ctx)) return;
     fireGuardShape(world, ctx.defender, 'per hit absorbed', attacker);
   });
+}
+
+/** The cadence of a "per tick while active" Guard: the lineage `pulse` card's own. */
+const PULSE_MS = lineageUnit('pulseMs');
+/** The per-Guard pulse clock, a cooldown like a pulse card's `lineage.pulse.<card>`. */
+const pulseCd = (abilityId: string): string => `abilityNode.pulse.${abilityId}`;
+
+/**
+ * "Per tick while active" (design §22.10: Endure "per tick while held",
+ * Recuperate "per tick of the mend"): while the Guard's own window is up, its
+ * node fires once per pulse — the first on the tick the window comes up, then
+ * every `pulseMs` until it drops. No new clock: the lineage pulse's cadence,
+ * counted by a cooldown exactly as `updateLineageCards` counts a pulse card's,
+ * and each firing under its lane's cap.
+ *
+ * Run once per world tick from `World.tick`, beside `updateLineageCards`.
+ */
+export function updateAbilityNodePulses(world: World): void {
+  for (const player of world.livePlayers) {
+    const runtime = getAbilityNodeRuntime(player.tracksCombat);
+    if (!runtime) continue;
+    for (const abilityId of Object.keys(runtime)) {
+      // The table first: most node holders own no pulse Guard, and this runs
+      // every tick, so nothing is resolved for an ability whose row says otherwise.
+      if (ABILITY_FIRE_SHAPES.get(abilityId)?.fire !== 'per tick while active') continue;
+      const ability = ABILITY_DATABASE.get(abilityId);
+      if (!ability || ability.slot !== 'guard' || !guardWindowUp(player, ability)) continue;
+      const cs = player.tracksCombat;
+      if (isCooldownActive(cs, pulseCd(abilityId))) continue;
+      const payoffs = withShape(payoffsFor(player, abilityId), 'per tick while active');
+      if (payoffs.length === 0) continue;
+      setCooldown(cs, pulseCd(abilityId), PULSE_MS);
+      fireLineagePayoffs(world, player, payoffs);
+    }
+  }
 }

@@ -80,6 +80,7 @@ import { updateLairDrags } from "../systems/combat/damage/lairDrag";
 import { updateMonsterSlows } from "../systems/combat/status/monsterControl";
 import { syncPlayerBuffs } from "../systems/combat/buffs/buffSync";
 import { updateLineageCards } from '../systems/combat/lineageCards';
+import { updateAbilityNodePulses } from '../systems/combat/abilityNodes';
 import { updateScheduledKeystoneHits } from '../systems/combat/keystones/ability/scheduledHits';
 import { mirrorHpForecast } from "../systems/defense/core/hpForecast";
 import {
@@ -493,6 +494,10 @@ export class World {
     // triggers that answer to time rather than to an event. Before the buff sync,
     // so a window opened this tick shows its clock on the same frame.
     updateLineageCards(this, dt);
+    // Ability nodes that fire per tick while a Guard's window is up (design
+    // §22.10: Endure, Recuperate), on the same pulse cadence and for the same
+    // reason: a window opened this tick shows its clock on the same frame.
+    updateAbilityNodePulses(this);
     syncPlayerBuffs(this, now);
     mirrorHpForecast(this);
     updateAutoIntent(this);
