@@ -1512,6 +1512,7 @@ import { applyMonsterDotToPlayer } from '../src/systems/combat/status/monsterDot
 import { joinParty } from '../src/systems/player/party/partySystem';
 import { activeRecoveryFraction, runRecovery } from '../src/systems/defense/regen/recovery';
 import { applyHealToPlayer } from '../src/systems/defense/regen/healing';
+import { updateWards } from '../src/systems/defense/barrier/wards';
 import { guardKeystoneMagnitude, overflowWardOf } from '../src/systems/combat/keystones';
 import { applyResistedPlayerDebuff } from '../src/systems/combat/status/debuffGuard';
 import { beginEngageLock, engageSequenceHoldsAttack } from '../src/systems/combat/ai/engageSequence';
@@ -1889,12 +1890,35 @@ const stunnedBy = (monster: MonsterEntity, sourceId: string): boolean => {
     for (let tick = 0; tick < 20; tick++) runRecovery(sliced.world, sliced.player, 100, true);
     assert(wardTotal(sliced.player) >= 1, 'the mend\u2019s own ticks past full raise the ward');
 
-    // When the mend has run out, healing past full is just healing.
+    // Always on (design §22.12): with the mend run out, healing past full is still the ward.
     player.tracksCombat.statusEffects = player.tracksCombat.statusEffects.filter((e) => e.id !== 'ability-second-wind-2');
-    const before = wardTotal(player);
     player.holdsWards!.wards = [];
     applyHealToPlayer(player, player.tracksCombat, 10, world);
-    assert(wardTotal(player) === 0 && before === cap, 'no mend, no overflow');
+    const unmended = overflowWardOf(player);
+    assert(unmended !== undefined && unmended.amount === 10, 'no mend running: any overheal still becomes the ward');
+    assert(player.holdsWards!.wards.length === 1, 'still one ward, topped up as built');
+  }
+
+  // A player who never fired Recuperate: out-of-combat regen at full HP fills the
+  // shell before a pull (accepted by the designer), up to the same cap.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-overflow-ooc', {
+      abilityId: 'recuperate', nodes: rows('recuperate', { packet: 'tempo', keystone: 'overflow' }),
+    });
+    const cap = Math.round(player.hasHealth.maxHp * guardKeystoneMagnitude(player, 'overflow'));
+    assert(player.hasHealth.hp === player.hasHealth.maxHp, 'fixture: at full, no mend');
+    world.takeNodeEvents(NODE);
+    // A minute at rest, the ward clock running as World.tick runs it.
+    for (let tick = 0; tick < 600; tick++) {
+      updateWards(world, 100);
+      runRecovery(world, player, 100, false);
+    }
+    const shell = overflowWardOf(player);
+    assert(shell !== undefined && shell.amount === cap, `out-of-combat regen at full fills the one ward to its cap (${shell?.amount} of ${cap})`);
+    assert(player.holdsWards!.wards.length === 1, 'one ward, never a stack of crumbs');
+    assert(cardFx(world).filter((e) => e.fx === OVERFLOW_FX).length === 1,
+      'the full shell is kept standing by the spill: it never lapses and re-forms');
   }
 
   // Without the verb, healing past full is just healing.
