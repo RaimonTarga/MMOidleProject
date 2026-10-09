@@ -33,6 +33,7 @@ export const KEYSTONE_ANIMATED: ReadonlySet<string> = new Set<string>([
   'riposte',
   'backlash',
   'entangle',
+  'unyielding',
 ]);
 
 /** The first verbs (design §22.4, §22.8, §22.11) still drawn by the stub. */

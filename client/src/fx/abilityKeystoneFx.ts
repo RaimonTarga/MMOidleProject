@@ -1544,6 +1544,84 @@ function entangle(scene: GameScene, ev: CardFxEvent): void {
   });
 }
 
+// ── Endure · UNYIELDING — nothing hard-controls you while Endure is up ───────
+
+/**
+ * The Endure face's chips, at full size and run backwards: plating comes ON.
+ * WIND-UP: the body plants — it sinks into its stance, dust at its feet. PAYOFF:
+ * plates fly in from all round and lock onto the body with a heavy ring on the
+ * ground and weight on your screen. LASTING MARK: while Endure holds (`durationMs`,
+ * as applied) the locked plates ring the feet, glinting in turn; at its end they
+ * drop away.
+ */
+function unyielding(scene: GameScene, ev: CardFxEvent): void {
+  const id = ev.playerId;
+  const start = spriteAt(scene, id);
+  if (!start) return;
+  const color = verbColor(ev);
+  const iron = 0xb8c0c8;
+  const { k } = sizeOf(scene, ev);
+  const sprite = scene.state.sprite.get(id);
+  const feetY = (sprite?.displayHeight ?? 48) * 0.42;
+
+  // The plant.
+  posePath(scene, id, [
+    { sy: 0.88, sx: 1.08, ms: 110, ease: 'Quad.easeIn' },
+    { sy: 0.94, sx: 1.04, ms: 160 },
+    { sy: 1, sx: 1, ms: 260, ease: 'Back.easeOut' },
+  ]);
+  dustCloud(scene, start.x, start.y + feetY, [0x9a8a70, 0x6e6250], 0.6 * k);
+
+  // The plates come in and lock.
+  const plates = 6;
+  for (let i = 0; i < plates; i++) {
+    const a = (i / plates) * Math.PI * 2;
+    const plate = scene.add.graphics({ x: start.x + Math.cos(a) * 54 * k, y: start.y + Math.sin(a) * 40 * k })
+      .setDepth(DEPTH.FX).setRotation(a + Math.PI / 2);
+    plate.fillStyle(i % 2 ? iron : color, 1);
+    plate.fillRect(-6 * k, -4 * k, 12 * k, 8 * k);
+    plate.lineStyle(1.5, 0x3a4048, 1);
+    plate.strokeRect(-6 * k, -4 * k, 12 * k, 8 * k);
+    scene.tweens.add({
+      targets: plate, x: start.x + Math.cos(a) * 12 * k, y: start.y - 4 + Math.sin(a) * 14 * k,
+      duration: 130, delay: 80 + i * 12, ease: 'Cubic.easeIn',
+      onComplete: () => fading(scene, plate, 160),
+    });
+  }
+  scene.time.delayedCall(230, () => {
+    if (document.hidden) return;
+    const at = spriteAt(scene, id) ?? start;
+    const flash = scene.add.graphics({ x: at.x, y: at.y - 4 }).setDepth(DEPTH.FX);
+    flash.fillStyle(0xffffff, 0.6);
+    flash.fillEllipse(0, 0, 34 * k, 46 * k);
+    fading(scene, flash, 200);
+    ring(scene, at.x, at.y + feetY, color, { from: 16 * k, scale: 3.4, width: 4, ms: 420, flat: true });
+    ring(scene, at.x, at.y + feetY, iron, { from: 12 * k, scale: 2.4, width: 2.5, ms: 360, flat: true, delay: 60 });
+    if (isOwn(scene, ev)) impact(scene, 'medium', at);
+  });
+
+  // The plates ring the feet while Endure holds; they drop away at its end.
+  const holdMs = Math.max(300, (ev.durationMs ?? 0) - 230);
+  scene.time.delayedCall(230, () => {
+    if (document.hidden) return;
+    followBody(scene, id, holdMs, DEPTH.SPRITE - 1, (g, at, p, body) => {
+      const rx = Math.max(18, body.displayWidth * 0.5);
+      const cy = at.y + body.displayHeight * 0.42;
+      const drop = Math.max(0, p - 0.9) / 0.1;
+      for (let i = 0; i < 4; i++) {
+        const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
+        const glint = (Math.floor(p * holdMs / 350) % 4) === i;
+        const x = at.x + Math.cos(a) * rx;
+        const y = cy + Math.sin(a) * rx * 0.36 + drop * 8;
+        g.fillStyle(glint ? 0xffffff : iron, 0.85 * (1 - drop));
+        g.fillRect(x - 4 * k, y - 3 * k, 8 * k, 6 * k);
+        g.lineStyle(1, glint ? color : 0x3a4048, 0.9 * (1 - drop));
+        g.strokeRect(x - 4 * k, y - 3 * k, 8 * k, 6 * k);
+      }
+    });
+  });
+}
+
 // ── The table ────────────────────────────────────────────────────────────────
 
 /** The bespoke animations, by verb id. Kept in step with `KEYSTONE_ANIMATED`. */
@@ -1565,6 +1643,7 @@ const KEYSTONE_ANIMATIONS: Record<string, KeystoneAnimation> = {
   riposte: riposte,
   backlash: backlash,
   entangle: entangle,
+  unyielding: unyielding,
 };
 
 /**
