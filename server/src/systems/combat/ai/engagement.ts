@@ -3,6 +3,7 @@ import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import type { PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 import { applyCombatEndRites, combatExitDelay } from "../../player/rites/riteOoc";
+import { onAbilityKeystoneCombatEnded } from "../keystones/ability/registry";
 
 export type PlayerCombatPhase = "ACTIVE" | "POST_COMBAT" | "OUT_OF_COMBAT";
 
@@ -44,6 +45,8 @@ export function updateCombatTransitions(world: World, now: number): void {
     if (player.tracksEngagement === undefined) continue;
     if (playerCombatPhase(world, player, now) !== "OUT_OF_COMBAT") continue;
     applyCombatEndRites(world, player);
+    // The fight is over: per-fight keystone state (Relay's set) goes with it.
+    onAbilityKeystoneCombatEnded(world, player);
     clearEngagement(world, player);
   }
 }

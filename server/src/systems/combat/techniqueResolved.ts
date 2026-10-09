@@ -28,7 +28,7 @@
  * lane can never be fired by a defensive cast — design-bible §1's separated
  * budgets, enforced in one place instead of three.
  */
-import type { AbilityDef } from '@mmo-idle/shared';
+import type { AbilityDef, Vec2 } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../ecs/entity';
 import type { World } from '../../world/World';
 import type { CombatContext } from './engine/combatPipeline';
@@ -73,7 +73,17 @@ export function onTechniqueResolved(
   world: World,
   player: PlayerEntity,
   ability: AbilityDef,
-  site: { ctx?: CombatContext; target?: MonsterEntity; now?: number } = {},
+  site: {
+    ctx?: CombatContext;
+    target?: MonsterEntity;
+    now?: number;
+    /** A Conduit cast's physical caster (the ability keystones' delivery body). */
+    casterMinionId?: string;
+    /** A reposition's departure point. */
+    from?: Vec2;
+    /** A cast's target's health share before its payload landed. */
+    targetHealthShare?: number;
+  } = {},
 ): void {
   if (ability.slot !== 'technique') return;
   if (site.ctx) consumeTechniqueWindow(player, site.ctx);

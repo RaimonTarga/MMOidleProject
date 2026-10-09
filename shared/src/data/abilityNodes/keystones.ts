@@ -183,7 +183,7 @@ const trioEntries: [string, Trio][] = [
   ['snipe', [
     verb('snipe', 1, 'pierce', 'Pierce',
       'The shot passes through its target and hits everything in line behind it.',
-      'tempo.ruin-afterimage', 'echo-hit', { delivery: DB, paysShare: true }),
+      'tempo.ruin-afterimage', 'echo-hit', { delivery: DB, paysShare: true, live: true }),
     verb('snipe', 2, 'mark', 'Mark',
       'The sniped body takes your next Technique as if from max reach.',
       'empowered.weak-point', 'vulnerability'),
@@ -194,7 +194,7 @@ const trioEntries: [string, Trio][] = [
   ['imbue-lightning', [
     verb('imbue-lightning', 1, 'fork', 'Fork',
       'Every imbued hit arcs to the nearest other body.',
-      'kill-chain.spread-arc', 'echo-hit', { delivery: DB, paysShare: true }),
+      'kill-chain.spread-arc', 'echo-hit', { delivery: DB, paysShare: true, live: true }),
     verb('imbue-lightning', 2, 'static', 'Static',
       'An imbued hit that kills refunds its charge.',
       'technique.refund-flash', 'technique-refund'),
@@ -205,7 +205,7 @@ const trioEntries: [string, Trio][] = [
   ['detonate', [
     verb('detonate', 1, 'chain-reaction', 'Chain Reaction',
       'A Detonate kill detonates every afflicted body in reach.',
-      'affliction.keystone', 'hemorrhage', { delivery: DB }),
+      'affliction.keystone', 'hemorrhage', { delivery: DB, live: true }),
     verb('detonate', 2, 'fuse', 'Fuse',
       'The detonation lands a second later, doubled on a body still afflicted.',
       'affliction.double-dose', 'hemorrhage', { delivery: DB }),
@@ -216,7 +216,7 @@ const trioEntries: [string, Trio][] = [
   ['cull', [
     verb('cull', 1, 'harvest', 'Harvest',
       'A Cull kill lands the same strike on the nearest body below the same health share, and keeps going while it keeps killing.',
-      'kill-chain.keystone', 'echo-hit', { delivery: DB }),
+      'kill-chain.keystone', 'echo-hit', { delivery: DB, live: true }),
     verb('cull', 2, 'death-sentence', 'Death Sentence',
       'A body Cull hits but does not kill is marked; your next kill of any body also kills it if it is below the threshold.',
       'empowered.weak-point', 'vulnerability'),
@@ -227,7 +227,7 @@ const trioEntries: [string, Trio][] = [
   ['disengage', [
     verb('disengage', 1, 'vanish', 'Vanish',
       "Breaking contact drops you from every nearby monster's aggro until your next hit.",
-      'engagement.sidestep-blur', 'evasion-window'),
+      'engagement.sidestep-blur', 'evasion-window', { live: true }),
     verb('disengage', 2, 'parting-shot', 'Parting Shot',
       'Disengage also arms your next hit as an opening strike.',
       'engagement.opening-flash', 'damage-window'),
@@ -238,7 +238,7 @@ const trioEntries: [string, Trio][] = [
   ['stunning-strike', [
     verb('stunning-strike', 1, 'relay', 'Relay',
       'When the stun ends it jumps to the nearest body not yet stunned this fight.',
-      'control.keystone', 'stun', { delivery: DB }),
+      'control.keystone', 'stun', { delivery: DB, live: true }),
     verb('stunning-strike', 2, 'concussion', 'Concussion',
       'The stun lands on every body around the target, shorter.',
       'empowered.quake-ring', 'stun', { delivery: DB }),
