@@ -176,6 +176,8 @@ function tick(world: World): Map<string, number[]> {
     landed.set(ev.targetId, (landed.get(ev.targetId) ?? 0) + 1);
     if (ev.sourceType !== 'special') continue;
     assert(ev.element === 'fire', `Radiant strikes in the burn's element, got ${ev.element}`);
+    // The client draws the fire leaping from the burning body (W2-D's arc).
+    assert(!!ev.fromId && ev.fromId !== ev.targetId, 'a Radiant strike names the body it radiated from');
     strikes.set(ev.targetId, [...(strikes.get(ev.targetId) ?? []), ev.amount]);
   }
   return strikes;

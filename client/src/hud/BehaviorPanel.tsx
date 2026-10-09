@@ -4,6 +4,7 @@ import { atomWithStorage } from "jotai/utils";
 import { CONDITION_DATABASE, abilityDef, stanceDef } from "@mmo-idle/shared";
 import {
   abilityFiredAtAtom,
+  abilityNodesAtom,
   activeStanceAtom,
   autoAtom,
   autoIntentAtom,
@@ -11,7 +12,9 @@ import {
   knownStancesAtom,
   partyAtom,
   playerIdAtom,
+  playerTierAtom,
 } from "./atoms";
+import { abilityNameFor } from "../ui/abilityName";
 import { composeIntentPresentation } from "./intentPresentation";
 import { GameIcon } from "../ui/GameIcon";
 import {
@@ -34,6 +37,8 @@ export function BehaviorPanel() {
   const stance = useAtomValue(activeStanceAtom);
   const known = useAtomValue(knownStancesAtom);
   const fired = useAtomValue(abilityFiredAtAtom);
+  const tier = useAtomValue(playerTierAtom);
+  const nodes = useAtomValue(abilityNodesAtom);
   const [expanded, setExpanded] = useAtom(expandedAtom);
   const detailsId = useId();
   const [now, setNow] = useState(Date.now);
@@ -116,7 +121,7 @@ export function BehaviorPanel() {
                 decorative
                 fallback="◇"
               />
-              {justFired.name} activated
+              {abilityNameFor(justFired, tier, nodes, "plain")} activated
             </span>
           </div>
         )}

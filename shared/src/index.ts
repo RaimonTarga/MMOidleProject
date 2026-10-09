@@ -44,6 +44,8 @@ export * from './data/families';
 export * from './systems/lineages';
 export * from './systems/rhythm';
 export * from './data/abilityNodes';
+// Not re-exported by the folder's index: flavor reads the node database it builds.
+export * from './data/abilityNodes/flavor';
 export * from './systems/abilityNodes';
 export * from './systems/cores';
 export * from './systems/relics';

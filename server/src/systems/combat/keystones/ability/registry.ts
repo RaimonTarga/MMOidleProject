@@ -305,6 +305,12 @@ export interface AbilityKeystoneFxOptions {
   at?: Vec2;
   /** How long what it applied holds, as applied (a stagger, a root, a spin). */
   durationMs?: number;
+  /**
+   * A WIND-UP beat: the verb's payoff lands this many ms later, with its own
+   * card-fx then (Aftershock's ground cracking before it erupts). The client
+   * draws the wind-up clock off it (design §22.7's premium grammar).
+   */
+  windupMs?: number;
 }
 
 /**
@@ -327,5 +333,8 @@ export function pushAbilityKeystoneFx(
     ...(options.target ? { targetId: options.target.isMonster.id } : {}),
     ...(targetPos ? { targetPos: { ...targetPos } } : {}),
     ...(options.durationMs !== undefined ? { durationMs: options.durationMs } : {}),
+    // The verb's own id: the client keys its bespoke animation on it (design §22.7).
+    keystone: definition.id,
+    ...(options.windupMs !== undefined ? { windupMs: options.windupMs } : {}),
   });
 }

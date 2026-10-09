@@ -25,6 +25,7 @@
  */
 import {
   ABILITY_DATABASE,
+  COOLDOWN_REVERB_ECHO_FX,
   GAME_CONFIG,
   KEYSTONE_DEFINITIONS,
   SKILL_TREE,
@@ -271,6 +272,8 @@ const REVERB = 'cooldown-balanced-t3-a';
   );
   const drawn = playerHits(world.takeNodeEvents(NODE), player.isPlayer.id);
   assert(drawn.length === 1 && drawn[0].empowered === true, 'the client draws the echo as an empowered hit');
+  assert(drawn[0].effects?.includes(COOLDOWN_REVERB_ECHO_FX) === true,
+    'tagged as the echo, so the path draws the bell answering rather than a second execution');
 
   // Only once: the next tick owes nothing.
   hits.length = 0;
@@ -595,6 +598,13 @@ const deliveries = (): SeenHit[] => hits.filter((h) => h.metadata['destroyerDeli
   assert(delivered.length === 1 && delivered[0].targetId === far.isMonster.id, "the execution lands on Snipe's target, from range");
   assert(player.hasEmpoweredAttack === undefined, 'spent');
   assert(beside.hasHealth.hp === besideHp, 'a single-target cast carries no area');
+  // The client draws the execution's own cue at the cast's target: the delivery
+  // is an execution hit on the wire (the Destroyer path's payoff, W2-D).
+  assert(
+    playerHits(world.takeNodeEvents(NODE), player.isPlayer.id)
+      .some((e) => e.execution && e.targetId === far.isMonster.id),
+    "the delivered execution reaches the client as an execution hit on the cast's target",
+  );
 }
 
 // ── Destroyer + Signature: the one execution fires once and counts once ──────

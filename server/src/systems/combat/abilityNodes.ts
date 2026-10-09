@@ -100,6 +100,7 @@ import {
   type AbilityNodeFiringCache,
   type AbilityNodeOption,
   type AbilityNodeRuntime,
+  type AmplifiedAxis,
   type LineagePayoff,
   type PacketId,
 } from '@mmo-idle/shared';
@@ -123,6 +124,7 @@ export function refreshAbilityNodeRuntime(player: PlayerEntity): void {
     const cache: AbilityNodeFiringCache = { option: firing.option, payoff: firing.payoff };
     if (firing.cross) cache.cross = firing.cross;
     if (firing.castSpeedPct !== undefined) cache.castSpeedPct = firing.castSpeedPct;
+    if (firing.amplifier?.amplifies) cache.axis = firing.amplifier.amplifies;
     runtime[abilityId] = cache;
   }
   setAbilityNodeRuntime(player.tracksCombat, runtime);
@@ -172,14 +174,21 @@ function external(
   option: AbilityNodeOption,
   payoff: LineagePayoff,
   shape: AbilityFireShape,
+  axis?: AmplifiedAxis,
 ): ExternalLineagePayoff | null {
   const fx = abilityNodeFx(option.lane, payoff.kind);
   if (!fx) return null;
   const capMs = CAPPED_SHAPES.has(shape) ? packetMoment(option.lane)?.capMs ?? 0 : 0;
   // The payoff is cloned because the dispatcher mutates what it is handed (a
   // bleed rewrites `damagePerTick`, plating-stack stamps `perStackFraction`),
-  // and the cache must survive the fight unchanged.
-  return { key: option.id, fx, payoff: { ...payoff }, ...(capMs > 0 ? { capMs } : {}) };
+  // and the cache must survive the fight unchanged. The amplifier's axis rides
+  // every firing's card-fx — per body, per hit, per pulse alike — so the client
+  // scales or extends the lane's fx by it (design §22.7).
+  return {
+    key: option.id, fx, payoff: { ...payoff },
+    ...(capMs > 0 ? { capMs } : {}),
+    ...(axis ? { axis } : {}),
+  };
 }
 
 /**
@@ -195,13 +204,15 @@ function payoffsFor(player: PlayerEntity, abilityId: string): NodePayoff[] {
   const firing = getAbilityNodeRuntime(player.tracksCombat)?.[abilityId];
   if (!firing) return [];
   const out: NodePayoff[] = [];
-  const add = (option: AbilityNodeOption, payoff: LineagePayoff): void => {
+  // The amplifier moves the PACKET's route, so only the packet's firings carry
+  // its axis; the cross row is a second offer at the cross scalar, unamplified.
+  const add = (option: AbilityNodeOption, payoff: LineagePayoff, axis?: AmplifiedAxis): void => {
     const shape = abilityOfferFireShape(abilityId, option.lane) ?? 'on land';
-    const entry = external(option, payoff, shape);
+    const entry = external(option, payoff, shape, axis);
     if (!entry) return;
     out.push({ lane: option.lane, shape, payoff: entry });
   };
-  add(firing.option, firing.payoff);
+  add(firing.option, firing.payoff, firing.axis);
   if (firing.cross) add(firing.cross.option, firing.cross.payoff);
   return out;
 }

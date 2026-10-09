@@ -25,7 +25,7 @@
  * one home.
  */
 import { ABILITY_DATABASE } from '../../abilities';
-import type { AbilityDef, AbilityNameParts } from '../../abilities';
+import type { AbilityDef } from '../../abilities';
 import { PAYOFF_UNIT } from '../lineages/magnitudes';
 import { packetDefinition } from '../lineages/packets';
 import type { AmplifiedAxis, LineageFxKey, PacketId, PayoffKind } from '../lineages/types';
@@ -200,111 +200,10 @@ export function abilityNodeDescription(option: AbilityNodeOption): string {
   }
 }
 
-// ─── Names grow with the rows (design §22.7, grammar finalised in §22.10) ─────
-
-/** The packet row's adjective, from the payoff (§22.10's table). */
-const PAYOFF_ADJECTIVE: Partial<Record<PayoffKind, string>> = {
-  'echo-hit': 'Echoing',
-  'vulnerability': 'Branding',
-  'plating-shred': 'Sundering',
-  'hemorrhage': 'Bleeding',
-  'poison-stack': 'Venomed',
-  'slow': 'Chilling',
-  'damage-window': 'Opening',
-  'speed-window': 'Quickening',
-  'technique-refund': 'Drilled',
-  'engagement-dr': 'Braced',
-  'recovery-window': 'Mending',
-  'ward': 'Warded',
-  'plating-stack': 'Plated',
-  'evasion-window': 'Fleet',
-};
-
-/** The amplifier row's "of X", from the axis (§22.10's table). */
-const AXIS_OF: Partial<Record<AmplifiedAxis, string>> = {
-  targets: 'of Many',
-  duration: 'of the Lingering',
-  magnitude: 'of Weight',
-  cast: 'of Haste',
-};
-
-/** The cross row's "with Y", from the borrowed payoff's noun (§22.10's table). */
-const PAYOFF_WITH: Partial<Record<PayoffKind, string>> = {
-  'echo-hit': 'with Echoes',
-  'vulnerability': 'with Brands',
-  'plating-shred': 'with Sundering',
-  'hemorrhage': 'with Bleeding',
-  'poison-stack': 'with Venom',
-  'slow': 'with Chill',
-  'damage-window': 'with Opening',
-  'speed-window': 'with Quickening',
-  'technique-refund': 'with Drill',
-  'engagement-dr': 'with Bracing',
-  'recovery-window': 'with Mending',
-  'ward': 'with Ward',
-  'plating-stack': 'with Plate',
-  'evasion-window': 'with Fleetness',
-};
-
-/** The adjective a packet payoff lends the ability's name, if it has one. */
-export function nodePayoffAdjective(payoff: PayoffKind): string | undefined {
-  return PAYOFF_ADJECTIVE[payoff];
-}
-
-/** The "with Y" a borrowed payoff lends the ability's name, if it has one. */
-export function nodeCrossPhrase(payoff: PayoffKind): string | undefined {
-  return PAYOFF_WITH[payoff];
-}
-
-/** The "of X" an amplifier axis lends the ability's name, if it has one. */
-export function nodeAxisPhrase(axis: AmplifiedAxis): string | undefined {
-  return AXIS_OF[axis];
-}
-
-/**
- * The words the ability's ACTIVE rows lend its name (design §22.10), for
- * `abilityDisplayName`: *Bleeding Sweep* → *Bleeding Sweep of Many* → *Bleeding
- * Whirlwind of Many* → *Bleeding Whirlwind of Many, with Echoes*.
- *
- * Each word comes from a row that is actually live: the packet's adjective, the
- * amplifier's "of X" only while it modifies the active packet, the keystone's noun
- * only for a live verb, and the cross's "with Y" only while it borrows a lane that
- * is not the packet's own — so the name never promises a row that does nothing.
- * Every word is derived from the payoff or the axis, never authored per ability.
- */
-export function abilityNodeNameParts(
-  abilityId: string,
-  progress: AbilityNodeProgress | undefined,
-): AbilityNameParts {
-  const tree = ABILITY_NODE_DATABASE.get(abilityId);
-  if (!tree || !progress) return {};
-  const activeOption = (row: AbilityNodeRow): AbilityNodeOption | undefined => {
-    const id = progress.active[row];
-    return id && progress.owned.includes(id)
-      ? tree.options.find((o) => o.id === id && o.row === row)
-      : undefined;
-  };
-  const parts: AbilityNameParts = {};
-  const packet = activeOption('packet');
-  if (packet) {
-    const adjective = nodePayoffAdjective(packet.payoff);
-    if (adjective) parts.adjective = adjective;
-    const amplifier = activeOption('amplifier');
-    if (amplifier && amplifier.modifies === packet.id && amplifier.amplifies) {
-      const of = nodeAxisPhrase(amplifier.amplifies);
-      if (of) parts.of = of;
-    }
-    const cross = activeOption('cross');
-    if (cross && cross.lane !== packet.lane) {
-      const withY = nodeCrossPhrase(cross.payoff);
-      if (withY) parts.with = withY;
-    }
-  }
-  const keystone = activeOption('keystone');
-  const verb = keystone?.keystone ? abilityKeystoneDefinition(keystone.keystone) : undefined;
-  if (verb?.live) parts.noun = verb.name;
-  return parts;
-}
+// ─── Names grow with the rows ────────────────────────────────────────────────
+//
+// The name grammar (design §22.7, §22.10) and the composed icon live in
+// `flavor.ts`, beside each other, because both read the same active rows.
 
 // ─── Ids ─────────────────────────────────────────────────────────────────────
 

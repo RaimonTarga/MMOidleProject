@@ -5,51 +5,6 @@ import { DEPTH } from '../render/depth';
 import type { AttackTint } from './elementTint';
 
 /**
- * Duelist exploding-clip shot — a fat, hot-red tracer with a heavy muzzle flash,
- * a bright impact bloom and a generous spark burst. Reads as a noticeably more
- * powerful round than the standard gunshot.
- */
-export function fxDuelistShot(scene: GameScene, fromX: number, fromY: number, toX: number, toY: number): void {
-  const core = 0xffe2c0;   // near-white hot core
-  const red  = 0xff3322;   // angry red body
-
-  const g = scene.add.graphics().setDepth(DEPTH.FX);
-  g.lineStyle(9, red, 0.22);
-  g.lineBetween(fromX, fromY, toX, toY);
-  g.lineStyle(5, red, 0.85);
-  g.lineBetween(fromX, fromY, toX, toY);
-  g.lineStyle(2, core, 1);
-  g.lineBetween(fromX, fromY, toX, toY);
-  scene.tweens.add({ targets: g, alpha: 0, duration: 140, ease: 'Quad.easeIn', onComplete: () => g.destroy() });
-
-  const muzzle = scene.add.graphics({ x: fromX, y: fromY }).setDepth(DEPTH.FX);
-  muzzle.fillStyle(red, 0.55);
-  muzzle.fillCircle(0, 0, 14);
-  muzzle.fillStyle(core, 0.9);
-  muzzle.fillCircle(0, 0, 7);
-  scene.tweens.add({ targets: muzzle, alpha: 0, scaleX: 2.4, scaleY: 2.4, duration: 120, onComplete: () => muzzle.destroy() });
-
-  const flash = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
-  flash.fillStyle(red, 0.5);
-  flash.fillCircle(0, 0, 26);
-  flash.fillStyle(core, 0.9);
-  flash.fillCircle(0, 0, 13);
-  scene.tweens.add({ targets: flash, alpha: 0, scaleX: 2.8, scaleY: 2.8, duration: 220, ease: 'Quad.easeOut', onComplete: () => flash.destroy() });
-
-  const travelAngleDeg = Math.atan2(toY - fromY, toX - fromX) * 180 / Math.PI;
-  const backDeg = (travelAngleDeg + 180 + 360) % 360;
-  burstFx(scene, 'ptx-spark', toX, toY, 16, 340, {
-    tint: red,
-    speed: { min: 110, max: 340 },
-    angle: { min: backDeg - 50, max: backDeg + 50 },
-    scale: { start: 1.2, end: 0 },
-    alpha: { start: 1, end: 0 },
-    rotate: { min: 0, max: 360 },
-  });
-}
-
-
-/**
  * Bounty Hunter Death Mark detonation — a small, punchy explosion on the target:
  * a hot core flash, an expanding orange shockwave ring, and an outward spark burst.
  */
@@ -94,7 +49,7 @@ export function fxDeathMarkBlast(scene: GameScene, x: number, y: number): void {
  * tracer halo, the muzzle and the debris; the thin bright core keeps the
  * archetype/empowered color, which is what makes a surge readable.
  *
- * The T3 signature shots (Duelist red above; Dualslinger's gold and blue rounds in
+ * The T3 signature shots (Dualslinger's gold and blue rounds in
  * bespoke/slinger.ts) deliberately take no tint: their colors are mechanic tells,
  * not flavor — Dualslinger's alternation IS the on-hit rhythm indicator.
  *
