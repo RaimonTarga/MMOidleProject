@@ -721,6 +721,7 @@ function attackLedger(player: PlayerEntity): string {
 
 import { requestManualAbilityUse } from '../src/systems/player/abilities/abilityFiring';
 import { syncPlayerControlLockout } from '../src/systems/combat/status/playerControlLockout';
+import { runMonsterAttack } from '../src/systems/combat/engine/combat';
 
 /** Fire a Guard the way a hotkey press does; asserts it activated. */
 function fireGuard(world: World, player: PlayerEntity, abilityId: string, now = 1_000_000): void {
@@ -783,6 +784,64 @@ const stunnedBy = (monster: MonsterEntity, sourceId: string): boolean => {
     fireGuard(world, player, 'break-free');
     assert(!stunnedBy(near, player.isPlayer.id), 'no verb, no stagger');
   }
+}
+
+// ─── Brace · RIPOSTE: a melee hit absorbed while Braced staggers the attacker ─
+
+{
+  const RIPOSTE_FX = ABILITY_KEYSTONE_DEFINITIONS.get('riposte')!.fx;
+  /** Clear a body's stagger and its post-stun ward, as if both had run out. */
+  const recover = (monster: MonsterEntity): void => {
+    monster.tracksCombat.statusEffects = monster.tracksCombat.statusEffects
+      .filter((effect) => effect.id !== STUN_EFFECT && effect.id !== 'stun-immune');
+  };
+  /** Ready every Guard again (cooldowns and the one-activation window). */
+  const rested = (player: PlayerEntity): void => { player.tracksCombat.cooldowns = {}; };
+
+  const world = new World();
+  const player = spawnPlayer(world, 'ks-riposte', {
+    abilityId: 'brace', nodes: rows('brace', { packet: 'control', keystone: 'riposte' }),
+  });
+  const brute = spawnMonster(world, 430);
+  const archer = spawnMonster(world, 380, 430);
+  archer.isMonster.isRanged = true;
+  const bodies = [brute, archer];
+  const before = healthOf(bodies);
+
+  // Not Braced: nothing to riposte with.
+  runMonsterAttack(world, brute, player, 1_000_000);
+  assert(!stunnedBy(brute, player.isPlayer.id), 'no Brace, no riposte');
+
+  fireGuard(world, player, 'brace');
+  world.takeNodeEvents(NODE);
+  assert(runMonsterAttack(world, brute, player, 1_000_100) === 'hit', 'the melee blow lands into the Brace');
+  assert(stunnedBy(brute, player.isPlayer.id), 'a melee hit absorbed while Braced staggers the attacker');
+  const drawn = cardFx(world).filter((e) => e.fx === RIPOSTE_FX);
+  assert(drawn.length === 1 && drawn[0]!.targetId === brute.isMonster.id && (drawn[0]!.durationMs ?? 0) > 0,
+    'one card-fx on the staggered attacker, with the hold as applied');
+
+  runMonsterAttack(world, archer, player, 1_000_200);
+  assert(!stunnedBy(archer, player.isPlayer.id), 'a ranged shot is not riposted');
+
+  // Once per attacker per Brace: the same body, its stagger and ward run out, is not
+  // staggered again by the same Brace...
+  recover(brute);
+  runMonsterAttack(world, brute, player, 1_000_300);
+  assert(!stunnedBy(brute, player.isPlayer.id), 'once per attacker per Brace');
+  // ...and a fresh Brace answers it again.
+  rested(player);
+  fireGuard(world, player, 'brace', 1_000_400);
+  runMonsterAttack(world, brute, player, 1_000_500);
+  assert(stunnedBy(brute, player.isPlayer.id), 'a fresh Brace ripostes the same attacker again');
+
+  // A blow dodged outright was not absorbed.
+  const dodged = spawnMonster(world, 440, 360);
+  emitCombatEvent('afterHit', {
+    attacker: dodged, attackerType: 'monster', defender: player, defenderType: 'player',
+    damage: 0, platingMult: 1, drPierce: 0, cancelled: false, metadata: { evaded: true, evadeFull: true },
+  } as unknown as CombatContext, world);
+  assert(!stunnedBy(dodged, player.isPlayer.id), 'a dodged blow is not riposted');
+  assert(healthOf(bodies) === before, 'a Guard verb deals no damage');
 }
 
 console.log('abilityKeystones: ok');

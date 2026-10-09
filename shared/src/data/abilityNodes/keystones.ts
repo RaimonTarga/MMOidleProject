@@ -273,7 +273,7 @@ const trioEntries: [string, Trio][] = [
   ['brace', [
     verb('brace', 1, 'riposte', 'Riposte',
       'A melee hit absorbed while Braced staggers the attacker.',
-      'control.knockdown', 'stun'),
+      'control.knockdown', 'stun', { live: true }),
     verb('brace', 2, 'set', 'Set',
       'Brace also roots you and doubles its footing.',
       'bulwark.keystone', 'plating-stack'),

@@ -21,6 +21,7 @@
  * | Ability | Verb | Seam it reuses |
  * |---|---|---|
  * | Break Free | Backlash | the control ladder's shortest rung (applyStun, ladderStunMs) on every body adjacent to the player |
+ * | Brace | Riposte | an afterHit listener on a melee hit taken while Braced; the shortest rung on the attacker, once per attacker per Brace |
  */
 export * from './registry';
 export * from './scheduledHits';
@@ -31,3 +32,4 @@ export { BREAKTHROUGH_KEYSTONE } from './breakthrough';
 export { OUTBREAK_KEYSTONE, outbreakTag, outbreakTagged } from './outbreak';
 export { DRAGNET_KEYSTONE } from './dragnet';
 export { BACKLASH_KEYSTONE } from './backlash';
+export { RIPOSTE_KEYSTONE } from './riposte';
