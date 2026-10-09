@@ -4,7 +4,7 @@
  * the Squire's own execution slam underneath, so an execution still reads as one.
  * Devout Priest's execution is its holy channel (combatFx); its hits carry a halo.
  */
-import type { PlayerView } from '@mmo-idle/shared';
+import { COOLDOWN_REVERB_ECHO_FX, type PlayerView } from '@mmo-idle/shared';
 import { DEPTH } from '../../render/depth';
 import { burstFx } from '../particles';
 import { drawCracks, ring } from '../bossKit';
@@ -35,24 +35,59 @@ function wings(h: BespokeHit, at: P, open: number, alpha: number, ms: number): v
 
 const batteryCells = (p: PlayerView): number => Math.min(8, buffStacks(p, 'cooldown-battery'));
 
+/**
+ * Reverb's echo clock, 0..1 of its half-cycle still to run, or undefined when no
+ * echo is due — the `cooldown-reverb` tile's `durationPct` (its stack count is
+ * always 1: the echo is a clock, not a bank).
+ */
+function reverbEchoDue(p: PlayerView): number | undefined {
+  const tile = (p.activeBuffs ?? []).find((b) => b.id === 'cooldown-reverb');
+  if (!tile) return undefined;
+  return Math.max(0, Math.min(1, (tile.durationPct ?? 0) / 100));
+}
+
 export const SQUIRE_PATHS: PathTable = {
-  // Reverb — hits leave echo rings that linger; the execution rings them all back.
+  // Reverb — the execution echoes (design §22.5): it lands, and lands again at
+  // half strength when its recharge reaches the halfway mark. The execution is a
+  // struck bell; while the echo is due, hits hum with it, the hum gathering as
+  // its clock (the `cooldown-reverb` tile: remaining over the half-cycle) runs
+  // down; the echo itself is the bell answering — a paler, half-sized peal.
   'cooldown-balanced-t3-a': {
     hit: (h) => {
-      const pct = buffStacks(h.player, 'cooldown-reverb');
-      const echoes = Math.min(4, 1 + Math.floor(pct / 25));
-      for (let i = 0; i < echoes; i++) {
-        ring(h.scene, h.to.x, h.to.y, i % 2 ? 0xe0d8ff : 0xb8a8ff, {
-          from: 10 + i * 6, scale: 1.6, width: 1.5, ms: 520, alpha: 0.55, delay: i * 90,
+      const due = reverbEchoDue(h.player);
+      if (due === undefined) return;
+      const near = 1 - due;
+      const hums = 1 + Math.floor(near * 3);
+      for (let i = 0; i < hums; i++) {
+        // Inward: the echo gathering toward its beat.
+        const g = h.scene.add.graphics({ x: h.to.x, y: h.to.y }).setDepth(DEPTH.FX);
+        g.lineStyle(1.5, i % 2 ? 0xe0d8ff : 0xb8a8ff, 0.3 + 0.55 * near);
+        g.strokeCircle(0, 0, 30 + i * 8);
+        h.scene.tweens.add({
+          targets: g, scaleX: 0.4, scaleY: 0.4, alpha: 0, duration: 420, delay: i * 70, ease: 'Quad.easeIn',
+          onComplete: () => g.destroy(),
         });
       }
+      if (near > 0.8) ring(h.scene, h.to.x, h.to.y, 0xffffff, { from: 8, scale: 2, width: 1.5, ms: 220, alpha: 0.8 });
     },
     payoff: (h) => {
+      if (h.effects?.includes(COOLDOWN_REVERB_ECHO_FX)) {
+        // The echo: the bell answering, paler and half the size.
+        const ghost = h.scene.add.graphics({ x: h.to.x, y: h.to.y }).setDepth(DEPTH.FX).setBlendMode(Phaser.BlendModes.ADD);
+        ghost.fillStyle(0xb8a8ff, 0.35);
+        ghost.fillCircle(0, 0, 20 * h.k);
+        fadeOut(h.scene, ghost, 260, 0, 1.8);
+        for (let i = 0; i < 2; i++) {
+          ring(h.scene, h.to.x, h.to.y, i ? 0xe0d8ff : 0xb8a8ff, { from: 8, scale: 3.2, width: 2.5 - i, ms: 380, delay: i * 90 });
+        }
+        crescent(h.scene, h.to, angleOf(h), 22 * h.k, 4 * h.k, 0xffffff, 0xb8a8ff, 160);
+        feel(h);
+        return;
+      }
       slam(h);
-      const pct = buffStacks(h.player, 'cooldown-reverb');
-      const echoes = Math.min(6, 2 + Math.floor(pct / 20));
+      const echoes = 5;
       for (let i = 0; i < echoes; i++) {
-        // Inward first (the stored hits come back), then out as one peal.
+        // The bell struck: rings drawn in, then out as one peal — the echo's beat is set.
         const g = h.scene.add.graphics({ x: h.to.x, y: h.to.y }).setDepth(DEPTH.FX);
         g.lineStyle(2, i % 2 ? 0xffffff : 0xb8a8ff, 0.9);
         g.strokeCircle(0, 0, 70 + i * 8);
@@ -63,7 +98,7 @@ export const SQUIRE_PATHS: PathTable = {
       }
       h.scene.time.delayedCall(220 + echoes * 40, () => {
         ring(h.scene, h.to.x, h.to.y, 0xb8a8ff, { from: 12, scale: 5, width: 4, ms: 420 });
-        feel(h, echoes >= 6);
+        feel(h, true);
       });
     },
   },

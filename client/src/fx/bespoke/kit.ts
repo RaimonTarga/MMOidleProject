@@ -30,6 +30,8 @@ export interface BespokeHit {
   empowered: boolean;
   /** A cooldown-class execution. */
   execution: boolean;
+  /** The hit's client-effect tags (`ev.effects`), e.g. Reverb's echo. */
+  effects?: readonly string[];
   /** Ascension-driven size multiplier (AttackFlair.scale). */
   k: number;
 }

@@ -25,6 +25,7 @@
  */
 import {
   ABILITY_DATABASE,
+  COOLDOWN_REVERB_ECHO_FX,
   GAME_CONFIG,
   KEYSTONE_DEFINITIONS,
   SKILL_TREE,
@@ -271,6 +272,8 @@ const REVERB = 'cooldown-balanced-t3-a';
   );
   const drawn = playerHits(world.takeNodeEvents(NODE), player.isPlayer.id);
   assert(drawn.length === 1 && drawn[0].empowered === true, 'the client draws the echo as an empowered hit');
+  assert(drawn[0].effects?.includes(COOLDOWN_REVERB_ECHO_FX) === true,
+    'tagged as the echo, so the path draws the bell answering rather than a second execution');
 
   // Only once: the next tick owes nothing.
   hits.length = 0;

@@ -10,7 +10,7 @@ import {
   GAME_CONFIG,
   isRangedPlayerView,
   CADENCE_CURSED_FINALE_FX,
-  COOLDOWN_HOLLOW_FX,
+  COOLDOWN_REVERB_ECHO_FX,
   CADENCE_OVERLOAD_FX,
   CADENCE_VERDICT_EXECUTE_FX,
   COOLDOWN_SUNDER_FX,
@@ -42,7 +42,6 @@ import {
 } from "../fx/particles";
 import { getDotPath, type DotPath } from "../fx/dot";
 import { fxDotTick } from "../fx/dotTick";
-import { fxHollowStrike } from "../fx/hollowStrike";
 import { fxHeavyShell } from "../fx/heavyShell";
 import { fxLightningDagger } from "../fx/lightningDagger";
 import { fxBleedOpen } from "../fx/bleedOpen";
@@ -2445,7 +2444,6 @@ function runFxForAttackStyle(
     ev.empowered &&
     player.combatArchetype === "cadence" &&
     (player.passives["cadence.hemorrhage"] ?? 0) > 0;
-  const isHollowStrike = ev.effects?.includes(COOLDOWN_HOLLOW_FX) ?? false;
   // Equinox: the phase is already on the wire as the aura id, so the attack can
   // match the glow without a protocol change of its own.
   const isEquinox =
@@ -2508,9 +2506,6 @@ function runFxForAttackStyle(
   } else if (isVoidDischarge) {
     // Voidwalker singularity discharge: void implosion → detonation on the target.
     fxVoidDischarge(scene, to.x, to.y);
-  } else if (isHollowStrike) {
-    // No empowered ring, no lunge FX, nothing but a dead tap.
-    fxHollowStrike(scene, to.x, to.y);
   } else if (isBleedOpen) {
     fxBleedOpen(scene, from.x, from.y, to.x, to.y, ev.empowered);
   } else if (isHeavyShell) {
@@ -2552,7 +2547,7 @@ function runFxForAttackStyle(
     const bespoke = flair.stage === 3 ? bespokePathFor(flair.specId) : undefined;
     const hit = {
       scene, player, playerId: ev.playerId, targetId: ev.targetId, from, to,
-      empowered: ev.empowered, execution: ev.execution, k: flair.scale,
+      empowered: ev.empowered, execution: ev.execution, k: flair.scale, effects: ev.effects,
     };
     // The payoff beat: a finisher / discharge / last bullet, or a Squire execution.
     if (ev.empowered || ev.execution) playAscensionRing(scene, flair, to);
@@ -2585,7 +2580,7 @@ function runFxForAttackStyle(
   for (const effectId of ev.effects ?? []) {
     if (effectId === FLASH_CLIENT_EFFECT) continue;
     if (effectId === SWIFTBLADE_CLIENT_EFFECT) continue; // handled above
-    if (effectId === COOLDOWN_HOLLOW_FX) continue; // handled above
+    if (effectId === COOLDOWN_REVERB_ECHO_FX) continue; // drawn by the Reverb path's payoff
     if (effectId === CHANNEL_BEAM_CLIENT_EFFECT) continue; // handled above
     if (effectId === HOLY_FLASH_CLIENT_EFFECT) continue; // handled above
     if (effectId === ALT_ONHIT_CLIENT_EFFECT) continue; // handled above

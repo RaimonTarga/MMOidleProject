@@ -1,5 +1,5 @@
-import { applyStatusEffect } from '@mmo-idle/shared';
-import { registerCombatListener, type CombatContext } from '../../../../../combat/engine/combatPipeline';
+import { COOLDOWN_REVERB_ECHO_FX, applyStatusEffect } from '@mmo-idle/shared';
+import { pushClientEffect, registerCombatListener, type CombatContext } from '../../../../../combat/engine/combatPipeline';
 import { proxyEmpoweredMultiplier } from '../../../../../combat/engine/empoweredAttacks';
 import type { PlayerEntity } from '../../../../../../ecs/entity';
 import { hasPassive } from '../core/helpers';
@@ -88,5 +88,7 @@ export function registerReverbEcho(): void {
     ctx.metadata['mechanicConsumed'] = true;
     ctx.metadata['empoweredMultiplier'] = Number(ctx.metadata['empoweredMultiplier'] ?? 1) * factor;
     ctx.metadata['empoweredBonus'] = Number(ctx.metadata['empoweredBonus'] ?? 0) + (ctx.damage - base);
+    // The client draws the bell answering, not a second execution (W2-D).
+    pushClientEffect(ctx, COOLDOWN_REVERB_ECHO_FX);
   });
 }
