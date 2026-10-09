@@ -1146,6 +1146,89 @@ function sharedBreath(scene: GameScene, ev: CardFxEvent): void {
   }
 }
 
+// ── Cleanse · IMMUNITY — the kind you stripped cannot come back for a while ──
+
+/** A hexagonal shell's outline round a body, `drawn` 0..1 of its six facets. */
+function hexShell(g: Phaser.GameObjects.Graphics, at: P, rx: number, ry: number, drawn: number, color: number, alpha: number): void {
+  const corners: P[] = [];
+  for (let i = 0; i < 6; i++) {
+    const a = -Math.PI / 2 + (i / 6) * Math.PI * 2;
+    corners.push({ x: at.x + Math.cos(a) * rx, y: at.y + Math.sin(a) * ry });
+  }
+  const facets = drawn * 6;
+  g.lineStyle(2.5, color, alpha);
+  for (let i = 0; i < Math.ceil(facets); i++) {
+    const a = corners[i]!;
+    const b = corners[(i + 1) % 6]!;
+    const part = Math.min(1, facets - i);
+    g.lineBetween(a.x, a.y, a.x + (b.x - a.x) * part, a.y + (b.y - a.y) * part);
+  }
+}
+
+/**
+ * The Sustain face's shell, at full size. One event per Cleanse that locked a
+ * kind out. WIND-UP: what was stripped is wrenched out of the body — dark motes
+ * thrown off it. PAYOFF: a hexagonal shell seals round the body facet by facet and
+ * flashes shut. LASTING MARK: the shell holds round the body for the lock's clock
+ * (`durationMs`, as applied), shimmering, and flickers out at its end.
+ */
+function immunity(scene: GameScene, ev: CardFxEvent): void {
+  const id = ev.playerId;
+  const start = spriteAt(scene, id);
+  if (!start) return;
+  const color = verbColor(ev);
+  const pale = lighten(color, 0.55);
+  const { k, sparks } = sizeOf(scene, ev);
+  const sprite = scene.state.sprite.get(id);
+  const rx = Math.max(22, (sprite?.displayWidth ?? 40) * 0.62) * k * 0.8;
+  const ry = Math.max(28, (sprite?.displayHeight ?? 48) * 0.6) * k * 0.8;
+
+  // What was stripped, thrown off the body.
+  burstFx(scene, 'ptx-dot', start.x, start.y - 6, count(10, sparks), 520, {
+    tint: [0x3a2a44, 0x5a6a3a, 0x2a2a2a], speed: { min: 80, max: 180 }, angle: { min: 0, max: 360 },
+    scale: { start: 0.9, end: 0.2 }, alpha: { start: 0.9, end: 0 },
+  });
+  posePath(scene, id, [
+    { sx: 1.06, sy: 0.94, ms: 70 },
+    { sx: 0.97, sy: 1.04, ms: 110 },
+    { sx: 1, sy: 1, ms: 240, ease: 'Back.easeOut' },
+  ]);
+
+  // The shell seals facet by facet, then flashes shut.
+  const seal = scene.add.graphics().setDepth(DEPTH.FX);
+  const t = { p: 0 };
+  scene.tweens.add({
+    targets: t, p: 1, duration: 200, delay: 90, ease: 'Quad.easeOut',
+    onUpdate: () => {
+      const at = spriteAt(scene, id);
+      if (!at || !seal.active) return;
+      seal.clear();
+      hexShell(seal, { x: at.x, y: at.y - 6 }, rx, ry, t.p, pale, 0.95);
+    },
+    onComplete: () => {
+      fading(scene, seal, 160);
+      const at = spriteAt(scene, id);
+      if (!at || document.hidden) return;
+      const flash = scene.add.graphics({ x: at.x, y: at.y - 6 }).setDepth(DEPTH.FX);
+      flash.fillStyle(pale, 0.35);
+      flash.fillEllipse(0, 0, rx * 2, ry * 2);
+      fading(scene, flash, 220, { scaleX: 1.15, scaleY: 1.15 });
+    },
+  });
+
+  // The shell holds for the lock's clock.
+  const holdMs = Math.max(300, (ev.durationMs ?? 0) - 290);
+  scene.time.delayedCall(290, () => {
+    if (document.hidden) return;
+    followBody(scene, id, holdMs, DEPTH.FX - 1, (g, at, p) => {
+      const ending = p > 0.85 ? (Math.sin(p * 120) > 0 ? 0.35 : 0.08) : 1;
+      const shimmer = 0.22 + 0.12 * Math.sin(p * holdMs / 180);
+      hexShell(g, { x: at.x, y: at.y - 6 }, rx, ry, 1, color, shimmer * ending);
+    });
+  });
+  if (isOwn(scene, ev)) impact(scene, 'light', start);
+}
+
 // ── The table ────────────────────────────────────────────────────────────────
 
 /** The bespoke animations, by verb id. Kept in step with `KEYSTONE_ANIMATED`. */
@@ -1162,6 +1245,7 @@ const KEYSTONE_ANIMATIONS: Record<string, KeystoneAnimation> = {
   fork: fork,
   harvest: harvest,
   'shared-breath': sharedBreath,
+  immunity: immunity,
 };
 
 /**
