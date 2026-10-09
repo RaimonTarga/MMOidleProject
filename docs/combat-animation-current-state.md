@@ -109,7 +109,8 @@ Voidwalker's discharge, Devout Priest's holy channel, and the T3 threshold trigg
 The five paths the ability pass re-homed (design §22.5) draw their new rules: Duelist
 chambers a round past the clip on a kill (the old last-bullet glint and red round are
 gone); Warmonger's war drum reads the Artillerist ramp's FILL (`reload-frame-ramp`'s
-`durationPct`, the ramp's cap being twice the clip); Pyromancer's Radiant is fire
+`durationPct`, one clip full like the damage and the glow, design §22.12; past it the drum
+only beats faster with the attack speed); Pyromancer's Radiant is fire
 leaping from the burning body to each body its max-stack tick strikes
 (`fxRadiantArc`, on the struck body's `dot-tick`, whose `fromId` names the burning
 body; the old max-stack burst is gone); Reverb's hits hum while its echo is due,

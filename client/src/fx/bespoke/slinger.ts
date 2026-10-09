@@ -221,10 +221,12 @@ export const SLINGER_PATHS: PathTable = {
   // through it (design §22.5), so the drum picks up where the carry left it.
   'reload-heavy-t3-b': {
     hit: (h) => {
-      // The ramp's FILL (stacks over its cap), as the server projects it on the
-      // tile — never a fixed stack count: Warmonger's cap is twice its clip (80
-      // stacks on a 40-round clip), and a fixed 20-stack scale was white-hot a
-      // quarter of the way up.
+      // The ramp's FILL, as the server projects it on the tile — never a fixed
+      // stack count. The fill is one clip (40 stacks on Warmonger's 40-round clip),
+      // the same top the damage and the barrel glow read (design §22.12), so the
+      // drum runs red-hot exactly when the top damage is reached; past it only the
+      // attack speed climbs, and the drum shows that by beating faster (one beat
+      // per hit) rather than by any more heat.
       const heat = rampFill(h.player);
       const g = h.scene.add.graphics({ x: h.from.x, y: h.from.y + 14 }).setDepth(DEPTH.SPRITE - 1);
       g.fillStyle(0xff3b2f, 0.08 + 0.22 * heat);

@@ -354,11 +354,13 @@ export const t3CombatEntriesA = [
     id: 'reload-heavy-t3-b', name: 'Warmonger', tier: 3,
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-heavy', children: [],
-    description: 'Tempo: a reload halves your ramp instead of resetting it, so a sustained fight climbs past what one clip reaches — toward twice a clip\'s worth of attack speed, with the ramp\'s top damage waiting up there. The barrel glow holds at the carried charge while you reload. Carries 20 extra rounds (a 40-round clip).',
+    description: 'Tempo: a reload halves your ramp instead of resetting it. Your first clip climbs exactly as the frame\'s does, to the top damage at the clip\'s end; every clip after starts from the carried half, so it reaches that top sooner, and only your attack speed keeps climbing past one clip — toward twice a clip\'s worth in a sustained fight. The barrel glow holds at the carried charge while you reload. Carries 20 extra rounds (a 40-round clip).',
     // Design §22.5 (T3 path review): Tempo kept. The Artillerist frame now owns
     // the per-clip ramp (frame brief §1), so the path's own capped ramp (Hair
     // Trigger) is retired and the path re-homed onto the frame's: half of the
     // ramp carries through a reload, and a per-clip climb becomes a sustained one.
+    // Design §22.12: the top damage and the glow measure against ONE clip, so the
+    // first clip is the Artillerist's own; only the attack-speed climb carries past.
     packet: 'tempo',
     cost: 1, statEffects: {},
     // The carry is a shape constant (half), not a tuning number; the ramp's own
