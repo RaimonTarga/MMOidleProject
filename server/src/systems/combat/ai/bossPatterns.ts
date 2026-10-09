@@ -1947,6 +1947,9 @@ const FEINT_ARRIVE_PX = 56;
  * Uses the shared `slow` status and the same tenacity scaling as every other monster
  * debuff, so mobility gear shortens it and Cleanse strips it. `totalMs` is written
  * for the buff-bar clock, per the status conventions.
+ *
+ * It passes the Guard keystones' refusal gate (design §22.12): Immunity refuses the
+ * `slow` kind its Cleanse stripped, and Unyielding a zero-speed pin.
  */
 function applyContactSlow(
   world: World,
@@ -1958,13 +1961,15 @@ function applyContactSlow(
   const target = patternTarget(world, monster);
   if (!target || !canApplyPlayerDebuff(target)) return;
   const durationMs = Math.round(slow.durationMs * harmfulStatusDurationMult(target));
+  const data = { speedMult: slow.speedMult, totalMs: durationMs };
+  if (playerRefusesStatus(target, 'slow', data)) return;
   applyStatusEffect(target.tracksCombat, {
     id: 'slow',
     maxStacks: 1,
     remainingMs: durationMs,
     refreshable: true,
     sourceId: monster.isMonster.id,
-    data: { speedMult: slow.speedMult, totalMs: durationMs },
+    data,
   });
 }
 
