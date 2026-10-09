@@ -22,8 +22,20 @@
  *   on every body hit       once per body the ability's own area struck, from the
  *                           seam that resolved the area (`onAbilityNodeBodiesHit`:
  *                           Sweep's cleave, Slam's circle, Contagion's spread)
+ *   on each hit of a window once per charge a window spends, on that hit's target
+ *                           (`onAbilityNodeWindowHit`, from Imbue's consumer)
  *   on the kill             a Kill chain route on a Technique, on the kill its hit
  *                           makes (below)
+ *
+ * THE RATE CAP. A shape that fires more than once per cast — per hit of a
+ * window, per hit absorbed, per hit dodged, per tick while active — must not
+ * escape the lane's existing rate cap (design §24.2: synergy buys reliability,
+ * never rate). So each of its firings carries its packet moment's `capMs`
+ * (`packetMoment(lane)`: Affliction and Control one per 5 s, Empowered one per
+ * 4 s, the rest uncapped), and `fire()` applies it exactly as it does for a card:
+ * one landed firing per cap per option. A shape that fires once per cast — on
+ * land, on every body hit (one moment that lands on several bodies, like a
+ * `targets` amplifier), on cast, on strip, on the break — carries none, as before.
  *
  * "Lands" is deliberately not "activates": an armed Technique activates when it
  * arms, which can be a swing before it touches anything, and a node that paid out
@@ -45,6 +57,7 @@
 import {
   abilityOfferFireShape,
   getAbilityNodeRuntime,
+  packetMoment,
   resolveActiveAbilityKeystones,
   resolveActiveAbilityNodes,
   setAbilityKeystoneRuntime,
@@ -107,14 +120,33 @@ interface NodePayoff {
   payoff: ExternalLineagePayoff;
 }
 
-/** One node payoff as the dispatcher wants it, or null when it has no declared fx. */
-function external(option: AbilityNodeOption, payoff: LineagePayoff): ExternalLineagePayoff | null {
+/**
+ * The fire-shapes that fire more than once per cast, so each firing carries the
+ * lane's rate cap (see the module header).
+ */
+const CAPPED_SHAPES: ReadonlySet<AbilityFireShape> = new Set<AbilityFireShape>([
+  'on each hit of a window',
+  'per hit absorbed',
+  'per hit dodged',
+  'per tick while active',
+]);
+
+/**
+ * One node payoff as the dispatcher wants it, or null when it has no declared fx.
+ * A payoff on a capped shape carries its packet moment's `capMs`.
+ */
+function external(
+  option: AbilityNodeOption,
+  payoff: LineagePayoff,
+  shape: AbilityFireShape,
+): ExternalLineagePayoff | null {
   const fx = abilityNodeFx(option.lane, payoff.kind);
   if (!fx) return null;
+  const capMs = CAPPED_SHAPES.has(shape) ? packetMoment(option.lane)?.capMs ?? 0 : 0;
   // The payoff is cloned because the dispatcher mutates what it is handed (a
   // bleed rewrites `damagePerTick`, plating-stack stamps `perStackFraction`),
   // and the cache must survive the fight unchanged.
-  return { key: option.id, fx, payoff: { ...payoff } };
+  return { key: option.id, fx, payoff: { ...payoff }, ...(capMs > 0 ? { capMs } : {}) };
 }
 
 /**
@@ -131,13 +163,10 @@ function payoffsFor(player: PlayerEntity, abilityId: string): NodePayoff[] {
   if (!firing) return [];
   const out: NodePayoff[] = [];
   const add = (option: AbilityNodeOption, payoff: LineagePayoff): void => {
-    const entry = external(option, payoff);
+    const shape = abilityOfferFireShape(abilityId, option.lane) ?? 'on land';
+    const entry = external(option, payoff, shape);
     if (!entry) return;
-    out.push({
-      lane: option.lane,
-      shape: abilityOfferFireShape(abilityId, option.lane) ?? 'on land',
-      payoff: entry,
-    });
+    out.push({ lane: option.lane, shape, payoff: entry });
   };
   add(firing.option, firing.payoff);
   if (firing.cross) add(firing.cross.option, firing.cross.payoff);
@@ -151,10 +180,13 @@ function withShape(entries: readonly NodePayoff[], shape: AbilityFireShape): Ext
 
 /**
  * The shapes a Technique's own resolution never pays: they have their own seam
- * and fire there instead (an area's bodies, the kill).
+ * and fire there instead (an area's bodies, a window's hits, the kill). Imbue
+ * Lightning's resolution only opens its window — its node pays on the hits that
+ * spend it.
  */
 const NOT_AT_RESOLUTION: ReadonlySet<AbilityFireShape> = new Set<AbilityFireShape>([
   'on every body hit',
+  'on each hit of a window',
   'on the kill',
 ]);
 
@@ -239,6 +271,27 @@ export function onAbilityNodeBodiesHit(
       own ? { ctx: exchange, target: body } : { target: body },
     );
   }
+}
+
+/**
+ * A Technique's WINDOW spent one charge on the landed hit `ctx` — Imbue
+ * Lightning's, today — so its "on each hit of a window" routes fire once, on
+ * that hit's target, on that hit's exchange (design §22.10: "on each imbued
+ * hit"). Each spent charge is one firing; a capped lane pays at most once per its
+ * cap, however fast the charges go.
+ *
+ * Called from the window's own consumer (`abilityImbue.ts`), once per charge.
+ */
+export function onAbilityNodeWindowHit(
+  world: World,
+  player: PlayerEntity,
+  ability: AbilityDef,
+  ctx: CombatContext,
+): void {
+  if (ability.slot !== 'technique' || ctx.defenderType !== 'monster') return;
+  const payoffs = withShape(payoffsFor(player, ability.id), 'on each hit of a window');
+  if (payoffs.length === 0) return;
+  fireLineagePayoffs(world, player, payoffs, { ctx, target: ctx.defender });
 }
 
 /**

@@ -19,6 +19,7 @@ import {
   abilityNodeId,
   baseRecoveryForTier,
   emptyEquipment,
+  packetMoment,
   resolveAbilityEffect,
   type AbilityNodeProgress,
   type AmplifiedAxis,
@@ -39,6 +40,9 @@ import { beginAbilityCast, updateAbilityCasts } from '../src/systems/player/abil
 import { addLineageAffliction } from '../src/systems/combat/damage/lineageAffliction';
 import { runFormationAttack } from '../src/systems/classes/archetypes/summoner/formationAttack';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
+import { applyImbueWindow, imbueChargesRemaining } from '../src/systems/player/abilities/abilityImbue';
+import { onTechniqueResolved } from '../src/systems/combat/techniqueResolved';
+import { updateCombatState } from '../src/systems/combat/engine/combatState';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -332,6 +336,63 @@ function idsOf(...monsters: MonsterEntity[]): string {
     echoes.length === 2 && targetsOf(echoes) === idsOf(target, beside),
     `the first delivery's cleave over 2 bodies fires twice across ${minions.length} deliveries, got ${echoes.length}`,
   );
+}
+
+// ═══ on each hit of a window ════════════════════════════════════════════════
+
+// ─── Imbue Lightning: on each imbued hit, each spent charge one firing ───────
+
+{
+  const world = new World();
+  const imbue = ABILITY_DATABASE.get('imbue-lightning')!;
+  const effect = resolveAbilityEffect(imbue, { playerTier: 4 });
+  if (effect.kind !== 'imbue') throw new Error('Imbue Lightning imbues');
+  assert(effect.charges >= 4, 'the fixture spends three charges and keeps one');
+  const player = spawnPlayer(world, 'fs-imbue', {
+    abilityId: 'imbue-lightning', nodes: rows('imbue-lightning', { packet: 'tempo' }),
+  });
+  const bodies = [spawnMonster(world, 600), spawnMonster(world, 1_200), spawnMonster(world, 1_800)];
+  world.takeNodeEvents(NODE);
+
+  // The instant path: the window opens and the Technique resolves — with no body
+  // to fire on, so its node waits for the hits.
+  applyImbueWindow(world, player, imbue);
+  onTechniqueResolved(world, player, imbue);
+  assert(cardFx(world).length === 0, 'opening the window fires nothing');
+
+  for (const body of bodies) hit(world, player, body);
+  const fired = cardFx(world).filter((e) => e.fx === 'tempo.ghost-strike');
+  assert(fired.length === 3, `3 charges spent give 3 firings, got ${fired.length}`);
+  assert(targetsOf(fired) === idsOf(...bodies), 'each on the target of the hit that spent the charge');
+  assert(imbueChargesRemaining(player) === effect.charges - 3, 'one charge per hit');
+}
+
+// ─── A capped lane pays at most once per its cap, however fast the charges go ─
+
+{
+  const world = new World();
+  const imbue = ABILITY_DATABASE.get('imbue-lightning')!;
+  const player = spawnPlayer(world, 'fs-imbue-cap', {
+    abilityId: 'imbue-lightning', nodes: rows('imbue-lightning', { packet: 'empowered' }),
+  });
+  const capMs = packetMoment('empowered')?.capMs ?? 0;
+  assert(capMs > 0, 'the Empowered moment carries a rate cap');
+  const target = spawnMonster(world, 600);
+  world.takeNodeEvents(NODE);
+  applyImbueWindow(world, player, imbue);
+  for (let i = 0; i < 3; i++) hit(world, player, target);
+  const brands = cardFx(world).filter((e) => e.fx === 'empowered.weak-point');
+  assert(brands.length === 1, `three charges inside one cap pay once, got ${brands.length}`);
+  // The cap's clock runs out; the next charge pays again.
+  updateCombatState(world, capMs);
+  hit(world, player, target);
+  assert(cardFx(world).filter((e) => e.fx === 'empowered.weak-point').length === 1, 'and again once the cap has run');
+  // With the window spent, a hit pays nothing.
+  while (imbueChargesRemaining(player) > 0) hit(world, player, target);
+  world.takeNodeEvents(NODE);
+  updateCombatState(world, capMs);
+  hit(world, player, target);
+  assert(cardFx(world).length === 0, 'a hit with no charge left fires no node');
 }
 
 console.log('abilityFireShapesRuntime: ok');
