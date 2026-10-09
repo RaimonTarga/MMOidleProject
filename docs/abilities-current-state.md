@@ -814,9 +814,27 @@ tables above:
   `data/abilityNodes/offers.ts` says where and when each ability's packet payoff fires,
   from the closed list, each shape mapped to an existing trigger seam
   (`ABILITY_FIRE_SHAPE_SEAM`); `ABILITY_KILL_TRIGGER_OFFERS` tags the Technique Kill chain
-  offers (Charge, Contagion, Disengage, Snipe, Cull) as firing on the kill. Data only: the
-  node runtime still fires a Technique's node on its resolution and a Guard's on its cast
-  (`abilityFireShapes.test.ts`).
+  offers (Charge, Contagion, Disengage, Snipe, Cull) as firing on the kill
+  (`abilityFireShapes.test.ts`). **Live** (W2-E, `server/src/systems/combat/abilityNodes.ts`;
+  `abilityFireShapesRuntime.test.ts`): packet and cross payoffs fire through each shape's
+  seam, same payoffs and shares —
+  - *on land* at the resolution (Binding Strike, Snipe, Detonate, Cull, Stunning Strike);
+    Disengage on the body it broke from (`departedFrom` on the resolution site); Charge on
+    its target on arrival only — the rush has no contact seam (players move through
+    monster bodies), so "the first body the rush touches" is not wired;
+  - *on every body hit* once per body: Sweep's cleave (first delivery on a formation),
+    Slam's circle (`applyPlayerAoe`'s victims; a Conduit's one summon cast), Contagion's
+    recipients after the copies land. The exchange's own body fires on the exchange; every
+    other body on the owner's Attack, with no evade of its own;
+  - *on each hit of a window*: each Imbue charge spent, on that hit's target;
+  - *on cast* (Second Wind) and *on the break* (Break Free) on guard-cast; *per hit
+    absorbed* (Brace, Bramble Guard: a direct hit not dodged outright while the window is
+    up) and *per hit dodged* (Sidestep) on their own `onDamageTaken` listener after
+    defense; *per tick while active* (Endure, Recuperate) once per `pulseMs` while the
+    window is up, from `World.tick`; *on strip* (Cleanse) once per affliction kind removed.
+  - The per-hit and per-tick shapes carry their packet moment's `capMs` per firing
+    (Affliction, Control 5 s; Empowered 4 s), applied by `fire()` as for a card.
+  - Disengage's Kill chain route still never fires: nothing dies at a departure.
 - **Offers** (§22.10): Binding Strike's Technique refund became an Affliction bleed;
   Snipe's Technique refund the Kill chain on-kill refund; Detonate's Empowered brand a
   Control slow; Charge, Contagion and Disengage's Kill chain speed window the on-kill

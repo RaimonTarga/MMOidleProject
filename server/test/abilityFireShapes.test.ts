@@ -6,8 +6,8 @@
  * fires, from a closed list, and every entry maps to an existing trigger seam
  * (hit, kill, guard-cast, hit-taken, evade, pulse, cleanse, break-free) — a
  * fire-shape with no seam would be a defect to report, never a new primitive.
- * Which shapes today's node runtime already honours is the ability pass report's
- * gap list, not this file's business.
+ * The runtime that honours each shape is pinned by
+ * `abilityFireShapesRuntime.test.ts`, one wiring smoke per shape.
  *
  * Run: node --conditions=development --import tsx test/abilityFireShapes.test.ts
  */

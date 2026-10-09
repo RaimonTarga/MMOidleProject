@@ -50,6 +50,7 @@ import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summo
 import { applyImbueWindow, imbueChargesRemaining } from '../src/systems/player/abilities/abilityImbue';
 import { onTechniqueResolved } from '../src/systems/combat/techniqueResolved';
 import { updateCombatState } from '../src/systems/combat/engine/combatState';
+import { applyStun } from '../src/systems/combat/status/stun';
 import { requestManualAbilityUse } from '../src/systems/player/abilities/abilityFiring';
 import { detachComponent } from '../src/ecs/markerHelpers';
 
@@ -670,6 +671,41 @@ function pulseFor(world: World, ms: number, fx: string): number {
   const fired = cardFx(world).filter((e) => e.fx === 'empowered.weak-point');
   assert(fired.length === 1 && fired[0]!.targetId === target.isMonster.id, 'Charge fires once, on its target on arrival');
   assert(getStatusEffect(passed.tracksCombat, 'vulnerability') === undefined, 'never on a body the rush passed');
+}
+
+// ═══ on cast, on the break: unchanged, through the real cast ════════════════
+
+{
+  // Second Wind: on cast, once.
+  const world = new World();
+  const player = spawnPlayer(world, 'fs-second-wind', {
+    abilityId: 'second-wind', nodes: rows('second-wind', { packet: 'bulwark' }),
+  });
+  player.hasHealth.hp = Math.round(player.hasHealth.maxHp / 2);
+  const attacker = spawnMonster(world, 440);
+  world.takeNodeEvents(NODE);
+  castGuard(world, player, 'second-wind');
+  assert(cardFx(world).filter((e) => e.fx === 'bulwark.plating-chip').length === 1, 'Second Wind fires once on its cast');
+  incoming(world, attacker, player);
+  updateCombatState(world, lineageUnit('pulseMs'));
+  updateAbilityNodePulses(world);
+  assert(cardFx(world).length === 0, 'and on no hit or pulse after it');
+}
+
+{
+  // Break Free: on the break — it only casts while held, so its cast IS the break.
+  const world = new World();
+  const player = spawnPlayer(world, 'fs-break-free', {
+    abilityId: 'break-free', nodes: rows('break-free', { packet: 'barrier-tempo' }),
+  });
+  world.takeNodeEvents(NODE);
+  const free = requestManualAbilityUse(world, player, 'break-free', 1_000);
+  assert(free.state !== 'activated', 'with nothing holding the player, Break Free does not cast');
+  assert(cardFx(world).length === 0, 'so nothing fires');
+  detachComponent(world, player, 'queuesAbilities'); // a refused press queues; clear it
+  applyStun(player.tracksCombat, 2_000, 'tester');
+  castGuard(world, player, 'break-free');
+  assert(cardFx(world).filter((e) => e.fx === 'barrier-tempo.ward-shell').length === 1, 'the break fires once');
 }
 
 console.log('abilityFireShapesRuntime: ok');
