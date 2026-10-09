@@ -317,7 +317,7 @@ const trioEntries: [string, Trio][] = [
   ['break-free', [
     verb('break-free', 1, 'backlash', 'Backlash',
       'Breaking free staggers every adjacent body.',
-      'control.knockdown', 'stun'),
+      'control.knockdown', 'stun', { live: true }),
     verb('break-free', 2, 'slip', 'Slip',
       'You are untargetable for a moment after breaking free.',
       'engagement.sidestep-blur', 'evasion-window'),

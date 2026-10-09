@@ -54,6 +54,7 @@ import { cleansePlayerAfflictions, type RemovedEffect } from "../../combat/statu
 import { activateRecovery } from "../../defense/regen/recovery";
 import { onGuardFired } from "../../defense/charmHooks";
 import { onTechniqueResolved } from "../../combat/techniqueResolved";
+import { onAbilityKeystoneGuardCast } from "../../combat/keystones/ability/guardCast";
 import { repositionPlayer } from "../../combat/damage/knockback";
 import { abilityCooldownKey, guardCooldownMs, startTechniqueCooldown } from "./abilityCooldowns";
 import { beginAbilityCast } from "./abilityCasting";
@@ -586,6 +587,9 @@ function maybeFireGuard(
       playerId: player.isPlayer.id,
     });
   }
+  // This Guard's keystone verb (design §22.4), after its own effect landed and with
+  // what a Cleanse stripped — the Guard side's twin of `onTechniqueResolved`.
+  onAbilityKeystoneGuardCast(world, player, ability, removedEffects ?? []);
   recordAbilityActivation(world, player, abilityId, 'guard', removedEffects);
   return true;
 }

@@ -712,4 +712,77 @@ function attackLedger(player: PlayerEntity): string {
   assert(rootedBy(beside, player.isPlayer.id) === 0, 'a dodged strike nets nothing');
 }
 
+// ═══ The Guard verbs (W2-B): immunity, control of the attacker, or a shared mend ═══
+//
+// A Guard keystone never deals damage (design §22.1): every block below also
+// checks that the bodies it touched lost no health. Guards fire through the real
+// activation path (`requestManualAbilityUse` → `maybeFireGuard`), so each verb is
+// exercised from the one seam it hangs off.
+
+import { requestManualAbilityUse } from '../src/systems/player/abilities/abilityFiring';
+import { syncPlayerControlLockout } from '../src/systems/combat/status/playerControlLockout';
+
+/** Fire a Guard the way a hotkey press does; asserts it activated. */
+function fireGuard(world: World, player: PlayerEntity, abilityId: string, now = 1_000_000): void {
+  const result = requestManualAbilityUse(world, player, abilityId, now);
+  assert(result.state === 'activated', `${abilityId} activates (${result.state}: ${result.reason ?? ''})`);
+}
+
+/** Every body's health, so a block can assert a Guard verb dealt no damage. */
+const healthOf = (bodies: MonsterEntity[]): string => bodies.map((b) => b.hasHealth.hp).join();
+
+/** Stunned by `sourceId`, right now. */
+const stunnedBy = (monster: MonsterEntity, sourceId: string): boolean => {
+  const stun = getStatusEffect(monster.tracksCombat, STUN_EFFECT);
+  return !!stun && stun.remainingMs > 0 && stun.sourceId === sourceId;
+};
+
+// ─── Break Free · BACKLASH: breaking free staggers every adjacent body ───────
+
+{
+  const BACKLASH_FX = ABILITY_KEYSTONE_DEFINITIONS.get('backlash')!.fx;
+  const held = (world: World, player: PlayerEntity): void => {
+    applyStun(player.tracksCombat, 2_000, 'a-boss');
+    syncPlayerControlLockout(world, player);
+  };
+
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-backlash', {
+      abilityId: 'break-free', nodes: rows('break-free', { packet: 'control', keystone: 'backlash' }),
+    });
+    const near = spawnMonster(world, 460);
+    const flank = spawnMonster(world, 420, 470);
+    const far = spawnMonster(world, 900);
+    const bodies = [near, flank, far];
+    const before = healthOf(bodies);
+    held(world, player);
+    world.takeNodeEvents(NODE);
+    fireGuard(world, player, 'break-free');
+    assert(!getStatusEffect(player.tracksCombat, STUN_EFFECT), 'Break Free broke the stun');
+    assert(stunnedBy(near, player.isPlayer.id) && stunnedBy(flank, player.isPlayer.id),
+      'breaking free staggers every adjacent body');
+    assert(!stunnedBy(far, player.isPlayer.id), 'a body out of reach is not staggered');
+    const drawn = cardFx(world).filter((e) => e.fx === BACKLASH_FX);
+    assert(
+      drawn.length === 2 && new Set(drawn.map((e) => e.targetId)).size === 2
+        && drawn.every((e) => (e.durationMs ?? 0) > 0),
+      `one card-fx per staggered body, each once, with the hold as applied (got ${drawn.length})`,
+    );
+    assert(healthOf(bodies) === before, 'a Guard verb deals no damage');
+  }
+
+  // Without the verb, Break Free breaks free and staggers nothing.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-backlash-off', {
+      abilityId: 'break-free', nodes: rows('break-free', { packet: 'control' }),
+    });
+    const near = spawnMonster(world, 460);
+    held(world, player);
+    fireGuard(world, player, 'break-free');
+    assert(!stunnedBy(near, player.isPlayer.id), 'no verb, no stagger');
+  }
+}
+
 console.log('abilityKeystones: ok');
