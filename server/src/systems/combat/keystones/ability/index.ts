@@ -18,6 +18,7 @@
  * | Cull | Harvest | a Cull kill re-strikes (Cull's own strike, applyPlayerAoeTo) the nearest body below the killed target's share, while it kills |
  * | Imbue Lightning | Fork | Imbue's charge consumer (onChargeSpent): each imbued hit arcs a share to the nearest other body |
  * | Stunning Strike | Relay | the landed stun is watched (tick); when it runs out applyStun jumps to the nearest body not stunned this fight |
+ * | Disengage | Vanish | setAggroTarget(null) on every monster near the departure point; selectMonsterAggroCandidate skips the marked player until their next hit |
  */
 export * from './registry';
 export * from './scheduledHits';
@@ -31,3 +32,5 @@ export { PIERCE_KEYSTONE } from './pierce';
 export { HARVEST_KEYSTONE } from './harvest';
 export { FORK_KEYSTONE } from './fork';
 export { RELAY_KEYSTONE, relayCarriers, relayedThisFight } from './relay';
+export { VANISH_KEYSTONE } from './vanish';
+export { VANISH_FLAG, hiddenByVanish, monsterSeesThroughVanish, playerVanished } from './vanishMark';

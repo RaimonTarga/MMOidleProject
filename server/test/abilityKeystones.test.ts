@@ -77,6 +77,11 @@ import { setAggroTarget } from '../src/systems/combat/ai/targeting';
 import { markEngaged, updateCombatTransitions } from '../src/systems/combat/ai/engagement';
 import { updateCombatState } from '../src/systems/combat/engine/combatState';
 import { relayCarriers, relayedThisFight, updateAbilityKeystones } from '../src/systems/combat/keystones';
+import { setFlag } from '@mmo-idle/shared';
+import { VANISH_FLAG, playerVanished } from '../src/systems/combat/keystones';
+import { selectMonsterAggroCandidate } from '../src/systems/combat/ai/monsterTargeting';
+import { createPackCoordination, updatePacks } from '../src/systems/combat/ai/packs';
+import { attachComponent } from '../src/ecs/markerHelpers';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -1178,6 +1183,79 @@ function attackLedger(player: PlayerEntity): string {
   markEngaged(world, player, 0);
   updateCombatTransitions(world, 1_000_000);
   assert(relayedThisFight(player).size === 0, "the fight's set clears when the fight ends");
+}
+
+// ─── Disengage · VANISH: breaking contact drops you from nearby aggro ────────
+
+{
+  const VANISH_FX = ABILITY_KEYSTONE_DEFINITIONS.get('vanish')!.fx;
+  const aggroOn = (monster: MonsterEntity, player: PlayerEntity): boolean =>
+    monster.hasAggroTarget?.targetKind === 'player' && monster.hasAggroTarget.targetId === player.isPlayer.id;
+  const hunt = (world: World, monster: MonsterEntity, player: PlayerEntity): void => {
+    setAggroTarget(world, monster, { id: player.isPlayer.id, kind: 'player' }, 0);
+    setAttackTarget(world, monster, player.isPlayer.id);
+  };
+  const acquires = (world: World, monster: MonsterEntity, player: PlayerEntity): boolean => {
+    const candidate = selectMonsterAggroCandidate(world, monster);
+    return candidate?.kind === 'player' && candidate.entity === player;
+  };
+
+  const world = new World();
+  const player = spawnPlayer(world, 'ks-vanish', {
+    abilityId: 'disengage', nodes: rows('disengage', { packet: 'engagement', keystone: 'vanish' }),
+  });
+  const from = { ...player.hasPosition.current };
+  const contact = spawnMonster(world, 470); // the body the player breaks from
+  const far = spawnMonster(world, 900); // aggroed from outside Disengage's reach
+  const boss = spawnMonster(world, 400, 470);
+  boss.isMonster.isBoss = true;
+  // A pack: one member at the departure point, one out of reach of it.
+  const packNear = spawnMonster(world, 400, 330);
+  const packFar = spawnMonster(world, 1_200);
+  const coordination = createPackCoordination(packNear);
+  coordination.target = { id: player.isPlayer.id, kind: 'player' };
+  attachComponent(world, packNear, 'inPack', { packId: 'ks-vanish-pack', role: 'alpha', coordination });
+  attachComponent(world, packFar, 'inPack', { packId: 'ks-vanish-pack', role: 'follower', coordination });
+  for (const monster of [contact, far, boss, packNear, packFar]) hunt(world, monster, player);
+  setAttackTarget(world, player, contact.isMonster.id);
+  world.takeNodeEvents(NODE);
+
+  assert(requestManualAbilityUse(world, player, 'disengage', 1_000).success, 'Disengage breaks contact');
+  assert(player.hasPosition.current.x < from.x, 'the player moved away');
+  assert(!aggroOn(contact, player) && !contact.hasAttackTarget, 'the body broken from drops the player');
+  assert(aggroOn(far, player), 'a monster out of reach of the departure point keeps its aggro');
+  assert(aggroOn(boss, player), 'a boss keeps its target: its script owns it');
+  assert(
+    !aggroOn(packNear, player) && !aggroOn(packFar, player) && coordination.target === undefined,
+    'a pack hunts as one: a member near the break drops the player for the whole pack',
+  );
+  assert(playerVanished(player), 'the player is marked');
+  const drawn = cardFx(world).filter((e) => e.fx === VANISH_FX);
+  assert(drawn.length === 1 && drawn[0]!.pos.x === from.x, 'one card-fx, left at the departure point');
+
+  // While it stands, nothing re-acquires the player — but a boss still can.
+  const lurker = spawnMonster(world, player.hasPosition.current.x, player.hasPosition.current.y - 70);
+  assert(!acquires(world, lurker, player), 'a monster in pull range does not acquire a vanished player');
+  updatePacks(world, 2_000);
+  assert(!aggroOn(packNear, player) && !aggroOn(packFar, player), 'nor does the pack, on its own clock');
+  const sentinel = spawnMonster(world, player.hasPosition.current.x, player.hasPosition.current.y + 70);
+  sentinel.isMonster.isBoss = true;
+  assert(acquires(world, sentinel, player), 'a boss sees through Vanish');
+
+  // The next landed hit ends it.
+  hit(world, player, lurker);
+  assert(!playerVanished(player), 'the first hit clears the mark');
+  assert(acquires(world, lurker, player), 'and the player can be acquired again');
+
+  // The out-of-combat reset ends one never spent.
+  setFlag(player.tracksCombat, VANISH_FLAG, true);
+  setAttackTarget(world, player, null);
+  for (const monster of world.monsterEntitiesInNode(NODE)) {
+    if (aggroOn(monster, player)) setAggroTarget(world, monster, null, 0);
+  }
+  markEngaged(world, player, 0);
+  updateCombatTransitions(world, 1_000_000);
+  assert(!playerVanished(player), 'a mark never spent ends with the fight');
 }
 
 console.log('abilityKeystones: ok');

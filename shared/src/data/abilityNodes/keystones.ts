@@ -227,7 +227,7 @@ const trioEntries: [string, Trio][] = [
   ['disengage', [
     verb('disengage', 1, 'vanish', 'Vanish',
       "Breaking contact drops you from every nearby monster's aggro until your next hit.",
-      'engagement.sidestep-blur', 'evasion-window'),
+      'engagement.sidestep-blur', 'evasion-window', { live: true }),
     verb('disengage', 2, 'parting-shot', 'Parting Shot',
       'Disengage also arms your next hit as an opening strike.',
       'engagement.opening-flash', 'damage-window'),

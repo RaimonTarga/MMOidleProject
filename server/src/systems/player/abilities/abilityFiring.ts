@@ -438,8 +438,9 @@ function maybeFireTechnique(
     } else {
       // A reposition with no strike rider has nothing further to land, so the
       // move itself is the landing. One that DOES arm pays out from the armed
-      // rider instead, so nothing fires twice for one cooldown.
-      onTechniqueResolved(world, player, ability);
+      // rider instead, so nothing fires twice for one cooldown. The departure
+      // point rides along: Disengage's Vanish drops the aggro of what was near it.
+      onTechniqueResolved(world, player, ability, { from });
     }
     return { activated: true, claimed: true };
   }
