@@ -57,7 +57,10 @@ type CombatEventPayload =
   // damage-number styling) — e.g. Cinder Lord's Conflagration burns. Omitted for
   // plain DoT ticks, which only style the number by element. `sourceId` attributes
   // owned ticks so a player's mechanic HUD never reacts to another player's DoT.
-  | { kind: 'dot-tick'; targetId: string; targetPos: Vec2; amount: number; absorbed?: number; element: DamageElement; sourceType: DotTickSourceType; sourceId?: string; fx?: DotTickFx }
+  // `fromId` names the body the tick RADIATED from (Pyromancer's Radiant: a burn
+  // tick at max stacks strikes every adjacent body), so the client draws the fire
+  // leaping from that body to this one; absent on every ordinary tick.
+  | { kind: 'dot-tick'; targetId: string; targetPos: Vec2; amount: number; absorbed?: number; element: DamageElement; sourceType: DotTickSourceType; sourceId?: string; fx?: DotTickFx; fromId?: string }
   | { kind: 'monster-dodge'; monsterId: string; targetPos?: Vec2 }
   // Player attack whiffed (chaotic weapon family's every-Nth-hit miss). Direct
   // damage was zeroed but on-hit effects (DoT) still applied; renders a "MISS"

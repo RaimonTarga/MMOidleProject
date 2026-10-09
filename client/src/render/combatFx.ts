@@ -15,7 +15,6 @@ import {
   CADENCE_VERDICT_EXECUTE_FX,
   COOLDOWN_SUNDER_FX,
   DOT_FROZEN_FX,
-  DOT_MAXSTACK_BURST_FX,
   DOT_RIMESHATTER_FX,
   lineageForRecipeId,
   lineagePayloadOfHitFx,
@@ -53,7 +52,6 @@ import {
   fxRampageOverload,
   fxCursedFinale,
   fxSunderShatter,
-  fxMaxStackBurst,
   fxRimeshatter,
   fxFrozenShatter,
 } from "../fx/t4Triggers";
@@ -230,6 +228,7 @@ import { fxSwiftbladeStrike } from "../fx/bespoke/striker";
 import { championTether, fxSummonShatter } from "../fx/conduitPaths";
 import { abilityCallout, playAbilityRank } from "../fx/abilityRank";
 import { drawAbilityKeystoneFx } from "../fx/abilityKeystoneFx";
+import { fxRadiantArc } from "../fx/bespoke/apprentice";
 import { axisFx } from "../fx/abilityKeystoneModel";
 import {
   fxCharnelMaul, fxConstrict, fxHindKick, fxOozeEngulf, fxSnap, fxSpiderFang, fxSting,
@@ -1133,9 +1132,6 @@ const TRIGGER_FX_BY_EFFECT: Record<
   [COOLDOWN_SUNDER_FX]: (scene, at) => fxSunderShatter(scene, at.x, at.y),
   [DOT_RIMESHATTER_FX]: (scene, at) => fxRimeshatter(scene, at.x, at.y),
   [DOT_FROZEN_FX]: (scene, at) => fxFrozenShatter(scene, at.x, at.y),
-  // Element-driven so the burst matches the path that filled the bar.
-  [DOT_MAXSTACK_BURST_FX]: (scene, at, args) =>
-    fxMaxStackBurst(scene, at.x, at.y, args.dotPath ?? "poison"),
 };
 
 /**
@@ -1512,6 +1508,8 @@ export function dispatchCombatEvent(
       const spr = state.sprite.get(ev.targetId);
       const tx = spr?.x ?? ev.targetPos.x;
       const ty = spr?.y ?? ev.targetPos.y;
+      // Pyromancer's Radiant: the fire leaps from the burning body to this one.
+      if (ev.fromId) fxRadiantArc(scene, ev.fromId, { x: tx, y: ty });
       if (ev.fx === "conflagration") fxConflagrationTick(scene, tx, ty);
       else if (ev.element === "lightning") fxLightning(scene, tx, ty - 130, tx, ty, true);
       else if (ev.element === "doom") fxDoomTick(scene, tx, ty);

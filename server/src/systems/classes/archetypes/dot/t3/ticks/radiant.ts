@@ -67,7 +67,8 @@ function burnIsFull(player: PlayerEntity, effect: StatusEffect): boolean {
  * Presentation: a `dot-tick` on each struck body in the burn's element (fire), with
  * `sourceType: 'special'` so the struck body's number and flame read as the burn,
  * while the caster's own tick clock (which listens to `class` ticks on its target)
- * does not mistake the splash for its target's tick.
+ * does not mistake the splash for its target's tick; `fromId` names the burning
+ * body, so the client draws the fire leaping from it to each struck body.
  *
  * Returns how many bodies the tick struck.
  */
@@ -117,7 +118,7 @@ export function radiateBurnTick(
     victim.hasHealth.hp -= damage;
     // The same pack wake-up `applyPlayerAoe` gives a body its area damage hurts.
     renewPackPursuit(world, victim, { id: sourceId, kind: 'player' });
-    pushDotTickEvent(world, victim, element, damage, { sourceType: 'special', sourceId });
+    pushDotTickEvent(world, victim, element, damage, { sourceType: 'special', sourceId, fromId: burning.isMonster.id });
     struck++;
     if (victim.hasHealth.hp <= 0) queueKill(victim, damage);
   }
