@@ -90,8 +90,8 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
 
 const CAST_ABILITY = ABILITY_DATABASE.get("slam");
 if (!CAST_ABILITY) throw new Error("slam ability missing");
-// The fixture player is tier 2, so it casts rank II (Slam's ranks differ in
-// wind-up since design §22.12: rank I's is the T1 parity number).
+// The fixture player is tier 2, so it casts rank II (since design §22.13 every
+// Slam rank winds up for rank I's 600 ms, the T1 parity number).
 const CAST_MS = abilityCastMs(CAST_ABILITY, 2);
 assert(CAST_MS > 0, "a cast-shaped ability must declare a castMs wind-up");
 

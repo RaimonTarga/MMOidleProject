@@ -169,10 +169,11 @@ initCombatSystems();
     assert(slamEffect(tier).radius === 150, "Slam's authored radius is 150px at every rank");
     assert(abilityCooldownMs(SLAM, tier) === 10000, "Slam holds a 10s cooldown");
   }
-  // Rank I's wind-up is the lab's parity number (design §22.12), pinned in §6 by
-  // shape only; ranks II–IV keep the 1.6 s wind-up.
-  for (const tier of [2, 3, 4]) {
-    assert(abilityCastMs(SLAM, tier) === 1600, "Slam ranks II–IV hold a 1.6s wind-up");
+  // Slam is a 600 ms cast at every rank (design §22.13): rank I's wind-up is the
+  // lab's parity number (design §22.12), and ranks II–IV carry it unchanged
+  // (measured at T2, reports/ability-pass/measure-slam-t2.md).
+  for (const tier of [1, 2, 3, 4]) {
+    assert(abilityCastMs(SLAM, tier) === 600, `Slam rank ${tier} holds a 600 ms wind-up`);
   }
   assert(
     (slamEffect(2)!.radius ?? 0) > 90,
@@ -281,7 +282,7 @@ initCombatSystems();
     "Slam should begin a wind-up rather than arming the next attack",
   );
   const baselineCastMs = player.isCastingAbility!.castMs;
-  assert(baselineCastMs === 1600, "the authored wind-up should be used as-is");
+  assert(baselineCastMs === 600, "the authored wind-up should be used as-is");
 
   updateAbilityCasts(world, 1_000 + baselineCastMs - 1);
   assert(!!player.isCastingAbility, "the wind-up must hold until it elapses");
@@ -311,7 +312,7 @@ initCombatSystems();
   setAttackTarget(fast.world, fast.player, fastTarget.isMonster.id);
   fireWithReferenceWiring(fast.world, 1_000);
   assert(
-    fast.player.isCastingAbility?.castMs === 1600,
+    fast.player.isCastingAbility?.castMs === 600,
     "attack speed must not shorten Slam's wind-up — that is the whole reason it favours heavy builds",
   );
 
@@ -321,7 +322,7 @@ initCombatSystems();
   setAttackTarget(quick.world, quick.player, quickTarget.isMonster.id);
   fireWithReferenceWiring(quick.world, 1_000);
   assert(
-    (quick.player.isCastingAbility?.castMs ?? 1600) < 1600,
+    (quick.player.isCastingAbility?.castMs ?? 600) < 600,
     "technique.cast-speed-pct should shorten Slam's wind-up through the existing seam",
   );
 }
@@ -368,13 +369,20 @@ initCombatSystems();
     );
   }
   assert(abilityCooldownMs(SLAM, 1) === 10000, "rank I keeps Power Strike's 10 s cooldown");
-  // Rank I stays a cast (§22.9): its wind-up is solved between Charge's, the
-  // shortest authored player wind-up, and the 1.6 s of the ranks above it.
+  // Rank I stays a cast (§22.9): its wind-up is no shorter than Charge's, the
+  // shortest authored player wind-up. Ranks II–IV carry rank I's wind-up
+  // unchanged (design §22.13), so a tier-up raises the multiple on the same clock.
   const chargeWindup = abilityCastMs(ABILITY_DATABASE.get("charge")!, 1);
   assert(
-    abilityCastMs(SLAM, 1) >= chargeWindup && abilityCastMs(SLAM, 1) <= abilityCastMs(SLAM, 2),
-    `rank I's wind-up must sit between Charge's ${chargeWindup} ms and rank II's (got ${abilityCastMs(SLAM, 1)})`,
+    abilityCastMs(SLAM, 1) >= chargeWindup,
+    `rank I's wind-up must be no shorter than Charge's ${chargeWindup} ms (got ${abilityCastMs(SLAM, 1)})`,
   );
+  for (let tier = 2; tier <= SLAM.ranks.length; tier++) {
+    assert(
+      abilityCastMs(SLAM, tier) === abilityCastMs(SLAM, 1),
+      `rank ${tier}'s wind-up must equal rank I's (${abilityCastMs(SLAM, 1)} ms), got ${abilityCastMs(SLAM, tier)}`,
+    );
+  }
 }
 
 // ── 7. Two casts share one channel ───────────────────────────────────────────
