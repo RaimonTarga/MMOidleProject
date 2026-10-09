@@ -68,7 +68,7 @@ import {
   removeStatusEffect,
   setCounter,
 } from '@mmo-idle/shared';
-import { applyResistedPlayerDebuff, canApplyPlayerDebuff } from '../status/debuffGuard';
+import { applyResistedPlayerDebuff, canApplyPlayerDebuff, playerRefusesStatus } from '../status/debuffGuard';
 import { harmfulStatusDurationMult } from '../status/harmfulStatus';
 import { syncPlayerControlLockout } from '../status/playerControlLockout';
 import {
@@ -1375,14 +1375,20 @@ function tickStep(
       // straight through here without applying anything. That is the intent.
       if (state.skippedStepIndexes.includes(state.stepIndex)) return 'done';
       const target = patternTarget(world, monster);
-      if (target && canApplyPlayerDebuff(target)) {
+      const data = { totalMs: step.durationMs, ...(step.data ?? {}) };
+      // THE GUARD KEYSTONES (design §22.12): the status passes the same refusal gate
+      // as every other player debuff writer — Unyielding refuses Deep Freeze's Frozen
+      // and a zero-speed root, Immunity the kind its Cleanse stripped (`sun-mark`,
+      // `slow`, ...). The refusal only: no resistance or duration scaling joins this
+      // write. The cast still resolved, so what it spends is spent all the same.
+      if (target && canApplyPlayerDebuff(target) && !playerRefusesStatus(target, step.effectId, data)) {
         applyStatusEffect(target.tracksCombat, {
           id: step.effectId,
           maxStacks: Math.max(1, step.stacks),
           remainingMs: step.durationMs,
           refreshable: true,
           sourceId: monster.isMonster.id,
-          data: { totalMs: step.durationMs, ...(step.data ?? {}) },
+          data,
         });
         syncPlayerControlLockout(world, target);
       }
