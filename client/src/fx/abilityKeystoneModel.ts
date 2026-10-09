@@ -21,6 +21,7 @@ import { ABILITY_KEYSTONE_DEFINITIONS, type AmplifiedAxis } from '@mmo-idle/shar
  */
 export const KEYSTONE_ANIMATED: ReadonlySet<string> = new Set<string>([
   'whirlwind', 'aftershock', 'breakthrough', 'outbreak', 'dragnet',
+  'chain-reaction',
 ]);
 
 /** The first verbs (design §22.4, §22.8, §22.11) still drawn by the stub. */

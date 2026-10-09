@@ -30,9 +30,10 @@ import {
 import type { GameScene } from '../scenes/GameScene';
 import { DEPTH } from '../render/depth';
 import { nodeToScene } from '../render/sceneCoords';
-import { bodyPose, posePath, releasePose, tweenPose } from './bodyPose';
-import { debrisKick, drawCracks, dustCloud, inhale, lob, ring } from './bossKit';
+import { afterimages, bodyPose, posePath, releasePose, tweenPose } from './bodyPose';
+import { debrisKick, drawCracks, drawSigil, dustCloud, inhale, lob, ring } from './bossKit';
 import { burstFx } from './particles';
+import { bolt, crescent } from './bespoke/kit';
 import { impact } from './impactFeel';
 import { attackFlairOf } from './attackFlair';
 import { payloadFlair } from './lineagePayloadModel';
@@ -90,6 +91,89 @@ function fading(scene: GameScene, g: Phaser.GameObjects.Graphics, ms: number, ex
     targets: g, alpha: 0, duration: ms, delay, ease: 'Cubic.easeOut', ...extra,
     onComplete: () => g.destroy(),
   });
+}
+
+/** The point an event names (`targetPos`, else its delivery body), in the scene. */
+function eventPoint(ev: CardFxEvent): P {
+  const at = ev.targetPos ?? ev.pos;
+  return nodeToScene(at.x, at.y);
+}
+
+/**
+ * Which application of one verb's cast this event is, by caster: a verb that
+ * reaches several bodies at once pushes one card-fx per body in the same batch,
+ * and the animation staggers them down the line (Shared Breath's pulse, Backlash's
+ * ring, a Chain Reaction's links, a Harvest's swings). 0 for the first of a batch.
+ */
+const batches = new Map<string, { at: number; n: number }>();
+const BATCH_MS = 90;
+function batchIndex(ev: CardFxEvent): number {
+  const key = `${ev.playerId}|${ev.keystone ?? ''}`;
+  const now = performance.now();
+  const last = batches.get(key);
+  const n = last && now - last.at <= BATCH_MS ? last.n + 1 : 0;
+  batches.set(key, { at: now, n });
+  return n;
+}
+
+/**
+ * The body nearest a point (a party member or a summon a formation verb reached,
+ * which its event names by position only), within `within` scene px.
+ */
+function bodyNear(scene: GameScene, at: P, kinds: readonly string[], within = 60): string | undefined {
+  let best: string | undefined;
+  let gap = within * within;
+  for (const [id, sprite] of scene.state.sprite) {
+    if (!kinds.includes(scene.state.kind.get(id) ?? '')) continue;
+    const d = (sprite.x - at.x) ** 2 + (sprite.y - at.y) ** 2;
+    if (d <= gap) {
+      gap = d;
+      best = id;
+    }
+  }
+  return best;
+}
+
+/**
+ * A lasting look that follows a body for the server's clock (`durationMs` as
+ * applied): `draw` is handed the body's position and the clock's progress each
+ * frame and paints into one graphics object. It ends on the clock, when the body
+ * leaves the scene, or when `holds` says the server's state is gone.
+ */
+function followBody(
+  scene: GameScene,
+  id: string,
+  durationMs: number,
+  depth: number,
+  draw: (g: Phaser.GameObjects.Graphics, at: P, p: number, sprite: { displayWidth: number; displayHeight: number }) => void,
+  holds?: () => boolean,
+): void {
+  const g = scene.add.graphics().setDepth(depth);
+  const t = { p: 0 };
+  scene.tweens.add({
+    targets: t, p: 1, duration: Math.max(150, durationMs),
+    onUpdate: (tween) => {
+      const sprite = scene.state.sprite.get(id);
+      if (!sprite || (holds && !holds())) {
+        tween.stop();
+        g.destroy();
+        return;
+      }
+      g.clear();
+      draw(g, { x: sprite.x, y: sprite.y }, t.p, sprite);
+    },
+    onComplete: () => g.destroy(),
+  });
+}
+
+/** Whether the server still shows a monster held (its mirrored hard control), once it has been seen. */
+function heldWhileSeen(scene: GameScene, id: string): () => boolean {
+  let seen = false;
+  return () => {
+    const view = scene.state.view.get(id) as MonsterView | undefined;
+    if (view?.hardControlled) seen = true;
+    return !seen || view?.hardControlled === true;
+  };
 }
 
 // ── Sweep · WHIRLWIND — a one-second spin that cleaves every tick ────────────
@@ -343,19 +427,23 @@ function aftershockWindup(
 
 /**
  * A dazed halo over a staggered body: stars turning round its head for the
- * stagger's clock as APPLIED (`durationMs`), ending early when the knockdown look
- * does (the server's stun gone, the body gone). The lasting mark of every
+ * stagger's clock as APPLIED (`durationMs`), ending early when `holds` says the
+ * stun is gone (by default, when the knockdown look ends) or the body does. The lasting mark of every
  * stagger keystone (Breakthrough now; Riposte, Backlash, Tremor and Relay draw it
  * when they land).
  */
-export function dazedHalo(scene: GameScene, targetId: string, durationMs: number, color: number, k: number): void {
+export function dazedHalo(
+  scene: GameScene, targetId: string, durationMs: number, color: number, k: number,
+  holds: () => boolean = () => !!lastingRecord(targetId, 'knockdown'),
+): void {
   const halo = scene.add.graphics().setDepth(DEPTH.FX + 1);
   const t = { p: 0 };
   scene.tweens.add({
     targets: t, p: 1, duration: Math.max(200, durationMs),
-    onUpdate: () => {
+    onUpdate: (tween) => {
       const sprite = scene.state.sprite.get(targetId);
-      if (!sprite || !lastingRecord(targetId, 'knockdown')) {
+      if (!sprite || !holds()) {
+        tween.stop();
         halo.destroy();
         return;
       }
@@ -597,6 +685,61 @@ function dragnet(scene: GameScene, ev: CardFxEvent): void {
   });
 }
 
+// ── Detonate · CHAIN REACTION — a Detonate kill sets off every afflicted body ─
+
+/** When a kill last started a chain, per caster and spot: its burst draws once per kill. */
+const chainOrigins = new Map<string, number>();
+
+/**
+ * One event per body the kill set off, drawn from the body that died. The
+ * Detonate's own wind-up and the kill are the WIND-UP; at the kill the corpse
+ * flares once and a crackling fuse leaps from it to each afflicted body in turn,
+ * down the batch, and lands in a ring (each body's own Detonate burst, the
+ * `dot-detonate` event, draws the explosion it sets off). LASTING MARK: a scorched
+ * star burnt into the ground where the chain began.
+ */
+function chainReaction(scene: GameScene, ev: CardFxEvent): void {
+  const origin = nodeToScene(ev.pos.x, ev.pos.y);
+  const to = spriteAt(scene, ev.targetId) ?? eventPoint(ev);
+  const color = verbColor(ev);
+  const hot = 0xff8a3a;
+  const { k, sparks } = sizeOf(scene, ev);
+  const n = batchIndex(ev);
+
+  const key = `${ev.playerId}|${Math.round(origin.x)}|${Math.round(origin.y)}`;
+  const now = performance.now();
+  if (now - (chainOrigins.get(key) ?? 0) > 400) {
+    chainOrigins.set(key, now);
+    // The corpse goes off: a flash, a ring, and the scorch it leaves.
+    const flash = scene.add.graphics({ x: origin.x, y: origin.y }).setDepth(DEPTH.FX);
+    flash.fillStyle(lighten(hot, 0.6), 0.9);
+    flash.fillCircle(0, 0, 12 * k);
+    fading(scene, flash, 240, { scaleX: 2.6, scaleY: 2.6 });
+    ring(scene, origin.x, origin.y, hot, { from: 10 * k, scale: 3.8, width: 3, ms: 380 });
+    const scorch = scene.add.graphics().setDepth(DEPTH.SPRITE - 1);
+    scorch.fillStyle(0x1a120c, 0.5);
+    scorch.fillEllipse(origin.x, origin.y + 10, 52 * k, 18 * k);
+    drawCracks(scorch, origin.x, origin.y + 10, 38 * k, 1, hot, 0.5, Math.floor(Math.random() * 1e6), 8);
+    fading(scene, scorch, 1_400, {}, 1_200);
+    if (isOwn(scene, ev)) impact(scene, 'medium', origin);
+  }
+
+  // The fuse to this body, one link after another down the batch.
+  scene.time.delayedCall(n * 45, () => {
+    if (document.hidden) return;
+    const end = spriteAt(scene, ev.targetId) ?? to;
+    const cord = scene.add.graphics().setDepth(DEPTH.FX).setBlendMode(Phaser.BlendModes.ADD);
+    bolt(cord, origin, end, hot, 3.5 * k, 9, 7);
+    bolt(cord, origin, end, lighten(color, 0.55), 1.5, 5, 7);
+    fading(scene, cord, 240);
+    ring(scene, end.x, end.y, color, { from: 8 * k, scale: 3, width: 2.5, ms: 300 });
+    burstFx(scene, 'ptx-spark', end.x, end.y, count(8, sparks), 320, {
+      tint: [hot, color, 0xffffff], speed: { min: 90, max: 220 }, angle: { min: 0, max: 360 },
+      scale: { start: 0.9, end: 0 }, alpha: { start: 1, end: 0 },
+    });
+  });
+}
+
 // ── The table ────────────────────────────────────────────────────────────────
 
 /** The bespoke animations, by verb id. Kept in step with `KEYSTONE_ANIMATED`. */
@@ -606,6 +749,7 @@ const KEYSTONE_ANIMATIONS: Record<string, KeystoneAnimation> = {
   breakthrough: breakthrough,
   outbreak: outbreak,
   dragnet: dragnet,
+  'chain-reaction': chainReaction,
 };
 
 /**
