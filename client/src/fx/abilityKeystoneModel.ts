@@ -20,7 +20,7 @@ import { ABILITY_KEYSTONE_DEFINITIONS, type AmplifiedAxis } from '@mmo-idle/shar
  * are, so the report can name them.
  */
 export const KEYSTONE_ANIMATED: ReadonlySet<string> = new Set<string>([
-  'whirlwind',
+  'whirlwind', 'aftershock',
 ]);
 
 /** The first verbs (design §22.4, §22.8, §22.11) still drawn by the stub. */
