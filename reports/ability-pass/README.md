@@ -213,6 +213,14 @@ branch moved a T1 kit fight; every Razorback cell is ±0.0% at every candidate. 
 The boss5 tier-3/4 rerun with Slam in place of Expose Weakness is in `stacking.md`
 ("Rerun"), `w1a-boss5.md` and `w1a-boss5-cells.md` (plan `plan-boss5-w1a.json`).
 
+## 7. After each wave merge, and wave 3 (the conductor, on `feat/ability-pass`)
+
+| file | what | result |
+|---|---|---|
+| `plan-wave1.json`, `wave1.jsonl`, `wave1-parity.md`, `wave1.md` | §3 on the wave-1 merge (`5633b3c4`) | plan byte-identical to `plan-w1a.json`; matrix IDENTICAL to `w1a.jsonl` (1,800/1,800): W1-B..F move no T1 cell; parity broken by W1-A's Slam (12/30) |
+| `plan-final.json`, `final.jsonl`, `final-parity.md`, `final.md` | §3 on the wave-2 merge (`d6e1d84f`, which is also wave 3's tip: no code commit between) | matrix IDENTICAL to `wave1.jsonl` (1,800/1,800): wave 2 moves no T1 cell; **parity broken, 18/30 kit cells inside, worst +8.9% (Conduit, Behemoth)**; every kit cell still wins ≥97% |
+| `final-base.jsonl`, `final-base-identity.md` | §4, the frozen no-band plan | the 180 rows whose abilities survive unchanged (the Razorback's Sweep + Second Wind) IDENTICAL to `reports/legibility/final-base.jsonl`; the 720 rows naming the cut Expose Weakness are refused by the lab (`illegal ability budget`), as §4 predicted |
+
 ## Commits
 
 Branch `feat/ability-pass-baseline` off `feat/ability-pass` (`e56d530e`). Nothing was
