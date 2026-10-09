@@ -73,6 +73,11 @@ export interface PlayerAoeOptions {
 /**
  * Apply splash AoE damage from a player to all monsters within radius of a
  * center point, skipping any excluded monster (the primary target).
+ *
+ * Returns every body the area struck, as the query found them — a body it then
+ * killed included — so a caller whose payoff fires per body struck (an ability
+ * node's "on every body hit", design §22.10) reads the one answer the damage
+ * used rather than asking the circle a second time.
  */
 export function applyPlayerAoe(
   world: World,
@@ -84,11 +89,10 @@ export function applyPlayerAoe(
   physicalSource: "player" | "summon" = "player",
   flavor: PlayerAoeFlavor = {},
   options: PlayerAoeOptions = {},
-): void {
-  applyPlayerAoeTo(
-    world, attacker, playerAoeTargets(world, attacker, center, radius, excludeId),
-    baseDamage, physicalSource, flavor, options,
-  );
+): MonsterEntity[] {
+  const victims = playerAoeTargets(world, attacker, center, radius, excludeId);
+  applyPlayerAoeTo(world, attacker, victims, baseDamage, physicalSource, flavor, options);
+  return victims;
 }
 
 /**

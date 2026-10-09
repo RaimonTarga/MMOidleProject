@@ -315,6 +315,7 @@ const SWEEP_TEMPO_AMP = abilityNodeId('sweep', 'amplifier', 'tempo');
 // Swarm drops the Technique shard. Used here as "a lane the player is NOT running".
 const SWEEP_OTHER_LANE = abilityNodeId('sweep', 'packet', 'technique');
 const BRACE_WARD = abilityNodeId('brace', 'packet', 'barrier-tempo');
+const BREAK_FREE_WARD = abilityNodeId('break-free', 'packet', 'barrier-tempo');
 const sweepTree = ABILITY_NODE_DATABASE.get('sweep')!;
 const braceTree = ABILITY_NODE_DATABASE.get('brace')!;
 const sweepTempo = sweepTree.options.find((o) => o.id === SWEEP_TEMPO)!;
@@ -488,7 +489,9 @@ const braceWard = braceTree.options.find((o) => o.id === BRACE_WARD)!;
     knownAbilities: ['sweep'],
     abilityNodes: { sweep: { owned: [SWEEP_TEMPO], active: { packet: SWEEP_TEMPO } } },
   });
-  const target = monster(470);
+  // Alone in Sweep's circle: the node fires on every body the cleave hits
+  // (design §22.10), so one body is one firing.
+  const target = monster(1100);
 
   // Arming is not landing: the charge is up, nothing has been struck.
   assert(cardFx().length === 0, 'spawning draws nothing');
@@ -512,19 +515,21 @@ const braceWard = braceTree.options.find((o) => o.id === BRACE_WARD)!;
 
 {
   // Both trees are bought, so the cross-family assertions below are about WHICH
-  // node fires rather than about a player who owns nothing.
+  // node fires rather than about a player who owns nothing. Break Free, whose
+  // node fires on the break — its cast (design §22.10); Brace's fires per hit
+  // absorbed instead (`abilityFireShapesRuntime.test.ts`).
   const player = spawn('an-guard', {
-    knownAbilities: ['brace', 'sweep'],
+    knownAbilities: ['break-free', 'sweep'],
     abilityNodes: {
-      brace: { owned: [BRACE_WARD], active: { packet: BRACE_WARD } },
+      'break-free': { owned: [BREAK_FREE_WARD], active: { packet: BREAK_FREE_WARD } },
       sweep: { owned: [SWEEP_TEMPO], active: { packet: SWEEP_TEMPO } },
     },
   });
-  const target = monster(480);
-  const brace = ABILITY_DATABASE.get('brace')!;
+  const target = monster(1300); // alone in Sweep's circle, as above
+  const breakFree = ABILITY_DATABASE.get('break-free')!;
   const secondWind = ABILITY_DATABASE.get('second-wind')!;
 
-  onGuardFired(world, player, brace);
+  onGuardFired(world, player, breakFree);
   const fired = cardFx();
   assert(fired.length === 1, `one cast, one application, got ${fired.length}`);
   assert(fired[0].fx === 'barrier-tempo.ward-shell', `the face's own fx, got ${fired[0].fx}`);
@@ -610,8 +615,12 @@ const braceWard = braceTree.options.find((o) => o.id === BRACE_WARD)!;
       },
     },
   });
-  const primary = monster(430);
-  const neighbour = world.createMonster(NODE, 'plains-slime', { x: 450, y: 400 })!;
+  // The neighbour stands outside Sweep's own circle (90) but inside the
+  // amplifier's reach (`contagionRadius`, 120): Sweep fires on every body its
+  // cleave hits (design §22.10), so a neighbour inside the cleave would be a
+  // second firing, not the amplified second body this block is about.
+  const primary = monster(1600);
+  const neighbour = world.createMonster(NODE, 'plains-slime', { x: 1705, y: 400 })!;
   neighbour.hasHealth.maxHp = 100_000;
   neighbour.hasHealth.hp = 100_000;
   world.takeNodeEvents(NODE);
@@ -918,14 +927,16 @@ function richWallet(abilityId: string): AbilityNodeWallet {
     `packet and cross each draw once, got ${fired.join()}`,
   );
 
-  // A Guard casts its cross too.
-  const braceTree = ABILITY_NODE_DATABASE.get('brace')!;
-  const braceCross = braceTree.options.find((o) => o.id === abilityNodeId('brace', 'cross', 'bulwark'))!;
+  // A Guard casts its cross too (Break Free: its node fires on the break, its cast).
+  const breakFreeTree = ABILITY_NODE_DATABASE.get('break-free')!;
+  const breakFreeCross = breakFreeTree.options.find((o) => o.id === abilityNodeId('break-free', 'cross', 'bulwark'))!;
   const guard = spawn('an-cross-guard', {
-    knownAbilities: ['brace'],
-    abilityNodes: { brace: { owned: [BRACE_WARD, braceCross.id], active: { packet: BRACE_WARD, cross: braceCross.id } } },
+    knownAbilities: ['break-free'],
+    abilityNodes: {
+      'break-free': { owned: [BREAK_FREE_WARD, breakFreeCross.id], active: { packet: BREAK_FREE_WARD, cross: breakFreeCross.id } },
+    },
   });
-  onGuardFired(world, guard, ABILITY_DATABASE.get('brace')!);
+  onGuardFired(world, guard, ABILITY_DATABASE.get('break-free')!);
   const guarded = cardFx().map((e) => e.fx).sort();
   assert(
     guarded.join() === 'barrier-tempo.ward-shell,bulwark.plating-chip',

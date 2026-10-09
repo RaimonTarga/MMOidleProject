@@ -516,7 +516,11 @@ still decide *when* it fires.
   so the node path inherits the evade early-return, max-wins debuff records, and the
   amplified-target spread without restating any of them). A node fires on the ability's
   **resolution** (landing/casting), not its activation — an armed Charge the fight never
-  consumed pays nothing.
+  consumed pays nothing. WHERE it fires is the ability's §22.10 fire-shape (live since the
+  ability pass, W2-E: on every body an area hit, per imbued hit, per hit absorbed or
+  dodged, per pulse while a Guard's window is up, per kind stripped — see
+  `abilities-current-state.md`), and the per-hit and per-tick shapes pay under their
+  packet's `capMs`.
 - **Client:** `client/src/ui/AbilityNodeRows.tsx` on the Abilities panel, the same card
   component the lineage tree uses.
 - Binary payoffs (`stun`, `cleanse`) are never offered — "half a stun" is no stun.

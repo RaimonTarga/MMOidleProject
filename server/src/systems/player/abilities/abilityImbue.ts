@@ -17,6 +17,7 @@
  * evaporates on death and on logout with no explicit teardown.
  */
 import {
+  ABILITY_DATABASE,
   ABILITY_IMBUE_EFFECT_ID,
   ABILITY_IMBUE_FX,
   applyStatusEffect,
@@ -32,6 +33,15 @@ import type { PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 import { techniquePowerPctFor } from "./abilityKata";
 import { onAbilityKeystoneChargeSpent } from "../../combat/keystones/ability/registry";
+import { onAbilityNodeWindowHit } from "../../combat/abilityNodes";
+
+/**
+ * The Techniques whose window this is: every ability that applies an `imbue`
+ * effect (Imbue Lightning, today). Their node fires on each charge the window
+ * spends (design §22.10, "on each imbued hit").
+ */
+const IMBUE_ABILITIES = [...ABILITY_DATABASE.values()]
+  .filter((ability) => ability.ranks.some((rank) => rank.effect.kind === "imbue"));
 
 /**
  * Apply the window. Charges and magnitude both come from the authored rank, with
@@ -148,9 +158,12 @@ export function initImbueSystem(): void {
     }
 
     tagImbueHit(ctx);
-    // This hit is an imbued hit: a keystone verb that rides the window's hits
-    // (design §22.4's Fork) hangs off the charge it just spent — once per
-    // charge, whatever body delivered the hit.
+
+    // One spent charge is one firing of the window's node, on this hit's target.
+    for (const ability of IMBUE_ABILITIES) onAbilityNodeWindowHit(world, player, ability, ctx);
+    // Then the keystone verb that rides the window's hits (design §22.4's Fork),
+    // node before verb as at every Technique resolution: once per charge,
+    // whatever body delivered the hit.
     onAbilityKeystoneChargeSpent(world, player, ctx);
   });
 }

@@ -55,6 +55,7 @@ import { activateRecovery } from "../../defense/regen/recovery";
 import { onGuardFired } from "../../defense/charmHooks";
 import { onTechniqueResolved } from "../../combat/techniqueResolved";
 import { onAbilityKeystoneGuardCast } from "../../combat/keystones/ability/guardCast";
+import { onAbilityNodeStripped } from "../../combat/abilityNodes";
 import { repositionPlayer } from "../../combat/damage/knockback";
 import { abilityCooldownKey, guardCooldownMs, startTechniqueCooldown } from "./abilityCooldowns";
 import { beginAbilityCast } from "./abilityCasting";
@@ -441,7 +442,13 @@ function maybeFireTechnique(
       // move itself is the landing. One that DOES arm pays out from the armed
       // rider instead, so nothing fires twice for one cooldown. The departure
       // point rides along: Disengage's Vanish drops the aggro of what was near it.
-      onTechniqueResolved(world, player, ability, { from });
+      // A backward one (Disengage) also broke from `target` — the threat it
+      // reacted to — which is where its node fires (design §22.10: "on the body
+      // you broke from").
+      onTechniqueResolved(world, player, ability, {
+        from,
+        ...(effect.toward ? {} : { departedFrom: target }),
+      });
     }
     return { activated: true, claimed: true };
   }
@@ -571,6 +578,9 @@ function maybeFireGuard(
   }
 
   onGuardFired(world, player, ability);
+  // Cleanse's node fires on the strip, once per affliction kind it removed
+  // (design §22.10: "on strip, sized by what it removed").
+  if (removedEffects) onAbilityNodeStripped(world, player, ability, removedEffects);
 
   setCooldown(player.tracksCombat, cdKey, guardCooldownMs(player, ability));
   setCooldown(player.tracksCombat, GUARD_WINDOW_KEY, GUARD_WINDOW_MS);

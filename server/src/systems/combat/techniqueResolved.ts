@@ -68,6 +68,11 @@ import { destroyerOnTechniqueResolved } from '../classes/archetypes/cooldown/t3/
  *
  * `now` is the tick's clock, passed by a resolution that may land an attack of
  * its own (the cast loop's, for the Destroyer's delivery).
+ *
+ * `departedFrom` is the body a backward reposition broke from (Disengage's
+ * threat). It is NOT a `target`: nothing was struck, so the Destroyer must not
+ * deliver an execution to it and a `technique-cast` card keeps its own read. Only
+ * the ability node reads it, for "on the body you broke from" (design §22.10).
  */
 export function onTechniqueResolved(
   world: World,
@@ -83,6 +88,8 @@ export function onTechniqueResolved(
     from?: Vec2;
     /** A cast's target's health share before its payload landed. */
     targetHealthShare?: number;
+    /** The body a backward reposition broke from (see above; the ability node's read only). */
+    departedFrom?: MonsterEntity;
   } = {},
 ): void {
   if (ability.slot !== 'technique') return;
