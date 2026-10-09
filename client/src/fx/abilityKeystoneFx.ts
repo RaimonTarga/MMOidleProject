@@ -39,7 +39,8 @@ import { payloadFlair } from './lineagePayloadModel';
 import { drawPayloadFx, laneColor } from './lineagePayloadFx';
 import { lastingRecord } from './lineagePayloadStates';
 import {
-  AFTERSHOCK_MARK_MS, OUTBREAK_MARK_MS, OUTBREAK_SWELL_MS, WHIRLWIND_COIL_MS,
+  AFTERSHOCK_MARK_MS, DRAGNET_BATCH_MS, DRAGNET_FLIGHT_MS, OUTBREAK_MARK_MS, OUTBREAK_SWELL_MS,
+  WHIRLWIND_COIL_MS,
 } from './abilityKeystoneModel';
 
 type CardFxEvent = Extract<CombatEvent, { kind: 'card-fx' }>;
@@ -512,6 +513,90 @@ function outbreak(scene: GameScene, ev: CardFxEvent): void {
   });
 }
 
+// ── Binding Strike · DRAGNET — the root takes every body adjacent ────────────
+
+/** The bodies one cast's net took so far, per caster: they arrive as one batch. */
+const dragnetBatches = new Map<string, { at: number; bodies: string[] }>();
+
+/** A net's mesh: a diamond lattice in a flat ellipse, drawn at the origin. */
+function drawNet(g: Phaser.GameObjects.Graphics, rx: number, ry: number, color: number, alpha: number): void {
+  g.lineStyle(1.5, color, alpha);
+  g.strokeEllipse(0, 0, rx * 2, ry * 2);
+  for (let i = -2; i <= 2; i++) {
+    const off = (i / 2.5) * rx;
+    g.lineBetween(off - rx * 0.45, -ry * 0.85, off + rx * 0.45, ry * 0.85);
+    g.lineBetween(off + rx * 0.45, -ry * 0.85, off - rx * 0.45, ry * 0.85);
+  }
+}
+
+/**
+ * One event per body the net took. WIND-UP: a weighted net thrown from the
+ * delivering body (a Conduit's summon on a Conduit), readable in flight. PAYOFF: it
+ * lands and spreads over the body, the shackle clamps its feet (the Control
+ * lane's shackle, for the root's clock as APPLIED, less the flight), and every
+ * body this one cast netted is tied to the others by a strand of the same net.
+ * LASTING MARK: the shackle's held look until the root ends or breaks.
+ */
+function dragnet(scene: GameScene, ev: CardFxEvent): void {
+  const bodyId = ev.targetId;
+  if (!bodyId) return;
+  const from = nodeToScene(ev.pos.x, ev.pos.y);
+  const to = spriteAt(scene, bodyId) ?? keystoneScenePoint(ev);
+  const color = verbColor(ev);
+  const rope = 0x6b5a3e;
+  const { k } = sizeOf(scene, ev);
+
+  // The batch: the bodies one cast netted arrive together.
+  const now = performance.now();
+  const batch = dragnetBatches.get(ev.playerId);
+  const fresh = !batch || now - batch.at > DRAGNET_BATCH_MS;
+  const bodies = fresh ? [] : batch.bodies;
+  dragnetBatches.set(ev.playerId, { at: now, bodies: [...bodies, bodyId] });
+
+  lob(scene, { x: from.x, y: from.y - 10 }, { x: to.x, y: to.y - 8 }, DRAGNET_FLIGHT_MS, 26 * k, (g) => {
+    drawNet(g, 9 * k, 6 * k, rope, 0.95);
+    g.lineStyle(1, lighten(color, 0.4), 0.8);
+    g.strokeCircle(0, 0, 3);
+  }, () => {
+    if (document.hidden) return;
+    const at = spriteAt(scene, bodyId) ?? to;
+    const sprite = scene.state.sprite.get(bodyId);
+    const w = sprite?.displayWidth ?? 48;
+    // The net spreads over the body and settles to its feet.
+    const net = scene.add.graphics({ x: at.x, y: at.y - 4 }).setDepth(DEPTH.FX);
+    drawNet(net, Math.max(18, w * 0.55), Math.max(12, w * 0.4), rope, 0.95);
+    drawNet(net, Math.max(18, w * 0.55) * 0.96, Math.max(12, w * 0.4) * 0.96, lighten(color, 0.3), 0.6);
+    net.setScale(0.35);
+    scene.tweens.add({
+      targets: net, scaleX: 1, scaleY: 1, y: at.y + 6, duration: 140, ease: 'Back.easeOut',
+      onComplete: () => fading(scene, net, 420, {}, 160),
+    });
+    // The shackle, for what is left of the root's clock after the flight.
+    const held = ev.durationMs !== undefined ? Math.max(1, ev.durationMs - DRAGNET_FLIGHT_MS) : undefined;
+    drawPayloadFx(scene, held !== undefined ? { ...ev, durationMs: held } : ev, 'control.shackle', 1.1);
+    // A strand of the same net to every body this cast already took.
+    for (const otherId of bodies) {
+      const other = spriteAt(scene, otherId);
+      if (!other) continue;
+      const strand = scene.add.graphics().setDepth(DEPTH.SPRITE - 1);
+      const mid = { x: (at.x + other.x) / 2, y: (at.y + other.y) / 2 + 10 };
+      strand.lineStyle(3, rope, 0.85);
+      strand.beginPath();
+      strand.moveTo(at.x, at.y + 12);
+      strand.lineTo(mid.x, mid.y + 6);
+      strand.lineTo(other.x, other.y + 12);
+      strand.strokePath();
+      strand.lineStyle(1.2, lighten(color, 0.4), 0.9);
+      strand.beginPath();
+      strand.moveTo(at.x, at.y + 12);
+      strand.lineTo(mid.x, mid.y + 6);
+      strand.lineTo(other.x, other.y + 12);
+      strand.strokePath();
+      fading(scene, strand, 600, {}, 500);
+    }
+  });
+}
+
 // ── The table ────────────────────────────────────────────────────────────────
 
 /** The bespoke animations, by verb id. Kept in step with `KEYSTONE_ANIMATED`. */
@@ -520,6 +605,7 @@ const KEYSTONE_ANIMATIONS: Record<string, KeystoneAnimation> = {
   aftershock: aftershock,
   breakthrough: breakthrough,
   outbreak: outbreak,
+  dragnet: dragnet,
 };
 
 /**
