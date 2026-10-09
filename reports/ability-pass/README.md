@@ -247,6 +247,13 @@ they move together in whole hit points); at 800 ms and above the spread does not
 1.2 pass at 600 ms; 1.2 has the smaller worst cell. The no-card controls (ungated) run −4.3%
 (Spirit, Behemoth) to +9.9% (Conduit, Behemoth), down from W1-A's +26.7% there.
 
+The boss5 tier-3/4 rerun with ranks III/IV at 2.7/2.95 is `stacking.md` "Rerun 2",
+`w4a-boss5.md` and `w4a-boss5-cells.md` (plan `plan-boss5-w4a.json`, byte-identical to
+`plan-boss5-w1a.json`; run `w4a-boss5.jsonl`). Its control, `w4a-boss5-oldranks.jsonl`, is the
+same plan on this branch with `{"slam": {"field": "damageMult", "values": [1.2, 1.75, 2.0, 2.25]}}`,
+which separates the rank change (T3 +5.6%, T4 +5.1%) from the pass's own T4 path drift since
+W1-A's branch (the Reverb Squire and Pyromancer Apprentice rows; T4 Apprentice −40.5%).
+
 ## Commits
 
 Branch `feat/ability-pass-baseline` off `feat/ability-pass` (`e56d530e`). Nothing was

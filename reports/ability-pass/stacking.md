@@ -225,3 +225,55 @@ because Slam's later ranks were authored as Power Strike's half and Expose Weakn
 grew. The Spirit at T4 (-44%) is the outlier to look at first. Whether the T3/T4 reference
 package should wear Slam at all, and Slam's ranks II–IV, are the designer's calls (this run
 moves no number but rank I).
+
+## Rerun 2 (W4-A, Slam ranks 2.7/2.95)
+
+The same 78 rows again (`plan-boss5-w4a.json`, regenerated on `feat/ap-slam-parity`,
+byte-identical to `plan-boss5-w1a.json`), with design §22.12's Slam ranks III/IV, 2.0/2.25 →
+**2.7/2.95** (the 1.6 s wind-up and the 10 s cooldown unchanged; rank I's 1.2/600 ms is not
+read at T3/T4). A MEASUREMENT, not a target. 0 error rows; 335 s at 3 shards (beside the T1
+authored run).
+
+W1-A ran on `feat/ability-roster` (its own task only); this branch carries the whole pass. So a
+control isolates the rank change: the same plan on this branch with the lab's `ap` override
+restoring the old ranks, `{"slam": {"field": "damageMult", "values": [1.2, 1.75, 2.0, 2.25]}}`
+(`w4a-boss5-oldranks.jsonl`, 146 s at 6 shards, 0 error rows).
+
+- **W1-A → the pass tip, old ranks:** 12 of 78 rows move, all at T4: the six Reverb Squire rows
+  and the six Pyromancer Apprentice rows (`cooldown-balanced-t3-a`, `dot-balanced-t3-a`, two of
+  the five T3 paths the pass reworked). T3 is identical, 42/42. The T4 Apprentice falls 349.7 →
+  207.9 dps (−40.5%), the T4 Squire rises 290.8 → 294.1.
+- **The rank change itself** (old ranks → 2.45/2.7/2.95, same code): T3 **+5.6%** dps, T4
+  **+5.1%**; every class rises but the T3 Slinger (−0.6%).
+
+Every cell: `w4a-boss5-cells.md` (W1-A / tip with old ranks / W4-A); table: `w4a-boss5.md`.
+
+| candidate | n | dps W0 (Expose Weakness) | dps W1-A (Slam 2.0/2.25) | dps tip, old ranks | dps W4-A (Slam 2.7/2.95) | Δ ranks (old → new) | Δ W0 → W4-A | wins W0 → W1-A → tip old → W4-A |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| boss5-t3 | 42 | 105.9 | 97.2 | 97.2 | 102.6 | +5.6% | -3.2% | 25 → 21 → 21 → 22 /42 |
+| boss5-t4 | 36 | 286.5 | 240.2 | 217.1 | 228.1 | +5.1% | -20.4% | 32 → 28 → 28 → 29 /36 |
+
+Per class (pooled over the bosses; single seed per cell):
+
+| tier | class | dps W0 | dps W1-A | dps tip, old ranks | dps W4-A | Δ ranks | Δ W0 → W4-A | wins W0 → W1-A → tip old → W4-A |
+|---|---|---:|---:|---:|---:|---:|---:|---|
+| T3 | striker | 106.5 | 85.6 | 85.6 | 91.5 | +6.9% | -14.0% | 4 → 2 → 2 → 3 /7 |
+| T3 | squire | 98.7 | 97.4 | 97.4 | 106.3 | +9.1% | +7.7% | 4 → 4 → 4 → 4 /7 |
+| T3 | slinger | 123.0 | 99.7 | 99.7 | 99.1 | -0.6% | -19.4% | 5 → 4 → 4 → 4 /7 |
+| T3 | spirit | 100.6 | 94.0 | 94.0 | 96.5 | +2.7% | -4.1% | 6 → 5 → 5 → 5 /7 |
+| T3 | apprentice | 126.2 | 119.6 | 119.6 | 125.6 | +5.0% | -0.5% | 3 → 3 → 3 → 3 /7 |
+| T3 | conduit | 80.6 | 86.7 | 86.7 | 96.4 | +11.1% | +19.6% | 3 → 3 → 3 → 3 /7 |
+| T4 | striker | 295.6 | 239.0 | 239.0 | 242.7 | +1.6% | -17.9% | 5 → 5 → 5 → 6 /6 |
+| T4 | squire | 293.0 | 290.8 | 294.1 | 316.2 | +7.5% | +7.9% | 6 → 6 → 6 → 6 /6 |
+| T4 | slinger | 252.6 | 205.1 | 205.1 | 207.9 | +1.4% | -17.7% | 6 → 5 → 5 → 5 /6 |
+| T4 | spirit | 236.8 | 131.6 | 131.6 | 143.3 | +8.9% | -39.5% | 5 → 3 → 3 → 2 /6 |
+| T4 | apprentice | 397.3 | 349.7 | 207.9 | 224.3 | +7.9% | -43.6% | 5 → 4 → 4 → 5 /6 |
+| T4 | conduit | 244.1 | 224.9 | 224.9 | 234.1 | +4.1% | -4.1% | 5 → 5 → 5 → 5 /6 |
+
+Reading: at T3 the higher ranks win back most of W1-A's loss against Expose Weakness (−8.3% →
+−3.2% pooled). At T4 they add +5.1% against W1-A's −16.2% swap, and the tip's own path drift
+takes −9.6% (all of it the Pyromancer Apprentice), so T4 sits at −20.4% against W0. The Striker and
+the Slinger still trail W0 by 14–19% at both tiers and the T4 Spirit by 40% (it loses one more
+fight, 3 → 2 of 6, while its dps rises 8.9%); the Squire and the T3 Conduit now beat W0. The
+T4 Apprentice's −40.5% from the path drift is the largest single move in this table and is not
+a Slam effect. Single seed: each cell is one fight.
