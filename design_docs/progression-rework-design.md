@@ -1020,7 +1020,7 @@ card.
 | Charge | on the first body the rush touches, and the target on arrival |
 | Slam | on every body the Slam hits |
 | Second Wind | on cast |
-| Cleanse | on strip, sized by what it removed |
+| Cleanse | on strip (when it removed anything; the sizing was dropped in §22.13) |
 | Brace | per hit absorbed while Braced |
 | Sidestep | per hit dodged during the window |
 | Binding Strike | on the rooted body |
@@ -1152,6 +1152,26 @@ Where these calls contradict an earlier subsection, they win.
 - **Names.** The shared ability slow reads "Slowed"; the lineage cards that echoed cut
   abilities become "Deeper Hobble", "Envenomed Hobble", "Hobbled Plague" (Dagger) and
   "Deeper Fury" (Axe). The keystone names stay placeholders.
+
+### 22.13 After the follow-up wave: the second round of calls (decided 2026-10-09)
+
+The follow-up wave built §22.12 and merged the pass (report addendum). Its open calls:
+
+- **Measure before deciding** Slam's tier-up step (rank I 1.2× on 0.6 s, rank II 2.45× on
+  1.6 s; T2+ is outside the parity rule) and the T4 Pyromancer Apprentice's ~40% loss in
+  the T3/T4 reference package (the max-burn bonus hit is gone and the burn no longer
+  refreshes at max). The numbers come back to the designer; nothing moves until then.
+- **Flow stays as designed**: it is the evasion build's verb, weak on low evasion by intent.
+- **Cleanse fires when it removed anything.** "Sized by what it removed" is dropped: under
+  §22.12's rate guards every Guard payoff fires once per cast.
+- **A refused Deep Freeze still spends the cold**, like every other refusal.
+- **A Vanish hold ends on a clock.** A boss, add or dungeon guardian holding for a Vanished
+  player re-acquires after the existing out-of-combat reset window even if the player never
+  attacks; no new number.
+- **The environment respects the Guard keystones too.** Node-feature terrain slows and
+  Frost Nova's ambient Chill ramp pass Immunity's refusal gate; an ordinary monster's rally
+  never hands a Vanished player to its allies.
+- **Imbue's per-hit Tempo echo stays uncapped**: the window's charges bound it.
 
 ## 23. Forms are full power at the craft (locked 2026-10-02)
 
