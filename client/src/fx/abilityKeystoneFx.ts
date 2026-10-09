@@ -875,6 +875,70 @@ function pierce(scene: GameScene, ev: CardFxEvent): void {
   });
 }
 
+// ── Stunning Strike · RELAY — when the stun ends it jumps on ────────────────
+
+/** The flight of the stun from one body to the next. */
+const RELAY_FLIGHT_MS = 220;
+
+/** A stagger flash on a body: a white burst, a jolt of the body, its daze. */
+function staggerFlash(scene: GameScene, id: string | undefined, at: P, color: number, k: number, sparks: number): void {
+  const burst = scene.add.graphics({ x: at.x, y: at.y - 6 }).setDepth(DEPTH.FX + 1);
+  burst.fillStyle(0xffffff, 0.95);
+  burst.fillCircle(0, 0, 9 * k);
+  burst.lineStyle(3, lighten(color, 0.3), 1);
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2;
+    burst.lineBetween(Math.cos(a) * 11 * k, Math.sin(a) * 11 * k, Math.cos(a) * 20 * k, Math.sin(a) * 20 * k);
+  }
+  fading(scene, burst, 240, { scaleX: 1.7, scaleY: 1.7 });
+  burstFx(scene, 'ptx-spark', at.x, at.y - 6, count(8, sparks), 320, {
+    tint: [0xffffff, color], speed: { min: 80, max: 200 }, angle: { min: 0, max: 360 },
+    scale: { start: 0.8, end: 0 }, alpha: { start: 1, end: 0 },
+  });
+  if (id && !(scene.state.view.get(id) as MonsterView | undefined)?.isBoss) {
+    posePath(scene, id, [
+      { sx: 1.12, sy: 0.88, rot: 0.12, ms: 60 },
+      { sx: 0.96, sy: 1.04, rot: -0.08, ms: 90 },
+      { sx: 1, sy: 1, rot: 0, ms: 240, ease: 'Back.easeOut' },
+    ]);
+  }
+}
+
+/**
+ * One event per jump, from the body whose stun ran out to the body it reached.
+ * WIND-UP: the daze over the old body gathers into one spark. PAYOFF: the spark
+ * arcs across and lands as a stagger flash — the new body jolts. LASTING MARK:
+ * the dazed halo over the new body for the stun as APPLIED, ending early when the
+ * server's mirrored hold does.
+ */
+function relay(scene: GameScene, ev: CardFxEvent): void {
+  const from = nodeToScene(ev.pos.x, ev.pos.y);
+  const head = { x: from.x, y: from.y - 34 };
+  const color = verbColor(ev);
+  const { k, sparks } = sizeOf(scene, ev);
+  inhale(scene, head.x, head.y, [0xffffff, lighten(color, 0.5)], 18 * k, 120);
+  scene.time.delayedCall(120, () => {
+    if (document.hidden) return;
+    const to = spriteAt(scene, ev.targetId) ?? eventPoint(ev);
+    lob(scene, head, { x: to.x, y: to.y - 30 }, RELAY_FLIGHT_MS, 40 * k, (g) => {
+      g.fillStyle(0xffffff, 1);
+      g.fillTriangle(-5 * k, 0, 5 * k, 0, 0, -7 * k);
+      g.fillTriangle(-5 * k, -3 * k, 5 * k, -3 * k, 0, 4 * k);
+      g.lineStyle(1.5, color, 1);
+      g.strokeCircle(0, -1.5 * k, 7 * k);
+    }, () => {
+      if (document.hidden) return;
+      const at = spriteAt(scene, ev.targetId) ?? to;
+      staggerFlash(scene, ev.targetId, at, color, k, sparks);
+      if (ev.targetId) {
+        const held = Math.max(1, (ev.durationMs ?? 0) - RELAY_FLIGHT_MS - 120);
+        dazedHalo(scene, ev.targetId, held, color, k, heldWhileSeen(scene, ev.targetId));
+      }
+      if (isOwn(scene, ev)) impact(scene, 'light', at);
+    });
+  });
+}
+
 // ── The table ────────────────────────────────────────────────────────────────
 
 /** The bespoke animations, by verb id. Kept in step with `KEYSTONE_ANIMATED`. */
@@ -887,6 +951,7 @@ const KEYSTONE_ANIMATIONS: Record<string, KeystoneAnimation> = {
   'chain-reaction': chainReaction,
   vanish: vanish,
   pierce: pierce,
+  relay: relay,
 };
 
 /**
