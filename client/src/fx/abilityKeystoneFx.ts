@@ -35,7 +35,8 @@ import { burstFx } from './particles';
 import { impact } from './impactFeel';
 import { attackFlairOf } from './attackFlair';
 import { payloadFlair } from './lineagePayloadModel';
-import { laneColor } from './lineagePayloadFx';
+import { drawPayloadFx, laneColor } from './lineagePayloadFx';
+import { lastingRecord } from './lineagePayloadStates';
 import { AFTERSHOCK_MARK_MS, WHIRLWIND_COIL_MS } from './abilityKeystoneModel';
 
 type CardFxEvent = Extract<CombatEvent, { kind: 'card-fx' }>;
@@ -334,12 +335,103 @@ function aftershockWindup(
   });
 }
 
+// ── Charge · BREAKTHROUGH — arriving staggers the target ─────────────────────
+
+/**
+ * A dazed halo over a staggered body: stars turning round its head for the
+ * stagger's clock as APPLIED (`durationMs`), ending early when the knockdown look
+ * does (the server's stun gone, the body gone). The lasting mark of every
+ * stagger keystone (Breakthrough now; Riposte, Backlash, Tremor and Relay draw it
+ * when they land).
+ */
+export function dazedHalo(scene: GameScene, targetId: string, durationMs: number, color: number, k: number): void {
+  const halo = scene.add.graphics().setDepth(DEPTH.FX + 1);
+  const t = { p: 0 };
+  scene.tweens.add({
+    targets: t, p: 1, duration: Math.max(200, durationMs),
+    onUpdate: () => {
+      const sprite = scene.state.sprite.get(targetId);
+      if (!sprite || !lastingRecord(targetId, 'knockdown')) {
+        halo.destroy();
+        return;
+      }
+      halo.clear();
+      const cx = sprite.x;
+      const cy = sprite.y - sprite.displayHeight * 0.5 - 4;
+      const spin = t.p * Math.PI * 2 * Math.max(2, durationMs / 450);
+      for (let i = 0; i < 3; i++) {
+        const a = spin + (i / 3) * Math.PI * 2;
+        const x = cx + Math.cos(a) * 13 * k;
+        const y = cy + Math.sin(a) * 4.5 * k;
+        const r = (Math.sin(a) > 0 ? 3.2 : 2.4) * k; // the near side reads larger
+        halo.fillStyle(i === 0 ? 0xffffff : lighten(color, 0.55), 0.95);
+        halo.fillTriangle(x - r, y, x + r, y, x, y - r * 1.5);
+        halo.fillTriangle(x - r, y - r * 0.6, x + r, y - r * 0.6, x, y + r * 0.9);
+      }
+    },
+    onComplete: () => halo.destroy(),
+  });
+}
+
+/**
+ * The arrival IS the wind-up: the rush the Charge already draws closes the gap,
+ * and the blow lands from the delivering body's side (on a Conduit, the summon
+ * that arrived first). PAYOFF: the shoulder's starburst at the contact, a cone of
+ * force driven through the target along the line of the rush, and the target
+ * knocked off its feet — the knockdown payload, drawn from the delivering body,
+ * held for the stagger's clock. LASTING MARK: the dazed halo for that clock.
+ */
+function breakthrough(scene: GameScene, ev: CardFxEvent): void {
+  if (!ev.targetId) return;
+  const to = spriteAt(scene, ev.targetId) ?? keystoneScenePoint(ev);
+  const from = nodeToScene(ev.pos.x, ev.pos.y);
+  const color = verbColor(ev);
+  const { k, sparks } = sizeOf(scene, ev);
+  const angle = Math.atan2(to.y - from.y, to.x - from.x);
+  const dx = Math.cos(angle);
+  const dy = Math.sin(angle);
+
+  // The knockdown itself (the blow, the tip, the hold, the get-up), larger.
+  drawPayloadFx(scene, ev, 'control.knockdown', KEYSTONE_SIZE);
+
+  // The contact: a starburst on the side the rush came from.
+  const contact = { x: to.x - dx * 12, y: to.y - dy * 8 };
+  const burst = scene.add.graphics({ x: contact.x, y: contact.y }).setDepth(DEPTH.FX + 1);
+  burst.lineStyle(3 * k, lighten(color, 0.5), 1);
+  for (let i = 0; i < 8; i++) {
+    const a = angle + Math.PI + ((i - 3.5) / 3.5) * 1.2;
+    burst.lineBetween(Math.cos(a) * 5, Math.sin(a) * 5, Math.cos(a) * (i % 2 ? 16 : 24) * k, Math.sin(a) * (i % 2 ? 16 : 24) * k);
+  }
+  fading(scene, burst, 240, { scaleX: 1.5, scaleY: 1.5 });
+
+  // The cone of force driven through the body along the rush.
+  for (let i = 0; i < 4; i++) {
+    const spread = (i - 1.5) * 0.22;
+    const a = angle + spread;
+    const line = scene.add.graphics().setDepth(DEPTH.FX);
+    const sx = to.x + Math.cos(a) * 6;
+    const sy = to.y + Math.sin(a) * 4;
+    line.lineStyle(2.5 * k, i % 2 ? color : lighten(color, 0.6), 0.9);
+    line.lineBetween(sx, sy, sx + Math.cos(a) * 18 * k, sy + Math.sin(a) * 12 * k);
+    fading(scene, line, 260, { x: Math.cos(a) * 30 * k, y: Math.sin(a) * 18 * k }, i * 20);
+  }
+  burstFx(scene, 'ptx-spark', to.x, to.y, count(10, sparks), 360, {
+    tint: [color, lighten(color, 0.6), 0xffffff],
+    speed: { min: 140, max: 300 },
+    angle: { min: (angle * 180) / Math.PI - 35, max: (angle * 180) / Math.PI + 35 },
+    scale: { start: 1, end: 0 }, alpha: { start: 1, end: 0 },
+  });
+  dazedHalo(scene, ev.targetId, ev.durationMs ?? 0, color, k);
+  if (isOwn(scene, ev)) impact(scene, 'medium', to);
+}
+
 // ── The table ────────────────────────────────────────────────────────────────
 
 /** The bespoke animations, by verb id. Kept in step with `KEYSTONE_ANIMATED`. */
 const KEYSTONE_ANIMATIONS: Record<string, KeystoneAnimation> = {
   whirlwind: whirlwind,
   aftershock: aftershock,
+  breakthrough: breakthrough,
 };
 
 /**
