@@ -41,6 +41,13 @@
  * tier 2, so T3 casts 2.7 and T4 2.95 exactly as the tip's ranks III/IV; cooldown
  * 10 s, wind-up 1.6 s and radius 150 are equal on both commits), so the arm differs
  * from the tip's by the code alone.
+ *
+ *   # 3. The final calls (design §22.13, decided): rerun some arms of a plan above.
+ *   #    Keeps the rows whose id starts with one of the prefixes, ids unchanged;
+ *   #    `--slam-cast-ms` adds the lab's `ap` castMs override to every row (Slam's
+ *   #    wind-up held at a value, e.g. 1600 to restore the pre-§22.13 ranks II–IV).
+ *   node --conditions=development --import tsx scripts/_apMeasurePlans.ts \
+ *     --select-from=<plan.json> --prefixes='<p1>,<p2>' --out=<plan.json> [--slam-cast-ms=1600]
  */
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -54,6 +61,21 @@ type Row = Record<string, unknown> & { id: string; cls: string; boss: string; se
 const read = (p: string): Row[] => JSON.parse(readFileSync(p, 'utf8')) as Row[];
 const rest = (id: string): string => id.slice(id.indexOf('|'));
 assert(args.out, '--out=<plan.json> is required');
+
+if (args['select-from']) {
+  assert(args.prefixes, '--prefixes=<p1,p2,...> is required with --select-from');
+  const prefixes = args.prefixes.split(',');
+  const rows = read(args['select-from']).filter((r) => prefixes.some((p) => r.id.startsWith(p)));
+  for (const p of prefixes) assert(rows.some((r) => r.id.startsWith(p)), `no row id starts with ${p}`);
+  const castMs = args['slam-cast-ms'] === undefined ? undefined : Number(args['slam-cast-ms']);
+  const out = castMs === undefined ? rows : rows.map((r) => {
+    assert(r.ap === undefined, `${r.id} already carries an ap override`);
+    return { ...r, ap: { slam: { castMs } } };
+  });
+  writeFileSync(args.out, JSON.stringify(out));
+  console.log(`select: ${out.length} rows${castMs === undefined ? '' : `, Slam castMs ${castMs}`} -> ${args.out}`);
+  process.exit(0);
+}
 
 if (args['slam-t2-from']) {
   const control = read(args['slam-t2-from']).filter((r) => r.id.split('|')[0]!.endsWith('-control'));
@@ -133,4 +155,4 @@ if (args['pyro-from']) {
   process.exit(0);
 }
 
-throw new Error('pass --slam-t2-from=<plan> or --pyro-from=<plan>');
+throw new Error('pass --slam-t2-from=<plan>, --pyro-from=<plan> or --select-from=<plan>');
