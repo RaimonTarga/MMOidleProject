@@ -1,11 +1,12 @@
 import { Fragment, useMemo, useRef } from "react";
 import { useAtomValue } from "jotai";
 import type { BuffCategory, PlayerBuff, BuffShape } from "@mmo-idle/shared";
-import { activeBuffsAtom, lastCleanseAtAtom } from "./atoms";
+import { abilityNodesAtom, activeBuffsAtom, lastCleanseAtAtom, playerTierAtom } from "./atoms";
+import { abilityForBuff, abilityLineageFor, abilityNameFor } from "../ui/abilityName";
 import { GameIcon } from "../ui/GameIcon";
 import { statusIconSource } from "../ui/conceptIcons";
 import { TooltipCard, useStatusStrip, type StripTileProps } from "./primitives";
-import { buffTooltipContent } from "./statusTooltips";
+import { buffTooltipContent, type BuffAbilityName } from "./statusTooltips";
 import { useIsMobile } from "./useIsMobile";
 import { useReadoutBuffIds } from "./RhythmReadout";
 import {
@@ -315,6 +316,24 @@ function BuffStrip({ rail }: { rail: boolean }) {
   const buffs = useAtomValue(activeBuffsAtom);
   const lastCleanseAt = useAtomValue(lastCleanseAtAtom);
   const isMobile = useIsMobile();
+  // A tile an ability owns is named after the ability as it is called NOW
+  // (design §22.7): a keystone renames the Guard's window with the Guard.
+  const tier = useAtomValue(playerTierAtom);
+  const nodes = useAtomValue(abilityNodesAtom);
+  const ownerOf = (buff: PlayerBuff): BuffAbilityName | undefined => {
+    const ability = abilityForBuff(buff.id);
+    if (!ability) return undefined;
+    const lineage = abilityLineageFor(ability, nodes);
+    return { name: abilityNameFor(ability, tier, nodes), ...(lineage ? { lineage } : {}) };
+  };
+  // The printed label keeps a state's own word ("Imbued", "Unbound"); a tile
+  // labelled with its ability's name takes the name as it is called now.
+  const labelled = (buff: PlayerBuff): PlayerBuff => {
+    const ability = abilityForBuff(buff.id);
+    if (!ability || buff.label !== ability.name) return buff;
+    const label = abilityNameFor(ability, tier, nodes, "plain");
+    return label === buff.label ? buff : { ...buff, label };
+  };
   // The rhythm readout replaces some tiles (design §24.6, "not buff tiles"): the
   // frame's window and bank under its frame ring, and a lineage window under the
   // ring of the card that opened it. Their statuses stay in `activeBuffs`, so
@@ -341,7 +360,7 @@ function BuffStrip({ rail }: { rail: boolean }) {
     renderTip: ({ key, item, ended }) => {
       // Rebuilt every render: the CURRENT block is the reason the player
       // hovered, and a stale stack count would be worse than no card at all.
-      const content = buffTooltipContent(item);
+      const content = buffTooltipContent(item, ownerOf(item));
       if (ended) {
         content.ended = endReasons.current.get(key) === "cleansed"
           ? { label: "Cleansed", note: "stripped off you", tone: "cleansed" }
@@ -418,7 +437,7 @@ function BuffStrip({ rail }: { rail: boolean }) {
       {tiles.map(({ key, buff, ghost, ended }) => (
         <BuffIcon
           key={key}
-          buff={buff}
+          buff={labelled(buff)}
           interactive={!isMobile}
           stripProps={ghost ? undefined : strip.tileProps(key)}
           ghost={ghost}

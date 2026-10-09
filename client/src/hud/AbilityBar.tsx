@@ -7,8 +7,6 @@ import {
   STANCE_SWITCH_COOLDOWN_MS,
   abilityCooldownMs,
   abilityDef,
-  abilityRankNumber,
-  abilityRankNumeral,
   attunedForFamily,
   guardEffectIdForAbility,
   packetDefinition,
@@ -40,6 +38,7 @@ import {
 import type { AbilityCooldownSample } from "./atoms";
 import { GameIcon } from "../ui/GameIcon";
 import { abilityIconSource } from "../ui/abilityIcons";
+import { useAbilityName } from "../ui/abilityName";
 import { useIsMobile } from "./useIsMobile";
 import { HudDock, TooltipCard, useHoverTooltip } from "./primitives";
 import { useAbilityContext } from "../ui/describe/useAbilityContext";
@@ -247,8 +246,9 @@ function AbilityIcon({
   const icon = abilityIconSource(ability);
   // The rank numeral rides the tile because it is the same learned ability the
   // whole way up — a player needs to see that Sweep got deeper, not go looking
-  // for a second Sweep.
-  const rank = abilityRankNumeral(abilityRankNumber(ability, useAtomValue(playerTierAtom)));
+  // for a second Sweep. The hotbar shows the NOUN (design §22.10): a keystone's
+  // rename, else the ability's own; the tooltip carries the whole name.
+  const name = useAbilityName(ability, "noun");
   const remainingPct = Math.max(0, Math.min(100, status.remainingFrac * 100));
   const cooling = remainingPct > 0;
   const onCooldown = status.castRemainingMs === undefined && status.cooldownLeftMs > 0;
@@ -363,7 +363,7 @@ function AbilityIcon({
       </div>
 
       <span className="mobile-combat-ability__name" style={{ color: meta.accent }}>
-        {ability.name} {rank}
+        {name}
       </span>
       {node}
     </button>
@@ -390,8 +390,7 @@ function DesktopAbilityFamily({
 }: DesktopAbilityFamilyProps) {
   const meta = SLOT_META[ability.slot];
   const icon = abilityIconSource(ability);
-  const playerTier = useAtomValue(playerTierAtom);
-  const rank = abilityRankNumeral(abilityRankNumber(ability, playerTier));
+  const name = useAbilityName(ability, "noun");
   const remainingPct = Math.max(0, Math.min(100, status.remainingFrac * 100));
   const remainingSeconds = Math.ceil(status.cooldownLeftMs / 1000);
   const cooling = remainingPct > 0;
@@ -474,7 +473,7 @@ function DesktopAbilityFamily({
         )}
       </div>
 
-      <div className="combat-ability-slot__name">{ability.name} {rank}</div>
+      <div className="combat-ability-slot__name">{name}</div>
       {node}
     </button>
   );

@@ -35,6 +35,11 @@ export interface TooltipCardContent {
   equipment?: TooltipRow[];
   /** The thing's name, e.g. "Sweep III" or "Frost". */
   title: string;
+  /**
+   * The lineage line under the title: the ability a keystone renamed ("Sweep"
+   * beneath *Whirlwind*, design §22.7). Absent on everything else.
+   */
+  lineage?: string;
   /** What kind of thing it is, e.g. "Technique", "Debuff · Monster". */
   kicker?: string;
   /** The static mechanic explanation. Authored once, never sent per tick. */
@@ -77,7 +82,7 @@ function Rows({ rows, live }: { rows: readonly TooltipRow[]; live: boolean }) {
 }
 
 export function TooltipCard({ content }: { content: TooltipCardContent }): ReactNode {
-  const { title, kicker, body, rows, rowsTitle, classSpecific, current, footnote, ended } = content;
+  const { title, lineage, kicker, body, rows, rowsTitle, classSpecific, current, footnote, ended } = content;
   return (
     <div className={`tip-card${ended ? ' tip-card--ended' : ''}`}>
       {ended && (
@@ -87,6 +92,7 @@ export function TooltipCard({ content }: { content: TooltipCardContent }): React
         </div>
       )}
       <div className="tip-card__title">{title}</div>
+      {lineage && <div className="tip-card__lineage">{lineage}</div>}
       {kicker && <div className="tip-card__kicker">{kicker}</div>}
       {content.tags && <AbilityTags tags={content.tags} />}
       {body && <p className="tip-card__body">{body}</p>}

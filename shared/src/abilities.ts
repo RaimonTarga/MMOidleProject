@@ -485,7 +485,8 @@ export function abilityRankNumeral(rank: number): string {
  * The words an ability's node rows lend its name (design §22.7, grammar §22.10):
  * the packet's adjective, the amplifier's "of X", the keystone's noun (which
  * replaces the ability's own) and the cross's "with Y". Derived from the payoff
- * or the axis, never authored per ability — `abilityNodeNameParts` builds them.
+ * or the axis, never authored per ability — `abilityNodeNameParts`
+ * (`data/abilityNodes/flavor.ts`) builds them from the active rows.
  */
 export interface AbilityNameParts {
   adjective?: string;
@@ -495,15 +496,48 @@ export interface AbilityNameParts {
 }
 
 /**
+ * Which slice of the name a surface shows (design §22.10: "the hotbar shows the
+ * noun; the tooltip the whole name"):
+ *  - `full`  adjective, noun, "of X", the numeral, ", with Y" — tooltips, the
+ *            Abilities panel: *Bleeding Whirlwind of Many III, with Echoes*;
+ *  - `noun`  the noun and the numeral — the hotbar, the cast callout: *Whirlwind III*;
+ *  - `plain` the noun alone — running copy (the tutorial's lines, a buff tile's
+ *            printed label): *Whirlwind*.
+ */
+export type AbilityNameForm = "full" | "noun" | "plain";
+
+/**
+ * THE one entry point for an ability's player-facing name (design §22.7): every
+ * surface — the hotbar, the Abilities panel, the tooltips, the buff bar, the cast
+ * callout and the tutorial's copy — reads it, with the words its node rows lend it.
+ *
  * Display name including the rank numeral, e.g. `Sweep III` — and, with the node
  * rows' words, *Bleeding Whirlwind of Many III, with Echoes*: adjective, noun (the
  * keystone's, else the ability's), "of X", the numeral after the name, then the
- * cross's ", with Y". No parts, no change: `Sweep III`.
+ * cross's ", with Y". No parts, no change: `Sweep III`. Numbers never appear in a
+ * name; the numeral is the rank.
  */
-export function abilityDisplayName(ability: AbilityDef, playerTier: number, parts: AbilityNameParts = {}): string {
-  const head = [parts.adjective, parts.noun ?? ability.name, parts.of].filter(Boolean).join(" ");
+export function abilityDisplayName(
+  ability: AbilityDef,
+  playerTier: number,
+  parts: AbilityNameParts = {},
+  form: AbilityNameForm = "full",
+): string {
+  const noun = parts.noun ?? ability.name;
+  if (form === "plain") return noun;
   const numeral = abilityRankNumeral(abilityRankNumber(ability, playerTier));
+  if (form === "noun") return `${noun} ${numeral}`;
+  const head = [parts.adjective, noun, parts.of].filter(Boolean).join(" ");
   return `${head} ${numeral}${parts.with ? `, ${parts.with}` : ""}`;
+}
+
+/**
+ * The lineage line a renamed ability carries beneath its name (design §22.7: "the
+ * hotbar and the tooltip read *Whirlwind*, with 'Sweep' as the lineage line beneath
+ * it"): the ability's own name once a keystone has replaced it, else nothing.
+ */
+export function abilityLineageLine(ability: AbilityDef, parts: AbilityNameParts = {}): string | undefined {
+  return parts.noun && parts.noun !== ability.name ? ability.name : undefined;
 }
 
 /**

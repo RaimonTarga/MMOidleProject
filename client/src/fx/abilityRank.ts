@@ -12,12 +12,15 @@
  *   IV   + a pillar of light and a wider ring (and a light impact for your own).
  *
  * Also `abilityCallout`: the floating skill name carries the numeral from II on
- * ("Brace III"), so the rank reads in words as well as in light.
+ * ("Brace III"), so the rank reads in words as well as in light — and the name is
+ * the one `abilityDisplayName` gives the caster's rows, so a keystone renames the
+ * callout as it renames the hotbar ("Riposte III", design §22.7).
  */
 import {
   abilityDef,
+  abilityDisplayName,
+  abilityNodeNameParts,
   abilityRankNumber,
-  abilityRankNumeral,
   type PlayerView,
 } from '@mmo-idle/shared';
 import type { GameScene } from '../scenes/GameScene';
@@ -62,11 +65,18 @@ export function abilityRankFor(scene: GameScene, playerId: string, abilityId: st
   return abilityRankNumber(def, view.playerTier ?? 0);
 }
 
-/** The floating skill name, with its rank numeral from II on. */
+/**
+ * The floating skill name, with its rank numeral from II on: the noun the caster's
+ * node rows give it (a keystone's rename, else the ability's own), read off the
+ * caster's view so an ally's callout names their build, not yours.
+ */
 export function abilityCallout(scene: GameScene, playerId: string, abilityId: string): string {
-  const name = abilityDef(abilityId)?.name ?? abilityId;
+  const def = abilityDef(abilityId);
+  if (!def) return abilityId;
+  const view = scene.state.view.get(playerId) as PlayerView | undefined;
+  const parts = abilityNodeNameParts(abilityId, view?.abilityNodes?.[abilityId]);
   const rank = abilityRankFor(scene, playerId, abilityId);
-  return rank >= 2 ? `${name} ${abilityRankNumeral(rank)}` : name;
+  return abilityDisplayName(def, view?.playerTier ?? 0, parts, rank >= 2 ? 'noun' : 'plain');
 }
 
 /**
