@@ -100,15 +100,17 @@ assert(
 // Design §22.2/§22.8: an ability's ranks are authored per tier from its home
 // tier, so moving it to an earlier tier adds ONE rank there and re-indexes
 // nothing else — a player at the old home tier and above reads exactly the rank
-// they read before the move. Pinned by value at the old tiers.
+// they read before the move. Pinned by value at the old tiers. (Slam's ranks
+// II–IV were re-authored afterwards by design §22.12, 2.45 / 2.7 / 2.95, so a
+// tier-up never weakens it; still not re-indexed.)
 const castDamageAt = (id: string, tier: number): number => {
   const effect = abilityRankAt(ABILITY_DATABASE.get(id)!, tier).effect;
   return effect.kind === "cast-strike" ? effect.damageMult : NaN;
 };
 assert(slam.tier === 1 && abilityMaxRank(slam) === 4, "Slam re-homes to T1 with one added rank");
 assert(
-  castDamageAt("slam", 2) === 1.75 && castDamageAt("slam", 3) === 2.0 && castDamageAt("slam", 4) === 2.25,
-  "Slam's old T2–T4 ranks are untouched and not re-indexed",
+  castDamageAt("slam", 2) === 2.45 && castDamageAt("slam", 3) === 2.7 && castDamageAt("slam", 4) === 2.95,
+  "Slam's T2–T4 ranks are design §22.12's 2.45 / 2.7 / 2.95, not re-indexed",
 );
 assert(abilityCooldownMs(slam, 1) === 10000 && abilityCastMs(slam, 1) === 1600,
   "Slam rank I keeps Power Strike's cooldown and wind-up");

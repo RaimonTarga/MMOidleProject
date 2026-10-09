@@ -844,13 +844,14 @@ const abilities: AbilityDef[] = [
     icon: "slam",
     // THE BURST CAST (design §22.2, ability pass 2026-10-06): Slam absorbed Power
     // Strike and re-homed from T2 Mountain 9 to T1 Mountain 5, Power Strike's
-    // slot. Rank I is the new T1 rank and the single-target-leaning one: the
-    // biggest multiplier per body, still cast with Slam's radius. Its damageMult
-    // is the one number the ability pass authored, by the lab's parity rule
+    // slot. Rank I is the new T1 rank, still cast with Slam's radius. Its
+    // damageMult is the number the ability pass authored, by the lab's parity rule
     // (§22.1: the T1 boss kits swapped Expose Weakness for Slam, and every class
     // must hold its T1 boss DPS within ±5%; reports/ability-pass/). Its cooldown
-    // and wind-up are Power Strike's. Ranks II–IV are the old T2–T4 ranks,
-    // unchanged and not re-indexed.
+    // is Power Strike's. Ranks II–IV are 2.45 / 2.7 / 2.95 (design §22.12: Slam
+    // never weakens on tier-up — the old +0.25 per tier, counted from rank I's
+    // 2.2), on the 1.6 s wind-up; the old half-of-Power-Strike relation went with
+    // Power Strike.
     //
     // It favours heavy, slow builds WITHOUT ever asking about attack speed:
     // it scales from Attack, its wind-up ignores attack cadence, and casting
@@ -871,9 +872,10 @@ const abilities: AbilityDef[] = [
       // Conduit's Behemoth — no single value holds every class inside ±5%;
       // reports/ability-pass/README.md §6 and w1a-ladder.md).
       { effect: { kind: "cast-strike", damageMult: 2.2, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
-      { effect: { kind: "cast-strike", damageMult: 1.75, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
-      { effect: { kind: "cast-strike", damageMult: 2.0, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
-      { effect: { kind: "cast-strike", damageMult: 2.25, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
+      // Ranks II–IV: design §22.12, +0.25 per tier; the wind-up stays 1.6 s.
+      { effect: { kind: "cast-strike", damageMult: 2.45, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
+      { effect: { kind: "cast-strike", damageMult: 2.7, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
+      { effect: { kind: "cast-strike", damageMult: 2.95, radius: 150 }, cooldownMs: 10000, castMs: 1600 },
     ],
   },
   {
