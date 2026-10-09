@@ -542,3 +542,55 @@ can only lower it further. Per class: `stacking.md` "Rerun 2".
 8. **Imbue's per-hit Tempo echo** is a Technique route and stays uncapped.
 9. `biomeEcology.test.ts` failed once under the lab's CPU load (a patrol sentinel did not
    move; the test seeds its clock from `Date.now()`); it passes alone and in the final run.
+
+## Addendum 2: the second round of calls (design §22.13, 2026-10-09)
+
+The designer answered the wave-4 open calls (design §22.13, `12d2b1f1`) and, after two
+measurements, the last two (`c1470881`). Built on `feat/ability-pass-calls-2` off develop
+`398e3f49`; merged to develop with this addendum.
+
+| Call (§22.13) | Built by | Merged | Result |
+|---|---|---|---|
+| Measure Slam's tier-up step and the T4 Pyromancer first | X2, `w1a`, `feat/ap-measure` | `4a5c502f` | `measure-slam-t2.md`, `measure-pyromancer.md` |
+| Cleanse fires when it removed anything (sizing dropped) | X1, `w1b`, `feat/ap-calls-2-code` | `a7a4c91b` | a leftover per-kind loop removed; each route fires once per strip |
+| A Vanish hold ends on the out-of-combat reset clock | X1 | `a7a4c91b` | `outOfCombatResetMs` shared by the fight phase and the hold |
+| Terrain slows, the Chill ramp / Frost Nova and monster rally respect the Guard keystones | X1 | `a7a4c91b` | refusal only; a refused rally spends its once-per-combat token (the precedent) |
+| Flow kept; a refused Deep Freeze still spends the cold; Imbue's echo uncapped | — | — | no change needed |
+| **Slam is a 600 ms cast at every rank** (2.45 / 2.7 / 2.95 at T2–T4) | X3, `w1a`, `feat/ap-final-calls` | `53daf17e` | see below |
+| **The Pyromancer's stacks are full strength; a hit at max refreshes** | X3 | `53daf17e` | see below |
+
+**What the measurements said, and what the calls did:**
+
+- **Slam at T2** (6,000 fights, five T2 forms, 10 seeds): the old rank II (2.45× on 1.6 s)
+  added about nothing over a Sweep control for the Striker, Slinger and Spirit (−0.8% to
+  +1.9%) and +24% for the Conduit. On 600 ms every class gains +12.9% (Striker) to +30.9%
+  (Conduit) over Sweep, +17.7% pooled. The built rank II fights X2's 600 ms arm exactly
+  (1,500/1,500).
+- **The T3/T4 reference package with Slam 600 ms** (boss5 Rerun 3): T3 102.6 → 113.8 dps
+  (+11.0%), T4 228.1 → 268.7 (+17.8%); against the pre-pass W0 (Expose Weakness) T3 is
+  +7.5% and T4 −6.2%. Wins 25 → 23 / 42 at T3 and 32 → 32 / 36 at T4. The T4 Spirit went
+  2 → 5 of 6. Still below W0: the Striker and Slinger by 3–8%, the T4 Spirit by 20.5%.
+- **The T4 Pyromancer:** before the call it was −32.7% against its own frame (the weakest of
+  nine Apprentice paths; +28.2% before the pass). With full-strength stacks and the refresh
+  it is **+1.7% over the frame alone** (321.2 vs 315.8 dps; +0.7% on the old Slam) — no
+  longer a loss, but the weakest balanced path on a lone boss (Firebrand +5.4%, Cinder Lord
+  +17.8%): two stacks only shorten the climb, and Radiant pays nothing with no second body.
+
+**Gate.** The T1 lab is identical to wave 4's (1,800/1,800; parity still holds, 30/30 kit
+cells inside ±5%, worst −4.7%). Suite **402/402**, typecheck clean.
+
+**Left for later sessions (none blocks this merge):**
+
+1. **The Pyromancer on a lone boss** is now level with its frame, not above it; whether
+   Radiant should also pay on a single target is the T3 class review's.
+2. **The T3/T4 package still trails W0** for the Striker and Slinger (3–8%) and the T4
+   Spirit (20.5%) without Expose Weakness; a T3/T4 balance pass, not this pass.
+3. **The trios' second and third verbs** (design §22.11) are designed and unbuilt
+   (Afterimage among them: it needs a decoy target kind).
+4. **Names:** every keystone name is a placeholder.
+5. **Provisional numbers:** Sidestep (3 RP, 10 s, green 45), Cull (4 RP, 2.0 → 4.0 / 2.25 →
+   4.5 under 50% health, blue 150), Slam's ranks, the re-homed recipe prices, Whirlwind's
+   500 ms tick. Sidestep and Cull have no art.
+6. **A refused rally spends its once-per-combat token** (one line to reverse); the Swamp rot
+   pool's damage over time is not gated (only its slow is, per §22.13).
+7. `biomeEcology.test.ts` is flaky under CPU load (it seeds its clock from `Date.now()`).
