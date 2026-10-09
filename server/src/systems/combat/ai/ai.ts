@@ -250,7 +250,7 @@ function syncBossSpawnedAddTarget(
       if (!vanishedTarget(world, target)) {
         setAggroTarget(world, add, { id: target.targetId, kind: target.targetKind }, now);
       } else if (!add.hasAggroTarget && !add.holdsForVanished) {
-        attachComponent(world, add, "holdsForVanished", { playerId: target.targetId, sinceMs: target.sinceMs });
+        attachComponent(world, add, "holdsForVanished", { playerId: target.targetId, sinceMs: target.sinceMs, heldMs: 0 });
       }
     }
   } else {
@@ -260,6 +260,7 @@ function syncBossSpawnedAddTarget(
     }
     const bossHold = boss?.holdsForVanished;
     if (bossHold && !add.holdsForVanished && boss.hasPosition.nodeId === add.hasPosition.nodeId) {
+      // Its boss's hold, clock included: the add takes the player back with it.
       attachComponent(world, add, "holdsForVanished", { ...bossHold });
     }
   }

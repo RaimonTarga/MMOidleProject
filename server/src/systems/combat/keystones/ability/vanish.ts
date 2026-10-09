@@ -33,10 +33,19 @@
  * player who left the node or died releases it to the ordinary rules; any target
  * it found meanwhile ends it. Its adds hold with it (`syncBossSpawnedAddTarget`).
  *
+ * THE HOLD'S CLOCK (design §22.13). A hold ends on a clock even if the player
+ * never attacks: something else can keep them in combat (another monster out of
+ * Vanish's reach), so the out-of-combat reset never comes. Once a hold has lasted
+ * the out-of-combat reset window (`outOfCombatResetMs`, the very window
+ * `updateCombatTransitions` ends a fight on) it takes the player back in the same
+ * aggro session, as a mark-clear does, and clears the player's mark so every
+ * other monster sees them again.
+ *
  * Owner-delivered (§22.10): it is the player who vanishes, on a Conduit too —
  * the summons fight on and stay in the monsters' sight.
  *
- * No number: the reach is Disengage's own (`reach.ts`), the mark has no clock.
+ * No number: the reach is Disengage's own (`reach.ts`); the mark has no clock of
+ * its own, and the hold's is the out-of-combat reset window.
  * One `card-fx` per vanish, left at the departure point (the fading outline).
  */
 import {
@@ -49,7 +58,7 @@ import { attachComponent, detachComponent } from '../../../../ecs/markerHelpers'
 import { registerCombatListener } from '../../engine/combatPipeline';
 import { abortMonsterCast } from '../../engine/combat';
 import { setAggroTarget, setAttackTarget } from '../../ai/targeting';
-import { markEngaged } from '../../ai/engagement';
+import { markEngaged, outOfCombatResetMs } from '../../ai/engagement';
 import { endPattern } from '../../ai/bossPatterns';
 import { abilityEngagementRange } from '../../../player/abilities/abilityTargeting';
 import { defineAbilityKeystone, pushAbilityKeystoneFx } from './registry';
@@ -72,7 +81,7 @@ function drop(world: World, monster: MonsterEntity, player: PlayerEntity, now: n
   setAggroTarget(world, monster, null, now);
   if (monster.hasAttackTarget?.targetId === player.isPlayer.id) setAttackTarget(world, monster, null);
   if (encounterMonster(monster)) {
-    attachComponent(world, monster, 'holdsForVanished', { playerId: player.isPlayer.id, sinceMs });
+    attachComponent(world, monster, 'holdsForVanished', { playerId: player.isPlayer.id, sinceMs, heldMs: 0 });
   }
 }
 
@@ -83,7 +92,7 @@ function resumeSession(monster: MonsterEntity, sinceMs: number): void {
 
 export const VANISH_KEYSTONE = defineAbilityKeystone({
   id: ID,
-  seam: 'Disengage\'s resolution clears setAggroTarget on every monster in Disengage\'s reach of the departure point (and their packs), aborting its wind-up or pattern, and marks the player; nothing acquires a marked player; a dropped boss, add or dungeon monster holds (holdsForVanished) and takes the player back in the same aggro session when the next landed hit or the out-of-combat reset clears the mark',
+  seam: 'Disengage\'s resolution clears setAggroTarget on every monster in Disengage\'s reach of the departure point (and their packs), aborting its wind-up or pattern, and marks the player; nothing acquires a marked player; a dropped boss, add or dungeon monster holds (holdsForVanished) and takes the player back in the same aggro session when the next landed hit or the out-of-combat reset clears the mark, or once the hold has lasted the out-of-combat reset window',
   onResolved: (world, player, ability, site) => {
     const definition = ABILITY_KEYSTONE_DEFINITIONS.get(ID);
     if (!definition || ability.id !== definition.abilityId) return;
@@ -129,7 +138,7 @@ export const VANISH_KEYSTONE = defineAbilityKeystone({
     });
   },
   // Every hold, every tick (live or not: a hold outlives a swapped-out verb).
-  tick: (world) => {
+  tick: (world, dt) => {
     const now = Date.now();
     for (const monster of [...world.vanishHoldingMonsters]) {
       const hold = monster.holdsForVanished;
@@ -144,7 +153,13 @@ export const VANISH_KEYSTONE = defineAbilityKeystone({
         detachComponent(world, monster, 'holdsForVanished');
         continue;
       }
-      if (playerVanished(player)) continue; // still hidden: hold
+      if (playerVanished(player)) {
+        hold.heldMs += dt;
+        if (hold.heldMs < outOfCombatResetMs(player)) continue; // still hidden: hold
+        // The hold ran the out-of-combat reset window (design §22.13): the mark
+        // ends here too, so every other monster sees the player again.
+        setFlag(player.tracksCombat, VANISH_FLAG, false);
+      }
       // The mark is gone: the fight resumes, it does not restart — the same session.
       setAggroTarget(world, monster, { id: player.isPlayer.id, kind: 'player' }, now);
       resumeSession(monster, hold.sinceMs);
