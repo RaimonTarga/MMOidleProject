@@ -217,10 +217,26 @@ animation half is here.
 | Breakthrough | the Charge's own rush | a contact starburst from the delivering body's side, a cone of force through the target, the knockdown payload held for the stagger's clock | a dazed halo of stars for that clock (`dazedHalo`, reusable by every stagger verb) |
 | Outbreak | the infected corpse swells | it bursts; a glob of what it carried is lobbed onto its nearest neighbour, which flinches | a bubbling miasma pool where it died |
 | Dragnet | a weighted net thrown from the delivering body, readable in flight | it spreads over each adjacent body, the shackle locks for the root's clock (less the flight), strands tie the bodies of one cast together | the shackle's held look until the root ends or breaks |
+| Chain Reaction | Detonate's own wind-up and the kill | the corpse goes off once; a crackling fuse leaps to each afflicted body down the batch and lands in a ring (each body's own `dot-detonate` draws its explosion) | a scorched star where the chain began |
+| Pierce | a glint at the muzzle, a hair-thin sight line | a rail of light through and past the last body, every body on the line punctured in turn | the smoke of its wake along the line |
+| Relay | the daze over the body whose stun ran out gathers into a spark | the spark arcs to the next body and lands as a stagger flash; the body jolts | the dazed halo for the stun as applied, ending with the server's mirrored hold |
+| Fork | static gathers on the struck body | a forked bolt (main arc, a branch that fizzles) flickers across; the body it reaches jolts | static crackling on it a moment |
+| Harvest | a pale scythe drawn back over each next low body, link after link | it reaps across in a slash, the body buckles; each link a little larger | a wisp rising from what was reaped |
+| Vanish | Disengage's own leap | smoke and an outline of your body left where you stood (the Avoid face's blur); the real body slips away in afterimages | the outline flickers and thins over 1.7 s |
+| Shared Breath | the owner draws breath, a pulse ring off the body | the Sustain pulse runs body to body down the formation and party, a ring and rising crosses on each | each body breathes with the shared mend while it runs |
+| Immunity | what was stripped is wrenched out of the body | a hexagonal shell seals facet by facet and flashes shut | the shell holds, shimmering, for the lock's clock |
+| Overflow | the heal rises up the body like a level to the brim | it spills over and sets into a round ward bubble with a chime | the bubble holds for the ward's window, its highlight turning |
+| Riposte | the blow caught on the Brace, plating chips thrown off | a counter crescent, the stagger flash on the attacker, the knockdown for the stagger's clock | the dazed halo |
+| Backlash | the hold bursts into shards as the body heaves up | a shockwave rolls out; each adjacent body, a beat apart, takes the stagger flash and the knockdown | the dazed halo on each |
+| Entangle | thorns bristle round you at the blow | a vine lashes along the hit and coils round the attacker's legs with a burst of thorns | the coil at its feet for the slow's clock, tightening as it ends |
+| Unyielding | the body plants into its stance, dust at its feet | plates fly in and lock on with a heavy ring | the locked plates ring the feet, glinting in turn, dropping away at the end |
 
-The other first verbs (Chain Reaction, Vanish, Pierce, Relay, Fork, Harvest, Shared
-Breath, Immunity, Riposte, Entangle, Unyielding, Backlash, Overflow, Afterimage) are
-keyed stubs until their server modules land (`KEYSTONE_STUBS`).
+Shared keys are told apart by the verb id: Breakthrough, Riposte and Backlash all
+push `control.knockdown`; Immunity and Overflow `barrier-tempo.ward-shell`; Shared
+Breath `kill-chain.recovery-pulse` (also Second Wind's Kill-chain packet fx, which
+stays the lane's pulse). Afterimage, the one first verb not yet live (it needs a
+decoy primitive), is the only keyed stub (`KEYSTONE_STUBS`); the test refuses a
+live verb left as a stub.
 
 ## Guards (tests)
 
