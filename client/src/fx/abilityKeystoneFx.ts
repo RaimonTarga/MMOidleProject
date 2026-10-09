@@ -788,6 +788,93 @@ function vanish(scene: GameScene, ev: CardFxEvent): void {
   afterimages(scene, ev.playerId, { count: 4, everyMs: 40, tint: color, alpha: 0.35, fadeMs: 280 });
 }
 
+// ── Snipe · PIERCE — the shot passes through and hits everything behind ──────
+
+/** The bodies whose sprites stand on a segment (within `width` px of it). */
+function bodiesOnLine(scene: GameScene, a: P, b: P, width: number): P[] {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len2 = dx * dx + dy * dy || 1;
+  const out: P[] = [];
+  for (const [id, sprite] of scene.state.sprite) {
+    if (scene.state.kind.get(id) !== 'monster') continue;
+    const t = ((sprite.x - a.x) * dx + (sprite.y - a.y) * dy) / len2;
+    if (t <= 0.05 || t > 1.05) continue;
+    const px = a.x + dx * t;
+    const py = a.y + dy * t;
+    if ((sprite.x - px) ** 2 + (sprite.y - py) ** 2 <= width * width) out.push({ x: sprite.x, y: sprite.y });
+  }
+  return out;
+}
+
+/**
+ * One event per shot that pierced, from the delivery body to the farthest body it
+ * reached. WIND-UP: a glint gathers at the muzzle and a hair-thin sight line
+ * flicks out along the shot. PAYOFF: the round goes through as a rail of light,
+ * past the last body, and every body on the line is punctured in turn. LASTING
+ * MARK: the smoke of its wake hangs along the line and thins away.
+ */
+function pierce(scene: GameScene, ev: CardFxEvent): void {
+  const from = nodeToScene(ev.pos.x, ev.pos.y);
+  const far = eventPoint(ev);
+  const color = verbColor(ev);
+  const { k, sparks } = sizeOf(scene, ev);
+  const angle = Math.atan2(far.y - from.y, far.x - from.x);
+  const beyond = { x: far.x + Math.cos(angle) * 34 * k, y: far.y + Math.sin(angle) * 34 * k };
+  const muzzle = { x: from.x + Math.cos(angle) * 12, y: from.y - 10 + Math.sin(angle) * 8 };
+
+  // The glint and the sight line.
+  inhale(scene, muzzle.x, muzzle.y, [0xffffff, lighten(color, 0.5)], 22 * k, 90);
+  const sight = scene.add.graphics().setDepth(DEPTH.FX);
+  sight.lineStyle(1, lighten(color, 0.6), 0.7);
+  sight.lineBetween(muzzle.x, muzzle.y, beyond.x, beyond.y);
+  fading(scene, sight, 120);
+
+  scene.time.delayedCall(90, () => {
+    if (document.hidden) return;
+    // The rail.
+    const rail = scene.add.graphics().setDepth(DEPTH.FX + 1).setBlendMode(Phaser.BlendModes.ADD);
+    const t = { p: 0 };
+    scene.tweens.add({
+      targets: t, p: 1, duration: 80, ease: 'Quad.easeOut',
+      onUpdate: () => {
+        rail.clear();
+        const x = muzzle.x + (beyond.x - muzzle.x) * t.p;
+        const y = muzzle.y + (beyond.y - muzzle.y) * t.p;
+        rail.lineStyle(9 * k, color, 0.3);
+        rail.lineBetween(muzzle.x, muzzle.y, x, y);
+        rail.lineStyle(3 * k, lighten(color, 0.4), 0.95);
+        rail.lineBetween(muzzle.x, muzzle.y, x, y);
+        rail.lineStyle(1.2, 0xffffff, 1);
+        rail.lineBetween(muzzle.x, muzzle.y, x, y);
+      },
+      onComplete: () => fading(scene, rail, 180),
+    });
+    // Every body the line passes, punctured in turn.
+    const hit = bodiesOnLine(scene, from, far, 26 * k)
+      .sort((a, b) => Math.hypot(a.x - from.x, a.y - from.y) - Math.hypot(b.x - from.x, b.y - from.y));
+    const deg = (angle * 180) / Math.PI;
+    hit.forEach((at, i) => {
+      scene.time.delayedCall(20 + i * 18, () => {
+        if (document.hidden) return;
+        ring(scene, at.x, at.y, color, { from: 6 * k, scale: 2.4, width: 2, ms: 220 });
+        burstFx(scene, 'ptx-spark', at.x, at.y, count(7, sparks), 300, {
+          tint: [0xffffff, lighten(color, 0.4)], speed: { min: 140, max: 320 },
+          angle: { min: deg - 22, max: deg + 22 }, scale: { start: 0.8, end: 0 }, alpha: { start: 1, end: 0 },
+        });
+      });
+    });
+    // The wake: smoke along the line, thinning away.
+    const wake = scene.add.graphics().setDepth(DEPTH.FX - 1);
+    wake.lineStyle(6 * k, 0x9a9aa8, 0.28);
+    wake.lineBetween(muzzle.x, muzzle.y, beyond.x, beyond.y);
+    wake.lineStyle(2, 0xd8d8e0, 0.3);
+    wake.lineBetween(muzzle.x, muzzle.y, beyond.x, beyond.y);
+    fading(scene, wake, 900, { y: -6 }, 160);
+    if (isOwn(scene, ev)) impact(scene, 'light', muzzle);
+  });
+}
+
 // ── The table ────────────────────────────────────────────────────────────────
 
 /** The bespoke animations, by verb id. Kept in step with `KEYSTONE_ANIMATED`. */
@@ -799,6 +886,7 @@ const KEYSTONE_ANIMATIONS: Record<string, KeystoneAnimation> = {
   dragnet: dragnet,
   'chain-reaction': chainReaction,
   vanish: vanish,
+  pierce: pierce,
 };
 
 /**
