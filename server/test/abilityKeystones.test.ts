@@ -1986,13 +1986,18 @@ import { makeCombatContext } from '../src/systems/combat/engine/combatPipeline';
       'one card-fx per dodge, carrying the window as it now stands');
     assert(nodeFx(fx).length === 1, "the packet's per-hit-dodged route fires on the same dodge");
 
-    // Past the cast's own clock: the window is still up, and the node still pays per dodge.
-    updateCombatState(world, 400);
-    assert(up(player), 'the extended window outlives the cast’s own clock');
-    incoming(world, attacker, player, true);
-    fx = cardFx(world);
-    assert(nodeFx(fx).length === 1, 'a dodge in the extended window still fires the node');
-    assert(flowFx(fx).length === 1 && windowOf(player)!.remainingMs === unitMs, 'and extends it again');
+    // Dodge after dodge, each just before the window runs out: it never closes, and
+    // well past the cast's own clock (and past any per-route rate cap, §22.12's
+    // fire-shape guard included) a dodge still fires the node.
+    for (let dodge = 0; dodge < 3; dodge++) {
+      updateCombatState(world, unitMs - 200);
+      assert(up(player), `the extended window is still up before dodge ${dodge + 2}`);
+      incoming(world, attacker, player, true);
+      fx = cardFx(world);
+      assert(flowFx(fx).length === 1 && windowOf(player)!.remainingMs === unitMs, 'each dodge extends it again');
+    }
+    assert(3 * (unitMs - 200) >= 5_000, 'fixture: the last dodge is past a 5 s rate cap');
+    assert(nodeFx(fx).length === 1, 'a dodge in the long-extended window still fires the node');
 
     // A DoT tick is neither: it moves nothing.
     updateCombatState(world, 100);
