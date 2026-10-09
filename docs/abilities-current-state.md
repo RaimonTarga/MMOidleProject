@@ -833,15 +833,21 @@ tables above:
   - *on every body hit* once per body: Sweep's cleave (first delivery on a formation),
     Slam's circle (`applyPlayerAoe`'s victims; a Conduit's one summon cast), Contagion's
     recipients after the copies land. The exchange's own body fires on the exchange; every
-    other body on the owner's Attack, with no evade of its own;
+    other body on the owner's Attack, with no evade of its own. Only a BODY payoff fires per
+    body: a self payoff (the Technique refund) fires once per resolution (design §22.12);
   - *on each hit of a window*: each Imbue charge spent, on that hit's target;
   - *on cast* (Second Wind) and *on the break* (Break Free) on guard-cast; *per hit
     absorbed* (Brace, Bramble Guard: a direct hit not dodged outright while the window is
     up) and *per hit dodged* (Sidestep) on their own `onDamageTaken` listener after
-    defense; *per tick while active* (Endure, Recuperate) once per `pulseMs` while the
-    window is up, from `World.tick`; *on strip* (Cleanse) once per affliction kind removed.
-  - The per-hit and per-tick shapes carry their packet moment's `capMs` per firing
-    (Affliction, Control 5 s; Empowered 4 s), applied by `fire()` as for a card.
+    defense; *per tick while active* (Endure, Recuperate) once per pulse while the
+    window is up, from `World.tick`; *on strip* (Cleanse) once per strip that removed
+    anything.
+  - The three rate guards of design §22.12 ("fire-shapes keep their rate"): a self payoff
+    fires once per resolution; a node's ward refreshes the one ward it owns; every Guard
+    route on per hit absorbed, per hit dodged, per tick while active or on strip is capped
+    at its packet's `capMs`, else Control's 5 s. Imbue's window keeps its packet's own
+    `capMs` (Affliction 5 s, Empowered 4 s). Details and rates under "Fire-shapes as
+    implemented" below.
   - Disengage's Kill chain route still never fires: nothing dies at a departure.
 - **Offers** (§22.10): Binding Strike's Technique refund became an Affliction bleed;
   Snipe's Technique refund the Kill chain on-kill refund; Detonate's Empowered brand a
@@ -929,7 +935,7 @@ live keystone owns one bespoke animation keyed by its id
 (`client/src/fx/abilityKeystoneFx.ts`; Afterimage, not live, is the one keyed stub); the
 table is in [`combat-animation-current-state.md`](combat-animation-current-state.md).
 
-### Fire-shapes as implemented (design §22.10)
+### Fire-shapes as implemented (design §22.10, §22.12)
 
 `ABILITY_FIRE_SHAPES` (`offers.ts`) is the closed table; `ABILITY_FIRE_SHAPE_SEAM` maps
 each shape to an existing trigger seam; the runtime is
@@ -952,8 +958,64 @@ each shape to an existing trigger seam; the runtime is
 touches, and the target on arrival"; players move through monster bodies (they collide
 only with terrain), so there is no contact seam and Charge fires on its TARGET on arrival
 only. Disengage fires on the body it broke from (`departedFrom`), and its Kill chain
-route never fires (nothing dies at a departure). The per-hit and per-tick shapes carry
-their packet's `capMs` per firing.
+route never fires (nothing dies at a departure).
+
+**The three rate guards (design §22.12, "fire-shapes keep their rate").** The shapes move
+the moment a payoff fires, never its rate:
+
+1. **A self payoff fires once per resolution.** A payoff that lands on the player or on
+   the ability itself (Technique refund, speed/damage/Technique window, ward, plating
+   stack, Recovery window, damage reduction, evasion window) fires once however many
+   bodies the resolution hit; a payoff that lands on a body (bleed, poison, slow, brand,
+   plating shred, echo) still fires on each. The split is the resolver's own:
+   `applyPayoff` lands a payoff on a body exactly when `payoffLandsOnTarget(kind)`
+   (shared `ON_TARGET_PAYOFF_KINDS`), and `landsOnBody` in `abilityNodes.ts` reads the
+   same predicate, so there is no second list. On *every body hit* the self payoffs ride
+   the exchange's own body (else the first); a Slam over four bodies refunds its cooldown
+   once. Cleanse's strip is one resolution too: it fires once per strip, not once per
+   affliction kind removed (every Guard offer is a self payoff, so "sized by what it
+   removed" now reads "fires when it removed anything").
+2. **A node's ward refreshes, not stacks.** A ward an ability node fires (packet or cross)
+   carries the owner key `abilityNode.<abilityId>` (`abilityNodeOwner`); `applyWard`'s
+   optional `owner` refreshes that owner's one live ward in place, topped up to the
+   payoff's size (never shrunk) with its window renewed, and marks `holdsWards` dirty.
+   Ownership is a server-only `WeakMap` keyed by the ward object (`ownedWardOf`), never
+   on the networked `WardState`; a ward that broke, expired or went with a death is not
+   found again, so the next firing mints a fresh one. Every other source (lineage cards,
+   overheal, the Overflow keystone) passes no owner, so its wards stack as before.
+3. **Every per-hit and per-tick Guard route is capped.** The *per hit absorbed*, *per
+   hit dodged*, *per tick while active* and *on strip* routes always carry a `capMs`
+   (`abilityNodeRouteCapMs`): the packet's own where it has one (only Control's 5 s, on
+   Brace's damage-reduction route), otherwise the existing Control lane cap,
+   `PACKET_HALF_NUMBERS.control.moment.capMs` (5 s), read through `packetMoment('control')`
+   (`GUARD_FALLBACK_CAP_LANE`). So every Guard route fires at most once per 5 s per
+   (player, ability, route), applied by `fire()` on `capCd(<option id>)` exactly as for a
+   card. A per-tick pulse that every route's cap would refuse waits for the cap rather
+   than being spent, so Endure and Recuperate pulse every 5 s (the cap is longer than
+   the 4 s `pulseMs`). Imbue's *on each hit of a window* keeps its packet's own `capMs`
+   only (Affliction 5 s, Empowered 4 s; its Tempo echo is uncapped, as before).
+
+**Rates** (`server/test/_fireShapeRates.ts`: one monster hitting every 1.5 s through
+`runMonsterAttack` for a minute; *held* keeps the Guard's window up the whole minute,
+*duty* casts it on its own cooldown). Firings per minute, W2-E (`feat/ability-pass`
+9463f1d4) → with the guards:
+
+| Guard | Shape | Route(s) | Held | Duty | Casts/min, window up |
+|---|---|---|---|---|---|
+| Brace | per hit absorbed | Control / damage reduction | 10 → 10 | 6 → 6 | 6, 21 s |
+| Brace | per hit absorbed | Barrier tempo / ward; Bulwark / plating stack | 40 → 10 | 14 → 6 | 6, 21 s |
+| Bramble Guard | per hit absorbed | all three | 40 → 10 | 20 → 5 | 5, 25 s |
+| Sidestep | per hit dodged | Engagement / evasion window | 9 → 9 | 2 → 2 | 6, 15 s |
+| Sidestep | per hit dodged | Kill chain / Recovery; Bulwark / plating stack | 8 → 8 | 2 → 2 | 6, 15 s |
+| Endure | per tick while active | all three | 15 → 12 | 13 → 9 | 5, 44 s |
+| Recuperate | per tick while active | all three | 15 → 12 | 12 → 8 | 4, 40 s |
+| Second Wind | on cast | all three | — | 6 → 6 | 6 |
+| Cleanse | on strip (2 kinds per cast) | all three | — | 12 → 6 | 6 |
+| Break Free | on the break | all three | — | 5 → 5 | 5 |
+
+Duty cycle, every Guard now fires its node at or near its cast rate (5–9 a minute); held
+up the whole minute, at most 12 (the 5 s cap). Sidestep is unchanged: its 2.5 s window is
+shorter than the cap, and a dodge is rarer than a hit.
 
 ### T3 path re-homes (design §22.5)
 

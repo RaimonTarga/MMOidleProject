@@ -196,7 +196,7 @@ const GUARD_RATE_SHAPES: ReadonlySet<AbilityFireShape> = new Set<AbilityFireShap
  * The lane whose EXISTING moment cap a Guard route borrows when its own packet has
  * none (design §22.12: "an existing lane cap otherwise"): Control's one per 5 s
  * (`PACKET_HALF_NUMBERS.control.moment.capMs`), the one capped lane a Guard
- * offers (Brace's and Break Free's Control route already ride it), so every route
+ * offers (Brace's Control route already rides it per hit absorbed), so every route
  * of a Guard fires at the same rate and differs only in what it does. Read from
  * the table, never copied: move Control's cap and the Guard routes follow.
  */
