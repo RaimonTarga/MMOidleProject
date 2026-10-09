@@ -328,7 +328,7 @@ const trioEntries: [string, Trio][] = [
   ['recuperate', [
     verb('recuperate', 1, 'overflow', 'Overflow',
       'Healing past full becomes a ward.',
-      'barrier-tempo.ward-shell', 'ward'),
+      'barrier-tempo.ward-shell', 'ward', { live: true }),
     verb('recuperate', 2, 'battle-rest', 'Battle Rest',
       'Recuperate mends at its full rate while you are hit.',
       'kill-chain.recovery-pulse', 'recovery-window'),

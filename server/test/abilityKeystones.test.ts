@@ -731,7 +731,9 @@ import {
 } from '@mmo-idle/shared';
 import { applyMonsterDotToPlayer } from '../src/systems/combat/status/monsterDot';
 import { joinParty } from '../src/systems/player/party/partySystem';
-import { activeRecoveryFraction } from '../src/systems/defense/regen/recovery';
+import { activeRecoveryFraction, runRecovery } from '../src/systems/defense/regen/recovery';
+import { applyHealToPlayer } from '../src/systems/defense/regen/healing';
+import { guardKeystoneMagnitude, overflowWardOf } from '../src/systems/combat/keystones';
 import { applyResistedPlayerDebuff } from '../src/systems/combat/status/debuffGuard';
 import { beginEngageLock, engageSequenceHoldsAttack } from '../src/systems/combat/ai/engageSequence';
 import { syncPlayerBuffs } from '../src/systems/combat/buffs/buffSync';
@@ -1063,6 +1065,64 @@ const stunnedBy = (monster: MonsterEntity, sourceId: string): boolean => {
     const before = summon.hasHealth.hp;
     updateSummonerArchetype(world, 1_000, 1_000_100);
     assert(summon.hasHealth.hp === before, 'no verb: a summon in combat is not mended');
+  }
+}
+
+// ─── Recuperate · OVERFLOW: healing past full becomes a ward ──────────────────
+
+{
+  const OVERFLOW_FX = ABILITY_KEYSTONE_DEFINITIONS.get('overflow')!.fx;
+  const wardTotal = (player: PlayerEntity): number =>
+    (player.holdsWards?.wards ?? []).reduce((sum, ward) => sum + ward.amount, 0);
+
+  /** A player who has just fired Recuperate, then is topped back to full. */
+  const mending = (id: string, keystone?: string) => {
+    const world = new World();
+    const player = spawnPlayer(world, id, {
+      abilityId: 'recuperate', nodes: rows('recuperate', { packet: 'tempo', ...(keystone ? { keystone } : {}) }),
+    });
+    player.hasHealth.hp = player.hasHealth.maxHp - 20;
+    world.takeNodeEvents(NODE);
+    fireGuard(world, player, 'recuperate');
+    player.hasHealth.hp = player.hasHealth.maxHp;
+    return { world, player };
+  };
+
+  {
+    const { world, player } = mending('ks-overflow', 'overflow');
+    const cap = Math.round(player.hasHealth.maxHp * guardKeystoneMagnitude(player, 'overflow'));
+    assert(cap > 0, 'fixture: the ward has a cap off the table');
+    applyHealToPlayer(player, player.tracksCombat, 3, world);
+    const ward = overflowWardOf(player);
+    assert(ward !== undefined && ward.amount === 3 && ward.remainingMs > 0, 'healing past full becomes a ward');
+    assert(player.hasHealth.hp === player.hasHealth.maxHp, 'and the HP stays at full');
+    assert(cardFx(world).filter((e) => e.fx === OVERFLOW_FX).length === 1, 'one card-fx as the ward rises');
+    applyHealToPlayer(player, player.tracksCombat, 4, world);
+    assert(player.holdsWards!.wards.length === 1 && overflowWardOf(player)!.amount === 7,
+      'more spill tops up the one ward');
+    assert(cardFx(world).filter((e) => e.fx === OVERFLOW_FX).length === 0, 'a top-up draws nothing new');
+    applyHealToPlayer(player, player.tracksCombat, cap * 3, world);
+    assert(overflowWardOf(player)!.amount === cap, `the ward stops at its cap (${cap})`);
+
+    // The Recovery engine's own sub-1-HP slices at 10 Hz add up to a ward too.
+    const sliced = mending('ks-overflow-sliced', 'overflow');
+    sliced.player.hasHealth.recovery = 20;
+    for (let tick = 0; tick < 20; tick++) runRecovery(sliced.world, sliced.player, 100, true);
+    assert(wardTotal(sliced.player) >= 1, 'the mend\u2019s own ticks past full raise the ward');
+
+    // When the mend has run out, healing past full is just healing.
+    player.tracksCombat.statusEffects = player.tracksCombat.statusEffects.filter((e) => e.id !== 'ability-second-wind-2');
+    const before = wardTotal(player);
+    player.holdsWards!.wards = [];
+    applyHealToPlayer(player, player.tracksCombat, 10, world);
+    assert(wardTotal(player) === 0 && before === cap, 'no mend, no overflow');
+  }
+
+  // Without the verb, healing past full is just healing.
+  {
+    const { world, player } = mending('ks-overflow-off');
+    applyHealToPlayer(player, player.tracksCombat, 10, world);
+    assert(wardTotal(player) === 0, 'no verb, no ward');
   }
 }
 
