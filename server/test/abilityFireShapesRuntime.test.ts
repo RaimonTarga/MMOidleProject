@@ -15,6 +15,7 @@
 import {
   ABILITY_DATABASE,
   ABILITY_SIDESTEP_EFFECT_ID,
+  ABILITY_SLOW_EFFECT_ID,
   GAME_CONFIG,
   STARTER_RUNE_IDS,
   abilityNodeId,
@@ -50,6 +51,7 @@ import { applyImbueWindow, imbueChargesRemaining } from '../src/systems/player/a
 import { onTechniqueResolved } from '../src/systems/combat/techniqueResolved';
 import { updateCombatState } from '../src/systems/combat/engine/combatState';
 import { requestManualAbilityUse } from '../src/systems/player/abilities/abilityFiring';
+import { detachComponent } from '../src/ecs/markerHelpers';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -609,6 +611,65 @@ function pulseFor(world: World, ms: number, fx: string): number {
       assert(getStatusEffect(player.tracksCombat, id) === undefined, `${id} was stripped`);
     }
   }
+}
+
+// ═══ on land: the body you broke from, and Charge's target ══════════════════
+
+// ─── Disengage: on the body you broke from ───────────────────────────────────
+
+{
+  const world = new World();
+  const player = spawnPlayer(world, 'fs-disengage', {
+    abilityId: 'disengage', nodes: rows('disengage', { packet: 'control' }), x: 1_000,
+  });
+  const threat = spawnMonster(world, 1_030);
+  const bystander = spawnMonster(world, 2_400);
+  setAttackTarget(world, player, threat.isMonster.id);
+  world.takeNodeEvents(NODE);
+  const before = { ...player.hasPosition.current };
+
+  const result = requestManualAbilityUse(world, player, 'disengage', 1_000);
+  assert(result.state === 'activated', `Disengage activates, got ${result.state} (${result.reason ?? ''})`);
+  assert(player.hasPosition.current.x !== before.x || player.hasPosition.current.y !== before.y, 'the player broke away');
+  const fired = cardFx(world).filter((e) => e.fx === 'control.frost-drag');
+  assert(fired.length === 1, `one firing on the departure, got ${fired.length}`);
+  assert(fired[0]!.targetId === threat.isMonster.id, 'on the body the player broke from');
+  assert(getStatusEffect(threat.tracksCombat, ABILITY_SLOW_EFFECT_ID) !== undefined, 'its Control slow landed on that body');
+  assert(getStatusEffect(bystander.tracksCombat, ABILITY_SLOW_EFFECT_ID) === undefined, 'and on nobody else');
+
+  // The seam itself, with no live attack target to fall back on: the resolution
+  // names the body it broke from, and without it the slow lands on nobody (the
+  // wave-1 gap).
+  const disengage = ABILITY_DATABASE.get('disengage')!;
+  const other = spawnMonster(world, 2_000);
+  detachComponent(world, player, 'hasAttackTarget');
+  world.takeNodeEvents(NODE);
+  updateCombatState(world, packetMoment('control')?.capMs ?? 0);
+  onTechniqueResolved(world, player, disengage);
+  assert(cardFx(world).length === 0, 'a departure that names no body slows nobody');
+  onTechniqueResolved(world, player, disengage, { departedFrom: other });
+  const named = cardFx(world).filter((e) => e.fx === 'control.frost-drag');
+  assert(named.length === 1 && named[0]!.targetId === other.isMonster.id, 'the named body takes the slow');
+}
+
+// ─── Charge: on its target on arrival — the rush has no contact seam ─────────
+
+{
+  // Design §22.10 also reads "on the first body the rush touches". The rush is a
+  // player moving through monster bodies (movement collides with terrain only),
+  // so there is no first-touched body to fire on: Charge stays on its target.
+  const world = new World();
+  const player = spawnPlayer(world, 'fs-charge', {
+    abilityId: 'charge', nodes: rows('charge', { packet: 'empowered' }),
+  });
+  const target = spawnMonster(world, 700);
+  const passed = spawnMonster(world, 550);
+  world.takeNodeEvents(NODE);
+  armTechnique(world, player, 'charge');
+  hit(world, player, target);
+  const fired = cardFx(world).filter((e) => e.fx === 'empowered.weak-point');
+  assert(fired.length === 1 && fired[0]!.targetId === target.isMonster.id, 'Charge fires once, on its target on arrival');
+  assert(getStatusEffect(passed.tracksCombat, 'vulnerability') === undefined, 'never on a body the rush passed');
 }
 
 console.log('abilityFireShapesRuntime: ok');

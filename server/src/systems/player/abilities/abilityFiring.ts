@@ -439,8 +439,10 @@ function maybeFireTechnique(
     } else {
       // A reposition with no strike rider has nothing further to land, so the
       // move itself is the landing. One that DOES arm pays out from the armed
-      // rider instead, so nothing fires twice for one cooldown.
-      onTechniqueResolved(world, player, ability);
+      // rider instead, so nothing fires twice for one cooldown. A backward one
+      // (Disengage) broke from `target` — the threat it reacted to — which is
+      // where its node fires (design §22.10: "on the body you broke from").
+      onTechniqueResolved(world, player, ability, effect.toward ? {} : { departedFrom: target });
     }
     return { activated: true, claimed: true };
   }

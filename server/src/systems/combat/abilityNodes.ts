@@ -18,7 +18,9 @@
  *
  *   on land                 the Technique's resolution, on its target
  *                           (`onAbilityNodeTechniqueLanded`, from
- *                           `combat/techniqueResolved.ts`)
+ *                           `combat/techniqueResolved.ts`); Disengage's is the
+ *                           body it broke from, and Charge's its target on
+ *                           arrival (its rush has no contact seam)
  *   on every body hit       once per body the ability's own area struck, from the
  *                           seam that resolved the area (`onAbilityNodeBodiesHit`:
  *                           Sweep's cleave, Slam's circle, Contagion's spread)
@@ -230,13 +232,20 @@ const KILL_CHAIN_PENDING = 'abilityNodeKillChain';
  * and leaves a Kill chain route waiting for the kill (design §22.10). A route
  * that fires on every body hit is the area's to fire ({@link onAbilityNodeBodiesHit}).
  *
+ * "On land" is the resolution's own body: the exchange's, the cast's target, or —
+ * for a backward reposition, which strikes nothing — `departedFrom`, the body it
+ * broke from (Disengage: "on the body you broke from"). Charge's row also reads
+ * "on the first body the rush touches": the rush has no contact seam (a player
+ * moves through monster bodies, colliding only with terrain), so Charge fires on
+ * its target on arrival alone — the landing blow's exchange.
+ *
  * Called from `onTechniqueResolved`, never directly.
  */
 export function onAbilityNodeTechniqueLanded(
   world: World,
   player: PlayerEntity,
   ability: AbilityDef,
-  site: { ctx?: CombatContext; target?: MonsterEntity } = {},
+  site: { ctx?: CombatContext; target?: MonsterEntity; departedFrom?: MonsterEntity } = {},
 ): void {
   if (ability.slot !== 'technique') return;
   const payoffs = payoffsFor(player, ability.id);
@@ -245,7 +254,12 @@ export function onAbilityNodeTechniqueLanded(
   const now = payoffs.filter((entry) => !NOT_AT_RESOLUTION.has(entry.shape)).map((entry) => entry.payoff);
   const onKill = withShape(payoffs, 'on the kill');
 
-  if (now.length > 0) fireLineagePayoffs(world, player, now, site);
+  if (now.length > 0) {
+    const land = site.ctx || site.target || !site.departedFrom
+      ? { ctx: site.ctx, target: site.target }
+      : { target: site.departedFrom };
+    fireLineagePayoffs(world, player, now, land);
+  }
   if (onKill.length === 0) return;
 
   if (site.ctx) {
