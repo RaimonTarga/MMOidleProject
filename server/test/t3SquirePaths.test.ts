@@ -598,6 +598,13 @@ const deliveries = (): SeenHit[] => hits.filter((h) => h.metadata['destroyerDeli
   assert(delivered.length === 1 && delivered[0].targetId === far.isMonster.id, "the execution lands on Snipe's target, from range");
   assert(player.hasEmpoweredAttack === undefined, 'spent');
   assert(beside.hasHealth.hp === besideHp, 'a single-target cast carries no area');
+  // The client draws the execution's own cue at the cast's target: the delivery
+  // is an execution hit on the wire (the Destroyer path's payoff, W2-D).
+  assert(
+    playerHits(world.takeNodeEvents(NODE), player.isPlayer.id)
+      .some((e) => e.execution && e.targetId === far.isMonster.id),
+    "the delivered execution reaches the client as an execution hit on the cast's target",
+  );
 }
 
 // ── Destroyer + Signature: the one execution fires once and counts once ──────

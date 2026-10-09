@@ -211,9 +211,27 @@ export const SQUIRE_PATHS: PathTable = {
     },
   },
 
-  // Destroyer — ordinary hits are dead taps (fxHollowStrike, combatFx); the
-  // execution is everything the taps held back.
+  // Destroyer — the execution rides the next Technique (design §22.5): regular
+  // hits are ordinary blows, and while the execution waits PRIMED (the recharge
+  // full) each one smoulders at the weapon, the charge looking for a Technique to
+  // carry it. The execution lands with the Technique's shape — on the armed hit,
+  // or on a cast's target from wherever you stand (Snipe's range) — and draws the
+  // same crater there either way: the delivery is an execution hit on the wire.
   'cooldown-heavy-t3-b': {
+    hit: (h) => {
+      if ((h.player.executionCooldownPct ?? 0) < 100) return;
+      const at = { x: h.from.x + (h.to.x > h.from.x ? 10 : -10), y: h.from.y - 8 };
+      const ember = h.scene.add.graphics({ x: at.x, y: at.y }).setDepth(DEPTH.FX);
+      ember.fillStyle(0xffb066, 0.55);
+      ember.fillCircle(0, 0, 6 * h.k);
+      ember.lineStyle(1.5, 0x8a6a5a, 0.9);
+      ember.strokeCircle(0, 0, 8 * h.k);
+      fadeOut(h.scene, ember, 320, 60, 1.5);
+      burstFx(h.scene, 'ptx-dot', at.x, at.y, 4, 520, {
+        tint: [0xffb066, 0x8a6a5a], speed: { min: 10, max: 40 }, angle: { min: 250, max: 290 },
+        scale: { start: 0.6, end: 0 }, alpha: { start: 0.9, end: 0 }, gravityY: -40,
+      });
+    },
     payoff: (h) => {
       slam(h);
       const cracks = h.scene.add.graphics().setDepth(DEPTH.SPRITE - 1);
