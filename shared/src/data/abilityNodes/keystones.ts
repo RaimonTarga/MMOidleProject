@@ -251,7 +251,7 @@ const trioEntries: [string, Trio][] = [
   ['second-wind', [
     verb('second-wind', 1, 'shared-breath', 'Shared Breath',
       'The mend also runs on your summons and same-node party.',
-      'kill-chain.recovery-pulse', 'recovery-window', { delivery: 'formation' }),
+      'kill-chain.recovery-pulse', 'recovery-window', { delivery: 'formation', live: true }),
     verb('second-wind', 2, 'deep-breath', 'Deep Breath',
       'Nothing can hard-control you while the mend runs.',
       'bulwark.keystone', 'engagement-dr'),

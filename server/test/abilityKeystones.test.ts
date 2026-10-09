@@ -730,6 +730,8 @@ import {
   abilityImmunityKindKey,
 } from '@mmo-idle/shared';
 import { applyMonsterDotToPlayer } from '../src/systems/combat/status/monsterDot';
+import { joinParty } from '../src/systems/player/party/partySystem';
+import { activeRecoveryFraction } from '../src/systems/defense/regen/recovery';
 import { applyResistedPlayerDebuff } from '../src/systems/combat/status/debuffGuard';
 import { beginEngageLock, engageSequenceHoldsAttack } from '../src/systems/combat/ai/engageSequence';
 import { syncPlayerBuffs } from '../src/systems/combat/buffs/buffSync';
@@ -1005,6 +1007,63 @@ const stunnedBy = (monster: MonsterEntity, sourceId: string): boolean => {
   fireGuard(plainWorld, plain, 'cleanse');
   applyMonsterDotToPlayer(plainWorld, plainViper, plain, venom);
   assert(has(plain, venomId), 'no verb, no immunity');
+}
+
+// ─── Second Wind · SHARED BREATH: the mend runs on your summons and same-node party ─
+
+{
+  const SHARED_BREATH_FX = ABILITY_KEYSTONE_DEFINITIONS.get('shared-breath')!.fx;
+  // The Bulwark route, so the packet's own payoff never wears the verb's fx key.
+  const nodes = rows('second-wind', { packet: 'bulwark', keystone: 'shared-breath' });
+
+  /** A Conduit owner (hurt, so Second Wind fires), a party member here and one a node away. */
+  const scene = (id: string, withVerb: boolean) => {
+    const world = new World();
+    const { player: owner, minions } = conduit(world, id, 'second-wind',
+      withVerb ? nodes : rows('second-wind', { packet: 'bulwark' }));
+    owner.hasHealth.hp = Math.round(owner.hasHealth.maxHp / 2);
+    if (!((owner.hasHealth.recovery ?? 0) > 0)) owner.hasHealth.recovery = 10;
+    const ally = spawnPlayer(world, `${id}-ally`, { abilityId: 'brace' });
+    const away = spawnPlayer(world, `${id}-away`, { abilityId: 'brace' });
+    away.hasPosition.nodeId = 'node-5-6';
+    joinParty(world, ally, owner.isPlayer.id);
+    joinParty(world, away, owner.isPlayer.id);
+    assert(ally.inParty?.leaderId === owner.isPlayer.id && away.inParty?.leaderId === owner.isPlayer.id,
+      'fixture: one party');
+    // One summon hurt and engaged, so it is in combat.
+    const summon = minions[0]!;
+    const foe = spawnMonster(world, summon.hasPosition.current.x + 24, summon.hasPosition.current.y);
+    setAttackTarget(world, summon, foe.isMonster.id);
+    summon.hasHealth.hp = Math.round(summon.hasHealth.maxHp / 2);
+    world.takeNodeEvents(NODE);
+    fireGuard(world, owner, 'second-wind');
+    return { world, owner, minions, ally, away, summon };
+  };
+
+  {
+    const { world, owner, minions, ally, away, summon } = scene('ks-shared-breath', true);
+    const ownerFraction = getStatusEffect(owner.tracksCombat, 'ability-second-wind')!.data['recoveryPct']!;
+    assert(ownerFraction > 0, 'fixture: the owner mends');
+    assert(activeRecoveryFraction(ally, true) === ownerFraction,
+      'a same-node party member mends at the owner\u2019s fraction (the engine\u2019s skill source)');
+    assert(activeRecoveryFraction(away, true) === 0, 'a party member on another node does not');
+    const drawn = cardFx(world).filter((e) => e.fx === SHARED_BREATH_FX);
+    assert(drawn.length === 1 + minions.length,
+      `one card-fx per body the mend reaches (the ally and ${minions.length} summons), got ${drawn.length}`);
+
+    const before = summon.hasHealth.hp;
+    updateSummonerArchetype(world, 1_000, 1_000_100);
+    assert(summon.hasHealth.hp > before, 'a summon in combat mends while the owner\u2019s mend runs');
+  }
+
+  // Without the verb, Second Wind mends only its caster.
+  {
+    const { world, ally, summon } = scene('ks-shared-breath-off', false);
+    assert(activeRecoveryFraction(ally, true) === 0, 'no verb: the party is not mended');
+    const before = summon.hasHealth.hp;
+    updateSummonerArchetype(world, 1_000, 1_000_100);
+    assert(summon.hasHealth.hp === before, 'no verb: a summon in combat is not mended');
+  }
 }
 
 console.log('abilityKeystones: ok');
