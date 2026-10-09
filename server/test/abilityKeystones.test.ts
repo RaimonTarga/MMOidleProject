@@ -712,4 +712,91 @@ function attackLedger(player: PlayerEntity): string {
   assert(rootedBy(beside, player.isPlayer.id) === 0, 'a dodged strike nets nothing');
 }
 
+// ─── Detonate · CHAIN REACTION: a Detonate kill detonates every afflicted body in reach ─
+
+{
+  const detonate = ABILITY_DATABASE.get('detonate')!;
+  const CHAIN_REACTION_FX = ABILITY_KEYSTONE_DEFINITIONS.get('chain-reaction')!.fx;
+  const bleeds = (monster: MonsterEntity, player: PlayerEntity): boolean =>
+    monster.tracksCombat.statusEffects.some(
+      (effect) => effect.id === LINEAGE_BLEED_ID && effect.sourceId === player.isPlayer.id && effect.remainingMs !== 0,
+    );
+  /** Cast Detonate on `target` through the whole cast lifecycle; the events it drew. */
+  const castDetonate = (world: World, player: PlayerEntity, target: MonsterEntity): CombatEvent[] => {
+    setAttackTarget(world, player, target.isMonster.id);
+    assert(beginAbilityCast(world, player, detonate, 1_000), 'Detonate winds up');
+    world.takeNodeEvents(NODE);
+    updateAbilityCasts(world, player.isCastingAbility!.endsAt);
+    return world.takeNodeEvents(NODE);
+  };
+
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-chain-reaction', {
+      abilityId: 'detonate', nodes: rows('detonate', { packet: 'technique', keystone: 'chain-reaction' }),
+    });
+    // Detonate's reach is the player's own; widened so the fixture has room.
+    player.performsAttack.attackRange = 100;
+    const target = spawnMonster(world, 470);
+    const inReach = spawnMonster(world, 400, 480);
+    const fragile = spawnMonster(world, 400, 320);
+    const clean = spawnMonster(world, 330);
+    const outOfReach = spawnMonster(world, 900);
+    // Next to the fragile body, outside the cast's reach: only a chain ON the
+    // chain could reach it.
+    const behindFragile = spawnMonster(world, 400, 230);
+    for (const monster of [target, inReach, fragile, outOfReach, behindFragile]) {
+      assert(addLineageAffliction(world, player, monster, 600, 4_000), 'fixture: the body bleeds');
+    }
+    target.hasHealth.hp = 1;
+    fragile.hasHealth.hp = 1;
+    const ledger = attackLedger(player);
+
+    const events = castDetonate(world, player, target);
+    assert(!world.getMonsterEntity(target.isMonster.id), 'the Detonate killed its target');
+    assert(
+      !bleeds(inReach, player) && inReach.hasHealth.hp < inReach.hasHealth.maxHp,
+      'an afflicted body in reach is detonated: its records spent, their payout dealt',
+    );
+    assert(!world.getMonsterEntity(fragile.isMonster.id), 'a chained burst can kill');
+    assert(
+      bleeds(behindFragile, player) && behindFragile.hasHealth.hp === behindFragile.hasHealth.maxHp,
+      'a body the chain detonated sets nothing off: no chain on the chain',
+    );
+    assert(
+      bleeds(outOfReach, player) && outOfReach.hasHealth.hp === outOfReach.hasHealth.maxHp,
+      "only bodies in the cast's reach",
+    );
+    assert(
+      clean.hasHealth.hp === clean.hasHealth.maxHp,
+      'a clean body is not set off: the chain spends afflictions, not health',
+    );
+    const bursts = events.filter((e) => e.kind === 'dot-detonate').length;
+    assert(bursts === 3, `the kill's own burst plus one per afflicted body in reach, each once — got ${bursts}`);
+    const drawn = events.filter((e): e is CardFx => e.kind === 'card-fx' && e.fx === CHAIN_REACTION_FX);
+    assert(
+      drawn.length === 2 && new Set(drawn.map((e) => e.targetId)).size === 2,
+      `one card-fx per body set off, got ${drawn.length}`,
+    );
+    assert(attackLedger(player) === ledger, 'a chained burst is never an attack: no attack event, no hit counter');
+  }
+
+  // No kill, no chain.
+  {
+    const world = new World();
+    const player = spawnPlayer(world, 'ks-chain-reaction-nokill', {
+      abilityId: 'detonate', nodes: rows('detonate', { packet: 'technique', keystone: 'chain-reaction' }),
+    });
+    player.performsAttack.attackRange = 100;
+    const target = spawnMonster(world, 470);
+    const neighbour = spawnMonster(world, 400, 480);
+    addLineageAffliction(world, player, target, 600, 4_000);
+    addLineageAffliction(world, player, neighbour, 600, 4_000);
+    const events = castDetonate(world, player, target);
+    assert(world.getMonsterEntity(target.isMonster.id), 'the target survived its Detonate');
+    assert(bleeds(neighbour, player), 'a Detonate that does not kill sets nothing off');
+    assert(!events.some((e) => e.kind === 'card-fx' && e.fx === CHAIN_REACTION_FX), 'and draws nothing');
+  }
+}
+
 console.log('abilityKeystones: ok');

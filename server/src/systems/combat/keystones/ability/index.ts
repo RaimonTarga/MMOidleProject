@@ -13,6 +13,7 @@
  * | Charge | Breakthrough | the control ladder's shortest rung (applyStun, ladderStunMs) on the arrival blow |
  * | Contagion | Outbreak | the affliction toolkit: a tag where resolveContagion writes, copyPlayerDotOnto on the tagged body's onKill |
  * | Binding Strike | Dragnet | the root writer in monsterControl (applyMonsterRoot) on every body adjacent to the target |
+ * | Detonate | Chain Reaction | a Detonate kill runs resolveDetonate once on every afflicted body in the cast's reach |
  */
 export * from './registry';
 export * from './scheduledHits';
@@ -21,3 +22,4 @@ export { AFTERSHOCK_KEYSTONE } from './aftershock';
 export { BREAKTHROUGH_KEYSTONE } from './breakthrough';
 export { OUTBREAK_KEYSTONE, outbreakTag, outbreakTagged } from './outbreak';
 export { DRAGNET_KEYSTONE } from './dragnet';
+export { CHAIN_REACTION_KEYSTONE } from './chainReaction';

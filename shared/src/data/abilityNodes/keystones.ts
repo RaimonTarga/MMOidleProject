@@ -205,7 +205,7 @@ const trioEntries: [string, Trio][] = [
   ['detonate', [
     verb('detonate', 1, 'chain-reaction', 'Chain Reaction',
       'A Detonate kill detonates every afflicted body in reach.',
-      'affliction.keystone', 'hemorrhage', { delivery: DB }),
+      'affliction.keystone', 'hemorrhage', { delivery: DB, live: true }),
     verb('detonate', 2, 'fuse', 'Fuse',
       'The detonation lands a second later, doubled on a body still afflicted.',
       'affliction.double-dose', 'hemorrhage', { delivery: DB }),

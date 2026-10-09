@@ -18,11 +18,16 @@
  *  3. **What does the player see?** {@link pushAbilityKeystoneFx} — one
  *     `card-fx` per application, with the verb's own (existing) fx key.
  *
- * TWO SEAMS. A module either reacts to its ability RESOLVING — `onResolved`,
+ * THE SEAMS. A module either reacts to its ability RESOLVING — `onResolved`,
  * called once per resolution from `combat/techniqueResolved.ts` (the one place
  * every Technique shape's resolution passes through, so Reload's clip, a Conduit's
  * formation and a cast all reach it exactly once) — or registers combat listeners
- * of its own (`register`), or both. {@link registerAbilityKeystones} is called
+ * of its own (`register`), or both. A few rules hang off a moment the resolution
+ * does not own, each called from the one place that moment happens: a spread
+ * landing its copy (`onInfected`, Contagion's victim loop), a charge window
+ * spending a charge (`onChargeSpent`, Imbue's consumer), a status running out
+ * (`tick`, once per logic tick from `World.tick`) and the player's fight ending
+ * (`onCombatEnded`, `updateCombatTransitions`). {@link registerAbilityKeystones} is called
  * from the lane registry's `registerKeystones()`, which `registerLineageCards()`
  * calls from `initCombatSystems()`: the live server and every bench harness see
  * one set.
@@ -34,6 +39,7 @@
  * attack-equivalent Sweep's Tempo counts.
  */
 import {
+  ABILITY_DATABASE,
   ABILITY_KEYSTONE_DEFINITIONS,
   getAbilityKeystoneRuntime,
   type AbilityDef,
@@ -41,7 +47,7 @@ import {
   type AbilityKeystoneDelivery,
   type Vec2,
 } from '@mmo-idle/shared';
-import type { MonsterEntity, PlayerEntity } from '../../../../ecs/entity';
+import type { MinionEntity, MonsterEntity, PlayerEntity } from '../../../../ecs/entity';
 import type { World } from '../../../../world/World';
 import type { CombatContext } from '../../engine/combatPipeline';
 
@@ -49,6 +55,16 @@ import type { CombatContext } from '../../engine/combatPipeline';
 export interface TechniqueResolutionSite {
   ctx?: CombatContext;
   target?: MonsterEntity;
+  /**
+   * A cast a Conduit delivered through one physical summon: that summon's id (the
+   * cast's `casterMinionId`). A cast has no exchange, so this is how a
+   * `delivering-body` verb finds the body that cast it.
+   */
+  casterMinionId?: string;
+  /** A reposition's departure point: where the player stood before it moved them. */
+  from?: Vec2;
+  /** A cast's target's health share as the payload FOUND it, before it landed. */
+  targetHealthShare?: number;
 }
 
 /** One ability keystone verb's runtime. */
@@ -76,6 +92,29 @@ export interface AbilityKeystoneModule {
     ability: AbilityDef,
     victim: MonsterEntity,
   ) => void;
+  /**
+   * A landed hit just spent one charge of the ability's charge window (Imbue's),
+   * with this verb live. Called once per charge spent, from the window's own
+   * consumer — so once per imbued hit, never per tick.
+   */
+  onChargeSpent?: (
+    world: World,
+    player: PlayerEntity,
+    ability: AbilityDef,
+    ctx: CombatContext,
+  ) => void;
+  /**
+   * Once per logic tick, for a rule that waits on a clock it does not own (a
+   * status running out). Every module's, live or not, so state a swapped-out
+   * verb left behind still drains; the module checks liveness itself.
+   */
+  tick?: (world: World, dt: number) => void;
+  /**
+   * The player's fight just ended (the out-of-combat reset,
+   * `updateCombatTransitions`). Every module's, live or not: per-fight state is
+   * cleared whether or not the verb is still slotted.
+   */
+  onCombatEnded?: (world: World, player: PlayerEntity) => void;
 }
 
 const _modules = new Map<string, AbilityKeystoneModule>();
@@ -162,6 +201,42 @@ export function onAbilityKeystoneInfected(
 }
 
 /**
+ * A landed hit spent a charge of the player's charge window (design §22.4's
+ * Fork rides it). Called from the window's consumer (`abilityImbue.ts`), the one
+ * place a charge is spent, so it holds whatever delivered the hit. The window
+ * does not know which ability opened it, so every live verb with the hook is
+ * offered it and checks its own ability.
+ */
+export function onAbilityKeystoneChargeSpent(
+  world: World,
+  player: PlayerEntity,
+  ctx: CombatContext,
+): void {
+  const runtime = getAbilityKeystoneRuntime(player.tracksCombat);
+  if (!runtime) return;
+  for (const [abilityId, cache] of Object.entries(runtime)) {
+    const module = _modules.get(cache.keystoneId);
+    if (!module?.onChargeSpent) continue;
+    const ability = ABILITY_DATABASE.get(abilityId);
+    if (ability) module.onChargeSpent(world, player, ability, ctx);
+  }
+}
+
+/** Advance every verb that waits on a clock. Called once per tick from `World.tick`. */
+export function updateAbilityKeystones(world: World, dt: number): void {
+  for (const module of _modules.values()) module.tick?.(world, dt);
+}
+
+/**
+ * The player's fight ended: clear every verb's per-fight state. Called from
+ * `updateCombatTransitions`, the one place a fight ends (POST_COMBAT becoming
+ * OUT_OF_COMBAT), beside the rites that run there.
+ */
+export function onAbilityKeystoneCombatEnded(world: World, player: PlayerEntity): void {
+  for (const module of _modules.values()) module.onCombatEnded?.(world, player);
+}
+
+/**
  * The hit a share-paying verb takes its share OF: the resolving exchange as it
  * was BEFORE any empowered multiplier (`ctx.metadata.empoweredMultiplier`), the
  * basis every Technique rider and lineage payoff takes — so one multiplier per
@@ -194,6 +269,29 @@ export function deliveryBodyPos(
     if (body) return { ...body.hasPosition.current };
   }
   return { ...player.hasPosition.current };
+}
+
+/**
+ * The delivery BODY itself, for a verb that measures reach or a line from it:
+ * the physical summon that landed the ability (an exchange's `ctx.formation`) or
+ * cast it (the site's `casterMinionId`) on a Conduit, the owner everywhere else
+ * and always for an `owner` verb. A summon that has since died or left yields
+ * the owner, so the rule still has somewhere to stand.
+ */
+export function deliveringBody(
+  world: World,
+  player: PlayerEntity,
+  delivery: AbilityKeystoneDelivery,
+  site: TechniqueResolutionSite = {},
+): PlayerEntity | MinionEntity {
+  if (delivery !== 'delivering-body') return player;
+  const id = site.ctx?.formation?.side === 'summon'
+    ? site.ctx.formation.physicalEntityId
+    : site.casterMinionId;
+  const body = id ? world.getMinionEntity(id) : undefined;
+  return body && body.hasHealth.hp > 0 && body.hasPosition.nodeId === player.hasPosition.nodeId
+    ? body
+    : player;
 }
 
 // ── One visible thing per application ────────────────────────────────────────

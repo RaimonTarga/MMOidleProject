@@ -267,12 +267,24 @@ export function updateAbilityCasts(world: World, now: number): void {
       }
       startTechniqueCooldown(world, player, ability);
     } else {
+      // The share the payload FINDS the target at, read before it lands: Cull's
+      // Harvest chains on "the same health share" (design §22.8).
+      const targetHealthShare = target.hasHealth.maxHp > 0
+        ? target.hasHealth.hp / target.hasHealth.maxHp
+        : 1;
       const refundsItself = resolveCastPayload(world, player, ability, target);
       // Cooldown first, so `technique-refund` has a remaining cooldown to take
       // its share off: a resolution that runs before the cooldown is charged
       // reads zero and refunds nothing. Same ordering as the armed path.
       startTechniqueCooldown(world, player, ability);
-      onTechniqueResolved(world, player, ability, { target, now });
+      onTechniqueResolved(world, player, ability, {
+        target,
+        now,
+        targetHealthShare,
+        // A Conduit cast's physical caster: the delivery body of the ability's
+        // keystone verb (design §22.10).
+        ...(casting.casterMinionId ? { casterMinionId: casting.casterMinionId } : {}),
+      });
       // A Cull kill hands Cull its own cooldown back (design §22.8): charged above
       // like every resolve, then refunded, so the HUD hears both samples.
       if (refundsItself) refundTechniqueCooldown(world, player, ability);
