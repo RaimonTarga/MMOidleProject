@@ -14,20 +14,27 @@
  */
 import {
   ABILITY_DATABASE,
+  ABILITY_PACKET_OFFERS,
   ABILITY_SIDESTEP_EFFECT_ID,
   ABILITY_SLOW_EFFECT_ID,
   GAME_CONFIG,
   STARTER_RUNE_IDS,
+  abilityNodeFx,
   abilityNodeId,
+  abilityOfferFireShape,
   applyStatusEffect,
   baseRecoveryForTier,
   emptyEquipment,
+  getAbilityNodeRuntime,
+  getCooldown,
   getStatusEffect,
   guardEffectIdForAbility,
   lineageUnit,
   packetMoment,
+  payoffLandsOnTarget,
   recoveryEffectIdForAbility,
   resolveAbilityEffect,
+  setCooldown,
   type AbilityNodeProgress,
   type AmplifiedAxis,
   type CombatArchetype,
@@ -41,7 +48,8 @@ import { World } from '../src/world/World';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { emitCombatEvent, makeCombatContext, type CombatContext } from '../src/systems/combat/engine/combatPipeline';
 import { setAttackTarget } from '../src/systems/combat/ai/targeting';
-import { refreshAbilityNodeRuntime, updateAbilityNodePulses } from '../src/systems/combat/abilityNodes';
+import { onAbilityNodeBodiesHit, refreshAbilityNodeRuntime, updateAbilityNodePulses } from '../src/systems/combat/abilityNodes';
+import { abilityCooldownKey, techniqueCooldownMs } from '../src/systems/player/abilities/abilityCooldowns';
 import { armTechnique } from '../src/systems/player/abilities/abilityArming';
 import { beginAbilityCast, updateAbilityCasts } from '../src/systems/player/abilities/abilityCasting';
 import { addLineageAffliction } from '../src/systems/combat/damage/lineageAffliction';
@@ -231,6 +239,69 @@ function idsOf(...monsters: MonsterEntity[]): string {
   assert(targetsOf(slows) === idsOf(target, second, third), 'the packet fired on each body the Slam hit');
   assert(targetsOf(cracks) === idsOf(target, second, third), 'and so did the cross');
   assert(!fired.some((e) => e.targetId === outside.isMonster.id), 'never on a body outside the circle');
+}
+
+// ─── Slam: a self payoff fires once per resolution, a body payoff per body ───
+
+{
+  // Design §22.12: "a payoff that lands on the player or on the ability itself
+  // fires once per resolution, whatever the number of bodies hit". The Technique
+  // refund lands on Slam's own cooldown; the Control slow lands on each body.
+  const world = new World();
+  const slam = ABILITY_DATABASE.get('slam')!;
+  const effect = resolveAbilityEffect(slam, { playerTier: 4 });
+  if (effect.kind !== 'cast-strike' || !effect.radius) throw new Error('Slam is an area cast strike');
+  const player = spawnPlayer(world, 'fs-slam-self', {
+    abilityId: 'slam', nodes: rows('slam', { packet: 'technique', cross: 'control' }),
+  });
+  const share = getAbilityNodeRuntime(player.tracksCombat)?.['slam']?.payoff.magnitude ?? 0;
+  assert(share > 0 && share < 1, `fixture: the refund is a share of the cooldown, got ${share}`);
+  const target = spawnMonster(world, 440);
+  const bodies = [
+    target,
+    spawnMonster(world, 440 + effect.radius * 0.3),
+    spawnMonster(world, 440 + effect.radius * 0.6),
+    spawnMonster(world, 440, 400 + effect.radius * 0.5),
+  ];
+  setAttackTarget(world, player, target.isMonster.id);
+  world.takeNodeEvents(NODE);
+
+  assert(beginAbilityCast(world, player, slam, 1_000), 'the Slam cast begins');
+  updateAbilityCasts(world, player.isCastingAbility!.endsAt);
+  const fired = cardFx(world);
+  const refunds = fired.filter((e) => e.fx === 'technique.cast-flare');
+  const slows = fired.filter((e) => e.fx === 'control.frost-drag');
+  assert(refunds.length === 1, `a Slam over 4 bodies refunds once, got ${refunds.length}`);
+  assert(slows.length === 4 && targetsOf(slows) === idsOf(...bodies), `and its body payoff fires on all 4, got ${slows.length}`);
+  // The cooldown took ONE share off, not four compounded.
+  const full = techniqueCooldownMs(player, slam);
+  const left = getCooldown(player.tracksCombat, abilityCooldownKey('slam'));
+  assert(Math.abs(left - full * (1 - share)) <= 1, `one refund of ${share} off ${full} ms leaves ${full * (1 - share)}, got ${left}`);
+}
+
+// ─── Every every-body-hit route: self once, body per body (the classification) ─
+
+{
+  // The resolver's own split (`payoffLandsOnTarget`), for every route an area
+  // Technique offers that fires on every body hit — four bodies, one resolution.
+  for (const abilityId of ['sweep', 'slam', 'contagion']) {
+    const ability = ABILITY_DATABASE.get(abilityId)!;
+    for (const [lane, payoff] of ABILITY_PACKET_OFFERS.get(abilityId)!) {
+      if (abilityOfferFireShape(abilityId, lane) !== 'on every body hit') continue;
+      const world = new World();
+      const player = spawnPlayer(world, `fs-split-${abilityId}-${lane}`, { abilityId, nodes: rows(abilityId, { packet: lane }) });
+      const bodies = [0, 1, 2, 3].map((i) => spawnMonster(world, 1_000 + i * 20));
+      // Something on each body for a DoT payoff to carry, and a running cooldown to refund.
+      for (const body of bodies) addLineageAffliction(world, player, body, 600, 4_000);
+      setCooldown(player.tracksCombat, abilityCooldownKey(abilityId), 10_000);
+      world.takeNodeEvents(NODE);
+      onAbilityNodeBodiesHit(world, player, ability, bodies);
+      const fx = abilityNodeFx(lane, payoff);
+      const fired = cardFx(world).filter((e) => e.fx === fx).length;
+      const want = payoffLandsOnTarget(payoff) ? bodies.length : 1;
+      assert(fired === want, `${abilityId} ${lane}/${payoff} over 4 bodies: ${want} firing(s), got ${fired}`);
+    }
+  }
 }
 
 // ─── Contagion: on every body the spread reaches ─────────────────────────────
@@ -583,9 +654,12 @@ function pulseFor(world: World, ms: number, fx: string): number {
 
 // ═══ on strip ═══════════════════════════════════════════════════════════════
 
-// ─── Cleanse: on strip, sized by what it removed — one firing per kind ───────
+// ─── Cleanse: on strip — a self payoff once per strip, whatever it removed ───
 
 {
+  // Every Cleanse offer lands on the player (a ward, a window, a plating stack),
+  // so design §22.12's "once per resolution" holds: one strip, one firing. A strip
+  // that removed nothing fires nothing.
   const cleanse = resolveAbilityEffect(ABILITY_DATABASE.get('cleanse')!, { playerTier: 4 });
   if (cleanse.kind !== 'cleanse') throw new Error('Cleanse cleanses');
   assert(cleanse.debuffs >= 2, 'the fixture strips two kinds');
@@ -606,8 +680,8 @@ function pulseFor(world: World, ms: number, fx: string): number {
     world.takeNodeEvents(NODE);
     castGuard(world, player, 'cleanse');
     const fired = cardFx(world).filter((e) => e.fx === 'barrier-tempo.ward-shell');
-    assert(fired.length === ids.length, `a Cleanse that strips ${label} gives ${ids.length} firings, got ${fired.length}`);
-    assert((player.holdsWards?.wards.length ?? 0) === ids.length, 'one ward per kind stripped');
+    assert(fired.length === 1, `a Cleanse that strips ${label} fires its self payoff once, got ${fired.length}`);
+    assert((player.holdsWards?.wards.length ?? 0) === 1, 'one ward per strip, not one per kind');
     for (const id of ids) {
       assert(getStatusEffect(player.tracksCombat, id) === undefined, `${id} was stripped`);
     }

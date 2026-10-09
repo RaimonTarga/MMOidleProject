@@ -23,7 +23,8 @@
  *                           arrival (its rush has no contact seam)
  *   on every body hit       once per body the ability's own area struck, from the
  *                           seam that resolved the area (`onAbilityNodeBodiesHit`:
- *                           Sweep's cleave, Slam's circle, Contagion's spread)
+ *                           Sweep's cleave, Slam's circle, Contagion's spread) —
+ *                           a body payoff only; a self payoff fires once (below)
  *   on each hit of a window once per charge a window spends, on that hit's target
  *                           (`onAbilityNodeWindowHit`, from Imbue's consumer)
  *   on the kill             a Kill chain route on a Technique, on the kill its hit
@@ -48,6 +49,15 @@
  *
  * A Guard's payoff is a defensive face's and never deals damage; the shape only
  * moves the moment it is granted.
+ *
+ * SELF PAYOFFS FIRE ONCE PER RESOLUTION (design §22.12, "fire-shapes keep their
+ * rate"). A payoff that lands on the player or on the ability itself — a cooldown
+ * refund, a speed, damage or Technique window, a ward, a plating stack — fires
+ * once per resolution however many bodies it hit; a payoff that lands on a body
+ * (a bleed, a slow, a brand, a plating shred, poison) still fires on each. The
+ * classification is the resolver's own: `applyPayoff` sends a payoff to the body
+ * exactly when `payoffLandsOnTarget(kind)` (shared `ON_TARGET_PAYOFF_KINDS`),
+ * and everything else resolves on the player (see {@link landsOnBody}).
  *
  * THE RATE CAP. A shape that fires more than once per cast — per hit of a
  * window, per hit absorbed, per hit dodged, per tick while active — must not
@@ -87,6 +97,7 @@ import {
   isCooldownActive,
   lineageUnit,
   packetMoment,
+  payoffLandsOnTarget,
   recoveryEffectIdForAbility,
   resolveActiveAbilityKeystones,
   resolveActiveAbilityNodes,
@@ -223,6 +234,23 @@ function withShape(entries: readonly NodePayoff[], shape: AbilityFireShape): Ext
 }
 
 /**
+ * Whether a node payoff lands on a BODY rather than on the player or the ability
+ * itself (design §22.12). Not a list of its own: it is the very test the payoff
+ * resolver dispatches on — `applyPayoff` hands a payoff to `applyOnTarget` exactly
+ * when `payoffLandsOnTarget(kind)` — so a payoff kind can never be fired per body
+ * here and resolved on the player there. A self payoff fires once per resolution;
+ * a body payoff once per body.
+ */
+function landsOnBody(entry: ExternalLineagePayoff): boolean {
+  return payoffLandsOnTarget(entry.payoff.kind);
+}
+
+/** A fresh clone of each payoff: the dispatcher mutates what it is handed. */
+function cloned(payoffs: readonly ExternalLineagePayoff[]): ExternalLineagePayoff[] {
+  return payoffs.map((entry) => ({ ...entry, payoff: { ...entry.payoff } }));
+}
+
+/**
  * The shapes a Technique's own resolution never pays: they have their own seam
  * and fire there instead (an area's bodies, a window's hits, the kill). Imbue
  * Lightning's resolution only opens its window — its node pays on the hits that
@@ -293,6 +321,11 @@ export function onAbilityNodeTechniqueLanded(
  * (design §22.10). One firing per body per resolution: a body listed twice
  * fires once. Every other route is the resolution's, so this fires nothing else.
  *
+ * Only a BODY payoff fires per body. A self payoff (a cooldown refund, a window:
+ * {@link landsOnBody}) fires ONCE for the whole area (design §22.12), on the
+ * exchange's own body when the exchange is among the bodies, else on the first
+ * — a Slam over four bodies refunds its cooldown once, never four times over.
+ *
  * Called from the seam that resolved the area, after the Technique's own
  * resolution (`onTechniqueResolved`), so a cooldown refund has a running
  * cooldown to take its share off. `exchange` is the hit that carried the area,
@@ -314,18 +347,22 @@ export function onAbilityNodeBodiesHit(
   if (ability.slot !== 'technique' || bodies.length === 0) return;
   const payoffs = withShape(payoffsFor(player, ability.id), 'on every body hit');
   if (payoffs.length === 0) return;
+  const perBody = payoffs.filter(landsOnBody);
   const seen = new Set<string>();
-  for (const body of bodies) {
-    if (seen.has(body.isMonster.id)) continue;
+  const unique = bodies.filter((body) => {
+    if (seen.has(body.isMonster.id)) return false;
     seen.add(body.isMonster.id);
-    const own = exchange?.defenderType === 'monster' && exchange.defender === body;
-    // Each body is its own application: a fresh clone per body, since the
-    // dispatcher mutates the payoff it is handed.
-    fireLineagePayoffs(
-      world, player,
-      payoffs.map((payoff) => ({ ...payoff, payoff: { ...payoff.payoff } })),
-      own ? { ctx: exchange, target: body } : { target: body },
-    );
+    return true;
+  });
+  const isOwn = (body: MonsterEntity): boolean =>
+    exchange?.defenderType === 'monster' && exchange.defender === body;
+  // The one body the self payoffs ride: the exchange's own, else the first.
+  const selfBody = unique.find(isOwn) ?? unique[0];
+  for (const body of unique) {
+    const now = body === selfBody ? payoffs : perBody;
+    if (now.length === 0) continue;
+    // Each body is its own application: a fresh clone per body.
+    fireLineagePayoffs(world, player, cloned(now), isOwn(body) ? { ctx: exchange, target: body } : { target: body });
   }
 }
 
@@ -404,12 +441,13 @@ export function onAbilityNodeGuardCast(
 
 /**
  * A Guard just STRIPPED afflictions off the player — Cleanse (design §22.10: "on
- * strip, sized by what it removed"). Its "on strip" routes fire once per
- * affliction KIND removed: the size is a count of firings, never a new number.
- * Each firing is its own application (a ward per kind; a window refreshed per
- * kind). A strip that removed nothing fires nothing — Cleanse only casts with
- * something harmful on the player, but a partial-only effect can leave the strip
- * empty.
+ * strip, sized by what it removed"). The size is a count of firings, never a new
+ * number: a BODY payoff fires once per affliction KIND removed. A self payoff —
+ * every Guard offer is one (a ward, a window, a plating stack) — fires once per
+ * strip (design §22.12: once per resolution), so a Cleanse that removed three
+ * kinds raises one ward, not three. A strip that removed nothing fires nothing —
+ * Cleanse only casts with something harmful on the player, but a partial-only
+ * effect can leave the strip empty.
  *
  * Called from the Guard firing that did the strip (`maybeFireGuard`), right after
  * `onGuardFired`.
@@ -425,9 +463,11 @@ export function onAbilityNodeStripped(
   if (kinds === 0) return;
   const payoffs = withShape(payoffsFor(player, ability.id), 'on strip');
   if (payoffs.length === 0) return;
+  const perKind = payoffs.filter(landsOnBody);
   for (let i = 0; i < kinds; i++) {
-    // A fresh clone per firing: the dispatcher mutates what it is handed.
-    fireLineagePayoffs(world, player, payoffs.map((entry) => ({ ...entry, payoff: { ...entry.payoff } })));
+    const now = i === 0 ? payoffs : perKind;
+    if (now.length === 0) break;
+    fireLineagePayoffs(world, player, cloned(now));
   }
 }
 
