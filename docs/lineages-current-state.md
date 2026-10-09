@@ -709,7 +709,7 @@ the composed heavy bleed, the Affliction re-dose, `poison-stack`, a standalone
 
 - The Control lean's slow is "Hobbled" (`lineage.hobbled`) and the Control payload's root
   "Pinned" (`lineage.pinned`), each its own id with its own help, instead of borrowing
-  Hamstring's "Hamstrung" (`ability-slowed`) and Binding Strike's "Bound"
+  the ability slow (`ability-slowed`, "Slowed" since design §22.12) and Binding Strike's "Bound"
   (`ability-rooted`). They sit on the same ladder rungs (`MONSTER_SLOW_STATUS_IDS`,
   `MONSTER_ROOT_STATUS_IDS`, `monsterHasLiveRoot`, `monsterIsHeld`). The `slow` payoff, the
   ability-node slows and the T3 Control keystone's root still use the ability ids.

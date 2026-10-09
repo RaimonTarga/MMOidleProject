@@ -848,9 +848,9 @@ tables above:
   Control slow; Charge, Contagion and Disengage's Kill chain speed window the on-kill
   refund; Cull's Kill chain offer is the speed window (it refunds natively).
 - **Statuses.** Expose Weakness's `expose-weakness` and Frenzy's `ability-frenzy` lost
-  their only writers and their registry entries. The `ability-slowed` id ("Hamstrung")
+  their only writers and their registry entries. The `ability-slowed` id ("Slowed")
   is KEPT: the lineage `slow` payoff (every ability-node slow) and the at-bay tap still
-  write it; renaming its copy is the designer's open call. Sidestep's `ability-sidestep`
+  write it; it read "Hamstrung" until design §22.12 renamed it. Sidestep's `ability-sidestep`
   carries the evasion window and the speed burst on one clock.
 
 ### Node rows, the tier rule and the cast axis (design §22.1, §22.9, §22.10)
@@ -980,7 +980,7 @@ node-progress entry naming one, the load path logs one line per affected charact
 legacy rename that resolves to a cut id (`heavy-strike` to expose-weakness,
 `charged-strike` to power-strike) drops the same way. A re-homed ability keeps its id
 and its progress. Anything a cut ability produced that is still a live concept keeps its
-status id and art: `ability-slowed` ("Hamstrung") is written by the lineage `slow` payoff
+status id and art: `ability-slowed` ("Slowed", design §22.12) is written by the lineage `slow` payoff
 and the at-bay tap; its help text no longer names Hamstring.
 
 ## Ability tags and equipment modifiers (2026-09-13)

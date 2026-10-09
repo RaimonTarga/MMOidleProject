@@ -446,7 +446,7 @@ function hit(player: PlayerEntity, defender: MonsterEntity, damage: number, meta
   applyMonsterSlow(world, both, 0.4, 10_000, 'at-bay');
   hit(player, both, 200);
   assert(getStatusEffect(both.tracksCombat, ABILITY_SLOW_EFFECT_ID) !== undefined
-    && getStatusEffect(both.tracksCombat, LINEAGE_SLOW_STATUS_ID) !== undefined, 'Hamstrung and Hobbled side by side');
+    && getStatusEffect(both.tracksCombat, LINEAGE_SLOW_STATUS_ID) !== undefined, 'Slowed and Hobbled side by side');
   updateMonsterSlows(world);
   assert(near(both.hasStatus.monsterMoveSpeedMult ?? 1, 0.6), `the strongest slow wins, got ${both.hasStatus.monsterMoveSpeedMult}`);
 

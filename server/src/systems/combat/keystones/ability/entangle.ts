@@ -12,7 +12,7 @@
  *    axes, `totalMs` in the status data for the buff clock, the `hasAbilitySlow`
  *    marker, and the one slow reconciler. Under its own id, `ability-entangled`
  *    ("Entangled"), rather than the shared ability slow, whose label and help
- *    still say "Hamstrung" and name a cut ability (the precedent is the lean's
+ *    were written for the cut Hamstring (the precedent is the lean's
  *    `lineage.hobbled`). The id is a member of `MONSTER_SLOW_STATUS_IDS`, so it is
  *    the same rung as every slow: the reconciler takes the strongest of them, the
  *    Control keystone's ladder escalates from it, and `monsterIsHeld` counts it —

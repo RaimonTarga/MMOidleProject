@@ -15,7 +15,7 @@ const STATUS_META: Record<string, StatusMeta> = {
   'dot-conf':      { label: 'Conflag', color: '#ff5a2c' },
   'dot-frostbite': { label: 'Frostbite', color: '#8fd8ff' },
   slow:            { label: 'Slow',    color: '#88aaff' },
-  'ability-slowed': { label: 'Hamstrung', color: '#88aaff' },
+  'ability-slowed': { label: 'Slowed', color: '#88aaff' },
   'ability-rooted': { label: 'Bound', color: '#aa77ee' },
   // The lineage cards' own records (design §26.2): the one bleed on a weapon with
   // no poison of its own, and the Control lean's slow and root under their names.

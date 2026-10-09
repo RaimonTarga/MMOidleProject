@@ -20,8 +20,8 @@
  *   `lineage.hobbled`  the Control lean's slow ("Hobbled").
  *   `lineage.pinned`   the Control payload's root ("Pinned").
  *
- * The last two have their own ids rather than Hamstring's `ability-slowed` and
- * Binding Strike's `ability-rooted`, whose labels ("Hamstrung", "Bound") and help
+ * The last two have their own ids rather than the ability slow `ability-slowed` and
+ * Binding Strike's `ability-rooted`, whose labels ("Slowed", "Bound") and help
  * name abilities the player may not have. They are the same ladder rungs: the
  * server's slow/root reconciler, the root ownership rules, the Control keystone's
  * ladder and boss control immunity all read both ids of a rung.

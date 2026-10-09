@@ -133,7 +133,7 @@ export function applyMonsterRoot(
  * Read off the live status records rather than the reconciled
  * `monsterMoveSpeedMult`, which only catches up on the next control pass: a slow
  * that landed earlier in this tick already holds the body. Every rung of the
- * ladder counts — an ability, at-bay or lean slow (Hamstrung, Hobbled), a chill,
+ * ladder counts — an ability, at-bay or lean slow (Slowed, Hobbled), a chill,
  * a freeze, the root (Bound, Pinned), and the stun, which is also what the
  * Control payload's knockdown is. The list is shared (`isHoldStatusId`), so the
  * HUD's "held" and this one can never disagree. A boss that roots ITSELF for a

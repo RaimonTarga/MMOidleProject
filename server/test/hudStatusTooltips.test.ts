@@ -152,7 +152,7 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
   );
 
   const targetLabels: Record<string, string> = {
-    "ability-slowed": "Hamstrung",
+    "ability-slowed": "Slowed",
     "ability-rooted": "Bound",
     stunned: "Stunned",
     "stun-immune": "Stun ward",
