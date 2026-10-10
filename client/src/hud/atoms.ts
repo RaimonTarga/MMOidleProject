@@ -407,6 +407,8 @@ export interface TargetFrameData {
   plating: number;
   damageReduction: number;
   isBoss: boolean;
+  /** A dungeon guardian (the render state's `dungeonGuardianIds`, from the dungeon snapshot). */
+  isGuardian: boolean;
   statuses: TargetStatusView[];
   bossEffects: string[];
   bossEffectStacks: Record<string, number>;
@@ -664,7 +666,7 @@ function targetFrameEqual(a: TargetFrameData | null, b: TargetFrameData | null):
   if (
     a.id !== b.id || a.hp !== b.hp || a.maxHp !== b.maxHp ||
     a.attack !== b.attack || a.plating !== b.plating ||
-    a.damageReduction !== b.damageReduction || a.isBoss !== b.isBoss ||
+    a.damageReduction !== b.damageReduction || a.isBoss !== b.isBoss || a.isGuardian !== b.isGuardian ||
     a.bossPhase !== b.bossPhase ||
     a.statuses.length !== b.statuses.length || a.bossEffects.length !== b.bossEffects.length
   ) return false;

@@ -4,6 +4,7 @@ import {
 } from '@mmo-idle/shared';
 import { useState, useEffect, useRef } from 'react';
 import { biomeXPAtom, biomeLevelAtom, playerNodeIdAtom, playerTierAtom } from './atoms';
+import { useLingeringBoss } from './BossFrame';
 import './biomeXpBar.css';
 
 const MAX_PLAYER_TIER = 7;
@@ -36,6 +37,9 @@ export function BiomeXpBar() {
   const biomeXP    = useAtomValue(biomeXPAtom);
   const biomeLevel = useAtomValue(biomeLevelAtom);
   const playerTier = useAtomValue(playerTierAtom);
+  // The boss frame takes the top centre (designer's call, 2026-10-10): while it is up,
+  // lingering included, the desktop bar steps aside (biomeXpBar.css scopes the fade).
+  const bossUp = useLingeringBoss().shown !== null;
 
   const nodeInfo   = nodeId ? NODE_BIOMES[nodeId] : null;
   const biomeGroup = nodeInfo?.biomeGroup ?? null;
@@ -138,7 +142,7 @@ export function BiomeXpBar() {
   ].filter(Boolean).join(' ');
 
   return (
-    <div className="biome-xp-bar" data-ui-unlock-system="map">
+    <div className={`biome-xp-bar${bossUp ? ' biome-xp-bar--behind-boss' : ''}`} data-ui-unlock-system="map">
       <div className="biome-xp-bar__header">
         <span className="biome-xp-bar__biome">{biomeName} T{tier}</span>
         <span className={`biome-xp-bar__level${levelModClass ? ` ${levelModClass}` : ''}`}>

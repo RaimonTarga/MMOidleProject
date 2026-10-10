@@ -1,0 +1,895 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Combat Readout Mockup</title>
+<style>
+/* The page chrome. Every readout colour and size comes from the TOKENS object in the
+   script below (the mirror of client/src/render/readoutTokens.ts), not from here. */
+:root {
+  --page: #0e0d0b; --panel: #17150f; --ink: #e9e2d0; --muted: #a39a85; --rule: #2c281f;
+  --accent: #d8b867; --field: #26301f; --field-2: #1f2819;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 14px/1.5 system-ui, -apple-system, Segoe UI, sans-serif; }
+main { max-width: 1480px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 22px; margin: 0 0 4px; }
+h2 { font-size: 17px; margin: 40px 0 6px; padding-top: 14px; border-top: 1px solid var(--rule); }
+h3 { font-size: 14px; margin: 18px 0 6px; color: var(--accent); }
+p, li { color: var(--muted); max-width: 980px; }
+p b, li b { color: var(--ink); }
+code { font: 12px ui-monospace, monospace; color: #d6cfbd; background: #1d1b15; padding: 1px 4px; border-radius: 2px; }
+.bar-controls { position: sticky; top: 0; z-index: 50; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  padding: 8px 0; background: var(--page); border-bottom: 1px solid var(--rule); }
+.bar-controls button { font: inherit; color: var(--ink); background: #221f17; border: 1px solid #3a3426; padding: 4px 10px; border-radius: 2px; cursor: pointer; }
+.bar-controls button[aria-pressed="true"] { background: #3b331f; border-color: var(--accent); }
+.bar-controls span { color: var(--muted); font-size: 12px; }
+.row { display: flex; gap: 18px; flex-wrap: wrap; align-items: flex-start; }
+.cap { font-size: 12px; color: var(--muted); margin: 4px 0 0; max-width: none; }
+.legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-top: 12px; }
+.legend > div { background: var(--panel); border: 1px solid var(--rule); padding: 10px 12px; }
+.legend table { border-collapse: collapse; width: 100%; font-size: 12px; }
+.legend td { padding: 2px 4px; color: var(--muted); }
+.legend td:first-child { color: var(--ink); }
+.swatch { display: inline-block; width: 12px; height: 12px; vertical-align: -2px; margin-right: 6px; border: 1px solid #000; }
+.verdict { background: #1b1912; border-left: 3px solid var(--accent); padding: 10px 14px; margin-top: 12px; }
+.verdict p { margin: 4px 0; }
+
+/* ── A simulated viewport ─────────────────────────────────────────────── */
+.vp { position: relative; overflow: hidden; background:
+  radial-gradient(ellipse at 50% 55%, var(--field) 0%, var(--field-2) 70%, #171d12 100%);
+  border: 1px solid #000; flex: 0 0 auto; font-family: monospace; }
+.vp-label { position: absolute; left: 6px; bottom: 4px; z-index: 40; font: 11px system-ui; color: rgba(255,255,255,.45); pointer-events: none; }
+.body { position: absolute; transform: translate(-50%, -50%); background-repeat: no-repeat; image-rendering: pixelated; }
+.body.flash { filter: brightness(2.6) saturate(0.2); }
+.body.dead { opacity: 0.18; filter: grayscale(1); }
+.ohbar { position: absolute; transform: translateX(-50%); }
+.ohbar i { position: absolute; top: 0; bottom: 0; left: 0; display: block; }
+.ohbar .absorb-band { position: absolute; left: 0; }
+.ohbar .seg { position: absolute; top: 0; bottom: 0; width: 1px; }
+.floater { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; pointer-events: none;
+  font-family: monospace; font-weight: bold; line-height: 1; z-index: 20; }
+.cast-label { position: absolute; transform: translate(-50%, -100%); font: 11px monospace; color: #ffb6a0; text-shadow: 0 0 3px #000, 0 0 3px #000; z-index: 15; white-space: nowrap; }
+
+/* ── The HUD pieces (DOM in the real client) ──────────────────────────── */
+.hud { position: absolute; z-index: 30; font-family: monospace; color: #e8e0c8; }
+.panel { background: rgba(20, 18, 13, 0.94); border: 1px solid; border-color: #4a4232 #14110b #14110b #4a4232; box-shadow: 2px 2px 8px rgba(0,0,0,.6); border-radius: 2px; }
+.rbar { position: relative; overflow: hidden; border-radius: 2px; }
+.rbar > .t { position: absolute; inset: 0; }
+.rbar > .chip, .rbar > .fill, .rbar > .absorb { position: absolute; top: 0; bottom: 0; left: 0; }
+.rbar > .absorb { background: repeating-linear-gradient(115deg, rgba(255,255,255,.26) 0 3px, transparent 3px 7px), linear-gradient(180deg, #7fe6ff, #2ba8ca); border-left: 2px solid rgba(232,251,255,.95); }
+.rbar > .q { position: absolute; top: -2px; bottom: -2px; width: 2px; transform: translateX(-1px); }
+.rbar > .lostq { position: absolute; top: 0; bottom: 0; }
+.rbar > .num { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff;
+  text-shadow: 1px 1px 0 #000, -1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000; letter-spacing: .02em; }
+.tag { font-size: 8px; font-weight: bold; letter-spacing: .1em; border-radius: 2px; padding: 1px 4px; border: 1px solid; }
+.pips { display: inline-flex; gap: 3px; }
+.pips i { width: 7px; height: 7px; display: block; transform: rotate(45deg); border: 1px solid; }
+.homes { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 5px; margin-top: 7px; }
+.home { min-height: 34px; padding: 2px 4px 3px; border: 1px solid rgba(255,255,255,.1); background: rgba(0,0,0,.22); font-size: 8px; color: #8d846f; letter-spacing: .08em; text-transform: uppercase; }
+.home b { display: block; margin-top: 3px; font-size: 9px; letter-spacing: 0; text-transform: none; }
+.home.empty { background: transparent; border-color: rgba(255,255,255,.05); }
+.stats { display: flex; justify-content: center; gap: 14px; margin-top: 5px; font-size: 10px; color: #8d846f; }
+.stats b { color: #e8e0c8; }
+.portrait { flex: 0 0 auto; background-repeat: no-repeat; image-rendering: pixelated; border: 1px solid #000; background-color: #11161d; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
+.rail { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(16,14,10,.97); border-right: 1px solid #000; z-index: 29; }
+.ring { width: 26px; height: 26px; border-radius: 50%; border: 3px solid #5e5645; border-top-color: #e2c26d; border-right-color: #e2c26d; flex: 0 0 auto; }
+.mtop { position: absolute; left: 0; right: 0; top: 0; z-index: 31; background: rgba(18,16,12,.97); border-bottom: 1px solid #3a3426; padding: 4px 10px; display: flex; flex-direction: column; gap: 2px; }
+.mrow { display: flex; align-items: center; gap: 7px; min-height: 22px; }
+.mtabs { position: absolute; left: 0; right: 0; bottom: 0; height: 86px; z-index: 31; background: rgba(18,16,12,.97); border-top: 1px solid #3a3426; display: flex; flex-direction: column; }
+.mtabs .xp { height: 26px; border-bottom: 1px solid #2c281f; }
+.mtabs .tabs { flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); }
+.mtabs .tabs i { border-right: 1px solid #2c281f; }
+</style>
+</head>
+<body>
+<main>
+<h1>Combat readout — mockup (wave 0)</h1>
+<p>One grammar for the numbers, the crit, the overhead bars, a boss frame with quarters, the target
+frame's chrome and the vitals. Every scene below is driven by <b>real event shapes</b>
+(<code>player-hit</code>, <code>dot-tick</code>, <code>monster-hit</code> with <code>absorbed</code>,
+<code>monster-cast-start</code>/<code>-end</code>) at real T1 numbers (Moss Rat 160 HP, Crag Behemoth
+2100 HP and its 2.4 s Crag Charge for 95, a T1 pool of 220–240), fed through a port of the code the
+build will ship: band selection by share, DoT coalescing per second, the per-target lane stack, the
+bar chip, the quarter markers. Bodies and portraits are the game's own atlas frames
+(<code>client/public/assets/sprites.png</code>); open this file from the repo so the relative path
+resolves. Structure and tokens only — no ornament (design §26.4).</p>
+
+<div class="bar-controls" role="group" aria-label="Number language">
+  <span>Number language for the scenes:</span>
+  <button data-variant="A" aria-pressed="true">A · size by share</button>
+  <button data-variant="B" aria-pressed="false">B · weight by share</button>
+  <button data-variant="today" aria-pressed="false">Today (develop)</button>
+  <span>· Replay loops; reduced-motion is honoured.</span>
+</div>
+
+<div class="legend" id="legend"></div>
+
+<h2>The two number languages, side by side</h2>
+<p>The same event streams, twice. <b>A</b> sets a floater's <b>size</b> by the hit's share of the
+target's max HP (chip / hit / heavy / whole swing). <b>B</b> keeps one size and sets <b>weight,
+outline and opacity</b> by share. Both keep the colour-by-kind and motion-by-kind rules and the lane
+stack. Left: a T1 Striker on a Moss Rat. Right: a Slinger in a swarm.</p>
+<div class="row" id="ab-row-1"></div>
+<div class="row" id="ab-row-2" style="margin-top:14px"></div>
+<div class="verdict">
+  <p><b>Reviewer's pick: A, size by share.</b></p>
+  <p>Size reads before the digits do, in the corner of the eye, which is the whole point of
+  "numbers say share". B's weight ladder only separates its top and bottom rungs: at 15 px a
+  600 and an 800 weight look the same under a 3 px outline, and at the phone floor (right-hand
+  frames below, the camera at 0.4) every rung of B collapses into one bold blur, while A's
+  25 px whole swing still stands out from a 12 px chip. A also gives the crit a free, honest
+  look: a crit moves up one band, so on a rat it is the biggest thing on screen and on a boss
+  it is a visible step above the chip-sized swings around it, without inventing a fifth size.
+  A costs more vertical room, which the lane stack pays for: five live floaters a target,
+  oldest dropped, never overlapping. B's one real win, steadier geometry in a swarm, is not
+  worth a language you cannot read on a phone.</p>
+</div>
+
+<h2>1 · A T1 fight on a rat</h2>
+<p>Striker (Axe, its Bleed) on a Moss Rat. Hits land at 9–10 % of the rat (band <i>hit</i>); the
+cadence finisher is <code>empowered</code>, 19–21 %, promoted one band to <i>whole swing</i>, gold,
+with a 110 ms body flash. Bleed ticks every 0.5 s and is coalesced to one number a second. The rat's
+17s land on a 220 pool at 8 % (<i>hit</i>, damage-taken red); one is a graze (<code>~</code>). The
+overhead bar's chip holds the last hit for 0.4 s, then drains. Target frame: portrait slot (the
+atlas frame), name and tier, a proper bar with the number and the chip; homes and tiles unchanged.</p>
+<div class="row" id="scene-rat"></div>
+
+<h2>2 · A Behemoth fight</h2>
+<p>Squire on the Crag Behemoth at 53 %. The boss frame sits top centre: name, (phase tile slot —
+the T1 Behemoth announces no named phase; the T2 example strip below shows one), a wide bar with
+<b>quarter markers: the quarters already LOST are lit gold</b> and counted in the pips, the next
+boundary is the white tick, so the third lit pip says the fourth firing is next. A slim cast line
+fills with the Crag Charge's 2.4 s (the client's <code>castState</code> from
+<code>monster-cast-start</code>). The 95 lands as 65 taken + 30 absorbed by the ward
+(<i>whole swing</i> against the pool). Swings of 21 are 1 % of the boss: chip-sized, honestly. The
+target frame drops its own name and bar under a boss frame for the same body (one channel per fact)
+and keeps the homes and tiles. Low health at a quarter: a steady red edge glow on the vitals.</p>
+<div class="row" id="scene-boss"></div>
+<h3>Boss frame states</h3>
+<div class="row" id="boss-states"></div>
+
+<h2>3 · A Slinger in a swarm</h2>
+<p>Slinger (reload, light) against four Young Wolves, two Field Hares and a Grass Kite. Small bodies
+take a 24 px bar, the medium ones 32 px. A volley of eight shots on one wolf inside a second shows the
+cap: five live floaters per target, the oldest dropped first, never stacked on top of each other.
+Poison ticks coalesce per target per second.</p>
+<div class="row" id="scene-swarm"></div>
+
+<h2>4 · Overhead bars, the target frame, the vitals</h2>
+<h3>Overhead bars by size class (desktop, zoom 1)</h3>
+<div class="row" id="bars-static"></div>
+<p class="cap">Width by body size class: small 24, medium 32, large 44, boss 72; height 4 (boss 5);
+minion/summon 24×2. Colour by thirds kept (green above 50 %, amber above 25 %, red), tokenised. The
+chip (pale) lags the fill. Absorb: a player's barrier+wards ride the fill as one cyan band; an enemy
+shell is the cyan band above the bar. Elites and bosses get a thin segment every 25 %. Bars draw no
+text. On a phone at the 0.4 floor the thickness keeps 3 screen px and the width stays body-relative.</p>
+<h3>Target frame chrome</h3>
+<div class="row" id="tf-static"></div>
+<h3>The vitals (one bar module, three uses)</h3>
+<div class="row" id="vitals-static"></div>
+<p class="cap">The vitals bar is the same module as the target and boss bars: chip, absorb band, number
+inside. Low-health treatment at ≤ 25 %: a steady, tokenised red edge glow on the bar's frame (no
+flash, no pulse). The ring beside it does not move.</p>
+</main>
+
+<script>
+'use strict';
+/* ══ TOKENS — the mirror of client/src/render/readoutTokens.ts ═══════════════ */
+const TOKENS = {
+  number: {
+    bands: [
+      { id: 'chip',  minShare: 0,    px: 12 },
+      { id: 'hit',   minShare: 0.04, px: 15 },
+      { id: 'heavy', minShare: 0.12, px: 19 },
+      { id: 'swing', minShare: 0.30, px: 25 },
+    ],
+    dotMaxBand: 'hit',               // a DoT number never draws above "hit"
+    weightB: { px: 15, chip: [400, 0.7, 2], hit: [600, 0.9, 3], heavy: [800, 1, 3], swing: [900, 1, 4] },
+    color: {
+      direct: '#ffffff', crit: '#ffd23f', shield: '#44ccdd', dot: '#c9a7eb',
+      takenOwn: '#ff4444', takenOther: '#ff8844', takenMinion: '#ffd1d1',
+      capped: '#9aa6bf', graze: '#bcd2ff', outline: '#000000',
+    },
+    // Numbers lift the bleed red off the ground (the fx keep #c41e1e); the rest match the fx.
+    element: { poison: '#5fd35f', fire: '#ff8c2b', frost: '#5fd0ff', lightning: '#c77dff', bleed: '#ec4b40', doom: '#9d4dff' },
+    elementGlyph: { poison: '☠', fire: '🔥', frost: '❄', lightning: '⚡', bleed: '🩸', doom: '☠' },
+    glyph: { shield: '🛡', capped: '▼', graze: '~', crit: '!', dot: '•' },
+    motion: {
+      hit:  { popScale: 1.25, popMs: 90,  risePx: 26, lifeMs: 850 },
+      crit: { popScale: 1.6,  popMs: 120, risePx: 30, lifeMs: 1050 },
+      dot:  { popScale: 1,    popMs: 0,   risePx: 18, lifeMs: 900 },
+    },
+    bodyFlashMs: 110,
+    lane: { cap: 5, gapPx: 2 },
+    dotWindowMs: 1000,
+    phoneScreenFloor: 0.85,          // screen size = band px × max(zoom, floor) ÷ zoom in world
+  },
+  bar: {
+    width: { small: 24, medium: 32, large: 44, boss: 72 },
+    height: 4, bossHeight: 5, minion: { width: 24, height: 2 },
+    sizeClassPx: { small: 60, large: 80 },   // displayed body px: < 60 small, ≥ 80 large
+    thirds: { high: 0.5, mid: 0.25 },
+    color: {
+      high: '#44ee44', mid: '#eeaa22', low: '#ee3322', trough: '#1a1a1a', outline: 'rgba(0,0,0,.75)',
+      chip: '#fff1cf', absorbPlayer: '#44ccdd', absorbEnemy: '#55d9f2', absorbEnemyTrough: '#102d38',
+      segment: 'rgba(0,0,0,.7)',
+    },
+    chip: { holdMs: 400, drainMs: 500, reholdShare: 0.04 },
+    segmentEvery: 0.25,
+    phoneMinScreenPx: 3,
+  },
+  frame: {
+    quarter: { lost: '#f0c35a', next: '#ffffff', tick: 'rgba(0,0,0,.6)', lostTrough: 'rgba(240,195,90,.13)' },
+    cast: { fill: '#ff8f6b', trough: 'rgba(255,143,107,.18)', label: '#ffb6a0' },
+    boss: { edge: 'rgba(200,70,70,.5)', tag: '#ff8a8a' },
+    elite: { tag: '#ffdd33' },
+    lowHealth: { at: 0.25, glow: '#ff2a2a' },
+  },
+};
+
+/* ══ The pure logic the build ships (ported 1:1 into the client modules) ═══ */
+const B = TOKENS.number.bands;
+function bandIndexFor(amount, maxHp) {
+  const share = maxHp > 0 ? amount / maxHp : 0;
+  let idx = 0;
+  for (let i = 0; i < B.length; i++) if (share >= B[i].minShare) idx = i;
+  return idx;
+}
+/** One look per entry: band, colour, motion, glyphs. */
+function numberLook(entry, maxHp, targetKind, isOwn) {
+  let band = bandIndexFor(entry.amount, maxHp);
+  const C = TOKENS.number.color;
+  let color = C.direct, motion = 'hit', suffix = '', symbol = '';
+  if (entry.shield) { color = C.shield; symbol = TOKENS.number.glyph.shield; }
+  else if (entry.hint.capped) { color = C.capped; symbol = TOKENS.number.glyph.capped; }
+  else if (entry.hint.evadedPartial) { color = C.graze; suffix = TOKENS.number.glyph.graze; }
+  else if (entry.hint.isDot) {
+    color = entry.hint.dotElement ? TOKENS.number.element[entry.hint.dotElement] : C.dot;
+    symbol = entry.hint.dotElement ? TOKENS.number.elementGlyph[entry.hint.dotElement] : TOKENS.number.glyph.dot;
+    motion = 'dot';
+    band = Math.min(band, B.findIndex(b => b.id === TOKENS.number.dotMaxBand));
+  } else if (targetKind === 'player' || targetKind === 'minion') {
+    color = targetKind === 'minion' ? C.takenMinion : isOwn ? C.takenOwn : C.takenOther;
+    if (entry.hint.empowered) { band = Math.min(B.length - 1, band + 1); suffix = '!'; motion = 'crit'; }
+  } else if (entry.hint.empowered || entry.hint.execution) {
+    band = Math.min(B.length - 1, band + 1);
+    color = entry.hint.dotElement ? TOKENS.number.element[entry.hint.dotElement] : C.crit;
+    suffix = TOKENS.number.glyph.crit; motion = 'crit';
+  }
+  return { band, color, motion, suffix, symbol, crit: motion === 'crit' && targetKind === 'monster' };
+}
+/** prepareCombatText's instance-preserving shape (unchanged). */
+function prepare(events) {
+  const out = [];
+  for (const ev of events) {
+    if (ev.kind === 'damage') { out.push({ targetId: ev.targetId, amount: Math.round(ev.amount), hint: { isDot: ev.category === 'dot', empowered: !!ev.empowered, dotElement: ev.element } }); continue; }
+    if (ev.kind !== 'player-hit' && ev.kind !== 'monster-hit' && ev.kind !== 'dot-tick') continue;
+    const amount = ev.kind === 'dot-tick' ? ev.amount : ev.damage;
+    const hint = ev.kind === 'dot-tick'
+      ? { isDot: true, dotElement: ev.element }
+      : { empowered: !!ev.empowered, execution: !!ev.execution, evadedPartial: ev.evadedPartial, capped: ev.capped };
+    if (Math.round(amount) > 0) out.push({ targetId: ev.targetId, amount: Math.round(amount), hint });
+    if (ev.absorbed > 0) out.push({ targetId: ev.targetId, amount: Math.round(ev.absorbed), hint, shield: true });
+  }
+  return out;
+}
+/** DoT ticks on one target (per element) become one number a second. */
+class DotCoalescer {
+  constructor() { this.open = new Map(); }
+  add(entry, now) {
+    const key = entry.targetId + '|' + (entry.hint.dotElement ?? '');
+    const w = this.open.get(key);
+    if (w) { w.amount += entry.amount; return; }
+    this.open.set(key, { entry: { ...entry, hint: { ...entry.hint } }, amount: entry.amount, closesAt: now + TOKENS.number.dotWindowMs });
+  }
+  flush(now) {
+    const out = [];
+    for (const [key, w] of this.open) if (now >= w.closesAt) { out.push({ ...w.entry, amount: w.amount }); this.open.delete(key); }
+    return out;
+  }
+  reset() { this.open.clear(); }
+}
+/** Per-target lane stack: newest at the base, older ones lifted, oldest dropped at the cap. */
+class LaneStack {
+  constructor() { this.byTarget = new Map(); }
+  push(targetId, item) {
+    const lane = this.byTarget.get(targetId) ?? [];
+    lane.unshift(item);
+    const dropped = lane.splice(TOKENS.number.lane.cap);
+    this.byTarget.set(targetId, lane);
+    return dropped;
+  }
+  expire(now) { for (const [id, lane] of this.byTarget) { const live = lane.filter(f => now < f.bornAt + f.lifeMs); if (live.length) this.byTarget.set(id, live); else this.byTarget.delete(id); } }
+  offsets(targetId) { // px above the anchor for each live floater, newest first
+    const lane = this.byTarget.get(targetId) ?? []; const out = []; let y = 0;
+    for (const f of lane) { out.push(y); y += f.heightPx + TOKENS.number.lane.gapPx; }
+    return out;
+  }
+  reset() { this.byTarget.clear(); }
+}
+/** The chip: holds the last value for a beat, then drains to the fill. A fresh hit (from a
+ *  caught-up chip, or a drop of at least `reholdShare`) restarts the hold; a small drop while
+ *  the chip is still out (a DoT tick) only keeps it draining, or a 0.5 s bleed would pin it. */
+function chipAdvance(c, fill, now) {
+  if (!c) return { from: fill, to: fill, at: now };
+  const cur = chipValue(c, now);
+  if (fill >= cur) return { from: fill, to: fill, at: now };
+  if (fill === c.to) return c;
+  const idle = cur <= c.to + 1e-9;
+  if (fill < c.to && (idle || c.to - fill >= TOKENS.bar.chip.reholdShare)) return { from: cur, to: fill, at: now };
+  return { from: cur, to: fill, at: now - TOKENS.bar.chip.holdMs };
+}
+function chipValue(c, now) {
+  const { holdMs, drainMs } = TOKENS.bar.chip;
+  const dt = now - c.at;
+  if (dt <= holdMs) return c.from;
+  const k = Math.min(1, (dt - holdMs) / drainMs);
+  return c.from + (c.to - c.from) * (k * k);
+}
+/** Quarters the boss has LOST, and the boundary that is next. */
+function quarterModel(hp, maxHp) {
+  const f = maxHp > 0 ? Math.max(0, Math.min(1, hp / maxHp)) : 0;
+  const lost = f <= 0 ? 4 : Math.min(3, Math.floor((1 - f) * 4 + 1e-9));
+  return { lost, markers: [0.75, 0.5, 0.25].map((at, i) => ({ at, lost: i < lost, next: i === lost })) };
+}
+function sizeClassOf(body) {
+  if (body.kind === 'minion') return 'minion';
+  if (body.boss) return 'boss';
+  const px = 64 * (body.scale ?? 1);
+  return px < TOKENS.bar.sizeClassPx.small ? 'small' : px >= TOKENS.bar.sizeClassPx.large ? 'large' : 'medium';
+}
+function thirdsColor(f) { const c = TOKENS.bar.color; return f > TOKENS.bar.thirds.high ? c.high : f > TOKENS.bar.thirds.mid ? c.mid : c.low; }
+
+/* ══ Atlas frames (from client/public/assets/sprites.json) ═══════════════════ */
+const ATLAS = { url: '../../client/public/assets/sprites.png', w: 2048, h: 1024 };
+const FRAMES = {
+  'forest-slime': { x: 1280, y: 768, w: 64, h: 64, scale: 1 },
+  'plains-slime': { x: 1024, y: 704, w: 64, h: 64, scale: 1 },
+  'young-wolf':   { x: 1024, y: 960, w: 64, h: 64, scale: 1 },
+  'grass-kite':   { x: 1728, y: 704, w: 64, h: 64, scale: 0.85 },
+  'stampede-bull':{ x: 1280, y: 576, w: 64, h: 64, scale: 1.25 }, // boar frame as a stand-in large body
+  'crag-behemoth':{ x: 256,  y: 128, w: 128, h: 128, scale: 1, boss: true },
+  'striker':      { x: 448,  y: 384, w: 64, h: 64 },
+  'slinger':      { x: 1792, y: 448, w: 64, h: 64 },
+  'squire':       { x: 768,  y: 384, w: 64, h: 64 },
+};
+function spriteStyle(el, frameId, px) {
+  const f = FRAMES[frameId]; const k = px / Math.max(f.w, f.h);
+  el.style.width = f.w * k + 'px'; el.style.height = f.h * k + 'px';
+  el.style.backgroundImage = `url(${ATLAS.url})`;
+  el.style.backgroundSize = `${ATLAS.w * k}px ${ATLAS.h * k}px`;
+  el.style.backgroundPosition = `-${f.x * k}px -${f.y * k}px`;
+}
+
+/* ══ Scene definitions: real event shapes on a timeline ═════════════════════ */
+function hit(at, playerId, targetId, damage, extra = {}) { return { at, ev: { kind: 'player-hit', playerId, targetId, targetName: '', damage, empowered: false, execution: false, ...extra } }; }
+function taken(at, targetId, damage, extra = {}) { return { at, ev: { kind: 'monster-hit', targetId, damage, ...extra } }; }
+function tick(at, targetId, amount, element) { return { at, ev: { kind: 'dot-tick', targetId, targetPos: { x: 0, y: 0 }, amount, element, sourceType: 'class' } }; }
+
+const SCENES = {
+  rat: () => {
+    const ev = [
+      hit(300, 'p', 'm', 15), hit(1200, 'p', 'm', 14), hit(2100, 'p', 'm', 16),
+      hit(3000, 'p', 'm', 31, { empowered: true }), hit(3900, 'p', 'm', 15), hit(4800, 'p', 'm', 14),
+      hit(5700, 'p', 'm', 33, { empowered: true }),
+      taken(900, 'p', 17), taken(2300, 'p', 17), taken(3700, 'p', 9, { evadedPartial: true }), taken(5100, 'p', 17),
+    ];
+    for (let t = 1300; t < 5700; t += 500) ev.push(tick(t, 'm', t % 1000 === 300 ? 3 : 2, 'bleed'));
+    return {
+      loopMs: 7600, world: { w: 960, h: 540, cx: 470, cy: 300 },
+      bodies: [
+        { id: 'p', kind: 'player', frame: 'striker', name: 'You', x: 420, y: 310, maxHp: 220, hp: 220, own: true },
+        { id: 'm', kind: 'monster', frame: 'forest-slime', type: 'forest-slime', name: 'Moss Rat', tier: 1, x: 505, y: 300, maxHp: 160, hp: 160 },
+      ],
+      target: 'm', vitals: 'p', ring: true, events: ev,
+      homes: { owes: { name: 'Bleed', value: '14', color: '#c41e1e' } },
+    };
+  },
+  boss: () => {
+    const ev = [];
+    for (let t = 400, i = 0; t < 9000; t += 1100, i++) ev.push(hit(t, 'p', 'b', i === 3 ? 66 : 21, i === 3 ? { execution: true, empowered: true } : {}));
+    ev.push({ at: 1500, ev: { kind: 'monster-cast-start', monsterId: 'b', castMs: 2400, label: 'Crag Charge' } });
+    ev.push({ at: 3900, ev: { kind: 'monster-cast-end', monsterId: 'b', fired: true } });
+    ev.push(taken(4050, 'p', 65, { absorbed: 30 }));
+    ev.push(taken(7600, 'p', 50));
+    for (let t = 900; t < 9000; t += 1000) ev.push(tick(t, 'b', 9, 'bleed'));
+    return {
+      loopMs: 9800, world: { w: 960, h: 540, cx: 470, cy: 310 },
+      bodies: [
+        { id: 'p', kind: 'player', frame: 'squire', name: 'You', x: 390, y: 340, maxHp: 240, hp: 200, own: true, ward: 30 },
+        { id: 'b', kind: 'monster', frame: 'crag-behemoth', type: 'crag-behemoth', name: 'Crag Behemoth', tier: 1, boss: true, x: 500, y: 300, maxHp: 2100, hp: 1112 },
+      ],
+      target: 'b', boss: 'b', vitals: 'p', ring: true, events: ev,
+      homes: { owes: { name: 'Bleed', value: '27', color: '#c41e1e' } },
+    };
+  },
+  swarm: () => {
+    const ev = [];
+    const ids = ['w1', 'w2', 'w3', 'w4', 'h1', 'h2', 'k1'];
+    let t = 200;
+    const volley = [8, 12, 9, 14, 8, 26, 11, 9];
+    for (let i = 0; i < 8; i++) { ev.push(hit(t, 'p', 'w1', volley[i], i === 5 ? { empowered: true } : {})); t += 120; }
+    t = 1500;
+    for (let r = 0; r < 3; r++) for (const [j, id] of ids.slice(1).entries()) { ev.push(hit(t, 'p', id, [12, 8, 10, 14, 9, 11][(j + r) % 6])); t += 140; }
+    for (let s = 400; s < 5600; s += 500) for (const id of ['w1', 'w2', 'h1']) ev.push(tick(s, id, 2, 'poison'));
+    for (let s = 700; s < 5600; s += 1150) ev.push(taken(s, 'p', 14));
+    return {
+      loopMs: 6400, world: { w: 960, h: 540, cx: 470, cy: 300 },
+      bodies: [
+        { id: 'p', kind: 'player', frame: 'slinger', name: 'You', x: 330, y: 330, maxHp: 200, hp: 200, own: true },
+        { id: 'w1', kind: 'monster', frame: 'young-wolf', type: 'young-wolf', name: 'Young Wolf', tier: 1, x: 470, y: 250, maxHp: 70, hp: 70 },
+        { id: 'w2', kind: 'monster', frame: 'young-wolf', type: 'young-wolf', name: 'Young Wolf', tier: 1, x: 540, y: 310, maxHp: 70, hp: 70 },
+        { id: 'w3', kind: 'monster', frame: 'young-wolf', type: 'young-wolf', name: 'Young Wolf', tier: 1, x: 470, y: 390, maxHp: 70, hp: 70 },
+        { id: 'w4', kind: 'monster', frame: 'young-wolf', type: 'young-wolf', name: 'Young Wolf', tier: 1, x: 600, y: 230, maxHp: 70, hp: 70 },
+        { id: 'h1', kind: 'monster', frame: 'plains-slime', type: 'plains-slime', name: 'Field Hare', tier: 1, x: 610, y: 380, maxHp: 50, hp: 50 },
+        { id: 'h2', kind: 'monster', frame: 'plains-slime', type: 'plains-slime', name: 'Field Hare', tier: 1, x: 410, y: 450, maxHp: 50, hp: 50 },
+        { id: 'k1', kind: 'monster', frame: 'grass-kite', type: 'grass-kite', name: 'Grass Kite', tier: 1, scale: 0.85, x: 560, y: 170, maxHp: 90, hp: 90 },
+      ],
+      target: 'w1', vitals: 'p', ring: true, events: ev,
+      homes: { owes: { name: 'Poison', value: '8', color: '#5fd35f' } },
+    };
+  },
+};
+
+/* ══ Runtime ═════════════════════════════════════════════════════════════════ */
+const REDUCED = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
+let VARIANT = 'A';
+const VIEWS = [];
+
+function el(tag, cls, parent, style) { const e = document.createElement(tag); if (cls) e.className = cls; if (style) Object.assign(e.style, style); if (parent) parent.appendChild(e); return e; }
+function fmt(n) { return Math.max(0, Math.ceil(n)).toLocaleString('en-US'); }
+
+/** The DOM readout bar: fill, chip, absorb, quarters, number inside. */
+function makeReadoutBar(parent, h, opts = {}) {
+  const root = el('div', 'rbar', parent, { height: h + 'px', background: TOKENS.bar.color.trough, border: '1px solid rgba(255,255,255,.14)' });
+  const lost = [0, 1, 2, 3].map(() => el('i', 'lostq', root));
+  const chip = el('i', 'chip', root, { background: TOKENS.bar.color.chip, opacity: 0.9 });
+  const fill = el('i', 'fill', root);
+  const absorb = el('i', 'absorb', root, { display: 'none' });
+  const ticks = opts.quarters ? [0.75, 0.5, 0.25].map(at => el('i', 'q', root, { left: at * 100 + '%' })) : [];
+  const num = el('span', 'num', root, { fontSize: (opts.numPx ?? 10) + 'px' });
+  let chipState = null;
+  return {
+    root,
+    update(hp, maxHp, absorbAmt, now, numText) {
+      const f = maxHp > 0 ? Math.max(0, Math.min(1, hp / maxHp)) : 0;
+      chipState = chipAdvance(chipState, f, now);
+      fill.style.width = f * 100 + '%'; fill.style.background = thirdsColor(f);
+      chip.style.width = chipValue(chipState, now) * 100 + '%';
+      if (absorbAmt > 0) {
+        const w = Math.max(4, Math.min(100, (absorbAmt / maxHp) * 100));
+        absorb.style.display = 'block'; absorb.style.width = w + '%'; absorb.style.left = Math.max(0, Math.min(f * 100, 100 - w)) + '%';
+      } else absorb.style.display = 'none';
+      if (opts.quarters) {
+        const q = quarterModel(hp, maxHp);
+        q.markers.forEach((m, i) => {
+          ticks[i].style.background = m.lost ? TOKENS.frame.quarter.lost : m.next ? TOKENS.frame.quarter.next : TOKENS.frame.quarter.tick;
+          ticks[i].style.width = m.lost || m.next ? '2px' : '1px';
+        });
+        // Each fully lost quarter keeps a faint gold trough, so the lost ones read as LOST, not empty.
+        for (let i = 0; i < 4; i++) {
+          const from = 1 - (i + 1) * 0.25;
+          Object.assign(lost[i].style, { left: from * 100 + '%', width: '25%', background: i < q.lost ? TOKENS.frame.quarter.lostTrough : 'transparent' });
+        }
+      }
+      num.textContent = numText ?? '';
+    },
+  };
+}
+
+class View {
+  constructor(host, sceneId, viewport, opts = {}) {
+    this.def = SCENES[sceneId]();
+    this.viewport = viewport; this.opts = opts;
+    this.variant = opts.variant ?? null; // fixed variant (A/B comparison) or null = follow the toggle
+    const phone = viewport === 'phone';
+    this.zoom = phone ? 0.4 : 1;
+    const W = phone ? 390 : (opts.w ?? 960), H = phone ? 844 : (opts.h ?? 540);
+    const wrap = el('div', '', host);
+    this.vp = el('div', 'vp', wrap, { width: W + 'px', height: H + 'px' });
+    el('div', 'vp-label', this.vp).textContent = opts.label ?? (phone ? '390 × 844 · camera 0.4 (floor)' : 'desktop · zoom 1');
+    if (opts.caption) el('p', 'cap', wrap).textContent = opts.caption;
+    this.W = W; this.H = H;
+    this.layer = el('div', '', this.vp, { position: 'absolute', inset: 0 });
+    this.coal = new DotCoalescer(); this.lanes = new LaneStack();
+    this.buildHud(phone);
+    this.reset(performance.now());
+    VIEWS.push(this);
+  }
+  get lang() { return this.variant ?? VARIANT; }
+  toScreen(x, y) {
+    const { cx, cy } = this.def.world;
+    const sx = this.W / 2 + (x - cx) * this.zoom + (this.viewport === 'desktop' && this.opts.hud !== false ? 80 : 0);
+    const sy = this.H / 2 + (y - cy) * this.zoom + (this.viewport === 'phone' ? 10 : 30);
+    return { x: sx, y: sy };
+  }
+  reset(now) {
+    this.start = now; this.cursor = 0; this.coal.reset(); this.lanes.reset();
+    this.layer.innerHTML = '';
+    this.bodies = new Map();
+    this.cast = null;
+    for (const src of this.def.bodies) {
+      const b = { ...src, hp: src.hp, ward: src.ward ?? 0, chip: null };
+      const s = this.toScreen(b.x, b.y);
+      const px = (b.boss ? 128 : 64 * (b.scale ?? 1)) * this.zoom;
+      b.el = el('div', 'body', this.layer, { left: s.x + 'px', top: s.y + 'px' });
+      spriteStyle(b.el, b.frame, px);
+      b.screen = s; b.px = px;
+      b.barOffset = (b.boss ? 50 : px / this.zoom / 2 + 8) * this.zoom;
+      this.buildOverheadBar(b);
+      this.bodies.set(b.id, b);
+    }
+    this.floaters = [];
+    this.castLabel = null;
+  }
+  buildOverheadBar(b) {
+    const cls = sizeClassOf(b);
+    const w = (cls === 'minion' ? TOKENS.bar.minion.width : TOKENS.bar.width[cls]) * this.zoom;
+    let h = (cls === 'minion' ? TOKENS.bar.minion.height : cls === 'boss' ? TOKENS.bar.bossHeight : TOKENS.bar.height) * this.zoom;
+    h = Math.max(h, this.zoom < 1 ? TOKENS.bar.phoneMinScreenPx : 0);
+    const root = el('div', 'ohbar', this.layer, { left: b.screen.x + 'px', top: (b.screen.y - b.barOffset) + 'px', width: w + 'px', height: h + 'px',
+      background: TOKENS.bar.color.trough, outline: `1px solid ${TOKENS.bar.color.outline}` });
+    const chip = el('i', '', root, { background: TOKENS.bar.color.chip });
+    const fill = el('i', '', root);
+    const absorb = el('i', '', root, { background: TOKENS.bar.color.absorbPlayer, opacity: 0.9 });
+    const segs = (b.boss || b.elite) ? [0.25, 0.5, 0.75].map(at => el('i', 'seg', root, { left: at * w + 'px', background: TOKENS.bar.color.segment })) : [];
+    b.bar = { root, chip, fill, absorb, segs, w, h };
+    if (this.lang === 'today') { b.bar.root.style.width = 32 * this.zoom + 'px'; b.bar.w = 32 * this.zoom; segs.forEach(s => s.remove()); b.bar.segs = []; }
+  }
+  buildHud(phone) {
+    const d = this.def;
+    if (this.opts.hud === false) return;
+    if (phone) {
+      // Phone: top strip (vitals row, boss row when a boss is up, ring row), bottom tabs.
+      this.mtop = el('div', 'mtop', this.vp);
+      const r1 = el('div', 'mrow', this.mtop);
+      el('span', '', r1, { color: '#7fd26a', fontSize: '12px', fontWeight: 'bold' }).textContent = 'Wanderer';
+      this.vbar = makeReadoutBar(el('div', '', r1, { flex: 1 }), 12, { numPx: 9 });
+      el('span', '', r1, { color: '#d8b867', fontSize: '9px' }).textContent = 'Forest T1';
+      if (d.boss) {
+        const br = el('div', 'mrow', this.mtop, { gap: '6px' });
+        this.bossNamePhone = el('span', '', br, { fontSize: '10px', fontWeight: 'bold', maxWidth: '84px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' });
+        const col = el('div', '', br, { flex: 1, display: 'flex', flexDirection: 'column', gap: '2px' });
+        this.bbar = makeReadoutBar(col, 10, { quarters: true, numPx: 8 });
+        this.castTrack = el('div', '', col, { height: '2px', background: TOKENS.frame.cast.trough, position: 'relative' });
+        this.castFill = el('i', '', this.castTrack, { position: 'absolute', left: 0, top: 0, bottom: 0, background: TOKENS.frame.cast.fill, display: 'block' });
+        this.pips = el('span', 'pips', br);
+      }
+      const r2 = el('div', 'mrow', this.mtop);
+      el('div', 'ring', r2); el('span', '', r2, { fontSize: '8px', color: '#bdb39c' }).textContent = d.boss ? 'Cleaving Blow' : 'Easy Prey';
+      el('span', '', r2, { fontSize: '8px', color: '#8d846f', border: '1px solid #3a3426', padding: '1px 5px' }).textContent = 'No stance';
+      this.vglowTarget = this.vbar.root;
+      const tabs = el('div', 'mtabs', this.vp); el('div', 'xp', tabs); const t = el('div', 'tabs', tabs); for (let i = 0; i < 5; i++) el('i', '', t);
+      // Target frame (phone): under the strip.
+      this.buildTargetFrame(phone);
+      return;
+    }
+    // Desktop: the left rail's crown (vitals + ring beside), top-centre boss and target frames.
+    const rail = el('div', 'rail', this.vp, { width: '170px', padding: '10px' });
+    el('div', '', rail, { fontSize: '10px', color: '#8d846f', letterSpacing: '.08em' }).textContent = 'CHARACTER';
+    el('div', '', rail, { fontSize: '13px', fontWeight: 'bold', margin: '6px 0 4px' }).textContent = 'Wanderer';
+    this.vbar = makeReadoutBar(rail, 14, { numPx: 10 });
+    this.vglowTarget = this.vbar.root;
+    const beside = el('div', '', rail, { display: 'flex', gap: '6px', alignItems: 'center', marginTop: '8px' });
+    el('div', 'ring', beside); el('span', '', beside, { fontSize: '9px', color: '#bdb39c' }).textContent = d.boss ? 'Cleaving Blow' : 'Easy Prey';
+    if (d.boss) this.buildBossFrame();
+    this.buildTargetFrame(false);
+  }
+  buildBossFrame() {
+    const f = el('div', 'hud panel', this.vp, { left: '50%', top: '10px', transform: 'translateX(-50%)', width: '440px', padding: '6px 10px 7px', borderColor: TOKENS.frame.boss.edge, marginLeft: '80px' });
+    const top = el('div', '', f, { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' });
+    this.bossName = el('span', '', top, { fontSize: '13px', fontWeight: 'bold' });
+    el('span', 'tag', top, { color: TOKENS.frame.boss.tag, borderColor: TOKENS.frame.boss.edge }).textContent = 'T1 · BOSS';
+    el('span', '', top, { flex: 1 });
+    this.pips = el('span', 'pips', top);
+    this.bbar = makeReadoutBar(f, 16, { quarters: true, numPx: 11 });
+    const castRow = el('div', '', f, { display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px', height: '11px' });
+    this.castName = el('span', '', castRow, { fontSize: '9px', color: TOKENS.frame.cast.label, minWidth: '72px' });
+    this.castTrack = el('div', '', castRow, { flex: 1, height: '3px', background: TOKENS.frame.cast.trough, position: 'relative' });
+    this.castFill = el('i', '', this.castTrack, { position: 'absolute', left: 0, top: 0, bottom: 0, background: TOKENS.frame.cast.fill, display: 'block' });
+  }
+  buildTargetFrame(phone) {
+    const d = this.def; const t = d.bodies.find(b => b.id === d.target);
+    const underBoss = !!d.boss;
+    const top = phone ? (d.boss ? 104 : 74) : (underBoss ? 96 : 10);
+    const f = el('div', 'hud panel', this.vp, { left: '50%', top: top + 'px', transform: 'translateX(-50%)', width: phone ? '230px' : '320px', padding: phone ? '6px 8px 7px' : '8px 10px 9px', marginLeft: phone ? 0 : '80px' });
+    if (!(underBoss && d.target === d.boss)) {
+      const head = el('div', '', f, { display: 'flex', gap: '8px', alignItems: 'center' });
+      const portrait = el('div', 'portrait', head); spriteStyle(portrait, t.frame, phone ? 28 : 38);
+      const col = el('div', '', head, { flex: 1, minWidth: 0 });
+      const nr = el('div', '', col, { display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' });
+      el('span', '', nr, { fontSize: phone ? '12px' : '13px', fontWeight: 'bold' }).textContent = t.name;
+      el('span', '', nr, { fontSize: '9px', color: '#8d846f' }).textContent = 'T' + t.tier;
+      if (t.elite) el('span', 'tag', nr, { color: TOKENS.frame.elite.tag, borderColor: 'rgba(255,221,51,.4)' }).textContent = 'ELITE';
+      this.tbar = makeReadoutBar(col, phone ? 11 : 14, { numPx: phone ? 9 : 10 });
+      if (!phone) { const s = el('div', 'stats', f); s.innerHTML = `<span>ATK <b>17</b></span><span>DR <b>0%</b></span><span>PLT <b>4</b></span>`; }
+    }
+    const homes = el('div', 'homes', f);
+    for (const [key, cap] of [['owes', 'Owes'], ['slowed', 'Slowed'], ['held', 'Held']]) {
+      const h = d.homes?.[key];
+      const c = el('div', 'home' + (h ? '' : ' empty'), homes); c.textContent = cap;
+      if (h) { const b = el('b', '', c, { color: h.color }); b.innerHTML = (phone ? '' : h.name + ' ') + `<span style="color:#fff">${h.value}</span>`; }
+    }
+  }
+  setVariant() { this.reset(performance.now()); }
+  spawn(entry, now) {
+    const body = this.bodies.get(entry.targetId); if (!body) return;
+    const lang = this.lang;
+    const look = numberLook(entry, body.maxHp, body.kind, !!body.own);
+    let px, weight = 'bold', opacity = 1, stroke = 3;
+    if (lang === 'today') {
+      // develop: 14 px, 22 px gold "!" crits, DoT same size, glyphs, 12-slot grid.
+      px = look.crit ? 22 : 14;
+    } else if (lang === 'B') {
+      const w = TOKENS.number.weightB[B[look.band].id];
+      px = TOKENS.number.weightB.px; weight = w[0]; opacity = w[1]; stroke = w[2];
+    } else px = B[look.band].px;
+    // Phone floor: keep the floater's SCREEN size (× the floor), not the world's.
+    const screenPx = this.zoom < 1 && lang !== 'today' ? px * Math.max(this.zoom, TOKENS.number.phoneScreenFloor) : px * this.zoom;
+    const span = el('span', 'floater', this.layer, { fontSize: screenPx + 'px', color: look.color, fontWeight: weight, opacity,
+      textShadow: `0 0 ${stroke}px #000, 0 0 ${stroke}px #000, 1px 1px 0 #000, -1px -1px 0 #000` });
+    span.textContent = `${entry.amount}${look.suffix}${look.symbol ? ' ' + look.symbol : ''}`;
+    const m = TOKENS.number.motion[look.motion];
+    const f = { span, baseOpacity: opacity, bornAt: now, lifeMs: m.lifeMs, heightPx: screenPx + 2, motion: m, target: entry.targetId, jitter: lang === 'today' ? (Math.random() - 0.5) * 18 : 0 };
+    if (lang === 'today') {
+      const slot = this.floaters.filter(x => x.target === entry.targetId && now < x.bornAt + x.lifeMs).length;
+      if (slot >= 12) { span.remove(); return; }
+      f.todaySlot = slot;
+    } else {
+      for (const old of this.lanes.push(entry.targetId, f)) old.span.remove();
+    }
+    this.floaters.push(f);
+    if (look.crit && !REDUCED) { body.el.classList.add('flash'); setTimeout(() => body.el.classList.remove('flash'), TOKENS.number.bodyFlashMs); }
+  }
+  apply(ev, now) {
+    if (ev.kind === 'monster-cast-start') { this.cast = { label: ev.label, startedAt: now, castMs: ev.castMs }; return; }
+    if (ev.kind === 'monster-cast-end') { this.cast = null; return; }
+    const entries = prepare([ev]);
+    for (const e of entries) {
+      const b = this.bodies.get(e.targetId); if (!b) continue;
+      if (e.shield) b.ward = Math.max(0, b.ward - e.amount); else b.hp = Math.max(0, b.hp - e.amount);
+      if (e.hint.isDot && this.lang !== 'today') this.coal.add(e, now); else this.spawn(e, now);
+    }
+  }
+  frame(now) {
+    if (now - this.start > this.def.loopMs) this.reset(now);
+    const t = now - this.start;
+    const evs = this.def.events;
+    if (!this.sorted) { this.def.events.sort((a, b) => a.at - b.at); this.sorted = true; }
+    while (this.cursor < evs.length && evs[this.cursor].at <= t) this.apply(evs[this.cursor++].ev, now);
+    for (const e of this.coal.flush(now)) this.spawn(e, now);
+    this.lanes.expire(now);
+    // floaters
+    this.floaters = this.floaters.filter(f => {
+      const age = now - f.bornAt;
+      if (age >= f.lifeMs || !f.span.isConnected) { f.span.remove(); return false; }
+      const b = this.bodies.get(f.target);
+      const k = age / f.lifeMs;
+      let lane = 0;
+      if (f.todaySlot !== undefined) lane = (f.todaySlot % 6) * 26 * this.zoom;
+      else { const lanes = this.lanes.byTarget.get(f.target) ?? []; const i = lanes.indexOf(f); lane = this.lanes.offsets(f.target)[i] ?? 0; }
+      const rise = REDUCED ? 0 : (f.todaySlot !== undefined ? 40 * this.zoom * (k * (2 - k)) : f.motion.risePx * (this.zoom < 1 ? Math.max(this.zoom, TOKENS.number.phoneScreenFloor) : 1) * (f.motion.popMs ? k * (2 - k) : k));
+      const pop = REDUCED || !f.motion.popMs ? 1 : age < f.motion.popMs ? f.motion.popScale - (f.motion.popScale - 1) * (age / f.motion.popMs) : 1;
+      const x = b.screen.x + (f.todaySlot !== undefined ? Math.floor(f.todaySlot / 6) * 48 * this.zoom + f.jitter * this.zoom : 0);
+      const y = b.screen.y - b.barOffset - 6 * this.zoom - lane - rise;
+      f.span.style.left = x + 'px'; f.span.style.top = y + 'px';
+      f.span.style.transform = `translate(-50%, -100%) scale(${pop})`;
+      f.span.style.opacity = String(f.baseOpacity * (k > 0.7 ? 1 - (k - 0.7) / 0.3 : 1));
+      return true;
+    });
+    // overhead bars
+    for (const b of this.bodies.values()) {
+      const fpct = b.maxHp > 0 ? b.hp / b.maxHp : 0;
+      b.chip = chipAdvance(b.chip, fpct, now);
+      const { w } = b.bar;
+      b.bar.fill.style.width = Math.round(w * fpct) + 'px'; b.bar.fill.style.background = thirdsColor(fpct);
+      b.bar.chip.style.width = (this.lang === 'today' ? 0 : Math.round(w * chipValue(b.chip, now))) + 'px';
+      if (b.kind === 'player' && b.ward > 0) {
+        const s = Math.round(w * fpct); b.bar.absorb.style.left = s + 'px'; b.bar.absorb.style.width = Math.min(w - s, Math.round(w * b.ward / b.maxHp)) + 'px';
+      } else b.bar.absorb.style.width = '0px';
+      b.el.classList.toggle('dead', b.hp <= 0);
+    }
+    // world cast label
+    const boss = this.def.boss && this.bodies.get(this.def.boss);
+    if (boss && this.cast) {
+      if (!this.castLabel) this.castLabel = el('span', 'cast-label', this.layer);
+      this.castLabel.textContent = this.cast.label;
+      this.castLabel.style.left = boss.screen.x + 'px'; this.castLabel.style.top = (boss.screen.y - boss.barOffset - 10 * this.zoom) + 'px';
+      this.castLabel.style.fontSize = (this.zoom < 1 ? 9 : 11) + 'px';
+    } else if (this.castLabel) { this.castLabel.remove(); this.castLabel = null; }
+    // HUD
+    const v = this.bodies.get(this.def.vitals);
+    if (this.vbar && v) {
+      this.vbar.update(v.hp, v.maxHp, v.ward, now, `${fmt(v.hp)} / ${v.maxHp}`);
+      const low = v.hp / v.maxHp <= TOKENS.frame.lowHealth.at;
+      this.vglowTarget.style.boxShadow = low && this.lang !== 'today' ? `0 0 0 1px ${TOKENS.frame.lowHealth.glow}, 0 0 8px ${TOKENS.frame.lowHealth.glow}` : 'none';
+    }
+    const tgt = this.bodies.get(this.def.target);
+    if (this.tbar && tgt) this.tbar.update(tgt.hp, tgt.maxHp, 0, now, `${fmt(tgt.hp)} / ${tgt.maxHp}`);
+    if (this.bbar && boss) {
+      this.bbar.update(boss.hp, boss.maxHp, 0, now, `${fmt(boss.hp)} / ${fmt(boss.maxHp)}`);
+      if (this.bossName) this.bossName.textContent = boss.name;
+      if (this.bossNamePhone) this.bossNamePhone.textContent = boss.name;
+      const q = quarterModel(boss.hp, boss.maxHp);
+      this.pips.innerHTML = '';
+      for (let i = 0; i < 4; i++) el('i', '', this.pips, { background: i < q.lost ? TOKENS.frame.quarter.lost : 'transparent', borderColor: i < q.lost ? TOKENS.frame.quarter.lost : '#6d6553' });
+      const k = this.cast ? Math.min(1, (now - this.cast.startedAt) / this.cast.castMs) : 0;
+      this.castFill.style.width = k * 100 + '%';
+      if (this.castName) this.castName.textContent = this.cast ? this.cast.label : '';
+    }
+  }
+}
+
+/* ══ Static pieces ═══════════════════════════════════════════════════════════ */
+function legend() {
+  const host = document.getElementById('legend');
+  const bands = el('div', '', host);
+  bands.innerHTML = '<b>Bands (share of the target\'s max HP)</b>';
+  const tb = el('table', '', bands);
+  for (const b of B) {
+    const tr = el('tr', '', tb);
+    el('td', '', tr).textContent = b.id;
+    el('td', '', tr).textContent = '≥ ' + Math.round(b.minShare * 100) + ' %';
+    const td = el('td', '', tr); const s = el('span', '', td, { fontFamily: 'monospace', fontWeight: 'bold', fontSize: b.px + 'px', color: '#fff', textShadow: '0 0 3px #000' }); s.textContent = '24';
+    el('td', '', tr).textContent = b.px + ' px';
+  }
+  el('p', 'cap', bands).textContent = 'A crit moves up one band. A DoT number never draws above "hit". Phone: × 0.85 screen size at the camera floor.';
+  const kinds = el('div', '', host);
+  kinds.innerHTML = '<b>Colour by kind</b>';
+  const tk = el('table', '', kinds);
+  const C = TOKENS.number.color;
+  for (const [label, color] of [['direct (outgoing)', C.direct], ['crit — empowered/execution', C.crit], ['shield absorbed 🛡', C.shield], ['DoT (element colour + glyph)', TOKENS.number.element.bleed], ['DoT, untyped', C.dot], ['damage taken (you)', C.takenOwn], ['damage taken (ally)', C.takenOther], ['graze ~ / capped ▼', C.graze]]) {
+    const tr = el('tr', '', tk); const td = el('td', '', tr); el('span', 'swatch', td, { background: color }); td.append(label);
+  }
+  const motion = el('div', '', host);
+  motion.innerHTML = '<b>Motion by kind</b>';
+  const tm = el('table', '', motion);
+  for (const [label, m] of [['hit — pops, then drifts', TOKENS.number.motion.hit], ['crit — bigger pop + 110 ms body flash', TOKENS.number.motion.crit], ['DoT — rises small and steady', TOKENS.number.motion.dot]]) {
+    const tr = el('tr', '', tm); el('td', '', tr).textContent = label; el('td', '', tr).textContent = `${m.popMs ? '×' + m.popScale + ' / ' + m.popMs + ' ms, ' : ''}${m.risePx} px, ${m.lifeMs} ms`;
+  }
+  el('p', 'cap', motion).textContent = 'Lane stack: 5 live floaters per target, oldest dropped, 2 px gap. DoT ticks coalesce per target per element per 1 s. Reduced motion: no pop, no rise, no flash.';
+}
+
+function staticBars() {
+  const host = document.getElementById('bars-static');
+  const vp = el('div', 'vp', host, { width: '760px', height: '170px' });
+  const items = [
+    { label: 'small · kite', w: 24, f: 0.8, chip: 0.92 }, { label: 'medium · rat', w: 32, f: 0.62, chip: 0.74 },
+    { label: 'large · bull', w: 44, f: 0.4, chip: 0.52 }, { label: 'elite · large', w: 44, f: 0.7, chip: 0.7, seg: true },
+    { label: 'boss', w: 72, f: 0.53, chip: 0.6, seg: true, h: 5 }, { label: 'minion', w: 24, f: 0.9, chip: 0.9, h: 2 },
+    { label: 'player + ward', w: 32, f: 0.6, chip: 0.6, ward: 0.15 }, { label: 'enemy shell', w: 32, f: 1, chip: 1, shell: 0.7 },
+  ];
+  items.forEach((it, i) => {
+    const x = 50 + i * 90, y = 70;
+    const h = it.h ?? 4;
+    const root = el('div', 'ohbar', vp, { left: x + 'px', top: y + 'px', width: it.w * 2 + 'px', height: h * 2 + 'px', background: TOKENS.bar.color.trough, outline: '2px solid rgba(0,0,0,.75)' });
+    el('i', '', root, { width: it.chip * 100 + '%', background: TOKENS.bar.color.chip });
+    el('i', '', root, { width: it.f * 100 + '%', background: thirdsColor(it.f) });
+    if (it.ward) el('i', '', root, { left: it.f * 100 + '%', width: it.ward * 100 + '%', background: TOKENS.bar.color.absorbPlayer });
+    if (it.seg) [0.25, 0.5, 0.75].forEach(a => el('i', 'seg', root, { left: a * 100 + '%', width: '2px', background: TOKENS.bar.color.segment }));
+    if (it.shell) { const sb = el('div', '', vp, { position: 'absolute', left: x + 'px', top: (y - 7) + 'px', transform: 'translateX(-50%)', width: it.w * 2 + 'px', height: '4px', background: TOKENS.bar.color.absorbEnemyTrough }); el('div', '', sb, { width: it.shell * 100 + '%', height: '100%', background: TOKENS.bar.color.absorbEnemy }); }
+    el('div', '', vp, { position: 'absolute', left: x + 'px', top: '100px', transform: 'translateX(-50%)', fontSize: '11px', color: '#cfc6b0', whiteSpace: 'nowrap', fontFamily: 'system-ui' }).textContent = it.label;
+  });
+  el('div', 'vp-label', vp).textContent = 'drawn at 2× for inspection';
+}
+
+function bossStates() {
+  const host = document.getElementById('boss-states');
+  const states = [
+    { name: 'Crag Behemoth', tier: 1, hp: 2100, max: 2100, cap: 'Full: 0/4 lost, the first boundary (75 %) is next.' },
+    { name: 'Gorging Razortusk', tier: 2, hp: 1400, max: 3000, phase: 'Stampede', cast: 0.6, castLabel: 'Gore Rush', cap: 'T2: the phase tile leads; 2/4 lost; a cast 60 % in.' },
+    { name: 'Crag Behemoth', tier: 1, hp: 420, max: 2100, absorb: 300, cap: '3/4 lost: the fourth firing is next. A shell is up (hatched cyan).' },
+  ];
+  for (const s of states) {
+    const wrap = el('div', '', host);
+    const f = el('div', 'panel', wrap, { width: '440px', padding: '6px 10px 7px', borderColor: TOKENS.frame.boss.edge, fontFamily: 'monospace', color: '#e8e0c8' });
+    const top = el('div', '', f, { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' });
+    if (s.phase) { const t = el('span', '', top, { display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '9px', fontWeight: 'bold', color: '#ffb38a' }); el('i', '', t, { width: '16px', height: '16px', display: 'block', background: '#3a1b12', border: '1px solid #ff8a5a', boxShadow: '0 0 6px #ff8a5a66' }); t.append(s.phase); }
+    el('span', '', top, { fontSize: '13px', fontWeight: 'bold' }).textContent = s.name;
+    el('span', 'tag', top, { color: TOKENS.frame.boss.tag, borderColor: TOKENS.frame.boss.edge }).textContent = `T${s.tier} · BOSS`;
+    el('span', '', top, { flex: 1 });
+    const pips = el('span', 'pips', top);
+    const bar = makeReadoutBar(f, 16, { quarters: true, numPx: 11 });
+    bar.update(s.hp, s.max, s.absorb ?? 0, 0, `${fmt(s.hp)} / ${fmt(s.max)}`);
+    const q = quarterModel(s.hp, s.max);
+    for (let i = 0; i < 4; i++) el('i', '', pips, { background: i < q.lost ? TOKENS.frame.quarter.lost : 'transparent', borderColor: i < q.lost ? TOKENS.frame.quarter.lost : '#6d6553' });
+    const castRow = el('div', '', f, { display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px', height: '11px' });
+    el('span', '', castRow, { fontSize: '9px', color: TOKENS.frame.cast.label, minWidth: '72px' }).textContent = s.cast ? s.castLabel : '';
+    const tr = el('div', '', castRow, { flex: 1, height: '3px', background: TOKENS.frame.cast.trough, position: 'relative' });
+    el('i', '', tr, { position: 'absolute', left: 0, top: 0, bottom: 0, width: (s.cast ?? 0) * 100 + '%', background: TOKENS.frame.cast.fill, display: 'block' });
+    el('p', 'cap', wrap).textContent = s.cap;
+  }
+}
+
+function staticTargetFrames() {
+  const host = document.getElementById('tf-static');
+  // Today (develop): name centred, bar with text, stats, homes.
+  const a = el('div', '', host);
+  const fa = el('div', 'panel', a, { width: '320px', padding: '8px 12px 10px', fontFamily: 'monospace', color: '#e8e0c8' });
+  el('div', '', fa, { textAlign: 'center', fontSize: '14px', fontWeight: 'bold', marginBottom: '5px' }).textContent = 'Moss Rat';
+  const tr = el('div', '', fa, { position: 'relative', height: '18px', borderRadius: '5px', background: 'rgba(0,0,0,.55)', border: '1px solid rgba(255,255,255,.12)', overflow: 'hidden' });
+  el('div', '', tr, { height: '100%', width: '62%', background: '#44ee44' });
+  el('span', '', tr, { position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold', color: '#fff', textShadow: '1px 1px 0 #000' }).textContent = '99 / 160';
+  el('div', 'stats', fa).innerHTML = '<span>ATK <b>17</b></span><span>DR <b>0%</b></span><span>PLT <b>4</b></span>';
+  const ha = el('div', 'homes', fa); ['Owes', 'Slowed', 'Held'].forEach((c, i) => { const h = el('div', 'home' + (i ? ' empty' : ''), ha); h.textContent = c; if (!i) el('b', '', h, { color: '#c41e1e' }).innerHTML = 'Bleed <span style="color:#fff">14</span>'; });
+  el('p', 'cap', a).textContent = 'Today: the prototype chrome around the legibility run\'s homes.';
+  // New chrome.
+  const b = el('div', '', host);
+  const fb = el('div', 'panel', b, { width: '320px', padding: '8px 10px 9px', fontFamily: 'monospace', color: '#e8e0c8' });
+  const head = el('div', '', fb, { display: 'flex', gap: '8px', alignItems: 'center' });
+  const p = el('div', 'portrait', head); spriteStyle(p, 'forest-slime', 38);
+  const col = el('div', '', head, { flex: 1 });
+  const nr = el('div', '', col, { display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' });
+  el('span', '', nr, { fontSize: '13px', fontWeight: 'bold' }).textContent = 'Moss Rat';
+  el('span', '', nr, { fontSize: '9px', color: '#8d846f' }).textContent = 'T1';
+  const bar = makeReadoutBar(col, 14, { numPx: 10 });
+  bar.update(99, 160, 0, 0, '99 / 160');
+  // freeze a chip for the static frame
+  bar.root.querySelector('.chip').style.width = '74%';
+  el('div', 'stats', fb).innerHTML = '<span>ATK <b>17</b></span><span>DR <b>0%</b></span><span>PLT <b>4</b></span>';
+  const hb = el('div', 'homes', fb); ['Owes', 'Slowed', 'Held'].forEach((c, i) => { const h = el('div', 'home' + (i ? ' empty' : ''), hb); h.textContent = c; if (!i) el('b', '', h, { color: '#c41e1e' }).innerHTML = 'Bleed <span style="color:#fff">14</span>'; });
+  el('p', 'cap', b).textContent = 'New: portrait slot (atlas frame), name + tier, the readout bar with chip and number. Homes untouched.';
+  // Elite.
+  const c = el('div', '', host);
+  const fc = el('div', 'panel', c, { width: '320px', padding: '8px 10px 9px', fontFamily: 'monospace', color: '#e8e0c8' });
+  const hc = el('div', '', fc, { display: 'flex', gap: '8px', alignItems: 'center' });
+  const pc = el('div', 'portrait', hc); spriteStyle(pc, 'stampede-bull', 38);
+  const cc = el('div', '', hc, { flex: 1 });
+  const nc = el('div', '', cc, { display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' });
+  el('span', '', nc, { fontSize: '13px', fontWeight: 'bold' }).textContent = 'Dire Wolf';
+  el('span', '', nc, { fontSize: '9px', color: '#8d846f' }).textContent = 'T1';
+  el('span', 'tag', nc, { color: TOKENS.frame.elite.tag, borderColor: 'rgba(255,221,51,.4)' }).textContent = 'ELITE';
+  const barc = makeReadoutBar(cc, 14, { numPx: 10, quarters: true });
+  barc.update(300, 420, 60, 0, '300 / 420');
+  el('div', 'stats', fc).innerHTML = '<span>ATK <b>28</b></span><span>DR <b>5%</b></span><span>PLT <b>6</b></span>';
+  const hcc = el('div', 'homes', fc); ['Owes', 'Slowed', 'Held'].forEach(cap => { const h = el('div', 'home empty', hcc); h.textContent = cap; });
+  el('p', 'cap', c).textContent = 'Elite: the ELITE mark (the overhead outline\'s yellow), quarter ticks, an enemy shell in the bar.';
+}
+
+function staticVitals() {
+  const host = document.getElementById('vitals-static');
+  for (const s of [{ hp: 220, max: 220, cap: 'Full' }, { hp: 150, max: 220, chip: 0.82, cap: 'A hit just landed: the chip' }, { hp: 150, max: 220, ward: 40, cap: 'Warded: the absorb band' }, { hp: 48, max: 220, cap: 'At a quarter: the edge glow', low: true }]) {
+    const wrap = el('div', '', host, { width: '200px' });
+    const f = el('div', 'panel', wrap, { padding: '8px 10px', fontFamily: 'monospace', color: '#e8e0c8' });
+    el('div', '', f, { fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }).textContent = 'Wanderer';
+    const bar = makeReadoutBar(f, 14, { numPx: 10 });
+    bar.update(s.hp, s.max, s.ward ?? 0, 0, `${s.hp} / ${s.max}`);
+    if (s.chip) bar.root.querySelector('.chip').style.width = s.chip * 100 + '%';
+    if (s.low) bar.root.style.boxShadow = `0 0 0 1px ${TOKENS.frame.lowHealth.glow}, 0 0 8px ${TOKENS.frame.lowHealth.glow}`;
+    el('p', 'cap', wrap).textContent = s.cap;
+  }
+}
+
+/* ══ Boot ════════════════════════════════════════════════════════════════════ */
+legend();
+new View(document.getElementById('ab-row-1'), 'rat', 'desktop', { variant: 'A', w: 600, h: 300, hud: false, label: 'A · size by share', caption: 'A — Moss Rat' });
+new View(document.getElementById('ab-row-1'), 'rat', 'desktop', { variant: 'B', w: 600, h: 300, hud: false, label: 'B · weight by share', caption: 'B — Moss Rat' });
+new View(document.getElementById('ab-row-2'), 'swarm', 'desktop', { variant: 'A', w: 600, h: 340, hud: false, label: 'A · size by share', caption: 'A — swarm' });
+new View(document.getElementById('ab-row-2'), 'swarm', 'desktop', { variant: 'B', w: 600, h: 340, hud: false, label: 'B · weight by share', caption: 'B — swarm' });
+new View(document.getElementById('scene-rat'), 'rat', 'desktop');
+new View(document.getElementById('scene-rat'), 'rat', 'phone');
+new View(document.getElementById('scene-boss'), 'boss', 'desktop');
+new View(document.getElementById('scene-boss'), 'boss', 'phone');
+new View(document.getElementById('scene-swarm'), 'swarm', 'desktop');
+new View(document.getElementById('scene-swarm'), 'swarm', 'phone');
+staticBars(); bossStates(); staticTargetFrames(); staticVitals();
+
+document.querySelectorAll('.bar-controls button').forEach(btn => btn.addEventListener('click', () => {
+  VARIANT = btn.dataset.variant;
+  document.querySelectorAll('.bar-controls button').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+  for (const v of VIEWS) if (!v.variant) v.setVariant();
+}));
+// A ?freeze=<ms> query pins every scene at that moment (for screenshots).
+const FREEZE = Number(new URLSearchParams(location.search).get('freeze'));
+if (FREEZE > 0) {
+  const t0 = performance.now();
+  for (const v of VIEWS) { v.reset(t0); for (let t = 0; t <= FREEZE; t += 16) v.frame(t0 + t); }
+} else {
+  const loop = (now) => { for (const v of VIEWS) v.frame(now); requestAnimationFrame(loop); };
+  requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>

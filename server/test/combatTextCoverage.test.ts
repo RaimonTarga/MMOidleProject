@@ -26,7 +26,7 @@ import { updateAlternatingCurrents } from '../src/systems/classes/archetypes/ene
 import { updateDotArchetype } from '../src/systems/classes/archetypes/dot/dotPrototype';
 import { attachComponent, attachMarker } from '../src/ecs/markerHelpers';
 import { applyWard } from '../src/systems/defense/barrier/wards';
-import { prepareCombatText, renderCombatText } from '../../client/src/render/combatText';
+import { flushCombatText, prepareCombatText, renderCombatText } from '../../client/src/render/combatText';
 import { createRenderState } from '../../client/src/render/state';
 
 initCombatSystems();
@@ -137,7 +137,11 @@ function probe(world: World, victims: Victim[], action: () => void, counts = vic
   const { entries } = probe(world, [player], () => { runDebtDrain(world, player); });
   assert(entries[0].hint.isDot);
   const shown: string[] = [];
-  renderCombatText({ entries }, createRenderState(), (_p, _o, _a, _c, style) => shown.push(style?.symbol ?? ''));
+  // DoT ticks draw when their one-second window closes (the combat readout's coalescing).
+  const state = createRenderState();
+  const spawn = (_p: unknown, _o: unknown, _a: unknown, _c: unknown, style?: { symbol?: string }) => shown.push(style?.symbol ?? '');
+  renderCombatText({ entries }, state, spawn, 0);
+  flushCombatText(state, spawn, 1000);
   assert(shown[0], 'unflavored DoT must have a distinct glyph');
 }
 // Reflection plus the original hit must each be represented once.

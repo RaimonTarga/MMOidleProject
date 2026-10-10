@@ -1,3 +1,4 @@
-/** Shared by the pure style resolver and Phaser number renderer. */
-export const EMPOWERED_DAMAGE_COLOR = '#ffd23f';
-export const EMPOWERED_DAMAGE_SIZE_PX = 22;
+import { NUMBER_TOKENS } from './readoutTokens';
+
+/** The crit gold, under its old name (fx/detonate.ts tints its burst with it). */
+export const EMPOWERED_DAMAGE_COLOR = NUMBER_TOKENS.crit.color;

@@ -247,12 +247,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-.stat-crown__hp {
-  color: var(--hud-text);
-  font-size: 12px;
-  font-weight: bold;
-}
-
 .stat-crown__max {
   color: var(--hud-text-dim);
   font-size: 10px;
@@ -319,11 +313,7 @@
   to   { opacity: 1; }
 }
 
-/* A capping band along the top edge: absorb sitting on top of health. */
-.stat-crown__layer--shield {
-  top: 0;
-  bottom: auto;
-  height: 3px;
-  background: #4fc6d8;
-  box-shadow: 0 0 4px rgba(79, 198, 216, 0.5);
+/* The HP bar itself is the shared ReadoutBar (hud/readoutBar.css). */
+.stat-crown__track {
+  margin-top: 1px;
 }

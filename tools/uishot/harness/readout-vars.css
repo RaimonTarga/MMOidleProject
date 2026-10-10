@@ -1,0 +1,48 @@
+/* The combat readout's --ro-* custom properties, as readoutCssVars()
+   (client/src/render/readoutTokens.ts) sets them at runtime on every readout
+   root. A static harness cannot import the tokens, so this copy stands in;
+   combatReadout.test.ts fails when it drifts from the tokens and prints what
+   to paste here. */
+:root {
+  --ro-h-boss: 16px;
+  --ro-h-target: 14px;
+  --ro-h-vitals: 12px;
+  --ro-h-strip: 10px;
+  --ro-num-boss: 11px;
+  --ro-num-target: 10px;
+  --ro-num-vitals: 10px;
+  --ro-num-strip: 8px;
+  --ro-trough: rgba(0, 0, 0, 0.55);
+  --ro-edge: rgba(255, 255, 255, 0.14);
+  --ro-number: #ffffff;
+  --ro-fill-ms: 180ms;
+  --ro-chip: #fff1cf;
+  --ro-chip-alpha: 0.9;
+  --ro-absorb: #55d9f2;
+  --ro-q-lost: #f0c35a;
+  --ro-q-next: #ffffff;
+  --ro-q-tick: rgba(0, 0, 0, 0.6);
+  --ro-q-trough: rgba(240, 195, 90, 0.13);
+  --ro-q-pip-empty: #6d6553;
+  --ro-q-tick-px: 2px;
+  --ro-segment: #000000;
+  --ro-cast-fill: #ff8f6b;
+  --ro-cast-trough: rgba(255, 143, 107, 0.18);
+  --ro-cast-label: #ffb6a0;
+  --ro-cast-primed: #ff5a3c;
+  --ro-boss-edge: rgba(200, 70, 70, 0.5);
+  --ro-boss-shadow: rgba(120, 20, 20, 0.45);
+  --ro-boss-tag: #ff8a8a;
+  --ro-boss-tag-bg: rgba(180, 30, 30, 0.25);
+  --ro-boss-width: 440px;
+  --ro-boss-h: 70px;
+  --ro-boss-row: 26px;
+  --ro-elite-tag: #ffdd33;
+  --ro-elite-edge: rgba(255, 221, 51, 0.4);
+  --ro-guardian-tag: #ff3333;
+  --ro-guardian-edge: rgba(255, 51, 51, 0.45);
+  --ro-portrait-bg: #11161d;
+  --ro-low-glow: #ff2a2a;
+  --ro-low-glow-px: 8px;
+  --ro-stale: 0.55;
+}
