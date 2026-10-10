@@ -31,7 +31,7 @@ export const CAMPAIGN_T2_V1K_ROUTES: Route[] = [
   else preparation.push({ type: "learnAbility", recipeId: "ability-recipe-cleanse", abilityId: "cleanse", slot: "guard", attune: false,
     farmAt: { kind: "biome", biomeGroup: "swamp", tier: 2 } });
   const build: DesiredBuild = {
-    abilities: { techniques: group === "cave" ? [] : ["expose-weakness"],
+    abilities: { techniques: group === "cave" ? [] : ["slam"],
       guards: group === "cave" ? ["second-wind", "cleanse", "brace"] : ["second-wind", "cleanse"] },
     runeRules: t2Runes("ranged-orbit"),
     stances: { attuned: ["defensive-stance"], default: "defensive-stance" }, rites: [],

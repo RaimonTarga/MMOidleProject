@@ -7,6 +7,7 @@
 import type { MonsterEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { setAggroTarget, setAttackTarget } from './targeting';
+import { vanishedTarget } from '../keystones/ability/vanishMark';
 
 /** True when `monster` fights for `boss` (summoned by it, or raised by it). */
 export function isBossAdd(monster: MonsterEntity, bossId: string): boolean {
@@ -25,7 +26,8 @@ export function bossAdds(world: World, boss: MonsterEntity): MonsterEntity[] {
 /**
  * Bind an add to its boss: the boss's anchor and leash, and its current target.
  * The AI then keeps the add's target synced for the rest of the fight
- * (`syncBossSpawnedAddTarget`) and exempts it from its own leash.
+ * (`syncBossSpawnedAddTarget`) and exempts it from its own leash. A vanished
+ * player is never handed over (design §22.12): the sync holds the add for them.
  */
 export function bindBossAdd(world: World, boss: MonsterEntity, add: MonsterEntity, now: number): void {
   add.controlsMonster.bossSpawnerId = boss.isMonster.id;
@@ -33,7 +35,7 @@ export function bindBossAdd(world: World, boss: MonsterEntity, add: MonsterEntit
   add.controlsMonster.leashRange = boss.controlsMonster.leashRange;
   add.hasAwareness.leashRange = boss.hasAwareness.leashRange;
   const aggro = boss.hasAggroTarget;
-  if (!aggro) return;
+  if (!aggro || vanishedTarget(world, aggro)) return;
   setAggroTarget(world, add, { id: aggro.targetId, kind: aggro.targetKind }, now);
   setAttackTarget(world, add, boss.hasAttackTarget?.targetId ?? aggro.targetId);
 }

@@ -75,7 +75,7 @@ export const STRIKER_CAMPAIGN_PLAINS_BOSS_V1B: Route = {
       const copy = structuredClone(step);
       // Learn the recipe normally, but keep the already-qualified farming
       // Technique. Final configureBuild still verifies the complete boss kit.
-      if (copy.type === "learnAbility" && copy.abilityId === "expose-weakness") copy.attune = false;
+      if (copy.type === "learnAbility" && copy.abilityId === "slam") copy.attune = false;
       if (copy.type === "milestone" && copy.id.startsWith("v1a:")) copy.id = copy.id.replace("v1a:", "v1b:");
       if (copy.label?.startsWith("v1a:")) copy.label = copy.label.replace("v1a:", "v1b:");
       return copy;

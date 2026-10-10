@@ -63,7 +63,6 @@ export function relicEffectPreview(
   }
   if (archetype === 'cooldown' && (p['cooldown.overdrive'] ?? 0) > 0) add('buff', 'cooldown-overdrive', 'attackSpeedPct', 'Overdrive attack-speed bonus', p['cooldown.overdrive-attack-speed-pct'] ?? 1, 'percent');
   if (archetype === 'reload') {
-    if ((p['reload.hair-trigger'] ?? 0) > 0) add('buff', 'reload-hair-trigger', 'attackSpeedPctPerShot', 'Hair Trigger attack speed per shot', p['reload.hair-trigger-pct-per-shot'] ?? 0.07, 'percent');
     if ((p['reload.suppressing-fire'] ?? 0) > 0) add('debuff', 'reload-suppress-shred', 'platingReduction', 'Suppressing Fire plating removed per stack', p['reload.suppress-shred'] ?? 4, 'flat');
   }
   if (archetype === 'energy') {

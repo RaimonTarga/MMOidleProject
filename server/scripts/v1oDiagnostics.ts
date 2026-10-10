@@ -79,8 +79,8 @@ async function main() {
       // Travel-only rules have no role in this fixed encounter; remove identically in every arm.
       profile.runesEquipped = profile.runesEquipped.filter(r => r.conditionId !== 'while-traveling');
       if ('hamstring' in arm) {
-        if (!profile.knownAbilities.includes('hamstring')) profile.knownAbilities.push('hamstring');
-        profile.attunedAbilities.techniques.push('hamstring');
+        if (!profile.knownAbilities.includes('binding-strike')) profile.knownAbilities.push('binding-strike');
+        profile.attunedAbilities.techniques.push('binding-strike');
       }
       if ('boots' in arm) {
         const old = profile.equipment.mobility;

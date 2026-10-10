@@ -501,10 +501,6 @@ const DEBUFF_BUFFS = [
     },
     { category: "neutral", shape: "diamond", color: "#7755aa", label: "Antiheal" },
   ),
-  // Note: Expose Weakness (the ability technique) is a debuff on the MONSTER, so
-  // it is shown only on the enemy target frame (client targetStatusMeta keys off
-  // the raw `expose-weakness` status id). It is intentionally NOT projected onto
-  // the player's own buff bar.
 ] as const satisfies readonly BuffDescriptor[];
 
 /** Compile-time guard: shared BUFF_IDS must match server descriptor ids. */
@@ -866,7 +862,7 @@ function buffEffectText(buff: PlayerBuff): string {
     case "cooldown-battery":
       return "+execution damage";
     case "cooldown-reverb":
-      return "next execution empowered";
+      return "execution echo due";
     case "cooldown-alignment":
       return "+attack speed";
     case "cooldown-rupture":
@@ -899,8 +895,6 @@ function buffEffectText(buff: PlayerBuff): string {
       return "+DoT damage taken";
     case "reload-snipe-ready":
       return "next shot empowered";
-    case "reload-hair-trigger":
-      return "+attack speed";
     case "reload-cover-fire":
       return "damage reduction while reloading";
     case "debuff-slow":

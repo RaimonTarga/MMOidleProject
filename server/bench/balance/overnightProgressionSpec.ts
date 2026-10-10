@@ -28,7 +28,7 @@ function make(root:typeof SURVEY_CLASSES[number],frame:typeof frames[number],gro
  const tierFor=(g:string)=>t===3&&['plains','forest'].includes(g)?2:t;
  const stance=t===1?null:(desertMelee||group==='tundra'||(boss&&t===3))?'defensive-stance':'offensive-stance';
  const aoe=group==='plains'||group==='forest'||group==='jungle'||group==='volcanic';
- const abilities={techniques:[aoe?(t>1&&(root.name==='squire'||root.name==='apprentice'&&frame==='heavy')?'slam':'sweep'):'power-strike'],
+ const abilities={techniques:[aoe?(t>1&&(root.name==='squire'||root.name==='apprentice'&&frame==='heavy')?'slam':'sweep'):'slam'],
    guards:['second-wind',...(['swamp','jungle','desert'].includes(group)?['cleanse']:[]),...(['mountain','cave','desert','tundra','volcanic'].includes(group)?['brace']:[])]};
  const rules:any[]=[{conditionId:'always',actionId:'auto-path-enemy'},
    {conditionId:'inside-telegraph',actionId:'step-back'},
@@ -37,7 +37,7 @@ function make(root:typeof SURVEY_CLASSES[number],frame:typeof frames[number],gro
    {conditionId:'always',actionId:'wait-for-regen'}];
  if(desertMelee&&(s.mastery.desert??0)>=4)rules.unshift({conditionId:'in-combat',actionId:'focus-lowest-hp'});
  if(boss&&t>1&&abilities.guards.includes('brace'))rules.push({conditionId:'target-casting',actionId:'use-ability',targetAbilityId:'brace'});
- if(t===3&&group==='tundra')abilities.techniques=['power-strike','hamstring'];
+ if(t===3&&group==='tundra')abilities.techniques=['slam','binding-strike'];
  // Volcano boss: fixed persistent mitigation plus native low-HP Endure;
  // target-casting Brace stays the separately timed native reaction, no overlap claim.
  if(boss&&group==='volcanic')abilities.guards.push('endure');

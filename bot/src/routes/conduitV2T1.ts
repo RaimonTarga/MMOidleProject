@@ -8,7 +8,7 @@ import {
   getPiece,
   learnBrace,
   learnCleanse,
-  learnExposeWeakness,
+  learnSlam,
   learnSecondWind,
   learnSweep,
   maxOut,
@@ -112,7 +112,7 @@ export const CONDUIT_V2_T1: Route = routeWithClassRecovery({
     },
     { type: "farm", at: biome("cave"), until: { type: "recipeUnlocked", recipeId: "chaotic-axe" } },
     { type: "craft", recipeIds: ["chaotic-axe"], farmAt: biome("cave") },
-    learnExposeWeakness(),
+    learnSlam(),
 
     { type: "equip", definitionIds: ["chaotic-axe"], label: "switch to the Chaotic Axe" },
 
@@ -135,7 +135,7 @@ export const CONDUIT_V2_T1: Route = routeWithClassRecovery({
       wornKit: ["chaotic-axe", "mountain-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES,
       armor: "plains-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "second-wind",
     }),
     ...bossFight({
@@ -143,7 +143,7 @@ export const CONDUIT_V2_T1: Route = routeWithClassRecovery({
       wornKit: ["chaotic-axe", "mountain-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES,
       armor: "mountain-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "second-wind", // was brace
     }),
     ...bossFight({
@@ -151,7 +151,7 @@ export const CONDUIT_V2_T1: Route = routeWithClassRecovery({
       wornKit: ["chaotic-axe", "mountain-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES,
       armor: "mountain-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "cleanse",
     }),
     ...bossFight({
@@ -159,7 +159,7 @@ export const CONDUIT_V2_T1: Route = routeWithClassRecovery({
       wornKit: ["chaotic-axe", "mountain-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES,
       armor: "mountain-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "second-wind", // was brace
     }),
   ] satisfies RouteStep[],

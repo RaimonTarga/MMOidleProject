@@ -1,5 +1,6 @@
 import {
   ABILITY_CONTROL_RESIST_EFFECT_ID,
+  ABILITY_UNYIELDING_EFFECT_ID,
   applyStatusEffect,
   getStatusEffect,
   hasStatusEffect,
@@ -50,6 +51,10 @@ export function applyStun(
   durationMult = 1,
 ): boolean {
   if (hasStatusEffect(targetCs, STUN_IMMUNE_EFFECT)) return false;
+  // Unyielding (Endure's keystone, design §22.4): refused outright, and no
+  // post-stun ward is granted for a stun that never landed. Read here rather than
+  // through `refusesHardControl`, which lives in a module that imports this one.
+  if (hasStatusEffect(targetCs, ABILITY_UNYIELDING_EFFECT_ID)) return false;
   const resisted = Math.max(
     1,
     Math.round(durationMs * (1 - controlResistPct(targetCs)) * Math.max(0, durationMult)),

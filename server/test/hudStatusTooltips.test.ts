@@ -141,7 +141,7 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
   assert(prettifyStatusId("debuff-frost-ramp") === "Frost Ramp", "prettify should drop the namespace");
   assert(prettifyStatusId("mob-sprint") === "Sprint", "prettify should drop the mobility namespace");
   assert(
-    targetStatusHelp("expose-weakness") !== undefined,
+    targetStatusHelp("ability-rooted") !== undefined,
     "the ability debuff on a monster must be explained on the target frame",
   );
   // A mechanic with only a player-side entry still resolves through the target
@@ -152,7 +152,7 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
   );
 
   const targetLabels: Record<string, string> = {
-    "ability-slowed": "Hamstrung",
+    "ability-slowed": "Slowed",
     "ability-rooted": "Bound",
     stunned: "Stunned",
     "stun-immune": "Stun ward",
@@ -351,6 +351,34 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
   });
   assert(!BAD.test(label), `accessible label must be legible: ${label}`);
   assert(label.includes(sweep.name), "the accessible label must name the ability");
+
+  // The node rows name it (design §22.7, §22.10): the whole name on the card, and
+  // the ability's own name as the lineage line once a keystone has renamed it.
+  const nodes = {
+    sweep: {
+      owned: ["sweep.packet.affliction", "sweep.keystone.whirlwind"],
+      active: { packet: "sweep.packet.affliction", keystone: "sweep.keystone.whirlwind" },
+    },
+  };
+  const renamed = abilityTooltipContent(sweep, { ...lowTier, abilityNodes: nodes }, { state: "ready" });
+  assertLegible(renamed, "a renamed ability");
+  assert(renamed.title === "Bleeding Whirlwind I", `the card carries the whole name, got ${renamed.title}`);
+  assert(renamed.lineage === sweep.name, "the ability's own name is the lineage line beneath the rename");
+  assert(ready.lineage === undefined, "an ability no keystone renamed has no lineage line");
+  assert(
+    abilityAccessibleLabel(sweep, { ...lowTier, abilityNodes: nodes }, { state: "ready" }).includes("Bleeding Whirlwind I"),
+    "the accessible label reads the same name",
+  );
+
+  // A buff tile an ability owns is named after the ability as it is called now.
+  const guardTile = {
+    id: "ability-guard", label: "Brace", stacks: 1, durationPct: 50, color: "#9ad0ff",
+    category: "neutral", shape: "square",
+  } as PlayerBuff;
+  const owned = buffTooltipContent(guardTile, { name: "Plated Riposte I", lineage: "Brace" });
+  assert(owned.title === "Plated Riposte I" && owned.lineage === "Brace", "the Guard's window wears the Guard's name");
+  assert(owned.kicker?.includes("Guard"), `the status's own name moves to the kicker, got ${owned.kicker}`);
+  assert(buffTooltipContent(guardTile).title === "Guard", "without an owner the tile keeps its authored title");
 
   // Every authored ability must build a legible card at its own home tier.
   for (const id of ["brace", "second-wind"]) {

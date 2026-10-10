@@ -19,6 +19,8 @@ interface DotTickEventOptions {
   /** Owning player/monster when the tick can be attributed to one source. */
   sourceId?: string;
   fx?: DotTickFx;
+  /** The body the tick radiated from (Pyromancer's Radiant), for the client's arc. */
+  fromId?: string;
 }
 
 /**
@@ -42,6 +44,7 @@ export function pushDotTickEvent(
     sourceType: options.sourceType ?? "class",
     ...(options.sourceId ? { sourceId: options.sourceId } : {}),
     ...(options.fx ? { fx: options.fx } : {}),
+    ...(options.fromId ? { fromId: options.fromId } : {}),
   });
 }
 

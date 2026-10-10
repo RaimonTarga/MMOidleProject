@@ -77,7 +77,7 @@ async function main() {
   const prepWorld = new World();
   const prepPlayer = prepWorld.attachPlayerEntity(blank('v1p-preparation'), 'v1p-preparation');
   assert(applyTierEntryProfile(prepWorld, prepPlayer, structuredClone(base)).success, 'Tundra entry failed');
-  assert(craftAbilityRecipe(prepWorld, prepPlayer, 'ability-recipe-hamstring').success, 'Cannot buy Hamstring');
+  assert(craftAbilityRecipe(prepWorld, prepPlayer, 'ability-recipe-binding-strike').success, 'Cannot buy Binding Strike');
   assert(craftRecipe(prepWorld, prepPlayer, 'desert-boots-t2').success, 'Cannot buy Desert Boots');
   for (let i = 0; i < 5; i++) assert(upgradeItem(prepWorld, prepPlayer, 'desert-boots-t2').success, `Cannot upgrade boots to ${i + 1}`);
   assert(equipItem(prepWorld, prepPlayer, 'desert-boots-t2'), 'Cannot equip Desert Boots');

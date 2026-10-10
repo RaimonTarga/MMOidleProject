@@ -25,6 +25,12 @@ export function isEmpoweredAttack(entity: ServerEntity): boolean {
 }
 
 /**
+ * `ctx.metadata` key: this hit must not spend the attacker's pending empowered
+ * charge. See the hold in {@link registerEmpoweredMultiplier}.
+ */
+export const HOLD_EMPOWERED_ATTACK = 'holdEmpoweredAttack';
+
+/**
  * If the entity is currently empowered, consume the flag and return true.
  * Returns false (and makes no change) if the entity was not empowered.
  * Designed for single-use: empowerment is spent exactly once.
@@ -71,12 +77,24 @@ export interface EmpoweredMultiplierOptions {
   passiveAddKey?: PassiveKey;
   /**
    * `mechanic-proxy` (design §24.2) only: use this registration for a proxy ONLY
-   * when the player's `passiveKey` is authored. For a root whose registration is a
-   * SPEC's mechanic rather than the root's — reload's is the Duelist's exploding
-   * clip — every other spec has no damage-multiplier mechanic to proxy, so it gets
-   * the proxy's fallback instead of a multiplier its class never fires.
+   * when the player's proxy key ({@link proxyPassiveKey}, else `passiveKey`) is
+   * authored. For a root whose registration is a SPEC's mechanic rather than the
+   * root's — reload's registration was the Duelist's exploding clip, retired by the
+   * T3 review (design §22.5) — a spec with no damage-multiplier mechanic to proxy
+   * gets the proxy's fallback instead of a multiplier its class never fires.
    */
   proxyRequiresPassive?: boolean;
+  /**
+   * `mechanic-proxy` only: the passive the PROXY reads its base multiplier from, in
+   * place of `passiveKey`; the live empowered hit never reads it. For a spec whose
+   * proxy has a size of its own while no real shot of its class is empowered — the
+   * Duelist's proxy is ×3.5 (design §22.12), but no reload shot arms the empowered
+   * flag and the Scout's openers are the frame loop's own fold — so authoring the
+   * proxy can never move a real shot, nor the shared readers that take
+   * `reload.empowered-mult` for a real last-round multiplier
+   * (`resolveEmpoweredMultiplier`, the Stats panel's DPS estimate).
+   */
+  proxyPassiveKey?: PassiveKey;
 }
 
 interface EmpoweredRegistration {
@@ -193,6 +211,14 @@ export function registerEmpoweredMultiplier(
     // mark the hit empowered). The charge stays armed for the next real hit.
     if (ctx.metadata['chaoticMiss']) return;
 
+    // A HELD hit leaves a pending charge exactly where it is, like a chaotic miss
+    // does: the hit is not the one that delivers the mechanic. Set in
+    // `beforeAttack` (or on a hit the root runs itself) by a mechanic that decides
+    // WHICH hit spends its charge — the Squire's Destroyer, whose primed execution
+    // waits for a Technique, and Reverb's echo, which must never spend an
+    // execution that is already waiting (design §22.5).
+    if (ctx.metadata[HOLD_EMPOWERED_ATTACK]) return;
+
     if (!consumeEmpoweredAttack(world, ctx.attacker)) return;
 
     // Some T4 mechanics suppress the standard multiplier but still need the
@@ -230,18 +256,27 @@ export function registerEmpoweredMultiplier(
 /**
  * The empowered multiplier this player's root would land a real mechanic hit at,
  * or undefined when the root has no damage-multiplier mechanic to proxy (the DoT
- * root, the summoner, a reload spec other than the Duelist).
+ * root, the summoner, and every reload spec but the Duelist since the exploding
+ * clip was retired).
+ *
+ * A registration with a {@link EmpoweredMultiplierOptions.proxyPassiveKey} resolves
+ * through the same arithmetic as the real hit with that key standing in for
+ * `passiveKey` — the Duelist's ×3.5 (design §22.12), on reload's registration.
  */
 export function proxyEmpoweredMultiplier(world: World, player: PlayerEntity): number | undefined {
   for (const registration of _registrations) {
     const { options } = registration;
     if (options.attackerMonsterArchetype) continue;
     if (!registrationAdmits(world, 'player', player, options)) continue;
+    const proxyKey = options.proxyPassiveKey ?? options.passiveKey;
     if (options.proxyRequiresPassive) {
-      const authored = options.passiveKey ? player.usesSkills.passives[options.passiveKey] ?? 0 : 0;
+      const authored = proxyKey ? player.usesSkills.passives[proxyKey] ?? 0 : 0;
       if (!(authored > 0)) return undefined;
     }
-    return resolveEffectiveMultiplier('player', player, registration.multiplier, options);
+    const resolved = options.proxyPassiveKey
+      ? { ...options, passiveKey: options.proxyPassiveKey }
+      : options;
+    return resolveEffectiveMultiplier('player', player, registration.multiplier, resolved);
   }
   return undefined;
 }

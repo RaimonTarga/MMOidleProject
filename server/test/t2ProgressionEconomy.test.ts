@@ -181,8 +181,10 @@ for (const id of ALL_T2_GEAR_IDS) {
 // ── Techniques / Guards (§10) ───────────────────────────────────────────────
 
 const ABILITY_COSTS: Record<string, { color: EssenceType; amount: number; level: number; group: string }> = {
-  "ability-recipe-hamstring": { color: "green", amount: 70, level: 3, group: "jungle" },
-  "ability-recipe-charge": { color: "yellow", amount: 70, level: 3, group: "desert" },
+  // The ability pass (design §22.2, §22.8) re-homed Binding Strike and Snipe into
+  // the cut Hamstring's and the moved Charge's slots, at those slots' prices.
+  "ability-recipe-binding-strike": { color: "green", amount: 70, level: 3, group: "jungle" },
+  "ability-recipe-snipe": { color: "yellow", amount: 70, level: 3, group: "desert" },
   "ability-recipe-bramble-guard": { color: "green", amount: 90, level: 5, group: "jungle" },
   "ability-recipe-endure": { color: "yellow", amount: 90, level: 5, group: "desert" },
 };

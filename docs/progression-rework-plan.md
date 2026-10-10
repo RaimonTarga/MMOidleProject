@@ -46,8 +46,8 @@ only for history or rationale; the pages below are the living truth.
 - The player pool raise's factors (1.25/1.30/1.35/1.40) are PROVISIONAL: only the boss
   half of their acceptance criterion discriminates, and the normal-node half was already
   breached before the raise — see `reports/progression-phase0/pool-raise-run3.md`.
-- The T3 class-path review (Pyromancer/Ember Mage overlap, Warmonger/Artillerist overlap,
-  the PROVISIONAL `packet` tags on all 54 T3 paths).
+- The PROVISIONAL `packet` tags on all 54 T3 paths (the Pyromancer and Warmonger overlaps
+  were closed by the ability pass, design §22.5).
 
 ## Cross-cutting rules (still binding)
 

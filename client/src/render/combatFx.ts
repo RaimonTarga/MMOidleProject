@@ -1,10 +1,7 @@
 import { spawnEssenceMotes } from '../fx/essenceMotes';
 import {
   ABILITY_BINDING_STRIKE_FX,
-  ABILITY_EXPOSE_WEAKNESS_FX,
-  ABILITY_HAMSTRING_FX,
   ABILITY_IMBUE_FX,
-  ABILITY_QUICK_STRIKE_FX,
   ABILITY_DATABASE,
   ABILITY_SWEEP_FX,
   ABILITY_TECHNIQUE_FIRED_FX,
@@ -13,12 +10,11 @@ import {
   GAME_CONFIG,
   isRangedPlayerView,
   CADENCE_CURSED_FINALE_FX,
-  COOLDOWN_HOLLOW_FX,
+  COOLDOWN_REVERB_ECHO_FX,
   CADENCE_OVERLOAD_FX,
   CADENCE_VERDICT_EXECUTE_FX,
   COOLDOWN_SUNDER_FX,
   DOT_FROZEN_FX,
-  DOT_MAXSTACK_BURST_FX,
   DOT_RIMESHATTER_FX,
   lineageForRecipeId,
   lineagePayloadOfHitFx,
@@ -46,7 +42,6 @@ import {
 } from "../fx/particles";
 import { getDotPath, type DotPath } from "../fx/dot";
 import { fxDotTick } from "../fx/dotTick";
-import { fxHollowStrike } from "../fx/hollowStrike";
 import { fxHeavyShell } from "../fx/heavyShell";
 import { fxLightningDagger } from "../fx/lightningDagger";
 import { fxBleedOpen } from "../fx/bleedOpen";
@@ -56,7 +51,6 @@ import {
   fxRampageOverload,
   fxCursedFinale,
   fxSunderShatter,
-  fxMaxStackBurst,
   fxRimeshatter,
   fxFrozenShatter,
 } from "../fx/t4Triggers";
@@ -73,7 +67,7 @@ import { fxSiegeBlow } from "../fx/siegeBlow";
 import { fxPikeBrace } from "../fx/pikeBrace";
 import { fxSquireSlam } from "../fx/squireSlam";
 import { fxImpact } from "../fx/impact";
-import { fxGunshot, fxDuelistShot, fxDeathMarkBlast } from "../fx/gunshot";
+import { fxGunshot, fxDeathMarkBlast } from "../fx/gunshot";
 import { fxBoulder } from "../fx/boulder";
 import { fxArrow } from "../fx/arrow";
 import { fxBite } from "../fx/bite";
@@ -199,14 +193,12 @@ import {
 } from "../fx/beastBosses";
 import { bossBiome } from "../fx/bossBiome";
 import { fxSweep } from "../fx/sweep";
-import { fxExposeWeakness } from "../fx/heavyStrike";
 import { fxBrace } from "../fx/brace";
 import { fxSecondWind } from "../fx/secondWind";
 import { fxEndure } from "../fx/endure";
 import { fxBreakFree } from "../fx/breakFree";
 import { fxRecuperate } from "../fx/recuperate";
 import { fxBramble } from "../fx/bramble";
-import { fxFrenzy } from "../fx/frenzy";
 import { fxContagion } from "../fx/contagion";
 import { fxDetonate } from "../fx/detonate";
 import {
@@ -219,10 +211,7 @@ import {
   startAllyAoeFootprint,
 } from "../fx/allyAoeFootprint";
 import { fxImbueCast, fxImbueCrackle } from "../fx/imbueLightning";
-import { fxHamstring } from "../fx/hamstring";
 import { fxBindingStrike } from "../fx/bindingStrike";
-import { fxQuickStrike } from "../fx/quickStrike";
-import { fxPowerStrike } from "../fx/powerStrike";
 import { fxSnipe } from "../fx/snipe";
 import { fxStunningStrike } from "../fx/stunningStrike";
 import { fxCharge, fxDisengage } from "../fx/reposition";
@@ -237,6 +226,9 @@ import { fxDualBlueRound } from "../fx/bespoke/slinger";
 import { fxSwiftbladeStrike } from "../fx/bespoke/striker";
 import { championTether, fxSummonShatter } from "../fx/conduitPaths";
 import { abilityCallout, playAbilityRank } from "../fx/abilityRank";
+import { drawAbilityKeystoneFx } from "../fx/abilityKeystoneFx";
+import { fxRadiantArc } from "../fx/bespoke/apprentice";
+import { axisFx } from "../fx/abilityKeystoneModel";
 import {
   fxCharnelMaul, fxConstrict, fxHindKick, fxOozeEngulf, fxSnap, fxSpiderFang, fxSting,
   fxStoneFist, fxTongueLash, fxWispTouch,
@@ -393,7 +385,6 @@ const AFTERSHOCK_CLIENT_EFFECT = "aftershock";
 const SWIFTBLADE_CLIENT_EFFECT = "swiftblade";
 const CHANNEL_BEAM_CLIENT_EFFECT = "channel-beam";
 const HOLY_FLASH_CLIENT_EFFECT = "holy-flash";
-const EXPLODING_CLIP_CLIENT_EFFECT = "reload-exploding-clip";
 const ALT_ONHIT_CLIENT_EFFECT = "reload-alt-onhit";
 const DEATH_MARK_BLAST_CLIENT_EFFECT = "death-mark-blast";
 const CANNON_BLAST_CLIENT_EFFECT = "reload-cannon-blast";
@@ -652,10 +643,40 @@ const warnedUnknownFx = new Set<string>();
  * resolved per event. There is nothing to add to this switch for an amplifier.
  */
 function fxLineageCard(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }): void {
+  // An ability keystone verb owns ONE bespoke animation, keyed by its id (design
+  // §22.7); a verb with none yet is a keyed stub and falls through to its lane fx.
+  if (drawAbilityKeystoneFx(scene, ev)) return;
+  // The amplifier scales or extends what the packet drew (design §22.7): the same
+  // lane fx, bigger, or repeated as a second echo or a lingering trail.
+  const axis = axisFx(ev.axis);
+  // A T1 payload is already a multi-beat animation (a second swing, a dash, a
+  // clamp): repeating it would replay the body's pose, so it grows instead.
+  const multiBeat = isPayloadFx(ev.fx);
+  if (multiBeat) {
+    drawLaneFx(scene, ev, axis.scale * (1 + 0.12 * axis.echoes));
+    return;
+  }
+  drawLaneFx(scene, ev, axis.scale);
+  let scale = axis.scale;
+  for (let i = 1; i <= axis.echoes; i++) {
+    scale *= axis.echoFalloff;
+    const echoScale = scale;
+    scene.time.delayedCall(axis.echoDelayMs * i, () => {
+      if (document.hidden) return;
+      drawLaneFx(scene, ev, echoScale);
+    });
+  }
+}
+
+/**
+ * One handler per `LineageFxKey`, drawn at `scale` (an ability amplifier's axis,
+ * 1 otherwise). See {@link fxLineageCard} for what calls it.
+ */
+function drawLaneFx(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }, scale = 1): void {
   // The T1 payloads (design §24.2, course-correction W2-C) each own a premium
   // effect of their own — lineagePayloadFx.ts. The rest keep the lane primitives.
   if (isPayloadFx(ev.fx)) {
-    drawPayloadFx(scene, ev, ev.fx);
+    drawPayloadFx(scene, ev, ev.fx, scale);
     return;
   }
   const pos = nodeToScene(ev.pos.x, ev.pos.y);
@@ -665,7 +686,7 @@ function fxLineageCard(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }):
   const live = ev.targetId ? spritePos(scene.state, ev.targetId) : null;
   const target = live ?? (ev.targetPos ? nodeToScene(ev.targetPos.x, ev.targetPos.y) : pos);
   const color = laneFxColor(ev.fx);
-  const amp = ampScale(ev.stacks);
+  const amp = ampScale(ev.stacks) * scale;
 
   switch (ev.fx) {
     // Payoff rows — a new on-screen event (design §8). `tempo.ghost-strike`
@@ -1110,9 +1131,6 @@ const TRIGGER_FX_BY_EFFECT: Record<
   [COOLDOWN_SUNDER_FX]: (scene, at) => fxSunderShatter(scene, at.x, at.y),
   [DOT_RIMESHATTER_FX]: (scene, at) => fxRimeshatter(scene, at.x, at.y),
   [DOT_FROZEN_FX]: (scene, at) => fxFrozenShatter(scene, at.x, at.y),
-  // Element-driven so the burst matches the path that filled the bar.
-  [DOT_MAXSTACK_BURST_FX]: (scene, at, args) =>
-    fxMaxStackBurst(scene, at.x, at.y, args.dotPath ?? "poison"),
 };
 
 /**
@@ -1279,9 +1297,9 @@ const GUARD_FX_BY_ABILITY: Record<
 
 /**
  * Self-facing TECHNIQUE FX, keyed by ability id. A Technique is usually
- * enemy-facing, but an instant offensive self-buff (Frenzy) has no target to
- * draw on — it plays on the caster, exactly like a Guard, and still belongs to
- * the Technique slot.
+ * enemy-facing, but an instant offensive self-buff (Imbue Lightning, instant
+ * since the ability pass) has no target to draw on — it plays on the caster,
+ * exactly like a Guard, and still belongs to the Technique slot.
  */
 const TECHNIQUE_SELF_FX_BY_ABILITY: Record<
   string,
@@ -1295,7 +1313,9 @@ const TECHNIQUE_SELF_FX_BY_ABILITY: Record<
     },
   ) => void
 > = {
-  frenzy: fxFrenzy,
+  // The loud arrival of the charge window, now on activation rather than at the
+  // end of a wind-up; the quiet per-hit crackle is `ABILITY_IMBUE_FX` below.
+  "imbue-lightning": (scene, x, y) => fxImbueCast(scene, x, y),
 };
 
 /**
@@ -1307,22 +1327,18 @@ const CAST_FX_BY_ABILITY: Record<
   string,
   (scene: GameScene, from: Vec2, to: Vec2) => void
 > = {
-  "power-strike": (scene, _from, to) => fxPowerStrike(scene, to.x, to.y),
   // Slam reuses the boss ground-slam: it is already the game's "an area just got
   // hit" vocabulary (cracks, expanding shock rings, debris), it takes the kill
   // radius as an argument so the FX lands exactly on the circle the server
   // damaged, and reusing it means a player reads a Slam the same way they have
   // been reading telegraphed AoE since Mountain. Radius comes from the authored
   // rank rather than a client constant, so the ring can never drift from the
-  // damage. The stone `impact` palette keeps it distinct from Power Strike's
-  // single-target flash.
+  // damage. The stone `impact` palette reads as earth, not a weapon flash.
   slam: (scene, _from, to) => fxSlam(scene, to.x, to.y, slamRadius(), "impact"),
   "stunning-strike": (scene, _from, to) => fxStunningStrike(scene, to.x, to.y),
   // Snipe is the one cast whose FX needs BOTH points: the distance crossed is
   // the ability, and an impact alone would not show it.
   snipe: (scene, from, to) => fxSnipe(scene, from.x, from.y, to.x, to.y),
-  // A self-cast resolves on the caster, so both endpoints are the player.
-  "imbue-lightning": (scene, from) => fxImbueCast(scene, from.x, from.y),
 };
 
 /** Slam's authored impact radius — the same number the server damages with. */
@@ -1360,10 +1376,7 @@ const RECALL_CALLOUT_COLOR = "#9cd2ff";
 
 const TECHNIQUE_CONSUMED_TAGS = [
   ABILITY_SWEEP_FX,
-  ABILITY_EXPOSE_WEAKNESS_FX,
-  ABILITY_HAMSTRING_FX,
   ABILITY_BINDING_STRIKE_FX,
-  ABILITY_QUICK_STRIKE_FX,
   ABILITY_IMBUE_FX,
   ABILITY_TECHNIQUE_FIRED_FX,
 ];
@@ -1494,6 +1507,8 @@ export function dispatchCombatEvent(
       const spr = state.sprite.get(ev.targetId);
       const tx = spr?.x ?? ev.targetPos.x;
       const ty = spr?.y ?? ev.targetPos.y;
+      // Pyromancer's Radiant: the fire leaps from the burning body to this one.
+      if (ev.fromId) fxRadiantArc(scene, ev.fromId, { x: tx, y: ty });
       if (ev.fx === "conflagration") fxConflagrationTick(scene, tx, ty);
       else if (ev.element === "lightning") fxLightning(scene, tx, ty - 130, tx, ty, true);
       else if (ev.element === "doom") fxDoomTick(scene, tx, ty);
@@ -2052,7 +2067,7 @@ export function dispatchCombatEvent(
         // above would otherwise sit there until some unrelated hit cleared it.
         const selfFx = TECHNIQUE_SELF_FX_BY_ABILITY[ev.ability];
         if (selfFx) {
-          // `durationMs` lets a window-opening Technique (Frenzy) sustain an
+          // `durationMs` lets a timed window-opening Technique sustain an
           // in-world cue for as long as the buff actually lasts, and `follow`
           // keeps that cue on the sprite while the player moves — a one-shot
           // burst at the fire position would be left behind immediately.
@@ -2238,8 +2253,7 @@ export function dispatchCombatEvent(
       if (ev.fired) {
         notifyAbilityCooldownStarted(ev.ability);
         notifyAbilityFired(ev.ability);
-        const cue = ev.ability === 'slam' ? 'slam' : ev.ability === 'snipe' ? 'shot'
-          : ev.ability === 'imbue-lightning' ? 'spirit-empowered' : 'striker-empowered';
+        const cue = ev.ability === 'slam' ? 'slam' : ev.ability === 'snipe' ? 'shot' : 'striker-empowered';
         playSfx(cue);
       }
     }
@@ -2361,6 +2375,17 @@ export function dispatchCombatEvent(
       if (!killedBoss) playSfx(monsterDeathCue(presentation?.targetMonsterTypeId
         ?? state.entity.get(ev.targetId)?.isMonster?.monsterTypeId));
       spawnRewardFloaters(scene, ev, presentation?.to);
+      // A path whose kill is a beat of its own (Duelist: a round loads past the clip).
+      const killer = state.view.get(ev.playerId) as PlayerView | undefined;
+      const killerSprite = state.sprite.get(ev.playerId);
+      if (killer && killerSprite) {
+        const flair = attackFlairOf(killer);
+        if (flair.stage === 3) {
+          bespokePathFor(flair.specId)?.kill?.({
+            scene, player: killer, playerId: ev.playerId, at: { x: killerSprite.x, y: killerSprite.y },
+          });
+        }
+      }
     }
   }
 }
@@ -2380,7 +2405,6 @@ function runFxForAttackStyle(
   const isSwiftblade = ev.effects?.includes(SWIFTBLADE_CLIENT_EFFECT) ?? false;
   const isHolyBeam = ev.effects?.includes(CHANNEL_BEAM_CLIENT_EFFECT) ?? false;
   const isHolyFlash = ev.effects?.includes(HOLY_FLASH_CLIENT_EFFECT) ?? false;
-  const isDuelistShot = ev.effects?.includes(EXPLODING_CLIP_CLIENT_EFFECT) ?? false;
   const isAltShot = ev.effects?.includes(ALT_ONHIT_CLIENT_EFFECT) ?? false;
   const isDeathMarkBlast = ev.effects?.includes(DEATH_MARK_BLAST_CLIENT_EFFECT) ?? false;
   const isCannonBlast = ev.effects?.includes(CANNON_BLAST_CLIENT_EFFECT) ?? false;
@@ -2420,7 +2444,6 @@ function runFxForAttackStyle(
     ev.empowered &&
     player.combatArchetype === "cadence" &&
     (player.passives["cadence.hemorrhage"] ?? 0) > 0;
-  const isHollowStrike = ev.effects?.includes(COOLDOWN_HOLLOW_FX) ?? false;
   // Equinox: the phase is already on the wire as the aura id, so the attack can
   // match the glow without a protocol change of its own.
   const isEquinox =
@@ -2470,10 +2493,6 @@ function runFxForAttackStyle(
     // Execution "cast" that opens the channel — holy flash instead of melee lunge/ring.
     fxHolyFlash(scene, from.x, from.y);
     fxHolyFlash(scene, to.x, to.y, 0.8);
-  } else if (isDuelistShot) {
-    // Duelist last-bullet: red power shot + empowered ring (replaces the normal gunshot).
-    playEmpoweredRing(args);
-    fxDuelistShot(scene, from.x, from.y, to.x, to.y);
   } else if (isAltShot) {
     // Dualslinger on-hit (odd) round: the spiralling arcane round, the opposite of
     // its gold kinetic round (fx/bespoke/slinger.ts).
@@ -2487,9 +2506,6 @@ function runFxForAttackStyle(
   } else if (isVoidDischarge) {
     // Voidwalker singularity discharge: void implosion → detonation on the target.
     fxVoidDischarge(scene, to.x, to.y);
-  } else if (isHollowStrike) {
-    // No empowered ring, no lunge FX, nothing but a dead tap.
-    fxHollowStrike(scene, to.x, to.y);
   } else if (isBleedOpen) {
     fxBleedOpen(scene, from.x, from.y, to.x, to.y, ev.empowered);
   } else if (isHeavyShell) {
@@ -2531,7 +2547,7 @@ function runFxForAttackStyle(
     const bespoke = flair.stage === 3 ? bespokePathFor(flair.specId) : undefined;
     const hit = {
       scene, player, playerId: ev.playerId, targetId: ev.targetId, from, to,
-      empowered: ev.empowered, execution: ev.execution, k: flair.scale,
+      empowered: ev.empowered, execution: ev.execution, k: flair.scale, effects: ev.effects,
     };
     // The payoff beat: a finisher / discharge / last bullet, or a Squire execution.
     if (ev.empowered || ev.execution) playAscensionRing(scene, flair, to);
@@ -2564,10 +2580,9 @@ function runFxForAttackStyle(
   for (const effectId of ev.effects ?? []) {
     if (effectId === FLASH_CLIENT_EFFECT) continue;
     if (effectId === SWIFTBLADE_CLIENT_EFFECT) continue; // handled above
-    if (effectId === COOLDOWN_HOLLOW_FX) continue; // handled above
+    if (effectId === COOLDOWN_REVERB_ECHO_FX) continue; // drawn by the Reverb path's payoff
     if (effectId === CHANNEL_BEAM_CLIENT_EFFECT) continue; // handled above
     if (effectId === HOLY_FLASH_CLIENT_EFFECT) continue; // handled above
-    if (effectId === EXPLODING_CLIP_CLIENT_EFFECT) continue; // handled above
     if (effectId === ALT_ONHIT_CLIENT_EFFECT) continue; // handled above
     if (effectId === DEATH_MARK_BLAST_CLIENT_EFFECT) continue; // handled above
     if (effectId === CANNON_BLAST_CLIENT_EFFECT) continue; // handled above
@@ -2585,22 +2600,8 @@ function runFxForAttackStyle(
       fxSweep(scene, from.x, from.y, to.x, to.y, ev.empowered);
       continue;
     }
-    if (effectId === ABILITY_EXPOSE_WEAKNESS_FX) {
-      // Expose Weakness: target-marking impact cue plus a Technique HUD-icon pulse.
-      fxExposeWeakness(scene, to.x, to.y, ev.empowered);
-      continue;
-    }
-    if (effectId === ABILITY_HAMSTRING_FX) {
-      // Played low, at the legs — the slow is what the ability bought.
-      fxHamstring(scene, to.x, to.y, ev.empowered);
-      continue;
-    }
     if (effectId === ABILITY_BINDING_STRIKE_FX) {
       fxBindingStrike(scene, to.x, to.y, ev.empowered);
-      continue;
-    }
-    if (effectId === ABILITY_QUICK_STRIKE_FX) {
-      fxQuickStrike(scene, to.x, to.y, ev.empowered);
       continue;
     }
     if (effectId === ABILITY_IMBUE_FX) {

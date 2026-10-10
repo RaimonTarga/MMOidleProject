@@ -192,7 +192,10 @@ export const COOLDOWN_KEYS = [
   'cooldown.battery-damage-per-stack',
   'cooldown.alignment',
   'cooldown.entropy-collapse',
-  'cooldown.singular-extraction',
+  // Destroyer (heavy, design §22.5): the execution is delivered by the player's
+  // Techniques — primed, it waits for the next Technique that lands and fires with
+  // that Technique's shape (the armed hit; a cast's target or area).
+  'cooldown.technique-execution',
   'cooldown.channeled-beam',
   // Devout Priest: damage per beam tick = player.attack × this (authored on the node).
   'cooldown.channeled-beam-mult',
@@ -205,9 +208,11 @@ export const COOLDOWN_KEYS = [
   // Rupture (light): execution bypasses plating; brief window bypasses 50% on regulars.
   'cooldown.rupture',
   'cooldown.rupture-dr-pierce',
-  // Reverb (balanced): attacks-between-executions charge the NEXT execution.
+  // Reverb (balanced, design §22.5): the execution echoes — it lands again when its
+  // recharge reaches the halfway mark, at `echo-strength` × the execution's own
+  // multiplier, on whatever the player is hitting then (nothing in reach: lost).
   'cooldown.reverb',
-  'cooldown.reverb-bonus-per-attack',
+  'cooldown.reverb-echo-strength',
   // Patience Paid (balanced): uninterrupted CD ramps attack + execution damage.
   'cooldown.patience-paid',
   'cooldown.patience-ramp-ms',
@@ -223,8 +228,6 @@ export const COOLDOWN_KEYS = [
   // Sunderer: post-execution window (ms) + the plating multiplier applied during it.
   'cooldown.rupture-window-ms',
   'cooldown.rupture-window-plating-mult',
-  // Destroyer: ms without a target before the primed execution cooldown resets.
-  'cooldown.singular-no-target-ms',
   // Devout Priest: holy-beam channel duration and per-tick interval (ms).
   'cooldown.beam-duration-ms',
   'cooldown.beam-tick-ms',
@@ -260,9 +263,15 @@ export const COOLDOWN_KEYS = [
 export const RELOAD_KEYS = [
   'reload.max-ammo',
   'reload.reload-time-ms',
-  // Duelist: the last bullet of a clip fires as an empowered attack at this
-  // multiplier (so shared.empowered-mult-add / weapon.empowered-mult-bonus apply).
+  // The reload root's empowered multiplier (shared.empowered-mult-add /
+  // weapon.empowered-mult-bonus apply on top). No path authors it since the T3
+  // review retired the Duelist's exploding last bullet (design §22.5).
   'reload.empowered-mult',
+  // The multiplier an Empowered `mechanic-proxy` lands at on this reload spec, read
+  // by the proxy ONLY (the live empowered hit and the HUD/DPS readers keep reading
+  // `reload.empowered-mult`). The Duelist authors 3.5 (design §22.12); every other
+  // reload spec takes the proxy's fallback.
+  'reload.mechanic-proxy-mult',
   'reload.laser',
   'reload.laser-damage-per-tick-pct',
   'reload.laser-heat-per-tick',
@@ -277,9 +286,12 @@ export const RELOAD_KEYS = [
   // HP fraction at/above which a target counts as "full HP" for the snipe bonus.
   'reload.snipe-fullhp-threshold',
   'reload.gatling',
+  // Retired by the T3 review (design §22.5): no node authors the exploding clip.
   'reload.exploding-clip',
   'reload.exploding-clip-mult',
   'reload.exploding-aoe-mult',
+  // Retired by the T3 review (design §22.5): the Artillerist frame owns the ramp
+  // and Warmonger carries it (`reload.ramp-carry-pct`); no node authors these.
   'reload.hair-trigger',
   'reload.hair-trigger-pct-per-shot',
   'reload.hair-trigger-max-stacks',
@@ -324,6 +336,14 @@ export const RELOAD_KEYS = [
   'reload.cannon-damage-per-shot',
   // Fraction of the reload spent charging before the cannon fires.
   'reload.cannon-charge-fraction',
+  // ── T3 path review (design §22.5) ──────────────────────────────────────────
+  // Duelist (light, Kill chain): every kill loads this many rounds on top of the
+  // clip, past its size, until the next reload starts.
+  'reload.kill-chain',
+  // Warmonger (heavy, Tempo): the fraction of the Artillerist ramp a reload keeps
+  // instead of resetting it — a shape constant (half), not a tuning number. The
+  // ramp's own numbers stay the frame's `reload.frame-ramp-*`.
+  'reload.ramp-carry-pct',
   // ── Frame loop (progression rework Phase 3) ────────────────────────────────
   // The Slinger's loop is WHERE IN THE CLIP the payoff lives
   // (docs/briefs/frame-loops-2026-10-01.md §1). Authored on the frame nodes, so
@@ -337,7 +357,8 @@ export const RELOAD_KEYS = [
   'reload.frame-last-round-mult',
   // Artillerist — ACROSS: attack speed ramps with every shot of the clip with NO
   // cap below the clip length, and damage rides the same ramp (×1 at an empty
-  // ramp, ×`frame-ramp-top-mult` at the top). Both reset on reload.
+  // ramp, ×`frame-ramp-top-mult` at the top). Both reset on reload — or keep
+  // `reload.ramp-carry-pct` of the ramp through it (Warmonger).
   'reload.frame-ramp-pct-per-shot',
   'reload.frame-ramp-top-mult',
   // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
@@ -469,7 +490,10 @@ export const DOT_KEYS = [
   'dot.eternal-doom-max-stacks',
   'dot.fan-the-flames-stacks-per-hit',
   'dot.fan-the-flames-stack-damage-mult',
-  'dot.fan-the-flames-max-stack-bonus-mult',
+  // Pyromancer's payoff (design §22.5): a burn tick on a target at max stacks
+  // also strikes every adjacent body for the tick. Presence-gated; its reach is
+  // the lineage adjacency unit, so the key carries no number of its own.
+  'dot.radiant',
   'dot.ignition-stack-damage-mult',
   'dot.conflagration-ticks',
   'dot.conflagration-tick-ms',

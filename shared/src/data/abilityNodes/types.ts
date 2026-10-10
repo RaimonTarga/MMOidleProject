@@ -1,10 +1,12 @@
 /**
- * Ability nodes — the generic tree keyed to packets (design §19).
+ * Ability nodes — the generic tree keyed to packets (design §19, §22).
  *
  * "Runes decide *when* an ability fires; nodes decide *what* it does." A node
  * means "this ability also fires the chosen packet's payoff at a share when it
  * lands (Technique) or casts (Guard)", resolved through the lineage payoff
- * runtime. Two rows ship: the `packet` node and the `amplifier` node above it.
+ * runtime. Four rows: `packet`, `amplifier`, `keystone` and `cross` — and the
+ * keystone row is the one bespoke exception to axiom 1 below (design §22.1:
+ * "nodes stay generic; keystones are the exception").
  *
  * The three axioms this file encodes, all inherited rather than invented:
  *
@@ -24,13 +26,24 @@
 import type { AmplifiedAxis, PacketId, PayoffKind } from '../lineages/types';
 
 /**
- * The two rows that ship (design §19: "one node per tier per ability, three
- * options each"). Keystone and cross rows for abilities come after the T3 class
- * review, so the union is deliberately two wide and not a placeholder for five.
+ * The four rows (design §19, widened by §22.1 and §22.10–§22.11):
+ *
+ *  - `packet`    what the ability ALSO does: three offers, one active.
+ *  - `amplifier` how that packet route fires: a free choice of axis on the
+ *                active route (§22.10), the payoff's natural axis the default.
+ *  - `keystone`  what the ability BECOMES: up to three bespoke verbs (§22.11),
+ *                each a named server module. The one exception to "data over a
+ *                closed vocabulary", exactly as the lane keystone row is (§4).
+ *  - `cross`     what it BORROWS: one of the ability's other two packet offers at
+ *                `ROW_SCALAR.cross`, derived — never authored.
+ *
+ * Tiers are home + {0, 1, 2, 3} with no clamp (§22.10); see `abilityNodeRowTier`.
  */
-export type AbilityNodeRow = 'packet' | 'amplifier';
+export type AbilityNodeRow = 'packet' | 'amplifier' | 'keystone' | 'cross';
 
-export const ABILITY_NODE_ROWS: readonly AbilityNodeRow[] = ['packet', 'amplifier'] as const;
+export const ABILITY_NODE_ROWS: readonly AbilityNodeRow[] = [
+  'packet', 'amplifier', 'keystone', 'cross',
+] as const;
 
 /**
  * The payoffs a Technique node may pay with: every one acts on the fight the
@@ -71,9 +84,22 @@ export interface AbilityNodeOption {
   id: string;
   abilityId: string;
   row: AbilityNodeRow;
-  /** The packet this option names. Its shard is what the option costs. */
+  /**
+   * The packet this option names. Its shard is what a `packet`, `amplifier` or
+   * `cross` option costs; on a `cross` option it is the BORROWED offer's lane.
+   *
+   * A `keystone` option is not keyed to a lane — its price is paid in the ACTIVE
+   * packet's shard (design §22.1) — so there it is only the lane whose grammar
+   * the keystone's fx draws (the fx key's own lane), which is the colour the card
+   * wears.
+   */
   lane: PacketId;
-  /** The lane's payoff this node fires at the share. */
+  /**
+   * The lane's payoff this node fires at the share. On a `keystone` option: the
+   * payoff kind the rule IS (a stagger is a `stun`, a net a `root`), authored on
+   * the keystone so every non-stat row does something (as the lane keystones'
+   * cards do), and the kind its share resolves from when it pays one.
+   */
   payoff: PayoffKind;
   /**
    * `amplifier` options only: the packet option this one modifies. Owning it is
@@ -81,17 +107,35 @@ export interface AbilityNodeOption {
    * exactly how a lineage amplifier's `modifies` behaves.
    */
   modifies?: string;
-  /** `amplifier` options only: the axis of the modified payoff this one moves. */
+  /**
+   * `amplifier` options only: the axis of the modified route this one moves. A
+   * free choice since design §22.10 — every axis the route has is an option, the
+   * payoff's natural one (`nodePayoffAxis`) the default — and `cast` (a shorter
+   * wind-up, §22.9) on a cast-shaped ability.
+   */
   amplifies?: AmplifiedAxis;
+  /** `keystone` options only: which of the ability's verbs this is (design §22.11). */
+  keystone?: string;
 }
 
-/** One ability's node tree: two rows, three options each. */
+/** One ability's node tree: four rows. */
 export interface AbilityNodeDefinition {
   abilityId: string;
   /** `technique` offers offensive packets, `guard` the three defensive faces. */
   family: 'technique' | 'guard';
-  /** The band each row is gated in. `packet` sits on the ability's home tier. */
+  /**
+   * The BAND each row is gated and priced in: its own tier
+   * ({@link AbilityNodeDefinition.rowOwnTier}) folded into the current cap band
+   * (design §22.10). `packet` sits on the ability's home tier.
+   */
   rowTier: Record<AbilityNodeRow, number>;
+  /**
+   * The tier each row BELONGS to: home + {0, 1, 2, 3}, never clamped (§22.10).
+   * Above the current cap it is folded into the cap band ({@link rowTier}) until
+   * that tier ships; nothing about it is persisted, so a ship moves the row with
+   * no save touched.
+   */
+  rowOwnTier: Record<AbilityNodeRow, number>;
   options: readonly AbilityNodeOption[];
 }
 

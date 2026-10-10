@@ -672,8 +672,9 @@ function kill(player: PlayerEntity, defender: MonsterEntity): void {
   assert(unlockLineageCard(world, player, 'rapier', 'rapier-t1-effect').success, 'Effect rank II bought');
   assert(setLineageActive(world, player, 'rapier', 'stat', 'rapier-t1-effect').success, 'Effect slotted');
   const scaled = getLineageRuntime(player.tracksCombat)?.cards.find((c) => c.card.id === 'rapier-t1-tempo-payoff');
-  assert(scaled?.payoff?.kind === 'echo-hit' && scaled.payoff.magnitude === 1.15 && scaled.composition?.pure === true,
-    `Effect II + Flurry: the second strike lands at 115%, got ${scaled?.payoff?.magnitude}`);
+  // +50% at rank I on a payload-scale weapon (design §26.5, parity with Attack), × 1.5 at rank II.
+  assert(scaled?.payoff?.kind === 'echo-hit' && scaled.payoff.magnitude === 1.75 && scaled.composition?.pure === true,
+    `Effect II + Flurry: the second strike lands at 175%, got ${scaled?.payoff?.magnitude}`);
   assert(scaled?.trigger?.kind === 'hit-nth' && scaled.trigger.n === 6, 'on the same moment');
   // The payload scale is the verb's, never a character stat.
   assert(!Object.keys(player.usesSkills.passives).some((key) => /payload/i.test(key)), 'no payload-scale passive');

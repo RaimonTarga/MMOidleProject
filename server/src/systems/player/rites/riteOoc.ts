@@ -57,8 +57,11 @@ function renewClassMechanic(world: World, player: PlayerEntity): void {
       break;
     case "reload":
       if (player.usesReload) {
+        // Tops up toward the clip a Duelist's kill chain has grown (`chainRounds`
+        // is 0 for everyone else), so a chain held past the clip's size is never
+        // clipped back down by a top-up.
         player.usesReload.ammo = Math.min(
-          player.usesReload.ammoMax,
+          player.usesReload.ammoMax + player.usesReload.chainRounds,
           player.usesReload.ammo + Math.ceil(player.usesReload.ammoMax * MECHANIC_RENEWAL_FRACTION),
         );
         player.usesReload.reloadingMs *= 1 - MECHANIC_RENEWAL_FRACTION;

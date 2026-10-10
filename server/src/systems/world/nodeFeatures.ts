@@ -35,6 +35,7 @@ import { isInvulnerableMonster, isInvulnerablePlayer } from '../combat/invulnera
 import { isPlayerInCombat } from '../combat/ai/engagement';
 import { pushPlayerDotTickEvent } from '../combat/damage/dotTickEvent';
 import { attackCadenceMult } from '../combat/engine/attackCadence';
+import { playerRefusesStatus } from '../combat/status/debuffGuard';
 
 /** Distinct from boss environmental-dot (`isEnvironmental === 1`). */
 const NODE_FEATURE_FLAG = 2;
@@ -260,7 +261,15 @@ function updateAmbientRamp(world: World, dt: number, now: number): void {
       continue;
     }
 
+    // THE GUARD KEYSTONES (design §22.13): while Immunity holds the ramp's kind (the
+    // status id Cleanse strips Chill under), the room adds no stack — not the first,
+    // not the boss floor, not the climb — and the refused time is not banked. The
+    // refusal only: the stacks the player already carries stay, and the ceiling
+    // still follows the room.
+    const refused = playerRefusesStatus(player, ramp.effectId, effect?.data ?? ambientRampData(ramp.payload, ramp));
+
     if (!effect) {
+      if (refused) continue;
       applyStatusEffect(cs, {
         id: ramp.effectId,
         maxStacks: ramp.maxStacks,
@@ -278,6 +287,7 @@ function updateAmbientRamp(world: World, dt: number, now: number): void {
     effect.maxStacks = ramp.maxStacks;
     effect.data.maxStacks = ramp.maxStacks;
     effect.data.rampMs = ramp.rampMs;
+    if (refused) continue;
     if (effect.stacks < floor) effect.stacks = floor;
 
     // A VENT ACCELERATES THE ROOM'S CLOCK. Standing in a magma vent makes Heat climb
@@ -494,6 +504,8 @@ function applyAndTickPlayerNodeFeatures(
 
   let activeNodeFeature = false;
   const pos = player.hasPosition.current;
+  const refuses = (effectId: string, data: Record<string, number>): boolean =>
+    playerRefusesStatus(player, effectId, data);
 
   for (const feature of features) {
     const inside = pointInNodeFeatureShape(pos, feature.shape);
@@ -509,6 +521,7 @@ function applyAndTickPlayerNodeFeatures(
         inside,
         'player',
         inDamageContact,
+        refuses,
       ) || activeNodeFeature;
   }
 
@@ -576,6 +589,7 @@ function applyFeatureEffectsToEntity(
   inside: boolean,
   target: FeatureTarget,
   inDamageContact: boolean,
+  refusesStatus: (effectId: string, data: Record<string, number>) => boolean = () => false,
 ): boolean {
   let active = false;
 
@@ -595,15 +609,22 @@ function applyFeatureEffectsToEntity(
   if (feature.statusWhileInside?.targets.includes(target)) {
     const se = feature.statusWhileInside;
     if (inside) {
-      applyStatusEffect(tracksCombat, {
-        id: se.effectId,
-        maxStacks: 1,
-        instanced: false,
-        sourceId,
-        remainingMs: se.refreshMs,
-        refreshable: true,
-        data: { ...se.data, isNodeFeature: NODE_FEATURE_FLAG },
-      });
+      const data = { ...se.data, isNodeFeature: NODE_FEATURE_FLAG };
+      // THE GUARD KEYSTONES (design §22.13): a terrain slow (the Swamp rot pool's,
+      // the Jungle bush's) passes the player's refusal gate under its own status
+      // id — Immunity refuses the kind its Cleanse stripped. The refusal only: no
+      // resistance or duration change joins this write.
+      if (!refusesStatus(se.effectId, data)) {
+        applyStatusEffect(tracksCombat, {
+          id: se.effectId,
+          maxStacks: 1,
+          instanced: false,
+          sourceId,
+          remainingMs: se.refreshMs,
+          refreshable: true,
+          data,
+        });
+      }
       active = true;
     } else if (ownsFeatureStatus(se.effectId)) {
       removeStatusEffect(tracksCombat, se.effectId);

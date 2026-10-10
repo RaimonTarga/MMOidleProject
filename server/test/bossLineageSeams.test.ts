@@ -222,17 +222,17 @@ function engaged(world: World): { boss: MonsterEntity; now: number } {
 
 // ── Rune conditions ──────────────────────────────────────────────────────────
 {
-  const rules = [{ conditionId: 'target-shielded', actionId: 'use-ability', targetAbilityId: 'power-strike' }];
+  const rules = [{ conditionId: 'target-shielded', actionId: 'use-ability', targetAbilityId: 'slam' }];
   const base = { hpPct: 1, inCombat: true, inParty: false, aggroCount: 1 };
   const off = deriveAutoConfigFromRunes(rules, { ...base, targetShielded: false });
   const on = deriveAutoConfigFromRunes(rules, { ...base, targetShielded: true });
-  assert(off.abilityTargets.length === 0 && on.abilityTargets.includes('power-strike'),
+  assert(off.abilityTargets.length === 0 && on.abilityTargets.includes('slam'),
     'Enemy Shielded gates its rule');
   const esc = deriveAutoConfigFromRunes(
-    [{ conditionId: 'target-escaping', actionId: 'use-ability', targetAbilityId: 'power-strike' }],
+    [{ conditionId: 'target-escaping', actionId: 'use-ability', targetAbilityId: 'slam' }],
     { ...base, targetEscaping: true },
   );
-  assert(esc.abilityTargets.includes('power-strike'), 'Enemy Escaping gates its rule');
+  assert(esc.abilityTargets.includes('slam'), 'Enemy Escaping gates its rule');
 }
 
 // ── Escaping reads a fleeing boss ────────────────────────────────────────────

@@ -15,13 +15,10 @@ export const SERVER_TICK_MS = 100;
 export const DEATH_MARK_EFFECT_ID = 'death-mark';
 export const SUPPRESS_SHRED_EFFECT_ID = 'reload-suppress-shred';
 export const COVER_FIRE_EFFECT_ID = 'reload-cover-fire';
-export const EXPLODING_CLIP_CLIENT_EFFECT = 'reload-exploding-clip';
 export const ALT_ONHIT_CLIENT_EFFECT = 'reload-alt-onhit';
 
 export const DEFAULT_EXPLODING_CLIP_MULT = 3.5;
 export const DEFAULT_EXPLODING_AOE_MULT = 0.6;
-export const DEFAULT_HAIR_TRIGGER_PCT = 0.07;
-export const DEFAULT_HAIR_TRIGGER_MAX = 5;
 export const DEFAULT_BLUNDERBUSS_SPREAD_RAD = 0.55;
 export const DEFAULT_BLUNDERBUSS_KNOCKBACK_DIST_PER_PELLET = 7;
 export const DEFAULT_BLUNDERBUSS_KNOCKBACK_MS_PER_PELLET = 14;

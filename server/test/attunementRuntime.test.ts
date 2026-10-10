@@ -42,9 +42,9 @@ function makePlayerSlices(): PersistedPlayerSlices {
       runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [],
       runesEquipped: [],
-      knownAbilities: ["sweep", "expose-weakness", "brace", "cleanse", "endure"],
+      knownAbilities: ["sweep", "binding-strike", "brace", "cleanse", "endure"],
       attunedAbilities: {
-        techniques: ["sweep", "expose-weakness"],
+        techniques: ["sweep", "binding-strike"],
         guards: ["brace", "endure"],
       },
       knownStances: [],
@@ -79,7 +79,7 @@ slices.tracksProgression.biomeLevel = { plains: 1000 };
 slices.tracksProgression.knownStances = ["offensive-stance", "tanking-stance"];
 const player = world.attachPlayerEntity(slices, "attunement-test");
 player.usesAutocombat.auto = true;
-const many = { techniques: ["sweep", "power-strike", "frenzy", "snipe"], guards: ["brace", "endure", "cleanse", "break-free"] };
+const many = { techniques: ["sweep", "slam", "imbue-lightning", "snipe"], guards: ["brace", "endure", "cleanse", "break-free"] };
 assert(setAbilityLoadout(world, player, many).success, "T1 must allow arbitrary ability count within RP");
 assert(player.tracksProgression.attunedAbilities.techniques.length === 4, "hidden family cap");
 assert(!setStanceLoadout(world, player, "default", "offensive-stance").success, "unattuned default accepted");
@@ -94,16 +94,16 @@ setAttackTarget(world, player, enemy.isMonster.id);
 player.tracksProgression.runesEquipped = [{ conditionId: "before-empowered", actionId: "use-ability", targetAbilityId: "sweep" }];
 updateRuneDerivedConfig(world, 1000);
 fireWithReferenceWiring(world, 1000);
-assert(player.isCastingAbility?.abilityId === "power-strike", "an ability with its own rule must not also get reference wiring, while a later wired Technique runs");
-assert(getStatusEffect(player.tracksCombat, "ability-frenzy"), "instant Technique must fire behind a claimed offensive opportunity");
+assert(player.isCastingAbility?.abilityId === "slam", "an ability with its own rule must not also get reference wiring, while a later wired Technique runs");
+assert(getStatusEffect(player.tracksCombat, "ability-imbue"), "instant Technique (Imbue Lightning) must fire behind a claimed offensive opportunity");
 world.ecs.removeComponent(player, "isCastingAbility");
 player.tracksProgression.runesEquipped = [
- { conditionId: "in-combat", actionId: "use-ability", targetAbilityId: "power-strike" },
+ { conditionId: "in-combat", actionId: "use-ability", targetAbilityId: "slam" },
  { conditionId: "in-combat", actionId: "use-ability", targetAbilityId: "sweep" },
 ];
 updateRuneDerivedConfig(world, 1100);
 fireWithReferenceWiring(world, 1100);
-assert(player.isCastingAbility?.abilityId === "power-strike", "Rune order decides arbitration, not attunement order");
+assert(player.isCastingAbility?.abilityId === "slam", "Rune order decides arbitration, not attunement order");
 // Drop the reference wiring the helper added; keep only the two explicit rules.
 player.tracksProgression.runesEquipped = player.tracksProgression.runesEquipped.slice(0, 2);
 assert(setAbilityLoadout(world, player, { ...many, techniques: ["sweep"] }).success, "unattune failed");

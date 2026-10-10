@@ -11,15 +11,10 @@
  */
 import {
   ABILITY_BINDING_STRIKE_FX,
-  ABILITY_EXPOSE_WEAKNESS_FX,
   ABILITY_GUARD_EFFECT_IDS,
-  ABILITY_HAMSTRING_FX,
-  ABILITY_QUICK_STRIKE_FX,
   ABILITY_SWEEP_FX,
   ABILITY_TECHNIQUE_FIRED_FX,
   ABILITY_DATABASE,
-  EXPOSE_WEAKNESS_EFFECT_ID,
-  applyStatusEffect,
   getStatusEffect,
   resolveAbilityEffect,
   resolveSummonerProfile,
@@ -35,14 +30,13 @@ import {
 } from "./abilityAffliction";
 import { applyImbueWindow, initImbueSystem } from "./abilityImbue";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
-import { applyPlayerDebuff } from "../../classes/shared/applyPlayerDebuff";
 import {
   applyPlayerAoe,
   playerAoeTargets,
 } from "../../combat/damage/aoeDamage";
 import { applyClassDotStack } from "../../classes/archetypes/dot/dotPrototype";
 import { registerReloadLifecycleHook } from "../../classes/archetypes/reload/reloadLifecycle";
-import { applyMonsterRoot, applyMonsterSlow } from "../../combat/status/monsterControl";
+import { applyMonsterRoot } from "../../combat/status/monsterControl";
 import { monsterIgnoresControl } from "../../combat/status/controlImmunity";
 import { applyStun } from "../../combat/status/stun";
 import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
@@ -64,6 +58,7 @@ import type { World } from "../../../world/World";
 import type { WorldLogActor } from "@mmo-idle/shared";
 import { techniquePowerPctFor } from "./abilityKata";
 import { onTechniqueResolved } from "../../combat/techniqueResolved";
+import { onAbilityNodeBodiesHit } from "../../combat/abilityNodes";
 
 /** Reporting-only: Technique/Sweep adapter contribution for combat-run diagnostics. */
 function recordTechniqueAdapter(
@@ -245,6 +240,17 @@ function castStrikeFootprintRadius(effect: AbilityEffectSpec): number | undefine
 }
 
 /**
+ * The area a caster's live rank of a `cast-strike` lands on — `undefined` for a
+ * single-target strike (Snipe) and for every other payload (Contagion's spread
+ * is its own, not a strike's). For a blow that RIDES the cast, so it covers
+ * exactly the strike's circle from the one definition above: the Squire's
+ * Destroyer execution across Slam's area (design §22.5).
+ */
+export function castStrikeArea(player: PlayerEntity, ability: AbilityDef): number | undefined {
+  return castStrikeFootprintRadius(techniqueEffect(player, ability));
+}
+
+/**
  * The ground footprint a caster's live rank of `ability` will act on, for the
  * client's wind-up indicator — `undefined` when the cast has no area at all.
  *
@@ -315,28 +321,36 @@ function tagClientEffect(ctx: CombatContext, tag: string): void {
  * because that is a property of the wielder's damage, not an on-hit proc. The payload
  * still passes through the target's defensive pipeline via `applyPlayerAoe`, so
  * plating/DR/caps all apply.
+ *
+ * Returns true when the payload earned its OWN cooldown back (a Cull kill): the
+ * cast driver charges the cooldown after the resolution and then refunds it, so
+ * the refund is visible to the HUD as an ordinary cooldown sample.
+ *
+ * `struck`, when given, receives every body a strike's circle hit (Slam's area),
+ * so the cast driver can fire the ability node's "on every body hit" routes on
+ * them once the cooldown is running (design §22.10).
  */
 export function resolveCastPayload(
   world: World,
   player: PlayerEntity,
   ability: AbilityDef,
   target: MonsterEntity,
-): void {
+  struck?: MonsterEntity[],
+): boolean {
   const effect = techniqueEffect(player, ability);
 
-  // The affliction Techniques act on damage-over-time the player already owns
-  // rather than on the player's attack, so they own their own resolution. They
-  // still arrive here because they are ordinary casts in every other respect.
-  if (effect.kind === "spread-dots") {
-    resolveContagion(world, player, ability, target);
-    return;
-  }
+  // Detonate acts on damage-over-time the player already owns rather than on the
+  // player's attack, so it owns its own resolution. It still arrives here because
+  // it is an ordinary cast in every other respect. (Contagion is armed since the
+  // ability pass and lands in `applyTechniqueRider`.)
   if (effect.kind === "detonate-dots") {
     resolveDetonate(world, player, ability, target);
-    return;
+    return false;
   }
 
-  if (effect.kind !== "cast-strike") return;
+  if (effect.kind === "execute-strike") return resolveCull(world, player, effect, target);
+
+  if (effect.kind !== "cast-strike") return false;
 
   // The payload is authored as a multiple of the player's attack, so the wind-up
   // buys a burst a normal swing can't reach. `applyPlayerAoe` runs it through the
@@ -349,9 +363,10 @@ export function resolveCastPayload(
   const radius = castStrikeFootprintRadius(effect) ?? 1;
   // A cast skips the attack pipeline, but it is still the wielder's damage: a
   // DoT-conversion weapon converts it the same way it converts a swing.
-  applyPlayerAoe(world, player, target.hasPosition.current, radius, damage, undefined, "player", {}, {
+  const hit = applyPlayerAoe(world, player, target.hasPosition.current, radius, damage, undefined, "player", {}, {
     feedsWeaponReservoir: true,
   });
+  struck?.push(...hit);
 
   // Stunning Strike: the control lands with the blow. Applied after the damage so
   // a killing blow doesn't spend the stun on a corpse, and through `applyStun` so
@@ -361,6 +376,44 @@ export function resolveCastPayload(
   if (effect.stunMs && effect.stunMs > 0 && target.hasHealth.hp > 0 && !monsterIgnoresControl(target)) {
     applyStun(target.tracksCombat, effect.stunMs, player.isPlayer.id);
   }
+  return false;
+}
+
+/**
+ * Cull's multiplier against a target at `healthShare` of its max HP (design
+ * §22.8): `damageMult` at or above the threshold, climbing linearly to
+ * `executeMult` at zero. The curve is the rank's; Technique Power has already
+ * scaled both ends (`TECHNIQUE_POWER_FIELDS`), never the threshold.
+ */
+export function cullMultiplier(
+  effect: Extract<AbilityEffectSpec, { kind: "execute-strike" }>,
+  healthShare: number,
+): number {
+  const share = Math.max(0, Math.min(1, healthShare));
+  if (share >= effect.thresholdPct) return effect.damageMult;
+  const depth = (effect.thresholdPct - share) / effect.thresholdPct;
+  return effect.damageMult + (effect.executeMult - effect.damageMult) * depth;
+}
+
+/**
+ * Resolve Cull: one single-target strike at the multiplier the target's health
+ * share earns, through the same seam every cast strike uses. Returns true on a
+ * kill, which is what refunds Cull's own cooldown.
+ */
+function resolveCull(
+  world: World,
+  player: PlayerEntity,
+  effect: Extract<AbilityEffectSpec, { kind: "execute-strike" }>,
+  target: MonsterEntity,
+): boolean {
+  if (target.hasHealth.hp <= 0) return false;
+  const share = target.hasHealth.maxHp > 0 ? target.hasHealth.hp / target.hasHealth.maxHp : 1;
+  const damage = Math.max(1, Math.round(player.dealsDamage.attack * cullMultiplier(effect, share)));
+  // Radius 1, as every single-target cast: the query is a body-overlap test.
+  applyPlayerAoe(world, player, target.hasPosition.current, 1, damage, undefined, "player", {}, {
+    feedsWeaponReservoir: true,
+  });
+  return target.hasHealth.hp <= 0;
 }
 
 /**
@@ -408,14 +461,31 @@ function applyTechniqueRider(
   // "ONCE PER LANDING" contract in `combat/techniqueResolved.ts`.
   // The FIRST delivery, not the last: the last pending body can die or forfeit
   // and never claim, which left the cast unresolved (review finding P8).
+  const effect = techniqueEffect(ctx.attacker, ability);
   if (!formationDelivery || formationDelivery.isFirstDelivery) {
     onTechniqueResolved(world, ctx.attacker, ability, {
       ctx,
       target: ctx.defender,
     });
+    // Sweep's node fires on every body its cleave hits (design §22.10): the
+    // struck body and the circle the cleave resolves around it — the same query
+    // every branch below uses, read once here so the Apprentice spread, the
+    // Slinger clip's first shot and a Conduit's first delivery all fire on the
+    // cleave that resolution made.
+    if (effect.kind === "cleave") {
+      onAbilityNodeBodiesHit(world, ctx.attacker, ability, [
+        ctx.defender,
+        ...playerAoeTargets(
+          world,
+          ctx.attacker,
+          ctx.defender.hasPosition.current,
+          effect.radius,
+          ctx.defender.isMonster.id,
+        ),
+      ], ctx);
+    }
   }
 
-  const effect = techniqueEffect(ctx.attacker, ability);
   const formationBasis = formationDelivery
     ? Math.max(1, Math.round(
       ctx.attacker.dealsDamage.attack * resolveSummonerProfile({
@@ -527,15 +597,11 @@ function applyTechniqueRider(
     return;
   }
 
-  if (effect.kind === "empower" || effect.kind === "reposition") {
+  if (effect.kind === "reposition") {
     // A reposition's dash already happened at fire time; what rides the next hit
-    // is its optional strike rider, which behaves exactly like `empower`.
-    const mult =
-      effect.kind === "empower" ? effect.damageMult : (effect.empowerMult ?? 1);
-    tagClientEffect(
-      ctx,
-      effect.kind === "empower" ? ABILITY_QUICK_STRIKE_FX : ABILITY_TECHNIQUE_FIRED_FX,
-    );
+    // is its optional strike rider, a plain damage multiple.
+    const mult = effect.empowerMult ?? 1;
+    tagClientEffect(ctx, ABILITY_TECHNIQUE_FIRED_FX);
     const beforeDamage = ctx.damage;
     addEmpoweredDamage(ctx, formationBasis, mult, formationDelivery);
     if (formationDelivery) {
@@ -552,36 +618,25 @@ function applyTechniqueRider(
     return;
   }
 
-  if (effect.kind === "expose-weakness") {
-    tagClientEffect(ctx, ABILITY_EXPOSE_WEAKNESS_FX);
-    // An evaded hit lands no debuff — the shared rule for every on-hit applier.
+  if (effect.kind === "spread-dots") {
+    // Contagion, armed since the ability pass (design §22.9): the hit that lands
+    // it spreads what ITS target carries — the one damage-over-time record per
+    // weapon (§26.2: the weapon's reservoir, or the single lineage bleed) and
+    // every class family, through the DoT inventory. It deals no damage of its
+    // own, so nothing is added to the hit.
+    //
+    // A Conduit delivers it through the formation-rider adapter Sweep uses, but a
+    // spread copies FULL stacks, so it is not divisible into per-summon shares:
+    // the first summon hit spreads once and the later deliveries carry nothing
+    // (the same once-per-Technique key the node payoff above uses).
+    if (formationDelivery && !formationDelivery.isFirstDelivery) return;
+    tagClientEffect(ctx, ABILITY_TECHNIQUE_FIRED_FX);
+    // A spread is a DoT applier: an evaded hit spreads nothing.
     if (evadeBlocksDebuffs(ctx)) return;
-    applyPlayerDebuff(ctx.attacker, ctx.defender.tracksCombat, {
-      id: EXPOSE_WEAKNESS_EFFECT_ID,
-      instanced: false,
-      maxStacks: 1,
-      refreshable: true,
-      remainingMs: effect.durationMs,
-      sourceId: ctx.attacker.isPlayer.id,
-      data: {
-        damageTakenPct: effect.damageTakenPct,
-        totalMs: effect.durationMs,
-      },
-    });
-    return;
-  }
-
-  if (effect.kind === "slow-strike") {
-    tagClientEffect(ctx, ABILITY_HAMSTRING_FX);
-    addEmpoweredDamage(ctx, formationBasis, effect.damageMult, formationDelivery);
-    if (evadeBlocksDebuffs(ctx)) return;
-    applyMonsterSlow(
-      world,
-      ctx.defender,
-      effect.slowPct,
-      effect.slowDurationMs,
-      ctx.attacker.isPlayer.id,
-    );
+    // Its node fires on every body the spread reached (design §22.10), after the
+    // copies landed: a seed laid before the copy would be max-merged away by it.
+    const reached = resolveContagion(world, ctx.attacker, ability, ctx.defender);
+    onAbilityNodeBodiesHit(world, ctx.attacker, ability, reached, ctx);
     return;
   }
 

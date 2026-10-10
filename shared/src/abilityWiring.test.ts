@@ -4,10 +4,14 @@ function assert(value: unknown, message: string): asserts value { if (!value) th
 // Prices from before abilities lost their built-in triggers. Each ability's new
 // price plus its reference wiring must equal what the ability alone used to cost.
 const PRE_WIRING_COST: Record<string, number> = {
-  sweep: 6, "second-wind": 6, cleanse: 3, brace: 5, "power-strike": 6, "expose-weakness": 7,
-  hamstring: 4, "bramble-guard": 5, charge: 4, endure: 6, contagion: 7, slam: 6,
-  "binding-strike": 4, "break-free": 3, frenzy: 6, "quick-strike": 5, detonate: 6,
+  sweep: 6, "second-wind": 6, cleanse: 3, brace: 5,
+  "bramble-guard": 5, charge: 4, endure: 6, contagion: 7, slam: 6,
+  "binding-strike": 4, "break-free": 3, detonate: 6,
   disengage: 3, recuperate: 6, snipe: 5, "stunning-strike": 6, "imbue-lightning": 6,
+  // The ability pass's additions (design §22.8) never had a built-in trigger;
+  // their gross prices are the ones they were priced against (Sidestep like
+  // Brace, Cull like Power Strike), net of the same In Combat wiring.
+  sidestep: 5, cull: 6,
 };
 
 const starter = new Set(STARTER_RUNE_IDS);

@@ -106,7 +106,7 @@ for(const BLOCK of BOSS3_BLOCKS){
   assert.equal(d.sources.abilities,'explicit',`${ready.cell}: the arm must state its abilities, never inherit a default`);
   assert.equal(d.runeRules.length,5,`${ready.cell}: reference carries five ordered rules`);
   assert.equal(d.runeRules[1].actionId,'step-back',`${ready.cell}: Step Back precedes the movement rule`);
-  assert.deepEqual(d.abilities.techniques,['expose-weakness'],`${ready.cell}: technique drift`);
+  assert.deepEqual(d.abilities.techniques,['slam'],`${ready.cell}: technique drift`);
 
   // ── THE ARM. Declared and applied, in ORDER, on both sides.
   assert.deepEqual(d.abilities.guards,arm.guards,

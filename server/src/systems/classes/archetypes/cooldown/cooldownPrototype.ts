@@ -3,6 +3,8 @@ import { setEmpoweredAttack, isEmpoweredAttack, isMechanicProxy, registerEmpower
 import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
 import { initCooldownFrameLoop } from './frameLoop';
 import { initCooldownT3 } from './t3';
+import { isReverbEcho } from './t3/pipeline/reverbEcho';
+import { registerDestroyerHold } from './t3/pipeline/destroyer';
 import type { World } from '../../../../world/World';
 import { relicRatingsFromPassives, resolveCooldownRelicProfile } from '@mmo-idle/shared';
 
@@ -90,6 +92,11 @@ export function updateCooldownArchetype(world: World, dt: number): void {
  * of the next execution. The timer restarts after the hit lands, never before.
  */
 export function initCooldownArchetype(): void {
+  // The Destroyer's hold (design §22.5) goes in front of the multiplier: whether
+  // a hit carries the primed execution is decided on the hit itself, after the
+  // dodge roll and before anything can spend the charge.
+  registerDestroyerHold();
+
   // Register the empowered multiplier FIRST. Its onHit handler is what sets
   // ctx.metadata['empoweredAttack'], and every T3 onHit handler (overdrive,
   // alignment, battery, …) gates on that flag — so the multiplier must run before
@@ -115,6 +122,15 @@ export function initCooldownArchetype(): void {
     // Query by component presence, not by combatArchetype string.
     const entity = ctx.attacker;
     if (!entity?.usesCooldown) return;
+
+    // Reverb's echo (design §22.5) is the execution landing AGAIN, not the root
+    // spending its charge: it announces the mechanic — once, through the exchange
+    // latch, from this one emitter — but the recharge it lands halfway through
+    // runs on untouched.
+    if (isReverbEcho(ctx)) {
+      emitMechanicFired(world, entity, ctx);
+      return;
+    }
 
     const cd     = entity.usesCooldown;
 

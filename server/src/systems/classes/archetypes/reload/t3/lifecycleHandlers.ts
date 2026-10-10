@@ -93,15 +93,6 @@ export function registerReloadLifecycleHandlers(): void {
         });
       }
 
-      if ((passives['reload.hair-trigger'] ?? 0) > 0) {
-        reload.clipSpeedStacks = 0;
-        if (reload.clipBaseAttackCooldownMs > 0) {
-          player.performsAttack.attackCooldown = reload.clipBaseAttackCooldownMs;
-          markSliceDirty(world, player, 'performsAttack');
-        }
-        markSliceDirty(world, player, 'usesReload');
-      }
-
     },
 
     onComplete(world, player) {
@@ -109,11 +100,6 @@ export function registerReloadLifecycleHandlers(): void {
       const reload = player.usesReload;
       const passives = player.usesSkills.passives;
       removeStatusEffect(player.tracksCombat, COVER_FIRE_EFFECT_ID);
-
-      if ((passives['reload.hair-trigger'] ?? 0) > 0) {
-        reload.clipBaseAttackCooldownMs = 0;
-        markSliceDirty(world, player, 'usesReload');
-      }
 
       // Momentum: each reload grants a stack (decays out of combat). The attack-speed
       // reduction is (re)applied every tick in updateReloadMomentum so a recalc can't

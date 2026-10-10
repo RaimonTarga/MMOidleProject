@@ -42,10 +42,13 @@ import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import { setEntityMotion, stopEntity } from "../../world/movement";
 import { resolveObstaclesForNode } from "../../world/nodeFeatures";
 import { harmfulStatusDurationMult } from '../status/harmfulStatus';
+import { playerRefusesStatus } from '../status/debuffGuard';
 import { setAggroTarget, setAttackTarget } from "./targeting";
 import { packFollowDestination } from "./packs";
 import { abortMonsterCast } from "../engine/combat";
 import { clearBossPatternState, patternOwnsMonster } from "./bossPatterns";
+import { attachComponent } from "../../../ecs/markerHelpers";
+import { vanishedTarget } from "../keystones/ability/vanishMark";
 import {
   selectMonsterAggroCandidate,
   type MonsterAggroCandidate,
@@ -222,6 +225,12 @@ function stopMonster(world: World, entity: MonsterEntity): void {
  * Boss-script adds are encounter bodies, not independent ambient monsters. Keep
  * their aggro exactly aligned with their living summoner so they neither retarget
  * nor wander off while the boss is still fighting.
+ *
+ * Disengage's Vanish (design §22.12): an add is never HANDED a vanished player.
+ * While its boss still holds one (out of Vanish's reach), an add that does not
+ * keeps what it has, holding for them if it has nothing; and when its boss holds
+ * for one (Vanish dropped it), the add holds with it. Either way the vanish tick
+ * hands the player back once the mark clears.
  */
 function syncBossSpawnedAddTarget(
   world: World,
@@ -238,11 +247,22 @@ function syncBossSpawnedAddTarget(
       add.hasAggroTarget?.targetId !== target.targetId ||
       add.hasAggroTarget.targetKind !== target.targetKind
     ) {
-      setAggroTarget(world, add, { id: target.targetId, kind: target.targetKind }, now);
+      if (!vanishedTarget(world, target)) {
+        setAggroTarget(world, add, { id: target.targetId, kind: target.targetKind }, now);
+      } else if (!add.hasAggroTarget && !add.holdsForVanished) {
+        attachComponent(world, add, "holdsForVanished", { playerId: target.targetId, sinceMs: target.sinceMs, heldMs: 0 });
+      }
     }
-  } else if (add.hasAggroTarget) {
-    setAggroTarget(world, add, null, now);
-    setAttackTarget(world, add, null);
+  } else {
+    if (add.hasAggroTarget) {
+      setAggroTarget(world, add, null, now);
+      setAttackTarget(world, add, null);
+    }
+    const bossHold = boss?.holdsForVanished;
+    if (bossHold && !add.holdsForVanished && boss.hasPosition.nodeId === add.hasPosition.nodeId) {
+      // Its boss's hold, clock included: the add takes the player back with it.
+      attachComponent(world, add, "holdsForVanished", { ...bossHold });
+    }
   }
   return true;
 }
@@ -493,10 +513,15 @@ export function updateMonsters(world: World, dt: number, now: number) {
               const rootMs = Math.round(
                 monsterDef.engageSequence.rootMs * harmfulStatusDurationMult(target.entity),
               );
-              applyStatusEffect(target.entity.tracksCombat, {
-                id: 'slow', maxStacks: 1, remainingMs: rootMs, refreshable: true,
-                sourceId: e.isMonster.id, data: { speedMult: 0, totalMs: rootMs },
-              });
+              const data = { speedMult: 0, totalMs: rootMs };
+              // THE GUARD KEYSTONES (design §22.12): a root, so Unyielding refuses
+              // it (and Immunity a stripped `slow`); the dive still lands.
+              if (!playerRefusesStatus(target.entity, 'slow', data)) {
+                applyStatusEffect(target.entity.tracksCombat, {
+                  id: 'slow', maxStacks: 1, remainingMs: rootMs, refreshable: true,
+                  sourceId: e.isMonster.id, data,
+                });
+              }
             } else {
               armEngageSequenceLandingAttack(e, monsterDef.engageSequence.damageMultiplier);
             }
@@ -624,6 +649,17 @@ export function updateMonsters(world: World, dt: number, now: number) {
         // standoff point can sit inside trunk collision and strand the monster.
         setMonsterTarget(world, e, targetPos);
       }
+    } else if (e.holdsForVanished) {
+      // An ENCOUNTER body that lost a player to Disengage's Vanish (design §22.12)
+      // holds where it stands: no walk home, its ramp kept, and no regen
+      // (`updateCombat`). Its script runs on; the vanish tick hands the player
+      // back, in the same aggro session, once their mark clears.
+      ai.kiteTimer = 0;
+      ai.chargeRemainingMs = 0;
+      e.hasPosition.speed = ai.baseSpeed;
+      setAttackTarget(world, e, null);
+      e.hasAwareness.state = "idle";
+      stopMonster(world, e);
     } else {
       // No valid aggro target — reset kite state and return/wander.
       ai.kiteTimer = 0;

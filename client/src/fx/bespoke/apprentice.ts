@@ -9,6 +9,7 @@
 import { DEPTH } from '../../render/depth';
 import { burstFx } from '../particles';
 import { drawSigil, ring } from '../bossKit';
+import type { GameScene } from '../../scenes/GameScene';
 import {
   fadeOut, hasBuff, targetHas, targetStacks,
   type BespokeHit, type P, type PathTable,
@@ -48,6 +49,60 @@ function crystal(g: Phaser.GameObjects.Graphics, x: number, y: number, s: number
   }
 }
 
+/** When a burning body last threw its radiant pulse — one pulse per tick, however many it struck. */
+const radiantPulseAt = new Map<string, number>();
+
+/**
+ * PYROMANCER's Radiant (design §22.5): a burn tick at max stacks strikes every
+ * adjacent body. Drawn on each struck body's `dot-tick` (its `fromId` names the
+ * burning body): a short arc of fire leaping from the burning body to this one,
+ * embers running along it, a lick of flame where it lands; and once per tick a
+ * heat pulse off the burning body itself. No stacks move, so nothing is drawn
+ * settling onto the struck body — the fire strikes and is gone.
+ */
+export function fxRadiantArc(scene: GameScene, fromId: string, to: P): void {
+  const sprite = scene.state.sprite.get(fromId);
+  if (!sprite) return;
+  const from = { x: sprite.x, y: sprite.y - 8 };
+  const now = performance.now();
+  if (now - (radiantPulseAt.get(fromId) ?? 0) > 150) {
+    radiantPulseAt.set(fromId, now);
+    ring(scene, from.x, from.y + 8, 0xff8a3a, { from: 14, scale: 2.6, width: 3, ms: 300, flat: true });
+  }
+  const mid = { x: (from.x + to.x) / 2, y: Math.min(from.y, to.y) - 26 };
+  const arc = scene.add.graphics().setDepth(DEPTH.FX);
+  const t = { p: 0 };
+  const point = (p: number): P => ({
+    x: (1 - p) * (1 - p) * from.x + 2 * (1 - p) * p * mid.x + p * p * to.x,
+    y: (1 - p) * (1 - p) * from.y + 2 * (1 - p) * p * mid.y + p * p * (to.y - 6),
+  });
+  scene.tweens.add({
+    targets: t, p: 1, duration: 160, ease: 'Quad.easeOut',
+    onUpdate: () => {
+      arc.clear();
+      for (const [width, color, alpha] of [[7, 0xff6a1a, 0.35], [2.5, 0xffe08a, 1]] as const) {
+        arc.lineStyle(width, color, alpha);
+        arc.beginPath();
+        const steps = 12;
+        for (let i = 0; i <= steps; i++) {
+          const q = point((i / steps) * t.p);
+          if (i === 0) arc.moveTo(q.x, q.y);
+          else arc.lineTo(q.x, q.y);
+        }
+        arc.strokePath();
+      }
+    },
+    onComplete: () => {
+      fadeOut(scene, arc, 200);
+      if (document.hidden) return;
+      burstFx(scene, 'ptx-spark', to.x, to.y - 6, 6, 320, {
+        tint: [0xff6a1a, 0xffe08a], speed: { min: 50, max: 140 }, angle: { min: 200, max: 340 },
+        scale: { start: 0.7, end: 0 }, alpha: { start: 1, end: 0 },
+      });
+    },
+  });
+}
+
 export const APPRENTICE_PATHS: PathTable = {
   // Venomslinger — ten venom pips filled by the target's poison stacks; the
   // 10-stack detonation keeps its own burst (fxPoisonExplosion).
@@ -75,7 +130,9 @@ export const APPRENTICE_PATHS: PathTable = {
   },
 
   // Pyromancer — every hit lays two flame licks (the double stack); at max
-  // stacks they flare white-hot for the bonus blow.
+  // stacks they flare white-hot: the burn is full and radiates (design §22.5),
+  // which each tick then draws as fire leaping to the bodies beside it
+  // (`fxRadiantArc`, on the tick's `dot-tick`).
   'dot-balanced-t3-a': {
     hit: (h) => {
       const full = targetStacks(h, 'dot') >= BURN_MAX;

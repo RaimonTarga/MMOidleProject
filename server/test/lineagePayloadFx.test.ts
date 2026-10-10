@@ -74,7 +74,8 @@ const clientSrc = (rel: string): string => readFileSync(join(__dirname, '../../c
   }
   const combatFx = clientSrc('render/combatFx.ts');
   const route = combatFx.indexOf('if (isPayloadFx(ev.fx))');
-  assert(route > 0 && combatFx.indexOf('drawPayloadFx(scene, ev, ev.fx)', route) > route,
+  // (`drawPayloadFx(scene, ev, ev.fx, scale)`: an ability amplifier's axis scales it, design §22.7.)
+  assert(route > 0 && combatFx.indexOf('drawPayloadFx(scene, ev, ev.fx', route) > route,
     'combatFx routes a payload key to drawPayloadFx');
   assert(route < combatFx.indexOf('switch (ev.fx)', route), 'before the lane-primitive switch');
   assert(!combatFx.includes('case "tempo.ghost-strike"'), 'lands-twice is drawn as a payload, not the old streak');

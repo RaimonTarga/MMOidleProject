@@ -85,7 +85,7 @@ for(const BLOCK of BLOCKS){
   assert.equal(d.sources.stance,'explicit',`${ready.cell}: the reference states its stance`);
   assert.equal(d.runeRules.length,5,`${ready.cell}: reference carries five ordered rules`);
   assert.equal(d.runeRules[1].actionId,'step-back',`${ready.cell}: Step Back precedes the movement rule`);
-  assert.deepEqual(d.abilities.techniques,['expose-weakness'],`${ready.cell}: technique drift`);
+  assert.deepEqual(d.abilities.techniques,['slam'],`${ready.cell}: technique drift`);
   assert.deepEqual(d.abilities.guards,['second-wind','brace'],`${ready.cell}: guard drift`);
   // The escort receipt rule, per boss. Only the Razortusk summons, so only its
   // receipt has teeth; the other five must declare none rather than inherit a list.

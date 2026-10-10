@@ -84,7 +84,9 @@ export function unlockAbilityNode(
   const check = checkUnlockAbilityNode({ option, progress, wallet });
   if (!check.ok) return fail(abilityId, 'unlockNode', check.reason ?? 'Cannot buy that node.');
 
-  if (!wallet.isTestRoom) spend(world, entity, resolveAbilityNodeOption(option).cost);
+  // The progress rides along because a keystone is paid in the ACTIVE packet's
+  // shard (design §22.1) — the same quote the check above just approved.
+  if (!wallet.isTestRoom) spend(world, entity, resolveAbilityNodeOption(option, progress).cost);
 
   mutateSlice(world, entity, 'tracksProgression', (prog) => {
     // Materialised here and nowhere earlier: a refused purchase must not leave a

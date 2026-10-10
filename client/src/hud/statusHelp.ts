@@ -63,9 +63,11 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'ability-bramble': b('Bramble', 'Thorned plating: you gain flat plating and return damage to anything that hits you, for the duration.'),
   'ability-second-wind': b('Recovery skill', 'A Recovery window is open — a share of your Recovery rate is switched on, healing you over the duration. What that converts to in HP depends on your Recovery stat.'),
   'ability-second-wind-2': b('Recovery skill', 'Your second Recovery window is open. Second Wind (strong and short) and Recuperate (weak and long) can be held together and run independently.'),
-  'ability-frenzy': b('Frenzy', 'Your attack speed is raised for the window.'),
+  'ability-sidestep': b('Sidestep', 'You slipped aside: for the window, a chance to dodge each hit outright on top of whatever your gear gives you, and a burst of move speed that ends with it.'),
   'ability-imbue': b('Imbued', 'Lightning is stored in your hands. Each attack that lands spends one charge and carries bonus damage with it. There is no timer — the charges wait as long as you need them to, and the number on the tile is how many attacks are left.'),
   'ability-control-resist': b('Unbound', 'You broke free, and incoming control is shortened for a moment afterward so you are not immediately re-caught.'),
+  'ability-immunity': b('Immunity', 'What your Cleanse just stripped cannot be put back on you for a few seconds: a new application of that same affliction fails to land. Anything else still can.'),
+  'ability-unyielding': b('Unyielding', 'While Endure holds, nothing can stun, freeze, lock down or root you: new hard control simply fails to land. Control already on you when Endure went up still runs its course.'),
 
   // -- Defense ---------------------------------------------------------------
   'defense-ward': b('Ward', 'A temporary pool that absorbs damage before your health does. Unlike your barrier it expires rather than recharging.'),
@@ -92,7 +94,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'cooldown-eternal-charge': m('Eternal charge', 'Each regular attack banks a stack and gains the current bonus. Your next execution adds the full bank again, then clears it.'),
   'cooldown-temporal-ext': m('Temporal extension', 'Flat bonus damage added to every on-hit for the window.'),
   'cooldown-battery': m('Battery', 'Stored charge raising both your attack damage and your execution damage.'),
-  'cooldown-reverb': m('Reverb', 'Your next execution lands for a percentage more.'),
+  'cooldown-reverb': m('Reverb', 'Your execution echoes. The clock runs to the halfway mark of its recharge, where it lands again at half strength on whatever you are hitting. With nothing in reach then, the echo is lost.'),
   'cooldown-alignment': m('Alignment', 'An attack-speed window opened by lining your cooldowns up.'),
   'cooldown-rupture': m('Rupture', 'Your regular attacks bypass a share of the target’s plating and damage reduction while it holds.'),
   'cooldown-vengeance': m('Vengeance', 'Damage you have taken is stored and paid back through your next execution.'),
@@ -125,7 +127,6 @@ const STATUS_HELP: Record<string, StatusHelp> = {
 
   // -- Reload ----------------------------------------------------------------
   'reload-snipe-ready': m('Snipe', 'Your next shot lands for a multiplier against a target still at full health.'),
-  'reload-hair-trigger': m('Hair trigger', 'Rounds spent this magazine raise your attack speed.'),
   'reload-cover-fire': m('Cover fire', 'You take reduced damage while reloading — the downtime stops being a hole in your defense.'),
   'reload-momentum': m('Momentum', 'Each completed reload grants a stack that raises attack speed and shortens reload time. Stacks persist through combat and decay slowly out of combat.'),
   'reload-cannon': m('Cannon', 'Shots stored to fire mid-reload, so the magazine break is not silent.'),
@@ -195,7 +196,7 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   'dot-smolder': d('Smolder', 'A slow burn on the target, ticking past its plating.'),
   'dot-conf': d('Conflagration', 'The target’s burn has caught properly and is running at an accelerated rate.'),
   slow: d('Slow', 'The target’s movement speed is cut, so it closes on you and repositions more slowly.'),
-  'ability-slowed': d('Hamstrung', 'Hamstring has crippled the target’s stride: movement is reduced, but its attack cadence is unchanged. It can still attack and cast; this is soft control, not a root or stun.'),
+  'ability-slowed': d('Slowed', 'An ability has crippled the target’s stride: movement is reduced, but its attack cadence is unchanged. It can still attack and cast; this is soft control, not a root or stun.'),
   'ability-rooted': d('Bound', 'Binding Strike has pinned the target in place. It can still attack anything already in reach, but cannot reposition until the bind ends.'),
   // The lineage cards' own records (design §26.2). One bleed for a weapon with no
   // poison of its own, and the Control lean's slow and root under their own names,
@@ -203,6 +204,8 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   'lineage.bleed': d('Bleed', 'Your weapon’s cards have opened a wound. Every Affliction card on a weapon with no poison of its own adds to this one bleed, which ticks past the target’s plating at half its damage reduction. The number is the damage it still owes.'),
   'lineage.hobbled': d('Hobbled', 'Your weapon drags at the target’s stride with every hit: it moves slower, but still attacks and casts. A hobbled target counts as held for the cards that need one.'),
   'lineage.pinned': d('Pinned', 'A card has pinned the target where it stands: it cannot reposition, but still attacks anything already in reach. A pinned target counts as held.'),
+  // Bramble Guard's Entangle keystone (design §22.4): the slow on whatever hit a brambled player.
+  'ability-entangled': d('Entangled', 'It struck you through your brambles and the thorns caught its stride: it moves slower, but still attacks and casts. An entangled target counts as held for the cards that need one.'),
   'death-mark': d('Death Mark', 'Your shots are stacking marks on the target. Your next reload detonates them a beat later, each mark adding to the blast.'),
   'energy-ci-tag': d('Induction', 'Cascading Induction: your regular hits land almost nothing but charge the target. Your next discharge grows with every charge stored here, then spends them all.'),
   stunned: d('Stunned', 'The target cannot move or act until this hard-control window ends. This is the control applied by Stunning Strike or a frost shatter; slow resistance does not help.'),
@@ -216,7 +219,6 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   brittle: d('Brittle', 'Each Brittle stack can strip the target’s flat plating and damage reduction, so more of your hits get through.'),
   'dr-shatter': d('Shattered', 'Brittle has been stacked to its shatter threshold: the target’s damage reduction is stripped to nothing for the window. Plating still applies, but the percentage reduction is gone.'),
   vulnerability: d('Vulnerable', 'The target takes amplified damage from every source while this holds.'),
-  'expose-weakness': d('Exposed', 'Your Technique has opened the target up: it takes increased damage from everything, your party included, for the duration.'),
   'summoner-harried': d('Accused', 'Your summons have marked this target. What deepens it is the number of DISTINCT summons on it, not how often they hit.'),
   'summoner-withering-chorus': d('Chorus', 'Each distinct summon voice on the target deepens the affliction.'),
   'enemy-barrier': { title: 'Barrier', kind: 'buff', help: 'A temporary absorb shell is protecting this monster. Damage drains the shell before health; when a reforming clock is shown, sustained pressure is what keeps it broken.' },

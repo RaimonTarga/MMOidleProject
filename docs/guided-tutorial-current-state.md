@@ -33,7 +33,7 @@ choice, and disappears.
 | Question | Decision |
 |---|---|
 | Classes | All six T1 roots, so six scripts. The player picks their class; the guide follows that class's script. |
-| Bosses | Plains + Mountain (Mountain with the bot-tested setup: Expose Weakness + Second Wind, Mountain plate), only after all five zones are maxed (GM 30). Was Plains + Forest until the evening of 2026-09-29; see Findings. |
+| Bosses | Plains + Mountain (Mountain with the bot-tested setup: Slam + Second Wind, Mountain plate — Slam in Expose Weakness's place since the ability pass, design §22.2), only after all five zones are maxed (GM 30). Was Plains + Forest until the evening of 2026-09-29; see Findings. |
 | Route shape | Slow and safe, not fastest: every zone visited and maxed, full HP before bosses, survival Runes. |
 | Pacing | Always wait for **Next**. Long farm beats show live progress; Next appears when the beat is done. No auto-continue. |
 | Who can use it | Any character at player tier 0–1. Opt in or out at any time. Gone from tier 2 on (after the farewell). |
@@ -177,10 +177,20 @@ configs (Striker/Squire durable melee, Slinger, Spirit/Conduit, Apprentice), wit
   Step Back replaces it in the Cave (first-rule-wins in the Movement lane, so the
   default loadout's flee below chase could never fire in a fight);
   `while-traveling → fight-back`; Conduit waits for its formation instead of HP.
-- **Budget-driven changes from the bot route:** Expose Weakness is learned after
+- **Budget-driven changes from the bot route:** the Cave's Technique is learned after
   Cave mastery, not at Cave 3 — with Step Back and two abilities the build only fits
-  the Rune budget at GM 30. `flee` is dropped at the Step Back stage for the same
+  the Rune budget at GM 30. Since the ability pass (design §22.2) that learn is Charge
+  (Expose Weakness was cut), followed at the same leg end by Slam, which the seal and
+  gate kits wear and nothing else teaches. `flee` is dropped at the Step Back stage for the same
   reason (ranged builds would not fit even at GM 30).
+- **The kit swap (ability pass, design §22.2 and §22.12; merged to develop 2026-10-09).**
+  `plans.ts`'s boss kits wear Slam where they wore Expose Weakness (Forest, Mountain,
+  Swamp and Cave; Plains keeps Sweep), and Slam rank I (1.2× on a 600 ms wind-up,
+  PROVISIONAL) was solved on two numbers so the T1 boss lab holds every class within ±5%
+  of the old kit (30/30 kit cells inside, worst −4.7%; every kit cell wins as before; the
+  ladder is `reports/ability-pass/w4a-ladder.md`). The Cave leg's end learns Charge and
+  then Slam (`classScript.ts`; `tutorial.test.ts` refuses a kit that attunes an unlearned
+  ability). The lean, verb and rank beats are unchanged.
 - **Slinger** skips the bot's Mountain vest (only worn against the later bosses), and
   crafts its Forest armor at Forest 3 rather than 2 (`PlanItem.atLevel`; the first-hour
   checklist below).

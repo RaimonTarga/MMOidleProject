@@ -68,7 +68,11 @@ export const t3CombatEntriesA = [
     classId: 'cadence-root', subVariantId: 'balanced',
     parent: 'cadence-balanced', children: [],
     description: 'Each finisher banks 30% of its damage into a Verdict — a stored pool of execution power that persists across targets. When a target\'s remaining health is at or below your Verdict, your finisher executes it instantly and spends the pool.',
-    packet: 'affliction', // PROVISIONAL (run 3 W1-B, design §4)
+    // Design §22.5 (2026-10-02): retagged Empowered, no effect change. The Verdict is
+    // banked from and spent by the FINISHER, so it pays out on the class mechanic —
+    // the Empowered lane's moment. Nothing in it reads or applies a DoT, which is
+    // why the provisional Affliction tag (run 3 W1-B) did not fit.
+    packet: 'empowered',
     cost: 1, statEffects: {},
     mechanicEffects: { 'cadence.detonation': 1, 'cadence.verdict-bank-pct': 0.30 },
   }],
@@ -157,10 +161,15 @@ export const t3CombatEntriesA = [
     id: 'cooldown-balanced-t3-a', name: 'Reverb', tier: 3,
     classId: 'cooldown-root', subVariantId: 'balanced',
     parent: 'cooldown-balanced', children: [],
-    description: 'The attacks you land during one cooldown window charge your NEXT execution: each attack adds bonus damage to the following execution (the current one fires normally). The charge resets each execution.',
-    packet: 'empowered', // PROVISIONAL (run 3 W1-B, design §4)
+    description: 'Your execution echoes: it lands now, and lands again at half strength when its recharge reaches the halfway mark, on whatever you are hitting then. If nothing is in reach at that moment, the echo is lost, not held. The echo is an execution hit in every other way — on-hit and empowered gear apply, and it counts as your mechanic firing — but it never restarts the recharge. A second beat on the clock: no bank, no window.',
+    // Design §22.5 (2026-10-02): the old "attacks bank into the next execution"
+    // duplicated the Squire heavy frame's bank, so the path became an echo on the
+    // execution's own clock. `reverb-echo-strength` is the design's "half strength"
+    // — a shape constant, authored here rather than in the runtime — applied to the
+    // execution's own multiplier as the root resolves it (one multiplier per hit).
+    packet: 'empowered',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'cooldown.reverb': 1, 'cooldown.reverb-bonus-per-attack': 0.05 },
+    mechanicEffects: { 'cooldown.reverb': 1, 'cooldown.reverb-echo-strength': 0.5 },
   }],
   ['cooldown-balanced-t3-b', {
     id: 'cooldown-balanced-t3-b', name: 'Dynamo', tier: 3,
@@ -209,12 +218,18 @@ export const t3CombatEntriesA = [
     id: 'cooldown-heavy-t3-b', name: 'Destroyer', tier: 3,
     classId: 'cooldown-root', subVariantId: 'heavy',
     parent: 'cooldown-heavy', children: [],
-    description: 'Normal attacks deal no damage. Your execution fires on a greatly shortened cooldown (5s) and hits harder (3× instead of the tier\'s 2.5×). On-hit gear and charm triggers still fire on regular attacks. Out of combat, your execution stays primed — the first strike on a new target is an execution.',
-    packet: 'engagement', // PROVISIONAL (run 3 W1-B, design §4)
+    description: 'Your execution is delivered by your Techniques. When it is ready it waits, primed, and the next Technique you land fires it with that Technique\'s shape: an armed Technique lands it on the armed hit; a cast lands it on the cast\'s target — across Slam\'s whole area, from Snipe\'s range. It lands at the frame\'s own ×3.5 (the other heavy paths drop to 2.5×), and the bank your regular hits fill while it waits grows it from there. Your regular attacks deal their normal damage and never spend it, and a Guard never fires it.',
+    // Design §22.5 (2026-10-02): the old path (normals deal no damage, a 5 s
+    // execution, the first strike on a new target is an execution) duplicated the
+    // Engagement keystone Always First; it is now the Technique lane's path.
+    // Distinct from the Signature keystone: Signature makes a landed Technique COUNT
+    // as the mechanic; here the mechanic RIDES the Technique.
+    // The recharge is the heavy frame's own again (the 5 s override is gone), and so
+    // is the multiplier (design §22.12): the path's −0.5 delta is dropped, so the
+    // delivered execution is the Bulwark frame's ×3.5 and the bank takes it above.
+    packet: 'technique',
     cost: 1, statEffects: {},
-    // Heavy frame is 8000ms / 3.5×; deltas land it at 5000ms / 3.0× (3.5 − 0.5).
-    // 2026-09-28 T4 outlier pass: cooldown 4000 -> 5000 ms (1.39x the median spec on live T4 bosses).
-    mechanicEffects: { 'cooldown.singular-extraction': 1, 'cooldown.empowered-cd-ms': -3000, 'cooldown.empowered-mult': -0.5, 'cooldown.singular-no-target-ms': 4000 },
+    mechanicEffects: { 'cooldown.technique-execution': 1 },
   }],
   ['cooldown-heavy-t3-c', {
     id: 'cooldown-heavy-t3-c', name: 'Devout Priest', tier: 3,
@@ -232,10 +247,19 @@ export const t3CombatEntriesA = [
     id: 'reload-light-t3-a', name: 'Duelist', tier: 3,
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-light', children: [],
-    description: 'The last bullet of every clip fires as an empowered shot (3.5×) with a splash — and like all empowered attacks, it scales with empowered-damage gear and passives.',
-    packet: 'empowered', // PROVISIONAL (run 3 W1-B, design §4)
+    description: 'Kill chain: every kill loads one round on top of your clip, even past its size, until you next reload — a long chain is a long clip, and the ammo counter climbs past its maximum. Reloading returns the clip to its authored size; a kill that readies the reload (Refund) refills the clip and still adds the round. Your openers stay the first two rounds of a fresh clip. A hit an Empowered card makes count as your mechanic lands at ×3.5.',
+    // Design §22.5 (T3 path review): re-homed from Empowered. Its last-bullet
+    // payoff duplicated the Marksman frame's end-of-clip and its splash the
+    // Shockwave keystone; Kill chain had one path. Distinct from Refund, which
+    // readies the mechanic (completes the reload) — this grows the clip.
+    packet: 'kill-chain',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'reload.exploding-clip': 1, 'reload.empowered-mult': 3.5, 'reload.max-ammo': +1 },
+    // Rounds per kill: a shape constant (one), not a tuning number.
+    // Design §22.12: the Empowered `mechanic-proxy` is ×3.5 again (the retired
+    // last bullet's number), on a key only the proxy reads — never
+    // `reload.empowered-mult`, so no real shot (the Scout's openers) and no HUD or
+    // DPS reader moves.
+    mechanicEffects: { 'reload.kill-chain': 1, 'reload.mechanic-proxy-mult': 3.5 },
   }],
   ['reload-light-t3-b', {
     id: 'reload-light-t3-b', name: 'Desperado', tier: 3,
@@ -334,13 +358,19 @@ export const t3CombatEntriesA = [
     id: 'reload-heavy-t3-b', name: 'Warmonger', tier: 3,
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-heavy', children: [],
-    description: 'Attack speed ramps up with every shot fired through the high-capacity clip, resetting on reload.',
-    packet: 'tempo', // PROVISIONAL (run 3 W1-B, design §4)
+    description: 'Tempo: a reload halves your ramp instead of resetting it. Your first clip climbs exactly as the frame\'s does, to the top damage at the clip\'s end; every clip after starts from the carried half, so it reaches that top sooner, and only your attack speed keeps climbing past one clip — toward twice a clip\'s worth in a sustained fight. The barrel glow holds at the carried charge while you reload. Carries 20 extra rounds (a 40-round clip).',
+    // Design §22.5 (T3 path review): Tempo kept. The Artillerist frame now owns
+    // the per-clip ramp (frame brief §1), so the path's own capped ramp (Hair
+    // Trigger) is retired and the path re-homed onto the frame's: half of the
+    // ramp carries through a reload, and a per-clip climb becomes a sustained one.
+    // Design §22.12: the top damage and the glow measure against ONE clip, so the
+    // first clip is the Artillerist's own; only the attack-speed climb carries past.
+    packet: 'tempo',
     cost: 1, statEffects: {},
+    // The carry is a shape constant (half), not a tuning number; the ramp's own
+    // numbers are the frame's (`reload.frame-ramp-*`).
     mechanicEffects: {
-      'reload.hair-trigger': 1,
-      'reload.hair-trigger-pct-per-shot': 0.04,
-      'reload.hair-trigger-max-stacks': 15,
+      'reload.ramp-carry-pct': 0.5,
       'reload.max-ammo': +20,
     },
   }],

@@ -1020,7 +1020,7 @@ card.
 | Charge | on the first body the rush touches, and the target on arrival |
 | Slam | on every body the Slam hits |
 | Second Wind | on cast |
-| Cleanse | on strip, sized by what it removed |
+| Cleanse | on strip (when it removed anything; the sizing was dropped in §22.13) |
 | Brace | per hit absorbed while Braced |
 | Sidestep | per hit dodged during the window |
 | Binding Strike | on the rooted body |
@@ -1110,6 +1110,82 @@ liked and are the seed of a party layer for later. The designer asked whether th
 getting too complex; the answer this design gives is §4's: one question per row, the
 screen never wider, and everything above T4 amplifies instead of branching. If the trios
 play as too much, the row shrinks to two before it shrinks to one.
+
+### 22.12 After the run: the designer's calls (decided 2026-10-09)
+
+The run (report `docs/briefs/ability-pass-report-2026-10-09.md`) built the pass and found
+that one Slam number cannot hold the T1 parity rule: a wind-up's cost depends on the
+attacker's cadence, and the Conduit casts through one summon while the rest keep hitting.
+Where these calls contradict an earlier subsection, they win.
+
+- **Parity is solved on two numbers.** Slam rank I authors its `damageMult` AND its
+  wind-up (`castMs`), solved together on the same lab and seeds until every T1 kit cell is
+  within ±5%. Lowering the multiplier trims the Conduit, which casts for free; shortening
+  the wind-up returns what the attackers lose while they stand. Rank I stays a cast (§22.9).
+- **Slam never weakens on tier-up.** Ranks II–IV are 2.45 / 2.7 / 2.95 (the old +0.25 per
+  tier, from rank I's 2.2). Their wind-up stays 1.6 s. This supersedes §22.2's "keeping the
+  T2 rank as rank II"; the half-of-Power-Strike relation of the old Slam is retired with
+  Power Strike.
+- **Sidestep ships Flow first.** Afterimage needs a decoy target kind the game does not
+  have; Flow (every hit dodged during the window extends it, the first that lands ends it)
+  becomes the live first verb, and Afterimage stays a silhouette in the same row.
+- **Fire-shapes keep their rate.** A payoff that lands on the player or on the ability
+  itself (a cooldown refund, a speed or damage window) fires once per resolution, whatever
+  the number of bodies hit; payoffs that land on a body still fire per body. A ward a node
+  fires refreshes the one ward that node owns instead of stacking a new one. Every per-hit
+  and per-tick Guard route carries a rate cap, the packet's own where it has one and an
+  existing lane cap otherwise.
+- **Charge fires on its target.** "The first body the rush touches" is dropped: a body
+  sweep is the primitive Trample was dropped over (§22.11).
+- **Boss mechanics respect the Guard keystones.** A boss pattern's status step, contact
+  slows, ground hazards and the boss room debuff pass the same player refusal gates as
+  every other applier, so Unyielding and Immunity hold against them. No boss number moves.
+- **Keystone readings.** Vanish works on bosses, boss adds and dungeon guardians too.
+  Harvest's chain is capped at the lineage `chainMaxLinks`. Overflow turns any overheal
+  into the ward, not only during Recuperate's mend. Immunity's window is the
+  `engagement-dr` unit's 3 s.
+- **Paths.** Destroyer's delivered execution is ×3.5 (the path's −0.5 is dropped: equal to
+  the frame, and banked charges take it above). Warmonger's top damage and glow measure
+  against one clip again; only the attack-speed climb carries past it. The Duelist's
+  Empowered proxy is ×3.5 again. A Pyromancer hit at max burn does not refresh the burn
+  (Radiant fires while the stacks last).
+- **Names.** The shared ability slow reads "Slowed"; the lineage cards that echoed cut
+  abilities become "Deeper Hobble", "Envenomed Hobble", "Hobbled Plague" (Dagger) and
+  "Deeper Fury" (Axe). The keystone names stay placeholders.
+
+### 22.13 After the follow-up wave: the second round of calls (decided 2026-10-09)
+
+The follow-up wave built §22.12 and merged the pass (report addendum). Its open calls:
+
+- **Measure before deciding** Slam's tier-up step (rank I 1.2× on 0.6 s, rank II 2.45× on
+  1.6 s; T2+ is outside the parity rule) and the T4 Pyromancer Apprentice's ~40% loss in
+  the T3/T4 reference package (the max-burn bonus hit is gone and the burn no longer
+  refreshes at max). The numbers come back to the designer; nothing moves until then.
+- **Flow stays as designed**: it is the evasion build's verb, weak on low evasion by intent.
+- **Cleanse fires when it removed anything.** "Sized by what it removed" is dropped: under
+  §22.12's rate guards every Guard payoff fires once per cast.
+- **A refused Deep Freeze still spends the cold**, like every other refusal.
+- **A Vanish hold ends on a clock.** A boss, add or dungeon guardian holding for a Vanished
+  player re-acquires after the existing out-of-combat reset window even if the player never
+  attacks; no new number.
+- **The environment respects the Guard keystones too.** Node-feature terrain slows and
+  Frost Nova's ambient Chill ramp pass Immunity's refusal gate; an ordinary monster's rally
+  never hands a Vanished player to its allies.
+- **Imbue's per-hit Tempo echo stays uncapped**: the window's charges bound it.
+
+**Decided after the measurements (same day; `reports/ability-pass/measure-*.md`):**
+
+- **Slam is a 600 ms cast at every rank.** At T2, rank II as authored (2.45× on 1.6 s) added
+  about nothing over Sweep for the Striker, Slinger and Spirit (−0.8% to +1.9%) while the
+  Conduit gained +24%; on 600 ms every class gains 13–31% and the class spread narrows.
+  Ranks II–IV keep 2.45 / 2.7 / 2.95 on rank I's 600 ms wind-up. This supersedes §22.12's
+  "their wind-up stays 1.6 s".
+- **The Pyromancer's stacks are full strength and a hit at max refreshes the bar.** It
+  measured 33% below its own frame at T4 (weakest of the nine Apprentice paths; +28% before
+  the pass): 55% stacks capped the full burn at 55% of the frame's, the bar lapsed without a
+  refresh, and Radiant pays nothing on a lone boss. Two stacks per hit at full strength and
+  the refresh make the path the frame's burn ramped twice as fast, with Radiant on top.
+  This supersedes §22.5's "keeps two stacks per hit at 55%" and §22.12's "does not refresh".
 
 ## 23. Forms are full power at the craft (locked 2026-10-02)
 

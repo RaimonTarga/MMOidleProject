@@ -19,6 +19,7 @@ import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import { registerCombatListener } from "../../combat/engine/combatPipeline";
 import { setAggroTarget, setAttackTarget } from "../../combat/ai/targeting";
 import { createPackCoordination } from "../../combat/ai/packs";
+import { playerVanished } from "../../combat/keystones/ability/vanishMark";
 import { clearGroundZonesForNode } from "../groundZones";
 import { clearCorpsesForNode } from "../corpses";
 import {
@@ -669,6 +670,12 @@ function nearestLivePlayerDistanceSq(
   return nearest;
 }
 
+/**
+ * Turn an engaged dungeon monster on the nearest player, every tick. A vanished
+ * player is never forced (Disengage's Vanish, design §22.12): with nobody else
+ * in the node the monster keeps what it has, and one Vanish dropped holds for the
+ * player until their mark clears (`keystones/ability/vanish.ts`).
+ */
 function forceDungeonAggro(world: World, monster: MonsterEntity): void {
   const target = nearestLivePlayer(
     world,
@@ -708,6 +715,7 @@ function nearestLivePlayer(
   let nearest: PlayerEntity | null = null;
   let nearestDistSq = Infinity;
   for (const player of world.livePlayersInNode(nodeId)) {
+    if (playerVanished(player)) continue; // hidden from the whole dungeon
     const distSq = distanceSq(player.hasPosition.current, point);
     if (distSq >= nearestDistSq) continue;
     nearest = player;

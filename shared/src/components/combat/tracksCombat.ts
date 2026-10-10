@@ -1,6 +1,6 @@
 import type { StatusEffect } from './effects';
 import type {
-  LineagePayoff, ResolvedLineageCapstone, ResolvedLineageCard,
+  AmplifiedAxis, LineagePayoff, ResolvedLineageCapstone, ResolvedLineageCard,
 } from '../../data/lineages/types';
 import type { AbilityNodeOption } from '../../data/abilityNodes/types';
 
@@ -28,6 +28,15 @@ export interface LineageRuntime {
 export interface AbilityNodeFiringCache {
   option: AbilityNodeOption;
   payoff: LineagePayoff;
+  /** The cross row's borrowed payoff (design §22.1), when one is in play. */
+  cross?: { option: AbilityNodeOption; payoff: LineagePayoff };
+  /** The amplifier's `cast` axis as a cast-speed fraction (design §22.9). */
+  castSpeedPct?: number;
+  /**
+   * The active amplifier's axis, for the packet payoff's `card-fx` (design §22.7:
+   * the amplifier scales or extends the lane's fx). Absent with no amplifier.
+   */
+  axis?: AmplifiedAxis;
 }
 
 /**
@@ -36,6 +45,19 @@ export interface AbilityNodeFiringCache {
  * on the ability's landing would make two sites responsible for one answer.
  */
 export type AbilityNodeRuntime = Record<string, AbilityNodeFiringCache>;
+
+/**
+ * One ability's live keystone verb (design §22.4, §22.11), resolved at recalc:
+ * which verb, and the share of a hit it pays when it pays one (off the magnitude
+ * table at `ROW_SCALAR.keystone`, never a literal).
+ */
+export interface AbilityKeystoneCache {
+  keystoneId: string;
+  share?: number;
+}
+
+/** The live ability keystones, keyed by ability id, or absent when none is in play. */
+export type AbilityKeystoneRuntime = Record<string, AbilityKeystoneCache>;
 
 /** Input shape for applyStatusEffect. All optional fields have sensible defaults. */
 export interface StatusEffectConfig {
@@ -83,6 +105,12 @@ export interface TracksCombat {
    * {@link setAbilityNodeRuntime}.
    */
   abilityNodeRuntime?: AbilityNodeRuntime;
+  /**
+   * Live ability keystone verbs, or absent when none is in play. Read through
+   * {@link getAbilityKeystoneRuntime} / written through
+   * {@link setAbilityKeystoneRuntime}.
+   */
+  abilityKeystoneRuntime?: AbilityKeystoneRuntime;
 }
 
 export function makeTracksCombat(): TracksCombat {
@@ -108,6 +136,7 @@ export function resetTracksCombat(state: TracksCombat): void {
   state.statusEffects = [];
   delete state.lineageRuntime;
   delete state.abilityNodeRuntime;
+  delete state.abilityKeystoneRuntime;
 }
 
 // Lineage runtime (progression rework Phase 1c)
@@ -147,6 +176,20 @@ export function setAbilityNodeRuntime(state: TracksCombat, runtime?: AbilityNode
     return;
   }
   state.abilityNodeRuntime = runtime;
+}
+
+/** The live ability keystones, or undefined when none is in play. */
+export function getAbilityKeystoneRuntime(state: TracksCombat): AbilityKeystoneRuntime | undefined {
+  return state.abilityKeystoneRuntime;
+}
+
+/** Replace the keystone cache. Passing nothing (or an empty runtime) clears it. */
+export function setAbilityKeystoneRuntime(state: TracksCombat, runtime?: AbilityKeystoneRuntime): void {
+  if (!runtime || Object.keys(runtime).length === 0) {
+    delete state.abilityKeystoneRuntime;
+    return;
+  }
+  state.abilityKeystoneRuntime = runtime;
 }
 
 // Counters

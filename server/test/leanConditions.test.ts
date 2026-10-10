@@ -439,13 +439,14 @@ function hit(player: PlayerEntity, defender: MonsterEntity, damage: number, meta
   assert(near(held.data['moveSlowPct'] ?? 0, 0.4), 'a stronger slow keeps its depth');
   assert(held.remainingMs === 10_000, 'and its clock');
 
-  // Hamstring's slow and the lean's are the same rung on two ids: both stay on
+  // The ability-family slow (the `slow` payoff, the at-bay tap; Hamstring's id
+  // before the ability pass cut it) and the lean's are the same rung on two ids: both stay on
   // the target (each names its own source), and the strongest is what moves it.
   const both = dummy();
-  applyMonsterSlow(world, both, 0.4, 10_000, 'hamstring');
+  applyMonsterSlow(world, both, 0.4, 10_000, 'at-bay');
   hit(player, both, 200);
   assert(getStatusEffect(both.tracksCombat, ABILITY_SLOW_EFFECT_ID) !== undefined
-    && getStatusEffect(both.tracksCombat, LINEAGE_SLOW_STATUS_ID) !== undefined, 'Hamstrung and Hobbled side by side');
+    && getStatusEffect(both.tracksCombat, LINEAGE_SLOW_STATUS_ID) !== undefined, 'Slowed and Hobbled side by side');
   updateMonsterSlows(world);
   assert(near(both.hasStatus.monsterMoveSpeedMult ?? 1, 0.6), `the strongest slow wins, got ${both.hasStatus.monsterMoveSpeedMult}`);
 

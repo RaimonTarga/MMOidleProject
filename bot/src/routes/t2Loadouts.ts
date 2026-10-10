@@ -34,13 +34,14 @@ export const BIOME_ENCOUNTER_SHAPE: Record<T2BiomeGroup, EncounterShape> = {
  * The live game permits ordered repertoires constrained by shared RP.
  *
  *   AoE            -> Sweep, which arms the next attack to cleave.
- *   Single target  -> Expose Weakness, which makes one target take more damage.
+ *   Single target  -> Slam, the burst cast (Expose Weakness until the ability
+ *                     pass cut it, design §22.2; the tutorial kit made the same swap).
  *
  * Both are learned by every canonical Tier-1 template, so no class has to detour
  * to acquire its half of the split.
  */
 export function techniqueFor(shape: EncounterShape): string {
-  return shape === "aoe" ? "sweep" : "expose-weakness";
+  return shape === "aoe" ? "sweep" : "slam";
 }
 
 /**

@@ -774,10 +774,11 @@ function estimateClassDamage(
     const execRate = 1 / cdSec;
     const mult = empowered?.effective ?? p['cooldown.empowered-mult'] ?? 2;
     const exec = directNoOnHit(stats.dealsDamage.attack * mult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
-    if ((p['cooldown.singular-extraction'] ?? 0) > 0) {
-      directPerHit = stats.dealsDamage.onHitDamage;
-      classMechanicPerSec += exec * execRate;
-      notes.push('singular extraction: normal direct damage suppressed');
+    if ((p['cooldown.technique-execution'] ?? 0) > 0) {
+      // Design §22.5: the Destroyer's execution waits for a landed Technique; the
+      // recharge rate is its ceiling (Techniques are not modeled here).
+      classMechanicPerSec += Math.max(0, exec - baseWithOnHit) * execRate;
+      notes.push('destroyer: execution delivered by Techniques, modeled at the recharge rate (an upper bound)');
     } else if ((p['cooldown.channeled-beam'] ?? 0) > 0) {
       const beamMult = p['cooldown.channeled-beam-mult'] ?? 1;
       classMechanicPerSec += directNoOnHit(stats.dealsDamage.attack * beamMult, targetWithDebuffs, platingMult) * 6 * execRate;
@@ -814,8 +815,11 @@ function estimateClassDamage(
       notes.push(`stalwart linear ramp averaged; ${Math.round(attackMax * 100)}% attack/${Math.round(executionMax * 100)}% execution caps`);
     }
     if ((p['cooldown.reverb'] ?? 0) > 0) {
-      classMechanicPerSec += exec * Math.floor(cdSec * hitRate) * (p['cooldown.reverb-bonus-per-attack'] ?? 0.04) * execRate;
-      notes.push('reverb next-window bonus estimated');
+      // Design §22.5: one echo per execution at the halfway mark, at the authored
+      // share of the execution. Assumes a target is always in reach then.
+      const strength = Math.max(0, p['cooldown.reverb-echo-strength'] ?? 0);
+      classMechanicPerSec += exec * strength * execRate;
+      notes.push(`reverb echo at ${Math.round(strength * 100)}% of the execution, target assumed in reach`);
     }
     if ((p['cooldown.vengeance'] ?? 0) > 0) {
       classMechanicPerSec += (p['cooldown.vengeance-floor'] ?? 30) * execRate;
@@ -1033,10 +1037,10 @@ function estimateClassDamage(
     if ((p['dot.fan-the-flames'] ?? 0) > 0) {
       const stackDamageMult = Math.max(0, p['dot.fan-the-flames-stack-damage-mult'] ?? 0.5);
       const stacksPerHit = Math.max(1, Math.round(p['dot.fan-the-flames-stacks-per-hit'] ?? 2));
-      const bonusMult = Math.max(0, p['dot.fan-the-flames-max-stack-bonus-mult'] ?? 2);
       dotPerSec *= stackDamageMult;
-      classMechanicPerSec += maxStacks * dmgPerStack * bonusMult * effectiveHitRate;
-      notes.push(`${stacksPerHit} burn stacks/hit at ${Math.round(stackDamageMult * 100)}% value; max-stack bonus ${bonusMult}x`);
+      // Radiant (design §22.5) strikes the bodies ADJACENT to a max-burn target, so
+      // it adds nothing to this single-target figure.
+      notes.push(`${stacksPerHit} burn stacks/hit at ${Math.round(stackDamageMult * 100)}% value; Radiant splash not modelled (single target)`);
     }
 
     if ((p['dot.ignition'] ?? 0) > 0) {

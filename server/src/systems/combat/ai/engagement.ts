@@ -3,6 +3,7 @@ import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import type { PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 import { applyCombatEndRites, combatExitDelay } from "../../player/rites/riteOoc";
+import { onAbilityKeystoneCombatEnded } from "../keystones/ability/registry";
 
 export type PlayerCombatPhase = "ACTIVE" | "POST_COMBAT" | "OUT_OF_COMBAT";
 
@@ -23,11 +24,20 @@ export function isPlayerActivelyInCombat(world: World, player: PlayerEntity): bo
   return false;
 }
 
+/**
+ * The out-of-combat reset window: how long after the player's last engagement
+ * the fight counts as over (`updateCombatTransitions`). The one source for it —
+ * Vanish's encounter hold ends on the same window (design §22.13).
+ */
+export function outOfCombatResetMs(player: PlayerEntity): number {
+  return combatExitDelay(player, GAME_CONFIG.COMBAT_REGEN_DELAY);
+}
+
 export function playerCombatPhase(world: World, player: PlayerEntity, now: number): PlayerCombatPhase {
   if (isPlayerActivelyInCombat(world, player)) return "ACTIVE";
   const last = player.tracksEngagement;
   if (last === undefined) return "OUT_OF_COMBAT";
-  return now - last < combatExitDelay(player, GAME_CONFIG.COMBAT_REGEN_DELAY)
+  return now - last < outOfCombatResetMs(player)
     ? "POST_COMBAT"
     : "OUT_OF_COMBAT";
 }
@@ -35,7 +45,7 @@ export function playerCombatPhase(world: World, player: PlayerEntity, now: numbe
 export function isPlayerInCombat(player: PlayerEntity, now: number): boolean {
   if (player.hasAttackTarget !== undefined) return true;
   const last = player.tracksEngagement;
-  return last !== undefined && now - last < combatExitDelay(player, GAME_CONFIG.COMBAT_REGEN_DELAY);
+  return last !== undefined && now - last < outOfCombatResetMs(player);
 }
 
 /** Finalize combat boundaries once, after combat resolution has updated targets. */
@@ -44,6 +54,8 @@ export function updateCombatTransitions(world: World, now: number): void {
     if (player.tracksEngagement === undefined) continue;
     if (playerCombatPhase(world, player, now) !== "OUT_OF_COMBAT") continue;
     applyCombatEndRites(world, player);
+    // The fight is over: per-fight keystone state (Relay's set) goes with it.
+    onAbilityKeystoneCombatEnded(world, player);
     clearEngagement(world, player);
   }
 }

@@ -21,7 +21,11 @@ for (let i = 0; i < DESERT_CELLS.length; i += 2) {
   assert.equal(a.stance, 'offensive-stance'); assert.equal(a.upgradeLevel, 5);
   assert.equal(a.nodeId, 'node-t4-desert-03'); assert.equal(b.nodeId, a.nodeId);
   const cost = (c: typeof a) => runicPointLoadoutCost({ rules: withReferenceAbilityWiring(c.runeRules!, c.abilities!), abilities: c.abilities!, stances: [c.stance!], rites: [] });
-  assert.equal(cost(a), ['apprentice', 'spirit'].includes(a.className) ? 43 : 40);
+  // 40 (43 for the Apprentice and Spirit) until the ability pass (design §22.2) cut
+  // Frenzy and merged Power Strike and Expose Weakness into Slam: the T4 reference
+  // package these cells inherit (playerBreadthSpec) now carries fewer Techniques.
+  const EXPECTED_RP: Record<string, number> = { striker: 33, squire: 27, apprentice: 30, slinger: 27, conduit: 33, spirit: 36 };
+  assert.equal(cost(a), EXPECTED_RP[a.className]);
   assert.equal(cost(b) - cost(a), 3);
 }
 const bond = { packId: 'one', firstBothEngagedMs: 100, bothEngagedMs: 100, ownerHpDamage: 7,

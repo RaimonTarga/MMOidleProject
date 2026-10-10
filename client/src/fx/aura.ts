@@ -78,11 +78,6 @@ const BUFF_AURA_BY_ID: Record<string, BuffAuraDef> = {
     kind: 'stacks', fullAt: 3, color: 0xff5577, tint: 0xffaabb,
     minIntensity: 0.7, maxIntensity: 1.6,
   },
-  // Warmonger — attack speed ramping with every shot in the clip.
-  'reload-hair-trigger': {
-    kind: 'stacks', fullAt: 10, color: 0xffaa44, tint: 0xffd8a8,
-    minIntensity: 0.6, maxIntensity: 1.5,
-  },
   // Desperado — 5 momentum stacks that persist through a fight.
   'reload-momentum': {
     kind: 'stacks', fullAt: 5, color: 0xffcc44, tint: 0xffe9a8,

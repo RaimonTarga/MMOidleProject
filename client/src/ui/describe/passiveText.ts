@@ -102,7 +102,7 @@ const WORD_OVERRIDES: Record<string, string> = {
  */
 const PERCENT_KEYS = new Set([
   'cadence.momentum-buildup',
-  'cooldown.reverb-bonus-per-attack',
+  'cooldown.reverb-echo-strength',
   'cooldown.rupture-dr-pierce',
   'defense.debuff-resist',
   'defense.debuff-resistance',

@@ -102,8 +102,8 @@ export const SQUIRE_V2_T1: Route = {
     ...getPiece(biome("mountain"), "mountain-vest-t1"),
     {
       type: "learnAbility",
-      recipeId: "ability-recipe-power-strike",
-      abilityId: "power-strike",
+      recipeId: "ability-recipe-slam",
+      abilityId: "slam",
       slot: "technique",
       farmAt: biome("mountain"),
       label: "learn Power Strike (replaces Sweep for good -- Expose Weakness is never learned)",
@@ -136,7 +136,7 @@ export const SQUIRE_V2_T1: Route = {
       wornKit: ["chaotic-axe", "forest-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES,
       armor: "plains-vest-t1",
-      technique: "power-strike",
+      technique: "slam",
       guard: "second-wind",
     }),
     ...bossFight({
@@ -144,7 +144,7 @@ export const SQUIRE_V2_T1: Route = {
       wornKit: ["chaotic-axe", "forest-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES,
       armor: "plains-vest-t1",
-      technique: "power-strike",
+      technique: "slam",
       guard: "second-wind",
     }),
     ...bossFight({
@@ -152,7 +152,7 @@ export const SQUIRE_V2_T1: Route = {
       wornKit: ["chaotic-axe", "forest-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES,
       armor: "mountain-vest-t1",
-      technique: "power-strike",
+      technique: "slam",
       guard: "second-wind", // was brace
     }),
     ...bossFight({
@@ -160,7 +160,7 @@ export const SQUIRE_V2_T1: Route = {
       wornKit: ["chaotic-axe", "forest-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES,
       armor: "mountain-vest-t1",
-      technique: "power-strike",
+      technique: "slam",
       guard: "cleanse",
     }),
     ...bossFight({
@@ -168,7 +168,7 @@ export const SQUIRE_V2_T1: Route = {
       wornKit: ["chaotic-axe", "forest-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES,
       armor: "mountain-vest-t1",
-      technique: "power-strike",
+      technique: "slam",
       guard: "second-wind", // was brace
     }),
   ] satisfies RouteStep[],

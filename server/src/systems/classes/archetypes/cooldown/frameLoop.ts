@@ -37,6 +37,7 @@ import {
   setFrameCharge,
 } from '../../shared/frameLoop';
 import { resolveExecutionCooldownMs } from './cooldownPrototype';
+import { isReverbEcho } from './t3/pipeline/reverbEcho';
 import type { PlayerEntity } from '../../../../ecs/entity';
 
 const ROOT = 'cooldown' as const;
@@ -59,6 +60,9 @@ export function initCooldownFrameLoop(): void {
     // A `mechanic-proxy` hit (design §24.2) COUNTS AS the mechanic for what reads
     // it downstream, but it never walks the root's own loop (rule 3).
     if (isMechanicProxy(ctx)) return;
+    // Reverb's echo (design §22.5) is the execution's second beat, not a spend and
+    // not a regular hit: the bank and the window belong to the execution itself.
+    if (isReverbEcho(ctx)) return;
     if (ctx.attackerType !== 'player') return;
     const player = ctx.attacker;
     const cd = player.usesCooldown;

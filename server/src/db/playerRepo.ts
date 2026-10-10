@@ -1,5 +1,5 @@
 import { baseRecoveryForTier } from "@mmo-idle/shared";
-import { migrateAttunement } from "@mmo-idle/shared";
+import { hasRetiredAbilityEntries, migrateAttunement, retiredAbilityEntries } from "@mmo-idle/shared";
 import { and, desc, eq, isNull } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
@@ -33,7 +33,6 @@ import {
   PACKET_IDS,
   CAPSTONE_MATERIALS,
   normalizeLineageProgressMap,
-  normalizeAbilityNodeProgressMap,
   normalizeFiringsTaught,
   CLEARING_NODE_ID,
   WORLD_NODES,
@@ -676,6 +675,16 @@ function hydratePlayerSlices(
         'legibility run: refunded retired T1 lineage cards',
       );
     }
+    // The abilities the ability pass CUT (design §22.2) drop silently from the
+    // save below (`migrateAttunement`); say so once per character, on the load
+    // that keeps the result. Read off the stored slice, before migration.
+    const retired = retiredAbilityEntries(parseSlice<TracksProgression>(row.tracksProgression));
+    if (hasRetiredAbilityEntries(retired)) {
+      log.info(
+        { characterId: row.id, ...retired },
+        'ability pass: dropped cut abilities from the save',
+      );
+    }
   }
   tracksProgression.unlockedRecipes = migrateLegacyRecipeIds(tracksProgression.unlockedRecipes);
   const hasPosition = parseSlice<HasPosition>(row.hasPosition);
@@ -713,14 +722,14 @@ function hydratePlayerSlices(
       runesOwned:     runeIdsFromCraftedRecipes(runeRecipesCrafted),
       knownRites,
       equippedRites,
-      // Ability nodes (design §19). Absent from every save written before they
-      // shipped, and normalized the same way lineage trees are: unknown ability
-      // ids, unknown option ids and active rows pointing at something unowned
-      // are dropped, so a save written before an offer changed loads clean.
-      abilityNodes: normalizeAbilityNodeProgressMap(tracksProgression.abilityNodes),
       // The teaching counter (design §26.4). Absent from every save written before
       // the legibility run; counts clamp to 0..3.
       cardFiringsTaught: normalizeFiringsTaught(tracksProgression.cardFiringsTaught),
+      // Ability nodes (design §19) ride in `attunement`: `migrateAttunement` drops
+      // the trees of the abilities the ability pass cut (design §22.2), then
+      // normalizes the rest the way lineage trees are (unknown ability ids, unknown
+      // option ids and active rows pointing at something unowned are dropped), so a
+      // save written before an offer changed loads clean.
       ...attunement,
     },
     holdsInventory,

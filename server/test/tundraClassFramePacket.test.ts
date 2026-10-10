@@ -5,11 +5,12 @@ import {
 } from '../bench/balance/tundraClassFrameSpec';
 
 assert.equal(TUNDRA_CLASS_FRAME_BASES.length, 18);
-assert.equal(TUNDRA_CLASS_FRAME_CELLS.length, 52);
-assert.equal(new Set(TUNDRA_CLASS_FRAME_CELLS.map(c => c.id)).size, 52);
+assert.equal(TUNDRA_CLASS_FRAME_CELLS.length, 50); // 52 until A3 retired with Hamstring (design §22.2)
+assert.equal(new Set(TUNDRA_CLASS_FRAME_CELLS.map(c => c.id)).size, 50);
 assert.deepEqual([...new Set(TUNDRA_CLASS_FRAME_CELLS.map(c => c.seed))], [...TUNDRA_CLASS_FRAME_SEEDS]);
 assert.equal(TUNDRA_CLASS_FRAME_CELLS.filter(c => c.block === 'primary').length, 36);
-assert.equal(TUNDRA_CLASS_FRAME_CELLS.filter(c => c.block === 'alternative').length, 16);
+// 14 since A3 (Hamstring -> Binding Strike) retired with Hamstring (design §22.2).
+assert.equal(TUNDRA_CLASS_FRAME_CELLS.filter(c => c.block === 'alternative').length, 14);
 assert(!TUNDRA_CLASS_FRAME_CELLS.some(c => c.abilities?.techniques.includes('slam')), 'User correction excludes Slam completely');
 assert(!TUNDRA_CLASS_FRAME_CELLS.some(c => c.build.gearItemIds.armor === 'tundra-vest-t3'), 'Glacial Bulwark is excluded');
 assert(!TUNDRA_CLASS_FRAME_CELLS.some(c => c.runeRules?.some(r => r.actionId === 'flee')), 'No generic Flee');
@@ -25,7 +26,7 @@ for (const c of TUNDRA_CLASS_FRAME_CELLS) {
   assert.equal(c.runeRules?.some(r => r.actionId === 'orbit'), c.range === 'mid');
   const cost = runicPointLoadoutCost({ abilities: c.abilities!, rules: c.runeRules!, stances: [c.stance!], rites: [] });
   assert(cost <= 38, `${c.id} costs ${cost}/38 RP`);
-  if (c.className === 'squire') assert(c.abilities?.techniques.includes('power-strike'));
+  if (c.className === 'squire') assert(c.abilities?.techniques.includes('cull'));
 }
 
 for (const comparisonId of new Set(TUNDRA_CLASS_FRAME_CELLS.filter(c => c.alternativeId).map(c => c.comparisonId))) {
@@ -42,14 +43,11 @@ for (const comparisonId of new Set(TUNDRA_CLASS_FRAME_CELLS.filter(c => c.altern
     assert.deepEqual(primary.runeRules, alt.runeRules);
   }
   if (alt.arm === 'A2') {
-    assert.deepEqual(primary.abilities?.techniques, ['frenzy', 'hamstring']);
-    assert.deepEqual(alt.abilities?.techniques, ['detonate', 'hamstring']);
+    assert.deepEqual(primary.abilities?.techniques, ['imbue-lightning', 'binding-strike']);
+    assert.deepEqual(alt.abilities?.techniques, ['detonate', 'binding-strike']);
     assert(alt.runeRules?.some(r => r.conditionId === 'target-max-stacks' && r.actionId === 'use-ability' && r.targetAbilityId === 'detonate'));
   }
-  if (alt.arm === 'A3') {
-    assert.deepEqual(primary.abilities?.techniques, ['frenzy', 'hamstring']);
-    assert.deepEqual(alt.abilities?.techniques, ['frenzy', 'binding-strike']);
-  }
+  // A3 (Hamstring -> Binding Strike) retired with Hamstring (design §22.2).
 }
 
-console.log('tundraClassFramePacket: 36 primary + 16 alternatives, Slam excluded, legal RP, fixed pairs and reversed seed order; zero combat');
+console.log('tundraClassFramePacket: 36 primary + 14 alternatives, Slam excluded, legal RP, fixed pairs and reversed seed order; zero combat');

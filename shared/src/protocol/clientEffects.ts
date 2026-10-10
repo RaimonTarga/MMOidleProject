@@ -15,8 +15,6 @@ import type { LineageFxKey } from '../data/lineages/types';
 
 // ── tier-4 path thresholds ─────────────────────────────────────────────────
 
-/** Pyromancer: a hit landing on an already-full stack bar pays out as direct damage. */
-export const DOT_MAXSTACK_BURST_FX = 'dot-maxstack-burst';
 /** Icebreaker: max frost stacks flip conversion off — the shell breaks outward. */
 export const DOT_RIMESHATTER_FX = 'dot-rimeshatter';
 /** Winter Warden: chill cap converts to Frozen — the shell closes inward. */
@@ -55,8 +53,9 @@ export function lineagePayloadOfHitFx(effect: string): LineageFxKey | undefined 
 }
 
 /**
- * Destroyer: a regular attack that was zeroed out by Singular Extraction. Tagged
- * rather than inferred from `ev.damage === 0`, because a hit can legitimately be
- * reduced to 0 by mitigation and should still look like a real blow.
+ * Reverb: this hit is the execution's ECHO (design §22.5), landing at half strength
+ * at the recharge's halfway mark — not the execution itself. Both are execution
+ * hits on the wire, so the tag is what lets the path draw the bell answering
+ * rather than a second strike of it.
  */
-export const COOLDOWN_HOLLOW_FX = 'cooldown-hollow';
+export const COOLDOWN_REVERB_ECHO_FX = 'reverb-echo';

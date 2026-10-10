@@ -7,7 +7,7 @@ import {
   getPiece,
   learnBrace,
   learnCleanse,
-  learnExposeWeakness,
+  learnSlam,
   learnSecondWind,
   maxOut,
   standardCompletion,
@@ -130,7 +130,7 @@ export const APPRENTICE_V2_T1: Route = {
       definitionIds: ["heavy-hammer", "mountain-vest-t1", "swamp-charm-t1", "plains-boots-t1"],
       label: "standing kit: heavy hammer, mountain plate, swamp charm",
     },
-    learnExposeWeakness(),
+    learnSlam(),
 
     maxOut("cave"),
     { type: "milestone", id: "all-biomes-maxed" },
@@ -144,7 +144,7 @@ export const APPRENTICE_V2_T1: Route = {
       wornKit: ["heavy-hammer", "swamp-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES_ORBIT,
       armor: "plains-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "second-wind",
     }),
     ...bossFight({
@@ -152,7 +152,7 @@ export const APPRENTICE_V2_T1: Route = {
       wornKit: ["heavy-hammer", "swamp-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES_ORBIT,
       armor: "plains-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "second-wind",
     }),
     ...bossFight({
@@ -160,7 +160,7 @@ export const APPRENTICE_V2_T1: Route = {
       wornKit: ["heavy-hammer", "swamp-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES_ORBIT,
       armor: "mountain-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "second-wind", // was brace
     }),
     ...bossFight({
@@ -168,7 +168,7 @@ export const APPRENTICE_V2_T1: Route = {
       wornKit: ["heavy-hammer", "swamp-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES_ORBIT,
       armor: "swamp-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "cleanse",
     }),
     ...bossFight({
@@ -176,7 +176,7 @@ export const APPRENTICE_V2_T1: Route = {
       wornKit: ["heavy-hammer", "swamp-charm-t1", "plains-boots-t1"],
       baseRunes: RUNES_ORBIT,
       armor: "mountain-vest-t1",
-      technique: "expose-weakness",
+      technique: "slam",
       guard: "second-wind", // was brace
     }),
   ] satisfies RouteStep[],

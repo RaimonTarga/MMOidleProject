@@ -15,13 +15,15 @@ const STATUS_META: Record<string, StatusMeta> = {
   'dot-conf':      { label: 'Conflag', color: '#ff5a2c' },
   'dot-frostbite': { label: 'Frostbite', color: '#8fd8ff' },
   slow:            { label: 'Slow',    color: '#88aaff' },
-  'ability-slowed': { label: 'Hamstrung', color: '#88aaff' },
+  'ability-slowed': { label: 'Slowed', color: '#88aaff' },
   'ability-rooted': { label: 'Bound', color: '#aa77ee' },
   // The lineage cards' own records (design §26.2): the one bleed on a weapon with
   // no poison of its own, and the Control lean's slow and root under their names.
   'lineage.bleed':  { label: 'Bleed', color: '#d8423c' },
   'lineage.hobbled': { label: 'Hobbled', color: '#88aaff' },
   'lineage.pinned': { label: 'Pinned', color: '#aa77ee' },
+  // Bramble Guard's Entangle keystone (design §22.4): a slow, so the slow's blue.
+  'ability-entangled': { label: 'Entangled', color: '#88aaff' },
   stunned:         { label: 'Stunned', color: '#ffdd44' },
   'stun-immune':   { label: 'Stun ward', color: '#c6a8ff' },
   'enemy-barrier': { label: 'Barrier', color: '#5599ff' },
@@ -53,7 +55,6 @@ const STATUS_META: Record<string, StatusMeta> = {
   'tundra-rimebrand-burn':  { label: 'Chill',  color: '#6fd0ff' },
   'rimebrand-burn':         { label: 'Chill',  color: '#6fd0ff' },
   vulnerability:   { label: 'Vuln',    color: '#ff5577' },
-  'expose-weakness': { label: 'Exposed', color: '#ff5577' },
   'summoner-harried': { label: 'Accused', color: '#e6c35c' },
   'summoner-withering-chorus': { label: 'Chorus', color: '#9d6ad6' },
   'monster-howl-haste': { label: 'Howl', color: '#b18cff' },

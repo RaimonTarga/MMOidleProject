@@ -211,15 +211,24 @@ export const t3CombatEntriesB = [
     id: 'dot-balanced-t3-a', name: 'Pyromancer', tier: 3,
     classId: 'dot-root', subVariantId: 'balanced',
     parent: 'dot-balanced', children: [],
-    description: 'Each hit applies 2 burn stacks instead of 1, but each stack deals 55% of normal tick damage. Hitting a target already at max stacks deals bonus direct damage equal to 1.5× the max-stack DoT damage.',
-    packet: 'affliction', // PROVISIONAL (run 3 W1-B, design §4)
+    description: 'Each hit applies 2 burn stacks instead of 1, each at full tick damage. A hit on a target already at max burn refreshes the burn, so it stays full while you keep hitting. Radiant: while a target is at max burn stacks, each of its burn ticks also strikes every adjacent enemy for the tick\'s damage. The radiated fire is damage over time (it ignores plating), applies no stacks and spreads nothing.',
+    // Design §22.5 (T3 path review, locked 2026-10-02). The old max-stack direct
+    // bonus duplicated the Ember Mage frame's "intensifies" (frameLoop.ts) and is
+    // gone; the payoff is Radiant, which moves DAMAGE, never stacks — unlike the
+    // Warlock range node, Contagion and the Outbreak keystone, which all move stacks.
+    // Design §22.13 (superseding §22.5's 55% and §22.12's "does not refresh"): the
+    // stacks are full strength and a hit at max refreshes the bar, so the path is the
+    // frame's burn ramped twice as fast, with Radiant on top. Measured at T4 before
+    // the call: 33% below its own frame (reports/ability-pass/measure-pyromancer.md).
+    packet: 'affliction',
     cost: 1, statEffects: {},
     mechanicEffects: {
       'dot.fan-the-flames': 1,
       'dot.fan-the-flames-stacks-per-hit': 2,
-      // 2026-09-28 T4 outlier pass: 0.4 -> 0.55 and 1.25x -> 1.5x (0.79x the median spec on live T4 bosses).
-      'dot.fan-the-flames-stack-damage-mult': 0.55,
-      'dot.fan-the-flames-max-stack-bonus-mult': 1.5,
+      // Full strength (design §22.13; 0.55 since the 2026-09-28 T4 outlier pass). Kept
+      // at 1, not dropped: an absent key falls back to fire.ts's FTF_DMG_MULT (0.5).
+      'dot.fan-the-flames-stack-damage-mult': 1,
+      'dot.radiant': 1,
     },
   }],
   ['dot-balanced-t3-b', {

@@ -192,8 +192,8 @@ function kitFor(cls: (typeof TUTORIAL_CLASS_PLANS)[number], biome: T1Biome) {
  * against `final`, not `base` -- the question is what the tuned matrix depends on.
  */
 const ABILITY_CANDIDATES: Record<string, Record<string, { field: string; values: number[] }>> = {
-  // Expose Weakness is the technique in four of the five boss loadouts.
-  'abl-no-expose': { 'expose-weakness': { field: 'damageTakenPct', values: [0, 0, 0, 0] } },
+  // (abl-no-expose zeroed Expose Weakness, the Technique in four of the five boss
+  // loadouts until the ability pass cut it and the kits wore Slam: design §22.2.)
   // Second Wind is the guard in four of five, and it is a Recovery activation --
   // `recoveryPct` is the fraction of the flat rate it switches on.
   'abl-no-secondwind': { 'second-wind': { field: 'recoveryPct', values: [0, 0, 0, 0] } },

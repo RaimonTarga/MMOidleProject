@@ -68,7 +68,7 @@ import {
   removeStatusEffect,
   setCounter,
 } from '@mmo-idle/shared';
-import { applyResistedPlayerDebuff, canApplyPlayerDebuff } from '../status/debuffGuard';
+import { applyResistedPlayerDebuff, canApplyPlayerDebuff, playerRefusesStatus } from '../status/debuffGuard';
 import { harmfulStatusDurationMult } from '../status/harmfulStatus';
 import { syncPlayerControlLockout } from '../status/playerControlLockout';
 import {
@@ -1375,14 +1375,20 @@ function tickStep(
       // straight through here without applying anything. That is the intent.
       if (state.skippedStepIndexes.includes(state.stepIndex)) return 'done';
       const target = patternTarget(world, monster);
-      if (target && canApplyPlayerDebuff(target)) {
+      const data = { totalMs: step.durationMs, ...(step.data ?? {}) };
+      // THE GUARD KEYSTONES (design §22.12): the status passes the same refusal gate
+      // as every other player debuff writer — Unyielding refuses Deep Freeze's Frozen
+      // and a zero-speed root, Immunity the kind its Cleanse stripped (`sun-mark`,
+      // `slow`, ...). The refusal only: no resistance or duration scaling joins this
+      // write. The cast still resolved, so what it spends is spent all the same.
+      if (target && canApplyPlayerDebuff(target) && !playerRefusesStatus(target, step.effectId, data)) {
         applyStatusEffect(target.tracksCombat, {
           id: step.effectId,
           maxStacks: Math.max(1, step.stacks),
           remainingMs: step.durationMs,
           refreshable: true,
           sourceId: monster.isMonster.id,
-          data: { totalMs: step.durationMs, ...(step.data ?? {}) },
+          data,
         });
         syncPlayerControlLockout(world, target);
       }
@@ -1941,6 +1947,9 @@ const FEINT_ARRIVE_PX = 56;
  * Uses the shared `slow` status and the same tenacity scaling as every other monster
  * debuff, so mobility gear shortens it and Cleanse strips it. `totalMs` is written
  * for the buff-bar clock, per the status conventions.
+ *
+ * It passes the Guard keystones' refusal gate (design §22.12): Immunity refuses the
+ * `slow` kind its Cleanse stripped, and Unyielding a zero-speed pin.
  */
 function applyContactSlow(
   world: World,
@@ -1952,13 +1961,15 @@ function applyContactSlow(
   const target = patternTarget(world, monster);
   if (!target || !canApplyPlayerDebuff(target)) return;
   const durationMs = Math.round(slow.durationMs * harmfulStatusDurationMult(target));
+  const data = { speedMult: slow.speedMult, totalMs: durationMs };
+  if (playerRefusesStatus(target, 'slow', data)) return;
   applyStatusEffect(target.tracksCombat, {
     id: 'slow',
     maxStacks: 1,
     remainingMs: durationMs,
     refreshable: true,
     sourceId: monster.isMonster.id,
-    data: { speedMult: slow.speedMult, totalMs: durationMs },
+    data,
   });
 }
 
@@ -2359,10 +2370,15 @@ function distinctDebuffs(player: PlayerEntity): number {
   ).length;
 }
 
-/** Push a player's ambient ramp (Tundra Chill) up by `stacks`, within its ceiling. */
+/**
+ * Push a player's ambient ramp (Tundra Chill) up by `stacks`, within its ceiling.
+ * THE GUARD KEYSTONES (design §22.13): no stack is added while Immunity holds the
+ * ramp's kind (the status id Cleanse strips it under) — the refusal only.
+ */
 function addAmbientStacks(player: PlayerEntity, stacks: number): void {
   const ramp = ambientRampStatus(player.tracksCombat);
   if (!ramp) return;
+  if (playerRefusesStatus(player, ramp.id, ramp.data)) return;
   const cap = ramp.data.maxStacks ?? 0;
   ramp.stacks = cap > 0 ? Math.min(cap, ramp.stacks + stacks) : ramp.stacks + stacks;
 }

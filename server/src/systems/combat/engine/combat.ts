@@ -7,7 +7,6 @@ import { prepareWeaponDeadSwing, commitWeaponDeadSwing } from './weaponDeadSwing
 import { pushDamageEvent } from '../damage/damageEvent';
 import type { World } from "../../../world/World";
 import {
-  ABILITY_FRENZY_EFFECT_ID,
   ABILITY_GUARD_EFFECT_IDS,
   applyStatusEffect,
   GAME_CONFIG,
@@ -105,10 +104,11 @@ import {
   lungeSpecFor,
   performAmbushLunge,
 } from "../ai/ambushLunge";
-import { canApplyPlayerDebuff, applyResistedPlayerDebuff, resistedPlayerDebuffMagnitude } from "../status/debuffGuard";
+import { canApplyPlayerDebuff, applyResistedPlayerDebuff, playerRefusesStatus, resistedPlayerDebuffMagnitude } from "../status/debuffGuard";
 import { evadeBlocksDebuffs, monsterDodgeChance, rollMonsterDodge } from "../../defense/mitigation/evasion";
 import { isMonsterStunned, applyStun } from "../status/stun";
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
+import { vanishedTarget } from '../keystones/ability/vanishMark';
 import { applyPlatingShredStacks } from '../status/platingShred';
 import { shellDamageMult } from '../ai/shellUp';
 import { renewPackPursuit, setAggroTarget, setAttackTarget } from "../ai/targeting";
@@ -356,7 +356,11 @@ export function runPlayerAttack(
   // (e.g. drop to 0 in a desperation phase). 0 is a valid override, so use ??.
   // ONE dodge clock per monster, shared with the Tempo keystone's chain links —
   // see `rollMonsterDodge`.
-  const evadeChance = monsterDodgeChance(target);
+  // A hit a completed CAST delivers (the Destroyer's execution riding Slam or
+  // Snipe, design §22.5) is never dodged and never moves that clock: the cast
+  // already resolved on this body, and a cast's own payload (`applyPlayerAoe`)
+  // never rolls the dodge either.
+  const evadeChance = ctx.metadata["castDelivered"] === true ? 0 : monsterDodgeChance(target);
   let evaded = false;
   let evadeMult = 0;
   if (evadeChance > 0) {
@@ -438,6 +442,12 @@ export function runPlayerAttack(
   if (outgoingMult > 1) ctx.damage = Math.round(ctx.damage * outgoingMult);
 
   emitCombatEvent("onHit", ctx, world);
+  // The ONE multiplier the hit landed at (its mechanic, a bank, a window), for a
+  // caller that carries the same blow further: the Destroyer's execution spreads
+  // over a Slam's area at the strength it landed with.
+  if (opts.resultMetadata) {
+    opts.resultMetadata.empoweredMultiplier = Number(ctx.metadata["empoweredMultiplier"] ?? 1);
+  }
   // An onHit proc (a lineage echo, the Effigy's linked slam) can kill the target
   // through `applyPlayerProcDamage`, which already paid onKill, the rewards and the
   // removal. Carrying on would find hp <= 0 below and pay the kill a second time
@@ -918,6 +928,7 @@ export function runMonsterAttack(
     mark &&
     ctx.metadata["sunMarkConsumed"] !== true &&
     canApplyPlayerDebuff(target) &&
+    !playerRefusesStatus(target, SUN_MARK_EFFECT_ID) &&
     !evadeBlocksDebuffs(ctx)
   ) {
     const fresh = !getStatusEffect(target.tracksCombat, SUN_MARK_EFFECT_ID);
@@ -1141,7 +1152,10 @@ function rallyNearbyMonsters(
 
   const radius = buff.radius ?? 0;
   const maxTargets = Math.max(0, Math.round(rally.maxTargets));
-  if (radius <= 0 || maxTargets <= 0) {
+  // VANISH (design §22.13): a rally never hands a Vanished player to its allies.
+  // The caster may still hold them (it stood out of Vanish's reach); its call
+  // recruits nobody and is spent, like every other refusal.
+  if (radius <= 0 || maxTargets <= 0 || vanishedTarget(world, aggro)) {
     if (rally.oncePerCombat !== false) {
       setCounter(monster.tracksCombat, CASTED_BUFF_RALLY_SESSION_KEY, sessionToken);
     }
@@ -1206,6 +1220,7 @@ function applyStrongestPlayerRider(
   value: number,
   harsher: (existing: number, incoming: number) => number,
 ): void {
+  if (playerRefusesStatus(target, id, { [key]: value })) return;
   value = resistedPlayerDebuffMagnitude(target, key, value);
   const effect = applyStatusEffect(target.tracksCombat, {
     id,
@@ -2815,6 +2830,8 @@ export function updateCombat(world: World, dt: number, now: number) {
     if (e.hasHealth.hp >= e.hasHealth.maxHp) continue;
     const ai = e.controlsMonster;
     if (e.hasAggroTarget) continue;
+    // An encounter holding for a vanished player is still in its fight (design §22.12).
+    if (e.holdsForVanished) continue;
     if (now - ai.lastAggroAt < GAME_CONFIG.MONSTER_REGEN_DELAY) continue;
     e.hasHealth.hp = Math.min(
       e.hasHealth.maxHp,

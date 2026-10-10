@@ -137,7 +137,7 @@ export function resolveSurveyPackage(cell: SurveyCell): ResolvedSurveyPackage {
     { conditionId:'always', actionId:'wait-for-regen' },
   ];
   const abilities = cell.abilities ?? {
-    techniques: [...(cell.tier >= 3 ? ['frenzy'] : []), cell.technique ?? 'sweep'],
+    techniques: [...(cell.tier >= 3 ? ['imbue-lightning'] : []), cell.technique ?? 'sweep'],
     guards: cell.guards ?? (cell.tier === 1 ? ['second-wind'] : ['second-wind','cleanse']),
   };
   // Abilities no longer carry built-in triggers. Every attuned ability the cell

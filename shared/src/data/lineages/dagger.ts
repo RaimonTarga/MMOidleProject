@@ -138,7 +138,7 @@ export const DAGGER_LINEAGE: LineageDefinition = {
     },
     {
       id: 'dagger-t2-control-payoff', lineageId: 'dagger', tier: 2, row: 'payoff', lane: 'control',
-      name: 'Deeper Hamstring', description: 'Every third hit takes the legs out further.',
+      name: 'Deeper Hobble', description: 'Every third hit takes the legs out further.',
       fx: 'control.frost-drag',
     },
     {
@@ -188,12 +188,12 @@ export const DAGGER_LINEAGE: LineageDefinition = {
     // ── T4 cross row (design §4): a second lane's payoff at ROW_SCALAR.cross ──
     {
       id: 'dagger-t4-affliction-cross', lineageId: 'dagger', tier: 4, row: 'cross', lane: 'affliction',
-      name: 'Envenomed Hamstring', description: 'Every dose left in the wound drags on the legs besides.',
+      name: 'Envenomed Hobble', description: 'Every dose left in the wound drags on the legs besides.',
       fx: 'affliction.venom-pips', trigger: 'hit-nth', payoff: 'slow', borrowsLane: 'control',
     },
     {
       id: 'dagger-t4-control-cross', lineageId: 'dagger', tier: 4, row: 'cross', lane: 'control',
-      name: 'Hamstrung Plague', description: 'What the cut takes the legs from still carries, on a kill, to whatever stood near it.',
+      name: 'Hobbled Plague', description: 'What the cut takes the legs from still carries, on a kill, to whatever stood near it.',
       fx: 'control.frost-drag', trigger: 'kill', payoff: 'contagion', borrowsLane: 'kill-chain',
     },
     {

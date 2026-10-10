@@ -51,11 +51,16 @@ const coreFor = (root: Root, frame: Frame): string => {
   if (root === 'spirit') return frame === 'heavy' ? 'core-tempered' : 'core-accelerant';
   return 'core-tempered';
 };
+// The ability pass (design §22.2) cut Frenzy, Power Strike, Quick Strike and
+// Hamstring: Imbue Lightning took Frenzy's slot, Sweep stands in for the generic
+// armed Quick Strike, and Binding Strike took Hamstring's control slot (same 2 RP).
+// Power Strike merged into Slam, but this packet excludes Slam by the user's own
+// correction, so its single-target cast is Cull, the Tundra 3 cast.
 const techniquesFor = (root: Root): string[] => {
-  if (root === 'striker') return ['frenzy', 'power-strike'];
-  if (root === 'squire') return ['power-strike', 'frenzy'];
-  if (root === 'slinger' || root === 'conduit') return ['quick-strike', 'hamstring'];
-  return ['frenzy', 'hamstring'];
+  if (root === 'striker') return ['imbue-lightning', 'cull'];
+  if (root === 'squire') return ['cull', 'imbue-lightning'];
+  if (root === 'slinger' || root === 'conduit') return ['sweep', 'binding-strike'];
+  return ['imbue-lightning', 'binding-strike'];
 };
 const stanceFor = (root: Root, frame: Frame) =>
   root === 'squire' || root === 'conduit' || frame === 'heavy' ? 'defensive-stance' : 'offensive-stance';
@@ -96,7 +101,7 @@ function primary(root: Root, frame: Frame, seed: number): TundraClassFrameCell {
     `${cell.stance} remains fixed; no switching or generic Flee rule.`,
     cell.range === 'mid' ? 'Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.' : 'Close range, telegraph stepping, hazard avoidance and Recover First are fixed.',
     root === 'squire' && frame === 'heavy' ? 'Endure is the explicitly declared sustained-tanking Guard for Heavy Squire; every other row starts from Brace.' : 'Brace is the declared burst Guard.',
-    root === 'apprentice' && frame === 'balanced' ? 'Break Free is omitted from both Balanced Apprentice arms so Fully Afflicted -> Detonate fits 38 RP; Cleanse, Hamstring and movement counterplay remain.' : 'Break Free is retained for Tundra hard-control pressure.',
+    root === 'apprentice' && frame === 'balanced' ? 'Break Free is omitted from both Balanced Apprentice arms so Fully Afflicted -> Detonate fits 38 RP; Cleanse, Binding Strike and movement counterplay remain.' : 'Break Free is retained for Tundra hard-control pressure.',
     'Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim.',
   ];
   return cell;
@@ -107,16 +112,17 @@ const ALTERNATIVES: Alternative[] = [
   ...(['light', 'balanced', 'heavy'] as const).map((frame, index) => ({
     id: `W${index + 1}`, root: 'striker' as const, frame,
     apply: (c: TundraClassFrameCell) => { c.build.gearItemIds.weapon = 'cave-cataclysm-axe'; },
-    note: 'Cinderlash -> Cataclysm Axe; Frenzy, Power Strike, core, stance and defense remain fixed.',
+    note: 'Cinderlash -> Cataclysm Axe; Imbue Lightning, Cull, core, stance and defense remain fixed.',
   })),
-  { id: 'W4', root: 'squire', frame: 'heavy', apply: c => { c.build.gearItemIds.weapon = 'tundra-permafrost-maul'; }, note: 'Avalanche Maul -> Permafrost Maul; Power Strike, core, policy and Endure remain fixed.' },
-  { id: 'W5', root: 'slinger', frame: 'balanced', apply: c => { c.build.gearItemIds.weapon = 'swamp-blightbrand'; }, note: 'Venomthorn Rapier -> Plague Fang; Quick Strike, Hamstring, core and policy remain fixed.' },
+  { id: 'W4', root: 'squire', frame: 'heavy', apply: c => { c.build.gearItemIds.weapon = 'tundra-permafrost-maul'; }, note: 'Avalanche Maul -> Permafrost Maul; Cull, core, policy and Endure remain fixed.' },
+  { id: 'W5', root: 'slinger', frame: 'balanced', apply: c => { c.build.gearItemIds.weapon = 'swamp-blightbrand'; }, note: 'Venomthorn Rapier -> Plague Fang; Sweep, Binding Strike, core and policy remain fixed.' },
   { id: 'A2', root: 'apprentice', frame: 'balanced', apply: c => {
-    c.abilities!.techniques = ['detonate', 'hamstring'];
+    c.abilities!.techniques = ['detonate', 'binding-strike'];
     c.runeRules!.unshift({ conditionId: 'target-max-stacks', actionId: 'use-ability', targetAbilityId: 'detonate' });
-  }, note: 'Frenzy -> Detonate with the existing Fully Afflicted timing rule; weapon, control, core, stance and defense remain fixed.' },
-  { id: 'W6', root: 'conduit', frame: 'balanced', apply: c => { c.build.gearItemIds.weapon = 'tundra-permafrost-maul'; }, note: 'Cataclysm Axe -> Permafrost Maul; Quick Strike, Hamstring, formation, core and policy remain fixed.' },
-  { id: 'A3', root: 'spirit', frame: 'balanced', apply: c => { c.abilities!.techniques = ['frenzy', 'binding-strike']; }, note: 'Hamstring -> Binding Strike; equipment, Frenzy, core, stance and policy remain fixed.' },
+  }, note: 'Imbue Lightning -> Detonate with the existing Fully Afflicted timing rule; weapon, control, core, stance and defense remain fixed.' },
+  { id: 'W6', root: 'conduit', frame: 'balanced', apply: c => { c.build.gearItemIds.weapon = 'tundra-permafrost-maul'; }, note: 'Cataclysm Axe -> Permafrost Maul; Sweep, Binding Strike, formation, core and policy remain fixed.' },
+  // A3 (Hamstring -> Binding Strike) retired with Hamstring (design §22.2): the
+  // primary arm now carries Binding Strike, so the alternative would be itself.
 ];
 
 function alternative(base: TundraClassFrameCell, spec: Alternative): TundraClassFrameCell {
@@ -144,8 +150,8 @@ export const TUNDRA_CLASS_FRAME_CELLS: TundraClassFrameCell[] = TUNDRA_CLASS_FRA
 
 assert(NODE_BIOMES['node-t3-tundra-03'] && !NODE_BIOMES['node-t3-tundra-03'].isDungeon);
 assert.equal(TUNDRA_CLASS_FRAME_BASES.length, 18);
-assert.equal(ALTERNATIVES.length, 8);
-assert.equal(TUNDRA_CLASS_FRAME_CELLS.length, 52);
+assert.equal(ALTERNATIVES.length, 7); // A3 retired with Hamstring (design §22.2)
+assert.equal(TUNDRA_CLASS_FRAME_CELLS.length, 50);
 assert(!TUNDRA_CLASS_FRAME_CELLS.some(c => c.abilities?.techniques.includes('slam')));
 
 export const TUNDRA_CLASS_FRAME_BLOCKS = Object.fromEntries([

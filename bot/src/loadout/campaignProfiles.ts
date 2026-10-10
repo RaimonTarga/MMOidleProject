@@ -16,8 +16,8 @@ export const CAMPAIGN_PROFILES = T2_CLASS_PLANS.map(plan => {
   });
   return {
     id: `${plan.slug}-campaign-v1`, classRoot: plan.classRoot, frameId: plan.frameId,
-    entry: build("expose-weakness", null, false),
+    entry: build("slam", null, false),
     farm: build("sweep", "offensive-stance", false),
-    bossCandidate: build("expose-weakness", "defensive-stance", true),
+    bossCandidate: build("slam", "defensive-stance", true),
   };
 });

@@ -1,5 +1,5 @@
 import {
-  GAME_CONFIG, MONSTER_DATABASE, getCounter, setCounter,
+  ABILITY_SIDESTEP_EFFECT_ID, GAME_CONFIG, MONSTER_DATABASE, getCounter, setCounter,
   getStatusEffect, lineageStatusEffectId, type TracksCombat,
 } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
@@ -161,15 +161,19 @@ export function rollMonsterDodge(target: MonsterEntity, chance: number): boolean
 const EVADE_WINDOW_ACC = 'evadeWindowAcc';
 
 /**
- * The live magnitude of an active `evasion-window` payoff, or 0 when none is
- * active. Reads the `lineage.evasion-window` status effect directly rather than
- * importing a reader from `lineageCards.ts`, which already imports THIS module
+ * The live magnitude of every active evasion WINDOW, or 0 when none is active:
+ * an `evasion-window` payoff (the `lineage.evasion-window` status effect) plus
+ * Sidestep's own window (design §22.8), which is the same unit on the Guard's own
+ * status. They add, as every "+X% evade for a window" promise does. Read directly
+ * rather than through `lineageCards.ts`, which already imports THIS module
  * (`evadeBlocksDebuffs`) — a second edge the other way would be a cycle.
  */
-function evasionWindowBonus(cs: TracksCombat): number {
-  const effect = getStatusEffect(cs, lineageStatusEffectId('evasion-window'));
-  if (!effect || effect.remainingMs <= 0) return 0;
-  return Math.max(0, effect.data.magnitude ?? 0);
+export function evasionWindowBonus(cs: TracksCombat): number {
+  const lineage = getStatusEffect(cs, lineageStatusEffectId('evasion-window'));
+  const sidestep = getStatusEffect(cs, ABILITY_SIDESTEP_EFFECT_ID);
+  const lineagePct = lineage && lineage.remainingMs > 0 ? Math.max(0, lineage.data.magnitude ?? 0) : 0;
+  const sidestepPct = sidestep && sidestep.remainingMs > 0 ? Math.max(0, sidestep.data.evasionPct ?? 0) : 0;
+  return lineagePct + sidestepPct;
 }
 
 /**

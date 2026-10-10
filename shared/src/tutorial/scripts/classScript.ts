@@ -89,9 +89,9 @@ const SEAL_OPENING: Record<T1Biome, string> = {
 /** Prep line for the second seal: the one reason this fight's loadout differs. */
 const SEAL_SECOND: Record<T1Biome, string> = {
   plains: 'One seal down. The Plains boss next; Sweep suits its crowd of guards.',
-  forest: 'One seal down. For the Forest boss, Expose Weakness goes back in to end the fight sooner.',
+  forest: 'One seal down. For the Forest boss, Slam goes back in to end the fight sooner.',
   swamp: 'One seal down. The Swamp boss poisons, so Cleanse comes back for this one.',
-  mountain: 'One seal down. The Mountain boss winds up one huge hit: Step Back dodges it, Expose Weakness ends the fight sooner.',
+  mountain: 'One seal down. The Mountain boss winds up one huge hit: Step Back dodges it, Slam ends the fight sooner.',
   cave: 'One seal down. The Cave boss winds up big hits, and Step Back is already on your Runes for them.',
 };
 
@@ -101,7 +101,7 @@ const SEAL_SECOND: Record<T1Biome, string> = {
  */
 const GATE_LOADOUT_REASON: Record<T1Biome, string> = {
   plains: 'Sweep is back for its guards.',
-  forest: 'Expose Weakness is back.',
+  forest: 'Slam is back.',
   swamp: 'Cleanse is back: it poisons.',
   mountain: 'Second Wind is back.',
   cave: 'Second Wind is back.',
@@ -190,7 +190,8 @@ const LEARN_REASON: Record<string, string> = {
   sweep: 'Learn Sweep: every so often your swing cleaves everything around you.',
   'second-wind': 'Learn Second Wind: a burst of healing in the middle of a fight.',
   cleanse: 'Learn Cleanse. Here it takes Second Wind\'s place, because poison is the real threat.',
-  'expose-weakness': 'Learn Expose Weakness. It replaces Sweep and marks your target to take more damage from everything.',
+  charge: 'Learn Charge: it closes the gap and lands the first blow.',
+  slam: 'Learn Slam: a wound-up blow that hits everything around your target.',
 };
 
 /**
@@ -546,7 +547,7 @@ class ScriptBuilder {
         if (ranged) this.rune(chapter, 'rune-recipe-keep-distance', 'orbit');
         return;
       case 'cave':
-        // Expose Weakness waits for Cave mastery (see `build`).
+        // Charge waits for Cave mastery (see `build`).
         this.rune(chapter, 'rune-recipe-step-back', 'final');
         return;
     }
@@ -961,7 +962,15 @@ class ScriptBuilder {
       if (verbTaught && mastered.includes(home)) ranksHeld(chapter, leanRank, masteryOf(mastered));
       // The bot learns it at Cave 3, but with Step Back and two abilities the
       // build only fits the Rune budget of a fully mastered Tier 1 (GM 30).
-      if (biome === 'cave') this.learn(chapter, 'ability-recipe-expose-weakness', 'technique');
+      if (biome === 'cave') {
+        this.learn(chapter, 'ability-recipe-charge', 'technique');
+        // The ability pass (design §22.2) put Slam in the seal and gate kits in
+        // Expose Weakness's place, and nothing else teaches it: learned here, at
+        // the same leg end, so it is known before the first boss beat that wears
+        // it. Its recipe is the Mountain's (already mastered), so the farm beat is
+        // usually already met. Neither learn introduces a new idea.
+        this.learn(chapter, 'ability-recipe-slam', 'technique');
+      }
       this.items(chapter, biome, biomePlan.afterMax);
     }
     if (!verbTaught) throw new Error(`${this.plan.className}: the verb's gates never open inside Tier 1`);

@@ -93,7 +93,7 @@ function j0Weapon(slug: string): string {
 function entryKnownAbilities(slug: string): string[] {
   return [
     "sweep",
-    "expose-weakness",
+    "slam",
     "second-wind",
     "cleanse",
     ...(slug === "apprentice" || slug === "slinger" ? ["contagion"] : []),
@@ -139,7 +139,7 @@ function treatmentChecks(
 }
 
 function j0PreparationChecks(plan: T2ClassPlan, weaponId: string): T2TreatmentAssertion[] {
-  return treatmentChecks(plan, weaponId, "core-tempered", "expose-weakness");
+  return treatmentChecks(plan, weaponId, "core-tempered", "slam");
 }
 
 type DayRouteConfig = Omit<T2RouteConfig, "branch" | "version" | "bossless">;
@@ -408,7 +408,7 @@ export const T2_DAY_SURVIVALIST_ROUTES: readonly Route[] = SURVIVALIST_CLASSES.f
       initialEquip: [coreId],
       skipCoreIds: ["core-force"],
       entryAssertions: treatmentChecks(base, j0Weapon(slug), "core-tempered", "sweep"),
-      terminalAssertions: treatmentChecks(plan, j0Weapon(slug), coreId, "expose-weakness"),
+      terminalAssertions: treatmentChecks(plan, j0Weapon(slug), coreId, "slam"),
       captureTier2Handoff: false,
       entryItems: [j0Weapon(slug), "core-tempered", "core-survivalist"],
       entryKnownAbilities: entryKnownAbilities(slug),
