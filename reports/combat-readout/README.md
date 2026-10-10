@@ -14,7 +14,9 @@ Report: [docs/briefs/combat-readout-report-2026-10-06.md](../../docs/briefs/comb
   through the admin namespace and dev-only debug events sent on the page's own websocket
   (tier-entry profile, teleport, fast boss retry, the altar), monsters tracked through a
   spectator socket, a second anonymous page on `/?watch=<socket id>` for the live boss fight.
-  `node capture.cjs <baseUrl> <outDir> <before|after> [rat,boss,swarm,low]` with
+  `node capture.cjs <baseUrl> <outDir> <label> [rat,boss,swarm,low,guardian,flash]` with
   `PROFILES=<tier-entry profiles json>`; the guest token is cached outside the repo.
 - `screens/` — the selected shots, `<item>-before.png` (develop `677c9f99`) and
   `<item>-after.png` (this branch), indexed in the report's "Before / after" table.
+  `<item>-merged.png` are the 2026-10-10 re-shots after develop was merged in and the
+  designer's calls were built (`guardian` and `flash` scenes), indexed in the report's addendum.

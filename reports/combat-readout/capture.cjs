@@ -264,6 +264,45 @@ async function ensureCharacter(token) {
         }
       }
     }
+    if (scene === 'flash') {
+      // The crit body flash lasts 110 ms: a burst of tight clips around the camera's
+      // centre (the player), with no pause, catches it at its strength.
+      await applyProfile('striker-t1-t2-entry-clean');
+      await desktop();
+      await revive();
+      await send('debug:teleportToNode', 'node-t1-forest-02');
+      await sleep(3500);
+      await send('player:setAuto', true);
+      await warmHunt(5000);
+      for (let i = 0; i < 90; i++) {
+        if (i % 15 === 0) await hunt();
+        await page.screenshot({
+          path: path.join(OUT, `${LABEL}-desktop-1440-flash-${String(i).padStart(2, '0')}.png`),
+          clip: { x: 520, y: 250, width: 400, height: 300 },
+        });
+      }
+    }
+    if (scene === 'guardian') {
+      // The GUARDIAN mark (designer's call, 2026-10-10): the Mountain dungeon with its
+      // guardians up; auto-combat engages them before the altar is ever woken.
+      await applyProfile('striker-t1-t2-entry-clean');
+      for (const vp of ['desktop', 'phone']) {
+        await (vp === 'desktop' ? desktop() : phone());
+        await revive();
+        await send('player:setAuto', false);
+        await send('debug:prepareFastBossRetry', { nodeId: 'node-t1-mountain-dungeon', includeGuardians: true });
+        await sleep(3000);
+        await send('player:setAuto', true);
+        // The nearest guardian can be a ledge's detour away: shoot once its mark is up.
+        const marked = await page.waitForSelector('.tf-mark--guardian', { timeout: 45000 }).catch(() => null);
+        console.log('guardian mark', vp, marked ? 'up' : 'not seen');
+        const name = `${vp === 'desktop' ? 'desktop-1440' : 'portrait-390'}-guardian`;
+        for (let i = 0; i < 24; i++) {
+          await page.screenshot({ path: path.join(OUT, `${LABEL}-${name}-${String(i).padStart(2, '0')}.png`) });
+          await sleep(400);
+        }
+      }
+    }
     if (scene === 'swarm') {
       await applyProfile('slinger-t1-t2-entry-clean');
       for (const vp of ['desktop', 'phone']) {

@@ -254,15 +254,18 @@ client's `castState`; no networked field or event exists for any of it.
 | Tokens | `render/readoutTokens.ts` | every size, colour, duration and threshold (`NUMBER_TOKENS`, `BAR_TOKENS`, `FRAME_TOKENS`); DOM readouts get them as `--ro-*` vars via `readoutCssVars()` — the skin track restyles here |
 | Rules | `render/readoutModel.ts`, `hud/bossFrameModel.ts` | pure: bands, DoT coalescer, lane stack, size classes, chip, quarters, absorb band, phone floor; which boss and what it reads |
 | Damage numbers | `render/combatText.ts`, `render/damageNumberStyle.ts`, `fx/particles.ts` `spawnDamageNumber` | size = share of the target's max HP (chip < 4 % / hit / heavy ≥ 12 % / whole swing ≥ 30 %, 12–25 px); colour and motion by kind; DoT ticks coalesce per target and element per 1 s and never draw above "hit"; one lane per target, 5 live, oldest dropped; entries carry the pool they were captured against |
-| The crit | same | `empowered`/execution: +1 band, gold `!`, a 110 ms tint-filled copy flashed over the body; an elemental crit keeps its colour; gold means crit only |
+| The crit | same | `empowered`/execution: +1 band and never below heavy (`crit.minBand`, `critBand()`; incoming crits too), gold `!`, a 110 ms tint-filled copy flashed over the body at 0.5; an elemental crit keeps its colour; gold means crit only |
 | Overhead bars | `render/healthBars.ts` | width by body size class (24 / 32 / 44 / boss 72, summons 24×2), thirds, a chip under the fill (hold 400 ms, drain 500 ms; small drops keep it draining), segments every 25 % on elites, guardians and bosses, absorb bands kept, no text |
-| Boss frame | `hud/BossFrame.tsx` + `bossFrameState.ts` | up while a boss is the target or targets the player; desktop top centre (the target frame steps under it), phone a top-strip row; quarters LOST lit + pips, cast line from `castState` (`primed` holds it full), phase tile first; for the same body the target frame drops its head |
-| Target frame chrome | `hud/TargetFrame.tsx` | portrait (bestiary `MonsterSprite`), name, node tier, ELITE/BOSS mark, the shared bar; homes and tiles as §26.4 |
+| Boss frame | `hud/BossFrame.tsx` + `bossFrameState.ts` | up while a boss is the target or targets the player; desktop top centre (the target frame steps under it), phone a top-strip row; quarters LOST lit + pips, cast line from `castState` (`primed` holds it full), phase tile first; for the same body the target frame drops its head; while it is up (linger included) the desktop biome XP bar fades out (`biome-xp-bar--behind-boss`) |
+| Target frame chrome | `hud/TargetFrame.tsx` | portrait (bestiary `MonsterSprite`), name, node tier, GUARDIAN or ELITE mark (`targetMark()`: a guardian outranks an elite, as its outline does; `TargetFrameData.isGuardian` from the dungeon snapshot) and the BOSS mark, the shared bar; homes and tiles as §26.4 |
 | One DOM bar | `hud/ReadoutBar.tsx` | boss frame, target frame and vitals (desktop crown `hud/stat/StatPlate.tsx`, phone `MobileHUD.tsx`): fill, chip (`useDamageChip`, the overhead model), hatched absorb band, number inside; vitals glow at ≤ 25 % |
 | Phone floor | `numberScreenScale`, `barHeightAtZoom` | below zoom 1 numbers keep 85 % of their screen size and bars 3 px of thickness; the camera floor is unchanged |
 
 Not built: heal floaters (no heal event exists). Guards: `combatReadout.test.ts` (pure
-rules and the tokens' shape), `combatText.test.ts` (styles, the crit, the wiring).
+rules, the tokens' shape, and `tools/uishot/harness/readout-vars.css` equal to the tokens),
+`combatText.test.ts` (styles, the crit and its floor, the wiring). Static harnesses:
+`tools/uishot/harness/target-frame.html`, `crown.html` (DOM copies, re-synced by hand).
+The designer's calls of 2026-10-10 are in the report's addendum.
 
 ## Guards (tests)
 

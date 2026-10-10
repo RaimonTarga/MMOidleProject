@@ -1,7 +1,8 @@
 # Combat readout run — report (2026-10-06)
 
-**Branch:** `feat/combat-readout` in `../mmo-lineages`, off develop `677c9f99`. **Not merged**
-(the designer merges). Brief: [combat-readout-run-2026-10-06.md](combat-readout-run-2026-10-06.md).
+**Branch:** `feat/combat-readout` in `../mmo-lineages`, off develop `677c9f99`. **Merged to
+develop 2026-10-10** with the designer's calls — see the [addendum](#addendum--the-designers-calls-and-the-merge-2026-10-10)
+at the end. Brief: [combat-readout-run-2026-10-06.md](combat-readout-run-2026-10-06.md).
 Evidence: `reports/combat-readout/` (the mockup, the capture driver, `screens/`).
 
 | Commit | What |
@@ -268,3 +269,59 @@ look (one band up) without a fifth size. The build follows A.
    `TargetFrameData` would close it.
 10. **Stale harnesses:** `tools/uishot/harness/target-frame.html` and `crown.html` mirror the old
     DOM; they were not updated (outside the run's files).
+
+## Addendum — the designer's calls and the merge (2026-10-10)
+
+The designer reviewed the ten open calls on 2026-10-10. The branch took develop first (the ability
+pass and its two rounds of calls, design §22.12–§22.13), then the calls, then went to develop.
+
+**The merge of develop** (`eff39cd2`). The handoff expected conflicts in `client/src/hud/*` and
+`client/src/fx/*`; there were none. No source file was touched by both sides: the ability pass
+changed the ability bar, buff bar, tooltips and keystone fx; the readout changed the frames, bars
+and numbers. Only two docs conflicted, both by appending a section each (`docs/README.md`,
+`docs/combat-animation-current-state.md`); both sides were kept. The one cross-reference
+(`lineagePayloadFx.test.ts` reads `render/combatPlayback.ts` as text) passes.
+
+**The calls** (`96af67df`):
+
+| # | Call | Decision | What changed |
+| --- | --- | --- | --- |
+| 1 | Camera floor (`screenFloor` 0.85) | Keep; judge in playtest 3 | — |
+| 2 | Band thresholds 4 / 12 / 30 % | Keep (provisional); playtest 3 | — |
+| 3 | A boss crit drew smaller than develop's | **A crit floor at heavy** | `NUMBER_TOKENS.crit.minBand: 'heavy'`, `critBand()` in `readoutModel.ts`: a crit is one band up from its share and never below heavy (19 px); the incoming crit takes the same floor. A chip-sized crit on a T2+ boss no longer draws at 15 px. |
+| 4 | The quarters' look | Keep (gold ticks, lit trough, pips) | — |
+| 5 | The crowded top centre at 1440 | **The biome XP bar steps aside** | While the boss frame is up (its 800 ms linger included) the desktop `BiomeXpBar` fades out (`biome-xp-bar--behind-boss`, 200 ms, none under reduced motion). The phone's bar sits in its own strip row and is untouched. |
+| 6 | Crit body flash strength | **0.5 alpha**, 110 ms kept | `crit.bodyFlashAlpha` 0.85 → 0.5: the sprite reads through the white. |
+| 7 | A DoT window outliving its target | Keep | — |
+| 8 | The phone strip grows 28 px with a boss | Keep | — |
+| 9 | No guardian mark in the DOM | **A GUARDIAN mark** | `TargetFrameData.isGuardian` (from the render state's `dungeonGuardianIds`, i.e. the dungeon snapshot); `targetMark()` gives a guardian precedence over an elite, as its overhead outline does; the mark and the frame's edge take the guardian outline's red (`FRAME_TOKENS.guardian`, `--ro-guardian-*`); guardians' DOM bars get the quarter segments. |
+| 10 | Stale uishot harnesses | **Updated, and marked as copies** | `tools/uishot/harness/target-frame.html` now mirrors the readout DOM (the shell walk, ELITE, GUARDIAN, guardian-over-elite, the boss frame over the headless target frame at each quarter, casting, primed, shelled; `?only=`); `crown.html` mirrors the crown (vitals on the readout bar, wards band, layers, low glow, barrier conduit, headline and rails). Their `--ro-*` values live in `harness/readout-vars.css`, which `combatReadout.test.ts` keeps equal to `readoutCssVars()` (it fails on drift and prints the block to paste); the DOM copies are re-synced by hand (the uishot README says so). |
+
+**Tests.** New cases: `critBand` at every band and `targetMark` (combatReadout), the crit floor
+on a 2100 pool both ways (combatText), the harness vars copy (combatReadout). `pnpm typecheck`
+clean; **full suite 403/403** (280 s) on the branch tip before the merge to develop — develop's
+402 plus `combatReadout.test.ts`.
+
+**Re-screenshots.** The same real-client recipe (production build with `VITE_DEV_TOOLS=true`, a
+capture server on :4351 against `gamedb_readout` and Redis index 11, a fresh guest `Readout2`)
+on the merged branch; `capture.cjs` gained two scenes: `guardian` (the Mountain dungeon with its
+guardians up; it waits for the mark before shooting) and `flash` (a burst of tight clips that
+catches the 110 ms flash). Console errors: zero in every run.
+
+| Shot | What it shows |
+| --- | --- |
+| `0-desktop-boss-full-merged` | the merged HUD mid-Behemoth: the boss frame alone at the top centre (the XP bar faded), its chip, the target frame under it, the ability pass's bar (Slam II, Second Wind II) and behaviour panel beside the readout |
+| `4-boss-frame-desktop-merged` | the Crag Charge cast line at half health, two quarters lost, the space right of the frame clear |
+| `4-boss-frame-phone-merged` | the phone strip: vitals with the chip, the boss row (one quarter lost, its pip lit), the headless target frame under it |
+| `5-target-frame-guardian-desktop-merged` | a Stone Warden: `GUARDIAN` in red, the red frame edge, segments, a fading `122!`, the ability pass's buff tile in the crown |
+| `5-target-frame-guardian-phone-merged` | the same mark in the compact phone frame |
+| `2-crit-flash-rat-merged` | a `112!` killing crit on a Moss Rat at swing size, the body flash at 0.5 (the rat's death burst lands in the same instant) |
+
+**Still open.**
+- Calls 1, 2, 4, 7 and 8 stand as built and go to **playtest 3** with the rest of the readout.
+- Outside a boss fight the target frame still covers the XP bar's left ~64 px at 1440, as on develop
+  before this run (call 5 covered the boss fight only).
+- On a new target the portrait can show its fallback swatch for a frame while the atlas frame
+  resolves (seen once in the guardian capture; `MonsterSprite`'s existing behaviour).
+- Unchanged from the run: heal floaters (no heal event), the phase tile and the enemy shell on the
+  boss frame live, reduced motion in a browser.
