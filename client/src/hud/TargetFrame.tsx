@@ -11,6 +11,7 @@ import { useIsMobile } from './useIsMobile';
 import { ReadoutBar } from './ReadoutBar';
 import { MonsterSprite } from './bestiary/MonsterSprite';
 import { FRAME_TOKENS, readoutCssVars } from '../render/readoutTokens';
+import { targetMark } from '../render/readoutModel';
 
 // The base DoT stack ('dot') tile should reflect YOUR chosen element instead of a
 // fixed green — green (poison/light), red (fire/balanced), light-blue (frost/heavy).
@@ -307,6 +308,7 @@ function TargetFrameBody({ bossId, underBoss }: { bossId: string | null; underBo
   const shieldAmount = Math.max(0, shown.enemyBarrier?.amount ?? 0);
   const def = shown.monsterTypeId ? MONSTER_DATABASE.get(shown.monsterTypeId) : undefined;
   const elite = def?.elite === true;
+  const mark = targetMark(shown.isGuardian, elite);
   // The target is always on the player's node (deltaApplier), so its tier is the node's.
   const tier = nodeId ? NODE_BIOMES[nodeId]?.biomeTier : undefined;
   const hpText = `${Math.ceil(shown.hp)} / ${shown.maxHp}`;
@@ -317,11 +319,11 @@ function TargetFrameBody({ bossId, underBoss }: { bossId: string | null; underBo
 
   return (
     <div
-      className={`target-frame${stale ? ' target-frame--stale' : ''}${shown.isBoss ? ' target-frame--boss' : ''}${elite ? ' target-frame--elite' : ''}${underBoss ? ' target-frame--under-boss' : ''}`}
+      className={`target-frame${stale ? ' target-frame--stale' : ''}${shown.isBoss ? ' target-frame--boss' : ''}${mark ? ` target-frame--${mark}` : ''}${underBoss ? ' target-frame--under-boss' : ''}`}
       style={readoutCssVars() as React.CSSProperties}
     >
       {/* The chrome (combat readout run, item 5): portrait slot, name and tier, the
-          readout bar with its number and chip, the elite / boss marks. */}
+          readout bar with its number and chip, the guardian / elite / boss marks. */}
       {!bossOwnsHead && (
         <div className="tf-head">
           {shown.monsterTypeId && (
@@ -337,7 +339,7 @@ function TargetFrameBody({ bossId, underBoss }: { bossId: string | null; underBo
             <div className="tf-head__name-row">
               <span className="target-frame__name">{shown.name}</span>
               {tier !== undefined && <span className="tf-head__tier">T{tier}</span>}
-              {elite && <span className="tf-mark tf-mark--elite">ELITE</span>}
+              {mark && <span className={`tf-mark tf-mark--${mark}`}>{mark.toUpperCase()}</span>}
               {shown.isBoss && <span className="tf-mark tf-mark--boss">BOSS</span>}
               {shieldAmount > 0 && (
                 <span className="tf-head__absorb" title="Barrier — absorbed before health">+{Math.round(shieldAmount)}</span>
@@ -349,7 +351,7 @@ function TargetFrameBody({ bossId, underBoss }: { bossId: string | null; underBo
               hp={shown.hp}
               maxHp={shown.maxHp}
               absorb={shieldAmount}
-              segments={elite}
+              segments={mark !== null}
               quarters={shown.isBoss}
               label={hpText}
               ariaLabel={`${shown.name}: ${hpText}${shieldAmount > 0 ? `, barrier absorbing ${Math.round(shieldAmount)}` : ''}`}

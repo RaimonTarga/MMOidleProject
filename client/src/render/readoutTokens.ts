@@ -77,15 +77,17 @@ export const NUMBER_TOKENS = {
   } satisfies Record<DamageElement, string>,
   /**
    * The crit look is one look: an `empowered` (or execution) hit moves up the band
-   * ladder, draws gold with a '!' and flashes the body. Nothing else is gold. An
+   * ladder, never below `minBand` (a crit on a big pool still pops: designer's call
+   * 2026-10-10), draws gold with a '!' and flashes the body. Nothing else is gold. An
    * elemental crit keeps its element's colour and takes only the size and the flash.
    */
   crit: {
     color: '#ffd23f',
     bandSteps: 1,
+    minBand: 'heavy' as NumberBand,
     suffix: '!',
     bodyFlashMs: 110,
-    bodyFlashAlpha: 0.85,
+    bodyFlashAlpha: 0.5,
   },
   glyph: {
     shield: '🛡',
@@ -214,6 +216,8 @@ export const FRAME_TOKENS = {
   },
   /** The elite mark: the overhead outline's yellow (render/monsters.ts ELITE_OUTLINE). */
   elite: { tag: '#ffdd33', edge: 'rgba(255, 221, 51, 0.4)' },
+  /** The dungeon guardian mark: the overhead outline's red (render/monsters.ts GUARDIAN_OUTLINE). */
+  guardian: { tag: '#ff3333', edge: 'rgba(255, 51, 51, 0.45)' },
   portrait: { px: 38, phonePx: 26, bg: '#11161d' },
   /** Low health on the vitals: a steady edge glow at a quarter. No flash, no pulse. */
   lowHealth: { at: 0.25, glow: '#ff2a2a', glowPx: 8 },
@@ -265,6 +269,8 @@ function buildCssVars(): Record<string, string> {
     '--ro-boss-row': `${f.boss.rowPx}px`,
     '--ro-elite-tag': f.elite.tag,
     '--ro-elite-edge': f.elite.edge,
+    '--ro-guardian-tag': f.guardian.tag,
+    '--ro-guardian-edge': f.guardian.edge,
     '--ro-portrait-bg': f.portrait.bg,
     '--ro-low-glow': f.lowHealth.glow,
     '--ro-low-glow-px': `${f.lowHealth.glowPx}px`,

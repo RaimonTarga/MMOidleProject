@@ -29,6 +29,22 @@ export function minBand(a: NumberBand, b: NumberBand): NumberBand {
   return BAND_ORDER.indexOf(a) <= BAND_ORDER.indexOf(b) ? a : b;
 }
 
+/**
+ * The target frame's mark beside the name: a dungeon guardian outranks an elite, as
+ * its overhead outline does (render/monsters.ts). The BOSS mark is separate.
+ */
+export function targetMark(isGuardian: boolean, isElite: boolean): 'guardian' | 'elite' | null {
+  if (isGuardian) return 'guardian';
+  return isElite ? 'elite' : null;
+}
+
+/** A crit's band: `bandSteps` up from its share's band, never below `crit.minBand`. */
+export function critBand(band: NumberBand): NumberBand {
+  const raised = shiftBand(band, NUMBER_TOKENS.crit.bandSteps);
+  const floor = NUMBER_TOKENS.crit.minBand;
+  return BAND_ORDER.indexOf(raised) < BAND_ORDER.indexOf(floor) ? floor : raised;
+}
+
 export function bandSizePx(band: NumberBand): number {
   return BANDS.find((b) => b.band === band)!.sizePx;
 }

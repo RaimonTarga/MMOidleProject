@@ -2,7 +2,7 @@ import type { DamageElement } from '@mmo-idle/shared';
 import type { DamageNumberHint } from './state';
 import type { DamageNumberStyle } from '../fx/particles';
 import { NUMBER_TOKENS, type NumberBand, type NumberMotion } from './readoutTokens';
-import { bandSizePx, minBand, numberBandFor, shiftBand } from './readoutModel';
+import { bandSizePx, critBand, minBand, numberBandFor } from './readoutModel';
 
 /**
  * Per-element damage-number flavor (color + glyph), resolved per damage instance.
@@ -90,16 +90,16 @@ export function resolveMonsterDamageStyle(
   const mitigation = resolveMitigationStyle(hint, band);
   if (mitigation) return mitigation;
   if (hint?.empowered || hint?.execution) {
-    // The crit look: one band up, '!', the body flash. An elemental crit keeps its
+    // The crit look: one band up (at least heavy), '!', the body flash. An elemental crit keeps its
     // element's colour and glyph — the size and the flash say "crit", so gold stays
     // the one colour that means it. Only Detonate currently produces this pair (an
     // empowered `damage` event); a `player-hit` never carries `dotElement`.
     const crit = NUMBER_TOKENS.crit;
     return hint.dotElement
-      ? look(NUMBER_TOKENS.element[hint.dotElement], shiftBand(band, crit.bandSteps), 'crit', {
+      ? look(NUMBER_TOKENS.element[hint.dotElement], critBand(band), 'crit', {
           suffix: crit.suffix, symbol: ELEMENT_STYLE[hint.dotElement].symbol,
         })
-      : look(crit.color, shiftBand(band, crit.bandSteps), 'crit', { suffix: crit.suffix });
+      : look(crit.color, critBand(band), 'crit', { suffix: crit.suffix });
   }
   // An explicit DoT entry carries its own hint, so adjacent direct hits cannot
   // overwrite its element. Unflavored direct hits retain their base color.
@@ -122,7 +122,7 @@ export function resolvePlayerDamageStyle(
   // Incoming "crit" (a monster's empowered hit): one band up and '!', but in the
   // damage-taken colour — it reads as a heavy hit, never as the player's own crit.
   if (hint?.empowered || hint?.execution) {
-    return look(baseColor, shiftBand(band, NUMBER_TOKENS.crit.bandSteps), 'crit', { suffix: NUMBER_TOKENS.crit.suffix });
+    return look(baseColor, critBand(band), 'crit', { suffix: NUMBER_TOKENS.crit.suffix });
   }
   // Each event retains its own element, independently of adjacent direct hits.
   if (hint) {

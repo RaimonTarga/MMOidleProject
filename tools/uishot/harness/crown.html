@@ -1,10 +1,15 @@
 <!doctype html>
 <!--
-  Layout harness for the Character crown (V3.2) and the Evasion instrument.
-  Mirrors StatPlate/StatPanel markup against the real stylesheets.
+  Layout harness for the Character crown and the Evasion instrument.
+  Mirrors StatPlate's Crown markup (the vitals are the shared ReadoutBar since the
+  combat readout run) and the Evasion frame against the real stylesheets. The
+  --ro-* values come from readout-vars.css (guarded by combatReadout.test.ts); the
+  DOM and the bar formulas below are a copy: re-sync them when StatPlate.tsx,
+  ReadoutBar.tsx or render/readoutModel.ts change.
 
-  ?hp=  current health as a percentage (drives the threshold ramp)
-  ?dot= incoming damage, ?heal= pending regen, ?shield= absorb — all percentages
+  ?hp=  current health as a percentage (thirds colour; the edge glow at <= 25)
+  ?dot= incoming damage, ?heal= pending regen, ?shield= wards — all percentages
+  ?barrier= barrier fill 0-1 (its own conduit; omit for none)
   ?charge= evasion charge 0-1, ?rate= dodge rate
 -->
 <html lang="en">
@@ -15,6 +20,8 @@
   <link rel="stylesheet" href="../../../client/src/hud/primitives/kit.css" />
   <link rel="stylesheet" href="../../../client/src/hud/hud.css" />
   <link rel="stylesheet" href="../../../client/src/hud/rail.css" />
+  <link rel="stylesheet" href="./readout-vars.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/readoutBar.css" />
   <link rel="stylesheet" href="../../../client/src/hud/stat/statPlate.css" />
   <link rel="stylesheet" href="../../../client/src/hud/mechanics/mechanics.css" />
   <style>
@@ -42,11 +49,24 @@
     const dot = Number(q.get('dot') ?? 12);
     const heal = Number(q.get('heal') ?? 10);
     const shield = Number(q.get('shield') ?? 22);
+    const barrier = q.has('barrier') ? Number(q.get('barrier')) : null;
     const charge = Number(q.get('charge') ?? 0.75);
     const rate = Number(q.get('rate') ?? 0.25);
 
-    const safe = Math.max(0, hp - dot);
-    const ramp = hp > 50 ? 'vital' : hp > 25 ? 'caution' : 'critical';
+    // StatPlate's Crown: pending DoT eats the right edge of current HP; regen extends it.
+    const MAX_HP = 1000;
+    const dotPct = Math.min(hp, dot);
+    const safe = Math.max(0, hp - dotPct);
+    const healPct = Math.min(100 - hp, heal);
+    const ward = Math.round(MAX_HP * shield / 100);
+    const hpValue = Math.round(MAX_HP * hp / 100);
+    // render/readoutModel.ts healthColor / absorbBand, and FRAME_TOKENS.lowHealth.at.
+    const fillColor = hp > 50 ? '#44ee44' : hp > 25 ? '#eeaa22' : '#ee3322';
+    const band = shield > 0
+      ? { width: Math.max(4, Math.min(100, shield)), left: 0 }
+      : null;
+    if (band) band.left = Math.max(0, Math.min(Math.max(0, Math.min(100, hp)), 100 - band.width));
+    const low = hp > 0 && hp <= 25;
     const primed = charge + rate >= 1;
     const hitsAway = Math.max(1, Math.ceil((1 - charge) / rate));
     let ticks = '';
@@ -56,41 +76,41 @@
       <div class="panel-title">Character</div>
       <section class="stat-plate">
         <div class="stat-crown">
-          <div class="stat-crown__identity">
-            <span class="stat-crown__name">Raimon</span>
-            <span class="stat-crown__state">
-              <span class="stat-crown__stance" title="Active stance: Berserker Stance">Berserker Stance</span>
+          <div class="stat-crown__body">
+            <div class="stat-crown__identity">
+              <span class="stat-crown__name">Raimon</span>
               <span class="status-dot connected"></span>
-            </span>
+            </div>
+            ${barrier !== null || shield > 0 ? `
+            <div class="stat-crown__readout">
+              ${barrier !== null ? `<span class="stat-crown__barrier-read">${Math.round(300 * barrier)}<span class="stat-crown__max"> / 300</span></span>` : ''}
+              ${shield > 0 ? `<span class="stat-crown__shield">+${ward}</span>` : ''}
+            </div>` : ''}
+            <div class="stat-crown__track">
+              <div class="ro-bar ro-bar--vitals${low ? ' ro-bar--low' : ''}" role="img">
+                <i class="ro-bar__fill" style="width:${hp}%;background:${fillColor}"></i>
+                ${healPct > 0 ? `<i class="stat-crown__layer stat-crown__layer--regen" style="left:${hp}%;width:${healPct}%"></i>` : ''}
+                ${dotPct > 0 ? `<i class="stat-crown__layer stat-crown__layer--dot" style="left:${safe}%;width:${dotPct}%"></i>` : ''}
+                ${band ? `<i class="ro-bar__absorb" style="left:${band.left}%;width:${band.width}%"></i>` : ''}
+                <span class="ro-bar__num">${hpValue} / ${MAX_HP}</span>
+              </div>
+            </div>
+            ${barrier !== null ? `
+            <span class="gradient-conduit gradient-conduit--arcane stat-crown__barrier" style="--conduit-height:5px" role="progressbar">
+              <span class="gradient-conduit__track"><span class="gradient-conduit__fill" style="width:${barrier * 100}%"></span></span>
+            </span>` : ''}
           </div>
-          <div class="stat-crown__readout">
-            <span class="stat-crown__hp">620<span class="stat-crown__max"> / 1000</span></span>
-            ${shield > 0 ? '<span class="stat-crown__shield">+220</span>' : ''}
-          </div>
-          <span class="gradient-conduit stat-crown__track gradient-conduit--${ramp}" style="--conduit-height:9px">
-            <span class="gradient-conduit__track">
-              <span class="gradient-conduit__fill" style="width:${safe}%"></span>
-              <span class="gradient-conduit__layers">
-                ${heal > 0 ? `<span class="stat-crown__layer stat-crown__layer--regen" style="left:${hp}%;width:${heal}%"></span>` : ''}
-                ${dot > 0 ? `<span class="stat-crown__layer stat-crown__layer--dot" style="left:${safe}%;width:${dot}%"></span>` : ''}
-                ${shield > 0 ? `<span class="stat-crown__layer stat-crown__layer--shield" style="width:${shield}%"></span>` : ''}
-              </span>
-            </span>
-          </span>
         </div>
 
-        <div class="stat-plate__figures">
-          <div class="glyph-tile"><span class="glyph-tile__value">141</span><span class="glyph-tile__label">DPS</span></div>
-          <div class="glyph-tile"><span class="glyph-tile__value">18</span><span class="glyph-tile__label">Plating</span></div>
+        <div class="stat-headline">
+          <span class="stat-headline__glyph"></span>
+          <span class="stat-headline__value">74.1</span>
+          <span class="stat-headline__sub">1.21/s</span>
+          <span class="stat-headline__label">DPS</span>
         </div>
-        <div class="stat-plate__lines">
-          <span>82 attack</span><span>1.35/s</span><span>60 range</span><span>4/s regen</span><span>210 speed</span>
-        </div>
-        <div class="stat-plate__meter-row">
-          <span class="stat-plate__meter-label">Reduction</span>
-          <span class="engraved-meter stat-plate__meter"><span class="engraved-meter__fill" style="width:24%"></span></span>
-          <span class="stat-plate__meter-value">24%</span>
-        </div>
+        <div class="stat-rail"><span class="stat-reading"><span class="stat-reading__glyph"></span><span class="stat-reading__value">51</span><span class="stat-reading__name">Attack</span></span><span class="stat-reading"><span class="stat-reading__glyph"></span><span class="stat-reading__value">12</span><span class="stat-reading__name">Range</span></span><span class="stat-reading"><span class="stat-reading__glyph"></span><span class="stat-reading__value">×2.00</span><span class="stat-reading__name">Crit</span></span></div>
+        <div class="stat-rail"><span class="stat-reading"><span class="stat-reading__glyph"></span><span class="stat-reading__value">4</span><span class="stat-reading__name">Plating</span></span><span class="stat-reading"><span class="stat-reading__glyph"></span><span class="stat-reading__value">21<span class="stat-reading__unit">%</span></span><span class="stat-reading__name">Reduction</span></span><span class="stat-reading"><span class="stat-reading__glyph"></span><span class="stat-reading__value">16<span class="stat-reading__unit">HP/s</span></span><span class="stat-reading__name">Recovery</span></span></div>
+        <div class="stat-rail"><span class="stat-reading"><span class="stat-reading__glyph"></span><span class="stat-reading__value">153</span><span class="stat-reading__name">Speed</span></span></div>
       </section>
 
       <section class="mechanic-frame mechanic-frame--evasion${primed ? ' mechanic-frame--primed' : ''}">

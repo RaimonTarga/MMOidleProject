@@ -189,5 +189,12 @@ function floater(height = 10) {
   const incomingCrit = resolvePlayerDamageStyle({ ...base, empowered: true }, NUMBER_TOKENS.color.takenOwn, share);
   assert.equal(incomingCrit.style?.motion, 'crit', 'an incoming crit is larger...');
   assert.equal(incomingCrit.color, NUMBER_TOKENS.color.takenOwn, '...in the damage-taken colour');
+  // The crit floor: 51 of the Behemoth's 2100 is a chip, its crit still draws at heavy.
+  const bossShare = { amount: 51, maxHp: 2100 };
+  assert.equal(resolveMonsterDamageStyle(base, bossShare).style?.band, 'chip');
+  assert.equal(resolveMonsterDamageStyle({ ...base, empowered: true }, bossShare).style?.band, 'heavy',
+    'a crit on a big pool draws at the crit floor, not one band up from chip');
+  assert.equal(resolvePlayerDamageStyle({ ...base, empowered: true }, NUMBER_TOKENS.color.takenOwn, bossShare).style?.band,
+    'heavy', 'the incoming crit takes the same floor');
 }
 console.log('combatText.test.ts: ok');

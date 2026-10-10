@@ -1,91 +1,176 @@
 <!doctype html>
-<!-- Target-frame absorb harness. Mirrors TargetFrame's real DOM and drives the
-     same shield formula over the states a barrier passes through, so the absorb
-     band can be checked without a server, a login, or a shielded mob on screen.
-     Keep the SHIELD_PCT formula below in sync with TargetFrame.tsx. -->
+<!-- Target-frame and boss-frame harness. Mirrors the real DOM of TargetFrame.tsx,
+     BossFrame.tsx (BossFrameView, desktop) and ReadoutBar.tsx, and drives them over
+     the states that are awkward to find on a live mob: an enemy shell from a sliver
+     to larger than the pool, broken/reforming, the elite and guardian marks, and a
+     boss at every quarter with a cast and a primed line. The --ro-* values come from
+     readout-vars.css (guarded by combatReadout.test.ts). The DOM and the formulas
+     below are a copy: re-sync them when those components or render/readoutModel.ts
+     (healthColor, absorbBand, quarterModel, segmentMarks, targetMark) change.
+     ?only=<substring> keeps the matching cases. -->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <title>Target frame harness</title>
   <link rel="stylesheet" href="../../../client/src/hud/primitives/tokens.css" />
+  <link rel="stylesheet" href="./readout-vars.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/readoutBar.css" />
   <link rel="stylesheet" href="../../../client/src/hud/targetFrame.css" />
+  <link rel="stylesheet" href="../../../client/src/hud/bossFrame.css" />
   <style>
     html, body { margin: 0; background: #0b0a08; font-family: monospace; }
-    .grid { display: flex; flex-wrap: wrap; gap: 26px; padding: 18px; }
+    .grid { display: flex; flex-wrap: wrap; gap: 26px; padding: 18px; align-items: flex-start; }
     .case { width: 340px; }
+    .case--boss { width: 460px; }
     .case h2 {
       font-size: 11px; color: #c9b98f; margin: 0 0 6px;
       font-weight: normal; letter-spacing: 0.05em;
     }
-    /* The frame is position:absolute in the real HUD; anchor each case instead. */
-    .case .target-frame { position: relative; top: 0; left: 0; transform: none; }
-    @media (max-width: 1100px) { .case { width: 240px; } }
+    /* Both frames are position:absolute in the real HUD; anchor each case instead. */
+    .case .target-frame, .case .boss-frame { position: relative; top: 0; left: 0; transform: none; }
+    .case .target-frame.target-frame--under-boss { top: 8px; }
+    .case .boss-frame { width: 100%; }
+    .portrait { display: block; width: 38px; height: 38px; border-radius: 4px; }
+    @media (max-width: 1100px) { .case { width: 240px; } .case--boss { width: 300px; } }
   </style>
 </head>
 <body>
   <div class="grid" id="grid"></div>
   <script>
-    // Same formulas as TargetFrame.tsx.
-    const shieldPct = (amount, maxHp) =>
-      amount > 0 && maxHp > 0 ? Math.max(4, Math.min(100, (amount / maxHp) * 100)) : 0;
-    const shieldLeft = (hpPct, pct) => Math.max(0, Math.min(hpPct, 100 - pct));
+    // ── Copies of render/readoutModel.ts (re-sync when it changes) ─────────────
+    const healthColor = (f) => (f > 0.5 ? '#44ee44' : f > 0.25 ? '#eeaa22' : '#ee3322');
+    const absorbBand = (hpF, absorbF) => {
+      if (!(absorbF > 0)) return null;
+      const width = Math.max(0.04, Math.min(1, absorbF)) * 100;
+      return { left: Math.max(0, Math.min(Math.max(0, Math.min(1, hpF)) * 100, 100 - width)), width };
+    };
+    const quarterModel = (hp, maxHp) => {
+      const f = maxHp > 0 ? Math.max(0, Math.min(1, hp / maxHp)) : 0;
+      const lost = f <= 0 ? 4 : Math.min(3, Math.floor((1 - f) * 4 + 1e-9));
+      return { lost, markers: [0.75, 0.5, 0.25].map((at, i) => ({ at, lost: i < lost, next: i === lost })) };
+    };
+    const SEGMENTS = [0.25, 0.5, 0.75];
+    const targetMark = (guardian, elite) => (guardian ? 'guardian' : elite ? 'elite' : null);
+    const fmt = (n) => Math.max(0, Math.ceil(n)).toLocaleString('en-US');
 
-    const CASES = [
-      { t: 'No barrier (baseline)',      name: 'Field Hare',        hp: 260, maxHp: 400, barrier: null },
-      { t: 'Small shell (10% of maxHP)', name: 'Warded Husk',       hp: 400, maxHp: 400, barrier: { amount: 40 } },
-      { t: 'Large shell (75%)',          name: 'Aegis Sentinel',    hp: 310, maxHp: 400, barrier: { amount: 300 } },
-      { t: 'Shell over maxHP (clamped)', name: 'Bulwark Colossus',  hp: 400, maxHp: 400, barrier: { amount: 600 } },
-      { t: 'Depleting (mid-drain)',      name: 'Warded Husk',       hp: 190, maxHp: 400, barrier: { amount: 118 } },
-      { t: 'Low HP, shell fits (no lap)', name: 'Warded Husk',      hp: 120, maxHp: 400, barrier: { amount: 80 } },
-      { t: 'Nearly broken (floor)',      name: 'Warded Husk',       hp: 120, maxHp: 400, barrier: { amount: 3 } },
-      { t: 'Broken / Reforming (0)',     name: 'Warded Husk',       hp: 88,  maxHp: 400, barrier: { amount: 0 }, reforming: true },
-      { t: 'Boss, shell up',             name: 'Apex Timberclaw',   hp: 5200, maxHp: 9000, boss: true, barrier: { amount: 2700 } },
-      { t: 'Boss, no shell',             name: 'Gnarled Greatbear', hp: 5200, maxHp: 9000, boss: true, barrier: null },
-      { t: 'Late-tier, 6-digit absorb',  name: 'Void Overlord',     hp: 402000, maxHp: 900000, boss: true, barrier: { amount: 248000 } },
-    ];
+    // ReadoutBar.tsx: trough, (chip), fill by thirds, absorb band, quarters or segments, number.
+    const readoutBar = ({ size, hp, maxHp, absorb = 0, quarters = false, segments = false, chip = 0, label }) => {
+      const f = maxHp > 0 ? Math.max(0, Math.min(1, hp / maxHp)) : 0;
+      const band = absorbBand(f, maxHp > 0 ? absorb / maxHp : 0);
+      const q = quarters ? quarterModel(hp, maxHp) : null;
+      const lostTroughs = q ? Array.from({ length: q.lost }, (_, i) =>
+        `<i class="ro-bar__lost" style="left:${(1 - (i + 1) * 0.25) * 100}%"></i>`).join('') : '';
+      const chipEl = chip > 0 ? `<i class="ro-bar__chip" style="left:${f * 100}%;width:${chip * 100}%"></i>` : '';
+      const ticks = q
+        ? q.markers.map((m) => `<i class="ro-bar__q${m.lost ? ' ro-bar__q--lost' : m.next ? ' ro-bar__q--next' : ''}" style="left:${m.at * 100}%"></i>`).join('')
+        : segments ? SEGMENTS.map((at) => `<i class="ro-bar__seg" style="left:${at * 100}%"></i>`).join('') : '';
+      return `<div class="ro-bar ro-bar--${size}" role="img">${lostTroughs}${chipEl}`
+        + `<i class="ro-bar__fill" style="width:${f * 100}%;background:${healthColor(f)}"></i>`
+        + (band ? `<i class="ro-bar__absorb" style="left:${band.left}%;width:${band.width}%"></i>` : '')
+        + `${ticks}${label ? `<span class="ro-bar__num">${label}</span>` : ''}</div>`;
+    };
+    const pips = (hp, maxHp) => {
+      const { lost } = quarterModel(hp, maxHp);
+      return `<span class="ro-pips" role="img">${[0, 1, 2, 3].map((i) => `<i${i < lost ? ' class="is-lost"' : ''}></i>`).join('')}</span>`;
+    };
 
+    // TargetFrame.tsx: the stats row, the three fixed homes, the loose tiles.
     const tile = (label, color) => `
       <div class="tf-tile-wrap" role="img" aria-label="${label}">
         <div class="tf-tile" style="background-color:${color};box-shadow:0 0 8px ${color}66"></div>
         <span class="tf-tile__label" style="color:${color}">${label}</span>
       </div>`;
-
-    document.getElementById('grid').innerHTML = CASES.map((c) => {
-      const hpPct = Math.max(0, Math.min(100, (c.hp / c.maxHp) * 100));
-      const hpColor = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
-      const amount = Math.max(0, c.barrier ? c.barrier.amount : 0);
-      const pct = shieldPct(amount, c.maxHp);
-
-      const shieldOverlay = pct > 0 ? `
-        <div class="target-frame__shield" role="img" aria-label="Barrier absorbing ${Math.round(amount)}"
-             style="left:${shieldLeft(hpPct, pct)}%;width:${pct}%"></div>
-        <span class="target-frame__shield-amount">${Math.round(amount)}</span>` : '';
-
-      const tiles = [
-        tile('Slow', '#6fd0ff'),
-        ...(c.barrier ? [tile(c.reforming ? 'Reforming' : 'Barrier', '#55d9f2')] : []),
-      ].join('');
-
-      return `
-      <div class="case">
-        <h2>${c.t}</h2>
-        <div class="target-frame${c.boss ? ' target-frame--boss' : ''}">
-          <div class="target-frame__name-row">
-            <span class="target-frame__name">${c.name}</span>
-            ${c.boss ? '<span class="target-frame__boss-tag">BOSS</span>' : ''}
-          </div>
-          <div class="target-frame__track">
-            <div class="target-frame__fill" style="width:${hpPct}%;background:${hpColor}"></div>
-            ${shieldOverlay}
-            <span class="target-frame__hp-text">${Math.ceil(c.hp)} / ${c.maxHp}</span>
-          </div>
-          <div class="target-frame__stats">
-            <span>ATK <b>42</b></span><span>DR <b>12%</b></span><span>PLT <b>8</b></span>
-          </div>
-          <div class="target-frame__tiles">${tiles}</div>
-        </div>
+    const homes = (slowed) => `
+      <div class="tf-homes">
+        <div class="tf-home tf-home--owes tf-home--empty"><span class="tf-home__caption">Owes</span><span class="tf-home__ghost" aria-hidden="true"></span></div>
+        <div class="tf-home tf-home--slowed${slowed ? '' : ' tf-home--empty'}"><span class="tf-home__caption">Slowed</span>${slowed
+          ? '<span class="tf-home__badge"><span class="tf-home__icon"></span><span class="tf-home__name">Slow</span><span class="tf-home__value">30%</span><i class="tf-home__clock" style="width:60%"></i></span>'
+          : '<span class="tf-home__ghost" aria-hidden="true"></span>'}</div>
+        <div class="tf-home tf-home--held tf-home--empty"><span class="tf-home__caption">Held</span><span class="tf-home__ghost" aria-hidden="true"></span></div>
       </div>`;
-    }).join('');
+
+    const targetFrame = (c, { underBoss = false } = {}) => {
+      const amount = Math.max(0, c.barrier ? c.barrier.amount : 0);
+      const mark = targetMark(!!c.guardian, !!c.elite);
+      const hpText = `${Math.ceil(c.hp)} / ${c.maxHp}`;
+      // When the boss frame shows this body, the target frame drops its head (one channel per fact).
+      const head = underBoss ? '' : `
+        <div class="tf-head">
+          <span class="tf-portrait" aria-hidden="true"><span class="portrait" style="background:${c.color ?? '#7a6a55'}"></span></span>
+          <div class="tf-head__body">
+            <div class="tf-head__name-row">
+              <span class="target-frame__name">${c.name}</span>
+              <span class="tf-head__tier">T${c.tier ?? 1}</span>
+              ${mark ? `<span class="tf-mark tf-mark--${mark}">${mark.toUpperCase()}</span>` : ''}
+              ${c.boss ? '<span class="tf-mark tf-mark--boss">BOSS</span>' : ''}
+              ${amount > 0 ? `<span class="tf-head__absorb" title="Barrier — absorbed before health">+${Math.round(amount)}</span>` : ''}
+            </div>
+            ${readoutBar({ size: 'target', hp: c.hp, maxHp: c.maxHp, absorb: amount, segments: mark !== null, quarters: !!c.boss, chip: c.chip ?? 0, label: hpText })}
+          </div>
+        </div>`;
+      const loose = c.barrier ? [tile(c.reforming ? 'Reforming' : 'Barrier', '#55d9f2')] : [];
+      const cls = ['target-frame', c.boss ? 'target-frame--boss' : '', mark ? `target-frame--${mark}` : '', underBoss ? 'target-frame--under-boss' : '']
+        .filter(Boolean).join(' ');
+      return `
+        <div class="${cls}">
+          ${head}
+          <div class="target-frame__stats"><span>ATK <b>42</b></span><span>DR <b>12%</b></span><span>PLT <b>8</b></span></div>
+          ${homes(!!c.slowed)}
+          ${loose.length ? `<div class="target-frame__tiles">${loose.join('')}</div>` : ''}
+        </div>`;
+    };
+
+    // BossFrame.tsx BossFrameView, placement "top"; the cast line is frozen part-way.
+    const bossFrame = (c) => {
+      const amount = Math.max(0, c.barrier ? c.barrier.amount : 0);
+      const hpLabel = `${fmt(c.hp)} / ${fmt(c.maxHp)}`;
+      const cast = c.cast
+        ? `<div class="boss-cast is-casting"><span class="boss-cast__label">${c.cast.label}</span><span class="boss-cast__track" role="img">`
+          + `<i class="boss-cast__fill" style="animation-duration:${c.cast.ms}ms;animation-delay:-${c.cast.ms * c.cast.at}ms;animation-play-state:paused"></i></span></div>`
+        : c.primed
+          ? '<div class="boss-cast is-primed"><span class="boss-cast__label">Next hit empowered</span><span class="boss-cast__track" role="img"><i class="boss-cast__fill boss-cast__fill--primed"></i></span></div>'
+          : '<div class="boss-cast"><span class="boss-cast__label"></span><span class="boss-cast__track"></span></div>';
+      return `
+        <div class="boss-frame">
+          <div class="boss-frame__head">
+            <span class="boss-frame__name">${c.name}</span>
+            <span class="boss-frame__tag">T${c.tier ?? 1} · BOSS</span>
+            <span class="boss-frame__spacer"></span>
+            ${pips(c.hp, c.maxHp)}
+          </div>
+          ${readoutBar({ size: 'boss', hp: c.hp, maxHp: c.maxHp, absorb: amount, quarters: true, chip: c.chip ?? 0, label: hpLabel })}
+          ${cast}
+        </div>`;
+    };
+
+    const CASES = [
+      { t: 'No barrier (baseline)',       name: 'Field Hare',       hp: 260, maxHp: 400, barrier: null, chip: 0.08 },
+      { t: 'Small shell (10% of maxHP)',  name: 'Warded Husk',      hp: 400, maxHp: 400, barrier: { amount: 40 } },
+      { t: 'Large shell (75%)',           name: 'Aegis Sentinel',   hp: 310, maxHp: 400, barrier: { amount: 300 } },
+      { t: 'Shell over maxHP (clamped)',  name: 'Bulwark Colossus', hp: 400, maxHp: 400, barrier: { amount: 600 } },
+      { t: 'Depleting (mid-drain)',       name: 'Warded Husk',      hp: 190, maxHp: 400, barrier: { amount: 118 } },
+      { t: 'Low HP, shell fits (no lap)', name: 'Warded Husk',      hp: 120, maxHp: 400, barrier: { amount: 80 } },
+      { t: 'Nearly broken (floor)',       name: 'Warded Husk',      hp: 120, maxHp: 400, barrier: { amount: 3 } },
+      { t: 'Broken / Reforming (0)',      name: 'Warded Husk',      hp: 88,  maxHp: 400, barrier: { amount: 0 }, reforming: true },
+      { t: 'Elite, slowed',               name: 'Thornback Boar',   hp: 640, maxHp: 900, elite: true, slowed: true, color: '#8a5a3a' },
+      { t: 'Dungeon guardian',            name: 'Cave Warden',      hp: 520, maxHp: 700, guardian: true, color: '#555a66' },
+      { t: 'Guardian that is elite',      name: 'Cave Warden',      hp: 700, maxHp: 700, guardian: true, elite: true, color: '#555a66' },
+      { t: 'Boss, own head (no boss frame)', name: 'Gnarled Greatbear', hp: 5200, maxHp: 9000, boss: true, tier: 2, barrier: null },
+      { t: 'Boss frame, full',            name: 'Crag Behemoth',    hp: 2100, maxHp: 2100, boss: true, frame: true },
+      { t: 'Boss frame, one quarter lost, casting', name: 'Crag Behemoth', hp: 1500, maxHp: 2100, boss: true, frame: true, chip: 0.04, cast: { label: 'Crag Charge', ms: 2400, at: 0.6 } },
+      { t: 'Boss frame, half, primed',    name: 'Crag Behemoth',    hp: 1000, maxHp: 2100, boss: true, frame: true, primed: true },
+      { t: 'Boss frame, shell up, last quarter', name: 'Apex Timberclaw', hp: 2000, maxHp: 9000, boss: true, tier: 2, frame: true, barrier: { amount: 2700 }, slowed: true },
+      { t: 'Boss frame, 6-digit absorb',  name: 'Void Sovereign',   hp: 402000, maxHp: 900000, boss: true, tier: 4, frame: true, barrier: { amount: 248000 } },
+    ];
+
+    const only = new URLSearchParams(location.search).get('only');
+    document.getElementById('grid').innerHTML = CASES
+      .filter((c) => !only || c.t.toLowerCase().includes(only.toLowerCase()))
+      .map((c) => `
+        <div class="case${c.frame ? ' case--boss' : ''}">
+          <h2>${c.t}</h2>
+          ${c.frame ? bossFrame(c) + targetFrame(c, { underBoss: true }) : targetFrame(c)}
+        </div>`).join('');
   </script>
 </body>
 </html>

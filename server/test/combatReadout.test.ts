@@ -6,10 +6,12 @@
  * wiring checks that need client render state live in combatText.test.ts.
  */
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { BAR_TOKENS, FRAME_TOKENS, NUMBER_TOKENS, readoutCssVars } from '../../client/src/render/readoutTokens';
 import {
   DotCoalescer, LaneStack, absorbBand, bodySizeClass, chipActive, chipAdvance, chipValue, colorInt, healthColor,
-  barHeightAtZoom, numberBandFor, numberScreenScale, quarterModel, segmentMarks, shiftBand, type ChipState,
+  barHeightAtZoom, critBand, numberBandFor, numberScreenScale, targetMark, quarterModel, segmentMarks, shiftBand, type ChipState,
 } from '../../client/src/render/readoutModel';
 import {
   bossFrameEqual, bossFrameModel, liveCast, pickBoss, type BossFrameSource,
@@ -32,6 +34,16 @@ import {
   assert.equal(shiftBand('swing', 1), 'swing');
   assert.equal(shiftBand('chip', -1), 'chip');
   assert.equal(shiftBand('hit', 1), 'heavy');
+  // A crit moves up one band and never draws below the crit floor (heavy).
+  assert.equal(critBand('chip'), 'heavy', 'a chip-sized crit (a boss) still pops at the floor');
+  assert.equal(critBand('hit'), 'heavy');
+  assert.equal(critBand('heavy'), 'swing');
+  assert.equal(critBand('swing'), 'swing');
+  // The target frame's mark: a guardian outranks an elite, as its overhead outline does.
+  assert.equal(targetMark(true, true), 'guardian');
+  assert.equal(targetMark(true, false), 'guardian');
+  assert.equal(targetMark(false, true), 'elite');
+  assert.equal(targetMark(false, false), null);
   assert(chip.sizePx < hit.sizePx && hit.sizePx < heavy.sizePx && heavy.sizePx < swing.sizePx, 'bands grow');
 }
 
@@ -229,5 +241,16 @@ function floater(height = 10) {
   for (const size of Object.keys(FRAME_TOKENS.bar.height)) assert(vars[`--ro-h-${size}`] && vars[`--ro-num-${size}`]);
   assert(FRAME_TOKENS.cast.primed !== NUMBER_TOKENS.crit.color, 'the primed line is not crit gold');
   assert(FRAME_TOKENS.lowHealth.at > 0 && FRAME_TOKENS.lowHealth.at < 0.5);
+}
+
+// ── The uishot harnesses' copy of the css vars ──────────────────────────────
+{
+  // tools/uishot/harness/*.html are static pages: they cannot call readoutCssVars(),
+  // so readout-vars.css carries a copy. It must say what the tokens say.
+  const css = readFileSync(join(__dirname, '../../tools/uishot/harness/readout-vars.css'), 'utf8');
+  const copied = Object.fromEntries([...css.matchAll(/(--ro-[\w-]+):\s*([^;]+);/g)].map((m) => [m[1], m[2].trim()]));
+  const expected = readoutCssVars();
+  const block = Object.entries(expected).map(([k, v]) => `  ${k}: ${v};`).join('\n');
+  assert.deepEqual(copied, expected, `tools/uishot/harness/readout-vars.css drifted from the tokens; its :root block should read:\n${block}\n`);
 }
 console.log('combatReadout.test.ts: ok');

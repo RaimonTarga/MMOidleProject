@@ -35,6 +35,19 @@
   flex: 0 0 auto;
   scale: var(--ui-font-scale);
   transform-origin: top right;
+  transition: opacity 200ms ease;
+}
+
+/* The boss frame owns the top centre during a boss fight; at 1440 it would cover
+   the bar's left third. Desktop only: the phone's bar sits in its own strip row. */
+#biome-xp-overlay > .biome-xp-bar--behind-boss {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #biome-xp-overlay > .biome-xp-bar {
+    transition: none;
+  }
 }
 
 /* ── Header row ──────────────────────────────────────────────────────────── */

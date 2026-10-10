@@ -83,7 +83,10 @@ W2's discoverability surfaces have focused harnesses too:
 
 - `system-nav.html` mirrors the expanded desktop Loadout navigation and the
   standalone Runes, Crafting, and Upgrade destinations.
-- `crown.html` covers the desktop active-stance chip alongside health layers.
+- `crown.html` covers the desktop Character crown: the vitals on the shared
+  readout bar (thirds colour, the ward band, the pending-DoT and regen layers, the
+  edge glow at a quarter: `?hp=22`), the barrier conduit (`?barrier=0.6`), the
+  headline and the rails, and the Evasion instrument.
 - `crafting-dialog.html` mirrors the Crafting and Upgrade destinations in their
   shared `GameDialog` shell. `?tab=`, `?rows=`, `?filters=few`, and `?maxed=1`
   vary the content volume, because the thing worth measuring there is that the
@@ -93,10 +96,20 @@ W2's discoverability surfaces have focused harnesses too:
 
 `target-frame.html` walks the target frame through every enemy-absorb state — no
 barrier, a shell sized from a sliver to larger than the health pool, mid-drain,
-and broken/reforming — because the interesting cases are exactly the ones that
-are awkward to find on a live mob. It duplicates TargetFrame's two shield
-formulas (width, and the left offset that slides the shell back inside the bar),
-so keep them in sync.
+and broken/reforming — then the ELITE and GUARDIAN marks, and the desktop boss
+frame (with the headless target frame under it) at each quarter, casting, primed
+and shelled, because the interesting cases are exactly the ones that are awkward
+to find on a live mob. `?only=<substring>` keeps the matching cases.
+
+**The combat readout harnesses are copies; keep them in sync.** The readout's
+DOM components set their `--ro-*` custom properties at runtime from
+`client/src/render/readoutTokens.ts`, which a static page cannot import, so
+`harness/readout-vars.css` carries them: `combatReadout.test.ts` fails when it
+drifts and prints the block to paste. The DOM of `target-frame.html` and
+`crown.html` (TargetFrame, BossFrame, ReadoutBar, StatPlate) and their copies of
+`readoutModel.ts` (healthColor, absorbBand, quarterModel, targetMark) are not
+checked: re-sync them by hand when those files change, or the harness will show
+yesterday's frame. Last synced with the combat readout merge, 2026-10-10.
 
 Two things a harness cannot tell you: whether the React state that produces the
 DOM is correct, and how it behaves with real fonts under `zoom`. For those, point

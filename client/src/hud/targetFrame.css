@@ -27,6 +27,7 @@
 .target-frame--stale { opacity: var(--ro-stale); }
 
 .target-frame--elite { border-color: var(--ro-elite-edge); }
+.target-frame--guardian { border-color: var(--ro-guardian-edge); }
 
 /* The head (combat readout run, item 5): the portrait slot (the monster's atlas
    frame, no new art), then the name row over the readout bar (hud/ReadoutBar.tsx,
@@ -88,6 +89,7 @@
   letter-spacing: 0.1em;
 }
 .tf-mark--elite { color: var(--ro-elite-tag); border-color: var(--ro-elite-edge); }
+.tf-mark--guardian { color: var(--ro-guardian-tag); border-color: var(--ro-guardian-edge); }
 .tf-mark--boss { color: var(--ro-boss-tag); border-color: var(--ro-boss-edge); background: var(--ro-boss-tag-bg); }
 
 /* The shell's absorb, at the end of the name row (the bar draws its band). */

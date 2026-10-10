@@ -276,6 +276,7 @@ export function applyDelta(
         plating: tm.plating,
         damageReduction: tm.damageReduction,
         isBoss: tm.isBoss,
+        isGuardian: state.dungeonGuardianIds.has(tm.id),
         statuses: tm.targetStatus ?? [],
         bossEffects: tm.bossEffects ?? [],
         bossEffectStacks: tm.bossEffectStacks ?? {},
