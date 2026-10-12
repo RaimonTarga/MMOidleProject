@@ -874,22 +874,23 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "a huge cave troll, the same broad faceless top-heavy vessel breed as a cave brute but larger and heavier, massive shoulders and long heavy arms, skin like rough hewn stone and packed chitin, crude slabs of stone strapped across the shoulders and forearms as armor plates, small featureless head, heavy patrol stance, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, pale chitin-grey and dun-brown stone hide with bone-pale plating and a faint pale glint at the eye sockets",
-      "status": "accepted",
+      "prompt": "a massive faceless cave vessel of rough hewn stone and packed chitin, the same breed as a cave brute but hunched low and knuckle-walking on all fours, enormous thick forearms planted on the knuckles, short bowed hind legs, broad sloping back armored with crude slabs of stone, small featureless head sunk low between the shoulders, heavy prowling stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale chitin-grey and dun-brown stone hide with bone-pale stone slabs and a faint pale glint at the eye sockets",
+      "status": "pending",
       "sources": [
         "cave-troll"
       ],
-      "negative": "human face, eyes, mouth, human skin, flesh tone, handsome, hair, clothing, uniform, purple, violet, green, blue, red, colorful, glowing, magical glow, neon, black body, pitch dark, bright white, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "negative": "troll, ogre, orc, goblin, green skin, pink skin, loincloth, face, nose, ears, teeth, standing upright, human face, eyes, mouth, human skin, flesh tone, hair, clothing, weapon, club, purple, violet, green, blue, red, colorful, glowing, magical glow, neon, black body, pitch dark, bright white, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
         "direction": "east",
-        "initImage": "sprites/style-probes/brute-v8.png",
-        "initImageStrength": 250
+        "initImage": "sprites/monsters/brute.png",
+        "initImageStrength": 65
       },
-      "notes": "T2 of the bruiser line: same species as Cave Brute, bigger + crude stone armor slabs. img2img from brute-v8 @250 keeps the family silhouette."
+      "notes": "Distinctness batch 2026-10-12 (round 2: round 1 drew generic fantasy trolls with faces and flesh/green skin; the word \"troll\" dropped, light kin anchor on the Cave Brute at 65): the Brute line (Cave Brute, Cave Troll, Cavern Troll) all came from one anchor at img2img 250 and read as one body. T2 now knuckle-walks (horizontal silhouette). Previous: T2 of the bruiser line: same species as Cave Brute, bigger + crude stone armor slabs. img2img from brute-v8 @250 keeps the family silhouette.",
+      "candidates": 5
     },
     {
       "id": "cavern-troll",
@@ -898,22 +899,23 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "a colossal cavern troll, the same broad faceless top-heavy vessel breed as a cave brute at its most massive, enormous shoulders and long heavy arms, skin like rough hewn stone and packed chitin, heavy interlocking stone plates armoring the shoulders, back and forearms, cracked and battle-worn, small featureless head, dominating heavy stance, three-quarter view facing right, full body, painterly pixel art, soft volumetric shading, minimal outline, pale chitin-grey and dun-brown stone hide with bone-pale armor plating and a faint pale glint at the eye sockets",
-      "status": "accepted",
+      "prompt": "a colossal faceless cavern vessel of rough pale stone and packed chitin, the same breed as a cave brute grown ancient and enormous, long pale dripstone stalactites hanging from its arms, chin and shoulders, flowstone ridges running down its back like melted wax, long heavy arms, small featureless head, dominating planted stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale chitin-grey and dun-brown stone hide with bone-pale dripstone and a faint pale glint at the eye sockets",
+      "status": "pending",
       "sources": [
         "cavern-troll"
       ],
-      "negative": "human face, eyes, mouth, human skin, flesh tone, handsome, hair, clothing, uniform, purple, violet, green, blue, red, colorful, glowing, magical glow, neon, black body, pitch dark, bright white, small, front view, facing camera, cartoon, chibi, anthropomorphic, weapon, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "negative": "troll, ogre, orc, goblin, green skin, pink skin, flesh, loincloth, face, nose, ears, teeth, muscles, crystal, crystals, quartz, human face, eyes, mouth, human skin, flesh tone, hair, clothing, weapon, purple, violet, green, blue, red, colorful, glowing, magical glow, neon, black body, pitch dark, bright white, small, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
       "params": {
         "outline": "lineless",
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
         "direction": "east",
-        "initImage": "sprites/style-probes/brute-v8.png",
-        "initImageStrength": 250
+        "initImage": "sprites/monsters/brute.png",
+        "initImageStrength": 65
       },
-      "notes": "T3 elite ceiling of the bruiser line: heaviest armor, most massive. img2img from brute-v8 @250."
+      "notes": "Distinctness batch 2026-10-12 (round 2: round 1 drew generic fantasy trolls with faces and flesh/green skin; the word \"troll\" dropped, light kin anchor on the Cave Brute at 65): same Brute-line problem. T3 now carries hanging dripstone (not crystal: the Crystal Gargoyle owns that look). Previous: T3 elite ceiling of the bruiser line: heaviest armor, most massive. img2img from brute-v8 @250.",
+      "candidates": 5
     },
     {
       "id": "cinder-hound",
@@ -3695,9 +3697,9 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "a small lean grassland kite, a young raptor smaller and slighter than a hawk, narrow pointed wings spread wide in a low swooping glide, forked tail, small hooked beak, talons tucked, airborne with nothing beneath it, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dusty tan and warm grey-brown plumage with cream barring on the underwing",
-      "negative": "large, bulky, eagle, owl, perched, folded wings, wings closed, standing on ground, grass, wheat, standing upright, bipedal, on hind legs, rearing up, bright green, vivid yellow, cool hues, pure white, glowing, magical glow, slime, weapon, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "accepted",
+      "prompt": "a slender grassland kite hovering in place, a small long-winged bird of prey holding still in the air with long narrow wings raised high in a sharp V above its back, long deeply forked swallow tail fanned open, small head tilted down scanning below, legs dangling with talons open, airborne with nothing beneath it, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale dusty buff and warm grey-brown plumage with dark russet wingtips and a cream face",
+      "negative": "hawk, eagle, broad wings, wings swept back, diving, owl, perched, folded wings, wings closed, standing on ground, grass, wheat, bright green, vivid yellow, cool hues, pure white, glowing, magical glow, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "pending",
       "sources": [
         "grass-kite"
       ],
@@ -3706,11 +3708,10 @@
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
-        "direction": "east",
-        "initImage": "sprites/monsters/savanna-hawk.png",
-        "initImageStrength": 250
+        "direction": "east"
       },
-      "notes": "T1 third-family mob (progression rework 2026-10-01). Younger kin of the T2 family member, anchored on its accepted sprite."
+      "notes": "Distinctness batch 2026-10-12: was a near-copy of the Savanna Hawk (img2img 250). New silhouette: hovering with wings in a raised V and a forked tail, vs the hawk's swept-back dive. Previous: T1 third-family mob (progression rework 2026-10-01). Younger kin of the T2 family member, anchored on its accepted sprite.",
+      "candidates": 5
     },
     {
       "id": "bramble-pod",
@@ -3719,9 +3720,9 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "a small young bramble creature, a tight knot of twisted dark bark and thorny vine with a single hollow seed-pod snout aimed forward, squat and low on stubby root nubs, fewer and smaller thorns than a grown bramble beast, crouched and planted, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark bark-brown and umber body with matte berry-red thorn tips",
-      "negative": "fairy, pixie, wings, flower, blossom, leafy bright green body, moss green, glowing, magical glow, humanoid, face, eyes, tall, large, slime, standing upright, bipedal, on hind legs, rearing up, plains tan, sandy, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "accepted",
+      "prompt": "a rooted bramble pod plant creature, a single swollen seed pod the size of a dog, husk of dark gnarled bark split open at the top like a gaping mouth, a thick tangle of thorny vines wrapped around the pod, a clutch of short writhing root tendrils curling beneath it instead of legs, dark sticky sap oozing from the split, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark umber and rust-brown bark husk with matte bramble-red thorn tips",
+      "negative": "animal, legs, paws, snout, tail, quadruped, rat, eyes, face, flower, petals, leaves, green body, bright green, glowing, magical glow, pot, planter, plains tan, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "pending",
       "sources": [
         "bramble-pod"
       ],
@@ -3730,11 +3731,10 @@
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
-        "direction": "east",
-        "initImage": "sprites/monsters/thorn-spitter.png",
-        "initImageStrength": 250
+        "direction": "east"
       },
-      "notes": "T1 third-family mob (progression rework 2026-10-01). Younger kin of the T2 family member, anchored on its accepted sprite."
+      "notes": "Distinctness batch 2026-10-12: was a near-copy of the Thorn Spitter (img2img 250). New concept: a legless rooted pod (it is a rooted ranged mob), not a second bark quadruped. Previous: T1 third-family mob (progression rework 2026-10-01). Younger kin of the T2 family member, anchored on its accepted sprite.",
+      "candidates": 5
     },
     {
       "id": "rockback-ram",
@@ -3743,9 +3743,9 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "a stocky mountain ram on all four legs, head lowered in a braced charging stance, thick curled ivory horns, a heavy back plated with slabs of lichen-dusted dark stone grown into its hide like armor, short powerful legs planted, compact and low, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, warm buff and tan hide with ivory horns and dark basalt-grey stone plates dusted pale with lichen",
-      "negative": "standing upright, bipedal, on hind legs, rearing up, walking, mid-stride, raised hoof, goat kid, slender, antlers, mossy, green, mid-grey body, blue-grey body, robot, mechanical, metal armor, saddle, rider, glowing, magical glow, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "accepted",
+      "prompt": "a stocky heavy mountain ram on all four legs, low barrel-chested body much broader and heavier than a goat, enormous thick spiral horns curling fully around both sides of the head, short thick legs, dense matted fleece on the neck and chest, a row of flat stone plates grown along its spine and shoulders like armor, head lowered in a braced charging stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, warm buff and dun fleece with darker basalt-grey stone back plates and ivory horns",
+      "negative": "goat, slender, lean, long legs, beard, backswept horns, thin horns, walking, mid-stride, raised paw, standing upright, bipedal, on hind legs, rearing up, mid-grey body, moss, mossy, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "pending",
       "sources": [
         "rockback-ram"
       ],
@@ -3754,11 +3754,10 @@
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
-        "direction": "east",
-        "initImage": "sprites/monsters/cliff-hopper.png",
-        "initImageStrength": 250
+        "direction": "east"
       },
-      "notes": "T1 third-family mob (progression rework 2026-10-01). Younger kin of the T2 family member, anchored on its accepted sprite."
+      "notes": "Distinctness batch 2026-10-12: was a near-copy of the Cliff Hopper goat, horns included (img2img 250). New silhouette: low, wide, spiral horns, stone back plates (it is the plated charger). Previous: T1 third-family mob (progression rework 2026-10-01). Younger kin of the T2 family member, anchored on its accepted sprite.",
+      "candidates": 5
     },
     {
       "id": "brood-spiderling",
@@ -3767,9 +3766,9 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "a small cave spiderling, a young spider with a compact round body on eight slim jointed legs, soft pale chitin not yet hardened, a small cluster of pale eyes, fangs lowered, quick skittering crouch, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale chitin-grey and dun-brown body with bone-pale leg joints and a colorless pale glint in the eyes",
-      "negative": "purple, violet, green, blue, red, colorful, glowing, magical glow, neon, black body, pitch dark, bright white, web, hanging from thread, large, bulky, heavy plating, many spiders, swarm, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "accepted",
+      "prompt": "a single small cave spiderling, a soft newly hatched spider with a huge round swollen translucent abdomen much bigger than its tiny head, short stubby legs, pale and waxy unhardened body, two small pale fangs, scuttling low crouch, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale waxy bone-cream and soft chitin-grey body with faint dun-brown markings and a colorless pale glint on the abdomen",
+      "negative": "armored, plated carapace, hard shell, long legs, giant spider, eye cluster, swarm, group, multiple spiders, several creatures, web, bright white, glowing, strong hue, dark body, black, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "pending",
       "sources": [
         "brood-spiderling"
       ],
@@ -3778,11 +3777,10 @@
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
-        "direction": "east",
-        "initImage": "sprites/monsters/giant-spider.png",
-        "initImageStrength": 250
+        "direction": "east"
       },
-      "notes": "T1 third-family mob (progression rework 2026-10-01). Younger kin of the T2 family member, anchored on its accepted sprite."
+      "notes": "Distinctness batch 2026-10-12: was a near-copy of the Giant Spider (img2img 250). New proportions: a soft hatchling, huge waxy abdomen, stubby legs. Previous: T1 third-family mob (progression rework 2026-10-01). Younger kin of the T2 family member, anchored on its accepted sprite.",
+      "candidates": 5
     },
     {
       "id": "fen-hexer",
@@ -3791,9 +3789,9 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "a small hunched swamp hexer vessel, a faceless figure wrapped in sodden reeds and moss-stained rags, a plain cracked wooden mask where a face would be, thin crooked frame shorter and slighter than a bog witch, one gnarled hand raised holding a bundle of reeds trailing a dim wisp of poison-chartreuse witch-light, planted stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark bog-brown and olive-black rags with pallid bone-cream trinkets, no visible skin",
-      "negative": "human face, eyes, mouth, human skin, flesh tone, pretty, young woman, pointed witch hat, broomstick, staff, bright glow, large glow, dry, dusty, bright blue, clean white, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "accepted",
+      "prompt": "a small reed effigy hexer, a crude hunched little figure made of bound bundles of wet marsh reeds and twisted sticks tied with rotten twine, no body of flesh, a cracked wooden mask lashed to the top bundle, small bone charms dangling from cords, one stick arm holding out a hanging gourd lantern with a dim wisp of poison-chartreuse witch-light, planted stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark wet bog-brown and olive-black reeds with pallid bone-cream charms",
+      "negative": "cloak, hood, robe, rags, cloth, woman, witch, human face, eyes, mouth, human skin, flesh tone, hair, pointed hat, broomstick, bright glow, large glow, dry, dusty, yellow straw, straw scarecrow, bright blue, clean white, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "pending",
       "sources": [
         "fen-hexer"
       ],
@@ -3802,11 +3800,194 @@
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
-        "direction": "east",
-        "initImage": "sprites/monsters/bog-witch.png",
-        "initImageStrength": 250
+        "direction": "east"
       },
-      "notes": "T1 third-family mob (progression rework 2026-10-01). Younger kin of the T2 family member, anchored on its accepted sprite."
+      "notes": "Distinctness batch 2026-10-12: was a near-copy of the Bog Witch (img2img 250). New concept: a walking reed effigy carrying the witch-light, same Coven language, different body. Previous: T1 third-family mob (progression rework 2026-10-01). Younger kin of the T2 family member, anchored on its accepted sprite.",
+      "candidates": 5
+    },
+    {
+      "id": "prairie-yearling",
+      "out": "sprites/monsters/prairie-yearling.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a young prairie wolf yearling, a lanky half-grown wolf pup with oversized ears and big clumsy paws, short fluffy coat, thin tail, low eager crouch with front legs splayed and head lowered, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dusty sandy-tan and warm grey-brown coat with a darker grey-brown saddle and a cream belly and muzzle",
+      "negative": "adult wolf, fox, rust orange, red fur, walking, mid-stride, raised paw, standing upright, bipedal, on hind legs, rearing up, bright green, vivid yellow, cool hues, pure white, glowing, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "pending",
+      "sources": [
+        "prairie-yearling"
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "candidates": 5,
+      "notes": "Distinctness batch 2026-10-12: Prairie Wolf follower (x3). Shared the adult's frame; gets its own. Wire: frameMaps prairie-yearling -> this frame."
+    },
+    {
+      "id": "dire-whelp",
+      "out": "sprites/monsters/dire-whelp.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a dire wolf whelp, a stocky heavy-boned wolf pup with an oversized blocky head and huge paws, short thick neck, dense shaggy coat bristling along the spine, short blunt muzzle with small bared fangs, low growling stance with hackles raised, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, charcoal and dark umber shaggy coat with a rust-brown chest and muzzle",
+      "negative": "adult wolf, slender, lean, long legs, fox, orange fur, walking, mid-stride, raised paw, standing upright, bipedal, on hind legs, rearing up, green body, glowing, plains tan, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "pending",
+      "sources": [
+        "dire-whelp"
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "candidates": 5,
+      "notes": "Distinctness batch 2026-10-12: Dire Wolf follower (x3). Shared the adult's frame; gets its own. Wire: frameMaps dire-whelp -> this frame."
+    },
+    {
+      "id": "summit-slinger",
+      "out": "sprites/monsters/summit-slinger.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a towering mountain slinger vessel, faceless humanoid giant of dark basalt stone and taut hide wrappings, a long heavy leather sling hanging coiled from one huge hand, a wide hide harness of round boulders strapped across its chest and back, steady wide planted stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark basalt-grey stone body with weathered dun hide wrappings, ivory bone toggles and a faint cold sky-blue glint in the cracks of the stone",
+      "negative": "human face, eyes, mouth, human skin, flesh tone, hair, beard, metal armor, medieval soldier, knight, bow, arrow, basket, mid-throw, action pose, mid-grey body, moss, mossy, bright glow, neon, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "pending",
+      "sources": [
+        "summit-slinger"
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "candidates": 5,
+      "notes": "Distinctness batch 2026-10-12: NEW mob, Mountain Ridge family T4 (Ridge had no T4 body). Ladder: Ridge Ambusher -> Boulder Thrower -> Crag Mortar -> this. Needs a monster definition (placeholder stats) once picked."
+    },
+    {
+      "id": "bog-leech",
+      "out": "sprites/monsters/bog-leech.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a giant bog leech, a long fat glossy worm-like body thick as a log, smooth slick skin with faint ridged rings, a wide round sucker mouth ringed with small teeth raised and searching at the front end, the rear end coiled in a loose curve, low creeping posture, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark glossy olive-black and bog-brown skin with a pallid toad-belly cream underside and faint mottling",
+      "negative": "legs, many legs, centipede, segmented plates, eye cluster, snake head, fangs, scales, eyes, slime blob, dry, dusty, bright blue, clean white, bright green, glowing, water, mud puddle, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "pending",
+      "sources": [
+        "bog-leech"
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "candidates": 5,
+      "notes": "Distinctness batch 2026-10-12: NEW mob, Swamp Mire family T2 (Mire had no T2 body; between Bog Slime and Bog Lurker). Needs a monster definition once picked."
+    },
+    {
+      "id": "fen-shoebill",
+      "out": "sprites/monsters/fen-shoebill.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a tall swamp shoebill stork, a grim prehistoric wading bird standing on long thin legs, huge heavy clog-shaped hooked bill held low and forward, hunched shoulders and thick neck, shaggy plumage with a small crest at the back of the head, utterly still ambush stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark slate-grey and olive-black plumage with a pallid cream bill and a faint wet sheen",
+      "negative": "flying, wings spread, airborne, pelican pouch, colorful, pink, flamingo, bright blue, clean white, white feathers, dry, dusty, water, reeds, mud puddle, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "pending",
+      "sources": [
+        "fen-shoebill"
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "candidates": 5,
+      "notes": "Distinctness batch 2026-10-12: NEW mob, Swamp Stalker family T3 (Stalker had no T3 body; Mud Toad -> Mire Stalker -> this, the thing that eats both). Needs a monster definition once picked."
+    },
+    {
+      "id": "jungle-ocelot",
+      "out": "sprites/monsters/jungle-ocelot.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a small lean jungle ocelot, a slender spotted wild cat with a long thick ringed tail, large rounded ears, bold dark rosette spots and stripes across its coat, crouched low in a stalking freeze, intense stare, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, deep russet-brown and dark green-brown coat with near-black rosettes and dusky crimson eyes and ear tips",
+      "negative": "panther, black panther, solid black coat, lion, tiger, orange tiger stripes, house cat, bright green, plains tan, sandy tan, full-body high contrast, glowing, walking, mid-stride, raised paw, standing upright, bipedal, on hind legs, rearing up, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "pending",
+      "sources": [
+        "jungle-ocelot"
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "candidates": 5,
+      "notes": "Distinctness batch 2026-10-12: NEW mob, Jungle Stalker family T2 (Stalker had no T2 body). A spotted small cat, so it does not read as a third panther. Needs a monster definition once picked."
+    },
+    {
+      "id": "venom-dart-frog",
+      "out": "sprites/monsters/venom-dart-frog.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a large jungle poison dart frog, a sleek glossy frog the size of a hound with long thin limbs and wide splayed toe pads, compact body raised on its front legs in an alert ready-to-leap crouch, smooth wet skin with bold irregular warning patterns, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, deep dark green-brown glossy skin with bold dusky crimson warning blotches and a near-black throat",
+      "negative": "toad, warts, warty skin, fat, squat, heavy-lidded eyes, cartoon frog, bright green, neon, bright red, bright blue, yellow, glowing, lily pad, water, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "pending",
+      "sources": [
+        "venom-dart-frog"
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "candidates": 5,
+      "notes": "Distinctness batch 2026-10-12: NEW mob, Jungle Undergrowth family T3 (Undergrowth had no T3 body). Needs a monster definition once picked."
+    },
+    {
+      "id": "dune-antlion",
+      "out": "sprites/monsters/dune-antlion.png",
+      "size": {
+        "w": 64,
+        "h": 64
+      },
+      "prompt": "a giant desert antlion, a squat heavy-bodied insect with a broad round bristly abdomen, a wide flat head with enormous curved sickle-shaped mandibles held wide open, six short thick spiny legs splayed low, hunched ambush posture, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, sun-baked umber and dark terracotta bristly body with dusty dark gold mandibles and a faint regal sun-amber sheen on the mandible tips",
+      "negative": "scorpion, tail, stinger, pincers, claws, spider, eight legs, eye cluster, many thin legs, fine segmentation, ant, wings, pale tan body, sand colored, sand, dune, sand pit, bones, green, glowing, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "pending",
+      "sources": [
+        "dune-antlion"
+      ],
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east"
+      },
+      "candidates": 5,
+      "notes": "Distinctness batch 2026-10-12: NEW mob, Desert Scorpion family T3 (Scorpion had no T3 body). A pit ambusher fits the control family. Needs a monster definition once picked."
     }
   ]
 }
