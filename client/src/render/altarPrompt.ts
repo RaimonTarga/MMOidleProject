@@ -7,7 +7,7 @@ import {
   canActivateDungeonAltar,
   DUNGEON_ALTAR_LABEL,
 } from "../scenes/game/dungeonAltar";
-import { ALTAR_LABEL, isAtRuneAltar } from "../scenes/game/runeAltar";
+import { ALTAR_LABEL, canResetPassivesHere } from "../scenes/game/runeAltar";
 import type { GameScene } from "../scenes/game/GameScene";
 
 // Larger than the entity thought bubble so a label + key fits. Native art is
@@ -101,7 +101,7 @@ function createPrompt(scene: GameScene, label: string): AltarPromptHandle {
 }
 
 function activeAltarLabel(scene: GameScene): string | null {
-  if (isAtRuneAltar(scene)) return ALTAR_LABEL;
+  if (canResetPassivesHere(scene)) return ALTAR_LABEL;
 
   const dungeon = getDefaultStore().get(dungeonAtom);
   return canActivateDungeonAltar(scene, dungeon)

@@ -27,7 +27,7 @@ import { emoteForWheelDirection, NODE_BIOMES, NO_STANCE_ID } from '@mmo-idle/sha
 import { cancelActiveMove, setHoldStill, setKeyboardVector } from './movement';
 import { closeTopmostOverlay, togglePrimaryOverlay } from './overlayStack';
 import { canActivateDungeonAltar } from '../scenes/game/dungeonAltar';
-import { isAtRuneAltar } from '../scenes/game/runeAltar';
+import { canResetPassivesHere } from '../scenes/game/runeAltar';
 import { cycleGroundBakeoff } from '../render/wangGround';
 import { paintActiveNode } from '../scenes/game/overlays';
 import { rebuildNeighborLayer } from '../render/neighborScenes';
@@ -233,7 +233,7 @@ export function attachKeyboard(scene: GameScene): () => void {
     // Enter: trigger the interaction advertised by the current altar prompt.
     if (event.code === 'Enter' || event.code === 'NumpadEnter') {
       if (dead) return;
-      if (isAtRuneAltar(scene)) {
+      if (canResetPassivesHere(scene)) {
         event.preventDefault();
         hudBus.requestResetClass();
       } else if (

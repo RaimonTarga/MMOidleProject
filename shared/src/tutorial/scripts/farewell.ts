@@ -9,7 +9,8 @@
  * anyone would look for it.
  *
  * The third line is the frames line: the one place the guide names the frame
- * choice AND the frame-charge glow that comes with it (the weapon glow that
+ * choice (by the Passive Tree's word for it, "style": playtest 3 found the guide
+ * saying "frame" over a panel that says "Choose your style") AND the frame-charge glow that comes with it (the weapon glow that
  * grows with a frame's banked charge, `docs/briefs/frame-loops-2026-10-01.md`
  * §1, shipped in commit ec3a9d65). It is a pointer, not a lesson: the frames
  * themselves are a Tier-2 decision the guide deliberately leaves to the player.
@@ -17,5 +18,5 @@
 export const TUTORIAL_FAREWELL: readonly string[] = [
   'Two seals, Tier 2, and a tier-2 weapon. That is the guided part done.',
   'Keep going forward: new zones are open, and your next skill point is waiting in the Passive Tree.',
-  'Spend it on a frame. It decides how your mechanic pays out, and from then on your weapon glows brighter as the frame banks charge — that glow is the payoff filling up.',
+  'Spend it on a style. It decides how your mechanic pays out, and from then on your weapon glows brighter as the style banks charge — that glow is the payoff filling up.',
 ];
