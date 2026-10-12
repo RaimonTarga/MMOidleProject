@@ -303,12 +303,26 @@ export function conceptAbilityIconSource(id: string): AssetIconSource | null {
   return ABILITY_IDS.has(iconId) ? source('abilities', iconId) : null;
 }
 
+/**
+ * Rune fragments with no art of their own, drawn with another fragment's file
+ * (`<dir>/<name>` under `runes/`). Use Ability replaced the Fire Technique and
+ * Fire Guard actions (`attunementMigration.ts`) and wears their art; Formation
+ * Broken wears Wait for Summons', the action it is about. Without these both
+ * requested a PNG that was never drawn (a 404 and a "?" tile).
+ */
+const RUNE_ICON_ALIASES: Record<string, string> = {
+  'use-ability': 'actions/fire-technique',
+  'formation-broken': 'actions/wait-for-summons',
+};
+
 export function runeConditionIconSource(id: string): AssetIconSource | null {
-  return CONDITION_IDS.has(id) ? source('runes/conditions', id, 'rune-set-v2') : null;
+  if (!CONDITION_IDS.has(id)) return null;
+  return source('runes', RUNE_ICON_ALIASES[id] ?? `conditions/${id}`, 'rune-set-v2');
 }
 
 export function runeActionIconSource(id: string): AssetIconSource | null {
-  return ACTION_IDS.has(id) ? source('runes/actions', id, 'rune-set-v2') : null;
+  if (!ACTION_IDS.has(id)) return null;
+  return source('runes', RUNE_ICON_ALIASES[id] ?? `actions/${id}`, 'rune-set-v2');
 }
 
 export function runeFragmentConceptIconSource(id: string): AssetIconSource | null {

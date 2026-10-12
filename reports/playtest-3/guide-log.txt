@@ -1,0 +1,404 @@
+[17:51:11] STEP a-01 zone=CLEARING T0 Lv 2 hp=100/100 beh=Attacking Tiny Wisp
+    THE CLEARING | Craft the Bark Wrap and wear it. | Next | 
+[17:51:11] ZONE CLEARING T0 Lv 2
+[17:51:16] STEP a-02 zone=CLEARING T0 Lv 3 hp=124/125 beh=Recover First
+    THE CLEARING | Craft the Bark Wrap and wear it. | Working… | 
+[17:51:16] ZONE CLEARING T0 Lv 3
+[17:51:22] STEP a-03 zone=CLEARING T0 Lv 3 hp=140/150 beh=Recover First
+    THE CLEARING | Pick the class you like the look of. The guide has a route for every one. | Working… | 
+[17:51:25] STEP a-04 zone=CLEARING T0 Lv 3 hp=150/150 beh=◇
+    THE CLEARING | Pick the class you like the look of. The guide has a route for every one. | Next | 
+[17:51:30] STEP a-05 zone=CLEARING T0 Lv 3 hp=150/150 beh=Attacking Tiny Wisp
+    THE CLEARING | Read the cards, then confirm your pick with Unlock. | Your move | 
+[17:52:49] ZONE 
+[18:00:12] END min HP fraction 0.93
+[18:01:03] STEP b-01 zone= hp=177/177 beh=Chase Enemy
+    THE CLEARING | Craft the Herb Pouch and carry it. | Next | 
+[18:01:08] STEP b-02 zone= hp=177/177 beh=Chase Enemy
+    THE CLEARING | Craft the Herb Pouch and carry it. | Working… | 
+[18:01:14] STEP b-03 zone= hp=177/177 beh=Chase Enemy
+    THE CLEARING | Craft the Soft Boots and lace them up: less time walking, more time fighting. That is the full Clearing set. | Next | 
+[18:01:19] STEP b-04 zone= hp=177/177 beh=Chase Enemy
+    THE CLEARING | Craft the Soft Boots and lace them up: less time walking, more time fighting. That is the full Clearing set. | Working… | 
+[18:01:24] STEP b-05 zone= hp=177/177 beh=Attacking Tiny Wisp
+    THE CLEARING | These Runes are your standing orders: rest up between fights and back off when badly hurt. | Working… | 
+[18:01:28] STEP b-06 zone= hp=177/177 beh=Chase Enemy
+    THE CLEARING | These Runes are your standing orders: rest up between fights and back off when badly hurt. | Next | 
+[18:01:32] STEP b-07 zone= hp=176/177 beh=Recover First
+    THE CLEARING | Moving HP Below 25% → Flee up: higher rules win. | Working… | 
+[18:01:36] STEP b-08 zone= hp=177/177 beh=Chase Enemy
+    THE PLAINS | On to the Plains, next door to the Clearing and still forgiving. | Next | 
+[18:01:41] STEP b-09 zone= hp=177/177 beh=Fight Back
+    THE PLAINS | Heading there first. | Working… | 
+[18:01:55] STEP b-10 zone=PLAINS T1 Lv 0 hp=177/177 beh=Manual control
+    THE PLAINS | On to the Plains, next door to the Clearing and still forgiving. | Working… | 
+[18:01:55] ZONE PLAINS T1 Lv 0
+[18:01:58] STEP b-11 zone=PLAINS T1 Lv 0 hp=174/177 beh=Chase Enemy
+    THE PLAINS | Fighting in the Plains until the Iron Broadsword is ready. | Mastery level | 0/1 | Might essence | 0/10 | In progress… | 
+[18:02:42] LOW HP 43/177 zone=PLAINS T1 Lv 0 beh=Flee
+[18:02:44] LOW HP 38/177 zone=PLAINS T1 Lv 0 beh=Flee
+[18:02:47] LOW HP 22/177 zone=PLAINS T1 Lv 0 beh=Flee
+[18:02:50] LOW HP 15/177 zone=PLAINS T1 Lv 1 beh=Flee
+[18:02:50] STEP b-12 zone=PLAINS T1 Lv 1 hp=15/177 beh=Flee
+    THE PLAINS | A real weapon at last: the Iron Broadsword. | Working… | 
+[18:02:50] ZONE PLAINS T1 Lv 1
+[18:02:53] LOW HP 20/177 zone=PLAINS T1 Lv 1 beh=Flee
+[18:02:54] STEP b-13 zone=PLAINS T1 Lv 1 hp=20/177 beh=Flee
+    THE PLAINS | A real weapon at last: the Iron Broadsword. | Next | 
+[18:02:59] STEP b-14 zone=PLAINS T1 Lv 1 hp=122/177 beh=Retreating
+    THE PLAINS | A real weapon at last: the Iron Broadsword. | Working… | 
+[18:03:05] STEP b-15 zone=PLAINS T1 Lv 1 hp=177/177 beh=Attacking Grass Kite
+    THE PLAINS | Next up: the Survivor's Robe. | Working… | 
+[18:03:08] STEP b-16 zone=PLAINS T1 Lv 1 hp=169/177 beh=Chase Enemy
+    THE PLAINS | Next up: the Survivor's Robe. | Next | 
+[18:03:14] STEP b-17 zone=PLAINS T1 Lv 1 hp=177/177 beh=Attacking Grass Kite
+    THE PLAINS | Fighting in the Plains until the Survivor's Robe is ready. | Mastery level | 1/2 | Might essence | 20/20 | In progress… | 
+[18:04:09] STEP b-18 zone=PLAINS T1 Lv 2 hp=170/177 beh=Recover First
+    THE PLAINS | Craft the Survivor's Robe and wear it. | Next | 
+[18:04:09] ZONE PLAINS T1 Lv 2
+[18:04:14] STEP b-19 zone=PLAINS T1 Lv 2 hp=171/177 beh=Recover First
+    THE PLAINS | Craft the Survivor's Robe and wear it. | Working… | 
+[18:04:19] STEP b-20 zone=PLAINS T1 Lv 2 hp=193/208 beh=Recover First
+    THE PLAINS | Learn Sweep: every so often your swing cleaves everything around you. | Working… | 
+[18:04:22] STEP b-21 zone=PLAINS T1 Lv 2 hp=208/208 beh=Attacking Boar
+    THE PLAINS | Learn Sweep: every so often your swing cleaves everything around you. | Next | 
+[18:04:27] STEP b-22 zone=PLAINS T1 Lv 2 hp=118/208 beh=Chase Enemy
+    THE PLAINS | Learn Sweep: every so often your swing cleaves everything around you. | Working… | 
+[18:04:30] STEP b-23 zone=PLAINS T1 Lv 2 hp=90/208 beh=Chase Enemy
+    THE PLAINS | Attuning Sweep. | Working… | 
+[18:04:33] STEP b-24 zone=PLAINS T1 Lv 2 hp=85/208 beh=Recover First
+    THE PLAINS | Giving Sweep a Rune, so it fires on its own in a fight. | Working… | 
+[18:04:37] STEP b-25 zone=PLAINS T1 Lv 2 hp=90/208 beh=Recover First
+    THE PLAINS | Next up: the Plains Stone. | Next | 
+[18:04:42] STEP b-26 zone=PLAINS T1 Lv 2 hp=199/208 beh=Recover First
+    THE PLAINS | Fighting in the Plains until the Plains Stone is ready. | Mastery level | 2/3 | Might essence | 10/10 | In progress… | 
+[18:04:58] STEP b-27 zone=PLAINS T1 Lv 3 hp=182/208 beh=Recover First
+    THE PLAINS | Craft the Plains Stone and wear it. | Working… | 
+[18:04:58] ZONE PLAINS T1 Lv 3
+[18:05:02] STEP b-28 zone=PLAINS T1 Lv 3 hp=188/208 beh=Recover First
+    THE PLAINS | Craft the Plains Stone and wear it. | Next | 
+[18:05:07] STEP b-29 zone=PLAINS T1 Lv 3 hp=205/208 beh=Recover First
+    THE PLAINS | Craft the Plains Stone and wear it. | Working… | 
+[18:05:12] STEP b-30 zone=PLAINS T1 Lv 3 hp=172/208 beh=Chase Enemy
+    THE PLAINS | Next up: the Fleet Boots. | Working… | 
+[18:05:16] STEP b-31 zone=PLAINS T1 Lv 3 hp=185/208 beh=Recover First
+    THE PLAINS | Next up: the Fleet Boots. | Next | 
+[18:05:21] STEP b-32 zone=PLAINS T1 Lv 3 hp=200/208 beh=Chase Enemy
+    THE PLAINS | Fighting in the Plains until the Fleet Boots is ready. | Mastery level | 3/4 | Might essence | 10/10 | In progress… | 
+[18:06:13] STEP b-33 zone=PLAINS T1 Lv 4 hp=206/208 beh=◇
+    THE PLAINS | These boots speed you up after every kill. | Next | 
+[18:06:13] ZONE PLAINS T1 Lv 4
+[18:06:18] STEP b-34 zone=PLAINS T1 Lv 4 hp=208/208 beh=Attacking Grass Kite
+    THE PLAINS | These boots speed you up after every kill. | Working… | 
+[18:06:24] STEP b-35 zone=PLAINS T1 Lv 4 hp=196/208 beh=Chase Enemy
+    THE PLAINS | Now master the Plains. Every zone you master opens stronger gear to craft. | Working… | 
+[18:06:27] STEP b-36 zone=PLAINS T1 Lv 4 hp=194/208 beh=Recover First
+    THE PLAINS | Now master the Plains. Every zone you master opens stronger gear to craft. | Next | 
+[18:06:33] STEP b-37 zone=PLAINS T1 Lv 4 hp=208/208 beh=Attacking Grass Kite
+    THE PLAINS | Fighting in the Plains until its mastery is maxed. | Mastery level | 4/6 | In progress… | 
+[18:07:06] ZONE PLAINS T1 Lv 5
+[18:08:06] STEP b-38 zone= hp=191/208 beh=◇
+    THE FOREST | Plains mastered. The Forest is next. | Next | 
+[18:08:06] ZONE 
+[18:08:11] STEP b-39 zone= hp=208/208 beh=Fight Back
+    THE FOREST | Heading there first. | Working… | 
+[18:08:55] STEP b-40 zone=FOREST T1 Lv 0 hp=208/208 beh=Manual control
+    THE FOREST | Plains mastered. The Forest is next. | Working… | 
+[18:08:55] ZONE FOREST T1 Lv 0
+[18:08:59] STEP b-41 zone=FOREST T1 Lv 0 hp=208/208 beh=Attacking Bramble Pod
+    THE FOREST | Fighting in the Forest until the Flash Rapier is ready. | Mastery level | 0/1 | Wild essence | 20/20 | In progress… | 
+[18:09:44] STEP b-42 zone=FOREST T1 Lv 0 hp=127/208 beh=◇
+    THE FOREST | The Flash Rapier swings far faster than the broadsword. Switch to it. | Working… | 
+[18:09:48] STEP b-43 zone=FOREST T1 Lv 1 hp=144/208 beh=Recover First
+    THE FOREST | The Flash Rapier swings far faster than the broadsword. Switch to it. | Next | 
+[18:09:48] ZONE FOREST T1 Lv 1
+[18:09:53] STEP b-44 zone=FOREST T1 Lv 1 hp=208/208 beh=Attacking Bramble Pod
+    THE FOREST | The Flash Rapier swings far faster than the broadsword. Switch to it. | Working… | 
+[18:09:58] STEP b-45 zone=FOREST T1 Lv 1 hp=196/208 beh=Recover First
+    THE FOREST | Next: Second Wind. | Working… | 
+[18:10:02] STEP b-46 zone=FOREST T1 Lv 1 hp=197/208 beh=Recover First
+    THE FOREST | Next: Second Wind. | Next | 
+[18:10:07] END min HP fraction 0.08
+[18:11:15] STEP c-01 zone=FOREST T1 Lv 2 hp=208/208 beh=Attacking Bramble Pod
+    THE FOREST | Learn Second Wind: a burst of healing in the middle of a fight. | Next | 
+[18:11:15] ZONE FOREST T1 Lv 2
+[18:11:20] STEP c-02 zone=FOREST T1 Lv 2 hp=205/208 beh=Chase Enemy
+    THE FOREST | Learn Second Wind: a burst of healing in the middle of a fight. | Working… | 
+[18:11:23] STEP c-03 zone=FOREST T1 Lv 3 hp=198/208 beh=Recover First
+    THE FOREST | Attuning Second Wind. | Working… | 
+[18:11:23] ZONE FOREST T1 Lv 3
+[18:11:27] STEP c-04 zone=FOREST T1 Lv 3 hp=208/208 beh=Attacking Young Wolf
+    THE FOREST | Giving Second Wind a Rune, so it fires on its own in a fight. | Working… | 
+[18:11:30] STEP c-05 zone=FOREST T1 Lv 3 hp=208/208 beh=Attacking Young Wolf
+    THE FOREST | Now master the Forest. | Next | 
+[18:11:36] STEP c-06 zone=FOREST T1 Lv 3 hp=208/208 beh=Attacking Young Wolf
+    THE FOREST | Fighting in the Forest until its mastery is maxed. | Mastery level | 3/6 | In progress… | 
+[18:12:12] ZONE FOREST T1 Lv 4
+[18:13:13] ZONE FOREST T1 Lv 5
+[18:14:21] STEP c-07 zone= hp=208/208 beh=Chase Enemy
+    THE SWAMP | Into the Swamp. Its monsters poison, so we come prepared. Next: the Avoid Hazards Rune. | Next | 
+[18:14:21] ZONE 
+[18:14:26] STEP c-08 zone= hp=155/208 beh=Chase Enemy
+    THE SWAMP | Heading there first. | Working… | 
+[18:14:48] STEP c-09 zone=SWAMP T1 Lv 0 hp=208/208 beh=Manual control
+    THE SWAMP | Into the Swamp. Its monsters poison, so we come prepared. Next: the Avoid Hazards Rune. | Working… | 
+[18:14:48] ZONE SWAMP T1 Lv 0
+[18:14:51] STEP c-10 zone=SWAMP T1 Lv 0 hp=208/208 beh=Attacking Mire Ooze
+    THE SWAMP | Fighting until the Avoid Hazards Rune can be made. | Mastery level | 0/2 | Rot essence | 0/25 | In progress… | 
+[18:15:30] ZONE SWAMP T1 Lv 1
+[18:16:20] STEP c-11 zone=SWAMP T1 Lv 2 hp=203/208 beh=◇
+    THE SWAMP | The Swamp floor hurts. Avoid Hazards walks you around the bad ground. | Next | 
+[18:16:20] ZONE SWAMP T1 Lv 2
+[18:16:25] STEP c-12 zone=SWAMP T1 Lv 2 hp=208/208 beh=Attacking Mire Ooze
+    THE SWAMP | The Swamp floor hurts. Avoid Hazards walks you around the bad ground. | Working… | 
+[18:16:28] STEP c-13 zone=SWAMP T1 Lv 2 hp=208/208 beh=Attacking Mire Ooze
+    THE SWAMP | Add Avoid Hazards to your Runes. | Next | 
+[18:16:34] STEP c-14 zone=SWAMP T1 Lv 2 hp=177/208 beh=Chase Enemy
+    THE SWAMP | New rule: Always → Avoid Hazards. | Working… | 
+[18:16:34] CONSOLE [error] Failed to load resource: the server responded with a status of 404 (Not Found)
+[18:16:36] CONSOLE [error] Failed to load resource: the server responded with a status of 404 (Not Found)
+[18:16:39] STEP c-15 zone=SWAMP T1 Lv 2 hp=129/208 beh=Recover First
+    THE SWAMP | Next: Cleanse. | Next | 
+[18:16:44] STEP c-16 zone=SWAMP T1 Lv 2 hp=208/208 beh=Attacking Mire Ooze
+    THE SWAMP | Fighting until Cleanse can be learned. | Mastery level | 2/3 | Rot essence | 30/30 | In progress… | 
+[18:16:53] STEP c-17 zone=SWAMP T1 Lv 3 hp=176/208 beh=Recover First
+    THE SWAMP | Learn Cleanse. Here it takes Second Wind's place, because poison is the real threat. | Next | 
+[18:16:53] ZONE SWAMP T1 Lv 3
+[18:16:58] STEP c-18 zone=SWAMP T1 Lv 3 hp=208/208 beh=Attacking Mire Ooze
+    THE SWAMP | Learn Cleanse. Here it takes Second Wind's place, because poison is the real threat. | Working… | 
+[18:17:01] STEP c-19 zone=SWAMP T1 Lv 3 hp=208/208 beh=Attacking Mire Ooze
+    THE SWAMP | Unattuning Second Wind to make room. | Working… | 
+[18:17:04] STEP c-20 zone=SWAMP T1 Lv 3 hp=205/208 beh=Chase Enemy
+    THE PLAINS | Giving Cleanse a Rune, so it fires on its own in a fight. | Working… | 
+[18:17:07] STEP c-21 zone=SWAMP T1 Lv 3 hp=183/208 beh=Chase Enemy
+    THE SWAMP | This charm heals in steady pulses, which carries you through long fights. | Next | 
+[18:17:12] STEP c-22 zone=SWAMP T1 Lv 3 hp=208/208 beh=Attacking Mire Ooze
+    THE SWAMP | This charm heals in steady pulses, which carries you through long fights. | Working… | 
+[18:17:18] STEP c-23 zone=SWAMP T1 Lv 3 hp=204/208 beh=Chase Enemy
+    THE SWAMP | Now master the Swamp. | Working… | 
+[18:17:22] STEP c-24 zone=SWAMP T1 Lv 3 hp=180/208 beh=Recover First
+    THE SWAMP | Now master the Swamp. | Next | 
+[18:17:27] STEP c-25 zone=SWAMP T1 Lv 3 hp=206/208 beh=Chase Enemy
+    THE SWAMP | Fighting in the Swamp until its mastery is maxed. | Mastery level | 3/6 | In progress… | 
+[18:17:40] ZONE SWAMP T1 Lv 4
+[18:18:52] ZONE SWAMP T1 Lv 5
+[18:19:42] STEP c-26 zone= hp=202/208 beh=Recover First
+    THE MOUNTAIN | The Mountain hits harder but pays well. No poison up here, so Second Wind goes back in. | Next | 
+[18:19:42] ZONE 
+[18:19:47] STEP c-27 zone= hp=208/208 beh=Attacking Mire Ooze
+    THE FOREST | Attuning Second Wind. | Working… | 
+[18:19:50] STEP c-28 zone= hp=208/208 beh=Attacking Mire Ooze
+    THE PLAINS | Giving Second Wind a Rune, so it fires on its own in a fight. | Working… | 
+[18:19:53] STEP c-29 zone= hp=208/208 beh=Chase Enemy
+    THE MOUNTAIN | Next up: the Fallen Knight Plate. | Next | 
+[18:19:59] STEP c-30 zone= hp=175/208 beh=Fight Back
+    THE MOUNTAIN | Heading there first. | Working… | 
+[18:20:35] END min HP fraction 0.62
+[18:21:38] STEP d-01 zone= hp=208/208 beh=Manual control
+    THE MOUNTAIN | Next up: the Fallen Knight Plate. | Next | 
+[18:21:43] STEP d-02 zone= hp=208/208 beh=Fight Back
+    THE MOUNTAIN | Heading there first. | Working… | 
+[18:21:49] ZONE CAVERNS T1 Lv 0
+[18:22:20] STEP d-03 zone=MOUNTAIN T1 Lv 0 hp=208/208 beh=Manual control
+    THE MOUNTAIN | Next up: the Fallen Knight Plate. | Working… | 
+[18:22:20] ZONE MOUNTAIN T1 Lv 0
+[18:22:24] STEP d-04 zone=MOUNTAIN T1 Lv 0 hp=208/208 beh=Attacking Rockback Ram
+    THE MOUNTAIN | Fighting in the Mountain until the Fallen Knight Plate is ready. | Mastery level | 0/2 | Stone essence | 0/22 | In progress… | 
+[18:23:07] ZONE MOUNTAIN T1 Lv 1
+[18:23:28] STEP d-05 zone=MOUNTAIN T1 Lv 2 hp=200/208 beh=Recover First
+    THE MOUNTAIN | The Mountain armor is the sturdiest yet. | Next | 
+[18:23:28] ZONE MOUNTAIN T1 Lv 2
+[18:23:34] STEP d-06 zone=MOUNTAIN T1 Lv 2 hp=183/208 beh=Chase Enemy
+    THE MOUNTAIN | The Mountain armor is the sturdiest yet. | Working… | 
+[18:23:37] STEP d-07 zone=MOUNTAIN T1 Lv 2 hp=208/208 beh=Chase Enemy
+    THE MOUNTAIN | Now master the Mountain. | Next | 
+[18:23:42] STEP d-08 zone=MOUNTAIN T1 Lv 2 hp=196/208 beh=Chase Enemy
+    THE MOUNTAIN | Fighting in the Mountain until its mastery is maxed. | Mastery level | 2/6 | In progress… | 
+[18:24:21] ZONE MOUNTAIN T1 Lv 3
+[18:24:52] ZONE MOUNTAIN T1 Lv 4
+[18:25:33] ZONE MOUNTAIN T1 Lv 5
+[18:26:20] STEP d-09 zone= hp=201/208 beh=Recover First
+    THE CAVE | Last zone: the Cave. Its monsters wind up big hits you can dodge. | Next | 
+[18:26:20] ZONE 
+[18:26:26] STEP d-10 zone= hp=208/208 beh=Fight Back
+    THE CAVE | Heading there first. | Working… | 
+[18:26:58] STEP d-11 zone=CAVERNS T1 Lv 0 hp=208/208 beh=Manual control
+    THE CAVE | Last zone: the Cave. Its monsters wind up big hits you can dodge. | Working… | 
+[18:26:58] ZONE CAVERNS T1 Lv 0
+[18:27:01] STEP d-12 zone=CAVERNS T1 Lv 0 hp=208/208 beh=Attacking Cave Lurker
+    THE CAVE | Fighting in the Cave until the Chaotic Axe is ready. | Mastery level | 0/1 | Deep essence | 0/26 | In progress… | 
+[18:27:24] STEP d-13 zone=CAVERNS T1 Lv 1 hp=172/208 beh=◇
+    THE CAVE | The Chaotic Axe hits hardest of anything here but whiffs now and then. It is the weapon you take to the bosses, so switch to it now. | Working… | 
+[18:27:24] ZONE CAVERNS T1 Lv 1
+[18:27:27] STEP d-14 zone=CAVERNS T1 Lv 1 hp=186/208 beh=Recover First
+    THE CAVE | The Chaotic Axe hits hardest of anything here but whiffs now and then. It is the weapon you take to the bosses, so switch to it now. | Next | 
+[18:27:32] STEP d-15 zone=CAVERNS T1 Lv 1 hp=181/208 beh=Chase Enemy
+    THE CAVE | The Chaotic Axe hits hardest of anything here but whiffs now and then. It is the weapon you take to the bosses, so switch to it now. | Working… | 
+[18:27:38] STEP d-16 zone=CAVERNS T1 Lv 1 hp=208/208 beh=Attacking Brood Spiderling
+    THE CAVE | The Chaotic Axe has a page of its own, and its first card is paid in Gale Shards. Every kill in Brood territory pays them; the map names each node's territory. | Working… | 
+[18:27:45] STEP d-17 zone=CAVERNS T1 Lv 1 hp=208/208 beh=Chase Enemy
+    THE CAVE | Fighting in Brood territory for Gale Shards. | Mastery level | 1/2 | Deep essence | 30/30 | Gale Shard | 3/3 | In progress… | 
+[18:27:49] STEP d-18 zone=CAVERNS T1 Lv 2 hp=208/208 beh=Chase Enemy
+    THE CAVE | Buy Effect, row one of the Chaotic Axe's page: the lean, one active at a time. Attack and Speed are plain stats; Effect makes the weapon's own move stronger. | Next | 
+[18:27:49] ZONE CAVERNS T1 Lv 2
+[18:27:56] STEP d-19 zone=CAVERNS T1 Lv 2 hp=136/208 beh=Recover First
+    THE CAVE | Look at what Effect says: “+50% to Chopping Rhythm's second strike.” | Working… | 
+[18:28:02] STEP d-20 zone=CAVERNS T1 Lv 2 hp=208/208 beh=Recover First
+    THE CAVE | Step Back moves you out of a telegraphed hit before it lands. | Next | 
+[18:28:06] STEP d-21 zone=CAVERNS T1 Lv 2 hp=193/208 beh=Chase Enemy
+    THE CAVE | Step Back moves you out of a telegraphed hit before it lands. | Working… | 
+[18:28:09] STEP d-22 zone=CAVERNS T1 Lv 2 hp=168/208 beh=Chase Enemy
+    THE CAVE | Put Step Back at the top of your Runes, so dodging comes before anything else. | Next | 
+[18:28:14] STEP d-23 zone=CAVERNS T1 Lv 3 hp=191/208 beh=Recover First
+    THE CLEARING | New rule: Inside Telegraph → Step Back. | Working… | 
+[18:28:14] ZONE CAVERNS T1 Lv 3
+[18:28:17] CONSOLE [http 404] http://localhost:4361/assets/concept-icons/runes/conditions/formation-broken.png?v=rune-set-v2
+[18:28:17] CONSOLE [error] Failed to load resource: the server responded with a status of 404 (Not Found)
+[18:28:17] CONSOLE [http 404] http://localhost:4361/assets/concept-icons/runes/actions/use-ability.png?v=rune-set-v2
+[18:28:17] CONSOLE [error] Failed to load resource: the server responded with a status of 404 (Not Found)
+[18:28:23] STEP d-24 zone=CAVERNS T1 Lv 3 hp=187/208 beh=Chase Enemy
+    THE CAVE | Moving Inside Telegraph → Step Back up: higher rules win. | Working… | 
+[18:28:26] STEP d-25 zone=CAVERNS T1 Lv 3 hp=172/208 beh=Recover First
+    THE CAVE | Cave 4 opens row two of the Chaotic Axe's page: the verb, what the weapon does. Chopping Rhythm costs Gale Shards from the Cave's Brood territory. | Next | 
+[18:28:31] STEP d-26 zone=CAVERNS T1 Lv 3 hp=208/208 beh=Attacking Brood Spiderling
+    THE CAVE | Fighting in Brood territory for Gale Shards. | Mastery level | 3/4 | Deep essence | 41/90 | Gale Shard | 8/8 | In progress… | 
+[18:28:41] ZONE CAVERNS T1 Lv 4
+[18:28:52] STEP d-27 zone=CAVERNS T1 Lv 4 hp=106/208 beh=Chase Enemy
+    THE CAVE | Buy Chopping Rhythm, the Chaotic Axe's own move: a moment in the fight that comes round on its own. | Working… | 
+[18:28:55] STEP d-28 zone=CAVERNS T1 Lv 4 hp=93/208 beh=Recover First
+    THE CAVE | Buy Chopping Rhythm, the Chaotic Axe's own move: a moment in the fight that comes round on its own. | Next | 
+[18:29:00] STEP d-29 zone=CAVERNS T1 Lv 4 hp=157/208 beh=Recover First
+    THE CAVE | Buy Chopping Rhythm, the Chaotic Axe's own move: a moment in the fight that comes round on its own. | Working… | 
+[18:29:03] STEP d-30 zone=CAVERNS T1 Lv 4 hp=208/208 beh=Attacking Brood Spiderling
+    THE CAVE | Look at what Chopping Rhythm says now: “Every 6th hit strikes again at 150% strength.” Effect made that stronger; its ranks add more. | Working… | 
+[18:29:09] STEP d-31 zone=CAVERNS T1 Lv 4 hp=200/208 beh=Chase Enemy
+    THE CAVE | In a fight, Chopping Rhythm's ring under your health bar counts your hits, lights when the next one pays, and fires on the 6th. | Working… | 
+[18:29:11] ZONE CAVERNS T1 Lv 5
+[18:29:15] STEP d-32 zone=CAVERNS T1 Lv 5 hp=208/208 beh=Attacking Brood Spiderling
+    THE CAVE | Next: Effect rank II, paid in Gale Shards from Brood territory. | Next | 
+[18:29:20] STEP d-33 zone=CAVERNS T1 Lv 5 hp=188/208 beh=Recover First
+    THE CAVE | Rank Effect up to II on the Chaotic Axe's page. A lean has three ranks, and each one makes its number bigger. | Next | 
+[18:29:25] STEP d-34 zone=CAVERNS T1 Lv 5 hp=203/208 beh=Chase Enemy
+    THE CAVE | Rank Effect up to II on the Chaotic Axe's page. A lean has three ranks, and each one makes its number bigger. | Working… | 
+[18:29:27] STEP d-35 zone=CAVERNS T1 Lv 5 hp=208/208 beh=Chase Enemy
+    THE CAVE | Look at Effect now: “+75% to Chopping Rhythm's second strike.” It was “+50% to Chopping Rhythm's second strike.” | Working… | 
+[18:29:33] STEP d-36 zone=CAVERNS T1 Lv 5 hp=208/208 beh=Chase Enemy
+    THE CAVE | Now master the Cave. | Next | 
+[18:29:38] STEP d-37 zone=CAVERNS T1 Lv 5 hp=208/208 beh=Attacking Cave Lurker
+    THE CAVE | Fighting in the Cave until its mastery is maxed. | Mastery level | 5/6 | In progress… | 
+[18:29:44] STEP d-38 zone= hp=203/208 beh=Recover First
+    THE CAVE | Next: Effect rank III, the last at this tier, paid in Gale Shards from Brood territory. | Next | 
+[18:29:44] ZONE 
+[18:29:49] STEP d-39 zone= hp=192/208 beh=Chase Enemy
+    THE CAVE | Fighting in Brood territory for Gale Shards. | Mastery level | 2/2 | Deep essence | 38/60 | Gale Shard | 6/6 | In progress… | 
+[18:30:08] STEP d-40 zone= hp=186/208 beh=Recover First
+    THE CAVE | Rank Effect up to III, the last rank at this tier: “+100% to Chopping Rhythm's second strike.” | Next | 
+[18:30:13] STEP d-41 zone= hp=208/208 beh=Attacking Cave Lurker
+    THE CAVE | Rank Effect up to III, the last rank at this tier: “+100% to Chopping Rhythm's second strike.” | Working… | 
+[18:30:16] STEP d-42 zone= hp=208/208 beh=Attacking Cave Lurker
+    THE CAVE | Next: Charge. | Next | 
+[18:30:22] STEP d-43 zone= hp=190/208 beh=Chase Enemy
+    THE CAVE | Fighting until Charge can be learned. | Mastery level | 3/3 | Deep essence | 18/85 | In progress… | 
+[18:30:55] STEP d-44 zone= hp=124/208 beh=Holding position
+    THE CAVE | Learn Charge: it closes the gap and lands the first blow. | Working… | 
+[18:30:58] END min HP fraction 0.45
+[18:34:50] STEP e-01 zone= hp=188/208 beh=Recover First
+    THE CAVE | Learn Charge: it closes the gap and lands the first blow. | Next | 
+[18:34:55] STEP e-02 zone= hp=208/208 beh=Attacking Cave Lurker
+    THE CAVE | Learn Charge: it closes the gap and lands the first blow. | Working… | 
+[18:34:58] STEP e-03 zone= hp=192/208 beh=Chase Enemy
+    THE CAVE | Unattuning Sweep to make room. | Working… | 
+[18:35:01] STEP e-04 zone= hp=172/208 beh=◇
+    THE PLAINS | Giving Charge a Rune, so it fires on its own in a fight. | Working… | 
+[18:35:04] STEP e-05 zone= hp=187/208 beh=Recover First
+    THE CAVE | Learn Slam: a wound-up blow that hits everything around your target. | Next | 
+[18:35:09] STEP e-06 zone= hp=184/208 beh=Chase Enemy
+    THE CAVE | Learn Slam: a wound-up blow that hits everything around your target. | Working… | 
+[18:35:12] STEP e-07 zone= hp=208/208 beh=Chase Enemy
+    THE CAVE | Unattuning Charge to make room. | Working… | 
+[18:35:15] STEP e-08 zone= hp=208/208 beh=Attacking Brood Spiderling
+    THE PLAINS | Giving Slam a Rune, so it fires on its own in a fight. | Working… | 
+[18:35:18] STEP e-09 zone= hp=205/208 beh=Chase Enemy
+    THE SEALS | Clear the guards, wake the boss at the altar, and take the seal. Falling is normal; we just try again. | Next | 
+[18:35:23] STEP e-10 zone= hp=207/208 beh=◇
+    THE SEALS | Heading there first. | Working… | 
+[18:37:34] STEP e-11 zone= hp=208/208 beh=Manual control
+    THE SEALS | Clear the guards, wake the boss at the altar, and take the seal. Falling is normal; we just try again. | Working… | 
+[18:37:37] STEP e-12 zone= hp=208/208 beh=Attacking Grass Kite
+    THE SEALS | Clearing the guards first. | In progress… | 
+[18:38:22] STEP e-13 zone= hp=187/208 beh=Manual control
+    THE SEALS | Clear the guards, wake the boss at the altar, and take the seal. Falling is normal; we just try again. | Working… | 
+[18:38:25] STEP e-14 zone= hp=208/208 beh=Holding position
+    THE SEALS | Boss fight! Auto Combat has it; the Runes handle dodging and healing. | In progress… | 
+[18:39:12] STEP e-15 zone= hp=102/208 beh=Recover First
+    THE SEALS | One seal down. The Mountain boss winds up one huge hit: Step Back dodges it, Slam ends the fight sooner. | Next | 
+[18:39:17] STEP e-16 zone= hp=208/208 beh=Holding position
+    THE SEALS | One seal down. The Mountain boss winds up one huge hit: Step Back dodges it, Slam ends the fight sooner. | Working… | 
+[18:39:20] STEP e-17 zone= hp=228/228 beh=Holding position
+    THE SEALS | The last seal before Tier 2. | Next | 
+[18:39:25] STEP e-18 zone= hp=228/228 beh=Fight Back
+    THE SEALS | Heading there first. | Working… | 
+[18:43:39] STEP e-19 zone= hp=228/228 beh=Attacking Ridge Ambusher
+    THE SEALS | Clearing the guards first. | In progress… | 
+[18:44:10] END min HP fraction 0.38
+[18:44:28] STEP f-01 zone= hp=195/228 beh=Chase Enemy
+    THE SEALS | Clearing the guards first. | In progress… | 
+[18:44:34] STEP f-02 zone= hp=201/228 beh=Manual control
+    THE SEALS | To the altar. | Working… | 
+[18:44:37] STEP f-03 zone= hp=228/228 beh=Manual control
+    THE SEALS | The last seal before Tier 2. | Working… | 
+[18:44:43] STEP f-04 zone= hp=228/228 beh=Holding position
+    THE SEALS | Boss fight! Auto Combat has it; the Runes handle dodging and healing. | In progress… | 
+[18:45:29] LOW HP 60/228 zone= beh=Chase Enemy
+[18:45:32] LOW HP 27/228 zone= beh=Chase Enemy
+[18:45:34] LOW HP 17/228 zone= beh=◇
+[18:45:37] LOW HP 37/228 zone= beh=Holding position
+[18:45:39] LOW HP 48/228 zone= beh=Chase Enemy
+[18:45:42] LOW HP 24/236 zone=MOUNTAIN T1 Lv 6 beh=Recover First
+[18:45:42] STEP f-05 zone=MOUNTAIN T1 Lv 6 hp=24/236 beh=Recover First
+    THE GATE | Tier 1 is done, and this part is optional: the Ruinous Axe's gate also wants 3 Broodmother Chitin drops, and only the Cave boss has them. | Next | I'm done | 
+[18:45:42] ZONE MOUNTAIN T1 Lv 6
+[18:45:48] STEP f-06 zone=MOUNTAIN T1 Lv 6 hp=102/236 beh=Manual control
+    THE GATE | Resting to full health before going in. | Broodmother Chitin | 0/3 | In progress… | 
+[18:45:53] STEP f-07 zone=MOUNTAIN T1 Lv 6 hp=236/236 beh=Manual control
+    THE GATE | Heading there first. | Working… | 
+[18:46:57] ZONE CAVERNS T1 Lv 6
+[18:47:31] STEP f-08 zone=CAVERNS T1 Lv 6 hp=236/236 beh=Manual control
+    THE GATE | Tier 1 is done, and this part is optional: the Ruinous Axe's gate also wants 3 Broodmother Chitin drops, and only the Cave boss has them. | Working… | 
+[18:47:34] STEP f-09 zone=CAVERNS T1 Lv 6 hp=236/236 beh=Attacking Cave Brute
+    THE GATE | Clearing the guards first. | Broodmother Chitin | 0/3 | In progress… | 
+[18:48:25] ZONE CAVERNS T1 Lv 7
+[18:48:37] STEP f-10 zone=CAVERNS T1 Lv 7 hp=154/236 beh=Manual control
+    THE GATE | Tier 1 is done, and this part is optional: the Ruinous Axe's gate also wants 3 Broodmother Chitin drops, and only the Cave boss has them. | Working… | 
+[18:48:40] STEP f-11 zone=CAVERNS T1 Lv 7 hp=222/236 beh=◇
+    THE GATE | Boss fight! Auto Combat has it; the Runes handle dodging and healing. | Broodmother Chitin | 0/3 | In progress… | 
+[18:49:31] STEP f-12 zone=CAVERNS T1 Lv 8 hp=218/236 beh=Recover First
+    THE GATE | The altar is reforming. Waiting for the next one. | Broodmother Chitin | 1/3 | In progress… | 
+[18:49:31] ZONE CAVERNS T1 Lv 8
+[18:50:31] STEP f-13 zone=CAVERNS T1 Lv 8 hp=236/236 beh=Attacking Cave Brute
+    THE GATE | Clearing the guards first. | Broodmother Chitin | 1/3 | In progress… | 
+[18:51:14] STEP f-14 zone=CAVERNS T1 Lv 9 hp=149/236 beh=Manual control
+    THE GATE | To the altar. | Working… | 
+[18:51:14] ZONE CAVERNS T1 Lv 9
+[18:51:18] STEP f-15 zone=CAVERNS T1 Lv 9 hp=184/236 beh=Manual control
+    THE GATE | Tier 1 is done, and this part is optional: the Ruinous Axe's gate also wants 3 Broodmother Chitin drops, and only the Cave boss has them. | Working… | 
+[18:51:21] STEP f-16 zone=CAVERNS T1 Lv 9 hp=236/236 beh=Holding position
+    THE GATE | Boss fight! Auto Combat has it; the Runes handle dodging and healing. | Broodmother Chitin | 1/3 | In progress… | 
+[18:52:10] STEP f-17 zone=CAVERNS T1 Lv 9 hp=219/236 beh=Recover First
+    THE GATE | The altar is reforming. Waiting for the next one. | Broodmother Chitin | 2/3 | In progress… | 
+[18:53:09] STEP f-18 zone=CAVERNS T1 Lv 9 hp=236/236 beh=Attacking Cave Brute
+    THE GATE | Clearing the guards first. | Broodmother Chitin | 2/3 | In progress… | 
+[18:53:32] ZONE CAVERNS T1 Lv 10
+[18:53:47] END min HP fraction 0.07
+[18:54:01] STEP g-01 zone=CAVERNS T1 Lv 10 hp=236/236 beh=Holding position
+    THE GATE | Boss fight! Auto Combat has it; the Runes handle dodging and healing. | Broodmother Chitin | 2/3 | In progress… | 
+[18:54:01] ZONE CAVERNS T1 Lv 10
+[18:54:50] STEP g-02 zone=CAVERNS T1 Lv 10 hp=220/236 beh=Recover First
+    THE GATE | Pay the gate and wear it: the Ruinous Axe, and a whole new band of cards above the one you have. | Next | I'm done | 
+[18:54:55] STEP g-03 zone=CAVERNS T1 Lv 10 hp=236/236 beh=Holding position
+    THE GATE | Pay the gate and wear it: the Ruinous Axe, and a whole new band of cards above the one you have. | Working… | 
+[18:55:01] STEP g-04 zone=CAVERNS T1 Lv 10 hp=236/236 beh=Holding position
+     | Two seals, Tier 2, and a tier-2 weapon. That is the guided part done. | Keep going forward: new zones are open, and your next skill point is waiting in the Passive Tree. | Spend it on a frame. It decides how your mechanic pays out, and from then on your weapon glows brighter as the frame banks charge — that glow is the payoff filling up. | Thanks! | 
+[18:56:07] ZONE CAVERNS T1 Lv 11
+[18:58:39] ZONE 
+[19:00:42] END min HP fraction 0.74
