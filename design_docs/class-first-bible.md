@@ -31,7 +31,7 @@ when the section that replaces them locks. The read-only audit behind this draft
 | 9 | Apprentice | Not started |
 | 10 | Slinger | Not started |
 | 11 | Spirit | Not started |
-| 12 | Striker | Not started |
+| 12 | Striker | Not started (next; prep in [striker-deep-dive-prep-2026-10-13.md](../docs/briefs/striker-deep-dive-prep-2026-10-13.md)) |
 | 13 | Parked | — |
 | 14 | Docs this bible supersedes | — |
 
@@ -504,6 +504,8 @@ Conduits doesn't multiply. *Decided (2026-10-13).*
 9. The armor and charm Conduit lines after T1 (§4).
 10. Components (§4's own session) and farming efficiency (§13).
 11. Mob targeting variety: opportunistic mobs that go for the summoner.
+12. Names are placeholders. "Juggernaut" (the Cave heavy's variant) also names an old
+    Striker path and a Squire discipline in the brief; pick owners later.
 
 ### 7.16 Tier by tier: what each biome gives the Conduit
 
@@ -626,9 +628,10 @@ Serpent) bring new Souls.
 
 ## 8.–12. Other classes — Not started
 
-Order: **Conduit first** (the first slice; the most complex; the players who asked for it).
-Proposed order after it: Squire (shares the "who tanks" and party questions with Conduit),
-Apprentice, Slinger, Spirit, Striker. Each class's brief concept is in the
+Order: **Conduit first** (done, §7 locked). **Striker next** (designer's call, 2026-10-13:
+it is the standard class the game is measured by and the most playtested). Then, as
+proposed: Squire (shares the "who tanks" and party questions with the Conduit), Apprentice,
+Slinger, Spirit. Each class's brief concept is in the
 [brief](../docs/briefs/class-first-rework-brief-2026-10-13.md#class-reworks).
 
 ## 13. Parked
