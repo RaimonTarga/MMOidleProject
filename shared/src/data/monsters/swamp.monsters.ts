@@ -277,4 +277,34 @@ export const swampMonsterEntries = [
   }],
 
 
+  ['bog-leech', {
+    id: 'bog-leech', name: 'Bog Leech', color: 0x3f4228,
+    // MIRE FAMILY, T2 (distinctness batch, 2026-10-12). Mire had no T2 body, so three T2 Swamp nodes that
+    // name the family re-scaled it away. Between the Mire Ooze (T1) and the Bog Lurker
+    // (T3): a slow drain body with the family's shape — low direct damage, the poison
+    // and the evasion do the work. PLACEHOLDER numbers seeded from the T2 Swamp band
+    // (Moss-Shell Snapper 680 HP) and the Ooze's poison. Designer hand-edits.
+    stats: { hp: 560, attack: 18, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 2000, pullRange: 170 },
+    behavior: 'melee', attackStyle: 'bite-bog', biome: 'swamp',
+    rewards: { essence: 12, essenceType: 'purple', level: 1, biomeXp: 68 },
+    evasion: 0.15,
+    ai: { wanderRadius: 160, leashRange: 530, idleMinMs: 2000, idleMaxMs: 5500 },
+    dotEffect: { debuffId: 'swamp-poison', label: 'Poison', damagePerStack: 8, maxStacks: 3, tickIntervalMs: 1000, durationMs: 4000 },
+  }],
+
+  ['fen-shoebill', {
+    id: 'fen-shoebill', name: 'Fen Shoebill', color: 0x4b5352,
+    // STALKER FAMILY, T3 (distinctness batch, 2026-10-12). Stalker had no T3 body, so five T3 Swamp nodes
+    // that name the family re-scaled it away. Mud Toad -> Mire Stalker -> this: the
+    // wading bird that eats both, standing still until it strikes. PLACEHOLDER numbers
+    // seeded from the T3 Swamp band (Bog Lurker / Mire Hexer, ~500 HP, ~43 attack) and
+    // the Jungle Stalker's opening strike for the ambush. Designer hand-edits.
+    stats: { hp: 900, attack: 52, plating: 0, damageReduction: 0, speed: 70, attackRange: 14, attackCooldown: 2400, pullRange: 200 },
+    behavior: 'melee', attackStyle: 'snap', biome: 'swamp',
+    rewards: { essence: 45, essenceType: 'purple', level: 2, biomeXp: 270 },
+    evasion: 0.1,
+    ai: { wanderRadius: 150, leashRange: 520, idleMinMs: 2800, idleMaxMs: 8000 },
+    openingStrike: { multiplier: 1.75 },
+  }],
+
 ] satisfies [string, MonsterDefinition][];

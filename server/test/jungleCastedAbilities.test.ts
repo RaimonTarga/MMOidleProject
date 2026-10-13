@@ -50,12 +50,13 @@ function playerSlices(id: string): PersistedPlayerSlices {
 
 initCombatSystems();
 
-// Duplicate pool entries are the current per-monster weighting mechanism. T2
-// Apes are intentionally 1/4 of Jungle's pool instead of an even 1/3 share.
+// Duplicate pool entries are the flat per-monster weighting (used only by a node with no
+// blend). T2 Apes are listed once, so they stay a minority of the flat pool; the Jungle
+// Ocelot (2026-10-12) makes the pool five entries.
 {
   const jungleT2Pool = BIOME_DATABASE.get('jungle')?.monsterPoolByTier[2] ?? [];
   assert(jungleT2Pool.filter(id => id === 'jungle-ape').length === 1, 'Jungle T2 should weight Apes once');
-  assert(jungleT2Pool.length === 4, 'Jungle T2 weighted pool should have four entries');
+  assert(jungleT2Pool.length === 5, 'Jungle T2 weighted pool should have five entries');
 }
 
 // Chestbeat is a local, casted rally: haste reaches the whole authored radius,

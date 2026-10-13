@@ -85,6 +85,7 @@ const CORPSE_PRESENTATION: Record<string, CorpsePresentation> = {
   'granite-titan':     { family: 'construct-rubble', size: 'medium' },
   'mountain-colossus': { family: 'construct-rubble', size: 'large' },
   'crag-mortar':       { family: 'construct-rubble', size: 'medium' },
+  'summit-slinger':    { family: 'construct-rubble', size: 'large' },
 
   // ── Cave ─────────────────────────────────────────────────────────────────
   'cave-lurker': { family: 'arthropod', size: 'medium' },  // sprite is an isopod/woodlouse
@@ -100,12 +101,14 @@ const CORPSE_PRESENTATION: Record<string, CorpsePresentation> = {
   // ── Jungle ───────────────────────────────────────────────────────────────
   'jungle-ape':       { family: 'beast', size: 'medium' },
   'jungle-stalker':   { family: 'beast', size: 'medium' },  // sprite is a black panther
+  'jungle-ocelot':    { family: 'beast', size: 'small' },
   'silverback':       { family: 'beast', size: 'large' },
   'hunting-panther':  { family: 'beast', size: 'large' },
   'apex-silverback':  { family: 'beast', size: 'large' },
   'jungle-snake':        { family: 'serpent',        size: 'small' },
   'emerald-constrictor': { family: 'serpent',        size: 'medium' },
   'jungle-blowdarter':   { family: 'reptile-lizard', size: 'small' },   // display "Vine Chameleon"
+  'venom-dart-frog':     { family: 'amphibian',      size: 'small' },
   'canopy-harrier':      { family: 'reptile-lizard', size: 'medium' },  // display "Canopy Chameleon"
   'thornback-lizard':    { family: 'reptile-lizard', size: 'medium' },  // display "Thornback Chameleon"
 
@@ -113,6 +116,7 @@ const CORPSE_PRESENTATION: Record<string, CorpsePresentation> = {
   'sand-scorpion':      { family: 'arthropod', size: 'medium' },
   'dust-djinn':         { family: 'arthropod', size: 'small' },  // display "Sun Scarab"
   'dune-stalker':       { family: 'arthropod', size: 'medium' }, // scorpion-lineage
+  'dune-antlion':       { family: 'arthropod', size: 'medium' },
   'sandweaver':         { family: 'arthropod', size: 'small' },  // display "Gilded Scarab"
   'dune-tyrant':        { family: 'arthropod', size: 'large' },  // sprite is a giant scorpion, not a brute
   'sandspitter-cobra':  { family: 'arthropod', size: 'small' },  // display "Sunshield Scarab", sprite is a beetle
@@ -158,6 +162,8 @@ const CORPSE_PRESENTATION: Record<string, CorpsePresentation> = {
   'fen-hexer':       { family: 'humanoid',         size: 'small' },
   'mire-hex-spitter':{ family: 'humanoid',         size: 'medium' },  // display "Mire Hexer"
   'mire-stalker':    { family: 'serpent',          size: 'small' },
+  'bog-leech':       { family: 'serpent',          size: 'small' },  // closest worm-shaped body
+  'fen-shoebill':    { family: 'avian',            size: 'medium' },
   'bog-lurker':      { family: 'reptile-lizard',   size: 'medium' },  // swamp crocodile
 
   // ── Wasteland / Graveyard ───────────────────────────────────────────────

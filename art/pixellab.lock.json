@@ -33901,6 +33901,941 @@
       "candidateFiles": [
         "candidate-3.png"
       ]
+    },
+    {
+      "at": "2026-10-12T17:19:11.708Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "grass-kite",
+      "requestHash": "929bd75417fe399cdb647dc5",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:19:35.755Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "grass-kite",
+      "requestHash": "929bd75417fe399cdb647dc5",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:19:54.993Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "grass-kite",
+      "requestHash": "929bd75417fe399cdb647dc5",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:20:18.061Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "grass-kite",
+      "requestHash": "929bd75417fe399cdb647dc5",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:20:37.619Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "grass-kite",
+      "requestHash": "929bd75417fe399cdb647dc5",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:20:52.786Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "bramble-pod",
+      "requestHash": "9e73b75490f5fb26ebd9ac57",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:21:08.472Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "bramble-pod",
+      "requestHash": "9e73b75490f5fb26ebd9ac57",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:21:28.085Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "bramble-pod",
+      "requestHash": "9e73b75490f5fb26ebd9ac57",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:21:57.371Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "bramble-pod",
+      "requestHash": "9e73b75490f5fb26ebd9ac57",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:22:08.896Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "bramble-pod",
+      "requestHash": "9e73b75490f5fb26ebd9ac57",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:22:25.447Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "rockback-ram",
+      "requestHash": "8060baa764d15c03af6847f8",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:22:49.233Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "rockback-ram",
+      "requestHash": "8060baa764d15c03af6847f8",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:23:03.103Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "rockback-ram",
+      "requestHash": "8060baa764d15c03af6847f8",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:23:21.060Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "rockback-ram",
+      "requestHash": "8060baa764d15c03af6847f8",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:23:41.512Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "rockback-ram",
+      "requestHash": "8060baa764d15c03af6847f8",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:24:05.617Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "brood-spiderling",
+      "requestHash": "5ca8c438045ddede33abd4a2",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:24:27.653Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "brood-spiderling",
+      "requestHash": "5ca8c438045ddede33abd4a2",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:24:48.037Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "brood-spiderling",
+      "requestHash": "5ca8c438045ddede33abd4a2",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:25:18.779Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "brood-spiderling",
+      "requestHash": "5ca8c438045ddede33abd4a2",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:25:32.343Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "brood-spiderling",
+      "requestHash": "5ca8c438045ddede33abd4a2",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:25:57.100Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "fen-hexer",
+      "requestHash": "3cd0a244e96a8708f29da788",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:26:18.103Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "fen-hexer",
+      "requestHash": "3cd0a244e96a8708f29da788",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:26:46.749Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "fen-hexer",
+      "requestHash": "3cd0a244e96a8708f29da788",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:27:15.924Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "fen-hexer",
+      "requestHash": "3cd0a244e96a8708f29da788",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:27:37.689Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "fen-hexer",
+      "requestHash": "3cd0a244e96a8708f29da788",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:27:56.910Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cave-troll",
+      "requestHash": "28c2acc5ab92f0e5d2ac3a6b",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:28:18.601Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cave-troll",
+      "requestHash": "28c2acc5ab92f0e5d2ac3a6b",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:28:40.459Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cave-troll",
+      "requestHash": "28c2acc5ab92f0e5d2ac3a6b",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:29:04.726Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cave-troll",
+      "requestHash": "28c2acc5ab92f0e5d2ac3a6b",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:29:28.488Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cave-troll",
+      "requestHash": "28c2acc5ab92f0e5d2ac3a6b",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:29:50.874Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cavern-troll",
+      "requestHash": "d366f63a294301c9fa623318",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:30:26.145Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cavern-troll",
+      "requestHash": "d366f63a294301c9fa623318",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:30:47.086Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cavern-troll",
+      "requestHash": "d366f63a294301c9fa623318",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:31:07.432Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cavern-troll",
+      "requestHash": "d366f63a294301c9fa623318",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:31:19.475Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cavern-troll",
+      "requestHash": "d366f63a294301c9fa623318",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:31:40.499Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "prairie-yearling",
+      "requestHash": "d16486385c2ff0d92a44bc90",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:31:58.234Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "prairie-yearling",
+      "requestHash": "d16486385c2ff0d92a44bc90",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:32:15.706Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "prairie-yearling",
+      "requestHash": "d16486385c2ff0d92a44bc90",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:32:41.549Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "prairie-yearling",
+      "requestHash": "d16486385c2ff0d92a44bc90",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:33:01.739Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "prairie-yearling",
+      "requestHash": "d16486385c2ff0d92a44bc90",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:33:35.080Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "dire-whelp",
+      "requestHash": "2afa838452c551a75b899306",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:34:07.331Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "dire-whelp",
+      "requestHash": "2afa838452c551a75b899306",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:34:28.365Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "dire-whelp",
+      "requestHash": "2afa838452c551a75b899306",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:34:46.643Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "dire-whelp",
+      "requestHash": "2afa838452c551a75b899306",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:35:24.369Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "dire-whelp",
+      "requestHash": "2afa838452c551a75b899306",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:35:47.263Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "summit-slinger",
+      "requestHash": "e1b84d7ef34a57882febb97b",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:36:07.793Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "summit-slinger",
+      "requestHash": "e1b84d7ef34a57882febb97b",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:36:24.436Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "summit-slinger",
+      "requestHash": "e1b84d7ef34a57882febb97b",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:37:01.773Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "summit-slinger",
+      "requestHash": "e1b84d7ef34a57882febb97b",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:37:24.534Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "summit-slinger",
+      "requestHash": "e1b84d7ef34a57882febb97b",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:37:49.658Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "bog-leech",
+      "requestHash": "a5de3dab70a73de08d3bcb3d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:38:05.076Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "bog-leech",
+      "requestHash": "a5de3dab70a73de08d3bcb3d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:38:21.115Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "bog-leech",
+      "requestHash": "a5de3dab70a73de08d3bcb3d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:38:35.696Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "bog-leech",
+      "requestHash": "a5de3dab70a73de08d3bcb3d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:39:01.488Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "bog-leech",
+      "requestHash": "a5de3dab70a73de08d3bcb3d",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:39:21.029Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "fen-shoebill",
+      "requestHash": "921539e31718676ed25d9488",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:39:53.839Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "fen-shoebill",
+      "requestHash": "921539e31718676ed25d9488",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:40:12.897Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "fen-shoebill",
+      "requestHash": "921539e31718676ed25d9488",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:40:40.671Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "fen-shoebill",
+      "requestHash": "921539e31718676ed25d9488",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:41:01.334Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "fen-shoebill",
+      "requestHash": "921539e31718676ed25d9488",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:41:40.947Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "jungle-ocelot",
+      "requestHash": "d4f5b1b5adb6c5750f590c74",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:42:00.388Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "jungle-ocelot",
+      "requestHash": "d4f5b1b5adb6c5750f590c74",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:42:20.526Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "jungle-ocelot",
+      "requestHash": "d4f5b1b5adb6c5750f590c74",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:42:49.077Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "jungle-ocelot",
+      "requestHash": "d4f5b1b5adb6c5750f590c74",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:43:21.320Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "jungle-ocelot",
+      "requestHash": "d4f5b1b5adb6c5750f590c74",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:43:45.876Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "venom-dart-frog",
+      "requestHash": "dd5b13dee43d5c76f761a99e",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:44:20.123Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "venom-dart-frog",
+      "requestHash": "dd5b13dee43d5c76f761a99e",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:44:46.731Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "venom-dart-frog",
+      "requestHash": "dd5b13dee43d5c76f761a99e",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:45:04.332Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "venom-dart-frog",
+      "requestHash": "dd5b13dee43d5c76f761a99e",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:45:20.304Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "venom-dart-frog",
+      "requestHash": "dd5b13dee43d5c76f761a99e",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:46:00.436Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "dune-antlion",
+      "requestHash": "ec56a008482b0d1aa23d0235",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:46:34.356Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "dune-antlion",
+      "requestHash": "ec56a008482b0d1aa23d0235",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:46:56.807Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "dune-antlion",
+      "requestHash": "ec56a008482b0d1aa23d0235",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:47:23.247Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "dune-antlion",
+      "requestHash": "ec56a008482b0d1aa23d0235",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:47:41.097Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "dune-antlion",
+      "requestHash": "ec56a008482b0d1aa23d0235",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:49:22.662Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cave-troll",
+      "requestHash": "e0bbe115b3a682da14712ed3",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:49:41.596Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cave-troll",
+      "requestHash": "e0bbe115b3a682da14712ed3",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:50:05.111Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cave-troll",
+      "requestHash": "e0bbe115b3a682da14712ed3",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:50:22.814Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cave-troll",
+      "requestHash": "e0bbe115b3a682da14712ed3",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:50:42.445Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cave-troll",
+      "requestHash": "e0bbe115b3a682da14712ed3",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:51:36.978Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cavern-troll",
+      "requestHash": "a1caadce900e2e25026804c9",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:51:55.248Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cavern-troll",
+      "requestHash": "a1caadce900e2e25026804c9",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:52:17.991Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cavern-troll",
+      "requestHash": "a1caadce900e2e25026804c9",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:52:45.830Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cavern-troll",
+      "requestHash": "a1caadce900e2e25026804c9",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-10-12T17:53:03.908Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "cavern-troll",
+      "requestHash": "a1caadce900e2e25026804c9",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
     }
   ]
 }

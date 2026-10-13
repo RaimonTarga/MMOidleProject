@@ -163,7 +163,7 @@ const familyEntries: [FamilyId, FamilyDefinition][] = [
   }],
   ['mountain-ridge', {
     id: 'mountain-ridge', name: 'Ridge', biome: 'mountain',
-    monsterIds: ['ridge-archer', 'peak-archer', 'crag-mortar'],
+    monsterIds: ['ridge-archer', 'peak-archer', 'crag-mortar', 'summit-slinger'],
     drops: 'control', punishes: 'kill-chain',
   }],
   ['mountain-hopper', {
@@ -202,7 +202,7 @@ const familyEntries: [FamilyId, FamilyDefinition][] = [
   // ── Swamp (proposed) ───────────────────────────────────────────────────────
   ['swamp-mire', {
     id: 'swamp-mire', name: 'Mire', biome: 'swamp',
-    monsterIds: ['bog-slime', 'bog-lurker'],
+    monsterIds: ['bog-slime', 'bog-leech', 'bog-lurker'],
     drops: 'affliction', punishes: 'empowered',
   }],
   ['swamp-coven', {
@@ -212,12 +212,13 @@ const familyEntries: [FamilyId, FamilyDefinition][] = [
   }],
   ['swamp-stalker', {
     id: 'swamp-stalker', name: 'Stalker', biome: 'swamp',
-    monsterIds: ['mud-toad', 'mire-stalker'],
+    monsterIds: ['mud-toad', 'mire-stalker', 'fen-shoebill'],
     drops: 'kill-chain', punishes: 'bulwark',
   }],
 
   // ── Jungle (T2 — W1-E) ──────────────────────────────────────────────────────
-  // Jungle's ten non-boss mobs partition EXACTLY across these three families —
+  // Jungle's twelve non-boss mobs (ten at W1-E, plus the Ocelot and the Dart Frog of
+  // 2026-10-12) partition EXACTLY across these three families —
   // no "assigned by kind" gap here (contrast Desert below).
   ['jungle-ape', {
     id: 'jungle-ape', name: 'Ape', biome: 'jungle',
@@ -228,19 +229,20 @@ const familyEntries: [FamilyId, FamilyDefinition][] = [
   }],
   ['jungle-undergrowth', {
     id: 'jungle-undergrowth', name: 'Undergrowth', biome: 'jungle',
-    monsterIds: ['jungle-snake', 'jungle-blowdarter', 'emerald-constrictor', 'thornback-lizard'],
+    monsterIds: ['jungle-snake', 'jungle-blowdarter', 'venom-dart-frog', 'emerald-constrictor', 'thornback-lizard'],
     // Affliction/Control mirrors Forest Canopy, Jungle's own ancestor biome.
     drops: 'affliction', punishes: 'control',
   }],
   ['jungle-stalker', {
     id: 'jungle-stalker', name: 'Stalker', biome: 'jungle',
-    monsterIds: ['jungle-stalker', 'canopy-harrier', 'hunting-panther'],
+    monsterIds: ['jungle-ocelot', 'jungle-stalker', 'canopy-harrier', 'hunting-panther'],
     // Engagement/Affliction mirrors Plains Sky, the game's other Engagement source.
     drops: 'engagement', punishes: 'affliction',
   }],
 
   // ── Desert (T2 — W1-E) ──────────────────────────────────────────────────────
-  // Desert's ten non-boss mobs do NOT partition across the three approved
+  // Desert's ten W1-E non-boss mobs did NOT partition across the three approved
+  // (the Dune Antlion, added 2026-10-12, was authored for Scorpion and is not one of them)
   // families (design review item, see the file header): Basilisk, Scorpion and
   // Stalker between them name only 7 of the 10. The leftover three are the
   // scarab "Dealer" line (dust-djinn / sandweaver / sandspitter-cobra) — kiting,
@@ -270,7 +272,7 @@ const familyEntries: [FamilyId, FamilyDefinition][] = [
   ['desert-scorpion', {
     id: 'desert-scorpion', name: 'Scorpion', biome: 'desert',
     // dust-djinn: the shared T2 Dealer, assigned here — see the header comment above.
-    monsterIds: ['sand-scorpion', 'sand-viper', 'dust-djinn'],
+    monsterIds: ['sand-scorpion', 'dune-antlion', 'sand-viper', 'dust-djinn'],
     // Control/Kill-chain mirrors Mountain Ridge.
     drops: 'control', punishes: 'kill-chain',
   }],

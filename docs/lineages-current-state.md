@@ -623,7 +623,8 @@ Phase 2b deleted the catalyst accumulator outright.
   Shackle, Bone, Spark, Sigil, Iron, Glass — `shardName`), never lane names. **Every node
   pays a family it fields**: its leader has a body in its tier pool (`nodeShards.test.ts`,
   no allowlist; the eight T2–T4 nodes that paid a bodiless family were re-led by the
-  verbs-that-fire run — table in [`variants-current-state.md`](variants-current-state.md) §4).
+  verbs-that-fire run, then restored to their authored leads on 2026-10-12 when six new
+  mobs gave those families bodies — table in [`variants-current-state.md`](variants-current-state.md) §4).
 - **Capstones.** Granted on every boss kill whose biome has a capstone material: `+= max(1,
   round(debugMult))` per kill — not scaled by node identity.
 - **Boss Lane-A stopgap (design §18.6, provisional).** Every biome boss kill also drops
@@ -780,9 +781,8 @@ the composed heavy bleed, the Affliction re-dose, `poison-stack`, a standalone
   only T1 source again. Technique's T1 income is one Swarm-led Plains node plus the Plains
   boss; since design §24.4 every other weapon lane is paid by at least two T1 nodes'
   territories.
-- Six T2–T4 biome tiers field only two of their three families, so the eight nodes
-  re-led in §10 pay a fielded family's shard instead of the one their template named
-  (variants-current-state §4); which shards those doors should pay is the designer's.
+- The six T2–T4 family gaps were filled on 2026-10-12 and the eight nodes re-led in §10
+  are back on their authored leads (variants-current-state §3–§4).
 
 ## 13. The weapon page and the rhythm readout (design §24.6)
 
