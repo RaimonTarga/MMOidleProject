@@ -245,4 +245,33 @@ export const jungleMonsterEntries = [
   }],
 
 
+  ['jungle-ocelot', {
+    id: 'jungle-ocelot', name: 'Jungle Ocelot', color: 0x6b4a2e,
+    // STALKER FAMILY, T2 (distinctness batch, 2026-10-12). Stalker had no T2 body, so four T2 Jungle nodes
+    // that name the family re-scaled it away. A small spotted cat before the panthers:
+    // the family's opening strike and DoT resistance at T2 size. PLACEHOLDER numbers
+    // seeded from the Jungle Stalker (T3) scaled to the T2 Jungle band (Jungle Snake
+    // 480 HP). Designer hand-edits.
+    stats: { hp: 560, attack: 24, plating: 0, damageReduction: 0, speed: 78, attackRange: 12, attackCooldown: 1000, pullRange: 270 },
+    dotResistance: 0.25,
+    behavior: 'melee', attackStyle: 'claws-light', biome: 'jungle',
+    rewards: { essence: 8, essenceType: 'green', level: 1, biomeXp: 44 },
+    ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 600, idleMaxMs: 2600 },
+    openingStrike: { multiplier: 1.5 },
+  }],
+
+  ['venom-dart-frog', {
+    id: 'venom-dart-frog', name: 'Venom Dart Frog', color: 0x3a3a22,
+    // UNDERGROWTH FAMILY, T3 (distinctness batch, 2026-10-12). Undergrowth had no T3 body, so four T3
+    // Jungle nodes that name the family re-scaled it away. Between the Vine Chameleon
+    // (T2) and the T4 constrictor and thornback: a ranged poisoner. PLACEHOLDER numbers
+    // seeded from the Vine Chameleon scaled to the T3 Jungle band (Canopy Chameleon
+    // 1,150 HP). Designer hand-edits.
+    stats: { hp: 1100, attack: 40, plating: 0, damageReduction: 0, speed: 50, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
+    behavior: 'ranged', attackStyle: 'dart', biome: 'jungle',
+    rewards: { essence: 27, essenceType: 'green', level: 2, biomeXp: 165 },
+    ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1200, idleMaxMs: 4000 },
+    dotEffect: { debuffId: 'dart-poison', label: 'Dart Poison', damagePerStack: 14, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2100 },
+  }],
+
 ] satisfies [string, MonsterDefinition][];

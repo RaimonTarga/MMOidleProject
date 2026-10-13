@@ -46,10 +46,8 @@ const CAVE_T3_BLENDS: readonly NodeBlend[] = [
 
 const JUNGLE_T3_BLENDS: readonly NodeBlend[] = [
   { 'jungle-ape': 0.70, 'jungle-undergrowth': 0.20, 'jungle-stalker': 0.10 },
-  // 02 — Stalker territory, not Undergrowth (verbs-that-fire C, PROVISIONAL): no
-  // Undergrowth body lives at T3 (snake/blowdarter are T2, lizard/constrictor T4), so
-  // the node spawned Stalker 7 / Ape 3 while paying Venom. Spawns unchanged.
-  { 'jungle-stalker': 0.70, 'jungle-ape': 0.30 },
+  // 02 — its authored lead, restored 2026-10-12: Undergrowth (Venom Dart Frog) has a body at this tier now.
+  { 'jungle-undergrowth': 0.70, 'jungle-stalker': 0.20, 'jungle-ape': 0.10 },
   { 'jungle-stalker': 0.70, 'jungle-ape': 0.20, 'jungle-undergrowth': 0.10 },
   { 'jungle-ape': 0.45, 'jungle-undergrowth': 0.45, 'jungle-stalker': 0.10 },
   { 'jungle-ape': 0.34, 'jungle-undergrowth': 0.33, 'jungle-stalker': 0.33 },
@@ -62,10 +60,8 @@ const JUNGLE_T3_BLENDS: readonly NodeBlend[] = [
  */
 const DESERT_T3_BLENDS: readonly NodeBlend[] = [
   { 'desert-basilisk': 0.70, 'desert-scorpion': 0.20, 'desert-stalker': 0.10 },
-  // 02 — Stalker territory, not Scorpion (verbs-that-fire C, PROVISIONAL): with no T3
-  // Scorpion the node spawned Stalker 7 / Basilisk 3 while paying Shackle. Spawns
-  // unchanged.
-  { 'desert-stalker': 0.70, 'desert-basilisk': 0.30 },
+  // 02 — its authored lead, restored 2026-10-12: Scorpion (Dune Antlion) has a body at this tier now.
+  { 'desert-scorpion': 0.70, 'desert-stalker': 0.20, 'desert-basilisk': 0.10 },
   { 'desert-stalker': 0.70, 'desert-basilisk': 0.20, 'desert-scorpion': 0.10 },
   { 'desert-basilisk': 0.45, 'desert-scorpion': 0.45, 'desert-stalker': 0.10 },
   { 'desert-basilisk': 0.34, 'desert-scorpion': 0.33, 'desert-stalker': 0.33 },
@@ -83,10 +79,8 @@ const VOLCANIC_T3_BLENDS: readonly NodeBlend[] = [
 const SWAMP_T3_BLENDS: readonly NodeBlend[] = [
   { 'swamp-mire': 0.70, 'swamp-coven': 0.20, 'swamp-stalker': 0.10 },
   { 'swamp-coven': 0.70, 'swamp-stalker': 0.20, 'swamp-mire': 0.10 },
-  // 03 — Mire territory, not Stalker (verbs-that-fire C, PROVISIONAL): no Stalker body
-  // lives at T3 (mud-toad is T1, mire-stalker T2), so the node spawned Mire 7 /
-  // Coven 3 while paying Bone. Spawns unchanged.
-  { 'swamp-mire': 0.70, 'swamp-coven': 0.30 },
+  // 03 — its authored lead, restored 2026-10-12: Stalker (Fen Shoebill) has a body at this tier now.
+  { 'swamp-stalker': 0.70, 'swamp-mire': 0.20, 'swamp-coven': 0.10 },
   { 'swamp-mire': 0.45, 'swamp-coven': 0.45, 'swamp-stalker': 0.10 },
   { 'swamp-mire': 0.34, 'swamp-coven': 0.33, 'swamp-stalker': 0.33 },
   { 'swamp-coven': 0.55, 'swamp-stalker': 0.30, 'swamp-mire': 0.15 },

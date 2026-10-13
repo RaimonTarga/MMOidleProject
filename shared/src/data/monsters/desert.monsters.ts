@@ -308,4 +308,17 @@ export const desertMonsterEntries = [
   }],
 
 
+  ['dune-antlion', {
+    id: 'dune-antlion', name: 'Dune Antlion', color: 0x7a4a2a,
+    // SCORPION FAMILY, T3 (distinctness batch, 2026-10-12). Scorpion had no T3 body, so four T3 Desert
+    // nodes that name the family re-scaled it away. A pit ambusher with sickle jaws,
+    // between the Sand Scorpion (T2) and the Sand Viper (T4). No pack: a lone body
+    // until the designer decides whether it duos. PLACEHOLDER numbers seeded from the
+    // T3 Desert band (Dune Stalker 4,050 HP, 67 attack). Designer hand-edits.
+    stats: { hp: 3800, attack: 70, plating: 0, damageReduction: 0.08, speed: 26, attackRange: 12, attackCooldown: 2600, pullRange: 200 },
+    behavior: 'melee', attackStyle: 'snap', biome: 'desert',
+    rewards: { essence: 30, essenceType: 'yellow', level: 2, biomeXp: 180 },
+    ai: { wanderRadius: 240, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
+  }],
+
 ] satisfies [string, MonsterDefinition][];

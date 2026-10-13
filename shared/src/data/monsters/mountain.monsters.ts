@@ -345,4 +345,18 @@ export const mountainMonsterEntries = [
   }],
 
 
+  ['summit-slinger', {
+    id: 'summit-slinger', name: 'Summit Slinger', color: 0x5d6470,
+    // RIDGE FAMILY, T4 (distinctness batch, 2026-10-12). Ridge had no T4 body, so four T4 Mountain nodes
+    // that name the family re-scaled it away. The line's apex: Ridge Ambusher ->
+    // Boulder Thrower -> Crag Mortar -> this, a stone vessel with a sling that holds
+    // range. PLACEHOLDER numbers seeded from Crag Mortar (T3 Ridge) and the T4 Mountain
+    // band (Cliffside Roc / Avalanche Tyrant, ~1,600 HP, ~140 attack); no mechanic of
+    // its own yet. Designer hand-edits.
+    stats: { hp: 1600, attack: 140, plating: 0, damageReduction: 0, speed: 30, attackRange: 260, attackCooldown: 3600, pullRange: 380 },
+    behavior: 'ranged', attackStyle: 'boulder', biome: 'mountain',
+    rewards: { essence: 70, essenceType: 'blue', level: 3, biomeXp: 420 },
+    ai: { wanderRadius: 200, leashRange: 620, idleMinMs: 2000, idleMaxMs: 5000 },
+  }],
+
 ] satisfies [string, MonsterDefinition][];

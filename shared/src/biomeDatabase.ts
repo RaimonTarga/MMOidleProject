@@ -90,7 +90,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
       1: ['cliff-hopper', 'cliff-hopper', 'ridge-archer', 'rockback-ram'],
       2: ['granite-titan', 'stone-eagle', 'peak-archer'],
       3: ['mountain-colossus', 'avalanche-ram', 'crag-mortar'],
-      4: ['granite-mammoth', 'avalanche-tyrant', 'cliffside-roc', 'cragback-rhino'],
+      4: ['granite-mammoth', 'avalanche-tyrant', 'cliffside-roc', 'cragback-rhino', 'summit-slinger'],
     },
     bossPoolByTier: {
       1: ['crag-behemoth'],
@@ -136,8 +136,8 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     backgroundColor: 0x0c1708,
     monsterPoolByTier: {
       1: ['bog-slime', 'mud-toad', 'fen-hexer'],
-      2: ['swamp-hydra', 'bog-witch', 'mire-stalker'],
-      3: ['plague-hydra', 'mire-hex-spitter', 'bog-lurker'],
+      2: ['swamp-hydra', 'bog-witch', 'mire-stalker', 'bog-leech'],
+      3: ['plague-hydra', 'mire-hex-spitter', 'bog-lurker', 'fen-shoebill'],
     },
     bossPoolByTier: {
       1: ['grave-toadeater'],
@@ -177,8 +177,8 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     monsterPoolByTier: {
       // Pool entries are weighted. Keep Apes as a notable bruiser without making
       // the limited Chestbeat rally a routine part of every T2 pull.
-      2: ['jungle-snake', 'jungle-snake', 'jungle-ape', 'jungle-blowdarter'],
-      3: ['jungle-stalker', 'silverback', 'canopy-harrier'],
+      2: ['jungle-snake', 'jungle-snake', 'jungle-ape', 'jungle-blowdarter', 'jungle-ocelot'],
+      3: ['jungle-stalker', 'silverback', 'canopy-harrier', 'venom-dart-frog'],
       4: ['hunting-panther', 'apex-silverback', 'thornback-lizard', 'emerald-constrictor'],
     },
     bossPoolByTier: {
@@ -231,7 +231,7 @@ export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([
     // control: root + sunder) and the scorpion (soft control: slow/cripple).
     monsterPoolByTier: {
       2: ['sand-scorpion', 'stone-basilisk'],
-      3: ['dune-stalker', 'desert-basilisk'],
+      3: ['dune-stalker', 'desert-basilisk', 'dune-antlion'],
       4: ['sand-viper', 'dune-basilisk', 'dune-tyrant'],
     },
     bossPoolByTier: {

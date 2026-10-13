@@ -165,9 +165,7 @@ export const MONSTER_FRAMES: Record<string, string> = {
 
   // ── T2: Plains ──────────────────────────────────────────────────────────────
   'prairie-wolf':   'sprites/monsters/prairie-wolf.png',
-  // Shares the adult frame for now, exactly as `young-wolf` shared `wolf.png` before it
-  // earned its own smaller-silhouette sprite. Art pass can split it the same way.
-  'prairie-yearling': 'sprites/monsters/prairie-wolf.png',
+  'prairie-yearling': 'sprites/monsters/prairie-yearling.png', // own pup frame since 2026-10-12
   'stampede-bull':  'sprites/monsters/stampede-bull.png',
   'savanna-hawk':   'sprites/monsters/savanna-hawk.png',
 
@@ -175,8 +173,7 @@ export const MONSTER_FRAMES: Record<string, string> = {
   'ancient-wolf':   'sprites/monsters/ancient-wolf.png',   // display: Dire Wolf
   'ironwood-golem': 'sprites/monsters/ironclaw-badger.png', // display: Ironclaw Badger
   'canopy-sprite':  'sprites/monsters/thorn-spitter.png',   // display: Thorn Spitter
-  // Shares the adult frame until the art pass splits it, as `young-wolf` once did.
-  'dire-whelp':     'sprites/monsters/ancient-wolf.png',
+  'dire-whelp':     'sprites/monsters/dire-whelp.png', // own pup frame since 2026-10-12
 
   // ── T2: Mountain ────────────────────────────────────────────────────────────
   'granite-titan':  'sprites/monsters/granite-titan.png',
@@ -187,6 +184,7 @@ export const MONSTER_FRAMES: Record<string, string> = {
   'swamp-hydra':    'sprites/monsters/moss-shell-snapper.png', // display: Moss-Shell Snapper
   'bog-witch':      'sprites/monsters/bog-witch.png',
   'mire-stalker':   'sprites/monsters/mire-stalker.png',
+  'bog-leech':      'sprites/monsters/bog-leech.png',
 
   // ── T2: Cave ─────────────────────────────────────────────────────────────────
   'giant-spider':   'sprites/monsters/giant-spider.png',
@@ -197,6 +195,7 @@ export const MONSTER_FRAMES: Record<string, string> = {
   'jungle-snake':      'sprites/monsters/jungle-snake.png',
   'jungle-ape':        'sprites/monsters/jungle-ape.png',
   'jungle-blowdarter': 'sprites/monsters/vine-chameleon.png', // display: Vine Chameleon
+  'jungle-ocelot':  'sprites/monsters/jungle-ocelot.png',
 
   // ── T2: Desert ───────────────────────────────────────────────────────────────
   'sand-scorpion':  'sprites/monsters/sand-scorpion.png',
@@ -226,15 +225,18 @@ export const MONSTER_FRAMES: Record<string, string> = {
   'plague-hydra': 'sprites/monsters/plague-shell-snapper.png', // display: Plague-Shell Snapper
   'bog-lurker':   'sprites/monsters/bog-lurker.png',
   'mire-hex-spitter': 'sprites/monsters/mire-hex-spitter.png',
+  'fen-shoebill': 'sprites/monsters/fen-shoebill.png',
 
   // ── T3: Jungle ───────────────────────────────────────────────────────────────
   'jungle-stalker':  'sprites/monsters/jungle-stalker.png',
   'silverback':      'sprites/monsters/silverback.png',
   'canopy-harrier':  'sprites/monsters/canopy-chameleon.png', // display: Canopy Chameleon
+  'venom-dart-frog': 'sprites/monsters/venom-dart-frog.png',
 
   // ── T3: Desert ───────────────────────────────────────────────────────────────
   'dune-stalker':    'sprites/monsters/dune-stalker.png',
   'desert-basilisk': 'sprites/monsters/desert-basilisk.png',
+  'dune-antlion':    'sprites/monsters/dune-antlion.png',
   'sandweaver':      'sprites/monsters/gilded-scarab.png', // display: Gilded Scarab
 
   // ── T3: Volcano ──────────────────────────────────────────────────────────────
@@ -262,6 +264,7 @@ export const MONSTER_FRAMES: Record<string, string> = {
   'avalanche-tyrant': 'sprites/monsters/avalanche-tyrant.png',
   'cliffside-roc':    'sprites/monsters/cliffside-roc.png',
   'cragback-rhino':   'sprites/monsters/cragback-rhino.png',
+  'summit-slinger':   'sprites/monsters/summit-slinger.png',
 
   // ── T4: Tundra ───────────────────────────────────────────────────────────────
   'rime-tusk-mastodon':  'sprites/monsters/rime-tusk-mastodon.png',
@@ -432,6 +435,8 @@ export const MONSTER_DISPLAY_SCALE: Record<string, number> = {
   'glacier-bear':          1.25,
   'dune-stalker':          1.25,
   'desert-basilisk':       1.25,
+  'dune-antlion':          1.25,
+  'fen-shoebill':          1.25,
   'magma-brute':           1.25, // Magma Tortoise
   'infernal-direhound':    1.25,
   'ashspitter-salamander': 1.25,
@@ -448,6 +453,7 @@ export const MONSTER_DISPLAY_SCALE: Record<string, number> = {
   'glacial-direbear':      1.5,
   'avalanche-tyrant':      1.5,
   'cragback-rhino':        1.5,
+  'summit-slinger':        1.5,
   'cliffside-roc':         1.5,
   'dune-basilisk':         1.5,
   'dune-tyrant':           1.5,

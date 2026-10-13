@@ -508,4 +508,28 @@ export const BESTIARY_TEXT: Readonly<Record<string, BestiaryText>> = {
     profile: 'Wound-and-devour boss',
     description: 'Elder Trench Serpent fights one long sentence: Abyssal Bite wounds recovery, Undertow drags the target back, Constrict steals a moment, and Devour heals the serpent if it lands. Every step has a different answer, but none reward standing still.',
   },
+  'summit-slinger': {
+    profile: 'Long-range stone artillery',
+    description: 'The Summit Slinger is the end of the ridge line: a stone vessel that never closes the distance and never needs to. Every boulder comes from further away than the last thrower you met, so the climb to reach it is the fight.',
+  },
+  'bog-leech': {
+    profile: 'Slow poison drain',
+    description: 'Bog Leeches hit softly and slip half the blows aimed at them. The danger is what stays behind: every bite leaves poison working, so a long fight with one costs more than its teeth suggest.',
+  },
+  'fen-shoebill': {
+    profile: 'Still-water ambusher',
+    description: 'The Fen Shoebill stands so still in the reeds that it reads as scenery until the first strike lands, and that strike is the heavy one. It eats toads and serpents; it will try the same on you.',
+  },
+  'jungle-ocelot': {
+    profile: 'Fast opening striker',
+    description: 'Jungle Ocelots are the small cats of the canopy floor: quick, spotted, and committed to their first pounce. Poison barely slows them, so the answer is to outlast the opening, not to wear them down.',
+  },
+  'venom-dart-frog': {
+    profile: 'Ranged poisoner',
+    description: 'Venom Dart Frogs keep their distance and spit, and each dart adds to a poison that outpaces most recovery. Their warning colours are honest: close the gap or cleanse, but do not trade from range.',
+  },
+  'dune-antlion': {
+    profile: 'Armoured pit ambusher',
+    description: 'The Dune Antlion waits with its sickle jaws open and a shell that shrugs off the lightest hits. It is slow to move and slow to die, which makes it a test of steady damage rather than of footwork.',
+  },
 } as const;

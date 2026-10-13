@@ -115,20 +115,21 @@ function pickSweep(where: string, biome: string, tier: number, blend: NodeBlend)
     && outward.families.size === 2,
     `a 70/30 pair must spawn 21/9 over thirty picks, got ${JSON.stringify([...outward.families])}`);
 
-  // A guest the tier cannot field (Swamp T2 has no Mire body) is dropped onto the
-  // leader: the node narrows to one family, it never widens to the whole pool.
-  assert((BIOME_DATABASE.get('swamp')?.monsterPoolByTier[2] ?? []).length > 2,
-    'fixture: the Swamp T2 pool fields several families');
-  const narrowed = pickSweep('pair with an unfielded guest', 'swamp', 2, { 'swamp-coven': 0.7, 'swamp-mire': 0.3 });
-  assert(narrowed.resolved.unavailable.length === 1 && narrowed.resolved.unavailable[0] === 'swamp-mire',
-    `fixture: swamp-mire must be unfielded at T2, got ${JSON.stringify(narrowed.resolved.unavailable)}`);
-  assert(narrowed.families.size === 1 && narrowed.families.get('swamp-coven') === 30,
+  // A guest the tier cannot field (Desert's Stalker family is T3+ only; Swamp T2 has
+  // had a Mire body since 2026-10-12) is dropped onto the leader: the node narrows to
+  // one family, it never widens to the whole pool.
+  assert((BIOME_DATABASE.get('desert')?.monsterPoolByTier[2] ?? []).length >= 2,
+    'fixture: the Desert T2 pool fields more than one family');
+  const narrowed = pickSweep('pair with an unfielded guest', 'desert', 2, { 'desert-scorpion': 0.7, 'desert-stalker': 0.3 });
+  assert(narrowed.resolved.unavailable.length === 1 && narrowed.resolved.unavailable[0] === 'desert-stalker',
+    `fixture: desert-stalker must be unfielded at T2, got ${JSON.stringify(narrowed.resolved.unavailable)}`);
+  assert(narrowed.families.size === 1 && narrowed.families.get('desert-scorpion') === 30,
     `an unfielded guest must fold onto the leader, got ${JSON.stringify([...narrowed.families])}`);
 
   // A blend with nothing fieldable resolves to undefined — the one path on which
   // the spawner falls back to the flat pool. `nodeShards.test.ts` section 4 makes
   // it unreachable for every real node (its leader always has a body).
-  assert(resolveNodeBlend('swamp', 2, { 'swamp-mire': 1 }) === undefined,
+  assert(resolveNodeBlend('desert', 2, { 'desert-stalker': 1 }) === undefined,
     'a blend with no fielded family resolves to nothing');
 }
 

@@ -5,6 +5,8 @@ biome, the T1 third-mob close-out, and the T1 mask re-cut — on top of the Phas
 work that first shipped this system for Plains/Forest/T1 and then Jungle/Desert/T2).
 Updated 2026-10-03 (verbs-that-fire run, task C): every node pays a family it fields — the
 eight T2–T4 territories with no body at their tier were re-led (§4).
+Updated 2026-10-12 (distinctness batch): six new mobs give those families bodies, and the
+eight nodes are back on their authored leads (§3, §4).
 
 **Design authority:** [`design_docs/progression-rework-design.md`](../design_docs/progression-rework-design.md)
 §12, §18.7–§18.9. **History:** [`archive/progression-rework-plan.md`](archive/progression-rework-plan.md)
@@ -121,14 +123,14 @@ stat/HP tables are untouched by blend or family.
   re-familying Mud Toad from Mire to Stalker) now lets all 25 authored T1 blends resolve
   exactly as authored, with no family dropped and rescaled away. Engagement shards are
   now **earned** from Plains Sky kills rather than credited by a harness shim.
-- **A later-tier gap of the same shape is still in the pools, but no longer leads a
-  node.** Six T2–T4 biome tiers field only two of their three families (Swamp T2 has no
-  Mire, Jungle T2 no Stalker, Jungle T3 no Undergrowth, Desert T3 no Scorpion, Swamp T3 no
-  Stalker, Mountain T4 no Ridge). A bodiless family may keep a minority share — it is
-  dropped and re-scaled away at spawn time and pays nothing — but it must not LEAD a
-  blend, because a node pays its leader's shard (§4). The verbs-that-fire run re-led the
-  eight nodes that broke that; filling the pools is the designer's (a tier-native body,
-  like design §18.8's third T1 mobs).
+- **The later-tier gaps are filled (2026-10-12).** Six T2–T4 biome tiers used to field
+  only two of their three families. Each now has a tier-native body, the same move as
+  design §18.8's third T1 mobs: Bog Leech (Swamp Mire T2), Jungle Ocelot (Jungle Stalker
+  T2), Venom Dart Frog (Jungle Undergrowth T3), Dune Antlion (Desert Scorpion T3), Fen
+  Shoebill (Swamp Stalker T3), Summit Slinger (Mountain Ridge T4); numbers PLACEHOLDER.
+  The one family still bodiless at a tier by design is Desert Stalker at T2 (T3+ only).
+  A bodiless family may keep a minority share — it is dropped and re-scaled away at
+  spawn time and pays nothing — but it must not LEAD a blend (§4).
 - Pack mobs (e.g. a wolf alpha fielding followers) mean a family's share of **spawn
   picks** runs ahead of its share of **bodies on the field**.
 - A family's own monster list is deduplicated for spawning: a mob once listed twice to
@@ -168,7 +170,11 @@ tier's fielded families leading fewer than two nodes. All PROVISIONAL, the desig
 | t3-swamp-03 | Stalker → Bone | Mire 70 / Coven 30 → Venom | unchanged (7/3) |
 | t4-mountain-02 | Ridge → Shackle | Hopper 70 / Crag 30 → Spark | unchanged (7/3) |
 
-Every new leader is a lane of the weapon whose door that biome tier is. What left: Swamp
+**Restored 2026-10-12:** with the six gap mobs in the pools, all eight nodes are back on
+their authored leads (the "Was" column; `regionT2.ts`/`regionT3.ts`/`regionT4.ts`). The
+table stays for the history of the call.
+
+Every new leader was a lane of the weapon whose door that biome tier is. What left: Swamp
 T2 pays no Venom (the Dagger's T2 door), Jungle T2 no Spark and Jungle T3 no Venom (the
 Rapier's doors; the Jungle forms crown Affliction), Desert T3 and Mountain T4 no Shackle.
 Two family-table notes for the designer sit behind these: `dune-stalker` is the Scorpion
