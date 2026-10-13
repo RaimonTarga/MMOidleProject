@@ -127,7 +127,11 @@ behavior.
 - [Boss lineage art list](briefs/boss-lineage-art-list-2026-09-27.md) — icons and ground textures the boss lineages borrow art for, with target paths and wiring.
 - [Four-tier source audit](briefs/four-tier-audit-2026-10-05.md) — read-only inventory of tier ceilings, authored tables, validation pins, and fifth-tier consequences across packages; source revision and generic paths distinguished.
 - [Playtest 3 report](briefs/playtest-3-report-2026-10-12.md) — a fresh guest through the guided Tier 1 in a real browser on develop `6a819467` (Striker, ~48 min): the timeline, three fixes made (rune icon 404s, the Reset Passives prompt on a new character, the guide's "frame" vs the panel's "style"), the designer's list (6.5 of 10 seal minutes are walking, the Plains entry spike, the Mountain boss at 7% HP, system-language class text, two names for frames) and what worked. Evidence: `reports/playtest-3/`.
-- [System cut proposal](briefs/system-cut-proposal-2026-10-12.md) — PROPOSAL, not decided: the ten systems and fifteen currencies a player meets by Tier 2, and a cut to four (gear, the weapon page, the Passive Tree, abilities with Runes) by folding shards into essence, hiding Global Mastery behind tier wording, and parking ability node rows, stances and rites to T3+. Open questions for the designer at the end.
+- [Class-first rework brief](briefs/class-first-rework-brief-2026-10-13.md) — the designer's handoff brief for the class-first rework (each class its own mechanic, custom system, weapons, relics and abilities; random loot with agency; item and ability trees, frames, range nodes, cores and the shared runic budget scrapped; Discipline / flat pick / Mastery progression; Conduit first), plus an addendum of the designer's calls in the first brainstorm. Source of truth for intent until the new design bible lands.
+- [Rework audit](briefs/rework-audit-2026-10-13.md) — step 1 of the brief, read-only: every current system tagged keep / rework / scrap, what shipped to production (the item and ability trees never did), the footprint of each scrapped system and its seams, an order of operations for removing the weapon tree, the written rules the brief overturns, and the open calls.
+- [Conduit deep dive prep](briefs/conduit-deep-dive-prep-2026-10-13.md) — the starting material for the first class deep dive: what the designer has said, what exists today and what it becomes, the nine current specializations grouped into three families, the evidence (attrition, Taunt, the T4 weapon trap, Recall invisible to bots), and the sixteen questions in session order with starting options.
+- [Conduit deep dive log](briefs/conduit-deep-dive-log-2026-10-13.md) — the working record of the Conduit deep dive: every call in order (nine reviews), the reasoning, and the ideas dropped along the way (tactics, the T3 flat pick, Bond, Link, Warlord, Champion, per-discipline casts). The design itself is §7 of the class-first bible.
+- [System cut proposal](briefs/system-cut-proposal-2026-10-12.md) — SUPERSEDED by the class-first rework brief (read it only for the system inventory). PROPOSAL, not decided: the ten systems and fifteen currencies a player meets by Tier 2, and a cut to four (gear, the weapon page, the Passive Tree, abilities with Runes) by folding shards into essence, hiding Global Mastery behind tier wording, and parking ability node rows, stances and rites to T3+. Open questions for the designer at the end.
 - [Handoff 2026-10-10](briefs/handoff-2026-10-10.md) — where the designer session ended: develop state, the two finished runs (combat readout unmerged with ten calls; ability pass merged with its leftovers), the next steps in order, parked items, housekeeping and the standing rules.
 - [Combat readout run report](briefs/combat-readout-report-2026-10-06.md) — COMPLETE 2026-10-06, MERGED to develop 2026-10-10 with the designer's calls (addendum): the grammar as built (numbers sized by share of the pool, one crit look, overhead bars by size class with a damage chip, a boss frame with the quarters lost lit and a cast line, the target frame's chrome, the vitals on the same bar, the phone floor), every token, before/after real-client screenshots per item and a live spectator capture, what could not be verified, the designer's open calls (camera floor, band thresholds, the crowded top centre at 1440). Evidence: `reports/combat-readout/` (mockup, capture driver, screens).
 - [Combat readout run brief](briefs/combat-readout-run-2026-10-06.md) — RUN 2026-10-06 (report above), parallel to the ability pass: one grammar for damage numbers (size by share of the pool, one crit look), overhead health bars with a damage chip and size classes, a boss frame with HP quarter markers (the Kill chain prerequisite) and a telegraph line, the target frame's chrome, the player's vitals; tokens for the later skin track, no ornament; Opus in ../mmo-lineages on `feat/combat-readout`, unmerged for the designer.
@@ -174,6 +178,11 @@ behavior.
 The flat files in design_docs/ are the design and architecture source set:
 
 - [architecture.md](../design_docs/architecture.md)
+- [Class-first bible](../design_docs/class-first-bible.md) — DRAFT (2026-10-13): the design
+  authority for the class-first rework, one section per system with its own Draft/Locked
+  status. Once a section locks, it wins over every older design doc listed in its §14.
+  **§7 Conduit LOCKED 2026-10-13** (it superseded the archived summoner-overhaul design
+  source).
 - [design-bible.md](../design_docs/design-bible.md)
 - [Progression rework design](../design_docs/progression-rework-design.md) — design authority;
   the worn-form band gate, delegated monster pass and Consort loop decisions are §18.11–§18.13.
@@ -183,7 +192,6 @@ The flat files in design_docs/ are the design and architecture source set:
 - [boss-design.md](../design_docs/boss-design.md)
 - [boss-lineage-redesign.md](../design_docs/boss-lineage-redesign.md) — 2026-09-27 boss contract (fight length and phases per tier) and per-lineage T1–T4 redesign; **first pass implemented 2026-09-27**, numbers pass pending; supersedes boss-design.md's fight-length target
 - [relics-design.md](../design_docs/relics-design.md)
-- [summoner-overhaul-design-source.md](../design_docs/summoner-overhaul-design-source.md)
 - [ability cast and tier progression](../design_docs/ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md)
 - [core design philosophy](../design_docs/CORE_DESIGN_PHILOSOPHY.md)
 - [core cast review](../design_docs/CORE_CAST_REVIEW_DRAFT.md)

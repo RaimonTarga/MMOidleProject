@@ -1,3 +1,8 @@
+> **ARCHIVED (2026-10-13) — superseded as design authority.** The Conduit's design is now
+> §7 of [class-first-bible.md](../class-first-bible.md) (locked 2026-10-13). The live code
+> still implements this design until the class-first rework is built; what exists today
+> is `docs/conduit-current-state.md`. Kept for rationale.
+
 # Summoner Class Overhaul — Locked Design Source
 
 **Status:** Design-complete for implementation planning  
