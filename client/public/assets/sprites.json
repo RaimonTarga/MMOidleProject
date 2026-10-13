@@ -5,348 +5,12 @@
 			"format": "RGBA8888",
 			"size": {
 				"w": 2048,
-				"h": 1024
+				"h": 1056
 			},
 			"scale": 1,
 			"frames": [
 				{
 					"filename": "sprites/accents/crest-close-cadence.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 1264,
-						"y": 960,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "sprites/accents/crest-close-cooldown.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 1296,
-						"y": 960,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "sprites/accents/crest-close-dot.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 1328,
-						"y": 960,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "sprites/accents/crest-close-energy.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 1360,
-						"y": 960,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "sprites/accents/crest-close-reload.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 1392,
-						"y": 960,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "sprites/accents/crest-close-summoner.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 1424,
-						"y": 960,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "sprites/accents/crest-far-cadence.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 1456,
-						"y": 960,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "sprites/accents/crest-far-cooldown.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 1488,
-						"y": 960,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "sprites/accents/crest-far-dot.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 1520,
-						"y": 960,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "sprites/accents/crest-far-energy.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 1552,
-						"y": 960,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "sprites/accents/crest-far-reload.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 1584,
-						"y": 960,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "sprites/accents/crest-far-summoner.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 1616,
-						"y": 960,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "sprites/accents/crest-mid-cadence.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 1648,
-						"y": 960,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "sprites/accents/crest-mid-cooldown.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 1680,
-						"y": 960,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "sprites/accents/crest-mid-dot.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 1712,
-						"y": 960,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "sprites/accents/crest-mid-energy.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
-						"x": 1744,
-						"y": 960,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "sprites/accents/crest-mid-reload.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -367,7 +31,7 @@
 					}
 				},
 				{
-					"filename": "sprites/accents/crest-mid-summoner.png",
+					"filename": "sprites/accents/crest-close-cooldown.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -383,6 +47,342 @@
 					"frame": {
 						"x": 1808,
 						"y": 960,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-close-dot.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 1840,
+						"y": 960,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-close-energy.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 1872,
+						"y": 960,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-close-reload.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 1904,
+						"y": 960,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-close-summoner.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 1936,
+						"y": 960,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-far-cadence.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 1968,
+						"y": 960,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-far-cooldown.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 2000,
+						"y": 960,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-far-dot.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 0,
+						"y": 1024,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-far-energy.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 32,
+						"y": 1024,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-far-reload.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 64,
+						"y": 1024,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-far-summoner.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 96,
+						"y": 1024,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-mid-cadence.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 128,
+						"y": 1024,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-mid-cooldown.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 160,
+						"y": 1024,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-mid-dot.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 192,
+						"y": 1024,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-mid-energy.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 224,
+						"y": 1024,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-mid-reload.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 256,
+						"y": 1024,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "sprites/accents/crest-mid-summoner.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 288,
+						"y": 1024,
 						"w": 32,
 						"h": 32
 					}
@@ -3685,7 +3685,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/bog-lurker.png",
+					"filename": "sprites/monsters/bog-leech.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3706,7 +3706,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/bog-witch.png",
+					"filename": "sprites/monsters/bog-lurker.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3727,7 +3727,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/bone-crawler.png",
+					"filename": "sprites/monsters/bog-witch.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3748,7 +3748,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/bone-rat.png",
+					"filename": "sprites/monsters/bone-crawler.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3769,7 +3769,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/bramble-pod.png",
+					"filename": "sprites/monsters/bone-rat.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3790,7 +3790,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/brood-spiderling.png",
+					"filename": "sprites/monsters/bramble-pod.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3811,7 +3811,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/brute-variant-2.png",
+					"filename": "sprites/monsters/brood-spiderling.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3832,7 +3832,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/brute.png",
+					"filename": "sprites/monsters/brute-variant-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3853,7 +3853,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/canopy-chameleon.png",
+					"filename": "sprites/monsters/brute.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3874,7 +3874,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/carrion-vulture.png",
+					"filename": "sprites/monsters/canopy-chameleon.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3895,7 +3895,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/cave-gargoyle.png",
+					"filename": "sprites/monsters/carrion-vulture.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3916,7 +3916,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/cave-troll-variant-2.png",
+					"filename": "sprites/monsters/cave-gargoyle.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3937,7 +3937,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/cave-troll-variant-3.png",
+					"filename": "sprites/monsters/cave-troll-variant-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3958,7 +3958,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/cave-troll.png",
+					"filename": "sprites/monsters/cave-troll-variant-3.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3979,7 +3979,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/cavern-troll-variant-2.png",
+					"filename": "sprites/monsters/cave-troll.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -4000,7 +4000,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/cavern-troll-variant-3.png",
+					"filename": "sprites/monsters/cavern-troll-variant-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -4021,7 +4021,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/cavern-troll.png",
+					"filename": "sprites/monsters/cavern-troll-variant-3.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -4042,7 +4042,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/charnel-brute.png",
+					"filename": "sprites/monsters/cavern-troll.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -4063,7 +4063,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/cinder-hound.png",
+					"filename": "sprites/monsters/charnel-brute.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -4084,7 +4084,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/cliff-hopper.png",
+					"filename": "sprites/monsters/cinder-hound.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -4105,7 +4105,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/cliffside-roc.png",
+					"filename": "sprites/monsters/cliff-hopper.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -4120,6 +4120,27 @@
 					},
 					"frame": {
 						"x": 576,
+						"y": 640,
+						"w": 64,
+						"h": 64
+					}
+				},
+				{
+					"filename": "sprites/monsters/cliffside-roc.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 64
+					},
+					"frame": {
+						"x": 640,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4161,7 +4182,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 640,
+						"x": 704,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4182,7 +4203,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 704,
+						"x": 768,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4266,7 +4287,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 768,
+						"x": 832,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4308,7 +4329,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 832,
+						"x": 896,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4329,7 +4350,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 896,
+						"x": 960,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4350,7 +4371,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 960,
+						"x": 1024,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4371,7 +4392,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1024,
+						"x": 1088,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4392,7 +4413,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1088,
+						"x": 1152,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4413,7 +4434,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1152,
+						"x": 1216,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4434,7 +4455,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1216,
+						"x": 1280,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4455,7 +4476,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1280,
+						"x": 1344,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4476,7 +4497,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1344,
+						"x": 1408,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4497,7 +4518,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1408,
+						"x": 1472,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4518,7 +4539,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1472,
+						"x": 1536,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4539,7 +4560,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1536,
+						"x": 1600,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4560,7 +4581,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1600,
+						"x": 1664,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4581,7 +4602,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1664,
+						"x": 1728,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4602,7 +4623,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1728,
+						"x": 1792,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4623,7 +4644,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1792,
+						"x": 1856,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4644,7 +4665,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1856,
+						"x": 1920,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4665,7 +4686,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1920,
+						"x": 1984,
 						"y": 640,
 						"w": 64,
 						"h": 64
@@ -4686,8 +4707,8 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1984,
-						"y": 640,
+						"x": 0,
+						"y": 704,
 						"w": 64,
 						"h": 64
 					}
@@ -4707,7 +4728,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 0,
+						"x": 64,
 						"y": 704,
 						"w": 64,
 						"h": 64
@@ -4728,7 +4749,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 64,
+						"x": 128,
 						"y": 704,
 						"w": 64,
 						"h": 64
@@ -4749,7 +4770,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 128,
+						"x": 192,
 						"y": 704,
 						"w": 64,
 						"h": 64
@@ -4770,7 +4791,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 192,
+						"x": 256,
 						"y": 704,
 						"w": 64,
 						"h": 64
@@ -4791,7 +4812,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 256,
+						"x": 320,
 						"y": 704,
 						"w": 64,
 						"h": 64
@@ -4812,7 +4833,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 320,
+						"x": 384,
 						"y": 704,
 						"w": 64,
 						"h": 64
@@ -4833,7 +4854,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 384,
+						"x": 448,
 						"y": 704,
 						"w": 64,
 						"h": 64
@@ -4854,27 +4875,6 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 448,
-						"y": 704,
-						"w": 64,
-						"h": 64
-					}
-				},
-				{
-					"filename": "sprites/monsters/dune-basilisk.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 64,
-						"h": 64
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 64,
-						"h": 64
-					},
-					"frame": {
 						"x": 512,
 						"y": 704,
 						"w": 64,
@@ -4882,7 +4882,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/dune-stalker.png",
+					"filename": "sprites/monsters/dire-whelp.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -4903,7 +4903,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/dune-tyrant.png",
+					"filename": "sprites/monsters/dune-antlion.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -4924,7 +4924,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/elder-leviathan.png",
+					"filename": "sprites/monsters/dune-basilisk.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -4945,7 +4945,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/ember-scuttler.png",
+					"filename": "sprites/monsters/dune-stalker.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -4966,7 +4966,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/ember-skink.png",
+					"filename": "sprites/monsters/dune-tyrant.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -4987,7 +4987,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/emerald-constrictor.png",
+					"filename": "sprites/monsters/elder-leviathan.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5008,7 +5008,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/fen-hexer.png",
+					"filename": "sprites/monsters/ember-scuttler.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5029,7 +5029,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/field-hare.png",
+					"filename": "sprites/monsters/ember-skink.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5050,7 +5050,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/frog.png",
+					"filename": "sprites/monsters/emerald-constrictor.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5071,7 +5071,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/frost-lurker.png",
+					"filename": "sprites/monsters/fen-hexer.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5092,7 +5092,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/giant-spider.png",
+					"filename": "sprites/monsters/fen-shoebill.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5113,7 +5113,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/gilded-scarab.png",
+					"filename": "sprites/monsters/field-hare.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5134,7 +5134,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/glacial-direbear.png",
+					"filename": "sprites/monsters/frog.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5155,7 +5155,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/glacier-bear.png",
+					"filename": "sprites/monsters/frost-lurker.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5176,7 +5176,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/granite-mammoth-variant-2.png",
+					"filename": "sprites/monsters/giant-spider.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5197,7 +5197,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/granite-mammoth-variant-3.png",
+					"filename": "sprites/monsters/gilded-scarab.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5218,7 +5218,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/granite-mammoth.png",
+					"filename": "sprites/monsters/glacial-direbear.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5239,7 +5239,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/granite-titan.png",
+					"filename": "sprites/monsters/glacier-bear.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5260,7 +5260,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/grass-kite.png",
+					"filename": "sprites/monsters/granite-mammoth-variant-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5281,7 +5281,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/gravewright.png",
+					"filename": "sprites/monsters/granite-mammoth-variant-3.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5302,7 +5302,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/hadal-stalker.png",
+					"filename": "sprites/monsters/granite-mammoth.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5323,7 +5323,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/hoarfrost-yeti.png",
+					"filename": "sprites/monsters/granite-titan.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5344,7 +5344,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/hunting-panther.png",
+					"filename": "sprites/monsters/grass-kite.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5365,7 +5365,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/infernal-direhound.png",
+					"filename": "sprites/monsters/gravewright.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5386,7 +5386,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/iron-marches-amplifying-servitor-variant-2.png",
+					"filename": "sprites/monsters/hadal-stalker.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5407,7 +5407,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/iron-marches-amplifying-servitor.png",
+					"filename": "sprites/monsters/hoarfrost-yeti.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -5422,6 +5422,90 @@
 					},
 					"frame": {
 						"x": 128,
+						"y": 768,
+						"w": 64,
+						"h": 64
+					}
+				},
+				{
+					"filename": "sprites/monsters/hunting-panther.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 64
+					},
+					"frame": {
+						"x": 192,
+						"y": 768,
+						"w": 64,
+						"h": 64
+					}
+				},
+				{
+					"filename": "sprites/monsters/infernal-direhound.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 64
+					},
+					"frame": {
+						"x": 256,
+						"y": 768,
+						"w": 64,
+						"h": 64
+					}
+				},
+				{
+					"filename": "sprites/monsters/iron-marches-amplifying-servitor-variant-2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 64
+					},
+					"frame": {
+						"x": 320,
+						"y": 768,
+						"w": 64,
+						"h": 64
+					}
+				},
+				{
+					"filename": "sprites/monsters/iron-marches-amplifying-servitor.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 64
+					},
+					"frame": {
+						"x": 384,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5526,7 +5610,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 192,
+						"x": 448,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5547,7 +5631,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 256,
+						"x": 512,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5568,7 +5652,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 320,
+						"x": 576,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5589,7 +5673,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 384,
+						"x": 640,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5610,7 +5694,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 448,
+						"x": 704,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5631,7 +5715,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 512,
+						"x": 768,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5694,7 +5778,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 576,
+						"x": 832,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5715,7 +5799,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 640,
+						"x": 896,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5736,7 +5820,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 704,
+						"x": 960,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5757,7 +5841,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 768,
+						"x": 1024,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5778,7 +5862,28 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 832,
+						"x": 1088,
+						"y": 768,
+						"w": 64,
+						"h": 64
+					}
+				},
+				{
+					"filename": "sprites/monsters/jungle-ocelot.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 64
+					},
+					"frame": {
+						"x": 1152,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5799,7 +5904,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 896,
+						"x": 1216,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5820,7 +5925,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 960,
+						"x": 1280,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5841,7 +5946,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1024,
+						"x": 1344,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5862,7 +5967,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1088,
+						"x": 1408,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5883,7 +5988,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1152,
+						"x": 1472,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5904,7 +6009,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1216,
+						"x": 1536,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5925,7 +6030,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1280,
+						"x": 1600,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5946,7 +6051,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1344,
+						"x": 1664,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5967,7 +6072,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1408,
+						"x": 1728,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -5988,7 +6093,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1472,
+						"x": 1792,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -6009,7 +6114,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1536,
+						"x": 1856,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -6030,7 +6135,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1600,
+						"x": 1920,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -6051,7 +6156,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1664,
+						"x": 1984,
 						"y": 768,
 						"w": 64,
 						"h": 64
@@ -6072,8 +6177,8 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1728,
-						"y": 768,
+						"x": 0,
+						"y": 832,
 						"w": 64,
 						"h": 64
 					}
@@ -6093,8 +6198,8 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1792,
-						"y": 768,
+						"x": 64,
+						"y": 832,
 						"w": 64,
 						"h": 64
 					}
@@ -6114,8 +6219,8 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1856,
-						"y": 768,
+						"x": 128,
+						"y": 832,
 						"w": 64,
 						"h": 64
 					}
@@ -6135,8 +6240,29 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1920,
-						"y": 768,
+						"x": 192,
+						"y": 832,
+						"w": 64,
+						"h": 64
+					}
+				},
+				{
+					"filename": "sprites/monsters/prairie-yearling.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 64
+					},
+					"frame": {
+						"x": 256,
+						"y": 832,
 						"w": 64,
 						"h": 64
 					}
@@ -6156,8 +6282,8 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1984,
-						"y": 768,
+						"x": 320,
+						"y": 832,
 						"w": 64,
 						"h": 64
 					}
@@ -6177,7 +6303,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 0,
+						"x": 384,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6198,7 +6324,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 64,
+						"x": 448,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6219,7 +6345,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 128,
+						"x": 512,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6240,7 +6366,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 192,
+						"x": 576,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6261,7 +6387,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 256,
+						"x": 640,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6282,7 +6408,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 320,
+						"x": 704,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6303,7 +6429,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 384,
+						"x": 768,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6324,7 +6450,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 448,
+						"x": 832,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6345,7 +6471,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 512,
+						"x": 896,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6366,7 +6492,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 576,
+						"x": 960,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6387,7 +6513,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 640,
+						"x": 1024,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6408,7 +6534,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 704,
+						"x": 1088,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6429,7 +6555,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 768,
+						"x": 1152,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6450,7 +6576,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 832,
+						"x": 1216,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6471,7 +6597,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 896,
+						"x": 1280,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6492,7 +6618,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 960,
+						"x": 1344,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6513,7 +6639,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1024,
+						"x": 1408,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6534,7 +6660,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1088,
+						"x": 1472,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6555,7 +6681,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1152,
+						"x": 1536,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6576,7 +6702,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1216,
+						"x": 1600,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6597,7 +6723,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1280,
+						"x": 1664,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6618,7 +6744,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1344,
+						"x": 1728,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6639,7 +6765,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1408,
+						"x": 1792,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6660,7 +6786,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1472,
+						"x": 1856,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6681,7 +6807,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1536,
+						"x": 1920,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6702,7 +6828,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1600,
+						"x": 1984,
 						"y": 832,
 						"w": 64,
 						"h": 64
@@ -6723,8 +6849,8 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1664,
-						"y": 832,
+						"x": 0,
+						"y": 896,
 						"w": 64,
 						"h": 64
 					}
@@ -6744,8 +6870,8 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1728,
-						"y": 832,
+						"x": 64,
+						"y": 896,
 						"w": 64,
 						"h": 64
 					}
@@ -6765,8 +6891,8 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1792,
-						"y": 832,
+						"x": 128,
+						"y": 896,
 						"w": 64,
 						"h": 64
 					}
@@ -6786,8 +6912,8 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1856,
-						"y": 832,
+						"x": 192,
+						"y": 896,
 						"w": 64,
 						"h": 64
 					}
@@ -6807,8 +6933,8 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1920,
-						"y": 832,
+						"x": 256,
+						"y": 896,
 						"w": 64,
 						"h": 64
 					}
@@ -6828,8 +6954,8 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1984,
-						"y": 832,
+						"x": 320,
+						"y": 896,
 						"w": 64,
 						"h": 64
 					}
@@ -6849,7 +6975,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 0,
+						"x": 384,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -6870,7 +6996,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 64,
+						"x": 448,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -6891,7 +7017,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 128,
+						"x": 512,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -6912,7 +7038,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 192,
+						"x": 576,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -6933,7 +7059,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 256,
+						"x": 640,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -6954,7 +7080,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 320,
+						"x": 704,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -6975,7 +7101,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 384,
+						"x": 768,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -6996,7 +7122,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 448,
+						"x": 832,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -7017,7 +7143,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 512,
+						"x": 896,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -7038,7 +7164,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 576,
+						"x": 960,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -7059,7 +7185,28 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 640,
+						"x": 1024,
+						"y": 896,
+						"w": 64,
+						"h": 64
+					}
+				},
+				{
+					"filename": "sprites/monsters/summit-slinger.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 64
+					},
+					"frame": {
+						"x": 1088,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -7080,7 +7227,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 704,
+						"x": 1152,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -7101,7 +7248,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 768,
+						"x": 1216,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -7122,7 +7269,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 832,
+						"x": 1280,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -7143,7 +7290,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 896,
+						"x": 1344,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -7164,7 +7311,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 960,
+						"x": 1408,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -7185,7 +7332,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1024,
+						"x": 1472,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -7206,7 +7353,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1088,
+						"x": 1536,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -7227,7 +7374,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1152,
+						"x": 1600,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -7248,7 +7395,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1216,
+						"x": 1664,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -7269,7 +7416,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1280,
+						"x": 1728,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -7290,7 +7437,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1344,
+						"x": 1792,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -7311,7 +7458,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1408,
+						"x": 1856,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -7332,7 +7479,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1472,
+						"x": 1920,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -7353,7 +7500,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1536,
+						"x": 1984,
 						"y": 896,
 						"w": 64,
 						"h": 64
@@ -7374,153 +7521,6 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1600,
-						"y": 896,
-						"w": 64,
-						"h": 64
-					}
-				},
-				{
-					"filename": "sprites/monsters/underworlds-crucible-hound.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 64,
-						"h": 64
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 64,
-						"h": 64
-					},
-					"frame": {
-						"x": 1664,
-						"y": 896,
-						"w": 64,
-						"h": 64
-					}
-				},
-				{
-					"filename": "sprites/monsters/underworlds-ember-parasite-variant-2.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 64,
-						"h": 64
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 64,
-						"h": 64
-					},
-					"frame": {
-						"x": 1728,
-						"y": 896,
-						"w": 64,
-						"h": 64
-					}
-				},
-				{
-					"filename": "sprites/monsters/underworlds-ember-parasite-variant-3.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 64,
-						"h": 64
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 64,
-						"h": 64
-					},
-					"frame": {
-						"x": 1792,
-						"y": 896,
-						"w": 64,
-						"h": 64
-					}
-				},
-				{
-					"filename": "sprites/monsters/underworlds-ember-parasite.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 64,
-						"h": 64
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 64,
-						"h": 64
-					},
-					"frame": {
-						"x": 1856,
-						"y": 896,
-						"w": 64,
-						"h": 64
-					}
-				},
-				{
-					"filename": "sprites/monsters/underworlds-furnace-beetle-variant-2.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 64,
-						"h": 64
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 64,
-						"h": 64
-					},
-					"frame": {
-						"x": 1920,
-						"y": 896,
-						"w": 64,
-						"h": 64
-					}
-				},
-				{
-					"filename": "sprites/monsters/underworlds-furnace-beetle-variant-3.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 64,
-						"h": 64
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 64,
-						"h": 64
-					},
-					"frame": {
-						"x": 1984,
-						"y": 896,
-						"w": 64,
-						"h": 64
-					}
-				},
-				{
-					"filename": "sprites/monsters/underworlds-furnace-beetle.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 64,
-						"h": 64
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 64,
-						"h": 64
-					},
-					"frame": {
 						"x": 0,
 						"y": 960,
 						"w": 64,
@@ -7528,7 +7528,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/underworlds-gloom-spider-variant-2.png",
+					"filename": "sprites/monsters/underworlds-crucible-hound.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7549,7 +7549,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/underworlds-gloom-spider.png",
+					"filename": "sprites/monsters/underworlds-ember-parasite-variant-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7570,7 +7570,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/underworlds-hellshaft-watcher-variant-2.png",
+					"filename": "sprites/monsters/underworlds-ember-parasite-variant-3.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7591,7 +7591,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/underworlds-hellshaft-watcher.png",
+					"filename": "sprites/monsters/underworlds-ember-parasite.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7612,7 +7612,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/underworlds-iron-locust-variant-2.png",
+					"filename": "sprites/monsters/underworlds-furnace-beetle-variant-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7633,7 +7633,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/underworlds-iron-locust.png",
+					"filename": "sprites/monsters/underworlds-furnace-beetle-variant-3.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7654,7 +7654,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/underworlds-mineral-mite-colossus-variant-2.png",
+					"filename": "sprites/monsters/underworlds-furnace-beetle.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7675,7 +7675,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/underworlds-mineral-mite-colossus-variant-3.png",
+					"filename": "sprites/monsters/underworlds-gloom-spider-variant-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7696,7 +7696,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/underworlds-mineral-mite-colossus-variant-4.png",
+					"filename": "sprites/monsters/underworlds-gloom-spider.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7717,7 +7717,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/underworlds-mineral-mite-colossus.png",
+					"filename": "sprites/monsters/underworlds-hellshaft-watcher-variant-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7738,7 +7738,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/underworlds-underworks-sentinel.png",
+					"filename": "sprites/monsters/underworlds-hellshaft-watcher.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7759,7 +7759,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/underworlds-walking-crucible-variant-2.png",
+					"filename": "sprites/monsters/underworlds-iron-locust-variant-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7780,7 +7780,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/underworlds-walking-crucible.png",
+					"filename": "sprites/monsters/underworlds-iron-locust.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7801,7 +7801,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/vine-chameleon.png",
+					"filename": "sprites/monsters/underworlds-mineral-mite-colossus-variant-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7822,7 +7822,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/wolf.png",
+					"filename": "sprites/monsters/underworlds-mineral-mite-colossus-variant-3.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7843,7 +7843,7 @@
 					}
 				},
 				{
-					"filename": "sprites/monsters/young-wolf.png",
+					"filename": "sprites/monsters/underworlds-mineral-mite-colossus-variant-4.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7864,7 +7864,7 @@
 					}
 				},
 				{
-					"filename": "sprites/style-probes/brute-v8.png",
+					"filename": "sprites/monsters/underworlds-mineral-mite-colossus.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7879,6 +7879,174 @@
 					},
 					"frame": {
 						"x": 1088,
+						"y": 960,
+						"w": 64,
+						"h": 64
+					}
+				},
+				{
+					"filename": "sprites/monsters/underworlds-underworks-sentinel.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 64
+					},
+					"frame": {
+						"x": 1152,
+						"y": 960,
+						"w": 64,
+						"h": 64
+					}
+				},
+				{
+					"filename": "sprites/monsters/underworlds-walking-crucible-variant-2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 64
+					},
+					"frame": {
+						"x": 1216,
+						"y": 960,
+						"w": 64,
+						"h": 64
+					}
+				},
+				{
+					"filename": "sprites/monsters/underworlds-walking-crucible.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 64
+					},
+					"frame": {
+						"x": 1280,
+						"y": 960,
+						"w": 64,
+						"h": 64
+					}
+				},
+				{
+					"filename": "sprites/monsters/venom-dart-frog.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 64
+					},
+					"frame": {
+						"x": 1344,
+						"y": 960,
+						"w": 64,
+						"h": 64
+					}
+				},
+				{
+					"filename": "sprites/monsters/vine-chameleon.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 64
+					},
+					"frame": {
+						"x": 1408,
+						"y": 960,
+						"w": 64,
+						"h": 64
+					}
+				},
+				{
+					"filename": "sprites/monsters/wolf.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 64
+					},
+					"frame": {
+						"x": 1472,
+						"y": 960,
+						"w": 64,
+						"h": 64
+					}
+				},
+				{
+					"filename": "sprites/monsters/young-wolf.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 64
+					},
+					"frame": {
+						"x": 1536,
+						"y": 960,
+						"w": 64,
+						"h": 64
+					}
+				},
+				{
+					"filename": "sprites/style-probes/brute-v8.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 64
+					},
+					"frame": {
+						"x": 1600,
 						"y": 960,
 						"w": 64,
 						"h": 64
@@ -7920,7 +8088,7 @@
 						"h": 48
 					},
 					"frame": {
-						"x": 1216,
+						"x": 1728,
 						"y": 960,
 						"w": 48,
 						"h": 48
@@ -7941,7 +8109,7 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1152,
+						"x": 1664,
 						"y": 960,
 						"w": 64,
 						"h": 64

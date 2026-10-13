@@ -875,7 +875,7 @@
         "h": 64
       },
       "prompt": "a massive faceless cave vessel of rough hewn stone and packed chitin, the same breed as a cave brute but hunched low and knuckle-walking on all fours, enormous thick forearms planted on the knuckles, short bowed hind legs, broad sloping back armored with crude slabs of stone, small featureless head sunk low between the shoulders, heavy prowling stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale chitin-grey and dun-brown stone hide with bone-pale stone slabs and a faint pale glint at the eye sockets",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "cave-troll"
       ],
@@ -900,7 +900,7 @@
         "h": 64
       },
       "prompt": "a colossal faceless cavern vessel of rough pale stone and packed chitin, the same breed as a cave brute grown ancient and enormous, long pale dripstone stalactites hanging from its arms, chin and shoulders, flowstone ridges running down its back like melted wax, long heavy arms, small featureless head, dominating planted stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale chitin-grey and dun-brown stone hide with bone-pale dripstone and a faint pale glint at the eye sockets",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "cavern-troll"
       ],
@@ -3699,7 +3699,7 @@
       },
       "prompt": "a slender grassland kite hovering in place, a small long-winged bird of prey holding still in the air with long narrow wings raised high in a sharp V above its back, long deeply forked swallow tail fanned open, small head tilted down scanning below, legs dangling with talons open, airborne with nothing beneath it, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale dusty buff and warm grey-brown plumage with dark russet wingtips and a cream face",
       "negative": "hawk, eagle, broad wings, wings swept back, diving, owl, perched, folded wings, wings closed, standing on ground, grass, wheat, bright green, vivid yellow, cool hues, pure white, glowing, magical glow, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "grass-kite"
       ],
@@ -3722,7 +3722,7 @@
       },
       "prompt": "a rooted bramble pod plant creature, a single swollen seed pod the size of a dog, husk of dark gnarled bark split open at the top like a gaping mouth, a thick tangle of thorny vines wrapped around the pod, a clutch of short writhing root tendrils curling beneath it instead of legs, dark sticky sap oozing from the split, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark umber and rust-brown bark husk with matte bramble-red thorn tips",
       "negative": "animal, legs, paws, snout, tail, quadruped, rat, eyes, face, flower, petals, leaves, green body, bright green, glowing, magical glow, pot, planter, plains tan, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "bramble-pod"
       ],
@@ -3745,7 +3745,7 @@
       },
       "prompt": "a stocky heavy mountain ram on all four legs, low barrel-chested body much broader and heavier than a goat, enormous thick spiral horns curling fully around both sides of the head, short thick legs, dense matted fleece on the neck and chest, a row of flat stone plates grown along its spine and shoulders like armor, head lowered in a braced charging stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, warm buff and dun fleece with darker basalt-grey stone back plates and ivory horns",
       "negative": "goat, slender, lean, long legs, beard, backswept horns, thin horns, walking, mid-stride, raised paw, standing upright, bipedal, on hind legs, rearing up, mid-grey body, moss, mossy, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "rockback-ram"
       ],
@@ -3766,9 +3766,9 @@
         "w": 64,
         "h": 64
       },
-      "prompt": "a single small cave spiderling, a soft newly hatched spider with a huge round swollen translucent abdomen much bigger than its tiny head, short stubby legs, pale and waxy unhardened body, two small pale fangs, scuttling low crouch, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale waxy bone-cream and soft chitin-grey body with faint dun-brown markings and a colorless pale glint on the abdomen",
-      "negative": "armored, plated carapace, hard shell, long legs, giant spider, eye cluster, swarm, group, multiple spiders, several creatures, web, bright white, glowing, strong hue, dark body, black, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "pending",
+      "prompt": "a small cave spiderling, a young spider with a compact round body on eight slim jointed legs, soft pale chitin not yet hardened, a small cluster of pale eyes, fangs lowered, quick skittering crouch, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale chitin-grey and dun-brown body with bone-pale leg joints and a colorless pale glint in the eyes",
+      "negative": "purple, violet, green, blue, red, colorful, glowing, magical glow, neon, black body, pitch dark, bright white, web, hanging from thread, large, bulky, heavy plating, many spiders, swarm, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "status": "accepted",
       "sources": [
         "brood-spiderling"
       ],
@@ -3777,10 +3777,11 @@
         "shading": "highly detailed shading",
         "detail": "highly detailed",
         "view": "low top-down",
-        "direction": "east"
+        "direction": "east",
+        "initImage": "sprites/monsters/giant-spider.png",
+        "initImageStrength": 250
       },
-      "notes": "Distinctness batch 2026-10-12: was a near-copy of the Giant Spider (img2img 250). New proportions: a soft hatchling, huge waxy abdomen, stubby legs. Previous: T1 third-family mob (progression rework 2026-10-01). Younger kin of the T2 family member, anchored on its accepted sprite.",
-      "candidates": 5
+      "notes": "T1 third-family mob (progression rework 2026-10-01). Younger kin of the T2 family member, anchored on its accepted sprite."
     },
     {
       "id": "fen-hexer",
@@ -3791,7 +3792,7 @@
       },
       "prompt": "a small reed effigy hexer, a crude hunched little figure made of bound bundles of wet marsh reeds and twisted sticks tied with rotten twine, no body of flesh, a cracked wooden mask lashed to the top bundle, small bone charms dangling from cords, one stick arm holding out a hanging gourd lantern with a dim wisp of poison-chartreuse witch-light, planted stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark wet bog-brown and olive-black reeds with pallid bone-cream charms",
       "negative": "cloak, hood, robe, rags, cloth, woman, witch, human face, eyes, mouth, human skin, flesh tone, hair, pointed hat, broomstick, bright glow, large glow, dry, dusty, yellow straw, straw scarecrow, bright blue, clean white, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "fen-hexer"
       ],
@@ -3814,7 +3815,7 @@
       },
       "prompt": "a young prairie wolf yearling, a lanky half-grown wolf pup with oversized ears and big clumsy paws, short fluffy coat, thin tail, low eager crouch with front legs splayed and head lowered, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dusty sandy-tan and warm grey-brown coat with a darker grey-brown saddle and a cream belly and muzzle",
       "negative": "adult wolf, fox, rust orange, red fur, walking, mid-stride, raised paw, standing upright, bipedal, on hind legs, rearing up, bright green, vivid yellow, cool hues, pure white, glowing, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "prairie-yearling"
       ],
@@ -3837,7 +3838,7 @@
       },
       "prompt": "a dire wolf whelp, a stocky heavy-boned wolf pup with an oversized blocky head and huge paws, short thick neck, dense shaggy coat bristling along the spine, short blunt muzzle with small bared fangs, low growling stance with hackles raised, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, charcoal and dark umber shaggy coat with a rust-brown chest and muzzle",
       "negative": "adult wolf, slender, lean, long legs, fox, orange fur, walking, mid-stride, raised paw, standing upright, bipedal, on hind legs, rearing up, green body, glowing, plains tan, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "dire-whelp"
       ],
@@ -3860,7 +3861,7 @@
       },
       "prompt": "a towering mountain slinger vessel, faceless humanoid giant of dark basalt stone and taut hide wrappings, a long heavy leather sling hanging coiled from one huge hand, a wide hide harness of round boulders strapped across its chest and back, steady wide planted stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark basalt-grey stone body with weathered dun hide wrappings, ivory bone toggles and a faint cold sky-blue glint in the cracks of the stone",
       "negative": "human face, eyes, mouth, human skin, flesh tone, hair, beard, metal armor, medieval soldier, knight, bow, arrow, basket, mid-throw, action pose, mid-grey body, moss, mossy, bright glow, neon, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "summit-slinger"
       ],
@@ -3883,7 +3884,7 @@
       },
       "prompt": "a giant bog leech, a long fat glossy worm-like body thick as a log, smooth slick skin with faint ridged rings, a wide round sucker mouth ringed with small teeth raised and searching at the front end, the rear end coiled in a loose curve, low creeping posture, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark glossy olive-black and bog-brown skin with a pallid toad-belly cream underside and faint mottling",
       "negative": "legs, many legs, centipede, segmented plates, eye cluster, snake head, fangs, scales, eyes, slime blob, dry, dusty, bright blue, clean white, bright green, glowing, water, mud puddle, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "bog-leech"
       ],
@@ -3906,7 +3907,7 @@
       },
       "prompt": "a tall swamp shoebill stork, a grim prehistoric wading bird standing on long thin legs, huge heavy clog-shaped hooked bill held low and forward, hunched shoulders and thick neck, shaggy plumage with a small crest at the back of the head, utterly still ambush stance, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, dark slate-grey and olive-black plumage with a pallid cream bill and a faint wet sheen",
       "negative": "flying, wings spread, airborne, pelican pouch, colorful, pink, flamingo, bright blue, clean white, white feathers, dry, dusty, water, reeds, mud puddle, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "fen-shoebill"
       ],
@@ -3929,7 +3930,7 @@
       },
       "prompt": "a small lean jungle ocelot, a slender spotted wild cat with a long thick ringed tail, large rounded ears, bold dark rosette spots and stripes across its coat, crouched low in a stalking freeze, intense stare, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, deep russet-brown and dark green-brown coat with near-black rosettes and dusky crimson eyes and ear tips",
       "negative": "panther, black panther, solid black coat, lion, tiger, orange tiger stripes, house cat, bright green, plains tan, sandy tan, full-body high contrast, glowing, walking, mid-stride, raised paw, standing upright, bipedal, on hind legs, rearing up, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "jungle-ocelot"
       ],
@@ -3952,7 +3953,7 @@
       },
       "prompt": "a large jungle poison dart frog, a sleek glossy frog the size of a hound with long thin limbs and wide splayed toe pads, compact body raised on its front legs in an alert ready-to-leap crouch, smooth wet skin with bold irregular warning patterns, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, deep dark green-brown glossy skin with bold dusky crimson warning blotches and a near-black throat",
       "negative": "toad, warts, warty skin, fat, squat, heavy-lidded eyes, cartoon frog, bright green, neon, bright red, bright blue, yellow, glowing, lily pad, water, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "venom-dart-frog"
       ],
@@ -3975,7 +3976,7 @@
       },
       "prompt": "a giant desert antlion, a squat heavy-bodied insect with a broad round bristly abdomen, a wide flat head with enormous curved sickle-shaped mandibles held wide open, six short thick spiny legs splayed low, hunched ambush posture, three-quarter view facing right, full body, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, sun-baked umber and dark terracotta bristly body with dusty dark gold mandibles and a faint regal sun-amber sheen on the mandible tips",
       "negative": "scorpion, tail, stinger, pincers, claws, spider, eight legs, eye cluster, many thin legs, fine segmentation, ant, wings, pale tan body, sand colored, sand, dune, sand pit, bones, green, glowing, ground, floor, terrain, dirt, rock underneath, stone platform, pedestal, base, perch, cast shadow, drop shadow, shadow under the creature, standing on anything, scenery, background elements, environment, cartoony, cute, rounded soft shapes, toy-like, plush, mascot, smooth bubbly forms, front view, facing camera, cartoon, chibi, anthropomorphic, human, blurry, 3d render, photograph, hard black outline, text, watermark",
-      "status": "pending",
+      "status": "accepted",
       "sources": [
         "dune-antlion"
       ],
