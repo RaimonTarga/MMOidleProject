@@ -29,7 +29,7 @@ when the section that replaces them locks. The read-only audit behind this draft
 | 7 | Conduit | **Locked** (2026-10-13) |
 | 8 | Squire | **Locked** (2026-10-14) |
 | 9 | Apprentice | Draft (deep dive started 2026-10-14) |
-| 10 | Slinger | Draft (deep dive started 2026-10-14) |
+| 10 | Slinger | **Locked** (2026-10-14) |
 | 11 | Spirit | Draft (deep dive started 2026-10-14) |
 | 12 | Striker | **Locked** (2026-10-14) |
 | 13 | Parked | — |
@@ -124,7 +124,12 @@ Formation) must be.
   how many summons it fields and how powerful they are (§7). *Decided.*
 - **Room grows with tier** (more beats, more rules, more formation slots…). *Proposed.*
 - **Universal standing orders are free for every class:** Flee, Recover First, Avoid
-  Hazards, target focus, travel. *Proposed.*
+  Hazards, Keep Distance (kiting), target focus, travel. *Proposed (the list) / Decided
+  (Keep Distance, 2026-10-14, Slinger dive: today a rune; every ranged class needs it, and
+  it decides where the Slinger stands for its stationary reload).*
+- **Fire rate is not attack speed.** The Slinger's fire rate is its own stat (§10.2): no
+  other class's attack-speed effect touches it unless the effect says so. *Decided
+  (2026-10-14, Slinger dive).*
 - **No shared stances or rites.** A class may have stance-like modes or rite-like passives
   of its own, inside its system. *Decided.*
 - **Same engine, different surface.** One rule engine underneath (today's rune engine:
@@ -1095,10 +1100,407 @@ concept is in the [brief](../docs/briefs/class-first-rework-brief-2026-10-13.md#
 `docs/briefs/<class>-deep-dive-log-2026-10-14.md`. When the dive converges, the section is
 rewritten to the class template (§6) in one edit, then locked.
 
-## 10. Slinger — Draft (deep dive started 2026-10-14)
+## 10. Slinger — Locked (2026-10-14)
 
-Stub while the dive runs (see §9). Prep: `docs/briefs/slinger-deep-dive-prep-2026-10-14.md`;
-log: `docs/briefs/slinger-deep-dive-log-2026-10-14.md`.
+**Locked by the designer on 2026-10-14: build authority.** Every proposal the walk-through
+reached was accepted; items still tagged *Proposed* are notes or wait on another section
+(§4's boots) and may change without reopening this one; **Playtest** questions stay open
+(§10.15), and whether the stationary reload bites comes first. Outside the lock, each for its own session: names (placeholders throughout), guns
+drawn for the bodies, leaves after T4 and the T7–T8 capstone, components and rule-benders
+(§4), farming efficiency (§13), per-class stats (§5). The lock archives nothing: no design
+doc is the Slinger's alone, and `docs/frames-current-state.md` stays the code's truth until
+the build replaces frames.
+
+Written to the class template (§6) from the 2026-10-14 deep dive. Every call in order, the
+reasoning and the ideas that were dropped are in
+[slinger-deep-dive-log-2026-10-14.md](../docs/briefs/slinger-deep-dive-log-2026-10-14.md);
+the prep is [slinger-deep-dive-prep-2026-10-14.md](../docs/briefs/slinger-deep-dive-prep-2026-10-14.md).
+No mockup. Tags as everywhere in this bible; **Playtest** marks a question only the game can
+answer (§10.15). Names are placeholders throughout.
+
+**The main risk, on record:** ranged classes are the hardest to hurt. In the T1 boss pass
+the Slinger won every T1 boss every time and took 1.2 HP/s on the Behemoth against the
+Striker's 8.2, because an orbiting ranged class never stands in a telegraph. The stationary
+reload is the design's answer (§10.2); the first playtest question is whether it bites
+(§10.15). *Decided (the risk is on record).*
+
+### 10.1 Fantasy
+
+The gunslinger, with real guns: "I load the right rounds and empty the clip." Pistols and
+flintlocks; clips, rounds and a hand cannon read literally. *Decided.* Today's Slinger
+bodies carry no firearm (the art prompts avoided gun nouns), so guns must be drawn.
+*Proposed (art task).*
+
+### 10.2 Core mechanic
+
+- **The clip:** the Slinger fires a clip of rounds at its gun's fire rate, then reloads.
+  **Fire rate is its own stat;** "2× attack speed at 65% attack" is gone, and the fast feel
+  comes from animation and sound. *Decided (brief).*
+- **Every round in a clip is the same;** what the rounds are is the loaded **clip type**
+  (§10.3). No per-bullet authoring. *Decided (§3).* Bullet properties are the Slinger's
+  on-hit; there is no generic on-hit. *Decided (brief).* **The plain clip is the damage
+  clip:** typed rounds trade some raw damage for their effect, so plain stays a real
+  choice. *Decided.*
+- **Per-round effects build to a cap,** so fire rate buys how fast you reach it, not how
+  high it goes (above all for control: Snare, Stopping, Frost). *Decided.*
+- **The last round is the relic:** the boss trophy is a special round loaded last in every
+  clip. A plain last round until the first boss kill, which the base kit must win (no
+  starter trophy, as the other classes). *Decided.*
+- **The reload is stationary by default: the class's risk window.** Standing still for part
+  of every clip is what makes the Slinger catchable, the class-level answer to the risk
+  above. Gunslinger and gear lines may loosen it; no reload-triggered shield or heal
+  (§10.10). *Decided.* Today the Slinger moves freely while it reloads in combat.
+- **The reload is a readable moment:** the ring empties, a reload bar fills around it, the
+  next clip's colour shows; each gun has its own reload pose and sound (a revolver's
+  cylinder spin, a carbine's magazine, a flintlock's ramrod, the hand cannon's shell).
+  *Decided.*
+- **The gun sets the clip:** the weapon sets fire rate, clip size and reload time; the
+  discipline shifts the clip (Gunslinger smaller, Siege bigger) by a flat amount, not a
+  multiplier, so a small gun never drops to a handful of rounds. *Decided.*
+- **The budget: rack slots, then double loads.** Each Global Mastery step adds a slot to the
+  rack (§10.3); once the rack is full, a step lets one clip carry two properties (Venom +
+  Breaching rounds: custom loads, the gunslinger's craft), paying the **higher** of the two
+  prices. Shown in class terms ("Rack 3, next at Mastery 30"). *Decided.* Illustrative: one
+  slot at the start, two at Mastery 15, three at Mastery 30, four by the end of T2, double
+  loads from T3. *Decided (illustrative; bots tune it).*
+- **HUD:** the ammo ring coloured by the loaded clip type, the last round marked gold, the
+  next clip's colour beside it; twin guns show two half-rings; Siege's shell charge glows
+  inside the ring; Trickshot marks the called shot's target when the last round chambers.
+  *Decided.* **Callouts** only for the trophy round (by name, every discipline) and
+  Siege's shell; clip switches show on the ring with no callout. *Decided.*
+
+### 10.3 The class system: the Loadout
+
+**What you configure** *(Decided)*:
+
+- **The rack:** the clip types you carry, within your rack slots. The plain clip is always
+  there and takes no slot.
+- **Clip rules:** at each reload a free rule picks the next clip for the situation ("three
+  or more enemies → Scatter", "an elite → Breaching", else plain).
+- **Switch reloads:** a rule may dump the clip early to load a better one; you lose the
+  rounds left and stand still. When a switch is worth it is the Loadout's decision.
+- **The relic:** your last round.
+- **Discipline rules,** free: Trickshot's called-shot rule (§10.5), Deadeye's hold (§10.6).
+  Free reload rules: reload early when nothing threatens you; never start a reload inside a
+  telegraph. *Decided (free, §3; those two are defaults).*
+
+**Not in it** *(Decided)*: abilities outside the class system (§3, confirmed for the
+Slinger), per-bullet authoring (§3) and defense (equipment, §10.10).
+
+**Never the same editor** (§3): the Order is a short authored sequence, the Response rules
+answer what the enemy does, the Loadout chooses **ammunition at the reload**: a rack, never
+a sequence of rounds and never an instant answer to an enemy move. *Decided.*
+
+**Ownership** *(Decided)*: clip types own every round; the relic owns the last round; the
+discipline owns its rule (twin guns, the shell, the called shot) and the rhythm (clip size,
+reload, where in the clip the damage lives); a specialization bends that rule or the
+delivery of the shell or the last round, never what a clip or a trophy does; leaves are
+small turns on all of it.
+
+Default configuration: §10.13.
+
+### 10.4 The T1 form
+
+- **The first ten minutes** *(Decided: shape; numbers illustrative)*: the Clearing gives a
+  plain pistol (8 rounds), the ammo ring and one preset rule (reload when empty); the
+  reload is stationary. The Plains teaches Scatter around minute 6, in rack slot 1, with a
+  default rule (three or more enemies → Scatter, else plain): the answer to the Plains
+  entry spike playtest 3 measured (15 of 177 HP). The first boss is won with a plain last
+  round and gives Stampede Round. By the end of T1 the Slinger owns five clip types and
+  carries three.
+- **Each T1 biome's threat hands you its answer:** a clip type (that zone's level, before
+  its boss), a gun, an armor and a charm; its boss gives a trophy round. *Decided.* The gear
+  slots' questions (§10.9): the gun **"which gun?"**, the armor **"what covers your
+  reload?"**, the charm **"where are you safe?"**.
+
+| Biome | Threat | Clip type | Gun (job) | Armor (shared base + Slinger line) | Charm (Slinger line) | Trophy (last round) |
+|---|---|---|---|---|---|---|
+| Plains | swarms | **Scatter:** each round bursts on impact, nicking up to two enemies beside the target | **Pepperbox:** fast fire, a big clip, light rounds; Scatter nicks one more | Plating + **Elbow Room:** while three or more enemies are near you, you reload faster | **Breathing Room:** Recovery rises with the distance to the nearest enemy | Tusked Razorback, **Stampede Round:** knocks the target and everything in a line behind it back |
+| Forest | fast packs | **Snare:** each round slows the target's movement and attacks a little, up to a cap | **Carbine:** quick fire, a quick reload; the first rounds of each clip hit harder (the Scout's openers) | Evasion + **Quickdraw:** you can walk at half speed while reloading | **Fleet:** Recovery doubles while you move | Gnarled Greatbear, **Twin Round:** the last round fires twice |
+| Swamp | attrition | **Venom:** each round adds a poison (damage over time) | **Snakebite Pistol:** slow fire, a small clip; your poison lasts longer and the last round hits a poisoned target harder | DoT resistance + **Oilskin:** damage over time on you is halved while you reload | **Snake Oil:** Recovery doubles while you carry poison or bleed and no enemy is near you | Grave Toadeater, **Rot Round:** the last round's wound rots, hitting again over a few seconds |
+| Mountain | the hardest hits | **Stopping:** each round shoves the target back a little; a charger reaches you late | **Hand Cannon** (the brief's): slow fire, a 6-round clip, heavy rounds; the last round hits much harder | Damage cap + **Dig In:** while you reload, no single hit takes more than a fifth of your HP | **Regroup:** after a hit over a quarter of your HP, you move faster and Recovery doubles for a few seconds | Crag Behemoth, **Quake Round:** a heavy slug that hits everything around the target |
+| Cave | elites, plating | **Breaching:** every round ignores most of the target's plating (today every Slinger shot pays half plating; that moves to this clip) | **Drum Gun:** a big drum, a slow reload; each round of a clip hits a bit harder than the last (the Artillerist ramp) | Bulk + **Hunker:** your plating doubles while you reload | **Bivouac:** much faster out-of-combat Recovery | Obsidian Broodmother, **Splinter Round:** the last round splits into three that strike the nearest other enemies |
+
+Clip types, gear and trophies *Decided (direction; names and numbers open)*. Boots stay
+generic (§4). Weapon fits: Gunslinger the Carbine and Pepperbox; Siege the Drum Gun and
+Pepperbox; Trickshot the Hand Cannon and Snakebite Pistol. Notes *(Proposed)*: Snare and
+Stopping are control that scales with fire rate, so both build to a cap and bosses may
+shrug them off; Twin Round, Splinter Round and Ricochet all multiply the last round, so
+watch them together; Rot Round crosses the Striker's Festering Cut (§3 allows it);
+"Splinter" avoids "shatter" (the Apprentice's).
+
+### 10.5 Disciplines (T2)
+
+A considerable power step (§2): the discipline brings the Slinger's rule. The old frames'
+successors, as for both melee classes. *Decided (rules); numbers and looks illustrative.*
+
+| | Gunslinger (light, from Scout): the fast hand | Siege (heavy, from Artillerist): the emplacement | Trickshot (balanced, from Marksman): the showman |
+|---|---|---|---|
+| Fantasy | "Two guns, never still for long." | "I dig in and shell everything." | "Every clip ends with the impossible shot." |
+| Clip and reload | The smallest clip, the quickest reload (a spin) | The biggest clip (a drum), the longest reload: the riskiest window | The gun's own clip and reload |
+| Rule | **Twin guns:** two of whatever gun you hold, each with half the clip and its own clip type from the rack; shots alternate (Snare left, Venom right), so two clip types act at once; both reload together in a quick spin | **The shell:** every round charges a siege gun on your back; the reload fires it where the target stands, an area blast **made of what you fired** (Venom: a gas shell; Scatter: a cluster shell; Breaching: a bunker-buster). The bank lives on the Slinger, never on the target (stack-then-detonate is the Apprentice's, §3) | **Called shot:** the last round (your trophy) flies to a target a free rule picks (the enemy winding up, the lowest HP, the elite), anywhere in range, past whatever stands in the way, and hits harder (the Marksman's ×2.2, now Trickshot's) |
+| Damage, rounds / payoff | ~85 / 15 (the last round) | ~50 / 50 (the shell) | ~60 / 40 (the last round) |
+| Look | Each round coloured by its clip; a gun spin on the reload | A mortar on the back whose barrel glows as the shell charges | A gold glint as the last round chambers; a gold tracer |
+| Best at / weak at | Mixed fights and farming (switching is cheap) / plating (light rounds) | Packs and bosses that hold still / kiters and telegraph-heavy fights (the long stationary reload) | Bosses, elites, casters / swarms (one big round on a dying mob is wasted) |
+
+Siege's risk window is also its big moment: you plant and shell. Three classes bank toward
+one big hit (the Striker's Momentum from its own swings, single target; the Squire's slam
+from enemy hits; Siege's shell from rounds fired, an area blast in the reload); the area and
+the clip's property keep Siege apart. *Proposed (note).* Twin guns overlap double loads
+(both put two properties in play at once); a twin-gun double load is four. *Proposed
+(note).*
+
+### 10.6 Specializations (T3)
+
+Ownership as §10.3; **specializations are content-neutral** (§12.6): weapon, clip types
+and relic choose the content. *Decided.* Concepts *Decided*; names and numbers open.
+
+| Gunslinger (twin guns) | Siege (the shell) | Trickshot (the called shot) |
+|---|---|---|
+| **Fan the Hammer:** after every reload spin, both guns' first three rounds fire at triple rate (the brief's reload triggers; Gunslinger reloads most, so it pays most) | **Deathmark** (the designer's): rounds mark the enemies they hit; at the reload the shell bursts on every marked enemy at once. One mark per enemy, never stacking; the charge lives on the Slinger and the marks only say where it lands: breadth, where the Apprentice's payoff is depth on one target | **Ricochet:** the called shot bounces on to two more enemies, each picked by your rule, each taking the trophy's twist |
+| **Crossfire:** a target hit by both guns back to back takes both clips' effects at +50%; the pair you rack is the build (Snare + Venom, Breaching + Stopping) | **Entrenched:** the longer you stand your ground, the faster you fire and the bigger the shell, to a cap; moving resets it; the stationary reload counts as standing | **Pierce:** the called shot passes through every enemy between you and its target, each taking it in full |
+| **Gun Kata:** you fight at arm's length; rounds hit much harder up close, and both guns fire at once at enemies in melee with you (a range commitment, not a dial) | **Rolling Fire:** the shell fires in small pieces, a small shell every few rounds, and the reload carries none: steady area instead of one big moment | **Deadeye:** the last round can be held; the clip waits on it until your rule's moment (an enemy winds up, an elite appears, the target drops below a third) or a few seconds pass; held, it hits much harder |
+
+Mined from the old paths: Fan the Hammer (Desperado), Entrenched (Warmonger's carry),
+Rolling Fire (the Cannoneer reversed), Deadeye (the Sniper). Spares: The Draw (each fight
+opens with both guns emptying at triple rate), Airburst (the shell covers a wide circle,
+weaker per enemy), Encore (the last two rounds are both called shots). Notes *(Proposed)*:
+Ricochet, Pierce and Deathmark lean to packs, Deadeye and Entrenched to bosses (watch them
+against content-neutrality); Gun Kata puts a ranged class in melee, where damage taken
+doubles, so it needs its own armor answer; Deadeye's held round crosses the Striker's
+Crescendo release and the Squire's held slam.
+
+### 10.7 Leaves (T4 onward)
+
+Three per discipline per tier (§2). The Slinger's T4 asks **"what goes wrong?"**: you're
+caught reloading, they reach you, or the wrong clip is loaded; one answer each per
+discipline, in its style. The first two columns carry the resilience a stationary-reload
+class needs (two of three, where melee classes get it throughout); the third keeps the
+rack's choice interesting. Every defensive leaf is a state or enemy-paced, never triggered
+by your shots (§12.10). *Decided (names and numbers open).*
+
+| | Caught reloading | They reach you | The wrong clip |
+|---|---|---|---|
+| Gunslinger: footwork | **Light Hands:** while you reload, the first hit every few seconds deals half damage | **Slip Away:** while an enemy is in melee with you, you move a quarter faster | **Quick Swap:** switching clips early keeps the rounds you had left; they come back in the next clip |
+| Siege: fortified | **Bunker:** while you reload, you take a quarter less damage | **Stakes:** an enemy that charges or rushes you is stopped dead at your feet for a moment, once per enemy every few seconds | **Fresh Powder:** the shell takes the property of the clip you're loading, not the one you fired, so a switch reload fires the right shell at once |
+| Trickshot: composure | **Cool Reload:** telegraphed attacks aimed at you while you reload deal half damage | **Steady Nerve:** while an enemy is in melee with you, you can't be stunned or knocked back | **Improvise:** when the loaded clip does nothing to the called shot's target (control on a boss that accepts none, poison on the immune), the called shot hits a third harder |
+
+Theme crossings *(Proposed, notes)*: Cool Reload with the Striker's Read the Blow; Stakes
+with the Squire's Stand Fast and the Conduit's Ironhorn. Spare theme for later leaf tiers:
+**clip transformations** (Scatter's bursts split again, Snare roots at its cap, Venom
+lingers after the clip). *Decided (spare theme).*
+
+### 10.8 Clip types, and where every piece comes from
+
+| Piece | Comes from | Status |
+|---|---|---|
+| Clip types | A zone's level teaches a lesson, before its boss, every tier: a new clip type, a **sidegrade** (the same idea in a new shape) or a **rank-up** (stronger, one visible twist per rank). Through T4: 14 new, 3 sidegrades, 9 rank-ups (§10.16) | Decided |
+| Clip scaling | Every clip type scales with the Slinger's tier, so a T1 favourite stays fieldable (as the Striker's techniques, §12.8, and the Squire's responses) | Decided |
+| Trophy rounds | Boss trophies in the relic slot; the same lineage's next-tier boss ranks one up | Decided |
+| The discipline's rule | The T2 pick: twin guns, the shell, the called shot | Decided |
+| Specialization | The T3 pick | Decided |
+| Leaves | T4 onward | Decided |
+| Rack slots and double loads | Global Mastery steps | Decided |
+
+**Three clip families** *(Decided, vocabulary)*: **damage** (Scatter, Buckshot, Venom,
+Acid, Breaching, Hollow-point, Incendiary, Thermite, Exploit, Hallowed), **control**
+(Snare, Stopping, Frost, Tether) and **utility** (Shellbreaker, Tracer, Seeker). Every typed
+clip pays the price (the plain clip is the damage clip). The T2–T4 clip types are in
+§10.16.
+
+### 10.9 Items
+
+| Slot | The Slinger's version | Status |
+|---|---|---|
+| Weapon | **"Which gun?"** Fire rate, clip size and reload time, plus one **job**. A job follows you up: every tier has a stronger recipe for each job you know; new biomes add jobs; a retiring biome's jobs move to a biome of the next tier | Decided (direction) |
+| Relic | The trophy round: your last round. One twist each, no per-discipline versions; Trickshot makes the most of it | Decided |
+| Armor | A shared base plus a Slinger line. Slinger armor asks **"what covers your reload?"**: the lines protect the stationary window, always as a "while reloading" state, never a per-reload trigger | Decided |
+| Charm | A shared recovery base plus a Slinger line. It asks **"where are you safe?"**: Recovery tied to distance, movement or being out of combat, never to the reload or your shots | Decided |
+| Boots | Generic | Proposed (§4) |
+| Components | §4's own session. Waiting there: the brief's **Hand Cannon legendary** (the last round deals bonus damage per round of this clip that hit) and the **Bandolier** (each reload adds marking rounds: a Deathmark rule-bender) | Under review |
+
+The brief's **Glass Duster** is the Desert armor line (§10.16): an offense–defense trade
+§1 allows. T1's pieces are in §10.4; T2–T4 in §10.16. **Eleven trophy rounds**, one per
+lineage: Stampede, Twin, Rot, Quake, Splinter, Hunter's, Bounty, Rime, Cinder, Toll,
+Harpoon. *Decided (T1 concepts) / Decided on paper (T2–T4).*
+
+### 10.10 Defense and recovery
+
+- **The stationary reload is the risk window,** on purpose (§10.2). Its answers live in
+  equipment (the armor's "while reloading" lines, the charm's "where are you safe?") and
+  two columns of T4 leaves (§10.7). *Decided.*
+- **Never a per-reload trigger:** small clips and fast fire reload more often, so a
+  reload-triggered shield or heal would let Gunslinger farm it (§12.10's first rule).
+  *Decided.* A "while reloading" state is allowed, but its uptime also grows with fire rate
+  (a bigger share of each cycle is reload): watch it. *Proposed (note).*
+- **Gone:** the root's Recovery on kill (§1); every shot paying half plating (it moves to
+  the Breaching clip). *Decided.*
+- **Evasion:** today's root carries 30% evasion, worth little on a player (an evade is a
+  graze: the Forest vest's 36% bought about 3.6% mitigation in the boss pass). Per-class
+  stats are §5's question. *Open.*
+- **Kiting:** today a rune (Keep Distance); now a free universal standing order for every
+  class (§3). *Decided (2026-10-14).*
+- **Gun Kata** fights in melee, where damage taken doubles: it needs its own armor answer.
+  *Proposed (note).*
+
+### 10.11 Stance-like modes, rite-like passives
+
+None. The loaded clip is the mode, and the rack's rules switch it. *Decided.*
+
+### 10.12 Party role
+
+The party's ranged damage and spotter. Its debuffs help everyone: traced enemies can't hide
+from anyone, Acid strips plating, Snare and Frost slow. Its buffs are self-only. The same
+debuff from two Slingers doesn't stack; the strongest copy applies (§7.12, §12.12).
+*Decided.*
+
+### 10.13 Bot plan
+
+*Decided (accepted at the lock; defaults and test arms tuned by the bots).* Bots can't press
+buttons; every lever is a setting the harness writes.
+
+- **Harness intents:** set the rack and its clip rules; the switch-reload rules; the reload
+  rules (reload early when nothing threatens; never start a reload in a telegraph);
+  Trickshot's called-shot rule; Deadeye's hold; equip the relic. The Reload Safely and Keep
+  Distance runes go.
+- **Defaults:** T1, plain, then each clip type on its natural rule as it is learned
+  (Scatter on three or more enemies; Snare on a fast enemy closing; Venom on an elite or a
+  boss; Stopping on a charge; Breaching on a plated target). Gunslinger: a damage clip and a
+  control clip on the twin guns. Siege: a damage clip in the drum, switch reloads rare.
+  Trickshot: called shot on the enemy winding up, else the elite, else the lowest HP.
+- **Metrics:** time to kill, deaths, HP lows; **damage taken while reloading against while
+  firing** (the risk window); time spent reloading; switch reloads per minute and rounds
+  lost to them; the shell's and the last round's share of damage; incoming HP/s on the
+  Behemoth and the Broodmother (the orbit finding).
+- **Test arms the design already asks for:** the stationary reload against the orbit
+  finding; the caps on Snare and Stopping at high fire rate; double loads and twin-gun double
+  loads; Fan the Hammer against fire rate; Deathmark's breadth on packs; Gun Kata's
+  survival; the first boss without a trophy.
+
+### 10.14 Salvage
+
+*Decided (accepted at the lock).*
+
+| Keep | Where |
+|---|---|
+| The reload runtime: the ammo slice, the reload timer, the lifecycle hooks (`onStart`, `onComplete`), early completion, the manual-reload intent | `server/src/systems/classes/archetypes/reload/` (`reloadPrototype.ts`, `reloadLifecycle.ts`) |
+| Every shot's place in the clip (`reloadClipIndex`): the last-round seam; the frame loop's three shapes (openers, the last round, the ramp) as references | `reload/frameLoop.ts` |
+| Reload Safely's out-of-combat reload and hold | becomes free reload rules |
+| Blunderbuss pellets and the shove per pellet | Buckshot, Stopping |
+| The Cannoneer's bank fired at the reload | the Siege shell |
+| The Bounty hunter's marks (the marks only; the damage moves to the shell) | Deathmark |
+| Desperado, Warmonger's carry and the Sniper as references | Fan the Hammer, Entrenched, Deadeye |
+| The ammo ring and its shot and refill animations | `client/src/hud/mechanics/ReloadMechanic.tsx` |
+| Bespoke FX: Dualslinger's gold slug and blue round (the twin guns' coloured rounds), the Cannoneer blast and the barrel glow (the shell) | `client/src/fx/bespoke/slinger.ts` |
+| Callouts | `client/src/render/skillCallouts.ts` |
+| Slinger bodies through T3 (guns to draw) | the atlases |
+| The Passive Tree's panel, unlock gate, reset and layers | §2 |
+
+| Remove or rework | Why |
+|---|---|
+| Frames, range nodes and the nine paths as data | Replaced by disciplines and specializations |
+| "Weapon Attack at 65% at this extreme cadence" | Fire rate is its own stat (brief) |
+| Every shot paying half plating (`platingMult` 0.5) | Moves to the Breaching clip |
+| Recovery on kill; the Duelist's kill chain | On-kill (§1) |
+| Shared abilities and the runes driving them (Reload Safely, Keep Distance) | The Loadout's free rules; kiting a standing order (XC2) |
+| Moving freely while reloading in combat | The reload is stationary (§10.2) |
+| The Melter's heat laser | No home in the rework; parked |
+
+### 10.15 Open questions
+
+**Playtest:**
+
+1. Does the stationary reload bite? The orbit finding (1.2 HP/s on the Behemoth) is the
+   bar.
+2. Every number: clip sizes, reload times, fire rates, the clip price, the rack steps, the
+   caps on per-round effects, the shell's share, the called shot's multiplier.
+3. Twin guns with double loads (four properties); Fan the Hammer against fire rate;
+   Deadeye's hold length.
+4. The first boss without a trophy.
+5. Control clips at high fire rate (Snare, Stopping, Frost, Tether).
+
+**Design, later:**
+
+6. Names: placeholders throughout.
+7. Guns drawn for the Slinger bodies (art).
+8. Components and rule-benders (§4): the Hand Cannon legendary, the Bandolier.
+9. Leaves after T4 (spare theme: clip transformations) and the T7–T8 capstone.
+10. Per-class stats (§5), evasion among them.
+11. The dive's two cross-class proposals were decided on 2026-10-14 and written into §3:
+    fire rate is not attack speed (XC1); Keep Distance is a free universal standing order
+    (XC2).
+
+**Collisions, as settled** *(Decided, notes)*: stack-then-detonate stays the Apprentice's
+(Siege's bank lives on the Slinger; Deathmark's marks only designate, which satisfies the
+Apprentice dive's "marks never bank damage"); freezing and burning clips never freeze or
+detonate (Frost, Incendiary, Thermite); Ricochet crosses the Conduit's Dartcaller,
+Deathmark's split the Spirit's Overcast, Tether the Spirit's Dust Devil II (theme
+crossings, §3); "Siege" sits next to the Squire's Siege Engine leaf; Tide's ebb moves the
+Spirit away, the opposite of the Slinger's stand-still reload.
+
+### 10.16 Tier by tier: what each biome gives the Slinger
+
+T1 is §10.4. Every tier, each biome teaches a lesson (§10.8), has a gun, an armor and a
+charm recipe (its jobs, stronger), and its boss gives a trophy round or ranks one up.
+**Jobs move when a biome retires,** as for the other classes: after T2 the Forest's
+(Carbine, Quickdraw, Fleet) to the Jungle and the Plains' (Pepperbox, Elbow Room, Breathing
+Room) to the Volcanic; after T3 the Swamp's (Snakebite Pistol, Oilskin, Snake Oil) to the
+Wasteland and the Cave's (Drum Gun, Hunker, Bivouac) to the Trench. A retired lineage's
+trophy keeps working and scaling; it only stops ranking up. *Decided on paper, to judge in
+the game; names and numbers open.*
+
+**T2**
+
+| Biome | Threat | Lesson (kind) | New gear jobs | Trophy |
+|---|---|---|---|---|
+| Plains | Stampedes | **Buckshot** (sidegrade of Scatter): each round sprays a cone of pellets, harder up close; the pellets stop a charging enemy in its tracks | — | Gorging Razortusk: Stampede Round II, the shove also knocks down |
+| Forest | Cadence duel, stuns | **Snare II** (rank-up): builds faster, and at its cap the target's wind-ups take longer too | — | Apex Timberclaw: Twin Round II, both shots full strength |
+| Mountain | Heavy plating, breakable barriers, charges | **Shellbreaker** (new): every round hits barriers and shields double | — | Stoneplate Juggernaut: Quake Round II, a wider blast that also cracks plating |
+| Swamp | Pools, rain, the rising mire; Corrosion | **Venom II** (rank-up): deeper poison that lasts longer | — | Mire-Gorged Behemoth: Rot Round II, a bigger share |
+| Cave | Eruptions from below | **Breaching II** (rank-up): ignores all plating | — | Chitinous Dreadbore: Splinter Round II, four splinters |
+| Jungle (new) | Fleeing prey, ambush from cover | **Tracer** (new): each round tags its target, so it can't hide, vanish or break away from you; ambushers in cover are revealed (it designates, never stores damage) | Gun **Hunting Rifle:** long reach; rounds hit harder the farther the target. Armor: anti-ambush base + **Lookout:** an enemy that ambushes you while you reload is slowed and revealed. Charm **Undergrowth:** Recovery doubles while no enemy is targeting you | Jungle Dread-Gorger, **Hunter's Round:** the last round follows its target, can't miss a fleeing enemy, and hits harder the farther it flies |
+| Desert (new) | Mark, slow, execute; ranged kiters | **Hollow-point** (new): every round hits a target below half HP harder | Gun **Long Rifle:** the longest reach in the game; outranges kiters. Armor: ranged-hit base + **Glass Duster** (the brief's): you reload faster and hit harder, and the base's defense is lower. Charm **Shade:** every few seconds a mark or slow on you ends | Dune-Stalker Emperor, **Bounty Round:** the last round executes a target below a threshold (a threshold, not an on-kill) |
+
+**T3** (the Plains and Forest have retired)
+
+| Biome | Threat | Lesson (kind) | New gear jobs | Trophy |
+|---|---|---|---|---|
+| Mountain | The double charge | **Stopping II** (rank-up): a stopped charger is also staggered | — | Crag-Gorged Horn-Behemoth: Quake Round III, it knocks down |
+| Cave | The tunnel chase | **Seeker** (new): rounds find a target that has burrowed, dived or gone out of sight, at reduced damage | — | Deep-Core Burrow-Gorger: Splinter Round III, the splinters split once more (the last rank) |
+| Swamp (last tier) | Spores, detonating pools, the drag | **Acid** (sidegrade of Venom): instead of poison, each round eats a little plating, up to a cap | — | Rot-Spore Croc-Behemoth: Rot Round III (the last rank) |
+| Jungle (+ the Forest's jobs) | Pursuit, flight | **Tracer II** (rank-up): a traced target also moves slower while it flees | The Forest's jobs move here | Apex Bramble-Slasher: Hunter's Round II |
+| Desert | Postures; the Monarch turns kiter at half HP; a dash-escape | **Tether** (new): a target hit by several rounds in a row can't dash or teleport away for a moment | — | Dune-Carapace Monarch: Bounty Round II, a higher threshold |
+| Tundra (new) | The Chill clock, Deep Freeze, Ice Armor, root casters; bosses accept no control | **Frost** (new): each round chills (slower attacks and movement), up to a cap; never freezes (shatter stays the Apprentice's) | Gun **Frostlock Rifle:** rounds hit harder against chilled, slowed or rooted enemies. Armor: chill base + **Warm Hands:** the Chill on you doesn't build while you reload. Charm **Thaw:** Recovery doubles while you're chilled or slowed | Frost-Plated Rime-Mammoth, **Rime Round:** the last round leaves frozen ground that slows enemies on it |
+| Volcanic (new; + the Plains' jobs) | Heat, vents, the Final Eruption, obsidian shells, hound swarms, burning gunners | **Incendiary** (new): each round sets the target burning, up to a cap; never detonates (the Apprentice's) | Gun **Firebrand Pistol:** each step of the fight's Heat makes every round hit harder. Armor: heat base + **Asbestos Coat:** the Heat's extra damage doesn't apply to you while you reload. Charm **Heatsink:** Recovery rises with the Heat while no enemy is near you. The Plains' jobs move here | Cinder-Shell Magma-Salamander, **Cinder Round:** the last round sets everything around the target burning |
+
+**T4** (the Swamp and Cave have retired)
+
+| Biome | Threat | Lesson (kind) | New gear jobs | Trophy |
+|---|---|---|---|---|
+| Mountain (last tier) | Earthshatter, delayed fault lines | **Shellbreaker II** (rank-up): a barrier breaks in a few rounds | — | Iron-Crest Titan: Quake Round IV, aftershocks (the last rank) |
+| Tundra | Ice Armor at its heaviest | **Frost II** (rank-up): builds twice as fast; Ice Armor takes it double | — | Glacial Patriarch: Rime Round II |
+| Jungle | Hard to catch, then it commits | **Tracer III** (rank-up): rounds on a traced target hit harder while it flees or hides | — | Verdant-Crown Predator: Hunter's Round III |
+| Desert | The three-act duel: melee, kiter, cornered | **Hollow-point II** (rank-up): the bonus doubles below a third | — | Dune-Throne Sovereign: Bounty Round III |
+| Volcanic | The Heat race, Magma Shove | **Thermite** (sidegrade of Incendiary): the burn eats shells; obsidian and ice shells take it double | — | Caldera Sovereign: Cinder Round II |
+| Wasteland (new; + the Swamp's jobs) | The dead rise again; area damage matters most | **Hallowed** (new): risen enemies take double from these rounds and rise weaker | Gun **Reaper's Repeater:** each round splashes a share of its damage to the enemies around the target. Armor: base (risen enemies hit softer) + **Hallowed Ground:** while you reload, risen enemies around you deal half damage. Charm **Vigil:** Recovery rises with the number of enemies in the fight while none is near you. The Swamp's jobs move here | Charnel-Crown Sovereign, **Toll Round:** the last round hits harder for every enemy in the fight |
+| Trench (new; + the Cave's jobs) | One enormous duel; the debuff pile; dives out of reach | **Exploit** (new): each round hits harder for each different debuff on the target | Gun **Pressure Rifle:** rounds hit harder the more HP the target has left. Armor: debuff-resistance base + **Pressure Suit:** debuffs can't land on you while you reload. Charm **Ballast:** Recovery rises for each debuff on you. The Cave's jobs move here | Elder Trench Serpent, **Harpoon Round:** the last round harpoons the target; for a few seconds it can't dive, burrow or flee |
+
+**Totals through T4:** 14 new clip types, 3 sidegrades (Buckshot, Acid, Thermite) and 9
+rank-ups. By the end of T2 the Slinger owns 9 clip types, by T3 14, by T4 17 (rank-ups
+counted once). Eleven trophy rounds (§10.9).
+
+**How the later tiers test the build** *(Proposed, notes)*: the Tundra and Volcanic bosses
+accept no control, so Snare, Stopping, Frost, Tether and Stampede Round do nothing there
+(Improvise, Breaching, Thermite and the shell carry); shells want burst (the Siege shell,
+the called shot, Thermite, Shellbreaker); the Heat and the Chill land during the stationary
+reload (Asbestos Coat, Warm Hands); the Final Eruption is a damage race (Fan the Hammer,
+Entrenched, Deadeye); the Wasteland is the area fight (Deathmark, Rolling Fire, Ricochet,
+Pierce, Reaper's Repeater, Toll Round); the Trench is the duel (Exploit, Pressure Rifle,
+Harpoon Round), and the Cave's Seeker rounds answer its dives. **Overlaps to judge:** the
+Desert stacks execution (Hollow-point, Bounty Round), on purpose, as the execute lineage
+for every class; Shellbreaker crosses the Squire's Splitting Blow and the Striker's
+Icebreaker; Tracer is the Slinger's answer to fleeing prey (the Striker's is Charge, the
+Squire's Chain Hook).
 
 ## 11. Spirit — Draft (deep dive started 2026-10-14)
 
