@@ -38,9 +38,9 @@ export function unlockSkill(world: World, entity: PlayerEntity, skillId: string)
     entity.usesSkills.selectedClass   = skillId;
     entity.usesSkills.combatArchetype = CLASS_ARCHETYPES[skillId] ?? null;
   } else if (node.tier === 1) {
-    entity.usesSkills.selectedSubVariant = node.subVariantId!;
+    entity.usesSkills.disciplineId = skillId;
   } else if (node.tier === 2) {
-    entity.usesSkills.selectedRange = skillId;
+    entity.usesSkills.specializationId = skillId;
   }
 
   // Attach the newly selected class slice before recalculation so class-specific
@@ -70,8 +70,8 @@ function buildSkillPath(unlockedSkills: string[]): string[] {
     .sort((a, b) => a.tier - b.tier)
     .map((node) => {
       if (node.tier === 0) return `Class: ${node.name}`;
-      if (node.tier === 1) return `Variant: ${node.name}`;
-      if (node.tier === 2) return `Range: ${node.name}`;
-      return `Perk: ${node.name}`;
+      if (node.tier === 1) return `Discipline: ${node.name}`;
+      if (node.tier === 2) return `Specialization: ${node.name}`;
+      return `Leaf: ${node.name}`;
     });
 }

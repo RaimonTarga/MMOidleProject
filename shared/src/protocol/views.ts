@@ -108,6 +108,8 @@ export interface PlayerView {
   selectedClass: string | null;
   selectedSubVariant: SubVariant | null;
   selectedRange: string | null;
+  disciplineId: string | null;
+  specializationId: string | null;
   currentSkillTier: number;
   recovery: number;
   speed: number;
@@ -396,6 +398,8 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     selectedClass: skills.selectedClass,
     selectedSubVariant: skills.selectedSubVariant,
     selectedRange: skills.selectedRange,
+    disciplineId: skills.disciplineId ?? null,
+    specializationId: skills.specializationId ?? null,
     currentSkillTier: progression.currentSkillTier,
     recovery: entity.hasHealth.recovery ?? 0,
     speed: entity.hasPosition.speed,

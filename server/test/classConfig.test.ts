@@ -104,8 +104,14 @@ const saved = JSON.parse(JSON.stringify(striker.configuresClass!.config));
 assert(JSON.stringify(hydrateClassConfig(striker, saved)?.config) === JSON.stringify(striker.configuresClass!.config), 'a saved custom config loads as it was');
 assert(hydrateClassConfig(striker, { nonsense: true })?.config.mode === 'auto', 'an unreadable save loads the default');
 
-// Back to auto, then no class.
-assert(setClassConfig(world, striker, { ...custom, mode: 'auto' }).ok, 'switching back to auto is accepted');
+// The T2 discipline reshapes the default: Light swings a 7-beat combo (§12.5).
+striker.tracksProgression.skillPoints += 1;
+assert(setClassConfig(world, striker, { ...custom, mode: 'auto' }).ok, 'back to auto before the discipline');
+assert(unlockSkill(world, striker, 'striker-light'), 'the Light discipline unlocks at tier 1');
+assert(striker.usesSkills.disciplineId === 'striker-light', 'the pick is recorded as the discipline');
+assert(order(striker.configuresClass?.config).beats.length === 6, 'a Light combo has six beats before the finisher');
+
+// Auto mode resumed, then no class.
 assert(striker.configuresClass!.config.mode === 'auto', 'auto mode resumes');
 striker.usesSkills.combatArchetype = null;
 syncArchetypeSlices(world, striker);

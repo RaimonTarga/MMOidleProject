@@ -488,6 +488,10 @@ export interface UsesSkills {
   selectedSubVariant: SubVariant | null;
   selectedRange: string | null;
   combatArchetype: CombatArchetype;
+  /** The T2 pick: a discipline node id (class-first build plan §3.5). */
+  disciplineId?: string | null;
+  /** The T3 pick: a specialization node id, scoped to the discipline. */
+  specializationId?: string | null;
 }
 
 // ─── Monster-specific ─────────────────────────────────────────────────────────

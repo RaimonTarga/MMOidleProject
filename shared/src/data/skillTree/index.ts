@@ -1,19 +1,17 @@
 import type { SkillNode } from './types';
-import { rootsAndFramesEntries } from './rootsAndFrames';
-export { isMeleeArchetype, isRangedCombatant, type RangedCombatantInput } from './rootsAndFrames';
-import { t3CombatEntriesA } from './t3CombatA';
-import { t3CombatEntriesB } from './t3CombatB';
-import { t3SummonerEntries } from './t3Summoner';
-import { addGeneratedPlaceholderNodes } from './generated';
+import { rootEntries } from './roots';
+import { classFirstTreeEntries } from './classFirst';
+export { isMeleeArchetype, isRangedCombatant, type RangedCombatantInput } from './roots';
+export { leafTreeTier } from './classFirst';
 
-const skillEntries: [string, SkillNode][] = [
-  ...rootsAndFramesEntries,
-  ...t3CombatEntriesA,
-  ...t3CombatEntriesB,
-  ...t3SummonerEntries,
-];
-
-export const SKILL_TREE: Map<string, SkillNode> = new Map<string, SkillNode>(skillEntries);
-addGeneratedPlaceholderNodes(SKILL_TREE);
+/**
+ * The Passive Tree: the six class roots, then each class's disciplines, specializations and
+ * leaves, built from its kit (class-first build plan §3.5). The old frames, range nodes and
+ * paths are gone; they live on at the tag `pre-rework-2026-10-13`.
+ */
+export const SKILL_TREE: Map<string, SkillNode> = new Map<string, SkillNode>([
+  ...rootEntries,
+  ...classFirstTreeEntries(),
+]);
 
 export type { SkillNode, StatEffects, SubVariant } from './types';

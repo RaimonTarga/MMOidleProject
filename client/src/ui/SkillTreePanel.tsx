@@ -1,16 +1,15 @@
 import { useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { SKILL_TREE, TUTORIAL_ANCHORS, canUnlockSkill } from '@mmo-idle/shared';
-import type { SkillNode, SubVariant } from '@mmo-idle/shared';
+import type { SkillNode } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 import { CONDUIT_BLOCKED_DESC, isBlockedConduit, isPlaceholder, nodeName, nodeDescription } from './skillNodePresentation';
 import { DetailLines } from './describe/DetailLines';
 import { skillNodeLines, type DetailLine } from './describe';
 import {
   currentSkillTierAtom,
+  disciplineIdAtom,
   selectedClassAtom,
-  selectedRangeAtom,
-  selectedSubVariantAtom,
   skillPointsAtom,
   unlockedSkillsAtom,
 } from '../hud/atoms';
@@ -35,28 +34,25 @@ const CLASS_ROOTS = [
 /** Internal tiers start at 0; players count from Tier 1. */
 const displayTier = (tier: number) => tier + 1;
 
-/** The last authored tier; everything after it is folded into one "in development" step. */
-const PATH_TIER = 3;
+/** The specialization tier: where each discipline leads (class-first build plan §3.5). */
+const PATH_TIER = 2;
+/** The last authored tier (the T4 leaves); everything after it folds into one "in development" step. */
+const LAST_TIER = 3;
 
 function tierKind(tier: number): string {
   if (tier === 0) return 'Class';
-  if (tier === 1) return 'Style';
-  if (tier === 2) return 'Range';
-  if (tier === 3) return 'Path';
-  return 'Specialization';
+  if (tier === 1) return 'Discipline';
+  if (tier === 2) return 'Specialization';
+  return 'Leaf';
 }
 
-const SUB_LABEL: Record<SubVariant, string> = { light: 'Light', balanced: 'Balanced', heavy: 'Heavy' };
-
 function kindLabel(node: SkillNode): string {
-  const sub = node.tier === 1 && node.subVariantId ? `${SUB_LABEL[node.subVariantId as SubVariant] ?? node.subVariantId} · ` : '';
-  return `Tier ${displayTier(node.tier)} · ${sub}${tierKind(node.tier)}`;
+  return `Tier ${displayTier(node.tier)} · ${tierKind(node.tier)}`;
 }
 
 /** Short card subtitle: the tier is already on the track, so only what differs. */
 function cardKind(node: SkillNode): string {
-  const sub = node.tier === 1 && node.subVariantId ? SUB_LABEL[node.subVariantId as SubVariant] : tierKind(node.tier);
-  return `${sub} · ${costLabel(node.cost)}`;
+  return `${tierKind(node.tier)} · ${costLabel(node.cost)}`;
 }
 
 /** The authored emblem, or a monogram crest for tiers that have no art yet. */
@@ -92,8 +88,7 @@ type NodeStatus = 'unlocked' | 'available' | 'locked';
 
 interface SkillPlayer {
   selectedClass: string | null;
-  selectedSubVariant: SubVariant | null;
-  selectedRange: string | null;
+  disciplineId: string | null;
   unlockedSkills: string[];
   skillPoints: number;
   currentSkillTier: number;
@@ -106,8 +101,7 @@ function unlockCheck(node: SkillNode, player: SkillPlayer) {
       usesSkills: {
         unlockedSkills: player.unlockedSkills,
         selectedClass: player.selectedClass,
-        selectedSubVariant: player.selectedSubVariant,
-        selectedRange: player.selectedRange,
+        disciplineId: player.disciplineId,
       },
       tracksProgression: {
         skillPoints: player.skillPoints,
@@ -126,8 +120,8 @@ function getNodeStatus(node: SkillNode, player: SkillPlayer): NodeStatus {
 
 /**
  * The choices a tier offers this character: the class roots before a class is
- * picked; afterwards the class's nodes, with Path-and-later filtered to the
- * chosen style.
+ * picked; afterwards the class's nodes, with specializations and leaves
+ * filtered to the chosen discipline.
  */
 function choicesAt(tier: number, player: SkillPlayer): SkillNode[] {
   if (tier === 0) return CLASS_ROOTS.map((id) => SKILL_TREE.get(id)!).filter(Boolean);
@@ -135,13 +129,13 @@ function choicesAt(tier: number, player: SkillPlayer): SkillNode[] {
   return [...SKILL_TREE.values()].filter((node) =>
     node.tier === tier
     && node.classId === classId
-    && (tier < 3 || node.subVariantId === player.selectedSubVariant));
+    && (tier < PATH_TIER || node.disciplineId === player.disciplineId));
 }
 
-/** The Path nodes a style would open, whichever style is chosen. */
-function pathsFor(style: SkillNode): SkillNode[] {
+/** The specializations a discipline would open, whichever discipline is chosen. */
+function pathsFor(discipline: SkillNode): SkillNode[] {
   return [...SKILL_TREE.values()].filter((node) =>
-    node.tier === PATH_TIER && node.classId === style.classId && node.subVariantId === style.subVariantId);
+    node.tier === PATH_TIER && node.classId === discipline.classId && node.disciplineId === discipline.id);
 }
 
 /** Stat lines, each marked with its siblings' values where the choice differs. */
@@ -173,11 +167,11 @@ function JourneyTrack({
 }) {
   const current = player.selectedClass ? player.currentSkillTier : 0;
   const steps = [0, 1, 2, 3, 4].map((tier) => {
-    const beyond = tier > PATH_TIER;
+    const beyond = tier > LAST_TIER;
     const taken = beyond ? undefined : player.unlockedSkills
       .map((id) => SKILL_TREE.get(id))
       .find((node) => node && node.tier === tier && (tier === 0 || node.classId === player.selectedClass));
-    const now = beyond ? current > PATH_TIER : current === tier && !taken;
+    const now = beyond ? current > LAST_TIER : current === tier && !taken;
     return { tier, beyond, taken, now };
   });
   return (
@@ -198,7 +192,7 @@ function JourneyTrack({
               {taken ? <NodeGlyph node={taken} size={22} /> : now ? '●' : beyond ? '…' : displayTier(tier)}
             </span>
             <span className="skill-track__tier">
-              {beyond ? `Tier ${displayTier(PATH_TIER + 1)}+` : `Tier ${displayTier(tier)} · ${tierKind(tier)}`}
+              {beyond ? `Tier ${displayTier(LAST_TIER + 1)}+` : `Tier ${displayTier(tier)} · ${tierKind(tier)}`}
             </span>
             <span className="skill-track__name">
               {taken ? nodeName(taken) : now ? 'Choose now' : beyond ? 'In development' : 'Later'}
@@ -263,8 +257,8 @@ function ChoiceCard({
 
 // ── Branch diagram ────────────────────────────────────────────────────────────
 //
-// Choosing a style silently decides which Paths open two tiers later. The
-// diagram makes that visible: every style and the three Paths it leads to.
+// Choosing a discipline decides which specializations open a tier later. The
+// diagram makes that visible: every discipline and the three it leads to.
 
 function StyleBranches({
   styles,
@@ -279,7 +273,7 @@ function StyleBranches({
 }) {
   return (
     <div className="skill-branches">
-      <div className="skill-branches__label">Where each style leads · Tier {displayTier(PATH_TIER)} paths</div>
+      <div className="skill-branches__label">Where each discipline leads · Tier {displayTier(PATH_TIER)} specializations</div>
       <div className="skill-branches__cols">
         {styles.map((style) => (
           <div
@@ -349,7 +343,6 @@ function NodeDesc({
         <div className="skill-desc__preview"><SkillCharacterPreview node={node} owned={player.unlockedSkills} /></div>
         {node.description && !classMechanicSummary && <div className="skill-desc__text">{nodeDescription(node)}</div>}
         <ClassIdentity key={node.id} classId={node.classId ?? node.id} expanded={node.tier === 0} />
-        {node.tier === 2 && <p className="skill-desc__text">Range changes your fighting distance and head crest. The body keeps your chosen style.</p>}
         <div className="skill-desc__effects">
           <DetailLines
             title="Stats"
@@ -366,7 +359,7 @@ function NodeDesc({
         </div>
         {paths.length > 0 && (
           <div className="skill-desc__paths">
-            <div className="detail-lines__title">Leads to · Tier {displayTier(PATH_TIER)} paths</div>
+            <div className="detail-lines__title">Leads to · Tier {displayTier(PATH_TIER)} specializations</div>
             {paths.map((path) => (
               <details key={path.id} className="skill-desc__path">
                 <summary>{nodeName(path)}</summary>
@@ -397,13 +390,12 @@ interface Props { onClose: () => void; }
 
 export function SkillTreePanel({ onClose }: Props) {
   const selectedClass = useAtomValue(selectedClassAtom);
-  const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
-  const selectedRange = useAtomValue(selectedRangeAtom);
+  const disciplineId = useAtomValue(disciplineIdAtom);
   const unlockedSkills = useAtomValue(unlockedSkillsAtom);
   const skillPoints = useAtomValue(skillPointsAtom);
   const currentSkillTier = useAtomValue(currentSkillTierAtom);
   const player: SkillPlayer = {
-    selectedClass, selectedSubVariant, selectedRange, unlockedSkills, skillPoints, currentSkillTier,
+    selectedClass, disciplineId, unlockedSkills, skillPoints, currentSkillTier,
   };
   const currentTier = selectedClass ? currentSkillTier : 0;
   const [viewTier, setViewTier] = useState<number | null>(null);
@@ -420,7 +412,7 @@ export function SkillTreePanel({ onClose }: Props) {
   const styleStep = shownTier === 1 && !!selectedClass;
   // The style the branch diagram highlights: the one you took, or the one you are reading.
   const selectedStyle = styleStep
-    ? (inspected?.tier === 1 ? inspected : choices.find((node) => node.subVariantId === inspected?.subVariantId) ?? taken ?? null)
+    ? (inspected?.tier === 1 ? inspected : choices.find((node) => node.id === inspected?.disciplineId) ?? taken ?? null)
     : null;
   const siblings = inspected ? choicesAt(inspected.tier, player) : [];
 
@@ -443,9 +435,9 @@ export function SkillTreePanel({ onClose }: Props) {
   const blurb = past
     ? 'Choices you did not take stay readable here. A class reset reopens them.'
     : shownTier === 0 ? 'Your class decides how you fight. Read each one, then confirm with Unlock.'
-      : shownTier === 1 ? `Sets your fighting style and decides which Tier ${displayTier(PATH_TIER)} paths you can take.`
-        : shownTier === 2 ? 'Sets your fighting distance.'
-          : shownTier === PATH_TIER ? 'Your specialization, opened by your style.'
+      : shownTier === 1 ? `Your discipline: the main way your class fights, and which Tier ${displayTier(PATH_TIER)} specializations you can take.`
+        : shownTier === PATH_TIER ? 'Your specialization, opened by your discipline.'
+          : shownTier === LAST_TIER ? 'A small pick within your discipline.'
             : 'These tiers are still being designed.';
 
   return (

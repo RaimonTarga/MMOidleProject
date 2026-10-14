@@ -68,6 +68,8 @@ function resetPlayerProgression(world: World, player: PlayerEntity): void {
   player.tracksProgression.currentSkillTier = 0;
   player.usesSkills.selectedClass = null;
   player.usesSkills.selectedSubVariant = null;
+  player.usesSkills.disciplineId = null;
+  player.usesSkills.specializationId = null;
   player.usesSkills.selectedRange = null;
   player.usesSkills.combatArchetype = null;
   player.tracksProgression.questProgress = {};

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { applyStatusEffect, getResource, setCooldown } from '@mmo-idle/shared';
 import { createBalanceWorld } from '../bench/balance/worldFactory';
-import { BREADTH_CELLS } from '../bench/balance/playerBreadthSpec';
+import { PACKAGE_FIT_CELLS } from '../bench/balance/playerPackageFitSpec';
 import { prepareSurveyBot } from '../bench/balance/ttkSurveySpec';
 import { makeCombatContext, emitCombatEvent } from '../src/systems/combat/engine/combatPipeline';
 import { applyWard } from '../src/systems/defense/barrier/wards';
@@ -15,10 +15,12 @@ import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summo
 // Damage-pipeline order: Guard position, debt installments, splash through
 // defense, and Conduit redirection ahead of debt/recuperation.
 
-function fixture(identityId = 'breadth-t3-slinger-light') {
+/** A T3 farm package holding only its class root (the class-first tree has no frames). */
+function fixture(className = 'slinger') {
   const world = createBalanceWorld();
-  const c = structuredClone(BREADTH_CELLS.find(c => c.identityId === identityId && c.role === 'farm')!);
-  assert(c, `missing breadth cell ${identityId}`);
+  const c = structuredClone(PACKAGE_FIT_CELLS.find(c => c.tier === 3 && c.className === className && c.role === 'farm')!);
+  assert(c, `missing T3 ${className} farm package`);
+  c.build.skillPath = [c.build.classRoot];
   const { bot } = prepareSurveyBot(world, c, { x: 400, y: 400 });
   bot.usesSkills.passives = {}; if (bot.evadesHits) bot.evadesHits.dodgeRate = 0;
   bot.mitigatesDamage.plating = 0; bot.mitigatesDamage.damageReduction = 0;
@@ -77,7 +79,7 @@ function fixture(identityId = 'breadth-t3-slinger-light') {
 
 // Conduit redirection: after shields, before the owner's debt and recuperation.
 {
-  const { world, bot, hit } = fixture('breadth-t3-conduit-balanced');
+  const { world, bot, hit } = fixture('conduit');
   updateSummonerArchetype(world, 0, 1_000);
   const minionIds = bot.summonsMinions?.minionIds.filter(Boolean) ?? [];
   assert(minionIds.length > 0, 'Conduit fixture must field summons');
@@ -97,7 +99,7 @@ function fixture(identityId = 'breadth-t3-slinger-light') {
 
 // Splash on the owner is not redirected: nearby summons already take their own splash.
 {
-  const { world, bot, monster } = fixture('breadth-t3-conduit-balanced');
+  const { world, bot, monster } = fixture('conduit');
   updateSummonerArchetype(world, 0, 1_000);
   const minionIds = bot.summonsMinions!.minionIds.filter(Boolean);
   for (const id of minionIds) world.getMinionEntity(id)!.hasPosition.current = { x: 5000, y: 5000 };

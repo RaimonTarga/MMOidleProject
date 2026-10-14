@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { tickCooldowns } from '@mmo-idle/shared';
 import { createBalanceWorld } from '../bench/balance/worldFactory';
-import { BREADTH_CELLS } from '../bench/balance/playerBreadthSpec';
+import { PACKAGE_FIT_CELLS } from '../bench/balance/playerPackageFitSpec';
 import { prepareSurveyBot } from '../bench/balance/ttkSurveySpec';
 import { makeCombatContext, emitCombatEvent } from '../src/systems/combat/engine/combatPipeline';
 import { updateEngagementDr, getEngagementDrRemaining } from '../src/systems/defense/mitigation/engagementDr';
@@ -9,9 +9,11 @@ import { runStationaryDr, getStationaryDrBonus } from '../src/systems/defense/mi
 import { runReactivePlating, getReactivePlatingBonus } from '../src/systems/defense/mitigation/reactivePlating';
 import { setAttackTarget } from '../src/systems/combat/ai/targeting';
 
+// A T3 Slinger farm package holding only its class root (the class-first tree has no frames).
 function fixture(){
  const world=createBalanceWorld();
- const c=structuredClone(BREADTH_CELLS.find(c=>c.identityId==='breadth-t3-slinger-light'&&c.role==='farm')!);
+ const c=structuredClone(PACKAGE_FIT_CELLS.find(c=>c.tier===3&&c.className==='slinger'&&c.role==='farm')!);
+ c.build.skillPath=[c.build.classRoot];
  const {bot}=prepareSurveyBot(world,c,{x:400,y:400});
  bot.usesSkills.passives={};bot.evadesHits!.dodgeRate=0;bot.mitigatesDamage.plating=0;bot.mitigatesDamage.damageReduction=0;
  bot.hasHealth.maxHp=1000;bot.hasHealth.hp=1000;bot.tracksProgression.activeStance=null;

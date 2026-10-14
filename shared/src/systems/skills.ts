@@ -9,18 +9,17 @@ export interface UnlockResult {
 
 /** Minimal slice view for skill-unlock validation. */
 export interface SkillUnlockTarget {
-  usesSkills:        Pick<UsesSkills, 'unlockedSkills' | 'selectedClass' | 'selectedSubVariant' | 'selectedRange'>;
+  usesSkills:        Pick<UsesSkills, 'unlockedSkills' | 'selectedClass' | 'disciplineId'>;
   tracksProgression: Pick<TracksProgression, 'skillPoints' | 'currentSkillTier'>;
 }
 
 /**
  * Pure validation — does not mutate the player.
  *
- * Unlock rules by tier:
+ * Unlock rules by code tier (class-first build plan §3.5):
  *   0 — class roots: no class chosen yet; any root is valid.
- *   1 — sub-variants: must match player's selectedClass.
- *   2 — range nodes: universal; player must have a class and sub-variant (tier 1 done).
- *   3+ — path nodes: must match both selectedClass AND selectedSubVariant (full 15-way lock).
+ *   1 — disciplines: must belong to the player's class.
+ *   2+ — specializations and leaves: must belong to the player's class AND discipline.
  *
  * Across all tiers: node.tier must equal player.currentSkillTier (strict sequential gate).
  */
@@ -35,11 +34,10 @@ export function canUnlockSkill(target: SkillUnlockTarget, skillId: string): Unlo
     if (target.usesSkills.selectedClass !== null) return { ok: false, reason: 'Class already chosen' };
   } else if (node.tier === 1) {
     if (node.classId !== target.usesSkills.selectedClass) return { ok: false, reason: 'Wrong class' };
-  } else if (node.tier === 2) {
-    if (target.usesSkills.selectedSubVariant === null) return { ok: false, reason: 'Sub-variant not chosen' };
   } else {
     if (node.classId !== target.usesSkills.selectedClass) return { ok: false, reason: 'Wrong class' };
-    if (node.subVariantId !== target.usesSkills.selectedSubVariant) return { ok: false, reason: 'Wrong sub-variant' };
+    if (!target.usesSkills.disciplineId) return { ok: false, reason: 'Discipline not chosen' };
+    if (node.disciplineId !== target.usesSkills.disciplineId) return { ok: false, reason: 'Wrong discipline' };
   }
 
   return { ok: true };
@@ -52,8 +50,7 @@ export function canUnlockSkillFromView(player: PlayerView, skillId: string): Unl
       usesSkills: {
         unlockedSkills:     player.unlockedSkills,
         selectedClass:      player.selectedClass,
-        selectedSubVariant: player.selectedSubVariant,
-        selectedRange:      player.selectedRange,
+        disciplineId:       player.disciplineId,
       },
       tracksProgression: {
         skillPoints:      player.skillPoints,

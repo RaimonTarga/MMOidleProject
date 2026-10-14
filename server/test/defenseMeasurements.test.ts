@@ -1,15 +1,22 @@
 import assert from 'node:assert/strict';
 import { applyStatusEffect } from '@mmo-idle/shared';
 import { createBalanceWorld } from '../bench/balance/worldFactory';
-import { BREADTH_CELLS } from '../bench/balance/playerBreadthSpec';
+import { PACKAGE_FIT_CELLS } from '../bench/balance/playerPackageFitSpec';
 import { prepareSurveyBot } from '../bench/balance/ttkSurveySpec';
 import { makeCombatContext, emitCombatEvent, setCombatMeasurementObserver, type CombatMeasurement } from '../src/systems/combat/engine/combatPipeline';
 import { applyWard } from '../src/systems/defense/barrier/wards';
 import { runMonsterAttack } from '../src/systems/combat/engine/combat';
 
+/** A T3 Slinger farm package holding only its class root (the class-first tree has no frames). */
+function rootOnlySlinger(){
+ const cell=structuredClone(PACKAGE_FIT_CELLS.find(c=>c.tier===3&&c.className==='slinger'&&c.role==='farm')!);
+ cell.build.skillPath=[cell.build.classRoot];
+ return cell;
+}
+
 function run(observe:boolean){
  const world=createBalanceWorld();
- const cell=structuredClone(BREADTH_CELLS.find(c=>c.identityId==='breadth-t3-slinger-light'&&c.role==='farm')!);
+ const cell=rootOnlySlinger();
  const {bot}=prepareSurveyBot(world,cell,{x:400,y:400});
  bot.usesSkills.passives={};bot.evadesHits!.dodgeRate=0;bot.tracksProgression.activeStance=null;
  if(bot.hasBarrier)bot.hasBarrier.current=0;
@@ -34,7 +41,7 @@ assert.equal(b.rows.reduce((n,r)=>n+r.before-r.after,0),80,'attribution telescop
 console.log('defenseMeasurements: ok');
 {
  const world=createBalanceWorld();
- const cell=structuredClone(BREADTH_CELLS.find(c=>c.identityId==='breadth-t3-slinger-light'&&c.role==='farm')!);
+ const cell=rootOnlySlinger();
  const {bot}=prepareSurveyBot(world,cell,{x:400,y:400});
  bot.usesSkills.passives={};bot.evadesHits!.dodgeRate=0;bot.tracksProgression.activeStance=null;
  if(bot.hasBarrier)bot.hasBarrier.current=0;

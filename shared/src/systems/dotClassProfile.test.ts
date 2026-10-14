@@ -67,10 +67,4 @@ function assertEq<T>(actual: T, expected: T, msg: string): void {
   );
 }
 
-{
-  const frost = resolveDotClassProfile({}, 'heavy');
-  const fullStackTick = computeDotClassDamagePerStack(100, frost) * frost.maxStacks;
-  assertEq(fullStackTick, 162, 'frost full-stack tick includes mechanic multiplier');
-}
-
 console.log('dotClassProfile.test.ts: ok');

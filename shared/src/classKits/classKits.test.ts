@@ -32,13 +32,18 @@ const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const problems: string[] = [];
 const allIds = new Map<string, string>();
 
-function claim(id: string, where: string): void {
+/** Disciplines, specializations and leaves become Passive Tree nodes built from the kit itself. */
+function claim(id: string, where: string, treeNode = false): void {
   if (!KEBAB.test(id)) problems.push(`${where}: id "${id}" is not kebab-case`);
   const previous = allIds.get(id);
   if (previous) problems.push(`${where}: id "${id}" is also used by ${previous}`);
   allIds.set(id, where);
-  if (SKILL_TREE.has(id) || RECIPE_DATABASE.has(id) || ITEM_DATABASE.has(id)) {
-    problems.push(`${where}: id "${id}" reuses a legacy skill, recipe or item id`);
+  const inTree = SKILL_TREE.get(id);
+  if (treeNode ? inTree?.disciplineId === undefined : inTree !== undefined) {
+    problems.push(`${where}: id "${id}" ${treeNode ? 'is missing from the Passive Tree' : 'reuses a Passive Tree id'}`);
+  }
+  if (RECIPE_DATABASE.has(id) || ITEM_DATABASE.has(id)) {
+    problems.push(`${where}: id "${id}" reuses a recipe or item id`);
   }
 }
 
@@ -58,7 +63,7 @@ for (const archetype of CLASS_ARCHETYPES) {
     ...kit.leaves.map((l) => ({ id: l.id, classId: l.classId, what: 'leaf' })),
   ];
   for (const entry of owned) {
-    claim(entry.id, `${where} ${entry.what}`);
+    claim(entry.id, `${where} ${entry.what}`, ['discipline', 'specialization', 'leaf'].includes(entry.what));
     if (!entry.id.startsWith(prefix)) problems.push(`${where} ${entry.what} ${entry.id}: must start with "${prefix}"`);
     if (entry.classId !== archetype) problems.push(`${where} ${entry.what} ${entry.id}: classId is ${entry.classId}`);
   }

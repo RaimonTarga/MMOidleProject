@@ -8,13 +8,20 @@ import {steerTowardTarget} from '../src/systems/combat/ai/autoTarget';
 import {approachDeferred} from '../src/systems/combat/ai/blockedApproach';
 import {selectAutoCombatAction} from '../src/systems/combat/ai/targetPriority';
 
+// The T3 volcanic Spirit swarm package, holding only its class root (the class-first tree has no frames).
+function spiritCell(){
+  const cell=structuredClone(DURABILITY12_SWARM.find(c=>c.tier===3&&c.nodeId.endsWith('03')&&c.className==='spirit')!);
+  cell.build.skillPath=[cell.build.classRoot];
+  return cell;
+}
+
 // Volcanic stall (Striker s101033, node-t4-volcanic-01): the pool mob briefly
 // fails the safe-pull check at some rim positions, so selection flips to a far
 // mob for ONE tick roughly every 1.3 s. That tick used to wipe the pool mob's
 // hazard-approach budget, so it was never deferred and the player circled the
 // lava rim for minutes without contact. A brief switch must not reset the clock.
 const world=createFarmWorld();
-const cell=DURABILITY12_SWARM.find(c=>c.tier===3&&c.nodeId.endsWith('03')&&c.className==='spirit')!;
+const cell=spiritCell();
 setupArena(world,{nodeId:cell.nodeId,biomeGroup:'volcanic',contentTier:3,isDungeon:false});
 try {
   for(const m of [...world.monsterEntitiesInNode(cell.nodeId)]) world.removeMonsterEntity(m.entityId);
@@ -43,7 +50,7 @@ try {
   // window still covers non-hazard path failures; a probe of this node found
   // no rim position outside the envelope that fails the check.
   const world=createFarmWorld();
-  const cell=DURABILITY12_SWARM.find(c=>c.tier===3&&c.nodeId.endsWith('03')&&c.className==='spirit')!;
+  const cell=spiritCell();
   setupArena(world,{nodeId:cell.nodeId,biomeGroup:'volcanic',contentTier:3,isDungeon:false});
   try {
     for(const m of [...world.monsterEntitiesInNode(cell.nodeId)]) world.removeMonsterEntity(m.entityId);
