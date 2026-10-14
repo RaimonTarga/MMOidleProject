@@ -153,8 +153,9 @@ goes.
   generic weapons are replaced tier by tier (T1 in Phase 1).
 - **Armor and charm:** shared bases plus `classLines` keyed by archetype, applied at the stat
   rebuild; each class runtime reads its own line keys (`squire.*`, `slinger.*`, ...).
-- **Boots** unchanged; **+N upgrades** as today. **No** sockets, components or random drops
-  (§4: under review).
+- **Boots** unchanged. **No +N ladder** (it is retired on every slot today; §4's +N steps
+  with sockets wait for §4 to lock), and **no** sockets, components or random drops (§4:
+  under review).
 
 ### 3.7 Moments: one registry of fight predicates
 
