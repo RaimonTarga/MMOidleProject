@@ -2,13 +2,19 @@ import assert from 'node:assert/strict';
 import { tickCooldowns } from '@mmo-idle/shared';
 import { createFarmWorld } from '../bench/balance/worldFactory';
 import { prepareSurveyBot } from '../bench/balance/ttkSurveySpec';
-import { GUARD_COVERAGE_CELLS } from '../bench/balance/guardCoverageSpec';
+import { PACKAGE_FIT_CELLS } from '../bench/balance/playerPackageFitSpec';
 import { GuardCoverageRecorder } from '../bench/balance/guardCoverageRecorder';
 import { fireWithReferenceWiring } from './fixtures/abilityWiring';
 import { emitCombatEvent, makeCombatContext } from '../src/systems/combat/engine/combatPipeline';
 
 const world = createFarmWorld();
-const cell = GUARD_COVERAGE_CELLS.find(c => c.arm === 'inferno-endure')!;
+// A T4 Striker package holding only its class root (the class-first tree has no frames; the
+// Guard coverage packet's Heavy-frame Striker went with it), on the packet's inferno arm: the
+// volcanic charm, and Endure added to its Guards.
+const cell = structuredClone(PACKAGE_FIT_CELLS.find(c => c.tier === 4 && c.className === 'striker' && c.role === 'farm')!);
+cell.build.skillPath = [cell.build.classRoot];
+cell.build.gearItemIds.recovery = 'volcanic-charm-t4';
+cell.abilities!.guards.push('endure');
 const { bot } = prepareSurveyBot(world, cell, { x: 2400, y: 2400 });
 bot.hasHealth.hp = bot.hasHealth.maxHp * 0.2;
 // No arena fight: fire the Guards on Always instead of their In Combat default.
