@@ -64,8 +64,8 @@ function clearingPiece(
  * skipped the club's and the armor's farm beats and put the class, the gear,
  * the armor and the charm in front of a new player within seconds. Made as the
  * levels arrive, they land two at a time. (Crafting and equipping need no tier
- * or class; the Make tab shows once the first essence is held.) The class script
- * opens with the guide's Rune loadout, right after the Clearing set.
+ * or class; the Make tab shows once the first essence is held.) The seal route
+ * follows this script, right after the Clearing set.
  */
 export const TUTORIAL_OPENING: TutorialScript = {
   id: 'tutorial-opening',

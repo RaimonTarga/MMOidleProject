@@ -6,8 +6,8 @@ import type { TutorialCondition, TutorialScript } from './types';
  * The first-hour checklist (docs/guided-tutorial-plan.md, "The first-hour
  * checklist"): every new idea the guide's lines put in front of a player, and the
  * thing on screen that explains it. A beat names the ideas its line introduces in
- * `teaches`; `tutorial.test.ts` holds every level of every class script to at most
- * two, and every idea to exactly one introduction.
+ * `teaches`; `tutorial.test.ts` holds every level of a script to at most two,
+ * and every idea to exactly one introduction.
  *
  * An idea is something the player has to hold in their head from then on (a
  * system, a screen, a rule), not an item: a second charm is not a new idea, the
@@ -59,6 +59,8 @@ export const TUTORIAL_CONCEPTS = {
     name: 'Boots are speed',
     shownBy: 'the walk between pulls getting shorter',
   },
+  // Standing orders stay (the rune engine is their surface). Crafted runes do not,
+  // so this idea is the board, not a recipe.
   runes: {
     name: 'Runes are standing orders; the higher rule of a lane wins',
     shownBy: 'the Runes board, built rule by rule',
@@ -67,21 +69,6 @@ export const TUTORIAL_CONCEPTS = {
   zones: {
     name: 'The guide travels between zones',
     shownBy: 'the arrival banner naming the zone',
-  },
-  technique: {
-    name: 'A Technique fires on its own every so often',
-    shownBy: 'the Abilities tab, Attune',
-    anchor: 'abilityAttune',
-  },
-  'ability-runes': {
-    name: 'An ability fires from a Rune',
-    shownBy: '"Use default timing" under the ability',
-    anchor: 'abilityTiming',
-  },
-  guard: {
-    name: 'A Guard rescues you mid-fight',
-    shownBy: 'the Abilities tab, Attune',
-    anchor: 'abilityAttune',
   },
   evasion: {
     name: 'Evasion: harder to hit',
@@ -94,11 +81,6 @@ export const TUTORIAL_CONCEPTS = {
   hazards: {
     name: 'Hazard ground hurts, and a Rune walks around it',
     shownBy: 'the hazard patches on the Swamp floor',
-  },
-  'loadout-swap': {
-    name: 'Abilities are swapped to fit the zone',
-    shownBy: 'the Abilities tab, Unattune then Attune',
-    anchor: 'abilityAttune',
   },
   orbit: {
     name: 'Orbit: circle out of reach while attacking',
@@ -130,7 +112,7 @@ export type TutorialConceptId = keyof typeof TUTORIAL_CONCEPTS;
 /** Most new ideas one level of the first hour may introduce. */
 export const TUTORIAL_CONCEPTS_PER_LEVEL = 2;
 
-/** The zone a chapter plays in; chapters with none (the seals, the gate) are their own level. */
+/** The zone a chapter plays in; a chapter with none (the farewell) is its own level. */
 const CHAPTER_ZONE: Readonly<Record<string, string>> = {
   'The Clearing': 'clearing',
   'The Plains': 'plains',
@@ -169,7 +151,7 @@ function gatesIn(condition: TutorialCondition): TutorialCondition[] {
  * that a farm finishing two levels at once lands two levels' lines together —
  * which the 1x sweep's own level-ups show (docs/guided-tutorial-plan.md).
  *
- * The seals and the gate are their own levels.
+ * A chapter that names no zone (the farewell) is its own level.
  */
 export function tutorialChecklist(script: TutorialScript): TutorialChecklistRow[] {
   const levels: Record<string, number> = {};

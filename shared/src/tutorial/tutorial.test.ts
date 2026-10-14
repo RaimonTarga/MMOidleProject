@@ -1,18 +1,22 @@
-import { ABILITY_DATABASE } from '../abilities';
-import { ABILITY_RECIPE_DATABASE } from '../abilityRecipes';
-import { globalMastery } from '../config/gameConfig';
+import { biomeLevelCap, globalMastery } from '../config/gameConfig';
+import { SKILL_TREE } from '../data/skillTree';
 import { RECIPE_DATABASE } from '../data/recipes';
 import { ITEM_DATABASE } from '../itemDatabase';
 import { emptyEquipment, type EssenceType } from '../items';
 import { QUEST_DATABASE } from '../quests/questDatabase';
-import { ACTION_DATABASE, CONDITION_DATABASE } from '../runeDatabase';
-import { RUNE_RECIPE_DATABASE } from '../runeRecipes';
-import { NODE_BIOMES } from '../world/nodeBiomes';
+import { bossClearKey } from '../systems/biomeProgress';
+import { tutorialNodeFor } from './nodes';
 import {
+  T1_BIOME_ORDER,
   TUTORIAL_ANCHORS,
+  TUTORIAL_CLASS_BEATS,
   TUTORIAL_CONCEPTS,
   TUTORIAL_CONCEPTS_PER_LEVEL,
+  TUTORIAL_FAREWELL,
   TUTORIAL_OPENING,
+  TUTORIAL_SEALS,
+  buildSealRouteBeats,
+  evaluateTutorialCondition,
   nextStepOf,
   resolveBeatIndex,
   tutorialChecklist,
@@ -22,7 +26,6 @@ import {
   type TutorialConcept,
   type TutorialConceptId,
   type TutorialScript,
-  type TutorialStep,
   type TutorialView,
 } from './index';
 
@@ -60,6 +63,8 @@ function view(overrides: Partial<TutorialView> = {}): TutorialView {
 }
 
 const beatIndex = (script: TutorialScript, id: string): number => script.beats.findIndex((beat) => beat.id === id);
+
+const FROM_CLEARING = { nodeId: 'node-clearing', clearedNodes: [] as const };
 
 // ── Opening: resume from state ───────────────────────────────────────────────
 {
@@ -119,7 +124,7 @@ const beatIndex = (script: TutorialScript, id: string): number => script.beats.f
   assert(essence?.current === 4 && essence.target === 4, 'essence progress is clamped to the cost');
 }
 
-// ── Scripts: data validity ───────────────────────────────────────────────────
+// ── The seal route ───────────────────────────────────────────────────────────
 const SAY_LIMIT = 170;
 
 function conditionsIn(condition: TutorialCondition): TutorialCondition[] {
@@ -128,75 +133,207 @@ function conditionsIn(condition: TutorialCondition): TutorialCondition[] {
   return [condition];
 }
 
-function nodesFor(at: Extract<TutorialStep, { type: 'farm' }>['at']): string[] {
-  if (at.kind === 'node') return NODE_BIOMES[at.nodeId] || at.nodeId === 'node-clearing' ? [at.nodeId] : [];
-  return Object.entries(NODE_BIOMES)
-    .filter(([, info]) => info.biomeGroup === at.biomeGroup && info.biomeTier === at.tier
-      && (at.kind === 'dungeon' ? info.isDungeon === true : info.kind === 'normal')
-      && (at.kind !== 'biome' || !at.modifier || info.modifier === at.modifier))
-    .map(([id]) => id);
+/** Tier-0 skill nodes: the six class roots the seam is keyed by. */
+const CLASS_ROOTS = [...SKILL_TREE.values()].filter((node) => node.tier === 0 && node.parent === null);
+
+const [FIRST_SEAL, SECOND_SEAL] = TUTORIAL_SEALS;
+const WALK_BIOMES = T1_BIOME_ORDER.filter((biome) => biome !== FIRST_SEAL && biome !== SECOND_SEAL);
+
+assert(FIRST_SEAL === 'plains' && SECOND_SEAL === 'mountain', 'the two seals stay Plains, then Mountain');
+assert(WALK_BIOMES.join(',') === 'forest,swamp,cave', 'between the seals the walk is Forest, Swamp, Cave');
+
+const route = buildSealRouteBeats();
+const routeIds = [
+  `open:${FIRST_SEAL}`,
+  `boss:${FIRST_SEAL}`,
+  ...WALK_BIOMES.map((biome) => `zone:${biome}`),
+  `boss:${SECOND_SEAL}`,
+  'farewell',
+];
+assert(route.map((beat) => beat.id).join(',') === routeIds.join(','), `seal route ids: ${route.map((b) => b.id).join(',')}`);
+assert(route[route.length - 1].id === 'farewell', 'the seal route ends on the farewell beat');
+assert(route[route.length - 1].say === TUTORIAL_FAREWELL[0], 'the farewell beat speaks the guide\'s goodbye');
+assert(route[route.length - 1].chapter === 'Farewell', 'the farewell beat is its own chapter');
+
+for (const beat of route) {
+  assert(beat.steps.length === 1, `${beat.id}: one step`);
+  const step = beat.steps[0];
+  if (beat.id.startsWith('boss:')) {
+    assert(step.type === 'attemptBoss', `${beat.id}: a boss fight`);
+    if (step.type !== 'attemptBoss') continue;
+    assert(step.tier === 1 && step.until === undefined, `${beat.id}: a tier-1 boss with no extra gate`);
+    assert(step.biomeGroup === beat.id.slice('boss:'.length), `${beat.id}: boss biome`);
+    continue;
+  }
+  assert(step.type === 'farm', `${beat.id}: a fight, not a craft`);
+  if (step.type !== 'farm') continue;
+  if (beat.id === 'farewell') {
+    assert(step.at.kind === 'biome' && step.at.biomeGroup === SECOND_SEAL && step.at.tier === 1, 'farewell stands in the second seal\'s zone');
+    assert(step.until.type === 'playerTierAtLeast' && step.until.tier === 2, 'farewell waits on tier 2');
+    continue;
+  }
+  const biome = beat.id.slice(beat.id.indexOf(':') + 1);
+  const cap = biomeLevelCap(1, biome);
+  assert(step.at.kind === 'biome' && step.at.biomeGroup === biome && step.at.tier === 1, `${beat.id}: farms its own tier-1 zone`);
+  assert(step.until.type === 'biomeLevelAtLeast' && step.until.level === cap, `${beat.id}: waits for the tier cap (${cap}), not a written-in level`);
 }
 
-for (const script of [TUTORIAL_OPENING]) {
+{
+  const taught = route.flatMap((beat) => beat.teaches ?? []);
+  assert(taught.join(',') === 'zones,seals,boss-altar,poison', `seal route teaches ${taught.join(',')}`);
+  const swamp = route.find((beat) => beat.id === 'zone:swamp');
+  assert(swamp?.teaches?.join(',') === 'poison', 'poison is introduced in the Swamp');
+  const plainsBoss = route.find((beat) => beat.id === 'boss:plains');
+  assert(plainsBoss?.teaches?.join(',') === 'seals,boss-altar', 'the first seal introduces seals and the altar');
+}
+
+// ── Every class root gets the opening, then the seal route ───────────────────
+assert(Object.keys(TUTORIAL_CLASS_BEATS).length === 0, 'no class builder is registered yet');
+assert(CLASS_ROOTS.length === 6, `six class roots, found ${CLASS_ROOTS.map((node) => node.id).join(',')}`);
+
+function sameRoute(script: TutorialScript): void {
+  assert(script.beats.length === TUTORIAL_OPENING.beats.length + route.length, `${script.id}: opening plus the seal route`);
+  script.beats.slice(0, TUTORIAL_OPENING.beats.length).forEach((beat, i) => {
+    assert(beat === TUTORIAL_OPENING.beats[i], `${script.id}: opening beat ${beat.id} was replaced`);
+  });
+  script.beats.slice(TUTORIAL_OPENING.beats.length).forEach((beat, i) => {
+    assert(beat.id === route[i].id && beat.say === route[i].say && beat.chapter === route[i].chapter,
+      `${script.id}: beat ${i} is ${beat.id}, not ${route[i].id}`);
+  });
+}
+
+for (const root of CLASS_ROOTS) {
+  const script = tutorialScriptFor(root.id);
+  assert(script.id === `tutorial-${root.name.toLowerCase()}`, `${root.id}: id ${script.id}`);
+  assert(script.classRoot === root.id, `${root.id}: class root is stored`);
+  assert(tutorialScriptFor(root.id) === script, `${root.id}: the script is cached`);
+  sameRoute(script);
+}
+
+{
+  const classless = tutorialScriptFor(null);
+  assert(classless.id === TUTORIAL_OPENING.id, 'no class keeps the opening id');
+  assert(classless.classRoot === null, 'no class stores a null root');
+  assert(classless !== TUTORIAL_OPENING, 'no class still appends the seal route');
+  assert(tutorialScriptFor(null) === classless, 'the classless script is cached');
+  sameRoute(classless);
+  assert(resolveBeatIndex(classless, view()) === 0, 'before a class, the opening is still the first beat');
+}
+
+{
+  const unknown = tutorialScriptFor('not-a-class');
+  assert(unknown.id === 'tutorial-not-a-class', `unknown class id ${unknown.id}`);
+  assert(unknown.classRoot === 'not-a-class', 'an unknown class keeps the key it was asked with');
+  sameRoute(unknown);
+}
+
+// ── Every beat's conditions and locations resolve ────────────────────────────
+const SCRIPTS = [tutorialScriptFor(null), ...CLASS_ROOTS.map((root) => tutorialScriptFor(root.id))];
+
+for (const script of SCRIPTS) {
   const ids = new Set<string>();
   for (const beat of script.beats) {
     assert(!ids.has(beat.id), `${script.id}: duplicate beat id ${beat.id}`);
     ids.add(beat.id);
     assert(beat.say.length > 0 && beat.say.length <= SAY_LIMIT, `${script.id}/${beat.id}: line should be a short phrase (${beat.say.length})`);
+    for (const line of [beat.say, beat.waiting]) {
+      if (line !== undefined) assert(!/\btree\b/i.test(line.replace(/Passive Tree/g, '')), `${script.id}/${beat.id}: says "tree": "${line}"`);
+    }
     assert(beat.chapter.length > 0, `${script.id}/${beat.id}: no chapter`);
     for (const step of beat.steps) {
       const where = `${script.id}/${beat.id}`;
       switch (step.type) {
-        case 'farm':
-          assert(nodesFor(step.at).length > 0, `${where}: farm location resolves to no node`);
+        case 'farm': {
+          assert(tutorialNodeFor(step.at, FROM_CLEARING) !== null, `${where}: farm location resolves to no node`);
           for (const c of conditionsIn(step.until)) {
+            assert(typeof evaluateTutorialCondition(c, view()) === 'boolean', `${where}: condition ${c.type} did not resolve`);
             if (c.type === 'canCraft' || c.type === 'recipeUnlocked') assert(RECIPE_DATABASE.has(c.recipeId), `${where}: unknown recipe ${c.recipeId}`);
             if (c.type === 'hasItem') assert(ITEM_DATABASE.has(c.definitionId), `${where}: unknown item ${c.definitionId}`);
-            if (c.type === 'abilityKnown') assert(ABILITY_DATABASE.has(c.abilityId), `${where}: unknown ability ${c.abilityId}`);
-            if (c.type === 'runeRecipeCrafted') assert(RUNE_RECIPE_DATABASE.has(c.recipeId), `${where}: unknown rune recipe ${c.recipeId}`);
-            // Monotone farm conditions: a bare spendable resource would regress after the spend.
             assert(!(c === step.until && (c.type === 'canCraft' || c.type === 'essenceAtLeast')),
               `${where}: farm condition must be guarded by its outcome (anyOf)`);
           }
           break;
+        }
         case 'craft':
           for (const id of step.recipeIds) assert(RECIPE_DATABASE.has(id), `${where}: unknown recipe ${id}`);
           break;
         case 'equip':
           for (const id of step.definitionIds) assert(ITEM_DATABASE.has(id), `${where}: unknown item ${id}`);
           break;
-        case 'configureRunes':
-          for (const rule of step.rules) {
-            assert(CONDITION_DATABASE.has(rule.conditionId as never), `${where}: unknown rune condition ${rule.conditionId}`);
-            assert(ACTION_DATABASE.has(rule.actionId as never), `${where}: unknown rune action ${rule.actionId}`);
-          }
-          break;
-        case 'craftRune':
-          assert(RUNE_RECIPE_DATABASE.has(step.recipeId), `${where}: unknown rune recipe ${step.recipeId}`);
-          break;
-        case 'learnAbility':
-          assert(ABILITY_RECIPE_DATABASE.get(step.recipeId)?.abilityId === step.abilityId, `${where}: recipe/ability mismatch`);
-          break;
-        case 'setAbilities':
-          for (const id of [...step.techniques, ...step.guards]) assert(ABILITY_DATABASE.has(id), `${where}: unknown ability ${id}`);
-          break;
         case 'attemptBoss':
-          assert(nodesFor({ kind: 'dungeon', biomeGroup: step.biomeGroup, tier: step.tier }).length === 1, `${where}: no dungeon`);
+          assert(
+            tutorialNodeFor({ kind: 'dungeon', biomeGroup: step.biomeGroup, tier: step.tier }, FROM_CLEARING) !== null,
+            `${where}: no dungeon`,
+          );
+          if (step.until) {
+            for (const c of conditionsIn(step.until)) {
+              assert(typeof evaluateTutorialCondition(c, view()) === 'boolean', `${where}: condition ${c.type} did not resolve`);
+            }
+          }
           break;
         case 'chooseClass':
           break;
+        default:
+          assert(false, `${where}: step ${step.type} is not part of the opening or the seal route`);
       }
     }
   }
 }
 
-// ── The first-hour checklist (docs/guided-tutorial-plan.md) ─────────────────
+// ── Resume walks the seal route forward ──────────────────────────────────────
+{
+  const script = tutorialScriptFor('cadence-root');
+  const equipped = {
+    ...emptyEquipment(),
+    weapon: 'primordial-club',
+    armor: 'clearing-vest-t1',
+    recovery: 'clearing-charm-t1',
+    mobility: 'clearing-boots-t1',
+  };
+  const openingDone = {
+    playerTier: 1,
+    selectedClass: 'cadence-root',
+    biomeLevel: { clearing: biomeLevelCap(1, 'clearing') },
+    unlockedRecipes: ['primordial-club', 'clearing-vest-t1', 'clearing-charm-t1', 'clearing-boots-t1'],
+    equipment: equipped,
+  };
+  const at = (patch: Partial<TutorialView>, id: string) => {
+    const index = resolveBeatIndex(script, view({ ...openingDone, ...patch }));
+    assert(index === beatIndex(script, id), `expected ${id}, landed on ${script.beats[index]?.id ?? 'done'}`);
+  };
+
+  at({}, 'open:plains');
+  const plainsCap = biomeLevelCap(1, 'plains');
+  at({ biomeLevel: { ...openingDone.biomeLevel, plains: plainsCap } }, 'boss:plains');
+  at({
+    biomeLevel: { ...openingDone.biomeLevel, plains: plainsCap },
+    bossesCleared: [bossClearKey('plains', 1)],
+  }, 'zone:forest');
+
+  const levels: Record<string, number> = { ...openingDone.biomeLevel, plains: plainsCap };
+  const cleared = [bossClearKey('plains', 1)];
+  for (const biome of WALK_BIOMES) {
+    at({ biomeLevel: { ...levels }, bossesCleared: cleared }, `zone:${biome}`);
+    levels[biome] = biomeLevelCap(1, biome);
+  }
+  at({ biomeLevel: { ...levels }, bossesCleared: cleared }, 'boss:mountain');
+  const finished = resolveBeatIndex(script, view({
+    ...openingDone,
+    playerTier: 2,
+    biomeLevel: { ...levels },
+    bossesCleared: [...cleared, bossClearKey('mountain', 1)],
+  }));
+  assert(finished === script.beats.length, 'both seals at tier 2 finish the script, farewell included');
+}
+
+// ── The first-hour checklist ─────────────────────────────────────────────────
 /**
- * At most two new ideas per level and per beat, each introduced once, each with
- * a screen element that explains it (an anchor the guide can ring, when it names
- * one). Levels are read off the script's own gates (`tutorialChecklist`).
+ * At most two new ideas per level and per beat, each introduced once. Levels
+ * are read off the script's own gates (`tutorialChecklist`). The seal route
+ * adds zones, the two seal ideas, and poison; it does not teach mastery,
+ * because these fights do not open a recipe.
  */
-for (const script of [TUTORIAL_OPENING]) {
+for (const script of SCRIPTS) {
   const rows = tutorialChecklist(script);
   const seen = new Set<TutorialConceptId>();
   const perLevel = new Map<string, TutorialConceptId[]>();
@@ -213,17 +350,22 @@ for (const script of [TUTORIAL_OPENING]) {
     assert(concepts.length <= TUTORIAL_CONCEPTS_PER_LEVEL,
       `${script.id}: ${level} introduces ${concepts.length} ideas (${concepts.join(', ')})`);
   }
+  for (const concept of ['zones', 'seals', 'boss-altar', 'poison'] as const) {
+    assert(seen.has(concept), `${script.id}: never teaches ${concept}`);
+  }
+  assert(!seen.has('mastery'), `${script.id}: mastery stays untaught; the route opens no recipe`);
+  const levelOf = (id: string) => rows.find((row) => row.beatId === id)?.level;
+  assert(levelOf('open:plains') === 'Plains 0', `${script.id}: zones are introduced at Plains 0`);
+  assert(levelOf('boss:plains') === `Plains ${biomeLevelCap(1, 'plains')}`, `${script.id}: the first seal is introduced at the Plains cap`);
+  assert(levelOf('zone:swamp') === 'Swamp 0', `${script.id}: poison is introduced at Swamp 0`);
+  assert(levelOf('farewell') === 'Farewell', `${script.id}: the farewell is its own level`);
 }
+
 for (const [id, concept] of Object.entries(TUTORIAL_CONCEPTS) as [TutorialConceptId, TutorialConcept][]) {
   assert(concept.name.length > 0 && concept.shownBy.length > 0, `${id}: an idea needs a name and what shows it`);
   if (concept.anchor) assert(concept.anchor in TUTORIAL_ANCHORS, `${id}: unknown anchor ${concept.anchor}`);
 }
 
-// The class scripts went with the lineage trees (class-first rework D1): before
-// the class pick, after it, and for an unknown class, the script is the opening.
-assert(tutorialScriptFor(null) === TUTORIAL_OPENING, 'no class → opening only');
-assert(tutorialScriptFor('cadence-root') === TUTORIAL_OPENING, 'a class with no script → opening only');
-assert(tutorialScriptFor('not-a-class') === TUTORIAL_OPENING, 'unknown class → opening only');
 assert(QUEST_DATABASE.has('tier-0'), 'the opening names a real quest');
 
 console.log('tutorial: ok');

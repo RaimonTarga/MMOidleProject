@@ -177,10 +177,8 @@ export function TutorialPanel() {
 
   if (!playerId || !view) return null;
 
-  // The farewell waits for the SCRIPT to run out, not merely for Tier 2: the
-  // gate chapter plays after the seals, because the weapon's tier-1 gate asks
-  // for full Tier-1 mastery and a third boss before the seals would itself be
-  // one (`sealsHeldAtTier` counts any two biome bosses).
+  // The farewell waits for the script to run out. The seal route's last beat
+  // is that goodbye, and it is met when Tier 2 lands.
   const scriptDone = !script || index >= script.beats.length;
   if (view.playerTier >= 2 && (scriptDone || choice === 'farewell')) {
     if (choice !== 'on' && choice !== 'farewell') return null;
@@ -216,7 +214,7 @@ export function TutorialPanel() {
           Let the guide play Tier 1 with you. It makes every choice and says why; you just press Next.
         </p>
         {view.playerTier >= 1 && (
-          <p className="tutorial-panel__note">It will swap your gear, abilities and Runes to its plan.</p>
+          <p className="tutorial-panel__note">It picks up from where you are and does the fighting. You press Next.</p>
         )}
         <div className="tutorial-panel__actions">
           <button type="button" className="tutorial-button tutorial-button--primary" onClick={() => setChoice('on')}>
@@ -312,9 +310,7 @@ export function TutorialPanel() {
               >
                 Next
               </button>
-              {/* Tier 1 is already behind them: the gate chapter is a last
-                  optional lesson, so there has to be a way to the farewell
-                  that is not "Stop the guide". */}
+              {/* Already Tier 2: a way to the farewell that is not stopping the guide. */}
               {view.playerTier >= 2 && (
                 <button type="button" className="tutorial-button" onClick={() => setChoice('farewell')}>
                   I'm done
@@ -326,7 +322,7 @@ export function TutorialPanel() {
       ) : (
         <p className="tutorial-panel__line">
           {view.selectedClass
-            ? 'Everything is in place. The seals come next.'
+            ? 'The guided part is done.'
             : 'Waiting for your class.'}
         </p>
       )}
