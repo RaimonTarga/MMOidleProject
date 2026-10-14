@@ -11,7 +11,6 @@ import {
   type EquippedRule,
 } from "@mmo-idle/shared";
 import { hudBus } from "../hudBus";
-import { tutorialRuneDraftAtom } from "../tutorial/atoms";
 import {
   combatArchetypeAtom,
   attunedAbilitiesAtom,
@@ -46,12 +45,6 @@ export function BuildRunesTab() {
     step?.focus({ preventScroll: true });
     step?.scrollIntoView({ block: "nearest" });
   }, [draft?.conditionId, draft?.actionId]);
-  // The guided tutorial fills the new-rule draft in, one choice at a time.
-  const tutorialDraft = useAtomValue(tutorialRuneDraftAtom);
-  useEffect(() => {
-    if (!tutorialDraft) return;
-    setDraft({ index: null, ...tutorialDraft });
-  }, [tutorialDraft]);
   const [reset, setReset] = useState(false);
   const [error, setError] = useState("");
   useEffect(() => {

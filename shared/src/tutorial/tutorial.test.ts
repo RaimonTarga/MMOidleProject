@@ -51,9 +51,6 @@ function view(overrides: Partial<TutorialView> = {}): TutorialView {
     equipment: emptyEquipment(),
     itemUpgrades: {},
     questProgress: {},
-    runesEquipped: [],
-    knownAbilities: [],
-    attunedAbilities: { techniques: [], guards: [] },
     bossesCleared: [],
     clearedNodes: [],
   };
@@ -98,17 +95,11 @@ const FROM_CLEARING = { nodeId: 'node-clearing', clearedNodes: [] as const };
     classRoot: null,
     beats: [
       { id: 'club', chapter: 'x', say: 'club', steps: [{ type: 'equip', definitionIds: ['primordial-club'] }] },
-      { id: 'runes-a', chapter: 'x', say: 'a', steps: [{ type: 'configureRunes', rules: [{ conditionId: 'always', actionId: 'auto-path-enemy' }] }] },
       { id: 'sword', chapter: 'x', say: 'sword', steps: [{ type: 'equip', definitionIds: ['iron-broadsword'] }] },
-      { id: 'runes-b', chapter: 'x', say: 'b', steps: [{ type: 'configureRunes', rules: [{ conditionId: 'always', actionId: 'avoid-hazards' }] }] },
     ],
   };
   const sword = { ...emptyEquipment(), weapon: 'iron-broadsword' };
-  assert(resolveBeatIndex(synthetic, view({ equipment: sword })) === 1, 'a later weapon supersedes the club');
-  assert(
-    resolveBeatIndex(synthetic, view({ equipment: sword, runesEquipped: [{ conditionId: 'always', actionId: 'avoid-hazards' }] })) === 4,
-    'a later Rune loadout supersedes an earlier one',
-  );
+  assert(resolveBeatIndex(synthetic, view({ equipment: sword })) === 2, 'a later weapon supersedes the club');
   assert(
     resolveBeatIndex(synthetic, view({ equipment: { ...emptyEquipment(), weapon: 'flash-rapier' } })) === 0,
     'a weapon the script never equips is taken over, not treated as progress',
@@ -273,7 +264,7 @@ for (const script of SCRIPTS) {
         case 'chooseClass':
           break;
         default:
-          assert(false, `${where}: step ${step.type} is not part of the opening or the seal route`);
+          assert(false, `${where}: step ${(step as { type: string }).type} is not part of the opening or the seal route`);
       }
     }
   }
