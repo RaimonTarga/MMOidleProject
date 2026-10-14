@@ -43,8 +43,7 @@ export interface FormationTechniqueDelivery {
    *
    * One armed Technique becomes one delivery per living summon, and the rider's
    * damage is divided by `magnitudeWeight` across them. Anything that must
-   * happen ONCE per Technique — an ability node's packet payoff (design §19) —
-   * keys off this instead, or it would pay out once per summon at full value.
+   * happen ONCE per Technique keys off this instead, or it would pay out once per summon at full value.
    */
   isFinalDelivery: boolean;
   /**

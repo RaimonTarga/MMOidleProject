@@ -79,8 +79,7 @@ function durableMelee(): Record<T1Biome, BiomePlan> {
     cave: {
       before: [
         { equip: ['mountain-vest-t1', 'swamp-charm-t1', 'plains-boots-t1'] },
-        // Worn the moment it is made: its page is the tree the guide teaches,
-        // and a lineage pays only while its own form is worn (design §23).
+        // Worn the moment it is made: it is the boss kit's weapon.
         { piece: 'chaotic-axe' },
       ],
     },
@@ -97,9 +96,8 @@ function slinger(): Record<T1Biome, BiomePlan> {
       after: [{ piece: 'forest-vest-t1', atLevel: 3 }],
     },
     swamp: {
-      // The Poison Dagger is the Slinger's boss weapon and its page the tree the
-      // guide teaches, so it is made and worn first thing in the Swamp, where its
-      // shards drop (design §24.9).
+      // The Poison Dagger is the Slinger's boss weapon, so it is made and worn
+      // first thing in the Swamp.
       before: [{ piece: 'ashbrand-blade' }],
       after: [{ piece: 'swamp-charm-t1' }],
     },

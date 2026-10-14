@@ -305,9 +305,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   //
   // It sits here because the flat pool is now complete and nothing has multiplied
   // it yet: `GAME_CONFIG.PLAYER_MAX_HP` from step 1, the armor's `maxHp` and its
-  // upgrade steps from step 3, and the flat half of a defensive lineage's HP row
-  // from step 3c (which §3c itself calls item power) are the only flat sources in
-  // the game — no skill node or stance authors a flat `maxHp`, they all author
+  // upgrade steps from step 3 are the only flat sources in the game — no skill node or stance authors a flat `maxHp`, they all author
   // `maxHpPct`. So one multiplication here IS "base max HP and armor maxHp", and
   // every percentage layer below (class affinities 3d, the stance 3e, the core's
   // `core.maxhp-mult`) keeps multiplying the finished pool exactly as before.

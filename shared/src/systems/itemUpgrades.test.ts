@@ -76,8 +76,8 @@ function testCeilingIsTierScoped(): void {
 /**
  * The ladder itself is retired on every slot (design §24.5): no item has a step
  * to take, and `checkUpgrade` refuses everything — at any Global Mastery, level
- * or wallet. The GM band above survives because it prices the lineage rows'
- * Global Mastery gate (`data/lineages/magnitudes.ts`).
+ * or wallet. The GM band above survives because it prices the bot's GM
+ * milestones.
  */
 function testLadderRetired(): void {
   const rich = { red: 1e9, blue: 1e9, green: 1e9, yellow: 1e9, purple: 1e9 } as Record<EssenceType, number>;

@@ -712,9 +712,8 @@ function sidestepHasThreat(world: World, player: PlayerEntity): boolean {
 /**
  * Sidestep (design §22.8): an evasion window and a move-speed burst on ONE
  * status, so the burst ends exactly when the window does. Both magnitudes come
- * from the lineage magnitude table (`sidestepWindow`); the evade is rolled by
- * `defense/mitigation/evasion.ts` beside any `evasion-window` payoff, and the
- * speed is a movement layer in `world/movement.ts`.
+ * from `sidestepWindow`; the evade is rolled by `defense/mitigation/evasion.ts`,
+ * and the speed is a movement layer in `world/movement.ts`.
  */
 function applySidestep(player: PlayerEntity, ability: AbilityDef): void {
   const window = sidestepWindow(ability, player.tracksProgression.playerTier);

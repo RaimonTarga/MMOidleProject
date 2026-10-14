@@ -132,12 +132,10 @@ export function evadeBlocksDebuffs(ctx: CombatContext): boolean {
 /**
  * The monster-side dodge clock: ONE accumulator per monster, in `tracksCombat`.
  *
- * `MONSTER_EVADE_ACC` is read and written by two callers — the ordinary attack
- * path in `combat.ts`, and the Tempo keystone's chain links, which are hits in
- * every sense the player can see and so must spend the same clock. Keeping it in
- * one function is what makes "a monster dodges one hit in five" true of the
- * sequence the player actually delivers rather than of each delivery system
- * separately.
+ * `MONSTER_EVADE_ACC` is read and written here only, so every delivery system
+ * that rolls a monster's dodge spends the same clock. Keeping it in one function
+ * is what makes "a monster dodges one hit in five" true of the sequence the player
+ * actually delivers rather than of each delivery system separately.
  */
 export const MONSTER_EVADE_ACC = 'evadeAcc';
 

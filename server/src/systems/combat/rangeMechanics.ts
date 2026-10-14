@@ -11,8 +11,8 @@
  * `<root>.range-mid-*` / `<root>.range-far-*` keys on `rootsAndFrames.ts`, read
  * HERE and nowhere else.
  *
- * RANGE STAYS A LEAF (design §11). Nothing downstream — T3 paths, capstones,
- * lineage cards — reads a range node, and the `isRangedCombatant` seam in
+ * RANGE STAYS A LEAF (design §11). Nothing downstream — the T3 paths — reads a
+ * range node, and the `isRangedCombatant` seam in
  * `rootsAndFrames.ts` is untouched. One module is the whole of it.
  *
  * THE AT-BAY LAYER (locked: slow only, no shove, no knockback). A target is

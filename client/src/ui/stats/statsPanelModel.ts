@@ -102,10 +102,6 @@ const ROWS: readonly RowDef[] = [
     value: (p, input) => resolveDotClassProfile(p.passives, input.build.usesSkills.selectedSubVariant).dotMechanicMultiplier,
     fmt: (v) => `×${trimmed(v, 2)}`, delta: points, pinned: true,
   },
-  // What amplifies a weapon reservoir's bank (`weapon.reservoir-potency-pct`).
-  { key: 'reservoirPotency', label: 'Reservoir potency', group: 'offence', value: (p) => p.passives['weapon.reservoir-potency-pct'] ?? 0, fmt: (v) => signed(pct(v)), delta: points, neutral: 0 },
-  { key: 'bleedOnHit', label: 'Bleed per hit', group: 'offence', value: (p) => p.passives['shared.bleed-on-hit-pct'] ?? 0, fmt: (v) => pct(v), delta: points, neutral: 0 },
-  { key: 'slowOnHit', label: 'Slow on hit', group: 'offence', value: (p) => p.passives['shared.slow-on-hit-pct'] ?? 0, fmt: (v) => pct(v), delta: points, neutral: 0 },
   { key: 'techniquePower', label: 'Technique power', group: 'offence', value: (p) => p.passives['technique.power-pct'] ?? 0, fmt: (v) => signed(pct(v)), delta: points, neutral: 0 },
   // The Technique lane's own second number (design §22.9: "cast speed is the
   // Technique lane's stat ... shown beside Technique Power"), capped as the cast
@@ -184,8 +180,6 @@ export function buildStatsPanel(input: StatsPanelInput): StatsPanelData {
     const element = reservoir.element === 'poison' ? 'Poison' : reservoir.element === 'fire' ? 'Burn'
       : reservoir.element === 'frost' ? 'Chill' : 'Reservoir';
     const share = reservoir.convPct;
-    const potency = rows.get('offence')!.find((r) => r.key === 'reservoirPotency');
-    if (potency) potency.label = `${element} potency`;
     rows.get('offence')!.push({
       key: 'reservoir',
       label: `${element} per hit`,

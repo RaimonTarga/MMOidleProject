@@ -133,8 +133,8 @@ export function registerCadenceEmpoweredHit(): void {
       const monsterState = ctx.defender.tracksCombat;
       // A brand pressed INTO the target; the plating strip is permanent.
       pushClientEffect(ctx, CADENCE_CURSED_FINALE_FX);
-      // BOTH of these records are shared with the lineage cards and the range
-      // nodes, so both go through the §18.1 max-wins applier. `applyStatusEffect`
+      // BOTH of these records are shared with the range nodes, so both go
+      // through the §18.1 max-wins applier. `applyStatusEffect`
       // never updates `data` on an existing entry and only refreshes the window when
       // the NEW config says refreshable, so a card that landed first — weaker,
       // timed, single-stack — owned the brand: the finisher's multiplier never

@@ -95,8 +95,7 @@ export const caveMonsterEntries = [
     id: 'brood-spiderling', name: 'Brood Spiderling', color: 0xb8ad9a,
     // BROOD FAMILY, T1 (progression rework, 2026-10-01). The Giant Spider's
     // spawn: small, fast, in threes, with a weak venom that stacks. Many bodies
-    // plus a DoT is what the Affliction lane answers (spread, cleave), which is
-    // why Brood drops Affliction shards.
+    // plus a DoT is what the Affliction lane answers (spread, cleave).
     // PLACEHOLDER numbers seeded from the T1 Cave band (lurker 225/31); designer
     // hand-edits before the lane bench.
     // BROOD FAMILY (progression rework, 2026-10-01, PROVISIONAL): plating 0 -> 2.

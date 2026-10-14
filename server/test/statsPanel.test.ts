@@ -62,7 +62,6 @@ const row = (data: ReturnType<typeof buildStatsPanel>, key: string) => {
   const health = row(data, 'maxHp')!;
   assert.ok(health.sources.some((s) => s.kind === 'item' && /Shaded Bindings/.test(s.label)), 'health names the armour');
   assert.ok(health.sources.some((s) => s.kind === 'base'), 'and the base it started from');
-  assert.equal(row(data, 'bleedOnHit'), undefined, 'a reservoir weapon writes no light bleed (one DoT record)');
 }
 
 // ── Rules ────────────────────────────────────────────────────────────────────

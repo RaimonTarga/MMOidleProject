@@ -152,9 +152,8 @@ export function abilityActsWhileControlled(ability: AbilityDef): boolean {
  *   so investing in Recovery gear makes the button better.
  * - `dodge-window`: Guard immediate (Sidestep) — an evasion window plus a short
  *   move-speed burst that ends with it. It authors NO number: both magnitudes
- *   and the window come from the lineage magnitude table's units
- *   (`evasion-window`, and `speed-window`'s magnitude for the burst) at the
- *   rank's tier, so the ability file holds only the rank shape.
+ *   and the window come from `sidestepWindow` (abilityMagnitudes.ts), one row
+ *   per rank, so the ability file holds only the rank shape.
  * - `break-free`: Guard immediate — removes the current hard control, optionally
  *   followed by `controlResistPct` control resistance for `controlResistMs`.
  * - `spread-dots`: armed Technique rider (Contagion) — your next hit COPIES every
@@ -326,9 +325,8 @@ export function abilityImmunityKindKey(kind: string): string {
 
 /**
  * The default ability-family slow on a monster. Hamstring, its first writer, was
- * cut by the ability pass (design §22.2); the id is kept because the lineage
- * `slow` payoff (and so every ability-node slow) and the Mid range at-bay slow
- * still write it (`applyMonsterSlow`'s default).
+ * cut by the ability pass (design §22.2); the id is kept because the Mid range
+ * at-bay slow still writes it (`applyMonsterSlow`'s default).
  */
 export const ABILITY_SLOW_EFFECT_ID = "ability-slowed";
 
@@ -407,7 +405,7 @@ export function abilityRankNumber(ability: AbilityDef, playerTier: number): numb
   return abilityRankIndex(ability, playerTier) + 1;
 }
 
-/** Highest authored rank — how far this ability's lineage currently goes. */
+/** Highest authored rank — how far this ability currently goes. */
 export function abilityMaxRank(ability: AbilityDef): number {
   return ability.ranks.length;
 }
@@ -1111,9 +1109,8 @@ const abilities: AbilityDef[] = [
     blurb: "Wind up a finishing blow that hits harder the weaker the target is. A kill readies it again.",
     tier: 3,
     icon: "cull",
-    // THE KILL-SHAPED TECHNIQUE (design §22.8): no ability was kill-shaped although
-    // Kill chain is a lane on three lineages. A cast, because it deals its own
-    // damage (§22.9), scaled by Technique Power.
+    // THE KILL-SHAPED TECHNIQUE (design §22.8): no ability was kill-shaped. A cast,
+    // because it deals its own damage (§22.9), scaled by Technique Power.
     //
     // The curve IS the rank's shape: `damageMult` at or above `thresholdPct` of the
     // target's max HP, climbing linearly to `executeMult` at zero. A kill refunds

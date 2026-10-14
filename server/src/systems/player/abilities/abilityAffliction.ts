@@ -161,7 +161,7 @@ function squaredGap(monster: MonsterEntity, origin: { x: number; y: number }): n
  * to tune.
  *
  * Returns the bodies the spread reached (empty when it reached none), so the
- * ability node can fire on every one of them (design §22.10).
+ * caller can act on every one of them.
  */
 export function resolveContagion(
   world: World,
@@ -242,8 +242,7 @@ export function copyPlayerDotOnto(
   entry: DotInventoryEntry,
   /**
    * Share of the source's stacks the copy carries. 1 (Contagion's own default)
-   * copies the affliction whole; a lineage `contagion` payoff passes its authored
-   * fraction, which is what makes a card a trickle and the Technique a flood.
+   * copies the affliction whole.
    */
   stackFraction = 1,
 ): void {

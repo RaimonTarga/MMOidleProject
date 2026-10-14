@@ -353,8 +353,7 @@ export function runPlayerAttack(
   const monsterDef = MONSTER_DATABASE.get(target.isMonster.monsterTypeId);
   // A boss 'stat-buff' evasion action can override the dodge fraction at runtime
   // (e.g. drop to 0 in a desperation phase). 0 is a valid override, so use ??.
-  // ONE dodge clock per monster, shared with the Tempo keystone's chain links —
-  // see `rollMonsterDodge`.
+  // ONE dodge clock per monster — see `rollMonsterDodge`.
   // A hit a completed CAST delivers (the Destroyer's execution riding Slam or
   // Snipe, design §22.5) is never dodged and never moves that clock: the cast
   // already resolved on this body, and a cast's own payload (`applyPlayerAoe`)
@@ -447,7 +446,7 @@ export function runPlayerAttack(
   if (opts.resultMetadata) {
     opts.resultMetadata.empoweredMultiplier = Number(ctx.metadata["empoweredMultiplier"] ?? 1);
   }
-  // An onHit proc (a lineage echo, the Effigy's linked slam) can kill the target
+  // An onHit proc (the Effigy's linked slam) can kill the target
   // through `applyPlayerProcDamage`, which already paid onKill, the rewards and the
   // removal. Carrying on would find hp <= 0 below and pay the kill a second time
   // (review finding B3, 2026-10-02).

@@ -47,14 +47,13 @@ export const RADIANT_REACH = 120;
  *
  *   - It is DAMAGE, never a stack. It touches no body's burn record, so it applies
  *     no stacks and spreads nothing. That is the whole difference from the Warlock
- *     range node (a stack applied at reach also lands one adjacent), Contagion and
- *     the Outbreak keystone, which all move STACKS.
+ *     range node (a stack applied at reach also lands one adjacent) and Contagion,
+ *     which both move STACKS.
  *   - Each struck body pays the DoT rules for ITSELF (`classDotTickDamage`: no
  *     plating, half its DR, its own `dotResistance` and DoT vulnerabilities) on the
  *     burning body's RAW tick, so an armoured centre never dims the fire around it.
  *   - It is not a hit. No combat-pipeline event runs, so nothing that listens for a
- *     hit (on-hit procs, the lineage `hit-nth` counter, Sweep's Tempo attack
- *     equivalent) sees it. A body it kills is handed back through `queueKill` and
+ *     hit (on-hit procs, Sweep's Tempo attack equivalent) sees it. A body it kills is handed back through `queueKill` and
  *     dies exactly as a DoT-tick kill does.
  *   - It never recurses. A struck body's burn is untouched, so one that is itself
  *     at max radiates on its OWN tick and only then: one splash per ticking body.

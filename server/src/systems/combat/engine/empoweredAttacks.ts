@@ -329,9 +329,8 @@ export function applyMechanicProxy(
   if (ctx.metadata['mechanicConsumed'] === true) return 0;
   // The real mechanic already ANNOUNCED itself on this exchange without spending a
   // charge — the DoT root's stack filling, the Conduit's formation cycle closing.
-  // Both roots register their listeners before the lineage cards, so their
-  // emission lands first and their own "a proxy never announces" guards never see
-  // a proxy; proxying the hit as well counted it as the mechanic twice (an
+  // Both roots register their listeners first, so their emission lands first and
+  // their own "a proxy never announces" guards never see a proxy; proxying the hit as well counted it as the mechanic twice (an
   // emission AND the proxy's multiplier on one exchange). The hit IS the mechanic's
   // already: left alone, like a hit that spent the charge.
   if (mechanicAlreadyFired(ctx)) return 0;

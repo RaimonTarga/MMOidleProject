@@ -396,9 +396,8 @@ export function describeAbility(
  * gap-closer worth a slot and what lets a melee build hold a ranged tool.
  */
 /**
- * Sidestep's window (design §22.8). The rank authors no field — the numbers are
- * the lineage magnitude table's, so they come from the same `sidestepWindow`
- * the server applies.
+ * Sidestep's window (design §22.8). The rank authors no field — the numbers come
+ * from the same `sidestepWindow` the server applies.
  */
 function sidestepLines(ability: AbilityDef, context: AbilityContext): AbilityLine[] {
   const window = sidestepWindow(ability, context.playerTier);
