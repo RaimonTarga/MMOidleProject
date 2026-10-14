@@ -10,7 +10,8 @@
     "build": "tsc && tsx --conditions=development src/hitbox/bakeArtifactCli.ts",
     "start": "NODE_ENV=production node dist/index.js",
     "bench": "tsx --conditions=development bench/run.ts",
-    "bench:balance": "tsx --conditions=development bench/balanceRun.ts"
+    "bench:balance": "tsx --conditions=development bench/balanceRun.ts",
+    "bench:summon-cap": "tsx --conditions=development bench/summonCap.ts"
   },
   "dependencies": {
     "@mmo-idle/shared": "link:../shared",
