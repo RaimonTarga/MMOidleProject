@@ -238,27 +238,4 @@ export const STAT_HELP: Record<string, string> = {
   'guard.potency-pct': 'Scales Mitigation Guards: damage reduction, knockback resistance, Bramble plating and reflection. Recovery skills use Recovery skill potency.',
   'guard.duration-pct': 'Extends Mitigation Guard buffs, including Bramble Guard. Does not extend Recovery or Cleanse.',
   'guard.recovery-on-fire-pct': 'Firing your Guard also switches on this share of your Recovery rate for a few seconds.',
-
-  // ── Core amplifiers ────────────────────────────────────────────────────────
-  'core.damage-dealt-pct': 'Multiplies final damage, including direct, on-hit, damage over time and summons. Included in DPS.',
-  'core.damage-taken-pct': 'Multiplies damage remaining after ordinary mitigation. Negative values reduce damage taken; positive values increase it.',
-  'core.attack-mult': 'Percentage multiplier on your final attack, applied after everything else adds up.',
-  'core.maxhp-mult': 'Percentage multiplier on your final max HP.',
-  'core.plating-mult': 'Percentage multiplier on your final plating.',
-  'core.speed-mult': 'Percentage multiplier on your final move speed.',
-  'core.attack-speed-mult': 'Percentage multiplier on your final attack speed.',
-  'core.recovery-mult':
-    'Percentage multiplier on your final Recovery rate. This scales passive regeneration and effects that activate a share of Recovery, but not unrelated flat heals or absorbs.',
-  'core.dr-layer-pct':
-    'A SEPARATE multiplicative damage-reduction layer, applied after your normal DR rather than added to it. Capped at 90%.',
-  'core.focus-damage-per-hit-mult':
-    'Each consecutive direct hit against the same enemy deals more direct attack damage, up to the Core\u2019s Focus cap. Switching targets resets Focus; summon hits do not build it.',
-  'core.onhit-mult':
-    'Percentage multiplier on flat on-hit damage you already have. It grants no on-hit damage by itself. Target plating and damage reduction still apply. Empowered and attack-boosting ability multipliers do not amplify this bonus.',
-  'core.debuff-duration-mult': 'Debuffs you apply to enemies last longer.',
-  'core.debuff-potency-mult': 'Debuffs you apply to enemies hit harder.',
-  'core.mobility-cooldown-reduction-pct':
-    'Shortens the cooldown of mobility abilities. Does nothing unless you have one equipped.',
-  'core.mobility-refund-on-kill-pct':
-    'Each kill returns part of your mobility ability’s cooldown. Does nothing unless you have one equipped.',
 };

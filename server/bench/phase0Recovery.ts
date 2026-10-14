@@ -69,7 +69,7 @@ function cells(plus: number, wiring: SecondWindWiring, tiers: number[]): SurveyC
       out.push({ id, tier, role: 'farm', nodeId, className: c.name, alternate: false, upgradeLevel: plus, runeRules: rulesFor(c, wiring),
         build: { id, classRoot: `${c.prefix}-root`, contentTier: tier, playerTier: tier, gearTier: tier,
           skillPath: [`${c.prefix}-root`, `${c.prefix}-${frame}`, `${c.prefix}-range-${c.melee ? 'close' : 'mid'}`],
-          gearItemIds: { weapon: c.weapons[2], armor: `${biome}-vest-t${tier}`, recovery: `${biome}-charm-t${tier}`, mobility: `mountain-boots-t${tier}`, core: 'core-tempered' } } });
+          gearItemIds: { weapon: c.weapons[2], armor: `${biome}-vest-t${tier}`, recovery: `${biome}-charm-t${tier}`, mobility: `mountain-boots-t${tier}` } } });
     }
   }
   for (const c of SURVEY_CLASSES) for (const biome of BIOMES) {
@@ -86,7 +86,7 @@ function cells(plus: number, wiring: SecondWindWiring, tiers: number[]): SurveyC
       const id = `p0-t2-${c.name}-${frame}-${biome}`;
       out.push({ id, tier: 2, role: 'farm', nodeId: `node-t2-${biome}-03`, className: c.name, alternate: false, upgradeLevel: plus, runeRules,
         build: { id, classRoot: `${c.prefix}-root`, contentTier: 2, playerTier: 2, gearTier: 2, skillPath: [`${c.prefix}-root`, `${c.prefix}-${frame}`],
-          gearItemIds: { weapon: c.weapons[1], armor: `${biome}-vest-t2`, recovery: `${biome}-charm-t2`, mobility: 'mountain-boots-t2', core: 'core-tempered' } } });
+          gearItemIds: { weapon: c.weapons[1], armor: `${biome}-vest-t2`, recovery: `${biome}-charm-t2`, mobility: 'mountain-boots-t2' } } });
     }
   }
   return out;

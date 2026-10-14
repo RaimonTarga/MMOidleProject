@@ -128,7 +128,7 @@ const TIMBERCLAW_MELEE = new Set(['striker', 'squire']);
 /** The corroborated kit. Deliberately mixed-biome -- it is what was actually worn. */
 export const BOSS1_TIMBERCLAW_KIT = {
   armor: 'cave-vest-t2', recovery: 'mountain-charm-t2',
-  mobility: 'plains-boots-t2', core: 'core-tempered',
+  mobility: 'plains-boots-t2',
 } as const;
 /**
  * The reference shape's ordered Guard list: a Recovery Guard, then a burst-mitigation

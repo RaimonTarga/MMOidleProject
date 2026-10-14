@@ -3,7 +3,6 @@ import { useAtomValue } from 'jotai';
 import { EquipmentAbilityTags } from '../AbilityTags';
 import {
   ITEM_DATABASE, RECIPE_DATABASE, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS,
-  coreEligibilityLabel, coreIsActive, isRestrictedCore,
   type EquipmentSlot,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
@@ -94,7 +93,7 @@ export function StatSheet({ compare }: Props) {
       // Keyed so the changed values replay their arrival when the subject changes.
       key={defId ?? 'character'}
     >
-      <SheetHeader sheet={sheet} defId={defId} selectedRange={selectedRange} />
+      <SheetHeader sheet={sheet} defId={defId} />
       <Headline sheet={sheet} />
       <SheetRows sheet={sheet} />
       {def && <SheetEffects sheet={sheet} />}
@@ -128,8 +127,8 @@ export function StatSheet({ compare }: Props) {
   );
 }
 
-function SheetHeader({ sheet, defId, selectedRange }: {
-  sheet: StatSheetData; defId: string | null; selectedRange: Parameters<typeof coreIsActive>[1];
+function SheetHeader({ sheet, defId }: {
+  sheet: StatSheetData; defId: string | null;
 }) {
   const def = defId ? ITEM_DATABASE.get(defId) : undefined;
   if (!def || !sheet.slot) {
@@ -155,15 +154,6 @@ function SheetHeader({ sheet, defId, selectedRange }: {
         <span className="inv-stat-sheet__slot-label">{SLOT_LABELS[slot]}</span>
       </div>
       {group && <div className="inv-stat-sheet__biome">{biomeName(group)}</div>}
-      {slot === 'core' && def.coreEligibility && (() => {
-        const active = coreIsActive(def.coreEligibility, selectedRange);
-        const gated = isRestrictedCore(def.coreEligibility);
-        return (
-          <div className={`inv-stat-sheet__core-eligibility${active ? '' : ' inv-stat-sheet__core-eligibility--inactive'}`}>
-            {coreEligibilityLabel(def.coreEligibility)}{gated ? (active ? ' · active' : ' · inactive') : ''}
-          </div>
-        );
-      })()}
       <div className="inv-sheet__versus">
         {sheet.mode === 'contribution'
           ? 'Equipped · what it gives you'

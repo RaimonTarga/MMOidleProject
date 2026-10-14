@@ -128,7 +128,6 @@ const MAKE_KIND_ICONS: Record<string, IconSource> = {
   armor: statIconSource('plating'),
   recovery: statIconSource('regen'),
   mobility: statIconSource('speed'),
-  core: statIconSource('empowered'),
   relic: menuIconSource('passive-tree'),
   technique: atlasIcon('UI_icons/abilities/sweep.png'),
 };

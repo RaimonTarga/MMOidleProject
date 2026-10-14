@@ -416,19 +416,6 @@
   letter-spacing: 0.7px;
 }
 
-/* Core range tag (Step 9) */
-.inv-stat-sheet__core-eligibility {
-  margin-top: 2px;
-  font-size: 9px;
-  color: #6fd0ff;
-  text-transform: uppercase;
-  letter-spacing: 0.7px;
-}
-
-.inv-stat-sheet__core-eligibility--inactive {
-  color: #cc6655;
-}
-
 /* Stat rows */
 .inv-stat-sheet__rows {
   display: flex;

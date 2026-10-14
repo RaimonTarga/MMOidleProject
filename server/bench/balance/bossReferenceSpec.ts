@@ -78,7 +78,7 @@ export const BOSSREF_BOSS_STATS = { hp: 7100, attack: 22, plating: 0, damageRedu
  */
 export const BOSSREF_A_GEAR = {
   weapon: 'ruinous-axe', armor: 'cave-vest-t2', recovery: 'mountain-charm-t2',
-  mobility: 'plains-boots-t2', core: 'core-tempered',
+  mobility: 'plains-boots-t2',
 } as const;
 export const BOSSREF_A_ABILITIES: AttunedAbilities = {
   techniques: ['slam'], guards: ['second-wind', 'brace'],
@@ -104,9 +104,7 @@ export const BOSSREF_A_RULES = [
  */
 export const BOSSREF_B_GEAR = {
   weapon: 'gale-needle', armor: 'forest-vest-t2', recovery: 'forest-charm-t2',
-  // Force since the 2026-09-25 defense rebudget removed its HP penalty; the legacy
-  // scorer now prefers it over Tempered.
-  mobility: 'forest-boots-t2', core: 'core-force',
+  mobility: 'forest-boots-t2',
 } as const;
 export const BOSSREF_B_STANCE = 'offensive-stance';
 /** Empty is meaningful: the legacy bot equips no behaviour rules at all. */

@@ -735,8 +735,8 @@ function applySidestep(player: PlayerEntity, ability: AbilityDef): void {
 /**
  * Fire a Recovery-skill Guard (Second Wind / Recuperate): switch on a fraction of
  * the player's Recovery rate for a window. The healing itself is paid out by the
- * Recovery engine, so this shares antiheal, the overheal ward and
- * `core.recovery-mult` with every other regen effect instead of running its own HoT.
+ * Recovery engine, so this shares antiheal and the overheal ward with every other
+ * regen effect instead of running its own HoT.
  *
  * `defense.recovery-skill-potency` scales the fraction, and ONLY for abilities
  * carrying the `recovery` tag — that is the whole point of the tag.

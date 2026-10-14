@@ -57,14 +57,13 @@ const declaredSeeds=[303007,303019,303041,303067];
 const seeds=process.env.DEFENSE_SEED?[Number(process.env.DEFENSE_SEED)]:declaredSeeds;assert(seeds.every(s=>declaredSeeds.includes(s)));
 const traceAll=process.env.DEFENSE_TRACE_ALL==='1';
 const cells:SurveyCell[]=[];
-function add(tier:number,cls:string,armor:string,node:string,core?:string,plus=3,frame='balanced',boss=false,stance?:string|null){
+function add(tier:number,cls:string,armor:string,node:string,plus=3,frame='balanced',boss=false,stance?:string|null){
  const base=BREADTH_CELLS.find(c=>c.tier===tier&&c.className===cls&&c.frame===frame&&c.role===(boss?'boss':'farm')&&!c.controlCaseId&&(!c.id.includes('-far-')))!;
  assert(base,`${tier}/${cls}/${frame}`);
  const cell=structuredClone(base); cell.nodeId=node; cell.upgradeLevel=plus; cell.isDungeon=boss;
  cell.build.gearItemIds.armor=armor;
- if(core)cell.build.gearItemIds.core=core;
  if(stance!==undefined)cell.stance=stance;
- cell.id=`${tier}-${cls}-${frame}-${armor}-${node}-${core??'reference'}-p${plus}-${stance??'default'}`;cell.build.id=cell.id;
+ cell.id=`${tier}-${cls}-${frame}-${armor}-${node}-reference-p${plus}-${stance??'default'}`;cell.build.id=cell.id;
  cells.push(cell);
 }
 type Profile={id:string;tier:number;biome:string;armor:string;alpha?:string;members?:string[]};

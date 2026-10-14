@@ -178,8 +178,8 @@ export const BOSS5_ROSTER: Boss5Boss[] = BOSS5_ACTIVE_ROSTER
  *   T1  NO stance (the tier admits none), the SAME ordered Guard pair, and NO
  *       technique -- the guard pair is what makes a T1 row readable against the T2
  *       campaign, and it is the half that survives the budget. 18-20 of 22 RP.
- *   T3  the T2 shape entire, on T3 weapons, kit, core and the range node. 26-28/38.
- *   T4  the T2 shape entire, on the T4 ladder's weapons, kit, core and relic, plus
+ *   T3  the T2 shape entire, on T3 weapons, kit and the range node. 26-28/38.
+ *   T4  the T2 shape entire, on the T4 ladder's weapons, kit and relic, plus
  *       the `-balanced-t3-a` suffix the qualified T4 builds carry. 26-28/47.
  *
  * `techniques: []` at T1 is an EXPLICIT statement that the package runs none, not an
@@ -231,19 +231,19 @@ export const BOSS5_TIER_REFERENCE: Record<number, Boss5TierReference> = {
     tier: 3, stance: 'defensive-stance', techniques: ['slam'], guards: REFERENCE_GUARDS,
     kit: {
       armor: 'mountain-vest-t3', recovery: 'mountain-charm-t3',
-      mobility: 'mountain-boots-t3', core: 'core-tempered',
+      mobility: 'mountain-boots-t3',
     },
-    note: 'The T2 reference shape entire, on T3 weapons, the fixed kit, the core and the range node.',
+    note: 'The T2 reference shape entire, on T3 weapons, the fixed kit and the range node.',
   },
   4: {
     tier: 4, stance: 'defensive-stance', techniques: ['slam'], guards: REFERENCE_GUARDS,
     kit: {
       armor: 'mountain-vest-t4', recovery: 'mountain-charm-t4',
-      mobility: 'mountain-boots-t4', core: 'core-tempered',
+      mobility: 'mountain-boots-t4',
     },
     note:
       'The T2 reference shape entire, on the qualified T4 ladder (weapons, the fixed kit, '
-      + 'the core, the relic and the -balanced-t3-a suffix the T4 builds carry).',
+      + 'the relic and the -balanced-t3-a suffix the T4 builds carry).',
   },
 };
 

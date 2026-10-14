@@ -40,7 +40,6 @@ const DEFAULT_EQUIPMENT: EquipmentMap = {
   armor: null,
   recovery: null,
   mobility: null,
-  core: null,
   relic: null,
 };
 

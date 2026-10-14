@@ -302,14 +302,6 @@ initCombatSystems();
   ).dealt;
   assert(Math.abs(dealt - 1.15) < 1e-9, `every channel should read +15%, got ${dealt}`);
 
-  // It must compose with (not replace) the other final layers.
-  player.usesSkills.passives['core.damage-dealt-pct'] = 0.10;
-  const composed = resolveFinalDamageMultipliers(
-    player.usesSkills.passives, player.tracksCombat,
-  ).dealt;
-  assert(Math.abs(composed - 1.10 * 1.15) < 1e-9, `Sunlight should compose with core damage dealt, got ${composed}`);
-  delete player.usesSkills.passives['core.damage-dealt-pct'];
-
   // And it must not be double-counted by the OTHER outgoing seam: `damageDealtPct`
   // (playerAmplifiers) is summed separately in the direct-attack path, so Sunlight
   // deliberately does NOT use that key.

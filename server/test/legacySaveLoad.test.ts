@@ -1,7 +1,7 @@
 /**
  * Loading a save written before a retired system went away.
  *
- * Two retirements are pinned here, both driven through the real load path with a
+ * Three retirements are pinned here, all driven through the real load path with a
  * stub query builder — CI provisions no Postgres:
  *
  *  1. The lineage trees, their shard and capstone wallets, the card teaching
@@ -10,10 +10,13 @@
  *     loads clean and nothing downstream sees a key no type declares.
  *  2. The retired +N upgrade ladder: its refund GRANTS essence, so it runs on
  *     the load path that keeps the slices and never on the read-only listings.
+ *  3. Stances, rites, crafted runes and the core slot (class-first rework D2): the
+ *     load drops their keys and the core slot, and rune ownership comes from the
+ *     class.
  *
  * Run: node --conditions=development --import tsx test/legacySaveLoad.test.ts
  */
-import { GAME_CONFIG, baseRecoveryForTier, emptyEquipment } from '@mmo-idle/shared';
+import { GAME_CONFIG, baseRecoveryForTier, emptyEquipment, runeIdsForArchetype } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import {
   listAccountCharacters,
@@ -113,6 +116,38 @@ async function lineageKeysAreDropped(): Promise<void> {
   assert(loaded!.holdsInventory.inventory.includes('chaotic-axe'), 'and so is the bag');
 }
 
+// ─── A dev save written before the D2 removals ───────────────────────────────
+
+async function d2KeysAreDropped(): Promise<void> {
+  const save = legacySave('p-pre-d2');
+  Object.assign(save.tracksProgression, {
+    runeRecipesCrafted: ['rune-recipe-focus-elites'],
+    knownStances: ['offensive-stance'], attunedStances: ['offensive-stance'],
+    equippedStances: ['offensive-stance'], activeStance: 'offensive-stance',
+    knownRites: ['swift-repose'], equippedRites: ['swift-repose'],
+  });
+  Object.assign(save.holdsInventory, {
+    inventory: ['chaotic-axe', 'core-tempered'],
+    equipment: { ...save.holdsInventory.equipment, core: 'core-tempered' },
+  });
+  const loaded = await loadCharacter(stubDb([storedRow('p-pre-d2', save)]), 'acct-refund', 'p-pre-d2');
+  assert(loaded !== null, 'a save from before the D2 removals still loads');
+  const progression = loaded!.tracksProgression as unknown as Record<string, unknown>;
+  for (const key of [
+    'runeRecipesCrafted', 'knownStances', 'attunedStances', 'equippedStances', 'activeStance',
+    'knownRites', 'equippedRites',
+  ]) {
+    assert(!(key in progression), `the load drops the retired '${key}' key`);
+  }
+  assert(!('core' in loaded!.holdsInventory.equipment), 'and the core slot');
+  assert(!loaded!.holdsInventory.inventory.includes('core-tempered'), 'and the core item in the bag');
+  assert(loaded!.holdsInventory.equipment.weapon === 'flash-rapier', 'the weapon the save wears is untouched');
+  assert(
+    JSON.stringify(loaded!.tracksProgression.runesOwned) === JSON.stringify(runeIdsForArchetype(null)),
+    'rune ownership comes from the class',
+  );
+}
+
 // ─── A GRANT inside hydration, on paths that throw the slices away ───────────
 //
 // `refundRetiredUpgradeEssence` is the one hydration transform that is not a pure
@@ -187,6 +222,7 @@ async function refundStaysOnTheLoadPath(): Promise<void> {
 }
 
 void lineageKeysAreDropped()
+  .then(d2KeysAreDropped)
   .then(refundStaysOnTheLoadPath)
   .then(() => { console.log('legacySaveLoad.test.ts: ok'); })
   .catch((err: unknown) => { console.error(err); process.exitCode = 1; });

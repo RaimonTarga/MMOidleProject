@@ -164,7 +164,7 @@ function techniqueEntries(spec: TechniqueSpec): MakeEntry[] {
  * ahead of weapons, which is how relics used to lead the recipe list.
  */
 export const KIND_ORDER: MakeKind[] = [
-  'weapon', 'armor', 'recovery', 'mobility', 'core', 'relic',
+  'weapon', 'armor', 'recovery', 'mobility', 'relic',
   'technique',
 ];
 
@@ -174,7 +174,6 @@ export const MAKE_KIND_LABELS: Record<MakeKind, string> = {
   armor: 'Armor',
   recovery: 'Recovery',
   mobility: 'Boots',
-  core: 'Core',
   relic: 'Relic',
   technique: 'Technique',
 };

@@ -9,8 +9,6 @@ import {
   essenceLabel,
   ITEM_DATABASE,
   abilityDef,
-  coreEligibilityLabel,
-  isRestrictedCore,
   relicRatingsFromPassives, relicRatingsFromEffects,
   resolveRelicComparison,
 } from '@mmo-idle/shared';
@@ -610,11 +608,6 @@ function MakeDetail({
     : [];
   const effectLines = recipe
     ? [
-      ...(recipe.slot === 'core' && recipe.coreEligibility
-        ? [isRestrictedCore(recipe.coreEligibility)
-          ? `Full effect only for ${coreEligibilityLabel(recipe.coreEligibility).toLowerCase()}`
-          : 'Works for any build']
-        : []),
       ...formatMechanicEffects(recipe.mechanicEffects),
       ...(recipe.slot === 'relic'
         ? formatResolvedRelicProfile(resolveRelicComparison(

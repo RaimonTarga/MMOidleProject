@@ -40,22 +40,13 @@ for (const sheet of [character, contribution, swap]) {
   }
 }
 
-// Effect accounting is measured, not labelled: a final-damage core moves DPS.
-const core = buildStatSheet(build({ weapon: 'chaotic-axe' }), 'core-tempered');
-assert.ok(core.effects.counted.some((line) => /final damage/i.test(line)), 'core final damage is counted');
-
 // The preview-only omission leaves the default path untouched.
-const plain = previewEquipmentStats(build({ weapon: 'chaotic-axe', core: 'core-tempered' }));
+const plain = previewEquipmentStats(build({ weapon: 'chaotic-axe' }));
 const omitNothing = previewEquipmentStats({
-  ...build({ weapon: 'chaotic-axe', core: 'core-tempered' }),
-  omitItemEffects: { defId: 'core-tempered', keys: new Set() },
+  ...build({ weapon: 'chaotic-axe' }),
+  omitItemEffects: { defId: 'chaotic-axe', keys: new Set() },
 });
 assert.deepEqual(omitNothing.stats, plain.stats);
-const omitted = previewEquipmentStats({
-  ...build({ weapon: 'chaotic-axe', core: 'core-tempered' }),
-  omitItemEffects: { defId: 'core-tempered', keys: new Set(['core.damage-dealt-pct']) },
-});
-assert.ok(omitted.stats.dps < plain.stats.dps, 'omitting the core final-damage key lowers DPS');
 
 // Keyed entries render exactly the text the old formatter did.
 for (const item of ITEM_DATABASE.values()) {

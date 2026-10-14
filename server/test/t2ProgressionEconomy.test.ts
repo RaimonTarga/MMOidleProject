@@ -76,36 +76,6 @@ function essenceSum(cost: Partial<Record<EssenceType, number>> | undefined): num
   return Object.values(cost ?? {}).reduce((a, b) => a + (b ?? 0), 0);
 }
 
-function normalizedCost(cost: Partial<Record<string, number>> | undefined): string {
-  return JSON.stringify(Object.entries(cost ?? {}).sort(([a], [b]) => a.localeCompare(b)));
-}
-
-type T2RewardSpec = {
-  id: string;
-  group: string;
-  level: number;
-  cost: Record<string, number>;
-  essenceBand: readonly [number, number];
-};
-
-const T2_CORE_REWARDS: T2RewardSpec[] = [
-  { id: "core-tempered", group: "cave", level: 12, cost: { red: 500 }, essenceBand: [450, 600] },
-  { id: "core-survivalist", group: "jungle", level: 6, cost: { green: 500 }, essenceBand: [450, 600] },
-  { id: "core-force", group: "desert", level: 6, cost: { yellow: 500 }, essenceBand: [450, 600] },
-];
-
-for (const spec of T2_CORE_REWARDS) {
-  const recipe = RECIPE_DATABASE.get(spec.id);
-  assert(!!recipe, `${spec.id}: core recipe must exist`);
-  assert(recipe!.tier === 2, `${spec.id}: must stay tier 2`);
-  assert(recipe!.recipeGroup === spec.group, `${spec.id}: biome gate must be ${spec.group}`);
-  assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: unlock level must be ${spec.group} L${spec.level}`);
-  assert(normalizedCost(recipe!.cost) === normalizedCost(spec.cost), `${spec.id}: essence cost changed unexpectedly`);
-  assert(!recipe!.requiredBossClear, `${spec.id}: must not require a boss clear`);
-  const total = essenceSum(recipe!.cost);
-  assert(total >= spec.essenceBand[0] && total <= spec.essenceBand[1], `${spec.id}: core essence total is outside its band`);
-}
-
 for (const id of ALL_T2_GEAR_IDS) {
   const recipe = RECIPE_DATABASE.get(id)!;
   if (!recipe.upgrades || recipe.upgrades.length !== 5) continue;

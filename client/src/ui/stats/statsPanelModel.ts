@@ -132,7 +132,7 @@ const GROUP_TITLES: Readonly<Record<StatsGroupKey, string>> = {
 const GROUP_ORDER: readonly StatsGroupKey[] = ['offence', 'defence', 'recovery', 'rhythm'];
 
 /** Slots in the order their sources are named. */
-const SLOTS: readonly EquipmentSlot[] = ['weapon', 'armor', 'recovery', 'mobility', 'core', 'relic'];
+const SLOTS: readonly EquipmentSlot[] = ['weapon', 'armor', 'recovery', 'mobility', 'relic'];
 
 // ─── Build ───────────────────────────────────────────────────────────────────
 

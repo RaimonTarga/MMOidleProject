@@ -153,11 +153,4 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
     description: 'Light enough that the wind mistakes the wearer for one of its own.',
   }],
 
-  // ── Cores ───────────────────────────────────────────────────────────────────
-  // The 5th equipment slot. See the CORES header in plains.recipes.ts for how the
-  // slot works and how eligibility/tier placement is decided.
-  //
-  // Forest owns SUSTAIN — it is where Second Wind is learned. The T2 recovery
-  // capstone is intentionally delayed to Jungle.
-
 ] satisfies [string, Recipe][];

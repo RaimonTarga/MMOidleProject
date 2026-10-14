@@ -61,7 +61,7 @@ export interface DpsEstimateTarget {
 }
 
 export interface DpsEstimateInput {
-  /** Final attack stat, after gear, cores and the skill tree. */
+  /** Final attack stat, after gear and the skill tree. */
   attack: number;
   /** Flat per-hit damage applied after the target's defences. */
   onHitDamage: number;

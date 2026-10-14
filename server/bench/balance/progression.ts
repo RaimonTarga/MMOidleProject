@@ -15,7 +15,6 @@ import {
   type ResolvedRelicProfile,
   type SubVariant,
   biomeLevelCap,
-  coreIsActive,
   listBiomeGroupsAtTier,
 } from '@mmo-idle/shared';
 import { findDungeonNodeFor } from '../../src/world/nodePath';
@@ -45,7 +44,7 @@ const VARIANTS = ['light', 'balanced', 'heavy'] as const;
 const RANGES = ['range-close', 'range-mid', 'range-far'] as const;
 const T3_CHOICES = ['a', 'b', 'c'] as const;
 
-const GEAR_SLOTS: GearSlot[] = ['weapon', 'armor', 'recovery', 'mobility', 'core', 'relic'];
+const GEAR_SLOTS: GearSlot[] = ['weapon', 'armor', 'recovery', 'mobility', 'relic'];
 
 /** Cooldown heavy T3 has no server logic yet. Reload T3 is fully implemented. */
 export const UNIMPLEMENTED_T3_IDS = new Set<string>([
@@ -65,10 +64,10 @@ function classPrefixFromRoot(classRoot: string): string {
 /**
  * The headline stat each slot is ranked by when choosing the "best" item.
  *
- * `core` and `relic` are absent on purpose: both carry `stats: {}` and express
- * their power through `mechanicEffects`, so they have build-aware scorers below.
+ * `relic` is absent on purpose: it carries `stats: {}` and expresses its power
+ * through `mechanicEffects`, so it has a build-aware scorer below.
  */
-const SLOT_PRIMARY_STAT: Record<Exclude<GearSlot, 'core' | 'relic'>, string> = {
+const SLOT_PRIMARY_STAT: Record<Exclude<GearSlot, 'relic'>, string> = {
   weapon: 'attack',
   armor: 'damageReduction',
   recovery: 'recovery',
@@ -80,7 +79,7 @@ const SLOT_PRIMARY_STAT: Record<Exclude<GearSlot, 'core' | 'relic'>, string> = {
  * a tiebreaker so a richer item wins when primaries tie. (Bench bots run fully
  * upgraded, so base stats are a faithful proxy for final power.)
  */
-function gearScore(recipe: Recipe, slot: Exclude<GearSlot, 'core' | 'relic'>): number {
+function gearScore(recipe: Recipe, slot: Exclude<GearSlot, 'relic'>): number {
   const stats = recipe.stats as Record<string, number>;
   const primary = stats[SLOT_PRIMARY_STAT[slot]] ?? 0;
   let total = 0;
@@ -88,8 +87,8 @@ function gearScore(recipe: Recipe, slot: Exclude<GearSlot, 'core' | 'relic'>): n
   return primary * 1000 + total;
 }
 
-// Core scoring lives below the shared path-profile helpers because it needs the
-// selected build's passives and fully-upgraded weapon, not authored magnitude alone.
+// Relic scoring lives below the shared path-profile helpers because it needs the
+// selected build's passives, not authored magnitude alone.
 const RELIC_BUFF_PASSIVES = [
   'cadence.momentum-echo',
   'cooldown.overdrive',
@@ -172,69 +171,6 @@ function hasAnyPassive(passives: PassiveMap, keys: readonly PassiveKey[]): boole
   return keys.some((key) => (passives[key] ?? 0) > 0);
 }
 
-function fullyUpgradedStat(recipe: Recipe | undefined, stat: string): number {
-  if (!recipe) return 0;
-  let total = (recipe.stats as Record<string, number>)[stat] ?? 0;
-  for (const step of recipe.upgrades ?? []) {
-    total += (step.stats as Record<string, number> | undefined)?.[stat] ?? 0;
-  }
-  return total;
-}
-
-/** Score the Core's signed, build-relevant effect instead of its absolute budget. */
-export function coreScore(
-  recipe: Recipe,
-  classRoot: string,
-  skillPath: string[],
-  gearItemIds: string[],
-): number {
-  const effects = recipe.mechanicEffects ?? {};
-  const { passives } = skillPathProfile(skillPath, gearItemIds);
-  const weapon = gearItemIds
-    .map((id) => RECIPE_DATABASE.get(id))
-    .find((candidate) => candidate?.slot === 'weapon');
-  const attack = Math.max(0.1, 1 + (effects['core.attack-mult'] ?? 0));
-  const attackSpeed = Math.max(0.1, 1 + (effects['core.attack-speed-mult'] ?? 0));
-  const focusStacks = Math.min(3, effects['core.focus-max-stacks'] ?? 0);
-  const focus = 1 + (effects['core.focus-damage-per-hit-mult'] ?? 0) * focusStacks;
-  const onHit = Math.max(0.1, 1 + (effects['core.onhit-mult'] ?? 0));
-
-  const rawAttack = GAME_CONFIG.PLAYER_ATTACK + fullyUpgradedStat(weapon, 'attack');
-  const rawOnHit = fullyUpgradedStat(weapon, 'onHitDamage') +
-    (passives['cadence.aftershock-onhit-per-tier'] ?? 0) +
-    (passives['reload.alternating-onhit-per-tier'] ?? 0);
-  const onHitShare = rawOnHit > 0
-    ? Math.min(0.8, rawOnHit / Math.max(1, rawAttack + rawOnHit))
-    : 0;
-  const directFactor = attack * attackSpeed * focus;
-  const onHitFactor = onHit * attackSpeed;
-  let score = (directFactor * (1 - onHitShare) + onHitFactor * onHitShare)
-    * Math.max(0.1, 1 + (effects['core.damage-dealt-pct'] ?? 0));
-
-  const techniqueCdr = Math.min(0.9, Math.max(0, effects['technique.cooldown-reduction-pct'] ?? 0));
-  const techniquePower = Math.max(0.1, 1 + (effects['technique.power-pct'] ?? 0));
-  const techniqueThroughput = techniquePower / (1 - techniqueCdr);
-  score *= 1 + (techniqueThroughput - 1) * 0.35;
-
-  const appliesScalableDebuff = classRoot === 'dot-root' || hasAnyPassive(passives, RELIC_DEBUFF_PASSIVES);
-  if (appliesScalableDebuff) {
-    const debuffFactor =
-      (1 + (effects['core.debuff-duration-mult'] ?? 0)) *
-      (1 + (effects['core.debuff-potency-mult'] ?? 0));
-    score *= 1 + (debuffFactor - 1) * 0.5;
-  }
-
-  const defensiveWeight = skillPath.some((id) => id.includes('-heavy')) ? 0.75 : 0.3;
-  const survivability =
-    Math.max(0.1, 1 + (effects['core.maxhp-mult'] ?? 0)) *
-    Math.max(0.1, 1 + (effects['core.plating-mult'] ?? 0) * 0.35) /
-    (Math.max(0.1, 1 - (effects['core.dr-layer-pct'] ?? 0)) * Math.max(0.1, 1 + (effects['core.damage-taken-pct'] ?? 0)));
-  score *= Math.pow(survivability, defensiveWeight);
-  score *= Math.pow(Math.max(0.1, 1 + (effects['core.recovery-mult'] ?? 0)), defensiveWeight * 0.4);
-  score *= Math.pow(Math.max(0.1, 1 + (effects['core.speed-mult'] ?? 0)), 0.15);
-  return score;
-}
-
 /** Score only relic channels the selected path demonstrably exercises. */
 function relicScore(
   recipe: Recipe,
@@ -289,7 +225,7 @@ function isBenchEquippable(recipe: Recipe, playerTier: number): boolean {
  * could realistically bring into the fight.
  */
 function bestGearForSlot(
-  slot: Exclude<GearSlot, 'core' | 'relic'>,
+  slot: Exclude<GearSlot, 'relic'>,
   gearTier: number,
   biomeGroup: string,
   playerTier: number,
@@ -347,49 +283,6 @@ function bestRelicForBuild(
   return best?.id;
 }
 
-/**
- * Pick the core this build would actually wear.
- *
- * A core only contributes if `coreIsActive` says so, so an ineligible core is worth
- * exactly nothing — equipping one would silently under-power the bot. Eligible Cores
- * then compete on estimated signed effect in this build: direct/on-hit output,
- * Technique throughput, scalable debuffs, and weighted survivability. Native biome
- * is only a tie-breaker. Before range selection, only unrestricted Cores are eligible.
- */
-function bestCoreForBuild(
-  gearTier: number,
-  biomeGroup: string,
-  playerTier: number,
-  selectedRange: string | null,
-  classRoot: string,
-  skillPath: string[],
-  gearItemIds: string[],
-): string | undefined {
-  let best: Recipe | undefined;
-  let bestScore = Number.NEGATIVE_INFINITY;
-
-  for (const recipe of RECIPE_DATABASE.values()) {
-    if (recipe.slot !== 'core') continue;
-    if (recipe.tier !== gearTier) continue;
-    if (!isBenchEquippable(recipe, playerTier)) continue;
-    if (!coreIsActive(recipe.coreEligibility, selectedRange)) continue;
-
-    const score = coreScore(recipe, classRoot, skillPath, gearItemIds);
-    const native = recipe.recipeGroup === biomeGroup;
-    const bestNative = best?.recipeGroup === biomeGroup;
-    if (
-      score > bestScore ||
-      (score === bestScore && native && !bestNative) ||
-      (score === bestScore && native === bestNative && best && recipe.id.localeCompare(best.id) < 0)
-    ) {
-      best = recipe;
-      bestScore = score;
-    }
-  }
-
-  return best?.id;
-}
-
 /** The tier-2 range node in a skill path, in the same form `selectedRange` holds. */
 export function selectedRangeFromSkillPath(skillPath: string[]): string | null {
   return skillPath.find((id) => id.includes('-range-')) ?? null;
@@ -400,31 +293,21 @@ export function resolveGearLoadout(
   gearTier: number,
   playerTier: number,
   classRoot: string,
-  selectedRange: string | null = null,
+  _selectedRange: string | null = null,
   skillPath: string[] = [classRoot],
 ): Partial<Record<GearSlot, string>> {
   const loadout: Partial<Record<GearSlot, string>> = {};
   for (const slot of GEAR_SLOTS) {
     const id =
-      slot === 'core'
-        ? bestCoreForBuild(
+      slot === 'relic'
+        ? bestRelicForBuild(
             gearTier,
             biomeGroup,
             playerTier,
-            selectedRange,
             classRoot,
             skillPath,
             Object.values(loadout),
           )
-        : slot === 'relic'
-          ? bestRelicForBuild(
-              gearTier,
-              biomeGroup,
-              playerTier,
-              classRoot,
-              skillPath,
-              Object.values(loadout),
-            )
         : bestGearForSlot(slot, gearTier, biomeGroup, playerTier);
     if (id) loadout[slot] = id;
   }

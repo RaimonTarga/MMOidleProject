@@ -92,7 +92,6 @@ const ladderLower: Night5Cell[] = ([2,3] as const).flatMap(tier =>
     gearItemIds: {
      weapon: c.weapons[tier-1], armor: `jungle-vest-t${tier}`,
      recovery: `jungle-charm-t${tier}`, mobility: `mountain-boots-t${tier}`,
-     core: 'core-tempered',
     },
    },
   } satisfies Night5Cell;

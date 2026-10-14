@@ -31,7 +31,7 @@ export interface BiomeUnlock {
   description: string;
   tier: number;
   cost: Partial<Record<EssenceType, number>>;
-  /** Present for gear (weapon/armor/recovery/mobility/core/relic) only. */
+  /** Present for gear (weapon/armor/recovery/mobility/relic) only. */
   gear?: Recipe;
   /**
    * The ability id learned, which is NOT the recipe id.

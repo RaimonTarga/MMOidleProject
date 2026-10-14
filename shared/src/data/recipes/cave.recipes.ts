@@ -186,41 +186,4 @@ mechanicEffects: {},
     description: 'They give back no sound at all — not even the echo the deep stone expects.',
   }],
 
-
-  // ── Cores ───────────────────────────────────────────────────────────────────────
-  // See the CORES header in plains.recipes.ts. Cave owns SINGLE-TARGET PRESSURE —
-  // it teaches Charge (at the end of the T1 leg), so it is where the T2 capstone and elite-killer
-  // core line live.
-
-  // T2 premium capstone — Tempered: the balanced core is deliberately delayed
-  // until the end of Cave's returning-biome T2 band.
-  ['core-tempered', {
-    id: 'core-tempered', name: 'Tempered Core',
-    recipeGroup: 'cave', requiredBiomeLevel: 12, slot: 'core', coreEligibility: 'unrestricted',
-    lineageId: 'core-tempered',
-    cost: { red: 500 }, // family-tag: cave capstone generalist → Dominion
-    stats: {}, tier: 2,
-    mechanicEffects: { 'core.damage-dealt-pct': 0.12, 'core.maxhp-mult': 0.12 },
-    icon: 'items/cores/tempered.png',
-    description: 'Balanced for any hand. It asks no commitment, and rewards none in particular.',
-  }],
-
-  // T3 premium melee — Duelist: commitment to one big target. Its opportunity
-  // cost is structural rather than a stated penalty: it does very little against
-  // a crowd. The L18 gate and 1,350 red / 6 Dominion price make that commitment
-  // an aspirational Cave capstone.
-  ['core-duelist', {
-    id: 'core-duelist', name: 'Duelist Core',
-    recipeGroup: 'cave', requiredBiomeLevel: 18, slot: 'core', coreEligibility: 'melee',
-    lineageId: 'core-duelist',
-    cost: { red: 1350 }, // family-tag: single-target alpha → Dominion
-    stats: {}, tier: 3,
-    mechanicEffects: {
-      'core.damage-dealt-pct': 0.18, 'core.maxhp-mult': 0.10,
-      'core.focus-damage-per-hit-mult': 0.05, 'core.focus-max-stacks': 5,
-    },
-    icon: 'items/cores/duelist.png',
-    description: 'Each direct hit on the same target sharpens your focus. Change targets, and the edge must be honed again.',
-  }],
-
 ] satisfies [string, Recipe][];

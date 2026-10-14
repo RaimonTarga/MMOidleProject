@@ -68,9 +68,7 @@
       "energy.empowered-mult": 6,
       "weapon.dead-swing-interval": 4,
       "mobility.kill-speed-pct": 0.6,
-      "mobility.kill-speed-ms": 3000,
-      "core.damage-dealt-pct": 0.12,
-      "core.maxhp-mult": 0.12
+      "mobility.kill-speed-ms": 3000
     },
     "playerTier": 3,
     "currentSkillTier": 3,
@@ -112,7 +110,6 @@
       "cave-vest-t2",
       "cave-charm-t2",
       "cave-boots-t2",
-      "core-tempered",
       "flash-rapier",
       "forest-vest-t1",
       "forest-charm-t1",
@@ -125,7 +122,6 @@
       "jungle-vest-t2",
       "jungle-charm-t2",
       "jungle-boots-t2",
-      "core-survivalist",
       "heavy-hammer",
       "mountain-vest-t1",
       "mountain-charm-t1",
@@ -154,7 +150,6 @@
       "desert-vest-t2",
       "desert-charm-t2",
       "desert-boots-t2",
-      "core-force",
       "volcanic-cinderlash",
       "volcanic-vest-t3",
       "volcanic-charm-t3",
@@ -306,7 +301,6 @@
       "plains-charm-t2",
       "gale-needle",
       "plains-vest-t2",
-      "core-survivalist",
       "jungle-stinger-rapier"
     ],
     "equipment": {
@@ -314,7 +308,6 @@
       "armor": "cave-vest-t2",
       "recovery": "mountain-charm-t2",
       "mobility": "plains-boots-t2",
-      "core": "core-tempered",
       "relic": null
     },
     "itemUpgrades": {

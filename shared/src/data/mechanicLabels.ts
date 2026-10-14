@@ -24,9 +24,9 @@
  * - FORMATTERS (`15%` vs `1.5×` vs `4s`) stay in `itemDisplay.ts`. Those are
  *   presentation and belong with the renderer.
  *
- * SCOPE. This covers the namespaces that gear, cores and relics
+ * SCOPE. This covers the namespaces that gear and relics
  * can author: `defense`, `mobility`, `shared`/`weapon`, `summoner`, `guard`,
- * `technique`, `core`, `relic`. The class-mechanic namespaces
+ * `technique`, `relic`. The class-mechanic namespaces
  * (`cadence`, `cooldown`, `reload`, `energy`, `dot`) are authored on skill-tree
  * nodes only, never on an item, and are rendered by the rule-driven engine in
  * `client/src/ui/describe/passiveText.ts`. If an item ever authors one, the test
@@ -170,26 +170,6 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   'guard.cleanse-pulse':                  { label: 'Pulse on Cleanse' },
   'guard.recovery-ramp-advance-ms':       { label: 'Ramp on Guard' },
   'recovery.cooldown-reduction-pct':      { label: 'Recovery skill cooldown' },
-
-  // ── Cores. Every `-mult` here is a FRACTION on the final summed stat
-  //    (0.15 = +15%), not a multiplier — see the formatter table. ─────────────
-  'core.damage-dealt-pct': { label: 'Final damage dealt' },
-  'core.damage-taken-pct': { label: 'Final damage taken' },
-  'core.attack-mult':                     { label: 'Attack' },
-  'core.maxhp-mult':                      { label: 'Max HP' },
-  'core.plating-mult':                    { label: 'Plating' },
-  'core.speed-mult':                      { label: 'Move speed' },
-  'core.attack-speed-mult':               { label: 'Attack speed' },
-  'core.dr-layer-pct':                    { label: 'Core damage reduction' },
-  'core.recovery-mult':                   { label: 'Recovery rate' },
-  'core.focus-damage-per-hit-mult':       { label: 'Focus direct damage per hit' },
-  'core.focus-max-stacks':                { label: 'Maximum Focus', companion: true },
-  'core.onhit-mult':                      { label: 'On-hit damage' },
-  'core.debuff-duration-mult':            { label: 'Debuff duration' },
-  'core.debuff-potency-mult':             { label: 'Debuff potency' },
-  'core.mobility-cooldown-reduction-pct': { label: 'Mobility cooldown' },
-  'core.mobility-refund-on-kill-pct':     { label: 'Mobility refund on kill' },
-
 
   // ── Relic ratings (title-case: these are named stats in the relic UI) ──────
   'relic.mechanic-frequency':             { label: 'Mechanic Frequency' },

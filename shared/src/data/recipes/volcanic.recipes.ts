@@ -24,8 +24,8 @@ export const volcanicRecipeEntries = [
     id: 'volcanic-cinderlash', name: 'Cinderlash',
     recipeGroup: 'volcanic', requiredBiomeLevel: 1, slot: 'weapon',
     // GENUINELY NEW (no T2 flurry weapon exists). Knight's Steelsword is NOT its
-    // parent: that item's whole identity is technique CDR, which was retired to the
-    // Arcanist Core, not to a weapon. Priced at the top of the T3 weapon band.
+    // parent: that item's whole identity is technique CDR. Priced at the top of the
+    // T3 weapon band.
     // 2026-09-26 T2-T4 weapon normalization: Attack 34->39 (+5: 64->70).
     cost: { red: 140 }, stats: { attack: 70 }, attacksPerSecond: 1.65, tier: 3, // family-tag: new Volcanic item → Swarming (native)
     mechanicEffects: { 'weapon.flurry-pct': 0.03, 'weapon.flurry-stacks': 5 },
@@ -152,26 +152,6 @@ export const volcanicRecipeEntries = [
     mechanicEffects: { 'mobility.passive-speed-pct': 0.70, 'mobility.suppress-ms': 3500 },
     icon: 'items/boots/pyroclast-treads.png',
     description: 'Swift as a thrown ember — until a solid blow stalls them, and the heat must build again.',
-  }],
-
-  // ── Cores ───────────────────────────────────────────────────────────────────────
-  // See the CORES header in plains.recipes.ts. Volcanic owns THE STRIKE ITSELF —
-  // burn weapons and heat, so it is where the on-hit amplifier comes from.
-
-  // T4 premium unrestricted — Catalyst scales existing on-hit damage. Runtime
-  // mitigation is shared with the attack; this is not an armor-bypass effect.
-  // L10 and 2,300 red / 8 Swarming make it Volcanic's late capstone.
-  ['core-catalyst', {
-    id: 'core-catalyst', name: 'Catalyst Core',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 10, slot: 'core', coreEligibility: 'unrestricted',
-    lineageId: 'core-catalyst',
-    cost: { red: 2300 }, // family-tag: on-hit proc amplifier → Swarming
-    stats: {}, tier: 4,
-    // The specialization is the opportunity cost: no on-hit damage is granted
-    // to builds without it, and the core supplies no generic damage or defense.
-    mechanicEffects: { 'core.onhit-mult': 1.15 },
-    icon: 'items/cores/catalyst.png',
-    description: 'Amplifies on-hit damage you already have; it grants none by itself.',
   }],
 
 ] satisfies [string, Recipe][];

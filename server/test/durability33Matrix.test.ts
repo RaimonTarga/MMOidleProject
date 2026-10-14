@@ -78,7 +78,6 @@ assertDurability33Definitions();
     assert(cell.upgradeLevel === 3, 'the earned first-arrival kit is +3');
     assert(cell.build.gearItemIds.armor === 'swamp-vest-t1', 'carrying the Swamp vest the route actually holds');
     assert(cell.build.gearItemIds.recovery === 'swamp-charm-t1', 'and the Swamp charm');
-    assert(!cell.build.gearItemIds.core, 'a T1 character has no core');
   }
   // The delta vs Durability32's first-arrival must be the KIT and nothing else.
   const old = DURABILITY32_BLOCKS['mountain-powershot'].cells

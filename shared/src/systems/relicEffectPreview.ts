@@ -2,7 +2,6 @@ import type { PassiveMap } from '../passives';
 import type { SubVariant } from '../data/skillTree';
 import { SUMMONER_SPECIALIZATION_TUNING, summonerSpecializationFor, type SummonerFrame } from '../data/summoner';
 import { resolveRelicMagnitudeMultiplier, type RelicRatings } from './relics';
-import { SCALABLE_DEBUFFS } from './debuffScaling';
 import { SCALABLE_MECHANIC_BUFFS, SCALABLE_MECHANIC_DEBUFFS, scaleMechanicMagnitude } from './mechanicEffectScaling';
 
 /** Which secondary relic rating produced a line; never inferred from its label. */
@@ -40,11 +39,7 @@ export function relicEffectPreview(
   const add = (kind: 'buff' | 'debuff', id: string, field: string, label: string, value: number, unit: RelicEffectPreview['unit']) => {
     const registry = kind === 'buff' ? SCALABLE_MECHANIC_BUFFS : SCALABLE_MECHANIC_DEBUFFS;
     if (!registry[id]?.fields[field]) return;
-    // The Controller Core only ever strengthens debuffs it already owns
-    // (SCALABLE_DEBUFFS); a mechanic added to the Relic registry here must not
-    // start reading as Core-scalable just because it now has a preview line.
-    const core = kind === 'debuff' && SCALABLE_DEBUFFS[id] ? 1 + (p['core.debuff-potency-mult'] ?? 0) : 1;
-    const before = value * core;
+    const before = value;
     result.push({ kind, label, unit, before, after: scaleMechanicMagnitude(id, field, before, resolveRelicMagnitudeMultiplier(kind === 'buff' ? ratings.buffEffect : ratings.debuffEffect), registry) });
   };
   if (archetype === 'cadence') {
@@ -52,7 +47,7 @@ export function relicEffectPreview(
     if ((p['cadence.hemorrhage'] ?? 0) > 0) add('debuff', 'cadence-hemorrhage', 'damagePerTick', 'Hemorrhage tick damage', 1, 'multiplier');
     if ((p['cadence.debuff-vuln-pct'] ?? 0) > 0) {
       // Display the bonus fraction; the runtime registry stores 1 + this fraction.
-      const before = (p['cadence.debuff-vuln-pct'] ?? 0) / 100 * (1 + (p['core.debuff-potency-mult'] ?? 0));
+      const before = (p['cadence.debuff-vuln-pct'] ?? 0) / 100;
       result.push({ kind: 'debuff', label: 'Vulnerability damage taken', before, after: before * resolveRelicMagnitudeMultiplier(ratings.debuffEffect), unit: 'percent' });
     }
     if ((p['cadence.debuff-plating-shred'] ?? 0) > 0) add('debuff', 'plating-shred', 'platingReduction', 'Plating removed per finisher', p['cadence.debuff-plating-shred']!, 'flat');
@@ -76,7 +71,7 @@ export function relicEffectPreview(
     add('debuff', 'dot', 'damagePerStack', 'DoT damage per stack', 1, 'multiplier');
     if ((p['dot.frenzy'] ?? 0) > 0) {
       add('buff', 'dot-frenzy', 'attackSpeedPct', 'Frenzy attack-speed bonus', p['dot.frenzy-attack-speed-pct'] ?? 0.3, 'percent');
-      add('buff', 'dot-frenzy', 'onHitPerTier', 'Frenzy on-hit damage', (p['dot.frenzy-onhit-per-tier'] ?? 10) * Math.max(1, tier - 3) * (1 + (p['core.onhit-mult'] ?? 0)), 'flat');
+      add('buff', 'dot-frenzy', 'onHitPerTier', 'Frenzy on-hit damage', (p['dot.frenzy-onhit-per-tier'] ?? 10) * Math.max(1, tier - 3), 'flat');
     }
     if ((p['dot.rimeshatter'] ?? 0) > 0) add('debuff', 'brittle', 'drPerStack', 'Rimeshatter damage reduction removed', p['dot.rimeshatter-dr-reduction'] ?? 0.08, 'percent');
     if ((p['dot.freezing-cold'] ?? 0) > 0) {

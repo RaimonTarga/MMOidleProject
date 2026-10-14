@@ -509,7 +509,7 @@ export function refundRetiredUpgradeEssence(
 /**
  * Drop item ids that no longer exist in ITEM_DATABASE.
  *
- * Recipes get retired (the placeholder core cast was deleted outright), and a save
+ * Recipes get retired (the core cast was deleted outright), and a save
  * written before that still names them. The stat rebuild already skips unknown ids,
  * so this is not a correctness fix — it is a presentation one: an unknown id left in
  * an equipment slot renders as an occupied-but-blank slot the player cannot clear,
@@ -584,6 +584,10 @@ function hydratePlayerSlices(
 ): PersistedPlayerSlices {
   const holdsInventory = parseSlice<HoldsInventory>(row.holdsInventory);
   holdsInventory.equipment = normalizeEquipment(holdsInventory.equipment);
+  // The core slot is gone (class-first rework D2): a save written before that still
+  // names it, so the slot is dropped here; the core items themselves are unknown ids
+  // now and pruneUnknownItems drops them from the bag.
+  delete (holdsInventory.equipment as Record<string, unknown>).core;
   holdsInventory.itemUpgrades = holdsInventory.itemUpgrades ?? {};
   holdsInventory.inventory = holdsInventory.inventory ?? [];
   // The lineage trees are gone (class-first rework D1): a dev save written before

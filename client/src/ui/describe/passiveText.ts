@@ -143,7 +143,6 @@ export function passiveNamespace(key: string): string {
 const NAMESPACE_LABELS: Record<string, string> = {
   cadence: 'Cadence',
   cooldown: 'Cooldown',
-  core: 'Core',
   defense: 'Defense',
   dot: 'Damage over Time',
   energy: 'Energy',

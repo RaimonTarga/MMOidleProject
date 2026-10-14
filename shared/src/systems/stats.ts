@@ -12,7 +12,6 @@ import type {
 import { SKILL_TREE, type StatEffects } from '../skillTree';
 import { ITEM_DATABASE } from '../itemDatabase';
 import { EQUIPMENT_SLOTS } from '../items';
-import { coreIsActive } from './cores';
 import { effectiveAttacksPerSecond } from './itemUpgrades';
 import { GAME_CONFIG, baseRecoveryForTier, poolFactorForTier } from '../index';
 import { mergePassives, makePulseAccumulator, finalizePulse } from '../passives';
@@ -221,10 +220,6 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     if (!defId) continue;
     const def = ITEM_DATABASE.get(defId);
     if (!def) continue;
-    // Core slot: a restricted core (melee/ranged) contributes NOTHING — neither its
-    // upsides nor its tradeoffs — unless the player's selectedRange qualifies.
-    // Unrestricted cores always apply. Eligibility is binary; see systems/cores.ts.
-    if (slot === 'core' && !coreIsActive(def.coreEligibility, p.usesSkills.selectedRange)) continue;
     for (const [stat, value] of Object.entries(def.statModifiers)) {
       if (stat === 'damageReduction') { itemDr += value; continue; }
       if (stat === 'evasion') {
@@ -251,8 +246,8 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   // it yet: `GAME_CONFIG.PLAYER_MAX_HP` from step 1, the armor's `maxHp` and its
   // upgrade steps from step 3 are the only flat sources in the game — no skill node authors a flat `maxHp`, they all author
   // `maxHpPct`. So one multiplication here IS "base max HP and armor maxHp", and
-  // every percentage layer below (class affinities 3d, the core's
-  // `core.maxhp-mult`) keeps multiplying the finished pool exactly as before.
+  // every percentage layer below (class affinities 3d) keeps multiplying the
+  // finished pool exactly as before.
   //
   // Recovery is NOT touched: `hasHealth.recovery` was seeded in step 1 from the
   // tier's REFERENCE pool and is a flat HP/s, so a bigger pool buys attrition
@@ -354,46 +349,6 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
       }
     }
   }
-
-  // 3c. Core multiplier layer (system rework Step 9). Cores express their effects as
-  // percentage multipliers on the FINAL summed stat (base + skills + equipment), applied
-  // once here. Sources add (two +10% → +20%); negative values reduce. The separate
-  // multiplicative DR layer (`core.dr-layer-pct`) is applied in the combat pipeline, not
-  // here. maxHp is multiplied BEFORE the hp-clamp below so the new ceiling takes effect.
-  const passives = p.usesSkills.passives;
-  const attackMult    = passives['core.attack-mult']       ?? 0;
-  const maxHpMult     = passives['core.maxhp-mult']         ?? 0;
-  const platMult      = passives['core.plating-mult']       ?? 0;
-  const speedMult     = passives['core.speed-mult']         ?? 0;
-  // Recovery is the canonical HP-restoration rate, so `core.recovery-mult` is
-  // applied HERE and only here. Every in-combat regen effect activates a fraction
-  // of this rate, so multiplying the rate covers all of them exactly once —
-  // applying it again per-heal in defense/regen/healing.ts would compound it
-  // (a +20% core landing as +44%).
-  const recoveryMult   = passives['core.recovery-mult']       ?? 0;
-  const atkSpeedMult  = passives['core.attack-speed-mult']  ?? 0;
-  if (attackMult !== 0)
-    p.dealsDamage.attack = Math.max(1, Math.round(p.dealsDamage.attack * (1 + attackMult)));
-  if (maxHpMult !== 0)
-    p.hasHealth.maxHp = Math.max(1, Math.round(p.hasHealth.maxHp * (1 + maxHpMult)));
-  if (platMult !== 0)
-    p.mitigatesDamage.plating = Math.max(0, Math.round(p.mitigatesDamage.plating * (1 + platMult)));
-  if (speedMult !== 0)
-    p.hasPosition.speed = Math.max(0, Math.round(p.hasPosition.speed * (1 + speedMult)));
-  // Quantized to a TENTH, not to a whole number like the four integer stats above.
-  // Recovery became a fractional HP/s rate in Phase 0b, so `Math.round` was eating
-  // most of the bonus: the Jungle core's +30% on a naked T1's 6.5 HP/s is 8.45, which
-  // rounded to 8 and delivered +1.5 of the +1.95 it authored — a quarter of the core's
-  // whole payoff, gone. One decimal is the same resolution `baseRecoveryForTier`
-  // already quantizes to and the HUD already shows.
-  if (recoveryMult !== 0)
-    p.hasHealth.recovery = Math.max(0,
-      Math.round((p.hasHealth.recovery ?? 0) * (1 + recoveryMult) * 10) / 10);
-  if (atkSpeedMult !== 0)
-    p.performsAttack.attackCooldown = Math.max(
-      1,
-      Math.round(p.performsAttack.attackCooldown / Math.max(0.1, 1 + atkSpeedMult)),
-    );
 
   // 4. Range floor. Negative range bonuses can reduce ranged builds down to
   // melee, but should never remove the base contact reach needed to attack.

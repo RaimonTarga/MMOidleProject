@@ -81,7 +81,7 @@ export const SURVEY_CELLS: SurveyCell[] = [1,2,3].flatMap(tier =>
         skillPath: [`${c.prefix}-root`, ...(tier >= 2 ? [`${c.prefix}-balanced`] : []),
           ...(tier >= 3 ? [`${c.prefix}-range-${c.melee ? 'close' : 'mid'}`] : [])],
         gearItemIds: { weapon, armor: `${group}-vest-t${tier}`, recovery: `${group}-charm-t${tier}`,
-          mobility: `mountain-boots-t${tier}`, ...(tier >= 2 ? { core: 'core-tempered' } : {}) },
+          mobility: `mountain-boots-t${tier}` },
       } };
     });
   })));

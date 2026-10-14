@@ -26,7 +26,7 @@ export interface PlayerProcDamageOpts {
   /** Tag the damage number with empowered (yellow "!") styling. Proc damage never
    *  splashes, so this is purely cosmetic — no AoE is involved. */
   empowered?: boolean;
-  /** Physical owner of the proc for owner-only event hooks such as Cores. */
+  /** Physical owner of the proc for owner-only event hooks. */
   physicalSource?: 'player' | 'summon';
 }
 

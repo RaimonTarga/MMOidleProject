@@ -32,9 +32,4 @@ const tooltip = abilityTooltipContent(sweep, context, { state: 'ready' });
 assert(tooltip.tags?.includes('aoe'));
 assert.equal(tooltip.equipment?.length, 1);
 
-const charge = ABILITY_DATABASE.get('charge')!;
-const inactive = describeAbility(charge, { playerTier: 4, passives: {}, equipmentSources: [
-  { id: 'core-bruiser', name: 'Bruiser Core', effects: { 'core.mobility-refund-on-kill-pct': 0.5 }, inactiveReason: 'Melee builds only' },
-] });
-assert.equal(inactive.equipmentModifiers[0].value, 'Inactive · Melee builds only');
 console.log('abilityEquipmentFeedback: ok');

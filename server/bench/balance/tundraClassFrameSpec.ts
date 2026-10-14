@@ -43,14 +43,6 @@ const weaponFor = (root: Root, frame: Frame): string => {
   if (root === 'conduit') return frame === 'light' ? 'jungle-venomthorn-rapier' : frame === 'balanced' ? 'cave-cataclysm-axe' : 'tundra-permafrost-maul';
   return frame === 'light' ? 'volcanic-cinderlash' : 'cave-cataclysm-axe';
 };
-const coreFor = (root: Root, frame: Frame): string => {
-  if (root === 'striker') return 'core-accelerant';
-  if (root === 'squire') return 'core-arcanist';
-  if (root === 'apprentice') return frame === 'light' ? 'core-accelerant' : 'core-tempered';
-  if (root === 'conduit') return 'core-survivalist';
-  if (root === 'spirit') return frame === 'heavy' ? 'core-tempered' : 'core-accelerant';
-  return 'core-tempered';
-};
 // The ability pass (design §22.2) cut Frenzy, Power Strike, Quick Strike and
 // Hamstring: Imbue Lightning took Frenzy's slot, Sweep stands in for the generic
 // armed Quick Strike, and Binding Strike took Hamstring's control slot (same 2 RP).
@@ -78,7 +70,7 @@ function primary(root: Root, frame: Frame, seed: number): TundraClassFrameCell {
   });
   cell.build.id = cell.id;
   cell.build.gearItemIds = {
-    weapon: weaponFor(root, frame), ...gearByRoot[root], core: coreFor(root, frame),
+    weapon: weaponFor(root, frame), ...gearByRoot[root],
   };
   cell.abilities = {
     techniques: techniquesFor(root),

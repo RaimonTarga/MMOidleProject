@@ -117,22 +117,8 @@ const MECHANIC_FMT: Record<string, (v: number) => string> = {
   'weapon.brittle-dr':                pct,
   'weapon.empowered-mult-bonus':      v => `+${pct(v)}`,
   'mobility.ramp-rate':               v => `${pct(v)}/s`,
-  // Core `-mult` keys are fractions ON a stat, not multipliers OF it: 0.15 means
-  // +15%, and `mult` would print a meaningless "0.2×". Negative values are real
-  // (a core that trades one stat for another), so they read signed.
-  'core.damage-dealt-pct': signedPct,
-  'core.damage-taken-pct': signedPct,
-  'core.attack-mult':                 signedPct,
-  'core.maxhp-mult':                  signedPct,
-  'core.plating-mult':                signedPct,
-  'core.speed-mult':                  signedPct,
-  'core.attack-speed-mult':           signedPct,
-  'core.recovery-mult':               signedPct,
-  'core.focus-damage-per-hit-mult':   signedPct,
-  'core.onhit-mult':                  signedPct,
-  'core.debuff-duration-mult':        signedPct,
-  'core.debuff-potency-mult':         signedPct,
-  // Relic ratings are signed offsets on a class mechanic, same reasoning.
+  // Relic ratings are signed offsets on a class mechanic: 0.15 means +15%, and
+  // negative values are real, so they read signed.
   'relic.mechanic-frequency':         signedPct,
   'relic.mechanic-potency':           signedPct,
   'relic.mechanic-buff-effect':       signedPct,
@@ -437,56 +423,6 @@ export function formatMechanicEffectEntries(fx: Record<string, number> | undefin
   if (has('defense.evade-mitigation')) {
     lines.push(`+${pctK('defense.evade-mitigation')} damage avoided when you evade`);
     mark('defense.evade-mitigation');
-  }
-
-  // Cores (Step 9): percentage multipliers on overall stats + a separate
-  // multiplicative damage-reduction layer. Signed so decreases read as "-15%".
-  const signedPctK = (k: string) => {
-    const v = Math.round((fx[k] ?? 0) * 100);
-    return `${v >= 0 ? '+' : ''}${v}%`;
-  };
-  const coreMults: [string, string][] = [
-    ['core.attack-mult',       'attack'],
-    ['core.maxhp-mult',        'max HP'],
-    ['core.plating-mult',      'plating'],
-    ['core.speed-mult',        'move speed'],
-    ['core.attack-speed-mult', 'attack speed'],
-    ['core.recovery-mult',     'Recovery rate'],
-    ['core.onhit-mult',        'on-hit damage'],
-    ['core.debuff-duration-mult', 'duration of debuffs you apply'],
-    ['core.debuff-potency-mult',  'strength of debuffs you apply'],
-  ];
-  for (const [k, label] of coreMults) {
-    if (has(k)) { lines.push(`${signedPctK(k)} ${label}`); mark(k); }
-  }
-  if (has('core.focus-damage-per-hit-mult')) {
-    lines.push(
-      `Consecutive direct hits on one target gain ${signedPctK('core.focus-damage-per-hit-mult')} direct attack damage each, up to ${num(fx['core.focus-max-stacks'] ?? 0)} stacks; switching targets resets Focus`,
-    );
-    mark('core.focus-damage-per-hit-mult', 'core.focus-max-stacks');
-  }
-  for (const [key, label] of [['core.damage-dealt-pct', 'final damage dealt'], ['core.damage-taken-pct', 'final damage taken']] as const) {
-    if (has(key)) { lines.push(`${signedPct(fx[key] ?? 0)} ${label}`); mark(key); }
-  }
-  if (has('core.dr-layer-pct')) {
-    lines.push(`${pctK('core.dr-layer-pct')} damage reduction (separate multiplicative layer)`);
-    mark('core.dr-layer-pct');
-  }
-  // Both mobility keys read as a REDUCTION at a positive value, so they are phrased
-  // rather than run through the signed-percent helper (which would print "+20%
-  // cooldown" for what is a 20% cut).
-  if (has('core.mobility-cooldown-reduction-pct')) {
-    lines.push(`${pctK('core.mobility-cooldown-reduction-pct')} shorter mobility ability cooldown`);
-    mark('core.mobility-cooldown-reduction-pct');
-  }
-  if (has('core.mobility-refund-on-kill-pct')) {
-    lines.push(`Kills refund ${pctK('core.mobility-refund-on-kill-pct')} of your mobility ability's cooldown`);
-    mark('core.mobility-refund-on-kill-pct');
-  }
-  if (has('core.onhit-mult')) {
-    // The generic Core line above states the magnitude; this warning prevents a
-    // no-on-hit build from mistaking Catalyst for a provider of the mechanic.
-    lines.push('Amplifies existing on-hit damage only; grants no on-hit damage by itself');
   }
 
   // ── Ability amplifiers ─────────────────────────────────────────────────────

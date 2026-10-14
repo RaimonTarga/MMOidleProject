@@ -12,8 +12,6 @@
 
 import {
   GAME_CONFIG,
-  resolveFinalDamageMultipliers,
-  RECIPE_DATABASE,
   SKILL_TREE,
   emptyEquipment,
   recalculatePlayerStats,
@@ -28,11 +26,10 @@ function build(
   skills: string[],
   armor?: string,
   plus = 0,
-  options?: { core?: string; combatArchetype?: string },
+  options?: { combatArchetype?: string },
 ): PlayerStatsTarget {
   const equipment = emptyEquipment();
   if (armor) equipment.armor = armor;
-  if (options?.core) equipment.core = options.core;
   const target = {
     dealsDamage: { attack: 0, onHitDamage: 0, attackStyle: "slash" },
     mitigatesDamage: { plating: 0, damageReduction: 0 },
@@ -174,25 +171,19 @@ const SPIRIT = ["energy-root"];
   }
 }
 
-// â”€â”€ 7. Core is the final multiplicative capstone layer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â”€â”€ 7. Attack keeps its class and archetype stat layers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 {
   const skills = ["reload-root"];
-  const core = RECIPE_DATABASE.get("core-tempered")!;
-  const coreAttack = core.mechanicEffects?.["core.attack-mult"] ?? 0;
   const affinity = skills.reduce(
     (total, id) => total + (SKILL_TREE.get(id)?.statEffects.attackPct ?? 0),
     0,
   );
   const result = build(skills, undefined, 0, {
-    core: core.id,
     combatArchetype: "reload",
   });
 
   let expected = Math.round(GAME_CONFIG.PLAYER_ATTACK * (1 + affinity));
   expected = Math.max(1, Math.floor(expected * 0.65)); // reload archetype
-  expected = Math.max(1, Math.round(expected * (1 + coreAttack))); // Core
-  const finalDamage = resolveFinalDamageMultipliers(result.usesSkills.passives);
-  assert(Math.abs(finalDamage.dealt - 1.12) < 1e-9, 'Core is an independent final damage factor');
   assert(
     result.dealsDamage.attack === expected,
     `attack retains class/archetype stat layers (${expected}), got ${result.dealsDamage.attack}`,
@@ -220,15 +211,12 @@ const SPIRIT = ["energy-root"];
       slinger.performsAttack.attackCooldown === Math.round(ordinary.performsAttack.attackCooldown / 2),
       'Slinger must retain its double-speed multiplier above the former cap',
     );
-    const core = build([id], undefined, 0, { combatArchetype: 'reload', core: 'core-accelerant' });
-    assert(core.performsAttack.attackCooldown < slinger.performsAttack.attackCooldown,
-      'Core haste must not clamp or slow an already fast Slinger');
     fixture.mechanicEffects['reload.gatling'] = 1;
     const gatling = build([id], undefined, 0, { combatArchetype: 'reload' });
     assert(gatling.performsAttack.attackCooldown < slinger.performsAttack.attackCooldown,
       'Gatling must retain its additional speed multiplier above 10 nominal APS');
     fixture.statEffects.attackSpeedPct = 1e9;
-    const extreme = build([id], undefined, 0, { combatArchetype: 'reload', core: 'core-accelerant' });
+    const extreme = build([id], undefined, 0, { combatArchetype: 'reload' });
     assert(extreme.performsAttack.attackCooldown === 1, 'rounding must never produce a zero cooldown');
   } finally {
     SKILL_TREE.delete(id);

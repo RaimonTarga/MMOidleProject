@@ -221,37 +221,4 @@ export const desertRecipeEntries = [
     description: 'Named for the desert wind that arrives only as the dust it already left behind.',
   }],
 
-  // ── Cores ───────────────────────────────────────────────────────────────────────
-  // See the CORES header in plains.recipes.ts. Desert owns DISTANCE AND SIGHTLINES —
-  // it teaches Charge and the kiting boot, and it carries the T2 offensive capstone
-  // before the ranged glass-cannon core.
-
-  // T2 premium capstone — Force: a deliberate save through Desert's final mastery
-  // level for the raw-offence tradeoff.
-  ['core-force', {
-    id: 'core-force', name: 'Force Core',
-    recipeGroup: 'desert', requiredBiomeLevel: 6, slot: 'core', coreEligibility: 'unrestricted',
-    lineageId: 'core-force',
-    cost: { yellow: 500 }, // family-tag: raw offence → Dominion
-    stats: {}, tier: 2,
-    mechanicEffects: {"core.damage-dealt-pct": 0.22},
-    icon: 'items/cores/force.png',
-    description: "A focused damage amplifier; choosing it forgoes another core’s protection.",
-  }],
-
-  // T3 premium ranged — Sniper: ranged damage amplification without reducing HP.
-  // Its L12 gate and 1,300 yellow / 6 Dominion price make it Desert's late
-  // capstone.
-  ['core-sniper', {
-    id: 'core-sniper', name: 'Sniper Core',
-    recipeGroup: 'desert', requiredBiomeLevel: 12, slot: 'core', coreEligibility: 'ranged',
-    lineageId: 'core-sniper',
-    cost: { yellow: 1300 }, // family-tag: ranged alpha-strike → Dominion
-    stats: {}, tier: 3,
-    // Deliberately no mobility bonus — the Scout core is the one that buys spacing.
-    mechanicEffects: {"core.damage-dealt-pct": 0.3},
-    icon: 'items/cores/sniper.png',
-    description: "Amplifies ranged damage without reducing your health.",
-  }],
-
 ] satisfies [string, Recipe][];

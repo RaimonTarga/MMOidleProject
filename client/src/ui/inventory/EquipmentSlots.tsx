@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
-import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS, coreEligibilityLabel, coreIsActive, isRestrictedCore } from '@mmo-idle/shared';
-import { equipmentAtom, playerNodeIdAtom, playerTierAtom, selectedRangeAtom } from '../../hud/atoms';
+import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS } from '@mmo-idle/shared';
+import { equipmentAtom, playerNodeIdAtom, playerTierAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
 import { ItemIcon } from '../ItemIcon';
 import type { ComparePin } from './useFocus';
@@ -11,7 +11,6 @@ interface Props {
 
 export function EquipmentSlots({ compare }: Props) {
   const equipment = useAtomValue(equipmentAtom);
-  const selectedRange = useAtomValue(selectedRangeAtom);
   const playerTier = useAtomValue(playerTierAtom);
   const playerNodeId = useAtomValue(playerNodeIdAtom);
 
@@ -26,9 +25,6 @@ export function EquipmentSlots({ compare }: Props) {
           const isShown = !!defId && compare.shown === defId;
           const isPinned = !!defId && compare.pinned === defId;
           const color = filled ? tierColor(def.tier) : null;
-          const coreInactive = filled && slot === 'core'
-            && isRestrictedCore(def.coreEligibility)
-            && !coreIsActive(def.coreEligibility, selectedRange);
           // The relic slot holds the boss trophy; the class screen sets it (build plan §3.4).
           const relicLocked = false;
           return (
@@ -41,13 +37,10 @@ export function EquipmentSlots({ compare }: Props) {
                 filled ? 'inv-equip-slot--filled' : 'inv-equip-slot--empty',
                 isShown ? 'inv-equip-slot--focused' : '',
                 isPinned ? 'inv-equip-slot--pinned' : '',
-                coreInactive ? 'inv-equip-slot--inactive' : '',
                 relicLocked ? 'inv-equip-slot--inactive' : '',
               ].filter(Boolean).join(' ')}
               style={color ? { borderColor: `${color}88` } : undefined}
-              title={relicLocked ? 'Relics unlock at Tier 4' : coreInactive
-                ? `Inactive — ${coreEligibilityLabel(def.coreEligibility).toLowerCase()}`
-                : undefined}
+              title={relicLocked ? 'Relics unlock at Tier 4' : undefined}
               aria-label={filled ? `Show what ${def.name} gives you` : `${SLOT_LABELS[slot]} slot empty`}
               aria-pressed={filled ? isPinned : undefined}
               disabled={!filled}

@@ -276,7 +276,6 @@ const EMPTY_EQUIPMENT = {
   armor: null,
   recovery: null,
   mobility: null,
-  core: null,
 } as EquipmentMap;
 
 export function composePlayerView(entity: NetworkedEntity): PlayerView | null {

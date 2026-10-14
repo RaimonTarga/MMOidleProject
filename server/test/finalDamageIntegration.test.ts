@@ -1,17 +1,15 @@
 import { baseRecoveryForTier } from '@mmo-idle/shared';
-import { GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment, applyStatusEffect, compareEquipmentStats, previewEquipmentStats, estimatePlayerDps, composePlayerView } from '@mmo-idle/shared';
+import { GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment, applyStatusEffect, estimatePlayerDps, SUNLIGHT_EFFECT_ID, FINAL_DAMAGE_DEALT_PCT_KEY } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { World } from '../src/world/World';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
-import { runPlayerAttack, runMonsterAttack } from '../src/systems/combat/engine/combat';
+import { runPlayerAttack } from '../src/systems/combat/engine/combat';
 import { applyPlayerProcDamage } from '../src/systems/combat/damage/procDamage';
-import { applyPlayerAoe, applyMonsterAoe } from '../src/systems/combat/damage/aoeDamage';
+import { applyPlayerAoe } from '../src/systems/combat/damage/aoeDamage';
 import { updateDotArchetype } from '../src/systems/classes/archetypes/dot/dotPrototype';
 import { updateReloadT3Ticks } from '../src/systems/classes/archetypes/reload/t3/ticks/laser';
-import { mirrorHpForecast } from '../src/systems/defense/core/hpForecast';
-import { playerFinalDamageMultipliers } from '../src/systems/combat/damage/finalDamage';
 import { attachComponent } from '../src/ecs/markerHelpers';
 initCombatSystems();
 let serial = 0;
@@ -65,7 +63,11 @@ for (const mode of ['direct', 'proc', 'aoe', 'dot', 'laser'] as const) {
   const target = targetFor(world);
   player.dealsDamage.attack = 100;
   player.dealsDamage.onHitDamage = 20;
-  player.usesSkills.passives = { 'core.damage-dealt-pct': 0.4 };
+  // The final damage-dealt layer's one source since the cores went (class-first
+  // rework D2) is the Sunlight window.
+  player.usesSkills.passives = {};
+  applyStatusEffect(player.tracksCombat, { id: SUNLIGHT_EFFECT_ID, sourceId: player.isPlayer.id, remainingMs: 60000,
+    data: { [FINAL_DAMAGE_DEALT_PCT_KEY]: 0.4 } });
   const before = target.hasHealth.hp;
   if (mode === 'direct') attack(world, player, target);
   if (mode === 'proc') applyPlayerProcDamage(world, player, target, 120);
@@ -80,54 +82,15 @@ for (const mode of ['direct', 'proc', 'aoe', 'dot', 'laser'] as const) {
     attachComponent(world, target, 'hasDot', {});
     updateDotArchetype(world, 100);
   }
-  eq(before - target.hasHealth.hp, 168, `${mode}: 120 × Core 1.4, once`);
-}
-// Incoming direct, AoE and DoT use the same independent layers.
-for (const mode of ['direct', 'aoe', 'dot'] as const) {
-  const { world, player } = fixture(null);
-  const monster = targetFor(world);
-  player.hasHealth.hp = player.hasHealth.maxHp = 10000;
-  player.mitigatesDamage.plating = 0;
-  player.mitigatesDamage.damageReduction = 0.5;
-  if (player.evadesHits) player.evadesHits.dodgeRate = 0;
-  player.usesSkills.passives = { 'core.damage-taken-pct': -0.2 };
-  monster.dealsDamage.attack = 100;
-  const hp = player.hasHealth.hp;
-  if (mode === 'direct') runMonsterAttack(world, monster, player, 1000);
-  else if (mode === 'aoe') applyMonsterAoe(world, monster, player.hasPosition.current, 100, 100);
-  else {
-    applyStatusEffect(player.tracksCombat, { id: 'monster-dot:test', sourceId: monster.isMonster.id, maxStacks: 1,
-      remainingMs: 5000, data: { damagePerStack: 100, tickIntervalMs: 1000, nextTickIn: 0 } });
-    attachComponent(world, player, 'hasDot', {});
-    updateDotArchetype(world, 100);
-  }
-  // DoTs pay GAME_CONFIG.DOT_DR_SHARE (half) of DR since 2026-09-27; hits pay it all.
-  eq(hp - player.hasHealth.hp, mode === 'dot' ? 60 : 40, `${mode}: 100 × .5 DR (half on DoT) × .8 Core`);
-  mirrorHpForecast(world);
-  eq(composePlayerView(player)!.finalDamageTakenMult, 0.8, 'sheet includes independent taken layers');
+  eq(before - target.hasHealth.hp, 168, `${mode}: 120 × final 1.4, once`);
 }
 {
-  const { player } = fixture(null);
-  const input = { usesSkills: player.usesSkills, equipment: emptyEquipment(), itemUpgrades: {}, playerTier: 4 };
-  const normal = previewEquipmentStats(input);
-  const core = compareEquipmentStats(input, 'core', 'core-force');
-  eq(core.after.stats.attack, normal.stats.attack, 'broad Core no longer changes Attack');
-  assert(core.after.stats.damageDealtMult > 1 && core.after.stats.dps > normal.stats.dps, 'Core modifies final damage and DPS');
-  assert(core.relevant.includes('damageDealtMult'), 'inventory includes the Core upside');
-  const accelerant = compareEquipmentStats(input, 'core', 'core-accelerant');
-  assert(accelerant.relevant.includes('damageDealtMult') && accelerant.relevant.includes('attacksPerSecond'), 'inventory includes both Core upside and cost');
-  assert(!core.relevant.includes('attackRange') && !core.relevant.includes('dodgeRate'), 'inventory omits unrelated class stats');
-  const same = compareEquipmentStats({ ...input, equipment: { ...input.equipment, core: 'core-force' } }, 'core', 'core-force');
-  assert(same.relevant.includes('damageDealtMult'), 'equal replacements keep relevant unchanged values');
-  eq(same.before.stats.dps, same.after.stats.dps, 'equal swap cannot invent DPS');
-  const removed = compareEquipmentStats({ ...input, equipment: { ...input.equipment, core: 'core-force' } }, 'core', null);
-  eq(removed.after.stats.dps, normal.stats.dps, 'unequip returns to rebuilt baseline');
   for (const archetype of ['cadence', 'cooldown', 'reload', 'dot', 'energy', 'summoner']) {
     const { player: p } = fixture(archetype as any);
     const base = { attack: 100, onHitDamage: 20, attackCooldownMs: 1000, archetype, passives: p.usesSkills.passives,
       summoner: { activeCount: 5, profileInput: p.usesSkills } };
     const before = estimatePlayerDps(base).total;
-    const after = estimatePlayerDps({ ...base, passives: { ...base.passives, 'core.damage-dealt-pct': 0.4 } }).total;
+    const after = estimatePlayerDps({ ...base, finalDamageDealtMult: 1.4 }).total;
     assert(Math.abs(after - before * 1.4) < 0.3, `${archetype}: DPS multiplies all included channels once`);
   }
 }

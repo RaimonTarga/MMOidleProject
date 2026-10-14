@@ -7,7 +7,6 @@ import type {
 import {
   NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, ESSENCE_COLORS, ESSENCE_LABELS,
   essenceLabel,
-  coreEligibilityLabel, isRestrictedCore,
   relicRatingsFromPassives, relicRatingsFromEffects, resolveRelicComparison,
   FAMILY_DATABASE, blendEntries, nodeFamily, nodeSpawnBlend,
   biomeLevelCap, biomeXpForBiomeLevel, formatNodeCoord, formatRespawnRemaining, nodeIdToCoord,
@@ -138,11 +137,6 @@ function UnlockRow({ unlock, unlocked, open, onToggle, relicPreview, abilityCont
     : [];
   const effects = gear
     ? [
-      ...(gear.slot === 'core' && gear.coreEligibility
-        ? [isRestrictedCore(gear.coreEligibility)
-          ? `Full effect only for ${coreEligibilityLabel(gear.coreEligibility).toLowerCase()}`
-          : 'Works for any build']
-        : []),
       ...formatMechanicEffects(gear.mechanicEffects),
       ...(gear.slot === 'relic' ? relicPreview(unlock) : []),
       ...(gear.slot === 'weapon' ? formatWeaponEffects(gear.id) : []),

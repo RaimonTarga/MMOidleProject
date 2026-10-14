@@ -8,7 +8,6 @@ export function abilityCooldownReduction(ability: AbilityDef, passives: Record<s
   const familyKey = abilityHasTag(ability, 'technique')
     ? 'technique.cooldown-reduction-pct' : 'guard.cooldown-reduction-pct';
   let reduction = Math.max(0, passives[familyKey] ?? 0);
-  if (abilityHasTag(ability, 'mobility')) reduction += Math.max(0, passives['core.mobility-cooldown-reduction-pct'] ?? 0);
   if (abilityHasTag(ability, 'cleanse')) reduction += Math.max(0, passives['cleanse.cooldown-reduction-pct'] ?? 0);
   if (abilityHasTag(ability, 'recovery')) reduction += Math.max(0, passives['recovery.cooldown-reduction-pct'] ?? 0);
   return Math.min(ABILITY_COOLDOWN_REDUCTION_CAP, reduction);

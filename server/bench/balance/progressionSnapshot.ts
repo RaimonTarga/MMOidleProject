@@ -54,7 +54,7 @@ export function applyProgressionSnapshot(bot:PlayerEntity,cell:SurveyCell) {
     pay(id!,'craft',r.cost);
     let plus=Math.min(cell.upgradeLevel!,getMaxUpgrade(item),upgradeCeilingFromGlobalMastery(s.gm,r.tier));
     while(plus>0 && requiredBiomeLevelForUpgrade(item,plus)>(p.biomeLevel[r.recipeGroup]??0))plus--;
-    if(s.id==='t4-established-gm148')assert.equal(plus,['core','relic'].includes(r.slot)?0:4,`${cell.id}: T4 upgrade must not silently clamp ${id}`);
+    if(s.id==='t4-established-gm148')assert.equal(plus,r.slot==='relic'?0:4,`${cell.id}: T4 upgrade must not silently clamp ${id}`);
     bot.holdsInventory.itemUpgrades[id!]=plus;
     for(let n=1;n<=plus;n++)pay(`${id}+${n}`,'upgrade',upgradeCostFor(item,n)!);
   }

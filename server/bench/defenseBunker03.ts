@@ -17,7 +17,7 @@ writeFileSync(resolve(out,'manifest.json'),JSON.stringify({source:execFileSync('
 let completed=0;
 const nowOriginal=Date.now;let now=0;Date.now=()=>now;
 try{
-for(const cls of ['squire','striker'])for(const tier of [4])for(const family of ['mountain','tundra','graveyard'])for(const plus of [3,5])for(const profile of ['small','large'])for(const core of ['core-arcanist','core-juggernaut'])for(const guard of [false,true])for(const variant of ['baseline']){
+for(const cls of ['squire','striker'])for(const tier of [4])for(const family of ['mountain','tundra','graveyard'])for(const plus of [3,5])for(const profile of ['small','large'])for(const guard of [false,true])for(const variant of ['baseline']){
  now=0;const id=family+'-vest-t'+tier,original=ITEM_DATABASE.get(id)!;
  const item=structuredClone(original);
  if(variant==='desert-dr')item.statModifiers.damageReduction=(item.statModifiers.damageReduction??0)+.06;
@@ -27,7 +27,7 @@ for(const cls of ['squire','striker'])for(const tier of [4])for(const family of 
  const world=createBalanceWorld();
  try{
   const c=structuredClone(BREADTH_CELLS.find(c=>c.tier===tier&&c.className===cls&&c.frame==='heavy'&&c.role==='farm'&&!c.controlCaseId&&!c.id.includes('-far-'))!);assert(c);
-  c.build.gearItemIds.armor=id;c.build.gearItemIds.core=core;c.upgradeLevel=plus;c.stance='tanking-stance';
+  c.build.gearItemIds.armor=id;c.upgradeLevel=plus;c.stance='tanking-stance';
   const {bot}=prepareSurveyBot(world,c,{x:400,y:400});
   const monster=world.createMonster(c.nodeId,'magma-brute',{x:400,y:400})!;assert(monster);setAttackTarget(world,bot,monster.isMonster.id);
   const interval=profile==='small'?500:2000,gross=(profile==='small'?30:120)*(tier===4?1.6:1);
@@ -47,7 +47,7 @@ for(const cls of ['squire','striker'])for(const tier of [4])for(const family of 
    }
    minHp=Math.min(minHp,bot.hasHealth.hp);if(bot.hasHealth.hp<=0||bot.isDead)break;
   }
-  appendFileSync(resolve(out,'rows.jsonl'),JSON.stringify({cls,tier,family,plus,profile,core,guard,variant,elapsedMs:now,hp:bot.hasHealth.hp,maxHp:bot.hasHealth.maxHp,dead:bot.hasHealth.hp<=0||!!bot.isDead,hits,evades,damage,maxHit,minHp})+'\n');completed++;
+  appendFileSync(resolve(out,'rows.jsonl'),JSON.stringify({cls,tier,family,plus,profile,guard,variant,elapsedMs:now,hp:bot.hasHealth.hp,maxHp:bot.hasHealth.maxHp,dead:bot.hasHealth.hp<=0||!!bot.isDead,hits,evades,damage,maxHit,minHp})+'\n');completed++;
  }finally{ITEM_DATABASE.set(id,original);teardownArena(world);}
 }
 writeFileSync(resolve(out,'complete.json'),JSON.stringify({completed,expected:96}));assert.equal(completed,96);

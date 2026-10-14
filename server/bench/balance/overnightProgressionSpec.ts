@@ -48,8 +48,7 @@ function make(root:typeof SURVEY_CLASSES[number],frame:typeof frames[number],gro
    ...(dungeon?{boss:dungeon.boss.bossId}:{}),
    build:{id,classRoot:`${root.prefix}-root`,contentTier:t,playerTier:t,gearTier:t,
      skillPath:[`${root.prefix}-root`,...(t>1?[`${root.prefix}-${frame}`]:[]),...(t>2?[`${root.prefix}-range-${melee?'close':'mid'}`]:[])],
-     gearItemIds:{weapon,armor:`${armor}-vest-t${tierFor(armor)}`,recovery:`${charm}-charm-t${tierFor(charm)}`,mobility:`${boots}-boots-t${tierFor(boots)}`,
-       ...(t>1?{core:root.name==='conduit'&&(s.mastery.jungle??0)>=6?'core-survivalist':'core-tempered'}:{})}}};
+     gearItemIds:{weapon,armor:`${armor}-vest-t${tierFor(armor)}`,recovery:`${charm}-charm-t${tierFor(charm)}`,mobility:`${boots}-boots-t${tierFor(boots)}`}}};
  return c;
 }
 const groups:ProgressionCell[][]=[];

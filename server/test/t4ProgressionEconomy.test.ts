@@ -4,7 +4,7 @@
  *
  * Covers the 36 T3→T4 lineages (26 distinct predecessors, 10 branch groups), the T4
  * gear cost curves / lifetime ratios / hybrid splits / catalyst schedule+families, the
- * four T4 ability prices, the locked T3/T4 Core redistribution, the normalized
+ * four T4 ability prices, the normalized
  * T4 Relic economy, the Trench monster essence-colour correction, and the no-regression
  * pins on Runes and the GM architecture.
  */
@@ -29,7 +29,7 @@ const essenceTotal = (cost: Partial<Record<string, number>> | undefined): number
 // ═══════════════════════════════════════════════════════════════════════════
 
 const t4Gear: Recipe[] = [...RECIPE_DATABASE.values()].filter(
-  (r) => r.tier === 4 && r.slot !== "relic" && r.slot !== "core",
+  (r) => r.tier === 4 && r.slot !== "relic",
 );
 
 assert(t4Gear.length === 40, `expected 40 ordinary T4 gear items, got ${t4Gear.length}`);
@@ -281,43 +281,6 @@ for (const [id, snap] of Object.entries(TRENCH_MONSTER_SNAPSHOT)) {
 
 assert([...RECIPE_DATABASE.values()].every((r) => r.slot !== "relic"), "no recipe makes a relic item");
 
-// ═══════════════════════════════════════════════════════════════════════════
-// 13. Final Core tier split and no-regression pins
-// ═══════════════════════════════════════════════════════════════════════════
-
-{
-  const CORES: Array<{
-    id: string;
-    group: string;
-    level: number;
-    cost: Record<string, number>;
-  }> = [
-    { id: "core-juggernaut", group: "mountain", level: 22, cost: { blue: 2200 } },
-    { id: "core-controller", group: "graveyard", level: 4, cost: { purple: 2100 } },
-    { id: "core-catalyst", group: "volcanic", level: 10, cost: { red: 2300 } },
-  ];
-  const cores = [...RECIPE_DATABASE.values()].filter((r) => r.slot === "core");
-  assert(cores.length === 12, `expected 12 Core recipes total, got ${cores.length}`);
-  assert(cores.filter((c) => c.tier === 2).length === 3, "final Core split must retain 3 T2 Cores");
-  assert(cores.filter((c) => c.tier === 3).length === 6, "final Core split must retain 6 T3 Cores");
-  assert(cores.filter((c) => c.tier === 4).length === 3, "final Core split must place 3 T4 Cores");
-  for (const spec of CORES) {
-    const core = RECIPE_DATABASE.get(spec.id);
-    assert(!!core, `${spec.id}: T4 Core recipe must exist`);
-    assert(core!.slot === "core" && core!.tier === 4, `${spec.id}: must be a T4 Core`);
-    assert(core!.recipeGroup === spec.group, `${spec.id}: home must be ${spec.group}`);
-    assert(core!.requiredBiomeLevel === spec.level, `${spec.id}: gate must be ${spec.group} L${spec.level}`);
-    assert(JSON.stringify(core!.cost) === JSON.stringify(spec.cost), `${spec.id}: essence cost must be exact`);
-    assert(essenceTotal(core!.cost) >= 2000 && essenceTotal(core!.cost) <= 2500, `${spec.id}: T4 Core essence must be in 2000-2500`);
-    assert(!core!.requiredBossClear, `${spec.id}: must not require a boss clear`);
-  }
-  const t4CoreIds = cores.filter((core) => core.tier === 4).map((core) => core.id).sort();
-  assert(
-    JSON.stringify(t4CoreIds) === JSON.stringify(CORES.map((spec) => spec.id).sort()),
-    `T4 Core roster must be exactly the locked three (got ${t4CoreIds.join(", ")})`,
-  );
-}
-
 // GM architecture: T4 gates untouched by this economy-only pass.
 assert(maxGlobalMasteryAtTier(4) === 156, "max GM at tier 4 must remain 156");
 {
@@ -332,8 +295,7 @@ assert(maxGlobalMasteryAtTier(4) === 156, "max GM at tier 4 must remain 156");
 const T4_CAP: Record<string, number> = {
   mountain: 24, jungle: 18, desert: 18, tundra: 12, volcanic: 12, graveyard: 6, trench: 6,
 };
-const t4Cores = [...RECIPE_DATABASE.values()].filter((r) => r.slot === "core" && r.tier === 4);
-for (const r of [...t4Gear, ...t4Cores]) {
+for (const r of t4Gear) {
   const cap = T4_CAP[r.recipeGroup];
   assert(cap !== undefined, `${r.id}: recipeGroup ${r.recipeGroup} must have a known T4 cap`);
   assert(r.requiredBiomeLevel <= cap, `${r.id}: requiredBiomeLevel ${r.requiredBiomeLevel} must not exceed T4 cap ${cap} for ${r.recipeGroup}`);

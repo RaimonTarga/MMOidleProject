@@ -101,7 +101,6 @@ const lowerCell=(role:string,tier:number,className:string,nodeId:string,id:strin
    gearItemIds:{
     weapon:c.weapons[tier-1]!, armor:`${role}-vest-t${tier}`,
     recovery:`${role}-charm-t${tier}`, mobility:`mountain-boots-t${tier}`,
-    core:'core-tempered',
    },
   },
  };

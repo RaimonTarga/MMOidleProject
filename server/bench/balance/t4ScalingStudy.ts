@@ -15,7 +15,7 @@ import { ensureDungeon, tickDungeons } from '../../src/systems/world/dungeons/du
 import { BOT_SPAWN } from './arena';
 
 type Arm = 'baseline' | 'speed30' | 'threshold3' | 'speed30threshold3' | 'gain10' | 'cap100' | 'laserFlat25' | 'laserFlat75' | 'laserSoft';
-interface Spec { path:string; arm:Arm; plus:number; weapon?:string; core?:string; relic?:string; armor?:boolean; seed:number; mode:'probe'|'farm'|'boss'; durationMs:number }
+interface Spec { path:string; arm:Arm; plus:number; weapon?:string; relic?:string; armor?:boolean; seed:number; mode:'probe'|'farm'|'boss'; durationMs:number }
 const [mode='smoke', output='../reports/t4-scaling-study-2026-09-25'] = process.argv.slice(2);
 mkdirSync(output,{recursive:true});
 assert(hydrateHitboxCacheFromArtifact('D:/mmo-idle/volcano-heat-management-01/hitboxes.json')>0);
@@ -33,10 +33,6 @@ else if(mode==='probes') {
     add('cadence-heavy-t3-a',['baseline','speed30'],{plus,weapon});
     add('energy-heavy-t3-b',['baseline','gain10'],{plus,weapon});
   }
-  for(const core of ['core-catalyst','core-tempered']) {
-    add('reload-heavy-t3-a',['baseline','laserFlat25'],{core});
-    add('cooldown-heavy-t3-c',['baseline'],{core});
-  }
   for(const weapon of ['jungle-deathfang-rapier','tundra-glacial-rimebrand','mountain-earthsunder-maul']) {
     add('reload-heavy-t3-a',['baseline','laserFlat25'],{weapon});
     add('cooldown-heavy-t3-c',['baseline'],{weapon});
@@ -46,7 +42,6 @@ else if(mode==='probes') {
 } else if(mode==='followup') {
   add('cadence-heavy-t3-a',['baseline','speed30']);
   add('energy-heavy-t3-b',['baseline','gain10']);
-  for(const core of ['core-catalyst','core-tempered'])add('reload-heavy-t3-a',['baseline','laserFlat75'],{core});
   for(const plus of [0,5])add('cadence-heavy-t3-a',['baseline','speed30'],{plus,weapon:'graveyard-plague-axe'});
   for(const relic of ['relic-hastebound-dial','relic-equilibrium-shard','relic-glacial-bell']) {
     add('cadence-heavy-t3-a',['baseline','speed30'],{weapon:'graveyard-plague-axe',relic});
@@ -107,7 +102,6 @@ for(const [index,spec] of unique.entries()) {
   const cell=structuredClone(BREADTH_CELLS.find(c=>c.role===(spec.mode==='boss'?'boss':'farm')&&c.playerTreatment==='untreated'&&c.build.skillPath.includes(spec.path))!);assert(cell);
   cell.upgradeLevel=spec.plus;
   if(spec.weapon)cell.build.gearItemIds.weapon=spec.weapon;
-  if(spec.core)cell.build.gearItemIds.core=spec.core;
   if(spec.relic)cell.build.gearItemIds.relic=spec.relic;
   const world=createFarmWorld();world.suppressRepopulation=spec.mode!=='farm';
   setupArena(world,{nodeId:cell.nodeId,biomeGroup:NODE_BIOMES[cell.nodeId].biomeGroup,contentTier:4,isDungeon:spec.mode==='boss'});

@@ -11,7 +11,6 @@ import { initRuneTauntSystem } from "./combat/ai/taunt";
 import { initDungeonCombatHooks } from "./world/dungeons/dungeon";
 import { initAbilitySystems } from "./player/abilities/abilityEffects";
 import { initAttackTempoSystem } from "./player/abilities/attackTempo";
-import { initCoreCombatEffects } from "./combat/cores";
 import { initMonsterDeathEffects } from "./combat/damage/monsterDeathEffects";
 import { initPlayerAmplifiers } from "./combat/damage/playerAmplifiers";
 import { initBossPatternCombat } from "./combat/engine/patternCombat";
@@ -85,8 +84,6 @@ export function initCombatSystems(): void {
   // Attack-equivalents: landed basic attacks hasten Tempo-bearing Techniques
   // (Sweep II+). Registered on afterHit, so it runs after the rider above.
   initAttackTempoSystem();
-  // Cores: Duelist same-target Focus (onHit) + Bruiser mobility refund (onKill).
-  initCoreCombatEffects();
   // Mobility boots: on-kill / on-acquire / on-hit speed & tenacity hooks.
   // Order-independent — these listeners only apply status effects, never touch ctx.damage.
   initMobilityBoots();

@@ -1,12 +1,11 @@
 /**
- * T3 progression/economy pass (2026-08-30) plus the locked Tier-3
- * Stance/Core redistribution (2026-09-04) — see
+ * T3 progression/economy pass (2026-08-30) — see
  * `docs/briefs/T3_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md` and the
  * current-state docs.
  *
  * Covers the retirement-aware mastery architecture, the 23 T2→T3 successions, the T3 gear
- * cost curves / hybrid splits / catalyst schedule, and the ability / Core
- * prices and reward placement.
+ * cost curves / hybrid splits / catalyst schedule, and the ability prices and
+ * reward placement.
  */
 import {
   RECIPE_DATABASE,
@@ -219,7 +218,7 @@ const T3_NEW_ITEMS = [
 ];
 
 const T3_GEAR = [...RECIPE_DATABASE.values()].filter(
-  (r) => r.tier === 3 && r.slot !== "core" && r.slot !== "relic",
+  (r) => r.tier === 3 && r.slot !== "relic",
 );
 
 assert(T3_GEAR.length === 30, `30 T3 gear items expected, got ${T3_GEAR.length}`);
@@ -270,7 +269,7 @@ for (const recipe of T3_GEAR) {
 // the catalyst wallet and every `catalystCost` field are gone.
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 4. Abilities and Cores
+// 4. Abilities
 // ═══════════════════════════════════════════════════════════════════════════
 
 {
@@ -293,45 +292,6 @@ for (const recipe of T3_GEAR) {
     }
   // Ordering: within each biome L3 < L5, and the whole set sits in the T3 band.
   for (const spec of ABILITIES) assert(spec.cost >= 140 && spec.cost <= 220, `${spec.id}: inside the T3 band`);
-}
-
-{
-  // T3 keeps six final Core homes. The three mature capstones move to T4; the
-  // remaining six stay deliberate late-band purchases with their live mechanics.
-  const CORES: Array<{
-    id: string;
-    group: string;
-    level: number;
-    family: string;
-    catalysts: number;
-    cost: Partial<Record<EssenceType, number>>;
-  }> = [
-    { id: "core-arcanist", group: "mountain", level: 18, family: "swarming", catalysts: 5, cost: { blue: 1200 } },
-    { id: "core-duelist", group: "cave", level: 18, family: "dominion", catalysts: 6, cost: { red: 1350 } },
-    { id: "core-bruiser", group: "jungle", level: 11, family: "alacrity", catalysts: 6, cost: { green: 1350 } },
-    { id: "core-accelerant", group: "jungle", level: 12, family: "alacrity", catalysts: 5, cost: { green: 1150 } },
-    { id: "core-sniper", group: "desert", level: 12, family: "dominion", catalysts: 6, cost: { yellow: 1300 } },
-    { id: "core-scout", group: "tundra", level: 6, family: "heavy", catalysts: 5, cost: { blue: 1200 } },
-  ];
-  assert(CORES.length === 6, "T3 must have exactly six Cores");
-  for (const spec of CORES) {
-    const recipe = RECIPE_DATABASE.get(spec.id);
-    assert(!!recipe, `${spec.id}: Core recipe must exist`);
-    assert(recipe!.slot === "core" && recipe!.tier === 3, `${spec.id}: must stay a T3 Core`);
-    assert(recipe!.recipeGroup === spec.group, `${spec.id}: home must remain ${spec.group}`);
-    assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: gate must be ${spec.group} L${spec.level}`);
-    assert(JSON.stringify(recipe!.cost) === JSON.stringify(spec.cost), `${spec.id}: essence cost must be exact`);
-    assert(total(recipe!.cost) >= 1000 && total(recipe!.cost) <= 1500, `${spec.id}: Core essence total is outside 1000-1500`);
-    assert(!recipe!.requiredBossClear, `${spec.id}: must not require a boss clear`);
-  }
-  const t3CoreIds = [...RECIPE_DATABASE.values()]
-    .filter((recipe) => recipe.slot === "core" && recipe.tier === 3)
-    .map((recipe) => recipe.id)
-    .sort();
-  assert(
-    JSON.stringify(t3CoreIds) === JSON.stringify(CORES.map((spec) => spec.id).sort()),
-    `T3 Core roster must be exactly the six intended homes (got ${t3CoreIds.join(", ")})`,
-  );
 }
 
 console.log("t3ProgressionEconomy: ok");

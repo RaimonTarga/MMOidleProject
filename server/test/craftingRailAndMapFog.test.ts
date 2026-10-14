@@ -26,7 +26,7 @@ const fresh: MakeSources = {
 };
 
 const none = unlockedMakeKinds(fresh);
-for (const kind of ['core', 'relic'] as const) {
+for (const kind of ['relic'] as const) {
   assert.ok(!none.has(kind), `${kind} must stay hidden before any of its recipes unlock`);
 }
 

@@ -22,14 +22,17 @@ const FINAL_DAMAGE_DEALT_EFFECT_IDS: readonly string[] = [
   SUNLIGHT_EFFECT_ID,
 ];
 
-/** Independent final layers. Positive taken values are drawbacks; negative values reduce damage. */
+/**
+ * Independent final layers. Nothing authors a final damage-taken layer since the
+ * cores went (class-first rework D2), so `taken` is 1; it stays because the HP
+ * forecast and the view's `finalDamageTakenMult` read it.
+ */
 export function resolveFinalDamageMultipliers(
-  passives: PassiveMap,
+  _passives: PassiveMap,
   combat?: TracksCombat,
 ): { dealt: number; taken: number } {
-  let dealt = Math.max(0, 1 + (passives['core.damage-dealt-pct'] ?? 0));
-  const taken = Math.max(0.1, 1 + (passives['core.damage-taken-pct'] ?? 0))
-    * (1 - Math.min(0.9, Math.max(0, passives['core.dr-layer-pct'] ?? 0)));
+  let dealt = 1;
+  const taken = 1;
   for (const effect of combat?.statusEffects ?? []) {
     if (effect.remainingMs > 0 && FINAL_DAMAGE_DEALT_EFFECT_IDS.includes(effect.id)) {
       dealt *= Math.max(0, 1 + (effect.data[FINAL_DAMAGE_DEALT_PCT_KEY] ?? 0));
