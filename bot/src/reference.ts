@@ -238,7 +238,7 @@ w("| biome | id | slot | gate lvl | craft cost | stats | mechanics |");
 w("|---|---|---|---|---|---|---|");
 for (const group of ["clearing", ...T1_BIOMES]) {
   const recipes = [...RECIPE_DATABASE.values()]
-    .filter((r) => r.recipeGroup === group && r.tier <= 1 && !r.evolvesFrom)
+    .filter((r) => r.recipeGroup === group && r.tier <= 1)
     .sort((a, b) => a.requiredBiomeLevel - b.requiredBiomeLevel);
   for (const r of recipes) {
     const cost = Object.entries(r.cost)

@@ -90,12 +90,6 @@ export interface Recipe {
    * removal deletes (left to it, not D1); the field goes with them.
    */
   lineageId?: string;
-  /**
-   * The evolve path is gone and no recipe names a predecessor. Typed `never` so
-   * none can again; kept only because `bot/src/reference.ts` (outside D1) still
-   * reads it. Delete with that read.
-   */
-  evolvesFrom?: never;
   // ── Cores (system rework Step 9) ────────────────────────────────────────────
   /**
    * REQUIRED on `slot: 'core'` recipes, and must be absent on every other slot.

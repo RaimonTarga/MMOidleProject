@@ -39,11 +39,6 @@ export * from './systems/tierAdvancement';
 export * from './systems/itemUpgrades';
 export * from './systems/t1EconomyExperiment';
 export * from './data/families';
-/**
- * Retired with the ability node rows (class-first rework D1). Kept only because
- * `bot/src/net/intents.ts` (outside D1) still imports the name; delete with it.
- */
-export type RowKind = never;
 export * from './systems/cores';
 export * from './systems/relics';
 export * from './systems/debuffScaling';

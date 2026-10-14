@@ -5,7 +5,6 @@ import type {
   FastBossRetryResult,
   ProgressionCheckpointResult,
   ProgressionCheckpointRestore,
-  RowKind,
   T1EconomyArm,
   T1EconomyExperimentConfig,
   Vec2,
