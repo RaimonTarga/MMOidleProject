@@ -2015,9 +2015,7 @@ function runFxForAttackStyle(
       continue;
     }
     if (effectId === ABILITY_SWEEP_FX) {
-      // Sweep Technique: a bold horizontal cleave ON TOP of the normal attack FX,
-      // plus a Technique HUD-icon pulse so the fire is visible both in-world and
-      // on the ability bar.
+      // Sweep Technique: a bold horizontal cleave ON TOP of the normal attack FX.
       fxSweep(scene, from.x, from.y, to.x, to.y, ev.empowered);
       continue;
     }

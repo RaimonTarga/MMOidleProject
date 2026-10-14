@@ -6,7 +6,6 @@ import {
   essencesAtom,
   globalMasteryAtom,
   inventoryAtom,
-  knownAbilitiesAtom,
   passivesAtom,
   playerTierAtom,
   questProgressAtom,
@@ -28,7 +27,6 @@ export function useSystemVisibility(): SystemVisibility {
   return resolveSystemVisibility({
     playerTier: useAtomValue(playerTierAtom),
     globalMastery: useAtomValue(globalMasteryAtom),
-    knownAbilities: useAtomValue(knownAbilitiesAtom),
     essences: useAtomValue(essencesAtom),
     unlockedRecipes: useAtomValue(unlockedRecipesAtom),
     skillPoints: useAtomValue(skillPointsAtom),

@@ -7,7 +7,7 @@ import { applyStun } from "../src/systems/combat/status/stun";
 import { isHardControlled } from "../src/systems/combat/status/playerHardControl";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { World } from "../src/world/World";
-import { fireAbilities } from "./fixtures/fireAbilities";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import { gameplayPlayerSlices } from "./fixtures/gameplayPlayer";
 
 function assert(condition: unknown, message: string): asserts condition {
@@ -19,8 +19,7 @@ function assert(condition: unknown, message: string): asserts condition {
   const world = new World();
   const slices = gameplayPlayerSlices("controlled-player");
   slices.tracksProgression.playerTier = 3;
-  slices.tracksProgression.knownAbilities = ["break-free"];
-  slices.tracksProgression.attunedAbilities = { techniques: [], guards: ["break-free"] };
+  giveAbilities(slices.isPlayer.id, ["break-free"]);
   const player = world.attachPlayerEntity(slices, "controlled-player");
   player.usesAutocombat.auto = true;
 
@@ -38,8 +37,7 @@ function assert(condition: unknown, message: string): asserts condition {
   const world = new World();
   const slices = gameplayPlayerSlices("rooted-player");
   slices.tracksProgression.playerTier = 3;
-  slices.tracksProgression.knownAbilities = ["break-free"];
-  slices.tracksProgression.attunedAbilities = { techniques: [], guards: ["break-free"] };
+  giveAbilities(slices.isPlayer.id, ["break-free"]);
   const player = world.attachPlayerEntity(slices, "rooted-player");
   player.usesAutocombat.auto = true;
   applyStatusEffect(player.tracksCombat, {

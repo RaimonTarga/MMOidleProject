@@ -30,7 +30,7 @@ const receipt = (cell: SurveyCell, appliedOver: Record<string, unknown> = {}) =>
       abilities: d.abilities, runeRules: d.runeRules, sources: d.sources,
     },
     appliedPackage: {
-      attunedAbilities: d.abilities, runesEquipped: d.runeRules,
+      runesEquipped: d.runeRules,
       equipment: { ...cell.build.gearItemIds },
       itemUpgrades: Object.fromEntries(Object.values(cell.build.gearItemIds).map((id) => [id, d.upgradeLevel])),
       ...appliedOver,

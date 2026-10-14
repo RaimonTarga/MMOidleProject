@@ -2,14 +2,14 @@ import { applyProgressionSnapshot, snapshotReceipts, type ProgressionSnapshot } 
 import assert from 'node:assert/strict';
 import { requiredBiomeLevelForUpgrade, upgradeCeilingFromGlobalMastery, globalMastery, ITEM_DATABASE, RECIPE_DATABASE, NODE_BIOMES,
   composePlayerView } from '@mmo-idle/shared';
-import { materializeBot, BENCH_BOT_ID } from './botFactory';
+import { materializeBot, BENCH_BOT_ID, type DeclaredAbilities } from './botFactory';
 import { validateBuild } from '../../../bot/src/loadout/loadout';
 import { recalculatePlayerEntityStats } from '../../src/ecs/playerEntityFormulas';
 import { syncArchetypeSlices } from '../../src/ecs/archetypeSliceSync';
 import { refillBarrier } from '../../src/systems/defense/barrier/barrier';
 import type { World } from '../../src/world/World';
 import type { BuildSpec } from './types';
-import { type AttunedAbilities, type EquippedRule } from '@mmo-idle/shared';
+import { type EquippedRule } from '@mmo-idle/shared';
 
 export const SURVEY_CLASSES = [
   { name: 'striker', prefix: 'cadence', melee: true, weapons: ['flash-rapier','gale-needle','volcanic-cinderlash'] },
@@ -36,11 +36,11 @@ export interface SurveyCell { progressionSnapshot?: ProgressionSnapshot; id: str
    */
   upgradeLevel?: number;
   /**
-   * Guard abilities to attune instead of the tier default. Durability33's
-   * Mountain-entry context uses this: the shipped T1 route has learned Second
-   * Wind, Cleanse and Brace by the time it first travels to Mountain, and Brace
-   * is the mitigation that Power Shot's counterplay actually depends on.
-   * Legality is still enforced by validateBuild.
+   * Guard abilities to declare instead of the tier default. Durability33's
+   * Mountain-entry context used this: the shipped T1 route had learned Second
+   * Wind, Cleanse and Brace by the time it first travelled to Mountain, and Brace
+   * was the mitigation that Power Shot's counterplay depended on. Inert since
+   * class-first D3: declared for the receipt, never applied to the bot.
    */
   guards?: string[];
   /**
@@ -56,9 +56,9 @@ export interface SurveyCell { progressionSnapshot?: ProgressionSnapshot; id: str
    *
    * The defaults express ONE technique plus a fixed guard pair, which cannot state
    * a historical package that ran a different technique and a different guard pair.
-   * When set, it is used verbatim and still passes through `validateBuild`.
+   * When set, it is used verbatim. Inert since class-first D3, like `guards`.
    */
-  abilities?: AttunedAbilities;
+  abilities?: DeclaredAbilities;
   /**
    * Explicit rune rules, replacing the derived five-rule policy. An EMPTY array is
    * meaningful and is honoured: it means the package runs no behaviour rules at all,
@@ -105,7 +105,7 @@ export const SURVEY_CELLS: SurveyCell[] = [1,2,3].flatMap(tier =>
  */
 export type PackageFieldSource = 'explicit' | 'preparation-default';
 export interface ResolvedSurveyPackage {
-  abilities: AttunedAbilities;
+  abilities: DeclaredAbilities;
   runeRules: EquippedRule[];
   upgradeLevel: number;
   sources: { abilities: PackageFieldSource; runeRules: PackageFieldSource; upgradeLevel: PackageFieldSource };
@@ -167,14 +167,10 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
   const c = SURVEY_CLASSES.find(c=>c.name===cell.className)!;
   const rules = declared.runeRules;
   p.runesEquipped = rules;
-  const abilities = declared.abilities;
-  // Attunement is gone (class-first D3): the declared package is written as
-  // state only, so the receipt and validateBuild still read it.
-  p.attunedAbilities = { techniques: [...abilities.techniques], guards: [...abilities.guards] };
   recalculatePlayerEntityStats(world,bot); syncArchetypeSlices(world,bot);
   bot.hasHealth.hp = bot.hasHealth.maxHp; refillBarrier(world,bot);
   const view = composePlayerView(bot)!;
-  assert.deepEqual(validateBuild({abilities, runeRules:rules},view), [], cell.id);
+  assert.deepEqual(validateBuild({runeRules:rules},view), [], cell.id);
   // Derived from the cell's OWN skill path rather than hardcoded to 'balanced'.
   // The assertion's intent is "the build that was declared is the build that
   // materialised"; every existing cell declares `-balanced`, so this is identical

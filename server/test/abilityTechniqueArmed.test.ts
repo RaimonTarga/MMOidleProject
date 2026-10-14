@@ -49,8 +49,6 @@ function makePlayerSlices(
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: [abilityId],
-      attunedAbilities: { techniques: [abilityId], guards: [] },
     },
     holdsInventory: {
       inventory: [],

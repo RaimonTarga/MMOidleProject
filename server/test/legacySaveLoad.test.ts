@@ -1,7 +1,7 @@
 /**
  * Loading a save written before a retired system went away.
  *
- * Three retirements are pinned here, all driven through the real load path with a
+ * Four retirements are pinned here, all driven through the real load path with a
  * stub query builder — CI provisions no Postgres:
  *
  *  1. The lineage trees, their shard and capstone wallets, the card teaching
@@ -13,10 +13,14 @@
  *  3. Stances, rites, crafted runes and the core slot (class-first rework D2): the
  *     load drops their keys and the core slot, and rune ownership comes from the
  *     class.
+ *  4. Learned and attuned abilities (class-first rework D3): the load drops both
+ *     lists and the older `equippedAbilities` shape, and attaching the character
+ *     sanitizes away the Rune rules that named the retired Use Ability action.
  *
  * Run: node --conditions=development --import tsx test/legacySaveLoad.test.ts
  */
 import { GAME_CONFIG, baseRecoveryForTier, emptyEquipment, runeIdsForArchetype } from '@mmo-idle/shared';
+import { World } from '../src/world/World';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import {
   listAccountCharacters,
@@ -44,7 +48,6 @@ function legacySave(id: string): PersistedPlayerSlices {
       unlockedRecipes: [], questProgress: {},
       playerTier: 1, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
       runesOwned: [], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: {
       inventory: ['chaotic-axe'],
@@ -148,6 +151,37 @@ async function d2KeysAreDropped(): Promise<void> {
   );
 }
 
+// ─── A dev save written before the D3 removals ───────────────────────────────
+
+async function d3KeysAreDropped(): Promise<void> {
+  const save = legacySave('p-pre-d3');
+  Object.assign(save.tracksProgression, {
+    knownAbilities: ['sweep', 'brace', 'expose-weakness'],
+    attunedAbilities: { techniques: ['sweep'], guards: ['brace'] },
+    equippedAbilities: { technique: 'sweep', guard: 'brace' },
+    runesEquipped: [
+      { conditionId: 'in-combat', actionId: 'use-ability', targetAbilityId: 'sweep' },
+      { conditionId: 'always', actionId: 'fire-guard' },
+      { conditionId: 'in-combat', actionId: 'chase-enemy' },
+    ],
+  });
+  const loaded = await loadCharacter(stubDb([storedRow('p-pre-d3', save)]), 'acct-refund', 'p-pre-d3');
+  assert(loaded !== null, 'a save from before the D3 removals still loads');
+  const progression = loaded!.tracksProgression as unknown as Record<string, unknown>;
+  for (const key of ['knownAbilities', 'attunedAbilities', 'equippedAbilities']) {
+    assert(!(key in progression), `the load drops the retired '${key}' key`);
+  }
+  assert(loaded!.holdsInventory.equipment.weapon === 'flash-rapier', 'the weapon the save wears is untouched');
+
+  const player = new World().attachPlayerEntity(loaded!, 'p-pre-d3');
+  const rules = player.tracksProgression.runesEquipped;
+  assert(
+    rules.length === 1 && rules[0]!.actionId === 'chase-enemy',
+    `attaching drops the rules that fired abilities and keeps the rest, got ${JSON.stringify(rules)}`,
+  );
+  assert(!('targetAbilityId' in (rules[0] as unknown as Record<string, unknown>)), 'no rule carries an ability target');
+}
+
 // ─── A GRANT inside hydration, on paths that throw the slices away ───────────
 //
 // `refundRetiredUpgradeEssence` is the one hydration transform that is not a pure
@@ -223,6 +257,7 @@ async function refundStaysOnTheLoadPath(): Promise<void> {
 
 void lineageKeysAreDropped()
   .then(d2KeysAreDropped)
+  .then(d3KeysAreDropped)
   .then(refundStaysOnTheLoadPath)
   .then(() => { console.log('legacySaveLoad.test.ts: ok'); })
   .catch((err: unknown) => { console.error(err); process.exitCode = 1; });

@@ -16,7 +16,7 @@ import {
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { updateCombatState } from "../src/systems/combat/engine/combatState";
-import { fireAbilities } from "./fixtures/fireAbilities";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { World } from "../src/world/World";
 import { takeWorldLogEvents } from "../src/world/worldLog";
@@ -26,6 +26,7 @@ function assert(condition: unknown, message: string): void {
 }
 
 function makePlayerSlices(): PersistedPlayerSlices {
+  giveAbilities("abilities-player", ["brace"]);
   return {
     isPlayer: { id: "abilities-player", name: "Ability Tester" },
     hasPosition: {
@@ -53,8 +54,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: ["brace"],
-      attunedAbilities: { techniques: [], guards: ["brace"] },
     },
     holdsInventory: {
       inventory: [],

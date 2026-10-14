@@ -17,7 +17,7 @@ import { setAggroTarget, setAttackTarget } from '../src/systems/combat/ai/target
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { runFormationAttack } from '../src/systems/classes/archetypes/summoner/formationAttack';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
-import { fireAbilities } from './fixtures/fireAbilities';
+import { fireAbilities, giveAbilities } from './fixtures/fireAbilities';
 import { updateAbilityCasts, updateAbilityCharges, cancelAbilityCast } from '../src/systems/player/abilities/abilityCasting';
 import { runPlayerAttack } from '../src/systems/combat/engine/combat';
 import { updateMovement } from '../src/systems/world/movement';
@@ -42,6 +42,7 @@ function slices(
   tier: number,
   frame: FormationFrame = null,
 ): PersistedPlayerSlices {
+  giveAbilities(id, [abilityId]);
   return {
     isPlayer: { id, name: id },
     hasPosition: {
@@ -65,8 +66,6 @@ function slices(
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: [abilityId],
-      attunedAbilities: { techniques: [abilityId], guards: [] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {
@@ -326,9 +325,7 @@ for (const champion of [false, true]) for (const ability of ABILITY_DATABASE.val
     minions = player.summonsMinions!.minionIds.map(id => world.getMinionEntity(id)!);
     assert(minions.length === 1, 'Champion fixture must have one bonded summon');
   }
-  player.tracksProgression.attunedAbilities = ability.slot === 'guard'
-    ? { techniques: [], guards: [ability.id] }
-    : { techniques: [ability.id], guards: [] };
+  giveAbilities(player.isPlayer.id, [ability.id]);
   const target = createMonster(world, ability.shape === 'cast' && !champion ? 650
     : ability.id === 'charge' ? 600 : ability.id === 'disengage' ? 480 : 430);
   createMonster(world, target.hasPosition.current.x + 30);

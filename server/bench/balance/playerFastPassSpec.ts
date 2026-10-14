@@ -80,12 +80,11 @@ export function fastPassReadback(cell: SurveyCell, bot: PlayerEntity, globalMast
   for (const [slot, id] of Object.entries(cell.build.gearItemIds)) {
     assert.equal(bot.holdsInventory.equipment[slot as keyof typeof bot.holdsInventory.equipment], id);
   }
-  assert.deepEqual(p.attunedAbilities, declared.abilities);
   assert.deepEqual(p.runesEquipped, declared.runeRules);
   return { ...(cell.progressionSnapshot ? {progression: snapshotReceipts.get(bot)} : {}), declared, skillPath: [...bot.usesSkills.unlockedSkills], equipment: structuredClone(bot.holdsInventory),
     mastery: { biomeLevel: { ...p.biomeLevel }, globalMastery },
     access: cell.progressionSnapshot ? 'Fixed declared synthetic route checkpoint; prior paid ownership, no acquisition or guardian evidence.' : 'Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.',
-    skillPoints: p.skillPoints, knownAbilities: [...p.knownAbilities] };
+    skillPoints: p.skillPoints };
 }
 
 export function assertFastPassHitboxes(entities: Iterable<{ hasHitbox?: { frameName?: string | null } }>) {

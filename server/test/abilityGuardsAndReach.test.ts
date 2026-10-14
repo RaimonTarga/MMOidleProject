@@ -26,13 +26,12 @@ import {
   guardEffectIdForAbility,
   hasStatusEffect,
   recoveryEffectIdForAbility,
-  emptyAttunedAbilities,
   type TracksCombat,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
-import { fireAbilities } from "./fixtures/fireAbilities";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import {
   beginAbilityCast,
   holdsPositionWhileCasting,
@@ -53,6 +52,7 @@ function makePlayerSlices(
   guards: string[],
   playerTier = 4,
 ): PersistedPlayerSlices {
+  giveAbilities(id, [...techniques, ...guards]);
   return {
     isPlayer: { id, name: "Guardian" },
     hasPosition: {
@@ -80,12 +80,6 @@ function makePlayerSlices(
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: [...techniques, ...guards],
-      attunedAbilities: {
-        ...emptyAttunedAbilities(),
-        techniques: [...techniques],
-        guards: [...guards],
-      },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

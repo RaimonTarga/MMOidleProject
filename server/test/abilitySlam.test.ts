@@ -41,7 +41,7 @@ import { STUN_EFFECT } from "../src/systems/combat/status/stun";
 import { updateAbilityCasts } from "../src/systems/player/abilities/abilityCasting";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { resolveCastPayload } from "../src/systems/player/abilities/abilityEffects";
-import { fireAbilities } from "./fixtures/fireAbilities";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import { World } from "../src/world/World";
 import type { PlayerEntity } from "../src/ecs/entity";
 
@@ -67,6 +67,7 @@ function slices(
   options: { tier?: number; archetype?: "dot" | null; abilities?: string[] } = {},
 ): PersistedPlayerSlices {
   const abilities = options.abilities ?? ["slam"];
+  giveAbilities(id, abilities);
   return {
     isPlayer: { id, name: id },
     hasPosition: {
@@ -94,8 +95,6 @@ function slices(
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: [...abilities],
-      attunedAbilities: { techniques: [...abilities], guards: [] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {
@@ -370,14 +369,10 @@ initCombatSystems();
 }
 
 // ── 7. Two casts share one channel ───────────────────────────────────────────
-// Both can be held and attuned at once.
+// Both can be held at once.
 {
   const { world, player } = spawn("slam-coexist") as { world: World; player: PlayerEntity };
-  player.tracksProgression.knownAbilities = ["slam", "stunning-strike"];
-  player.tracksProgression.attunedAbilities = {
-    techniques: ["slam", "stunning-strike"],
-    guards: [],
-  };
+  giveAbilities(player.isPlayer.id, ["slam", "stunning-strike"]);
   const target = monsterAt(world, 430);
   setAttackTarget(world, player, target.isMonster.id);
   fireAbilities(world, 1_000);

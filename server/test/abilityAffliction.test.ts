@@ -20,7 +20,6 @@ import {
   applyStatusEffect,
   weaponDotProfileForWeapon,
   emptyEquipment,
-  emptyAttunedAbilities,
   getStatusEffect,
   resolveAbilityEffect,
 } from "@mmo-idle/shared";
@@ -38,7 +37,7 @@ import {
   resolveDetonate,
 } from "../src/systems/player/abilities/abilityAffliction";
 import { updateAbilityCasts } from "../src/systems/player/abilities/abilityCasting";
-import { fireAbilities } from "./fixtures/fireAbilities";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import { STUN_EFFECT } from "../src/systems/combat/status/stun";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
 import { applyImbueWindow } from "../src/systems/player/abilities/abilityImbue";
@@ -56,6 +55,7 @@ function assert(condition: unknown, message: string): void {
 const NODE = "node-5-5";
 
 function makePlayerSlices(id: string, techniques: string[]): PersistedPlayerSlices {
+  giveAbilities(id, techniques);
   return {
     isPlayer: { id, name: "Afflictor" },
     hasPosition: {
@@ -83,11 +83,6 @@ function makePlayerSlices(id: string, techniques: string[]): PersistedPlayerSlic
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: [...techniques],
-      attunedAbilities: {
-        ...emptyAttunedAbilities(),
-        techniques: [...techniques],
-      },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

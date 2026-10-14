@@ -14,7 +14,6 @@ import {
   STARTER_RUNE_IDS,
   VOLCANIC_HEAT_EFFECT_ID,
   applyStatusEffect,
-  emptyAttunedAbilities,
   emptyEquipment,
   getStatusEffect,
   isCleanseable,
@@ -60,8 +59,6 @@ function makePlayerSlices(id: string, guards: string[], playerTier: number): Per
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: [...guards],
-      attunedAbilities: { ...emptyAttunedAbilities(), techniques: [], guards: [...guards] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

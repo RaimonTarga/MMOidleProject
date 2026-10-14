@@ -618,8 +618,8 @@ function applyGuardHeal(
  * the buff bar. `totalMs` drives the clock. guard.potency-pct scales magnitude;
  * guard.duration-pct extends it. Shared by Brace and Endure.
  *
- * Each authored DR ability owns a stable effect ID. Reordering attunements
- * cannot overwrite or relabel a running effect.
+ * Each authored DR ability owns a stable effect ID, so firing order cannot
+ * overwrite or relabel a running effect.
  */
 function applyGuardDrBuff(
   player: PlayerEntity,

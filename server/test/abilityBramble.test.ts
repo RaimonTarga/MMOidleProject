@@ -24,7 +24,7 @@ import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { emitCombatEvent, makeCombatContext } from "../src/systems/combat/engine/combatPipeline";
 import { updateCombatState } from "../src/systems/combat/engine/combatState";
-import { fireAbilities } from "./fixtures/fireAbilities";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import {
   BRAMBLE_EFFECT_ID,
   runBramblePlating,
@@ -37,6 +37,7 @@ function assert(condition: unknown, message: string): void {
 }
 
 function makePlayerSlices(): PersistedPlayerSlices {
+  giveAbilities("bramble-player", ["bramble-guard"]);
   return {
     isPlayer: { id: "bramble-player", name: "Bramble" },
     hasPosition: {
@@ -64,8 +65,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: ["bramble-guard"],
-      attunedAbilities: { techniques: [], guards: ["bramble-guard"] },
     },
     holdsInventory: {
       inventory: [],

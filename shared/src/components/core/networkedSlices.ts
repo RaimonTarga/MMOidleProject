@@ -15,7 +15,6 @@ import type { CombatArchetype, MonsterAIState } from '../../types/combat';
 import type { MonsterBehavior } from '../../data/monsters/behavior';
 import type { HasHitbox } from '../../hitbox/types';
 import type { EquippedRule } from '../../runeDatabase';
-import type { AttunedAbilities } from '../../abilities';
 import type { ClassConfig } from '../../classKits/configTypes';
 
 export type { HasHitbox };
@@ -353,17 +352,6 @@ export interface TracksProgression {
   runesOwned: string[];
   /** Assembled rune rules, ordered (loadout). Drives the auto-combat config. */
   runesEquipped: EquippedRule[];
-  /**
-   * Abilities the player has learned (crafted) — the slottable pool
-   * (system rework Step 7). Stored here like runes (build/loadout data).
-   */
-  knownAbilities: string[];
-  /**
-   * Attuned abilities as ordered lists per semantic family — Technique (offensive)
-   * and Guard (defensive). List order is default arbitration priority.
-   * There is no capacity limit.
-   */
-  attunedAbilities: AttunedAbilities;
 }
 
 /** Owned items, by inventory bag and equipment slot. */

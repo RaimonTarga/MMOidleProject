@@ -44,7 +44,6 @@ import {
   questProgressAtom,
   runesOwnedAtom,
   craftTabAtom,
-  knownAbilitiesAtom,
   deathOverlayAtom,
   buildOpenAtom,
   globalMasteryAtom,

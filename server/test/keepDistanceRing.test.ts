@@ -68,8 +68,7 @@ function playerSlices(id: string, pos: Vec2): PersistedPlayerSlices {
       biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [],
-      runesEquipped: [], knownAbilities: [],
-      attunedAbilities: { techniques: [], guards: [] },
+      runesEquipped: [], 
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

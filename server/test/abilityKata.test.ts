@@ -23,7 +23,7 @@ import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { updateAbilityCasts } from "../src/systems/player/abilities/abilityCasting";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { KATA_EFFECT_ID } from "../src/systems/player/abilities/abilityKata";
-import { fireAbilities } from "./fixtures/fireAbilities";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import { World } from "../src/world/World";
 
 function assert(condition: unknown, message: string): void {
@@ -31,6 +31,7 @@ function assert(condition: unknown, message: string): void {
 }
 
 function slices(id: string, weapon: string | null): PersistedPlayerSlices {
+  giveAbilities(id, ["slam"]);
   return {
     isPlayer: { id, name: id },
     hasPosition: { current: { x: 400, y: 400 }, nodeId: "node-5-5", speed: GAME_CONFIG.PLAYER_SPEED },
@@ -42,7 +43,6 @@ function slices(id: string, weapon: string | null): PersistedPlayerSlices {
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier: 4, currentSkillTier: 4, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
-      knownAbilities: ["slam"], attunedAbilities: { techniques: ["slam"], guards: [] },
     },
     holdsInventory: {
       inventory: weapon ? [weapon] : [],

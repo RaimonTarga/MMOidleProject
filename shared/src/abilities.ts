@@ -7,9 +7,9 @@
  * family. A Technique does NOT have to be enemy-facing: Imbue Lightning is an
  * instant self-buff and is still a Technique, because its job is offense.
  *
- * State (the learned pool + ordered attunements) lives on `TracksProgression`, exactly
- * like runes — abilities are build/loadout data, not a recalculated component.
- * Firing behavior lives in `server/src/systems/player/abilities/`.
+ * No player state holds abilities: they are an internal effect library that the
+ * class runtimes fire (class-first rework D3). Firing behavior lives in
+ * `server/src/systems/player/abilities/`.
  *
  * PROGRESSION IS AUTHORED, NOT SCALED (design_docs/ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md
  * §1.3). Every ability owns one authored {@link AbilityRank} per player tier from
@@ -208,7 +208,7 @@ export interface AbilityRank {
    *
    * Exists because a rank may add a MECHANIC, not just a number: Sweep II turns
    * on Tempo, and the T1 sentence stops being true. Authored here so every
-   * surface (attunement list, HUD tooltip) reads one shared string rather than
+   * surface reads one shared string rather than
    * each re-deriving "does this rank have Tempo?" in presentation code.
    */
   blurb?: string;
@@ -254,7 +254,7 @@ export interface AbilityDef {
   icon?: string;
 }
 
-/** Stable runtime effect ID for Brace; independent of attunement priority. */
+/** Stable runtime effect ID for Brace; independent of firing order. */
 export const ABILITY_GUARD_EFFECT_ID = "ability-guard";
 
 /** Authored Brace and Endure effect IDs, independent of ability capacity. */
@@ -362,25 +362,6 @@ export const ABILITY_IMBUE_EFFECT_ID = "ability-imbue";
 
 /** Client-effect tag for a hit that spent an Imbue charge. */
 export const ABILITY_IMBUE_FX = "ability-imbue";
-
-/**
- * Equipped abilities, as ORDERED lists.
- *
- * List order IS arbitration priority: index 0 is considered first when several
- * rune conditions go valid on the same tick. There is no capacity cap. Custom Rune priority precedes default attunement order.
- */
-export interface AttunedAbilities {
-  techniques: string[];
-  guards: string[];
-}
-
-export function emptyAttunedAbilities(): AttunedAbilities {
-  return { techniques: [], guards: [] };
-}
-
-export function attunedAbilityIds(abilities: AttunedAbilities): string[] {
-  return [...new Set([...abilities.techniques, ...abilities.guards])];
-}
 
 
 // ── Rank resolution ──────────────────────────────────────────────────────────
@@ -504,16 +485,14 @@ export function abilityRankNumeral(rank: number): string {
 
 /**
  * Which slice of the name a surface shows: `full` and `noun` are the name and the
- * rank numeral (*Sweep III*) — the tooltips, the Abilities panel, the hotbar, the
- * cast callout; `plain` is the name alone — running copy (the tutorial's lines, a
- * buff tile's printed label).
+ * rank numeral (*Sweep III*) — the tooltips and the cast callout; `plain` is the
+ * name alone — running copy (the tutorial's lines, a buff tile's printed label).
  */
 export type AbilityNameForm = "full" | "noun" | "plain";
 
 /**
  * THE one entry point for an ability's player-facing name: every surface — the
- * hotbar, the Abilities panel, the tooltips, the buff bar, the cast callout and
- * the tutorial's copy — reads it. `Sweep III`: the name, then the rank numeral.
+ * tooltips, the buff bar, the cast callout and the tutorial's copy — reads it. `Sweep III`: the name, then the rank numeral.
  * Numbers never appear in a name; the numeral is the rank.
  */
 export function abilityDisplayName(
@@ -835,8 +814,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "sidestep",
-    // PROVISIONAL: priced like Brace, the other burst Guard (net of its In
-    // Combat reference wiring, abilityWiring.ts).
+    // PROVISIONAL: authored like Brace, the other burst Guard.
     name: "Sidestep",
     slot: "guard",
     shape: "instant",
@@ -1079,8 +1057,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "cull",
-    // PROVISIONAL: priced like Power Strike was (net of its In Combat reference
-    // wiring, abilityWiring.ts).
+    // PROVISIONAL: authored like Power Strike was.
     name: "Cull",
     slot: "technique",
     shape: "cast",
@@ -1177,65 +1154,6 @@ export function abilityDef(id: string | null | undefined): AbilityDef | undefine
 }
 
 /**
- * All known-ability ids that resolve to a real def, with renamed ids mapped
- * forward and duplicates collapsed (filters stale/removed ids).
- */
-export function validAbilityIds(ids: readonly string[]): string[] {
-  const seen = new Set<string>();
-  for (const raw of ids) {
-    const id = currentAbilityId(raw);
-    if (ABILITY_DATABASE.has(id)) seen.add(id);
-  }
-  return [...seen];
-}
-
-/**
- * Ability ids renamed after they had already shipped. Applied on hydrate so
- * saves that learned the old id keep the ability. Additive-only — never remove
- * an entry, or the affected saves silently lose the ability.
- */
-export const RENAMED_ABILITY_IDS: Record<string, string> = {
-  "heavy-strike": "expose-weakness",
-  // Charged Strike became the T1 Mountain **Power Strike** lineage: the same
-  // wind-up-then-deliver cast, re-homed a tier earlier as the reference
-  // all-damage cast. Saves that learned it keep it.
-  //
-  // Both targets were later CUT (the ability pass, below), so these two renames
-  // now resolve to a retired id and drop with it — kept, because removing an
-  // entry would let a renamed id slip past the retirement as an unknown one.
-  "charged-strike": "power-strike",
-};
-
-/** Map a persisted id through {@link RENAMED_ABILITY_IDS}. */
-export function currentAbilityId(id: string): string {
-  return RENAMED_ABILITY_IDS[id] ?? id;
-}
-
-/**
- * Player abilities the ability pass CUT (design §22.2, 2026-10-02): each one's
- * job moved to a lane payoff, and Power Strike merged into Slam. A save that still
- * names one — known, attuned, wired by a `use-ability` Rune rule, or holding node
- * progress — drops it on load (`attunementMigration.ts`), and the load logs one
- * line per character. Additive-only, like {@link RENAMED_ABILITY_IDS}.
- *
- * PLAYER ability ids only. Several share a name with a monster id ('frenzy' is a
- * boss buff and an fx, 'power-strike' a monster attack style); nothing here
- * touches those.
- */
-export const RETIRED_ABILITY_IDS: readonly string[] = [
-  "expose-weakness",
-  "power-strike",
-  "hamstring",
-  "frenzy",
-  "quick-strike",
-];
-
-/** True when a persisted ability id (after renames) names a cut ability. */
-export function isRetiredAbilityId(id: string): boolean {
-  return RETIRED_ABILITY_IDS.includes(currentAbilityId(id));
-}
-
-/**
  * THE single seam where an authored ability effect becomes the numbers the
  * server actually applies. Every consumer must go through this — a new ability
  * that reads a rank's `effect` raw silently opts out of Technique Power.
@@ -1267,50 +1185,6 @@ export function resolveAbilityEffect(
   }
   return out as AbilityEffectSpec;
 }
-
-/**
- * Legacy equipped shape from Step 7 (one named Technique + one named Guard).
- * Kept only so `playerRepo` can migrate old rows on hydrate — nothing new should
- * produce this shape.
- */
-export interface LegacyAttunedAbilities {
-  technique?: string | null;
-  guard?: string | null;
-}
-
-/**
- * Coerce whatever is in a persisted row into the current list shape, dropping
- * ids that no longer resolve, duplicates, and entries that don't fit their slot.
- * Accepts the legacy `{technique, guard}` shape so old saves migrate silently.
- * There is no tier or family capacity limit.
- */
-export function normalizeAttunedAbilities(raw: unknown): AttunedAbilities {
-  if (!raw || typeof raw !== "object") return emptyAttunedAbilities();
-
-  const source = raw as Partial<AttunedAbilities> & LegacyAttunedAbilities;
-  const fromLegacy = (id: string | null | undefined): string[] =>
-    typeof id === "string" ? [id] : [];
-
-  const pick = (list: unknown, legacy: string | null | undefined): string[] =>
-    Array.isArray(list) ? list.filter((id): id is string => typeof id === "string") : fromLegacy(legacy);
-
-  const forSlot = (ids: string[], slot: AbilityFamily): string[] => {
-    const seen = new Set<string>();
-    for (const raw of ids) {
-      const id = currentAbilityId(raw);
-      if (seen.has(id)) continue;
-      if (ABILITY_DATABASE.get(id)?.slot !== slot) continue;
-      seen.add(id);
-    }
-    return [...seen];
-  };
-
-  return {
-    techniques: forSlot(pick(source.techniques, source.technique), "technique"),
-    guards: forSlot(pick(source.guards, source.guard), "guard"),
-  };
-}
-
 
 /** Validation for dev boot: every rank must be authored coherently. */
 export function validateAbilities(): string[] {

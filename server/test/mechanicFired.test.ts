@@ -63,7 +63,6 @@ function makeSlices(id: string): PersistedPlayerSlices {
       unlockedRecipes: [], questProgress: {}, playerTier: 4, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [],
       runesOwned: [], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: { inventory: [], equipment: { ...emptyEquipment() }, itemUpgrades: {} },
     usesSkills: {

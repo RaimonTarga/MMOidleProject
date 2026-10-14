@@ -7,7 +7,6 @@ import type { EssenceType } from "../items";
 export interface SystemVisibilityInput {
   playerTier: number;
   globalMastery: number;
-  knownAbilities: readonly string[];
   essences?: Partial<Record<EssenceType, number>>;
   unlockedRecipes?: readonly string[];
   skillPoints?: number;
@@ -77,8 +76,7 @@ export function resolveSystemVisibility(
     .some((amount) => amount >= 4);
   const hasCraftedSomething =
     (input.inventory?.length ?? 0) > 0 ||
-    input.hasEquipment === true ||
-    input.knownAbilities.length > 0;
+    input.hasEquipment === true;
 
   return {
     combatLog: hasFought,

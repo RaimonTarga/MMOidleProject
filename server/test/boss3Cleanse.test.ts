@@ -41,7 +41,6 @@ import {
   VOLCANIC_HEAT_EFFECT_ID,
   abilityRankAt,
   applyStatusEffect,
-  emptyAttunedAbilities,
   emptyEquipment,
   getStatusEffect,
   isCleanseable,
@@ -50,7 +49,7 @@ import {
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
-import { fireAbilities } from "./fixtures/fireAbilities";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import { World } from "../src/world/World";
 import { takeWorldLogEvents } from "../src/world/worldLog";
 import {
@@ -72,6 +71,7 @@ function assert(condition: unknown, message: string): void {
  * BASELINE arm too — which is how assertion 5 is checked rather than asserted.
  */
 function makePlayerSlices(id: string, guards: string[]): PersistedPlayerSlices {
+  giveAbilities(id, guards);
   return {
     isPlayer: { id, name: "Boss3" },
     hasPosition: {
@@ -101,8 +101,6 @@ function makePlayerSlices(id: string, guards: string[]): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: [...guards],
-      attunedAbilities: { ...emptyAttunedAbilities(), techniques: [], guards: [...guards] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

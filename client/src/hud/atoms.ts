@@ -297,8 +297,6 @@ export const partyAtom = atom<{ leaderId: string; members: PartyMember[] } | nul
 export const runesOwnedAtom = atom<string[]>([]);
 export const runesEquippedAtom = atom<EquippedRule[]>([]);
 
-/** Abilities learned (crafted) — the slottable pool (system rework Step 7). */
-export const knownAbilitiesAtom = atom<string[]>([]);
 
 export const combatControlFeedbackAtom = atom<{ reason: string; at: number } | null>(null);
 
@@ -699,7 +697,6 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(unlockedSkillsAtom, []);
   setIfShallowArrayEqual(runesOwnedAtom, []);
   setRunesEquipped([]);
-  setIfShallowArrayEqual(knownAbilitiesAtom, []);
   store.set(combatControlFeedbackAtom, null);
   setIfShallowArrayEqual(inventoryAtom, []);
   setIfShallowArrayEqual(unlockedRecipesAtom, []);
@@ -813,7 +810,6 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfShallowArrayEqual(unlockedSkillsAtom, player.unlockedSkills);
   setIfShallowArrayEqual(runesOwnedAtom, player.runesOwned);
   setRunesEquipped(player.runesEquipped);
-  setIfShallowArrayEqual(knownAbilitiesAtom, player.knownAbilities);
   setIfShallowArrayEqual(inventoryAtom, player.inventory);
   setIfShallowArrayEqual(unlockedRecipesAtom, player.unlockedRecipes);
   setIfShallowArrayEqual(bossesClearedAtom, player.bossesCleared);

@@ -50,7 +50,6 @@ function makePlayer(id: string, playerTier: number, bossesCleared: string[]): Pe
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier, currentSkillTier: 0, bossesCleared, clearedNodes: [],
       runesOwned: [], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

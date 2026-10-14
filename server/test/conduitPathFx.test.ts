@@ -42,7 +42,6 @@ function slices(id: string, specId: string, range: string): PersistedPlayerSlice
       unlockedRecipes: [], questProgress: {}, playerTier: 4, currentSkillTier: 4,
       bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

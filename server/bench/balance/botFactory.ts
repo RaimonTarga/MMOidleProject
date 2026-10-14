@@ -10,7 +10,6 @@ import {
   globalMastery,
   listBiomeGroupsAtTier,
   ITEM_DATABASE,
-  type AttunedAbilities,
   type Vec2,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../../src/db/playerRepo';
@@ -51,22 +50,28 @@ function canonicalBiomeLevels(playerTier: number): Record<string, number> {
 }
 
 /**
- * The canonical abilities a bench bot runs at a given tier.
+ * A declared ability package: what a frozen bench cell says its character ran.
+ * Inert since class-first D3 (no ability is learned, attuned or fired from the
+ * player's state); kept so historical packets still read and compare.
+ */
+export interface DeclaredAbilities {
+  techniques: string[];
+  guards: string[];
+}
+
+/**
+ * The canonical abilities a bench bot ran at a given tier, as a declaration.
  *
- * These systems are CONTEXT for the bench, not the swept axis — the skill path is
- * what varies between builds. So every bot wears the same deterministic loadout
- * for its tier: build-to-build comparison stays valid, but the bot is no longer a
- * character with three shipped systems switched off entirely (which is what the
- * bench measured before this).
+ * These systems were CONTEXT for the bench, not the swept axis — the skill path is
+ * what varies between builds. So every bot wore the same deterministic loadout
+ * for its tier. Nothing applies it to the bot any more (class-first D3); the
+ * boss reference packet still declares its legacy case from it.
  *
  * Selection is "the most tier-appropriate options, deterministically ordered".
  * That is a CANONICAL-BASELINE CHOICE and it is balance-relevant — revisit it
  * when the layered-sweep mode lands and these become swept axes of their own.
  */
-export function canonicalLoadout(playerTier: number): {
-  knownAbilities: string[];
-  attunedAbilities: AttunedAbilities;
-} {
+export function canonicalLoadout(playerTier: number): DeclaredAbilities {
   // Deepest-authored first, so a T4 bot fills its slots with T4 content, not T1.
   const forSlot = (kind: 'technique' | 'guard'): string[] =>
     [...ABILITY_DATABASE.values()]
@@ -77,18 +82,14 @@ export function canonicalLoadout(playerTier: number): {
   const techniques = forSlot('technique');
   const guards = forSlot('guard');
 
-  const abilities: AttunedAbilities = { techniques: [], guards: [] };
-  // Bench selection policy: round-robin families, deepest authored first. Attuning
-  // costs nothing (Runic Points are gone), so every unlocked ability is attuned.
+  const abilities: DeclaredAbilities = { techniques: [], guards: [] };
+  // Bench selection policy: round-robin families, deepest authored first.
   for (let i = 0; i < Math.max(techniques.length, guards.length); i++) {
     for (const [family, id] of [["techniques", techniques[i]], ["guards", guards[i]]] as const) {
       if (id) abilities[family].push(id);
     }
   }
-  return {
-    knownAbilities: [...techniques, ...guards],
-    attunedAbilities: abilities,
-  };
+  return abilities;
 }
 
 function buildBotSlices(
@@ -97,7 +98,6 @@ function buildBotSlices(
   nodeId: string,
   pos: Vec2,
 ): PersistedPlayerSlices {
-  const loadout = canonicalLoadout(build.playerTier);
   return {
     isPlayer: { id, name: build.id },
     hasPosition: { current: pos, nodeId, speed: GAME_CONFIG.PLAYER_SPEED },
@@ -124,8 +124,6 @@ function buildBotSlices(
       // means, not a value that can be picked neutrally. Left as a documented gap
       // for the layered-sweep work.
       runesEquipped: [],
-      knownAbilities: loadout.knownAbilities,
-      attunedAbilities: loadout.attunedAbilities,
     },
     holdsInventory: {
       inventory: [],

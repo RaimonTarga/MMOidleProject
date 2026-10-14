@@ -2,7 +2,6 @@ import type { NodeTelemetrySnapshot } from './nodeTelemetry';
 import type { GameplayQuery, GameplaySnapshot } from './gameplayTelemetry';
 import type { WorldLogEvent } from './worldLogEvents';
 import type { EssenceType } from '../items';
-import type { AttunedAbilities } from '../abilities';
 import type { BalanceLabSnapshot } from '../systems/balanceLab';
 
 export type AdminLogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
@@ -69,9 +68,6 @@ export interface AdminCharacterRecord {
   bossesCleared: string[];
   inventoryCount: number;
   equipmentCount: number;
-  /** Abilities learned + equipped (system rework Step 7). */
-  knownAbilities: string[];
-  attunedAbilities: AttunedAbilities;
   lastPlayedAt: number;
   updatedAt: number;
 }

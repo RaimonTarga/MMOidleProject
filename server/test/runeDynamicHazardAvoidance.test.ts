@@ -73,7 +73,6 @@ function playerSlices(
       bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS, 'avoid-hazards', 'step-back'],
       runesEquipped: rules,
-      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

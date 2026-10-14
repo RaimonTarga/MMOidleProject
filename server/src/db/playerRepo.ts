@@ -1,5 +1,4 @@
 import { baseRecoveryForTier } from "@mmo-idle/shared";
-import { hasRetiredAbilityEntries, migrateAttunement, retiredAbilityEntries } from "@mmo-idle/shared";
 import { and, desc, eq, isNull } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
@@ -23,7 +22,6 @@ import {
   ITEM_DATABASE,
   normalizeEquipment,
   emptyEquipment,
-  emptyAttunedAbilities,
   globalMastery,
   runeIdsForArchetype,
   CLEARING_NODE_ID,
@@ -429,8 +427,6 @@ export async function listCharacters(db: DB): Promise<AdminCharacterRecord[]> {
       bossesCleared: slices.tracksProgression.bossesCleared,
       inventoryCount: slices.holdsInventory.inventory.length,
       equipmentCount,
-      knownAbilities: slices.tracksProgression.knownAbilities,
-      attunedAbilities: slices.tracksProgression.attunedAbilities,
       lastPlayedAt: character.lastPlayedAt,
       updatedAt: character.updatedAt,
     };
@@ -619,6 +615,12 @@ function hydratePlayerSlices(
   ]) {
     delete (tracksProgression as unknown as Record<string, unknown>)[key];
   }
+  // Abilities are no longer learned or attuned (class-first rework D3): the
+  // class runtimes fire them. A save written before that drops both lists, and
+  // the older `equippedAbilities` shape, on load.
+  for (const key of ['knownAbilities', 'attunedAbilities', 'equippedAbilities']) {
+    delete (tracksProgression as unknown as Record<string, unknown>)[key];
+  }
   // The +N ladder is retired on every slot: refund and drop any itemUpgrades
   // entry it left behind (weapons since Phase 2b, armour/charm/boots since design
   // §24.5). Mutates holdsInventory.itemUpgrades and tracksProgression.essences in
@@ -626,16 +628,6 @@ function hydratePlayerSlices(
   // for the load path that keeps it — see this function's docblock.
   if (options.grantRetiredRefunds) {
     refundRetiredUpgradeEssence(row.id, holdsInventory, tracksProgression.essences);
-    // The abilities the ability pass CUT (design §22.2) drop silently from the
-    // save below (`migrateAttunement`); say so once per character, on the load
-    // that keeps the result. Read off the stored slice, before migration.
-    const retired = retiredAbilityEntries(parseSlice<TracksProgression>(row.tracksProgression));
-    if (hasRetiredAbilityEntries(retired)) {
-      log.info(
-        { characterId: row.id, ...retired },
-        'ability pass: dropped cut abilities from the save',
-      );
-    }
   }
   tracksProgression.unlockedRecipes = migrateLegacyRecipeIds(tracksProgression.unlockedRecipes);
   const hasPosition = parseSlice<HasPosition>(row.hasPosition);
@@ -643,8 +635,6 @@ function hydratePlayerSlices(
     hasPosition.nodeId = CLEARING_NODE_ID;
   }
   const usesSkills = parseSlice<UsesSkills>(row.usesSkills);
-  const attunement = migrateAttunement(tracksProgression);
-  delete (tracksProgression as unknown as { equippedAbilities?: unknown }).equippedAbilities;
 
   return {
     isPlayer:          {
@@ -663,7 +653,6 @@ function hydratePlayerSlices(
           ? [hasPosition.nodeId]
           : tracksProgression.clearedNodes ?? []),
       runesOwned:     runeIdsForArchetype(usesSkills.combatArchetype),
-      ...attunement,
     },
     holdsInventory,
     usesSkills:        {
@@ -744,8 +733,6 @@ function buildFreshSlices(
       visitedNodes:     [],
       runesOwned:       runeIdsForArchetype(null),
       runesEquipped:    [...DEFAULT_RUNE_LOADOUT],
-      knownAbilities:   [],
-      attunedAbilities: emptyAttunedAbilities(),
     },
     holdsInventory: {
       inventory: [],

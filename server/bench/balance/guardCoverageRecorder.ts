@@ -6,9 +6,10 @@ import type { World } from '../../src/world/World';
 import { registerCombatListener, unregisterCombatListener, type CombatEventHandler } from '../../src/systems/combat/engine/combatPipeline';
 import { isHardControlled } from '../../src/systems/combat/status/playerHardControl';
 
-export function guardCoverageReadback(bot: PlayerEntity) {
+/** The declared Guards' resolved effects and cooldowns (nothing attunes them since class-first D3). */
+export function guardCoverageReadback(bot: PlayerEntity, guards: readonly string[]) {
   const p = bot.tracksProgression;
-  return p.attunedAbilities.guards.map(id => {
+  return guards.map(id => {
     const ability = ABILITY_DATABASE.get(id)!;
     return { id, effect: resolveAbilityEffectWithPassives(ability, p.playerTier, bot.usesSkills.passives),
       cooldownMs: modifiedAbilityCooldownMs(ability, p.playerTier, bot.usesSkills.passives) };
@@ -25,7 +26,7 @@ export class GuardCoverageRecorder {
   private preTick: ReturnType<GuardCoverageRecorder['state']> | null = null;
   private lastDamage: unknown = null;
   private handler: CombatEventHandler;
-  constructor(private world: World, private bot: PlayerEntity) {
+  constructor(private world: World, private bot: PlayerEntity, private declaredGuards: readonly string[]) {
     // Registered after production listeners, without mutating their context.
     this.handler = (ctx, w) => {
       if (w !== this.world || ctx.defender !== this.bot) return;
@@ -40,7 +41,7 @@ export class GuardCoverageRecorder {
     const b = this.bot, v = composePlayerView(b)!;
     const guards = Object.fromEntries(['brace', 'endure'].map(id => {
       const effect = getStatusEffect(b.tracksCombat, guardEffectIdForAbility(id)!);
-      return [id, { attuned: b.tracksProgression.attunedAbilities.guards.includes(id),
+      return [id, { attuned: this.declaredGuards.includes(id),
         remainingMs: effect?.remainingMs ?? 0, drPct: effect?.data.drPct ?? 0,
         cooldownMs: getCooldown(b.tracksCombat, `ability.cd.${id}`) }];
     }));

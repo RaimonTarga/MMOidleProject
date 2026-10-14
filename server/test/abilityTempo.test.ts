@@ -38,7 +38,7 @@ import { runMonsterAttack, runPlayerAttack } from "../src/systems/combat/engine/
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { resolveCastPayload } from "../src/systems/player/abilities/abilityEffects";
-import { fireAbilities } from "./fixtures/fireAbilities";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import { World } from "../src/world/World";
 import type { PlayerEntity } from "../src/ecs/entity";
 import type { CombatEvent } from "@mmo-idle/shared";
@@ -60,6 +60,7 @@ interface Options {
 
 function slices(id: string, options: Options = {}): PersistedPlayerSlices {
   const techniques = options.techniques ?? ["sweep"];
+  giveAbilities(id, techniques);
   return {
     isPlayer: { id, name: id },
     hasPosition: {
@@ -83,8 +84,6 @@ function slices(id: string, options: Options = {}): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: techniques,
-      attunedAbilities: { techniques, guards: [] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

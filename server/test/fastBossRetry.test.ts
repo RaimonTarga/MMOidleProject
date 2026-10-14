@@ -49,8 +49,6 @@ function playerSlices(id: string): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [],
       runesEquipped: [],
-      knownAbilities: [],
-      attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: {
       inventory: ["primordial-club"],

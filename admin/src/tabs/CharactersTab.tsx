@@ -163,11 +163,6 @@ function CharacterRow({
       <td className="px-3 py-3">
         <div>{character.inventoryCount} bag</div>
         <div className="text-xs text-red-200/35">{character.equipmentCount} equipped</div>
-        <div className="text-xs text-red-200/35">
-          T:{character.attunedAbilities?.techniques?.join(', ') || '—'}
-          {' / G:'}{character.attunedAbilities?.guards?.join(', ') || '—'}
-          {` (${character.knownAbilities?.length ?? 0} known)`}
-        </div>
       </td>
       <td className="px-3 py-3">
         <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">

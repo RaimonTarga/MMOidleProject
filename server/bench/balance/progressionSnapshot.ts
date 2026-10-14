@@ -3,7 +3,7 @@ import { runeIdsForArchetype,
   RECIPE_DATABASE, ITEM_DATABASE, globalMastery, biomeLevelCap,
   getMaxUpgrade, requiredBiomeLevelForUpgrade, upgradeCeilingFromGlobalMastery,
   upgradeCostFor,
-  ABILITY_DATABASE, abilityRankNumber, bossSealSourcesAtTier, sealsRequiredForTier, sealsHeldAtTier, SKILL_TREE } from '@mmo-idle/shared';
+  bossSealSourcesAtTier, sealsRequiredForTier, sealsHeldAtTier, SKILL_TREE } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../src/ecs/entity';
 import type { SurveyCell } from './ttkSurveySpec';
 
@@ -36,9 +36,6 @@ export function applyProgressionSnapshot(bot:PlayerEntity,cell:SurveyCell) {
     for(let tier=1;tier<s.tier;tier++)assert(sealsHeldAtTier(p.bossesCleared,tier)>=sealsRequiredForTier(tier),`Missing T${tier} prior seals`);
     assert(cell.build.skillPath.reduce((sum,id)=>sum+SKILL_TREE.get(id)!.cost,0)<=s.tier,'Class purchases exceed earned tier skill points');
   }
-  // Ability recipes are gone (class-first D3): the declared abilities are
-  // recorded as known, with no recipe and no price.
-  p.knownAbilities=[...cell.abilities!.techniques,...cell.abilities!.guards];
   p.runesOwned=runeIdsForArchetype(bot.usesSkills.combatArchetype);
   const purchases:{id:string;kind:string;cost:Record<string,number>}[]=[];
   const pay=(id:string,kind:string,cost:object={})=>purchases.push({id,kind,cost:{...cost}});
@@ -62,6 +59,6 @@ export function applyProgressionSnapshot(bot:PlayerEntity,cell:SurveyCell) {
   return {snapshot:s,purchases,priorResources:totals,remainingResources:{essences:p.essences},
     ...(s.priorBossClears?{priorBossClears:[...p.bossesCleared],priorSealOwnership:'Synthetic earned prior clears assumed; no acquisition combat measured',classSkillPointBudget:s.tier,classSkillPointsSpent:cell.build.skillPath.reduce((sum,id)=>sum+SKILL_TREE.get(id)!.cost,0)}:{}),
     acquisition:'Synthetic prior paid ownership; plain craft at production price. No acquisition time measured.',
-    abilityRanks:Object.fromEntries(p.knownAbilities.map(id=>[id,abilityRankNumber(ABILITY_DATABASE.get(id)!,s.tier)])),knownAbilities:[...p.knownAbilities],runesOwned:[...p.runesOwned]};
+    runesOwned:[...p.runesOwned]};
 }
 export const snapshotReceipts=new WeakMap<PlayerEntity,ReturnType<typeof applyProgressionSnapshot>>();

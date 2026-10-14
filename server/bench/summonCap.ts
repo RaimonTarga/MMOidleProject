@@ -108,8 +108,6 @@ function benchOwner(id: string, nodeId: string, conduit: boolean): PersistedPlay
       playerTier: 1, currentSkillTier: 1,
       bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
-      knownAbilities: [],
-      attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: { inventory: [], equipment, itemUpgrades: {} },
     usesSkills: conduit

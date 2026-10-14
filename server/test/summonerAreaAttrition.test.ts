@@ -32,7 +32,6 @@ function persisted(id: string): PersistedPlayerSlices {
       unlockedRecipes: [], questProgress: {}, playerTier: 1, currentSkillTier: 1,
       bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

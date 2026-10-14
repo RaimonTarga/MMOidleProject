@@ -10,12 +10,13 @@ import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { World } from "../src/world/World";
 import { equipItem } from "../src/systems/player/economy/inventory";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
-import { fireAbilities } from './fixtures/fireAbilities';
+import { fireAbilities, giveAbilities } from './fixtures/fireAbilities';
 import { setAggroTarget } from "../src/systems/combat/ai/targeting";
 import { BRAMBLE_EFFECT_ID } from "../src/systems/player/abilities/abilityBramble";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { describeAbility } from "../../client/src/ui/describe/abilityText";
 function makePlayerSlices(): PersistedPlayerSlices {
+  giveAbilities("bramble-player", ["bramble-guard"]);
   return {
     isPlayer: { id: "bramble-player", name: "Bramble" },
     hasPosition: {
@@ -42,8 +43,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: ["bramble-guard"],
-      attunedAbilities: { techniques: [], guards: ["bramble-guard"] },
     },
     holdsInventory: {
       inventory: [],
@@ -68,6 +67,7 @@ let serial = 0;
 function player() {
   const slices = makePlayerSlices();
   slices.isPlayer.id = `extra-${serial++}`;
+  giveAbilities(slices.isPlayer.id, ["bramble-guard"]);
   slices.tracksProgression.playerTier = 4;
   return world.attachPlayerEntity(slices, slices.isPlayer.id);
 }
@@ -119,8 +119,7 @@ const recovered = resolveAbilityEffectWithPassives(secondWind, 4, recoveryPlayer
 const recoveryBase = abilityRankAt(secondWind, 4).effect;
 assert(recovered.kind === 'heal' && recoveryBase.kind === 'heal');
 assert(recovered.recoveryPct > recoveryBase.recoveryPct);
-recoveryPlayer.tracksProgression.knownAbilities = ['second-wind'];
-recoveryPlayer.tracksProgression.attunedAbilities = { techniques: [], guards: ['second-wind'] };
+giveAbilities(recoveryPlayer.isPlayer.id, ['second-wind']);
 recoveryPlayer.hasHealth.hp = 1;
 recoveryPlayer.usesAutocombat.auto = true;
 fireAbilities(world, Date.now());
@@ -152,8 +151,7 @@ for (const id of ['brace', 'endure', 'second-wind', 'recuperate']) {
   p.holdsInventory.inventory.push(itemId);
   p.holdsInventory.itemUpgrades[itemId] = 3;
   assert(equipItem(world, p, itemId));
-  p.tracksProgression.knownAbilities = [id];
-  p.tracksProgression.attunedAbilities = { techniques: [], guards: [id] };
+  giveAbilities(p.isPlayer.id, [id]);
   p.hasHealth.hp = 1;
   p.usesAutocombat.auto = true;
   const ability = ABILITY_DATABASE.get(id)!;
@@ -187,8 +185,7 @@ for (const tier of [2, 3, 4]) {
     p.holdsInventory.inventory.push(item.id);
     p.holdsInventory.itemUpgrades[item.id] = 5;
     assert(equipItem(world, p, item.id));
-    p.tracksProgression.knownAbilities = [id];
-    p.tracksProgression.attunedAbilities = { techniques: [], guards: [id] };
+    giveAbilities(p.isPlayer.id, [id]);
     p.usesAutocombat.auto = true;
     if (id === 'break-free') applyStun(p.tracksCombat, 4000, 'tester');
     else applyStatusEffect(p.tracksCombat, { id: 'antiheal', maxStacks: 1, remainingMs: 6000, refreshable: true, sourceId: 'tester', data: {} });

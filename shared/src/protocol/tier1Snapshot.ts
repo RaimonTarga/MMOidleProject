@@ -6,7 +6,6 @@ import { sealsHeldAtTier, sealsRequiredForTier } from "../systems/tierAdvancemen
 import { SKILL_TREE } from "../skillTree";
 import { ITEM_DATABASE } from "../itemDatabase";
 import { getMaxUpgrade } from "../systems/itemUpgrades";
-import { isRetiredAbilityId } from "../abilities";
 
 /** Versioned JSON contract written by a canonical T1 route at A/B boundaries. */
 export const T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION = 1 as const;
@@ -126,8 +125,6 @@ export interface T1SnapshotState {
   inventory: string[];
   equipment: PlayerView["equipment"];
   itemUpgrades: Record<string, number>;
-  knownAbilities: string[];
-  attunedAbilities: PlayerView["attunedAbilities"];
   runesOwned: string[];
   runesEquipped: PlayerView["runesEquipped"];
   derivedStats: T1SnapshotDerivedStats;
@@ -238,7 +235,6 @@ export function tierEntryProfileFromT1Snapshot(
     throw new Error("T1 handoff snapshot has an unsupported skill-tree unlock set");
   }
   assertUnique("inventory", state.inventory);
-  assertUnique("knownAbilities", state.knownAbilities);
   assertUnique("runesOwned", state.runesOwned);
   assertUnique("bossesCleared", state.bossesCleared);
   assertUnique("clearedNodes", state.clearedNodes);
@@ -301,14 +297,6 @@ export function tierEntryProfileFromT1Snapshot(
     inventory: [...state.inventory],
     equipment: { ...state.equipment },
     itemUpgrades: importableItemUpgrades,
-    // The abilities the ability pass CUT (design §22.2) drop from a snapshot the
-    // way they drop from every save (`attunementMigration.ts`): known and
-    // attuned. Lossless for everything else.
-    knownAbilities: state.knownAbilities.filter((id) => !isRetiredAbilityId(id)),
-    attunedAbilities: {
-      techniques: state.attunedAbilities.techniques.filter((id) => !isRetiredAbilityId(id)),
-      guards: state.attunedAbilities.guards.filter((id) => !isRetiredAbilityId(id)),
-    },
     runesEquipped: state.runesEquipped.map((rule) => ({ ...rule })),
   };
 }

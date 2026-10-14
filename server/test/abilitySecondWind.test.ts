@@ -10,7 +10,7 @@ import {
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
-import { fireAbilities } from "./fixtures/fireAbilities";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import {
   activeRecoveryFraction,
   runRecovery,
@@ -24,6 +24,7 @@ function assert(condition: unknown, message: string): void {
 }
 
 function makePlayerSlices(): PersistedPlayerSlices {
+  giveAbilities("second-wind-player", ["second-wind"]);
   return {
     isPlayer: { id: "second-wind-player", name: "Second Wind" },
     hasPosition: {
@@ -51,8 +52,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: ["second-wind"],
-      attunedAbilities: { techniques: [], guards: ["second-wind"] },
     },
     holdsInventory: {
       inventory: [],

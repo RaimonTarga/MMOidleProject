@@ -33,7 +33,7 @@ import { evasionWindowBonus } from '../src/systems/defense/mitigation/evasion';
 import { fireGuard } from '../src/systems/player/abilities/abilityFiring';
 import { setEntityMotion, updateMovement } from '../src/systems/world/movement';
 import { World } from '../src/world/World';
-import { fireAbilities } from './fixtures/fireAbilities';
+import { fireAbilities, giveAbilities } from './fixtures/fireAbilities';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -42,6 +42,7 @@ function assert(condition: unknown, message: string): void {
 const SIDESTEP = ABILITY_DATABASE.get('sidestep')!;
 
 function slices(id: string): PersistedPlayerSlices {
+  giveAbilities(id, ['sidestep']);
   return {
     isPlayer: { id, name: id },
     hasPosition: { current: { x: 400, y: 400 }, nodeId: 'node-5-5', speed: GAME_CONFIG.PLAYER_SPEED },
@@ -53,7 +54,6 @@ function slices(id: string): PersistedPlayerSlices {
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier: 1, currentSkillTier: 1, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
-      knownAbilities: ['sidestep'], attunedAbilities: { techniques: [], guards: ['sidestep'] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

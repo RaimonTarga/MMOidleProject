@@ -7,7 +7,7 @@ import {
   NODE_BIOMES, GAME_CONFIG, SKILL_TREE, ITEM_DATABASE, RECIPE_DATABASE,
   ABILITY_DATABASE, MONSTER_DATABASE, RESOLVED_NODE_FEATURES,
   canUnlockSkill, composePlayerView, globalMastery,
-  normalizeEquipment, normalizeAttunedAbilities,
+  normalizeEquipment,
   sanitizeRuneLoadout, runeIdsForArchetype, initSummonsMinions,
   buildNavGrid, moverOverlapsBlockShapes, navigationBodyHalfExtents,
   type ProgressionCheckpointCapture, type ProgressionCheckpointState,
@@ -70,9 +70,8 @@ function validatePersistent(s: ProgressionCheckpointState): void {
   finiteTree(p); finiteTree(s.holdsInventory);
   requireThat(Number.isInteger(p.playerTier) && p.playerTier >= 1 && p.playerTier <= 6, 'Unsupported tier');
   const unique = (values: readonly string[], label: string) => requireThat(Array.isArray(values) && new Set(values).size === values.length, `Duplicate ${label}`);
-  for (const key of ['unlockedRecipes','bossesCleared','clearedNodes','visitedNodes','runesOwned','knownAbilities'] as const) unique(p[key] ?? [],key);
+  for (const key of ['unlockedRecipes','bossesCleared','clearedNodes','visitedNodes','runesOwned'] as const) unique(p[key] ?? [],key);
   unique(s.holdsInventory.inventory,'inventory'); unique(skills.unlockedSkills,'skills');
-  unique([...p.attunedAbilities.techniques,...p.attunedAbilities.guards],'attuned abilities');
   for (const key of p.bossesCleared) { if(key==='ultimate:void-overlord') continue; /* legacy token in old saves; the encounter was deleted 2026-09-27 */ const [group,raw]=key.split(':');const tier=Number(raw);requireThat(Number.isInteger(tier) && tier<=p.playerTier && bossSealSourcesAtTier(tier).includes(group), `Invalid boss clear ${key}`); }
   for (let tier=1;tier<p.playerTier;tier++) requireThat(sealsRequiredForTier(tier)>0 && sealsHeldAtTier(p.bossesCleared,tier)>=sealsRequiredForTier(tier), `Missing earned tier ${tier} seals`);
   for (const [group,level] of Object.entries(p.biomeLevel)) requireThat(BIOME_DATABASE.has(group) && Number.isInteger(level) && level<=biomeLevelCap(p.playerTier,group), `Invalid mastery ${group}`);
@@ -103,9 +102,6 @@ function validatePersistent(s: ProgressionCheckpointState): void {
   }
   for (const [id,plus] of Object.entries(inv.itemUpgrades)) requireThat(ITEM_DATABASE.has(id) && Number.isInteger(plus) && plus <= (ITEM_DATABASE.get(id)?.upgrades?.length ?? 0), `Incompatible upgrade history ${id}`);
   for (const id of p.unlockedRecipes) requireThat(RECIPE_DATABASE.has(id), `Unknown recipe ${id}`);
-  for (const id of p.knownAbilities) requireThat(ABILITY_DATABASE.has(id), `Unknown ability ${id}`);
-  requireThat(stable(normalizeAttunedAbilities(p.attunedAbilities)) === stable(p.attunedAbilities), 'Invalid attuned ability order');
-  requireThat([...p.attunedAbilities.techniques,...p.attunedAbilities.guards].every(id=>p.knownAbilities.includes(id)), 'Unlearned ability');
   requireThat(stable([...runeIdsForArchetype(skills.combatArchetype)].sort()) === stable([...p.runesOwned].sort()), 'Rune ownership incompatible with current definitions');
   requireThat(stable(sanitizeRuneLoadout(p.runesEquipped,new Set(p.runesOwned),skills.combatArchetype)) === stable(p.runesEquipped), 'Invalid ordered Rune loadout');
 }

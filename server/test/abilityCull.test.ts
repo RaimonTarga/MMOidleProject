@@ -30,7 +30,7 @@ import { updateAbilityCasts } from '../src/systems/player/abilities/abilityCasti
 import { abilityCooldownKey } from '../src/systems/player/abilities/abilityCooldowns';
 import { cullMultiplier } from '../src/systems/player/abilities/abilityEffects';
 import { World } from '../src/world/World';
-import { fireAbilities } from './fixtures/fireAbilities';
+import { fireAbilities, giveAbilities } from './fixtures/fireAbilities';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -39,6 +39,7 @@ function assert(condition: unknown, message: string): void {
 const CULL = ABILITY_DATABASE.get('cull')!;
 
 function slices(id: string): PersistedPlayerSlices {
+  giveAbilities(id, ['cull']);
   return {
     isPlayer: { id, name: id },
     hasPosition: { current: { x: 400, y: 400 }, nodeId: 'node-5-5', speed: GAME_CONFIG.PLAYER_SPEED },
@@ -50,7 +51,6 @@ function slices(id: string): PersistedPlayerSlices {
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier: 3, currentSkillTier: 3, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
-      knownAbilities: ['cull'], attunedAbilities: { techniques: ['cull'], guards: [] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

@@ -248,7 +248,7 @@ export function BuildRunesTab() {
             {pending && !valid && (
               <span className="rune-detail">
                 {response?.missing
-                  ? "Attune the target ability before adding this rule."
+                  ? "This response no longer exists."
                   : "Choose a compatible response."}
               </span>
             )}

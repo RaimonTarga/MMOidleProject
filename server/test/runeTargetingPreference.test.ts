@@ -77,8 +77,6 @@ function makePlayerSlices(id: string, runesEquipped: EquippedRule[]): PersistedP
       // recipes and silently drops any rule it does not own, so a missing recipe
       // here would make the test pass for the wrong reason.
       runesEquipped,
-      knownAbilities: [],
-      attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

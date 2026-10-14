@@ -10,7 +10,6 @@ function assert(condition: boolean, message: string): void {
 const FRESH: SystemVisibilityInput = {
   playerTier: 0,
   globalMastery: 0,
-  knownAbilities: [],
   essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
   // Fresh characters own starter rune fragments, so Loadout is intentionally
   // present from boot under the existing ownership rule.

@@ -5,7 +5,6 @@ import {
   skillPointsAtom,
   unlockedRecipesAtom,
   globalMasteryAtom,
-  knownAbilitiesAtom,
   playerIdAtom,
   playerTierAtom,
   biomeLevelAtom,
@@ -78,7 +77,6 @@ export function installUiUnlockSync(): () => void {
     resolveSystemVisibility({
       playerTier: store.get(playerTierAtom),
       globalMastery: store.get(globalMasteryAtom),
-      knownAbilities: store.get(knownAbilitiesAtom),
       essences: store.get(essencesAtom),
       unlockedRecipes: store.get(unlockedRecipesAtom),
       skillPoints: store.get(skillPointsAtom),
@@ -183,7 +181,6 @@ export function installUiUnlockSync(): () => void {
   const visibilityAtoms = [
     playerTierAtom,
     globalMasteryAtom,
-    knownAbilitiesAtom,
     essencesAtom,
     unlockedRecipesAtom,
     skillPointsAtom,

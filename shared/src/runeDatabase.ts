@@ -48,8 +48,7 @@ export type RuneConditionId =
   // satisfy this condition.
   | "inside-telegraph"
   // Reactive telegraph hook: active while an enemy attacking you is charging a
-  // cast-time attack (e.g. the Ridge Archer's Power Shot). Pairs with Fire Guard
-  // for read-and-react defense.
+  // cast-time attack (e.g. the Ridge Archer's Power Shot): read-and-react timing.
   | "target-casting"
   // Active while your NEXT attack is empowered (the finisher / execution / discharge
   // is armed and waiting to land). Class-agnostic: it reads the shared empowered flag,

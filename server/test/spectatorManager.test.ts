@@ -2,7 +2,6 @@ import {
   CLEARING_NODE_ID,
   GAME_CONFIG,
   emptyEquipment,
-  emptyAttunedAbilities,
   type SpectateStatus,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
@@ -134,8 +133,6 @@ function playerSlices(id: string, name: string, playerTier: number): PersistedPl
       visitedNodes: [],
       runesOwned: [],
       runesEquipped: [],
-      knownAbilities: [],
-      attunedAbilities: emptyAttunedAbilities(),
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

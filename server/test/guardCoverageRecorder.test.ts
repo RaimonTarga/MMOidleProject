@@ -4,7 +4,7 @@ import { createFarmWorld } from '../bench/balance/worldFactory';
 import { prepareSurveyBot } from '../bench/balance/ttkSurveySpec';
 import { PACKAGE_FIT_CELLS } from '../bench/balance/playerPackageFitSpec';
 import { GuardCoverageRecorder } from '../bench/balance/guardCoverageRecorder';
-import { fireAbilities } from './fixtures/fireAbilities';
+import { fireAbilities, giveAbilities } from './fixtures/fireAbilities';
 import { emitCombatEvent, makeCombatContext } from '../src/systems/combat/engine/combatPipeline';
 
 const world = createFarmWorld();
@@ -17,7 +17,10 @@ cell.build.gearItemIds.recovery = 'volcanic-charm-t4';
 cell.abilities!.guards.push('endure');
 const { bot } = prepareSurveyBot(world, cell, { x: 2400, y: 2400 });
 bot.hasHealth.hp = bot.hasHealth.maxHp * 0.2;
-const recorder = new GuardCoverageRecorder(world, bot);
+// No arena fight: fire only the declared Guards (the package's Techniques would
+// have waited for combat).
+giveAbilities(bot.isPlayer.id, cell.abilities!.guards);
+const recorder = new GuardCoverageRecorder(world, bot, cell.abilities!.guards);
 // Direct ability decisions only: no arena, damage application, or balance observation.
 for (let tick = 0; tick < 4; tick++) {
   world.worldLogJournal = [];
