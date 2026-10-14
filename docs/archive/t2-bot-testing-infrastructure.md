@@ -1,3 +1,5 @@
+> **ARCHIVED (2026-10-15): the class-first rework removed this system (D5).** Design authority: [class-first-bible.md](../../design_docs/class-first-bible.md). Kept for history only.
+
 # Tier-2 Bot Testing Infrastructure — current state
 
 **Status:** LIVE; audited 2026-09-27. This is the living truth for the Tier-2 bot
@@ -464,7 +466,7 @@ one table.
 ## 9.5 What the first runs actually showed
 
 Five live runs, all non-canonical. Full detail and classification in
-[`reports/t2-experiment-ledger.md`](../reports/t2-experiment-ledger.md).
+[`reports/t2-experiment-ledger.md`](../../reports/t2-experiment-ledger.md).
 
 | id | what happened | classification |
 |---|---|---|
