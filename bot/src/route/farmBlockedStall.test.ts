@@ -2,19 +2,18 @@
  * `farmBlocked` must raise a NAMED stall on a requirement farming cannot pay.
  *
  * The span exists to measure how long the economy makes a player wait, so its
- * contract is that the wait ends. Three requirement shapes break it — a Global
- * Mastery shortfall larger than the farm biome's remaining headroom, another
- * biome's level, and a shard this node does not pay — and all three used
- * to surface as a generic timeout: twelve minutes of "no progress", or for the
- * lineage steps (which pass `ignoreBiomeCap` because their essence does keep
- * arriving) the full thirty-minute step timeout, with a `missing` map and no
- * sentence saying what was impossible about it.
+ * contract is that the wait ends. Two requirement shapes break it — a Global
+ * Mastery shortfall larger than the farm biome's remaining headroom, and
+ * another biome's level — and both used to surface as a generic timeout:
+ * twelve minutes of "no progress", or under `ignoreBiomeCap` (essence does
+ * keep arriving) the full thirty-minute step timeout, with a `missing` map and
+ * no sentence saying what was impossible about it.
  */
 import assert from "node:assert/strict";
-import { NODE_BIOMES, biomeLevelCap, maxGlobalMasteryAtTier, nodeFamily, nodeShard, nodesPayingShard } from "@mmo-idle/shared";
+import { NODE_BIOMES, biomeLevelCap, maxGlobalMasteryAtTier } from "@mmo-idle/shared";
 import { missingToReasons, reasonsToMissing, unsatisfiableByFarming } from "./conditions";
 import { RouteExecutor } from "./executor";
-import { dungeonNodeFor, type Observation } from "../state/observation";
+import type { Observation } from "../state/observation";
 
 const PLAINS_NODE = "node-t1-plains-01";
 assert.equal(NODE_BIOMES[PLAINS_NODE]?.biomeGroup, "plains", "the fixture node is a Plains node");
@@ -86,74 +85,17 @@ assert.equal(
   assert.match(reason, /needs a tier-up, not more farming/);
 }
 
-// ── A shard this node does not pay (design §24.3) ────────────────────────────
+// ── The stall survives the reasons round trip ────────────────────────────────
 //
-// A blended node pays ONE shard, its dominant family's, for every kill in it —
-// minority bodies included. So standing on a node that pays another shard farms
-// forever for this one, even when a minority family here "drops" it. Asserted
-// against the node rule's own readings rather than hard-coded families, so a
-// blend reorder cannot silently turn this into a test of nothing (review B5).
+// `farmBlocked` only ever sees `reasonsToMissing(reasons())`, so every key the
+// stall reads must come back out of it unchanged.
 {
   const obs = obsWith(2, 30, { plains: 3 });
-  const paid = nodeShard(PLAINS_NODE);
-  const territory = nodeFamily(PLAINS_NODE)?.name;
-  assert(paid && territory, "fixture: the Plains node is a blended territory");
-
-  // Control: no Plains family drops it at all.
-  const reason = unsatisfiableByFarming({ "shard.control": 4 }, PLAINS_NODE, obs);
-  assert(reason, `${PLAINS_NODE} pays ${paid}, so a control shortfall is unfarmable here`);
-  assert.match(reason, /needs 4 more control shards/);
-  assert.match(reason, new RegExp(`${territory} territory, which pays ${paid} shards`));
-
-  // A Plains packet that is NOT this node's: some other Plains node pays it, this
-  // one never will — the stall names the node, not the biome.
-  const elsewhere = (["technique", "kill-chain", "empowered"] as const).find((p) => p !== paid)!;
-  assert(nodesPayingShard("plains", 1, elsewhere).length > 0, `fixture: some Plains node pays ${elsewhere}`);
-  const elsewhereReason = unsatisfiableByFarming({ [`shard.${elsewhere}`]: 4 }, PLAINS_NODE, obs);
-  assert(elsewhereReason, `${PLAINS_NODE} pays ${paid}, not ${elsewhere}, whatever its minority families drop`);
-  assert.match(elsewhereReason, /every kill here pays/);
-
-  // This node's own shard, and another packet on the node that pays it, are waits.
-  assert.equal(
-    unsatisfiableByFarming({ [`shard.${paid}`]: 4 }, PLAINS_NODE, obs),
-    undefined,
-    "the node's own shard is an ordinary wait",
-  );
-  const payingNode = nodesPayingShard("plains", 1, elsewhere)[0]!;
-  assert.equal(
-    unsatisfiableByFarming({ [`shard.${elsewhere}`]: 4 }, payingNode, { ...obs, nodeId: payingNode } as Observation),
-    undefined,
-    `${payingNode} pays ${elsewhere}, so the shortfall is an ordinary wait there`,
-  );
-
-  // A node with no blend (a dungeon) keeps the per-mob rule: the biome's
-  // fieldable families decide.
-  const dungeon = dungeonNodeFor("plains", 1)!;
-  assert(dungeon && nodeShard(dungeon) === undefined, "fixture: the Plains dungeon has no blend");
-  const dungeonReason = unsatisfiableByFarming({ "shard.control": 4 }, dungeon, obs);
-  assert(dungeonReason, "no Plains family drops control, so the dungeon cannot pay it either");
-  assert.match(dungeonReason, /no tier-1 plains family drops them/);
-  assert.equal(
-    unsatisfiableByFarming({ "shard.technique": 4 }, dungeon, obs),
-    undefined,
-    "the Plains Swarm fields at tier 1, so a dungeon kill can pay technique",
-  );
-}
-
-// ── The stall survives the reasons round trip (review L26) ────────────────────
-//
-// `farmBlocked` only ever sees `reasonsToMissing(reasons())`. A shard shortfall
-// used to be lifted into a `prerequisite` reason, which collapses to a bare
-// `prerequisite` count, so `unsatisfiableByFarming` never saw a shard key and the
-// unfarmable-shard stall could not fire: the route farmed to the step timeout.
-{
-  const obs = obsWith(2, 30, { plains: 3 });
-  const reasons = missingToReasons({ "shard.control": 4 }, obs);
-  assert.equal(reasons.length, 1);
-  assert.equal(reasons[0]!.kind, "shard", "a shard shortfall is its own reason kind");
+  const reasons = missingToReasons({ "biomeLevel.forest": 2, globalMasteryNeeded: 1 }, obs);
+  assert.deepEqual(reasons.map((r) => r.kind).sort(), ["biomeLevel", "globalMastery"]);
   const missing = reasonsToMissing(reasons);
-  assert.deepEqual(missing, { "shard.control": 4 }, "the shard key survives the round trip");
-  assert(unsatisfiableByFarming(missing, PLAINS_NODE, obs), "and still names the stall");
+  assert.deepEqual(missing, { "biomeLevel.forest": 2, globalMasteryNeeded: 1 }, "the keys survive the round trip");
+  assert(unsatisfiableByFarming(missing, PLAINS_NODE, obs), "and still name the stall");
 }
 
 // ── Essence is never a stall, and neither is an unnamed player ───────────────
@@ -202,17 +144,17 @@ async function farmBlockedRaisesIt(): Promise<void> {
   await assert.rejects(
     api.farmBlocked(
       PLAINS_NODE,
-      "card:rapier-t1-effect",
+      "craft:plains-vest-t1",
       () => false,
       () => [{ kind: "globalMastery", current: 30, required: 35, missing: 5 }],
-      // The lineage steps' own flag: it must not suppress this stall.
+      // `ignoreBiomeCap` must not suppress this stall.
       true,
     ),
     (error: unknown) => {
       const message = (error as Error).message;
       assert.match(
         message,
-        /^card:rapier-t1-effect cannot be farmed at node-t1-plains-01: it needs 5 more Global Mastery/,
+        /^craft:plains-vest-t1 cannot be farmed at node-t1-plains-01: it needs 5 more Global Mastery/,
         `named stall, got: ${message}`,
       );
       return true;
@@ -232,7 +174,7 @@ async function farmBlockedRaisesIt(): Promise<void> {
   await assert.rejects(
     api.farmBlocked(
       PLAINS_NODE,
-      "card:rapier-t1-speed",
+      "craft:plains-charm-t1",
       () => false,
       () => [{ kind: "essence", essence: "yellow", current: 0, required: 400, missing: 400 }],
       true,

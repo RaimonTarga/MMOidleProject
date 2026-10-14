@@ -8,6 +8,7 @@ const tests = [
   ["bot", "src/loadout/loadout.test.ts"],
   ["bot", "src/policy/choices.test.ts"],
   ["bot", "src/route/executor.test.ts"],
+  ["bot", "src/routes/smokeT1.test.ts"],
   ["bot", "src/telemetry/experience.test.ts"],
   ["bot", "src/telemetry/t1Snapshots.test.ts"],
 ];

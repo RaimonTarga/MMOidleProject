@@ -1,3 +1,12 @@
+/**
+ * NOT USED BY THE HARNESS. The bot's loadout is Rune rules only (`./runes.ts`,
+ * `./apply.ts`). This full-build validator (abilities, stances, rites and their
+ * Runic Point bill) is kept only because the server's bench imports
+ * `validateBuild` from this path: `server/bench/balance/ttkSurveySpec.ts`
+ * (whose `prepareSurveyBot` about twenty server tests call),
+ * `server/bench/poolRaise.ts` and `server/bench/lineage/laneBot.ts`. It goes
+ * with those systems, together with its server importers.
+ */
 import {
   ABILITY_DATABASE, STANCE_DATABASE, RITE_DATABASE, attunedAbilityIds,
   runicPointBreakdown, runeBudgetForGlobalMastery, sanitizeRuneLoadout, withReferenceAbilityWiring,

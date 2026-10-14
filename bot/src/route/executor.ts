@@ -1,44 +1,22 @@
-import { applyBuild } from "../loadout/apply";
+import { applyRuneLoadout } from "../loadout/apply";
 import { ObservationWindow } from "./observationWindow";
-import { BuildError, buildKey, buildRP, validateBuild, observedBuild, type DesiredBuild } from "../loadout/loadout";
+import { BuildError, runeLoadoutKey, validateRuneLoadout } from "../loadout/runes";
 import {
   GAME_CONFIG,
-  ABILITY_RECIPE_DATABASE,
-  RITE_RECIPE_DATABASE,
-  isRiteRecipeUnlocked,
-  isAbilityRecipeUnlocked,
   BIOME_START_TIER_BY_GROUP,
   BIOME_PRIMARY_ESSENCE,
-  RUNE_RECIPE_DATABASE,
-  STANCE_RECIPE_DATABASE,
-  isStanceRecipeUnlocked,
-  NO_STANCE_ID,
   ITEM_DATABASE,
-  biomeLaneAPackets,
   LINEAGE_DATABASE,
-  capstoneMaterialName,
-  formGateBiomeLevel,
-  formGateMastery,
-  cardRank,
-  lineageCardPrice,
-  maxCardRank,
-  rankNumeral,
-  lineageGateCost,
-  resolveLineageCard,
   NODE_BIOMES,
   biomeLevelCap,
   RECIPE_DATABASE,
   canUnlockSkillFromView,
-  globalMasteryRequiredForUpgrade,
-  isGatedLineageForm,
   SKILL_TREE,
   upgradeCeilingFromGlobalMastery,
   upgradeCostFor,
   type EquippedRule,
   type EssenceType,
   type EquipmentSlot,
-  type PacketId,
-  withReferenceAbilityWiring,
 } from "@mmo-idle/shared";
 import type { Intents } from "../net/intents";
 import {
@@ -53,11 +31,9 @@ import type { Observation } from "../state/observation";
 import { dungeonNodeFor, normalNodesFor } from "../state/observation";
 import type { Activity, Recorder } from "../telemetry/recorder";
 import {
-  conditionBlockReasons,
   craftBlockReasons,
   describe,
   evaluate,
-  missingToReasons,
   reasonsToMissing,
   recipeShortfall,
   resolveNode,
@@ -167,7 +143,8 @@ export interface ExecutorDeps {
 
 export class RouteExecutor {
   private rotation = 0;
-  private expectedBuild: DesiredBuild | null = null;
+  /** The Rune loadout the last `configureRunes` verified; drift from it is a failure. */
+  private expectedRunes: EquippedRule[] | null = null;
   /** Near cluster for the farm step being set up, consumed by `farmUntil`. */
   private nearCandidates: readonly string[] | undefined;
   private readonly firedMilestones = new Set<string>();
@@ -366,38 +343,16 @@ export class RouteExecutor {
         return this.doFarm(step, step.stallAfterMs);
       case "craft":
         return this.doCraft(step);
-      case "evolveItem":
-        return this.doEvolveItem(step);
-      case "craftStance":
-        return this.doCraftStance(step);
-      case "setDefaultStance":
-        return this.doSetDefaultStance(step.stanceId);
       case "equip":
         return this.doEquip(step.definitionIds);
       case "unequip":
         return this.doUnequip(step.slot, step.expectedDefinitionId);
       case "upgrade":
         return this.doUpgrade(step);
-      case "configureBuild":
-        return this.doConfigureBuild(step.build);
-      case "craftRite":
-        return this.doCraftRite(step);
       case "configureRunes":
         return this.doConfigureRunes(step.rules);
-      case "learnAbility":
-        return this.doLearnAbility(step);
-      case "setAbilities":
-        return this.doSetAbilities(step);
-      case "craftRune":
-        return this.doCraftRune(step);
-      case "unlockCard":
-        return this.doUnlockCard(step);
       case "setActive":
         return this.doSetActive(step);
-      case "unlockForm":
-        return this.doUnlockForm(step);
-      case "wearForm":
-        return this.doWearForm(step);
       case "attemptBoss":
         return this.doAttemptBoss(step);
       case "repeatUntil":
@@ -425,8 +380,6 @@ export class RouteExecutor {
       message: step.message,
       nodeId: this.deps.obs.nodeId,
       equipment: self ? { ...self.equipment } : {},
-      techniques: self ? [...self.attunedAbilities.techniques] : [],
-      guards: self ? [...self.attunedAbilities.guards] : [],
       frameId,
     };
     this.deps.recorder.emit({
@@ -438,8 +391,6 @@ export class RouteExecutor {
       message: step.message,
       nodeId: this.deps.obs.nodeId,
       equipment: detail.equipment,
-      techniques: detail.techniques,
-      guards: detail.guards,
       frameId,
     });
     if (!passed) throw new InvalidTreatmentError(`${code}: ${step.message ?? condition}`, detail);
@@ -1104,12 +1055,11 @@ export class RouteExecutor {
     const definitionId = obs.self?.equipment[slot] ?? null;
     if (!definitionId) return;
 
-    // The plan was resolved against a static snapshot at route-build time; if
-    // a different item has since been equipped into this slot (e.g. a later
-    // leg's weapon arrived before this leg's own evolve-after-unequip step
-    // ran), evicting it unconditionally would strip the wrong, currently
-    // correct item and can leave the class disarmed for the rest of the run.
-    // Skip rather than guess. See t2Acquisition.ts's `evolve-after-unequip`.
+    // The step was planned against the item it expects in this slot; if a
+    // different item has since been equipped there (e.g. a later leg's weapon
+    // arrived before this step ran), evicting it unconditionally would strip
+    // the wrong, currently correct item and can leave the class disarmed for
+    // the rest of the run. Skip rather than guess.
     if (expectedDefinitionId && definitionId !== expectedDefinitionId) {
       recorder.emit({
         kind: "build-change",
@@ -1274,252 +1224,26 @@ export class RouteExecutor {
     }
   }
 
+  /**
+   * Equip the policy's Rune loadout and verify it. Runes are free standing
+   * orders, so the only gates are ownership and the class; once verified, any
+   * later change outside an authored `configureRunes` step is a failure.
+   */
   private async doConfigureRunes(rules: EquippedRule[]): Promise<void> {
-    const { obs } = this.deps;
-    const wanted = this.deps.policy.runeLoadout(rules);
-
-    await this.doConfigureBuild({ ...observedBuild(obs.requireSelf()), runeRules: wanted });
-  }
-
-  private async doConfigureBuild(build: DesiredBuild): Promise<void> {
     const { obs, intents, recorder } = this.deps;
-    const issues = obs.self ? validateBuild(build, obs.self) : [];
-    if (issues.length) throw new BuildError(issues[0].code, issues.map(i => i.reason).join("; "), { issues, requested: build });
-    const auto = (obs.self?.auto ?? false) && (!obs.self || buildKey(observedBuild(obs.self)) !== buildKey(build));
-    this.expectedBuild = null;
-    if (auto) await this.emitUntil(() => intents.setAuto(false), () => obs.self?.auto === false, { timeoutMs: 5000, what: "pause combat for build mutation" });
-    await applyBuild(build, { obs, intents,
+    const wanted = this.deps.policy.runeLoadout(rules);
+    const issues = obs.self ? validateRuneLoadout(wanted, obs.self) : [];
+    if (issues.length) throw new BuildError(issues[0].code, issues.map(i => i.reason).join("; "), { issues, requested: wanted });
+    const auto = (obs.self?.auto ?? false) && (!obs.self || runeLoadoutKey(obs.self.runesEquipped) !== runeLoadoutKey(wanted));
+    this.expectedRunes = null;
+    if (auto) await this.emitUntil(() => intents.setAuto(false), () => obs.self?.auto === false, { timeoutMs: 5000, what: "pause combat for rune change" });
+    await applyRuneLoadout(wanted, { obs, intents,
       mutate: send => this.mutate(send),
       wait: (predicate, what) => this.waitUntil(predicate, { timeoutMs: 15_000, what }),
       report: detail => recorder.emit({ kind: "build-change", atMs: recorder.now(), system: "loadout", detail }),
     });
-    // What `applyBuild` actually equipped: it appends reference wiring for any
-    // attuned ability the rules leave unwired (abilities have no built-in trigger
-    // since 2026-09-25). Expecting the unwired build made every ability-learning
-    // step fail the drift check on its next poll.
-    this.expectedBuild = structuredClone({ ...build, runeRules: withReferenceAbilityWiring(build.runeRules, build.abilities) });
-    if (auto) await this.emitUntil(() => intents.setAuto(true), () => obs.self?.auto === true, { timeoutMs: 5000, what: "resume combat after verified build" });
-  }
-
-  private async doLearnAbility(
-    step: Extract<RouteStep, { type: "learnAbility" }>,
-  ): Promise<void> {
-    const { obs, intents, recorder } = this.deps;
-
-    if (!obs.self?.knownAbilities.includes(step.abilityId)) {
-      const recipe = ABILITY_RECIPE_DATABASE.get(step.recipeId);
-      if (!recipe) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown ability recipe in route", { step });
-
-      const farmNode = recipe.recipeGroup
-        ? this.resolveFarmNode(step.farmAt, recipe.recipeGroup)
-        : (step.farmAt ? resolveNode(step.farmAt, obs, this.rotation) : null);
-
-      const affordable = (): boolean => {
-        for (const [type, amount] of Object.entries(recipe.cost)) {
-          if (obs.essence(type as EssenceType) < (amount ?? 0)) return false;
-        }
-        return isAbilityRecipeUnlocked(recipe, obs.requireSelf());
-      };
-
-      if (!affordable()) {
-        if (!farmNode) {
-          throw new StallError("cannot satisfy ability requirement", { step });
-        }
-        const abilityMissing = (): Record<string, number> => {
-          const missing: Record<string, number> = {};
-          for (const [type, amount] of Object.entries(recipe.cost)) {
-            const short = (amount ?? 0) - obs.essence(type as EssenceType);
-            if (short > 0) missing[`essence.${type}`] = short;
-          }
-          if (recipe.recipeGroup) {
-            const short =
-              (recipe.requiredBiomeLevel ?? 0) - obs.biomeLevel(recipe.recipeGroup);
-            if (short > 0) missing[`biomeLevel.${recipe.recipeGroup}`] = short;
-          }
-          return missing;
-        };
-        await this.farmBlocked(farmNode, `ability:${step.abilityId}`, affordable, () =>
-          missingToReasons(abilityMissing(), obs),
-        );
-      }
-
-      const result = await this.mutate(() => intents.craftAbilityRecipe(step.recipeId));
-      if (!result.success) {
-        throw new StallError(`ability craft rejected: ${result.reason ?? "unknown"}`, { step });
-      }
-      await this.waitUntil(() => obs.self?.knownAbilities.includes(step.abilityId) ?? false, {
-        timeoutMs: 30_000,
-        what: `${step.abilityId} learned`,
-      });
-    }
-
-    if (step.attune === false) return;
-    const current = obs.self?.attunedAbilities ?? { techniques: [], guards: [] };
-    const key = step.slot === "guard" ? "guards" : "techniques";
-    if (current[key].includes(step.abilityId)) return;
-
-    // This route step replaces its family; setAbilities declares arbitrary repertoires.
-    const next = {
-      techniques: [...current.techniques],
-      guards: [...current.guards],
-    };
-    next[key] = [step.abilityId];
-    await this.doSetAbilities({ type: "setAbilities", ...next });
-  }
-
-  private async doSetAbilities(step: Extract<RouteStep, { type: "setAbilities" }>): Promise<void> {
-    const current = observedBuild(this.deps.obs.requireSelf());
-    const abilities = { techniques: [...step.techniques], guards: [...step.guards] };
-    const ids = new Set([...step.techniques, ...step.guards]);
-    // Match the ordinary server removal semantics for legacy family replacements.
-    const runeRules = current.runeRules.filter(r => r.actionId !== "use-ability" || ids.has(r.targetAbilityId ?? ""));
-    await this.doConfigureBuild({ ...current, abilities, runeRules });
-  }
-
-  private async doCraftRune(
-    step: Extract<RouteStep, { type: "craftRune" }>,
-  ): Promise<void> {
-    const { obs, intents, recorder } = this.deps;
-    const recipe = RUNE_RECIPE_DATABASE.get(step.recipeId);
-    if (!recipe) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown rune recipe in route", { step });
-    if (obs.self?.runeRecipesCrafted.includes(step.recipeId)) return;
-
-    const farmNode = recipe.recipeGroup
-      ? this.resolveFarmNode(step.farmAt, recipe.recipeGroup)
-      : (step.farmAt ? resolveNode(step.farmAt, obs, this.rotation) : null);
-
-    const missing = (): Record<string, number> => {
-      const out: Record<string, number> = {};
-      for (const [type, amount] of Object.entries(recipe.cost)) {
-        const short = (amount ?? 0) - obs.essence(type as EssenceType);
-        if (short > 0) out[`essence.${type}`] = short;
-      }
-      if (recipe.recipeGroup && recipe.requiredBiomeLevel !== undefined) {
-        const short = recipe.requiredBiomeLevel - obs.biomeLevel(recipe.recipeGroup);
-        if (short > 0) out[`biomeLevel.${recipe.recipeGroup}`] = short;
-      }
-      return out;
-    };
-
-    if (Object.keys(missing()).length > 0) {
-      if (!farmNode) throw new StallError("cannot satisfy rune requirement", { step });
-      await this.farmBlocked(
-        farmNode,
-        `rune:${step.recipeId}`,
-        () => Object.keys(missing()).length === 0,
-        () => missingToReasons(missing(), obs),
-        true,
-      );
-    }
-
-    const result = await this.mutate(() => intents.craftRuneRecipe(step.recipeId));
-    if (!result.success) {
-      throw new StallError(`rune craft rejected: ${result.reason ?? "unknown"}`, { step });
-    }
-    await this.waitUntil(
-      () => obs.self?.runeRecipesCrafted.includes(step.recipeId) ?? false,
-      { timeoutMs: 30_000, what: `${step.recipeId} crafted` },
-    );
-
-    recorder.emit({
-      kind: "build-change",
-      atMs: recorder.now(),
-      system: "rune-forge",
-      detail: { recipeId: step.recipeId, runeId: recipe.runeId ?? null },
-    });
-  }
-
-  /**
-   * Buy one lineage card, farming for the shortfall exactly as `craft` does.
-   *
-   * Prices are read from the magnitude table at runtime (`lineageCardPrice`), so
-   * a route never restates one and a tuning pass cannot silently invalidate a
-   * route. The tree itself is opened by HOLDING the base form, so this throws a
-   * route-logic failure rather than stalling if the slot is empty — that is an
-   * authoring mistake, not a wallet problem.
-   */
-  private async doUnlockCard(
-    step: Extract<RouteStep, { type: "unlockCard" }>,
-  ): Promise<void> {
-    const { obs, intents, recorder } = this.deps;
-    const lineage = LINEAGE_DATABASE.get(step.lineageId);
-    if (!lineage) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown lineage in route", { step });
-    const card = lineage.cards.find((c) => c.id === step.cardId);
-    if (!card) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown lineage card in route", { step });
-    // A RANKED card (the T1 lean trio, design §26.1) is bought one rank at a time
-    // through the same intent, each rank priced and gated at its own rank; every
-    // other card has one rank, and owning it is the end.
-    const target = Math.min(Math.max(1, step.rank ?? 1), maxCardRank(card));
-    const owned = (): number => cardRank(obs.self?.lineages[step.lineageId], step.cardId);
-    if (owned() >= target) return;
-
-    const farmNode = this.lineageFarmNode(step.farmAt, lineage.homeBiome, card.lane);
-
-    while (owned() < target) {
-      const buying = owned() + 1;
-      const what = buying > 1 ? `card:${step.cardId}:rank-${buying}` : `card:${step.cardId}`;
-      const missing = (): Record<string, number> => {
-        const out: Record<string, number> = {};
-        const self = obs.self;
-        const { cost } = lineageCardPrice({ lineage, card, lineages: self?.lineages, rank: buying });
-        for (const [type, amount] of Object.entries(cost.essence)) {
-          const short = (amount ?? 0) - obs.essence(type as EssenceType);
-          if (short > 0) out[`essence.${type}`] = short;
-        }
-        for (const [packet, amount] of Object.entries(cost.shards)) {
-          const short = (amount ?? 0) - (self?.shards[packet as PacketId] ?? 0);
-          if (short > 0) out[`shard.${packet}`] = short;
-        }
-        // The band's own gates. Both are biome mastery, which is why one farm loop
-        // answers them: the row's level in the home biome, and the account-wide GM
-        // band (a rank's own: design §26.1 puts ranks II and III 4 and 8 above the lean).
-        const resolved = resolveLineageCard(card, lineage, { rank: buying });
-        const levelShort = resolved.requiredBiomeLevel - obs.biomeLevel(lineage.homeBiome);
-        if (levelShort > 0) out[`biomeLevel.${lineage.homeBiome}`] = levelShort;
-        const gmShort = resolved.requiredGlobalMastery - (self?.globalMastery ?? 0);
-        if (gmShort > 0) out.globalMasteryNeeded = gmShort;
-        return out;
-      };
-
-      if (Object.keys(missing()).length > 0) {
-        if (!farmNode) {
-          const bossBiomes = bossBiomesDroppingShardAtTier1(card.lane);
-          throw new StallError(
-            bossBiomes.length > 0
-              ? `no tier-1 node pays the ${card.lane} shard: it drops only from the `
-                + `${bossBiomes.join("/")} boss, and this route has no boss step for it`
-              : `no tier-1 node pays the ${card.lane} shard this card costs`,
-            { step, missing: missing() },
-          );
-        }
-        await this.farmBlocked(
-          farmNode,
-          what,
-          () => Object.keys(missing()).length === 0,
-          () => missingToReasons(missing(), obs),
-          true,
-        );
-      }
-
-      const result = await this.mutate(() => intents.unlockLineageCard(step.lineageId, step.cardId));
-      if (!result.success) {
-        throw new StallError(`lineage card rejected: ${result.reason ?? "unknown"}`, { step, rank: buying });
-      }
-      await this.waitUntil(
-        () => owned() >= buying,
-        { timeoutMs: 30_000, what: buying > 1 ? `${step.cardId} rank ${rankNumeral(buying)}` : `${step.cardId} owned` },
-      );
-
-      recorder.emit({
-        kind: "build-change",
-        atMs: recorder.now(),
-        system: "lineage-card",
-        detail: {
-          lineageId: step.lineageId, cardId: step.cardId, lane: card.lane, row: card.row,
-          ...(maxCardRank(card) > 1 ? { rank: buying } : {}),
-        },
-      });
-    }
+    this.expectedRunes = structuredClone(wanted);
+    if (auto) await this.emitUntil(() => intents.setAuto(true), () => obs.self?.auto === true, { timeoutMs: 5000, what: "resume combat after verified runes" });
   }
 
   /**
@@ -1551,117 +1275,6 @@ export class RouteExecutor {
       atMs: recorder.now(),
       system: "lineage-active",
       detail: { lineageId: step.lineageId, row: step.row, cardId: step.cardId },
-    });
-  }
-
-  /**
-   * Pay a band's gate, farming for the essence and shard shortfall as
-   * `unlockCard` does.
-   *
-   * The capstone is the one cost farming cannot answer: it drops from the form's
-   * biome boss and nowhere else (design §12), so a shortfall there is a route
-   * authoring problem — the route needs that boss cleared `amount` times first —
-   * and it raises a named stall instead of farming a node forever.
-   */
-  private async doUnlockForm(
-    step: Extract<RouteStep, { type: "unlockForm" }>,
-  ): Promise<void> {
-    const { obs, intents, recorder } = this.deps;
-    const lineage = LINEAGE_DATABASE.get(step.lineageId);
-    if (!lineage) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown lineage in route", { step });
-    const form = lineage.forms.find((f) => f.recipeId === step.recipeId);
-    if (!form) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown lineage form in route", { step });
-    if (obs.self?.lineages[step.lineageId]?.ownedForms.includes(step.recipeId)) return;
-
-    const cost = lineageGateCost(form, lineage);
-    const missing = (): Record<string, number> => {
-      const out: Record<string, number> = {};
-      const self = obs.self;
-      for (const [type, amount] of Object.entries(cost.essence)) {
-        const short = (amount ?? 0) - obs.essence(type as EssenceType);
-        if (short > 0) out[`essence.${type}`] = short;
-      }
-      for (const [packet, amount] of Object.entries(cost.shards)) {
-        const short = (amount ?? 0) - (self?.shards[packet as PacketId] ?? 0);
-        if (short > 0) out[`shard.${packet}`] = short;
-      }
-      const levelShort = formGateBiomeLevel(form) - obs.biomeLevel(form.biome);
-      if (levelShort > 0) out[`biomeLevel.${form.biome}`] = levelShort;
-      const gmShort = formGateMastery(form) - (self?.globalMastery ?? 0);
-      if (gmShort > 0) out.globalMasteryNeeded = gmShort;
-      return out;
-    };
-    const capstoneShort = (): number =>
-      cost.capstone.amount - (obs.self?.capstones[cost.capstone.biome] ?? 0);
-
-    if (capstoneShort() > 0) {
-      throw new StallError(
-        `the ${form.recipeId} gate needs ${cost.capstone.amount} ${capstoneMaterialName(cost.capstone.biome)}`
-        + ` and the wallet is ${capstoneShort()} short: only the ${cost.capstone.biome} boss drops it,`
-        + " so this route needs that many cleared boss kills before the gate",
-        { step, missing: { [`capstone.${cost.capstone.biome}`]: capstoneShort() } },
-      );
-    }
-
-    if (Object.keys(missing()).length > 0) {
-      const farmNode = this.lineageFarmNode(step.farmAt, form.biome, form.capstone?.lane ?? lineage.lanes[0]);
-      if (!farmNode) {
-        throw new StallError(`no reachable node pays the ${form.recipeId} gate`, { step, missing: missing() });
-      }
-      await this.farmBlocked(
-        farmNode,
-        `gate:${step.recipeId}`,
-        () => Object.keys(missing()).length === 0,
-        () => missingToReasons(missing(), obs),
-        true,
-      );
-    }
-
-    const result = await this.mutate(() => intents.unlockLineageForm(step.lineageId, step.recipeId));
-    if (!result.success) {
-      throw new StallError(`lineage gate rejected: ${result.reason ?? "unknown"}`, { step });
-    }
-    await this.waitUntil(
-      () => obs.self?.lineages[step.lineageId]?.ownedForms.includes(step.recipeId) ?? false,
-      { timeoutMs: 30_000, what: `${step.recipeId} owned` },
-    );
-
-    recorder.emit({
-      kind: "build-change",
-      atMs: recorder.now(),
-      system: "lineage-gate",
-      detail: { lineageId: step.lineageId, recipeId: step.recipeId, tier: form.tier },
-    });
-  }
-
-  /**
-   * Wear an owned form. Free, so a refusal here is always an authoring error
-   * (an unowned form, or one that belongs to another lineage).
-   */
-  private async doWearForm(
-    step: Extract<RouteStep, { type: "wearForm" }>,
-  ): Promise<void> {
-    const { obs, intents, recorder } = this.deps;
-    if (!LINEAGE_DATABASE.has(step.lineageId)) {
-      throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown lineage in route", { step });
-    }
-    const worn = (): string | null => obs.self?.lineages[step.lineageId]?.wornForm ?? null;
-    if (worn() === step.recipeId) return;
-
-    const result = await this.mutate(() => intents.wearLineageForm(step.lineageId, step.recipeId));
-    if (!result.success) {
-      throw new StallError(`lineage form rejected: ${result.reason ?? "unknown"}`, { step });
-    }
-    await this.waitUntil(() => worn() === step.recipeId, {
-      timeoutMs: 30_000,
-      what: `${step.recipeId} worn`,
-    });
-
-    recorder.emit({
-      kind: "build-change",
-      atMs: recorder.now(),
-      system: "lineage-form",
-      detail: { lineageId: step.lineageId, recipeId: step.recipeId },
     });
   }
 
@@ -1804,22 +1417,10 @@ export class RouteExecutor {
   private async doAttemptBoss(step: Extract<RouteStep, { type: "attemptBoss" }>): Promise<void> {
     const { obs, intents, recorder } = this.deps;
     const leaseSession = this.deps.leaseSession;
-    // `bossesCleared` is the biome's FIRST clear and stays true forever, so it answers
-    // "do I hold the seal", not "did I just kill it". A capstone loop needs the second
-    // question: the gate wants three drops, so the bot has to kill the boss three
-    // times. Reading the first question returned instantly from every attempt after
-    // the first, and the gate chapter's `repeatUntil` spent all five rounds in one
-    // tick (seen live on 2026-10-02: five `boss forest T1` steps starting and ending
-    // at the same millisecond, then `repeatUntil exhausted 5 iterations`). At 25x
-    // rewards one kill dropped round(25) capstones, so the defect never showed.
-    //
-    // A repeat attempt reads its own kill off the capstone wallet instead: the boss
-    // drops one every kill, deterministically, no rolls (design §1).
-    // `?.[` on the map too: a view that predates the lineage wallet (and every test
-    // fixture that builds `self` by hand) has no `capstones` at all, and indexing it
-    // would throw inside a boss attempt rather than read as "none yet".
-    const capstonesHeld = (): number => obs.self?.capstones?.[step.biomeGroup] ?? 0;
-    if (!step.repeat && obs.bossCleared(step.biomeGroup, step.tier)) return;
+    // `bossesCleared` is the biome's FIRST clear and stays true forever: it answers
+    // "do I hold the seal", which is what a boss step asks.
+    const killed = (): boolean => obs.bossCleared(step.biomeGroup, step.tier);
+    if (killed()) return;
 
     const nodeId = dungeonNodeFor(step.biomeGroup, step.tier);
     if (!nodeId) throw new StallError("no dungeon node for target", { step });
@@ -1828,13 +1429,6 @@ export class RouteExecutor {
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       if (this.deps.aborted()) throw new AbortError("run aborted");
-      // Per ATTEMPT, not per step: each attempt is asking for one more drop, so the
-      // baseline has to move with it or the second kill of a step would read as won
-      // before it started.
-      const capstonesBefore = capstonesHeld();
-      const killed = (): boolean => (step.repeat
-        ? capstonesHeld() > capstonesBefore
-        : obs.bossCleared(step.biomeGroup, step.tier));
       if (killed()) return;
 
       await this.deps.awaitAlive();
@@ -2145,13 +1739,9 @@ export class RouteExecutor {
       attempts: maxAttempts,
       nextAction: "skip-dependent",
     });
-    // Only a ONE-SHOT step's exhaustion is evidence the boss is beyond this build. A
-    // repeat step exhausting one round says nothing — its own `repeatUntil` owns that
-    // verdict — and poisoning the fact here would skip every later step that depends
-    // on the seal the bot does in fact hold.
-    if (!step.repeat) {
-      this.failedFacts.add(`bossCleared:${step.biomeGroup}:${step.tier}`);
-    }
+    // The exhaustion is evidence the boss is beyond this build: every later step
+    // that `requires` this seal is skipped rather than waited on.
+    this.failedFacts.add(`bossCleared:${step.biomeGroup}:${step.tier}`);
     this.partial = true;
     this.activeStepOutcome = {
       status: "blocked",
@@ -2169,171 +1759,6 @@ export class RouteExecutor {
       return condition.of.map((part) => this.failedRequirement(part)).find((key): key is string => key !== null) ?? null;
     }
     return null;
-  }
-
-  /**
-   * `evolveItem` is a RETIRED step kind (design §24.5): the server refuses
-   * evolve and reconstruct on every slot. Legacy routes still carry it, so the
-   * executor rewrites what it can rather than stalling on a refusal:
-   *
-   *  - a recipe that is a plain recipe now (every armour, charm and boots T2+
-   *    item) is CRAFTED from its recipe at its biome level, which is how a
-   *    player gets it today. Nothing is consumed: the predecessor stays owned.
-   *  - a live lineage's gated form (a tier-2+ weapon) cannot be made outside
-   *    its tree, so the step stalls with that reason; a route that wants one
-   *    must pay the gate (`unlockForm`) instead.
-   */
-  private async doEvolveItem(
-    step: Extract<RouteStep, { type: "evolveItem" }>,
-  ): Promise<void> {
-    const { obs, recorder } = this.deps;
-    const recipe = RECIPE_DATABASE.get(step.recipeId);
-    if (!recipe) throw new StallError("unknown evolution recipe in route", { step });
-    if (obs.hasItem(step.recipeId)) return;
-    if (isGatedLineageForm(recipe.id)) {
-      throw new StallError(
-        "evolveItem is retired: a lineage's tier-2+ form is opened at its gate (use unlockForm)",
-        { recipeId: step.recipeId, mode: step.mode },
-      );
-    }
-    recorder.emit({
-      kind: "build-change",
-      atMs: recorder.now(),
-      system: "retired-step",
-      detail: { step: "evolveItem", mode: step.mode, recipeId: step.recipeId, rewrittenAs: "craft" },
-    });
-    await this.doCraft({ type: "craft", recipeIds: [step.recipeId], farmAt: step.farmAt });
-  }
-
-  private async doCraftStance(
-    step: Extract<RouteStep, { type: "craftStance" }>,
-  ): Promise<void> {
-    const { obs, recorder } = this.deps;
-    const recipe = STANCE_RECIPE_DATABASE.get(step.recipeId);
-    if (!recipe) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown stance recipe in route", { step });
-    if (obs.self?.knownStances.includes(recipe.stanceId)) return;
-
-    const unlocked = (): boolean => isStanceRecipeUnlocked(recipe, {
-      biomeLevel: obs.self?.biomeLevel ?? {},
-      bossesCleared: obs.self?.bossesCleared ?? [],
-    });
-    const affordable = (): boolean => {
-      if (!unlocked()) return false;
-      for (const [type, amount] of Object.entries(recipe.cost)) {
-        if (obs.essence(type as EssenceType) < (amount ?? 0)) return false;
-      }
-      return true;
-    };
-    const missing = (): Record<string, number> => {
-      const out: Record<string, number> = {};
-      for (const [type, amount] of Object.entries(recipe.cost)) {
-        const short = (amount ?? 0) - obs.essence(type as EssenceType);
-        if (short > 0) out[`essence.${type}`] = short;
-      }
-      if (!unlocked() && recipe.recipeGroup) {
-        out[`biomeLevel.${recipe.recipeGroup}`] = Math.max(
-          1,
-          (recipe.requiredBiomeLevel ?? 0) - obs.biomeLevel(recipe.recipeGroup),
-        );
-      }
-      return out;
-    };
-    if (!affordable()) {
-      const farmNode = recipe.recipeGroup
-        ? this.resolveFarmNode(step.farmAt, recipe.recipeGroup)
-        : (step.farmAt ? resolveNode(step.farmAt, obs, this.rotation) : null);
-      if (!farmNode) throw new StallError("cannot satisfy stance requirement", { step, missing: missing() });
-      await this.farmBlocked(
-        farmNode,
-        `stance:${recipe.stanceId}`,
-        affordable,
-        () => missingToReasons(missing(), obs),
-        true,
-      );
-    }
-
-    const result = await this.mutate(() => this.deps.intents.craftStanceRecipe(step.recipeId));
-    if (!result.success) {
-      throw new StallError(`stance craft rejected: ${result.reason ?? "unknown"}`, { step });
-    }
-    recorder.emit({
-      kind: "stance-craft",
-      atMs: recorder.now(),
-      recipeId: step.recipeId,
-      stanceId: recipe.stanceId,
-      success: result.success,
-      reason: result.reason,
-      essenceSpent: { ...recipe.cost },
-      context: recorder.context(obs.nodeId),
-    });
-    await this.waitUntil(
-      () => obs.self?.knownStances.includes(recipe.stanceId) ?? false,
-      { timeoutMs: 30_000, what: `${recipe.stanceId} learned` },
-    );
-  }
-
-  private async doCraftRite(
-    step: Extract<RouteStep, { type: "craftRite" }>,
-  ): Promise<void> {
-    const { obs, recorder } = this.deps;
-    const recipe = RITE_RECIPE_DATABASE.get(step.recipeId);
-    if (!recipe) throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown rite recipe in route", { step });
-    if (obs.self?.knownRites.includes(recipe.riteId)) return;
-
-    const unlocked = (): boolean => isRiteRecipeUnlocked(recipe, {
-      biomeLevel: obs.self?.biomeLevel ?? {},
-      bossesCleared: obs.self?.bossesCleared ?? [],
-    });
-    const affordable = (): boolean => {
-      if (!unlocked()) return false;
-      for (const [type, amount] of Object.entries(recipe.cost)) {
-        if (obs.essence(type as EssenceType) < (amount ?? 0)) return false;
-      }
-      return true;
-    };
-    const missing = (): Record<string, number> => {
-      const out: Record<string, number> = {};
-      for (const [type, amount] of Object.entries(recipe.cost)) {
-        const short = (amount ?? 0) - obs.essence(type as EssenceType);
-        if (short > 0) out[`essence.${type}`] = short;
-      }
-      if (!unlocked() && recipe.recipeGroup) {
-        out[`biomeLevel.${recipe.recipeGroup}`] = Math.max(
-          1,
-          (recipe.requiredBiomeLevel ?? 0) - obs.biomeLevel(recipe.recipeGroup),
-        );
-      }
-      return out;
-    };
-    if (!affordable()) {
-      const farmNode = recipe.recipeGroup
-        ? this.resolveFarmNode(step.farmAt, recipe.recipeGroup)
-        : (step.farmAt ? resolveNode(step.farmAt, obs, this.rotation) : null);
-      if (!farmNode) throw new StallError("cannot satisfy rite requirement", { step, missing: missing() });
-      await this.farmBlocked(
-        farmNode,
-        `rite:${recipe.riteId}`,
-        affordable,
-        () => missingToReasons(missing(), obs),
-        true,
-      );
-    }
-
-    const result = await this.mutate(() => this.deps.intents.craftRiteRecipe(step.recipeId));
-    if (!result.success) {
-      throw new StallError(`rite craft rejected: ${result.reason ?? "unknown"}`, { step });
-    }
-    recorder.emit({ kind: "build-change", atMs: recorder.now(), system: "rite-craft", detail: { recipeId: step.recipeId, ...result } });
-    await this.waitUntil(
-      () => obs.self?.knownRites.includes(recipe.riteId) ?? false,
-      { timeoutMs: 30_000, what: `${recipe.riteId} learned` },
-    );
-  }
-
-  private async doSetDefaultStance(stanceId: string | null): Promise<void> {
-    const current = observedBuild(this.deps.obs.requireSelf());
-    await this.doConfigureBuild({ ...current, stances: { default: stanceId,
-      attuned: [...new Set([...current.stances.attuned, ...(stanceId ? [stanceId] : [])])] } });
   }
 
   private async doIfPossible(step: Extract<RouteStep, { type: "ifPossible" }>): Promise<void> {
@@ -2384,9 +1809,9 @@ export class RouteExecutor {
     const missing = (): Record<string, number> => reasonsToMissing(reasons());
 
     // A wait this node can never end is not a wait, it is a stall — and it was
-    // being reported as a twelve-minute "no progress" timeout, or for the
-    // lineage steps (which pass `ignoreBiomeCap`, so `farmUntil`'s own capped-
-    // biome guard is off) as the thirty-minute step timeout. The requirement,
+    // being reported as a twelve-minute "no progress" timeout, or under
+    // `ignoreBiomeCap` (which switches `farmUntil`'s own capped-biome guard off)
+    // as the thirty-minute step timeout. The requirement,
     // the node and the reason are known HERE, before a single kill, so say them.
     // `unsatisfiableByFarming` only fires on provably unpayable shortfalls, so
     // this never fails a run that would otherwise have finished — it fails the
@@ -2453,45 +1878,6 @@ export class RouteExecutor {
       this.deps.obs,
       this.rotation,
     );
-  }
-
-  /**
-   * Where to farm for a lineage card or gate. Since design §24.3 a shard is paid
-   * by the NODE — every kill in a node pays its dominant family's shard and no
-   * other — so the question is which node, not which biome: a Forest farm for an
-   * affliction card on a Pack-led node pays tempo forever.
-   *
-   * An authored `farmAt` keeps its biome and pick, narrowed to the territories
-   * that pay `lane` (the ref's `shard`). If none of that biome's nodes pays it, the
-   * un-narrowed node is returned and `farmBlocked` raises the named "pays none of
-   * this packet" stall instead of an endless farm. With no `farmAt`, the home
-   * biome is tried first and then each Tier-1 biome in map order, nearest
-   * uncleared paying node first. Null when no such node exists, which
-   * `doUnlockCard` turns into a stall with a reason.
-   */
-  private lineageFarmNode(
-    ref: NodeRef | undefined,
-    homeBiome: string,
-    lane: PacketId,
-  ): string | null {
-    const { obs } = this.deps;
-    if (ref) {
-      if (ref.kind === "biome" && !ref.shard) {
-        const paying = resolveNode({ ...ref, shard: lane }, obs, this.rotation);
-        if (paying) return paying;
-      }
-      return resolveNode(ref, obs, this.rotation);
-    }
-    for (const biomeGroup of [homeBiome, ...LINEAGE_SHARD_BIOMES]) {
-      const tier = BIOME_START_TIER_BY_GROUP[biomeGroup] ?? 1;
-      const node = resolveNode(
-        { kind: "biome", biomeGroup, tier, pick: "uncleared", shard: lane },
-        obs,
-        this.rotation,
-      );
-      if (node) return node;
-    }
-    return null;
   }
 
   /** Resolve an authored farm location, falling back to the default node for
@@ -2628,10 +2014,10 @@ export class RouteExecutor {
 
   private checkMilestones(): void {
     const self = this.deps.obs.self;
-    if (self && this.expectedBuild && buildKey(observedBuild(self)) !== buildKey(this.expectedBuild)) {
-      const detail = { requested: this.expectedBuild, observed: observedBuild(self), observedRP: buildRP(observedBuild(self)) };
+    if (self && this.expectedRunes && runeLoadoutKey(self.runesEquipped) !== runeLoadoutKey(this.expectedRunes)) {
+      const detail = { requested: this.expectedRunes, observed: structuredClone(self.runesEquipped) };
       this.deps.recorder.emit({ kind: "build-change", atMs: this.deps.recorder.now(), system: "loadout", detail: { phase: "drift", code: "STATE_SYNC_FAILURE", ...detail } });
-      throw new BuildError("STATE_SYNC_FAILURE", "Verified build changed outside an authored loadout step", detail);
+      throw new BuildError("STATE_SYNC_FAILURE", "Verified runes changed outside an authored configureRunes step", detail);
     }
     for (const milestone of this.deps.route.milestones) {
       if (this.firedMilestones.has(milestone.id)) continue;
@@ -2693,26 +2079,6 @@ function definedNumbers(record: Partial<Record<string, number>>): Record<string,
   return out;
 }
 
-/**
- * The Tier-1 biomes a shard is looked for in, in map order. Local rather than in
- * `shared/src/data/families`, so this stays a BOT policy: `nodeShard` says which
- * node pays what, and this says where the bot goes looking.
- */
-const LINEAGE_SHARD_BIOMES = ['plains', 'forest', 'mountain', 'cave', 'swamp'] as const;
-
-/**
- * The tier-1 biomes whose BOSS drops `lane`, via the design-§18.6 stopgap: a boss
- * kill pays shards of each Lane-A packet of the lineages homed in its biome.
- * Bulwark and Barrier tempo have no tier-1 family source at all, so for those a
- * boss is the ONLY source and no amount of farming trash will do — and while their
- * trees are parked (design §24.5) not even a boss pays them: the stopgap skips
- * parked lineages.
- */
-function bossBiomesDroppingShardAtTier1(lane: PacketId): string[] {
-  return LINEAGE_SHARD_BIOMES.filter((biomeGroup) =>
-    biomeLaneAPackets(biomeGroup).includes(lane));
-}
-
 function defaultLabel(step: RouteStep): string {
   switch (step.type) {
     case "moveWithinNode": return `move:${step.nodeId}:${step.position.x},${step.position.y}`;
@@ -2729,12 +2095,6 @@ function defaultLabel(step: RouteStep): string {
       return `farm ${refLabel(step.at)} until ${describe(step.until)}`;
     case "craft":
       return `craft ${step.recipeIds.join(", ")}`;
-    case "evolveItem":
-      return `${step.mode} ${step.recipeId}`;
-    case "craftStance":
-      return `craft stance ${step.recipeId}`;
-    case "setDefaultStance":
-      return `set default stance ${step.stanceId ?? NO_STANCE_ID}`;
     case "unequip":
       return step.expectedDefinitionId
         ? `unequip ${step.slot} (expecting ${step.expectedDefinitionId})`
@@ -2743,26 +2103,10 @@ function defaultLabel(step: RouteStep): string {
       return `equip ${step.definitionIds.join(", ")}`;
     case "upgrade":
       return `upgrade ${step.definitionId} to +${step.toPlus}${step.opportunistic ? " (as GM allows)" : ""}`;
-    case "configureBuild":
-      return "configure exact build";
-    case "craftRite":
-      return `craft Rite ${step.recipeId}`;
     case "configureRunes":
       return `configure runes (${step.rules.length})`;
-    case "learnAbility":
-      return `learn ${step.abilityId} (${step.slot})`;
-    case "setAbilities":
-      return `abilities T[${step.techniques.join(",")}] G[${step.guards.join(",")}]`;
-    case "craftRune":
-      return `craft rune ${step.recipeId}`;
-    case "unlockCard":
-      return `buy card ${step.cardId}${(step.rank ?? 1) > 1 ? ` to rank ${step.rank}` : ""}`;
     case "setActive":
       return `activate ${step.lineageId} ${step.row} = ${step.cardId ?? "none"}`;
-    case "unlockForm":
-      return `pay gate ${step.lineageId} -> ${step.recipeId}`;
-    case "wearForm":
-      return `wear form ${step.recipeId}`;
     case "attemptBoss":
       return `boss ${step.biomeGroup} T${step.tier}`;
     case "ifPossible":
@@ -2782,28 +2126,4 @@ function refLabel(ref: NodeRef): string {
 
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-/**
- * Rune order is behavior: the first active rule claims its channel. Comparing
- * only array length lets a same-sized Chase loadout masquerade as Orbit (or a
- * lower-priority Step Back loadout as the intended one).
- */
-export function runeLoadoutsEqual(
-  live: readonly EquippedRule[],
-  wanted: readonly EquippedRule[],
-): boolean {
-  return (
-    live.length === wanted.length &&
-    live.every((rule, index) => {
-      const expected = wanted[index];
-      return (
-        expected !== undefined &&
-        rule.conditionId === expected.conditionId &&
-        rule.actionId === expected.actionId &&
-        (rule.targetAbilityId ?? null) === (expected.targetAbilityId ?? null) &&
-        (rule.targetStanceId ?? null) === (expected.targetStanceId ?? null)
-      );
-    })
-  );
 }

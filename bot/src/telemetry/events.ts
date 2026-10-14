@@ -369,8 +369,6 @@ export type BotEvent =
       nodeId: string;
       frameId: string | null;
       equipment: Partial<EquipmentMap>;
-      techniques: string[];
-      guards: string[];
     }
   | { kind: "node-enter"; atMs: number; nodeId: string; biomeGroup: string | null; nodeModifier: string | null }
   | { kind: "milestone"; atMs: number; id: string; detail?: Record<string, unknown> }
