@@ -11,6 +11,8 @@ const groups = [
   ['ranges/classes', 96, 54],
   ['paths', 96, 54],
   ['abilities', 64, 44],
+  ['class-pieces', 64, 44],
+  ['trophies', 64, 44],
   ['stances', 64, 22],
   ['rites', 64, 22],
   ['runes/conditions', 48, 32],
@@ -82,6 +84,7 @@ async function renderReviewSheet(entries) {
   </svg>`);
 
   const reviewPath = path.join(sourceRoot, 'contact-sheets', 'downscale-review.png');
+  fs.mkdirSync(path.dirname(reviewPath), { recursive: true });
   await sharp({
     create: { width, height, channels: 4, background: '#0d0b18' },
   }).composite([...composites, { input: svg, left: 0, top: 0 }]).png().toFile(reviewPath);
@@ -97,6 +100,7 @@ async function main() {
   const reviewEntries = [];
   for (const [directory, size, displaySize] of groups) {
     const sourceDirectory = path.join(sourceRoot, directory);
+    if (!fs.existsSync(sourceDirectory)) continue;
     const outputDirectory = path.join(outputRoot, directory);
     fs.mkdirSync(outputDirectory, { recursive: true });
 
@@ -124,7 +128,10 @@ async function main() {
         .toFile(path.join(outputDirectory, filename));
       prepared += 1;
     }
-    reviewEntries.push({ directory, displaySize, filenames });
+    const reviewFilenames = fs.readdirSync(outputDirectory)
+      .filter((filename) => filename.endsWith('.png'))
+      .sort();
+    reviewEntries.push({ directory, displaySize, filenames: reviewFilenames });
   }
 
   const statusBuffs = reviewEntries.find((entry) => entry.directory === 'statuses/buffs');
