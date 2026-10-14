@@ -1,11 +1,58 @@
 import { emitMonsterSession } from '../engine/sessionObservation';
 import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
 import { MONSTER_DATABASE } from '@mmo-idle/shared';
-import type { AggroTargetKind } from '@mmo-idle/shared';
+import type { AggroTargetKind, HeldByTaunt } from '@mmo-idle/shared';
 import type { MonsterEntity } from '../../../ecs/entity';
 import type { ServerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { markEngaged } from './engagement';
+import { monsterIgnoresTaunts } from './monsterTargeting';
+
+/**
+ * The taunt holding this monster, while it still holds: released once its time runs out
+ * or its taunter is gone (dead, despawned or in another node).
+ */
+export function activeTaunt(world: World, monster: MonsterEntity, now: number): HeldByTaunt | undefined {
+  const held = monster.heldByTaunt;
+  if (!held) return undefined;
+  const nodeId = monster.hasPosition.nodeId;
+  const taunter = held.taunterKind === 'player'
+    ? world.getPlayerEntity(held.taunterId)
+    : world.getMinionEntity(held.taunterId);
+  const present = !!taunter && !taunter.isDead && (taunter.hasHealth?.hp ?? 0) > 0
+    && taunter.hasPosition?.nodeId === nodeId;
+  if (now >= held.untilMs || !present) {
+    detachComponent(world, monster, 'heldByTaunt');
+    return undefined;
+  }
+  return held;
+}
+
+/**
+ * Taunt a monster onto `taunter` for `durationMs` (class-first build plan S3, bible §8.12).
+ * A taunt holds for its whole duration: nobody can take the monster until it ends, except
+ * that a player's taunt takes it from a summon's. The same taunter refreshes its own hold.
+ * Monsters that ignore taunts refuse. Returns whether the taunt took.
+ */
+export function applyTaunt(
+  world: World,
+  monster: MonsterEntity,
+  taunter: { id: string; kind: AggroTargetKind },
+  durationMs: number,
+  now: number,
+): boolean {
+  if (monsterIgnoresTaunts(monster)) return false;
+  const held = activeTaunt(world, monster, now);
+  if (held && held.taunterId !== taunter.id && !(held.taunterKind === 'minion' && taunter.kind === 'player')) {
+    return false;
+  }
+  if (held) detachComponent(world, monster, 'heldByTaunt');
+  setAggroTarget(world, monster, taunter, now);
+  if (monster.hasAggroTarget?.targetId !== taunter.id) return false;
+  const untilMs = Math.max(held?.taunterId === taunter.id ? held.untilMs : 0, now + durationMs);
+  attachComponent(world, monster, 'heldByTaunt', { taunterId: taunter.id, taunterKind: taunter.kind, untilMs });
+  return true;
+}
 
 export function setAggroTarget(
   world: World,
@@ -16,9 +63,15 @@ export function setAggroTarget(
   if (target === null) {
     emitMonsterSession(monster, 'aggro-clear-before', now);
     detachComponent(world, monster, 'hasAggroTarget');
+    detachComponent(world, monster, 'heldByTaunt');
     monster.controlsMonster.chargeRemainingMs = 0;
     return;
   }
+
+  // A taunt holds the monster on its taunter: nothing else moves its aggro meanwhile
+  // (`applyTaunt` releases the hold itself before a stronger taunt takes it).
+  const held = activeTaunt(world, monster, now);
+  if (held && held.taunterId !== target.id) return;
 
   // Ordinary alerts must not split a returning group. Hits renew it as a whole
   // through renewPackPursuit before assigning any individual target.

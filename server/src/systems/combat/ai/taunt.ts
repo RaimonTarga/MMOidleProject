@@ -4,7 +4,7 @@ import {
   setCooldown,
 } from "@mmo-idle/shared";
 import { registerCombatListener } from "../engine/combatPipeline";
-import { setAggroTarget } from "./targeting";
+import { applyTaunt } from "./targeting";
 import { monsterIgnoresTaunts } from "./monsterTargeting";
 import { RUNE_TAUNT_CURRENT_TARGET_FLAG } from "./runeConfig";
 
@@ -45,12 +45,15 @@ export function initRuneTauntSystem(): void {
     }
     if (getCooldown(player.tracksCombat, TAUNT_COOLDOWN_KEY) > 0) return;
 
-    setAggroTarget(
+    // The taunt holds until the rune can fire again (class-first build plan S3): a
+    // player's taunt takes the monster from a summon's, never the reverse.
+    const took = applyTaunt(
       world,
       monster,
       { id: String(aggroSource.id), kind: aggroSource.kind },
+      RUNE_TAUNT_COOLDOWN_MS,
       Date.now(),
     );
-    setCooldown(player.tracksCombat, TAUNT_COOLDOWN_KEY, RUNE_TAUNT_COOLDOWN_MS);
+    if (took) setCooldown(player.tracksCombat, TAUNT_COOLDOWN_KEY, RUNE_TAUNT_COOLDOWN_MS);
   });
 }

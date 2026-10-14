@@ -21,6 +21,7 @@ import type {
   HasFrozen,
   HasSmolder,
   HasAggroTarget,
+  HeldByTaunt,
   HasEntropy,
   HasEmpoweredAttack,
   HasEnvironmentalDot,
@@ -294,6 +295,8 @@ export interface ServerEntity {
   isMonster?: IsMonster;
   hasAwareness?: HasAwareness;
   hasAggroTarget?: HasAggroTarget;
+  /** A taunt holding this monster's aggro (class-first build plan S3). */
+  heldByTaunt?: HeldByTaunt;
 
   // Minion-only slices (summoner archetype)
   isMinion?: IsMinion;
