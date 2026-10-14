@@ -27,10 +27,10 @@ when the section that replaces them locks. The read-only audit behind this draft
 | 5 | Defense and recovery | Not started |
 | 6 | The class template | Draft |
 | 7 | Conduit | **Locked** (2026-10-13) |
-| 8 | Squire | Not started |
-| 9 | Apprentice | Not started |
-| 10 | Slinger | Not started |
-| 11 | Spirit | Not started |
+| 8 | Squire | **Locked** (2026-10-14) |
+| 9 | Apprentice | Draft (deep dive started 2026-10-14) |
+| 10 | Slinger | Draft (deep dive started 2026-10-14) |
+| 11 | Spirit | Draft (deep dive started 2026-10-14) |
 | 12 | Striker | **Locked** (2026-10-14) |
 | 13 | Parked | — |
 | 14 | Docs this bible supersedes | — |
@@ -162,7 +162,9 @@ Formation) must be.
 
 ## 5. Defense and recovery — Not started
 
-Known so far: Squire's Resolve and Spirit's energy shield are set (brief); Striker: §12.10
+Known so far: Squire: §8.10 (the one class whose class system holds defense: guards are
+responses paid in Resolve and refunded when they land; no Resolve shield; equipment
+carries the baseline); Spirit's energy shield is set (brief); Striker: §12.10
 (armor and charm lines plus T4 resilience leaves, nothing on finisher triggers; the brief's
 finisher shield/heal is dropped); Conduit: §7.10 (who tanks is the armor line; rebuilds
 cost HP; no default redirection). Flat
@@ -359,7 +361,8 @@ ally including the Conduit), Desert executioner (T2; marks a target and executes
 a threshold), Tundra chiller (T3; enemies around it attack slower, for when kiting enemies
 exist), Volcanic burner (T3; the first area damage, toward the T5 pack axis), Graveyard
 raiser (T4; fallen enemies rise briefly, an on-kill to review), Trench hook tank (T4; hooks
-the enemy hitting the back row). **Juggernaut**, a summon whose damage scales off its HP,
+the enemy hitting the back row). **Bonecrusher** (named Juggernaut until 2026-10-14, when
+the name went to the Squire's discipline, §8.12), a summon whose damage scales off its HP,
 is a summon type: the Cave heavy's T2 variant. *Decided.*
 
 **Seed Souls** (*Proposed*; the real designs come after every class settles, and Two
@@ -510,8 +513,8 @@ Conduits doesn't multiply. *Decided (2026-10-13).*
 9. The armor and charm Conduit lines after T1 (§4).
 10. Components (§4's own session) and farming efficiency (§13).
 11. Mob targeting variety: opportunistic mobs that go for the summoner.
-12. Names are placeholders. "Juggernaut" (the Cave heavy's variant) also names an old
-    Striker path and a Squire discipline in the brief; pick owners later.
+12. Names are placeholders. The Cave heavy's T2 variant is **Bonecrusher** (2026-10-14):
+    "Juggernaut" went to the Squire's discipline (§8.12).
 
 ### 7.16 Tier by tier: what each biome gives the Conduit
 
@@ -534,12 +537,12 @@ strike ready). Charms: §7.9.
 | Forest | Cadence duel, stuns | **Barkward** (support): every few seconds coats a summon in bark that absorbs the next stun or control and some damage | Faster attacks, stronger | Thorns, stronger | Timberclaw ranks up |
 | Mountain | Heavy plating, charges | **Rockhurler** (ranged damage): lobs boulders that hit a small area; the class's first real area damage | Stronger summon abilities, stronger | Big-hit intercept, stronger | Stoneplate ranks up |
 | Swamp | Area denial: pools, rain, rising mire | **Bog Leech** (damage, sustain): latches onto its target and drains it, sharing what it drains with the most hurt summon | Poison, stronger | Poison moves to a summon, stronger | Mire Behemoth ranks up |
-| Cave | Eruptions from below | **Juggernaut** (heavy): its hits scale off its own max HP (*Decided*) | Fewer, stronger summons, stronger | You tank, stronger | Dreadbore ranks up |
+| Cave | Eruptions from below | **Bonecrusher** (heavy): its hits scale off its own max HP (*Decided*) | Fewer, stronger summons, stronger | You tank, stronger | Dreadbore ranks up |
 | Jungle (new) | Fleeing prey, ambushers from cover | **Bloomtender** (support): the first true healer; heals the most hurt ally, the Conduit included | **New job: First Strike:** each summon's first hit on a new target hits much harder | **New: Sentinel:** the first hit each enemy lands on the Conduit is taken by the nearest summon (anti-ambush) | New Soul (Dread-Gorger) |
 | Desert (new) | Mark, slow, execute; ranged kiters | **Executioner** (ranged damage): marks its target; below a threshold its shots hit twice as hard (a threshold, not an on-kill) | **New job: Longshot:** ranged summons fire from much further back and hit harder at range; melee summons hit softer | **New: Sandveil:** ranged hits deal less to you and your summons (*Decided*; replaces Decoy, which was too narrow) | New Soul (Dune-Stalker Emperor) |
 
 By the end of T2 the roster is 12 specialists plus the Thrall: 2 tanks (the Plains tank,
-Ironhorn), 2 heavies (the Cave heavy, Juggernaut), 5 damage dealers (the Forest bruiser,
+Ironhorn), 2 heavies (the Cave heavy, Bonecrusher), 5 damage dealers (the Forest bruiser,
 the Mountain marksman, Rockhurler, Bog Leech, Executioner) and 3 supports (the Swamp
 spitter, Barkward, Bloomtender): enough for Pack's variety and Legion's choice of what to
 mass.
@@ -570,7 +573,7 @@ Swarm family is many fast, short-lived bodies and whose Anchor family is armored
 
 **Heavies (2+ Command by default), one per tier, roles rotating** (*Decided*, 2026-10-13;
 the designer found T3 had none and no support heavy existed): T1 the Cave heavy (tank), T2
-Juggernaut (damage), T3 Warhorn (support), T4 the Obsidian Tortoise (tank) and Avalanche
+Bonecrusher (damage), T3 Warhorn (support), T4 the Obsidian Tortoise (tank) and Avalanche
 (damage, 3 Command).
 
 Roster by the end of T3: 19 specialists plus the Thrall. Souls: Swamp and Cave reach their
@@ -632,13 +635,475 @@ Serpent) bring new Souls.
 - **The Patriarch's Ice Armor wants burst** (as in T3), and the Caldera's Magma Shove
   pushes you into hazards (player-only for now; §13).
 
-## 8.–11. Other classes — Not started
+## 8. Squire — Locked (2026-10-14)
 
-Order: **Conduit first** (done, §7 locked). **Striker second** (done, §12 locked;
-designer's call, 2026-10-13: it is the standard class the game is measured by and the most
-playtested). Then, as proposed: Squire (shares the "who tanks" and party questions with the
-Conduit), Apprentice, Slinger, Spirit. Each class's brief concept is in the
-[brief](../docs/briefs/class-first-rework-brief-2026-10-13.md#class-reworks).
+**Locked by the designer on 2026-10-14: build authority.** Every item the walk-through
+reached was accepted; **Playtest** questions stay open (§8.15), and the flake check comes
+first. Outside the lock, each for its own session: names (placeholders throughout),
+leaves after T4 and the T7–T8 capstone, components (§4), farming efficiency (§13),
+per-class stats (§5).
+
+Written to the class template (§6) from the 2026-10-14 deep dive. Every call in order, the
+reasoning and the ideas that were dropped are in
+[squire-deep-dive-log-2026-10-14.md](../docs/briefs/squire-deep-dive-log-2026-10-14.md);
+the prep is [squire-deep-dive-prep-2026-10-14.md](../docs/briefs/squire-deep-dive-prep-2026-10-14.md).
+No mockup. Tags as everywhere in this bible; **Playtest** marks a question only the game can
+answer (§8.15). Names are placeholders throughout.
+
+**The designer's standing doubt:** of the six classes, this is the one the designer is
+least convinced about; the risk is a class that flakes against enemies that don't hit back
+much. The design answers it in several places (§8.2, §8.5, §8.7), and the first playtest
+question is whether those answers hold (§8.15). *Decided (the doubt is on record).*
+
+### 8.1 Fantasy
+
+The shield that hits back: "I take the blows, and every one comes back as a slam", with
+some of the guardian who reads the fight and answers what is coming. *Decided.*
+
+### 8.2 Core mechanic
+
+- **Resolve fills from three sources:** how hard you are hit (the raw hit, whatever your
+  armor, into a capped bar; *Decided*); **defending properly**, a landed answer such as
+  a guard catching a telegraph or a bash interrupting a wind-up (*Decided*); and a
+  **pressure trickle**: every enemy engaged with you feeds a little each second, hit or
+  not, a boss counting as several (*Decided*). Damage over time on you doesn't fill it;
+  the Swamp trophy changes that (§8.9). *Decided.*
+- **Resolve is one currency:** responses spend it, and the slam spends what is left.
+  *Decided.*
+- **The slam fires at a full bar.** Rules can hold it (don't waste it on a nearly dead
+  target), never fire it early; the Relentless and Executioner's Oath trophies are the only
+  early slams. A plain slam until the first boss kill. *Decided.*
+- **Resolve never absorbs damage by itself;** only spending it through a response defends.
+  That keeps it clear of the Spirit, whose energy is both damage and shield. *Decided.*
+  Kept apart from the Striker's Momentum by source and moment: Momentum comes from the
+  Striker's own swings and is spent at the end of its combo; Resolve comes from the enemy's
+  hits and is spent in answer to them. *Decided (note).*
+- **The cap is the guard against enemy tuning.** Today's Avenger path banked raw boss
+  damage and grew 1.42–1.49× the median specialization when T4 boss offense was resized
+  (cut 2026-09-28). Harder hits fill the bar faster; they never make a slam bigger without
+  limit. *Decided (note).*
+- **The framing:** plain swings carry easy trash; Resolve makes the Squire strongest when
+  the fight is hardest. *Decided.* The heaviest chassis (slow hands, an iron body) stays
+  in spirit; per-class stats are §5's question. *Decided.*
+- **The budget is Resolve's size:** each Global Mastery step adds a pip, shown in class
+  terms ("Resolve 6, next at Mastery 24"); you carry every response you own and the bar
+  limits how often you answer. *Decided.* Illustrative: T1 4 → 5 at Mastery 15 → 6 at 30;
+  later tiers in steps like Command's. *Decided (illustrative).*
+- **HUD:** Resolve as pips (the old cooldown dial's successor), a pulse when an answer
+  refunds. *Decided.* **Callouts** only for answers that land on a telegraph or cast
+  ("GUARDED", "INTERRUPTED") and for the relic slam; ordinary ripostes never call out.
+  *Decided.*
+
+### 8.3 The class system: Response rules
+
+**What you configure:**
+
+- **The rules:** every response you own is carried and comes with its natural trigger and a
+  default rule. Rules cost nothing (§3): add conditions (only on bosses, only with N pips in
+  the bar, Bash only what can be interrupted), choose to **hold or step out** of each
+  ground telegraph, and hold the slam. *Decided.*
+- **The relic:** the slam's twist or a change to how Resolve flows (§8.9).
+
+**How a response works** *(Decided)*:
+
+1. It answers one specific enemy action (a telegraph, a cast, a debuff landing, control, a
+   big hit), never a standing buff on a cooldown.
+2. It costs Resolve and refunds more than it cost when it lands; a wasted one loses its
+   cost. Good rules are profit and sloppy rules a drain: the automation produces power.
+3. Guards catch telegraphs and big hits only; ordinary chip damage always lands and fills
+   Resolve, so weak hitters stay relevant.
+4. Nothing triggers on your hits or scales with attack speed.
+5. Resolve never absorbs damage by itself (§8.2).
+
+**Where the decisions are** *(Decided)*: Bash or Guard on a cast (a Bash that interrupts
+refunds more and staggers but fails on an uninterruptible step; a Guard always works and
+returns less); Parry or Guard on a melee telegraph (Avenger); spend now or save for the
+slam; hold or step out of a ground telegraph (guard it and keep swinging, paying Resolve
+and part of the damage, or walk out like every other class).
+
+**Three families** *(Decided)*: **guards** (take it better), **counters** (hit back),
+**holds** (move enemies). Each tier spreads its lessons across the three.
+
+**Not in it** *(Decided)*: standing buffs; dodges (Sidestep and Disengage are dropped: the
+Squire doesn't dodge); recovery skills (Second Wind and Recuperate go; Last Breath is the
+one emergency answer, and it spends the whole bar); abilities outside the class system
+(§3, confirmed for the Squire).
+
+**Three editors, never the same** (§3): the Striker's Order is a short sequence authored
+beat by beat, the Conduit's Formation a roster, the Squire's Response rules a list of "when
+the enemy does X, I do Y". *Decided (note).* Default configuration: §8.13.
+
+### 8.4 The T1 form
+
+- **The first ten minutes** *(Decided: shape; numbers illustrative)*: the Clearing gives a
+  plain sword and shield, Resolve 4 pips filling as you are hit (plus the trickle) and one
+  default rule, bar full → slam. The Plains teaches Shove around minute 6 with its default
+  rule (three or more enemies on me → Shove). The first boss is won with the base kit and
+  gives Muster. By the end of T1 the Squire carries five responses, Resolve 4 → 6.
+- **Each T1 biome's threat teaches its answer:** a response (that zone's level, before its
+  boss), a weapon, an armor and a charm; its boss gives a trophy. *Decided.*
+- **What each slot asks** *(Decided)*: the weapon, **"how do you hit back?"** (how heavy
+  the plain swings are, how big the slam is, plus one job); the armor, **"what does the
+  threat give you?"** (a shared base plus a Squire line that makes its biome's threat feed
+  Resolve, or its answer cheaper or sturdier); the charm, **"what does an answer give
+  back?"** (recovery paid when an answer lands: enemy-paced, so attack speed can't farm it).
+
+| Biome | Threat | Response | Weapon | Armor (base + Squire line) | Charm | Trophy |
+|---|---|---|---|---|---|---|
+| Plains | swarms | **Shove:** when three or more enemies are on you, shove them all back a step with the shield (lands if it moves three or more) | **Flanged Mace:** the slam's circle is wider | Plating + **Rampart:** enemies you shoved deal less damage for a few seconds | **Breather:** each Shove that lands heals a little per enemy shoved | Tusked Razorback, **Muster** |
+| Forest | fast packs | **Riposte:** the third hit one enemy lands on you, you strike it back at once (Brawler's counter on hit) | **Arming Sword:** quick, light swings; counters hit harder | Evasion + **Turn Aside:** a dodged hit fills Resolve as if it had landed | **Counterbalance:** after a Riposte, Recovery doubles for a few seconds | Gnarled Greatbear, **Relentless** |
+| Swamp | attrition | **Steel Will:** when a poison or bleed lands, spend Resolve to shake it off | **Spiked Flail:** the slam leaves a bleed on everything it hits | DoT resistance + **Iron Gut:** Steel Will costs half | **Purifying Breath:** a poison or bleed you shake off heals you for part of the damage it had left | Grave Toadeater, **Rot-Eater** |
+| Mountain | the hardest hits | **Guard:** brace against the telegraphed blow aimed at you; it deals much less and, caught, refunds (Brace's reactive window) | **Warhammer:** slow, heavy swings, a bigger slam; a slam soon after a caught telegraph hits much harder | Damage cap + **Planted:** while guarding you can't be knocked back or stunned | **Stone Patience:** after a caught telegraph, Recovery triples for a few seconds | Crag Behemoth, **Faultline** |
+| Cave | elites, casters, corrosion | **Shield Bash:** when the enemy you fight starts a wind-up, bash it; the stun interrupts it | **Tower Shield:** you fight with the shield; lighter swings; Shield Bash costs half and stuns longer | Bulk + **Reforged:** stripped plating comes back faster, and each stack stripped fills Resolve | **Old Guard:** part of your Recovery stays on in combat (the old root's share) | Obsidian Broodmother, **Corrode** |
+
+Responses, gear and trophies *Decided (direction; names and numbers open)*. Boots stay
+generic (§4). Challenge, the old Taunt rune's successor, is the Desert's T2 lesson: every
+Plains mob is melee, so solo a pull adds little, and pulling more at the Plains entry spike
+makes it worse. *Decided.* The Toadeater, the Squire's worst T1 boss, meets three answers
+before its fight (Steel Will, Iron Gut, Purifying Breath).
+
+### 8.5 Disciplines (T2)
+
+A considerable power step (§2). The base stays (Resolve from hits, answers and the trickle;
+the slam at a full bar); each discipline tilts where Resolve comes from, how it is spent,
+and unlocks one piece. They are the old frames' successors: Warrior → Avenger, Knight →
+Bulwark, the old heavy frame (named Bulwark until now) → Juggernaut. *Decided.*
+
+| | Avenger (light): the answer | Bulwark (balanced): the anchor | Juggernaut (heavy): the weapon |
+|---|---|---|---|
+| Fantasy | "I read every blow and answer it." | "Everything comes to me, and nothing gets past." | "My armor is my weapon." |
+| Resolve | landed answers fill much more; plain hits less | every enemy on you counts more (its hits and its trickle) | a steady fill from armor and max HP, hit or not; hits fill less |
+| Spending | a counter after every landed answer (a quick strike at the attacker, paid from Resolve); slams are rarer | slams that hold: everything hit turns on you; the circle grows with the enemies on you | one huge slam, the class's biggest hit |
+| Piece | **Parry** (counter): a telegraphed melee blow aimed at you is negated and countered at once; costs more than Guard and fails on ground telegraphs and ranged shots | **Intercept** (hold): step in front of an ally under a telegraph or at low HP and take the blow | **Unbowed** (guard): when an untelegraphed blow over a quarter of your HP lands, spend Resolve to take it on your armor (plating counts twice) |
+| Damage (illustrative) | ~40 counters / ~40 swings / ~20 slam | ~50 swings / ~50 slam | ~25 swings / ~75 slam |
+| Look | a silver flash on every landed answer | a blue ward that thickens with each enemy held | iron glowing ember-orange as the bar fills; the slam lands as a crater |
+| Weapons | Arming Sword, Tower Shield, Warhammer | Flanged Mace, Tower Shield, Bone Maul | Warhammer, Spiked Flail, Forge Hammer, Pressure Hammer |
+| Best at | bosses, elites | packs, parties | farming and bosses alike: it never flakes |
+| Weak at | trash without telegraphs (Plains, Forest) | low pressure (kiters, shells) | swarms (their hits are just damage to it) |
+
+Concepts, pieces and tilts *Decided*; damage shares and looks *Decided, illustrative*.
+**Guardrail on Juggernaut** (§1): its conversion runs one way, defense into damage, and an
+item that converts never also carries above-curve defense. *Decided.* Juggernaut grows
+mainly through gear, not lessons (its Resolve comes from bulk). *Decided.*
+
+### 8.6 Specializations (T3)
+
+**Ownership** *(Decided)*: responses own what each answer does; the relic owns the slam's
+twist or the change to Resolve's flow; the discipline owns where Resolve comes from and how
+it is spent; a specialization bends Resolve or the slam's delivery.
+
+| Bulwark | Avenger | Juggernaut |
+|---|---|---|
+| **Reverb** (old Reverb): the slam lands, then rings out again at half strength a few seconds later | **Measure for Measure** (old Avenger, reshaped): every counter returns a capped share of what its answer prevented; the bigger the blow you caught, the harder you hit back | **Destroyer:** the slam becomes a charge; you crash into your next target from range |
+| **Bastion:** each enemy on you adds a pip to the bar's cap, up to double; a boss counts as several | **Second Nature** (Warrior's tempo): for a few seconds after a counter lands, answers cost nothing | **Inexorable:** your bulk keeps filling the bar between fights and while you walk, so every fight opens with a slam |
+| **Consecrate** (old Devout Priest): the slam becomes a 3 s channel; everything around you is struck again and again, and you can't be moved | **Sunderer:** counters ignore plating and crack shells | **Rampage** (old Assassin): each slam starts a burst of faster swings |
+
+*Decided (concepts; names and numbers open).* Watch three against content-neutrality
+(§12.6): Bastion leans to packs, Inexorable to farming, Sunderer to shells. Measure for
+Measure grows with enemy damage, so it is capped (§8.2). *Decided (notes).*
+
+### 8.7 Leaves (T4 onward)
+
+Three per discipline per tier (§2). The Squire's T4 asks **"what happens when you can't
+answer?"**: the bar is empty when something comes, you paid for an answer that hit
+nothing, or nothing is attacking you at all. The empty-bar column carries the melee
+resilience the bible wants at T4; the quiet column answers the designer's doubt.
+*Decided (names and numbers open).*
+
+| | Empty bar | Wasted answer | Quiet |
+|---|---|---|---|
+| Avenger | **Last Word:** with an empty bar, Parry still fires once every so often, at no cost | **Read Again:** a wasted answer refunds half its cost, and your next answer of the same kind costs less | **Seize the Opening:** an enemy that hasn't attacked you for a few seconds is open; your next swing on it counts as a counter |
+| Bulwark | **Second Line:** when the bar empties, it refills a pip for every enemy on you, once every so often | **No Wasted Effort:** a wasted answer's cost goes into the next slam instead of being lost | **Goad:** when nothing has hit you for a few seconds, a free Challenge pulls the nearest enemies onto you |
+| Juggernaut | **Last Rampart:** with an empty bar, Unbowed still fires once every so often, at no cost | **Focused Weight:** a slam that hits only one enemy refunds a quarter of the bar | **Siege Engine:** while nothing has hit you for a few seconds, your swings hit harder |
+
+Spare ideas for later leaf tiers *(Decided: kept as spares)*: Grudge (counters go to whoever hurt you
+most); **response transformations** (Shove knocks down, Guard also covers an ally behind
+you, Challenge pulls from twice as far); Overrun (a slam's damage beyond the kill carries
+into the next enemy; close to on-kill, to review).
+
+### 8.8 Responses, and where every piece comes from
+
+| Piece | Comes from | Status |
+|---|---|---|
+| Responses | A zone's level teaches a lesson, before its boss, every tier: a new response, a **sidegrade** (the same idea in a new shape) or a **rank-up** (stronger, one visible twist per rank). Through T4: 16 new and 2 sidegrades | Decided |
+| Response scaling | Every response scales with the Squire's tier, so a T1 favourite stays fieldable (as the Striker's techniques, §12.8) | Decided |
+| Discipline pieces | Parry, Intercept, Unbowed: the T2 pick | Decided |
+| Last Breath | Every Squire learns it with its T2 pick | Decided |
+| Trophies | Boss trophies in the relic slot; the same lineage's next-tier boss ranks one up | Decided |
+| Resolve pips | Global Mastery steps | Decided |
+| Specialization, leaves | The T3 pick; T4 onward | Decided |
+
+**Every response through T4** *(Decided: names and numbers open)*:
+
+| Response | Family | Answers | From |
+|---|---|---|---|
+| Shove | hold | three or more enemies on you | Plains T1 |
+| Riposte | counter | the third hit one enemy lands on you | Forest T1 |
+| Steel Will (II: also Corrosion and slows) | guard | a poison or bleed landing | Swamp T1 (II Swamp T2) |
+| Guard (II: a second telegraph within a few seconds; III: staggers the attacker) | guard | a telegraphed blow at you | Mountain T1 (II T3, III T4) |
+| Shield Bash | counter | an interruptible wind-up | Cave T1 |
+| Stand Fast (sidegrade of Guard) | guard | a charge: it stops dead and the charger staggers | Plains T2 |
+| Unshaken | guard | a stun, root or knockdown on you | Forest T2 |
+| Splitting Blow (II: breaks Ice Armor in one blow) | counter | a shield or barrier raised: a blow that hits barriers double | Mountain T2 (II Tundra T4) |
+| Earthstamp (II: knocks down everything around) | hold | a burrow or unseen dash: it surfaces at your feet, staggered | Cave T2 (II Cave T3) |
+| Watchful (II: the ambusher is staggered) | guard | an ambusher's first hit: caught on the shield, at no cost, fills Resolve | Jungle T2 (II Jungle T4) |
+| Challenge (II: the pulled enemy can't move away for a moment) | hold | ranged and kiting enemies, or enemies on an ally: pulled onto you | Desert T2 (II Desert T3) |
+| Anchor (II: even into a hazard) | guard | a drag or push: you don't move, and it fills Resolve | Swamp T3 (II Volcanic T4) |
+| Chain Hook | hold | a fleeing enemy: hooked and dragged back | Jungle T3 |
+| Frostward | guard | the Chill at its threshold: held there a few seconds, no freeze | Tundra T3 |
+| Backdraft | counter | a fire attack or burning shot: the heat thrown back at its source | Volcanic T3 |
+| Disarm (sidegrade of Shield Bash) | counter | a big attack starting: it lands at half; not a stun, so it works on bosses that accept no control | Desert T4 |
+| Lay to Rest | hold | a fallen enemy rising near you: struck down before it stands | Wasteland T4 |
+| Lie in Wait | counter | a dive out of reach: the held slam lands double when it resurfaces | Trench T4 |
+| Parry | counter | a telegraphed melee blow: negated and countered | Avenger |
+| Intercept | hold | an ally under a telegraph or at low HP | Bulwark |
+| Unbowed | guard | an untelegraphed blow over a quarter of your HP | Juggernaut |
+| Last Breath | — | low HP: spend the whole bar to heal | every Squire (§8.10) |
+
+Families through T4: guards 8, counters 7, holds 6 (discipline pieces included). Costs and
+refunds are numbers for the bots; illustratively a guard or hold costs 1 pip, Parry and
+Intercept 2, and a landed answer refunds about double. *Decided (illustrative).*
+
+### 8.9 Items
+
+| Slot | The Squire's version | Status |
+|---|---|---|
+| Weapon | **"How do you hit back?"**: how heavy the plain swings are, how big the slam is, plus one job. A job follows you up: every tier has a stronger recipe for each job you know; new biomes add jobs; a retiring biome's jobs move to a biome of the next tier | Decided |
+| Relic | The boss trophy. **Slam relics** change what the slam does; **Resolve relics** change how you gain or spend Resolve. One twist each, no per-discipline versions; relics never grant or change responses (zones teach responses, bosses give trophies) | Decided |
+| Armor | A shared base plus a Squire line: **"what does the threat give you?"** | Decided |
+| Charm | A shared recovery base plus a Squire line: **"what does an answer give back?"** | Decided |
+| Boots | Generic | Proposed (§4) |
+| Components | §4's own session | Under review |
+
+**The eleven trophies** *(Decided: concepts; names and numbers open)*:
+
+| Lineage | Trophy (kind) | Twist | Ranks |
+|---|---|---|---|
+| Plains (T1–2) | **Muster** (Resolve, gain) | every enemy that joins the fight against you fills a chunk of Resolve, hit or not | II: a rally's whole wave fills double |
+| Forest (T1–2) | **Relentless** (Resolve, spend) | the slam fires at a third of the bar, a third the size; each one fired soon after the last is a bit bigger | II: the chain ramps faster |
+| Swamp (T1–3) | **Rot-Eater** (Resolve, gain) | poison and bleed ticks on you fill Resolve as if they were hits | II: every debuff landing on you also fills; III: the last rank |
+| Mountain (T1–4) | **Faultline** (slam) | the slam runs as a shockwave down a line through the target and everything behind it, reaching the ranged enemies | II: hits barriers double; III: a longer line; IV: aftershocks along it |
+| Cave (T1–3) | **Corrode** (slam) | each slam strips plating from what it hits, stacking (the plating strip moved here from the old heavy frame) | II: a higher stack cap; III: the last rank |
+| Jungle (T2–4) | **Strangler Vine** (slam) | the slam pulls every enemy in a wide ring to you before it lands, fleeing ones included | II: a wider ring; III |
+| Desert (T2–4) | **Executioner's Oath** (Resolve, spend) | the slam can fire early on an enemy below a third of its HP, with whatever Resolve you have | II: a higher threshold; III |
+| Tundra (T3–4) | **Deep Winter** (Resolve, spend) | the bar can fill past full, up to double; an overfull slam hits as hard as two | II: up to triple |
+| Volcanic (T3–4) | **Kindling** (Resolve, gain) | every gain fills a bit more for each 10 s the fight has lasted | II |
+| Wasteland (T4) | **Charnel Ring** (slam) | the slam's circle widens with every enemy in the fight | — |
+| Trench (T4) | **Undertow** (slam) | for a few seconds after the slam, the target can't dive, burrow or flee | — |
+
+Six Resolve relics, five slam relics. Juggernaut leans to slam relics; Avenger and Bulwark
+to Resolve relics. A retired lineage's trophy keeps working and scaling; it only stops
+ranking up. The armor and charm lines by tier are in §8.4 and §8.16.
+
+### 8.10 Defense and recovery
+
+- **The Squire is the one class whose class system holds defense:** the brief sets Resolve
+  as its defense answer, and its guards are responses. Equipment still carries the
+  baseline (the shared armor and charm bases). *Decided.*
+- **The response rules** (§8.3) are its defensive rules: one specific enemy action each,
+  paid in Resolve and refunded when they land; chip damage always lands; nothing on your
+  hits or on attack speed; no Resolve shield. *Decided.*
+- **The old root's in-combat Recovery share** moves to the Cave charm line, Old Guard.
+  *Decided.*
+- **Last Breath:** at low HP, spend the whole bar to heal. Kept with a flag: the Striker
+  dive found Second Wind unhealthy; here it costs your slam. *Decided / Playtest.*
+- **The measured weak spots and their answers:** attrition, the Toadeater (Steel Will,
+  Iron Gut, Purifying Breath, then Rot-Eater) *Decided*; the Plains entry spike (Shove,
+  Rampart, Breather; the bar fills fast in a swarm) *Decided (bots to check)*; enemies
+  that don't hit back (the trickle, Juggernaut and Inexorable, the quiet leaves) *Decided
+  / Playtest*.
+
+### 8.11 Stance-like modes, rite-like passives
+
+None. Hold-or-step-out is a rule, not a stance; the bar and the responses are the class's
+states. *Decided.*
+
+### 8.12 Party role
+
+The party's tank. It holds enemies (Challenge, Bulwark's slams that hold, Goad), breaks
+what threatens the party (Shield Bash and Disarm stop big attacks, Splitting Blow breaks
+barriers, Corrode strips plating), and with Bulwark takes blows meant for allies
+(Intercept). No buffs for allies and no Bulwark aura. An intercepted blow is a hit on you
+that lands an answer, so a party keeps the Squire's bar full. *Decided.*
+
+- **Taunts lock and players come first:** a taunt holds for its whole duration and nobody
+  can take the enemy until it ends; a player's taunt outranks a summon's, so a Squire can
+  take an enemy from a Conduit's tank summon, never the reverse. The natural split: the
+  Squire holds the boss, the Conduit's tanks hold the adds. *Decided.*
+- **The same debuff from two Squires doesn't stack;** the strongest copy applies (§7.12,
+  §12.12). *Decided.*
+- **"Juggernaut" is the Squire's:** the Conduit's Cave T2 summon is renamed **Bonecrusher**
+  (a name change doesn't reopen §7); the Stoneplate Juggernaut boss keeps its name.
+  *Decided.*
+
+### 8.13 Bot plan
+
+*Decided (accepted at the lock; defaults and test arms tuned by the bots).* Bots can't press buttons; every lever is a setting the harness writes.
+
+- **Harness intents:** set the response rules (conditions, hold or step out, holding the
+  slam); equip the relic. The Taunt and Ready Execution runes and the shared guards go.
+- **Defaults:** T1: bar full → slam; each response on its natural trigger as it is learned
+  (Shove on three or more; Guard on a telegraph at you; Shield Bash on an interruptible
+  cast, Guard otherwise; Steel Will on a poison or bleed; Riposte always on). Avenger: Parry
+  the melee telegraphs, Guard the rest, Bash what can be interrupted, a Resolve relic.
+  Bulwark: Shove and Challenge early, hold the slam until three or more enemies stand in
+  its circle, a Resolve relic. Juggernaut: Unbowed on big hits, hold the slam only on a
+  nearly dead target, a slam relic.
+- **Metrics:** Resolve gained by source (hits, answers, trickle, bulk), answers landed and
+  wasted, slams per minute, time to kill, deaths, HP lows (the Plains entry spike, the
+  Toadeater), the share of time with an empty bar.
+- **Test arms the design already asks for:** **the flake check** (the Squire's time to kill
+  on easy trash, kiters and shells against the other classes); the trickle's size; the
+  refund ratio; Juggernaut's bulk fill against farming speed; Measure for Measure's cap;
+  Last Breath; Relentless against full slams; Bastion, Inexorable and Sunderer against
+  content-neutrality.
+
+### 8.14 Salvage
+
+| Keep | Where |
+|---|---|
+| The empowered-attack machinery (arm the big hit, its multiplier) for the slam | `server/src/systems/classes/archetypes/cooldown/cooldownPrototype.ts`, `combat/engine/empoweredAttacks.ts` |
+| The frame loop's bank (Juggernaut's huge slam, Deep Winter's overfill) | `cooldown/frameLoop.ts`, `classes/shared/frameLoop` |
+| The raw incoming hit on `onDamageTaken` (`ctx.metadata.incomingGross`) and Avenger's tracking: Resolve from hits, Measure for Measure's prevented share | `cooldown/t3/ticks/cooldownState.ts` |
+| Old path mechanics: Reverb's echo (Reverb), Devout Priest's channel (Consecrate), Assassin's burst (Rampage), Sunderer's plating bypass (Sunderer); Destroyer's charge uses the player charge (the Striker's salvage) | `cooldown/t3/` |
+| Taunt (Challenge, Goad, Bulwark's slams), plus the new lock and player priority | `server/src/systems/combat/ai/taunt.ts`, `monsterTargeting.ts` |
+| The monster wind-up interrupt (Shield Bash, Earthstamp, Stand Fast), uninterruptible steps, boss patterns ending as interrupted or staggered | `combat/engine/monsterMechanics.ts`, `combat.ts`, `ai/bossPatterns.ts` |
+| Rune conditions as triggers: an enemy casting at you, standing in a telegraph, melee contact, three or more on you, a debuff, three debuffs, controlled, a boss escaping, a shielded target, in a party, HP below 25% | `shared/src/runeDatabase.ts` |
+| Guard buffs' plumbing (buff-bar identities, the multiplicative 90% cap) | [abilities-current-state.md](../docs/abilities-current-state.md) |
+| Callouts | `client/src/render/skillCallouts.ts` |
+| The `squireSlam` effect, bespoke `fx/bespoke/squire.ts`, the brace pose, the mechanic flash; the cooldown dial becomes the Resolve pips | the client's fx |
+| Squire bodies through T3 (iron great helm, plate and tabard; mobile → knight → fortress) | the atlases |
+| The Passive Tree's panel, unlock gate, reset and layers | §2 |
+
+| Remove or rework | Why |
+|---|---|
+| The 7 s execution clock | Resolve |
+| Frames, range nodes and the nine paths as data | Disciplines and specializations |
+| The root's in-combat Recovery share | The Old Guard charm line |
+| Shared guards (Brace, Endure, Bramble Guard, Sidestep, Break Free, Cleanse, Second Wind, Recuperate); the Taunt and Ready Execution runes | Squire responses (§3) |
+| Destroyer's delivery by Techniques | Techniques are the Striker's |
+| Stalwart and Transcendant | Dropped (Stalwart was a T4 outlier) |
+
+**Build tasks** *(Decided)*: triggers the rune engine lacks (an ally low or under a
+telegraph, an enemy joining the fight, a fallen enemy rising, a dive out of reach, a drag
+or push, the Chill at its threshold, a fire attack); "landed" detection per response (the
+refund); the taunt lock and player priority; damage over time kept out of the base fill;
+Parry's negate and Disarm's halving of a boss attack.
+
+### 8.15 Open questions
+
+**Playtest:**
+
+1. **The flake check:** does the Squire flake against enemies that don't hit back (easy
+   trash, kiters, shells)? The designer's main doubt; measure it first.
+2. Every number: the trickle, the pips, response costs and refunds, the discipline tilts,
+   Resolve per hit.
+3. Last Breath's health.
+4. The Avenger warning: Resolve from raw hits and Measure for Measure grow with enemy
+   damage; the cap must hold.
+5. Avenger in telegraph-poor content (Plains and Forest trash).
+6. Bastion, Inexorable and Sunderer against content-neutrality.
+
+**Design, later:**
+
+7. Names: placeholders throughout (the Conduit's Cave T2 summon is now Bonecrusher;
+   Juggernaut is the Squire's).
+8. Leaves after T4 (spare theme: response transformations) and the T7–T8 capstone.
+9. Components (§4), farming efficiency (§13), per-class stats (§5).
+
+**Collisions, as settled** *(Decided, notes)*: Resolve and the Spirit (no Resolve shield);
+Resolve and the Striker's Momentum (source and moment, §8.2); countering and the Striker's
+reactive pieces (Read the Blow is passive mitigation, the Striker's control techniques sit
+in a sequence; the Squire's answers are reactive, cost Resolve and refund); holding on
+(Last Word and Last Rampart fire a free answer when you can't pay, never cheat-death, which
+is the Striker's Unbreakable); thorns stays the Conduit's Bramble (the Squire's retaliation
+is a counter, Riposte); redirection (Intercept between players is the Squire's; the
+Conduit's gear lines between a Conduit and its summons).
+
+### 8.16 Tier by tier: what each biome gives the Squire
+
+T1 is §8.4. Every later tier, each biome teaches a lesson (§8.8: a new response, a
+sidegrade or a rank-up), has a weapon, an armor and a charm recipe (its jobs, stronger),
+and its boss gives a trophy or ranks one up. **Jobs move when a biome retires:** after T2
+the Forest's (Arming Sword, Turn Aside, Counterbalance) to the Jungle and the Plains'
+(Flanged Mace, Rampart, Breather) to the Volcanic; after T3 the Swamp's (Spiked Flail, Iron
+Gut, Purifying Breath) to the Wasteland and the Cave's (Tower Shield, Reforged, Old Guard)
+to the Trench. *Decided on paper, to judge in the game; names and numbers open.*
+
+**T2** (the disciplines arrive at the same tier)
+
+| Biome | Threat | Lesson (family, kind) | New gear jobs | Trophy |
+|---|---|---|---|---|
+| Plains | stampedes | **Stand Fast** (guard, sidegrade of Guard) | — | Gorging Razortusk: Muster II |
+| Forest | cadence duel, stuns | **Unshaken** (guard, new) | — | Apex Timberclaw: Relentless II |
+| Mountain | heavy plating, the breakable barrier, charges | **Splitting Blow** (counter, new) | — | Stoneplate Juggernaut: Faultline II |
+| Swamp | pools, rain, the rising mire; Corrosion | **Steel Will II** (guard, rank-up) | — | Mire-Gorged Behemoth: Rot-Eater II |
+| Cave | eruptions from below | **Earthstamp** (hold, new) | — | Chitinous Dreadbore: Corrode II |
+| Jungle (new) | fleeing prey, ambushers from cover | **Watchful** (guard, new) | Weapon **Hooked Glaive:** longer reach; the slam hooks fleeing enemies back into its ring. Armor: anti-ambush base + **Unflinching:** an ambush can't stun or knock you down. Charm **Watchman's Ease:** an ambush Watchful catches heals you for the hit it stopped | Jungle Dread-Gorger, **Strangler Vine** |
+| Desert (new) | mark, slow, execute; ranged kiters | **Challenge** (hold, new; moved from the Plains) | Weapon **Throwing Shield:** when your target is out of reach, your swing throws the shield instead (lighter). Armor: ranged-hit base + **Arrow Catcher:** ranged hits on you fill double Resolve. Charm **Called Out:** each enemy a Challenge pulls heals you a little | Dune-Stalker Emperor, **Executioner's Oath** |
+
+How the T2 bosses test the Squire: the Jungle boss's Escape Guard is a barrier Splitting
+Blow breaks, its ambush what Watchful catches; the Desert boss's mark is what Steel Will
+shakes off and its Execution what Guard catches; the Forest's stuns are Unshaken's. Stand
+Fast is the same lesson as the Conduit's Ironhorn (a theme crossing, §3).
+
+**T3** (the Plains and Forest have retired)
+
+| Biome | Threat | Lesson (family, kind) | New gear jobs | Trophy |
+|---|---|---|---|---|
+| Mountain | the double charge | **Guard II** (guard, rank-up) | — | Crag-Gorged Horn-Behemoth: Faultline III |
+| Cave | the tunnel chase | **Earthstamp II** (hold, rank-up) | — | Deep-Core Burrow-Gorger: Corrode III |
+| Swamp (last tier) | spores, detonating pools, the drag | **Anchor** (guard, new) | — | Rot-Spore Croc-Behemoth: Rot-Eater III |
+| Jungle (+ the Forest's jobs) | pursuit, flight | **Chain Hook** (hold, new) | The Forest's jobs | Apex Bramble-Slasher: Strangler Vine II |
+| Desert | postures; the Monarch turns kiter at half HP; a dash-escape | **Challenge II** (hold, rank-up) | — | Dune-Carapace Monarch: Executioner's Oath II |
+| Tundra (new) | the Chill clock, Deep Freeze, Ice Armor, root casters; bosses accept no control | **Frostward** (guard, new) | Weapon **Glacier Mace:** the slam leaves frozen ground that slows enemies on it. Armor: chill base + **Frozen Resolve:** the Chill building on you fills Resolve. Charm **Hearth:** while Frostward holds, you heal a little each second | Frost-Plated Rime-Mammoth, **Deep Winter** |
+| Volcanic (new; + the Plains' jobs) | Heat, vents, the Final Eruption, Obsidian shells, hound swarms, burning gunners | **Backdraft** (counter, new) | Weapon **Forge Hammer:** each step of the fight's Heat makes the slam bigger. Armor: heat base + **Stoked:** the Heat's extra damage on you fills extra Resolve. Charm **Cooling Breath:** each Backdraft that lands heals you a little | Cinder-Shell Magma-Salamander, **Kindling** |
+
+**T4** (the Swamp and Cave have retired)
+
+| Biome | Threat | Lesson (family, kind) | New gear jobs | Trophy |
+|---|---|---|---|---|
+| Mountain (last tier) | Earthshatter, delayed fault lines | **Guard III** (guard, rank-up) | — | Iron-Crest Titan: Faultline IV |
+| Tundra | Ice Armor at its heaviest | **Splitting Blow II** (counter, rank-up) | — | Glacial Patriarch: Deep Winter II |
+| Jungle | hard to catch, then it commits | **Watchful II** (guard, rank-up) | — | Verdant-Crown Predator: Strangler Vine III |
+| Desert | three acts: melee, kiter, cornered | **Disarm** (counter, sidegrade of Shield Bash) | — | Dune-Throne Sovereign: Executioner's Oath III |
+| Volcanic | the Heat race, Magma Shove | **Anchor II** (guard, rank-up) | — | Caldera Sovereign: Kindling II |
+| Wasteland (new; + the Swamp's jobs) | the dead rise; area matters | **Lay to Rest** (hold, new) | Weapon **Bone Maul:** the slam hits harder for every enemy in its circle. Armor: base (risen enemies hit softer) + **Grave Plate:** risen enemies' hits fill double Resolve. Charm **Rest Eternal:** each Lay to Rest that lands heals you a little | Charnel-Crown Sovereign, **Charnel Ring** |
+| Trench (new; + the Cave's jobs) | the debuff pile, Devour, dives out of reach | **Lie in Wait** (counter, new) | Weapon **Pressure Hammer:** the slam hits harder for each different debuff on you. Armor: debuff-resistance base + **Abyssal Plate:** while you carry three or more debuffs, guards cost nothing. Charm **Brine Will:** each debuff you shake off raises Recovery for a few seconds, stacking | Elder Trench Serpent, **Undertow** |
+
+How T3 and T4 test the Squire: the Tundra and Volcanic bosses accept no control, so Shield
+Bash, Earthstamp and Stand Fast's stagger do nothing there and Guard, Splitting Blow,
+Frostward and Backdraft carry (Disarm is the T4 answer that isn't a stun); the Heat makes
+every hit bigger, so more Resolve as well as more damage (the Squire likes the Volcanic);
+Deep Winter and Kindling are the Final Eruption's tools; Steel Will, Abyssal Plate and Brine
+Will answer the Trench's debuff pile, Lie in Wait and Undertow its dives.
+
+**Totals through T4:** 16 new lessons and 2 sidegrades plus 8 rank-ups; with the three
+discipline pieces, guards 8, counters 7, holds 6. Eleven trophies: six Resolve relics, five
+slam relics.
+
+## 9. Apprentice — Draft (deep dive started 2026-10-14)
+
+Order of the dives: **Conduit first** (done, §7 locked). **Striker second** (done, §12
+locked; designer's call, 2026-10-13: it is the standard class the game is measured by and
+the most playtested). **Squire third** (dive started 2026-10-14, §8). **Apprentice, Slinger
+and Spirit run in parallel from 2026-10-14**, each in its own session. Each class's brief
+concept is in the [brief](../docs/briefs/class-first-rework-brief-2026-10-13.md#class-reworks).
+
+**While a parallel dive runs, its section stays this stub.** Its prep pack is
+`docs/briefs/<class>-deep-dive-prep-2026-10-14.md` and every call lives in its review log,
+`docs/briefs/<class>-deep-dive-log-2026-10-14.md`. When the dive converges, the section is
+rewritten to the class template (§6) in one edit, then locked.
+
+## 10. Slinger — Draft (deep dive started 2026-10-14)
+
+Stub while the dive runs (see §9). Prep: `docs/briefs/slinger-deep-dive-prep-2026-10-14.md`;
+log: `docs/briefs/slinger-deep-dive-log-2026-10-14.md`.
+
+## 11. Spirit — Draft (deep dive started 2026-10-14)
+
+Stub while the dive runs (see §9). Prep: `docs/briefs/spirit-deep-dive-prep-2026-10-14.md`;
+log: `docs/briefs/spirit-deep-dive-log-2026-10-14.md`.
 
 ## 12. Striker — Locked (2026-10-14)
 
@@ -925,7 +1390,8 @@ press buttons; every lever is a setting the harness writes.
 8. Leaves after T4 (spare theme: technique transformations) and the T7–T8 capstone.
 9. Components (§4), farming efficiency (§13), per-class stats (§5).
 10. Collisions: marks and Deathmark are the Slinger's; Shatter is the Apprentice's;
-    "Juggernaut" now names a Conduit summon and a Squire discipline, not a Striker piece.
+    "Juggernaut" is the Squire's discipline (§8.12; the Conduit's summon became Bonecrusher),
+    not a Striker piece.
 
 ### 12.16 Tier by tier: what each biome gives the Striker
 
@@ -1033,4 +1499,4 @@ Archived with a header when the section that replaces them locks:
 (§1, §3, §6, §9, §10) rather than archived: its world, biome and math sections still hold.
 The Striker's lock (§12, 2026-10-14) archives nothing: no design doc is the Striker's
 alone, and `docs/frames-current-state.md` stays the code's truth until the build replaces
-frames.
+frames. The Squire's lock (§8, 2026-10-14) archives nothing either, for the same reasons.
