@@ -38,7 +38,7 @@ function playerSlices(id: string): PersistedPlayerSlices {
       level: 7,
       skillPoints: 2,
       essences: { red: 11, blue: 12, green: 13, yellow: 14, purple: 15 },
-      shards: {}, capstones: {},
+      
       biomeXP: { plains: 99 },
       biomeLevel: { plains: 4 },
       unlockedRecipes: ["primordial-club"],

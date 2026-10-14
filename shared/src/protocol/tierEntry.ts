@@ -1,5 +1,4 @@
 import type { AttunedAbilities } from "../abilities";
-import type { LineageProgressMap, PacketId } from "../data/lineages/types";
 import type { EquipmentMap, EssenceType } from "../items";
 import type { EquippedRule } from "../runeDatabase";
 import type { EquippedRites } from "../rites";
@@ -43,20 +42,6 @@ export interface TierEntryProfile {
   checkpointSourceNodeId?: string;
   /** Exact wallet used at entry. Synthetic wallets are labeled in telemetry. */
   wallet: TierEntryWallet;
-  /**
-   * The weapon-lineage lane this profile is a PURE REFERENCE BUILD for (design
-   * §9: "pure lanes are the reference builds"). Present only on the lane matrix's
-   * profiles; an ordinary tier-entry template names no lane, and a profile whose
-   * `lineages` buy nothing is the lane-less control.
-   */
-  lane?: PacketId;
-  /**
-   * Lineage trees the character already owns: cards bought, which one is active
-   * per row, forms owned, and the worn form. Absent (the ordinary case) leaves
-   * every tree at whatever HOLDING the base form opens on its own — which is what
-   * every pre-lineage template describes.
-   */
-  lineages?: LineageProgressMap;
 
   level: number;
   skillPoints: number;

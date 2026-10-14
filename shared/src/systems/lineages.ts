@@ -201,7 +201,7 @@ export { isRankedCard, maxCardRank, rankNumeral };
  * nothing outside this file reads `holdsInventory.lineages` raw.
  */
 export function lineageProgressFor(
-  inventory: Pick<HoldsInventory, 'lineages'> | undefined,
+  inventory: { lineages?: LineageProgressMap } | undefined,
   lineageId: string,
 ): LineageProgress {
   return inventory?.lineages?.[lineageId]
@@ -1055,7 +1055,7 @@ export interface ActiveLineageEffects {
  * for wearing one would be a lineage verb with no tree behind it.
  */
 export function resolveActiveLineages(
-  inventory: Pick<HoldsInventory, 'equipment' | 'lineages'> | undefined,
+  inventory: Pick<HoldsInventory, 'equipment'> & { lineages?: LineageProgressMap } | undefined,
   frameFace?: DefensiveFace,
 ): ActiveLineageEffects {
   const cards: ResolvedLineageCard[] = [];

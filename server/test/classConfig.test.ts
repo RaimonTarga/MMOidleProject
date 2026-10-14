@@ -36,7 +36,7 @@ function makeUnclassedPlayer(id: string): PersistedPlayerSlices {
     tracksProgression: {
       level: 0, skillPoints: 1,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      shards: {}, capstones: {}, biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
+      biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier: 0, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },

@@ -28,14 +28,6 @@ export function gameplayMetrics(e: GameplayEvent): GameplayMetric[] {
       }
       break;
     case 'progression': add('progression', `${p.milestone}:${p.value}`, p.sessionElapsedMs); break;
-    case 'lineage': {
-      const dimension = `${p.lineageId}:${p.lane ?? 'none'}:${p.row ?? 'gate'}`;
-      add(p.event, dimension, p.sessionElapsedMs);
-      // Time-to-first-card is a per-session fact, and a daily aggregate cannot
-      // recover it from the purchase rows, so it gets its own metric.
-      if (p.firstOfSession) add('lineage.first-card-ms', dimension, p.sessionElapsedMs);
-      break;
-    }
     case 'resource':
       if (p.earned) add('resource-earned', p.resource, p.earned);
       if (p.spent) add('resource-spent', p.resource, p.spent);

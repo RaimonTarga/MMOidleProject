@@ -27,7 +27,7 @@ const slices: PersistedPlayerSlices = {
     level: 77,
     skillPoints: 9,
     essences: { red: 12345, blue: 0, green: 0, yellow: 0, purple: 0 },
-    shards: {}, capstones: {},
+    
     biomeXP: { "private-biome": 999 },
     biomeLevel: {},
     unlockedRecipes: ["private-recipe"],

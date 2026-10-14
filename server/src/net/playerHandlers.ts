@@ -1,5 +1,5 @@
 import { captureProgressionCheckpoint, restoreProgressionCheckpoint } from '../admin/progressionCheckpoint';
-import { runicLoadoutFromProgression, runicPointEditAllowed, attunedAbilityIds, ABILITY_NODE_ROWS, ROW_KINDS } from "@mmo-idle/shared";
+import { runicLoadoutFromProgression, runicPointEditAllowed, attunedAbilityIds } from "@mmo-idle/shared";
 import type { Socket } from "socket.io";
 import {
   DEFAULT_AUTOCOMBAT_CONFIG,

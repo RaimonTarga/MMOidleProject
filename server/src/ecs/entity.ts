@@ -3,7 +3,6 @@ import type {
   CannotAttack,
   ChillsTarget,
   ControlsMonster,
-  ShowsRhythm,
   InPack,
   DealsDamage,
   EvadesHits,
@@ -70,7 +69,7 @@ import type {
   UsesSkills,
   ConfiguresClass,
 } from "@mmo-idle/shared";
-import type { FeatureTarget, LineageFxKey, Vec2 } from "@mmo-idle/shared";
+import type { FeatureTarget, Vec2 } from "@mmo-idle/shared";
 import type { With } from "miniplex";
 import type { ControlsMinion } from "../systems/classes/archetypes/summoner/controlsMinion";
 import type { ControlsSummons } from "../systems/classes/archetypes/summoner/controlsSummons";
@@ -187,38 +186,6 @@ export interface IsCastingAbility {
 }
 
 /**
- * One area hit an ability keystone has scheduled (design §22.4): a spin tick of
- * Whirlwind, the second eruption of Aftershock. Resolved through
- * `applyPlayerAoe` when due, so it is never an attack: it advances no hit
- * counter and is no attack-equivalent.
- */
-export interface ScheduledKeystoneHit {
-  keystoneId: string;
-  abilityId: string;
-  /** Ms until it lands. Drained by `dt` every tick. */
-  dueInMs: number;
-  /** Where it lands; absent = around the owner, wherever they stand then. */
-  at?: Vec2;
-  /** The node it belongs to: a hit whose owner left the node is dropped. */
-  nodeId: string;
-  radius: number;
-  damage: number;
-  /** Broken by hard control on the owner, like a cast (Whirlwind's spin). */
-  interruptible: boolean;
-  /** The `card-fx` key to push when it lands, if the landing is the application. */
-  fxOnLand?: LineageFxKey;
-}
-
-/**
- * Server-only: the player has keystone area hits still to land. Present only while
- * at least one is pending — attached by `scheduleKeystoneHit`, detached by the
- * tick that lands or drops the last one.
- */
-export interface SchedulesKeystoneHits {
-  hits: ScheduledKeystoneHit[];
-}
-
-/**
  * Server-only: a Technique whose wind-up resolved into a fast, target-bound
  * rush. It owns movement until contact, interruption, or expiry, then hands the
  * normal armed-hit rider back to the combat pipeline.
@@ -321,13 +288,9 @@ export interface ServerEntity {
   isChargingAbility?: IsChargingAbility;
   /** One owner command, with physical summon IDs that cannot transfer on reconstruction. */
   hasFormationCharge?: IsChargingAbility & { pendingEntityIds: string[] };
-  /** Ability keystone area hits still to land (Whirlwind's spin, Aftershock). */
-  schedulesKeystoneHits?: SchedulesKeystoneHits;
   hasEnvironmentalDot?: HasEnvironmentalDot;
   hasNodeFeatureEffect?: HasNodeFeatureEffect;
   isDead?: IsDead;
-  /** The rhythm readout (design §24.6): present while a triggered lineage card is in play. */
-  showsRhythm?: ShowsRhythm;
 
   // Monster-only slices
   isMonster?: IsMonster;

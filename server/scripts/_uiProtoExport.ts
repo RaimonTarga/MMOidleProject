@@ -288,7 +288,6 @@ const RICH_LEVELS = (lineage: LineageDefinition): LineageWallet => {
   return {
     essences: { [essence]: 500 },
     shards: Object.fromEntries(lineage.lanes.map((l) => [l, 20])),
-    capstones: {},
     biomeLevels: { [lineage.homeBiome]: 6 },
     globalMastery: 18,
     playerTier: 1,
@@ -303,7 +302,7 @@ const weapons = T1_WEAPONS.map((lineage) => {
     key: 'fresh', label: 'Nothing bought, levels and materials at zero (Striker)',
     archetype: 'cadence', root: 'cadence-root',
     progress: { ownedCards: [], active: {}, ownedForms: [t1.recipeId], wornForm: t1.recipeId },
-    wallet: { essences: {}, shards: {}, capstones: {}, biomeLevels: { [lineage.homeBiome]: 0 }, globalMastery: 0, playerTier: 1 },
+    wallet: { essences: {}, biomeLevels: { [lineage.homeBiome]: 0 }, globalMastery: 0, playerTier: 1 },
     equipment: { weapon: t1.recipeId },
   };
   const open: PageState = {

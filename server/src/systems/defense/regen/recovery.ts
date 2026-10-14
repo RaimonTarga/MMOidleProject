@@ -54,7 +54,7 @@ import { applyHealToPlayer } from './healing';
  * stronger fraction ride the longer window — strictly better than either
  * ability as authored.
  */
-export type RecoverySourceId = 'pulse' | 'kill' | 'guard' | 'skill' | 'skill-2' | 'lineage';
+export type RecoverySourceId = 'pulse' | 'kill' | 'guard' | 'skill' | 'skill-2';
 
 interface TimedSource {
   /** Remaining active time, ms. */
@@ -69,10 +69,6 @@ const TIMED_SOURCES: Record<RecoverySourceId, TimedSource> = {
   guard: { msKey: 'recovery.guardMs', pctKey: 'recovery.guardPct' },
   skill: { msKey: 'recovery.skillMs', pctKey: 'recovery.skillPct' },
   'skill-2': { msKey: 'recovery.skill2Ms', pctKey: 'recovery.skill2Pct' },
-  // A lineage card's `recovery-window` payoff. Its own source rather than a
-  // borrowed one: sharing `guard` would let a card's window ride a Guard's
-  // fraction (or be downgraded by it), and the two are earned differently.
-  lineage: { msKey: 'recovery.lineageMs', pctKey: 'recovery.lineagePct' },
 };
 
 const TIMED_SOURCE_IDS = Object.keys(TIMED_SOURCES) as RecoverySourceId[];

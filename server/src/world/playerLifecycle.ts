@@ -26,11 +26,6 @@ export function attachPlayerEntity(
 ): PlayerEntity {
   Object.assign(player.tracksProgression, migrateAttunement(player.tracksProgression));
   delete (player.tracksProgression as unknown as { equippedAbilities?: unknown }).equippedAbilities;
-  // Lineage wallets, normalized here rather than at each construction site: a
-  // save written before the progression rework has neither, and the reward seam
-  // and the four economy handlers both write into them unconditionally.
-  player.tracksProgression.shards ??= {};
-  player.tracksProgression.capstones ??= {};
   const craftedRuneRecipes = player.tracksProgression.runeRecipesCrafted ?? [];
   player.tracksProgression.runeRecipesCrafted = craftedRuneRecipes;
   player.tracksProgression.runesOwned = runeIdsFromCraftedRecipes(craftedRuneRecipes);

@@ -18,8 +18,6 @@ import type { EquippedRule } from '../../runeDatabase';
 import type { AttunedAbilities } from '../../abilities';
 import type { EquippedStances } from '../../stances';
 import type { EquippedRites } from '../../rites';
-import type { LineageProgressMap, PacketId } from '../../data/lineages/types';
-import type { AbilityNodeProgressMap } from '../../data/abilityNodes/types';
 import type { ClassConfig } from '../../classKits/configTypes';
 
 export type { HasHitbox };
@@ -354,33 +352,6 @@ export interface TracksProgression {
   level: number;
   skillPoints: number;
   essences: Record<EssenceType, number>;
-  /**
-   * Lineage shard wallet, keyed by PACKET (progression rework Phase 1). Eight
-   * shards for the whole game; every kill drops a little of the shard its mob
-   * family favours, so the material's name says what it buys and the map says
-   * where it drops (design §12). Shards gate a card, essence pays the bulk.
-   *
-   * The only kill-driven material wallet since Phase 2b deleted the old
-   * node-modifier catalyst accumulator (`catalysts`/`catalystProgress`).
-   */
-  shards: Partial<Record<PacketId, number>>;
-  /**
-   * Boss capstone wallet, keyed by BIOME. The biome's boss drops one every kill,
-   * and a gate costs several — which is why the boss is the only way up a
-   * lineage tree (design §5).
-   */
-  capstones: Record<string, number>;
-  /**
-   * The teaching counter (design §26.4, legibility run Contract 2): per card or
-   * capstone id, how many of its firings the player has been SHOWN — counted only
-   * while the client reported the fight on screen — capped at
-   * `CARD_TEACHING_FIRINGS`. The floating word plays for a firing the server marks
-   * as teaching (`card-fx.teach`), so a card names itself for its first three
-   * on-screen firings and then never again. Server-written only; optional for
-   * save compatibility (hydration normalises absent to `{}`); wiped with the rest
-   * of progression by `resetPlayerProgress`.
-   */
-  cardFiringsTaught?: Record<string, number>;
   biomeXP: Record<string, number>;
   biomeLevel: Record<string, number>;
   unlockedRecipes: string[];
@@ -414,17 +385,6 @@ export interface TracksProgression {
    */
   attunedAbilities: AttunedAbilities;
   /**
-   * Ability nodes, keyed by ability id (design §19). A node means "this ability
-   * also fires the chosen packet's payoff at a share when it lands (Technique)
-   * or casts (Guard)" — runes decide WHEN an ability fires, nodes decide WHAT
-   * it does.
-   *
-   * Stored here with the rest of the ability build data, and optional because
-   * every save written before design §19 shipped has none: hydration normalizes
-   * an absent map to an empty one, so there is no migration.
-   */
-  abilityNodes?: AbilityNodeProgressMap;
-  /**
    * Stances the player has learned (crafted) — the slottable pool
    * (system rework Step 10). Stored here like runes/abilities (build/loadout data).
    */
@@ -455,20 +415,6 @@ export interface HoldsInventory {
   equipment: EquipmentMap;
   /** Per-item-id upgrade level (+0..+MAX_UPGRADE). Absent key means +0. */
   itemUpgrades: Record<string, number>;
-  /**
-   * Lineage trees, keyed by lineage id (progression rework Phase 1). Per lineage:
-   * the cards bought, which owned card is active in each row, the forms bought,
-   * and the form currently worn — `equipment[slot]` mirrors `wornForm`, so stat
-   * derivation, tooltips and the ladder rules are unchanged.
-   *
-   * OPTIONAL for save and construction compatibility, exactly like
-   * `TracksProgression.visitedNodes`: a save written before Phase 1 has no
-   * lineages, and a bare test or preview inventory need not invent any. Nothing
-   * reads this field raw — `lineageProgressFor` / `normalizeLineageProgressMap`
-   * in `systems/lineages.ts` are the single readers. Phase 1b can make it
-   * required once every construction site is wired.
-   */
-  lineages?: LineageProgressMap;
 }
 
 /**

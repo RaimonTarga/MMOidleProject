@@ -52,7 +52,7 @@ function makePlayerSlices(id: string, x: number, y: number): PersistedPlayerSlic
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      shards: {}, capstones: {},
+      
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],

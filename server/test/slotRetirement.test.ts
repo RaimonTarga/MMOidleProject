@@ -36,7 +36,7 @@ function makeSlices(id: string, opts: { essence?: number; nodeId?: string } = {}
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: e, blue: e, green: e, yellow: e, purple: e },
-      shards: {}, capstones: {},
+      
       biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 4, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [],

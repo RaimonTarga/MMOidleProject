@@ -56,7 +56,7 @@ assert(broadcast().deltas.some(d => d.kind === 'remove' && d.netId === id));
     hasHealth: { hp: 1000, maxHp: 1000, recovery: 0 },
     tracksProgression: {
       level: 0, skillPoints: 0, essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      shards: {}, capstones: {},
+      
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
       questProgress: {}, playerTier: 0, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
       runesOwned: [], runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [],

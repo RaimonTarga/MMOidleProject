@@ -20,7 +20,6 @@ import {
   TEST_ROOM_NODE_ID,
   runeIdsFromCraftedRecipes,
   normalizeAttunedAbilities,
-  normalizeLineageProgressMap,
   normalizeEquipment,
   validStanceIds,
   validRiteIds,
@@ -126,12 +125,6 @@ export function resetPlayerProgress(world: World, player: PlayerEntity): GameAct
   player.holdsInventory.inventory = [];
   player.holdsInventory.equipment = emptyEquipment();
   player.holdsInventory.itemUpgrades = {};
-  // Lineage trees and their wallets are progression, so a wipe takes them too.
-  player.holdsInventory.lineages = {};
-  player.tracksProgression.shards = {};
-  player.tracksProgression.capstones = {};
-  // A wiped character is taught its cards again (design §26.4).
-  player.tracksProgression.cardFiringsTaught = {};
   player.usesAutocombat.auto = false;
   clearAutoTraversePath(world, player);
 
@@ -464,7 +457,6 @@ export function applyTierEntryProfile(
   // Unlock content from the same authoritative recipe gates the live game uses;
   // the profile does not carry an invented unlocked-recipe list.
   checkRecipeUnlocks(player);
-  player.holdsInventory.lineages = {};
   syncArchetypeSlices(world, player);
   recalculatePlayerEntityStats(world, player);
   syncArchetypeSlices(world, player);

@@ -94,7 +94,7 @@ function richWallet(overrides: Partial<LineageWallet> = {}): LineageWallet {
   assert(
     checkUnlockCard({
       lineage: rapier, card: statCard, progress,
-      wallet: richWallet({ essences: {}, shards: {}, biomeLevels: {}, globalMastery: 0, isTestRoom: true }),
+      wallet: richWallet({ essences: {}, biomeLevels: {}, globalMastery: 0, isTestRoom: true }),
     }).ok,
     'the test room should skip cost gates',
   );
