@@ -25,7 +25,7 @@ import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { runPlayerAttack } from "../src/systems/combat/engine/combat";
 import { resolveCastPayload } from "../src/systems/player/abilities/abilityEffects";
 import { makeCombatContext, emitCombatEvent } from "../src/systems/combat/engine/combatPipeline";
-import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
+import { fireAbilities } from "./fixtures/fireAbilities";
 import { World } from "../src/world/World";
 
 function assert(condition: unknown, message: string): void {
@@ -120,7 +120,7 @@ for (const abilityId of ["slam", "cull"]) {
   const target = monsterAt(world, 430);
   const splashed = monsterAt(world, 470);
   setAttackTarget(world, player, target.isMonster.id);
-  fireWithReferenceWiring(world, Date.now());
+  fireAbilities(world, Date.now());
   assert(player.hasArmedAbility?.abilityId === "sweep", "Sweep must arm for the test to mean anything");
   runPlayerAttack(world, player, target, Date.now(), {
     attackOrigin: player.hasPosition.current,

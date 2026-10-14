@@ -10,7 +10,7 @@ import { refillBarrier } from '../../src/systems/defense/barrier/barrier';
 import { setAbilityLoadout } from '../../src/systems/player/economy/abilityCrafting';
 import type { World } from '../../src/world/World';
 import type { BuildSpec } from './types';
-import { withReferenceAbilityWiring, type AttunedAbilities, type EquippedRule } from '@mmo-idle/shared';
+import { type AttunedAbilities, type EquippedRule } from '@mmo-idle/shared';
 
 export const SURVEY_CLASSES = [
   { name: 'striker', prefix: 'cadence', melee: true, weapons: ['flash-rapier','gale-needle','volcanic-cinderlash'] },
@@ -129,10 +129,9 @@ export function resolveSurveyPackage(cell: SurveyCell): ResolvedSurveyPackage {
     techniques: [...(cell.tier >= 3 ? ['imbue-lightning'] : []), cell.technique ?? 'sweep'],
     guards: cell.guards ?? (cell.tier === 1 ? ['second-wind'] : ['second-wind','cleanse']),
   };
-  // Abilities no longer carry built-in triggers. Every attuned ability the cell
-  // does not wire itself gets its reference Rune rule, so the bench keeps
-  // measuring the retired default timing.
-  const runeRules = withReferenceAbilityWiring(authoredRules, abilities);
+  // Nothing fires an ability from a Rune any more (the Use Ability action is
+  // gone); the class runtimes will.
+  const runeRules = authoredRules;
   return {
     abilities, runeRules, upgradeLevel: cell.upgradeLevel ?? 5,
     sources: {

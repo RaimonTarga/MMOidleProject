@@ -19,7 +19,7 @@ import { initCombatSystems } from "../src/systems/combatBootstrap";
 import {
   SLINGER_SWEEP_CLIP_BUDGET_MULT,
 } from "../src/systems/player/abilities/abilityEffects";
-import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
+import { fireAbilities } from "./fixtures/fireAbilities";
 import { takeWorldLogEvents } from "../src/world/worldLog";
 import { World } from "../src/world/World";
 
@@ -149,7 +149,7 @@ function armSweep(world: World, playerId: string, targetId: string): void {
   if (!player) throw new Error("missing Sweep player");
   player.usesAutocombat.auto = true;
   setAttackTarget(world, player, targetId);
-  fireWithReferenceWiring(world, 1_000);
+  fireAbilities(world, 1_000);
   assert(
     player.hasArmedAbility?.abilityId === "sweep",
     "Sweep should arm while the player is in combat",

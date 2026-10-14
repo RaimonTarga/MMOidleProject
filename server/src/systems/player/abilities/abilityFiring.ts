@@ -1,10 +1,14 @@
 /**
- * Ability auto-fire — the per-tick driver for equipped abilities.
+ * Ability firing — fire one given ability now.
  *
- * Abilities have no built-in trigger: one auto-fires only while a `use-ability`
- * Rune rule naming it is active. Active rules arbitrate in Rune order. A few
- * abilities additionally decline to fire when they would do nothing (see
- * `fireGateOpen`) — those are execution gates, not triggers.
+ * Nothing fires an ability on its own: the player has no ability bar, no
+ * attunement and no Use Ability rune. The class runtimes call `fireTechnique` /
+ * `fireGuard` when their system decides (a Striker beat, a Squire response...).
+ * Every engine rule still applies here: per-ability cooldowns, the one offensive
+ * channel, one Guard activation per decision window, control, and the execution
+ * gates that stop an ability spending its cooldown where it would do nothing
+ * (see `fireGateOpen`). A caller firing several Techniques arbitrates with the
+ * returned `claimed` flag.
  *
  * Execution shapes:
  * - `armed`   — arms the next attack (`hasArmedAbility`); the rider lands in
@@ -14,8 +18,9 @@
  * - `reposition` — resolves immediately by moving the player.
  * - `instant` — an immediate self-facing effect.
  *
- * Runs in `World.tick` after rune-derived flags are stamped and after targets are
- * acquired, but before combat resolves, so an armed Technique is honored this tick.
+ * A caller in `World.tick` should fire after rune-derived flags are stamped and
+ * targets are acquired, but before casts advance and combat resolves, so an armed
+ * Technique is honored the same tick.
  */
 import {
   ABILITY_CONTROL_RESIST_EFFECT_ID,
@@ -42,7 +47,6 @@ import {
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
-import { getAbilityRuneTargets, getTimedAbilityRuneTargets } from "../../combat/ai/runeConfig";
 import {
   activePlayerRoots,
   isHardControlled,
@@ -109,44 +113,6 @@ export interface FireTechniqueOptions {
 
 const DECLINED_TECHNIQUE: TechniqueAttempt = { activated: false, claimed: false };
 const CLAIMED_TECHNIQUE: TechniqueAttempt = { activated: false, claimed: true };
-
-export function updateAbilityFiring(world: World, now: number): void {
-  for (const player of world.livePlayers) {
-    // The Auto Combat toggle owns Rune ability activation. Fight Back is
-    // the deliberate exception: while it temporarily owns travel combat, the
-    // player behaves exactly as though Auto Combat were enabled.
-    if (!player.usesAutocombat.auto && !player.fightsWhileTraveling) continue;
-    const equipped = player.tracksProgression.attunedAbilities;
-    if (!equipped) continue;
-    // Only abilities whose Rune rule is active this tick, in Rune order.
-    const active = getAbilityRuneTargets(player);
-    const techniques = active.filter(id => equipped.techniques?.includes(id));
-    const guards = active.filter(id => equipped.guards?.includes(id));
-    if (techniques.length === 0 && guards.length === 0) continue;
-    const timed = getTimedAbilityRuneTargets(player);
-
-    // Techniques share ONE offensive execution channel: at most one may be
-    // armed/casting at a time. Walk in Rune order — the player's declared
-    // priority — and stop at the first one that CLAIMS the channel, so
-    // arbitration is deterministic when several rune conditions go valid at once.
-    //
-    // An `instant` Technique (Imbue Lightning) is self-facing and claims nothing,
-    // so it neither blocks nor is blocked by an armed charge sitting on the channel.
-    let offensiveClaimed = false;
-    for (const abilityId of techniques) {
-      if (offensiveClaimed && ABILITY_DATABASE.get(abilityId)?.shape !== "instant") continue;
-      const attempt = fireTechnique(world, player, abilityId, now, {
-        chargeAtAnyRange: timed.includes(abilityId),
-      });
-      offensiveClaimed = attempt.claimed || offensiveClaimed;
-    }
-
-    // Guards are independent, but only one ACTIVATION resolves per window.
-    for (const abilityId of guards) {
-      if (fireGuard(world, player, abilityId)) break;
-    }
-  }
-}
 
 function buildFireContext(player: PlayerEntity): FireContext {
   return {

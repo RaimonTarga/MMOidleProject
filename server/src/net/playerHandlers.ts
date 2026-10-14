@@ -1,5 +1,4 @@
 import { captureProgressionCheckpoint, restoreProgressionCheckpoint } from '../admin/progressionCheckpoint';
-import { attunedAbilityIds } from "@mmo-idle/shared";
 import type { Socket } from "socket.io";
 import {
   DEFAULT_AUTOCOMBAT_CONFIG,
@@ -380,14 +379,9 @@ export function registerPlayerHandlers(
     if (!p) return reject(NOT_LIVE_REASON);
     if (!Array.isArray(rules)) return reject("Malformed Rune loadout.");
     const owned = new Set(p.tracksProgression.runesOwned);
-    const valid = sanitizeRuneLoadout(
-      rules,
-      owned,
-      p.usesSkills.combatArchetype,
-      new Set(attunedAbilityIds(p.tracksProgression.attunedAbilities)),
-    );
+    const valid = sanitizeRuneLoadout(rules, owned, p.usesSkills.combatArchetype);
     if (valid.length !== rules.length) {
-      socket.emit("build:loadoutResult", { system: "runes", success: false, reason: "One or more Rune rules are invalid, unowned, or target an unattuned ability." });
+      socket.emit("build:loadoutResult", { system: "runes", success: false, reason: "One or more Rune rules are invalid or unowned." });
       return;
     }
     const telemetryBefore = world.gameplay?.beforeDecision(p);

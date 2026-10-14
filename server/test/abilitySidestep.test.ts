@@ -22,7 +22,6 @@ import {
   baseRecoveryForTier,
   emptyEquipment,
   getStatusEffect,
-  referenceAbilityRule,
   sidestepWindow,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
@@ -35,7 +34,7 @@ import { evasionWindowBonus } from '../src/systems/defense/mitigation/evasion';
 import { fireGuard } from '../src/systems/player/abilities/abilityFiring';
 import { setEntityMotion, updateMovement } from '../src/systems/world/movement';
 import { World } from '../src/world/World';
-import { fireWithReferenceWiring } from './fixtures/abilityWiring';
+import { fireAbilities } from './fixtures/fireAbilities';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -90,7 +89,6 @@ initCombatSystems();
   assert(recipe?.recipeGroup === 'forest' && recipe.requiredBiomeLevel === 5 && recipe.tier === 1,
     'Sidestep is learned at Forest 5');
   assert(recipe!.cost.green !== undefined, "Sidestep's recipe is paid in the Forest's own essence colour");
-  assert(referenceAbilityRule('sidestep')?.conditionId === 'in-combat', 'Sidestep is wired In Combat -> Use Ability');
   for (const rank of SIDESTEP.ranks) {
     assert(Object.keys(rank.effect).join() === 'kind', 'the rank authors only its shape — no magnitude');
   }
@@ -108,7 +106,7 @@ initCombatSystems();
   const monster = world.createMonster('node-5-5', 'plains-slime', { x: 430, y: 400 })!;
   setAttackTarget(world, player, monster.isMonster.id);
   assert(evasionWindowBonus(player.tracksCombat) === 0, 'no window before firing');
-  fireWithReferenceWiring(world, 1_000);
+  fireAbilities(world, 1_000);
   const status = getStatusEffect(player.tracksCombat, ABILITY_SIDESTEP_EFFECT_ID);
   assert(!!status, 'Sidestep must open its window');
   const window = sidestepWindow(SIDESTEP, 1);
@@ -128,7 +126,7 @@ initCombatSystems();
   const monster = world.createMonster('node-5-5', 'plains-slime', { x: 430, y: 400 })!;
   setAttackTarget(world, player, monster.isMonster.id);
   const base = stride(world, player, 1_000);
-  fireWithReferenceWiring(world, 1_100);
+  fireAbilities(world, 1_100);
   assert(!!getStatusEffect(player.tracksCombat, ABILITY_SIDESTEP_EFFECT_ID), 'the window must be open');
   const burst = stride(world, player, 1_200);
   const { moveSpeedPct, durationMs } = sidestepWindow(SIDESTEP, 1);
@@ -146,7 +144,7 @@ initCombatSystems();
 {
   const { world, player } = spawn('sidestep-empty');
   // Out of combat: no monster anywhere, so neither the rule nor a press fires it.
-  fireWithReferenceWiring(world, 1_000);
+  fireAbilities(world, 1_000);
   assert(getStatusEffect(player.tracksCombat, ABILITY_SIDESTEP_EFFECT_ID) === undefined,
     'Sidestep must not fire out of combat');
   const fired = fireGuard(world, player, 'sidestep');

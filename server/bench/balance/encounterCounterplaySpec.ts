@@ -25,8 +25,6 @@ for(const [block,prefix] of Object.entries(references))for(const seed of [101009
    if(block==='M1'){assert(!c.abilities!.guards.includes('endure'));c.abilities!.guards.push('endure');}
    if(block==='E1'){
     assert.deepEqual(c.abilities!.techniques,['sweep']);c.abilities!.techniques=['detonate'];
-    const i=c.runeRules!.findIndex(r=>r.conditionId==='target-casting'&&r.actionId==='use-ability'&&r.targetAbilityId==='brace');assert(i>=0);
-    c.runeRules![i]={conditionId:'target-max-stacks',actionId:'use-ability',targetAbilityId:'detonate'};
    }
   }
   ENCOUNTER_CELLS.push(c);

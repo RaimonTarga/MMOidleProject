@@ -20,7 +20,6 @@ import {
   baseRecoveryForTier,
   emptyEquipment,
   getCooldown,
-  referenceAbilityRule,
   resolveAbilityEffect,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
@@ -32,7 +31,7 @@ import { updateAbilityCasts } from '../src/systems/player/abilities/abilityCasti
 import { abilityCooldownKey } from '../src/systems/player/abilities/abilityCooldowns';
 import { cullMultiplier } from '../src/systems/player/abilities/abilityEffects';
 import { World } from '../src/world/World';
-import { fireWithReferenceWiring } from './fixtures/abilityWiring';
+import { fireAbilities } from './fixtures/fireAbilities';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -84,7 +83,7 @@ function monsterAt(world: World, x: number, hp: number, maxHp = 10_000): Monster
 /** Begin Cull through its reference wiring and run the wind-up to resolution. */
 function castCull(world: World, player: ReturnType<typeof spawn>['player'], target: MonsterEntity, now: number): void {
   setAttackTarget(world, player, target.isMonster.id);
-  fireWithReferenceWiring(world, now);
+  fireAbilities(world, now);
   assert(player.isCastingAbility?.abilityId === 'cull', 'Cull must begin its wind-up');
   updateAbilityCasts(world, player.isCastingAbility!.endsAt);
   assert(player.isCastingAbility === undefined, 'the wind-up must resolve');
@@ -99,7 +98,6 @@ initCombatSystems();
   assert(recipe?.recipeGroup === 'tundra' && recipe.requiredBiomeLevel === 3 && recipe.tier === 3,
     'Cull is learned at Tundra 3');
   assert(recipe!.cost.blue !== undefined, "Cull's recipe is paid in the Tundra's own essence colour");
-  assert(referenceAbilityRule('cull')?.conditionId === 'in-combat', 'Cull is wired In Combat -> Use Ability');
   for (const tier of [3, 4]) {
     assert(abilityRankAt(CULL, tier).effect.kind === 'execute-strike', 'every rank is the execute curve');
   }
@@ -164,7 +162,7 @@ initCombatSystems();
   // Ready again at once: the next body can be culled on the very next decision.
   const next = monsterAt(world, 440, 10_000);
   setAttackTarget(world, player, next.isMonster.id);
-  fireWithReferenceWiring(world, 2_000);
+  fireAbilities(world, 2_000);
   assert(player.isCastingAbility?.abilityId === 'cull', 'a refunded Cull winds up again immediately');
 }
 

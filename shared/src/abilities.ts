@@ -79,22 +79,20 @@ export type AbilityShape =
   | "instant";
 
 /*
- * TIMING IS WIRED, NOT BUILT IN. An ability has no trigger of its own: it fires
- * automatically only while a `use-ability` Rune rule naming it is active (or when
- * the player presses it). Each `attunementCost` is priced net of that rule — see
- * `referenceAbilityRule` in `abilityWiring.ts` — so an ability plus the wiring
- * that reproduces its old default costs what the ability alone used to.
+ * NO TRIGGER OF ITS OWN. An ability fires only when something calls the engine
+ * (`fireTechnique` / `fireGuard` in the server's `abilityFiring.ts`): the class
+ * runtimes, which place every ability inside their own system.
  *
- * What remains here are EXECUTION GATES, not triggers: whatever rule fires them,
- * a few abilities decline to spend their cooldown on nothing (Cleanse with no
+ * What remains here are EXECUTION GATES, not triggers: whatever fires them, a
+ * few abilities decline to spend their cooldown on nothing (Cleanse with no
  * debuff, Break Free with no hard control on you, Charge with no gap to close).
  */
 
 /**
- * Under an `Always` rule, Charge declines to auto-fire unless its target sits at
- * least this far (edge-to-edge px) beyond contact, so unconditional wiring
- * opens on distant enemies instead of spending the cooldown on whatever is
- * adjacent. A rule with a real condition skips this gate (see `autoFireGateOpen`).
+ * Charge declines to fire unless its target sits at least this far (edge-to-edge
+ * px) beyond contact, so it opens on distant enemies instead of spending the
+ * cooldown on whatever is adjacent. A caller that picked its own moment skips
+ * this gate (`chargeAtAnyRange`, see `fireGateOpen`).
  */
 export const CHARGE_MIN_GAP_PX = 70;
 

@@ -23,7 +23,7 @@ import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { updateAbilityCasts } from "../src/systems/player/abilities/abilityCasting";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { KATA_EFFECT_ID } from "../src/systems/player/abilities/abilityKata";
-import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
+import { fireAbilities } from "./fixtures/fireAbilities";
 import { World } from "../src/world/World";
 
 function assert(condition: unknown, message: string): void {
@@ -96,7 +96,7 @@ initCombatSystems();
   const stacksAfter: number[] = [];
   for (let i = 0; i < 5; i++) {
     setCooldown(player.tracksCombat, abilityCooldownKey("slam"), 0);
-    fireWithReferenceWiring(world, now);
+    fireAbilities(world, now);
     assert(player.isCastingAbility?.abilityId === "slam", `cast ${i + 1} must begin`);
     const before = target.hasHealth.hp;
     now += player.isCastingAbility!.castMs;
@@ -126,7 +126,7 @@ initCombatSystems();
   if (!target) throw new Error("failed to create target");
   target.hasHealth.hp = target.hasHealth.maxHp = 1_000_000;
   setAttackTarget(world, player, target.isMonster.id);
-  fireWithReferenceWiring(world, 1_000);
+  fireAbilities(world, 1_000);
   updateAbilityCasts(world, 1_000 + (player.isCastingAbility?.castMs ?? 0));
   assert(getStatusEffect(player.tracksCombat, KATA_EFFECT_ID) === undefined, "without the Warstaff, Kata never stacks");
 }

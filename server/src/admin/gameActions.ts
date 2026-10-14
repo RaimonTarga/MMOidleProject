@@ -351,7 +351,6 @@ export function applyTierEntryProfile(
     Array.isArray(profile.runesEquipped) ? profile.runesEquipped : [],
     new Set(runesOwned),
     archetype,
-    new Set([...attunedAbilities.techniques, ...attunedAbilities.guards]),
   );
   if (runesEquipped.length !== (profile.runesEquipped ?? []).length) {
     return fail('Profile Rune loadout is invalid.');

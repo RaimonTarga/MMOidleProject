@@ -186,8 +186,8 @@ export function castWindupFor(player: PlayerEntity, ability: AbilityDef, authore
 }
 
 /**
- * Advance every in-flight cast. Runs each tick AFTER `updateAbilityFiring` (which
- * may have started one this tick) and BEFORE combat resolves, so a completed cast
+ * Advance every in-flight cast. Runs each tick AFTER anything that may have
+ * started one (`fireTechnique`) and BEFORE combat resolves, so a completed cast
  * lands in the same tick it finished.
  */
 export function updateAbilityCasts(world: World, now: number): void {

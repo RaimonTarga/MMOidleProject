@@ -3,7 +3,6 @@ import {
   DUNGEON_DEFS, MONSTER_DATABASE, NODE_BIOMES,
   ABILITY_DATABASE, abilityRankAt, isCleanseable, isHarmfulPlayerStatusEffect,
   resolveMonsterDotDebuff, PLATING_SHRED_EFFECT_ID,
-  referenceAbilityRule,
 } from '@mmo-idle/shared';
 import { REFERENCE_GUARDS, referencePackageCells } from './boss1Spec';
 import type { Night5Cell } from './night5Spec';
@@ -228,8 +227,6 @@ export function assertBoss3Definitions(): void {
   assert.equal(inn.slot, 'guard', `${BOSS3_GUARD_IN} must be a Guard`);
   const rank = abilityRankAt(inn, BOSS3_TIER);
   assert.equal(rank.effect.kind, 'cleanse', `${BOSS3_GUARD_IN} at tier ${BOSS3_TIER} must resolve a cleanse effect`);
-  assert.equal(referenceAbilityRule(inn.id)?.conditionId, 'has-debuff',
-    `${BOSS3_GUARD_IN} must use its reference wiring; this screen adds no other ability-specific Rune rule`);
   // The reference baseline must still BE the baseline.
   assert.deepEqual([...REFERENCE_GUARDS], ['second-wind', BOSS3_GUARD_OUT],
     'the reference Guard list has moved; the baseline arm no longer reproduces Boss2');

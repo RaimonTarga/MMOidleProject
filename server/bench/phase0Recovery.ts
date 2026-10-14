@@ -45,6 +45,8 @@ const HIGH_TIER_NODES: Record<3 | 4, readonly string[]> = {
  * Second Wind wiring. `reference` is the retired default (fires off cooldown in
  * combat, so at full HP the heal is wasted). `timed` fires at `hp-below-25`, the
  * only HP-threshold condition authored, as a stand-in for a player who saves it.
+ * The Use Ability rune is gone (class-first D3), so nothing fires Second Wind
+ * from a Rune now and `timed` only differs by spelling out the default rules.
  */
 type SecondWindWiring = 'reference' | 'timed';
 function rulesFor(c: (typeof SURVEY_CLASSES)[number], wiring: SecondWindWiring): EquippedRule[] | undefined {
@@ -55,7 +57,6 @@ function rulesFor(c: (typeof SURVEY_CLASSES)[number], wiring: SecondWindWiring):
     ...(!c.melee ? [{ conditionId: 'in-combat', actionId: 'orbit' }] : []),
     { conditionId: 'always', actionId: 'avoid-hazards' },
     { conditionId: 'always', actionId: 'wait-for-regen' },
-    { conditionId: 'hp-below-25', actionId: 'use-ability', targetAbilityId: 'second-wind' },
   ];
 }
 

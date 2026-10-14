@@ -11,7 +11,7 @@ import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { World } from "../src/world/World";
 import { equipItem } from "../src/systems/player/economy/inventory";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
-import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
+import { fireAbilities } from "./fixtures/fireAbilities";
 import { applyStun } from "../src/systems/combat/status/stun";
 import { makeCombatContext, emitCombatEvent } from "../src/systems/combat/engine/combatPipeline";
 import { runBarrierRecharge, stampBarrierDamage } from "../src/systems/defense/barrier/barrier";
@@ -48,11 +48,10 @@ function withCharm(charm: string, guard: string, slot: "guards" | "techniques" =
   assert(equipItem(world, p, charm), `equip ${charm}`);
   p.tracksProgression.knownAbilities = [guard];
   p.tracksProgression.attunedAbilities = slot === "guards" ? { techniques: [], guards: [guard] } : { techniques: [guard], guards: [] };
-  p.tracksProgression.runesEquipped = [{ conditionId: "always", actionId: "use-ability", targetAbilityId: guard }];
   p.usesAutocombat.auto = true;
   return p;
 }
-const fire = () => fireWithReferenceWiring(world, Date.now());
+const fire = () => fireAbilities(world, Date.now());
 function drainBarrier(p: ReturnType<typeof withCharm>) {
   assert(p.hasBarrier, "charm attaches a barrier");
   p.hasBarrier.current = 0;

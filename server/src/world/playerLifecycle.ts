@@ -1,4 +1,4 @@
-import { migrateAttunement, attunedAbilityIds } from "@mmo-idle/shared";
+import { migrateAttunement } from "@mmo-idle/shared";
 import {
   DEFAULT_AUTOCOMBAT_CONFIG,
   GAME_CONFIG,
@@ -35,7 +35,6 @@ export function attachPlayerEntity(
     persistedRules,
     owned,
     player.usesSkills.combatArchetype,
-    new Set(attunedAbilityIds(player.tracksProgression.attunedAbilities)),
   );
   player.tracksProgression.runesEquipped = sanitizedRules;
 

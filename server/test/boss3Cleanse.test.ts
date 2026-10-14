@@ -50,7 +50,7 @@ import {
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
-import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
+import { fireAbilities } from "./fixtures/fireAbilities";
 import { World } from "../src/world/World";
 import { takeWorldLogEvents } from "../src/world/worldLog";
 import {
@@ -227,7 +227,7 @@ const cave = BOSS3_BLOCKS_DEF.find((b) => b.name === "cave-response")!;
   const before = getStatusEffect(player.tracksCombat, venomId)!.stacks;
   assert(before === 4, `the fixture should hold four venom stacks, got ${before}`);
 
-  updateAbilityFiring(world, Date.now());
+  fireAbilities(world, Date.now());
 
   const after = getStatusEffect(player.tracksCombat, venomId)?.stacks ?? 0;
   assert(
@@ -257,7 +257,7 @@ const cave = BOSS3_BLOCKS_DEF.find((b) => b.name === "cave-response")!;
   paintShred(player.tracksCombat, cave.bossId, 5);
   paintContactSlow(player.tracksCombat, cave.bossId);
 
-  updateAbilityFiring(world, Date.now());
+  fireAbilities(world, Date.now());
 
   const shredAfter = getStatusEffect(player.tracksCombat, PLATING_SHRED_EFFECT_ID)?.stacks ?? 0;
   assert(
@@ -293,7 +293,7 @@ const cave = BOSS3_BLOCKS_DEF.find((b) => b.name === "cave-response")!;
   paintShred(player.tracksCombat, cave.bossId, 1);
   paintContactSlow(player.tracksCombat, cave.bossId);
 
-  updateAbilityFiring(world, Date.now());
+  fireAbilities(world, Date.now());
 
   const removed = removedByCleanse(world, player.isPlayer.id);
   assert(
@@ -317,7 +317,7 @@ const cave = BOSS3_BLOCKS_DEF.find((b) => b.name === "cave-response")!;
   const player = armedPlayer(world, "b3-order", SUB_GUARDS);
   const venomId = paintVenom(player.tracksCombat, swamp.bossId, 4);
 
-  updateAbilityFiring(world, Date.now());
+  fireAbilities(world, Date.now());
 
   assert(
     !!player.tracksCombat.cooldowns[`ability.cd.${BOSS3_GUARD_IN}`],
@@ -356,7 +356,7 @@ const cave = BOSS3_BLOCKS_DEF.find((b) => b.name === "cave-response")!;
     data: { totalMs: 60_000 },
   });
 
-  updateAbilityFiring(world, Date.now());
+  fireAbilities(world, Date.now());
 
   assert(
     (getStatusEffect(player.tracksCombat, VOLCANIC_HEAT_EFFECT_ID)?.stacks ?? 0) === 1,
@@ -376,7 +376,7 @@ const cave = BOSS3_BLOCKS_DEF.find((b) => b.name === "cave-response")!;
   // And with nothing at all, the cooldown is held rather than burned.
   const world = new World();
   const player = armedPlayer(world, "b3-idle", SUB_GUARDS);
-  updateAbilityFiring(world, Date.now());
+  fireAbilities(world, Date.now());
   assert(
     !player.tracksCombat.cooldowns[`ability.cd.${BOSS3_GUARD_IN}`],
     "the substituted Guard must not fire with no affliction present",
@@ -395,7 +395,7 @@ const cave = BOSS3_BLOCKS_DEF.find((b) => b.name === "cave-response")!;
   const player = armedPlayer(world, "b3-baseline", REF_GUARDS);
   const venomId = paintVenom(player.tracksCombat, swamp.bossId, 4);
 
-  updateAbilityFiring(world, Date.now());
+  fireAbilities(world, Date.now());
 
   assert(
     !player.tracksCombat.cooldowns[`ability.cd.${BOSS3_GUARD_OUT}`],

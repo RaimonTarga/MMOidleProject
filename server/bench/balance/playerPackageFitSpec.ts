@@ -16,7 +16,6 @@ export const PACKAGE_FIT_CELLS: Night5Cell[] = FAST_PASS_CELLS.map(original => {
       c.runeRules = c.runeRules!.filter(r => r.actionId !== 'orbit');
     }
   } else {
-    c.runeRules!.push({ conditionId: 'target-casting', actionId: 'use-ability', targetAbilityId: 'brace' });
     if (!['striker', 'squire'].includes(c.className)) {
       // T2 needs one RP; Slam (Power Strike until the ability pass merged it) is
       // the existing single-target cast option.
@@ -37,7 +36,6 @@ export function assertPackageFitDefinitions() {
   assert.equal(new Set(PACKAGE_FIT_CELLS.map(c => c.id)).size, 36);
   for (const c of PACKAGE_FIT_CELLS) {
     assert.equal(c.stance, 'offensive-stance');
-    if (c.role === 'boss') assert(c.runeRules!.some(r => r.conditionId === 'target-casting' && r.actionId === 'use-ability' && r.targetAbilityId === 'brace'));
-    else assert(c.abilities!.techniques.some(a => a === 'slam' || a === 'sweep'));
+    if (c.role !== 'boss') assert(c.abilities!.techniques.some(a => a === 'slam' || a === 'sweep'));
   }
 }

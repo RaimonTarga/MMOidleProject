@@ -9,7 +9,6 @@
  */
 import type { AutocombatConfig } from "./components/core/networkedSlices";
 import type { CombatArchetype } from "./types/combat";
-import { ABILITY_DATABASE } from "./abilities";
 
 export type RuneChannel =
   | "MOVEMENT"
@@ -27,8 +26,7 @@ export type RuneChannel =
   | "TRAVEL_RESPONSE"
   | "CONTROL"
   /** Conduit only: where the formation stands, independent of the owner's movement. */
-  | "FORMATION"
-  | "ABILITY";
+  | "FORMATION";
 
 export type RuneConditionId =
   | "always"
@@ -57,7 +55,7 @@ export type RuneConditionId =
   // is armed and waiting to land). Class-agnostic: it reads the shared empowered flag,
   // so it fires for cadence (finisher armed), cooldown (execution ready), and energy
   // (energy maxed). Inert for classes with no empowered attack (DoT/reload/summoner
-  // baseline). Pairs with Fire Technique to land your Technique on the empowered hit.
+  // baseline).
   | "before-empowered"
   // Active while your current attack target is an ELITE. Lets two equipped
   // Techniques specialise against the same enemy — e.g. Cull to kill
@@ -118,8 +116,7 @@ export type RuneActionId =
   | "avoid-enemies"
   | "fight-back"
   | "lead-the-way"
-  | "taunt-current-target"
-  | "use-ability";
+  | "taunt-current-target";
 
 export interface ConditionDef {
   id: RuneConditionId;
@@ -143,7 +140,6 @@ export interface ActionDef {
 export interface EquippedRule {
   conditionId: string;
   actionId: string;
-  targetAbilityId?: string;
   waitOutMode?: "all" | "heat-managed";
 }
 
@@ -159,7 +155,6 @@ export const RUNE_CHANNELS: RuneChannel[] = [
   "TRAVEL_RESPONSE",
   "CONTROL",
   "FORMATION",
-  "ABILITY",
 ];
 
 const COMBAT_CONDITIONS: readonly RuneConditionId[] = [
@@ -220,10 +215,6 @@ const CONTROL_CONDITIONS: readonly RuneConditionId[] = [
   "in-combat",
   "in-party",
 ];
-
-// System rework Step 7: conditions a player can wire to an ability-fire override.
-
-
 
 export const CONDITION_DATABASE = new Map<string, ConditionDef>([
   [
@@ -719,7 +710,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       requiredArchetype: "summoner",
     },
   ],
-  ["use-ability", { id: "use-ability", name: "Use Ability", blurb: "Use an attuned ability whenever this situation holds and it is off cooldown.", tier: 1, channel: "ABILITY" }],
 ]);
 
 /** Every fragment id (conditions + actions). Useful for validation/tooling. */
@@ -752,7 +742,6 @@ export const STARTER_RUNE_IDS: string[] = Array.from(
     "follow-and-assist",
     "taunt-current-target",
     "focus-closest",
-    "use-ability",
     // Reactive "enemy is charging a cast" condition — available from the start so
     // players can answer telegraphed casts once they meet a charging mob.
     "target-casting",
@@ -799,7 +788,6 @@ export function normalizeRuneRule(rule: EquippedRule): EquippedRule {
     conditionId: LEGACY_CONDITION_IDS[rule.conditionId] ?? rule.conditionId,
     actionId: LEGACY_ACTION_IDS[rule.actionId] ?? rule.actionId,
     ...(rule.waitOutMode !== undefined ? { waitOutMode: rule.waitOutMode } : {}),
-    ...(rule.actionId === "use-ability" && typeof rule.targetAbilityId === "string" ? { targetAbilityId: rule.targetAbilityId } : {}),
   };
 }
 
@@ -850,8 +838,6 @@ export function runeChannelLabel(channel: RuneChannel): string {
       return "Control";
     case "FORMATION":
       return "Formation";
-    case "ABILITY":
-      return "Abilities";
   }
 }
 
@@ -919,7 +905,6 @@ export function sanitizeRuneLoadout(
   rules: EquippedRule[],
   owned: ReadonlySet<string>,
   combatArchetype?: CombatArchetype,
-  attunedAbilities: ReadonlySet<string> = new Set(),
 ): EquippedRule[] {
   const sanitized: EquippedRule[] = [];
   for (const raw of normalizeRuneLoadout(rules)) {
@@ -933,12 +918,10 @@ export function sanitizeRuneLoadout(
     ) {
       continue;
     }
-    if (raw.actionId === "use-ability" && (!raw.targetAbilityId || !ABILITY_DATABASE.has(raw.targetAbilityId) || !attunedAbilities.has(raw.targetAbilityId))) continue;
     sanitized.push({
       conditionId: raw.conditionId,
       actionId: raw.actionId,
       ...(raw.waitOutMode !== undefined ? { waitOutMode: raw.waitOutMode } : {}),
-      ...(raw.targetAbilityId ? { targetAbilityId: raw.targetAbilityId } : {}),
     });
   }
   return sanitized;
@@ -1007,7 +990,6 @@ export function analyzeRuneLoadoutConflicts(
       const earlier = rules[earlierIndex];
       const earlierAction = ACTION_DATABASE.get(earlier.actionId);
       if (!earlierAction || earlierAction.channel !== action.channel) continue;
-      if (action.id === "use-ability" && earlier.targetAbilityId !== rule.targetAbilityId) continue;
       if (earlier.conditionId === rule.conditionId && earlier.actionId === rule.actionId) {
         conflicts.push({ ruleIndex: index, earlierRuleIndex: earlierIndex, channel: action.channel, kind: "redundant" });
         break;
@@ -1036,8 +1018,7 @@ export function addRuneRuleWithReplacement(
     const existing = ACTION_DATABASE.get(rule.actionId);
     return existing?.channel === action.channel &&
       !runeActionsCompose(existing, action) &&
-      rule.conditionId === added.conditionId &&
-      (added.actionId !== "use-ability" || rule.targetAbilityId === added.targetAbilityId);
+      rule.conditionId === added.conditionId;
   });
   if (replacementIndex < 0) return [...rules, added];
   const next = [...rules];
@@ -1205,14 +1186,6 @@ export const NAMED_RULES = new Map<string, NamedRule>([
     },
   ],
   [
-    ruleKey("before-empowered", "use-ability"),
-    {
-      name: "Finishing Technique",
-      blurb:
-        "Arm your Technique the instant your next attack becomes empowered, so the big hit also carries it.",
-    },
-  ],
-  [
     ruleKey("in-combat", "taunt-current-target"),
     {
       name: "Challenge",
@@ -1258,13 +1231,6 @@ export interface RuneContext {
    * measured it — they fall back to `inCombat`.
    */
   activelyEngaged?: boolean;
-  /**
-   * A living owned summon in the player's node is fighting (targeting a live
-   * monster, or targeted by one). Satisfies `In Combat` on `use-ability` rules
-   * ONLY, so formation Techniques fire while the owner stays out of direct
-   * combat; movement and recovery rules keep the owner's own combat state.
-   */
-  summonsInCombat?: boolean;
   /** Summoner with at most half its target summon count alive in its node. */
   formationBroken?: boolean;
   inParty: boolean;
@@ -1317,15 +1283,6 @@ export interface ClaimedRuneAction {
 export type ClaimedRuneChannels = Record<RuneChannel, ClaimedRuneAction | null>;
 
 export interface DerivedRuneConfig {
-  /** Active ability targets in Rune priority order; runtime arbitrates executable candidates. */
-  abilityTargets: string[];
-  abilityRules: EquippedRule[];
-  /**
-   * Active ability targets with at least one active rule whose condition is not
-   * `Always`: the player picked the moment, so timing heuristics standing in
-   * for a missing condition (Charge's gap gate) must not second-guess it.
-   */
-  timedAbilityTargets: string[];
   config: AutocombatConfig;
   claimed: ClaimedRuneChannels;
   /** Every active OOC predicate; unlike exclusive channels these compose by action. */
@@ -1376,7 +1333,6 @@ function emptyClaims(): ClaimedRuneChannels {
     TRAVEL_RESPONSE: null,
     CONTROL: null,
     FORMATION: null,
-    ABILITY: null,
   };
 }
 
@@ -1435,9 +1391,6 @@ export function deriveAutoConfigFromRunes(
 ): DerivedRuneConfig {
   const claimed = emptyClaims();
   const derived: DerivedRuneConfig = {
-    abilityTargets: [],
-    abilityRules: [],
-    timedAbilityTargets: [],
     config: { ...BASELINE_RUNE_CONFIG },
     claimed,
     oocMaintenanceClaims: [],
@@ -1502,22 +1455,12 @@ export function deriveAutoConfigFromRunes(
     ) {
       continue;
     }
-    if (action.id === "use-ability") {
-      const abilityCtx = ctx.summonsInCombat && !ctx.inCombat ? { ...ctx, inCombat: true } : ctx;
-      const abilityId = raw.targetAbilityId;
-      if (abilityId && ABILITY_DATABASE.has(abilityId) && isConditionActive(condition.id, abilityCtx)) {
-        if (!derived.abilityTargets.includes(abilityId)) { derived.abilityTargets.push(abilityId); derived.abilityRules.push(raw); }
-        if (condition.id !== "always" && !derived.timedAbilityTargets.includes(abilityId)) derived.timedAbilityTargets.push(abilityId);
-      }
-      continue;
-    }
     if (!isConditionActive(condition.id, ctx)) continue;
 
     const rule: EquippedRule = {
       conditionId: condition.id,
       actionId: action.id,
       ...(raw.waitOutMode !== undefined ? { waitOutMode: raw.waitOutMode } : {}),
-      ...(raw.targetAbilityId ? { targetAbilityId: raw.targetAbilityId } : {}),
     };
     const claim = { rule, action, condition };
     if (action.channel === "OOC_MAINTENANCE") {
@@ -1643,7 +1586,7 @@ export function composeRuneEdit(rules: readonly EquippedRule[], rule: EquippedRu
   const action = ACTION_DATABASE.get(rule.actionId);
   const channel = action?.channel;
   const collision = rules.findIndex((r, i) => {
-    if (i === index || (rule.actionId === "use-ability" && r.targetAbilityId !== rule.targetAbilityId)) return false;
+    if (i === index) return false;
     const existing = ACTION_DATABASE.get(r.actionId);
     return existing?.channel === channel &&
       (!action || !runeActionsCompose(existing, action)) &&

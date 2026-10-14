@@ -9,9 +9,8 @@ import {
   getStatusEffect,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
-import { updateRuneDerivedConfig } from "../src/systems/combat/ai/runeConfig";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
-import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
+import { fireAbilities } from "./fixtures/fireAbilities";
 import {
   activeRecoveryFraction,
   runRecovery,
@@ -51,7 +50,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       bossesCleared: [],
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
-      runesEquipped: [{ conditionId: "in-combat", actionId: "use-ability", targetAbilityId: "second-wind" }],
+      runesEquipped: [],
       knownAbilities: ["second-wind"],
       attunedAbilities: { techniques: [], guards: ["second-wind"] },
     },
@@ -78,8 +77,7 @@ const target = world.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 
 if (!target) throw new Error("failed to create target");
 setAttackTarget(world, player, target.isMonster.id);
 
-updateRuneDerivedConfig(world, 1_000);
-updateAbilityFiring(world, Date.now());
+fireAbilities(world, 1_000);
 assert(
   getStatusEffect(player.tracksCombat, ABILITY_SECOND_WIND_EFFECT_ID) === undefined,
   "Second Wind should not spend its cooldown at full HP",
@@ -89,10 +87,9 @@ const maxHp = player.hasHealth.maxHp;
 player.hasHealth.hp = maxHp * 0.7;
 const hpBefore = player.hasHealth.hp;
 
-updateRuneDerivedConfig(world, 1_100);
-updateAbilityFiring(world, Date.now());
+fireAbilities(world, 1_100);
 const effect = getStatusEffect(player.tracksCombat, ABILITY_SECOND_WIND_EFFECT_ID);
-assert(!!effect, "In Combat -> Fire Guard should activate Second Wind when damaged");
+assert(!!effect, "Second Wind should activate when damaged");
 assert(effect!.data.recoveryPct === 0.5, "Second Wind status carries its Recovery fraction");
 assert(effect!.data.totalMs === 4000, "Second Wind lasts four seconds");
 assert(player.hasHealth.hp === hpBefore, "Second Wind should not heal instantly");

@@ -110,7 +110,7 @@ function validatePersistent(s: ProgressionCheckpointState): void {
   requireThat(stable(normalizeAttunedAbilities(p.attunedAbilities)) === stable(p.attunedAbilities), 'Invalid attuned ability order');
   requireThat([...p.attunedAbilities.techniques,...p.attunedAbilities.guards].every(id=>p.knownAbilities.includes(id)), 'Unlearned ability');
   requireThat(stable([...runeIdsForArchetype(skills.combatArchetype)].sort()) === stable([...p.runesOwned].sort()), 'Rune ownership incompatible with current definitions');
-  requireThat(stable(sanitizeRuneLoadout(p.runesEquipped,new Set(p.runesOwned),skills.combatArchetype,new Set([...p.attunedAbilities.techniques,...p.attunedAbilities.guards]))) === stable(p.runesEquipped), 'Invalid ordered Rune loadout');
+  requireThat(stable(sanitizeRuneLoadout(p.runesEquipped,new Set(p.runesOwned),skills.combatArchetype)) === stable(p.runesEquipped), 'Invalid ordered Rune loadout');
 }
 export function captureProgressionCheckpoint(world: World, p: PlayerEntity, boundaryId: string): ProgressionCheckpointCapture {
   requireThat(process.env.NODE_ENV !== 'production', 'Checkpoints are development-only');

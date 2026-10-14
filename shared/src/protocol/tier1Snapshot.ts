@@ -302,15 +302,13 @@ export function tierEntryProfileFromT1Snapshot(
     equipment: { ...state.equipment },
     itemUpgrades: importableItemUpgrades,
     // The abilities the ability pass CUT (design §22.2) drop from a snapshot the
-    // way they drop from every save (`attunementMigration.ts`): known, attuned,
-    // and the `use-ability` rules that wire them. Lossless for everything else.
+    // way they drop from every save (`attunementMigration.ts`): known and
+    // attuned. Lossless for everything else.
     knownAbilities: state.knownAbilities.filter((id) => !isRetiredAbilityId(id)),
     attunedAbilities: {
       techniques: state.attunedAbilities.techniques.filter((id) => !isRetiredAbilityId(id)),
       guards: state.attunedAbilities.guards.filter((id) => !isRetiredAbilityId(id)),
     },
-    runesEquipped: state.runesEquipped
-      .filter((rule) => !(rule.actionId === "use-ability" && rule.targetAbilityId && isRetiredAbilityId(rule.targetAbilityId)))
-      .map((rule) => ({ ...rule })),
+    runesEquipped: state.runesEquipped.map((rule) => ({ ...rule })),
   };
 }

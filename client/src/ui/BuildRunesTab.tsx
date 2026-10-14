@@ -1,4 +1,4 @@
-import { ABILITY_DATABASE, TUTORIAL_ANCHORS, tutorialRuleKey } from "@mmo-idle/shared";
+import { TUTORIAL_ANCHORS, tutorialRuleKey } from "@mmo-idle/shared";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useAtomValue } from "jotai";
 import {
@@ -13,7 +13,6 @@ import {
 import { hudBus } from "../hudBus";
 import {
   combatArchetypeAtom,
-  attunedAbilitiesAtom,
   runesEquippedAtom,
   runesOwnedAtom,
 } from "../hud/atoms";
@@ -28,20 +27,18 @@ type Draft = EquippedRule & { index: number | null };
 export function BuildRunesTab() {
   const owned = useAtomValue(runesOwnedAtom);
   const equipped = useAtomValue(runesEquippedAtom);
-  const abilities = useAtomValue(attunedAbilitiesAtom);
   const archetype = useAtomValue(combatArchetypeAtom);
   const [rules, setRules] = useState(equipped);
   const [draft, setDraft] = useState<Draft | null>(null);
   const editorScroll = useRef<HTMLDivElement>(null);
   const conditionSection = useRef<HTMLElement>(null);
   const responseSection = useRef<HTMLElement>(null);
-  const destinationSection = useRef<HTMLElement>(null);
   useEffect(() => {
     if (!draft) return;
     editorScroll.current?.scrollTo({ top: 0 });
     const step = !draft.conditionId ? conditionSection.current
       : !draft.actionId ? responseSection.current
-      : destinationSection.current;
+      : null;
     step?.focus({ preventScroll: true });
     step?.scrollIntoView({ block: "nearest" });
   }, [draft?.conditionId, draft?.actionId]);
@@ -88,7 +85,7 @@ export function BuildRunesTab() {
       )
     )
       return false;
-    return a.id !== "use-ability" || abilities.techniques.length + abilities.guards.length > 0;
+    return true;
   });
   const pending: EquippedRule | null =
     draft?.conditionId && draft.actionId
@@ -96,10 +93,9 @@ export function BuildRunesTab() {
           conditionId: draft.conditionId,
           actionId: draft.actionId,
           ...(draft.waitOutMode ? { waitOutMode: draft.waitOutMode } : {}),
-          ...(draft.targetAbilityId ? { targetAbilityId: draft.targetAbilityId } : {}),
         }
       : null;
-  const response = pending ? runeResponse(pending, abilities, archetype) : null;
+  const response = pending ? runeResponse(pending, archetype) : null;
   const next = pending ? composeRuneEdit(rules, pending, draft!.index) : rules;
   const valid =
     pending &&
@@ -111,7 +107,6 @@ export function BuildRunesTab() {
       (r, i) =>
         i !== draft?.index &&
         r.conditionId === pending.conditionId &&
-        (pending.actionId !== "use-ability" || r.targetAbilityId === pending.targetAbilityId) &&
         ACTION_DATABASE.get(r.actionId)?.channel ===
           ACTION_DATABASE.get(pending.actionId)?.channel,
     );
@@ -188,14 +183,13 @@ export function BuildRunesTab() {
                 </p>
               )}
               {draft.actionId ? <div className="rune-step-summary">
-                <GameIcon source={runeResponse({ conditionId: draft.conditionId, actionId: draft.actionId }, abilities).icon} size={28} decorative fallback="◇" />
+                <GameIcon source={runeResponse({ conditionId: draft.conditionId, actionId: draft.actionId }).icon} size={28} decorative fallback="◇" />
                 <span title={response?.detail}><strong>{ACTION_DATABASE.get(draft.actionId)?.name ?? draft.actionId}</strong></span>
-                <button type="button" aria-label="Change Do response" onClick={() => setDraft({ ...draft, actionId: "", waitOutMode: undefined, targetAbilityId: undefined })}>↶ Change</button>
+                <button type="button" aria-label="Change Do response" onClick={() => setDraft({ ...draft, actionId: "", waitOutMode: undefined })}>↶ Change</button>
               </div> : <div className="rune-choice-grid">
                 {actions.map((a) => {
                   const view = runeResponse(
                     { conditionId: draft.conditionId, actionId: a.id },
-                    abilities,
                   );
                   return (
                     <button
@@ -222,14 +216,13 @@ export function BuildRunesTab() {
                   );
                 })}
               </div>}
-              {response && draft.actionId !== "use-ability" && <p className="rune-detail">{response.detail}</p>}
+              {response && <p className="rune-detail">{response.detail}</p>}
             </section>
             {draft.actionId === "wait-it-out" && <section aria-label="Wait mode"><button type="button" aria-pressed={draft.waitOutMode !== "heat-managed"} onClick={() => setDraft({ ...draft, waitOutMode: "all" })}>All eligible statuses</button><button type="button" disabled={draft.conditionId !== "always"} aria-pressed={draft.waitOutMode === "heat-managed"} onClick={() => setDraft({ ...draft, waitOutMode: "heat-managed" })}>Manage Heat</button><p>Always only. Ordinary Volcano: 25 Heat to request a break; resume at 10. Current fights finish first.</p></section>}
-            {draft.actionId === "use-ability" && <section ref={destinationSection} tabIndex={-1} aria-label="Choose attuned ability" className="rune-editor__destinations"><h3>Choose attuned ability</h3><div className="rune-choice-grid">{[...abilities.techniques, ...abilities.guards].map(id => <button className="rune-ability-choice" type="button" key={id} data-tutorial-anchor={TUTORIAL_ANCHORS.runesAbility(id)} aria-pressed={draft.targetAbilityId === id} onClick={() => setDraft({ ...draft, targetAbilityId: id })}>{ABILITY_DATABASE.get(id)?.name}</button>)}</div></section>}
           </div>
           <footer className="rune-draft" aria-live="polite">
             {pending ? (
-              <RuneClause rule={pending} abilities={abilities} />
+              <RuneClause rule={pending} />
             ) : (
               <span>
                 {draft.conditionId
@@ -301,7 +294,7 @@ export function BuildRunesTab() {
               >
                 <h3>
                   {runeChannelLabel(channel)}
-                  <span>{indices.length > 1 ? (channel === "ABILITY" ? "Execution priority ↓" : "First match ↓") : ""}</span>
+                  <span>{indices.length > 1 ? "First match ↓" : ""}</span>
                 </h3>
                 <ol className="rune-priority-track">
                   {indices.map((index, rank) => {
@@ -311,7 +304,7 @@ export function BuildRunesTab() {
                         c.ruleIndex === index &&
                         (c.kind === "suppressed" || c.kind === "redundant"),
                     );
-                    const missing = runeResponse(rule, abilities).missing;
+                    const missing = runeResponse(rule).missing;
                     return (
                       <li
                         key={`${index}:${rule.conditionId}:${rule.actionId}`}
@@ -327,10 +320,9 @@ export function BuildRunesTab() {
                           type="button"
                           className="rune-rule__edit"
                           onClick={() => setDraft({ index, ...rule })}
-                          aria-label={`Edit ${CONDITION_DATABASE.get(rule.conditionId)?.name} to ${runeResponse(rule, abilities).name}`}
+                          aria-label={`Edit ${CONDITION_DATABASE.get(rule.conditionId)?.name} to ${runeResponse(rule).name}`}
                         >
-                          <RuneClause rule={rule} abilities={abilities} />
-                          {rule.actionId === "use-ability" && <small>{runeResponse(rule, abilities).detail}</small>}
+                          <RuneClause rule={rule} />
                           {missing && (
                             <small className="rune-error">
                               Target unavailable · edit this rule

@@ -199,8 +199,6 @@
 .rune-step-summary strong { font-size: 12px; overflow-wrap: anywhere; }
 .rune-step-summary small { display: block; margin-top: 4px; font-size: 10px; color: var(--hud-text-muted); }
 .rune-step-summary > button { flex-shrink: 0; font-size: 11px; }
-.rune-editor__destinations { padding: 12px; border: 1px solid var(--hud-primary-strong); background: var(--hud-material-inset); }
-.rune-editor__destinations > p { margin: 8px 0 0; color: var(--hud-text-muted); font-size: 12px; line-height: 1.5; }
 .rune-choice-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
@@ -220,9 +218,6 @@
   color: var(--hud-text-muted);
   font-size: 10px;
   white-space: nowrap;
-}
-.rune-editor__destinations {
-  grid-column: 1 / -1;
 }
 .rune-detail {
   font-size: 12px;
@@ -295,5 +290,3 @@
   .rune-workspace__scroll { flex: none; overflow: visible; }
 }
 
-.rune-choice-grid .rune-ability-choice { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
-.rune-choice-grid .rune-ability-choice small { white-space: normal; line-height: 1.4; }

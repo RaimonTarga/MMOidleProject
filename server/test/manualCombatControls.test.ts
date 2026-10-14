@@ -18,8 +18,6 @@ import {
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
-import { updateRuneDerivedConfig } from "../src/systems/combat/ai/runeConfig";
-import { updateCombatState } from "../src/systems/combat/engine/combatState";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import {
@@ -27,9 +25,7 @@ import {
   updateAbilityCasts,
 } from "../src/systems/player/abilities/abilityCasting";
 import { fireTechnique } from "../src/systems/player/abilities/abilityFiring";
-import { fireAbilities, wireReferenceAbilities } from "./fixtures/abilityWiring";
 import { STUN_EFFECT } from "../src/systems/combat/status/stun";
-import { attachComponent } from "../src/ecs/markerHelpers";
 import { World } from "../src/world/World";
 import {
   DEFAULT_BINDINGS,
@@ -157,31 +153,6 @@ initCombatSystems();
   slinger.usesSkills.passives["reload.laser"] = 1;
   assert(requestManualReload(world, slinger).success, "Laser Slinger reload input should be a harmless no-op");
   assert(slinger.usesReload.ammo === 3 && slinger.usesReload.reloadingMs === 0, "Laser heat must not enter the magazine reload lifecycle");
-}
-
-// Auto-off suppresses default/Rune ability activation. Fight Back is temporary
-// Auto authority during travel, so it deliberately retains automatic abilities.
-{
-  const world = new World();
-  const player = world.attachPlayerEntity(makePlayerSlices("ability-auto-ownership"), "ability-auto-ownership");
-  player.tracksProgression.attunedAbilities = { techniques: ["imbue-lightning"], guards: [] };
-  wireReferenceAbilities(player);
-  const target = world.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 });
-  if (!target) throw new Error("auto ownership target setup failed");
-  setAttackTarget(world, player, target.isMonster.id);
-
-  fireAbilities(world, 900);
-  assert(
-    getCooldown(player.tracksCombat, abilityCooldownKey("imbue-lightning")) === 0,
-    "Auto-off must suppress automatic ability activation",
-  );
-
-  player.fightsWhileTraveling = { startedAtMs: 901 };
-  fireAbilities(world, 901);
-  assert(
-    getCooldown(player.tracksCombat, abilityCooldownKey("imbue-lightning")) > 0,
-    "Fight Back must grant automatic ability authority while travel combat is active",
-  );
 }
 
 // `currentTargetOnly` acts on the player's current combat target and nothing

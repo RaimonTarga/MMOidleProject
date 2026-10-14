@@ -1,16 +1,12 @@
 import {
   ACTION_DATABASE,
   CONDITION_DATABASE,
-  abilityDef,
-  attunedForFamily,
   runeActionArchetypeNote,
-  type AttunedAbilities,
   type CombatArchetype,
   type EquippedRule,
 } from "@mmo-idle/shared";
 import { GameIcon } from "./GameIcon";
 import {
-  conceptAbilityIconSource,
   runeActionIconSource,
   runeConditionIconSource,
 } from "./conceptIcons";
@@ -18,13 +14,8 @@ import {
 
 export function runeResponse(
   rule: EquippedRule,
-  abilities: AttunedAbilities,
   combatArchetype?: CombatArchetype,
 ) {
-  if (rule.actionId === "use-ability") {
-    const ability = abilityDef(rule.targetAbilityId);
-    return { name: ability?.name ?? "Choose ability", icon: ability ? conceptAbilityIconSource(ability.id) : runeActionIconSource(rule.actionId), missing: !ability || ![...abilities.techniques, ...abilities.guards].includes(ability.id), detail: ability ? `Fires ${ability.name} while this situation holds, whenever it is off cooldown.` : "Choose an attuned ability. Learn and attune tools before targeting them." };
-  }
   if (rule.actionId === "wait-it-out" && rule.waitOutMode === "heat-managed") return { name: "Wait It Out / Manage Heat", icon: runeActionIconSource(rule.actionId), missing: false, detail: "Ordinary Volcano only: 25 Heat to request a break; resume at 10. Current fights finish first. Other afflictions do not extend this wait." };
   const action = ACTION_DATABASE.get(rule.actionId);
   const note = runeActionArchetypeNote(rule.actionId, combatArchetype);
@@ -39,12 +30,10 @@ export function runeResponse(
 /** The same visual sentence in the editor, draft and live behavior readout. */
 export function RuneClause({
   rule,
-  abilities,
 }: {
   rule: EquippedRule;
-  abilities: AttunedAbilities;
 }) {
-  const response = runeResponse(rule, abilities);
+  const response = runeResponse(rule);
   return (
     <span className="rune-clause">
       <span className="rune-clause__half">

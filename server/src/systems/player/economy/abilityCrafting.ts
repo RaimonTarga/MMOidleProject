@@ -1,4 +1,3 @@
-import { attunedAbilityIds } from "@mmo-idle/shared";
 /**
  * Ability crafting + loadout (system rework Step 7).
  *
@@ -117,9 +116,6 @@ export function setAbilityLoadout(
     }
   }
 
-  const ids = new Set(attunedAbilityIds(equipped));
-  const rules = prog.runesEquipped.filter(rule => rule.actionId !== "use-ability" || ids.has(rule.targetAbilityId ?? ""));
-  prog.runesEquipped = rules;
   prog.attunedAbilities = {
     techniques: [...equipped.techniques],
     guards: [...equipped.guards],

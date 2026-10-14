@@ -7,11 +7,10 @@ import {
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
-import { updateRuneDerivedConfig } from "../src/systems/combat/ai/runeConfig";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
 import { runPlayerAttack } from "../src/systems/combat/engine/combat";
 import { registerCombatListener } from "../src/systems/combat/engine/combatPipeline";
-import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
+import { fireTechnique } from "../src/systems/player/abilities/abilityFiring";
 import { World } from "../src/world/World";
 import { takeWorldLogEvents } from "../src/world/worldLog";
 
@@ -21,10 +20,10 @@ function assert(condition: unknown, message: string): void {
 
 function makePlayerSlices(
   abilityId = "sweep",
-  playerId = "technique-rune-player",
+  playerId = "technique-armed-player",
 ): PersistedPlayerSlices {
   return {
-    isPlayer: { id: playerId, name: "Technique Rune" },
+    isPlayer: { id: playerId, name: "Technique Armed" },
     hasPosition: {
       current: { x: 400, y: 400 },
       nodeId: "node-5-5",
@@ -49,7 +48,7 @@ function makePlayerSlices(
       bossesCleared: [],
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
-      runesEquipped: [{ conditionId: "in-combat", actionId: "use-ability", targetAbilityId: abilityId }],
+      runesEquipped: [],
       knownAbilities: [abilityId],
       attunedAbilities: { techniques: [abilityId], guards: [] },
     },
@@ -84,20 +83,19 @@ registerCombatListener("onHit", (ctx) => {
 initCombatSystems();
 
 const world = new World();
-const player = world.attachPlayerEntity(makePlayerSlices(), "technique-rune-player");
+const player = world.attachPlayerEntity(makePlayerSlices(), "technique-armed-player");
 player.usesAutocombat.auto = true;
 const target = world.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 });
 if (!target) throw new Error("failed to create target");
 
 setAttackTarget(world, player, target.isMonster.id);
-updateRuneDerivedConfig(world, 1_000);
-updateAbilityFiring(world, Date.now());
+fireTechnique(world, player, "sweep", Date.now());
 
 // The armed Technique here is Sweep (Expose Weakness carried this test until the
 // ability pass cut it, design §22.2; its own debuff assertions went with it).
 assert(
   player.hasArmedAbility?.abilityId === "sweep",
-  "In Combat -> Fire Technique should arm Sweep when off cooldown",
+  "firing Sweep should arm it when off cooldown",
 );
 assert(
   takeWorldLogEvents(world, player.isPlayer.id).some(
@@ -132,8 +130,7 @@ assert(
   "Sweep should tag the hit so the client plays its Technique FX",
 );
 
-updateRuneDerivedConfig(world, 1_200);
-updateAbilityFiring(world, Date.now());
+fireTechnique(world, player, "sweep", Date.now());
 assert(
   player.hasArmedAbility === undefined,
   "Technique should not re-arm again while its cooldown is still running",
@@ -179,8 +176,7 @@ function armedRun(playerId: string, withWindow: boolean): { base: number; dealt:
   t.mitigatesDamage.damageReduction = 0;
 
   setAttackTarget(w, p, t.isMonster.id);
-  updateRuneDerivedConfig(w, 1_000);
-  updateAbilityFiring(w, Date.now());
+  fireTechnique(w, p, "binding-strike", Date.now());
   assert(
     p.hasArmedAbility?.abilityId === "binding-strike",
     `${playerId}: Binding Strike should be armed before the hit`,
@@ -226,4 +222,4 @@ assert(
     `expected about ${additive} (compounding would be ${compounded})`,
 );
 
-console.log("abilityTechniqueRune.test.ts: ok");
+console.log("abilityTechniqueArmed.test.ts: ok");

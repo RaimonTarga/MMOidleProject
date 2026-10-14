@@ -33,7 +33,7 @@ import { setAttackTarget } from "../src/systems/combat/ai/targeting";
 import { runPlayerAttack } from "../src/systems/combat/engine/combat";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
-import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
+import { fireTechnique } from "../src/systems/player/abilities/abilityFiring";
 import { World } from "../src/world/World";
 import type { MonsterEntity, PlayerEntity } from "../src/ecs/entity";
 
@@ -127,7 +127,7 @@ function measure(
     // Arm Sweep whenever it is ready (the real firing driver).
     const wasCooling = getCooldown(player.tracksCombat, abilityCooldownKey("sweep")) > 0;
     setAttackTarget(world, player, target.isMonster.id);
-    updateAbilityFiring(world, now);
+    fireTechnique(world, player, "sweep", now);
     if (!wasCooling && getCooldown(player.tracksCombat, abilityCooldownKey("sweep")) > 0) {
       activations++;
       if (firstActivationAt === null) firstActivationAt = now;

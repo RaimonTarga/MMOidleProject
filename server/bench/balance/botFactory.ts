@@ -10,7 +10,6 @@ import {
   globalMastery,
   listBiomeGroupsAtTier,
   ITEM_DATABASE,
-  referenceAbilityRules,
   type AttunedAbilities,
   type Vec2,
 } from '@mmo-idle/shared';
@@ -122,10 +121,9 @@ function buildBotSlices(
       runesOwned: [...STARTER_RUNE_IDS],
       // Behaviour runes stay UNEQUIPPED on purpose. They are the behaviour layer —
       // which rules a bot runs is a design decision about what "default play"
-      // means, not a value that can be picked neutrally. The only rules equipped
-      // are each attuned ability's reference wiring, since abilities have no
-      // built-in trigger. Left as a documented gap for the layered-sweep work.
-      runesEquipped: referenceAbilityRules(loadout.attunedAbilities),
+      // means, not a value that can be picked neutrally. Left as a documented gap
+      // for the layered-sweep work.
+      runesEquipped: [],
       knownAbilities: loadout.knownAbilities,
       attunedAbilities: loadout.attunedAbilities,
     },

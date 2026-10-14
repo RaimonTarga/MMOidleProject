@@ -13,7 +13,7 @@ export interface GameplayBuild {
   equipment: Array<{ slot: string; itemId: string; upgrade: number }>;
   techniques: string[];
   guards: string[];
-  runes: Array<{ conditionId: string; actionId: string; targetAbilityId?: string; waitOutMode?: "all" | "heat-managed" }>;
+  runes: Array<{ conditionId: string; actionId: string; waitOutMode?: "all" | "heat-managed" }>;
   auto: boolean;
   autoTraverse: boolean;
   priorityMode: string;

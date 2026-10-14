@@ -9,7 +9,6 @@ export * from './dungeons';
 export * from './runeDatabase';
 export * from './data/runeTuning';
 export * from './abilities';
-export * from './abilityWiring';
 export * from './abilityRecipes';
 export * from './abilityMagnitudes';
 export * from './passives';

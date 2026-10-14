@@ -30,7 +30,7 @@ import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { updateCombatState } from "../src/systems/combat/engine/combatState";
 import { runMonsterAttack, runPlayerAttack } from "../src/systems/combat/engine/combat";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
-import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
+import { fireAbilities } from "./fixtures/fireAbilities";
 import {
   applyMonsterRoot,
   applyMonsterSlow,
@@ -165,7 +165,7 @@ initCombatSystems();
   if (!target) throw new Error("failed to create target");
   setAttackTarget(world, player, target.isMonster.id);
 
-  fireWithReferenceWiring(world, Date.now());
+  fireAbilities(world, Date.now());
   runPlayerAttack(world, player, target, 1_000, {
     attackOrigin: player.hasPosition.current,
     aggroSource: { id: player.isPlayer.id, kind: "player" },

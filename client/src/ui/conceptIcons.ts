@@ -81,7 +81,6 @@ const ACTION_IDS = new Set([
   'fight-back',
   'lead-the-way',
   'taunt-current-target',
-  'use-ability',
 ]);
 
 const BUFF_IDS = new Set([
@@ -262,13 +261,11 @@ export function conceptAbilityIconSource(id: string): AssetIconSource | null {
 
 /**
  * Rune fragments with no art of their own, drawn with another fragment's file
- * (`<dir>/<name>` under `runes/`). Use Ability replaced the Fire Technique and
- * Fire Guard actions (`attunementMigration.ts`) and wears their art; Formation
- * Broken wears Wait for Summons', the action it is about. Without these both
- * requested a PNG that was never drawn (a 404 and a "?" tile).
+ * (`<dir>/<name>` under `runes/`). Formation Broken wears Wait for Summons',
+ * the action it is about. Without this it requested a PNG that was never
+ * drawn (a 404 and a "?" tile).
  */
 const RUNE_ICON_ALIASES: Record<string, string> = {
-  'use-ability': 'actions/fire-technique',
   'formation-broken': 'actions/wait-for-summons',
 };
 

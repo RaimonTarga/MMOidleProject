@@ -7,7 +7,6 @@
  */
 import {
   applyStatusEffect,
-  deriveAutoConfigFromRunes,
   DEPTH_EFFECT_ID,
   getStatusEffect,
   REND_EFFECT_ID,
@@ -54,12 +53,6 @@ const stun = (a: ReturnType<typeof arena>) => applyStatusEffect(a.boss.tracksCom
   const rend = getStatusEffect(a.player.tracksCombat, REND_EFFECT_ID);
   assert(rend, 'Rend: +damage taken');
   assert((rend.data.totalMs ?? 0) > 8000, `Depth lengthens the debuff (${rend.data.totalMs}ms > 8000ms)`);
-
-  const pile = deriveAutoConfigFromRunes(
-    [{ conditionId: 'debuff-pile', actionId: 'use-ability', targetAbilityId: 'slam' }],
-    { hpPct: 1, inCombat: true, inParty: false, aggroCount: 1, debuffCount: 3 },
-  );
-  assert(pile.abilityTargets.includes('slam'), 'Debuff Pile fires at three debuffs');
 
   stun(a);
   runUntil(a, () => a.boss.recoversFromPattern !== undefined, 300);

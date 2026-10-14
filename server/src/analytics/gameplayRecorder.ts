@@ -19,7 +19,7 @@ export function gameplayBuild(p: PlayerEntity): GameplayBuild {
     skills: [...p.usesSkills.unlockedSkills],
     equipment: Object.entries(p.holdsInventory.equipment).flatMap(([slot, itemId]) => itemId ? [{ slot, itemId, upgrade: p.holdsInventory.itemUpgrades[itemId] ?? 0 }] : []),
     techniques: [...p.tracksProgression.attunedAbilities.techniques], guards: [...p.tracksProgression.attunedAbilities.guards],
-    runes: p.tracksProgression.runesEquipped.map(r => ({ conditionId: r.conditionId, actionId: r.actionId, targetAbilityId: r.targetAbilityId, waitOutMode: r.waitOutMode })),
+    runes: p.tracksProgression.runesEquipped.map(r => ({ conditionId: r.conditionId, actionId: r.actionId, waitOutMode: r.waitOutMode })),
     auto: p.usesAutocombat.auto, autoTraverse: p.usesAutocombat.autoTraverse,
     priorityMode: p.usesAutocombat.priorityMode, acquireRadius: p.usesAutocombat.acquireRadius,
     focusLeaderTarget: p.usesAutocombat.focusLeaderTarget,

@@ -275,7 +275,6 @@ export interface RuneTraceRule {
   waitOutMode?: "all" | "heat-managed";
   conditionId: string;
   actionId: string;
-  targetAbilityId?: string;
 }
 
 /**

@@ -183,7 +183,6 @@ export function assertBreadthDefinitions() {
   for (const c of BREADTH_CELLS) {
     assert(c.build.skillPath.every(id => SKILL_TREE.has(id) && !SKILL_TREE.get(id)!.description.includes('[Placeholder]')));
     if (c.role === 'farm') assert(c.abilities!.techniques.some(id => ['slam','sweep'].includes(id)));
-    else assert(c.runeRules!.some(r => r.conditionId === 'target-casting' && r.actionId === 'use-ability' && r.targetAbilityId === 'brace'));
     if (c.controlCaseId) {
       const control = controls.find(x => x.id === c.controlCaseId)!;
       const normalize = (x: BreadthCell) => ({ ...x, id: '', build: { ...x.build, id: '' }, playerTreatment: '', controlCaseId: null });

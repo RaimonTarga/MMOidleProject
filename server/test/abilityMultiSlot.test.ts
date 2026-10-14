@@ -25,7 +25,7 @@ import {
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
-import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
+import { fireAbilities } from "./fixtures/fireAbilities";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { updateCombatState } from "../src/systems/combat/engine/combatState";
 import { World } from "../src/world/World";
@@ -141,7 +141,7 @@ applyStatusEffect(player.tracksCombat, {
   data: { totalMs: 60_000 },
 });
 
-fireWithReferenceWiring(world, Date.now());
+fireAbilities(world, Date.now());
 assert(
   player.hasArmedAbility?.abilityId === "sweep",
   "the FIRST Technique in loadout order should win arbitration",
@@ -152,7 +152,7 @@ assert(
 );
 
 // Still armed: the second Technique must not also arm on top of it.
-fireWithReferenceWiring(world, Date.now());
+fireAbilities(world, Date.now());
 assert(
   player.hasArmedAbility?.abilityId === "sweep",
   "a second Technique must never stack on top of an already-armed one",
@@ -160,7 +160,7 @@ assert(
 
 // Consume the charge; Sweep is now cooling, so the second Technique gets its turn.
 world.ecs.removeComponent(player, "hasArmedAbility");
-fireWithReferenceWiring(world, Date.now());
+fireAbilities(world, Date.now());
 assert(
   player.hasArmedAbility?.abilityId === "binding-strike",
   "once the first Technique is cooling, the second should arm",
@@ -177,7 +177,7 @@ assert(
 
 // Next window: the second Guard is free to activate, and both layer.
 updateCombatState(world, 100);
-fireWithReferenceWiring(world, Date.now());
+fireAbilities(world, Date.now());
 const guard1After = getStatusEffect(player.tracksCombat, guardEffectIdForAbility("endure")!);
 assert(
   !!guard1After,

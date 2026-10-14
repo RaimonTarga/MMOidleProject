@@ -8,7 +8,7 @@
  * with those systems, together with its server importers.
  */
 import {
-  ABILITY_DATABASE, attunedAbilityIds,
+  ABILITY_DATABASE,
   sanitizeRuneLoadout,
   type AttunedAbilities, type EquippedRule, type PlayerView,
 } from "@mmo-idle/shared";
@@ -35,7 +35,7 @@ export function observedBuild(self: PlayerView): DesiredBuild {
 /** Fixed field order; array order is meaningful, object insertion order is not. */
 export function buildKey(build: DesiredBuild): string {
   return JSON.stringify([build.abilities.techniques, build.abilities.guards,
-    build.runeRules.map(r => [r.conditionId, r.actionId, r.targetAbilityId ?? null])]);
+    build.runeRules.map(r => [r.conditionId, r.actionId])]);
 }
 
 export function validateBuild(build: DesiredBuild, self: PlayerView): BuildIssue[] {
@@ -57,8 +57,7 @@ export function validateBuild(build: DesiredBuild, self: PlayerView): BuildIssue
   }
   for (const [index, rule] of build.runeRules.entries()) {
     if (!self.runesOwned.includes(rule.conditionId) || !self.runesOwned.includes(rule.actionId)) add("MISSING_UNLOCK", `Rune rule ${index} uses an unowned fragment`);
-    const valid = sanitizeRuneLoadout([rule], new Set(self.runesOwned), self.combatArchetype,
-      new Set(attunedAbilityIds(build.abilities)));
+    const valid = sanitizeRuneLoadout([rule], new Set(self.runesOwned), self.combatArchetype);
     if (valid.length !== 1 || buildKey({ ...build, runeRules: valid }) !== buildKey({ ...build, runeRules: [rule] })) {
       add("MALFORMED_BUILD", `Rune rule ${index} has invalid compatibility, target or obsolete schema`);
     }
