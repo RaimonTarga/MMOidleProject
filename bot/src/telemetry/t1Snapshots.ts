@@ -84,6 +84,9 @@ export function buildT1CharacterSnapshot(
     inventory: [...self.inventory],
     equipment: { ...self.equipment },
     itemUpgrades: cloneRecord(self.itemUpgrades),
+    // The shared snapshot contract (`T1SnapshotState`) still requires the
+    // retired build layers below; they are copied as the view holds them until
+    // that type drops them.
     knownAbilities: [...self.knownAbilities],
     attunedAbilities: cloneAbilities(self),
     runesOwned: [...self.runesOwned],

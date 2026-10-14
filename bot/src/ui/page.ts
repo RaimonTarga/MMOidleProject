@@ -89,7 +89,7 @@ const dur = ms => {
 const nz = o => Object.entries(o || {}).filter(([,v]) => v > 0);
 
 function slotRows(p){
-  const slots = ['weapon','armor','recovery','mobility','core','relic'];
+  const slots = ['weapon','armor','recovery','mobility','relic'];
   return slots.map(s => {
     const id = p.equipment[s];
     if (!id) return '';
@@ -148,10 +148,8 @@ function card(b){
     inner += '<div class="sect"><h3>Mastery</h3><div class="kv">'+(lv||'<span>—</span>')+'</div>'
       + '<div class="muted" style="margin-top:4px">bosses: '+(p.bossesCleared.length ? esc(p.bossesCleared.join(', ')) : 'none')+'</div></div>';
 
-    const abil = [].concat(p.techniques.map(a=>'T:'+a), p.guards.map(a=>'G:'+a));
-    inner += '<div class="sect"><h3>Build</h3>'
-      + '<div class="muted">'+(abil.length ? esc(abil.join('  ')) : 'no abilities')+'</div>'
-      + '<div class="muted" style="margin-top:3px">'
+    inner += '<div class="sect"><h3>Runes</h3>'
+      + '<div class="muted">'
       + (p.runes.length ? p.runes.map(r=>esc(r.conditionId)+'&rarr;'+esc(r.actionId)).join(' &middot; ') : 'no runes')
       + '</div></div>';
   }

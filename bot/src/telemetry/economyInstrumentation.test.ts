@@ -82,8 +82,7 @@ function assert(condition: unknown, message: string): asserts condition {
   assert(!("blocked" in missing), "the generic `blocked` marker must not come back");
 
   // The Global-Mastery wall this block also pinned belonged to the +N ladder,
-  // which is retired; the lineage rows' own GM gate is checked server-side by
-  // `checkUnlockCard` and covered by the lineage economy tests.
+  // which is retired.
 
   // A locked recipe is its own reason, not an essence shortage.
   const craftReasons = craftBlockReasons(

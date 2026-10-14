@@ -8,10 +8,10 @@ import type {
   PlayerView,
   Vec2,
 } from "@mmo-idle/shared";
-import type { T1EconomyArm, TierEntryInitialState } from "@mmo-idle/shared";
+import type { T1EconomyArm } from "@mmo-idle/shared";
 
 /** Bump when an event shape changes incompatibly. Mirrors the bench convention. */
-export const BOT_JSONL_SCHEMA_VERSION = 6;
+export const BOT_JSONL_SCHEMA_VERSION = 7;
 
 /** Tags that mark a run as unfit for canonical balance conclusions. */
 export type RunTaint =
@@ -84,29 +84,6 @@ export interface RunHeader {
   maxConcurrency: number;
   /** Wallet at the first authoritative run snapshot. */
   initialEssences?: Record<EssenceType, number>;
-  /** Present only for an explicit synthetic tier-entry run. */
-  tierEntry?: TierEntryInitialState;
-  /**
-   * Present only for a tier-entry run: proof that the template this run started
-   * from is a character the game could actually have produced.
-   *
-   * A stale template does not announce itself -- it silently spawns an
-   * impossible character and every number the run produces describes a build no
-   * player can hold. The run refuses to start when this fails, and the artifact
-   * records the result either way so a reader never has to take it on trust.
-   */
-  templateValidation?: TemplateValidationSummary;
-}
-
-export interface TemplateValidationSummary {
-  profileId: string;
-  /** Offline legality against today's static game data. */
-  profilePass: boolean;
-  /** Live agreement between the template and the character the server built. */
-  spawnPass: boolean;
-  checked: number;
-  /** Every failing check, verbatim, so a FAIL is diagnosable from the artifact. */
-  failures: Array<{ pass: "profile" | "spawn"; check: string; message: string }>;
 }
 
 export type CompletionState =
@@ -196,7 +173,6 @@ export type BlockReason =
   | { kind: "essence"; essence: string; current: number; required: number; missing: number }
   | { kind: "globalMastery"; current: number; required: number; missing: number }
   | { kind: "biomeLevel"; biomeGroup: string; current: number; required: number; missing: number }
-  | { kind: "shard"; packet: string; current: number; required: number; missing: number }
   | { kind: "recipeLocked"; recipeId: string }
   | { kind: "prerequisite"; detail: string };
 
@@ -406,33 +382,8 @@ export type BotEvent =
       essenceSpent: Partial<Record<EssenceType, number>>;
       context: EconomyContext;
     }
-  | {
-      kind: "evolution";
-      atMs: number;
-      recipeId: string;
-      mode: "evolve" | "reconstruct";
-      predecessorId: string;
-      success: boolean;
-      reason?: string;
-      essenceSpent: Partial<Record<EssenceType, number>>;
-      context: EconomyContext;
-    }
-  | {
-      kind: "stance-craft";
-      atMs: number;
-      recipeId: string;
-      stanceId: string;
-      success: boolean;
-      reason?: string;
-      essenceSpent: Partial<Record<EssenceType, number>>;
-      context: EconomyContext;
-    }
   | { kind: "equip"; atMs: number; slot: string; definitionId: string | null }
-  /**
-   * A slot was deliberately emptied. Almost always the prelude to an evolution:
-   * the cheap evolve path consumes a BAG copy of the predecessor, so a worn item
-   * has to come off before it can be evolved.
-   */
+  /** A slot was deliberately emptied by an authored `unequip` step. */
   | { kind: "unequip"; atMs: number; slot: string; definitionId: string }
   | { kind: "build-change"; atMs: number; system: string; detail: Record<string, unknown> }
   | { kind: "biome-level-up"; atMs: number; biomeGroup: string; newLevel: number; unlockedRecipeIds: string[] }
@@ -562,34 +513,10 @@ export type BotEvent =
     }
   | { kind: "coordination-fallback"; atMs: number; fallback: CoordinationFallback }
   | {
-      /** Authoritative Rune posture change carried by a DeltaSnapshot when available. */
-      kind: "stance-switch";
-      atMs: number;
-      playerId: string;
-      nodeId: string;
-      stanceId: string | null;
-    }
-  | {
-      /**
-       * One of this player's lineage cards PAID (design §24.2): a `card-fx` the
-       * server pushed with our `playerId` and the card's `cardId` — one per
-       * application that actually did something (`fire` in lineageCards.ts), so a
-       * capped, dodged or immune moment is not counted. The verbs-that-fire sweep
-       * reads these to prove the bought verb fired in each boss fight.
-       */
-      kind: "card-fired";
-      atMs: number;
-      nodeId: string;
-      cardId: string;
-      fx: string;
-      targetId?: string;
-    }
-  | {
       /**
        * Damage-over-time ticks this player's own sources dealt in the last window
-       * (`dot-tick` events carrying our `sourceId`), by element — the observable
-       * half of a lean that SEEDS a condition (design §24.9: the Affliction lean's
-       * light bleed). Batched, never one event per tick; only windows with ticks.
+       * (`dot-tick` events carrying our `sourceId`), by element. Batched, never
+       * one event per tick; only windows with ticks.
        */
       kind: "own-dot-ticks";
       atMs: number;

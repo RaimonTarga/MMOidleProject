@@ -95,7 +95,6 @@ export interface RunSummary {
     summonDamageDealt: number;
     summonDamageShare: number;
     targetSwitches: number;
-    stanceSwitches: Array<{ atMs: number; nodeId: string; stanceId: string | null }>;
     topIncomingSources: Array<{ name: string; damage: number }>;
     incomingByDamageType: Record<string, number>;
     damagePerTarget: Array<{ name: string; damage: number }>;
@@ -212,7 +211,6 @@ export interface RunSummary {
     finalLoadout: Record<string, string | null>;
     finalUpgrades: Record<string, number>;
     runesEquipped: unknown;
-    abilitiesEquipped: unknown;
   };
   economy: {
     winCondition: CompletionMode;
@@ -250,23 +248,6 @@ export interface RunSummary {
         itemId: string;
         fromLevel: number;
         newLevel: number;
-        success: boolean;
-        essenceSpent: Record<string, number>;
-        context: unknown;
-      }>;
-      evolutions: Array<{
-        atMs: number;
-        recipeId: string;
-        mode: "evolve" | "reconstruct";
-        predecessorId: string;
-        success: boolean;
-        essenceSpent: Record<string, number>;
-        context: unknown;
-      }>;
-      stanceCrafts: Array<{
-        atMs: number;
-        recipeId: string;
-        stanceId: string;
         success: boolean;
         essenceSpent: Record<string, number>;
         context: unknown;
@@ -369,8 +350,6 @@ export function buildSummary(params: {
   for (const event of [
     ...recorder.economyTimeline.crafts,
     ...recorder.economyTimeline.upgrades,
-    ...recorder.economyTimeline.evolutions,
-    ...recorder.economyTimeline.stanceCrafts,
   ]) {
     if (!event.success) continue;
     for (const [type, amount] of Object.entries(event.essenceSpent)) {
@@ -529,9 +508,7 @@ export function buildSummary(params: {
       economyEvidenceEligible:
         params.completion === "completed" &&
         header.taints.length === 0 &&
-        economyIsolationEligible &&
-        (!header.tierEntry ||
-          header.tierEntry.economyPolicy === "authoritative-economy-continuation"),
+        economyIsolationEligible,
       treatmentValidity: params.treatmentValidity ?? "not-asserted",
     },
     progression: {
@@ -567,11 +544,6 @@ export function buildSummary(params: {
       summonDamageDealt: round(recorder.totalDamageDealtBySummons),
       summonDamageShare: totalOut > 0 ? round(recorder.totalDamageDealtBySummons / totalOut) : 0,
       targetSwitches: recorder.targetSwitches,
-      stanceSwitches: recorder.stanceSwitches.map((event) => ({
-        atMs: event.atMs,
-        nodeId: event.nodeId,
-        stanceId: event.stanceId,
-      })),
       topIncomingSources: topDamage(recorder.damageInBySource, 10),
       incomingByDamageType: roundRecord(recorder.damageInByType),
       damagePerTarget: topDamage(recorder.damageOutByTarget, 10),
@@ -656,7 +628,6 @@ export function buildSummary(params: {
       finalLoadout: { ...(self?.equipment ?? {}) },
       finalUpgrades: { ...(self?.itemUpgrades ?? {}) },
       runesEquipped: self?.runesEquipped ?? [],
-      abilitiesEquipped: self?.attunedAbilities ?? null,
     },
     economy: {
       winCondition: params.winCondition ?? "full-gauntlet",
@@ -679,23 +650,6 @@ export function buildSummary(params: {
           itemId: event.itemId,
           fromLevel: event.fromLevel,
           newLevel: event.newLevel,
-          success: event.success,
-          essenceSpent: { ...event.essenceSpent } as Record<string, number>,
-          context: event.context,
-        })),
-        evolutions: recorder.economyTimeline.evolutions.map((event) => ({
-          atMs: event.atMs,
-          recipeId: event.recipeId,
-          mode: event.mode,
-          predecessorId: event.predecessorId,
-          success: event.success,
-          essenceSpent: { ...event.essenceSpent } as Record<string, number>,
-          context: event.context,
-        })),
-        stanceCrafts: recorder.economyTimeline.stanceCrafts.map((event) => ({
-          atMs: event.atMs,
-          recipeId: event.recipeId,
-          stanceId: event.stanceId,
           success: event.success,
           essenceSpent: { ...event.essenceSpent } as Record<string, number>,
           context: event.context,

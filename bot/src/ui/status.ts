@@ -58,8 +58,6 @@ export interface BotStatus {
     essences: Record<string, number>;
     biomeLevels: Record<string, number>;
     bossesCleared: string[];
-    techniques: string[];
-    guards: string[];
     runes: Array<{ conditionId: string; actionId: string }>;
   } | null;
 

@@ -380,10 +380,10 @@ export async function runBot(
     executionMode: config.executionMode,
     maxConcurrency: config.maxConcurrency,
     startState: Object.fromEntries([
-      "nodeId", "hp", "maxHp", "activeStance", "runesOwned", "unlockedRecipes", "level",
+      "nodeId", "hp", "maxHp", "runesOwned", "unlockedRecipes", "level",
       "playerTier", "selectedClass", "selectedSubVariant", "selectedRange", "unlockedSkills", "skillPoints",
       "biomeLevel", "biomeXP", "bossesCleared", "inventory", "equipment", "itemUpgrades", "essences",
-      "knownAbilities", "attunedAbilities", "knownStances", "attunedStances", "equippedStances", "knownRites", "equippedRites", "runesEquipped",
+      "runesEquipped",
     ].map(key => [key, structuredClone(initialSelf[key as keyof typeof initialSelf])])),
     checkpoint: sourceSnapshot?.progressionCheckpoint ? { snapshotId:sourceSnapshot.snapshotId,
       sourceRevision:sourceSnapshot.progressionCheckpoint.sourceRevision,boundaryId:sourceSnapshot.progressionCheckpoint.boundaryId,
@@ -557,8 +557,6 @@ export async function runBot(
             essences: { ...self.essences },
             biomeLevels: { ...self.biomeLevel },
             bossesCleared: [...self.bossesCleared],
-            techniques: [...self.attunedAbilities.techniques],
-            guards: [...self.attunedAbilities.guards],
             runes: self.runesEquipped.map((r) => ({
               conditionId: r.conditionId,
               actionId: r.actionId,
