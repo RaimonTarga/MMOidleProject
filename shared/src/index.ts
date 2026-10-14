@@ -53,6 +53,7 @@ export * from './systems/debuffScaling';
 export * from './systems/mechanicEffectScaling';
 export * from './systems/summonerHud';
 export * from './systems/summonerProfile';
+export * from './classKits';
 export * from './data/summoner';
 export * from './systems/weaponFamilies';
 export * from './systems/alphaWindow';
