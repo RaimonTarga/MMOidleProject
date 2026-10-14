@@ -17,14 +17,6 @@ export interface CraftOutcome {
   reason?: string;
 }
 
-/** The server's answer event for the row-activation intent (`setActive`). */
-export interface LineageResult {
-  success: boolean;
-  reason?: string;
-  lineageId: string;
-  action: "unlockCard" | "setActive" | "unlockForm" | "wearForm";
-}
-
 export interface UpgradeOutcome {
   success: boolean;
   reason?: string;
@@ -146,16 +138,6 @@ export class Intents {
     return this.conn.request("debug:economyExperimentResult", () =>
       this.conn.raw.emit("debug:applyEconomyExperiment", arm),
     );
-  }
-
-  /**
-   * The `setActive` step's intent. Its answer event is shared with other
-   * intents, so the request filter matches on the ACTION as well as the id.
-   */
-  setLineageActive(lineageId: string, row: RowKind, cardId: string | null): Promise<LineageResult> {
-    return this.conn.request<LineageResult>("lineage:result",
-      () => this.conn.raw.emit("lineage:setActive", { lineageId, row, cardId }),
-      15_000, p => p.lineageId === lineageId && p.action === "setActive");
   }
 
   /**

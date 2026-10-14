@@ -6,7 +6,6 @@ import {
   BIOME_START_TIER_BY_GROUP,
   BIOME_PRIMARY_ESSENCE,
   ITEM_DATABASE,
-  LINEAGE_DATABASE,
   NODE_BIOMES,
   biomeLevelCap,
   RECIPE_DATABASE,
@@ -351,8 +350,6 @@ export class RouteExecutor {
         return this.doUpgrade(step);
       case "configureRunes":
         return this.doConfigureRunes(step.rules);
-      case "setActive":
-        return this.doSetActive(step);
       case "attemptBoss":
         return this.doAttemptBoss(step);
       case "repeatUntil":
@@ -1247,38 +1244,6 @@ export class RouteExecutor {
   }
 
   /**
-   * Choose which owned card is active for a row. Free, so there is nothing to
-   * farm for and nothing to be short of — a refusal here is always an authoring
-   * error (an unowned card, or a row the tier does not have).
-   */
-  private async doSetActive(
-    step: Extract<RouteStep, { type: "setActive" }>,
-  ): Promise<void> {
-    const { obs, intents, recorder } = this.deps;
-    if (!LINEAGE_DATABASE.has(step.lineageId)) {
-      throw new BuildError("ROUTE_LOGIC_FAILURE", "unknown lineage in route", { step });
-    }
-    const active = (): string | null => obs.self?.lineages[step.lineageId]?.active[step.row] ?? null;
-    if (active() === step.cardId) return;
-
-    const result = await this.mutate(() => intents.setLineageActive(step.lineageId, step.row, step.cardId));
-    if (!result.success) {
-      throw new StallError(`lineage activation rejected: ${result.reason ?? "unknown"}`, { step });
-    }
-    await this.waitUntil(() => active() === step.cardId, {
-      timeoutMs: 30_000,
-      what: `${step.row} active = ${step.cardId ?? "none"}`,
-    });
-
-    recorder.emit({
-      kind: "build-change",
-      atMs: recorder.now(),
-      system: "lineage-active",
-      detail: { lineageId: step.lineageId, row: step.row, cardId: step.cardId },
-    });
-  }
-
-  /**
    * Kill every guardian while the dungeon is still idle, so the boss is fought
    * alone.
    *
@@ -2105,8 +2070,6 @@ function defaultLabel(step: RouteStep): string {
       return `upgrade ${step.definitionId} to +${step.toPlus}${step.opportunistic ? " (as GM allows)" : ""}`;
     case "configureRunes":
       return `configure runes (${step.rules.length})`;
-    case "setActive":
-      return `activate ${step.lineageId} ${step.row} = ${step.cardId ?? "none"}`;
     case "attemptBoss":
       return `boss ${step.biomeGroup} T${step.tier}`;
     case "ifPossible":

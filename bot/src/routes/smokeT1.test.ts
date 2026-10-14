@@ -8,7 +8,7 @@ import { DEFAULT_SMOKE_CLASS, SMOKE_T1_ARMOR, SMOKE_T1_ID, smokeT1Route } from "
 const KEPT_STEP_KINDS = [
   "assert", "attemptBoss", "captureCheckpoint", "chooseClass", "craft", "equip", "unequip",
   "upgrade", "farm", "travel", "moveWithinNode", "ifPossible", "repeatUntil", "milestone",
-  "setActive", "unlockSkill", "configureRunes",
+  "unlockSkill", "configureRunes",
 ] as const;
 
 /** The conditions it keeps. */

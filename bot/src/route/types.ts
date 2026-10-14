@@ -1,4 +1,4 @@
-import type { EquipmentSlot, EquippedRule, EssenceType, RowKind, TierCheckpointKind } from "@mmo-idle/shared";
+import type { EquipmentSlot, EquippedRule, EssenceType, TierCheckpointKind } from "@mmo-idle/shared";
 
 /**
  * A place a step happens. Routes name content, not node ids, so a map edit that
@@ -95,7 +95,6 @@ export type StepBody =
    * Choose which owned card is active for a row, or clear the row with `null`.
    * Free and instant.
    */
-  | { type: "setActive"; lineageId: string; row: RowKind; cardId: string | null }
   /** Fight a biome's tier boss through its guard, up to `maxAttempts` times. */
   | { type: "attemptBoss"; biomeGroup: string; tier: number; maxAttempts?: number }
   | { type: "repeatUntil"; steps: RouteStep[]; until: Condition; maxIterations?: number }
