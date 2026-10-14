@@ -1,8 +1,10 @@
 /**
  * Class stat affinity wiring (T1–T3).
  *
- * Roots, frames and range nodes grant PERCENTAGE affinities rather than flat
- * stats. This asserts the contract those tables depend on — additive, applied
+ * The class roots grant PERCENTAGE affinities rather than flat stats (the
+ * class-first tree's later nodes carry none yet; synthetic nodes stand in where a
+ * case needs more than one source). This asserts the contract those tables depend
+ * on — additive, applied
  * once, applied to base + equipment — plus the chassis invariants the design
  * exists to protect. Balance numbers are deliberately NOT asserted; they will
  * move with the next tuning pass.
@@ -57,27 +59,35 @@ function build(
   return target;
 }
 
-const SQUIRE = ["cooldown-root", "cooldown-heavy", "cooldown-range-close"];
-const SQUIRE_FAR = ["cooldown-root", "cooldown-heavy", "cooldown-range-far"];
-const SPIRIT = ["energy-root", "energy-light", "energy-range-close"];
+const SQUIRE = ["cooldown-root"];
+const SPIRIT = ["energy-root"];
 
 // ── 1. Affinities are ADDITIVE, never compounding tier by tier ──────────────
-// Squire +30% / Bulwark +22% / Vanguard +10% max HP must resolve as ×1.62.
-// The bug this guards against is ×1.30 × 1.22 × 1.10 = ×1.7446, which would
-// make every later tier silently worth more than the table says.
+// Squire +30% plus two later sources of +22% and +10% max HP must resolve as
+// ×1.62. The bug this guards against is ×1.30 × 1.22 × 1.10 = ×1.7446, which
+// would make every later tier silently worth more than the table says. The two
+// later sources are synthetic: the class-first tree's later nodes carry no stats.
 {
-  const naked = build([]);
-  const squire = build(SQUIRE);
-  const additive = Math.round(naked.hasHealth.maxHp * 1.62);
-  const compounded = Math.round(naked.hasHealth.maxHp * 1.3 * 1.22 * 1.1);
-  assert(
-    squire.hasHealth.maxHp === additive,
-    `Squire→Bulwark→Vanguard max HP should be additive (${additive}), got ${squire.hasHealth.maxHp}`,
-  );
-  assert(
-    squire.hasHealth.maxHp !== compounded,
-    "affinities must not compound multiplicatively across tiers",
-  );
+  const later = [["test-affinity-later-a", 0.22], ["test-affinity-later-b", 0.1]] as const;
+  for (const [id, maxHpPct] of later) {
+    SKILL_TREE.set(id, { ...SKILL_TREE.get("cooldown-root")!, id, statEffects: { maxHpPct }, mechanicEffects: {} });
+  }
+  try {
+    const naked = build([]);
+    const squire = build([...SQUIRE, ...later.map(([id]) => id)]);
+    const additive = Math.round(naked.hasHealth.maxHp * 1.62);
+    const compounded = Math.round(naked.hasHealth.maxHp * 1.3 * 1.22 * 1.1);
+    assert(
+      squire.hasHealth.maxHp === additive,
+      `Squire root + two later sources max HP should be additive (${additive}), got ${squire.hasHealth.maxHp}`,
+    );
+    assert(
+      squire.hasHealth.maxHp !== compounded,
+      "affinities must not compound multiplicatively across tiers",
+    );
+  } finally {
+    for (const [id] of later) SKILL_TREE.delete(id);
+  }
 }
 
 // ── 2. Every affinity stat is applied exactly once ──────────────────────────
@@ -85,21 +95,21 @@ const SPIRIT = ["energy-root", "energy-light", "energy-range-close"];
   const naked = build([]);
   const squire = build(SQUIRE);
   assert(
-    squire.dealsDamage.attack === Math.round(naked.dealsDamage.attack * 1.32),
-    "attack affinity should sum to +32% and apply once",
+    squire.dealsDamage.attack === Math.round(naked.dealsDamage.attack * 1.18),
+    "attack affinity should be +18% and apply once",
   );
   assert(
-    squire.mitigatesDamage.plating === Math.round(naked.mitigatesDamage.plating * 1.2),
-    "plating affinity should sum to +20% and apply once",
+    squire.mitigatesDamage.plating === Math.round(naked.mitigatesDamage.plating * 1.1),
+    "plating affinity should be +10% and apply once",
   );
   assert(
-    squire.hasPosition.speed === Math.round(naked.hasPosition.speed * 0.78),
-    "move speed affinity should sum to −22% and apply once",
+    squire.hasPosition.speed === Math.round(naked.hasPosition.speed * 0.9),
+    "move speed affinity should be −10% and apply once",
   );
   assert(
     squire.performsAttack.attackCooldown ===
-      Math.round(naked.performsAttack.attackCooldown / 0.78),
-    "attack speed affinity should sum to −22% and apply once as a cooldown divisor",
+      Math.round(naked.performsAttack.attackCooldown / 0.85),
+    "attack speed affinity should be −15% and apply once as a cooldown divisor",
   );
 }
 
@@ -116,8 +126,8 @@ const SPIRIT = ["energy-root", "energy-light", "energy-range-close"];
   const at0 = ratioAt(0);
   const at5 = ratioAt(5);
   assert(
-    Math.abs(at0 - 1.62) < 0.01 && Math.abs(at5 - 1.62) < 0.01,
-    `class HP share should hold at ~1.62× across upgrade levels, got +0:${at0.toFixed(3)} +5:${at5.toFixed(3)}`,
+    Math.abs(at0 - 1.3) < 0.01 && Math.abs(at5 - 1.3) < 0.01,
+    `class HP share should hold at ~1.30× across upgrade levels, got +0:${at0.toFixed(3)} +5:${at5.toFixed(3)}`,
   );
   const geared = build(SQUIRE, "cave-vest-t3", 5);
   const bare = build(SQUIRE);
@@ -127,43 +137,24 @@ const SPIRIT = ["energy-root", "energy-light", "energy-range-close"];
   );
 }
 
-// ── 4. Chassis ordering survives the positional choice ──────────────────────
-// A Squire that gave up melee is still heavier than a Spirit that embraced it;
-// compensation restores function, never identity.
+// ── 4. Chassis ordering ─────────────────────────────────────────────────────
+// The Squire is the heavy end of the chassis line and the Spirit the light end.
 {
-  const squireFar = build(SQUIRE_FAR, "cave-vest-t3", 3);
-  const spiritClose = build(SPIRIT, "cave-vest-t3", 3);
+  const squire = build(SQUIRE, "cave-vest-t3", 3);
+  const spirit = build(SPIRIT, "cave-vest-t3", 3);
   assert(
-    squireFar.hasHealth.maxHp > spiritClose.hasHealth.maxHp,
-    "Squire on Far must remain bulkier than Spirit on Close",
+    squire.hasHealth.maxHp > spirit.hasHealth.maxHp,
+    "Squire must remain bulkier than Spirit",
   );
   assert(
-    squireFar.mitigatesDamage.plating >= spiritClose.mitigatesDamage.plating &&
-      squireFar.mitigatesDamage.damageReduction > spiritClose.mitigatesDamage.damageReduction,
-    "Squire must remain the more armored chassis regardless of range (class DR is its armor layer)",
+    squire.mitigatesDamage.plating >= spirit.mitigatesDamage.plating &&
+      squire.mitigatesDamage.damageReduction > spirit.mitigatesDamage.damageReduction,
+    "Squire must remain the more armored chassis (class DR is its armor layer)",
   );
   assert(
-    spiritClose.hasPosition.speed > squireFar.hasPosition.speed &&
-      spiritClose.performsAttack.attackCooldown < squireFar.performsAttack.attackCooldown,
-    "Spirit must remain the faster chassis regardless of range",
-  );
-}
-
-// ── 5. Close range carries its whole budget in the node tables ──────────────
-// The old hardcoded CLOSE_RANGE_CLASS_BONUS added invisible per-class plating
-// and regen for picking any close node. Nothing may grant stats off-table.
-{
-  const closeOnly = build(["cooldown-root", "cooldown-range-close"]);
-  const rootOnly = build(["cooldown-root"]);
-  // Squire root +10% plating; the close-range node carries none (it grants DR).
-  const expected = Math.round(GAME_CONFIG.PLAYER_PLATING * (1 + 0.1));
-  assert(
-    closeOnly.mitigatesDamage.plating === expected,
-    `close-range plating should come only from the node tables (${expected}), got ${closeOnly.mitigatesDamage.plating}`,
-  );
-  assert(
-    closeOnly.hasHealth.recovery === rootOnly.hasHealth.recovery,
-    "close range must not grant off-table hp regen",
+    spirit.hasPosition.speed > squire.hasPosition.speed &&
+      spirit.performsAttack.attackCooldown < squire.performsAttack.attackCooldown,
+    "Spirit must remain the faster chassis",
   );
 }
 
@@ -186,7 +177,7 @@ const SPIRIT = ["energy-root", "energy-light", "energy-range-close"];
 
 // â”€â”€ 7. Core is the final multiplicative capstone layer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 {
-  const skills = ["reload-root", "reload-light", "reload-range-mid"];
+  const skills = ["reload-root"];
   const core = RECIPE_DATABASE.get("core-tempered")!;
   const coreAttack = core.mechanicEffects?.["core.attack-mult"] ?? 0;
   const affinity = skills.reduce(
@@ -207,23 +198,6 @@ const SPIRIT = ["energy-root", "energy-light", "energy-range-close"];
   assert(
     result.dealsDamage.attack === expected,
     `attack retains class/archetype stat layers (${expected}), got ${result.dealsDamage.attack}`,
-  );
-}
-
-// A hard-set archetype cadence still receives the final Core attack-speed layer.
-{
-  const accelerant = RECIPE_DATABASE.get("core-accelerant")!;
-  const coreAttackSpeed = accelerant.mechanicEffects?.["core.attack-speed-mult"] ?? 0;
-  const result = build(
-    ["reload-root", "reload-light", "reload-range-mid", "reload-light-t3-c"],
-    undefined,
-    0,
-    { core: accelerant.id, combatArchetype: "reload" },
-  );
-  const expected = Math.round(2_000 / (1 + coreAttackSpeed));
-  assert(
-    result.performsAttack.attackCooldown === expected,
-    `Core attack speed must apply after Snipe hard-sets cadence (${expected}), got ${result.performsAttack.attackCooldown}`,
   );
 }
 
