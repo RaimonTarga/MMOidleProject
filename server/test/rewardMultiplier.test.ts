@@ -3,9 +3,8 @@
 // WHY THIS EXISTS: the multiplier is a single scalar threaded through the ONE
 // reward seam (`applyKillRewardsToPlayer`). The invariants worth pinning are
 // structural: the default must be a true no-op (production runs at 1x), the
-// scalar must reach every kill reward (essence, biome XP, and lineage shards),
-// a boss clear's capstone grant is on the same rule, and garbage input must
-// not poison later kills with NaN.
+// scalar must reach every kill reward (essence and biome XP), and garbage
+// input must not poison later kills with NaN.
 //
 // Deliberately NOT asserted: any balance number. Kill payouts change with every
 // tuning pass — this compares boosted-vs-baseline on the same fixture instead.
@@ -82,15 +81,10 @@ function makePlayer(id: string, playerTier = 4): PersistedPlayerSlices {
 
 const FARM_NODE = "node-t1-forest-01";
 const BIOME_GROUP = "forest";
-// "wolf" is in the Forest Pack family (shared/src/data/families/index.ts),
-// which drops the Tempo shard. "gnarled-greatbear" is the Forest T1 boss and
-// drops the Forest capstone ("Warden's Heart") instead of a shard.
-const SHARD = "tempo";
 
 interface Payout {
   essence: number;
   biomeXp: number;
-  shards: number;
 }
 
 /**
@@ -108,7 +102,6 @@ function farm(id: string, multiplier: number, kills: number, playerTier = 4): Pa
   return {
     essence: Object.values(prog.essences).reduce((a, b) => a + b, 0),
     biomeXp: prog.biomeXP[BIOME_GROUP] ?? 0,
-    shards: prog.shards[SHARD] ?? 0,
   };
 }
 
@@ -130,11 +123,10 @@ const boosted = farm("p-boost", MULT, KILLS);
 
 assert(base.essence > 0, "baseline farm must earn essence for the comparison to mean anything");
 assert(base.biomeXp > 0, "baseline farm must earn biome XP");
-assert(base.shards > 0, "baseline farm must earn lineage shards");
 
 // NOT an exact `base * MULT`: every kill rounds its own payout to an integer, so
 // a 4.2-essence wolf pays 4 at 1x but 42 at 10x — the boosted run loses less to
-// rounding, which is correct, not a bug. The band pins "all three scale together,
+// rounding, which is correct, not a bug. The band pins "both scale together,
 // by roughly the multiplier" without re-implementing the reward formula.
 function assertScales(label: string, boostedValue: number, baseValue: number): void {
   const ratio = boostedValue / baseValue;
@@ -146,26 +138,6 @@ function assertScales(label: string, boostedValue: number, baseValue: number): v
 
 assertScales("essence", boosted.essence, base.essence);
 assertScales("biome XP", boosted.biomeXp, base.biomeXp);
-assertScales("lineage shards", boosted.shards, base.shards);
-
-// ── A boss kill's capstone grant is on the same rule ──────────────────────────
-// Bosses are outside the family table: a kill drops the biome's capstone
-// material instead of a shard (one per kill, scaled only by the multiplier,
-// not by biome tier — see `grantLineageMaterials`).
-
-function bossCapstoneGain(id: string, multiplier: number): number {
-  const world = new World();
-  world.rewardMultiplier = multiplier;
-  const player = world.attachPlayerEntity(makePlayer(id), id);
-  const boss = world.createMonster(FARM_NODE, "gnarled-greatbear", { x: 800, y: 800 })!;
-  assert(boss.isMonster.isBoss, "greatbear is a boss");
-  grantMonsterRewards(world, id, boss);
-  return player.tracksProgression.capstones[BIOME_GROUP] ?? 0;
-}
-
-const baseBossCapstone = bossCapstoneGain("p-boss-base", 1);
-assert(baseBossCapstone > 0, "baseline boss clear must grant a capstone");
-assertScales("boss capstone", bossCapstoneGain("p-boss-boost", MULT), baseBossCapstone);
 
 // ── The biome level cap still binds: the multiplier is not a cap bypass ───────
 // Worth pinning because it is the one place a boosted run behaves qualitatively
@@ -227,10 +199,8 @@ assert(clampRewardMultiplier(1.23456) === 1.23, "multipliers round to 2 decimals
   assert(world.takeNodeEvents(FARM_NODE).length === 0, 'raised monster emits no reward cosmetics');
 }
 
-// Per-biome XP multipliers are mastery-only: essence and shards ignore them,
-// and biomes/tiers without an entry are untouched. (The T3/T4 monsters sampled
-// here are outside the T1 family table, so they never earn shards either way —
-// this still pins that nothing wires the biome XP factor into the shard grant.)
+// Per-biome XP multipliers are mastery-only: essence ignores them, and
+// biomes/tiers without an entry are untouched.
 {
   const factors = GAME_CONFIG.BIOME_XP_MULT_BY_TIER_AND_BIOME as Record<number, Record<string, number>>;
   const sample = (node: string, type: string) => {
@@ -242,7 +212,6 @@ assert(clampRewardMultiplier(1.23456) === 1.23, "multipliers round to 2 decimals
     return {
       xp: Object.values(p.biomeXP).reduce((a, b) => a + b, 0),
       essence: JSON.stringify(p.essences),
-      shards: JSON.stringify(p.shards),
     };
   };
   const cases = [
@@ -260,7 +229,6 @@ assert(clampRewardMultiplier(1.23456) === 1.23, "multipliers round to 2 decimals
       const adjusted = sample(node, type);
       assert(base.xp > 0 && Math.abs(adjusted.xp - base.xp * factor) <= 1, `${node}: biome XP factor ${factor}`);
       assert(adjusted.essence === base.essence, `${node}: essence ignores the biome XP factor`);
-      assert(adjusted.shards === base.shards, `${node}: shards ignore the biome XP factor`);
     } finally {
       factors[4] = saved;
     }

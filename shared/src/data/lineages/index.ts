@@ -136,40 +136,6 @@ export function lineagesWithLane(slot: EquipmentSlot, lane: PacketId): LineageDe
   return lineagesForSlot(slot).filter((l) => l.lanes.includes(lane));
 }
 
-/**
- * The distinct Lane-A packets of every lineage homed in a biome — the input to
- * design §18.6's boss shard stopgap: "the boss pays four shards of the lineage's
- * Lane A packet plus the capstone, so a boss-only lane buys a payoff card in two
- * kills". Derived from the registered lineages rather than a second hand-kept
- * table. See `server/src/systems/player/progression/rewards.ts`.
- *
- * WHY EVERY LINEAGE AND NOT JUST THE DEFENSIVE ONES. This read the three
- * non-weapon lineages only, because when §17 wrote the stopgap every WEAPON Lane A
- * already had a mob family dropping its shard. §22's Technique packet broke that
- * assumption: it is the Broadsword's Lane A, and with Plains Swarm its only
- * family source it would otherwise have ONE T1 source where §12's coverage rule
- * asks for two. §18.6's sentence says "the lineage's Lane A packet" without
- * qualification, so the rule is now what it says. The four other weapon Lane As
- * (Rapier and Axe Tempo, Hammer Empowered, Dagger Affliction) already had family
- * sources, so for them this is a small boss-kill bonus rather than access.
- *
- * PARKED LINEAGES PAY NOTHING (design §24.5, course-correction report item 17). A
- * parked tree can spend no shard, so its Lane A is not paid: while the armour,
- * charm and boots trees are parked the stopgap pays the weapon lanes only, and no
- * boss pays Iron (Bulwark) or Glass (Barrier tempo) Shards. Read off
- * `isLineageParked`, so un-parking a tree restores its Lane A here with no other
- * edit.
- */
-export function biomeLaneAPackets(biome: string): PacketId[] {
-  const packets = new Set<PacketId>();
-  for (const lineage of LINEAGE_DATABASE.values()) {
-    if (lineage.homeBiome !== biome) continue;
-    if (isLineageParked(lineage)) continue;
-    packets.add(lineage.lanes[0]);
-  }
-  return [...packets];
-}
-
 export * from './types';
 export * from './packets';
 export * from './keystones';

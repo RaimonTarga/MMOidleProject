@@ -23,20 +23,19 @@ import { buildRegionNodes } from './authoring';
  *               { A: 0.6, B: 0.4 }          a DOOR pair (the first two arrivals).
  *   crossroads  { A: .34, B: .33, C: .33 }  all three families, one per biome.
  *
- * Every node pays its dominant family's shard (design §24.3, `nodeShard`), so a
- * reshape is a currency move. The roster pass kept every node's dominant except
+ * Every node is its dominant family's territory (design §24.3, `nodeFamily`), so a
+ * reshape is a territory move. The roster pass kept every node's dominant except
  * `node-t1-mountain-03` (Crag → Ridge): Ridge's only territory became the
  * crossroads, and every family of a biome leads at least one node that is not the
- * crossroads (`nodeRosters.test.ts`), so its shard keeps a home of its own.
+ * crossroads (`nodeRosters.test.ts`), so each family keeps a home of its own.
  *
  * THE CROSSROADS is the cell the dungeon is entered from, the last normal node
  * before the boss: in every biome the -01 cell (Mountain and Cave each have two
  * cells on their dungeon; the crossroads is the one met last). It fields all three
  * families at near-equal shares, so a player meets the whole biome once before the
- * fight. PROVISIONAL (legibility run, §26.3 open): it pays the shard of the family
- * that leads it by a hair (0.34), chosen as the family the cell led before the
- * roster pass so no crossroads changed currency; whether a crossroads should roll
- * its shard per kill instead is the designer's open call.
+ * fight. PROVISIONAL (legibility run, §26.3 open): it is the territory of the
+ * family that leads it by a hair (0.34), chosen as the family the cell led before
+ * the roster pass so no crossroads changed territory.
  *
  * ORDER IS DISTANCE (T1 entry pressure, 2026-10-02). Index N is cell -0(N+1), and a
  * cell's id comes from the procedural territory growth, so it carries no position at
@@ -58,9 +57,9 @@ import { buildRegionNodes } from './authoring';
  * breaks hop ties alphabetically instead (`tutorialNodeFor`), which differs only at
  * Forest's second arrival (03, not 05) and for a Swamp entered from the Clearing.
  *
- * The order also decides each node's SHARD (design §24.3: a node pays its dominant
- * family's shard), so a reorder is a currency move — re-run every test that reads
- * blends, families or spawns (review B5), not only this region's.
+ * The order also decides each node's TERRITORY (design §24.3: a node is its
+ * dominant family's), so a reorder is a territory move — re-run every test that
+ * reads blends, families or spawns (review B5), not only this region's.
  *
  * Every family named here has a body in its biome's T1 pool (the third-mob close-out,
  * 2026-10-01), so every T1 blend resolves exactly as authored (`resolveNodeBlend`).

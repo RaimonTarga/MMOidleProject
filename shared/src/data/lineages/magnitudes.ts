@@ -837,17 +837,6 @@ export const SHARD_BASE: Record<RowKind, number> = {
 export const GATE_SHARD_BASE = 10;
 
 /**
- * Shards a single kill drops, before the tier multiplier and the reward
- * multipliers. Design §12: "every kill drops a small amount of the mob family's
- * shard, deterministically."
- *
- * Deliberately not the binding cost. A T1 band is 33 shards across three lanes
- * against 360 essence, so essence pays the bulk and the shard says WHERE you
- * farmed — which is the point of keying materials by packet rather than biome.
- */
-export const SHARD_BASE_PER_KILL = 1;
-
-/**
  * Per-tier multiplier on shard costs AND shard drops — the same curve on both
  * sides, which is what design §12's "drop quantity and card cost scale by tier
  * with the same kind of multiplier essence uses" asks for. Far shallower than

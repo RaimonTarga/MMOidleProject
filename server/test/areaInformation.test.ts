@@ -1,23 +1,19 @@
 import assert from 'node:assert/strict';
 import {
   areaDanger, NODE_BIOMES, WORLD_NODE_LIST, buildNodeGateEntities, GAME_CONFIG,
-  nodeFamily, nodeShard, shardName,
+  nodeFamily,
 } from '@mmo-idle/shared';
 import { arrivalKind, arrivalTerritoryLine, nearbyExits } from '../../client/src/hud/areaInformationModel';
 
-// The arrival banner names the node's territory and the ONE shard every kill in it
-// pays (design §24.3), by shard name; a node with no blend says nothing about shards.
+// The arrival banner names the node's territory (design §24.3); a node with no
+// blend has none.
 for (const node of WORLD_NODE_LIST) {
-  const line = arrivalTerritoryLine(node.id, 'discovery');
+  const line = arrivalTerritoryLine(node.id);
   if (!node.blend) {
-    assert.equal(line, null, `${node.id}: a node with no blend promises no shard`);
+    assert.equal(line, null, `${node.id}: a node with no blend has no territory line`);
     continue;
   }
-  const shard = nodeShard(node.id)!;
   assert.equal(line?.territory, `${nodeFamily(node.id)!.name} territory`, `${node.id}: territory`);
-  assert.equal(line?.shard, shard, `${node.id}: the banner's shard is the node's`);
-  assert.equal(line?.detail, `every kill here drops ${shardName(shard)}s`, `${node.id}: discovery copy`);
-  assert.equal(arrivalTerritoryLine(node.id, 'return')?.detail, `${shardName(shard)}s`, `${node.id}: return copy`);
 }
 
 for (const node of WORLD_NODE_LIST) {

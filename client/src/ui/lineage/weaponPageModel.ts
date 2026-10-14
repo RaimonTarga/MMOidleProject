@@ -44,8 +44,6 @@ import {
   lineageCardPrice,
   lineageEssenceType,
   lineageGateCost,
-  nodeFamily,
-  nodesPayingShard,
   LEAN_COLORS,
   packetDefinition,
   packetHalves,
@@ -1024,22 +1022,6 @@ export interface MaterialLine {
   where?: string;
 }
 
-/**
- * Where a lane's shard drops: the territory and the nodes of the band's door
- * biome that pay it (design §24.3), falling back to the lineage's home biome at
- * tier 1 when the door biome has no node paying it.
- */
-export function shardWhere(lineage: LineageDefinition, progress: LineageProgress, lane: PacketId): string | undefined {
-  const tier = Math.max(1, wornFormTier(lineage, progress));
-  const door = lineageBandBiome(lineage, progress, tier);
-  const nodes = nodesPayingShard(door, tier, lane);
-  const ids = nodes.length > 0 ? nodes : nodesPayingShard(lineage.homeBiome, 1, lane);
-  if (ids.length === 0) return undefined;
-  const families = [...new Set(ids.map((id) => nodeFamily(id)?.name).filter((n): n is string => !!n))];
-  const places = ids.map((id) => NODE_BIOMES[id]?.displayName ?? id);
-  return `${families.join(' / ')} territory: ${places.join(', ')}`;
-}
-
 export function materialLines(params: {
   lineage: LineageDefinition;
   progress: LineageProgress;
@@ -1053,7 +1035,7 @@ export function materialLines(params: {
   for (const lane of lineage.lanes) {
     lines.push({
       kind: 'shard', key: lane, name: `${shardName(lane)}s`, held: wallet.shards?.[lane] ?? 0,
-      color: laneColor(lane), where: shardWhere(lineage, progress, lane),
+      color: laneColor(lane),
     });
   }
   const tier = Math.max(1, wornFormTier(lineage, progress));

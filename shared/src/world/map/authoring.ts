@@ -49,8 +49,8 @@ export interface RegionAuthoringInput {
   blends?: Readonly<Record<string, readonly NodeBlend[]>>;
   /**
    * Phase 2b (2026-10-01), T1 only: a blended normal node carries no
-   * `modifier` field at all any more (cosmetic only -- shard granting is
-   * family-keyed). Display names still draw from the SAME modifier-keyed
+   * `modifier` field at all any more (cosmetic only -- a node's identity is
+   * its family blend). Display names still draw from the SAME modifier-keyed
    * table, but only as an authoring-time lookup: `buildRegionNodes` takes a
    * PREFIX of the biome's modifier sequence, as long as `blends[biome]`, to
    * name its nodes, and never attaches a `modifier` to the pushed node. That

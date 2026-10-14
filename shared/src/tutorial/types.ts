@@ -1,4 +1,4 @@
-import type { PacketId, RowKind } from '../data/lineages/types';
+import type { RowKind } from '../data/lineages/types';
 import type { EssenceType } from '../items';
 import type { EquippedRule } from '../runeDatabase';
 import type { TutorialConceptId } from './concepts';
@@ -21,11 +21,6 @@ export type TutorialNodeRef =
       tier: number;
       pick?: 'first' | 'uncleared';
       modifier?: string;
-      /**
-       * Only nodes that pay this shard (design §24.3: every kill in a node pays its
-       * dominant family's shard, so a shard farm must stand in that territory).
-       */
-      shard?: PacketId;
     }
   | { kind: 'dungeon'; biomeGroup: string; tier: number };
 
@@ -43,10 +38,6 @@ export type TutorialCondition =
   | { type: 'runeRecipeCrafted'; recipeId: string }
   | { type: 'bossCleared'; biomeGroup: string; tier: number }
   // ── Lineage trees (progression rework Phase 1; design §4, §5, §12) ─────────
-  /** Lane shards, the kill-driven wallet a card and a gate are paid in. */
-  | { type: 'shardAtLeast'; packet: PacketId; amount: number }
-  /** A biome boss's capstone material — the only thing a boss kill mints. */
-  | { type: 'capstoneAtLeast'; biome: string; amount: number }
   /**
    * The card is owned; with `rank`, owned at that rank or above (a RANKED card, the
    * T1 lean trio: design §26.1). A rank is never lost, so this stays monotone.
@@ -91,14 +82,13 @@ export type TutorialStep =
    * by hand needs (the weapon page sends the same intent after a buy).
    */
   | { type: 'setActive'; lineageId: string; row: RowKind; cardId: string }
-  /** Pay a band's gate: essence, the crowned lane's shard, the boss capstone. */
+  /** Pay a band's gate. */
   | { type: 'unlockForm'; lineageId: string; recipeId: string }
   /** Wear an owned form. Free, and it moves the slot like any equip. */
   | { type: 'wearForm'; lineageId: string; recipeId: string }
   /**
-   * `until` turns one boss attempt into "keep fighting this boss until"; the
-   * gate's three capstone materials are three kills, which is the one place the
-   * guide repeats a fight. Without it the step ends on the first clear.
+   * `until` turns one boss attempt into "keep fighting this boss until". Without
+   * it the step ends on the first clear.
    */
   | { type: 'attemptBoss'; biomeGroup: string; tier: number; until?: TutorialCondition };
 
@@ -107,9 +97,7 @@ export type TutorialProgressRef =
   | { type: 'questKills'; questId: string }
   | { type: 'biomeLevel'; biomeGroup: string; level: number }
   | { type: 'essenceFor'; recipeId: string }
-  | { type: 'essence'; essence: EssenceType; amount: number }
-  | { type: 'shard'; packet: PacketId; amount: number }
-  | { type: 'capstone'; biome: string; amount: number };
+  | { type: 'essence'; essence: EssenceType; amount: number };
 
 /**
  * One press of Next.

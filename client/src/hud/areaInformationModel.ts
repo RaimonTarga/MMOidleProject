@@ -1,6 +1,6 @@
 import {
-  buildNodeGateEntities, NODE_BIOMES, nodeFamily, nodeShard, shardName,
-  type NodeGateEntity, type PacketId, type Vec2,
+  buildNodeGateEntities, NODE_BIOMES, nodeFamily,
+  type NodeGateEntity, type Vec2,
 } from '@mmo-idle/shared';
 
 export type ArrivalKind = 'discovery' | 'new-node' | 'return';
@@ -19,48 +19,29 @@ export function arrivalKind(nodeId: string, previouslyVisited: readonly string[]
 }
 
 /**
- * The arrival banner's territory line (design §24.3): the node's dominant family
- * and the one shard every kill in it pays — "Pack territory · every kill here
- * drops Gale Shards", shortened on a return visit. Null for a node with no blend
- * (dungeon, sanctuary, the Clearing): it says nothing about shards rather than
- * something untrue. Replaces the modifier line (review P13).
+ * The arrival banner's territory line (design §24.3): the node's dominant family —
+ * "Pack territory". Null for a node with no blend (dungeon, sanctuary, the
+ * Clearing). Replaces the modifier line (review P13).
  */
-export function arrivalTerritoryLine(
-  nodeId: string,
-  kind: ArrivalKind,
-): { territory: string; shard: PacketId; detail: string } | null {
+export function arrivalTerritoryLine(nodeId: string): { territory: string } | null {
   const family = nodeFamily(nodeId);
-  const shard = nodeShard(nodeId);
-  if (!family || !shard) return null;
-  return {
-    territory: `${family.name} territory`,
-    shard,
-    detail: kind === 'return' ? `${shardName(shard)}s` : `every kill here drops ${shardName(shard)}s`,
-  };
+  if (!family) return null;
+  return { territory: `${family.name} territory` };
 }
 
 /**
  * The territory line that STAYS on screen (design §26.4, thesis D's permanent
- * "Here" line): the node's name, its dominant family and the one shard every
- * kill pays — "Mire territory · every kill pays Venom". Null where the node has
- * no blend (dungeon, sanctuary, the Clearing), like the arrival line.
+ * "Here" line): the node's name and its dominant family — "Mire territory". Null
+ * where the node has no blend (dungeon, sanctuary, the Clearing), like the
+ * arrival line.
  */
-export function territoryHereLine(nodeId: string): {
-  name: string;
-  territory: string;
-  shard: PacketId;
-  /** "Venom": the shard's word, the mockup's short form. */
-  shardWord: string;
-} | null {
+export function territoryHereLine(nodeId: string): { name: string; territory: string } | null {
   const info = NODE_BIOMES[nodeId];
   const family = nodeFamily(nodeId);
-  const shard = nodeShard(nodeId);
-  if (!info || !family || !shard) return null;
+  if (!info || !family) return null;
   return {
     name: info.displayName,
     territory: `${family.name} territory`,
-    shard,
-    shardWord: shardName(shard).replace(/ Shard$/, ''),
   };
 }
 

@@ -1,6 +1,4 @@
-import { capstoneMaterialName } from '../data/lineages/capstones';
 import { isGatedLineageForm } from '../data/lineages';
-import { shardName } from '../data/lineages/packets';
 import { RECIPE_DATABASE } from '../data/recipes';
 import { ITEM_DATABASE } from '../itemDatabase';
 import { cardRank } from '../systems/lineages';
@@ -34,8 +32,6 @@ export type TutorialView = Pick<
   | 'bossesCleared'
   | 'clearedNodes'
   | 'lineages'
-  | 'shards'
-  | 'capstones'
 >;
 
 export function viewHasItem(view: Pick<TutorialView, 'inventory' | 'equipment'>, definitionId: string): boolean {
@@ -115,10 +111,6 @@ export function evaluateTutorialCondition(condition: TutorialCondition, view: Tu
       return view.runeRecipesCrafted.includes(condition.recipeId);
     case 'bossCleared':
       return view.bossesCleared.includes(bossClearKey(condition.biomeGroup, condition.tier));
-    case 'shardAtLeast':
-      return (view.shards[condition.packet] ?? 0) >= condition.amount;
-    case 'capstoneAtLeast':
-      return (view.capstones[condition.biome] ?? 0) >= condition.amount;
     case 'lineageCardOwned':
       return viewOwnsLineageCard(view, condition.lineageId, condition.cardId, condition.rank);
     case 'lineageFormOwned':
@@ -174,17 +166,5 @@ export function tutorialProgress(ref: TutorialProgressRef, view: TutorialView): 
     }
     case 'essence':
       return [essenceProgress(view, ref.essence, ref.amount)];
-    case 'shard':
-      return [{
-        current: Math.min(view.shards[ref.packet] ?? 0, ref.amount),
-        target: ref.amount,
-        label: shardName(ref.packet),
-      }];
-    case 'capstone':
-      return [{
-        current: Math.min(view.capstones[ref.biome] ?? 0, ref.amount),
-        target: ref.amount,
-        label: capstoneMaterialName(ref.biome),
-      }];
   }
 }

@@ -12,7 +12,6 @@ import {
   type FamilyId,
   type NodeBlend,
 } from '../data/families';
-import type { PacketId } from '../data/lineages/types';
 import { WORLD_NODE_LIST, WORLD_NODES } from './map/registry';
 
 /**
@@ -127,7 +126,7 @@ export function blendSpawnPick(
   return { family, monsterTypeId: pool[occurrence % pool.length] };
 }
 
-// ── One shard per node (design §24.3) ────────────────────────────────────────
+// ── One family per node (design §24.3) ───────────────────────────────────────
 
 const familyByNode = new Map<string, FamilyDefinition | undefined>();
 
@@ -139,10 +138,9 @@ const familyByNode = new Map<string, FamilyDefinition | undefined>();
  *
  * Authored, not resolved, on purpose: a node's identity is what the map author
  * wrote, never something the spawner re-derives. The authoring rule that keeps the
- * two equal: a family with no body at the node's tier never leads a blend
- * (`nodeShards.test.ts`, every node, no allowlist — the eight T2–T4 nodes that
- * broke it, review L16, were re-led by the verbs-that-fire run). A bodiless family
- * may keep a minority share; it renormalises away and pays nothing.
+ * two equal: a family with no body at the node's tier never leads a blend (the
+ * eight T2–T4 nodes that broke it, review L16, were re-led by the verbs-that-fire
+ * run). A bodiless family may keep a minority share; it renormalises away.
  */
 export function nodeFamily(nodeId: string): FamilyDefinition | undefined {
   if (familyByNode.has(nodeId)) return familyByNode.get(nodeId);
@@ -151,33 +149,6 @@ export function nodeFamily(nodeId: string): FamilyDefinition | undefined {
   const family = dominant ? FAMILY_DATABASE.get(dominant) : undefined;
   familyByNode.set(nodeId, family);
   return family;
-}
-
-/**
- * The one shard every non-boss kill in this node pays (design §24.3): its
- * dominant family's `drops`, minority families included. A player learns a
- * node's currency in one visit and never collects three from one clearing, and
- * a pack follower filed under another family pays the node's shard like every
- * other body here (review P16, closed by construction).
- *
- * Undefined for a node with no blend; the reward seam then falls back to the
- * dead monster's own family shard there (dungeons — the behaviour before §24.3).
- */
-export function nodeShard(nodeId: string): PacketId | undefined {
-  return nodeFamily(nodeId)?.drops;
-}
-
-/**
- * The normal nodes of one biome and tier that pay `packet`, in id order. Where a
- * shard can be farmed under the node rule — what the map, the bot and the
- * tutorial ask instead of "which family drops it".
- */
-export function nodesPayingShard(biomeGroup: string, tier: number, packet: PacketId): string[] {
-  return WORLD_NODE_LIST
-    .filter((node) => node.biomeGroup === biomeGroup && node.biomeTier === tier && node.blend)
-    .filter((node) => nodeShard(node.id) === packet)
-    .map((node) => node.id)
-    .sort();
 }
 
 // ── Rosters (design §26.3) ───────────────────────────────────────────────────
@@ -193,9 +164,8 @@ export const ROSTER_TIERS: ReadonlySet<number> = new Set([1]);
 /**
  * True for a crossroads: a normal node of a roster tier whose authored blend fields
  * three families (`regionT1.ts`: one per biome, the cell the dungeon is entered
- * from). It pays its by-a-hair leader's shard like any node (`nodeShard`;
- * PROVISIONAL — §26.3 leaves "one shard or a roll per kill" open). False for every
- * node outside a roster tier, where a three-family blend is the normal shape.
+ * from). False for every node outside a roster tier, where a three-family blend is
+ * the normal shape.
  */
 export function isCrossroadsNode(nodeId: string): boolean {
   const node = WORLD_NODES.get(nodeId);

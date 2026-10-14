@@ -5,9 +5,6 @@ import {
   ESSENCE_COLORS,
   ESSENCE_LABELS,
   ESSENCE_TYPES,
-  PACKET_IDS,
-  packetDefinition,
-  shardName,
   type EssenceType,
 } from "@mmo-idle/shared";
 import { GameIcon } from "../ui/GameIcon";
@@ -16,9 +13,8 @@ import {
   essenceMaterial,
   MaterialChip,
   materialIconSource,
-  shardMaterial,
 } from "../ui/MaterialChip";
-import { capstonesAtom, essencesAtom, shardsAtom } from "./atoms";
+import { capstonesAtom, essencesAtom } from "./atoms";
 import { DisclosureHeader, HudPanel } from "./primitives";
 import "./essence.css";
 
@@ -68,22 +64,18 @@ function useEssenceGainFlash(essences: Record<EssenceType, number>) {
 
 /**
  * The player's whole spendable economy in one rail panel. Collapsed it is a
- * dense chip strip; expanded it names each material. Shards and touched
- * capstones stay hidden until the player has actually held one, so the early
- * game is not cluttered with empty rows.
+ * dense chip strip; expanded it names each material. Touched capstones stay
+ * hidden until the player has actually held one, so the early game is not
+ * cluttered with empty rows.
  */
 export function MaterialsPanel() {
   const essences = useAtomValue(essencesAtom);
-  const shards = useAtomValue(shardsAtom);
   const capstones = useAtomValue(capstonesAtom);
   const [expanded, setExpanded] = useState(readExpandedPreference);
   const detailsId = useId();
   const flashClass = useEssenceGainFlash(essences);
 
-  // Lineage wallets (progression rework Phase 1): shards by packet, touched
-  // capstones by biome. Hidden until touched — eight empty shard rows would
-  // swamp the early game before a player has opened a single tree.
-  const ownedShards = PACKET_IDS.filter((packet) => (shards[packet] ?? 0) > 0);
+  // Touched capstones by biome, hidden until touched.
   const ownedCapstones = Object.entries(capstones).filter(([, amount]) => (amount ?? 0) > 0);
 
   const toggleExpanded = () => {
@@ -122,18 +114,6 @@ export function MaterialsPanel() {
               />
             ))}
           </div>
-          {ownedShards.length > 0 && (
-            <div className="materials-strip__group material-chip-strip">
-              {ownedShards.map((packet) => (
-                <MaterialChip
-                  key={packet}
-                  material={shardMaterial(packet)}
-                  held={shards[packet] ?? 0}
-                  size={18}
-                />
-              ))}
-            </div>
-          )}
           {ownedCapstones.length > 0 && (
             <div className="materials-strip__group material-chip-strip">
               {ownedCapstones.map(([biome, amount]) => (
@@ -168,24 +148,6 @@ export function MaterialsPanel() {
               <span className="essence-value" style={{ color: ESSENCE_COLORS[type] }}>
                 {essences[type] ?? 0}
               </span>
-            </div>
-          ))}
-
-          {ownedShards.length > 0 && <div className="materials-divider" />}
-
-          {ownedShards.map((packet) => (
-            <div key={packet} className="essence-row">
-              <GameIcon
-                source={materialIconSource(shardMaterial(packet))}
-                size={18}
-                fallback={null}
-                className="economy-icon"
-                decorative
-              />
-              <span className="essence-name" style={{ color: packetDefinition(packet)?.color }}>
-                {shardName(packet)}s
-              </span>
-              <span className="essence-value">{shards[packet] ?? 0}</span>
             </div>
           ))}
 

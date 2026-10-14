@@ -5,8 +5,8 @@
  * eye, so a T1 node now fields its dominant family and at most one guest, and one
  * node per biome — the crossroads, the cell the dungeon is entered from — fields
  * all three. The failure modes are silent (a third family creeping back into a
- * pair, a family losing its last territory, two nodes that look the same but pay
- * different shards), so they are pinned here as invariants over the registry, not
+ * pair, a family losing its last territory, two nodes that look the same but are
+ * different territories), so they are pinned here as invariants over the registry, not
  * as node ids (the lists are re-ordered by balance passes; review B5):
  *
  *  1. The spawner seam handles a one-family and a two-family blend: it resolves
@@ -22,13 +22,12 @@
  *     biome at near-equal shares with a strict (by-a-hair) leader, adjacent to the
  *     biome's dungeon and the last of the dungeon's cells a player meets.
  *  4. Territories: every family of a T1 biome leads at least one node that is NOT
- *     the crossroads, so each of the biome's three shards has a home of its own
- *     (and keeps one if the crossroads ever rolls its shard per kill — §26.3 open).
+ *     the crossroads, so each of the biome's three families has a home of its own.
  *  5. Variety: no two nodes of a biome field the same set of families, so a node's
- *     roster — and with it its shard — is read off the bodies in one visit.
+ *     roster — and with it its territory — is read off the bodies in one visit.
  *
- * `nodeShards.test.ts` owns the currency side (every node pays its leader's shard,
- * a leader the tier fields); `server/test/variantBlend.test.ts` owns the cycle and
+ * `nodeTerritories.test.ts` owns the territory side (every node is its leader's
+ * territory, a leader the tier fields); `server/test/variantBlend.test.ts` owns the cycle and
  * the live spawner (a World spawning a pure, a pair and a crossroads).
  *
  * Run (from server/): node --conditions=development --import tsx ../shared/src/world/nodeRosters.test.ts
@@ -127,7 +126,7 @@ function pickSweep(where: string, biome: string, tier: number, blend: NodeBlend)
     `an unfielded guest must fold onto the leader, got ${JSON.stringify([...narrowed.families])}`);
 
   // A blend with nothing fieldable resolves to undefined — the one path on which
-  // the spawner falls back to the flat pool. `nodeShards.test.ts` section 4 makes
+  // the spawner falls back to the flat pool. `nodeTerritories.test.ts` section 3 makes
   // it unreachable for every real node (its leader always has a body).
   assert(resolveNodeBlend('desert', 2, { 'desert-stalker': 1 }) === undefined,
     'a blend with no fielded family resolves to nothing');
@@ -217,7 +216,7 @@ for (const biome of biomes) {
     const bottom = entries[entries.length - 1].share;
     check(top - bottom <= 0.02 + 1e-9, `${cross.id}: crossroads shares must be near-equal, got ${top}..${bottom}`);
     check(entries.length < 2 || entries[0].share > entries[1].share + 1e-9,
-      `${cross.id}: the crossroads' leader must lead by a hair, not tie (its shard is its leader's)`);
+      `${cross.id}: the crossroads' leader must lead by a hair, not tie (its territory is its leader's)`);
     // The resolved spawn is all three, too.
     check(nodeSpawnBlend(cross.id)?.poolByFamily.size === families.length,
       `${cross.id}: the spawner does not field all three families`);
@@ -242,7 +241,7 @@ for (const biome of biomes) {
   // 4. Every family leads a node that is not the crossroads.
   for (const family of families) {
     const led = nodes.filter((node) => !isCrossroadsNode(node.id) && blendEntries(node.blend ?? {})[0]?.family === family);
-    check(led.length > 0, `${biome}: ${family} leads no node but the crossroads — its shard has no territory`);
+    check(led.length > 0, `${biome}: ${family} leads no node but the crossroads — it has no territory of its own`);
   }
 
   // 5. Variety: every node's roster is its own.
