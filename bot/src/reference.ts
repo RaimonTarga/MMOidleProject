@@ -1,8 +1,6 @@
 import { writeFileSync, mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import {
-  ABILITY_DATABASE,
-  ABILITY_RECIPE_DATABASE,
   ACTION_DATABASE,
   BIOME_DATABASE,
   BIOME_LEVELS_PER_TIER,
@@ -13,17 +11,13 @@ import {
   MONSTER_DATABASE,
   NODE_BIOMES,
   RECIPE_DATABASE,
-  RITE_DATABASE,
-  RUNE_RECIPE_DATABASE,
   SKILL_TREE,
-  STANCE_DATABASE,
   STARTER_RUNE_IDS,
   WORLD_NODE_LIST,
   biomeLevelCap,
   biomeXpForLevel,
   biomeXpSegmentBudget,
   globalMasteryRequiredForUpgrade,
-  runeBudgetForGlobalMastery,
   upgradeCostFor,
 } from "@mmo-idle/shared";
 import { parseArgs } from "./config";
@@ -62,7 +56,7 @@ w("**Generated from live game data. Do not hand-edit — run `pnpm bot:reference
 w();
 w("Audience: whoever (human or model) is authoring progression routes for the");
 w("headless bot harness. It contains everything needed to choose a class, a gear");
-w("path, abilities and runes, and to express that choice as a route.");
+w("path and runes, and to express that choice as a route.");
 w();
 w("A route is a **hypothesis about how the game should be played**. The harness");
 w("executes it faithfully and reports where it breaks. A stall is a finding, not");
@@ -99,10 +93,8 @@ w();
 w(`One T1 biome maxes at ${biomeLevelCap(1, "plains")} GM, so a single-biome character can only ever reach **+1**.`);
 w(`All five maxed = GM ${T1_BIOMES.length * biomeLevelCap(1, "plains")}, which is exactly what **+5** needs.`);
 w();
-w("Abilities and stances reserve Runic Points; there is no tier capacity cap.");
-w();
-w(`**Runic Points**: budget is \`16 + floor(GM / 5)\` — ${runeBudgetForGlobalMastery(0)} at GM 0,`);
-w(`${runeBudgetForGlobalMastery(30)} at GM 30. Each equipped rune rule costs condition + action.`);
+w("**Runes are free.** A rune rule is a universal standing order; the harness checks");
+w("only that its fragments are owned and that it fits the class.");
 w();
 w("**Biome XP curve** (local six-level segments, cumulative per biome):");
 w();
@@ -235,7 +227,7 @@ for (const group of T1_BIOMES) {
 }
 w("A dungeon node is entered through its **guard** — a pack of guardians engages");
 w("before the boss awakens. Measured: 11-12 simultaneous attackers in the Plains");
-w("dungeon. Plan armor and Guards for the guard fight, not just the boss.");
+w("dungeon. Plan armor for the guard fight, not just the boss.");
 w();
 
 // ── Items ────────────────────────────────────────────────────────────────────
@@ -286,47 +278,21 @@ for (const [id, item] of ITEM_DATABASE) {
 }
 w();
 
-// ── Abilities ────────────────────────────────────────────────────────────────
-
-w("## 6. Abilities");
-w();
-w("Techniques are offensive riders; Guards are defensive reactions. Both auto-fire");
-w("on a built-in heuristic, which a Rune rule can override.");
-w();
-w("| ability | slot | tier | learn via | gate | cost | what it does |");
-w("|---|---|---|---|---|---|---|");
-for (const recipe of [...ABILITY_RECIPE_DATABASE.values()].sort((a, b) => a.tier - b.tier)) {
-  if (recipe.tier > 1) continue;
-  const def = ABILITY_DATABASE.get(recipe.abilityId);
-  const cost = Object.entries(recipe.cost)
-    .map(([k, v]) => `${v} ${k}`)
-    .join(" + ");
-  const gate = recipe.recipeGroup
-    ? `${recipe.recipeGroup} L${recipe.requiredBiomeLevel ?? "?"}`
-    : "—";
-  w(
-    `| **${def?.name ?? recipe.abilityId}** \`${recipe.abilityId}\` | ${def?.slot ?? "?"} | ${
-      def?.tier ?? recipe.tier
-    } | \`${recipe.id}\` | ${gate} | ${cost} | ${def?.blurb ?? ""} |`,
-  );
-}
-w();
-
 // ── Runes ────────────────────────────────────────────────────────────────────
 
-w("## 7. Runes");
+w("## 6. Runes");
 w();
 w("A rune rule pairs one **condition** with one **action**, and the equipped list is");
-w("ordered by priority. Both fragments must be owned. Fragments not marked");
-w("*starter* must be unlocked by crafting a rune forge recipe.");
+w("ordered by priority. Both fragments must be owned; a fresh character owns the");
+w("*starter* fragments.");
 w();
 w("### Conditions");
 w();
-w("| id | cost | starter | what it means |");
-w("|---|---|---|---|");
+w("| id | starter | what it means |");
+w("|---|---|---|");
 for (const [id, def] of CONDITION_DATABASE) {
   w(
-    `| \`${id}\` | ${num((def as { cost?: number }).cost)} | ${
+    `| \`${id}\` | ${
       STARTER_RUNE_IDS.includes(id) ? "yes" : "**no**"
     } | ${(def as { blurb?: string }).blurb ?? ""} |`,
   );
@@ -334,71 +300,40 @@ for (const [id, def] of CONDITION_DATABASE) {
 w();
 w("### Actions");
 w();
-w("| id | cost | channel | starter | what it does |");
-w("|---|---|---|---|---|");
+w("| id | channel | starter | what it does |");
+w("|---|---|---|---|");
 for (const [id, def] of ACTION_DATABASE) {
-  const d = def as { cost?: number; channel?: string; blurb?: string };
+  const d = def as { channel?: string; blurb?: string };
   w(
-    `| \`${id}\` | ${num(d.cost)} | ${d.channel ?? ""} | ${
+    `| \`${id}\` | ${d.channel ?? ""} | ${
       STARTER_RUNE_IDS.includes(id) ? "yes" : "**no**"
     } | ${d.blurb ?? ""} |`,
   );
 }
 w();
-w("### Rune forge recipes (how non-starter fragments are unlocked)");
-w();
-w("| recipe | unlocks | kind | gate | cost |");
-w("|---|---|---|---|---|");
-for (const recipe of RUNE_RECIPE_DATABASE.values()) {
-  // Deprecated recipes' runes are already starter defaults (see the "starter"
-  // column above) — excluded here so this table keeps meaning what its header
-  // says: how NON-starter fragments are unlocked.
-  if (recipe.tier > 1 || recipe.deprecated) continue;
-  const cost = Object.entries(recipe.cost)
-    .map(([k, v]) => `${v} ${k}`)
-    .join(" + ");
-  const gate = recipe.recipeGroup
-    ? `${recipe.recipeGroup} L${recipe.requiredBiomeLevel ?? "?"}`
-    : "—";
-  w(`| \`${recipe.id}\` | \`${recipe.runeId}\` | ${recipe.runeKind} | ${gate} | ${cost} |`);
-}
-w();
-
-// ── Stances / rites ──────────────────────────────────────────────────────────
-
-w("## 8. Stances and Rites");
-w();
-w("Both are build layers the harness can set but the baseline routes do not yet");
-w("use. Listed so a route author knows they exist.");
-w();
-w(`- **Stances** (${STANCE_DATABASE.size} authored): postures folded into stats; one free default slot,`);
-w("  with automated destinations carried on Rune `switch-stance` rules.");
-w(`- **Rites** (${RITE_DATABASE.size} authored): always-on out-of-combat effects sharing the Runic Point`);
-w("  budget with rune rules.");
-w();
 
 // ── DSL ──────────────────────────────────────────────────────────────────────
 
-w("## 9. Expressing a route");
+w("## 7. Expressing a route");
 w();
 w("Routes are data in `bot/src/routes/`, registered in `bot/src/routes/index.ts`.");
-w("`bot/src/harness.test.ts` fails the build if a route names a recipe, item,");
-w("ability, rune fragment, dungeon or node that does not exist, equips something it");
-w("never crafted, or exceeds the tier-1 ability slot count.");
+w("`bot/src/harness.test.ts` fails the build if a route names a recipe, item, rune");
+w("fragment, dungeon or node that does not exist, or equips something it never crafted.");
 w();
 w("```ts");
 w('{ type: "chooseClass",  skillId: "cadence-root" }');
+w('{ type: "unlockSkill",  skillId }');
 w('{ type: "travel",       to: <NodeRef> }');
 w('{ type: "farm",         at: <NodeRef>, until: <Condition> }');
 w('{ type: "craft",        recipeIds: [...], farmAt?: <NodeRef> }');
 w('{ type: "equip",        definitionIds: [...] }');
+w('{ type: "unequip",      slot }');
 w('{ type: "upgrade",      definitionId, toPlus, farmAt?, opportunistic? }');
-w('{ type: "learnAbility", recipeId, abilityId, slot: "technique"|"guard", farmAt? }');
-w('{ type: "setAbilities", techniques: [...], guards: [...] }   // REPLACES');
-w('{ type: "craftRune",    recipeId, farmAt? }');
 w('{ type: "configureRunes", rules: [{ conditionId, actionId }] }');
 w('{ type: "attemptBoss",  biomeGroup, tier, maxAttempts? }');
 w('{ type: "repeatUntil",  steps: [...], until: <Condition> }');
+w('{ type: "ifPossible",   when: <Condition>, steps: [...] }');
+w('{ type: "assert",       condition: <Condition>, message? }');
 w('{ type: "milestone",    id: "..." }');
 w("");
 w("// every step also accepts: label?, optional?, stallAfterMs?");
@@ -411,12 +346,13 @@ w('{ kind: "dungeon", biomeGroup: "plains", tier: 1 }');
 w("");
 w("// Condition");
 w('{ type: "biomeLevelAtLeast", biomeGroup, level }   { type: "essenceAtLeast", essence, amount }');
-w('{ type: "catalystAtLeast", family, amount }        { type: "recipeUnlocked", recipeId }');
+w('{ type: "recipeUnlocked", recipeId }               { type: "canCraft", recipeId }');
 w('{ type: "hasItem", definitionId }                  { type: "itemAtLeastPlus", definitionId, plus }');
 w('{ type: "equipped", definitionId }                 { type: "bossCleared", biomeGroup, tier }');
 w('{ type: "playerTierAtLeast", tier }                { type: "globalMasteryAtLeast", value }');
-w('{ type: "canCraft", recipeId }                     { type: "canUpgrade", definitionId }');
-w('{ type: "elapsedMs", ms }                          allOf(...) / anyOf(...) / { type: "not", of }');
+w('{ type: "canUpgrade", definitionId }               { type: "classSelected" }');
+w('{ type: "fullyRecovered" }                         { type: "elapsedMs", ms }');
+w('allOf(...) / anyOf(...) / { type: "not", of }');
 w("```");
 w();
 w("**The Clearing is not a `biome` ref.** It is `kind: \"tutorial\"` at biomeTier 0,");
@@ -437,59 +373,17 @@ w();
 
 // ── Worked example ───────────────────────────────────────────────────────────
 
-w("## 10. Worked example — the controlled Striker dodge baseline");
+w("## 8. Worked example — the smoke route");
 w();
-w("The route config is in [`bot/src/routes/strikerT1.ts`](../bot/src/routes/strikerT1.ts);");
-w("generated movement and defense semantics live in `t1RouteBuilder.ts`.");
-w();
-w("Its spine, and *why* it is shaped that way:");
+w("Class routes are rebuilt per class in the class-first build (plan §5); `smoke-t1`");
+w("is the only route until then. It is class-agnostic: `--class=<archetype>` picks");
+w("the class (default `cadence`). Its config is in");
+w("[`bot/src/routes/smokeT1.ts`](../bot/src/routes/smokeT1.ts).");
 w();
 w("```text");
-w("Clearing   full tutorial set, tier 0->1, pick Striker");
-w("Plains     Sweep at L2 + whole set,          max out -> +1");
-w("Forest     flash-rapier + Second Wind,       max out -> +2");
-w("Swamp      Cleanse + Avoid Hazards + charm,  max out -> +3");
-w("Mountain   plate,                          max out -> +4");
-w("Cave       Chaotic Axe + Expose Weakness,   max out -> GM 30, everything -> +5");
-w("Bosses     Plains, Forest, Mountain, Swamp, Cave");
+w("Clearing   tier-0 quest (tier 0 -> 1), choose the class");
+w("Plains     farm to level 2, craft and equip plains-vest-t1, assert it is equipped");
 w("```");
-w();
-w("- **All five bosses at the END, not per biome.** +5 needs GM 30, which needs all");
-w("  five biomes maxed. The gear ladder and the boss tuning agree on this.");
-w("- **Each biome maxed adds exactly one upgrade level** (6 GM per biome, gates every 6).");
-w("- **Swamp precedes Mountain.** Cleanse and Avoid Hazards answer Swamp; Mountain");
-w("  then unlocks Step Back at Cave L2 / GM26 to answer planted Slam telegraphs.");
-w("- **Only one piece is taken from Mountain and Swamp.** Breadth exists to raise GM,");
-w("  not to collect a full set from every biome.");
-w();
-w("Standing kit into the gauntlet: `chaotic-axe`, `swamp-charm-t1`, `plains-boots-t1`,");
-w("with `plains-vest-t1` (plating 7) for Plains/Forest and `mountain-vest-t1`");
-w("(guard potency 15%) for Mountain/Swamp/Cave.");
-w();
-w("Per-boss baseline choices — the live game supports ordered repertoires within shared RP:");
-w();
-w("| boss | armor | technique | guard |");
-w("|---|---|---|---|");
-w("| Plains | plains-vest-t1 | sweep | second-wind |");
-w("| Forest | plains-vest-t1 | slam | second-wind |");
-w("| Mountain | mountain-vest-t1 | slam | second-wind |");
-w("| Swamp | mountain-vest-t1 | slam | cleanse |");
-w("| Cave | mountain-vest-t1 | slam | cleanse |");
-w();
-w("Standing Rune loadout after Mountain L2 (8/10 RP at GM20):");
-w();
-w("```ts");
-w('{ conditionId: "always",         actionId: "auto-path-enemy" }  // 0 RP');
-w('{ conditionId: "inside-telegraph", actionId: "step-back" }      // 3 RP');
-w('{ conditionId: "in-combat",      actionId: "chase-enemy" }      // 1 RP');
-w('{ conditionId: "always",         actionId: "avoid-hazards" }    // 2 RP, Swamp L2 recipe');
-w('{ conditionId: "always",         actionId: "wait-for-regen" }   // 1 RP');
-w("```");
-w();
-w("Step Back must precede Chase because both claim MOVEMENT. Avoid Hazards is a separate");
-w("PATHING channel. Abilities have no built-in trigger: `applyBuild` appends each attuned");
-w("ability's reference `use-ability` rule unless the route wires it. The Brace-tank A/B omits");
-w("Step Back and wires Brace to `target-casting` instead.");
 w();
 
 // ── Write ────────────────────────────────────────────────────────────────────

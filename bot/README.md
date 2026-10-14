@@ -23,16 +23,16 @@ development and legacy shared-world experiments.
 The dev server must be up with `AUTH_DEV_BYPASS=1` (it is in `.env`).
 
 ```bash
-# one bot, canonical 1x economy
-pnpm bot:run --route=striker-t1 --policy=intended
+# one bot, canonical 1x economy: the smoke route, played as the Squire
+pnpm bot:run --route=smoke-t1 --class=cooldown --policy=intended
 
 # ...with the live dashboard on http://localhost:4500
-pnpm bot:run --route=striker-t1 --policy=intended --ui
+pnpm bot:run --route=smoke-t1 --policy=intended --ui
 
 # pipeline test (NOT an evaluation): 25x rewards, auto-tagged non-canonical
-pnpm bot:run --route=striker-t1 --policy=intended --ui --rewardMultiplier=25
+pnpm bot:run --route=smoke-t1 --policy=intended --ui --rewardMultiplier=25
 
-# clean T1 controlled batch: eight routes, 25x, sequential, one bot at a time
+# clean controlled batch: the controlled routes, 25x, sequential, one bot at a time
 pnpm bot:batch
 
 # LEGACY/DEPRECATED for canonical evidence: shared-world lease experiment
@@ -42,19 +42,19 @@ pnpm bot:batch --executionMode=isolated-parallel --maxConcurrency=6
 pnpm bot:batch --executionMode=isolated-parallel --maxConcurrency=6 --staggerMs=60000
 
 # explicit exploratory shared-world batch (not controlled evidence)
-pnpm bot:batch --controlled=false --routes=striker-v2-t1 --parallel=true
+pnpm bot:batch --controlled=false --routes=smoke-t1 --parallel=true
 
 # NONCANONICAL: authentic route + accelerated attempts 2+ against each boss
-pnpm bot:run --route=striker-t1 --policy=intended --fastBossRetry=true
+pnpm bot:run --route=<route> --policy=intended --fastBossRetry=true
 
 # delete bot characters between runs (accounts are reused, not orphaned)
-pnpm bot:cleanup --routes=striker-t1 --policies=intended,rusher,generic --count=2
+pnpm bot:cleanup --routes=smoke-t1 --policies=intended,rusher,generic --count=2
 ```
 
 Flags: `--route` `--policy` `--index` `--server` `--out` `--maxRunMs`
+`--class=<archetype>` (the class a class-agnostic route plays, e.g. `cadence`; part of the bot account id),
 `--fresh=false` (keep the existing character instead of starting from zero),
 `--ui[=port]` (dashboard, default 4500), `--rewardMultiplier=N` (dev-only, 1-1000),
-`--tierEntry=<profile-id>` (dev-only synthetic completed-T1 entry in the target-tier Sanctuary),
 `--fastBossRetry=true` (dev-only, always noncanonical), and
 `--fastBossRetryIncludeGuardians=true` (rebuild/reclear guardians on accelerated retries).
 
@@ -94,11 +94,11 @@ bot and refreshing every second:
   other players present
 - **equipment** with upgrade levels, **resources** (essence + catalysts),
   **mastery** per biome and bosses cleared
-- build: equipped Techniques / Guards and the full rune loadout
+- the full rune loadout
 - route progress: step N of M, the step label, milestones reached
 - run totals and a colour-coded feed of recent events
 
-`pnpm bot:batch` defaults to the eight-route controlled T1 registry and awaits
+`pnpm bot:batch` defaults to the controlled route registry and awaits
 each terminal result before starting the next bot. It uses 25x rewards and a
 finite six-hour per-run watchdog by default, so its output is pipeline-validation
 evidence rather than canonical economy evidence. Parallel/shared-world execution
@@ -160,49 +160,11 @@ A pin survives the target dying — bots die constantly, so the camera takes
 temporary cover on the automatic pick and snaps back on respawn. It is released
 only when that player disconnects.
 
-## Tier 2
+## Class routes
 
-A Tier-2 route does not start from zero — it starts from a **tier-entry
-template**, a validated snapshot of a legitimately completed Tier-1 character.
-Full state: [`docs/t2-bot-testing-infrastructure.md`](../docs/t2-bot-testing-infrastructure.md).
-
-```bash
-# one run; the template is resolved from the route's own class root
-pnpm bot:run --route=striker-t2-mid --policy=intended --entryEconomy=clean
-
-# the three carryover-economy arms
-#   clean            zero essence and zero catalysts -- the economy-isolation control
-#   natural          a documented conservative carryover MODEL (unmeasured)
-#   catalyst-primed  zero essence + the full tier catalyst demand; PROGRESSION-INTEGRITY
-#                    runs only, because it deletes catalyst supply by construction
-
-pnpm bot:t2-validate         # T2_ENTRY_TEMPLATE_VALIDATION over all 18 templates
-pnpm bot:t2-templates        # every template, dumped, with its validation report
-pnpm bot:t2-catalogue        # the live T2 item catalogue in control-route order
-pnpm bot:t2-reachability     # which T2 items each template can obtain, and how
-pnpm bot:t2-routes           # the 18 routes and every resolved acquisition path
-pnpm bot:t2-catalyst-demand  # total T2 catalyst demand per family (demand only)
-pnpm bot:t2-report <batchDir>  # smoke matrix + gear adoption report
-```
-
-Three things about Tier 2 that are easy to get wrong:
-
-- **There is no branch at Tier-2 entry.** A skill point comes from a TIER
-  advance, and `canUnlockSkill` requires `node.tier === currentSkillTier`, so the
-  tier-2 range node is bought with the **tier-3** point — after three Tier-2
-  seals. There are six legal entry templates, not eighteen; the 18 routes buy
-  their branch mid-run behind an `ifPossible`, and a walled run records a skipped
-  conditional instead of stalling.
-- **Most Tier-2 gear cannot be crafted.** 21 of 32 recipes are evolutions;
-  `craftRecipe` refuses them. Evolution consumes a **bag** copy of the
-  predecessor at **+3**, so a worn item must be `unequip`ped first, and anything
-  below +3 pays the higher reconstruction cost instead. `t2Acquisition.ts` resolves the
-  path per item from the class's own template.
-- **Accelerated rewards include catalysts.** The reward multiplier scales
-  catalyst progress alongside essence and biome XP, so accelerated playtests do
-  not stop on an unscaled catalyst grind. `--entryEconomy=catalyst-primed` remains
-  available for exact synthetic starting-wallet tests; never read economy
-  conclusions from one.
+Class routes are rebuilt per class in the class-first build
+([plan §5](../docs/briefs/class-first-build-plan-2026-10-14.md)); `smoke-t1` is the
+only route until then.
 
 ## Canonical vs non-canonical
 
@@ -223,7 +185,7 @@ and barrier; combat statuses, cooldowns, class resources, aggro, targets, motion
 and summons reset), teleports the same character back to the same dungeon, and
 rebuilds encounter-local monsters, script state, telegraphs, persistent zones,
 corpses, node ramp overrides, timers, and dungeon phase. Equipment, upgrades,
-progression, Techniques, Guards, Runes, stats, boss implementation/numbers, and
+progression, Runes, stats, boss implementation/numbers, and
 the combat engine remain real. By default it skips guard reform and reclear;
 guardian-inclusive retries are separately explicit. Controlled batches reject
 the flag; use an exploratory single run or `--controlled=false` batch.
@@ -235,10 +197,11 @@ and was raised to 40x underneath it is still reported non-canonical.
 
 ## Build controls and preflight
 
-Run `pnpm bot:preflight` before launching a long batch. The [capability audit and
-authoring guide](../docs/bot-harness-capability-audit.md) describes exact full-build
-configuration, RP validation, rejection diagnostics, template checks and remaining
-experiment risks. These tests are harness evidence, not balance evidence.
+Run `pnpm bot:preflight` before launching a long batch: it typechecks the bot and
+runs the harness, loadout, choice, executor, smoke-route and snapshot tests.
+`configureRunes` is the only build control: rules must be owned and fit the
+class, nothing is priced, and a rejected or drifted loadout fails explicitly.
+These tests are harness evidence, not balance evidence.
 
 ## Architecture
 
@@ -271,9 +234,9 @@ WorldMirror ──► Observation ──► RouteExecutor ──► Intents ─�
   physically cannot see monster AI, exact DPS, private cooldowns, or drop rolls.
 - **No bot-only tactics.** No manual boss dodging, no hazard avoidance, no
   superhuman movement. Tactical reaction comes from equipped **Runes** only —
-  and requested unowned, invalid or over-budget Rune configurations fail explicitly.
+  and requested unowned or invalid Rune configurations fail explicitly.
 - **Entry provenance is explicit.** Fresh-character routes earn progression.
-  Tier-entry routes use validated, labeled profiles or sealed snapshots; dev
+  Checkpoint continuations start from sealed named checkpoints; dev
   fixtures are never reported as fresh canonical progression.
 - **Waiting is data.** When the economy makes the bot wait, that is recorded as
   a `blocked-on-resource` span, not shortcut.
@@ -334,14 +297,14 @@ catalogue (ids, gate levels, costs, stats, mechanics) so you can pick gear
 without opening `shared/src/data/recipes/`.
 
 For a self-contained packet aimed at someone (or some model) with no repo
-access — classes, the map, every T1 monster's stat block, gear, abilities,
+access — classes, the map, every T1 monster's stat block, gear,
 runes, the DSL and a worked example — generate
 [`reports/bot-route-reference.md`](../reports/bot-route-reference.md) with
 `pnpm bot:reference`. It is built from live game data, so regenerate it after
 any balance or content change rather than editing it.
 
 Add a file to `routes/` and register it in `routes/index.ts`. It should be
-data. `harness.test.ts` verifies that every recipe, item, ability, rune fragment
+data. `harness.test.ts` verifies that every recipe, item, rune fragment
 and dungeon a route names actually exists — a typo there would otherwise run for
 hours and never finish.
 
