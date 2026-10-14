@@ -4,8 +4,8 @@ Kept by the conductor. Plan: [class-first-build-plan-2026-10-14.md](../class-fir
 Integration branch `rework/class-first` (conductor worktree `../mmo-rework`).
 
 **Updated:** 2026-10-14: every Phase 0 delegate task is merged except D2 (running as a Claude subagent); D3, F6, F7 follow D2.
-**Baseline:** `rework/class-first` at `1a89670a` (D1, F5, F8 merged): full suite **339/339**, typecheck clean (verified in `../mmo-rw-verify`). Codex hit rate limits, so D5 and K1–K3 run as
-Claude subagents of the conductor (same briefs, same worktrees); ICONS-T1 stays with Codex.
+**Baseline:** `rework/class-first` at `d04a6a85` (everything but D2 merged): full suite **342/342**, typecheck clean (verified in `../mmo-rw-verify`).
+Codex hit rate limits, so D5, K1–K3, D1, T0 and D2 ran as Claude subagents of the conductor (same briefs, same worktrees).
 
 ## Open tasks
 
