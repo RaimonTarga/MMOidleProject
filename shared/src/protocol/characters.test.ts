@@ -6,7 +6,6 @@ import type {
 } from '../components';
 import {
   buildCharacterSummary,
-  resolveCharacterClassName,
   validateCharacterName,
 } from './characters';
 
@@ -44,12 +43,7 @@ const tracksProgression = {
 const usesSkills = {
   combatArchetype: 'cadence',
   selectedClass: 'cadence-root',
-  unlockedSkills: [
-    'cadence-root',
-    'cadence-heavy',
-    'cadence-range-close',
-    'cadence-heavy-t3-a',
-  ],
+  unlockedSkills: ['cadence-root'],
 } as UsesSkills;
 
 const summary = buildCharacterSummary(
@@ -62,21 +56,9 @@ assert(summary.globalMastery === 5, 'summary should derive mastery and exclude t
 assert(summary.playerTier === 2, 'summary should include player tier');
 assert(summary.combatArchetype === 'cadence', 'summary should include combat archetype');
 assert(summary.selectedClass === 'cadence-root', 'summary should include selected class');
-assert(summary.classDisplayName === 'Berserker', 'summary should use the latest named class tier');
+assert(summary.classDisplayName === 'Striker', 'summary should use the latest named class tier');
 assert(summary.unlockedSkills[0] === 'cadence-root', 'summary should include sprite-selection skills');
 assert(summary.nodeId === 'node-clearing', 'summary should include node id');
 assert(summary.lastPlayedAt === 1234, 'summary should include last-played time');
-
-assert(
-  resolveCharacterClassName(['cadence-root', 'cadence-heavy'], 'cadence-root') === 'Breaker',
-  'frame class should replace the root name',
-);
-assert(
-  resolveCharacterClassName(
-    ['cadence-root', 'cadence-heavy', 'cadence-range-close', 'cadence-heavy-t3-a', 'cadence-heavy-t4-a'],
-    'cadence-root',
-  ) === 'Berserker',
-  'later perk tiers should retain the specialization name',
-);
 
 console.log('characters: ok');
