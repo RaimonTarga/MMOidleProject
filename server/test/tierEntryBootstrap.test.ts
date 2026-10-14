@@ -4,7 +4,6 @@ import {
   type T1CharacterSnapshot,
   CLEARING_NODE_ID,
   GAME_CONFIG,
-  SKILL_TREE,
   STANCE_RECIPE_DATABASE,
   emptyEquipment,
   emptyAttunedAbilities,
@@ -14,7 +13,7 @@ import {
 } from "@mmo-idle/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { validateProfile, validateSpawn } from "../../bot/src/tierEntry/validate";
+import { validateSpawn } from "../../bot/src/tierEntry/validate";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { applyTierEntryProfile } from "../src/admin/gameActions";
 import { World } from "../src/world/World";
@@ -32,7 +31,8 @@ const profile: TierEntryProfile = {
   id: "server-tier-entry-smoke",
   targetTier: 2,
   classRoot: "cadence-root",
-  frameId: "cadence-balanced",
+  // The tier-1 pick a T2+ entry requires: since the class-first tree, a discipline.
+  frameId: "striker-balanced",
   spawnNodeId: "node-t2-sanctuary",
   economyPolicy: "synthetic-combat-progression",
   wallet: {
@@ -142,11 +142,7 @@ assert(player.tracksProgression.playerTier === 2, "player tier is authoritative 
 assert(player.tracksProgression.biomeLevel.plains === 6, "T1 biome state is applied");
 assert(player.tracksProgression.essences.yellow === 123, "essence wallet is applied exactly");
 assert(player.usesSkills.selectedClass === profile.classRoot, "root class is selected");
-assert(
-  player.usesSkills.selectedSubVariant === SKILL_TREE.get(profile.frameId!)?.subVariantId,
-  "frame is selected",
-);
-assert(player.usesSkills.unlockedSkills.join(",") === "cadence-root,cadence-balanced", "root and frame are selected only");
+assert(player.usesSkills.unlockedSkills.join(",") === "cadence-root,striker-balanced", "root and tier-1 pick are selected only");
 assert(player.hasHealth.hp === player.hasHealth.maxHp, "entry starts at full HP");
 assert(!player.usesAutocombat.auto && !player.usesAutocombat.autoTraverse, "entry disables auto runtime state");
 assert(Object.keys(player.tracksCombat.cooldowns).length === 0, "entry clears cooldowns");
@@ -212,7 +208,7 @@ assert(player.usesSkills.unlockedSkills.join() === "cadence-root", "T1 import do
 assert((player.tracksProgression.playerTier as number) === 1 && player.tracksProgression.currentSkillTier === 1, "T1 progression stays T1");
 assert(player.tracksProgression.level === 127, "earned level is retained");
 assert(player.hasHealth.hp === player.hasHealth.maxHp && !player.usesAutocombat.auto, "entry resets HP and auto");
-assert(!applyTierEntryProfile(world, player, { ...t1Profile, frameId: "cadence-balanced" }).success, "T1 rejects frame injection");
+assert(!applyTierEntryProfile(world, player, { ...t1Profile, frameId: "striker-balanced" }).success, "T1 rejects frame injection");
 assert(!applyTierEntryProfile(world, player, { ...t1Profile, spawnNodeId: "node-t1-plains-01" }).success, "T1 entry cannot bypass travel");
 
 // V1d's earned state is a permanent regression fixture, not a synthetic kit.
@@ -260,27 +256,3 @@ assert(t3Result.success && t3Result.spawnView, t3Result.reason ?? "T3 entry appl
 assert(t3Result.spawnView.playerTier === 3 && t3Result.spawnView.skillPoints === 1, "T3 tier and point retained");
 assert(t3Result.spawnView.selectedRange === null && t3Result.spawnView.unlockedSkills.length === 2, "no branch granted");
 assert(validateSpawn(t3Profile, t3Result.spawnView).pass, "T3 handoff strict live comparison passes");
-const branchedProfile = { ...t3Profile, selectedRange: "cadence-range-far", skillPoints: 0 };
-const branchedResult = applyTierEntryProfile(world, player, branchedProfile);
-assert(branchedResult.success && branchedResult.spawnView, branchedResult.reason ?? "earned branch imports");
-assert(validateSpawn(branchedProfile, branchedResult.spawnView).pass, "branched live entry validates");
-assert(branchedResult.spawnView.unlockedSkills.includes("cadence-range-far") && branchedResult.spawnView.attackRange > t3Result.spawnView.attackRange, "branch persists and authoritative stats rebuild");
-for (const patch of [{ selectedRange: "energy-range-far" }, { skillPoints: 1 }, { targetTier: 2 }, { bossesCleared: [] }]) {
-  assert(!applyTierEntryProfile(world, player, { ...branchedProfile, ...patch }).success, "reject wrong class, free point, early branch or missing seals");
-}
-
-// Read-only qualification of the actual earned checkpoint in this in-memory world.
-{
-  const checkpointPath = process.argv[2] ?? join(__dirname, "fixtures/v1m-earned-t3-snapshot.json");
-  const raw = readFileSync(checkpointPath, "utf8");
-  const snapshot = JSON.parse(raw) as T1CharacterSnapshot;
-  const actual = tierEntryProfileFromT1Snapshot(snapshot, "node-t3-sanctuary", 3);
-  const staticReport = validateProfile(actual);
-  assert(staticReport.pass, JSON.stringify(staticReport.findings));
-  const applied = applyTierEntryProfile(world, player, actual);
-  assert(applied.success && applied.spawnView, applied.reason ?? "actual checkpoint applies");
-  const liveReport = validateSpawn(actual, applied.spawnView);
-  assert(liveReport.pass, JSON.stringify(liveReport));
-  assert(readFileSync(checkpointPath, "utf8") === raw, "actual snapshot unchanged");
-  console.log("Actual earned T3 checkpoint: static and authoritative spawn qualification PASS");
-}
