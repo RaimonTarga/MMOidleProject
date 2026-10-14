@@ -10,7 +10,6 @@
 import type { AutocombatConfig } from "./components/core/networkedSlices";
 import type { CombatArchetype } from "./types/combat";
 import { ABILITY_DATABASE } from "./abilities";
-import { NO_STANCE_ID, stanceDef } from "./stances";
 
 export type RuneChannel =
   | "MOVEMENT"
@@ -29,8 +28,7 @@ export type RuneChannel =
   | "CONTROL"
   /** Conduit only: where the formation stands, independent of the owner's movement. */
   | "FORMATION"
-  | "ABILITY"
-  | "STANCE";
+  | "ABILITY";
 
 export type RuneConditionId =
   | "always"
@@ -52,8 +50,8 @@ export type RuneConditionId =
   // satisfy this condition.
   | "inside-telegraph"
   // Reactive telegraph hook: active while an enemy attacking you is charging a
-  // cast-time attack (e.g. the Ridge Archer's Power Shot). Pairs with Fire Guard /
-  // Switch Stance for read-and-react defense.
+  // cast-time attack (e.g. the Ridge Archer's Power Shot). Pairs with Fire Guard
+  // for read-and-react defense.
   | "target-casting"
   // Active while your NEXT attack is empowered (the finisher / execution / discharge
   // is armed and waiting to land). Class-agnostic: it reads the shared empowered flag,
@@ -81,9 +79,6 @@ export type RuneConditionId =
   | "target-max-stacks"
   /** Active only while a server-owned map navigation path has remaining hops. */
   | "while-traveling"
-  // Active while the active stance's own charge is full. Currently only Powering Up
-  // charges, and this is how a rule LEAVES it to cash the charge in.
-  | "stance-charged"
   // Summoner only: at most half of your formation is standing (living summons in
   // your node). Inert for every other archetype. Pairs with Flee so a Conduit whose
   // summons are dying faster than they reform backs off to rebuild.
@@ -124,9 +119,7 @@ export type RuneActionId =
   | "fight-back"
   | "lead-the-way"
   | "taunt-current-target"
-  | "use-ability"
-  // Switch to a destination stance authored on the assembled rule.
-  | "switch-stance";
+  | "use-ability";
 
 export interface ConditionDef {
   id: RuneConditionId;
@@ -150,8 +143,6 @@ export interface ActionDef {
 export interface EquippedRule {
   conditionId: string;
   actionId: string;
-  /** Required destination for switch-stance; invalid and ignored on other actions. */
-  targetStanceId?: string;
   targetAbilityId?: string;
   waitOutMode?: "all" | "heat-managed";
 }
@@ -169,7 +160,6 @@ export const RUNE_CHANNELS: RuneChannel[] = [
   "CONTROL",
   "FORMATION",
   "ABILITY",
-  "STANCE",
 ];
 
 const COMBAT_CONDITIONS: readonly RuneConditionId[] = [
@@ -234,26 +224,6 @@ const CONTROL_CONDITIONS: readonly RuneConditionId[] = [
 // System rework Step 7: conditions a player can wire to an ability-fire override.
 
 
-// System rework Step 10: situations a player can wire to a stance auto-switch.
-const STANCE_CONDITIONS: readonly RuneConditionId[] = [
-  "always",
-  "in-combat",
-  "when-idle",
-  "hp-below-25",
-  "hp-above-90",
-  "target-hp-below-25",
-  "has-debuff",
-  "target-casting",
-  // The empowered window is a posture decision as much as an ability-timing one —
-  // `Empowered Ready -> Time to Strike` is that stance's whole reason to exist. The
-  // condition already existed for ability-fire rules; this only lets Switch Stance
-  // name it too.
-  "before-empowered",
-  // `Stance Charged -> <anything>` is how a charging posture is left on purpose.
-  "stance-charged",
-  "while-traveling",
-  "n-aggro-3",
-];
 
 export const CONDITION_DATABASE = new Map<string, ConditionDef>([
   [
@@ -422,19 +392,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "debuff-pile",
       name: "Debuff Pile",
       blurb: "Works while you carry three or more different harmful debuffs.",
-      tier: 3,
-      kind: "state",
-    },
-  ],
-  [
-    "stance-charged",
-    {
-      id: "stance-charged",
-      name: "Stance Charged",
-      // Deliberately generic rather than "Powering Up is full": a charging posture
-      // is a shape, and a second one would reuse this rather than add a condition.
-      blurb:
-        "Works while your active stance has finished charging and is holding a full charge, waiting to be spent.",
       tier: 3,
       kind: "state",
     },
@@ -763,20 +720,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
     },
   ],
   ["use-ability", { id: "use-ability", name: "Use Ability", blurb: "Use an attuned ability whenever this situation holds and it is off cooldown.", tier: 1, channel: "ABILITY" }],
-  [
-    "switch-stance",
-    {
-      id: "switch-stance",
-      name: "Switch Stance",
-      blurb:
-        "Switch to a chosen learned stance while this situation holds, reverting to your default otherwise.",
-      // The destination reserves RP through stance attunement. Switching adds only
-      // the condition cost; repeated rules do not repay the destination reservation.
-      tier: 2,
-      channel: "STANCE",
-      allowedConditionIds: STANCE_CONDITIONS,
-    },
-  ],
 ]);
 
 /** Every fragment id (conditions + actions). Useful for validation/tooling. */
@@ -810,8 +753,6 @@ export const STARTER_RUNE_IDS: string[] = Array.from(
     "taunt-current-target",
     "focus-closest",
     "use-ability",
-    // Stance auto-switch is a timing preference for a learned destination.
-    "switch-stance",
     // Reactive "enemy is charging a cast" condition — available from the start so
     // players can answer telegraphed casts once they meet a charging mob.
     "target-casting",
@@ -859,9 +800,6 @@ export function normalizeRuneRule(rule: EquippedRule): EquippedRule {
     actionId: LEGACY_ACTION_IDS[rule.actionId] ?? rule.actionId,
     ...(rule.waitOutMode !== undefined ? { waitOutMode: rule.waitOutMode } : {}),
     ...(rule.actionId === "use-ability" && typeof rule.targetAbilityId === "string" ? { targetAbilityId: rule.targetAbilityId } : {}),
-    ...(rule.actionId === "switch-stance" && typeof rule.targetStanceId === "string"
-      ? { targetStanceId: rule.targetStanceId }
-      : {}),
   };
 }
 
@@ -914,8 +852,6 @@ export function runeChannelLabel(channel: RuneChannel): string {
       return "Formation";
     case "ABILITY":
       return "Abilities";
-    case "STANCE":
-      return "Stance";
   }
 }
 
@@ -983,7 +919,6 @@ export function sanitizeRuneLoadout(
   rules: EquippedRule[],
   owned: ReadonlySet<string>,
   combatArchetype?: CombatArchetype,
-  knownStances: ReadonlySet<string> = new Set(),
   attunedAbilities: ReadonlySet<string> = new Set(),
 ): EquippedRule[] {
   const sanitized: EquippedRule[] = [];
@@ -998,20 +933,12 @@ export function sanitizeRuneLoadout(
     ) {
       continue;
     }
-    if (
-      raw.actionId === "switch-stance" &&
-      (!raw.targetStanceId ||
-        (raw.targetStanceId !== NO_STANCE_ID &&
-          (!stanceDef(raw.targetStanceId) ||
-            (knownStances !== undefined && !knownStances.has(raw.targetStanceId)))))
-    ) continue;
     if (raw.actionId === "use-ability" && (!raw.targetAbilityId || !ABILITY_DATABASE.has(raw.targetAbilityId) || !attunedAbilities.has(raw.targetAbilityId))) continue;
     sanitized.push({
       conditionId: raw.conditionId,
       actionId: raw.actionId,
       ...(raw.waitOutMode !== undefined ? { waitOutMode: raw.waitOutMode } : {}),
       ...(raw.targetAbilityId ? { targetAbilityId: raw.targetAbilityId } : {}),
-      ...(raw.targetStanceId ? { targetStanceId: raw.targetStanceId } : {}),
     });
   }
   return sanitized;
@@ -1379,12 +1306,6 @@ export interface RuneContext {
   targetEscaping?: boolean;
   /** Distinct harmful debuffs the player carries. */
   debuffCount?: number;
-  /**
-   * The active stance's own charge is full. Only a charging posture (Powering Up)
-   * ever sets this; every other stance leaves it false, so a `Stance Charged` rule
-   * built without one simply never fires.
-   */
-  stanceCharged?: boolean;
 }
 
 export interface ClaimedRuneAction {
@@ -1419,8 +1340,6 @@ export interface DerivedRuneConfig {
   travelPathingAction: RuneActionId | null;
   travelResponseAction: RuneActionId | null;
   controlAction: RuneActionId | null;
-  stanceAction: RuneActionId | null;
-  stanceTargetId: string | null;
   fleeRequested: boolean;
   orbit: boolean;
   evadeTelegraph: boolean;
@@ -1442,8 +1361,6 @@ export interface DerivedRuneConfig {
   spreadDots: boolean;
   /** A `focus-elites` rule is active this tick — prioritize elite-tagged enemies. */
   focusElites: boolean;
-  /** A valid `switch-stance` rule claims the Stance channel this tick. */
-  switchStance: boolean;
 }
 
 function emptyClaims(): ClaimedRuneChannels {
@@ -1460,7 +1377,6 @@ function emptyClaims(): ClaimedRuneChannels {
     CONTROL: null,
     FORMATION: null,
     ABILITY: null,
-    STANCE: null,
   };
 }
 
@@ -1502,8 +1418,6 @@ function isConditionActive(conditionId: string, ctx: RuneContext): boolean {
       return ctx.targetAtMaxDotStacks ?? false;
     case "while-traveling":
       return ctx.traveling ?? false;
-    case "stance-charged":
-      return ctx.stanceCharged ?? false;
     case "target-shielded":
       return ctx.targetShielded ?? false;
     case "target-escaping":
@@ -1537,8 +1451,6 @@ export function deriveAutoConfigFromRunes(
     travelPathingAction: null,
     travelResponseAction: null,
     controlAction: null,
-    stanceAction: null,
-    stanceTargetId: null,
     fleeRequested: false,
     orbit: false,
     evadeTelegraph: false,
@@ -1559,7 +1471,6 @@ export function deriveAutoConfigFromRunes(
     letDotsFinish: false,
     spreadDots: false,
     focusElites: false,
-    switchStance: false,
   };
 
   const engaged = ctx.activelyEngaged ?? ctx.inCombat;
@@ -1607,7 +1518,6 @@ export function deriveAutoConfigFromRunes(
       actionId: action.id,
       ...(raw.waitOutMode !== undefined ? { waitOutMode: raw.waitOutMode } : {}),
       ...(raw.targetAbilityId ? { targetAbilityId: raw.targetAbilityId } : {}),
-      ...(raw.targetStanceId ? { targetStanceId: raw.targetStanceId } : {}),
     };
     const claim = { rule, action, condition };
     if (action.channel === "OOC_MAINTENANCE") {
@@ -1638,8 +1548,6 @@ export function deriveAutoConfigFromRunes(
   derived.travelResponseAction = claimed.TRAVEL_RESPONSE?.action.id ?? null;
   derived.controlAction = claimed.CONTROL?.action.id ?? null;
   derived.recallSummons = claimed.FORMATION?.action.id === "recall-summons";
-  derived.stanceAction = claimed.STANCE?.action.id ?? null;
-  derived.stanceTargetId = claimed.STANCE?.rule.targetStanceId ?? null;
 
   switch (derived.movementAction) {
     case "flee":
@@ -1726,10 +1634,6 @@ export function deriveAutoConfigFromRunes(
   if (derived.controlAction === "taunt-current-target") {
     derived.tauntCurrentTarget = true;
   }
-  if (derived.stanceAction === "switch-stance") {
-    derived.switchStance = true;
-  }
-
   return derived;
 }
 

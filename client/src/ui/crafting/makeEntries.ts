@@ -5,14 +5,10 @@ import {
   availableToClass,
   RITE_DATABASE,
   RITE_RECIPE_DATABASE,
-  STANCE_DATABASE,
-  STANCE_RECIPE_DATABASE,
   abilityDef,
   isAbilityRecipeUnlocked,
   isRiteRecipeUnlocked,
-  isStanceRecipeUnlocked,
   riteDef,
-  stanceDef,
   type EquipmentSlot,
   type EssenceType,
   type Recipe,
@@ -25,9 +21,9 @@ import { biomeName } from './common';
  * separate authoritative databases — this is a client view model that lets one
  * browser present them with a single grammar.
  */
-export type MakeKind = EquipmentSlot | 'technique' | 'stance' | 'rite';
+export type MakeKind = EquipmentSlot | 'technique' | 'rite';
 
-export const TECHNIQUE_KINDS: readonly MakeKind[] = ['technique', 'stance', 'rite'];
+export const TECHNIQUE_KINDS: readonly MakeKind[] = ['technique', 'rite'];
 
 export interface MakeEntry {
   /** Unique across kinds; recipe ids are only unique within their database. */
@@ -49,7 +45,7 @@ export interface MakeEntry {
   /** Present for gear only; carries the fields the gear detail pane needs. */
   gear?: Recipe;
   /**
-   * What making this actually gives you — the ability/stance/rite id, which
+   * What making this actually gives you — the ability/rite id, which
    * is NOT the recipe id. Absent for gear, where the recipe id is the item id.
    * Drives icon resolution and the effect table in the detail pane.
    */
@@ -61,7 +57,6 @@ export interface MakeSources {
   ownedGearIds: ReadonlySet<string>;
   equippedGearIds: ReadonlySet<string>;
   knownAbilities: readonly string[];
-  knownStances: readonly string[];
   knownRites: readonly string[];
   biomeLevel: Record<string, number>;
   bossesCleared: readonly string[];
@@ -175,7 +170,7 @@ function techniqueEntries(spec: TechniqueSpec): MakeEntry[] {
  */
 export const KIND_ORDER: MakeKind[] = [
   'weapon', 'armor', 'recovery', 'mobility', 'core', 'relic',
-  'technique', 'stance', 'rite',
+  'technique', 'rite',
 ];
 
 /** One name per kind, for every surface that has to say what a recipe makes. */
@@ -187,7 +182,6 @@ export const MAKE_KIND_LABELS: Record<MakeKind, string> = {
   core: 'Core',
   relic: 'Relic',
   technique: 'Technique',
-  stance: 'Stance',
   rite: 'Rite',
 };
 
@@ -205,18 +199,6 @@ function techniqueSpecs(sources: MakeSources): TechniqueSpec[] {
       isUnlocked: (id) => {
         const recipe = ABILITY_RECIPE_DATABASE.get(id);
         return !!recipe && isAbilityRecipeUnlocked(recipe, gates);
-      },
-    },
-    {
-      kind: 'stance',
-      recipes: STANCE_RECIPE_DATABASE.values(),
-      learnedId: (id) => STANCE_RECIPE_DATABASE.get(id)?.stanceId ?? null,
-      blurb: (id) => stanceDef(id)?.blurb ?? '',
-      displayName: (_recipeId, learnedId) => STANCE_DATABASE.get(learnedId)?.name ?? null,
-      known: sources.knownStances,
-      isUnlocked: (id) => {
-        const recipe = STANCE_RECIPE_DATABASE.get(id);
-        return !!recipe && isStanceRecipeUnlocked(recipe, gates);
       },
     },
     {

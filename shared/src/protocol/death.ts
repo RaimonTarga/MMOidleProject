@@ -22,8 +22,7 @@ export type DeathCause = { abilityName?: string } & (
   | { kind: "ranged"; killer: DeathKiller; damage: number }
   | { kind: "dot"; killer: DeathKiller; damage: number; stacks: number; effectName?: string }
   | { kind: "aoe"; killer: DeathKiller; damage: number }
-  | { kind: "debt"; damage: number; nodeId: string; killer?: DeathKiller }
-  | { kind: "stance"; damage: number; stanceName: string });
+  | { kind: "debt"; damage: number; nodeId: string; killer?: DeathKiller });
 
 export interface PlayerDeathPayload {
   cause: DeathCause;
@@ -47,8 +46,6 @@ export function formatDeathCauseLabel(cause: DeathCause): string {
       return "Area damage";
     case "debt":
       return "Damage over time";
-    case "stance":
-      return cause.stanceName;
   }
 }
 
@@ -68,7 +65,6 @@ export function formatDeathLocation(diedAtNodeId: string): string {
 
 export function formatDeathLogMessage(payload: PlayerDeathPayload): string {
   const { cause } = payload;
-  if (cause.kind === "stance") return `Consumed by ${cause.stanceName}`;
   if (cause.kind === "debt" && !cause.killer) {
     return "You were defeated by accumulated damage";
   }
@@ -79,12 +75,11 @@ export function formatDeathLogMessage(payload: PlayerDeathPayload): string {
 
 /**
  * Display name of whatever killed the player, or undefined when nothing nameable
- * did. Used for the tombstone epitaph, so it names the ACTOR ("Gnarled Greatbear",
- * "Berserker Stance") rather than the mechanism — `formatDeathCauseLabel` already
+ * did. Used for the tombstone epitaph, so it names the ACTOR ("Gnarled Greatbear")
+ * rather than the mechanism — `formatDeathCauseLabel` already
  * owns the mechanism half.
  */
 export function deathKillerName(cause: DeathCause): string | undefined {
-  if (cause.kind === "stance") return cause.stanceName;
   if (cause.kind === "debt") return cause.killer?.monsterName;
   return cause.killer.monsterName;
 }

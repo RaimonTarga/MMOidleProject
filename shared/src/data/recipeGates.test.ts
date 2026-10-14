@@ -15,7 +15,6 @@
  * nothing about whether the costs are right.
  */
 import { RECIPE_DATABASE } from './recipes';
-import { STANCE_RECIPE_DATABASE } from '../stanceRecipes';
 import { RITE_RECIPE_DATABASE } from '../riteRecipes';
 import { ABILITY_RECIPE_DATABASE } from '../abilityRecipes';
 import { biomeLevelCap } from '../config/gameConfig';
@@ -66,7 +65,6 @@ interface GatedRecipe {
 // walks the same lists again, and an iterator is empty the second time round.
 const DATABASES: [string, GatedRecipe[]][] = [
   ['item', [...RECIPE_DATABASE.values()] as GatedRecipe[]],
-  ['stance', [...STANCE_RECIPE_DATABASE.values()]],
   ['rite', [...RITE_RECIPE_DATABASE.values()]],
   ['ability', [...ABILITY_RECIPE_DATABASE.values()] as GatedRecipe[]],
 ];

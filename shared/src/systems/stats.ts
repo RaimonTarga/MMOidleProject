@@ -13,7 +13,6 @@ import { SKILL_TREE, type StatEffects } from '../skillTree';
 import { ITEM_DATABASE } from '../itemDatabase';
 import { EQUIPMENT_SLOTS } from '../items';
 import { coreIsActive } from './cores';
-import { activeStanceModifiers, stanceDef, type StanceModifiers } from '../stances';
 import { effectiveAttacksPerSecond } from './itemUpgrades';
 import { GAME_CONFIG, baseRecoveryForTier, poolFactorForTier } from '../index';
 import { mergePassives, makePulseAccumulator, finalizePulse } from '../passives';
@@ -54,11 +53,6 @@ export interface PlayerStatsTarget {
   holdsInventory:  HoldsInventory;
   /** Player progression tier (0-indexed: T1=0 … T4=3). Drives per-tier class bonuses. */
   playerTier?:     number;
-  /**
-   * The currently-active stance id (system rework Step 10), if any. Its stat/mechanic
-   * deltas fold into the rebuild; the stance-switch system triggers a recalc on change.
-   */
-  activeStance?:   string | null;
   /**
    * Equipped rites (system rework Step 11). Always-on OOC passives; every equipped
    * rite's `mechanicEffects` (the `rite.*` keys) folds into `usesSkills.passives` so
@@ -130,27 +124,6 @@ function applyClassAffinities(p: PlayerStatsTarget, a: ClassAffinities): void {
     p.hasPosition.speed = Math.max(0, Math.round(p.hasPosition.speed * mult(a.moveSpeed)));
 }
 
-/**
- * Fold the active stance's percentage posture onto the finished stat line.
- *
- * Separate from {@link applyClassAffinities} on purpose. Affinities are a shared
- * bucket because the class tree is one long additive chain the player builds over
- * tiers. A stance is a single mode with a single tooltip, and the player has to be
- * able to read that tooltip literally — so its percentages multiply the result of
- * everything below them rather than joining the class's sum.
- *
- * Attack speed and evasion are absent: both fold earlier, in step 2a, because they
- * already had once-applied semantics of their own.
- */
-function applyStanceModifiers(p: PlayerStatsTarget, mods: StanceModifiers | undefined): void {
-  if (!mods) return;
-  const mult = (pct: number): number => Math.max(0.05, 1 + pct);
-  if (mods.platingPct)
-    p.mitigatesDamage.plating = Math.max(0, Math.round(p.mitigatesDamage.plating * mult(mods.platingPct)));
-  if (mods.moveSpeedPct)
-    p.hasPosition.speed = Math.max(0, Math.round(p.hasPosition.speed * mult(mods.moveSpeedPct)));
-}
-
 function applyStatModToTarget(p: PlayerStatsTarget, stat: string, value: number): void {
   switch (stat) {
     case 'attack':          p.dealsDamage.attack          += value; break;
@@ -181,12 +154,6 @@ export interface PlayerStatsResult {
  * Mutates slice fields in place. Returns out-of-band signals (see {@link PlayerStatsResult}).
  */
 export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult {
-  // 0. Capture the HP fraction BEFORE step 1 wipes maxHp back to base. A gated stance
-  // (Perfection) reads it to decide whether its upside half is in force. The stance
-  // system re-runs this rebuild whenever the player crosses the threshold; nothing here
-  // moves HP, so the reading cannot feed back into itself.
-  const hpFraction = p.hasHealth.hp / Math.max(1, p.hasHealth.maxHp);
-
   // 1. Reset to base
   p.dealsDamage.attack          = GAME_CONFIG.PLAYER_ATTACK;
   p.dealsDamage.onHitDamage     = 0;
@@ -239,26 +206,6 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     mergePassives(p.usesSkills.passives, node.mechanicEffects, pulseAcc);
   }
 
-  // 2a. Apply the active stance posture (system rework Step 10, corrected 2026-08-22).
-  // Only the two fields with pre-existing sum-then-apply-once semantics fold here, so
-  // they ride the same path as skill nodes: attack speed must land before the cooldown
-  // computation below, and evasion is already a fraction. The stance's attack / plating
-  // / move-speed PERCENTAGES are a separate multiplicative layer applied after the class
-  // affinity fold (step 3e) — a posture the player toggles has to mean exactly what its
-  // tooltip says for every class. `damageTakenPct` is not a stat at all: it is read at
-  // hit time by the stance combat listener. The stance-switch system recalcs on change.
-  const stance = stanceDef(p.activeStance);
-  // Resolved, never `stance.modifiers`: a gated posture's conditional half only exists
-  // in the resolver, so reading the field directly would silently drop it.
-  const stanceMods = activeStanceModifiers(p.activeStance, hpFraction);
-  if (stanceMods) {
-    attackSpeedPct += stanceMods.attackSpeedPct ?? 0;
-    if ((stanceMods.evasion ?? 0) > 0) evasionChance += stanceMods.evasion!;
-  }
-  if (stance?.mechanicEffects) {
-    mergePassives(p.usesSkills.passives, stance.mechanicEffects, pulseAcc);
-  }
-
   p.performsAttack.attackCooldown = Math.round(
     p.performsAttack.attackCooldown / Math.max(0.1, 1 + attackSpeedPct),
   );
@@ -308,9 +255,9 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   //
   // It sits here because the flat pool is now complete and nothing has multiplied
   // it yet: `GAME_CONFIG.PLAYER_MAX_HP` from step 1, the armor's `maxHp` and its
-  // upgrade steps from step 3 are the only flat sources in the game — no skill node or stance authors a flat `maxHp`, they all author
+  // upgrade steps from step 3 are the only flat sources in the game — no skill node authors a flat `maxHp`, they all author
   // `maxHpPct`. So one multiplication here IS "base max HP and armor maxHp", and
-  // every percentage layer below (class affinities 3d, the stance 3e, the core's
+  // every percentage layer below (class affinities 3d, the core's
   // `core.maxhp-mult`) keeps multiplying the finished pool exactly as before.
   //
   // Recovery is NOT touched: `hasHealth.recovery` was seeded in step 1 from the
@@ -328,13 +275,6 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   // grants) and BEFORE the core layer (cores stay the deliberate final multiplier,
   // a separate layer stacked on the finished class chassis).
   applyClassAffinities(p, affinities);
-
-  // 3e. Active-stance plating/movement percentages. Damage is resolved at hit time. A stance is a MODE with a printed tooltip, so its
-  // multipliers sit on top of the finished class chassis instead of summing into the
-  // affinity bucket: "+40% Plating" is x1.40 for a Squire and for an Apprentice alike.
-  // Placed immediately after the affinity fold and before the reload/core layers, which
-  // both deliberately price the completed stat line.
-  applyStanceModifiers(p, stanceMods);
 
   // Cadence must resolve after equipment is folded so item/relic threshold
   // changes are live. The old pre-equipment callback made those values inert.

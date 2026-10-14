@@ -12,14 +12,11 @@ import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { riteDef } from '@mmo-idle/shared';
 import {
-  activeStanceAtom,
   barrierMaxAtom,
   combatArchetypeAtom,
   equipmentAtom,
   equippedRitesAtom,
-  hpAtom,
   itemUpgradesAtom,
-  maxHpAtom,
   passivesAtom,
   playerIdAtom,
   playerTierAtom,
@@ -69,12 +66,8 @@ export function StatsView() {
   const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
   const playerTier = useAtomValue(playerTierAtom);
   const unlockedSkills = useAtomValue(unlockedSkillsAtom);
-  const activeStance = useAtomValue(activeStanceAtom);
   const equippedRites = useAtomValue(equippedRitesAtom);
-  const hp = useAtomValue(hpAtom);
-  const maxHp = useAtomValue(maxHpAtom);
   const barrierMax = useAtomValue(barrierMaxAtom);
-  const hpFraction = hp / Math.max(1, maxHp);
 
   const data = useMemo(() => buildStatsPanel({
     build: {
@@ -82,11 +75,11 @@ export function StatsView() {
         unlockedSkills, passives, selectedClass: combatArchetype ? `${combatArchetype}-root` : null,
         selectedSubVariant, selectedRange, combatArchetype,
       },
-      equipment, itemUpgrades, playerTier, activeStance, equippedRites, hpFraction,
+      equipment, itemUpgrades, playerTier, equippedRites,
     },
     barrierMax,
   }), [unlockedSkills, passives, combatArchetype, selectedSubVariant, selectedRange, equipment,
-    itemUpgrades, playerTier, activeStance, equippedRites, hpFraction, barrierMax]);
+    itemUpgrades, playerTier, equippedRites, barrierMax]);
 
   if (!playerId) return <div className="sp-empty">Not connected.</div>;
 

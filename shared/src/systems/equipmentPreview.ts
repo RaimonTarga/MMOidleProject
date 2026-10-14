@@ -12,8 +12,6 @@ export interface EquipmentPreviewInput {
   equipment: HoldsInventory['equipment'];
   itemUpgrades: Record<string, number>;
   playerTier: number;
-  hpFraction?: number;
-  activeStance?: string | null;
   equippedRites?: readonly string[];
   /** Leave these mechanic-effect keys of one equipped item out (see `PlayerStatsTarget`). */
   omitItemEffects?: { defId: string; keys: ReadonlySet<string> };
@@ -26,18 +24,18 @@ export function previewEquipmentStats(input: EquipmentPreviewInput) {
     mitigatesDamage: { plating: 0, damageReduction: 0 },
     evadesHits: { dodgeRate: 0, evadeMitigation: 0, charge: 0 },
     performsAttack: { attackRange: 0, attackCooldown: 1000, lastAttackAt: 0 },
-    hasHealth: { hp: input.hpFraction ?? 1, maxHp: 1, recovery: 0 },
+    hasHealth: { hp: 1, maxHp: 1, recovery: 0 },
     hasPosition: { nodeId: '', current: { x: 0, y: 0 }, speed: 0 },
     usesSkills: { ...input.usesSkills, unlockedSkills: [...input.usesSkills.unlockedSkills], passives: {} },
     holdsInventory: {
       equipment: { ...input.equipment }, inventory: [], itemUpgrades: { ...input.itemUpgrades },
     },
-    playerTier: input.playerTier, activeStance: input.activeStance, equippedRites: input.equippedRites,
+    playerTier: input.playerTier, equippedRites: input.equippedRites,
     previewOmitItemEffects: input.omitItemEffects,
   };
   const { cannotAttack } = recalculatePlayerStats(target);
   const passives = target.usesSkills.passives;
-  const finalDamage = resolveFinalDamageMultipliers(passives, input.activeStance, input.hpFraction);
+  const finalDamage = resolveFinalDamageMultipliers(passives);
   const summonerInput = { ...target.usesSkills };
   const dps = estimatePlayerDps({
     attack: target.dealsDamage.attack, onHitDamage: target.dealsDamage.onHitDamage,

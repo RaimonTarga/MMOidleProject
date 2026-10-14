@@ -43,8 +43,7 @@ function playerSlices(id: string): PersistedPlayerSlices {
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [], knownAbilities: [],
-      attunedAbilities: { techniques: [], guards: [] }, knownStances: [],
-      equippedStances: { default: null }, activeStance: null,
+      attunedAbilities: { techniques: [], guards: [] },
       knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
@@ -75,7 +74,7 @@ function playerSlices(id: string): PersistedPlayerSlices {
   // satisfied by `killPlayer` marking the slice itself.
   world.dirty.drain();
 
-  world.killPlayer('dies-mid-order', { kind: 'stance', damage: 100, stanceName: 'Test Stance' });
+  world.killPlayer('dies-mid-order', { kind: 'debt', damage: 100, nodeId: player.hasPosition.nodeId });
 
   assert(!!player.isDead, 'the player should be dead');
   assert((player.usesAutocombat.auto as boolean) === false, 'death must clear auto-combat');
@@ -102,7 +101,7 @@ function playerSlices(id: string): PersistedPlayerSlices {
 
   player.usesAutocombat.auto = true;
   setEntityMotion(world, player, { x: 1200, y: 1200 }, { mode: 'direct' });
-  world.killPlayer('respawns-idle', { kind: 'stance', damage: 100, stanceName: 'Test Stance' });
+  world.killPlayer('respawns-idle', { kind: 'debt', damage: 100, nodeId: player.hasPosition.nodeId });
   world.respawnPlayer('respawns-idle');
 
   assert(!player.isDead, 'the player should be alive again');

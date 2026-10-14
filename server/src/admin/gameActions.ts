@@ -4,7 +4,6 @@ import {
   ABILITY_DATABASE,
   emptyEquipment,
   emptyAttunedAbilities,
-  emptyEquippedStances,
   emptyEquippedRites,
   ESSENCE_TYPES,
   FAST_BOSS_RETRY_TAINT,
@@ -21,7 +20,6 @@ import {
   runeIdsForArchetype,
   normalizeAttunedAbilities,
   normalizeEquipment,
-  validStanceIds,
   validRiteIds,
   sanitizeRuneLoadout,
   type FastBossRetryResult,
@@ -110,10 +108,6 @@ export function resetPlayerProgress(world: World, player: PlayerEntity): GameAct
   player.tracksProgression.runesEquipped = DEFAULT_RUNE_LOADOUT.map((rule) => ({ ...rule }));
   player.tracksProgression.knownAbilities = [];
   player.tracksProgression.attunedAbilities = emptyAttunedAbilities();
-  player.tracksProgression.knownStances = [];
-  player.tracksProgression.attunedStances = [];
-  player.tracksProgression.equippedStances = emptyEquippedStances();
-  player.tracksProgression.activeStance = null;
   player.tracksProgression.knownRites = [];
   player.tracksProgression.equippedRites = emptyEquippedRites();
   player.holdsInventory.inventory = [];
@@ -357,16 +351,6 @@ export function applyTierEntryProfile(
   }
 
   const runesOwned = runeIdsForArchetype(archetype);
-  const knownStances = validStanceIds(profile.knownStances ?? []);
-  if (knownStances.length !== new Set(profile.knownStances ?? []).size) return fail('Profile contains an unknown stance.');
-  const equippedStances = profile.equippedStances?.default === null || profile.equippedStances?.default === undefined
-    ? emptyEquippedStances()
-    : { default: profile.equippedStances.default };
-  if (equippedStances.default && !knownStances.includes(equippedStances.default)) {
-    return fail('Profile default stance is not learned.');
-  }
-  const attunedStances = profile.attunedStances ?? [];
-  if (attunedStances.some(id => !knownStances.includes(id)) || (equippedStances.default && !attunedStances.includes(equippedStances.default))) return fail("Profile stance is not attuned.");
   const knownRites = validRiteIds(profile.knownRites ?? []);
   if (knownRites.length !== new Set(profile.knownRites ?? []).size) return fail('Profile contains an unknown rite.');
   const equippedRites = validRiteIds(profile.equippedRites ?? []);
@@ -377,7 +361,6 @@ export function applyTierEntryProfile(
     Array.isArray(profile.runesEquipped) ? profile.runesEquipped : [],
     new Set(runesOwned),
     archetype,
-    new Set(attunedStances),
     new Set([...attunedAbilities.techniques, ...attunedAbilities.guards]),
   );
   if (runesEquipped.length !== (profile.runesEquipped ?? []).length) {
@@ -419,10 +402,6 @@ export function applyTierEntryProfile(
   player.tracksProgression.runesEquipped = runesEquipped;
   player.tracksProgression.knownAbilities = knownAbilities;
   player.tracksProgression.attunedAbilities = attunedAbilities;
-  player.tracksProgression.knownStances = knownStances;
-  player.tracksProgression.attunedStances = attunedStances;
-  player.tracksProgression.equippedStances = equippedStances;
-  player.tracksProgression.activeStance = equippedStances.default;
   player.tracksProgression.knownRites = knownRites;
   player.tracksProgression.equippedRites = equippedRites;
   player.holdsInventory.inventory = [...new Set(profile.inventory)];

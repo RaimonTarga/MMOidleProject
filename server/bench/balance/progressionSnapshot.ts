@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
-import { ABILITY_RECIPE_DATABASE, STANCE_RECIPE_DATABASE, runeIdsForArchetype,
+import { ABILITY_RECIPE_DATABASE, runeIdsForArchetype,
   RECIPE_DATABASE, ITEM_DATABASE, globalMastery, biomeLevelCap,
   getMaxUpgrade, requiredBiomeLevelForUpgrade, upgradeCeilingFromGlobalMastery,
-  upgradeCostFor, isAbilityRecipeUnlocked, isStanceRecipeUnlocked,
+  upgradeCostFor, isAbilityRecipeUnlocked,
   ABILITY_DATABASE, abilityRankNumber, bossSealSourcesAtTier, sealsRequiredForTier, sealsHeldAtTier, SKILL_TREE } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../src/ecs/entity';
 import type { SurveyCell } from './ttkSurveySpec';
@@ -36,7 +36,7 @@ export function applyProgressionSnapshot(bot:PlayerEntity,cell:SurveyCell) {
     for(let tier=1;tier<s.tier;tier++)assert(sealsHeldAtTier(p.bossesCleared,tier)>=sealsRequiredForTier(tier),`Missing T${tier} prior seals`);
     assert(cell.build.skillPath.reduce((sum,id)=>sum+SKILL_TREE.get(id)!.cost,0)<=s.tier,'Class purchases exceed earned tier skill points');
   }
-  p.knownAbilities=[];p.knownStances=[];p.knownRites=[];p.equippedRites=[];
+  p.knownAbilities=[];p.knownRites=[];p.equippedRites=[];
   p.runesOwned=runeIdsForArchetype(bot.usesSkills.combatArchetype);
   const purchases:{id:string;kind:string;cost:Record<string,number>}[]=[];
   const pay=(id:string,kind:string,cost:object={})=>purchases.push({id,kind,cost:{...cost}});
@@ -45,9 +45,6 @@ export function applyProgressionSnapshot(bot:PlayerEntity,cell:SurveyCell) {
     assert(r && isAbilityRecipeUnlocked(r,p),`${cell.id}: unearned ability ${id}`);
     pay(r.id,'learn-ability',r.cost);p.knownAbilities.push(id);
   }
-  if(cell.stance){const r=[...STANCE_RECIPE_DATABASE.values()].find(r=>r.stanceId===cell.stance)!;
-    assert(r && isStanceRecipeUnlocked(r,p),`Unearned stance ${cell.stance}`);
-    pay(r.id,'learn-stance',r.cost);p.knownStances.push(cell.stance);}
   for(const id of new Set(cell.runeRules!.flatMap(r=>[r.conditionId,r.actionId])))
     assert(p.runesOwned.includes(id),`${cell.id}: rune ${id} is not the class's`);
   p.unlockedRecipes=[...RECIPE_DATABASE.values()].filter(r=>(p.biomeLevel[r.recipeGroup]??0)>=r.requiredBiomeLevel && !r.requiredBossClear).map(r=>r.id);
@@ -68,6 +65,6 @@ export function applyProgressionSnapshot(bot:PlayerEntity,cell:SurveyCell) {
   return {snapshot:s,purchases,priorResources:totals,remainingResources:{essences:p.essences},
     ...(s.priorBossClears?{priorBossClears:[...p.bossesCleared],priorSealOwnership:'Synthetic earned prior clears assumed; no acquisition combat measured',classSkillPointBudget:s.tier,classSkillPointsSpent:cell.build.skillPath.reduce((sum,id)=>sum+SKILL_TREE.get(id)!.cost,0)}:{}),
     acquisition:'Synthetic prior paid ownership; plain craft at production price. No acquisition time measured.',
-    abilityRanks:Object.fromEntries(p.knownAbilities.map(id=>[id,abilityRankNumber(ABILITY_DATABASE.get(id)!,s.tier)])),knownAbilities:[...p.knownAbilities],knownStances:[...p.knownStances],runesOwned:[...p.runesOwned]};
+    abilityRanks:Object.fromEntries(p.knownAbilities.map(id=>[id,abilityRankNumber(ABILITY_DATABASE.get(id)!,s.tier)])),knownAbilities:[...p.knownAbilities],runesOwned:[...p.runesOwned]};
 }
 export const snapshotReceipts=new WeakMap<PlayerEntity,ReturnType<typeof applyProgressionSnapshot>>();

@@ -14,19 +14,6 @@ export const ABILITY_HOTKEY_ACTIONS = [
 
 export type AbilityHotkeyAction = (typeof ABILITY_HOTKEY_ACTIONS)[number];
 
-export const STANCE_HOTKEY_ACTIONS = [
-  'stance.slot1',
-  'stance.slot2',
-  'stance.slot3',
-  'stance.slot4',
-  'stance.slot5',
-  'stance.slot6',
-  'stance.slot7',
-  'stance.slot8',
-] as const;
-
-export type StanceHotkeyAction = (typeof STANCE_HOTKEY_ACTIONS)[number];
-
 export type ActionId =
   | 'move.up'
   | 'move.down'
@@ -42,8 +29,6 @@ export type ActionId =
   | 'toggle.quest'
   | 'toggle.debug'
   | 'toggle.settings'
-  | 'stance.neutral'
-  | StanceHotkeyAction
   | 'class.reload'
   | 'class.recall'
   | AbilityHotkeyAction
@@ -85,8 +70,6 @@ export const REBINDABLE_ACTIONS: readonly ActionId[] = [
   'toggle.quest',
   'toggle.debug',
   'toggle.settings',
-  'stance.neutral',
-  ...STANCE_HOTKEY_ACTIONS,
   'class.reload',
   'class.recall',
   ...ABILITY_HOTKEY_ACTIONS,
@@ -111,15 +94,6 @@ export const DEFAULT_BINDINGS: Bindings = {
   'toggle.quest': { key: 'KeyQ', pad: TRIGGER_LEFT_INDEX },
   'toggle.debug': { key: 'Backquote', pad: 8 },
   'toggle.settings': { key: '', pad: 9 },
-  'stance.neutral': { key: 'Digit1', pad: null, shift: true },
-  'stance.slot1': { key: 'Digit2', pad: null, shift: true },
-  'stance.slot2': { key: 'Digit3', pad: null, shift: true },
-  'stance.slot3': { key: 'Digit4', pad: null, shift: true },
-  'stance.slot4': { key: 'Digit5', pad: null, shift: true },
-  'stance.slot5': { key: 'Digit6', pad: null, shift: true },
-  'stance.slot6': { key: 'Digit7', pad: null, shift: true },
-  'stance.slot7': { key: 'Digit8', pad: null, shift: true },
-  'stance.slot8': { key: 'Digit9', pad: null, shift: true },
   'class.reload': { key: 'KeyR', pad: null },
   // Same key as Slinger reload: each only fires for its own class.
   'class.recall': { key: 'KeyR', pad: null },
@@ -259,26 +233,9 @@ export function abilitySlotForKey(eventOrCode: KeyboardChordInput | string, bind
   return slot >= 0 ? slot : null;
 }
 
-/** Resolve a keyboard chord to its zero-based displayed attuned-stance slot. */
-export function stanceSlotForKey(eventOrCode: KeyboardChordInput | string, bindings: Bindings): number | null {
-  const event = typeof eventOrCode === 'string' ? { code: eventOrCode } : eventOrCode;
-  const slot = STANCE_HOTKEY_ACTIONS.findIndex(
-    (action) => matchesKeyboardBinding(event, bindings[action]),
-  );
-  return slot >= 0 ? slot : null;
-}
-
 /** Resolve a configured gamepad button to its zero-based combat-hotbar slot. */
 export function abilitySlotForPad(buttonIndex: number, bindings: Bindings): number | null {
   const slot = ABILITY_HOTKEY_ACTIONS.findIndex(
-    (action) => bindings[action].pad !== null && bindings[action].pad === buttonIndex,
-  );
-  return slot >= 0 ? slot : null;
-}
-
-/** Resolve a configured gamepad button to its zero-based displayed stance slot. */
-export function stanceSlotForPad(buttonIndex: number, bindings: Bindings): number | null {
-  const slot = STANCE_HOTKEY_ACTIONS.findIndex(
     (action) => bindings[action].pad !== null && bindings[action].pad === buttonIndex,
   );
   return slot >= 0 ? slot : null;
@@ -344,15 +301,6 @@ export const ACTION_LABELS: Record<ActionId, string> = {
   'toggle.quest': 'Open Quests',
   'toggle.debug': 'Toggle Debug',
   'toggle.settings': 'Open Settings',
-  'stance.neutral': 'Use Neutral Stance',
-  'stance.slot1': 'Use Stance 1',
-  'stance.slot2': 'Use Stance 2',
-  'stance.slot3': 'Use Stance 3',
-  'stance.slot4': 'Use Stance 4',
-  'stance.slot5': 'Use Stance 5',
-  'stance.slot6': 'Use Stance 6',
-  'stance.slot7': 'Use Stance 7',
-  'stance.slot8': 'Use Stance 8',
   'class.reload': 'Slinger: Reload',
   'class.recall': 'Conduit: Recall Summons',
   'ability.slot1': 'Use Ability 1',

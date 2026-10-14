@@ -256,7 +256,7 @@ export function registerReloadFrameLoop(): void {
       // reload short) already paid it, and paying again would halve the carry twice.
       if (!completion.startHooksRan) settleRampForReload(world, player);
       // Drop the captured base so the next clip re-reads the live cadence (a recalc
-      // or a stance change between clips must not be ramped off a stale number).
+      // between clips must not be ramped off a stale number).
       player.usesReload.clipBaseAttackCooldownMs = 0;
       markSliceDirty(world, player, 'usesReload');
     },

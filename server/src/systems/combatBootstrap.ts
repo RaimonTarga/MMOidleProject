@@ -15,7 +15,6 @@ import { initRiteListeners } from "./player/rites/riteOoc";
 import { initCoreCombatEffects } from "./combat/cores";
 import { initMonsterDeathEffects } from "./combat/damage/monsterDeathEffects";
 import { initPlayerAmplifiers } from "./combat/damage/playerAmplifiers";
-import { initStanceCombatEffects } from "./player/stances/stanceSwitch";
 import { initBossPatternCombat } from "./combat/engine/patternCombat";
 import { initRangeMechanics } from "./combat/rangeMechanics";
 
@@ -68,7 +67,6 @@ export function initCombatSystems(): void {
   // Player damage amplifiers (P3): must register BEFORE defense so the incoming
   // multiplier lands ahead of evasion / damage-cap / shields.
   withCombatRegistrationLabel('initPlayerAmplifiers', initPlayerAmplifiers);
-  withCombatRegistrationLabel('initStanceCombatEffects', initStanceCombatEffects);
   withCombatRegistrationLabel('initAbilitySystems', initAbilitySystems); // Guard mitigation protects shields and deferred damage.
   // Evasion + shield absorption onDamageTaken listeners (after weapon effects).
   initDefenseSystems();

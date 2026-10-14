@@ -36,11 +36,6 @@ import {
   setAbilityLoadout,
 } from "../systems/player/economy/abilityCrafting";
 import { requestManualAbilityUse } from "../systems/player/abilities/abilityFiring";
-import {
-  craftStanceRecipe,
-  setStanceLoadout,
-} from "../systems/player/economy/stanceCrafting";
-import { requestManualStance } from "../systems/player/stances/stanceSwitch";
 import { requestManualReload } from "../systems/classes/archetypes/reload/reloadLifecycle";
 import {
   craftRiteRecipe,
@@ -278,10 +273,6 @@ export function registerPlayerHandlers(
       detachComponent(world, p, "isFleeing");
       return;
     }
-    // The global Auto toggle is also the visible way to return live stance
-    // ownership to Rune/default automation now that the stance rail uses a
-    // Neutral posture button instead of a second, ambiguous AUTO button.
-    detachComponent(world, p, "overridesStance");
     // Click/keyboard moves latch hasManualMoveIntent until the server stops.
     // Toggling auto on must release that latch or updateAutoTargets skips every
     // tick ("auto combat does nothing").
@@ -398,11 +389,10 @@ export function registerPlayerHandlers(
       rules,
       owned,
       p.usesSkills.combatArchetype,
-      new Set(p.tracksProgression.attunedStances ?? []),
       new Set(attunedAbilityIds(p.tracksProgression.attunedAbilities)),
     );
     if (valid.length !== rules.length) {
-      socket.emit("build:loadoutResult", { system: "runes", success: false, reason: "One or more Rune rules are invalid, unowned, or target an unlearned stance." });
+      socket.emit("build:loadoutResult", { system: "runes", success: false, reason: "One or more Rune rules are invalid, unowned, or target an unattuned ability." });
       return;
     }
     const telemetryBefore = world.gameplay?.beforeDecision(p);
@@ -482,43 +472,6 @@ export function registerPlayerHandlers(
       return ack?.({ success: false, reason: "Malformed ability id." });
     }
     const result = requestManualAbilityUse(world, p, abilityId);
-    ack?.(result);
-  });
-
-  socket.on("stance:craftRecipe", (recipeId: string) => {
-    const p = liveSelf();
-    if (!p || typeof recipeId !== "string") {
-      socket.emit("stance:craftResult", { recipeId, success: false, reason: !p ? NOT_LIVE_REASON : "Malformed recipe id." });
-      return;
-    }
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = craftStanceRecipe(world, p, recipeId);
-    world.gameplay?.decision(p, "craft-stance", recipeId, telemetryBefore, result.success);
-    socket.emit("stance:craftResult", result);
-  });
-
-  socket.on("stance:setLoadout", (payload) => {
-    const p = liveSelf();
-    const reject = (reason: string): void => { socket.emit("build:loadoutResult", { system: "stances", success: false, reason }); };
-    if (!p) return reject(NOT_LIVE_REASON);
-    if (!payload) return reject("Malformed stance loadout.");
-    if (payload.slot !== "default") return reject("Unknown stance slot.");
-    if (payload.attunedStances !== undefined && (!Array.isArray(payload.attunedStances) || payload.attunedStances.some(id => typeof id !== "string"))) return reject("Malformed stance attunement.");
-    if (payload.stanceId !== null && typeof payload.stanceId !== "string") return reject("Malformed default stance.");
-    const stanceId = payload.stanceId;
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = setStanceLoadout(world, p, payload.slot, stanceId, payload.attunedStances);
-    world.gameplay?.decision(p, "stances", null, telemetryBefore, result.success);
-    socket.emit("build:loadoutResult", { system: "stances", ...result });
-  });
-
-  socket.on("stance:setControl", (payload, ack) => {
-    const p = liveSelf();
-    if (!p) return ack?.({ success: false, reason: NOT_LIVE_REASON });
-    if (!payload || (payload.stanceId !== null && typeof payload.stanceId !== "string")) {
-      return ack?.({ success: false, reason: "Malformed stance selection." });
-    }
-    const result = requestManualStance(world, p, payload.stanceId);
     ack?.(result);
   });
 

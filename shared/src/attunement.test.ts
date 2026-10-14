@@ -1,31 +1,26 @@
 import { ABILITY_DATABASE, migrateAttunement, sanitizeRuneLoadout, STARTER_RUNE_IDS, composeRuneEdit, deriveAutoConfigFromRunes, retiredAbilityEntries, hasRetiredAbilityEntries, RETIRED_ABILITY_IDS } from "./index";
 function assert(value: unknown, message: string): asserts value { if (!value) throw new Error(message); }
 const abilities = { techniques: ["sweep", "slam", "imbue-lightning"], guards: ["cleanse", "break-free", "second-wind"] };
-const stances = ["offensive-stance", "tanking-stance"];
 const rules = [
   { conditionId: "in-combat", actionId: "use-ability", targetAbilityId: "sweep" },
   { conditionId: "before-empowered", actionId: "use-ability", targetAbilityId: "sweep" },
-  { conditionId: "hp-below-25", actionId: "switch-stance", targetStanceId: stances[1] },
-  { conditionId: "in-combat", actionId: "switch-stance", targetStanceId: stances[0] },
 ];
 const owned = new Set(STARTER_RUNE_IDS);
-const sanitized = sanitizeRuneLoadout([...rules, { conditionId: "always", actionId: "use-ability", targetAbilityId: "snipe" }, { conditionId: "always", actionId: "switch-stance", targetStanceId: "perfection-stance" }], owned, undefined, new Set(stances), new Set(Object.values(abilities).flat()));
-assert(sanitized.length === rules.length, "unattuned targets must be removed");
+// A rule naming the retired Switch Stance action is unknown now and is dropped.
+const retiredStanceRule = { conditionId: "in-combat", actionId: "switch-stance" };
+const sanitized = sanitizeRuneLoadout([...rules, { conditionId: "always", actionId: "use-ability", targetAbilityId: "snipe" }, retiredStanceRule], owned, undefined, new Set(Object.values(abilities).flat()));
+assert(sanitized.length === rules.length, "unattuned targets and retired actions must be removed");
 const legacy = {
- knownAbilities: ["sweep", "slam", "brace", "cleanse"], knownStances: stances,
+ knownAbilities: ["sweep", "slam", "brace", "cleanse"],
  equippedAbilities: { techniques: ["sweep", "slam"], guards: ["brace", "cleanse"] },
- equippedStances: { default: stances[0] },
- runesEquipped: [ { conditionId: "before-empowered", actionId: "fire-technique-2" }, { conditionId: "has-debuff", actionId: "fire-guard-2" }, rules[2] ],
+ runesEquipped: [ { conditionId: "before-empowered", actionId: "fire-technique-2" }, { conditionId: "has-debuff", actionId: "fire-guard-2" } ],
 };
 const migrated = migrateAttunement(legacy);
 assert(migrated.runesEquipped[0].targetAbilityId === "slam" && migrated.runesEquipped[1].targetAbilityId === "cleanse", "legacy slot-target migration");
-assert(migrated.attunedStances.length === 2 && migrated.equippedStances.default === stances[0], "default and automated stances migrate");
 assert(migrated.knownAbilities.includes("slam"), "learning survives migration");
 assert(JSON.stringify(migrateAttunement(JSON.parse(JSON.stringify(migrated)))) === JSON.stringify(migrated), "migration round trip is not idempotent");
 const holes = migrateAttunement({ ...legacy, equippedAbilities: { techniques: ["stale", "sweep"], guards: [] }, runesEquipped: [{ conditionId: "always", actionId: "fire-technique" }, { conditionId: "in-combat", actionId: "fire-technique-2" }] });
 assert(holes.runesEquipped.length === 1 && holes.runesEquipped[0].targetAbilityId === "sweep", "orphan must not steal the next slot's target");
-const noAttunement = migrateAttunement({ ...migrated, attunedStances: [], equippedStances: { default: stances[0] } });
-assert(noAttunement.equippedStances.default === null, "default requires attunement");
 const other = { ...rules[0], targetAbilityId: "imbue-lightning" };
 assert(composeRuneEdit([rules[0]], other, null).length === 2, "different abilities must retain independent same-condition rules");
 const derived = deriveAutoConfigFromRunes([other, rules[0]], { hpPct: 1, inCombat: true, inParty: false, aggroCount: 1 });
@@ -42,7 +37,6 @@ assert(derived.abilityTargets.join() === "imbue-lightning,sweep", "Rune order mu
   assert(RETIRED_ABILITY_IDS.length === 5 && RETIRED_ABILITY_IDS.every((id) => !ABILITY_DATABASE.has(id)), "the five cut ids are gone from the roster");
   const save = {
     knownAbilities: ["sweep", "expose-weakness", "hamstring", "heavy-strike", "brace", "slam"],
-    knownStances: [], attunedStances: [],
     attunedAbilities: { techniques: ["sweep", "power-strike", "slam"], guards: ["brace"] },
     runesEquipped: [
       { conditionId: "in-combat", actionId: "use-ability", targetAbilityId: "sweep" },

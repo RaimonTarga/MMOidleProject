@@ -4,7 +4,6 @@ import {
   emptyEquipment,
   emptyAttunedAbilities,
   emptyEquippedRites,
-  emptyEquippedStances,
   type SpectateStatus,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
@@ -138,9 +137,6 @@ function playerSlices(id: string, name: string, playerTier: number): PersistedPl
       runesEquipped: [],
       knownAbilities: [],
       attunedAbilities: emptyAttunedAbilities(),
-      knownStances: [],
-      equippedStances: emptyEquippedStances(),
-      activeStance: null,
       knownRites: [],
       equippedRites: emptyEquippedRites(),
     },

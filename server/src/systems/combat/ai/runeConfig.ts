@@ -25,7 +25,6 @@ import {
   telegraphsContainingPlayer,
   updateTelegraphEvasionLifecycle,
 } from "./telegraphEvasion";
-import { POWERING_UP_ID, poweringUpFullyCharged } from "../../player/stances/stanceBehaviors";
 import { isPlayerControlled } from "../status/playerHardControl";
 
 /** Server-only runtime flags read by the auto-combat systems. */
@@ -49,9 +48,6 @@ export const RUNE_AVOID_ENEMIES_FLAG = "rune.avoidEnemies";
 export const RUNE_FIGHT_BACK_WHILE_TRAVELING_FLAG = "rune.fightBackWhileTraveling";
 export const RUNE_EVADE_TELEGRAPH_FLAG = "rune.evadeTelegraph";
 /** Abilities evolution §7: the same, for the SECOND slot of each kind. */
-/** System rework Step 10: a switch-stance rule's condition is active this tick. */
-export const RUNE_SWITCH_STANCE_FLAG = "rune.switchStance";
-export const RUNE_STANCE_TARGET_KEY = "rune.stanceTarget";
 
 // Presentation consumes the exact fold result, never a second evaluation after combat.
 // Weak ownership keeps this tick-local data out of persistence and releases departed players.
@@ -248,11 +244,6 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
       // Set by each class when its finisher/execution/discharge becomes ready
       // (cadence/cooldown/energy); absent for classes with no empowered attack.
       empoweredImminent: player.hasEmpoweredAttack !== undefined,
-      // Only a charging posture ever sets this; every other stance leaves it false,
-      // so a `Stance Charged` rule built without one simply never fires.
-      stanceCharged:
-        player.tracksProgression.activeStance === POWERING_UP_ID &&
-        poweringUpFullyCharged(player.tracksCombat),
       // Elite-ness is a property of the monster DEFINITION, same source the
       // `focus-elites` targeting bonus reads.
       targetIsElite: isEliteTarget(world, attackTargetId),
@@ -417,7 +408,5 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
     recordHeatDecision(world, player, now, getFlag(player.tracksCombat, RUNE_WAIT_IT_OUT_FLAG), getFlag(player.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG));
     abilityDecisions.set(player, d.abilityTargets);
     timedAbilityDecisions.set(player, d.timedAbilityTargets);
-    setFlag(player.tracksCombat, RUNE_SWITCH_STANCE_FLAG, d.switchStance);
-    setString(player.tracksCombat, RUNE_STANCE_TARGET_KEY, d.stanceTargetId ?? "");
   }
 }

@@ -22,7 +22,6 @@
  */
 
 import {
-  PREDATOR_DETECTION_REDUCTION,
   addCounter,
   applyStatusEffect,
   getCounter,
@@ -171,10 +170,7 @@ function isClosingOnTarget(world: World, player: PlayerEntity): boolean {
  */
 export function playerDetectionMult(player: PlayerEntity): number {
   const p = player.usesSkills.passives;
-  const stealth = (p["mobility.stealth-pct"] ?? 0)
-    + (player.tracksProgression.activeStance === "predator-stance"
-      ? PREDATOR_DETECTION_REDUCTION
-      : 0);
+  const stealth = p["mobility.stealth-pct"] ?? 0;
   const pull = p["mobility.aggro-pull-pct"] ?? 0;
   // Terrain can broadcast the player (jungle thicket). Read straight off the node
   // feature rather than a status effect — see the note on `detectionMultWhileInside`.

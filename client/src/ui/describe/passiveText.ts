@@ -3,7 +3,7 @@ import { mechanicLabel } from '@mmo-idle/shared';
 import { STAT_HELP } from '../../hud/stat/statHelp';
 
 /**
- * Mechanic-effect maps (`mechanicEffects` on skill nodes, stances, rites, gear)
+ * Mechanic-effect maps (`mechanicEffects` on skill nodes, rites, gear)
  * as player-facing rows.
  *
  * There are ~270 distinct passive keys across the skill tree alone, so this is

@@ -1,8 +1,7 @@
 import assert from 'node:assert/strict';
 import {
   ABILITY_DATABASE, MONSTER_DATABASE, RESOLVED_NODE_FEATURES,
-  applyStatusEffect, emptyEquipment, setCooldown, setFlag,
-  BERSERKER_SELF_DAMAGE_INTERVAL_MS, initUsesEnergy,
+  applyStatusEffect, emptyEquipment, setCooldown, initUsesEnergy,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import type { PlayerEntity, MonsterEntity, MinionEntity } from '../src/ecs/entity';
@@ -19,8 +18,6 @@ import { tickSummonerSpecializations } from '../src/systems/classes/archetypes/s
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
-import { markEngaged } from '../src/systems/combat/ai/engagement';
-import { updateStanceSwitch } from '../src/systems/player/stances/stanceSwitch';
 import { updateNodeFeatures } from '../src/systems/world/nodeFeatures';
 import { updateAlternatingCurrents } from '../src/systems/classes/archetypes/energy/t3/ticks/alternatingCurrents';
 import { updateDotArchetype } from '../src/systems/classes/archetypes/dot/dotPrototype';
@@ -43,8 +40,8 @@ function setup(summoner = false, volatile = false) {
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
       questProgress: {}, playerTier: 4, currentSkillTier: 4, bossesCleared: [], clearedNodes: [],
       runesOwned: [], runesEquipped: [], knownAbilities: [],
-      attunedAbilities: { techniques: [], guards: [] }, knownStances: [],
-      equippedStances: { default: null }, activeStance: null, knownRites: [], equippedRites: [],
+      attunedAbilities: { techniques: [], guards: [] },
+      knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {
@@ -166,15 +163,6 @@ function probe(world: World, victims: Victim[], action: () => void, counts = vic
     }); }, [2]);
     assert.equal(packet.entries.filter(e => e.shield).length, 1);
   } finally { MONSTER_DATABASE.delete(key); }
-}
-// Berserker's explicit self-damage does not depend on observing a net HP delta.
-{
-  const { world, player } = setup();
-  player.tracksProgression.activeStance = 'berserker-stance';
-  player.tracksProgression.equippedStances.default = 'berserker-stance';
-  setFlag(player.tracksCombat, 'stance.gate.met', false);
-  markEngaged(world, player, 1000);
-  probe(world, [player], () => updateStanceSwitch(world, BERSERKER_SELF_DAMAGE_INTERVAL_MS, 1000));
 }
 // Additional audit finding: reconstruction payment and deliberate volatile sacrifice.
 {

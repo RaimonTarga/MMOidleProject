@@ -5,11 +5,9 @@ import {
   ACTION_DATABASE,
   CONDITION_DATABASE,
   DEFAULT_RUNE_LOADOUT,
-  NO_STANCE_ID,
   analyzeRuneLoadoutConflicts,
   isRuneRuleCompatibleForArchetype,
   runeChannelLabel,
-  stanceDef,
   type EquippedRule,
 } from "@mmo-idle/shared";
 import { hudBus } from "../hudBus";
@@ -17,13 +15,11 @@ import { tutorialRuneDraftAtom } from "../tutorial/atoms";
 import {
   combatArchetypeAtom,
   attunedAbilitiesAtom,
-  equippedStancesAtom,
-  attunedStancesAtom,
   runesEquippedAtom,
   runesOwnedAtom,
 } from "../hud/atoms";
 import { GameIcon } from "./GameIcon";
-import { runeConditionIconSource, stanceIconSource } from "./conceptIcons";
+import { runeConditionIconSource } from "./conceptIcons";
 import { RuneClause, runeResponse } from "./RuneClause";
 import { composeRuneEdit } from "@mmo-idle/shared";
 import "./buildPanel.css";
@@ -34,8 +30,6 @@ export function BuildRunesTab() {
   const owned = useAtomValue(runesOwnedAtom);
   const equipped = useAtomValue(runesEquippedAtom);
   const abilities = useAtomValue(attunedAbilitiesAtom);
-  const stances = useAtomValue(attunedStancesAtom);
-  const defaultStance = useAtomValue(equippedStancesAtom).default;
   const archetype = useAtomValue(combatArchetypeAtom);
   const [rules, setRules] = useState(equipped);
   const [draft, setDraft] = useState<Draft | null>(null);
@@ -101,7 +95,7 @@ export function BuildRunesTab() {
       )
     )
       return false;
-    return (a.id !== "use-ability" || abilities.techniques.length + abilities.guards.length > 0) && (a.id !== "switch-stance" || stances.length > 0);
+    return a.id !== "use-ability" || abilities.techniques.length + abilities.guards.length > 0;
   });
   const pending: EquippedRule | null =
     draft?.conditionId && draft.actionId
@@ -110,9 +104,6 @@ export function BuildRunesTab() {
           actionId: draft.actionId,
           ...(draft.waitOutMode ? { waitOutMode: draft.waitOutMode } : {}),
           ...(draft.targetAbilityId ? { targetAbilityId: draft.targetAbilityId } : {}),
-          ...(draft.targetStanceId
-            ? { targetStanceId: draft.targetStanceId }
-            : {}),
         }
       : null;
   const response = pending ? runeResponse(pending, abilities, archetype) : null;
@@ -120,10 +111,7 @@ export function BuildRunesTab() {
   const valid =
     pending &&
     !response?.missing &&
-    isRuneRuleCompatibleForArchetype(pending, archetype) &&
-    (pending.actionId !== "switch-stance" ||
-      pending.targetStanceId === NO_STANCE_ID ||
-      stances.includes(pending.targetStanceId ?? ""));
+    isRuneRuleCompatibleForArchetype(pending, archetype);
   const replaces =
     pending &&
     rules.some(
@@ -185,7 +173,6 @@ export function BuildRunesTab() {
                         ...draft,
                         conditionId: c.id,
                         actionId: fits ? draft.actionId : "",
-                        targetStanceId: fits ? draft.targetStanceId : undefined,
                       });
                     }}
                   >
@@ -210,7 +197,7 @@ export function BuildRunesTab() {
               {draft.actionId ? <div className="rune-step-summary">
                 <GameIcon source={runeResponse({ conditionId: draft.conditionId, actionId: draft.actionId }, abilities).icon} size={28} decorative fallback="◇" />
                 <span title={response?.detail}><strong>{ACTION_DATABASE.get(draft.actionId)?.name ?? draft.actionId}</strong></span>
-                <button type="button" aria-label="Change Do response" onClick={() => setDraft({ ...draft, actionId: "", waitOutMode: undefined, targetAbilityId: undefined, targetStanceId: undefined })}>↶ Change</button>
+                <button type="button" aria-label="Change Do response" onClick={() => setDraft({ ...draft, actionId: "", waitOutMode: undefined, targetAbilityId: undefined })}>↶ Change</button>
               </div> : <div className="rune-choice-grid">
                 {actions.map((a) => {
                   const view = runeResponse(
@@ -228,10 +215,6 @@ export function BuildRunesTab() {
                           ...draft,
                           actionId: a.id,
                           waitOutMode: undefined,
-                          targetStanceId:
-                            a.id === "switch-stance"
-                              ? draft.targetStanceId
-                              : undefined,
                         })
                       }
                     >
@@ -241,51 +224,15 @@ export function BuildRunesTab() {
                         decorative
                         fallback="◇"
                       />
-                      <span>
-                        {a.id === "switch-stance" ? "Switch stance" : view.name}
-                      </span>
+                      <span>{view.name}</span>
                     </button>
                   );
                 })}
               </div>}
-              {response && draft.actionId !== "use-ability" && draft.actionId !== "switch-stance" && <p className="rune-detail">{response.detail}</p>}
+              {response && draft.actionId !== "use-ability" && <p className="rune-detail">{response.detail}</p>}
             </section>
             {draft.actionId === "wait-it-out" && <section aria-label="Wait mode"><button type="button" aria-pressed={draft.waitOutMode !== "heat-managed"} onClick={() => setDraft({ ...draft, waitOutMode: "all" })}>All eligible statuses</button><button type="button" disabled={draft.conditionId !== "always"} aria-pressed={draft.waitOutMode === "heat-managed"} onClick={() => setDraft({ ...draft, waitOutMode: "heat-managed" })}>Manage Heat</button><p>Always only. Ordinary Volcano: 25 Heat to request a break; resume at 10. Current fights finish first.</p></section>}
             {draft.actionId === "use-ability" && <section ref={destinationSection} tabIndex={-1} aria-label="Choose attuned ability" className="rune-editor__destinations"><h3>Choose attuned ability</h3><div className="rune-choice-grid">{[...abilities.techniques, ...abilities.guards].map(id => <button className="rune-ability-choice" type="button" key={id} data-tutorial-anchor={TUTORIAL_ANCHORS.runesAbility(id)} aria-pressed={draft.targetAbilityId === id} onClick={() => setDraft({ ...draft, targetAbilityId: id })}>{ABILITY_DATABASE.get(id)?.name}</button>)}</div></section>}
-            {draft.actionId === "switch-stance" && (
-              <section
-                ref={destinationSection}
-                tabIndex={-1}
-                aria-label="Choose stance"
-                className="rune-editor__destinations"
-              >
-                <h3>Choose stance</h3>
-                <div className="rune-choice-grid">
-                  {[NO_STANCE_ID, ...stances].map((id) => (
-                    <button
-                      type="button"
-                      key={id}
-                      aria-pressed={draft.targetStanceId === id}
-                      onClick={() => setDraft({ ...draft, targetStanceId: id })}
-                    >
-                      <GameIcon
-                        source={
-                          id === NO_STANCE_ID ? null : stanceIconSource(id)
-                        }
-                        size={28}
-                        decorative
-                        fallback="◇"
-                      />
-                      <span>{stanceDef(id)?.name ?? "No stance"}</span>
-                    </button>
-                  ))}
-                </div>
-                <p className="rune-detail">
-                  ↩ Otherwise return to{" "}
-                  {stanceDef(defaultStance)?.name ?? "No stance"}.
-                </p>
-              </section>
-            )}
           </div>
           <footer className="rune-draft" aria-live="polite">
             {pending ? (
@@ -314,11 +261,9 @@ export function BuildRunesTab() {
             </div>
             {pending && !valid && (
               <span className="rune-detail">
-                {pending.actionId === "switch-stance" && !pending.targetStanceId
-                  ? "Choose the stance to switch to."
-                  : response?.missing
-                    ? "Attune the target ability before adding this rule."
-                    : "Choose a compatible response."}
+                {response?.missing
+                  ? "Attune the target ability before adding this rule."
+                  : "Choose a compatible response."}
               </span>
             )}
             {replaces && (
@@ -393,12 +338,6 @@ export function BuildRunesTab() {
                         >
                           <RuneClause rule={rule} abilities={abilities} />
                           {rule.actionId === "use-ability" && <small>{runeResponse(rule, abilities).detail}</small>}
-                          {rule.actionId === "switch-stance" && (
-                            <small>
-                              ↩ Default:{" "}
-                              {stanceDef(defaultStance)?.name ?? "No stance"}
-                            </small>
-                          )}
                           {missing && (
                             <small className="rune-error">
                               Target unavailable · edit this rule

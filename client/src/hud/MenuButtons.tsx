@@ -33,7 +33,6 @@ import {
   togglePrimaryOverlay,
 } from "../input/overlayStack";
 import {
-  activeStanceAtom,
   buildPanelTabAtom,
   essencesAtom,
   passivesAtom,
@@ -47,10 +46,8 @@ import {
   craftTabAtom,
   attunedAbilitiesAtom,
   equippedRitesAtom,
-  equippedStancesAtom,
   knownAbilitiesAtom,
   knownRitesAtom,
-  knownStancesAtom,
   deathOverlayAtom,
   buildOpenAtom,
   globalMasteryAtom,
@@ -90,8 +87,8 @@ interface RightNavButtonProps {
 }
 
 /**
- * Icon-led navigation entry. Every destination is flat: Abilities, Stances,
- * Rites and Runes each get their own entry rather than hiding behind a wrapper
+ * Icon-led navigation entry. Every destination is flat: Abilities, Rites and
+ * Runes each get their own entry rather than hiding behind a wrapper
  * that expands into them.
  */
 function RightNavButton({
@@ -170,7 +167,7 @@ export function RightSidebar() {
 
   // How many recipes became makeable and have not been looked at. Replaces a
   // local counter fed by the gear-unlock toast, which could only ever see gear:
-  // techniques, stances, rites and runes unlock from biome levels and boss
+  // techniques and rites unlock from biome levels and boss
   // clears, with no event to subscribe to. This shares its state with the craft
   // list, so looking at an entry there decrements the count here.
   const makeEntries = useMakeEntries();
@@ -191,7 +188,7 @@ export function RightSidebar() {
     if (isMobile) closePrimaryOverlays();
   }, [isMobile]);
 
-  // Abilities, Stances, Rites and Runes share one dialog but each owns a rail
+  // Abilities, Rites and Runes share one dialog but each owns a rail
   // entry: an entry is selected when that dialog is open on its tab.
   const buildEntries: {
     tab: BuildPanelTab;
@@ -199,7 +196,6 @@ export function RightSidebar() {
     gate: UiUnlockSystem;
   }[] = [
     { tab: "abilities", label: "Abilities", gate: "abilities" },
-    { tab: "stances", label: "Stances", gate: "stances" },
     { tab: "rites", label: "Rites", gate: "rites" },
     { tab: "runes", label: "Runes", gate: "loadout" },
   ];

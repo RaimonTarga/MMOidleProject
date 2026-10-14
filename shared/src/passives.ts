@@ -18,7 +18,7 @@ export const DEFENSE_KEYS = [
   // invent their own %-maxHp heals — they ACTIVATE a fraction of that one rate,
   // and fractions from different sources ADD (see recoveryFraction()).
   //
-  // `-active-pct` is permanent-while-in-combat access (Squire, stances).
+  // `-active-pct` is permanent-while-in-combat access (Squire).
   'defense.recovery-active-pct',
   // Periodic pulse: every `interval-ms`, activate `pulse-pct` of Recovery for
   // `duration-ms`. The pulse refreshes its own timer rather than stacking a

@@ -6,7 +6,6 @@ import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { World } from "../src/world/World";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { setAbilityLoadout } from "../src/systems/player/economy/abilityCrafting";
-import { setStanceLoadout } from "../src/systems/player/economy/stanceCrafting";
 import { updateRuneDerivedConfig } from "../src/systems/combat/ai/runeConfig";
 import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
@@ -46,9 +45,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
         techniques: ["sweep", "binding-strike"],
         guards: ["brace", "endure"],
       },
-      knownStances: [],
-      equippedStances: { default: null },
-      activeStance: null,
       knownRites: [],
       equippedRites: [],
     },
@@ -75,14 +71,11 @@ const slices = makePlayerSlices();
 slices.tracksProgression.playerTier = 1;
 slices.tracksProgression.knownAbilities = [...ABILITY_DATABASE.keys()];
 slices.tracksProgression.biomeLevel = { plains: 1000 };
-slices.tracksProgression.knownStances = ["offensive-stance", "tanking-stance"];
 const player = world.attachPlayerEntity(slices, "attunement-test");
 player.usesAutocombat.auto = true;
 const many = { techniques: ["sweep", "slam", "imbue-lightning", "snipe"], guards: ["brace", "endure", "cleanse", "break-free"] };
 assert(setAbilityLoadout(world, player, many).success, "T1 must allow an arbitrary ability count");
 assert(player.tracksProgression.attunedAbilities.techniques.length === 4, "hidden family cap");
-assert(!setStanceLoadout(world, player, "default", "offensive-stance").success, "unattuned default accepted");
-assert(setStanceLoadout(world, player, "default", "offensive-stance", ["offensive-stance", "tanking-stance"]).success, "stance attunement failed");
 const enemy = world.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 });
 assert(enemy, "monster fixture");
 setAttackTarget(world, player, enemy.isMonster.id);

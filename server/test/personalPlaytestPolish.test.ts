@@ -3,7 +3,7 @@ import { inflateShape, segmentEntryT } from '@mmo-idle/shared';
 import { navigationPadForEntity } from '../src/systems/world/movement';
 import { updateMovement } from '../src/systems/world/movement';
 import { setMovePath } from '../src/systems/world/pathMotion';
-import { getCounter, GAME_CONFIG, MONSTER_DATABASE, STARTER_RUNE_IDS, emptyEquipment, STANCE_RECIPE_DATABASE } from '@mmo-idle/shared';
+import { getCounter, GAME_CONFIG, MONSTER_DATABASE, STARTER_RUNE_IDS, emptyEquipment } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { World } from '../src/world/World';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
@@ -29,8 +29,7 @@ function playerSlices(id: string, x = 405, y = 400, nodeId = NODE): PersistedPla
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [], knownAbilities: [],
-      attunedAbilities: { techniques: [], guards: [] }, knownStances: [],
-      equippedStances: { default: null }, activeStance: null,
+      attunedAbilities: { techniques: [], guards: [] },
       knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
@@ -352,7 +351,4 @@ for (const [id, raw] of [['cinder-shell-magma-salamander', 650], ['caldera-sover
   updateBossPatterns(world, 100, now + 100000);
   assert(!boss.runsBossPattern, `${id}: finisher is once per life`);
 }
-const early = [...STANCE_RECIPE_DATABASE.values()].filter(r => r.tier === 2).map(r => r.stanceId).sort();
-assert(JSON.stringify(early) === JSON.stringify(['defensive-stance', 'fleeting-stance', 'offensive-stance']), 'T2 has exactly the three introductory stances');
-for (const recipe of STANCE_RECIPE_DATABASE.values()) assert([2, 3, 4].includes(recipe.tier), `${recipe.id}: stance has a supported tier`);
 console.log('personalPlaytestPolish: ok');

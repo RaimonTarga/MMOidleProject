@@ -101,9 +101,6 @@ function buildBenchPlayer(
       // single-slot `{ technique, guard }` until the benches were typechecked
       // (2026-08-02) — a malformed slice that no type ever saw.
       attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [],
-      equippedStances: { default: null },
-      activeStance: null,
       knownRites: [],
       equippedRites: [],
     },

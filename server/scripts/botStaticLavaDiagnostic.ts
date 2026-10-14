@@ -31,7 +31,7 @@ for (const recoverFirst of [true, false]) {
         ...(recoverFirst ? [{ conditionId: 'always' as const, actionId: 'wait-for-regen' as const }] : []),
       ],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [], equippedStances: { default: null }, activeStance: null, knownRites: [], equippedRites: [],
+      knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: { unlockedSkills: [], passives: {}, selectedClass: null, selectedSubVariant: null, selectedRange: null, combatArchetype: null },

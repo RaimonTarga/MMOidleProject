@@ -6,7 +6,6 @@ import { useSystemVisibility } from "../hud/useSystemVisibility";
 import { buildSectionIconSource } from "./systemIcons";
 import { GameIcon } from "./GameIcon";
 import { AbilitiesPanelContent } from "./AbilitiesPanel";
-import { StancesPanelContent } from "./StancesPanel";
 import { RitesPanelContent } from "./RitesPanel";
 import { BuildRunesTab } from "./BuildRunesTab";
 import { DialogHeader, DialogTab, DialogTabs, GameDialog } from "../hud/primitives";
@@ -23,7 +22,6 @@ interface Props {
  */
 const TABS: { id: BuildPanelTab; label: string; gate: keyof SystemVisibility }[] = [
   { id: "abilities", label: "Abilities", gate: "abilities" },
-  { id: "stances", label: "Stances", gate: "stances" },
   { id: "rites", label: "Rites", gate: "rites" },
   { id: "runes", label: "Runes", gate: "loadout" },
 ];
@@ -79,7 +77,6 @@ export function BuildPanel({ onClose }: Props) {
 
       <div id={`build-panel-${effectiveTab}`} className="build-dialog__body" role="tabpanel">
         {effectiveTab === "abilities" && <AbilitiesPanelContent />}
-        {effectiveTab === "stances" && <StancesPanelContent />}
         {effectiveTab === "rites" && <RitesPanelContent />}
         {effectiveTab === "runes" && <BuildRunesTab />}
       </div>

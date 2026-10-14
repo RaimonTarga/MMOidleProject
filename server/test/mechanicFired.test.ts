@@ -64,7 +64,6 @@ function makeSlices(id: string): PersistedPlayerSlices {
       bossesCleared: [], clearedNodes: [],
       runesOwned: [], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: { ...emptyEquipment() }, itemUpgrades: {} },

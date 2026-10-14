@@ -461,7 +461,6 @@ function run(cell: Night5Cell, seed: number) {
         skillPath: [...cell.build.skillPath],
         gearItemIds: { ...cell.build.gearItemIds },
         upgradeLevel: declared.upgradeLevel,
-        stance: declared.stance,
         abilities: declared.abilities,
         runeRules: declared.runeRules,
         sources: declared.sources,
@@ -474,8 +473,6 @@ function run(cell: Night5Cell, seed: number) {
       appliedPackage: {
         selectedSubVariant: view.selectedSubVariant,
         selectedRange: view.selectedRange,
-        activeStance: view.activeStance,
-        attunedStances: [...view.attunedStances ?? []],
         attunedAbilities: structuredClone(view.attunedAbilities),
         runesEquipped: structuredClone(view.runesEquipped),
         equipment: { ...view.equipment },

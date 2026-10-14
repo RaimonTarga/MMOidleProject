@@ -16,7 +16,6 @@ import type { MonsterBehavior } from '../../data/monsters/behavior';
 import type { HasHitbox } from '../../hitbox/types';
 import type { EquippedRule } from '../../runeDatabase';
 import type { AttunedAbilities } from '../../abilities';
-import type { EquippedStances } from '../../stances';
 import type { EquippedRites } from '../../rites';
 import type { ClassConfig } from '../../classKits/configTypes';
 
@@ -168,7 +167,7 @@ export interface HasStatus {
   pendingHeal?: number;
   /**
    * Players only — the live attack-cadence multiplier from TEMPORARY haste and
-   * slow effects (Frenzy, the stance windows, frost/ambient ramps).
+   * slow effects (Frenzy, frost/ambient ramps).
    *
    * Below 1 is faster, above 1 is slower, exactly 1 (or absent) means nothing is
    * modifying the cadence. Mirrored because those effects are deliberately never
@@ -269,15 +268,6 @@ export interface UsesAutocombat extends AutocombatConfig {
   autoTraverse: boolean;
 }
 
-/**
- * Runtime ownership marker for the live stance selector. Presence means Rune
- * and default-stance automation yield to the named attuned stance or reserved
- * neutral posture until runtime ownership is released. Never persisted.
- */
-export interface OverridesStance {
-  stanceId: string;
-}
-
 /** Runtime, server-owned manual ability requests waiting for legal activation. */
 export interface QueuesAbilities {
   abilityIds: string[];
@@ -291,7 +281,6 @@ export interface RuneTraceRule {
   waitOutMode?: "all" | "heat-managed";
   conditionId: string;
   actionId: string;
-  targetStanceId?: string;
   targetAbilityId?: string;
 }
 
@@ -383,22 +372,8 @@ export interface TracksProgression {
    */
   attunedAbilities: AttunedAbilities;
   /**
-   * Stances the player has learned (crafted) — the slottable pool
-   * (system rework Step 10). Stored here like runes/abilities (build/loadout data).
-   */
-  knownStances: string[];
-  attunedStances?: string[];
-  /** Free default stance; automated destinations are stored on Rune rules. */
-  equippedStances: EquippedStances;
-  /**
-   * Runtime: which posture is currently folded into stats. Initialized to
-   * `equippedStances.default` on attach and reconciled each tick by the stance-switch
-   * system; a switch triggers a stat recalc. Networked so the client shows it.
-   */
-  activeStance: string | null;
-  /**
    * Rites the player has learned (crafted) — the slottable pool (system rework
-   * Step 11). Stored here like runes/abilities/stances (build/loadout data).
+   * Step 11). Stored here like runes/abilities (build/loadout data).
    */
   knownRites: string[];
   /**

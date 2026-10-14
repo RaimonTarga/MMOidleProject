@@ -2,7 +2,7 @@
  * ONE WRITER for "how hard does an incoming harmful status land on this player?".
  *
  * Several systems want to shorten or soften a debuff on its way in — mobility-boot
- * tenacity (Graveyard stacks, Trench), the Warding stance, and whatever gear line
+ * tenacity (Graveyard stacks, Trench) and whatever gear line
  * grows the axis next. They must not each scale the value independently: two
  * callers that both read the raw duration and both multiply it would each treat
  * the other's output as the clean base, exactly the ratchet `monsterControl.ts`

@@ -1,5 +1,4 @@
 import type { AttunedAbilities } from "../abilities";
-import type { EquippedStances } from "../stances";
 import type { EssenceType } from "../items";
 
 /**
@@ -11,9 +10,6 @@ export interface SystemVisibilityInput {
   globalMastery: number;
   knownAbilities: readonly string[];
   attunedAbilities: AttunedAbilities;
-  knownStances: readonly string[];
-  equippedStances: EquippedStances;
-  activeStance: string | null;
   knownRites: readonly string[];
   equippedRites: readonly string[];
   essences?: Partial<Record<EssenceType, number>>;
@@ -31,7 +27,6 @@ export interface SystemVisibilityInput {
 export interface SystemVisibility {
   mastery: boolean;
   abilities: boolean;
-  stances: boolean;
   rites: boolean;
   /** Materials reveal when the player first receives economy currency. */
   materials: boolean;
@@ -97,7 +92,6 @@ export function resolveSystemVisibility(
     (input.inventory?.length ?? 0) > 0 ||
     input.hasEquipment === true ||
     input.knownAbilities.length > 0 ||
-    input.knownStances.length > 0 ||
     input.knownRites.length > 0;
 
   return {
@@ -117,11 +111,6 @@ export function resolveSystemVisibility(
     abilityDock: abilities,
     mastery: masteryIsVisible(input.globalMastery),
     abilities,
-    stances:
-      input.playerTier >= 2 ||
-      input.knownStances.length > 0 ||
-      input.equippedStances.default !== null ||
-      input.activeStance !== null,
     rites:
       input.playerTier >= 3 ||
       input.knownRites.length > 0 ||

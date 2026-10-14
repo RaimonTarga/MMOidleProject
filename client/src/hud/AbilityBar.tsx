@@ -3,14 +3,11 @@ import { useAtomValue } from "jotai";
 import {
   ABILITY_IMBUE_EFFECT_ID,
   ABILITY_SIDESTEP_EFFECT_ID,
-  NO_STANCE_ID,
-  STANCE_SWITCH_COOLDOWN_MS,
   abilityCooldownMs,
   abilityDef,
   attunedForFamily,
   guardEffectIdForAbility,
   recoveryEffectIdForAbility,
-  stanceDef,
   type AbilityDef,
   type AbilityFamily,
   type PlayerBuff,
@@ -21,17 +18,12 @@ import {
   abilityCooldownSampleAtom,
   abilityCooldownStartedAtAtom,
   activeBuffsAtom,
-  activeStanceAtom,
   armedAbilityIdAtom,
   attackTargetIdAtom,
   attunedAbilitiesAtom,
-  attunedStancesAtom,
-  autoAtom,
-  manualStanceOverrideAtom,
   playerTierAtom,
   queuedAbilityIdsAtom,
   runesEquippedAtom,
-  stanceCooldownStartedAtAtom,
 } from "./atoms";
 import type { AbilityCooldownSample } from "./atoms";
 import { GameIcon } from "../ui/GameIcon";
@@ -48,11 +40,9 @@ import {
 import "./hud.css";
 import "./statusFeedback.css";
 import { abilityTiming } from "../ui/describe/abilityTiming";
-import { stanceIconSource } from "../ui/conceptIcons";
 import { hudBus } from "../hudBus";
 import {
   ABILITY_HOTKEY_ACTIONS,
-  STANCE_HOTKEY_ACTIONS,
   bindingToLabel,
   keybindsAtom,
 } from "../settings/keybinds";
@@ -441,91 +431,6 @@ function DesktopAbilityFamily({
   );
 }
 
-function StanceCooldownSweep({ remainingPct }: { remainingPct: number }) {
-  if (remainingPct <= 0) return null;
-  return (
-    <span
-      className="combat-stance-control__cooldown-sweep"
-      style={{
-        background: `conic-gradient(from -90deg, rgba(0,0,0,0.7) ${remainingPct}%, transparent ${remainingPct}%)`,
-      }}
-      aria-hidden="true"
-    />
-  );
-}
-
-function StanceControl({ now }: { now: number }) {
-  const attuned = useAtomValue(attunedStancesAtom);
-  const active = useAtomValue(activeStanceAtom);
-  const manual = useAtomValue(manualStanceOverrideAtom);
-  const auto = useAtomValue(autoAtom);
-  const cooldownStartedAt = useAtomValue(stanceCooldownStartedAtAtom);
-  const bindings = useAtomValue(keybindsAtom);
-  if (attuned.length === 0) return null;
-
-  const cooldownElapsedMs = Math.max(0, now - cooldownStartedAt);
-  const cooldownRemainingMs = cooldownStartedAt > 0
-    ? Math.max(0, STANCE_SWITCH_COOLDOWN_MS - cooldownElapsedMs)
-    : 0;
-  const cooldownRemainingPct = (cooldownRemainingMs / STANCE_SWITCH_COOLDOWN_MS) * 100;
-  const cooldownLabel = cooldownRemainingMs > 0
-    ? `; stance switch ready in ${(cooldownRemainingMs / 1_000).toFixed(1)} seconds`
-    : "";
-  const neutralHotkey = bindingToLabel(bindings['stance.neutral']);
-
-  return (
-    <div className="combat-stance-control" role="group" aria-label="Live stance control">
-      <button
-        type="button"
-        className={`combat-stance-control__button combat-stance-control__button--neutral${manual === NO_STANCE_ID ? " is-selected" : ""}${active === null ? " is-current" : ""}`}
-        aria-label={`Neutral stance; hotkey ${neutralHotkey}${cooldownLabel}`}
-        aria-pressed={manual === NO_STANCE_ID}
-        title={`${auto
-          ? `Neutral stance${active === null ? " — currently active" : ""}; Auto Combat retains Rune/default control`
-          : `Neutral stance${active === null ? " — currently active" : ""}; hold no stance manually`}${cooldownLabel}`}
-        onClick={() => hudBus.requestSetStanceControl(NO_STANCE_ID)}
-      >
-        <span className="combat-stance-control__icon"><GameIcon source={null} size={25} decorative fallback="◇" /></span>
-        <StanceCooldownSweep remainingPct={cooldownRemainingPct} />
-        <span className="combat-stance-control__key-hint" aria-hidden="true">{neutralHotkey.replace('Shift+', '⇧')}</span>
-      </button>
-      {attuned.map((stanceId, index) => {
-        const stance = stanceDef(stanceId);
-        if (!stance) return null;
-        const selected = manual === stanceId;
-        const current = active === stanceId;
-        const hotkey = STANCE_HOTKEY_ACTIONS[index]
-          ? bindingToLabel(bindings[STANCE_HOTKEY_ACTIONS[index]])
-          : "—";
-        return (
-          <button
-            key={stanceId}
-            type="button"
-            className={`combat-stance-control__button${selected ? " is-selected" : ""}${current ? " is-current" : ""}`}
-            aria-pressed={selected}
-            aria-label={`${stance.name}; hotkey ${hotkey}${cooldownLabel}`}
-            title={`${auto
-              ? `${stance.name}${current ? " — currently active" : ""}; Auto Combat retains Rune/default control`
-              : `${stance.name}${current ? " — currently active" : ""}; select manually`}${cooldownLabel}`}
-            onClick={() => hudBus.requestSetStanceControl(stanceId)}
-          >
-            <span className="combat-stance-control__icon">
-              <GameIcon
-                source={stanceIconSource(stance.id)}
-                size={25}
-                decorative
-                fallback={stance.name.slice(0, 1)}
-              />
-            </span>
-            <StanceCooldownSweep remainingPct={cooldownRemainingPct} />
-            <span className="combat-stance-control__key-hint" aria-hidden="true">{hotkey.replace('Shift+', '⇧')}</span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
 export function AbilityBar() {
   const isMobile = useIsMobile();
   const equipped = useAtomValue(attunedAbilitiesAtom);
@@ -539,9 +444,8 @@ export function AbilityBar() {
   const queuedAbilityIds = useAtomValue(queuedAbilityIdsAtom);
   const targetId = useAtomValue(attackTargetIdAtom);
   const bindings = useAtomValue(keybindsAtom);
-  const attunedStances = useAtomValue(attunedStancesAtom);
 
-  // Tick a wall clock so ability and stance cooldown sweeps / flashes animate.
+  // Tick a wall clock so ability cooldown sweeps / flashes animate.
   // The bar only mounts while at least one combat control exists, so this stays cheap.
   const [now, setNow] = useState(() => Date.now());
 
@@ -562,13 +466,13 @@ export function AbilityBar() {
   const hasAny = equippedDefs.length > 0;
 
   useEffect(() => {
-    if (!hasAny && attunedStances.length === 0) return;
+    if (!hasAny) return;
     const id = window.setInterval(() => setNow(Date.now()), 120);
     return () => window.clearInterval(id);
-  }, [hasAny, attunedStances.length]);
+  }, [hasAny]);
 
   const keyHints = ABILITY_HOTKEY_ACTIONS.map((action) => bindingToLabel(bindings[action]));
-  if (!hasAny && attunedStances.length === 0) return null;
+  if (!hasAny) return null;
 
   const slots: { ability: AbilityDef; status: SlotStatus }[] = equippedDefs.map(
     ({ ability, slot, index }) => {
@@ -619,7 +523,6 @@ export function AbilityBar() {
         zIndex: 12,
       }}
     >
-      <StanceControl now={now} />
       {hasAny && <div className="mobile-combat-abilities">
         {slots.map(({ ability, status }, index) => (
           <AbilityIcon
@@ -643,7 +546,6 @@ export function AbilityBar() {
       aria-label="Combat controls"
     >
       <div className="combat-control-stack">
-        <StanceControl now={now} />
         {hasAny && <div className="desktop-combat-abilities__layout" role="list">
           {slots.map(({ ability, status }, index) => (
             <DesktopAbilityFamily

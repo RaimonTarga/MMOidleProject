@@ -8,7 +8,6 @@ import {
   runeIdsForArchetype,
   emptyAttunedAbilities,
   emptyEquippedRites,
-  emptyEquippedStances,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { resetPlayerProgress } from "../src/admin/gameActions";
@@ -50,9 +49,6 @@ const slices: PersistedPlayerSlices = {
     runesEquipped: [{ conditionId: "target-is-elite", actionId: "focus-elites" }],
     knownAbilities: ["whirlwind"],
     attunedAbilities: { techniques: ["whirlwind"], guards: [] },
-    knownStances: ["offensive-stance"],
-    equippedStances: { default: "offensive-stance" },
-    activeStance: "offensive-stance",
     knownRites: ["rite-a"],
     equippedRites: ["rite-a"],
   },
@@ -108,12 +104,6 @@ assert(
     JSON.stringify(emptyAttunedAbilities()),
   "equipped abilities should reset",
 );
-assert(progression.knownStances.length === 0, "known stances should reset");
-assert(
-  JSON.stringify(progression.equippedStances) === JSON.stringify(emptyEquippedStances()),
-  "equipped stances should reset",
-);
-assert(progression.activeStance === null, "active stance should reset");
 assert(progression.knownRites.length === 0, "known rites should reset");
 assert(
   JSON.stringify(progression.equippedRites) === JSON.stringify(emptyEquippedRites()),

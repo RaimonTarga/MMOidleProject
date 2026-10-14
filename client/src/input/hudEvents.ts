@@ -8,9 +8,6 @@ import {
   sendUseAbility,
   sendManualReload,
   sendRecallSummons,
-  sendCraftStanceRecipe,
-  sendSetStanceLoadout,
-  sendSetStanceControl,
   sendCraftRiteRecipe,
   sendSetRiteLoadout,
   sendEquipItem,
@@ -119,21 +116,6 @@ export function attachHudEvents(scene: GameScene): () => void {
   intents.on("recallSummons", () => {
     if (isDeathOverlayActive()) return;
     sendRecallSummons(scene.socket);
-  });
-
-  intents.on("craftStanceRecipe", (recipeId) => {
-    if (isDeathOverlayActive()) return;
-    sendCraftStanceRecipe(scene.socket, recipeId);
-  });
-
-  intents.on("setStanceLoadout", (payload) => {
-    if (isDeathOverlayActive()) return;
-    sendSetStanceLoadout(scene.socket, payload);
-  });
-
-  intents.on("setStanceControl", (stanceId) => {
-    if (isDeathOverlayActive()) return;
-    sendSetStanceControl(scene.socket, stanceId, notifyCombatControlResult);
   });
 
   intents.on("craftRiteRecipe", (recipeId) => {

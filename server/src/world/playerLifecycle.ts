@@ -35,12 +35,10 @@ export function attachPlayerEntity(
     persistedRules,
     owned,
     player.usesSkills.combatArchetype,
-    new Set(player.tracksProgression.attunedStances ?? []),
     new Set(attunedAbilityIds(player.tracksProgression.attunedAbilities)),
   );
   player.tracksProgression.runesEquipped = sanitizedRules;
   player.tracksProgression.equippedRites = validRiteIds(player.tracksProgression.equippedRites ?? []).filter(id => (player.tracksProgression.knownRites ?? []).includes(id));
-  player.tracksProgression.activeStance = player.tracksProgression.equippedStances?.default ?? null;
 
   const entity: PlayerEntity = {
     entityId: socketId,

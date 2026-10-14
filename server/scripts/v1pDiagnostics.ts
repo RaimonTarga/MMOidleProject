@@ -44,8 +44,8 @@ function blank(id: string): PersistedPlayerSlices {
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 }, catalysts: {}, catalystProgress: {},
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {}, bossesCleared: [], clearedNodes: [],
       visitedNodes: [], runesOwned: [], runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [],
-      attunedAbilities: emptyAttunedAbilities(), knownStances: [], equippedStances: emptyEquippedStances(),
-      activeStance: null, knownRites: [], equippedRites: [] },
+      attunedAbilities: emptyAttunedAbilities(), equippedStances: emptyEquippedStances(),
+      knownRites: [], equippedRites: [] },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: { unlockedSkills: [], passives: {}, selectedClass: null, selectedSubVariant: null, selectedRange: null, combatArchetype: null },
   };

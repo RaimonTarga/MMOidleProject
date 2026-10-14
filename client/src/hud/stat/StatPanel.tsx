@@ -151,8 +151,8 @@ export function StatPanel() {
   const dotPct      = player && maxHpVal > 0 ? Math.min(hpPct, (player.incomingDot / maxHpVal) * 100) : 0;
   const safePct     = Math.max(0, hpPct - dotPct);
   const healPct     = player && maxHpVal > 0 ? Math.min(100 - hpPct, (player.pendingHeal / maxHpVal) * 100) : 0;
-  // EFFECTIVE cadence, not base. Temporary haste/slow (Frenzy, the stance
-  // windows, frost/ambient ramps) is applied as a multiplier at the server's
+  // EFFECTIVE cadence, not base. Temporary haste/slow (Frenzy, frost/ambient
+  // ramps) is applied as a multiplier at the server's
   // cadence gate and never written into `attackCooldown` — so reading the raw
   // stat here showed a number that never moved, and every one of those effects
   // looked like it did nothing at all.

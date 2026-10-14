@@ -3,14 +3,14 @@ import { execFileSync } from 'node:child_process';
 import {
   bossSealSourcesAtTier, biomeLevelCap, sealsHeldAtTier, sealsRequiredForTier, BIOME_DATABASE,
   upgradeCeilingFromGlobalMastery, requiredBiomeLevelForUpgrade, ESSENCE_TYPES,
-  ABILITY_RECIPE_DATABASE, STANCE_RECIPE_DATABASE, RITE_RECIPE_DATABASE,
-  isAbilityRecipeUnlocked, isStanceRecipeUnlocked, isRiteRecipeUnlocked,
+  ABILITY_RECIPE_DATABASE, RITE_RECIPE_DATABASE,
+  isAbilityRecipeUnlocked, isRiteRecipeUnlocked,
   resolveSummonerProfile,
   NODE_BIOMES, GAME_CONFIG, SKILL_TREE, ITEM_DATABASE, RECIPE_DATABASE,
   ABILITY_DATABASE, MONSTER_DATABASE, RESOLVED_NODE_FEATURES,
   canUnlockSkill, composePlayerView, globalMastery,
   normalizeEquipment, normalizeAttunedAbilities, validRiteIds,
-  validStanceIds, sanitizeRuneLoadout, runeIdsForArchetype, initSummonsMinions,
+  sanitizeRuneLoadout, runeIdsForArchetype, initSummonsMinions,
   buildNavGrid, moverOverlapsBlockShapes, navigationBodyHalfExtents,
   type ProgressionCheckpointCapture, type ProgressionCheckpointState,
   type ProgressionCheckpointRestore, type PlayerView,
@@ -34,7 +34,7 @@ function stable(value: unknown): string {
 export function checkpointDefinitionSections(): Record<string,string> {
   return Object.fromEntries(Object.entries({ config:GAME_CONFIG,world:NODE_BIOMES,features:RESOLVED_NODE_FEATURES,
     skills:[...SKILL_TREE],items:[...ITEM_DATABASE],recipes:[...RECIPE_DATABASE],abilities:[...ABILITY_DATABASE],
-    monsters:[...MONSTER_DATABASE],stances:[...STANCE_RECIPE_DATABASE],rites:[...RITE_RECIPE_DATABASE]
+    monsters:[...MONSTER_DATABASE],rites:[...RITE_RECIPE_DATABASE]
   }).map(([key,value])=>[key,createHash('sha256').update(stable(value)).digest('hex')]));
 }
 export function checkpointDefinitionsHash(): string { return createHash('sha256').update(stable(checkpointDefinitionSections())).digest('hex'); }
@@ -51,7 +51,6 @@ export function checkpointGameplayState(state: ProgressionCheckpointState): unkn
   const copy = structuredClone(state);
   copy.usesSkills.passives = {};
   copy.hasPosition.speed = 0;
-  copy.tracksProgression.activeStance = copy.tracksProgression.equippedStances.default;
   if (copy.summonerState) copy.summonerState = initSummonsMinions({ slots: copy.summonerState.slotIds.map((slotId,i)=>({ slotId, role: copy.summonerState!.slotRoles[i] })) });
   return copy;
 }
@@ -73,7 +72,7 @@ function validatePersistent(s: ProgressionCheckpointState): void {
   finiteTree(p); finiteTree(s.holdsInventory);
   requireThat(Number.isInteger(p.playerTier) && p.playerTier >= 1 && p.playerTier <= 6, 'Unsupported tier');
   const unique = (values: readonly string[], label: string) => requireThat(Array.isArray(values) && new Set(values).size === values.length, `Duplicate ${label}`);
-  for (const key of ['unlockedRecipes','bossesCleared','clearedNodes','visitedNodes','runesOwned','knownAbilities','knownStances','knownRites','equippedRites','attunedStances'] as const) unique(p[key] ?? [],key);
+  for (const key of ['unlockedRecipes','bossesCleared','clearedNodes','visitedNodes','runesOwned','knownAbilities','knownRites','equippedRites'] as const) unique(p[key] ?? [],key);
   unique(s.holdsInventory.inventory,'inventory'); unique(skills.unlockedSkills,'skills');
   unique([...p.attunedAbilities.techniques,...p.attunedAbilities.guards],'attuned abilities');
   for (const key of p.bossesCleared) { if(key==='ultimate:void-overlord') continue; /* legacy token in old saves; the encounter was deleted 2026-09-27 */ const [group,raw]=key.split(':');const tier=Number(raw);requireThat(Number.isInteger(tier) && tier<=p.playerTier && bossSealSourcesAtTier(tier).includes(group), `Invalid boss clear ${key}`); }
@@ -82,7 +81,6 @@ function validatePersistent(s: ProgressionCheckpointState): void {
   for (const type of ESSENCE_TYPES) requireThat(Number.isFinite(p.essences[type]) && p.essences[type]>=0, `Missing essence ${type}`);
   const gates={biomeLevel:p.biomeLevel,bossesCleared:p.bossesCleared};
   for (const id of p.knownAbilities) { const r=[...ABILITY_RECIPE_DATABASE.values()].find(r=>r.abilityId===id); requireThat(r && isAbilityRecipeUnlocked(r,gates), `Unreachable ability ${id}`); }
-  for (const id of p.knownStances) { const r=[...STANCE_RECIPE_DATABASE.values()].find(r=>r.stanceId===id); requireThat(r && isStanceRecipeUnlocked(r,gates), `Unreachable stance ${id}`); }
   for (const id of p.knownRites) { const r=[...RITE_RECIPE_DATABASE.values()].find(r=>r.riteId===id); requireThat(r && isRiteRecipeUnlocked(r,gates), `Unreachable Rite ${id}`); }
   const selection = { unlockedSkills: [] as string[], selectedClass: null as string|null, selectedSubVariant: null as typeof skills.selectedSubVariant, selectedRange: null as string|null };
   let spent = 0;
@@ -112,11 +110,10 @@ function validatePersistent(s: ProgressionCheckpointState): void {
   for (const id of p.knownAbilities) requireThat(ABILITY_DATABASE.has(id), `Unknown ability ${id}`);
   requireThat(stable(normalizeAttunedAbilities(p.attunedAbilities)) === stable(p.attunedAbilities), 'Invalid attuned ability order');
   requireThat([...p.attunedAbilities.techniques,...p.attunedAbilities.guards].every(id=>p.knownAbilities.includes(id)), 'Unlearned ability');
-  requireThat(stable(validStanceIds(p.knownStances))===stable(p.knownStances) && stable(validRiteIds(p.knownRites))===stable(p.knownRites), 'Unknown stance or Rite');
-  requireThat((p.attunedStances??[]).every(id=>p.knownStances.includes(id)) && (!p.equippedStances.default || (p.attunedStances??[]).includes(p.equippedStances.default)), 'Unlearned stance');
+  requireThat(stable(validRiteIds(p.knownRites))===stable(p.knownRites), 'Unknown Rite');
   requireThat(p.equippedRites.every(id=>p.knownRites.includes(id)), 'Unlearned Rite');
   requireThat(stable([...runeIdsForArchetype(skills.combatArchetype)].sort()) === stable([...p.runesOwned].sort()), 'Rune ownership incompatible with current definitions');
-  requireThat(stable(sanitizeRuneLoadout(p.runesEquipped,new Set(p.runesOwned),skills.combatArchetype,new Set(p.attunedStances??[]),new Set([...p.attunedAbilities.techniques,...p.attunedAbilities.guards]))) === stable(p.runesEquipped), 'Invalid ordered Rune loadout');
+  requireThat(stable(sanitizeRuneLoadout(p.runesEquipped,new Set(p.runesOwned),skills.combatArchetype,new Set([...p.attunedAbilities.techniques,...p.attunedAbilities.guards]))) === stable(p.runesEquipped), 'Invalid ordered Rune loadout');
 }
 export function captureProgressionCheckpoint(world: World, p: PlayerEntity, boundaryId: string): ProgressionCheckpointCapture {
   requireThat(process.env.NODE_ENV !== 'production', 'Checkpoints are development-only');
@@ -140,7 +137,6 @@ export function restoreProgressionCheckpoint(world: World, player: PlayerEntity,
   requireThat(player.tracksProgression.playerTier === 0 && player.usesSkills.unlockedSkills.length === 0, 'Restore requires a fresh character');
   const state = structuredClone(c.persistent);
   state.usesSkills.passives = {};
-  state.tracksProgression.activeStance = state.tracksProgression.equippedStances.default;
   if(state.summonerState) state.summonerState = initSummonsMinions({slots: state.summonerState.slotIds.map((slotId,i)=>({slotId,role:state.summonerState!.slotRoles[i]}))});
   const stageId = `${player.isPlayer.id}-checkpoint-validation`;
   requireThat(!world.getPlayerEntity(stageId), 'Concurrent restore rejected');

@@ -1031,7 +1031,7 @@ const abilities: AbilityDef[] = [
     // The first CHARGE-based window in the roster.
     //
     // Charges rather than seconds is the whole identity. Every other offensive
-    // window in the game (the stance windows, Overdrive) races a clock,
+    // window in the game (Overdrive) races a clock,
     // which punishes exactly the builds that attack slowly and rewards the ones
     // that were already fastest. A charge window pays the same to everyone: five
     // hits are five hits whether they take three seconds or ten. The cost of

@@ -1,6 +1,5 @@
 import type { EquipmentSlot } from "../items";
 import type { AttunedAbilities } from "../abilities";
-import type { StanceSlot } from "../stances";
 import type { AutocombatConfig } from "../components/core/networkedSlices";
 import type { EquippedRule } from "../runeDatabase";
 import type { ClassConfig } from "../classKits/configTypes";
@@ -132,11 +131,9 @@ export interface ServerToClientEvents {
   "crafting:result": (result: { success: boolean; reason?: string }) => void;
   /** Immediate result of learning an ability (crafting an ability recipe). */
   "ability:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
-  /** Immediate result of learning a stance (crafting a stance recipe). */
-  "stance:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
   /** Immediate result of learning a rite (crafting a rite recipe). */
   "rite:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
-  "build:loadoutResult": (result: { system: "abilities" | "runes" | "stances" | "rites"; success: boolean; reason?: string }) => void;
+  "build:loadoutResult": (result: { system: "abilities" | "runes" | "rites"; success: boolean; reason?: string }) => void;
   /** The answer to `class:setConfig`: accepted, or every reason it was not. */
   "class:configResult": (result: { ok: boolean; reasons?: string[] }) => void;
   /** Immediate result of an item upgrade attempt. */
@@ -246,12 +243,6 @@ export interface ClientToServerEvents {
   "ability:setLoadout": (payload: { equipped: AttunedAbilities }) => void;
   /** Attempt to activate one currently attuned ability through normal authority. */
   "ability:use": (abilityId: string, ack?: (result: CombatControlResult) => void) => void;
-  /** Learn a stance by crafting its recipe. Server validates gate + cost. */
-  "stance:craftRecipe": (recipeId: string) => void;
-  /** Equip/clear a stance in a slot. `stanceId: null` clears the slot. */
-  "stance:setLoadout": (payload: { slot: StanceSlot; stanceId: string | null; attunedStances?: string[] }) => void;
-  /** Select a live attuned/neutral stance; null is the internal automation release. */
-  "stance:setControl": (payload: { stanceId: string | null }, ack?: (result: CombatControlResult) => void) => void;
   /** Learn a rite by crafting its recipe. Server validates gate + cost. */
   "rite:craftRecipe": (recipeId: string) => void;
   /** Set the full equipped-rite list (interchangeable slots; length ≤ slot count). */

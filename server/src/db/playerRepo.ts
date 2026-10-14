@@ -24,7 +24,6 @@ import {
   normalizeEquipment,
   emptyEquipment,
   emptyAttunedAbilities,
-  emptyEquippedStances,
   emptyEquippedRites,
   globalMastery,
   runeIdsForArchetype,
@@ -434,10 +433,6 @@ export async function listCharacters(db: DB): Promise<AdminCharacterRecord[]> {
       equipmentCount,
       knownAbilities: slices.tracksProgression.knownAbilities,
       attunedAbilities: slices.tracksProgression.attunedAbilities,
-      attunedStances: slices.tracksProgression.attunedStances,
-      knownStances: slices.tracksProgression.knownStances,
-      equippedStances: slices.tracksProgression.equippedStances,
-      activeStance: slices.tracksProgression.activeStance,
       knownRites: slices.tracksProgression.knownRites,
       equippedRites: slices.tracksProgression.equippedRites,
       lastPlayedAt: character.lastPlayedAt,
@@ -625,9 +620,10 @@ function hydratePlayerSlices(
   for (const key of ['shards', 'capstones', 'cardFiringsTaught', 'abilityNodes']) {
     delete (tracksProgression as unknown as Record<string, unknown>)[key];
   }
-  // Crafted runes went with the Runic Points (class-first rework D2): rune
-  // ownership comes from the class now, so the crafted list is dropped on load.
-  for (const key of ['runeRecipesCrafted']) {
+  // Crafted runes went with the Runic Points, and the stances went (class-first
+  // rework D2): rune ownership comes from the class now, and no posture is
+  // learned or held, so a save written before that drops them on load.
+  for (const key of ['runeRecipesCrafted', 'knownStances', 'attunedStances', 'equippedStances', 'activeStance']) {
     delete (tracksProgression as unknown as Record<string, unknown>)[key];
   }
   // The +N ladder is retired on every slot: refund and drop any itemUpgrades
@@ -762,10 +758,6 @@ function buildFreshSlices(
       runesEquipped:    [...DEFAULT_RUNE_LOADOUT],
       knownAbilities:   [],
       attunedAbilities: emptyAttunedAbilities(),
-      attunedStances:   [],
-      knownStances:     [],
-      equippedStances:  emptyEquippedStances(),
-      activeStance:     null,
       knownRites:       [],
       equippedRites:    emptyEquippedRites(),
     },

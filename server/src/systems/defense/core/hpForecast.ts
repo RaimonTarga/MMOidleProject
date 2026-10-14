@@ -30,7 +30,7 @@ function forecastIncomingDot(player: PlayerEntity, world: World): number {
     const mitigatedPerTick = perTick * (1 - drForDot) * (1 - dotResist);
     const tickMs = dot.data['tickIntervalMs'] || 1000;
     const ticksLeft = Math.ceil(dot.remainingMs / tickMs);
-    total += mitigatedPerTick * ticksLeft * playerFinalDamageMultipliers(player, world).taken;
+    total += mitigatedPerTick * ticksLeft * playerFinalDamageMultipliers(player).taken;
   }
 
   // Deferred hit-to-DoT debt — the whole pool will drain onto the player as HP loss.
@@ -53,7 +53,7 @@ export function mirrorHpForecast(world: World): void {
     // and never written into `attackCooldown`, so it has to be mirrored
     // explicitly or nothing that displays the stat can ever see it. Same
     // function the gate itself uses — see `combat/engine/attackCadence.ts`.
-    const finalDamage = playerFinalDamageMultipliers(player, world);
+    const finalDamage = playerFinalDamageMultipliers(player);
     player.hasStatus.finalDamageDealtMult = finalDamage.dealt;
     player.hasStatus.finalDamageTakenMult = finalDamage.taken;
     player.hasStatus.attackCadenceMult = attackCadenceMult(player.tracksCombat);

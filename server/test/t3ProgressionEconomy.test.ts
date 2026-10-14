@@ -5,13 +5,12 @@
  * current-state docs.
  *
  * Covers the retirement-aware mastery architecture, the 23 T2→T3 successions, the T3 gear
- * cost curves / hybrid splits / catalyst schedule, and the ability / stance / rite / Core
+ * cost curves / hybrid splits / catalyst schedule, and the ability / rite / Core
  * prices and reward placement.
  */
 import {
   RECIPE_DATABASE,
   ABILITY_RECIPE_DATABASE,
-  STANCE_RECIPE_DATABASE,
   RITE_RECIPE_DATABASE,
   NODE_BIOMES,
   BIOME_START_TIER_BY_GROUP,
@@ -298,49 +297,6 @@ for (const recipe of T3_GEAR) {
 }
 
 {
-  // Playtest correction: T3 has six specialized stances, including Tanking and Enraged.
-  // They sit early in their own T3 bands and use local essence plus two live
-  // catalysts; no Stance recipe has a boss-clear gate.
-  const STANCES: Array<{
-    id: string;
-    group: string;
-    level: number;
-    family: string;
-    cost: Partial<Record<EssenceType, number>>;
-  }> = [
-    { id: "stance-recipe-tanking", group: "mountain", level: 13, family: "heavy", cost: { blue: 220 } },
-    { id: "stance-recipe-enraged", group: "cave", level: 14, family: "dominion", cost: { red: 230 } },
-    { id: "stance-recipe-warding", group: "swamp", level: 13, family: "fortified", cost: { purple: 220 } },
-    { id: "stance-recipe-berserker", group: "cave", level: 13, family: "dominion", cost: { red: 230 } },
-    { id: "stance-recipe-predator", group: "tundra", level: 2, family: "dominion", cost: { blue: 210 } },
-    { id: "stance-recipe-execute", group: "desert", level: 7, family: "dominion", cost: { yellow: 230 } },
-  ];
-  assert(STANCES.length === 6, "T3 must have exactly six placed Stances");
-  for (const spec of STANCES) {
-    const recipe = STANCE_RECIPE_DATABASE.get(spec.id);
-    assert(!!recipe, `${spec.id}: recipe must exist`);
-    assert(recipe!.tier === 3, `${spec.id}: must stay tier 3`);
-    assert(recipe!.recipeGroup === spec.group, `${spec.id}: biome gate must be ${spec.group}`);
-    assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: gate must be ${spec.group} L${spec.level}`);
-    assert(JSON.stringify(recipe!.cost) === JSON.stringify(spec.cost), `${spec.id}: essence cost changed unexpectedly`);
-    assert(total(recipe!.cost) >= 180 && total(recipe!.cost) <= 250, `${spec.id}: T3 stance essence total is outside 180-250`);
-    assert(!recipe!.requiredBossClear, `${spec.id}: must not require a boss clear`);
-  }
-  const t3StanceIds = [...STANCE_RECIPE_DATABASE.values()]
-    .filter((recipe) => recipe.tier === 3)
-    .map((recipe) => recipe.id)
-    .sort();
-  assert(
-    JSON.stringify(t3StanceIds) === JSON.stringify(STANCES.map((spec) => spec.id).sort()),
-    `T3 stance roster must be exactly the six (got ${t3StanceIds.join(", ")})`,
-  );
-  assert(
-    ![...STANCE_RECIPE_DATABASE.values()].some((recipe) => recipe.tier === 3 && recipe.stanceId === "powering-up-stance"),
-    "Powering Up must not be placed in T3",
-  );
-}
-
-{
   // T3 keeps six final Core homes. The three mature capstones move to T4; the
   // remaining six stay deliberate late-band purchases with their live mechanics.
   const CORES: Array<{
@@ -376,14 +332,6 @@ for (const recipe of T3_GEAR) {
   assert(
     JSON.stringify(t3CoreIds) === JSON.stringify(CORES.map((spec) => spec.id).sort()),
     `T3 Core roster must be exactly the six intended homes (got ${t3CoreIds.join(", ")})`,
-  );
-}
-
-{
-  const recuperating = STANCE_RECIPE_DATABASE.get("stance-recipe-recuperating")!;
-  assert(
-    recuperating.tier === 4 && recuperating.recipeGroup === "graveyard" && recuperating.requiredBiomeLevel === 2,
-    "Recuperating Stance must be a Graveyard T4 reward, not a T3 reward",
   );
 }
 

@@ -19,7 +19,7 @@ export const STAT_HELP: Record<string, string> = {
   dps:
     'Estimated sustained damage per second, worked out from your class mechanic — including a Slinger’s direct, flat on-hit, and weapon-reservoir damage or a Conduit formation’s weighted offense. A planning number, not a measurement: it is before enemy plating and damage reduction, and it cannot see positioning, conditional proc damage, abilities, or spec behaviours that only exist mid-fight. Hover the figure in the character panel for its full working.',
   atkSpeed:
-    'How often you actually attack right now, as attacks-per-second and the cooldown between swings. Permanent attack-speed bonuses add up and set cooldown = base / (1 + total). TEMPORARY haste and slows — Frenzy, stance windows, frost and chill — are applied on top and shown as a percentage next to the base value.',
+    'How often you actually attack right now, as attacks-per-second and the cooldown between swings. Permanent attack-speed bonuses add up and set cooldown = base / (1 + total). TEMPORARY haste and slows — Frenzy, frost and chill — are applied on top and shown as a percentage next to the base value.',
   plating:
     'Flat damage removed from every incoming hit, subtracted BEFORE damage reduction. Best against many small hits, weak against a few big ones. Does not reduce damage-over-time at all.',
   damageReduction:

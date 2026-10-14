@@ -42,7 +42,6 @@ function makeSlices(id: string, opts: { essence?: number; nodeId?: string } = {}
       bossesCleared: [], clearedNodes: [],
       runesOwned: [], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: { ...emptyEquipment() }, itemUpgrades: {} },

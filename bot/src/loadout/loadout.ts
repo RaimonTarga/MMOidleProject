@@ -1,6 +1,6 @@
 /**
  * NOT USED BY THE HARNESS. The bot's loadout is Rune rules only (`./runes.ts`,
- * `./apply.ts`). This full-build validator (abilities, stances and rites) is
+ * `./apply.ts`). This full-build validator (abilities and rites) is
  * kept only because the server's bench imports
  * `validateBuild` from this path: `server/bench/balance/ttkSurveySpec.ts`
  * (whose `prepareSurveyBot` about twenty server tests call),
@@ -8,7 +8,7 @@
  * with those systems, together with its server importers.
  */
 import {
-  ABILITY_DATABASE, STANCE_DATABASE, RITE_DATABASE, attunedAbilityIds,
+  ABILITY_DATABASE, RITE_DATABASE, attunedAbilityIds,
   sanitizeRuneLoadout,
   type AttunedAbilities, type EquippedRule, type PlayerView,
 } from "@mmo-idle/shared";
@@ -17,7 +17,6 @@ import {
 export interface DesiredBuild {
   abilities: AttunedAbilities;
   runeRules: EquippedRule[];
-  stances: { attuned: string[]; default: string | null };
   rites: string[];
 }
 
@@ -32,14 +31,14 @@ export class BuildError extends Error {
 
 export function observedBuild(self: PlayerView): DesiredBuild {
   return structuredClone({ abilities: self.attunedAbilities, runeRules: self.runesEquipped,
-    stances: { attuned: self.attunedStances, default: self.equippedStances.default }, rites: self.equippedRites });
+    rites: self.equippedRites });
 }
 
 /** Fixed field order; array order is meaningful, object insertion order is not. */
 export function buildKey(build: DesiredBuild): string {
   return JSON.stringify([build.abilities.techniques, build.abilities.guards,
-    build.runeRules.map(r => [r.conditionId, r.actionId, r.targetAbilityId ?? null, r.targetStanceId ?? null]),
-    build.stances.attuned, build.stances.default, build.rites]);
+    build.runeRules.map(r => [r.conditionId, r.actionId, r.targetAbilityId ?? null]),
+    build.rites]);
 }
 
 export function validateBuild(build: DesiredBuild, self: PlayerView): BuildIssue[] {
@@ -47,9 +46,8 @@ export function validateBuild(build: DesiredBuild, self: PlayerView): BuildIssue
   const add = (code: BuildFailureCode, reason: string) => issues.push({ code, reason });
   const ids = (value: unknown): value is string[] => Array.isArray(value) && value.every(id => typeof id === "string");
   if (!build || !ids(build.abilities?.techniques) || !ids(build.abilities?.guards)
-    || !ids(build.stances?.attuned) || !(build.stances.default === null || typeof build.stances.default === "string")
     || !ids(build.rites) || !Array.isArray(build.runeRules) || build.runeRules.some(r => !r || typeof r.conditionId !== "string" || typeof r.actionId !== "string")) {
-    return [{ code: "MALFORMED_BUILD", reason: "Expected abilities, runeRules, stances and rites using the current schema." }];
+    return [{ code: "MALFORMED_BUILD", reason: "Expected abilities, runeRules and rites using the current schema." }];
   }
   for (const [family, values] of Object.entries(build.abilities)) {
     if (family !== "techniques" && family !== "guards") { add("MALFORMED_BUILD", `Unknown ability family ${family}`); continue; }
@@ -61,7 +59,6 @@ export function validateBuild(build: DesiredBuild, self: PlayerView): BuildIssue
     }
   }
   for (const [values, known, database, label] of [
-    [build.stances.attuned, self.knownStances, STANCE_DATABASE, "stance"],
     [build.rites, self.knownRites, RITE_DATABASE, "rite"],
   ] as const) {
     if (new Set(values).size !== values.length) add("MALFORMED_BUILD", `Duplicate ${label}`);
@@ -70,11 +67,10 @@ export function validateBuild(build: DesiredBuild, self: PlayerView): BuildIssue
       else if (!known.includes(id)) add("MISSING_UNLOCK", `${label} ${id} is not learned`);
     }
   }
-  if (build.stances.default !== null && !build.stances.attuned.includes(build.stances.default)) add("MALFORMED_BUILD", "Default stance must be attuned");
   for (const [index, rule] of build.runeRules.entries()) {
     if (!self.runesOwned.includes(rule.conditionId) || !self.runesOwned.includes(rule.actionId)) add("MISSING_UNLOCK", `Rune rule ${index} uses an unowned fragment`);
     const valid = sanitizeRuneLoadout([rule], new Set(self.runesOwned), self.combatArchetype,
-      new Set(build.stances.attuned), new Set(attunedAbilityIds(build.abilities)));
+      new Set(attunedAbilityIds(build.abilities)));
     if (valid.length !== 1 || buildKey({ ...build, runeRules: valid }) !== buildKey({ ...build, runeRules: [rule] })) {
       add("MALFORMED_BUILD", `Rune rule ${index} has invalid compatibility, target or obsolete schema`);
     }

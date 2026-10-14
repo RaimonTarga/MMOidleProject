@@ -56,7 +56,7 @@ function slices(id: string): PersistedPlayerSlices {
       playerTier: 1, currentSkillTier: 1, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
       knownAbilities: ['sidestep'], attunedAbilities: { techniques: [], guards: ['sidestep'] },
-      knownStances: [], equippedStances: { default: null }, activeStance: null, knownRites: [], equippedRites: [],
+      knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

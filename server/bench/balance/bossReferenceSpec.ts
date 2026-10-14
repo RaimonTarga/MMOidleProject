@@ -206,7 +206,5 @@ export function assertBossReferenceDefinitions(): void {
   const canonical = canonicalLoadout(BOSSREF_TIER);
   assert.deepEqual(BOSSREF_CELLS[1]!.abilities, canonical.attunedAbilities,
     'Case B abilities no longer match the canonical bench loadout');
-  assert.equal(canonical.equippedStances.default, BOSSREF_B_STANCE,
-    'Case B stance no longer matches the canonical bench stance');
   assert.equal(BOSSREF_B_RULES.length, 0, 'the legacy package equips no rune rules');
 }

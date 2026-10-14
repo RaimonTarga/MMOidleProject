@@ -29,7 +29,6 @@ function fixture(archetype: 'cadence' | 'cooldown' | 'reload' | 'dot' | 'energy'
       questProgress: {}, playerTier: 4, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
@@ -68,7 +67,6 @@ for (const mode of ['direct', 'proc', 'aoe', 'dot', 'laser'] as const) {
   player.dealsDamage.attack = 100;
   player.dealsDamage.onHitDamage = 20;
   player.usesSkills.passives = { 'core.damage-dealt-pct': 0.4 };
-  player.tracksProgression.activeStance = 'offensive-stance';
   const before = target.hasHealth.hp;
   if (mode === 'direct') attack(world, player, target);
   if (mode === 'proc') applyPlayerProcDamage(world, player, target, 120);
@@ -83,7 +81,7 @@ for (const mode of ['direct', 'proc', 'aoe', 'dot', 'laser'] as const) {
     attachComponent(world, target, 'hasDot', {});
     updateDotArchetype(world, 100);
   }
-  eq(before - target.hasHealth.hp, 193, `${mode}: 120 × Core 1.4 × stance 1.15, once`);
+  eq(before - target.hasHealth.hp, 168, `${mode}: 120 × Core 1.4, once`);
 }
 // Incoming direct, AoE and DoT use the same independent layers.
 for (const mode of ['direct', 'aoe', 'dot'] as const) {
@@ -94,7 +92,6 @@ for (const mode of ['direct', 'aoe', 'dot'] as const) {
   player.mitigatesDamage.damageReduction = 0.5;
   if (player.evadesHits) player.evadesHits.dodgeRate = 0;
   player.usesSkills.passives = { 'core.damage-taken-pct': -0.2 };
-  player.tracksProgression.activeStance = 'tanking-stance';
   monster.dealsDamage.attack = 100;
   const hp = player.hasHealth.hp;
   if (mode === 'direct') runMonsterAttack(world, monster, player, 1000);
@@ -106,9 +103,9 @@ for (const mode of ['direct', 'aoe', 'dot'] as const) {
     updateDotArchetype(world, 100);
   }
   // DoTs pay GAME_CONFIG.DOT_DR_SHARE (half) of DR since 2026-09-27; hits pay it all.
-  eq(hp - player.hasHealth.hp, mode === 'dot' ? 45 : 30, `${mode}: 100 × .5 DR (half on DoT) × .8 Core × .75 stance`);
+  eq(hp - player.hasHealth.hp, mode === 'dot' ? 60 : 40, `${mode}: 100 × .5 DR (half on DoT) × .8 Core`);
   mirrorHpForecast(world);
-  eq(composePlayerView(player)!.finalDamageTakenMult, 0.6, 'sheet includes independent taken layers');
+  eq(composePlayerView(player)!.finalDamageTakenMult, 0.8, 'sheet includes independent taken layers');
 }
 {
   const { player } = fixture(null);
@@ -126,10 +123,6 @@ for (const mode of ['direct', 'aoe', 'dot'] as const) {
   eq(same.before.stats.dps, same.after.stats.dps, 'equal swap cannot invent DPS');
   const removed = compareEquipmentStats({ ...input, equipment: { ...input.equipment, core: 'core-force' } }, 'core', null);
   eq(removed.after.stats.dps, normal.stats.dps, 'unequip returns to rebuilt baseline');
-  for (const hpFraction of [1, 0.5]) {
-    const p = previewEquipmentStats({ ...input, activeStance: 'perfection-stance', hpFraction });
-    eq(p.stats.damageDealtMult, hpFraction === 1 ? 1.2 : 1, 'HP gate identical on both comparison sides');
-  }
   for (const archetype of ['cadence', 'cooldown', 'reload', 'dot', 'energy', 'summoner']) {
     const { player: p } = fixture(archetype as any);
     const base = { attack: 100, onHitDamage: 20, attackCooldownMs: 1000, archetype, passives: p.usesSkills.passives,

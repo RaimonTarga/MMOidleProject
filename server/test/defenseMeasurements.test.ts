@@ -18,7 +18,7 @@ function run(observe:boolean){
  const world=createBalanceWorld();
  const cell=rootOnlySlinger();
  const {bot}=prepareSurveyBot(world,cell,{x:400,y:400});
- bot.usesSkills.passives={};bot.evadesHits!.dodgeRate=0;bot.tracksProgression.activeStance=null;
+ bot.usesSkills.passives={};bot.evadesHits!.dodgeRate=0;
  if(bot.hasBarrier)bot.hasBarrier.current=0;
  applyWard(world,bot,30,5000);
  applyStatusEffect(bot.tracksCombat,{id:'ability-guard',sourceId:bot.isPlayer.id,remainingMs:3000,data:{drPct:.5}});
@@ -43,7 +43,7 @@ console.log('defenseMeasurements: ok');
  const world=createBalanceWorld();
  const cell=rootOnlySlinger();
  const {bot}=prepareSurveyBot(world,cell,{x:400,y:400});
- bot.usesSkills.passives={};bot.evadesHits!.dodgeRate=0;bot.tracksProgression.activeStance=null;
+ bot.usesSkills.passives={};bot.evadesHits!.dodgeRate=0;
  if(bot.hasBarrier)bot.hasBarrier.current=0;
  bot.hasHealth.maxHp=1000;bot.hasHealth.hp=1000;bot.mitigatesDamage.plating=15;bot.mitigatesDamage.damageReduction=.25;
  const monster=world.createMonster(cell.nodeId,'magma-brute',{x:400,y:400})!;monster.dealsDamage.attack=20;

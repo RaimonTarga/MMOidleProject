@@ -66,7 +66,6 @@ assertBoss3Definitions();
       const src = origin.find((c) => c.className === cell.className);
       assert(!!src, `${cell.id}: no Boss2 origin for root ${cell.className}`);
       const mine = resolveSurveyPackage(cell), theirs = resolveSurveyPackage(src);
-      assert(mine.stance === theirs.stance, `${cell.id}: stance drift from its Boss2 origin`);
       assert(JSON.stringify(mine.abilities) === JSON.stringify(theirs.abilities),
         `${cell.id}: ability drift from its Boss2 origin (order included)`);
       assert(JSON.stringify(mine.runeRules) === JSON.stringify(theirs.runeRules),
@@ -98,7 +97,6 @@ assertBoss3Definitions();
       const a = resolveSurveyPackage(ref[i]!), c = resolveSurveyPackage(sub[i]!);
       assert(ref[i]!.className === sub[i]!.className, `${b.name}: arms must pair root-for-root at index ${i}`);
       // Everything the package resolves EXCEPT the guard list.
-      assert(a.stance === c.stance, `${b.name}/${ref[i]!.className}: stance differs between arms`);
       assert(a.upgradeLevel === c.upgradeLevel, `${b.name}/${ref[i]!.className}: upgrade level differs between arms`);
       assert(JSON.stringify(a.runeRules) === JSON.stringify(c.runeRules),
         `${b.name}/${ref[i]!.className}: rune rules differ between arms — no ability-specific rule may be added`);

@@ -120,7 +120,6 @@ import {
   engageSequenceSlamReady,
 } from '../ai/engageSequence';
 import { harmfulStatusDurationMult } from "../status/harmfulStatus";
-import { stanceAttackSpeedBonus } from "../../player/stances/stanceBehaviors";
 import { attackCadenceMult } from "./attackCadence";
 import type {
   MinionEntity,
@@ -2425,15 +2424,15 @@ export function updateCombat(world: World, dt: number, now: number) {
 
     if (target) {
       // Every temporary haste and slow — Tundra's frost ramp, the ambient node
-      // ramp, Frenzy, and the stance-owned windows — is applied as a MULTIPLIER
+      // ramp, Frenzy — is applied as a MULTIPLIER
       // here rather than written into `attackCooldown`, so the stat-recalc-owned
       // base is never mutated (two mutators each treating the other's output as
       // "the clean base" ratchet the cooldown toward zero).
       //
       // The maths lives in `attackCadence.ts` because the HUD mirror has to use
       // the exact same function. When it was inline here, the stat sheet read
-      // the untouched `attackCooldown` and showed no change at all — Frenzy,
-      // both stance windows and both slows worked but looked inert.
+      // the untouched `attackCooldown` and showed no change at all — Frenzy
+      // and both slows worked but looked inert.
       const cadenceMult = attackCadenceMult(player.tracksCombat);
       if (
         now - player.performsAttack.lastAttackAt >=

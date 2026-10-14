@@ -10,20 +10,18 @@ import {
   MOVEMENT_ACTIONS,
   matchesHoldStillKey,
   matchesKey,
-  stanceSlotForKey,
   type ActionId,
 } from '../settings/keybinds';
 import {
   deathOverlayAtom,
   attunedAbilitiesAtom,
-  attunedStancesAtom,
   combatArchetypeAtom,
   debugPanelOpenAtom,
   dungeonAtom,
   flashEmoteWheel,
   type EmoteWheelDirection,
 } from '../hud/atoms';
-import { emoteForWheelDirection, NODE_BIOMES, NO_STANCE_ID } from '@mmo-idle/shared';
+import { emoteForWheelDirection, NODE_BIOMES } from '@mmo-idle/shared';
 import { cancelActiveMove, setHoldStill, setKeyboardVector } from './movement';
 import { closeTopmostOverlay, togglePrimaryOverlay } from './overlayStack';
 import { canActivateDungeonAltar } from '../scenes/game/dungeonAltar';
@@ -158,22 +156,6 @@ export function attachKeyboard(scene: GameScene): () => void {
     if (event.repeat) return;
 
     if (!dead && !event.ctrlKey && !event.metaKey && !event.altKey) {
-      if (matchesKey(event, 'stance.neutral', bindings)) {
-        event.preventDefault();
-        hudBus.requestSetStanceControl(NO_STANCE_ID);
-        return;
-      }
-
-      const stanceSlot = stanceSlotForKey(event, bindings);
-      if (stanceSlot !== null) {
-        const stanceId = store.get(attunedStancesAtom)[stanceSlot];
-        if (stanceId) {
-          event.preventDefault();
-          hudBus.requestSetStanceControl(stanceId);
-        }
-        return;
-      }
-
       if (
         store.get(combatArchetypeAtom) === 'reload'
         && matchesKey(event, 'class.reload', bindings)

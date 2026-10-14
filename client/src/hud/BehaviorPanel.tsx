@@ -1,14 +1,12 @@
 import { useEffect, useId, useState } from "react";
 import { useAtom, useAtomValue } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import { CONDITION_DATABASE, abilityDef, stanceDef } from "@mmo-idle/shared";
+import { CONDITION_DATABASE, abilityDef } from "@mmo-idle/shared";
 import {
   abilityFiredAtAtom,
-  activeStanceAtom,
   autoAtom,
   autoIntentAtom,
   attunedAbilitiesAtom,
-  knownStancesAtom,
   partyAtom,
   playerIdAtom,
   playerTierAtom,
@@ -19,7 +17,6 @@ import { GameIcon } from "../ui/GameIcon";
 import {
   conceptAbilityIconSource,
   runeConditionIconSource,
-  stanceIconSource,
 } from "../ui/conceptIcons";
 import { runeResponse } from "../ui/RuneClause";
 import { DisclosureHeader } from './primitives';
@@ -33,8 +30,6 @@ export function BehaviorPanel() {
   const playerId = useAtomValue(playerIdAtom);
   const party = useAtomValue(partyAtom);
   const abilities = useAtomValue(attunedAbilitiesAtom);
-  const stance = useAtomValue(activeStanceAtom);
-  const known = useAtomValue(knownStancesAtom);
   const fired = useAtomValue(abilityFiredAtAtom);
   const tier = useAtomValue(playerTierAtom);
   const [expanded, setExpanded] = useAtom(expandedAtom);
@@ -63,7 +58,6 @@ export function BehaviorPanel() {
       : null;
   const justFired =
     recent && now - recent[1] < 2400 ? abilityDef(recent[0]) : null;
-  const activeStance = stanceDef(stance);
   return (
     <section
       className="hud-panel behavior-panel"
@@ -77,17 +71,6 @@ export function BehaviorPanel() {
         controls={detailsId}
         onToggle={() => setExpanded((value) => !value)}
       />
-      {known.length > 0 && (
-        <div className="behavior-panel__stance" title={activeStance?.blurb}>
-          <GameIcon
-            source={stance ? stanceIconSource(stance) : null}
-            size={24}
-            decorative
-            fallback="◇"
-          />
-          <strong>{activeStance?.name ?? "No stance"}</strong>
-        </div>
-      )}
       <div className="behavior-panel__action">
         {action && (
           <GameIcon source={action.icon} size={24} decorative fallback="◇" />

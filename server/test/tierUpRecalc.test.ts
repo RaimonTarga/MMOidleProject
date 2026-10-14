@@ -51,7 +51,6 @@ function makePlayer(id: string, playerTier: number, bossesCleared: string[]): Pe
       playerTier, currentSkillTier: 0, bossesCleared, clearedNodes: [],
       runesOwned: [], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },

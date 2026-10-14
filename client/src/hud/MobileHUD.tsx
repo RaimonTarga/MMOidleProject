@@ -15,7 +15,7 @@ import { ArchetypeMechanics } from './stat/mechanics';
 import { BossFrame } from './BossFrame';
 import { ReadoutBar } from './ReadoutBar';
 import { FRAME_TOKENS } from '../render/readoutTokens';
-import { NODE_BIOMES, BIOME_DATABASE, stanceDef } from '@mmo-idle/shared';
+import { NODE_BIOMES, BIOME_DATABASE } from '@mmo-idle/shared';
 import { SettingsPanel } from './settings/SettingsPanel';
 import { CharacterSelectPrompt } from './CharacterSelectPrompt';
 import { useIsMobile } from './useIsMobile';
@@ -27,7 +27,6 @@ import { useNewEntries } from '../ui/crafting/useNewEntries';
 import { eligibleMakeKeys, useMakeEntries } from '../ui/crafting/useMakeEntries';
 import type { UiUnlockSystem } from './uiUnlocks';
 import {
-  activeStanceAtom,
   autoAtom,
   buildPanelTabAtom,
   bestiaryOpenAtom,
@@ -103,8 +102,6 @@ function MobileHUDContent() {
   const skillPoints = useAtomValue(skillPointsAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
   const dead = useAtomValue(deathOverlayAtom).active;
-  const activeStance = useAtomValue(activeStanceAtom);
-  const activeStanceName = stanceDef(activeStance)?.name ?? 'No stance';
 
   // Phase 5 approved reveal gates, previously desktop-only. The same resolver
   // and ownership overrides run here, so a migrated save never loses a
@@ -231,7 +228,6 @@ function MobileHUDContent() {
       unlockSystems: [
         'loadout',
         'abilities',
-        'stances',
         'rites',
         'mastery',
         'combatLog',
@@ -241,11 +237,10 @@ function MobileHUDContent() {
     },
   ];
 
-  // Abilities, Stances, Rites and Runes each get their own row; they share one
+  // Abilities, Rites and Runes each get their own row; they share one
   // dialog, so a row is "open the dialog on this tab".
   const buildRows: { tab: BuildPanelTab; label: string; gate: UiUnlockSystem; fallback: string }[] = [
     { tab: 'abilities', label: 'Abilities', gate: 'abilities', fallback: 'A' },
-    { tab: 'stances', label: 'Stances', gate: 'stances', fallback: 'S' },
     { tab: 'rites', label: 'Rites', gate: 'rites', fallback: 'R' },
     { tab: 'runes', label: 'Runes', gate: 'loadout', fallback: 'U' },
   ];
@@ -346,9 +341,6 @@ function MobileHUDContent() {
         <BossFrame placement="strip" />
 
         <div className="mhud-context">
-          <span className="mhud-stance" title={`Active stance: ${activeStanceName}`}>
-            {activeStanceName}
-          </span>
           {/* Compact archetype mechanic — shares the desktop renderer */}
           <div className="mhud-mech">
             <ArchetypeMechanics compact />

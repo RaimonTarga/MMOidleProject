@@ -131,10 +131,6 @@ export interface T1SnapshotState {
   attunedAbilities: PlayerView["attunedAbilities"];
   runesOwned: string[];
   runesEquipped: PlayerView["runesEquipped"];
-  knownStances: string[];
-  attunedStances?: string[];
-  equippedStances: PlayerView["equippedStances"];
-  activeStance: string | null;
   knownRites: string[];
   equippedRites: PlayerView["equippedRites"];
   derivedStats: T1SnapshotDerivedStats;
@@ -236,21 +232,17 @@ export function tierEntryProfileFromT1Snapshot(
   if (state.skillPoints !== (entryTier === 3 && !range ? 1 : 0)) {
     throw new Error("Snapshot skill points do not match its tier and preserved branch");
   }
-  // Passive nodes are derived from persistent skill, stance, equipment, and
-  // item-upgrade state. Keep them in the snapshot for auditability, but let the
+  // Passive nodes are derived from persistent skill, equipment and item-upgrade
+  // state. Keep them in the snapshot for auditability, but let the
   // authoritative tier-entry path rebuild them from that persistent state.
   const expectedSkills = rootOnly ? [classRoot] : [classRoot, frameId];
   if (range) expectedSkills.push(range.id);
   if (JSON.stringify(state.unlockedSkills) !== JSON.stringify(expectedSkills)) {
     throw new Error("T1 handoff snapshot has an unsupported skill-tree unlock set");
   }
-  if (state.activeStance !== state.equippedStances.default) {
-    throw new Error("T1 handoff snapshot active stance differs from its preserved default stance");
-  }
   assertUnique("inventory", state.inventory);
   assertUnique("knownAbilities", state.knownAbilities);
   assertUnique("runesOwned", state.runesOwned);
-  assertUnique("knownStances", state.knownStances);
   assertUnique("knownRites", state.knownRites);
   assertUnique("bossesCleared", state.bossesCleared);
   assertUnique("clearedNodes", state.clearedNodes);
@@ -324,9 +316,6 @@ export function tierEntryProfileFromT1Snapshot(
     runesEquipped: state.runesEquipped
       .filter((rule) => !(rule.actionId === "use-ability" && rule.targetAbilityId && isRetiredAbilityId(rule.targetAbilityId)))
       .map((rule) => ({ ...rule })),
-    knownStances: [...state.knownStances],
-    attunedStances: [...(state.attunedStances ?? [])],
-    equippedStances: { ...state.equippedStances },
     knownRites: [...state.knownRites],
     equippedRites: [...state.equippedRites],
   };

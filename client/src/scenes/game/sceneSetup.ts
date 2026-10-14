@@ -770,11 +770,6 @@ function connectSocket(scene: GameScene): () => void {
         new CustomEvent("hud:craftResult", { detail: result }),
       );
     },
-    onStanceCraftResult: (result) => {
-      window.dispatchEvent(
-        new CustomEvent("hud:craftResult", { detail: result }),
-      );
-    },
     onRiteCraftResult: (result) => {
       window.dispatchEvent(
         new CustomEvent("hud:craftResult", { detail: result }),

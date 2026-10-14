@@ -5,7 +5,7 @@
  * in seconds.
  *
  * WHY CHARGES. Every other offensive window in the game races a clock: Frenzy,
- * the stance windows, Overdrive. A clock quietly pays the most to whoever was
+ * Overdrive. A clock quietly pays the most to whoever was
  * already attacking fastest and punishes the builds that swing slowly, which is
  * the opposite of what a "your next few strikes" fantasy promises. A charge
  * window pays every build the same: five hits are five hits whether they take

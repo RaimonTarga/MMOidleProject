@@ -182,8 +182,7 @@ mechanicEffects: {},
   // T3 cores are late-band premium answers: level 17-18 in returning T1 biomes,
   // 11-12 in the Jungle/Desert continuation band, and 5-6 in Tundra/Volcanic.
   // T4 cores use the later bands: Mountain L22, Volcanic L10, and Graveyard L4.
-  // Their Stance answers arrive earlier in each biome; the economy is authored in
-  // the owning recipe files without changing any Core mechanics.
+  // The economy is authored in the owning recipe files without changing any Core mechanics.
   //
   // Core mechanics are unchanged by the 2026-09-04 reward-placement pass. The T2
   // economy intentionally makes these late-biome capstones a deliberate save.

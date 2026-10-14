@@ -37,7 +37,6 @@ import { updateAutoTargets } from "../systems/combat/ai/autoTarget";
 import { updateRuneDerivedConfig } from "../systems/combat/ai/runeConfig";
 import { updateAbilityFiring } from "../systems/player/abilities/abilityFiring";
 import { updateAbilityCasts, updateAbilityCharges } from "../systems/player/abilities/abilityCasting";
-import { updateStanceSwitch } from "../systems/player/stances/stanceSwitch";
 import { updateCombatTransitions } from "../systems/combat/ai/engagement";
 import { updateAutoTraverse } from "../systems/world/autoTraverse";
 import { updateAutoIntent } from "../systems/world/autoIntent";
@@ -459,7 +458,6 @@ export class World {
     // before combat resolves.
     updateAbilityCasts(this, now);
     updateAbilityCharges(this, now);
-    updateStanceSwitch(this, dt, now);
     updateKnockback(this, dt);
     // With knockback, and for the same reason: a component that owns one monster's
     // position for a bounded window has to write it before movement and AI look at it.

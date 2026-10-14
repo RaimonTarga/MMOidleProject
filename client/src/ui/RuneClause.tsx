@@ -1,11 +1,9 @@
 import {
   ACTION_DATABASE,
   CONDITION_DATABASE,
-  NO_STANCE_ID,
   abilityDef,
   attunedForFamily,
   runeActionArchetypeNote,
-  stanceDef,
   type AttunedAbilities,
   type CombatArchetype,
   type EquippedRule,
@@ -15,7 +13,6 @@ import {
   conceptAbilityIconSource,
   runeActionIconSource,
   runeConditionIconSource,
-  stanceIconSource,
 } from "./conceptIcons";
 
 
@@ -27,22 +24,6 @@ export function runeResponse(
   if (rule.actionId === "use-ability") {
     const ability = abilityDef(rule.targetAbilityId);
     return { name: ability?.name ?? "Choose ability", icon: ability ? conceptAbilityIconSource(ability.id) : runeActionIconSource(rule.actionId), missing: !ability || ![...abilities.techniques, ...abilities.guards].includes(ability.id), detail: ability ? `Fires ${ability.name} while this situation holds, whenever it is off cooldown.` : "Choose an attuned ability. Learn and attune tools before targeting them." };
-  }
-  if (rule.actionId === "switch-stance") {
-    const stance = stanceDef(rule.targetStanceId);
-    return {
-      name:
-        rule.targetStanceId === NO_STANCE_ID
-          ? "No stance"
-          : (stance?.name ?? "Choose a stance"),
-      icon: stance
-        ? stanceIconSource(stance.id)
-        : runeActionIconSource(rule.actionId),
-      missing: !stance && rule.targetStanceId !== NO_STANCE_ID,
-      detail:
-        stance?.blurb ??
-        "Return to your default posture when this rule no longer applies.",
-    };
   }
   if (rule.actionId === "wait-it-out" && rule.waitOutMode === "heat-managed") return { name: "Wait It Out / Manage Heat", icon: runeActionIconSource(rule.actionId), missing: false, detail: "Ordinary Volcano only: 25 Heat to request a break; resume at 10. Current fights finish first. Other afflictions do not extend this wait." };
   const action = ACTION_DATABASE.get(rule.actionId);

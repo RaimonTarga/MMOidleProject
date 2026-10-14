@@ -1,4 +1,4 @@
-import type { StanceModifiers, StatEffects } from '@mmo-idle/shared';
+import type { StatEffects } from '@mmo-idle/shared';
 import { STAT_HELP } from '../../hud/stat/statHelp';
 import type { IconSource } from '../GameIcon';
 import { statIconSource } from '../systemIcons';
@@ -7,7 +7,7 @@ import { statIconSource } from '../systemIcons';
  * `StatEffects` as player-facing rows: full label, formatted value, and the same
  * explanatory copy the character sheet uses.
  *
- * Every surface that grants stat deltas — skill nodes, stances — renders through
+ * Every surface that grants stat deltas — skill nodes — renders through
  * this, so "+0.1 attackSpeedPct" is never what the player is asked to read.
  */
 
@@ -174,66 +174,4 @@ export function statEffectChipValue(key: keyof StatEffects, value: number): stri
 
 export function statEffectGlyph(key: keyof StatEffects): IconSource | null {
   return STAT_EFFECT_META[key]?.glyph ?? null;
-}
-
-// ── Stance postures ───────────────────────────────────────────────────────────
-//
-// A stance's modifiers are all percentages and deliberately do NOT share the
-// `StatEffects` shape (see the authoring contract in shared/src/stances.ts), but
-// the player must not be able to tell: they render as the same rows, with the same
-// glyphs and the same help copy, as a skill node's stat deltas.
-
-interface StanceModifierMeta {
-  label: string;
-  help?: string;
-  /** Reuses a STAT_EFFECT_META entry for glyph + help, so one stat looks one way. */
-  like: keyof StatEffects;
-  format: (value: number) => string;
-  /** Set where a negative value is the improvement (damage taken). */
-  lowerIsBetter?: boolean;
-}
-
-const STANCE_MODIFIER_META: Record<keyof StanceModifiers, StanceModifierMeta> = {
-  damageDealtPct: { label: 'Final damage dealt', like: 'attack', format: signedPct, help: 'Multiplies final direct, on-hit, damage-over-time and summon damage. Included in estimated DPS.' },
-  attackSpeedPct: { label: 'Attack Speed',  like: 'attackSpeedPct',  format: signedPct },
-  platingPct:     { label: 'Plating',       like: 'plating',         format: signedPct },
-  moveSpeedPct:   { label: 'Move Speed',    like: 'speed',           format: signedPct },
-  evasion:        { label: 'Evasion',       like: 'evasion',         format: signedPct },
-  damageTakenPct: {
-    label: 'Final damage taken',
-    help: 'Multiplies damage remaining after normal mitigation. This is independent of normal damage reduction; negative values mean less damage taken.',
-    like: 'damageReduction',
-    format: signedPct,
-    lowerIsBetter: true,
-  },
-};
-
-/** Upsides before drawbacks within each half — offense, then defense, then utility. */
-const STANCE_MODIFIER_ORDER: (keyof StanceModifiers)[] = [
-  'damageDealtPct',
-  'attackSpeedPct',
-  'platingPct',
-  'damageTakenPct',
-  'evasion',
-  'moveSpeedPct',
-];
-
-export function stanceModifierLines(mods: StanceModifiers | undefined): StatEffectLine[] {
-  if (!mods) return [];
-  const lines: StatEffectLine[] = [];
-  for (const key of STANCE_MODIFIER_ORDER) {
-    const value = mods[key];
-    if (value === undefined || value === 0) continue;
-    const meta = STANCE_MODIFIER_META[key];
-    const base = STAT_EFFECT_META[meta.like];
-    lines.push({
-      key: meta.like,
-      label: meta.label,
-      value: meta.format(value),
-      glyph: base.glyph,
-      help: meta.help ?? STAT_HELP[base.helpKey],
-      good: meta.lowerIsBetter ? value < 0 : value > 0,
-    });
-  }
-  return lines;
 }

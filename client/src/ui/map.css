@@ -963,7 +963,6 @@
 .map-recipe__kind[data-slot="core"]      { color: #3fb8d0; border-color: rgba(40, 170, 200, 0.40); }
 .map-recipe__kind[data-slot="relic"]     { color: #cba53a; border-color: rgba(200, 160, 55, 0.40); }
 .map-recipe__kind[data-slot="technique"] { color: #e0685c; border-color: rgba(200, 80, 70, 0.40); }
-.map-recipe__kind[data-slot="stance"]    { color: #d08fd8; border-color: rgba(190, 120, 200, 0.40); }
 .map-recipe__kind[data-slot="rite"]      { color: #8fc7d8; border-color: rgba(120, 180, 200, 0.40); }
 
 .map-recipe__detail {

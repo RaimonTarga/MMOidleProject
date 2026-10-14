@@ -158,7 +158,6 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
   // slot works and how eligibility/tier placement is decided.
   //
   // Forest owns SUSTAIN — it is where Second Wind is learned. The T2 recovery
-  // capstone is intentionally delayed to Jungle; Forest's T2 reward is the
-  // Perfection Stance in stanceRecipes.ts.
+  // capstone is intentionally delayed to Jungle.
 
 ] satisfies [string, Recipe][];

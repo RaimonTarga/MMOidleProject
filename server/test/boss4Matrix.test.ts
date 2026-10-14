@@ -82,7 +82,6 @@ assertBoss4Definitions();
         const src = origin.find((c) => c.className === cell.className);
         assert(!!src, `${cell.id}: no Boss3 ${b.originArm} origin for root ${cell.className}`);
         const mine = resolveSurveyPackage(cell), theirs = resolveSurveyPackage(src);
-        assert(mine.stance === theirs.stance, `${cell.id}: stance drift from its Boss3 origin`);
         assert(JSON.stringify(mine.abilities) === JSON.stringify(theirs.abilities),
           `${cell.id}: ability drift from its Boss3 origin (guard ORDER included)`);
         assert(JSON.stringify(mine.runeRules) === JSON.stringify(theirs.runeRules),

@@ -569,7 +569,6 @@ export function assertBoss5Definitions(): void {
         : [...REFERENCE_GUARDS];
       if (block.kind === 'breadth') {
         const ref = BOSS5_TIER_REFERENCE[block.tier]!;
-        assert.equal(r.stance, ref.stance, `${cell.id}: stance is not the tier reference`);
         assert.deepEqual(r.abilities.guards, [...ref.guards],
           `${cell.id}: the Guard list is not the tier reference — ORDER included`);
         assert.deepEqual(r.abilities.techniques, [...ref.techniques],

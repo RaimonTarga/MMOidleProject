@@ -6,7 +6,6 @@ import type {
   HasAutoIntent,
   EquipmentMap,
   AttunedAbilities,
-  EquippedStances,
   EquippedRule,
   EssenceType,
   PartyMember,
@@ -301,13 +300,6 @@ export function notifyAbilityCooldownSample(
   });
 }
 
-/** Client receipt time for the authoritative shared stance-switch cooldown. */
-export const stanceCooldownStartedAtAtom = atom<number>(0);
-
-export function notifyStanceCooldownStarted(): void {
-  getDefaultStore().set(stanceCooldownStartedAtAtom, Date.now());
-}
-
 /**
  * Live cast progress for the local player's casted Technique, or null when not
  * casting. Driven by the `player-cast-start` / `player-cast-end` node events.
@@ -406,17 +398,6 @@ export const attunedAbilitiesAtom = atom<AttunedAbilities>({
   guards: [],
 });
 
-/** Stances learned (crafted) — the slottable pool (system rework Step 10). */
-export const attunedStancesAtom = atom<string[]>([]);
-export const knownStancesAtom = atom<string[]>([]);
-/** Attuned default posture. Automated destinations live on individual Rune rules. */
-export const equippedStancesAtom = atom<EquippedStances>({
-  default: null,
-});
-/** Which posture is currently active (folded into stats). */
-export const activeStanceAtom = atom<string | null>(null);
-/** Runtime manual owner; null means default/Rune AUTO stance control. */
-export const manualStanceOverrideAtom = atom<string | null>(null);
 /** Server-authoritative manual ability requests waiting to become legal. */
 export const queuedAbilityIdsAtom = atom<string[]>([]);
 
@@ -437,11 +418,11 @@ export const equippedRitesAtom = atom<string[]>([]);
 export const riteSlotsAtom = atom<number>(0);
 
 export const skillTreeOpenAtom = atom<boolean>(false);
-export type BuildPanelTab = 'abilities' | 'stances' | 'rites' | 'runes';
+export type BuildPanelTab = 'abilities' | 'rites' | 'runes';
 export const buildOpenAtom = atom<boolean>(false);
 /**
- * The four arrangement surfaces share one dialog, and the rail gives each its
- * own entry: opening Stances is opening this dialog on the stances tab. The
+ * The arrangement surfaces share one dialog, and the rail gives each its
+ * own entry: opening Rites is opening this dialog on the rites tab. The
  * identifiers keep the `build*` prefix from the old combined Loadout dialog:
  * renaming them reaches a dozen files for no player-visible gain.
  */
@@ -729,13 +710,6 @@ function setAttunedAbilities(next: AttunedAbilities): void {
   store.set(attunedAbilitiesAtom, next);
 }
 
-function setEquippedStances(next: EquippedStances): void {
-  const store = getDefaultStore();
-  const prev = store.get(equippedStancesAtom);
-  if (prev.default === next.default) return;
-  store.set(equippedStancesAtom, next);
-}
-
 function buffsEqual(a: readonly PlayerBuff[], b: readonly PlayerBuff[]): boolean {
   if (a === b) return true;
   if (a.length !== b.length) return false;
@@ -847,11 +821,6 @@ function resetPlayerAtoms(): void {
   setRunesEquipped([]);
   setIfShallowArrayEqual(knownAbilitiesAtom, []);
   setAttunedAbilities({ techniques: [], guards: [] });
-  setIfShallowArrayEqual(attunedStancesAtom, []);
-  setIfShallowArrayEqual(knownStancesAtom, []);
-  setEquippedStances({ default: null });
-  setIfChanged(activeStanceAtom, null);
-  setIfChanged(manualStanceOverrideAtom, null);
   setIfChanged(queuedAbilityIdsAtom, []);
   store.set(combatControlFeedbackAtom, null);
   setIfShallowArrayEqual(knownRitesAtom, []);
@@ -864,7 +833,6 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(activeBuffsAtom, []);
   store.set(abilityFiredAtAtom, {});
   store.set(abilityCooldownStartedAtAtom, {});
-  store.set(stanceCooldownStartedAtAtom, 0);
   store.set(abilityCastAtom, null);
   store.set(armedAbilityIdAtom, null);
   store.set(lastCleanseAtAtom, 0);
@@ -975,11 +943,6 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setRunesEquipped(player.runesEquipped);
   setIfShallowArrayEqual(knownAbilitiesAtom, player.knownAbilities);
   setAttunedAbilities(player.attunedAbilities);
-  setIfShallowArrayEqual(attunedStancesAtom, player.attunedStances);
-  setIfShallowArrayEqual(knownStancesAtom, player.knownStances);
-  setEquippedStances(player.equippedStances);
-  setIfChanged(activeStanceAtom, player.activeStance);
-  setIfChanged(manualStanceOverrideAtom, player.manualStanceOverride);
   setIfChanged(queuedAbilityIdsAtom, player.queuedAbilityIds);
   setIfShallowArrayEqual(knownRitesAtom, player.knownRites);
   setIfShallowArrayEqual(equippedRitesAtom, player.equippedRites);

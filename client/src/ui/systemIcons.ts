@@ -67,7 +67,7 @@ export function statIconSource(icon: StatIcon): AssetIconSource {
 export type CraftingSectionIcon = 'biome' | 'forge' | 'upgrade';
 export type MasterySectionIcon = 'summary' | 'items' | 'biomes';
 export type RuneFragmentIcon = 'condition' | 'action';
-export type BuildSectionIcon = 'abilities' | 'stances' | 'rites' | 'runes';
+export type BuildSectionIcon = 'abilities' | 'rites' | 'runes';
 
 const CRAFTING_SECTION_ICONS: Record<CraftingSectionIcon, IconSource> = {
   biome: menuIconSource('map'),
@@ -106,7 +106,6 @@ export function runeFragmentIconSource(fragment: RuneFragmentIcon): AtlasIconSou
  */
 const BUILD_SECTION_ICONS: Record<BuildSectionIcon, IconSource> = {
   abilities: menuIconSource('loadout'),
-  stances: assetIcon('/assets/concept-icons/stances/offensive-stance.png?v=specific-v3'),
   rites: menuIconSource('rites'),
   runes: menuIconSource('runes'),
 };
@@ -118,7 +117,7 @@ export function buildSectionIconSource(section: BuildSectionIcon): IconSource {
 /**
  * One glyph per craftable kind, for the Make browser.
  *
- * Stances, rites and runes read as absent from Crafting: the list groups by kind
+ * Rites read as absent from Crafting: the list groups by kind
  * and the non-gear kinds sit under the whole gear block, behind a wall of
  * text-only filter chips. A glyph on the chip and on each row is what makes a
  * group findable without scrolling to it.
@@ -126,7 +125,7 @@ export function buildSectionIconSource(section: BuildSectionIcon): IconSource {
  * Deliberately reuses shipped art rather than commissioning a slot set. The stat
  * glyphs already carry the right meaning for gear (attack/plating/regen/speed).
  * Generic family filters use representative navigation glyphs; individual
- * stance and rune rows resolve their own dedicated concept art.
+ * rite rows resolve their own dedicated concept art.
  */
 const MAKE_KIND_ICONS: Record<string, IconSource> = {
   weapon: statIconSource('attack'),
@@ -136,7 +135,6 @@ const MAKE_KIND_ICONS: Record<string, IconSource> = {
   core: statIconSource('empowered'),
   relic: menuIconSource('passive-tree'),
   technique: atlasIcon('UI_icons/abilities/sweep.png'),
-  stance: assetIcon('/assets/concept-icons/stances/offensive-stance.png?v=specific-v3'),
   rite: menuIconSource('rites'),
 };
 

@@ -302,8 +302,8 @@
 }
 
 /* ── Session actions in the rail ─────────────────────────────────────────────
-   Every entry is a flat destination now that Abilities, Stances, Rites and
-   Runes each own one. A standalone entry is the exception: it leaves the world
+   Every entry is a flat destination now that Abilities, Rites and Runes each
+   own one. A standalone entry is the exception: it leaves the world
    rather than opening a panel inside it, so a rule sets it apart and it takes
    the full width instead of pairing off with a destination. */
 .desktop-hud .right-nav-entry {

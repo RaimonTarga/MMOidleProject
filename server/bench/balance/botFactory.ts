@@ -5,8 +5,6 @@ import {
   GAME_CONFIG,
   RITE_DATABASE,
   RITE_RECIPE_DATABASE,
-  STANCE_DATABASE,
-  STANCE_RECIPE_DATABASE,
   STARTER_RUNE_IDS,
   emptyEquipment,
   biomeLevelCap,
@@ -14,7 +12,6 @@ import {
   globalMastery,
   listBiomeGroupsAtTier,
   isRiteRecipeUnlocked,
-  isStanceRecipeUnlocked,
   ITEM_DATABASE,
   referenceAbilityRules,
   type AttunedAbilities,
@@ -36,21 +33,9 @@ export const BENCH_BOT_ID = `${BENCH_BOT_PREFIX}0`;
  * Deliberate baseline choices. Never derive these from database iteration order:
  * adding a new alphabetically-earlier option must not silently retune the bench.
  *
- * The canonical stance must be UNCONDITIONAL. It was Perfection until the 2026-09-02
- * pass gave Perfection an intrinsic >=90% HP gate: a benched fight leaves that gate
- * within the first exchange, so the bot would have spent most of every measurement
- * carrying Perfection's -20% Plating with none of its payoff — an instrument that
- * silently reads a different build than the one it names.
- *
- * Offensive is now the least polarising unconditional posture in the cast: the
- * smallest authored magnitudes, the cheapest destination, no self-damage, no
- * recovery loop, no target/crowd/HP rule. It still exercises the stance stat path.
- * NOTE: this MOVES the bench baseline; pre-2026-09-02 runs are not comparable.
- *
  * The Rite set covers kill recovery, between-fight class reset, and OOC cadence
  * without pairing contradictory options such as Swift Repose/Lingering Battle.
  */
-const CANONICAL_STANCE_ID = 'offensive-stance';
 const CANONICAL_RITE_PRIORITY = [
   'blood-offering',
   'purification',
@@ -85,7 +70,7 @@ function canonicalBiomeLevels(playerTier: number): Record<string, number> {
 }
 
 /**
- * The canonical abilities / stances / rites a bench bot runs at a given tier.
+ * The canonical abilities / rites a bench bot runs at a given tier.
  *
  * These systems are CONTEXT for the bench, not the swept axis — the skill path is
  * what varies between builds. So every bot wears the same deterministic loadout
@@ -100,10 +85,6 @@ function canonicalBiomeLevels(playerTier: number): Record<string, number> {
 export function canonicalLoadout(playerTier: number): {
   knownAbilities: string[];
   attunedAbilities: AttunedAbilities;
-  knownStances: string[];
-  attunedStances: string[];
-  equippedStances: { default: string | null };
-  activeStance: string | null;
   knownRites: string[];
   equippedRites: string[];
 } {
@@ -119,15 +100,6 @@ export function canonicalLoadout(playerTier: number): {
 
   const biomeLevel = canonicalBiomeLevels(playerTier);
   const progressionGate = { biomeLevel, bossesCleared: [] as string[] };
-  const stances = [...STANCE_RECIPE_DATABASE.values()]
-    .filter((recipe) => recipe.tier <= playerTier && isStanceRecipeUnlocked(recipe, progressionGate))
-    .map((recipe) => recipe.stanceId)
-    .filter((id) => STANCE_DATABASE.has(id))
-    .sort();
-  const activeStance = stances.includes(CANONICAL_STANCE_ID)
-    ? CANONICAL_STANCE_ID
-    : null;
-
   const rites = [...RITE_RECIPE_DATABASE.values()]
     .filter((recipe) => recipe.tier <= playerTier && isRiteRecipeUnlocked(recipe, progressionGate))
     .map((recipe) => recipe.riteId)
@@ -147,12 +119,6 @@ export function canonicalLoadout(playerTier: number): {
   return {
     knownAbilities: [...techniques, ...guards],
     attunedAbilities: abilities,
-    attunedStances: activeStance ? [activeStance] : [],
-    knownStances: stances,
-    equippedStances: {
-      default: activeStance,
-    },
-    activeStance,
     knownRites: rites,
     equippedRites,
   };
@@ -194,9 +160,6 @@ function buildBotSlices(
       runesEquipped: referenceAbilityRules(loadout.attunedAbilities),
       knownAbilities: loadout.knownAbilities,
       attunedAbilities: loadout.attunedAbilities,
-      knownStances: loadout.knownStances,
-      equippedStances: loadout.equippedStances,
-      activeStance: loadout.activeStance,
       knownRites: loadout.knownRites,
       equippedRites: loadout.equippedRites,
     },

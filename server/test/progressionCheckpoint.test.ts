@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { tierEntryProfileFromT1Snapshot, CLEARING_NODE_ID, GAME_CONFIG, SKILL_TREE, emptyEquipment, emptyAttunedAbilities, emptyEquippedRites, emptyEquippedStances, type T1CharacterSnapshot } from '@mmo-idle/shared';
+import { tierEntryProfileFromT1Snapshot, CLEARING_NODE_ID, GAME_CONFIG, SKILL_TREE, emptyEquipment, emptyAttunedAbilities, emptyEquippedRites, type T1CharacterSnapshot } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { World } from '../src/world/World';
 import { applyTierEntryProfile } from '../src/admin/gameActions';
@@ -45,9 +45,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
       runesEquipped: [],
       knownAbilities: [],
       attunedAbilities: emptyAttunedAbilities(),
-      knownStances: [],
-      equippedStances: emptyEquippedStances(),
-      activeStance: null,
       knownRites: [],
       equippedRites: [],
     },

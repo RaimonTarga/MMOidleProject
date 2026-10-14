@@ -1,6 +1,6 @@
 /**
  * The human name for every `mechanicEffects` key that can reach a player-facing
- * surface (item tooltips, upgrade diffs, crafting rows, stance/rite cards).
+ * surface (item tooltips, upgrade diffs, crafting rows, rite cards).
  *
  * WHY THIS LIVES IN `shared/` AND NOT NEXT TO THE RENDERER
  * -------------------------------------------------------
@@ -14,7 +14,7 @@
  * The fix is an invariant test, and the test runner only discovers
  * `server/test/*.test.ts` and `shared/src/**\/*.test.ts` — so the table has to be
  * here for `mechanicLabels.test.ts` to guard it. That test derives the authored
- * key set from the recipe/item/stance data itself, so it fails the moment someone
+ * key set from the recipe/item data itself, so it fails the moment someone
  * authors an effect key without writing a label for it.
  *
  * WHAT IS AND IS NOT HERE
@@ -24,7 +24,7 @@
  * - FORMATTERS (`15%` vs `1.5×` vs `4s`) stay in `itemDisplay.ts`. Those are
  *   presentation and belong with the renderer.
  *
- * SCOPE. This covers the namespaces that gear, cores, relics, stances and rites
+ * SCOPE. This covers the namespaces that gear, cores, relics and rites
  * can author: `defense`, `mobility`, `shared`/`weapon`, `summoner`, `guard`,
  * `technique`, `core`, `rite`, `relic`. The class-mechanic namespaces
  * (`cadence`, `cooldown`, `reload`, `energy`, `dot`) are authored on skill-tree

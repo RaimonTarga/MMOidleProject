@@ -136,10 +136,6 @@ export const BUFF_IDS = [
   // labels and colours its own (see `classes/shared/frameLoop.ts`).
   'frame-window',   // Light/Balanced — the timed window the mechanic opened
   'frame-charge',   // Heavy/Balanced — the bank, counting toward its cap
-  // Stances (see server/src/systems/player/stances/stanceBehaviors.ts)
-  'stance-reaper',   // Reaper — on-kill momentum, outlives the stance itself
-  'stance-charge',   // Powering Up — the charge accruing, shown as a filling clock
-  'stance-release',  // Powering Up — the spent-charge burst window
 ] as const;
 
 export type BuffId = typeof BUFF_IDS[number];

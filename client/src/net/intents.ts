@@ -6,7 +6,6 @@ import type {
   PlayerMoveOptions,
   PlayerMoveResult,
   CombatControlResult,
-  StanceSlot,
   Vec2,
 } from '@mmo-idle/shared';
 import type { GameSocket } from './socket';
@@ -98,25 +97,6 @@ export function sendManualReload(
   ack?: (result: CombatControlResult) => void,
 ): void {
   socket.emit('player:manualReload', ack);
-}
-
-export function sendCraftStanceRecipe(socket: GameSocket, recipeId: string): void {
-  socket.emit('stance:craftRecipe', recipeId);
-}
-
-export function sendSetStanceLoadout(
-  socket: GameSocket,
-  payload: { slot: StanceSlot; stanceId: string | null },
-): void {
-  socket.emit('stance:setLoadout', payload);
-}
-
-export function sendSetStanceControl(
-  socket: GameSocket,
-  stanceId: string | null,
-  ack?: (result: CombatControlResult) => void,
-): void {
-  socket.emit('stance:setControl', { stanceId }, ack);
 }
 
 export function sendCraftRiteRecipe(socket: GameSocket, recipeId: string): void {

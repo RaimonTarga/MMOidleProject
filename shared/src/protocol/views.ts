@@ -19,7 +19,6 @@ import {
   normalizeAttunedAbilities,
   type AttunedAbilities,
 } from "../abilities";
-import { emptyEquippedStances, type EquippedStances } from "../stances";
 import { emptyEquippedRites, type EquippedRites } from "../rites";
 import {
   FALLBACK_MONSTER_AABB,
@@ -167,15 +166,6 @@ export interface PlayerView {
   knownAbilities: string[];
   /** Attuned abilities by semantic family; ordered for default arbitration. */
   attunedAbilities: AttunedAbilities;
-  /** Stances learned (crafted) — the slottable pool (system rework Step 10). */
-  knownStances: string[];
-  attunedStances: string[];
-  /** Attuned default posture; Rune rules carry automated destinations. */
-  equippedStances: EquippedStances;
-  /** Which posture is currently active (folded into stats). */
-  activeStance: string | null;
-  /** Runtime manual stance owner (including `no-stance`); null means no override. */
-  manualStanceOverride: string | null;
   /** Server-authoritative manual ability requests waiting for legal activation. */
   queuedAbilityIds: string[];
   /** Rites learned (crafted) — the slottable pool (system rework Step 11). */
@@ -298,7 +288,7 @@ const EMPTY_EQUIPMENT = {
 
 export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
   if (!entity.isPlayer || !entity.hasPosition || !entity.hasHealth) return null;
-  const finalDamage = resolveFinalDamageMultipliers(entity.usesSkills?.passives ?? {}, entity.tracksProgression?.activeStance, entity.hasHealth.hp / Math.max(1, entity.hasHealth.maxHp));
+  const finalDamage = resolveFinalDamageMultipliers(entity.usesSkills?.passives ?? {});
   const target = entity.isMoving
     ? pointFromMotion(entity.hasPosition.current, entity.isMoving.motion)
     : entity.hasPosition.current;
@@ -470,11 +460,6 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     runesEquipped: progression.runesEquipped ?? [],
     knownAbilities: progression.knownAbilities ?? [],
     attunedAbilities: normalizeAttunedAbilities(progression.attunedAbilities),
-    knownStances: progression.knownStances ?? [],
-    attunedStances: progression.attunedStances ?? [],
-    equippedStances: progression.equippedStances ?? emptyEquippedStances(),
-    activeStance: progression.activeStance ?? null,
-    manualStanceOverride: entity.overridesStance?.stanceId ?? null,
     queuedAbilityIds: entity.queuesAbilities?.abilityIds ?? [],
     knownRites: progression.knownRites ?? [],
     equippedRites: progression.equippedRites ?? emptyEquippedRites(),

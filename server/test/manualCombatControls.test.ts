@@ -1,13 +1,12 @@
 /**
- * Focused authority tests for live manual ability and stance controls.
- * Manual requests must enter the existing ability/cast/stance systems rather
+ * Focused authority tests for live manual ability controls.
+ * Manual requests must enter the existing ability/cast systems rather
  * than becoming a second execution path.
  */
 import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   ABILITY_DATABASE,
   GAME_CONFIG,
-  NO_STANCE_ID,
   STARTER_RUNE_IDS,
   abilityCastMs,
   applyStatusEffect,
@@ -28,23 +27,15 @@ import {
 } from "../src/systems/player/abilities/abilityCasting";
 import { requestManualAbilityUse } from "../src/systems/player/abilities/abilityFiring";
 import { fireAbilities, wireReferenceAbilities } from "./fixtures/abilityWiring";
-import {
-  STANCE_SWITCH_COOLDOWN_MS,
-  requestManualStance,
-  updateStanceSwitch,
-} from "../src/systems/player/stances/stanceSwitch";
 import { STUN_EFFECT } from "../src/systems/combat/status/stun";
 import { attachComponent } from "../src/ecs/markerHelpers";
 import { World } from "../src/world/World";
 import {
   ABILITY_HOTKEY_ACTIONS,
   DEFAULT_BINDINGS,
-  STANCE_HOTKEY_ACTIONS,
   abilitySlotForKey,
   abilitySlotForPad,
-  bindingToLabel,
   matchesKey,
-  stanceSlotForKey,
 } from "../../client/src/settings/keybinds";
 import {
   completeReload,
@@ -88,10 +79,6 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
         techniques: ["binding-strike", "slam", "snipe", "imbue-lightning"],
         guards: ["brace"],
       },
-      knownStances: ["offensive-stance", "defensive-stance", "tanking-stance"],
-      attunedStances: ["offensive-stance", "defensive-stance"],
-      equippedStances: { default: "offensive-stance" },
-      activeStance: "offensive-stance",
       knownRites: [],
       equippedRites: [],
     },
@@ -121,24 +108,8 @@ initCombatSystems();
   }
   assert(abilitySlotForKey("KeyX", DEFAULT_BINDINGS) === null, "unbound keys must not activate a hotbar slot");
   assert(
-    matchesKey({ code: "Digit1", shiftKey: true }, "stance.neutral", DEFAULT_BINDINGS),
-    "Shift+1 should select Neutral",
-  );
-  assert(
-    stanceSlotForKey({ code: "Digit2", shiftKey: true }, DEFAULT_BINDINGS) === 0,
-    "Shift+2 should select the first displayed attuned stance",
-  );
-  assert(
     abilitySlotForKey({ code: "Digit2", shiftKey: true }, DEFAULT_BINDINGS) === null,
-    "a shifted stance chord must not also fire the matching numbered ability",
-  );
-  assert(
-    STANCE_HOTKEY_ACTIONS.length === 8,
-    "Neutral should own Shift+1 and the displayed stance rail should expose Shift+2 through Shift+9",
-  );
-  assert(
-    bindingToLabel(DEFAULT_BINDINGS["stance.neutral"]) === "Shift+1",
-    "modifier bindings should have a readable settings label",
+    "a shifted chord must not fire the matching numbered ability",
   );
   assert(
     matchesKey({ code: "KeyR" }, "class.reload", DEFAULT_BINDINGS),
@@ -321,69 +292,11 @@ initCombatSystems();
   const controlled = requestManualAbilityUse(world, player, "snipe", 4_002);
   assert(controlled.success && controlled.state === "queued", "hard control should queue a valid manual Technique until it is legal");
   world.killPlayer(player.isPlayer.id, {
-    kind: "stance",
-    stanceName: "Test",
+    kind: "debt",
+    nodeId: player.hasPosition.nodeId,
     damage: player.hasHealth.maxHp,
   });
   assert(!player.queuesAbilities, "death should clear queued manual ability intents");
-}
-
-// Manual stance ownership accepts only attuned stances, survives Rune/default
-// evaluation, and the neutral choice is a deliberate, persistent manual posture.
-{
-  const world = new World();
-  const player = world.attachPlayerEntity(makePlayerSlices("manual-stance"), "manual-stance");
-  updateStanceSwitch(world, 0, 5_000);
-  updateCombatState(world, STANCE_SWITCH_COOLDOWN_MS);
-
-  assert(!requestManualStance(world, player, "not-real").success, "unknown manual stance must be rejected");
-  assert(!requestManualStance(world, player, "tanking-stance").success, "unattuned manual stance must be rejected");
-  assert(requestManualStance(world, player, "defensive-stance").success, "attuned manual stance should switch");
-  assert(player.overridesStance?.stanceId === "defensive-stance", "manual selection should attach runtime ownership");
-  assert(player.tracksProgression.activeStance === "defensive-stance", "manual stance should use the normal authoritative switch");
-  assert(player.tracksProgression.equippedStances.default === "offensive-stance", "manual stance must not overwrite saved default");
-
-  player.tracksProgression.runesEquipped = [{
-    conditionId: "always",
-    actionId: "switch-stance",
-    targetStanceId: "offensive-stance",
-  }];
-  updateCombatState(world, STANCE_SWITCH_COOLDOWN_MS);
-  updateRuneDerivedConfig(world, 7_000);
-  updateStanceSwitch(world, STANCE_SWITCH_COOLDOWN_MS, 7_000);
-  assert(player.tracksProgression.activeStance === "defensive-stance", "Rune automation must yield to manual stance ownership");
-
-  player.usesAutocombat.auto = true;
-  updateStanceSwitch(world, 0, 7_001);
-  assert(!player.overridesStance, "Auto Combat must release a stale manual stance override");
-  assert(player.tracksProgression.activeStance === "offensive-stance", "Auto Combat must restore Rune/default stance ownership");
-
-  player.usesAutocombat.auto = false;
-  updateCombatState(world, STANCE_SWITCH_COOLDOWN_MS);
-  assert(requestManualStance(world, player, NO_STANCE_ID).success, "neutral stance should be manually selectable");
-  assert(player.overridesStance?.stanceId === NO_STANCE_ID, "neutral should retain manual stance ownership");
-  assert(player.tracksProgression.activeStance === null, "neutral should clear the active stance");
-  assert(player.tracksProgression.equippedStances.default === "offensive-stance", "neutral must not mutate the saved default");
-
-  updateCombatState(world, STANCE_SWITCH_COOLDOWN_MS);
-  updateRuneDerivedConfig(world, 7_002);
-  updateStanceSwitch(world, 0, 7_002);
-  assert(player.tracksProgression.activeStance === null, "Rune automation must not undo manual neutral stance");
-
-  player.fightsWhileTraveling = { startedAtMs: 7_003 };
-  updateStanceSwitch(world, 0, 7_003);
-  assert(!player.overridesStance, "Fight Back must release manual stance ownership like Auto Combat");
-  assert(player.tracksProgression.activeStance === "offensive-stance", "Fight Back must restore Rune/default stance control");
-
-  player.fightsWhileTraveling = undefined;
-  updateCombatState(world, STANCE_SWITCH_COOLDOWN_MS);
-  assert(requestManualStance(world, player, "defensive-stance").success, "manual stance should be selectable again");
-  world.killPlayer(player.isPlayer.id, {
-    kind: "stance",
-    stanceName: "Test",
-    damage: player.hasHealth.maxHp,
-  });
-  assert(!player.overridesStance, "death should clear manual stance ownership");
 }
 
 console.log("manualCombatControls: ok");

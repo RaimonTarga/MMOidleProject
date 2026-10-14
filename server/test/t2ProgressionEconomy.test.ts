@@ -1,7 +1,6 @@
 import {
   RECIPE_DATABASE,
   ABILITY_RECIPE_DATABASE,
-  STANCE_RECIPE_DATABASE,
   ESSENCE_TYPES,
 } from "@mmo-idle/shared";
 import type { EssenceType } from "@mmo-idle/shared";
@@ -89,29 +88,11 @@ type T2RewardSpec = {
   essenceBand: readonly [number, number];
 };
 
-const T2_STANCE_REWARDS: T2RewardSpec[] = [
-  { id: "stance-recipe-offensive", group: "plains", level: 7, cost: { yellow: 60 }, essenceBand: [50, 70] },
-  { id: "stance-recipe-defensive", group: "plains", level: 7, cost: { yellow: 60 }, essenceBand: [50, 70] },
-  { id: "stance-recipe-fleeting", group: "swamp", level: 8, cost: { purple: 110 }, essenceBand: [90, 120] },
-];
-
 const T2_CORE_REWARDS: T2RewardSpec[] = [
   { id: "core-tempered", group: "cave", level: 12, cost: { red: 500 }, essenceBand: [450, 600] },
   { id: "core-survivalist", group: "jungle", level: 6, cost: { green: 500 }, essenceBand: [450, 600] },
   { id: "core-force", group: "desert", level: 6, cost: { yellow: 500 }, essenceBand: [450, 600] },
 ];
-
-for (const spec of T2_STANCE_REWARDS) {
-  const recipe = STANCE_RECIPE_DATABASE.get(spec.id);
-  assert(!!recipe, `${spec.id}: stance recipe must exist`);
-  assert(recipe!.tier === 2, `${spec.id}: must stay tier 2`);
-  assert(recipe!.recipeGroup === spec.group, `${spec.id}: biome gate must be ${spec.group}`);
-  assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: unlock level must be ${spec.group} L${spec.level}`);
-  assert(normalizedCost(recipe!.cost) === normalizedCost(spec.cost), `${spec.id}: essence cost changed unexpectedly`);
-  assert(!recipe!.requiredBossClear, `${spec.id}: must not require a boss clear`);
-  const total = essenceSum(recipe!.cost);
-  assert(total >= spec.essenceBand[0] && total <= spec.essenceBand[1], `${spec.id}: stance essence total is outside its band`);
-}
 
 for (const spec of T2_CORE_REWARDS) {
   const recipe = RECIPE_DATABASE.get(spec.id);

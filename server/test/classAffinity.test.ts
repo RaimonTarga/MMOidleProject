@@ -28,7 +28,7 @@ function build(
   skills: string[],
   armor?: string,
   plus = 0,
-  options?: { core?: string; activeStance?: string; combatArchetype?: string },
+  options?: { core?: string; combatArchetype?: string },
 ): PlayerStatsTarget {
   const equipment = emptyEquipment();
   if (armor) equipment.armor = armor;
@@ -53,7 +53,6 @@ function build(
       equipment,
       itemUpgrades: armor && plus > 0 ? { [armor]: plus } : {},
     },
-    activeStance: options?.activeStance ?? null,
   } as PlayerStatsTarget;
   recalculatePlayerStats(target);
   return target;
@@ -186,15 +185,14 @@ const SPIRIT = ["energy-root"];
   );
   const result = build(skills, undefined, 0, {
     core: core.id,
-    activeStance: "offensive-stance",
     combatArchetype: "reload",
   });
 
   let expected = Math.round(GAME_CONFIG.PLAYER_ATTACK * (1 + affinity));
   expected = Math.max(1, Math.floor(expected * 0.65)); // reload archetype
   expected = Math.max(1, Math.round(expected * (1 + coreAttack))); // Core
-  const finalDamage = resolveFinalDamageMultipliers(result.usesSkills.passives, 'offensive-stance');
-  assert(Math.abs(finalDamage.dealt - 1.12 * 1.15) < 1e-9, 'Core and stance compose as independent final damage factors');
+  const finalDamage = resolveFinalDamageMultipliers(result.usesSkills.passives);
+  assert(Math.abs(finalDamage.dealt - 1.12) < 1e-9, 'Core is an independent final damage factor');
   assert(
     result.dealsDamage.attack === expected,
     `attack retains class/archetype stat layers (${expected}), got ${result.dealsDamage.attack}`,

@@ -76,9 +76,6 @@ function makePlayerSlices(id: string, nodeId: string): PersistedPlayerSlices {
       runesEquipped: [],
       knownAbilities: [],
       attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [],
-      equippedStances: { default: null },
-      activeStance: null,
       knownRites: [],
       equippedRites: [],
     },
@@ -391,7 +388,7 @@ for (const nodeId of [HEAT_NODE, 'node-t4-tundra-01']) {
   player.hasPosition.nodeId = sameBiomeNode;
   world.movePlayerNode(nodeId, sameBiomeNode, player.isPlayer.id);
   assert(ambientRampStatus(player.tracksCombat)?.stacks === stacks, 'same-biome travel preserves stacks');
-  world.killPlayer(player.isPlayer.id, { kind: 'stance', damage: 100_000, stanceName: 'Test' });
+  world.killPlayer(player.isPlayer.id, { kind: 'debt', damage: 100_000, nodeId: sameBiomeNode });
   assert(!ambientRampStatus(player.tracksCombat), 'death clears ramp status');
   assert(player.hasStatus.attackCadenceMult === 1, 'death clears displayed chill penalty');
   assert(player.hasStatus.finalDamageDealtMult === 1 && player.hasStatus.finalDamageTakenMult === 1, 'death clears displayed heat amplifiers');

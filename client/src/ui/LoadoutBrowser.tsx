@@ -71,7 +71,7 @@ export function LoadoutBrowser({
   const abilityContext = useAbilityContext();
 
   // Something you learned but have never equipped is easy to forget you own.
-  // Namespaced by icon kind so an ability and a stance can never collide, and
+  // Namespaced by icon kind so an ability and a rite can never collide, and
   // kept in its own channel so it does not inflate the rail's craft count.
   const playerId = useAtomValue(playerIdAtom);
   const newKey = (id: string) => `${iconKind}:${id}`;

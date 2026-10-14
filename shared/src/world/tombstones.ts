@@ -29,7 +29,7 @@ export interface TombstoneView {
   playerName: string;
   /**
    * What killed them, already resolved to a display name server-side ("Gnarled
-   * Greatbear", "Berserker Stance"). Absent when nothing nameable did — dying to
+   * Greatbear"). Absent when nothing nameable did — dying to
    * accumulated damage with no remembered source.
    */
   killerName?: string;
