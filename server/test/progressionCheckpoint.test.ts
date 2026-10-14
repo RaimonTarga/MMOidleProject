@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { tierEntryProfileFromT1Snapshot, CLEARING_NODE_ID, GAME_CONFIG, emptyEquipment, emptyAttunedAbilities, emptyEquippedRites, emptyEquippedStances, type T1CharacterSnapshot } from '@mmo-idle/shared';
+import { tierEntryProfileFromT1Snapshot, CLEARING_NODE_ID, GAME_CONFIG, SKILL_TREE, emptyEquipment, emptyAttunedAbilities, emptyEquippedRites, emptyEquippedStances, type T1CharacterSnapshot } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { World } from '../src/world/World';
 import { applyTierEntryProfile } from '../src/admin/gameActions';
@@ -70,8 +70,22 @@ function makePlayerSlices(): PersistedPlayerSlices {
 
 const snapshot=JSON.parse(readFileSync(join(__dirname, 'fixtures/v1m-earned-t3-snapshot.json'),'utf8')) as T1CharacterSnapshot;
 const world=new World(); const original=world.attachPlayerEntity(makePlayerSlices(),'source');
-const applied=applyTierEntryProfile(world,original,tierEntryProfileFromT1Snapshot(snapshot,'node-t3-sanctuary',3));
+// The earned T3 Spirit took the Heavy frame and the Far range node; the class-first tree has
+// neither, so the character is rebuilt on its class root alone. A T2+ tier entry still demands
+// a tier-1 pick and the Spirit's kit has no discipline yet, so an empty stand-in node carries
+// the entry and is gone again before the skill state is reset to the root.
+const STAND_IN='t0-spirit-tier1-stand-in';
+SKILL_TREE.set(STAND_IN,{id:STAND_IN,name:'Stand-in',description:'',tier:1,classId:'energy-root',parent:'energy-root',
+  subVariantId:null,children:[],cost:1,statEffects:{},mechanicEffects:{}});
+const entry=structuredClone(snapshot);
+entry.frameId=STAND_IN;Object.assign(entry.state,{frameId:STAND_IN,selectedSubVariant:null,selectedRange:null,
+  unlockedSkills:['energy-root',STAND_IN],skillPoints:1});
+const applied=applyTierEntryProfile(world,original,tierEntryProfileFromT1Snapshot(entry,'node-t3-sanctuary',3));
+SKILL_TREE.delete(STAND_IN);
 assert(applied.success,applied.reason);
+Object.assign(original.usesSkills,{unlockedSkills:['energy-root'],selectedSubVariant:null,selectedRange:null,passives:{}});
+original.tracksProgression.currentSkillTier=1;original.tracksProgression.skillPoints=2;
+syncArchetypeSlices(world,original);recalculatePlayerEntityStats(world,original);original.hasHealth.hp=original.hasHealth.maxHp;refillBarrier(world,original);
 // An explicit safe authored spot; production capture must arrive through ordinary movement.
 original.hasPosition.current={x:1000,y:1000};
 original.tracksProgression.visitedNodes=[...new Set([...(original.tracksProgression.visitedNodes??[]),'node-t3-sanctuary'])];
@@ -79,7 +93,6 @@ original.tracksProgression.knownRites=['blood-offering'];original.tracksProgress
 initCombatSystems();
 for(let i=0;i<30;i++)world.tick(100,Date.now()+i*100);
 const captured=captureProgressionCheckpoint(world,original,'pre-volcano-rested');
-assert.equal(captured.view.selectedRange,'energy-range-far');
 const newWorld=new World(); const blank=newWorld.attachPlayerEntity(makePlayerSlices(),'restore-a');
 const restored=restoreProgressionCheckpoint(newWorld,blank,{capture:captured,boundaryId:captured.boundaryId,revisionPolicy:'same-revision'});
 assert.deepEqual(checkpointGameplayState(restored.persistent),checkpointGameplayState(captured.persistent));
@@ -127,20 +140,15 @@ assert.throws(()=>restoreProgressionCheckpoint(newWorld,newWorld.getPlayerEntity
 const environment=process.env.NODE_ENV;process.env.NODE_ENV='production';
 assert.throws(()=>captureProgressionCheckpoint(world,original,'production'),/development-only/);
 if(environment===undefined)delete process.env.NODE_ENV;else process.env.NODE_ENV=environment;
-// Specialization and unspent points across later tiers use the actual skill unlock chain.
-original.tracksProgression.playerTier=4;original.tracksProgression.skillPoints=1;
+// Unspent points across later tiers use the actual skill unlock chain (a root-only T4 holds three).
+original.tracksProgression.playerTier=4;original.tracksProgression.skillPoints=3;
 original.tracksProgression.bossesCleared.push('cave:3','desert:3','jungle:3','mountain:3');
 const unspent=captureProgressionCheckpoint(world,original,'unspent-t4');
 const uw=new World();const up=uw.attachPlayerEntity(makePlayerSlices(),'unspent');
-assert.equal(restoreProgressionCheckpoint(uw,up,{capture:unspent,boundaryId:unspent.boundaryId,revisionPolicy:'same-revision'}).view.skillPoints,1);
-original.usesSkills.unlockedSkills.push('energy-heavy-t3-a');original.tracksProgression.currentSkillTier=4;original.tracksProgression.skillPoints=0;
-syncArchetypeSlices(world,original);recalculatePlayerEntityStats(world,original);original.hasHealth.hp=original.hasHealth.maxHp;
-const spec=captureProgressionCheckpoint(world,original,'specialized-t4');
-const sw=new World(),sp=sw.attachPlayerEntity(makePlayerSlices(),'spec');
-assert(restoreProgressionCheckpoint(sw,sp,{capture:spec,boundaryId:spec.boundaryId,revisionPolicy:'same-revision'}).view.unlockedSkills.includes('energy-heavy-t3-a'));
+assert.equal(restoreProgressionCheckpoint(uw,up,{capture:unspent,boundaryId:unspent.boundaryId,revisionPolicy:'same-revision'}).view.skillPoints,3);
 // Summoner logical slots survive; entities, charges and reconstruction progress are reset.
-original.usesSkills={unlockedSkills:['summoner-root','summoner-heavy','summoner-range-far'],selectedClass:'summoner-root',selectedSubVariant:'heavy',selectedRange:'summoner-range-far',combatArchetype:'summoner',passives:{}};
-original.tracksProgression.playerTier=3;original.tracksProgression.currentSkillTier=3;original.tracksProgression.skillPoints=0;
+original.usesSkills={unlockedSkills:['summoner-root'],selectedClass:'summoner-root',selectedSubVariant:null,selectedRange:null,combatArchetype:'summoner',passives:{}};
+original.tracksProgression.playerTier=3;original.tracksProgression.currentSkillTier=1;original.tracksProgression.skillPoints=2;
 original.tracksProgression.runesEquipped=[];original.tracksProgression.attunedAbilities={techniques:[],guards:[]};
 syncArchetypeSlices(world,original);recalculatePlayerEntityStats(world,original);syncArchetypeSlices(world,original);original.hasHealth.hp=original.hasHealth.maxHp;refillBarrier(world,original);
 original.summonsMinions!.bondCharge=42;
