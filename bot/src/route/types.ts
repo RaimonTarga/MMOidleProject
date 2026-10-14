@@ -1,4 +1,4 @@
-import type { EquipmentSlot, EquippedRule, EssenceType, TierCheckpointKind } from "@mmo-idle/shared";
+import type { ClassConfig, EquipmentSlot, EquippedRule, EssenceType, TierCheckpointKind } from "@mmo-idle/shared";
 
 /**
  * A place a step happens. Routes name content, not node ids, so a map edit that
@@ -32,6 +32,10 @@ export type Condition =
   | { type: "globalMasteryAtLeast"; value: number }
   // Guided-tutorial vocabulary (shared/src/tutorial/types.ts), so tutorial scripts run as routes.
   | { type: "classSelected" }
+  /** A class-kit piece is learned, at `rank` or above (lessons follow biome levels). */
+  | { type: "pieceLearned"; pieceId: string; rank?: number }
+  /** A boss trophy is held, at `rank` or above (trophies follow boss clears). */
+  | { type: "trophyHeld"; trophyId: string; rank?: number }
   | { type: "elapsedMs"; ms: number }
   | { type: "allOf"; of: Condition[] }
   | { type: "anyOf"; of: Condition[] }
@@ -91,6 +95,12 @@ export type StepBody =
    * nothing else is priced.
    */
   | { type: "configureRunes"; rules: EquippedRule[] }
+  /**
+   * Set the class system and the relic slot (class-first build plan §3.3): the Order,
+   * Response rules, Payoff rules, Loadout, Thresholds or Formation. A config in `auto`
+   * mode hands the choice back to the class default.
+   */
+  | { type: "classConfig"; config: ClassConfig }
   /**
    * Choose which owned card is active for a row, or clear the row with `null`.
    * Free and instant.

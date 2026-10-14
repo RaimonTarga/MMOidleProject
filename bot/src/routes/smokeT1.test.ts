@@ -8,14 +8,14 @@ import { DEFAULT_SMOKE_CLASS, SMOKE_T1_ARMOR, SMOKE_T1_ID, smokeT1Route } from "
 const KEPT_STEP_KINDS = [
   "assert", "attemptBoss", "captureCheckpoint", "chooseClass", "craft", "equip", "unequip",
   "upgrade", "farm", "travel", "moveWithinNode", "ifPossible", "repeatUntil", "milestone",
-  "unlockSkill", "configureRunes",
+  "unlockSkill", "configureRunes", "classConfig",
 ] as const;
 
 /** The conditions it keeps. */
 const KEPT_CONDITION_KINDS = [
   "biomeLevelAtLeast", "essenceAtLeast", "recipeUnlocked", "hasItem", "itemAtLeastPlus",
   "equipped", "bossCleared", "playerTierAtLeast", "fullyRecovered", "canCraft", "canUpgrade",
-  "globalMasteryAtLeast", "classSelected", "elapsedMs", "allOf", "anyOf", "not",
+  "globalMasteryAtLeast", "classSelected", "pieceLearned", "trophyHeld", "elapsedMs", "allOf", "anyOf", "not",
 ] as const;
 
 // Compile-time pin: the route vocabulary is exactly the kept kinds, no more and

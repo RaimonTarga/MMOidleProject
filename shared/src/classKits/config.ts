@@ -25,6 +25,7 @@ import {
   trophyRanks,
   type ClassKitProgress,
 } from './registry';
+import { globalMastery } from '../config/gameConfig';
 import type { ClassArchetype } from './types';
 
 const SYSTEMS: { [K in ClassSystemKind]: ClassSystemSpec<Extract<ClassSystemConfig, { kind: K }>> } = {
@@ -134,4 +135,29 @@ export function resolveClassConfig(saved: unknown, ctx: ClassConfigContext): Cla
 
 export function sameClassConfig(a: ClassConfig, b: ClassConfig): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
+}
+
+/** The parts of a character the class context reads, as the player view or the server holds them. */
+export interface ClassStateInput {
+  combatArchetype: ClassArchetype | null;
+  biomeLevel: Readonly<Record<string, number>>;
+  bossesCleared: readonly string[];
+  /** The T2 pick; ignored unless it is one of the class's own disciplines. */
+  disciplineId?: string | null;
+}
+
+/**
+ * The class context for a character, from the same fields the server persists and the player
+ * view carries, so the client and the bot check a config exactly as the server will.
+ */
+export function classConfigContextFromState(state: ClassStateInput): ClassConfigContext | null {
+  const archetype = state.combatArchetype;
+  if (!archetype) return null;
+  const picked = state.disciplineId ?? null;
+  const disciplineId = picked && classKitFor(archetype).disciplines.some((d) => d.id === picked) ? picked : null;
+  return classConfigContext(
+    archetype,
+    { biomeLevel: state.biomeLevel, bossesCleared: state.bossesCleared, disciplineId },
+    globalMastery(state.biomeLevel),
+  );
 }

@@ -1,5 +1,6 @@
 import type {
   AutocombatConfig,
+  ClassConfig,
   EquipmentSlot,
   EquippedRule,
   FastBossRetryResult,
@@ -113,6 +114,11 @@ export class Intents {
 
   unequip(slot: EquipmentSlot): void {
     this.conn.raw.emit("inventory:unequip", slot);
+  }
+
+  /** `class:setConfig`: the server answers with every reason it refused, or ok. */
+  setClassConfig(config: ClassConfig): Promise<{ ok: boolean; reasons?: string[] }> {
+    return this.conn.request("class:configResult", () => this.conn.raw.emit("class:setConfig", config), 15_000);
   }
 
   setRuneLoadout(rules: EquippedRule[]): Promise<CraftOutcome> {

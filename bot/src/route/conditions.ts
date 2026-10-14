@@ -1,5 +1,6 @@
 import {
   ITEM_DATABASE,
+  classConfigContextFromState,
   NODE_BIOMES,
   RECIPE_DATABASE,
   biomeLevelCap,
@@ -55,6 +56,14 @@ export function evaluate(condition: Condition, ctx: ConditionContext): boolean {
       return (obs.self?.globalMastery ?? 0) >= condition.value;
     case "classSelected":
       return (obs.self?.selectedClass ?? null) !== null;
+    case "pieceLearned": {
+      const kit = obs.self ? classConfigContextFromState(obs.self) : null;
+      return (kit?.pieceRanks.get(condition.pieceId) ?? 0) >= (condition.rank ?? 1);
+    }
+    case "trophyHeld": {
+      const kit = obs.self ? classConfigContextFromState(obs.self) : null;
+      return (kit?.trophyRanks.get(condition.trophyId) ?? 0) >= (condition.rank ?? 1);
+    }
     case "elapsedMs":
       return ctx.elapsedMs >= condition.ms;
     case "allOf":
@@ -95,6 +104,10 @@ export function describe(condition: Condition): string {
       return `global mastery >= ${condition.value}`;
     case "classSelected":
       return "a class selected";
+    case "pieceLearned":
+      return `${condition.pieceId} learned${condition.rank ? ` (rank ${condition.rank}+)` : ""}`;
+    case "trophyHeld":
+      return `${condition.trophyId} held${condition.rank ? ` (rank ${condition.rank}+)` : ""}`;
     case "elapsedMs":
       return `elapsed >= ${Math.round(condition.ms / 1000)}s`;
     case "allOf":

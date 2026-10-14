@@ -6,6 +6,10 @@ import {
   BIOME_START_TIER_BY_GROUP,
   BIOME_PRIMARY_ESSENCE,
   ITEM_DATABASE,
+  classConfigContextFromState,
+  resolveClassConfig,
+  validateClassConfig,
+  type ClassConfig,
   NODE_BIOMES,
   biomeLevelCap,
   RECIPE_DATABASE,
@@ -350,6 +354,8 @@ export class RouteExecutor {
         return this.doUpgrade(step);
       case "configureRunes":
         return this.doConfigureRunes(step.rules);
+      case "classConfig":
+        return this.doClassConfig(step.config);
       case "attemptBoss":
         return this.doAttemptBoss(step);
       case "repeatUntil":
@@ -1244,6 +1250,34 @@ export class RouteExecutor {
   }
 
   /**
+   * Set the class system (build plan §3.3). The config is checked with the same shared
+   * rules the server applies, so a route that asks for a piece it hasn't learned fails as
+   * an authoring error before anything is sent; then the step waits until the server's
+   * copy is the one it resolved (`auto` resolves to the class default).
+   */
+  private async doClassConfig(config: ClassConfig): Promise<void> {
+    const { obs, intents, recorder } = this.deps;
+    const ctx = obs.self ? classConfigContextFromState(obs.self) : null;
+    if (!ctx) throw new BuildError("ROUTE_LOGIC_FAILURE", "class config before a class is picked", { config });
+    const checked = validateClassConfig(config, ctx);
+    if (!checked.ok) throw new BuildError("ROUTE_LOGIC_FAILURE", checked.reasons.join("; "), { config });
+    const wanted = JSON.stringify(resolveClassConfig(checked.config, ctx));
+    if (JSON.stringify(obs.self?.classConfig ?? null) === wanted) return;
+    const result = await this.mutate(async () => {
+      const answer = await intents.setClassConfig(checked.config);
+      return { success: answer.ok, reason: (answer.reasons ?? []).join("; ") };
+    });
+    if (!result.success) {
+      throw new StallError(`class config rejected: ${result.reason ?? "unknown"}`, { config });
+    }
+    await this.waitUntil(() => JSON.stringify(obs.self?.classConfig ?? null) === wanted, {
+      timeoutMs: 15_000,
+      what: "the server's class config matches the route's",
+    });
+    recorder.emit({ kind: "build-change", atMs: recorder.now(), system: "class-config", detail: { config: checked.config } });
+  }
+
+  /**
    * Kill every guardian while the dungeon is still idle, so the boss is fought
    * alone.
    *
@@ -2070,6 +2104,8 @@ function defaultLabel(step: RouteStep): string {
       return `upgrade ${step.definitionId} to +${step.toPlus}${step.opportunistic ? " (as GM allows)" : ""}`;
     case "configureRunes":
       return `configure runes (${step.rules.length})`;
+    case "classConfig":
+      return `class config (${step.config.mode}, ${step.config.system.kind})`;
     case "attemptBoss":
       return `boss ${step.biomeGroup} T${step.tier}`;
     case "ifPossible":
