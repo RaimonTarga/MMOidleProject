@@ -25,6 +25,7 @@ import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import { setEntityMotion, stopEntity } from '../../../world/movement';
 import { setAttackTarget } from '../../../combat/ai/targeting';
 import { runFormationAttack } from './formationAttack';
+import { minionAttackCooldown, minionCanSwing } from '../../../combat/status/minionAfflictions';
 import { computeMinionSpeed, despawnMinion, getFollowOffset } from './spawn';
 import {
   isSummonerRecalling,
@@ -110,7 +111,8 @@ function findReachableMonster(world: World, owner: PlayerEntity, minion: MinionE
 
 /** Swing at `target` once the summon's cooldown is ready. */
 function strikeWhenReady(world: World, owner: PlayerEntity, minion: MinionEntity, target: MonsterEntity, now: number): void {
-  if (now - minion.performsAttack.lastAttackAt >= minion.performsAttack.attackCooldown) {
+  if (!minionCanSwing(minion)) return;
+  if (now - minion.performsAttack.lastAttackAt >= minionAttackCooldown(minion)) {
     const outcome = runFormationAttack(world, owner, minion, target, now);
     if (outcome !== 'cancelled') {
       minion.performsAttack.lastAttackAt = now;

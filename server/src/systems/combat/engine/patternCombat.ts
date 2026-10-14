@@ -128,6 +128,7 @@ function resolvePatternCircle(
   const shares = formationAreaMults(minions);
   for (const minion of minions) {
     runMonsterAttackOnMinion(world, monster, minion, now, shares.get(minion.isMinion.id) ?? 1, rawDamage);
+    if (stunMs && minion.hasHealth.hp > 0) applyStun(minion.tracksCombat, stunMs, monster.isMonster.id);
   }
 
   // The circle ALWAYS erupts, hit or miss: a telegraph that resolves silently on

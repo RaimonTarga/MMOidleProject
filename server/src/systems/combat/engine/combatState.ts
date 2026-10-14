@@ -36,6 +36,10 @@ export function updateCombatState(world: World, dt: number): void {
     tickCooldowns(e.tracksCombat, dt);
     tickStatusEffectDurations(e.tracksCombat, dt);
   }
+  // Summons carry monster debuffs too (class-first build plan S1).
+  for (const e of world.minionEntities) {
+    tickStatusEffectDurations(e.tracksCombat, dt);
+  }
   // Plating corrosion is permanent while its boss encounter is active, but it
   // must not follow the player into a later pull or another node.
   pruneEndedEncounterCorrosion(world);

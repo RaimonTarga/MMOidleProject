@@ -220,6 +220,16 @@ export function assertMarkerInvariants(world: World): string[] {
     checkAbsentState(entity, violations);
   }
 
+  for (const entity of world.minionEntities) {
+    checkEntity(entity, [{
+      marker: "hasDot",
+      effectId: "monster-dot",
+      hasEffect: (state) => state.statusEffects.some((effect) =>
+        isMonsterDotStatusEffectId(effect.id),
+      ),
+    }], violations);
+  }
+
   for (const entity of world.playerEntities) {
     checkEntity(entity, [{
       marker: "hasDot",

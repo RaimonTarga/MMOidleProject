@@ -159,9 +159,15 @@ export function auditStatusRegistry(root: string = AUDIT_DEFAULT_ROOT) {
     ['applyStatusEffect', [0, 1]], ['applyPlayerDebuff', [1, 2]],
     ['applyPlayerMechanicBuff', [1, 2]], ['applyResistedPlayerDebuff', [0, 1]],
     ['applySharedDebuffMaxWins', [1, 2]],
+    // The monster rider table's writer (`monsterRiders.ts`): its target is the adapter,
+    // a player or a summon, so the call carries no target argument.
+    ['target.apply', [-1, 0]],
   ]);
   function carrier(target: string, file: string, api: string): string {
     if (api === 'applyResistedPlayerDebuff') return 'player';
+    // It reaches players and summons; summons show no statuses yet (the Conduit HUD
+    // decides), so the player tiles are the ones it needs.
+    if (api === 'target.apply') return 'player';
     if (api === 'applyPlayerDebuff' || api === 'applySharedDebuffMaxWins') return 'monster';
     if (/monster|defender|targetState/.test(target)) return 'monster';
     if (/player|owner|attacker|wielder/.test(target)) return 'player';
@@ -209,7 +215,8 @@ export function auditStatusRegistry(root: string = AUDIT_DEFAULT_ROOT) {
       const idNode = cfg ? prop(cfg, 'id') : undefined;
       const ids = strings(idNode);
       if (!ids.length) dynamic.push({ at: loc(node), expression: idNode?.getText() ?? api, target, config: cfg?.getText().replace(/\s+/g, ' ').slice(0, 180) ?? '' });
-      for (const id of ids) applications.push({ id, at: loc(node), carrier: inferredCarrier(node.arguments[indexes[0]], carrier(target, file, api)),
+      const targetNode = node.arguments[indexes[0]];
+      for (const id of ids) applications.push({ id, at: loc(node), carrier: targetNode ? inferredCarrier(targetNode, carrier(target, file, api)) : carrier(target, file, api),
         totalMs: cfg && prop(cfg, 'data')?.getText().includes('totalMs') ? 'yes' : 'no', via: api });
     }
     if (api === 'defineBuff') {
@@ -397,7 +404,10 @@ export function auditStatusRegistry(root: string = AUDIT_DEFAULT_ROOT) {
   // site's id is expanded above (`applyMonsterSlow` / `applyMonsterRoot`).
   const controlApplier = (row: Dynamic) => row.expression === 'effectId'
     && row.at.startsWith('server/src/systems/combat/status/monsterControl.ts:');
-  const unexplained = dynamic.filter((row) => !controlApplier(row) && !/applyStatusEffect|frameWindowEffectId|sourceBarrierEffectId|recoveryEffectIdForAbility|guardEffectIdForAbility|linkId|step\.effectId|debuff\.effectId|room\.effectId|profile\.effectId|^id$|action\.effectId|buff\.effectId|ward\.effectId|debuff\.statusEffectId|source\.id|pool\.erodes\.effectId|ramp\.effectId|se\.effectId|damage\.effectId/.test(row.expression));
+  // The monster rider adapters (`monsterRiders.ts`) forward a config whose id the audit
+  // already resolved at its `target.apply` call site.
+  const riderAdapter = (row: Dynamic) => row.at.startsWith('server/src/systems/combat/status/monsterRiders.ts:');
+  const unexplained = dynamic.filter((row) => !controlApplier(row) && !riderAdapter(row) && !/applyStatusEffect|frameWindowEffectId|sourceBarrierEffectId|recoveryEffectIdForAbility|guardEffectIdForAbility|linkId|step\.effectId|debuff\.effectId|room\.effectId|profile\.effectId|^id$|action\.effectId|buff\.effectId|ward\.effectId|debuff\.statusEffectId|source\.id|pool\.erodes\.effectId|ramp\.effectId|se\.effectId|damage\.effectId/.test(row.expression));
   const uiOnly = [...new Set([...playerHelp.keys(), ...targetHelp.keys(), ...badge.keys()])].filter((id) => !byId.has(id) && !descriptors.has(id) && !['source-barrier', 'enemy-barrier', 'harvest'].includes(id)).sort();
   const bossMeta = entries('client/src/hud/targetStatusMeta.ts', 'BOSS_META');
   const bossCopy = entries(helpFile, 'BOSS_HELP');

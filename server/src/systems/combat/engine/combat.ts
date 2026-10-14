@@ -109,6 +109,8 @@ import { evadeBlocksDebuffs, monsterDodgeChance, rollMonsterDodge } from "../../
 import { isMonsterStunned, applyStun } from "../status/stun";
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
 import { applyPlatingShredStacks } from '../status/platingShred';
+import { applyMonsterHitRiders, minionRiderTarget, playerRiderTarget, type RiderTarget } from '../status/monsterRiders';
+import { applyMonsterHitDotToMinion, minionDamageTakenMult } from '../status/minionAfflictions';
 import { shellDamageMult } from '../ai/shellUp';
 import { renewPackPursuit, setAggroTarget, setAttackTarget } from "../ai/targeting";
 import { markEngaged } from "../ai/engagement";
@@ -911,159 +913,13 @@ export function runMonsterAttack(
   // conditionally set — see the field's note on staleness.
   monster.performsAttack.lastAttackEmpowered = ctx.metadata["empoweredAttack"] === true;
 
-  // Sun Mark setup (Desert): the marker paints a cleansable mark the finisher cashes
-  // in. Edge-triggered telegraph — a one-shot pulse only when the mark is freshly
-  // applied (not on every refresh). Skipped on an evaded hit, like every debuff.
-  //
-  // A SELF-MARKING monster (both `appliesMark` and `markedStrike` — the T2 Desert
-  // Emperor) must not repaint on the very hit that just cashed the mark: the
-  // finisher check runs before damage and this applier runs after it, so without
-  // this guard every hit from the second onward would land amplified forever.
-  // Skipping the repaint makes it ALTERNATE — paint, cash, paint, cash.
-  const mark = def?.appliesMark;
-  if (
-    mark &&
-    ctx.metadata["sunMarkConsumed"] !== true &&
-    canApplyPlayerDebuff(target) &&
-    !playerRefusesStatus(target, SUN_MARK_EFFECT_ID) &&
-    !evadeBlocksDebuffs(ctx)
-  ) {
-    const fresh = !getStatusEffect(target.tracksCombat, SUN_MARK_EFFECT_ID);
-    const markMs = Math.round(
-      mark.durationMs * harmfulStatusDurationMult(target),
-    );
-    applyStatusEffect(target.tracksCombat, {
-      id: SUN_MARK_EFFECT_ID,
-      maxStacks: 1,
-      remainingMs: markMs,
-      refreshable: true,
-      sourceId: monster.isMonster.id,
-      data: { totalMs: markMs },
-    });
-    if (fresh) {
-      world.pushEvent(target.hasPosition.nodeId, {
-        kind: "ecology-pulse",
-        monsterId: monster.isMonster.id,
-        pos: { ...monster.hasPosition.current },
-        pulse: "sun-mark",
-      });
-    }
-  }
-
-  // CONSTRICT — when the cadence finisher fires, the boosted hit also roots.
-  // Gated on `cadenceFiredThisTick` so it lands on the heavy beat only, and on the
-  // usual debuff rules so an evaded hit pins nobody.
-  const cadenceRootMs = def?.cadenceFinisher?.rootMs;
-  if (
-    cadenceRootMs &&
-    cadenceFiredThisTick(monster, now) &&
-    canApplyPlayerDebuff(target) &&
-    !evadeBlocksDebuffs(ctx)
-  ) {
-    const rootMs = Math.round(
-      cadenceRootMs * harmfulStatusDurationMult(target),
-    );
-    applyResistedPlayerDebuff(target, {
-      id: "slow",
-      maxStacks: 1,
-      remainingMs: rootMs,
-      refreshable: true,
-      sourceId: monster.isMonster.id,
-      data: { speedMult: 0, totalMs: rootMs },
-    });
-  }
-
-  const slow = def?.slowEffect;
-  if (slow && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
-    // Mobility-boot tenacity (Swamp + Graveyard stacks) shortens the CC duration.
-    const slowMs = Math.round(
-      slow.durationMs * harmfulStatusDurationMult(target),
-    );
-    applyResistedPlayerDebuff(target, {
-      id: "slow",
-      maxStacks: 1,
-      remainingMs: slowMs,
-      refreshable: true,
-      sourceId: monster.isMonster.id,
-      data: {
-        speedMult: slow.speedMult,
-        totalMs: slowMs,
-      },
-    });
-  }
-
-  // Trench "abyssal pressure" — stack the player's `antiheal` status (suppresses ALL
-  // healing via getAntiHealMult), so you can't out-heal an abyssal terror and must
-  // burst/execute it. Decays after the last hit. Skipped on an evaded hit.
-  const antiheal = def?.appliesAntiheal;
-  if (antiheal && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
-    const durMs = Math.round(
-      antiheal.durationMs * harmfulStatusDurationMult(target),
-    );
-    applyResistedPlayerDebuff(target, {
-      id: "antiheal",
-      maxStacks: antiheal.maxStacks,
-      remainingMs: durMs,
-      refreshable: true,
-      sourceId: monster.isMonster.id,
-      data: { reductionPerStack: antiheal.reductionPerStack, totalMs: durMs },
-    });
-  }
-
-  // Desert sundering — stack the player's `sundered` status (+damage TAKEN from
-  // every source via playerIncomingDamageMult). The controller half of the Desert
-  // pair: the pinning mob barely scratches you, it just makes its kiting dealer's
-  // shots land harder. Decays after the last hit. Skipped on an evaded hit.
-  const vulnerability = def?.appliesVulnerability;
-  if (vulnerability && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
-    const durMs = Math.round(
-      vulnerability.durationMs * harmfulStatusDurationMult(target),
-    );
-    applyResistedPlayerDebuff(target, {
-      id: SUNDERED_EFFECT_ID,
-      maxStacks: vulnerability.maxStacks,
-      remainingMs: durMs,
-      refreshable: true,
-      sourceId: monster.isMonster.id,
-      data: {
-        [DAMAGE_TAKEN_PCT_KEY]: vulnerability.damageTakenPct,
-        totalMs: durMs,
-      },
-    });
-  }
-
-  // Tundra rampDebuff — stacking move-slow + attack-slow on the player, each
-  // capped, decaying stackDurationMs after the last hit (refreshed every hit).
-  // A Cave boss phase ('empower-shred') deepens the same corrosion instead of
-  // bolting on a second mechanic. An ordinary hit erodes by ONE stack; the
-  // cast-only corrosion is configured separately and never enters this rider.
-  if (def?.appliesPlatingShred && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
-    applyPlatingShredStacks(world, monster, target, def, 1, abilityName);
-  }
-
-  const rampDebuff = def?.rampDebuff;
-  if (rampDebuff && canApplyPlayerDebuff(target) && !evadeBlocksDebuffs(ctx)) {
-    const durMs = Math.round(
-      rampDebuff.stackDurationMs * harmfulStatusDurationMult(target),
-    );
-    // A boss 'modify-ramp-debuff' action raises the slow caps mid-fight.
-    const capOverride = monster.scriptsBoss?.rampDebuffCapOverride;
-    const effectiveRamp = capOverride
-      ? { ...rampDebuff, moveSlowMaxPct: capOverride.moveSlowMaxPct, atkSlowMaxPct: capOverride.atkSlowMaxPct }
-      : rampDebuff;
-    applyResistedPlayerDebuff(target, {
-      id: FROST_RAMP_EFFECT_ID,
-      maxStacks: frostRampMaxStacks(effectiveRamp),
-      remainingMs: durMs,
-      refreshable: true,
-      sourceId: monster.isMonster.id,
-      data: {
-        moveSlowPerHit: effectiveRamp.moveSlowPerHit,
-        moveSlowMaxPct: effectiveRamp.moveSlowMaxPct,
-        atkSlowPerHit: effectiveRamp.atkSlowPerHit,
-        atkSlowMaxPct: effectiveRamp.atkSlowMaxPct,
-        totalMs: durMs,
-      },
+  // The hit's riders (mark, root, slow, antiheal, sunder, corrosion, frost ramp): one
+  // table for players and summons (`monsterRiders.ts`). A full dodge carries none; a
+  // graze still does.
+  if (!evadeBlocksDebuffs(ctx)) {
+    applyMonsterHitRiders(world, monster, def, playerRiderTarget(target), now, {
+      sunMarkConsumed: ctx.metadata["sunMarkConsumed"] === true,
+      abilityName,
     });
   }
 
@@ -1399,6 +1255,7 @@ function resolveMonsterAbilityArea(
       runMonsterAttackOnMinion(
         world, monster, minion, now, action.multiplier * (shares.get(minion.isMinion.id) ?? 1),
       );
+      if (action.stunMs && minion.hasHealth.hp > 0) applyStun(minion.tracksCombat, action.stunMs, monster.isMonster.id);
     }
   }
 }
@@ -1732,19 +1589,17 @@ function updateLowHealthWard(
 function applyChargedAttackRiders(
   world: World,
   monster: MonsterEntity,
-  target: PlayerEntity,
+  target: RiderTarget,
   charged: NonNullable<MonsterDefinition["chargedAttack"]>,
 ): void {
-  if (!canApplyPlayerDebuff(target)) return;
+  if (!target.canApply) return;
 
   // ROOT — the shared `slow` status at speedMult 0. Movement stops; attacks do
   // NOT, which is what keeps these solvable by configuration. Mobility tenacity
   // shortens it and Cleanse strips it, like any other monster debuff.
   if (charged.rootMs && charged.rootMs > 0) {
-    const rootMs = Math.round(
-      charged.rootMs * harmfulStatusDurationMult(target),
-    );
-    applyResistedPlayerDebuff(target, {
+    const rootMs = Math.round(charged.rootMs * target.durationMult());
+    target.apply({
       id: "slow",
       maxStacks: 1,
       remainingMs: rootMs,
@@ -1752,7 +1607,7 @@ function applyChargedAttackRiders(
       sourceId: monster.isMonster.id,
       data: { speedMult: 0, totalMs: rootMs },
     });
-    world.pushEvent(target.hasPosition.nodeId, {
+    world.pushEvent(monster.hasPosition.nodeId, {
       kind: "ecology-pulse",
       monsterId: monster.isMonster.id,
       pos: { ...monster.hasPosition.current },
@@ -1765,10 +1620,8 @@ function applyChargedAttackRiders(
   // fraction rather than dropping speed to zero.
   const slow = charged.appliesSlow;
   if (slow && slow.durationMs > 0 && slow.speedMult >= 0 && slow.speedMult < 1) {
-    const slowMs = Math.round(
-      slow.durationMs * harmfulStatusDurationMult(target),
-    );
-    applyResistedPlayerDebuff(target, {
+    const slowMs = Math.round(slow.durationMs * target.durationMult());
+    target.apply({
       id: "slow",
       maxStacks: 1,
       remainingMs: slowMs,
@@ -1784,10 +1637,8 @@ function applyChargedAttackRiders(
   // every ordinary hit.
   const wither = charged.appliesAntiheal;
   if (wither) {
-    const durMs = Math.round(
-      wither.durationMs * harmfulStatusDurationMult(target),
-    );
-    applyResistedPlayerDebuff(target, {
+    const durMs = Math.round(wither.durationMs * target.durationMult());
+    target.apply({
       id: "antiheal",
       maxStacks: 1,
       remainingMs: durMs,
@@ -1804,7 +1655,7 @@ function applyChargedAttackRiders(
   const hex = charged.refreshesPlayerDots;
   if (hex) {
     let extended = false;
-    for (const effect of target.tracksCombat.statusEffects) {
+    for (const effect of target.state.statusEffects) {
       if ((effect.data["isDot"] ?? 0) === 0) continue;
       if (effect.remainingMs <= 0) continue;
       const total = effect.data["totalMs"] ?? effect.remainingMs;
@@ -1816,7 +1667,7 @@ function applyChargedAttackRiders(
       extended = true;
     }
     if (extended) {
-      world.pushEvent(target.hasPosition.nodeId, {
+      world.pushEvent(monster.hasPosition.nodeId, {
         kind: "ecology-pulse",
         monsterId: monster.isMonster.id,
         pos: { ...monster.hasPosition.current },
@@ -1960,9 +1811,11 @@ function applyChargedAttackKnockback(
 
 /**
  * Run a single monster attack against a minion. Bypasses the combat pipeline
- * intentionally — minions are damage sponges, not full combatants. They have
- * no buffs, no shields, no DoT resistance; HP reduction is raw modulo plating.
- * Mirrors AoE's pipeline-bypass design.
+ * intentionally: a summon has no buffs, shields or evasion, and its HP loss is the
+ * monster's attack less plating and DR. It does take the monster's debuffs, the same
+ * as a player (class-first build plan S1, bible §7.10): the hit carries its riders
+ * and DoT, a Sun Mark on the summon is cashed by the finisher, and sundering and
+ * corrosion on the summon count.
  */
 export function runMonsterAttackOnMinion(
   world: World,
@@ -1972,18 +1825,31 @@ export function runMonsterAttackOnMinion(
   damageMultiplier = 1,
   rawDamage?: number,
 ): void {
+  const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
+  let markMult = 1;
+  const markedStrike = def?.markedStrike;
+  if (markedStrike && markedStrike.multiplier > 1 && getStatusEffect(minion.tracksCombat, SUN_MARK_EFFECT_ID)) {
+    markMult = markedStrike.multiplier;
+    removeStatusEffect(minion.tracksCombat, SUN_MARK_EFFECT_ID);
+  }
   const damage = Math.max(
     1,
     Math.round(
-      Math.max(0, (rawDamage ?? monster.dealsDamage.attack) - minion.mitigatesDamage.plating) *
+      Math.max(0, (rawDamage ?? monster.dealsDamage.attack) - platingAfterShred(minion.mitigatesDamage.plating, minion.tracksCombat)) *
         (1 - minion.mitigatesDamage.damageReduction) *
-        Math.max(0, damageMultiplier),
+        Math.max(0, damageMultiplier) *
+        markMult *
+        minionDamageTakenMult(minion),
     ),
   );
   minion.hasHealth.hp = Math.max(0, minion.hasHealth.hp - damage);
   pushDamageEvent(world, minion, damage, { sourceId: monster.isMonster.id });
   monster.performsAttack.lastAttackAt = now;
-  monster.performsAttack.lastAttackEmpowered = damageMultiplier > 1 || rawDamage !== undefined;
+  monster.performsAttack.lastAttackEmpowered = damageMultiplier > 1 || rawDamage !== undefined || markMult > 1;
+  if (minion.hasHealth.hp > 0) {
+    applyMonsterHitRiders(world, monster, def, minionRiderTarget(minion), now, { sunMarkConsumed: markMult > 1 });
+    applyMonsterHitDotToMinion(world, monster, def, minion, now);
+  }
   // Death is observed by the summoner tick on its next pass — it will detach
   // the minion entity and start a respawn timer.
 }
@@ -2020,6 +1886,7 @@ function updateChargedAttackOnMinion(
       return true;
     }
     runMonsterAttackOnMinion(world, monster, minion, now, charged.multiplier);
+    if (minion.hasHealth.hp > 0) applyChargedAttackRiders(world, monster, minionRiderTarget(minion), charged);
     const healPct = charged.healsSelfPct ?? 0;
     if (healPct > 0 && world.hasMonster(monster.isMonster.id)) {
       monster.hasHealth.hp = Math.min(
@@ -2172,7 +2039,7 @@ function resolveChargedSlam(
       // being closed, not a behavior change to an existing encounter — and it is
       // what lets a root become a telegraphed circle you can step out of instead of
       // an unavoidable cast that follows you.
-      applyChargedAttackRiders(world, monster, victim, charged);
+      applyChargedAttackRiders(world, monster, playerRiderTarget(victim), charged);
       const refreshed = world.getPlayerEntity(victim.isPlayer.id);
       if (refreshed) markEngaged(world, refreshed, now);
     }
@@ -2191,6 +2058,9 @@ function resolveChargedSlam(
   const shares = formationAreaMults(minions);
   for (const minion of minions) {
     runMonsterAttackOnMinion(world, monster, minion, now, shares.get(minion.isMinion.id) ?? 1);
+    if (minion.hasHealth.hp <= 0) continue;
+    if (charged.stunMs) applyStun(minion.tracksCombat, charged.stunMs, monster.isMonster.id);
+    applyChargedAttackRiders(world, monster, minionRiderTarget(minion), charged);
   }
 
   if (charged.pool) {
@@ -2623,7 +2493,7 @@ export function updateCombat(world: World, dt: number, now: number) {
           }
           if (outcome === "hit") {
             applyChargedAttackKnockback(world, e, target, charged);
-            applyChargedAttackRiders(world, e, target, charged);
+            applyChargedAttackRiders(world, e, playerRiderTarget(target), charged);
             // DEATHROLL DRAG. Last, because it takes ownership of the monster for the
             // whole haul: nothing else on this charge gets to run afterwards, and the
             // splash/kite bookkeeping below must see the grab already in place.
@@ -2795,8 +2665,9 @@ export function updateCombat(world: World, dt: number, now: number) {
     if (updateLowHealthWard(world, e, now)) continue;
     if (updateCastedAttackSpeedBuff(world, e, now)) continue;
     // Charged attacks fire at summons too — otherwise a mob held by a summon
-    // silently loses its slam. Player-only riders (lunge leap, mark, precast
-    // stun, knockback, root/slow/antiheal, lair drag, chill gate) do not apply.
+    // silently loses its slam. The charge's riders (root, slow, wither, hex) land
+    // on the summon; the player-shaped ones (lunge leap, mark, precast stun,
+    // knockback, lair drag, chill gate) do not.
     if (updateChargedAttackOnMinion(world, e, minion, minionMonsterDef, now)) continue;
     if (
       now - e.performsAttack.lastAttackAt >= monsterAttackCooldown(e)

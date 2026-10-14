@@ -241,6 +241,8 @@ export class World {
     "hasStatus",
   );
   readonly movingMinions = this.minionEntities.with("isMoving");
+  /** Summons carrying a monster DoT (class-first build plan S1). */
+  readonly dottedMinions = this.minionEntities.with("hasDot");
   readonly reloadPlayers = this.livePlayers.with("usesReload");
   readonly dottedPlayers = this.livePlayers.with("hasDot");
   readonly environmentallyDottedPlayers =

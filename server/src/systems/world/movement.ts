@@ -32,6 +32,7 @@ import { markSliceDirty } from '../../ecs/dirtyHelpers';
 import { resolveObstaclesForNode } from './nodeFeatures';
 import { bootSpeedMultiplier, slowResistedMult } from './mobility/mobilityBoots';
 import { isSummonerRecalling, RECALL_SPEED_MULT } from '../classes/archetypes/summoner/command';
+import { minionMoveSpeedMult } from '../combat/status/minionAfflictions';
 import {
   advanceMovePath,
   clearMovePath,
@@ -556,7 +557,8 @@ export function updateMovement(world: World, dt: number, now: number) {
   // A recall sprints them home on top of that.
   const ownerHaste = new Map<string, number>();
   for (const e of world.movingMinions) {
-    if (e.isRooted) {
+    const statusMult = minionMoveSpeedMult(e);
+    if (e.isRooted || statusMult <= 0) {
       stopEntity(world, e);
       continue;
     }
@@ -568,7 +570,7 @@ export function updateMovement(world: World, dt: number, now: number) {
       haste = owner ? bootSpeedMultiplier(world, owner, now) * (isSummonerRecalling(owner) ? RECALL_SPEED_MULT : 1) : 1;
       ownerHaste.set(ownerId, haste);
     }
-    processMoverStep(world, e, dt, (e.isChargingAbility?.speedMult ?? 1) * haste, 'monster', now);
+    processMoverStep(world, e, dt, (e.isChargingAbility?.speedMult ?? 1) * haste * statusMult, 'monster', now);
 
     const node = NODE_REGISTRY.get(e.hasPosition.nodeId);
     if (node) {
