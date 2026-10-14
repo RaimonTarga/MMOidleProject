@@ -86,9 +86,10 @@ assert(
   `weapon recipes must carry no +N ladder (power is folded into base stats): ${laddered.join(', ')}`,
 );
 
-// 2. Every weapon is at its authored full-power Attack, and the table covers them all.
+// 2. Every generic weapon is at its authored full-power Attack, and the table covers them all.
 const problems: string[] = [];
-for (const recipe of weapons) {
+const generic = weapons.filter((r) => !r.classes);
+for (const recipe of generic) {
   const expected = WEAPON_ATTACK.get(recipe.id);
   if (expected === undefined) {
     problems.push(`${recipe.id}: not in WEAPON_ATTACK — add its authored full-power Attack`);
@@ -100,7 +101,25 @@ for (const recipe of weapons) {
   }
 }
 for (const id of WEAPON_ATTACK.keys()) {
-  if (!weapons.some((r) => r.id === id)) problems.push(`${id}: in WEAPON_ATTACK but no longer a weapon recipe`);
+  if (!generic.some((r) => r.id === id)) problems.push(`${id}: in WEAPON_ATTACK but no longer a weapon recipe`);
+}
+
+// 3. Class weapons (class-first build plan §3.6) copy a generic weapon of their biome until
+// the class tracks retune them, so each one's Attack is a pinned full-power Attack from its
+// own biome.
+const pinnedByGroup = new Map<string, Set<number>>();
+for (const recipe of generic) {
+  const attack = WEAPON_ATTACK.get(recipe.id);
+  if (attack === undefined) continue;
+  const pinned = pinnedByGroup.get(recipe.recipeGroup) ?? new Set<number>();
+  pinned.add(attack);
+  pinnedByGroup.set(recipe.recipeGroup, pinned);
+}
+for (const recipe of weapons.filter((r) => r.classes)) {
+  const attack = recipe.stats?.attack ?? 0;
+  if (!pinnedByGroup.get(recipe.recipeGroup)?.has(attack)) {
+    problems.push(`${recipe.id}: Attack ${attack} is no ${recipe.recipeGroup} generic weapon's full-power Attack`);
+  }
 }
 assert(problems.length === 0, `weapon curve drift:\n  ${problems.join('\n  ')}`);
 
