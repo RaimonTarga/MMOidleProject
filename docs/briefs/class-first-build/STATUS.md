@@ -3,7 +3,7 @@
 Kept by the conductor. Plan: [class-first-build-plan-2026-10-14.md](../class-first-build-plan-2026-10-14.md).
 Integration branch `rework/class-first` (conductor worktree `../mmo-rework`).
 
-**Updated:** 2026-10-14: F1, F2, F4 (+T0), K1–K3, D5 merged; D1 running; D2 ready for Grok.
+**Updated:** 2026-10-14: F1, F2, F4 (+T0), K1–K3, D5, D1 merged; D2 ready for Grok.
 **Baseline:** `rework/class-first` at `2e3a305b`: full suite **376/376**, typecheck clean. Codex hit rate limits, so D5 and K1–K3 run as
 Claude subagents of the conductor (same briefs, same worktrees); ICONS-T1 stays with Codex.
 
@@ -11,7 +11,6 @@ Claude subagents of the conductor (same briefs, same worktrees); ICONS-T1 stays 
 
 | ID | Task | Agent | Worktree · branch | State |
 |---|---|---|---|---|
-| D1 | [Remove the item lineage trees, ability node rows, shards](D1-lineage-trees-rows-shards.md) | Claude subagent | `../mmo-rw-d1-lineages` · `rw/d1-lineages` | running |
 | D2 | [Remove stances, rites, Runic Points, the core slot](D2-stances-rites-runic-points-cores.md) | Grok | `../mmo-rw-d2-stances-rites` · `rw/d2-stances-rites` | ready to start |
 | ICONS-T1 | [Icons for every T1 piece and trophy](ICONS-T1.md) | Codex (image generation) | `../mmo-rw-icons-t1` · `rw/icons-t1` | running |
 | D6 | [The tutorial keeps its engine and the seal route](D6-tutorial-engine.md) | Grok | `../mmo-rw-d6-tutorial-core` · `rw/d6-tutorial-core` | running |
@@ -114,6 +113,13 @@ your report where the brief says, and tell me.
   `docs/bot-harness-capability-audit.md`, `docs/bot-experiment-runner-current-state.md`).
   `attemptBoss.repeat` is gone: repeated boss kills for trophy ranks need a new signal when
   the class routes return.
+- **From D1:** `Recipe.lineageId` survives only on the 12 core recipes (goes with the core
+  slot in D2, with `coreAuthoring.test.ts`); the Guard keystones' statuses
+  (`ability-unyielding`, `ability-immunity`, `ability-entangled`) are dormant but still read by
+  boss AI and status code (goes with the abilities in D3); unused pipeline hooks
+  (`applyMechanicProxy`, the reload's "readied without a reload" path, `applyPlayerAoeTo`, the
+  contagion copy's `stackFraction`); `'evolve'` / `'reconstruct'` in `gameplayRecorder.ts`'s
+  kinds; living docs still describe lineages, shards and node rows (docs pass at M0 exit).
 - **Squire moments:** Challenge also answers "an enemy attacking an ally" and Unbowed only
   untelegraphed blows; neither has its own moment yet (Squire track).
 
@@ -125,6 +131,7 @@ your report where the brief says, and tell me.
 | I2 | Plan, agent rules, this board | `011e95d2` |
 | F1 | Class kit types, registry, moments, budget, scaling | `d1a7aac9` |
 | D5 | Bot: class-agnostic harness, smoke-t1 route (subagent); server lane benches and setActive removed | `8c18ccbc`, `f8d6e40f` |
+| D1 | Item lineage trees, ability node rows, shards removed (subagent): 165 files, −53k lines; bot shims dropped | `9164b024`, `b1a4962a` |
 | F4 + T0 | Passive Tree from the kits; tests swept (subagent); root-only fixes (empowered default, balance lab, tier entry) | `b5ce4436`, `2d43e779` |
 | F2 | The class config: `configuresClass`, `class:setConfig`, migration 0010, auto mode | `4d1cc6ea` |
 | F3 | Lessons and trophies: derived from biome levels and boss clears inside F1/F2, nothing to grant; the "new" toast moves to F7 | (in F1, F2) |
