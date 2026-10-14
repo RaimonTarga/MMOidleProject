@@ -34,6 +34,7 @@
  */
 import {
   GAME_CONFIG,
+  SKILL_TREE,
   baseRecoveryForTier,
   emptyEquipment,
   getLineageRuntime,
@@ -56,6 +57,9 @@ import { applyMonsterSlow, monsterIsHeld } from '../src/systems/combat/status/mo
 import { equipItem } from '../src/systems/player/economy/inventory';
 import { unlockLineageCard } from '../src/systems/player/economy/lineages';
 import { unlockSkill } from '../src/systems/player/progression/skills';
+import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
+import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
+import { refillBarrier } from '../src/systems/defense/barrier/barrier';
 import {
   LINEAGE_FRAME_PROFILES,
   LINEAGE_FRAME_REFERENCES,
@@ -347,6 +351,33 @@ function assertCapped(label: string, firedAt: number[], capMs: number, stepMs: n
   const node = laneNodes().find((n) => n.nodeId === 'node-t1-cave-01');
   assert(node, 'the Cave own-node is in the lane set');
 
+  // The reference character holds only its class root: the class-first tree has no frames.
+  // `prepareLaneBot` always unlocks a tier-1 pick (it was the root's frame), so an empty
+  // stand-in node takes that unlock and is stripped again before the fight.
+  const standInFor = (root: string): string => `t0-tier1-stand-in-${root}`;
+  const prepareRootOnlyLaneBot = (
+    bench: World, profile: TierEntryProfile, reference: LineageLaneReference, nodeId: string,
+  ): ReturnType<typeof prepareLaneBot> => {
+    const standIn = standInFor(profile.classRoot);
+    SKILL_TREE.set(standIn, {
+      id: standIn, name: 'Stand-in', description: '', tier: 1, classId: profile.classRoot,
+      parent: profile.classRoot, subVariantId: null, children: [], cost: 1, statEffects: {}, mechanicEffects: {},
+    });
+    try {
+      const prepared = prepareLaneBot(bench, profile, reference, nodeId);
+      const { bot } = prepared;
+      bot.usesSkills.unlockedSkills = [profile.classRoot];
+      bot.usesSkills.disciplineId = null;
+      recalculatePlayerEntityStats(bench, bot);
+      syncArchetypeSlices(bench, bot);
+      bot.hasHealth.hp = bot.hasHealth.maxHp;
+      refillBarrier(bench, bot);
+      return prepared;
+    } finally {
+      SKILL_TREE.delete(standIn);
+    }
+  };
+
   for (const frame of LINEAGE_FRAME_REFERENCES.filter((r) => r.canonical && r.bandTier === 1)) {
     const root = frame.classRoot;
     const base = LINEAGE_FRAME_PROFILES.get(frame.profileId)!;
@@ -354,6 +385,7 @@ function assertCapped(label: string, firedAt: number[], capMs: number, stepMs: n
     const profile: TierEntryProfile = {
       ...base,
       id: `proxy-${root}`,
+      frameId: standInFor(root),
       equipment: { ...base.equipment, weapon: 'chaotic-axe' },
       inventory: [...new Set([
         ...base.inventory.filter((id) => id !== 'chaotic-axe'),
@@ -362,7 +394,7 @@ function assertCapped(label: string, firedAt: number[], capMs: number, stepMs: n
       itemUpgrades: {},
     };
     const reference: LineageLaneReference = {
-      profileId: profile.id, lineageId: 'axe', lane: null, classRoot: root, frameId: frame.frameId,
+      profileId: profile.id, lineageId: 'axe', lane: null, classRoot: root, frameId: standInFor(root),
       bandTier: 1, baseForm: 'chaotic-axe', wornForm: 'chaotic-axe', homeBiome: 'cave',
       cardIds: [], activeCardIds: [], shardsUnobtainableAtT1: false,
     };
@@ -377,7 +409,7 @@ function assertCapped(label: string, firedAt: number[], capMs: number, stepMs: n
     proxiedHits = 0;
     try {
       setupArena(bench, { nodeId: node!.nodeId, biomeGroup: node!.biome, contentTier: 1, isDungeon: false });
-      const { bot, refusals } = prepareLaneBot(bench, profile, reference, node!.nodeId);
+      const { bot, refusals } = prepareRootOnlyLaneBot(bench, profile, reference, node!.nodeId);
       assert(refusals.length === 0, `${root}: ${refusals.join('; ')}`);
       const seed = () => setLineageRuntime(bot.tracksCombat, { cards: [PROXY_EVERY_HIT], capstones: [] });
       seed();
