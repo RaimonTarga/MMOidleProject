@@ -4,15 +4,12 @@
  *
  *   Duelist    Kill chain. Every kill loads a round on top of the clip, past its
  *              size, until the next reload; a reload returns the authored clip.
- *              Distinct from the Kill chain keystone Refund (a kill completes the
- *              reload): with Refund the Duelist gets the refill AND the round.
  *   Warmonger  Tempo. The Artillerist frame owns the per-clip ramp; a reload now
  *              HALVES it instead of resetting it, and the barrel glow holds at the
  *              carried value through the reload. The top damage and the glow
  *              measure against ONE clip (design §22.12), so the first clip is the
  *              Artillerist's own; only the attack speed climbs past one clip in a
- *              sustained fight. The halving is paid once per reload, however the
- *              clip comes back (a Refund kill included).
+ *              sustained fight. The halving is paid once per reload.
  *
  * WHAT THIS PINS. The rule's wiring and its bounds, through the real ammo pipeline
  * (`beforeAttack` spends the round and tags its clip position, `afterHit` runs the
@@ -27,12 +24,9 @@ import {
   baseRecoveryForTier,
   composePlayerView,
   emptyEquipment,
-  keystoneFxKey,
   resolveEmpoweredMultiplier,
   setFlag,
-  setLineageRuntime,
   type CombatEvent,
-  type ResolvedLineageCard,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import type { MonsterEntity, PlayerEntity } from '../src/ecs/entity';
@@ -42,7 +36,6 @@ import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { emitCombatEvent, type CombatContext } from '../src/systems/combat/engine/combatPipeline';
 import { proxyEmpoweredMultiplier } from '../src/systems/combat/engine/empoweredAttacks';
-import { refundMechanic } from '../src/systems/combat/keystones';
 import { RUNE_TACTICAL_RELOAD_FLAG } from '../src/systems/combat/ai/runeConfig';
 import { updateReloadArchetype } from '../src/systems/classes/archetypes/reload/reloadPrototype';
 import { requestManualReload } from '../src/systems/classes/archetypes/reload/reloadLifecycle';
@@ -118,26 +111,6 @@ function slinger(id: string, subVariant: 'light' | 'heavy', path: string[]): Pla
   recalculatePlayerEntityStats(world, player);
   updateReloadArchetype(world, 0);
   return player;
-}
-
-/** The Kill chain keystone (Refund), seeded on the runtime cache as keystones.test does. */
-function withRefund(player: PlayerEntity): void {
-  const card: ResolvedLineageCard = {
-    card: {
-      id: `seed-refund-${player.isPlayer.id}`,
-      lineageId: 'axe', tier: 3, row: 'keystone', lane: 'kill-chain',
-      name: 'Refund', description: 'A kill readies your class mechanic.',
-      fx: keystoneFxKey('kill-chain'),
-      trigger: 'kill', payoff: 'recovery-window',
-    },
-    requiredBiomeGroup: 'forest',
-    requiredBiomeLevel: 14,
-    requiredGlobalMastery: 0,
-    cost: { essence: {}, shards: {} },
-    trigger: { kind: 'kill' },
-    payoff: { kind: 'recovery-window', magnitude: 0.5 },
-  };
-  setLineageRuntime(player.tracksCombat, { cards: [card], capstones: [] });
 }
 
 /** A target that cannot die, so a kill is only ever the one the test emits. */
@@ -262,29 +235,6 @@ const DUELIST = 'reload-light-t3-a';
   );
   assert(duelist.hasEmpoweredAttack === undefined, 'and no empowered flag is armed');
   finishReload(duelist);
-
-  // An Empowered-lane `mechanic-proxy` through the real card seam, on a round past
-  // the openers, lands at ×3.5.
-  for (let round = 1; round <= 2; round++) fireShot(duelist, duelistTarget);
-  const proxyCard: ResolvedLineageCard = {
-    card: {
-      id: 'seed-proxy-duelist', lineageId: 'rapier', tier: 1, row: 'payoff', lane: 'empowered',
-      name: 'Seeded proxy', description: '', fx: 'empowered.mechanic-flash',
-    },
-    requiredBiomeGroup: 'forest', requiredBiomeLevel: 4, requiredGlobalMastery: 0,
-    cost: { essence: {}, shards: {} },
-    trigger: { kind: 'hit-nth', n: 1 },
-    payoff: { kind: 'mechanic-proxy', magnitude: 1.5 },
-    payoffFx: 'empowered.mechanic-flash',
-    composition: { verbLane: 'empowered', pure: false },
-  };
-  setLineageRuntime(duelist.tracksCombat, { cards: [proxyCard], capstones: [] });
-  const proxied = fireShot(duelist, duelistTarget);
-  assert(proxied.metadata['mechanicProxy'] === true, 'fixture: the seeded card proxied the hit');
-  close(empoweredMult(proxied), 3.5, 'the Duelist\'s Empowered proxy lands at ×3.5');
-  assert(proxied.damage === Math.floor(BASE_DAMAGE * 3.5), `and the hit carries it, got ${proxied.damage}`);
-  assert(duelist.hasEmpoweredAttack === undefined, 'a proxy neither arms nor spends the root\'s charge');
-  setLineageRuntime(duelist.tracksCombat, { cards: [], capstones: [] });
 }
 
 // ── Duelist: the clip grows by one per kill, past max, and the HUD sees it ───
@@ -419,74 +369,6 @@ const DUELIST = 'reload-light-t3-a';
   setFlag(player.tracksCombat, RUNE_TACTICAL_RELOAD_FLAG, false);
   finishReload(player);
   assert(ammoOf(player) === clip, `a tactical reload returns the authored clip, got ${ammoOf(player)}`);
-}
-
-// ── Duelist with Refund: the refill AND the round ────────────────────────────
-
-{
-  // Mid-clip: Refund completes the reload, the Duelist adds the kill's round on top,
-  // and the chain keeps growing kill by kill.
-  const player = slinger('t3s-duelist-refund', 'light', [DUELIST]);
-  withRefund(player);
-  const target = punchbag(580);
-  const reload = player.usesReload!;
-  const clip = reload.ammoMax;
-  const openerMult = player.usesSkills.passives['reload.frame-opener-mult'] ?? 0;
-
-  fireShot(player, target);
-  fireShot(player, target);
-  fireShot(player, target);
-  assert(ammoOf(player) === clip - 3, 'three rounds spent');
-  kill(player, target);
-  assert(reload.reloadingMs === 0, 'Refund completed the reload');
-  assert(ammoOf(player) === clip + 1, `the refill AND the round: expected ${clip + 1}, got ${ammoOf(player)}`);
-  kill(player, target);
-  assert(ammoOf(player) === clip + 2, `the clip grows by one per kill with Refund too, got ${ammoOf(player)}`);
-  assert(chainOf(player) === 2, 'a Refund refill does not break the chain');
-  close(
-    empoweredMult(fireShot(player, target)),
-    openerMult,
-    'a refilled clip is a fresh clip: its first round is an opener',
-  );
-
-  // The last round's own kill: the reload had started; Refund cuts it short and pays
-  // the owed round.
-  while (ammoOf(player) > 1) fireShot(player, target);
-  const last = landShot(player, target);
-  finishShot(last);
-  assert(reload.reloadingMs > 0 && chainOf(player) === 0, 'the dry clip started a reload and ended the chain');
-  kill(player, target);
-  assert(reload.reloadingMs === 0, 'Refund cut the reload short');
-  assert(ammoOf(player) === clip + 1, `the last round's kill still pays its round: expected ${clip + 1}, got ${ammoOf(player)}`);
-}
-
-{
-  // Order independence. The live server registers the Duelist's kill listener (a
-  // class mechanic) before Refund (a lineage keystone). Running the refill FIRST and
-  // the Duelist second must land on the same clip.
-  for (const lastRound of [false, true]) {
-    const live = slinger(`t3s-order-live-${lastRound}`, 'light', [DUELIST]);
-    withRefund(live);
-    const swapped = slinger(`t3s-order-swapped-${lastRound}`, 'light', [DUELIST]);
-    const target = punchbag(lastRound ? 600 : 620);
-    for (const player of [live, swapped]) {
-      if (lastRound) {
-        while (ammoOf(player) > 1) fireShot(player, target);
-        finishShot(landShot(player, target));
-      } else {
-        fireShot(player, target);
-        fireShot(player, target);
-      }
-    }
-    kill(live, target);
-    refundMechanic(world, swapped);
-    kill(swapped, target);
-    assert(
-      ammoOf(live) === ammoOf(swapped) && chainOf(live) === chainOf(swapped),
-      `${lastRound ? 'last-round' : 'mid-clip'} kill: Refund-first ${ammoOf(swapped)}/${chainOf(swapped)} must equal Duelist-first ${ammoOf(live)}/${chainOf(live)}`,
-    );
-    assert(ammoOf(live) === live.usesReload!.ammoMax + 1, 'both orders land on the refill plus the round');
-  }
 }
 
 // ── Component presence: a Scout without the path loads nothing on a kill ─────
@@ -669,68 +551,6 @@ function frameCharges(playerId: string): Array<Extract<CombatEvent, { kind: 'fra
   assert(
     frameCharges('t3s-warmonger-sustained').every((e) => e.max === clip && e.stacks <= clip),
     'the glow measures against one clip throughout',
-  );
-}
-
-// ── Warmonger with Refund: one halving per reload, however it completes ──────
-
-{
-  // Mid-clip: a kill completes the reload without a reload ever starting. The
-  // carry is paid on the completion — once.
-  const player = slinger('t3s-warmonger-refund', 'heavy', [WARMONGER]);
-  withRefund(player);
-  const target = punchbag(740);
-  const reload = player.usesReload!;
-  const carry = reloadRampCarry(player);
-  const baseCooldown = player.performsAttack.attackCooldown;
-
-  for (let shot = 0; shot < 10; shot++) fireShot(player, target);
-  assert(stacksOf(player) === 10, `ten shots, ten stacks, got ${stacksOf(player)}`);
-  kill(player, target);
-  assert(reload.reloadingMs === 0 && ammoOf(player) === reload.ammoMax, 'Refund completed the reload');
-  assert(
-    stacksOf(player) === Math.floor(10 * carry),
-    `a Refund reload halves the ramp once: ${Math.floor(10 * carry)}, got ${stacksOf(player)}`,
-  );
-  close(player.performsAttack.attackCooldown, baseCooldown, 'and hands back the base, so the next clip cannot compound');
-  fireShot(player, target);
-  assert(stacksOf(player) === Math.floor(10 * carry) + 1, 'the climb continues from the carry');
-
-  // The last round's own kill: the reload had started (and halved the ramp); Refund
-  // cuts it short. Halving again would be the double count.
-  fireAllButLast(player, target);
-  const last = landShot(player, target);
-  const preReload = stacksOf(player);
-  finishShot(last);
-  const carried = stacksOf(player);
-  assert(carried === Math.floor(preReload * carry), 'the started reload halved the ramp');
-  kill(player, target);
-  assert(reload.reloadingMs === 0, 'Refund cut the reload short');
-  assert(
-    stacksOf(player) === carried,
-    `a Refund completing a started reload must not halve again: ${carried}, got ${stacksOf(player)}`,
-  );
-}
-
-{
-  // The Artillerist alone (no carry) through a Refund kill: the ramp resets, as any
-  // reload resets it, and the next clip ramps off the live base, not a ramped one.
-  const player = slinger('t3s-artillerist-refund', 'heavy', []);
-  withRefund(player);
-  const target = punchbag(760);
-  const perShot = player.usesSkills.passives['reload.frame-ramp-pct-per-shot'] ?? 0;
-  const baseCooldown = player.performsAttack.attackCooldown;
-  assert(reloadRampCarry(player) === 0, 'the frame alone carries nothing');
-
-  for (let shot = 0; shot < 6; shot++) fireShot(player, target);
-  kill(player, target);
-  assert(stacksOf(player) === 0, `a Refund reload resets the Artillerist ramp, got ${stacksOf(player)}`);
-  close(player.performsAttack.attackCooldown, baseCooldown, 'and hands the base cadence back');
-  fireShot(player, target);
-  close(
-    player.performsAttack.attackCooldown,
-    Math.max(200, Math.round(baseCooldown / (1 + perShot))),
-    'the next clip\'s first stack ramps off the live base — no compounding',
   );
 }
 

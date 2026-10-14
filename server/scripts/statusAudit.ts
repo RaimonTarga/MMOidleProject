@@ -38,6 +38,12 @@ export const ACCEPTED_GAPS: Readonly<Record<string, string>> = {
     'Kept on purpose as a Summoner icon (docs/conduit-current-state.md §9). Not a status id.',
   'cooldown-temporal-ext: descriptor requires unproduced status: temporal-extension-buff (server/src/systems/classes/archetypes/cooldown/t3/core/buffs.ts:76)':
     "The Cooldown path's Temporal Extension tile reads a buff nothing writes, and its passive (`cooldown.temporal-extension`) has no reader either: the mechanic itself is unimplemented. A class-path question for the designer, not a registry one; the tile stays authored for when it ships.",
+  'ability-entangled: authored label/help/badge; no status writer or descriptor found':
+    'Its writer was an ability keystone, removed with the ability node rows (class-first rework D1). The status and its copy stay with the abilities until task D3 removes them.',
+  'ability-immunity: descriptor requires unproduced status: ability-immunity (server/src/systems/player/abilities/abilityBuffs.ts:208)':
+    "Cleanse's Immunity keystone wrote it and went with the ability node rows (class-first rework D1). The tile and the admission gate that reads it are guard plumbing, kept until task D3.",
+  'ability-unyielding: descriptor requires unproduced status: ability-unyielding (server/src/systems/player/abilities/abilityBuffs.ts:231)':
+    "Endure's Unyielding keystone wrote it and went with the ability node rows (class-first rework D1). The tile and the hard-control refusal that reads it are guard plumbing, kept until task D3.",
 };
 
 /** One open (or accepted) registry gap: which id, and what it lacks. */

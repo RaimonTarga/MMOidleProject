@@ -42,7 +42,6 @@ import { setAggroTarget, setAttackTarget } from '../systems/combat/ai/targeting'
 import { clearEngagement } from '../systems/combat/ai/engagement';
 import { refillBarrier } from '../systems/defense/barrier/barrier';
 import { grantDevLoadout } from '../systems/player/economy/grantDevWeapon';
-import { syncLineagesFromInventory } from '../systems/player/economy/lineageSync';
 import { checkRecipeUnlocks } from '../systems/player/progression/rewards';
 import {
   clearAutoTraversePath,
@@ -465,28 +464,7 @@ export function applyTierEntryProfile(
   // Unlock content from the same authoritative recipe gates the live game uses;
   // the profile does not carry an invented unlocked-recipe list.
   checkRecipeUnlocks(player);
-  // A profile hands the character forms wholesale rather than through crafting,
-  // so open the trees those forms belong to — otherwise a bot or a dev profile
-  // holds a Gale Needle with no tree behind it, and the rebuild that
-  // `attachPlayerEntity` performs would disagree with what was captured here.
   player.holdsInventory.lineages = {};
-  syncLineagesFromInventory(world, player);
-  // A lane reference profile additionally DECLARES which cards it bought (the
-  // lane matrix, plan §1.5). Normalizing first drops any id static data no
-  // longer has, and merging only onto a tree the held forms already opened keeps
-  // the invariant that owning a tree means owning its slot.
-  for (const [lineageId, declared] of Object.entries(normalizeLineageProgressMap(profile.lineages))) {
-    const born = player.holdsInventory.lineages[lineageId];
-    if (!born) continue;
-    player.holdsInventory.lineages[lineageId] = {
-      ...born,
-      ownedCards: [...new Set([...born.ownedCards, ...declared.ownedCards])],
-      active: { ...born.active, ...declared.active },
-      ownedForms: [...new Set([...born.ownedForms, ...declared.ownedForms])],
-      // A declared rank (design §26.1) is the rank the profile bought.
-      ...(born.ranks || declared.ranks ? { ranks: { ...born.ranks, ...declared.ranks } } : {}),
-    };
-  }
   syncArchetypeSlices(world, player);
   recalculatePlayerEntityStats(world, player);
   syncArchetypeSlices(world, player);

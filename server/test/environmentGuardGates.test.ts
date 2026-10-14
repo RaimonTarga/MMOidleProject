@@ -1,5 +1,5 @@
 /**
- * The environment respects the Guard keystones too (design §22.13).
+ * The environment respects the Guard gates too (design §22.13).
  *
  * Design §22.12 put the boss appliers behind the player's one admission check
  * (`playerRefusesStatus`, bossGuardGates.test.ts). §22.13 extends it to the
@@ -10,13 +10,12 @@
  *    status id;
  *  - Frost Nova's Chill (`addsAmbientStacks`) and the room's ambient Chill ramp add
  *    no stack while Immunity holds the Chill kind (`tundra-chill`, the id Cleanse
- *    strips it under);
- *  - an ordinary monster's rally never hands a Vanished player to its allies.
+ *    strips it under).
  *
  * Wiring smoke, per applier: refused under the gate, and unchanged without it (the
  * same write lands exactly as authored: a refusal only, no resistance or duration
  * change). The gates are raised as bare state, as bossGuardGates.test.ts raises
- * them; the keystones' own activation is abilityKeystones.test.ts's business.
+ * them.
  *
  * Run: node --conditions=development --import tsx test/environmentGuardGates.test.ts
  */
@@ -32,16 +31,13 @@ import {
   getStatusEffect,
   pointInNodeFeatureShape,
   removeStatusEffect,
-  setFlag,
   type ResolvedNodeFeature,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../src/ecs/entity';
 import { runningBossPatternDef, updateBossPatterns } from '../src/systems/combat/ai/bossPatterns';
 import { updateBossScripts } from '../src/systems/combat/ai/bossScripts';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
-import { updateCombat } from '../src/systems/combat/engine/combat';
 import { updateCombatState } from '../src/systems/combat/engine/combatState';
-import { VANISH_FLAG } from '../src/systems/combat/keystones';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { updateNodeFeatures } from '../src/systems/world/nodeFeatures';
 import { World } from '../src/world/World';
@@ -250,44 +246,6 @@ function spawn(world: World, id: string, nodeId: string, at: { x: number; y: num
   assert(takeNova('other-kind', immunity('slow')) === 1 + adds, 'Immunity for another kind leaves the Nova alone');
   assert(takeNova('immunity', immunity(TUNDRA_CHILL_EFFECT_ID)) === 1,
     'under Immunity for Chill the Nova adds none, and takes none away');
-}
-
-// ── 4. An ordinary monster's rally never hands a Vanished player to its allies ──
-{
-  const JUNGLE = 'node-t2-jungle-01';
-  const rallyFor = (label: string, vanished: boolean) => {
-    const world = new World();
-    const player = spawn(world, `env-rally-${label}`, JUNGLE, { x: 405, y: 400 });
-    player.performsAttack.lastAttackAt = 1_000_000; // no auto-swing: the rally is the only acquirer
-    const ape = world.createMonster(JUNGLE, 'jungle-ape', { x: 400, y: 400 })!;
-    const ally = world.createMonster(JUNGLE, 'jungle-ape', { x: 500, y: 400 })!;
-    assert(ape && ally && MONSTER_DATABASE.get('jungle-ape')!.castedAttackSpeedBuff?.rallyNearby,
-      'fixture: a rallying ape and an idle ally');
-    setAggroTarget(world, ape, { id: player.isPlayer.id, kind: 'player' }, 1_000);
-    ape.hasAwareness.state = 'attacking';
-    ape.performsAttack.lastAttackAt = 0;
-    // The ape kept the player (it stood out of Vanish's reach); the mark is the gate.
-    if (vanished) setFlag(player.tracksCombat, VANISH_FLAG, true);
-    updateCombat(world, 0, 5_000);
-    updateCombat(world, 0, 6_300);
-    assert(getStatusEffect(ally.tracksCombat, 'monster-ape-chestbeat') !== undefined,
-      `${label}: the Chestbeat resolved (its haste reached the ally)`);
-    assert(ape.hasAggroTarget?.targetId === player.isPlayer.id, `${label}: the caster keeps its own target`);
-    return { world, player, ape, ally };
-  };
-
-  const open = rallyFor('open', false);
-  assert(open.ally.hasAggroTarget?.targetId === open.player.isPlayer.id, 'without the mark the rally hands its target on');
-
-  const hidden = rallyFor('vanished', true);
-  assert(!hidden.ally.hasAggroTarget, 'the rally never hands a Vanished player to an ally');
-  assert(!hidden.ape.inPack && !hidden.ally.inPack, 'and forms no encounter around them');
-  // Spent like any other refusal: the mark clearing does not let the same cast
-  // session call a wave later.
-  setFlag(hidden.player.tracksCombat, VANISH_FLAG, false);
-  updateCombat(hidden.world, 0, 18_300);
-  updateCombat(hidden.world, 0, 19_600);
-  assert(!hidden.ally.hasAggroTarget, 'the refused rally was spent for the session');
 }
 
 console.log('environmentGuardGates: ok');

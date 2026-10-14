@@ -5,7 +5,6 @@ import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import { mutateSlice } from "../../../ecs/dirtyHelpers";
 import { registerCombatListener } from "../../combat/engine/combatPipeline";
 import { isPlayerActivelyInCombat } from "../../combat/ai/engagement";
-import { unbrokenHoldsRecharge } from "../../combat/keystones/unbroken";
 
 /**
  * The barrier: a permanent absorb pool worth `defense.barrier-pct × maxHp` that
@@ -59,12 +58,6 @@ export function getUndamagedMs(cs: TracksCombat): number {
  * would let a burning player recharge straight through the burn.
  */
 export function stampBarrierDamage(world: World, player: PlayerEntity): void {
-  // UNBROKEN (design §4, the barrier-tempo keystone): above half health the hit
-  // does not interrupt the recharge at all. Refused HERE rather than in the two
-  // listeners because this function is deliberately the single entry point both
-  // damage paths call — a rule about the stamp belongs inside it, or the direct
-  // hit and the DoT tick would answer it differently.
-  if (unbrokenHoldsRecharge(player)) return;
   setResource(player.tracksCombat, UNDAMAGED_KEY, 0);
   if (player.hasBarrier?.recharging) {
     mutateSlice(world, player, "hasBarrier", (slice) => { slice.recharging = false; });

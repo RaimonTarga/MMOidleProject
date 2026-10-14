@@ -10,7 +10,6 @@ import {
 import type { World } from "./World";
 import type { PlayerEntity } from "../ecs/entity";
 import type { PersistedPlayerSlices } from "../db/playerRepo";
-import { syncLineagesFromInventory } from '../systems/player/economy/lineageSync';
 import { resolvePlayerHitbox } from "../hitbox/resolve";
 import { freezeNode } from "./nodeLifecycle";
 import { despawnMinionsForOwner } from "../systems/classes/archetypes/summoner";
@@ -95,11 +94,6 @@ export function attachPlayerEntity(
   entity.hasHitbox = resolvePlayerHitbox(entity);
   world.ecs.add(entity);
   world.incrementPlayersInNode(entity.hasPosition.nodeId);
-  // Give every lineage the character already holds a base form of its tree. This
-  // is what a save written before Phase 1 gets: crafting the Flash Rapier was
-  // always how you took the weapon slot, so the tree opens live rather than
-  // demanding a second purchase for something already owned.
-  syncLineagesFromInventory(world, entity);
   return entity;
 }
 

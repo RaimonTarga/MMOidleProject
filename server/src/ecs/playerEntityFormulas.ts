@@ -12,27 +12,11 @@ import { forgetStationaryDrApplied, resetStationaryDr } from '../systems/defense
 import { forgetReactivePlatingApplied, resetReactivePlating } from '../systems/defense/mitigation/reactivePlating';
 import { forgetBramblePlatingApplied, resetBramblePlating } from '../systems/player/abilities/abilityBramble';
 import { syncBarrier } from '../systems/defense/barrier/barrier';
-import { refreshLineageRuntime } from '../systems/combat/lineageCards';
-import { refreshAbilityNodeRuntime } from '../systems/combat/abilityNodes';
-import { syncRhythmReadout } from '../systems/combat/rhythmReadout';
 
 export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity): void {
   resetStationaryDr(entity);
   resetReactivePlating(entity);
   resetBramblePlating(entity);
-  // The lineage card runtime's cache (progression rework 1c). Refreshed HERE
-  // because recalc is the one place its inputs — the trees, what is equipped, and
-  // the frame's sub-variant — can have moved, and because the card runtime must
-  // never resolve lazily on a hit: two sites answering the same question is how a
-  // cache and its source drift.
-  refreshLineageRuntime(entity);
-  // Ability nodes resolve on the same beat and for the same reason (design §19):
-  // the cache is a recalc product, and resolving it on an ability's landing would
-  // make two sites responsible for one answer.
-  refreshAbilityNodeRuntime(entity);
-  // The rhythm readout follows the card cache it reads (design §24.6): a new verb
-  // attaches it, the last triggered card gone detaches it.
-  syncRhythmReadout(world, entity);
   const evadesHits = entity.evadesHits
     ? { ...entity.evadesHits }
     : { dodgeRate: 0, evadeMitigation: 0, charge: 0 };

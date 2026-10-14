@@ -26,7 +26,6 @@ import {
   type TracksCombat,
 } from "@mmo-idle/shared";
 import { stanceAttackSpeedBonus } from "../../player/stances/stanceBehaviors";
-import { lineageSpeedWindowBonus } from "../lineageCards";
 
 /**
  * Total temporary SLOW on the attack cadence, as a multiplier ≥ 1.
@@ -47,15 +46,12 @@ export function attackSlowMult(cs: TracksCombat): number {
 /**
  * Total temporary HASTE bonus, as a fraction (0.3 = +30% attack speed).
  *
- * The stance-owned windows (Reaper momentum, Powering Up's released charge) and
- * a lineage card's `speed-window` SUM rather than multiply: they are all "+X%
- * attack speed" promises, and the shared accumulator semantics say those add.
- * (The Frenzy ability's window summed here too until the ability pass cut it,
- * design §22.2: Tempo and Kill chain `speed-window` payoffs own that job now.)
+ * The stance-owned windows (Reaper momentum, Powering Up's released charge) SUM
+ * rather than multiply: they are all "+X% attack speed" promises, and the shared
+ * accumulator semantics say those add.
  */
 export function attackHasteBonus(cs: TracksCombat): number {
-  return Math.max(0, stanceAttackSpeedBonus(cs))
-    + Math.max(0, lineageSpeedWindowBonus(cs));
+  return Math.max(0, stanceAttackSpeedBonus(cs));
 }
 
 /**

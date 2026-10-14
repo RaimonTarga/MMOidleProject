@@ -8,8 +8,6 @@ import {
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
-import { syncLineagesFromInventory } from './lineageSync';
-import { isGatedLineageForm } from '@mmo-idle/shared';
 
 const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
 
@@ -25,15 +23,6 @@ export function craftRecipe(
 ): CraftResult {
   const recipe = RECIPE_DATABASE.get(recipeId);
   if (!recipe) return { success: false, reason: "Unknown recipe." };
-  // A live lineage's tier-2+ form is opened at its gate (boss capstone + shards),
-  // never crafted for essence (design §5: the boss is the only way up; review B4).
-  // One shared check, the one the Make tab reads; `evolvesFrom` survives on weapon
-  // forms only and every one of them is a gated form (pinned by
-  // `slotRetirement.test.ts`). A PARKED lineage's T2+ items are plain recipes,
-  // crafted below at their biome level (design §24.5).
-  if (isGatedLineageForm(recipe.id)) {
-    return { success: false, reason: "This form is opened at its lineage's gate." };
-  }
 
   const isTestRoom = entity.hasPosition.nodeId === TEST_ROOM_NODE_ID;
   if (isTestRoom) {
@@ -79,8 +68,5 @@ export function craftRecipe(
     recipe.id,
   ];
   markSliceDirty(world, entity, "holdsInventory");
-  // Crafting a lineage's T1 base form IS taking that slot's lineage, so the tree
-  // opens with it — there is no separate "unlock the tree" purchase (design §2).
-  syncLineagesFromInventory(world, entity);
   return { success: true };
 }

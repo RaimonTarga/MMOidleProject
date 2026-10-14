@@ -11,8 +11,8 @@
  *             waits through ordinary (damaging) regular hits; the next Technique
  *             that LANDS fires it with its shape — the armed hit itself (Sweep
  *             cleaves it), a cast's target or area (Slam's circle, Snipe's
- *             range). An evaded armed hit did not land, so it stays primed. With
- *             the Signature keystone too, the one execution counts once.
+ *             range). An evaded armed hit did not land, so it stays primed. The
+ *             one execution counts once.
  *
  * The Techniques used are the ones the ability pass keeps (Sweep armed, Slam and
  * Snipe cast; Imbue as the targetless self-cast).
@@ -27,16 +27,12 @@ import {
   ABILITY_DATABASE,
   COOLDOWN_REVERB_ECHO_FX,
   GAME_CONFIG,
-  KEYSTONE_DEFINITIONS,
   SKILL_TREE,
   baseRecoveryForTier,
   emptyEquipment,
-  keystoneFxKey,
   mergePassives,
   setCounter,
-  setLineageRuntime,
   type CombatEvent,
-  type ResolvedLineageCard,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import type { MonsterEntity, PlayerEntity } from '../src/ecs/entity';
@@ -412,23 +408,6 @@ function castNow(player: PlayerEntity, abilityId: string, target: MonsterEntity)
   assert(player.isCastingAbility === undefined, `${abilityId}: the cast should have resolved`);
 }
 
-/** The Signature keystone, seeded the way keystones.test.ts seeds it. */
-function signatureCard(): ResolvedLineageCard {
-  const definition = KEYSTONE_DEFINITIONS.get('technique')!;
-  const payoffKind = definition.payoff ?? 'echo-hit';
-  return {
-    card: {
-      id: 'seed-keystone-technique', lineageId: 'rapier', tier: 3, row: 'keystone', lane: 'technique',
-      name: definition.name, description: definition.rule,
-      fx: keystoneFxKey('technique'), trigger: 'hit-nth', payoff: payoffKind,
-    },
-    requiredBiomeGroup: 'forest', requiredBiomeLevel: 14, requiredGlobalMastery: 0,
-    cost: { essence: {}, shards: {} },
-    trigger: { kind: 'hit-nth', n: 1 },
-    payoff: { kind: payoffKind, magnitude: 0.5 },
-  };
-}
-
 const deliveries = (): SeenHit[] => hits.filter((h) => h.metadata['destroyerDelivery'] === true);
 
 // ── Destroyer: the node ──────────────────────────────────────────────────────
@@ -634,11 +613,10 @@ const deliveries = (): SeenHit[] => hits.filter((h) => h.metadata['destroyerDeli
   );
 }
 
-// ── Destroyer + Signature: the one execution fires once and counts once ──────
+// ── Destroyer: the one execution fires once and counts once ──────────────────
 
 {
-  const player = spawn('sq-destroyer-signature', 'cooldown-heavy', DESTROYER);
-  setLineageRuntime(player.tracksCombat, { cards: [signatureCard()], capstones: [] });
+  const player = spawn('sq-destroyer-counts', 'cooldown-heavy', DESTROYER);
   const target = monster(player);
 
   // Armed.
@@ -648,7 +626,7 @@ const deliveries = (): SeenHit[] => hits.filter((h) => h.metadata['destroyerDeli
   fires.length = 0;
   swing(player, target);
   assert(hits.filter((h) => h.metadata['mechanicConsumed'] === true).length === 1, 'armed: one execution');
-  assert(fires.length === 1, `armed: it counts once with Signature, got ${fires.length}`);
+  assert(fires.length === 1, `armed: it counts once, got ${fires.length}`);
 
   // Cast.
   setEmpoweredAttack(world, player);
@@ -656,13 +634,13 @@ const deliveries = (): SeenHit[] => hits.filter((h) => h.metadata['destroyerDeli
   fires.length = 0;
   castNow(player, 'slam', target);
   assert(deliveries().length === 1, 'cast: one execution');
-  assert(fires.length === 1, `cast: it counts once with Signature, got ${fires.length}`);
+  assert(fires.length === 1, `cast: it counts once, got ${fires.length}`);
 
-  // Control: nothing primed — Signature alone still counts the cast.
+  // Control: nothing primed — the cast delivers nothing and counts nothing.
   hits.length = 0;
   fires.length = 0;
   castNow(player, 'slam', target);
-  assert(deliveries().length === 0 && fires.length === 1, 'unprimed, Signature counts the cast on its own');
+  assert(deliveries().length === 0 && fires.length === 0, 'unprimed, the cast neither delivers nor counts');
 }
 
 // ── Destroyer: wired into the live tick ──────────────────────────────────────

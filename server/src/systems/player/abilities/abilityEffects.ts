@@ -58,7 +58,6 @@ import type { World } from "../../../world/World";
 import type { WorldLogActor } from "@mmo-idle/shared";
 import { techniquePowerPctFor } from "./abilityKata";
 import { onTechniqueResolved } from "../../combat/techniqueResolved";
-import { onAbilityNodeBodiesHit } from "../../combat/abilityNodes";
 
 /** Reporting-only: Technique/Sweep adapter contribution for combat-run diagnostics. */
 function recordTechniqueAdapter(
@@ -467,23 +466,6 @@ function applyTechniqueRider(
       ctx,
       target: ctx.defender,
     });
-    // Sweep's node fires on every body its cleave hits (design §22.10): the
-    // struck body and the circle the cleave resolves around it — the same query
-    // every branch below uses, read once here so the Apprentice spread, the
-    // Slinger clip's first shot and a Conduit's first delivery all fire on the
-    // cleave that resolution made.
-    if (effect.kind === "cleave") {
-      onAbilityNodeBodiesHit(world, ctx.attacker, ability, [
-        ctx.defender,
-        ...playerAoeTargets(
-          world,
-          ctx.attacker,
-          ctx.defender.hasPosition.current,
-          effect.radius,
-          ctx.defender.isMonster.id,
-        ),
-      ], ctx);
-    }
   }
 
   const formationBasis = formationDelivery
@@ -628,15 +610,12 @@ function applyTechniqueRider(
     // A Conduit delivers it through the formation-rider adapter Sweep uses, but a
     // spread copies FULL stacks, so it is not divisible into per-summon shares:
     // the first summon hit spreads once and the later deliveries carry nothing
-    // (the same once-per-Technique key the node payoff above uses).
+    // (the same once-per-Technique rule as the resolution above).
     if (formationDelivery && !formationDelivery.isFirstDelivery) return;
     tagClientEffect(ctx, ABILITY_TECHNIQUE_FIRED_FX);
     // A spread is a DoT applier: an evaded hit spreads nothing.
     if (evadeBlocksDebuffs(ctx)) return;
-    // Its node fires on every body the spread reached (design §22.10), after the
-    // copies landed: a seed laid before the copy would be max-merged away by it.
-    const reached = resolveContagion(world, ctx.attacker, ability, ctx.defender);
-    onAbilityNodeBodiesHit(world, ctx.attacker, ability, reached, ctx);
+    resolveContagion(world, ctx.attacker, ability, ctx.defender);
     return;
   }
 

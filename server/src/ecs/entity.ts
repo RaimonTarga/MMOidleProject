@@ -230,25 +230,6 @@ export interface IsChargingAbility {
   endsAt: number;
 }
 
-/**
- * Server-only: an ENCOUNTER body (a boss, a boss's add, a dungeon monster) lost a
- * player to Disengage's Vanish (design §22.12) and holds for them. Present only
- * while it waits: it stays where it stands, keeps its ramp and does not regenerate,
- * its script runs on, and when the player's mark clears — or the hold has lasted
- * the out-of-combat reset window (design §22.13) — it takes them back in the same
- * aggro session (`keystones/ability/vanish.ts`). Detached the moment it holds any
- * target, or the player leaves the node or dies. Never persisted: monsters are
- * ephemeral.
- */
-export interface HoldsForVanished {
-  /** The vanished player it lost. */
-  playerId: string;
-  /** The aggro session it was in (`hasAggroTarget.sinceMs`), resumed on re-acquire. */
-  sinceMs: number;
-  /** How long it has held, advanced by the vanish tick; the hold ends at the reset window. */
-  heldMs: number;
-}
-
 export type DungeonMonsterSource = "dungeonGuardian" | "dungeonBoss";
 
 /** Server-only runtime metadata for monsters owned by a dungeon node. */
@@ -396,8 +377,6 @@ export interface ServerEntity {
    */
   isConcealed?: IsConcealed;
   tracksDungeon?: TracksDungeon;
-  /** Server-only: an encounter body waiting out a Vanish (see `HoldsForVanished`). */
-  holdsForVanished?: HoldsForVanished;
 
   // ── Player (S8) ───────────────────────────────────────────────
   tracksEngagement?: number;

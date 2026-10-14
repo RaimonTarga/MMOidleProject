@@ -34,7 +34,6 @@ import { recordBroadcast } from "./profiler";
 import { unlockSkill } from "../systems/player/progression/skills";
 import { equipItem, unequipItem } from "../systems/player/economy/inventory";
 import { craftRecipe } from "../systems/player/economy/crafting";
-import { evolveItem } from "../systems/player/economy/itemEvolution";
 import { craftRuneRecipe } from "../systems/player/economy/runeCrafting";
 import {
   craftAbilityRecipe,
@@ -53,18 +52,6 @@ import {
 } from "../systems/player/economy/riteCrafting";
 import { upgradeItem } from "../systems/player/economy/itemUpgrade";
 import {
-  setLineageActive,
-  unlockLineageCard,
-  unlockLineageForm,
-  wearLineageForm,
-  type LineageAction,
-} from "../systems/player/economy/lineages";
-import {
-  setAbilityNode,
-  unlockAbilityNode,
-  type AbilityNodeAction,
-} from "../systems/player/economy/abilityNodes";
-import {
   handlePartyDisconnect,
   joinParty,
   leaveParty,
@@ -74,7 +61,6 @@ import { stopEntity } from "../systems/world/movement";
 import { applyManualMoveIntent } from "../systems/world/manualMove";
 import { setAggroTarget, setAttackTarget } from "../systems/combat/ai/targeting";
 import { clearEngagement } from "../systems/combat/ai/engagement";
-import { setFightOnScreen } from "../systems/combat/rhythmReadout";
 import { attachComponent, detachComponent } from "../ecs/markerHelpers";
 import {
   applySummonerCommand,
@@ -382,9 +368,6 @@ export function registerPlayerHandlers(
     if (typeof active !== "boolean") return;
     if (active) inactiveSockets.delete(socket.id);
     else inactiveSockets.add(socket.id);
-    // The teaching counter and the ring's away count read this (design §26.4).
-    const p = world.getPlayerEntity(socket.id);
-    if (p) setFightOnScreen(world, p, active);
     adminControls.emitPlayerSummaries();
   });
 
@@ -477,20 +460,6 @@ export function registerPlayerHandlers(
     const telemetryBefore = world.gameplay?.beforeDecision(p);
     const result = craftRecipe(world, p, recipeId);
     world.gameplay?.decision(p, "craft", recipeId, telemetryBefore, result.success);
-    socket.emit("crafting:result", result);
-  });
-
-  socket.on("crafting:evolveItem", (payload) => {
-    const p = liveSelf();
-    if (!p || !payload || typeof payload.recipeId !== "string") {
-      if (p) return; // malformed payload: no ack contract to honor either way
-      socket.emit("crafting:result", { success: false, reason: NOT_LIVE_REASON });
-      return;
-    }
-    if (payload.mode !== "evolve" && payload.mode !== "reconstruct") return;
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = evolveItem(world, p, payload.recipeId, payload.mode);
-    world.gameplay?.decision(p, payload.mode, payload.recipeId, telemetryBefore, result.success);
     socket.emit("crafting:result", result);
   });
 
@@ -618,77 +587,6 @@ export function registerPlayerHandlers(
     const result = upgradeItem(world, p, itemId);
     world.gameplay?.decision(p, "upgrade", itemId, telemetryBefore, result.success);
     socket.emit("inventory:upgradeResult", result);
-  });
-
-  // ── Lineage trees (progression rework Phase 1) ─────────────────────────────
-  // All four answer on one event, because the client's reaction is the same:
-  // refresh the tree panel, and on failure show the reason the shared check gave.
-  const lineageReject = (lineageId: string, action: LineageAction): void => {
-    socket.emit("lineage:result", { success: false, reason: NOT_LIVE_REASON, lineageId, action });
-  };
-
-  socket.on("lineage:unlockCard", (payload) => {
-    const p = liveSelf();
-    if (!payload || typeof payload.lineageId !== "string" || typeof payload.cardId !== "string") return;
-    if (!p) return lineageReject(payload.lineageId, "unlockCard");
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = unlockLineageCard(world, p, payload.lineageId, payload.cardId);
-    world.gameplay?.decision(p, "lineage-card", payload.cardId, telemetryBefore, result.success);
-    socket.emit("lineage:result", result);
-  });
-
-  socket.on("lineage:setActive", (payload) => {
-    const p = liveSelf();
-    if (!payload || typeof payload.lineageId !== "string") return;
-    if (payload.cardId !== null && typeof payload.cardId !== "string") return;
-    if (!ROW_KINDS.includes(payload.row)) return;
-    if (!p) return lineageReject(payload.lineageId, "setActive");
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = setLineageActive(world, p, payload.lineageId, payload.row, payload.cardId);
-    world.gameplay?.decision(p, "lineage-active", payload.cardId, telemetryBefore, result.success);
-    socket.emit("lineage:result", result);
-  });
-
-  socket.on("lineage:unlockForm", (payload) => {
-    const p = liveSelf();
-    if (!payload || typeof payload.lineageId !== "string" || typeof payload.recipeId !== "string") return;
-    if (!p) return lineageReject(payload.lineageId, "unlockForm");
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = unlockLineageForm(world, p, payload.lineageId, payload.recipeId);
-    world.gameplay?.decision(p, "lineage-gate", payload.recipeId, telemetryBefore, result.success);
-    socket.emit("lineage:result", result);
-  });
-
-  socket.on("lineage:wearForm", (payload) => {
-    const p = liveSelf();
-    if (!payload || typeof payload.lineageId !== "string" || typeof payload.recipeId !== "string") return;
-    if (!p) return lineageReject(payload.lineageId, "wearForm");
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = wearLineageForm(world, p, payload.lineageId, payload.recipeId);
-    world.gameplay?.decision(p, "lineage-form", payload.recipeId, telemetryBefore, result.success);
-    socket.emit("lineage:result", result);
-  });
-
-  // ── Ability nodes (design §19) ─────────────────────────────────────────────
-  // Both answer on one event, for the same reason the four lineage actions do.
-  const nodeReject = (abilityId: string, action: AbilityNodeAction): void => {
-    socket.emit("ability:nodeResult", { success: false, reason: NOT_LIVE_REASON, abilityId, action });
-  };
-
-  socket.on("ability:unlockNode", (payload) => {
-    const p = liveSelf();
-    if (!payload || typeof payload.abilityId !== "string" || typeof payload.optionId !== "string") return;
-    if (!p) return nodeReject(payload.abilityId, "unlockNode");
-    socket.emit("ability:nodeResult", unlockAbilityNode(world, p, payload.abilityId, payload.optionId));
-  });
-
-  socket.on("ability:setNode", (payload) => {
-    const p = liveSelf();
-    if (!payload || typeof payload.abilityId !== "string") return;
-    if (payload.optionId !== null && typeof payload.optionId !== "string") return;
-    if (!ABILITY_NODE_ROWS.includes(payload.row)) return;
-    if (!p) return nodeReject(payload.abilityId, "setNode");
-    socket.emit("ability:nodeResult", setAbilityNode(world, p, payload.abilityId, payload.row, payload.optionId));
   });
 
   socket.on("party:join", (targetPlayerId: string) => {
