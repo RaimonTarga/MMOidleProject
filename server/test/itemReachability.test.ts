@@ -1,32 +1,25 @@
 /**
- * Every armor, recovery, or mobility item a player can hold must be reachable
- * by SOME path — the non-weapon sibling of weaponReachability.test.ts.
+ * Every weapon, armor, recovery, or mobility item a player can hold must be
+ * reachable by SOME path.
  *
- * Since design §24.5 there is exactly one path for these slots: the recipe. The
- * +N ladder and the evolve/reconstruct path are retired on every slot, and the
- * armour, charm and boots lineage trees are parked, so none of their items is a
- * gated door any more. A non-weapon recipe is therefore reachable when:
- *
- *  - it is plain-craftable: no `evolvesFrom` and not a gated lineage form
- *    (`isGatedLineageForm`, the craft guard's one check), and
- *  - its unlock is a biome level its biome actually reaches at the item's own
- *    tier (`checkRecipeUnlocks` grants it there), or a boss clear.
- *
- * The evolve leg this test used to walk (own the predecessor, push it to +3, or
- * pay `reconstructCost`) is gone; an item that only it could reach would be a
- * dead end now, and fails here by name. `slotRetirement.test.ts` crafts every
- * non-weapon T2+ item on a real World at its level; this is the static census.
+ * There is exactly one path for these slots: the recipe. The +N ladder, the
+ * evolve/reconstruct path and the lineage trees are gone (design §24.5, class-first
+ * rework D1), so a gear recipe is reachable when its unlock is a biome level its
+ * biome actually reaches at the item's own tier (`checkRecipeUnlocks` grants it
+ * there), or a boss clear. An item that only a retired path could reach would be a
+ * dead end now, and fails here by name. `slotRetirement.test.ts` crafts every T2+
+ * item on a real World at its level; this is the static census.
  */
 import assert from 'node:assert/strict';
 import {
-  BIOME_START_TIER_BY_GROUP, RECIPE_DATABASE, biomeLevelCap, isGatedLineageForm,
+  BIOME_START_TIER_BY_GROUP, RECIPE_DATABASE, biomeLevelCap,
 } from '@mmo-idle/shared';
 import type { EquipmentSlot, Recipe } from '@mmo-idle/shared';
 
-const NON_WEAPON_SLOTS: readonly EquipmentSlot[] = ['armor', 'recovery', 'mobility'];
+const GEAR_SLOTS: readonly EquipmentSlot[] = ['weapon', 'armor', 'recovery', 'mobility'];
 
 /**
- * Non-weapon items with no path in. EMPTY, and it stays empty.
+ * Gear with no path in. EMPTY, and it stays empty.
  *
  * An entry appearing here means a player can earn a dead end. Give the recipe a
  * reachable unlock instead of widening the list.
@@ -34,8 +27,6 @@ const NON_WEAPON_SLOTS: readonly EquipmentSlot[] = ['armor', 'recovery', 'mobili
 const KNOWN_UNREACHABLE: readonly string[] = [];
 
 function whyUnreachable(recipe: Recipe): string | null {
-  if (recipe.evolvesFrom) return `still names a predecessor (${recipe.evolvesFrom}); the evolve path is retired`;
-  if (isGatedLineageForm(recipe.id)) return 'is a gated lineage form, which crafting refuses';
   if (recipe.requiredBossClear) return null;
   const start = BIOME_START_TIER_BY_GROUP[recipe.recipeGroup] ?? (recipe.recipeGroup === 'clearing' ? 0 : undefined);
   if (start === undefined) return `'${recipe.recipeGroup}' is not a biome with nodes`;
@@ -49,7 +40,7 @@ function whyUnreachable(recipe: Recipe): string | null {
 const unreachable: string[] = [];
 const reasons: string[] = [];
 for (const [id, recipe] of RECIPE_DATABASE) {
-  if (!NON_WEAPON_SLOTS.includes(recipe.slot)) continue;
+  if (!GEAR_SLOTS.includes(recipe.slot)) continue;
   const why = whyUnreachable(recipe);
   if (why) {
     unreachable.push(id);
@@ -64,7 +55,7 @@ const stranded = actual.filter((id) => !expected.includes(id));
 assert.deepEqual(
   stranded,
   [],
-  'these armor/recovery/mobility items have no craft path and are not a known gap:\n  '
+  'these gear items have no craft path and are not a known gap:\n  '
     + reasons.filter((r) => stranded.some((id) => r.startsWith(`${id} `))).join('\n  '),
 );
 
@@ -76,7 +67,7 @@ assert.deepEqual(
 );
 
 // Guard the guard: a slot filter that matches nothing passes vacuously.
-const nonWeaponTotal = [...RECIPE_DATABASE.values()].filter((r) => NON_WEAPON_SLOTS.includes(r.slot)).length;
-assert(nonWeaponTotal > 50, `only ${nonWeaponTotal} non-weapon recipes found — the slot filter is broken`);
+const gearTotal = [...RECIPE_DATABASE.values()].filter((r) => GEAR_SLOTS.includes(r.slot)).length;
+assert(gearTotal > 80, `only ${gearTotal} gear recipes found — the slot filter is broken`);
 
-console.log(`itemReachability: ok (${actual.length} known-unreachable armor/recovery/mobility items)`);
+console.log(`itemReachability: ok (${actual.length} known-unreachable gear items)`);

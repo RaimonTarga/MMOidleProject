@@ -340,23 +340,6 @@ export function auditStatusRegistry(root: string = AUDIT_DEFAULT_ROOT) {
     if (api === 'openFrameWindow') for (const id of strings(node.arguments[1])) add(`frame.${id}.window`, `${runtime('server/src/systems/classes/shared/frameLoop.ts', 'frameWindowEffectId(root)')}; ${loc(node)}`, 'player');
     if (api === 'applyStrongestPlayerRider') for (const id of strings(node.arguments[2])) add(id, `server/src/systems/combat/engine/combat.ts:1210; ${loc(node)}`, 'player');
     if (api === 'syncOwnedTargetEffect') for (const id of strings(node.arguments[2])) add(id, `server/src/systems/classes/archetypes/summoner/specs/index.ts:80; ${loc(node)}`, 'monster');
-    if (api === 'applyTimedSelf') {
-      let clause: ts.Node | undefined = node;
-      while (clause && !ts.isCaseClause(clause)) clause = clause.parent;
-      if (clause && ts.isCaseClause(clause)) {
-        const parent = clause.parent;
-        const clauses: readonly ts.CaseOrDefaultClause[] = ts.isCaseBlock(parent) ? parent.clauses : [];
-        const index = clauses.indexOf(clause);
-        for (let i = index; i >= 0; i--) {
-          const c = clauses[i]; if (!ts.isCaseClause(c) || i < index && c.statements.length) break;
-          for (const kind of strings(c.expression)) add(`lineage.${kind}`, `${runtime('server/src/systems/combat/lineageCards.ts', 'lineageStatusEffectId(kind)')}; ${loc(node)}`, 'player');
-        }
-      }
-    }
-    if (api === 'defineWindowBuff') {
-      const kind = strings(node.arguments[0])[0], id = strings(node.arguments[1])[0];
-      if (kind && id) descriptors.set(id, { at: loc(node), reads: [`lineage.${kind}`], icon: id, text: node.getText() });
-    }
   });
   add('frame.summoner.link.<ownerId>', runtime('server/src/systems/classes/archetypes/summoner/frameLoop.ts', 'id:          linkId').replace(/;$/, ''), 'monster');
   add('barrier:<sourceId>', runtime('server/src/systems/combat/engine/sourceBarriers.ts', 'sourceBarrierEffectId(sourceId)'), 'monster');
@@ -414,7 +397,7 @@ export function auditStatusRegistry(root: string = AUDIT_DEFAULT_ROOT) {
   // site's id is expanded above (`applyMonsterSlow` / `applyMonsterRoot`).
   const controlApplier = (row: Dynamic) => row.expression === 'effectId'
     && row.at.startsWith('server/src/systems/combat/status/monsterControl.ts:');
-  const unexplained = dynamic.filter((row) => !controlApplier(row) && !/applyStatusEffect|frameWindowEffectId|lineageStatusEffectId|sourceBarrierEffectId|recoveryEffectIdForAbility|guardEffectIdForAbility|linkId|step\.effectId|debuff\.effectId|room\.effectId|profile\.effectId|^id$|action\.effectId|buff\.effectId|ward\.effectId|debuff\.statusEffectId|source\.id|pool\.erodes\.effectId|ramp\.effectId|se\.effectId|damage\.effectId/.test(row.expression));
+  const unexplained = dynamic.filter((row) => !controlApplier(row) && !/applyStatusEffect|frameWindowEffectId|sourceBarrierEffectId|recoveryEffectIdForAbility|guardEffectIdForAbility|linkId|step\.effectId|debuff\.effectId|room\.effectId|profile\.effectId|^id$|action\.effectId|buff\.effectId|ward\.effectId|debuff\.statusEffectId|source\.id|pool\.erodes\.effectId|ramp\.effectId|se\.effectId|damage\.effectId/.test(row.expression));
   const uiOnly = [...new Set([...playerHelp.keys(), ...targetHelp.keys(), ...badge.keys()])].filter((id) => !byId.has(id) && !descriptors.has(id) && !['source-barrier', 'enemy-barrier', 'harvest'].includes(id)).sort();
   const bossMeta = entries('client/src/hud/targetStatusMeta.ts', 'BOSS_META');
   const bossCopy = entries(helpFile, 'BOSS_HELP');

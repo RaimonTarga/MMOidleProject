@@ -1,7 +1,6 @@
 // ─── Skill tree types ─────────────────────────────────────────────────────────
 
 import type { MechanicEffects } from '../../passives';
-import type { PacketId } from '../lineages/types';
 
 /** The three sub-variants available within every class. */
 export type SubVariant = 'light' | 'balanced' | 'heavy';
@@ -101,13 +100,4 @@ export interface SkillNode {
    * arrays in shared/src/passives.ts.
    */
   mechanicEffects?: MechanicEffects;
-  /**
-   * Tier-3 path modifiers only: the lineage packet this path's effect most
-   * resembles (design §4: "the item keystone and the class path name the same
-   * lane"), chosen from the node's own description. PROVISIONAL — run 3 W1-B
-   * tags these so the keystone handoff is checkable; the paths themselves are
-   * reviewed, and this tag re-cut, after the class rework (not in this task's
-   * scope). Absent on every node that is not a tier-3 path.
-   */
-  packet?: PacketId;
 }

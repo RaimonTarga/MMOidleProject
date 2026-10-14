@@ -84,15 +84,18 @@ export interface Recipe {
    * (any boss-clear key, e.g. `mountain:4`).
    */
   requiredBossClear?: string;
-  // ── Lineage / evolution (system rework Step 6) ──────────────────────────────
-  /** Lineage this recipe belongs to (e.g. `"rapier"`). Shared by base + all branches. */
+  // ── Retired with the lineage trees (class-first rework D1) ──────────────────
+  /**
+   * Read by nothing. Still authored on the core recipes only, which the core-slot
+   * removal deletes (left to it, not D1); the field goes with them.
+   */
   lineageId?: string;
   /**
-   * Predecessor recipe id this evolves from.
-   * Sibling recipes sharing an `evolvesFrom` are alternate branches.
+   * The evolve path is gone and no recipe names a predecessor. Typed `never` so
+   * none can again; kept only because `bot/src/reference.ts` (outside D1) still
+   * reads it. Delete with that read.
    */
-  evolvesFrom?: string;
-  reconstructCost?: Partial<Record<EssenceType, number>>;
+  evolvesFrom?: never;
   // ── Cores (system rework Step 9) ────────────────────────────────────────────
   /**
    * REQUIRED on `slot: 'core'` recipes, and must be absent on every other slot.

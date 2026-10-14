@@ -31,7 +31,6 @@ import {
   emptyEquipment,
   getStatusEffect,
   getTotalStacks,
-  lineageUnit,
   mergePassives,
   type CombatEvent,
 } from '@mmo-idle/shared';
@@ -48,6 +47,7 @@ import {
 } from '../src/systems/combat/engine/combatPipeline';
 import { updateDotArchetype } from '../src/systems/classes/archetypes/dot/dotPrototype';
 import { updateCombatState } from '../src/systems/combat/engine/combatState';
+import { RADIANT_REACH } from '../src/systems/classes/archetypes/dot/t3/ticks/radiant';
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -154,7 +154,7 @@ const authored = (nodeId: string, key: string): number => {
 
 const MAX_STACKS = authored('dot-balanced', 'dot.max-stacks');
 const STACKS_PER_HIT = authored(PYROMANCER, 'dot.fan-the-flames-stacks-per-hit');
-const REACH = lineageUnit('contagionRadius');
+const REACH = RADIANT_REACH;
 
 /** Hit until the burn is full. */
 function fillBurn(world: World, player: PlayerEntity, target: MonsterEntity): void {
@@ -203,7 +203,6 @@ assert(
   !('dot.fan-the-flames-max-stack-bonus-mult' in (SKILL_TREE.get(PYROMANCER)!.mechanicEffects ?? {})),
   'Pyromancer must not author the max-stack direct bonus any more',
 );
-assert(SKILL_TREE.get(PYROMANCER)!.packet === 'affliction', 'Pyromancer stays an Affliction path');
 
 // ── The hit: two full-strength stacks; a full bar is refreshed, with no bonus of its own ─
 {

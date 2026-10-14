@@ -44,15 +44,19 @@
  * Crawler fast corpse-fodder / Plague DoT+death-rider bodies / Choir ranged
  * support+necromancer backline), Trench (3, one mob each — the biome's own
  * banner already names them THE HUNTER / THE KITER / THE ANCHOR, reused
- * verbatim as family names). `punishes` lanes below are chosen against
- * each packet's own `weakAgainst` text in `data/lineages/packets.ts` where it
- * speaks directly to the shape (e.g. Tempo is "weak against fortified
- * plating, a single big target", so every slow/heavy/shielded family here
- * punishes Tempo; Affliction is "weak against... short fights", so the
- * low-HP/fast-dying Hadal Stalker punishes it) — not re-derived from scratch
- * per family. None of this is reviewed with the designer yet.
+ * verbatim as family names). The `punishes` play styles below were chosen
+ * against each style's own weakness where it speaks directly to the shape
+ * (e.g. Tempo is weak against fortified plating and a single big target, so
+ * every slow/heavy/shielded family here punishes Tempo; Affliction is weak
+ * against short fights, so the low-HP/fast-dying Hadal Stalker punishes it) —
+ * not re-derived from scratch per family. None of this is reviewed with the
+ * designer yet.
  */
-import type { PacketId } from '../lineages/types';
+
+/** The play style a family is built to punish (design §12). */
+export type PunishedStyle =
+  | 'tempo' | 'empowered' | 'affliction' | 'control'
+  | 'kill-chain' | 'engagement' | 'bulwark';
 
 export type FamilyId =
   // Plains
@@ -85,8 +89,8 @@ export interface FamilyDefinition {
   biome: string;
   /** The monsters that make up this family. Non-boss only. */
   monsterIds: readonly string[];
-  /** The lane this family is built to punish (design §12; Phase 2 measures it). */
-  punishes: PacketId;
+  /** The play style this family is built to punish (design §12). */
+  punishes: PunishedStyle;
 }
 
 const familyEntries: [FamilyId, FamilyDefinition][] = [

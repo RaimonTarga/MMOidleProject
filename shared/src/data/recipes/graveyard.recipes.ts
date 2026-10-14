@@ -14,7 +14,6 @@ export const graveyardRecipeEntries = [
   ['graveyard-plague-axe', {
     id: 'graveyard-plague-axe', name: 'Plague Axe',
     recipeGroup: 'graveyard', requiredBiomeLevel: 1, slot: 'weapon',
-    evolvesFrom: 'cave-cataclysm-axe',
     // Evolves from Cataclysm Axe (Cave), continuing the
     // `weapon.dead-swing-interval` family (see
     // T4_PROGRESSION_ECONOMY_PROPOSAL_2026-08-30.md §5). Economy resolved by
@@ -24,7 +23,6 @@ export const graveyardRecipeEntries = [
     //   (no cadence count, no energy, no cooldown progress).
     // 2026-09-26 T2-T4 weapon normalization: Attack 150->140 (+5: 300->258).
     cost: { purple: 270 }, stats: { attack: 258 }, attacksPerSecond: 1.10, tier: 4, // family-tag: dead-swing axe → Swarming
-    reconstructCost: { purple: 945 },
     mechanicEffects: {
       'weapon.dead-swing-interval': 3,
       'weapon.dead-swing-vuln-pct': 0.20, 'weapon.dead-swing-vuln-ms': 4000,
@@ -38,7 +36,6 @@ export const graveyardRecipeEntries = [
     id: 'graveyard-vest-t4', name: 'Plaguebound Mantle',
     recipeGroup: 'graveyard', requiredBiomeLevel: 2, slot: 'armor',
     cost: { purple: 220 }, stats: { "maxHp": 452, "damageReduction": 0.18 }, // family-tag: dot-resistance armor (Swamp inheritance) → Fortified
-    reconstructCost: { purple: 770 },
     // 2026-09-26 armor niches: the pure Swamp continuation — resist damage over
     // time and spread hits into it. The Mantle leans on resistance, Grave Ward on
     // deferral. Its reactive plating moved to Volcanic, its debuff resist to Trench.
@@ -52,7 +49,6 @@ export const graveyardRecipeEntries = [
     id: 'graveyard-vest-t4-debtward', name: 'Grave Ward',
     recipeGroup: 'graveyard', requiredBiomeLevel: 2, slot: 'armor',
     cost: { purple: 220 }, stats: { "maxHp": 452, "damageReduction": 0.18 }, // family-tag: dot-resistance armor (Swamp inheritance) → Fortified
-    reconstructCost: { purple: 770 },
     // Debt specialist: larger deferral, less resistance than the Mantle.
     // Debt is repaid normally; this armor grants no automatic forgiveness.
     mechanicEffects: { "defense.dot-resistance": 0.35, "defense.hit-to-dot-pct": 0.3 },
@@ -65,7 +61,6 @@ export const graveyardRecipeEntries = [
     id: 'graveyard-charm-t4', name: 'Necrotic Pulse',
     recipeGroup: 'graveyard', requiredBiomeLevel: 3, slot: 'recovery',
     cost: { purple: 150 }, stats: { "recovery": 168.2 }, // family-tag: recovery-pulse charm (Swamp inheritance) → Fortified
-    reconstructCost: { purple: 525 },
     mechanicEffects: { "defense.recovery-pulse-pct": 0.26, "defense.recovery-pulse-interval-ms": 6000, "guard.cleanse-pulse": 1 },
     tier: 4,
     icon: 'items/charms/necrotic-pulse.png',
@@ -76,7 +71,6 @@ export const graveyardRecipeEntries = [
     id: 'graveyard-charm-t4-gravetide', name: 'Grave-Tide Pulse',
     recipeGroup: 'graveyard', requiredBiomeLevel: 3, slot: 'recovery',
     cost: { purple: 150 }, stats: { "recovery": 168.2 }, // family-tag: recovery-pulse charm (Swamp inheritance) → Fortified
-    reconstructCost: { purple: 525 },
     // Combined: slower burst, compensated by a baseline in-combat trickle.
     // +5: 12% active + 12% for 4s/8s = 18% mean access (2.88% HP/s at 16 Recovery).
     mechanicEffects: { "defense.recovery-pulse-pct": 0.12, "defense.recovery-pulse-interval-ms": 8000, "defense.recovery-active-pct": 0.12, "guard.cleanse-pulse": 1 },
@@ -86,7 +80,7 @@ export const graveyardRecipeEntries = [
   }],
 
   // T4 boots — on-kill stacking speed + tenacity (max 3, 4s). Suits the dense swarm.
-  // No evolvesFrom: `mobility.kill-stack-speed-pct`/`-tenacity-pct` matches
+  // No predecessor: `mobility.kill-stack-speed-pct`/`-tenacity-pct` matches
   // neither Cave (`mobility.stealth-pct`) nor Swamp (`mobility.slow-resistance`)
   // — a genuine T4-only kill-momentum identity (see the proposal §6).
   ['graveyard-boots-t4', {
@@ -124,7 +118,6 @@ export const graveyardRecipeEntries = [
   ['relic-haunted-prism', {
     id: 'relic-haunted-prism', name: 'Haunted Prism',
     recipeGroup: 'graveyard', requiredBiomeLevel: 6, slot: 'relic',
-    lineageId: 'relic-haunted-prism',
     cost: { purple: 3500 },
     stats: {}, tier: 4,
     mechanicEffects: {

@@ -113,10 +113,8 @@ mechanicEffects: {},
   ['knight-steelsword', {
     id: 'knight-steelsword', name: "Knight's Steelsword",
     recipeGroup: 'plains', requiredBiomeLevel: 7, slot: 'weapon',
-    evolvesFrom: 'iron-broadsword',
     // 2026-09-26 weapon normalization: Attack 18->25 (+5: 27->51).
     cost: { yellow: 45 }, stats: { attack: 51 }, attacksPerSecond: 1.00, tier: 2,
-    reconstructCost: { yellow: 180 },
     icon: 'items/weapons/knight-steelsword.png',
     // The Technique weapon, inherited from the Broadsword: bought for stronger,
     // more frequent Techniques rather than for the raw number on the blade.
@@ -132,7 +130,6 @@ mechanicEffects: {},
     id: 'plains-vest-t2', name: 'Enduring Robe',
     recipeGroup: 'plains', requiredBiomeLevel: 8, slot: 'armor',
     cost: { yellow: 60 }, stats: { "maxHp": 75, "plating": 8, "damageReduction": 0.08 }, tier: 2, // family-tag: plating answers frequent light hits → Alacrity
-    reconstructCost: { yellow: 210 },
     icon: 'items/armor/enduring-robe.png',
     description: "Flat plating specializes in frequent small direct hits.",
 
@@ -145,7 +142,6 @@ mechanicEffects: {},
     id: 'plains-charm-t2', name: 'Stalwart Heart',
     recipeGroup: 'plains', requiredBiomeLevel: 9, slot: 'recovery',
     cost: { yellow: 50 }, stats: { "recovery": 8.8 }, // family-tag: on-kill Recovery answers swarm attrition → Alacrity
-    reconstructCost: { yellow: 175 },
     mechanicEffects: { "defense.recovery-on-kill-pct": 0.42, "defense.recovery-on-kill-ms": 4000 },
     tier: 2,
     icon: 'items/charms/stalwart-heart.png',
@@ -157,7 +153,6 @@ mechanicEffects: {},
     id: 'plains-boots-t2', name: 'Gale Boots',
     recipeGroup: 'plains', requiredBiomeLevel: 10, slot: 'mobility',
     cost: { yellow: 40 }, stats: { "speed": 41 }, tier: 2, // family-tag: plains speed → Alacrity
-    reconstructCost: { yellow: 140 },
     mechanicEffects: { "mobility.kill-speed-pct": 0.6, "mobility.kill-speed-ms": 3000 },
     icon: 'items/boots/gale-boots.png',
     description: 'Wind-cured leather that seems to lean into every stride.',

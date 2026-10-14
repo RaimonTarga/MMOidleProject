@@ -255,11 +255,6 @@ export interface AbilityDef {
   /** Home tier — the player tier `ranks[0]` is authored for. */
   tier: number;
   /**
-   * Evolution family. Grouping only — an evolution NEVER destroys or replaces its
-   * predecessor, so unlike gear lineages there is no consume/reconstruct here.
-   */
-  lineageId?: string;
-  /**
    * Authored ranks, `ranks[0]` = home tier. Never empty. Ranks past the last
    * authored one clamp: an ability simply stops deepening until T5+ is designed.
    */
@@ -513,62 +508,26 @@ export function abilityRankNumeral(rank: number): string {
 }
 
 /**
- * The words an ability's node rows lend its name (design §22.7, grammar §22.10):
- * the packet's adjective, the amplifier's "of X", the keystone's noun (which
- * replaces the ability's own) and the cross's "with Y". Derived from the payoff
- * or the axis, never authored per ability — `abilityNodeNameParts`
- * (`data/abilityNodes/flavor.ts`) builds them from the active rows.
- */
-export interface AbilityNameParts {
-  adjective?: string;
-  noun?: string;
-  of?: string;
-  with?: string;
-}
-
-/**
- * Which slice of the name a surface shows (design §22.10: "the hotbar shows the
- * noun; the tooltip the whole name"):
- *  - `full`  adjective, noun, "of X", the numeral, ", with Y" — tooltips, the
- *            Abilities panel: *Bleeding Whirlwind of Many III, with Echoes*;
- *  - `noun`  the noun and the numeral — the hotbar, the cast callout: *Whirlwind III*;
- *  - `plain` the noun alone — running copy (the tutorial's lines, a buff tile's
- *            printed label): *Whirlwind*.
+ * Which slice of the name a surface shows: `full` and `noun` are the name and the
+ * rank numeral (*Sweep III*) — the tooltips, the Abilities panel, the hotbar, the
+ * cast callout; `plain` is the name alone — running copy (the tutorial's lines, a
+ * buff tile's printed label).
  */
 export type AbilityNameForm = "full" | "noun" | "plain";
 
 /**
- * THE one entry point for an ability's player-facing name (design §22.7): every
- * surface — the hotbar, the Abilities panel, the tooltips, the buff bar, the cast
- * callout and the tutorial's copy — reads it, with the words its node rows lend it.
- *
- * Display name including the rank numeral, e.g. `Sweep III` — and, with the node
- * rows' words, *Bleeding Whirlwind of Many III, with Echoes*: adjective, noun (the
- * keystone's, else the ability's), "of X", the numeral after the name, then the
- * cross's ", with Y". No parts, no change: `Sweep III`. Numbers never appear in a
- * name; the numeral is the rank.
+ * THE one entry point for an ability's player-facing name: every surface — the
+ * hotbar, the Abilities panel, the tooltips, the buff bar, the cast callout and
+ * the tutorial's copy — reads it. `Sweep III`: the name, then the rank numeral.
+ * Numbers never appear in a name; the numeral is the rank.
  */
 export function abilityDisplayName(
   ability: AbilityDef,
   playerTier: number,
-  parts: AbilityNameParts = {},
   form: AbilityNameForm = "full",
 ): string {
-  const noun = parts.noun ?? ability.name;
-  if (form === "plain") return noun;
-  const numeral = abilityRankNumeral(abilityRankNumber(ability, playerTier));
-  if (form === "noun") return `${noun} ${numeral}`;
-  const head = [parts.adjective, noun, parts.of].filter(Boolean).join(" ");
-  return `${head} ${numeral}${parts.with ? `, ${parts.with}` : ""}`;
-}
-
-/**
- * The lineage line a renamed ability carries beneath its name (design §22.7: "the
- * hotbar and the tooltip read *Whirlwind*, with 'Sweep' as the lineage line beneath
- * it"): the ability's own name once a keystone has replaced it, else nothing.
- */
-export function abilityLineageLine(ability: AbilityDef, parts: AbilityNameParts = {}): string | undefined {
-  return parts.noun && parts.noun !== ability.name ? ability.name : undefined;
+  if (form === "plain") return ability.name;
+  return `${ability.name} ${abilityRankNumeral(abilityRankNumber(ability, playerTier))}`;
 }
 
 /**
@@ -665,7 +624,6 @@ const abilities: AbilityDef[] = [
     tags: [],
     blurb: "Arms your next attack to cleave nearby enemies.",
     tier: 1,
-    lineageId: "sweep",
     icon: "sweep",
     // Splash has an intuitive ceiling: 100% means a secondary target receives a
     // full-strength copy of the payload. Once T3 reaches it there is nowhere
@@ -840,7 +798,6 @@ const abilities: AbilityDef[] = [
     blurb:
       "Wind up and drive the blow into the ground, striking everything around the impact. You stop attacking while it charges — and hard control breaks it.",
     tier: 1,
-    lineageId: "slam",
     icon: "slam",
     // THE BURST CAST (design §22.2, ability pass 2026-10-06): Slam absorbed Power
     // Strike and re-homed from T2 Mountain 9 to T1 Mountain 5, Power Strike's
@@ -906,9 +863,8 @@ const abilities: AbilityDef[] = [
     // Disengage: Disengage moves you out of contact, Sidestep stays and dodges.
     //
     // NO NUMBER IN THIS FILE beyond the rank shape: the evasion window and the
-    // move-speed burst both come from the lineage magnitude table's units at the
-    // rank's tier (`sidestepWindow` in abilityMagnitudes.ts), so the window is the
-    // `evasion-window` payoff's own and the burst ends with it. The cooldown is
+    // move-speed burst both come from `sidestepWindow` in abilityMagnitudes.ts,
+    // one row per rank, and the burst ends with the window. The cooldown is
     // Brace's (PROVISIONAL). Situational: it does not fire with nothing in reach.
     ranks: [
       { effect: { kind: "dodge-window" }, cooldownMs: 10000 },
@@ -988,7 +944,6 @@ const abilities: AbilityDef[] = [
     blurb:
       "Arms your next attack to spread the target's afflictions outward — every burn, poison and frost you put on it takes hold in the enemies around it.",
     tier: 2,
-    lineageId: "affliction",
     icon: "contagion",
     // ARMED since the ability pass (design §22.9: a cast iff the ability deals its
     // own damage). Contagion deals none, so it waits for your next hit instead of
@@ -1064,7 +1019,6 @@ const abilities: AbilityDef[] = [
     blurb:
       "Call the storm into your hands. Your next few strikes land with it — however long they take to land.",
     tier: 3,
-    lineageId: "imbue",
     icon: "imbue-lightning",
     // The ability pass (design §22.2, §22.9) re-homed it from T4 Jungle 15 to T3
     // Volcanic 3 (Frenzy's slot) and made it INSTANT: a self-buff needs no
@@ -1123,7 +1077,6 @@ const abilities: AbilityDef[] = [
     blurb:
       "Rip every affliction off the target at once, dealing all the damage they had left to give — and then some.",
     tier: 3,
-    lineageId: "affliction",
     icon: "detonate",
     // The long cooldown is the whole design. Detonate converts patience into a
     // burst, so it must not be available for every ramp — otherwise a DoT build

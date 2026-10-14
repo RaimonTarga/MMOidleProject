@@ -1,5 +1,4 @@
 import {
-  lineageUnit,
   relicRatingsFromPassives,
   resolveDotClassProfile,
   resolveDotRelicDeliveryProfile,
@@ -37,6 +36,9 @@ function burnIsFull(player: PlayerEntity, effect: StatusEffect): boolean {
   return effect.stacks >= Math.min(effect.maxStacks, cap);
 }
 
+/** How far a full burn's tick reaches from the burning body (body overlap). */
+export const RADIANT_REACH = 120;
+
 /**
  * RADIANT — the Pyromancer's payoff (design §22.5, dot-balanced-t3-a).
  *
@@ -59,9 +61,9 @@ function burnIsFull(player: PlayerEntity, effect: StatusEffect): boolean {
  *
  * Gated on the burn's source carrying `dot.radiant`, which only the Pyromancer node
  * authors: the class DoT record is one id across all three elements, so the path's
- * presence, not the element, is what decides. The reach is the lineage adjacency
- * unit (`LINEAGE_UNITS.contagionRadius`), measured as body overlap from the burning
- * body, through the same target query `applyPlayerAoe` uses. `applyPlayerAoe`
+ * presence, not the element, is what decides. The reach is {@link RADIANT_REACH},
+ * measured as body overlap from the burning body, through the same target query
+ * `applyPlayerAoe` uses. `applyPlayerAoe`
  * itself is not used because it mitigates as a hit (plating, full DR).
  *
  * Presentation: a `dot-tick` on each struck body in the burn's element (fire), with
@@ -93,7 +95,7 @@ export function radiateBurnTick(
     world,
     player,
     burning.hasPosition.current,
-    lineageUnit('contagionRadius'),
+    RADIANT_REACH,
     burning.isMonster.id,
   );
   if (victims.length === 0) return 0;

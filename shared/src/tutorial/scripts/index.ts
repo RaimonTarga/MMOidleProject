@@ -8,7 +8,6 @@ export {
   TUTORIAL_SEALS,
   T1_BIOME_ORDER,
   type TutorialClassPlan,
-  type TutorialWeaponCards,
   type T1Biome,
 } from './plans';
 export { tutorialRunes, type TutorialMovement, type TutorialRuneStage } from './runes';

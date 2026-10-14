@@ -10,7 +10,7 @@ import type { Recipe } from './types';
 // Rimebrand is a genuinely NEW T3 item with no predecessor. See item-identity-audit.md.
 //
 // T3 economy pass (2026-08-30): all five T3 items are new-item priced into their slot
-// bands (Tundra debuts at T3, so nothing here carries `evolvesFrom`); the flat
+// bands (Tundra debuts at T3, so nothing here has a predecessor); the flat
 // +3/+4/+5 plateau is replaced by the shipped accelerating curve; catalysts move off
 // the base craft to +4/+5.
 
@@ -81,10 +81,8 @@ export const tundraRecipeEntries = [
   ['tundra-glacial-tyrant-maul', {
     id: 'tundra-glacial-tyrant-maul', name: 'Glacial Tyrant Maul',
     recipeGroup: 'tundra', requiredBiomeLevel: 7, slot: 'weapon',
-    evolvesFrom: 'tundra-permafrost-maul',
     // 2026-09-26 T2-T4 weapon normalization: Attack 200->204 (+5: 450->378).
     cost: { blue: 273 }, stats: { attack: 378 }, attacksPerSecond: 0.50, tier: 4, // family-tag: capstone heavy maul → Heavy
-    reconstructCost: { blue: 956 },
     // † brittle-shatter-threshold: at max brittle stacks (8), strip the target's
     //   DR for 2s (brittle-shatter-dr-strip-ms). (new key)
     mechanicEffects: {
@@ -99,13 +97,11 @@ export const tundraRecipeEntries = [
   ['tundra-glacial-rimebrand', {
     id: 'tundra-glacial-rimebrand', name: 'Glacial Rimebrand',
     recipeGroup: 'tundra', requiredBiomeLevel: 7, slot: 'weapon',
-    evolvesFrom: 'tundra-rimebrand',
     // Evolves from Rimebrand (T3), Tundra's own genuinely-new frost-DoT weapon
     // line (no Swamp predecessor — see the file header). Base attack and mechanic
     // identity (`weaponDot`, convPct 0.70) are carried forward from the T3 item.
     // 2026-09-26 T2-T4 weapon normalization: Attack 155->165 (+5: 330->310).
     cost: { blue: 258 }, stats: { attack: 310 }, attacksPerSecond: 0.60, tier: 4, // family-tag: frost DoT-conversion weapon → Fortified
-    reconstructCost: { blue: 903 },
     // 2026-09-28 T4 outlier pass: convPct 0.70 -> 0.60. It was the best T4 weapon for most specs (its
     // plating-free conversion) and, with Detonate, every class's damage ceiling (1.2-1.38x).
     weaponDot: { effectId: 'rimebrand-burn', convPct: 0.60, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'frost' },
@@ -117,7 +113,6 @@ export const tundraRecipeEntries = [
     id: 'tundra-vest-t4', name: 'Permafrost Sovereign',
     recipeGroup: 'tundra', requiredBiomeLevel: 8, slot: 'armor',
     cost: { blue: 256, red: 64 }, stats: { "maxHp": 519, "plating": 5, "damageReduction": 0.18 }, // family-tag: stationary DR armor → Heavy
-    reconstructCost: { blue: 896, red: 224 },
     mechanicEffects: {"defense.stationary-dr-pct": 0.16, "defense.stationary-dr-ramptime-ms": 4000},
     tier: 4,
     icon: 'items/armor/permafrost-sovereign.png',
@@ -128,7 +123,6 @@ export const tundraRecipeEntries = [
     id: 'tundra-charm-t4', name: 'Glacial Ward',
     recipeGroup: 'tundra', requiredBiomeLevel: 9, slot: 'recovery',
     cost: { blue: 220, purple: 30 }, stats: { "recovery": 168.2 }, // family-tag: barrier charm (anti-spike) → Heavy
-    reconstructCost: { blue: 770, purple: 105 },
     mechanicEffects: { "defense.barrier-pct": 0.37, "defense.barrier-stationary-recharge-pct": 0.025, "guard.barrier-refill-on-control-pct": 1 },
     tier: 4,
     icon: 'items/charms/glacial-ward.png',
@@ -139,7 +133,6 @@ export const tundraRecipeEntries = [
     id: 'tundra-charm-t4-deepfreeze', name: 'Deepfreeze Ward',
     recipeGroup: 'tundra', requiredBiomeLevel: 9, slot: 'recovery',
     cost: { blue: 220, purple: 30 }, stats: { "recovery": 168.2 }, // family-tag: ramping absorb ward → Heavy
-    reconstructCost: { blue: 770, purple: 105 },
     // † absorb-ramp: absorb starts at 0.04 and climbs to 0.18 over 12s in combat
     //   (weaker early, stronger in long fights). (new keys)
     mechanicEffects: { "defense.absorb-ramp-start-pct": 0.06, "defense.absorb-ramp-max-pct": 0.45, "defense.absorb-ramptime-ms": 12000 },
@@ -154,7 +147,6 @@ export const tundraRecipeEntries = [
     recipeGroup: 'tundra', requiredBiomeLevel: 10, slot: 'mobility',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 42->97 (+5: 120->118).
     cost: { blue: 176 }, stats: { "speed": 118 }, tier: 4, // family-tag: tundra momentum mobility → Heavy
-    reconstructCost: { blue: 616 },
     mechanicEffects: { 'mobility.ramp-speed-pct': 0.75, 'mobility.ramp-rate': 0.35 },
     icon: 'items/boots/avalanche-striders.png',
     description: 'Slow to start and impossible to stop — by the far end of the ice you are a thing that simply happens to whatever is in the way.',
@@ -183,7 +175,6 @@ export const tundraRecipeEntries = [
   ['relic-glacial-bell', {
     id: 'relic-glacial-bell', name: 'Glacial Bell',
     recipeGroup: 'tundra', requiredBiomeLevel: 12, slot: 'relic',
-    lineageId: 'relic-glacial-bell',
     cost: { blue: 3200 },
     stats: {}, tier: 4,
     mechanicEffects: {

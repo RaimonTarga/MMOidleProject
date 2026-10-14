@@ -10,11 +10,6 @@ import type { TutorialMovement } from './runes';
  * - No upgrade beats: the +N ladder is retired on every slot (design §24.5) and
  *   an item is crafted at its old +5 power, so the kit the bot took to +5 is the
  *   plain crafted kit here.
- * - The weapon page (`weaponCards`): the lean, the weapon's own verb and the lean's
- *   ranks (design §26.1), on the weapon the class FIGHTS with (design §24.9): so
- *   that weapon is worn from where it is crafted — the Chaotic Axe from the Cave's
- *   first level, the Slinger's Poison Dagger from the Swamp's — rather than
- *   swapped in late as the bot does.
  * - The Slinger's Forest armor waits for Forest 3 (`atLevel`).
  */
 
@@ -54,28 +49,6 @@ export interface BossPlan {
   guard: string;
 }
 
-/**
- * The T1 band (design §26.1: "T1 deepens; T2 branches") on the page of the weapon
- * the class fights with (design §24.9): a LEAN of the Attack / Speed / Effect trio
- * (row 1, its home zone's level 2), the weapon's ONE verb (row 2, the zone's level 4
- * and the row's Global Mastery — not a choice, the weapon's own move), then the
- * lean's further ranks. The lineage is the boss kit's weapon's, so the band is live
- * in every seal and gate fight (`tutorial.test.ts` holds the plan to that), and the
- * gate the last chapter pays is the same weapon's.
- */
-export interface TutorialWeaponCards {
-  lineageId: string;
-  /** One of the weapon's ranked T1 leans (`<weapon>-t1-attack|speed|effect`). */
-  lean: string;
-  /** The weapon's one T1 verb. */
-  verb: string;
-  /**
-   * The rank the guide takes the lean to (1..3): rank II one level after the verb,
-   * rank III at the home leg's end, each where its Global Mastery gate is held.
-   */
-  leanRank: number;
-}
-
 export interface TutorialClassPlan {
   classRoot: string;
   className: string;
@@ -84,30 +57,7 @@ export interface TutorialClassPlan {
   /** Weapon, charm and boots worn for every boss fight (the seals and the gate). */
   bossKit: string[];
   bosses: Record<T1Biome, BossPlan>;
-  /** What the guide buys on the boss kit weapon's page (reasons per class below). */
-  weaponCards: TutorialWeaponCards;
 }
-
-/**
- * The Axe's and the Dagger's T1 band (`data/lineages/axe.ts`, `dagger.ts`, design
- * §26.1): the lean trio, Attack / Speed / Effect, and the weapon's one verb. Named
- * here only to keep the class table readable.
- */
-const AXE = {
-  lineageId: 'axe',
-  attack: 'axe-t1-attack',
-  speed: 'axe-t1-speed',
-  effect: 'axe-t1-effect',
-  choppingRhythm: 'axe-t1-tempo-payoff',
-} as const;
-
-const DAGGER = {
-  lineageId: 'dagger',
-  attack: 'dagger-t1-attack',
-  speed: 'dagger-t1-speed',
-  effect: 'dagger-t1-effect',
-  intoTheWound: 'dagger-t1-affliction-payoff',
-} as const;
 
 const PLAINS: BiomePlan = {
   before: [{ piece: 'iron-broadsword' }, { piece: 'plains-vest-t1' }],
@@ -194,31 +144,6 @@ function withArmor(bosses: Record<T1Biome, BossPlan>, armor: string): Record<T1B
   ) as Record<T1Biome, BossPlan>;
 }
 
-/*
- * The picks (`weaponCards`), PROVISIONAL and the designer's to change. Design §26.1
- * leaves the guide no pair to pick: the verb is the weapon's own, and the lesson
- * names the EFFECT lean, the weapon's own move made stronger (the legibility run's
- * brief), taken to rank III because the home leg holds rank III's Global Mastery 14
- * long before the gate. Attack and Speed are plain stats and are not taught.
- *
- * What the choice costs, per class (boss lab, legibility run after wave 1 at
- * `8deb861d`, reports/legibility/after-composition.md: boss DPS over the same class on
- * the same weapon with no cards, median over the five T1 bosses, 10 seeds; I / III =
- * rank). On the Chaotic Axe Effect is the weakest lean for every class — it scales
- * Chopping Rhythm's second strike, which is a sixth of the hits — so a designer who
- * wants the strongest guide would switch the five Axe plans to the lean named per
- * class. On the Poison Dagger the three are within ~2 pp at rank I and Effect leads
- * at rank III.
- */
-/** The rank the guide takes its lean to: III, inside the home leg (GM 14 is held there). */
-const LEAN_RANK = 3;
-const AXE_BAND: TutorialWeaponCards = {
-  lineageId: AXE.lineageId, lean: AXE.effect, verb: AXE.choppingRhythm, leanRank: LEAN_RANK,
-};
-const DAGGER_BAND: TutorialWeaponCards = {
-  lineageId: DAGGER.lineageId, lean: DAGGER.effect, verb: DAGGER.intoTheWound, leanRank: LEAN_RANK,
-};
-
 export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
   {
     classRoot: 'cadence-root',
@@ -227,9 +152,6 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     biomes: durableMelee(),
     bossKit: MELEE_KIT,
     bosses: DEFAULT_BOSSES,
-    // Effect +11.6% / +12.9% (I / III); best: Speed +24.5% at I (flat to III),
-    // Attack +28.1% at III. The verb alone: +10.2%.
-    weaponCards: AXE_BAND,
   },
   {
     classRoot: 'cooldown-root',
@@ -238,9 +160,6 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     biomes: durableMelee(),
     bossKit: MELEE_KIT,
     bosses: DEFAULT_BOSSES,
-    // Effect +10.7% / +12.1%; best: Speed +18.4% at I (Attack +18.3%), Speed +29.2%
-    // at III. The verb alone: +9.7%.
-    weaponCards: AXE_BAND,
   },
   {
     classRoot: 'reload-root',
@@ -249,10 +168,6 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     biomes: slinger(),
     bossKit: ['ashbrand-blade', 'swamp-charm-t1', 'plains-boots-t1'],
     bosses: withArmor(DEFAULT_BOSSES, 'forest-vest-t1'),
-    // Effect +50.5% / +58.4% ("Your poison is +10% stronger", and Into the Wound
-    // re-doses that poison: design §26.2); best: Attack +52.3% at I, Effect itself at
-    // III. The verb alone: +46.3%.
-    weaponCards: DAGGER_BAND,
   },
   {
     classRoot: 'energy-root',
@@ -261,9 +176,6 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     biomes: durableMelee(),
     bossKit: MELEE_KIT,
     bosses: DEFAULT_BOSSES,
-    // Effect +13.9% / +15.6%; best: Speed +24.8% at I (flat to III), Attack +28.0% at
-    // III. The verb alone: +12.5%.
-    weaponCards: AXE_BAND,
   },
   {
     classRoot: 'dot-root',
@@ -272,9 +184,6 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     biomes: apprentice(),
     bossKit: MELEE_KIT,
     bosses: { ...DEFAULT_BOSSES, swamp: { ...DEFAULT_BOSSES.swamp, armor: 'swamp-vest-t1' } },
-    // Effect +5.1% / +5.8%; best: Attack +16.4% at I, +18.9% at III. The verb alone:
-    // +4.6%.
-    weaponCards: AXE_BAND,
   },
   {
     classRoot: 'summoner-root',
@@ -283,8 +192,5 @@ export const TUTORIAL_CLASS_PLANS: readonly TutorialClassPlan[] = [
     biomes: durableMelee(),
     bossKit: MELEE_KIT,
     bosses: DEFAULT_BOSSES,
-    // Effect +17.5% / +19.9%; best: Attack +24.0% at I, +36.9% at III. The verb alone:
-    // +17.0% (four summons fill the six-count fast).
-    weaponCards: AXE_BAND,
   },
 ];

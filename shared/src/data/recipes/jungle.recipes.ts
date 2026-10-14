@@ -68,13 +68,9 @@ mechanicEffects: { "defense.evade-mitigation": 0.2, "defense.dot-resistance": 0.
     recipeGroup: 'jungle', requiredBiomeLevel: 7, slot: 'weapon',
     // T3 economy pass (2026-08-30): EVOLUTION of jungle-stinger-rapier at +5 — same
     // biome, same mechanic keys, same cadence. The Forest needle (gale-needle) is a
-    // deliberate DEAD END: `evolvesFrom` is single-parent by design
-    // and Jungle authored its own unambiguous T2 predecessor. Forest players take the
-    // reconstruct path.
-    evolvesFrom: 'jungle-stinger-rapier',
+    // deliberate DEAD END: Jungle authored its own unambiguous T2 predecessor.
     // 2026-09-26 T2-T4 weapon normalization: Attack 22->29 (+5: 42->50). On-hit unchanged.
     cost: { green: 120 }, stats: { attack: 50, onHitDamage: 38 }, attacksPerSecond: 1.65, tier: 3, // family-tag: fast on-hit rapier → Alacrity
-    reconstructCost: { green: 420 },
     icon: 'items/weapons/venomthorn-rapier.png',
     element: 'poison',   // cosmetic attack tint only
     description: 'Thin and quick, and slick with a thorn-sap that bites a little more with every touch.',
@@ -84,7 +80,6 @@ mechanicEffects: { "defense.evade-mitigation": 0.2, "defense.dot-resistance": 0.
     id: 'jungle-vest-t3', name: 'Wildgrowth Weave',
     recipeGroup: 'jungle', requiredBiomeLevel: 8, slot: 'armor',
     cost: { green: 90, yellow: 30 }, stats: { "maxHp": 216, "evasion": 0.4, "damageReduction": 0.07 }, // family-tag: evasion armor → Alacrity
-    reconstructCost: { green: 315, yellow: 105 },
     tier: 3,
     icon: 'items/armor/wildgrowth-weave.png',
     description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade and resists damage over time.",
@@ -100,7 +95,6 @@ mechanicEffects: { "defense.evade-mitigation": 0.25, "defense.dot-resistance": 0
     // inheritance and green followed it, so mechanic and home colour are the same
     // colour — there is nothing left to splash.
     cost: { green: 100 }, stats: { "recovery": 68.3 }, // family-tag: jungle recovery → Alacrity
-    reconstructCost: { green: 350 },
     mechanicEffects: { "defense.recovery-ramp-start-pct": 0.05, "defense.recovery-ramp-max-pct": 0.24, "defense.recovery-ramp-ramptime-ms": 10000, "guard.recovery-ramp-advance-ms": 3000 },
     tier: 3,
     icon: 'items/charms/worldvine-heart.png',
@@ -112,7 +106,6 @@ mechanicEffects: { "defense.evade-mitigation": 0.25, "defense.dot-resistance": 0
     recipeGroup: 'jungle', requiredBiomeLevel: 10, slot: 'mobility',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 44->68 (+5: 88->88).
     cost: { green: 90 }, stats: { "speed": 88 }, tier: 3, // family-tag: jungle mobility → Alacrity
-    reconstructCost: { green: 315 },
     mechanicEffects: { 'mobility.aggro-pull-pct': 0.65 },
     icon: 'items/boots/canopy-striders.png',
     description: 'They crash through the green loud enough to turn every hungry thing your way.',
@@ -126,10 +119,8 @@ mechanicEffects: { "defense.evade-mitigation": 0.25, "defense.dot-resistance": 0
   ['jungle-deathfang-rapier', {
     id: 'jungle-deathfang-rapier', name: 'Deathfang Rapier',
     recipeGroup: 'jungle', requiredBiomeLevel: 13, slot: 'weapon',
-    evolvesFrom: 'jungle-venomthorn-rapier',
     // 2026-09-26 T2-T4 weapon normalization: Attack 34->59 (+5: 84->108). On-hit unchanged.
     cost: { green: 264 }, stats: { attack: 108, onHitDamage: 70 }, attacksPerSecond: 1.75, tier: 4, // family-tag: capstone fast on-hit rapier → Alacrity
-    reconstructCost: { green: 924 },
     icon: 'items/weapons/deathfang-rapier.png',
     element: 'poison',   // cosmetic attack tint only
     description: 'Quick past seeing, and slick with something the deep jungle spent a long time perfecting.',
@@ -139,7 +130,6 @@ mechanicEffects: { "defense.evade-mitigation": 0.25, "defense.dot-resistance": 0
     id: 'jungle-vest-t4', name: 'Primal Canopy',
     recipeGroup: 'jungle', requiredBiomeLevel: 14, slot: 'armor',
     cost: { green: 220, yellow: 55 }, stats: { "maxHp": 411, "evasion": 0.44, "damageReduction": 0.1 }, // family-tag: evasion armor → Alacrity
-    reconstructCost: { green: 770, yellow: 193 },
     // Bonus evade-mitigation: increases the fraction of damage avoided on an evade
     // (the reload-class mechanic). Stacks on GAME_CONFIG.EVADE_MITIGATION_BASE.
     mechanicEffects: { "defense.evade-mitigation": 0.3, "defense.dot-resistance": 0.35 },
@@ -152,7 +142,6 @@ mechanicEffects: { "defense.evade-mitigation": 0.25, "defense.dot-resistance": 0
     id: 'jungle-charm-t4', name: 'Ancient Canopy',
     recipeGroup: 'jungle', requiredBiomeLevel: 15, slot: 'recovery',
     cost: { green: 200 }, stats: { "recovery": 168.2 }, // family-tag: jungle recovery → Alacrity
-    reconstructCost: { green: 700 },
     mechanicEffects: { "defense.recovery-ramp-start-pct": 0.04, "defense.recovery-ramp-max-pct": 0.24, "defense.recovery-ramp-ramptime-ms": 9000, "guard.recovery-ramp-advance-ms": 4000 },
     tier: 4,
     icon: 'items/charms/ancient-canopy.png',
@@ -163,7 +152,6 @@ mechanicEffects: { "defense.evade-mitigation": 0.25, "defense.dot-resistance": 0
     id: 'jungle-charm-t4-overgrowth', name: 'Overgrowth Pulse',
     recipeGroup: 'jungle', requiredBiomeLevel: 15, slot: 'recovery',
     cost: { green: 200 }, stats: { "recovery": 168.2 }, // family-tag: jungle recovery → Alacrity
-    reconstructCost: { green: 700 },
     // † overheal-ward-pct: regen beyond max HP converts to a temporary ward.
     mechanicEffects: { "defense.recovery-ramp-start-pct": 0.04, "defense.recovery-ramp-max-pct": 0.22, "defense.recovery-ramp-ramptime-ms": 9000, "defense.overheal-ward-pct": 0.1, "defense.overheal-ward-cap-pct": 0.05, "guard.recovery-ramp-advance-ms": 4000 },
     tier: 4,
@@ -177,7 +165,6 @@ mechanicEffects: { "defense.evade-mitigation": 0.25, "defense.dot-resistance": 0
     recipeGroup: 'jungle', requiredBiomeLevel: 16, slot: 'mobility',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 66->97 (+5: 120->120).
     cost: { green: 198 }, stats: { "speed": 120 }, tier: 4, // family-tag: jungle mobility → Alacrity
-    reconstructCost: { green: 693 },
     mechanicEffects: { 'mobility.aggro-pull-pct': 0.80 },
     icon: 'items/boots/warpath-treads.png',
     description: 'They tear through the green loud enough to wake the whole canopy — and bring all of it to you at once.',
@@ -243,7 +230,6 @@ mechanicEffects: { "defense.evade-mitigation": 0.25, "defense.dot-resistance": 0
   ['relic-verdant-flywheel', {
     id: 'relic-verdant-flywheel', name: 'Verdant Flywheel',
     recipeGroup: 'jungle', requiredBiomeLevel: 18, slot: 'relic',
-    lineageId: 'relic-verdant-flywheel',
     cost: { green: 3000 },
     stats: {}, tier: 4,
     mechanicEffects: {

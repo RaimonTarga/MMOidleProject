@@ -130,18 +130,6 @@ export const BUFF_IDS = [
   'mob-rush',     // Tundra — continuous-move ramp
   'mob-volcanic', // Volcanic — passive speed (active while not suppressed)
   'mob-suppress', // Volcanic — speed suppressed after a direct hit
-  // Lineage card windows (progression rework 1c). One tile per timed payoff, fed
-  // by the `lineage.<payoff>` status effects the card runtime applies — the
-  // existing buff-sync path, with no channel of its own.
-  'lineage-damage',
-  'lineage-speed',
-  'lineage-recovery',
-  'lineage-guard',
-  'lineage-ward',
-  'lineage-plate',
-  'lineage-technique', // Technique packet (design §22) — the next Technique's window
-  // Added 2026-10-01 with the `evasion-window` payoff (design §6).
-  'lineage-evasion',
   // Frame loops (progression rework Phase 3). TWO ids for all six roots, not two
   // per root: a player wears exactly one frame, so the clock and the counter are
   // the same two tiles whatever root is under them, and each root's descriptor

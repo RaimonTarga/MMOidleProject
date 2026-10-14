@@ -4,7 +4,7 @@
  * `docs/briefs/T3_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md` and the
  * current-state docs.
  *
- * Covers the retirement-aware mastery architecture, the 22 T2→T3 lineages, the T3 gear
+ * Covers the retirement-aware mastery architecture, the 23 T2→T3 successions, the T3 gear
  * cost curves / hybrid splits / catalyst schedule, and the ability / stance / rite / Core
  * prices and reward placement.
  */
@@ -24,17 +24,12 @@ import {
   globalMasteryRequiredForUpgrade,
   upgradeCeilingFromGlobalMastery,
   MAX_UPGRADE,
-  checkEvolve,
-  ESSENCE_TYPES,
 } from "@mmo-idle/shared";
 import type { EssenceType } from "@mmo-idle/shared";
 
 function assert(cond: unknown, msg: string): void {
   if (!cond) throw new Error(msg);
 }
-
-const fullEssences = () =>
-  Object.fromEntries(ESSENCE_TYPES.map((t) => [t, 1_000_000])) as Record<EssenceType, number>;
 
 const MAX_TIER = 4;
 
@@ -183,16 +178,16 @@ for (let tier = 1; tier <= MAX_TIER; tier++) {
 assert(BIOME_LEVELS_PER_TIER === 6, "BIOME_LEVELS_PER_TIER pin");
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 2. T2 → T3 lineage
+// 2. T2 → T3 successions
 // ═══════════════════════════════════════════════════════════════════════════
 
 /**
- * The approved T2→T3 successions: 20 continuing-biome + 3 cross-biome. Since
- * design §24.5 only the WEAPON rows are a predecessor link (`evolvesFrom`, the
- * form graph the weapon trees were authored from); the armour, charm and boots
- * rows are plain recipes that follow their T2 item with no link.
+ * The approved T2→T3 successions: 20 continuing-biome + 3 cross-biome. Every T3
+ * item is a plain recipe (the evolve path and the weapon form graph went with the
+ * lineage trees, class-first rework D1); the table pins which T2 identity each
+ * T3 item follows.
  */
-const T3_LINEAGES: Array<{ t2: string; t3: string }> = [
+const T3_SUCCESSIONS: Array<{ t2: string; t3: string }> = [
   { t2: "quake-hammer", t3: "mountain-avalanche-maul" },
   { t2: "mountain-vest-t2", t3: "mountain-vest-t3" },
   { t2: "mountain-charm-t2", t3: "mountain-charm-t3" },
@@ -226,110 +221,27 @@ const T3_NEW_ITEMS = [
   "tundra-boots-t3", "volcanic-cinderlash", "volcanic-boots-t3",
 ];
 
-/** T2 identities that deliberately END at T2 — no T3 item may name them. */
-const DEAD_END_T2_IDS = [
-  "plains-boots-t2", "gale-needle",
-  "forest-vest-t2", "forest-charm-t2", "forest-boots-t2",
-];
-
 const T3_GEAR = [...RECIPE_DATABASE.values()].filter(
   (r) => r.tier === 3 && r.slot !== "core" && r.slot !== "relic",
 );
 
 assert(T3_GEAR.length === 30, `30 T3 gear items expected, got ${T3_GEAR.length}`);
 
-const isWeaponRow = ({ t3 }: { t3: string }) => RECIPE_DATABASE.get(t3)?.slot === "weapon";
-
-// 2a. The predecessor links that remain are exactly the approved WEAPON rows.
-{
-  const live = T3_GEAR.filter((r) => r.evolvesFrom).map((r) => `${r.evolvesFrom}->${r.id}`).sort();
-  const want = T3_LINEAGES.filter(isWeaponRow).map((l) => `${l.t2}->${l.t3}`).sort();
-  assert(T3_LINEAGES.length === 23, `exactly 23 T3 successions expected, got ${T3_LINEAGES.length}`);
-  assert(JSON.stringify(live) === JSON.stringify(want), `T3 weapon link mismatch:\n live ${live}\n want ${want}`);
-}
-
-for (const { t2, t3 } of T3_LINEAGES) {
+assert(T3_SUCCESSIONS.length === 23, `exactly 23 T3 successions expected, got ${T3_SUCCESSIONS.length}`);
+for (const { t2, t3 } of T3_SUCCESSIONS) {
   const pred = RECIPE_DATABASE.get(t2);
   const recipe = RECIPE_DATABASE.get(t3);
   assert(!!pred, `${t2}: predecessor must exist`);
   assert(!!recipe, `${t3}: recipe must exist`);
   assert(pred!.tier === recipe!.tier - 1, `${t3}: predecessor must sit exactly one tier below`);
   assert(pred!.slot === recipe!.slot, `${t3}: predecessor must occupy the same slot`);
-  if (recipe!.slot === "weapon") {
-    assert(recipe!.evolvesFrom === t2, `${t3}: the weapon form graph names ${t2}`);
-  } else {
-    assert(recipe!.evolvesFrom === undefined, `${t3}: a plain recipe has no predecessor link`);
-  }
 }
 
-// 2b. Genuinely-new T3 items carry no lineage at all.
+// Genuinely-new T3 items exist, and the two lists account for every T3 item.
 for (const id of T3_NEW_ITEMS) {
-  const recipe = RECIPE_DATABASE.get(id);
-  assert(!!recipe, `${id}: recipe must exist`);
-  assert(recipe!.evolvesFrom === undefined, `${id}: must have NO predecessor`);
-  assert(recipe!.reconstructCost === undefined, `${id}: must have NO reconstruct cost`);
+  assert(!!RECIPE_DATABASE.get(id), `${id}: recipe must exist`);
 }
-assert(T3_LINEAGES.length + T3_NEW_ITEMS.length === T3_GEAR.length, "23 + 7 must account for all 30");
-
-// 2c. The confirmed dead ends: nothing anywhere points back at them.
-for (const dead of DEAD_END_T2_IDS) {
-  assert(!!RECIPE_DATABASE.get(dead), `${dead}: the dead-end T2 item must still exist`);
-  const heirs = [...RECIPE_DATABASE.values()].filter((r) => r.evolvesFrom === dead);
-  assert(heirs.length === 0, `${dead} is a deliberate dead end but ${heirs.map((h) => h.id)} evolve(s) from it`);
-}
-
-// 2d. Multi-parent evolution was explicitly REJECTED — no such field may exist.
-for (const recipe of RECIPE_DATABASE.values()) {
-  assert(
-    !("evolvesFromAny" in (recipe as unknown as Record<string, unknown>)),
-    `${recipe.id}: multi-parent evolution is rejected; evolvesFrom is single-parent by design`,
-  );
-  if (recipe.evolvesFrom !== undefined) {
-    assert(typeof recipe.evolvesFrom === "string", `${recipe.id}: evolvesFrom must be a single id`);
-    assert(RECIPE_DATABASE.has(recipe.evolvesFrom), `${recipe.id}: evolvesFrom ${recipe.evolvesFrom} must resolve`);
-  }
-}
-
-// 2e. Evolution is retired on every slot: weapons in Phase 2b (a weapon's power
-//     track is its lineage tree), armour/charm/boots in design §24.5 (their T3s
-//     are plain recipes) — spot-checked on a weapon and on the cross-biome
-//     Plains→Volcanic handoff, at any predecessor level.
-{
-  const recipe = RECIPE_DATABASE.get("mountain-avalanche-maul")!;
-  for (const plus of [2, 3]) {
-    const check = checkEvolve({
-      recipe, inventory: ["quake-hammer"], itemUpgrades: { "quake-hammer": plus },
-      essences: fullEssences(),
-    });
-    assert(!check.ok, `mountain-avalanche-maul: a +${plus} quake-hammer must NOT evolve (weapons use the lineage tree)`);
-  }
-}
-for (const { t2, t3 } of [
-  { t2: "plains-vest-t2", t3: "volcanic-vest-t3" },
-  { t2: "plains-charm-t2", t3: "volcanic-charm-t3" },
-]) {
-  const recipe = RECIPE_DATABASE.get(t3)!;
-  for (const plus of [2, 3, 5]) {
-    const check = checkEvolve({
-      recipe, inventory: [t2], itemUpgrades: { [t2]: plus },
-      essences: fullEssences(),
-    });
-    assert(!check.ok, `${t3}: a +${plus} ${t2} must NOT evolve (the path is retired)`);
-  }
-}
-
-// 2f. Reconstruction was 3.5x the evolve essence, per colour, on the recipes
-// that keep a predecessor link (the weapon forms; the path itself is retired).
-// The catalyst leg of this rule (RETIRED, Phase 2b) is gone with the wallet.
-for (const recipe of T3_GEAR) {
-  if (!recipe.evolvesFrom) continue;
-  const recon = recipe.reconstructCost!;
-  for (const [type, amount] of Object.entries(recipe.cost)) {
-    const got = recon[type as EssenceType] ?? 0;
-    const want = (amount ?? 0) * 3.5;
-    assert(Math.abs(got - want) <= 1, `${recipe.id}: reconstruct ${type} must be ~3.5x ${amount} (got ${got})`);
-  }
-}
+assert(T3_SUCCESSIONS.length + T3_NEW_ITEMS.length === T3_GEAR.length, "23 + 7 must account for all 30");
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 3. T3 gear economy

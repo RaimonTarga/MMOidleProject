@@ -38,11 +38,10 @@ const t4Gear: Recipe[] = [...RECIPE_DATABASE.values()].filter(
 assert(t4Gear.length === 40, `expected 40 ordinary T4 gear items, got ${t4Gear.length}`);
 
 /**
- * The approved T3→T4 successions, child → parent. Weapons keep this link in data
- * as their lineage form graph (`evolvesFrom`). Armour, charm and boots became
- * plain recipes in design §24.5 and lost it, so the rows are FROZEN here as the
- * economy's reference: the lifetime ratios and branch groups below are still
- * the authored price relationships between those items.
+ * The approved T3→T4 successions, child → parent. Every T4 item is a plain recipe
+ * (the evolve path went with the lineage trees, class-first rework D1), so the
+ * rows are FROZEN here as the economy's reference: the branch groups below are
+ * still the authored relationships between those items.
  */
 const T4_SUCCESSIONS: Readonly<Record<string, string>> = {
   "jungle-deathfang-rapier": "jungle-venomthorn-rapier",
@@ -90,24 +89,12 @@ const withoutLineage = t4Gear.filter((r) => T4_SUCCESSIONS[r.id] === undefined);
 
 assert(withLineage.length === 37, `expected 37 T4 successions, got ${withLineage.length}`);
 assert(withoutLineage.length === 3, `expected 3 T4 items without a predecessor, got ${withoutLineage.length}`);
-for (const r of t4Gear) {
-  if (r.slot === "weapon") {
-    assert(r.evolvesFrom === T4_SUCCESSIONS[r.id], `${r.id}: the weapon form graph must match the succession table`);
-  } else {
-    assert(r.evolvesFrom === undefined, `${r.id}: a plain recipe carries no predecessor link (design §24.5)`);
-  }
-}
 
 const NO_LINEAGE_IDS = new Set(["graveyard-boots-t4", "trench-charm-t4", "trench-boots-t4-treaders"]);
 assert(
   JSON.stringify([...withoutLineage.map((r) => r.id)].sort()) === JSON.stringify([...NO_LINEAGE_IDS].sort()),
   `the 3 no-lineage items must be exactly Gravewalker Boots/Pressure Vessel/Abyssal Treaders, got ${withoutLineage.map((r) => r.id).join(", ")}`,
 );
-
-// No `evolvesFromAny` (multi-parent) field exists anywhere.
-for (const r of t4Gear) {
-  assert(!("evolvesFromAny" in (r as unknown as Record<string, unknown>)), `${r.id}: no multi-parent field should exist`);
-}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 2. Predecessors: exactly 27 distinct ids, each real, T3, slot-matched
@@ -187,19 +174,6 @@ for (const r of t4Gear) {
 // 6. Catalysts: RETIRED, Phase 2b. The catalyst wallet and every `catalystCost`/
 // `reconstructCatalystCost` field are gone — nothing left to schedule-audit.
 // ═══════════════════════════════════════════════════════════════════════════
-
-// Reconstruction essence ≈3.5× base essence per colour (±1 on rounding), only on the 36 lineaged items.
-for (const child of withLineage) {
-  assert(!!child.reconstructCost, `${child.id}: lineaged item must have a reconstructCost`);
-  for (const [color, amount] of Object.entries(child.cost)) {
-    const expected = Math.round((amount ?? 0) * 3.5);
-    const got = (child.reconstructCost as Record<string, number>)[color] ?? 0;
-    assert(Math.abs(got - expected) <= 1, `${child.id}: reconstruct ${color} should be ~3.5x base (${expected}), got ${got}`);
-  }
-}
-for (const noLineage of withoutLineage) {
-  assert(!noLineage.reconstructCost, `${noLineage.id}: genuinely-new item must not have a reconstructCost`);
-}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 7. Catalyst families: RETIRED, Phase 2b. Items no longer carry a catalyst
@@ -367,7 +341,6 @@ for (const [id, spec] of Object.entries(RELIC_SNAPSHOT)) {
   assert(r!.recipeGroup === spec.group && r!.requiredBiomeLevel === spec.level, `${id}: gate must be unchanged (${spec.group} L${spec.level})`);
   assert(JSON.stringify(r!.cost) === JSON.stringify(spec.cost), `${id}: normalized essence cost must be exact`);
   assert(essenceTotal(r!.cost) >= 2500 && essenceTotal(r!.cost) <= 3500, `${id}: relic essence must be in 2500-3500`);
-  assert(!r!.evolvesFrom && !r!.reconstructCost, `${id}: relics must not gain lineage/reconstruction`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

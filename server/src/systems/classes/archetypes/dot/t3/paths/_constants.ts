@@ -37,7 +37,7 @@ export const IT_SPEED_PER_STACK = 0.02;  // attackCooldown reduction per stack (
 export const IT_SPEED_CAP       = 0.40;  // maximum 40% reduction
 
 // Balanced — Pyromancer's stack half, Fan the Flames (dot-balanced-t3-a). Its
-// payoff, Radiant, has no constant: its reach is LINEAGE_UNITS.contagionRadius.
+// payoff, Radiant, keeps its reach next to its runtime (`RADIANT_REACH`, ticks/radiant.ts).
 export const FTF_STACKS_PER_HIT = 2;
 export const FTF_DMG_MULT       = 0.5;
 

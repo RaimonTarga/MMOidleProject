@@ -88,10 +88,8 @@ export const desertRecipeEntries = [
     id: 'desert-solar-cross', name: 'Solar Falchion',
     recipeGroup: 'desert', requiredBiomeLevel: 7, slot: 'weapon',
     // T3 economy pass (2026-08-30): EVOLUTION of desert-sunsteel-cross at +5.
-    evolvesFrom: 'desert-sunsteel-cross',
     // 2026-09-26 T2-T4 weapon normalization: Attack 42->71 (+5: 102->112).
     cost: { yellow: 116 }, stats: { attack: 112 }, attacksPerSecond: 0.80, tier: 3, // family-tag: opening-strike weapon → Dominion
-    reconstructCost: { yellow: 406 },
     // Alpha window (2026-09-15): opener + a longer, stronger Sunlight. The lineage
     // carries NO Technique Power at any tier - see Sunsteel Falchion.
     mechanicEffects: {
@@ -112,9 +110,7 @@ export const desertRecipeEntries = [
   ['desert-pilgrim-quarterstaff', {
     id: 'desert-pilgrim-quarterstaff', name: "Pilgrim's Quarterstaff",
     recipeGroup: 'desert', requiredBiomeLevel: 7, slot: 'weapon',
-    evolvesFrom: 'knight-steelsword',
     cost: { yellow: 66 }, stats: { attack: 90 }, attacksPerSecond: 1.0, tier: 3, // family-tag: technique staff -> Dominion
-    reconstructCost: { yellow: 231 },
     mechanicEffects: { 'technique.cooldown-reduction-pct': 0.23, 'technique.power-pct': 0.65 },
     icon: 'items/weapons/pilgrim-quarterstaff.png',
     description: 'Sun-bleached ironwood shod in brass. It teaches the body a rhythm, and the rhythm does the rest.',
@@ -124,7 +120,6 @@ export const desertRecipeEntries = [
     id: 'desert-vest-t3', name: 'Eternal Duneplate',
     recipeGroup: 'desert', requiredBiomeLevel: 8, slot: 'armor',
     cost: { yellow: 120, purple: 30 }, stats: { "maxHp": 225, "damageReduction": 0.14, "plating": 15 }, // family-tag: opening-protection (Dawn) armor → Dominion
-    reconstructCost: { yellow: 420, purple: 105 },
     mechanicEffects: { "defense.engagement-dr-pct": 0.35, "defense.engagement-dr-ms": 8000 },
     tier: 3,
     icon: 'items/armor/eternal-duneplate.png',
@@ -136,7 +131,6 @@ export const desertRecipeEntries = [
     id: 'desert-charm-t3', name: 'Oasis Heart',
     recipeGroup: 'desert', requiredBiomeLevel: 9, slot: 'recovery',
     cost: { yellow: 100, purple: 25 }, stats: { "recovery": 68.3 }, // family-tag: cleanse recovery → Dominion
-    reconstructCost: { yellow: 350, purple: 88 },
     mechanicEffects: { "cleanse.cooldown-reduction-pct": 0.25 },
     tier: 3,
     icon: 'items/charms/oasis-heart.png',
@@ -148,7 +142,6 @@ export const desertRecipeEntries = [
     recipeGroup: 'desert', requiredBiomeLevel: 10, slot: 'mobility',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 86->125 (+5: 157->157).
     cost: { yellow: 90 }, stats: { "speed": 157 }, tier: 3, // family-tag: desert kite mobility → Dominion
-    reconstructCost: { yellow: 315 },
     mechanicEffects: { 'mobility.kite-speed-pct': 0.30 },
     icon: 'items/boots/mirage-striders.png',
     description: 'By the time the storm reaches where you stood, you are already a rumor on the next dune.',
@@ -164,10 +157,8 @@ export const desertRecipeEntries = [
   ['desert-zenith-cross', {
     id: 'desert-zenith-cross', name: 'Zenith Falchion',
     recipeGroup: 'desert', requiredBiomeLevel: 13, slot: 'weapon',
-    evolvesFrom: 'desert-solar-cross',
     // 2026-09-26 T2-T4 weapon normalization: Attack 110->122 (+5: 210->212).
     cost: { yellow: 255 }, stats: { attack: 212 }, attacksPerSecond: 0.80, tier: 4,
-    reconstructCost: { yellow: 893 },
     // Alpha window (2026-09-15). Opener 1.4 / 1.5 / 1.6; Sunlight 15%/4s, 20%/5s,
     // 25%/6s. The tier deepening is the WINDOW, not the opener - that is the whole
     // point of the rework (the old line was 2.0 / 2.5 / 3.0 on one hit).
@@ -188,9 +179,7 @@ export const desertRecipeEntries = [
   ['desert-sunmonk-warstaff', {
     id: 'desert-sunmonk-warstaff', name: "Sunmonk's Warstaff",
     recipeGroup: 'desert', requiredBiomeLevel: 13, slot: 'weapon',
-    evolvesFrom: 'desert-pilgrim-quarterstaff',
     cost: { yellow: 145 }, stats: { attack: 192 }, attacksPerSecond: 1.0, tier: 4,
-    reconstructCost: { yellow: 508 },
     mechanicEffects: {
       'technique.cooldown-reduction-pct': 0.26, 'technique.power-pct': 0.8,
       'technique.kata-power-pct': 0.80, 'technique.kata-stacks': 3,
@@ -203,7 +192,6 @@ export const desertRecipeEntries = [
     id: 'desert-vest-t4', name: 'Deathless Duneplate',
     recipeGroup: 'desert', requiredBiomeLevel: 14, slot: 'armor',
     cost: { yellow: 220, purple: 55 }, stats: { "maxHp": 433, "damageReduction": 0.18, "plating": 29 },
-    reconstructCost: { yellow: 770, purple: 193 },
     // Dawnward protects the opening of an engagement; no cheat-death rider.
     mechanicEffects: { "defense.engagement-dr-pct": 0.35, "defense.engagement-dr-ms": 10000 },
     tier: 4,
@@ -215,7 +203,6 @@ export const desertRecipeEntries = [
     id: 'desert-charm-t4', name: 'Last Oasis',
     recipeGroup: 'desert', requiredBiomeLevel: 15, slot: 'recovery',
     cost: { yellow: 200, purple: 50 }, stats: { "recovery": 168.2 },
-    reconstructCost: { yellow: 700, purple: 175 },
     // 25% Cleanse cooldown reduction; each upgrade adds 1.5 percentage points.
     mechanicEffects: { "cleanse.cooldown-reduction-pct": 0.325 },
     tier: 4,
@@ -229,7 +216,6 @@ export const desertRecipeEntries = [
     recipeGroup: 'desert', requiredBiomeLevel: 16, slot: 'mobility',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 121->173 (+5: 209->209).
     cost: { yellow: 198 }, stats: { "speed": 209 }, tier: 4,
-    reconstructCost: { yellow: 693 },
     mechanicEffects: { 'mobility.kite-speed-pct': 0.40 },
     icon: 'items/boots/simoom-striders.png',
     description: 'Named for the desert wind that arrives only as the dust it already left behind.',
@@ -271,7 +257,6 @@ export const desertRecipeEntries = [
   ['relic-withering-lens', {
     id: 'relic-withering-lens', name: 'Withering Lens',
     recipeGroup: 'desert', requiredBiomeLevel: 18, slot: 'relic',
-    lineageId: 'relic-withering-lens',
     cost: { yellow: 3300 },
     stats: {}, tier: 4,
     mechanicEffects: {

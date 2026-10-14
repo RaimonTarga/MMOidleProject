@@ -72,7 +72,7 @@ export function abilityCallout(scene: GameScene, playerId: string, abilityId: st
   if (!def) return abilityId;
   const view = scene.state.view.get(playerId) as PlayerView | undefined;
   const rank = abilityRankFor(scene, playerId, abilityId);
-  return abilityDisplayName(def, view?.playerTier ?? 0, {}, rank >= 2 ? 'noun' : 'plain');
+  return abilityDisplayName(def, view?.playerTier ?? 0, rank >= 2 ? 'noun' : 'plain');
 }
 
 /**

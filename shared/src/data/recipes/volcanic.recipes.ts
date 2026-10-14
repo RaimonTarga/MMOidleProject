@@ -43,7 +43,6 @@ export const volcanicRecipeEntries = [
     // niches: this replaced hardening (plating per second, cracked by big hits), which
     // fought the Volcano's Heat — late in a long fight hits grow and cracked it.
     cost: { red: 120, yellow: 30 }, stats: { "maxHp": 225, "plating": 9, "damageReduction": 0.14 }, // family-tag: inherits plains-vest-t2's Alacrity (plating answers frequent light hits)
-    reconstructCost: { red: 420, yellow: 105 },
     mechanicEffects: {"defense.hit-plating-per-stack": 1, "defense.hit-plating-max-stacks": 10, "defense.hit-plating-duration-ms": 3000},
     tier: 3,
     icon: 'items/armor/emberforge-plate.png',
@@ -57,7 +56,6 @@ export const volcanicRecipeEntries = [
     // CROSS-BIOME LINEAGE: evolves from the Plains charm (Stalwart Heart). Identical
     // `defense.recovery-on-kill-pct` key, extended with an always-active half.
     cost: { red: 75, yellow: 25 }, stats: { "recovery": 68.3 }, // family-tag: inherits plains-charm-t2's Alacrity
-    reconstructCost: { red: 263, yellow: 88 },
     mechanicEffects: { "defense.recovery-active-pct": 0.16, "defense.recovery-on-kill-pct": 0.14 },
     tier: 3,
     icon: 'items/charms/magmaheart-stone.png',
@@ -89,10 +87,8 @@ export const volcanicRecipeEntries = [
   ['volcanic-eruption-lash', {
     id: 'volcanic-eruption-lash', name: 'Eruption Lash',
     recipeGroup: 'volcanic', requiredBiomeLevel: 7, slot: 'weapon',
-    evolvesFrom: 'volcanic-cinderlash',
     // 2026-09-26 T2-T4 weapon normalization: Attack 58->65 (+5: 113->119).
     cost: { red: 308 }, stats: { attack: 119 }, attacksPerSecond: 1.80, tier: 4, // family-tag: flurry weapon → Swarming
-    reconstructCost: { red: 1078 },
     mechanicEffects: { 'weapon.flurry-pct': 0.04, 'weapon.flurry-stacks': 5 },
     icon: 'items/weapons/eruption-lash.png',
     element: 'fire',   // cosmetic attack tint only
@@ -104,14 +100,12 @@ export const volcanicRecipeEntries = [
     // onto fire vocabulary — Volcanic owns the fire DoT line.
     id: 'volcanic-blightbrand', name: 'Cinderbrand',
     recipeGroup: 'volcanic', requiredBiomeLevel: 7, slot: 'weapon',
-    evolvesFrom: 'volcanic-cinderlash',
     // Evolves from Cinderlash (T3), continuing its `weapon.flurry-pct` family.
     // Economy resolved by the T4 pass; base `attack` value has NOT been
     // revalidated against current combat formulas — that remains a separate
     // balance question.
     // 2026-09-26 T2-T4 weapon normalization: Attack 70->105 (+5: 170->172).
     cost: { red: 290 }, stats: { attack: 172 }, attacksPerSecond: 1.20, tier: 4, // family-tag: fast-DoT weapon → Swarming
-    reconstructCost: { red: 1015 },
     weaponDot: { effectId: 'cinderbrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'fire' },
     icon: 'items/weapons/cinderbrand.png',
     description: 'It leaves a fire under the skin that does the rest of the work while you move on.',
@@ -121,7 +115,6 @@ export const volcanicRecipeEntries = [
     id: 'volcanic-vest-t4', name: 'Pyroclasm Mantle',
     recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'armor',
     cost: { red: 220, yellow: 55 }, stats: { "maxHp": 433, "plating": 14, "damageReduction": 0.18 }, // family-tag: reactive-plating armor → Alacrity
-    reconstructCost: { red: 770, yellow: 193 },
     mechanicEffects: {"defense.hit-plating-per-stack": 1, "defense.hit-plating-max-stacks": 16, "defense.hit-plating-duration-ms": 3000},
     tier: 4,
     icon: 'items/armor/pyroclasm-mantle.png',
@@ -132,7 +125,6 @@ export const volcanicRecipeEntries = [
     id: 'volcanic-vest-t4-lavatempered', name: 'Lava-Tempered Hide',
     recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'armor',
     cost: { red: 220, yellow: 55 }, stats: { "maxHp": 433, "plating": 14, "damageReduction": 0.18 }, // family-tag: reactive-plating armor → Alacrity
-    reconstructCost: { red: 770, yellow: 193 },
     // † overheal-ward-pct: overheal from always-active Recovery becomes a temporary ward.
     //   Pairs naturally with Inferno Heart. (new key)
     mechanicEffects: {"defense.hit-plating-per-stack": 1, "defense.hit-plating-max-stacks": 8, "defense.hit-plating-duration-ms": 3000, "defense.overheal-ward-pct": 0.5, "defense.overheal-ward-cap-pct": 0.15},
@@ -145,7 +137,6 @@ export const volcanicRecipeEntries = [
     id: 'volcanic-charm-t4', name: 'Inferno Heart',
     recipeGroup: 'volcanic', requiredBiomeLevel: 9, slot: 'recovery',
     cost: { red: 200, yellow: 50 }, stats: { "recovery": 168.2 }, // family-tag: on-kill Recovery charm → Alacrity
-    reconstructCost: { red: 700, yellow: 175 },
     mechanicEffects: { "defense.recovery-active-pct": 0.2, "defense.recovery-on-kill-pct": 0.18 },
     tier: 4,
     icon: 'items/charms/inferno-heart.png',
@@ -158,7 +149,6 @@ export const volcanicRecipeEntries = [
     recipeGroup: 'volcanic', requiredBiomeLevel: 10, slot: 'mobility',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 50->105 (+5: 128->128).
     cost: { red: 163 }, stats: { "speed": 128 }, tier: 4, // family-tag: volcanic passive-speed mobility → Swarming
-    reconstructCost: { red: 571 },
     mechanicEffects: { 'mobility.passive-speed-pct': 0.70, 'mobility.suppress-ms': 3500 },
     icon: 'items/boots/pyroclast-treads.png',
     description: 'Swift as a thrown ember — until a solid blow stalls them, and the heat must build again.',
@@ -191,7 +181,6 @@ export const volcanicRecipeEntries = [
   ['relic-hastebound-dial', {
     id: 'relic-hastebound-dial', name: 'Hastebound Dial',
     recipeGroup: 'volcanic', requiredBiomeLevel: 11, slot: 'relic',
-    lineageId: 'relic-hastebound-dial',
     cost: { red: 3300 },
     stats: {}, tier: 4,
     mechanicEffects: {

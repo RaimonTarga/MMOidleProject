@@ -183,7 +183,6 @@ const REVERB = 'cooldown-balanced-t3-a';
 
 {
   const node = SKILL_TREE.get(REVERB)!;
-  assert(node.packet === 'empowered', `Reverb stays Empowered (design §22.5), got ${node.packet}`);
   assert(authored(REVERB, 'cooldown.reverb-echo-strength') > 0, 'Reverb authors its echo strength on the node');
   assert(
     !('cooldown.reverb-bonus-per-attack' in (node.mechanicEffects as Record<string, number>)),
@@ -415,7 +414,6 @@ const deliveries = (): SeenHit[] => hits.filter((h) => h.metadata['destroyerDeli
 {
   const node = SKILL_TREE.get(DESTROYER)!;
   const effects = node.mechanicEffects as Record<string, number>;
-  assert(node.packet === 'technique', `Destroyer is the Technique lane's path (design §22.5), got ${node.packet}`);
   assert(effects['cooldown.technique-execution'] > 0, 'Destroyer authors its rule key');
   assert(!('cooldown.singular-extraction' in effects), 'the no-damage rule is gone');
   assert(!('cooldown.empowered-cd-ms' in effects), 'the 5 s recharge override is gone');

@@ -187,7 +187,6 @@ const DUELIST = 'reload-light-t3-a';
 {
   const node = SKILL_TREE.get(DUELIST);
   assert(node, 'the Duelist node must exist');
-  assert(node.packet === 'kill-chain', `Duelist is the Kill chain path (design §22.5), got '${node.packet}'`);
   const effects = (node.mechanicEffects ?? {}) as Record<string, number>;
   assert((effects['reload.kill-chain'] ?? 0) === 1, 'Duelist authors one round per kill');
   assert(effects['reload.exploding-clip'] === undefined, 'the exploding last bullet is retired');
@@ -389,7 +388,6 @@ const WARMONGER = 'reload-heavy-t3-b';
 {
   const node = SKILL_TREE.get(WARMONGER);
   assert(node, 'the Warmonger node must exist');
-  assert(node.packet === 'tempo', `Warmonger keeps the Tempo tag (design §22.5), got '${node.packet}'`);
   const effects = (node.mechanicEffects ?? {}) as Record<string, number>;
   assert(effects['reload.ramp-carry-pct'] === 0.5, 'Warmonger authors the carry at a half');
   for (const key of ['reload.hair-trigger', 'reload.hair-trigger-pct-per-shot', 'reload.hair-trigger-max-stacks']) {

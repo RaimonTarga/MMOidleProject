@@ -202,10 +202,6 @@ export interface ItemDefinition {
    * Recipe.element; see that field for the full contract.
    */
   element?: DamageElement;
-  /** Lineage this item belongs to (system rework Step 6). Mirrors Recipe.lineageId. */
-  lineageId?: string;
-  /** Predecessor recipe/item id this evolved from. Mirrors Recipe.evolvesFrom. */
-  evolvesFrom?: string;
   /**
    * Core slot only. Eligibility category gating the core's effect: melee/ranged apply
    * their stats/mechanicEffects ONLY when the player's selectedRange qualifies;

@@ -339,7 +339,7 @@ function abilityName(id: string): string {
   const ability = ABILITY_DATABASE.get(id);
   if (!ability) return id;
   const view = store.get(localPlayerViewAtom);
-  return abilityDisplayName(ability, view?.playerTier ?? 0, {}, 'plain');
+  return abilityDisplayName(ability, view?.playerTier ?? 0, 'plain');
 }
 
 function ruleLabel(rule: EquippedRule): string {

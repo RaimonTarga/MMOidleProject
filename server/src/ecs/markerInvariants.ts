@@ -41,8 +41,7 @@ const MONSTER_MARKER_CHECKS: MarkerCheck[] = [
   { marker: "hasDot", effectId: "dot" },
   { marker: "hasDetonation", effectId: "cadence-detonation", multi: true },
   {
-    // The marker means "carries some bleed": a lineage card's DoT payoff has its
-    // own id (design §18.1) and the same driver ticks all of them.
+    // The marker means "carries some bleed": every id in `BLEED_EFFECT_IDS`.
     marker: "hasHemorrhage",
     effectId: "cadence-hemorrhage",
     multi: true,

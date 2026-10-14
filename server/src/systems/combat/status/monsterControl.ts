@@ -50,9 +50,8 @@ const OWNS_ROOT_FLAG = "abilityOwnsRoot";
  * and still closes — just more slowly. It exists for kiting, for maintaining
  * range, and for catching something that is running away.
  *
- * `effectId` names the slow on the target frame: Hamstring's (`ability-slowed`,
- * the default) or the Control lean's "Hobbled" (`lineage.hobbled`). Every id in
- * `MONSTER_SLOW_STATUS_IDS` is the same rung — the reconciler below takes the
+ * `effectId` names the slow on the target frame (Hamstring's `ability-slowed` by
+ * default). Every id in `MONSTER_SLOW_STATUS_IDS` is the same rung — the reconciler below takes the
  * strongest across them, as it takes the strongest across every other source.
  */
 export function applyMonsterSlow(
@@ -95,9 +94,8 @@ export function applyMonsterSlow(
  * the whole reason root sits between slow and stun on the ladder, so nothing
  * here may reach for `cannotAttack`.
  *
- * `effectId` names the root on the target frame: Binding Strike's
- * (`ability-rooted`, the default) or the Control payload's "Pinned"
- * (`lineage.pinned`). Every id in `MONSTER_ROOT_STATUS_IDS` is the same rung: the
+ * `effectId` names the root on the target frame (Binding Strike's
+ * `ability-rooted` by default). Every id in `MONSTER_ROOT_STATUS_IDS` is the same rung: the
  * root holds while any of them is live, under the same ownership rules.
  */
 export function applyMonsterRoot(

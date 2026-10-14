@@ -109,10 +109,8 @@ export const mountainRecipeEntries = [
   ['quake-hammer', {
     id: 'quake-hammer', name: 'Quake Hammer',
     recipeGroup: 'mountain', requiredBiomeLevel: 7, slot: 'weapon',
-    evolvesFrom: 'heavy-hammer',
     // 2026-09-26 weapon normalization: Attack 47->45 (+5: 70->85).
     cost: { blue: 52 }, stats: { attack: 85 }, attacksPerSecond: 0.55, tier: 2, // family-tag: slow heavy hammer → Heavy
-    reconstructCost: { blue: 182 },
     icon: 'items/weapons/quake-hammer.png',
     // Cast Speed (abilities evolution §6.1) lives on Mountain's T2 hammer — the
     // biome that owns Charged Strike, and whose whole identity is the wind-up.
@@ -129,7 +127,6 @@ export const mountainRecipeEntries = [
     id: 'mountain-vest-t2', name: 'Iron Crusader Plate',
     recipeGroup: 'mountain', requiredBiomeLevel: 8, slot: 'armor',
     cost: { blue: 52 }, stats: { "maxHp": 99, "plating": 2, "damageReduction": 0.08 }, // family-tag: Guard-amplifying plate → Heavy
-    reconstructCost: { blue: 182 },
     mechanicEffects: { "guard.potency-pct": 0.3 },
     tier: 2,
     icon: 'items/armor/iron-crusader-plate.png',
@@ -141,7 +138,6 @@ export const mountainRecipeEntries = [
     id: 'mountain-charm-t2', name: 'Iron Bulwark',
     recipeGroup: 'mountain', requiredBiomeLevel: 9, slot: 'recovery',
     cost: { blue: 42 }, stats: { "recovery": 8.7 }, // family-tag: barrier pool (anti-spike) → Heavy
-    reconstructCost: { blue: 147 },
     mechanicEffects: { "defense.barrier-pct": 0.26, "guard.barrier-refill-pct": 0.15 },
     tier: 2,
     icon: 'items/charms/iron-bulwark.png',
@@ -153,7 +149,6 @@ export const mountainRecipeEntries = [
     id: 'mountain-boots-t2', name: 'Mountain Stride',
     recipeGroup: 'mountain', requiredBiomeLevel: 10, slot: 'mobility',
     cost: { blue: 42 }, stats: { "speed": 37 }, tier: 2, // family-tag: gap-closer boots serve the heavy-hit identity → Heavy
-    reconstructCost: { blue: 147 },
     mechanicEffects: { "mobility.approach-speed-pct": 0.9 },
     icon: 'items/boots/mountain-stride.png',
     description: 'Forged for those who treat a sheer slope as a road.',
@@ -167,10 +162,8 @@ export const mountainRecipeEntries = [
   ['mountain-avalanche-maul', {
     id: 'mountain-avalanche-maul', name: 'Avalanche Maul',
     recipeGroup: 'mountain', requiredBiomeLevel: 13, slot: 'weapon',
-    evolvesFrom: 'quake-hammer',
     // 2026-09-26 weapon normalization: Attack 84->96 (+5: 126->164). It sat 21% under the T3 +5 median.
     cost: { blue: 116 }, stats: { attack: 164 }, attacksPerSecond: 0.55, tier: 3, // family-tag: slow heavy maul → Heavy
-    reconstructCost: { blue: 406 },
     icon: 'items/weapons/avalanche-maul.png',
     element: 'frost',   // cosmetic attack tint only
     mechanicEffects: { 'weapon.empowered-mult-bonus': 0.44 },
@@ -184,7 +177,6 @@ export const mountainRecipeEntries = [
     id: 'mountain-vest-t3', name: 'Summit Aegis',
     recipeGroup: 'mountain', requiredBiomeLevel: 14, slot: 'armor',
     cost: { blue: 116, red: 29 }, stats: { "maxHp": 270, "plating": 3, "damageReduction": 0.17 }, // family-tag: Guard-amplifying plate → Heavy
-    reconstructCost: { blue: 406, red: 102 },
     mechanicEffects: { "guard.potency-pct": 0.35 },
     tier: 3,
     icon: 'items/armor/summit-aegis.png',
@@ -195,7 +187,6 @@ export const mountainRecipeEntries = [
     id: 'mountain-charm-t3', name: 'Bastion Heart',
     recipeGroup: 'mountain', requiredBiomeLevel: 15, slot: 'recovery',
     cost: { blue: 100, red: 25 }, stats: { "recovery": 28.2 }, // family-tag: barrier pool (anti-spike) → Heavy
-    reconstructCost: { blue: 350, red: 88 },
     mechanicEffects: { "defense.barrier-pct": 0.34, "guard.barrier-refill-pct": 0.2 },
     tier: 3,
     icon: 'items/charms/bastion-heart.png',
@@ -206,7 +197,6 @@ export const mountainRecipeEntries = [
     id: 'mountain-boots-t3', name: 'Peak Stride',
     recipeGroup: 'mountain', requiredBiomeLevel: 16, slot: 'mobility',
     cost: { blue: 100 }, stats: { "speed": 66 }, tier: 3, // family-tag: gap-closer boots → Heavy
-    reconstructCost: { blue: 350 },
     mechanicEffects: { "mobility.approach-speed-pct": 1.2 },
     icon: 'items/boots/peak-stride.png',
     description: 'Not even the mountain can keep you from your prey.',
@@ -223,10 +213,8 @@ export const mountainRecipeEntries = [
   ['mountain-earthsunder-maul', {
     id: 'mountain-earthsunder-maul', name: 'Earthsunder Maul',
     recipeGroup: 'mountain', requiredBiomeLevel: 19, slot: 'weapon',
-    evolvesFrom: 'mountain-avalanche-maul',
     // 2026-09-26 T2-T4 weapon normalization: Attack 240->264 (+5: 540->486).
     cost: { blue: 256 }, stats: { attack: 486 }, attacksPerSecond: 0.40, tier: 4, // family-tag: capstone heavy maul → Heavy
-    reconstructCost: { blue: 896 },
     icon: 'items/weapons/earthsunder-maul.png',
     description: 'It does not strike the earth so much as remind it of an old grievance.',
   }],
@@ -234,10 +222,8 @@ export const mountainRecipeEntries = [
   ['mountain-warmaul', {
     id: 'mountain-warmaul', name: 'Warmaul',
     recipeGroup: 'mountain', requiredBiomeLevel: 19, slot: 'weapon',
-    evolvesFrom: 'mountain-avalanche-maul',
     // 2026-09-26 T2-T4 weapon normalization: Attack 98->184 (+5: 147->370).
     cost: { blue: 240 }, stats: { attack: 370 }, attacksPerSecond: 0.55, tier: 4, // family-tag: capstone hammer → Heavy
-    reconstructCost: { blue: 840 },
     // ⚠⚠ empowered-mult-bonus MUST be implemented MULTIPLICATIVELY, not additively.
     // final empowered mult = base_mult * (1 + 0.48), i.e. a flat +48% to the
     // empowered hit REGARDLESS of the spec's base multiplier.
@@ -253,7 +239,6 @@ export const mountainRecipeEntries = [
     id: 'mountain-vest-t4', name: "Titan's Keep",
     recipeGroup: 'mountain', requiredBiomeLevel: 20, slot: 'armor',
     cost: { blue: 256, red: 64 }, stats: { "maxHp": 519, "plating": 5, "damageReduction": 0.21 }, // family-tag: capstone Guard plate → Heavy
-    reconstructCost: { blue: 896, red: 224 },
     // Timed Guard potency replaces the former cap-triggered barrier refill.
     mechanicEffects: { "guard.potency-pct": 0.4 },
     tier: 4,
@@ -266,7 +251,6 @@ export const mountainRecipeEntries = [
     id: 'mountain-vest-t4-stormwall', name: 'Stormwall Plate',
     recipeGroup: 'mountain', requiredBiomeLevel: 20, slot: 'armor',
     cost: { blue: 256, red: 64 }, stats: { "maxHp": 519, "plating": 5, "damageReduction": 0.21 }, // family-tag: capstone anti-spike plate → Heavy
-    reconstructCost: { blue: 896, red: 224 },
     // † barrier-break-hp-recovery-pct: when the barrier is emptied, recover 30% of
     //   its max value as HP (armor-side variant; rider cooldown applies).
     mechanicEffects: { "guard.potency-pct": 0.3, "defense.barrier-pct": 0.1, "defense.barrier-break-hp-recovery-pct": 0.2 },
@@ -279,7 +263,6 @@ export const mountainRecipeEntries = [
     id: 'mountain-charm-t4', name: 'Fortress Heart',
     recipeGroup: 'mountain', requiredBiomeLevel: 21, slot: 'recovery',
     cost: { blue: 220, red: 30 }, stats: { "recovery": 77.8 }, // family-tag: barrier pool (anti-spike) → Heavy
-    reconstructCost: { blue: 770, red: 105 },
     mechanicEffects: { "defense.barrier-pct": 0.42, "guard.barrier-refill-pct": 0.3 },
     tier: 4,
     icon: 'items/charms/fortress-heart.png',
@@ -291,7 +274,6 @@ export const mountainRecipeEntries = [
     id: 'mountain-charm-t4-shieldmend', name: 'Shieldmend Ward',
     recipeGroup: 'mountain', requiredBiomeLevel: 21, slot: 'recovery',
     cost: { blue: 220, red: 30 }, stats: { "recovery": 77.8 }, // family-tag: barrier-break survival → Heavy
-    reconstructCost: { blue: 770, red: 105 },
     // † barrier-break-heal-pct: when the barrier is emptied, heal 25% of its max
     //   value as HP (rider cooldown applies).
     mechanicEffects: { "defense.barrier-pct": 0.37, "defense.barrier-break-heal-pct": 0.25, "guard.barrier-refill-pct": 0.2 },
@@ -304,7 +286,6 @@ export const mountainRecipeEntries = [
     id: 'mountain-boots-t4', name: 'Vanguard Stride',
     recipeGroup: 'mountain', requiredBiomeLevel: 22, slot: 'mobility',
     cost: { blue: 220 }, stats: { "speed": 119 }, tier: 4, // family-tag: gap-closer boots → Heavy
-    reconstructCost: { blue: 770 },
     mechanicEffects: { "mobility.approach-speed-pct": 1.5 },
     icon: 'items/boots/vanguard-stride.png',
     description: 'While a foe stands at distance, they close the gap as if the mountain itself leaned them forward.',
@@ -354,7 +335,6 @@ export const mountainRecipeEntries = [
   ['relic-colossus-heart', {
     id: 'relic-colossus-heart', name: 'Colossus Heart',
     recipeGroup: 'mountain', requiredBiomeLevel: 24, slot: 'relic',
-    lineageId: 'relic-colossus-heart',
     cost: { blue: 3300 },
     stats: {}, tier: 4,
     mechanicEffects: {
@@ -374,7 +354,6 @@ export const mountainRecipeEntries = [
   ['relic-equilibrium-shard', {
     id: 'relic-equilibrium-shard', name: 'Equilibrium Shard',
     recipeGroup: 'mountain', requiredBiomeLevel: 24, slot: 'relic',
-    lineageId: 'relic-equilibrium-shard',
     cost: { blue: 2500 },
     stats: {}, tier: 4,
     mechanicEffects: {

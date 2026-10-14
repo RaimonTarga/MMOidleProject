@@ -1,6 +1,6 @@
 import {
   ABILITY_SIDESTEP_EFFECT_ID, GAME_CONFIG, MONSTER_DATABASE, getCounter, setCounter,
-  getStatusEffect, lineageStatusEffectId, type TracksCombat,
+  getStatusEffect, type TracksCombat,
 } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import { mutateSlice } from '../../../ecs/dirtyHelpers';
@@ -50,13 +50,12 @@ export function registerEvasion(): void {
         mutateSlice(world, player, 'evadesHits', (slice) => { slice.charge = acc; });
       }
     }
-    // A live `evasion-window` lineage/ability-node payoff (design §6, added
-    // 2026-10-01) is a SECOND, independent deterministic roll — see
-    // `rollEvadeWindowAccumulator` — rather than being folded into
-    // `evadesHits.charge`. That keeps the networked charge exactly what
-    // `evasion.test.ts` pins it as (the gear-derived accumulator, untouched
-    // while the component is absent) and still lets an avoid-faced card do
-    // something for a player who has not also stacked the `evasion` stat.
+    // A live evasion window (Sidestep's, design §22.8) is a SECOND, independent
+    // deterministic roll — see `rollEvadeWindowAccumulator` — rather than being
+    // folded into `evadesHits.charge`. That keeps the networked charge exactly
+    // what `evasion.test.ts` pins it as (the gear-derived accumulator, untouched
+    // while the component is absent) and still lets the window do something for
+    // a player who has not also stacked the `evasion` stat.
     if (!evaded && windowDodge > 0) {
       evaded = rollEvadeWindowAccumulator(player.tracksCombat, windowDodge);
     }
@@ -161,24 +160,17 @@ export function rollMonsterDodge(target: MonsterEntity, chance: number): boolean
 const EVADE_WINDOW_ACC = 'evadeWindowAcc';
 
 /**
- * The live magnitude of every active evasion WINDOW, or 0 when none is active:
- * an `evasion-window` payoff (the `lineage.evasion-window` status effect) plus
- * Sidestep's own window (design §22.8), which is the same unit on the Guard's own
- * status. They add, as every "+X% evade for a window" promise does. Read directly
- * rather than through `lineageCards.ts`, which already imports THIS module
- * (`evadeBlocksDebuffs`) — a second edge the other way would be a cycle.
+ * The live magnitude of the active evasion WINDOW, or 0 when none is active:
+ * Sidestep's own window (design §22.8), read off the Guard's status.
  */
 export function evasionWindowBonus(cs: TracksCombat): number {
-  const lineage = getStatusEffect(cs, lineageStatusEffectId('evasion-window'));
   const sidestep = getStatusEffect(cs, ABILITY_SIDESTEP_EFFECT_ID);
-  const lineagePct = lineage && lineage.remainingMs > 0 ? Math.max(0, lineage.data.magnitude ?? 0) : 0;
-  const sidestepPct = sidestep && sidestep.remainingMs > 0 ? Math.max(0, sidestep.data.evasionPct ?? 0) : 0;
-  return lineagePct + sidestepPct;
+  return sidestep && sidestep.remainingMs > 0 ? Math.max(0, sidestep.data.evasionPct ?? 0) : 0;
 }
 
 /**
  * A second, independent deterministic (no RNG) dodge accumulator for a live
- * `evasion-window` payoff, kept in `tracksCombat` scratch rather than in the
+ * evasion window, kept in `tracksCombat` scratch rather than in the
  * networked `evadesHits.charge` slice: the slice is the gear-derived dodge rate
  * only (see `evasion.test.ts`'s "a player with no evadesHits component must
  * never touch the accumulator"), and the window's own clock already drives the

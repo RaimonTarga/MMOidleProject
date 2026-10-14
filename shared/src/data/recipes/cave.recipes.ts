@@ -98,11 +98,9 @@ mechanicEffects: {},
   ['ruinous-axe', {
     id: 'ruinous-axe', name: 'Ruinous Axe',
     recipeGroup: 'cave', requiredBiomeLevel: 7, slot: 'weapon',
-    evolvesFrom: 'chaotic-axe',
     // 2026-09-26 weapon normalization: Attack 43->31 (+5: 65->60). Its +0 sat 28% over the T2 +0
     // median (a flat curve with a huge start); +5 is the axe's ~5% cut.
     cost: { red: 60 }, stats: { attack: 60 }, attacksPerSecond: 1.20, tier: 2, // family-tag: chaotic-axe (counted disruption) → Swarming
-    reconstructCost: { red: 210 },
     mechanicEffects: { 'weapon.dead-swing-interval': 4 },
     icon: 'items/weapons/ruinous-axe.png',
     description: 'Bigger, meaner, and somehow better balanced — chaos with the faintest thread of discipline.',
@@ -113,7 +111,6 @@ mechanicEffects: {},
     id: 'cave-vest-t2', name: 'Dire Bestial Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 8, slot: 'armor',
     cost: { red: 54 }, stats: { "maxHp": 83, "damageReduction": 0.22 }, tier: 2, // family-tag: premium %DR generalist wall → Swarming
-    reconstructCost: { red: 189 },
     icon: 'items/armor/dire-bestial-hide.png',
     description: "Dependable protection against direct damage and damage over time.",
 
@@ -126,7 +123,6 @@ mechanicEffects: {},
     id: 'cave-charm-t2', name: 'Resonant Gem',
     recipeGroup: 'cave', requiredBiomeLevel: 9, slot: 'recovery',
     cost: { red: 44 }, stats: { "recovery": 15.7 }, // family-tag: reliable generalist recovery → Swarming
-    reconstructCost: { red: 154 },
     mechanicEffects: { "defense.absorb-pct": 0.19, "defense.absorb-guard-bonus-pct": 0.08 },
     tier: 2,
     icon: 'items/charms/resonant-gem.png',
@@ -138,7 +134,6 @@ mechanicEffects: {},
     id: 'cave-boots-t2', name: 'Cavern Sprints',
     recipeGroup: 'cave', requiredBiomeLevel: 10, slot: 'mobility',
     cost: { red: 33 }, stats: { "speed": 46 }, tier: 2, // family-tag: cave generalist mobility → Swarming
-    reconstructCost: { red: 116 },
     mechanicEffects: { "mobility.stealth-pct": 0.48 },
     icon: 'items/boots/cavern-sprints.png',
     description: 'Worn smooth on tunnel floors no map has ever charted.',
@@ -150,10 +145,8 @@ mechanicEffects: {},
     recipeGroup: 'cave', requiredBiomeLevel: 13, slot: 'weapon',
     // T3 economy pass (2026-08-30): EVOLUTION of ruinous-axe at +5; 2.00× its lifetime
     // total on the shipped accelerating curve; catalysts moved to +4/+5.
-    evolvesFrom: 'ruinous-axe',
     // 2026-09-26 T2-T4 weapon normalization: Attack 78->67 (+5: 117->112).
     cost: { red: 120 }, stats: { attack: 112 }, attacksPerSecond: 1.20, tier: 3, // family-tag: chaotic-axe → Swarming
-    reconstructCost: { red: 420 },
     mechanicEffects: { 'weapon.dead-swing-interval': 5 },
     icon: 'items/weapons/cataclysm-axe.png',
     description: 'Chaos given an edge — and, at last, a little rhythm. Every fifth swing still finds only air.',
@@ -163,7 +156,6 @@ mechanicEffects: {},
     id: 'cave-vest-t3', name: 'Deepscale Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 14, slot: 'armor',
     cost: { red: 116, yellow: 29 }, stats: { "maxHp": 225, "damageReduction": 0.3 }, // family-tag: premium %DR wall → Swarming
-    reconstructCost: { red: 406, yellow: 102 },
     tier: 3,
     icon: 'items/armor/deepscale-hide.png',
     description: "Dependable protection against direct damage and damage over time.",
@@ -179,7 +171,6 @@ mechanicEffects: {},
     id: 'cave-charm-t3', name: 'Echo Geode',
     recipeGroup: 'cave', requiredBiomeLevel: 15, slot: 'recovery',
     cost: { red: 100, green: 25 }, stats: { "recovery": 50.5 }, // family-tag: reliable generalist recovery → Swarming
-    reconstructCost: { red: 350, green: 88 },
     mechanicEffects: { "defense.absorb-pct": 0.24, "defense.absorb-guard-bonus-pct": 0.1 },
     tier: 3,
     icon: 'items/charms/echo-geode.png',
@@ -190,7 +181,6 @@ mechanicEffects: {},
     id: 'cave-boots-t3', name: 'Echostep Treads',
     recipeGroup: 'cave', requiredBiomeLevel: 16, slot: 'mobility',
     cost: { red: 100 }, stats: { "speed": 83 }, tier: 3, // family-tag: cave generalist mobility → Swarming
-    reconstructCost: { red: 350 },
     mechanicEffects: { "mobility.stealth-pct": 0.6 },
     icon: 'items/boots/echostep-treads.png',
     description: 'They give back no sound at all — not even the echo the deep stone expects.',

@@ -54,16 +54,12 @@ export const FARMING_SUSTAIN_BLOCKS = Object.fromEntries(FARMING_SUSTAIN_CELLS.m
 
 export function sustainGates(cell: FarmingSustainCell, bot: PlayerEntity) {
   const p = bot.tracksProgression;
-  const chain: unknown[] = [];
-  let id: string | undefined = cell.build.gearItemIds.recovery;
-  while (id) {
-    const r = RECIPE_DATABASE.get(id)!;
-    assert(r && r.tier <= cell.tier && (p.biomeLevel[r.recipeGroup] ?? 0) >= r.requiredBiomeLevel);
-    chain.push({ id, evolvesFrom: r.evolvesFrom ?? null, tier: r.tier, group: r.recipeGroup,
-      requiredMastery: r.requiredBiomeLevel, actualMastery: p.biomeLevel[r.recipeGroup],
-      equipped: id === cell.build.gearItemIds.recovery });
-    id = r.evolvesFrom;
-  }
+  // One recipe, no predecessor chain: the evolve path is gone (class-first rework D1).
+  const id = cell.build.gearItemIds.recovery!;
+  const r = RECIPE_DATABASE.get(id)!;
+  assert(r && r.tier <= cell.tier && (p.biomeLevel[r.recipeGroup] ?? 0) >= r.requiredBiomeLevel);
+  const chain: unknown[] = [{ id, tier: r.tier, group: r.recipeGroup,
+    requiredMastery: r.requiredBiomeLevel, actualMastery: p.biomeLevel[r.recipeGroup], equipped: true }];
   const item = ITEM_DATABASE.get(cell.build.gearItemIds.recovery!)!;
   const stanceGates = (p.attunedStances ?? []).map(id => {
     const recipe = [...STANCE_RECIPE_DATABASE.values()].find(r => r.stanceId === id)!;

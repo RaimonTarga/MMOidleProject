@@ -14,7 +14,6 @@ import {
   FAMILY_BIOMES,
   FAMILY_DATABASE,
   MONSTER_DATABASE,
-  PACKET_IDS,
   WORLD_NODE_LIST,
   blendEntries,
 } from '@mmo-idle/shared';
@@ -33,7 +32,6 @@ const check = (condition: boolean, message: string): void => {
 const claimed = new Map<string, string>();
 for (const family of FAMILY_DATABASE.values()) {
   check(FAMILY_BIOMES.includes(family.biome), `${family.id}: biome '${family.biome}' is not a family biome`);
-  check(PACKET_IDS.includes(family.punishes), `${family.id}: punishes unknown packet '${family.punishes}'`);
   check(family.monsterIds.length > 0, `${family.id}: has no monsters`);
 
   for (const id of family.monsterIds) {

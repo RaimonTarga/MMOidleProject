@@ -40,7 +40,6 @@ export const forestRecipeEntries = [
   ['flash-rapier', {
     id: 'flash-rapier', name: 'Flash Rapier',
     recipeGroup: 'forest', requiredBiomeLevel: 1, slot: 'weapon',
-    lineageId: 'rapier',
     // 2026-09-26 weapon pass: Attack 5->8 (+5: 8->12). Per-hit size is what Power
     // Strike and monster plating reward, so the buff is Attack, not APS.
     cost: { green: 20 }, stats: { attack: 12 }, attacksPerSecond: 1.60, tier: 1,
@@ -109,9 +108,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
   ['gale-needle', {
     id: 'gale-needle', name: 'Gale Needle',
     recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'weapon',
-    lineageId: 'rapier', evolvesFrom: 'flash-rapier',
     cost: { green: 60 },                                     // family-tag: fast rapier → Alacrity
-    reconstructCost: { green: 210 }, // RECONSTRUCT (no predecessor)
     // 2026-09-26 weapon normalization: Attack 9->17 (+5: 14->35). The old curve was T1-sized, so a
     // +5 Flash Rapier matched a +0 Gale Needle.
     stats: { attack: 35 }, attacksPerSecond: 1.70, tier: 2,
@@ -128,7 +125,6 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
     id: 'forest-vest-t2', name: 'Phantom Bindings',
     recipeGroup: 'forest', requiredBiomeLevel: 8, slot: 'armor',
     cost: { green: 48, yellow: 12 }, stats: { "maxHp": 78, "evasion": 0.42, "damageReduction": 0.04 }, tier: 2, // family-tag: evasion armor answers frequent light hits → Alacrity
-    reconstructCost: { green: 168, yellow: 42 },
     icon: 'items/armor/phantom-bindings.png',
     description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade.",
 
@@ -142,7 +138,6 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
     id: 'forest-charm-t2', name: 'Ancient Heartroot Amulet',
     recipeGroup: 'forest', requiredBiomeLevel: 9, slot: 'recovery',
     cost: { green: 50 }, stats: { "recovery": 20.3 }, tier: 2,
-    reconstructCost: { green: 175 }, // family-tag: recovery charm → Alacrity
     mechanicEffects: { "defense.recovery-skill-potency": 0.23 },
     icon: 'items/charms/ancient-heartroot-amulet.png',
     description: 'A relic of a grove that burned an age ago, its life somehow undimmed.',
@@ -153,7 +148,6 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
     id: 'forest-boots-t2', name: 'Windstep Wraps',
     recipeGroup: 'forest', requiredBiomeLevel: 10, slot: 'mobility',
     cost: { green: 40 }, stats: { "speed": 51 }, tier: 2,
-    reconstructCost: { green: 140 }, // family-tag: forest mobility → Alacrity
     mechanicEffects: { "mobility.ooc-speed-pct": 0.55 },
     icon: 'items/boots/windstep-wraps.png',
     description: 'Light enough that the wind mistakes the wearer for one of its own.',

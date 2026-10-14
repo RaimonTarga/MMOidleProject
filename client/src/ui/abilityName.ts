@@ -23,7 +23,7 @@ export function abilityNameFor(
   playerTier: number,
   form: AbilityNameForm = "full",
 ): string {
-  return abilityDisplayName(ability, playerTier, {}, form);
+  return abilityDisplayName(ability, playerTier, form);
 }
 
 /** The own character's name for an ability, kept current with its tier. */

@@ -1,7 +1,5 @@
 import { getMaxUpgrade } from './itemUpgrades';
 import { normalizeEquipment } from '../items';
-import { checkEvolve } from './evolution';
-import type { Recipe } from '../data/recipes/types';
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -24,26 +22,5 @@ assert(getMaxUpgrade({
   tier: 4,
   statModifiers: {},
 }) === 0, 'relics stay off the +N upgrade track');
-
-const evolvedRelic: Recipe = {
-  id: 'test-relic-rank-2',
-  name: 'Test Relic Rank 2',
-  recipeGroup: 'forest',
-  requiredBiomeLevel: 18,
-  slot: 'relic',
-  cost: {},
-  stats: {},
-  tier: 5,
-  lineageId: 'test-relic',
-  evolvesFrom: 'test-relic',
-};
-// The evolve path is retired on every slot (design §24.5), relics included: no
-// relic recipe authors a predecessor, and a synthetic one is refused like any.
-assert(!checkEvolve({
-  recipe: evolvedRelic,
-  inventory: ['test-relic'],
-  itemUpgrades: {},
-  essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-}).ok, 'relic evolution is retired with every other slot');
 
 console.log('relicEquipment: ok');
