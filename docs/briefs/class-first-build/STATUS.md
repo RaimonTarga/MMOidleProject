@@ -3,8 +3,8 @@
 Kept by the conductor. Plan: [class-first-build-plan-2026-10-14.md](../class-first-build-plan-2026-10-14.md).
 Integration branch `rework/class-first` (conductor worktree `../mmo-rework`).
 
-**Updated:** 2026-10-14: F1, F2, F4 (+T0), K1–K3, D5, D1 merged; D2 ready for Grok.
-**Baseline:** `rework/class-first` at `2e3a305b`: full suite **376/376**, typecheck clean. Codex hit rate limits, so D5 and K1–K3 run as
+**Updated:** 2026-10-14: F1, F2, F4 (+T0), F5, F8, K1–K3, D5, D1 merged; D2 ready for Grok.
+**Baseline:** `rework/class-first` at `b1a4962a` (D1 merged): full suite **338/338**, typecheck clean (verified in `../mmo-rw-verify`). Codex hit rate limits, so D5 and K1–K3 run as
 Claude subagents of the conductor (same briefs, same worktrees); ICONS-T1 stays with Codex.
 
 ## Open tasks
@@ -132,6 +132,8 @@ your report where the brief says, and tell me.
 | F1 | Class kit types, registry, moments, budget, scaling | `d1a7aac9` |
 | D5 | Bot: class-agnostic harness, smoke-t1 route (subagent); server lane benches and setActive removed | `8c18ccbc`, `f8d6e40f` |
 | D1 | Item lineage trees, ability node rows, shards removed (subagent): 165 files, −53k lines; bot shims dropped | `9164b024`, `b1a4962a` |
+| F5 | Class gear: smart loot (`classes`), class lines on shared bases, relic items and the T4 gate gone | `98eec7e3` |
+| F8 | Bot: `classConfig` step, `pieceLearned` / `trophyHeld` conditions; shared `classConfigContextFromState` | `cd81e3bb` |
 | F4 + T0 | Passive Tree from the kits; tests swept (subagent); root-only fixes (empowered default, balance lab, tier entry) | `b5ce4436`, `2d43e779` |
 | F2 | The class config: `configuresClass`, `class:setConfig`, migration 0010, auto mode | `4d1cc6ea` |
 | F3 | Lessons and trophies: derived from biome levels and boss clears inside F1/F2, nothing to grant; the "new" toast moves to F7 | (in F1, F2) |
