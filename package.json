@@ -28,6 +28,7 @@
     "play": "cross-env VITE_ENABLE_OPS_MAP=true pnpm build:client && cross-env NODE_ENV=production DEV_TOOLS=true pnpm dev:server",
     "bench:server": "pnpm --filter @mmo-idle/server bench",
     "bench:balance": "pnpm --filter @mmo-idle/server bench:balance",
+    "bench:summon-cap": "pnpm --filter @mmo-idle/server bench:summon-cap",
     "test:balance-instruments": "pnpm --filter @mmo-idle/server exec tsx --conditions=development test/balanceInstruments.test.ts",
     "bench:tui": "cargo run --release --manifest-path tools/balance-tui/Cargo.toml --",
     "bot:run": "pnpm --filter @mmo-idle/bot exec tsx --conditions=development src/run.ts",

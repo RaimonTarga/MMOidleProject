@@ -1,3 +1,5 @@
+import { NODE_BIOMES } from '@mmo-idle/shared';
+
 export type BenchScenarioId = 'idle' | 'autoCombatSameNode' | 'spreadNodes';
 
 export interface BenchScenario {
@@ -7,29 +9,34 @@ export interface BenchScenario {
   nodeForIndex: (index: number, total: number) => string;
 }
 
-const CLEARING = 'node-5-5';
+const T1_PLAINS = 'node-t1-plains-01';
+
+/** Authored T1 nodes. The Clearing is tier 0 and is not a fight. */
+const T1_NODES = Object.entries(NODE_BIOMES)
+  .filter(([, info]) => info.biomeTier === 1 && info.biomeGroup !== 'clearing')
+  .map(([id]) => id);
 
 export const BENCH_SCENARIOS: Record<BenchScenarioId, BenchScenario> = {
   idle: {
     id: 'idle',
     label: 'Idle players (no auto-combat)',
     autoCombat: false,
-    nodeForIndex: () => CLEARING,
+    nodeForIndex: () => T1_PLAINS,
   },
   autoCombatSameNode: {
     id: 'autoCombatSameNode',
-    label: 'Auto-combat, all in clearing',
+    label: 'Auto-combat, all in one T1 plains node',
     autoCombat: true,
-    nodeForIndex: () => CLEARING,
+    nodeForIndex: () => T1_PLAINS,
   },
   spreadNodes: {
     id: 'spreadNodes',
-    label: 'Auto-combat, one player per node grid slot',
+    label: 'Auto-combat, spread across T1 nodes',
     autoCombat: true,
     nodeForIndex: (index) => {
-      const row = 1 + Math.floor(index / 9);
-      const col = 1 + (index % 9);
-      return `node-${Math.min(row, 9)}-${Math.min(col, 9)}`;
+      const nodeId = T1_NODES[index % T1_NODES.length];
+      if (!nodeId) throw new Error('NODE_BIOMES has no T1 nodes for spreadNodes');
+      return nodeId;
     },
   },
 };

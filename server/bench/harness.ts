@@ -8,6 +8,7 @@ import {
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { World } from "../src/world/World";
+import { thawNode } from "../src/world/nodeLifecycle";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { db, runMigrations } from "../src/db/index";
 import {
@@ -127,8 +128,15 @@ export function spawnBenchPlayers(
   scenario: BenchScenario,
   count: number,
 ): void {
+  const thawed = new Set<string>();
   for (let i = 0; i < count; i++) {
     const nodeId = scenario.nodeForIndex(i, count);
+    // attachPlayerEntity counts occupancy but does not populate the node.
+    // The live server thaws on join, so the bench must too.
+    if (!thawed.has(nodeId)) {
+      if (world.isNodeFrozen(nodeId)) thawNode(world, nodeId);
+      thawed.add(nodeId);
+    }
     const pos: Vec2 = {
       x: GAME_CONFIG.NODE_WIDTH / 2 + (i % 5) * 40,
       y: GAME_CONFIG.NODE_HEIGHT / 2,

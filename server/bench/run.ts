@@ -43,6 +43,11 @@ function runScenarioPlayerCount(scenarioId: BenchScenarioId, playerCount: number
   const scenario = resolveScenario(scenarioId);
   if (!scenario) throw new Error(`Unknown scenario: ${scenarioId}`);
 
+  const scenarioNodes = new Set<string>();
+  for (let i = 0; i < playerCount; i++) {
+    scenarioNodes.add(scenario.nodeForIndex(i, playerCount));
+  }
+
   const world = createBenchWorld();
   spawnBenchPlayers(world, scenario, playerCount);
 
@@ -79,6 +84,13 @@ function runScenarioPlayerCount(scenarioId: BenchScenarioId, playerCount: number
   world.syncTelemetryOccupancy();
   const snap = world.telemetry.flush(world.tickCounter);
 
+  // The dev test room's dummies live in every bench world. Count only the
+  // scenario's nodes, which is the fight the row claims to measure.
+  let monsters = 0;
+  for (const monster of world.monsterEntities) {
+    if (scenarioNodes.has(monster.hasPosition.nodeId)) monsters++;
+  }
+
   console.log([
     scenarioId,
     playerCount,
@@ -88,7 +100,7 @@ function runScenarioPlayerCount(scenarioId: BenchScenarioId, playerCount: number
     percentile(broadcastSamples, 95).toFixed(2),
     snap.process.orphanCpuPct.toFixed(1),
     snap.process.heapUsedMb.toFixed(1),
-    world.monsterEntities.size,
+    monsters,
   ].join(','));
 }
 
