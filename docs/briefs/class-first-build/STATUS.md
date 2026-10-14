@@ -4,7 +4,7 @@ Kept by the conductor. Plan: [class-first-build-plan-2026-10-14.md](../class-fir
 Integration branch `rework/class-first` (conductor worktree `../mmo-rework`).
 
 **Updated:** 2026-10-14: F1, F2, F4 (+T0), F5, F8, K1–K3, D5, D1 merged; D2 ready for Grok.
-**Baseline:** `rework/class-first` at `b1a4962a` (D1 merged): full suite **338/338**, typecheck clean (verified in `../mmo-rw-verify`). Codex hit rate limits, so D5 and K1–K3 run as
+**Baseline:** `rework/class-first` at `1a89670a` (D1, F5, F8 merged): full suite **339/339**, typecheck clean (verified in `../mmo-rw-verify`). Codex hit rate limits, so D5 and K1–K3 run as
 Claude subagents of the conductor (same briefs, same worktrees); ICONS-T1 stays with Codex.
 
 ## Open tasks
