@@ -1,5 +1,7 @@
 import type { EquipmentSlot, ItemStats, EssenceType, UpgradeStep, CoreEligibility } from '../../items';
 import type { DamageElement } from '../../systems/dotElements';
+import type { MechanicEffects } from '../../passives';
+import type { ClassArchetype } from '../../classKits/types';
 
 /**
  * Reservoir DoT design for a weapon, authored on the recipe so the full effect
@@ -79,6 +81,16 @@ export interface Recipe {
   upgrades?: UpgradeStep[];
   /** Frame name in the /assets/icons.png atlas for the item's inventory icon. */
   icon?: string;
+  /**
+   * Smart loot (class-first build plan §3.6): the classes this is for. Absent means every
+   * class (the shared armor, charm and boots bases). See `systems/classGear.ts`.
+   */
+  classes?: readonly ClassArchetype[];
+  /**
+   * A shared base's line per class: mechanic keys merged into the wearer's passives only
+   * for that class, on top of `mechanicEffects` (bible §4: shared bases, class lines).
+   */
+  classLines?: Partial<Record<ClassArchetype, MechanicEffects>>;
   /**
    * If set, recipe unlocks only when this token is present in bossesCleared
    * (any boss-clear key, e.g. `mountain:4`).

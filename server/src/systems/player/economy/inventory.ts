@@ -1,5 +1,5 @@
 import type { EquipmentSlot } from '@mmo-idle/shared';
-import { ITEM_DATABASE, TEST_ROOM_NODE_ID, relicIsUnlocked } from '@mmo-idle/shared';
+import { ITEM_DATABASE, availableToClass } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
 import type { PlayerEntity } from '../../../ecs/entity';
 import { syncArchetypeSlices } from '../../../ecs/archetypeSliceSync';
@@ -27,10 +27,9 @@ export function recalculateAfterEquipmentChange(
 export function equipItem(world: World, entity: PlayerEntity, definitionId: string): boolean {
   const def = ITEM_DATABASE.get(definitionId);
   if (!def) return false;
-  if (def.slot === 'relic' && !relicIsUnlocked(
-    entity.tracksProgression.playerTier,
-    entity.hasPosition.nodeId === TEST_ROOM_NODE_ID,
-  )) return false;
+  // The relic slot holds the class's boss trophy, set in the class config (build plan §3.4).
+  if (def.slot === 'relic') return false;
+  if (!availableToClass(def, entity.usesSkills.combatArchetype)) return false;
 
   const idx = entity.holdsInventory.inventory.indexOf(definitionId);
   if (idx === -1) return false;

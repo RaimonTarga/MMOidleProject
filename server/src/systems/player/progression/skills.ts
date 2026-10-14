@@ -6,6 +6,7 @@ import { syncArchetypeSlices } from '../../../ecs/archetypeSliceSync';
 import { canUnlockEntitySkill, recalculatePlayerEntityStats } from '../../../ecs/playerEntityFormulas';
 import { despawnMinionsForOwner } from '../../classes/archetypes/summoner';
 import { CONDUIT_ENABLED } from '../../../env';
+import { checkRecipeUnlocks } from './rewards';
 
 export { canUnlockSkill, canUnlockSkillFromView } from '@mmo-idle/shared';
 export type { UnlockResult } from '@mmo-idle/shared';
@@ -37,6 +38,8 @@ export function unlockSkill(world: World, entity: PlayerEntity, skillId: string)
   if (node.tier === 0) {
     entity.usesSkills.selectedClass   = skillId;
     entity.usesSkills.combatArchetype = CLASS_ARCHETYPES[skillId] ?? null;
+    // The class's own gear for the levels already reached (smart loot).
+    checkRecipeUnlocks(entity);
   } else if (node.tier === 1) {
     entity.usesSkills.disciplineId = skillId;
   } else if (node.tier === 2) {

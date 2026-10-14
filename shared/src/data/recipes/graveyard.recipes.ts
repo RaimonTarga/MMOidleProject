@@ -115,18 +115,4 @@ export const graveyardRecipeEntries = [
     description: 'The swamp never kills quickly. It simply makes sure nothing leaves the way it came in.',
   }],
 
-  ['relic-haunted-prism', {
-    id: 'relic-haunted-prism', name: 'Haunted Prism',
-    recipeGroup: 'graveyard', requiredBiomeLevel: 6, slot: 'relic',
-    cost: { purple: 3500 },
-    stats: {}, tier: 4,
-    mechanicEffects: {
-      'relic.mechanic-frequency': -0.10,
-      'relic.mechanic-potency': -0.10,
-      'relic.mechanic-buff-effect': 0.35,
-      'relic.mechanic-debuff-effect': 0.35,
-    },
-    icon: 'items/relics/haunted-prism.png',
-    description: 'The prism weakens the pulse itself so every blessing and affliction can linger with greater force.',
-  }],
 ] satisfies [string, Recipe][];

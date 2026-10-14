@@ -41,6 +41,7 @@ export * from './systems/t1EconomyExperiment';
 export * from './data/families';
 export * from './systems/cores';
 export * from './systems/relics';
+export * from './systems/classGear';
 export * from './systems/debuffScaling';
 export * from './systems/mechanicEffectScaling';
 export * from './systems/summonerHud';

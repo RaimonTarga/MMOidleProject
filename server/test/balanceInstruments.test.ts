@@ -34,22 +34,11 @@ const t4 = canonicalLoadout(4);
 assert(t4.activeStance === 'offensive-stance', 'T4 roster growth must not change the canonical stance');
 assert(t4.equippedRites.join(',') === CANONICAL_T3_RITES, 'T4 rites must fill the legal canonical budget');
 
-const t2Gear = resolveGearLoadout('plains', 2, 2, 'cadence-root', null);
-assert(t2Gear.relic === undefined, 'relic must not be equipped below T4');
-
-const cadencePath = ['cadence-root', 'cadence-light', 'cadence-range-close', 'cadence-light-t3-a'];
-const t4Gear = resolveGearLoadout('desert', 4, 4, 'cadence-root', 'cadence-range-close', cadencePath);
-assert(t4Gear.relic !== undefined, 'T4 build must equip a representative relic');
-assert(ITEM_DATABASE.get(t4Gear.relic)?.slot === 'relic', 'resolved relic id must point to a relic item');
-
-const dotPath = ['dot-root', 'dot-light', 'dot-range-close', 'dot-light-t3-a'];
-const dotT4Gear = resolveGearLoadout('desert', 4, 4, 'dot-root', 'dot-range-close', dotPath);
-assert(dotT4Gear.relic !== undefined, 'every T4 class root must receive a legal relic');
-assert(dotT4Gear.relic !== t4Gear.relic, 'relic selection must respond to class relevance');
-
-const summonerPath = ['summoner-root', 'summoner-light', 'summoner-range-mid', 'summoner-light-t3-a'];
-const summonerT4Gear = resolveGearLoadout('desert', 4, 4, 'summoner-root', 'summoner-range-mid', summonerPath);
-assert(summonerT4Gear.relic !== undefined, 'summoner must receive a legal root-mechanic relic');
-assert(summonerT4Gear.relic !== 'relic-glacial-bell', 'summoner must not select a relic for its unused buff channel');
+// The relic slot holds the class's boss trophy, never an item (class-first build plan §3.4),
+// so no reference build equips a relic at any tier.
+for (const [tier, root] of [[2, 'cadence-root'], [4, 'cadence-root'], [4, 'dot-root'], [4, 'summoner-root']] as const) {
+  const gear = resolveGearLoadout('desert', tier, tier, root, null, [root]);
+  assert(gear.relic === undefined, `${root} at T${tier} equips no relic item`);
+}
 
 console.log('balance instruments: ok');

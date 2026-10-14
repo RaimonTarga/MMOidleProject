@@ -24,5 +24,7 @@ for (const recipe of RECIPE_DATABASE.values()) {
     // with itself); `weaponDot` itself is deliberately not projected here.
     element: recipe.element ?? recipe.weaponDot?.element,
     coreEligibility: recipe.coreEligibility,
+    classes: recipe.classes,
+    classLines: recipe.classLines,
   });
 }

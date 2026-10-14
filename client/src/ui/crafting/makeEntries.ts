@@ -6,6 +6,7 @@ import {
   CONDITION_DATABASE,
   RUNE_RECIPE_DATABASE,
   RECIPE_DATABASE,
+  availableToClass,
   RITE_DATABASE,
   RITE_RECIPE_DATABASE,
   STANCE_DATABASE,
@@ -99,6 +100,8 @@ function gearEntries(sources: MakeSources): MakeEntry[] {
     // Crafted gear leaves the make list entirely — it is managed from Inventory
     // after that, never re-made here.
     if (sources.ownedGearIds.has(recipe.id)) continue;
+    // Smart loot: another class's gear is never offered (class-first build plan §3.6).
+    if (!availableToClass(recipe, sources.combatArchetype)) continue;
 
     entries.push({
       key: `gear:${recipe.id}`,

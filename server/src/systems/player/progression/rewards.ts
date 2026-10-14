@@ -1,4 +1,4 @@
-import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, GAME_CONFIG } from '@mmo-idle/shared';
+import { availableToClass, NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, GAME_CONFIG } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -129,6 +129,8 @@ function applyBiomeXP(
 
 export function checkRecipeUnlocks(entity: PlayerEntity, biomeGroup?: string, newLevel?: number): void {
   for (const recipe of RECIPE_DATABASE.values()) {
+    // Smart loot: another class's gear is never offered (class-first build plan §3.6).
+    if (!availableToClass(recipe, entity.usesSkills.combatArchetype)) continue;
     if (recipe.requiredBossClear &&
         !entity.tracksProgression.bossesCleared.includes(recipe.requiredBossClear)) {
       continue;

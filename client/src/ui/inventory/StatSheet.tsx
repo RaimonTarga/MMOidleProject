@@ -3,7 +3,7 @@ import { useAtomValue } from 'jotai';
 import { EquipmentAbilityTags } from '../AbilityTags';
 import {
   ITEM_DATABASE, RECIPE_DATABASE, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS,
-  coreEligibilityLabel, coreIsActive, isRestrictedCore, relicIsUnlocked,
+  coreEligibilityLabel, coreIsActive, isRestrictedCore,
   type EquipmentSlot,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
@@ -59,8 +59,8 @@ export function StatSheet({ compare }: Props) {
 
   const def = defId ? ITEM_DATABASE.get(defId) : undefined;
   const slot = sheet.slot;
-  const relicLocked = slot === 'relic' && sheet.mode === 'swap'
-    && !relicIsUnlocked(playerTier, playerNodeId === TEST_ROOM_NODE_ID);
+  // The relic slot holds the boss trophy, never an item (class-first build plan §3.4).
+  const relicLocked = slot === 'relic' && sheet.mode === 'swap';
 
   function handleAction() {
     if (!def || !slot) return;

@@ -174,21 +174,4 @@ export const volcanicRecipeEntries = [
     description: 'Amplifies on-hit damage you already have; it grants none by itself.',
   }],
 
-  // Frequency-forward Relic (many small mechanic events) in the biome whose native
-  // family is Swarming. Moved off Forest, which has no T4 nodes: its level-24 gate
-  // cost ~7,000 kills of T2 content that a T4 character has long outgrown.
-  // Volcanic starts at T3, so its T4 band is levels 7-12.
-  ['relic-hastebound-dial', {
-    id: 'relic-hastebound-dial', name: 'Hastebound Dial',
-    recipeGroup: 'volcanic', requiredBiomeLevel: 11, slot: 'relic',
-    cost: { red: 3300 },
-    stats: {}, tier: 4,
-    mechanicEffects: {
-      'relic.mechanic-frequency': 0.35,
-      'relic.mechanic-potency': -0.25,
-    },
-    icon: 'items/relics/hastebound-dial.png',
-    description: 'The dial runs ahead of every rhythm, trading weight for relentless motion.',
-  }],
-
 ] satisfies [string, Recipe][];

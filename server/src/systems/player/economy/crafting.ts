@@ -1,5 +1,6 @@
 import type { EssenceType } from "@mmo-idle/shared";
 import {
+  availableToClass,
   ESSENCE_TYPES,
   ESSENCE_LABELS,
   RECIPE_DATABASE,
@@ -23,6 +24,9 @@ export function craftRecipe(
 ): CraftResult {
   const recipe = RECIPE_DATABASE.get(recipeId);
   if (!recipe) return { success: false, reason: "Unknown recipe." };
+  if (!availableToClass(recipe, entity.usesSkills.combatArchetype)) {
+    return { success: false, reason: "That recipe is for another class." };
+  }
 
   const isTestRoom = entity.hasPosition.nodeId === TEST_ROOM_NODE_ID;
   if (isTestRoom) {

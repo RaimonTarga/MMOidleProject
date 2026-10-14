@@ -254,18 +254,4 @@ export const desertRecipeEntries = [
     description: "Amplifies ranged damage without reducing your health.",
   }],
 
-  ['relic-withering-lens', {
-    id: 'relic-withering-lens', name: 'Withering Lens',
-    recipeGroup: 'desert', requiredBiomeLevel: 18, slot: 'relic',
-    cost: { yellow: 3300 },
-    stats: {}, tier: 4,
-    mechanicEffects: {
-      'relic.mechanic-frequency': -0.20,
-      'relic.mechanic-potency': 0.25,
-      'relic.mechanic-debuff-effect': 0.25,
-    },
-    icon: 'items/relics/withering-lens.png',
-    description: 'It takes its time finding the flaw, then makes the flaw impossible to ignore.',
-  }],
-
 ] satisfies [string, Recipe][];

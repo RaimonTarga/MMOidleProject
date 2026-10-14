@@ -227,18 +227,4 @@ mechanicEffects: { "defense.evade-mitigation": 0.25, "defense.dot-resistance": 0
     description: 'The canopy keeps a fast rhythm. Match it, and you will find you are swinging before you decide to.',
   }],
 
-  ['relic-verdant-flywheel', {
-    id: 'relic-verdant-flywheel', name: 'Verdant Flywheel',
-    recipeGroup: 'jungle', requiredBiomeLevel: 18, slot: 'relic',
-    cost: { green: 3000 },
-    stats: {}, tier: 4,
-    mechanicEffects: {
-      'relic.mechanic-frequency': 0.20,
-      'relic.mechanic-potency': -0.20,
-      'relic.mechanic-buff-effect': 0.25,
-    },
-    icon: 'items/relics/verdant-flywheel.png',
-    description: 'Its living spokes turn faster with every gift the mechanic gives back.',
-  }],
-
 ] satisfies [string, Recipe][];

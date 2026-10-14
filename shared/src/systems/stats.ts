@@ -1,3 +1,4 @@
+import { classLineFor } from './classGear';
 import type {
   DealsDamage,
   EvadesHits,
@@ -292,6 +293,8 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
       }
     }
     mergePassives(p.usesSkills.passives, omitKeys(def.mechanicEffects, p.previewOmitItemEffects, defId), pulseAcc);
+    // A shared base's line for the wearer's class (class-first build plan §3.6).
+    mergePassives(p.usesSkills.passives, classLineFor(def, p.usesSkills.combatArchetype), pulseAcc);
     // No `+N` bonus on top: the ladder is retired on every slot and an item is
     // crafted at full power (design §23, §24.5). A save's stale `itemUpgrades`
     // entry adds nothing here; hydration refunds it.

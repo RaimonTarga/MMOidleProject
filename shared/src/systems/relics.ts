@@ -1,14 +1,9 @@
 import type { LaserRelicProfile } from './laserProfile';
 import type { PassiveMap } from '../passives';
 
-/** T4 in the live progression domain (playerTier 0 is the Clearing tutorial). */
-export const RELIC_UNLOCK_PLAYER_TIER = 4;
-/** Relic recipes use the player-facing item tier domain. */
-export const RELIC_ITEM_TIER = 4;
-
-export function relicIsUnlocked(playerTier: number, isTestRoom = false): boolean {
-  return isTestRoom || playerTier >= RELIC_UNLOCK_PLAYER_TIER;
-}
+// The relic ITEMS and their T4 gate are gone (class-first build plan §3.4): the relic slot
+// holds the class's boss trophy, chosen in the class config. The rating math below still
+// runs (every rating reads zero without relic items) until each class track replaces it.
 
 export const RELIC_RATING_KEYS = {
   frequency: 'relic.mechanic-frequency',

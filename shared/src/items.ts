@@ -47,6 +47,7 @@ export const BIOME_PRIMARY_ESSENCE: Record<string, EssenceType> = {
 };
 
 import type { MechanicEffects } from './passives';
+import type { ClassArchetype } from './classKits/types';
 
 // ─── Equipment slots ──────────────────────────────────────────────────────────
 
@@ -196,6 +197,16 @@ export interface ItemDefinition {
   upgrades?: UpgradeStep[];
   /** Frame name in the /assets/icons.png atlas for the item's inventory icon. */
   icon?: string;
+  /**
+   * Smart loot (class-first build plan §3.6): the classes this is for. Absent means every
+   * class (the shared armor, charm and boots bases). See `systems/classGear.ts`.
+   */
+  classes?: readonly ClassArchetype[];
+  /**
+   * A shared base's line per class: mechanic keys merged into the wearer's passives only
+   * for that class, on top of `mechanicEffects` (bible §4: shared bases, class lines).
+   */
+  classLines?: Partial<Record<ClassArchetype, MechanicEffects>>;
   /**
    * Weapons only. PURELY COSMETIC elemental flavor — tints the wielder's
    * basic-attack animation. No gameplay effect whatsoever. Mirrors

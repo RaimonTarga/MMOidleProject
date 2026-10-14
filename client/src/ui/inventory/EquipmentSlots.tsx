@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai';
-import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS, coreEligibilityLabel, coreIsActive, isRestrictedCore, relicIsUnlocked } from '@mmo-idle/shared';
+import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS, coreEligibilityLabel, coreIsActive, isRestrictedCore } from '@mmo-idle/shared';
 import { equipmentAtom, playerNodeIdAtom, playerTierAtom, selectedRangeAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
 import { ItemIcon } from '../ItemIcon';
@@ -29,8 +29,8 @@ export function EquipmentSlots({ compare }: Props) {
           const coreInactive = filled && slot === 'core'
             && isRestrictedCore(def.coreEligibility)
             && !coreIsActive(def.coreEligibility, selectedRange);
-          const relicLocked = slot === 'relic'
-            && !relicIsUnlocked(playerTier, playerNodeId === TEST_ROOM_NODE_ID);
+          // The relic slot holds the boss trophy; the class screen sets it (build plan §3.4).
+          const relicLocked = false;
           return (
             <button
               type="button"

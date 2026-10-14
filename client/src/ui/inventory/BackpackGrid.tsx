@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
-import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS, relicIsUnlocked } from '@mmo-idle/shared';
+import { EQUIPMENT_SLOTS, ITEM_DATABASE, TUTORIAL_ANCHORS } from '@mmo-idle/shared';
 import { inventoryAtom, playerNodeIdAtom, playerTierAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
 import { ItemIcon } from '../ItemIcon';
@@ -129,8 +129,8 @@ export function BackpackGrid({ compare }: Props) {
             const isShown  = !!defId && compare.shown === defId;
             const isPinned = !!defId && compare.pinned === defId;
             const color     = def ? tierColor(def.tier) : null;
-            const relicLocked = def?.slot === 'relic'
-              && !relicIsUnlocked(playerTier, playerNodeId === TEST_ROOM_NODE_ID);
+            // The relic slot holds the boss trophy, never an item (class-first build plan §3.4).
+            const relicLocked = def?.slot === 'relic';
 
             return (
               <button

@@ -172,18 +172,4 @@ export const tundraRecipeEntries = [
     description: "Amplifies movement and mobility abilities, with a modest damage bonus.",
   }],
 
-  ['relic-glacial-bell', {
-    id: 'relic-glacial-bell', name: 'Glacial Bell',
-    recipeGroup: 'tundra', requiredBiomeLevel: 12, slot: 'relic',
-    cost: { blue: 3200 },
-    stats: {}, tier: 4,
-    mechanicEffects: {
-      'relic.mechanic-frequency': -0.20,
-      'relic.mechanic-potency': 0.25,
-      'relic.mechanic-buff-effect': 0.25,
-    },
-    icon: 'items/relics/glacial-bell.png',
-    description: 'It rings only when the moment is ready, and every boon carries the note.',
-  }],
-
 ] satisfies [string, Recipe][];

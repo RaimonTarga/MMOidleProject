@@ -1,6 +1,4 @@
 import {
-  RELIC_UNLOCK_PLAYER_TIER,
-  relicIsUnlocked,
   resolveCadenceRelicProfile,
   resolveCooldownRelicProfile,
   resolveDotRelicDeliveryProfile,
@@ -26,9 +24,6 @@ const zero: RelicRatings = { frequency: 0, potency: 0, buffEffect: 0, debuffEffe
 const positive: RelicRatings = { frequency: 0.35, potency: 0.4, buffEffect: 0, debuffEffect: 0 };
 const negative: RelicRatings = { frequency: -0.3, potency: -0.25, buffEffect: 0, debuffEffect: 0 };
 
-assert(!relicIsUnlocked(RELIC_UNLOCK_PLAYER_TIER - 1), 'relic locked below T4');
-assert(relicIsUnlocked(RELIC_UNLOCK_PLAYER_TIER), 'relic opens exactly at T4');
-assert(relicIsUnlocked(0, true), 'test room bypasses unlock');
 
 eq(resolveRelicInterval(1000, 0.5, 1, 100), 667, 'positive frequency shortens interval');
 eq(resolveRelicInterval(1000, -0.5, 1, 100), 2000, 'negative frequency lengthens interval');
