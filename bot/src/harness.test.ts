@@ -1,39 +1,21 @@
-import { validateBuild } from "./loadout/loadout";
 import fs from "node:fs";
 import path from "node:path";
 import {
-  tierEntryProfileFromT1Snapshot,
-  type T1CharacterSnapshot,
-  ABILITY_RECIPE_DATABASE, ABILITY_DATABASE, STANCE_DATABASE, RITE_DATABASE, STANCE_RECIPE_DATABASE, RITE_RECIPE_DATABASE,
-  type PlayerView,
+  ALL_RUNE_IDS,
   CLEARING_NODE_ID,
-  LINEAGE_DATABASE,
   RECIPE_DATABASE,
-  RUNE_RECIPE_DATABASE,
+  SKILL_TREE,
   STARTER_RUNE_IDS,
   bossClearKey,
-  globalMastery,
-  isGatedLineageForm,
-  lineageGateCost,
-  nodeShard,
-  isRuneRecipeAvailableForArchetype,
   isRuneRuleCompatibleForArchetype,
-  runeBudgetForGlobalMastery,
-  runicPointLoadoutCost,
   type CombatArchetype,
   type DeltaSnapshot,
 } from "@mmo-idle/shared";
-import { readFileSync } from "node:fs";
-const earnedT1State = JSON.parse(readFileSync(path.resolve(__dirname, "../../server/test/fixtures/v1d-earned-t1-state.json"), "utf8")).state;
-const earnedT1Profile = tierEntryProfileFromT1Snapshot({ schemaVersion: 1, snapshotKind: "tier2-handoff",
-  snapshotId: "v1d-regression", frameId: null, state: earnedT1State } as T1CharacterSnapshot, "node-clearing", 1);
-const earnedT3Profile = tierEntryProfileFromT1Snapshot(JSON.parse(readFileSync(
-  path.resolve(__dirname, "../../server/test/fixtures/v1m-earned-t3-snapshot.json"), "utf8")), "node-t3-sanctuary", 3);
 import { evaluate, resolveNearCandidates, resolveNode, resolveNodeCandidates } from "./route/conditions";
 import { POLICIES, requirePolicy } from "./policy/profiles";
-import { TIER_ENTRY_PROFILES } from "./tierEntry/profiles";
-import { ROUTES, T1_BASELINE_ROUTE_IDS, T1_BASELINE_ROUTES, requireRoute } from "./routes";
-import type { Condition, NodeRef, RouteStep } from "./route/types";
+import { CONTROLLED_ROUTE_IDS, ROUTES, classRootFor, isControlledRouteId, requireRoute } from "./routes";
+import { DEFAULT_SMOKE_CLASS, SMOKE_T1_ID } from "./routes/smokeT1";
+import type { Condition, NodeRef, Route, RouteStep } from "./route/types";
 import { Observation, dungeonNodeFor, normalNodesFor } from "./state/observation";
 import { WorldMirror } from "./state/reducer";
 import { RouteExecutor, type ExecutorDeps } from "./route/executor";
@@ -53,19 +35,6 @@ const ARCHETYPE_FOR_ROOT: Record<string, CombatArchetype> = {
   "dot-root": "dot",
   "summoner-root": "summoner",
 };
-
-// A progressionEntry route consumes a named checkpoint snapshot at runtime;
-// its inherited inventory/unlocks are validated by that snapshot contract, not
-// by the fresh-character route walk below. The harness still validates build
-// schema and compatibility against the complete authored vocabulary.
-const SEALED_ENTRY_GM = 1_000_000;
-const ALL_AUTHORED_RUNE_IDS = [
-  ...new Set([
-    ...STARTER_RUNE_IDS,
-    ...Array.from(RUNE_RECIPE_DATABASE.values(), (recipe) => recipe.runeId)
-      .filter((id): id is string => !!id),
-  ]),
-];
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(`assertion failed: ${message}`);
@@ -283,15 +252,7 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
               clearedNodes: [],
               visitedNodes: [],
               runesOwned: [...STARTER_RUNE_IDS],
-              runeRecipesCrafted: [],
               runesEquipped: [],
-              knownAbilities: [],
-              attunedAbilities: { techniques: [], guards: [] },
-              knownStances: [],
-              equippedStances: { default: null },
-              activeStance: null,
-              knownRites: [],
-              equippedRites: [],
             } as never,
             // `composePlayerView` needs all six persisted/derived player slices;
             // the real `state:sync` always carries them together.
@@ -472,31 +433,6 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
     assert(narrowed > 0, "zero slack must exclude the more distant candidates somewhere");
   }
 
-  // A `shard` narrows a biome ref to the nodes that pay it (design §24.3: every
-  // kill in a node pays its dominant family's shard). Every pick obeys it, and a
-  // shard the biome's territories never pay resolves to nothing rather than to a
-  // node that would farm forever.
-  for (const biomeGroup of T1_BIOMES) {
-    const paid = [...new Set(normalNodesFor(biomeGroup, 1).map((id) => nodeShard(id)!))];
-    assert(paid.length >= 2, `${biomeGroup}: fixture — its nodes pay more than one shard`);
-    for (const shard of paid) {
-      for (const pick of ["first", "rotate", "uncleared"] as const) {
-        const ref = { kind: "biome", biomeGroup, tier: 1, pick, shard } as const;
-        const candidates = resolveNodeCandidates(ref, obs, 1);
-        assert(candidates.length > 0, `${biomeGroup}/${shard}/${pick}: some node pays it`);
-        assert(
-          candidates.every((nodeId) => nodeShard(nodeId) === shard),
-          `${biomeGroup}/${shard}/${pick}: every candidate pays ${shard}, got ${candidates.join(",")}`,
-        );
-      }
-    }
-    assert(
-      resolveNodeCandidates({ kind: "biome", biomeGroup, tier: 1, pick: "uncleared", shard: "bulwark" }, obs, 0)
-        .length === 0,
-      `${biomeGroup}: no T1 node pays bulwark, so a bulwark farm resolves nowhere`,
-    );
-  }
-
   // A dungeon must never offer an alternative -- boss state has to serialize.
   assert(
     resolveNodeCandidates({ kind: "dungeon", biomeGroup: "plains", tier: 1 }, obs, 0).length === 1,
@@ -512,600 +448,207 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
 
 // ── The authored routes must not reference content that has been renamed ────
 
-{
-  assert(ROUTES.size > 0, "at least one route is registered");
+/**
+ * Static validation of one route against live game data: every node it names
+ * resolves, every recipe and item exists, nothing is equipped before it is
+ * crafted, every Rune rule is owned and compatible with the route's class, and
+ * every boss step and condition names a real dungeon. A typo here would
+ * otherwise run for hours and never finish.
+ */
+function validateRoute(route: Route): void {
+  const archetype = ARCHETYPE_FOR_ROOT[route.classRoot];
+  assert(archetype, `${route.id}: class root maps to a combat archetype`);
+  // A progressionEntry route starts from a named checkpoint; its inherited
+  // inventory and Rune catalogue are validated by that snapshot contract at run
+  // time, not by this fresh-character walk.
+  const sealedEntry = route.progressionEntry !== undefined;
+  const ownedRunes = new Set<string>(sealedEntry ? ALL_RUNE_IDS : STARTER_RUNE_IDS);
+  const crafted = new Set<string>([
+    ...(sealedEntry ? RECIPE_DATABASE.keys() : []),
+    ...(route.entryItems ?? []),
+  ]);
 
-  for (const route of ROUTES.values()) {
-    // Rune fragments the route itself unlocks via the forge, so a loadout that
-    // uses one is legitimate even though it is not a starter.
-    const craftedRuneIds = new Set<string>();
-    const collectRunes = (steps: RouteStep[]): void => {
-      for (const step of steps) {
-        if (step.type === "craftRune") {
-          const runeId = RUNE_RECIPE_DATABASE.get(step.recipeId)?.runeId;
-          if (runeId) craftedRuneIds.add(runeId);
-        } else if (step.type === "repeatUntil" || step.type === "ifPossible") {
-          collectRunes(step.steps);
-        }
-      }
-    };
-    collectRunes(route.steps);
-    if (route.progressionEntry) {
-      for (const runeId of ALL_AUTHORED_RUNE_IDS) craftedRuneIds.add(runeId);
-    }
-
-    // A route that starts from a tier-entry template already OWNS everything the
-    // preceding tier earned. Without seeding that, static validation reads a
-    // Tier-2 route as a fresh character equipping runes it never crafted and a
-    // Global Mastery of zero -- both false, and both would block correct routes.
-    const entryProfile = route.startsFromTierEntry
-      ? [earnedT1Profile, earnedT3Profile, ...TIER_ENTRY_PROFILES.values()].find(
-          (p) => p.targetTier === route.startsFromTierEntry && p.classRoot === route.classRoot,
-        )
-      : undefined;
-    if (route.startsFromTierEntry) {
-      assert(
-        entryProfile,
-        `${route.id}: declares tier-${route.startsFromTierEntry} entry but no matching template exists`,
-      );
-    }
-    for (const recipeId of entryProfile?.runeRecipesCrafted ?? []) {
-      const runeId = RUNE_RECIPE_DATABASE.get(recipeId)?.runeId;
-      if (runeId) craftedRuneIds.add(runeId);
-    }
-
-    // Every NodeRef a route names must resolve to a real node. This is the
-    // cheapest possible guard against the most expensive possible mistake: a
-    // route that walks fine for hours and then stalls on "cannot reach target
-    // area". It has already caught one — `{ biomeGroup: "clearing", tier: 1 }`
-    // resolves to nothing, because the Clearing is `kind: "tutorial"` at tier 0.
-    const emptyObs = new Observation(new WorldMirror());
-    // Route execution farms whenever a recipe gate is unmet. Track the minimum
-    // biome levels guaranteed by the preceding steps so RP validation uses the
-    // same GM-derived budget as the server, rather than a flat GM-0 floor.
-    const minimumBiomeLevels: Record<string, number> = {};
-    const setMinimumBiomeLevel = (biomeGroup: string, level: number): void => {
-      minimumBiomeLevels[biomeGroup] = Math.max(minimumBiomeLevels[biomeGroup] ?? 0, level);
-    };
-    const recordBiomeLevelCondition = (condition: Condition): void => {
-      if (condition.type === "biomeLevelAtLeast") {
-        setMinimumBiomeLevel(condition.biomeGroup, condition.level);
-      } else if (condition.type === "allOf") {
-        condition.of.forEach(recordBiomeLevelCondition);
-      }
-    };
-    for (const [group, level] of Object.entries(entryProfile?.biomeLevels ?? {})) {
-      minimumBiomeLevels[group] = Math.max(minimumBiomeLevels[group] ?? 0, level);
-    }
-    const currentRuneBudget = (): { gm: number; budget: number } => {
-      const gm = route.progressionEntry
-        ? SEALED_ENTRY_GM
-        : globalMastery(minimumBiomeLevels);
-      return { gm, budget: runeBudgetForGlobalMastery(gm) };
-    };
-    const checkRef = (ref: NodeRef, where: string): void => {
-      // Authoring validation has no live location. A current-node selector
-      // requires a real biome; runtime separately checks the observed node.
-      const resolvable = ref.kind === "biome" && ref.pick === "current"
-        ? normalNodesFor(ref.biomeGroup, ref.tier, ref.modifier).length > 0
-        : resolveNode(ref, emptyObs, 0) !== null;
-      assert(
-        resolvable,
-        `${route.id}: ${where} names a resolvable node (${JSON.stringify(ref)})`,
-      );
-    };
-
-    const walk = (steps: RouteStep[]): void => {
-      for (const step of steps) {
-        if ("at" in step && step.at) checkRef(step.at, step.type);
-        if ("to" in step && step.to) checkRef(step.to, step.type);
-        if ("farmAt" in step && step.farmAt) checkRef(step.farmAt, `${step.type}.farmAt`);
-        if (step.type === "assert") {
-          recordBiomeLevelCondition(step.condition);
-        } else if (step.type === "farm") {
-          recordBiomeLevelCondition(step.until);
-        } else if (step.type === "craftRune") {
-          const recipe = RUNE_RECIPE_DATABASE.get(step.recipeId);
-          if (recipe?.recipeGroup && recipe.requiredBiomeLevel !== undefined) {
-            setMinimumBiomeLevel(recipe.recipeGroup, recipe.requiredBiomeLevel);
-          }
-        } else if (step.type === "craftStance" || step.type === "craftRite") {
-          const recipe = step.type === "craftStance" ? STANCE_RECIPE_DATABASE.get(step.recipeId) : RITE_RECIPE_DATABASE.get(step.recipeId);
-          if (recipe?.recipeGroup && recipe.requiredBiomeLevel !== undefined) setMinimumBiomeLevel(recipe.recipeGroup, recipe.requiredBiomeLevel);
-        } else if (step.type === "learnAbility") {
-          const recipe = ABILITY_RECIPE_DATABASE.get(step.recipeId);
-          if (recipe?.recipeGroup && recipe.requiredBiomeLevel !== undefined) {
-            setMinimumBiomeLevel(recipe.recipeGroup, recipe.requiredBiomeLevel);
-          }
-        }
-        switch (step.type) {
-          case "craft":
-            for (const recipeId of step.recipeIds) {
-              assert(
-                RECIPE_DATABASE.has(recipeId),
-                `${route.id}: craft names a real recipe (${recipeId})`,
-              );
-            }
-            break;
-          case "equip":
-            for (const definitionId of step.definitionIds) {
-              assert(
-                RECIPE_DATABASE.has(definitionId),
-                `${route.id}: equip names a real item (${definitionId})`,
-              );
-            }
-            break;
-          case "upgrade":
-            assert(
-              RECIPE_DATABASE.has(step.definitionId),
-              `${route.id}: upgrade names a real item (${step.definitionId})`,
-            );
-            break;
-          case "learnAbility": {
-            const recipe = ABILITY_RECIPE_DATABASE.get(step.recipeId);
-            assert(recipe, `${route.id}: ability recipe exists (${step.recipeId})`);
-            assert(
-              recipe.abilityId === step.abilityId,
-              `${route.id}: ability id matches its recipe (${step.abilityId})`,
-            );
-            break;
-          }
-          case "configureBuild": {
-            const issues = validateBuild(step.build, { knownAbilities: [...ABILITY_DATABASE.keys()], knownStances: [...STANCE_DATABASE.keys()], knownRites: [...RITE_DATABASE.keys()],
-              runesOwned: [...STARTER_RUNE_IDS, ...craftedRuneIds], combatArchetype: ARCHETYPE_FOR_ROOT[route.classRoot], globalMastery: currentRuneBudget().gm } as PlayerView);
-            assert(issues.length === 0, route.id + ": invalid build: " + JSON.stringify(issues));
-            break;
-          }
-          case "craftStance":
-            assert(STANCE_RECIPE_DATABASE.has(step.recipeId), route.id + ": unknown stance recipe");
-            break;
-          case "craftRite":
-            assert(RITE_RECIPE_DATABASE.has(step.recipeId), route.id + ": unknown Rite recipe");
-            break;
-          case "setAbilities":
-            // Nothing to verify statically beyond the ids being real; the
-            // executor refuses to slot an ability the run never learned.
-            break;
-          case "craftRune":
-            assert(
-              RUNE_RECIPE_DATABASE.has(step.recipeId),
-              `${route.id}: rune recipe exists (${step.recipeId})`,
-            );
-            break;
-          // Lineage steps name cards and forms that must still exist. Prices and
-          // unlock levels come from the magnitude table at runtime, so there is
-          // nothing numeric to check here -- only identity.
-          case "unlockCard":
-          case "setActive": {
-            const lineage = LINEAGE_DATABASE.get(step.lineageId);
-            assert(lineage, `${route.id}: lineage exists (${step.lineageId})`);
-            const cardId = step.type === "unlockCard" ? step.cardId : step.cardId;
-            if (cardId === null) break;
-            const card = lineage!.cards.find((c) => c.id === cardId);
-            assert(card, `${route.id}: lineage card exists (${cardId})`);
-            if (step.type === "setActive") {
-              assert(
-                card!.row === step.row,
-                `${route.id}: ${cardId} is a ${card!.row} card, activated as ${step.row}`,
-              );
-            }
-            break;
-          }
-          case "unlockForm":
-          case "wearForm": {
-            const lineage = LINEAGE_DATABASE.get(step.lineageId);
-            assert(lineage, `${route.id}: lineage exists (${step.lineageId})`);
-            const form = lineage!.forms.find((f) => f.recipeId === step.recipeId);
-            assert(form, `${route.id}: lineage form exists (${step.recipeId})`);
-            break;
-          }
-          case "configureRunes":
-            for (const rule of step.rules) {
-              // A rule whose fragments the run never obtains would be silently
-              // dropped and the run would quietly differ from the route. A
-              // fragment is legitimate if it is a starter OR the route crafts
-              // the rune recipe that unlocks it.
-              assert(
-                STARTER_RUNE_IDS.includes(rule.conditionId) ||
-                  craftedRuneIds.has(rule.conditionId),
-                `${route.id}: rune condition is obtainable (${rule.conditionId})`,
-              );
-              assert(
-                STARTER_RUNE_IDS.includes(rule.actionId) || craftedRuneIds.has(rule.actionId),
-                `${route.id}: rune action is obtainable (${rule.actionId})`,
-              );
-            }
-            {
-              const { gm, budget } = currentRuneBudget();
-              const used = runicPointLoadoutCost({ abilities: { techniques: [], guards: [] }, stances: [], rules: step.rules, rites: [] });
-              assert(
-                used <= budget,
-                `${route.id}: rune loadout costs ${used} RP against ${budget} RP at GM ${gm}`,
-              );
-            }
-            break;
-          case "attemptBoss":
-            assert(
-              dungeonNodeFor(step.biomeGroup, step.tier) !== null,
-              `${route.id}: boss step targets a real dungeon (${step.biomeGroup} T${step.tier})`,
-            );
-            break;
-          case "repeatUntil":
-          case "ifPossible":
-            walk(step.steps);
-            break;
-          default:
-            break;
-        }
-      }
-    };
-    walk(route.steps);
-
-    // The completion condition is what actually ends a run, so it has to name
-    // real content too — a typo here would run for hours and never finish.
-    const walkCondition = (condition: Condition): void => {
-      if (condition.type === "bossCleared") {
+  // Every NodeRef a route names must resolve to a real node: the cheapest guard
+  // against a route that walks for hours and then stalls on "cannot reach
+  // target area". The Clearing, for one, is `kind: "tutorial"` at tier 0, so a
+  // `{ biomeGroup: "clearing", tier: 1 }` ref resolves to nothing.
+  const emptyObs = new Observation(new WorldMirror());
+  const checkRef = (ref: NodeRef, where: string): void => {
+    // Authoring validation has no live location. A current-node selector
+    // requires a real biome; runtime separately checks the observed node.
+    const resolvable = ref.kind === "biome" && ref.pick === "current"
+      ? normalNodesFor(ref.biomeGroup, ref.tier, ref.modifier).length > 0
+      : resolveNode(ref, emptyObs, 0) !== null;
+    assert(resolvable, `${route.id}: ${where} names a resolvable node (${JSON.stringify(ref)})`);
+  };
+  const checkCondition = (condition: Condition, where: string): void => {
+    switch (condition.type) {
+      case "bossCleared":
         assert(
           dungeonNodeFor(condition.biomeGroup, condition.tier) !== null,
-          `${route.id}: completion names a real dungeon (${condition.biomeGroup})`,
+          `${route.id}: ${where} names a real dungeon (${condition.biomeGroup})`,
         );
-      } else if (condition.type === "allOf" || condition.type === "anyOf") {
-        condition.of.forEach(walkCondition);
-      } else if (condition.type === "not") {
-        walkCondition(condition.of);
-      }
-    };
-    walkCondition(route.completion);
-    for (const milestone of route.milestones) walkCondition(milestone.when);
-  }
-
-  // Check in execution order: content exists is not enough if a route uses it
-  // before earning it.
-
-  const checkRecipeConditions = (routeId: string, condition: Condition): void => {
-    switch (condition.type) {
+        return;
       case "recipeUnlocked":
-        // `unlockedRecipes` contains item recipes only. Ability recipes use a
-        // dynamic biome/boss predicate and must go through `learnAbility`.
+      case "canCraft":
+        // `unlockedRecipes` holds item recipes only.
         assert(
           RECIPE_DATABASE.has(condition.recipeId),
-          `${routeId}: recipeUnlocked names an item recipe (${condition.recipeId})`,
+          `${route.id}: ${where} names an item recipe (${condition.recipeId})`,
+        );
+        return;
+      case "hasItem":
+      case "equipped":
+      case "itemAtLeastPlus":
+      case "canUpgrade":
+        assert(
+          RECIPE_DATABASE.has(condition.definitionId),
+          `${route.id}: ${where} names a real item (${condition.definitionId})`,
         );
         return;
       case "allOf":
       case "anyOf":
-        condition.of.forEach((child) => checkRecipeConditions(routeId, child));
+        condition.of.forEach((child) => checkCondition(child, where));
         return;
       case "not":
-        checkRecipeConditions(routeId, condition.of);
+        checkCondition(condition.of, where);
         return;
       default:
         return;
     }
   };
-  for (const route of ROUTES.values()) {
-    // A tier-entry route inherits the previous tier's crafted gear, learned
-    // abilities and rune catalogue. A progressionEntry route likewise starts
-    // from an authored checkpoint snapshot, so its ordering checks use the
-    // complete authored vocabulary while runtime snapshot validation stays authoritative.
-    const sealedEntry = route.progressionEntry !== undefined;
-    const entry = route.startsFromTierEntry
-      ? [earnedT1Profile, earnedT3Profile, ...TIER_ENTRY_PROFILES.values()].find(
-          (p) => p.targetTier === route.startsFromTierEntry && p.classRoot === route.classRoot,
-        )
-      : undefined;
-    const craftedItems = new Set<string>([
-      ...(sealedEntry ? RECIPE_DATABASE.keys() : []),
-      ...(route.entryItems ?? []),
-      ...(entry?.inventory ?? []),
-      ...Object.values(entry?.equipment ?? {}).filter((id): id is string => !!id),
-    ]);
-    const learnedAbilities = new Set<string>([
-      ...(sealedEntry ? ABILITY_DATABASE.keys() : []),
-      ...(entry?.knownAbilities ?? []),
-      ...(route.entryKnownAbilities ?? []),
-    ]);
-    const knownStances = new Set<string>(sealedEntry ? STANCE_DATABASE.keys() : entry?.knownStances ?? []);
-    const knownRites = new Set<string>(sealedEntry ? RITE_DATABASE.keys() : entry?.knownRites ?? []);
-    const ownedRunes = new Set<string>(sealedEntry ? ALL_AUTHORED_RUNE_IDS : STARTER_RUNE_IDS);
-    for (const recipeId of entry?.runeRecipesCrafted ?? []) {
-      const runeId = RUNE_RECIPE_DATABASE.get(recipeId)?.runeId;
-      if (runeId) ownedRunes.add(runeId);
-    }
-    const archetype = ARCHETYPE_FOR_ROOT[route.classRoot];
-    assert(archetype, `${route.id}: class root maps to a combat archetype`);
 
-    // Lineage ordering: a band opens by HOLDING a form of that tier (the gate is
-    // the band's key), and a gate is paid in the form biome boss's capstone --
-    // which only that boss drops. Both are statically checkable, and both are
-    // the kind of mistake that would otherwise burn a whole live run.
-    const bestFormTier = new Map<string, number>();
-    // A tier-entry character has fought every boss its profile records as
-    // cleared (`<group>:<tier>`), so a T2 route may pay a gate in a T1 boss's
-    // capstone without re-fighting it. Live, the executor still demands the
-    // capstone material itself; the entry profile's wallet carries essences only,
-    // so a live unlock from a snapshot is a prerequisite failure, not a route bug.
-    const bossesFought = new Set<string>(
-      (entry?.bossesCleared ?? [])
-        .map((key) => key.split(":")[0])
-        .filter((group): group is string => !!group),
-    );
-    const noteForm = (lineageId: string, tier: number): void => {
-      bestFormTier.set(lineageId, Math.max(bestFormTier.get(lineageId) ?? 0, tier));
-    };
-    for (const lineage of LINEAGE_DATABASE.values()) {
-      for (const form of lineage.forms) {
-        if (form.tier === 1 && craftedItems.has(form.recipeId)) noteForm(lineage.id, 1);
-      }
-    }
-
-    const walkInOrder = (steps: RouteStep[]): void => {
-      for (const step of steps) {
-        if (step.type === "farm") {
-          checkRecipeConditions(route.id, step.until);
-        } else if (step.type === "craft") {
+  // In execution order: content existing is not enough if a route uses it
+  // before earning it.
+  const walk = (steps: readonly RouteStep[]): void => {
+    for (const step of steps) {
+      if (step.requires) checkCondition(step.requires, `${step.type}.requires`);
+      switch (step.type) {
+        case "chooseClass":
+          assert(
+            step.skillId === route.classRoot,
+            `${route.id}: chooseClass picks the route's own class (${step.skillId})`,
+          );
+          break;
+        case "unlockSkill":
+          assert(SKILL_TREE.has(step.skillId), `${route.id}: unlockSkill names a real skill (${step.skillId})`);
+          break;
+        case "travel":
+          checkRef(step.to, "travel");
+          break;
+        case "farm":
+          checkRef(step.at, "farm");
+          checkCondition(step.until, "farm.until");
+          break;
+        case "craft":
+          if (step.farmAt) checkRef(step.farmAt, "craft.farmAt");
           for (const recipeId of step.recipeIds) {
-            craftedItems.add(recipeId);
-            for (const lineage of LINEAGE_DATABASE.values()) {
-              const form = lineage.forms.find((f) => f.recipeId === recipeId);
-              if (form?.tier === 1) noteForm(lineage.id, 1);
-            }
+            assert(RECIPE_DATABASE.has(recipeId), `${route.id}: craft names a real recipe (${recipeId})`);
+            crafted.add(recipeId);
           }
-        } else if (step.type === "attemptBoss") {
-          bossesFought.add(step.biomeGroup);
-        } else if (step.type === "unlockCard") {
-          const lineage = LINEAGE_DATABASE.get(step.lineageId)!;
-          const card = lineage.cards.find((c) => c.id === step.cardId)!;
-          assert(
-            (bestFormTier.get(lineage.id) ?? 0) >= card.tier,
-            `${route.id}: ${step.cardId} is a tier-${card.tier} card but the route never holds a tier-${card.tier} ${lineage.id} form`,
-          );
-        } else if (step.type === "unlockForm") {
-          const lineage = LINEAGE_DATABASE.get(step.lineageId)!;
-          const form = lineage.forms.find((f) => f.recipeId === step.recipeId)!;
-          assert(
-            (bestFormTier.get(lineage.id) ?? 0) >= form.tier - 1,
-            `${route.id}: the ${step.recipeId} gate needs a tier-${form.tier - 1} ${lineage.id} form first`,
-          );
-          const capstone = lineageGateCost(form, lineage).capstone;
-          assert(
-            bossesFought.has(capstone.biome),
-            `${route.id}: the ${step.recipeId} gate is paid in ${capstone.biome} capstones, which only that boss drops,`
-            + " and the route never fights it",
-          );
-          noteForm(lineage.id, form.tier);
-          craftedItems.add(step.recipeId);
-        } else if (step.type === "wearForm") {
-          const lineage = LINEAGE_DATABASE.get(step.lineageId)!;
-          const form = lineage.forms.find((f) => f.recipeId === step.recipeId)!;
-          assert(
-            (bestFormTier.get(lineage.id) ?? 0) >= form.tier,
-            `${route.id}: ${step.recipeId} is worn before the route obtains it`,
-          );
-        } else if (step.type === "evolveItem") {
-          // A RETIRED step kind (design §24.5): the server refuses evolve and
-          // reconstruct on every slot. The executor rewrites one on a plain
-          // recipe (every armour, charm and boots T2+ item) as an ordinary
-          // craft — the item is obtained, nothing is consumed — and stalls on a
-          // gated weapon form, which only its lineage gate opens.
-          const recipe = RECIPE_DATABASE.get(step.recipeId);
-          assert(recipe, `${route.id}: evolution recipe exists (${step.recipeId})`);
-          if (isGatedLineageForm(step.recipeId)) {
-            // LEGACY: a weapon-form evolve has been refused by the server since
-            // Phase 2b, and dozens of old T2 route definitions still carry one.
-            // They stall at run time; statically they are walked as authored
-            // (predecessor consumed) until they are retired or rewritten to an
-            // `unlockForm`.
-            if (step.mode === "reconstruct") {
-              assert(!!recipe.reconstructCost, `${route.id}: ${step.recipeId} authors a reconstruction cost`);
-            } else {
-              assert(
-                !!recipe.evolvesFrom && craftedItems.has(recipe.evolvesFrom),
-                `${route.id}: ${step.recipeId} evolves from an owned ${recipe.evolvesFrom}`,
-              );
-              craftedItems.delete(recipe.evolvesFrom!);
-            }
-          }
-          craftedItems.add(step.recipeId);
-        } else if (step.type === "equip") {
+          break;
+        case "equip":
           for (const definitionId of step.definitionIds) {
-            assert(
-              craftedItems.has(definitionId),
-              `${route.id}: ${definitionId} is equipped only after crafting it`,
-            );
+            assert(RECIPE_DATABASE.has(definitionId), `${route.id}: equip names a real item (${definitionId})`);
+            assert(crafted.has(definitionId), `${route.id}: ${definitionId} is equipped only after crafting it`);
           }
-        } else if (step.type === "learnAbility") {
-          learnedAbilities.add(step.abilityId);
-        } else if (step.type === "craftStance") {
-          const recipe = STANCE_RECIPE_DATABASE.get(step.recipeId); if (recipe) knownStances.add(recipe.stanceId);
-        } else if (step.type === "craftRite") {
-          const recipe = RITE_RECIPE_DATABASE.get(step.recipeId); if (recipe) knownRites.add(recipe.riteId);
-        } else if (step.type === "configureBuild") {
-          const issues = validateBuild(step.build, { knownAbilities: [...learnedAbilities], knownStances: [...knownStances], knownRites: [...knownRites],
-            runesOwned: [...ownedRunes], combatArchetype: archetype, globalMastery: 1000000 } as PlayerView);
-          assert(issues.length === 0, route.id + ": build precedes acquisition: " + JSON.stringify(issues));
-        } else if (step.type === "setAbilities") {
-          for (const abilityId of [...step.techniques, ...step.guards]) {
-            assert(
-              learnedAbilities.has(abilityId),
-              `${route.id}: ${abilityId} is slotted only after learning it`,
-            );
-          }
-        } else if (step.type === "craftRune") {
-          const recipe = RUNE_RECIPE_DATABASE.get(step.recipeId);
-          assert(recipe, `${route.id}: rune recipe exists (${step.recipeId})`);
+          break;
+        case "upgrade":
+          if (step.farmAt) checkRef(step.farmAt, "upgrade.farmAt");
           assert(
-            isRuneRecipeAvailableForArchetype(recipe, archetype),
-            `${route.id}: rune recipe is available to ${archetype} (${step.recipeId})`,
+            RECIPE_DATABASE.has(step.definitionId),
+            `${route.id}: upgrade names a real item (${step.definitionId})`,
           );
-          if (recipe.runeId) ownedRunes.add(recipe.runeId);
-        } else if (step.type === "configureRunes") {
+          break;
+        case "configureRunes":
+          // A rule whose fragments the run never owns would be silently dropped
+          // and the run would quietly differ from the route. Runes are free
+          // standing orders: ownership and class compatibility are the gates.
           for (const rule of step.rules) {
             assert(
               ownedRunes.has(rule.conditionId) && ownedRunes.has(rule.actionId),
-              `${route.id}: Rune rule is owned before configuration (${rule.conditionId} -> ${rule.actionId})`,
+              `${route.id}: Rune rule is owned (${rule.conditionId} -> ${rule.actionId})`,
             );
             assert(
               isRuneRuleCompatibleForArchetype(rule, archetype),
               `${route.id}: Rune rule is compatible with ${archetype} (${rule.conditionId} -> ${rule.actionId})`,
             );
           }
-        } else if (step.type === "repeatUntil") {
-          checkRecipeConditions(route.id, step.until);
-          walkInOrder(step.steps);
-        } else if (step.type === "ifPossible") {
-          checkRecipeConditions(route.id, step.when);
-          walkInOrder(step.steps);
-        }
+          break;
+        case "attemptBoss":
+          assert(
+            dungeonNodeFor(step.biomeGroup, step.tier) !== null,
+            `${route.id}: boss step targets a real dungeon (${step.biomeGroup} T${step.tier})`,
+          );
+          break;
+        case "assert":
+          checkCondition(step.condition, "assert");
+          break;
+        case "repeatUntil":
+          checkCondition(step.until, "repeatUntil.until");
+          walk(step.steps);
+          break;
+        case "ifPossible":
+          checkCondition(step.when, "ifPossible.when");
+          walk(step.steps);
+          break;
+        default:
+          break;
       }
-    };
-    walkInOrder(route.steps);
-  }
-
-  const striker = requireRoute("striker-t1");
-  assert(striker.classRoot === "cadence-root", "striker route targets the cadence root");
-
-  // Every T1 root class has an authored baseline route (bot-route-reference.md
-  // §18's deliverable list), and each targets its own class root.
-  assert(T1_BASELINE_ROUTE_IDS.length === 6, "six canonical T1 route ids are declared");
-  assert(T1_BASELINE_ROUTES.length === 6, "six canonical T1 routes resolve");
-  assert(
-    new Set(T1_BASELINE_ROUTE_IDS).size === T1_BASELINE_ROUTE_IDS.length,
-    "canonical T1 route ids are unique",
-  );
-  const EXPECTED_T1_ROUTES: Record<string, string> = {
-    "striker-t1": "cadence-root",
-    "squire-t1": "cooldown-root",
-    "striker-brace-tank-t1": "cadence-root",
-    "squire-brace-tank-t1": "cooldown-root",
-    "slinger-t1": "reload-root",
-    "spirit-t1": "energy-root",
-    "apprentice-t1": "dot-root",
-    "conduit-t1": "summoner-root",
-    "squire-heavyhammer-t1": "cooldown-root",
-    "apprentice-letdotsfinish-t1": "dot-root",
-    "slinger-murkeyeonly-t1": "reload-root",
-    "spirit-murkeyeonly-t1": "energy-root",
-    "striker-v2-t1": "cadence-root",
-    "squire-v2-t1": "cooldown-root",
-    "slinger-v2-t1": "reload-root",
-    "spirit-v2-t1": "energy-root",
-    "apprentice-v2-t1": "dot-root",
-    "conduit-v2-t1": "summoner-root",
+    }
   };
-  for (const [routeId, classRoot] of Object.entries(EXPECTED_T1_ROUTES)) {
-    const route = requireRoute(routeId);
-    assert(route.classRoot === classRoot, `${routeId} targets ${classRoot}`);
+  walk(route.steps);
+
+  // The completion condition is what actually ends a run, so it has to name
+  // real content too.
+  checkCondition(route.completion, "completion");
+  for (const milestone of route.milestones) checkCondition(milestone.when, `milestone ${milestone.id}`);
+}
+
+{
+  assert(ROUTES.size > 0, "at least one route is registered");
+  for (const route of ROUTES.values()) validateRoute(route);
+  for (const routeId of CONTROLLED_ROUTE_IDS) {
+    assert(ROUTES.has(routeId), `controlled route ${routeId} is registered`);
+    assert(isControlledRouteId(routeId), `${routeId} is admitted to a controlled batch`);
   }
 
-  // The durable-melee experiment is intentionally a clean strategy split:
-  // canonical routes earn Step Back and retain Second Wind, while the tank
-  // arms omit Step Back and only arm Brace's cast-reactive rule for Mountain
-  // and Cave bosses. This prevents future baseline edits from collapsing the
-  // comparison into two superficially different route ids.
-  const hasRule = (step: RouteStep, conditionId: string, actionId: string): boolean =>
-    step.type === "configureRunes" &&
-    step.rules.some((rule) => rule.conditionId === conditionId && rule.actionId === actionId);
-  for (const routeId of ["striker-t1", "squire-t1"]) {
-    const route = requireRoute(routeId);
-    assert(
-      route.steps.some((step) => step.type === "craftRune" && step.recipeId === "rune-recipe-step-back"),
-      `${routeId}: canonical melee arm crafts Step Back`,
-    );
-    assert(
-      !route.steps.some((step) => step.type === "learnAbility" && step.abilityId === "brace"),
-      `${routeId}: canonical melee arm stays on the dodge strategy`,
-    );
-    assert(
-      !route.steps.some((step) => hasRule(step, "target-casting", "use-ability")),
-      `${routeId}: Second Wind is not driven by the Brace rune rule`,
-    );
-  }
-  for (const routeId of ["striker-brace-tank-t1", "squire-brace-tank-t1"]) {
-    const route = requireRoute(routeId);
-    assert(
-      !route.steps.some((step) => step.type === "craftRune" && step.recipeId === "rune-recipe-step-back"),
-      `${routeId}: tank arm does not craft Step Back`,
-    );
-    assert(
-      route.steps.some((step) => step.type === "learnAbility" && step.abilityId === "brace"),
-      `${routeId}: tank arm learns Brace`,
-    );
-    for (let i = 2; i < route.steps.length; i++) {
-      const attempt = route.steps[i];
-      if (
-        attempt.type !== "attemptBoss" ||
-        (attempt.biomeGroup !== "mountain" && attempt.biomeGroup !== "cave")
-      ) {
-        continue;
-      }
-      const abilities = route.steps[i - 2];
-      const runes = route.steps[i - 1];
+  // The smoke route is class-agnostic: the command line picks the class, and
+  // every class root builds a valid route that chooses that class.
+  const smoke = requireRoute(SMOKE_T1_ID);
+  assert(smoke.classRoot === classRootFor(DEFAULT_SMOKE_CLASS), "smoke-t1 defaults to the cadence root");
+  for (const classRoot of Object.keys(ARCHETYPE_FOR_ROOT)) {
+    for (const classId of [classRoot.replace(/-root$/, ""), classRoot]) {
+      const route = requireRoute(SMOKE_T1_ID, classId);
+      assert(route.classRoot === classRoot, `--class=${classId} plays ${classRoot}`);
       assert(
-        abilities?.type === "setAbilities" && abilities.guards.includes("brace"),
-        `${routeId}: ${attempt.biomeGroup} boss equips Brace`,
+        route.steps.some((step) => step.type === "chooseClass" && step.skillId === classRoot),
+        `smoke-t1 for ${classId} chooses ${classRoot}`,
       );
-      assert(
-        runes !== undefined && hasRule(runes, "target-casting", "use-ability"),
-        `${routeId}: ${attempt.biomeGroup} boss arms Brace's cast-reactive rule`,
-      );
+      validateRoute(route);
     }
   }
-
-  const squireV2 = requireRoute("squire-v2-t1");
-  const hasPowerStrikeItemRecipeWait = (steps: RouteStep[]): boolean =>
-    steps.some(
-      (step) =>
-        (step.type === "farm" &&
-          step.until.type === "recipeUnlocked" &&
-          step.until.recipeId === "ability-recipe-slam") ||
-        (step.type === "repeatUntil" && hasPowerStrikeItemRecipeWait(step.steps)),
-    );
-  assert(
-    !hasPowerStrikeItemRecipeWait(squireV2.steps),
-    "squire-v2 waits for Power Strike through learnAbility's live ability gate, not unlockedRecipes",
-  );
-
-  // Tier 1 grants exactly one Technique and one Guard slot, so a boss-prep
-  // loadout that asks for two of either would be silently truncated. Every
-  // ability a boss loadout equips must be learned earlier in the SAME route,
-  // and every item a boss loadout equips must be crafted earlier too -- a
-  // route cannot silently equip something it never earned.
-  for (const routeId of Object.keys(EXPECTED_T1_ROUTES)) {
-    const route = requireRoute(routeId);
-
-    for (const step of route.steps) {
-      if (step.type !== "setAbilities") continue;
-      assert(
-        new Set(step.techniques).size === step.techniques.length,
-        `${routeId}: ${step.techniques.length} techniques exceeds the tier-1 slot count`,
-      );
-      assert(
-        new Set(step.guards).size === step.guards.length,
-        `${routeId}: ${step.guards.length} guards exceeds the tier-1 slot count`,
-      );
-    }
-
-    const learned = new Set(
-      route.steps.flatMap((s) => (s.type === "learnAbility" ? [s.abilityId] : [])),
-    );
-    for (const step of route.steps) {
-      if (step.type !== "setAbilities") continue;
-      for (const abilityId of [...step.techniques, ...step.guards]) {
-        assert(learned.has(abilityId), `${routeId}: ${abilityId} is equipped but never learned`);
-      }
-    }
-
-    const crafted = new Set(route.steps.flatMap((s) => (s.type === "craft" ? s.recipeIds : [])));
-    for (const step of route.steps) {
-      if (step.type !== "equip") continue;
-      for (const definitionId of step.definitionIds) {
-        assert(crafted.has(definitionId), `${routeId}: ${definitionId} is equipped but never crafted`);
-      }
-    }
+  let unknownClassRejected = false;
+  try {
+    requireRoute(SMOKE_T1_ID, "not-a-class");
+  } catch {
+    unknownClassRejected = true;
   }
+  assert(unknownClassRejected, "an unknown --class is rejected, not silently replaced");
 
   console.log("routes: ok");
+}
+
+// `--class` picks a class-agnostic route's class and keeps each class on its
+// own bot account, so two classes never share (and delete) one character.
+{
+  const plain = buildConfig({});
+  assert(plain.routeId === SMOKE_T1_ID, "the default run is the smoke route");
+  assert(plain.classId === undefined, "no --class plays the route's own class");
+  const dot = buildConfig({ class: "dot" });
+  assert(dot.classId === "dot", "--class reaches the run config");
+  assert(dot.devAccountId !== plain.devAccountId, "each class gets its own bot account");
+  console.log("class selection config: ok");
 }
 
 // ── Policies are parameters over one executor, not forked behavior ───────────
@@ -1357,7 +900,7 @@ async function mutationRetryCheck(): Promise<void> {
 
 // Fast boss retry is opt-in only and always poisons canonicality.
 {
-  const normal = buildConfig({ route: "striker-t1" });
+  const normal = buildConfig({ route: SMOKE_T1_ID });
   assert(!normal.fastBossRetry, "ordinary single routes leave fast retry disabled");
   assert(
     !initialRunTaints(normal, "1").includes("NON_CANONICAL_FAST_BOSS_RETRY"),
@@ -1365,7 +908,7 @@ async function mutationRetryCheck(): Promise<void> {
   );
 
   const fast = buildConfig({
-    route: "striker-t1",
+    route: SMOKE_T1_ID,
     fastBossRetry: "true",
     fastBossRetryIncludeGuardians: "true",
   });

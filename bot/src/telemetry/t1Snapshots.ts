@@ -7,7 +7,6 @@ import {
   type T1CharacterSnapshotKind,
   type T1SnapshotState,
   type TierCheckpointKind,
-  tierEntryProfileFromT1Snapshot,
 } from "@mmo-idle/shared";
 import type { RunHeader } from "./events";
 
@@ -285,7 +284,7 @@ export class T1SnapshotStore {
   }
 }
 
-/** Read the stable JSON artifact used by the future T2 continuation command. */
+/** Read a snapshot or named checkpoint artifact back from disk. */
 export function readT1CharacterSnapshot(path: string): T1CharacterSnapshot {
   let parsed: unknown;
   try {
@@ -309,5 +308,3 @@ export function readT1CharacterSnapshot(path: string): T1CharacterSnapshot {
   }
   return snapshot as T1CharacterSnapshot;
 }
-
-export { tierEntryProfileFromT1Snapshot };

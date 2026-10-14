@@ -13,11 +13,11 @@ import { BotConnection } from "./net/connection";
  * accumulating orphans — and the `bot-` prefix makes them trivially greppable if
  * the dev database ever does need a manual sweep.
  *
- *   pnpm --filter @mmo-idle/bot cleanup -- --routes=striker-t1 --policies=intended --count=3
+ *   pnpm --filter @mmo-idle/bot cleanup -- --routes=smoke-t1 --policies=intended --count=3
  */
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
-  const routes = (args.routes ?? "striker-t1").split(",").filter(Boolean);
+  const routes = (args.routes ?? "smoke-t1").split(",").filter(Boolean);
   const policies = (args.policies ?? "intended,rusher,generic").split(",").filter(Boolean);
   const count = Number(args.count ?? "1");
 

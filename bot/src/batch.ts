@@ -21,12 +21,7 @@ import { RouteLeaseSession } from "./concurrency/routeLeaseSession";
 import { CohortEvidenceMonitor } from "./concurrency/cohortEvidenceMonitor";
 import { BotConnection } from "./net/connection";
 import { Intents } from "./net/intents";
-import {
-  T1_CONTROLLED_ROUTE_IDS,
-  isControlledRouteId,
-  isT1ControlledRouteId,
-  isT2ControlledRouteId,
-} from "./routes";
+import { CONTROLLED_ROUTE_IDS, isControlledRouteId } from "./routes";
 import { startDashboardOrWarn } from "./ui/server";
 import {
   T1_ECONOMY_ARMS,
@@ -252,20 +247,21 @@ function loadOrCreateManifest(
 }
 
 /**
- * Batch runner. Its default mode is the clean T1 controlled cohort: exactly
- * the eight registered routes, one intended-policy run each, awaited one at a
- * time. This prevents shared-world combat/reward contamination by construction.
+ * Batch runner. Its default mode is the clean controlled cohort: exactly the
+ * registered controlled routes (`smoke-t1` until the class routes are rebuilt),
+ * one intended-policy run each, awaited one at a time. This prevents
+ * shared-world combat/reward contamination by construction.
  *
  * Isolated controlled concurrency is opt-in with
  * `--executionMode=isolated-parallel`; the default remains sequential.
  *
  *   pnpm bot:batch
- *   pnpm bot:batch -- --controlled=false --routes=striker-v2-t1 --parallel=true
+ *   pnpm bot:batch -- --controlled=false --routes=smoke-t1 --parallel=true
  */
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
   const controlled = args.controlled !== "false";
-  const routes = (args.routes ?? T1_CONTROLLED_ROUTE_IDS.join(",")).split(",").filter(Boolean);
+  const routes = (args.routes ?? CONTROLLED_ROUTE_IDS.join(",")).split(",").filter(Boolean);
   const policies = (args.policies ?? "intended").split(",").filter(Boolean);
   const count = Number(args.count ?? "1");
   const outDir = normalizeOutDir(args.out ?? "runs");
@@ -289,11 +285,6 @@ async function main(): Promise<void> {
   const contentionPolicy = controlledSettings.contentionPolicy;
   assertFastRetryBatchSafety(args, controlled);
 
-  // A controlled batch is either an all-Tier-1 cohort or an all-Tier-2 one.
-  // Mixing them is rejected: they carry different entry mechanisms, different
-  // reward-multiplier conventions and different completion conditions, so one
-  // manifest could not describe both.
-  const allT2Controlled = routes.length > 0 && routes.every(isT2ControlledRouteId);
   if (controlled) {
     const excluded = routes.filter((routeId) => !isControlledRouteId(routeId));
     if (excluded.length > 0) {
@@ -302,21 +293,12 @@ async function main(): Promise<void> {
           "use --controlled=false for an explicit exploratory batch",
       );
     }
-    const anyT1 = routes.some(isT1ControlledRouteId);
-    if (anyT1 && allT2Controlled === false && routes.some(isT2ControlledRouteId)) {
-      throw new Error(
-        "a controlled batch must be all Tier-1 or all Tier-2 routes, not a mix",
-      );
-    }
     if (policies.length !== 1 || policies[0] !== "intended") {
       throw new Error("controlled batch requires exactly --policies=intended");
     }
-    // Tier-1 cohorts are one-run-per-route by construction; the Tier-2
-    // progression cohort is explicitly replicated (2 per class in the first
-    // campaign), because a single run gives no within-class variance and makes
-    // the "isolated extreme replicate" interpretation rule unenforceable.
-    if (count !== 1 && !allT2Controlled) {
-      throw new Error("controlled T1 batch requires --count=1");
+    // Controlled cohorts are one-run-per-route by construction.
+    if (count !== 1) {
+      throw new Error("controlled batch requires --count=1");
     }
   }
 

@@ -3,22 +3,12 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const tests = [
-  ["server", "test/botBuildPreflight.test.ts"],
-  ["server", "test/tierEntryBootstrap.test.ts"],
   ["server", "test/humanPlaytestRecorder.test.ts"],
-  ["server", "../shared/src/attunement.test.ts"],
   ["bot", "src/harness.test.ts"],
   ["bot", "src/loadout/loadout.test.ts"],
   ["bot", "src/policy/choices.test.ts"],
+  ["bot", "src/route/executor.test.ts"],
   ["bot", "src/telemetry/experience.test.ts"],
-  ["bot", "src/tierEntry/profiles.test.ts"],
-  ["bot", "src/tierEntry/validate.test.ts"],
-  ["bot", "src/routes/t1Routes.semantic.test.ts"],
-  ["bot", "src/routes/t2Routes.semantic.test.ts"],
-  ["bot", "src/routes/campaignReadiness.test.ts"],
-  ["bot", "src/routes/campaignBehavior.test.ts"],
-  ["bot", "src/routes/campaignBoss.test.ts"],
-  ["bot", "src/routes/campaignT2Boss.test.ts"],
   ["bot", "src/telemetry/t1Snapshots.test.ts"],
 ];
 console.log("Bot preflight: NONCANONICAL infrastructure validation, no balance evidence.");
