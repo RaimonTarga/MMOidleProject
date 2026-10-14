@@ -1,5 +1,5 @@
 import { captureProgressionCheckpoint, restoreProgressionCheckpoint } from '../admin/progressionCheckpoint';
-import { runicLoadoutFromProgression, runicPointEditAllowed, attunedAbilityIds } from "@mmo-idle/shared";
+import { attunedAbilityIds } from "@mmo-idle/shared";
 import type { Socket } from "socket.io";
 import {
   DEFAULT_AUTOCOMBAT_CONFIG,
@@ -7,10 +7,7 @@ import {
   GAME_CONFIG,
   NODE_BIOMES,
   TEST_ROOM_NODE_ID,
-  globalMastery,
-  runeBudgetForGlobalMastery,
   sanitizeRuneLoadout,
-  runicPointLoadoutCost,
   clampRewardMultiplier,
   isT1EconomyArm,
   t1EconomyConfigForArm,
@@ -34,7 +31,6 @@ import { recordBroadcast } from "./profiler";
 import { unlockSkill } from "../systems/player/progression/skills";
 import { equipItem, unequipItem } from "../systems/player/economy/inventory";
 import { craftRecipe } from "../systems/player/economy/crafting";
-import { craftRuneRecipe } from "../systems/player/economy/runeCrafting";
 import {
   craftAbilityRecipe,
   setAbilityLoadout,
@@ -398,24 +394,15 @@ export function registerPlayerHandlers(
     if (!p) return reject(NOT_LIVE_REASON);
     if (!Array.isArray(rules)) return reject("Malformed Rune loadout.");
     const owned = new Set(p.tracksProgression.runesOwned);
-    const budget = runeBudgetForGlobalMastery(
-      globalMastery(p.tracksProgression.biomeLevel),
-    );
     const valid = sanitizeRuneLoadout(
       rules,
       owned,
-      Number.POSITIVE_INFINITY,
       p.usesSkills.combatArchetype,
       new Set(p.tracksProgression.attunedStances ?? []),
       new Set(attunedAbilityIds(p.tracksProgression.attunedAbilities)),
     );
     if (valid.length !== rules.length) {
       socket.emit("build:loadoutResult", { system: "runes", success: false, reason: "One or more Rune rules are invalid, unowned, or target an unlearned stance." });
-      return;
-    }
-    const total = runicPointLoadoutCost({ ...runicLoadoutFromProgression(p.tracksProgression), rules: valid });
-    if (!runicPointEditAllowed(runicLoadoutFromProgression(p.tracksProgression), { ...runicLoadoutFromProgression(p.tracksProgression), rules: valid }, budget)) {
-      socket.emit("build:loadoutResult", { system: "runes", success: false, reason: `This build costs ${total} RP, but only ${budget} RP is available.` });
       return;
     }
     const telemetryBefore = world.gameplay?.beforeDecision(p);
@@ -461,19 +448,6 @@ export function registerPlayerHandlers(
     const result = craftRecipe(world, p, recipeId);
     world.gameplay?.decision(p, "craft", recipeId, telemetryBefore, result.success);
     socket.emit("crafting:result", result);
-  });
-
-  socket.on("rune:craftRecipe", (recipeId: string) => {
-    const p = liveSelf();
-    if (!p || typeof recipeId !== "string") {
-      if (p) return;
-      socket.emit("rune:craftResult", { recipeId, success: false, reason: NOT_LIVE_REASON });
-      return;
-    }
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = craftRuneRecipe(world, p, recipeId);
-    world.gameplay?.decision(p, "craft-rune", recipeId, telemetryBefore, result.success);
-    socket.emit("rune:craftResult", result);
   });
 
   socket.on("ability:craftRecipe", (recipeId: string) => {

@@ -1,12 +1,9 @@
 import {
   ABILITY_DATABASE,
   ABILITY_RECIPE_DATABASE,
-  ACTION_DATABASE,
-  CONDITION_DATABASE,
   RECIPE_DATABASE,
   RITE_DATABASE,
   RITE_RECIPE_DATABASE,
-  RUNE_RECIPE_DATABASE,
   STANCE_DATABASE,
   STANCE_RECIPE_DATABASE,
   abilityDef,
@@ -20,17 +17,15 @@ import { KIND_ORDER, type MakeKind } from '../crafting/makeEntries';
 /**
  * One thing a biome hands you at one of its levels.
  *
- * Biome mastery pays out of FIVE authoritative databases — gear, abilities,
- * stances, rites and runes — and only gear lives in `RECIPE_DATABASE`. The map
+ * Biome mastery pays out of FOUR authoritative databases — gear, abilities,
+ * stances and rites — and only gear lives in `RECIPE_DATABASE`. The map
  * used to read that one database and so silently omitted every technique,
- * stance, rite and rune a biome grants. This is the client view model that lets
+ * stance and rite a biome grants. This is the client view model that lets
  * the map answer "what does this place give me, and when" from all of them.
  *
  * Unlike the Craft browser's `MakeEntry`, nothing is filtered out for being
  * already owned or learned: the map is the reference ladder for a biome, so it
- * has to keep showing the rungs you have already climbed. The one exception is
- * a `deprecated` rune recipe (2026-08-28) — its reward is a starter default,
- * so it was never really a rung on the ladder and is dropped entirely.
+ * has to keep showing the rungs you have already climbed.
  */
 export interface BiomeUnlock {
   /** Unique across kinds; recipe ids are only unique within their database. */
@@ -45,7 +40,7 @@ export interface BiomeUnlock {
   /** Present for gear (weapon/armor/recovery/mobility/core/relic) only. */
   gear?: Recipe;
   /**
-   * The ability/stance/rite/rune id learned, which is NOT the recipe id.
+   * The ability/stance/rite id learned, which is NOT the recipe id.
    * Absent for gear, where the recipe id is the item id.
    */
   learnedId?: string;
@@ -59,8 +54,6 @@ interface LearnedRecipe {
   cost: Partial<Record<EssenceType, number>>;
   recipeGroup?: string;
   requiredBiomeLevel?: number;
-  /** Only rune recipes ever set this; see `RuneRecipe.deprecated`. */
-  deprecated?: true;
 }
 
 function learnedUnlocks<T extends LearnedRecipe>(
@@ -74,10 +67,6 @@ function learnedUnlocks<T extends LearnedRecipe>(
   const unlocks: BiomeUnlock[] = [];
   for (const recipe of recipes) {
     if (recipe.recipeGroup !== group) continue;
-    // A deprecated recipe's reward is already a starter default — it is not a
-    // real rung on this biome's ladder, even though the map otherwise shows
-    // already-climbed rungs.
-    if (recipe.deprecated) continue;
     const learnedId = learnedIdOf(recipe);
     if (!learnedId) continue;
     const name = nameOf(recipe, learnedId);
@@ -139,18 +128,6 @@ export function biomeUnlocks(group: string): BiomeUnlock[] {
     (recipe) => recipe.riteId,
     (_recipe, learnedId) => RITE_DATABASE.get(learnedId)?.name,
     (learnedId) => riteDef(learnedId)?.blurb ?? '',
-  ));
-
-  // A rune recipe yields one FRAGMENT — a condition or an action — so it is
-  // named by the recipe rather than by an assembled rule.
-  unlocks.push(...learnedUnlocks(
-    'rune',
-    group,
-    RUNE_RECIPE_DATABASE.values(),
-    (recipe) => recipe.runeId,
-    (recipe) => recipe.name,
-    (learnedId) =>
-      ACTION_DATABASE.get(learnedId)?.blurb ?? CONDITION_DATABASE.get(learnedId)?.blurb ?? '',
   ));
 
   return unlocks.sort((a, b) =>

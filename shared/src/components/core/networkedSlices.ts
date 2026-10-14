@@ -367,10 +367,8 @@ export interface TracksProgression {
    * JSON-save compatibility; hydration normalizes old saves to an array.
    */
   visitedNodes?: string[];
-  /** Every rune condition + action fragment id the player has found. */
+  /** Every rune condition + action fragment id the class may use (`runeIdsForArchetype`). */
   runesOwned: string[];
-  /** One-time rune forge recipes the player has crafted. */
-  runeRecipesCrafted: string[];
   /** Assembled rune rules, ordered (loadout). Drives the auto-combat config. */
   runesEquipped: EquippedRule[];
   /**
@@ -381,7 +379,7 @@ export interface TracksProgression {
   /**
    * Attuned abilities as ordered lists per semantic family — Technique (offensive)
    * and Guard (defensive). List order is default arbitration priority.
-   * RP is the only capacity limit.
+   * There is no capacity limit.
    */
   attunedAbilities: AttunedAbilities;
   /**

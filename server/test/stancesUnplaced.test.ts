@@ -30,7 +30,6 @@ import {
   NO_STANCE_ID,
   ITEM_DATABASE,
   upgradeStatBonusTotal,
-  runeRuleCost,
   stanceDef,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
@@ -83,7 +82,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier: 0, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
-      runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [],
+      runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: [...NEW_STANCES],
@@ -128,11 +127,6 @@ assert(
   "While Traveling must be a legal Switch Stance situation — it is what makes Fleeting/Predator travel postures",
 );
 assert(!!CONDITION_DATABASE.get("stance-charged"), "Stance Charged must be an authored condition");
-assert(
-  runeRuleCost({ conditionId: "before-empowered", actionId: "switch-stance", targetStanceId: "time-to-strike-stance" }) ===
-    CONDITION_DATABASE.get("before-empowered")!.cost,
-  "stance rules pay only for timing",
-);
 
 // ── Setup ─────────────────────────────────────────────────────────────────────
 

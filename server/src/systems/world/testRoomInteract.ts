@@ -5,6 +5,7 @@ import {
   inAttackRange,
   posHitboxFromEntity,
   resetTracksCombat,
+  runeIdsForArchetype,
 } from "@mmo-idle/shared";
 import type { PlayerEntity } from "../../ecs/entity";
 import type { World } from "../../world/World";
@@ -72,6 +73,7 @@ function resetPlayerProgression(world: World, player: PlayerEntity): void {
   player.usesSkills.specializationId = null;
   player.usesSkills.selectedRange = null;
   player.usesSkills.combatArchetype = null;
+  player.tracksProgression.runesOwned = runeIdsForArchetype(null);
   player.tracksProgression.questProgress = {};
   setAttackTarget(world, player, null);
   player.usesAutocombat.auto = false;

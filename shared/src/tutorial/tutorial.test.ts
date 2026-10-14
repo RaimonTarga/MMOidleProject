@@ -6,7 +6,6 @@ import { ITEM_DATABASE } from '../itemDatabase';
 import { emptyEquipment, type EssenceType } from '../items';
 import { QUEST_DATABASE } from '../quests/questDatabase';
 import { ACTION_DATABASE, CONDITION_DATABASE } from '../runeDatabase';
-import { RUNE_RECIPE_DATABASE } from '../runeRecipes';
 import { NODE_BIOMES } from '../world/nodeBiomes';
 import {
   TUTORIAL_ANCHORS,
@@ -49,7 +48,6 @@ function view(overrides: Partial<TutorialView> = {}): TutorialView {
     itemUpgrades: {},
     questProgress: {},
     runesEquipped: [],
-    runeRecipesCrafted: [],
     knownAbilities: [],
     attunedAbilities: { techniques: [], guards: [] },
     bossesCleared: [],
@@ -153,7 +151,6 @@ for (const script of [TUTORIAL_OPENING]) {
             if (c.type === 'canCraft' || c.type === 'recipeUnlocked') assert(RECIPE_DATABASE.has(c.recipeId), `${where}: unknown recipe ${c.recipeId}`);
             if (c.type === 'hasItem') assert(ITEM_DATABASE.has(c.definitionId), `${where}: unknown item ${c.definitionId}`);
             if (c.type === 'abilityKnown') assert(ABILITY_DATABASE.has(c.abilityId), `${where}: unknown ability ${c.abilityId}`);
-            if (c.type === 'runeRecipeCrafted') assert(RUNE_RECIPE_DATABASE.has(c.recipeId), `${where}: unknown rune recipe ${c.recipeId}`);
             // Monotone farm conditions: a bare spendable resource would regress after the spend.
             assert(!(c === step.until && (c.type === 'canCraft' || c.type === 'essenceAtLeast')),
               `${where}: farm condition must be guarded by its outcome (anyOf)`);
@@ -170,9 +167,6 @@ for (const script of [TUTORIAL_OPENING]) {
             assert(CONDITION_DATABASE.has(rule.conditionId as never), `${where}: unknown rune condition ${rule.conditionId}`);
             assert(ACTION_DATABASE.has(rule.actionId as never), `${where}: unknown rune action ${rule.actionId}`);
           }
-          break;
-        case 'craftRune':
-          assert(RUNE_RECIPE_DATABASE.has(step.recipeId), `${where}: unknown rune recipe ${step.recipeId}`);
           break;
         case 'learnAbility':
           assert(ABILITY_RECIPE_DATABASE.get(step.recipeId)?.abilityId === step.abilityId, `${where}: recipe/ability mismatch`);

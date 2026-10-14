@@ -135,7 +135,6 @@ function playerSlices(id: string, name: string, playerTier: number): PersistedPl
       clearedNodes: [],
       visitedNodes: [],
       runesOwned: [],
-      runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
       attunedAbilities: emptyAttunedAbilities(),

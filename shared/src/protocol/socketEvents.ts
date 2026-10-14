@@ -130,7 +130,6 @@ export interface ServerToClientEvents {
   "node:delta": (snapshot: DeltaSnapshot) => void;
   /** Immediate result of a crafting attempt — success or reason for failure. */
   "crafting:result": (result: { success: boolean; reason?: string }) => void;
-  "rune:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
   /** Immediate result of learning an ability (crafting an ability recipe). */
   "ability:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
   /** Immediate result of learning a stance (crafting a stance recipe). */
@@ -237,7 +236,6 @@ export interface ClientToServerEvents {
   "rune:setLoadout": (rules: EquippedRule[]) => void;
   /** Set the class system (the Order, Response rules, ...) and the relic slot (build plan §3.3). */
   "class:setConfig": (config: ClassConfig) => void;
-  "rune:craftRecipe": (recipeId: string) => void;
   /** Learn an ability by crafting its recipe. Server validates gate + cost. */
   "ability:craftRecipe": (recipeId: string) => void;
   /**

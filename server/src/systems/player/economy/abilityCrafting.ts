@@ -1,10 +1,10 @@
-import { runicLoadoutFromProgression, runicPointEditAllowed, attunedAbilityIds, runeBudgetForGlobalMastery, globalMastery } from "@mmo-idle/shared";
+import { attunedAbilityIds } from "@mmo-idle/shared";
 /**
  * Ability crafting + loadout (system rework Step 7).
  *
  * Crafting an ability recipe LEARNS the ability (adds it to
  * `TracksProgression.knownAbilities`), spending essence and gating on
- * Biome Mastery — mirroring rune crafting. Attunement reserves authored RP from the same pool as Rune logic, stances and Rites.
+ * Biome Mastery. Attunement costs nothing.
  */
 import type { EssenceType } from "@mmo-idle/shared";
 import {
@@ -118,11 +118,8 @@ export function setAbilityLoadout(
     }
   }
 
-  const previous = runicLoadoutFromProgression(prog);
   const ids = new Set(attunedAbilityIds(equipped));
   const rules = prog.runesEquipped.filter(rule => rule.actionId !== "use-ability" || ids.has(rule.targetAbilityId ?? ""));
-  const next = { ...previous, abilities: equipped, rules };
-  if (!runicPointEditAllowed(previous, next, runeBudgetForGlobalMastery(globalMastery(prog.biomeLevel)))) return { success: false, reason: "Not enough Runic Points to attune these abilities." };
   prog.runesEquipped = rules;
   prog.attunedAbilities = {
     techniques: [...equipped.techniques],

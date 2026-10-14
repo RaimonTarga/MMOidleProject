@@ -37,7 +37,6 @@ const receipt = (cell: SurveyCell, appliedOver: Record<string, unknown> = {}) =>
       itemUpgrades: Object.fromEntries(Object.values(cell.build.gearItemIds).map((id) => [id, d.upgradeLevel])),
       ...appliedOver,
     },
-    runicPoints: { budget: 30, cost: 26 },
   };
 };
 
@@ -118,10 +117,6 @@ const receipt = (cell: SurveyCell, appliedOver: Record<string, unknown> = {}) =>
   delete (raw.declaredPackage as { sources?: unknown }).sources;
   assert((verifyDeclaredApplied(raw) as string[]).some((m) => m.includes('provenance')),
     'a declaration serialized raw, without provenance, must be flagged');
-
-  const overBudget = { ...receipt(base()), runicPoints: { budget: 30, cost: 31 } };
-  assert((verifyDeclaredApplied(overBudget) as string[]).some((m) => m.includes('RP')),
-    'an illegal RP total must be flagged');
 
   const wrongGear = verifyDeclaredApplied(
     receipt(base(), { equipment: { weapon: 'quake-hammer', armor: 'cave-vest-t2' } }),

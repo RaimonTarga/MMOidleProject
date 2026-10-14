@@ -59,7 +59,6 @@ function makePlayerSlices(id: string, guards: string[], playerTier: number): Per
       bossesCleared: [],
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [...guards],
       attunedAbilities: { ...emptyAttunedAbilities(), techniques: [], guards: [...guards] },

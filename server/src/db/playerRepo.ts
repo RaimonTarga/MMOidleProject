@@ -27,7 +27,7 @@ import {
   emptyEquippedStances,
   emptyEquippedRites,
   globalMastery,
-  runeIdsFromCraftedRecipes,
+  runeIdsForArchetype,
   validRiteIds,
   CLEARING_NODE_ID,
   WORLD_NODES,
@@ -625,6 +625,11 @@ function hydratePlayerSlices(
   for (const key of ['shards', 'capstones', 'cardFiringsTaught', 'abilityNodes']) {
     delete (tracksProgression as unknown as Record<string, unknown>)[key];
   }
+  // Crafted runes went with the Runic Points (class-first rework D2): rune
+  // ownership comes from the class now, so the crafted list is dropped on load.
+  for (const key of ['runeRecipesCrafted']) {
+    delete (tracksProgression as unknown as Record<string, unknown>)[key];
+  }
   // The +N ladder is retired on every slot: refund and drop any itemUpgrades
   // entry it left behind (weapons since Phase 2b, armour/charm/boots since design
   // §24.5). Mutates holdsInventory.itemUpgrades and tracksProgression.essences in
@@ -648,7 +653,7 @@ function hydratePlayerSlices(
   if (!WORLD_NODES.has(hasPosition.nodeId)) {
     hasPosition.nodeId = CLEARING_NODE_ID;
   }
-  const runeRecipesCrafted = tracksProgression.runeRecipesCrafted ?? [];
+  const usesSkills = parseSlice<UsesSkills>(row.usesSkills);
   const attunement = migrateAttunement(tracksProgression);
   delete (tracksProgression as unknown as { equippedAbilities?: unknown }).equippedAbilities;
   const knownRites = migrateRiteIds(tracksProgression.knownRites);
@@ -671,15 +676,14 @@ function hydratePlayerSlices(
         (hasPosition.nodeId !== CLEARING_NODE_ID
           ? [hasPosition.nodeId]
           : tracksProgression.clearedNodes ?? []),
-      runeRecipesCrafted,
-      runesOwned:     runeIdsFromCraftedRecipes(runeRecipesCrafted),
+      runesOwned:     runeIdsForArchetype(usesSkills.combatArchetype),
       knownRites,
       equippedRites,
       ...attunement,
     },
     holdsInventory,
     usesSkills:        {
-      ...parseSlice<UsesSkills>(row.usesSkills),
+      ...usesSkills,
       passives: {},
     },
     summonerState: row.summonerState
@@ -754,8 +758,7 @@ function buildFreshSlices(
       bossesCleared:    [],
       clearedNodes:     [],
       visitedNodes:     [],
-      runesOwned:       runeIdsFromCraftedRecipes([]),
-      runeRecipesCrafted: [],
+      runesOwned:       runeIdsForArchetype(null),
       runesEquipped:    [...DEFAULT_RUNE_LOADOUT],
       knownAbilities:   [],
       attunedAbilities: emptyAttunedAbilities(),

@@ -13,7 +13,6 @@ import {
   ABILITY_RECIPE_DATABASE,
   STANCE_RECIPE_DATABASE,
   RITE_RECIPE_DATABASE,
-  RUNE_RECIPE_DATABASE,
   maxGlobalMasteryAtTier,
   globalMasteryRequiredForUpgrade,
 } from "@mmo-idle/shared";
@@ -326,14 +325,6 @@ assert([...RECIPE_DATABASE.values()].every((r) => r.slot !== "relic"), "no recip
 // ═══════════════════════════════════════════════════════════════════════════
 // 13. Final Core tier split and no-regression pins
 // ═══════════════════════════════════════════════════════════════════════════
-
-{
-  const rune = RUNE_RECIPE_DATABASE.get("rune-recipe-focus-elites");
-  assert(!!rune, "rune-recipe-focus-elites must exist");
-  assert(rune!.tier === 4 && rune!.recipeGroup === "graveyard" && rune!.requiredBiomeLevel === 4, "rune-recipe-focus-elites gate must be unchanged");
-  assert(JSON.stringify(rune!.cost) === JSON.stringify({ purple: 320, blue: 140 }), "rune-recipe-focus-elites cost must be unchanged");
-  assert(RUNE_RECIPE_DATABASE.size >= 1, "rune database must still contain the T4 rune");
-}
 
 {
   // Zero T4 rites, exactly 6 tier-3 rites (unchanged count/shape).

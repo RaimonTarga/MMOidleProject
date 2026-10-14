@@ -72,7 +72,6 @@ function playerSlices(
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS, 'avoid-hazards', 'step-back'],
-      runeRecipesCrafted: ['rune-recipe-avoid-hazards', 'rune-recipe-step-back'],
       runesEquipped: rules,
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,

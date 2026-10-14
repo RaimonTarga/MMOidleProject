@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import {
   DUNGEON_DEFS, MONSTER_DATABASE, NODE_BIOMES, RECIPE_DATABASE, ITEM_DATABASE,
-  runicPointLoadoutCost, runeBudgetForGlobalMastery, withReferenceAbilityWiring,
 } from '@mmo-idle/shared';
 import { SURVEY_CLASSES, resolveSurveyPackage } from './ttkSurveySpec';
 import { REFERENCE_GUARDS, referencePackageCells } from './boss1Spec';
@@ -489,14 +488,6 @@ export function boss5CellFingerprint(cell: Night5Cell): string {
 }
 
 /**
- * The global mastery a prepared bot reaches at each tier, measured during preparation
- * and pinned here so the RP ceiling below is the real one rather than a constant
- * borrowed from T2. A tier whose ladder later grants a different mastery fails the
- * preflight's own budget readback rather than silently loosening this ceiling.
- */
-const TIER_MASTERY: Record<number, number> = { 1: 30, 2: 72, 3: 114, 4: 156 };
-
-/**
  * Fail loudly at load time if anything this screen depends on has drifted.
  *
  * Three jobs in one place: the roster really is the active source roster minus a
@@ -537,7 +528,6 @@ export function assertBoss5Definitions(): void {
   assert.equal(new Set(BOSS5_BLOCKS_DEF.map((b) => b.name)).size, BOSS5_BLOCKS_DEF.length,
     'Boss5: block names must be distinct');
 
-  const budget = (gm: number) => runeBudgetForGlobalMastery(gm);
   for (const block of BOSS5_BLOCKS_DEF) {
     const spec = BOSS5_BLOCKS[block.name]!;
     assert.equal(spec.pilotIds.length, 0, `${block.name}: no pilot is authorized`);
@@ -591,15 +581,6 @@ export function assertBoss5Definitions(): void {
       // the default-trigger reference every earlier boss screen ran.
       assert.equal(r.runeRules.filter((x) => guards.includes(x.actionId)).length, 0,
         `${cell.id}: a Rune rule names a Guard`);
-      // RP: the budget stance, abilities and rules all draw on. The global mastery a
-      // prepared bot actually reaches is tier-dependent, so the affordable ceiling is
-      // asserted at the LOWEST mastery the tier ladder grants rather than a constant.
-      const cost = runicPointLoadoutCost({
-        rules: withReferenceAbilityWiring(r.runeRules as never, r.abilities), abilities: r.abilities,
-        stances: r.stance ? [r.stance] : [], rites: [],
-      });
-      assert(cost <= budget(TIER_MASTERY[block.tier]!),
-        `${cell.id}: the package costs ${cost} RP against the tier's ${budget(TIER_MASTERY[block.tier]!)} budget`);
     }
   }
 

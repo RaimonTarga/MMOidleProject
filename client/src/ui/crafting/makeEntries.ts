@@ -1,10 +1,6 @@
 import {
   ABILITY_DATABASE,
   ABILITY_RECIPE_DATABASE,
-  ACTION_DATABASE,
-  runeActionArchetypeNote,
-  CONDITION_DATABASE,
-  RUNE_RECIPE_DATABASE,
   RECIPE_DATABASE,
   availableToClass,
   RITE_DATABASE,
@@ -14,8 +10,6 @@ import {
   abilityDef,
   isAbilityRecipeUnlocked,
   isRiteRecipeUnlocked,
-  isRuneRecipeUnlocked,
-  isRuneRecipeAvailableForArchetype,
   isStanceRecipeUnlocked,
   riteDef,
   stanceDef,
@@ -31,9 +25,9 @@ import { biomeName } from './common';
  * separate authoritative databases — this is a client view model that lets one
  * browser present them with a single grammar.
  */
-export type MakeKind = EquipmentSlot | 'technique' | 'stance' | 'rite' | 'rune';
+export type MakeKind = EquipmentSlot | 'technique' | 'stance' | 'rite';
 
-export const TECHNIQUE_KINDS: readonly MakeKind[] = ['technique', 'stance', 'rite', 'rune'];
+export const TECHNIQUE_KINDS: readonly MakeKind[] = ['technique', 'stance', 'rite'];
 
 export interface MakeEntry {
   /** Unique across kinds; recipe ids are only unique within their database. */
@@ -55,7 +49,7 @@ export interface MakeEntry {
   /** Present for gear only; carries the fields the gear detail pane needs. */
   gear?: Recipe;
   /**
-   * What making this actually gives you — the ability/stance/rite/rune id, which
+   * What making this actually gives you — the ability/stance/rite id, which
    * is NOT the recipe id. Absent for gear, where the recipe id is the item id.
    * Drives icon resolution and the effect table in the detail pane.
    */
@@ -69,8 +63,6 @@ export interface MakeSources {
   knownAbilities: readonly string[];
   knownStances: readonly string[];
   knownRites: readonly string[];
-  /** Rune fragments already crafted; a rune recipe yields one fragment. */
-  ownedRunes: readonly string[];
   biomeLevel: Record<string, number>;
   bossesCleared: readonly string[];
   /** The test room unlocks every gear recipe regardless of progression. */
@@ -183,7 +175,7 @@ function techniqueEntries(spec: TechniqueSpec): MakeEntry[] {
  */
 export const KIND_ORDER: MakeKind[] = [
   'weapon', 'armor', 'recovery', 'mobility', 'core', 'relic',
-  'technique', 'stance', 'rite', 'rune',
+  'technique', 'stance', 'rite',
 ];
 
 /** One name per kind, for every surface that has to say what a recipe makes. */
@@ -197,7 +189,6 @@ export const MAKE_KIND_LABELS: Record<MakeKind, string> = {
   technique: 'Technique',
   stance: 'Stance',
   rite: 'Rite',
-  rune: 'Rune',
 };
 
 /** One spec per learnable kind, shared by the entry list and `unlockedMakeKinds`. */
@@ -238,32 +229,6 @@ function techniqueSpecs(sources: MakeSources): TechniqueSpec[] {
       isUnlocked: (id) => {
         const recipe = RITE_RECIPE_DATABASE.get(id);
         return !!recipe && isRiteRecipeUnlocked(recipe, gates);
-      },
-    },
-    // Rune fragments are made here too (V5): crafting a rune is making a thing,
-    // and it was the last recipe kind still being spent from inside Build.
-    {
-      kind: 'rune',
-      // `!r.deprecated` is belt-and-suspenders: a deprecated recipe's rune is
-      // always a starter default too, so `known` already filters it below —
-      // but this keeps the exclusion correct even if that stops being true.
-      recipes: [...RUNE_RECIPE_DATABASE.values()].filter(
-        (r) =>
-          !!r.runeId &&
-          !r.deprecated &&
-          isRuneRecipeAvailableForArchetype(r, sources.combatArchetype),
-      ),
-      learnedId: (id) => RUNE_RECIPE_DATABASE.get(id)?.runeId ?? null,
-      blurb: (id) =>
-        [
-          ACTION_DATABASE.get(id)?.blurb ?? CONDITION_DATABASE.get(id)?.blurb ?? '',
-          runeActionArchetypeNote(id, sources.combatArchetype),
-        ].filter(Boolean).join(' '),
-      displayName: (recipeId) => RUNE_RECIPE_DATABASE.get(recipeId)?.name ?? null,
-      known: sources.ownedRunes,
-      isUnlocked: (id) => {
-        const recipe = RUNE_RECIPE_DATABASE.get(id);
-        return !!recipe && isRuneRecipeUnlocked(recipe, gates);
       },
     },
   ];

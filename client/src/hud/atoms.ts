@@ -221,7 +221,7 @@ export const unlockedRecipesAtom = atom<string[]>([]);
 export const bossesClearedAtom = atom<string[]>([]);
 export const visitedNodesAtom = atom<string[]>([]);
 export const biomeLevelAtom = atom<Record<string, number>>({});
-/** Derived sum of all biome levels (system rework Step 4) — RP budget + upgrade ceiling. */
+/** Derived sum of all biome levels (system rework Step 4) — the upgrade ceiling. */
 export const globalMasteryAtom = atom((get) => globalMastery(get(biomeLevelAtom)));
 export const biomeXPAtom = atom<Record<string, number>>({});
 export const questProgressAtom = atom<Record<string, number>>({});
@@ -396,7 +396,6 @@ export const dungeonAtom = atom<DungeonView | null>(null);
 export const partyAtom = atom<{ leaderId: string; members: PartyMember[] } | null>(null);
 
 export const runesOwnedAtom = atom<string[]>([]);
-export const runeRecipesCraftedAtom = atom<string[]>([]);
 export const runesEquippedAtom = atom<EquippedRule[]>([]);
 
 /** Abilities learned (crafted) — the slottable pool (system rework Step 7). */
@@ -845,7 +844,6 @@ function resetPlayerAtoms(): void {
   setIfChanged(summonRespawnMaxMsAtom, 0);
   setIfShallowArrayEqual(unlockedSkillsAtom, []);
   setIfShallowArrayEqual(runesOwnedAtom, []);
-  setIfShallowArrayEqual(runeRecipesCraftedAtom, []);
   setRunesEquipped([]);
   setIfShallowArrayEqual(knownAbilitiesAtom, []);
   setAttunedAbilities({ techniques: [], guards: [] });
@@ -974,7 +972,6 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfShallowArrayEqual(wardsAtom, player.wards);
   setIfShallowArrayEqual(unlockedSkillsAtom, player.unlockedSkills);
   setIfShallowArrayEqual(runesOwnedAtom, player.runesOwned);
-  setIfShallowArrayEqual(runeRecipesCraftedAtom, player.runeRecipesCrafted);
   setRunesEquipped(player.runesEquipped);
   setIfShallowArrayEqual(knownAbilitiesAtom, player.knownAbilities);
   setAttunedAbilities(player.attunedAbilities);

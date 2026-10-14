@@ -1,7 +1,7 @@
 /**
  * NOT USED BY THE HARNESS. The bot's loadout is Rune rules only (`./runes.ts`,
- * `./apply.ts`). This full-build validator (abilities, stances, rites and their
- * Runic Point bill) is kept only because the server's bench imports
+ * `./apply.ts`). This full-build validator (abilities, stances and rites) is
+ * kept only because the server's bench imports
  * `validateBuild` from this path: `server/bench/balance/ttkSurveySpec.ts`
  * (whose `prepareSurveyBot` about twenty server tests call),
  * `server/bench/poolRaise.ts` and `server/bench/lineage/laneBot.ts`. It goes
@@ -9,7 +9,7 @@
  */
 import {
   ABILITY_DATABASE, STANCE_DATABASE, RITE_DATABASE, attunedAbilityIds,
-  runicPointBreakdown, runeBudgetForGlobalMastery, sanitizeRuneLoadout, withReferenceAbilityWiring,
+  sanitizeRuneLoadout,
   type AttunedAbilities, type EquippedRule, type PlayerView,
 } from "@mmo-idle/shared";
 
@@ -21,7 +21,7 @@ export interface DesiredBuild {
   rites: string[];
 }
 
-export type BuildFailureCode = "MALFORMED_BUILD" | "MISSING_UNLOCK" | "INSUFFICIENT_RP"
+export type BuildFailureCode = "MALFORMED_BUILD" | "MISSING_UNLOCK"
   | "GAME_REJECTION" | "STATE_SYNC_FAILURE" | "STALE_IMPLEMENTATION" | "ROUTE_LOGIC_FAILURE";
 export interface BuildIssue { code: BuildFailureCode; reason: string }
 export class BuildError extends Error {
@@ -40,13 +40,6 @@ export function buildKey(build: DesiredBuild): string {
   return JSON.stringify([build.abilities.techniques, build.abilities.guards,
     build.runeRules.map(r => [r.conditionId, r.actionId, r.targetAbilityId ?? null, r.targetStanceId ?? null]),
     build.stances.attuned, build.stances.default, build.rites]);
-}
-
-/** Priced as equipped: `applyBuild` adds reference wiring for unwired abilities. */
-export function buildRP(build: DesiredBuild) {
-  return runicPointBreakdown({ abilities: build.abilities,
-    rules: withReferenceAbilityWiring(build.runeRules, build.abilities),
-    stances: build.stances.attuned, rites: build.rites });
 }
 
 export function validateBuild(build: DesiredBuild, self: PlayerView): BuildIssue[] {
@@ -80,14 +73,11 @@ export function validateBuild(build: DesiredBuild, self: PlayerView): BuildIssue
   if (build.stances.default !== null && !build.stances.attuned.includes(build.stances.default)) add("MALFORMED_BUILD", "Default stance must be attuned");
   for (const [index, rule] of build.runeRules.entries()) {
     if (!self.runesOwned.includes(rule.conditionId) || !self.runesOwned.includes(rule.actionId)) add("MISSING_UNLOCK", `Rune rule ${index} uses an unowned fragment`);
-    const valid = sanitizeRuneLoadout([rule], new Set(self.runesOwned), Infinity, self.combatArchetype,
+    const valid = sanitizeRuneLoadout([rule], new Set(self.runesOwned), self.combatArchetype,
       new Set(build.stances.attuned), new Set(attunedAbilityIds(build.abilities)));
     if (valid.length !== 1 || buildKey({ ...build, runeRules: valid }) !== buildKey({ ...build, runeRules: [rule] })) {
       add("MALFORMED_BUILD", `Rune rule ${index} has invalid compatibility, target or obsolete schema`);
     }
   }
-  const cost = buildRP(build).total;
-  const budget = runeBudgetForGlobalMastery(self.globalMastery);
-  if (cost > budget) add("INSUFFICIENT_RP", `Build costs ${cost} RP; budget is ${budget}`);
   return issues;
 }

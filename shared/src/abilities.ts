@@ -385,6 +385,10 @@ export function emptyAttunedAbilities(): AttunedAbilities {
   return { techniques: [], guards: [] };
 }
 
+export function attunedAbilityIds(abilities: AttunedAbilities): string[] {
+  return [...new Set([...abilities.techniques, ...abilities.guards])];
+}
+
 
 // ── Rank resolution ──────────────────────────────────────────────────────────
 

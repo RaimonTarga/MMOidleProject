@@ -113,7 +113,7 @@ export interface PlayerView {
   itemUpgrades: Record<string, number>;
   biomeXP: Record<string, number>;
   biomeLevel: Record<string, number>;
-  /** Derived sum of all biome levels (system rework Step 4) — drives RP budget + upgrade ceiling. */
+  /** Derived sum of all biome levels (system rework Step 4) — drives the upgrade ceiling. */
   globalMastery: number;
   unlockedRecipes: string[];
   combatArchetype: CombatArchetype;
@@ -162,7 +162,6 @@ export interface PlayerView {
   /** Nodes entered through world travel; unlocks the map after first travel. */
   visitedNodes: string[];
   runesOwned: string[];
-  runeRecipesCrafted: string[];
   runesEquipped: EquippedRule[];
   /** Abilities learned (crafted) — the slottable pool (system rework Step 7). */
   knownAbilities: string[];
@@ -468,7 +467,6 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     clearedNodes: progression.clearedNodes ?? [],
     visitedNodes: progression.visitedNodes ?? [],
     runesOwned: progression.runesOwned ?? [],
-    runeRecipesCrafted: progression.runeRecipesCrafted ?? [],
     runesEquipped: progression.runesEquipped ?? [],
     knownAbilities: progression.knownAbilities ?? [],
     attunedAbilities: normalizeAttunedAbilities(progression.attunedAbilities),

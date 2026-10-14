@@ -19,7 +19,6 @@ import {
   equipmentAtom,
   inventoryAtom,
   questProgressAtom,
-  runeRecipesCraftedAtom,
   runesOwnedAtom,
 } from './atoms';
 import {
@@ -98,7 +97,6 @@ export function installUiUnlockSync(): () => void {
       equippedRites: store.get(equippedRitesAtom),
       essences: store.get(essencesAtom),
       unlockedRecipes: store.get(unlockedRecipesAtom),
-      runeRecipesCrafted: store.get(runeRecipesCraftedAtom),
       skillPoints: store.get(skillPointsAtom),
       passives: store.get(passivesAtom),
       biomeXP: store.get(biomeXPAtom),
@@ -210,7 +208,6 @@ export function installUiUnlockSync(): () => void {
     equippedRitesAtom,
     essencesAtom,
     unlockedRecipesAtom,
-    runeRecipesCraftedAtom,
     skillPointsAtom,
     passivesAtom,
     biomeXPAtom,

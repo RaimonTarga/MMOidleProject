@@ -65,7 +65,7 @@ export function statIconSource(icon: StatIcon): AssetIconSource {
 }
 
 export type CraftingSectionIcon = 'biome' | 'forge' | 'upgrade';
-export type MasterySectionIcon = 'summary' | 'items' | 'runes' | 'biomes';
+export type MasterySectionIcon = 'summary' | 'items' | 'biomes';
 export type RuneFragmentIcon = 'condition' | 'action';
 export type BuildSectionIcon = 'abilities' | 'stances' | 'rites' | 'runes';
 
@@ -78,7 +78,6 @@ const CRAFTING_SECTION_ICONS: Record<CraftingSectionIcon, IconSource> = {
 const MASTERY_SECTION_ICONS: Record<MasterySectionIcon, IconSource> = {
   summary: menuIconSource('mastery'),
   items: CRAFTING_SECTION_ICONS.upgrade,
-  runes: menuIconSource('runes'),
   biomes: CRAFTING_SECTION_ICONS.biome,
 };
 
@@ -139,7 +138,6 @@ const MAKE_KIND_ICONS: Record<string, IconSource> = {
   technique: atlasIcon('UI_icons/abilities/sweep.png'),
   stance: assetIcon('/assets/concept-icons/stances/offensive-stance.png?v=specific-v3'),
   rite: menuIconSource('rites'),
-  rune: menuIconSource('runes'),
 };
 
 /** Glyph for a craftable kind, or null when the kind has no art yet. */

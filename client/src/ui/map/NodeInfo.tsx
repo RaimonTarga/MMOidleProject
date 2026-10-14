@@ -42,7 +42,7 @@ import {
 } from '../crafting/itemDisplay';
 import { MAKE_KIND_LABELS } from '../crafting/makeEntries';
 import { DetailLines } from '../describe/DetailLines';
-import { loadoutLinesFor, ruleLines } from '../describe';
+import { loadoutLinesFor } from '../describe';
 import { useAbilityContext } from '../describe/useAbilityContext';
 import type { AbilityContext } from '../describe';
 import { biomeUnlocksByLevel, type BiomeUnlock } from './biomeUnlocks';
@@ -148,13 +148,8 @@ function UnlockRow({ unlock, unlocked, open, onToggle, relicPreview, abilityCont
       ...(gear.slot === 'weapon' ? formatWeaponEffects(gear.id) : []),
     ]
     : [];
-  // A rune recipe yields one fragment, so it describes that fragment's own
-  // numbers rather than an assembled rule's.
   const learnedLines = unlock.learnedId
-    ? unlock.kind === 'rune'
-      ? ruleLines({ conditionId: unlock.learnedId, actionId: unlock.learnedId })
-        .filter((line) => line.key !== 'cost')
-      : loadoutLinesFor(unlock.learnedId, abilityContext)
+    ? loadoutLinesFor(unlock.learnedId, abilityContext)
     : [];
   const costs = Object.entries(unlock.cost) as [EssenceType, number][];
 

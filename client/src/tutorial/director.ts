@@ -3,7 +3,6 @@ import {
   ABILITY_RECIPE_DATABASE,
   ITEM_DATABASE,
   RECIPE_DATABASE,
-  RUNE_RECIPE_DATABASE,
   ABILITY_DATABASE,
   ACTION_DATABASE,
   CONDITION_DATABASE,
@@ -283,16 +282,6 @@ async function craft(recipeId: string, beat: TutorialBeat, signal: AbortSignal):
   store.set(tutorialHighlightAtom, null);
 }
 
-async function craftRune(recipeId: string, beat: TutorialBeat, signal: AbortSignal): Promise<void> {
-  if (requireView().runeRecipesCrafted.includes(recipeId)) return;
-  const recipe = RUNE_RECIPE_DATABASE.get(recipeId);
-  if (!recipe) throw new TutorialStop(`Unknown Rune recipe ${recipeId}.`, 'error');
-  await makeEntry('rune', `rune:${recipeId}`, () => hudBus.requestCraftRuneRecipe(recipeId), beat, signal);
-  const made = await waitAlive((v) => v.runeRecipesCrafted.includes(recipeId), signal, ACTION_TIMEOUT_MS);
-  if (!made) throw new TutorialStop(`${recipe.name} was not made. Press Next to try again.`, 'error');
-  store.set(tutorialHighlightAtom, null);
-}
-
 async function equip(definitionId: string, beat: TutorialBeat, signal: AbortSignal): Promise<void> {
   const item = ITEM_DATABASE.get(definitionId);
   if (!item) throw new TutorialStop(`Unknown item ${definitionId}.`, 'error');
@@ -435,8 +424,7 @@ async function buildRunesOnBoard(target: EquippedRule[], beat: TutorialBeat, sig
 /**
  * Ability loadout the way a player does it on the Abilities tab: Unattune what
  * leaves, Attune what joins, then "Use default timing" on each new ability so a
- * Rune fires it (abilities have no built-in trigger). Unattuning first frees
- * the RP the new ones need, like the bot's `applyBuild`.
+ * Rune fires it (abilities have no built-in trigger).
  */
 async function applyAbilities(
   abilities: { techniques: string[]; guards: string[] },
@@ -657,8 +645,6 @@ async function performStep(
       return;
     case 'configureRunes':
       return configureRunes(step, beat, signal);
-    case 'craftRune':
-      return craftRune(step.recipeId, beat, signal);
     case 'learnAbility':
       return learnAbility(step, beat, signal);
     case 'setAbilities':

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { BREADTH_CELLS, type BreadthCell } from './playerBreadthSpec';
 import { FARMING_STANCE_CELLS } from './farmingStanceSpec';
-import { ITEM_DATABASE, RECIPE_DATABASE, requiredBiomeLevelForUpgrade, runicPointBreakdown, STANCE_RECIPE_DATABASE, isStanceRecipeUnlocked } from '@mmo-idle/shared';
+import { ITEM_DATABASE, RECIPE_DATABASE, requiredBiomeLevelForUpgrade, STANCE_RECIPE_DATABASE, isStanceRecipeUnlocked } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../src/ecs/entity';
 
 export interface FarmingSustainCell extends BreadthCell {
@@ -69,7 +69,6 @@ export function sustainGates(cell: FarmingSustainCell, bot: PlayerEntity) {
   });
   return { evolutionChain: chain, acquisition: cell.progressionSnapshot ? 'Fixed route checkpoint; paid costs in progression receipt' : 'Synthetic mature equipment; chain gates checked, no acquisition/cost claim',
     upgrade: { plus: bot.holdsInventory.itemUpgrades[item.id], requiredMastery: requiredBiomeLevelForUpgrade(item, cell.progressionSnapshot ? bot.holdsInventory.itemUpgrades[item.id] : 5) },
-    stanceGates, reserved: runicPointBreakdown({ abilities: p.attunedAbilities, rules: p.runesEquipped,
-      stances: p.attunedStances ?? [], rites: p.equippedRites }),
+    stanceGates,
     recoveryPassives: Object.fromEntries(Object.entries(bot.usesSkills.passives).filter(([k]) => k.includes('recovery'))) };
 }

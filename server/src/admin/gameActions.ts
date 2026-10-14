@@ -18,16 +18,12 @@ import {
   SKILL_TREE,
   sealsHeldAtTier, sealsRequiredForTier,
   TEST_ROOM_NODE_ID,
-  runeIdsFromCraftedRecipes,
+  runeIdsForArchetype,
   normalizeAttunedAbilities,
   normalizeEquipment,
   validStanceIds,
   validRiteIds,
   sanitizeRuneLoadout,
-  runeBudgetForGlobalMastery,
-  runicPointLoadoutCost,
-  RUNE_RECIPE_DATABASE,
-  globalMastery,
   type FastBossRetryResult,
   type TierEntryApplyResult,
   type TierEntryProfile,
@@ -111,8 +107,6 @@ export function resetPlayerProgress(world: World, player: PlayerEntity): GameAct
   player.tracksProgression.bossesCleared = [];
   player.tracksProgression.clearedNodes = [];
   player.tracksProgression.visitedNodes = [];
-  player.tracksProgression.runeRecipesCrafted = [];
-  player.tracksProgression.runesOwned = runeIdsFromCraftedRecipes([]);
   player.tracksProgression.runesEquipped = DEFAULT_RUNE_LOADOUT.map((rule) => ({ ...rule }));
   player.tracksProgression.knownAbilities = [];
   player.tracksProgression.attunedAbilities = emptyAttunedAbilities();
@@ -362,11 +356,7 @@ export function applyTierEntryProfile(
     return fail('Profile equips an ability that is not learned.');
   }
 
-  const runeRecipesCrafted = [...new Set(profile.runeRecipesCrafted ?? [])];
-  if (runeRecipesCrafted.some((id) => !RUNE_RECIPE_DATABASE.has(id))) {
-    return fail('Profile contains an unknown Rune recipe.');
-  }
-  const runesOwned = runeIdsFromCraftedRecipes(runeRecipesCrafted);
+  const runesOwned = runeIdsForArchetype(archetype);
   const knownStances = validStanceIds(profile.knownStances ?? []);
   if (knownStances.length !== new Set(profile.knownStances ?? []).size) return fail('Profile contains an unknown stance.');
   const equippedStances = profile.equippedStances?.default === null || profile.equippedStances?.default === undefined
@@ -383,20 +373,15 @@ export function applyTierEntryProfile(
   if (equippedRites.length !== (profile.equippedRites ?? []).length || equippedRites.some((id) => !knownRites.includes(id))) {
     return fail('Profile equips an unlearned or unknown rite.');
   }
-  const budget = runeBudgetForGlobalMastery(globalMastery(profile.biomeLevels ?? {}));
   const runesEquipped = sanitizeRuneLoadout(
     Array.isArray(profile.runesEquipped) ? profile.runesEquipped : [],
     new Set(runesOwned),
-    budget,
     archetype,
     new Set(attunedStances),
     new Set([...attunedAbilities.techniques, ...attunedAbilities.guards]),
   );
   if (runesEquipped.length !== (profile.runesEquipped ?? []).length) {
-    return fail(`Profile Rune loadout is invalid or exceeds the ${budget} RP budget.`);
-  }
-  if (runicPointLoadoutCost({ rules: runesEquipped, rites: equippedRites, abilities: attunedAbilities, stances: attunedStances }) > budget) {
-    return fail(`Profile Rune/Rite loadout exceeds the ${budget} RP budget.`);
+    return fail('Profile Rune loadout is invalid.');
   }
 
   // Relocate first, then clear every transient combat slice. No monsters or
@@ -430,7 +415,6 @@ export function applyTierEntryProfile(
   player.tracksProgression.visitedNodes = [...new Set(profile.visitedNodes ?? [])];
   player.tracksProgression.questProgress = { ...(profile.questProgress ?? {}) };
   player.tracksProgression.unlockedRecipes = [];
-  player.tracksProgression.runeRecipesCrafted = runeRecipesCrafted;
   player.tracksProgression.runesOwned = runesOwned;
   player.tracksProgression.runesEquipped = runesEquipped;
   player.tracksProgression.knownAbilities = knownAbilities;
@@ -552,6 +536,7 @@ function clearPlayerSkillState(world: World, player: PlayerEntity): void {
   player.usesSkills.specializationId = null;
   player.usesSkills.selectedRange = null;
   player.usesSkills.combatArchetype = null;
+  player.tracksProgression.runesOwned = runeIdsForArchetype(null);
 
   clearPlayerMotionAndTargets(world, player);
   detachComponent(world, player, 'hasEmpoweredAttack');

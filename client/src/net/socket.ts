@@ -47,7 +47,6 @@ export interface SocketHandlers {
   onDelta(snapshot: DeltaSnapshot): void;
   onNodePreparing(payload: { nodeId: string }): void;
   onCraftResult(result: { success: boolean; reason?: string }): void;
-  onRuneCraftResult(result: { recipeId: string; success: boolean; reason?: string }): void;
   onAbilityCraftResult(result: { recipeId: string; success: boolean; reason?: string }): void;
   onStanceCraftResult(result: { recipeId: string; success: boolean; reason?: string }): void;
   onRiteCraftResult(result: { recipeId: string; success: boolean; reason?: string }): void;
@@ -86,7 +85,6 @@ export function wireSocketHandlers(
   socket.on('spectate:error', (p) => h.onSpectateError(p.reason));
   socket.on('node:preparing', (p) => h.onNodePreparing(p));
   socket.on('crafting:result', (r) => h.onCraftResult(r));
-  socket.on('rune:craftResult', (r) => h.onRuneCraftResult(r));
   socket.on('ability:craftResult', (r) => h.onAbilityCraftResult(r));
   socket.on('stance:craftResult', (r) => h.onStanceCraftResult(r));
   socket.on('rite:craftResult', (r) => h.onRiteCraftResult(r));
@@ -118,7 +116,6 @@ export function wireSocketHandlers(
     socket.off('spectate:error');
     socket.off('node:preparing');
     socket.off('crafting:result');
-    socket.off('rune:craftResult');
     socket.off('ability:craftResult');
     socket.off('stance:craftResult');
     socket.off('rite:craftResult');

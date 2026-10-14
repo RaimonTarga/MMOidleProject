@@ -42,7 +42,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
       bossesCleared: [],
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: ["bramble-guard"],
       attunedAbilities: { techniques: [], guards: ["bramble-guard"] },

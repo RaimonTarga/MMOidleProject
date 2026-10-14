@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { DUNGEON_DEFS, NODE_BIOMES, runicPointLoadoutCost } from '@mmo-idle/shared';
+import { DUNGEON_DEFS, NODE_BIOMES } from '@mmo-idle/shared';
 import { SURVEY_CLASSES } from './ttkSurveySpec';
 import type { BreadthCell } from './playerBreadthSpec';
 import { PROGRESSION_SNAPSHOTS } from './progressionSnapshot';
@@ -50,9 +50,6 @@ function make(root:typeof SURVEY_CLASSES[number],frame:typeof frames[number],gro
      skillPath:[`${root.prefix}-root`,...(t>1?[`${root.prefix}-${frame}`]:[]),...(t>2?[`${root.prefix}-range-${melee?'close':'mid'}`]:[])],
      gearItemIds:{weapon,armor:`${armor}-vest-t${tierFor(armor)}`,recovery:`${charm}-charm-t${tierFor(charm)}`,mobility:`${boots}-boots-t${tierFor(boots)}`,
        ...(t>1?{core:root.name==='conduit'&&(s.mastery.jungle??0)>=6?'core-survivalist':'core-tempered'}:{})}}};
- // The 20-RP T1 budget prioritises the encounter answer over optional offense.
- if(t===1 && runicPointLoadoutCost({rules,abilities,stances:[],rites:[]})>s.rp)abilities.techniques=[];
- assert(runicPointLoadoutCost({rules,abilities,stances:stance?[stance]:[],rites:[]})<=s.rp,`${id}: RP conflict`);
  return c;
 }
 const groups:ProgressionCell[][]=[];

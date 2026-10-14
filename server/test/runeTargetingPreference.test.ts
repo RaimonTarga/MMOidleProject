@@ -76,7 +76,6 @@ function makePlayerSlices(id: string, runesEquipped: EquippedRule[]): PersistedP
       // not starters. `attachPlayerEntity` re-derives ownership from crafted
       // recipes and silently drops any rule it does not own, so a missing recipe
       // here would make the test pass for the wrong reason.
-      runeRecipesCrafted: ["rune-recipe-focus-highest-hp", "rune-recipe-focus-lowest-hp"],
       runesEquipped,
       knownAbilities: [],
       attunedAbilities: { techniques: [], guards: [] },

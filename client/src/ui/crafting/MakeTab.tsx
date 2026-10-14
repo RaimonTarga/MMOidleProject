@@ -44,11 +44,10 @@ import { BuildIcon } from '../BuildIcon';
 import { abilityIconSource } from '../abilityIcons';
 import {
   riteIconSource,
-  runeFragmentConceptIconSource,
   stanceIconSource,
 } from '../conceptIcons';
 import { DetailLines } from '../describe/DetailLines';
-import { loadoutLinesFor, ruleLines } from '../describe';
+import { loadoutLinesFor } from '../describe';
 import { useAbilityContext } from '../describe/useAbilityContext';
 import type { AbilityContext } from '../describe';
 import { makeFiltersAtom } from '../panelFilters';
@@ -131,9 +130,7 @@ function EntryIcon({ entry, size }: { entry: MakeEntry; size: number }) {
       ? stanceIconSource(entry.learnedId)
       : entry.learnedId && entry.kind === 'rite'
         ? riteIconSource(entry.learnedId)
-        : entry.learnedId && entry.kind === 'rune'
-          ? runeFragmentConceptIconSource(entry.learnedId)
-          : null;
+        : null;
   return (
     <BuildIcon
       kind={
@@ -141,9 +138,7 @@ function EntryIcon({ entry, size }: { entry: MakeEntry; size: number }) {
           ? 'ability'
           : entry.kind === 'stance'
             ? 'stance'
-            : entry.kind === 'rune'
-              ? 'rune'
-              : 'rite'
+            : 'rite'
       }
       label={entry.name}
       size={size}
@@ -603,17 +598,11 @@ interface MakeDetailProps {
 
 /**
  * What a non-gear recipe would actually give you. Gear already states its stats
- * and mechanic effects; techniques, stances, rites and runes used to offer a
+ * and mechanic effects; techniques, stances and rites used to offer a
  * blurb and a price, which is not enough to decide whether to spend on one.
  */
 function madeThingLines(entry: MakeEntry, context: AbilityContext) {
   if (!entry.learnedId) return [];
-  if (entry.kind === 'rune') {
-    // A rune recipe yields ONE fragment — a condition or an action, not an
-    // assembled rule — so it describes that fragment's own numbers.
-    return ruleLines({ conditionId: entry.learnedId, actionId: entry.learnedId })
-      .filter((line) => line.key !== 'cost');
-  }
   return loadoutLinesFor(entry.learnedId, context);
 }
 
@@ -662,7 +651,6 @@ function MakeDetail({
     if (entry.kind === 'technique') hudBus.requestCraftAbilityRecipe(entry.recipeId);
     else if (entry.kind === 'stance') hudBus.requestCraftStanceRecipe(entry.recipeId);
     else if (entry.kind === 'rite') hudBus.requestCraftRiteRecipe(entry.recipeId);
-    else if (entry.kind === 'rune') hudBus.requestCraftRuneRecipe(entry.recipeId);
   }
 
   const blocked = !entry.unlocked

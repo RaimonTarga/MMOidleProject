@@ -82,7 +82,6 @@ function slices(id: string, options: Options = {}): PersistedPlayerSlices {
       bossesCleared: [],
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: techniques,
       attunedAbilities: { techniques, guards: [] },

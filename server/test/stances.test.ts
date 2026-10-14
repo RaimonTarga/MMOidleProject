@@ -14,7 +14,6 @@ import {
   activeStanceModifiers,
   brawlerDamageReduction,
   emptyEquipment,
-  runeRuleCost,
   sanitizeRuneLoadout,
   stanceDef,
 } from "@mmo-idle/shared";
@@ -44,7 +43,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier: 0, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
-      runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [],
+      runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [{ conditionId: "hp-below-25", actionId: "switch-stance", targetStanceId: "defensive-stance" }],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: ["offensive-stance", "defensive-stance", "tanking-stance", "berserker-stance"],
@@ -63,7 +62,6 @@ recalculatePlayerEntityStats(world, player);
 const neutralRule = sanitizeRuneLoadout(
   [{ conditionId: "hp-below-25", actionId: "switch-stance", targetStanceId: NO_STANCE_ID }],
   new Set(STARTER_RUNE_IDS),
-  Number.POSITIVE_INFINITY,
   null,
   new Set(),
 );
@@ -311,25 +309,6 @@ assert(player.performsAttack.attackCooldown === gatedCooldown, "Perfection's cad
 player.hasHealth.hp = player.hasHealth.maxHp * 0.5;
 updateStanceSwitch(world, 100, now);
 assert(player.dealsDamage.attack === GAME_CONFIG.PLAYER_ATTACK, "setup: gate closed before the Berserker section");
-
-// ── Runic cost of a stance rule ───────────────────────────────────────────────
-// `Switch Stance` is a verb with no power of its own; the destination carries the
-// whole charge. Taxing the verb too priced the cheapest tactical transition like a
-// premium Rite and pushed Stance micro out of reach of ordinary budgets.
-assert(ACTION_DATABASE.get("switch-stance")!.cost === 0, "Switch Stance itself must contribute 0 RP");
-assert(
-  runeRuleCost({ conditionId: "in-combat", actionId: "switch-stance", targetStanceId: "offensive-stance" }) === 1,
-  "a stance rule costs only its condition",
-);
-assert(
-  runeRuleCost({ conditionId: "hp-above-90", actionId: "switch-stance", targetStanceId: "perfection-stance" }) === 1,
-  "Perfection switching must not repay its attunement",
-);
-assert(
-  runeRuleCost({ conditionId: "in-combat", actionId: "switch-stance", targetStanceId: NO_STANCE_ID }) ===
-    runeRuleCost({ conditionId: "in-combat", actionId: "switch-stance" }),
-  "the neutral destination must stay free",
-);
 
 player.tracksProgression.activeStance = "berserker-stance";
 recalculatePlayerStanceStats(world, player);

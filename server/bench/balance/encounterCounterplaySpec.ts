@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict';
-import { runicPointLoadoutCost, withReferenceAbilityWiring } from '@mmo-idle/shared';
 import { PROGRESSION_CELLS, type ProgressionCell } from './overnightProgressionSpec';
 export const ENCOUNTER_ID='encounter-counterplay-01';
 export type EncounterCell=ProgressionCell & {referenceObservationId:string;referenceSource:string;durationMs:number};
@@ -30,8 +29,6 @@ for(const [block,prefix] of Object.entries(references))for(const seed of [101009
     c.runeRules![i]={conditionId:'target-max-stacks',actionId:'use-ability',targetAbilityId:'detonate'};
    }
   }
-  const cost=runicPointLoadoutCost({rules:withReferenceAbilityWiring(c.runeRules!,c.abilities!),abilities:c.abilities!,stances:c.stance?[c.stance]:[],rites:[]});
-  assert(cost<=c.progressionSnapshot!.rp,`${c.id}: ${cost}/${c.progressionSnapshot!.rp} RP`);
   ENCOUNTER_CELLS.push(c);
  }
 }

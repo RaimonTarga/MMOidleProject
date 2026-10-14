@@ -18,7 +18,6 @@ export interface SystemVisibilityInput {
   equippedRites: readonly string[];
   essences?: Partial<Record<EssenceType, number>>;
   unlockedRecipes?: readonly string[];
-  runeRecipesCrafted?: readonly string[];
   skillPoints?: number;
   passives?: Record<string, number>;
   biomeXP?: Record<string, number>;
@@ -99,8 +98,7 @@ export function resolveSystemVisibility(
     input.hasEquipment === true ||
     input.knownAbilities.length > 0 ||
     input.knownStances.length > 0 ||
-    input.knownRites.length > 0 ||
-    (input.runeRecipesCrafted?.length ?? 0) > 0;
+    input.knownRites.length > 0;
 
   return {
     combatLog: hasFought,

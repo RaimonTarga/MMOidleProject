@@ -24,7 +24,6 @@ export type TutorialView = Pick<
   | 'itemUpgrades'
   | 'questProgress'
   | 'runesEquipped'
-  | 'runeRecipesCrafted'
   | 'knownAbilities'
   | 'attunedAbilities'
   | 'bossesCleared'
@@ -71,8 +70,6 @@ export function evaluateTutorialCondition(condition: TutorialCondition, view: Tu
       return Object.values(view.equipment).includes(condition.definitionId);
     case 'abilityKnown':
       return view.knownAbilities.includes(condition.abilityId);
-    case 'runeRecipeCrafted':
-      return view.runeRecipesCrafted.includes(condition.recipeId);
     case 'bossCleared':
       return view.bossesCleared.includes(bossClearKey(condition.biomeGroup, condition.tier));
     case 'allOf':

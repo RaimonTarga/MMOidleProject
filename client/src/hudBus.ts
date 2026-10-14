@@ -36,11 +36,6 @@ export const hudBus = {
     intents.emit('setRuneLoadout', rules);
   },
 
-  /** Called by BuildRunesTab forge tab; server validates unlocks and costs. */
-  requestCraftRuneRecipe(recipeId: string): void {
-    intents.emit('craftRuneRecipe', recipeId);
-  },
-
   /** Learn an ability (craft its recipe); server validates gate + cost. */
   requestCraftAbilityRecipe(recipeId: string): void {
     intents.emit('craftAbilityRecipe', recipeId);

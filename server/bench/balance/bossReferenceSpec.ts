@@ -1,8 +1,7 @@
 import assert from 'node:assert/strict';
 import {
   DUNGEON_DEFS, MONSTER_DATABASE, NODE_BIOMES,
-  runicPointLoadoutCost, runeBudgetForGlobalMastery,
-  type AttunedAbilities, withReferenceAbilityWiring,
+  type AttunedAbilities,
 } from '@mmo-idle/shared';
 import { enumerateBuildsForContentTier } from './progression';
 import { canonicalLoadout } from './botFactory';
@@ -165,16 +164,6 @@ export const BOSSREF_BLOCKS: Record<string, { cells: Night5Cell[]; durationMs: n
 /** The check installs nothing; the boss is fought at authored source values. */
 export function installBossReferenceTreatment(): null { return null; }
 
-/** RP cost of a case, on the same budget the bot actually has. */
-export function bossReferenceRpCost(c: Night5Cell): number {
-  return runicPointLoadoutCost({
-    rules: withReferenceAbilityWiring((c.runeRules ?? []) as never, c.abilities!),
-    abilities: c.abilities!,
-    stances: c.stance ? [c.stance] : [],
-    rites: [],
-  });
-}
-
 /** Fail loudly at load time if any frozen identity or source package has drifted. */
 export function assertBossReferenceDefinitions(): void {
   const boss = MONSTER_DATABASE.get(BOSSREF_BOSS_ID);
@@ -220,12 +209,4 @@ export function assertBossReferenceDefinitions(): void {
   assert.equal(canonical.equippedStances.default, BOSSREF_B_STANCE,
     'Case B stance no longer matches the canonical bench stance');
   assert.equal(BOSSREF_B_RULES.length, 0, 'the legacy package equips no rune rules');
-
-  // Both packages must fit the SAME budget. This is the guard against quietly
-  // making an illegal hybrid legal by changing another input.
-  const budget = runeBudgetForGlobalMastery(72);
-  for (const c of BOSSREF_CELLS) {
-    const cost = bossReferenceRpCost(c);
-    assert(cost <= budget, `${c.id}: package costs ${cost} RP against a ${budget} budget`);
-  }
 }

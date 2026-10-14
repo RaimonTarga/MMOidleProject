@@ -1,5 +1,4 @@
 import { clearReaperMomentum } from "../stances/stanceBehaviors";
-import { runicLoadoutFromProgression, runicPointEditAllowed, attunedAbilityIds, runeBudgetForGlobalMastery, globalMastery } from "@mmo-idle/shared";
 /**
  * Stance crafting + loadout (system rework Step 10).
  *
@@ -109,9 +108,7 @@ export function setStanceLoadout(
   const stances = [...new Set(attunedStances)];
   if (stances.some(id => !STANCE_DATABASE.has(id) || !(prog.knownStances ?? []).includes(id))) return { success: false, reason: "Stances must be valid and learned." };
   if (stanceId && !stances.includes(stanceId)) return { success: false, reason: "Attune this stance before choosing it as default." };
-  const previous = runicLoadoutFromProgression(prog);
   const rules = prog.runesEquipped.filter(rule => rule.actionId !== "switch-stance" || rule.targetStanceId === "no-stance" || stances.includes(rule.targetStanceId ?? ""));
-  if (!runicPointEditAllowed(previous, { ...previous, stances, rules }, runeBudgetForGlobalMastery(globalMastery(prog.biomeLevel)))) return { success: false, reason: "Not enough Runic Points to attune these stances." };
   clearReaperMomentum(entity.tracksCombat);
   prog.attunedStances = stances;
   prog.runesEquipped = rules;

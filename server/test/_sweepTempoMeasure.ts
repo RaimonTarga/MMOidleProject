@@ -55,7 +55,7 @@ function slices(id: string, tier: number, archetype: Archetype, frame: string | 
       unlockedRecipes: [], questProgress: {},
       playerTier: tier, currentSkillTier: tier,
       bossesCleared: [], clearedNodes: [],
-      runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
+      runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
       knownAbilities: ["sweep"], attunedAbilities: { techniques: ["sweep"], guards: [] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],

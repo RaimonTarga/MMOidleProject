@@ -95,7 +95,6 @@ function buildBenchPlayer(
       bossesCleared: [],
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
       // Multi-slot shape (`techniques`/`guards` arrays). This was still the old

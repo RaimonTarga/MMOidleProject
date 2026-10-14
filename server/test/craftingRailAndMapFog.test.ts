@@ -21,7 +21,6 @@ const fresh: MakeSources = {
   knownAbilities: [],
   knownStances: [],
   knownRites: [],
-  ownedRunes: [],
   biomeLevel: {},
   bossesCleared: [],
   isTestRoom: false,

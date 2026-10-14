@@ -7,7 +7,7 @@
  */
 import assert from 'node:assert/strict';
 import { readFileSync, appendFileSync } from 'node:fs';
-import { ABILITY_DATABASE, ITEM_DATABASE, RECIPE_DATABASE, MONSTER_DATABASE, NODE_BIOMES, SKILL_TREE, composePlayerView, runicPointLoadoutCost, withReferenceAbilityWiring } from '@mmo-idle/shared';
+import { ABILITY_DATABASE, ITEM_DATABASE, RECIPE_DATABASE, MONSTER_DATABASE, NODE_BIOMES, SKILL_TREE, composePlayerView } from '@mmo-idle/shared';
 import { createBalanceWorld } from '../bench/balance/worldFactory';
 import { setupArena, teardownArena, BOT_SPAWN } from '../bench/balance/arena';
 import { prepareSurveyBot, SURVEY_CLASSES, type SurveyCell } from '../bench/balance/ttkSurveySpec';
@@ -278,19 +278,13 @@ const DEFAULT_RULES = (melee: boolean) => [
   { conditionId: 'always', actionId: 'wait-for-regen' },
 ];
 
-/** Richest rule set the 22 RP T1 budget admits: full -> no hazards/regen -> no step-back. */
+/** The full rule set: rules cost nothing, so nothing is dropped to fit a budget. */
 function pickRules(row: Row, melee: boolean) {
-  // An explicit rule set is honoured verbatim; its RP legality is still enforced,
-  // by `prepareSurveyBot`'s `setAbilityLoadout` assert, which sees the equipped
-  // rules alongside the abilities.
+  // An explicit rule set is honoured verbatim.
   if (row.rules) { chosenRules = row.rules.length; return row.rules; }
   const full = DEFAULT_RULES(melee);
-  const abilities = { techniques: row.techniques, guards: row.guards };
-  for (const rules of [full, full.slice(0, 3), [full[0]!, full[2]!]]) {
-    const cost = runicPointLoadoutCost({ rules: withReferenceAbilityWiring(rules, abilities), abilities, stances: [], rites: [] } as any);
-    if (cost <= 22) { chosenRules = rules.length; return rules; }
-  }
-  throw Error('no legal rule set');
+  chosenRules = full.length;
+  return full;
 }
 let chosenRules = 0;
 

@@ -42,7 +42,7 @@ function setup(summoner = false, volatile = false) {
       
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
       questProgress: {}, playerTier: 4, currentSkillTier: 4, bossesCleared: [], clearedNodes: [],
-      runesOwned: [], runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [],
+      runesOwned: [], runesEquipped: [], knownAbilities: [],
       attunedAbilities: { techniques: [], guards: [] }, knownStances: [],
       equippedStances: { default: null }, activeStance: null, knownRites: [], equippedRites: [],
     },

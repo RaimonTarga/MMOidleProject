@@ -82,7 +82,6 @@ function makePlayerSlices(id: string, techniques: string[]): PersistedPlayerSlic
       bossesCleared: [],
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [...techniques],
       attunedAbilities: {

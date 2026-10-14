@@ -1,5 +1,5 @@
 import type { CombatArchetype, SkillNode } from '@mmo-idle/shared';
-import { SKILL_TREE, canUnlockSkill } from '@mmo-idle/shared';
+import { SKILL_TREE, canUnlockSkill, runeIdsForArchetype } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
 import type { PlayerEntity } from '../../../ecs/entity';
 import { syncArchetypeSlices } from '../../../ecs/archetypeSliceSync';
@@ -38,6 +38,8 @@ export function unlockSkill(world: World, entity: PlayerEntity, skillId: string)
   if (node.tier === 0) {
     entity.usesSkills.selectedClass   = skillId;
     entity.usesSkills.combatArchetype = CLASS_ARCHETYPES[skillId] ?? null;
+    // Every rune the class may use (rune ownership follows the class).
+    entity.tracksProgression.runesOwned = runeIdsForArchetype(entity.usesSkills.combatArchetype);
     // The class's own gear for the levels already reached (smart loot).
     checkRecipeUnlocks(entity);
   } else if (node.tier === 1) {

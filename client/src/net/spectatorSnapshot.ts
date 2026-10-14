@@ -24,7 +24,6 @@ function presentationDefaults(projection: SpectatorPlayer): Partial<NetworkedEnt
       clearedNodes: [],
       visitedNodes: [],
       runesOwned: [],
-      runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
       attunedAbilities: emptyAttunedAbilities(),

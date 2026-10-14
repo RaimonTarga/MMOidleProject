@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { composePlayerView, RUNE_RECIPE_DATABASE, isRuneRecipeUnlocked } from '@mmo-idle/shared';
+import { composePlayerView } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../src/ecs/entity';
 import type { World } from '../../src/world/World';
 import { getAutoTargetId } from '../../src/systems/combat/ai/targetPriority';
@@ -11,15 +11,13 @@ export function desertRole(type: string) {
 }
 export function desertTargetingReadback(bot: PlayerEntity) {
   const p = bot.tracksProgression;
-  const recipes = [...RUNE_RECIPE_DATABASE.values()].filter(r => r.runeId === 'focus-lowest-hp');
   const active = p.runesEquipped.some(r => r.actionId === 'focus-lowest-hp');
   if (active) {
-    assert(recipes.length && recipes.every(r => isRuneRecipeUnlocked(r, p)));
     assert(p.runesOwned.includes('focus-lowest-hp'));
     assert(p.runesOwned.includes('in-combat'));
   }
-  return { active, ownedFragments: [...p.runesOwned], recipes: recipes.map(r => ({ id: r.id, unlocked: isRuneRecipeUnlocked(r, p) })),
-    acquisition: 'Existing synthetic mature-package recipe-unlock path; no live acquisition measurement.',
+  return { active, ownedFragments: [...p.runesOwned],
+    acquisition: 'Every rune the class may use is owned; no live acquisition measurement.',
     rules: structuredClone(p.runesEquipped) };
 }
 type Member = { id: string; type: string; role: string; firstSeenMs: number; killedAtMs: number | null };

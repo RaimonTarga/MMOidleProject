@@ -1,13 +1,11 @@
 import {
   DEFAULT_AUTOCOMBAT_CONFIG,
   GAME_CONFIG,
-  RUNE_RECIPE_DATABASE,
   STARTER_RUNE_IDS,
   deriveAutoConfigFromRunes,
   distanceSq,
   emptyEquipment,
   getFlag,
-  runeRuleCost,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import {
@@ -64,7 +62,6 @@ function playerSlices(
       bossesCleared: [],
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS, "step-back", "avoid-hazards"],
-      runeRecipesCrafted: ["rune-recipe-step-back"],
       runesEquipped: rules,
       knownAbilities: [],
       attunedAbilities: { techniques: [], guards: [] },
@@ -86,19 +83,10 @@ function playerSlices(
   };
 }
 
-// Catalog/economy: the complete early-T1 pair costs 3 RP and Step Back comes from Cave.
-assert(runeRuleCost(EVADE_RULE) === 3, "Inside Telegraph -> Step Back should cost 3 RP");
-const actionRecipe = RUNE_RECIPE_DATABASE.get("rune-recipe-step-back");
+// Catalog: the situation is baseline vocabulary.
 assert(
   STARTER_RUNE_IDS.includes("inside-telegraph"),
   "Inside Telegraph should follow the live baseline-situation vocabulary rule",
-);
-assert(
-  actionRecipe?.recipeGroup === "cave" &&
-    actionRecipe.requiredBiomeLevel === 2 &&
-    actionRecipe.cost.red === 35 &&
-    actionRecipe.cost.blue === undefined,
-  "Step Back should unlock at Cave mastery 2 for 35 red essence",
 );
 
 // Shared rule folding identifies the acquisition edge; the server lifecycle

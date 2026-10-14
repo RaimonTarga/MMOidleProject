@@ -94,7 +94,6 @@ function slices(
       bossesCleared: [],
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [...abilities],
       attunedAbilities: { techniques: [...abilities], guards: [] },

@@ -1,7 +1,7 @@
 import { applyProgressionSnapshot, snapshotReceipts, type ProgressionSnapshot } from './progressionSnapshot';
 import assert from 'node:assert/strict';
-import { requiredBiomeLevelForUpgrade, upgradeCeilingFromGlobalMastery, globalMastery, ITEM_DATABASE, RECIPE_DATABASE, NODE_BIOMES, RUNE_RECIPE_DATABASE,
-  isRuneRecipeUnlocked, composePlayerView } from '@mmo-idle/shared';
+import { requiredBiomeLevelForUpgrade, upgradeCeilingFromGlobalMastery, globalMastery, ITEM_DATABASE, RECIPE_DATABASE, NODE_BIOMES,
+  composePlayerView } from '@mmo-idle/shared';
 import { materializeBot, BENCH_BOT_ID } from './botFactory';
 import { validateBuild } from '../../../bot/src/loadout/loadout';
 import { recalculatePlayerEntityStats } from '../../src/ecs/playerEntityFormulas';
@@ -142,7 +142,7 @@ export function resolveSurveyPackage(cell: SurveyCell): ResolvedSurveyPackage {
   };
   // Abilities no longer carry built-in triggers. Every attuned ability the cell
   // does not wire itself gets its reference Rune rule, so the bench keeps
-  // measuring the retired default timing at the same RP total.
+  // measuring the retired default timing.
   const runeRules = withReferenceAbilityWiring(authoredRules, abilities);
   return {
     stance, abilities, runeRules, upgradeLevel: cell.upgradeLevel ?? 5,
@@ -188,10 +188,6 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
   p.activeStance = stance;
   const c = SURVEY_CLASSES.find(c=>c.name===cell.className)!;
   const rules = declared.runeRules;
-  for (const r of RUNE_RECIPE_DATABASE.values()) if (!r.deprecated && r.runeId && !p.runesOwned.includes(r.runeId) && rules.some(rule=>rule.actionId===r.runeId)) {
-    assert(isRuneRecipeUnlocked(r,p), `Unreachable rune ${r.id}`);
-    if(!p.runesOwned.includes(r.runeId)) p.runesOwned.push(r.runeId);
-  }
   p.runesEquipped = rules;
   const abilities = declared.abilities;
   assert(setAbilityLoadout(world,bot,abilities).success, `${cell.id}: illegal ability budget`);

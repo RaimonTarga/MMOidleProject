@@ -13,7 +13,6 @@ import {
   ABILITY_RECIPE_DATABASE,
   STANCE_RECIPE_DATABASE,
   RITE_RECIPE_DATABASE,
-  RUNE_RECIPE_DATABASE,
   NODE_BIOMES,
   BIOME_START_TIER_BY_GROUP,
   BIOME_FINAL_TIER_BY_GROUP,
@@ -410,11 +409,5 @@ for (const recipe of T3_GEAR) {
     );
   }
 }
-
-// No T3 Rune content was authored, and that is deliberate — T3's RP layer is Rites.
-assert(
-  [...RUNE_RECIPE_DATABASE.values()].filter((r) => r.tier === 3).length === 0,
-  "zero tier-3 rune recipes is intentional, not a gap to fill",
-);
 
 console.log("t3ProgressionEconomy: ok");

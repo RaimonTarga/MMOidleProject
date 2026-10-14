@@ -61,7 +61,7 @@ function makePlayer(id: string): PersistedPlayerSlices {
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
       shards: {}, capstones: {}, biomeXP: {}, biomeLevel: { plains: 1 }, unlockedRecipes: [], questProgress: {},
       playerTier: 1, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
-      runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
+      runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],

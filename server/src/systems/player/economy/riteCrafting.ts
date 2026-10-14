@@ -1,4 +1,3 @@
-import { runicLoadoutFromProgression, runicPointEditAllowed } from "@mmo-idle/shared";
 /**
  * Rite crafting + loadout (system rework Step 11).
  *
@@ -14,10 +13,7 @@ import {
   ESSENCE_TYPES,
   ESSENCE_LABELS,
   TEST_ROOM_NODE_ID,
-  globalMastery,
   isRiteRecipeUnlocked,
-  runeBudgetForGlobalMastery,
-  runicPointLoadoutCost,
   validRiteIds,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
@@ -110,11 +106,6 @@ export function setRiteLoadout(
 
   if (cleaned.length !== new Set(riteIds).size) {
     return { success: false, reason: "One or more Rites are invalid." };
-  }
-  const budget = runeBudgetForGlobalMastery(globalMastery(prog.biomeLevel));
-  const total = runicPointLoadoutCost({ ...runicLoadoutFromProgression(prog), rites: cleaned });
-  if (!runicPointEditAllowed(runicLoadoutFromProgression(prog), { ...runicLoadoutFromProgression(prog), rites: cleaned }, budget)) {
-    return { success: false, reason: `This build costs ${total} RP, but only ${budget} RP is available.` };
   }
   prog.equippedRites = cleaned;
   markSliceDirty(world, entity, "tracksProgression");

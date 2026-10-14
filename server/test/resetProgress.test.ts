@@ -5,6 +5,7 @@ import {
   GAME_CONFIG,
   STARTER_RUNE_IDS,
   emptyEquipment,
+  runeIdsForArchetype,
   emptyAttunedAbilities,
   emptyEquippedRites,
   emptyEquippedStances,
@@ -46,7 +47,6 @@ const slices: PersistedPlayerSlices = {
     clearedNodes: ["node-4-5"],
     visitedNodes: ["node-4-5"],
     runesOwned: [...STARTER_RUNE_IDS, "focus-elites"],
-    runeRecipesCrafted: ["rune-recipe-focus-elites"],
     runesEquipped: [{ conditionId: "target-is-elite", actionId: "focus-elites" }],
     knownAbilities: ["whirlwind"],
     attunedAbilities: { techniques: ["whirlwind"], guards: [] },
@@ -94,10 +94,9 @@ assert(progression.currentSkillTier === 0, "skill tier should reset");
 assert(progression.bossesCleared.length === 0, "boss clears should reset");
 assert(progression.clearedNodes.length === 0, "node clears should reset");
 assert(progression.visitedNodes?.length === 0, "visited nodes should reset");
-assert(progression.runeRecipesCrafted.length === 0, "crafted rune recipes should reset");
 assert(
-  progression.runesOwned.length === STARTER_RUNE_IDS.length,
-  "only starter rune fragments should remain",
+  JSON.stringify(progression.runesOwned) === JSON.stringify(runeIdsForArchetype(null)),
+  "a classless character owns every rune no class names",
 );
 assert(
   JSON.stringify(progression.runesEquipped) === JSON.stringify(DEFAULT_RUNE_LOADOUT),

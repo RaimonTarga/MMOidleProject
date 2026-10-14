@@ -8,10 +8,7 @@ import {
   NO_STANCE_ID,
   analyzeRuneLoadoutConflicts,
   isRuneRuleCompatibleForArchetype,
-  runeBudgetForGlobalMastery,
   runeChannelLabel,
-  runeRuleCost,
-  runicPointLoadoutCost,
   stanceDef,
   type EquippedRule,
 } from "@mmo-idle/shared";
@@ -20,14 +17,11 @@ import { tutorialRuneDraftAtom } from "../tutorial/atoms";
 import {
   combatArchetypeAtom,
   attunedAbilitiesAtom,
-  equippedRitesAtom,
   equippedStancesAtom,
-  globalMasteryAtom,
   attunedStancesAtom,
   runesEquippedAtom,
   runesOwnedAtom,
 } from "../hud/atoms";
-import { AttunementBudget } from "./AttunementBudget";
 import { GameIcon } from "./GameIcon";
 import { runeConditionIconSource, stanceIconSource } from "./conceptIcons";
 import { RuneClause, runeResponse } from "./RuneClause";
@@ -42,9 +36,7 @@ export function BuildRunesTab() {
   const abilities = useAtomValue(attunedAbilitiesAtom);
   const stances = useAtomValue(attunedStancesAtom);
   const defaultStance = useAtomValue(equippedStancesAtom).default;
-  const rites = useAtomValue(equippedRitesAtom);
   const archetype = useAtomValue(combatArchetypeAtom);
-  const gm = useAtomValue(globalMasteryAtom);
   const [rules, setRules] = useState(equipped);
   const [draft, setDraft] = useState<Draft | null>(null);
   const editorScroll = useRef<HTMLDivElement>(null);
@@ -87,8 +79,6 @@ export function BuildRunesTab() {
     window.addEventListener("hud:loadoutResult", handler);
     return () => window.removeEventListener("hud:loadoutResult", handler);
   }, [equipped]);
-  const budget = runeBudgetForGlobalMastery(gm);
-  const spent = runicPointLoadoutCost({ rules, rites, abilities, stances });
   const groups = useMemo(() => {
     const result = new Map<Parameters<typeof runeChannelLabel>[0], number[]>();
     rules.forEach((r, i) => {
@@ -127,7 +117,6 @@ export function BuildRunesTab() {
       : null;
   const response = pending ? runeResponse(pending, abilities, archetype) : null;
   const next = pending ? composeRuneEdit(rules, pending, draft!.index) : rules;
-  const nextSpent = runicPointLoadoutCost({ rules: next, rites, abilities, stances });
   const valid =
     pending &&
     !response?.missing &&
@@ -158,7 +147,6 @@ export function BuildRunesTab() {
   }
   return (
     <div className="build-tab-body rune-workspace" data-tutorial-anchor={TUTORIAL_ANCHORS.runesBoard}>
-      <AttunementBudget loadout={{ rules, rites, abilities, stances }} budget={budget} />
       {error && (
         <p className="rune-error" role="alert">
           {error}
@@ -177,7 +165,7 @@ export function BuildRunesTab() {
               <h3>When</h3>
               {draft.conditionId ? <div className="rune-step-summary">
                 <GameIcon source={runeConditionIconSource(draft.conditionId)} size={28} decorative fallback="◇" />
-                <span title={CONDITION_DATABASE.get(draft.conditionId)?.blurb}><strong>{CONDITION_DATABASE.get(draft.conditionId)?.name ?? draft.conditionId}</strong><small>{CONDITION_DATABASE.get(draft.conditionId)?.cost} RP</small></span>
+                <span title={CONDITION_DATABASE.get(draft.conditionId)?.blurb}><strong>{CONDITION_DATABASE.get(draft.conditionId)?.name ?? draft.conditionId}</strong></span>
                 <button type="button" aria-label="Change When condition" onClick={() => setDraft({ index: draft.index, conditionId: "", actionId: "" })}>↶ Change</button>
               </div> : <div className="rune-choice-grid">
                 {conditions.map((c) => (
@@ -208,7 +196,6 @@ export function BuildRunesTab() {
                       fallback="◇"
                     />
                     <span>{c.name}</span>
-                    <small>{c.cost} RP</small>
                   </button>
                 ))}
               </div>}
@@ -222,7 +209,7 @@ export function BuildRunesTab() {
               )}
               {draft.actionId ? <div className="rune-step-summary">
                 <GameIcon source={runeResponse({ conditionId: draft.conditionId, actionId: draft.actionId }, abilities).icon} size={28} decorative fallback="◇" />
-                <span title={response?.detail}><strong>{ACTION_DATABASE.get(draft.actionId)?.name ?? draft.actionId}</strong><small>{ACTION_DATABASE.get(draft.actionId)?.cost} RP</small></span>
+                <span title={response?.detail}><strong>{ACTION_DATABASE.get(draft.actionId)?.name ?? draft.actionId}</strong></span>
                 <button type="button" aria-label="Change Do response" onClick={() => setDraft({ ...draft, actionId: "", waitOutMode: undefined, targetAbilityId: undefined, targetStanceId: undefined })}>↶ Change</button>
               </div> : <div className="rune-choice-grid">
                 {actions.map((a) => {
@@ -257,7 +244,6 @@ export function BuildRunesTab() {
                       <span>
                         {a.id === "switch-stance" ? "Switch stance" : view.name}
                       </span>
-                      <small>{a.cost} RP</small>
                     </button>
                   );
                 })}
@@ -265,7 +251,7 @@ export function BuildRunesTab() {
               {response && draft.actionId !== "use-ability" && draft.actionId !== "switch-stance" && <p className="rune-detail">{response.detail}</p>}
             </section>
             {draft.actionId === "wait-it-out" && <section aria-label="Wait mode"><button type="button" aria-pressed={draft.waitOutMode !== "heat-managed"} onClick={() => setDraft({ ...draft, waitOutMode: "all" })}>All eligible statuses</button><button type="button" disabled={draft.conditionId !== "always"} aria-pressed={draft.waitOutMode === "heat-managed"} onClick={() => setDraft({ ...draft, waitOutMode: "heat-managed" })}>Manage Heat</button><p>Always only. Ordinary Volcano: 25 Heat to request a break; resume at 10. Current fights finish first.</p></section>}
-            {draft.actionId === "use-ability" && <section ref={destinationSection} tabIndex={-1} aria-label="Choose attuned ability" className="rune-editor__destinations"><h3>Choose attuned ability</h3><div className="rune-choice-grid">{[...abilities.techniques, ...abilities.guards].map(id => <button className="rune-ability-choice" type="button" key={id} data-tutorial-anchor={TUTORIAL_ANCHORS.runesAbility(id)} aria-pressed={draft.targetAbilityId === id} onClick={() => setDraft({ ...draft, targetAbilityId: id })}>{ABILITY_DATABASE.get(id)?.name}</button>)}</div><p>Attunement is already paid. This rule costs only its logic.</p></section>}
+            {draft.actionId === "use-ability" && <section ref={destinationSection} tabIndex={-1} aria-label="Choose attuned ability" className="rune-editor__destinations"><h3>Choose attuned ability</h3><div className="rune-choice-grid">{[...abilities.techniques, ...abilities.guards].map(id => <button className="rune-ability-choice" type="button" key={id} data-tutorial-anchor={TUTORIAL_ANCHORS.runesAbility(id)} aria-pressed={draft.targetAbilityId === id} onClick={() => setDraft({ ...draft, targetAbilityId: id })}>{ABILITY_DATABASE.get(id)?.name}</button>)}</div></section>}
             {draft.actionId === "switch-stance" && (
               <section
                 ref={destinationSection}
@@ -291,14 +277,6 @@ export function BuildRunesTab() {
                         fallback="◇"
                       />
                       <span>{stanceDef(id)?.name ?? "No stance"}</span>
-                      <small>
-                        {runeRuleCost({
-                          conditionId: draft.conditionId,
-                          actionId: "switch-stance",
-                          targetStanceId: id,
-                        })}{" "}
-                        RP total
-                      </small>
                     </button>
                   ))}
                 </div>
@@ -320,15 +298,11 @@ export function BuildRunesTab() {
               </span>
             )}
             <div className="rune-toolbar">
-              <span>
-                {pending
-                  ? `${runeRuleCost(pending)} RP · Setup ${nextSpent} / ${budget}`
-                  : "Your saved setup stays active while you edit."}
-              </span>
+              <span>Your saved setup stays active while you edit.</span>
               <button
                 type="button"
                 data-tutorial-anchor={TUTORIAL_ANCHORS.runesCommit}
-                disabled={!valid || (nextSpent > budget && nextSpent >= spent)}
+                disabled={!valid}
                 onClick={() => commit(next)}
               >
                 {replaces
@@ -345,11 +319,6 @@ export function BuildRunesTab() {
                   : response?.missing
                     ? "Attune the target ability before adding this rule."
                     : "Choose a compatible response."}
-              </span>
-            )}
-            {nextSpent > budget && pending && (
-              <span className="rune-error">
-                Free {nextSpent - budget} RP to use this setup.
               </span>
             )}
             {replaces && (
@@ -444,9 +413,6 @@ export function BuildRunesTab() {
                             </small>
                           )}
                         </button>
-                        <span className="rune-rule__cost">
-                          {runeRuleCost(rule)} RP
-                        </span>
                         <div className="rune-rule__controls">
                           <button
                             type="button"

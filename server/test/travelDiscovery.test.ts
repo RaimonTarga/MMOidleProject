@@ -50,7 +50,6 @@ const slices: PersistedPlayerSlices = {
     clearedNodes: [],
     visitedNodes: [],
     runesOwned: [],
-    runeRecipesCrafted: [],
     runesEquipped: [],
     knownAbilities: [],
     attunedAbilities: emptyAttunedAbilities(),

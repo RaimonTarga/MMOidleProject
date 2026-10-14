@@ -13,8 +13,6 @@ import {
   getMaxUpgrade,
   globalMastery,
   listBiomeGroupsAtTier,
-  runeBudgetForGlobalMastery,
-  runicPointLoadoutCost,
   isRiteRecipeUnlocked,
   isStanceRecipeUnlocked,
   ITEM_DATABASE,
@@ -70,8 +68,8 @@ export function benchBotId(index: number): string {
  * Every biome group the player could plausibly have levelled by `playerTier`,
  * each at its cap for that tier.
  *
- * Global Mastery is the sum of all biome levels, and it drives the rune-point
- * budget and the item-upgrade ceiling. Seeding only the target biome (the old
+ * Global Mastery is the sum of all biome levels, and it drives the item-upgrade
+ * ceiling. Seeding only the target biome (the old
  * behaviour) left GM at roughly one biome's worth, which is not a state any real
  * player at that tier would be in. Capping every reachable biome mirrors the
  * "fully upgraded gear" assumption the bench already makes elsewhere.
@@ -136,20 +134,14 @@ export function canonicalLoadout(playerTier: number): {
     .filter((id) => RITE_DATABASE.has(id))
     .sort();
   const knownRites = new Set(rites);
-  const runeBudget = runeBudgetForGlobalMastery(globalMastery(biomeLevel));
-  const equippedRites: string[] = [];
-  for (const riteId of CANONICAL_RITE_PRIORITY) {
-    if (!knownRites.has(riteId)) continue;
-    if (runicPointLoadoutCost({ rules: [], abilities: { techniques: [], guards: [] }, stances: activeStance ? [activeStance] : [], rites: [...equippedRites, riteId] }) <= runeBudget) equippedRites.push(riteId);
-  }
+  const equippedRites: string[] = CANONICAL_RITE_PRIORITY.filter((riteId) => knownRites.has(riteId));
 
   const abilities: AttunedAbilities = { techniques: [], guards: [] };
-  // Bench selection policy: round-robin families, deepest authored first, within RP.
+  // Bench selection policy: round-robin families, deepest authored first. Attuning
+  // costs nothing (Runic Points are gone), so every unlocked ability is attuned.
   for (let i = 0; i < Math.max(techniques.length, guards.length); i++) {
     for (const [family, id] of [["techniques", techniques[i]], ["guards", guards[i]]] as const) {
-      if (!id) continue;
-      const proposed = { ...abilities, [family]: [...abilities[family], id] };
-      if (runicPointLoadoutCost({ rules: referenceAbilityRules(proposed), abilities: proposed, stances: activeStance ? [activeStance] : [], rites: equippedRites }) <= runeBudget) abilities[family].push(id);
+      if (id) abilities[family].push(id);
     }
   }
   return {
@@ -194,7 +186,6 @@ function buildBotSlices(
       bossesCleared: [],
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: [],
       // Behaviour runes stay UNEQUIPPED on purpose. They are the behaviour layer —
       // which rules a bot runs is a design decision about what "default play"
       // means, not a value that can be picked neutrally. The only rules equipped

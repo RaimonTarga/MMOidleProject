@@ -1,6 +1,6 @@
 import { snapshotReceipts } from './progressionSnapshot';
 import assert from 'node:assert/strict';
-import { DUNGEON_DEFS, MONSTER_DATABASE, NODE_BIOMES, runicPointLoadoutCost, runeBudgetForGlobalMastery } from '@mmo-idle/shared';
+import { DUNGEON_DEFS, MONSTER_DATABASE, NODE_BIOMES } from '@mmo-idle/shared';
 import { SURVEY_CLASSES, resolveSurveyPackage, type SurveyCell } from './ttkSurveySpec';
 import type { Night5Cell } from './night5Spec';
 import type { PlayerEntity } from '../../src/ecs/entity';
@@ -83,13 +83,8 @@ export function fastPassReadback(cell: SurveyCell, bot: PlayerEntity, globalMast
   assert.deepEqual(p.attunedAbilities, declared.abilities);
   assert.deepEqual(p.runesEquipped, declared.runeRules);
   assert.equal(p.activeStance, declared.stance);
-  const cost = runicPointLoadoutCost({ rules: p.runesEquipped, abilities: p.attunedAbilities,
-    stances: p.attunedStances ?? [], rites: p.equippedRites });
-  const budget = runeBudgetForGlobalMastery(globalMastery);
-  assert(cost <= budget);
   return { ...(cell.progressionSnapshot ? {progression: snapshotReceipts.get(bot)} : {}), declared, skillPath: [...bot.usesSkills.unlockedSkills], equipment: structuredClone(bot.holdsInventory),
-    mastery: { biomeLevel: { ...p.biomeLevel }, globalMastery }, runicPoints: { budget, cost, unused: budget - cost,
-      reason: 'Fixed practical package; headroom is deliberate, not an optimal-loadout claim.' },
+    mastery: { biomeLevel: { ...p.biomeLevel }, globalMastery },
     access: cell.progressionSnapshot ? 'Fixed declared synthetic route checkpoint; prior paid ownership, no acquisition or guardian evidence.' : 'Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.',
     skillPoints: p.skillPoints, knownAbilities: [...p.knownAbilities], rites: [...p.equippedRites] };
 }

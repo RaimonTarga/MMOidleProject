@@ -1,4 +1,4 @@
-import { ITEM_DATABASE, NODE_BIOMES, RECIPE_DATABASE, runeBudgetForGlobalMastery, runicPointLoadoutCost } from '@mmo-idle/shared';
+import { ITEM_DATABASE, NODE_BIOMES, RECIPE_DATABASE } from '@mmo-idle/shared';
 import {
   BOSS2_BLOCKS, BOSS2_BOSSES, BOSS2_CAP_MS, BOSS2_SEED,
   assertBoss2Definitions, installBoss2Treatment,
@@ -70,7 +70,7 @@ assertBoss2Definitions();
   }
 }
 
-// -- Targeting, tier legality and RP budget.
+// -- Targeting and tier legality.
 {
   for (const b of BOSS2_BOSSES) {
     for (const cell of BOSS2_BLOCKS[b.name]!.cells) {
@@ -85,13 +85,6 @@ assertBoss2Definitions();
         assert(!!recipe && ITEM_DATABASE.has(id!), `${cell.id}: missing recipe/item ${id}`);
         assert(recipe.tier <= 2, `${cell.id}: ${id} exceeds tier 2`);
       }
-      const r = resolveSurveyPackage(cell);
-      const cost = runicPointLoadoutCost({
-        rules: r.runeRules as never, abilities: r.abilities,
-        stances: r.stance ? [r.stance] : [], rites: [],
-      });
-      assert(cost <= runeBudgetForGlobalMastery(72),
-        `${cell.id}: package costs ${cost} RP against a 30 budget`);
     }
   }
 }

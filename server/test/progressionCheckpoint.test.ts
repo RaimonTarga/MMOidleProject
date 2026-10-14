@@ -1,4 +1,4 @@
-import { baseRecoveryForTier } from '@mmo-idle/shared';
+import { baseRecoveryForTier, runeIdsForArchetype } from '@mmo-idle/shared';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
@@ -42,7 +42,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
       clearedNodes: [],
       visitedNodes: [],
       runesOwned: [],
-      runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
       attunedAbilities: emptyAttunedAbilities(),
@@ -148,6 +147,8 @@ const uw=new World();const up=uw.attachPlayerEntity(makePlayerSlices(),'unspent'
 assert.equal(restoreProgressionCheckpoint(uw,up,{capture:unspent,boundaryId:unspent.boundaryId,revisionPolicy:'same-revision'}).view.skillPoints,3);
 // Summoner logical slots survive; entities, charges and reconstruction progress are reset.
 original.usesSkills={unlockedSkills:['summoner-root'],selectedClass:'summoner-root',selectedSubVariant:null,selectedRange:null,combatArchetype:'summoner',passives:{}};
+// Rune ownership follows the class (`runeIdsForArchetype`), as `unlockSkill` sets it.
+original.tracksProgression.runesOwned=runeIdsForArchetype('summoner');
 original.tracksProgression.playerTier=3;original.tracksProgression.currentSkillTier=1;original.tracksProgression.skillPoints=2;
 original.tracksProgression.runesEquipped=[];original.tracksProgression.attunedAbilities={techniques:[],guards:[]};
 syncArchetypeSlices(world,original);recalculatePlayerEntityStats(world,original);syncArchetypeSlices(world,original);original.hasHealth.hp=original.hasHealth.maxHp;refillBarrier(world,original);

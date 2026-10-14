@@ -120,7 +120,7 @@
 }
 .rune-rule {
   display: grid;
-  grid-template-columns: 18px minmax(0, 1fr) auto auto;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
   gap: 10px;
   align-items: center;
   padding: 8px;
@@ -143,11 +143,6 @@
   display: block;
   margin-top: 5px;
   color: var(--hud-text-muted);
-}
-.rune-rule__cost {
-  font-size: 11px;
-  white-space: nowrap;
-  color: var(--hud-primary-strong);
 }
 .rune-rule__controls {
   display: flex;

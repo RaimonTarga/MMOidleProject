@@ -40,7 +40,7 @@ function legacySave(id: string): PersistedPlayerSlices {
       catalysts: { alacrity: 2 }, biomeXP: {}, biomeLevel: { forest: 6 },
       unlockedRecipes: [], questProgress: {},
       playerTier: 1, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
-      runesOwned: [], runeRecipesCrafted: [], runesEquipped: [],
+      runesOwned: [], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,
       knownRites: [], equippedRites: [],

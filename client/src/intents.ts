@@ -9,7 +9,6 @@ export interface IntentMap {
   setAutoTraverse: boolean;
   setAutocombatConfig: AutocombatConfig;
   setRuneLoadout: EquippedRule[];
-  craftRuneRecipe: string;
   craftAbilityRecipe: string;
   setAbilityLoadout: { equipped: AttunedAbilities };
   useAbility: string;

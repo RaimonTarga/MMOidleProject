@@ -90,7 +90,6 @@ export function buildT1CharacterSnapshot(
     knownAbilities: [...self.knownAbilities],
     attunedAbilities: cloneAbilities(self),
     runesOwned: [...self.runesOwned],
-    runeRecipesCrafted: [...self.runeRecipesCrafted],
     runesEquipped: self.runesEquipped.map((rule) => ({ ...rule })),
     knownStances: [...self.knownStances],
     attunedStances: [...(self.attunedStances ?? [])],

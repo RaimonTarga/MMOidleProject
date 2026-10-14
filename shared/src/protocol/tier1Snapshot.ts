@@ -1,8 +1,6 @@
 import type { PlayerView } from "./views";
 import type { TierCheckpointKind, TierEntryProfile } from "./tierEntry";
 import type { T1EconomyArm } from "../systems/t1EconomyExperiment";
-import { STARTER_RUNE_IDS } from "../runeDatabase";
-import { runeIdsFromCraftedRecipes } from "../runeRecipes";
 import { globalMastery, maxGlobalMasteryAtTier } from "../config/gameConfig";
 import { sealsHeldAtTier, sealsRequiredForTier } from "../systems/tierAdvancement";
 import { SKILL_TREE } from "../skillTree";
@@ -132,7 +130,6 @@ export interface T1SnapshotState {
   knownAbilities: string[];
   attunedAbilities: PlayerView["attunedAbilities"];
   runesOwned: string[];
-  runeRecipesCrafted: string[];
   runesEquipped: PlayerView["runesEquipped"];
   knownStances: string[];
   attunedStances?: string[];
@@ -250,26 +247,9 @@ export function tierEntryProfileFromT1Snapshot(
   if (state.activeStance !== state.equippedStances.default) {
     throw new Error("T1 handoff snapshot active stance differs from its preserved default stance");
   }
-  const derivedRunes = new Set(runeIdsFromCraftedRecipes(state.runeRecipesCrafted));
-  const capturedRunes = new Set(state.runesOwned);
-  const unexpectedCapturedRunes = [...capturedRunes].filter((id) => !derivedRunes.has(id));
-  const missingCapturedRunes = [...derivedRunes].filter((id) => !capturedRunes.has(id));
-  // Starter vocabulary can grow after a real Snapshot B was captured.  The
-  // authoritative T2 entry path derives ownership from current starter runes
-  // plus the preserved crafted recipes, so accepting only those newly-added
-  // starter IDs is lossless.  Any crafted/non-starter mismatch still rejects
-  // the handoff instead of silently changing its loadout.
-  if (
-    unexpectedCapturedRunes.length > 0 ||
-    missingCapturedRunes.some((id) => !STARTER_RUNE_IDS.includes(id))
-  ) {
-    throw new Error("T1 handoff snapshot rune ownership does not match crafted Rune recipes");
-  }
-
   assertUnique("inventory", state.inventory);
   assertUnique("knownAbilities", state.knownAbilities);
   assertUnique("runesOwned", state.runesOwned);
-  assertUnique("runeRecipesCrafted", state.runeRecipesCrafted);
   assertUnique("knownStances", state.knownStances);
   assertUnique("knownRites", state.knownRites);
   assertUnique("bossesCleared", state.bossesCleared);
@@ -341,7 +321,6 @@ export function tierEntryProfileFromT1Snapshot(
       techniques: state.attunedAbilities.techniques.filter((id) => !isRetiredAbilityId(id)),
       guards: state.attunedAbilities.guards.filter((id) => !isRetiredAbilityId(id)),
     },
-    runeRecipesCrafted: [...state.runeRecipesCrafted],
     runesEquipped: state.runesEquipped
       .filter((rule) => !(rule.actionId === "use-ability" && rule.targetAbilityId && isRetiredAbilityId(rule.targetAbilityId)))
       .map((rule) => ({ ...rule })),

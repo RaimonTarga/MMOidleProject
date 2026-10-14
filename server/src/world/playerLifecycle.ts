@@ -4,7 +4,7 @@ import {
   GAME_CONFIG,
   makeTracksCombat,
   normalizeRuneLoadout,
-  runeIdsFromCraftedRecipes,
+  runeIdsForArchetype,
   sanitizeRuneLoadout,
 } from "@mmo-idle/shared";
 import type { World } from "./World";
@@ -26,9 +26,7 @@ export function attachPlayerEntity(
 ): PlayerEntity {
   Object.assign(player.tracksProgression, migrateAttunement(player.tracksProgression));
   delete (player.tracksProgression as unknown as { equippedAbilities?: unknown }).equippedAbilities;
-  const craftedRuneRecipes = player.tracksProgression.runeRecipesCrafted ?? [];
-  player.tracksProgression.runeRecipesCrafted = craftedRuneRecipes;
-  player.tracksProgression.runesOwned = runeIdsFromCraftedRecipes(craftedRuneRecipes);
+  player.tracksProgression.runesOwned = runeIdsForArchetype(player.usesSkills.combatArchetype);
   const owned = new Set(player.tracksProgression.runesOwned);
   const persistedRules = Array.isArray(player.tracksProgression.runesEquipped)
     ? normalizeRuneLoadout(player.tracksProgression.runesEquipped)
@@ -36,7 +34,6 @@ export function attachPlayerEntity(
   const sanitizedRules = sanitizeRuneLoadout(
     persistedRules,
     owned,
-    Number.POSITIVE_INFINITY,
     player.usesSkills.combatArchetype,
     new Set(player.tracksProgression.attunedStances ?? []),
     new Set(attunedAbilityIds(player.tracksProgression.attunedAbilities)),

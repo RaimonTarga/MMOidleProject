@@ -70,10 +70,6 @@ export function sendSetRuneLoadout(
   socket.emit('rune:setLoadout', rules);
 }
 
-export function sendCraftRuneRecipe(socket: GameSocket, recipeId: string): void {
-  socket.emit('rune:craftRecipe', recipeId);
-}
-
 export function sendCraftAbilityRecipe(socket: GameSocket, recipeId: string): void {
   socket.emit('ability:craftRecipe', recipeId);
 }

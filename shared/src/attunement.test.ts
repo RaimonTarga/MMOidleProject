@@ -1,4 +1,4 @@
-import { ABILITY_DATABASE, STANCE_DATABASE, NO_STANCE_ID, migrateAttunement, runeBudgetForGlobalMastery, runeRuleCost, runicPointLoadoutCost, runicPointBreakdown, runicPointEditAllowed, sanitizeRuneLoadout, STARTER_RUNE_IDS, composeRuneEdit, deriveAutoConfigFromRunes, retiredAbilityEntries, hasRetiredAbilityEntries, RETIRED_ABILITY_IDS } from "./index";
+import { ABILITY_DATABASE, migrateAttunement, sanitizeRuneLoadout, STARTER_RUNE_IDS, composeRuneEdit, deriveAutoConfigFromRunes, retiredAbilityEntries, hasRetiredAbilityEntries, RETIRED_ABILITY_IDS } from "./index";
 function assert(value: unknown, message: string): asserts value { if (!value) throw new Error(message); }
 const abilities = { techniques: ["sweep", "slam", "imbue-lightning"], guards: ["cleanse", "break-free", "second-wind"] };
 const stances = ["offensive-stance", "tanking-stance"];
@@ -8,17 +8,8 @@ const rules = [
   { conditionId: "hp-below-25", actionId: "switch-stance", targetStanceId: stances[1] },
   { conditionId: "in-combat", actionId: "switch-stance", targetStanceId: stances[0] },
 ];
-const loadout = { abilities, stances, rules, rites: [] };
-const parts = runicPointBreakdown(loadout);
-assert(parts.total === parts.abilities + parts.stances + parts.logic + parts.rites, "combined cost disagrees with breakdown");
-assert(parts.abilities === Object.values(abilities).flat().reduce((n,id) => n + ABILITY_DATABASE.get(id)!.attunementCost, 0), "ability reservation missing");
-assert(parts.stances === stances.reduce((n,id) => n + STANCE_DATABASE.get(id)!.runeCost, 0), "stance reservation missing");
-assert(runicPointLoadoutCost({ ...loadout, abilities: { techniques: [...abilities.techniques, "sweep"], guards: abilities.guards }, stances: [...stances, stances[0]] }) === parts.total, "duplicates double-charge");
-assert(runeRuleCost(rules[2]) === runeRuleCost({ ...rules[2], targetStanceId: NO_STANCE_ID }), "stance destination recharged by rule");
-assert(runeBudgetForGlobalMastery(0) === 16 && runeBudgetForGlobalMastery(4) === 16 && runeBudgetForGlobalMastery(5) === 17, "GM progression seed");
-assert(ABILITY_DATABASE.get("cleanse")!.attunementCost < ABILITY_DATABASE.get("second-wind")!.attunementCost, "conditional tool price");
 const owned = new Set(STARTER_RUNE_IDS);
-const sanitized = sanitizeRuneLoadout([...rules, { conditionId: "always", actionId: "use-ability", targetAbilityId: "snipe" }, { conditionId: "always", actionId: "switch-stance", targetStanceId: "perfection-stance" }], owned, Infinity, undefined, new Set(stances), new Set(Object.values(abilities).flat()));
+const sanitized = sanitizeRuneLoadout([...rules, { conditionId: "always", actionId: "use-ability", targetAbilityId: "snipe" }, { conditionId: "always", actionId: "switch-stance", targetStanceId: "perfection-stance" }], owned, undefined, new Set(stances), new Set(Object.values(abilities).flat()));
 assert(sanitized.length === rules.length, "unattuned targets must be removed");
 const legacy = {
  knownAbilities: ["sweep", "slam", "brace", "cleanse"], knownStances: stances,
@@ -35,8 +26,6 @@ const holes = migrateAttunement({ ...legacy, equippedAbilities: { techniques: ["
 assert(holes.runesEquipped.length === 1 && holes.runesEquipped[0].targetAbilityId === "sweep", "orphan must not steal the next slot's target");
 const noAttunement = migrateAttunement({ ...migrated, attunedStances: [], equippedStances: { default: stances[0] } });
 assert(noAttunement.equippedStances.default === null, "default requires attunement");
-assert(runicPointEditAllowed(loadout, { ...loadout, rules: rules.slice(1) }, 1), "over-budget saves must permit incremental repair");
-assert(!runicPointEditAllowed(loadout, { ...loadout, rules: [...rules, rules[0]] }, 1), "over-budget edit added cost");
 const other = { ...rules[0], targetAbilityId: "imbue-lightning" };
 assert(composeRuneEdit([rules[0]], other, null).length === 2, "different abilities must retain independent same-condition rules");
 const derived = deriveAutoConfigFromRunes([other, rules[0]], { hpPct: 1, inCombat: true, inParty: false, aggroCount: 1 });

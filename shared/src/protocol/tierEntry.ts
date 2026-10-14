@@ -59,7 +59,6 @@ export interface TierEntryProfile {
 
   knownAbilities: string[];
   attunedAbilities: AttunedAbilities;
-  runeRecipesCrafted: string[];
   runesEquipped: EquippedRule[];
   knownStances: string[];
   attunedStances?: string[];
@@ -86,7 +85,6 @@ export interface TierEntryInitialState {
   itemUpgrades: Record<string, number>;
   knownAbilities: string[];
   attunedAbilities: AttunedAbilities;
-  runeRecipesCrafted: string[];
   runesEquipped: EquippedRule[];
   knownStances: string[];
   attunedStances?: string[];

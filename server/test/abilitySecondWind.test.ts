@@ -51,7 +51,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
       bossesCleared: [],
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: [],
       runesEquipped: [{ conditionId: "in-combat", actionId: "use-ability", targetAbilityId: "second-wind" }],
       knownAbilities: ["second-wind"],
       attunedAbilities: { techniques: [], guards: ["second-wind"] },

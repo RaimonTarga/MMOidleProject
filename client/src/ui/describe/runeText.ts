@@ -11,7 +11,6 @@ import {
   RUNE_NODE_ACQUIRE_RADIUS,
   RUNE_TELEGRAPH_ESCAPE_CLEARANCE,
   runeChannelLabel,
-  runeRuleCost,
   type EquippedRule,
 } from '@mmo-idle/shared';
 import type { DetailLine } from './index';
@@ -146,14 +145,9 @@ export function actionLines(actionId: string): DetailLine[] {
   return [...lines, ...(ACTION_FACTS[actionId] ?? [])];
 }
 
-/** Everything an assembled rule promises: its cost, its trigger, its distances. */
+/** Everything an assembled rule promises: its trigger, its distances. */
 export function ruleLines(rule: EquippedRule): DetailLine[] {
-  const lines: DetailLine[] = [{
-    key: 'cost',
-    label: 'Rune points',
-    value: String(runeRuleCost(rule)),
-    help: 'Spent from your Rune Point budget, which grows with Global Mastery.',
-  }];
+  const lines: DetailLine[] = [];
   const condition = CONDITION_DATABASE.get(rule.conditionId);
   const action = ACTION_DATABASE.get(rule.actionId);
   if (condition && action) {

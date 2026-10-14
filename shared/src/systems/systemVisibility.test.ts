@@ -129,7 +129,6 @@ const ownershipCases: Array<
   ["has an unspent skill point", { skillPoints: 1 }, "passiveTree"],
   ["has equipment on", { hasEquipment: true }, "inventory"],
   ["has global mastery", { globalMastery: 1 }, "mastery"],
-  ["has crafted a rune", { runeRecipesCrafted: ["rune-recipe-a"] }, "crafting"],
 ];
 
 for (const [description, signal, system] of ownershipCases) {
