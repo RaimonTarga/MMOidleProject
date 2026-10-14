@@ -164,6 +164,8 @@ for (const item of ITEM_DATABASE.values()) {
     );
 
     const p = spawn({ essence: 1e6 });
+    // A class weapon is crafted by its own class (smart loot, class-first build plan §3.6).
+    if (recipe.classes) p.usesSkills.combatArchetype = recipe.classes[0];
     p.tracksProgression.biomeLevel[recipe.recipeGroup] = recipe.requiredBiomeLevel;
     checkRecipeUnlocks(p);
     const result = craftRecipe(world, p, recipe.id);

@@ -28,8 +28,9 @@ const essenceTotal = (cost: Partial<Record<string, number>> | undefined): number
 // 1. Census: exactly 40 ordinary T4 gear items, 37 successions, 3 without
 // ═══════════════════════════════════════════════════════════════════════════
 
+// The shared and generic gear; class gear (class-first build plan §3.6) has its own suite.
 const t4Gear: Recipe[] = [...RECIPE_DATABASE.values()].filter(
-  (r) => r.tier === 4 && r.slot !== "relic",
+  (r) => r.tier === 4 && r.slot !== "relic" && !r.classes,
 );
 
 assert(t4Gear.length === 40, `expected 40 ordinary T4 gear items, got ${t4Gear.length}`);
