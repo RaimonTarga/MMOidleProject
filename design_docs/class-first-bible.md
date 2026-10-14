@@ -28,7 +28,7 @@ when the section that replaces them locks. The read-only audit behind this draft
 | 6 | The class template | Draft |
 | 7 | Conduit | **Locked** (2026-10-13) |
 | 8 | Squire | **Locked** (2026-10-14) |
-| 9 | Apprentice | Draft (deep dive started 2026-10-14) |
+| 9 | Apprentice | **Locked** (2026-10-14) |
 | 10 | Slinger | **Locked** (2026-10-14) |
 | 11 | Spirit | **Locked** (2026-10-14) |
 | 12 | Striker | **Locked** (2026-10-14) |
@@ -1090,18 +1090,404 @@ Will answer the Trench's debuff pile, Lie in Wait and Undertow its dives.
 discipline pieces, guards 8, counters 7, holds 6. Eleven trophies: six Resolve relics, five
 slam relics.
 
-## 9. Apprentice — Draft (deep dive started 2026-10-14)
+## 9. Apprentice — Locked (2026-10-14)
 
-Order of the dives: **Conduit first** (done, §7 locked). **Striker second** (done, §12
-locked; designer's call, 2026-10-13: it is the standard class the game is measured by and
-the most playtested). **Squire third** (dive started 2026-10-14, §8). **Apprentice, Slinger
-and Spirit run in parallel from 2026-10-14**, each in its own session. Each class's brief
-concept is in the [brief](../docs/briefs/class-first-rework-brief-2026-10-13.md#class-reworks).
+**Locked by the designer on 2026-10-14: build authority.** Every proposal the walk-through
+reached was accepted; items still tagged *Proposed* are notes or wait on another section
+(§4's boots; the cross-class proposals XC1 and XC2 in the log) and may change without
+reopening this one; **Playtest** questions stay open (§9.15), and whether the Apprentice is
+still the slowest farmer comes first. Outside the lock, each for its own session: names
+(placeholders throughout), the second element and reactions (T5–T6, §13), leaves after T4
+and the T7–T8 capstone, components and rule-benders (§4), farming efficiency (§13),
+per-class stats (§5). The lock archives nothing: no design doc is the Apprentice's alone,
+and `docs/dot-systems-current-state.md` and `docs/frames-current-state.md` stay the code's
+truth until the build replaces them.
 
-**While a parallel dive runs, its section stays this stub.** Its prep pack is
-`docs/briefs/<class>-deep-dive-prep-2026-10-14.md` and every call lives in its review log,
-`docs/briefs/<class>-deep-dive-log-2026-10-14.md`. When the dive converges, the section is
-rewritten to the class template (§6) in one edit, then locked.
+Written to the class template (§6) from the 2026-10-14 deep dive, run in parallel with the
+Slinger and Spirit dives. Every call in order, the reasoning and the ideas that were dropped
+are in [apprentice-deep-dive-log-2026-10-14.md](../docs/briefs/apprentice-deep-dive-log-2026-10-14.md);
+the prep is [apprentice-deep-dive-prep-2026-10-14.md](../docs/briefs/apprentice-deep-dive-prep-2026-10-14.md).
+No mockup. Tags as everywhere in this bible; **Playtest** marks a question only the game can
+answer (§9.15). Names are placeholders throughout.
+
+**The main risks, on record:** the Apprentice is the slowest class through T1 in every bot
+tutorial sweep (69–77 min against 47–68), suspected to be damage still owed on trash that
+dies first; it leaned on Second Wind (without it, the Razorback went from 100% to 3%); and
+its payoffs are the explosive numbers (one 5× Detonate made T4 Apprentice specs 2–3× the
+tier median; Contagion's copies multiply). The answers: Detonate from minute one and
+Poison's no-waste (§9.2), Siphon (§9.10), and caps on every chain (§9.5). *Decided (the
+risks are on record).*
+
+### 9.1 Fantasy
+
+The student of three schools who masters one, and the chain reaction: "one spark and the
+whole pack goes up." The arc lives in the kit: raw magic at T1, an element at T2, and the
+basics of every school kept. *Decided.*
+
+### 9.2 Core mechanic
+
+- **Sigils:** the Apprentice's hits lay sigils on the enemy (placeholder name; not "Hex",
+  which the T4 Charnel-Crown boss casts). Sigils tick as damage over time under the usual
+  rules (they skip plating, pay half of DR, meet monster DoT resistance; a full evade blocks
+  them). *Decided.*
+- **Raw magic at T1, an element at T2:** one neutral kind of sigil, violet, until the
+  discipline gives the sigils its element and colour (§9.5). *Decided.*
+- **The weapon sets how sigils build** (the fix for the DoT-weapon trap, where attack
+  conversion made slow, heavy weapons strictly better): sigil damage comes from the
+  weapon's potency and the Apprentice's tier, never from the hit; fast weapons fill and
+  spread (breadth), heavy weapons lay more sigils per hit and hit harder directly (depth),
+  so neither wins at the cap. Direct hits still deal the weapon's damage. *Decided.*
+- **The front-loaded stack curve goes:** sigils tick linearly. Short fights are answered
+  by payoffs (Detonate from minute one) and by Poison's no-waste rule, not by a hidden
+  curve. *Decided.*
+- **Payoffs spend sigils at moments** (§9.3). Detonate is the starting payoff; a plain
+  payoff set until the first boss kill, which the base kit must win (no starter trophy, as
+  every class). *Decided.*
+- **The budget is the sigil cap:** Global Mastery's steps raise how many sigils every enemy
+  can hold, so every payoff grows with it. Shown in class terms ("Sigils 5, next at Mastery
+  24"). The one class whose room shows on the enemies. *Decided.* Illustrative: 4 at the
+  start, 5 at Mastery 15, 6 at Mastery 30. *Decided (illustrative; bots tune it).*
+- **No resource on the Apprentice itself:** its state lives on the enemies. *Decided.*
+- **One range for all:** every Apprentice fights at the class's reach; the discipline
+  changes what sigils do, not where you stand (the Spirit's disciplines move it). *Decided.*
+  Base reach: today's Apprentice reach. *Decided.*
+- **HUD:** sigils as pips in a ring at the enemy's feet, coloured by the element, the ring
+  sized by the cap; "Sigils N" in class terms. **Callouts** only for the trophy's payoff
+  (by name) and the discipline's signature moments (a chain of three or more, a Shatter);
+  plain ticks and spreads never call out. *Decided.*
+
+### 9.3 The class system: Payoff rules
+
+**What you configure** *(Decided)*:
+
+- **Moments on the enemy:** an enemy card with its sigil ring and the moments around it:
+  **full, winds up, low, shell up, frozen, dies, out of reach** (the seventh added by Seep,
+  §9.16). You drop a payoff on a moment and may add a condition ("only with three or more
+  enemies near", "only when my HP is low", "only on an elite"). Rules are free (§3). A
+  moment shows on the card only once you own a lesson that uses it, so a fresh character
+  sees only "full"; "winds up" arrives with Seize, "out of reach" with Seep. *Decided (the
+  list open to additions).*
+- **The relic:** a payoff relic or a sigil relic (§9.9).
+
+**Not in it** *(Decided)*: abilities outside the class system (§3, confirmed for the
+Apprentice: Contagion, Detonate and Imbue become payoffs or go), and defense beyond Siphon
+(equipment and leaves, §9.10).
+
+**Never the same editor** (§3): the Payoff rules read **the enemy's state** (its sigils,
+frozen, low, casting, shelled, out of reach); the Spirit's Thresholds read its own gauge;
+the Squire's Response rules answer enemy actions aimed at the Squire; the Order is a
+sequence; the Loadout picks ammunition at the reload. *Decided.*
+
+**Ownership** *(Decided)*: the payoffs (lessons) own what happens at each moment; the
+weapon owns how sigils build; the relic twists one payoff or the sigils; the discipline
+owns the element and its signature; a specialization bends the signature or the chain's
+delivery (where, when, who it reaches), never what a payoff does; leaves are small turns on
+all of it. **Lessons are payoffs:** everything a lesson does happens at a moment; how
+sigils behave between moments belongs to the weapon and to sigil relics. *Decided.*
+
+**The decisions live in the rules:** at full sigils, spread or detonate; on a boss, let the
+sigils tick or cash in when its shell goes up; spend frost on a wind-up or save it for the
+shatter. *Decided.* Default configuration: §9.13.
+
+### 9.4 The T1 form
+
+- **The first ten minutes** *(Decided: shape; numbers illustrative)*: the Clearing gives a
+  plain wand, Sigils 4 shown as pips on enemies, and one moment filled (full → Detonate).
+  The Plains teaches Spread around minute 6 with its default (full and two or more enemies
+  near → Spread, otherwise Detonate): the first real choice, and the answer to the Plains
+  entry spike playtest 3 measured (15 of 177 HP). The first boss is won with the base kit
+  and gives the first trophy. By the end of T1 the Apprentice owns six payoffs.
+- **Each T1 biome's threat hands you its answer:** a lesson (that zone's level, before its
+  boss), a weapon, an armor and a charm; its boss gives a trophy. **T1 seeds every school
+  twice:** Fire (Detonate, Converge), Frost (Numb, Seize), Poison (Spread, Siphon).
+  *Decided.* The gear slots' questions (§9.9): the weapon **"how do your sigils build?"**,
+  the armor **"what buys you the time?"**, the charm **"what does the affliction give
+  back?"**.
+
+| Biome | Threat | Lesson (school) | Weapon | Armor (shared base + Apprentice line) | Charm (Apprentice line) | Trophy |
+|---|---|---|---|---|---|---|
+| Plains | swarms | **Spread** (Poison): a full target passes a sigil to its nearest neighbour every second | **Branching Wand:** fast, light; each hit also lays a sigil on the nearest other enemy | Plating + **Warding Sigils:** each enemy carrying your sigils deals a little less damage to you (capped) | **Feeding Swarm:** Recovery rises a little for each enemy carrying your sigils (capped) | Tusked Razorback, **Outbreak** (payoff): a Spread passes to two neighbours |
+| Forest | fast packs; the Greatbear's attack-speed race | **Numb** (Frost): spend a target's sigils to slow its attacks and movement for a few seconds, longer the more it carried | **Thornwood Rod:** fast; sigils tick twice as fast for half as long | Evasion + **Give Ground:** while an enemy carrying your sigils is in melee reach, you move faster | **Numbing Calm:** while two or more enemies near you are numbed, Recovery doubles | Gnarled Greatbear, **Firstbrand** (sigil): the first hit on an enemy carrying none of your sigils lays three |
+| Swamp | attrition | **Siphon** (Poison): spend a target's sigils to heal yourself; a cooldown | **Bog Censer:** slow; sigils linger long after you stop; Siphon heals more | DoT resistance + **Bitter Blood:** poison and bleed on you tick slower | **Bitter Tonic:** Siphon heals more and comes back sooner | Grave Toadeater, **Glut** (payoff): Siphon also drains every enemy near the target |
+| Mountain | the hardest hits, telegraphed | **Seize** (Frost): spend a target's sigils to hold it for a moment, breaking its wind-up | **Runestone Staff:** slow, heavy; three sigils per hit and +1 to the cap (the brief's Frostbrand Staff) | Damage cap + **Stone Sigil:** part of a hit over a quarter of your HP arrives as damage over time instead (today's root mechanic) | **Still Mind:** after a Seize breaks a wind-up, Recovery triples for a few seconds | Crag Behemoth, **Petrify** (payoff): a Seize lasts longer and the held enemy takes more damage |
+| Cave | elites, casters | **Converge** (Fire): pull the sigils of every enemy near the target onto it, past its cap | **Deep Grimoire:** payoffs pay more; sigils tick a bit weaker | Bulk + **Sigil Weight:** a winding-up enemy's blow is weaker for each sigil it carries (up to a third) | **Long Draw:** while an elite or boss carries a full bar of your sigils, Recovery rises | Obsidian Broodmother, **Brood Sigils** (sigil): an enemy carrying three or more of your sigils grows one more every 2 s |
+
+Concepts *Decided*; names and numbers open. The measured weak spots each get three answers:
+the Greatbear's race (Numb, Firstbrand, Numbing Calm), the Toadeater's attrition (Siphon,
+Bitter Blood, Bitter Tonic), the Behemoth's one big blow (Seize, Sigil Weight, Still Mind;
+its Crag Charge cast carries no `uninterruptible` flag, so Seize can break it). Seize is a
+theme crossing with the Squire's Shield Bash (§3): it spends the sigils you built and works
+from range. *Decided.*
+
+### 9.5 Disciplines (T2)
+
+A considerable power step (§2). The base kit stays (sigils, moments, the six T1 payoffs, the
+cap as budget); each discipline gives the sigils an element, turns its school's T1 lesson
+into the **signature**, keeps every other lesson working on the new element ("master one,
+keep the basics"), and unlocks one piece that covers its weak content. Every discipline has
+its own **chain reaction**; each enemy goes off at most once per chain. *Decided.*
+
+| | Poison: the plague | Fire: the blast | Frost: the freeze |
+|---|---|---|---|
+| Fantasy | "I touch one, and the whole pack is already dying." | "One spark, and they go up one after another." | "I lock the giant in ice, then break it." |
+| Sigils become | Small and many: the cap holds 2 more, ticks fast (Venom vessel) | Burn: hits into a full-burn target strike harder (Ember mage) | Few and heavy: the cap holds 1 fewer; each sigil slows a little (Rime-Bound) |
+| Signature | **The walking plague:** Spread stops being a payoff and happens on its own (a full target passes a sigil each second; a dying one passes on what it still carried, adding no damage), freeing the "full" moment | **Chain Detonate:** a detonation throws burn onto every enemy around it; any pushed to full goes off too | **Freeze:** Seize becomes a real freeze; on a boss that accepts no control it makes the boss **Brittle** for a few seconds (no stop, more damage taken, still shatterable). A Detonate on a frozen or brittle target **Shatters**: a heavy hit whose cold chills its neighbours |
+| Chain | creeps: the plague walks through the pack | blasts: detonations set off their neighbours | spreads cold: a shatter chills the next one |
+| New piece | **Wither:** spend a target's sigils so it deals less damage for a few seconds (the boss floor) | **Fuse:** the target's sigils blow in 3 s, and everything laid meanwhile adds to the blast (shells, lone elites) | **Cold Snap:** spend a target's sigils to chill every enemy around it (the pack answer) |
+| Damage, ticks / hits / payoffs | ~60 / 20 / 20 | ~30 / 20 / 50 | ~30 / 25 / 45 |
+| Look | green motes creeping enemy to enemy | orange sigils that flare, then blow in sequence | pale frost creeping over the body; an ice shell; shards on the shatter |
+| Weapons | Branching Wand, Thornwood Rod, Bog Censer | Deep Grimoire, Runestone Staff | Runestone Staff, Bog Censer |
+| Best at / weak at | packs, farming / bosses alone, burst races (the Final Eruption), DoT-resistant families | clumped packs, elites, shells / spread-out kiters, long single-target fights between blasts | bosses, elites / swarms (one freeze at a time), its slower ramp |
+
+Concepts and rules *Decided*; the cap shifts, damage shares and looks *Decided
+(illustrative)*. The walking plague's pass-on at death is argued as no on-kill effect, since
+it adds no damage (cross-class proposal XC1 in the log, for §1). Not taken: chains for Fire
+only, losing the other schools' lessons at T2, Poison closer and Frost further. Note
+*(Proposed)*: Fire's chain and Poison's plague both reach across packs; they stay apart by
+speed and cost (the plague creeps for free, the chain spends sigils at once).
+
+### 9.6 Specializations (T3)
+
+Each bends its discipline's signature or the chain's delivery, never what a payoff does
+(§9.3). Concepts *Decided*; names and numbers open.
+
+| Poison (the plague) | Fire (the blast) | Frost (the freeze) |
+|---|---|---|
+| **Carrier:** the plague also walks from you: every enemy near you catches a sigil each second (where) | **Afterburn:** a detonation leaves half its sigils burning on the target, so the next blast comes sooner (what's left) | **Ice Tomb** (old Winter Warden): a frozen target stays frozen until you shatter it (up to ~6 s); a Brittle boss stays brittle until shattered, capped (when) |
+| **Ripening** (old Cultist, reshaped): sigils darken as they age; one older than ~5 s ticks double; the walking plague passes on its ripest sigil (how the plague grows) | **Long Fuse:** every detonation waits 2 s and grows with everything laid meanwhile; the chain carries the extra (when) | **Creeping Frost:** a target reaching the cap freezes on its own, once every ~8 s per target; the freeze comes from the sigils, freeing the "winds up" moment (how the freeze arrives) |
+| **Wasting:** Wither's weakening stays on any enemy carrying a full bar, so plagued packs and bosses hit softer (the plague as a defense) | **Hair Trigger:** the chain sets off any enemy carrying sigils, not only those it pushes to full; each pays what it carries (who it reaches) | **Shardstorm:** a shatter's shards fly to the 3 nearest enemies, laying frost sigils; a frozen one hit by a shard shatters too, once per chain (who it reaches) |
+
+Notes *(Proposed)*: Hair Trigger and Shardstorm lean to packs and Ice Tomb to bosses (watch
+them against content-neutrality, as §8 notes for Bastion and Inexorable); the other six
+work in both. Ripening is the board's only ramp, visible and per sigil. Shardstorm and Hair
+Trigger multiply: the bots watch them with the once-per-chain cap.
+
+### 9.7 Leaves (T4 onward)
+
+Three per discipline per tier (§2). The Apprentice's T4 asks **"what reaches you?"**:
+whatever gets past a ranged class's distance (the charger, the ambusher, the shooter),
+answered in each discipline's style. They are the Apprentice's T4 resilience. Every leaf
+triggers on an enemy's action, never on your hits, so attack speed can't farm them
+(§12.10). *Decided (names and numbers open).*
+
+| | The charger (closes the gap) | The ambusher (appears beside you) | The shooter (hits from range) |
+|---|---|---|---|
+| Poison: they catch it | **Thick Air:** an enemy that charges or leaps at you lands carrying a full bar, slowed for a moment | **Taint:** an ambusher's first hit on you is halved, and it arrives carrying a full bar | **Windborne:** your plague also walks to whoever hits you from range, however far |
+| Fire: blast them back | **Fire Ward:** once every few seconds, an enemy reaching melee range sets off its own sigils and is knocked back a step | **Tinderbox:** once every so often, an enemy appearing beside you sets off your sigils on every enemy around you at once | **Smokescreen:** for 2 s after a detonation, the enemies it hit deal half damage to you with ranged hits |
+| Frost: lock them out | **Frozen Step:** a charge that reaches you freezes the charger for a moment (Brittle if it accepts no control) | **Cold Shoulder:** the first hit an ambusher lands on you is halved and freezes it | **Frost Mirror:** each ranged hit on you lays a frost sigil on the shooter; a full shooter freezes |
+
+Spare theme for a later leaf tier *(Decided: kept as a spare)*: **"what if there's no
+time?"** (they die first: route a dying enemy's leftovers to whoever will live long enough
+to pay them; they're on you; they won't hold sigils: shells, dives, DoT resistance).
+
+### 9.8 Payoffs, and where every piece comes from
+
+| Piece | Comes from | Status |
+|---|---|---|
+| Lessons (payoffs) | A zone's level teaches a lesson, before its boss, every tier: a new payoff, a **sidegrade** or a **rank-up**. Through T4: 6 at T1, then 9 new, 3 sidegrades and 9 rank-ups (§9.16) | Decided |
+| Lesson scaling | Every payoff scales with the Apprentice's tier, so a T1 favourite stays fieldable (as the Striker's techniques, the Squire's responses, the Slinger's clips) | Decided |
+| Trophies | Boss trophies in the relic slot; the same lineage's next-tier boss ranks one up | Decided |
+| The element, the signature and one piece | The T2 pick | Decided |
+| Specialization | The T3 pick | Decided |
+| Leaves | T4 onward | Decided |
+| The sigil cap | Global Mastery steps | Decided |
+
+**Three schools** *(Decided, vocabulary; the Squire's response families are the model)*:
+**Poison** (Spread, Siphon, Wither, Seep, Recoil, Spore Burst, Transference), **Fire**
+(Detonate, Converge, Fuse, Blast Back, Sear, Signal Fire, Melt, Cinderfall, Pyre), **Frost**
+(Numb, Seize, Cold Snap, Snag, Frostcrack). Each tier spreads its lessons across the three.
+Counting rank-ups, 30 payoffs through T4: Poison 11, Fire 10, Frost 9. Note *(Proposed)*:
+Frost grows mostly through rank-ups (Numb II, Seize II–III, Snag II), so it has the fewest
+distinct pieces; a later tier can even it out.
+
+### 9.9 Items
+
+| Slot | The Apprentice's version | Status |
+|---|---|---|
+| Weapon | **"How do your sigils build?"** Speed, sigils per hit, tick speed, duration, cap, plus one **job**. A job follows you up: every tier has a stronger recipe for each job you know; new biomes add jobs; a retiring biome's jobs move to a biome of the next tier | Decided (direction) |
+| Relic | Two kinds, one twist each: **payoff relics** change what a payoff does; **sigil relics** change how sigils build or behave. No discipline-only relics | Decided |
+| Armor | A shared base plus an Apprentice line. It asks **"what buys you the time?"**: the lines keep you alive while the sigils work | Decided |
+| Charm | A shared recovery base plus an Apprentice line. It asks **"what does the affliction give back?"**: Recovery bound to a state of the enemies carrying your sigils, never to your hits | Decided |
+| Boots | Generic | Proposed (§4) |
+| Components | §4's own session. Waiting there: the brief's **Plague Censer** (spreading poison also spreads fire stacks), a two-element reaction for T5–T6 (§13) or a rule-bender | Under review |
+
+The brief's **Frostbrand Staff** became the Mountain weapon job (the Runestone Staff, §9.4).
+T1's pieces are in §9.4; T2–T4 in §9.16. **Eleven trophies**, one per lineage: payoff relics
+Outbreak, Glut, Petrify, Dune Wind, Frostheart, Dirge, Pressure Fuse; sigil relics
+Firstbrand, Brood Sigils, Scent, Magma Core. *Decided (T1 concepts) / Decided on paper
+(T2–T4).*
+
+### 9.10 Defense and recovery
+
+- **Siphon is Second Wind's successor, inside the class system** (as the Squire's defense
+  is): spend a target's sigils to heal yourself; a rule chooses when; a cooldown stops
+  attack speed farming it. *Decided.*
+- **Equipment carries the rest:** the armor's "what buys you the time?" and the charm's
+  "what does the affliction give back?" (charm lines bound to enemy states, never to your
+  hits), plus the T4 leaves (§9.7). *Decided.*
+- **Today's root mechanic returns as gear:** 15% of incoming hits delayed into damage over
+  time becomes the Mountain armor line, Stone Sigil. The root's 18% DoT resistance is per-
+  class stats, §5's question. *Decided.*
+- **Evidence the kit must answer:** without Second Wind the Apprentice lost almost every
+  Razorback and Greatbear fight in the T1 boss pass; its incoming damage sits mid-pack
+  (6.6 / 9.6 / 4.5 / 4.0 / 1.7 HP/s on the five T1 bosses). *Decided (on record).*
+
+### 9.11 Stance-like modes, rite-like passives
+
+None. The moments are the class's states. *Decided.*
+
+### 9.12 Party role
+
+The weakener and spreader: Wither and Wasting make enemies hit everyone softer, Brittle
+makes a boss take more from everyone, Numb and chill slow enemies for the party. **Each
+Apprentice keeps its own sigils** on an enemy (its damage adds like any player's); only the
+debuffs (Wither's weakening, Brittle, Numb, chill) follow the strongest-copy rule (§7.12,
+§12.12). Brittle and the Striker's Expose are different debuffs, so both apply. *Decided.*
+
+### 9.13 Bot plan
+
+*Decided (defaults and test arms tuned by the bots).* Bots can't press buttons; every lever
+is a setting the harness writes.
+
+- **Harness intents:** set each moment's payoff and condition; equip the relic. The
+  Contagion, Detonate and Imbue runes go.
+- **Defaults:** T1, full → Spread if two or more enemies are near, else Detonate; winds up
+  → Seize; your HP low → Siphon. Poison: full → Detonate (the plague walks on its own), low
+  → Wither. Fire: full → Detonate, shell up → Fuse. Frost: winds up → Seize, frozen →
+  Detonate, three or more near → Cold Snap.
+- **Metrics:** time to kill; **waste** (damage still owed on dead enemies, the measured
+  slowness); chain lengths; payoffs fired; Siphon healing; deaths.
+- **Test arms the design already asks for:** fast against heavy weapons at the cap (the W1
+  fix); Hair Trigger and Shardstorm multiplication; Ripening; the cap steps; Brittle's
+  strength; the first boss without a relic.
+
+### 9.14 Salvage
+
+*Decided (accepted at the walk-through).*
+
+| Keep | Where |
+|---|---|
+| The DoT inventory: what is on a target, whose, what element, what it still owes; the Payoff rules' reader | `server/src/systems/combat/damage/dotInventory.ts` |
+| The affliction toolkit: Contagion's copy and better-of-two merge, nearest-first (Spread, Spore Burst); Detonate's consume-and-pay, stripping before the damage lands, declining before it commits | `server/src/systems/player/abilities/abilityAffliction.ts` |
+| The class DoT runtime: application on hit, ticking, `tickOnExpire`, the element per source, `dot-tick` events | `server/src/systems/classes/archetypes/dot/`, `combat/damage/dotTickEvent.ts` |
+| The frame verbs as references: Venom vessel's opener (Firstbrand), Ember mage's intensify (Fire's burn), Rime-Bound's chill (Frost's sigils) | `dot/frameLoop.ts` |
+| T3 tick drivers as references: Conflagration, Permafrost's bounded window, chill and Winter Warden's Frozen (Freeze, Brittle), Radiant | `dot/t3/ticks/` |
+| Rule conditions: the target at max stacks, the target's HP (moments full, low) | `server/src/systems/combat/ai/runeConfig.ts` |
+| A freeze interrupting a wind-up; the step-level `uninterruptible` flag; `controlImmune` | `combat/ai/bossPatterns.ts`, `shared/src/data/monsters/types.ts` |
+| Element tints, DoT damage numbers, bespoke FX, Apprentice bodies through T3 | `shared/src/systems/dotElements.ts`, `client/src/fx/bespoke/apprentice.ts`, the atlases |
+| The root's delayed hits | the Stone Sigil armor line |
+| The Passive Tree's panel, unlock gate, reset and layers | §2 |
+
+| Remove or rework | Why |
+|---|---|
+| Frames, range nodes and the nine paths as data | Replaced by disciplines and specializations |
+| Stack damage from the hit's attack (`computeDotClassDamagePerStack`) | Sigil damage from weapon potency and tier (§9.2) |
+| The front-loaded curve (`computeScaledDotDamage`) | Linear sigils and payoffs |
+| One class `dot` record per monster, taken over by the last applier | One record per owner (§9.12) |
+| Shared Contagion, Detonate and Imbue, and the runes driving them | Payoffs in the Payoff rules |
+| DoT-conversion weapons for any class (`BURN_FAMILY` reservoirs) | Class weapons (§4); other classes' damage over time is their own pieces |
+| The DoT stat panel in system language | Sigils on the enemy, the Payoff card |
+| Recovery on kill from DoT kills | On-kill (§1); only the no-waste pass-on stays |
+
+### 9.15 Open questions
+
+**Playtest:**
+
+1. Is the Apprentice still the slowest farmer? Waste is the metric.
+2. Every number: sigil damage, tick speeds, the cap steps and the disciplines' shifts,
+   payoff multipliers, chain caps, Siphon's cooldown, Brittle's strength.
+3. Chain multiplication: Hair Trigger, Shardstorm, Outbreak, Dune Wind.
+4. Ripening's ramp; Ice Tomb's hold.
+5. The first boss without a relic.
+
+**Design, later:**
+
+6. Names: placeholders throughout ("Sigils" among them; "Seize" sits next to the Squire's
+   Seize the Opening leaf).
+7. Components and rule-benders (§4): the Plague Censer.
+8. The second element and reactions (T5–T6, §13): keep one element per discipline through
+   T4, built so a second can sit beside it.
+9. Leaves after T4 (spare theme: "what if there's no time?") and the T7–T8 capstone.
+10. Per-class stats (§5), the root's DoT resistance among them.
+11. Cross-class proposals in the log: XC1 (§1: passing on what a dead enemy carried,
+    adding no damage, is not on-kill), XC2 (marks never bank damage; the Slinger's lock
+    satisfies it).
+12. The T4 undead biome is "Graveyard" in §7.16 and "Wasteland" in §8, §12.16 and here.
+
+**Build tasks, from the design:** one sigil record per owner (§9.12); the "out of reach"
+moment; the Tundra Ice Armor's break renamed on screen ("breaks", "cracks"), so "shatter"
+stays the Apprentice's. *Decided.*
+
+**Collisions, as settled** *(Decided, notes)*: stack-then-detonate and freeze-then-shatter
+stay the Apprentice's (the Slinger's Siege banks on the Slinger and Deathmark's marks only
+designate; the Spirit's Chain Lightning leaps damage, never stacks that set each other
+off); the Payoff rules read the enemy's state, Thresholds the Spirit's gauge (§9.3); theme
+crossings (§3): Seize with the Squire's Shield Bash, Blast Back with the Squire's Stand Fast
+and the Conduit's Ironhorn, Firstbrand with the Slinger's Carbine and the Striker's
+Hunter's Blade, Pressure Fuse with the Squire's Lie in Wait and the Spirit's Depth Charge,
+Transference with the Conduit's Abyssal Warden, Pyre with the Squire's Lay to Rest.
+Renamed to avoid locked names: Flare → Signal Fire and Depth Charge → Pressure Fuse (the
+Spirit's), Slip Away → Give Ground and Thaw → Melt (the Slinger's).
+
+### 9.16 Tier by tier: what each biome gives the Apprentice
+
+T1 is §9.4. Every tier, each biome teaches a lesson (§9.8), has a weapon, an armor and a
+charm recipe (its jobs, stronger), and its boss gives a trophy or ranks one up. **Jobs move
+when a biome retires:** after T2 the Forest's (Thornwood Rod, Give Ground, Numbing Calm) to
+the Jungle and the Plains' (Branching Wand, Warding Sigils, Feeding Swarm) to the Volcanic;
+after T3 the Swamp's (Bog Censer, Bitter Blood, Bitter Tonic) to the Wasteland and the
+Cave's (Deep Grimoire, Sigil Weight, Long Draw) to the Trench. A retired lineage's trophy
+keeps working and scaling; it only stops ranking up. *Decided on paper*, to judge in the
+game; names and numbers open.
+
+**T2**
+
+| Biome | Threat | Lesson (school, kind) | New gear jobs | Trophy |
+|---|---|---|---|---|
+| Plains | stampedes | **Blast Back** (Fire, sidegrade of Detonate): a detonation on a charging enemy stops its charge and knocks it back | — | Gorging Razortusk: Outbreak II, a Spread passes to three neighbours |
+| Forest | cadence duel, stuns | **Numb II** (Frost, rank-up): a numbed enemy's wind-ups also take longer | — | Apex Timberclaw: Firstbrand II, the first hit lays half a bar |
+| Mountain | heavy plating, the breakable barrier, charges | **Sear** (Fire, new): spend a shielded target's sigils to burn through its barrier at double (lands if the barrier breaks) | — | Stoneplate Juggernaut: Petrify II, a held enemy also takes more from your ticks |
+| Swamp | pools, rain, the rising mire; Corrosion | **Siphon II** (Poison, rank-up): Siphon also washes a poison, bleed or Corrosion off you | — | Mire-Gorged Behemoth: Glut II, twice the drain reach |
+| Cave | eruptions from below | **Seep** (Poison, new): when an enemy burrows or dives out of reach, its sigils keep ticking at double until it surfaces | — | Chitinous Dreadbore: Brood Sigils II, one every 1.5 s |
+| Jungle (new) | fleeing prey, ambushers from cover | **Snag** (Frost, new): a fleeing or kiting enemy carrying a full bar is rooted for a moment | Weapon **Stalker's Rod:** sigils on a fleeing or kiting enemy tick double. Armor: anti-ambush base + **Second Skin:** the first hit each ambusher lands on you is a third weaker. Charm **Patient Hunter:** Recovery doubles while every enemy within your reach carries your sigils | Jungle Dread-Gorger, **Scent** (sigil): sigils on an enemy that flees or kites never fall off while it runs, and tick faster |
+| Desert (new) | mark, slow, execute; ranged kiters | **Recoil** (Poison, new): when an enemy's mark, slow or curse lands on you, its caster catches a full bar | Weapon **Dune Staff:** longer reach; sigils last longer on far enemies. Armor: ranged-hit base + **Sun-Ward:** marks and slows on you are shorter for each enemy carrying your sigils (capped). Charm **Cool Draught:** a mark or slow ending on you heals you a little | Dune-Stalker Emperor, **Dune Wind** (payoff): a Spread or a chain can leap any distance to an enemy carrying your sigils |
+
+Kiters are the Apprentice's natural prey (the sigils tick while they run), so the Desert is
+about the debuffs that land on you.
+
+**T3** (the Plains and Forest have retired)
+
+| Biome | Threat | Lesson (school, kind) | New gear jobs | Trophy |
+|---|---|---|---|---|
+| Mountain | the double charge | **Seize II** (Frost, rank-up): Seize catches a second wind-up within a few seconds | — | Crag-Gorged Horn-Behemoth: Petrify III |
+| Cave | the tunnel chase | **Seep II** (Poison, rank-up): when the enemy surfaces, its sigils burst onto every enemy near the spot | — | Deep-Core Burrow-Gorger: Brood Sigils III, the last rank |
+| Swamp (last tier) | spores, detonating pools, the drag | **Spore Burst** (Poison, sidegrade of Spread): spend a target's sigils to burst them onto every enemy around it at once, half each | — | Rot-Spore Croc-Behemoth: Glut III, the last rank |
+| Jungle (+ the Forest's jobs) | pursuit, flight | **Snag II** (Frost, rank-up): the root also holds every enemy near the snagged one | The Forest's jobs move here | Apex Bramble-Slasher: Scent II |
+| Desert | postures; the Monarch turns kiter at half HP; a dash-escape | **Signal Fire** (Fire, new): a detonation on your target also sets off your sigils on the enemy furthest from you | — | Dune-Carapace Monarch: Dune Wind II |
+| Tundra (new) | the Chill clock, Deep Freeze, Ice Armor, root casters; bosses accept no control | **Melt** (Fire, new): when the Chill on you reaches its threshold, spend the nearest enemy's sigils to melt it off | Weapon **Glacial Wand:** sigils on a chilled or slowed enemy last twice as long. Armor: chill base + **Ice Veil:** when the Chill on you reaches its threshold, every enemy around you carrying your sigils is numbed. Charm **Cold Comfort:** Recovery doubles while an enemy carrying your sigils is frozen or brittle | Frost-Plated Rime-Mammoth, **Frostheart** (payoff): every Seize also leaves its target brittle for a few seconds after |
+| Volcanic (new; + the Plains' jobs) | Heat, vents, the Final Eruption, Obsidian shells, hound swarms, burning gunners | **Cinderfall** (Fire, sidegrade of Detonate): the detonation hits everything around the target, each paying a share | Weapon **Magma Censer:** sigils tick harder for each step of the fight's Heat. Armor: heat base + **Ashguard:** a burning hit on you lays a sigil on its shooter. Charm **Banked Coals:** Recovery rises with the Heat while three or more enemies carry your sigils. The Plains' jobs move here | Cinder-Shell Magma-Salamander, **Magma Core** (sigil): sigils on a shelled enemy keep ticking at full through the shell |
+
+**T4** (the Swamp and Cave have retired)
+
+| Biome | Threat | Lesson (school, kind) | New gear jobs | Trophy |
+|---|---|---|---|---|
+| Mountain (last tier) | Earthshatter, delayed fault lines | **Seize III** (Frost, rank-up): a seized enemy's delayed attacks (fault lines) are cancelled too | — | Iron-Crest Titan: Petrify IV, the last rank |
+| Tundra | Ice Armor at its heaviest | **Frostcrack** (Frost, new): a Seize on a shielded or shelled enemy cracks the shell open at once | — | Glacial Patriarch: Frostheart II |
+| Jungle | hard to catch, then it commits | **Spread II** (Poison, rank-up): Spread and the plague reach a hiding or fleeing enemy anywhere within your reach | — | Verdant-Crown Predator: Scent III |
+| Desert | three acts: melee, kiter, cornered | **Recoil II** (Poison, rank-up): the caster also suffers its own mark or slow | — | Dune-Throne Sovereign: Dune Wind III |
+| Volcanic | the Heat race, Magma Shove | **Cinderfall II** (Fire, rank-up): each step of the Heat widens it | — | Caldera Sovereign: Magma Core II |
+| Wasteland (new; + the Swamp's jobs) | the dead rise; area damage matters most | **Pyre** (Fire, new): a fallen enemy carrying your sigils burns and can't rise; its leftovers pass on (no damage added, XC1's shape) | Weapon **Charnel Rod:** your hits also lay a sigil on the nearest risen enemy. Armor: base (risen enemies hit softer) + **Gravewrap:** a risen enemy carrying your sigils can't hit you for its first seconds. Charm **Last Rites:** Recovery rises for each risen enemy carrying your sigils. The Swamp's jobs move here | Charnel-Crown Sovereign, **Dirge** (payoff): a Detonate also sets off your sigils on every risen enemy in the fight |
+| Trench (new; + the Cave's jobs) | the debuff pile, Devour, dives out of reach | **Transference** (Poison, new): spend a target's sigils to move one of your debuffs onto it | Weapon **Abyssal Censer:** sigils tick harder for each different debuff on their carrier. Armor: debuff-resistance base + **Deep Ward:** while you carry three or more debuffs, each enemy carrying a full bar deals less damage to you. Charm **Tidal Draw:** each debuff you move or wash off heals you a little. The Cave's jobs move here | Elder Trench Serpent, **Pressure Fuse** (payoff): a Detonate on an enemy out of reach goes off, doubled, when it resurfaces |
+
+**How T3 and T4 test the Apprentice:** shells waste damage over time, so Magma Core,
+Frostcrack, Sear and Fuse are the answers and Fire is strongest there; the bosses that
+accept no control meet Brittle, Frostheart and Numb (a slow still lands); the Final
+Eruption is a race, Poison's weakest fight, where Cinderfall and Long Fuse matter; the
+Wasteland is the area fight, home for the plague and the chain; the Trench's debuff pile
+meets Siphon II, Transference and Recoil, its dives Seep and Pressure Fuse.
+
+**Totals through T4:** 30 payoffs counting rank-ups (6 at T1, the 3 discipline pieces, then
+9 new, 3 sidegrades and 9 rank-ups): Poison 11, Fire 10, Frost 9. Eleven trophies (§9.9).
 
 ## 10. Slinger — Locked (2026-10-14)
 
