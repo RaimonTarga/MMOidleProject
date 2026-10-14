@@ -1,16 +1,11 @@
 import type {
   AutocombatConfig,
   EquipmentSlot,
-  AttunedAbilities,
   EquippedRule,
-  EvolveMode,
   FastBossRetryResult,
-  StanceSlot,
   ProgressionCheckpointResult,
   ProgressionCheckpointRestore,
   RowKind,
-  TierEntryApplyResult,
-  TierEntryProfile,
   T1EconomyArm,
   T1EconomyExperimentConfig,
   Vec2,
@@ -22,7 +17,7 @@ export interface CraftOutcome {
   reason?: string;
 }
 
-/** Answer to any of the four lineage intents; one event serves all of them. */
+/** The server's answer event for the row-activation intent (`setActive`). */
 export interface LineageResult {
   success: boolean;
   reason?: string;
@@ -113,33 +108,9 @@ export class Intents {
     );
   }
 
-  evolveItem(recipeId: string, mode: EvolveMode): Promise<CraftOutcome> {
-    return this.conn.request<CraftOutcome>("crafting:result", () =>
-      this.conn.raw.emit("crafting:evolveItem", { recipeId, mode }),
-    );
-  }
-
   upgradeItem(itemId: string): Promise<UpgradeOutcome> {
     return this.conn.request<UpgradeOutcome>("inventory:upgradeResult", () =>
       this.conn.raw.emit("inventory:upgradeItem", itemId),
-    );
-  }
-
-  craftRuneRecipe(recipeId: string): Promise<{ recipeId: string; success: boolean; reason?: string }> {
-    return this.conn.request("rune:craftResult", () =>
-      this.conn.raw.emit("rune:craftRecipe", recipeId),
-    );
-  }
-
-  craftAbilityRecipe(recipeId: string): Promise<{ recipeId: string; success: boolean; reason?: string }> {
-    return this.conn.request("ability:craftResult", () =>
-      this.conn.raw.emit("ability:craftRecipe", recipeId),
-    );
-  }
-
-  craftStanceRecipe(recipeId: string): Promise<{ recipeId: string; success: boolean; reason?: string }> {
-    return this.conn.request("stance:craftResult", () =>
-      this.conn.raw.emit("stance:craftRecipe", recipeId),
     );
   }
 
@@ -157,23 +128,12 @@ export class Intents {
     return this.conn.request("build:loadoutResult", () => this.conn.raw.emit("rune:setLoadout", rules), 15_000, p => p.system === "runes");
   }
 
-  setDefaultStance(stanceId: string | null, attunedStances?: string[]): Promise<{ system: "stances"; success: boolean; reason?: string }> {
-    return this.conn.request("build:loadoutResult", () =>
-      this.conn.raw.emit("stance:setLoadout", { slot: "default" as StanceSlot, stanceId, attunedStances }), 15_000, p => p.system === "stances",
-    );
-  }
-
   /** Dev-only bootstrap; the server remains authoritative over the applied state. */
   captureCheckpoint(boundaryId: string): Promise<ProgressionCheckpointResult> {
     return this.conn.request('debug:checkpointResult', () => this.conn.raw.emit('debug:captureCheckpoint', boundaryId));
   }
   restoreCheckpoint(request: ProgressionCheckpointRestore): Promise<ProgressionCheckpointResult> {
     return this.conn.request('debug:checkpointResult', () => this.conn.raw.emit('debug:restoreCheckpoint', request));
-  }
-  applyTierEntryProfile(profile: TierEntryProfile): Promise<TierEntryApplyResult> {
-    return this.conn.request<TierEntryApplyResult>("debug:tierEntryResult", () =>
-      this.conn.raw.emit("debug:applyTierEntryProfile", profile),
-    );
   }
 
   /** Dev-only bootstrap; the server remains authoritative over the selected arm. */
@@ -188,45 +148,14 @@ export class Intents {
     );
   }
 
-  setAbilityLoadout(equipped: AttunedAbilities): Promise<CraftOutcome> {
-    return this.conn.request("build:loadoutResult", () => this.conn.raw.emit("ability:setLoadout", { equipped }), 15_000, p => p.system === "abilities");
-  }
-
-  // ── Lineage trees (progression rework Phase 1) ───────────────────────────
-  // All four lineage intents answer on the single `lineage:result` event, so the
-  // request filter has to match on the ACTION as well as the lineage: two
-  // in-flight lineage intents would otherwise resolve each other's promise.
-
-  unlockLineageCard(lineageId: string, cardId: string): Promise<LineageResult> {
-    return this.conn.request<LineageResult>("lineage:result",
-      () => this.conn.raw.emit("lineage:unlockCard", { lineageId, cardId }),
-      15_000, p => p.lineageId === lineageId && p.action === "unlockCard");
-  }
-
+  /**
+   * The `setActive` step's intent. Its answer event is shared with other
+   * intents, so the request filter matches on the ACTION as well as the id.
+   */
   setLineageActive(lineageId: string, row: RowKind, cardId: string | null): Promise<LineageResult> {
     return this.conn.request<LineageResult>("lineage:result",
       () => this.conn.raw.emit("lineage:setActive", { lineageId, row, cardId }),
       15_000, p => p.lineageId === lineageId && p.action === "setActive");
-  }
-
-  unlockLineageForm(lineageId: string, recipeId: string): Promise<LineageResult> {
-    return this.conn.request<LineageResult>("lineage:result",
-      () => this.conn.raw.emit("lineage:unlockForm", { lineageId, recipeId }),
-      15_000, p => p.lineageId === lineageId && p.action === "unlockForm");
-  }
-
-  wearLineageForm(lineageId: string, recipeId: string): Promise<LineageResult> {
-    return this.conn.request<LineageResult>("lineage:result",
-      () => this.conn.raw.emit("lineage:wearForm", { lineageId, recipeId }),
-      15_000, p => p.lineageId === lineageId && p.action === "wearForm");
-  }
-
-  craftRiteRecipe(recipeId: string): Promise<CraftOutcome> {
-    return this.conn.request("rite:craftResult", () => this.conn.raw.emit("rite:craftRecipe", recipeId));
-  }
-
-  setRiteLoadout(riteIds: string[]): Promise<CraftOutcome> {
-    return this.conn.request("build:loadoutResult", () => this.conn.raw.emit("rite:setLoadout", { riteIds }), 15_000, p => p.system === "rites");
   }
 
   /**

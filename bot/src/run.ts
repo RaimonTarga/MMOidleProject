@@ -5,7 +5,7 @@ import { startDashboardOrWarn } from "./ui/server";
 /**
  * Single-bot entrypoint.
  *
- *   pnpm --filter @mmo-idle/bot run:bot -- --route=striker-t1 --policy=intended
+ *   pnpm --filter @mmo-idle/bot run:bot -- --route=smoke-t1 --class=cadence --policy=intended
  *
  * The dev server must be running with `AUTH_DEV_BYPASS=1`. Canonical runs leave
  * `DEBUG_REWARD_MULT` unset so the server stays at the shipped 1x economy.

@@ -1,231 +1,70 @@
-import { CAMPAIGN_T4_VOLCANO_FINISH_ROUTES } from './campaignT4VolcanoFinish';
-import { CAMPAIGN_T4_NIGHT3_ROUTES } from './campaignT4Night3';
-import { CAMPAIGN_T4_BOSS_COVERAGE_ROUTES, CAMPAIGN_T4_VOLCANO_DIAGNOSTIC } from './campaignT4ValidationExit';
-import { CAMPAIGN_T4_V1Z } from './campaignT4V1z';
-import { CAMPAIGN_T4_V1Y } from './campaignT4V1y';
-import { CAMPAIGN_T3_V1X } from './campaignT3V1x';
-import { CAMPAIGN_T3_V1W_ROUTES } from './campaignT3V1w';
-import { CAMPAIGN_T3_V1V } from './campaignT3V1v';
-import { CAMPAIGN_T3_V1U2_ROUTES } from './campaignT3V1u2';
-import { NAMED_CHECKPOINT_ROUTES } from './namedCheckpoints';
-import { CAMPAIGN_T3_V1R_ROUTES } from './campaignT3V1r';
-import { CAMPAIGN_T3_V1S_ROUTES } from './campaignT3V1s';
-import { CAMPAIGN_T3_V1U_ROUTES } from './campaignT3V1u';
-import { CAMPAIGN_T3_V1T } from './campaignT3V1t';
-import { CAMPAIGN_NIGHT_KIT, CAMPAIGN_NIGHT_BOSSES, CAMPAIGN_NIGHT_SWAMP_DUAL_GUARD, CAMPAIGN_CAVE_DUAL_GUARD, CAMPAIGN_CAVE_RECOVERY_ROUTES } from "./campaignOvernight";
-import { STRIKER_DECISIONS_T1 } from "./strikerDecisionsT1";
-import { CAMPAIGN_T2_BOSS_ROUTES } from "./campaignT2Boss";
-import { CAMPAIGN_T2_EXPANSION_ROUTES } from "./campaignT2Expansion";
-import { CAMPAIGN_T2_V1K_ROUTES } from "./campaignT2V1k";
-import { CAMPAIGN_NIGHT2_ROUTES } from "./campaignNight2";
-import { CAMPAIGN_NIGHT2_BRIDGE, CAMPAIGN_NIGHT2_TRAVEL_BRIDGE, CAMPAIGN_WISP_TRAVEL_BRIDGE } from "./campaignNight2Bridge";
-import { CAMPAIGN_NIGHT2_SQUIRE_ROUTES } from "./campaignNight2Squire";
-import { CAMPAIGN_T3_V1N_ROUTES } from "./campaignT3V1n";
-import { CAMPAIGN_T3_V1P_TUNDRA } from "./campaignT3V1p";
-import { STRIKER_CAMPAIGN_PLAINS_BOSS_T1, STRIKER_CAMPAIGN_PLAINS_BOSS_V1B, STRIKER_CAMPAIGN_PREPARATION_T1, STRIKER_CAMPAIGN_PLAINS_ENTRY_T1 } from "./campaignBoss";
-import { CAMPAIGN_READINESS_ROUTES } from "./campaignReadiness";
-import { CAMPAIGN_BEHAVIOR_ROUTES, CAMPAIGN_LOCAL_BEHAVIOR_ROUTES } from "./campaignBehavior";
+import { SKILL_TREE } from "@mmo-idle/shared";
 import type { Route } from "../route/types";
-import { APPRENTICE_LETDOTSFINISH_T1 } from "./apprenticeLetDotsFinishT1";
-import { APPRENTICE_T1 } from "./apprenticeT1";
-import { APPRENTICE_V2_T1 } from "./apprenticeV2T1";
-import { CONDUIT_T1 } from "./conduitT1";
-import { CONDUIT_V2_T1 } from "./conduitV2T1";
-import { SLINGER_MURKEYEONLY_T1 } from "./slingerMurkEyeOnlyT1";
-import { SLINGER_T1 } from "./slingerT1";
-import { SLINGER_V2_T1 } from "./slingerV2T1";
-import { SPIRIT_MURKEYEONLY_T1 } from "./spiritMurkEyeOnlyT1";
-import { SPIRIT_T1 } from "./spiritT1";
-import { SPIRIT_V2_T1 } from "./spiritV2T1";
-import { SQUIRE_HEAVYHAMMER_T1 } from "./squireHeavyHammerT1";
-import { SQUIRE_BRACE_TANK_T1 } from "./squireBraceTankT1";
-import { SQUIRE_T1 } from "./squireT1";
-import { SQUIRE_V2_T1 } from "./squireV2T1";
-import { STRIKER_LINEAGE_FOREST_T1 } from "./strikerLineageForestT1";
-import { STRIKER_LINEAGE_SWAP_FOREST_T1 } from "./strikerLineageSwapForestT1";
-import { STRIKER_T1 } from "./strikerT1";
-import { STRIKER_BRACE_TANK_T1 } from "./strikerBraceTankT1";
-import { STRIKER_V2_T1 } from "./strikerV2T1";
-import { T1_CANONICAL_FRAME_HANDOFF_ROUTES } from "./t1CanonicalFrameHandoffRoutes";
-import {
-  T2_CONTROL_ROUTE_IDS,
-  T2_PROBE_ROUTES,
-  T2_PROBE_ROUTE_IDS,
-  T2_PROGRESSION_ROUTES,
-  T2_PROGRESSION_ROUTE_IDS,
-  T2_ROUTES,
-  T2_ROUTE_IDS,
-} from "./t2RouteBuilder";
-import {
-  T2_NIGHT2_ROUTES,
-  T2_NIGHT2_ROUTE_IDS,
-} from "./t2Night2Routes";
-import {
-  T2_DAY_EXPERIMENT_ROUTES,
-  T2_DAY_EXPERIMENT_ROUTE_IDS,
-  T2_DAY_J0_CHECKPOINT_ROUTES,
-  T2_DAY_J3_CHECKPOINT_ROUTES,
-  T2_DAY_D0_CHECKPOINT_ROUTES,
-  T2_DAY_FRAME_ROUTES,
-  T2_DAY_WEAPON_ROUTES,
-  T2_DAY_CONTAGION_ROUTES,
-  T2_DAY_SURVIVALIST_ROUTES,
-} from "./t2DayExperimentRoutes";
-import {
-  T2_CANONICAL_VALIDATION_ROUTES,
-  T2_CANONICAL_VALIDATION_ROUTE_IDS,
-} from "./t2CanonicalValidationRoutes";
-import {
-  T2_ECONOMY_PACING_ROUTES,
-  T2_ECONOMY_PACING_ROUTE_IDS,
-} from "./t2EconomyPacingRoutes";
-
-import { TUTORIAL_ROUTES } from "./tutorialRoutes";
-export { TUTORIAL_ROUTES, TUTORIAL_ROUTE_IDS } from "./tutorialRoutes";
-
-/** Canonical class baselines, excluding the two deliberate Brace A/B arms. */
-export { T1_BASELINE_ROUTE_IDS, T1_BASELINE_ROUTES } from "./t1Baselines";
+import { DEFAULT_SMOKE_CLASS, SMOKE_T1_ID, smokeT1Route } from "./smokeT1";
 
 /**
- * The only routes admitted to the clean Tier-1 controlled batch. Historical
- * variants remain addressable for explicit one-off runs, but are not members
- * of this registry.
+ * The route registry.
+ *
+ * Class routes are rebuilt per class in the class-first build (plan §5);
+ * `smoke-t1` is the only route until then. Each class's route registers here
+ * as data over the same executor.
  */
-export const T1_CONTROLLED_ROUTE_IDS = [
-  "striker-t1",
-  "striker-brace-tank-t1",
-  "squire-t1",
-  "squire-brace-tank-t1",
-  "slinger-t1",
-  "spirit-t1",
-  "apprentice-t1",
-  "conduit-t1",
-] as const;
 
 /**
- * Authored routes, keyed by id. The six T1 root-class baselines, the Tier-1
- * experiment variants from bot-route-reference.md §12, and the "v2" overnight
- * round (2026-08-25) folding in the survivability + per-class gear changes --
- * all authored as DATA over the same executor.
+ * Class-agnostic routes, rebuilt for the class named on the command line
+ * (`--class=<archetype>`). Every other route is authored for one class.
  */
+const CLASS_AGNOSTIC_ROUTES = new Map<string, (classRoot: string) => Route>([
+  [SMOKE_T1_ID, smokeT1Route],
+]);
+
+/** Authored routes, keyed by id; class-agnostic ones in their default class. */
 export const ROUTES = new Map<string, Route>(
-  [
-    ...NAMED_CHECKPOINT_ROUTES,
-    ...CAMPAIGN_T3_V1R_ROUTES,
-    ...CAMPAIGN_T3_V1S_ROUTES,
-    CAMPAIGN_T3_V1T,
-    ...CAMPAIGN_T3_V1U_ROUTES,
-    ...CAMPAIGN_T3_V1U2_ROUTES,
-    CAMPAIGN_T3_V1V,
-    CAMPAIGN_T3_V1X,
-    CAMPAIGN_T4_V1Y,
-    CAMPAIGN_T4_V1Z,
-    ...CAMPAIGN_T4_NIGHT3_ROUTES,
-    ...CAMPAIGN_T4_BOSS_COVERAGE_ROUTES,
-    ...CAMPAIGN_T4_VOLCANO_FINISH_ROUTES,
-    CAMPAIGN_T4_VOLCANO_DIAGNOSTIC,
-    ...CAMPAIGN_T3_V1W_ROUTES,
-    ...CAMPAIGN_T3_V1N_ROUTES,
-    CAMPAIGN_T3_V1P_TUNDRA,
-    STRIKER_T1,
-    STRIKER_LINEAGE_FOREST_T1,
-    STRIKER_LINEAGE_SWAP_FOREST_T1,
-    STRIKER_DECISIONS_T1,
-    SQUIRE_T1,
-    ...T1_CANONICAL_FRAME_HANDOFF_ROUTES,
-    SLINGER_T1,
-    SPIRIT_T1,
-    APPRENTICE_T1,
-    CONDUIT_T1,
-    STRIKER_BRACE_TANK_T1,
-    SQUIRE_BRACE_TANK_T1,
-    SQUIRE_HEAVYHAMMER_T1,
-    APPRENTICE_LETDOTSFINISH_T1,
-    SLINGER_MURKEYEONLY_T1,
-    SPIRIT_MURKEYEONLY_T1,
-    STRIKER_V2_T1,
-    SQUIRE_V2_T1,
-    SLINGER_V2_T1,
-    SPIRIT_V2_T1,
-    APPRENTICE_V2_T1,
-    CONDUIT_V2_T1,
-    ...T2_ROUTES,
-    ...T2_PROGRESSION_ROUTES,
-    ...T2_PROBE_ROUTES,
-    ...T2_NIGHT2_ROUTES,
-    ...T2_DAY_EXPERIMENT_ROUTES,
-    ...T2_CANONICAL_VALIDATION_ROUTES,
-    ...T2_ECONOMY_PACING_ROUTES,
-    ...CAMPAIGN_READINESS_ROUTES,
-    ...CAMPAIGN_BEHAVIOR_ROUTES,
-    ...CAMPAIGN_LOCAL_BEHAVIOR_ROUTES,
-    STRIKER_CAMPAIGN_PLAINS_BOSS_T1,
-    STRIKER_CAMPAIGN_PLAINS_BOSS_V1B,
-    STRIKER_CAMPAIGN_PREPARATION_T1,
-    CAMPAIGN_NIGHT_KIT, ...CAMPAIGN_NIGHT_BOSSES, CAMPAIGN_NIGHT_SWAMP_DUAL_GUARD, CAMPAIGN_CAVE_DUAL_GUARD, ...CAMPAIGN_CAVE_RECOVERY_ROUTES, ...CAMPAIGN_T2_BOSS_ROUTES, ...CAMPAIGN_T2_EXPANSION_ROUTES, ...CAMPAIGN_T2_V1K_ROUTES, ...CAMPAIGN_NIGHT2_ROUTES, CAMPAIGN_NIGHT2_BRIDGE, CAMPAIGN_NIGHT2_TRAVEL_BRIDGE, CAMPAIGN_WISP_TRAVEL_BRIDGE, ...CAMPAIGN_NIGHT2_SQUIRE_ROUTES,
-    STRIKER_CAMPAIGN_PLAINS_ENTRY_T1,
-    ...TUTORIAL_ROUTES,
-  ].map((route) => [route.id, route]),
+  [smokeT1Route(classRootFor(DEFAULT_SMOKE_CLASS))].map((route) => [route.id, route]),
 );
 
-export {
-  T2_CONTROL_ROUTE_IDS,
-  T2_ROUTE_IDS,
-  T2_PROGRESSION_ROUTE_IDS,
-  T2_PROBE_ROUTE_IDS,
-  T2_NIGHT2_ROUTE_IDS,
-  T2_DAY_EXPERIMENT_ROUTE_IDS,
-  T2_DAY_J0_CHECKPOINT_ROUTES,
-  T2_DAY_J3_CHECKPOINT_ROUTES,
-  T2_DAY_D0_CHECKPOINT_ROUTES,
-  T2_DAY_FRAME_ROUTES,
-  T2_DAY_WEAPON_ROUTES,
-  T2_DAY_CONTAGION_ROUTES,
-  T2_DAY_SURVIVALIST_ROUTES,
-  T2_CANONICAL_VALIDATION_ROUTES,
-  T2_CANONICAL_VALIDATION_ROUTE_IDS,
-  T2_ECONOMY_PACING_ROUTES,
-  T2_ECONOMY_PACING_ROUTE_IDS,
-};
+/**
+ * The class root for a command-line class: an archetype id (`cadence`) or the
+ * root itself (`cadence-root`). Throws on anything that is not a class root.
+ */
+export function classRootFor(classId: string): string {
+  const root = classId.endsWith("-root") ? classId : `${classId}-root`;
+  if (SKILL_TREE.get(root)?.tier !== 0) {
+    const roots = [...SKILL_TREE.values()].filter((node) => node.tier === 0).map((node) => node.id);
+    throw new Error(`unknown class "${classId}" (have: ${roots.join(", ")})`);
+  }
+  return root;
+}
 
-/** The eighteen Tier-2 branch routes: 6 class plans x 3 range nodes. */
-export const T2_BRANCH_ROUTES: readonly Route[] = T2_ROUTES;
-
-export function requireRoute(id: string): Route {
+/**
+ * Resolve a route id. `classId` rebuilds a class-agnostic route for that class;
+ * naming a class for a route authored for one class is an error, not a silent
+ * substitution.
+ */
+export function requireRoute(id: string, classId?: string): Route {
+  const build = CLASS_AGNOSTIC_ROUTES.get(id);
+  if (build && classId !== undefined) return build(classRootFor(classId));
   const route = ROUTES.get(id);
   if (!route) {
     throw new Error(`unknown route "${id}" (have: ${[...ROUTES.keys()].join(", ")})`);
   }
+  if (classId !== undefined && classRootFor(classId) !== route.classRoot) {
+    throw new Error(`route "${id}" is authored for ${route.classRoot}; --class applies only to class-agnostic routes`);
+  }
   return route;
 }
 
-/** Exact eight-route clean combat-validation cohort. */
-export const T1_CONTROLLED_ROUTES: readonly Route[] = T1_CONTROLLED_ROUTE_IDS.map(requireRoute);
-
-export function isT1ControlledRouteId(id: string): boolean {
-  return (T1_CONTROLLED_ROUTE_IDS as readonly string[]).includes(id);
+export function isClassAgnosticRouteId(id: string): boolean {
+  return CLASS_AGNOSTIC_ROUTES.has(id);
 }
 
 /**
- * The Tier-2 bossless progression cohort, admitted to the CONTROLLED batch path.
- *
- * Admission is what unlocks `--executionMode=isolated-parallel` and its area
- * reservations: `batch.ts` only builds a `CombatReservationManager` for a controlled batch,
- * and the controlled path previously rejected every non-T1 route id. Without
- * this, a six-class Tier-2 batch could only run sequentially or in legacy
- * uncontrolled parallel -- and uncontrolled parallel is what put all five bots
- * of T2-E009 in a single node and voided the run as comparative evidence.
+ * The only routes admitted to a clean controlled batch. Each class's route
+ * joins this list when it is rebuilt; explicit one-off runs of anything else
+ * need `--controlled=false`.
  */
-export const T2_CONTROLLED_ROUTE_IDS: readonly string[] = [
-  ...T2_PROGRESSION_ROUTE_IDS,
-  ...T2_PROBE_ROUTE_IDS,
-];
+export const CONTROLLED_ROUTE_IDS: readonly string[] = [SMOKE_T1_ID];
 
-export function isT2ControlledRouteId(id: string): boolean {
-  return T2_CONTROLLED_ROUTE_IDS.includes(id);
-}
-
-/** Any route id the controlled batch path will admit, Tier-1 or Tier-2. */
 export function isControlledRouteId(id: string): boolean {
-  return isT1ControlledRouteId(id) || isT2ControlledRouteId(id);
+  return CONTROLLED_ROUTE_IDS.includes(id);
 }

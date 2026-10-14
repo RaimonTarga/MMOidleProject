@@ -8,23 +8,15 @@ Routes live in `bot/src/routes/` and are registered in `bot/src/routes/index.ts`
 They are pure data — adding a class must never need executor changes.
 
 `bot/src/harness.test.ts` fails the build if a route names content that does not
-exist or uses content before acquiring it. Rune budgets are checked against the
-minimum Global Mastery guaranteed at each generated configuration, not a flat
-starting budget. `bot/src/routes/t1Routes.semantic.test.ts` additionally checks
-the generated controlled T1 boss kits, movement priority, ability matrix, and
-experimental isolation.
+exist or uses content before acquiring it. Rune rules must be owned and fit the
+route's class; runes are free, so nothing is priced.
 
-Controlled T1 routes are generated through `t1RouteBuilder.ts`. Add class gear
-and economy choices to a `T1RouteConfig`; do not duplicate Rune arrays or boss
-ability logic in a new route file. The clean batch admits only
-`T1_CONTROLLED_ROUTE_IDS` unless `--controlled=false` is explicitly supplied.
+Class routes are rebuilt per class in the class-first build
+([plan §5](../docs/briefs/class-first-build-plan-2026-10-14.md)); `smoke-t1` is the
+only route until then. The clean batch admits only `CONTROLLED_ROUTE_IDS` unless
+`--controlled=false` is explicitly supplied.
 
 ---
-
-## Exact build controls
-
-Use `configureBuild` for full Abilities + Runes + Stances + Rites requests.
-See [the supported schema, acquisition steps and next-experiment example](../docs/bot-harness-capability-audit.md#route-author-interface). Run `pnpm bot:preflight` before long experiments. Invalid builds fail explicitly; no unowned or over-budget Rune rules are trimmed.
 
 ## Steps
 
@@ -48,13 +40,13 @@ See [the supported schema, acquisition steps and next-experiment example](../doc
 // one biome cannot do (see the GM table below).
 { type: "upgrade", definitionId: "iron-broadsword", toPlus: 3, farmAt: <NodeRef>, opportunistic: true }
 
-{ type: "configureRunes", rules: [{ conditionId: "target-casting", actionId: "use-ability", targetAbilityId: "brace" }] }
-
-// Crafts the ability recipe, then replaces its semantic family.
-// attune: false learns only, for a later configureBuild step.
-{ type: "learnAbility", recipeId: "ability-recipe-brace", abilityId: "brace", slot: "guard", farmAt: <NodeRef> }
+// Free universal standing orders, in priority order; owned and fit for the class.
+{ type: "configureRunes", rules: [{ conditionId: "hp-below-25", actionId: "flee" }] }
 
 { type: "attemptBoss", biomeGroup: "plains", tier: 1, maxAttempts: 6 }
+
+// Fails the run as an invalid treatment when the condition does not hold.
+{ type: "assert", condition: <Condition>, message: "..." }
 
 { type: "repeatUntil", steps: [...], until: <Condition>, maxIterations: 20 }
 
@@ -96,7 +88,6 @@ difficulty. Prefer `"uncleared"` unless a step genuinely needs one node.
 ```ts
 { type: "biomeLevelAtLeast",   biomeGroup: "plains", level: 4 }
 { type: "essenceAtLeast",      essence: "yellow", amount: 200 }
-{ type: "catalystAtLeast",     family: "alacrity", amount: 2 }
 { type: "recipeUnlocked",      recipeId: "plains-vest-t1" }
 { type: "hasItem",             definitionId: "plains-vest-t1" }
 { type: "itemAtLeastPlus",     definitionId: "iron-broadsword", plus: 2 }
@@ -106,6 +97,8 @@ difficulty. Prefer `"uncleared"` unless a step genuinely needs one node.
 { type: "canCraft",            recipeId: "..." }
 { type: "canUpgrade",          definitionId: "..." }
 { type: "globalMasteryAtLeast", value: 18 }
+{ type: "classSelected" }
+{ type: "fullyRecovered" }
 { type: "elapsedMs",           ms: 600000 }
 allOf(a, b, ...) / anyOf(a, b, ...) / { type: "not", of: a }
 ```
@@ -130,16 +123,11 @@ bought with **breadth**: one T1 biome caps at 6, which only ever reaches `+1`.
 altar, activates it, and turns on auto-combat. The guardians engage first — a
 measured run saw **11–12 simultaneous attackers** in the Plains dungeon.
 
-**Rune ability targets must be attuned.** `target-casting -> use-ability` with
-`targetAbilityId: "brace"` requires learned and attuned Brace. The harness validates
-exact targets and the total RP reservation across all four build categories.
-
 ---
 
 ## T1 catalogue
 
-Generated from `RECIPE_DATABASE` / `ABILITY_RECIPE_DATABASE`. Regenerate if the
-data moves.
+Generated from `RECIPE_DATABASE`. Regenerate if the data moves.
 
 | biome | id | slot | lvl | cost | key stats | mechanics |
 |---|---|---|---|---|---|---|
@@ -168,16 +156,6 @@ data moves.
 | swamp | `swamp-charm-t1` | recovery | 3 | 18 purple | recovery 2 | defense.recovery-pulse-pct=0.2, defense.recovery-pulse-interval-ms=8000, defense.recovery-pulse-duration-ms=4000 |
 | swamp | `swamp-boots-t1` | mobility | 4 | 18 purple | speed 18 | mobility.slow-resistance=0.25 |
 
-### T1 ability recipes
-| id | ability | biome | lvl | cost |
-|---|---|---|---|---|
-| `ability-recipe-sweep` | sweep | plains | 3 | 160 yellow |
-| `ability-recipe-second-wind` | second-wind | forest | 3 | 150 green |
-| `ability-recipe-cleanse` | cleanse | swamp | 3 | 150 purple |
-| `ability-recipe-brace` | brace | mountain | 3 | 150 blue |
-| `ability-recipe-power-strike` | power-strike | mountain | 5 | 190 blue |
-| `ability-recipe-expose-weakness` | expose-weakness | cave | 3 | 150 red |
-
 ### Global Mastery required per upgrade level (tier-1 items)
 | +1 | +2 | +3 | +4 | +5 |
 |---|---|---|---|---|
@@ -189,6 +167,7 @@ data moves.
 
 ```bash
 pnpm bot:run --route=<id> --policy=intended
+pnpm bot:run --route=smoke-t1 --class=dot --policy=intended   # a class-agnostic route, as one class
 pnpm bot:cleanup --routes=<id> --policies=intended    # reset characters between runs
 ```
 

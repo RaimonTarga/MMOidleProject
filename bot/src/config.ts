@@ -6,7 +6,6 @@ import { parseChoices } from "./policy/choices";
 import { basename, isAbsolute } from "node:path";
 import { isT1EconomyArm, type T1EconomyArm } from "@mmo-idle/shared";
 import type { HarnessExecutionMode } from "./telemetry/events";
-import type { EntryEconomyMode } from "./tierEntry/economy";
 import type { ContentionPolicy } from "./concurrency/areaLeaseManager";
 
 /** Prefix that marks an account as bot-owned. `cleanup.ts` deletes on this. */
@@ -27,38 +26,21 @@ export interface BotConfig {
   characterName: string;
   /** Route id, resolved against the route registry. */
   routeId: string;
+  /**
+   * Class for a class-agnostic route (`--class=<archetype>`, e.g. `cadence`).
+   * Undefined plays the route's own class; a class-specific route rejects it.
+   */
+  classId?: string;
   /** Optional per-player T1 factorial arm; omitted means the live C/default behavior. */
   economyArm?: T1EconomyArm;
   /** Policy profile id. */
   policyId: string;
   choices?: Record<string, string>;
-  /** Optional dev-only synthetic tier-entry profile id. */
-  tierEntryProfileId?: string;
-  /** Optional Snapshot B JSON produced by a real canonical T1 run. */
+  /**
+   * The named checkpoint file a `progressionEntry` route continues from
+   * (`--tierEntrySnapshot=<file>`, the flag name the experiment runner passes).
+   */
   tierEntrySnapshotPath?: string;
-  /**
-   * Optional directory of real Tier-1 runs, from which the per-route Snapshot B
-   * is resolved BY CLASS ROOT (median wallet where a class has several).
-   *
-   * A snapshot is class-specific, so a six-class batch cannot share one
-   * `--tierEntrySnapshot=<file>`. Any class with no usable snapshot in the
-   * directory falls back to its synthetic `--entryEconomy` template, and the
-   * substitution is visible in the run header's profile id.
-   */
-  tierEntrySnapshotDir?: string;
-  /** Fail instead of substituting a synthetic template when a requested real handoff is absent. */
-  requireTierEntrySnapshot?: boolean;
-  /**
-   * Carryover-economy arm for a route that starts from a tier-entry template.
-   *
-   * A batch of eighteen Tier-2 routes spans six classes, and a tier-entry
-   * template is class-specific, so one `--tierEntry=<id>` cannot serve them all.
-   * Naming the ECONOMY MODE instead lets the runner resolve the right template
-   * per route while keeping the arm explicit and reproducible in the header:
-   * `clean` carries no essence at all (the economy-isolation control) and
-   * `natural` carries a documented conservative carryover.
-   */
-  entryEconomy: EntryEconomyMode;
   /** Harness stop condition; gameplay routes remain unchanged. */
   completionMode: CompletionMode;
   /** Directory that receives `runs/<runId>/`. */
@@ -203,14 +185,17 @@ export function normalizeOutDir(raw: string, cwd: string = process.cwd()): strin
 }
 
 export function buildConfig(args: Record<string, string>): BotConfig {
-  const routeId = args.route ?? "striker-t1";
+  const routeId = args.route ?? "smoke-t1";
+  const classId = args.class;
   const policyId = args.policy ?? "intended";
   const index = args.index ?? "01";
   const economyArm = args.economyArm;
   if (economyArm !== undefined && !isT1EconomyArm(economyArm)) {
     throw new Error(`unknown --economyArm ${economyArm}; use C,D,E,F`);
   }
-  const botId = `${economyArm ? `${economyArm}-` : ""}${routeId}-${policyId}-${index}`;
+  // The class is part of the account id, so smoke runs of two classes never
+  // share (and delete) one character.
+  const botId = `${economyArm ? `${economyArm}-` : ""}${routeId}${classId ? `-${classId}` : ""}-${policyId}-${index}`;
   const completionMode = (args.winCondition ?? args.completion ?? "full-gauntlet") as CompletionMode;
   if (completionMode !== "full-gauntlet" && completionMode !== "next-tier") {
     throw new Error("--winCondition must be full-gauntlet or next-tier");
@@ -221,17 +206,11 @@ export function buildConfig(args: Record<string, string>): BotConfig {
     devAccountId: args.account ?? `${BOT_ACCOUNT_PREFIX}${botId}`,
     characterName: sanitizeCharacterName(args.name ?? `Bot ${routeId} ${index}`),
     routeId,
+    classId,
     economyArm: economyArm as T1EconomyArm | undefined,
     policyId,
     choices: parseChoices(args.choices),
-    tierEntryProfileId: args.tierEntry || args.entryProfile,
     tierEntrySnapshotPath: args.tierEntrySnapshot,
-    tierEntrySnapshotDir: args.tierEntrySnapshotDir,
-    requireTierEntrySnapshot: args.requireTierEntrySnapshot === "true",
-    entryEconomy:
-      args.entryEconomy === "natural"
-        ? args.entryEconomy
-        : "clean",
     completionMode,
     outDir: normalizeOutDir(args.out ?? envOr("BOT_OUT_DIR", "runs")),
     maxRunMs: Number(args.maxRunMs ?? envOr("BOT_MAX_RUN_MS", String(24 * 60 * 60 * 1000))),

@@ -9,24 +9,16 @@ import {
   getMaxUpgrade,
   ITEM_DATABASE,
   checkUpgrade,
-  checkEvolve,
-  checkReconstruct,
-  isGatedLineageForm,
-  nodeShard,
-  type EvolveMode,
   type DungeonView,
   type EquipmentSlot,
   type EssenceType,
   type MinionView,
   type MonsterView,
-  type PacketId,
   type PlayerView,
   type Recipe,
   type T1EconomyExperimentConfig,
 } from "@mmo-idle/shared";
 import type { WorldMirror } from "./reducer";
-import { observedBuild, buildRP } from "../loadout/loadout";
-import { runeBudgetForGlobalMastery } from "@mmo-idle/shared";
 
 /**
  * Everything the policy layer is allowed to know, and nothing else.
@@ -37,15 +29,6 @@ import { runeBudgetForGlobalMastery } from "@mmo-idle/shared";
  * `checkUpgrade` rather than restated in route files.
  */
 export class Observation {
-  /** Shared game formulas over normal networked player state; no hidden input. */
-  get build() {
-    const self = this.self;
-    if (!self) return null;
-    const loadout = observedBuild(self);
-    return { loadout, rp: buildRP(loadout), budget: runeBudgetForGlobalMastery(self.globalMastery),
-      knownAbilities: [...self.knownAbilities], knownStances: [...self.knownStances],
-      knownRites: [...self.knownRites], runesOwned: [...self.runesOwned], activeStance: self.activeStance };
-  }
   constructor(
     private readonly mirror: WorldMirror,
     readonly economyConfig?: T1EconomyExperimentConfig,
@@ -148,37 +131,8 @@ export class Observation {
     const self = this.self;
     const recipe = RECIPE_DATABASE.get(recipeId);
     if (!self || !recipe) return false;
-    // The server's craft guard: a live lineage's tier-2+ form is opened at its
-    // gate, never crafted (review B4).
-    if (isGatedLineageForm(recipeId)) return false;
     if (!self.unlockedRecipes.includes(recipeId)) return false;
     return this.canAfford(recipe);
-  }
-
-  /** The shared evolve/reconstruct checks — which refuse every slot now (design §24.5). */
-  canEvolve(recipeId: string, mode: EvolveMode = "evolve"): { ok: boolean; reason?: string } {
-    const self = this.self;
-    const recipe = RECIPE_DATABASE.get(recipeId);
-    if (!self || !recipe || !self.unlockedRecipes.includes(recipeId)) {
-      return { ok: false, reason: "Recipe is locked or unknown." };
-    }
-    if (mode === "reconstruct") {
-      return checkReconstruct({
-        recipe,
-        essences: self.essences,
-      });
-    }
-    return checkEvolve({
-      recipe,
-      inventory: self.inventory,
-      equipment: self.equipment,
-      itemUpgrades: self.itemUpgrades,
-      essences: self.essences,
-    });
-  }
-
-  canReconstruct(recipeId: string): { ok: boolean; reason?: string } {
-    return this.canEvolve(recipeId, "reconstruct");
   }
 
   canAfford(recipe: Recipe): boolean {
@@ -223,7 +177,6 @@ export function normalNodesFor(
   biomeGroup: string,
   tier: number,
   modifier?: string,
-  shard?: PacketId,
 ): string[] {
   return Object.entries(NODE_BIOMES)
     .filter(
@@ -233,9 +186,6 @@ export function normalNodesFor(
         info.kind === "normal",
     )
     .filter(([, info]) => modifier === undefined || info.modifier === modifier)
-    // Design §24.3: every kill in a node pays that node's ONE shard, so a shard
-    // farm narrows the biome to the territories that pay it.
-    .filter(([id]) => shard === undefined || nodeShard(id) === shard)
     .map(([id]) => id)
     .sort();
 }

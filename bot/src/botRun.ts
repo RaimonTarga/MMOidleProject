@@ -12,10 +12,7 @@ import {
   defaultT1EconomyConfig,
   t1EconomyConfigForArm,
   t1Plus5EssenceCosts,
-  tierEntryProfileFromT1Snapshot,
   type PlayerView,
-  type TierEntryInitialState,
-  type TierEntryProfile,
 } from "@mmo-idle/shared";
 import type { RouteLeaseSession } from "./concurrency/routeLeaseSession";
 import type { BotConfig } from "./config";
@@ -34,7 +31,6 @@ import type {
   RunHeader,
   RunTaint,
   TreatmentValidity,
-  TemplateValidationSummary,
 } from "./telemetry/events";
 import { BOT_JSONL_SCHEMA_VERSION } from "./telemetry/events";
 import { Recorder } from "./telemetry/recorder";
@@ -46,9 +42,6 @@ import {
   T1SnapshotStore,
 } from "./telemetry/t1Snapshots";
 import { botRegistry, type BotStatus, type WorldEntity, type WorldView } from "./ui/status";
-import { requireTierEntryProfile, t2EntryProfileId } from "./tierEntry/profiles";
-import { indexSnapshotDir } from "./tierEntry/snapshotDir";
-import { formatValidation, validateProfile, validateSpawn } from "./tierEntry/validate";
 
 const RECORDER_TICK_MS = 1_000;
 /** How long to lie dead before acknowledging — a human is not instant either. */
@@ -96,160 +89,20 @@ export async function runBot(
   if (config.executionMode === "isolated-parallel" && !leaseSession) {
     throw new Error("isolated-parallel runs require a coordinator-owned lease session");
   }
-  const authoredRoute = requireRoute(config.routeId);
-  // A route that declares a tier-entry start CANNOT run without one. A tier-0
-  // character sent to a Tier-2 biome banks no XP at all (`biomeLevelCap(0, ...)`
-  // is 0), so the first farm step would spin until the run's watchdog fired --
-  // hours of nothing, reported as a stall rather than as the configuration
-  // mistake it is.
-  // Resolve the class-specific template from the route's own class root, so an
-  // eighteen-route batch spanning six classes needs one `--entryEconomy` flag
-  // rather than eighteen `--tierEntry` ids. The resolved id is recorded in the
-  // run header, so the arm stays explicit and reproducible either way.
-  if (config.tierEntryProfileId && config.tierEntrySnapshotPath) {
-    throw new Error("--tierEntry and --tierEntrySnapshot are mutually exclusive");
-  }
-  if (config.tierEntrySnapshotPath && config.tierEntrySnapshotDir) {
-    throw new Error("--tierEntrySnapshot and --tierEntrySnapshotDir are mutually exclusive");
-  }
-
-  // Resolve a REAL Tier-1 handoff for this route's class, when a source
-  // directory was given. A class with no usable snapshot falls through to its
-  // synthetic template rather than failing the run: the cohort keeps all six
-  // classes (so the cross-class interpretation rules still have six to work
-  // with), and the substitution stays visible in the header's profile id, which
-  // is `snapshot-*` for a real handoff and `*-t2-entry-*` for a template.
-  let resolvedSnapshotPath = config.tierEntrySnapshotPath;
-  if (config.tierEntrySnapshotDir && authoredRoute.startsFromTierEntry) {
-    const index = indexSnapshotDir(config.tierEntrySnapshotDir);
-    const match = index.byClassRoot.get(authoredRoute.classRoot);
-    if (match) {
-      resolvedSnapshotPath = match.file;
-      console.log(
-        `[bot] ${config.routeId}: real T1 handoff for ${authoredRoute.classRoot} ` +
-          `(essence ${match.walletTotal}) -> ${match.file}`,
-      );
-    } else {
-      if (config.requireTierEntrySnapshot) {
-        const rejected = index.rejected.length > 0
-          ? ` ${index.rejected.length} snapshot file(s) were rejected.`
-          : "";
-        throw new Error(
-          `no usable real T1 handoff for ${authoredRoute.classRoot} in ` +
-            `${config.tierEntrySnapshotDir}; canonical snapshot entry cannot fall back.` +
-            rejected,
-        );
-      }
-      console.warn(
-        `[bot] ${config.routeId}: NO usable T1 handoff for ${authoredRoute.classRoot} in ` +
-          `${config.tierEntrySnapshotDir}; falling back to the synthetic ` +
-          `"${config.entryEconomy}" template. This run is NOT comparable to a ` +
-          `snapshot-entry run and must not be pooled with one.`,
-      );
-      if (index.rejected.length > 0) {
-        console.warn(`[bot] ${index.rejected.length} snapshot file(s) were rejected:`);
-        for (const reject of index.rejected.slice(0, 5)) {
-          console.warn(`[bot]   ${reject.file}: ${reject.reason}`);
-        }
-      }
-    }
-  }
-
-  const sourceSnapshot = resolvedSnapshotPath
-    ? readT1CharacterSnapshot(resolvedSnapshotPath)
+  const authoredRoute = requireRoute(config.routeId, config.classId);
+  // A named checkpoint continuation (`progressionEntry`) is the one way a route
+  // starts from saved state; every other route starts from a fresh character.
+  // Each side demands the other, so a checkpoint is never silently ignored and a
+  // continuation never silently starts fresh.
+  const sourceSnapshot = config.tierEntrySnapshotPath
+    ? readT1CharacterSnapshot(config.tierEntrySnapshotPath)
     : undefined;
-  if (authoredRoute.startsFromTierEntry === 1 && !sourceSnapshot) {
-    throw new Error("T1 encounter entry requires an earned final snapshot; no synthetic fallback");
-  }
-  if (
-    sourceSnapshot &&
-    config.requireTierEntrySnapshot &&
-    (!sourceSnapshot.canonicalAtCapture || sourceSnapshot.economy.rewardMultiplier !== 1)
-  ) {
+  if (sourceSnapshot && !authoredRoute.progressionEntry) {
     throw new Error(
-      `canonical snapshot entry requires a canonical 1x Snapshot B; ` +
-        `${sourceSnapshot.snapshotId} is not eligible`,
+      `route ${authoredRoute.id} does not declare a progression entry for --tierEntrySnapshot`,
     );
   }
-  if (sourceSnapshot && !authoredRoute.startsFromTierEntry && !authoredRoute.progressionEntry) {
-    throw new Error(
-      `route ${authoredRoute.id} does not declare a tier-entry start for --tierEntrySnapshot`,
-    );
-  }
-  if (sourceSnapshot?.progressionCheckpoint && !authoredRoute.progressionEntry) throw new Error("Named checkpoint requires an explicit continuation entry contract");
-  if (authoredRoute.progressionEntry && (!sourceSnapshot?.progressionCheckpoint || config.tierEntryProfileId || config.tierEntrySnapshotDir)) throw new Error("Named continuation requires one explicit named checkpoint file; no fallback");
-  const resolvedTierEntryId = sourceSnapshot
-    ? undefined
-    : config.tierEntryProfileId ??
-      (authoredRoute.startsFromTierEntry
-        ? t2EntryProfileId(authoredRoute.classRoot, config.entryEconomy)
-        : undefined);
-  if (authoredRoute.resumePreparedT2 && !sourceSnapshot) throw new Error("Prepared T2 route requires its source snapshot");
-  if (authoredRoute.startsFromTierEntry === 3 && !sourceSnapshot) throw new Error("T3 route requires an earned source snapshot");
-  const resolvedTierEntryProfile = authoredRoute.progressionEntry ? undefined : sourceSnapshot
-    ? tierEntryProfileFromT1Snapshot(sourceSnapshot,
-      authoredRoute.startsFromTierEntry === 1 ? "node-clearing" : authoredRoute.startsFromTierEntry === 3 ? "node-t3-sanctuary" : "node-t2-sanctuary",
-      authoredRoute.startsFromTierEntry === 1 ? 1 : authoredRoute.startsFromTierEntry === 3 ? 3 : 2, authoredRoute.resumePreparedT2)
-    : resolvedTierEntryId
-      ? requireTierEntryProfile(resolvedTierEntryId)
-      : undefined;
-  if (authoredRoute.entryCheckpointKind) {
-    if (!sourceSnapshot || sourceSnapshot.snapshotKind !== "experiment-checkpoint") {
-      throw new Error(
-        `route ${authoredRoute.id} requires the ${authoredRoute.entryCheckpointKind} ` +
-          `experiment checkpoint; no checkpoint snapshot was supplied`,
-      );
-    }
-    if (sourceSnapshot.checkpointKind !== authoredRoute.entryCheckpointKind) {
-      throw new Error(
-        `route ${authoredRoute.id} requires the ${authoredRoute.entryCheckpointKind} ` +
-          `experiment checkpoint, but received ${sourceSnapshot.checkpointKind ?? "unknown"}`,
-      );
-    }
-  }
-  const canOverrideCheckpointFrame = sourceSnapshot?.snapshotKind === "experiment-checkpoint";
-  if (
-    sourceSnapshot &&
-    resolvedTierEntryProfile &&
-    authoredRoute.frameId &&
-    authoredRoute.frameId !== resolvedTierEntryProfile.frameId &&
-    !canOverrideCheckpointFrame
-  ) {
-    throw new Error(
-      `route ${authoredRoute.id} requests frame ${authoredRoute.frameId}, but the real ` +
-        `T1 handoff is ${resolvedTierEntryProfile.frameId}; frame variants require synthetic entry`,
-    );
-  }
-  // Synthetic T2 entry is a clean progression template, so an exploratory
-  // route may change only the declared frame while retaining the same class,
-  // T1 gear, mastery and wallet. Real T1 handoffs are never rewritten above.
-  const tierEntryProfile =
-    resolvedTierEntryProfile &&
-    (!sourceSnapshot || canOverrideCheckpointFrame) &&
-    authoredRoute.frameId &&
-    authoredRoute.frameId !== resolvedTierEntryProfile.frameId
-      ? {
-          ...resolvedTierEntryProfile,
-          id: `${resolvedTierEntryProfile.id}-frame-${authoredRoute.frameId}`,
-          frameId: authoredRoute.frameId,
-        }
-      : resolvedTierEntryProfile;
-  if (
-    tierEntryProfile &&
-    authoredRoute.startsFromTierEntry &&
-    tierEntryProfile.targetTier !== authoredRoute.startsFromTierEntry
-  ) {
-    throw new Error(
-      `tier-entry profile ${tierEntryProfile.id} targets tier ${tierEntryProfile.targetTier}, ` +
-        `but route ${authoredRoute.id} starts at tier ${authoredRoute.startsFromTierEntry}`,
-    );
-  }
-  if (tierEntryProfile && tierEntryProfile.classRoot !== authoredRoute.classRoot) {
-    throw new Error(
-      `tier-entry profile ${tierEntryProfile.id} is for ${tierEntryProfile.classRoot}, ` +
-        `but route ${authoredRoute.id} is for ${authoredRoute.classRoot}`,
-    );
-  }
+  if (authoredRoute.progressionEntry && !sourceSnapshot?.progressionCheckpoint) throw new Error("Named continuation requires one explicit named checkpoint file; no fallback");
   const unresolvedRoute = config.completionMode === "next-tier"
     ? {
         ...authoredRoute,
@@ -412,7 +265,6 @@ export async function runBot(
   });
 
   let restoredCheckpointView: PlayerView | undefined;
-  let templateValidation: TemplateValidationSummary | undefined;
   const characterId = await prepareFreshCharacter(conn, config);
   await conn.selectCharacter(characterId);
 
@@ -426,7 +278,7 @@ export async function runBot(
     const restoreStartedAt = Date.now();
     const result = await intents.restoreCheckpoint({ capture: source, boundaryId: entry.boundaryId, revisionPolicy: entry.revisionPolicy });
     writeFileSync(join(sink.dir, 'checkpoint-restore.json'), JSON.stringify({
-      checkpointId: sourceSnapshot!.snapshotId, checkpointHash: createHash('sha256').update(readFileSync(resolvedSnapshotPath!)).digest('hex'),
+      checkpointId: sourceSnapshot!.snapshotId, checkpointHash: createHash('sha256').update(readFileSync(config.tierEntrySnapshotPath!)).digest('hex'),
       source, result, changedDefinitionSections: Object.keys(source.definitionSections).filter(key=>source.definitionSections[key]!==result.capture?.definitionSections[key]), sourceRoute: {routeId:sourceSnapshot!.routeId,routeVersion:sourceSnapshot!.routeVersion,policyId:sourceSnapshot!.policyId,resolvedChoices:sourceSnapshot!.resolvedChoices}, continuation: { routeId: route.id, version: route.version, policyId: policy.id, selectedChoices, entry },
       setupMs: restoreStartedAt-startedAt, restoreMs: Date.now()-restoreStartedAt,
       normalized: true, skippedPreparation: 'inherited; not earned or timed in this run', inheritedProvenance: sourceSnapshot,
@@ -435,65 +287,6 @@ export async function runBot(
     restoredCheckpointView = result.capture.view;
     await waitFor(() => obs.self?.nodeId === entry.nodeId && obs.self?.selectedClass === authoredRoute.classRoot, 15000, 'restored checkpoint sync', runAbort.signal);
     for (const condition of entry.prerequisites) if (!evaluate(condition, {obs, elapsedMs:0})) throw new Error('Checkpoint continuation prerequisite failed: '+JSON.stringify(condition));
-  }
-  if (tierEntryProfile) {
-    const result = await intents.applyTierEntryProfile(tierEntryProfile);
-    if (!result.success) {
-      throw new Error(`tier-entry profile ${tierEntryProfile.id} rejected: ${result.reason ?? "unknown"}`);
-    }
-    if (result.profileId !== tierEntryProfile.id || result.targetTier !== tierEntryProfile.targetTier ||
-      !result.spawnView || result.spawnView.id !== conn.id) {
-      throw new Error("tier-entry acknowledgement missing matching authoritative spawn view");
-    }
-    await waitFor(
-      () => {
-        const self = obs.self;
-        return !!self &&
-          self.nodeId === tierEntryProfile.spawnNodeId &&
-          self.playerTier === tierEntryProfile.targetTier &&
-          self.selectedClass === tierEntryProfile.classRoot &&
-          (tierEntryProfile.frameId ? self.unlockedSkills.includes(tierEntryProfile.frameId) : self.unlockedSkills.length === 1) &&
-          !self.isDead;
-      },
-      60_000,
-      `tier-entry profile ${tierEntryProfile.id} to appear in the authoritative view`,
-      runAbort.signal,
-    );
-    if (
-      (!sourceSnapshot || tierEntryProfile.economyPolicy === "synthetic-combat-progression") &&
-      !taints.includes("SYNTHETIC_TIER_ENTRY")
-    ) {
-      taints.push("SYNTHETIC_TIER_ENTRY");
-    }
-
-    // Prove the template is legal BEFORE a single route step runs. The offline
-    // pass asks whether the template is a character today's game data allows;
-    // the live pass asks whether the server actually built that character. A
-    // failure here is worth more than any amount of downstream telemetry, so
-    // the run refuses to start rather than quietly producing hours of evidence
-    // about an impossible build.
-    const profileReport = validateProfile(tierEntryProfile);
-    // Strictly validate the server's immutable reset-time view. The live mirror
-    // continues to carry subsequent damage/buffs; no healing or retry is applied.
-    const spawnReport = validateSpawn(tierEntryProfile, result.spawnView);
-    templateValidation = {
-      profileId: tierEntryProfile.id,
-      profilePass: profileReport.pass,
-      spawnPass: spawnReport.pass,
-      checked: profileReport.checked + spawnReport.checked,
-      failures: [
-        ...profileReport.findings.map((f) => ({ pass: "profile" as const, check: f.check, message: f.message })),
-        ...spawnReport.findings.map((f) => ({ pass: "spawn" as const, check: f.check, message: f.message })),
-      ],
-    };
-    console.log(formatValidation("T2_ENTRY_TEMPLATE_VALIDATION[profile]", profileReport));
-    console.log(formatValidation("T2_ENTRY_TEMPLATE_VALIDATION[spawn]", spawnReport));
-    if (!profileReport.pass || !spawnReport.pass) {
-      throw new Error(
-        `tier-entry template ${tierEntryProfile.id} failed validation; ` +
-          "refusing to produce evidence from an impossible character",
-      );
-    }
   }
 
   // Economy arm selection is per-player and must settle before any route action
@@ -563,10 +356,7 @@ export async function runBot(
   if (!initialSelf) throw new Error("own player disappeared before run-start telemetry");
 
   if (authoredRoute.progressionEntry || authoredRoute.steps.some(step=>step.type==='captureCheckpoint')) recorder.seedProgression(initialSelf);
-  const liveFrameId = initialSelf.unlockedSkills.find((id) => {
-    const node = SKILL_TREE.get(id);
-    return node?.tier === 1 && node.parent === initialSelf.selectedClass;
-  }) ?? null;
+  const liveFrameId = tierOneSkillOf(initialSelf);
 
   const header: RunHeader = {
     schemaVersion: BOT_JSONL_SCHEMA_VERSION,
@@ -579,7 +369,7 @@ export async function runBot(
     routeVersion: route.version,
     policyId: policy.id,
     behavior: { choices: selectedChoices, upgrades: policy.upgrades ?? "authored", description: policy.description },
-    classRoot: tierEntryProfile?.classRoot ?? route.classRoot,
+    classRoot: route.classRoot,
     frameId: liveFrameId,
     gitRevision: gitRevision(),
     serverUrl: config.serverUrl,
@@ -590,25 +380,18 @@ export async function runBot(
     executionMode: config.executionMode,
     maxConcurrency: config.maxConcurrency,
     startState: Object.fromEntries([
-      "nodeId", "hp", "maxHp", "activeStance", "runesOwned", "unlockedRecipes", "level",
+      "nodeId", "hp", "maxHp", "runesOwned", "unlockedRecipes", "level",
       "playerTier", "selectedClass", "selectedSubVariant", "selectedRange", "unlockedSkills", "skillPoints",
       "biomeLevel", "biomeXP", "bossesCleared", "inventory", "equipment", "itemUpgrades", "essences",
-      "knownAbilities", "attunedAbilities", "knownStances", "attunedStances", "equippedStances", "knownRites", "equippedRites", "runesEquipped",
+      "runesEquipped",
     ].map(key => [key, structuredClone(initialSelf[key as keyof typeof initialSelf])])),
     checkpoint: sourceSnapshot?.progressionCheckpoint ? { snapshotId:sourceSnapshot.snapshotId,
       sourceRevision:sourceSnapshot.progressionCheckpoint.sourceRevision,boundaryId:sourceSnapshot.progressionCheckpoint.boundaryId,
       inheritedProvenance:sourceSnapshot.inheritedProvenance,skippedPreparation:'inherited, not measured in this continuation' } : undefined,
     initialEssences: { ...initialSelf.essences },
-    tierEntry: tierEntryProfile
-      ? buildTierEntryInitialState(tierEntryProfile, initialSelf)
-      : undefined,
-    templateValidation,
   };
-  // Fresh T1 routes do not have a tier-1 frame at run start: the route buys
-  // the intended frame after the Forest seal.  Persist that declared frame in
-  // the final handoff rather than the start-of-run observation (which is
-  // legitimately null for a fresh character).
-  const snapshotFrameId = tierEntryProfile?.frameId ?? route.frameId ?? liveFrameId;
+  // A fresh character has no tier-1 skill at run start, so each snapshot reads
+  // the one it holds at capture time.
   const captureSnapshot = (kind: "mastery-completion" | "tier2-handoff"): void => {
     const self = obs.self;
     if (!self) return;
@@ -616,7 +399,7 @@ export async function runBot(
       kind,
       header,
       self,
-      frameId: snapshotFrameId,
+      frameId: tierOneSkillOf(self),
       elapsedMs: recorder.now(),
       rewardMultiplier,
       canonicalAtCapture: taints.length === 0 && rewardMultiplier === 1,
@@ -636,7 +419,7 @@ export async function runBot(
       checkpointSourceNodeId: self.nodeId,
       header,
       self,
-      frameId: liveFrameId,
+      frameId: tierOneSkillOf(self),
       elapsedMs: recorder.now(),
       rewardMultiplier,
       canonicalAtCapture: false,
@@ -774,8 +557,6 @@ export async function runBot(
             essences: { ...self.essences },
             biomeLevels: { ...self.biomeLevel },
             bossesCleared: [...self.bossesCleared],
-            techniques: [...self.attunedAbilities.techniques],
-            guards: [...self.attunedAbilities.guards],
             runes: self.runesEquipped.map((r) => ({
               conditionId: r.conditionId,
               actionId: r.actionId,
@@ -1074,39 +855,12 @@ function sleepOrAbort(ms: number, signal?: AbortSignal): Promise<void> {
   });
 }
 
-function buildTierEntryInitialState(
-  profile: TierEntryProfile,
-  self: PlayerView,
-): TierEntryInitialState {
-  return {
-    profileId: profile.id,
-    targetTier: profile.targetTier,
-    economyPolicy: profile.economyPolicy,
-    classRoot: self.selectedClass ?? "unknown",
-    frameId: profile.frameId,
-    spawnNodeId: self.nodeId,
-    checkpointKind: profile.checkpointKind,
-    checkpointSourceNodeId: profile.checkpointSourceNodeId,
-    biomeLevels: { ...self.biomeLevel },
-    globalMastery: self.globalMastery,
-    bossesCleared: [...self.bossesCleared],
-    equipment: { ...self.equipment },
-    inventory: [...self.inventory],
-    itemUpgrades: { ...self.itemUpgrades },
-    knownAbilities: [...self.knownAbilities],
-    attunedAbilities: {
-      techniques: [...self.attunedAbilities.techniques],
-      guards: [...self.attunedAbilities.guards],
-    },
-    runeRecipesCrafted: [...self.runeRecipesCrafted],
-    runesEquipped: self.runesEquipped.map((rule) => ({ ...rule })),
-    knownStances: [...self.knownStances],
-    equippedStances: { ...self.equippedStances },
-    activeStance: self.activeStance,
-    knownRites: [...self.knownRites],
-    equippedRites: [...self.equippedRites],
-    initialEssences: { ...self.essences },
-  };
+/** The tier-1 Passive Tree node this view holds under its class, if any. */
+function tierOneSkillOf(view: PlayerView): string | null {
+  return view.unlockedSkills.find((id) => {
+    const node = SKILL_TREE.get(id);
+    return node?.tier === 1 && node.parent === view.selectedClass;
+  }) ?? null;
 }
 
 /**

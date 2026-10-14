@@ -1,11 +1,3 @@
-import {
-  STANCE_DATABASE,
-  NO_STANCE_ID,
-  runeRuleCost,
-  runicPointLoadoutCost,
-  runicPointLoadoutFits,
-  stanceDef,
-} from "@mmo-idle/shared";
 import { resolveNodeCandidates } from "./conditions";
 import { normalNodesFor } from "../state/observation";
 import type { Observation } from "../state/observation";
@@ -14,44 +6,6 @@ import { NODE_BIOMES } from "@mmo-idle/shared";
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(`assertion failed: ${message}`);
 }
-
-// A stance destination is part of the rule's RP bill, and an exact-budget
-// loadout is legal while the same loadout one point over is not.
-const offensiveRule = {
-  conditionId: "in-combat",
-  actionId: "switch-stance",
-  targetStanceId: "offensive-stance",
-} as const;
-const withoutDestination = { conditionId: "in-combat", actionId: "switch-stance" } as const;
-const stanceCost = stanceDef("offensive-stance")!.runeCost;
-assert(STANCE_DATABASE.has("offensive-stance"), "stance catalog contains the RP destination");
-assert(
-  runeRuleCost(offensiveRule) === runeRuleCost(withoutDestination),
-  "stance switch pays only for logic",
-);
-const exactCost = runicPointLoadoutCost({ abilities: { techniques: [], guards: [] }, stances: [], rules: [offensiveRule], rites: [] });
-assert(runicPointLoadoutFits({ abilities: { techniques: [], guards: [] }, stances: [], rules: [offensiveRule], rites: [] }, exactCost), "exact RP budget fits");
-assert(!runicPointLoadoutFits({ abilities: { techniques: [], guards: [] }, stances: [], rules: [offensiveRule], rites: [] }, exactCost - 1), "one point over RP budget fails");
-const defensiveRule = {
-  conditionId: "low-health",
-  actionId: "switch-stance",
-  targetStanceId: "defensive-stance",
-} as const;
-const repeatedDestinationRules = [offensiveRule, { ...offensiveRule, conditionId: "boss" }, defensiveRule];
-assert(
-  runicPointLoadoutCost({ abilities: { techniques: [], guards: [] }, stances: [], rules: repeatedDestinationRules, rites: [] }) ===
-    runeRuleCost(offensiveRule) + runeRuleCost({ ...offensiveRule, conditionId: "boss" }) + runeRuleCost(defensiveRule),
-  "multiple rules pay only their own logic",
-);
-assert(
-  runicPointLoadoutFits({ abilities: { techniques: [], guards: [] }, stances: [], rules: repeatedDestinationRules, rites: [] }, runicPointLoadoutCost({ abilities: { techniques: [], guards: [] }, stances: [], rules: repeatedDestinationRules, rites: [] })),
-  "multiple destinations fit at their exact combined RP budget",
-);
-assert(
-  runicPointLoadoutCost({ abilities: { techniques: [], guards: [] }, stances: [], rules: [{ ...offensiveRule, targetStanceId: NO_STANCE_ID }], rites: [] }) ===
-    runeRuleCost({ ...offensiveRule, targetStanceId: NO_STANCE_ID }),
-  "no-stance destination remains a legal zero-surcharge destination",
-);
 
 // Modifier selectors are hard filters. A requested family with no live node is
 // reported as an empty candidate set, so the executor cannot silently farm a

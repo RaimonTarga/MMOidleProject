@@ -67,8 +67,6 @@ export interface EconomyTimeline {
   nodeEntries: Array<Extract<BotEvent, { kind: "node-enter" }>>;
   biomeLevelUps: Array<Extract<BotEvent, { kind: "biome-level-up" }>>;
   crafts: Array<Extract<BotEvent, { kind: "craft" }>>;
-  evolutions: Array<Extract<BotEvent, { kind: "evolution" }>>;
-  stanceCrafts: Array<Extract<BotEvent, { kind: "stance-craft" }>>;
   upgrades: Array<Extract<BotEvent, { kind: "upgrade" }>>;
   equips: Array<Extract<BotEvent, { kind: "equip" }>>;
   milestones: Array<Extract<BotEvent, { kind: "milestone" }>>;
@@ -102,12 +100,6 @@ function describeEvent(event: BotEvent): string | null {
       return `entered ${event.nodeId}${event.nodeModifier ? ` (${event.nodeModifier})` : ""}`;
     case "craft":
       return `${event.success ? "crafted" : "craft FAILED"} ${event.recipeId}`;
-    case "evolution":
-      return `${event.success ? event.mode : `${event.mode} FAILED`} ${event.recipeId}`;
-    case "stance-craft":
-      return `${event.success ? "learned" : "stance FAILED"} ${event.stanceId}`;
-    case "stance-switch":
-      return `stance: ${event.stanceId ?? "none"}`;
     case "upgrade":
       return `${event.itemId} -> +${event.newLevel}`;
     case "equip":
@@ -220,8 +212,6 @@ export class Recorder {
     nodeEntries: [],
     biomeLevelUps: [],
     crafts: [],
-    evolutions: [],
-    stanceCrafts: [],
     upgrades: [],
     equips: [],
     milestones: [],
@@ -273,7 +263,6 @@ export class Recorder {
   hazardEscape = { attempts: 0, successes: 0, failures: 0, expired: 0, interrupted: 0 };
   stepBack = { activations: 0, attempts: 0, successes: 0, failures: 0, discarded: 0, damageReceived: 0 };
   bossAttemptResults: Array<Extract<BotEvent, { kind: "boss-attempt" }>> = [];
-  stanceSwitches: Array<Extract<BotEvent, { kind: "stance-switch" }>> = [];
 
   /**
    * Technique/Sweep adapter contribution (Part 2). Counts are authoritative
@@ -367,7 +356,6 @@ export class Recorder {
   private lastAbilityAtMs: number | null = null;
   private lastTargetSwitchAtMs: number | null = null;
   private lastHazardEventAtMs: number | null = null;
-  private readonly cardFirings: Record<string, number> = {};
   private ownDotWindow: { startedAtMs: number; nodeId: string; ticks: Record<string, number> } | null = null;
 
   readonly productiveActivity: ProductiveActivityQualification = {
@@ -402,8 +390,6 @@ export class Recorder {
       case "node-enter": this.economyTimeline.nodeEntries.push(event); break;
       case "biome-level-up": this.economyTimeline.biomeLevelUps.push(event); break;
       case "craft": this.economyTimeline.crafts.push(event); break;
-      case "evolution": this.economyTimeline.evolutions.push(event); break;
-      case "stance-craft": this.economyTimeline.stanceCrafts.push(event); break;
       case "upgrade": this.economyTimeline.upgrades.push(event); break;
       case "equip": this.economyTimeline.equips.push(event); break;
       case "milestone": this.economyTimeline.milestones.push(event); break;
@@ -414,7 +400,6 @@ export class Recorder {
     if (event.kind === "boss-attempt" && event.phase === "end") {
       this.bossAttemptResults.push(event);
     }
-    if (event.kind === "stance-switch") this.stanceSwitches.push(event);
     const text = describeEvent(event);
     if (text) {
       this.recent.push({ atMs: event.atMs, kind: event.kind, text });
@@ -424,13 +409,9 @@ export class Recorder {
 
   /**
    * DeltaSnapshots carry authoritative combat cues separately from the
-   * player-scoped world log. Kept from them, each filtered to THIS player so
-   * another player's cues never enter this run's evidence:
-   *
-   *  - the stance cue;
-   *  - every lineage card that paid (`card-fx` with a `cardId`), one event each;
-   *  - our own damage-over-time ticks (`dot-tick` with our `sourceId`), batched
-   *    per {@link OWN_DOT_WINDOW_MS} by element.
+   * player-scoped world log. Kept from them: our own damage-over-time ticks
+   * (`dot-tick` with our `sourceId`), batched per {@link OWN_DOT_WINDOW_MS} by
+   * element, so another player's ticks never enter this run's evidence.
    */
   ingestCombatEvents(events: CombatEvent[], nodeId: string): void {
     const ownId = this.ownIdProvider();
@@ -439,28 +420,11 @@ export class Recorder {
       this.flushOwnDotTicks(atMs);
     }
     for (const event of events) {
-      if (event.kind === "stance-switch" && event.playerId === ownId) {
-        this.emit({ kind: "stance-switch", atMs, playerId: event.playerId, nodeId, stanceId: event.stanceId });
-      } else if (event.kind === "card-fx" && event.playerId === ownId && event.cardId) {
-        this.cardFirings[event.cardId] = (this.cardFirings[event.cardId] ?? 0) + 1;
-        this.emit({
-          kind: "card-fired",
-          atMs,
-          nodeId,
-          cardId: event.cardId,
-          fx: event.fx,
-          ...(event.targetId !== undefined ? { targetId: event.targetId } : {}),
-        });
-      } else if (event.kind === "dot-tick" && ownId && event.sourceId === ownId && event.targetId !== ownId) {
+      if (event.kind === "dot-tick" && ownId && event.sourceId === ownId && event.targetId !== ownId) {
         const window = this.ownDotWindow ??= { startedAtMs: atMs, nodeId, ticks: {} };
         window.ticks[event.element] = (window.ticks[event.element] ?? 0) + 1;
       }
     }
-  }
-
-  /** Card id -> times it paid this run (the `card-fired` events, counted). */
-  cardFiringCounts(): Readonly<Record<string, number>> {
-    return { ...this.cardFirings };
   }
 
   /** Write the open own-DoT window, if it holds any tick. */

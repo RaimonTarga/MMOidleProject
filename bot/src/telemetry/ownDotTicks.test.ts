@@ -5,11 +5,9 @@ import { OWN_DOT_WINDOW_MS, Recorder } from "./recorder";
 import type { TelemetrySink } from "./sink";
 
 /**
- * The bot records lineage card FIRINGS (verbs-that-fire wave 2): every `card-fx`
- * the server pushes for THIS player with a `cardId` becomes one `card-fired`
- * event, and our own damage-over-time ticks are batched into `own-dot-ticks`
- * windows — the evidence the 1x sweep reads to prove the bought pair fired in
- * each boss fight. Another player's cues never enter the run.
+ * The bot batches its own damage-over-time ticks into `own-dot-ticks` windows,
+ * by element. Another player's ticks, and a monster's DoT on us, never enter
+ * the run.
  */
 const events: BotEvent[] = [];
 let now = 1_000;
@@ -24,12 +22,6 @@ try {
   );
   const pos = { x: 0, y: 0 };
   const batch: CombatEvent[] = [
-    { kind: "card-fx", playerId: "me", fx: "tempo.ghost-strike", pos, cardId: "axe-t1-tempo-payoff", targetId: "m1" },
-    { kind: "card-fx", playerId: "me", fx: "empowered.weak-point", pos, cardId: "axe-t1-empowered-payoff" },
-    // Not a card's: an ability node's payoff or a keystone's chain link draws its fx only.
-    { kind: "card-fx", playerId: "me", fx: "tempo.ghost-strike", pos },
-    // Another player's card.
-    { kind: "card-fx", playerId: "someone-else", fx: "tempo.ghost-strike", pos, cardId: "axe-t1-tempo-payoff" },
     // Our bleed ticking on a monster, twice; another player's; a monster's DoT on us.
     { kind: "dot-tick", targetId: "m1", targetPos: pos, amount: 3, element: "bleed", sourceType: "special", sourceId: "me" },
     { kind: "dot-tick", targetId: "m1", targetPos: pos, amount: 3, element: "bleed", sourceType: "special", sourceId: "me" },
@@ -38,14 +30,8 @@ try {
   ];
   recorder.ingestCombatEvents(batch, "t1-cave-01");
 
-  const fired = events.filter((e): e is Extract<BotEvent, { kind: "card-fired" }> => e.kind === "card-fired");
-  assert.deepEqual(fired.map((e) => e.cardId), ["axe-t1-tempo-payoff", "axe-t1-empowered-payoff"]);
-  assert.equal(fired[0].targetId, "m1");
-  assert.equal(fired[0].nodeId, "t1-cave-01");
-  assert.deepEqual(recorder.cardFiringCounts(), { "axe-t1-tempo-payoff": 1, "axe-t1-empowered-payoff": 1 });
-
   // The DoT window is still open: nothing written until it closes.
-  assert.equal(events.filter((e) => e.kind === "own-dot-ticks").length, 0);
+  assert.equal(events.length, 0, "only own-dot-tick windows are written, and not before they close");
   now += OWN_DOT_WINDOW_MS;
   recorder.ingestCombatEvents([], "t1-cave-01");
   const windows = events.filter((e): e is Extract<BotEvent, { kind: "own-dot-ticks" }> => e.kind === "own-dot-ticks");
@@ -70,4 +56,4 @@ try {
   Date.now = realNow;
 }
 
-console.log("cardFirings.test: ok");
+console.log("ownDotTicks.test: ok");

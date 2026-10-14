@@ -2,14 +2,11 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import {
-  SKILL_TREE,
+  CLEARING_NODE_ID,
   T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION,
-  runeIdsFromCraftedRecipes,
-  tierEntryProfileFromT1Snapshot,
+  composePlayerView,
   type PlayerView,
 } from "@mmo-idle/shared";
-import { t2EntryProfileId, requireTierEntryProfile } from "../tierEntry/profiles";
-import { expectedUnlockedRecipes, validateProfile } from "../tierEntry/validate";
 import type { RunHeader } from "./events";
 import {
   buildT1CharacterSnapshot,
@@ -21,126 +18,58 @@ function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(`t1Snapshots: ${message}`);
 }
 
-const sourceProfile = requireTierEntryProfile(t2EntryProfileId("cadence-root", "clean"));
-assert(sourceProfile.frameId, "T2 fixture has a frame");
-const sourceFrame = SKILL_TREE.get(sourceProfile.frameId);
-const self = {
-  id: "real-t1-player",
-  name: "Real T1 Player",
-  pos: { x: 500, y: 500 },
-  target: { x: 500, y: 500 },
-  hp: 123,
-  maxHp: 123,
-  attack: 17,
-  onHitDamage: 2,
-  plating: 3,
-  damageReduction: 0.04,
-  dodgeRate: 0.1,
-  evadeMitigation: 1,
-  evadeCharge: 0,
-  barrier: 0,
-  barrierMax: 0,
-  barrierRecharging: false,
-  wards: [],
-  incomingDot: 0,
-  pendingHeal: 0,
-  attackRange: 80,
-  attackCooldown: 1000,
-  lastAttackAt: 0,
-  attackTargetId: null,
-  auto: false,
-  autoTraverse: false,
-  autoIntent: null,
-  emote: null,
-  partyLeaderId: null,
-  partyMembers: [],
-  nodeId: "node-t2-sanctuary",
-  essences: { ...sourceProfile.wallet.essences },
-  level: sourceProfile.level,
-  skillPoints: sourceProfile.skillPoints,
-  unlockedSkills: [sourceProfile.classRoot, sourceProfile.frameId],
-  passives: { "core.attack-mult": 0.1 },
-  cadenceSpeedStacks: 0,
-  selectedClass: sourceProfile.classRoot,
-  selectedSubVariant: sourceFrame?.subVariantId ?? null,
-  selectedRange: null,
-  currentSkillTier: sourceProfile.currentSkillTier,
-  recovery: 1,
-  speed: 100,
-  attackStyle: "melee",
-  inventory: [...sourceProfile.inventory],
-  equipment: { ...sourceProfile.equipment },
-  itemUpgrades: { ...sourceProfile.itemUpgrades },
-  biomeXP: { ...sourceProfile.biomeXP },
-  biomeLevel: { ...sourceProfile.biomeLevels },
-  globalMastery: 30,
-  unlockedRecipes: [...expectedUnlockedRecipes(sourceProfile)],
-  combatArchetype: "cadence",
-  cadenceCount: 0,
-  cadenceThreshold: 5,
-  cadenceEmpoweredArmed: false,
-  ammoCount: 0,
-  ammoMax: 0,
-  heatPct: 0,
-  laserOverheated: false,
-  executionReady: false,
-  executionCooldownPct: 0,
-  energyCount: 0,
-  energyMax: 0,
-  flashShiftPct: 0,
-  flashDamageShiftPct: 0,
-  flashSpeedBonusPct: 0,
-  flashEvasionBonusPct: 0,
-  empoweredReady: false,
-  targetDotStacks: 0,
-  targetDotTickPct: 0,
-  targetChillStacks: 0,
-  isChanneling: false,
-  channelingPct: 0,
-  cannonChargePct: 0,
-  aura: null,
-  activeEffects: {},
-  activeEffectFrames: {},
-  activeBuffs: [],
-  questProgress: { ...sourceProfile.questProgress },
-  playerTier: sourceProfile.targetTier,
-  bossesCleared: [...sourceProfile.bossesCleared],
-  clearedNodes: [...sourceProfile.clearedNodes],
-  visitedNodes: [...sourceProfile.visitedNodes],
-  runesOwned: runeIdsFromCraftedRecipes(sourceProfile.runeRecipesCrafted),
-  runeRecipesCrafted: [...sourceProfile.runeRecipesCrafted],
-  runesEquipped: sourceProfile.runesEquipped.map((rule) => ({ ...rule })),
-  knownAbilities: [...sourceProfile.knownAbilities],
-  attunedAbilities: {
-    techniques: [...sourceProfile.attunedAbilities.techniques],
-    guards: [...sourceProfile.attunedAbilities.guards],
+// The view the bot really holds: composed from networked slices, so every
+// field the snapshot copies is present exactly as it is live.
+const self = composePlayerView({
+  isPlayer: { id: "real-t1-player", name: "Real T1 Player" },
+  hasPosition: { current: { x: 500, y: 500 }, nodeId: CLEARING_NODE_ID, speed: 100 },
+  hasHealth: { hp: 123, maxHp: 123, recovery: 1 },
+  tracksProgression: {
+    level: 1,
+    skillPoints: 0,
+    essences: { red: 0, blue: 0, green: 7, yellow: 40, purple: 0 },
+    biomeXP: { plains: 900 },
+    biomeLevel: { clearing: 4, plains: 2 },
+    unlockedRecipes: ["primordial-club", "plains-vest-t1"],
+    questProgress: {},
+    playerTier: 1,
+    currentSkillTier: 1,
+    bossesCleared: [],
+    clearedNodes: [],
+    visitedNodes: [CLEARING_NODE_ID],
+    runesOwned: [],
+    runesEquipped: [],
   },
-  knownStances: [...sourceProfile.knownStances],
-  equippedStances: { ...sourceProfile.equippedStances },
-  activeStance: sourceProfile.equippedStances.default,
-  knownRites: [...sourceProfile.knownRites],
-  equippedRites: [...sourceProfile.equippedRites],
-  riteSlots: 2,
-  hitboxRects: [],
-  summonsMinions: 0,
-  summonActiveCount: 0,
-  summonRespawnMaxMs: 0,
-  summonSlots: [],
-  isDead: false,
-  graveFrame: null,
-} as unknown as PlayerView;
+  holdsInventory: {
+    inventory: ["primordial-club"],
+    equipment: { weapon: null, armor: "plains-vest-t1", recovery: null, mobility: null, core: null, relic: null },
+    itemUpgrades: {},
+  },
+  usesSkills: {
+    unlockedSkills: ["cadence-root"],
+    passives: { "core.attack-mult": 0.1 },
+    selectedClass: "cadence-root",
+    selectedSubVariant: null,
+    selectedRange: null,
+    combatArchetype: "cadence",
+  },
+  dealsDamage: { attack: 17, onHitDamage: 2 },
+  performsAttack: { range: 80, cooldownMs: 1000, lastAttackAt: 0, attackStyle: "melee" },
+  mitigatesDamage: { plating: 3, damageReduction: 0.04 },
+} as never) as PlayerView;
+assert(self, "the fixture composes a player view");
 
 const header: RunHeader = {
   schemaVersion: 3,
-  runId: "striker-t1-intended-test-run",
-  botId: "F-striker-t1-intended",
-  devAccountId: "bot-F-striker-t1-intended-01",
+  runId: "smoke-t1-intended-test-run",
+  botId: "smoke-t1-intended",
+  devAccountId: "bot-smoke-t1-intended-01",
   characterName: self.name,
   characterId: self.id,
-  routeId: "striker-t1",
+  routeId: "smoke-t1",
   routeVersion: "test",
   policyId: "intended",
-  classRoot: sourceProfile.classRoot,
+  classRoot: "cadence-root",
   gitRevision: "test-revision",
   serverUrl: "http://localhost:4000",
   startedAt: 1_000_000,
@@ -166,7 +95,7 @@ try {
     kind: "mastery-completion",
     header,
     self,
-    frameId: sourceProfile.frameId,
+    frameId: null,
     elapsedMs: 30_000,
     rewardMultiplier: 1,
     canonicalAtCapture: true,
@@ -175,82 +104,47 @@ try {
     kind: "tier2-handoff",
     header,
     self,
-    frameId: sourceProfile.frameId,
+    frameId: null,
     elapsedMs: 90_000,
     rewardMultiplier: 1,
     canonicalAtCapture: true,
   });
   store.capture(snapshotA);
   store.capture(snapshotB);
+  assert(store.capture(snapshotB).file === "snapshot-b.json", "a second Snapshot B keeps the first");
   const manifest = store.manifest();
   assert(manifest.snapshotA?.file === "snapshot-a.json", "Snapshot A must have a stable filename");
   assert(manifest.snapshotB?.file === "snapshot-b.json", "Snapshot B must have a stable filename");
   assert(manifest.snapshotB?.elapsedMs === 90_000, "manifest must retain elapsed handoff time");
 
   const loaded = readT1CharacterSnapshot(join(temp, "snapshot-b.json"));
-  assert(loaded.schemaVersion === T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION, "saved JSON must reload at schema 1");
+  assert(loaded.schemaVersion === T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION, "saved JSON must reload at its schema version");
+  assert(loaded.snapshotId === "smoke-t1-intended-test-run-b", "Snapshot B is named after its run");
+  assert(loaded.classRoot === "cadence-root", "the snapshot records the class");
   assert(loaded.state.passives["core.attack-mult"] === 0.1, "derived passive state must remain auditable in Snapshot B");
-  const profile = tierEntryProfileFromT1Snapshot(loaded);
-  const validation = validateProfile(profile);
-  assert(validation.pass, `reconstructed profile must validate: ${validation.findings.map((f) => f.message).join("; ")}`);
+  assert(JSON.stringify(loaded.state.equipment) === JSON.stringify(self.equipment), "equipment must round-trip exactly");
+  assert(JSON.stringify(loaded.state.inventory) === JSON.stringify(self.inventory), "inventory must round-trip exactly");
+  assert(JSON.stringify(loaded.state.essences) === JSON.stringify(self.essences), "the wallet must round-trip exactly");
+  assert(JSON.stringify(loaded.state.biomeLevel) === JSON.stringify(self.biomeLevel), "mastery must round-trip exactly");
+  assert(loaded.state.runtime.nodeId === CLEARING_NODE_ID, "the runtime position is recorded");
 
-  const prepared = structuredClone(loaded);
-  prepared.state.biomeLevel = { plains: 12, forest: 12, swamp: 12, mountain: 12, cave: 12, jungle: 6, desert: 6, clearing: 4 };
-  prepared.state.globalMastery = 72;
-  const unchanged = JSON.stringify(prepared);
-  assert(!validateProfile(tierEntryProfileFromT1Snapshot(prepared)).pass, "ordinary entry must still reject same-tier mastery");
-  const resumed = tierEntryProfileFromT1Snapshot(prepared, "node-t2-sanctuary", 2, true);
-  assert(resumed.checkpointKind === "prepared-t2" && validateProfile(resumed).pass, "explicit prepared resume validates current-tier state");
-  assert(JSON.stringify(prepared) === unchanged, "resume never rewrites the source snapshot");
-  for (const invalid of [loaded, { ...prepared, state: { ...prepared.state, bossesCleared: [...prepared.state.bossesCleared, "plains:2"] } }]) {
-    let rejected = false;
-    try { tierEntryProfileFromT1Snapshot(invalid, "node-t2-sanctuary", 2, true); } catch { rejected = true; }
-    assert(rejected, "prepared resume rejects incomplete mastery or existing current-tier boss clears");
-  }
+  // A named checkpoint is written once under its boundary id.
+  const named = { ...snapshotA, progressionCheckpoint: { boundaryId: "after-plains" } as never };
+  assert(store.capture(named).file === "checkpoint-after-plains.json", "a named checkpoint is filed by boundary");
+  let duplicateRejected = false;
+  try { store.capture(named); } catch { duplicateRejected = true; }
+  assert(duplicateRejected, "a boundary is captured once");
+  let invalidRejected = false;
+  try { store.capture({ ...snapshotA, progressionCheckpoint: { boundaryId: "Not Valid!" } as never }); } catch { invalidRejected = true; }
+  assert(invalidRejected, "a boundary id is kebab-case");
+  assert(store.manifest().namedCheckpoints?.["after-plains"]?.file === "checkpoint-after-plains.json", "the manifest lists named checkpoints");
 
-  const withHistoricalUpgrade = {
-    ...loaded,
-    state: { ...loaded.state, itemUpgrades: { ...loaded.state.itemUpgrades, "gale-needle": 1 } },
-  };
-  const t3 = structuredClone(prepared);
-  Object.assign(t3.state, { playerTier: 3, currentSkillTier: 3, skillPoints: 1, selectedRange: null,
-    bossesCleared: [...prepared.state.bossesCleared, "plains:2", "forest:2", "desert:2"] });
-  t3.canonicalAtCapture = false;
-  const t3Before = JSON.stringify(t3);
-  const t3Profile = tierEntryProfileFromT1Snapshot(t3, "node-t3-sanctuary", 3);
-  assert(validateProfile(t3Profile).pass, "earned T3 point and previous-tier mastery validate");
-  assert(t3Profile.skillPoints === 1 && t3Profile.economyPolicy === "synthetic-combat-progression", "T3 import preserves point and synthetic provenance");
-  assert(JSON.stringify(t3) === t3Before, "T3 import never rewrites the source");
-  const branched = structuredClone(t3);
-  branched.state.selectedRange = `${branched.state.classRoot}-range-far`.replace("-root-range", "-range");
-  branched.state.unlockedSkills.push(branched.state.selectedRange);
-  branched.state.skillPoints = 0;
-  const branchedBefore = JSON.stringify(branched);
-  const branchProfile = tierEntryProfileFromT1Snapshot(branched, "node-t3-sanctuary", 3);
-  assert(validateProfile(branchProfile).pass && branchProfile.selectedRange === branched.state.selectedRange, "strict T3 conversion preserves earned branch");
-  assert(JSON.stringify(branched) === branchedBefore, "branched snapshot remains unchanged");
-  for (const patch of [{ skillPoints: 0 }, { skillPoints: 2 }, { playerTier: 2 }, { selectedRange: "ranged" },
-    { bossesCleared: [...prepared.state.bossesCleared, "plains:2", "forest:2"] }]) {
-    const bad = { ...t3, state: { ...t3.state, ...patch } };
-    let refused = false;
-    try { tierEntryProfileFromT1Snapshot(bad, "node-t3-sanctuary", 3); } catch { refused = true; }
-    assert(refused, "T3 importer refuses invented points, missing seals, wrong tier or unsupported branch");
-  }
-  const projected = tierEntryProfileFromT1Snapshot(withHistoricalUpgrade);
-  assert(!Object.hasOwn(projected.itemUpgrades, "gale-needle"), "historical upgrades for unowned gear must stay out of the entry payload");
-  assert(validateProfile(projected).pass, "projected snapshot profile must remain valid");
-
-  assert(JSON.stringify(profile.equipment) === JSON.stringify(sourceProfile.equipment), "equipment must round-trip exactly");
-  assert(JSON.stringify(profile.itemUpgrades) === JSON.stringify(sourceProfile.itemUpgrades), "item upgrades must round-trip exactly");
-  assert(JSON.stringify(profile.inventory) === JSON.stringify(sourceProfile.inventory), "inventory must round-trip exactly");
-  assert(JSON.stringify(profile.bossesCleared) === JSON.stringify(sourceProfile.bossesCleared), "boss progression must round-trip exactly");
-  assert(JSON.stringify(profile.wallet) === JSON.stringify(sourceProfile.wallet), "wallet must round-trip exactly");
-  assert(JSON.stringify([...expectedUnlockedRecipes(profile)].sort()) === JSON.stringify([...loaded.state.unlockedRecipes].sort()), "recipe unlocks must be reproducible from the snapshot");
-  assert(JSON.stringify(runeIdsFromCraftedRecipes(profile.runeRecipesCrafted).sort()) === JSON.stringify([...loaded.state.runesOwned].sort()), "rune ownership must remain derived-identical");
-
-  profile.inventory.push("mutation-must-not-reach-snapshot");
-  assert(!loaded.state.inventory.includes("mutation-must-not-reach-snapshot"), "profile conversion must deep-copy arrays");
+  self.inventory.push("mutation-must-not-reach-snapshot");
+  assert(!loaded.state.inventory.includes("mutation-must-not-reach-snapshot"), "the snapshot deep-copies arrays");
   assert(JSON.parse(readFileSync(join(temp, "snapshot-index.json"), "utf8")).snapshotB.file === "snapshot-b.json", "index JSON must be written");
+  let reused = false;
+  try { new T1SnapshotStore(temp); } catch { reused = true; }
+  assert(reused, "a run directory with an index is never reused");
   console.log("t1Snapshots.test: ok");
 } finally {
   rmSync(temp, { recursive: true, force: true });
