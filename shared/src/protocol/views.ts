@@ -7,6 +7,7 @@ import type { LineageProgressMap, PacketId } from "../data/lineages/types";
 import type { AbilityNodeProgressMap } from "../data/abilityNodes/types";
 import { isRangedCombatant, type SubVariant } from "../skillTree";
 import type { MonsterBehavior } from "../data/monsters/behavior";
+import type { ClassConfig } from "../classKits/configTypes";
 import { resolveUpkeepConfig, upkeepStacks, upkeepStage } from "../systems/energyUpkeep";
 import type { BuffId, PlayerBuff } from "../components/combat/buffs";
 import type {
@@ -122,6 +123,8 @@ export interface PlayerView {
   globalMastery: number;
   unlockedRecipes: string[];
   combatArchetype: CombatArchetype;
+  /** The class system setup (class-first); null before a class is picked. */
+  classConfig: ClassConfig | null;
   cadenceCount: number;
   cadenceThreshold: number;
   cadenceEmpoweredArmed: boolean;
@@ -406,6 +409,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     globalMastery: globalMastery(progression.biomeLevel),
     unlockedRecipes: progression.unlockedRecipes,
     combatArchetype: skills.combatArchetype,
+    classConfig: entity.configuresClass?.config ?? null,
     cadenceCount: entity.usesCadence?.count ?? 0,
     cadenceThreshold: entity.usesCadence?.threshold ?? 0,
     cadenceEmpoweredArmed: entity.hasEmpoweredAttack !== undefined,

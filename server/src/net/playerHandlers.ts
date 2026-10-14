@@ -89,6 +89,7 @@ import {
   startNeighborNavigation,
 } from "../systems/world/autoTraverse";
 import { thawNode } from "../world/nodeLifecycle";
+import { setClassConfig } from "../systems/player/progression/classConfig";
 import { rightmostEntranceTarget } from "../world/nodePath";
 import { activateDungeonAltar } from "../systems/world/dungeons/dungeon";
 import {
@@ -439,6 +440,16 @@ export function registerPlayerHandlers(
     world.gameplay?.decision(p, "runes", null, telemetryBefore);
     markSliceDirty(world, p, "tracksProgression");
     socket.emit("build:loadoutResult", { system: "runes", success: true });
+  });
+
+  socket.on("class:setConfig", (config) => {
+    const p = liveSelf();
+    if (!p) {
+      socket.emit("class:configResult", { ok: false, reasons: [NOT_LIVE_REASON] });
+      return;
+    }
+    const result = setClassConfig(world, p, config);
+    socket.emit("class:configResult", result.ok ? { ok: true } : { ok: false, reasons: result.reasons });
   });
 
   socket.on("inventory:equipItem", (definitionId) => {

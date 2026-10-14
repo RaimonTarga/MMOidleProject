@@ -22,6 +22,7 @@ export const characters = pgTable('characters', {
   holdsInventory:    text('holds_inventory').notNull(),
   usesSkills:        text('uses_skills').notNull(),
   summonerState:     text('summoner_state'),
+  classConfig:       text('class_config'),
   deletedAt:         bigint('deleted_at', { mode: 'number' }),
   lastPlayedAt:      bigint('last_played_at', { mode: 'number' }).notNull().default(0),
   updatedAt:         bigint('updated_at', { mode: 'number' }).notNull().default(0),

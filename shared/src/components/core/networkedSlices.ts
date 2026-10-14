@@ -20,6 +20,7 @@ import type { EquippedStances } from '../../stances';
 import type { EquippedRites } from '../../rites';
 import type { LineageProgressMap, PacketId } from '../../data/lineages/types';
 import type { AbilityNodeProgressMap } from '../../data/abilityNodes/types';
+import type { ClassConfig } from '../../classKits/configTypes';
 
 export type { HasHitbox };
 
@@ -468,6 +469,15 @@ export interface HoldsInventory {
    * required once every construction site is wired.
    */
   lineages?: LineageProgressMap;
+}
+
+/**
+ * The character's class system setup (class-first build plan §3.3): present once a class is
+ * picked, persisted in its own column, sent to clients so the class screen and HUD can read it.
+ * What the character has learned and which trophies it holds are derived, never stored here.
+ */
+export interface ConfiguresClass {
+  config: ClassConfig;
 }
 
 /** Skill tree unlocks plus the derived passive map and class selections. */

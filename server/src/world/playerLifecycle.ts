@@ -14,6 +14,7 @@ import { syncLineagesFromInventory } from '../systems/player/economy/lineageSync
 import { resolvePlayerHitbox } from "../hitbox/resolve";
 import { freezeNode } from "./nodeLifecycle";
 import { despawnMinionsForOwner } from "../systems/classes/archetypes/summoner";
+import { hydrateClassConfig } from "../systems/player/progression/classConfig";
 
 /**
  * Attach hydrated player slices to the ECS world with fresh combat tracking.
@@ -89,6 +90,8 @@ export function attachPlayerEntity(
     },
     ...(player.summonerState ? { summonsMinions: player.summonerState } : {}),
   };
+  const configuresClass = hydrateClassConfig(player, player.classConfig);
+  if (configuresClass) entity.configuresClass = configuresClass;
   entity.hasHitbox = resolvePlayerHitbox(entity);
   world.ecs.add(entity);
   world.incrementPlayersInNode(entity.hasPosition.nodeId);

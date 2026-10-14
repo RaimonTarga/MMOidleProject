@@ -16,6 +16,7 @@ import {
 } from '@mmo-idle/shared';
 import { attachComponent, detachComponent } from './markerHelpers';
 import { initControlsSummons } from '../systems/classes/archetypes/summoner/controlsSummons';
+import { refreshClassConfig } from '../systems/player/progression/classConfig';
 
 function syncArchetypeSlice<K extends keyof ServerEntity>(
   world: World,
@@ -118,4 +119,7 @@ export function syncArchetypeSlices(world: World, entity: PlayerEntity): void {
   } else {
     detachComponent(world, entity, 'hasFormationTechnique');
   }
+
+  // The class system setup: attached with a class, rebuilt in auto mode (build plan §3.3).
+  refreshClassConfig(world, entity);
 }

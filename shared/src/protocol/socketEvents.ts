@@ -6,6 +6,7 @@ import type { RowKind } from "../data/lineages/types";
 import type { AbilityNodeRow } from "../data/abilityNodes/types";
 import type { AutocombatConfig } from "../components/core/networkedSlices";
 import type { EquippedRule } from "../runeDatabase";
+import type { ClassConfig } from "../classKits/configTypes";
 import type { BossFelledMarker } from "./bossFelled";
 import type { DeltaSnapshot } from "./delta";
 import type { PlayerDeathPayload } from "./death";
@@ -140,6 +141,8 @@ export interface ServerToClientEvents {
   /** Immediate result of learning a rite (crafting a rite recipe). */
   "rite:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
   "build:loadoutResult": (result: { system: "abilities" | "runes" | "stances" | "rites"; success: boolean; reason?: string }) => void;
+  /** The answer to `class:setConfig`: accepted, or every reason it was not. */
+  "class:configResult": (result: { ok: boolean; reasons?: string[] }) => void;
   /** Immediate result of an item upgrade attempt. */
   "inventory:upgradeResult": (result: {
     success: boolean;
@@ -260,6 +263,8 @@ export interface ClientToServerEvents {
   "player:resetClass": () => void;
   /** Set the player's equipped rune loadout (ordered). Server validates ownership/catalog. */
   "rune:setLoadout": (rules: EquippedRule[]) => void;
+  /** Set the class system (the Order, Response rules, ...) and the relic slot (build plan §3.3). */
+  "class:setConfig": (config: ClassConfig) => void;
   "rune:craftRecipe": (recipeId: string) => void;
   /** Learn an ability by crafting its recipe. Server validates gate + cost. */
   "ability:craftRecipe": (recipeId: string) => void;

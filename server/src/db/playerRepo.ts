@@ -58,6 +58,8 @@ export interface PersistedPlayerSlices {
   holdsInventory:    HoldsInventory;
   usesSkills:        UsesSkills;
   summonerState?:    SummonsMinions;
+  /** The saved class config, untrusted until `hydrateClassConfig` fits it to the character. */
+  classConfig?:      unknown;
 }
 
 // ── Account ───────────────────────────────────────────────────────────────────
@@ -387,6 +389,7 @@ export async function saveCharacter(
         respawnTimers: new Array(entity.summonsMinions.targetCount).fill(0),
         formationTargetId: null,
       }) : null,
+      classConfig: entity.configuresClass ? JSON.stringify(entity.configuresClass.config) : null,
       lastPlayedAt:      now,
       updatedAt:         now,
     })
@@ -740,6 +743,7 @@ function hydratePlayerSlices(
     summonerState: row.summonerState
       ? sanitizePersistedSummonerState(parseSlice<SummonsMinions>(row.summonerState))
       : undefined,
+    classConfig: row.classConfig ? parseSlice<unknown>(row.classConfig) : undefined,
   };
 }
 

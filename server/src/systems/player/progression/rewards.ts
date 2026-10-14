@@ -8,6 +8,7 @@ import { recalculatePlayerStatsPreservingCombatState } from '../../../ecs/player
 import { recordWorldLogEvent } from '../../../world/worldLog';
 import { actorFromPlayer } from '../../../world/worldLogActors';
 import { onDungeonMonsterRewarded } from '../../world/dungeons/dungeon';
+import { refreshClassConfig } from './classConfig';
 
 export interface KillRewards {
   essence: number;
@@ -266,6 +267,7 @@ function applyKillRewardsToPlayer(
     Math.max(1, Math.round((rewards.biomeXp ?? 1) * debugMult)),
   );
   const questResult = registerKillForQuests(recipient, monster.isMonster.monsterTypeId);
+  let bossNewlyCleared = false;
   if (monster.isMonster.isBoss) {
     if (!options.suppressBossRespawn) {
       scheduleBossRespawn(world, monster);
@@ -276,9 +278,13 @@ function applyKillRewardsToPlayer(
       if (!recipient.tracksProgression.bossesCleared.includes(key)) {
         recipient.tracksProgression.bossesCleared.push(key);
         markSliceDirty(world, recipient, 'tracksProgression');
+        bossNewlyCleared = true;
       }
     }
   }
+  // Lessons follow biome levels and trophies follow boss clears (build plan §3.4); an auto
+  // class config takes them up at once.
+  if (bossNewlyCleared || biomeResult.newLevel > biomeResult.prevLevel) refreshClassConfig(world, recipient);
   // Seals ARE boss first-clears, so this must run AFTER the block above records
   // one: the boss whose clear completes the requirement has to advance the player
   // on that same kill, not the next one. Tier 0 still advances by quest (no

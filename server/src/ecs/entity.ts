@@ -68,6 +68,7 @@ import type {
   UsesEnergy,
   UsesReload,
   UsesSkills,
+  ConfiguresClass,
 } from "@mmo-idle/shared";
 import type { FeatureTarget, LineageFxKey, Vec2 } from "@mmo-idle/shared";
 import type { With } from "miniplex";
@@ -316,6 +317,7 @@ export interface ServerEntity {
   tracksProgression?: TracksProgression;
   holdsInventory?: HoldsInventory;
   usesSkills?: UsesSkills;
+  configuresClass?: ConfiguresClass;
   summonsMinions?: SummonsMinions;
   controlsSummons?: ControlsSummons;
   inParty?: InParty;

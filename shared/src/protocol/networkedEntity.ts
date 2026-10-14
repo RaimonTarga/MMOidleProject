@@ -26,6 +26,7 @@ import type {
   QueuesAbilities,
   PerformsAttack,
   SummonsMinions,
+  ConfiguresClass,
   TracksProgression,
   UsesAutocombat,
   UsesCadence,
@@ -97,6 +98,7 @@ export const NETWORKED_PLAYER_KEYS = [
   "tracksProgression",
   "holdsInventory",
   "usesSkills",
+  "configuresClass",
   "hasStatus",
   "inParty",
   "usesCadence",
@@ -174,6 +176,7 @@ export interface NetworkedEntity {
   tracksProgression?: TracksProgression;
   holdsInventory?: HoldsInventory;
   usesSkills?: UsesSkills;
+  configuresClass?: ConfiguresClass;
   hasStatus?: HasStatus;
   inParty?: InParty;
   summonsMinions?: SummonsMinions;
