@@ -113,10 +113,8 @@ export function buildSectionIconSource(section: BuildSectionIcon): IconSource {
 /**
  * One glyph per craftable kind, for the Make browser.
  *
- * Techniques read as absent from Crafting: the list groups by kind
- * and the non-gear kinds sit under the whole gear block, behind a wall of
- * text-only filter chips. A glyph on the chip and on each row is what makes a
- * group findable without scrolling to it.
+ * The list groups by kind, behind a row of filter chips. A glyph on the chip
+ * and on each row is what makes a group findable without scrolling to it.
  *
  * Deliberately reuses shipped art rather than commissioning a slot set. The stat
  * glyphs already carry the right meaning for gear (attack/plating/regen/speed).
@@ -128,7 +126,6 @@ const MAKE_KIND_ICONS: Record<string, IconSource> = {
   recovery: statIconSource('regen'),
   mobility: statIconSource('speed'),
   relic: menuIconSource('passive-tree'),
-  technique: atlasIcon('UI_icons/abilities/sweep.png'),
 };
 
 /** Glyph for a craftable kind, or null when the kind has no art yet. */

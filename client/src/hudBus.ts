@@ -36,11 +36,6 @@ export const hudBus = {
     intents.emit('setRuneLoadout', rules);
   },
 
-  /** Learn an ability (craft its recipe); server validates gate + cost. */
-  requestCraftAbilityRecipe(recipeId: string): void {
-    intents.emit('craftAbilityRecipe', recipeId);
-  },
-
 
   /** Ask the authoritative Slinger reload lifecycle to discard the clip and reload. */
   requestManualReload(): void {

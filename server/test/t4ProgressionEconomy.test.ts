@@ -4,13 +4,12 @@
  *
  * Covers the 36 T3→T4 lineages (26 distinct predecessors, 10 branch groups), the T4
  * gear cost curves / lifetime ratios / hybrid splits / catalyst schedule+families, the
- * four T4 ability prices, the normalized
+ * normalized
  * T4 Relic economy, the Trench monster essence-colour correction, and the no-regression
  * pins on Runes and the GM architecture.
  */
 import {
   RECIPE_DATABASE,
-  ABILITY_RECIPE_DATABASE,
   maxGlobalMasteryAtTier,
   globalMasteryRequiredForUpgrade,
 } from "@mmo-idle/shared";
@@ -214,29 +213,6 @@ for (const id of HYBRID_IDS) {
   // Per-step splash share must also respect the ceiling (not just aggregate).
   const baseSplashPct = splashTotal === 0 ? 0 : ((r.cost as Record<string, number>)[splash] ?? 0) / (((r.cost as Record<string, number>)[home] ?? 0) + ((r.cost as Record<string, number>)[splash] ?? 0));
   assert(baseSplashPct <= 0.33, `${id}: base-craft splash share must be <= 33%, got ${(baseSplashPct * 100).toFixed(1)}%`);
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// 9. Abilities: exact costs 300/380/420, no catalysts, gates/effects unchanged
-//    (Snipe, 320, re-homed to T2 Desert 3 by the ability pass, design §22.8)
-// ═══════════════════════════════════════════════════════════════════════════
-
-const EXPECTED_ABILITIES: Record<string, { color: string; amount: number; group: string; level: number }> = {
-  "ability-recipe-disengage": { color: "green", amount: 300, group: "trench", level: 3 },
-  "ability-recipe-recuperate": { color: "green", amount: 380, group: "trench", level: 5 },
-  "ability-recipe-stunning-strike": { color: "purple", amount: 420, group: "graveyard", level: 5 },
-};
-for (const [id, spec] of Object.entries(EXPECTED_ABILITIES)) {
-  const recipe = ABILITY_RECIPE_DATABASE.get(id);
-  assert(!!recipe, `${id}: ability recipe must exist`);
-  assert(recipe!.tier === 4, `${id}: must stay tier 4`);
-  assert(recipe!.recipeGroup === spec.group, `${id}: biome must be ${spec.group}`);
-  assert(recipe!.requiredBiomeLevel === spec.level, `${id}: gate must be L${spec.level}`);
-  assert(
-    JSON.stringify(recipe!.cost) === JSON.stringify({ [spec.color]: spec.amount }),
-    `${id}: cost must be exactly ${spec.color} ${spec.amount}, got ${JSON.stringify(recipe!.cost)}`,
-  );
-  assert(!("catalystCost" in recipe!) || !recipe!.catalystCost, `${id}: must have no catalyst cost`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

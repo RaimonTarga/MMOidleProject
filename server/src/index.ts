@@ -19,7 +19,6 @@ import {
   ITEM_DATABASE,
   NODE_BIOMES,
   validateAbilities,
-  validateAbilityRecipes,
   validateNodeModifiers,
   validateTierAdvancement,
   pointInNodeFeatureShape,
@@ -315,10 +314,9 @@ async function boot(): Promise<void> {
     } else {
       log.info("tier advancement OK");
     }
-    // Ability ranks and unlocks: an ability with no recipe can never be learned,
-    // and a rank that changes effect kind is a different ability wearing the same
-    // id. Both are silent in play and obvious here.
-    const abilityViolations = [...validateAbilities(), ...validateAbilityRecipes()];
+    // Ability ranks: a rank that changes effect kind is a different ability
+    // wearing the same id. Silent in play and obvious here.
+    const abilityViolations = validateAbilities();
     if (abilityViolations.length > 0) {
       log.error({ abilityViolations }, "ability roster invalid");
     } else {

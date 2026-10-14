@@ -40,10 +40,7 @@ import {
   formatWeaponEffects,
 } from '../crafting/itemDisplay';
 import { MAKE_KIND_LABELS } from '../crafting/makeEntries';
-import { DetailLines } from '../describe/DetailLines';
-import { loadoutLinesFor } from '../describe';
 import { useAbilityContext } from '../describe/useAbilityContext';
-import type { AbilityContext } from '../describe';
 import { biomeUnlocksByLevel, type BiomeUnlock } from './biomeUnlocks';
 
 interface NodeInfoProps {
@@ -119,17 +116,14 @@ function MonsterRow({ m, isBoss, open, onToggle }: {
 
 // ── Expandable unlock row ───────────────────────────────────────────────────────
 /**
- * One rung of a biome's reward ladder, whichever database authored it. Gear
- * states its stats and effects; a technique states what
- * learning it would do for THIS character, the same way the Craft browser does.
+ * One rung of a biome's reward ladder: gear states its stats and effects.
  */
-function UnlockRow({ unlock, unlocked, open, onToggle, relicPreview, abilityContext }: {
+function UnlockRow({ unlock, unlocked, open, onToggle, relicPreview }: {
   unlock: BiomeUnlock;
   unlocked: boolean;
   open: boolean;
   onToggle: () => void;
   relicPreview: (unlock: BiomeUnlock) => string[];
-  abilityContext: AbilityContext;
 }) {
   const gear = unlock.gear;
   const stats = gear
@@ -141,9 +135,6 @@ function UnlockRow({ unlock, unlocked, open, onToggle, relicPreview, abilityCont
       ...(gear.slot === 'relic' ? relicPreview(unlock) : []),
       ...(gear.slot === 'weapon' ? formatWeaponEffects(gear.id) : []),
     ]
-    : [];
-  const learnedLines = unlock.learnedId
-    ? loadoutLinesFor(unlock.learnedId, abilityContext)
     : [];
   const costs = Object.entries(unlock.cost) as [EssenceType, number][];
 
@@ -179,9 +170,6 @@ function UnlockRow({ unlock, unlocked, open, onToggle, relicPreview, abilityCont
               {effects.map((line, i) => <li key={i} className="map-recipe__effectline">{line}</li>)}
             </ul>
           )}
-          {learnedLines.length > 0 && (
-            <DetailLines className="map-recipe__lines" lines={learnedLines} />
-          )}
           {unlock.description && <p className="map-recipe__desc">{unlock.description}</p>}
         </div>
       )}
@@ -211,8 +199,7 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
   const info  = NODE_BIOMES[nodeId];
   const biome = info ? BIOME_DATABASE.get(info.biomeGroup) : null;
 
-  // Every reward this biome pays out, from both recipe databases — gear and
-  // techniques — grouped by the level that opens it.
+  // Every reward this biome pays out, grouped by the level that opens it.
   const unlockLevels = useMemo(
     () => (info ? biomeUnlocksByLevel(info.biomeGroup) : []),
     [info?.biomeGroup], // eslint-disable-line react-hooks/exhaustive-deps
@@ -567,7 +554,6 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
                     open={openRecipe === unlock.key}
                     onToggle={() => setOpenRecipe(prev => prev === unlock.key ? null : unlock.key)}
                     relicPreview={relicPreview}
-                    abilityContext={abilityContext}
                   />
                 ))}
               </div>

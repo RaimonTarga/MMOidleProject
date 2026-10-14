@@ -1,6 +1,5 @@
 import {
   RECIPE_DATABASE,
-  ABILITY_RECIPE_DATABASE,
   ESSENCE_TYPES,
 } from "@mmo-idle/shared";
 import type { EssenceType } from "@mmo-idle/shared";
@@ -92,24 +91,6 @@ for (const id of ALL_T2_GEAR_IDS) {
     plus4and5Share >= 0.65,
     `${id}: +4/+5 must hold at least 65% of post-base spend (got ${(plus4and5Share * 100).toFixed(1)}%)`,
   );
-}
-
-// ── Techniques / Guards (§10) ───────────────────────────────────────────────
-
-const ABILITY_COSTS: Record<string, { color: EssenceType; amount: number; level: number; group: string }> = {
-  // The ability pass (design §22.2, §22.8) re-homed Binding Strike and Snipe into
-  // the cut Hamstring's and the moved Charge's slots, at those slots' prices.
-  "ability-recipe-binding-strike": { color: "green", amount: 70, level: 3, group: "jungle" },
-  "ability-recipe-snipe": { color: "yellow", amount: 70, level: 3, group: "desert" },
-  "ability-recipe-bramble-guard": { color: "green", amount: 90, level: 5, group: "jungle" },
-  "ability-recipe-endure": { color: "yellow", amount: 90, level: 5, group: "desert" },
-};
-for (const [id, spec] of Object.entries(ABILITY_COSTS)) {
-  const recipe = ABILITY_RECIPE_DATABASE.get(id);
-  assert(!!recipe, `${id}: recipe must exist`);
-  assert(recipe!.cost[spec.color] === spec.amount, `${id}: cost must be ${spec.amount} ${spec.color} (got ${JSON.stringify(recipe!.cost)})`);
-  assert(recipe!.requiredBiomeLevel === spec.level, `${id}: unlock level must stay at ${spec.group} L${spec.level}`);
-  assert(recipe!.recipeGroup === spec.group, `${id}: biome gate must stay ${spec.group}`);
 }
 
 console.log("t2ProgressionEconomy: ok");

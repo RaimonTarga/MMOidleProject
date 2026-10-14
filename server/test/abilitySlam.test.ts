@@ -21,7 +21,6 @@
 import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   ABILITY_DATABASE,
-  ABILITY_RECIPE_DATABASE,
   GAME_CONFIG,
   STARTER_RUNE_IDS,
   abilityCastMs,
@@ -136,16 +135,8 @@ function monsterAt(world: World, x: number, y = 400) {
 
 initCombatSystems();
 
-// ── 1. Acquisition and ranking ───────────────────────────────────────────────
+// ── 1. Ranking ───────────────────────────────────────────────────────────────
 {
-  const recipe = [...ABILITY_RECIPE_DATABASE.values()].find((r) => r.abilityId === "slam");
-  assert(!!recipe, "Slam must be learnable through an ability recipe, not granted by tier");
-  assert(recipe!.tier === 1, "Slam's recipe is a T1 recipe");
-  assert(
-    recipe!.recipeGroup === "mountain" && recipe!.requiredBiomeLevel === 5,
-    "Slam is homed at Mountain 5 (Power Strike's slot, the band's own level 5)",
-  );
-
   assert(SLAM.tier === 1 && SLAM.slot === "technique" && SLAM.shape === "cast",
     "Slam is a T1 cast-shaped Technique");
   assert(abilityRankNumber(SLAM, 1) === 1, "a T1 player holds Slam I");

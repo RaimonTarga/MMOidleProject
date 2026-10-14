@@ -1,21 +1,13 @@
 import {
-  ABILITY_DATABASE,
-  ABILITY_RECIPE_DATABASE,
   RECIPE_DATABASE,
-  abilityDef,
   type EssenceType,
   type Recipe,
 } from '@mmo-idle/shared';
 import { KIND_ORDER, type MakeKind } from '../crafting/makeEntries';
 
 /**
- * One thing a biome hands you at one of its levels.
- *
- * Biome mastery pays out of TWO authoritative databases — gear and
- * abilities — and only gear lives in `RECIPE_DATABASE`. The map used to read
- * that one database and so silently omitted every technique a biome
- * grants. This is the client view model that lets
- * the map answer "what does this place give me, and when" from all of them.
+ * One thing a biome hands you at one of its levels: the client view model that
+ * lets the map answer "what does this place give me, and when".
  *
  * Unlike the Craft browser's `MakeEntry`, nothing is filtered out for being
  * already owned or learned: the map is the reference ladder for a biome, so it
@@ -33,50 +25,6 @@ export interface BiomeUnlock {
   cost: Partial<Record<EssenceType, number>>;
   /** Present for gear (weapon/armor/recovery/mobility/relic) only. */
   gear?: Recipe;
-  /**
-   * The ability id learned, which is NOT the recipe id.
-   * Absent for gear, where the recipe id is the item id.
-   */
-  learnedId?: string;
-}
-
-/** The fields every non-gear recipe database shares. */
-interface LearnedRecipe {
-  id: string;
-  name: string;
-  tier: number;
-  cost: Partial<Record<EssenceType, number>>;
-  recipeGroup?: string;
-  requiredBiomeLevel?: number;
-}
-
-function learnedUnlocks<T extends LearnedRecipe>(
-  kind: MakeKind,
-  group: string,
-  recipes: Iterable<T>,
-  learnedIdOf: (recipe: T) => string | undefined,
-  nameOf: (recipe: T, learnedId: string) => string | undefined,
-  blurbOf: (learnedId: string) => string,
-): BiomeUnlock[] {
-  const unlocks: BiomeUnlock[] = [];
-  for (const recipe of recipes) {
-    if (recipe.recipeGroup !== group) continue;
-    const learnedId = learnedIdOf(recipe);
-    if (!learnedId) continue;
-    const name = nameOf(recipe, learnedId);
-    if (!name) continue;
-    unlocks.push({
-      key: `${kind}:${recipe.id}`,
-      kind,
-      level: recipe.requiredBiomeLevel ?? 0,
-      name,
-      description: blurbOf(learnedId),
-      tier: recipe.tier,
-      cost: recipe.cost,
-      learnedId,
-    });
-  }
-  return unlocks;
 }
 
 /** Every unlock this biome group grants, cheapest level first. */
@@ -96,15 +44,6 @@ export function biomeUnlocks(group: string): BiomeUnlock[] {
       gear: recipe,
     });
   }
-
-  unlocks.push(...learnedUnlocks(
-    'technique',
-    group,
-    ABILITY_RECIPE_DATABASE.values(),
-    (recipe) => recipe.abilityId,
-    (_recipe, learnedId) => ABILITY_DATABASE.get(learnedId)?.name,
-    (learnedId) => abilityDef(learnedId)?.blurb ?? '',
-  ));
 
   return unlocks.sort((a, b) =>
     a.level - b.level

@@ -24,7 +24,6 @@ import {
   abilityTempoRefundMs,
   resolveAbilityEffect,
   validateAbilities,
-  validateAbilityRecipes,
 } from "@mmo-idle/shared";
 
 function assert(condition: unknown, message: string): void {
@@ -33,7 +32,7 @@ function assert(condition: unknown, message: string): void {
 
 // ── 1. The roster validates ──────────────────────────────────────────────────
 
-const violations = [...validateAbilities(), ...validateAbilityRecipes()];
+const violations = validateAbilities();
 assert(violations.length === 0, `ability roster invalid: ${violations.join("; ")}`);
 
 // ── 2. Rank resolution clamps at both ends ───────────────────────────────────

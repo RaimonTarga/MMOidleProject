@@ -15,7 +15,6 @@
  */
 import {
   ABILITY_DATABASE,
-  ABILITY_RECIPE_DATABASE,
   ABILITY_SIDESTEP_EFFECT_ID,
   GAME_CONFIG,
   STARTER_RUNE_IDS,
@@ -85,10 +84,6 @@ initCombatSystems();
 {
   assert(SIDESTEP.slot === 'guard' && SIDESTEP.shape === 'instant' && SIDESTEP.tier === 1,
     'Sidestep is a T1 instant Guard');
-  const recipe = [...ABILITY_RECIPE_DATABASE.values()].find((r) => r.abilityId === 'sidestep');
-  assert(recipe?.recipeGroup === 'forest' && recipe.requiredBiomeLevel === 5 && recipe.tier === 1,
-    'Sidestep is learned at Forest 5');
-  assert(recipe!.cost.green !== undefined, "Sidestep's recipe is paid in the Forest's own essence colour");
   for (const rank of SIDESTEP.ranks) {
     assert(Object.keys(rank.effect).join() === 'kind', 'the rank authors only its shape — no magnitude');
   }

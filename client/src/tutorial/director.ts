@@ -233,7 +233,7 @@ async function chooseClass(
   await waitAlive(stepPassed(script, beat, step), signal);
 }
 
-/** Open the Make list on one entry and press its button (Craft or Learn). */
+/** Open the Make list on one entry and press its Craft button. */
 async function makeEntry(
   kind: string,
   entryKey: string,
@@ -252,7 +252,7 @@ async function makeEntry(
   requireView();
   await pressPointed(signal);
   press();
-  // Learning something can wake a UI unlock that reshuffles the rail; never
+  // Crafting something can wake a UI unlock that reshuffles the rail; never
   // leave the ring on a button that may be gone by the next frame.
   store.set(tutorialHighlightAtom, null);
 }

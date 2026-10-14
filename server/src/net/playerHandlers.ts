@@ -30,9 +30,6 @@ import { recordBroadcast } from "./profiler";
 import { unlockSkill } from "../systems/player/progression/skills";
 import { equipItem, unequipItem } from "../systems/player/economy/inventory";
 import { craftRecipe } from "../systems/player/economy/crafting";
-import {
-  craftAbilityRecipe,
-} from "../systems/player/economy/abilityCrafting";
 import { requestManualReload } from "../systems/classes/archetypes/reload/reloadLifecycle";
 import { upgradeItem } from "../systems/player/economy/itemUpgrade";
 import {
@@ -426,19 +423,6 @@ export function registerPlayerHandlers(
     const result = craftRecipe(world, p, recipeId);
     world.gameplay?.decision(p, "craft", recipeId, telemetryBefore, result.success);
     socket.emit("crafting:result", result);
-  });
-
-  socket.on("ability:craftRecipe", (recipeId: string) => {
-    const p = liveSelf();
-    if (!p || typeof recipeId !== "string") {
-      if (p) return;
-      socket.emit("ability:craftResult", { recipeId, success: false, reason: NOT_LIVE_REASON });
-      return;
-    }
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = craftAbilityRecipe(world, p, recipeId);
-    world.gameplay?.decision(p, "craft-ability", recipeId, telemetryBefore, result.success);
-    socket.emit("ability:craftResult", result);
   });
 
   socket.on("inventory:upgradeItem", (itemId: string) => {

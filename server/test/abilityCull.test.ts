@@ -13,7 +13,6 @@
  */
 import {
   ABILITY_DATABASE,
-  ABILITY_RECIPE_DATABASE,
   GAME_CONFIG,
   STARTER_RUNE_IDS,
   abilityRankAt,
@@ -91,13 +90,9 @@ function castCull(world: World, player: ReturnType<typeof spawn>['player'], targ
 
 initCombatSystems();
 
-// ── 1. A T3 Tundra cast on an execute curve, wired In Combat ─────────────────
+// ── 1. A T3 cast on an execute curve ────────────────────────────────────────
 {
   assert(CULL.slot === 'technique' && CULL.shape === 'cast' && CULL.tier === 3, 'Cull is a T3 cast Technique');
-  const recipe = [...ABILITY_RECIPE_DATABASE.values()].find((r) => r.abilityId === 'cull');
-  assert(recipe?.recipeGroup === 'tundra' && recipe.requiredBiomeLevel === 3 && recipe.tier === 3,
-    'Cull is learned at Tundra 3');
-  assert(recipe!.cost.blue !== undefined, "Cull's recipe is paid in the Tundra's own essence colour");
   for (const tier of [3, 4]) {
     assert(abilityRankAt(CULL, tier).effect.kind === 'execute-strike', 'every rank is the execute curve');
   }

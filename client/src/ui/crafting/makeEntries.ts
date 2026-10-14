@@ -1,10 +1,6 @@
 import {
-  ABILITY_DATABASE,
-  ABILITY_RECIPE_DATABASE,
   RECIPE_DATABASE,
   availableToClass,
-  abilityDef,
-  isAbilityRecipeUnlocked,
   type EquipmentSlot,
   type EssenceType,
   type Recipe,
@@ -13,13 +9,10 @@ import {
 import { biomeName } from './common';
 
 /**
- * Everything the player can make, in one shape. Gear and techniques stay
- * separate authoritative databases — this is a client view model that lets one
- * browser present them with a single grammar.
+ * Everything the player can make, in one shape: a client view model over the
+ * gear recipe database.
  */
-export type MakeKind = EquipmentSlot | 'technique';
-
-export const TECHNIQUE_KINDS: readonly MakeKind[] = ['technique'];
+export type MakeKind = EquipmentSlot;
 
 export interface MakeEntry {
   /** Unique across kinds; recipe ids are only unique within their database. */
@@ -40,21 +33,12 @@ export interface MakeEntry {
   unlockHint: string;
   /** Present for gear only; carries the fields the gear detail pane needs. */
   gear?: Recipe;
-  /**
-   * What making this actually gives you — the ability id, which
-   * is NOT the recipe id. Absent for gear, where the recipe id is the item id.
-   * Drives icon resolution and the effect table in the detail pane.
-   */
-  learnedId?: string;
 }
 
 export interface MakeSources {
   unlockedRecipeIds: readonly string[];
   ownedGearIds: ReadonlySet<string>;
   equippedGearIds: ReadonlySet<string>;
-  knownAbilities: readonly string[];
-  biomeLevel: Record<string, number>;
-  bossesCleared: readonly string[];
   /** The test room unlocks every gear recipe regardless of progression. */
   isTestRoom: boolean;
   combatArchetype: CombatArchetype;
@@ -64,8 +48,8 @@ export interface MakeSources {
  * What a locked gear recipe is still waiting on. Boss clears outrank biome
  * levels because a recipe gated on both wants the harder gate named. No gear
  * currently sets `requiredBossClear` — the ultimate recipes that did were a
- * scrapped feature, removed 2026-07-26 — but the field is a live gate on
- * ability recipes, so the branch stays rather than degrading silently.
+ * scrapped feature, removed 2026-07-26 — but the field is still a live recipe
+ * gate, so the branch stays rather than degrading silently.
  */
 function gearUnlockHint(recipe: Recipe): string {
   if (recipe.requiredBossClear) return `Defeat ${recipe.requiredBossClear}`;
@@ -106,58 +90,6 @@ function gearEntries(sources: MakeSources): MakeEntry[] {
   return entries;
 }
 
-interface TechniqueSpec {
-  kind: MakeKind;
-  recipes: Iterable<{
-    id: string;
-    name: string;
-    tier: number;
-    cost: Partial<Record<EssenceType, number>>;
-    recipeGroup?: string;
-    requiredBiomeLevel?: number;
-  }>;
-  /** Id of the thing learned, for known-set and definition lookups. */
-  learnedId: (recipeId: string) => string | null;
-  blurb: (learnedId: string) => string;
-  displayName: (recipeId: string, learnedId: string) => string | null;
-  known: readonly string[];
-  isUnlocked: (recipeId: string) => boolean;
-}
-
-function techniqueEntries(spec: TechniqueSpec): MakeEntry[] {
-  const knownSet = new Set(spec.known);
-  const entries: MakeEntry[] = [];
-
-  for (const recipe of spec.recipes) {
-    const learnedId = spec.learnedId(recipe.id);
-    if (!learnedId) continue;
-    const name = spec.displayName(recipe.id, learnedId);
-    if (!name) continue;
-
-    // Already learned leaves the list, the same way crafted gear does: Craft
-    // answers "what can I make", and a technique you own is not an answer to it.
-    if (knownSet.has(learnedId)) continue;
-
-    const unlocked = spec.isUnlocked(recipe.id);
-    entries.push({
-      key: `${spec.kind}:${recipe.id}`,
-      recipeId: recipe.id,
-      kind: spec.kind,
-      name,
-      blurb: spec.blurb(learnedId),
-      tier: recipe.tier,
-      recipeGroup: recipe.recipeGroup ?? null,
-      cost: recipe.cost,
-      unlocked,
-      unlockHint: unlocked || !recipe.recipeGroup
-        ? ''
-        : `Reach ${biomeName(recipe.recipeGroup)} level ${recipe.requiredBiomeLevel ?? 0}`,
-      learnedId,
-    });
-  }
-  return entries;
-}
-
 /**
  * Sort so the same kind stays together and the best tier comes first. Every
  * `MakeKind` must be listed — a missing kind resolves to `indexOf` -1 and sorts
@@ -165,7 +97,6 @@ function techniqueEntries(spec: TechniqueSpec): MakeEntry[] {
  */
 export const KIND_ORDER: MakeKind[] = [
   'weapon', 'armor', 'recovery', 'mobility', 'relic',
-  'technique',
 ];
 
 /** One name per kind, for every surface that has to say what a recipe makes. */
@@ -175,27 +106,7 @@ export const MAKE_KIND_LABELS: Record<MakeKind, string> = {
   recovery: 'Recovery',
   mobility: 'Boots',
   relic: 'Relic',
-  technique: 'Technique',
 };
-
-/** One spec per learnable kind, shared by the entry list and `unlockedMakeKinds`. */
-function techniqueSpecs(sources: MakeSources): TechniqueSpec[] {
-  const gates = { biomeLevel: sources.biomeLevel, bossesCleared: sources.bossesCleared };
-  return [
-    {
-      kind: 'technique',
-      recipes: ABILITY_RECIPE_DATABASE.values(),
-      learnedId: (id) => ABILITY_RECIPE_DATABASE.get(id)?.abilityId ?? null,
-      blurb: (id) => abilityDef(id)?.blurb ?? '',
-      displayName: (_recipeId, learnedId) => ABILITY_DATABASE.get(learnedId)?.name ?? null,
-      known: sources.knownAbilities,
-      isUnlocked: (id) => {
-        const recipe = ABILITY_RECIPE_DATABASE.get(id);
-        return !!recipe && isAbilityRecipeUnlocked(recipe, gates);
-      },
-    },
-  ];
-}
 
 /**
  * The kinds whose first recipe has unlocked — the Crafting rail shows only
@@ -207,19 +118,11 @@ export function unlockedMakeKinds(sources: MakeSources): Set<MakeKind> {
   for (const recipe of RECIPE_DATABASE.values()) {
     if (sources.isTestRoom || sources.unlockedRecipeIds.includes(recipe.id)) kinds.add(recipe.slot);
   }
-  for (const spec of techniqueSpecs(sources)) {
-    for (const recipe of spec.recipes) {
-      if (spec.isUnlocked(recipe.id)) { kinds.add(spec.kind); break; }
-    }
-  }
   return kinds;
 }
 
 export function buildMakeEntries(sources: MakeSources): MakeEntry[] {
-  const entries = [
-    ...gearEntries(sources),
-    ...techniqueSpecs(sources).flatMap(techniqueEntries),
-  ];
+  const entries = gearEntries(sources);
 
   // Highest tier first within each kind: the thing a player is working toward is
   // what they came to look at, and low-tier recipes stay crafted long after they

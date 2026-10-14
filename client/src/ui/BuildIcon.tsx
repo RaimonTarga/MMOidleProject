@@ -1,10 +1,9 @@
 import type { CSSProperties } from 'react';
 import { GameIcon, type IconSource } from './GameIcon';
 
-export type BuildIconKind = 'ability' | 'rune';
+export type BuildIconKind = 'rune';
 
 const KIND_CLASS: Record<BuildIconKind, string> = {
-  ability: 'build-icon--ability',
   rune: 'build-icon--rune',
 };
 

@@ -3,8 +3,6 @@ import { execFileSync } from 'node:child_process';
 import {
   bossSealSourcesAtTier, biomeLevelCap, sealsHeldAtTier, sealsRequiredForTier, BIOME_DATABASE,
   upgradeCeilingFromGlobalMastery, requiredBiomeLevelForUpgrade, ESSENCE_TYPES,
-  ABILITY_RECIPE_DATABASE,
-  isAbilityRecipeUnlocked,
   resolveSummonerProfile,
   NODE_BIOMES, GAME_CONFIG, SKILL_TREE, ITEM_DATABASE, RECIPE_DATABASE,
   ABILITY_DATABASE, MONSTER_DATABASE, RESOLVED_NODE_FEATURES,
@@ -80,7 +78,6 @@ function validatePersistent(s: ProgressionCheckpointState): void {
   for (const [group,level] of Object.entries(p.biomeLevel)) requireThat(BIOME_DATABASE.has(group) && Number.isInteger(level) && level<=biomeLevelCap(p.playerTier,group), `Invalid mastery ${group}`);
   for (const type of ESSENCE_TYPES) requireThat(Number.isFinite(p.essences[type]) && p.essences[type]>=0, `Missing essence ${type}`);
   const gates={biomeLevel:p.biomeLevel,bossesCleared:p.bossesCleared};
-  for (const id of p.knownAbilities) { const r=[...ABILITY_RECIPE_DATABASE.values()].find(r=>r.abilityId===id); requireThat(r && isAbilityRecipeUnlocked(r,gates), `Unreachable ability ${id}`); }
   const selection = { unlockedSkills: [] as string[], selectedClass: null as string|null, selectedSubVariant: null as typeof skills.selectedSubVariant, selectedRange: null as string|null };
   let spent = 0;
   for (const id of skills.unlockedSkills) {

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { ABILITY_DATABASE, ABILITY_RECIPE_DATABASE, isAbilityRecipeUnlocked, resolveAbilityEffectWithPassives,
+import { ABILITY_DATABASE, resolveAbilityEffectWithPassives,
   modifiedAbilityCooldownMs, getCooldown, getStatusEffect, guardEffectIdForAbility, composePlayerView } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../src/ecs/entity';
 import type { World } from '../../src/world/World';
@@ -10,12 +10,7 @@ export function guardCoverageReadback(bot: PlayerEntity) {
   const p = bot.tracksProgression;
   return p.attunedAbilities.guards.map(id => {
     const ability = ABILITY_DATABASE.get(id)!;
-    const recipe = [...ABILITY_RECIPE_DATABASE.values()].find(r => r.abilityId === id)!;
-    assert(recipe && isAbilityRecipeUnlocked(recipe, p), `Native learnability failed: ${id}`);
-    assert(p.knownAbilities.includes(id));
-    return { id, recipeId: recipe.id, recipeGroup: recipe.recipeGroup, requiredMastery: recipe.requiredBiomeLevel,
-      actualMastery: recipe.recipeGroup ? p.biomeLevel[recipe.recipeGroup] : null,
-      effect: resolveAbilityEffectWithPassives(ability, p.playerTier, bot.usesSkills.passives),
+    return { id, effect: resolveAbilityEffectWithPassives(ability, p.playerTier, bot.usesSkills.passives),
       cooldownMs: modifiedAbilityCooldownMs(ability, p.playerTier, bot.usesSkills.passives) };
   });
 }

@@ -6,7 +6,7 @@ import { canUnlockEntitySkill } from '../ecs/playerEntityFormulas';
 import { CONDUIT_ENABLED } from '../env';
 
 const DECISIONS_WITHOUT_BUILD_CHANGE = new Set([
-  'craft', 'craft-ability', 'upgrade', 'navigate', 'navigate-neighbor',
+  'craft', 'upgrade', 'navigate', 'navigate-neighbor',
 ]);
 
 /** Explicit projection: never serialize an entity, socket payload, actor or account. */

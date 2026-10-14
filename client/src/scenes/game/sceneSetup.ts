@@ -765,11 +765,6 @@ function connectSocket(scene: GameScene): () => void {
         new CustomEvent("hud:craftResult", { detail: result }),
       );
     },
-    onAbilityCraftResult: (result) => {
-      window.dispatchEvent(
-        new CustomEvent("hud:craftResult", { detail: result }),
-      );
-    },
     onBuildLoadoutResult: (result) => {
       window.dispatchEvent(new CustomEvent("hud:loadoutResult", { detail: result }));
     },

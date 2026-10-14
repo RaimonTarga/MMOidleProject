@@ -9,7 +9,6 @@ export interface IntentMap {
   setAutoTraverse: boolean;
   setAutocombatConfig: AutocombatConfig;
   setRuneLoadout: EquippedRule[];
-  craftAbilityRecipe: string;
   manualReload: undefined;
   recallSummons: undefined;
   activateDungeonAltar: undefined;

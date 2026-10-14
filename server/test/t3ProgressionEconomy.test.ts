@@ -4,12 +4,10 @@
  * current-state docs.
  *
  * Covers the retirement-aware mastery architecture, the 23 T2→T3 successions, the T3 gear
- * cost curves / hybrid splits / catalyst schedule, and the ability prices and
- * reward placement.
+ * cost curves / hybrid splits / catalyst schedule, and the reward placement.
  */
 import {
   RECIPE_DATABASE,
-  ABILITY_RECIPE_DATABASE,
   NODE_BIOMES,
   BIOME_START_TIER_BY_GROUP,
   BIOME_FINAL_TIER_BY_GROUP,
@@ -267,31 +265,5 @@ for (const recipe of T3_GEAR) {
 }
 // 3e (catalyst schedule) and 3f (volcanic catalyst families) RETIRED, Phase 2b:
 // the catalyst wallet and every `catalystCost` field are gone.
-
-// ═══════════════════════════════════════════════════════════════════════════
-// 4. Abilities
-// ═══════════════════════════════════════════════════════════════════════════
-
-{
-  const ABILITIES: Array<{ id: string; group: string; level: number; type: EssenceType; cost: number }> = [
-    // The ability pass (design §22.2, §22.8): Cull takes Binding Strike's old slot
-    // and Imbue Lightning the cut Frenzy's, at those slots' prices; Quick Strike's
-    // Volcanic 5 slot is empty.
-    { id: "ability-recipe-cull", group: "tundra", level: 3, type: "blue", cost: 150 },
-    { id: "ability-recipe-imbue-lightning", group: "volcanic", level: 3, type: "red", cost: 175 },
-    { id: "ability-recipe-break-free", group: "tundra", level: 5, type: "blue", cost: 190 },
-  ];
-  for (const spec of ABILITIES) {
-    const recipe = ABILITY_RECIPE_DATABASE.get(spec.id);
-    assert(!!recipe, `${spec.id}: recipe must exist`);
-    assert(recipe!.tier === 3, `${spec.id}: must stay tier 3`);
-    assert(recipe!.recipeGroup === spec.group, `${spec.id}: gate biome unchanged`);
-    assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: gate level unchanged`);
-    assert(recipe!.cost[spec.type] === spec.cost, `${spec.id}: cost must be ${spec.cost} ${spec.type}`);
-    assert(Object.keys(recipe!.cost).length === 1, `${spec.id}: abilities stay single-colour`);
-    }
-  // Ordering: within each biome L3 < L5, and the whole set sits in the T3 band.
-  for (const spec of ABILITIES) assert(spec.cost >= 140 && spec.cost <= 220, `${spec.id}: inside the T3 band`);
-}
 
 console.log("t3ProgressionEconomy: ok");

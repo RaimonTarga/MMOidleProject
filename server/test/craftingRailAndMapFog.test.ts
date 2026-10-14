@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict';
 import {
-  ABILITY_RECIPE_DATABASE,
   RECIPE_DATABASE,
   WORLD_NODE_LIST,
   type CombatArchetype,
@@ -18,9 +17,6 @@ const fresh: MakeSources = {
   unlockedRecipeIds: [],
   ownedGearIds: new Set(),
   equippedGearIds: new Set(),
-  knownAbilities: [],
-  biomeLevel: {},
-  bossesCleared: [],
   isTestRoom: false,
   combatArchetype: 'cadence' as CombatArchetype,
 };
@@ -40,23 +36,6 @@ assert.ok(unlockedMakeKinds(withWeapon).has('weapon'));
 const crafted = { ...withWeapon, ownedGearIds: new Set([weapon.id]) };
 assert.ok(!buildMakeEntries(crafted).some((entry) => entry.key === `gear:${weapon.id}`));
 assert.ok(unlockedMakeKinds(crafted).has('weapon'), 'a crafted-out category stays on the rail');
-
-// Learnable kinds follow their biome-level gate.
-const technique = [...ABILITY_RECIPE_DATABASE.values()]
-  .filter((recipe) => recipe.recipeGroup && (recipe.requiredBiomeLevel ?? 0) > 0 && !recipe.requiredBossClear)
-  .sort((a, b) => (a.requiredBiomeLevel ?? 0) - (b.requiredBiomeLevel ?? 0))[0];
-assert.ok(technique?.recipeGroup, 'fixture: a level-gated technique recipe');
-if (!none.has('technique')) {
-  const below = { ...fresh, biomeLevel: { [technique.recipeGroup]: (technique.requiredBiomeLevel ?? 1) - 1 } };
-  const at = { ...fresh, biomeLevel: { [technique.recipeGroup]: technique.requiredBiomeLevel ?? 1 } };
-  assert.ok(unlockedMakeKinds(at).has('technique'), 'technique appears at its first recipe level');
-  // Another technique recipe might share the lower level; only assert when none does.
-  const lowerExists = [...ABILITY_RECIPE_DATABASE.values()].some((recipe) =>
-    recipe.recipeGroup === technique.recipeGroup
-    && (recipe.requiredBiomeLevel ?? 0) <= (technique.requiredBiomeLevel ?? 1) - 1
-    && !recipe.requiredBossClear);
-  if (!lowerExists) assert.ok(!unlockedMakeKinds(below).has('technique'));
-}
 
 // The dev test room opens every gear slot.
 const testRoom = unlockedMakeKinds({ ...fresh, isTestRoom: true });
