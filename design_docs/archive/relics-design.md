@@ -1,6 +1,8 @@
+> **ARCHIVED (2026-10-15): the class-first rework removed this system (bible §4).** Design authority: [class-first-bible.md](../class-first-bible.md). Kept for history only.
+
 # Relic System Design
 
-**Status:** implemented; live behavior in `docs/relics-current-state.md`.  
+**Status:** implemented; live behavior in `docs/archive/relics-current-state.md`.  
 **Decided:** 2026-08-03.  
 **Historical implementation plan:** `docs/archive/relics-implementation-plan.md`.  
 **Design inputs:** `docs/archive/briefs/d2-relics.md` and

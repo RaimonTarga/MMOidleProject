@@ -1,7 +1,9 @@
+> **ARCHIVED (2026-10-15): the class-first rework removed this system (D2).** Design authority: [class-first-bible.md](../../design_docs/class-first-bible.md). Kept for history only.
+
 # Rites — current state
 
 - **Code audit:** 2026-08-09
-- **Authoring contract:** `docs/rites-authoring-guide.md`
+- **Authoring contract:** `docs/archive/rites-authoring-guide.md`
 - **Archived design handoff:** `docs/archive/rites-rework-design-handoff.md`
 - **Historical implementation plan:** `docs/archive/rites-plan.md`
 

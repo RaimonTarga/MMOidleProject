@@ -1,10 +1,12 @@
+> **ARCHIVED (2026-10-15): the class-first rework removed this system (D2).** Design authority: [class-first-bible.md](../../design_docs/class-first-bible.md). Kept for history only.
+
 # Stances — current state
 
-Branch note (2026-09-25): Defensive/Tanking plating bonuses are removed in the experimental defense candidate; [status and results](../reports/defense-redesign-01/REPORT.md). Not shipped.
+Branch note (2026-09-25): Defensive/Tanking plating bonuses are removed in the experimental defense candidate; [status and results](../../reports/defense-redesign-01/REPORT.md). Not shipped.
 
 - **Code audit:** 2026-09-04 (Tier 3 placement/economy redistribution)
-- **Authoring contract:** `docs/stances-authoring-guide.md`
-- **Candidate postures / design notes:** `docs/stances-future-design-notes.md`
+- **Authoring contract:** `docs/archive/stances-authoring-guide.md`
+- **Candidate postures / design notes:** `docs/archive/stances-future-design-notes.md`
 - **Archived design handoff:** `docs/archive/stances-rework-design-handoff.md`
 - **Historical implementation plan:** `docs/archive/stances-plan.md`
 
@@ -21,7 +23,7 @@ interface EquippedRule {
 }
 ```
 
-`activeStance` remains authoritative/networked. `attunedStances` reserves each stance's `runeCost` once. The default must be attuned. A `switch-stance` rule requires an attuned target and pays only its condition; the action costs 0 RP. Neutral is free. See [Runic attunement](runic-attunement-current-state.md) for combined costs and migration.
+`activeStance` remains authoritative/networked. `attunedStances` reserves each stance's `runeCost` once. The default must be attuned. A `switch-stance` rule requires an attuned target and pays only its condition; the action costs 0 RP. Neutral is free. See [Runic attunement](../runic-attunement-current-state.md) for combined costs and migration.
 
 `OverridesStance` is a separate networked runtime component. With Auto Combat off, presence means the player owns the live stance choice and Rune/default automation yields to its attuned `stanceId`, or to the reserved free `no-stance` neutral destination. Enabling Auto Combat—or entering its temporary Fight Back travel-combat equivalent—releases that override and hands stance ownership back to Rune/default automation. It is never part of persisted build data, disappears on logout/reconnect, resets on death or a stance-loadout edit, and never rewrites `equippedStances.default` or Rune rules.
 
@@ -79,7 +81,7 @@ First-pass magnitudes are balance seeds in `shared/src/stances.ts`; the structur
 All fifteen catalogued stances are now taught by recipes. Warding remains a T3
 reward; Time to Strike, Reaper, Recuperating, and Powering Up are T4 rewards in
 Mountain, Volcanic, Graveyard, and Trench respectively. See
-`docs/stances-future-design-notes.md` for the design intent; final placement is
+`docs/archive/stances-future-design-notes.md` for the design intent; final placement is
 covered by `server/test/t3ProgressionEconomy.test.ts`,
 `server/test/t4ProgressionEconomy.test.ts`, and `server/test/stancesUnplaced.test.ts`.
 

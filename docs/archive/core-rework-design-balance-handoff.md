@@ -1,3 +1,5 @@
+> **ARCHIVED (2026-10-15): the class-first rework removed this system (D2).** Design authority: [class-first-bible.md](../../design_docs/class-first-bible.md). Kept for history only.
+
 # Core Rework — Design & Balance Handoff
 
 **Status:** Approved design direction for implementation planning  

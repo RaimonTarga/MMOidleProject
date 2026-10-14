@@ -1,7 +1,9 @@
+> **ARCHIVED (2026-10-15): the class-first rework removed this system (D2).** Design authority: [class-first-bible.md](../../design_docs/class-first-bible.md). Kept for history only.
+
 # Rite authoring guide
 
 This is the living design and implementation contract for adding or revising Rites. Exact
-shipped values and behavior belong in `docs/rites-current-state.md`; the original rework
+shipped values and behavior belong in `docs/archive/rites-current-state.md`; the original rework
 rationale is preserved in `docs/archive/rites-rework-design-handoff.md`.
 
 ## Design identity

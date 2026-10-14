@@ -1,10 +1,12 @@
+> **ARCHIVED (2026-10-15): the class-first rework removed this system (D2).** Design authority: [class-first-bible.md](../../design_docs/class-first-bible.md). Kept for history only.
+
 # Cores — Current State
 
-Branch note (2026-09-25): the values below include the experimental defense candidate and its non-Volcano core follow-up, not a production release. See [current core patch notes](../reports/core-strength-01/PATCH-NOTES.md) and [defense candidate status](../reports/defense-redesign-01/PATCH-NOTES.md).
+Branch note (2026-09-25): the values below include the experimental defense candidate and its non-Volcano core follow-up, not a production release. See [current core patch notes](../../reports/core-strength-01/PATCH-NOTES.md) and [defense candidate status](../../reports/defense-redesign-01/PATCH-NOTES.md).
 
 Living truth for the **Core** equipment slot. Design source is
-`design_docs/CORE_DESIGN_PHILOSOPHY.md` (the locked foundation) and
-`docs/core-rework-design-balance-handoff.md` (the 2026-08-29 capstone balance pass).
+`design_docs/archive/CORE_DESIGN_PHILOSOPHY.md` (the locked foundation) and
+`docs/archive/core-rework-design-balance-handoff.md` (the 2026-08-29 capstone balance pass).
 The structural rework that produced the slot is
 `docs/archive/cores-rework-implementation-plan.md`.
 

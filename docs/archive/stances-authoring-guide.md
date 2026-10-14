@@ -1,7 +1,9 @@
+> **ARCHIVED (2026-10-15): the class-first rework removed this system (D2).** Design authority: [class-first-bible.md](../../design_docs/class-first-bible.md). Kept for history only.
+
 # Stance authoring guide
 
 This is the living design and implementation contract for adding or revising Stances.
-Exact shipped values and behavior belong in `docs/stances-current-state.md`; the original
+Exact shipped values and behavior belong in `docs/archive/stances-current-state.md`; the original
 rework rationale is preserved in `docs/archive/stances-rework-design-handoff.md`.
 
 ## Design identity
@@ -52,7 +54,7 @@ before its tier, biome and cost are decided — but it must be DELIBERATE, so
 of them gets a recipe. Placing one means updating that list in the same change.
 
 Four postures are unplaced today (Time to Strike, Reaper, Warding, Powering Up); see
-`docs/stances-future-design-notes.md`.
+`docs/archive/stances-future-design-notes.md`.
 
 ## Data contract
 
