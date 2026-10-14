@@ -30,8 +30,6 @@ export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity)
     usesSkills:      entity.usesSkills,
     holdsInventory:  entity.holdsInventory,
     playerTier:      entity.tracksProgression?.playerTier,
-    activeStance:    entity.tracksProgression?.activeStance,
-    equippedRites:   entity.tracksProgression?.equippedRites,
     resetCadenceCounters: (threshold) => {
       if (!entity.usesCadence) return;
       entity.usesCadence.speedStacks = 0;
@@ -87,8 +85,8 @@ export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity)
 }
 
 /**
- * Stance switches rebuild derived stats while preserving unrelated live combat
- * state. Max-HP changes preserve current HP percentage instead of healing or
+ * Mid-fight build changes (equipping, a reward) rebuild derived stats while
+ * preserving unrelated live combat state. Max-HP changes preserve current HP percentage instead of healing or
  * chopping off a flat amount.
  */
 export function recalculatePlayerStatsPreservingCombatState(world: World, entity: PlayerEntity): void {
@@ -136,8 +134,6 @@ export function recalculatePlayerStatsPreservingCombatState(world: World, entity
   markSliceDirty(world, entity, "hasHealth");
 }
 
-/** Stance changes use the same state-preserving rebuild contract as Core swaps. */
-export const recalculatePlayerStanceStats = recalculatePlayerStatsPreservingCombatState;
 
 export function canUnlockEntitySkill(
   entity: PlayerEntity,

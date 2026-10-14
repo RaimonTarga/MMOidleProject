@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import {
   DUNGEON_DEFS, MONSTER_DATABASE, NODE_BIOMES,
-  runicPointLoadoutCost, runeBudgetForGlobalMastery, withReferenceAbilityWiring,
 } from '@mmo-idle/shared';
 import { NIGHT5_BLOCKS, type Night5Cell } from './night5Spec';
 import { SURVEY_CLASSES } from './ttkSurveySpec';
@@ -129,7 +128,7 @@ const TIMBERCLAW_MELEE = new Set(['striker', 'squire']);
 /** The corroborated kit. Deliberately mixed-biome -- it is what was actually worn. */
 export const BOSS1_TIMBERCLAW_KIT = {
   armor: 'cave-vest-t2', recovery: 'mountain-charm-t2',
-  mobility: 'plains-boots-t2', core: 'core-tempered',
+  mobility: 'plains-boots-t2',
 } as const;
 /**
  * The reference shape's ordered Guard list: a Recovery Guard, then a burst-mitigation
@@ -300,12 +299,6 @@ export function assertBoss1Definitions(): void {
       `${c.id}: reference ability shape drift`);
     assert.equal(c.runeRules?.length, 5, `${c.id}: reference carries five behaviour rules`);
     assert.equal(c.upgradeLevel, 5, `${c.id}: upgrade level drift`);
-    const cost = runicPointLoadoutCost({
-      rules: withReferenceAbilityWiring((c.runeRules ?? []) as never, c.abilities!), abilities: c.abilities!,
-      stances: c.stance ? [c.stance] : [], rites: [],
-    });
-    assert(cost <= runeBudgetForGlobalMastery(72),
-      `${c.id}: reference package costs ${cost} RP against a 30 budget`);
   }
   // The Spirit cell must still BE the corroborated historical package.
   const spiritCell = corroborated[0]!;

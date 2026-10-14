@@ -102,7 +102,6 @@ assertDurability32Definitions();
     assert(NODE_BIOMES[cell.nodeId]?.biomeTier === 1, `${cell.nodeId} must be a T1 node`);
     assert(NODE_BIOMES[cell.nodeId]?.biomeGroup === 'mountain', `${cell.nodeId} must be Mountain`);
     assert(cell.targetTypes.includes('ridge-archer'), 'Block B must require archer exposure');
-    assert(!cell.build.gearItemIds.core, 'a T1 character has no core');
     assert(cell.build.skillPath.length === 1, 'a T1 character has only its root');
   }
 }

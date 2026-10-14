@@ -1,4 +1,4 @@
-import { baseRecoveryForTier } from '@mmo-idle/shared';
+import { baseRecoveryForTier, runeIdsForArchetype } from '@mmo-idle/shared';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { tierEntryProfileFromT1Snapshot, CLEARING_NODE_ID, GAME_CONFIG, SKILL_TREE, emptyEquipment, emptyAttunedAbilities, emptyEquippedRites, emptyEquippedStances, type T1CharacterSnapshot } from '@mmo-idle/shared';
+import { tierEntryProfileFromT1Snapshot, CLEARING_NODE_ID, GAME_CONFIG, SKILL_TREE, emptyEquipment, emptyAttunedAbilities, type T1CharacterSnapshot } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { World } from '../src/world/World';
 import { applyTierEntryProfile } from '../src/admin/gameActions';
@@ -42,15 +42,9 @@ function makePlayerSlices(): PersistedPlayerSlices {
       clearedNodes: [],
       visitedNodes: [],
       runesOwned: [],
-      runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
       attunedAbilities: emptyAttunedAbilities(),
-      knownStances: [],
-      equippedStances: emptyEquippedStances(),
-      activeStance: null,
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: {
       inventory: [],
@@ -89,7 +83,6 @@ syncArchetypeSlices(world,original);recalculatePlayerEntityStats(world,original)
 // An explicit safe authored spot; production capture must arrive through ordinary movement.
 original.hasPosition.current={x:1000,y:1000};
 original.tracksProgression.visitedNodes=[...new Set([...(original.tracksProgression.visitedNodes??[]),'node-t3-sanctuary'])];
-original.tracksProgression.knownRites=['blood-offering'];original.tracksProgression.equippedRites=['blood-offering'];
 initCombatSystems();
 for(let i=0;i<30;i++)world.tick(100,Date.now()+i*100);
 const captured=captureProgressionCheckpoint(world,original,'pre-volcano-rested');
@@ -97,7 +90,7 @@ const newWorld=new World(); const blank=newWorld.attachPlayerEntity(makePlayerSl
 const restored=restoreProgressionCheckpoint(newWorld,blank,{capture:captured,boundaryId:captured.boundaryId,revisionPolicy:'same-revision'});
 assert.deepEqual(checkpointGameplayState(restored.persistent),checkpointGameplayState(captured.persistent));
 assert.equal(restored.view.hp,restored.view.maxHp); assert.equal(restored.view.energyCount,0);
-assert.deepEqual(restored.view.runesEquipped,captured.view.runesEquipped);assert.deepEqual(restored.view.equippedRites,['blood-offering']);
+assert.deepEqual(restored.view.runesEquipped,captured.view.runesEquipped);
 assert.equal(restored.view.auto,false); assert.deepEqual(restored.view.pos,captured.view.pos);
 const otherWorld=new World(); const other=otherWorld.attachPlayerEntity(makePlayerSlices(),'restore-b');
 const second=restoreProgressionCheckpoint(otherWorld,other,{capture:captured,boundaryId:captured.boundaryId,revisionPolicy:'same-revision'});
@@ -148,6 +141,8 @@ const uw=new World();const up=uw.attachPlayerEntity(makePlayerSlices(),'unspent'
 assert.equal(restoreProgressionCheckpoint(uw,up,{capture:unspent,boundaryId:unspent.boundaryId,revisionPolicy:'same-revision'}).view.skillPoints,3);
 // Summoner logical slots survive; entities, charges and reconstruction progress are reset.
 original.usesSkills={unlockedSkills:['summoner-root'],selectedClass:'summoner-root',selectedSubVariant:null,selectedRange:null,combatArchetype:'summoner',passives:{}};
+// Rune ownership follows the class (`runeIdsForArchetype`), as `unlockSkill` sets it.
+original.tracksProgression.runesOwned=runeIdsForArchetype('summoner');
 original.tracksProgression.playerTier=3;original.tracksProgression.currentSkillTier=1;original.tracksProgression.skillPoints=2;
 original.tracksProgression.runesEquipped=[];original.tracksProgression.attunedAbilities={techniques:[],guards:[]};
 syncArchetypeSlices(world,original);recalculatePlayerEntityStats(world,original);syncArchetypeSlices(world,original);original.hasHealth.hp=original.hasHealth.maxHp;refillBarrier(world,original);

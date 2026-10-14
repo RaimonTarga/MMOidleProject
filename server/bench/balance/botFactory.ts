@@ -3,20 +3,12 @@ import {
   ABILITY_DATABASE,
   DEFAULT_AUTOCOMBAT_CONFIG,
   GAME_CONFIG,
-  RITE_DATABASE,
-  RITE_RECIPE_DATABASE,
-  STANCE_DATABASE,
-  STANCE_RECIPE_DATABASE,
   STARTER_RUNE_IDS,
   emptyEquipment,
   biomeLevelCap,
   getMaxUpgrade,
   globalMastery,
   listBiomeGroupsAtTier,
-  runeBudgetForGlobalMastery,
-  runicPointLoadoutCost,
-  isRiteRecipeUnlocked,
-  isStanceRecipeUnlocked,
   ITEM_DATABASE,
   referenceAbilityRules,
   type AttunedAbilities,
@@ -34,33 +26,6 @@ import type { BuildSpec, ContentTarget } from './types';
 export const BENCH_BOT_PREFIX = 'bench-bot-';
 export const BENCH_BOT_ID = `${BENCH_BOT_PREFIX}0`;
 
-/**
- * Deliberate baseline choices. Never derive these from database iteration order:
- * adding a new alphabetically-earlier option must not silently retune the bench.
- *
- * The canonical stance must be UNCONDITIONAL. It was Perfection until the 2026-09-02
- * pass gave Perfection an intrinsic >=90% HP gate: a benched fight leaves that gate
- * within the first exchange, so the bot would have spent most of every measurement
- * carrying Perfection's -20% Plating with none of its payoff — an instrument that
- * silently reads a different build than the one it names.
- *
- * Offensive is now the least polarising unconditional posture in the cast: the
- * smallest authored magnitudes, the cheapest destination, no self-damage, no
- * recovery loop, no target/crowd/HP rule. It still exercises the stance stat path.
- * NOTE: this MOVES the bench baseline; pre-2026-09-02 runs are not comparable.
- *
- * The Rite set covers kill recovery, between-fight class reset, and OOC cadence
- * without pairing contradictory options such as Swift Repose/Lingering Battle.
- */
-const CANONICAL_STANCE_ID = 'offensive-stance';
-const CANONICAL_RITE_PRIORITY = [
-  'blood-offering',
-  'purification',
-  'ability-reprieve',
-  'mechanic-renewal',
-  'swift-repose',
-] as const;
-
 /** Stable id for the Nth party member (member 0 is the solo bot / party leader). */
 export function benchBotId(index: number): string {
   return `${BENCH_BOT_PREFIX}${index}`;
@@ -70,8 +35,8 @@ export function benchBotId(index: number): string {
  * Every biome group the player could plausibly have levelled by `playerTier`,
  * each at its cap for that tier.
  *
- * Global Mastery is the sum of all biome levels, and it drives the rune-point
- * budget and the item-upgrade ceiling. Seeding only the target biome (the old
+ * Global Mastery is the sum of all biome levels, and it drives the item-upgrade
+ * ceiling. Seeding only the target biome (the old
  * behaviour) left GM at roughly one biome's worth, which is not a state any real
  * player at that tier would be in. Capping every reachable biome mirrors the
  * "fully upgraded gear" assumption the bench already makes elsewhere.
@@ -87,7 +52,7 @@ function canonicalBiomeLevels(playerTier: number): Record<string, number> {
 }
 
 /**
- * The canonical abilities / stances / rites a bench bot runs at a given tier.
+ * The canonical abilities a bench bot runs at a given tier.
  *
  * These systems are CONTEXT for the bench, not the swept axis — the skill path is
  * what varies between builds. So every bot wears the same deterministic loadout
@@ -102,12 +67,6 @@ function canonicalBiomeLevels(playerTier: number): Record<string, number> {
 export function canonicalLoadout(playerTier: number): {
   knownAbilities: string[];
   attunedAbilities: AttunedAbilities;
-  knownStances: string[];
-  attunedStances: string[];
-  equippedStances: { default: string | null };
-  activeStance: string | null;
-  knownRites: string[];
-  equippedRites: string[];
 } {
   // Deepest-authored first, so a T4 bot fills its slots with T4 content, not T1.
   const forSlot = (kind: 'technique' | 'guard'): string[] =>
@@ -119,50 +78,17 @@ export function canonicalLoadout(playerTier: number): {
   const techniques = forSlot('technique');
   const guards = forSlot('guard');
 
-  const biomeLevel = canonicalBiomeLevels(playerTier);
-  const progressionGate = { biomeLevel, bossesCleared: [] as string[] };
-  const stances = [...STANCE_RECIPE_DATABASE.values()]
-    .filter((recipe) => recipe.tier <= playerTier && isStanceRecipeUnlocked(recipe, progressionGate))
-    .map((recipe) => recipe.stanceId)
-    .filter((id) => STANCE_DATABASE.has(id))
-    .sort();
-  const activeStance = stances.includes(CANONICAL_STANCE_ID)
-    ? CANONICAL_STANCE_ID
-    : null;
-
-  const rites = [...RITE_RECIPE_DATABASE.values()]
-    .filter((recipe) => recipe.tier <= playerTier && isRiteRecipeUnlocked(recipe, progressionGate))
-    .map((recipe) => recipe.riteId)
-    .filter((id) => RITE_DATABASE.has(id))
-    .sort();
-  const knownRites = new Set(rites);
-  const runeBudget = runeBudgetForGlobalMastery(globalMastery(biomeLevel));
-  const equippedRites: string[] = [];
-  for (const riteId of CANONICAL_RITE_PRIORITY) {
-    if (!knownRites.has(riteId)) continue;
-    if (runicPointLoadoutCost({ rules: [], abilities: { techniques: [], guards: [] }, stances: activeStance ? [activeStance] : [], rites: [...equippedRites, riteId] }) <= runeBudget) equippedRites.push(riteId);
-  }
-
   const abilities: AttunedAbilities = { techniques: [], guards: [] };
-  // Bench selection policy: round-robin families, deepest authored first, within RP.
+  // Bench selection policy: round-robin families, deepest authored first. Attuning
+  // costs nothing (Runic Points are gone), so every unlocked ability is attuned.
   for (let i = 0; i < Math.max(techniques.length, guards.length); i++) {
     for (const [family, id] of [["techniques", techniques[i]], ["guards", guards[i]]] as const) {
-      if (!id) continue;
-      const proposed = { ...abilities, [family]: [...abilities[family], id] };
-      if (runicPointLoadoutCost({ rules: referenceAbilityRules(proposed), abilities: proposed, stances: activeStance ? [activeStance] : [], rites: equippedRites }) <= runeBudget) abilities[family].push(id);
+      if (id) abilities[family].push(id);
     }
   }
   return {
     knownAbilities: [...techniques, ...guards],
     attunedAbilities: abilities,
-    attunedStances: activeStance ? [activeStance] : [],
-    knownStances: stances,
-    equippedStances: {
-      default: activeStance,
-    },
-    activeStance,
-    knownRites: rites,
-    equippedRites,
   };
 }
 
@@ -194,7 +120,6 @@ function buildBotSlices(
       bossesCleared: [],
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: [],
       // Behaviour runes stay UNEQUIPPED on purpose. They are the behaviour layer —
       // which rules a bot runs is a design decision about what "default play"
       // means, not a value that can be picked neutrally. The only rules equipped
@@ -203,11 +128,6 @@ function buildBotSlices(
       runesEquipped: referenceAbilityRules(loadout.attunedAbilities),
       knownAbilities: loadout.knownAbilities,
       attunedAbilities: loadout.attunedAbilities,
-      knownStances: loadout.knownStances,
-      equippedStances: loadout.equippedStances,
-      activeStance: loadout.activeStance,
-      knownRites: loadout.knownRites,
-      equippedRites: loadout.equippedRites,
     },
     holdsInventory: {
       inventory: [],

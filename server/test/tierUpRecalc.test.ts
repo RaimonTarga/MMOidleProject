@@ -49,10 +49,8 @@ function makePlayer(id: string, playerTier: number, bossesCleared: string[]): Pe
       
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier, currentSkillTier: 0, bossesCleared, clearedNodes: [],
-      runesOwned: [], runeRecipesCrafted: [], runesEquipped: [],
+      runesOwned: [], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [], equippedStances: { default: null }, activeStance: null,
-      knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

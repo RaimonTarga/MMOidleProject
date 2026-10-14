@@ -16,7 +16,6 @@
  */
 import {
   ITEM_DATABASE, MONSTER_DATABASE, NODE_BIOMES, RECIPE_DATABASE,
-  runeBudgetForGlobalMastery, runicPointLoadoutCost,
 } from '@mmo-idle/shared';
 import {
   BOSS4_BLOCKS, BOSS4_BLOCKS_DEF, BOSS4_CAP_MS, BOSS4_SEED, BOSS4_TIER,
@@ -83,7 +82,6 @@ assertBoss4Definitions();
         const src = origin.find((c) => c.className === cell.className);
         assert(!!src, `${cell.id}: no Boss3 ${b.originArm} origin for root ${cell.className}`);
         const mine = resolveSurveyPackage(cell), theirs = resolveSurveyPackage(src);
-        assert(mine.stance === theirs.stance, `${cell.id}: stance drift from its Boss3 origin`);
         assert(JSON.stringify(mine.abilities) === JSON.stringify(theirs.abilities),
           `${cell.id}: ability drift from its Boss3 origin (guard ORDER included)`);
         assert(JSON.stringify(mine.runeRules) === JSON.stringify(theirs.runeRules),
@@ -164,9 +162,8 @@ assertBoss4Definitions();
   }
 }
 
-// ── Targeting, tier legality, and the RP budget. ──────────────────────────────────
+// ── Targeting and tier legality. ──────────────────────────────────────────────────
 {
-  const budget = runeBudgetForGlobalMastery(72);
   for (const b of BOSS4_BLOCKS_DEF) {
     for (const cell of BOSS4_BLOCKS[b.name]!.cells) {
       assert(cell.nodeId === b.nodeId, `${cell.id}: node drift`);
@@ -185,12 +182,6 @@ assertBoss4Definitions();
         assert(!!recipe && ITEM_DATABASE.has(id!), `${cell.id}: missing recipe/item ${id}`);
         assert(recipe.tier <= BOSS4_TIER, `${cell.id}: ${id} exceeds tier ${BOSS4_TIER}`);
       }
-      const r = resolveSurveyPackage(cell);
-      const cost = runicPointLoadoutCost({
-        rules: r.runeRules as never, abilities: r.abilities,
-        stances: r.stance ? [r.stance] : [], rites: [],
-      });
-      assert(cost <= budget, `${cell.id}: package costs ${cost} RP against a ${budget} budget`);
     }
   }
 }

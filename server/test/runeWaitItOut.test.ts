@@ -74,15 +74,9 @@ function makePlayerSlices(
       bossesCleared: [],
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
       attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [],
-      equippedStances: { default: null },
-      activeStance: null,
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: {
       inventory: [],
@@ -123,7 +117,7 @@ function addBystander(world: World) {
 }
 
 assert(STARTER_RUNE_IDS.includes("wait-it-out"), "Wait It Out should be generally available like Recover First");
-assert(ACTION_DATABASE.get("wait-it-out")?.cost === 1, "Wait It Out should cost 1 RP");
+assert(ACTION_DATABASE.has("wait-it-out"), "Wait It Out is a rune action");
 
 const idleWait = deriveAutoConfigFromRunes(
   [{ conditionId: "when-idle", actionId: "wait-it-out" }],

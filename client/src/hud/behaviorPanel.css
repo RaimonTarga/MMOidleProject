@@ -25,16 +25,6 @@
   outline: 2px solid var(--hud-primary-strong);
   outline-offset: 3px;
 }
-.behavior-panel__stance {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-.behavior-panel__stance strong {
-  font-size: 12px;
-  overflow-wrap: anywhere;
-}
 .behavior-panel__action {
   display: flex;
   align-items: center;

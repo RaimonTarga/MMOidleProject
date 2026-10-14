@@ -152,24 +152,4 @@ export const tundraRecipeEntries = [
     description: 'Slow to start and impossible to stop — by the far end of the ice you are a thing that simply happens to whatever is in the way.',
   }],
 
-  // ── Cores ───────────────────────────────────────────────────────────────────────
-  // See the CORES header in plains.recipes.ts. Tundra owns MOVEMENT — its boot
-  // ramps speed over sustained travel, so it is where the spacing core comes from.
-
-  // T3 premium ranged — Scout: reliable uptime instead of peak damage. Where
-  // Sniper wants the fight to never reach it, Scout assumes it will and keeps
-  // moving. L6 and 1,200 blue / 5 Heavy make this a late debut-biome capstone.
-  ['core-scout', {
-    id: 'core-scout', name: 'Scout Core',
-    recipeGroup: 'tundra', requiredBiomeLevel: 6, slot: 'core', coreEligibility: 'ranged',
-    lineageId: 'core-scout',
-    cost: { blue: 1200 }, // Alacrity is BANNED in Tundra; its native family is Heavy
-    stats: {}, tier: 3,
-    // The cooldown clause is INERT without an ability tagged `mobility` (today:
-    // Charge); the damage and movement halves are always on.
-    mechanicEffects: {"core.damage-dealt-pct": 0.18, "core.speed-mult": 0.25, "core.mobility-cooldown-reduction-pct": 0.25},
-    icon: 'items/cores/scout.png',
-    description: "Amplifies movement and mobility abilities, with a modest damage bonus.",
-  }],
-
 ] satisfies [string, Recipe][];

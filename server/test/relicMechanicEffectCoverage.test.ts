@@ -76,10 +76,8 @@ function summonerSlices(id: string, specId: string): PersistedPlayerSlices {
       biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 4, currentSkillTier: 4,
       bossesCleared: [], clearedNodes: [],
-      runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
+      runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [], equippedStances: { default: null }, activeStance: null,
-      knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {
@@ -129,10 +127,8 @@ function fixture(archetype: 'dot' | 'energy' | 'cadence') {
       
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
       questProgress: {}, playerTier: 4, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
-      runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
+      runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [], equippedStances: { default: null }, activeStance: null,
-      knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {
@@ -214,13 +210,6 @@ const hit = (world: World, player: ReturnType<typeof fixture>['player'], target:
   );
   close(preparedBase.damageMult, 1 + 3 * 0.035, 'Harrier baseline: three marks at 3.5% each');
   close(preparedBoosted.damageMult, 1 + 3 * 0.04375, '+25% Debuff Effect: 3.5% -> 4.375% per mark');
-
-  // A Core rating must not reach Harrier at all (it never touches applyStatusEffect).
-  base.player.usesSkills.passives['core.debuff-potency-mult'] = 1.0;
-  const preparedWithCore = prepareSpecializationAttack(
-    base.world, base.player as any, minions(base.world, base.player)[0]!, baseTarget, 1_100, { completed: false, serial: 0 },
-  );
-  close(preparedWithCore.damageMult, 1 + 3 * 0.035, 'the Controller Core must not scale Harrier Brood');
 
   // Mark duration and mark count are unaffected by the relic (real commit path).
   const durationTargetBase = durableTarget(base.world, 700, 400);
@@ -374,17 +363,6 @@ const hit = (world: World, player: ReturnType<typeof fixture>['player'], target:
       'the Chill threshold must not shrink under a Debuff Effect rating');
   }
 
-  // A Core rating must not reach the Frozen payoff either (it is not Core-registered).
-  {
-    const { world, player } = fixture('dot');
-    player.usesSkills.passives['dot.freezing-cold'] = 1;
-    player.usesSkills.passives['core.debuff-potency-mult'] = 1.0;
-    const target = nonSummonerTarget(world);
-    for (let i = 0; i < 9; i++) hit(world, player, target, 1_000 + i * 100);
-    const frozen = getStatusEffect(target.tracksCombat, FROZEN_EFFECT)!;
-    close(frozen.data.damageTakenPct, 0.35, 'the Controller Core must not scale the Frozen payoff');
-  }
-
   // Preview parity.
   const preview = resolveRelicPreview('dot', { 'dot.freezing-cold': 1 }, { ...ZERO_RELIC_RATINGS, debuffEffect: 0.25 });
   const line = preview?.secondaryEffects?.find((e) => e.label === 'Frozen damage taken');
@@ -395,9 +373,8 @@ const hit = (world: World, player: ReturnType<typeof fixture>['player'], target:
 
 // ── 11. A non-mechanic debuff must stay outside the registry's reach ────────────
 {
-  // dr-shatter is Core-scalable (SCALABLE_DEBUFFS) but was never opted into the
-  // Relic mechanic registry: scaling it through SCALABLE_MECHANIC_DEBUFFS must
-  // be a no-op even at an extreme rating, proving the two registries stay separate.
+  // dr-shatter was never opted into the Relic mechanic registry: scaling it
+  // through SCALABLE_MECHANIC_DEBUFFS must be a no-op even at an extreme rating.
   const untouched = scaleMechanicEffectConfig(
     { id: 'dr-shatter', sourceId: 'p', data: { anything: 5 } },
     2.0,

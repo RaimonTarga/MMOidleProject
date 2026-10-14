@@ -18,7 +18,7 @@ export const DEFENSE_KEYS = [
   // invent their own %-maxHp heals — they ACTIVATE a fraction of that one rate,
   // and fractions from different sources ADD (see recoveryFraction()).
   //
-  // `-active-pct` is permanent-while-in-combat access (Squire, stances).
+  // `-active-pct` is permanent-while-in-combat access (Squire).
   'defense.recovery-active-pct',
   // Periodic pulse: every `interval-ms`, activate `pulse-pct` of Recovery for
   // `duration-ms`. The pulse refreshes its own timer rather than stacking a
@@ -731,76 +731,6 @@ export const GUARD_KEYS = [
   'recovery.cooldown-reduction-pct',
 ] as const;
 
-// Core amplifiers. Carried by the `core` equipment slot (one core, always).
-//
-// The `*-mult` keys are percentage multipliers on the FINAL summed stat — sources
-// add (two +10% = +20%), applied once in recalculatePlayerStats' core-multiplier
-// pass. Negative values reduce (-0.15 = -15%).
-//
-// Keys whose consumer is NOT the stat rebuild are called out individually below.
-// `core.dr-layer-pct` is a SEPARATE multiplicative damage-reduction layer applied
-// in the combat pipeline (final = base × (1 − DR) × (1 − dr-layer)), clamped 0.9.
-//
-// NOTE there is deliberately no `core.dot-mult`. DoT damage per stack derives from
-// its own base budget, then receives `core.damage-dealt-pct` at damage resolution — so a DoT
-// potency core is a second multiplier on the same number and lands as either a trap
-// or a mandatory pick. See "Why there is no DoT core" in
-// docs/archive/cores-rework-implementation-plan.md before proposing one.
-export const CORE_KEYS = [
-  'core.attack-mult',
-  'core.damage-dealt-pct',
-  'core.damage-taken-pct',
-  'core.maxhp-mult',
-  'core.plating-mult',
-  'core.speed-mult',
-  'core.attack-speed-mult',
-  'core.dr-layer-pct',
-  // Survivalist: ONE recovery number covering the whole sustain engine.
-  // Multiplies the `recovery` STAT (the canonical HP-restoration rate) once, in
-  // recalculatePlayerStats. Because every in-combat regen effect activates a
-  // fraction of that rate, this lifts OOC regen and all Recovery access together.
-  // Deliberately NOT re-applied per-heal — that would compound it.
-  'core.recovery-mult',
-  // Duelist: consecutive direct hits against one target build Focus. The current
-  // hit uses the newly-earned stack; switching targets resets the ramp.
-  'core.focus-damage-per-hit-mult',
-  'core.focus-max-stacks',
-  // Catalyst: scales the flat on-hit term before target plating and DR.
-  // That unmitigated placement is exactly why this is a real axis and not a
-  // re-skin of core.attack-mult.
-  'core.onhit-mult',
-  // Controller: scales debuffs the player applies to monsters — duration, and the
-  // potency fields explicitly listed in SCALABLE_DEBUFFS. Never a blanket
-  // multiplier over every status effect; see systems/debuffScaling.ts for why.
-  'core.debuff-duration-mult',
-  'core.debuff-potency-mult',
-  // Scout / Bruiser: both act on abilities tagged `mobility`, so both are inert
-  // for a build carrying none. That is the magnifier rule, not an oversight.
-  'core.mobility-cooldown-reduction-pct',
-  'core.mobility-refund-on-kill-pct',
-] as const;
-
-// Rite OOC behaviors (system rework Step 11). Carried by equipped rites (always-on
-// while equipped); fold into usesSkills.passives like any mechanicEffect, then read
-// by the out-of-combat systems (not the in-combat stat path). See
-// server/src/systems/player/rites/riteOoc.ts + server/src/systems/defense/index.ts.
-export const RITE_KEYS = [
-  // Quickened Breath: shorten the post-combat regen delay by this fraction (regen
-  // resumes sooner). Read by the defense regen gate.
-  'rite.ooc-regen-delay-reduction-pct',
-  // Cleansing Breath: every `interval-ms` while OOC, strip this many stacks from
-  // each debuff/DoT status effect on the player.
-  'rite.ooc-cleanse-stacks',
-  'rite.ooc-cleanse-interval-ms',
-  // Lingering Momentum: slow the OOC decay of neutral buffs by this fraction
-  // (extend their remaining duration each tick while out of combat).
-  'rite.ooc-buff-decay-slowdown-pct',
-  // Hunter's Instinct: on kill, grant a movement-haste buff of this magnitude for
-  // this duration (reuses the mobility on-kill haste machinery).
-  'rite.on-kill-haste-pct',
-  'rite.on-kill-haste-ms',
-] as const;
-
 /** Universal Relic ratings. Resolved per root class in systems/relics.ts. */
 export const RELIC_KEYS = [
   'relic.mechanic-frequency',
@@ -822,15 +752,13 @@ export type SummonerPassiveKey = typeof SUMMONER_KEYS[number];
 export type MobilityPassiveKey = typeof MOBILITY_KEYS[number];
 export type TechniquePassiveKey = typeof TECHNIQUE_KEYS[number];
 export type GuardPassiveKey    = typeof GUARD_KEYS[number];
-export type CorePassiveKey     = typeof CORE_KEYS[number];
-export type RitePassiveKey     = typeof RITE_KEYS[number];
 export type RelicPassiveKey    = typeof RELIC_KEYS[number];
 
 export type PassiveKey =
   | DefensePassiveKey | CadencePassiveKey | CooldownPassiveKey
   | ReloadPassiveKey  | EnergyPassiveKey  | DotPassiveKey
   | SharedPassiveKey  | SummonerPassiveKey | MobilityPassiveKey
-  | GuardPassiveKey   | TechniquePassiveKey | CorePassiveKey | RitePassiveKey
+  | GuardPassiveKey   | TechniquePassiveKey
   | RelicPassiveKey;
 
 export type PassiveMap      = Partial<Record<PassiveKey, number>>;
@@ -840,7 +768,7 @@ export type MechanicEffects = Partial<Record<PassiveKey, number>>;
 export const ALL_PASSIVE_KEYS = [
   ...DEFENSE_KEYS, ...CADENCE_KEYS, ...COOLDOWN_KEYS,
   ...RELOAD_KEYS, ...ENERGY_KEYS, ...DOT_KEYS, ...SHARED_KEYS, ...SUMMONER_KEYS,
-  ...MOBILITY_KEYS, ...GUARD_KEYS, ...TECHNIQUE_KEYS, ...CORE_KEYS, ...RITE_KEYS,
+  ...MOBILITY_KEYS, ...GUARD_KEYS, ...TECHNIQUE_KEYS,
   ...RELIC_KEYS,
 ] as const;
 

@@ -103,7 +103,7 @@ function build(tier: number, root: typeof SURVEY_CLASSES[number], frame: Breadth
     if (root.name === 'conduit' || root.name === 'slinger') weapon = fastWeapon(tier);
     if (root.name === 'spirit') weapon = frame === 'light' ? fastWeapon(tier) : cell.build.gearItemIds.weapon!;
     const onHitPath = ['cadence-light-t3-a', 'cooldown-heavy-t3-c', 'reload-balanced-t3-c', 'reload-heavy-t3-a', 'energy-light-t3-c'].includes(pathId ?? '');
-    if (onHitPath) { weapon = fastWeapon(tier); notes.push('Authored flat/on-hit or channel delivery: Deathfang supplies actual on-hit magnitude; Catalyst amplifies it.'); }
+    if (onHitPath) { weapon = fastWeapon(tier); notes.push('Authored flat/on-hit or channel delivery: Deathfang supplies actual on-hit magnitude.'); }
     if (['reload-light-t3-c', 'energy-light-t3-b', 'energy-heavy-t3-c', 'dot-heavy-t3-c'].includes(pathId ?? '')) {
       weapon = 'mountain-earthsunder-maul'; notes.push('Fixed cadence, attack bonus, or long-lived Attack-scaled DoT makes high base Attack credible despite slow weapon cadence.');
     }
@@ -113,12 +113,6 @@ function build(tier: number, root: typeof SURVEY_CLASSES[number], frame: Breadth
     const measured = tier === 4 && pathId ? T4_MEASURED[pathId] : undefined;
     if (measured) { weapon = measured[0]; notes.push(`Measured best T4 weapon for this path (2026-09-26 class pass): ${weapon}.`); }
     cell.build.gearItemIds.weapon = weapon;
-    let core = tier === 2 ? 'core-tempered' : root.melee ? role === 'boss' ? 'core-duelist' : 'core-bruiser' : 'core-tempered';
-    if (root.name === 'conduit') { core = 'core-survivalist'; notes.push('Survivalist funds ordinary Recovery and queue-scoped Recovery without changing payment/safety ratios.'); }
-    if (tier >= 3 && root.name === 'squire' && role === 'farm' && frame !== 'light') core = 'core-arcanist';
-    if (tier === 4 && (onHitPath || (root.name === 'conduit' && frame === 'light'))) core = 'core-catalyst';
-    if (tier >= 3 && root.name === 'apprentice' && frame === 'light') core = 'core-accelerant';
-    cell.build.gearItemIds.core = core;
     if (tier === 4) {
       let relic = frame === 'heavy' && !onHitPath ? 'relic-colossus-heart' : 'relic-equilibrium-shard';
       if (['dot-light-t3-a', 'cooldown-light-t3-a', 'reload-light-t3-b'].includes(pathId ?? '')) relic = 'relic-hastebound-dial';

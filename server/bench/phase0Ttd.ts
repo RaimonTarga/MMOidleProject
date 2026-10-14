@@ -73,7 +73,7 @@ function cells(plus: number, classNames: string[], arms: Arm[]): TtdCell[] {
       const homeBiome = CHARM_NODES[tier][0];
       if (arms.includes('naked')) out.push({ cell: base(`ttd-t${tier}-${c.name}-naked`, nodeFor(tier, homeBiome), {}), arm: 'naked', charmId: null, tier, biome: homeBiome, className: c.name });
       for (const biome of CHARM_NODES[tier]) {
-        const gear: SurveyCell['build']['gearItemIds'] = { weapon, armor: `${biome}-vest-t${tier}`, mobility: `mountain-boots-t${tier}`, ...(tier >= 2 ? { core: 'core-tempered' } : {}) };
+        const gear: SurveyCell['build']['gearItemIds'] = { weapon, armor: `${biome}-vest-t${tier}`, mobility: `mountain-boots-t${tier}` };
         if (arms.includes('geared')) out.push({ cell: base(`ttd-t${tier}-${c.name}-${biome}-geared`, nodeFor(tier, biome), gear), arm: 'geared', charmId: null, tier, biome, className: c.name });
         if (arms.includes('charm')) for (const charm of charms.filter((r) => r.tier === tier && r.recipeGroup === biome)) {
           out.push({ cell: base(`ttd-t${tier}-${c.name}-${charm.id}`, nodeFor(tier, biome), { ...gear, recovery: charm.id }), arm: 'charm', charmId: charm.id, tier, biome, className: c.name });

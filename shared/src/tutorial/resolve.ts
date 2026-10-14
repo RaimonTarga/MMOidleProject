@@ -1,8 +1,7 @@
-import type { AttunedAbilities } from '../abilities';
+import { attunedAbilityIds, type AttunedAbilities } from '../abilities';
 import { withReferenceAbilityWiring } from '../abilityWiring';
 import { ITEM_DATABASE } from '../itemDatabase';
 import type { EquippedRule } from '../runeDatabase';
-import { attunedAbilityIds } from '../runicPoints';
 import { bossClearKey } from '../systems/biomeProgress';
 import {
   evaluateTutorialCondition,
@@ -130,8 +129,6 @@ export function stepSatisfied(step: TutorialStep, view: TutorialView, later: Lat
     case 'configureRunes':
       return loadoutIncludes(view.runesEquipped, step.rules)
         || later.some((next) => next.type === 'configureRunes' && loadoutIncludes(view.runesEquipped, next.rules));
-    case 'craftRune':
-      return view.runeRecipesCrafted.includes(step.recipeId);
     case 'learnAbility':
     case 'setAbilities': {
       if (step.type === 'learnAbility' && !view.knownAbilities.includes(step.abilityId)) return false;

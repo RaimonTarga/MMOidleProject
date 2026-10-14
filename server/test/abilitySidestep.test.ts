@@ -54,9 +54,8 @@ function slices(id: string): PersistedPlayerSlices {
       
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier: 1, currentSkillTier: 1, bossesCleared: [], clearedNodes: [],
-      runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
+      runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
       knownAbilities: ['sidestep'], attunedAbilities: { techniques: [], guards: ['sidestep'] },
-      knownStances: [], equippedStances: { default: null }, activeStance: null, knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

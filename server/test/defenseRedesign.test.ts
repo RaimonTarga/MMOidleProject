@@ -16,7 +16,7 @@ function fixture(){
  c.build.skillPath=[c.build.classRoot];
  const {bot}=prepareSurveyBot(world,c,{x:400,y:400});
  bot.usesSkills.passives={};bot.evadesHits!.dodgeRate=0;bot.mitigatesDamage.plating=0;bot.mitigatesDamage.damageReduction=0;
- bot.hasHealth.maxHp=1000;bot.hasHealth.hp=1000;bot.tracksProgression.activeStance=null;
+ bot.hasHealth.maxHp=1000;bot.hasHealth.hp=1000;
  if(bot.hasBarrier)bot.hasBarrier.current=0;
  const monster=world.createMonster(c.nodeId,'magma-brute',{x:400,y:400})!;assert(monster);
  const hit=(damage:number)=>{const ctx=makeCombatContext(monster,'monster',bot,'player');ctx.damage=damage;ctx.metadata.incomingGross=damage;emitCombatEvent('onAttack',ctx,world);emitCombatEvent('onDamageTaken',ctx,world);return ctx;};

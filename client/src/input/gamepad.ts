@@ -4,7 +4,6 @@ import type { GameScene } from '../scenes/GameScene';
 import { hudBus } from '../hudBus';
 import {
   attunedAbilitiesAtom,
-  attunedStancesAtom,
   combatArchetypeAtom,
   deathOverlayAtom,
   debugPanelOpenAtom,
@@ -16,7 +15,6 @@ import {
   getBindings,
   matchesPad,
   MOVEMENT_ACTIONS,
-  stanceSlotForPad,
   TRIGGER_LEFT_INDEX,
   TRIGGER_PRESS_THRESHOLD,
   TRIGGER_RIGHT_INDEX,
@@ -25,7 +23,6 @@ import {
 import { setGamepadVector } from './movement';
 import { closeTopmostOverlay, togglePrimaryOverlay } from './overlayStack';
 import { isMobileViewport } from '../breakpoints';
-import { NO_STANCE_ID } from '@mmo-idle/shared';
 
 const STICK_DEADZONE = 0.18;
 
@@ -53,18 +50,6 @@ export function attachGamepad(scene: GameScene): () => void {
   function dispatchButton(index: number): void {
     const bindings = getBindings();
     if (!store.get(deathOverlayAtom).active) {
-      if (matchesPad(index, 'stance.neutral', bindings)) {
-        hudBus.requestSetStanceControl(NO_STANCE_ID);
-        return;
-      }
-
-      const stanceSlot = stanceSlotForPad(index, bindings);
-      if (stanceSlot !== null) {
-        const stanceId = store.get(attunedStancesAtom)[stanceSlot];
-        if (stanceId) hudBus.requestSetStanceControl(stanceId);
-        return;
-      }
-
       if (
         store.get(combatArchetypeAtom) === 'reload'
         && matchesPad(index, 'class.reload', bindings)

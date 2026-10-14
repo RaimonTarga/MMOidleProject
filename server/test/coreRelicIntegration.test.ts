@@ -31,10 +31,8 @@ function fixture(archetype: 'cadence' | 'cooldown' | 'reload' | 'dot' | 'energy'
       
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
       questProgress: {}, playerTier: 4, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
-      runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
+      runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [], equippedStances: { default: null }, activeStance: null,
-      knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     // Root-only: the class-first Passive Tree has no frames.
@@ -120,43 +118,6 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy', 'summoner'
   eq(after.slots[0].defenseWeight, before.slots[0].defenseWeight, 'extra bodies do not dilute health');
 }
 
-// On-hit sources must all use Catalyst, while attack and defenses stay unchanged.
-for (const mode of ['normal', 'laser', 'frenzy', 'upkeep', 'binary'] as const) {
-  const damages: number[] = [];
-  for (const multiplier of [0, 1.15]) {
-    const { world, player } = fixture(mode === 'normal' ? null : mode === 'laser' ? 'reload' : mode === 'frenzy' ? 'dot' : 'energy');
-    const target = targetFor(world);
-    player.dealsDamage.attack = 100;
-    player.dealsDamage.onHitDamage = mode === 'normal' || mode === 'laser' ? 20 : 0;
-    player.usesSkills.passives['core.onhit-mult'] = multiplier;
-    if (mode === 'laser') {
-      player.usesSkills.passives['reload.laser'] = 1;
-      player.usesSkills.passives['reload.laser-damage-per-tick-pct'] = 1;
-    }
-    if (mode === 'frenzy') {
-      player.usesSkills.passives['dot.frenzy'] = 1;
-      player.usesSkills.passives['dot.frenzy-onhit-per-tier'] = 20;
-      applyStatusEffect(player.tracksCombat, { id: 'dot-frenzy', sourceId: player.isPlayer.id, remainingMs: 5000 });
-    }
-    if (mode === 'upkeep') {
-      player.usesSkills.passives['energy.upkeep'] = 1;
-      player.usesEnergy!.upkeepTimerMs = 10000;
-    }
-    if (mode === 'binary') {
-      player.usesSkills.passives['energy.binary-cycle'] = 1;
-      player.usesSkills.passives['energy.binary-charge-onhit-per-tier'] = 20;
-      player.usesEnergy!.binaryDischargeState = false;
-    }
-    const hp = target.hasHealth.hp;
-    if (mode === 'laser') updateReloadT3Ticks(world, 100, 2000);
-    else attack(world, player, target);
-    damages.push(hp - target.hasHealth.hp);
-  }
-  assert(damages[1] > damages[0], `${mode}: Catalyst must increase on-hit output (${damages})`);
-  if (mode === 'normal' || mode === 'laser') { eq(damages[0], 120, mode); eq(damages[1], 143, mode); }
-  if (mode === 'frenzy') { eq(damages[0], 70, mode); eq(damages[1], 93, mode); }
-}
-
 // Melter's magazine is heat; capacity must not implicitly extend the full reload.
 for (const potency of [-0.25, 0.4]) {
   const { world, player } = fixture('reload');
@@ -177,22 +138,13 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy'] as const) 
   const input = { attack: 100, onHitDamage: 20, attackCooldownMs: 1000, archetype: root, passives: player.usesSkills.passives, selectedSubVariant: null, playerTier: 4 };
   const before = estimatePlayerDps(input).total;
   assert(estimatePlayerDps({ ...input, passives: { ...input.passives, 'relic.mechanic-frequency': 0.35 } }).total > before, `${root}: DPS reflects frequency`);
-  assert(estimatePlayerDps({ ...input, passives: { ...input.passives, 'core.onhit-mult': 1.15 } }).total > before, `${root}: DPS reflects Catalyst`);
 }
 {
-  const { player } = fixture('cadence');
-  const input = { usesSkills: player.usesSkills, equipment: player.holdsInventory.equipment, itemUpgrades: {}, playerTier: 4 };
-  const baseline = previewEquipmentStats(input);
-  const core = previewEquipmentStats({ ...input, equipment: { ...input.equipment, core: 'core-force' } });
-  assert(core.stats.damageDealtMult > baseline.stats.damageDealtMult && core.stats.maxHp === baseline.stats.maxHp, 'Force comparison shows output without inventing an HP penalty');
-  const accelerant=previewEquipmentStats({...input,equipment:{...input.equipment,core:'core-accelerant'}});
-  assert(accelerant.stats.damageDealtMult < baseline.stats.damageDealtMult && accelerant.stats.attacksPerSecond > baseline.stats.attacksPerSecond,'Same-axis core tradeoffs remain visible');
   const p = { 'cadence.empowered-threshold': 4 };
   const comparison = resolveRelicComparison('cadence', p, { ...ZERO_RELIC_RATINGS, frequency: 0.35 }, ZERO_RELIC_RATINGS);
   assert(comparison?.archetype === 'cadence', 'cadence comparison');
   eq(comparison.threshold.before, 3, 'unequip starts from current relic');
   eq(comparison.threshold.after, 4, 'unequip restores base');
-  eq(resolveOnHitDamage(20, { 'core.onhit-mult': 1.15 }), 43, 'sheet on-hit matches combat');
 }
 // Player-facing descriptions expose class outcomes, including inert breakpoints.
 {

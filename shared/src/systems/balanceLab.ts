@@ -223,7 +223,7 @@ export function buildBalanceLabSnapshot(generatedAt = Date.now()): BalanceLabSna
     caveats: [
       // Mirrors LOADOUT_MODEL_NOTE in tools/balance-data.ts. Kept as a separate string
       // because shared/ must not import from tools/; keep the two in step.
-      'Reference players carry weapon, armour, charm and mobility only, plus skill nodes, item upgrades and class affinities. No core, relic, rune, rite, stance or ability is equipped, so these numbers are not comparable to bench output in absolute terms.',
+      'Reference players carry weapon, armour, charm and mobility only, plus skill nodes, item upgrades and class affinities. No relic, rune or ability is equipped, so these numbers are not comparable to bench output in absolute terms.',
       'Threat uses an analytical entry reference with no healing or multi-enemy pressure; use farm and fight benches for runtime outcomes.',
       'Planning TTK uses class-aware cycles but excludes abilities, movement, target-state mechanics, enemy shields, and soft caps.',
       'Threat indices and deviation signals compare siblings at the same tier. They expose drift; they are not balance targets.',

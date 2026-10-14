@@ -19,7 +19,7 @@ export const STAT_HELP: Record<string, string> = {
   dps:
     'Estimated sustained damage per second, worked out from your class mechanic — including a Slinger’s direct, flat on-hit, and weapon-reservoir damage or a Conduit formation’s weighted offense. A planning number, not a measurement: it is before enemy plating and damage reduction, and it cannot see positioning, conditional proc damage, abilities, or spec behaviours that only exist mid-fight. Hover the figure in the character panel for its full working.',
   atkSpeed:
-    'How often you actually attack right now, as attacks-per-second and the cooldown between swings. Permanent attack-speed bonuses add up and set cooldown = base / (1 + total). TEMPORARY haste and slows — Frenzy, stance windows, frost and chill — are applied on top and shown as a percentage next to the base value.',
+    'How often you actually attack right now, as attacks-per-second and the cooldown between swings. Permanent attack-speed bonuses add up and set cooldown = base / (1 + total). TEMPORARY haste and slows — Frenzy, frost and chill — are applied on top and shown as a percentage next to the base value.',
   plating:
     'Flat damage removed from every incoming hit, subtracted BEFORE damage reduction. Best against many small hits, weak against a few big ones. Does not reduce damage-over-time at all.',
   damageReduction:
@@ -238,33 +238,4 @@ export const STAT_HELP: Record<string, string> = {
   'guard.potency-pct': 'Scales Mitigation Guards: damage reduction, knockback resistance, Bramble plating and reflection. Recovery skills use Recovery skill potency.',
   'guard.duration-pct': 'Extends Mitigation Guard buffs, including Bramble Guard. Does not extend Recovery or Cleanse.',
   'guard.recovery-on-fire-pct': 'Firing your Guard also switches on this share of your Recovery rate for a few seconds.',
-
-  // ── Core amplifiers ────────────────────────────────────────────────────────
-  'core.damage-dealt-pct': 'Multiplies final damage, including direct, on-hit, damage over time and summons. Included in DPS.',
-  'core.damage-taken-pct': 'Multiplies damage remaining after ordinary mitigation. Negative values reduce damage taken; positive values increase it.',
-  'core.attack-mult': 'Percentage multiplier on your final attack, applied after everything else adds up.',
-  'core.maxhp-mult': 'Percentage multiplier on your final max HP.',
-  'core.plating-mult': 'Percentage multiplier on your final plating.',
-  'core.speed-mult': 'Percentage multiplier on your final move speed.',
-  'core.attack-speed-mult': 'Percentage multiplier on your final attack speed.',
-  'core.recovery-mult':
-    'Percentage multiplier on your final Recovery rate. This scales passive regeneration and effects that activate a share of Recovery, but not unrelated flat heals or absorbs.',
-  'core.dr-layer-pct':
-    'A SEPARATE multiplicative damage-reduction layer, applied after your normal DR rather than added to it. Capped at 90%.',
-  'core.focus-damage-per-hit-mult':
-    'Each consecutive direct hit against the same enemy deals more direct attack damage, up to the Core\u2019s Focus cap. Switching targets resets Focus; summon hits do not build it.',
-  'core.onhit-mult':
-    'Percentage multiplier on flat on-hit damage you already have. It grants no on-hit damage by itself. Target plating and damage reduction still apply. Empowered and attack-boosting ability multipliers do not amplify this bonus.',
-  'core.debuff-duration-mult': 'Debuffs you apply to enemies last longer.',
-  'core.debuff-potency-mult': 'Debuffs you apply to enemies hit harder.',
-  'core.mobility-cooldown-reduction-pct':
-    'Shortens the cooldown of mobility abilities. Does nothing unless you have one equipped.',
-  'core.mobility-refund-on-kill-pct':
-    'Each kill returns part of your mobility ability’s cooldown. Does nothing unless you have one equipped.',
-
-  // ── Rites (between-fight behavior) ─────────────────────────────────────────
-  'rite.ooc-regen-delay-reduction-pct': 'Health regeneration resumes sooner after a fight ends.',
-  'rite.ooc-cleanse-stacks': 'Debuff and damage-over-time stacks stripped from you on each pulse while out of combat.',
-  'rite.ooc-buff-decay-slowdown-pct': 'Your buffs fade more slowly once a fight ends.',
-  'rite.on-kill-haste-pct': 'Move speed granted by a fresh kill, to carry you to the next fight.',
 };

@@ -1,12 +1,11 @@
 import type { PassiveMap } from '../passives';
 import type { TracksCombat } from '../components/combat/tracksCombat';
-import { activeStanceModifiers, brawlerDamageReduction } from '../stances';
 import { SUNLIGHT_EFFECT_ID } from './alphaWindow';
 
 /**
  * Status `data` key carrying a FINAL damage-dealt fraction (0.15 = +15%).
  *
- * Historically named for the stance burst windows that introduced it; it is a
+ * Historically named for the burst windows that introduced it; it is a
  * final layer, not an Attack-stat change. Distinct from `DAMAGE_DEALT_PCT_KEY`
  * (playerAmplifiers), which is summed separately in the direct-attack path — an
  * effect must carry one or the other, never both, or it applies twice.
@@ -20,26 +19,20 @@ export const FINAL_DAMAGE_DEALT_PCT_KEY = 'attackPct';
  * on-hit, AoE/cleave, procs, Technique payloads, DoT ticks and owned-summon damage.
  */
 const FINAL_DAMAGE_DEALT_EFFECT_IDS: readonly string[] = [
-  'stance-reaper-momentum',
-  'stance-power-release',
   SUNLIGHT_EFFECT_ID,
 ];
 
-/** Independent final layers. Positive taken values are drawbacks; negative values reduce damage. */
+/**
+ * Independent final layers. Nothing authors a final damage-taken layer since the
+ * cores went (class-first rework D2), so `taken` is 1; it stays because the HP
+ * forecast and the view's `finalDamageTakenMult` read it.
+ */
 export function resolveFinalDamageMultipliers(
-  passives: PassiveMap,
-  stanceId?: string | null,
-  hpFraction = 1,
+  _passives: PassiveMap,
   combat?: TracksCombat,
-  aggressors = 0,
 ): { dealt: number; taken: number } {
-  const stance = activeStanceModifiers(stanceId, hpFraction);
-  let dealt = Math.max(0, 1 + (passives['core.damage-dealt-pct'] ?? 0))
-    * Math.max(0, 1 + (stance?.damageDealtPct ?? 0));
-  const taken = Math.max(0.1, 1 + (passives['core.damage-taken-pct'] ?? 0))
-    * (1 - Math.min(0.9, Math.max(0, passives['core.dr-layer-pct'] ?? 0)))
-    * Math.max(0.1, 1 + (stance?.damageTakenPct ?? 0))
-    * (stanceId === 'brawler-stance' ? 1 - brawlerDamageReduction(aggressors) : 1);
+  let dealt = 1;
+  const taken = 1;
   for (const effect of combat?.statusEffects ?? []) {
     if (effect.remainingMs > 0 && FINAL_DAMAGE_DEALT_EFFECT_IDS.includes(effect.id)) {
       dealt *= Math.max(0, 1 + (effect.data[FINAL_DAMAGE_DEALT_PCT_KEY] ?? 0));

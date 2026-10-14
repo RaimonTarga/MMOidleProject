@@ -8,8 +8,7 @@ export function resolveOnHitDamage(
   formationWeight = 1,
 ): number {
   return Math.max(0, Math.round(
-    Math.max(0, base) * Math.max(0, 1 + (passives['core.onhit-mult'] ?? 0))
-      * shotMultiplier * formationWeight,
+    Math.max(0, base) * shotMultiplier * formationWeight,
   ));
 }
 

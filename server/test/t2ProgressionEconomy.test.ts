@@ -1,9 +1,6 @@
 import {
   RECIPE_DATABASE,
   ABILITY_RECIPE_DATABASE,
-  RUNE_RECIPE_DATABASE,
-  STANCE_RECIPE_DATABASE,
-  isRuneRecipeUnlocked,
   ESSENCE_TYPES,
 } from "@mmo-idle/shared";
 import type { EssenceType } from "@mmo-idle/shared";
@@ -79,54 +76,6 @@ function essenceSum(cost: Partial<Record<EssenceType, number>> | undefined): num
   return Object.values(cost ?? {}).reduce((a, b) => a + (b ?? 0), 0);
 }
 
-function normalizedCost(cost: Partial<Record<string, number>> | undefined): string {
-  return JSON.stringify(Object.entries(cost ?? {}).sort(([a], [b]) => a.localeCompare(b)));
-}
-
-type T2RewardSpec = {
-  id: string;
-  group: string;
-  level: number;
-  cost: Record<string, number>;
-  essenceBand: readonly [number, number];
-};
-
-const T2_STANCE_REWARDS: T2RewardSpec[] = [
-  { id: "stance-recipe-offensive", group: "plains", level: 7, cost: { yellow: 60 }, essenceBand: [50, 70] },
-  { id: "stance-recipe-defensive", group: "plains", level: 7, cost: { yellow: 60 }, essenceBand: [50, 70] },
-  { id: "stance-recipe-fleeting", group: "swamp", level: 8, cost: { purple: 110 }, essenceBand: [90, 120] },
-];
-
-const T2_CORE_REWARDS: T2RewardSpec[] = [
-  { id: "core-tempered", group: "cave", level: 12, cost: { red: 500 }, essenceBand: [450, 600] },
-  { id: "core-survivalist", group: "jungle", level: 6, cost: { green: 500 }, essenceBand: [450, 600] },
-  { id: "core-force", group: "desert", level: 6, cost: { yellow: 500 }, essenceBand: [450, 600] },
-];
-
-for (const spec of T2_STANCE_REWARDS) {
-  const recipe = STANCE_RECIPE_DATABASE.get(spec.id);
-  assert(!!recipe, `${spec.id}: stance recipe must exist`);
-  assert(recipe!.tier === 2, `${spec.id}: must stay tier 2`);
-  assert(recipe!.recipeGroup === spec.group, `${spec.id}: biome gate must be ${spec.group}`);
-  assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: unlock level must be ${spec.group} L${spec.level}`);
-  assert(normalizedCost(recipe!.cost) === normalizedCost(spec.cost), `${spec.id}: essence cost changed unexpectedly`);
-  assert(!recipe!.requiredBossClear, `${spec.id}: must not require a boss clear`);
-  const total = essenceSum(recipe!.cost);
-  assert(total >= spec.essenceBand[0] && total <= spec.essenceBand[1], `${spec.id}: stance essence total is outside its band`);
-}
-
-for (const spec of T2_CORE_REWARDS) {
-  const recipe = RECIPE_DATABASE.get(spec.id);
-  assert(!!recipe, `${spec.id}: core recipe must exist`);
-  assert(recipe!.tier === 2, `${spec.id}: must stay tier 2`);
-  assert(recipe!.recipeGroup === spec.group, `${spec.id}: biome gate must be ${spec.group}`);
-  assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: unlock level must be ${spec.group} L${spec.level}`);
-  assert(normalizedCost(recipe!.cost) === normalizedCost(spec.cost), `${spec.id}: essence cost changed unexpectedly`);
-  assert(!recipe!.requiredBossClear, `${spec.id}: must not require a boss clear`);
-  const total = essenceSum(recipe!.cost);
-  assert(total >= spec.essenceBand[0] && total <= spec.essenceBand[1], `${spec.id}: core essence total is outside its band`);
-}
-
 for (const id of ALL_T2_GEAR_IDS) {
   const recipe = RECIPE_DATABASE.get(id)!;
   if (!recipe.upgrades || recipe.upgrades.length !== 5) continue;
@@ -161,33 +110,6 @@ for (const [id, spec] of Object.entries(ABILITY_COSTS)) {
   assert(recipe!.cost[spec.color] === spec.amount, `${id}: cost must be ${spec.amount} ${spec.color} (got ${JSON.stringify(recipe!.cost)})`);
   assert(recipe!.requiredBiomeLevel === spec.level, `${id}: unlock level must stay at ${spec.group} L${spec.level}`);
   assert(recipe!.recipeGroup === spec.group, `${id}: biome gate must stay ${spec.group}`);
-}
-
-// ── Runes (§11, §19) ─────────────────────────────────────────────────────────
-
-const SWAMP_T2_RUNES: Array<{ id: string; level: number; cost: number }> = [
-  { id: "rune-recipe-surrounded", level: 7, cost: 70 },
-  { id: "rune-recipe-focus-lowest-hp", level: 8, cost: 90 },
-  { id: "rune-recipe-let-dots-finish", level: 9, cost: 90 },
-  { id: "rune-recipe-spread-dots", level: 10, cost: 120 },
-];
-for (const spec of SWAMP_T2_RUNES) {
-  const recipe = RUNE_RECIPE_DATABASE.get(spec.id);
-  assert(!!recipe, `${spec.id}: recipe must exist`);
-  assert(recipe!.tier === 2, `${spec.id}: must stay tier 2`);
-  assert(recipe!.recipeGroup === "swamp", `${spec.id}: must stay in swamp`);
-  assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: must unlock at L${spec.level} (got ${recipe!.requiredBiomeLevel})`);
-  assert(recipe!.cost.purple === spec.cost, `${spec.id}: cost must be ${spec.cost} purple (got ${JSON.stringify(recipe!.cost)})`);
-
-  // Cannot unlock anywhere in Swamp's T1 band (levels 1-6).
-  const lockedAtT1Cap = isRuneRecipeUnlocked(recipe!, { biomeLevel: { swamp: 6 }, bossesCleared: [] });
-  assert(!lockedAtT1Cap, `${spec.id}: must NOT be reachable at swamp level 6 (T1 band)`);
-
-  // Unlocks exactly at its own level, not before.
-  const oneShort = isRuneRecipeUnlocked(recipe!, { biomeLevel: { swamp: spec.level - 1 }, bossesCleared: [] });
-  assert(!oneShort, `${spec.id}: must not unlock one level early (swamp ${spec.level - 1})`);
-  const atLevel = isRuneRecipeUnlocked(recipe!, { biomeLevel: { swamp: spec.level }, bossesCleared: [] });
-  assert(atLevel, `${spec.id}: must unlock at swamp level ${spec.level}`);
 }
 
 console.log("t2ProgressionEconomy: ok");

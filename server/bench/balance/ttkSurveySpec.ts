@@ -1,7 +1,7 @@
 import { applyProgressionSnapshot, snapshotReceipts, type ProgressionSnapshot } from './progressionSnapshot';
 import assert from 'node:assert/strict';
-import { requiredBiomeLevelForUpgrade, upgradeCeilingFromGlobalMastery, globalMastery, ITEM_DATABASE, RECIPE_DATABASE, NODE_BIOMES, RUNE_RECIPE_DATABASE,
-  isRuneRecipeUnlocked, composePlayerView } from '@mmo-idle/shared';
+import { requiredBiomeLevelForUpgrade, upgradeCeilingFromGlobalMastery, globalMastery, ITEM_DATABASE, RECIPE_DATABASE, NODE_BIOMES,
+  composePlayerView } from '@mmo-idle/shared';
 import { materializeBot, BENCH_BOT_ID } from './botFactory';
 import { validateBuild } from '../../../bot/src/loadout/loadout';
 import { recalculatePlayerEntityStats } from '../../src/ecs/playerEntityFormulas';
@@ -23,13 +23,11 @@ export const SURVEY_CLASSES = [
 export const SURVEY_SEEDS = [173, 947, 2027] as const;
 export interface SurveyCell { progressionSnapshot?: ProgressionSnapshot; id: string; className: string; tier: number; role: string; nodeId: string; alternate: boolean; build: BuildSpec; technique?: 'sweep' | 'slam';
   /**
-   * Stance to attune. OMITTED inherits the preparation default (Offensive from
-   * tier 2). Explicit `null` is a different statement -- it means the package
-   * runs NO stance on purpose -- and is honoured rather than defaulted, so a
-   * neutral package cannot be silently read as an Offensive one.
+   * The stance a frozen packet declared. Stances are gone (class-first rework D2):
+   * kept so the historical packets still read, never resolved or applied.
    */
   stance?: string | null;
-  /** Additional legally learned postures reserved for native Rune switching. */
+  /** Retired with `stance`; never applied. */
   additionalStances?: string[]; orbit?: boolean; focusElites?: boolean;
   /**
    * Item upgrade level to equip at. Omitted keeps the long-standing +5 bench
@@ -68,9 +66,6 @@ export interface SurveyCell { progressionSnapshot?: ProgressionSnapshot; id: str
    * meaningful and is honoured: it means the package runs no behaviour rules at all,
    * which is what the legacy bench bot actually does. `undefined` keeps the default.
    *
-   * Rules cost RP alongside abilities and the stance, so a cell that sets this must
-   * set `abilities` to a package the combined budget actually admits -- do not pair
-   * explicit rules with a 30-RP ability set and expect it to pass.
    */
   runeRules?: EquippedRule[]; }
 export const SURVEY_CELLS: SurveyCell[] = [1,2,3].flatMap(tier =>
@@ -86,7 +81,7 @@ export const SURVEY_CELLS: SurveyCell[] = [1,2,3].flatMap(tier =>
         skillPath: [`${c.prefix}-root`, ...(tier >= 2 ? [`${c.prefix}-balanced`] : []),
           ...(tier >= 3 ? [`${c.prefix}-range-${c.melee ? 'close' : 'mid'}`] : [])],
         gearItemIds: { weapon, armor: `${group}-vest-t${tier}`, recovery: `${group}-charm-t${tier}`,
-          mobility: `mountain-boots-t${tier}`, ...(tier >= 2 ? { core: 'core-tempered' } : {}) },
+          mobility: `mountain-boots-t${tier}` },
       } };
     });
   })));
@@ -96,36 +91,30 @@ export const SURVEY_CELLS: SurveyCell[] = [1,2,3].flatMap(tier =>
  *
  * This exists because Boss1's Sovereign block failed its own declared-versus-applied
  * check on twelve completed fights. The receipt serialized the cell's RAW optional
- * fields -- `stance: null`, `runeRules: null`, `abilities: null` -- while
- * `prepareSurveyBot` resolved and applied Offensive, the five-rule survey policy and
- * the tier ability set. Nothing was wrong with the bot; the declaration simply was
+ * fields -- `runeRules: null`, `abilities: null` -- while `prepareSurveyBot`
+ * resolved and applied the five-rule survey policy and the tier ability set. Nothing was wrong with the bot; the declaration simply was
  * not the thing being declared.
  *
  * So the defaults live HERE, once, and both preparation and the receipt read them.
  * A declaration is then computable from the cell ALONE, before any fight -- it is
  * never copied back from the observed bot, which would make the check vacuous. A
- * genuine mismatch (a stance that failed to attune, a rule dropped by legality, an
- * ability budget that did not take) still shows up as a divergence.
+ * genuine mismatch (a rule dropped by legality, an ability loadout that did not
+ * take) still shows up as a divergence.
  *
- * `sources` keeps the three cases apart, because they are different statements:
+ * `sources` keeps the two cases apart, because they are different statements:
  *   - `explicit`             the cell said so, including an empty rule array
  *   - `preparation-default`  the cell omitted it and inherited this resolution
- *   - `tier-none`            the tier admits no stance at all (tier 1)
  */
-export type PackageFieldSource = 'explicit' | 'preparation-default' | 'tier-none';
+export type PackageFieldSource = 'explicit' | 'preparation-default';
 export interface ResolvedSurveyPackage {
-  stance: string | null;
   abilities: AttunedAbilities;
   runeRules: EquippedRule[];
   upgradeLevel: number;
-  sources: { stance: PackageFieldSource; abilities: PackageFieldSource; runeRules: PackageFieldSource; upgradeLevel: PackageFieldSource };
+  sources: { abilities: PackageFieldSource; runeRules: PackageFieldSource; upgradeLevel: PackageFieldSource };
 }
 export function resolveSurveyPackage(cell: SurveyCell): ResolvedSurveyPackage {
   const c = SURVEY_CLASSES.find((x) => x.name === cell.className);
   assert(c, `${cell.id}: unknown class ${cell.className}`);
-  // `??` cannot express an intentional neutral stance, because it swallows null
-  // alongside undefined. Only an OMITTED field may inherit the default.
-  const stance = cell.tier >= 2 ? (cell.stance !== undefined ? cell.stance : 'offensive-stance') : null;
   // An EMPTY rule array is a real package (the legacy bench bot equips none) and is
   // honoured; only an omitted field falls through to the five-rule policy.
   const authoredRules = cell.runeRules ?? [
@@ -142,12 +131,11 @@ export function resolveSurveyPackage(cell: SurveyCell): ResolvedSurveyPackage {
   };
   // Abilities no longer carry built-in triggers. Every attuned ability the cell
   // does not wire itself gets its reference Rune rule, so the bench keeps
-  // measuring the retired default timing at the same RP total.
+  // measuring the retired default timing.
   const runeRules = withReferenceAbilityWiring(authoredRules, abilities);
   return {
-    stance, abilities, runeRules, upgradeLevel: cell.upgradeLevel ?? 5,
+    abilities, runeRules, upgradeLevel: cell.upgradeLevel ?? 5,
     sources: {
-      stance: cell.tier < 2 ? 'tier-none' : cell.stance !== undefined ? 'explicit' : 'preparation-default',
       abilities: cell.abilities !== undefined ? 'explicit' : 'preparation-default',
       runeRules: cell.runeRules !== undefined ? 'explicit' : 'preparation-default',
       upgradeLevel: cell.upgradeLevel !== undefined ? 'explicit' : 'preparation-default',
@@ -179,26 +167,16 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
     assert(plus===0||(p.biomeLevel[recipe.recipeGroup]??0)>=requiredBiomeLevelForUpgrade(ITEM_DATABASE.get(id!)!,plus), `Biome upgrade gate ${id}`);
   }
   p.skillPoints = 0; // Factory grants unlock scaffolding; none survives into measurement.
-  p.equippedRites = [];
   p.attunedAbilities = { techniques: [], guards: [] };
-  const stance = declared.stance;
-  p.attunedStances = [...(stance ? [stance] : []), ...(cell.additionalStances ?? [])];
-  for (const id of p.attunedStances) assert(p.knownStances.includes(id), `Unlearned stance ${id}`);
-  p.equippedStances = { default: stance };
-  p.activeStance = stance;
   const c = SURVEY_CLASSES.find(c=>c.name===cell.className)!;
   const rules = declared.runeRules;
-  for (const r of RUNE_RECIPE_DATABASE.values()) if (!r.deprecated && r.runeId && !p.runesOwned.includes(r.runeId) && rules.some(rule=>rule.actionId===r.runeId)) {
-    assert(isRuneRecipeUnlocked(r,p), `Unreachable rune ${r.id}`);
-    if(!p.runesOwned.includes(r.runeId)) p.runesOwned.push(r.runeId);
-  }
   p.runesEquipped = rules;
   const abilities = declared.abilities;
   assert(setAbilityLoadout(world,bot,abilities).success, `${cell.id}: illegal ability budget`);
   recalculatePlayerEntityStats(world,bot); syncArchetypeSlices(world,bot);
   bot.hasHealth.hp = bot.hasHealth.maxHp; refillBarrier(world,bot);
   const view = composePlayerView(bot)!;
-  assert.deepEqual(validateBuild({abilities, runeRules:rules, stances:{attuned:p.attunedStances,default:stance},rites:[]},view), [], cell.id);
+  assert.deepEqual(validateBuild({abilities, runeRules:rules},view), [], cell.id);
   // Derived from the cell's OWN skill path rather than hardcoded to 'balanced'.
   // The assertion's intent is "the build that was declared is the build that
   // materialised"; every existing cell declares `-balanced`, so this is identical

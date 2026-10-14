@@ -15,7 +15,7 @@ export type BenchMode = 'boss' | 'farm';
 
 export type BalanceOutcome = 'clear' | 'bot_died' | 'timeout';
 
-export type GearSlot = 'weapon' | 'armor' | 'recovery' | 'mobility' | 'core' | 'relic';
+export type GearSlot = 'weapon' | 'armor' | 'recovery' | 'mobility' | 'relic';
 
 export interface BuildSpec {
   id: string;

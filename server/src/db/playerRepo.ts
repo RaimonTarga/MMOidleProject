@@ -24,11 +24,8 @@ import {
   normalizeEquipment,
   emptyEquipment,
   emptyAttunedAbilities,
-  emptyEquippedStances,
-  emptyEquippedRites,
   globalMastery,
-  runeIdsFromCraftedRecipes,
-  validRiteIds,
+  runeIdsForArchetype,
   CLEARING_NODE_ID,
   WORLD_NODES,
   buildCharacterSummary,
@@ -434,12 +431,6 @@ export async function listCharacters(db: DB): Promise<AdminCharacterRecord[]> {
       equipmentCount,
       knownAbilities: slices.tracksProgression.knownAbilities,
       attunedAbilities: slices.tracksProgression.attunedAbilities,
-      attunedStances: slices.tracksProgression.attunedStances,
-      knownStances: slices.tracksProgression.knownStances,
-      equippedStances: slices.tracksProgression.equippedStances,
-      activeStance: slices.tracksProgression.activeStance,
-      knownRites: slices.tracksProgression.knownRites,
-      equippedRites: slices.tracksProgression.equippedRites,
       lastPlayedAt: character.lastPlayedAt,
       updatedAt: character.updatedAt,
     };
@@ -518,7 +509,7 @@ export function refundRetiredUpgradeEssence(
 /**
  * Drop item ids that no longer exist in ITEM_DATABASE.
  *
- * Recipes get retired (the placeholder core cast was deleted outright), and a save
+ * Recipes get retired (the core cast was deleted outright), and a save
  * written before that still names them. The stat rebuild already skips unknown ids,
  * so this is not a correctness fix — it is a presentation one: an unknown id left in
  * an equipment slot renders as an occupied-but-blank slot the player cannot clear,
@@ -538,17 +529,6 @@ function pruneUnknownItems(inv: HoldsInventory): void {
   for (const id of Object.keys(inv.itemUpgrades)) {
     if (!ITEM_DATABASE.has(id)) delete inv.itemUpgrades[id];
   }
-}
-
-const LEGACY_RITE_IDS: Record<string, string> = {
-  "quickened-breath": "swift-repose",
-  "cleansing-breath": "purification",
-  "lingering-momentum": "lingering-battle",
-  "hunters-instinct": "blood-offering",
-};
-
-function migrateRiteIds(ids: readonly string[] | undefined): string[] {
-  return validRiteIds((ids ?? []).map((id) => LEGACY_RITE_IDS[id] ?? id));
 }
 
 /**
@@ -604,6 +584,10 @@ function hydratePlayerSlices(
 ): PersistedPlayerSlices {
   const holdsInventory = parseSlice<HoldsInventory>(row.holdsInventory);
   holdsInventory.equipment = normalizeEquipment(holdsInventory.equipment);
+  // The core slot is gone (class-first rework D2): a save written before that still
+  // names it, so the slot is dropped here; the core items themselves are unknown ids
+  // now and pruneUnknownItems drops them from the bag.
+  delete (holdsInventory.equipment as Record<string, unknown>).core;
   holdsInventory.itemUpgrades = holdsInventory.itemUpgrades ?? {};
   holdsInventory.inventory = holdsInventory.inventory ?? [];
   // The lineage trees are gone (class-first rework D1): a dev save written before
@@ -623,6 +607,16 @@ function hydratePlayerSlices(
   // with the lineage trees (class-first rework D1). Dropped on load the same way,
   // so a dev save written before that still loads.
   for (const key of ['shards', 'capstones', 'cardFiringsTaught', 'abilityNodes']) {
+    delete (tracksProgression as unknown as Record<string, unknown>)[key];
+  }
+  // Crafted runes went with the Runic Points, and the stances and rites went
+  // (class-first rework D2): rune ownership comes from the class now, and no
+  // posture or rite is learned or held, so a save written before that drops them
+  // on load.
+  for (const key of [
+    'runeRecipesCrafted', 'knownStances', 'attunedStances', 'equippedStances', 'activeStance',
+    'knownRites', 'equippedRites',
+  ]) {
     delete (tracksProgression as unknown as Record<string, unknown>)[key];
   }
   // The +N ladder is retired on every slot: refund and drop any itemUpgrades
@@ -648,12 +642,9 @@ function hydratePlayerSlices(
   if (!WORLD_NODES.has(hasPosition.nodeId)) {
     hasPosition.nodeId = CLEARING_NODE_ID;
   }
-  const runeRecipesCrafted = tracksProgression.runeRecipesCrafted ?? [];
+  const usesSkills = parseSlice<UsesSkills>(row.usesSkills);
   const attunement = migrateAttunement(tracksProgression);
   delete (tracksProgression as unknown as { equippedAbilities?: unknown }).equippedAbilities;
-  const knownRites = migrateRiteIds(tracksProgression.knownRites);
-  const equippedRites = migrateRiteIds(tracksProgression.equippedRites)
-    .filter((id) => knownRites.includes(id));
 
   return {
     isPlayer:          {
@@ -671,15 +662,12 @@ function hydratePlayerSlices(
         (hasPosition.nodeId !== CLEARING_NODE_ID
           ? [hasPosition.nodeId]
           : tracksProgression.clearedNodes ?? []),
-      runeRecipesCrafted,
-      runesOwned:     runeIdsFromCraftedRecipes(runeRecipesCrafted),
-      knownRites,
-      equippedRites,
+      runesOwned:     runeIdsForArchetype(usesSkills.combatArchetype),
       ...attunement,
     },
     holdsInventory,
     usesSkills:        {
-      ...parseSlice<UsesSkills>(row.usesSkills),
+      ...usesSkills,
       passives: {},
     },
     summonerState: row.summonerState
@@ -754,17 +742,10 @@ function buildFreshSlices(
       bossesCleared:    [],
       clearedNodes:     [],
       visitedNodes:     [],
-      runesOwned:       runeIdsFromCraftedRecipes([]),
-      runeRecipesCrafted: [],
+      runesOwned:       runeIdsForArchetype(null),
       runesEquipped:    [...DEFAULT_RUNE_LOADOUT],
       knownAbilities:   [],
       attunedAbilities: emptyAttunedAbilities(),
-      attunedStances:   [],
-      knownStances:     [],
-      equippedStances:  emptyEquippedStances(),
-      activeStance:     null,
-      knownRites:       [],
-      equippedRites:    emptyEquippedRites(),
     },
     holdsInventory: {
       inventory: [],

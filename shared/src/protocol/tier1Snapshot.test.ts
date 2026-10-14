@@ -1,6 +1,5 @@
 import {
   STARTER_RUNE_IDS,
-  runeIdsFromCraftedRecipes,
   tierEntryProfileFromT1Snapshot,
   type T1CharacterSnapshot,
 } from "..";
@@ -9,7 +8,7 @@ function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
 }
 
-function makeSnapshot(runesOwned: string[], runeRecipesCrafted: string[] = []): T1CharacterSnapshot {
+function makeSnapshot(runesOwned: string[]): T1CharacterSnapshot {
   return {
     schemaVersion: 1,
     snapshotKind: "tier2-handoff",
@@ -36,21 +35,15 @@ function makeSnapshot(runesOwned: string[], runeRecipesCrafted: string[] = []): 
       currentSkillTier: 2,
       skillPoints: 0,
       unlockedSkills: ["cooldown-root", "cooldown-heavy"],
-      activeStance: null,
-      equippedStances: { default: null },
       selectedSubVariant: null,
       selectedRange: null,
       equipment: {},
       runesOwned,
-      runeRecipesCrafted,
       runesEquipped: [],
       attunedAbilities: { techniques: [], guards: [] },
       itemUpgrades: {},
       inventory: [],
       knownAbilities: [],
-      knownStances: [],
-      knownRites: [],
-      equippedRites: [],
       bossesCleared: [],
       clearedNodes: [],
       visitedNodes: [],
@@ -58,11 +51,8 @@ function makeSnapshot(runesOwned: string[], runeRecipesCrafted: string[] = []): 
   };
 }
 
-const crafted = ["rune-recipe-avoid-hazards", "rune-recipe-step-back"];
-const derived = runeIdsFromCraftedRecipes(crafted);
-const historicalStarterSubset = derived.filter((id) => id !== "target-max-stacks");
-const imported = tierEntryProfileFromT1Snapshot(makeSnapshot(historicalStarterSubset, crafted));
-const t1 = makeSnapshot(derived, crafted);
+const imported = tierEntryProfileFromT1Snapshot(makeSnapshot([...STARTER_RUNE_IDS]));
+const t1 = makeSnapshot([...STARTER_RUNE_IDS]);
 t1.frameId = null;
 Object.assign(t1.state, { frameId: null, playerTier: 1, currentSkillTier: 1,
   unlockedSkills: [t1.classRoot], selectedSubVariant: null, selectedRange: null });
@@ -82,19 +72,6 @@ for (const mutation of [
   try { tierEntryProfileFromT1Snapshot(bad, "node-clearing", 1); } catch { rejected = true; }
   assert(rejected, "T1 entry rejects early, post-boss or mismatched skill state");
 }
-assert(imported.frameId === "cooldown-heavy", "historical starter additions should remain importable");
-assert(
-  JSON.stringify(imported.runeRecipesCrafted) === JSON.stringify(crafted),
-  "import should preserve the crafted recipe list",
-);
-
-const missingCraftedRune = STARTER_RUNE_IDS;
-let rejected = false;
-try {
-  tierEntryProfileFromT1Snapshot(makeSnapshot(missingCraftedRune, ["rune-recipe-avoid-hazards"]));
-} catch {
-  rejected = true;
-}
-assert(rejected, "a missing non-starter crafted rune must still reject the handoff");
+assert(imported.frameId === "cooldown-heavy", "a T2 handoff snapshot imports");
 
 console.log("tier1Snapshot: ok");

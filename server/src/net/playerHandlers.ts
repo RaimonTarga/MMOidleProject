@@ -1,5 +1,5 @@
 import { captureProgressionCheckpoint, restoreProgressionCheckpoint } from '../admin/progressionCheckpoint';
-import { runicLoadoutFromProgression, runicPointEditAllowed, attunedAbilityIds } from "@mmo-idle/shared";
+import { attunedAbilityIds } from "@mmo-idle/shared";
 import type { Socket } from "socket.io";
 import {
   DEFAULT_AUTOCOMBAT_CONFIG,
@@ -7,10 +7,7 @@ import {
   GAME_CONFIG,
   NODE_BIOMES,
   TEST_ROOM_NODE_ID,
-  globalMastery,
-  runeBudgetForGlobalMastery,
   sanitizeRuneLoadout,
-  runicPointLoadoutCost,
   clampRewardMultiplier,
   isT1EconomyArm,
   t1EconomyConfigForArm,
@@ -34,22 +31,12 @@ import { recordBroadcast } from "./profiler";
 import { unlockSkill } from "../systems/player/progression/skills";
 import { equipItem, unequipItem } from "../systems/player/economy/inventory";
 import { craftRecipe } from "../systems/player/economy/crafting";
-import { craftRuneRecipe } from "../systems/player/economy/runeCrafting";
 import {
   craftAbilityRecipe,
   setAbilityLoadout,
 } from "../systems/player/economy/abilityCrafting";
 import { requestManualAbilityUse } from "../systems/player/abilities/abilityFiring";
-import {
-  craftStanceRecipe,
-  setStanceLoadout,
-} from "../systems/player/economy/stanceCrafting";
-import { requestManualStance } from "../systems/player/stances/stanceSwitch";
 import { requestManualReload } from "../systems/classes/archetypes/reload/reloadLifecycle";
-import {
-  craftRiteRecipe,
-  setRiteLoadout,
-} from "../systems/player/economy/riteCrafting";
 import { upgradeItem } from "../systems/player/economy/itemUpgrade";
 import {
   handlePartyDisconnect,
@@ -282,10 +269,6 @@ export function registerPlayerHandlers(
       detachComponent(world, p, "isFleeing");
       return;
     }
-    // The global Auto toggle is also the visible way to return live stance
-    // ownership to Rune/default automation now that the stance rail uses a
-    // Neutral posture button instead of a second, ambiguous AUTO button.
-    detachComponent(world, p, "overridesStance");
     // Click/keyboard moves latch hasManualMoveIntent until the server stops.
     // Toggling auto on must release that latch or updateAutoTargets skips every
     // tick ("auto combat does nothing").
@@ -398,24 +381,14 @@ export function registerPlayerHandlers(
     if (!p) return reject(NOT_LIVE_REASON);
     if (!Array.isArray(rules)) return reject("Malformed Rune loadout.");
     const owned = new Set(p.tracksProgression.runesOwned);
-    const budget = runeBudgetForGlobalMastery(
-      globalMastery(p.tracksProgression.biomeLevel),
-    );
     const valid = sanitizeRuneLoadout(
       rules,
       owned,
-      Number.POSITIVE_INFINITY,
       p.usesSkills.combatArchetype,
-      new Set(p.tracksProgression.attunedStances ?? []),
       new Set(attunedAbilityIds(p.tracksProgression.attunedAbilities)),
     );
     if (valid.length !== rules.length) {
-      socket.emit("build:loadoutResult", { system: "runes", success: false, reason: "One or more Rune rules are invalid, unowned, or target an unlearned stance." });
-      return;
-    }
-    const total = runicPointLoadoutCost({ ...runicLoadoutFromProgression(p.tracksProgression), rules: valid });
-    if (!runicPointEditAllowed(runicLoadoutFromProgression(p.tracksProgression), { ...runicLoadoutFromProgression(p.tracksProgression), rules: valid }, budget)) {
-      socket.emit("build:loadoutResult", { system: "runes", success: false, reason: `This build costs ${total} RP, but only ${budget} RP is available.` });
+      socket.emit("build:loadoutResult", { system: "runes", success: false, reason: "One or more Rune rules are invalid, unowned, or target an unattuned ability." });
       return;
     }
     const telemetryBefore = world.gameplay?.beforeDecision(p);
@@ -463,19 +436,6 @@ export function registerPlayerHandlers(
     socket.emit("crafting:result", result);
   });
 
-  socket.on("rune:craftRecipe", (recipeId: string) => {
-    const p = liveSelf();
-    if (!p || typeof recipeId !== "string") {
-      if (p) return;
-      socket.emit("rune:craftResult", { recipeId, success: false, reason: NOT_LIVE_REASON });
-      return;
-    }
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = craftRuneRecipe(world, p, recipeId);
-    world.gameplay?.decision(p, "craft-rune", recipeId, telemetryBefore, result.success);
-    socket.emit("rune:craftResult", result);
-  });
-
   socket.on("ability:craftRecipe", (recipeId: string) => {
     const p = liveSelf();
     if (!p || typeof recipeId !== "string") {
@@ -509,67 +469,6 @@ export function registerPlayerHandlers(
     }
     const result = requestManualAbilityUse(world, p, abilityId);
     ack?.(result);
-  });
-
-  socket.on("stance:craftRecipe", (recipeId: string) => {
-    const p = liveSelf();
-    if (!p || typeof recipeId !== "string") {
-      socket.emit("stance:craftResult", { recipeId, success: false, reason: !p ? NOT_LIVE_REASON : "Malformed recipe id." });
-      return;
-    }
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = craftStanceRecipe(world, p, recipeId);
-    world.gameplay?.decision(p, "craft-stance", recipeId, telemetryBefore, result.success);
-    socket.emit("stance:craftResult", result);
-  });
-
-  socket.on("stance:setLoadout", (payload) => {
-    const p = liveSelf();
-    const reject = (reason: string): void => { socket.emit("build:loadoutResult", { system: "stances", success: false, reason }); };
-    if (!p) return reject(NOT_LIVE_REASON);
-    if (!payload) return reject("Malformed stance loadout.");
-    if (payload.slot !== "default") return reject("Unknown stance slot.");
-    if (payload.attunedStances !== undefined && (!Array.isArray(payload.attunedStances) || payload.attunedStances.some(id => typeof id !== "string"))) return reject("Malformed stance attunement.");
-    if (payload.stanceId !== null && typeof payload.stanceId !== "string") return reject("Malformed default stance.");
-    const stanceId = payload.stanceId;
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = setStanceLoadout(world, p, payload.slot, stanceId, payload.attunedStances);
-    world.gameplay?.decision(p, "stances", null, telemetryBefore, result.success);
-    socket.emit("build:loadoutResult", { system: "stances", ...result });
-  });
-
-  socket.on("stance:setControl", (payload, ack) => {
-    const p = liveSelf();
-    if (!p) return ack?.({ success: false, reason: NOT_LIVE_REASON });
-    if (!payload || (payload.stanceId !== null && typeof payload.stanceId !== "string")) {
-      return ack?.({ success: false, reason: "Malformed stance selection." });
-    }
-    const result = requestManualStance(world, p, payload.stanceId);
-    ack?.(result);
-  });
-
-  socket.on("rite:craftRecipe", (recipeId: string) => {
-    const p = liveSelf();
-    if (!p || typeof recipeId !== "string") {
-      socket.emit("rite:craftResult", { recipeId, success: false, reason: !p ? NOT_LIVE_REASON : "Malformed recipe id." });
-      return;
-    }
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = craftRiteRecipe(world, p, recipeId);
-    world.gameplay?.decision(p, "craft-rite", recipeId, telemetryBefore, result.success);
-    socket.emit("rite:craftResult", result);
-  });
-
-  socket.on("rite:setLoadout", (payload) => {
-    const p = liveSelf();
-    const reject = (reason: string): void => { socket.emit("build:loadoutResult", { system: "rites", success: false, reason }); };
-    if (!p) return reject(NOT_LIVE_REASON);
-    if (!payload || !Array.isArray(payload.riteIds) || payload.riteIds.some(id => typeof id !== "string")) return reject("Malformed Rite loadout.");
-    const riteIds = payload.riteIds;
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = setRiteLoadout(world, p, riteIds);
-    world.gameplay?.decision(p, "rites", null, telemetryBefore, result.success);
-    socket.emit("build:loadoutResult", { system: "rites", ...result });
   });
 
   socket.on("inventory:upgradeItem", (itemId: string) => {

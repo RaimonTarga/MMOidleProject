@@ -22,7 +22,6 @@
  */
 
 import {
-  PREDATOR_DETECTION_REDUCTION,
   addCounter,
   applyStatusEffect,
   getCounter,
@@ -42,9 +41,8 @@ import {
 } from "../../combat/buffs/descriptor";
 
 // ── Status-effect ids (player tracksCombat) ─────────────────────────────────────
-// Exported so the Hunter's Instinct rite (system rework Step 11) can reuse the same
-// on-kill haste buff — the `mob-haste` descriptor projects it unconditionally.
-export const FOREST_HASTE = "mob-forest-haste"; // on-kill speed (Plains boots + Hunter's Instinct)
+// The `mob-haste` descriptor projects the on-kill haste buff unconditionally.
+export const FOREST_HASTE = "mob-forest-haste"; // on-kill speed (Plains boots)
 const GRAVEYARD_HASTE = "mob-graveyard-haste"; // Graveyard on-kill speed + tenacity (stacks)
 const VOLCANIC_SUPPRESS = "mob-volcanic-suppress"; // Volcanic: suppresses passive speed on hit
 
@@ -171,10 +169,7 @@ function isClosingOnTarget(world: World, player: PlayerEntity): boolean {
  */
 export function playerDetectionMult(player: PlayerEntity): number {
   const p = player.usesSkills.passives;
-  const stealth = (p["mobility.stealth-pct"] ?? 0)
-    + (player.tracksProgression.activeStance === "predator-stance"
-      ? PREDATOR_DETECTION_REDUCTION
-      : 0);
+  const stealth = p["mobility.stealth-pct"] ?? 0;
   const pull = p["mobility.aggro-pull-pct"] ?? 0;
   // Terrain can broadcast the player (jungle thicket). Read straight off the node
   // feature rather than a status effect — see the note on `detectionMultWhileInside`.
@@ -345,7 +340,7 @@ export const MOBILITY_BUFFS = [
     { ...NEUTRAL_CIRCLE, color: "#7cfc00", label: "Sprint" },
   ),
 
-  // Plains — on-kill haste (also projected by the Hunter's Instinct rite).
+  // Plains — on-kill haste.
   defineBuff(
     "mob-haste",
     ({ playerCs }) => {

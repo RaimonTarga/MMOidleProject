@@ -1,6 +1,6 @@
 /**
  * The human name for every `mechanicEffects` key that can reach a player-facing
- * surface (item tooltips, upgrade diffs, crafting rows, stance/rite cards).
+ * surface (item tooltips, upgrade diffs, crafting rows).
  *
  * WHY THIS LIVES IN `shared/` AND NOT NEXT TO THE RENDERER
  * -------------------------------------------------------
@@ -14,7 +14,7 @@
  * The fix is an invariant test, and the test runner only discovers
  * `server/test/*.test.ts` and `shared/src/**\/*.test.ts` — so the table has to be
  * here for `mechanicLabels.test.ts` to guard it. That test derives the authored
- * key set from the recipe/item/stance data itself, so it fails the moment someone
+ * key set from the recipe/item data itself, so it fails the moment someone
  * authors an effect key without writing a label for it.
  *
  * WHAT IS AND IS NOT HERE
@@ -24,9 +24,9 @@
  * - FORMATTERS (`15%` vs `1.5×` vs `4s`) stay in `itemDisplay.ts`. Those are
  *   presentation and belong with the renderer.
  *
- * SCOPE. This covers the namespaces that gear, cores, relics, stances and rites
+ * SCOPE. This covers the namespaces that gear and relics
  * can author: `defense`, `mobility`, `shared`/`weapon`, `summoner`, `guard`,
- * `technique`, `core`, `rite`, `relic`. The class-mechanic namespaces
+ * `technique`, `relic`. The class-mechanic namespaces
  * (`cadence`, `cooldown`, `reload`, `energy`, `dot`) are authored on skill-tree
  * nodes only, never on an item, and are rendered by the rule-driven engine in
  * `client/src/ui/describe/passiveText.ts`. If an item ever authors one, the test
@@ -170,33 +170,6 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   'guard.cleanse-pulse':                  { label: 'Pulse on Cleanse' },
   'guard.recovery-ramp-advance-ms':       { label: 'Ramp on Guard' },
   'recovery.cooldown-reduction-pct':      { label: 'Recovery skill cooldown' },
-
-  // ── Cores. Every `-mult` here is a FRACTION on the final summed stat
-  //    (0.15 = +15%), not a multiplier — see the formatter table. ─────────────
-  'core.damage-dealt-pct': { label: 'Final damage dealt' },
-  'core.damage-taken-pct': { label: 'Final damage taken' },
-  'core.attack-mult':                     { label: 'Attack' },
-  'core.maxhp-mult':                      { label: 'Max HP' },
-  'core.plating-mult':                    { label: 'Plating' },
-  'core.speed-mult':                      { label: 'Move speed' },
-  'core.attack-speed-mult':               { label: 'Attack speed' },
-  'core.dr-layer-pct':                    { label: 'Core damage reduction' },
-  'core.recovery-mult':                   { label: 'Recovery rate' },
-  'core.focus-damage-per-hit-mult':       { label: 'Focus direct damage per hit' },
-  'core.focus-max-stacks':                { label: 'Maximum Focus', companion: true },
-  'core.onhit-mult':                      { label: 'On-hit damage' },
-  'core.debuff-duration-mult':            { label: 'Debuff duration' },
-  'core.debuff-potency-mult':             { label: 'Debuff potency' },
-  'core.mobility-cooldown-reduction-pct': { label: 'Mobility cooldown' },
-  'core.mobility-refund-on-kill-pct':     { label: 'Mobility refund on kill' },
-
-  // ── Rites (out-of-combat behaviour) ────────────────────────────────────────
-  'rite.ooc-regen-delay-reduction-pct':   { label: 'Faster recovery' },
-  'rite.ooc-cleanse-stacks':              { label: 'Out-of-combat cleanse' },
-  'rite.ooc-cleanse-interval-ms':         { label: 'Cleanse rate', companion: true },
-  'rite.ooc-buff-decay-slowdown-pct':     { label: 'Buffs linger' },
-  'rite.on-kill-haste-pct':               { label: 'Haste on kill' },
-  'rite.on-kill-haste-ms':                { label: 'Haste time', companion: true },
 
   // ── Relic ratings (title-case: these are named stats in the relic UI) ──────
   'relic.mechanic-frequency':             { label: 'Mechanic Frequency' },

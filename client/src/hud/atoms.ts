@@ -6,7 +6,6 @@ import type {
   HasAutoIntent,
   EquipmentMap,
   AttunedAbilities,
-  EquippedStances,
   EquippedRule,
   EssenceType,
   PartyMember,
@@ -41,7 +40,6 @@ const DEFAULT_EQUIPMENT: EquipmentMap = {
   armor: null,
   recovery: null,
   mobility: null,
-  core: null,
   relic: null,
 };
 
@@ -221,7 +219,7 @@ export const unlockedRecipesAtom = atom<string[]>([]);
 export const bossesClearedAtom = atom<string[]>([]);
 export const visitedNodesAtom = atom<string[]>([]);
 export const biomeLevelAtom = atom<Record<string, number>>({});
-/** Derived sum of all biome levels (system rework Step 4) — RP budget + upgrade ceiling. */
+/** Derived sum of all biome levels (system rework Step 4) — the upgrade ceiling. */
 export const globalMasteryAtom = atom((get) => globalMastery(get(biomeLevelAtom)));
 export const biomeXPAtom = atom<Record<string, number>>({});
 export const questProgressAtom = atom<Record<string, number>>({});
@@ -299,13 +297,6 @@ export function notifyAbilityCooldownSample(
     ...prev,
     [abilityId]: { remainingMs, totalMs, observedAt: Date.now() },
   });
-}
-
-/** Client receipt time for the authoritative shared stance-switch cooldown. */
-export const stanceCooldownStartedAtAtom = atom<number>(0);
-
-export function notifyStanceCooldownStarted(): void {
-  getDefaultStore().set(stanceCooldownStartedAtAtom, Date.now());
 }
 
 /**
@@ -396,7 +387,6 @@ export const dungeonAtom = atom<DungeonView | null>(null);
 export const partyAtom = atom<{ leaderId: string; members: PartyMember[] } | null>(null);
 
 export const runesOwnedAtom = atom<string[]>([]);
-export const runeRecipesCraftedAtom = atom<string[]>([]);
 export const runesEquippedAtom = atom<EquippedRule[]>([]);
 
 /** Abilities learned (crafted) — the slottable pool (system rework Step 7). */
@@ -407,17 +397,6 @@ export const attunedAbilitiesAtom = atom<AttunedAbilities>({
   guards: [],
 });
 
-/** Stances learned (crafted) — the slottable pool (system rework Step 10). */
-export const attunedStancesAtom = atom<string[]>([]);
-export const knownStancesAtom = atom<string[]>([]);
-/** Attuned default posture. Automated destinations live on individual Rune rules. */
-export const equippedStancesAtom = atom<EquippedStances>({
-  default: null,
-});
-/** Which posture is currently active (folded into stats). */
-export const activeStanceAtom = atom<string | null>(null);
-/** Runtime manual owner; null means default/Rune AUTO stance control. */
-export const manualStanceOverrideAtom = atom<string | null>(null);
 /** Server-authoritative manual ability requests waiting to become legal. */
 export const queuedAbilityIdsAtom = atom<string[]>([]);
 
@@ -430,19 +409,12 @@ export function notifyCombatControlResult(result: { success: boolean; reason?: s
   );
 }
 
-/** Rites learned (crafted) — the slottable pool (system rework Step 11). */
-export const knownRitesAtom = atom<string[]>([]);
-/** Equipped rites — interchangeable list (always-on OOC), length ≤ riteSlots. */
-export const equippedRitesAtom = atom<string[]>([]);
-/** Number of rite slots available (GM-derived; flat 2 for v1). */
-export const riteSlotsAtom = atom<number>(0);
-
 export const skillTreeOpenAtom = atom<boolean>(false);
-export type BuildPanelTab = 'abilities' | 'stances' | 'rites' | 'runes';
+export type BuildPanelTab = 'abilities' | 'runes';
 export const buildOpenAtom = atom<boolean>(false);
 /**
- * The four arrangement surfaces share one dialog, and the rail gives each its
- * own entry: opening Stances is opening this dialog on the stances tab. The
+ * The arrangement surfaces share one dialog, and the rail gives each its
+ * own entry: opening Runes is opening this dialog on the runes tab. The
  * identifiers keep the `build*` prefix from the old combined Loadout dialog:
  * renaming them reaches a dozen files for no player-visible gain.
  */
@@ -730,13 +702,6 @@ function setAttunedAbilities(next: AttunedAbilities): void {
   store.set(attunedAbilitiesAtom, next);
 }
 
-function setEquippedStances(next: EquippedStances): void {
-  const store = getDefaultStore();
-  const prev = store.get(equippedStancesAtom);
-  if (prev.default === next.default) return;
-  store.set(equippedStancesAtom, next);
-}
-
 function buffsEqual(a: readonly PlayerBuff[], b: readonly PlayerBuff[]): boolean {
   if (a === b) return true;
   if (a.length !== b.length) return false;
@@ -845,20 +810,11 @@ function resetPlayerAtoms(): void {
   setIfChanged(summonRespawnMaxMsAtom, 0);
   setIfShallowArrayEqual(unlockedSkillsAtom, []);
   setIfShallowArrayEqual(runesOwnedAtom, []);
-  setIfShallowArrayEqual(runeRecipesCraftedAtom, []);
   setRunesEquipped([]);
   setIfShallowArrayEqual(knownAbilitiesAtom, []);
   setAttunedAbilities({ techniques: [], guards: [] });
-  setIfShallowArrayEqual(attunedStancesAtom, []);
-  setIfShallowArrayEqual(knownStancesAtom, []);
-  setEquippedStances({ default: null });
-  setIfChanged(activeStanceAtom, null);
-  setIfChanged(manualStanceOverrideAtom, null);
   setIfChanged(queuedAbilityIdsAtom, []);
   store.set(combatControlFeedbackAtom, null);
-  setIfShallowArrayEqual(knownRitesAtom, []);
-  setIfShallowArrayEqual(equippedRitesAtom, []);
-  setIfChanged(riteSlotsAtom, 0);
   setIfShallowArrayEqual(inventoryAtom, []);
   setIfShallowArrayEqual(unlockedRecipesAtom, []);
   setIfShallowArrayEqual(bossesClearedAtom, []);
@@ -866,7 +822,6 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(activeBuffsAtom, []);
   store.set(abilityFiredAtAtom, {});
   store.set(abilityCooldownStartedAtAtom, {});
-  store.set(stanceCooldownStartedAtAtom, 0);
   store.set(abilityCastAtom, null);
   store.set(armedAbilityIdAtom, null);
   store.set(lastCleanseAtAtom, 0);
@@ -974,19 +929,10 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfShallowArrayEqual(wardsAtom, player.wards);
   setIfShallowArrayEqual(unlockedSkillsAtom, player.unlockedSkills);
   setIfShallowArrayEqual(runesOwnedAtom, player.runesOwned);
-  setIfShallowArrayEqual(runeRecipesCraftedAtom, player.runeRecipesCrafted);
   setRunesEquipped(player.runesEquipped);
   setIfShallowArrayEqual(knownAbilitiesAtom, player.knownAbilities);
   setAttunedAbilities(player.attunedAbilities);
-  setIfShallowArrayEqual(attunedStancesAtom, player.attunedStances);
-  setIfShallowArrayEqual(knownStancesAtom, player.knownStances);
-  setEquippedStances(player.equippedStances);
-  setIfChanged(activeStanceAtom, player.activeStance);
-  setIfChanged(manualStanceOverrideAtom, player.manualStanceOverride);
   setIfChanged(queuedAbilityIdsAtom, player.queuedAbilityIds);
-  setIfShallowArrayEqual(knownRitesAtom, player.knownRites);
-  setIfShallowArrayEqual(equippedRitesAtom, player.equippedRites);
-  setIfChanged(riteSlotsAtom, player.riteSlots);
   setIfShallowArrayEqual(inventoryAtom, player.inventory);
   setIfShallowArrayEqual(unlockedRecipesAtom, player.unlockedRecipes);
   setIfShallowArrayEqual(bossesClearedAtom, player.bossesCleared);

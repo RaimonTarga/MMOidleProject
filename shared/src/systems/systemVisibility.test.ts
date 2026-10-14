@@ -12,11 +12,6 @@ const FRESH: SystemVisibilityInput = {
   globalMastery: 0,
   knownAbilities: [],
   attunedAbilities: { techniques: [], guards: [] },
-  knownStances: [],
-  equippedStances: { default: null },
-  activeStance: null,
-  knownRites: [],
-  equippedRites: [],
   essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
   // Fresh characters own starter rune fragments, so Loadout is intentionally
   // present from boot under the existing ownership rule.
@@ -113,23 +108,16 @@ for (const system of ["crafting", "mastery", "abilities", "abilityDock"] as cons
   assert(!tierOne[system], `tier 1 should not bypass the '${system}' milestone`);
 }
 
-const tierTwo = resolveSystemVisibility({ ...FRESH, playerTier: 2 });
-assert(tierTwo.stances, "stances should retain their tier 2 gate");
-const tierThree = resolveSystemVisibility({ ...FRESH, playerTier: 3 });
-assert(tierThree.rites, "rites should retain their tier 3 gate");
 
 const ownershipCases: Array<
   [string, Partial<SystemVisibilityInput>, keyof typeof fresh]
 > = [
   ["has an ability equipped", { attunedAbilities: { techniques: ["sweep"], guards: [] } }, "abilities"],
-  ["knows a stance", { knownStances: ["offensive-stance"] }, "stances"],
-  ["knows a rite", { knownRites: ["rite-a"] }, "rites"],
   ["has unlocked recipes", { unlockedRecipes: ["crude-dagger"] }, "materials"],
   ["has allocated passives", { passives: { "defense.evade": 1 } }, "passiveTree"],
   ["has an unspent skill point", { skillPoints: 1 }, "passiveTree"],
   ["has equipment on", { hasEquipment: true }, "inventory"],
   ["has global mastery", { globalMastery: 1 }, "mastery"],
-  ["has crafted a rune", { runeRecipesCrafted: ["rune-recipe-a"] }, "crafting"],
 ];
 
 for (const [description, signal, system] of ownershipCases) {

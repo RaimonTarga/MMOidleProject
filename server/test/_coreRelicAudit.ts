@@ -30,10 +30,8 @@ function fixture(archetype: 'cadence' | 'cooldown' | 'reload' | 'dot' | 'energy'
       
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
       questProgress: {}, playerTier: 4, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
-      runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
+      runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [], equippedStances: { default: null }, activeStance: null,
-      knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {
@@ -79,30 +77,6 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy', 'summoner'
 }
 console.log('MATRIX', JSON.stringify(matrix));
 
-for (const mode of ['normal', 'laser', 'frenzy'] as const) {
-  const { world, player } = fixture(mode === 'normal' ? null : mode === 'laser' ? 'reload' : 'dot');
-  const target = targetFor(world);
-  player.dealsDamage.attack = 100;
-  player.dealsDamage.onHitDamage = mode === 'frenzy' ? 0 : 20;
-  if (mode === 'laser') {
-    player.usesSkills.passives['reload.laser'] = 1;
-    player.usesSkills.passives['reload.laser-damage-per-tick-pct'] = 1;
-  }
-  if (mode === 'frenzy') {
-    player.usesSkills.passives['dot.frenzy'] = 1;
-    player.usesSkills.passives['dot.frenzy-onhit-per-tier'] = 20;
-    applyStatusEffect(player.tracksCombat, { id: 'dot-frenzy', sourceId: player.isPlayer.id, remainingMs: 5000 });
-  }
-  const damages: number[] = [];
-  for (const mult of [0, 1.15]) {
-    player.usesSkills.passives['core.onhit-mult'] = mult;
-    const hp = target.hasHealth.hp;
-    if (mode === 'laser') updateReloadT3Ticks(world, 100, 2000);
-    else runPlayerAttack(world, player, target, 2000, { attackOrigin: player.hasPosition.current, aggroSource: { id: player.isPlayer.id, kind: 'player' } });
-    damages.push(hp - target.hasHealth.hp);
-  }
-  console.log('CATALYST', JSON.stringify({ mode, damages, sheetOnHit: player.dealsDamage.onHitDamage }));
-}
 {
   const { player } = fixture('cadence');
   player.usesSkills.passives['cadence.empowered-threshold'] = 5;
@@ -116,7 +90,6 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy'] as const) 
   const input = { attack: 100, onHitDamage: 20, attackCooldownMs: 1000, archetype: root, passives: player.usesSkills.passives, selectedSubVariant: 'balanced' as const, playerTier: 4 };
   const before = estimatePlayerDps(input).total;
   const frequencyOnly = estimatePlayerDps({ ...input, passives: { ...input.passives, 'relic.mechanic-frequency': 0.35 } }).total;
-  const catalyst = estimatePlayerDps({ ...input, passives: { ...input.passives, 'core.onhit-mult': 1.15 } }).total;
-  console.log('DPS', JSON.stringify({ root, before, frequencyOnly, catalyst }));
+  console.log('DPS', JSON.stringify({ root, before, frequencyOnly }));
 }
 

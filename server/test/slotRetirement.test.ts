@@ -40,10 +40,8 @@ function makeSlices(id: string, opts: { essence?: number; nodeId?: string } = {}
       biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 4, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [],
-      runesOwned: [], runeRecipesCrafted: [], runesEquipped: [],
+      runesOwned: [], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [], equippedStances: { default: null }, activeStance: null,
-      knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: { ...emptyEquipment() }, itemUpgrades: {} },
     usesSkills: {

@@ -4,16 +4,13 @@
  *
  * Covers the 36 T3→T4 lineages (26 distinct predecessors, 10 branch groups), the T4
  * gear cost curves / lifetime ratios / hybrid splits / catalyst schedule+families, the
- * four T4 ability prices, the locked T3/T4 Stance/Core redistribution, the normalized
+ * four T4 ability prices, the normalized
  * T4 Relic economy, the Trench monster essence-colour correction, and the no-regression
- * pins on Runes/Rites and the GM architecture.
+ * pins on Runes and the GM architecture.
  */
 import {
   RECIPE_DATABASE,
   ABILITY_RECIPE_DATABASE,
-  STANCE_RECIPE_DATABASE,
-  RITE_RECIPE_DATABASE,
-  RUNE_RECIPE_DATABASE,
   maxGlobalMasteryAtTier,
   globalMasteryRequiredForUpgrade,
 } from "@mmo-idle/shared";
@@ -32,7 +29,7 @@ const essenceTotal = (cost: Partial<Record<string, number>> | undefined): number
 // ═══════════════════════════════════════════════════════════════════════════
 
 const t4Gear: Recipe[] = [...RECIPE_DATABASE.values()].filter(
-  (r) => r.tier === 4 && r.slot !== "relic" && r.slot !== "core",
+  (r) => r.tier === 4 && r.slot !== "relic",
 );
 
 assert(t4Gear.length === 40, `expected 40 ordinary T4 gear items, got ${t4Gear.length}`);
@@ -243,45 +240,6 @@ for (const [id, spec] of Object.entries(EXPECTED_ABILITIES)) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 10. Final T4 Stance placement and economy
-// ═══════════════════════════════════════════════════════════════════════════
-
-{
-  const STANCES: Array<{
-    id: string;
-    group: string;
-    level: number;
-    cost: Record<string, number>;
-  }> = [
-    { id: "stance-recipe-perfection", group: "jungle", level: 14, cost: { green: 450 } },
-    { id: "stance-recipe-time-to-strike", group: "mountain", level: 20, cost: { blue: 450 } },
-    { id: "stance-recipe-brawler", group: "jungle", level: 14, cost: { green: 500 } },
-    { id: "stance-recipe-reaper", group: "volcanic", level: 8, cost: { red: 500 } },
-    { id: "stance-recipe-recuperating", group: "graveyard", level: 2, cost: { purple: 450 } },
-    { id: "stance-recipe-powering-up", group: "trench", level: 2, cost: { green: 550 } },
-  ];
-  assert(STANCES.length === 6, "T4 must have exactly six placed Stances");
-  for (const spec of STANCES) {
-    const stance = STANCE_RECIPE_DATABASE.get(spec.id);
-    assert(!!stance, `${spec.id}: stance recipe must exist`);
-    assert(stance!.tier === 4, `${spec.id}: must be a T4 Stance`);
-    assert(stance!.recipeGroup === spec.group, `${spec.id}: biome gate must be ${spec.group}`);
-    assert(stance!.requiredBiomeLevel === spec.level, `${spec.id}: gate must be ${spec.group} L${spec.level}`);
-    assert(JSON.stringify(stance!.cost) === JSON.stringify(spec.cost), `${spec.id}: essence cost must be exact`);
-    assert(essenceTotal(stance!.cost) >= 400 && essenceTotal(stance!.cost) <= 600, `${spec.id}: T4 stance essence must be in 400-600`);
-    assert(!stance!.requiredBossClear, `${spec.id}: must not require a boss clear`);
-  }
-  const t4StanceIds = [...STANCE_RECIPE_DATABASE.values()]
-    .filter((recipe) => recipe.tier === 4)
-    .map((recipe) => recipe.id)
-    .sort();
-  assert(
-    JSON.stringify(t4StanceIds) === JSON.stringify(STANCES.map((spec) => spec.id).sort()),
-    `T4 Stance roster must be exactly the six (got ${t4StanceIds.join(", ")})`,
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
 // 11. Trench essence correction: 3 monsters + boss are green; warden untouched
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -323,59 +281,6 @@ for (const [id, snap] of Object.entries(TRENCH_MONSTER_SNAPSHOT)) {
 
 assert([...RECIPE_DATABASE.values()].every((r) => r.slot !== "relic"), "no recipe makes a relic item");
 
-// ═══════════════════════════════════════════════════════════════════════════
-// 13. Final Core tier split and no-regression pins
-// ═══════════════════════════════════════════════════════════════════════════
-
-{
-  const rune = RUNE_RECIPE_DATABASE.get("rune-recipe-focus-elites");
-  assert(!!rune, "rune-recipe-focus-elites must exist");
-  assert(rune!.tier === 4 && rune!.recipeGroup === "graveyard" && rune!.requiredBiomeLevel === 4, "rune-recipe-focus-elites gate must be unchanged");
-  assert(JSON.stringify(rune!.cost) === JSON.stringify({ purple: 320, blue: 140 }), "rune-recipe-focus-elites cost must be unchanged");
-  assert(RUNE_RECIPE_DATABASE.size >= 1, "rune database must still contain the T4 rune");
-}
-
-{
-  // Zero T4 rites, exactly 6 tier-3 rites (unchanged count/shape).
-  const rites = [...RITE_RECIPE_DATABASE.values()];
-  const t4Rites = rites.filter((r) => r.tier === 4);
-  assert(t4Rites.length === 0, "zero T4 rites must remain zero — no new T4 Rite content");
-  assert(rites.filter((r) => r.tier === 3).length === 6, "rite database must still contain exactly 6 tier-3 rites");
-}
-
-{
-  const CORES: Array<{
-    id: string;
-    group: string;
-    level: number;
-    cost: Record<string, number>;
-  }> = [
-    { id: "core-juggernaut", group: "mountain", level: 22, cost: { blue: 2200 } },
-    { id: "core-controller", group: "graveyard", level: 4, cost: { purple: 2100 } },
-    { id: "core-catalyst", group: "volcanic", level: 10, cost: { red: 2300 } },
-  ];
-  const cores = [...RECIPE_DATABASE.values()].filter((r) => r.slot === "core");
-  assert(cores.length === 12, `expected 12 Core recipes total, got ${cores.length}`);
-  assert(cores.filter((c) => c.tier === 2).length === 3, "final Core split must retain 3 T2 Cores");
-  assert(cores.filter((c) => c.tier === 3).length === 6, "final Core split must retain 6 T3 Cores");
-  assert(cores.filter((c) => c.tier === 4).length === 3, "final Core split must place 3 T4 Cores");
-  for (const spec of CORES) {
-    const core = RECIPE_DATABASE.get(spec.id);
-    assert(!!core, `${spec.id}: T4 Core recipe must exist`);
-    assert(core!.slot === "core" && core!.tier === 4, `${spec.id}: must be a T4 Core`);
-    assert(core!.recipeGroup === spec.group, `${spec.id}: home must be ${spec.group}`);
-    assert(core!.requiredBiomeLevel === spec.level, `${spec.id}: gate must be ${spec.group} L${spec.level}`);
-    assert(JSON.stringify(core!.cost) === JSON.stringify(spec.cost), `${spec.id}: essence cost must be exact`);
-    assert(essenceTotal(core!.cost) >= 2000 && essenceTotal(core!.cost) <= 2500, `${spec.id}: T4 Core essence must be in 2000-2500`);
-    assert(!core!.requiredBossClear, `${spec.id}: must not require a boss clear`);
-  }
-  const t4CoreIds = cores.filter((core) => core.tier === 4).map((core) => core.id).sort();
-  assert(
-    JSON.stringify(t4CoreIds) === JSON.stringify(CORES.map((spec) => spec.id).sort()),
-    `T4 Core roster must be exactly the locked three (got ${t4CoreIds.join(", ")})`,
-  );
-}
-
 // GM architecture: T4 gates untouched by this economy-only pass.
 assert(maxGlobalMasteryAtTier(4) === 156, "max GM at tier 4 must remain 156");
 {
@@ -390,21 +295,13 @@ assert(maxGlobalMasteryAtTier(4) === 156, "max GM at tier 4 must remain 156");
 const T4_CAP: Record<string, number> = {
   mountain: 24, jungle: 18, desert: 18, tundra: 12, volcanic: 12, graveyard: 6, trench: 6,
 };
-const t4Cores = [...RECIPE_DATABASE.values()].filter((r) => r.slot === "core" && r.tier === 4);
-const t4Stances = [...STANCE_RECIPE_DATABASE.values()].filter((r) => r.tier === 4);
-for (const r of [...t4Gear, ...t4Cores]) {
+for (const r of t4Gear) {
   const cap = T4_CAP[r.recipeGroup];
   assert(cap !== undefined, `${r.id}: recipeGroup ${r.recipeGroup} must have a known T4 cap`);
   assert(r.requiredBiomeLevel <= cap, `${r.id}: requiredBiomeLevel ${r.requiredBiomeLevel} must not exceed T4 cap ${cap} for ${r.recipeGroup}`);
   for (const step of r.upgrades ?? []) {
     assert(step.requiredBiomeLevel <= cap, `${r.id}: an upgrade step's requiredBiomeLevel must not exceed T4 cap ${cap}`);
   }
-}
-for (const stance of t4Stances) {
-  const cap = T4_CAP[stance.recipeGroup!];
-  assert(cap !== undefined, `${stance.id}: recipeGroup ${stance.recipeGroup} must have a known T4 cap`);
-  assert(stance.requiredBiomeLevel! <= cap, `${stance.id}: requiredBiomeLevel ${stance.requiredBiomeLevel} must not exceed T4 cap ${cap}`);
-  assert(!stance.requiredBossClear, `${stance.id}: must not require a boss clear`);
 }
 
 console.log("t4ProgressionEconomy: ok");

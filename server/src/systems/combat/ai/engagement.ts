@@ -2,7 +2,6 @@ import { GAME_CONFIG } from "@mmo-idle/shared";
 import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import type { PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
-import { applyCombatEndRites, combatExitDelay } from "../../player/rites/riteOoc";
 
 export type PlayerCombatPhase = "ACTIVE" | "POST_COMBAT" | "OUT_OF_COMBAT";
 
@@ -27,8 +26,8 @@ export function isPlayerActivelyInCombat(world: World, player: PlayerEntity): bo
  * The out-of-combat reset window: how long after the player's last engagement
  * the fight counts as over (`updateCombatTransitions`). The one source for it.
  */
-export function outOfCombatResetMs(player: PlayerEntity): number {
-  return combatExitDelay(player, GAME_CONFIG.COMBAT_REGEN_DELAY);
+export function outOfCombatResetMs(_player: PlayerEntity): number {
+  return GAME_CONFIG.COMBAT_REGEN_DELAY;
 }
 
 export function playerCombatPhase(world: World, player: PlayerEntity, now: number): PlayerCombatPhase {
@@ -51,7 +50,6 @@ export function updateCombatTransitions(world: World, now: number): void {
   for (const player of world.livePlayers) {
     if (player.tracksEngagement === undefined) continue;
     if (playerCombatPhase(world, player, now) !== "OUT_OF_COMBAT") continue;
-    applyCombatEndRites(world, player);
     clearEngagement(world, player);
   }
 }

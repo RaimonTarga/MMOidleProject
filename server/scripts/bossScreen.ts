@@ -53,7 +53,6 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import {
   MONSTER_DATABASE, NODE_BIOMES, composePlayerView,
-  runicPointLoadoutCost, runeBudgetForGlobalMastery,
 } from '@mmo-idle/shared';
 import { createBalanceWorld } from '../bench/balance/worldFactory';
 import { setupArena, teardownArena, BOT_SPAWN } from '../bench/balance/arena';
@@ -462,7 +461,6 @@ function run(cell: Night5Cell, seed: number) {
         skillPath: [...cell.build.skillPath],
         gearItemIds: { ...cell.build.gearItemIds },
         upgradeLevel: declared.upgradeLevel,
-        stance: declared.stance,
         abilities: declared.abilities,
         runeRules: declared.runeRules,
         sources: declared.sources,
@@ -475,24 +473,12 @@ function run(cell: Night5Cell, seed: number) {
       appliedPackage: {
         selectedSubVariant: view.selectedSubVariant,
         selectedRange: view.selectedRange,
-        activeStance: view.activeStance,
-        attunedStances: [...view.attunedStances ?? []],
         attunedAbilities: structuredClone(view.attunedAbilities),
         runesEquipped: structuredClone(view.runesEquipped),
         equipment: { ...view.equipment },
         itemUpgrades: { ...view.itemUpgrades },
         globalMastery: view.globalMastery,
         biomeLevel: { ...view.biomeLevel },
-      },
-      /** RP is the budget all three of stance, abilities and rules draw on. */
-      runicPoints: {
-        budget: runeBudgetForGlobalMastery(view.globalMastery),
-        cost: runicPointLoadoutCost({
-          rules: declared.runeRules as never,
-          abilities: declared.abilities,
-          stances: declared.stance ? [declared.stance] : [],
-          rites: [...view.equippedRites ?? []],
-        }),
       },
       /** Effective stats at the starting bell, after every layer has resolved. */
       effectiveStats: {

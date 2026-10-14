@@ -51,10 +51,8 @@ function persisted(id: string): PersistedPlayerSlices {
       biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 1, currentSkillTier: 1,
       bossesCleared: [], clearedNodes: [],
-      runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
+      runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [], equippedStances: { default: null }, activeStance: null,
-      knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {
@@ -262,7 +260,7 @@ assert(Math.abs(summonStep(0, true) / base - RECALL_SPEED_MULT) < 0.05, 'recalle
 // ── Recall Summons rune: situation-driven recall, Conduit only ───────────────
 {
   assert(STARTER_RUNE_IDS.includes('recall-summons'), 'Recall Summons is a starter rune');
-  assert(ACTION_DATABASE.get('recall-summons')?.cost === 1, 'Recall Summons costs 1 RP');
+  assert(ACTION_DATABASE.has('recall-summons'), 'Recall Summons is a rune action');
   const rule = { conditionId: 'target-casting', actionId: 'recall-summons' };
   const ctx: RuneContext = { hpPct: 1, inCombat: true, activelyEngaged: true, inParty: false, aggroCount: 1, combatArchetype: 'summoner' };
   assert(deriveAutoConfigFromRunes([rule], { ...ctx, enemyCharging: true }).recallSummons, 'a cast wind-up arms the recall');

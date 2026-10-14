@@ -22,8 +22,8 @@
  *    player-owned channel that already routes through `outgoingFinalDamage`.
  *
  * The magnitude lives in `data[FINAL_DAMAGE_DEALT_PCT_KEY]` (see finalDamage.ts),
- * the same key the stance burst windows use, so `resolveFinalDamageMultipliers`
- * folds all three in one place. It is deliberately NOT `DAMAGE_DEALT_PCT_KEY`
+ * the final damage-dealt key, so `resolveFinalDamageMultipliers` folds it in
+ * with the other final layers in one place. It is deliberately NOT `DAMAGE_DEALT_PCT_KEY`
  * (playerAmplifiers): that key is summed separately in the direct-attack path and
  * would double-apply here.
  */

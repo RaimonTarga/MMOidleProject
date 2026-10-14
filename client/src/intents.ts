@@ -1,4 +1,4 @@
-import type { AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, StanceSlot, Vec2 } from '@mmo-idle/shared';
+import type { AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, Vec2 } from '@mmo-idle/shared';
 
 export interface IntentMap {
   toggleAuto: undefined;
@@ -9,17 +9,11 @@ export interface IntentMap {
   setAutoTraverse: boolean;
   setAutocombatConfig: AutocombatConfig;
   setRuneLoadout: EquippedRule[];
-  craftRuneRecipe: string;
   craftAbilityRecipe: string;
   setAbilityLoadout: { equipped: AttunedAbilities };
   useAbility: string;
   manualReload: undefined;
   recallSummons: undefined;
-  craftStanceRecipe: string;
-  setStanceLoadout: { slot: StanceSlot; stanceId: string | null; attunedStances?: string[] };
-  setStanceControl: string | null;
-  craftRiteRecipe: string;
-  setRiteLoadout: { riteIds: string[] };
   activateDungeonAltar: undefined;
   unlockSkill: string;
   resetClass: undefined;

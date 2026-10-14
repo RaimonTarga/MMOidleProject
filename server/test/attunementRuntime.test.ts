@@ -1,12 +1,11 @@
 import { baseRecoveryForTier } from "@mmo-idle/shared";
 import { saveCharacter, loadCharacter } from "../src/db/playerRepo";
 import type { DB } from "../src/db/playerRepo";
-import { ABILITY_DATABASE, GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment, getCooldown, getStatusEffect, runicPointLoadoutCost, runicLoadoutFromProgression, composePlayerView } from "@mmo-idle/shared";
+import { ABILITY_DATABASE, GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment, getCooldown, getStatusEffect } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { World } from "../src/world/World";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { setAbilityLoadout } from "../src/systems/player/economy/abilityCrafting";
-import { setStanceLoadout } from "../src/systems/player/economy/stanceCrafting";
 import { updateRuneDerivedConfig } from "../src/systems/combat/ai/runeConfig";
 import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
@@ -40,18 +39,12 @@ function makePlayerSlices(): PersistedPlayerSlices {
       bossesCleared: [],
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: ["sweep", "binding-strike", "brace", "cleanse", "endure"],
       attunedAbilities: {
         techniques: ["sweep", "binding-strike"],
         guards: ["brace", "endure"],
       },
-      knownStances: [],
-      equippedStances: { default: null },
-      activeStance: null,
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: {
       inventory: [],
@@ -76,18 +69,11 @@ const slices = makePlayerSlices();
 slices.tracksProgression.playerTier = 1;
 slices.tracksProgression.knownAbilities = [...ABILITY_DATABASE.keys()];
 slices.tracksProgression.biomeLevel = { plains: 1000 };
-slices.tracksProgression.knownStances = ["offensive-stance", "tanking-stance"];
 const player = world.attachPlayerEntity(slices, "attunement-test");
 player.usesAutocombat.auto = true;
 const many = { techniques: ["sweep", "slam", "imbue-lightning", "snipe"], guards: ["brace", "endure", "cleanse", "break-free"] };
-assert(setAbilityLoadout(world, player, many).success, "T1 must allow arbitrary ability count within RP");
+assert(setAbilityLoadout(world, player, many).success, "T1 must allow an arbitrary ability count");
 assert(player.tracksProgression.attunedAbilities.techniques.length === 4, "hidden family cap");
-assert(!setStanceLoadout(world, player, "default", "offensive-stance").success, "unattuned default accepted");
-assert(setStanceLoadout(world, player, "default", "offensive-stance", ["offensive-stance", "tanking-stance"]).success, "stance attunement failed");
-const total = runicPointLoadoutCost(runicLoadoutFromProgression(player.tracksProgression));
-assert(total > 0, "authoritative cost missing");
-const view = composePlayerView(player);
-assert(view && runicPointLoadoutCost(runicLoadoutFromProgression(view)) === total, "client/server cost projection disagrees");
 const enemy = world.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 });
 assert(enemy, "monster fixture");
 setAttackTarget(world, player, enemy.isMonster.id);
@@ -109,21 +95,20 @@ player.tracksProgression.runesEquipped = player.tracksProgression.runesEquipped.
 assert(setAbilityLoadout(world, player, { ...many, techniques: ["sweep"] }).success, "unattune failed");
 assert(player.tracksProgression.runesEquipped.length === 1 && player.tracksProgression.runesEquipped[0].targetAbilityId === "sweep", "unattuning must clear only dependent rules");
 player.tracksProgression.biomeLevel = {};
-assert(!setAbilityLoadout(world, player, many).success, "over-budget expansion accepted");
-assert(setAbilityLoadout(world, player, { techniques: ["sweep"], guards: ["brace"] }).success, "cost-reducing repair rejected");
+assert(setAbilityLoadout(world, player, many).success, "attuning costs nothing, at any mastery");
 const over = makePlayerSlices();
 over.tracksProgression.knownAbilities = [...ABILITY_DATABASE.keys()];
 over.tracksProgression.attunedAbilities = many;
 over.tracksProgression.runesEquipped = [];
 const preserved = world.attachPlayerEntity(over, "over-budget");
-assert(preserved.tracksProgression.attunedAbilities.techniques.length === 4 && preserved.tracksProgression.runesEquipped.length === 0, "login must not trim over-budget choices or restore deleted rules");
+assert(preserved.tracksProgression.attunedAbilities.techniques.length === 4 && preserved.tracksProgression.runesEquipped.length === 0, "login must not trim attunement or restore deleted rules");
 async function persistenceRoundTrip() {
   let row: Record<string, unknown> = { id: "saved", accountId: "test", deletedAt: null };
   const db = { update: () => ({ set: (values: Record<string, unknown>) => { row = { ...row, ...values }; return { where: () => ({ returning: async () => [row] }) }; } }) } as unknown as DB;
   await saveCharacter(db, "saved", preserved);
   const restored = await loadCharacter(db, "test", "saved");
   assert(restored, "save/load lost character");
-  assert(restored.tracksProgression.attunedAbilities.techniques.length === 4, "save/load trimmed over-budget attunement");
+  assert(restored.tracksProgression.attunedAbilities.techniques.length === 4, "save/load trimmed attunement");
   assert(JSON.stringify(restored.tracksProgression.knownAbilities) === JSON.stringify(preserved.tracksProgression.knownAbilities), "save/load lost learning");
   assert(!("equippedAbilities" in restored.tracksProgression), "retired state survived hydration");
   console.log("attunementRuntime: ok");

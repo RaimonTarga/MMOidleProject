@@ -11,7 +11,6 @@
  */
 import {
   ITEM_DATABASE, NODE_BIOMES, RECIPE_DATABASE,
-  runeBudgetForGlobalMastery, runicPointLoadoutCost,
 } from '@mmo-idle/shared';
 import {
   BOSS3_ARMS, BOSS3_BLOCKS, BOSS3_BLOCKS_DEF, BOSS3_CAP_MS,
@@ -25,8 +24,8 @@ function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
-// Fails loudly if the bosses, their riders, the Cleanse definition, the arms or the
-// RP arithmetic have moved. This is the same function the preflight and the run call.
+// Fails loudly if the bosses, their riders, the Cleanse definition or the arms have
+// moved. This is the same function the preflight and the run call.
 assertBoss3Definitions();
 
 // ── Shape: two blocks, six roots, two arms, one seed = 24 planned observations. ────
@@ -67,7 +66,6 @@ assertBoss3Definitions();
       const src = origin.find((c) => c.className === cell.className);
       assert(!!src, `${cell.id}: no Boss2 origin for root ${cell.className}`);
       const mine = resolveSurveyPackage(cell), theirs = resolveSurveyPackage(src);
-      assert(mine.stance === theirs.stance, `${cell.id}: stance drift from its Boss2 origin`);
       assert(JSON.stringify(mine.abilities) === JSON.stringify(theirs.abilities),
         `${cell.id}: ability drift from its Boss2 origin (order included)`);
       assert(JSON.stringify(mine.runeRules) === JSON.stringify(theirs.runeRules),
@@ -99,7 +97,6 @@ assertBoss3Definitions();
       const a = resolveSurveyPackage(ref[i]!), c = resolveSurveyPackage(sub[i]!);
       assert(ref[i]!.className === sub[i]!.className, `${b.name}: arms must pair root-for-root at index ${i}`);
       // Everything the package resolves EXCEPT the guard list.
-      assert(a.stance === c.stance, `${b.name}/${ref[i]!.className}: stance differs between arms`);
       assert(a.upgradeLevel === c.upgradeLevel, `${b.name}/${ref[i]!.className}: upgrade level differs between arms`);
       assert(JSON.stringify(a.runeRules) === JSON.stringify(c.runeRules),
         `${b.name}/${ref[i]!.className}: rune rules differ between arms — no ability-specific rule may be added`);
@@ -128,9 +125,8 @@ assertBoss3Definitions();
   }
 }
 
-// ── Treatments, targeting, tier legality, and the RP budget. ──────────────────────
+// ── Treatments, targeting and tier legality. ──────────────────────────────────────
 {
-  const budget = runeBudgetForGlobalMastery(72);
   for (const b of BOSS3_BLOCKS_DEF) {
     for (const cell of BOSS3_BLOCKS[b.name]!.cells) {
       assert(cell.nodeId === b.nodeId, `${cell.id}: node drift`);
@@ -149,38 +145,6 @@ assertBoss3Definitions();
         assert(!!recipe && ITEM_DATABASE.has(id!), `${cell.id}: missing recipe/item ${id}`);
         assert(recipe.tier <= BOSS3_TIER, `${cell.id}: ${id} exceeds tier ${BOSS3_TIER}`);
       }
-      const r = resolveSurveyPackage(cell);
-      const cost = runicPointLoadoutCost({
-        rules: r.runeRules as never, abilities: r.abilities,
-        stances: r.stance ? [r.stance] : [], rites: [],
-      });
-      assert(cost <= budget, `${cell.id}: package costs ${cost} RP against a ${budget} budget`);
-    }
-  }
-}
-
-// ── The substitution FREES RP and never spends it, per root. ──────────────────────
-//
-// Freed RP is deliberately left UNSPENT. Spending it would add a second change to a
-// one-change experiment, which is the difference between a substitution effect and an
-// unreviewed build search.
-{
-  for (const b of BOSS3_BLOCKS_DEF) {
-    const ref = boss3ArmCells(b.name, 'portable-reference');
-    const sub = boss3ArmCells(b.name, 'cleanse-substitution');
-    const cost = (cell: (typeof ref)[number]) => {
-      const r = resolveSurveyPackage(cell);
-      return runicPointLoadoutCost({
-        rules: r.runeRules as never, abilities: r.abilities,
-        stances: r.stance ? [r.stance] : [], rites: [],
-      });
-    };
-    for (let i = 0; i < ref.length; i++) {
-      const before = cost(ref[i]!), after = cost(sub[i]!);
-      assert(after <= before,
-        `${b.name}/${ref[i]!.className}: the substitution costs ${after} RP against ${before} — it may only free RP`);
-      assert(before - after === 2,
-        `${b.name}/${ref[i]!.className}: expected the substitution to free exactly 2 RP (${BOSS3_GUARD_OUT} 5 -> ${BOSS3_GUARD_IN} 3), got ${before - after}`);
     }
   }
 }

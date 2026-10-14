@@ -52,17 +52,17 @@ import type { ClassLineDef } from './systems/classGear';
 
 // ─── Equipment slots ──────────────────────────────────────────────────────────
 
-export type EquipmentSlot = 'weapon' | 'armor' | 'recovery' | 'mobility' | 'core' | 'relic';
+export type EquipmentSlot = 'weapon' | 'armor' | 'recovery' | 'mobility' | 'relic';
 
 export const EQUIPMENT_SLOTS: EquipmentSlot[] = [
-  'weapon', 'armor', 'recovery', 'mobility', 'core', 'relic',
+  'weapon', 'armor', 'recovery', 'mobility', 'relic',
 ];
 
 /** Null in a slot means nothing is equipped there. */
 export type EquipmentMap = Record<EquipmentSlot, string | null>;
 
 export function emptyEquipment(): EquipmentMap {
-  return { weapon: null, armor: null, recovery: null, mobility: null, core: null, relic: null };
+  return { weapon: null, armor: null, recovery: null, mobility: null, relic: null };
 }
 
 /** Hydration-safe normalization for saves written before newer slots existed. */
@@ -71,28 +71,6 @@ export function normalizeEquipment(
 ): EquipmentMap {
   return { ...emptyEquipment(), ...(stored ?? {}) };
 }
-
-// ─── Cores (system rework Step 9) ───────────────────────────────────────────────
-
-/**
- * Eligibility category for a core (the 5th equipment slot's build amplifier).
- *   melee        — CLOSE range builds only. Compensates for the structural cost of
- *                  staying in contact range, so it may combine offence, bulk and
- *                  threat control more aggressively. Dedicated tanking lives here.
- *   ranged       — MID and FAR builds. "Ranged" means non-melee positional combat,
- *                  not maximum distance: mid and far share one pool and differ by
- *                  how well their class exploits it.
- *   unrestricted — every build. Lower raw-stat ceiling than a restricted core, but
- *                  may still be build-defining through synergy.
- *
- * Eligibility is BINARY: an eligible core applies its full effect, an ineligible one
- * applies nothing at all — no half-strength off-category scaling. That keeps tooltips,
- * simulation and build comparison honest.
- *
- * See systems/cores.ts `coreIsActive` (the single authority) and
- * `design_docs/CORE_DESIGN_PHILOSOPHY.md` §3–4.
- */
-export type CoreEligibility = 'melee' | 'ranged' | 'unrestricted';
 
 // ─── Item stat modifiers ──────────────────────────────────────────────────────
 
@@ -214,13 +192,6 @@ export interface ItemDefinition {
    * Recipe.element; see that field for the full contract.
    */
   element?: DamageElement;
-  /**
-   * Core slot only. Eligibility category gating the core's effect: melee/ranged apply
-   * their stats/mechanicEffects ONLY when the player's selectedRange qualifies;
-   * unrestricted always applies. Read by systems/cores.ts `coreIsActive` in the stat
-   * rebuild. Mirrors Recipe.coreEligibility.
-   */
-  coreEligibility?: CoreEligibility;
 }
 
 // ─── Mechanic-effect vocabulary ───────────────────────────────────────────────

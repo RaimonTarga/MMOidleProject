@@ -13,7 +13,7 @@ export interface GlyphTileProps {
   fallback?: ReactNode;
   /**
    * The raw number behind `value`, used only to notice a genuine change — a gear
-   * swap, a stance flip — and mark it once. Omit for figures that should never
+   * swap — and mark it once. Omit for figures that should never
    * flash, and for anything the server updates continuously.
    */
   watch?: number;

@@ -52,7 +52,6 @@ function view(overrides: Partial<TutorialView> = {}): TutorialView {
     itemUpgrades: {},
     questProgress: {},
     runesEquipped: [],
-    runeRecipesCrafted: [],
     knownAbilities: [],
     attunedAbilities: { techniques: [], guards: [] },
     bossesCleared: [],

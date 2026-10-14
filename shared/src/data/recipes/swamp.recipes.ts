@@ -205,12 +205,4 @@ export const swampRecipeEntries = [
     description: 'Nothing the bog grips holds them; they walk free of any mire that tries to keep them.',
   }],
 
-  // ── Cores ───────────────────────────────────────────────────────────────────────
-  // See the CORES header in plains.recipes.ts. Swamp owns AFFLICTION AND CONTROL —
-  // it teaches Cleanse, so it is where the debuff amplifier comes from.
-
-  // Controller's debuff specialisation is a T4 Graveyard capstone. Swamp keeps
-  // the foundational affliction equipment and Cleanse, while the premium Core
-  // moves with the later control identity.
-
 ] satisfies [string, Recipe][];

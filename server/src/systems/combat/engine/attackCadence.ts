@@ -10,8 +10,8 @@
  *
  * The cost of that design was a silent one: because the stat never changed,
  * nothing that displayed the stat ever changed either. The Attack Speed row on
- * the stat sheet reads `attackCooldown` straight, so Frenzy, both stance windows
- * and both environmental slows were all invisible to the player — the abilities
+ * the stat sheet reads `attackCooldown` straight, so Frenzy and both
+ * environmental slows were all invisible to the player — the abilities
  * worked, and looked like they did nothing.
  *
  * This module is the fix: the gate and the HUD mirror now read the SAME
@@ -25,7 +25,6 @@ import {
   ambientRampStatus,
   type TracksCombat,
 } from "@mmo-idle/shared";
-import { stanceAttackSpeedBonus } from "../../player/stances/stanceBehaviors";
 
 /**
  * Total temporary SLOW on the attack cadence, as a multiplier ≥ 1.
@@ -44,17 +43,6 @@ export function attackSlowMult(cs: TracksCombat): number {
 }
 
 /**
- * Total temporary HASTE bonus, as a fraction (0.3 = +30% attack speed).
- *
- * The stance-owned windows (Reaper momentum, Powering Up's released charge) SUM
- * rather than multiply: they are all "+X% attack speed" promises, and the shared
- * accumulator semantics say those add.
- */
-export function attackHasteBonus(cs: TracksCombat): number {
-  return Math.max(0, stanceAttackSpeedBonus(cs));
-}
-
-/**
  * The multiplier applied to `attackCooldown` at the cadence gate.
  *
  * Below 1 means attacking FASTER (a shorter interval between swings); above 1
@@ -62,6 +50,5 @@ export function attackHasteBonus(cs: TracksCombat): number {
  * the HUD uses to decide whether there is anything worth showing.
  */
 export function attackCadenceMult(cs: TracksCombat): number {
-  const haste = attackHasteBonus(cs);
-  return attackSlowMult(cs) * (haste > 0 ? 1 / (1 + haste) : 1);
+  return attackSlowMult(cs);
 }

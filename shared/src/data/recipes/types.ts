@@ -1,4 +1,4 @@
-import type { EquipmentSlot, ItemStats, EssenceType, UpgradeStep, CoreEligibility } from '../../items';
+import type { EquipmentSlot, ItemStats, EssenceType, UpgradeStep } from '../../items';
 import type { DamageElement } from '../../systems/dotElements';
 import type { MechanicEffects } from '../../passives';
 import type { ClassArchetype } from '../../classKits/types';
@@ -97,23 +97,4 @@ export interface Recipe {
    * (any boss-clear key, e.g. `mountain:4`).
    */
   requiredBossClear?: string;
-  // ── Retired with the lineage trees (class-first rework D1) ──────────────────
-  /**
-   * Read by nothing. Still authored on the core recipes only, which the core-slot
-   * removal deletes (left to it, not D1); the field goes with them.
-   */
-  lineageId?: string;
-  // ── Cores (system rework Step 9) ────────────────────────────────────────────
-  /**
-   * REQUIRED on `slot: 'core'` recipes, and must be absent on every other slot.
-   * Gates the core's effect — melee/ranged apply only when the player's selectedRange
-   * qualifies; unrestricted always applies. Carried to ItemDefinition.coreEligibility
-   * and read by systems/cores.ts `coreIsActive`.
-   *
-   * The type cannot express "required for one slot" (Recipe is one shape for every
-   * slot), so the guarantee is enforced by `server/test/coreAuthoring.test.ts`.
-   * `coreIsActive` treats a missing value as unrestricted so nothing crashes — but a
-   * core reaching players untagged is an authoring bug, not an always-on core.
-   */
-  coreEligibility?: CoreEligibility;
 }

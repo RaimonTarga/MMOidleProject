@@ -23,10 +23,8 @@ function fixture(archetype: 'cadence' | 'cooldown' | 'reload' | 'dot' | 'energy'
       
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
       questProgress: {}, playerTier: 4, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
-      runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
+      runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [], equippedStances: { default: null }, activeStance: null,
-      knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {
@@ -59,14 +57,13 @@ const attack = (world: World, player: ReturnType<typeof fixture>['player'], targ
 
 
 
-function damage(onHit: number, plating: number, dr: number, mode = 'normal', catalyst = 0): number {
+function damage(onHit: number, plating: number, dr: number, mode = 'normal'): number {
   const { world, player } = fixture(mode === 'empowered' ? 'cadence' : mode === 'laser' ? 'reload' : null);
   const target = targetFor(world);
   target.mitigatesDamage.plating = plating;
   target.mitigatesDamage.damageReduction = dr;
   player.dealsDamage.attack = 100;
   player.dealsDamage.onHitDamage = onHit;
-  player.usesSkills.passives['core.onhit-mult'] = catalyst;
   const hp = target.hasHealth.hp;
   if (mode === 'empowered') {
     player.usesSkills.passives['cadence.empowered-mult'] = 3;
@@ -88,7 +85,6 @@ for (const mode of ['normal', 'empowered', 'laser']) {
   eq(damage(20, 40, 0.5, mode) - damage(0, 40, 0.5, mode), 10, `${mode}: DR halves flat bonus without empowered scaling`);
 }
 eq(damage(20, 40, 0.5, 'slam'), damage(0, 40, 0.5, 'slam'), 'Slam is an independent cast and does not multiply on-hit');
-eq(damage(20, 40, 0.5, 'normal', 1), 50, 'Catalyst scales the bonus before defenses');
 eq(mitigateOnHitDamage(20, 100, 110, 0.5), 4, 'remaining plating absorbs part of on-hit; the existing glancing floor is paid once');
 for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy', 'summoner']) {
   const { player } = fixture(root as any);

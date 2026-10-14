@@ -292,9 +292,6 @@ type CombatEventPayload =
   // work. The damage number comes from the AoE damage event — this only drives
   // the animation.
   | { kind: 'dot-detonate'; playerId: string; pos: Vec2; element: DamageElement }
-  // A Rune changed the player's active posture. The authoritative progression
-  // delta carries the state; this event exists for immediate visual feedback.
-  | { kind: 'stance-switch'; playerId: string; stanceId: string | null }
   // A frame loop's BANK changed — progression rework Phase 3, design §10.
   //
   // Heavy frames build charge on every regular hit and spend it on the mechanic,

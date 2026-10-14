@@ -23,23 +23,22 @@ assert(hydrateHitboxCacheFromArtifact(artifact)>0);
 const capMs=180000;
 const seeds=[101009,101033];
 const cells:SurveyCell[]=[];
-function add(tier:number,cls:string,armor:string,node:string,core?:string,plus=3,frame='balanced',boss=false,stance?:string|null){
+function add(tier:number,cls:string,armor:string,node:string,plus=3,frame='balanced',boss=false,stance?:string|null){
  const base=BREADTH_CELLS.find(c=>c.tier===tier&&c.className===cls&&c.frame===frame&&c.role===(boss?'boss':'farm')&&!c.controlCaseId&&(!c.id.includes('-far-')))!;
  assert(base,`${tier}/${cls}/${frame}`);
  const cell=structuredClone(base); cell.nodeId=node; cell.upgradeLevel=plus; cell.isDungeon=boss;
  cell.build.gearItemIds.armor=armor;
- if(core)cell.build.gearItemIds.core=core;
  if(stance!==undefined)cell.stance=stance;
- cell.id=`${tier}-${cls}-${frame}-${armor}-${node}-${core??'reference'}-p${plus}-${stance??'default'}`;cell.build.id=cell.id;
+ cell.id=`${tier}-${cls}-${frame}-${armor}-${node}-reference-p${plus}-${stance??'default'}`;cell.build.id=cell.id;
  cells.push(cell);
 }
 const volcBoss=[...DUNGEON_DEFS.values()].find(d=>d.biomeTier===3&&d.boss.bossId==='cinder-shell-magma-salamander')!;
 assert(volcBoss);
 const volcNode=Object.entries(NODE_BIOMES).find(([id,n])=>n.biomeTier===3&&n.biomeGroup==='volcanic'&&id.endsWith('-03'))![0];
 const bossNode=[...DUNGEON_DEFS.entries()].find(([,d])=>d===volcBoss)![0];
-for(const core of ['core-tempered','core-force','core-scout','core-sniper'])for(const plus of [0,3]){
- add(3,'slinger','jungle-vest-t3',volcNode,core,plus,'light');
- add(3,'slinger','jungle-vest-t3',bossNode,core,plus,'light',true);
+for(const plus of [0,3]){
+ add(3,'slinger','jungle-vest-t3',volcNode,plus,'light');
+ add(3,'slinger','jungle-vest-t3',bossNode,plus,'light',true);
 }
 // All eight armor routes, home and cross-biome farm applications, same class packages.
 for(const [tier,armors] of [[2,['plains','forest','cave','mountain','swamp','jungle','desert']],[3,['volcanic','tundra','jungle','desert','cave','mountain','swamp']],[4,['volcanic','tundra','jungle','desert','trench','mountain','graveyard']]] as const){
@@ -51,7 +50,7 @@ for(const [tier,armors] of [[2,['plains','forest','cave','mountain','swamp','jun
  }
 }
 for(const cls of ['striker','apprentice','spirit','conduit'])for(const biome of ['volcanic','tundra','jungle'])add(3,cls,`${biome}-vest-t3`,volcNode);
-for(const armor of ['tundra-vest-t4','volcanic-vest-t4','trench-vest-t4'])add(4,'squire',armor,'node-t4-tundra-03','core-juggernaut',5,'heavy',false,'tanking-stance');
+for(const armor of ['tundra-vest-t4','volcanic-vest-t4','trench-vest-t4'])add(4,'squire',armor,'node-t4-tundra-03',5,'heavy',false,'tanking-stance');
 const filter=process.env.DEFENSE_CASE_FILTER;
 if(process.env.DEFENSE_FOLLOWUP==='1'){
  cells.length=0;
@@ -61,7 +60,7 @@ if(process.env.DEFENSE_FOLLOWUP==='1'){
  }
  for(const armor of ['mountain-vest-t4-stormwall','volcanic-vest-t4-lavatempered','graveyard-vest-t4-debtward'])for(const cls of ['squire','slinger'])add(4,cls,armor,'node-t4-tundra-03');
  for(const cls of ['slinger','squire','striker','apprentice','spirit','conduit']){
-  add(3,cls,cls==='slinger'?'jungle-vest-t3':'cave-vest-t3',bossNode,cls==='slinger'?'core-sniper':undefined,3,'balanced',true);
+  add(3,cls,cls==='slinger'?'jungle-vest-t3':'cave-vest-t3',bossNode,3,'balanced',true);
   const c=cells.at(-1)!;c.id+='-heat-managed';c.build.id=c.id;c.runeRules!.push({conditionId:'always',actionId:'wait-it-out',waitOutMode:'heat-managed'});
  }
 }
@@ -69,7 +68,7 @@ if(process.env.DEFENSE_FOLLOWUP==='2'){
  cells.length=0;
  for(const cls of ['striker','apprentice','spirit','conduit'])for(const armor of ['cave','swamp','mountain'])add(3,cls,`${armor}-vest-t3`,volcNode);
  for(const cls of ['slinger','squire','striker','apprentice','spirit','conduit']){
-  add(3,cls,cls==='slinger'?'jungle-vest-t3':'cave-vest-t3',bossNode,cls==='slinger'?'core-sniper':undefined,5,'balanced',true);
+  add(3,cls,cls==='slinger'?'jungle-vest-t3':'cave-vest-t3',bossNode,5,'balanced',true);
   const c=cells.at(-1)!;c.id+='-heat-managed';c.build.id=c.id;c.runeRules!.push({conditionId:'always',actionId:'wait-it-out',waitOutMode:'heat-managed'});
  }
 }

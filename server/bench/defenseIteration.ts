@@ -23,17 +23,16 @@ assert(hydrateHitboxCacheFromArtifact(artifact)>0);
 const capMs=180000;
 const seeds=process.env.DEFENSE_FRESH_SEEDS==='1'?[101051,101063,101081,101093]:[101009,101033];
 const cells:SurveyCell[]=[];
-function add(tier:number,cls:string,armor:string,node:string,core?:string,plus=3,frame='balanced',boss=false,stance?:string|null){
+function add(tier:number,cls:string,armor:string,node:string,plus=3,frame='balanced',boss=false,stance?:string|null){
  const base=BREADTH_CELLS.find(c=>c.tier===tier&&c.className===cls&&c.frame===frame&&c.role===(boss?'boss':'farm')&&!c.controlCaseId&&(!c.id.includes('-far-')))!;
  assert(base,`${tier}/${cls}/${frame}`);
  const cell=structuredClone(base); cell.nodeId=node; cell.upgradeLevel=plus; cell.isDungeon=boss;
  cell.build.gearItemIds.armor=armor;
- if(core)cell.build.gearItemIds.core=core;
  if(stance!==undefined)cell.stance=stance;
- cell.id=`${tier}-${cls}-${frame}-${armor}-${node}-${core??'reference'}-p${plus}-${stance??'default'}`;cell.build.id=cell.id;
+ cell.id=`${tier}-${cls}-${frame}-${armor}-${node}-reference-p${plus}-${stance??'default'}`;cell.build.id=cell.id;
  cells.push(cell);
 }
-// Matched armor comparisons use fixed current cores and the imported Volcano tuning.
+// Matched armor comparisons use the imported Volcano tuning.
 for(const cls of ['squire','striker','slinger','apprentice','spirit','conduit']) {
  for(const [tier,armor,home] of [[3,'desert-vest-t3','desert'],[3,'jungle-vest-t3','jungle'],[3,'cave-vest-t3','cave'],[4,'graveyard-vest-t4','graveyard'],[4,'trench-vest-t4','trench']] as const)
   for(const biome of [home,'volcanic'])add(tier,cls,armor,`node-t${tier}-${biome}-03`);

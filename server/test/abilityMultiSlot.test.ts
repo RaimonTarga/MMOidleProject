@@ -63,18 +63,12 @@ function makePlayerSlices(): PersistedPlayerSlices {
       bossesCleared: [],
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: ["sweep", "binding-strike", "brace", "cleanse", "endure"],
       attunedAbilities: {
         techniques: ["sweep", "binding-strike"],
         guards: ["brace", "endure"],
       },
-      knownStances: [],
-      equippedStances: { default: null },
-      activeStance: null,
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: {
       inventory: [],

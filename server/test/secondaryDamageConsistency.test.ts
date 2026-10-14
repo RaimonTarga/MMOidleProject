@@ -45,10 +45,8 @@ function slices(id: string, archetype: 'reload' | 'summoner' | null): PersistedP
       
       biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 1, currentSkillTier: 1,
-      bossesCleared: [], clearedNodes: [], runesOwned: [], runeRecipesCrafted: [], runesEquipped: [],
+      bossesCleared: [], clearedNodes: [], runesOwned: [], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [], equippedStances: { default: null }, activeStance: null,
-      knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: ['ashbrand-blade'], equipment, itemUpgrades: {} },
     usesSkills: {

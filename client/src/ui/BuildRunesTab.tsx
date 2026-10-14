@@ -5,14 +5,9 @@ import {
   ACTION_DATABASE,
   CONDITION_DATABASE,
   DEFAULT_RUNE_LOADOUT,
-  NO_STANCE_ID,
   analyzeRuneLoadoutConflicts,
   isRuneRuleCompatibleForArchetype,
-  runeBudgetForGlobalMastery,
   runeChannelLabel,
-  runeRuleCost,
-  runicPointLoadoutCost,
-  stanceDef,
   type EquippedRule,
 } from "@mmo-idle/shared";
 import { hudBus } from "../hudBus";
@@ -20,16 +15,11 @@ import { tutorialRuneDraftAtom } from "../tutorial/atoms";
 import {
   combatArchetypeAtom,
   attunedAbilitiesAtom,
-  equippedRitesAtom,
-  equippedStancesAtom,
-  globalMasteryAtom,
-  attunedStancesAtom,
   runesEquippedAtom,
   runesOwnedAtom,
 } from "../hud/atoms";
-import { AttunementBudget } from "./AttunementBudget";
 import { GameIcon } from "./GameIcon";
-import { runeConditionIconSource, stanceIconSource } from "./conceptIcons";
+import { runeConditionIconSource } from "./conceptIcons";
 import { RuneClause, runeResponse } from "./RuneClause";
 import { composeRuneEdit } from "@mmo-idle/shared";
 import "./buildPanel.css";
@@ -40,11 +30,7 @@ export function BuildRunesTab() {
   const owned = useAtomValue(runesOwnedAtom);
   const equipped = useAtomValue(runesEquippedAtom);
   const abilities = useAtomValue(attunedAbilitiesAtom);
-  const stances = useAtomValue(attunedStancesAtom);
-  const defaultStance = useAtomValue(equippedStancesAtom).default;
-  const rites = useAtomValue(equippedRitesAtom);
   const archetype = useAtomValue(combatArchetypeAtom);
-  const gm = useAtomValue(globalMasteryAtom);
   const [rules, setRules] = useState(equipped);
   const [draft, setDraft] = useState<Draft | null>(null);
   const editorScroll = useRef<HTMLDivElement>(null);
@@ -87,8 +73,6 @@ export function BuildRunesTab() {
     window.addEventListener("hud:loadoutResult", handler);
     return () => window.removeEventListener("hud:loadoutResult", handler);
   }, [equipped]);
-  const budget = runeBudgetForGlobalMastery(gm);
-  const spent = runicPointLoadoutCost({ rules, rites, abilities, stances });
   const groups = useMemo(() => {
     const result = new Map<Parameters<typeof runeChannelLabel>[0], number[]>();
     rules.forEach((r, i) => {
@@ -111,7 +95,7 @@ export function BuildRunesTab() {
       )
     )
       return false;
-    return (a.id !== "use-ability" || abilities.techniques.length + abilities.guards.length > 0) && (a.id !== "switch-stance" || stances.length > 0);
+    return a.id !== "use-ability" || abilities.techniques.length + abilities.guards.length > 0;
   });
   const pending: EquippedRule | null =
     draft?.conditionId && draft.actionId
@@ -120,21 +104,14 @@ export function BuildRunesTab() {
           actionId: draft.actionId,
           ...(draft.waitOutMode ? { waitOutMode: draft.waitOutMode } : {}),
           ...(draft.targetAbilityId ? { targetAbilityId: draft.targetAbilityId } : {}),
-          ...(draft.targetStanceId
-            ? { targetStanceId: draft.targetStanceId }
-            : {}),
         }
       : null;
   const response = pending ? runeResponse(pending, abilities, archetype) : null;
   const next = pending ? composeRuneEdit(rules, pending, draft!.index) : rules;
-  const nextSpent = runicPointLoadoutCost({ rules: next, rites, abilities, stances });
   const valid =
     pending &&
     !response?.missing &&
-    isRuneRuleCompatibleForArchetype(pending, archetype) &&
-    (pending.actionId !== "switch-stance" ||
-      pending.targetStanceId === NO_STANCE_ID ||
-      stances.includes(pending.targetStanceId ?? ""));
+    isRuneRuleCompatibleForArchetype(pending, archetype);
   const replaces =
     pending &&
     rules.some(
@@ -158,7 +135,6 @@ export function BuildRunesTab() {
   }
   return (
     <div className="build-tab-body rune-workspace" data-tutorial-anchor={TUTORIAL_ANCHORS.runesBoard}>
-      <AttunementBudget loadout={{ rules, rites, abilities, stances }} budget={budget} />
       {error && (
         <p className="rune-error" role="alert">
           {error}
@@ -177,7 +153,7 @@ export function BuildRunesTab() {
               <h3>When</h3>
               {draft.conditionId ? <div className="rune-step-summary">
                 <GameIcon source={runeConditionIconSource(draft.conditionId)} size={28} decorative fallback="◇" />
-                <span title={CONDITION_DATABASE.get(draft.conditionId)?.blurb}><strong>{CONDITION_DATABASE.get(draft.conditionId)?.name ?? draft.conditionId}</strong><small>{CONDITION_DATABASE.get(draft.conditionId)?.cost} RP</small></span>
+                <span title={CONDITION_DATABASE.get(draft.conditionId)?.blurb}><strong>{CONDITION_DATABASE.get(draft.conditionId)?.name ?? draft.conditionId}</strong></span>
                 <button type="button" aria-label="Change When condition" onClick={() => setDraft({ index: draft.index, conditionId: "", actionId: "" })}>↶ Change</button>
               </div> : <div className="rune-choice-grid">
                 {conditions.map((c) => (
@@ -197,7 +173,6 @@ export function BuildRunesTab() {
                         ...draft,
                         conditionId: c.id,
                         actionId: fits ? draft.actionId : "",
-                        targetStanceId: fits ? draft.targetStanceId : undefined,
                       });
                     }}
                   >
@@ -208,7 +183,6 @@ export function BuildRunesTab() {
                       fallback="◇"
                     />
                     <span>{c.name}</span>
-                    <small>{c.cost} RP</small>
                   </button>
                 ))}
               </div>}
@@ -222,8 +196,8 @@ export function BuildRunesTab() {
               )}
               {draft.actionId ? <div className="rune-step-summary">
                 <GameIcon source={runeResponse({ conditionId: draft.conditionId, actionId: draft.actionId }, abilities).icon} size={28} decorative fallback="◇" />
-                <span title={response?.detail}><strong>{ACTION_DATABASE.get(draft.actionId)?.name ?? draft.actionId}</strong><small>{ACTION_DATABASE.get(draft.actionId)?.cost} RP</small></span>
-                <button type="button" aria-label="Change Do response" onClick={() => setDraft({ ...draft, actionId: "", waitOutMode: undefined, targetAbilityId: undefined, targetStanceId: undefined })}>↶ Change</button>
+                <span title={response?.detail}><strong>{ACTION_DATABASE.get(draft.actionId)?.name ?? draft.actionId}</strong></span>
+                <button type="button" aria-label="Change Do response" onClick={() => setDraft({ ...draft, actionId: "", waitOutMode: undefined, targetAbilityId: undefined })}>↶ Change</button>
               </div> : <div className="rune-choice-grid">
                 {actions.map((a) => {
                   const view = runeResponse(
@@ -241,10 +215,6 @@ export function BuildRunesTab() {
                           ...draft,
                           actionId: a.id,
                           waitOutMode: undefined,
-                          targetStanceId:
-                            a.id === "switch-stance"
-                              ? draft.targetStanceId
-                              : undefined,
                         })
                       }
                     >
@@ -254,60 +224,15 @@ export function BuildRunesTab() {
                         decorative
                         fallback="◇"
                       />
-                      <span>
-                        {a.id === "switch-stance" ? "Switch stance" : view.name}
-                      </span>
-                      <small>{a.cost} RP</small>
+                      <span>{view.name}</span>
                     </button>
                   );
                 })}
               </div>}
-              {response && draft.actionId !== "use-ability" && draft.actionId !== "switch-stance" && <p className="rune-detail">{response.detail}</p>}
+              {response && draft.actionId !== "use-ability" && <p className="rune-detail">{response.detail}</p>}
             </section>
             {draft.actionId === "wait-it-out" && <section aria-label="Wait mode"><button type="button" aria-pressed={draft.waitOutMode !== "heat-managed"} onClick={() => setDraft({ ...draft, waitOutMode: "all" })}>All eligible statuses</button><button type="button" disabled={draft.conditionId !== "always"} aria-pressed={draft.waitOutMode === "heat-managed"} onClick={() => setDraft({ ...draft, waitOutMode: "heat-managed" })}>Manage Heat</button><p>Always only. Ordinary Volcano: 25 Heat to request a break; resume at 10. Current fights finish first.</p></section>}
-            {draft.actionId === "use-ability" && <section ref={destinationSection} tabIndex={-1} aria-label="Choose attuned ability" className="rune-editor__destinations"><h3>Choose attuned ability</h3><div className="rune-choice-grid">{[...abilities.techniques, ...abilities.guards].map(id => <button className="rune-ability-choice" type="button" key={id} data-tutorial-anchor={TUTORIAL_ANCHORS.runesAbility(id)} aria-pressed={draft.targetAbilityId === id} onClick={() => setDraft({ ...draft, targetAbilityId: id })}>{ABILITY_DATABASE.get(id)?.name}</button>)}</div><p>Attunement is already paid. This rule costs only its logic.</p></section>}
-            {draft.actionId === "switch-stance" && (
-              <section
-                ref={destinationSection}
-                tabIndex={-1}
-                aria-label="Choose stance"
-                className="rune-editor__destinations"
-              >
-                <h3>Choose stance</h3>
-                <div className="rune-choice-grid">
-                  {[NO_STANCE_ID, ...stances].map((id) => (
-                    <button
-                      type="button"
-                      key={id}
-                      aria-pressed={draft.targetStanceId === id}
-                      onClick={() => setDraft({ ...draft, targetStanceId: id })}
-                    >
-                      <GameIcon
-                        source={
-                          id === NO_STANCE_ID ? null : stanceIconSource(id)
-                        }
-                        size={28}
-                        decorative
-                        fallback="◇"
-                      />
-                      <span>{stanceDef(id)?.name ?? "No stance"}</span>
-                      <small>
-                        {runeRuleCost({
-                          conditionId: draft.conditionId,
-                          actionId: "switch-stance",
-                          targetStanceId: id,
-                        })}{" "}
-                        RP total
-                      </small>
-                    </button>
-                  ))}
-                </div>
-                <p className="rune-detail">
-                  ↩ Otherwise return to{" "}
-                  {stanceDef(defaultStance)?.name ?? "No stance"}.
-                </p>
-              </section>
-            )}
+            {draft.actionId === "use-ability" && <section ref={destinationSection} tabIndex={-1} aria-label="Choose attuned ability" className="rune-editor__destinations"><h3>Choose attuned ability</h3><div className="rune-choice-grid">{[...abilities.techniques, ...abilities.guards].map(id => <button className="rune-ability-choice" type="button" key={id} data-tutorial-anchor={TUTORIAL_ANCHORS.runesAbility(id)} aria-pressed={draft.targetAbilityId === id} onClick={() => setDraft({ ...draft, targetAbilityId: id })}>{ABILITY_DATABASE.get(id)?.name}</button>)}</div></section>}
           </div>
           <footer className="rune-draft" aria-live="polite">
             {pending ? (
@@ -320,15 +245,11 @@ export function BuildRunesTab() {
               </span>
             )}
             <div className="rune-toolbar">
-              <span>
-                {pending
-                  ? `${runeRuleCost(pending)} RP · Setup ${nextSpent} / ${budget}`
-                  : "Your saved setup stays active while you edit."}
-              </span>
+              <span>Your saved setup stays active while you edit.</span>
               <button
                 type="button"
                 data-tutorial-anchor={TUTORIAL_ANCHORS.runesCommit}
-                disabled={!valid || (nextSpent > budget && nextSpent >= spent)}
+                disabled={!valid}
                 onClick={() => commit(next)}
               >
                 {replaces
@@ -340,16 +261,9 @@ export function BuildRunesTab() {
             </div>
             {pending && !valid && (
               <span className="rune-detail">
-                {pending.actionId === "switch-stance" && !pending.targetStanceId
-                  ? "Choose the stance to switch to."
-                  : response?.missing
-                    ? "Attune the target ability before adding this rule."
-                    : "Choose a compatible response."}
-              </span>
-            )}
-            {nextSpent > budget && pending && (
-              <span className="rune-error">
-                Free {nextSpent - budget} RP to use this setup.
+                {response?.missing
+                  ? "Attune the target ability before adding this rule."
+                  : "Choose a compatible response."}
               </span>
             )}
             {replaces && (
@@ -424,12 +338,6 @@ export function BuildRunesTab() {
                         >
                           <RuneClause rule={rule} abilities={abilities} />
                           {rule.actionId === "use-ability" && <small>{runeResponse(rule, abilities).detail}</small>}
-                          {rule.actionId === "switch-stance" && (
-                            <small>
-                              ↩ Default:{" "}
-                              {stanceDef(defaultStance)?.name ?? "No stance"}
-                            </small>
-                          )}
                           {missing && (
                             <small className="rune-error">
                               Target unavailable · edit this rule
@@ -444,9 +352,6 @@ export function BuildRunesTab() {
                             </small>
                           )}
                         </button>
-                        <span className="rune-rule__cost">
-                          {runeRuleCost(rule)} RP
-                        </span>
                         <div className="rune-rule__controls">
                           <button
                             type="button"

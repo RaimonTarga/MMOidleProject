@@ -16,7 +16,6 @@
  */
 import {
   DUNGEON_DEFS, ITEM_DATABASE, MONSTER_DATABASE, NODE_BIOMES, RECIPE_DATABASE,
-  runicPointLoadoutCost, runeBudgetForGlobalMastery,
 } from '@mmo-idle/shared';
 import {
   BOSS5_ACTIVE_ROSTER, BOSS5_BLOCKS, BOSS5_BLOCKS_DEF, BOSS5_CAPS, BOSS5_CAVE_ARMS,
@@ -164,16 +163,8 @@ assertBoss5Definitions();
         assert(!!recipe && ITEM_DATABASE.has(id!), `${cell.id}: missing recipe/item ${id}`);
         assert(recipe.tier <= block.tier, `${cell.id}: ${id} is tier ${recipe.tier}, above ${block.tier}`);
       }
-      // The RESOLVED package, at the tier's own RP budget. A T2 budget would pass
-      // packages T1 cannot field, which is the whole trap.
+      // The RESOLVED package.
       const r = resolveSurveyPackage(cell);
-      const mastery = { 1: 30, 2: 72, 3: 114, 4: 156 }[block.tier]!;
-      const cost = runicPointLoadoutCost({
-        rules: r.runeRules as never, abilities: r.abilities,
-        stances: r.stance ? [r.stance] : [], rites: [],
-      });
-      assert(cost <= runeBudgetForGlobalMastery(mastery),
-        `${cell.id}: costs ${cost} RP against tier ${block.tier}'s ${runeBudgetForGlobalMastery(mastery)}`);
       assert(r.runeRules.length === 5, `${cell.id}: the reference carries five ordered behaviour rules`);
       // Nothing here is a historical result: every Boss5 row is a first observation.
       assert(!/corroborated/.test(cell.treatment!), `${cell.id}: no Boss5 row is a historical result`);

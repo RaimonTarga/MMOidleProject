@@ -13,10 +13,8 @@ export function packTestPlayerSlices(id: string, nodeId: string, x = 405, y = 40
       biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [],
-      attunedAbilities: { techniques: [], guards: [] }, knownStances: [],
-      equippedStances: { default: null }, activeStance: null,
-      knownRites: [], equippedRites: [],
+      runesEquipped: [], knownAbilities: [],
+      attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

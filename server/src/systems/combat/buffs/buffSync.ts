@@ -39,7 +39,6 @@ import { collectMechanicBuffs } from "../../classes/registry";
 import { DEFENSE_BUFFS } from "../../defense";
 import { WEAPON_BUFFS } from "../damage/weaponEffects";
 import { MOBILITY_BUFFS, slowResistedMult } from "../../world/mobility/mobilityBoots";
-import { STANCE_BUFFS } from "../../player/stances/stanceBehaviors";
 import { ABILITY_BUFFS } from "../../player/abilities/abilityBuffs";
 import { defineBuff, type BuffDescriptor, type BuffProjectionContext } from "./descriptor";
 
@@ -520,7 +519,6 @@ export const ALL_BUFFS = [
   ...WEAPON_BUFFS,
   ...DEFENSE_BUFFS,
   ...MOBILITY_BUFFS,
-  ...STANCE_BUFFS,
   ...ABILITY_BUFFS,
   ...DEBUFF_BUFFS,
 ] as const satisfies readonly BuffDescriptor[];

@@ -203,7 +203,7 @@ export interface RenderState {
   knownUnlockedRecipes: Set<string>;
   knownUnlockedRecipesInitialized: boolean;
   /**
-   * Technique/stance/rite/rune gates already seen open. These have no server
+   * Technique gates already seen open. These have no server
    * unlock list, so the client derives them from biome level — see
    * `net/gatedUnlocks.ts`.
    */

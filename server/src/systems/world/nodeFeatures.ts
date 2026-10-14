@@ -210,7 +210,7 @@ export function clearInvalidAmbientRamp(
     // Transitions can publish a sync before the next buff projection pass.
     player.hasStatus.activeBuffs = (player.hasStatus.activeBuffs ?? []).filter(b => b.id !== `debuff-${effect.id}`);
     player.hasStatus.attackCadenceMult = attackCadenceMult(player.tracksCombat);
-    const damageMults = playerFinalDamageMultipliers(player, world);
+    const damageMults = playerFinalDamageMultipliers(player);
     player.hasStatus.finalDamageDealtMult = damageMults.dealt;
     player.hasStatus.finalDamageTakenMult = damageMults.taken;
     markSliceDirty(world, player, 'hasStatus');

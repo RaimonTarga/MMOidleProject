@@ -133,7 +133,7 @@ export function activeRecoveryFraction(
   const cs = player.tracksCombat;
   const passives = player.usesSkills.passives;
 
-  // Permanent-while-in-combat access (Squire root, stances).
+  // Permanent-while-in-combat access (Squire root).
   let fraction = passives['defense.recovery-active-pct'] ?? 0;
 
   // Ramping access: interpolated from start→max over the ramp window.

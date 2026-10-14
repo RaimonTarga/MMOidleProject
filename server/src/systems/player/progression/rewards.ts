@@ -208,7 +208,7 @@ function applyKillRewardsToPlayer(
     // `baseRecoveryForTier`, `poolFactorForTier` and the T4 path on-hit scaling all
     // read it. Bumping it without a recalc left the player on the previous tier's
     // numbers — 6.5 HP/s instead of 10 on T1->T2 — until some unrelated recalc
-    // (equipping something, a stance swap) happened to fire. The state-preserving
+    // (equipping something) happened to fire. The state-preserving
     // rebuild is the right one here: a tier-up lands on a kill, mid-combat, so the
     // class mechanic's counters, resources and cooldowns must survive it, and HP
     // carries across as a share of the pool that just grew.

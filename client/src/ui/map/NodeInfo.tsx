@@ -7,7 +7,6 @@ import type {
 import {
   NODE_BIOMES, BIOME_DATABASE, MONSTER_DATABASE, ESSENCE_COLORS, ESSENCE_LABELS,
   essenceLabel,
-  coreEligibilityLabel, isRestrictedCore,
   relicRatingsFromPassives, relicRatingsFromEffects, resolveRelicComparison,
   FAMILY_DATABASE, blendEntries, nodeFamily, nodeSpawnBlend,
   biomeLevelCap, biomeXpForBiomeLevel, formatNodeCoord, formatRespawnRemaining, nodeIdToCoord,
@@ -42,7 +41,7 @@ import {
 } from '../crafting/itemDisplay';
 import { MAKE_KIND_LABELS } from '../crafting/makeEntries';
 import { DetailLines } from '../describe/DetailLines';
-import { loadoutLinesFor, ruleLines } from '../describe';
+import { loadoutLinesFor } from '../describe';
 import { useAbilityContext } from '../describe/useAbilityContext';
 import type { AbilityContext } from '../describe';
 import { biomeUnlocksByLevel, type BiomeUnlock } from './biomeUnlocks';
@@ -121,7 +120,7 @@ function MonsterRow({ m, isBoss, open, onToggle }: {
 // ── Expandable unlock row ───────────────────────────────────────────────────────
 /**
  * One rung of a biome's reward ladder, whichever database authored it. Gear
- * states its stats and effects; a technique, stance, rite or rune states what
+ * states its stats and effects; a technique states what
  * learning it would do for THIS character, the same way the Craft browser does.
  */
 function UnlockRow({ unlock, unlocked, open, onToggle, relicPreview, abilityContext }: {
@@ -138,23 +137,13 @@ function UnlockRow({ unlock, unlocked, open, onToggle, relicPreview, abilityCont
     : [];
   const effects = gear
     ? [
-      ...(gear.slot === 'core' && gear.coreEligibility
-        ? [isRestrictedCore(gear.coreEligibility)
-          ? `Full effect only for ${coreEligibilityLabel(gear.coreEligibility).toLowerCase()}`
-          : 'Works for any build']
-        : []),
       ...formatMechanicEffects(gear.mechanicEffects),
       ...(gear.slot === 'relic' ? relicPreview(unlock) : []),
       ...(gear.slot === 'weapon' ? formatWeaponEffects(gear.id) : []),
     ]
     : [];
-  // A rune recipe yields one fragment, so it describes that fragment's own
-  // numbers rather than an assembled rule's.
   const learnedLines = unlock.learnedId
-    ? unlock.kind === 'rune'
-      ? ruleLines({ conditionId: unlock.learnedId, actionId: unlock.learnedId })
-        .filter((line) => line.key !== 'cost')
-      : loadoutLinesFor(unlock.learnedId, abilityContext)
+    ? loadoutLinesFor(unlock.learnedId, abilityContext)
     : [];
   const costs = Object.entries(unlock.cost) as [EssenceType, number][];
 
@@ -222,8 +211,8 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
   const info  = NODE_BIOMES[nodeId];
   const biome = info ? BIOME_DATABASE.get(info.biomeGroup) : null;
 
-  // Every reward this biome pays out, from all five recipe databases — gear,
-  // techniques, stances, rites and runes — grouped by the level that opens it.
+  // Every reward this biome pays out, from both recipe databases — gear and
+  // techniques — grouped by the level that opens it.
   const unlockLevels = useMemo(
     () => (info ? biomeUnlocksByLevel(info.biomeGroup) : []),
     [info?.biomeGroup], // eslint-disable-line react-hooks/exhaustive-deps

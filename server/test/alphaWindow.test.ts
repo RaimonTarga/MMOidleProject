@@ -63,10 +63,8 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
       biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [],
+      runesEquipped: [], knownAbilities: [],
       attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [], equippedStances: { default: null }, activeStance: null,
-      knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {
@@ -202,7 +200,7 @@ initCombatSystems();
   assert(effect!.stacks === 1, 'Sunlight starts at one stack');
 
   // It is a FINAL damage-dealt layer — that is what makes it reach every channel.
-  const mults = resolveFinalDamageMultipliers(player.usesSkills.passives, null, 1, player.tracksCombat);
+  const mults = resolveFinalDamageMultipliers(player.usesSkills.passives, player.tracksCombat);
   assert(
     Math.abs(mults.dealt - (1 + AUTHORED[T2].pct)) < 1e-9,
     `Sunlight should multiply final damage dealt by ${1 + AUTHORED[T2].pct}, got ${mults.dealt}`,
@@ -300,17 +298,9 @@ initCombatSystems();
   // multiplier at the funnel is what says "all of them", rather than re-testing
   // each caller: they all read the same `dealt`.
   const dealt = resolveFinalDamageMultipliers(
-    player.usesSkills.passives, null, 1, player.tracksCombat,
+    player.usesSkills.passives, player.tracksCombat,
   ).dealt;
   assert(Math.abs(dealt - 1.15) < 1e-9, `every channel should read +15%, got ${dealt}`);
-
-  // It must compose with (not replace) the other final layers.
-  player.usesSkills.passives['core.damage-dealt-pct'] = 0.10;
-  const composed = resolveFinalDamageMultipliers(
-    player.usesSkills.passives, null, 1, player.tracksCombat,
-  ).dealt;
-  assert(Math.abs(composed - 1.10 * 1.15) < 1e-9, `Sunlight should compose with core damage dealt, got ${composed}`);
-  delete player.usesSkills.passives['core.damage-dealt-pct'];
 
   // And it must not be double-counted by the OTHER outgoing seam: `damageDealtPct`
   // (playerAmplifiers) is summed separately in the direct-attack path, so Sunlight
@@ -425,7 +415,7 @@ initCombatSystems();
     assert(effect.remainingMs === AUTHORED[tier].ms, `${tier} window should be ${AUTHORED[tier].ms}ms`);
     assert(
       Math.abs(
-        resolveFinalDamageMultipliers(player.usesSkills.passives, null, 1, player.tracksCombat).dealt -
+        resolveFinalDamageMultipliers(player.usesSkills.passives, player.tracksCombat).dealt -
           (1 + AUTHORED[tier].pct),
       ) < 1e-9,
       `${tier} should deal +${AUTHORED[tier].pct * 100}%`,

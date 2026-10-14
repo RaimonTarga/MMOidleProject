@@ -10,7 +10,6 @@ const oldSave = normalizeEquipment({
   armor: null,
   recovery: null,
   mobility: null,
-  core: null,
 });
 assert(oldSave.relic === null, 'pre-relic equipment hydrates with relic: null');
 assert(oldSave.weapon === 'old-weapon', 'normalization preserves old slots');

@@ -154,8 +154,8 @@ export function registerCadenceEmpoweredHit(): void {
       }
       if (platingShred > 0) {
         // Total shred = stacks × platingReduction; cap by clamping the stack count.
-        // The cap is computed from the UNSCALED shred so a Controller core raises
-        // per-stack strip without also raising the ceiling it was capped at.
+        // The cap is computed from the UNSCALED shred so scaling raises per-stack
+        // strip without also raising the ceiling it was capped at.
         const maxStacks = shredCap > 0 ? Math.max(1, Math.floor(shredCap / platingShred)) : 0;
         applySharedDebuffMaxWins(player, monsterState, {
           id: 'plating-shred',

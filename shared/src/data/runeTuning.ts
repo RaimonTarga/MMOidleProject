@@ -1,8 +1,8 @@
 /**
  * The distances a rune rule actually moves you.
  *
- * Rune ACTIONS are authored in `runeDatabase.ts` with a name, a blurb and an RP
- * cost, but the numbers that decide what "Keep Distance" or "Careful Pulling"
+ * Rune ACTIONS are authored in `runeDatabase.ts` with a name and a blurb, but the
+ * numbers that decide what "Keep Distance" or "Careful Pulling"
  * means lived as private constants inside the server's auto-combat systems.
  * That left runes the one build system with nothing concrete to show a player:
  * every other system can state its magnitudes, while a rune could only promise

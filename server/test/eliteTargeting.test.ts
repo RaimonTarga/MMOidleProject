@@ -68,15 +68,9 @@ function makePlayerSlices(id: string, runesEquipped: EquippedRule[]): PersistedP
       // recipes (sanitizing any equipped rule it doesn't own), so the unlock
       // recipe must be present or the equipped rule is silently dropped.
       runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: ["rune-recipe-focus-elites"],
       runesEquipped,
       knownAbilities: [],
       attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [],
-      equippedStances: { default: null },
-      activeStance: null,
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: {
       inventory: [],

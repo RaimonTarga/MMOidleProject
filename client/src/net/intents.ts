@@ -6,7 +6,6 @@ import type {
   PlayerMoveOptions,
   PlayerMoveResult,
   CombatControlResult,
-  StanceSlot,
   Vec2,
 } from '@mmo-idle/shared';
 import type { GameSocket } from './socket';
@@ -70,10 +69,6 @@ export function sendSetRuneLoadout(
   socket.emit('rune:setLoadout', rules);
 }
 
-export function sendCraftRuneRecipe(socket: GameSocket, recipeId: string): void {
-  socket.emit('rune:craftRecipe', recipeId);
-}
-
 export function sendCraftAbilityRecipe(socket: GameSocket, recipeId: string): void {
   socket.emit('ability:craftRecipe', recipeId);
 }
@@ -102,36 +97,6 @@ export function sendManualReload(
   ack?: (result: CombatControlResult) => void,
 ): void {
   socket.emit('player:manualReload', ack);
-}
-
-export function sendCraftStanceRecipe(socket: GameSocket, recipeId: string): void {
-  socket.emit('stance:craftRecipe', recipeId);
-}
-
-export function sendSetStanceLoadout(
-  socket: GameSocket,
-  payload: { slot: StanceSlot; stanceId: string | null },
-): void {
-  socket.emit('stance:setLoadout', payload);
-}
-
-export function sendSetStanceControl(
-  socket: GameSocket,
-  stanceId: string | null,
-  ack?: (result: CombatControlResult) => void,
-): void {
-  socket.emit('stance:setControl', { stanceId }, ack);
-}
-
-export function sendCraftRiteRecipe(socket: GameSocket, recipeId: string): void {
-  socket.emit('rite:craftRecipe', recipeId);
-}
-
-export function sendSetRiteLoadout(
-  socket: GameSocket,
-  payload: { riteIds: string[] },
-): void {
-  socket.emit('rite:setLoadout', payload);
 }
 
 export function sendEquipItem(socket: GameSocket, definitionId: string): void {

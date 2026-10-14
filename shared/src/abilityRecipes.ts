@@ -1,10 +1,10 @@
 /**
- * Ability recipes — parallel to `RuneRecipe`.
+ * Ability recipes.
  *
  * Crafting an ability recipe LEARNS the ability permanently (adds its id to
  * `TracksProgression.knownAbilities`); the player then freely slots it into a
  * Technique / Guard slot. Recipes gate on Biome Mastery (`recipeGroup` +
- * `requiredBiomeLevel`), mirroring gear and rune recipes. The boss channel
+ * `requiredBiomeLevel`), mirroring gear recipes. The boss channel
  * (`requiredBossClear`) is reserved for advanced/signature abilities.
  *
  * PLACEMENT RULE. Each ability is its biome's "answer tool", placed MID-BAND so

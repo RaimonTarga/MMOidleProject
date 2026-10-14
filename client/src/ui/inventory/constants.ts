@@ -6,7 +6,6 @@ export const SLOT_LABELS: Record<EquipmentSlot, string> = {
   armor:    'Armor',
   recovery: 'Recovery',
   mobility: 'Boots',
-  core:     'Core',
   relic:    'Relic',
 };
 

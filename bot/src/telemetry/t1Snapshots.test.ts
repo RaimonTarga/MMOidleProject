@@ -42,12 +42,12 @@ const self = composePlayerView({
   },
   holdsInventory: {
     inventory: ["primordial-club"],
-    equipment: { weapon: null, armor: "plains-vest-t1", recovery: null, mobility: null, core: null, relic: null },
+    equipment: { weapon: null, armor: "plains-vest-t1", recovery: null, mobility: null, relic: null },
     itemUpgrades: {},
   },
   usesSkills: {
     unlockedSkills: ["cadence-root"],
-    passives: { "core.attack-mult": 0.1 },
+    passives: { "technique.power-pct": 0.1 },
     selectedClass: "cadence-root",
     selectedSubVariant: null,
     selectedRange: null,
@@ -121,7 +121,7 @@ try {
   assert(loaded.schemaVersion === T1_CHARACTER_SNAPSHOT_SCHEMA_VERSION, "saved JSON must reload at its schema version");
   assert(loaded.snapshotId === "smoke-t1-intended-test-run-b", "Snapshot B is named after its run");
   assert(loaded.classRoot === "cadence-root", "the snapshot records the class");
-  assert(loaded.state.passives["core.attack-mult"] === 0.1, "derived passive state must remain auditable in Snapshot B");
+  assert(loaded.state.passives["technique.power-pct"] === 0.1, "derived passive state must remain auditable in Snapshot B");
   assert(JSON.stringify(loaded.state.equipment) === JSON.stringify(self.equipment), "equipment must round-trip exactly");
   assert(JSON.stringify(loaded.state.inventory) === JSON.stringify(self.inventory), "inventory must round-trip exactly");
   assert(JSON.stringify(loaded.state.essences) === JSON.stringify(self.essences), "the wallet must round-trip exactly");

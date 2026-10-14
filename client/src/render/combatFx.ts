@@ -241,7 +241,6 @@ import {
   notifyAbilityFired,
   notifyAbilityArmed,
   notifyCleansed,
-  notifyStanceCooldownStarted,
 } from "../hud/atoms";
 import type { GameScene } from "../scenes/GameScene";
 import { applyLunge } from "./interpolation";
@@ -943,10 +942,6 @@ export function dispatchCombatEvent(
         startedAt: performance.now(), nodeId: player.nodeId, effectId: ev.effectId,
       });
     }
-    return;
-  }
-  if (ev.kind === "stance-switch") {
-    if (ev.playerId === scene.myId) notifyStanceCooldownStarted();
     return;
   }
   if (ev.kind === "frame-charge") {

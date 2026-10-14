@@ -72,7 +72,7 @@ const COST_PER_LEVEL = 20;
 
 /**
  * Per-item max upgrade level: 0 for every item. The ladder is retired on every
- * slot (design §24.5; weapons since Phase 2b, cores and relics never had one).
+ * slot (design §24.5; weapons since Phase 2b, relics never had one).
  */
 export function getMaxUpgrade(_item: ItemDefinition): number {
   return 0;

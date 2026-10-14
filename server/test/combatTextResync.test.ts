@@ -59,9 +59,8 @@ assert(broadcast().deltas.some(d => d.kind === 'remove' && d.netId === id));
       
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
       questProgress: {}, playerTier: 0, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
-      runesOwned: [], runeRecipesCrafted: [], runesEquipped: [], knownAbilities: [],
-      attunedAbilities: { techniques: [], guards: [] }, knownStances: [],
-      equippedStances: { default: null }, activeStance: null, knownRites: [], equippedRites: [],
+      runesOwned: [], runesEquipped: [], knownAbilities: [],
+      attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

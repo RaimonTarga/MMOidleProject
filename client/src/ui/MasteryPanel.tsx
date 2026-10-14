@@ -2,9 +2,7 @@ import { useMemo, type CSSProperties } from 'react';
 import { useAtomValue } from 'jotai';
 import {
   BIOME_DATABASE,
-  RUNE_POINT_GLOBAL_MASTERY_STEP,
   biomeLevelCap,
-  runeBudgetForGlobalMastery,
 } from '@mmo-idle/shared';
 import {
   biomeLevelAtom,
@@ -16,7 +14,6 @@ import {
   EngravedMeter,
   GameDialog,
   GlyphTile,
-  MilestonePips,
 } from '../hud/primitives';
 import { BiomeIcon } from './map/BiomeIcon';
 import { tileColor } from './map/constants';
@@ -28,26 +25,6 @@ interface Props {
   onClose: () => void;
 }
 
-/**
- * A milestone is reached or it is not, so it reads as one filled or hollow pip
- * rather than the literal 'OK' / '--' this column used to print. The label is
- * what assistive tech and the tooltip get.
- */
-function MilestoneStatus({ unlocked, label }: { unlocked: boolean; label: string }) {
-  return (
-    <span
-      className={`craft-unlock-row__status${unlocked ? ' craft-unlock-row__status--ok' : ''}`}
-      title={`${label}: ${unlocked ? 'reached' : 'not yet reached'}`}
-    >
-      <MilestonePips
-        states={[unlocked ? 'done' : 'pending']}
-        label={`${label}: ${unlocked ? 'reached' : 'not yet reached'}`}
-        tone={unlocked ? 'success' : 'primary'}
-      />
-    </span>
-  );
-}
-
 function biomeLabel(group: string): string {
   return BIOME_DATABASE.get(group)?.name ?? group;
 }
@@ -56,10 +33,6 @@ export function MasteryPanel({ onClose }: Props) {
   const gm = useAtomValue(globalMasteryAtom);
   const biomeLevel = useAtomValue(biomeLevelAtom);
   const playerTier = useAtomValue(playerTierAtom);
-  const runeBudget = runeBudgetForGlobalMastery(gm);
-  const nextRuneReq =
-    (Math.floor(gm / RUNE_POINT_GLOBAL_MASTERY_STEP) + 1) *
-    RUNE_POINT_GLOBAL_MASTERY_STEP;
 
   const biomeRows = useMemo(
     () =>
@@ -67,13 +40,6 @@ export function MasteryPanel({ onClose }: Props) {
         .filter(([group, level]) => group !== 'clearing' && level > 0)
         .sort(([a], [b]) => biomeLabel(a).localeCompare(biomeLabel(b))),
     [biomeLevel],
-  );
-
-  const runeMilestoneMax =
-    Math.max(30, Math.floor(gm / RUNE_POINT_GLOBAL_MASTERY_STEP) * RUNE_POINT_GLOBAL_MASTERY_STEP + 20);
-  const runeMilestones = Array.from(
-    { length: Math.floor(runeMilestoneMax / RUNE_POINT_GLOBAL_MASTERY_STEP) + 1 },
-    (_, i) => i * RUNE_POINT_GLOBAL_MASTERY_STEP,
   );
 
   return (
@@ -92,7 +58,7 @@ export function MasteryPanel({ onClose }: Props) {
       />
       <div className="mastery-dialog__content">
 
-        {/* Three self-labelling figures instead of a headline plus a comma-joined
+        {/* Self-labelling figures instead of a headline plus a comma-joined
             sentence of caps. */}
         <div className="mastery-summary">
           <GlyphTile
@@ -101,59 +67,9 @@ export function MasteryPanel({ onClose }: Props) {
             icon={masterySectionIconSource('summary')}
             fallback={null}
           />
-          <GlyphTile
-            value={runeBudget}
-            label="Rune points"
-            icon={masterySectionIconSource('runes')}
-            fallback={null}
-          />
         </div>
 
         <div className="craft-body">
-          <section className="craft-biome-section">
-            <div className="craft-biome-section__header">
-              <span className="craft-biome-section__name craft-biome-section__name--icon">
-                <GameIcon
-                  source={masterySectionIconSource('runes')}
-                  size={18}
-                  fallback={null}
-                  decorative
-                />
-                Rune Points
-              </span>
-              <span className="craft-biome-section__level">
-                every {RUNE_POINT_GLOBAL_MASTERY_STEP} GM
-              </span>
-            </div>
-            <div className="craft-unlock-path">
-              {runeMilestones.map((req) => {
-                const unlocked = gm >= req;
-                return (
-                  <div
-                    key={req}
-                    className={[
-                      'craft-unlock-row',
-                      unlocked ? 'craft-unlock-row--unlocked' : '',
-                    ].filter(Boolean).join(' ')}
-                  >
-                    <span className="craft-unlock-row__level">GM {req}</span>
-                    <span className="craft-unlock-row__name">
-                      {runeBudgetForGlobalMastery(req)} rune points
-                    </span>
-                    <span className="craft-unlock-row__slot">RP</span>
-                    <MilestoneStatus
-                      unlocked={unlocked}
-                      label={`${runeBudgetForGlobalMastery(req)} rune points`}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-            <div className="mastery-note">
-              Next rune point at GM {nextRuneReq}.
-            </div>
-          </section>
-
           <section className="craft-biome-section">
             <div className="craft-biome-section__header">
               <span className="craft-biome-section__name craft-biome-section__name--icon">

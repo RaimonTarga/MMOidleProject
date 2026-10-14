@@ -19,9 +19,8 @@ export interface CrestDiamondProps extends HTMLAttributes<HTMLSpanElement> {
 /**
  * Square art in a rhomboid frame, filled so the two read as one gem.
  *
- * Shared by the stance sanctum and the character plate: the frame's three
- * measurements interlock, so having each surface size its own copy is how they
- * drift apart.
+ * Used by the character plate: the frame's three measurements interlock, so
+ * having each surface size its own copy is how they drift apart.
  */
 export function CrestDiamond({
   icon,

@@ -12,8 +12,6 @@ import type {
 import { SKILL_TREE, type StatEffects } from '../skillTree';
 import { ITEM_DATABASE } from '../itemDatabase';
 import { EQUIPMENT_SLOTS } from '../items';
-import { coreIsActive } from './cores';
-import { activeStanceModifiers, stanceDef, type StanceModifiers } from '../stances';
 import { effectiveAttacksPerSecond } from './itemUpgrades';
 import { GAME_CONFIG, baseRecoveryForTier, poolFactorForTier } from '../index';
 import { mergePassives, makePulseAccumulator, finalizePulse } from '../passives';
@@ -54,17 +52,6 @@ export interface PlayerStatsTarget {
   holdsInventory:  HoldsInventory;
   /** Player progression tier (0-indexed: T1=0 … T4=3). Drives per-tier class bonuses. */
   playerTier?:     number;
-  /**
-   * The currently-active stance id (system rework Step 10), if any. Its stat/mechanic
-   * deltas fold into the rebuild; the stance-switch system triggers a recalc on change.
-   */
-  activeStance?:   string | null;
-  /**
-   * Equipped rites (system rework Step 11). Always-on OOC passives; every equipped
-   * rite's `mechanicEffects` (the `rite.*` keys) folds into `usesSkills.passives` so
-   * the out-of-combat systems can read them. No in-combat stat path.
-   */
-  equippedRites?:  readonly string[];
   /** Optional callback when cadence threshold is recalculated (writes to usesCadence on server). */
   resetCadenceCounters?: (threshold: number) => void;
   /**
@@ -130,27 +117,6 @@ function applyClassAffinities(p: PlayerStatsTarget, a: ClassAffinities): void {
     p.hasPosition.speed = Math.max(0, Math.round(p.hasPosition.speed * mult(a.moveSpeed)));
 }
 
-/**
- * Fold the active stance's percentage posture onto the finished stat line.
- *
- * Separate from {@link applyClassAffinities} on purpose. Affinities are a shared
- * bucket because the class tree is one long additive chain the player builds over
- * tiers. A stance is a single mode with a single tooltip, and the player has to be
- * able to read that tooltip literally — so its percentages multiply the result of
- * everything below them rather than joining the class's sum.
- *
- * Attack speed and evasion are absent: both fold earlier, in step 2a, because they
- * already had once-applied semantics of their own.
- */
-function applyStanceModifiers(p: PlayerStatsTarget, mods: StanceModifiers | undefined): void {
-  if (!mods) return;
-  const mult = (pct: number): number => Math.max(0.05, 1 + pct);
-  if (mods.platingPct)
-    p.mitigatesDamage.plating = Math.max(0, Math.round(p.mitigatesDamage.plating * mult(mods.platingPct)));
-  if (mods.moveSpeedPct)
-    p.hasPosition.speed = Math.max(0, Math.round(p.hasPosition.speed * mult(mods.moveSpeedPct)));
-}
-
 function applyStatModToTarget(p: PlayerStatsTarget, stat: string, value: number): void {
   switch (stat) {
     case 'attack':          p.dealsDamage.attack          += value; break;
@@ -181,12 +147,6 @@ export interface PlayerStatsResult {
  * Mutates slice fields in place. Returns out-of-band signals (see {@link PlayerStatsResult}).
  */
 export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult {
-  // 0. Capture the HP fraction BEFORE step 1 wipes maxHp back to base. A gated stance
-  // (Perfection) reads it to decide whether its upside half is in force. The stance
-  // system re-runs this rebuild whenever the player crosses the threshold; nothing here
-  // moves HP, so the reading cannot feed back into itself.
-  const hpFraction = p.hasHealth.hp / Math.max(1, p.hasHealth.maxHp);
-
   // 1. Reset to base
   p.dealsDamage.attack          = GAME_CONFIG.PLAYER_ATTACK;
   p.dealsDamage.onHitDamage     = 0;
@@ -239,26 +199,6 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     mergePassives(p.usesSkills.passives, node.mechanicEffects, pulseAcc);
   }
 
-  // 2a. Apply the active stance posture (system rework Step 10, corrected 2026-08-22).
-  // Only the two fields with pre-existing sum-then-apply-once semantics fold here, so
-  // they ride the same path as skill nodes: attack speed must land before the cooldown
-  // computation below, and evasion is already a fraction. The stance's attack / plating
-  // / move-speed PERCENTAGES are a separate multiplicative layer applied after the class
-  // affinity fold (step 3e) — a posture the player toggles has to mean exactly what its
-  // tooltip says for every class. `damageTakenPct` is not a stat at all: it is read at
-  // hit time by the stance combat listener. The stance-switch system recalcs on change.
-  const stance = stanceDef(p.activeStance);
-  // Resolved, never `stance.modifiers`: a gated posture's conditional half only exists
-  // in the resolver, so reading the field directly would silently drop it.
-  const stanceMods = activeStanceModifiers(p.activeStance, hpFraction);
-  if (stanceMods) {
-    attackSpeedPct += stanceMods.attackSpeedPct ?? 0;
-    if ((stanceMods.evasion ?? 0) > 0) evasionChance += stanceMods.evasion!;
-  }
-  if (stance?.mechanicEffects) {
-    mergePassives(p.usesSkills.passives, stance.mechanicEffects, pulseAcc);
-  }
-
   p.performsAttack.attackCooldown = Math.round(
     p.performsAttack.attackCooldown / Math.max(0.1, 1 + attackSpeedPct),
   );
@@ -280,10 +220,6 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     if (!defId) continue;
     const def = ITEM_DATABASE.get(defId);
     if (!def) continue;
-    // Core slot: a restricted core (melee/ranged) contributes NOTHING — neither its
-    // upsides nor its tradeoffs — unless the player's selectedRange qualifies.
-    // Unrestricted cores always apply. Eligibility is binary; see systems/cores.ts.
-    if (slot === 'core' && !coreIsActive(def.coreEligibility, p.usesSkills.selectedRange)) continue;
     for (const [stat, value] of Object.entries(def.statModifiers)) {
       if (stat === 'damageReduction') { itemDr += value; continue; }
       if (stat === 'evasion') {
@@ -308,10 +244,10 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   //
   // It sits here because the flat pool is now complete and nothing has multiplied
   // it yet: `GAME_CONFIG.PLAYER_MAX_HP` from step 1, the armor's `maxHp` and its
-  // upgrade steps from step 3 are the only flat sources in the game — no skill node or stance authors a flat `maxHp`, they all author
+  // upgrade steps from step 3 are the only flat sources in the game — no skill node authors a flat `maxHp`, they all author
   // `maxHpPct`. So one multiplication here IS "base max HP and armor maxHp", and
-  // every percentage layer below (class affinities 3d, the stance 3e, the core's
-  // `core.maxhp-mult`) keeps multiplying the finished pool exactly as before.
+  // every percentage layer below (class affinities 3d) keeps multiplying the
+  // finished pool exactly as before.
   //
   // Recovery is NOT touched: `hasHealth.recovery` was seeded in step 1 from the
   // tier's REFERENCE pool and is a flat HP/s, so a bigger pool buys attrition
@@ -328,13 +264,6 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   // grants) and BEFORE the core layer (cores stay the deliberate final multiplier,
   // a separate layer stacked on the finished class chassis).
   applyClassAffinities(p, affinities);
-
-  // 3e. Active-stance plating/movement percentages. Damage is resolved at hit time. A stance is a MODE with a printed tooltip, so its
-  // multipliers sit on top of the finished class chassis instead of summing into the
-  // affinity bucket: "+40% Plating" is x1.40 for a Squire and for an Apprentice alike.
-  // Placed immediately after the affinity fold and before the reload/core layers, which
-  // both deliberately price the completed stat line.
-  applyStanceModifiers(p, stanceMods);
 
   // Cadence must resolve after equipment is folded so item/relic threshold
   // changes are live. The old pre-equipment callback made those values inert.
@@ -420,46 +349,6 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
       }
     }
   }
-
-  // 3c. Core multiplier layer (system rework Step 9). Cores express their effects as
-  // percentage multipliers on the FINAL summed stat (base + skills + equipment), applied
-  // once here. Sources add (two +10% → +20%); negative values reduce. The separate
-  // multiplicative DR layer (`core.dr-layer-pct`) is applied in the combat pipeline, not
-  // here. maxHp is multiplied BEFORE the hp-clamp below so the new ceiling takes effect.
-  const passives = p.usesSkills.passives;
-  const attackMult    = passives['core.attack-mult']       ?? 0;
-  const maxHpMult     = passives['core.maxhp-mult']         ?? 0;
-  const platMult      = passives['core.plating-mult']       ?? 0;
-  const speedMult     = passives['core.speed-mult']         ?? 0;
-  // Recovery is the canonical HP-restoration rate, so `core.recovery-mult` is
-  // applied HERE and only here. Every in-combat regen effect activates a fraction
-  // of this rate, so multiplying the rate covers all of them exactly once —
-  // applying it again per-heal in defense/regen/healing.ts would compound it
-  // (a +20% core landing as +44%).
-  const recoveryMult   = passives['core.recovery-mult']       ?? 0;
-  const atkSpeedMult  = passives['core.attack-speed-mult']  ?? 0;
-  if (attackMult !== 0)
-    p.dealsDamage.attack = Math.max(1, Math.round(p.dealsDamage.attack * (1 + attackMult)));
-  if (maxHpMult !== 0)
-    p.hasHealth.maxHp = Math.max(1, Math.round(p.hasHealth.maxHp * (1 + maxHpMult)));
-  if (platMult !== 0)
-    p.mitigatesDamage.plating = Math.max(0, Math.round(p.mitigatesDamage.plating * (1 + platMult)));
-  if (speedMult !== 0)
-    p.hasPosition.speed = Math.max(0, Math.round(p.hasPosition.speed * (1 + speedMult)));
-  // Quantized to a TENTH, not to a whole number like the four integer stats above.
-  // Recovery became a fractional HP/s rate in Phase 0b, so `Math.round` was eating
-  // most of the bonus: the Jungle core's +30% on a naked T1's 6.5 HP/s is 8.45, which
-  // rounded to 8 and delivered +1.5 of the +1.95 it authored — a quarter of the core's
-  // whole payoff, gone. One decimal is the same resolution `baseRecoveryForTier`
-  // already quantizes to and the HUD already shows.
-  if (recoveryMult !== 0)
-    p.hasHealth.recovery = Math.max(0,
-      Math.round((p.hasHealth.recovery ?? 0) * (1 + recoveryMult) * 10) / 10);
-  if (atkSpeedMult !== 0)
-    p.performsAttack.attackCooldown = Math.max(
-      1,
-      Math.round(p.performsAttack.attackCooldown / Math.max(0.1, 1 + atkSpeedMult)),
-    );
 
   // 4. Range floor. Negative range bonuses can reduce ranged builds down to
   // melee, but should never remove the base contact reach needed to attack.

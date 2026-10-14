@@ -1,8 +1,7 @@
 import assert from 'node:assert/strict';
 import {
   DUNGEON_DEFS, MONSTER_DATABASE, NODE_BIOMES,
-  runicPointLoadoutCost, runeBudgetForGlobalMastery,
-  type AttunedAbilities, withReferenceAbilityWiring,
+  type AttunedAbilities,
 } from '@mmo-idle/shared';
 import { enumerateBuildsForContentTier } from './progression';
 import { canonicalLoadout } from './botFactory';
@@ -79,7 +78,7 @@ export const BOSSREF_BOSS_STATS = { hp: 7100, attack: 22, plating: 0, damageRedu
  */
 export const BOSSREF_A_GEAR = {
   weapon: 'ruinous-axe', armor: 'cave-vest-t2', recovery: 'mountain-charm-t2',
-  mobility: 'plains-boots-t2', core: 'core-tempered',
+  mobility: 'plains-boots-t2',
 } as const;
 export const BOSSREF_A_ABILITIES: AttunedAbilities = {
   techniques: ['slam'], guards: ['second-wind', 'brace'],
@@ -105,9 +104,7 @@ export const BOSSREF_A_RULES = [
  */
 export const BOSSREF_B_GEAR = {
   weapon: 'gale-needle', armor: 'forest-vest-t2', recovery: 'forest-charm-t2',
-  // Force since the 2026-09-25 defense rebudget removed its HP penalty; the legacy
-  // scorer now prefers it over Tempered.
-  mobility: 'forest-boots-t2', core: 'core-force',
+  mobility: 'forest-boots-t2',
 } as const;
 export const BOSSREF_B_STANCE = 'offensive-stance';
 /** Empty is meaningful: the legacy bot equips no behaviour rules at all. */
@@ -165,16 +162,6 @@ export const BOSSREF_BLOCKS: Record<string, { cells: Night5Cell[]; durationMs: n
 /** The check installs nothing; the boss is fought at authored source values. */
 export function installBossReferenceTreatment(): null { return null; }
 
-/** RP cost of a case, on the same budget the bot actually has. */
-export function bossReferenceRpCost(c: Night5Cell): number {
-  return runicPointLoadoutCost({
-    rules: withReferenceAbilityWiring((c.runeRules ?? []) as never, c.abilities!),
-    abilities: c.abilities!,
-    stances: c.stance ? [c.stance] : [],
-    rites: [],
-  });
-}
-
 /** Fail loudly at load time if any frozen identity or source package has drifted. */
 export function assertBossReferenceDefinitions(): void {
   const boss = MONSTER_DATABASE.get(BOSSREF_BOSS_ID);
@@ -217,15 +204,5 @@ export function assertBossReferenceDefinitions(): void {
   const canonical = canonicalLoadout(BOSSREF_TIER);
   assert.deepEqual(BOSSREF_CELLS[1]!.abilities, canonical.attunedAbilities,
     'Case B abilities no longer match the canonical bench loadout');
-  assert.equal(canonical.equippedStances.default, BOSSREF_B_STANCE,
-    'Case B stance no longer matches the canonical bench stance');
   assert.equal(BOSSREF_B_RULES.length, 0, 'the legacy package equips no rune rules');
-
-  // Both packages must fit the SAME budget. This is the guard against quietly
-  // making an illegal hybrid legal by changing another input.
-  const budget = runeBudgetForGlobalMastery(72);
-  for (const c of BOSSREF_CELLS) {
-    const cost = bossReferenceRpCost(c);
-    assert(cost <= budget, `${c.id}: package costs ${cost} RP against a ${budget} budget`);
-  }
 }

@@ -263,7 +263,6 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
                 armor: null,
                 recovery: null,
                 mobility: null,
-                core: null,
                 relic: null,
               },
               itemUpgrades: {},

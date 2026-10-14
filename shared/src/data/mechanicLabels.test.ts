@@ -1,6 +1,6 @@
 /**
  * The invariant behind `mechanicLabels.ts`: every `mechanicEffects` key that any
- * authored item, upgrade step, stance or rite can put in front of a player has an
+ * authored item or upgrade step can put in front of a player has an
  * explicit human label.
  *
  * The authored key set is DERIVED from the data on every run, never snapshotted.
@@ -11,7 +11,6 @@
 
 import { ITEM_DATABASE } from '../itemDatabase';
 import { RECIPE_DATABASE } from '../recipeDatabase';
-import { STANCE_DATABASE } from '../stances';
 import {
   MECHANIC_LABELS,
   isCompanionMechanic,
@@ -63,13 +62,6 @@ function collectAuthoredKeys(): KeySource {
       for (const key of Object.keys(step.mechanicEffects ?? {})) {
         record(found, key, `item ${item.id} +${index + 1}`);
       }
-    }
-  }
-
-  // Stances render their effects through the same vocabulary as gear.
-  for (const stance of STANCE_DATABASE.values()) {
-    for (const key of Object.keys(stance.mechanicEffects ?? {})) {
-      record(found, key, `stance ${stance.id}`);
     }
   }
 

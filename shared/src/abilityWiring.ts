@@ -2,13 +2,11 @@
  * Reference Rune wiring for every ability.
  *
  * Abilities carry no built-in trigger: they auto-fire only through a
- * `use-ability` rule. Each ability's `attunementCost` was lowered by exactly the
- * RP of the rule listed here, so "ability + reference rule" reserves what the
- * ability alone used to — the price of the old default did not change, it moved
- * into the Rune board where the player can see and replace it.
+ * `use-ability` rule; the rule listed here reproduces the ability's old default
+ * timing on the Rune board, where the player can see and replace it.
  *
- * This is the COST BASIS and a harness convenience (benches, bots and tests use
- * it to keep measuring the old timing). It is not a default the server applies.
+ * This is a harness convenience (benches, bots and tests use it to keep
+ * measuring the old timing). It is not a default the server applies.
  *
  * It is also the rule the ability panel's "Use default timing" button equips.
  * It is a sensible default, not always a copy of the old trigger: HP-threshold
@@ -16,9 +14,8 @@
  * combat off cooldown. Charge maps to `Always`, which reproduces it exactly once
  * its gap gate applies (see `abilities.ts`).
  */
-import { ABILITY_DATABASE, type AttunedAbilities } from "./abilities";
+import { ABILITY_DATABASE, attunedAbilityIds, type AttunedAbilities } from "./abilities";
 import type { EquippedRule, RuneConditionId } from "./runeDatabase";
-import { attunedAbilityIds } from "./runicPoints";
 
 const REFERENCE_CONDITION: Record<string, RuneConditionId> = {
   sweep: "in-combat",

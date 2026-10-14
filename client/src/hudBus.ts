@@ -1,4 +1,4 @@
-import type { AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, StanceSlot, Vec2 } from '@mmo-idle/shared';
+import type { AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, Vec2 } from '@mmo-idle/shared';
 import { intents } from './intents';
 
 type RecipeUnlockListener = (name: string, biomeGroup: string) => void;
@@ -36,11 +36,6 @@ export const hudBus = {
     intents.emit('setRuneLoadout', rules);
   },
 
-  /** Called by BuildRunesTab forge tab; server validates unlocks and costs. */
-  requestCraftRuneRecipe(recipeId: string): void {
-    intents.emit('craftRuneRecipe', recipeId);
-  },
-
   /** Learn an ability (craft its recipe); server validates gate + cost. */
   requestCraftAbilityRecipe(recipeId: string): void {
     intents.emit('craftAbilityRecipe', recipeId);
@@ -67,31 +62,6 @@ export const hudBus = {
   /** Conduit: summons drop their targets and return to their spots around you. */
   requestRecallSummons(): void {
     intents.emit('recallSummons', undefined);
-  },
-
-  /** Learn a stance (craft its recipe); server validates gate + cost. */
-  requestCraftStanceRecipe(recipeId: string): void {
-    intents.emit('craftStanceRecipe', recipeId);
-  },
-
-  /** Equip/clear a stance in a slot (`stanceId: null` clears it). */
-  requestSetStanceLoadout(slot: StanceSlot, stanceId: string | null, attunedStances?: string[]): void {
-    intents.emit('setStanceLoadout', { slot, stanceId, attunedStances });
-  },
-
-  /** Select a live attuned/neutral stance; null releases runtime ownership. */
-  requestSetStanceControl(stanceId: string | null): void {
-    intents.emit('setStanceControl', stanceId);
-  },
-
-  /** Learn a rite (craft its recipe); server validates gate + cost. */
-  requestCraftRiteRecipe(recipeId: string): void {
-    intents.emit('craftRiteRecipe', recipeId);
-  },
-
-  /** Set the full equipped-rite list (interchangeable slots, capped server-side). */
-  requestSetRiteLoadout(riteIds: string[]): void {
-    intents.emit('setRiteLoadout', { riteIds });
   },
 
   requestActivateDungeonAltar(): void {

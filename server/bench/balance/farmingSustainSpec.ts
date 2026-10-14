@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { BREADTH_CELLS, type BreadthCell } from './playerBreadthSpec';
 import { FARMING_STANCE_CELLS } from './farmingStanceSpec';
-import { ITEM_DATABASE, RECIPE_DATABASE, requiredBiomeLevelForUpgrade, runicPointBreakdown, STANCE_RECIPE_DATABASE, isStanceRecipeUnlocked } from '@mmo-idle/shared';
+import { ITEM_DATABASE, RECIPE_DATABASE, requiredBiomeLevelForUpgrade } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../src/ecs/entity';
 
 export interface FarmingSustainCell extends BreadthCell {
@@ -39,10 +39,8 @@ export const FARMING_SUSTAIN_CELLS: FarmingSustainCell[] = identities.flatMap(id
         cell.abilities!.techniques = cell.abilities!.techniques.filter(id => id !== 'slam');
         cell.displacedAbility = 'slam';
       }
-      if (policy === 'recuperating') {
-        cell.additionalStances = ['recuperating-stance'];
-        cell.runeRules!.push({ conditionId: 'hp-below-25', actionId: 'switch-stance', targetStanceId: 'recuperating-stance' });
-      }
+      // The `recuperating` policy was a low-HP Switch Stance rule into Recuperating;
+      // stances are gone (class-first rework D2), so that arm now runs the static policy.
       cell.preparationNotes = cell.preparationNotes.filter(n => !n.includes('No stance switching') && !n.includes('no stance switching'));
       cell.preparationNotes.push('Offensive default; only declared native low-HP Rune may switch posture. No combat treatment.');
       return cell;
@@ -61,15 +59,7 @@ export function sustainGates(cell: FarmingSustainCell, bot: PlayerEntity) {
   const chain: unknown[] = [{ id, tier: r.tier, group: r.recipeGroup,
     requiredMastery: r.requiredBiomeLevel, actualMastery: p.biomeLevel[r.recipeGroup], equipped: true }];
   const item = ITEM_DATABASE.get(cell.build.gearItemIds.recovery!)!;
-  const stanceGates = (p.attunedStances ?? []).map(id => {
-    const recipe = [...STANCE_RECIPE_DATABASE.values()].find(r => r.stanceId === id)!;
-    assert(recipe && recipe.tier <= cell.tier && isStanceRecipeUnlocked(recipe, p));
-    return { id, recipeId: recipe.id, group: recipe.recipeGroup, requiredMastery: recipe.requiredBiomeLevel,
-      actualMastery: recipe.recipeGroup ? p.biomeLevel[recipe.recipeGroup] : null };
-  });
   return { evolutionChain: chain, acquisition: cell.progressionSnapshot ? 'Fixed route checkpoint; paid costs in progression receipt' : 'Synthetic mature equipment; chain gates checked, no acquisition/cost claim',
     upgrade: { plus: bot.holdsInventory.itemUpgrades[item.id], requiredMastery: requiredBiomeLevelForUpgrade(item, cell.progressionSnapshot ? bot.holdsInventory.itemUpgrades[item.id] : 5) },
-    stanceGates, reserved: runicPointBreakdown({ abilities: p.attunedAbilities, rules: p.runesEquipped,
-      stances: p.attunedStances ?? [], rites: p.equippedRites }),
     recoveryPassives: Object.fromEntries(Object.entries(bot.usesSkills.passives).filter(([k]) => k.includes('recovery'))) };
 }

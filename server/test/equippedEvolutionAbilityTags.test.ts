@@ -1,9 +1,9 @@
 import { baseRecoveryForTier } from "@mmo-idle/shared";
 import assert from "node:assert/strict";
 import { ABILITY_DATABASE, GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment, getStatusEffect,
-  ITEM_DATABASE, abilityTags, abilityHasTag, abilityRankAt,
+  ITEM_DATABASE, abilityTags, abilityRankAt,
   abilityCooldownMs, modifiedAbilityCooldownMs, resolveAbilityEffectWithPassives,
-  getCooldown, setCooldown } from "@mmo-idle/shared";
+  getCooldown } from "@mmo-idle/shared";
 import { applyStatusEffect, guardEffectIdForAbility, recoveryEffectIdForAbility, itemMechanicEffectsAt, equipmentAbilityTags } from '@mmo-idle/shared';
 import { applyStun, STUN_EFFECT } from '../src/systems/combat/status/stun';
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
@@ -12,9 +12,8 @@ import { equipItem } from "../src/systems/player/economy/inventory";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { fireWithReferenceWiring } from './fixtures/abilityWiring';
 import { setAggroTarget } from "../src/systems/combat/ai/targeting";
-import { makeCombatContext, emitCombatEvent } from "../src/systems/combat/engine/combatPipeline";
 import { BRAMBLE_EFFECT_ID } from "../src/systems/player/abilities/abilityBramble";
-import { abilityCooldownKey, techniqueCooldownMs } from "../src/systems/player/abilities/abilityCooldowns";
+import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { describeAbility } from "../../client/src/ui/describe/abilityText";
 function makePlayerSlices(): PersistedPlayerSlices {
   return {
@@ -42,15 +41,9 @@ function makePlayerSlices(): PersistedPlayerSlices {
       bossesCleared: [],
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: ["bramble-guard"],
       attunedAbilities: { techniques: [], guards: ["bramble-guard"] },
-      knownStances: [],
-      equippedStances: { default: null },
-      activeStance: null,
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: {
       inventory: [],
@@ -81,8 +74,6 @@ function player() {
 function equipPassive(p: ReturnType<typeof player>, key: string) {
   const item = [...ITEM_DATABASE.values()].find(i => (i.mechanicEffects?.[key] ?? 0) > 0);
   assert(item, `catalog item for ${key}`);
-  if (item.coreEligibility === "melee") p.usesSkills.selectedRange = "cadence-range-close";
-  if (item.coreEligibility === "ranged") p.usesSkills.selectedRange = "cadence-range-mid";
   p.holdsInventory.inventory.push(item.id);
   assert(equipItem(world, p, item.id));
   assert((p.usesSkills.passives[key] ?? 0) > 0, `${key} reaches player from equipment`);
@@ -146,27 +137,10 @@ const sweepPowered = resolveAbilityEffectWithPassives(sweep, 4, powered.usesSkil
 assert(sweepBase.kind === 'cleave' && sweepPowered.kind === 'cleave');
 assert(sweepPowered.splashPct > sweepBase.splashPct);
 assert.deepEqual(resolveAbilityEffectWithPassives(bramble, 4, powered.usesSkills.passives), base, 'Technique Power cannot scale a Guard');
-assert.equal(modifiedAbilityCooldownMs(sweep, 4, { 'core.mobility-cooldown-reduction-pct': 0.5 }), abilityCooldownMs(sweep, 4), 'non-mobility ability ignores Scout bonus');
 const brace = ABILITY_DATABASE.get('brace')!;
 const capped = resolveAbilityEffectWithPassives(brace, 4, { 'guard.potency-pct': 100 });
 assert(capped.kind === 'damage-reduction');
 assert.equal(capped.drPct, 0.9);
-const scout = player();
-equipPassive(scout, 'core.mobility-cooldown-reduction-pct');
-const mobility = [...ABILITY_DATABASE.values()].filter(a => abilityHasTag(a, 'mobility'));
-for (const a of mobility) {
-  assert(modifiedAbilityCooldownMs(a, 4, scout.usesSkills.passives) < abilityCooldownMs(a, 4));
-  assert.equal(techniqueCooldownMs(scout, a), modifiedAbilityCooldownMs(a, 4, scout.usesSkills.passives));
-}
-const bruiser = player();
-equipPassive(bruiser, 'core.mobility-refund-on-kill-pct');
-const ordinary = ABILITY_DATABASE.get('sweep')!;
-bruiser.tracksProgression.attunedAbilities = { techniques: [...mobility.map(a => a.id), ordinary.id], guards: [] };
-for (const id of bruiser.tracksProgression.attunedAbilities.techniques) setCooldown(bruiser.tracksCombat, abilityCooldownKey(id), 5000);
-const victim = world.createMonster(bruiser.hasPosition.nodeId, 'plains-slime', { x: 460, y: 400 })!;
-emitCombatEvent('onKill', makeCombatContext(bruiser, 'player', victim, 'monster'), world);
-for (const a of mobility) assert.equal(getCooldown(bruiser.tracksCombat, abilityCooldownKey(a.id)), Math.max(0, 5000 - abilityCooldownMs(a, 4) * bruiser.usesSkills.passives['core.mobility-refund-on-kill-pct']));
-assert.equal(getCooldown(bruiser.tracksCombat, abilityCooldownKey(ordinary.id)), 5000);
 // Exact gear-to-ability pairs: equip upgraded items, fire real Guards and compare
 // live payloads with authored values and the shared tooltip resolver.
 for (const id of ['brace', 'endure', 'second-wind', 'recuperate']) {

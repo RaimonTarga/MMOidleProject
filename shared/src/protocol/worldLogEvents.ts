@@ -367,9 +367,6 @@ function formatDeathHeadline(
 ): HeadlinePart[] {
   const who = actorPart(player, viewerId);
   const were = player.id === viewerId ? ' were' : ' was';
-  if (cause.kind === 'stance') {
-    return [who, neutral(`${were} consumed by ${cause.stanceName}`)];
-  }
   if (cause.kind === 'debt' && !cause.killer) {
     return [who, neutral(`${were} defeated by accumulated damage`)];
   }
@@ -423,7 +420,6 @@ function formatDeathText(
   viewerId: string,
 ): string {
   const who = player.id === viewerId ? 'You were' : `${player.name} was`;
-  if (cause.kind === 'stance') return `${who} consumed by ${cause.stanceName}`;
   if (cause.kind === 'debt' && !cause.killer) {
     return `${who} defeated by accumulated damage`;
   }

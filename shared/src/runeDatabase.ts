@@ -10,7 +10,6 @@
 import type { AutocombatConfig } from "./components/core/networkedSlices";
 import type { CombatArchetype } from "./types/combat";
 import { ABILITY_DATABASE } from "./abilities";
-import { NO_STANCE_ID, stanceDef } from "./stances";
 
 export type RuneChannel =
   | "MOVEMENT"
@@ -29,8 +28,7 @@ export type RuneChannel =
   | "CONTROL"
   /** Conduit only: where the formation stands, independent of the owner's movement. */
   | "FORMATION"
-  | "ABILITY"
-  | "STANCE";
+  | "ABILITY";
 
 export type RuneConditionId =
   | "always"
@@ -52,8 +50,8 @@ export type RuneConditionId =
   // satisfy this condition.
   | "inside-telegraph"
   // Reactive telegraph hook: active while an enemy attacking you is charging a
-  // cast-time attack (e.g. the Ridge Archer's Power Shot). Pairs with Fire Guard /
-  // Switch Stance for read-and-react defense.
+  // cast-time attack (e.g. the Ridge Archer's Power Shot). Pairs with Fire Guard
+  // for read-and-react defense.
   | "target-casting"
   // Active while your NEXT attack is empowered (the finisher / execution / discharge
   // is armed and waiting to land). Class-agnostic: it reads the shared empowered flag,
@@ -81,9 +79,6 @@ export type RuneConditionId =
   | "target-max-stacks"
   /** Active only while a server-owned map navigation path has remaining hops. */
   | "while-traveling"
-  // Active while the active stance's own charge is full. Currently only Powering Up
-  // charges, and this is how a rule LEAVES it to cash the charge in.
-  | "stance-charged"
   // Summoner only: at most half of your formation is standing (living summons in
   // your node). Inert for every other archetype. Pairs with Flee so a Conduit whose
   // summons are dying faster than they reform backs off to rebuild.
@@ -124,15 +119,12 @@ export type RuneActionId =
   | "fight-back"
   | "lead-the-way"
   | "taunt-current-target"
-  | "use-ability"
-  // Switch to a destination stance authored on the assembled rule.
-  | "switch-stance";
+  | "use-ability";
 
 export interface ConditionDef {
   id: RuneConditionId;
   name: string;
   blurb: string;
-  cost: number;
   tier: number;
   kind: "state";
 }
@@ -141,7 +133,6 @@ export interface ActionDef {
   id: RuneActionId;
   name: string;
   blurb: string;
-  cost: number;
   tier: number;
   channel: RuneChannel;
   allowedConditionIds?: readonly RuneConditionId[];
@@ -152,8 +143,6 @@ export interface ActionDef {
 export interface EquippedRule {
   conditionId: string;
   actionId: string;
-  /** Required destination for switch-stance; invalid and ignored on other actions. */
-  targetStanceId?: string;
   targetAbilityId?: string;
   waitOutMode?: "all" | "heat-managed";
 }
@@ -171,7 +160,6 @@ export const RUNE_CHANNELS: RuneChannel[] = [
   "CONTROL",
   "FORMATION",
   "ABILITY",
-  "STANCE",
 ];
 
 const COMBAT_CONDITIONS: readonly RuneConditionId[] = [
@@ -236,26 +224,6 @@ const CONTROL_CONDITIONS: readonly RuneConditionId[] = [
 // System rework Step 7: conditions a player can wire to an ability-fire override.
 
 
-// System rework Step 10: situations a player can wire to a stance auto-switch.
-const STANCE_CONDITIONS: readonly RuneConditionId[] = [
-  "always",
-  "in-combat",
-  "when-idle",
-  "hp-below-25",
-  "hp-above-90",
-  "target-hp-below-25",
-  "has-debuff",
-  "target-casting",
-  // The empowered window is a posture decision as much as an ability-timing one —
-  // `Empowered Ready -> Time to Strike` is that stance's whole reason to exist. The
-  // condition already existed for ability-fire rules; this only lets Switch Stance
-  // name it too.
-  "before-empowered",
-  // `Stance Charged -> <anything>` is how a charging posture is left on purpose.
-  "stance-charged",
-  "while-traveling",
-  "n-aggro-3",
-];
 
 export const CONDITION_DATABASE = new Map<string, ConditionDef>([
   [
@@ -264,7 +232,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "always",
       name: "Always",
       blurb: "Works whenever the response can run.",
-      cost: 0,
       tier: 1,
       kind: "state",
     },
@@ -275,7 +242,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "in-combat",
       name: "In Combat",
       blurb: "Works while you are fighting.",
-      cost: 1,
       tier: 1,
       kind: "state",
     },
@@ -286,7 +252,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "when-idle",
       name: "Out of Combat",
       blurb: "Works when combat has cleared.",
-      cost: 1,
       tier: 1,
       kind: "state",
     },
@@ -297,7 +262,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "hp-below-25",
       name: "HP Below 25%",
       blurb: "Works while your health is at or under 25%.",
-      cost: 1,
       tier: 1,
       kind: "state",
     },
@@ -308,7 +272,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "hp-above-90",
       name: "HP Above 90%",
       blurb: "Works while your health is at or above 90%.",
-      cost: 1,
       tier: 2,
       kind: "state",
     },
@@ -319,7 +282,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "target-hp-below-25",
       name: "Target HP Below 25%",
       blurb: "Works while your current target is at or under 25% health.",
-      cost: 1,
       tier: 2,
       kind: "state",
     },
@@ -330,7 +292,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "has-debuff",
       name: "When Debuffed",
       blurb: "Works while you are carrying a harmful debuff or damage-over-time effect.",
-      cost: 1,
       tier: 1,
       kind: "state",
     },
@@ -341,7 +302,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "controlled",
       name: "When Controlled",
       blurb: "Works while you are stunned, locked down, frozen or rooted.",
-      cost: 1,
       tier: 1,
       kind: "state",
     },
@@ -352,7 +312,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "enemy-contact",
       name: "Enemy in Contact",
       blurb: "Works while a melee enemy targeting you is close enough to hit you.",
-      cost: 1,
       tier: 1,
       kind: "state",
     },
@@ -363,7 +322,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "in-party",
       name: "In A Party",
       blurb: "Works while in a party with one or more players.",
-      cost: 1,
       tier: 1,
       kind: "state",
     },
@@ -374,7 +332,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "formation-broken",
       name: "Formation Broken",
       blurb: "Summoner only: works while half or fewer of your summons are standing.",
-      cost: 1,
       tier: 1,
       kind: "state",
     },
@@ -385,7 +342,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "n-aggro-3",
       name: "Surrounded",
       blurb: "Works when three or more enemies are chasing you.",
-      cost: 2,
       tier: 4,
       kind: "state",
     },
@@ -396,7 +352,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "inside-telegraph",
       name: "Inside Telegraph",
       blurb: "Works while you are standing inside an unresolved hostile attack telegraph.",
-      cost: 1,
       tier: 1,
       kind: "state",
     },
@@ -407,7 +362,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "target-casting",
       name: "Enemy Charging",
       blurb: "Works while an enemy attacking you is winding up a cast-time attack.",
-      cost: 2,
       tier: 2,
       kind: "state",
     },
@@ -418,7 +372,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "target-shielded",
       name: "Enemy Shielded",
       blurb: "Works while the enemy you are attacking is behind a barrier that absorbs damage.",
-      cost: 1,
       tier: 2,
       kind: "state",
     },
@@ -429,7 +382,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "target-escaping",
       name: "Enemy Escaping",
       blurb: "Works while a boss fighting you is fleeing, dashing away, or travelling toward you underground.",
-      cost: 1,
       tier: 2,
       kind: "state",
     },
@@ -440,21 +392,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "debuff-pile",
       name: "Debuff Pile",
       blurb: "Works while you carry three or more different harmful debuffs.",
-      cost: 1,
-      tier: 3,
-      kind: "state",
-    },
-  ],
-  [
-    "stance-charged",
-    {
-      id: "stance-charged",
-      name: "Stance Charged",
-      // Deliberately generic rather than "Powering Up is full": a charging posture
-      // is a shape, and a second one would reuse this rather than add a condition.
-      blurb:
-        "Works while your active stance has finished charging and is holding a full charge, waiting to be spent.",
-      cost: 1,
       tier: 3,
       kind: "state",
     },
@@ -464,10 +401,9 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
     {
       id: "before-empowered",
       name: "Empowered Ready",
-      // Numbers (cost/tier) are PLACEHOLDERS — user balance pass.
+      // Tier is a PLACEHOLDER — user balance pass.
       blurb:
         "Works the instant your next attack becomes empowered — a finisher, execution, or full-energy discharge that is armed and waiting to land.",
-      cost: 2,
       tier: 2,
       kind: "state",
     },
@@ -477,10 +413,9 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
     {
       id: "target-elite",
       name: "Elite Target",
-      // Numbers (cost/tier) are PLACEHOLDERS — user balance pass.
+      // Tier is a PLACEHOLDER — user balance pass.
       blurb:
         "Works while the enemy you are attacking is an elite — the high-value target worth spending a specialised ability on.",
-      cost: 2,
       tier: 2,
       kind: "state",
     },
@@ -490,10 +425,9 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
     {
       id: "target-max-stacks",
       name: "Fully Afflicted",
-      // Numbers (cost/tier) are PLACEHOLDERS — user balance pass.
+      // Tier is a PLACEHOLDER — user balance pass.
       blurb:
         "Works while your damage over time on the target has stacked as high as it goes — the moment there is most to spread, and most to detonate.",
-      cost: 2,
       tier: 3,
       kind: "state",
     },
@@ -504,7 +438,6 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "while-traveling",
       name: "While Traveling",
       blurb: "Works while you are following an intentional map travel route.",
-      cost: 0,
       tier: 1,
       kind: "state",
     },
@@ -518,7 +451,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "chase-enemy",
       name: "Chase Enemy",
       blurb: "Move into the weapon's normal attack range.",
-      cost: 0,
       tier: 1,
       channel: "MOVEMENT",
       allowedConditionIds: COMBAT_CONDITIONS,
@@ -530,7 +462,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "flee",
       name: "Flee",
       blurb: "Retreat from the current fight.",
-      cost: 1,
       tier: 1,
       channel: "MOVEMENT",
       allowedConditionIds: COMBAT_CONDITIONS,
@@ -542,7 +473,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "orbit",
       name: "Keep Distance",
       blurb: "Hold a standoff gap and kite while attacking.",
-      cost: 2,
       tier: 1,
       channel: "MOVEMENT",
       allowedConditionIds: COMBAT_CONDITIONS,
@@ -554,7 +484,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "step-back",
       name: "Step Back",
       blurb: "Take the shortest reasonable route out of visible attack telegraphs.",
-      cost: 2,
       tier: 1,
       channel: "MOVEMENT",
       allowedConditionIds: ["inside-telegraph"],
@@ -566,7 +495,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "follow-and-assist",
       name: "Follow And Assist",
       blurb: "Follow the party leader out of combat, and attack their target in combat.",
-      cost: 1,
       tier: 1,
       channel: "MOVEMENT",
       allowedConditionIds: ["in-party"],
@@ -578,7 +506,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "focus-closest",
       name: "Focus Closest",
       blurb: "Prefer the nearest valid enemy.",
-      cost: 0,
       tier: 1,
       channel: "TARGETING",
       allowedConditionIds: TARGETING_CONDITIONS,
@@ -590,7 +517,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "focus-lowest-hp",
       name: "Focus Lowest HP",
       blurb: "Prefer fast kills to reduce enemy count.",
-      cost: 2,
       tier: 4,
       channel: "TARGETING",
       allowedConditionIds: TARGETING_CONDITIONS,
@@ -602,7 +528,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "focus-highest-max-hp",
       name: "Focus Highest HP",
       blurb: "Prefer the enemy with the largest maximum health pool.",
-      cost: 2,
       tier: 1,
       channel: "TARGETING",
       allowedConditionIds: TARGETING_CONDITIONS,
@@ -614,7 +539,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "let-dots-finish",
       name: "Let DoTs Finish",
       blurb: "Prefer a new enemy when your damage over time should finish the current one.",
-      cost: 1,
       tier: 2,
       channel: "TARGETING",
       allowedConditionIds: TARGETING_CONDITIONS,
@@ -627,7 +551,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "spread-dots",
       name: "Spread DoTs",
       blurb: "In multi-enemy fights, rotate targets to keep your damage over time active.",
-      cost: 2,
       tier: 2,
       channel: "TARGETING",
       allowedConditionIds: TARGETING_CONDITIONS,
@@ -640,7 +563,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "focus-elites",
       name: "Focus Elites",
       blurb: "Prioritize elite enemies (the yellow-outlined standouts) — necromancers, apex predators — before clearing the rest.",
-      cost: 2,
       tier: 2,
       channel: "TARGETING",
       allowedConditionIds: TARGETING_CONDITIONS,
@@ -653,7 +575,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "tactical-reload",
       name: "Reload Safely",
       blurb: "Pause to refill your clip. Always holds as soon as combat disengages; Out of Combat waits for the combat grace period to expire.",
-      cost: 1,
       tier: 1,
       channel: "RESOURCE_MAINTENANCE",
       allowedConditionIds: RECOVER_FIRST_CONDITIONS,
@@ -666,7 +587,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "wait-for-execution",
       name: "Ready Execution",
       blurb: "Wait until your execution is ready. Always holds as soon as combat disengages; Out of Combat waits for the combat grace period to expire.",
-      cost: 1,
       tier: 1,
       channel: "OOC_MAINTENANCE",
       allowedConditionIds: RECOVER_FIRST_CONDITIONS,
@@ -679,7 +599,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "wait-for-summons",
       name: "Rebuild Formation",
       blurb: "Wait until every missing summon is reconstructed, without waiting for full summon HP. Always holds as soon as combat disengages; Out of Combat waits for the combat grace period to expire.",
-      cost: 1,
       tier: 1,
       channel: "OOC_MAINTENANCE",
       allowedConditionIds: WAIT_IT_OUT_CONDITIONS,
@@ -693,7 +612,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       name: "Recover First",
       blurb:
         "Hold position until HP is full instead of moving on. With Always, it holds as soon as nothing is attacking you, without waiting for combat to time out.",
-      cost: 1,
       tier: 1,
       channel: "OOC_MAINTENANCE",
       allowedConditionIds: RECOVER_FIRST_CONDITIONS,
@@ -706,7 +624,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       name: "Wait It Out",
       blurb:
         "Hold position until temporary harmful effects fade. With Always, it holds as soon as nothing is attacking you, without waiting for combat to time out.",
-      cost: 1,
       tier: 1,
       channel: "OOC_MAINTENANCE",
       allowedConditionIds: WAIT_IT_OUT_CONDITIONS,
@@ -718,7 +635,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "auto-path-enemy",
       name: "Find Enemies",
       blurb: "When idle, path to the nearest valid enemy in this node.",
-      cost: 0,
       tier: 1,
       channel: "GLOBAL_STRATEGY",
       allowedConditionIds: STRATEGY_CONDITIONS,
@@ -730,7 +646,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "avoid-hazards",
       name: "Avoid Hazards",
       blurb: "Route around damaging and slowing terrain when pathing.",
-      cost: 2,
       tier: 1,
       channel: "PATH_SAFETY",
       allowedConditionIds: PATHING_CONDITIONS,
@@ -742,7 +657,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "careful-pulling",
       name: "Careful Pulling",
       blurb: "While approaching a target, bias movement away from nearby non-target elites.",
-      cost: 2,
       tier: 1,
       channel: "APPROACH_STYLE",
       allowedConditionIds: PATHING_CONDITIONS,
@@ -754,7 +668,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "avoid-enemies",
       name: "Avoid Enemies",
       blurb: "While traveling, take reasonable local detours around unengaged hostiles.",
-      cost: 1,
       tier: 1,
       channel: "TRAVEL_PATHING",
       allowedConditionIds: TRAVEL_CONDITIONS,
@@ -766,7 +679,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "fight-back",
       name: "Fight Back",
       blurb: "Pause travel when attacked, use your normal combat rules, then resume the route.",
-      cost: 0,
       tier: 1,
       channel: "TRAVEL_RESPONSE",
       allowedConditionIds: TRAVEL_CONDITIONS,
@@ -778,7 +690,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "lead-the-way",
       name: "Lead The Way",
       blurb: "As party leader, look for enemies in this zone so followers can trail you.",
-      cost: 0,
       tier: 1,
       channel: "GLOBAL_STRATEGY",
       allowedConditionIds: ["in-party"],
@@ -790,7 +701,6 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       id: "taunt-current-target",
       name: "Taunt Target",
       blurb: "On hit, force your current enemy to attack you. Has a 4 second cooldown.",
-      cost: 1,
       tier: 1,
       channel: "CONTROL",
       allowedConditionIds: CONTROL_CONDITIONS,
@@ -803,29 +713,13 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       name: "Recall Summons",
       blurb:
         "While this situation holds, your summons drop their targets and stay at your side, then rejoin the fight when it ends.",
-      cost: 1,
       tier: 1,
       channel: "FORMATION",
       allowedConditionIds: ["hp-below-25", "while-traveling", "target-casting"],
       requiredArchetype: "summoner",
     },
   ],
-  ["use-ability", { id: "use-ability", name: "Use Ability", blurb: "Use an attuned ability whenever this situation holds and it is off cooldown.", cost: 1, tier: 1, channel: "ABILITY" }],
-  [
-    "switch-stance",
-    {
-      id: "switch-stance",
-      name: "Switch Stance",
-      blurb:
-        "Switch to a chosen learned stance while this situation holds, reverting to your default otherwise.",
-      // The destination reserves RP through stance attunement. Switching adds only
-      // the condition cost; repeated rules do not repay the destination reservation.
-      cost: 0,
-      tier: 2,
-      channel: "STANCE",
-      allowedConditionIds: STANCE_CONDITIONS,
-    },
-  ],
+  ["use-ability", { id: "use-ability", name: "Use Ability", blurb: "Use an attuned ability whenever this situation holds and it is off cooldown.", tier: 1, channel: "ABILITY" }],
 ]);
 
 /** Every fragment id (conditions + actions). Useful for validation/tooling. */
@@ -842,9 +736,14 @@ export const DEFAULT_RUNE_LOADOUT: EquippedRule[] = [
   { conditionId: "while-traveling", actionId: "fight-back" },
 ];
 
+/**
+ * The fragments a character owned before crafted runes went. Ownership is now
+ * {@link runeIdsForArchetype}; this set stays for the test and bot fixtures
+ * that hand a character this vocabulary.
+ */
 export const STARTER_RUNE_IDS: string[] = Array.from(
   new Set([
-    // Situations are baseline vocabulary. Progression unlocks new responses.
+    // Situations are baseline vocabulary.
     ...CONDITION_DATABASE.keys(),
     ...DEFAULT_RUNE_LOADOUT.flatMap((rule) => [rule.conditionId, rule.actionId]),
     // Party runes and basic targeting are available from the start
@@ -854,31 +753,20 @@ export const STARTER_RUNE_IDS: string[] = Array.from(
     "taunt-current-target",
     "focus-closest",
     "use-ability",
-    // Stance auto-switch is a timing preference for a learned destination.
-    "switch-stance",
     // Reactive "enemy is charging a cast" condition — available from the start so
     // players can answer telegraphed casts once they meet a charging mob.
     "target-casting",
-    // "Empowered Ready" condition. TEMPORARY starter so it's usable now; intended to
-    // become an earned reward later (move it onto a rune recipe in the reward pass).
+    // "Empowered Ready" condition.
     "before-empowered",
     // "Elite Target" condition — the situation that makes a specialised second
-    // Technique worth equipping. Same TEMPORARY-starter caveat as above.
+    // Technique worth equipping.
     "target-elite",
-    // "Fully Afflicted" condition. Starter vocabulary (DESIGNER CALL) rather than
-    // a swamp rune recipe: it is the timing half of the Contagion/Detonate pair,
-    // and gating the timing behind a THIRD swamp unlock would mean buying two
-    // techniques that then sit on a naive `in-combat` trigger. Inert until the
-    // player actually has a stacking DoT, so granting it early costs nothing.
+    // "Fully Afflicted" condition: the timing half of the Contagion/Detonate pair.
+    // Inert until the player actually has a stacking DoT.
     "target-max-stacks",
     // DESIGNER CALL, 2026-08-25: default-unlocked so every character can
-    // answer danger the way a human does without waiting on a Cave-gated
-    // recipe first -- recover before pulling again, and retreat when a fight
-    // has gone bad. Previously gated behind rune-recipe-recover-first and
-    // rune-recipe-flee. CLEANUP, 2026-08-28: both recipes are marked
-    // `deprecated: true` in `runeRecipes.ts` -- kept live for recipe-id/save
-    // stability, but hidden from every player-facing surface and rejected by
-    // `craftRuneRecipe` before any essence is spent.
+    // answer danger the way a human does -- recover before pulling again, and
+    // retreat when a fight has gone bad.
     "wait-for-regen",
     "wait-it-out",
     // Class maintenance is baseline vocabulary, filtered by requiredArchetype.
@@ -912,9 +800,6 @@ export function normalizeRuneRule(rule: EquippedRule): EquippedRule {
     actionId: LEGACY_ACTION_IDS[rule.actionId] ?? rule.actionId,
     ...(rule.waitOutMode !== undefined ? { waitOutMode: rule.waitOutMode } : {}),
     ...(rule.actionId === "use-ability" && typeof rule.targetAbilityId === "string" ? { targetAbilityId: rule.targetAbilityId } : {}),
-    ...(rule.actionId === "switch-stance" && typeof rule.targetStanceId === "string"
-      ? { targetStanceId: rule.targetStanceId }
-      : {}),
   };
 }
 
@@ -929,23 +814,16 @@ export function normalizeRuneLoadout(rules: EquippedRule[]): EquippedRule[] {
     .map(normalizeRuneRule);
 }
 
-/** Provisional economy seeds; Global Mastery is the sole capacity progression. */
-export const RUNE_POINT_BASE = 16;
-export const RUNE_POINT_GLOBAL_MASTERY_STEP = 5;
-
-export function runeBudgetForGlobalMastery(globalMastery: number): number {
-  return RUNE_POINT_BASE + Math.floor(Math.max(0, Number.isFinite(globalMastery) ? globalMastery : 0) / RUNE_POINT_GLOBAL_MASTERY_STEP);
-}
-
-export function runeRuleCost(rule: EquippedRule): number {
-  const condition = CONDITION_DATABASE.get(rule.conditionId);
-  const action = ACTION_DATABASE.get(rule.actionId);
-  if (!condition || !action) return 0;
-  return condition.cost + action.cost;
-}
-
-export function runeLoadoutCost(rules: EquippedRule[]): number {
-  return rules.reduce((sum, rule) => sum + runeRuleCost(rule), 0);
+/**
+ * The rune fragments a character owns: every rune its class may use. Runes are
+ * free standing orders (rules cost nothing), so ownership is every condition
+ * and every action that names no class or names this one (`requiredArchetype`).
+ */
+export function runeIdsForArchetype(combatArchetype: CombatArchetype | undefined): string[] {
+  return ALL_RUNE_IDS.filter((id) => {
+    const required = ACTION_DATABASE.get(id)?.requiredArchetype;
+    return required === undefined || required === combatArchetype;
+  });
 }
 
 export function runeChannelLabel(channel: RuneChannel): string {
@@ -974,8 +852,6 @@ export function runeChannelLabel(channel: RuneChannel): string {
       return "Formation";
     case "ABILITY":
       return "Abilities";
-    case "STANCE":
-      return "Stance";
   }
 }
 
@@ -1042,13 +918,10 @@ export function isRuneRuleOwned(
 export function sanitizeRuneLoadout(
   rules: EquippedRule[],
   owned: ReadonlySet<string>,
-  budget: number,
   combatArchetype?: CombatArchetype,
-  knownStances: ReadonlySet<string> = new Set(),
   attunedAbilities: ReadonlySet<string> = new Set(),
 ): EquippedRule[] {
   const sanitized: EquippedRule[] = [];
-  let spent = 0;
   for (const raw of normalizeRuneLoadout(rules)) {
     if (
       !raw ||
@@ -1060,24 +933,13 @@ export function sanitizeRuneLoadout(
     ) {
       continue;
     }
-    if (
-      raw.actionId === "switch-stance" &&
-      (!raw.targetStanceId ||
-        (raw.targetStanceId !== NO_STANCE_ID &&
-          (!stanceDef(raw.targetStanceId) ||
-            (knownStances !== undefined && !knownStances.has(raw.targetStanceId)))))
-    ) continue;
     if (raw.actionId === "use-ability" && (!raw.targetAbilityId || !ABILITY_DATABASE.has(raw.targetAbilityId) || !attunedAbilities.has(raw.targetAbilityId))) continue;
-    const cost = runeRuleCost(raw);
-    if (spent + cost > budget) continue;
     sanitized.push({
       conditionId: raw.conditionId,
       actionId: raw.actionId,
       ...(raw.waitOutMode !== undefined ? { waitOutMode: raw.waitOutMode } : {}),
       ...(raw.targetAbilityId ? { targetAbilityId: raw.targetAbilityId } : {}),
-      ...(raw.targetStanceId ? { targetStanceId: raw.targetStanceId } : {}),
     });
-    spent += cost;
   }
   return sanitized;
 }
@@ -1444,12 +1306,6 @@ export interface RuneContext {
   targetEscaping?: boolean;
   /** Distinct harmful debuffs the player carries. */
   debuffCount?: number;
-  /**
-   * The active stance's own charge is full. Only a charging posture (Powering Up)
-   * ever sets this; every other stance leaves it false, so a `Stance Charged` rule
-   * built without one simply never fires.
-   */
-  stanceCharged?: boolean;
 }
 
 export interface ClaimedRuneAction {
@@ -1484,8 +1340,6 @@ export interface DerivedRuneConfig {
   travelPathingAction: RuneActionId | null;
   travelResponseAction: RuneActionId | null;
   controlAction: RuneActionId | null;
-  stanceAction: RuneActionId | null;
-  stanceTargetId: string | null;
   fleeRequested: boolean;
   orbit: boolean;
   evadeTelegraph: boolean;
@@ -1507,8 +1361,6 @@ export interface DerivedRuneConfig {
   spreadDots: boolean;
   /** A `focus-elites` rule is active this tick — prioritize elite-tagged enemies. */
   focusElites: boolean;
-  /** A valid `switch-stance` rule claims the Stance channel this tick. */
-  switchStance: boolean;
 }
 
 function emptyClaims(): ClaimedRuneChannels {
@@ -1525,7 +1377,6 @@ function emptyClaims(): ClaimedRuneChannels {
     CONTROL: null,
     FORMATION: null,
     ABILITY: null,
-    STANCE: null,
   };
 }
 
@@ -1567,8 +1418,6 @@ function isConditionActive(conditionId: string, ctx: RuneContext): boolean {
       return ctx.targetAtMaxDotStacks ?? false;
     case "while-traveling":
       return ctx.traveling ?? false;
-    case "stance-charged":
-      return ctx.stanceCharged ?? false;
     case "target-shielded":
       return ctx.targetShielded ?? false;
     case "target-escaping":
@@ -1602,8 +1451,6 @@ export function deriveAutoConfigFromRunes(
     travelPathingAction: null,
     travelResponseAction: null,
     controlAction: null,
-    stanceAction: null,
-    stanceTargetId: null,
     fleeRequested: false,
     orbit: false,
     evadeTelegraph: false,
@@ -1624,7 +1471,6 @@ export function deriveAutoConfigFromRunes(
     letDotsFinish: false,
     spreadDots: false,
     focusElites: false,
-    switchStance: false,
   };
 
   const engaged = ctx.activelyEngaged ?? ctx.inCombat;
@@ -1672,7 +1518,6 @@ export function deriveAutoConfigFromRunes(
       actionId: action.id,
       ...(raw.waitOutMode !== undefined ? { waitOutMode: raw.waitOutMode } : {}),
       ...(raw.targetAbilityId ? { targetAbilityId: raw.targetAbilityId } : {}),
-      ...(raw.targetStanceId ? { targetStanceId: raw.targetStanceId } : {}),
     };
     const claim = { rule, action, condition };
     if (action.channel === "OOC_MAINTENANCE") {
@@ -1703,8 +1548,6 @@ export function deriveAutoConfigFromRunes(
   derived.travelResponseAction = claimed.TRAVEL_RESPONSE?.action.id ?? null;
   derived.controlAction = claimed.CONTROL?.action.id ?? null;
   derived.recallSummons = claimed.FORMATION?.action.id === "recall-summons";
-  derived.stanceAction = claimed.STANCE?.action.id ?? null;
-  derived.stanceTargetId = claimed.STANCE?.rule.targetStanceId ?? null;
 
   switch (derived.movementAction) {
     case "flee":
@@ -1791,10 +1634,6 @@ export function deriveAutoConfigFromRunes(
   if (derived.controlAction === "taunt-current-target") {
     derived.tauntCurrentTarget = true;
   }
-  if (derived.stanceAction === "switch-stance") {
-    derived.switchStance = true;
-  }
-
   return derived;
 }
 

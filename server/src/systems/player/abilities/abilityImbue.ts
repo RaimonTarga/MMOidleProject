@@ -5,7 +5,7 @@
  * in seconds.
  *
  * WHY CHARGES. Every other offensive window in the game races a clock: Frenzy,
- * the stance windows, Overdrive. A clock quietly pays the most to whoever was
+ * Overdrive. A clock quietly pays the most to whoever was
  * already attacking fastest and punishes the builds that swing slowly, which is
  * the opposite of what a "your next few strikes" fantasy promises. A charge
  * window pays every build the same: five hits are five hits whether they take
@@ -96,7 +96,7 @@ export function imbueChargesRemaining(player: PlayerEntity): number {
  *
  * ONE DEFINITION, TWO CONSUMERS — combat.ts folds this straight into the same
  * `dealsDamage.onHitDamage` term used by gear (so it rides the same
- * core.onhit-mult / formation-weight / per-shot multipliers), and the
+ * formation-weight / per-shot multipliers), and the
  * `hasStatus` mirror (see `hpForecast.ts`) reads this exact function so the
  * stat panel shows the boosted number instead of a value that visibly never
  * moves while the window is open — the same trap `attackCadenceMult` was
@@ -117,7 +117,7 @@ export function imbueOnHitBonus(cs: TracksCombat): number {
  * outgoing hit. The bonus itself is NOT added to `ctx.damage` here — it is
  * handed off via `ctx.metadata["imbueOnHitBonus"]` and folded into
  * `dealsDamage.onHitDamage`'s own term further down the pipeline (combat.ts),
- * so it passes through the SAME plating/DR placement, core.onhit-mult,
+ * so it passes through the SAME plating/DR placement,
  * formation weight, and per-shot multipliers as the real on-hit stat instead
  * of being a parallel, differently-composed number.
  *

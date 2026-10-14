@@ -79,7 +79,6 @@ function makePlayerSlices(
       bossesCleared: [],
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [...techniques, ...guards],
       attunedAbilities: {
@@ -87,11 +86,6 @@ function makePlayerSlices(
         techniques: [...techniques],
         guards: [...guards],
       },
-      knownStances: [],
-      equippedStances: { default: null },
-      activeStance: null,
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

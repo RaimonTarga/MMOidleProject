@@ -1,10 +1,10 @@
-import { ITEM_DATABASE, MONSTER_DATABASE, RECIPE_DATABASE, runeBudgetForGlobalMastery } from '@mmo-idle/shared';
+import { ITEM_DATABASE, MONSTER_DATABASE, RECIPE_DATABASE } from '@mmo-idle/shared';
 import {
   BOSSREF_A_ABILITIES, BOSSREF_A_GEAR, BOSSREF_A_RULES, BOSSREF_A_STANCE,
   BOSSREF_B_GEAR, BOSSREF_B_RULES, BOSSREF_B_STANCE,
   BOSSREF_BLOCKS, BOSSREF_BOSS_ID, BOSSREF_BOSS_STATS, BOSSREF_CAP_MS,
   BOSSREF_CELLS, BOSSREF_NODE_ID, BOSSREF_SEEDS, BOSSREF_SKILL_PATH, BOSSREF_TIER,
-  assertBossReferenceDefinitions, bossReferenceRpCost, installBossReferenceTreatment,
+  assertBossReferenceDefinitions, installBossReferenceTreatment,
 } from '../bench/balance/bossReferenceSpec';
 
 function assert(condition: unknown, message: string): asserts condition {
@@ -80,37 +80,10 @@ assertBossReferenceDefinitions();
   assert(Array.isArray(b.runeRules) && b.runeRules.length === 0,
     'Case B must equip NO rune rules — that is the legacy package, not an omission');
   assert(JSON.stringify(BOSSREF_B_RULES) === '[]', 'the legacy rule set must stay empty');
-  // 5 since the ability pass reshaped the T2 roster (design §22.2: Hamstring cut,
-  // Charge and Slam to T1, Binding Strike and Snipe to T2); the round-robin is derived.
-  assert(b.abilities!.techniques.length + b.abilities!.guards.length === 5,
-    'Case B must carry the full canonical round-robin ability set');
-  assert(!b.abilities!.guards.includes('second-wind') && !b.abilities!.guards.includes('brace'),
-    'Case B is expected to carry neither Second Wind nor Brace');
-}
-
-// ── RP: both packages must be legal on the same budget, and never hybridised.
-//
-// This is the guard the work order asked for. Rules, abilities and the stance all
-// draw on one budget. Lifting a component out of one package and into the other
-// produces an over-budget loadout, and the fix must never be to change some other
-// input until it fits.
-{
-  const budget = runeBudgetForGlobalMastery(72);
-  const [a, b] = BOSSREF_CELLS as [typeof BOSSREF_CELLS[number], typeof BOSSREF_CELLS[number]];
-  const aCost = bossReferenceRpCost(a), bCost = bossReferenceRpCost(b);
-  assert(aCost <= budget, `Case A costs ${aCost} RP against ${budget}`);
-  assert(bCost <= budget, `Case B costs ${bCost} RP against ${budget}`);
-  // The derived round-robin spent the whole 30 RP until the ability pass reshaped the
-  // T2 roster (design §22.2); its five abilities now leave 2 RP no next pick fits.
-  assert(bCost === budget - 2, `Case B is expected to spend 28 of the budget, got ${bCost}/${budget}`);
-
-  // The hybrid the work order explicitly warned about: Case B's abilities and
-  // stance with Case A's rules on top. It must NOT fit.
-  const hybrid = bossReferenceRpCost({
-    ...b, runeRules: [...BOSSREF_A_RULES],
-  } as typeof b);
-  assert(hybrid > budget,
-    `the ability-swap hybrid must be illegal, but costs ${hybrid} against ${budget}`);
+  // The round-robin is derived (`canonicalLoadout`); attuning costs nothing, so it
+  // carries every T2-legal ability (asserted in `assertBossReferenceDefinitions`).
+  assert(b.abilities!.techniques.length + b.abilities!.guards.length > 0,
+    'Case B must carry the canonical round-robin ability set');
 }
 
 // ── The boss itself, pinned. It summons nothing, so there is no escort question.

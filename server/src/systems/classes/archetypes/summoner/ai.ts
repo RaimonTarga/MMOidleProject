@@ -25,7 +25,6 @@ import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import { setEntityMotion, stopEntity } from '../../../world/movement';
 import { setAttackTarget } from '../../../combat/ai/targeting';
 import { runFormationAttack } from './formationAttack';
-import { attackHasteBonus } from '../../../combat/engine/attackCadence';
 import { computeMinionSpeed, despawnMinion, getFollowOffset } from './spawn';
 import {
   isSummonerRecalling,
@@ -109,11 +108,9 @@ function findReachableMonster(world: World, owner: PlayerEntity, minion: MinionE
   return best;
 }
 
-/** Swing at `target` once the summon's (owner-hasted) cooldown is ready. */
+/** Swing at `target` once the summon's cooldown is ready. */
 function strikeWhenReady(world: World, owner: PlayerEntity, minion: MinionEntity, target: MonsterEntity, now: number): void {
-  // Inherit offensive haste without copying body-local environmental slows.
-  if (now - minion.performsAttack.lastAttackAt >=
-    minion.performsAttack.attackCooldown / (1 + attackHasteBonus(owner.tracksCombat))) {
+  if (now - minion.performsAttack.lastAttackAt >= minion.performsAttack.attackCooldown) {
     const outcome = runFormationAttack(world, owner, minion, target, now);
     if (outcome !== 'cancelled') {
       minion.performsAttack.lastAttackAt = now;
@@ -219,7 +216,7 @@ function ownerStepsBack(owner: PlayerEntity): boolean {
 
 /**
  * Walk toward `dest`, or stand still when Step Back is on and `dest` lies under
- * a telegraph that has not landed yet — rather than chase, retreat or follow the
+ * a telegraph that has not landed yet ï¿½ rather than chase, retreat or follow the
  * owner back into a slam the summon just left.
  */
 function moveMinionOutsideTelegraphs(

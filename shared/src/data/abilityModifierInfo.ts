@@ -20,8 +20,6 @@ export const ABILITY_MODIFIER_INFO: { key: PassiveKey; label: string; tags: Abil
   { key: 'defense.absorb-guard-bonus-pct', label: 'Extra absorb while this Guard is up', tags: ['guard', 'mitigation'] },
   { key: 'guard.cleanse-pulse', label: 'Starts your Recovery pulse when this Guard fires', tags: ['guard', 'cleanse'] },
   { key: 'guard.recovery-ramp-advance-ms', label: 'Advances ramping Recovery when this Guard fires', tags: ['guard'], unit: 'ms' },
-  { key: 'core.mobility-cooldown-reduction-pct', label: 'Mobility cooldown reduction', tags: ['mobility'] },
-  { key: 'core.mobility-refund-on-kill-pct', label: 'Base cooldown refunded per direct kill', tags: ['mobility'] },
 ];
 
 export function abilityModifierApplies(key: string, ability: AbilityDef, tier: number): boolean {

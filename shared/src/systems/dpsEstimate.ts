@@ -61,7 +61,7 @@ export interface DpsEstimateTarget {
 }
 
 export interface DpsEstimateInput {
-  /** Final attack stat, after gear, cores and the skill tree. */
+  /** Final attack stat, after gear and the skill tree. */
   attack: number;
   /** Flat per-hit damage applied after the target's defences. */
   onHitDamage: number;
@@ -92,8 +92,6 @@ export interface DpsEstimateInput {
    * holding a weapon they are allowed to use.
    */
   cannotAttack?: boolean;
-  activeStance?: string | null;
-  hpFraction?: number;
   /** Authoritative live multiplier; overrides the static build calculation. */
   finalDamageDealtMult?: number;
   /**
@@ -423,7 +421,7 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
       break;
   }
 
-  const finalMult = input.finalDamageDealtMult ?? resolveFinalDamageMultipliers(input.passives, input.activeStance, input.hpFraction).dealt;
+  const finalMult = input.finalDamageDealtMult ?? resolveFinalDamageMultipliers(input.passives).dealt;
   for (const part of parts) part.dps *= finalMult;
   const kept = parts.filter((part) => part.dps > 0).map((part) => ({ ...part, dps: round1(part.dps) }));
   return {

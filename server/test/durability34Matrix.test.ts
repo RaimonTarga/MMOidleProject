@@ -1,5 +1,4 @@
-import { MONSTER_DATABASE, NODE_BIOMES, ABILITY_DATABASE, biomeLevelCap, listBiomeGroupsAtTier,
-  globalMastery, runeBudgetForGlobalMastery, runicPointBreakdown, referenceAbilityRule } from '@mmo-idle/shared';
+import { MONSTER_DATABASE, NODE_BIOMES, ABILITY_DATABASE, referenceAbilityRule } from '@mmo-idle/shared';
 import {
   DURABILITY34_BLOCKS,
   DURABILITY34_GUARD_ARMS,
@@ -86,25 +85,6 @@ assertDurability34Definitions();
     assert(cell.targetTypes.includes('ridge-archer'), 'archer exposure required');
   }
 
-  // The substitution must be legal AND cheaper for every root, melee and ranged.
-  const levels: Record<string, number> = {};
-  for (const g of listBiomeGroupsAtTier(1)) levels[g] = biomeLevelCap(1, g);
-  const budget = runeBudgetForGlobalMastery(globalMastery(levels));
-  assert(budget === 22, `T1 budget drift: ${budget}`);
-  const melee = [
-    { conditionId: 'always', actionId: 'auto-path-enemy' },
-    { conditionId: 'inside-telegraph', actionId: 'step-back' },
-    { conditionId: 'always', actionId: 'avoid-hazards' },
-    { conditionId: 'always', actionId: 'wait-for-regen' },
-  ];
-  const ranged = [melee[0], melee[1], { conditionId: 'in-combat', actionId: 'orbit' }, melee[2], melee[3]];
-  for (const [label, rules] of [['melee', melee], ['ranged', ranged]] as const) {
-    const ref = runicPointBreakdown({ rules, abilities: { techniques: ['sweep'], guards: ['second-wind'] }, stances: [], rites: [] });
-    const sub = runicPointBreakdown({ rules, abilities: { techniques: ['sweep'], guards: ['brace'] }, stances: [], rites: [] });
-    assert(ref.total <= budget, `${label}: the reference arm must be legal (${ref.total})`);
-    assert(sub.total <= budget, `${label}: the substitution must be legal (${sub.total})`);
-    assert(sub.total < ref.total, `${label}: substituting Brace is cheaper, not an added cost`);
-  }
   // Neither guard reacts to a cast by default; both fire in combat off cooldown.
   // The packet's framing depends on that staying true.
   assert(referenceAbilityRule('brace')?.conditionId === 'in-combat', 'Brace is not a cast response by default');

@@ -3,8 +3,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { DUNGEON_DEFS, NODE_BIOMES, SUMMONER_CORE_TUNING, SUMMONER_FRAME_TUNING,
-  buildNavGrid, navigationBodyHalfExtents, moverOverlapsBlockShapes, globalMastery,
-  runeBudgetForGlobalMastery } from '@mmo-idle/shared';
+  buildNavGrid, navigationBodyHalfExtents, moverOverlapsBlockShapes, globalMastery } from '@mmo-idle/shared';
 import { createFarmWorld } from './worldFactory';
 import { setupArena, BOT_SPAWN } from './arena';
 import { prepareSurveyBot, type SurveyCell } from './ttkSurveySpec';
@@ -43,7 +42,7 @@ if(mode==='prepare') {
       const mastery:Record<string,number>=Object.fromEntries(Object.entries(x.mastery).filter(([,v])=>v!==undefined)) as Record<string,number>;
       const gm=globalMastery(mastery), id=x.name;
       cells.push({id,className:'conduit',tier:1,role:x.boss?'boss':'farm',isDungeon:x.boss,nodeId,alternate:false,upgradeLevel:x.plus,stance:null,
-        progressionSnapshot:{id,tier:1,mastery,gm,rp:runeBudgetForGlobalMastery(gm),plus:x.plus},
+        progressionSnapshot:{id,tier:1,mastery,gm,plus:x.plus},
         abilities:{techniques:x.abilities,guards:x.guards},
         runeRules:[{conditionId:'always',actionId:'auto-path-enemy'},{conditionId:'always',actionId:'wait-for-regen'},
           {conditionId:'always',actionId:'wait-for-summons'},

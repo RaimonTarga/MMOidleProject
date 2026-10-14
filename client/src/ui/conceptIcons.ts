@@ -53,7 +53,6 @@ const CONDITION_IDS = new Set([
   'target-elite',
   'target-max-stacks',
   'while-traveling',
-  'stance-charged',
   'n-aggro-3',
   'formation-broken',
 ]);
@@ -83,34 +82,6 @@ const ACTION_IDS = new Set([
   'lead-the-way',
   'taunt-current-target',
   'use-ability',
-  'switch-stance',
-]);
-
-const STANCE_IDS = new Set([
-  'defensive-stance',
-  'offensive-stance',
-  'tanking-stance',
-  'enraged-stance',
-  'perfection-stance',
-  'fleeting-stance',
-  'berserker-stance',
-  'recuperating-stance',
-  'predator-stance',
-  'brawler-stance',
-  'execute-stance',
-  'time-to-strike-stance',
-  'reaper-stance',
-  'warding-stance',
-  'powering-up-stance',
-]);
-
-const RITE_IDS = new Set([
-  'lingering-battle',
-  'swift-repose',
-  'purification',
-  'mechanic-renewal',
-  'ability-reprieve',
-  'blood-offering',
 ]);
 
 const BUFF_IDS = new Set([
@@ -204,9 +175,6 @@ const BUFF_IDS = new Set([
   'summoner-twin-covenant',
   'summoner-volatile-brood',
   'summoner-withering-chorus',
-  'stance-charge',
-  'stance-reaper',
-  'stance-release',
   // The evasion window's art, worn by Sidestep (see `BUFF_ICON_ALIASES`).
   'lineage-evasion',
   // Frame loops (progression rework Phase 3). Two tiles for all six roots: the
@@ -316,14 +284,6 @@ export function runeActionIconSource(id: string): AssetIconSource | null {
 
 export function runeFragmentConceptIconSource(id: string): AssetIconSource | null {
   return runeConditionIconSource(id) ?? runeActionIconSource(id);
-}
-
-export function stanceIconSource(id: string): AssetIconSource | null {
-  return STANCE_IDS.has(id) ? source('stances', id, 'specific-v3') : null;
-}
-
-export function riteIconSource(id: string): AssetIconSource | null {
-  return RITE_IDS.has(id) ? source('rites', id, 'rites-v2') : null;
 }
 
 /**

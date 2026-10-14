@@ -46,7 +46,7 @@ import {
 const CAST_SPEED_CAP = TECHNIQUE_CAST_SPEED_CAP;
 
 export interface AbilityContext {
-  equipmentSources?: { id: string; name: string; effects: Record<string, number>; inactiveReason?: string }[];
+  equipmentSources?: { id: string; name: string; effects: Record<string, number> }[];
   playerTier: number;
   passives: Record<string, number>;
   /** Active class adapter to explain; omitted for class-agnostic previews. */
@@ -379,8 +379,7 @@ export function describeAbility(
       .filter(info => (source.effects[info.key] ?? 0) > 0 && abilityModifierApplies(info.key, ability, context.playerTier)
         && (info.key !== 'guard.recovery-on-fire-ms' || (context.passives['guard.recovery-on-fire-pct'] ?? 0) > 0))
       .map(info => ({ key: `${source.id}:${info.key}`, source: source.name, label: info.label,
-        value: source.inactiveReason ? `Inactive · ${source.inactiveReason}`
-          : info.unit === 'ms' ? seconds(source.effects[info.key]) : pct(source.effects[info.key]) }))),
+        value: info.unit === 'ms' ? seconds(source.effects[info.key]) : pct(source.effects[info.key]) }))),
     rank: abilityRankNumeral(rankNumber),
     rankLabel: `Rank ${abilityRankNumeral(rankNumber)}`,
     shape: SHAPE_SENTENCES[ability.shape],

@@ -13,10 +13,7 @@ export interface GameplayBuild {
   equipment: Array<{ slot: string; itemId: string; upgrade: number }>;
   techniques: string[];
   guards: string[];
-  stances: string[];
-  defaultStance: string | null;
-  rites: string[];
-  runes: Array<{ conditionId: string; actionId: string; targetStanceId?: string; targetAbilityId?: string; waitOutMode?: "all" | "heat-managed" }>;
+  runes: Array<{ conditionId: string; actionId: string; targetAbilityId?: string; waitOutMode?: "all" | "heat-managed" }>;
   auto: boolean;
   autoTraverse: boolean;
   priorityMode: string;
@@ -35,7 +32,7 @@ export type GameplayPayload =
   | { kind: 'session-start'; build: GameplayBuild }
   | { kind: 'session-end'; durationMs: number; reason: 'disconnect' | 'interrupted' }
   | { kind: 'exposure'; durationMs: number; combatMs: number }
-  | { kind: 'decision'; action: string; choice: string | null; afterFailure: 'death' | 'retreat' | null; before: GameplayBuild; build: GameplayBuild; availableSkills: string[]; ownedItems: string[]; availableRecipes: string[]; knownAbilities: string[]; knownRunes: string[]; knownStances: string[]; knownRites: string[]; skillPoints: number }
+  | { kind: 'decision'; action: string; choice: string | null; afterFailure: 'death' | 'retreat' | null; before: GameplayBuild; build: GameplayBuild; availableSkills: string[]; ownedItems: string[]; availableRecipes: string[]; knownAbilities: string[]; knownRunes: string[]; skillPoints: number }
   | { kind: 'encounter-start'; attemptId: string; bossType: string; build: GameplayBuild; partySize: number; bossHpFraction: number }
   | { kind: 'encounter-end'; attemptId: string; bossType: string; build: GameplayBuild; partySize: number; outcome: EncounterOutcome; previouslyCleared: boolean; durationMs: number; bossHpFraction: number; damageDealt: number; damageTaken: number }
   | { kind: 'death'; build: GameplayBuild; x: number; y: number; cause: string; ability: string | null; killerType: string | null; damage: number; statuses: Array<{ effectId: string; stacks: number }>; recentDamage: GameplayDamage[] }

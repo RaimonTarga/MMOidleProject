@@ -399,16 +399,13 @@ function sameIntent(
     && a.activeRune?.conditionId === b.activeRune?.conditionId
     && a.activeRune?.actionId === b.activeRune?.actionId
     && a.activeRune?.waitOutMode === b.activeRune?.waitOutMode
-    && a.activeRune?.targetStanceId === b.activeRune?.targetStanceId
     && JSON.stringify(a.matchedRunes) === JSON.stringify(b.matchedRunes)
     && a.overrideRune?.conditionId === b.overrideRune?.conditionId
     && a.overrideRune?.actionId === b.overrideRune?.actionId
     && a.overrideRune?.waitOutMode === b.overrideRune?.waitOutMode
-    && a.overrideRune?.targetStanceId === b.overrideRune?.targetStanceId
     && a.overriddenRune?.conditionId === b.overriddenRune?.conditionId
     && a.overriddenRune?.actionId === b.overriddenRune?.actionId
     && a.overriddenRune?.waitOutMode === b.overriddenRune?.waitOutMode
-    && a.overriddenRune?.targetStanceId === b.overriddenRune?.targetStanceId
     && a.travelPaused === b.travelPaused
   );
 }

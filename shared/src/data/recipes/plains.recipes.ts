@@ -119,8 +119,7 @@ mechanicEffects: {},
     // The Technique weapon, inherited from the Broadsword: bought for stronger,
     // more frequent Techniques rather than for the raw number on the blade.
     // 2026-09-26 weapon pass: a T2-sized upgrade curve (was +9 Attack over five
-    // steps, a T1-sized curve) and Technique Power. Watch the T3 stack with the
-    // Arcanist Core (+20% CDR / +20% power).
+    // steps, a T1-sized curve) and Technique Power.
     mechanicEffects: { 'technique.cooldown-reduction-pct': 0.18, 'technique.power-pct': 0.45 },
     description: 'A knight sidearm kept keen by habit and pride — plain, proven, never flashy.',
   }],
@@ -157,48 +156,5 @@ mechanicEffects: {},
     icon: 'items/boots/gale-boots.png',
     description: 'Wind-cured leather that seems to lean into every stride.',
   }],
-
-  // ── Cores ───────────────────────────────────────────────────────────────────
-  //
-  // CANONICAL HEADER FOR THE WHOLE CORE CAST — other biomes' core blocks point here.
-  // Design source: design_docs/CORE_DESIGN_PHILOSOPHY.md + CORE_CAST_REVIEW_DRAFT.md.
-  //
-  // WHAT A CORE IS: the 5th equipment slot, one at a time. A core MAGNIFIES what a
-  // build already does — it does not add a new attack, resource, or payoff loop
-  // (those belong to Techniques and Paths). Effects are percentage multipliers on
-  // your FINAL summed stats (`core.*-mult`, summed across sources, applied once),
-  // plus a few keys with their own consumers. Negative values are tradeoffs.
-  //
-  // ELIGIBILITY is binary — full effect or nothing at all, including the tradeoffs:
-  //   melee        — close-range builds only
-  //   ranged       — mid AND far builds (one pool)
-  //   unrestricted — every build; lower ceiling, no commitment
-  //
-  // TIER PLACEMENT IS LOad-BEARING. A range is not chosen until PLAYER TIER 3, so a
-  // restricted core placed in a T2 biome-level band is craftable but permanently
-  // inert — which is exactly the bug the original placeholder cast shipped with.
-  //   T2 cores      -> unrestricted only, late in their T2 biome band
-  //   T3 cores      -> T1 biomes level 13-18 | T2 biomes level 7-12 | T3 biomes level 1-6
-  // T3 cores are late-band premium answers: level 17-18 in returning T1 biomes,
-  // 11-12 in the Jungle/Desert continuation band, and 5-6 in Tundra/Volcanic.
-  // T4 cores use the later bands: Mountain L22, Volcanic L10, and Graveyard L4.
-  // Their Stance answers arrive earlier in each biome; the economy is authored in
-  // the owning recipe files without changing any Core mechanics.
-  //
-  // Core mechanics are unchanged by the 2026-09-04 reward-placement pass. The T2
-  // economy intentionally makes these late-biome capstones a deliberate save.
-  //
-  // The current cast is distributed across the core-bearing biomes:
-  //   T2: plains —             swamp —             tundra —
-  //       forest —             jungle Survivalist  volcanic —
-  //       cave Tempered        desert Force         mountain —
-  //   T3: plains —             swamp —             tundra Scout
-  //       forest —             jungle Bruiser,      volcanic —
-  //       cave Duelist         desert Sniper        mountain Arcanist
-  //                             Accelerant
-  //   T4: plains —             swamp —             tundra —
-  //       forest —             jungle —            volcanic Catalyst
-  //       cave —               desert —            mountain Juggernaut
-  //       graveyard Controller
 
 ] satisfies [string, Recipe][];

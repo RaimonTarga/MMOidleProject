@@ -3,8 +3,7 @@ import {
   DUNGEON_DEFS, MONSTER_DATABASE, NODE_BIOMES,
   ABILITY_DATABASE, abilityRankAt, isCleanseable, isHarmfulPlayerStatusEffect,
   resolveMonsterDotDebuff, PLATING_SHRED_EFFECT_ID,
-  runicPointLoadoutCost,
-  referenceAbilityRule, withReferenceAbilityWiring,
+  referenceAbilityRule,
 } from '@mmo-idle/shared';
 import { REFERENCE_GUARDS, referencePackageCells } from './boss1Spec';
 import type { Night5Cell } from './night5Spec';
@@ -227,9 +226,6 @@ export function assertBoss3Definitions(): void {
   assert(out && inn, 'both the substituted-out and substituted-in Guards must exist');
   assert.equal(out.slot, 'guard', `${BOSS3_GUARD_OUT} must be a Guard`);
   assert.equal(inn.slot, 'guard', `${BOSS3_GUARD_IN} must be a Guard`);
-  // Legality, not a budget increase: the substitution may only ever free RP.
-  assert(inn.attunementCost <= out.attunementCost,
-    `${BOSS3_GUARD_IN} (${inn.attunementCost} RP) must not cost more than ${BOSS3_GUARD_OUT} (${out.attunementCost} RP) — this screen never enlarges the budget`);
   const rank = abilityRankAt(inn, BOSS3_TIER);
   assert.equal(rank.effect.kind, 'cleanse', `${BOSS3_GUARD_IN} at tier ${BOSS3_TIER} must resolve a cleanse effect`);
   assert.equal(referenceAbilityRule(inn.id)?.conditionId, 'has-debuff',
@@ -310,15 +306,6 @@ export function assertBoss3Definitions(): void {
         if (g === BOSS3_GUARD_SLOT) continue;
         assert.equal(before[g], after[g], `${b.name}/${a.className}: guard slot ${g} moved as well as slot ${BOSS3_GUARD_SLOT}`);
       }
-      // RP is computed mechanically per root; the substitution must never enlarge it.
-      const rp = (cell: Night5Cell) => runicPointLoadoutCost({
-        rules: withReferenceAbilityWiring(cell.runeRules as never, cell.abilities!),
-        abilities: cell.abilities!,
-        stances: cell.stance ? [cell.stance] : [],
-        rites: [],
-      });
-      assert(rp(c) <= rp(a),
-        `${b.name}/${a.className}: the substitution costs ${rp(c)} RP against the baseline's ${rp(a)} — it may only free RP`);
     }
   }
 

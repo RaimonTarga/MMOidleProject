@@ -2,7 +2,7 @@ import { baseRecoveryForTier } from "@mmo-idle/shared";
 import assert from "node:assert/strict";
 import {
   ACTION_DATABASE, DEFAULT_AUTOCOMBAT_CONFIG, DEFAULT_RUNE_LOADOUT, GAME_CONFIG,
-  STARTER_RUNE_IDS, RUNE_RECIPE_DATABASE, deriveAutoConfigFromRunes, emptyEquipment,
+  STARTER_RUNE_IDS, deriveAutoConfigFromRunes, emptyEquipment,
   getFlag, sanitizeRuneLoadout, type CombatArchetype, type RuneContext,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
@@ -18,7 +18,6 @@ import { updateSummonerArchetype } from "../src/systems/classes/archetypes/summo
 import { driveMinion } from "../src/systems/classes/archetypes/summoner/ai";
 import { setEntityMotion } from "../src/systems/world/movement";
 import { updateAutoIntent } from "../src/systems/world/autoIntent";
-import { craftRuneRecipe } from "../src/systems/player/economy/runeCrafting";
 
 function makeReloadPlayerSlices(id: string): PersistedPlayerSlices {
   return {
@@ -47,15 +46,9 @@ function makeReloadPlayerSlices(id: string): PersistedPlayerSlices {
       bossesCleared: [],
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
-      runeRecipesCrafted: [],
       runesEquipped: [],
       knownAbilities: [],
       attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [],
-      equippedStances: { default: null },
-      activeStance: null,
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: {
       inventory: [],
@@ -82,15 +75,15 @@ for (const [actionId, archetype, result] of actions) {
   const rule = { conditionId: "always", actionId };
   assert(STARTER_RUNE_IDS.includes(actionId));
   assert(!DEFAULT_RUNE_LOADOUT.some(r => r.actionId === actionId));
-  assert.equal(ACTION_DATABASE.get(actionId)?.cost, 1);
+  assert(ACTION_DATABASE.has(actionId));
   const ctx: RuneContext = { hpPct: 1, inCombat: true, activelyEngaged: false, inParty: false, aggroCount: 0, combatArchetype: archetype };
   assert(deriveAutoConfigFromRunes([rule], ctx)[result], `${actionId}: Always holds during grace`);
   assert(!deriveAutoConfigFromRunes([rule], { ...ctx, activelyEngaged: true, aggroCount: 1 })[result]);
   const idle = { ...rule, conditionId: "when-idle" };
   assert(!deriveAutoConfigFromRunes([idle], ctx)[result]);
   assert(deriveAutoConfigFromRunes([idle], { ...ctx, inCombat: false })[result]);
-  assert.equal(sanitizeRuneLoadout([rule], new Set(STARTER_RUNE_IDS), 100, "cadence").length, 0);
-  assert.equal(sanitizeRuneLoadout([rule], new Set(STARTER_RUNE_IDS), 100, archetype).length, 1);
+  assert.equal(sanitizeRuneLoadout([rule], new Set(STARTER_RUNE_IDS), "cadence").length, 0);
+  assert.equal(sanitizeRuneLoadout([rule], new Set(STARTER_RUNE_IDS), archetype).length, 1);
   const composed = deriveAutoConfigFromRunes([rule, { conditionId: "always", actionId: "wait-for-regen" }, { conditionId: "always", actionId: "wait-it-out" }], ctx);
   assert(composed[result] && composed.waitForRegen && composed.waitItOut);
 }
@@ -116,12 +109,6 @@ function scenario(archetype: CombatArchetype, actionId: string) {
   const { world, player } = scenario("reload", "tactical-reload");
   player.usesReload!.ammoMax = 10;
   player.usesReload!.ammo = 5;
-  for (const id of ["rune-recipe-reload-safely", "rune-recipe-ready-execution"]) {
-    assert(RUNE_RECIPE_DATABASE.get(id)?.deprecated);
-    const before = { ...player.tracksProgression.essences };
-    assert(!craftRuneRecipe(world, player, id).success);
-    assert.deepEqual(player.tracksProgression.essences, before);
-  }
   updateRuneDerivedConfig(world, 1100);
   setEntityMotion(world, player, { x: 800, y: 400 });
   updateAutoTargets(world, 1100);

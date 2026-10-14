@@ -57,7 +57,6 @@ assertDurability35Definitions();
     // Second Wind is the reference guard: Durability34 rejected the Brace
     // substitution as a general solution, so it is not carried into this grid.
     assert(JSON.stringify(cell.guards) === JSON.stringify(['second-wind']), 'guard must stay Second Wind in both arms');
-    assert(!cell.build.gearItemIds.core, 'a T1 character has no core');
   }
 }
 

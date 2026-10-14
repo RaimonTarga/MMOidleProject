@@ -92,7 +92,7 @@
 }
 
 /* A qualifier can be a whole clause ("while at or above 60% HP — INACTIVE") and
-   the surfaces that carry one include a ~240px stance card. Fixed at its content
+   the surfaces that carry one include ~240px cards. Fixed at its content
    width it ran straight out through the card border, so it shrinks, wraps within
    itself, and drops to its own line when the row cannot hold it. */
 .detail-line__detail {

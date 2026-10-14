@@ -8,10 +8,7 @@ import {
   equipmentAtom,
   inventoryAtom,
   knownAbilitiesAtom,
-  knownRitesAtom,
-  knownStancesAtom,
   playerNodeIdAtom,
-  runesOwnedAtom,
   unlockedRecipesAtom,
 } from '../../hud/atoms';
 import {
@@ -46,9 +43,6 @@ function useMakeSources(): MakeSources {
   const inventory = useAtomValue(inventoryAtom);
   const equipment = useAtomValue(equipmentAtom);
   const knownAbilities = useAtomValue(knownAbilitiesAtom);
-  const knownStances = useAtomValue(knownStancesAtom);
-  const knownRites = useAtomValue(knownRitesAtom);
-  const ownedRunes = useAtomValue(runesOwnedAtom);
   const biomeLevel = useAtomValue(biomeLevelAtom);
   const bossesCleared = useAtomValue(bossesClearedAtom);
   const combatArchetype = useAtomValue(combatArchetypeAtom);
@@ -69,16 +63,13 @@ function useMakeSources(): MakeSources {
     ownedGearIds,
     equippedGearIds: equippedSet,
     knownAbilities,
-    knownStances,
-    knownRites,
-    ownedRunes,
     biomeLevel,
     bossesCleared,
     isTestRoom,
     combatArchetype,
   }), [
-    unlockedRecipeIds, ownedGearIds, equippedSet, knownAbilities, knownStances,
-    knownRites, ownedRunes, biomeLevel, bossesCleared, isTestRoom, combatArchetype,
+    unlockedRecipeIds, ownedGearIds, equippedSet, knownAbilities,
+    biomeLevel, bossesCleared, isTestRoom, combatArchetype,
   ]);
 }
 

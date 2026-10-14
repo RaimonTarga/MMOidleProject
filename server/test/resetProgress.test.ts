@@ -5,9 +5,8 @@ import {
   GAME_CONFIG,
   STARTER_RUNE_IDS,
   emptyEquipment,
+  runeIdsForArchetype,
   emptyAttunedAbilities,
-  emptyEquippedRites,
-  emptyEquippedStances,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { resetPlayerProgress } from "../src/admin/gameActions";
@@ -46,15 +45,9 @@ const slices: PersistedPlayerSlices = {
     clearedNodes: ["node-4-5"],
     visitedNodes: ["node-4-5"],
     runesOwned: [...STARTER_RUNE_IDS, "focus-elites"],
-    runeRecipesCrafted: ["rune-recipe-focus-elites"],
     runesEquipped: [{ conditionId: "target-is-elite", actionId: "focus-elites" }],
     knownAbilities: ["whirlwind"],
     attunedAbilities: { techniques: ["whirlwind"], guards: [] },
-    knownStances: ["offensive-stance"],
-    equippedStances: { default: "offensive-stance" },
-    activeStance: "offensive-stance",
-    knownRites: ["rite-a"],
-    equippedRites: ["rite-a"],
   },
   holdsInventory: {
     inventory: ["iron-broadsword"],
@@ -94,10 +87,9 @@ assert(progression.currentSkillTier === 0, "skill tier should reset");
 assert(progression.bossesCleared.length === 0, "boss clears should reset");
 assert(progression.clearedNodes.length === 0, "node clears should reset");
 assert(progression.visitedNodes?.length === 0, "visited nodes should reset");
-assert(progression.runeRecipesCrafted.length === 0, "crafted rune recipes should reset");
 assert(
-  progression.runesOwned.length === STARTER_RUNE_IDS.length,
-  "only starter rune fragments should remain",
+  JSON.stringify(progression.runesOwned) === JSON.stringify(runeIdsForArchetype(null)),
+  "a classless character owns every rune no class names",
 );
 assert(
   JSON.stringify(progression.runesEquipped) === JSON.stringify(DEFAULT_RUNE_LOADOUT),
@@ -108,17 +100,6 @@ assert(
   JSON.stringify(progression.attunedAbilities) ===
     JSON.stringify(emptyAttunedAbilities()),
   "equipped abilities should reset",
-);
-assert(progression.knownStances.length === 0, "known stances should reset");
-assert(
-  JSON.stringify(progression.equippedStances) === JSON.stringify(emptyEquippedStances()),
-  "equipped stances should reset",
-);
-assert(progression.activeStance === null, "active stance should reset");
-assert(progression.knownRites.length === 0, "known rites should reset");
-assert(
-  JSON.stringify(progression.equippedRites) === JSON.stringify(emptyEquippedRites()),
-  "equipped rites should reset",
 );
 
 assert(player.holdsInventory.inventory.length === 0, "inventory should reset");

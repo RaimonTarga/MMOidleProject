@@ -1,21 +1,17 @@
 import {
   abilityDef,
-  riteDef,
-  stanceDef,
   type AbilityDef,
-  type RiteDef,
-  type StanceDef,
 } from '@mmo-idle/shared';
 import type { IconSource } from '../GameIcon';
 import { describeAbility, type AbilityContext } from './abilityText';
 import { passiveLines } from './passiveText';
-import { stanceModifierLines, statEffectLines } from './statEffectText';
+import { statEffectLines } from './statEffectText';
 
 export { describeAbility, abilitySummary } from './abilityText';
 export type { AbilityContext, AbilityClassSpecific, AbilityDescription, AbilityLine } from './abilityText';
 export { passiveLines, passiveSummary, passiveNamespaceLabel, formatPassiveValue } from './passiveText';
 export type { PassiveLine } from './passiveText';
-export { statEffectLines, stanceModifierLines, statEffectGlyph, statEffectChipValue } from './statEffectText';
+export { statEffectLines, statEffectGlyph, statEffectChipValue } from './statEffectText';
 export type { StatEffectLine } from './statEffectText';
 export { actionLines, conditionLines, ruleLines, hasRuneNumbers } from './runeText';
 
@@ -78,85 +74,6 @@ export function skillNodeLines(node: {
   };
 }
 
-/**
- * Everything a stance does while it is the active posture — the static percentages,
- * every server-runtime behavior it owns, and what a Rune rule pays to reach it.
- *
- * Behaviors are authored on the stance rather than derived, because the effects that
- * decide whether a posture is survivable (Berserker's lethal self-damage, Predator's
- * opener, Brawler's cap) live in combat listeners and cannot describe themselves.
- * What is deliberately NOT here: the Rune CONDITION a stance is usually reached by.
- * Intrinsic payoff gates, such as Enraged's low-HP requirement, do belong here.
- */
-export function stanceLines(
-  stance: StanceDef | undefined,
-  /**
-   * The reader's current HP fraction, when a surface has one. A gated posture
-   * then marks its conditional rows ACTIVE or INACTIVE instead of only
-   * naming the threshold — the difference between "I could have this" and "I have
-   * this right now" is the entire point of the gate.
-   */
-  hpFraction?: number,
-): DetailLine[] {
-  if (!stance) return [];
-  const gate = stance.gatedModifiers;
-  const gateMet = gate !== undefined && hpFraction !== undefined
-    && (gate.minHpPct === undefined || hpFraction >= gate.minHpPct)
-    && (gate.maxHpPct === undefined || hpFraction <= gate.maxHpPct);
-  const gateQualifier = gate?.minHpPct !== undefined && gate.maxHpPct !== undefined
-    ? `while between ${Math.round(gate.minHpPct * 100)}% and ${Math.round(gate.maxHpPct * 100)}% HP`
-    : gate?.minHpPct !== undefined
-      ? `while at or above ${Math.round(gate.minHpPct * 100)}% HP`
-      : gate?.maxHpPct !== undefined
-        ? `while at or below ${Math.round(gate.maxHpPct * 100)}% HP`
-        : '';
-  return [
-    ...stanceModifierLines(stance.modifiers).map((line) => ({
-      key: `stat:${line.key}`,
-      label: line.label,
-      value: line.value,
-      help: line.help,
-      good: line.good,
-      glyph: line.glyph,
-    })),
-    // The gated half, rendered as its own rows so a player never reads a conditional
-    // bonus as an unconditional one. `detail` carries the threshold, and the live
-    // active/inactive state when the surface knows the reader's HP.
-    ...stanceModifierLines(gate?.modifiers).map((line) => ({
-      key: `gated:${line.key}`,
-      label: line.label,
-      value: line.value,
-      detail: hpFraction === undefined
-        ? gateQualifier
-        : `${gateQualifier} — ${gateMet ? 'ACTIVE' : 'INACTIVE'}`,
-      help: `${line.help} Granted only ${gateQualifier}. Any unconditional modifiers remain active outside this window.`,
-      good: line.good,
-      glyph: line.glyph,
-    })),
-    ...(stance.behaviors ?? []).map((behavior) => ({
-      key: `behavior:${behavior.key}`,
-      label: behavior.label,
-      value: behavior.value,
-      detail: behavior.detail,
-      help: behavior.help,
-      good: behavior.good ?? true,
-    })),
-    ...fromMechanicEffects(stance.mechanicEffects),
-    {
-      key: `stance:${stance.id}:rp`,
-      label: "Attunement cost",
-      value: `${stance.runeCost} RP`,
-      help: "Paid once while this stance is attuned. Choosing it as default or switching to it adds no stance cost.",
-    },
-  ];
-}
-
-/** Everything a rite does while equipped. Rites are OOC-only by construction. */
-export function riteLines(rite: RiteDef | undefined): DetailLine[] {
-  if (!rite) return [];
-  return [{ key: `rite:${rite.id}:rp`, label: "Shared Runic cost", value: `${rite.runeCost} RP`, help: rite.blurb }];
-}
-
 /** Everything an ability does for THIS character, tier and passives included. */
 export function abilityLines(
   ability: AbilityDef | undefined,
@@ -191,12 +108,9 @@ export function abilityLines(
 
 /**
  * Lines for any loadout id, whichever system owns it. Lets one browser explain
- * abilities, stances and rites without knowing which it is looking at.
+ * a loadout entry without knowing which system it belongs to.
  */
 export function loadoutLinesFor(id: string, context: AbilityContext): DetailLine[] {
   const ability = abilityDef(id);
-  if (ability) return abilityLines(ability, context);
-  const stance = stanceDef(id);
-  if (stance) return stanceLines(stance);
-  return riteLines(riteDef(id));
+  return ability ? abilityLines(ability, context) : [];
 }

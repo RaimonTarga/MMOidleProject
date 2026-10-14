@@ -80,7 +80,7 @@ export function togglePrimaryOverlay(overlay: PrimaryOverlay): void {
 }
 
 /**
- * Abilities, Stances, Rites and Runes are one dialog with four rail entries.
+ * Abilities and Runes are one dialog with two rail entries.
  * Pressing the entry you are already on closes it, the same as every other
  * destination; pressing a different one switches tab without a close/open.
  */

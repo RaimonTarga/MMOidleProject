@@ -24,7 +24,6 @@ const build = (over: Partial<EquipmentPreviewInput> = {}): EquipmentPreviewInput
   equipment: { ...emptyEquipment(), weapon: DAGGER, armor: 'forest-vest-t1', recovery: 'swamp-charm-t1' },
   itemUpgrades: {},
   playerTier: 1,
-  hpFraction: 1,
   ...over,
 });
 

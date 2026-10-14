@@ -34,7 +34,6 @@ export type TutorialCondition =
   | { type: 'hasItem'; definitionId: string }
   | { type: 'equipped'; definitionId: string }
   | { type: 'abilityKnown'; abilityId: string }
-  | { type: 'runeRecipeCrafted'; recipeId: string }
   | { type: 'bossCleared'; biomeGroup: string; tier: number }
   | { type: 'allOf'; of: TutorialCondition[] }
   | { type: 'anyOf'; of: TutorialCondition[] }
@@ -52,7 +51,6 @@ export type TutorialStep =
   | { type: 'craft'; recipeIds: string[] }
   | { type: 'equip'; definitionIds: string[] }
   | { type: 'configureRunes'; rules: EquippedRule[] }
-  | { type: 'craftRune'; recipeId: string }
   /** Craft the ability recipe, then make it the only ability of its slot kind. */
   | { type: 'learnAbility'; recipeId: string; abilityId: string; slot: 'technique' | 'guard' }
   | { type: 'setAbilities'; techniques: string[]; guards: string[] }

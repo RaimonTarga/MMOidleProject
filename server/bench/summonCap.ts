@@ -107,11 +107,9 @@ function benchOwner(id: string, nodeId: string, conduit: boolean): PersistedPlay
       unlockedRecipes: [], questProgress: {},
       playerTier: 1, currentSkillTier: 1,
       bossesCleared: [], clearedNodes: [],
-      runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
+      runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
       knownAbilities: [],
       attunedAbilities: { techniques: [], guards: [] },
-      knownStances: [], equippedStances: { default: null }, activeStance: null,
-      knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment, itemUpgrades: {} },
     usesSkills: conduit

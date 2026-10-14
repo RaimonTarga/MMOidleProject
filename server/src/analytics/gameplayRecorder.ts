@@ -6,7 +6,7 @@ import { canUnlockEntitySkill } from '../ecs/playerEntityFormulas';
 import { CONDUIT_ENABLED } from '../env';
 
 const DECISIONS_WITHOUT_BUILD_CHANGE = new Set([
-  'craft', 'evolve', 'reconstruct', 'craft-rune', 'craft-ability', 'craft-stance', 'craft-rite', 'upgrade', 'navigate', 'navigate-neighbor',
+  'craft', 'craft-ability', 'upgrade', 'navigate', 'navigate-neighbor',
 ]);
 
 /** Explicit projection: never serialize an entity, socket payload, actor or account. */
@@ -19,9 +19,7 @@ export function gameplayBuild(p: PlayerEntity): GameplayBuild {
     skills: [...p.usesSkills.unlockedSkills],
     equipment: Object.entries(p.holdsInventory.equipment).flatMap(([slot, itemId]) => itemId ? [{ slot, itemId, upgrade: p.holdsInventory.itemUpgrades[itemId] ?? 0 }] : []),
     techniques: [...p.tracksProgression.attunedAbilities.techniques], guards: [...p.tracksProgression.attunedAbilities.guards],
-    stances: [...(p.tracksProgression.attunedStances ?? [])], defaultStance: p.tracksProgression.equippedStances.default,
-    rites: [...p.tracksProgression.equippedRites],
-    runes: p.tracksProgression.runesEquipped.map(r => ({ conditionId: r.conditionId, actionId: r.actionId, targetStanceId: r.targetStanceId, targetAbilityId: r.targetAbilityId, waitOutMode: r.waitOutMode })),
+    runes: p.tracksProgression.runesEquipped.map(r => ({ conditionId: r.conditionId, actionId: r.actionId, targetAbilityId: r.targetAbilityId, waitOutMode: r.waitOutMode })),
     auto: p.usesAutocombat.auto, autoTraverse: p.usesAutocombat.autoTraverse,
     priorityMode: p.usesAutocombat.priorityMode, acquireRadius: p.usesAutocombat.acquireRadius,
     focusLeaderTarget: p.usesAutocombat.focusLeaderTarget,
@@ -102,7 +100,6 @@ export class GameplayRecorder {
       availableSkills: [...SKILL_TREE.keys()].filter(id => (id !== 'summoner-root' || CONDUIT_ENABLED) && canUnlockEntitySkill(p, id).ok),
       ownedItems: [...p.holdsInventory.inventory], availableRecipes: [...p.tracksProgression.unlockedRecipes],
       knownAbilities: [...p.tracksProgression.knownAbilities], knownRunes: [...p.tracksProgression.runesOwned],
-      knownStances: [...p.tracksProgression.knownStances], knownRites: [...p.tracksProgression.knownRites],
       skillPoints: p.tracksProgression.skillPoints,
     };
   }
@@ -209,7 +206,7 @@ export class GameplayRecorder {
     s.afterFailure = 'death';
     const killer = 'killer' in cause ? cause.killer : undefined;
     const build = gameplayBuild(p);
-    this.write(s, { kind: 'death', build, x: p.hasPosition.current.x, y: p.hasPosition.current.y, cause: cause.kind, ability: cause.abilityName ?? (cause.kind === 'dot' ? cause.effectName ?? null : cause.kind === 'stance' ? cause.stanceName : null), killerType: killer?.monsterTypeId ?? null, damage: cause.damage, statuses: p.tracksCombat.statusEffects.map(e => ({ effectId: e.id, stacks: e.stacks })), recentDamage: s.recentDamage.filter(d => d.at >= now - 10_000).map(d => ({ ...d })) }, now, p.hasPosition.nodeId, build);
+    this.write(s, { kind: 'death', build, x: p.hasPosition.current.x, y: p.hasPosition.current.y, cause: cause.kind, ability: cause.abilityName ?? (cause.kind === 'dot' ? cause.effectName ?? null : null), killerType: killer?.monsterTypeId ?? null, damage: cause.damage, statuses: p.tracksCombat.statusEffects.map(e => ({ effectId: e.id, stacks: e.stacks })), recentDamage: s.recentDamage.filter(d => d.at >= now - 10_000).map(d => ({ ...d })) }, now, p.hasPosition.nodeId, build);
     for (const a of [...s.attempts.values()]) {
       const boss = world.getMonsterEntity(a.bossId);
       if (boss) a.hp = fraction(boss);
