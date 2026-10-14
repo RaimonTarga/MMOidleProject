@@ -156,13 +156,13 @@ assert(seen.size === 1 + ZONE_LESSONS.length + RANK_UP_LESSONS.length, 'a lesson
 const TROPHIES: ReadonlyArray<{ id: string; name: string; bossTiers: readonly number[] }> = [
   { id: 'slinger-relic-plains', name: 'Stampede Round', bossTiers: [2] },
   { id: 'slinger-relic-forest', name: 'Twin Round', bossTiers: [2] },
-  { id: 'slinger-relic-swamp', name: 'Rot Round', bossTiers: [2] },
+  { id: 'slinger-relic-swamp', name: 'Rot Round', bossTiers: [2, 3] },
   { id: 'slinger-relic-mountain', name: 'Quake Round', bossTiers: [2, 3, 4] },
   { id: 'slinger-relic-cave', name: 'Splinter Round', bossTiers: [2, 3] },
-  { id: 'slinger-relic-jungle', name: "Hunter's Round", bossTiers: [] },
-  { id: 'slinger-relic-desert', name: 'Bounty Round', bossTiers: [3] },
-  { id: 'slinger-relic-tundra', name: 'Rime Round', bossTiers: [] },
-  { id: 'slinger-relic-volcanic', name: 'Cinder Round', bossTiers: [] },
+  { id: 'slinger-relic-jungle', name: "Hunter's Round", bossTiers: [3, 4] },
+  { id: 'slinger-relic-desert', name: 'Bounty Round', bossTiers: [3, 4] },
+  { id: 'slinger-relic-tundra', name: 'Rime Round', bossTiers: [4] },
+  { id: 'slinger-relic-volcanic', name: 'Cinder Round', bossTiers: [4] },
   { id: 'slinger-relic-graveyard', name: 'Toll Round', bossTiers: [] },
   { id: 'slinger-relic-trench', name: 'Harpoon Round', bossTiers: [] },
 ];

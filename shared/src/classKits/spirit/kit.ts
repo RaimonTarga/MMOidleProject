@@ -332,7 +332,10 @@ const TROPHIES: readonly SpiritTrophy[] = [
     kind: 'spend',
     text: 'A spend whose target flees follows it and lands harder the farther it ran.',
     // §11.9: "II; III" with no twist.
-    ranks: [],
+    ranks: [
+      { rank: 2, bossTier: 3, text: 'Running Storm grows stronger.' },
+      { rank: 3, bossTier: 4, text: 'Running Storm grows stronger.' },
+    ],
   }),
   spiritTrophy({
     id: 'spirit-relic-desert',
@@ -341,7 +344,10 @@ const TROPHIES: readonly SpiritTrophy[] = [
     kind: 'storm',
     text: 'While you are above your floor, a ring of blowing sand slows the enemies inside it.',
     // §11.9 rank III has no twist.
-    ranks: [{ rank: 2, bossTier: 3, text: 'The ring is wider.' }],
+    ranks: [
+      { rank: 2, bossTier: 3, text: 'The ring is wider.' },
+      { rank: 3, bossTier: 4, text: 'Sandstorm grows stronger.' },
+    ],
   }),
   spiritTrophy({
     id: 'spirit-relic-tundra',
@@ -350,7 +356,9 @@ const TROPHIES: readonly SpiritTrophy[] = [
     kind: 'spend',
     text: 'Every spend glazes the ground under its target. Enemies on it are slowed, and bosses that accept no control ignore it.',
     // §11.9: "II" with no twist.
-    ranks: [],
+    ranks: [
+      { rank: 2, bossTier: 4, text: 'Ice Storm grows stronger.' },
+    ],
   }),
   spiritTrophy({
     id: 'spirit-relic-volcanic',
@@ -359,7 +367,9 @@ const TROPHIES: readonly SpiritTrophy[] = [
     kind: 'storm',
     text: 'A full storm boils over. While you stay full, a burst strikes around you every few seconds.',
     // §11.9: "II" with no twist.
-    ranks: [],
+    ranks: [
+      { rank: 2, bossTier: 4, text: 'Pyrocumulus grows stronger.' },
+    ],
   }),
   spiritTrophy({
     id: 'spirit-relic-graveyard',

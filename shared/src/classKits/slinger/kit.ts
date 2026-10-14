@@ -269,7 +269,10 @@ const TROPHIES: readonly SlingerTrophy[] = [
     lineage: 'swamp',
     name: 'Rot Round',
     text: "Your last round's wound rots, and it hits again over a few seconds.",
-    ranks: [{ rank: 2, bossTier: 2, text: 'The rot deals a bigger share.' }],
+    ranks: [
+      { rank: 2, bossTier: 2, text: 'The rot deals a bigger share.' },
+      { rank: 3, bossTier: 3, text: 'Rot Round grows stronger.' },
+    ],
   }),
   slingerTrophy({
     id: 'slinger-relic-mountain',
@@ -297,28 +300,38 @@ const TROPHIES: readonly SlingerTrophy[] = [
     lineage: 'jungle',
     name: "Hunter's Round",
     text: "Your last round follows its target, can't miss a fleeing enemy, and hits harder the farther it flies.",
-    ranks: [],
+    ranks: [
+      { rank: 2, bossTier: 3, text: "Hunter's Round grows stronger." },
+      { rank: 3, bossTier: 4, text: "Hunter's Round grows stronger." },
+    ],
   }),
   slingerTrophy({
     id: 'slinger-relic-desert',
     lineage: 'desert',
     name: 'Bounty Round',
     text: 'Your last round finishes a target below a threshold of its health.',
-    ranks: [{ rank: 2, bossTier: 3, text: 'The threshold is higher.' }],
+    ranks: [
+      { rank: 2, bossTier: 3, text: 'The threshold is higher.' },
+      { rank: 3, bossTier: 4, text: 'Bounty Round grows stronger.' },
+    ],
   }),
   slingerTrophy({
     id: 'slinger-relic-tundra',
     lineage: 'tundra',
     name: 'Rime Round',
     text: 'Your last round leaves frozen ground that slows enemies standing on it.',
-    ranks: [],
+    ranks: [
+      { rank: 2, bossTier: 4, text: 'Rime Round grows stronger.' },
+    ],
   }),
   slingerTrophy({
     id: 'slinger-relic-volcanic',
     lineage: 'volcanic',
     name: 'Cinder Round',
     text: 'Your last round sets everything around the target burning.',
-    ranks: [],
+    ranks: [
+      { rank: 2, bossTier: 4, text: 'Cinder Round grows stronger.' },
+    ],
   }),
   slingerTrophy({
     id: 'slinger-relic-graveyard',
