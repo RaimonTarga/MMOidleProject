@@ -12,6 +12,8 @@ import type { LineageDefinition } from './types';
 export const HAMMER_LINEAGE: LineageDefinition = {
   id: 'hammer',
   slot: 'weapon',
+  // Parked by the class-first rework (D1): weapons are plain recipes, no tree.
+  parked: true,
   homeBiome: 'mountain',
   lanes: ['empowered', 'control', 'engagement'],
 

@@ -18,6 +18,8 @@ import type { LineageDefinition } from './types';
 export const RAPIER_LINEAGE: LineageDefinition = {
   id: 'rapier',
   slot: 'weapon',
+  // Parked by the class-first rework (D1): weapons are plain recipes, no tree.
+  parked: true,
   homeBiome: 'forest',
   lanes: ['tempo', 'affliction', 'engagement'],
 

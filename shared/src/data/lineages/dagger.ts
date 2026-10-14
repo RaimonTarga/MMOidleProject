@@ -12,6 +12,8 @@ import type { LineageDefinition } from './types';
 export const DAGGER_LINEAGE: LineageDefinition = {
   id: 'dagger',
   slot: 'weapon',
+  // Parked by the class-first rework (D1): weapons are plain recipes, no tree.
+  parked: true,
   homeBiome: 'swamp',
   lanes: ['affliction', 'control', 'kill-chain'],
 

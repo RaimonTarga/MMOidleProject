@@ -12,6 +12,8 @@ import type { LineageDefinition } from './types';
 export const AXE_LINEAGE: LineageDefinition = {
   id: 'axe',
   slot: 'weapon',
+  // Parked by the class-first rework (D1): weapons are plain recipes, no tree.
+  parked: true,
   homeBiome: 'cave',
   lanes: ['tempo', 'kill-chain', 'empowered'],
 
