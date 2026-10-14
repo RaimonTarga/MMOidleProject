@@ -30,7 +30,7 @@ when the section that replaces them locks. The read-only audit behind this draft
 | 8 | Squire | **Locked** (2026-10-14) |
 | 9 | Apprentice | Draft (deep dive started 2026-10-14) |
 | 10 | Slinger | **Locked** (2026-10-14) |
-| 11 | Spirit | Draft (deep dive started 2026-10-14) |
+| 11 | Spirit | **Locked** (2026-10-14) |
 | 12 | Striker | **Locked** (2026-10-14) |
 | 13 | Parked | — |
 | 14 | Docs this bible supersedes | — |
@@ -152,7 +152,7 @@ Formation) must be.
 | Slots | Five: weapon, relic, armor, charm, boots. The core slot is gone. | Decided |
 | Weapon | Class-specific. | Decided |
 | Relic: the boss trophy slot | Each boss drops your class's trophy, and the relic slot holds one. It is that class's boss piece and modifies its mechanic: Conduit, the Soul summon it fields; Striker, its empowered attack, made to do something special. Collected, swapped before a fight, upgraded by beating the same lineage's next-tier boss. Available from the first T1 boss kill. A specialization may grant a second relic slot (Conduit: Two Souls). | Decided (2026-10-13) |
-| Armor, charm | Shared bases, class lines. A base carries a defensive mechanic; its class line is fixed per recipe, so the same base does different things per class (Conduit armor shifts who tanks: the summons or the Conduit). Choosing a line at an upgrade step is a later option. | Decided (shared bases) / Tentative (fixed lines) |
+| Armor, charm | Shared bases, class lines. A base carries a defensive mechanic; its class line is fixed per recipe, so the same base does different things per class (Conduit armor shifts who tanks: the summons or the Conduit). Choosing a line at an upgrade step is a later option. **No shared base carries a recharging barrier:** a standing shield is the Spirit's storm (§11.10); timed wards stay (XC1, Spirit dive). | Decided (shared bases) / Tentative (fixed lines) / Decided (no barrier on bases, 2026-10-14) |
 | Boots | Generic: mobility is universal. | Proposed |
 | Item structure | A recipe makes exactly what its card says: nothing on an item is rolled. Upgrading (+N, paid in the zone's essence, gated by the zone's level) adds a small stat step, and some steps open a **socket**. Sockets open slowly: one in all of T1 (the weapon), about four by T2, eight by T3. | Tentative (2026-10-13) |
 | Components | What fills a socket. Each one shows one visible effect, is typed by slot, and comes from one mob family: it **drops**, or you **craft** it from that family's material. Owned forever, moved between sockets for free, carried to later items, scaled by the tier of the item it sits in. Conduit components go into gear, not summons. **The least settled system: the designer is not yet sold on components or on which slots get sockets; to be scrutinised in its own session.** | Under review (2026-10-13) / Decided (Conduit: gear, not summons) |
@@ -169,7 +169,10 @@ Formation) must be.
 
 Known so far: Squire: §8.10 (the one class whose class system holds defense: guards are
 responses paid in Resolve and refunded when they land; no Resolve shield; equipment
-carries the baseline); Spirit's energy shield is set (brief); Striker: §12.10
+carries the baseline); Spirit: §11.10 (the storm is one bar, damage and shield, filled by
+a constant flow and drained by hits and spending; armor lines change what it absorbs,
+charm lines are flow lines bound to a state; the recharging barrier leaves shared bases
+and its runtime becomes the storm, XC1); Striker: §12.10
 (armor and charm lines plus T4 resilience leaves, nothing on finisher triggers; the brief's
 finisher shield/heal is dropped); Conduit: §7.10 (who tanks is the armor line; rebuilds
 cost HP; no default redirection). Flat
@@ -1502,10 +1505,406 @@ for every class; Shellbreaker crosses the Squire's Splitting Blow and the Strike
 Icebreaker; Tracer is the Slinger's answer to fleeing prey (the Striker's is Charge, the
 Squire's Chain Hook).
 
-## 11. Spirit — Draft (deep dive started 2026-10-14)
+## 11. Spirit — Locked (2026-10-14)
 
-Stub while the dive runs (see §9). Prep: `docs/briefs/spirit-deep-dive-prep-2026-10-14.md`;
-log: `docs/briefs/spirit-deep-dive-log-2026-10-14.md`.
+**Locked by the designer on 2026-10-14: build authority.** Every item the walk-through
+reached was accepted; **Playtest** questions stay open (§11.15), and the range check comes
+first. Outside the lock, each for its own session: names (placeholders throughout), leaves
+after T4 and the T7–T8 capstone, components (§4), farming efficiency (§13), per-class
+stats (§5). The lock archives nothing: no design doc is the Spirit's alone, and
+`docs/barrier-ward-current-state.md` and `docs/frames-current-state.md` stay the code's
+truth until the build replaces them.
+
+Written to the class template (§6) from the 2026-10-14 deep dive. Every call in order, the reasoning and the ideas that were dropped are in
+[spirit-deep-dive-log-2026-10-14.md](../docs/briefs/spirit-deep-dive-log-2026-10-14.md);
+the prep is [spirit-deep-dive-prep-2026-10-14.md](../docs/briefs/spirit-deep-dive-prep-2026-10-14.md).
+No mockup yet. Tags as everywhere in this bible; **Playtest** marks a question only the
+game can answer (§11.15). Names are placeholders throughout.
+
+**The main risk, on record:** at range the Spirit barely gets hit (0.0 damage per second
+from the Broodmother and 0.8 from the Behemoth in the T1 boss pass), so a shield it spends
+would cost nothing. The design answers it with a short reach at T1 and a range set by each
+discipline (§11.2, §11.5); the first playtest question is whether the trade bites at every
+range (§11.15). *Decided (the risk is on record).*
+
+### 11.1 Fantasy
+
+The storm in a bottle: "I carry a storm. It shields me until I let it loose." It keeps
+today's lightning look. *Decided (F1).*
+
+### 11.2 Core mechanic
+
+- **The storm is one bar, both damage and shield.** Hits on you drain it before your HP;
+  spending drains it too. Enemies eat your storm, so you spend it before they do.
+  *Decided.* A resource doubling as a shield is the Spirit's alone (§12.10; the Squire's
+  Resolve never absorbs, §8.2). *Decided.*
+- **It fills from a steady flow, never from your hits,** so attack speed never grows the
+  shield. **The flow is constant:** taking damage never pauses it. The shield loses to
+  pressure because heavy pressure drains it faster than it flows, so the flow's rate is set
+  against the pool's size. *Decided.* Your hits add nothing to it; a later rule-bender may
+  be the one exception. *Decided (2026-10-14, at the wrap-up).*
+- **Damage over time eats the storm like any hit** (poison, bleed, burn ticks). *Decided.*
+- **Spends are the damage.** Plain attacks are free small zaps; the spends (the Spirit's
+  pieces, §11.8) carry most of the damage, and holding fire keeps your shield. *Decided.*
+  The zaps are about a quarter of the damage, and attack speed only speeds them.
+  *Decided (share illustrative).*
+- **At full, the flow is wasted** (the bottle is full); lifting the cap is Overflow's
+  (§11.5). Where a rule says "full", Overflow reads its brim. *Decided.*
+- **The budget is the bottle's size:** each Global Mastery step adds a pip, shown in class
+  terms ("Storm 6, next at Mastery 24"): a bigger shield and bigger bursts at once.
+  Illustrative: T1 4 → 5 at Mastery 15 → 6 at 30. *Decided.* **Guardrail (§1): gear never
+  grows the pool;** gear shapes how the storm fills, spends or absorbs. *Decided.*
+- **Where it fights:** a short-reach caster at T1, between melee and today's 130, close
+  enough that melee packs sometimes reach it; each discipline moves it (§11.5). *Decided.*
+- **A plain storm until the first boss kill:** the base kit wins the first boss, whose kill
+  gives the first trophy (no starter trophy, as the other classes). *Decided.*
+- **HUD:** the gauge beside the HP bar, the floor and band marks drawn on it; the crackle
+  around the character thins as the storm drains. **Callouts** only for the relic's moments
+  and the disciplines' big ones (Reservoir's release, a Spring Tide); ordinary spends never
+  call out. *Decided.*
+
+### 11.3 The class system: Thresholds
+
+**What you configure** *(Decided)*: a vertical gauge, the storm's bottle.
+
+- **The floor:** you never spend below it; it is the shield you always keep, though hits
+  can still eat it.
+- **The bands:** you put spends in bands above the floor, the bigger ones higher up. Calm
+  pieces sit at the floor (Eye of the Storm).
+- **The phase:** **gather** to full, then break down to the floor (big bursts, then bare),
+  or **hover** just above the floor (steady damage, a steady shield).
+- **The relic** (§11.9).
+
+All of it is free rules (§3); what limits power is which pieces you own and the bottle's
+size.
+
+**Each spend waits for its moment** *(Decided)*: in its band, a spend fires only when it has
+something to do (Thunderclap only with an enemy touching you, Downpour only with a poison
+or bleed on you). The bands decide when you are willing to spend; the gauge stays the only
+screen.
+
+**Three families** *(Decided, vocabulary)*: **strikes** (damage), **squalls** (control and
+movement), **calms** (protection). Each tier spreads its lessons across them.
+
+**Not in it** *(Decided)*: abilities outside the class system (§3, confirmed for the
+Spirit); rules that answer enemy actions (the Squire's Response rules); cast bars (casts
+are the Striker's, cast times the Wizard's, §13).
+
+**Never the same editor** (§3): the Order is a sequence, Formation a roster, the Response
+rules a list of "when the enemy does X", the Payoff rules moments on an enemy card, the
+Loadout a rack of clips; **Thresholds are marks on your own gauge.** *Decided (note).*
+Default configuration: §11.13.
+
+### 11.4 The T1 form
+
+- **The first ten minutes** *(Decided: shape; numbers illustrative)*: the Clearing gives a
+  plain rod, Storm 4 pips and **Bolt** (lightning, the starter spend), set to a 30% floor,
+  one Bolt band, gather. The Plains teaches Chain Lightning around minute 6, the answer to
+  the Plains entry spike playtest 3 measured (15 of 177 HP). The first boss is won with the
+  base kit and gives the first trophy. Storm 4 → 6 by the end of T1.
+- **Each T1 biome's threat hands you its answer:** a piece (that zone's level, before its
+  boss), a weapon, an armor and a charm; its boss gives a trophy. *Decided (concepts; names
+  and numbers open).*
+
+| Biome | Threat | Piece (weather) | Weapon | Armor (base + Spirit line) | Charm | Trophy |
+|---|---|---|---|---|---|---|
+| Plains | swarms | **Chain Lightning** (strike): leaps from the target to the 3 nearest enemies | **Forked Rod:** area spends reach one more enemy | Plating + **Static Skin:** an enemy that strikes your storm is charged (Static Web's charge); your next spend on it hits harder. No damage reflected: thorns stays the Conduit's Bramble (§8.15) | **Still Air:** the storm gathers much faster out of combat | Tusked Razorback, **Crosswind** (spend) |
+| Forest | fast packs that reach you | **Thunderclap** (squall): staggers every enemy around you for a moment | **Quickening Wand:** spends cost less and hit less (smaller, more frequent breaks) | Evasion + **Slipstream:** after a dodge you glide a step away from the attacker | **Clear Sky:** while no enemy touches you, the storm gathers faster | Gnarled Greatbear, **Squall** (spend) |
+| Swamp | attrition, poison | **Downpour** (calm): washes a poison or bleed off you | **Drenching Staff:** spends soak the target; lightning on a soaked target hits harder | DoT resistance + **Sealed Vessel:** poison and bleed ticks drain the storm at half cost | **Petrichor:** a Downpour heals you for part of what it washed off | Grave Toadeater, **Marsh Fire** (storm) |
+| Mountain | the hardest hits | **Eye of the Storm** (calm, sits at the floor): while at or below your floor, hits drain the storm at half cost | **Summit Staff:** spends cost more and hit much harder | Damage cap + **Grounded:** while the storm is at or above your floor, hits can't knock you back or stun you | **Afterstorm:** after a hit over a quarter of your HP, the storm gathers three times as fast for a few seconds | Crag Behemoth, **Thunderhead** (storm) |
+| Cave | elites, casters | **Thunderbolt** (strike): one costly single-target bolt that hits very hard and staggers | **Lodestone Orb:** single-target spends hit harder, area spends softer | Bulk + **Ironbound:** while your storm is empty, your plating doubles | **Capacitor:** while the storm is full, the flow that would be wasted heals you | Obsidian Broodmother, **Static Web** (spend) |
+
+The trophies' twists are in §11.9. The two measured weak spots get three answers each: the
+Forest (Thunderclap, Slipstream, Clear Sky) and the Swamp (Downpour, Sealed Vessel,
+Petrichor). Gather wants the Summit Staff, Thunderhead, Marsh Fire, Ironbound; hover the
+Quickening Wand, Squall, Static Web, Clear Sky. *Decided (notes).*
+
+### 11.5 Disciplines (T2)
+
+A considerable power step (§2), the frames' successors. The base storm stays; each
+discipline tilts it, sets where the Spirit fights and unlocks one piece. *Decided (concepts
+and rules; numbers and looks illustrative).*
+
+| | Overflow (light): the storm spills over | Tide (balanced): the storm comes in waves | Reservoir (heavy): the storm held |
+|---|---|---|---|
+| Fantasy | "I'm crackling with more than I can hold, and it pours off me." | "I gather, I break over them, I pull back." | "A deep storm behind a dam; when it's enough, the dam breaks." |
+| Rule | The bottle has a **brim, not a cap:** the flow keeps rising past it, and the excess **arcs off you into the nearest enemies**, faster the more you hold (the brief's accelerating decay, turned into damage). The overflow is shield too | The phase becomes a **tide:** in the **ebb** you can't spend, the flow runs fast and you drift back; in the **surge** you can't gather, spends cost less and you close in. You ebb to full and surge down to the floor | A much **deeper bottle.** A free rule fires **the whole bank when it's enough** to kill the target (or at your mark): release timing, no overkill. A full bank makes you nearly untouchable; releasing it leaves you bare |
+| Range | close: the spill reaches only enemies near you | moves with the tide: in on the surge, out on the ebb | far: one bolt from afar |
+| Piece | **Ball Lightning:** a slow orb that drifts through the pack, zapping all it passes | **Storm Surge:** the surge opens with a wave that rolls through the enemies in front of you | **Cloudburst:** everything above your floor in one bolt, sized by what you spend |
+| Look | white-blue arcs jumping off you, brighter as you overflow | the storm rising and falling around you | a dark cloud thickening overhead; the release falls from the sky |
+| Wants | strikes with reach; spend relics | squalls (it moves) | big strikes and calms (it holds); storm relics |
+| Best at / weak at | packs, farming / kiters and ranged enemies (outside the spill), shells | mixed content, parties / enemies that chase you through the ebb, stuns that break a surge | bosses, elites, shells / swarms (long waits between bolts), fast packs that reach it |
+
+Notes *(Decided)*: at range Reservoir is the safest Spirit; its trade bites against ranged
+enemies, area attacks and kiters, which fill T2–T4 (§11.15). Overflow's overfill stays
+apart from the Squire's Deep Winter because its spill is automatic damage and its overflow
+is shield. Tide's ebb moves the Spirit away, the opposite of the Slinger's stand-still
+reload. Reservoir's release is timing, never "+damage below X%" (execution pieces are the
+Striker's, the Squire's and the Conduit's). Reservoir's bank stays its shield, which keeps
+it apart from the Striker's Crescendo (offense only) and the Slinger's Siege bank.
+
+### 11.6 Specializations (T3)
+
+**Ownership** *(Decided, as §12.6 and §8.6)*: pieces own what each spend does; the relic
+owns one twist (a spend or the storm); the discipline owns the storm's shape (brim, tide,
+bank) and where it fights; a specialization bends that shape or changes its delivery, and
+stays content-neutral; leaves are small turns on all of it.
+
+| Overflow (the spill) | Tide (the waves) | Reservoir (the bank) |
+|---|---|---|
+| **Stormdancer** (old Stormdancer's Flash): while overflowing you blink between enemies; each landing lets loose a burst of the spill. Mobile; reaches kiters | **Spring Tide:** every third tide runs twice as high: that ebb fills the bottle to double and the surge spends it all | **Gathering Dark:** while the bank is full it keeps darkening: the release grows each second you hold it, up to double; the shield doesn't grow |
+| **Spillway:** spends made while overflowing carry the spill to their target, wherever the bolt lands. Answers the kiter weakness | **Slack Water:** you stand your ground instead of moving with the tide; during the ebb, hits drain the storm at half cost. The steady, tanky Tide | **Overcast:** the release splits into one bolt per enemy around the target, the bank shared between them |
+| **Lightning Rod:** the spill stops arcing around; all of it strikes your target | **Breakwater:** each surge ends in a wave that crashes over everything in front of you, sized by what the surge spent (Storm Surge opens the surge, Breakwater closes it) | **Deep Well:** each release keeps a third of the bank back as your shield: smaller bolts, never bare |
+
+*Decided (concepts; names and numbers open).* Notes *(Decided)*: Overcast leans to packs,
+Gathering Dark and Lightning Rod to bosses; each is a delivery change, not a spec for one
+kind of content. Gathering Dark is the board's one time ramp. Tempest's old storm brand
+stays dropped (damage over time stacked on the target is the Apprentice's ground).
+
+### 11.7 Leaves (T4 onward)
+
+Three per discipline per tier (§2). The Spirit's T4 asks **"what empties your storm?"**:
+the spike, the swarm or the slow drain, one answer each per discipline in its style. Every
+leaf triggers on enemy hits or your own states, never on your hits. *Decided (names and
+numbers open).*
+
+| | The spike | The swarm | The slow drain |
+|---|---|---|---|
+| Overflow: the spill takes it | **Shunt:** once every few seconds, a hit worth over a quarter of your storm goes into the spill instead: it costs nothing and arcs back out at enemies | **Static Field:** hits from enemies caught in your spill drain the storm a third less | **Burn Off:** while you overflow, poisons and bleeds on you end twice as fast |
+| Tide: the turn saves you | **Turn of the Tide:** a hit over a quarter of your HP during a surge turns the tide at once: you ebb, pulling back and gathering fast | **Wading:** enemies that follow you through the ebb are slowed | **Cleansing Tide:** every turn of the tide washes one debuff off you |
+| Reservoir: the dam holds | **Dam:** while the bank is above your floor, no single hit drains more than a quarter of the bottle; the rest of that hit is lost | **Levee:** while three or more enemies are around you, hits drain the storm a fifth less | **Calm Depths:** while the bank is full, debuffs on you last half as long |
+
+Spare theme for later leaf tiers: **weather transformations** (Chain Lightning leaps once
+more, Thunderclap knocks down, Downpour also heals, Thunderbolt splits). *Decided (as a
+spare theme).*
+
+### 11.8 Pieces, and where every piece comes from
+
+| Piece | Comes from | Status |
+|---|---|---|
+| Pieces (the spends and calms) | A zone's level teaches a lesson, before its boss, every tier: a **new piece**, a **sidegrade** or a **rank-up** with one visible twist. Through T4: Bolt and 5 at T1, then 12 new and 3 sidegrades (§11.16) | Decided (T1) / Decided on paper (T2–T4) |
+| Piece scaling | **Every piece scales with the Spirit's tier,** so a T1 favourite stays fieldable (as §7.2, §12.8) | Decided |
+| Discipline pieces | Ball Lightning, Storm Surge, Cloudburst: the T2 pick | Decided |
+| Trophies | Boss trophies in the relic slot; the same lineage's next-tier boss ranks one up | Decided |
+| The storm's shape (brim, tide, bank) and range | The T2 discipline | Decided |
+| Specialization | The T3 pick | Decided |
+| Leaves | T4 onward | Decided |
+| The bottle's size | Global Mastery steps | Decided |
+
+By family through T4 *(Decided on paper)*: strikes 8 plus the 3 discipline pieces (Bolt, Chain
+Lightning, Thunderbolt, Hailstorm, Forked Bolt, Ash Lightning, Sleet, Thunderstorm),
+squalls 8 (Thunderclap, Gale, Flare, Dust Devil, Downburst, Ground Charge, Dust Wall,
+Maelstrom), calms 5 (Downpour, Eye of the Storm, Updraft, Foehn, Tailwind). Calms grow slowest: Reservoir's defense leans on its leaves and gear.
+
+### 11.9 Items
+
+| Slot | The Spirit's version | Status |
+|---|---|---|
+| Weapon | **"How does your storm break?"**: the shape of your spends (bigger and rarer, smaller and more often, wider, focused) plus one job. A job follows you up: every tier has a stronger recipe for each job you know; new biomes add jobs; a retiring biome's jobs move to a biome of the next tier. Never grows the pool | Decided |
+| Relic | The boss trophy. **Spend relics** twist every spend; **storm relics** twist the gauge (how it gathers, holds, breaks or empties). One twist each, working in any setup, no per-discipline versions | Decided |
+| Armor | A shared base plus a Spirit line: **"what happens when they hit your storm?"** (what it absorbs and at what cost) | Decided |
+| Charm | A shared recovery base plus a Spirit line: **"what brings your storm back?"**, a flow line bound to a state, never a flat faster flow (which would grow offense and defense at once) | Decided |
+| Boots | Generic | Proposed (§4) |
+| Components, rule-benders | §4's own session | Under review |
+
+**The eleven trophies** *(Decided: T1 concepts; T2–T4 on paper; names and numbers open)*:
+
+| Lineage | Trophy (kind) | Twist | Ranks |
+|---|---|---|---|
+| Plains (T1–2) | **Crosswind** (spend) | every spend also strikes the 2 enemies nearest its target, weaker | II: three enemies |
+| Forest (T1–2) | **Squall** (spend) | each spend soon after the last costs a little less | II: the discount builds faster |
+| Swamp (T1–3) | **Marsh Fire** (storm) | when hits empty your storm, it bursts, striking everything around you | II: also washes a debuff off you; III: a bigger burst |
+| Mountain (T1–4) | **Thunderhead** (storm) | a full storm makes your next spend twice as big | II: it also ignores part of the plating; III: four-fifths counts as full; IV: it also staggers |
+| Cave (T1–3) | **Static Web** (spend) | enemies hit by a spend are charged for a few seconds; your plain zaps hit them twice as hard | II: longer; III: a charged enemy passes its charge to one enemy touching it |
+| Jungle (T2–4) | **Running Storm** (spend) | a spend whose target flees follows it and lands harder the farther it ran | II; III |
+| Desert (T2–4) | **Sandstorm** (storm) | while you're above your floor, a ring of blowing sand slows the enemies inside it | II: a wider ring; III |
+| Tundra (T3–4) | **Ice Storm** (spend) | every spend glazes the ground under its target; enemies on it are slowed (bosses that accept no control ignore it) | II |
+| Volcanic (T3–4) | **Pyrocumulus** (storm) | a full storm boils over: while you stay full, a burst strikes around you every few seconds | II |
+| Wasteland (T4) | **Stray Bolts** (spend) | every spend also strikes a random enemy elsewhere in the fight | — |
+| Trench (T4) | **Depth Charge** (storm) | while your target is out of reach, the storm gathers double; your first spend when it resurfaces is doubled | — |
+
+Six spend relics, five storm relics. Gather and Reservoir lean to storm relics; hover and
+Overflow to spend relics. A retired lineage's trophy keeps working and scaling; it only
+stops ranking up. Known non-fit *(Decided, note)*: Capacitor does nothing for Overflow
+(nothing is wasted), as Bloodtithe does nothing for the Conduit's Swarm.
+
+### 11.10 Defense and recovery
+
+- **The storm is the Spirit's defense:** one bar that absorbs before HP and that you spend
+  to deal damage; the trade between the two is the class (§1 allows it; the guardrail is
+  that gear never grows the pool, §11.2). *Decided.*
+- **It must lose to sustained pressure:** the constant flow is sized against the pool, so
+  weak hitters still matter (the Striker's "no shield you can keep up forever", met by
+  rate). *Decided / Playtest.*
+- **Equipment:** armor lines change what the storm absorbs and its cost; charm lines are
+  flow lines bound to a state; flat Recovery stays the HP baseline. Resilience leaves at T4
+  (§11.7). *Decided.*
+- **The recharging barrier leaves shared gear** (cross-class proposal XC1, accepted by the
+  designer 2026-10-14): today the Mountain and Tundra charms give any class one. The
+  Spirit's storm takes over that runtime; shared bases protect in other shapes (wards that
+  expire, damage caps, plating, resistances). Timed wards stay. *Decided; written into §4
+  and §5.*
+- **The measured weak spots and their answers:** the Forest's fast packs (Thunderclap,
+  Slipstream, Clear Sky), the Swamp's attrition and the Toadeater (Downpour, Sealed
+  Vessel, Petrichor, then Marsh Fire), the range check (§11.15). *Decided (bots to check).*
+
+### 11.11 Stance-like modes, rite-like passives
+
+None as a system of their own. Gather or hover is a rule; Tide's ebb and surge are that
+discipline's states. *Decided.*
+
+### 11.12 Party role
+
+Damage, plus a shared storm: mainly damage (Overflow's spill and Overcast for packs,
+Reservoir for bosses), and one shared defense: allies standing in your Overflow spill or
+your Tide's ebb take a little less damage. No healer, no shields lent to allies (the
+Conduit's Icewarden and the Squire's Intercept own those). The same buff from two Spirits
+doesn't stack; the strongest copy applies (§7.12). *Decided.* Reservoir shares nothing;
+its party value is boss damage. *Decided (note).*
+
+### 11.13 Bot plan
+
+*Decided (accepted at the lock; defaults and test arms tuned by the bots).* Bots can't
+press buttons; every lever is a setting the harness writes.
+
+- **Harness intents:** set the floor, the bands (a spend per band) and the phase; equip the
+  relic. The energy runes and shared abilities go.
+- **Defaults:** T1: a 30% floor, Bolt above it, gather; Chain Lightning in the top band once
+  learned; Thunderclap and Downpour in a band above the floor (they wait for their moment);
+  Eye of the Storm at the floor; Thunderbolt in the top band. Overflow: the floor at the
+  brim, hover, Ball Lightning and area strikes, a spend relic. Tide: a 20% floor, Storm
+  Surge, squalls, a spend relic. Reservoir: a 40% floor, Cloudburst on the "enough" rule,
+  calms at the floor, a storm relic.
+- **Metrics:** storm drained by source (hits, damage over time, spending), time bare, wasted
+  flow at full, spends per minute, damage taken per second by discipline and range, time
+  to kill, deaths, HP lows (the Plains entry spike, the Forest packs, the Toadeater).
+- **Test arms the design already asks for:** **the range check** (does the trade bite at
+  each discipline's range; Reservoir far); the flow against the pool (weak hitters must
+  still matter); the zap share; Overflow's spill rate and where it settles; Tide's cycle
+  length; Reservoir's "enough" release against full releases; Gathering Dark's cap; Spring
+  Tide; the strength of Eye of the Storm, Dam, Deep Well and Slack Water; the first boss
+  without a relic.
+
+### 11.14 Salvage
+
+| Keep | Where |
+|---|---|
+| The barrier runtime as the storm pool: `HasBarrier`, the absorb listener, sizing in one place, the per-tick refill, its HUD conduit (the delay accumulator goes: the flow is constant) | `server/src/systems/defense/barrier/`, [barrier-ward-current-state.md](../docs/barrier-ward-current-state.md) |
+| The energy slice and its single accrual point, which becomes the flow | `server/src/systems/classes/archetypes/energy/energyPrototype.ts`, `usesEnergy` |
+| One multiplier per hit, for every spend | `combat/engine/empoweredAttacks.ts` |
+| Old frame and path mechanics: Spark's chain (Chain Lightning, Overflow's spill), Phantasm's bank and stagger (Reservoir, Thunderbolt), Voidwalker's kill-timed early discharge (Reservoir's "enough"), Equinox's two states (Tide), Channeler's ramping decay (Overflow), Stormdancer's Flash (Stormdancer), Wisp's all-on-one-target (Lightning Rod) | `energy/frameLoop.ts`, `energy/t3/` |
+| Rune conditions as the spends' moments: melee contact, a debuff on you, three or more enemies, an elite, a shielded target | `shared/src/runeDatabase.ts` |
+| Stun and control immunity for the squalls | `combat/status/stun.ts`, `controlImmunity.ts` |
+| The lightning effects (`fxLightning`, `arcDischarge`, `lightningDagger`, `equinoxArc`) and bespoke `fx/bespoke/spirit.ts` (Channeler's stream for the spill) | the client's fx |
+| Robed Spirit bodies through T3 | the atlases |
+| The Passive Tree's panel, unlock gate, reset and layers | §2 |
+
+| Remove or rework | Why |
+|---|---|
+| Energy per hit | The flow |
+| The discharge at a full bar | Spends placed by Thresholds |
+| The root's 30% barrier, Haunt's 40%, barrier on the Mountain and Tundra charms; the barrier's 4 s delay | The storm (XC1); the flow is constant |
+| Frames, range nodes and the nine paths as data | Disciplines and specializations |
+| Tempest's storm brand | Damage over time stacked on a target is the Apprentice's |
+| The energy relic ratings | Trophies |
+
+**Build tasks** *(Decided)*: the storm as the absorb pool with two drains (hits, spending)
+and a constant flow; the Thresholds screen (floor, bands, phase) on the rule engine, plus
+each spend's moment; Overflow's brim and spill; Tide's movement with the tide (steering);
+Reservoir's "enough to kill" release (Voidwalker's projected-damage check); range per
+discipline; the soaked and charged states; the party storm (spill and ebb) under the
+same-buff rule.
+
+### 11.15 Open questions
+
+**Playtest:**
+
+1. **The range check:** does the shield trade bite at every discipline's range? At range
+   the Spirit took 0.0 damage per second from the Broodmother; Reservoir far is the safest
+   Spirit. Measure it first.
+2. The flow against the pool: weak hitters must still matter.
+3. Every number: the pips, the flow, the zap share, piece costs, the default floor,
+   Overflow's spill rate, Tide's cycle, Reservoir's depth, Gathering Dark's cap.
+4. The first boss without a relic.
+5. Too safe? Eye of the Storm, Dam, Deep Well, Slack Water.
+
+**Design, later:**
+
+6. Names: placeholders throughout.
+7. Leaves after T4 (spare theme: weather transformations) and the T7–T8 capstone.
+8. Components and rule-benders (§4), farming efficiency (§13), per-class stats (§5).
+
+**Collisions, as settled** *(Decided, notes)*: the resource as a shield is the Spirit's
+(the Striker's lines and the Squire's Resolve never absorb); Thresholds read your own
+gauge, the Apprentice's Payoff rules moments on the enemy; Reservoir is shield-linked
+(Crescendo offense only, the Slinger's Siege bank fired on reload); Overflow's spill is
+not the Squire's Deep Winter overfill; Chain Lightning is damage leaping between enemies,
+never stacks setting each other off (the Apprentice's chain reaction); Tide moves away
+where the Slinger's reload stands still, and the Spirit has no cast bars (the Striker's
+casts, the Wizard's cast times); Reservoir's release is timing, not execution.
+
+### 11.16 Tier by tier: what each biome gives the Spirit
+
+T1 is §11.4. The agent's extension, approved by the designer for now (*Decided on paper*,
+to judge in the game; names and numbers open). Every tier, each biome teaches a lesson
+(§11.8), has a weapon, an armor and a charm recipe (its jobs, stronger), and its boss gives
+a trophy or ranks one up (§11.9). **Jobs move when a biome retires,** as for the other
+classes: after T2 the Forest's (Quickening Wand, Slipstream, Clear Sky) to the Jungle and
+the Plains' (Forked Rod, Static Skin, Still Air) to the Volcanic; after T3 the Swamp's
+(Drenching Staff, Sealed Vessel, Petrichor) to the Wasteland ("Graveyard" in §7.16) and
+the Cave's (Lodestone Orb, Ironbound, Capacitor) to the Trench.
+
+**T2**
+
+| Biome | Threat | Lesson (family, kind) | New gear jobs |
+|---|---|---|---|
+| Plains | stampedes | **Gale** (squall, new): a gust in front of you blows enemies back a few steps; a charge caught in it stops dead | — |
+| Forest | cadence duel, stuns | **Thunderclap II** (squall, rank-up): what the clap staggers also attacks slower for a few seconds | — |
+| Mountain | heavy plating, the breakable barrier, charges | **Hailstorm** (strike, new): hail pelts the area around the target for a few seconds; hailstones hit shields and barriers double | — |
+| Swamp | pools, rain, the rising mire; Corrosion | **Downpour II** (calm, rank-up): also washes off Corrosion and slows | — |
+| Cave | eruptions from below | **Updraft** (calm, new): when the ground is about to erupt under you, a gust lifts you clear | — |
+| Jungle (new) | fleeing prey, ambushers from cover | **Flare** (squall, new): a flash around you reveals hidden ambushers and staggers them | Weapon **Lurker's Rod:** your first spend on each new target costs nothing. Armor: anti-ambush base + **Stormsense:** an ambush can't drain your storm below your floor. Charm **Monsoon:** after an ambush hits you, the storm gathers three times as fast for a few seconds |
+| Desert (new) | mark, slow, execute; ranged kiters | **Dust Devil** (squall, new): a whirlwind runs down the farthest enemy attacking you and drags it toward you | Weapon **Sirocco Staff:** your spends reach much farther. Armor: ranged-hit base + **Sandshroud:** ranged hits drain the storm at half cost. Charm **Oasis:** while you're marked or slowed, the storm gathers faster |
+
+**T3** (the Plains and Forest have retired)
+
+| Biome | Threat | Lesson (family, kind) | New gear jobs |
+|---|---|---|---|
+| Mountain | the double charge | **Downburst** (squall, new): a column of wind slams down on a charging enemy and pins it for a moment | — |
+| Cave | the tunnel chase | **Updraft II** (calm, rank-up): the gust also throws the surfacing enemy off its feet | — |
+| Swamp (last tier) | spores, detonating pools, the drag | **Tailwind** (calm, new): when something drags or shoves you, a gust carries you back | — |
+| Jungle (+ the Forest's jobs) | pursuit, flight | **Forked Bolt** (strike, sidegrade of Chain Lightning): splits toward the two enemies farthest from you, catching the fleeing ones | The Forest's jobs move here |
+| Desert | postures; the Monarch turns kiter at half HP; a dash-escape | **Dust Devil II** (squall, rank-up): the dragged enemy can't move away for a moment | — |
+| Tundra (new) | the Chill clock, Deep Freeze, Ice Armor, root casters; bosses accept no control | **Foehn** (calm, new): when the Chill on you nears its threshold, a warm wind melts it back down | Weapon **Rime Staff:** your spends hit shelled targets (Ice Armor, obsidian, barriers) harder. Armor: chill base + **Insulated:** the Chill builds on you slower while your storm is above the floor. Charm **Aurora:** while you're chilled, the storm gathers faster |
+| Volcanic (new; + the Plains' jobs) | Heat, vents, the Final Eruption, obsidian shells, hound swarms, burning gunners | **Ash Lightning** (strike, new): the volcano's own lightning; hits harder for each step of the fight's Heat | Weapon **Ember Rod:** the emptier your storm, the harder your spends hit. Armor: heat base + **Flash Steam:** fire damage drains the storm at half cost. Charm **Thermal:** each step of the Heat makes the storm gather a little faster. The Plains' jobs move here |
+
+**T4** (the Swamp and Cave have retired)
+
+| Biome | Threat | Lesson (family, kind) | New gear jobs |
+|---|---|---|---|
+| Mountain (last tier) | Earthshatter, delayed fault lines | **Downburst II** (squall, rank-up): pins every enemy in a line | — |
+| Tundra | Ice Armor at its heaviest | **Sleet** (strike, sidegrade of Hailstorm): a narrow sheet of sleet on one target; breaks shells three times as fast | — |
+| Jungle | hard to catch, then it commits | **Ground Charge** (squall, new): a charged patch under you; the first enemy to leap at you is thrown back and stunned | — |
+| Desert | three acts: melee, kiter, cornered | **Dust Wall** (squall, sidegrade of Gale): a wall of dust rolls out from you in every direction, pushing everything back | — |
+| Volcanic | the Heat race, Magma Shove | **Ash Lightning II** (strike, rank-up): also strikes the enemies around the target | — |
+| Wasteland (new; + the Swamp's jobs) | the dead rise; area matters most | **Thunderstorm** (strike, new): for a few seconds, lightning strikes at random among every enemy around you | Weapon **Tempest Staff:** area spends hit harder for each enemy they hit. Armor: base (risen enemies hit softer) + **Gravecloth:** risen enemies' hits drain the storm at half cost. Charm **Wake:** each enemy that rises near you makes the storm gather a burst. The Swamp's jobs move here |
+| Trench (new; + the Cave's jobs) | the debuff pile, Devour, dives out of reach | **Maelstrom** (squall, new): when the enemy you fight dives out of reach, a whirlpool drags it back to the surface | Weapon **Abyssal Lantern:** your spends hit harder for each different debuff on you. Armor: debuff-resistance base + **Deep Seal:** while you carry three or more debuffs, hits drain the storm a third less. Charm **Abyssal Calm:** each debuff on you makes the storm gather a little faster. The Cave's jobs move here |
+
+**How T3 and T4 test the Spirit:** shells reward burst (Reservoir, Thunderhead, Hailstorm,
+Sleet, the Rime Staff); the Tundra and Volcanic bosses accept no control, so the squalls'
+control (Thunderclap, Gale, Downburst, Ice Storm, Sandstorm) does nothing there and the
+strikes and calms carry; the Heat makes every hit bigger, so the storm drains faster
+(Flash Steam, Thermal); the Final Eruption is a damage race (Thunderhead, Gathering Dark,
+Spring Tide, Ash Lightning); the Wasteland is the area fight (Thunderstorm, Overcast,
+Overflow's spill, the Tempest Staff, Stray Bolts); the Trench piles debuffs (Downpour,
+Cleansing Tide, Calm Depths, Deep Seal) and dives (Maelstrom, Depth Charge).
+
+**Overlaps to judge** *(notes)*: the Ember Rod trades defense for damage inside the kit
+(§1); Ash Lightning and Thermal both ride the Heat; Downpour II has the shape of the
+Squire's Steel Will II, Depth Charge sits near its Lie in Wait, Petrichor near its
+Purifying Breath; Crosswind near the Striker's Wide Arc; Ground Charge's stun does nothing
+on the control-immune bosses (a counter, as for every class's control). Static Skin
+charges, never reflects: thorns stays the Conduit's Bramble (§8.15).
 
 ## 12. Striker — Locked (2026-10-14)
 
@@ -1902,3 +2301,5 @@ Archived with a header when the section that replaces them locks:
 The Striker's lock (§12, 2026-10-14) archives nothing: no design doc is the Striker's
 alone, and `docs/frames-current-state.md` stays the code's truth until the build replaces
 frames. The Squire's lock (§8, 2026-10-14) archives nothing either, for the same reasons.
+The Spirit's lock (§11, 2026-10-14) archives nothing either; `docs/barrier-ward-current-state.md`
+stays the code's truth until the build turns the barrier into the storm.
