@@ -1,6 +1,6 @@
 /**
  * NOT USED BY THE HARNESS. The bot's loadout is Rune rules only (`./runes.ts`,
- * `./apply.ts`). This full-build validator (abilities and rites) is
+ * `./apply.ts`). This full-build validator (abilities and rune rules) is
  * kept only because the server's bench imports
  * `validateBuild` from this path: `server/bench/balance/ttkSurveySpec.ts`
  * (whose `prepareSurveyBot` about twenty server tests call),
@@ -8,7 +8,7 @@
  * with those systems, together with its server importers.
  */
 import {
-  ABILITY_DATABASE, RITE_DATABASE, attunedAbilityIds,
+  ABILITY_DATABASE, attunedAbilityIds,
   sanitizeRuneLoadout,
   type AttunedAbilities, type EquippedRule, type PlayerView,
 } from "@mmo-idle/shared";
@@ -17,7 +17,6 @@ import {
 export interface DesiredBuild {
   abilities: AttunedAbilities;
   runeRules: EquippedRule[];
-  rites: string[];
 }
 
 export type BuildFailureCode = "MALFORMED_BUILD" | "MISSING_UNLOCK"
@@ -30,15 +29,13 @@ export class BuildError extends Error {
 }
 
 export function observedBuild(self: PlayerView): DesiredBuild {
-  return structuredClone({ abilities: self.attunedAbilities, runeRules: self.runesEquipped,
-    rites: self.equippedRites });
+  return structuredClone({ abilities: self.attunedAbilities, runeRules: self.runesEquipped });
 }
 
 /** Fixed field order; array order is meaningful, object insertion order is not. */
 export function buildKey(build: DesiredBuild): string {
   return JSON.stringify([build.abilities.techniques, build.abilities.guards,
-    build.runeRules.map(r => [r.conditionId, r.actionId, r.targetAbilityId ?? null]),
-    build.rites]);
+    build.runeRules.map(r => [r.conditionId, r.actionId, r.targetAbilityId ?? null])]);
 }
 
 export function validateBuild(build: DesiredBuild, self: PlayerView): BuildIssue[] {
@@ -46,8 +43,8 @@ export function validateBuild(build: DesiredBuild, self: PlayerView): BuildIssue
   const add = (code: BuildFailureCode, reason: string) => issues.push({ code, reason });
   const ids = (value: unknown): value is string[] => Array.isArray(value) && value.every(id => typeof id === "string");
   if (!build || !ids(build.abilities?.techniques) || !ids(build.abilities?.guards)
-    || !ids(build.rites) || !Array.isArray(build.runeRules) || build.runeRules.some(r => !r || typeof r.conditionId !== "string" || typeof r.actionId !== "string")) {
-    return [{ code: "MALFORMED_BUILD", reason: "Expected abilities, runeRules and rites using the current schema." }];
+    || !Array.isArray(build.runeRules) || build.runeRules.some(r => !r || typeof r.conditionId !== "string" || typeof r.actionId !== "string")) {
+    return [{ code: "MALFORMED_BUILD", reason: "Expected abilities and runeRules using the current schema." }];
   }
   for (const [family, values] of Object.entries(build.abilities)) {
     if (family !== "techniques" && family !== "guards") { add("MALFORMED_BUILD", `Unknown ability family ${family}`); continue; }
@@ -56,15 +53,6 @@ export function validateBuild(build: DesiredBuild, self: PlayerView): BuildIssue
       const def = ABILITY_DATABASE.get(id);
       if (!def || def.slot !== (family === "techniques" ? "technique" : "guard")) add("MALFORMED_BUILD", `Invalid ${family} ability ${id}`);
       else if (!self.knownAbilities.includes(id)) add("MISSING_UNLOCK", `Ability ${id} is not learned`);
-    }
-  }
-  for (const [values, known, database, label] of [
-    [build.rites, self.knownRites, RITE_DATABASE, "rite"],
-  ] as const) {
-    if (new Set(values).size !== values.length) add("MALFORMED_BUILD", `Duplicate ${label}`);
-    for (const id of values) {
-      if (!database.has(id)) add("MALFORMED_BUILD", `Unknown ${label} ${id}`);
-      else if (!known.includes(id)) add("MISSING_UNLOCK", `${label} ${id} is not learned`);
     }
   }
   for (const [index, rule] of build.runeRules.entries()) {

@@ -8,8 +8,6 @@ import {
   sendUseAbility,
   sendManualReload,
   sendRecallSummons,
-  sendCraftRiteRecipe,
-  sendSetRiteLoadout,
   sendEquipItem,
   sendGoToTestRoom,
   sendJoinParty,
@@ -116,16 +114,6 @@ export function attachHudEvents(scene: GameScene): () => void {
   intents.on("recallSummons", () => {
     if (isDeathOverlayActive()) return;
     sendRecallSummons(scene.socket);
-  });
-
-  intents.on("craftRiteRecipe", (recipeId) => {
-    if (isDeathOverlayActive()) return;
-    sendCraftRiteRecipe(scene.socket, recipeId);
-  });
-
-  intents.on("setRiteLoadout", (payload) => {
-    if (isDeathOverlayActive()) return;
-    sendSetRiteLoadout(scene.socket, payload);
   });
 
   intents.on("activateDungeonAltar", () => {

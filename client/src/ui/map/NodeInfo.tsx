@@ -121,7 +121,7 @@ function MonsterRow({ m, isBoss, open, onToggle }: {
 // ── Expandable unlock row ───────────────────────────────────────────────────────
 /**
  * One rung of a biome's reward ladder, whichever database authored it. Gear
- * states its stats and effects; a technique or rite states what
+ * states its stats and effects; a technique states what
  * learning it would do for THIS character, the same way the Craft browser does.
  */
 function UnlockRow({ unlock, unlocked, open, onToggle, relicPreview, abilityContext }: {
@@ -217,8 +217,8 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
   const info  = NODE_BIOMES[nodeId];
   const biome = info ? BIOME_DATABASE.get(info.biomeGroup) : null;
 
-  // Every reward this biome pays out, from all three recipe databases — gear,
-  // techniques and rites — grouped by the level that opens it.
+  // Every reward this biome pays out, from both recipe databases — gear and
+  // techniques — grouped by the level that opens it.
   const unlockLevels = useMemo(
     () => (info ? biomeUnlocksByLevel(info.biomeGroup) : []),
     [info?.biomeGroup], // eslint-disable-line react-hooks/exhaustive-deps

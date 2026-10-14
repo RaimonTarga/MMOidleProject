@@ -1,7 +1,6 @@
 import {
   emptyEquipment,
   emptyAttunedAbilities,
-  emptyEquippedRites,
   type DeltaSnapshot,
   type NetworkedEntity,
   type SpectatorPlayer,
@@ -26,8 +25,6 @@ function presentationDefaults(projection: SpectatorPlayer): Partial<NetworkedEnt
       runesEquipped: [],
       knownAbilities: [],
       attunedAbilities: emptyAttunedAbilities(),
-      knownRites: [],
-      equippedRites: emptyEquippedRites(),
     },
     holdsInventory: {
       inventory: [],

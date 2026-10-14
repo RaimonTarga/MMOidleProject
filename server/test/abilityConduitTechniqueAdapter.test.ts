@@ -68,8 +68,6 @@ function slices(
       runesEquipped: [],
       knownAbilities: [abilityId],
       attunedAbilities: { techniques: [abilityId], guards: [] },
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

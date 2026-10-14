@@ -10,7 +10,7 @@ import { hudBus } from '../../hudBus';
 import { togglePrimaryOverlay } from '../../input/overlayStack';
 import { useIsMobile } from '../../hud/useIsMobile';
 import {
-  equippedRitesAtom, equipmentAtom, itemUpgradesAtom, passivesAtom,
+  equipmentAtom, itemUpgradesAtom, passivesAtom,
   combatArchetypeAtom, selectedRangeAtom, selectedSubVariantAtom, playerTierAtom,
   unlockedSkillsAtom, playerNodeIdAtom,
 } from '../../hud/atoms';
@@ -38,7 +38,6 @@ export function StatSheet({ compare }: Props) {
   const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
   const playerTier = useAtomValue(playerTierAtom);
   const unlockedSkills = useAtomValue(unlockedSkillsAtom);
-  const equippedRites = useAtomValue(equippedRitesAtom);
   const playerNodeId = useAtomValue(playerNodeIdAtom);
   // The Stats panel is a desktop menu entry; the phone's is its Stats tab.
   const isMobile = useIsMobile();
@@ -49,9 +48,9 @@ export function StatSheet({ compare }: Props) {
       unlockedSkills, passives, selectedClass: combatArchetype ? `${combatArchetype}-root` : null,
       selectedSubVariant, selectedRange, combatArchetype,
     },
-    equipment, itemUpgrades, playerTier, equippedRites,
+    equipment, itemUpgrades, playerTier,
   }, defId), [unlockedSkills, passives, combatArchetype, selectedSubVariant, selectedRange, equipment,
-    itemUpgrades, playerTier, equippedRites, defId]);
+    itemUpgrades, playerTier, defId]);
 
   const def = defId ? ITEM_DATABASE.get(defId) : undefined;
   const slot = sheet.slot;

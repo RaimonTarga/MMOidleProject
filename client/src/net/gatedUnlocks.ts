@@ -1,10 +1,7 @@
 import {
   ABILITY_DATABASE,
   ABILITY_RECIPE_DATABASE,
-  RITE_DATABASE,
-  RITE_RECIPE_DATABASE,
   isAbilityRecipeUnlocked,
-  isRiteRecipeUnlocked,
 } from '@mmo-idle/shared';
 
 export interface GatedUnlock {
@@ -20,11 +17,11 @@ export interface UnlockGateInput {
 }
 
 /**
- * Every technique and rite whose gate is currently open.
+ * Every technique whose gate is currently open.
  *
  * Gear unlocks are authoritative — the server pushes them into
- * `TracksProgression.unlockedRecipes` as biome levels land. The other two
- * databases have no such list: their gates are evaluated on demand from biome
+ * `TracksProgression.unlockedRecipes` as biome levels land. The ability
+ * database has no such list: their gates are evaluated on demand from biome
  * level, which is why crossing one used to happen in total silence while a new
  * sword announced itself. This recomputes the open set so the delta applier can
  * diff it and announce the difference with the same toast.
@@ -37,15 +34,6 @@ export function openGatedUnlocks(input: UnlockGateInput): GatedUnlock[] {
     unlocks.push({
       key: `technique:${recipe.id}`,
       name: ABILITY_DATABASE.get(recipe.abilityId)?.name ?? recipe.name,
-      recipeGroup: recipe.recipeGroup ?? 'unknown',
-    });
-  }
-
-  for (const recipe of RITE_RECIPE_DATABASE.values()) {
-    if (!isRiteRecipeUnlocked(recipe, input)) continue;
-    unlocks.push({
-      key: `rite:${recipe.id}`,
-      name: RITE_DATABASE.get(recipe.riteId)?.name ?? recipe.name,
       recipeGroup: recipe.recipeGroup ?? 'unknown',
     });
   }

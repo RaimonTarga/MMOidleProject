@@ -54,8 +54,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
       runesEquipped: [{ conditionId: "in-combat", actionId: "use-ability", targetAbilityId: "second-wind" }],
       knownAbilities: ["second-wind"],
       attunedAbilities: { techniques: [], guards: ["second-wind"] },
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: {
       inventory: [],

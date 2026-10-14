@@ -41,7 +41,6 @@ function setup(summoner = false, volatile = false) {
       questProgress: {}, playerTier: 4, currentSkillTier: 4, bossesCleared: [], clearedNodes: [],
       runesOwned: [], runesEquipped: [], knownAbilities: [],
       attunedAbilities: { techniques: [], guards: [] },
-      knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

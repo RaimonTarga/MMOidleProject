@@ -10,8 +10,6 @@ export interface SystemVisibilityInput {
   globalMastery: number;
   knownAbilities: readonly string[];
   attunedAbilities: AttunedAbilities;
-  knownRites: readonly string[];
-  equippedRites: readonly string[];
   essences?: Partial<Record<EssenceType, number>>;
   unlockedRecipes?: readonly string[];
   skillPoints?: number;
@@ -27,7 +25,6 @@ export interface SystemVisibilityInput {
 export interface SystemVisibility {
   mastery: boolean;
   abilities: boolean;
-  rites: boolean;
   /** Materials reveal when the player first receives economy currency. */
   materials: boolean;
   /** Passive Tree reveals on its first point or an existing allocation. */
@@ -91,8 +88,7 @@ export function resolveSystemVisibility(
   const hasCraftedSomething =
     (input.inventory?.length ?? 0) > 0 ||
     input.hasEquipment === true ||
-    input.knownAbilities.length > 0 ||
-    input.knownRites.length > 0;
+    input.knownAbilities.length > 0;
 
   return {
     combatLog: hasFought,
@@ -111,10 +107,6 @@ export function resolveSystemVisibility(
     abilityDock: abilities,
     mastery: masteryIsVisible(input.globalMastery),
     abilities,
-    rites:
-      input.playerTier >= 3 ||
-      input.knownRites.length > 0 ||
-      input.equippedRites.length > 0,
     materials,
     passiveTree:
       (input.skillPoints ?? 0) > 0 ||

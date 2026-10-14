@@ -88,8 +88,6 @@ function makePlayerSlices(id: string, techniques: string[]): PersistedPlayerSlic
         ...emptyAttunedAbilities(),
         techniques: [...techniques],
       },
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

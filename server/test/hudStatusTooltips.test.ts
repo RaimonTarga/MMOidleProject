@@ -394,8 +394,6 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
       runesEquipped: [],
       knownAbilities: [],
       attunedAbilities: { techniques: [], guards: [] },
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

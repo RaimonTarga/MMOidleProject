@@ -99,17 +99,6 @@ export function sendManualReload(
   socket.emit('player:manualReload', ack);
 }
 
-export function sendCraftRiteRecipe(socket: GameSocket, recipeId: string): void {
-  socket.emit('rite:craftRecipe', recipeId);
-}
-
-export function sendSetRiteLoadout(
-  socket: GameSocket,
-  payload: { riteIds: string[] },
-): void {
-  socket.emit('rite:setLoadout', payload);
-}
-
 export function sendEquipItem(socket: GameSocket, definitionId: string): void {
   socket.emit('inventory:equipItem', definitionId);
 }

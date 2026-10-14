@@ -1,8 +1,6 @@
 import {
   abilityDef,
-  riteDef,
   type AbilityDef,
-  type RiteDef,
 } from '@mmo-idle/shared';
 import type { IconSource } from '../GameIcon';
 import { describeAbility, type AbilityContext } from './abilityText';
@@ -76,12 +74,6 @@ export function skillNodeLines(node: {
   };
 }
 
-/** Everything a rite does while equipped. Rites are OOC-only by construction. */
-export function riteLines(rite: RiteDef | undefined): DetailLine[] {
-  if (!rite) return [];
-  return [{ key: `rite:${rite.id}:rp`, label: "Shared Runic cost", value: `${rite.runeCost} RP`, help: rite.blurb }];
-}
-
 /** Everything an ability does for THIS character, tier and passives included. */
 export function abilityLines(
   ability: AbilityDef | undefined,
@@ -116,10 +108,9 @@ export function abilityLines(
 
 /**
  * Lines for any loadout id, whichever system owns it. Lets one browser explain
- * abilities and rites without knowing which it is looking at.
+ * a loadout entry without knowing which system it belongs to.
  */
 export function loadoutLinesFor(id: string, context: AbilityContext): DetailLine[] {
   const ability = abilityDef(id);
-  if (ability) return abilityLines(ability, context);
-  return riteLines(riteDef(id));
+  return ability ? abilityLines(ability, context) : [];
 }

@@ -16,7 +16,6 @@ import type { MonsterBehavior } from '../../data/monsters/behavior';
 import type { HasHitbox } from '../../hitbox/types';
 import type { EquippedRule } from '../../runeDatabase';
 import type { AttunedAbilities } from '../../abilities';
-import type { EquippedRites } from '../../rites';
 import type { ClassConfig } from '../../classKits/configTypes';
 
 export type { HasHitbox };
@@ -371,15 +370,6 @@ export interface TracksProgression {
    * There is no capacity limit.
    */
   attunedAbilities: AttunedAbilities;
-  /**
-   * Rites the player has learned (crafted) — the slottable pool (system rework
-   * Step 11). Stored here like runes/abilities (build/loadout data).
-   */
-  knownRites: string[];
-  /**
-   * Equipped Rites. Shared Runic Points are the sole loadout constraint.
-   */
-  equippedRites: EquippedRites;
 }
 
 /** Owned items, by inventory bag and equipment slot. */

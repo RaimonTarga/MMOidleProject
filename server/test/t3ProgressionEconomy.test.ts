@@ -5,13 +5,12 @@
  * current-state docs.
  *
  * Covers the retirement-aware mastery architecture, the 23 T2→T3 successions, the T3 gear
- * cost curves / hybrid splits / catalyst schedule, and the ability / rite / Core
+ * cost curves / hybrid splits / catalyst schedule, and the ability / Core
  * prices and reward placement.
  */
 import {
   RECIPE_DATABASE,
   ABILITY_RECIPE_DATABASE,
-  RITE_RECIPE_DATABASE,
   NODE_BIOMES,
   BIOME_START_TIER_BY_GROUP,
   BIOME_FINAL_TIER_BY_GROUP,
@@ -271,7 +270,7 @@ for (const recipe of T3_GEAR) {
 // the catalyst wallet and every `catalystCost` field are gone.
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 4. Abilities / stances / rites
+// 4. Abilities and Cores
 // ═══════════════════════════════════════════════════════════════════════════
 
 {
@@ -333,29 +332,6 @@ for (const recipe of T3_GEAR) {
     JSON.stringify(t3CoreIds) === JSON.stringify(CORES.map((spec) => spec.id).sort()),
     `T3 Core roster must be exactly the six intended homes (got ${t3CoreIds.join(", ")})`,
   );
-}
-
-{
-  // RP costs AND all six essence costs are UNCHANGED — only catalyst family/quantity moved.
-  // Rite essence is deliberately NOT monotonic in RP: RP is loadout opportunity cost,
-  // essence is acquisition cost. Lingering Battle at 2 RP / 170 essence is intended.
-  const RITES: Array<{ id: string; family: string; catalyst: number; cost: Partial<Record<EssenceType, number>> }> = [
-    { id: "rite-recipe-swift-repose", family: "dominion", catalyst: 2, cost: { red: 120 } },
-    { id: "rite-recipe-lingering-battle", family: "heavy", catalyst: 2, cost: { blue: 130, yellow: 40 } },
-    { id: "rite-recipe-purification", family: "fortified", catalyst: 2, cost: { purple: 120, green: 40 } },
-    { id: "rite-recipe-blood-offering", family: "swarming", catalyst: 2, cost: { red: 130, green: 40 } },
-    { id: "rite-recipe-mechanic-renewal", family: "heavy", catalyst: 3, cost: { blue: 160, yellow: 60 } },
-    { id: "rite-recipe-ability-reprieve", family: "dominion", catalyst: 3, cost: { red: 160, purple: 60 } },
-  ];
-  for (const spec of RITES) {
-    const recipe = RITE_RECIPE_DATABASE.get(spec.id);
-    assert(!!recipe, `${spec.id}: recipe must exist`);
-    assert(recipe!.tier === 3, `${spec.id}: must stay tier 3`);
-    assert(
-      JSON.stringify(recipe!.cost) === JSON.stringify(spec.cost),
-      `${spec.id}: essence cost must be UNCHANGED (got ${JSON.stringify(recipe!.cost)})`,
-    );
-  }
 }
 
 console.log("t3ProgressionEconomy: ok");

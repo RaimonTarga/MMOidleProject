@@ -42,7 +42,6 @@ export interface T1SnapshotDerivedStats {
   speed: number;
   attackStyle: string;
   combatArchetype: PlayerView["combatArchetype"];
-  riteSlots: number;
   summonsMinions: number;
 }
 
@@ -131,8 +130,6 @@ export interface T1SnapshotState {
   attunedAbilities: PlayerView["attunedAbilities"];
   runesOwned: string[];
   runesEquipped: PlayerView["runesEquipped"];
-  knownRites: string[];
-  equippedRites: PlayerView["equippedRites"];
   derivedStats: T1SnapshotDerivedStats;
   classResources: T1SnapshotClassResources;
   runtime: T1SnapshotRuntime;
@@ -243,7 +240,6 @@ export function tierEntryProfileFromT1Snapshot(
   assertUnique("inventory", state.inventory);
   assertUnique("knownAbilities", state.knownAbilities);
   assertUnique("runesOwned", state.runesOwned);
-  assertUnique("knownRites", state.knownRites);
   assertUnique("bossesCleared", state.bossesCleared);
   assertUnique("clearedNodes", state.clearedNodes);
   assertUnique("visitedNodes", state.visitedNodes);
@@ -316,7 +312,5 @@ export function tierEntryProfileFromT1Snapshot(
     runesEquipped: state.runesEquipped
       .filter((rule) => !(rule.actionId === "use-ability" && rule.targetAbilityId && isRetiredAbilityId(rule.targetAbilityId)))
       .map((rule) => ({ ...rule })),
-    knownRites: [...state.knownRites],
-    equippedRites: [...state.equippedRites],
   };
 }

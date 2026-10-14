@@ -52,8 +52,6 @@ function makePlayerSlices(
       runesEquipped: [{ conditionId: "in-combat", actionId: "use-ability", targetAbilityId: abilityId }],
       knownAbilities: [abilityId],
       attunedAbilities: { techniques: [abilityId], guards: [] },
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: {
       inventory: [],

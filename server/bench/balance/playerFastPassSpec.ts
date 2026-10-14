@@ -85,7 +85,7 @@ export function fastPassReadback(cell: SurveyCell, bot: PlayerEntity, globalMast
   return { ...(cell.progressionSnapshot ? {progression: snapshotReceipts.get(bot)} : {}), declared, skillPath: [...bot.usesSkills.unlockedSkills], equipment: structuredClone(bot.holdsInventory),
     mastery: { biomeLevel: { ...p.biomeLevel }, globalMastery },
     access: cell.progressionSnapshot ? 'Fixed declared synthetic route checkpoint; prior paid ownership, no acquisition or guardian evidence.' : 'Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.',
-    skillPoints: p.skillPoints, knownAbilities: [...p.knownAbilities], rites: [...p.equippedRites] };
+    skillPoints: p.skillPoints, knownAbilities: [...p.knownAbilities] };
 }
 
 export function assertFastPassHitboxes(entities: Iterable<{ hasHitbox?: { frameName?: string | null } }>) {

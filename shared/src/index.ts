@@ -12,8 +12,6 @@ export * from './abilities';
 export * from './abilityWiring';
 export * from './abilityRecipes';
 export * from './abilityMagnitudes';
-export * from './rites';
-export * from './riteRecipes';
 export * from './passives';
 export * from './components/combat/effects';
 export * from './registries/effects';

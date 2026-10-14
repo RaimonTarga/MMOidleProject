@@ -45,9 +45,7 @@ import {
   runesOwnedAtom,
   craftTabAtom,
   attunedAbilitiesAtom,
-  equippedRitesAtom,
   knownAbilitiesAtom,
-  knownRitesAtom,
   deathOverlayAtom,
   buildOpenAtom,
   globalMasteryAtom,
@@ -87,7 +85,7 @@ interface RightNavButtonProps {
 }
 
 /**
- * Icon-led navigation entry. Every destination is flat: Abilities, Rites and
+ * Icon-led navigation entry. Every destination is flat: Abilities and
  * Runes each get their own entry rather than hiding behind a wrapper
  * that expands into them.
  */
@@ -167,7 +165,7 @@ export function RightSidebar() {
 
   // How many recipes became makeable and have not been looked at. Replaces a
   // local counter fed by the gear-unlock toast, which could only ever see gear:
-  // techniques and rites unlock from biome levels and boss
+  // techniques unlock from biome levels and boss
   // clears, with no event to subscribe to. This shares its state with the craft
   // list, so looking at an entry there decrements the count here.
   const makeEntries = useMakeEntries();
@@ -188,7 +186,7 @@ export function RightSidebar() {
     if (isMobile) closePrimaryOverlays();
   }, [isMobile]);
 
-  // Abilities, Rites and Runes share one dialog but each owns a rail
+  // Abilities and Runes share one dialog but each owns a rail
   // entry: an entry is selected when that dialog is open on its tab.
   const buildEntries: {
     tab: BuildPanelTab;
@@ -196,7 +194,6 @@ export function RightSidebar() {
     gate: UiUnlockSystem;
   }[] = [
     { tab: "abilities", label: "Abilities", gate: "abilities" },
-    { tab: "rites", label: "Rites", gate: "rites" },
     { tab: "runes", label: "Runes", gate: "loadout" },
   ];
 

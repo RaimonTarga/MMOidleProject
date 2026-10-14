@@ -41,9 +41,8 @@ import {
 } from "../../combat/buffs/descriptor";
 
 // ── Status-effect ids (player tracksCombat) ─────────────────────────────────────
-// Exported so the Hunter's Instinct rite (system rework Step 11) can reuse the same
-// on-kill haste buff — the `mob-haste` descriptor projects it unconditionally.
-export const FOREST_HASTE = "mob-forest-haste"; // on-kill speed (Plains boots + Hunter's Instinct)
+// The `mob-haste` descriptor projects the on-kill haste buff unconditionally.
+export const FOREST_HASTE = "mob-forest-haste"; // on-kill speed (Plains boots)
 const GRAVEYARD_HASTE = "mob-graveyard-haste"; // Graveyard on-kill speed + tenacity (stacks)
 const VOLCANIC_SUPPRESS = "mob-volcanic-suppress"; // Volcanic: suppresses passive speed on hit
 
@@ -341,7 +340,7 @@ export const MOBILITY_BUFFS = [
     { ...NEUTRAL_CIRCLE, color: "#7cfc00", label: "Sprint" },
   ),
 
-  // Plains — on-kill haste (also projected by the Hunter's Instinct rite).
+  // Plains — on-kill haste.
   defineBuff(
     "mob-haste",
     ({ playerCs }) => {

@@ -50,8 +50,6 @@ function playerSlices(): PersistedPlayerSlices {
       runesEquipped: [...DEFAULT_RUNE_LOADOUT],
       knownAbilities: [],
       attunedAbilities: { techniques: [], guards: [] },
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: {
       inventory: [],

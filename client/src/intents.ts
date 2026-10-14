@@ -14,8 +14,6 @@ export interface IntentMap {
   useAbility: string;
   manualReload: undefined;
   recallSummons: undefined;
-  craftRiteRecipe: string;
-  setRiteLoadout: { riteIds: string[] };
   activateDungeonAltar: undefined;
   unlockSkill: string;
   resetClass: undefined;

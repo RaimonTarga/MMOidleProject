@@ -112,8 +112,7 @@ export function frostRampMaxStacks(def: {
 /**
  * Whether a player status effect is HARMFUL (a debuff or DoT). The single shared
  * authority for "what counts as a debuff on the player" — used by the Cleanse
- * ability, the Cleansing Breath rite (what it strips), and Lingering Momentum
- * (what it must NOT extend). Kept precise so beneficial buffs (mobility haste,
+ * ability (what it strips). Kept precise so beneficial buffs (mobility haste,
  * guard buffs, shields) are left alone.
  *
  * Covers the explicit debuff ids (slow/root, frost-ramp, Sun Mark, volcanic heat,

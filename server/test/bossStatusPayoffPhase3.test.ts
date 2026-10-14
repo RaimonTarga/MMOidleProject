@@ -60,7 +60,6 @@ function playerSlices(id: string, x = 405, y = 400): PersistedPlayerSlices {
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [], knownAbilities: [],
       attunedAbilities: { techniques: [], guards: [] },
-      knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

@@ -84,15 +84,6 @@ const ACTION_IDS = new Set([
   'use-ability',
 ]);
 
-const RITE_IDS = new Set([
-  'lingering-battle',
-  'swift-repose',
-  'purification',
-  'mechanic-renewal',
-  'ability-reprieve',
-  'blood-offering',
-]);
-
 const BUFF_IDS = new Set([
   'ability-bramble',
   'ability-control-resist',
@@ -293,10 +284,6 @@ export function runeActionIconSource(id: string): AssetIconSource | null {
 
 export function runeFragmentConceptIconSource(id: string): AssetIconSource | null {
   return runeConditionIconSource(id) ?? runeActionIconSource(id);
-}
-
-export function riteIconSource(id: string): AssetIconSource | null {
-  return RITE_IDS.has(id) ? source('rites', id, 'rites-v2') : null;
 }
 
 /**

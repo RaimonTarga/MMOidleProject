@@ -43,7 +43,6 @@ function slices(id: string, weapon: string | null): PersistedPlayerSlices {
       playerTier: 4, currentSkillTier: 4, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
       knownAbilities: ["slam"], attunedAbilities: { techniques: ["slam"], guards: [] },
-      knownRites: [], equippedRites: [],
     },
     holdsInventory: {
       inventory: weapon ? [weapon] : [],

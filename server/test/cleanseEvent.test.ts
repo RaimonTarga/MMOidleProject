@@ -62,8 +62,6 @@ function makePlayerSlices(id: string, guards: string[], playerTier: number): Per
       runesEquipped: [],
       knownAbilities: [...guards],
       attunedAbilities: { ...emptyAttunedAbilities(), techniques: [], guards: [...guards] },
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

@@ -115,7 +115,6 @@ function assert(condition: unknown, message: string): void {
       playerTier: 1, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
       runesOwned: [], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
-      knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: { ...emptyEquipment() }, itemUpgrades: {} },
     usesSkills: {

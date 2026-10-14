@@ -10,7 +10,6 @@ export type MenuIcon =
   | 'passive-tree'
   | 'loadout'
   | 'runes'
-  | 'rites'
   | 'inventory'
   | 'crafting'
   | 'upgrade'
@@ -22,7 +21,6 @@ const MENU_ICONS: Record<MenuIcon, AssetIconSource> = {
   'passive-tree': assetIcon('/assets/concept-icons/menu/passive-tree.png'),
   loadout: assetIcon('/assets/concept-icons/menu/loadout.png'),
   runes: assetIcon('/assets/concept-icons/menu/runes.png'),
-  rites: assetIcon('/assets/concept-icons/menu/rites.png'),
   inventory: assetIcon('/assets/concept-icons/menu/inventory.png'),
   crafting: assetIcon('/assets/concept-icons/menu/crafting.png'),
   upgrade: assetIcon('/assets/concept-icons/menu/upgrade.png'),
@@ -67,7 +65,7 @@ export function statIconSource(icon: StatIcon): AssetIconSource {
 export type CraftingSectionIcon = 'biome' | 'forge' | 'upgrade';
 export type MasterySectionIcon = 'summary' | 'items' | 'biomes';
 export type RuneFragmentIcon = 'condition' | 'action';
-export type BuildSectionIcon = 'abilities' | 'rites' | 'runes';
+export type BuildSectionIcon = 'abilities' | 'runes';
 
 const CRAFTING_SECTION_ICONS: Record<CraftingSectionIcon, IconSource> = {
   biome: menuIconSource('map'),
@@ -106,7 +104,6 @@ export function runeFragmentIconSource(fragment: RuneFragmentIcon): AtlasIconSou
  */
 const BUILD_SECTION_ICONS: Record<BuildSectionIcon, IconSource> = {
   abilities: menuIconSource('loadout'),
-  rites: menuIconSource('rites'),
   runes: menuIconSource('runes'),
 };
 
@@ -117,15 +114,14 @@ export function buildSectionIconSource(section: BuildSectionIcon): IconSource {
 /**
  * One glyph per craftable kind, for the Make browser.
  *
- * Rites read as absent from Crafting: the list groups by kind
+ * Techniques read as absent from Crafting: the list groups by kind
  * and the non-gear kinds sit under the whole gear block, behind a wall of
  * text-only filter chips. A glyph on the chip and on each row is what makes a
  * group findable without scrolling to it.
  *
  * Deliberately reuses shipped art rather than commissioning a slot set. The stat
  * glyphs already carry the right meaning for gear (attack/plating/regen/speed).
- * Generic family filters use representative navigation glyphs; individual
- * rite rows resolve their own dedicated concept art.
+ * Generic family filters use representative navigation glyphs.
  */
 const MAKE_KIND_ICONS: Record<string, IconSource> = {
   weapon: statIconSource('attack'),
@@ -135,7 +131,6 @@ const MAKE_KIND_ICONS: Record<string, IconSource> = {
   core: statIconSource('empowered'),
   relic: menuIconSource('passive-tree'),
   technique: atlasIcon('UI_icons/abilities/sweep.png'),
-  rite: menuIconSource('rites'),
 };
 
 /** Glyph for a craftable kind, or null when the kind has no art yet. */

@@ -3,7 +3,6 @@ import {
   GAME_CONFIG,
   emptyEquipment,
   emptyAttunedAbilities,
-  emptyEquippedRites,
   type SpectateStatus,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
@@ -137,8 +136,6 @@ function playerSlices(id: string, name: string, playerTier: number): PersistedPl
       runesEquipped: [],
       knownAbilities: [],
       attunedAbilities: emptyAttunedAbilities(),
-      knownRites: [],
-      equippedRites: emptyEquippedRites(),
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

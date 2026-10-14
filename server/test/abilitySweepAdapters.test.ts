@@ -113,8 +113,6 @@ function makePlayerSlices(id: string, archetype: SweepArchetype): PersistedPlaye
       runesEquipped: [],
       knownAbilities: ["sweep"],
       attunedAbilities: { techniques: ["sweep"], guards: [] },
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: {
       inventory: [],

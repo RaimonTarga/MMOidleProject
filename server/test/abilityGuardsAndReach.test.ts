@@ -86,8 +86,6 @@ function makePlayerSlices(
         techniques: [...techniques],
         guards: [...guards],
       },
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

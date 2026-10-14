@@ -1,6 +1,6 @@
 /**
  * The invariant behind `mechanicLabels.ts`: every `mechanicEffects` key that any
- * authored item, upgrade step or rite can put in front of a player has an
+ * authored item or upgrade step can put in front of a player has an
  * explicit human label.
  *
  * The authored key set is DERIVED from the data on every run, never snapshotted.

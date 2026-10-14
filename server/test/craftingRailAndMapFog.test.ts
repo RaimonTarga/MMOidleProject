@@ -19,7 +19,6 @@ const fresh: MakeSources = {
   ownedGearIds: new Set(),
   equippedGearIds: new Set(),
   knownAbilities: [],
-  knownRites: [],
   biomeLevel: {},
   bossesCleared: [],
   isTestRoom: false,
@@ -27,7 +26,7 @@ const fresh: MakeSources = {
 };
 
 const none = unlockedMakeKinds(fresh);
-for (const kind of ['core', 'relic', 'rite'] as const) {
+for (const kind of ['core', 'relic'] as const) {
   assert.ok(!none.has(kind), `${kind} must stay hidden before any of its recipes unlock`);
 }
 

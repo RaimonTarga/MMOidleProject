@@ -1,6 +1,6 @@
 /**
  * The human name for every `mechanicEffects` key that can reach a player-facing
- * surface (item tooltips, upgrade diffs, crafting rows, rite cards).
+ * surface (item tooltips, upgrade diffs, crafting rows).
  *
  * WHY THIS LIVES IN `shared/` AND NOT NEXT TO THE RENDERER
  * -------------------------------------------------------
@@ -24,9 +24,9 @@
  * - FORMATTERS (`15%` vs `1.5×` vs `4s`) stay in `itemDisplay.ts`. Those are
  *   presentation and belong with the renderer.
  *
- * SCOPE. This covers the namespaces that gear, cores, relics and rites
+ * SCOPE. This covers the namespaces that gear, cores and relics
  * can author: `defense`, `mobility`, `shared`/`weapon`, `summoner`, `guard`,
- * `technique`, `core`, `rite`, `relic`. The class-mechanic namespaces
+ * `technique`, `core`, `relic`. The class-mechanic namespaces
  * (`cadence`, `cooldown`, `reload`, `energy`, `dot`) are authored on skill-tree
  * nodes only, never on an item, and are rendered by the rule-driven engine in
  * `client/src/ui/describe/passiveText.ts`. If an item ever authors one, the test
@@ -190,13 +190,6 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   'core.mobility-cooldown-reduction-pct': { label: 'Mobility cooldown' },
   'core.mobility-refund-on-kill-pct':     { label: 'Mobility refund on kill' },
 
-  // ── Rites (out-of-combat behaviour) ────────────────────────────────────────
-  'rite.ooc-regen-delay-reduction-pct':   { label: 'Faster recovery' },
-  'rite.ooc-cleanse-stacks':              { label: 'Out-of-combat cleanse' },
-  'rite.ooc-cleanse-interval-ms':         { label: 'Cleanse rate', companion: true },
-  'rite.ooc-buff-decay-slowdown-pct':     { label: 'Buffs linger' },
-  'rite.on-kill-haste-pct':               { label: 'Haste on kill' },
-  'rite.on-kill-haste-ms':                { label: 'Haste time', companion: true },
 
   // ── Relic ratings (title-case: these are named stats in the relic UI) ──────
   'relic.mechanic-frequency':             { label: 'Mechanic Frequency' },

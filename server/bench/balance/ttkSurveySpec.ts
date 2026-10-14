@@ -167,7 +167,6 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
     assert(plus===0||(p.biomeLevel[recipe.recipeGroup]??0)>=requiredBiomeLevelForUpgrade(ITEM_DATABASE.get(id!)!,plus), `Biome upgrade gate ${id}`);
   }
   p.skillPoints = 0; // Factory grants unlock scaffolding; none survives into measurement.
-  p.equippedRites = [];
   p.attunedAbilities = { techniques: [], guards: [] };
   const c = SURVEY_CLASSES.find(c=>c.name===cell.className)!;
   const rules = declared.runeRules;
@@ -177,7 +176,7 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
   recalculatePlayerEntityStats(world,bot); syncArchetypeSlices(world,bot);
   bot.hasHealth.hp = bot.hasHealth.maxHp; refillBarrier(world,bot);
   const view = composePlayerView(bot)!;
-  assert.deepEqual(validateBuild({abilities, runeRules:rules, rites:[]},view), [], cell.id);
+  assert.deepEqual(validateBuild({abilities, runeRules:rules},view), [], cell.id);
   // Derived from the cell's OWN skill path rather than hardcoded to 'balanced'.
   // The assertion's intent is "the build that was declared is the build that
   // materialised"; every existing cell declares `-balanced`, so this is identical

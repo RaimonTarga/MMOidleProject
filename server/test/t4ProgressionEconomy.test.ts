@@ -6,12 +6,11 @@
  * gear cost curves / lifetime ratios / hybrid splits / catalyst schedule+families, the
  * four T4 ability prices, the locked T3/T4 Core redistribution, the normalized
  * T4 Relic economy, the Trench monster essence-colour correction, and the no-regression
- * pins on Runes/Rites and the GM architecture.
+ * pins on Runes and the GM architecture.
  */
 import {
   RECIPE_DATABASE,
   ABILITY_RECIPE_DATABASE,
-  RITE_RECIPE_DATABASE,
   maxGlobalMasteryAtTier,
   globalMasteryRequiredForUpgrade,
 } from "@mmo-idle/shared";
@@ -285,14 +284,6 @@ assert([...RECIPE_DATABASE.values()].every((r) => r.slot !== "relic"), "no recip
 // ═══════════════════════════════════════════════════════════════════════════
 // 13. Final Core tier split and no-regression pins
 // ═══════════════════════════════════════════════════════════════════════════
-
-{
-  // Zero T4 rites, exactly 6 tier-3 rites (unchanged count/shape).
-  const rites = [...RITE_RECIPE_DATABASE.values()];
-  const t4Rites = rites.filter((r) => r.tier === 4);
-  assert(t4Rites.length === 0, "zero T4 rites must remain zero — no new T4 Rite content");
-  assert(rites.filter((r) => r.tier === 3).length === 6, "rite database must still contain exactly 6 tier-3 rites");
-}
 
 {
   const CORES: Array<{

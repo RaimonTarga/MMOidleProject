@@ -780,27 +780,6 @@ export const CORE_KEYS = [
   'core.mobility-refund-on-kill-pct',
 ] as const;
 
-// Rite OOC behaviors (system rework Step 11). Carried by equipped rites (always-on
-// while equipped); fold into usesSkills.passives like any mechanicEffect, then read
-// by the out-of-combat systems (not the in-combat stat path). See
-// server/src/systems/player/rites/riteOoc.ts + server/src/systems/defense/index.ts.
-export const RITE_KEYS = [
-  // Quickened Breath: shorten the post-combat regen delay by this fraction (regen
-  // resumes sooner). Read by the defense regen gate.
-  'rite.ooc-regen-delay-reduction-pct',
-  // Cleansing Breath: every `interval-ms` while OOC, strip this many stacks from
-  // each debuff/DoT status effect on the player.
-  'rite.ooc-cleanse-stacks',
-  'rite.ooc-cleanse-interval-ms',
-  // Lingering Momentum: slow the OOC decay of neutral buffs by this fraction
-  // (extend their remaining duration each tick while out of combat).
-  'rite.ooc-buff-decay-slowdown-pct',
-  // Hunter's Instinct: on kill, grant a movement-haste buff of this magnitude for
-  // this duration (reuses the mobility on-kill haste machinery).
-  'rite.on-kill-haste-pct',
-  'rite.on-kill-haste-ms',
-] as const;
-
 /** Universal Relic ratings. Resolved per root class in systems/relics.ts. */
 export const RELIC_KEYS = [
   'relic.mechanic-frequency',
@@ -823,14 +802,13 @@ export type MobilityPassiveKey = typeof MOBILITY_KEYS[number];
 export type TechniquePassiveKey = typeof TECHNIQUE_KEYS[number];
 export type GuardPassiveKey    = typeof GUARD_KEYS[number];
 export type CorePassiveKey     = typeof CORE_KEYS[number];
-export type RitePassiveKey     = typeof RITE_KEYS[number];
 export type RelicPassiveKey    = typeof RELIC_KEYS[number];
 
 export type PassiveKey =
   | DefensePassiveKey | CadencePassiveKey | CooldownPassiveKey
   | ReloadPassiveKey  | EnergyPassiveKey  | DotPassiveKey
   | SharedPassiveKey  | SummonerPassiveKey | MobilityPassiveKey
-  | GuardPassiveKey   | TechniquePassiveKey | CorePassiveKey | RitePassiveKey
+  | GuardPassiveKey   | TechniquePassiveKey | CorePassiveKey
   | RelicPassiveKey;
 
 export type PassiveMap      = Partial<Record<PassiveKey, number>>;
@@ -840,7 +818,7 @@ export type MechanicEffects = Partial<Record<PassiveKey, number>>;
 export const ALL_PASSIVE_KEYS = [
   ...DEFENSE_KEYS, ...CADENCE_KEYS, ...COOLDOWN_KEYS,
   ...RELOAD_KEYS, ...ENERGY_KEYS, ...DOT_KEYS, ...SHARED_KEYS, ...SUMMONER_KEYS,
-  ...MOBILITY_KEYS, ...GUARD_KEYS, ...TECHNIQUE_KEYS, ...CORE_KEYS, ...RITE_KEYS,
+  ...MOBILITY_KEYS, ...GUARD_KEYS, ...TECHNIQUE_KEYS, ...CORE_KEYS,
   ...RELIC_KEYS,
 ] as const;
 

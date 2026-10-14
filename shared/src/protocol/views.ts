@@ -19,7 +19,6 @@ import {
   normalizeAttunedAbilities,
   type AttunedAbilities,
 } from "../abilities";
-import { emptyEquippedRites, type EquippedRites } from "../rites";
 import {
   FALLBACK_MONSTER_AABB,
   FALLBACK_PLAYER_AABB,
@@ -168,12 +167,6 @@ export interface PlayerView {
   attunedAbilities: AttunedAbilities;
   /** Server-authoritative manual ability requests waiting for legal activation. */
   queuedAbilityIds: string[];
-  /** Rites learned (crafted) — the slottable pool (system rework Step 11). */
-  knownRites: string[];
-  /** Equipped rites — interchangeable list (length ≤ `riteSlots`), always-on OOC. */
-  equippedRites: EquippedRites;
-  /** Number of rite slots available (GM-derived; flat 2 for v1). */
-  riteSlots: number;
   hitboxRects: HitboxRect[];
   /** Number of minion slots the player has. 0 if not a summoner. */
   summonsMinions: number;
@@ -461,10 +454,6 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     knownAbilities: progression.knownAbilities ?? [],
     attunedAbilities: normalizeAttunedAbilities(progression.attunedAbilities),
     queuedAbilityIds: entity.queuesAbilities?.abilityIds ?? [],
-    knownRites: progression.knownRites ?? [],
-    equippedRites: progression.equippedRites ?? emptyEquippedRites(),
-    // Compatibility field for older clients; Rites are RP-capped, not slot-capped.
-    riteSlots: (progression.knownRites ?? []).length,
     hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_PLAYER_AABB],
     summonsMinions: entity.summonsMinions?.targetCount ?? 0,
     summonActiveCount,

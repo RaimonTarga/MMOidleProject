@@ -1,7 +1,6 @@
 import type { AttunedAbilities } from "../abilities";
 import type { EquipmentMap, EssenceType } from "../items";
 import type { EquippedRule } from "../runeDatabase";
-import type { EquippedRites } from "../rites";
 import type { PlayerView } from "./views";
 
 /**
@@ -59,8 +58,6 @@ export interface TierEntryProfile {
   knownAbilities: string[];
   attunedAbilities: AttunedAbilities;
   runesEquipped: EquippedRule[];
-  knownRites: string[];
-  equippedRites: EquippedRites;
 }
 
 /** The authoritative snapshot recorded at the beginning of a tier-entry run. */
@@ -82,8 +79,6 @@ export interface TierEntryInitialState {
   knownAbilities: string[];
   attunedAbilities: AttunedAbilities;
   runesEquipped: EquippedRule[];
-  knownRites: string[];
-  equippedRites: EquippedRites;
   initialEssences: Record<EssenceType, number>;
 }
 

@@ -91,8 +91,6 @@ export function buildT1CharacterSnapshot(
     attunedAbilities: cloneAbilities(self),
     runesOwned: [...self.runesOwned],
     runesEquipped: self.runesEquipped.map((rule) => ({ ...rule })),
-    knownRites: [...self.knownRites],
-    equippedRites: [...self.equippedRites],
     derivedStats: {
       attack: self.attack,
       onHitDamage: self.onHitDamage,
@@ -106,7 +104,6 @@ export function buildT1CharacterSnapshot(
       speed: self.speed,
       attackStyle: self.attackStyle,
       combatArchetype: self.combatArchetype,
-      riteSlots: self.riteSlots,
       summonsMinions: self.summonsMinions,
     },
     classResources: {

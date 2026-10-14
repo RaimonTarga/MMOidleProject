@@ -9,7 +9,6 @@
 
 import {
   ABILITY_DATABASE,
-  RITE_DATABASE,
   SKILL_TREE,
 } from "@mmo-idle/shared";
 import { describeAbility } from "../../client/src/ui/describe/abilityText";
@@ -154,10 +153,6 @@ const sources: { id: string; effects?: Record<string, number> }[] = [
   ...[...SKILL_TREE.values()].map((node) => ({
     id: node.id,
     effects: node.mechanicEffects as Record<string, number> | undefined,
-  })),
-  ...[...RITE_DATABASE.values()].map((rite) => ({
-    id: rite.id,
-    effects: rite.mechanicEffects as Record<string, number> | undefined,
   })),
 ];
 

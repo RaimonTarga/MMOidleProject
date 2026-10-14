@@ -46,8 +46,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
       runesEquipped: [],
       knownAbilities: ["sweep", "brace"],
       attunedAbilities: { techniques: ["sweep"], guards: ["brace"] },
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: {
       inventory: [],

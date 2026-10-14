@@ -3,19 +3,17 @@
  * ordered layout of the prototype run's thesis D — offence, defence, recovery,
  * movement & rhythm — every number with its source. It replaces the Character panel's expanding details ("nothing
  * expands on the left any more"); the explained reference rows that lived there
- * (rites, defence and mobility passives) close the panel.
+ * (defence and mobility passives) close the panel.
  *
  * Everything shown is `buildStatsPanel` (statsPanelModel.ts), which reads the
  * server's own stat formula on a detached copy. This file only lays it out.
  */
 import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
-import { riteDef } from '@mmo-idle/shared';
 import {
   barrierMaxAtom,
   combatArchetypeAtom,
   equipmentAtom,
-  equippedRitesAtom,
   itemUpgradesAtom,
   passivesAtom,
   playerIdAtom,
@@ -25,7 +23,7 @@ import {
   unlockedSkillsAtom,
 } from '../../hud/atoms';
 import { DialogHeader, GameDialog } from '../../hud/primitives';
-import { DefensePassivesSection, MobilityPassivesSection, StatRow } from '../../hud/stat/components';
+import { DefensePassivesSection, MobilityPassivesSection } from '../../hud/stat/components';
 import { buildStatsPanel, type StatsGroup, type StatsSource } from './statsPanelModel';
 import './stats.css';
 
@@ -66,7 +64,6 @@ export function StatsView() {
   const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
   const playerTier = useAtomValue(playerTierAtom);
   const unlockedSkills = useAtomValue(unlockedSkillsAtom);
-  const equippedRites = useAtomValue(equippedRitesAtom);
   const barrierMax = useAtomValue(barrierMaxAtom);
 
   const data = useMemo(() => buildStatsPanel({
@@ -75,18 +72,13 @@ export function StatsView() {
         unlockedSkills, passives, selectedClass: combatArchetype ? `${combatArchetype}-root` : null,
         selectedSubVariant, selectedRange, combatArchetype,
       },
-      equipment, itemUpgrades, playerTier, equippedRites,
+      equipment, itemUpgrades, playerTier,
     },
     barrierMax,
   }), [unlockedSkills, passives, combatArchetype, selectedSubVariant, selectedRange, equipment,
-    itemUpgrades, playerTier, equippedRites, barrierMax]);
+    itemUpgrades, playerTier, barrierMax]);
 
   if (!playerId) return <div className="sp-empty">Not connected.</div>;
-
-  const rites = equippedRites.flatMap((id) => {
-    const def = riteDef(id);
-    return def ? [def] : [];
-  });
 
   return (
     <div className="sp-body">
@@ -97,12 +89,6 @@ export function StatsView() {
         Each number says where it comes from: an item, or the base you started with.
       </p>
       <div className="sp-more">
-        <div className="stat-section">
-          <div className="stat-section-title">Rites</div>
-          {rites.length > 0
-            ? rites.map((rite) => <StatRow key={rite.id} label={rite.name} value={`${rite.runeCost} RP`} help={rite.blurb} />)
-            : <StatRow label="Equipped" value="None" dim />}
-        </div>
         <DefensePassivesSection passives={passives ?? {}} />
         <MobilityPassivesSection passives={passives ?? {}} />
       </div>

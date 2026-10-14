@@ -48,8 +48,7 @@ export interface SocketHandlers {
   onNodePreparing(payload: { nodeId: string }): void;
   onCraftResult(result: { success: boolean; reason?: string }): void;
   onAbilityCraftResult(result: { recipeId: string; success: boolean; reason?: string }): void;
-  onRiteCraftResult(result: { recipeId: string; success: boolean; reason?: string }): void;
-  onBuildLoadoutResult(result: { system: "abilities" | "runes" | "rites"; success: boolean; reason?: string }): void;
+  onBuildLoadoutResult(result: { system: "abilities" | "runes"; success: boolean; reason?: string }): void;
   onPlayerDied(payload: PlayerDeathPayload): void;
   onPlayerAscended(tier: number): void;
   onBossFelled(markers: BossFelledMarker[]): void;
@@ -85,7 +84,6 @@ export function wireSocketHandlers(
   socket.on('node:preparing', (p) => h.onNodePreparing(p));
   socket.on('crafting:result', (r) => h.onCraftResult(r));
   socket.on('ability:craftResult', (r) => h.onAbilityCraftResult(r));
-  socket.on('rite:craftResult', (r) => h.onRiteCraftResult(r));
   socket.on('build:loadoutResult', (r) => h.onBuildLoadoutResult(r));
   socket.on('player:died', (p) => h.onPlayerDied(p));
   socket.on('player:ascended', (t) => h.onPlayerAscended(t));
@@ -115,7 +113,6 @@ export function wireSocketHandlers(
     socket.off('node:preparing');
     socket.off('crafting:result');
     socket.off('ability:craftResult');
-    socket.off('rite:craftResult');
     socket.off('build:loadoutResult');
     socket.off('player:died');
     socket.off('player:ascended');

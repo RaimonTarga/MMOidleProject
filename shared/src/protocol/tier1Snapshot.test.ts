@@ -44,8 +44,6 @@ function makeSnapshot(runesOwned: string[]): T1CharacterSnapshot {
       itemUpgrades: {},
       inventory: [],
       knownAbilities: [],
-      knownRites: [],
-      equippedRites: [],
       bossesCleared: [],
       clearedNodes: [],
       visitedNodes: [],

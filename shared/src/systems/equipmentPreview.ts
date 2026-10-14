@@ -12,7 +12,6 @@ export interface EquipmentPreviewInput {
   equipment: HoldsInventory['equipment'];
   itemUpgrades: Record<string, number>;
   playerTier: number;
-  equippedRites?: readonly string[];
   /** Leave these mechanic-effect keys of one equipped item out (see `PlayerStatsTarget`). */
   omitItemEffects?: { defId: string; keys: ReadonlySet<string> };
 }
@@ -30,7 +29,7 @@ export function previewEquipmentStats(input: EquipmentPreviewInput) {
     holdsInventory: {
       equipment: { ...input.equipment }, inventory: [], itemUpgrades: { ...input.itemUpgrades },
     },
-    playerTier: input.playerTier, equippedRites: input.equippedRites,
+    playerTier: input.playerTier,
     previewOmitItemEffects: input.omitItemEffects,
   };
   const { cannotAttack } = recalculatePlayerStats(target);

@@ -64,16 +64,6 @@ export const hudBus = {
     intents.emit('recallSummons', undefined);
   },
 
-  /** Learn a rite (craft its recipe); server validates gate + cost. */
-  requestCraftRiteRecipe(recipeId: string): void {
-    intents.emit('craftRiteRecipe', recipeId);
-  },
-
-  /** Set the full equipped-rite list (interchangeable slots, capped server-side). */
-  requestSetRiteLoadout(riteIds: string[]): void {
-    intents.emit('setRiteLoadout', { riteIds });
-  },
-
   requestActivateDungeonAltar(): void {
     intents.emit('activateDungeonAltar', undefined);
   },

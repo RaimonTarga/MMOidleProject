@@ -43,8 +43,6 @@ function makeUnclassedPlayer(): PersistedPlayerSlices {
       runesEquipped: [],
       knownAbilities: [],
       attunedAbilities: { techniques: [], guards: [] },
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: {
       inventory: [],

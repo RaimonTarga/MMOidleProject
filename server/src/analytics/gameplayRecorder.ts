@@ -6,7 +6,7 @@ import { canUnlockEntitySkill } from '../ecs/playerEntityFormulas';
 import { CONDUIT_ENABLED } from '../env';
 
 const DECISIONS_WITHOUT_BUILD_CHANGE = new Set([
-  'craft', 'craft-ability', 'craft-rite', 'upgrade', 'navigate', 'navigate-neighbor',
+  'craft', 'craft-ability', 'upgrade', 'navigate', 'navigate-neighbor',
 ]);
 
 /** Explicit projection: never serialize an entity, socket payload, actor or account. */
@@ -19,7 +19,6 @@ export function gameplayBuild(p: PlayerEntity): GameplayBuild {
     skills: [...p.usesSkills.unlockedSkills],
     equipment: Object.entries(p.holdsInventory.equipment).flatMap(([slot, itemId]) => itemId ? [{ slot, itemId, upgrade: p.holdsInventory.itemUpgrades[itemId] ?? 0 }] : []),
     techniques: [...p.tracksProgression.attunedAbilities.techniques], guards: [...p.tracksProgression.attunedAbilities.guards],
-    rites: [...p.tracksProgression.equippedRites],
     runes: p.tracksProgression.runesEquipped.map(r => ({ conditionId: r.conditionId, actionId: r.actionId, targetAbilityId: r.targetAbilityId, waitOutMode: r.waitOutMode })),
     auto: p.usesAutocombat.auto, autoTraverse: p.usesAutocombat.autoTraverse,
     priorityMode: p.usesAutocombat.priorityMode, acquireRadius: p.usesAutocombat.acquireRadius,
@@ -101,7 +100,6 @@ export class GameplayRecorder {
       availableSkills: [...SKILL_TREE.keys()].filter(id => (id !== 'summoner-root' || CONDUIT_ENABLED) && canUnlockEntitySkill(p, id).ok),
       ownedItems: [...p.holdsInventory.inventory], availableRecipes: [...p.tracksProgression.unlockedRecipes],
       knownAbilities: [...p.tracksProgression.knownAbilities], knownRunes: [...p.tracksProgression.runesOwned],
-      knownRites: [...p.tracksProgression.knownRites],
       skillPoints: p.tracksProgression.skillPoints,
     };
   }

@@ -42,7 +42,6 @@ function legacySave(id: string): PersistedPlayerSlices {
       playerTier: 1, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
       runesOwned: [], runesEquipped: [],
       knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
-      knownRites: [], equippedRites: [],
     },
     holdsInventory: {
       inventory: ['chaotic-axe'],

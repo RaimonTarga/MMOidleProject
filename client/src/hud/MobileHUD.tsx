@@ -228,7 +228,6 @@ function MobileHUDContent() {
       unlockSystems: [
         'loadout',
         'abilities',
-        'rites',
         'mastery',
         'combatLog',
         'bestiary',
@@ -237,11 +236,10 @@ function MobileHUDContent() {
     },
   ];
 
-  // Abilities, Rites and Runes each get their own row; they share one
+  // Abilities and Runes each get their own row; they share one
   // dialog, so a row is "open the dialog on this tab".
   const buildRows: { tab: BuildPanelTab; label: string; gate: UiUnlockSystem; fallback: string }[] = [
     { tab: 'abilities', label: 'Abilities', gate: 'abilities', fallback: 'A' },
-    { tab: 'rites', label: 'Rites', gate: 'rites', fallback: 'R' },
     { tab: 'runes', label: 'Runes', gate: 'loadout', fallback: 'U' },
   ];
 

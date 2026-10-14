@@ -36,7 +36,7 @@ export function applyProgressionSnapshot(bot:PlayerEntity,cell:SurveyCell) {
     for(let tier=1;tier<s.tier;tier++)assert(sealsHeldAtTier(p.bossesCleared,tier)>=sealsRequiredForTier(tier),`Missing T${tier} prior seals`);
     assert(cell.build.skillPath.reduce((sum,id)=>sum+SKILL_TREE.get(id)!.cost,0)<=s.tier,'Class purchases exceed earned tier skill points');
   }
-  p.knownAbilities=[];p.knownRites=[];p.equippedRites=[];
+  p.knownAbilities=[];
   p.runesOwned=runeIdsForArchetype(bot.usesSkills.combatArchetype);
   const purchases:{id:string;kind:string;cost:Record<string,number>}[]=[];
   const pay=(id:string,kind:string,cost:object={})=>purchases.push({id,kind,cost:{...cost}});

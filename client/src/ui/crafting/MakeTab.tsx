@@ -42,9 +42,6 @@ import { makeKindIconSource } from '../systemIcons';
 import { ItemIcon } from '../ItemIcon';
 import { BuildIcon } from '../BuildIcon';
 import { abilityIconSource } from '../abilityIcons';
-import {
-  riteIconSource,
-} from '../conceptIcons';
 import { DetailLines } from '../describe/DetailLines';
 import { loadoutLinesFor } from '../describe';
 import { useAbilityContext } from '../describe/useAbilityContext';
@@ -84,7 +81,7 @@ function kindLabel(kind: MakeKind): string {
 /**
  * The kind's own glyph, next to its name. Carried by both the filter chip and
  * every row, so a group is recognisable from the chip strip and again when it
- * scrolls past — which is the whole reason rites read as missing.
+ * scrolls past — which is the whole reason techniques read as missing.
  */
 function KindGlyph({ kind, size }: { kind: MakeKind; size: number }) {
   const source = makeKindIconSource(kind);
@@ -123,18 +120,10 @@ function EntryIcon({ entry, size }: { entry: MakeEntry; size: number }) {
   }
 
   const ability = entry.kind === 'technique' ? abilityDef(entry.learnedId) : null;
-  const conceptIcon = ability
-    ? abilityIconSource(ability)
-    : entry.learnedId && entry.kind === 'rite'
-      ? riteIconSource(entry.learnedId)
-      : null;
+  const conceptIcon = ability ? abilityIconSource(ability) : null;
   return (
     <BuildIcon
-      kind={
-        entry.kind === 'technique'
-          ? 'ability'
-          : 'rite'
-      }
+      kind="ability"
       label={entry.name}
       size={size}
       muted={!entry.unlocked}
@@ -593,7 +582,7 @@ interface MakeDetailProps {
 
 /**
  * What a non-gear recipe would actually give you. Gear already states its stats
- * and mechanic effects; techniques and rites used to offer a
+ * and mechanic effects; techniques used to offer a
  * blurb and a price, which is not enough to decide whether to spend on one.
  */
 function madeThingLines(entry: MakeEntry, context: AbilityContext) {
@@ -644,7 +633,6 @@ function MakeDetail({
   // several authoritative databases, not one database.
   function learnIntent() {
     if (entry.kind === 'technique') hudBus.requestCraftAbilityRecipe(entry.recipeId);
-    else if (entry.kind === 'rite') hudBus.requestCraftRiteRecipe(entry.recipeId);
   }
 
   const blocked = !entry.unlocked

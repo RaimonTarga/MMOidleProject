@@ -34,7 +34,6 @@ export function playerSlices(id: string, x: number, y: number, hp = 1_000_000, n
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [], knownAbilities: [],
       attunedAbilities: { techniques: [], guards: [] },
-      knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

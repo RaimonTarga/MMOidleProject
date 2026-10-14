@@ -37,10 +37,6 @@ import {
 } from "../systems/player/economy/abilityCrafting";
 import { requestManualAbilityUse } from "../systems/player/abilities/abilityFiring";
 import { requestManualReload } from "../systems/classes/archetypes/reload/reloadLifecycle";
-import {
-  craftRiteRecipe,
-  setRiteLoadout,
-} from "../systems/player/economy/riteCrafting";
 import { upgradeItem } from "../systems/player/economy/itemUpgrade";
 import {
   handlePartyDisconnect,
@@ -473,30 +469,6 @@ export function registerPlayerHandlers(
     }
     const result = requestManualAbilityUse(world, p, abilityId);
     ack?.(result);
-  });
-
-  socket.on("rite:craftRecipe", (recipeId: string) => {
-    const p = liveSelf();
-    if (!p || typeof recipeId !== "string") {
-      socket.emit("rite:craftResult", { recipeId, success: false, reason: !p ? NOT_LIVE_REASON : "Malformed recipe id." });
-      return;
-    }
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = craftRiteRecipe(world, p, recipeId);
-    world.gameplay?.decision(p, "craft-rite", recipeId, telemetryBefore, result.success);
-    socket.emit("rite:craftResult", result);
-  });
-
-  socket.on("rite:setLoadout", (payload) => {
-    const p = liveSelf();
-    const reject = (reason: string): void => { socket.emit("build:loadoutResult", { system: "rites", success: false, reason }); };
-    if (!p) return reject(NOT_LIVE_REASON);
-    if (!payload || !Array.isArray(payload.riteIds) || payload.riteIds.some(id => typeof id !== "string")) return reject("Malformed Rite loadout.");
-    const riteIds = payload.riteIds;
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = setRiteLoadout(world, p, riteIds);
-    world.gameplay?.decision(p, "rites", null, telemetryBefore, result.success);
-    socket.emit("build:loadoutResult", { system: "rites", ...result });
   });
 
   socket.on("inventory:upgradeItem", (itemId: string) => {

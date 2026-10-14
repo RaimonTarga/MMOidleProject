@@ -410,19 +410,12 @@ export function notifyCombatControlResult(result: { success: boolean; reason?: s
   );
 }
 
-/** Rites learned (crafted) — the slottable pool (system rework Step 11). */
-export const knownRitesAtom = atom<string[]>([]);
-/** Equipped rites — interchangeable list (always-on OOC), length ≤ riteSlots. */
-export const equippedRitesAtom = atom<string[]>([]);
-/** Number of rite slots available (GM-derived; flat 2 for v1). */
-export const riteSlotsAtom = atom<number>(0);
-
 export const skillTreeOpenAtom = atom<boolean>(false);
-export type BuildPanelTab = 'abilities' | 'rites' | 'runes';
+export type BuildPanelTab = 'abilities' | 'runes';
 export const buildOpenAtom = atom<boolean>(false);
 /**
  * The arrangement surfaces share one dialog, and the rail gives each its
- * own entry: opening Rites is opening this dialog on the rites tab. The
+ * own entry: opening Runes is opening this dialog on the runes tab. The
  * identifiers keep the `build*` prefix from the old combined Loadout dialog:
  * renaming them reaches a dozen files for no player-visible gain.
  */
@@ -823,9 +816,6 @@ function resetPlayerAtoms(): void {
   setAttunedAbilities({ techniques: [], guards: [] });
   setIfChanged(queuedAbilityIdsAtom, []);
   store.set(combatControlFeedbackAtom, null);
-  setIfShallowArrayEqual(knownRitesAtom, []);
-  setIfShallowArrayEqual(equippedRitesAtom, []);
-  setIfChanged(riteSlotsAtom, 0);
   setIfShallowArrayEqual(inventoryAtom, []);
   setIfShallowArrayEqual(unlockedRecipesAtom, []);
   setIfShallowArrayEqual(bossesClearedAtom, []);
@@ -944,9 +934,6 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfShallowArrayEqual(knownAbilitiesAtom, player.knownAbilities);
   setAttunedAbilities(player.attunedAbilities);
   setIfChanged(queuedAbilityIdsAtom, player.queuedAbilityIds);
-  setIfShallowArrayEqual(knownRitesAtom, player.knownRites);
-  setIfShallowArrayEqual(equippedRitesAtom, player.equippedRites);
-  setIfChanged(riteSlotsAtom, player.riteSlots);
   setIfShallowArrayEqual(inventoryAtom, player.inventory);
   setIfShallowArrayEqual(unlockedRecipesAtom, player.unlockedRecipes);
   setIfShallowArrayEqual(bossesClearedAtom, player.bossesCleared);

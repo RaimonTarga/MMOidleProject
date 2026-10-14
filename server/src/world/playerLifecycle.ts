@@ -1,4 +1,4 @@
-import { migrateAttunement, attunedAbilityIds, validRiteIds } from "@mmo-idle/shared";
+import { migrateAttunement, attunedAbilityIds } from "@mmo-idle/shared";
 import {
   DEFAULT_AUTOCOMBAT_CONFIG,
   GAME_CONFIG,
@@ -38,7 +38,6 @@ export function attachPlayerEntity(
     new Set(attunedAbilityIds(player.tracksProgression.attunedAbilities)),
   );
   player.tracksProgression.runesEquipped = sanitizedRules;
-  player.tracksProgression.equippedRites = validRiteIds(player.tracksProgression.equippedRites ?? []).filter(id => (player.tracksProgression.knownRites ?? []).includes(id));
 
   const entity: PlayerEntity = {
     entityId: socketId,

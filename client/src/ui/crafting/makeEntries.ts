@@ -3,12 +3,8 @@ import {
   ABILITY_RECIPE_DATABASE,
   RECIPE_DATABASE,
   availableToClass,
-  RITE_DATABASE,
-  RITE_RECIPE_DATABASE,
   abilityDef,
   isAbilityRecipeUnlocked,
-  isRiteRecipeUnlocked,
-  riteDef,
   type EquipmentSlot,
   type EssenceType,
   type Recipe,
@@ -21,9 +17,9 @@ import { biomeName } from './common';
  * separate authoritative databases — this is a client view model that lets one
  * browser present them with a single grammar.
  */
-export type MakeKind = EquipmentSlot | 'technique' | 'rite';
+export type MakeKind = EquipmentSlot | 'technique';
 
-export const TECHNIQUE_KINDS: readonly MakeKind[] = ['technique', 'rite'];
+export const TECHNIQUE_KINDS: readonly MakeKind[] = ['technique'];
 
 export interface MakeEntry {
   /** Unique across kinds; recipe ids are only unique within their database. */
@@ -45,7 +41,7 @@ export interface MakeEntry {
   /** Present for gear only; carries the fields the gear detail pane needs. */
   gear?: Recipe;
   /**
-   * What making this actually gives you — the ability/rite id, which
+   * What making this actually gives you — the ability id, which
    * is NOT the recipe id. Absent for gear, where the recipe id is the item id.
    * Drives icon resolution and the effect table in the detail pane.
    */
@@ -57,7 +53,6 @@ export interface MakeSources {
   ownedGearIds: ReadonlySet<string>;
   equippedGearIds: ReadonlySet<string>;
   knownAbilities: readonly string[];
-  knownRites: readonly string[];
   biomeLevel: Record<string, number>;
   bossesCleared: readonly string[];
   /** The test room unlocks every gear recipe regardless of progression. */
@@ -70,7 +65,7 @@ export interface MakeSources {
  * levels because a recipe gated on both wants the harder gate named. No gear
  * currently sets `requiredBossClear` — the ultimate recipes that did were a
  * scrapped feature, removed 2026-07-26 — but the field is a live gate on
- * ability and rite recipes, so the branch stays rather than degrading silently.
+ * ability recipes, so the branch stays rather than degrading silently.
  */
 function gearUnlockHint(recipe: Recipe): string {
   if (recipe.requiredBossClear) return `Defeat ${recipe.requiredBossClear}`;
@@ -170,7 +165,7 @@ function techniqueEntries(spec: TechniqueSpec): MakeEntry[] {
  */
 export const KIND_ORDER: MakeKind[] = [
   'weapon', 'armor', 'recovery', 'mobility', 'core', 'relic',
-  'technique', 'rite',
+  'technique',
 ];
 
 /** One name per kind, for every surface that has to say what a recipe makes. */
@@ -182,7 +177,6 @@ export const MAKE_KIND_LABELS: Record<MakeKind, string> = {
   core: 'Core',
   relic: 'Relic',
   technique: 'Technique',
-  rite: 'Rite',
 };
 
 /** One spec per learnable kind, shared by the entry list and `unlockedMakeKinds`. */
@@ -199,18 +193,6 @@ function techniqueSpecs(sources: MakeSources): TechniqueSpec[] {
       isUnlocked: (id) => {
         const recipe = ABILITY_RECIPE_DATABASE.get(id);
         return !!recipe && isAbilityRecipeUnlocked(recipe, gates);
-      },
-    },
-    {
-      kind: 'rite',
-      recipes: RITE_RECIPE_DATABASE.values(),
-      learnedId: (id) => RITE_RECIPE_DATABASE.get(id)?.riteId ?? null,
-      blurb: (id) => riteDef(id)?.blurb ?? '',
-      displayName: (_recipeId, learnedId) => RITE_DATABASE.get(learnedId)?.name ?? null,
-      known: sources.knownRites,
-      isUnlocked: (id) => {
-        const recipe = RITE_RECIPE_DATABASE.get(id);
-        return !!recipe && isRiteRecipeUnlocked(recipe, gates);
       },
     },
   ];

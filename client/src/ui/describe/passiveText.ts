@@ -3,7 +3,7 @@ import { mechanicLabel } from '@mmo-idle/shared';
 import { STAT_HELP } from '../../hud/stat/statHelp';
 
 /**
- * Mechanic-effect maps (`mechanicEffects` on skill nodes, rites, gear)
+ * Mechanic-effect maps (`mechanicEffects` on skill nodes, gear)
  * as player-facing rows.
  *
  * There are ~270 distinct passive keys across the skill tree alone, so this is
@@ -151,7 +151,6 @@ const NAMESPACE_LABELS: Record<string, string> = {
   mobility: 'Mobility',
   reload: 'Reload',
   relic: 'Relic',
-  rite: 'Rite',
   shared: 'General',
   summoner: 'Summoner',
   technique: 'Technique',

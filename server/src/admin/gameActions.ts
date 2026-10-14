@@ -4,7 +4,6 @@ import {
   ABILITY_DATABASE,
   emptyEquipment,
   emptyAttunedAbilities,
-  emptyEquippedRites,
   ESSENCE_TYPES,
   FAST_BOSS_RETRY_TAINT,
   GAME_CONFIG,
@@ -20,7 +19,6 @@ import {
   runeIdsForArchetype,
   normalizeAttunedAbilities,
   normalizeEquipment,
-  validRiteIds,
   sanitizeRuneLoadout,
   type FastBossRetryResult,
   type TierEntryApplyResult,
@@ -108,8 +106,6 @@ export function resetPlayerProgress(world: World, player: PlayerEntity): GameAct
   player.tracksProgression.runesEquipped = DEFAULT_RUNE_LOADOUT.map((rule) => ({ ...rule }));
   player.tracksProgression.knownAbilities = [];
   player.tracksProgression.attunedAbilities = emptyAttunedAbilities();
-  player.tracksProgression.knownRites = [];
-  player.tracksProgression.equippedRites = emptyEquippedRites();
   player.holdsInventory.inventory = [];
   player.holdsInventory.equipment = emptyEquipment();
   player.holdsInventory.itemUpgrades = {};
@@ -351,12 +347,6 @@ export function applyTierEntryProfile(
   }
 
   const runesOwned = runeIdsForArchetype(archetype);
-  const knownRites = validRiteIds(profile.knownRites ?? []);
-  if (knownRites.length !== new Set(profile.knownRites ?? []).size) return fail('Profile contains an unknown rite.');
-  const equippedRites = validRiteIds(profile.equippedRites ?? []);
-  if (equippedRites.length !== (profile.equippedRites ?? []).length || equippedRites.some((id) => !knownRites.includes(id))) {
-    return fail('Profile equips an unlearned or unknown rite.');
-  }
   const runesEquipped = sanitizeRuneLoadout(
     Array.isArray(profile.runesEquipped) ? profile.runesEquipped : [],
     new Set(runesOwned),
@@ -402,8 +392,6 @@ export function applyTierEntryProfile(
   player.tracksProgression.runesEquipped = runesEquipped;
   player.tracksProgression.knownAbilities = knownAbilities;
   player.tracksProgression.attunedAbilities = attunedAbilities;
-  player.tracksProgression.knownRites = knownRites;
-  player.tracksProgression.equippedRites = equippedRites;
   player.holdsInventory.inventory = [...new Set(profile.inventory)];
   player.holdsInventory.equipment = equipment;
   player.holdsInventory.itemUpgrades = itemUpgrades;

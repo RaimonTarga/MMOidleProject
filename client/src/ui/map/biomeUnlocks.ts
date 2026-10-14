@@ -2,10 +2,7 @@ import {
   ABILITY_DATABASE,
   ABILITY_RECIPE_DATABASE,
   RECIPE_DATABASE,
-  RITE_DATABASE,
-  RITE_RECIPE_DATABASE,
   abilityDef,
-  riteDef,
   type EssenceType,
   type Recipe,
 } from '@mmo-idle/shared';
@@ -14,9 +11,9 @@ import { KIND_ORDER, type MakeKind } from '../crafting/makeEntries';
 /**
  * One thing a biome hands you at one of its levels.
  *
- * Biome mastery pays out of THREE authoritative databases — gear, abilities
- * and rites — and only gear lives in `RECIPE_DATABASE`. The map used to read
- * that one database and so silently omitted every technique and rite a biome
+ * Biome mastery pays out of TWO authoritative databases — gear and
+ * abilities — and only gear lives in `RECIPE_DATABASE`. The map used to read
+ * that one database and so silently omitted every technique a biome
  * grants. This is the client view model that lets
  * the map answer "what does this place give me, and when" from all of them.
  *
@@ -37,7 +34,7 @@ export interface BiomeUnlock {
   /** Present for gear (weapon/armor/recovery/mobility/core/relic) only. */
   gear?: Recipe;
   /**
-   * The ability/rite id learned, which is NOT the recipe id.
+   * The ability id learned, which is NOT the recipe id.
    * Absent for gear, where the recipe id is the item id.
    */
   learnedId?: string;
@@ -107,15 +104,6 @@ export function biomeUnlocks(group: string): BiomeUnlock[] {
     (recipe) => recipe.abilityId,
     (_recipe, learnedId) => ABILITY_DATABASE.get(learnedId)?.name,
     (learnedId) => abilityDef(learnedId)?.blurb ?? '',
-  ));
-
-  unlocks.push(...learnedUnlocks(
-    'rite',
-    group,
-    RITE_RECIPE_DATABASE.values(),
-    (recipe) => recipe.riteId,
-    (_recipe, learnedId) => RITE_DATABASE.get(learnedId)?.name,
-    (learnedId) => riteDef(learnedId)?.blurb ?? '',
   ));
 
   return unlocks.sort((a, b) =>

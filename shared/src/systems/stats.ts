@@ -53,12 +53,6 @@ export interface PlayerStatsTarget {
   holdsInventory:  HoldsInventory;
   /** Player progression tier (0-indexed: T1=0 … T4=3). Drives per-tier class bonuses. */
   playerTier?:     number;
-  /**
-   * Equipped rites (system rework Step 11). Always-on OOC passives; every equipped
-   * rite's `mechanicEffects` (the `rite.*` keys) folds into `usesSkills.passives` so
-   * the out-of-combat systems can read them. No in-combat stat path.
-   */
-  equippedRites?:  readonly string[];
   /** Optional callback when cadence threshold is recalculated (writes to usesCadence on server). */
   resetCadenceCounters?: (threshold: number) => void;
   /**

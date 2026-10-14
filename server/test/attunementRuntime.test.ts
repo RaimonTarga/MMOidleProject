@@ -45,8 +45,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
         techniques: ["sweep", "binding-strike"],
         guards: ["brace", "endure"],
       },
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: {
       inventory: [],

@@ -3,15 +3,12 @@ import {
   ABILITY_DATABASE,
   DEFAULT_AUTOCOMBAT_CONFIG,
   GAME_CONFIG,
-  RITE_DATABASE,
-  RITE_RECIPE_DATABASE,
   STARTER_RUNE_IDS,
   emptyEquipment,
   biomeLevelCap,
   getMaxUpgrade,
   globalMastery,
   listBiomeGroupsAtTier,
-  isRiteRecipeUnlocked,
   ITEM_DATABASE,
   referenceAbilityRules,
   type AttunedAbilities,
@@ -28,21 +25,6 @@ import type { BuildSpec, ContentTarget } from './types';
 
 export const BENCH_BOT_PREFIX = 'bench-bot-';
 export const BENCH_BOT_ID = `${BENCH_BOT_PREFIX}0`;
-
-/**
- * Deliberate baseline choices. Never derive these from database iteration order:
- * adding a new alphabetically-earlier option must not silently retune the bench.
- *
- * The Rite set covers kill recovery, between-fight class reset, and OOC cadence
- * without pairing contradictory options such as Swift Repose/Lingering Battle.
- */
-const CANONICAL_RITE_PRIORITY = [
-  'blood-offering',
-  'purification',
-  'ability-reprieve',
-  'mechanic-renewal',
-  'swift-repose',
-] as const;
 
 /** Stable id for the Nth party member (member 0 is the solo bot / party leader). */
 export function benchBotId(index: number): string {
@@ -70,7 +52,7 @@ function canonicalBiomeLevels(playerTier: number): Record<string, number> {
 }
 
 /**
- * The canonical abilities / rites a bench bot runs at a given tier.
+ * The canonical abilities a bench bot runs at a given tier.
  *
  * These systems are CONTEXT for the bench, not the swept axis — the skill path is
  * what varies between builds. So every bot wears the same deterministic loadout
@@ -85,8 +67,6 @@ function canonicalBiomeLevels(playerTier: number): Record<string, number> {
 export function canonicalLoadout(playerTier: number): {
   knownAbilities: string[];
   attunedAbilities: AttunedAbilities;
-  knownRites: string[];
-  equippedRites: string[];
 } {
   // Deepest-authored first, so a T4 bot fills its slots with T4 content, not T1.
   const forSlot = (kind: 'technique' | 'guard'): string[] =>
@@ -97,16 +77,6 @@ export function canonicalLoadout(playerTier: number): {
 
   const techniques = forSlot('technique');
   const guards = forSlot('guard');
-
-  const biomeLevel = canonicalBiomeLevels(playerTier);
-  const progressionGate = { biomeLevel, bossesCleared: [] as string[] };
-  const rites = [...RITE_RECIPE_DATABASE.values()]
-    .filter((recipe) => recipe.tier <= playerTier && isRiteRecipeUnlocked(recipe, progressionGate))
-    .map((recipe) => recipe.riteId)
-    .filter((id) => RITE_DATABASE.has(id))
-    .sort();
-  const knownRites = new Set(rites);
-  const equippedRites: string[] = CANONICAL_RITE_PRIORITY.filter((riteId) => knownRites.has(riteId));
 
   const abilities: AttunedAbilities = { techniques: [], guards: [] };
   // Bench selection policy: round-robin families, deepest authored first. Attuning
@@ -119,8 +89,6 @@ export function canonicalLoadout(playerTier: number): {
   return {
     knownAbilities: [...techniques, ...guards],
     attunedAbilities: abilities,
-    knownRites: rites,
-    equippedRites,
   };
 }
 
@@ -160,8 +128,6 @@ function buildBotSlices(
       runesEquipped: referenceAbilityRules(loadout.attunedAbilities),
       knownAbilities: loadout.knownAbilities,
       attunedAbilities: loadout.attunedAbilities,
-      knownRites: loadout.knownRites,
-      equippedRites: loadout.equippedRites,
     },
     holdsInventory: {
       inventory: [],

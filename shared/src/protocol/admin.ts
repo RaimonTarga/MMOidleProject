@@ -72,9 +72,6 @@ export interface AdminCharacterRecord {
   /** Abilities learned + equipped (system rework Step 7). */
   knownAbilities: string[];
   attunedAbilities: AttunedAbilities;
-  /** Rites learned + equipped (system rework Step 11). */
-  knownRites: string[];
-  equippedRites: string[];
   lastPlayedAt: number;
   updatedAt: number;
 }

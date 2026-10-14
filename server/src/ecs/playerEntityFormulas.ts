@@ -30,7 +30,6 @@ export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity)
     usesSkills:      entity.usesSkills,
     holdsInventory:  entity.holdsInventory,
     playerTier:      entity.tracksProgression?.playerTier,
-    equippedRites:   entity.tracksProgression?.equippedRites,
     resetCadenceCounters: (threshold) => {
       if (!entity.usesCadence) return;
       entity.usesCadence.speedStacks = 0;

@@ -85,8 +85,6 @@ function slices(id: string, options: Options = {}): PersistedPlayerSlices {
       runesEquipped: [],
       knownAbilities: techniques,
       attunedAbilities: { techniques, guards: [] },
-      knownRites: [],
-      equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

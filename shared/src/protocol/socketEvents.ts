@@ -131,9 +131,7 @@ export interface ServerToClientEvents {
   "crafting:result": (result: { success: boolean; reason?: string }) => void;
   /** Immediate result of learning an ability (crafting an ability recipe). */
   "ability:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
-  /** Immediate result of learning a rite (crafting a rite recipe). */
-  "rite:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
-  "build:loadoutResult": (result: { system: "abilities" | "runes" | "rites"; success: boolean; reason?: string }) => void;
+  "build:loadoutResult": (result: { system: "abilities" | "runes"; success: boolean; reason?: string }) => void;
   /** The answer to `class:setConfig`: accepted, or every reason it was not. */
   "class:configResult": (result: { ok: boolean; reasons?: string[] }) => void;
   /** Immediate result of an item upgrade attempt. */
@@ -243,10 +241,6 @@ export interface ClientToServerEvents {
   "ability:setLoadout": (payload: { equipped: AttunedAbilities }) => void;
   /** Attempt to activate one currently attuned ability through normal authority. */
   "ability:use": (abilityId: string, ack?: (result: CombatControlResult) => void) => void;
-  /** Learn a rite by crafting its recipe. Server validates gate + cost. */
-  "rite:craftRecipe": (recipeId: string) => void;
-  /** Set the full equipped-rite list (interchangeable slots; length ≤ slot count). */
-  "rite:setLoadout": (payload: { riteIds: string[] }) => void;
   /** Equip an item from inventory by its definition ID. */
   "inventory:equipItem": (definitionId: string) => void;
   /** Move the item in the given slot back to inventory. */

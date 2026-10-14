@@ -261,10 +261,4 @@ export const STAT_HELP: Record<string, string> = {
     'Shortens the cooldown of mobility abilities. Does nothing unless you have one equipped.',
   'core.mobility-refund-on-kill-pct':
     'Each kill returns part of your mobility ability’s cooldown. Does nothing unless you have one equipped.',
-
-  // ── Rites (between-fight behavior) ─────────────────────────────────────────
-  'rite.ooc-regen-delay-reduction-pct': 'Health regeneration resumes sooner after a fight ends.',
-  'rite.ooc-cleanse-stacks': 'Debuff and damage-over-time stacks stripped from you on each pulse while out of combat.',
-  'rite.ooc-buff-decay-slowdown-pct': 'Your buffs fade more slowly once a fight ends.',
-  'rite.on-kill-haste-pct': 'Move speed granted by a fresh kill, to carry you to the next fight.',
 };

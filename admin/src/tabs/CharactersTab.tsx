@@ -168,10 +168,6 @@ function CharacterRow({
           {' / G:'}{character.attunedAbilities?.guards?.join(', ') || '—'}
           {` (${character.knownAbilities?.length ?? 0} known)`}
         </div>
-        <div className="text-xs text-red-200/35">
-          Rites:{character.equippedRites?.length ? character.equippedRites.join(', ') : '—'}
-          {` (${character.knownRites?.length ?? 0} known)`}
-        </div>
       </td>
       <td className="px-3 py-3">
         <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">

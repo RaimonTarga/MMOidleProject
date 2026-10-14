@@ -98,7 +98,7 @@ export interface NewEntries {
  *
  * The caller passes the currently-eligible keys, so this covers every recipe
  * kind at once — gear arrives from the server's `unlockedRecipes`, while
- * techniques and rites are derived from biome levels and boss
+ * techniques are derived from biome levels and boss
  * clears and have no unlock event to listen for.
  *
  * Safe to call from several components at once: the sync below is a set union

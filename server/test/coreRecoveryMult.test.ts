@@ -63,8 +63,6 @@ function makePlayerSlices(id: string, withCore: boolean): PersistedPlayerSlices 
       runesEquipped: [],
       knownAbilities: [],
       attunedAbilities: { techniques: [], guards: [] },
-      knownRites: [],
-      equippedRites: [],
     },
     // The core is EQUIPPED rather than its passive written by hand: recalc rebuilds
     // `usesSkills.passives` from scratch, so a hand-set key never reaches the fold.
