@@ -26,12 +26,12 @@ import type { World } from '../../../world/World';
 
 type ProgressSlices = {
   tracksProgression: Pick<TracksProgression, 'biomeLevel' | 'bossesCleared'>;
-  usesSkills: Pick<UsesSkills, 'combatArchetype' | 'selectedSubVariant'>;
+  usesSkills: Pick<UsesSkills, 'combatArchetype' | 'disciplineId'>;
 };
 
-/** The discipline pick, once the Passive Tree's tier-1 node is one of the class's disciplines. */
+/** The discipline pick, once it is one of the class's own disciplines. */
 function disciplineOf(archetype: ClassArchetype, usesSkills: ProgressSlices['usesSkills']): string | null {
-  const picked = usesSkills.selectedSubVariant as string | null;
+  const picked = usesSkills.disciplineId ?? null;
   if (!picked) return null;
   return classKitFor(archetype).disciplines.some((discipline) => discipline.id === picked) ? picked : null;
 }

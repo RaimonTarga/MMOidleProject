@@ -115,6 +115,8 @@ export const playerPosAtom = atom<Vec2 | null>(null);
 export const selectedClassAtom = atom<string | null>(null);
 export const selectedSubVariantAtom = atom<SubVariant | null>(null);
 export const selectedRangeAtom = atom<string | null>(null);
+/** The T2 pick, a discipline node id (class-first). */
+export const disciplineIdAtom = atom<string | null>(null);
 export const currentSkillTierAtom = atom<number>(0);
 export const playerTierAtom = atom<number>(0);
 export const levelAtom = atom<number>(1);
@@ -819,6 +821,7 @@ function resetPlayerAtoms(): void {
   store.set(selectedClassAtom, null);
   store.set(selectedSubVariantAtom, null);
   store.set(selectedRangeAtom, null);
+  store.set(disciplineIdAtom, null);
   store.set(currentSkillTierAtom, 0);
   store.set(playerTierAtom, 0);
   store.set(levelAtom, 1);
@@ -953,6 +956,7 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(selectedClassAtom, player.selectedClass);
   setIfChanged(selectedSubVariantAtom, player.selectedSubVariant);
   setIfChanged(selectedRangeAtom, player.selectedRange);
+  setIfChanged(disciplineIdAtom, player.disciplineId);
   setIfChanged(currentSkillTierAtom, player.currentSkillTier);
   setIfChanged(playerTierAtom, player.playerTier);
   setIfChanged(levelAtom, player.level);

@@ -65,12 +65,11 @@ export interface SkillNode {
   description: string;
   cost: number;
   /**
-   * Progression tier:
-   *   0 = class root (choose your mechanic)
-   *   1 = sub-variant (light / balanced / heavy)
-   *   2 = range (close / mid / far — universal, same for all paths)
-   *   3 = path modifier (3 choices per path — different per class+subvariant)
-   *   4–7 = path-locked progression nodes (3 choices each)
+   * Code tier (class-first build plan §3.5; the product's tiers are one higher):
+   *   0 = class root (T1: choose your class)
+   *   1 = discipline (T2: the main playstyle fork, three per class)
+   *   2 = specialization (T3: three per discipline)
+   *   3+ = leaves (T4 onward: three per discipline per tier)
    */
   tier: number;
   /**
@@ -79,12 +78,15 @@ export interface SkillNode {
    */
   classId: string | null;
   /**
-   * Which sub-variant this node targets.
-   * null for tier-0 class roots and tier-2 range nodes.
-   * For tier 1, identifies which sub-variant this node IS.
-   * For tier 3+, used as the path lock key alongside classId.
+   * Legacy frame key (light / balanced / heavy). Null on every node since the class-first
+   * tree replaced frames; kept until the class runtimes stop reading frames.
    */
   subVariantId: SubVariant | null;
+  /**
+   * The discipline this node belongs to: a discipline is its own; a specialization or leaf
+   * is unlocked only under it. Absent on class roots.
+   */
+  disciplineId?: string;
   /** Cosmetic only — not used for unlock logic. */
   parent: string | null;
   /** Cosmetic only — not used for unlock logic. */
