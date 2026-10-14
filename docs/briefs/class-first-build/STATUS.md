@@ -3,23 +3,21 @@
 Kept by the conductor. Plan: [class-first-build-plan-2026-10-14.md](../class-first-build-plan-2026-10-14.md).
 Integration branch `rework/class-first` (conductor worktree `../mmo-rework`).
 
-**Updated:** 2026-10-14: wave A handed out; F1 merged; K1–K6 ready.
+**Updated:** 2026-10-14: F1, F2, K1–K3 merged. Codex hit rate limits, so D5 and K1–K3 run as
+Claude subagents of the conductor (same briefs, same worktrees); ICONS-T1 stays with Codex.
 
 ## Open tasks
 
 | ID | Task | Agent | Worktree · branch | State |
 |---|---|---|---|---|
-| D5 | [The bot becomes a class-agnostic harness](D5-bot-harness-core.md) | Codex | `../mmo-rw-d5-bot-core` · `rw/d5-bot-core` | ready to start |
-| ICONS-T1 | [Icons for every T1 piece and trophy](ICONS-T1.md) | Codex (image generation) | `../mmo-rw-icons-t1` · `rw/icons-t1` | ready to start |
-| D6 | [The tutorial keeps its engine and the seal route](D6-tutorial-engine.md) | Grok | `../mmo-rw-d6-tutorial-core` · `rw/d6-tutorial-core` | ready to start |
-| I3 | [The server bench fights again](I3-bench-repair.md) | Grok | `../mmo-rw-i3-bench` · `rw/i3-bench` | ready to start |
-| K1 | [Striker kit data](K-kit-data.md) | Codex | `../mmo-rw-k1-striker` · `rw/k1-striker` | ready to start |
-| K2 | [Squire kit data](K-kit-data.md) | Codex | `../mmo-rw-k2-squire` · `rw/k2-squire` | ready to start |
-| K3 | [Apprentice kit data](K-kit-data.md) | Codex | `../mmo-rw-k3-apprentice` · `rw/k3-apprentice` | ready to start |
-| K4 | [Slinger kit data](K-kit-data.md) | Grok | `../mmo-rw-k4-slinger` · `rw/k4-slinger` | ready to start |
-| K5 | [Spirit kit data](K-kit-data.md) | Grok | `../mmo-rw-k5-spirit` · `rw/k5-spirit` | ready to start |
-| K6 | [Conduit kit data](K-kit-data.md) | Grok | `../mmo-rw-k6-conduit` · `rw/k6-conduit` | ready to start |
-| F2 | `holdsClassKit`, the config intent, persistence | Conductor | `../mmo-rework` | next |
+| D5 | [The bot becomes a class-agnostic harness](D5-bot-harness-core.md) | Claude subagent | `../mmo-rw-d5-bot-core` · `rw/d5-bot-core` | running |
+| ICONS-T1 | [Icons for every T1 piece and trophy](ICONS-T1.md) | Codex (image generation) | `../mmo-rw-icons-t1` · `rw/icons-t1` | running |
+| D6 | [The tutorial keeps its engine and the seal route](D6-tutorial-engine.md) | Grok | `../mmo-rw-d6-tutorial-core` · `rw/d6-tutorial-core` | running |
+| I3 | [The server bench fights again](I3-bench-repair.md) | Grok | `../mmo-rw-i3-bench` · `rw/i3-bench` | running |
+| K4 | [Slinger kit data](K-kit-data.md) | Grok | `../mmo-rw-k4-slinger` · `rw/k4-slinger` | running |
+| K5 | [Spirit kit data](K-kit-data.md) | Grok | `../mmo-rw-k5-spirit` · `rw/k5-spirit` | running |
+| K6 | [Conduit kit data](K-kit-data.md) | Grok | `../mmo-rw-k6-conduit` · `rw/k6-conduit` | running |
+| F4 | Passive Tree: per-class files, the discipline / specialization / leaf gate, the range layer removed | Conductor | `../mmo-rework` | next |
 
 Every open task touches its own folder, so any number can run at once, one agent session per
 task. If you'd rather run them a few at a time, a good order is D5 and D6 first (they unblock
@@ -92,7 +90,7 @@ your report where the brief says, and tell me.
 |---|---|---|---|
 | D1 | Item lineage trees, ability node rows, shards | Codex | D5, D6 merged |
 | D2 | Stances, rites, Runic Points, cores | Grok | D5, D6 merged |
-| F2–F8, D3, T0 | The rest of Phase 0 | Conductor, then delegates | see plan §4 |
+| F5–F8, D3, T0 | The rest of Phase 0 | Conductor, then delegates | see plan §4 |
 
 ## Done
 
@@ -101,3 +99,8 @@ your report where the brief says, and tell me.
 | I1 | Agent worktree script | `c363ff18` |
 | I2 | Plan, agent rules, this board | `011e95d2` |
 | F1 | Class kit types, registry, moments, budget, scaling | `d1a7aac9` |
+| F2 | The class config: `configuresClass`, `class:setConfig`, migration 0010, auto mode | `4d1cc6ea` |
+| F3 | Lessons and trophies: derived from biome levels and boss clears inside F1/F2, nothing to grant; the "new" toast moves to F7 | (in F1, F2) |
+| K1 | Striker kit (subagent): 26 pieces, 11 trophies, tree | `3073540a` |
+| K2 | Squire kit (subagent): 23 pieces, 11 trophies, tree | `3c014363` |
+| K3 | Apprentice kit (subagent): 21 pieces, 11 trophies, tree | `a66e443f` |
