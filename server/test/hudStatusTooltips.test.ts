@@ -164,10 +164,6 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
     "magma-molten-guard": "Molten Guard",
     "magma-obsidian-shell": "Obsidian Shell",
     "shatter-vulnerable": "Shatter Window",
-    // The lineage cards' own records (design §26.2): never an ability's name.
-    "lineage.bleed": "Bleed",
-    "lineage.hobbled": "Hobbled",
-    "lineage.pinned": "Pinned",
   };
   for (const [id, title] of Object.entries(targetLabels)) {
     assert(targetStatusHelp(id)?.title === title, `${id} needs its authored target title`);
@@ -352,31 +348,13 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
   assert(!BAD.test(label), `accessible label must be legible: ${label}`);
   assert(label.includes(sweep.name), "the accessible label must name the ability");
 
-  // The node rows name it (design §22.7, §22.10): the whole name on the card, and
-  // the ability's own name as the lineage line once a keystone has renamed it.
-  const nodes = {
-    sweep: {
-      owned: ["sweep.packet.affliction", "sweep.keystone.whirlwind"],
-      active: { packet: "sweep.packet.affliction", keystone: "sweep.keystone.whirlwind" },
-    },
-  };
-  const renamed = abilityTooltipContent(sweep, { ...lowTier, abilityNodes: nodes }, { state: "ready" });
-  assertLegible(renamed, "a renamed ability");
-  assert(renamed.title === "Bleeding Whirlwind I", `the card carries the whole name, got ${renamed.title}`);
-  assert(renamed.lineage === sweep.name, "the ability's own name is the lineage line beneath the rename");
-  assert(ready.lineage === undefined, "an ability no keystone renamed has no lineage line");
-  assert(
-    abilityAccessibleLabel(sweep, { ...lowTier, abilityNodes: nodes }, { state: "ready" }).includes("Bleeding Whirlwind I"),
-    "the accessible label reads the same name",
-  );
-
   // A buff tile an ability owns is named after the ability as it is called now.
   const guardTile = {
     id: "ability-guard", label: "Brace", stacks: 1, durationPct: 50, color: "#9ad0ff",
     category: "neutral", shape: "square",
   } as PlayerBuff;
-  const owned = buffTooltipContent(guardTile, { name: "Plated Riposte I", lineage: "Brace" });
-  assert(owned.title === "Plated Riposte I" && owned.lineage === "Brace", "the Guard's window wears the Guard's name");
+  const owned = buffTooltipContent(guardTile, { name: "Brace II" });
+  assert(owned.title === "Brace II", "the Guard's window wears the Guard's name");
   assert(owned.kicker?.includes("Guard"), `the status's own name moves to the kicker, got ${owned.kicker}`);
   assert(buffTooltipContent(guardTile).title === "Guard", "without an owner the tile keeps its authored title");
 
@@ -403,7 +381,7 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      shards: {}, capstones: {},
+      
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],

@@ -1,12 +1,11 @@
 import type { EssenceType } from '@mmo-idle/shared';
 
 /**
- * Progression rework Phase 2b — the weapon +N ladder is deleted (the lineage tree
- * owns weapon progression now), so every weapon recipe's `upgrades[]` step array is
- * gone from `shared/src/data/recipes/`. A save written before this phase can still
- * hold `holdsInventory.itemUpgrades[weaponId] > 0`, which is now unspendable (the
- * weapon is worn/owned regardless via `equipment`/`lineages`, so nothing is lost
- * there — see `lineageSync`), but the essence the player spent reaching that level
+ * Progression rework Phase 2b — the weapon +N ladder is deleted, so every weapon
+ * recipe's `upgrades[]` step array is gone from `shared/src/data/recipes/`. A save
+ * written before this phase can still hold `holdsInventory.itemUpgrades[weaponId] > 0`,
+ * which is now unspendable (the weapon itself is kept in `equipment`/`inventory`, so
+ * nothing is lost there), but the essence the player spent reaching that level
  * should not simply vanish.
  *
  * This is a frozen historical record of exactly what `shared/src/data/recipes/*`

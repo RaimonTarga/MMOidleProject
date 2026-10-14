@@ -3,7 +3,7 @@ import { ABILITY_RECIPE_DATABASE, STANCE_RECIPE_DATABASE, RUNE_RECIPE_DATABASE, 
   RECIPE_DATABASE, ITEM_DATABASE, globalMastery, runeBudgetForGlobalMastery, biomeLevelCap,
   getMaxUpgrade, requiredBiomeLevelForUpgrade, upgradeCeilingFromGlobalMastery,
   upgradeCostFor, isAbilityRecipeUnlocked, isStanceRecipeUnlocked, isRuneRecipeUnlocked,
-  checkReconstruct, ABILITY_DATABASE, abilityRankNumber, bossSealSourcesAtTier, sealsRequiredForTier, sealsHeldAtTier, SKILL_TREE } from '@mmo-idle/shared';
+  ABILITY_DATABASE, abilityRankNumber, bossSealSourcesAtTier, sealsRequiredForTier, sealsHeldAtTier, SKILL_TREE } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../src/ecs/entity';
 import type { SurveyCell } from './ttkSurveySpec';
 
@@ -58,12 +58,7 @@ export function applyProgressionSnapshot(bot:PlayerEntity,cell:SurveyCell) {
   for(const id of Object.values(cell.build.gearItemIds)) {
     const r=RECIPE_DATABASE.get(id!)!,item=ITEM_DATABASE.get(id!)!;
     assert(r && p.unlockedRecipes.includes(id!),`${cell.id}: unearned item ${id}`);
-    if(r.evolvesFrom){
-      assert(r.reconstructCost,`No reconstruction path ${id}`);
-      const wallet={red:0,blue:0,green:0,yellow:0,purple:0,...r.reconstructCost};
-      assert(checkReconstruct({recipe:r,essences:wallet}).ok);
-      pay(id!,'paid-reconstruction',r.reconstructCost);
-    } else pay(id!,'craft',r.cost);
+    pay(id!,'craft',r.cost);
     let plus=Math.min(cell.upgradeLevel!,getMaxUpgrade(item),upgradeCeilingFromGlobalMastery(s.gm,r.tier));
     while(plus>0 && requiredBiomeLevelForUpgrade(item,plus)>(p.biomeLevel[r.recipeGroup]??0))plus--;
     if(s.id==='t4-established-gm148')assert.equal(plus,['core','relic'].includes(r.slot)?0:4,`${cell.id}: T4 upgrade must not silently clamp ${id}`);
@@ -76,7 +71,7 @@ export function applyProgressionSnapshot(bot:PlayerEntity,cell:SurveyCell) {
   p.essences={red:0,blue:0,green:0,yellow:0,purple:0};
   return {snapshot:s,purchases,priorResources:totals,remainingResources:{essences:p.essences},
     ...(s.priorBossClears?{priorBossClears:[...p.bossesCleared],priorSealOwnership:'Synthetic earned prior clears assumed; no acquisition combat measured',classSkillPointBudget:s.tier,classSkillPointsSpent:cell.build.skillPath.reduce((sum,id)=>sum+SKILL_TREE.get(id)!.cost,0)}:{}),
-    acquisition:'Synthetic prior paid ownership; direct reconstruction at production price. No acquisition time measured.',
+    acquisition:'Synthetic prior paid ownership; plain craft at production price. No acquisition time measured.',
     abilityRanks:Object.fromEntries(p.knownAbilities.map(id=>[id,abilityRankNumber(ABILITY_DATABASE.get(id)!,s.tier)])),knownAbilities:[...p.knownAbilities],knownStances:[...p.knownStances],runesOwned:[...p.runesOwned],runeRecipesCrafted:[...p.runeRecipesCrafted]};
 }
 export const snapshotReceipts=new WeakMap<PlayerEntity,ReturnType<typeof applyProgressionSnapshot>>();

@@ -2,10 +2,8 @@
  * ONE implementation of "strip harmful stacks off this player".
  *
  * Extracted from `abilityFiring.ts` (where it was the Cleanse guard's private
- * `applyCleanse`) when the lineage card runtime needed the same action for its
- * `cleanse` payoff. It lives here, in a module that imports nothing but shared,
- * so both callers reach the same policy without the abilities module and the card
- * runtime having to import each other.
+ * `applyCleanse`). It lives here, in a module that imports nothing but shared, so
+ * any caller reaches the same policy without importing the abilities module.
  *
  * The policy itself is unchanged, and is the point of the function:
  *

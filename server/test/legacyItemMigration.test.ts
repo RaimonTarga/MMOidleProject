@@ -48,9 +48,4 @@ assert(ITEM_DATABASE.has("gale-needle"), "its replacement must exist");
   assert(migrateLegacyRecipeIds(undefined).length === 0, "a missing list stays empty");
 }
 
-// No live recipe may still point at the retired id.
-for (const recipe of RECIPE_DATABASE.values()) {
-  assert(recipe.evolvesFrom !== "thorn-needle", `${recipe.id} evolves from a retired item`);
-}
-
 console.log("legacyItemMigration: ok");

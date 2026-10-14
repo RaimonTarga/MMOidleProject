@@ -1,24 +1,18 @@
 import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import { useAtomValue } from "jotai";
 import {
-  capstoneMaterialName,
   ESSENCE_COLORS,
   ESSENCE_LABELS,
   ESSENCE_TYPES,
-  PACKET_IDS,
-  packetDefinition,
-  shardName,
   type EssenceType,
 } from "@mmo-idle/shared";
 import { GameIcon } from "../ui/GameIcon";
 import {
-  capstoneMaterial,
   essenceMaterial,
   MaterialChip,
   materialIconSource,
-  shardMaterial,
 } from "../ui/MaterialChip";
-import { capstonesAtom, essencesAtom, shardsAtom } from "./atoms";
+import { essencesAtom } from "./atoms";
 import { DisclosureHeader, HudPanel } from "./primitives";
 import "./essence.css";
 
@@ -68,23 +62,13 @@ function useEssenceGainFlash(essences: Record<EssenceType, number>) {
 
 /**
  * The player's whole spendable economy in one rail panel. Collapsed it is a
- * dense chip strip; expanded it names each material. Shards and touched
- * capstones stay hidden until the player has actually held one, so the early
- * game is not cluttered with empty rows.
+ * dense chip strip; expanded it names each material.
  */
 export function MaterialsPanel() {
   const essences = useAtomValue(essencesAtom);
-  const shards = useAtomValue(shardsAtom);
-  const capstones = useAtomValue(capstonesAtom);
   const [expanded, setExpanded] = useState(readExpandedPreference);
   const detailsId = useId();
   const flashClass = useEssenceGainFlash(essences);
-
-  // Lineage wallets (progression rework Phase 1): shards by packet, touched
-  // capstones by biome. Hidden until touched — eight empty shard rows would
-  // swamp the early game before a player has opened a single tree.
-  const ownedShards = PACKET_IDS.filter((packet) => (shards[packet] ?? 0) > 0);
-  const ownedCapstones = Object.entries(capstones).filter(([, amount]) => (amount ?? 0) > 0);
 
   const toggleExpanded = () => {
     setExpanded((value) => {
@@ -122,30 +106,6 @@ export function MaterialsPanel() {
               />
             ))}
           </div>
-          {ownedShards.length > 0 && (
-            <div className="materials-strip__group material-chip-strip">
-              {ownedShards.map((packet) => (
-                <MaterialChip
-                  key={packet}
-                  material={shardMaterial(packet)}
-                  held={shards[packet] ?? 0}
-                  size={18}
-                />
-              ))}
-            </div>
-          )}
-          {ownedCapstones.length > 0 && (
-            <div className="materials-strip__group material-chip-strip">
-              {ownedCapstones.map(([biome, amount]) => (
-                <MaterialChip
-                  key={biome}
-                  material={capstoneMaterial(biome)}
-                  held={amount}
-                  size={18}
-                />
-              ))}
-            </div>
-          )}
         </div>
       )}
 
@@ -171,39 +131,6 @@ export function MaterialsPanel() {
             </div>
           ))}
 
-          {ownedShards.length > 0 && <div className="materials-divider" />}
-
-          {ownedShards.map((packet) => (
-            <div key={packet} className="essence-row">
-              <GameIcon
-                source={materialIconSource(shardMaterial(packet))}
-                size={18}
-                fallback={null}
-                className="economy-icon"
-                decorative
-              />
-              <span className="essence-name" style={{ color: packetDefinition(packet)?.color }}>
-                {shardName(packet)}s
-              </span>
-              <span className="essence-value">{shards[packet] ?? 0}</span>
-            </div>
-          ))}
-
-          {ownedCapstones.length > 0 && <div className="materials-divider" />}
-
-          {ownedCapstones.map(([biome, amount]) => (
-            <div key={biome} className="essence-row">
-              <GameIcon
-                source={materialIconSource(capstoneMaterial(biome))}
-                size={18}
-                fallback={null}
-                className="economy-icon"
-                decorative
-              />
-              <span className="essence-name">{capstoneMaterialName(biome)}</span>
-              <span className="essence-value">{amount}</span>
-            </div>
-          ))}
         </div>
       )}
     </HudPanel>

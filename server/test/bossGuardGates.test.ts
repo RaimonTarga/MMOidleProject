@@ -1,5 +1,5 @@
 /**
- * Boss mechanics respect the Guard keystones (design §22.12).
+ * Boss mechanics respect the Guard gates (design §22.12).
  *
  * Endure's Unyielding refuses new hard control and roots; Cleanse's Immunity
  * refuses the affliction kinds its Cleanse stripped. Both are refusals at the
@@ -12,7 +12,7 @@
  * Wiring smoke, per applier: the gate refuses, and without the gate the same
  * mechanic lands exactly as authored. Real boss pattern steps wherever one exists.
  * The gates are raised as bare statuses, the way any future source would raise
- * them; the keystones' own activation is abilityKeystones.test.ts's business.
+ * them.
  */
 import {
   ABILITY_IMMUNITY_EFFECT_ID,

@@ -21,7 +21,6 @@ import {
   type AbilityDef,
   type AbilityEffectSpec,
   type CombatArchetype,
-  type AbilityNodeProgressMap,
 } from '@mmo-idle/shared';
 
 /**
@@ -58,17 +57,6 @@ export interface AbilityContext {
   maxHp?: number;
   /** Current attack range, for showing what an ability's reach adds up to. */
   attackRange?: number;
-  /**
-   * Cast speed this ability's own nodes add (the amplifier's 'cast' axis, design
-   * §22.9). It joins 'technique.cast-speed-pct' in ONE capped sum, as on the server.
-   */
-  nodeCastSpeedPct?: number;
-  /**
-   * The character's ability node rows, keyed by ability id: the words they lend
-   * the ability's NAME (design §22.7, through `abilityDisplayName`). Absent in a
-   * class-agnostic preview, which shows the plain name.
-   */
-  abilityNodes?: AbilityNodeProgressMap;
 }
 
 export interface AbilityLine {
@@ -408,9 +396,8 @@ export function describeAbility(
  * gap-closer worth a slot and what lets a melee build hold a ranged tool.
  */
 /**
- * Sidestep's window (design §22.8). The rank authors no field — the numbers are
- * the lineage magnitude table's, so they come from the same `sidestepWindow`
- * the server applies.
+ * Sidestep's window (design §22.8). The rank authors no field — the numbers come
+ * from the same `sidestepWindow` the server applies.
  */
 function sidestepLines(ability: AbilityDef, context: AbilityContext): AbilityLine[] {
   const window = sidestepWindow(ability, context.playerTier);
@@ -475,8 +462,7 @@ function timingLines(ability: AbilityDef, context: AbilityContext): AbilityLine[
   if (windsUp && authoredCast > 0) {
     const castReduction = Math.min(
       CAST_SPEED_CAP,
-      Math.max(0, context.passives['technique.cast-speed-pct'] ?? 0)
-        + Math.max(0, context.nodeCastSpeedPct ?? 0),
+      Math.max(0, context.passives['technique.cast-speed-pct'] ?? 0),
     );
     lines.push({
       key: 'cast',

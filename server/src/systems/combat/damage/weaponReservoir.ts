@@ -17,9 +17,8 @@ export function heldWeaponReservoir(player: PlayerEntity): BurnWeaponEntry | und
 
 /**
  * The reservoir record on `monster`, created (empty) when absent, its drain
- * window refreshed. The one place a reservoir's record is written, so a pool fed
- * by a hit and a pool topped up by a lineage payload are the same record with
- * the same clock.
+ * window refreshed. The one place a reservoir's record is written, so every pool
+ * a hit feeds is the same record with the same clock.
  */
 function reservoirRecord(
   world: World,
@@ -70,10 +69,6 @@ function reservoirRecord(
  * holds in `onHit`. A player without a conversion weapon gets the damage back
  * unchanged. Detonate must NOT call this: re-feeding a consumed reservoir would
  * loop.
- *
- * The Affliction lean on a reservoir weapon (design §26.2) is the reservoir's
- * POTENCY: `weapon.reservoir-potency-pct` scales what each converted hit banks.
- * The converted share — and so the direct damage left to land — is unchanged.
  */
 export function feedWeaponReservoir(
   world: World,
@@ -92,38 +87,13 @@ export function feedWeaponReservoir(
     player.usesSkills.combatArchetype,
     player.usesSkills.passives,
   );
-  const potency = 1 + Math.max(0, player.usesSkills.passives["weapon.reservoir-potency-pct"] ?? 0);
   const poolGain = reservoirBasis
     * profile.convPct
     * profile.dotMultiplier
-    * secondaryEffectMult
-    * potency;
+    * secondaryEffectMult;
 
   const effect = reservoirRecord(world, player, monster, profile);
   effect.data.pool = (effect.data.pool ?? 0) + poolGain;
 
   return Math.max(1, Math.round(directDamage * (1 - profile.convPct)));
-}
-
-/**
- * ADD `amount` of damage to the held weapon's reservoir on `monster` — what it
- * still owes grows, and its drain window restarts. The lineage payloads' route on
- * a weapon that owns a reservoir (design §26.2: amplified, never joined): the
- * heavy bleed, the re-dose and `poison-stack` top up the Poison Dagger's poison
- * rather than starting a second record beside it.
- *
- * Returns the reservoir record, or undefined when the player holds no reservoir
- * weapon (the caller then writes the one lineage bleed instead).
- */
-export function addToWeaponReservoir(
-  world: World,
-  player: PlayerEntity,
-  monster: MonsterEntity,
-  amount: number,
-): StatusEffect | undefined {
-  const profile = heldWeaponReservoir(player);
-  if (!profile) return undefined;
-  const effect = reservoirRecord(world, player, monster, profile);
-  if (amount > 0) effect.data.pool = (effect.data.pool ?? 0) + amount;
-  return effect;
 }

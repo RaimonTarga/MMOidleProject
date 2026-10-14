@@ -102,11 +102,9 @@ export const swampRecipeEntries = [
     // Recipe id kept stable (persisted); rethemed fire → poison (Venom Knife).
     id: 'swamp-mirebrand', name: 'Venom Knife',
     recipeGroup: 'swamp', requiredBiomeLevel: 7, slot: 'weapon',
-    evolvesFrom: 'ashbrand-blade',
     // 2026-09-26 weapon normalization: Attack 18->22 (+5: 27->47), a T2-sized curve. Judged on sustained
     // damage (DoT weapons start slow by design).
     cost: { purple: 52 }, stats: { attack: 47 }, attacksPerSecond: 1.0, tier: 2, // family-tag: poison DoT-conversion weapon → Fortified
-    reconstructCost: { purple: 182 },
     weaponDot: { effectId: 'swamp-mirebrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/venom-knife.png',
     description: 'The venom runs deeper now; what it touches keeps rotting.',
@@ -119,7 +117,6 @@ export const swampRecipeEntries = [
     id: 'swamp-vest-t2', name: 'Bog Wrappings',
     recipeGroup: 'swamp', requiredBiomeLevel: 8, slot: 'armor',
     cost: { purple: 54 }, stats: { "maxHp": 87, "damageReduction": 0.08 }, // family-tag: dot-resistance armor → Fortified
-    reconstructCost: { purple: 189 },
     // hit-to-DoT is the T2+ specialisation of this lineage: deliberately held out
     // of the T1 baseline, kept here as the thing the tier upgrade actually buys.
     mechanicEffects: { "defense.dot-resistance": 0.4, "defense.hit-to-dot-pct": 0.15 },
@@ -136,7 +133,6 @@ export const swampRecipeEntries = [
     id: 'swamp-charm-t2', name: 'Bog Eye',
     recipeGroup: 'swamp', requiredBiomeLevel: 9, slot: 'recovery',
     cost: { purple: 44 }, stats: { "recovery": 15.7 }, // family-tag: attrition-Recovery charm → Fortified
-    reconstructCost: { purple: 154 },
     mechanicEffects: { "defense.recovery-pulse-pct": 0.42, "defense.recovery-pulse-interval-ms": 8000, "defense.recovery-pulse-duration-ms": 4000, "guard.cleanse-pulse": 1 },
     tier: 2,
     icon: 'items/charms/bog-eye.png',
@@ -148,7 +144,6 @@ export const swampRecipeEntries = [
     id: 'swamp-boots-t2', name: 'Wetland Wraps',
     recipeGroup: 'swamp', requiredBiomeLevel: 10, slot: 'mobility',
     cost: { purple: 44 }, stats: { "speed": 41 }, tier: 2, // family-tag: swamp mobility → Fortified
-    reconstructCost: { purple: 154 },
     mechanicEffects: { "mobility.slow-resistance": 0.58 },
     icon: 'items/boots/wetland-wraps.png',
     description: 'Enchanted bindings that find footing where there should be none.',
@@ -163,11 +158,9 @@ export const swampRecipeEntries = [
     // T3 economy pass (2026-08-30): EVOLUTION of swamp-mirebrand at +5. Swamp's POISON
     // DoT line is continuous and intact (ashbrand-blade → mirebrand → Plague Fang);
     // Tundra's Rimebrand is a separate FROST flavour, not a relocation of this chain.
-    evolvesFrom: 'swamp-mirebrand',
     // 2026-09-26 weapon normalization: Attack 32->54 (+5: 48->86), so +0 clears the buffed Venom Knife
     // at +5 by 10% and +5 sits on the T3 median (sustained). No T4 successor.
     cost: { purple: 116 }, stats: { attack: 86 }, attacksPerSecond: 1.00, tier: 3, // family-tag: poison DoT weapon → Fortified
-    reconstructCost: { purple: 406 },
     weaponDot: { effectId: 'swamp-blightbrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/plague-fang.png',
     description: 'The rot it carries does more work than the edge ever could.',
@@ -183,7 +176,6 @@ export const swampRecipeEntries = [
     // Swamp is not a hybrid, so there is nothing to splash. (Debuff resistance moved
     // to the Trench carapace on 2026-09-26; this lineage owns damage over time.)
     cost: { purple: 140 }, stats: { "maxHp": 239, "damageReduction": 0.14 }, // family-tag: dot-resistance armor → Fortified
-    reconstructCost: { purple: 490 },
     mechanicEffects: { "defense.dot-resistance": 0.45, "defense.hit-to-dot-pct": 0.2 },
     tier: 3,
     icon: 'items/armor/plaguebound-shroud.png',
@@ -198,7 +190,6 @@ export const swampRecipeEntries = [
     // from another biome's mechanic, so the hybrid rule ("splash = the colour of the
     // borrowed mechanic") produces no splash here.
     cost: { purple: 100 }, stats: { "recovery": 50.5 }, // family-tag: attrition-Recovery charm → Fortified
-    reconstructCost: { purple: 350 },
     mechanicEffects: { "defense.recovery-pulse-pct": 0.54, "defense.recovery-pulse-interval-ms": 8000, "defense.recovery-pulse-duration-ms": 4000, "guard.cleanse-pulse": 1 },
     tier: 3,
     icon: 'items/charms/sorrow-eye.png',
@@ -209,7 +200,6 @@ export const swampRecipeEntries = [
     id: 'swamp-boots-t3', name: 'Mire Striders',
     recipeGroup: 'swamp', requiredBiomeLevel: 16, slot: 'mobility',
     cost: { purple: 100 }, stats: { "speed": 74 }, tier: 3, // family-tag: swamp mobility → Fortified
-    reconstructCost: { purple: 350 },
     mechanicEffects: { "mobility.slow-resistance": 0.72 },
     icon: 'items/boots/mire-striders.png',
     description: 'Nothing the bog grips holds them; they walk free of any mire that tries to keep them.',

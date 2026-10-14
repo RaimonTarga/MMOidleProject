@@ -10,7 +10,6 @@ import {
   ITEM_DATABASE,
   abilityDef,
   coreEligibilityLabel,
-  isGatedLineageForm,
   isRestrictedCore,
   relicRatingsFromPassives, relicRatingsFromEffects,
   resolveRelicComparison,
@@ -18,12 +17,11 @@ import {
 import { hudBus } from '../../hudBus';
 import { tutorialFocusAtom } from '../../tutorial/atoms';
 import {
-  capstonesAtom,
   essencesAtom,
   playerIdAtom,
   playerNodeIdAtom,
   combatArchetypeAtom,
-  selectedSubVariantAtom, selectedRangeAtom, shardsAtom, unlockedSkillsAtom,
+  selectedSubVariantAtom, selectedRangeAtom, unlockedSkillsAtom,
 } from '../../hud/atoms';
 import { BrowserPane, CategoryRail, RailLayout } from '../../hud/primitives';
 import { SLOT_ABBR, biomeName, tierColor } from './common';
@@ -306,8 +304,6 @@ export function MakeTab() {
   const playerId = useAtomValue(playerIdAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
   const essences = useAtomValue(essencesAtom);
-  const shards = useAtomValue(shardsAtom);
-  const capstones = useAtomValue(capstonesAtom);
 
   const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
   // Techniques deepen with tier and passives, so a recipe quotes what it would
@@ -378,20 +374,10 @@ export function MakeTab() {
   const openedNewRef = useRef(new Set<string>());
   for (const entry of entries) if (newEntries.has(entry.key)) openedNewRef.current.add(entry.key);
 
-  // Every recipe is made the same way now: unlocked and affordable (design
-  // §24.5 retired the evolve path and the +N ladder on every slot). The one
-  // exception is a live lineage's tier-2+ form, which is paid at its gate in the
-  // tree and never made here (review findings B4/P11) — the shared check the
-  // server's craft guard reads. A parked lineage's T2+ items are plain recipes.
-  const canMake = (entry: MakeEntry): boolean => {
-    if (isTestRoom) return true;
-    if (entry.gear && isGatedLineageForm(entry.gear.id)) return false;
-    return entryAffordable(entry, essences);
-  };
-
-  /** The row's short "what is missing" line for a form that is not made here. */
-  const gateNeed = (entry: MakeEntry): string =>
-    entry.gear && isGatedLineageForm(entry.gear.id) ? 'from its lineage tree' : '';
+  // Every recipe is made the same way: unlocked and affordable (design §24.5
+  // retired the evolve path and the +N ladder on every slot, and the class-first
+  // rework removed the weapon forms' lineage gates).
+  const canMake = (entry: MakeEntry): boolean => isTestRoom || entryAffordable(entry, essences);
 
   const sectionOf = (entry: MakeEntry): MakeSection => {
     if (!entry.unlocked) return 'locked';
@@ -498,7 +484,7 @@ export function MakeTab() {
           ? <CraftReveal key={craftResult.id} result={craftResult} />
           : <CraftStamp key={craftResult.id} result={craftResult} />
       )}
-      <WalletSummary essences={essences} shards={shards} capstones={capstones} />
+      <WalletSummary essences={essences} />
       <RailLayout>
       {rail}
       <BrowserPane
@@ -522,7 +508,6 @@ export function MakeTab() {
           <MakeRow
             entry={entry}
             missing={isTestRoom || canMake(entry) ? [] : missingMaterials(entry, essences)}
-            need={isTestRoom || canMake(entry) ? '' : gateNeed(entry)}
             isNew={newEntries.has(entry.key)}
             onSeen={() => newEntries.clear(entry.key)}
           />
@@ -559,18 +544,15 @@ export function MakeTab() {
 function MakeRow({
   entry,
   missing,
-  need,
   isNew,
   onSeen,
 }: {
   entry: MakeEntry;
   missing: ReturnType<typeof missingMaterials>;
-  /** A non-material blocker: a lineage form that is opened at its gate, not here. */
-  need: string;
   isNew: boolean;
   onSeen: () => void;
 }) {
-  const short = entry.unlocked && (missing.length > 0 || need !== '');
+  const short = entry.unlocked && missing.length > 0;
   return (
     <span
       className={[
@@ -594,13 +576,11 @@ function MakeRow({
       {isNew && <span className="make-row__new">NEW</span>}
       {!isNew && short && (
         <span className="make-row__need">
-          {need
-            ? <span>{need}</span>
-            : missing.map((item) => (
-              <span key={item.key} style={item.color ? { color: item.color } : undefined}>
-                -{item.amount}
-              </span>
-            ))}
+          {missing.map((item) => (
+            <span key={item.key} style={item.color ? { color: item.color } : undefined}>
+              -{item.amount}
+            </span>
+          ))}
         </span>
       )}
       {!entry.unlocked && (
@@ -651,9 +631,6 @@ function MakeDetail({
   const unlockedSkills = useAtomValue(unlockedSkillsAtom);
   const affordable = entryAffordable(entry, essences);
   const recipe = entry.gear;
-  // A live lineage's tier-2+ form is the tree's gate (LineageTreePanel, opened
-  // from the weapon slot), never made here (design §5, review B4/P11).
-  const isGatedForm = !!recipe && isGatedLineageForm(recipe.id);
 
   const statList = recipe
     ? statEntries(recipe.stats, recipe.slot === 'weapon' ? recipe.attacksPerSecond : undefined)
@@ -736,15 +713,11 @@ function MakeDetail({
         lines={madeThingLines(entry, abilityContext)}
       />
 
-      {!isGatedForm && (
-        <>
-          <div className="make-detail__cost-label">Cost</div>
-          <CostDisplay
-            cost={entry.cost}
-            essences={essences}
-          />
-        </>
-      )}
+      <div className="make-detail__cost-label">Cost</div>
+      <CostDisplay
+        cost={entry.cost}
+        essences={essences}
+      />
 
       {result && !result.success && (
         <div className="craft-card-result craft-card-result--err">
@@ -755,31 +728,22 @@ function MakeDetail({
         </div>
       )}
 
-      {isGatedForm ? (
-        // Tier-2+ weapon forms are bought at the previous band's gate, on the
-        // weapon's page — not crafted here (design §5, §26.4).
-        <div className="make-detail__lineage-note">
-          Tier {recipe!.tier} forms open at the gate on your weapon's page.
-          Find it under Upgrade, or click your equipped weapon in the Inventory.
-        </div>
-      ) : (
-        <div className="make-detail__actions">
-          <button
-            type="button"
-            className="craft-recipe__btn"
-            disabled={blocked !== ''}
-            title={blocked}
-            data-tutorial-anchor={TUTORIAL_ANCHORS.makeAction}
-            onClick={() => onAttempt(() => {
-              if (recipe) hudBus.requestCraftRecipe(recipe.id);
-              else learnIntent();
-            })}
-          >
-            {recipe ? 'Craft' : 'Learn'}
-          </button>
-          {blocked && <span className="make-detail__blocked">{blocked}</span>}
-        </div>
-      )}
+      <div className="make-detail__actions">
+        <button
+          type="button"
+          className="craft-recipe__btn"
+          disabled={blocked !== ''}
+          title={blocked}
+          data-tutorial-anchor={TUTORIAL_ANCHORS.makeAction}
+          onClick={() => onAttempt(() => {
+            if (recipe) hudBus.requestCraftRecipe(recipe.id);
+            else learnIntent();
+          })}
+        >
+          {recipe ? 'Craft' : 'Learn'}
+        </button>
+        {blocked && <span className="make-detail__blocked">{blocked}</span>}
+      </div>
     </div>
   );
 }

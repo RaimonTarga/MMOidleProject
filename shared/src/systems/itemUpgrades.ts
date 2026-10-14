@@ -16,8 +16,7 @@ import { t1ExperimentUpgradeCost } from './t1EconomyExperiment';
  *
  * What survives here is not the ladder:
  *  - The Global Mastery band below (`MAX_UPGRADE`, `globalMasteryRequiredForUpgrade`,
- *    `upgradeCeilingFromGlobalMastery`) still prices the lineage rows' Global
- *    Mastery gate (`data/lineages/magnitudes.ts`) and the bot's GM milestones.
+ *    `upgradeCeilingFromGlobalMastery`) still prices the bot's GM milestones.
  *  - The step readers (`upgradeStatBonusTotal`, `upgradeMechanicEffectsTotal`,
  *    `upgradeCostFor`, `requiredBiomeLevelForUpgrade`) read whatever `upgrades`
  *    steps a recipe still authors, for the legacy bot routes, the balance tools and
@@ -130,7 +129,7 @@ export function upgradeMechanicEffectsTotal(item: ItemDefinition, plus: number):
 }
 
 /**
- * Cumulative `attacksPerSecond` delta for an item at `plus` (0 when the lineage
+ * Cumulative `attacksPerSecond` delta for an item at `plus` (0 when the item
  * spends nothing on cadence). Weapons only; summed like every other upgrade delta.
  */
 export function upgradeApsBonusTotal(item: ItemDefinition, plus: number): number {

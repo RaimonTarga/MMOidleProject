@@ -9,10 +9,8 @@ import { SkillTreePanel } from "../ui/SkillTreePanel";
 import { BuildPanel } from "../ui/BuildPanel";
 import { buildSectionIconSource, menuIconSource, statIconSource } from "../ui/systemIcons";
 import { StatsPanel } from "../ui/stats/StatsPanel";
-import { useUpgradeBadge } from "../ui/lineage/useUpgradeList";
 import { MasteryPanel } from "../ui/MasteryPanel";
 import { InventoryPanel } from "../ui/InventoryPanel";
-import { LineageTreePanel } from "../ui/lineage/LineageTreePanel";
 import { CraftingPanel } from "../ui/CraftingPanel";
 import { MapPanel } from "../ui/MapPanel";
 import { AudioPanel } from "./AudioPanel";
@@ -57,7 +55,6 @@ import {
   buildOpenAtom,
   globalMasteryAtom,
   inventoryOpenAtom,
-  lineageTreeSlotAtom,
   mapHighlightNodesAtom,
   mapOpenAtom,
   masteryOpenAtom,
@@ -158,11 +155,8 @@ export function RightSidebar() {
   const [buildOpen, setBuildOpen] = useAtom(buildOpenAtom);
   const [masteryOpen, setMasteryOpen] = useAtom(masteryOpenAtom);
   const [invOpen, setInvOpen] = useAtom(inventoryOpenAtom);
-  const [lineageSlot, setLineageSlot] = useAtom(lineageTreeSlotAtom);
   const [craftTab, setCraftTab] = useAtom(craftTabAtom);
   const [statsOpen, setStatsOpen] = useAtom(statsOpenAtom);
-  // Ranks and cards the player can buy right now on the worn weapon's page.
-  const upgradeBadge = useUpgradeBadge();
   const buildTab = useAtomValue(buildPanelTabAtom);
   const [mapOpen, setMapOpen] = useAtom(mapOpenAtom);
   const [mapHighlightNodes, setMapHighlightNodes] = useAtom(mapHighlightNodesAtom);
@@ -210,7 +204,7 @@ export function RightSidebar() {
     { tab: "runes", label: "Runes", gate: "loadout" },
   ];
 
-  const toggleCraftDestination = (tab: 'make' | 'upgrade') => {
+  const toggleCraftDestination = (tab: 'make') => {
     if (craftTab === tab) {
       closePrimaryOverlays();
       return;
@@ -301,20 +295,6 @@ export function RightSidebar() {
             }}
           />
         )}
-        {/* Design §26.4: the old Upgrade slot, now the worn items and the
-            weapon's page, with a count of ranks the player can buy. */}
-        {visibility.crafting && (
-          <RightNavButton
-            label="Upgrade"
-            icon={menuIconSource("upgrade")}
-            selected={craftTab === "upgrade"}
-            disabled={dead}
-            badge={upgradeBadge > 0}
-            badgeCount={upgradeBadge}
-            unlockSystems={["crafting"]}
-            onClick={() => toggleCraftDestination("upgrade")}
-          />
-        )}
         <RightNavButton
           label="Stats"
           icon={statIconSource("dps")}
@@ -353,9 +333,6 @@ export function RightSidebar() {
       {buildOpen && <BuildPanel onClose={() => setBuildOpen(false)} />}
       {masteryOpen && <MasteryPanel onClose={() => setMasteryOpen(false)} />}
       {invOpen && <InventoryPanel onClose={() => setInvOpen(false)} />}
-      {lineageSlot !== null && (
-        <LineageTreePanel slot={lineageSlot} onClose={() => setLineageSlot(null)} />
-      )}
       {craftTab !== null && (
         <CraftingPanel
           tab={craftTab}

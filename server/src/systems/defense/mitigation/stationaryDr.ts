@@ -5,7 +5,6 @@ import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import { isPlayerActivelyInCombat } from '../../combat/ai/engagement';
 import { isHardControlled } from '../../combat/status/playerHardControl';
 import { registerCombatListener } from '../../combat/engine/combatPipeline';
-import { immovableMovementGraceMs } from '../../combat/keystones/immovable';
 
 // Mirrors the damage-reduction clamp applied in shared stats.ts so the ramp can
 // never push total DR past the cap (in-place additions bypass that clamp).
@@ -20,9 +19,8 @@ const RAMP_KEY = 'stationaryDrRampMs';
 // target into the next pull does not keep full stacks between fights.
 const PRESSURE_CD = 'stationaryIncomingPressure';
 const PRESSURE_MS = 2000;
-// Milliseconds since movement began (0 while stationary). Published through
-// {@link stationaryMovementMs} because the Bulwark keystone's own grace reads the
-// same clock rather than keeping a second one.
+// Milliseconds since movement began (0 while stationary), read through
+// {@link stationaryMovementMs}.
 const MOVEMENT_MS_KEY = 'stationaryMovementMs';
 // Whether the player moved on the last tick, kept beside the clock so a reader
 // never has to infer it from `movementMs > 0` (which is false on the first tick
@@ -30,8 +28,7 @@ const MOVEMENT_MS_KEY = 'stationaryMovementMs';
 const MOVING_KEY = 'stationaryMoving';
 /**
  * Grace before a moving player starts shedding the stance: a step out of a boss
- * telegraph should not cost the whole ramp. The Bulwark keystone (Immovable)
- * raises it — see `immovableMovementGraceMs`.
+ * telegraph should not cost the whole ramp.
  */
 const MOVEMENT_GRACE_MS = 250;
 
@@ -42,10 +39,7 @@ export function registerStationaryDr(): void {
   });
 }
 
-/**
- * Milliseconds this player has been moving (0 while stationary). The one clock
- * both this ramp and the Bulwark keystone's post-movement grace read.
- */
+/** Milliseconds this player has been moving (0 while stationary). */
 export function stationaryMovementMs(cs: TracksCombat): number {
   return getResource(cs, MOVEMENT_MS_KEY);
 }
@@ -60,12 +54,8 @@ export function stationaryIsMoving(cs: TracksCombat): boolean {
  * early returns, so it runs for every live player every tick whatever they are
  * wearing.
  *
- * That placement is the point. The Bulwark keystone (Immovable) reads this same
- * clock to hold plating stacks, and while the bookkeeping sat below those early
- * returns a build with no stationary-DR passive never advanced it — so
- * Immovable's plating half did nothing — and a player who lost the passive
- * mid-movement froze it inside the grace window, where it held their plating
- * stacks against the fade permanently.
+ * That placement is the point: below those early returns a player who lost the
+ * passive mid-movement would freeze the clock inside the grace window.
  */
 export function trackStationaryMovement(player: PlayerEntity, dt: number): void {
   const cs = player.tracksCombat;
@@ -114,7 +104,7 @@ export function resetStationaryDr(player: PlayerEntity): void {
  * remaining after base DR and updates the networked mitigation stat in place.
  */
 export function runStationaryDr(world: World, player: PlayerEntity, dt: number): void {
-  // First, and above the early returns: the keystone reads this clock too.
+  // First, and above the early returns (see `trackStationaryMovement`).
   trackStationaryMovement(player, dt);
 
   const maxBonus = player.usesSkills.passives['defense.stationary-dr-pct'] ?? 0;
@@ -129,9 +119,8 @@ export function runStationaryDr(world: World, player: PlayerEntity, dt: number):
   // The clock itself was advanced above, by `trackStationaryMovement`.
   const moving = stationaryIsMoving(cs);
   const movementMs = stationaryMovementMs(cs);
-  // Immovable (design §4) widens this grace, which is the whole of "stationary DR
-  // persists 2 s after the player moves": inside it the ramp is held, not shed.
-  const grace = immovableMovementGraceMs(player, MOVEMENT_GRACE_MS);
+  // Inside the grace the ramp is held, not shed.
+  const grace = MOVEMENT_GRACE_MS;
   const newRamp = moving && movementMs>grace
     ? Math.max(prevRamp - dt * ramptime / 1000, 0)
     : !active

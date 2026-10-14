@@ -2,7 +2,6 @@ import type { WardState } from "@mmo-idle/shared";
 import type { PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
-import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import { registerCombatListener } from "../../combat/engine/combatPipeline";
 import { recordWorldLogEvent } from "../../../world/worldLog";
 import { actorFromPlayer } from "../../../world/worldLogActors";
@@ -15,59 +14,23 @@ import { stampBarrierDamage } from "./barrier";
  * barrier — otherwise a ward that expired unspent while the barrier soaked the
  * damage would be pure waste. Multiple wards stack and drain oldest-first.
  *
- * Sources: overheal (`defense.overheal-ward-pct`), lineage `ward` cards, the
- * Overflow keystone, and ability nodes. An ability node's ward has an OWNER and
- * refreshes rather than stacks (see {@link applyWard}).
+ * Sources: overheal (`defense.overheal-ward-pct`). Each raise is a new ward.
  */
 
 /**
- * Who owns a ward that REFRESHES rather than stacks (design §22.12: "a ward a node
- * fires refreshes the one ward that node owns instead of stacking a new one").
- * Keyed by the ward object itself, server-only — never on the networked
- * `WardState` — so a ward that broke, expired or went with a death is simply not
- * found again, and the owner's next raise mints a fresh one.
- */
-const wardOwners = new WeakMap<WardState, string>();
-
-/** The live ward `owner` holds on `player`, if it still stands. */
-export function ownedWardOf(player: PlayerEntity, owner: string): WardState | undefined {
-  return player.holdsWards?.wards.find((ward) =>
-    wardOwners.get(ward) === owner
-    && ward.amount > 0
-    && (ward.remainingMs === -1 || ward.remainingMs > 0));
-}
-
-/**
- * Apply a ward to a player.
- *
- * With an `owner`, the ward is that owner's ONE ward: while it stands, a new raise
- * refreshes it in place — topped up to `amount` (never shrunk) with its window
- * renewed — instead of stacking a second one. Without an owner (every source but
- * an ability node), each raise is a new ward, as before.
+ * Apply a ward to a player. Each raise is a new ward.
  *
  * @param amount     Absorb HP. Caller is responsible for scaling by maxHp if needed.
  * @param durationMs Duration in ms. 0 or negative = lasts until fully depleted.
- * @param owner      The one ward this key owns (an ability node's), refreshed in place.
  */
 export function applyWard(
   world: World,
   player: PlayerEntity,
   amount: number,
   durationMs: number,
-  owner?: string,
 ): void {
   if (amount <= 0) return;
   const remainingMs = durationMs > 0 ? durationMs : -1;
-  const live = owner !== undefined ? ownedWardOf(player, owner) : undefined;
-  if (live) {
-    const gained = Math.max(0, amount - live.amount);
-    live.amount += gained;
-    live.maxAmount = Math.max(live.maxAmount, live.amount);
-    live.remainingMs = remainingMs;
-    markSliceDirty(world, player, "holdsWards");
-    if (gained > 0) recordWardGain(world, player, gained);
-    return;
-  }
   const ward: WardState = {
     amount,
     maxAmount: amount,
@@ -78,7 +41,6 @@ export function applyWard(
   } else {
     attachComponent(world, player, "holdsWards", { wards: [ward] });
   }
-  if (owner !== undefined) wardOwners.set(ward, owner);
   recordWardGain(world, player, amount);
 }
 
@@ -109,9 +71,8 @@ export function applyWardPercent(
   player: PlayerEntity,
   pct: number,
   durationMs: number,
-  owner?: string,
 ): void {
-  applyWard(world, player, Math.round(player.hasHealth.maxHp * pct), durationMs, owner);
+  applyWard(world, player, Math.round(player.hasHealth.maxHp * pct), durationMs);
 }
 
 /**

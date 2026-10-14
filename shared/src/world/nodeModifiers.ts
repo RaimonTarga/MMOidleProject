@@ -2,8 +2,8 @@
 //
 // Progression rework Phase 2b (2026-10-01): node modifiers no longer reshape
 // combat or rewards. T1 nodes get their personality from an authored family
-// BLEND (`shared/src/data/families/`, `world/map/authoring.ts` `blends`) and
-// the shard/capstone economy it drives. T2-T4 have no family tables yet, so
+// BLEND (`shared/src/data/families/`, `world/map/authoring.ts` `blends`).
+// T2-T4 have no family tables yet, so
 // their nodes still carry a `modifier` — it is AUTHORING IDENTITY ONLY now:
 // the node-count source for a biome with no blend list
 // (`normalNodeCountForBiome`), the input to display names (`displayNames.ts`),

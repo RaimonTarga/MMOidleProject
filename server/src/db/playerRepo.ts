@@ -15,7 +15,6 @@ import type {
   TracksProgression,
   UsesSkills,
   SummonsMinions,
-  PacketId,
 } from '@mmo-idle/shared';
 import {
   DEFAULT_RUNE_LOADOUT,
@@ -30,10 +29,6 @@ import {
   globalMastery,
   runeIdsFromCraftedRecipes,
   validRiteIds,
-  PACKET_IDS,
-  CAPSTONE_MATERIALS,
-  normalizeLineageProgressMap,
-  normalizeFiringsTaught,
   CLEARING_NODE_ID,
   WORLD_NODES,
   buildCharacterSummary,
@@ -46,7 +41,6 @@ import type * as schema from './schema';
 import { weaponUpgradeRefundFor } from './weaponUpgradeRefund';
 import { gearUpgradeRefundFor } from './gearUpgradeRefund';
 import { log } from '../log';
-import { refundRetiredLineageCards } from '../systems/player/economy/lineageSync';
 
 export type DB = NodePgDatabase<typeof schema>;
 
@@ -522,37 +516,6 @@ export function refundRetiredUpgradeEssence(
 }
 
 /**
- * Keep only live packet keys in a shard wallet, and only biomes that actually
- * have a capstone material in a capstone wallet.
- *
- * Same job as {@link sanitizeFamilyWallet}: a wallet is the one place a retired
- * key can sit forever, invisible until something tries to spend it.
- */
-export function sanitizeShardWallet(
-  wallet: Partial<Record<PacketId, number>> | undefined,
-): Partial<Record<PacketId, number>> {
-  const out: Partial<Record<PacketId, number>> = {};
-  if (!wallet) return out;
-  for (const packet of PACKET_IDS) {
-    const value = wallet[packet];
-    if (typeof value === 'number' && Number.isFinite(value)) out[packet] = Math.max(0, value);
-  }
-  return out;
-}
-
-export function sanitizeCapstoneWallet(
-  wallet: Record<string, number> | undefined,
-): Record<string, number> {
-  const out: Record<string, number> = {};
-  if (!wallet) return out;
-  for (const biome of CAPSTONE_MATERIALS.keys()) {
-    const value = wallet[biome];
-    if (typeof value === 'number' && Number.isFinite(value)) out[biome] = Math.max(0, value);
-  }
-  return out;
-}
-
-/**
  * Drop item ids that no longer exist in ITEM_DATABASE.
  *
  * Recipes get retired (the placeholder core cast was deleted outright), and a save
@@ -643,11 +606,9 @@ function hydratePlayerSlices(
   holdsInventory.equipment = normalizeEquipment(holdsInventory.equipment);
   holdsInventory.itemUpgrades = holdsInventory.itemUpgrades ?? {};
   holdsInventory.inventory = holdsInventory.inventory ?? [];
-  // Lineage trees drop unknown lineage, card and form ids, and any active row
-  // pointing at a card the save no longer owns. A save written before Phase 1
-  // simply has none; the tree is rebuilt from the forms the player holds when
-  // the entity attaches.
-  holdsInventory.lineages = normalizeLineageProgressMap(holdsInventory.lineages);
+  // The lineage trees are gone (class-first rework D1): a dev save written before
+  // that still holds them, so they are dropped here and the save loads clean.
+  delete (holdsInventory as { lineages?: unknown }).lineages;
   migrateLegacyItems(holdsInventory);
   pruneUnknownItems(holdsInventory);
   const tracksProgression = parseSlice<TracksProgression>(row.tracksProgression);
@@ -658,6 +619,12 @@ function hydratePlayerSlices(
   // migration or a dev reset bypassed it.
   delete (tracksProgression as { catalysts?: unknown }).catalysts;
   delete (tracksProgression as { catalystProgress?: unknown }).catalystProgress;
+  // The lineage wallets, the card teaching counter and the ability node rows went
+  // with the lineage trees (class-first rework D1). Dropped on load the same way,
+  // so a dev save written before that still loads.
+  for (const key of ['shards', 'capstones', 'cardFiringsTaught', 'abilityNodes']) {
+    delete (tracksProgression as unknown as Record<string, unknown>)[key];
+  }
   // The +N ladder is retired on every slot: refund and drop any itemUpgrades
   // entry it left behind (weapons since Phase 2b, armour/charm/boots since design
   // §24.5). Mutates holdsInventory.itemUpgrades and tracksProgression.essences in
@@ -665,19 +632,6 @@ function hydratePlayerSlices(
   // for the load path that keeps it — see this function's docblock.
   if (options.grantRetiredRefunds) {
     refundRetiredUpgradeEssence(row.id, holdsInventory, tracksProgression.essences);
-    // The T1 cards design §26.1 retired (legibility run): read off the save as
-    // WRITTEN, because `normalizeLineageProgressMap` above already dropped their
-    // ids from the live tree. See `refundRetiredLineageCards`.
-    const refund = refundRetiredLineageCards(
-      parseSlice<HoldsInventory>(row.holdsInventory).lineages,
-      tracksProgression,
-    );
-    if (refund.cardIds.length > 0) {
-      log.info(
-        { characterId: row.id, refundedCards: refund.cardIds, essence: refund.essence, shards: refund.shards },
-        'legibility run: refunded retired T1 lineage cards',
-      );
-    }
     // The abilities the ability pass CUT (design §22.2) drop silently from the
     // save below (`migrateAttunement`); say so once per character, on the load
     // that keeps the result. Read off the stored slice, before migration.
@@ -710,10 +664,6 @@ function hydratePlayerSlices(
     hasHealth:         parseSlice<HasHealth>(row.hasHealth),
     tracksProgression: {
       ...tracksProgression,
-      // Lineage wallets (Phase 1). Keyed by packet and by biome respectively, and
-      // absent from every save written before the progression rework.
-      shards:     sanitizeShardWallet(tracksProgression.shards),
-      capstones:  sanitizeCapstoneWallet(tracksProgression.capstones),
       bossesCleared: tracksProgression.bossesCleared ?? [],
       clearedNodes:   tracksProgression.clearedNodes ?? [],
       visitedNodes:
@@ -725,14 +675,6 @@ function hydratePlayerSlices(
       runesOwned:     runeIdsFromCraftedRecipes(runeRecipesCrafted),
       knownRites,
       equippedRites,
-      // The teaching counter (design §26.4). Absent from every save written before
-      // the legibility run; counts clamp to 0..3.
-      cardFiringsTaught: normalizeFiringsTaught(tracksProgression.cardFiringsTaught),
-      // Ability nodes (design §19) ride in `attunement`: `migrateAttunement` drops
-      // the trees of the abilities the ability pass cut (design §22.2), then
-      // normalizes the rest the way lineage trees are (unknown ability ids, unknown
-      // option ids and active rows pointing at something unowned are dropped), so a
-      // save written before an offer changed loads clean.
       ...attunement,
     },
     holdsInventory,
@@ -803,8 +745,6 @@ function buildFreshSlices(
       level:            0,
       skillPoints:      0,
       essences:         { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      shards:           {},
-      capstones:        {},
       biomeXP:          {},
       biomeLevel:       {},
       unlockedRecipes:  [],

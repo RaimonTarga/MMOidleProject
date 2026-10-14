@@ -4,10 +4,9 @@
  *
  * WHY IT EXISTS. Every class root has a moment its whole loop builds toward: the
  * cadence finisher, the cooldown execution, a full DoT stack, the reload landing,
- * the energy burst, a completed formation cycle. A lineage card that wants to hang
- * a payoff on "when your mechanic fires" must not have to know which of the six it
- * is looking at — otherwise a card is six cards, and the closed vocabulary (design
- * §6) stops being closed.
+ * the energy burst, a completed formation cycle. A payoff hung on "when your
+ * mechanic fires" must not have to know which of the six it is looking at —
+ * otherwise one payoff is six.
  *
  * So each root calls {@link emitMechanicFired} at its own moment, ONCE, and
  * everything downstream sees one uniform event. The call sites are:
@@ -26,7 +25,9 @@
  * actually closing, and it closes whether or not anybody is at the keyboard.
  *
  * This module DISPATCHES and nothing else: it owns no state of its own, applies
- * no effect, and reads no card. `lineageCards.ts` is currently its only listener.
+ * no effect, and reads no card. It has no listener since the lineage cards were
+ * removed (class-first rework D1); the class systems subscribe through
+ * {@link registerMechanicFiredListener}.
  *
  * ONE PER HIT. Where an emission rides an attack, the `ctx` is passed in and used
  * as the latch: the five roots whose moment is an on-hit moment (cadence, cooldown,

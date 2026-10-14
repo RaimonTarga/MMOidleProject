@@ -25,7 +25,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
     hasHealth: { hp: GAME_CONFIG.PLAYER_MAX_HP, maxHp: GAME_CONFIG.PLAYER_MAX_HP, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0, skillPoints: 0,
-      essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 }, shards: {}, capstones: {}, biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
+      essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 }, biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
       knownAbilities: ["brace"], attunedAbilities: { techniques: [], guards: ["brace"] },
       knownStances: [], equippedStances: { default: null }, activeStance: null,

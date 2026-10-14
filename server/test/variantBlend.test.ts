@@ -2,7 +2,7 @@
  * Node blends: what a node is made of, and whether it spawns what it says.
  *
  * WHY THIS EXISTS: a blend is the one piece of node authoring a player is meant to
- * read off the map ("this is a Herd node, Herd drops Empowered shards"), so the
+ * read off the map ("this is a Herd node"), so the
  * failure mode is silent — a node that advertises one family and fields another
  * looks fine and teaches the player the wrong thing. Two things are pinned:
  *
@@ -18,8 +18,8 @@
  * "within one mob" assertions below are therefore per cycle, with the 30-spawn
  * run asserted to be exactly three identical cycles rather than a drifting sample.
  *
- * Deliberately NOT asserted: which families a biome has, or their shards —
- * `lineageMaterials.test.ts` owns the family table.
+ * Deliberately NOT asserted: which families a biome has — `families.test.ts`
+ * owns the family table.
  *
  * Run: node --conditions=development --import tsx test/variantBlend.test.ts
  */
@@ -68,8 +68,8 @@ function countFamilies(families: readonly FamilyId[]): Map<FamilyId, number> {
 // T3+ only by design (no T2 member — see families/index.ts), so a T2 check
 // against `familiesForBiome` would wrongly demand a Stalker-led T2 node. And
 // only the named families the tier's pool FIELDS: a family with no body at the
-// tier must lead nothing (`nodeShards.test.ts` — a node pays its leader's
-// shard, so a bodiless leader pays for a family it never spawns), so a minority
+// tier must lead nothing (`nodeTerritories.test.ts` — a node is its leader's
+// territory, so a bodiless leader names a family it never spawns), so a minority
 // share it keeps in a blend is texture for when a body is authored, not a claim.
 
 function checkTierBlends(tier: number, expectedCount: number) {
@@ -129,8 +129,8 @@ function checkTierBlends(tier: number, expectedCount: number) {
       `T${tier} ${biomeGroup}: ${count} normal nodes but ${blended} blends`,
     );
     // Every family this tier's blends name for the biome, and its pool fields,
-    // leads at least one node, so no shard this tier claims to source is
-    // actually unreachable.
+    // leads at least one node, so no family this tier names is actually
+    // without a territory.
     const fielded = familiesFieldedByBiome.get(biomeGroup) ?? new Set<FamilyId>();
     for (const familyId of familiesNamedByBiome.get(biomeGroup) ?? []) {
       if (!fielded.has(familyId)) continue;
@@ -170,7 +170,7 @@ assert(problems.length === 0, `blend authoring failures:\n  ${problems.join('\n 
 //
 // `regionT1.ts` ("ORDER IS DISTANCE") puts each biome's MIXED nodes on the first two
 // nodes a player meets (its doors), so no biome opens on its worst concentration —
-// and since design §24.3 the order also decides which node pays which shard. Since
+// and since design §24.3 the order also decides which node is whose territory. Since
 // the roster pass (design §26.3, legibility run) "mixed" is the roster form: a door
 // fields at least two families (a pair or the crossroads, never a pure) and its
 // leader takes at most six spawns in ten (the 60/40 door pair; the old rule was "no

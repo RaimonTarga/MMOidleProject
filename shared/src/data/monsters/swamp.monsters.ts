@@ -95,7 +95,7 @@ export const swampMonsterEntries = [
     // COVEN FAMILY, T1 (progression rework, 2026-10-01). The Bog Witch's lesser
     // kin: a faceless reed-wrapped vessel that plants and casts MIRE HEX, a
     // telegraphed slow. Weak normal attacks on purpose; the hex is the kit. The
-    // family's shard is Control — control answers control.
+    // family is a Control one — control answers control.
     // PLACEHOLDER numbers seeded from the T1 Swamp band (toad 120/13); designer
     // hand-edits before the lane bench.
     // COVEN FAMILY (progression rework, 2026-10-01, PROVISIONAL): plating 0 -> 2.

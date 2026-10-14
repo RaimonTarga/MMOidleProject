@@ -2,7 +2,6 @@ import { atom, getDefaultStore } from 'jotai';
 import {
   ABILITY_RECIPE_DATABASE,
   ITEM_DATABASE,
-  LINEAGE_DATABASE,
   RECIPE_DATABASE,
   RUNE_RECIPE_DATABASE,
   ABILITY_DATABASE,
@@ -11,9 +10,7 @@ import {
   TUTORIAL_ANCHORS,
   abilityDisplayName,
   abilityLoadoutFor,
-  abilityNodeNameParts,
   attunedAbilityIds,
-  cardRank,
   composeRuneEdit,
   evaluateTutorialCondition,
   referenceAbilityRule,
@@ -38,7 +35,6 @@ import {
   clearDeathOverlay,
   deathOverlayAtom,
   dungeonAtom,
-  lineageTreeSlotAtom,
   localPlayerViewAtom,
 } from '../hud/atoms';
 import { closePrimaryOverlays, openPrimaryOverlay } from '../input/overlayStack';
@@ -318,145 +314,6 @@ async function equip(definitionId: string, beat: TutorialBeat, signal: AbortSign
   store.set(tutorialHighlightAtom, null);
 }
 
-/**
- * Open a slot's weapon page the way a player does: Inventory → the equipped
- * slot → the page, which replaces the Inventory dialog rather than stacking on
- * it (`lineageTreeSlotAtom`). The page shows whatever the slot holds, which is
- * why the scripts wear the lineage's form before any lineage step (review P9).
- */
-async function openLineageTree(
-  lineageId: string,
-  beat: TutorialBeat,
-  signal: AbortSignal,
-): Promise<void> {
-  const lineage = LINEAGE_DATABASE.get(lineageId);
-  if (!lineage) throw new TutorialStop(`Unknown lineage ${lineageId}.`, 'error');
-  if (store.get(lineageTreeSlotAtom) === lineage.slot) return;
-  report(beat, 'working');
-  closePrimaryOverlays();
-  await point(TUTORIAL_ANCHORS.menuInventory, signal);
-  openPrimaryOverlay('inventory');
-  await point(TUTORIAL_ANCHORS.equipmentSlot(lineage.slot), signal);
-  await pressPointed(signal);
-  closePrimaryOverlays();
-  store.set(lineageTreeSlotAtom, lineage.slot);
-}
-
-/**
- * Buy a card, or — with `rank` — rank an owned lean up to it (design §26.1): the
- * page's "Rank up" sends the same `lineage:unlockCard` for the next rank, so the
- * ring moves to that button once the card is owned. One rank per press, each
- * confirmed by the server's delta before the next.
- */
-async function unlockCard(
-  step: Extract<TutorialStep, { type: 'unlockCard' }>,
-  beat: TutorialBeat,
-  signal: AbortSignal,
-): Promise<void> {
-  const target = Math.max(1, step.rank ?? 1);
-  const rankOf = (v: PlayerView) => cardRank(v.lineages[step.lineageId], step.cardId);
-  while (rankOf(requireView()) < target) {
-    const buying = rankOf(requireView()) + 1;
-    await openLineageTree(step.lineageId, beat, signal);
-    await point(buying > 1 ? TUTORIAL_ANCHORS.lineageRankUp(step.cardId) : TUTORIAL_ANCHORS.lineageCard(step.cardId), signal);
-    await pressPointed(signal);
-    hudBus.requestLineageUnlockCard(step.lineageId, step.cardId);
-    const bought = await waitAlive((v) => rankOf(v) >= buying, signal, ACTION_TIMEOUT_MS);
-    if (!bought) {
-      throw new TutorialStop(buying > 1 ? 'The rank was not bought. Press Next to try again.' : 'The card was not bought. Press Next to try again.', 'error');
-    }
-    // Buying into an empty row activates it server-side; the button now reads
-    // "active" (or the next rank), so the ring must not stay on it.
-    store.set(tutorialHighlightAtom, null);
-  }
-}
-
-/**
- * Make an owned card the active one of its row — the same press and intent the
- * weapon page uses for "owned · click to swap in". After a purchase into an
- * empty row there is nothing to do: the server already slotted it.
- */
-async function setActive(
-  step: Extract<TutorialStep, { type: 'setActive' }>,
-  beat: TutorialBeat,
-  signal: AbortSignal,
-): Promise<void> {
-  const active = (v: PlayerView) => v.lineages[step.lineageId]?.active[step.row] === step.cardId;
-  if (active(requireView())) return;
-  await openLineageTree(step.lineageId, beat, signal);
-  await point(TUTORIAL_ANCHORS.lineageCard(step.cardId), signal);
-  await pressPointed(signal);
-  hudBus.requestLineageSetActive(step.lineageId, step.row, step.cardId);
-  const on = await waitAlive(active, signal, ACTION_TIMEOUT_MS);
-  if (!on) throw new TutorialStop('The card did not become active. Press Next to try again.', 'error');
-  store.set(tutorialHighlightAtom, null);
-}
-
-/** How long the ring rests on what a lesson line is about, so it can be read. */
-const READ_MS = 5_000;
-
-/**
- * A beat's lesson, after its steps are done (shared `TutorialBeat.lesson`): the
- * ring rests on the card the beat bought while its line reads out what the card
- * now says, then — with the page closed — on that card's ring under the HP bar
- * (design §26.4). Nothing is pressed and nothing is sent.
- *
- * By now the panel has moved on to the next beat (the purchase made this one
- * done); `TutorialPanel` shows a finished beat's `working` message for exactly
- * this.
- */
-async function playLesson(beat: TutorialBeat, signal: AbortSignal): Promise<void> {
-  const lesson = beat.lesson;
-  if (!lesson) return;
-  const view = requireView();
-  const progress = view.lineages[lesson.lineageId];
-  // Never narrate a card that is not the live one (a player can swap mid-beat).
-  if (!progress || !Object.values(progress.active).includes(lesson.cardId)) return;
-  await openLineageTree(lesson.lineageId, beat, signal);
-  report(beat, 'working', lesson.read);
-  store.set(tutorialHighlightAtom, TUTORIAL_ANCHORS.lineageCard(lesson.cardId));
-  await pause(READ_MS, signal);
-  if (lesson.ring) {
-    // The page is a dialog over the HUD; the ring sits under the HP bar beneath it.
-    store.set(lineageTreeSlotAtom, null);
-    report(beat, 'working', lesson.ring);
-    store.set(tutorialHighlightAtom, TUTORIAL_ANCHORS.rhythmRing(lesson.cardId));
-    await pause(READ_MS, signal);
-  }
-  store.set(tutorialHighlightAtom, null);
-}
-
-async function unlockForm(
-  step: Extract<TutorialStep, { type: 'unlockForm' }>,
-  beat: TutorialBeat,
-  signal: AbortSignal,
-): Promise<void> {
-  const owned = (v: PlayerView) => v.lineages[step.lineageId]?.ownedForms.includes(step.recipeId) ?? false;
-  if (owned(requireView())) return;
-  await openLineageTree(step.lineageId, beat, signal);
-  await point(TUTORIAL_ANCHORS.lineageForm(step.recipeId), signal);
-  await pressPointed(signal);
-  hudBus.requestLineageUnlockForm(step.lineageId, step.recipeId);
-  const paid = await waitAlive(owned, signal, ACTION_TIMEOUT_MS);
-  if (!paid) throw new TutorialStop('The gate did not take. Press Next to try again.', 'error');
-}
-
-async function wearForm(
-  step: Extract<TutorialStep, { type: 'wearForm' }>,
-  beat: TutorialBeat,
-  signal: AbortSignal,
-): Promise<void> {
-  const worn = (v: PlayerView) => v.lineages[step.lineageId]?.wornForm === step.recipeId;
-  if (worn(requireView())) return;
-  await openLineageTree(step.lineageId, beat, signal);
-  await point(TUTORIAL_ANCHORS.lineageForm(step.recipeId), signal);
-  await pressPointed(signal);
-  hudBus.requestLineageWearForm(step.lineageId, step.recipeId);
-  const on = await waitAlive(worn, signal, ACTION_TIMEOUT_MS);
-  if (!on) throw new TutorialStop('The form was not worn. Press Next to try again.', 'error');
-  store.set(tutorialHighlightAtom, null);
-}
-
 async function openBuildTab(tab: 'abilities' | 'runes', anchor: string, signal: AbortSignal): Promise<void> {
   if (store.get(buildOpenAtom) && store.get(buildPanelTabAtom) === tab) return;
   closePrimaryOverlays();
@@ -476,13 +333,13 @@ async function sendRunes(rules: EquippedRule[], signal: AbortSignal): Promise<vo
 
 /**
  * An ability in the tutorial's running copy: its noun through the one entry point
- * (design §22.7), so a character whose keystone renamed it reads that name here too.
+ * (design §22.7).
  */
 function abilityName(id: string): string {
   const ability = ABILITY_DATABASE.get(id);
   if (!ability) return id;
   const view = store.get(localPlayerViewAtom);
-  return abilityDisplayName(ability, view?.playerTier ?? 0, abilityNodeNameParts(id, view?.abilityNodes?.[id]), 'plain');
+  return abilityDisplayName(ability, view?.playerTier ?? 0, 'plain');
 }
 
 function ruleLabel(rule: EquippedRule): string {
@@ -663,9 +520,9 @@ async function configureRunes(
  * One trip to a boss: rest, travel, clear the guard, wake it, fight.
  *
  * `cleared` is the trip's own finish line, which is not always "this boss is
- * cleared": the gate beat fights the same boss several times for its capstone
- * drops, so after the first win the clear flag is already set and the trip has
- * to end on something else (see `attemptBoss`).
+ * cleared": a step with `until` fights the same boss several times, so after the
+ * first win the clear flag is already set and the trip has to end on something
+ * else (see `attemptBoss`).
  */
 async function bossRound(
   step: Extract<TutorialStep, { type: 'attemptBoss' }>,
@@ -806,14 +663,6 @@ async function performStep(
       return learnAbility(step, beat, signal);
     case 'setAbilities':
       return applyAbilities(abilityLoadoutFor(step, requireView()), beat, signal);
-    case 'unlockCard':
-      return unlockCard(step, beat, signal);
-    case 'setActive':
-      return setActive(step, beat, signal);
-    case 'unlockForm':
-      return unlockForm(step, beat, signal);
-    case 'wearForm':
-      return wearForm(step, beat, signal);
     case 'attemptBoss':
       return attemptBoss(step, beat, signal);
   }
@@ -823,9 +672,6 @@ function clearPointers(): void {
   store.set(tutorialHighlightAtom, null);
   store.set(tutorialFocusAtom, null);
   store.set(tutorialRuneDraftAtom, null);
-  // The lineage tree is its own top-level dialog, so `closePrimaryOverlays`
-  // does not reach it.
-  store.set(lineageTreeSlotAtom, null);
 }
 
 /**
@@ -840,7 +686,6 @@ export async function runBeat(script: TutorialScript, beat: TutorialBeat, signal
       if (!step) break;
       await performStep(script, beat, step, signal);
     }
-    await playLesson(beat, signal);
     // Let the result land on screen before the panel closes.
     await pause(POINT_MS, signal);
     closePrimaryOverlays();

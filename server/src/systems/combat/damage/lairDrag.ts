@@ -38,9 +38,6 @@ import { isMonsterStunned } from "../status/stun";
 import { stopEntity } from "../../world/movement";
 import { isMonsterKnockedBack } from "./knockback";
 import { pullPlayer } from "./forcedMovement";
-import {
-  immovableRefusesDisplacement, pushImmovableRefusal,
-} from "../keystones/immovable";
 
 /** Arrival tolerance at the shallow-water stopping point. */
 const ARRIVAL_MARGIN = 2;
@@ -76,15 +73,6 @@ export function beginLairDrag(
   // UNYIELDING (Endure's keystone, design §22.4): the haul owns a root, and a root
   // is refused — so the bite simply lands, as below.
   if (refusesHardControl(player.tracksCombat)) return false;
-  // IMMOVABLE (design §4): the haul is a displacement in everything but its
-  // implementation — it moves the player and roots them — so the Bulwark
-  // keystone refuses it the way it refuses a knockback. Returning false means
-  // "the bite simply lands", which is the honest outcome this function already
-  // has for a node with no lair.
-  if (immovableRefusesDisplacement(player)) {
-    pushImmovableRefusal(world, player);
-    return false;
-  }
   // ONE SET OF JAWS AT A TIME. Two lurkers hauling the same victim toward different
   // pools is a tug of war that resolves to neither drag, and leaves two components
   // fighting over one root. The second bite simply lands, which is honest enough.

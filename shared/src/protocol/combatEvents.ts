@@ -1,7 +1,6 @@
 import type { EssenceType } from '../items';
 import type { Vec2 } from '../systems/spatial';
 import type { DamageElement } from '../systems/dotElements';
-import type { AmplifiedAxis, LineageFxKey } from '../data/lineages/types';
 
 /** Dedicated per-tick DoT animations (distinct from element damage-number styling). */
 export type DotTickFx = 'conflagration';
@@ -296,67 +295,6 @@ type CombatEventPayload =
   // A Rune changed the player's active posture. The authoritative progression
   // delta carries the state; this event exists for immediate visual feedback.
   | { kind: 'stance-switch'; playerId: string; stanceId: string | null }
-  // A lineage card (or a worn form's capstone) paid out — progression rework 1c.
-  //
-  // Pushed EXACTLY ONCE per payoff application, from the listener that applied
-  // it. Never per tick and never for a stat row: a stat row's cosmetic is the
-  // weapon trail, which the client derives from `PlayerView.lineages` and needs
-  // no event for.
-  //
-  // `pos` is the player. `targetId`/`targetPos` are set when the payoff landed on
-  // a monster (vulnerability, plating-shred, echo-hit, hemorrhage, poison-stack,
-  // slow, stun, contagion); `stacks` when the payoff counts (plating-stack,
-  // poison-stack). A capstone pushes the same event with the capstone's own `fx`.
-  //
-  // The client draws one handler per `LineageFxKey` in `render/combatFx.ts`,
-  // keyed by the lane grammar (design §8). An unknown key draws nothing.
-  //
-  // `cardId` names the card or worn capstone that fired (design §24.6, W2-B): the
-  // rhythm readout pulses that card's ring and floats its NAME over the player.
-  // Absent on a firing that is not a card's — an ability node's payoff, a
-  // keystone's chain link — which draws its fx and no word.
-  //
-  // Two more OPTIONAL fields serve the T1 payload fx (design §24.2, W2-C), so a
-  // lasting look ends when the server's state does and not on a client guess:
-  //   `durationMs`  how long the payload actually holds, as APPLIED — a root's or
-  //                 a stun's clock after control resistance, a bleed's ticks ×
-  //                 its tick interval. Absent for an instant payload.
-  //   `abilityIds`  `technique-refund` only: the Techniques whose cooldown the
-  //                 refund actually moved (the HUD flashes those tiles).
-  //
-  // `teach` (design §26.4, legibility run Contract 2) marks a firing that TEACHES:
-  // one of the card's first three firings the player saw on screen (the server's
-  // `cardFiringsTaught` counter). The client floats the card's name only on such a
-  // firing; every other firing shows the body fx alone. Absent = do not teach.
-  //
-  // Three more serve the ability flavor (design §22.7, ability pass W2-D):
-  //   `keystone`  the ABILITY keystone verb that fired (its id, e.g. 'whirlwind').
-  //               The client keys the verb's own bespoke animation on it; `fx` stays
-  //               the lane grammar a client with no animation for the verb draws.
-  //               `pos` is the verb's DELIVERY BODY (design §22.10: the summon that
-  //               landed it on a Conduit), so the animation draws from there.
-  //               A verb that holds a window says when it ended early with
-  //               `durationMs: 0` (Flow: the hit that landed snaps the window).
-  //   `windupMs`  set on a keystone's WIND-UP beat only: its payoff lands this many
-  //               ms later (Aftershock's second eruption), with its own card-fx then.
-  //   `axis`      an ability node's active amplifier axis, on that node's payoff:
-  //               the client scales or extends the lane's fx by it (a bigger draw, a
-  //               second echo, a lingering trail). Absent with no amplifier.
-  | { kind: 'card-fx'; playerId: string; fx: LineageFxKey; pos: Vec2;
-      targetId?: string; targetPos?: Vec2; stacks?: number; cardId?: string;
-      durationMs?: number; abilityIds?: string[]; teach?: true;
-      keystone?: string; windupMs?: number; axis?: AmplifiedAxis }
-  // A Kill-chain carry that will land LOADED was armed or spent (design §24.2:
-  // "a kill heals a tenth of your pool and loads your next hit").
-  //
-  // The kill ARMS a server-only carry flag and the next landed hit spends it, so
-  // the "loaded weapon" glow between the two needs a beat for each end — the
-  // client must never guess when the load goes. `loaded: true` is pushed by the
-  // kill that arms a carry whose payload is `heal-and-load`; `loaded: false` by
-  // the hit that spends it (whatever the payoff then does). A respawn wipes the
-  // flag with the rest of `TracksCombat`; the client drops the glow on death on
-  // its own. Node-wide, like every other payload signature.
-  | { kind: 'lineage-load'; playerId: string; loaded: boolean }
   // A frame loop's BANK changed — progression rework Phase 3, design §10.
   //
   // Heavy frames build charge on every regular hit and spend it on the mechanic,

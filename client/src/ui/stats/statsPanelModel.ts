@@ -1,15 +1,14 @@
 /**
  * The Stats panel as data (design §26.4: "a Stats panel of its own, in the dense
- * ordered layout of the prototype run's thesis D, with the lean's contribution
- * marked. Nothing expands on the left any more.").
+ * ordered layout of the prototype run's thesis D. Nothing expands on the left any
+ * more.").
  *
  * Four groups in a fixed order — offence, defence, recovery, movement & rhythm —
  * and every number says where it came from. The client decides no gameplay
  * number here: each value is `previewEquipmentStats`, the server's own stat
  * formula on a detached copy, and each SOURCE is the same formula run with one
- * piece taken away (an equipped item, the active lean): "with it" minus "without
- * it" is that piece's share, honest even where pieces multiply. The lean's share
- * is marked in its lane colour.
+ * equipped item taken away: "with it" minus "without it" is that item's share,
+ * honest even where pieces multiply.
  *
  * Pure, so `server/test/statsPanel.test.ts` runs it without a DOM.
  */
@@ -18,39 +17,24 @@ import {
   ITEM_DATABASE,
   TECHNIQUE_CAST_SPEED_CAP,
   RECIPE_DATABASE,
-  defensiveFaceForSubVariant,
-  lineageForEquippedItem,
-  lineagePayloadScales,
-  LEAN_COLORS,
-  packetDefinition,
   previewEquipmentStats,
-  rankNumeral,
-  resolveActiveLineages,
   resolveDotClassProfile,
-  rhythmFirings,
   type EquipmentPreviewInput,
   type EquipmentSlot,
-  type LineageCard,
-  type LineageDefinition,
-  type LineageProgress,
-  type RhythmFiring,
 } from '@mmo-idle/shared';
 import { toughness } from '../inventory/statSheetModel';
-import { cardRank, cardSentenceAt, maxCardRank } from '../lineage/legibilityContracts';
 
 type Preview = ReturnType<typeof previewEquipmentStats>;
 
 export type StatsGroupKey = 'offence' | 'defence' | 'recovery' | 'rhythm';
 
-/** Where a number comes from: an item, the lean (in its lane colour), the base, or a fixed rule. */
+/** Where a number comes from: an item, the base, or a fixed rule. */
 export interface StatsSource {
-  kind: 'item' | 'lean' | 'base' | 'rule';
-  /** "Poison Dagger", "Coated Edge I", "base", "fixed". */
+  kind: 'item' | 'base' | 'rule';
+  /** "Poison Dagger", "base", "fixed". */
   label: string;
   /** The share, in the row's unit: "+18", "+44", "+10%". Absent for a rule. */
   amount?: string;
-  /** The lean's lane colour; absent for everything else. */
-  color?: string;
 }
 
 export interface StatsRow {
@@ -66,18 +50,8 @@ export interface StatsGroup {
   rows: StatsRow[];
 }
 
-/** The active lean, named once at the top in its lane colour. */
-export interface StatsLean {
-  name: string;
-  /** "rank II of III", or undefined for an unranked lean. */
-  rank?: string;
-  sentence?: string;
-  color: string;
-}
-
 export interface StatsPanelData {
   groups: StatsGroup[];
-  lean?: StatsLean;
 }
 
 export interface StatsPanelInput {
@@ -128,11 +102,6 @@ const ROWS: readonly RowDef[] = [
     value: (p, input) => resolveDotClassProfile(p.passives, input.build.usesSkills.selectedSubVariant).dotMechanicMultiplier,
     fmt: (v) => `×${trimmed(v, 2)}`, delta: points, pinned: true,
   },
-  // The Effect lean on a weapon with a reservoir (design §26.2): it amplifies
-  // what the reservoir banks (`weapon.reservoir-potency-pct`), never joins it.
-  { key: 'reservoirPotency', label: 'Reservoir potency', group: 'offence', value: (p) => p.passives['weapon.reservoir-potency-pct'] ?? 0, fmt: (v) => signed(pct(v)), delta: points, neutral: 0 },
-  { key: 'bleedOnHit', label: 'Bleed per hit', group: 'offence', value: (p) => p.passives['shared.bleed-on-hit-pct'] ?? 0, fmt: (v) => pct(v), delta: points, neutral: 0 },
-  { key: 'slowOnHit', label: 'Slow on hit', group: 'offence', value: (p) => p.passives['shared.slow-on-hit-pct'] ?? 0, fmt: (v) => pct(v), delta: points, neutral: 0 },
   { key: 'techniquePower', label: 'Technique power', group: 'offence', value: (p) => p.passives['technique.power-pct'] ?? 0, fmt: (v) => signed(pct(v)), delta: points, neutral: 0 },
   // The Technique lane's own second number (design §22.9: "cast speed is the
   // Technique lane's stat ... shown beside Technique Power"), capped as the cast
@@ -165,62 +134,6 @@ const GROUP_ORDER: readonly StatsGroupKey[] = ['offence', 'defence', 'recovery',
 /** Slots in the order their sources are named. */
 const SLOTS: readonly EquipmentSlot[] = ['weapon', 'armor', 'recovery', 'mobility', 'core', 'relic'];
 
-// ─── The lean ────────────────────────────────────────────────────────────────
-
-interface ActiveLean {
-  lineage: LineageDefinition;
-  progress: LineageProgress;
-  card: LineageCard;
-}
-
-/** The active stat-row card of the lineage worn in the weapon slot, if any. */
-export function activeWeaponLean(build: EquipmentPreviewInput): ActiveLean | undefined {
-  const lineage = lineageForEquippedItem(build.equipment.weapon);
-  const progress = lineage ? build.lineages?.[lineage.id] : undefined;
-  const cardId = progress?.active.stat;
-  if (!lineage || !progress || !cardId || !progress.ownedCards.includes(cardId)) return undefined;
-  const card = lineage.cards.find((c) => c.id === cardId && c.row === 'stat');
-  return card ? { lineage, progress, card } : undefined;
-}
-
-function withoutLean(build: EquipmentPreviewInput, lean: ActiveLean): EquipmentPreviewInput {
-  const active = { ...lean.progress.active };
-  delete active.stat;
-  return { ...build, lineages: { ...build.lineages, [lean.lineage.id]: { ...lean.progress, active } } };
-}
-
-function leanLabel(lean: ActiveLean): string {
-  const max = maxCardRank(lean.card);
-  return max > 1 ? `${lean.card.name} ${rankNumeral(Math.max(1, cardRank(lean.progress, lean.card.id)))}` : lean.card.name;
-}
-
-// ─── Rhythm rows ─────────────────────────────────────────────────────────────
-
-function ordinal(n: number): string {
-  const mod100 = n % 100;
-  if (mod100 >= 11 && mod100 <= 13) return `${n}th`;
-  return `${n}${['th', 'st', 'nd', 'rd'][n % 10] ?? 'th'}`;
-}
-
-/** How often a verb can fire, from its trigger's shape — the ring's own grammar. */
-export function cadenceText(firing: RhythmFiring): string {
-  const { trigger } = firing;
-  const cap = trigger.capMs ? `every ${trimmed(trigger.capMs / 1000, 1)} s at most` : undefined;
-  switch (firing.shape) {
-    case 'cap': return cap!;
-    case 'count': return `every ${ordinal(Math.round(trigger.n ?? 1))} hit`;
-    case 'latch-body': return 'first hit on each target';
-    case 'latch-engagement': return 'first hit of a fight';
-    case 'carry': return 'the hit after a kill';
-    case 'pulse':
-    default:
-      return trigger.kind === 'mechanic-fired' ? 'when your mechanic fires'
-        : trigger.kind === 'technique-cast' ? 'when a Technique lands'
-          : trigger.kind === 'kill' ? 'on a kill'
-            : 'on its moment';
-  }
-}
-
 // ─── Build ───────────────────────────────────────────────────────────────────
 
 function itemName(defId: string): string {
@@ -230,12 +143,6 @@ function itemName(defId: string): string {
 export function buildStatsPanel(input: StatsPanelInput): StatsPanelData {
   const { build } = input;
   const full = previewEquipmentStats(build);
-  const lean = activeWeaponLean(build);
-  // The lean trio's own colour (design §26.4), not the shard's lane.
-  const leanColor = lean
-    ? (lean.card.leanKind ? LEAN_COLORS[lean.card.leanKind] : packetDefinition(lean.card.lane)?.color ?? '#a99e8a')
-    : undefined;
-  const noLean = lean ? previewEquipmentStats(withoutLean(build, lean)) : undefined;
   const withoutSlot = new Map<EquipmentSlot, Preview>();
   for (const slot of SLOTS) {
     if (build.equipment[slot]) {
@@ -250,22 +157,14 @@ export function buildStatsPanel(input: StatsPanelInput): StatsPanelData {
     const value = def.value(full, input);
     const sources: StatsSource[] = [];
     let accounted = 0;
-    const leanShare = lean && noLean ? value - def.value(noLean, input) : 0;
     for (const [slot, without] of withoutSlot) {
-      let share = value - def.value(without, input);
-      // The weapon's share includes its lineage; the lean is named on its own.
-      if (slot === 'weapon') share -= leanShare;
+      const share = value - def.value(without, input);
       if (Math.abs(share) <= EPS) continue;
       accounted += share;
       sources.push({ kind: 'item', label: itemName(build.equipment[slot]!), amount: def.delta(share) });
     }
-    if (lean && Math.abs(leanShare) > EPS) {
-      accounted += leanShare;
-      sources.push({ kind: 'lean', label: leanLabel(lean), amount: def.delta(leanShare), color: leanColor });
-    }
     const base = value - accounted;
-    // Items in slot order, the lean after them, then the base.
-    sources.sort((a, b) => (a.kind === 'lean' ? 1 : 0) - (b.kind === 'lean' ? 1 : 0));
+    // Items in slot order, then the base.
     if (sources.length > 0 && Math.abs(base) > EPS && (def.neutral === undefined || Math.abs(base - def.neutral) > EPS)) {
       sources.push({ kind: 'base', label: 'base', amount: def.fmt(base).replace(/^\+/, '') });
     }
@@ -281,8 +180,6 @@ export function buildStatsPanel(input: StatsPanelInput): StatsPanelData {
     const element = reservoir.element === 'poison' ? 'Poison' : reservoir.element === 'fire' ? 'Burn'
       : reservoir.element === 'frost' ? 'Chill' : 'Reservoir';
     const share = reservoir.convPct;
-    const potency = rows.get('offence')!.find((r) => r.key === 'reservoirPotency');
-    if (potency) potency.label = `${element} potency`;
     rows.get('offence')!.push({
       key: 'reservoir',
       label: `${element} per hit`,
@@ -296,45 +193,7 @@ export function buildStatsPanel(input: StatsPanelInput): StatsPanelData {
     sources: [{ kind: 'rule', label: 'fixed, of your pool' }],
   });
 
-  // The verbs: one row each, how often they can fire (the ring's grammar).
-  const firings = rhythmFirings(resolveActiveLineages(
-    { equipment: build.equipment, lineages: build.lineages },
-    defensiveFaceForSubVariant(build.usesSkills.selectedSubVariant),
-  ));
-  // The payload SCALE an Effect lean puts on a verb (design §26.1: on a weapon
-  // with no mechanic of its own, Effect is the size of the verb's payload).
-  const weaponLineage = lineageForEquippedItem(build.equipment.weapon);
-  const weaponProgress = weaponLineage ? build.lineages?.[weaponLineage.id] : undefined;
-  const scales = weaponLineage && weaponProgress ? lineagePayloadScales(weaponLineage, weaponProgress) : {};
-  for (const firing of firings) {
-    const sources: StatsSource[] = [{ kind: 'rule', label: cadenceText(firing), color: packetDefinition(firing.lane)?.color }];
-    const scale = firing.source === 'card' ? scales[firing.payloadLane] ?? 0 : 0;
-    if (scale > EPS) {
-      const fromLean = lean?.card.statKey === 'payloadScale' && lean.card.lane === firing.payloadLane;
-      sources.push(fromLean
-        ? { kind: 'lean', label: `payload · ${leanLabel(lean!)}`, amount: signed(pct(scale)), color: leanColor }
-        : { kind: 'rule', label: `payload ${signed(pct(scale))} · your form` });
-    }
-    rows.get('rhythm')!.push({
-      key: `verb:${firing.key}`,
-      label: firing.name,
-      value: firing.source === 'capstone' ? 'capstone' : 'verb',
-      sources,
-    });
-  }
-
-  const data: StatsPanelData = {
+  return {
     groups: GROUP_ORDER.map((key) => ({ key, title: GROUP_TITLES[key], rows: rows.get(key)! })),
   };
-  if (lean) {
-    const max = maxCardRank(lean.card);
-    const rank = cardRank(lean.progress, lean.card.id);
-    data.lean = {
-      name: lean.card.name,
-      ...(max > 1 ? { rank: `rank ${rankNumeral(rank)} of ${rankNumeral(max)}` } : {}),
-      sentence: cardSentenceAt(lean.card, lean.progress),
-      color: leanColor!,
-    };
-  }
-  return data;
 }

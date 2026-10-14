@@ -7,9 +7,6 @@ import { bossClearKey } from '../systems/biomeProgress';
 import {
   evaluateTutorialCondition,
   viewHasItem,
-  viewOwnsLineageCard,
-  viewOwnsLineageForm,
-  viewWearsLineageForm,
   type TutorialView,
 } from './conditions';
 import type { TutorialBeat, TutorialScript, TutorialStep } from './types';
@@ -126,11 +123,9 @@ export function stepSatisfied(step: TutorialStep, view: TutorialView, later: Lat
         if (!slot) return false;
         const worn = view.equipment[slot];
         if (worn === id) return true;
-        // A later step took the slot: an ordinary equip, or a gated form the
-        // guide goes on to wear (the Gale Needle over the Chaotic Axe).
+        // A later step took the slot.
         return !!worn && later.some((next) =>
-          (next.type === 'equip' && next.definitionIds.includes(worn))
-          || (next.type === 'wearForm' && next.recipeId === worn));
+          next.type === 'equip' && next.definitionIds.includes(worn));
       });
     case 'configureRunes':
       return loadoutIncludes(view.runesEquipped, step.rules)
@@ -144,14 +139,6 @@ export function stepSatisfied(step: TutorialStep, view: TutorialView, later: Lat
       return later.some((next) =>
         (next.type === 'learnAbility' || next.type === 'setAbilities') && abilityLoadoutMatches(next, view));
     }
-    case 'unlockCard':
-      return viewOwnsLineageCard(view, step.lineageId, step.cardId, step.rank);
-    case 'setActive':
-      return view.lineages[step.lineageId]?.active[step.row] === step.cardId;
-    case 'unlockForm':
-      return viewOwnsLineageForm(view, step.lineageId, step.recipeId);
-    case 'wearForm':
-      return viewWearsLineageForm(view, step.lineageId, step.recipeId);
     case 'attemptBoss':
       return step.until
         ? evaluateTutorialCondition(step.until, view)

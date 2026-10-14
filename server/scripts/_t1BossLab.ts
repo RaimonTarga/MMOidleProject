@@ -7,7 +7,7 @@
  */
 import assert from 'node:assert/strict';
 import { readFileSync, appendFileSync } from 'node:fs';
-import { ABILITY_DATABASE, ESSENCE_TYPES, ITEM_DATABASE, LINEAGE_DATABASE, RECIPE_DATABASE, MONSTER_DATABASE, NODE_BIOMES, SKILL_TREE, composePlayerView, runicPointLoadoutCost, withReferenceAbilityWiring } from '@mmo-idle/shared';
+import { ABILITY_DATABASE, ITEM_DATABASE, RECIPE_DATABASE, MONSTER_DATABASE, NODE_BIOMES, SKILL_TREE, composePlayerView, runicPointLoadoutCost, withReferenceAbilityWiring } from '@mmo-idle/shared';
 import { createBalanceWorld } from '../bench/balance/worldFactory';
 import { setupArena, teardownArena, BOT_SPAWN } from '../bench/balance/arena';
 import { prepareSurveyBot, SURVEY_CLASSES, type SurveyCell } from '../bench/balance/ttkSurveySpec';
@@ -17,7 +17,6 @@ import { classifyBossTick, isVictory } from '../bench/balance/bossTerminal';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { refillBarrier } from '../src/systems/defense/barrier/barrier';
-import { setLineageActive, unlockLineageCard } from '../src/systems/player/economy/lineages';
 import type { PlayerEntity } from '../src/ecs/entity';
 import type { World } from '../src/world/World';
 
@@ -76,87 +75,10 @@ interface Row {
    * rows compare only against jittered rows.
    */
   jitter?: boolean;
-  /**
-   * The lean × verb composition matrix (course-correction W3-A). `lineage` names the
-   * weapon lineage whose T1 band the row buys; `lean` and `verb` are its T1 `stat`
-   * and `payoff` card ids (either may be null; both null is the no-band CONTROL,
-   * which still wears the form). Bought through the REAL economy handler with a
-   * generous wallet, after the bot is prepared; a refusal is recorded in the result's
-   * `refusals`, never faked. The row's `weapon` must be the lineage's form, since a
-   * lineage pays only while its own form is worn.
-   */
-  lineage?: string;
-  lean?: string | null;
-  verb?: string | null;
-  /**
-   * A RANKED lean's rank (design §26.1, legibility run): the lab buys `lean` this
-   * many times through the real handler — each purchase of an owned ranked card
-   * buys its next rank, with that rank's own gate and price. Absent = once.
-   */
-  leanRank?: number | null;
   /** Drop the per-second HP track and the loadout from the result (matrix runs). */
   compact?: boolean;
 }
 
-/**
- * Wallet the composition rows are credited before buying. Generous on purpose, like
- * the lane bench's (`bench/lineage/laneBot.ts`): the matrix measures combat, and the
- * purchase still goes through the real handler, so a mastery refusal is a refusal.
- */
-const MATRIX_ESSENCE = 5_000;
-const MATRIX_SHARDS = 200;
-
-/**
- * Buy the row's lean and verb through the real economy handler and slot both.
- * Returns the refusals (empty when the band is live exactly as declared).
- */
-function buyBand(world: World, bot: PlayerEntity, row: Row): string[] {
-  if (!row.lineage) return [];
-  const lineage = LINEAGE_DATABASE.get(row.lineage);
-  assert(lineage, `${row.id}: unknown lineage ${row.lineage}`);
-  const p = bot.tracksProgression;
-  const tree = composePlayerView(bot)!.lineages[row.lineage];
-  const refusals: string[] = [];
-  if (!tree) refusals.push(`no tree: wearing ${bot.holdsInventory.equipment.weapon} opened no ${row.lineage} tree`);
-  else if (tree.wornForm !== row.weapon) refusals.push(`worn form is ${tree.wornForm}, not ${row.weapon}`);
-  const cardIds = [row.lean, row.verb].filter((id): id is string => !!id);
-  // The purchases: the lean once per rank (its next rank each time), then the verb.
-  const purchases = [
-    ...(row.lean ? Array.from({ length: Math.max(1, row.leanRank ?? 1) }, () => row.lean!) : []),
-    ...(row.verb ? [row.verb] : []),
-  ];
-  const savedEssences = { ...p.essences };
-  for (const type of ESSENCE_TYPES) p.essences[type] = MATRIX_ESSENCE;
-  for (const cardId of cardIds) {
-    const card = lineage.cards.find((c) => c.id === cardId);
-    assert(card, `${row.id}: ${cardId} is not a card of ${row.lineage}`);
-    p.shards[card.lane] = MATRIX_SHARDS;
-  }
-  for (const cardId of purchases) {
-    const bought = unlockLineageCard(world, bot, row.lineage, cardId);
-    if (!bought.success) refusals.push(`unlockCard ${cardId}: ${bought.reason}`);
-  }
-  for (const cardId of cardIds) {
-    const card = lineage.cards.find((c) => c.id === cardId)!;
-    const activated = setLineageActive(world, bot, row.lineage, card.row, cardId);
-    if (!activated.success) refusals.push(`setActive ${cardId}: ${activated.reason}`);
-  }
-  Object.assign(p.essences, savedEssences);
-  recalculatePlayerEntityStats(world, bot);
-  syncArchetypeSlices(world, bot);
-  bot.hasHealth.hp = bot.hasHealth.maxHp;
-  refillBarrier(world, bot);
-  const live = composePlayerView(bot)!.lineages[row.lineage];
-  for (const cardId of cardIds) {
-    const card = lineage.cards.find((c) => c.id === cardId)!;
-    if (live?.active[card.row] !== cardId) refusals.push(`${cardId} is not the live ${card.row} card (${live?.active[card.row] ?? 'none'})`);
-  }
-  if (row.lean && (row.leanRank ?? 1) > 1) {
-    const owned = live?.ranks?.[row.lean] ?? (live?.ownedCards.includes(row.lean) ? 1 : 0);
-    if (owned !== row.leanRank) refusals.push(`${row.lean} is at rank ${owned}, not ${row.leanRank}`);
-  }
-  return refusals;
-}
 
 function skillPathFor(row: Row, c: { prefix: string; melee: boolean }, tier: number): string[] {
   if (row.skillPath) return [...row.skillPath];
@@ -502,9 +424,6 @@ function run(row: Row) {
       })()
       : BOT_SPAWN;
     const { bot } = prepareSurveyBot(world, cell, spawn);
-    // The composition matrix's band, bought AFTER the kit is prepared so the lean's
-    // stat is in the view the loadout below reports.
-    const refusals = buyBand(world, bot, row);
     const view = composePlayerView(bot)!;
     const loadout = {
       maxHp: view.maxHp, plating: view.plating, dr: view.damageReduction, dodge: (view as any).dodgeRate ?? (view as any).evasion,
@@ -536,9 +455,6 @@ function run(row: Row) {
     let hpAt8: number | null = null;
     const tally: Record<string, { n: number; amount: number }> = {};
     let fromBoss = 0, fromAdds = 0, maxAdds = 0, halfAt: number | null = null, killer: string | null = null;
-    // `card-fx` per card id: a verb's landed firings (the composition matrix's
-    // "does the moment fire, and how often").
-    const fxByCard: Record<string, number> = {};
     world.worldLogJournal = []; world.worldLogByPlayer.clear(); world.takeNodeEvents(nodeId);
     for (; elapsed < cap; elapsed += 100) {
       now = 1800000000000 + elapsed;
@@ -568,9 +484,7 @@ function run(row: Row) {
         }
       }
       world.worldLogJournal = []; world.worldLogByPlayer.clear();
-      for (const event of world.takeNodeEvents(nodeId)) {
-        if (event.kind === 'card-fx' && event.cardId !== undefined) fxByCard[event.cardId] = (fxByCard[event.cardId] ?? 0) + 1;
-      }
+      world.takeNodeEvents(nodeId);
       dmgPerTick.push(tickDmg);
       const live = findBoss();
       if (elapsed === 8000 && live) hpAt8 = live.hasHealth.hp;
@@ -589,13 +503,9 @@ function run(row: Row) {
       maxAdds = Math.max(maxAdds, adds);
       world.pendingDeaths = [];
     }
-    const band = row.lineage
-      ? { lineage: row.lineage, lean: row.lean ?? null, verb: row.verb ?? null, leanRank: row.leanRank ?? null, refusals, fxByCard,
-        verbFires: row.verb ? fxByCard[row.verb] ?? 0 : 0 }
-      : {};
     if (row.compact) {
       return {
-        id: row.id, boss: row.boss, cls: row.cls, seed, weapon: row.weapon, ...band,
+        id: row.id, boss: row.boss, cls: row.cls, seed, weapon: row.weapon,
         outcome, won: isVictory(outcome as any), t: elapsed / 1000, dealt: bossMaxHp - bossHp,
         dps: Math.round(((bossMaxHp - bossHp) / Math.max(0.1, elapsed / 1000)) * 10) / 10,
         bossPctLeft: Math.round((bossHp / bossMaxHp) * 1000) / 10, minHpPct: Math.round(minHp * 1000) / 10,
@@ -603,7 +513,7 @@ function run(row: Row) {
       };
     }
     return {
-      id: row.id, boss: row.boss, cls: row.cls, treatment: row.treatment ?? 'live', seed, jitter: row.jitter ?? false, ...band,
+      id: row.id, boss: row.boss, cls: row.cls, treatment: row.treatment ?? 'live', seed, jitter: row.jitter ?? false,
       weapon: row.weapon, armor: row.armor, charm: row.charm, techniques: row.techniques, guards: row.guards,
       ...(row.debugEvents ? { tally } : {}), rules: chosenRules, outcome, won: isVictory(outcome as any), t: elapsed / 1000, dealt: bossMaxHp - bossHp, dps8: hpAt8 === null ? null : Math.round(((bossMaxHp - hpAt8) / 8.1) * 10) / 10, dps: Math.round(((bossMaxHp - bossHp) / Math.max(0.1, elapsed / 1000)) * 10) / 10, bossPctLeft: Math.round((bossHp / bossMaxHp) * 1000) / 10,
       minHpPct: Math.round(minHp * 1000) / 10, hpLost, fromBoss, fromAdds, maxAdds, halfAt: halfAt && halfAt / 1000, killer, loadout,

@@ -28,7 +28,6 @@ import { isPlayerInCombat } from '../../../combat/ai/engagement';
 import { pruneFormationTechnique } from './formationTechnique';
 import { registerSummonerFrameLoop, summonerFrenzyApsPct } from './frameLoop';
 import { summonerLineBonus, syncSummonerLine } from './lineHolds';
-import { mendSummonWithOwner } from '../../../combat/keystones/ability/sharedBreath';
 
 type SummonerPlayerEntity = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
@@ -181,13 +180,8 @@ function runMinionRegen(
   now: number,
 ): void {
   if (minion.hasHealth.hp >= minion.hasHealth.maxHp) return;
-  if (isMinionInCombat(world, owner, minion, now)) {
-    // In combat a summon has no Recovery of its own. Second Wind's Shared Breath
-    // keystone (design §22.4) runs the owner's mend on it, beside the mitigation
-    // the same pass carries over (a no-op unless that verb is live and mending).
-    mendSummonWithOwner(world, owner, minion, dt);
-    return;
-  }
+  // In combat a summon has no Recovery of its own.
+  if (isMinionInCombat(world, owner, minion, now)) return;
   const recovery = minion.hasHealth.recovery ?? 0;
   if (recovery <= 0) return;
   // Flat HP/s: `minionRecoveryFor` already expressed the out-of-combat rule as a

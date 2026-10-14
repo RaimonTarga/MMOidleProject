@@ -31,7 +31,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { ...emptyEssences },
-      shards: {}, capstones: {},
+      
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],

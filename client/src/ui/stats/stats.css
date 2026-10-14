@@ -1,6 +1,6 @@
 /* The Stats panel (design §26.4; thesis D's dense ordered layout, the composite
    mockup's Stone skin). Dense is allowed here: panels may be dense, the HUD may
-   not. `--lane` is the lean's lane colour (packetDefinition(lane).color). */
+   not. */
 
 .game-dialog__panel.stats-dialog {
   max-width: min(860px, calc((100vw - 32px) / var(--ui-font-scale, 1)));
@@ -24,41 +24,6 @@
 
 .sp-empty {
   padding: 20px;
-  color: var(--hud-text-muted);
-}
-
-/* The lean, named once, in its lane colour. */
-.sp-lean {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 8px;
-  margin: 0;
-  padding: 8px 10px;
-  border: 1px solid var(--hud-edge-divider);
-  border-left: 3px solid var(--lane);
-  background: var(--hud-material-inset);
-  font-size: 12px;
-  color: var(--hud-text);
-}
-.sp-lean__tag {
-  color: var(--hud-text-dim);
-  font-size: 9.5px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.sp-lean b {
-  color: var(--lane);
-  font-family: var(--hud-font-display);
-  font-weight: var(--hud-font-display-weight);
-}
-.sp-lean__rank {
-  color: var(--hud-text-muted);
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 10px;
-}
-.sp-lean__sentence {
-  flex-basis: 100%;
   color: var(--hud-text-muted);
 }
 
@@ -127,11 +92,7 @@
   font-weight: 600;
   color: var(--hud-text-muted);
 }
-/* The lean's share: its lane colour (the mockup's "+20% Effect II"). */
-.sp-src--lean,
-.sp-src--lean b { color: var(--lane); }
 .sp-src--rule { white-space: normal; text-align: right; }
-.sp-src--rule[style] { color: var(--lane); }
 
 .sp-note {
   margin: 0;

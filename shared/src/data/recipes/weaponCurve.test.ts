@@ -104,19 +104,4 @@ for (const id of WEAPON_ATTACK.keys()) {
 }
 assert(problems.length === 0, `weapon curve drift:\n  ${problems.join('\n  ')}`);
 
-// 3. A tier step must be a reward: a form is never weaker than the form it evolves from.
-const downgrades: string[] = [];
-for (const recipe of weapons) {
-  const fromId = recipe.evolvesFrom;
-  if (!fromId) continue;
-  const from = RECIPE_DATABASE.get(fromId);
-  if (!from || from.slot !== 'weapon') continue;
-  const after = recipe.stats?.attack ?? 0;
-  const before = from.stats?.attack ?? 0;
-  if (after <= before) {
-    downgrades.push(`${recipe.id} (${after}) does not beat ${fromId} (${before})`);
-  }
-}
-assert(downgrades.length === 0, `an evolution must be an upgrade:\n  ${downgrades.join('\n  ')}`);
-
 console.log('weaponCurve.test.ts: ok');

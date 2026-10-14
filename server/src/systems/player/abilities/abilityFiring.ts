@@ -54,8 +54,6 @@ import { cleansePlayerAfflictions, type RemovedEffect } from "../../combat/statu
 import { activateRecovery } from "../../defense/regen/recovery";
 import { onGuardFired } from "../../defense/charmHooks";
 import { onTechniqueResolved } from "../../combat/techniqueResolved";
-import { onAbilityKeystoneGuardCast } from "../../combat/keystones/ability/guardCast";
-import { onAbilityNodeStripped } from "../../combat/abilityNodes";
 import { repositionPlayer } from "../../combat/damage/knockback";
 import { abilityCooldownKey, guardCooldownMs, startTechniqueCooldown } from "./abilityCooldowns";
 import { beginAbilityCast } from "./abilityCasting";
@@ -578,9 +576,6 @@ function maybeFireGuard(
   }
 
   onGuardFired(world, player, ability);
-  // Cleanse's node fires on the strip, once when it removed anything
-  // (design §22.10 "on strip", as amended by §22.13).
-  if (removedEffects) onAbilityNodeStripped(world, player, ability, removedEffects);
 
   setCooldown(player.tracksCombat, cdKey, guardCooldownMs(player, ability));
   setCooldown(player.tracksCombat, GUARD_WINDOW_KEY, GUARD_WINDOW_MS);
@@ -598,9 +593,6 @@ function maybeFireGuard(
       playerId: player.isPlayer.id,
     });
   }
-  // This Guard's keystone verb (design §22.4), after its own effect landed and with
-  // what a Cleanse stripped — the Guard side's twin of `onTechniqueResolved`.
-  onAbilityKeystoneGuardCast(world, player, ability, removedEffects ?? []);
   recordAbilityActivation(world, player, abilityId, 'guard', removedEffects);
   return true;
 }
@@ -720,9 +712,8 @@ function sidestepHasThreat(world: World, player: PlayerEntity): boolean {
 /**
  * Sidestep (design §22.8): an evasion window and a move-speed burst on ONE
  * status, so the burst ends exactly when the window does. Both magnitudes come
- * from the lineage magnitude table (`sidestepWindow`); the evade is rolled by
- * `defense/mitigation/evasion.ts` beside any `evasion-window` payoff, and the
- * speed is a movement layer in `world/movement.ts`.
+ * from `sidestepWindow`; the evade is rolled by `defense/mitigation/evasion.ts`,
+ * and the speed is a movement layer in `world/movement.ts`.
  */
 function applySidestep(player: PlayerEntity, ability: AbilityDef): void {
   const window = sidestepWindow(ability, player.tracksProgression.playerTier);

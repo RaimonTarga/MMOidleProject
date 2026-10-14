@@ -32,8 +32,6 @@ import type { CombatContext } from "../../combat/engine/combatPipeline";
 import type { PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 import { techniquePowerPctFor } from "./abilityKata";
-import { onAbilityKeystoneChargeSpent } from "../../combat/keystones/ability/registry";
-import { onAbilityNodeWindowHit } from "../../combat/abilityNodes";
 
 /**
  * The Techniques whose window this is: every ability that applies an `imbue`
@@ -158,13 +156,6 @@ export function initImbueSystem(): void {
     }
 
     tagImbueHit(ctx);
-
-    // One spent charge is one firing of the window's node, on this hit's target.
-    for (const ability of IMBUE_ABILITIES) onAbilityNodeWindowHit(world, player, ability, ctx);
-    // Then the keystone verb that rides the window's hits (design §22.4's Fork),
-    // node before verb as at every Technique resolution: once per charge,
-    // whatever body delivered the hit.
-    onAbilityKeystoneChargeSpent(world, player, ctx);
   });
 }
 

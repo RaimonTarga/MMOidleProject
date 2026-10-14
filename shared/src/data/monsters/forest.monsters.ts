@@ -94,8 +94,8 @@ export const forestMonsterEntries = [
     id: 'bramble-pod', name: 'Bramble Pod', color: 0x6b4a2e,
     // CANOPY FAMILY, T1 (progression rework, 2026-10-01). The Thorn Spitter's
     // younger kin: a rooted bramble that lobs sap-thorns from range. Weak direct
-    // hits, a light Bramble Sap poison that stacks — the family's shard is
-    // Affliction because stacks are both what it does and what kills it.
+    // hits, a light Bramble Sap poison that stacks — an Affliction family,
+    // because stacks are both what it does and what kills it.
     // PLACEHOLDER numbers seeded from the T1 Forest band (wolf 130/20); designer
     // hand-edits before the lane bench.
     stats: { hp: 140, attack: 14, plating: 0, damageReduction: 0, speed: 30, attackRange: 160, attackCooldown: 2600, pullRange: 230 },

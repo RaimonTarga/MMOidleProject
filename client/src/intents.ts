@@ -1,4 +1,4 @@
-import type { AbilityNodeRow, AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, RowKind, StanceSlot, Vec2 } from '@mmo-idle/shared';
+import type { AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, StanceSlot, Vec2 } from '@mmo-idle/shared';
 
 export interface IntentMap {
   toggleAuto: undefined;
@@ -26,14 +26,6 @@ export interface IntentMap {
   equipItem: string;
   unequipItem: EquipmentSlot;
   craftRecipe: string;
-  // ── Lineage trees (progression rework Phase 1) ─────────────────────────────
-  lineageUnlockCard: { lineageId: string; cardId: string };
-  lineageSetActive: { lineageId: string; row: RowKind; cardId: string | null };
-  lineageUnlockForm: { lineageId: string; recipeId: string };
-  lineageWearForm: { lineageId: string; recipeId: string };
-  // ── Ability nodes (design §19) ─────────────────────────────────────────────
-  abilityUnlockNode: { abilityId: string; optionId: string };
-  abilitySetNode: { abilityId: string; row: AbilityNodeRow; optionId: string | null };
   navigateTo: { path: string[] };
   goToTestRoom: undefined;
   teleportToNode: string;

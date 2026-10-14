@@ -21,7 +21,6 @@ export type PrimaryOverlay =
   | 'mastery'
   | 'inventory'
   | 'crafting'
-  | 'upgrade'
   | 'stats'
   | 'map'
   | 'quests'
@@ -35,7 +34,6 @@ function primaryOverlayIsOpen(overlay: PrimaryOverlay): boolean {
     case 'mastery': return store.get(masteryOpenAtom);
     case 'inventory': return store.get(inventoryOpenAtom);
     case 'crafting': return store.get(craftTabAtom) === 'make';
-    case 'upgrade': return store.get(craftTabAtom) === 'upgrade';
     case 'stats': return store.get(statsOpenAtom);
     case 'map': return store.get(mapOpenAtom);
     case 'quests': return store.get(questOpenAtom);
@@ -66,7 +64,6 @@ export function openPrimaryOverlay(overlay: PrimaryOverlay): void {
     case 'mastery': store.set(masteryOpenAtom, true); break;
     case 'inventory': store.set(inventoryOpenAtom, true); break;
     case 'crafting': store.set(craftTabAtom, 'make'); break;
-    case 'upgrade': store.set(craftTabAtom, 'upgrade'); break;
     case 'stats': store.set(statsOpenAtom, true); break;
     case 'map': store.set(mapOpenAtom, true); break;
     case 'quests': store.set(questOpenAtom, true); break;

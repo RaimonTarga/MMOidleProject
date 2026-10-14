@@ -10,7 +10,6 @@ export * from "./combat/hasEmpoweredAttack";
 export * from "./combat/hasEnvironmentalDot";
 export * from "./combat/hasNodeFeatureEffect";
 export * from "./combat/holdsWards";
-export * from "./combat/showsRhythm";
 export * from "./combat/statusEffects";
 export * from "./combat/tracksCombat";
 

@@ -33,7 +33,6 @@ import { recordWorldLogEvent } from "../../../world/worldLog";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 import { techniquePowerPctFor } from "./abilityKata";
-import { onAbilityKeystoneInfected } from "../../combat/keystones/ability/registry";
 
 /** Resolve an ability's effect through the shared Technique Power seam. */
 function afflictionEffect(
@@ -162,7 +161,7 @@ function squaredGap(monster: MonsterEntity, origin: { x: number; y: number }): n
  * to tune.
  *
  * Returns the bodies the spread reached (empty when it reached none), so the
- * ability node can fire on every one of them (design §22.10).
+ * caller can act on every one of them.
  */
 export function resolveContagion(
   world: World,
@@ -189,10 +188,6 @@ export function resolveContagion(
     for (const entry of entries) {
       copyPlayerDotOnto(world, player, victim, entry);
     }
-    // The spread has written onto this body: a live keystone verb may care (the
-    // Outbreak tag, design §22.4). Here, where the copy lands, not in the cast
-    // lifecycle, so the hook holds whatever shape delivers the spread.
-    onAbilityKeystoneInfected(world, player, ability, victim);
     for (const element of elements) {
       links.push({ to: { ...victim.hasPosition.current }, element });
     }
@@ -247,8 +242,7 @@ export function copyPlayerDotOnto(
   entry: DotInventoryEntry,
   /**
    * Share of the source's stacks the copy carries. 1 (Contagion's own default)
-   * copies the affliction whole; a lineage `contagion` payoff passes its authored
-   * fraction, which is what makes a card a trickle and the Technique a flood.
+   * copies the affliction whole.
    */
   stackFraction = 1,
 ): void {

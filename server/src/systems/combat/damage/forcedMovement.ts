@@ -21,9 +21,6 @@ import type { Vec2 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { playerForcedMovementResistPct, repositionPlayer } from './knockback';
-import {
-  immovableRefusesDisplacement, pushImmovableRefusal,
-} from '../keystones/immovable';
 
 /**
  * How close a pull may bring the player to its anchor. Arriving exactly on top of
@@ -56,16 +53,6 @@ export function applyForcedMovement(
   reason: ForcedMovementReason,
 ): ForcedMovementResult | null {
   if (baseDistance <= 0) return null;
-
-  // IMMOVABLE (design §4, the Bulwark keystone): a player holding a bulwark
-  // stance is not displaced at all. Refused HERE, at the one door push and pull
-  // both come through, so "knockback, pull and drag are refused" needs no second
-  // opinion — and refused as a null, which every caller already treats as "the
-  // beat did not land".
-  if (immovableRefusesDisplacement(player)) {
-    pushImmovableRefusal(world, player);
-    return null;
-  }
 
   // ONE resistance for both directions. Splitting it would mean a player geared
   // against being shoved is still dragged at full strength, which reads as the stat

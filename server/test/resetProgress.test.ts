@@ -36,8 +36,6 @@ const slices: PersistedPlayerSlices = {
     level: 99,
     skillPoints: 7,
     essences: { red: 10, blue: 20, green: 30, yellow: 40, purple: 50 },
-    shards: { tempo: 8, empowered: 3 },
-    capstones: { forest: 2 },
     biomeXP: { plains: 500 },
     biomeLevel: { plains: 4 },
     unlockedRecipes: ["recipe-a"],
@@ -86,11 +84,6 @@ assert(progression.skillPoints === 0, "skill points should reset");
 assert(
   Object.values(progression.essences).every((amount) => amount === 0),
   "all essence balances should reset",
-);
-assert(Object.keys(progression.shards).length === 0, "lineage shards should reset");
-assert(
-  Object.keys(progression.capstones).length === 0,
-  "capstones should reset",
 );
 assert(Object.keys(progression.biomeXP).length === 0, "biome XP should reset");
 assert(Object.keys(progression.biomeLevel).length === 0, "biome levels should reset");

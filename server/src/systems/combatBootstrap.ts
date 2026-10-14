@@ -17,9 +17,6 @@ import { initMonsterDeathEffects } from "./combat/damage/monsterDeathEffects";
 import { initPlayerAmplifiers } from "./combat/damage/playerAmplifiers";
 import { initStanceCombatEffects } from "./player/stances/stanceSwitch";
 import { initBossPatternCombat } from "./combat/engine/patternCombat";
-import { registerLineageCards, registerLineageIncomingCards } from "./combat/lineageCards";
-import { registerAbilityNodeIncoming, registerAbilityNodeKillChain } from "./combat/abilityNodes";
-import { registerLeanConditions } from "./combat/leanConditions";
 import { initRangeMechanics } from "./combat/rangeMechanics";
 
 let initialized = false;
@@ -42,9 +39,6 @@ let initialized = false;
  *  - the player incoming amplifier must register BEFORE defense (so the cap and
  *    shields act on the amplified hit)
  *  - defense systems must register AFTER weapon effects (run later in the chain)
- *  - the lineage triggers that READ the defense result (`hit-taken`,
- *    `barrier-break`) register AFTER defense, as a second pass — see
- *    `registerLineageIncomingCards`
  *  - Guard registers before defense; the summoner sponge registers inside
  *    defense, after shields and before debt and recuperation.
  */
@@ -62,22 +56,6 @@ export function initCombatSystems(): void {
   initAllMechanics();
   // Weapon-specific hooks (first-strike, brittle, flurry, reservoir DoTs, ...).
   initWeaponEffects();
-  // Lineage cards (progression rework 1c): one listener per trigger kind. AFTER
-  // the class mechanics, so the empowered multiplier has already resolved and set
-  // `empoweredMultiplier` by the time a card reads the hit it is scaling off —
-  // one multiplier per hit depends on that order.
-  withCombatRegistrationLabel('registerLineageCards', registerLineageCards);
-  // Ability nodes (design §22.10): a Kill chain route on a Technique pays on the
-  // kill its hit makes, not on landing — an onKill listener beside the card
-  // runtime it dispatches through.
-  withCombatRegistrationLabel('registerAbilityNodeKillChain', registerAbilityNodeKillChain);
-  // The leans that seed their lane's condition (design §24.9): the Affliction
-  // lean's light bleed and the Control lean's slow on every landed hit. After
-  // the card runtime for the same
-  // reason — the hit's empowered multiplier is recorded by now — and the
-  // moments that look for the condition probe the target in `beforeAttack`, so
-  // this hit's own seed is for the NEXT hit to find.
-  withCombatRegistrationLabel('registerLeanConditions', registerLeanConditions);
   // Range-node mechanics (progression rework Phase 3): the at-bay control layer on
   // Mid and the kiting payoffs on Far. AFTER the class mechanics for two reasons —
   // `empoweredAttack` must already be set by the archetype that consumed its charge
@@ -94,14 +72,6 @@ export function initCombatSystems(): void {
   withCombatRegistrationLabel('initAbilitySystems', initAbilitySystems); // Guard mitigation protects shields and deferred damage.
   // Evasion + shield absorption onDamageTaken listeners (after weapon effects).
   initDefenseSystems();
-  // Lineage cards that read what defense just did to the hit. Registered
-  // here rather than with the rest so `hit-taken` sees the damage that
-  // actually landed and `barrier-break` can see the break at all.
-  withCombatRegistrationLabel('registerLineageIncomingCards', registerLineageIncomingCards);
-  // The ability nodes' Guard fire-shapes that answer an incoming hit (design
-  // §22.10: per hit absorbed, per hit dodged), on the same seams and for the same
-  // reason: what the hit did is only known after defense has run.
-  withCombatRegistrationLabel('registerAbilityNodeIncoming', registerAbilityNodeIncoming);
   // Vulnerability/debuff multipliers applied on damage taken.
   initDebuffMechanics();
   // Cancels attacks against invulnerable entities (dormant/phased bosses).

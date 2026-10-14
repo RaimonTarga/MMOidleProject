@@ -3,23 +3,14 @@ import { registerCombatListener } from '../../combat/engine/combatPipeline';
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
-import { lineagePlatingStackFraction } from '../../combat/lineageCards';
-import { immovableHoldsPlating } from '../../combat/keystones/immovable';
 
 /**
- * Plating one stack is worth: the charm/armor passive plus whatever a live
- * lineage `plating-stack` window adds. ONE definition, because the listener's
- * gate and the tick's target must agree about whether the mechanic is on at all.
+ * Plating one stack is worth: the charm/armor passive. ONE definition, because
+ * the listener's gate and the tick's target must agree about whether the
+ * mechanic is on at all.
  */
 function platingPerStack(player: PlayerEntity): number {
-  const cs = player.tracksCombat;
-  const passive = player.usesSkills.passives['defense.hit-plating-per-stack'] ?? 0;
-  const fraction = lineagePlatingStackFraction(cs);
-  if (fraction <= 0) return passive;
-  // Base plating = the stat minus what WE have already added to it, or a card
-  // that scales off plating would compound against its own stacks every refresh.
-  const base = Math.max(0, player.mitigatesDamage.plating - Math.round(getResource(cs, APPLIED_KEY)));
-  return passive + Math.max(1, Math.round(base * fraction));
+  return player.usesSkills.passives['defense.hit-plating-per-stack'] ?? 0;
 }
 
 // Integer plating currently added to mitigatesDamage.plating from the stacks.
@@ -38,7 +29,7 @@ export function getReactivePlatingBonus(player: PlayerEntity): number {
   return Math.round(getResource(player.tracksCombat, APPLIED_KEY));
 }
 
-/** Stacks currently standing. Read by the Bulwark keystone's displacement refusal. */
+/** Stacks currently standing. */
 export function getReactivePlatingStacks(player: PlayerEntity): number {
   return getResource(player.tracksCombat, STACKS_KEY);
 }
@@ -87,9 +78,7 @@ export function runReactivePlating(world: World, player: PlayerEntity, dt: numbe
   const perStack = platingPerStack(player);
   let stacks = perStack > 0 ? getResource(cs, STACKS_KEY) : 0;
 
-  // Immovable (design §4): plating stacks persist for the keystone's grace after
-  // the player moves, so the fade does not run at all inside it.
-  if (stacks > 0 && !isCooldownActive(cs, HOLD_CD) && !immovableHoldsPlating(player)) {
+  if (stacks > 0 && !isCooldownActive(cs, HOLD_CD)) {
     let fade = getResource(cs, FADE_KEY) + dt;
     while (fade >= FADE_STEP_MS && stacks > 0) { fade -= FADE_STEP_MS; stacks -= 1; }
     setResource(cs, FADE_KEY, stacks > 0 ? fade : 0);

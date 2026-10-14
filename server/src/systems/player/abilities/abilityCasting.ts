@@ -51,7 +51,6 @@ import { armTechnique } from "./abilityArming";
 import { usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
 import { beginFormationCharge, cancelFormationCharge, formationChargeMinions, updateFormationCharge } from "./formationCharge";
 import { techniquePowerPctFor } from "./abilityKata";
-import { abilityNodeCastSpeedPctFor, onAbilityNodeBodiesHit } from "../../combat/abilityNodes";
 
 /**
  * Begin a wind-up. Returns true when the cast started (claiming the offensive
@@ -183,7 +182,6 @@ export function castWindupFor(player: PlayerEntity, ability: AbilityDef, authore
   return castWindupMs(
     authoredMs,
     player.usesSkills.passives["technique.cast-speed-pct"] ?? 0,
-    abilityNodeCastSpeedPctFor(player, ability.id),
   );
 }
 
@@ -286,10 +284,6 @@ export function updateAbilityCasts(world: World, now: number): void {
         // keystone verb (design §22.10).
         ...(casting.casterMinionId ? { casterMinionId: casting.casterMinionId } : {}),
       });
-      // The node's "on every body hit" routes (Slam): once per body the circle
-      // struck. A Conduit's cast is its one physical summon's circle, so this is
-      // per body THAT cast hit, never per formation body (design §22.11).
-      onAbilityNodeBodiesHit(world, player, ability, struck);
       // A Cull kill hands Cull its own cooldown back (design §22.8): charged above
       // like every resolve, then refunded, so the HUD hears both samples.
       if (refundsItself) refundTechniqueCooldown(world, player, ability);

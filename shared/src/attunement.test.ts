@@ -43,8 +43,8 @@ const derived = deriveAutoConfigFromRunes([other, rules[0]], { hpPct: 1, inComba
 assert(derived.abilityTargets.join() === "imbue-lightning,sweep", "Rune order must reach runtime arbitration");
 
 // ── The abilities the ability pass CUT (design §22.2) ────────────────────────
-// A save that knows, attunes, wires (`use-ability` with `targetAbilityId`) or
-// holds node progress for a cut ability drops those entries silently, and
+// A save that knows, attunes or wires (`use-ability` with `targetAbilityId`) a
+// cut ability drops those entries silently, and
 // `retiredAbilityEntries` reports them so the load path can log one line per
 // character. A renamed id that resolves to a cut one (heavy-strike ->
 // expose-weakness) is reported as written and dropped the same way. A re-homed
@@ -61,18 +61,12 @@ assert(derived.abilityTargets.join() === "imbue-lightning,sweep", "Rune order mu
       { conditionId: "always", actionId: "use-ability", targetAbilityId: "quick-strike" },
       { conditionId: "in-combat", actionId: "use-ability", targetAbilityId: "slam" },
     ],
-    abilityNodes: {
-      "expose-weakness": { owned: ["expose-weakness.packet.empowered"], active: { packet: "expose-weakness.packet.empowered" } },
-      hamstring: { owned: ["hamstring.packet.control"], active: {} },
-      sweep: { owned: ["sweep.packet.tempo"], active: { packet: "sweep.packet.tempo" } },
-    },
   };
   const found = retiredAbilityEntries(save);
   assert(hasRetiredAbilityEntries(found), "a save holding cut abilities must report them");
   assert(found.known.join() === "expose-weakness,hamstring,heavy-strike", `known: ${found.known.join()}`);
   assert(found.attuned.join() === "power-strike", `attuned: ${found.attuned.join()}`);
   assert(found.wired.join() === "frenzy,quick-strike", `wired: ${found.wired.join()}`);
-  assert(found.nodes.join() === "expose-weakness,hamstring", `nodes: ${found.nodes.join()}`);
 
   const out = migrateAttunement(save);
   assert(out.knownAbilities.join() === "sweep,brace,slam", `known after migration: ${out.knownAbilities.join()}`);
@@ -80,8 +74,6 @@ assert(derived.abilityTargets.join() === "imbue-lightning,sweep", "Rune order mu
     "attunement drops the cut Technique and keeps the rest in order");
   assert(out.runesEquipped.map((r) => r.targetAbilityId).join() === "sweep,slam",
     "rules wiring a cut ability go with it; the others keep their order");
-  assert(Object.keys(out.abilityNodes).join() === "sweep" && out.abilityNodes.sweep.active.packet === "sweep.packet.tempo",
-    "node progress for a cut ability is dropped; a surviving tree is kept as it was");
   assert(!hasRetiredAbilityEntries(retiredAbilityEntries(out)), "the migrated save holds nothing cut");
   assert(JSON.stringify(migrateAttunement(JSON.parse(JSON.stringify(out)))) === JSON.stringify(out), "the cut-ability migration is idempotent");
   // A clean save reports nothing (the load path logs only characters that had any).

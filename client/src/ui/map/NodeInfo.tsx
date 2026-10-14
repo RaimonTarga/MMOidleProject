@@ -9,8 +9,7 @@ import {
   essenceLabel,
   coreEligibilityLabel, isRestrictedCore,
   relicRatingsFromPassives, relicRatingsFromEffects, resolveRelicComparison,
-  FAMILY_DATABASE, blendEntries, nodeFamily, nodeShard, nodeSpawnBlend,
-  capstoneMaterial, packetDefinition, shardName,
+  FAMILY_DATABASE, blendEntries, nodeFamily, nodeSpawnBlend,
   biomeLevelCap, biomeXpForBiomeLevel, formatNodeCoord, formatRespawnRemaining, nodeIdToCoord,
   WORLD_REGIONS,
 } from '@mmo-idle/shared';
@@ -29,7 +28,6 @@ import { AreaDangerLabel } from '../../hud/AreaInformation';
 import { bfsPath } from './pathing';
 import { useMapClock } from './useMapClock';
 import { BiomeIcon } from './BiomeIcon';
-import { ShardIcon } from './ShardIcon';
 import {
   formatMonsterMechanics,
   monsterQuickStats,
@@ -310,14 +308,9 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
   const dungeonBadge = dungeonBadgeLabel(info);
   const accentColor  = isDungeon ? '#882222' : tileColor(biomeGroup);
 
-  // The node's identity and its currency (design §24.3): the territory of its
-  // dominant family, and the ONE shard every kill here pays, minority bodies
-  // included. Both read the authored blend, exactly as the reward seam does.
+  // The node's identity (design §24.3): the territory of its dominant family,
+  // read off the authored blend.
   const territory = nodeFamily(nodeId);
-  const paidShard = nodeShard(nodeId);
-  const territoryColor = paidShard
-    ? packetDefinition(paidShard)?.color ?? accentColor
-    : accentColor;
 
   // What the node is made of (design 12). `nodeSpawnBlend` resolves the authored
   // blend against the mobs this tier can actually field, so the composition and
@@ -330,7 +323,6 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
       }))
     : [];
   const territoryShare = territory ? blend?.shares[territory.id] ?? 0 : 0;
-  const capstone = isDungeon ? capstoneMaterial(biomeGroup) : undefined;
 
   const monsterIds = biome.monsterPoolByTier[biomeTier] ?? [];
   const monsters   = monsterIds.map(id => MONSTER_DATABASE.get(id)).filter((m): m is MonsterDefinition => m !== undefined);
@@ -390,20 +382,11 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
               </dd>
             </div>
           )}
-          {territory && paidShard && (
-            <>
-              <div className="map-summary__row">
-                <dt>Territory</dt>
-                <dd>{territory.name}</dd>
-              </div>
-              <div className="map-summary__row">
-                <dt>Drops</dt>
-                <dd className="map-summary__drops">
-                  <ShardIcon packet={paidShard} size={12} />
-                  {shardName(paidShard)}s
-                </dd>
-              </div>
-            </>
+          {territory && (
+            <div className="map-summary__row">
+              <dt>Territory</dt>
+              <dd>{territory.name}</dd>
+            </div>
           )}
           {unlockLevels.length > 0 && (
             <div className="map-summary__row">
@@ -425,15 +408,13 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
             </div>
           )}
         </dl>
-        {/* The composition bar: each family's share, in the colour of the shard its
-            own territory pays — texture, not currency (every kill here pays the
-            territory's shard above). */}
+        {/* The composition bar: each family's share. */}
         {blendRows.length > 0 && (
           <div className="map-family-mix" aria-hidden="true">
             {blendRows.map(({ family, share }) => (
               <i
                 key={family.id}
-                style={{ width: `${share * 100}%`, background: packetDefinition(family.drops)?.color ?? accentColor }}
+                style={{ width: `${share * 100}%`, background: accentColor }}
               />
             ))}
           </div>
@@ -463,15 +444,14 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
       )}
 
       {showDetails && (<>
-      {/* The node's territory, its shard and its composition (design §24.3). A
-          node with no blend (a dungeon, a sanctuary) has no territory; every
-          normal node carries one, so the old modifier band is gone (review L25:
-          it could no longer render). */}
-      {territory && paidShard && (
-        <section className="map-modifier" style={{ borderLeftColor: territoryColor }}>
+      {/* The node's territory and its composition (design §24.3). A node with no
+          blend (a dungeon, a sanctuary) has no territory; every normal node
+          carries one, so the old modifier band is gone (review L25: it could no
+          longer render). */}
+      {territory && (
+        <section className="map-modifier" style={{ borderLeftColor: accentColor }}>
           <div className="map-modifier__head">
-            <span className="map-modifier__chip" style={{ background: territoryColor }}>
-              <ShardIcon packet={paidShard} size={16} />
+            <span className="map-modifier__chip" style={{ background: accentColor }}>
               <span>{territory.name} territory</span>
             </span>
             {blend && (
@@ -480,9 +460,6 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
               </span>
             )}
           </div>
-          <p className="map-modifier__summary">
-            Every kill here drops {shardName(paidShard)}s, whichever family it came from.
-          </p>
           {blendRows.length > 0 && (
             <dl className="map-family-rows">
               {blendRows.map(({ family, share }) => (
@@ -517,11 +494,6 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
       {felledMarker && felledMarker.respawnAt > mapNow && felledBoss && (
         <section className="map-info-section">
           <div className="map-info-section__title map-info-section__title--boss">Boss</div>
-          {capstone && (
-            <div className="map-boss-capstone">
-              Drops <strong>{capstone.name}</strong> on every kill
-            </div>
-          )}
           <div className="map-boss-felled">
             <span className="map-boss-felled__tag">[FELLED]</span>
             <span className="map-boss-felled__name">{felledBoss.name}</span>
@@ -535,12 +507,6 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
       {!felledMarker && bosses.length > 0 && (
         <section className="map-info-section">
           <div className="map-info-section__title map-info-section__title--boss">Boss</div>
-          {capstone && (
-            <div className="map-boss-capstone">
-              Drops <strong>{capstone.name}</strong> on every kill -- the gate material
-              for this biome's forms
-            </div>
-          )}
           {bosses.map(m => (
             <MonsterRow
               key={m.id}

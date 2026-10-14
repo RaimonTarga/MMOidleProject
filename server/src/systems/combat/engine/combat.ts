@@ -108,7 +108,6 @@ import { canApplyPlayerDebuff, applyResistedPlayerDebuff, playerRefusesStatus, r
 import { evadeBlocksDebuffs, monsterDodgeChance, rollMonsterDodge } from "../../defense/mitigation/evasion";
 import { isMonsterStunned, applyStun } from "../status/stun";
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
-import { vanishedTarget } from '../keystones/ability/vanishMark';
 import { applyPlatingShredStacks } from '../status/platingShred';
 import { shellDamageMult } from '../ai/shellUp';
 import { renewPackPursuit, setAggroTarget, setAttackTarget } from "../ai/targeting";
@@ -354,8 +353,7 @@ export function runPlayerAttack(
   const monsterDef = MONSTER_DATABASE.get(target.isMonster.monsterTypeId);
   // A boss 'stat-buff' evasion action can override the dodge fraction at runtime
   // (e.g. drop to 0 in a desperation phase). 0 is a valid override, so use ??.
-  // ONE dodge clock per monster, shared with the Tempo keystone's chain links —
-  // see `rollMonsterDodge`.
+  // ONE dodge clock per monster — see `rollMonsterDodge`.
   // A hit a completed CAST delivers (the Destroyer's execution riding Slam or
   // Snipe, design §22.5) is never dodged and never moves that clock: the cast
   // already resolved on this body, and a cast's own payload (`applyPlayerAoe`)
@@ -448,7 +446,7 @@ export function runPlayerAttack(
   if (opts.resultMetadata) {
     opts.resultMetadata.empoweredMultiplier = Number(ctx.metadata["empoweredMultiplier"] ?? 1);
   }
-  // An onHit proc (a lineage echo, the Effigy's linked slam) can kill the target
+  // An onHit proc (the Effigy's linked slam) can kill the target
   // through `applyPlayerProcDamage`, which already paid onKill, the rewards and the
   // removal. Carrying on would find hp <= 0 below and pay the kill a second time
   // (review finding B3, 2026-10-02).
@@ -1152,10 +1150,7 @@ function rallyNearbyMonsters(
 
   const radius = buff.radius ?? 0;
   const maxTargets = Math.max(0, Math.round(rally.maxTargets));
-  // VANISH (design §22.13): a rally never hands a Vanished player to its allies.
-  // The caster may still hold them (it stood out of Vanish's reach); its call
-  // recruits nobody and is spent, like every other refusal.
-  if (radius <= 0 || maxTargets <= 0 || vanishedTarget(world, aggro)) {
+  if (radius <= 0 || maxTargets <= 0) {
     if (rally.oncePerCombat !== false) {
       setCounter(monster.tracksCombat, CASTED_BUFF_RALLY_SESSION_KEY, sessionToken);
     }
@@ -2830,8 +2825,6 @@ export function updateCombat(world: World, dt: number, now: number) {
     if (e.hasHealth.hp >= e.hasHealth.maxHp) continue;
     const ai = e.controlsMonster;
     if (e.hasAggroTarget) continue;
-    // An encounter holding for a vanished player is still in its fight (design §22.12).
-    if (e.holdsForVanished) continue;
     if (now - ai.lastAggroAt < GAME_CONFIG.MONSTER_REGEN_DELAY) continue;
     e.hasHealth.hp = Math.min(
       e.hasHealth.maxHp,

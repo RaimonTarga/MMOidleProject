@@ -59,7 +59,7 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      shards: {}, capstones: {},
+      
       biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
@@ -150,10 +150,8 @@ initCombatSystems();
     );
   }
 
-  // Evolution replaces the item wholesale (ITEM_DATABASE is built per recipe), so
-  // an evolved Falchion can never hold two tiers' values at once. Assert the chain.
-  assert(RECIPE_DATABASE.get(T3)?.evolvesFrom === T2, 'Solar should evolve from Sunsteel');
-  assert(RECIPE_DATABASE.get(T4)?.evolvesFrom === T3, 'Zenith should evolve from Solar');
+  // Each tier is its own item (ITEM_DATABASE is built per recipe), so a Falchion can
+  // never hold two tiers' values at once.
   const tiers = [T2, T3, T4] as const;
   for (const id of tiers) {
     const fx = RECIPE_DATABASE.get(id)!.mechanicEffects ?? {};

@@ -187,7 +187,7 @@ function validateBlendShape(
 /**
  * Where a biome has an authored family table, every normal node of it must carry
  * a blend, and every one of its families must be reachable on some node -- a
- * family no node fields is a shard with no source.
+ * family no node fields is a family the player never meets.
  *
  * Only tier 1 is covered: T2-T4 families are not authored yet, so those nodes
  * carry no blend and spawn from the flat biome pool (Phase 2a gap).

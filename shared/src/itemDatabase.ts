@@ -23,8 +23,6 @@ for (const recipe of RECIPE_DATABASE.values()) {
     // weapon never has to author the same element twice (and cannot disagree
     // with itself); `weaponDot` itself is deliberately not projected here.
     element: recipe.element ?? recipe.weaponDot?.element,
-    lineageId: recipe.lineageId,
-    evolvesFrom: recipe.evolvesFrom,
     coreEligibility: recipe.coreEligibility,
   });
 }

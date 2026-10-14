@@ -231,16 +231,6 @@
   border-color: rgba(160, 90, 70, 0.6) !important;
 }
 
-/* A slot holding a lineage form opens its tree instead of pinning a compare
-   card (design §2: the slot holds the lineage, not the item) — a thin gold
-   underline says "there's more here" without competing with the tier border. */
-.inv-equip-slot--lineage .inv-equip-slot__type {
-  color: var(--hud-primary-strong, #d9b25c);
-}
-.inv-equip-slot--lineage .inv-equip-slot__footer {
-  box-shadow: inset 0 -2px 0 -1px var(--hud-primary-strong, #d9b25c);
-}
-
 /* Icon strip — fixed width on the left */
 .inv-equip-slot__icon {
   flex: 0 0 44px;

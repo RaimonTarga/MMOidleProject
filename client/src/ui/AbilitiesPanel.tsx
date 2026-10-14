@@ -1,17 +1,16 @@
 import { useId, useState } from "react";
 import { LoadoutFeedback } from "./LoadoutFeedback";
 import { useAtomValue } from "jotai";
-import { ABILITY_DATABASE, CONDITION_DATABASE, TUTORIAL_ANCHORS, abilityBlurbAt, abilityNodeCastSpeedFor, attunedAbilityIds, attunedForFamily, referenceAbilityRule, runeRuleCost, runicPointLoadoutCost, runeBudgetForGlobalMastery } from "@mmo-idle/shared";
+import { ABILITY_DATABASE, CONDITION_DATABASE, TUTORIAL_ANCHORS, abilityBlurbAt, attunedAbilityIds, attunedForFamily, referenceAbilityRule, runeRuleCost, runicPointLoadoutCost, runeBudgetForGlobalMastery } from "@mmo-idle/shared";
 import { hudBus } from "../hudBus";
-import { abilityNodesAtom, attunedAbilitiesAtom, knownAbilitiesAtom, playerTierAtom, runesEquippedAtom, equippedRitesAtom, attunedStancesAtom, globalMasteryAtom, passivesAtom, attackAtom, maxHpAtom, attackRangeAtom, combatArchetypeAtom } from "../hud/atoms";
+import { attunedAbilitiesAtom, knownAbilitiesAtom, playerTierAtom, runesEquippedAtom, equippedRitesAtom, attunedStancesAtom, globalMasteryAtom, passivesAtom, attackAtom, maxHpAtom, attackRangeAtom, combatArchetypeAtom } from "../hud/atoms";
 import { abilityTiming } from "./describe/abilityTiming";
 import { describeAbility } from "./describe/abilityText";
 import { AbilityDetails } from "./AbilityDetails";
-import { AbilityNodeRows } from "./AbilityNodeRows";
 import { AttunementBudget } from "./AttunementBudget";
 import { GameIcon } from "./GameIcon";
 import { abilityIconSource } from "./abilityIcons";
-import { abilityLineageFor, abilityNameFor } from "./abilityName";
+import { abilityNameFor } from "./abilityName";
 import "./buildPanel.css";
 import "./attunementPanel.css";
 
@@ -22,7 +21,6 @@ export function AbilitiesPanelContent() {
   const rites = useAtomValue(equippedRitesAtom);
   const stances = useAtomValue(attunedStancesAtom);
   const tier = useAtomValue(playerTierAtom);
-  const nodes = useAtomValue(abilityNodesAtom);
   const combatArchetype = useAtomValue(combatArchetypeAtom);
   const context = { playerTier: tier, passives: useAtomValue(passivesAtom), combatArchetype, attack: useAtomValue(attackAtom), maxHp: useAtomValue(maxHpAtom), attackRange: useAtomValue(attackRangeAtom) };
   const budget = runeBudgetForGlobalMastery(useAtomValue(globalMasteryAtom));
@@ -51,13 +49,9 @@ export function AbilitiesPanelContent() {
         const nextRules = rules.filter(r => r.actionId !== "use-ability" || r.targetAbilityId !== id || !isAttuned);
         const nextSpent = runicPointLoadoutCost({ rules: nextRules, rites, stances, abilities: next });
         const timing = abilityTiming(ability, abilities, rules);
-        // The node rows deepen the name and the wind-up (design §22.7, §22.9): the
-        // same shared reads the server's cast lifecycle and the tree use.
-        const described = describeAbility(ability, { ...context, nodeCastSpeedPct: abilityNodeCastSpeedFor(id, nodes[id]) });
-        // The whole name (design §22.10), through the one entry point, and the
-        // ability's own name beneath it once a keystone has renamed it (§22.7).
-        const name = abilityNameFor(ability, tier, nodes);
-        const lineage = abilityLineageFor(ability, nodes);
+        const described = describeAbility(ability, context);
+        // The whole name (design §22.10), through the one entry point.
+        const name = abilityNameFor(ability, tier);
         const blocked = !isAttuned && nextSpent > budget;
         // One-click wiring that reproduces the timing abilities had before they
         // lost their built-in triggers. Only attuned abilities can be named by a rule.
@@ -68,10 +62,9 @@ export function AbilitiesPanelContent() {
         return <article key={id} className={`ability-entry${isAttuned ? " is-attuned" : ""}${selected ? " is-selected" : ""}`}>
           <div className="ability-entry__top">
             <button type="button" className="ability-entry__select" aria-expanded={selected} aria-controls={`${panelId}-${id}`} aria-label={`${selected ? "Hide" : "Show"} ${name} details`} onClick={() => setSelectedId(selected ? null : id)}>
-              <span className="ability-entry__icon"><GameIcon source={abilityIconSource(ability, nodes[id])} size={40} decorative /></span>
+              <span className="ability-entry__icon"><GameIcon source={abilityIconSource(ability)} size={40} decorative /></span>
               <span className="ability-entry__copy">
                 <span className="ability-entry__name">{name}</span>
-                {lineage && <span className="ability-entry__lineage">{lineage}</span>}
                 <span className="ability-entry__blurb">{abilityBlurbAt(ability, tier)}</span>
               </span>
               <span className="ability-entry__disclosure">{selected ? "Less" : "Details"} <span aria-hidden="true">{selected ? "−" : "+"}</span></span>
@@ -102,8 +95,6 @@ export function AbilitiesPanelContent() {
               <span>After {isAttuned ? "unattuning" : "attuning"}: <b>{nextSpent} / {budget} RP</b>{isAttuned && timing.overrides.length > 0 && " · removes this ability’s Rune rules"}</span>
             </div>
             {isAttuned && <p className="attunement-note">Fires automatically only through Use Ability rules, in Rune priority order.</p>}
-            {/* Runes decide WHEN it fires; nodes decide WHAT it does (design §19). */}
-            <AbilityNodeRows ability={ability} />
           </div>}
         </article>;
       })}

@@ -11,8 +11,8 @@
  *
  * Prints the ledger the course-correction report wants (docs/guided-tutorial-plan.md):
  * per class — completion, wall time, beats passed / total by chapter, deaths and
- * where, every seal and gate attempt, the lean and verb purchases (time, levels,
- * Global Mastery), stalls — and the first-hour checklist measured: the level each
+ * where, every seal and gate attempt, stalls — and the first-hour checklist
+ * measured: the level each
  * beat's line was ACTUALLY shown at (beat start + the run's own level-ups), with
  * skipped farm beats (already satisfied, so the guide never shows them) left out.
  */
@@ -20,7 +20,6 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
-  LINEAGE_DATABASE,
   TUTORIAL_CLASS_PLANS,
   TUTORIAL_CONCEPTS_PER_LEVEL,
   tutorialScriptFor,
@@ -61,9 +60,6 @@ const ZONE: Record<string, string> = {
   'The Clearing': 'clearing', 'The Plains': 'plains', 'The Forest': 'forest',
   'The Swamp': 'swamp', 'The Mountain': 'mountain', 'The Cave': 'cave',
 };
-// Card names across every lineage: the course-correction sweep's pairs were the Rapier's; since
-// verbs-that-fire wave 2 each plan names its own lineage (`weaponCards.lineageId`).
-const cardName = (id: string) => [...LINEAGE_DATABASE.values()].flatMap((l) => l.cards).find((c) => c.id === id)?.name ?? id;
 
 const ledger: Record<string, unknown>[] = [];
 const measured: string[] = [];
@@ -122,18 +118,7 @@ for (const plan of TUTORIAL_CLASS_PLANS) {
     return `${won.length}/${a.length}${fights.length ? `, fight ${Math.round(Math.min(...fights) / 1000)}–${Math.round(Math.max(...fights) / 1000)} s` : ''}${lost.length ? ` (lost: ${lost.join(', ')})` : ''}`;
   };
 
-  // Purchases.
   const milestone = (id: string) => events.find((e) => e.kind === 'milestone' && e.id === id)?.atMs;
-  // How long the purchase's shards farm stood (0 s: skipped, the wallet already covered it).
-  const farmFor = (cardId: string) => {
-    const ends = stepEnds.get(`shards:${cardId}`) ?? [];
-    return ends.length === 0 ? '' : `, farm ${Math.round(ends.reduce((t, e) => t + (e.durationMs ?? 0), 0) / 1000)} s`;
-  };
-  const purchase = (milestoneId: string, cardId: string) => {
-    const at = milestone(milestoneId);
-    if (at === undefined) return 'not bought';
-    return `${mins(at)} (Forest ${levelAt('forest', at)}, GM ${gmAt(at)}${farmFor(cardId)})`;
-  };
 
   const stallEvents = events.filter((e) => e.kind === 'stall' || e.kind === 'boss-step-exhausted');
   const row = {
@@ -155,8 +140,6 @@ for (const plan of TUTORIAL_CLASS_PLANS) {
     })),
     seals: { plains: bossCell('plains'), mountain: bossCell('mountain') },
     gate: bossCell('forest'),
-    lean: { card: cardName(plan.weaponCards.lean), at: purchase('first-lineage-card', plan.weaponCards.lean) },
-    verb: { card: cardName(plan.weaponCards.verb), at: purchase('verb-card', plan.weaponCards.verb) },
     notDone: notDone.map((e) => `${e.label} -> ${e.outcome}${e.reason ? ` (${e.reason})` : ''}`),
     stalls: stallEvents.map((e) => `${mins(e.atMs)} ${e.kind}${e.reason ? `: ${e.reason}` : ''}`),
   };
@@ -191,10 +174,10 @@ console.log(`|---|${chapters.map(() => '---').join('|')}|---|---|---|---|`);
 for (const r of L) {
   console.log(`| ${r.class} | ${chapters.map((c) => r.perChapter[c] ?? '—').join(' | ')} | ${r.beatsPassed}/${r.beatsTotal} | ${r.completion}${r.endReason ? ` (${r.endReason})` : ''} | ${mins(r.wallMs)} | ${r.deaths.length} |`);
 }
-console.log('\n| Class | Lean (bought) | Verb (bought) | GM 30 | Plains seal | Mountain seal | Greatbear (gate, 3 kills) | Tier 2 | gate paid |');
-console.log('|---|---|---|---|---|---|---|---|---|');
+console.log('\n| Class | GM 30 | Plains seal | Mountain seal | Greatbear (gate, 3 kills) | Tier 2 | gate paid |');
+console.log('|---|---|---|---|---|---|---|');
 for (const r of L) {
-  console.log(`| ${r.class} | ${r.lean.card}, ${r.lean.at} | ${r.verb.card}, ${r.verb.at} | ${mins(r.gm30Ms ?? undefined)} | ${r.seals.plains} | ${r.seals.mountain} | ${r.gate} | ${mins(r.tier2Ms ?? undefined)} | ${mins(r.gatePaidMs ?? undefined)} |`);
+  console.log(`| ${r.class} | ${mins(r.gm30Ms ?? undefined)} | ${r.seals.plains} | ${r.seals.mountain} | ${r.gate} | ${mins(r.tier2Ms ?? undefined)} | ${mins(r.gatePaidMs ?? undefined)} |`);
 }
 console.log('\nDeaths:');
 for (const r of L) for (const d of r.deaths) console.log(`- ${r.class} ${mins(d.atMs)} in ${d.where}, ${d.step}, by ${d.killer}`);

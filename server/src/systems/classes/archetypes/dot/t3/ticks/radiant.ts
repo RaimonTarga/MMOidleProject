@@ -1,5 +1,4 @@
 import {
-  lineageUnit,
   relicRatingsFromPassives,
   resolveDotClassProfile,
   resolveDotRelicDeliveryProfile,
@@ -37,6 +36,9 @@ function burnIsFull(player: PlayerEntity, effect: StatusEffect): boolean {
   return effect.stacks >= Math.min(effect.maxStacks, cap);
 }
 
+/** How far a full burn's tick reaches from the burning body (body overlap). */
+export const RADIANT_REACH = 120;
+
 /**
  * RADIANT — the Pyromancer's payoff (design §22.5, dot-balanced-t3-a).
  *
@@ -45,23 +47,22 @@ function burnIsFull(player: PlayerEntity, effect: StatusEffect): boolean {
  *
  *   - It is DAMAGE, never a stack. It touches no body's burn record, so it applies
  *     no stacks and spreads nothing. That is the whole difference from the Warlock
- *     range node (a stack applied at reach also lands one adjacent), Contagion and
- *     the Outbreak keystone, which all move STACKS.
+ *     range node (a stack applied at reach also lands one adjacent) and Contagion,
+ *     which both move STACKS.
  *   - Each struck body pays the DoT rules for ITSELF (`classDotTickDamage`: no
  *     plating, half its DR, its own `dotResistance` and DoT vulnerabilities) on the
  *     burning body's RAW tick, so an armoured centre never dims the fire around it.
  *   - It is not a hit. No combat-pipeline event runs, so nothing that listens for a
- *     hit (on-hit procs, the lineage `hit-nth` counter, Sweep's Tempo attack
- *     equivalent) sees it. A body it kills is handed back through `queueKill` and
+ *     hit (on-hit procs, Sweep's Tempo attack equivalent) sees it. A body it kills is handed back through `queueKill` and
  *     dies exactly as a DoT-tick kill does.
  *   - It never recurses. A struck body's burn is untouched, so one that is itself
  *     at max radiates on its OWN tick and only then: one splash per ticking body.
  *
  * Gated on the burn's source carrying `dot.radiant`, which only the Pyromancer node
  * authors: the class DoT record is one id across all three elements, so the path's
- * presence, not the element, is what decides. The reach is the lineage adjacency
- * unit (`LINEAGE_UNITS.contagionRadius`), measured as body overlap from the burning
- * body, through the same target query `applyPlayerAoe` uses. `applyPlayerAoe`
+ * presence, not the element, is what decides. The reach is {@link RADIANT_REACH},
+ * measured as body overlap from the burning body, through the same target query
+ * `applyPlayerAoe` uses. `applyPlayerAoe`
  * itself is not used because it mitigates as a hit (plating, full DR).
  *
  * Presentation: a `dot-tick` on each struck body in the burn's element (fire), with
@@ -93,7 +94,7 @@ export function radiateBurnTick(
     world,
     player,
     burning.hasPosition.current,
-    lineageUnit('contagionRadius'),
+    RADIANT_REACH,
     burning.isMonster.id,
   );
   if (victims.length === 0) return 0;

@@ -1,5 +1,4 @@
 import type { PlayerView } from '@mmo-idle/shared';
-import { packetDefinition } from '@mmo-idle/shared';
 import type { GameScene } from '../scenes/GameScene';
 import type { RenderState } from '../render/state';
 import { DEPTH } from '../render/depth';
@@ -37,17 +36,10 @@ import { DEPTH } from '../render/depth';
  * contract — see the comment on `frame-charge` in combatEvents.ts).
  */
 
-function resolveGlowColor(): number {
-  const css = packetDefinition('empowered')?.color;
-  if (!css) return 0xffb347;
-  const parsed = Number.parseInt(css.replace('#', ''), 16);
-  return Number.isNaN(parsed) ? 0xffb347 : parsed;
-}
-
-/** The Empowered lane colour (design §8: "Lane colour: weapon trail, buff clock,
- *  and the gate aura") — the frame-charge bank IS that lane's container, so the
- *  glow reuses its established colour rather than inventing a new one. */
-const GLOW_COLOR = resolveGlowColor();
+/** The Empowered lane's established colour — the frame-charge bank IS that
+ *  lane's container. Kept as its value when the lane table went with the lineage
+ *  trees (class-first rework D1). */
+const GLOW_COLOR = 0xffb347;
 const GLOW_CORE = 0xfff4cf;
 
 /** Fraction-per-second the rendered glow chases the latest known target. Not a

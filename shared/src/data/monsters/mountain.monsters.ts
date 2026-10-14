@@ -118,7 +118,7 @@ export const mountainMonsterEntries = [
     // CRAG FAMILY, T1 (progression rework, 2026-10-01). A plated charging ram, the
     // Granite Titan's small kin by role (slow anchor, big single bites) and the
     // Cliff Hopper's by species (caprine line). Real flat plating at T1 so light
-    // hits are eaten and big hits are rewarded — the family's shard is Empowered.
+    // hits are eaten and big hits are rewarded — an Empowered family.
     // PLACEHOLDER numbers seeded from the T1 Mountain band (hopper 190/40);
     // designer hand-edits before the lane bench.
     // T1 ENTRY PRESSURE (2026-10-02, PROVISIONAL): pullRange 300 -> 260. The mildest

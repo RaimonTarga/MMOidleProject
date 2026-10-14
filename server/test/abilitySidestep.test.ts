@@ -1,8 +1,8 @@
 /**
  * SIDESTEP — the Avoid Guard (the ability pass, design §22.8).
  *
- * Wiring, not balance: the window's numbers are the lineage magnitude table's
- * (`sidestepWindow`), so the test reads them from there rather than pinning them.
+ * Wiring, not balance: the window's numbers are `sidestepWindow`'s, so the test
+ * reads them from there rather than pinning them.
  * Pins:
  *   1. it is a T1 Forest-5 instant Guard, wired In Combat, with no number of its
  *      own in its rank;
@@ -18,7 +18,6 @@ import {
   ABILITY_RECIPE_DATABASE,
   ABILITY_SIDESTEP_EFFECT_ID,
   GAME_CONFIG,
-  PAYOFF_UNIT,
   STARTER_RUNE_IDS,
   baseRecoveryForTier,
   emptyEquipment,
@@ -52,7 +51,7 @@ function slices(id: string): PersistedPlayerSlices {
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      shards: {}, capstones: {},
+      
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier: 1, currentSkillTier: 1, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runeRecipesCrafted: [], runesEquipped: [],
@@ -96,12 +95,12 @@ initCombatSystems();
   for (const rank of SIDESTEP.ranks) {
     assert(Object.keys(rank.effect).join() === 'kind', 'the rank authors only its shape — no magnitude');
   }
-  // The window is the magnitude table's own unit, growing with the rank's tier.
+  // The window grows with the rank.
   const t1 = sidestepWindow(SIDESTEP, 1);
   const t4 = sidestepWindow(SIDESTEP, 4);
-  assert(t1.durationMs === PAYOFF_UNIT.get('evasion-window')!.durationMs, "the window is the evasion-window unit's");
+  assert(t1.durationMs > 0, 'the window has a clock');
   assert(t1.evasionPct > 0 && t1.moveSpeedPct > 0, 'both halves carry a magnitude');
-  assert(t4.evasionPct > t1.evasionPct, 'a later rank reads a later tier of the table');
+  assert(t4.evasionPct > t1.evasionPct, 'a later rank reads a later row');
 }
 
 // ── 2. The window opens on one status, and the evade roll reads it ──────────

@@ -19,7 +19,6 @@ import { mergePassives, makePulseAccumulator, finalizePulse } from '../passives'
 import { relicRatingsFromPassives, resolveCadenceRelicProfile } from './relics';
 import { summonerSpecializationFor } from '../data/summoner';
 import { SLINGER_DIRECT_ATTACK_EFFECTIVENESS } from './classSecondaryDamage';
-import { defensiveFaceForSubVariant, resolveActiveLineages } from './lineages';
 import { dotClassProfileForSubVariant } from './dotClassProfile';
 import { weaponDotProfileForWeapon } from './weaponFamilies';
 
@@ -259,37 +258,6 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     mergePassives(p.usesSkills.passives, stance.mechanicEffects, pulseAcc);
   }
 
-  // 2b. Lineage stat rows (progression rework Phase 1).
-  //
-  // Resolved ONCE here, before the cooldown fold, because a Tempo stat row grants
-  // `attackSpeedPct` and attack speed has to land before step 2a computes the
-  // cooldown, which is the line immediately below. The flat half of the same
-  // result is applied with equipment in step 3c, because a card is item power and
-  // must sit inside the magnitude the class affinities then multiply.
-  //
-  // Only a lineage whose worn form is the item actually equipped in its slot
-  // contributes, and only the active card of each row — owning a card is not
-  // playing it.
-  //
-  // BAND COLLAPSE (design §4, Phase 5). `statEffects` also carries the stat row
-  // of every band the worn form has collapsed: "the stat row's value folds into
-  // the next form's base stats at the gate". Those absorbed rows arrive in the
-  // SAME bag as the active one and so land through these two existing sites —
-  // the percentage half here, the flat half in step 3c — which is what makes an
-  // absorbed row contribute exactly once however many times recalc runs. There
-  // is deliberately no third application site; `resolveActiveLineages` also
-  // drops a slotted stat card its band has collapsed, so the two sets are
-  // disjoint by construction.
-  const lineageEffects = resolveActiveLineages(
-    p.holdsInventory,
-    defensiveFaceForSubVariant(p.usesSkills.selectedSubVariant),
-  );
-  attackSpeedPct += lineageEffects.statEffects.attackSpeedPct ?? 0;
-  if ((lineageEffects.statEffects.evasion ?? 0) > 0) evasionChance += lineageEffects.statEffects.evasion!;
-  if (lineageEffects.statEffects.attackPct) {
-    affinities.attack += lineageEffects.statEffects.attackPct;
-  }
-
   p.performsAttack.attackCooldown = Math.round(
     p.performsAttack.attackCooldown / Math.max(0.1, 1 + attackSpeedPct),
   );
@@ -328,67 +296,6 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     // crafted at full power (design §23, §24.5). A save's stale `itemUpgrades`
     // entry adds nothing here; hydration refunds it.
   }
-  // 3c. The flat half of the lineage stat rows — the slotted one plus the
-  // absorbed ones (step 2b) — folded with equipment so class affinities multiply
-  // it. Percentages and evasion already landed in step 2b; damage reduction joins
-  // the ITEM bucket, because a card is item power. An absorbed row is base stats
-  // of the worn form, so it belongs in exactly this bucket too.
-  for (const [stat, value] of Object.entries(lineageEffects.statEffects)) {
-    if (stat === 'attackSpeedPct' || stat === 'attackPct' || stat === 'evasion') continue;
-    if (stat === 'damageReduction') { itemDr += value; continue; }
-    // Technique power is the existing `technique.power-pct` PASSIVE, not an
-    // `ItemStats` field (design §22): the Technique lane scales the same number
-    // the Desert recipes author and `techniquePowerPctFor` reads, so a stat row
-    // ADDS into that passive rather than inventing a parallel stat for the
-    // ability code to miss. Additive and applied once, like every other `*Pct`.
-    if (stat === 'techniquePowerPct') {
-      p.usesSkills.passives['technique.power-pct'] =
-        (p.usesSkills.passives['technique.power-pct'] ?? 0) + value;
-      continue;
-    }
-    // DoT potency, the Affliction lean (design §24.2), is the same shape: it ADDS
-    // into `dot.mechanic-mult`, the DoT root's damage multiplier that
-    // `computeDotClassDamagePerStack` reads, on top of the frame node's base (the
-    // class nodes merged above). Inert for a root with no class DoT.
-    //
-    // The base is seeded from the profile when no frame has authored it yet:
-    // `resolveDotClassProfile` reads the passive with `??`, so a frameless
-    // Apprentice holding only this lean would otherwise read 0.10 as the WHOLE
-    // multiplier instead of base + 0.10.
-    //
-    // Since design §24.9 the same stat also SEEDS the Affliction moment for every
-    // class: that share of each landed hit becomes a light bleed
-    // (`shared.bleed-on-hit-pct`, read by the server's lean-condition listener).
-    // For the DoT root the two halves partition its damage — the multiplier
-    // scales its DoT, the bleed scales its hit — so neither counts twice.
-    //
-    // ONE DoT RECORD PER WEAPON (design §26.2): a weapon that owns a reservoir
-    // (`weaponDot`: the Poison Dagger, the Mirebrand, ...) is amplified, never
-    // joined. There the stat multiplies what the reservoir banks
-    // (`weapon.reservoir-potency-pct`, read by `feedWeaponReservoir`) and writes NO
-    // light bleed — the reservoir already afflicts every hit it converts, so the
-    // Affliction moment has its condition without a second record on the target.
-    if (stat === 'dotPotencyPct') {
-      const base = p.usesSkills.passives['dot.mechanic-mult']
-        ?? dotClassProfileForSubVariant(p.usesSkills.selectedSubVariant).dotMechanicMultiplier;
-      p.usesSkills.passives['dot.mechanic-mult'] = base + value;
-      const weaponId = p.holdsInventory.equipment.weapon;
-      const ownsReservoir = !!weaponId && weaponDotProfileForWeapon(weaponId) !== undefined;
-      const seedKey = ownsReservoir ? 'weapon.reservoir-potency-pct' : 'shared.bleed-on-hit-pct';
-      p.usesSkills.passives[seedKey] = (p.usesSkills.passives[seedKey] ?? 0) + value;
-      continue;
-    }
-    // The Control lean (design §24.9) is the same shape: a passive the server's
-    // lean-condition listener reads to slow every landed hit's target. It is not
-    // a stat-sheet number, so it lands nowhere else.
-    if (stat === 'slowOnHit') {
-      p.usesSkills.passives['shared.slow-on-hit-pct'] =
-        (p.usesSkills.passives['shared.slow-on-hit-pct'] ?? 0) + value;
-      continue;
-    }
-    applyStatModToTarget(p, stat, value);
-  }
-
   p.mitigatesDamage.damageReduction = 1 - (1-classDr)*(1-Math.min(.9,Math.max(0,itemDr)));
   if (itemDr > 0) p.usesSkills.passives['defense.item-dr-base'] = itemDr;
   finalizePulse(pulseAcc, p.usesSkills.passives);
@@ -398,9 +305,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   //
   // It sits here because the flat pool is now complete and nothing has multiplied
   // it yet: `GAME_CONFIG.PLAYER_MAX_HP` from step 1, the armor's `maxHp` and its
-  // upgrade steps from step 3, and the flat half of a defensive lineage's HP row
-  // from step 3c (which §3c itself calls item power) are the only flat sources in
-  // the game — no skill node or stance authors a flat `maxHp`, they all author
+  // upgrade steps from step 3 are the only flat sources in the game — no skill node or stance authors a flat `maxHp`, they all author
   // `maxHpPct`. So one multiplication here IS "base max HP and armor maxHp", and
   // every percentage layer below (class affinities 3d, the stance 3e, the core's
   // `core.maxhp-mult`) keeps multiplying the finished pool exactly as before.

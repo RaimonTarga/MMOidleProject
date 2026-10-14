@@ -103,7 +103,7 @@ export const plainsMonsterEntries = [
     // SKY FAMILY, T1 (progression rework, 2026-10-01). The Savanna Hawk's smaller
     // kin: an aerial opener. It is airborne, so the fight starts before you reach
     // it — one telegraphed Stoop into talon range, then it stays and fights. The
-    // family's shard is Engagement: the opening exchange is what this creature IS.
+    // family is an Engagement one: the opening exchange is what this creature IS.
     // PLACEHOLDER numbers seeded from the T1 Plains band (boar 100/18); designer
     // hand-edits before the lane bench.
     // PROGRESSION REWORK, 2026-10-01, PROVISIONAL: attack 16 -> 13, attackCooldown

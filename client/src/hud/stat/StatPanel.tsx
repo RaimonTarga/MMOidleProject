@@ -6,7 +6,6 @@ import { STAT_HELP } from './statHelp';
 import { StatPlate } from './StatPlate';
 import { HudPanel } from '../primitives';
 import { useIsMobile } from '../useIsMobile';
-import { RhythmReadout } from '../RhythmReadout';
 import { BuffBar } from '../BuffBar';
 import { togglePrimaryOverlay } from '../../input/overlayStack';
 import { statIconSource } from '../../ui/systemIcons';
@@ -64,14 +63,12 @@ const STAT_GLYPH = {
 };
 
 /**
- * What sits beside the HP bar on desktop (design §26.4): the rhythm readout's
- * named rings and the player's statuses as a small row. The phone draws its own
- * (the top strip's second row and the field's bottom-left).
+ * What sits beside the HP bar on desktop (design §26.4): the player's statuses
+ * as a small row. The phone draws its own (the field's bottom-left).
  */
 function BesideHp() {
   return (
     <div className="stat-crown__beside">
-      <RhythmReadout placement="rail" />
       <BuffBar placement="rail" />
     </div>
   );

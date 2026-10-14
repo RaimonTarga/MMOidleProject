@@ -1022,11 +1022,10 @@ export function respawnPlayer(world: World, playerId: string): void {
   // Drop any live slimes — the summoner tick will restage them at the new spawn.
   despawnMinionsForOwner(world, entity);
 
-  // Scratch state is cleared BEFORE the recalc: the recalc builds the lineage and
-  // ability-node runtime caches onto `tracksCombat`, and `resetTracksCombat` deletes
-  // them, so the old order (recalc, then reset) respawned every character with its
-  // cards, capstone, keystones and ability nodes switched off until some unrelated
-  // recalc — in idle play, the rest of the session (review finding B2, 2026-10-02).
+  // Scratch state is cleared BEFORE the recalc, so anything the recalc builds onto
+  // `tracksCombat` survives the respawn: the old order (recalc, then reset) wiped
+  // those caches until some unrelated recalc — in idle play, the rest of the session
+  // (review finding B2, 2026-10-02).
   resetTracksCombat(entity.tracksCombat);
   recalculatePlayerEntityStats(world, entity);
   syncArchetypeSlices(world, entity);

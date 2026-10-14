@@ -33,7 +33,7 @@ function slices(id: string, tier: number, nodeId = 'node-clearing'): PersistedPl
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      shards: {}, capstones: {},
+      
       biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: tier, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [],
@@ -73,8 +73,6 @@ for (const recipe of relics) {
   assert(Object.keys(recipe.stats).length === 0, `${recipe.id} has no ordinary stats`);
   assert((recipe.upgrades?.length ?? 0) === 0, `${recipe.id} has no +N upgrades`);
   assert(recipe.coreEligibility === undefined, `${recipe.id} has no core eligibility`);
-  assert(recipe.evolvesFrom === undefined, `${recipe.id} is a base lineage item`);
-  assert(recipe.lineageId === recipe.id, `${recipe.id} has a stable lineage id`);
   assert(
     Object.keys(recipe.mechanicEffects ?? {}).every((key) => allowedRatingKeys.has(key)),
     `${recipe.id} authors only approved relic.* ratings`,

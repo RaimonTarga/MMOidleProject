@@ -3,11 +3,9 @@ import {
   ABILITY_SLOW_EFFECT_ID,
   MONSTER_ROOT_STATUS_IDS,
   MONSTER_SLOW_STATUS_IDS,
-  getLineageRuntime,
   getStatusEffect,
   getStatusEffects,
   isMonsterDotStatusEffectId,
-  rhythmFirings,
   BURN_FAMILY,
 } from "@mmo-idle/shared";
 import {
@@ -43,8 +41,7 @@ const MONSTER_MARKER_CHECKS: MarkerCheck[] = [
   { marker: "hasDot", effectId: "dot" },
   { marker: "hasDetonation", effectId: "cadence-detonation", multi: true },
   {
-    // The marker means "carries some bleed": a lineage card's DoT payoff has its
-    // own id (design §18.1) and the same driver ticks all of them.
+    // The marker means "carries some bleed": every id in `BLEED_EFFECT_IDS`.
     marker: "hasHemorrhage",
     effectId: "cadence-hemorrhage",
     multi: true,
@@ -113,15 +110,6 @@ const ARCHETYPE_SLICE_CHECKS: ArchetypeSliceCheck[] = [
     slice: "summonsMinions",
     shouldBePresent: (entity) => entity.usesSkills?.combatArchetype === "summoner",
     label: "summoner archetype",
-  },
-  {
-    // The rhythm readout follows the resolved card cache (design §24.6).
-    slice: "showsRhythm",
-    shouldBePresent: (entity) => {
-      const runtime = entity.tracksCombat ? getLineageRuntime(entity.tracksCombat) : undefined;
-      return runtime !== undefined && rhythmFirings(runtime).length > 0;
-    },
-    label: "triggered lineage card",
   },
 ];
 

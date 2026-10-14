@@ -1,10 +1,8 @@
 import { resolveFinalDamageMultipliers } from '../systems/finalDamage';
 import { resolveLaserProfile } from '../systems/laserProfile';
 import type { EquipmentMap, EssenceType } from "../items";
-import type { HasAutoIntent, HasEmote, HasStatus, PartyMember, ShowsRhythm, TargetStatusView } from "../components";
+import type { HasAutoIntent, HasEmote, HasStatus, PartyMember, TargetStatusView } from "../components";
 import type { PassiveMap } from "../passives";
-import type { LineageProgressMap, PacketId } from "../data/lineages/types";
-import type { AbilityNodeProgressMap } from "../data/abilityNodes/types";
 import { isRangedCombatant, type SubVariant } from "../skillTree";
 import type { MonsterBehavior } from "../data/monsters/behavior";
 import type { ClassConfig } from "../classKits/configTypes";
@@ -96,10 +94,6 @@ export interface PlayerView {
   partyMembers: PartyMember[];
   nodeId: string;
   essences: Record<EssenceType, number>;
-  /** Lineage shard wallet, keyed by packet (progression rework Phase 1). */
-  shards: Partial<Record<PacketId, number>>;
-  /** Boss capstone wallet, keyed by biome — the gate cost of a lineage form. */
-  capstones: Record<string, number>;
   level: number;
   skillPoints: number;
   unlockedSkills: string[];
@@ -117,8 +111,6 @@ export interface PlayerView {
   inventory: string[];
   equipment: EquipmentMap;
   itemUpgrades: Record<string, number>;
-  /** Lineage trees, keyed by lineage id. Absent on a character with none yet. */
-  lineages: LineageProgressMap;
   biomeXP: Record<string, number>;
   biomeLevel: Record<string, number>;
   /** Derived sum of all biome levels (system rework Step 4) — drives RP budget + upgrade ceiling. */
@@ -163,12 +155,6 @@ export interface PlayerView {
   activeEffects?: Record<string, number>;
   activeEffectFrames?: Record<string, number>;
   activeBuffs: PlayerBuff[];
-  /**
-   * The rhythm readout's moment state (`ShowsRhythm.moments`), keyed by card or
-   * capstone id. Absent while the player has no triggered lineage card — the
-   * slice's presence, carried through.
-   */
-  rhythm?: ShowsRhythm['moments'];
   questProgress: Record<string, number>;
   playerTier: number;
   bossesCleared: string[];
@@ -182,8 +168,6 @@ export interface PlayerView {
   knownAbilities: string[];
   /** Attuned abilities by semantic family; ordered for default arbitration. */
   attunedAbilities: AttunedAbilities;
-  /** Ability nodes, keyed by ability id (design §19). Empty until one is bought. */
-  abilityNodes: AbilityNodeProgressMap;
   /** Stances learned (crafted) — the slottable pool (system rework Step 10). */
   knownStances: string[];
   attunedStances: string[];
@@ -388,8 +372,6 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     partyMembers: entity.inParty?.members ?? [],
     nodeId: entity.hasPosition.nodeId,
     essences: progression.essences,
-    shards: progression.shards ?? {},
-    capstones: progression.capstones ?? {},
     level: progression.level,
     skillPoints: progression.skillPoints,
     unlockedSkills: skills.unlockedSkills,
@@ -407,7 +389,6 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     inventory: inventory.inventory,
     equipment: inventory.equipment ?? EMPTY_EQUIPMENT,
     itemUpgrades: inventory.itemUpgrades ?? {},
-    lineages: inventory.lineages ?? {},
     biomeXP: progression.biomeXP,
     biomeLevel: progression.biomeLevel,
     globalMastery: globalMastery(progression.biomeLevel),
@@ -481,7 +462,6 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     activeEffects: entity.hasStatus?.activeEffects,
     activeEffectFrames: entity.hasStatus?.activeEffectFrames,
     activeBuffs: entity.hasStatus?.activeBuffs ?? [],
-    ...(entity.showsRhythm ? { rhythm: entity.showsRhythm.moments } : {}),
     questProgress: progression.questProgress,
     playerTier: progression.playerTier,
     bossesCleared: progression.bossesCleared ?? [],
@@ -492,7 +472,6 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     runesEquipped: progression.runesEquipped ?? [],
     knownAbilities: progression.knownAbilities ?? [],
     attunedAbilities: normalizeAttunedAbilities(progression.attunedAbilities),
-    abilityNodes: progression.abilityNodes ?? {},
     knownStances: progression.knownStances ?? [],
     attunedStances: progression.attunedStances ?? [],
     equippedStances: progression.equippedStances ?? emptyEquippedStances(),

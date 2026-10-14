@@ -164,19 +164,6 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'stance-charge': b('Charge', 'Powering Up: charge banked so far. It only builds while you are fighting, and it is lost if the fight ends. Leaving the stance spends it for a burst lasting as long as you charged.'),
   'stance-release': b('Unleashed', 'Powering Up: the charge you banked, spent. Extra damage and attack speed for as long as you spent charging it.'),
 
-  // -- Lineage card windows ---------------------------------------------------
-  // One tile per timed payoff a lineage card can open. The card that opened it
-  // names itself in the tree panel; these say what the window is DOING, because
-  // that is what the player needs while it is counting down.
-  'lineage-damage': b('Surge', 'A lineage card opened a damage window. Your hits land harder until it closes — the same one-multiplier-per-hit slot an empowered attack uses, so it does not stack a second multiplier on top.'),
-  'lineage-speed': b('Wake', 'A lineage card opened an attack-speed window. It adds to Frenzy and any stance window rather than replacing them.'),
-  'lineage-recovery': b('Mend', 'A lineage card switched on a share of your Recovery rate for a window. What that converts to in HP depends on your Recovery stat.'),
-  'lineage-guard': b('Brace', 'A lineage card opened a damage-reduction window — opening protection, earned by how the card fires rather than by gear.'),
-  'lineage-ward': b('Shell', 'A lineage card granted a temporary absorb pool, spent before your barrier and your health.'),
-  'lineage-plate': b('Plate', 'A lineage card is adding plating to each reactive-plating stack you are holding. The stacks themselves still build from hits taken and fade one at a time.'),
-  'lineage-technique': b('Form', 'A Technique lineage card opened a window: the next Technique that lands does so empowered, and the window closes when it spends. It uses the same one-multiplier-per-hit slot an empowered attack does, so a Technique rider adds to it rather than multiplying with it.'),
-  'lineage-evasion': b('Slip', 'A lineage card opened an evasion window: for its duration, a chance to graze a hit (take half of it) on top of whatever your gear already gives you. A graze still lets the monster\'s ailments through.'),
-
   // -- Frame loops -------------------------------------------------------------
   // Two tiles for all six classes: a frame is either a window or a bank (or, on a
   // Balanced frame, a little of both), and which one you have is decided by the
@@ -198,12 +185,6 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   slow: d('Slow', 'The target’s movement speed is cut, so it closes on you and repositions more slowly.'),
   'ability-slowed': d('Slowed', 'An ability has crippled the target’s stride: movement is reduced, but its attack cadence is unchanged. It can still attack and cast; this is soft control, not a root or stun.'),
   'ability-rooted': d('Bound', 'Binding Strike has pinned the target in place. It can still attack anything already in reach, but cannot reposition until the bind ends.'),
-  // The lineage cards' own records (design §26.2). One bleed for a weapon with no
-  // poison of its own, and the Control lean's slow and root under their own names,
-  // so the frame never names an ability the player may not have.
-  'lineage.bleed': d('Bleed', 'Your weapon’s cards have opened a wound. Every Affliction card on a weapon with no poison of its own adds to this one bleed, which ticks past the target’s plating at half its damage reduction. The number is the damage it still owes.'),
-  'lineage.hobbled': d('Hobbled', 'Your weapon drags at the target’s stride with every hit: it moves slower, but still attacks and casts. A hobbled target counts as held for the cards that need one.'),
-  'lineage.pinned': d('Pinned', 'A card has pinned the target where it stands: it cannot reposition, but still attacks anything already in reach. A pinned target counts as held.'),
   // Bramble Guard's Entangle keystone (design §22.4): the slow on whatever hit a brambled player.
   'ability-entangled': d('Entangled', 'It struck you through your brambles and the thorns caught its stride: it moves slower, but still attacks and casts. An entangled target counts as held for the cards that need one.'),
   'death-mark': d('Death Mark', 'Your shots are stacking marks on the target. Your next reload detonates them a beat later, each mark adding to the blast.'),

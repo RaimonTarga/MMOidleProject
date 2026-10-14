@@ -42,7 +42,6 @@ import { MOBILITY_BUFFS, slowResistedMult } from "../../world/mobility/mobilityB
 import { STANCE_BUFFS } from "../../player/stances/stanceBehaviors";
 import { ABILITY_BUFFS } from "../../player/abilities/abilityBuffs";
 import { defineBuff, type BuffDescriptor, type BuffProjectionContext } from "./descriptor";
-import { LINEAGE_BUFFS } from "../lineageCards";
 
 /**
  * The tooltip's CURRENT section is built from these, not from `logDetail`.
@@ -523,7 +522,6 @@ export const ALL_BUFFS = [
   ...MOBILITY_BUFFS,
   ...STANCE_BUFFS,
   ...ABILITY_BUFFS,
-  ...LINEAGE_BUFFS,
   ...DEBUFF_BUFFS,
 ] as const satisfies readonly BuffDescriptor[];
 

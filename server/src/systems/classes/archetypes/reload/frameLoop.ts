@@ -12,9 +12,8 @@
  *                                  rides the same ramp. The 3s reload is the reset.
  *
  * ONE MULTIPLIER PER HIT. The clip-position payoff folds itself into
- * `ctx.metadata.empoweredMultiplier` exactly as a lineage `damage-window` does, so a
- * Technique rider reading that number still sees one honest figure and nothing writes
- * a second multiplier key.
+ * `ctx.metadata.empoweredMultiplier`, so a Technique rider reading that number still
+ * sees one honest figure and nothing writes a second multiplier key.
  *
  * WARMONGER (`reload-heavy-t3-b`, design §22.5). The frame owns the ramp; the path
  * no longer authors one of its own. It authors `reload.ramp-carry-pct` (half): a

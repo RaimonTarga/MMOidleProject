@@ -27,8 +27,7 @@ export function updateHemorrhages(world: World, dt: number): void {
     const monsterId = entity.isMonster.id;
     const state     = entity.tracksCombat;
     if (isInvulnerableMonster(entity)) continue;
-    // Every bleed id the driver owns, not just the cadence root's: a lineage
-    // card's DoT payoff has its own id (design §18.1) and the same tick shape.
+    // Every bleed id the driver owns (`BLEED_EFFECT_IDS`).
     const bleeds = BLEED_EFFECT_IDS.flatMap((id) => getStatusEffects(state, id));
     if (bleeds.length === 0) continue;
 
@@ -58,8 +57,7 @@ export function updateHemorrhages(world: World, dt: number): void {
         buildSimpleBreakdown(tickDmg, tickDmg),
       );
       entity.hasHealth.hp -= tickDmg;
-      // `sourceId` attributes the tick to its owner (a lineage lean's light bleed is
-      // the observable half of the Affliction lean, design §24.9; the bot counts it).
+      // `sourceId` attributes the tick to its owner.
       pushDotTickEvent(world, entity, 'bleed', tickDmg, { sourceType: 'special', sourceId: bleed.sourceId }); // bleed-red number + 🩸 glyph
       lastSourceId = bleed.sourceId;
       lastTickDamage = tickDmg;

@@ -58,7 +58,6 @@ import type { World } from "../../../world/World";
 import type { WorldLogActor } from "@mmo-idle/shared";
 import { techniquePowerPctFor } from "./abilityKata";
 import { onTechniqueResolved } from "../../combat/techniqueResolved";
-import { onAbilityNodeBodiesHit } from "../../combat/abilityNodes";
 
 /** Reporting-only: Technique/Sweep adapter contribution for combat-run diagnostics. */
 function recordTechniqueAdapter(
@@ -327,8 +326,7 @@ function tagClientEffect(ctx: CombatContext, tag: string): void {
  * the refund is visible to the HUD as an ordinary cooldown sample.
  *
  * `struck`, when given, receives every body a strike's circle hit (Slam's area),
- * so the cast driver can fire the ability node's "on every body hit" routes on
- * them once the cooldown is running (design §22.10).
+ * so the cast driver can act on every body hit once the cooldown is running.
  */
 export function resolveCastPayload(
   world: World,
@@ -467,23 +465,6 @@ function applyTechniqueRider(
       ctx,
       target: ctx.defender,
     });
-    // Sweep's node fires on every body its cleave hits (design §22.10): the
-    // struck body and the circle the cleave resolves around it — the same query
-    // every branch below uses, read once here so the Apprentice spread, the
-    // Slinger clip's first shot and a Conduit's first delivery all fire on the
-    // cleave that resolution made.
-    if (effect.kind === "cleave") {
-      onAbilityNodeBodiesHit(world, ctx.attacker, ability, [
-        ctx.defender,
-        ...playerAoeTargets(
-          world,
-          ctx.attacker,
-          ctx.defender.hasPosition.current,
-          effect.radius,
-          ctx.defender.isMonster.id,
-        ),
-      ], ctx);
-    }
   }
 
   const formationBasis = formationDelivery
@@ -620,23 +601,20 @@ function applyTechniqueRider(
 
   if (effect.kind === "spread-dots") {
     // Contagion, armed since the ability pass (design §22.9): the hit that lands
-    // it spreads what ITS target carries — the one damage-over-time record per
-    // weapon (§26.2: the weapon's reservoir, or the single lineage bleed) and
-    // every class family, through the DoT inventory. It deals no damage of its
+    // it spreads what ITS target carries — the weapon's reservoir (§26.2: one
+    // damage-over-time record per weapon) and every class family, through the
+    // DoT inventory. It deals no damage of its
     // own, so nothing is added to the hit.
     //
     // A Conduit delivers it through the formation-rider adapter Sweep uses, but a
     // spread copies FULL stacks, so it is not divisible into per-summon shares:
     // the first summon hit spreads once and the later deliveries carry nothing
-    // (the same once-per-Technique key the node payoff above uses).
+    // (the same once-per-Technique rule as the resolution above).
     if (formationDelivery && !formationDelivery.isFirstDelivery) return;
     tagClientEffect(ctx, ABILITY_TECHNIQUE_FIRED_FX);
     // A spread is a DoT applier: an evaded hit spreads nothing.
     if (evadeBlocksDebuffs(ctx)) return;
-    // Its node fires on every body the spread reached (design §22.10), after the
-    // copies landed: a seed laid before the copy would be max-merged away by it.
-    const reached = resolveContagion(world, ctx.attacker, ability, ctx.defender);
-    onAbilityNodeBodiesHit(world, ctx.attacker, ability, reached, ctx);
+    resolveContagion(world, ctx.attacker, ability, ctx.defender);
     return;
   }
 
@@ -740,13 +718,12 @@ function addEmpoweredDamage(
   // The divisor is `empoweredMultiplier` alone, never gated on the
   // `empoweredAttack` marker. The marker means "the class mechanic fired this
   // hit", which is strictly narrower than "this hit already carries a
-  // multiplier": a lineage `damage-window` card and a Light/Balanced frame window
-  // both fold themselves into `empoweredMultiplier` WITHOUT setting the marker,
-  // because setting it would restart cooldowns and fire every `mechanic-fired`
-  // card. Gating on the marker therefore skipped the division for exactly those
-  // sources and let a rider compound with the window — which is what
-  // `lineageCards.ts` already promises does not happen ("a Technique rider
-  // reading `empoweredMultiplier` sees one honest number").
+  // multiplier": a Light/Balanced frame window folds itself into
+  // `empoweredMultiplier` WITHOUT setting the marker, because setting it would
+  // restart cooldowns and fire `mechanic-fired`. Gating on the marker therefore
+  // skipped the division for exactly that source and let a rider compound with
+  // the window ("a Technique rider reading `empoweredMultiplier` sees one honest
+  // number").
   const empoweredMult = Number(ctx.metadata["empoweredMultiplier"] ?? 1);
   const basis = empoweredMult > 1 ? formationBasis / empoweredMult : formationBasis;
   ctx.damage = Math.max(0, Math.round(

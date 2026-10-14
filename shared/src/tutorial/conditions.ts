@@ -1,9 +1,5 @@
-import { capstoneMaterialName } from '../data/lineages/capstones';
-import { isGatedLineageForm } from '../data/lineages';
-import { shardName } from '../data/lineages/packets';
 import { RECIPE_DATABASE } from '../data/recipes';
 import { ITEM_DATABASE } from '../itemDatabase';
-import { cardRank } from '../systems/lineages';
 import { ESSENCE_LABELS, type EssenceType } from '../items';
 import type { PlayerView } from '../protocol/views';
 import { QUEST_DATABASE } from '../quests/questDatabase';
@@ -33,44 +29,11 @@ export type TutorialView = Pick<
   | 'attunedAbilities'
   | 'bossesCleared'
   | 'clearedNodes'
-  | 'lineages'
-  | 'shards'
-  | 'capstones'
 >;
 
 export function viewHasItem(view: Pick<TutorialView, 'inventory' | 'equipment'>, definitionId: string): boolean {
   return view.inventory.includes(definitionId)
     || Object.values(view.equipment).some((id) => id === definitionId);
-}
-
-/**
- * "Owned is forever": a bought card never un-buys and a bought rank never drops,
- * so this is monotone. With `rank`, owned at that rank or above (a RANKED card,
- * the T1 lean trio: design §26.1); an owned unranked card is rank I.
- */
-export function viewOwnsLineageCard(
-  view: Pick<TutorialView, 'lineages'>,
-  lineageId: string,
-  cardId: string,
-  rank = 1,
-): boolean {
-  return cardRank(view.lineages[lineageId], cardId) >= Math.max(1, rank);
-}
-
-export function viewOwnsLineageForm(
-  view: Pick<TutorialView, 'lineages'>,
-  lineageId: string,
-  recipeId: string,
-): boolean {
-  return view.lineages[lineageId]?.ownedForms.includes(recipeId) ?? false;
-}
-
-export function viewWearsLineageForm(
-  view: Pick<TutorialView, 'lineages'>,
-  lineageId: string,
-  recipeId: string,
-): boolean {
-  return view.lineages[lineageId]?.wornForm === recipeId;
 }
 
 export function viewCanAffordRecipe(view: TutorialView, recipeId: string): boolean {
@@ -98,10 +61,7 @@ export function evaluateTutorialCondition(condition: TutorialCondition, view: Tu
       return view.unlockedRecipes.includes(condition.recipeId);
     case 'canCraft': {
       const recipe = RECIPE_DATABASE.get(condition.recipeId);
-      // The server's craft guard: a live lineage's tier-2+ form is opened at its
-      // gate, never crafted (review B4).
       return !!recipe
-        && !isGatedLineageForm(recipe.id)
         && view.unlockedRecipes.includes(condition.recipeId)
         && viewCanAffordRecipe(view, condition.recipeId);
     }
@@ -115,16 +75,6 @@ export function evaluateTutorialCondition(condition: TutorialCondition, view: Tu
       return view.runeRecipesCrafted.includes(condition.recipeId);
     case 'bossCleared':
       return view.bossesCleared.includes(bossClearKey(condition.biomeGroup, condition.tier));
-    case 'shardAtLeast':
-      return (view.shards[condition.packet] ?? 0) >= condition.amount;
-    case 'capstoneAtLeast':
-      return (view.capstones[condition.biome] ?? 0) >= condition.amount;
-    case 'lineageCardOwned':
-      return viewOwnsLineageCard(view, condition.lineageId, condition.cardId, condition.rank);
-    case 'lineageFormOwned':
-      return viewOwnsLineageForm(view, condition.lineageId, condition.recipeId);
-    case 'lineageFormWorn':
-      return viewWearsLineageForm(view, condition.lineageId, condition.recipeId);
     case 'allOf':
       return condition.of.every((c) => evaluateTutorialCondition(c, view));
     case 'anyOf':
@@ -174,17 +124,5 @@ export function tutorialProgress(ref: TutorialProgressRef, view: TutorialView): 
     }
     case 'essence':
       return [essenceProgress(view, ref.essence, ref.amount)];
-    case 'shard':
-      return [{
-        current: Math.min(view.shards[ref.packet] ?? 0, ref.amount),
-        target: ref.amount,
-        label: shardName(ref.packet),
-      }];
-    case 'capstone':
-      return [{
-        current: Math.min(view.capstones[ref.biome] ?? 0, ref.amount),
-        target: ref.amount,
-        label: capstoneMaterialName(ref.biome),
-      }];
   }
 }

@@ -4,9 +4,6 @@ import {
   RUNE_RECIPE_DATABASE,
   STANCE_RECIPE_DATABASE,
   isRuneRecipeUnlocked,
-  checkEvolve,
-  checkReconstruct,
-  isGatedLineageForm,
   ESSENCE_TYPES,
 } from "@mmo-idle/shared";
 import type { EssenceType } from "@mmo-idle/shared";
@@ -17,16 +14,13 @@ function assert(cond: unknown, msg: string): void {
 
 const emptyEssences = () =>
   Object.fromEntries(ESSENCE_TYPES.map((t) => [t, 0])) as Record<EssenceType, number>;
-const fullEssences = () =>
-  Object.fromEntries(ESSENCE_TYPES.map((t) => [t, 1_000_000])) as Record<EssenceType, number>;
 
 // ─────────────────────────────────────────────────────────────────────────
 // The returning-biome T2 map (§5/§18/§19): each T2 item and the same-slot T1
-// item it follows. A WEAPON T2 is a lineage form whose `evolvesFrom` names its
-// T1 form (the graph its tree was authored from; opened at the gate). Armour,
-// charm and boots T2s are plain recipes since design §24.5: no predecessor.
+// item it follows. Every T2 is a plain recipe: armour, charm and boots since
+// design §24.5, weapons since their lineage trees went (class-first rework D1).
 // ─────────────────────────────────────────────────────────────────────────
-const RETURNING_BIOME_LINEAGES: Array<{ t1: string; t2: string }> = [
+const RETURNING_BIOME_T2S: Array<{ t1: string; t2: string }> = [
   { t1: "iron-broadsword", t2: "knight-steelsword" },
   { t1: "plains-vest-t1", t2: "plains-vest-t2" },
   { t1: "plains-charm-t1", t2: "plains-charm-t2" },
@@ -54,57 +48,30 @@ const JUNGLE_DESERT_T2_IDS = [
   "desert-sunsteel-cross", "desert-vest-t2", "desert-charm-t2", "desert-boots-t2",
 ];
 
-// ── The T2 graph after the evolve path's retirement (design §24.5) ──────────
+// ── The T2 graph ─────────────────────────────────────────────────────────────
 
-for (const { t1, t2 } of RETURNING_BIOME_LINEAGES) {
+for (const { t1, t2 } of RETURNING_BIOME_T2S) {
   const predecessor = RECIPE_DATABASE.get(t1);
   const recipe = RECIPE_DATABASE.get(t2);
   assert(!!predecessor, `${t1}: predecessor recipe must exist`);
   assert(!!recipe, `${t2}: recipe must exist`);
   assert(predecessor!.slot === recipe!.slot, `${t2}: follows a same-slot T1 item`);
-  if (recipe!.slot === "weapon") {
-    assert(recipe!.evolvesFrom === t1, `${t2}: the weapon form graph names ${t1} (got ${recipe!.evolvesFrom})`);
-    assert(isGatedLineageForm(t2), `${t2}: a T2 weapon form is opened at its gate`);
-  } else {
-    assert(recipe!.evolvesFrom === undefined, `${t2}: a plain recipe has no predecessor (got ${recipe!.evolvesFrom})`);
-    assert(!isGatedLineageForm(t2), `${t2}: a plain recipe, not a gated door`);
-  }
 }
 
 for (const id of JUNGLE_DESERT_T2_IDS) {
-  const recipe = RECIPE_DATABASE.get(id);
-  assert(!!recipe, `${id}: recipe must exist`);
-  assert(recipe!.evolvesFrom === undefined, `${id}: Jungle/Desert gear must NOT have a T1 predecessor`);
+  assert(RECIPE_DATABASE.has(id), `${id}: recipe must exist`);
 }
 
-// Flash Rapier evolves into Gale Needle. Its old on-hit sibling, Thorn Needle, was
-// retired 2026-09-26 (it duplicated the Jungle Stinger Rapier).
-assert(RECIPE_DATABASE.get("gale-needle")!.evolvesFrom === "flash-rapier", "gale-needle branches from flash-rapier");
+// Gale Needle's old on-hit sibling, Thorn Needle, was retired 2026-09-26 (it
+// duplicated the Jungle Stinger Rapier).
 assert(!RECIPE_DATABASE.has("thorn-needle"), "thorn-needle is retired");
-
-// Evolution and reconstruction are retired on every slot, whatever the plus or
-// funding (weapons in Phase 2b, armour/charm/boots in design §24.5).
-for (const { t1, t2 } of RETURNING_BIOME_LINEAGES) {
-  const recipe = RECIPE_DATABASE.get(t2)!;
-  for (const plus of [3, 5]) {
-    const check = checkEvolve({
-      recipe,
-      inventory: [t1],
-      itemUpgrades: { [t1]: plus },
-      essences: fullEssences(),
-    });
-    assert(!check.ok, `${t2}: a +${plus} ${t1} must NOT be able to evolve (the path is retired)`);
-  }
-  assert(!checkReconstruct({ recipe, essences: fullEssences() }).ok, `${t2}: reconstruct is retired`);
-}
 
 // ── Catalyst economy (§2, §7, §8) ───────────────────────────────────────────
 // RETIRED (Phase 2b): the catalyst wallet and every `catalystCost`/
 // `reconstructCatalystCost` field are gone, and so are the evolve and
-// reconstruct paths that spent them (see the refusals above). Nothing left
-// here to audit.
+// reconstruct paths that spent them. Nothing left here to audit.
 
-const ALL_T2_GEAR_IDS = [...RETURNING_BIOME_LINEAGES.map((l) => l.t2), ...JUNGLE_DESERT_T2_IDS];
+const ALL_T2_GEAR_IDS = [...RETURNING_BIOME_T2S.map((l) => l.t2), ...JUNGLE_DESERT_T2_IDS];
 
 // ── Upgrade economy (§3, §17, §19) ─────────────────────────────────────────
 

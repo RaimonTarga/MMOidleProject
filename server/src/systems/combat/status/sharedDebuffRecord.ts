@@ -1,10 +1,9 @@
 /**
  * The §18.1 max-wins rule for a debuff record several sources share.
  *
- * Lives here rather than inside one consumer because it now has two: the lineage
- * card runtime (`lineageCards.ts`, payoff kinds `vulnerability` and
- * `plating-shred`) and the range-node mechanics (`rangeMechanics.ts`, Sentinel's
- * vulnerability window). Any future source that writes a multiplier-type debuff a
+ * Lives here rather than inside one consumer: the range-node mechanics
+ * (`rangeMechanics.ts`, Sentinel's vulnerability window), the frame loops and the
+ * cadence finisher (`empoweredHit.ts`) all write through it. Any future source that writes a multiplier-type debuff a
  * class mechanic also owns belongs on this function too.
  */
 import {

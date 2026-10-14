@@ -36,7 +36,7 @@ function makeSlices(id: string): PersistedPlayerSlices {
       // Plenty of every essence color, so a craft can only fail on the
       // deprecation check itself, never on affordability.
       essences: { red: 9_999, blue: 9_999, green: 9_999, yellow: 9_999, purple: 9_999 },
-      shards: {}, capstones: {},
+      
       biomeXP: {},
       // Cave L3 clears the gate on both `rune-recipe-recover-first` (L3) and
       // `rune-recipe-flee` (L2).

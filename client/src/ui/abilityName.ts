@@ -5,45 +5,31 @@ import {
   ABILITY_IMBUE_EFFECT_ID,
   ABILITY_SIDESTEP_EFFECT_ID,
   abilityDisplayName,
-  abilityLineageLine,
-  abilityNodeNameParts,
   guardEffectIdForAbility,
   recoveryEffectIdForAbility,
   type AbilityDef,
   type AbilityNameForm,
-  type AbilityNodeProgressMap,
 } from "@mmo-idle/shared";
-import { abilityNodesAtom, playerTierAtom } from "../hud/atoms";
+import { playerTierAtom } from "../hud/atoms";
 
 /**
  * An ability's name for one character, through the ONE entry point
- * (`abilityDisplayName`, design §22.7) with the words that character's node rows
- * lend it. Every client surface that names an ability reads this — the hotbar,
- * the Abilities panel, the tooltips, the buff bar, the cast callout, the Behavior
- * panel and the tutorial's lines — so a keystone renames it everywhere at once.
+ * (`abilityDisplayName`, design §22.7). Every client surface that names an
+ * ability reads this — the hotbar, the Abilities panel, the tooltips, the buff
+ * bar, the cast callout and the Behavior panel.
  */
 export function abilityNameFor(
   ability: AbilityDef,
   playerTier: number,
-  nodes: AbilityNodeProgressMap | undefined,
   form: AbilityNameForm = "full",
 ): string {
-  return abilityDisplayName(ability, playerTier, abilityNodeNameParts(ability.id, nodes?.[ability.id]), form);
+  return abilityDisplayName(ability, playerTier, form);
 }
 
-/** The lineage line under a renamed ability ("Sweep" beneath *Whirlwind*), or undefined. */
-export function abilityLineageFor(
-  ability: AbilityDef,
-  nodes: AbilityNodeProgressMap | undefined,
-): string | undefined {
-  return abilityLineageLine(ability, abilityNodeNameParts(ability.id, nodes?.[ability.id]));
-}
-
-/** The own character's name for an ability, kept current with its rows and tier. */
+/** The own character's name for an ability, kept current with its tier. */
 export function useAbilityName(ability: AbilityDef, form: AbilityNameForm = "full"): string {
   const tier = useAtomValue(playerTierAtom);
-  const nodes = useAtomValue(abilityNodesAtom);
-  return abilityNameFor(ability, tier, nodes, form);
+  return abilityNameFor(ability, tier, form);
 }
 
 /**

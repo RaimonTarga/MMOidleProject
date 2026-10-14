@@ -1,13 +1,7 @@
-import { createElement } from "react";
-import {
-  abilityIconLayers,
-  type AbilityDef,
-  type AbilityNodeProgress,
-} from "@mmo-idle/shared";
-import { assetIcon, atlasIcon, nodeIcon, type IconSource } from "./iconSource";
+import type { AbilityDef } from "@mmo-idle/shared";
+import { assetIcon, atlasIcon, type IconSource } from "./iconSource";
 import { conceptAbilityIconSource } from "./conceptIcons";
 import { BORROWED_BASE_GLYPHS, conceptArtPath } from "./abilityIconModel";
-import { ComposedAbilityIcon } from "./ComposedAbilityIcon";
 
 /**
  * Art is intentionally allowlisted after gallery approval. A generated file
@@ -45,19 +39,9 @@ export function abilityBaseIconSource(
   return borrowed ? assetIcon(conceptArtPath(borrowed)) : null;
 }
 
-/**
- * Resolve ability metadata to the shared icon-source contract — composed with the
- * rows when the character's node progress is given (design §22.7): the base glyph
- * alone with no rows, else the layers `abilityIconLayers` emits, drawn over it.
- * Without progress (a recipe, a preview) it is the base glyph.
- */
+/** Resolve ability metadata to the shared icon-source contract: its base glyph. */
 export function abilityIconSource(
   ability: Pick<AbilityDef, "id" | "icon">,
-  progress?: AbilityNodeProgress,
 ): IconSource | null {
-  const base = abilityBaseIconSource(ability);
-  if (!base || !progress) return base;
-  const layers = abilityIconLayers(ability.id, progress);
-  if (layers.length <= 1) return base;
-  return nodeIcon(createElement(ComposedAbilityIcon, { base, layers }));
+  return abilityBaseIconSource(ability);
 }

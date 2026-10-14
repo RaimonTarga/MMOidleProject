@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
-import { EQUIPMENT_SLOTS, ITEM_DATABASE, lineageForEquippedItem, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS, relicIsUnlocked } from '@mmo-idle/shared';
-import { equipmentAtom, inventoryAtom, playerNodeIdAtom, playerTierAtom } from '../../hud/atoms';
+import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS, relicIsUnlocked } from '@mmo-idle/shared';
+import { inventoryAtom, playerNodeIdAtom, playerTierAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
 import { ItemIcon } from '../ItemIcon';
 import type { ComparePin } from './useFocus';
@@ -17,31 +17,16 @@ interface Props {
 
 export function BackpackGrid({ compare }: Props) {
   const inventory    = useAtomValue(inventoryAtom);
-  const equipment    = useAtomValue(equipmentAtom);
   const playerTier = useAtomValue(playerTierAtom);
   const playerNodeId = useAtomValue(playerNodeIdAtom);
   const [filters, setFilters] = useAtom(backpackFiltersAtom);
 
   // Highest tier first, then by name: the best of what you carry leads the grid.
   // `invIndex` keeps the position in the server's list for anything keyed by it.
-  // Once the player is WEARING some form of a lineage, its other forms move to
-  // that lineage's tree panel (opened from the equipment slot) instead of
-  // sitting in the bag as ordinary loose gear (design §2). Before that — most
-  // importantly, the freshly-crafted T1 base form, which has no other equip
-  // path — a lineage form stays an ordinary backpack item so the ordinary
-  // equip flow (tap to pin, then Equip) still reaches it. A parked lineage's
-  // forms (design §24.5) have no tree to move to, so they always stay here.
   const items = useMemo(() => inventory
     .map((defId, invIndex) => ({ defId, def: ITEM_DATABASE.get(defId) ?? null, invIndex }))
-    .filter(({ defId }) => {
-      const lineage = lineageForEquippedItem(defId);
-      if (!lineage) return true;
-      const equippedId = equipment[lineage.slot];
-      const wearingThisLineage = !!equippedId && lineageForEquippedItem(equippedId)?.id === lineage.id;
-      return !wearingThisLineage;
-    })
     .sort((a, b) => (b.def?.tier ?? -1) - (a.def?.tier ?? -1)
-      || (a.def?.name ?? '').localeCompare(b.def?.name ?? '')), [inventory, equipment]);
+      || (a.def?.name ?? '').localeCompare(b.def?.name ?? '')), [inventory]);
 
   // A facet only exists while you carry something that matches it.
   const slots = useMemo(

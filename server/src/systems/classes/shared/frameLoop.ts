@@ -22,9 +22,8 @@
  *   Balanced frames author BOTH at half strength.
  *
  * ONE MULTIPLIER PER HIT. Every damage change here routes through
- * `ctx.metadata.empoweredMultiplier` — the single number a Technique rider or a
- * lineage card reads to recover "the hit as it was before the empowered
- * multiplier". Nothing in a frame loop writes a second multiplier key, and
+ * `ctx.metadata.empoweredMultiplier` — the single number a Technique rider reads
+ * to recover "the hit as it was before the empowered multiplier". Nothing in a frame loop writes a second multiplier key, and
  * nothing multiplies ctx.damage without folding the same factor into that record.
  */
 

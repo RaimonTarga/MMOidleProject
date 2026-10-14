@@ -1,7 +1,7 @@
 import { baseRecoveryForTier } from "@mmo-idle/shared";
 import assert from "node:assert/strict";
 import { ABILITY_DATABASE, GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment, getStatusEffect,
-  ITEM_DATABASE, RECIPE_DATABASE, abilityTags, abilityHasTag, abilityRankAt,
+  ITEM_DATABASE, abilityTags, abilityHasTag, abilityRankAt,
   abilityCooldownMs, modifiedAbilityCooldownMs, resolveAbilityEffectWithPassives,
   getCooldown, setCooldown } from "@mmo-idle/shared";
 import { applyStatusEffect, guardEffectIdForAbility, recoveryEffectIdForAbility, itemMechanicEffectsAt, equipmentAbilityTags } from '@mmo-idle/shared';
@@ -33,8 +33,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      shards: {},
-      capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -89,13 +87,6 @@ function equipPassive(p: ReturnType<typeof player>, key: string) {
   assert(equipItem(world, p, item.id));
   assert((p.usesSkills.passives[key] ?? 0) > 0, `${key} reaches player from equipment`);
   return item;
-}
-// Every weapon form's predecessor sits in the same slot. The evolve path itself
-// is retired on every slot (design §24.5); its refusals are pinned in
-// `slotRetirement.test.ts`.
-for (const recipe of RECIPE_DATABASE.values()) {
-  if (!recipe.evolvesFrom) continue;
-  assert.equal(ITEM_DATABASE.get(recipe.evolvesFrom)?.slot, recipe.slot, recipe.id);
 }
 // Tags classify all current abilities, with family and Armed derived from execution.
 for (const a of ABILITY_DATABASE.values()) {

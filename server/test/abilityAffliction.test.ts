@@ -18,7 +18,6 @@ import {
   GAME_CONFIG,
   STARTER_RUNE_IDS,
   applyStatusEffect,
-  LINEAGE_BLEED_STATUS_ID,
   weaponDotProfileForWeapon,
   emptyEquipment,
   emptyAttunedAbilities,
@@ -73,7 +72,7 @@ function makePlayerSlices(id: string, techniques: string[]): PersistedPlayerSlic
       level: 0,
       skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      shards: {}, capstones: {},
+      
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],
@@ -470,35 +469,7 @@ console.log("affliction: armed Contagion declines with nothing to spread");
     "the neighbour carries ONE record — the reservoir — not a second poison",
   );
 }
-{
-  const { world, player } = setup(["contagion"]);
-  player.holdsInventory.equipment.weapon = "flash-rapier";
-  syncArchetypeSlices(world, player);
-  const primary = spawn(world, 405, 400);
-  const neighbour = spawn(world, 450, 400);
-  // The Rapier owns no reservoir: its Affliction band writes the ONE lineage
-  // bleed, which every source adds to. Painted as that record.
-  applyStatusEffect(primary.tracksCombat, {
-    id: LINEAGE_BLEED_STATUS_ID, maxStacks: 0, refreshable: true, remainingMs: -1,
-    sourceId: player.isPlayer.id, data: { damagePerTick: 6, nextTickIn: 1000, tickIntervalMs: 1000 },
-  });
-  getStatusEffect(primary.tracksCombat, LINEAGE_BLEED_STATUS_ID)!.stacks = 4;
-  setAttackTarget(world, player, primary.isMonster.id);
-  player.usesAutocombat.auto = true;
-  fireWithReferenceWiring(world, 2_000_000);
-  assert(player.hasArmedAbility?.abilityId === "contagion", "Contagion arms against the bleeding target");
-  runPlayerAttack(world, player, primary, 2_000_100, {
-    attackOrigin: { ...player.hasPosition.current },
-    aggroSource: { id: player.isPlayer.id, kind: "player" },
-  });
-  const bleed = getStatusEffect(neighbour.tracksCombat, LINEAGE_BLEED_STATUS_ID);
-  assert(!!bleed && bleed.stacks > 0, "armed Contagion must spread the Rapier's single bleed");
-  assert(
-    playerDotsOnMonster(world, player, neighbour).every((entry) => entry.effect.id === LINEAGE_BLEED_STATUS_ID),
-    "the neighbour carries the one bleed record and nothing else",
-  );
-}
-console.log("affliction: armed Contagion spreads the one record per weapon (reservoir, bleed)");
+console.log("affliction: armed Contagion spreads the reservoir as one record");
 
 // ── 4. A Contagion copy never WEAKENS an existing affliction ────────────────
 

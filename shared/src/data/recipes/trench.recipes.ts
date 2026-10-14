@@ -14,7 +14,6 @@ export const trenchRecipeEntries = [
   ['trench-abyssal-axe', {
     id: 'trench-abyssal-axe', name: 'Abyssal Axe',
     recipeGroup: 'trench', requiredBiomeLevel: 1, slot: 'weapon',
-    evolvesFrom: 'cave-cataclysm-axe',
     // Evolves from Cataclysm Axe (Cave), continuing the
     // `weapon.dead-swing-interval` family (see
     // T4_PROGRESSION_ECONOMY_PROPOSAL_2026-08-30.md §5). Economy resolved by
@@ -23,7 +22,6 @@ export const trenchRecipeEntries = [
     // INVARIANT: dead swing must NOT consume class mechanic resources.
     // 2026-09-26 T2-T4 weapon normalization: Attack 120->140 (+5: 240->257).
     cost: { green: 270 }, stats: { attack: 257 }, attacksPerSecond: 1.15, tier: 4, // family-tag: dead-swing/execute axe → Swarming
-    reconstructCost: { green: 945 },
     // † execute-threshold-pct / execute-dmg-mult: vs targets below 20% HP, ×2.5.
     mechanicEffects: {
       'weapon.dead-swing-interval': 4,
@@ -41,14 +39,13 @@ export const trenchRecipeEntries = [
     // Swamp/Wasteland line). Tundra stays the best stand-and-trade vest when debuffs
     // don't matter; this is the one for elites that shred, slow and mark you.
     cost: { green: 220 }, stats: { "maxHp": 475, "damageReduction": 0.3 }, // family-tag: elite (raw stats + debuff resist) armor → Swarming
-    reconstructCost: { green: 770 },
     mechanicEffects: { "defense.debuff-resistance": 0.4 },
     tier: 4,
     icon: 'items/armor/deep-sea-carapace.png',
     description: "Heavy all-round protection that also weakens enemy debuffs: slows, plating shred, anti-heal and damage-taken marks.",
   }],
 
-  // No evolvesFrom: blends Cave's charm identity (`defense.absorb-pct`) and
+  // No predecessor: blends Cave's charm identity (`defense.absorb-pct`) and
   // Swamp's charm identity (`defense.recovery-pulse-pct`) with neither
   // clearly primary — per the proposal's tie-break rule, an ambiguous blend
   // becomes a genuinely-new item rather than an arbitrary single parent.
@@ -68,13 +65,12 @@ export const trenchRecipeEntries = [
     // Cave stealth-boot inheritor — soft stealth: reduces enemy detection radius.
     // 2026-09-26 T2-T4 boots curve normalization: Speed 52->92 (+5: 82->118).
     cost: { green: 80 }, stats: { "speed": 118 }, tier: 4, // family-tag: stealth mobility (Cave inheritance) → Swarming
-    reconstructCost: { green: 280 },
     mechanicEffects: { 'mobility.stealth-pct': 0.72 },
     icon: 'items/boots/abyssal-stalkers.png',
     description: 'They take you past the great blind hunters unseen — and lend the first strike, when it comes, a killing edge.',
   }],
 
-  // No evolvesFrom: `mobility.tenacity-pct` matches neither Cave nor Swamp —
+  // No predecessor: `mobility.tenacity-pct` matches neither Cave nor Swamp —
   // a genuine T4-only identity (self-identifying comment below predates this
   // pass and is left as-is).
   ['trench-boots-t4-treaders', {
@@ -96,7 +92,6 @@ export const trenchRecipeEntries = [
   ['relic-virulent-hourglass', {
     id: 'relic-virulent-hourglass', name: 'Virulent Hourglass',
     recipeGroup: 'trench', requiredBiomeLevel: 5, slot: 'relic',
-    lineageId: 'relic-virulent-hourglass',
     cost: { green: 3400 },
     stats: {}, tier: 4,
     mechanicEffects: {

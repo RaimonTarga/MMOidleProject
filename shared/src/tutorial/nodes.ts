@@ -1,6 +1,5 @@
 import { shortestWorldPath } from '../world/map/registry';
 import { NODE_BIOMES } from '../world/nodeBiomes';
-import { nodeShard } from '../world/nodeBlends';
 import type { TutorialNodeRef } from './types';
 
 /**
@@ -8,8 +7,7 @@ import type { TutorialNodeRef } from './types';
  * (`resolveNodeCandidates` in bot/src/route/conditions.ts): a fixed node, the
  * biome's dungeon, or a normal node of the biome. For a biome the player's
  * current node wins when it qualifies (no pointless trips), then uncleared
- * nodes nearest first. A `shard` narrows the biome to the nodes that pay it
- * (design §24.3).
+ * nodes nearest first.
  */
 export function tutorialNodeFor(
   ref: TutorialNodeRef,
@@ -20,7 +18,6 @@ export function tutorialNodeFor(
     .filter(([, info]) => info.biomeGroup === ref.biomeGroup && info.biomeTier === ref.tier)
     .filter(([, info]) => (ref.kind === 'dungeon' ? info.isDungeon === true : info.kind === 'normal'))
     .filter(([, info]) => ref.kind !== 'biome' || !ref.modifier || info.modifier === ref.modifier)
-    .filter(([id]) => ref.kind !== 'biome' || !ref.shard || nodeShard(id) === ref.shard)
     .map(([id]) => id)
     .sort();
   if (candidates.length === 0) return null;

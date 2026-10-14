@@ -6,15 +6,12 @@ import { SkillTreePanel } from '../ui/SkillTreePanel';
 import { BuildPanel } from '../ui/BuildPanel';
 import { MasteryPanel } from '../ui/MasteryPanel';
 import { InventoryPanel } from '../ui/InventoryPanel';
-import { LineageTreePanel } from '../ui/lineage/LineageTreePanel';
 import { CraftingPanel } from '../ui/CraftingPanel';
 import { MapPanel } from '../ui/MapPanel';
 import { QuestPanel } from '../ui/QuestPanel';
 import { StatsView } from '../ui/stats/StatsPanel';
-import { useUpgradeBadge } from '../ui/lineage/useUpgradeList';
 import { BiomeXpBar } from './BiomeXpBar';
 import { ArchetypeMechanics } from './stat/mechanics';
-import { RhythmReadout } from './RhythmReadout';
 import { BossFrame } from './BossFrame';
 import { ReadoutBar } from './ReadoutBar';
 import { FRAME_TOKENS } from '../render/readoutTokens';
@@ -37,7 +34,6 @@ import {
   deathOverlayAtom,
   hpAtom,
   incomingDotAtom,
-  lineageTreeSlotAtom,
   maxHpAtom,
   pendingHealAtom,
   playerNameAtom,
@@ -67,7 +63,6 @@ type MobileView =
   | 'skills'
   | 'bag'
   | 'craft'
-  | 'upgrade'
   | 'map'
   | 'quests'
   | 'build'
@@ -89,7 +84,6 @@ interface MoreEntry {
 
 function MobileHUDContent() {
   const [view, setView] = useState<MobileView>(null);
-  const [lineageSlot, setLineageSlot] = useAtom(lineageTreeSlotAtom);
   const [settingsOpen, setSettingsOpen] = useAtom(settingsOpenAtom);
   const [charSelectPrompt, setCharSelectPrompt] = useState(false);
   const setBuildTab = useSetAtom(buildPanelTabAtom);
@@ -125,7 +119,6 @@ function MobileHUDContent() {
   const eligibleRecipeKeys = useMemo(() => eligibleMakeKeys(makeEntries), [makeEntries]);
   const playerId = useAtomValue(playerIdAtom);
   const newRecipes = useNewEntries('craft', playerId, eligibleRecipeKeys);
-  const upgradeBadge = useUpgradeBadge();
 
   // ── HP-bar layers (all as % of maxHp), mirroring the desktop crown ──
   const hpPct       = maxHp > 0 ? (hp / maxHp) * 100 : 0;
@@ -153,7 +146,7 @@ function MobileHUDContent() {
     if (!visibility.mastery && view === 'mastery') setView(null);
     if (!visibility.passiveTree && view === 'skills') setView(null);
     if (!visibility.inventory && view === 'bag') setView(null);
-    if (!visibility.crafting && (view === 'craft' || view === 'upgrade')) setView(null);
+    if (!visibility.crafting && view === 'craft') setView(null);
     if (!visibility.loadout && view === 'build') setView(null);
     if (!visibility.map && view === 'map') setView(null);
   }, [
@@ -169,7 +162,7 @@ function MobileHUDContent() {
   const close = () => setView(null);
 
   function toggle(key: Exclude<MobileView, null>) {
-    if ((key === 'bag' || key === 'craft' || key === 'upgrade') && dead) return;
+    if ((key === 'bag' || key === 'craft') && dead) return;
     setView(v => (v === key ? null : key));
   }
 
@@ -268,18 +261,6 @@ function MobileHUDContent() {
         unlockSystem: row.gate,
         onSelect: () => { setBuildTab(row.tab); setView('build'); },
       })),
-    // Design §26.4: the old Upgrade slot — the worn items and the weapon's page.
-    ...(visibility.crafting
-      ? [{
-        key: 'upgrade',
-        label: upgradeBadge > 0 ? `Upgrade · ${upgradeBadge}` : 'Upgrade',
-        icon: menuIconSource('upgrade'),
-        fallback: 'U',
-        unlockSystem: 'crafting' as const,
-        disabled: dead,
-        onSelect: () => setView('upgrade'),
-      }]
-      : []),
     ...(visibility.mastery
       ? [{
         key: 'mastery',
@@ -365,9 +346,6 @@ function MobileHUDContent() {
         <BossFrame placement="strip" />
 
         <div className="mhud-context">
-          {/* The rhythm readout: the top strip's second row, beside the HP bar
-              (design §26.4; prototype E's phone placement). */}
-          <RhythmReadout placement="compact" />
           <span className="mhud-stance" title={`Active stance: ${activeStanceName}`}>
             {activeStanceName}
           </span>
@@ -468,11 +446,7 @@ function MobileHUDContent() {
       {/* ── Self-overlaying panels (reused from desktop, full-screen) ───── */}
       {view === 'skills' && <SkillTreePanel onClose={close} />}
       {view === 'bag'    && <InventoryPanel onClose={close} />}
-      {lineageSlot !== null && (
-        <LineageTreePanel slot={lineageSlot} onClose={() => setLineageSlot(null)} />
-      )}
       {view === 'craft' && <CraftingPanel tab="make" onClose={close} />}
-      {view === 'upgrade' && <CraftingPanel tab="upgrade" onClose={close} />}
       {view === 'map'    && <MapPanel onClose={close} />}
       {view === 'build' && <BuildPanel onClose={close} />}
       {view === 'mastery' && <MasteryPanel onClose={close} />}

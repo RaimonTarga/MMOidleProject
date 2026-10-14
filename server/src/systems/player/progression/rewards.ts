@@ -1,4 +1,4 @@
-import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, GAME_CONFIG, familyForMonster, nodeShard, CAPSTONE_MATERIALS, SHARD_BASE_PER_KILL, SHARD_TIER_MULT, biomeLaneAPackets } from '@mmo-idle/shared';
+import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, GAME_CONFIG } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -20,26 +20,6 @@ export interface KillRewards {
 const FALLBACK_REWARDS: KillRewards = { essence: 1, essenceType: 'green', level: 1 };
 const DEFAULT_BOSS_RESPAWN_MS = 30_000;
 
-/**
- * Design §18.6's shard-sourcing stopgap: Bulwark and Barrier tempo have NO T1 mob
- * family at all and would otherwise be unreachable, and Technique (design §22) has
- * only one. So a biome boss kill also drops this many shards of EACH distinct
- * Lane-A packet across the lineages homed in that biome — deduplicated per packet,
- * so a biome whose armor and mobility lineages share a Lane A (e.g. Plains' Kill
- * chain) pays that packet once per kill, not once per lineage that names it.
- *
- * Only LIVE lineages count (`biomeLaneAPackets` skips parked ones): while the
- * non-weapon trees are parked (design §24.5) the stopgap pays the weapon lanes
- * only, so no boss pays Iron or Glass Shards nothing can spend. Un-parking a tree
- * restores its Lane A with no edit here.
- *
- * FOUR, so a boss-only lane buys a payoff card in two kills (design §18.6): a
- * payoff row costs eight shards at T1, and at two per kill those lanes were four
- * boss kills behind a lane whose family drops its shard on ordinary trash.
- * Provisional; remove when a family covers it.
- */
-const BOSS_LANE_A_SHARD_AMOUNT = 4;
-
 export interface KillRewardInfo {
   essenceGained: number;
   essenceType: EssenceType;
@@ -54,72 +34,6 @@ export function rewardPlayer(entity: PlayerEntity, rewards: KillRewards): void {
   }
   entity.tracksProgression.level += rewards.level;
 }
-
-/**
- * Lineage shards and boss capstones (progression rework Phase 1b).
- *
- * Deterministic, like every other lineage material: every kill drops a little of
- * a shard, and the biome boss drops its capstone every kill (design §1, §12). No
- * rolls and no pity timer — costs gate the pace.
- *
- * WHICH shard is the NODE's, not the monster's (design §24.3): every non-boss kill
- * in a blended node pays `nodeShard` — the node's dominant family's shard —
- * whichever family the body belongs to, so a pack follower filed under another
- * family pays what the map says (review P16). A node with no blend (a dungeon)
- * keeps the per-monster rule: the dead mob's own family shard, and nothing for a
- * mob in no family.
- *
- * Was the sibling of a per-kill catalyst accumulator (keyed by the node's
- * modifier); Phase 2b deleted that wallet outright, so shards are now the
- * only kill-driven material wallet.
- */
-function grantLineageMaterials(
-  world: World,
-  recipient: PlayerEntity,
-  monster: MonsterEntity,
-  params: { nodeId: string; biomeTier: number; biomeGroup: string | undefined; debugMult: number },
-): void {
-  const prog = recipient.tracksProgression;
-  let touched = false;
-
-  const shard = monster.isMonster.isBoss
-    ? undefined
-    : nodeShard(params.nodeId) ?? familyForMonster(monster.isMonster.monsterTypeId)?.drops;
-  if (shard) {
-    // Shards scale by tier the way essence does, so lower-tier farming stays a
-    // slow but legal route rather than a dead one.
-    const amount = Math.max(
-      1,
-      Math.round(
-        SHARD_BASE_PER_KILL * (SHARD_TIER_MULT[params.biomeTier] ?? 1) * params.debugMult,
-      ),
-    );
-    prog.shards[shard] = (prog.shards[shard] ?? 0) + amount;
-    touched = true;
-  }
-
-  // The boss is the only way up a tree, so its capstone is not multiplier-scaled
-  // by node identity: one kill, one capstone, every time. The dev reward
-  // multiplier still applies, so a playtest can reach a gate without farming it.
-  if (monster.isMonster.isBoss && params.biomeGroup && CAPSTONE_MATERIALS.has(params.biomeGroup)) {
-    prog.capstones[params.biomeGroup] =
-      (prog.capstones[params.biomeGroup] ?? 0) + Math.max(1, Math.round(params.debugMult));
-    touched = true;
-  }
-
-  // Shard-sourcing stopgap (design §18.6) — see BOSS_LANE_A_SHARD_AMOUNT's comment.
-  // Same "not multiplier-scaled by node identity" treatment as the capstone above.
-  if (monster.isMonster.isBoss && params.biomeGroup) {
-    for (const packet of biomeLaneAPackets(params.biomeGroup)) {
-      prog.shards[packet] =
-        (prog.shards[packet] ?? 0) + Math.max(1, Math.round(BOSS_LANE_A_SHARD_AMOUNT * params.debugMult));
-      touched = true;
-    }
-  }
-
-  if (touched) markSliceDirty(world, recipient, 'tracksProgression');
-}
-
 
 function scheduleBossRespawn(world: World, monster: MonsterEntity): void {
   const durationMs = DEFAULT_BOSS_RESPAWN_MS;
@@ -254,12 +168,6 @@ function applyKillRewardsToPlayer(
     targetId: monster.isMonster.id, pos: { ...monster.hasPosition.current },
     amount: scaledEssence, essenceType: rewards.essenceType,
   });
-  grantLineageMaterials(world, recipient, monster, {
-    nodeId,
-    biomeTier,
-    biomeGroup: biomeInfo?.biomeGroup,
-    debugMult,
-  });
   const biomeResult = applyBiomeXP(
     world,
     recipient,
@@ -344,10 +252,10 @@ export function grantMonsterRewards(
 ): KillRewardInfo | null {
   const killer = world.getPlayerEntity(killerPlayerId);
   if (!killer) return null;
-  // A necromancer's risen dead are worth NOTHING: no essence, biome XP, lineage
-  // materials, quest credit or party share. This single gate covers every kill
-  // path because they all funnel through here, and it is why the raise loop can
-  // never be farmed — killing the raiser is the only way to stop the tide.
+  // A necromancer's risen dead are worth NOTHING: no essence, biome XP, quest
+  // credit or party share. This single gate covers every kill path because they
+  // all funnel through here, and it is why the raise loop can never be farmed —
+  // killing the raiser is the only way to stop the tide.
   if (monster.isRaised) return null;
 
   const suppressBossRespawn = monster.tracksDungeon?.source === 'dungeonBoss';

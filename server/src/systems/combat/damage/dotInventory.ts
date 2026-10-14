@@ -40,7 +40,6 @@ import {
 } from "../../classes/archetypes/dot/t3/core/selectors";
 import { applyMonsterDamageTakenDebuffs } from "../../classes/shared/debuffs";
 import { dotElementForSource } from "./dotTickEvent";
-import { LINEAGE_BLEED_ID } from "./bleedIds";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 
@@ -341,44 +340,9 @@ const WEAPON_RESERVOIR_FAMILY: DotFamily = {
  * first. Both also test `t3Perm`, so the order is belt-and-braces rather than
  * load-bearing — keep it anyway.
  */
-/**
- * The ONE lineage bleed (design §26.2), `lineage.bleed`: the record every lineage
- * damage-over-time source adds to on a weapon with no reservoir of its own — the
- * Affliction lean's light bleed, the heavy payload, the re-dose, `poison-stack`.
- * A separate id from the cadence root's bleed, ticked by the same driver, and
- * described here so the Affliction moment finds it, and a re-dose, Contagion,
- * Detonate and the stack-count rune condition count it like any other DoT.
- *
- * It spends one stack per tick and is permanent until spent, so its stack count
- * IS its remaining ticks. (The `intensity` shape — stacks multiplying the tick —
- * is still read for safety but no longer written: `poison-stack` adds too.)
- */
-const LINEAGE_BLEED_FAMILY: DotFamily = {
-  id: "lineage-bleed",
-  owns: (effect) => effect.id === LINEAGE_BLEED_ID,
-  describe({ world, monster, effect }) {
-    if (effect.stacks <= 0) return null;
-    const intensity = effect.data["bleedMode"] === 1;
-    const perTick = (effect.data["damagePerTick"] ?? 0)
-      * (intensity ? Math.max(1, effect.stacks) : 1);
-    if (perTick <= 0) return null;
-    // A spent-stack bleed carries no timer, so `ticksRemaining` cannot read it.
-    const ticks = intensity ? ticksRemaining(effect) : Math.max(1, effect.stacks);
-    return {
-      element: dotElementForSource(world, effect.sourceId),
-      remainingDamage: withVulnerability(monster, perTick) * ticks,
-      spreadable: true,
-      detonatable: true,
-      stackCap: intensity ? effect.maxStacks : 0,
-      marker: "hasHemorrhage",
-    };
-  },
-};
-
 export function initDotInventory(): void {
   registerDotFamily(PERMAFROST_FAMILY);
   registerDotFamily(CLASS_DOT_FAMILY);
   registerDotFamily(CONFLAGRATION_FAMILY);
   registerDotFamily(WEAPON_RESERVOIR_FAMILY);
-  registerDotFamily(LINEAGE_BLEED_FAMILY);
 }
