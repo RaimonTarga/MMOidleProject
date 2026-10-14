@@ -37,10 +37,11 @@ function fixture(archetype: 'cadence' | 'cooldown' | 'reload' | 'dot' | 'energy'
       knownRites: [], equippedRites: [],
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
+    // Root-only: the class-first Passive Tree has no frames.
     usesSkills: {
-      unlockedSkills: archetype ? [`${archetype}-root`, `${archetype}-balanced`] : [],
+      unlockedSkills: archetype ? [`${archetype}-root`] : [],
       passives: {}, selectedClass: archetype ? `${archetype}-root` : null,
-      selectedSubVariant: 'balanced', selectedRange: null, combatArchetype: archetype,
+      selectedSubVariant: null, selectedRange: null, combatArchetype: archetype,
     },
   };
   const player = world.attachPlayerEntity(slices, id);
@@ -84,7 +85,7 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy', 'summoner'
     const { world, player } = fixture(root);
     player.holdsInventory.inventory = [relic.id];
     assert(equipItem(world, player, relic.id), 'relic equip');
-    const preview = resolveRelicPreview(root, player.usesSkills.passives, relicRatingsFromEffects(relic.mechanicEffects), { subVariant: 'balanced', playerTier: 4, unlockedSkills: player.usesSkills.unlockedSkills });
+    const preview = resolveRelicPreview(root, player.usesSkills.passives, relicRatingsFromEffects(relic.mechanicEffects), { subVariant: null, playerTier: 4, unlockedSkills: player.usesSkills.unlockedSkills });
     world.tick(100, 100);
     const target = targetFor(world);
     if (root !== 'summoner') attack(world, player, target);
@@ -109,25 +110,12 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy', 'summoner'
   }
 }
 
-// All three formation exceptions preserve their bodies while potency changes output.
-for (const spec of ['summoner-heavy-t3-a', 'summoner-heavy-t3-b', 'summoner-heavy-t3-c']) {
-  const input = { selectedSubVariant: 'heavy' as const, selectedRange: null, unlockedSkills: [spec], passives: {} };
-  const before = resolveSummonerProfile(input);
-  for (const potency of [-0.25, 0.4]) {
-    const after = resolveSummonerProfile({ ...input, relicRatings: { ...ZERO_RELIC_RATINGS, potency } });
-    eq(after.slots.length, before.slots.length, 'unique formation preserves count');
-    eq(after.formationOffenseMult / before.formationOffenseMult, 1 + potency, 'companion attack scales once');
-    eq(after.totalSummonHpPct / before.totalSummonHpPct, 1 + potency, 'companion health scales once');
-    eq(after.slots[0].procWeight, before.slots[0].procWeight, 'fixed formation preserves proc frequency');
-    eq(after.relicPotencyMult, 1 + potency, 'fixed formation on-hit magnitude scales');
-  }
-}
 {
-  const input = { selectedSubVariant: 'balanced' as const, selectedRange: null, unlockedSkills: [], passives: {} };
+  const input = { selectedSubVariant: null, selectedRange: null, unlockedSkills: [], passives: {} };
   const before = resolveSummonerProfile(input);
   const after = resolveSummonerProfile({ ...input, relicRatings: { ...ZERO_RELIC_RATINGS, potency: 0.4 } });
-  eq(before.slots.length, 5, 'formation baseline');
-  eq(after.slots.length, 7, 'larger army');
+  eq(before.slots.length, 4, 'formation baseline');
+  eq(after.slots.length, 6, 'larger army');
   eq(after.slots[0].offenseWeight, before.slots[0].offenseWeight, 'extra bodies do not dilute damage');
   eq(after.slots[0].defenseWeight, before.slots[0].defenseWeight, 'extra bodies do not dilute health');
 }
@@ -186,7 +174,7 @@ for (const potency of [-0.25, 0.4]) {
 }
 for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy'] as const) {
   const { player } = fixture(root);
-  const input = { attack: 100, onHitDamage: 20, attackCooldownMs: 1000, archetype: root, passives: player.usesSkills.passives, selectedSubVariant: 'balanced' as const, playerTier: 4 };
+  const input = { attack: 100, onHitDamage: 20, attackCooldownMs: 1000, archetype: root, passives: player.usesSkills.passives, selectedSubVariant: null, playerTier: 4 };
   const before = estimatePlayerDps(input).total;
   assert(estimatePlayerDps({ ...input, passives: { ...input.passives, 'relic.mechanic-frequency': 0.35 } }).total > before, `${root}: DPS reflects frequency`);
   assert(estimatePlayerDps({ ...input, passives: { ...input.passives, 'core.onhit-mult': 1.15 } }).total > before, `${root}: DPS reflects Catalyst`);
