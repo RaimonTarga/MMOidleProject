@@ -48,6 +48,7 @@ export const BIOME_PRIMARY_ESSENCE: Record<string, EssenceType> = {
 
 import type { MechanicEffects } from './passives';
 import type { ClassArchetype } from './classKits/types';
+import type { ClassLineDef } from './systems/classGear';
 
 // ─── Equipment slots ──────────────────────────────────────────────────────────
 
@@ -206,7 +207,7 @@ export interface ItemDefinition {
    * A shared base's line per class: mechanic keys merged into the wearer's passives only
    * for that class, on top of `mechanicEffects` (bible §4: shared bases, class lines).
    */
-  classLines?: Partial<Record<ClassArchetype, MechanicEffects>>;
+  classLines?: Partial<Record<ClassArchetype, ClassLineDef>>;
   /**
    * Weapons only. PURELY COSMETIC elemental flavor — tints the wielder's
    * basic-attack animation. No gameplay effect whatsoever. Mirrors

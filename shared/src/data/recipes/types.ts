@@ -2,6 +2,7 @@ import type { EquipmentSlot, ItemStats, EssenceType, UpgradeStep, CoreEligibilit
 import type { DamageElement } from '../../systems/dotElements';
 import type { MechanicEffects } from '../../passives';
 import type { ClassArchetype } from '../../classKits/types';
+import type { ClassLineDef } from '../../systems/classGear';
 
 /**
  * Reservoir DoT design for a weapon, authored on the recipe so the full effect
@@ -90,7 +91,7 @@ export interface Recipe {
    * A shared base's line per class: mechanic keys merged into the wearer's passives only
    * for that class, on top of `mechanicEffects` (bible §4: shared bases, class lines).
    */
-  classLines?: Partial<Record<ClassArchetype, MechanicEffects>>;
+  classLines?: Partial<Record<ClassArchetype, ClassLineDef>>;
   /**
    * If set, recipe unlocks only when this token is present in bossesCleared
    * (any boss-clear key, e.g. `mountain:4`).

@@ -38,7 +38,7 @@ const blade: Recipe = {
 const plate: Recipe = {
   id: 'test-class-gear-plate', name: 'Test Plate', recipeGroup: 'plains', requiredBiomeLevel: 1,
   slot: 'armor', cost: {}, stats: {}, tier: 1,
-  classLines: { cooldown: { 'defense.dot-resistance': 0.25 } },
+  classLines: { cooldown: { name: 'Test Line', text: 'A test line.', effects: { 'defense.dot-resistance': 0.25 } } },
 };
 const relic: ItemDefinition = { id: 'test-class-gear-relic', name: 'Test Relic', slot: 'relic', tier: 1, statModifiers: {} };
 for (const recipe of [blade, plate]) {
