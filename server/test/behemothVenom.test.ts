@@ -105,12 +105,14 @@ const def = MONSTER_DATABASE.get(BOSS_ID)!;
  *
  * The bot is the Boss4 swamp package — the reference the adoption was measured on —
  * so what is measured here is the same channel on the same preparation, not a
- * synthetic target.
+ * synthetic target. It holds only its class root: the class-first Passive Tree has
+ * no frames.
  */
 function venomTick(stacks: number, perStackOverride?: number) {
   const swamp = BOSS4_BLOCKS_DEF.find((b) => b.name === 'swamp-pressure')!;
-  const cell: Night5Cell = boss4ArmCells('swamp-pressure', swamp.arms[0]!.name)
-    .find((c) => c.className === 'striker')!;
+  const cell: Night5Cell = structuredClone(boss4ArmCells('swamp-pressure', swamp.arms[0]!.name)
+    .find((c) => c.className === 'striker')!);
+  cell.build.skillPath = [cell.build.classRoot];
   let now = 1800000000000;
   const realNow = Date.now;
   Date.now = () => now;

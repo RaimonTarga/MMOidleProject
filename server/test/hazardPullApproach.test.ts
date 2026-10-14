@@ -13,6 +13,13 @@ import {approachDeferred, hazardApproachExpired} from '../src/systems/combat/ai/
 import {nearestEngageableMonster} from '../src/systems/combat/ai/targetPriority';
 import {DURABILITY12_SWARM} from '../bench/balance/durability12Spec';
 
+// The bench packages below hold only their class root: the class-first tree has no frames.
+function rootOnly<T extends {build:{classRoot:string;skillPath:string[]}}>(cell:T):T {
+  const copy=structuredClone(cell);
+  copy.build.skillPath=[copy.build.classRoot];
+  return copy;
+}
+
 // Recorded geometry from the two no-contact observations. Combat is not being
 // balanced here: a stationary caster must produce a stable, reachable pull leg.
 for (const scenario of [
@@ -21,7 +28,7 @@ for (const scenario of [
   {role:'jungle',cls:'squire',player:{x:3520.723,y:3520.723},target:{x:3613.311,y:3310.208},type:'canopy-harrier'},
 ]) {
   const world=createFarmWorld();
-  const cell=DURABILITY11_CELLS.find(c=>c.tier===3&&c.role===scenario.role&&c.className===scenario.cls&&c.nodeId.endsWith('05'))!;
+  const cell=rootOnly(DURABILITY11_CELLS.find(c=>c.tier===3&&c.role===scenario.role&&c.className===scenario.cls&&c.nodeId.endsWith('05'))!);
   setupArena(world,{nodeId:cell.nodeId,biomeGroup:scenario.role,contentTier:3,isDungeon:false});
   try {
     const {bot}=prepareSurveyBot(world,cell,scenario.player);
@@ -60,7 +67,7 @@ for (const scenario of [
 }
 {
   const world=createFarmWorld();
-  const cell=DURABILITY12_SWARM.find(c=>c.tier===3&&c.nodeId.endsWith('03')&&c.className==='spirit')!;
+  const cell=rootOnly(DURABILITY12_SWARM.find(c=>c.tier===3&&c.nodeId.endsWith('03')&&c.className==='spirit')!);
   setupArena(world,{nodeId:cell.nodeId,biomeGroup:'volcanic',contentTier:3,isDungeon:false});
   try {
     for(const m of [...world.monsterEntitiesInNode(cell.nodeId)]) world.removeMonsterEntity(m.entityId);
@@ -77,7 +84,7 @@ for (const scenario of [
   // retreating, then backs into it again when chased. Neither the pull goal nor
   // its failure budget may reset just because the target crossed that boundary.
   const world=createFarmWorld();
-  const cell=DURABILITY11_CELLS.find(c=>c.tier===3&&c.role==='swamp'&&c.className==='striker'&&c.nodeId.endsWith('05'))!;
+  const cell=rootOnly(DURABILITY11_CELLS.find(c=>c.tier===3&&c.role==='swamp'&&c.className==='striker'&&c.nodeId.endsWith('05'))!);
   setupArena(world,{nodeId:cell.nodeId,biomeGroup:'swamp',contentTier:3,isDungeon:false});
   try {
     const {bot}=prepareSurveyBot(world,cell,{x:1279.0697,y:3540.7193});
