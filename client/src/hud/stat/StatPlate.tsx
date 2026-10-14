@@ -39,8 +39,8 @@ export interface PlateCrown {
   /** Hover-tooltip plumbing for the HP readout, owned by the caller. */
   hpTip?: { handlers: HTMLAttributes<HTMLElement>; node: ReactNode };
   /**
-   * What sits beside the HP bar (design §26.4): the rhythm readout's rings and
-   * the player's statuses. Drawn under the health conduits, inside the crown.
+   * What sits beside the HP bar (design §26.4): the player's statuses. Drawn
+   * under the health conduits, inside the crown.
    */
   beside?: ReactNode;
 }

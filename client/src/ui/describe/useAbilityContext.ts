@@ -1,7 +1,6 @@
 import { useAtomValue } from 'jotai';
 import { ITEM_DATABASE, coreIsActive, coreEligibilityLabel } from '@mmo-idle/shared';
 import {
-  abilityNodesAtom,
   attackAtom,
   attackRangeAtom,
   maxHpAtom,
@@ -38,6 +37,5 @@ export function useAbilityContext(): AbilityContext {
     attack: useAtomValue(attackAtom),
     maxHp: useAtomValue(maxHpAtom),
     attackRange: useAtomValue(attackRangeAtom),
-    abilityNodes: useAtomValue(abilityNodesAtom),
   };
 }

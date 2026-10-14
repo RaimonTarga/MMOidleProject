@@ -1,15 +1,14 @@
 /**
  * The Stats panel (design §26.4): a panel of its own in the menu, in the dense
  * ordered layout of the prototype run's thesis D — offence, defence, recovery,
- * movement & rhythm — every number with its source, the lean's share in its
- * lane colour. It replaces the Character panel's expanding details ("nothing
+ * movement & rhythm — every number with its source. It replaces the Character panel's expanding details ("nothing
  * expands on the left any more"); the explained reference rows that lived there
  * (rites, defence and mobility passives) close the panel.
  *
  * Everything shown is `buildStatsPanel` (statsPanelModel.ts), which reads the
  * server's own stat formula on a detached copy. This file only lays it out.
  */
-import { useMemo, type CSSProperties } from 'react';
+import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { riteDef } from '@mmo-idle/shared';
 import {
@@ -20,7 +19,6 @@ import {
   equippedRitesAtom,
   hpAtom,
   itemUpgradesAtom,
-  lineagesAtom,
   maxHpAtom,
   passivesAtom,
   playerIdAtom,
@@ -34,12 +32,9 @@ import { DefensePassivesSection, MobilityPassivesSection, StatRow } from '../../
 import { buildStatsPanel, type StatsGroup, type StatsSource } from './statsPanelModel';
 import './stats.css';
 
-type LaneStyle = CSSProperties & { '--lane': string };
-
 function Source({ source }: { source: StatsSource }) {
-  const style = source.color ? ({ '--lane': source.color } as LaneStyle) : undefined;
   return (
-    <span className={`sp-src sp-src--${source.kind}`} style={style}>
+    <span className={`sp-src sp-src--${source.kind}`}>
       {source.amount && <b>{source.amount}</b>}
       {source.amount ? ' ' : ''}{source.label}
     </span>
@@ -76,7 +71,6 @@ export function StatsView() {
   const unlockedSkills = useAtomValue(unlockedSkillsAtom);
   const activeStance = useAtomValue(activeStanceAtom);
   const equippedRites = useAtomValue(equippedRitesAtom);
-  const lineages = useAtomValue(lineagesAtom);
   const hp = useAtomValue(hpAtom);
   const maxHp = useAtomValue(maxHpAtom);
   const barrierMax = useAtomValue(barrierMaxAtom);
@@ -88,11 +82,11 @@ export function StatsView() {
         unlockedSkills, passives, selectedClass: combatArchetype ? `${combatArchetype}-root` : null,
         selectedSubVariant, selectedRange, combatArchetype,
       },
-      equipment, itemUpgrades, playerTier, activeStance, equippedRites, hpFraction, lineages,
+      equipment, itemUpgrades, playerTier, activeStance, equippedRites, hpFraction,
     },
     barrierMax,
   }), [unlockedSkills, passives, combatArchetype, selectedSubVariant, selectedRange, equipment,
-    itemUpgrades, playerTier, activeStance, equippedRites, hpFraction, lineages, barrierMax]);
+    itemUpgrades, playerTier, activeStance, equippedRites, hpFraction, barrierMax]);
 
   if (!playerId) return <div className="sp-empty">Not connected.</div>;
 
@@ -103,19 +97,11 @@ export function StatsView() {
 
   return (
     <div className="sp-body">
-      {data.lean && (
-        <p className="sp-lean" style={{ '--lane': data.lean.color } as LaneStyle}>
-          <span className="sp-lean__tag">Lean</span>
-          <b>{data.lean.name}</b>
-          {data.lean.rank && <span className="sp-lean__rank">{data.lean.rank}</span>}
-          {data.lean.sentence && <span className="sp-lean__sentence">{data.lean.sentence}</span>}
-        </p>
-      )}
       <div className="sp-grid">
         {data.groups.map((group) => <Group key={group.key} group={group} />)}
       </div>
       <p className="sp-note">
-        Each number says where it comes from: an item, your lean (in its lane colour), or the base you started with.
+        Each number says where it comes from: an item, or the base you started with.
       </p>
       <div className="sp-more">
         <div className="stat-section">

@@ -16,14 +16,9 @@ import {
   COOLDOWN_SUNDER_FX,
   DOT_FROZEN_FX,
   DOT_RIMESHATTER_FX,
-  lineageForRecipeId,
-  lineagePayloadOfHitFx,
-  packetDefinition,
   type CombatArchetype,
-  type PacketId,
   type CombatEvent,
   type DamageElement,
-  type LineageFxKey,
   type MinionView,
   type PlayerView,
   type Vec2,
@@ -226,9 +221,7 @@ import { fxDualBlueRound } from "../fx/bespoke/slinger";
 import { fxSwiftbladeStrike } from "../fx/bespoke/striker";
 import { championTether, fxSummonShatter } from "../fx/conduitPaths";
 import { abilityCallout, playAbilityRank } from "../fx/abilityRank";
-import { drawAbilityKeystoneFx } from "../fx/abilityKeystoneFx";
 import { fxRadiantArc } from "../fx/bespoke/apprentice";
-import { axisFx } from "../fx/abilityKeystoneModel";
 import {
   fxCharnelMaul, fxConstrict, fxHindKick, fxOozeEngulf, fxSnap, fxSpiderFang, fxSting,
   fxStoneFist, fxTongueLash, fxWispTouch,
@@ -247,7 +240,6 @@ import {
   notifyAbilityCooldownStarted,
   notifyAbilityFired,
   notifyAbilityArmed,
-  notifyAbilityRefunded,
   notifyCleansed,
   notifyStanceCooldownStarted,
 } from "../hud/atoms";
@@ -257,10 +249,6 @@ import { nodeToScene } from "./sceneCoords";
 import type { RenderState } from "./state";
 import { DEPTH } from "./depth";
 import { recordFrameCharge } from "../fx/frameChargeGlow";
-import { playCardWord } from "../fx/cardWord";
-import { hitOwnsBodyLunge, isPayloadFx, payloadOfHit } from "../fx/lineagePayloadModel";
-import { drawPayloadFx, drawPayloadHit } from "../fx/lineagePayloadFx";
-import { endLasting, startLasting } from "../fx/lineagePayloadStates";
 // Deliberately NOT `import.meta.env.DEV`: `remotePlayerAttack.test.ts` transpiles
 // this whole file to CommonJS and runs it in a vm, where `import.meta` is a
 // syntax error. Keep this file free of it.
@@ -456,509 +444,6 @@ function fxAoeRing(
     duration: 420,
     ease: "Power2",
     onComplete: () => ring.destroy(),
-  });
-}
-
-// ─── Lineage card FX (progression rework Phase 1c contract) ─────────────────
-//
-// One handler per `LineageFxKey`, keyed by the lane grammar (design §8: Tempo
-// = afterimages, Empowered = glow/crash/cracks, Affliction = pips/arcs,
-// Control = drag/grasp, Kill chain = pulses, Engagement = opening flashes).
-// Colours come from `packetDefinition().color`, the one owner of a lane's colour
-// (design §18.2), so a card's tree accent and its combat effect always agree.
-// If a lane reads badly over busy terrain, change it there and both move. Six
-// small, reusable primitives (ghost
-// strike, plating crack, pips, arc, flash, ring) cover every key; capstones
-// reuse the same primitives at a larger scale rather than inventing new ones.
-
-/**
- * A lane's colour has ONE owner: `packetDefinition().color` (design §18.2). The FX
- * palette that used to live here was a second source of truth for the same idea,
- * so a card's tree accent and its combat effect disagreed on screen.
- *
- * The lane is the fx key's prefix, which is a `PacketId` by construction.
- */
-function laneFxColor(fx: LineageFxKey): number {
-  const lane = fx.slice(0, fx.indexOf(".")) as PacketId;
-  const css = packetDefinition(lane)?.color;
-  if (!css) return 0xffffff;
-  const parsed = Number.parseInt(css.replace("#", ""), 16);
-  return Number.isNaN(parsed) ? 0xffffff : parsed;
-}
-
-/**
- * How much bigger an AMPLIFIED application draws (design §8: "the event gets
- * bigger or spreads"). The signal is the `stacks` the server already sends — there
- * is no new fx key and no new handler for an amplifier, because an amplifier
- * reuses its lane's payoff key by design, and a second target arrives as a second
- * `card-fx` with its own `targetId`.
- */
-function ampScale(stacks: number | undefined): number {
-  if (!stacks || stacks <= 1) return 1;
-  return Math.min(1.8, 1 + 0.18 * (stacks - 1));
-}
-
-/**
- * How much bigger a KEYSTONE draws than the payoff row of the same lane
- * (design §8). One number, because a keystone is one idea — "this is the rule
- * changing" — and eight independently chosen sizes would read as eight unrelated
- * effects instead of one tier of them.
- */
-const KEYSTONE_SCALE = 1.6;
-
-/** A short duplicate streak implying the triggering hit struck a second time. */
-function fxCardGhostStrike(
-  scene: GameScene,
-  at: { x: number; y: number },
-  color: number,
-  scale = 1,
-): void {
-  const angle = Math.random() * Math.PI * 2;
-  const dx = Math.cos(angle);
-  const dy = Math.sin(angle);
-  const g = scene.add.graphics({ x: at.x, y: at.y }).setDepth(DEPTH.FX);
-  g.lineStyle(2.5 * scale, color, 0.85);
-  g.beginPath();
-  g.moveTo(-dx * 14 * scale, -dy * 14 * scale);
-  g.lineTo(dx * 14 * scale, dy * 14 * scale);
-  g.strokePath();
-  scene.tweens.add({
-    targets: g,
-    x: at.x + dx * 12 * scale,
-    y: at.y + dy * 12 * scale,
-    alpha: 0,
-    duration: 260,
-    ease: "Cubic.Out",
-    onComplete: () => g.destroy(),
-  });
-}
-
-/** A jagged crack over the target — plating giving way. */
-function fxCardPlatingCrack(
-  scene: GameScene,
-  at: { x: number; y: number },
-  color: number,
-  scale = 1,
-): void {
-  const g = scene.add.graphics({ x: at.x, y: at.y }).setDepth(DEPTH.FX);
-  g.lineStyle(2, color, 0.9);
-  g.beginPath();
-  g.moveTo(-9, -13);
-  g.lineTo(-2, -2);
-  g.lineTo(-7, 3);
-  g.lineTo(2, 13);
-  g.strokePath();
-  if (scale !== 1) g.setScale(scale);
-  scene.tweens.add({
-    targets: g,
-    alpha: 0,
-    y: at.y + 5,
-    duration: 380,
-    ease: "Cubic.Out",
-    onComplete: () => g.destroy(),
-  });
-}
-
-/** Small stack pips rising off a point — an affliction (or a count) taking hold. */
-function fxCardPips(scene: GameScene, at: { x: number; y: number }, color: number, count: number): void {
-  const n = Math.max(1, Math.min(5, Math.round(count)));
-  for (let i = 0; i < n; i++) {
-    const dx = (i - (n - 1) / 2) * 7;
-    const g = scene.add.graphics({ x: at.x + dx, y: at.y - 6 }).setDepth(DEPTH.FX);
-    g.fillStyle(color, 0.9);
-    g.fillCircle(0, 0, 2.5);
-    scene.tweens.add({
-      targets: g,
-      y: g.y - 18,
-      alpha: 0,
-      duration: 460,
-      delay: i * 40,
-      ease: "Cubic.Out",
-      onComplete: () => g.destroy(),
-    });
-  }
-}
-
-/** A short arc/tendril from the source to the target — a drag, a grasp, a spread. */
-function fxCardArc(
-  scene: GameScene,
-  from: { x: number; y: number },
-  to: { x: number; y: number },
-  color: number,
-  scale = 1,
-): void {
-  const g = scene.add.graphics().setDepth(DEPTH.FX);
-  const mx = (from.x + to.x) / 2;
-  const my = (from.y + to.y) / 2 - 18 * scale;
-  g.lineStyle(2 * scale, color, 0.75);
-  g.beginPath();
-  g.moveTo(from.x, from.y);
-  g.lineTo(mx, my);
-  g.lineTo(to.x, to.y);
-  g.strokePath();
-  scene.tweens.add({
-    targets: g,
-    alpha: 0,
-    duration: 340,
-    ease: "Cubic.Out",
-    onComplete: () => g.destroy(),
-  });
-}
-
-/** A quick radial flash — an opening window, a weak point marked. */
-function fxCardFlash(
-  scene: GameScene,
-  at: { x: number; y: number },
-  color: number,
-  scale = 1,
-): void {
-  const g = scene.add.graphics({ x: at.x, y: at.y }).setDepth(DEPTH.FX);
-  g.fillStyle(color, 0.9);
-  g.fillCircle(0, 0, 5);
-  scene.tweens.add({
-    targets: g,
-    scaleX: 3.2 * scale,
-    scaleY: 3.2 * scale,
-    alpha: 0,
-    duration: 240,
-    ease: "Cubic.Out",
-    onComplete: () => g.destroy(),
-  });
-}
-
-/** Unknown `card-fx` keys are reported once each, not once per event. */
-const warnedUnknownFx = new Set<string>();
-
-/**
- * One handler per `LineageFxKey`. The six `.trail` keys are NOT drawn here —
- * the stat row is a persistent cosmetic derived client-side from the active
- * stat card (see `playLineageTrail` below), never a `card-fx` event (Phase 1c
- * contract). Unknown keys draw nothing.
- *
- * AMPLIFIERS ADD NO KEYS. Design §8 gives the amplifier row "the event gets
- * bigger or spreads", and an authored amplifier deliberately reuses its lane's
- * payoff key — so an amplified application arrives here as the SAME key with more
- * `stacks`, or as a second event on a second `targetId`. Both are handled by the
- * handler that already existed: {@link ampScale} grows the draw, and the target is
- * resolved per event. There is nothing to add to this switch for an amplifier.
- */
-function fxLineageCard(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }): void {
-  // An ability keystone verb owns ONE bespoke animation, keyed by its id (design
-  // §22.7); a verb with none yet is a keyed stub and falls through to its lane fx.
-  if (drawAbilityKeystoneFx(scene, ev)) return;
-  // The amplifier scales or extends what the packet drew (design §22.7): the same
-  // lane fx, bigger, or repeated as a second echo or a lingering trail.
-  const axis = axisFx(ev.axis);
-  // A T1 payload is already a multi-beat animation (a second swing, a dash, a
-  // clamp): repeating it would replay the body's pose, so it grows instead.
-  const multiBeat = isPayloadFx(ev.fx);
-  if (multiBeat) {
-    drawLaneFx(scene, ev, axis.scale * (1 + 0.12 * axis.echoes));
-    return;
-  }
-  drawLaneFx(scene, ev, axis.scale);
-  let scale = axis.scale;
-  for (let i = 1; i <= axis.echoes; i++) {
-    scale *= axis.echoFalloff;
-    const echoScale = scale;
-    scene.time.delayedCall(axis.echoDelayMs * i, () => {
-      if (document.hidden) return;
-      drawLaneFx(scene, ev, echoScale);
-    });
-  }
-}
-
-/**
- * One handler per `LineageFxKey`, drawn at `scale` (an ability amplifier's axis,
- * 1 otherwise). See {@link fxLineageCard} for what calls it.
- */
-function drawLaneFx(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }, scale = 1): void {
-  // The T1 payloads (design §24.2, course-correction W2-C) each own a premium
-  // effect of their own — lineagePayloadFx.ts. The rest keep the lane primitives.
-  if (isPayloadFx(ev.fx)) {
-    drawPayloadFx(scene, ev, ev.fx, scale);
-    return;
-  }
-  const pos = nodeToScene(ev.pos.x, ev.pos.y);
-  // `targetId` first: a payoff that spread to a second target names that monster,
-  // and its live sprite is where the player is looking. `targetPos` is the
-  // position at push time, the player's own position the last resort.
-  const live = ev.targetId ? spritePos(scene.state, ev.targetId) : null;
-  const target = live ?? (ev.targetPos ? nodeToScene(ev.targetPos.x, ev.targetPos.y) : pos);
-  const color = laneFxColor(ev.fx);
-  const amp = ampScale(ev.stacks) * scale;
-
-  switch (ev.fx) {
-    // Payoff rows — a new on-screen event (design §8). `tempo.ghost-strike`
-    // ("lands twice") is a payload now, drawn above with the other nine.
-    case "empowered.plating-crack":
-      fxCardPlatingCrack(scene, target, color, amp);
-      return;
-    case "empowered.weak-point":
-      fxCardFlash(scene, target, color, amp);
-      return;
-    case "affliction.bleed-pips":
-    case "affliction.venom-pips":
-      // The pips ARE the stack count, so they spread rather than swell: scaling
-      // them as well would read the same number twice.
-      fxCardPips(scene, target, color, ev.stacks ?? 3);
-      return;
-    case "control.frost-drag":
-      fxCardArc(scene, pos, target, color, amp);
-      return;
-    case "kill-chain.kill-pulse":
-      fxAoeRing(scene, ev.pos, 24 * amp, color);
-      return;
-    case "kill-chain.spread-arc":
-      fxCardArc(scene, pos, target, color, amp);
-      return;
-    case "engagement.opening-flash":
-      fxCardFlash(scene, pos, color, amp);
-      return;
-    case "engagement.brace-sparks":
-      fxCardPips(scene, pos, color, ev.stacks ?? 4);
-      return;
-    case "technique.cast-flare":
-      // Technique (design §22): the flourish of the form itself — a flash on the
-      // wearer because the lane pays THEM (readiness, a window), plus a ghost of
-      // the strike on whatever it landed on. Both are the existing primitives in
-      // the lane's own colour, so there is no new visual language to learn.
-      fxCardFlash(scene, pos, color, amp);
-      fxCardGhostStrike(scene, target, color, amp);
-      return;
-    // Capstones — the form's lasting verb (design §8: "form art changes, plus
-    // a lasting aura"), drawn as a bigger pass of the same primitives.
-    case "tempo.gale-wake":
-      fxAoeRing(scene, ev.pos, 34 * amp, color);
-      fxCardGhostStrike(scene, pos, color, amp);
-      return;
-    case "tempo.ruin-afterimage":
-      fxCardGhostStrike(scene, target, color, amp);
-      fxCardGhostStrike(scene, target, color, amp);
-      return;
-    case "affliction.stinger-echo":
-      fxCardArc(scene, pos, target, color, amp);
-      fxCardPips(scene, target, color, 2);
-      return;
-    case "empowered.quake-ring":
-      fxAoeRing(scene, ev.targetPos ?? ev.pos, 40 * amp, color);
-      return;
-    case "control.mire-grasp":
-      fxCardArc(scene, pos, target, color, amp);
-      fxCardPips(scene, target, color, 2);
-      return;
-    case "kill-chain.steel-vigil":
-      fxAoeRing(scene, ev.pos, 30 * amp, color);
-      fxCardFlash(scene, pos, color, amp);
-      return;
-    // Defensive signatures (Phase 4: armor/recovery/mobility, design §17).
-    // The lane-keyed default below is reused by a lane's T1 payoff card AND
-    // by whichever ONE defensive lineage keeps the shared key for its
-    // capstone (same signature, permanent instead of one-off). Face grammar
-    // (design §8): Avoid = blur/sidestep, Sustain = pulses and ward shells,
-    // Endure = plating chips and a stance pose. All six reuse the primitives
-    // above; nothing new to draw.
-    case "tempo.evasive-blur":
-    case "engagement.sidestep-blur":
-    case "control.chill-blur":
-      // Avoid: a dodge-blur, drawn on the wearer like the existing brace/opening
-      // cards rather than on the (possibly absent) target.
-      fxCardGhostStrike(scene, pos, color, amp);
-      return;
-    case "kill-chain.recovery-pulse":
-      fxAoeRing(scene, ev.pos, 24 * amp, color);
-      return;
-    case "barrier-tempo.ward-shell":
-      fxAoeRing(scene, ev.pos, 20 * amp, color);
-      return;
-    case "affliction.toxic-pulse":
-      fxCardPips(scene, pos, color, ev.stacks ?? 3);
-      return;
-    case "bulwark.plating-chip":
-      fxCardPlatingCrack(scene, pos, color, amp);
-      return;
-    case "empowered.guard-spark":
-      fxCardFlash(scene, pos, color, amp);
-      return;
-    // Keystones — the lane's own grammar, drawn LARGER (design §8: a keystone is
-    // the moment the character starts playing differently, so it reads as the
-    // lane's existing signature at keystone scale rather than as a new verb the
-    // player has to learn). `stacks` carries the rule's own count where it has
-    // one — a chain's link index, a ladder's rung — so a long chain grows as it
-    // goes.
-    case "tempo.keystone":
-      // Chain: the lane's afterimage, twice, on the body the link jumped to.
-      fxCardGhostStrike(scene, target, color, KEYSTONE_SCALE * amp);
-      fxCardGhostStrike(scene, target, color, KEYSTONE_SCALE * amp);
-      return;
-    case "empowered.keystone":
-      // Shockwave: the quake ring at the area hit's own footprint.
-      fxAoeRing(scene, ev.targetPos ?? ev.pos, 56 * amp, color);
-      fxCardPlatingCrack(scene, target, color, KEYSTONE_SCALE);
-      return;
-    case "affliction.keystone":
-      // Festering: a full spread of pips, and the arc that says they are held.
-      fxCardPips(scene, target, color, 5);
-      fxCardArc(scene, pos, target, color, KEYSTONE_SCALE);
-      return;
-    case "control.keystone":
-      // Ladder: the grasp, plus a flash per rung climbed.
-      fxCardArc(scene, pos, target, color, KEYSTONE_SCALE);
-      fxCardFlash(scene, target, color, KEYSTONE_SCALE * amp);
-      return;
-    case "kill-chain.keystone":
-      // Refund: the kill pulse at keystone size, on the player — the mechanic is
-      // back in THEIR hand, not on the corpse.
-      fxAoeRing(scene, ev.pos, 44, color);
-      fxCardFlash(scene, pos, color, KEYSTONE_SCALE);
-      return;
-    case "engagement.keystone":
-      // Always First: the opening flash, thrown at the new body as well as the
-      // wearer, because the opener is what just happened to that target.
-      fxCardFlash(scene, pos, color, KEYSTONE_SCALE);
-      fxCardFlash(scene, target, color, KEYSTONE_SCALE);
-      return;
-    case "bulwark.keystone":
-      // Immovable: chips off the stance, ringed — the push that did not move you.
-      fxAoeRing(scene, ev.pos, 30, color);
-      fxCardPlatingCrack(scene, pos, color, KEYSTONE_SCALE);
-      return;
-    case "barrier-tempo.keystone":
-      // Unbroken: the ward shell, held rather than broken.
-      fxAoeRing(scene, ev.pos, 34, color);
-      return;
-    case "technique.keystone":
-      // Signature: the cast flare at keystone scale, ringed — the Technique just
-      // counted as the class mechanic, so it reads like the mechanic's own moment.
-      fxAoeRing(scene, ev.pos, 40, color);
-      fxCardFlash(scene, pos, color, KEYSTONE_SCALE);
-      fxCardGhostStrike(scene, target, color, KEYSTONE_SCALE * amp);
-      return;
-    // Defensive CAPSTONE signatures (gap closed 2026-10-01): every OTHER
-    // defensive lineage crowning a lane already covered above gets its own
-    // combination of the same six primitives, so two lineages' capstones on
-    // the same lane read differently even though both stay inside the
-    // lane's grammar. Still no new visual language — only new pairings.
-    case "bulwark.rampart-seal": // Plate
-      fxCardPlatingCrack(scene, pos, color, amp);
-      fxAoeRing(scene, ev.pos, 16 * amp, color);
-      return;
-    case "bulwark.hide-ward": // Hide
-      fxCardPlatingCrack(scene, pos, color, amp);
-      fxCardPips(scene, pos, color, 2);
-      return;
-    case "bulwark.frostline-plate": // Barrier (Mountain recovery)
-      fxCardPlatingCrack(scene, pos, color, amp);
-      fxCardFlash(scene, pos, color, 0.6 * amp);
-      return;
-    case "bulwark.resonant-plate": // Pulse
-      fxCardPlatingCrack(scene, pos, color, amp);
-      fxAoeRing(scene, ev.pos, 22 * amp, color);
-      return;
-    case "bulwark.ballast-plate": // Marsh
-      fxCardPlatingCrack(scene, pos, color, 1.4 * amp);
-      return;
-    case "control.deep-shock": // Pulse
-      fxCardArc(scene, pos, target, color, amp);
-      fxAoeRing(scene, ev.pos, 20 * amp, color);
-      return;
-    case "control.icebreaker": // Treads
-      fxCardArc(scene, pos, target, color, amp);
-      fxCardPips(scene, target, color, 2);
-      return;
-    case "control.wetland-anchor": // Marsh
-      fxCardArc(scene, pos, target, color, amp);
-      fxCardFlash(scene, pos, color, 0.6 * amp);
-      return;
-    case "engagement.oasis-guard": // Stone
-      fxCardFlash(scene, pos, color, amp);
-      fxCardPips(scene, pos, color, 2);
-      return;
-    case "engagement.windstep": // Wraps
-      fxCardFlash(scene, pos, color, amp);
-      fxCardGhostStrike(scene, pos, color, amp);
-      return;
-    case "engagement.mountain-stride": // Treads
-      fxCardFlash(scene, pos, color, 1.3 * amp);
-      return;
-    case "engagement.cavern-sprint": // Wing
-      fxCardFlash(scene, pos, color, amp);
-      fxAoeRing(scene, ev.pos, 14 * amp, color);
-      return;
-    case "affliction.spore-veil": // Bindings
-      fxCardPips(scene, pos, color, ev.stacks ?? 3);
-      fxCardGhostStrike(scene, pos, color, amp);
-      return;
-    case "affliction.bog-eye": // Eye
-      fxCardPips(scene, pos, color, (ev.stacks ?? 3) + 1);
-      return;
-    case "kill-chain.wind-chaser": // Fleet
-      fxAoeRing(scene, ev.pos, 24 * amp, color);
-      fxCardGhostStrike(scene, pos, color, amp);
-      return;
-    case "kill-chain.ember-spark": // Wing
-      fxAoeRing(scene, ev.pos, 24 * amp, color);
-      fxCardFlash(scene, pos, color, 0.6 * amp);
-      return;
-    case "barrier-tempo.bulwark-heart": // Barrier (Mountain recovery)
-      fxAoeRing(scene, ev.pos, 24 * amp, color);
-      fxCardPlatingCrack(scene, pos, color, amp);
-      return;
-    // Stat rows — a persistent weapon-trail cosmetic, never an event.
-    case "tempo.trail":
-    case "empowered.trail":
-    case "affliction.trail":
-    case "control.trail":
-    case "kill-chain.trail":
-    case "engagement.trail":
-    case "technique.trail":
-      return;
-    default:
-      // Unknown key: draw nothing (contract), and say so once per key in dev.
-      if (DEV_TOOLS_ENABLED && !warnedUnknownFx.has(ev.fx)) {
-        warnedUnknownFx.add(ev.fx);
-        // eslint-disable-next-line no-console
-        console.warn(`card-fx: no client handler for '${ev.fx}'`);
-      }
-      return;
-  }
-}
-
-/**
- * The active weapon lineage's STAT row, read as a persistent cosmetic on every
- * basic attack. Phase 1c contract: "derived client-side from
- * `PlayerView.lineages[<lineage>].active.stat` -> the card's `fx` key. No
- * event." A short tinted streak from attacker to target is the "weapon trail
- * colour/intensity" design §8 asks a stat row for.
- */
-function weaponStatTrailColor(player: PlayerView | undefined): number | null {
-  const weaponId = player?.equipment?.weapon;
-  if (!weaponId || !player?.lineages) return null;
-  const lineage = lineageForRecipeId(weaponId);
-  if (!lineage) return null;
-  const statCardId = player.lineages[lineage.id]?.active.stat;
-  if (!statCardId) return null;
-  const card = lineage.cards.find((c) => c.id === statCardId);
-  return card ? laneFxColor(card.fx) : null;
-}
-
-function playLineageTrail(args: AttackFxArgs): void {
-  if (!shouldRunClientFx()) return;
-  const color = weaponStatTrailColor(args.player);
-  if (color === null) return;
-  const { from, to, scene } = args;
-  const g = scene.add.graphics().setDepth(DEPTH.FX);
-  g.lineStyle(2, color, 0.45);
-  g.beginPath();
-  g.moveTo(from.x, from.y);
-  g.lineTo(to.x, to.y);
-  g.strokePath();
-  scene.tweens.add({
-    targets: g,
-    alpha: 0,
-    duration: 220,
-    ease: "Cubic.Out",
-    onComplete: () => g.destroy(),
   });
 }
 
@@ -1473,30 +958,6 @@ export function dispatchCombatEvent(
     // gates only the one-shot release burst (never queued while hidden); the
     // stacks/max bookkeeping itself is always kept current.
     recordFrameCharge(state, ev.playerId, ev.stacks, ev.max, shouldRunClientFx());
-    return;
-  }
-  if (ev.kind === "card-fx") {
-    // The Technique refund is HUD first: the refunded tiles flash on the own
-    // ability bar whatever the in-world FX state, like the cooldown sample it
-    // explains (which arrives in the same batch).
-    if (ev.fx === "technique.refund-flash" && ev.playerId === scene.myId && ev.abilityIds?.length) {
-      notifyAbilityRefunded(ev.abilityIds);
-    }
-    // Node-wide, like every other payoff signature: an ally should see a
-    // build's cards land exactly as they'd see a Guard or a Technique fire.
-    if (shouldRunClientFx()) {
-      fxLineageCard(scene, ev);
-      // The card's name over the player, and its readout ring's pulse (W2-B).
-      playCardWord(state, scene, ev);
-    }
-    return;
-  }
-  if (ev.kind === "lineage-load") {
-    // Bookkeeping only (the `lineage-loaded` aura row draws it): kept current
-    // whatever the tab state, like `frame-charge`, so a load armed while hidden
-    // still glows when the tab returns and one spent while hidden does not.
-    if (ev.loaded) startLasting(ev.playerId, "loaded", performance.now(), 0);
-    else endLasting(ev.playerId, "loaded");
     return;
   }
   // dot-tick / monster-hit amounts render separately in deltaApplier.
@@ -2461,13 +1922,6 @@ function runFxForAttackStyle(
     undefined;
   const flair = attackFlairOf(player);
   const args: AttackFxArgs = { scene, ev, player, from, to, dotPath, tint, flair };
-  // A lineage payload's OWN hit (the echo's second swing, the lunge's contact):
-  // drawn over the class's ordinary hit, which still draws beneath it.
-  const payloadHit = payloadOfHit(ev.effects);
-  if (payloadHit) drawPayloadHit(scene, ev, payloadHit, from, to, player);
-  // The active weapon lineage's stat row is a persistent cosmetic on every
-  // basic attack, independent of which style/branch below actually fires.
-  playLineageTrail(args);
 
   // Blunderbuss volley: each pellet is its own bullet, all fired at once from a
   // shared muzzle to its own scattered endpoint (angle + distance randomized
@@ -2587,7 +2041,6 @@ function runFxForAttackStyle(
     if (effectId === DEATH_MARK_BLAST_CLIENT_EFFECT) continue; // handled above
     if (effectId === CANNON_BLAST_CLIENT_EFFECT) continue; // handled above
     if (effectId === VOID_DISCHARGE_CLIENT_EFFECT) continue; // handled above
-    if (lineagePayloadOfHitFx(effectId)) continue; // the payload's own hit, above
     const triggerFx = TRIGGER_FX_BY_EFFECT[effectId];
     if (triggerFx) {
       triggerFx(scene, to, args);
@@ -2639,9 +2092,7 @@ function runFxForAttackStyle(
     !isHolyFlash &&
     !isFlashTeleport &&
     !isRangedPlayerView(player) &&
-    lungeTarget &&
-    // The Engagement lunge's dash already carries the body to this hit.
-    !hitOwnsBodyLunge(ev.effects)
+    lungeTarget
   ) {
     applyLunge(state, actorId, { ...lungeTarget }, scene);
   }

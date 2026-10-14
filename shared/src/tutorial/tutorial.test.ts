@@ -54,7 +54,6 @@ function view(overrides: Partial<TutorialView> = {}): TutorialView {
     attunedAbilities: { techniques: [], guards: [] },
     bossesCleared: [],
     clearedNodes: [],
-    lineages: {},
   };
   const merged = { ...base, ...overrides };
   return { ...merged, globalMastery: globalMastery(merged.biomeLevel) };

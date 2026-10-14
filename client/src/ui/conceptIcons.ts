@@ -207,19 +207,11 @@ const BUFF_IDS = new Set([
   'stance-charge',
   'stance-reaper',
   'stance-release',
-  // Lineage card windows (progression rework 1c).
-  'lineage-damage',
-  'lineage-speed',
-  'lineage-recovery',
-  'lineage-guard',
-  'lineage-ward',
-  'lineage-plate',
-  'lineage-technique',
+  // The evasion window's art, worn by Sidestep (see `BUFF_ICON_ALIASES`).
   'lineage-evasion',
   // Frame loops (progression rework Phase 3). Two tiles for all six roots: the
   // window the mechanic opened, and the bank counting toward its cap. Art is
-  // authored through the normal pipeline; until it lands these resolve the same
-  // way the lineage tiles above do.
+  // authored through the normal pipeline.
   'frame-window',
   'frame-charge',
 ]);
@@ -265,9 +257,6 @@ const TARGET_BUFF_ICON_IDS = new Set([
 // registry. Its icon is still authored in the normal status-debuff directory.
 const TARGET_DEBUFF_ICON_IDS = new Set([
   'shatter-vulnerable',
-  // The boss Rend art (claw wounds), reused as the one lineage bleed's own icon
-  // (design §26.2) through `TARGET_STATUS_ALIASES`.
-  'boss-rend',
 ]);
 
 function source(directory: string, id: string, revision?: string): AssetIconSource {
@@ -358,8 +347,8 @@ const BUFF_ICON_ALIASES: Record<string, string> = {
   'summoner-frame-frenzy': 'summoner-coordinated-hunt',
   'summoner-frame-line': 'summoner-colossus',
   'summoner-frame-link': 'summoner-battle-bond',
-  // Sidestep has no art yet: its window is the evasion window, so it borrows the
-  // lineage Slip tile until its own icon is generated.
+  // Sidestep has no art yet: its window is an evasion window, so it borrows the
+  // evasion-window tile until its own icon is generated.
   'ability-sidestep': 'lineage-evasion',
 };
 
@@ -470,12 +459,6 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'reload-suppress-shred': 'debuff-plating-shred',
   'ability-slowed': 'hamstring',
   'ability-rooted': 'binding-strike',
-  // The lineage cards' own records (design §26.2): the one bleed, and the
-  // Control lean's slow and root drawn as the generic slow and snare, not as the
-  // Hamstring and Binding Strike ability art.
-  'lineage.bleed': 'boss-rend',
-  'lineage.hobbled': 'debuff-slow',
-  'lineage.pinned': 'debuff-root',
   // Entangle (Bramble Guard's keystone) wears the Guard that laid it, as Bound wears Binding Strike.
   'ability-entangled': 'bramble-guard',
   stunned: 'debuff-stunned',

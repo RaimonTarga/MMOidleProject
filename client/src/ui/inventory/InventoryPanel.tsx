@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { BackpackGrid } from './BackpackGrid';
 import { EquipmentSlots } from './EquipmentSlots';
 import { StatSheet } from './StatSheet';
-import { lineageTreeSlotAtom, playerIdAtom } from '../../hud/atoms';
+import { playerIdAtom } from '../../hud/atoms';
 import { tutorialFocusAtom } from '../../tutorial/atoms';
 import { useIsMobile } from '../../hud/useIsMobile';
 import { DialogHeader, DialogTab, DialogTabs, GameDialog } from '../../hud/primitives';
@@ -20,7 +20,6 @@ type InvSection = 'gear' | 'bag' | 'stats';
 
 export function InventoryPanel({ onClose }: Props) {
   const playerId = useAtomValue(playerIdAtom);
-  const [, setLineageSlot] = useAtom(lineageTreeSlotAtom);
   const isMobile = useIsMobile();
   const [section, setSection] = useState<InvSection>('bag');
   // On phones the sheet is its own tab: pinning an item takes you to it.
@@ -72,16 +71,7 @@ export function InventoryPanel({ onClose }: Props) {
           <div className="inv-body">
             {showGear && (
               <div id="inventory-gear" className="inv-left" role={isMobile ? 'tabpanel' : undefined}>
-                <EquipmentSlots
-                  compare={compare}
-                  onOpenLineage={(slot) => {
-                    // The tree opens as its own top-level dialog (see
-                    // lineageTreeSlotAtom) rather than stacking a second modal
-                    // focus-trap over this one.
-                    setLineageSlot(slot);
-                    onClose();
-                  }}
-                />
+                <EquipmentSlots compare={compare} />
               </div>
             )}
             {showBag && (

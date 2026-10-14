@@ -17,17 +17,6 @@
   min-width: 0;
 }
 
-/* The two wallets are separated by space alone. A 1px vertical rule was tried
-   first and read as a stray artifact: the strip wraps, and `align-self: stretch`
-   only stretches within a flex LINE, so the rule collapsed to a short stub
-   floating between chips. */
-
-.materials-divider {
-  height: 1px;
-  margin: 3px 0 1px;
-  background: var(--hud-edge-divider);
-}
-
 .essence-row {
   display: grid;
   grid-template-columns: 18px minmax(0, 1fr) auto;

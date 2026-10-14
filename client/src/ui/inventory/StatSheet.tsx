@@ -12,7 +12,7 @@ import { useIsMobile } from '../../hud/useIsMobile';
 import {
   activeStanceAtom, equippedRitesAtom, equipmentAtom, itemUpgradesAtom, passivesAtom,
   combatArchetypeAtom, selectedRangeAtom, selectedSubVariantAtom, playerTierAtom,
-  unlockedSkillsAtom, hpAtom, maxHpAtom, playerNodeIdAtom, lineagesAtom,
+  unlockedSkillsAtom, hpAtom, maxHpAtom, playerNodeIdAtom,
 } from '../../hud/atoms';
 import { SLOT_LABELS, biomeName, tierColor } from './constants';
 import { buildStatSheet, type SheetRow, type StatSheetData } from './statSheetModel';
@@ -43,7 +43,6 @@ export function StatSheet({ compare }: Props) {
   const hp = useAtomValue(hpAtom);
   const maxHp = useAtomValue(maxHpAtom);
   const playerNodeId = useAtomValue(playerNodeIdAtom);
-  const lineages = useAtomValue(lineagesAtom);
   const hpFraction = hp / Math.max(1, maxHp);
   // The Stats panel is a desktop menu entry; the phone's is its Stats tab.
   const isMobile = useIsMobile();
@@ -54,9 +53,9 @@ export function StatSheet({ compare }: Props) {
       unlockedSkills, passives, selectedClass: combatArchetype ? `${combatArchetype}-root` : null,
       selectedSubVariant, selectedRange, combatArchetype,
     },
-    equipment, itemUpgrades, playerTier, activeStance, equippedRites, hpFraction, lineages,
+    equipment, itemUpgrades, playerTier, activeStance, equippedRites, hpFraction,
   }, defId), [unlockedSkills, passives, combatArchetype, selectedSubVariant, selectedRange, equipment,
-    itemUpgrades, playerTier, activeStance, equippedRites, hpFraction, lineages, defId]);
+    itemUpgrades, playerTier, activeStance, equippedRites, hpFraction, defId]);
 
   const def = defId ? ITEM_DATABASE.get(defId) : undefined;
   const slot = sheet.slot;

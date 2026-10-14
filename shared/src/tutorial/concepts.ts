@@ -78,28 +78,6 @@ export const TUTORIAL_CONCEPTS = {
     shownBy: '"Use default timing" under the ability',
     anchor: 'abilityTiming',
   },
-  'weapon-page': {
-    name: 'A weapon has a page of cards',
-    shownBy: 'the weapon page, opened from the equipped weapon',
-    anchor: 'equipmentSlot',
-  },
-  shards: {
-    name: 'Every kill pays its territory\'s shard',
-    shownBy: 'the arrival banner and the map ("Pack territory · Gale Shards")',
-  },
-  // Design §26.1: the T1 lean row is Attack, Speed and Effect on every weapon, and
-  // the guide buys Effect (the weapon's own move made stronger). It never says a
-  // lean choice composes with the verb at T1: Attack and Speed are plain stats.
-  lean: {
-    name: 'Row 1, the lean: Attack, Speed or Effect while the weapon is worn, one active',
-    shownBy: 'the lean card\'s sentence on the weapon page, and its share in the Stats panel',
-    anchor: 'lineageCard',
-  },
-  'lean-rank': {
-    name: 'A lean has three ranks, and each makes its number bigger',
-    shownBy: 'the rank pips and Rank up on the lean card, and the number in its sentence',
-    anchor: 'lineageRankUp',
-  },
   guard: {
     name: 'A Guard rescues you mid-fight',
     shownBy: 'the Abilities tab, Attune',
@@ -121,20 +99,6 @@ export const TUTORIAL_CONCEPTS = {
     name: 'Abilities are swapped to fit the zone',
     shownBy: 'the Abilities tab, Unattune then Attune',
     anchor: 'abilityAttune',
-  },
-  verb: {
-    name: 'Row 2, the verb: the weapon\'s own move, a moment in the fight',
-    shownBy: 'the verb card\'s sentence on the weapon page, ringed',
-    anchor: 'lineageCard',
-  },
-  // Design §26.4: one named ring per active verb, under the HP bar (desktop: the
-  // Character panel; phone: the top strip's second row), in five states, plus the
-  // count of firings the player did not see.
-  'rhythm-ring': {
-    name: 'A ring under your health bar shows the verb coming',
-    shownBy: 'the verb\'s named ring under the health bar: it counts, brightens when coming, lights when ready,'
-      + ' goes dashed when it needs a poisoned or held target, and shows +N for firings you missed',
-    anchor: 'rhythmRing',
   },
   orbit: {
     name: 'Orbit: circle out of reach while attacking',
@@ -158,15 +122,6 @@ export const TUTORIAL_CONCEPTS = {
     name: 'Clear the guard, then wake the boss at its altar',
     shownBy: 'the altar button, ringed',
     anchor: 'altar',
-  },
-  gate: {
-    name: 'A gate turns the weapon into its next form',
-    shownBy: 'the gate block at the bottom of the weapon page',
-    anchor: 'lineageForm',
-  },
-  capstone: {
-    name: 'Only the boss drops the gate\'s capstone',
-    shownBy: 'the capstone pips on the gate block',
   },
 } as const satisfies Record<string, TutorialConcept>;
 

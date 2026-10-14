@@ -37,7 +37,6 @@ import { syncStunOrbits } from "../render/stunOrbit";
 import { clearOwnMovePath } from '../input/pathPrediction';
 import { RemotePlayerPosition } from '../render/remotePlayerPosition';
 import { observeAreaArrival } from '../hud/areaInformationState';
-import { observeHudServerTime } from '../hud/hudServerClock';
 
 // Last frame's resolved target — lets us detect when a target dies (its id
 // vanishes from view) so the target frame can drain HP to 0 before fading.
@@ -50,7 +49,6 @@ export function applyDelta(
   options: { stateSync?: boolean } = {},
 ): void {
   state.serverClock.observe(snapshot.serverTime);
-  observeHudServerTime(snapshot.serverTime);
   if (options.stateSync || snapshot.nodeId !== state.ownNodeId) clearEssenceMotes(scene);
   if (snapshot.full) {
     state.ambientStackFlash.clear();

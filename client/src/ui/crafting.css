@@ -124,13 +124,6 @@
   border-radius: 2px;
 }
 
-.craft-wallet__split {
-  width: 1px;
-  align-self: stretch;
-  min-height: 14px;
-  background: var(--hud-edge-divider);
-}
-
 /* ── Per-recipe cost row ─────────────────────────────────────────────────── */
 .craft-cost {
   margin-bottom: 6px;
@@ -1625,17 +1618,6 @@
 .make-detail__blocked {
   color: var(--hud-text-dim);
   font-size: 10px;
-}
-
-.make-detail__lineage-note {
-  margin-top: 12px;
-  padding: 9px 11px;
-  border: 1px solid var(--hud-edge-light);
-  border-left: 2px solid var(--hud-primary);
-  background: var(--hud-material-inset);
-  color: var(--hud-text-muted);
-  font-size: 11px;
-  line-height: 1.45;
 }
 
 /* Mobile: the Make browser owns its own scrolling inside the sheet/dialog, and

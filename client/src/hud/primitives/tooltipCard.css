@@ -18,15 +18,6 @@
   color: var(--hud-primary-strong, #e0c070);
 }
 
-/* The ability a keystone renamed, under its new name (design §22.7). */
-.tip-card__lineage {
-  margin-top: -5px;
-  font-size: 10px;
-  font-style: italic;
-  line-height: 1.2;
-  color: var(--hud-text-muted, #8a806c);
-}
-
 .tip-card__kicker {
   margin-top: -4px;
   font-size: 9px;

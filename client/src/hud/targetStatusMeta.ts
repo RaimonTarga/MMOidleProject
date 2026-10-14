@@ -17,11 +17,6 @@ const STATUS_META: Record<string, StatusMeta> = {
   slow:            { label: 'Slow',    color: '#88aaff' },
   'ability-slowed': { label: 'Slowed', color: '#88aaff' },
   'ability-rooted': { label: 'Bound', color: '#aa77ee' },
-  // The lineage cards' own records (design §26.2): the one bleed on a weapon with
-  // no poison of its own, and the Control lean's slow and root under their names.
-  'lineage.bleed':  { label: 'Bleed', color: '#d8423c' },
-  'lineage.hobbled': { label: 'Hobbled', color: '#88aaff' },
-  'lineage.pinned': { label: 'Pinned', color: '#aa77ee' },
   // Bramble Guard's Entangle keystone (design §22.4): a slow, so the slow's blue.
   'ability-entangled': { label: 'Entangled', color: '#88aaff' },
   stunned:         { label: 'Stunned', color: '#ffdd44' },

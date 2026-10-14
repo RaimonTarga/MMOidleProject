@@ -15,11 +15,8 @@
 import {
   abilityBlurbAt,
   abilityDisplayName,
-  abilityLineageLine,
-  abilityNodeNameParts,
   MONSTER_DATABASE,
   type AbilityDef,
-  type AbilityNameParts,
   type PlayerBuff,
   type StatusValue,
   type TargetStatusView,
@@ -82,12 +79,11 @@ function specificBuffHelp(buff: PlayerBuff): StatusHelp | undefined {
 
 /**
  * The ability a buff tile belongs to, as it is called now (design §22.7): its full
- * display name and the lineage line under a keystone's rename. The buff bar passes
- * it for the tiles an ability owns (a Guard's window, a Recovery window, …).
+ * display name. The buff bar passes it for the tiles an ability owns (a Guard's
+ * window, a Recovery window, …).
  */
 export interface BuffAbilityName {
   name: string;
-  lineage?: string;
 }
 
 export function buffTooltipContent(buff: PlayerBuff, owner?: BuffAbilityName): TooltipCardContent {
@@ -109,11 +105,10 @@ export function buffTooltipContent(buff: PlayerBuff, owner?: BuffAbilityName): T
   const statusTitle = sharedTile && buff.label ? buff.label : help?.title ?? prettifyStatusId(buff.label || buff.id);
   const kind = help ? statusKindLabel(help.kind) : 'Status';
   if (owner) {
-    // A tile an ability owns is named after the ability as it is called now (a
-    // keystone renames it); the status's own name moves to the kicker.
+    // A tile an ability owns is named after the ability as it is called now;
+    // the status's own name moves to the kicker.
     return {
       title: owner.name,
-      ...(owner.lineage ? { lineage: owner.lineage } : {}),
       kicker: statusTitle !== owner.name ? `${kind} · ${statusTitle}` : kind,
       body: help?.help ?? FALLBACK_HELP,
       current,
@@ -223,18 +218,11 @@ const SLOT_LABEL: Record<AbilityDef['slot'], string> = {
  * read the same authored rank through the same resolver, so a number can never
  * mean one thing in the build screen and another on the HUD.
  */
-/** The words this character's node rows lend the ability's name (design §22.7). */
-function nameParts(ability: AbilityDef, context: AbilityContext): AbilityNameParts {
-  return abilityNodeNameParts(ability.id, context.abilityNodes?.[ability.id]);
-}
-
 export function abilityTooltipContent(
   ability: AbilityDef,
   context: AbilityContext,
   runtime: AbilityRuntime,
 ): TooltipCardContent {
-  const parts = nameParts(ability, context);
-  const lineage = abilityLineageLine(ability, parts);
   const described = describeAbility(ability, context);
 
   // `abilityLines` leads with a Rank row; the title already carries the numeral,
@@ -269,10 +257,8 @@ export function abilityTooltipContent(
   }
 
   return {
-    // The whole name (design §22.10: "the tooltip the whole name"), with the
-    // ability's own name beneath once a keystone has renamed it.
-    title: abilityDisplayName(ability, context.playerTier, parts),
-    ...(lineage ? { lineage } : {}),
+    // The whole name (design §22.10: "the tooltip the whole name").
+    title: abilityDisplayName(ability, context.playerTier),
     tags: described.tags.map(tag => tag.id),
     equipment: described.equipmentModifiers.map(line => ({ key: line.key, label: `${line.source} · ${line.label}`, value: line.value })),
     kicker: `${SLOT_LABEL[ability.slot]} · ${described.rankLabel}`,
@@ -297,7 +283,7 @@ export function abilityAccessibleLabel(
   context: AbilityContext,
   runtime: AbilityRuntime,
 ): string {
-  const name = abilityDisplayName(ability, context.playerTier, nameParts(ability, context));
+  const name = abilityDisplayName(ability, context.playerTier);
   const state =
     runtime.state === 'cooling' && runtime.cooldownRemainingMs !== undefined
       ? `cooling, ${SECONDS(runtime.cooldownRemainingMs)} remaining`
