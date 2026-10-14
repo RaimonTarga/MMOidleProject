@@ -239,11 +239,6 @@ export interface AbilityRank {
 export interface AbilityDef {
   id: string;
   name: string;
-  /**
-   * Fixed RP reservation, independent of rank and tier. Priced net of the Rune
-   * rule that wires it (see `referenceAbilityRule`).
-   */
-  attunementCost: number;
   slot: AbilityFamily;
   /** How the server executes it. */
   shape: AbilityShape;
@@ -604,8 +599,7 @@ export const ABILITY_MULTIHIT_MODE: Record<
 // ── The roster ───────────────────────────────────────────────────────────────
 //
 // 19 authored abilities across T1-T4 (the ability pass, design §22.2 and §22.8:
-// 11 Techniques, 8 Guards). Technique and Guard are semantic families; all
-// attuned tools reserve RP, without family capacity caps.
+// 11 Techniques, 8 Guards). Technique and Guard are semantic families.
 //
 // ALL NUMBERS ARE FIRST-PASS SEEDS. They express relative roles and give the
 // simulation a coherent starting point; the balance pass owns the values.
@@ -617,7 +611,6 @@ const abilities: AbilityDef[] = [
   // whole decision space before adding a single new verb.
   {
     id: "sweep",
-    attunementCost: 4,
     name: "Sweep",
     slot: "technique",
     shape: "armed",
@@ -661,7 +654,6 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "second-wind",
-    attunementCost: 4,
     name: "Second Wind",
     slot: "guard",
     shape: "instant",
@@ -685,7 +677,6 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "cleanse",
-    attunementCost: 1,
     name: "Cleanse",
     slot: "guard",
     shape: "instant",
@@ -705,7 +696,6 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "brace",
-    attunementCost: 3,
     name: "Brace",
     slot: "guard",
     shape: "instant",
@@ -737,7 +727,6 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "charge",
-    attunementCost: 3,
     name: "Charge",
     slot: "technique",
     shape: "charge",
@@ -790,7 +779,6 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "slam",
-    attunementCost: 4,
     name: "Slam",
     slot: "technique",
     shape: "cast",
@@ -849,7 +837,6 @@ const abilities: AbilityDef[] = [
     id: "sidestep",
     // PROVISIONAL: priced like Brace, the other burst Guard (net of its In
     // Combat reference wiring, abilityWiring.ts).
-    attunementCost: 3,
     name: "Sidestep",
     slot: "guard",
     shape: "instant",
@@ -877,7 +864,6 @@ const abilities: AbilityDef[] = [
   // ── T2: positioning, soft control, sustained mitigation ────────────────────
   {
     id: "binding-strike",
-    attunementCost: 2,
     name: "Binding Strike",
     slot: "technique",
     shape: "armed",
@@ -900,7 +886,6 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "bramble-guard",
-    attunementCost: 2,
     name: "Bramble Guard",
     slot: "guard",
     shape: "instant",
@@ -916,7 +901,6 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "endure",
-    attunementCost: 4,
     name: "Endure",
     slot: "guard",
     shape: "instant",
@@ -936,7 +920,6 @@ const abilities: AbilityDef[] = [
 
   {
     id: "contagion",
-    attunementCost: 5,
     name: "Contagion",
     slot: "technique",
     shape: "armed",
@@ -964,8 +947,7 @@ const abilities: AbilityDef[] = [
     // Homed at T2, which is where its half of the affliction pair belongs: T2 is
     // the first tier with real pack density (jungle), and spreading is the answer
     // to breadth. Detonate stays at T3 as the later, more build-warping half —
-    // Learn to spread first, learn to cash in second. Each tool then competes
-    // with the rest of the attuned build for RP.
+    // Learn to spread first, learn to cash in second.
     ranks: [
       { effect: { kind: "spread-dots", radius: 120, maxTargets: 5 }, cooldownMs: 14000 },
       { effect: { kind: "spread-dots", radius: 150, maxTargets: 6 }, cooldownMs: 12000 },
@@ -975,7 +957,6 @@ const abilities: AbilityDef[] = [
 
   {
     id: "snipe",
-    attunementCost: 3,
     name: "Snipe",
     slot: "technique",
     shape: "cast",
@@ -1011,7 +992,6 @@ const abilities: AbilityDef[] = [
   // ── T3: tempo, and hard movement/control counterplay ───────────────────────
   {
     id: "imbue-lightning",
-    attunementCost: 4,
     name: "Imbue Lightning",
     slot: "technique",
     shape: "instant",
@@ -1052,7 +1032,6 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "break-free",
-    attunementCost: 1,
     name: "Break Free",
     slot: "guard",
     shape: "instant",
@@ -1069,7 +1048,6 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "detonate",
-    attunementCost: 4,
     name: "Detonate",
     slot: "technique",
     shape: "cast",
@@ -1103,7 +1081,6 @@ const abilities: AbilityDef[] = [
     id: "cull",
     // PROVISIONAL: priced like Power Strike was (net of its In Combat reference
     // wiring, abilityWiring.ts).
-    attunementCost: 4,
     name: "Cull",
     slot: "technique",
     shape: "cast",
@@ -1140,7 +1117,6 @@ const abilities: AbilityDef[] = [
   // T5+ must give each of them a bespoke upgrade, not resume percentage growth.
   {
     id: "disengage",
-    attunementCost: 1,
     name: "Disengage",
     slot: "technique",
     shape: "reposition",
@@ -1157,7 +1133,6 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "recuperate",
-    attunementCost: 4,
     name: "Recuperate",
     slot: "guard",
     shape: "instant",
@@ -1173,7 +1148,6 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "stunning-strike",
-    attunementCost: 4,
     name: "Stunning Strike",
     slot: "technique",
     shape: "cast",
@@ -1308,7 +1282,7 @@ export interface LegacyAttunedAbilities {
  * Coerce whatever is in a persisted row into the current list shape, dropping
  * ids that no longer resolve, duplicates, and entries that don't fit their slot.
  * Accepts the legacy `{technique, guard}` shape so old saves migrate silently.
- * There is no tier or family capacity limit. RP validation belongs to loadout edits.
+ * There is no tier or family capacity limit.
  */
 export function normalizeAttunedAbilities(raw: unknown): AttunedAbilities {
   if (!raw || typeof raw !== "object") return emptyAttunedAbilities();
@@ -1337,14 +1311,6 @@ export function normalizeAttunedAbilities(raw: unknown): AttunedAbilities {
   };
 }
 
-
-/** Ordered attunements in a semantic family. */
-export function attunedForFamily(
-  equipped: AttunedAbilities,
-  slot: AbilityFamily,
-): string[] {
-  return slot === "technique" ? equipped.techniques : equipped.guards;
-}
 
 /** Validation for dev boot: every rank must be authored coherently. */
 export function validateAbilities(): string[] {

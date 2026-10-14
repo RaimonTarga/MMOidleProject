@@ -44,7 +44,6 @@ import {
   questProgressAtom,
   runesOwnedAtom,
   craftTabAtom,
-  attunedAbilitiesAtom,
   knownAbilitiesAtom,
   deathOverlayAtom,
   buildOpenAtom,
@@ -186,14 +185,13 @@ export function RightSidebar() {
     if (isMobile) closePrimaryOverlays();
   }, [isMobile]);
 
-  // Abilities and Runes share one dialog but each owns a rail
-  // entry: an entry is selected when that dialog is open on its tab.
+  // The arrangement dialog's tabs each own a rail entry: an entry is
+  // selected when that dialog is open on its tab.
   const buildEntries: {
     tab: BuildPanelTab;
     label: string;
     gate: UiUnlockSystem;
   }[] = [
-    { tab: "abilities", label: "Abilities", gate: "abilities" },
     { tab: "runes", label: "Runes", gate: "loadout" },
   ];
 
@@ -248,8 +246,7 @@ export function RightSidebar() {
             badge={badges.has(entry.gate)}
             badgeTone="unlock"
             unlockSystems={[entry.gate]}
-            anchor={entry.tab === "runes" ? TUTORIAL_ANCHORS.menuRunes
-              : entry.tab === "abilities" ? TUTORIAL_ANCHORS.menuAbilities : undefined}
+            anchor={entry.tab === "runes" ? TUTORIAL_ANCHORS.menuRunes : undefined}
             onClick={() => {
               badges.clear(entry.gate);
               toggleBuildTab(entry.tab);

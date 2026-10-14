@@ -5,7 +5,6 @@ import type {
   CombatArchetype,
   HasAutoIntent,
   EquipmentMap,
-  AttunedAbilities,
   EquippedRule,
   EssenceType,
   PartyMember,
@@ -300,11 +299,6 @@ export const runesEquippedAtom = atom<EquippedRule[]>([]);
 
 /** Abilities learned (crafted) — the slottable pool (system rework Step 7). */
 export const knownAbilitiesAtom = atom<string[]>([]);
-/** Equipped abilities per slot kind, ordered — list order is fire priority. */
-export const attunedAbilitiesAtom = atom<AttunedAbilities>({
-  techniques: [],
-  guards: [],
-});
 
 export const combatControlFeedbackAtom = atom<{ reason: string; at: number } | null>(null);
 
@@ -316,7 +310,7 @@ export function notifyCombatControlResult(result: { success: boolean; reason?: s
 }
 
 export const skillTreeOpenAtom = atom<boolean>(false);
-export type BuildPanelTab = 'abilities' | 'runes';
+export type BuildPanelTab = 'runes';
 export const buildOpenAtom = atom<boolean>(false);
 /**
  * The arrangement surfaces share one dialog, and the rail gives each its
@@ -324,7 +318,7 @@ export const buildOpenAtom = atom<boolean>(false);
  * identifiers keep the `build*` prefix from the old combined Loadout dialog:
  * renaming them reaches a dozen files for no player-visible gain.
  */
-export const buildPanelTabAtom = atom<BuildPanelTab>('abilities');
+export const buildPanelTabAtom = atom<BuildPanelTab>('runes');
 export const masteryOpenAtom = atom<boolean>(false);
 export const inventoryOpenAtom = atom<boolean>(false);
 export const mapOpenAtom = atom<boolean>(false);
@@ -596,18 +590,6 @@ function setRunesEquipped(next: EquippedRule[]): void {
 }
 
 
-function setAttunedAbilities(next: AttunedAbilities): void {
-  const store = getDefaultStore();
-  const prev = store.get(attunedAbilitiesAtom);
-  if (
-    shallowArrayEqual(prev.techniques, next.techniques) &&
-    shallowArrayEqual(prev.guards, next.guards)
-  ) {
-    return;
-  }
-  store.set(attunedAbilitiesAtom, next);
-}
-
 function buffsEqual(a: readonly PlayerBuff[], b: readonly PlayerBuff[]): boolean {
   if (a === b) return true;
   if (a.length !== b.length) return false;
@@ -718,7 +700,6 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(runesOwnedAtom, []);
   setRunesEquipped([]);
   setIfShallowArrayEqual(knownAbilitiesAtom, []);
-  setAttunedAbilities({ techniques: [], guards: [] });
   store.set(combatControlFeedbackAtom, null);
   setIfShallowArrayEqual(inventoryAtom, []);
   setIfShallowArrayEqual(unlockedRecipesAtom, []);
@@ -833,7 +814,6 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfShallowArrayEqual(runesOwnedAtom, player.runesOwned);
   setRunesEquipped(player.runesEquipped);
   setIfShallowArrayEqual(knownAbilitiesAtom, player.knownAbilities);
-  setAttunedAbilities(player.attunedAbilities);
   setIfShallowArrayEqual(inventoryAtom, player.inventory);
   setIfShallowArrayEqual(unlockedRecipesAtom, player.unlockedRecipes);
   setIfShallowArrayEqual(bossesClearedAtom, player.bossesCleared);

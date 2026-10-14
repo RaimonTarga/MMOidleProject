@@ -1,4 +1,3 @@
-import type { AttunedAbilities } from "../abilities";
 import type { EssenceType } from "../items";
 
 /**
@@ -9,7 +8,6 @@ export interface SystemVisibilityInput {
   playerTier: number;
   globalMastery: number;
   knownAbilities: readonly string[];
-  attunedAbilities: AttunedAbilities;
   essences?: Partial<Record<EssenceType, number>>;
   unlockedRecipes?: readonly string[];
   skillPoints?: number;
@@ -24,7 +22,6 @@ export interface SystemVisibilityInput {
 
 export interface SystemVisibility {
   mastery: boolean;
-  abilities: boolean;
   /** Materials reveal when the player first receives economy currency. */
   materials: boolean;
   /** Passive Tree reveals on its first point or an existing allocation. */
@@ -58,7 +55,7 @@ export function masteryIsVisible(globalMastery: number): boolean {
 
 /**
  * Ownership fallbacks keep an already-used destination from disappearing.
- * Explicit milestones (Crafting, Mastery, Abilities) do not use the old
+ * Explicit milestones (Crafting, Mastery) do not use the old
  * player-tier master override. Map is a baseline feature, not a milestone.
  */
 export function resolveSystemVisibility(
@@ -75,11 +72,6 @@ export function resolveSystemVisibility(
     (input.unlockedRecipes?.length ?? 0) > 0 ||
     input.globalMastery > 0 ||
     input.playerTier >= 1;
-
-  const abilities =
-    input.knownAbilities.length > 0 ||
-    input.attunedAbilities.techniques.length > 0 ||
-    input.attunedAbilities.guards.length > 0;
 
   const hasCraftingEssence = Object.values(input.essences ?? {})
     .some((amount) => amount >= 4);
@@ -99,11 +91,9 @@ export function resolveSystemVisibility(
     crafting: hasCraftingEssence || hasCraftedSomething,
     map: true,
     loadout:
-      abilities ||
       (input.runesOwned?.length ?? 0) > 0 ||
       input.playerTier >= 1,
     mastery: masteryIsVisible(input.globalMastery),
-    abilities,
     materials,
     passiveTree:
       (input.skillPoints ?? 0) > 0 ||

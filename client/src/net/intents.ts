@@ -1,7 +1,6 @@
 import type {
   AutocombatConfig,
   EquipmentSlot,
-  AttunedAbilities,
   EquippedRule,
   PlayerMoveOptions,
   PlayerMoveResult,
@@ -71,13 +70,6 @@ export function sendSetRuneLoadout(
 
 export function sendCraftAbilityRecipe(socket: GameSocket, recipeId: string): void {
   socket.emit('ability:craftRecipe', recipeId);
-}
-
-export function sendSetAbilityLoadout(
-  socket: GameSocket,
-  payload: { equipped: AttunedAbilities },
-): void {
-  socket.emit('ability:setLoadout', payload);
 }
 
 export function sendMoveToNeighbor(socket: GameSocket, nodeId: string, pos: Vec2, ack: (result: PlayerMoveResult) => void): void {

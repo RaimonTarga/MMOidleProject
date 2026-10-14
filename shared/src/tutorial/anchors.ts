@@ -9,7 +9,6 @@ export const TUTORIAL_ANCHORS = {
   menuPassiveTree: 'menu.passive-tree',
   menuInventory: 'menu.inventory',
   menuCrafting: 'menu.crafting',
-  menuAbilities: 'menu.abilities',
   menuRunes: 'menu.runes',
   menuMap: 'menu.map',
   classChoices: 'skills.choices',
@@ -23,7 +22,6 @@ export const TUTORIAL_ANCHORS = {
   inventoryItem: (definitionId: string) => `inventory.item:${definitionId}`,
   /** One equipped slot in the Inventory. */
   equipmentSlot: (slot: string) => `inventory.slot:${slot}`,
-  abilityAttune: (abilityId: string) => `abilities.attune:${abilityId}`,
   // The Rune board, step by step: + Add rule → When → Do → Add rule.
   runesAdd: 'runes.add',
   runesCommit: 'runes.commit',

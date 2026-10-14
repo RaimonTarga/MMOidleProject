@@ -65,7 +65,7 @@ export function statIconSource(icon: StatIcon): AssetIconSource {
 export type CraftingSectionIcon = 'biome' | 'forge' | 'upgrade';
 export type MasterySectionIcon = 'summary' | 'items' | 'biomes';
 export type RuneFragmentIcon = 'condition' | 'action';
-export type BuildSectionIcon = 'abilities' | 'runes';
+export type BuildSectionIcon = 'runes';
 
 const CRAFTING_SECTION_ICONS: Record<CraftingSectionIcon, IconSource> = {
   biome: menuIconSource('map'),
@@ -103,7 +103,6 @@ export function runeFragmentIconSource(fragment: RuneFragmentIcon): AtlasIconSou
  * until a bespoke set exists.
  */
 const BUILD_SECTION_ICONS: Record<BuildSectionIcon, IconSource> = {
-  abilities: menuIconSource('loadout'),
   runes: menuIconSource('runes'),
 };
 

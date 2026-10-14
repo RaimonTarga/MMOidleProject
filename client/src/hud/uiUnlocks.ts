@@ -4,7 +4,6 @@ import {
   passivesAtom,
   skillPointsAtom,
   unlockedRecipesAtom,
-  attunedAbilitiesAtom,
   globalMasteryAtom,
   knownAbilitiesAtom,
   playerIdAtom,
@@ -25,7 +24,6 @@ export type UiUnlockSystem = keyof SystemVisibility;
 
 const UI_UNLOCK_SYSTEMS: readonly UiUnlockSystem[] = [
   'mastery',
-  'abilities',
   'materials',
   'passiveTree',
   'party',
@@ -81,7 +79,6 @@ export function installUiUnlockSync(): () => void {
       playerTier: store.get(playerTierAtom),
       globalMastery: store.get(globalMasteryAtom),
       knownAbilities: store.get(knownAbilitiesAtom),
-      attunedAbilities: store.get(attunedAbilitiesAtom),
       essences: store.get(essencesAtom),
       unlockedRecipes: store.get(unlockedRecipesAtom),
       skillPoints: store.get(skillPointsAtom),
@@ -187,7 +184,6 @@ export function installUiUnlockSync(): () => void {
     playerTierAtom,
     globalMasteryAtom,
     knownAbilitiesAtom,
-    attunedAbilitiesAtom,
     essencesAtom,
     unlockedRecipesAtom,
     skillPointsAtom,

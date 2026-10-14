@@ -3,9 +3,6 @@ import { useAtomValue } from 'jotai';
 import { BrowserPane } from '../hud/primitives';
 import { playerIdAtom } from '../hud/atoms';
 import { BuildIcon, type BuildIconKind } from './BuildIcon';
-import { DetailLines } from './describe/DetailLines';
-import { loadoutLinesFor } from './describe';
-import { useAbilityContext } from './describe/useAbilityContext';
 import { useNewEntries } from './crafting/useNewEntries';
 import type { IconSource } from './GameIcon';
 
@@ -28,7 +25,7 @@ export interface LoadoutCandidate {
 }
 
 export interface LoadoutBrowserProps {
-  /** Accessible name for the slot list, e.g. "Ability slots". */
+  /** Accessible name for the slot list, e.g. "Rune slots". */
   label: string;
   iconKind: BuildIconKind;
   slots: readonly LoadoutSlot[];
@@ -66,13 +63,9 @@ export function LoadoutBrowser({
 }: LoadoutBrowserProps) {
   const [selectedKey, setSelectedKey] = useState<string | null>(slots[0]?.key ?? null);
   const selected = slots.find((slot) => slot.key === selectedKey) ?? slots[0] ?? null;
-  // Abilities deepen with tier and passives, so "what does this do" is a
-  // question about THIS character, not about the ability in the abstract.
-  const abilityContext = useAbilityContext();
-
   // Something you learned but have never equipped is easy to forget you own.
-  // Namespaced by icon kind so an ability and a rune can never collide, and
-  // kept in its own channel so it does not inflate the rail's craft count.
+  // Namespaced by icon kind, and kept in its own channel so it does not inflate
+  // the rail's craft count.
   const playerId = useAtomValue(playerIdAtom);
   const newKey = (id: string) => `${iconKind}:${id}`;
   const eligible = useMemo(() => {
@@ -136,10 +129,6 @@ export function LoadoutBrowser({
                   <div className="loadout-detail__current-name">{currentName}</div>
                   <p className="make-detail__blurb">{blurbOf(slot.currentId!)}</p>
                   {equippedBehavior?.(slot.currentId!)}
-                  <DetailLines
-                    className="loadout-detail__lines"
-                    lines={loadoutLinesFor(slot.currentId!, abilityContext)}
-                  />
                   <button
                     type="button"
                     className="craft-recipe__btn"
@@ -185,13 +174,6 @@ export function LoadoutBrowser({
                         <span className="loadout-candidate__blurb">
                           {candidate.disabledReason || candidate.blurb}
                         </span>
-                        {/* Choosing between two Guards is a numbers question.
-                            The candidate states its own, so the comparison does
-                            not require equipping one and remembering it. */}
-                        <DetailLines
-                          className="loadout-candidate__lines"
-                          lines={loadoutLinesFor(candidate.id, abilityContext)}
-                        />
                       </span>
                       <span className="loadout-candidate__action">
                         {isNew && <span className="make-row__new">NEW</span>}

@@ -5,7 +5,6 @@ import type { SystemVisibility } from "../hud/systemVisibility";
 import { useSystemVisibility } from "../hud/useSystemVisibility";
 import { buildSectionIconSource } from "./systemIcons";
 import { GameIcon } from "./GameIcon";
-import { AbilitiesPanelContent } from "./AbilitiesPanel";
 import { BuildRunesTab } from "./BuildRunesTab";
 import { DialogHeader, DialogTab, DialogTabs, GameDialog } from "../hud/primitives";
 import "./buildPanel.css";
@@ -20,25 +19,20 @@ interface Props {
  * destination above them any more.
  */
 const TABS: { id: BuildPanelTab; label: string; gate: keyof SystemVisibility }[] = [
-  { id: "abilities", label: "Abilities", gate: "abilities" },
   { id: "runes", label: "Runes", gate: "loadout" },
 ];
 
 export function BuildPanel({ onClose }: Props) {
   const [tab, setTab] = useAtom(buildPanelTabAtom);
-  // Through the shared resolver, NOT a locally assembled input. This panel used
-  // to build its own, and left `runesOwned` out of it — so a character holding
-  // runes but no crafted ability resolved `loadout` false here and true in the
-  // rail. The rail offered Runes, this filtered the tab out, and the corrective
-  // effect below rewrote the tab to the fallback: pressing Runes opened
-  // Abilities.
+  // Through the shared resolver, NOT a locally assembled input, so the tabs here
+  // always agree with the rail.
   const visibility = useSystemVisibility();
   const visibleTabs = TABS.filter((item) => visibility[item.gate]);
   // Nothing can open this dialog while every tab is gated, but a gate can close
   // behind an open one (class reset), so fall back rather than render a blank.
-  const fallbackTab = visibleTabs[0]?.id ?? "abilities";
+  const fallbackTab = visibleTabs[0]?.id ?? "runes";
   const effectiveTab = visibleTabs.some((item) => item.id === tab) ? tab : fallbackTab;
-  const title = TABS.find((item) => item.id === effectiveTab)?.label ?? "Abilities";
+  const title = TABS.find((item) => item.id === effectiveTab)?.label ?? "Runes";
 
   useEffect(() => {
     if (tab !== effectiveTab) setTab(effectiveTab);
@@ -74,7 +68,6 @@ export function BuildPanel({ onClose }: Props) {
       </DialogTabs>
 
       <div id={`build-panel-${effectiveTab}`} className="build-dialog__body" role="tabpanel">
-        {effectiveTab === "abilities" && <AbilitiesPanelContent />}
         {effectiveTab === "runes" && <BuildRunesTab />}
       </div>
     </GameDialog>

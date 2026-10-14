@@ -14,7 +14,7 @@ export function guardCoverageReadback(bot: PlayerEntity) {
     assert(recipe && isAbilityRecipeUnlocked(recipe, p), `Native learnability failed: ${id}`);
     assert(p.knownAbilities.includes(id));
     return { id, recipeId: recipe.id, recipeGroup: recipe.recipeGroup, requiredMastery: recipe.requiredBiomeLevel,
-      actualMastery: recipe.recipeGroup ? p.biomeLevel[recipe.recipeGroup] : null, cost: ability.attunementCost,
+      actualMastery: recipe.recipeGroup ? p.biomeLevel[recipe.recipeGroup] : null,
       effect: resolveAbilityEffectWithPassives(ability, p.playerTier, bot.usesSkills.passives),
       cooldownMs: modifiedAbilityCooldownMs(ability, p.playerTier, bot.usesSkills.passives) };
   });

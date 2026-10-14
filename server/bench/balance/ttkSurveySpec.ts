@@ -7,7 +7,6 @@ import { validateBuild } from '../../../bot/src/loadout/loadout';
 import { recalculatePlayerEntityStats } from '../../src/ecs/playerEntityFormulas';
 import { syncArchetypeSlices } from '../../src/ecs/archetypeSliceSync';
 import { refillBarrier } from '../../src/systems/defense/barrier/barrier';
-import { setAbilityLoadout } from '../../src/systems/player/economy/abilityCrafting';
 import type { World } from '../../src/world/World';
 import type { BuildSpec } from './types';
 import { type AttunedAbilities, type EquippedRule } from '@mmo-idle/shared';
@@ -41,7 +40,7 @@ export interface SurveyCell { progressionSnapshot?: ProgressionSnapshot; id: str
    * Mountain-entry context uses this: the shipped T1 route has learned Second
    * Wind, Cleanse and Brace by the time it first travels to Mountain, and Brace
    * is the mitigation that Power Shot's counterplay actually depends on.
-   * Legality is still enforced by setAbilityLoadout and validateBuild.
+   * Legality is still enforced by validateBuild.
    */
   guards?: string[];
   /**
@@ -57,8 +56,7 @@ export interface SurveyCell { progressionSnapshot?: ProgressionSnapshot; id: str
    *
    * The defaults express ONE technique plus a fixed guard pair, which cannot state
    * a historical package that ran a different technique and a different guard pair.
-   * When set, it is used verbatim and still passes through `setAbilityLoadout` and
-   * `validateBuild`, so an illegal RP total fails exactly as before.
+   * When set, it is used verbatim and still passes through `validateBuild`.
    */
   abilities?: AttunedAbilities;
   /**
@@ -166,12 +164,13 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
     assert(plus===0||(p.biomeLevel[recipe.recipeGroup]??0)>=requiredBiomeLevelForUpgrade(ITEM_DATABASE.get(id!)!,plus), `Biome upgrade gate ${id}`);
   }
   p.skillPoints = 0; // Factory grants unlock scaffolding; none survives into measurement.
-  p.attunedAbilities = { techniques: [], guards: [] };
   const c = SURVEY_CLASSES.find(c=>c.name===cell.className)!;
   const rules = declared.runeRules;
   p.runesEquipped = rules;
   const abilities = declared.abilities;
-  assert(setAbilityLoadout(world,bot,abilities).success, `${cell.id}: illegal ability budget`);
+  // Attunement is gone (class-first D3): the declared package is written as
+  // state only, so the receipt and validateBuild still read it.
+  p.attunedAbilities = { techniques: [...abilities.techniques], guards: [...abilities.guards] };
   recalculatePlayerEntityStats(world,bot); syncArchetypeSlices(world,bot);
   bot.hasHealth.hp = bot.hasHealth.maxHp; refillBarrier(world,bot);
   const view = composePlayerView(bot)!;

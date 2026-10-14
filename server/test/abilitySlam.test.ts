@@ -148,7 +148,6 @@ initCombatSystems();
 
   assert(SLAM.tier === 1 && SLAM.slot === "technique" && SLAM.shape === "cast",
     "Slam is a T1 cast-shaped Technique");
-  assert(SLAM.attunementCost === 4, "Slam reserves 4 RP (net of its In Combat wiring)");
   assert(abilityRankNumber(SLAM, 1) === 1, "a T1 player holds Slam I");
   assert(abilityRankNumber(SLAM, 2) === 2, "a T2 player holds Slam II");
   assert(abilityRankNumber(SLAM, 3) === 3, "a T3 player holds Slam III");

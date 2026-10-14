@@ -1,4 +1,4 @@
-import type { AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, Vec2 } from '@mmo-idle/shared';
+import type { AutocombatConfig, EquipmentSlot, EquippedRule, Vec2 } from '@mmo-idle/shared';
 import { intents } from './intents';
 
 type RecipeUnlockListener = (name: string, biomeGroup: string) => void;
@@ -39,14 +39,6 @@ export const hudBus = {
   /** Learn an ability (craft its recipe); server validates gate + cost. */
   requestCraftAbilityRecipe(recipeId: string): void {
     intents.emit('craftAbilityRecipe', recipeId);
-  },
-
-  /**
-   * Set the whole equipped-ability loadout. Ordered per slot kind — list order
-   * is fire priority — so equip, clear and reorder all go through here.
-   */
-  requestSetAbilityLoadout(equipped: AttunedAbilities): void {
-    intents.emit('setAbilityLoadout', { equipped });
   },
 
 

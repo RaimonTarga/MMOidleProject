@@ -48,7 +48,7 @@ export interface SocketHandlers {
   onNodePreparing(payload: { nodeId: string }): void;
   onCraftResult(result: { success: boolean; reason?: string }): void;
   onAbilityCraftResult(result: { recipeId: string; success: boolean; reason?: string }): void;
-  onBuildLoadoutResult(result: { system: "abilities" | "runes"; success: boolean; reason?: string }): void;
+  onBuildLoadoutResult(result: { system: "runes"; success: boolean; reason?: string }): void;
   onPlayerDied(payload: PlayerDeathPayload): void;
   onPlayerAscended(tier: number): void;
   onBossFelled(markers: BossFelledMarker[]): void;

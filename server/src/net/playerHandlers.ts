@@ -32,7 +32,6 @@ import { equipItem, unequipItem } from "../systems/player/economy/inventory";
 import { craftRecipe } from "../systems/player/economy/crafting";
 import {
   craftAbilityRecipe,
-  setAbilityLoadout,
 } from "../systems/player/economy/abilityCrafting";
 import { requestManualReload } from "../systems/classes/archetypes/reload/reloadLifecycle";
 import { upgradeItem } from "../systems/player/economy/itemUpgrade";
@@ -440,18 +439,6 @@ export function registerPlayerHandlers(
     const result = craftAbilityRecipe(world, p, recipeId);
     world.gameplay?.decision(p, "craft-ability", recipeId, telemetryBefore, result.success);
     socket.emit("ability:craftResult", result);
-  });
-
-  socket.on("ability:setLoadout", (payload) => {
-    const p = liveSelf();
-    const reject = (reason: string): void => { socket.emit("build:loadoutResult", { system: "abilities", success: false, reason }); };
-    if (!p) return reject(NOT_LIVE_REASON);
-    const equipped = payload?.equipped;
-    if (!equipped || !Array.isArray(equipped.techniques) || !Array.isArray(equipped.guards) || [...equipped.techniques, ...equipped.guards].some(id => typeof id !== "string")) return reject("Malformed ability loadout.");
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = setAbilityLoadout(world, p, equipped);
-    world.gameplay?.decision(p, "abilities", null, telemetryBefore, result.success);
-    socket.emit("build:loadoutResult", { system: "abilities", ...result });
   });
 
   socket.on("inventory:upgradeItem", (itemId: string) => {

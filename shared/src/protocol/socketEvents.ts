@@ -1,5 +1,4 @@
 import type { EquipmentSlot } from "../items";
-import type { AttunedAbilities } from "../abilities";
 import type { AutocombatConfig } from "../components/core/networkedSlices";
 import type { EquippedRule } from "../runeDatabase";
 import type { ClassConfig } from "../classKits/configTypes";
@@ -131,7 +130,7 @@ export interface ServerToClientEvents {
   "crafting:result": (result: { success: boolean; reason?: string }) => void;
   /** Immediate result of learning an ability (crafting an ability recipe). */
   "ability:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
-  "build:loadoutResult": (result: { system: "abilities" | "runes"; success: boolean; reason?: string }) => void;
+  "build:loadoutResult": (result: { system: "runes"; success: boolean; reason?: string }) => void;
   /** The answer to `class:setConfig`: accepted, or every reason it was not. */
   "class:configResult": (result: { ok: boolean; reasons?: string[] }) => void;
   /** Immediate result of an item upgrade attempt. */
@@ -233,12 +232,6 @@ export interface ClientToServerEvents {
   "class:setConfig": (config: ClassConfig) => void;
   /** Learn an ability by crafting its recipe. Server validates gate + cost. */
   "ability:craftRecipe": (recipeId: string) => void;
-  /**
-   * Set the full equipped-ability loadout. Ordered per slot kind — list order is
-   * fire priority — so equipping, clearing and RE-PRIORITISING are one intent.
-   * Server validates learned / slot-type / slot-count / duplicates.
-   */
-  "ability:setLoadout": (payload: { equipped: AttunedAbilities }) => void;
   /** Equip an item from inventory by its definition ID. */
   "inventory:equipItem": (definitionId: string) => void;
   /** Move the item in the given slot back to inventory. */
