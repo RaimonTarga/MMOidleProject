@@ -489,9 +489,13 @@ function comparisonCombos(classTier: number): BuildCombo[] {
   const combos: BuildCombo[] = [];
   for (const root of classRoots()) {
     const archetype = root.id.replace(/-root$/, '') as Exclude<CombatArchetype, null>;
-    const frames: Array<SkillNode | null> = cappedTier >= 1 ? frameNodes(root.id) : [null];
+    // The class-first tree has no frames or range nodes, so the combos fall back to the
+    // root alone; the frame and range branches stay for the tag `pre-rework-2026-10-13`.
+    const frameChoices = cappedTier >= 1 ? frameNodes(root.id) : [];
+    const frames: Array<SkillNode | null> = frameChoices.length > 0 ? frameChoices : [null];
     for (const frame of frames) {
-      const ranges: Array<'close' | 'far' | null> = cappedTier >= 2 ? ['close', 'far'] : [null];
+      const ranges: Array<'close' | 'far' | null> =
+        cappedTier >= 2 && SKILL_TREE.has(`${archetype}-range-close`) ? ['close', 'far'] : [null];
       for (const range of ranges) {
         const rangeId = range ? `${archetype}-range-${range}` : null;
         const validRangeId = rangeId && SKILL_TREE.has(rangeId) ? rangeId : null;

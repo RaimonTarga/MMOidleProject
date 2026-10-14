@@ -458,6 +458,9 @@ export function applyTierEntryProfile(
   player.usesSkills.selectedClass = root.id;
   player.usesSkills.selectedSubVariant = frame?.subVariantId ?? null;
   player.usesSkills.selectedRange = range?.id ?? null;
+  // The profile's tier-1 pick is a discipline in the class-first tree.
+  player.usesSkills.disciplineId = frame?.disciplineId ?? null;
+  player.usesSkills.specializationId = null;
   player.usesSkills.combatArchetype = archetype;
   player.usesAutocombat.auto = false;
   player.usesAutocombat.autoTraverse = false;

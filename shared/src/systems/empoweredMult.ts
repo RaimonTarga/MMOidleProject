@@ -46,6 +46,18 @@ export interface EmpoweredMultBreakdown {
   effective: number;
 }
 
+/**
+ * The multiplier each archetype's server registration falls back to when no node authors
+ * the passive: a root-only character (every character since the class-first tree replaced
+ * frames). Mirrors `CADENCE_DAMAGE_MULT_DEFAULT`, the Squire's `EXECUTION_MULTIPLIER` and
+ * the Spirit's `EMPOWERED_MULT_DEFAULT`. The reload root arms no empowered attack.
+ */
+const ROOT_DEFAULT_MULT: Partial<Record<EmpoweredArchetype, number>> = {
+  cadence:  2.0,
+  cooldown: 2.0,
+  energy:   2.0,
+};
+
 function isEmpoweredArchetype(a: string | null | undefined): a is EmpoweredArchetype {
   return a === 'cadence' || a === 'cooldown' || a === 'energy' || a === 'reload';
 }
@@ -61,10 +73,13 @@ export function resolveEmpoweredMultiplier(
 ): EmpoweredMultBreakdown | null {
   if (!isEmpoweredArchetype(archetype)) return null;
 
-  const base = passives[BASE_KEY[archetype]] ?? 0;
+  // As the server does: an authored base (with the archetype's add) wins; otherwise the
+  // registration's default, without the add.
+  const authored = passives[BASE_KEY[archetype]] ?? 0;
+  const base = authored > 0 ? authored : ROOT_DEFAULT_MULT[archetype] ?? 0;
   if (base <= 0) return null;
 
-  const archetypeAdd = archetype === 'cadence' ? (passives['cadence.damage-mult-add'] ?? 0) : 0;
+  const archetypeAdd = archetype === 'cadence' && authored > 0 ? (passives['cadence.damage-mult-add'] ?? 0) : 0;
   const sharedAdd    = passives['shared.empowered-mult-add'] ?? 0;
   const multBonus    = passives['weapon.empowered-mult-bonus'] ?? 0;
 
