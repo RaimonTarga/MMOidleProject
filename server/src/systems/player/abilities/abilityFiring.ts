@@ -133,15 +133,15 @@ function fireGateOpen(
   world: World,
   player: PlayerEntity,
   ability: AbilityDef,
-  chargeAtAnyRange = false,
+  options: FireTechniqueOptions = {},
 ): boolean {
   if (ability.shape === "charge") {
-    const target = abilityTarget(world, player, ability);
+    const target = abilityTarget(world, player, ability, options.currentTargetOnly);
     if (!target) return false;
     // The gap gate stands in for a missing moment: "charge the next enemy worth
     // closing on". A caller that chose its moment (an opener, say) skips it, and
     // Charge still lands its strike rider from contact, so it fires at any range.
-    if (chargeAtAnyRange) return true;
+    if (options.chargeAtAnyRange) return true;
     // A gap-closer needs a gap: something inside the ABILITY's reach that is
     // meaningfully outside the player's own.
     if (usesSummonTechniques(player)) {
@@ -182,7 +182,7 @@ export function fireTechnique(
   // while Sweep is still waiting for a hit to consume it.
   if (ability.shape === "instant") {
     if (getCooldown(player.tracksCombat, cdKey) > 0) return DECLINED_TECHNIQUE;
-    if (!fireGateOpen(world, player, ability, options.chargeAtAnyRange)) return DECLINED_TECHNIQUE;
+    if (!fireGateOpen(world, player, ability, options)) return DECLINED_TECHNIQUE;
     applyInstantTechnique(world, player, ability);
     recordAbilityActivation(world, player, abilityId, 'technique');
     // The cooldown starts BEFORE the resolution fires, because `technique-refund`
@@ -215,7 +215,7 @@ export function fireTechnique(
     player.isChargingAbility
   ) return CLAIMED_TECHNIQUE;
   if (getCooldown(player.tracksCombat, cdKey) > 0) return DECLINED_TECHNIQUE;
-  if (!fireGateOpen(world, player, ability, options.chargeAtAnyRange)) return DECLINED_TECHNIQUE;
+  if (!fireGateOpen(world, player, ability, options)) return DECLINED_TECHNIQUE;
 
   // A cast pays its cooldown on RESOLVE, not on begin (see abilityCasting.ts),
   // so nothing is charged here.
