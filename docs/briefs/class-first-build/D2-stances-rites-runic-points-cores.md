@@ -1,7 +1,7 @@
 # D2: remove stances, rites, Runic Points, crafted runes and the core slot
 
 **Agent:** Grok · **Worktree:** `../mmo-rw-d2-stances-rites` · **Branch:**
-`rw/d2-stances-rites` (from `rework/class-first` after D5 and D6 are merged) · **Size:** L ·
+`rw/d2-stances-rites` (from `rework/class-first` with D5 merged) · **Size:** L ·
 **Phase 0, wave B** (runs beside D1, which removes the item lineage trees; the conductor
 resolves any overlap at merge)
 
@@ -52,6 +52,14 @@ conditions.
 6. **Tests:** delete tests of deleted code; adapt tests that mention these systems in passing
    so they keep their real assertions. If a test fails for a reason unrelated to this
    removal, stop and report it.
+
+## The tutorial, while D6 is still running
+
+Task D6 (the tutorial keeps its engine) runs at the same time and deletes
+`shared/src/tutorial/scripts/classScript.ts` and `scripts/runes.ts`. If your removal
+breaks either file, delete it (and its export in `scripts/index.ts`) rather than fixing
+it. In the rest of `shared/src/tutorial/`, touch only the conditions and types that name
+the systems you remove. The conductor merges D6 and your branch together.
 
 ## Keep (don't delete)
 

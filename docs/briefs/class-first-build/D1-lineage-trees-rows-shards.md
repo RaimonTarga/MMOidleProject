@@ -1,7 +1,7 @@
 # D1: remove the item lineage trees, the ability node rows and shards
 
 **Agent:** Codex (or a Claude subagent) · **Worktree:** `../mmo-rw-d1-lineages` · **Branch:**
-`rw/d1-lineages` (from `rework/class-first` after D5 and D6 are merged) · **Size:** XL ·
+`rw/d1-lineages` (from `rework/class-first` with D5 merged) · **Size:** XL ·
 **Phase 0, wave B** (runs beside D2; you and D2 touch different systems, and the conductor
 resolves any overlap at merge)
 
@@ -54,6 +54,14 @@ any of it.
 7. **Tests:** delete tests of deleted code; adapt tests that only mention the removed systems
    in passing so they keep their real assertions. If a test fails for a reason that has
    nothing to do with this removal, stop and report it.
+
+## The tutorial, while D6 is still running
+
+Task D6 (the tutorial keeps its engine) runs at the same time and deletes
+`shared/src/tutorial/scripts/classScript.ts` and `scripts/runes.ts`. If your removal
+breaks either file, delete it (and its export in `scripts/index.ts`) rather than fixing
+it. In the rest of `shared/src/tutorial/`, touch only the conditions and types that name
+the systems you remove. The conductor merges D6 and your branch together.
 
 ## Keep (don't delete)
 
