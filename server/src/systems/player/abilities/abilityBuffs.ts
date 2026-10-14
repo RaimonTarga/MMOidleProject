@@ -1,4 +1,4 @@
-/** Timed ability effects own stable identities and labels across attunement edits. */
+/** Timed ability effects own stable identities and labels, whatever fires them. */
 import {
   ABILITY_CONTROL_RESIST_EFFECT_ID,
   ABILITY_IMBUE_EFFECT_ID,

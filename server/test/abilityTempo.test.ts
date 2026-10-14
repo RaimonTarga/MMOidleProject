@@ -38,7 +38,7 @@ import { runMonsterAttack, runPlayerAttack } from "../src/systems/combat/engine/
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { resolveCastPayload } from "../src/systems/player/abilities/abilityEffects";
-import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import { World } from "../src/world/World";
 import type { PlayerEntity } from "../src/ecs/entity";
 import type { CombatEvent } from "@mmo-idle/shared";
@@ -60,6 +60,7 @@ interface Options {
 
 function slices(id: string, options: Options = {}): PersistedPlayerSlices {
   const techniques = options.techniques ?? ["sweep"];
+  giveAbilities(id, techniques);
   return {
     isPlayer: { id, name: id },
     hasPosition: {
@@ -83,8 +84,6 @@ function slices(id: string, options: Options = {}): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: techniques,
-      attunedAbilities: { techniques, guards: [] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {
@@ -147,7 +146,7 @@ function cooldownSamples(
 /** Arm Sweep through the real firing driver, so the cooldown starts the real way. */
 function armSweep(world: World, player: PlayerEntity, targetId: string, now = 1_000): void {
   setAttackTarget(world, player, targetId);
-  fireWithReferenceWiring(world, now);
+  fireAbilities(world, now);
 }
 
 function attack(world: World, player: PlayerEntity, target: ReturnType<typeof durableMonster>, now: number): string {

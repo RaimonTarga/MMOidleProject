@@ -36,7 +36,6 @@ function make(root:typeof SURVEY_CLASSES[number],frame:typeof frames[number],gro
    ...(['swamp','jungle','volcanic'].includes(group)?[{conditionId:'always',actionId:'avoid-hazards'}]:[]),
    {conditionId:'always',actionId:'wait-for-regen'}];
  if(desertMelee&&(s.mastery.desert??0)>=4)rules.unshift({conditionId:'in-combat',actionId:'focus-lowest-hp'});
- if(boss&&t>1&&abilities.guards.includes('brace'))rules.push({conditionId:'target-casting',actionId:'use-ability',targetAbilityId:'brace'});
  if(t===3&&group==='tundra')abilities.techniques=['slam','binding-strike'];
  // Volcano boss: fixed persistent mitigation plus native low-HP Endure;
  // target-casting Brace stays the separately timed native reaction, no overlap claim.

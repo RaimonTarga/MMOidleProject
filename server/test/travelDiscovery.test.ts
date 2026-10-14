@@ -3,7 +3,6 @@ import {
   CLEARING_NODE_ID,
   GAME_CONFIG,
   emptyEquipment,
-  emptyAttunedAbilities,
   worldNodeExits,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
@@ -49,8 +48,6 @@ const slices: PersistedPlayerSlices = {
     visitedNodes: [],
     runesOwned: [],
     runesEquipped: [],
-    knownAbilities: [],
-    attunedAbilities: emptyAttunedAbilities(),
   },
   holdsInventory: {
     inventory: [],

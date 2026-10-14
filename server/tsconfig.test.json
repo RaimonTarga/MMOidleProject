@@ -28,7 +28,6 @@
   "include": ["src", "test"],
   "exclude": [
     "test/abilityEquipmentFeedback.test.ts",
-    "test/abilityTimingPresentation.test.ts",
     "test/ambientStackFlash.test.ts",
     "test/areaInformation.test.ts",
     "test/attackProgression.test.ts",

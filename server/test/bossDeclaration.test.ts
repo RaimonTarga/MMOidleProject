@@ -1,4 +1,3 @@
-import { referenceAbilityRules } from '@mmo-idle/shared';
 import { resolveSurveyPackage, type SurveyCell } from '../bench/balance/ttkSurveySpec';
 import { BOSS1_BLOCKS } from '../bench/balance/boss1Spec';
 // The checker lives beside the runners it guards, in plain JS, because the frozen
@@ -31,7 +30,7 @@ const receipt = (cell: SurveyCell, appliedOver: Record<string, unknown> = {}) =>
       abilities: d.abilities, runeRules: d.runeRules, sources: d.sources,
     },
     appliedPackage: {
-      attunedAbilities: d.abilities, runesEquipped: d.runeRules,
+      runesEquipped: d.runeRules,
       equipment: { ...cell.build.gearItemIds },
       itemUpgrades: Object.fromEntries(Object.values(cell.build.gearItemIds).map((id) => [id, d.upgradeLevel])),
       ...appliedOver,
@@ -52,8 +51,8 @@ const receipt = (cell: SurveyCell, appliedOver: Record<string, unknown> = {}) =>
 // behaviour policy; it carries only its abilities' reference wiring.
 {
   const r = resolveSurveyPackage(base({ runeRules: [] }));
-  assert(JSON.stringify(r.runeRules) === JSON.stringify(referenceAbilityRules(r.abilities)),
-    `an explicit empty rule array must carry only ability wiring, got ${JSON.stringify(r.runeRules)}`);
+  assert(r.runeRules.length === 0,
+    `an explicit empty rule array must stay empty, got ${JSON.stringify(r.runeRules)}`);
   assert(r.sources.runeRules === 'explicit', `empty is a declaration, got ${r.sources.runeRules}`);
   const omitted = resolveSurveyPackage(base());
   assert(omitted.runeRules.length > 0 && omitted.sources.runeRules === 'preparation-default',
@@ -92,10 +91,7 @@ const receipt = (cell: SurveyCell, appliedOver: Record<string, unknown> = {}) =>
 {
   for (const cell of BOSS1_BLOCKS['timberclaw']!.cells) {
     const r = resolveSurveyPackage(cell);
-    const behaviour = r.runeRules.filter(rule => rule.actionId !== 'use-ability');
-    assert(behaviour.length === 5, `${cell.id}: five ordered behaviour rules`);
-    assert(r.runeRules.slice(0, 5).every(rule => rule.actionId !== 'use-ability'),
-      `${cell.id}: ability wiring follows the prescribed rules`);
+    assert(r.runeRules.length === 5, `${cell.id}: five ordered behaviour rules`);
     assert(r.runeRules[1]!.actionId === 'step-back',
       `${cell.id}: Step Back must precede the movement rule`);
   }

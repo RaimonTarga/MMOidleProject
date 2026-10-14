@@ -110,7 +110,6 @@ const ALTERNATIVES: Alternative[] = [
   { id: 'W5', root: 'slinger', frame: 'balanced', apply: c => { c.build.gearItemIds.weapon = 'swamp-blightbrand'; }, note: 'Venomthorn Rapier -> Plague Fang; Sweep, Binding Strike, core and policy remain fixed.' },
   { id: 'A2', root: 'apprentice', frame: 'balanced', apply: c => {
     c.abilities!.techniques = ['detonate', 'binding-strike'];
-    c.runeRules!.unshift({ conditionId: 'target-max-stacks', actionId: 'use-ability', targetAbilityId: 'detonate' });
   }, note: 'Imbue Lightning -> Detonate with the existing Fully Afflicted timing rule; weapon, control, core, stance and defense remain fixed.' },
   { id: 'W6', root: 'conduit', frame: 'balanced', apply: c => { c.build.gearItemIds.weapon = 'tundra-permafrost-maul'; }, note: 'Cataclysm Axe -> Permafrost Maul; Sweep, Binding Strike, formation, core and policy remain fixed.' },
   // A3 (Hamstring -> Binding Strike) retired with Hamstring (design §22.2): the

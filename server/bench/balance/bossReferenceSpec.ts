@@ -1,10 +1,9 @@
 import assert from 'node:assert/strict';
 import {
   DUNGEON_DEFS, MONSTER_DATABASE, NODE_BIOMES,
-  type AttunedAbilities,
 } from '@mmo-idle/shared';
 import { enumerateBuildsForContentTier } from './progression';
-import { canonicalLoadout } from './botFactory';
+import { canonicalLoadout, type DeclaredAbilities } from './botFactory';
 import type { Night5Cell } from './night5Spec';
 
 /**
@@ -80,7 +79,7 @@ export const BOSSREF_A_GEAR = {
   weapon: 'ruinous-axe', armor: 'cave-vest-t2', recovery: 'mountain-charm-t2',
   mobility: 'plains-boots-t2',
 } as const;
-export const BOSSREF_A_ABILITIES: AttunedAbilities = {
+export const BOSSREF_A_ABILITIES: DeclaredAbilities = {
   techniques: ['slam'], guards: ['second-wind', 'brace'],
 };
 export const BOSSREF_A_STANCE = 'defensive-stance';
@@ -113,7 +112,7 @@ export const BOSSREF_B_RULES: { conditionId: string; actionId: string }[] = [];
 const cell = (
   id: string,
   gear: Record<string, string>,
-  abilities: AttunedAbilities,
+  abilities: DeclaredAbilities,
   stance: string,
   runeRules: { conditionId: string; actionId: string }[],
 ): Night5Cell => ({
@@ -146,7 +145,7 @@ export const BOSSREF_CELLS: Night5Cell[] = [
   cell('bossref-timberclaw-a-historical', BOSSREF_A_GEAR, BOSSREF_A_ABILITIES,
     BOSSREF_A_STANCE, BOSSREF_A_RULES),
   cell('bossref-timberclaw-b-legacy', BOSSREF_B_GEAR,
-    canonicalLoadout(BOSSREF_TIER).attunedAbilities, BOSSREF_B_STANCE, BOSSREF_B_RULES),
+    canonicalLoadout(BOSSREF_TIER), BOSSREF_B_STANCE, BOSSREF_B_RULES),
 ];
 
 export const BOSSREF_BLOCKS: Record<string, { cells: Night5Cell[]; durationMs: number; pilotIds: string[] }> = {
@@ -202,7 +201,7 @@ export function assertBossReferenceDefinitions(): void {
   assert.deepEqual({ ...BOSSREF_B_GEAR }, { ...legacyBuild.gearItemIds },
     'Case B gear no longer matches what the legacy scorer picks');
   const canonical = canonicalLoadout(BOSSREF_TIER);
-  assert.deepEqual(BOSSREF_CELLS[1]!.abilities, canonical.attunedAbilities,
+  assert.deepEqual(BOSSREF_CELLS[1]!.abilities, canonical,
     'Case B abilities no longer match the canonical bench loadout');
   assert.equal(BOSSREF_B_RULES.length, 0, 'the legacy package equips no rune rules');
 }

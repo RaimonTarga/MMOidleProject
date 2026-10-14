@@ -47,13 +47,6 @@ function cloneRecord<T extends object>(value: T): T {
   return { ...value } as T;
 }
 
-function cloneAbilities(self: PlayerView): PlayerView["attunedAbilities"] {
-  return {
-    techniques: [...self.attunedAbilities.techniques],
-    guards: [...self.attunedAbilities.guards],
-  };
-}
-
 /** Build the versioned persisted state from the bot's authoritative PlayerView. */
 export function buildT1CharacterSnapshot(
   params: BuildT1SnapshotParams,
@@ -87,8 +80,6 @@ export function buildT1CharacterSnapshot(
     // The shared snapshot contract (`T1SnapshotState`) still requires the
     // retired build layers below; they are copied as the view holds them until
     // that type drops them.
-    knownAbilities: [...self.knownAbilities],
-    attunedAbilities: cloneAbilities(self),
     runesOwned: [...self.runesOwned],
     runesEquipped: self.runesEquipped.map((rule) => ({ ...rule })),
     derivedStats: {

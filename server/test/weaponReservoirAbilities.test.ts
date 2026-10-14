@@ -25,7 +25,7 @@ import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { runPlayerAttack } from "../src/systems/combat/engine/combat";
 import { resolveCastPayload } from "../src/systems/player/abilities/abilityEffects";
 import { makeCombatContext, emitCombatEvent } from "../src/systems/combat/engine/combatPipeline";
-import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import { World } from "../src/world/World";
 
 function assert(condition: unknown, message: string): void {
@@ -37,6 +37,7 @@ const PROFILE = weaponDotProfileForWeapon(WEAPON)!;
 assert(!!PROFILE && PROFILE.convPct > 0, `${WEAPON} must be a DoT-conversion weapon`);
 
 function slices(id: string, abilities: string[], weapon: string | null): PersistedPlayerSlices {
+  giveAbilities(id, abilities);
   return {
     isPlayer: { id, name: id },
     hasPosition: { current: { x: 400, y: 400 }, nodeId: "node-5-5", speed: GAME_CONFIG.PLAYER_SPEED },
@@ -48,7 +49,6 @@ function slices(id: string, abilities: string[], weapon: string | null): Persist
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier: 3, currentSkillTier: 3, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
-      knownAbilities: [...abilities], attunedAbilities: { techniques: [...abilities], guards: [] },
     },
     holdsInventory: { inventory: [], equipment: { ...emptyEquipment(), weapon }, itemUpgrades: {} },
     usesSkills: {
@@ -120,7 +120,7 @@ for (const abilityId of ["slam", "cull"]) {
   const target = monsterAt(world, 430);
   const splashed = monsterAt(world, 470);
   setAttackTarget(world, player, target.isMonster.id);
-  fireWithReferenceWiring(world, Date.now());
+  fireAbilities(world, Date.now());
   assert(player.hasArmedAbility?.abilityId === "sweep", "Sweep must arm for the test to mean anything");
   runPlayerAttack(world, player, target, Date.now(), {
     attackOrigin: player.hasPosition.current,

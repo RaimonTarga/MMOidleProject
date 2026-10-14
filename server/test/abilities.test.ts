@@ -16,7 +16,7 @@ import {
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { updateCombatState } from "../src/systems/combat/engine/combatState";
-import { fireAbilities } from "./fixtures/abilityWiring";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { World } from "../src/world/World";
 import { takeWorldLogEvents } from "../src/world/worldLog";
@@ -26,6 +26,7 @@ function assert(condition: unknown, message: string): void {
 }
 
 function makePlayerSlices(): PersistedPlayerSlices {
+  giveAbilities("abilities-player", ["brace"]);
   return {
     isPlayer: { id: "abilities-player", name: "Ability Tester" },
     hasPosition: {
@@ -53,8 +54,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: ["brace"],
-      attunedAbilities: { techniques: [], guards: ["brace"] },
     },
     holdsInventory: {
       inventory: [],
@@ -80,28 +79,11 @@ const GUARD_CD_KEY = abilityCooldownKey("brace");
 // Rank I (a T0/T1 character sits at Brace I): 35% DR on a 10s cooldown.
 const BRACE_COOLDOWN_MS = 10000;
 
-// No rule: abilities have no built-in trigger, so Brace never auto-fires.
-player.hasHealth.hp = player.hasHealth.maxHp * 0.2;
-fireAbilities(world, Date.now());
-assert(
-  getStatusEffect(player.tracksCombat, ABILITY_GUARD_EFFECT_ID) === undefined,
-  "an unwired Brace must not auto-fire",
-);
-
-// Wired, but above 25% HP: the rule's condition is false.
-player.tracksProgression.runesEquipped = [{ conditionId: "hp-below-25", actionId: "use-ability", targetAbilityId: "brace" }];
-player.hasHealth.hp = player.hasHealth.maxHp * 0.4;
-fireAbilities(world, Date.now());
-assert(
-  getStatusEffect(player.tracksCombat, ABILITY_GUARD_EFFECT_ID) === undefined,
-  "Brace should not fire above its rule's HP threshold",
-);
-
-// At or below 25% HP: the rule fires Brace.
+// Fired through the engine.
 player.hasHealth.hp = player.hasHealth.maxHp * 0.2;
 fireAbilities(world, Date.now());
 const firstBuff = getStatusEffect(player.tracksCombat, ABILITY_GUARD_EFFECT_ID);
-assert(!!firstBuff, "Brace should fire on its HP Below 25% rule");
+assert(!!firstBuff, "Brace should fire");
 assert(firstBuff!.data.drPct === 0.35, "Brace I should apply its 35% damage-reduction magnitude");
 assert(
   takeWorldLogEvents(world, player.isPlayer.id).some(
@@ -114,8 +96,7 @@ assert(
   "firing Brace should start its full authored cooldown",
 );
 
-// Still below the threshold, but the cooldown is active: firing again this tick
-// must not happen (the cooldown should not reset to a fresh value).
+// The cooldown is active: firing again this tick must not happen (the cooldown should not reset to a fresh value).
 updateCombatState(world, 100);
 const cooldownAfterOneTick = getCooldown(player.tracksCombat, GUARD_CD_KEY);
 fireAbilities(world, Date.now());

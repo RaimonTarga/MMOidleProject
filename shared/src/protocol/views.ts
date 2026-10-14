@@ -16,10 +16,6 @@ import type {
 import type { HitboxRect } from "../hitbox/types";
 import type { EquippedRule } from "../runeDatabase";
 import {
-  normalizeAttunedAbilities,
-  type AttunedAbilities,
-} from "../abilities";
-import {
   FALLBACK_MONSTER_AABB,
   FALLBACK_PLAYER_AABB,
 } from "../hitbox/constants";
@@ -161,12 +157,6 @@ export interface PlayerView {
   visitedNodes: string[];
   runesOwned: string[];
   runesEquipped: EquippedRule[];
-  /** Abilities learned (crafted) — the slottable pool (system rework Step 7). */
-  knownAbilities: string[];
-  /** Attuned abilities by semantic family; ordered for default arbitration. */
-  attunedAbilities: AttunedAbilities;
-  /** Server-authoritative manual ability requests waiting for legal activation. */
-  queuedAbilityIds: string[];
   hitboxRects: HitboxRect[];
   /** Number of minion slots the player has. 0 if not a summoner. */
   summonsMinions: number;
@@ -450,9 +440,6 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     visitedNodes: progression.visitedNodes ?? [],
     runesOwned: progression.runesOwned ?? [],
     runesEquipped: progression.runesEquipped ?? [],
-    knownAbilities: progression.knownAbilities ?? [],
-    attunedAbilities: normalizeAttunedAbilities(progression.attunedAbilities),
-    queuedAbilityIds: entity.queuesAbilities?.abilityIds ?? [],
     hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_PLAYER_AABB],
     summonsMinions: entity.summonsMinions?.targetCount ?? 0,
     summonActiveCount,

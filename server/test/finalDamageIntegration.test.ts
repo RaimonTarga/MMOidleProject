@@ -26,7 +26,6 @@ function fixture(archetype: 'cadence' | 'cooldown' | 'reload' | 'dot' | 'energy'
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
       questProgress: {}, playerTier: 4, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

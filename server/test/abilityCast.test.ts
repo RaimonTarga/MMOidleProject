@@ -25,7 +25,7 @@ import {
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
-import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import { updateAbilityCasts } from "../src/systems/player/abilities/abilityCasting";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { STUN_EFFECT } from "../src/systems/combat/status/stun";
@@ -36,6 +36,7 @@ function assert(condition: unknown, message: string): void {
 }
 
 function makePlayerSlices(id: string): PersistedPlayerSlices {
+  giveAbilities(id, ["slam"]);
   return {
     isPlayer: { id, name: "Caster" },
     hasPosition: {
@@ -63,8 +64,6 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: ["slam"],
-      attunedAbilities: { techniques: ["slam"], guards: [] },
     },
     holdsInventory: {
       inventory: [],
@@ -100,7 +99,7 @@ if (!target) throw new Error("failed to create target");
 setAttackTarget(world, player, target.isMonster.id);
 
 const t0 = 1_000_000;
-fireWithReferenceWiring(world, t0);
+fireAbilities(world, t0);
 
 assert(
   player.isCastingAbility?.abilityId === "slam",
@@ -161,7 +160,7 @@ const target2 = world2.createMonster("node-5-5", "plains-slime", { x: 430, y: 40
 if (!target2) throw new Error("failed to create second target");
 setAttackTarget(world2, player2, target2.isMonster.id);
 
-fireWithReferenceWiring(world2, t0);
+fireAbilities(world2, t0);
 assert(!!player2.isCastingAbility, "second player should begin a cast");
 
 applyStatusEffect(player2.tracksCombat, {
@@ -207,7 +206,7 @@ if (!target3) throw new Error("failed to create third target");
 setAttackTarget(world3, player3, target3.isMonster.id);
 player3.usesSkills.passives["technique.cast-speed-pct"] = 0.25;
 
-fireWithReferenceWiring(world3, t0);
+fireAbilities(world3, t0);
 assert(
   (player3.isCastingAbility?.castMs ?? CAST_MS) < CAST_MS,
   "technique.cast-speed-pct should shorten the wind-up",

@@ -23,9 +23,6 @@ export type TutorialView = Pick<
   | 'equipment'
   | 'itemUpgrades'
   | 'questProgress'
-  | 'runesEquipped'
-  | 'knownAbilities'
-  | 'attunedAbilities'
   | 'bossesCleared'
   | 'clearedNodes'
 >;
@@ -68,8 +65,6 @@ export function evaluateTutorialCondition(condition: TutorialCondition, view: Tu
       return viewHasItem(view, condition.definitionId);
     case 'equipped':
       return Object.values(view.equipment).includes(condition.definitionId);
-    case 'abilityKnown':
-      return view.knownAbilities.includes(condition.abilityId);
     case 'bossCleared':
       return view.bossesCleared.includes(bossClearKey(condition.biomeGroup, condition.tier));
     case 'allOf':

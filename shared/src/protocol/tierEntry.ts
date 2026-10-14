@@ -1,4 +1,3 @@
-import type { AttunedAbilities } from "../abilities";
 import type { EquipmentMap, EssenceType } from "../items";
 import type { EquippedRule } from "../runeDatabase";
 import type { PlayerView } from "./views";
@@ -55,8 +54,6 @@ export interface TierEntryProfile {
   equipment: EquipmentMap;
   itemUpgrades: Record<string, number>;
 
-  knownAbilities: string[];
-  attunedAbilities: AttunedAbilities;
   runesEquipped: EquippedRule[];
 }
 
@@ -76,8 +73,6 @@ export interface TierEntryInitialState {
   equipment: EquipmentMap;
   inventory: string[];
   itemUpgrades: Record<string, number>;
-  knownAbilities: string[];
-  attunedAbilities: AttunedAbilities;
   runesEquipped: EquippedRule[];
   initialEssences: Record<EssenceType, number>;
 }

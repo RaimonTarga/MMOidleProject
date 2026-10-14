@@ -54,8 +54,6 @@ function makeReloadPlayerSlices(id: string): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: [],
-      attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: {
       inventory: [],

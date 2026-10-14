@@ -35,7 +35,6 @@ export type NodeSentSlices = Map<NetworkedComponentKey, string>;
 export type NodeDeltaState = Map<string, NodeSentSlices>;
 import { updateAutoTargets } from "../systems/combat/ai/autoTarget";
 import { updateRuneDerivedConfig } from "../systems/combat/ai/runeConfig";
-import { updateAbilityFiring } from "../systems/player/abilities/abilityFiring";
 import { updateAbilityCasts, updateAbilityCharges } from "../systems/player/abilities/abilityCasting";
 import { updateCombatTransitions } from "../systems/combat/ai/engagement";
 import { updateAutoTraverse } from "../systems/world/autoTraverse";
@@ -455,7 +454,6 @@ export class World {
     updatePartyFollow(this, now);
     updateAutoTraverse(this, now);
     updateAutoTargets(this, now);
-    updateAbilityFiring(this, now);
     // Advances wind-ups started above, so a cast that completes this tick lands
     // before combat resolves.
     updateAbilityCasts(this, now);

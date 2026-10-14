@@ -61,8 +61,6 @@ function makePlayerSlices(id: string, tier: number, armor: string | null): Persi
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: [],
-      attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: {
       inventory: armor ? [armor] : [],

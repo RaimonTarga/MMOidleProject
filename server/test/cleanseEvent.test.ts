@@ -14,7 +14,6 @@ import {
   STARTER_RUNE_IDS,
   VOLCANIC_HEAT_EFFECT_ID,
   applyStatusEffect,
-  emptyAttunedAbilities,
   emptyEquipment,
   getStatusEffect,
   isCleanseable,
@@ -22,7 +21,7 @@ import {
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
-import { requestManualAbilityUse } from "../src/systems/player/abilities/abilityFiring";
+import { fireGuard } from "../src/systems/player/abilities/abilityFiring";
 import { STUN_EFFECT } from "../src/systems/combat/status/stun";
 import { World } from "../src/world/World";
 
@@ -60,8 +59,6 @@ function makePlayerSlices(id: string, guards: string[], playerTier: number): Per
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: [...guards],
-      attunedAbilities: { ...emptyAttunedAbilities(), techniques: [], guards: [...guards] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {
@@ -101,10 +98,8 @@ initCombatSystems();
   paintSlow(player.tracksCombat);
   world.takeNodeEvents(NODE);
 
-  // Manual use, not auto-fire: it enters the same Guard path without depending on
-  // how automatic triggers are configured.
-  const result = requestManualAbilityUse(world, player, "cleanse", Date.now());
-  assert(result.success && result.state === "activated", `Cleanse should activate, got ${JSON.stringify(result)}`);
+  // Fired directly through the engine's Guard path.
+  assert(fireGuard(world, player, "cleanse"), "Cleanse should activate");
 
   assert(!getStatusEffect(player.tracksCombat, "slow"), "Cleanse should strip the slow");
   assert(cleansedEvents(world, "cg") === 1, "a Cleanse that removed stacks must emit exactly one player-cleansed");
@@ -129,7 +124,7 @@ initCombatSystems();
   world.takeNodeEvents(NODE);
 
   // Whether Cleanse refuses to fire or fires and strips nothing, the event must not appear.
-  requestManualAbilityUse(world, player, "cleanse", Date.now());
+  fireGuard(world, player, "cleanse");
 
   assert(cleansedEvents(world, "cg-immune") === 0, "nothing removed must mean no player-cleansed");
 }
@@ -148,8 +143,7 @@ initCombatSystems();
   });
   world.takeNodeEvents(NODE);
 
-  const result = requestManualAbilityUse(world, player, "break-free", Date.now());
-  assert(result.success && result.state === "activated", `Break Free should activate, got ${JSON.stringify(result)}`);
+  assert(fireGuard(world, player, "break-free"), "Break Free should activate");
 
   assert(!getStatusEffect(player.tracksCombat, STUN_EFFECT), "Break Free should remove the stun");
   assert(cleansedEvents(world, "bf") === 1, "Break Free removing control must emit player-cleansed");

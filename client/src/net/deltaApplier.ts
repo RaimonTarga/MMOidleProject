@@ -6,7 +6,6 @@ import {
   RECIPE_DATABASE,
   NODE_BIOMES,
 } from "@mmo-idle/shared";
-import { openGatedUnlocks } from './gatedUnlocks';
 import { loadGameplaySettings } from '../settings/gameplaySettings';
 import { sendSetAutocombatConfig, sendSetAutoTraverse } from './intents';
 import { hudBus } from "../hudBus";
@@ -194,16 +193,10 @@ export function applyDelta(
 
   const own = getOwnView(state);
   if (own) {
-    // Biome mastery pays out of five databases; only gear is pushed by the
-    // server. The other four are gate-derived, so both sets are diffed here and
-    // announced identically — the first sync is the baseline, never news.
-    const gatedUnlocks = openGatedUnlocks({
-      biomeLevel: own.biomeLevel,
-      bossesCleared: own.bossesCleared,
-    });
+    // Newly unlocked recipes are announced; the first sync is the baseline,
+    // never news.
     if (!state.knownUnlockedRecipesInitialized) {
       state.knownUnlockedRecipes = new Set(own.unlockedRecipes);
-      state.knownGatedUnlocks = new Set(gatedUnlocks.map((unlock) => unlock.key));
       state.knownUnlockedRecipesInitialized = true;
     } else {
       for (const recipeId of own.unlockedRecipes) {
@@ -214,11 +207,6 @@ export function applyDelta(
           recipe?.name ?? recipeId,
           recipe?.recipeGroup ?? "unknown",
         );
-      }
-      for (const unlock of gatedUnlocks) {
-        if (state.knownGatedUnlocks.has(unlock.key)) continue;
-        state.knownGatedUnlocks.add(unlock.key);
-        hudBus.notifyRecipeUnlock(unlock.name, unlock.recipeGroup);
       }
     }
     observeAreaArrival(own, options.stateSync === true);

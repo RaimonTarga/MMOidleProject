@@ -66,16 +66,6 @@
   box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.05);
 }
 
-.build-icon--ability {
-  background: #080706;
-  border-top-color: #827255;
-  border-left-color: #6d5e46;
-  border-right-color: #17130e;
-  border-bottom-color: #17130e;
-  color: #d7c6a2;
-  box-shadow: inset 0 0 0 1px #2f281d;
-}
-
 .build-icon__fallback {
   position: relative;
   z-index: 0;
@@ -212,23 +202,6 @@
 .loadout-candidate:disabled {
   opacity: 0.5;
   cursor: default;
-}
-
-/* Effect tables inside a candidate card and under the equipped occupant. Tighter
-   than the standalone block: they are supporting detail on something already
-   named, not a section of their own. */
-.loadout-candidate__lines,
-.loadout-detail__lines {
-  margin-top: 5px;
-}
-
-.loadout-candidate__lines .detail-line {
-  padding: 1px 0;
-  font-size: 10px;
-}
-
-.loadout-detail__lines {
-  margin-bottom: 8px;
 }
 
 .loadout-candidate--equipped {

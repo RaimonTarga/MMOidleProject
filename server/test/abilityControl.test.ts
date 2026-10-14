@@ -30,7 +30,7 @@ import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { updateCombatState } from "../src/systems/combat/engine/combatState";
 import { runMonsterAttack, runPlayerAttack } from "../src/systems/combat/engine/combat";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
-import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import {
   applyMonsterRoot,
   applyMonsterSlow,
@@ -50,6 +50,7 @@ function assert(condition: unknown, message: string): void {
 }
 
 function makePlayerSlices(id: string, abilities: string[]): PersistedPlayerSlices {
+  giveAbilities(id, abilities);
   return {
     isPlayer: { id, name: "Controller" },
     hasPosition: {
@@ -77,8 +78,6 @@ function makePlayerSlices(id: string, abilities: string[]): PersistedPlayerSlice
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: [...abilities],
-      attunedAbilities: { techniques: [...abilities], guards: [] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {
@@ -165,7 +164,7 @@ initCombatSystems();
   if (!target) throw new Error("failed to create target");
   setAttackTarget(world, player, target.isMonster.id);
 
-  fireWithReferenceWiring(world, Date.now());
+  fireAbilities(world, Date.now());
   runPlayerAttack(world, player, target, 1_000, {
     attackOrigin: player.hasPosition.current,
     aggroSource: { id: player.isPlayer.id, kind: "player" },

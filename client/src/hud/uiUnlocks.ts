@@ -4,9 +4,7 @@ import {
   passivesAtom,
   skillPointsAtom,
   unlockedRecipesAtom,
-  attunedAbilitiesAtom,
   globalMasteryAtom,
-  knownAbilitiesAtom,
   playerIdAtom,
   playerTierAtom,
   biomeLevelAtom,
@@ -25,7 +23,6 @@ export type UiUnlockSystem = keyof SystemVisibility;
 
 const UI_UNLOCK_SYSTEMS: readonly UiUnlockSystem[] = [
   'mastery',
-  'abilities',
   'materials',
   'passiveTree',
   'party',
@@ -38,7 +35,6 @@ const UI_UNLOCK_SYSTEMS: readonly UiUnlockSystem[] = [
   'crafting',
   'map',
   'loadout',
-  'abilityDock',
 ];
 const UI_UNLOCK_ACTIVATION_FALLBACK_MS = 3_600;
 /**
@@ -81,8 +77,6 @@ export function installUiUnlockSync(): () => void {
     resolveSystemVisibility({
       playerTier: store.get(playerTierAtom),
       globalMastery: store.get(globalMasteryAtom),
-      knownAbilities: store.get(knownAbilitiesAtom),
-      attunedAbilities: store.get(attunedAbilitiesAtom),
       essences: store.get(essencesAtom),
       unlockedRecipes: store.get(unlockedRecipesAtom),
       skillPoints: store.get(skillPointsAtom),
@@ -187,8 +181,6 @@ export function installUiUnlockSync(): () => void {
   const visibilityAtoms = [
     playerTierAtom,
     globalMasteryAtom,
-    knownAbilitiesAtom,
-    attunedAbilitiesAtom,
     essencesAtom,
     unlockedRecipesAtom,
     skillPointsAtom,

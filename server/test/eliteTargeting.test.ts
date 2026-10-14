@@ -69,8 +69,6 @@ function makePlayerSlices(id: string, runesEquipped: EquippedRule[]): PersistedP
       // recipe must be present or the equipped rule is silently dropped.
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped,
-      knownAbilities: [],
-      attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: {
       inventory: [],

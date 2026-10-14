@@ -44,8 +44,6 @@ function makePlayer(id: string): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [],
       runesEquipped: [],
-      knownAbilities: [],
-      attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

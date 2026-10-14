@@ -5,7 +5,6 @@ import type {
   CombatArchetype,
   HasAutoIntent,
   EquipmentMap,
-  AttunedAbilities,
   EquippedRule,
   EssenceType,
   PartyMember,
@@ -229,10 +228,9 @@ export const activeBuffsAtom = atom<PlayerBuff[]>([]);
 export const autoPathAtom = atom<string[] | null>(null);
 
 /**
- * Last observed ability-effect time, keyed by ABILITY ID; drives the brief HUD
- * pulse. Keyed per ability rather than per slot kind because two Techniques can
- * be equipped at once — a slot-kind key would pulse whichever tile happened to
- * be first. Server cooldowns are per-ability for the same reason.
+ * Last observed ability-effect time, keyed by ABILITY ID; drives the Behavior
+ * panel's "activated" line. Keyed per ability because two can fire close
+ * together. Server cooldowns are per-ability for the same reason.
  */
 export const abilityFiredAtAtom = atom<Record<string, number>>({});
 
@@ -241,96 +239,6 @@ export function notifyAbilityFired(abilityId: string): void {
   const store = getDefaultStore();
   const prev = store.get(abilityFiredAtAtom);
   store.set(abilityFiredAtAtom, { ...prev, [abilityId]: Date.now() });
-}
-
-/**
- * Client receipt time for the server event that places an ability on cooldown,
- * keyed by ability id. Distinct from `abilityFiredAtAtom`: Techniques enter
- * cooldown when ARMED, while their visible effect may land on a later attack.
- */
-export const abilityCooldownStartedAtAtom = atom<Record<string, number>>({});
-
-/** Stamp an ability as cooling from the server's fire or arm event. */
-export function notifyAbilityCooldownStarted(abilityId: string): void {
-  const store = getDefaultStore();
-  const prev = store.get(abilityCooldownStartedAtAtom);
-  store.set(abilityCooldownStartedAtAtom, { ...prev, [abilityId]: Date.now() });
-}
-
-/**
- * Authoritative ability-cooldown samples from the server, keyed by ability id,
- * each stamped with the client time it arrived.
- *
- * The `abilityCooldownStartedAtAtom` model above cannot tell the truth on its
- * own: it assumes the AUTHORED duration and a countdown nothing interferes with.
- * Sweep's Tempo mechanic shortens the live cooldown on every landed attack, and
- * equipment cooldown reduction shortens the duration itself, so the tile went on
- * sweeping long after the ability was ready.
- *
- * So the server samples the real remaining time whenever it changes for a reason
- * the client could not have predicted, and the HUD extrapolates between samples
- * off its own clock — the same authoritative-sample-plus-local-extrapolation
- * shape the reload bar uses. `observedAt` is the RECEIPT time, not a server
- * timestamp: the two clocks are unrelated, and what the sweep needs is elapsed
- * time since the sample, which only the local clock can give honestly.
- *
- * A sample supersedes the started-at estimate for that ability entirely. It can
- * never go stale across activations, because every activation ships a fresh
- * sample from the same server seam that starts the cooldown.
- */
-export interface AbilityCooldownSample {
-  remainingMs: number;
-  totalMs: number;
-  observedAt: number;
-}
-export const abilityCooldownSampleAtom = atom<Record<string, AbilityCooldownSample>>({});
-
-/** Record the server's authoritative remaining cooldown for one ability. */
-export function notifyAbilityCooldownSample(
-  abilityId: string,
-  remainingMs: number,
-  totalMs: number,
-): void {
-  const store = getDefaultStore();
-  const prev = store.get(abilityCooldownSampleAtom);
-  store.set(abilityCooldownSampleAtom, {
-    ...prev,
-    [abilityId]: { remainingMs, totalMs, observedAt: Date.now() },
-  });
-}
-
-/**
- * Live cast progress for the local player's casted Technique, or null when not
- * casting. Driven by the `player-cast-start` / `player-cast-end` node events.
- */
-export const abilityCastAtom = atom<{
-  abilityId: string;
-  startedAt: number;
-  castMs: number;
-} | null>(null);
-
-export function notifyAbilityCastStarted(abilityId: string, castMs: number): void {
-  getDefaultStore().set(abilityCastAtom, {
-    abilityId,
-    startedAt: Date.now(),
-    castMs,
-  });
-}
-
-export function notifyAbilityCastEnded(): void {
-  getDefaultStore().set(abilityCastAtom, null);
-}
-
-/**
- * The ability id currently ARMED onto the local player's next attack, or null.
- * Set by `player-technique-armed`, cleared by the consuming hit. Cosmetic only:
- * mirrors the in-world red armed telegraph so the HUD tile can say the same
- * thing the bar over the player does.
- */
-export const armedAbilityIdAtom = atom<string | null>(null);
-
-export function notifyAbilityArmed(abilityId: string | null): void {
-  getDefaultStore().set(armedAbilityIdAtom, abilityId);
 }
 
 /**
@@ -389,16 +297,6 @@ export const partyAtom = atom<{ leaderId: string; members: PartyMember[] } | nul
 export const runesOwnedAtom = atom<string[]>([]);
 export const runesEquippedAtom = atom<EquippedRule[]>([]);
 
-/** Abilities learned (crafted) — the slottable pool (system rework Step 7). */
-export const knownAbilitiesAtom = atom<string[]>([]);
-/** Equipped abilities per slot kind, ordered — list order is fire priority. */
-export const attunedAbilitiesAtom = atom<AttunedAbilities>({
-  techniques: [],
-  guards: [],
-});
-
-/** Server-authoritative manual ability requests waiting to become legal. */
-export const queuedAbilityIdsAtom = atom<string[]>([]);
 
 export const combatControlFeedbackAtom = atom<{ reason: string; at: number } | null>(null);
 
@@ -410,7 +308,7 @@ export function notifyCombatControlResult(result: { success: boolean; reason?: s
 }
 
 export const skillTreeOpenAtom = atom<boolean>(false);
-export type BuildPanelTab = 'abilities' | 'runes';
+export type BuildPanelTab = 'runes';
 export const buildOpenAtom = atom<boolean>(false);
 /**
  * The arrangement surfaces share one dialog, and the rail gives each its
@@ -418,7 +316,7 @@ export const buildOpenAtom = atom<boolean>(false);
  * identifiers keep the `build*` prefix from the old combined Loadout dialog:
  * renaming them reaches a dozen files for no player-visible gain.
  */
-export const buildPanelTabAtom = atom<BuildPanelTab>('abilities');
+export const buildPanelTabAtom = atom<BuildPanelTab>('runes');
 export const masteryOpenAtom = atom<boolean>(false);
 export const inventoryOpenAtom = atom<boolean>(false);
 export const mapOpenAtom = atom<boolean>(false);
@@ -690,18 +588,6 @@ function setRunesEquipped(next: EquippedRule[]): void {
 }
 
 
-function setAttunedAbilities(next: AttunedAbilities): void {
-  const store = getDefaultStore();
-  const prev = store.get(attunedAbilitiesAtom);
-  if (
-    shallowArrayEqual(prev.techniques, next.techniques) &&
-    shallowArrayEqual(prev.guards, next.guards)
-  ) {
-    return;
-  }
-  store.set(attunedAbilitiesAtom, next);
-}
-
 function buffsEqual(a: readonly PlayerBuff[], b: readonly PlayerBuff[]): boolean {
   if (a === b) return true;
   if (a.length !== b.length) return false;
@@ -811,9 +697,6 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(unlockedSkillsAtom, []);
   setIfShallowArrayEqual(runesOwnedAtom, []);
   setRunesEquipped([]);
-  setIfShallowArrayEqual(knownAbilitiesAtom, []);
-  setAttunedAbilities({ techniques: [], guards: [] });
-  setIfChanged(queuedAbilityIdsAtom, []);
   store.set(combatControlFeedbackAtom, null);
   setIfShallowArrayEqual(inventoryAtom, []);
   setIfShallowArrayEqual(unlockedRecipesAtom, []);
@@ -821,9 +704,6 @@ function resetPlayerAtoms(): void {
   setIfShallowArrayEqual(visitedNodesAtom, []);
   setIfShallowArrayEqual(activeBuffsAtom, []);
   store.set(abilityFiredAtAtom, {});
-  store.set(abilityCooldownStartedAtAtom, {});
-  store.set(abilityCastAtom, null);
-  store.set(armedAbilityIdAtom, null);
   store.set(lastCleanseAtAtom, 0);
   setIfShallowObjectEqual(passivesAtom, {});
   setIfShallowObjectEqual(equipmentAtom, { ...DEFAULT_EQUIPMENT });
@@ -930,9 +810,6 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfShallowArrayEqual(unlockedSkillsAtom, player.unlockedSkills);
   setIfShallowArrayEqual(runesOwnedAtom, player.runesOwned);
   setRunesEquipped(player.runesEquipped);
-  setIfShallowArrayEqual(knownAbilitiesAtom, player.knownAbilities);
-  setAttunedAbilities(player.attunedAbilities);
-  setIfChanged(queuedAbilityIdsAtom, player.queuedAbilityIds);
   setIfShallowArrayEqual(inventoryAtom, player.inventory);
   setIfShallowArrayEqual(unlockedRecipesAtom, player.unlockedRecipes);
   setIfShallowArrayEqual(bossesClearedAtom, player.bossesCleared);

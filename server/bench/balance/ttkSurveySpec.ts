@@ -2,15 +2,14 @@ import { applyProgressionSnapshot, snapshotReceipts, type ProgressionSnapshot } 
 import assert from 'node:assert/strict';
 import { requiredBiomeLevelForUpgrade, upgradeCeilingFromGlobalMastery, globalMastery, ITEM_DATABASE, RECIPE_DATABASE, NODE_BIOMES,
   composePlayerView } from '@mmo-idle/shared';
-import { materializeBot, BENCH_BOT_ID } from './botFactory';
+import { materializeBot, BENCH_BOT_ID, type DeclaredAbilities } from './botFactory';
 import { validateBuild } from '../../../bot/src/loadout/loadout';
 import { recalculatePlayerEntityStats } from '../../src/ecs/playerEntityFormulas';
 import { syncArchetypeSlices } from '../../src/ecs/archetypeSliceSync';
 import { refillBarrier } from '../../src/systems/defense/barrier/barrier';
-import { setAbilityLoadout } from '../../src/systems/player/economy/abilityCrafting';
 import type { World } from '../../src/world/World';
 import type { BuildSpec } from './types';
-import { withReferenceAbilityWiring, type AttunedAbilities, type EquippedRule } from '@mmo-idle/shared';
+import { type EquippedRule } from '@mmo-idle/shared';
 
 export const SURVEY_CLASSES = [
   { name: 'striker', prefix: 'cadence', melee: true, weapons: ['flash-rapier','gale-needle','volcanic-cinderlash'] },
@@ -37,11 +36,11 @@ export interface SurveyCell { progressionSnapshot?: ProgressionSnapshot; id: str
    */
   upgradeLevel?: number;
   /**
-   * Guard abilities to attune instead of the tier default. Durability33's
-   * Mountain-entry context uses this: the shipped T1 route has learned Second
-   * Wind, Cleanse and Brace by the time it first travels to Mountain, and Brace
-   * is the mitigation that Power Shot's counterplay actually depends on.
-   * Legality is still enforced by setAbilityLoadout and validateBuild.
+   * Guard abilities to declare instead of the tier default. Durability33's
+   * Mountain-entry context used this: the shipped T1 route had learned Second
+   * Wind, Cleanse and Brace by the time it first travelled to Mountain, and Brace
+   * was the mitigation that Power Shot's counterplay depended on. Inert since
+   * class-first D3: declared for the receipt, never applied to the bot.
    */
   guards?: string[];
   /**
@@ -57,10 +56,9 @@ export interface SurveyCell { progressionSnapshot?: ProgressionSnapshot; id: str
    *
    * The defaults express ONE technique plus a fixed guard pair, which cannot state
    * a historical package that ran a different technique and a different guard pair.
-   * When set, it is used verbatim and still passes through `setAbilityLoadout` and
-   * `validateBuild`, so an illegal RP total fails exactly as before.
+   * When set, it is used verbatim. Inert since class-first D3, like `guards`.
    */
-  abilities?: AttunedAbilities;
+  abilities?: DeclaredAbilities;
   /**
    * Explicit rune rules, replacing the derived five-rule policy. An EMPTY array is
    * meaningful and is honoured: it means the package runs no behaviour rules at all,
@@ -107,7 +105,7 @@ export const SURVEY_CELLS: SurveyCell[] = [1,2,3].flatMap(tier =>
  */
 export type PackageFieldSource = 'explicit' | 'preparation-default';
 export interface ResolvedSurveyPackage {
-  abilities: AttunedAbilities;
+  abilities: DeclaredAbilities;
   runeRules: EquippedRule[];
   upgradeLevel: number;
   sources: { abilities: PackageFieldSource; runeRules: PackageFieldSource; upgradeLevel: PackageFieldSource };
@@ -129,10 +127,9 @@ export function resolveSurveyPackage(cell: SurveyCell): ResolvedSurveyPackage {
     techniques: [...(cell.tier >= 3 ? ['imbue-lightning'] : []), cell.technique ?? 'sweep'],
     guards: cell.guards ?? (cell.tier === 1 ? ['second-wind'] : ['second-wind','cleanse']),
   };
-  // Abilities no longer carry built-in triggers. Every attuned ability the cell
-  // does not wire itself gets its reference Rune rule, so the bench keeps
-  // measuring the retired default timing.
-  const runeRules = withReferenceAbilityWiring(authoredRules, abilities);
+  // Nothing fires an ability from a Rune any more (the Use Ability action is
+  // gone); the class runtimes will.
+  const runeRules = authoredRules;
   return {
     abilities, runeRules, upgradeLevel: cell.upgradeLevel ?? 5,
     sources: {
@@ -167,16 +164,13 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
     assert(plus===0||(p.biomeLevel[recipe.recipeGroup]??0)>=requiredBiomeLevelForUpgrade(ITEM_DATABASE.get(id!)!,plus), `Biome upgrade gate ${id}`);
   }
   p.skillPoints = 0; // Factory grants unlock scaffolding; none survives into measurement.
-  p.attunedAbilities = { techniques: [], guards: [] };
   const c = SURVEY_CLASSES.find(c=>c.name===cell.className)!;
   const rules = declared.runeRules;
   p.runesEquipped = rules;
-  const abilities = declared.abilities;
-  assert(setAbilityLoadout(world,bot,abilities).success, `${cell.id}: illegal ability budget`);
   recalculatePlayerEntityStats(world,bot); syncArchetypeSlices(world,bot);
   bot.hasHealth.hp = bot.hasHealth.maxHp; refillBarrier(world,bot);
   const view = composePlayerView(bot)!;
-  assert.deepEqual(validateBuild({abilities, runeRules:rules},view), [], cell.id);
+  assert.deepEqual(validateBuild({runeRules:rules},view), [], cell.id);
   // Derived from the cell's OWN skill path rather than hardcoded to 'balanced'.
   // The assertion's intent is "the build that was declared is the build that
   // materialised"; every existing cell declares `-balanced`, so this is identical

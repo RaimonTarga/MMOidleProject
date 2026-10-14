@@ -5,7 +5,6 @@ import {
   ABILITY_DATABASE,
   ABILITY_SWEEP_FX,
   ABILITY_TECHNIQUE_FIRED_FX,
-  abilityDef,
   ESSENCE_COLORS,
   GAME_CONFIG,
   isRangedPlayerView,
@@ -234,12 +233,7 @@ import type { SfxId } from "../audio/manifest";
 import { startCastBar, endCastBar } from "./castBars";
 import { spawnSkillCallout } from "./skillCallouts";
 import {
-  notifyAbilityCastEnded,
-  notifyAbilityCastStarted,
-  notifyAbilityCooldownSample,
-  notifyAbilityCooldownStarted,
   notifyAbilityFired,
-  notifyAbilityArmed,
   notifyCleansed,
 } from "../hud/atoms";
 import type { GameScene } from "../scenes/GameScene";
@@ -1458,7 +1452,6 @@ export function dispatchCombatEvent(
         const cue = ['cleanse', 'second-wind', 'recuperate'].includes(ev.ability) ? 'heal'
           : ev.ability === 'break-free' ? 'shield-break' : 'block';
         playSfx(cue);
-        notifyAbilityCooldownStarted(ev.ability);
         notifyAbilityFired(ev.ability);
       }
     }
@@ -1509,12 +1502,6 @@ export function dispatchCombatEvent(
       abilityId: ev.ability,
       armedAt: Date.now(),
     });
-    if (ev.playerId === scene.myId) {
-      notifyAbilityCooldownStarted(ev.ability);
-      // A self-facing instant opens a window rather than charging an attack, so
-      // there is nothing waiting to land and the tile must not read "armed".
-      if (abilityDef(ev.ability)?.shape !== "instant") notifyAbilityArmed(ev.ability);
-    }
     if (shouldRunClientFx()) {
       const sprite = state.sprite.get(ev.playerId);
       if (sprite) {
@@ -1569,7 +1556,6 @@ export function dispatchCombatEvent(
         );
       }
       if (ev.playerId === scene.myId) {
-        notifyAbilityCooldownStarted(ev.ability);
         notifyAbilityFired(ev.ability);
       }
     }
@@ -1615,21 +1601,12 @@ export function dispatchCombatEvent(
         ev.aoeRadius,
       );
     }
-    if (ev.playerId === scene.myId) {
-      notifyAbilityCastStarted(ev.ability, ev.castMs);
-    }
     return;
   }
 
   if (ev.kind === "player-ability-cooldown") {
-    // The authoritative remaining cooldown. Own player only: this drives the
-    // local ability bar, and another player's Tempo is not information this HUD
-    // has anywhere to put. Not gated on `shouldRunClientFx` — a cooldown readout
-    // is HUD state, not an in-world effect, and must stay correct even when
-    // in-world FX are suppressed.
-    if (ev.playerId === scene.myId) {
-      notifyAbilityCooldownSample(ev.ability, ev.remainingMs, ev.totalMs);
-    }
+    // The authoritative remaining cooldown. It drove the retired ability bar;
+    // nothing on the client shows ability cooldowns now, so it is ignored.
     return;
   }
 
@@ -1703,11 +1680,9 @@ export function dispatchCombatEvent(
       if (impact) playAbilityRank(scene, ev.playerId, ev.ability, impact);
     }
     if (ev.playerId === scene.myId) {
-      notifyAbilityCastEnded();
-      // Only a cast that actually RESOLVED pays a cooldown — an interrupted
-      // wind-up costs nothing, so don't start a sweep for it.
+      // Only a cast that actually RESOLVED counts as fired — an interrupted
+      // wind-up costs nothing.
       if (ev.fired) {
-        notifyAbilityCooldownStarted(ev.ability);
         notifyAbilityFired(ev.ability);
         const cue = ev.ability === 'slam' ? 'slam' : ev.ability === 'snipe' ? 'shot' : 'striker-empowered';
         playSfx(cue);
@@ -1725,15 +1700,13 @@ export function dispatchCombatEvent(
     ev.effects?.some((fx) => TECHNIQUE_CONSUMED_TAGS.includes(fx))
   ) {
     // The armed entry is the only place the CONSUMED ability's id is known —
-    // the hit event carries FX tags, not the ability. Pulse the right HUD tile
-    // here, before the entry is dropped; with two Technique slots equipped a
-    // slot-kind guess would pulse the wrong one.
+    // the hit event carries FX tags, not the ability. Report it here, before
+    // the entry is dropped.
     const consumed = state.techniqueArmed.get(ev.playerId)!.abilityId;
     const victim = state.sprite.get(ev.targetId);
     if (victim) playAbilityRank(scene, ev.playerId, consumed, { x: victim.x, y: victim.y });
     if (ev.playerId === scene.myId) {
       notifyAbilityFired(consumed);
-      notifyAbilityArmed(null);
     }
     state.techniqueArmed.delete(ev.playerId);
   }
@@ -2042,9 +2015,7 @@ function runFxForAttackStyle(
       continue;
     }
     if (effectId === ABILITY_SWEEP_FX) {
-      // Sweep Technique: a bold horizontal cleave ON TOP of the normal attack FX,
-      // plus a Technique HUD-icon pulse so the fire is visible both in-world and
-      // on the ability bar.
+      // Sweep Technique: a bold horizontal cleave ON TOP of the normal attack FX.
       fxSweep(scene, from.x, from.y, to.x, to.y, ev.empowered);
       continue;
     }

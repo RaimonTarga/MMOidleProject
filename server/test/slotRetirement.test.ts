@@ -41,7 +41,6 @@ function makeSlices(id: string, opts: { essence?: number; nodeId?: string } = {}
       unlockedRecipes: [], questProgress: {}, playerTier: 4, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [],
       runesOwned: [], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: { inventory: [], equipment: { ...emptyEquipment() }, itemUpgrades: {} },
     usesSkills: {

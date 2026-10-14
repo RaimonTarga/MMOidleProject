@@ -19,7 +19,7 @@ import { initCombatSystems } from "../src/systems/combatBootstrap";
 import {
   SLINGER_SWEEP_CLIP_BUDGET_MULT,
 } from "../src/systems/player/abilities/abilityEffects";
-import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import { takeWorldLogEvents } from "../src/world/worldLog";
 import { World } from "../src/world/World";
 
@@ -84,6 +84,7 @@ function assertSweepFootprint(
 type SweepArchetype = "dot" | "reload" | null;
 
 function makePlayerSlices(id: string, archetype: SweepArchetype): PersistedPlayerSlices {
+  giveAbilities(id, ["sweep"]);
   return {
     isPlayer: { id, name: id },
     hasPosition: {
@@ -111,8 +112,6 @@ function makePlayerSlices(id: string, archetype: SweepArchetype): PersistedPlaye
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: ["sweep"],
-      attunedAbilities: { techniques: ["sweep"], guards: [] },
     },
     holdsInventory: {
       inventory: [],
@@ -149,7 +148,7 @@ function armSweep(world: World, playerId: string, targetId: string): void {
   if (!player) throw new Error("missing Sweep player");
   player.usesAutocombat.auto = true;
   setAttackTarget(world, player, targetId);
-  fireWithReferenceWiring(world, 1_000);
+  fireAbilities(world, 1_000);
   assert(
     player.hasArmedAbility?.abilityId === "sweep",
     "Sweep should arm while the player is in combat",

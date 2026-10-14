@@ -24,8 +24,7 @@ for (const id of ACTION_DATABASE.keys()) {
   if (icon) assert(onDisk(icon.src), `rune action ${id}'s icon ${icon.src} is not on disk`);
 }
 
-// The two that were missing now draw real art.
-assert(runeActionIconSource('use-ability'), 'Use Ability has a rune icon');
+// The one that was missing now draws real art (Use Ability, the other, is gone).
 assert(runeConditionIconSource('formation-broken'), 'Formation Broken has a rune icon');
 
 console.log('runeIconArt.test.ts: ok');

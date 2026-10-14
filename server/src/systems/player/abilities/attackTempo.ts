@@ -120,8 +120,8 @@ function channelTickFraction(ctx: CombatContext): number | null {
 }
 
 /**
- * Pay accumulated attack-equivalents into every attuned Technique whose CURRENT
- * rank owns a Tempo refund.
+ * Pay accumulated attack-equivalents into every Technique whose cooldown is
+ * running and whose CURRENT rank owns a Tempo refund.
  *
  * Generic over the roster on purpose: Sweep is the only ability authoring
  * `tempoRefundMs` today, and a second one should need no server change.
@@ -132,13 +132,11 @@ export function applyAttackTempo(
   contribution: number,
 ): void {
   if (contribution <= 0) return;
-  const attuned = player.tracksProgression.attunedAbilities;
-  if (!attuned) return;
 
   const combat = player.tracksCombat;
-  for (const abilityId of attuned.techniques) {
-    const ability = ABILITY_DATABASE.get(abilityId);
-    if (!ability) continue;
+  for (const ability of ABILITY_DATABASE.values()) {
+    if (ability.slot !== "technique") continue;
+    const abilityId = ability.id;
     const refundMs = abilityTempoRefundMs(ability, player.tracksProgression.playerTier);
     if (refundMs <= 0) continue;
 

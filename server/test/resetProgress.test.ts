@@ -6,7 +6,6 @@ import {
   STARTER_RUNE_IDS,
   emptyEquipment,
   runeIdsForArchetype,
-  emptyAttunedAbilities,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { resetPlayerProgress } from "../src/admin/gameActions";
@@ -46,8 +45,6 @@ const slices: PersistedPlayerSlices = {
     visitedNodes: ["node-4-5"],
     runesOwned: [...STARTER_RUNE_IDS, "focus-elites"],
     runesEquipped: [{ conditionId: "target-is-elite", actionId: "focus-elites" }],
-    knownAbilities: ["whirlwind"],
-    attunedAbilities: { techniques: ["whirlwind"], guards: [] },
   },
   holdsInventory: {
     inventory: ["iron-broadsword"],
@@ -94,12 +91,6 @@ assert(
 assert(
   JSON.stringify(progression.runesEquipped) === JSON.stringify(DEFAULT_RUNE_LOADOUT),
   "the starter rune loadout should be restored",
-);
-assert(progression.knownAbilities.length === 0, "known abilities should reset");
-assert(
-  JSON.stringify(progression.attunedAbilities) ===
-    JSON.stringify(emptyAttunedAbilities()),
-  "equipped abilities should reset",
 );
 
 assert(player.holdsInventory.inventory.length === 0, "inventory should reset");

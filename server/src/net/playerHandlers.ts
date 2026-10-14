@@ -1,5 +1,4 @@
 import { captureProgressionCheckpoint, restoreProgressionCheckpoint } from '../admin/progressionCheckpoint';
-import { attunedAbilityIds } from "@mmo-idle/shared";
 import type { Socket } from "socket.io";
 import {
   DEFAULT_AUTOCOMBAT_CONFIG,
@@ -31,11 +30,6 @@ import { recordBroadcast } from "./profiler";
 import { unlockSkill } from "../systems/player/progression/skills";
 import { equipItem, unequipItem } from "../systems/player/economy/inventory";
 import { craftRecipe } from "../systems/player/economy/crafting";
-import {
-  craftAbilityRecipe,
-  setAbilityLoadout,
-} from "../systems/player/economy/abilityCrafting";
-import { requestManualAbilityUse } from "../systems/player/abilities/abilityFiring";
 import { requestManualReload } from "../systems/classes/archetypes/reload/reloadLifecycle";
 import { upgradeItem } from "../systems/player/economy/itemUpgrade";
 import {
@@ -381,14 +375,9 @@ export function registerPlayerHandlers(
     if (!p) return reject(NOT_LIVE_REASON);
     if (!Array.isArray(rules)) return reject("Malformed Rune loadout.");
     const owned = new Set(p.tracksProgression.runesOwned);
-    const valid = sanitizeRuneLoadout(
-      rules,
-      owned,
-      p.usesSkills.combatArchetype,
-      new Set(attunedAbilityIds(p.tracksProgression.attunedAbilities)),
-    );
+    const valid = sanitizeRuneLoadout(rules, owned, p.usesSkills.combatArchetype);
     if (valid.length !== rules.length) {
-      socket.emit("build:loadoutResult", { system: "runes", success: false, reason: "One or more Rune rules are invalid, unowned, or target an unattuned ability." });
+      socket.emit("build:loadoutResult", { system: "runes", success: false, reason: "One or more Rune rules are invalid or unowned." });
       return;
     }
     const telemetryBefore = world.gameplay?.beforeDecision(p);
@@ -434,41 +423,6 @@ export function registerPlayerHandlers(
     const result = craftRecipe(world, p, recipeId);
     world.gameplay?.decision(p, "craft", recipeId, telemetryBefore, result.success);
     socket.emit("crafting:result", result);
-  });
-
-  socket.on("ability:craftRecipe", (recipeId: string) => {
-    const p = liveSelf();
-    if (!p || typeof recipeId !== "string") {
-      if (p) return;
-      socket.emit("ability:craftResult", { recipeId, success: false, reason: NOT_LIVE_REASON });
-      return;
-    }
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = craftAbilityRecipe(world, p, recipeId);
-    world.gameplay?.decision(p, "craft-ability", recipeId, telemetryBefore, result.success);
-    socket.emit("ability:craftResult", result);
-  });
-
-  socket.on("ability:setLoadout", (payload) => {
-    const p = liveSelf();
-    const reject = (reason: string): void => { socket.emit("build:loadoutResult", { system: "abilities", success: false, reason }); };
-    if (!p) return reject(NOT_LIVE_REASON);
-    const equipped = payload?.equipped;
-    if (!equipped || !Array.isArray(equipped.techniques) || !Array.isArray(equipped.guards) || [...equipped.techniques, ...equipped.guards].some(id => typeof id !== "string")) return reject("Malformed ability loadout.");
-    const telemetryBefore = world.gameplay?.beforeDecision(p);
-    const result = setAbilityLoadout(world, p, equipped);
-    world.gameplay?.decision(p, "abilities", null, telemetryBefore, result.success);
-    socket.emit("build:loadoutResult", { system: "abilities", ...result });
-  });
-
-  socket.on("ability:use", (abilityId, ack) => {
-    const p = liveSelf();
-    if (!p) return ack?.({ success: false, reason: NOT_LIVE_REASON });
-    if (typeof abilityId !== "string") {
-      return ack?.({ success: false, reason: "Malformed ability id." });
-    }
-    const result = requestManualAbilityUse(world, p, abilityId);
-    ack?.(result);
   });
 
   socket.on("inventory:upgradeItem", (itemId: string) => {

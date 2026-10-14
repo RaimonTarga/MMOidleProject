@@ -3,9 +3,6 @@ import { hudBus } from "../hudBus";
 import { intents as intentBus, type IntentMap } from "../intents";
 import {
   sendCraftRecipe,
-  sendCraftAbilityRecipe,
-  sendSetAbilityLoadout,
-  sendUseAbility,
   sendManualReload,
   sendRecallSummons,
   sendEquipItem,
@@ -89,21 +86,6 @@ export function attachHudEvents(scene: GameScene): () => void {
   intents.on("craftRecipe", (recipeId) => {
     if (isDeathOverlayActive()) return;
     sendCraftRecipe(scene.socket, recipeId);
-  });
-
-  intents.on("craftAbilityRecipe", (recipeId) => {
-    if (isDeathOverlayActive()) return;
-    sendCraftAbilityRecipe(scene.socket, recipeId);
-  });
-
-  intents.on("setAbilityLoadout", (payload) => {
-    if (isDeathOverlayActive()) return;
-    sendSetAbilityLoadout(scene.socket, payload);
-  });
-
-  intents.on("useAbility", (abilityId) => {
-    if (isDeathOverlayActive()) return;
-    sendUseAbility(scene.socket, abilityId, notifyCombatControlResult);
   });
 
   intents.on("manualReload", () => {

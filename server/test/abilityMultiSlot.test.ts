@@ -1,13 +1,11 @@
 /**
  * Wiring smoke test for the multi-slot ability engine (abilities evolution §7).
  *
- * Covers the three invariants the second Technique / Guard slot depends on:
- *   1. Techniques share ONE offensive channel — two equipped, at most one armed.
- *      Loadout order is the arbitration priority.
- *   2. Guards layer independently (own effect id per slot) but only ONE
+ * Covers the two invariants several Techniques / Guards depend on:
+ *   1. Techniques share ONE offensive channel — two fired, at most one armed.
+ *      The caller's order is the arbitration priority.
+ *   2. Guards layer independently (own effect id per ability) but only ONE
  *      activation resolves per decision window.
- *   3. `normalizeAttunedAbilities` migrates the legacy `{technique, guard}`
- *      shape and drops ids that no longer fit.
  *
  * Behaviour, not balance: no magnitude is asserted.
  */
@@ -20,12 +18,11 @@ import {
   getCooldown,
   getStatusEffect,
   guardEffectIdForAbility,
-  normalizeAttunedAbilities,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
-import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { updateCombatState } from "../src/systems/combat/engine/combatState";
 import { World } from "../src/world/World";
@@ -35,6 +32,7 @@ function assert(condition: unknown, message: string): void {
 }
 
 function makePlayerSlices(): PersistedPlayerSlices {
+  giveAbilities("multislot-player", ["sweep", "binding-strike", "brace", "endure"]);
   return {
     isPlayer: { id: "multislot-player", name: "Multislot" },
     hasPosition: {
@@ -64,11 +62,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: ["sweep", "binding-strike", "brace", "cleanse", "endure"],
-      attunedAbilities: {
-        techniques: ["sweep", "binding-strike"],
-        guards: ["brace", "endure"],
-      },
     },
     holdsInventory: {
       inventory: [],
@@ -85,37 +78,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
     },
   };
 }
-
-// ── 1. Slot counts are tier-gated ────────────────────────────────────────────
-const migrated = normalizeAttunedAbilities({ technique: "sweep", guard: "brace" });
-assert(
-  migrated.techniques.length === 1 && migrated.techniques[0] === "sweep",
-  "the legacy `technique` field should migrate into the techniques list",
-);
-assert(
-  migrated.guards.length === 1 && migrated.guards[0] === "brace",
-  "the legacy `guard` field should migrate into the guards list",
-);
-
-// Both shipped renames now resolve to an ability the ability pass CUT (design
-// §22.2): heavy-strike -> expose-weakness, charged-strike -> power-strike. The
-// rename still applies, and the cut id then drops like any unknown one.
-const renamed = normalizeAttunedAbilities({ technique: "heavy-strike", guard: null });
-assert(
-  renamed.techniques.length === 0,
-  "a renamed id that resolves to a cut ability must drop, not survive",
-);
-
-const dirty = normalizeAttunedAbilities({
-  // brace is a GUARD — it must not survive in the techniques list; `sweep`
-  // appears twice and must collapse; `nonsense` does not resolve at all.
-  techniques: ["sweep", "brace", "sweep", "nonsense"],
-  guards: ["cleanse"],
-});
-assert(
-  dirty.techniques.length === 1 && dirty.techniques[0] === "sweep",
-  "normalize should drop slot mismatches, duplicates and unknown ids",
-);
 
 // ── 3. One offensive channel across two Technique slots ──────────────────────
 initCombatSystems();
@@ -141,7 +103,7 @@ applyStatusEffect(player.tracksCombat, {
   data: { totalMs: 60_000 },
 });
 
-fireWithReferenceWiring(world, Date.now());
+fireAbilities(world, Date.now());
 assert(
   player.hasArmedAbility?.abilityId === "sweep",
   "the FIRST Technique in loadout order should win arbitration",
@@ -152,7 +114,7 @@ assert(
 );
 
 // Still armed: the second Technique must not also arm on top of it.
-fireWithReferenceWiring(world, Date.now());
+fireAbilities(world, Date.now());
 assert(
   player.hasArmedAbility?.abilityId === "sweep",
   "a second Technique must never stack on top of an already-armed one",
@@ -160,7 +122,7 @@ assert(
 
 // Consume the charge; Sweep is now cooling, so the second Technique gets its turn.
 world.ecs.removeComponent(player, "hasArmedAbility");
-fireWithReferenceWiring(world, Date.now());
+fireAbilities(world, Date.now());
 assert(
   player.hasArmedAbility?.abilityId === "binding-strike",
   "once the first Technique is cooling, the second should arm",
@@ -177,7 +139,7 @@ assert(
 
 // Next window: the second Guard is free to activate, and both layer.
 updateCombatState(world, 100);
-fireWithReferenceWiring(world, Date.now());
+fireAbilities(world, Date.now());
 const guard1After = getStatusEffect(player.tracksCombat, guardEffectIdForAbility("endure")!);
 assert(
   !!guard1After,

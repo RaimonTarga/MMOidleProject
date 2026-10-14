@@ -8,7 +8,7 @@ import { GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment } from "@mmo-idle/shared"
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
-import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import { World } from "../src/world/World";
 
 function assert(condition: unknown, message: string): void {
@@ -16,6 +16,7 @@ function assert(condition: unknown, message: string): void {
 }
 
 function makePlayerSlices(): PersistedPlayerSlices {
+  giveAbilities("telegraph-player", ["sweep", "brace"]);
   return {
     isPlayer: { id: "telegraph-player", name: "Telegraph" },
     hasPosition: {
@@ -44,8 +45,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: ["sweep", "brace"],
-      attunedAbilities: { techniques: ["sweep"], guards: ["brace"] },
     },
     holdsInventory: {
       inventory: [],
@@ -72,7 +71,7 @@ const target = world.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 
 if (!target) throw new Error("failed to create target");
 
 setAttackTarget(world, player, target.isMonster.id);
-fireWithReferenceWiring(world, Date.now());
+fireAbilities(world, Date.now());
 
 assert(
   player.hasArmedAbility?.abilityId === "sweep",
@@ -105,7 +104,7 @@ assert(
 );
 
 // While the charge is still armed (and cooldowns run), no duplicate telegraphs.
-fireWithReferenceWiring(world, Date.now());
+fireAbilities(world, Date.now());
 const repeat = world.takeNodeEvents("node-5-5");
 assert(
   repeat.every(

@@ -9,8 +9,6 @@ export * from './dungeons';
 export * from './runeDatabase';
 export * from './data/runeTuning';
 export * from './abilities';
-export * from './abilityWiring';
-export * from './abilityRecipes';
 export * from './abilityMagnitudes';
 export * from './passives';
 export * from './components/combat/effects';
@@ -106,7 +104,6 @@ export * from './config/gameConfig';
 export * from './emotes';
 export * from './systems/systemVisibility';
 export * from './tutorial';
-export * from "./attunementMigration";
 
 export * from './systems/onHitDamage';
 export * from './systems/relicPreview';

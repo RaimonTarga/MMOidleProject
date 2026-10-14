@@ -1,6 +1,5 @@
 import {
   emptyEquipment,
-  emptyAttunedAbilities,
   type DeltaSnapshot,
   type NetworkedEntity,
   type SpectatorPlayer,
@@ -23,8 +22,6 @@ function presentationDefaults(projection: SpectatorPlayer): Partial<NetworkedEnt
       visitedNodes: [],
       runesOwned: [],
       runesEquipped: [],
-      knownAbilities: [],
-      attunedAbilities: emptyAttunedAbilities(),
     },
     holdsInventory: {
       inventory: [],

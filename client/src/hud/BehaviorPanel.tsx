@@ -6,7 +6,6 @@ import {
   abilityFiredAtAtom,
   autoAtom,
   autoIntentAtom,
-  attunedAbilitiesAtom,
   partyAtom,
   playerIdAtom,
   playerTierAtom,
@@ -29,7 +28,6 @@ export function BehaviorPanel() {
   const auto = useAtomValue(autoAtom);
   const playerId = useAtomValue(playerIdAtom);
   const party = useAtomValue(partyAtom);
-  const abilities = useAtomValue(attunedAbilitiesAtom);
   const fired = useAtomValue(abilityFiredAtAtom);
   const tier = useAtomValue(playerTierAtom);
   const [expanded, setExpanded] = useAtom(expandedAtom);
@@ -51,7 +49,7 @@ export function BehaviorPanel() {
     party?.members ?? [],
   );
   const active = intent?.activeRune;
-  const action = active ? runeResponse(active, abilities) : null;
+  const action = active ? runeResponse(active) : null;
   const trigger =
     active && active.conditionId !== "always"
       ? CONDITION_DATABASE.get(active.conditionId)

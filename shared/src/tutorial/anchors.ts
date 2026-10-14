@@ -9,7 +9,6 @@ export const TUTORIAL_ANCHORS = {
   menuPassiveTree: 'menu.passive-tree',
   menuInventory: 'menu.inventory',
   menuCrafting: 'menu.crafting',
-  menuAbilities: 'menu.abilities',
   menuRunes: 'menu.runes',
   menuMap: 'menu.map',
   classChoices: 'skills.choices',
@@ -23,23 +22,19 @@ export const TUTORIAL_ANCHORS = {
   inventoryItem: (definitionId: string) => `inventory.item:${definitionId}`,
   /** One equipped slot in the Inventory. */
   equipmentSlot: (slot: string) => `inventory.slot:${slot}`,
-  abilityAttune: (abilityId: string) => `abilities.attune:${abilityId}`,
-  /** "Use default timing" under an attuned ability: adds its reference Rune. */
-  abilityTiming: (abilityId: string) => `abilities.timing:${abilityId}`,
-  // The Rune board, step by step: + Add rule → When → Do (→ ability) → Add rule.
+  // The Rune board, step by step: + Add rule → When → Do → Add rule.
   runesAdd: 'runes.add',
   runesCommit: 'runes.commit',
   runesWhen: (conditionId: string) => `runes.when:${conditionId}`,
   runesDo: (actionId: string) => `runes.do:${actionId}`,
-  runesAbility: (abilityId: string) => `runes.ability:${abilityId}`,
   /** Row controls, keyed by `tutorialRuleKey`. */
   runesUp: (ruleKey: string) => `runes.up:${ruleKey}`,
   runesRemove: (ruleKey: string) => `runes.remove:${ruleKey}`,
 } as const;
 
 /** Stable id for one Rune rule, for row anchors. */
-export function tutorialRuleKey(rule: { conditionId: string; actionId: string; targetAbilityId?: string }): string {
-  return `${rule.conditionId}>${rule.actionId}>${rule.targetAbilityId ?? ''}`;
+export function tutorialRuleKey(rule: { conditionId: string; actionId: string }): string {
+  return `${rule.conditionId}>${rule.actionId}`;
 }
 
 export function tutorialAnchorSelector(anchor: string): string {

@@ -8,7 +8,6 @@ import {
   TEST_ROOM_NODE_ID,
   essenceLabel,
   ITEM_DATABASE,
-  abilityDef,
   relicRatingsFromPassives, relicRatingsFromEffects,
   resolveRelicComparison,
 } from '@mmo-idle/shared';
@@ -29,7 +28,6 @@ import {
   entryAffordable,
   KIND_ORDER,
   MAKE_KIND_LABELS,
-  TECHNIQUE_KINDS,
   type MakeEntry,
   type MakeKind,
 } from './makeEntries';
@@ -38,10 +36,6 @@ import { eligibleMakeKeys, useMakeEntries, useUnlockedMakeKinds } from './useMak
 import { GameIcon } from '../GameIcon';
 import { makeKindIconSource } from '../systemIcons';
 import { ItemIcon } from '../ItemIcon';
-import { BuildIcon } from '../BuildIcon';
-import { abilityIconSource } from '../abilityIcons';
-import { DetailLines } from '../describe/DetailLines';
-import { loadoutLinesFor } from '../describe';
 import { useAbilityContext } from '../describe/useAbilityContext';
 import type { AbilityContext } from '../describe';
 import { makeFiltersAtom } from '../panelFilters';
@@ -117,17 +111,7 @@ function EntryIcon({ entry, size }: { entry: MakeEntry; size: number }) {
     );
   }
 
-  const ability = entry.kind === 'technique' ? abilityDef(entry.learnedId) : null;
-  const conceptIcon = ability ? abilityIconSource(ability) : null;
-  return (
-    <BuildIcon
-      kind="ability"
-      label={entry.name}
-      size={size}
-      muted={!entry.unlocked}
-      icon={conceptIcon}
-    />
-  );
+  return null;
 }
 
 interface CraftResult {
@@ -283,8 +267,7 @@ export function MakeTab() {
   const essences = useAtomValue(essencesAtom);
 
   const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
-  // Techniques deepen with tier and passives, so a recipe quotes what it would
-  // be worth to THIS character rather than its authored baseline.
+  // A relic's preview depends on this character's passives and tier.
   const abilityContext = useAbilityContext();
   const lastAttemptRef = useRef<MakeEntry | null>(null);
   const resultIdRef = useRef(0);
@@ -418,10 +401,6 @@ export function MakeTab() {
         return {
           key: kind,
           dataSlot: kind,
-          // Gear above, learned skills below.
-          divider: index > 0
-            && !TECHNIQUE_KINDS.includes(railKinds[index - 1])
-            && TECHNIQUE_KINDS.includes(kind),
           label: (
             <>
               <KindGlyph kind={kind} size={14} />
@@ -578,16 +557,6 @@ interface MakeDetailProps {
   onAttempt: (run: () => void) => void;
 }
 
-/**
- * What a non-gear recipe would actually give you. Gear already states its stats
- * and mechanic effects; techniques used to offer a
- * blurb and a price, which is not enough to decide whether to spend on one.
- */
-function madeThingLines(entry: MakeEntry, context: AbilityContext) {
-  if (!entry.learnedId) return [];
-  return loadoutLinesFor(entry.learnedId, context);
-}
-
 function MakeDetail({
   entry,
   essences,
@@ -621,12 +590,6 @@ function MakeDetail({
       ...(recipe.slot === 'weapon' ? formatWeaponEffects(recipe.id) : []),
     ]
     : [];
-
-  // Each recipe kind has its own server intent; the browser is one surface over
-  // several authoritative databases, not one database.
-  function learnIntent() {
-    if (entry.kind === 'technique') hudBus.requestCraftAbilityRecipe(entry.recipeId);
-  }
 
   const blocked = !entry.unlocked
     ? entry.unlockHint || 'Not unlocked yet'
@@ -669,13 +632,6 @@ function MakeDetail({
         </ul>
       )}
 
-      {/* Non-gear recipes: what learning this would actually give you, at your
-          current tier and passives. */}
-      <DetailLines
-        className="make-detail__lines"
-        lines={madeThingLines(entry, abilityContext)}
-      />
-
       <div className="make-detail__cost-label">Cost</div>
       <CostDisplay
         cost={entry.cost}
@@ -700,10 +656,9 @@ function MakeDetail({
           data-tutorial-anchor={TUTORIAL_ANCHORS.makeAction}
           onClick={() => onAttempt(() => {
             if (recipe) hudBus.requestCraftRecipe(recipe.id);
-            else learnIntent();
           })}
         >
-          {recipe ? 'Craft' : 'Learn'}
+          Craft
         </button>
         {blocked && <span className="make-detail__blocked">{blocked}</span>}
       </div>

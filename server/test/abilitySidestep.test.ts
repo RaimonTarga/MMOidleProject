@@ -15,14 +15,12 @@
  */
 import {
   ABILITY_DATABASE,
-  ABILITY_RECIPE_DATABASE,
   ABILITY_SIDESTEP_EFFECT_ID,
   GAME_CONFIG,
   STARTER_RUNE_IDS,
   baseRecoveryForTier,
   emptyEquipment,
   getStatusEffect,
-  referenceAbilityRule,
   sidestepWindow,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
@@ -32,10 +30,10 @@ import { setAttackTarget } from '../src/systems/combat/ai/targeting';
 import { updateCombatState } from '../src/systems/combat/engine/combatState';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { evasionWindowBonus } from '../src/systems/defense/mitigation/evasion';
-import { requestManualAbilityUse } from '../src/systems/player/abilities/abilityFiring';
+import { fireGuard } from '../src/systems/player/abilities/abilityFiring';
 import { setEntityMotion, updateMovement } from '../src/systems/world/movement';
 import { World } from '../src/world/World';
-import { fireWithReferenceWiring } from './fixtures/abilityWiring';
+import { fireAbilities, giveAbilities } from './fixtures/fireAbilities';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -44,6 +42,7 @@ function assert(condition: unknown, message: string): void {
 const SIDESTEP = ABILITY_DATABASE.get('sidestep')!;
 
 function slices(id: string): PersistedPlayerSlices {
+  giveAbilities(id, ['sidestep']);
   return {
     isPlayer: { id, name: id },
     hasPosition: { current: { x: 400, y: 400 }, nodeId: 'node-5-5', speed: GAME_CONFIG.PLAYER_SPEED },
@@ -55,7 +54,6 @@ function slices(id: string): PersistedPlayerSlices {
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier: 1, currentSkillTier: 1, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
-      knownAbilities: ['sidestep'], attunedAbilities: { techniques: [], guards: ['sidestep'] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {
@@ -86,11 +84,6 @@ initCombatSystems();
 {
   assert(SIDESTEP.slot === 'guard' && SIDESTEP.shape === 'instant' && SIDESTEP.tier === 1,
     'Sidestep is a T1 instant Guard');
-  const recipe = [...ABILITY_RECIPE_DATABASE.values()].find((r) => r.abilityId === 'sidestep');
-  assert(recipe?.recipeGroup === 'forest' && recipe.requiredBiomeLevel === 5 && recipe.tier === 1,
-    'Sidestep is learned at Forest 5');
-  assert(recipe!.cost.green !== undefined, "Sidestep's recipe is paid in the Forest's own essence colour");
-  assert(referenceAbilityRule('sidestep')?.conditionId === 'in-combat', 'Sidestep is wired In Combat -> Use Ability');
   for (const rank of SIDESTEP.ranks) {
     assert(Object.keys(rank.effect).join() === 'kind', 'the rank authors only its shape — no magnitude');
   }
@@ -108,7 +101,7 @@ initCombatSystems();
   const monster = world.createMonster('node-5-5', 'plains-slime', { x: 430, y: 400 })!;
   setAttackTarget(world, player, monster.isMonster.id);
   assert(evasionWindowBonus(player.tracksCombat) === 0, 'no window before firing');
-  fireWithReferenceWiring(world, 1_000);
+  fireAbilities(world, 1_000);
   const status = getStatusEffect(player.tracksCombat, ABILITY_SIDESTEP_EFFECT_ID);
   assert(!!status, 'Sidestep must open its window');
   const window = sidestepWindow(SIDESTEP, 1);
@@ -128,7 +121,7 @@ initCombatSystems();
   const monster = world.createMonster('node-5-5', 'plains-slime', { x: 430, y: 400 })!;
   setAttackTarget(world, player, monster.isMonster.id);
   const base = stride(world, player, 1_000);
-  fireWithReferenceWiring(world, 1_100);
+  fireAbilities(world, 1_100);
   assert(!!getStatusEffect(player.tracksCombat, ABILITY_SIDESTEP_EFFECT_ID), 'the window must be open');
   const burst = stride(world, player, 1_200);
   const { moveSpeedPct, durationMs } = sidestepWindow(SIDESTEP, 1);
@@ -146,17 +139,17 @@ initCombatSystems();
 {
   const { world, player } = spawn('sidestep-empty');
   // Out of combat: no monster anywhere, so neither the rule nor a press fires it.
-  fireWithReferenceWiring(world, 1_000);
+  fireAbilities(world, 1_000);
   assert(getStatusEffect(player.tracksCombat, ABILITY_SIDESTEP_EFFECT_ID) === undefined,
     'Sidestep must not fire out of combat');
-  const pressed = requestManualAbilityUse(world, player, 'sidestep', 1_000);
-  assert(getStatusEffect(player.tracksCombat, ABILITY_SIDESTEP_EFFECT_ID) === undefined && pressed.state !== 'activated',
-    'a manual press with nothing in reach must not spend it either');
+  const fired = fireGuard(world, player, 'sidestep');
+  assert(getStatusEffect(player.tracksCombat, ABILITY_SIDESTEP_EFFECT_ID) === undefined && !fired,
+    'firing it directly with nothing in reach must not spend it either');
   assert((player.tracksCombat.cooldowns['ability.cd.sidestep'] ?? 0) <= 0, 'a declined Sidestep keeps its cooldown');
 
   // A monster far outside reach is still nothing to dodge.
   world.createMonster('node-5-5', 'plains-slime', { x: 2_000, y: 400 });
-  requestManualAbilityUse(world, player, 'sidestep', 1_100);
+  fireGuard(world, player, 'sidestep');
   assert(getStatusEffect(player.tracksCombat, ABILITY_SIDESTEP_EFFECT_ID) === undefined,
     'a monster out of reach does not open the window');
 }

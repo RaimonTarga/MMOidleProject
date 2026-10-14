@@ -10,8 +10,6 @@ function assert(condition: boolean, message: string): void {
 const FRESH: SystemVisibilityInput = {
   playerTier: 0,
   globalMastery: 0,
-  knownAbilities: [],
-  attunedAbilities: { techniques: [], guards: [] },
   essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
   // Fresh characters own starter rune fragments, so Loadout is intentionally
   // present from boot under the existing ownership rule.
@@ -80,16 +78,6 @@ assert(!masteryZero.mastery, "player tier alone should not reveal mastery");
 const masteryOne = resolveSystemVisibility({ ...FRESH, globalMastery: 1 });
 assert(masteryOne.mastery, "global mastery 1 should reveal mastery");
 
-const tierWithoutAbility = resolveSystemVisibility({ ...FRESH, playerTier: 3 });
-assert(!tierWithoutAbility.abilities, "player tier alone should not reveal abilities");
-assert(!tierWithoutAbility.abilityDock, "player tier alone should not reveal the ability dock");
-const craftedAbility = resolveSystemVisibility({
-  ...FRESH,
-  knownAbilities: ["sweep"],
-});
-assert(craftedAbility.abilities, "crafting an ability should reveal abilities");
-assert(craftedAbility.abilityDock, "crafting an ability should reveal the ability dock");
-
 const tierOne = resolveSystemVisibility({ ...FRESH, playerTier: 1 });
 for (const system of [
   "combatLog",
@@ -104,7 +92,7 @@ for (const system of [
 ] as const) {
   assert(tierOne[system], `tier 1 should retain the existing '${system}' fallback`);
 }
-for (const system of ["crafting", "mastery", "abilities", "abilityDock"] as const) {
+for (const system of ["crafting", "mastery"] as const) {
   assert(!tierOne[system], `tier 1 should not bypass the '${system}' milestone`);
 }
 
@@ -112,7 +100,6 @@ for (const system of ["crafting", "mastery", "abilities", "abilityDock"] as cons
 const ownershipCases: Array<
   [string, Partial<SystemVisibilityInput>, keyof typeof fresh]
 > = [
-  ["has an ability equipped", { attunedAbilities: { techniques: ["sweep"], guards: [] } }, "abilities"],
   ["has unlocked recipes", { unlockedRecipes: ["crude-dagger"] }, "materials"],
   ["has allocated passives", { passives: { "defense.evade": 1 } }, "passiveTree"],
   ["has an unspent skill point", { skillPoints: 1 }, "passiveTree"],

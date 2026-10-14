@@ -1,4 +1,3 @@
-import { migrateAttunement, attunedAbilityIds } from "@mmo-idle/shared";
 import {
   DEFAULT_AUTOCOMBAT_CONFIG,
   GAME_CONFIG,
@@ -24,8 +23,6 @@ export function attachPlayerEntity(
   player: PersistedPlayerSlices,
   socketId: string,
 ): PlayerEntity {
-  Object.assign(player.tracksProgression, migrateAttunement(player.tracksProgression));
-  delete (player.tracksProgression as unknown as { equippedAbilities?: unknown }).equippedAbilities;
   player.tracksProgression.runesOwned = runeIdsForArchetype(player.usesSkills.combatArchetype);
   const owned = new Set(player.tracksProgression.runesOwned);
   const persistedRules = Array.isArray(player.tracksProgression.runesEquipped)
@@ -35,7 +32,6 @@ export function attachPlayerEntity(
     persistedRules,
     owned,
     player.usesSkills.combatArchetype,
-    new Set(attunedAbilityIds(player.tracksProgression.attunedAbilities)),
   );
   player.tracksProgression.runesEquipped = sanitizedRules;
 

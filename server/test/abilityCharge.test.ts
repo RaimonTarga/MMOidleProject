@@ -23,7 +23,7 @@ import {
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
-import { fireAbilities, fireWithReferenceWiring, wireReferenceAbilities } from "./fixtures/abilityWiring";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import { attachComponent } from "../src/ecs/markerHelpers";
 import { updateAbilityCasts, updateAbilityCharges } from "../src/systems/player/abilities/abilityCasting";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
@@ -35,6 +35,7 @@ function assert(condition: unknown, message: string): void {
 }
 
 function makePlayerSlices(id: string): PersistedPlayerSlices {
+  giveAbilities(id, ["charge"]);
   return {
     isPlayer: { id, name: "Charger" },
     hasPosition: {
@@ -62,8 +63,6 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: ["charge"],
-      attunedAbilities: { techniques: ["charge"], guards: [] },
     },
     holdsInventory: {
       inventory: [],
@@ -100,7 +99,7 @@ setAttackTarget(world, player, target.isMonster.id);
 
 const distBefore = distanceSq(player.hasPosition.current, target.hasPosition.current);
 const t0 = 1_000_000;
-fireWithReferenceWiring(world, t0);
+fireAbilities(world, t0);
 
 assert(
   player.isCastingAbility?.abilityId === "charge",
@@ -146,22 +145,21 @@ assert(
   "contact at the end of Charge should arm its empowered landing strike",
 );
 
-// ── 4. World tick wiring starts the cast and hands it into movement ───────────
+// ── 4. World tick advances a fired Charge's cast into movement ────────────────
 const wiredWorld = new World();
 const wiredPlayer = wiredWorld.attachPlayerEntity(
   makePlayerSlices("charge-wired-player"),
   "charge-wired-player",
 );
 wiredPlayer.usesAutocombat.auto = true;
-wireReferenceAbilities(wiredPlayer);
 const wiredTarget = wiredWorld.createMonster("node-5-5", "plains-slime", { x: 360, y: 400 });
 if (!wiredTarget) throw new Error("failed to create wired Charge target");
 setAttackTarget(wiredWorld, wiredPlayer, wiredTarget.isMonster.id);
 
-wiredWorld.tick(0, t0);
+fireAbilities(wiredWorld, t0);
 assert(
   wiredPlayer.isCastingAbility?.abilityId === "charge",
-  "World.tick should start Charge's cast lifecycle",
+  "firing Charge should start its cast lifecycle",
 );
 wiredWorld.tick(0, t0 + CAST_MS);
 assert(
@@ -182,7 +180,7 @@ const bystander = world2.createMonster("node-5-5", "plains-slime", { x: 1400, y:
 if (!bystander) throw new Error("failed to create bystander");
 
 const posBefore = { ...player2.hasPosition.current };
-fireWithReferenceWiring(world2, Date.now());
+fireAbilities(world2, Date.now());
 
 assert(
   player2.hasPosition.current.x === posBefore.x &&
@@ -209,37 +207,33 @@ const adjacent = world3.createMonster("node-5-5", "plains-slime", { x: 215, y: 4
 if (!adjacent) throw new Error("failed to create adjacent monster");
 setAttackTarget(world3, player3, adjacent.isMonster.id);
 
-fireWithReferenceWiring(world3, Date.now());
+fireAbilities(world3, Date.now());
 assert(
   getCooldown(player3.tracksCombat, abilityCooldownKey("charge")) === 0,
   "Charge must not fire at a target that is already in contact",
 );
 
-// ── 7. A conditioned rule fires Charge from contact ──────────────────────────
-// The gap gate stands in for the condition `Always` lacks. `Empowered Ready ->
-// Charge` picked its own moment, so it must fire at melee range and land the
-// strike rider (regression: the gate briefly applied to every rule).
+// ── 7. A caller that picks its moment fires Charge from contact ───────────────
+// The gap gate stands in for a missing moment. `chargeAtAnyRange` is a caller
+// that picked its own (an opener on the empowered hit, say), so Charge must fire
+// at melee range and land the strike rider.
 const world4 = new World();
 const player4 = world4.attachPlayerEntity(
   makePlayerSlices("charge-player-4"),
   "charge-player-4",
 );
 player4.usesAutocombat.auto = true;
-player4.tracksProgression.runesEquipped = [
-  { conditionId: "before-empowered", actionId: "use-ability", targetAbilityId: "charge" },
-];
 const adjacent4 = world4.createMonster("node-5-5", "plains-slime", { x: 215, y: 400 });
 if (!adjacent4) throw new Error("failed to create adjacent monster");
 setAttackTarget(world4, player4, adjacent4.isMonster.id);
 
 const t4 = 2_000_000;
 fireAbilities(world4, t4);
-assert(!player4.isCastingAbility, "Empowered Ready -> Charge must wait for the empowered attack");
-attachComponent(world4, player4, "hasEmpoweredAttack", {});
-fireAbilities(world4, t4);
+assert(!player4.isCastingAbility, "the gap gate keeps Charge off a target already in contact");
+fireAbilities(world4, t4, { chargeAtAnyRange: true });
 assert(
   player4.isCastingAbility?.abilityId === "charge",
-  "Empowered Ready -> Charge must fire at a target already in contact",
+  "Charge at any range must fire at a target already in contact",
 );
 updateAbilityCasts(world4, t4 + CAST_MS);
 updateAbilityCharges(world4, t4 + CAST_MS);

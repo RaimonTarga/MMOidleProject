@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { tierEntryProfileFromT1Snapshot, CLEARING_NODE_ID, GAME_CONFIG, SKILL_TREE, emptyEquipment, emptyAttunedAbilities, type T1CharacterSnapshot } from '@mmo-idle/shared';
+import { tierEntryProfileFromT1Snapshot, CLEARING_NODE_ID, GAME_CONFIG, SKILL_TREE, emptyEquipment, type T1CharacterSnapshot } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { World } from '../src/world/World';
 import { applyTierEntryProfile } from '../src/admin/gameActions';
@@ -43,8 +43,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
       visitedNodes: [],
       runesOwned: [],
       runesEquipped: [],
-      knownAbilities: [],
-      attunedAbilities: emptyAttunedAbilities(),
     },
     holdsInventory: {
       inventory: [],
@@ -144,7 +142,7 @@ original.usesSkills={unlockedSkills:['summoner-root'],selectedClass:'summoner-ro
 // Rune ownership follows the class (`runeIdsForArchetype`), as `unlockSkill` sets it.
 original.tracksProgression.runesOwned=runeIdsForArchetype('summoner');
 original.tracksProgression.playerTier=3;original.tracksProgression.currentSkillTier=1;original.tracksProgression.skillPoints=2;
-original.tracksProgression.runesEquipped=[];original.tracksProgression.attunedAbilities={techniques:[],guards:[]};
+original.tracksProgression.runesEquipped=[];
 syncArchetypeSlices(world,original);recalculatePlayerEntityStats(world,original);syncArchetypeSlices(world,original);original.hasHealth.hp=original.hasHealth.maxHp;refillBarrier(world,original);
 original.summonsMinions!.bondCharge=42;
 const summoned=captureProgressionCheckpoint(world,original,'summoner');

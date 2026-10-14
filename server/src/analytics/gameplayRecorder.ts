@@ -6,7 +6,7 @@ import { canUnlockEntitySkill } from '../ecs/playerEntityFormulas';
 import { CONDUIT_ENABLED } from '../env';
 
 const DECISIONS_WITHOUT_BUILD_CHANGE = new Set([
-  'craft', 'craft-ability', 'upgrade', 'navigate', 'navigate-neighbor',
+  'craft', 'upgrade', 'navigate', 'navigate-neighbor',
 ]);
 
 /** Explicit projection: never serialize an entity, socket payload, actor or account. */
@@ -18,8 +18,7 @@ export function gameplayBuild(p: PlayerEntity): GameplayBuild {
     stats: { maxHp: p.hasHealth.maxHp, attack: p.dealsDamage.attack, attackRange: p.performsAttack.attackRange, attackCooldown: p.performsAttack.attackCooldown, plating: p.mitigatesDamage.plating, damageReduction: p.mitigatesDamage.damageReduction },
     skills: [...p.usesSkills.unlockedSkills],
     equipment: Object.entries(p.holdsInventory.equipment).flatMap(([slot, itemId]) => itemId ? [{ slot, itemId, upgrade: p.holdsInventory.itemUpgrades[itemId] ?? 0 }] : []),
-    techniques: [...p.tracksProgression.attunedAbilities.techniques], guards: [...p.tracksProgression.attunedAbilities.guards],
-    runes: p.tracksProgression.runesEquipped.map(r => ({ conditionId: r.conditionId, actionId: r.actionId, targetAbilityId: r.targetAbilityId, waitOutMode: r.waitOutMode })),
+    runes: p.tracksProgression.runesEquipped.map(r => ({ conditionId: r.conditionId, actionId: r.actionId, waitOutMode: r.waitOutMode })),
     auto: p.usesAutocombat.auto, autoTraverse: p.usesAutocombat.autoTraverse,
     priorityMode: p.usesAutocombat.priorityMode, acquireRadius: p.usesAutocombat.acquireRadius,
     focusLeaderTarget: p.usesAutocombat.focusLeaderTarget,
@@ -99,7 +98,7 @@ export class GameplayRecorder {
       before: gameplayBuild(p),
       availableSkills: [...SKILL_TREE.keys()].filter(id => (id !== 'summoner-root' || CONDUIT_ENABLED) && canUnlockEntitySkill(p, id).ok),
       ownedItems: [...p.holdsInventory.inventory], availableRecipes: [...p.tracksProgression.unlockedRecipes],
-      knownAbilities: [...p.tracksProgression.knownAbilities], knownRunes: [...p.tracksProgression.runesOwned],
+      knownRunes: [...p.tracksProgression.runesOwned],
       skillPoints: p.tracksProgression.skillPoints,
     };
   }

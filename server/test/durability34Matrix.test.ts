@@ -1,4 +1,4 @@
-import { MONSTER_DATABASE, NODE_BIOMES, ABILITY_DATABASE, referenceAbilityRule } from '@mmo-idle/shared';
+import { MONSTER_DATABASE, NODE_BIOMES, ABILITY_DATABASE } from '@mmo-idle/shared';
 import {
   DURABILITY34_BLOCKS,
   DURABILITY34_GUARD_ARMS,
@@ -85,10 +85,6 @@ assertDurability34Definitions();
     assert(cell.targetTypes.includes('ridge-archer'), 'archer exposure required');
   }
 
-  // Neither guard reacts to a cast by default; both fire in combat off cooldown.
-  // The packet's framing depends on that staying true.
-  assert(referenceAbilityRule('brace')?.conditionId === 'in-combat', 'Brace is not a cast response by default');
-  assert(referenceAbilityRule('second-wind')?.conditionId === 'in-combat', 'Second Wind is not a cast response by default');
 }
 
 // ── Overlay: HP only, restored on every path; Block M overlays nothing.

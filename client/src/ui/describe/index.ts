@@ -1,7 +1,4 @@
-import {
-  abilityDef,
-  type AbilityDef,
-} from '@mmo-idle/shared';
+import type { AbilityDef } from '@mmo-idle/shared';
 import type { IconSource } from '../GameIcon';
 import { describeAbility, type AbilityContext } from './abilityText';
 import { passiveLines } from './passiveText';
@@ -104,13 +101,4 @@ export function abilityLines(
       value: line.text,
     })),
   ];
-}
-
-/**
- * Lines for any loadout id, whichever system owns it. Lets one browser explain
- * a loadout entry without knowing which system it belongs to.
- */
-export function loadoutLinesFor(id: string, context: AbilityContext): DetailLine[] {
-  const ability = abilityDef(id);
-  return ability ? abilityLines(ability, context) : [];
 }

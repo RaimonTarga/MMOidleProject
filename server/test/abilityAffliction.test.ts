@@ -20,7 +20,6 @@ import {
   applyStatusEffect,
   weaponDotProfileForWeapon,
   emptyEquipment,
-  emptyAttunedAbilities,
   getStatusEffect,
   resolveAbilityEffect,
 } from "@mmo-idle/shared";
@@ -38,7 +37,7 @@ import {
   resolveDetonate,
 } from "../src/systems/player/abilities/abilityAffliction";
 import { updateAbilityCasts } from "../src/systems/player/abilities/abilityCasting";
-import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import { STUN_EFFECT } from "../src/systems/combat/status/stun";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
 import { applyImbueWindow } from "../src/systems/player/abilities/abilityImbue";
@@ -56,6 +55,7 @@ function assert(condition: unknown, message: string): void {
 const NODE = "node-5-5";
 
 function makePlayerSlices(id: string, techniques: string[]): PersistedPlayerSlices {
+  giveAbilities(id, techniques);
   return {
     isPlayer: { id, name: "Afflictor" },
     hasPosition: {
@@ -83,11 +83,6 @@ function makePlayerSlices(id: string, techniques: string[]): PersistedPlayerSlic
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: [...techniques],
-      attunedAbilities: {
-        ...emptyAttunedAbilities(),
-        techniques: [...techniques],
-      },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {
@@ -390,7 +385,7 @@ console.log("affliction: Contagion's target cap follows the authored rank");
   player.usesAutocombat.auto = true;
   world.takeNodeEvents(NODE);
 
-  fireWithReferenceWiring(world, 2_000_000);
+  fireAbilities(world, 2_000_000);
   assert(player.hasArmedAbility?.abilityId === "contagion", "Contagion must ARM the next attack");
   assert(player.isCastingAbility === undefined, "an armed Contagion must not wind up");
   assert(
@@ -421,7 +416,7 @@ console.log("affliction: Contagion arms the next hit and that hit spreads");
   spawn(world, 450, 400);
   setAttackTarget(world, player, clean.isMonster.id);
   player.usesAutocombat.auto = true;
-  fireWithReferenceWiring(world, 2_000_000);
+  fireAbilities(world, 2_000_000);
   assert(player.hasArmedAbility === undefined, "an unafflicted target must not arm Contagion");
   assert(
     (player.tracksCombat.cooldowns["ability.cd.contagion"] ?? 0) <= 0,
@@ -452,7 +447,7 @@ console.log("affliction: armed Contagion declines with nothing to spread");
   runPlayerAttack(world, player, primary, 2_000_000, attackOpts);
   const owed = getStatusEffect(primary.tracksCombat, profile!.effectId);
   assert(!!owed && (owed.data["pool"] ?? 0) > 0, "the dagger's hit must fill its reservoir");
-  fireWithReferenceWiring(world, 2_000_100);
+  fireAbilities(world, 2_000_100);
   assert(player.hasArmedAbility?.abilityId === "contagion", "Contagion arms against the poisoned target");
   runPlayerAttack(world, player, primary, 2_001_000, attackOpts);
   const spread = getStatusEffect(neighbour.tracksCombat, profile!.effectId);
@@ -587,7 +582,7 @@ console.log("affliction: Detonate ships element + crit styling to the client");
 
   setAttackTarget(world, player, target.isMonster.id);
   player.usesAutocombat.auto = true;
-  fireWithReferenceWiring(world, 2_000_000);
+  fireAbilities(world, 2_000_000);
 
   const start = world
     .takeNodeEvents(NODE)
@@ -802,7 +797,7 @@ console.log("affliction: Imbue Lightning projects a charge-counting buff tile");
   setAttackTarget(world, player, target.isMonster.id);
   player.usesAutocombat.auto = true;
   world.takeNodeEvents(NODE);
-  fireWithReferenceWiring(world, 3_000_000);
+  fireAbilities(world, 3_000_000);
   assert(player.isCastingAbility === undefined, "an instant Imbue must not wind up");
   assert(getStatusEffect(player.tracksCombat, ABILITY_IMBUE_EFFECT_ID) !== undefined,
     "the charge window opens on activation");

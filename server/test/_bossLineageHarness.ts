@@ -32,8 +32,7 @@ export function playerSlices(id: string, x: number, y: number, hp = 1_000_000, n
       biomeXP: {}, biomeLevel: {},
       unlockedRecipes: [], questProgress: {}, playerTier: 0, currentSkillTier: 0,
       bossesCleared: [], clearedNodes: [], runesOwned: [...STARTER_RUNE_IDS],
-      runesEquipped: [], knownAbilities: [],
-      attunedAbilities: { techniques: [], guards: [] },
+      runesEquipped: [], 
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {

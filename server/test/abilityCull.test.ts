@@ -13,14 +13,12 @@
  */
 import {
   ABILITY_DATABASE,
-  ABILITY_RECIPE_DATABASE,
   GAME_CONFIG,
   STARTER_RUNE_IDS,
   abilityRankAt,
   baseRecoveryForTier,
   emptyEquipment,
   getCooldown,
-  referenceAbilityRule,
   resolveAbilityEffect,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
@@ -32,7 +30,7 @@ import { updateAbilityCasts } from '../src/systems/player/abilities/abilityCasti
 import { abilityCooldownKey } from '../src/systems/player/abilities/abilityCooldowns';
 import { cullMultiplier } from '../src/systems/player/abilities/abilityEffects';
 import { World } from '../src/world/World';
-import { fireWithReferenceWiring } from './fixtures/abilityWiring';
+import { fireAbilities, giveAbilities } from './fixtures/fireAbilities';
 
 function assert(condition: unknown, message: string): void {
   if (!condition) throw new Error(message);
@@ -41,6 +39,7 @@ function assert(condition: unknown, message: string): void {
 const CULL = ABILITY_DATABASE.get('cull')!;
 
 function slices(id: string): PersistedPlayerSlices {
+  giveAbilities(id, ['cull']);
   return {
     isPlayer: { id, name: id },
     hasPosition: { current: { x: 400, y: 400 }, nodeId: 'node-5-5', speed: GAME_CONFIG.PLAYER_SPEED },
@@ -52,7 +51,6 @@ function slices(id: string): PersistedPlayerSlices {
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier: 3, currentSkillTier: 3, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
-      knownAbilities: ['cull'], attunedAbilities: { techniques: ['cull'], guards: [] },
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {
@@ -84,7 +82,7 @@ function monsterAt(world: World, x: number, hp: number, maxHp = 10_000): Monster
 /** Begin Cull through its reference wiring and run the wind-up to resolution. */
 function castCull(world: World, player: ReturnType<typeof spawn>['player'], target: MonsterEntity, now: number): void {
   setAttackTarget(world, player, target.isMonster.id);
-  fireWithReferenceWiring(world, now);
+  fireAbilities(world, now);
   assert(player.isCastingAbility?.abilityId === 'cull', 'Cull must begin its wind-up');
   updateAbilityCasts(world, player.isCastingAbility!.endsAt);
   assert(player.isCastingAbility === undefined, 'the wind-up must resolve');
@@ -92,14 +90,9 @@ function castCull(world: World, player: ReturnType<typeof spawn>['player'], targ
 
 initCombatSystems();
 
-// ── 1. A T3 Tundra cast on an execute curve, wired In Combat ─────────────────
+// ── 1. A T3 cast on an execute curve ────────────────────────────────────────
 {
   assert(CULL.slot === 'technique' && CULL.shape === 'cast' && CULL.tier === 3, 'Cull is a T3 cast Technique');
-  const recipe = [...ABILITY_RECIPE_DATABASE.values()].find((r) => r.abilityId === 'cull');
-  assert(recipe?.recipeGroup === 'tundra' && recipe.requiredBiomeLevel === 3 && recipe.tier === 3,
-    'Cull is learned at Tundra 3');
-  assert(recipe!.cost.blue !== undefined, "Cull's recipe is paid in the Tundra's own essence colour");
-  assert(referenceAbilityRule('cull')?.conditionId === 'in-combat', 'Cull is wired In Combat -> Use Ability');
   for (const tier of [3, 4]) {
     assert(abilityRankAt(CULL, tier).effect.kind === 'execute-strike', 'every rank is the execute curve');
   }
@@ -164,7 +157,7 @@ initCombatSystems();
   // Ready again at once: the next body can be culled on the very next decision.
   const next = monsterAt(world, 440, 10_000);
   setAttackTarget(world, player, next.isMonster.id);
-  fireWithReferenceWiring(world, 2_000);
+  fireAbilities(world, 2_000);
   assert(player.isCastingAbility?.abilityId === 'cull', 'a refunded Cull winds up again immediately');
 }
 

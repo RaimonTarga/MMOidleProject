@@ -47,16 +47,9 @@ export const RUNE_CAREFUL_PULLING_FLAG = "rune.carefulPulling";
 export const RUNE_AVOID_ENEMIES_FLAG = "rune.avoidEnemies";
 export const RUNE_FIGHT_BACK_WHILE_TRAVELING_FLAG = "rune.fightBackWhileTraveling";
 export const RUNE_EVADE_TELEGRAPH_FLAG = "rune.evadeTelegraph";
-/** Abilities evolution §7: the same, for the SECOND slot of each kind. */
 
 // Presentation consumes the exact fold result, never a second evaluation after combat.
 // Weak ownership keeps this tick-local data out of persistence and releases departed players.
-const abilityDecisions = new WeakMap<PlayerEntity, string[]>();
-export function getAbilityRuneTargets(player: PlayerEntity): readonly string[] { return abilityDecisions.get(player) ?? []; }
-const timedAbilityDecisions = new WeakMap<PlayerEntity, string[]>();
-/** Active ability targets fired by a rule with a real condition (not `Always`). */
-export function getTimedAbilityRuneTargets(player: PlayerEntity): readonly string[] { return timedAbilityDecisions.get(player) ?? []; }
-
 const runeDecisions = new WeakMap<PlayerEntity, RuneTraceRule[]>();
 export function getRuneDecisions(player: PlayerEntity): RuneTraceRule[] {
   return runeDecisions.get(player) ?? [];
@@ -137,32 +130,6 @@ function inMeleeContact(
   return reachGap(playerBox, posHitboxFromEntity(monster)) <= reach + MELEE_CONTACT_SLACK_PX;
 }
 
-/**
- * A living owned summon in the owner's node targets a live monster there, or is
- * targeted by one. Summon aggro never counts toward the owner's `aggroCount`:
- * summons taking hits is not pressure on the player's body.
- */
-function summonsInCombat(world: World, player: PlayerEntity): boolean {
-  const ids = player.summonsMinions?.minionIds;
-  if (!ids?.length) return false;
-  const nodeId = player.hasPosition.nodeId;
-  const living = new Set<string>();
-  for (const id of ids) {
-    const minion = world.getMinionEntity(id);
-    if (!minion || minion.isMinion.ownerPlayerId !== player.isPlayer.id
-      || minion.hasHealth.hp <= 0 || minion.hasPosition.nodeId !== nodeId) continue;
-    living.add(id);
-    const targetId = minion.hasAttackTarget?.targetId;
-    const target = targetId ? world.getMonsterEntity(targetId) : undefined;
-    if (target && target.hasHealth.hp > 0 && target.hasPosition.nodeId === nodeId) return true;
-  }
-  for (const monster of world.aggroedMonsters) {
-    if (monster.hasAggroTarget.targetKind === "minion" && living.has(monster.hasAggroTarget.targetId)
-      && monster.hasHealth.hp > 0 && monster.hasPosition.nodeId === nodeId) return true;
-  }
-  return false;
-}
-
 /** Summoner with at most half of its target summon count alive in its node. */
 function formationBroken(world: World, player: PlayerEntity): boolean {
   const summons = player.summonsMinions;
@@ -228,7 +195,6 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
         (heatManagementState(player) === "requested" && heatEngagementTargets(world, player).size > 0),
       activelyEngaged: isPlayerActivelyInCombat(world, player) ||
         (heatManagementState(player) === "requested" && heatEngagementTargets(world, player).size > 0),
-      summonsInCombat: summonsInCombat(world, player),
       formationBroken: formationBroken(world, player),
       inParty: player.inParty !== undefined,
       aggroCount: currentAggroCount,
@@ -277,7 +243,6 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
         channel !== "OOC_MAINTENANCE" && claim ? [{ ...claim.rule }] : []
       ),
       ...d.oocMaintenanceClaims.map((claim) => ({ ...claim.rule })),
-      ...d.abilityRules,
     ]);
     const acquireRadius = d.autoPathEnemy
       ? RUNE_NODE_ACQUIRE_RADIUS
@@ -406,7 +371,5 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
     );
     setFlag(player.tracksCombat, RUNE_EVADE_TELEGRAPH_FLAG, stepBackOwnsMovement);
     recordHeatDecision(world, player, now, getFlag(player.tracksCombat, RUNE_WAIT_IT_OUT_FLAG), getFlag(player.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG));
-    abilityDecisions.set(player, d.abilityTargets);
-    timedAbilityDecisions.set(player, d.timedAbilityTargets);
   }
 }

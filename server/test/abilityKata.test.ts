@@ -23,7 +23,7 @@ import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { updateAbilityCasts } from "../src/systems/player/abilities/abilityCasting";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { KATA_EFFECT_ID } from "../src/systems/player/abilities/abilityKata";
-import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import { World } from "../src/world/World";
 
 function assert(condition: unknown, message: string): void {
@@ -31,6 +31,7 @@ function assert(condition: unknown, message: string): void {
 }
 
 function slices(id: string, weapon: string | null): PersistedPlayerSlices {
+  giveAbilities(id, ["slam"]);
   return {
     isPlayer: { id, name: id },
     hasPosition: { current: { x: 400, y: 400 }, nodeId: "node-5-5", speed: GAME_CONFIG.PLAYER_SPEED },
@@ -42,7 +43,6 @@ function slices(id: string, weapon: string | null): PersistedPlayerSlices {
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier: 4, currentSkillTier: 4, bossesCleared: [], clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
-      knownAbilities: ["slam"], attunedAbilities: { techniques: ["slam"], guards: [] },
     },
     holdsInventory: {
       inventory: weapon ? [weapon] : [],
@@ -96,7 +96,7 @@ initCombatSystems();
   const stacksAfter: number[] = [];
   for (let i = 0; i < 5; i++) {
     setCooldown(player.tracksCombat, abilityCooldownKey("slam"), 0);
-    fireWithReferenceWiring(world, now);
+    fireAbilities(world, now);
     assert(player.isCastingAbility?.abilityId === "slam", `cast ${i + 1} must begin`);
     const before = target.hasHealth.hp;
     now += player.isCastingAbility!.castMs;
@@ -126,7 +126,7 @@ initCombatSystems();
   if (!target) throw new Error("failed to create target");
   target.hasHealth.hp = target.hasHealth.maxHp = 1_000_000;
   setAttackTarget(world, player, target.isMonster.id);
-  fireWithReferenceWiring(world, 1_000);
+  fireAbilities(world, 1_000);
   updateAbilityCasts(world, 1_000 + (player.isCastingAbility?.castMs ?? 0));
   assert(getStatusEffect(player.tracksCombat, KATA_EFFECT_ID) === undefined, "without the Warstaff, Kata never stacks");
 }

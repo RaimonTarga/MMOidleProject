@@ -1,25 +1,13 @@
 import { atom, getDefaultStore } from 'jotai';
 import {
-  ABILITY_RECIPE_DATABASE,
   ITEM_DATABASE,
   RECIPE_DATABASE,
-  ABILITY_DATABASE,
-  ACTION_DATABASE,
-  CONDITION_DATABASE,
   TUTORIAL_ANCHORS,
-  abilityDisplayName,
-  abilityLoadoutFor,
-  attunedAbilityIds,
-  composeRuneEdit,
   evaluateTutorialCondition,
-  referenceAbilityRule,
-  tutorialRuleKey,
   bossClearKey,
   nextStepOf,
   tutorialNodeFor,
   viewHasItem,
-  wiredRunes,
-  type EquippedRule,
   type PlayerView,
   type TutorialBeat,
   type TutorialNodeRef,
@@ -29,8 +17,6 @@ import {
 import { playSfx } from '../audio/audioEngine';
 import { hudBus } from '../hudBus';
 import {
-  buildOpenAtom,
-  buildPanelTabAtom,
   clearDeathOverlay,
   deathOverlayAtom,
   dungeonAtom,
@@ -39,7 +25,7 @@ import {
 import { closePrimaryOverlays, openPrimaryOverlay } from '../input/overlayStack';
 import { bfsPath } from '../ui/map/pathing';
 import { makeFiltersAtom } from '../ui/panelFilters';
-import { tutorialFocusAtom, tutorialHighlightAtom, tutorialPressAtom, tutorialRuneDraftAtom } from './atoms';
+import { tutorialFocusAtom, tutorialHighlightAtom, tutorialPressAtom } from './atoms';
 
 /**
  * The guide's hands (docs/guided-tutorial-plan.md, "Director behavior").
@@ -49,8 +35,7 @@ import { tutorialFocusAtom, tutorialHighlightAtom, tutorialPressAtom, tutorialRu
  * server stays the only authority: a step is finished when the next delta says
  * so, never when the intent is sent. The bot harness performs the same steps
  * (bot/src/route/executor.ts); where it had to learn something the hard way
- * (clear a dungeon's guard before the altar, re-wire abilities after a loadout
- * change) this does the same.
+ * (clear a dungeon's guard before the altar) this does the same.
  */
 
 export type TutorialRunStatus = 'working' | 'waiting' | 'player' | 'stopped' | 'error' | 'dead';
@@ -248,7 +233,7 @@ async function chooseClass(
   await waitAlive(stepPassed(script, beat, step), signal);
 }
 
-/** Open the Make list on one entry and press its button (Craft or Learn). */
+/** Open the Make list on one entry and press its Craft button. */
 async function makeEntry(
   kind: string,
   entryKey: string,
@@ -267,7 +252,7 @@ async function makeEntry(
   requireView();
   await pressPointed(signal);
   press();
-  // Learning something can wake a UI unlock that reshuffles the rail; never
+  // Crafting something can wake a UI unlock that reshuffles the rail; never
   // leave the ring on a button that may be gone by the next frame.
   store.set(tutorialHighlightAtom, null);
 }
@@ -301,207 +286,6 @@ async function equip(definitionId: string, beat: TutorialBeat, signal: AbortSign
   if (!worn) throw new TutorialStop(`${item.name} was not equipped. Press Next to try again.`, 'error');
   // The pressed button now reads Unequip; do not leave the ring on it.
   store.set(tutorialHighlightAtom, null);
-}
-
-async function openBuildTab(tab: 'abilities' | 'runes', anchor: string, signal: AbortSignal): Promise<void> {
-  if (store.get(buildOpenAtom) && store.get(buildPanelTabAtom) === tab) return;
-  closePrimaryOverlays();
-  await point(anchor, signal);
-  store.set(buildPanelTabAtom, tab);
-  store.set(buildOpenAtom, true);
-}
-
-async function sendRunes(rules: EquippedRule[], signal: AbortSignal): Promise<void> {
-  const key = (list: readonly EquippedRule[]) =>
-    JSON.stringify(list.map((r) => [r.conditionId, r.actionId, r.targetAbilityId ?? null]));
-  if (key(requireView().runesEquipped) === key(rules)) return;
-  hudBus.requestSetRuneLoadout(rules);
-  const set = await waitAlive((v) => key(v.runesEquipped) === key(rules), signal, ACTION_TIMEOUT_MS);
-  if (!set) throw new TutorialStop('The Runes did not change. Press Next to try again.', 'error');
-}
-
-/**
- * An ability in the tutorial's running copy: its noun through the one entry point
- * (design §22.7).
- */
-function abilityName(id: string): string {
-  const ability = ABILITY_DATABASE.get(id);
-  if (!ability) return id;
-  const view = store.get(localPlayerViewAtom);
-  return abilityDisplayName(ability, view?.playerTier ?? 0, 'plain');
-}
-
-function ruleLabel(rule: EquippedRule): string {
-  const when = CONDITION_DATABASE.get(rule.conditionId as never)?.name ?? rule.conditionId;
-  const what = rule.actionId === 'use-ability'
-    ? abilityName(rule.targetAbilityId ?? '')
-    : ACTION_DATABASE.get(rule.actionId as never)?.name ?? rule.actionId;
-  return `${when} → ${what}`;
-}
-
-const sameRule = (a: EquippedRule, b: EquippedRule) => tutorialRuleKey(a) === tutorialRuleKey(b);
-
-/**
- * The next ↑ press that brings `current` closer to `target`'s order. The board
- * only reorders within a lane (same channel), exactly like its arrows.
- */
-function nextUpMove(current: readonly EquippedRule[], target: readonly EquippedRule[]): { index: number; other: number } | null {
-  const channel = (rule: EquippedRule) => ACTION_DATABASE.get(rule.actionId as never)?.channel ?? '';
-  for (const lane of new Set(current.map(channel))) {
-    const laneIdx = current.map((rule, i) => ({ rule, i })).filter(({ rule }) =>
-      channel(rule) === lane && target.some((t) => sameRule(t, rule)));
-    const desired = target.filter((rule) => channel(rule) === lane);
-    for (let pos = 0; pos < desired.length && pos < laneIdx.length; pos += 1) {
-      if (sameRule(laneIdx[pos].rule, desired[pos])) continue;
-      const from = laneIdx.findIndex(({ rule }) => sameRule(rule, desired[pos]));
-      if (from <= pos) break;
-      return { index: laneIdx[from].i, other: laneIdx[from - 1].i };
-    }
-  }
-  return null;
-}
-
-/**
- * Walks the Rune board to `target` the way a player would, one visible action
- * at a time (designer request 2026-09-29: show the steps, don't insta-equip):
- * x the rules that go, then + Add rule → When → Do (→ ability) → Add rule for
- * each new one, then ↑ to fix priority within a lane. Each action sends exactly
- * what that button sends. Anything the board cannot express (order across
- * lanes) is settled quietly at the end.
- */
-async function buildRunesOnBoard(target: EquippedRule[], beat: TutorialBeat, signal: AbortSignal): Promise<void> {
-  await openBuildTab('runes', TUTORIAL_ANCHORS.menuRunes, signal);
-
-  for (let guard = 0; guard < 20; guard += 1) {
-    const current = requireView().runesEquipped;
-    const extra = current.find((rule) => !target.some((t) => sameRule(t, rule)));
-    if (!extra) break;
-    report(beat, 'working', `Removing the rule ${ruleLabel(extra)}.`);
-    await point(TUTORIAL_ANCHORS.runesRemove(tutorialRuleKey(extra)), signal);
-    await pressPointed(signal);
-    await sendRunes(current.filter((rule) => !sameRule(rule, extra)), signal);
-  }
-
-  for (const rule of target) {
-    if (requireView().runesEquipped.some((r) => sameRule(r, rule))) continue;
-    report(beat, 'working', `New rule: ${ruleLabel(rule)}.`);
-    await point(TUTORIAL_ANCHORS.runesAdd, signal);
-    await pressPointed(signal);
-    store.set(tutorialRuneDraftAtom, { conditionId: '', actionId: '' });
-    await point(TUTORIAL_ANCHORS.runesWhen(rule.conditionId), signal);
-    await pressPointed(signal);
-    store.set(tutorialRuneDraftAtom, { conditionId: rule.conditionId, actionId: '' });
-    await point(TUTORIAL_ANCHORS.runesDo(rule.actionId), signal);
-    await pressPointed(signal);
-    store.set(tutorialRuneDraftAtom, { conditionId: rule.conditionId, actionId: rule.actionId });
-    if (rule.actionId === 'use-ability' && rule.targetAbilityId) {
-      await point(TUTORIAL_ANCHORS.runesAbility(rule.targetAbilityId), signal);
-      await pressPointed(signal);
-      store.set(tutorialRuneDraftAtom, { conditionId: rule.conditionId, actionId: rule.actionId, targetAbilityId: rule.targetAbilityId });
-    }
-    await point(TUTORIAL_ANCHORS.runesCommit, signal);
-    await pressPointed(signal);
-    store.set(tutorialRuneDraftAtom, null);
-    await sendRunes(composeRuneEdit(requireView().runesEquipped, rule, null), signal);
-  }
-
-  for (let guard = 0; guard < 40; guard += 1) {
-    const current = requireView().runesEquipped;
-    const move = nextUpMove(current, target);
-    if (!move) break;
-    report(beat, 'working', `Moving ${ruleLabel(current[move.index])} up: higher rules win.`);
-    await point(TUTORIAL_ANCHORS.runesUp(tutorialRuleKey(current[move.index])), signal);
-    await pressPointed(signal);
-    const next = [...current];
-    [next[move.index], next[move.other]] = [next[move.other], next[move.index]];
-    await sendRunes(next, signal);
-  }
-
-  await sendRunes(target, signal);
-  store.set(tutorialHighlightAtom, null);
-}
-
-/**
- * Ability loadout the way a player does it on the Abilities tab: Unattune what
- * leaves, Attune what joins, then "Use default timing" on each new ability so a
- * Rune fires it (abilities have no built-in trigger).
- */
-async function applyAbilities(
-  abilities: { techniques: string[]; guards: string[] },
-  beat: TutorialBeat,
-  signal: AbortSignal,
-): Promise<void> {
-  const wanted = [...abilities.techniques, ...abilities.guards];
-  const attunedIn = (v: PlayerView, id: string) =>
-    v.attunedAbilities.techniques.includes(id) || v.attunedAbilities.guards.includes(id);
-  const family = (id: string): 'techniques' | 'guards' =>
-    ABILITY_DATABASE.get(id)?.slot === 'guard' ? 'guards' : 'techniques';
-
-  const send = async (next: { techniques: string[]; guards: string[] }, done: (v: PlayerView) => boolean, what: string) => {
-    hudBus.requestSetAbilityLoadout(next);
-    const ok = await waitAlive(done, signal, ACTION_TIMEOUT_MS);
-    if (!ok) throw new TutorialStop(`${what} did not go through. Press Next to try again.`, 'error');
-  };
-
-  for (const id of attunedAbilityIds(requireView().attunedAbilities).filter((a) => !wanted.includes(a))) {
-    await openBuildTab('abilities', TUTORIAL_ANCHORS.menuAbilities, signal);
-    report(beat, 'working', `Unattuning ${abilityName(id)} to make room.`);
-    await point(TUTORIAL_ANCHORS.abilityAttune(id), signal);
-    await pressPointed(signal);
-    const current = requireView().attunedAbilities;
-    const key = family(id);
-    await send({ ...current, [key]: current[key].filter((a) => a !== id) }, (v) => !attunedIn(v, id), `Unattuning ${abilityName(id)}`);
-  }
-
-  for (const id of wanted.filter((a) => !attunedIn(requireView(), a))) {
-    await openBuildTab('abilities', TUTORIAL_ANCHORS.menuAbilities, signal);
-    report(beat, 'working', `Attuning ${abilityName(id)}.`);
-    await point(TUTORIAL_ANCHORS.abilityAttune(id), signal);
-    await pressPointed(signal);
-    const current = requireView().attunedAbilities;
-    const key = family(id);
-    await send({ ...current, [key]: [...current[key], id] }, (v) => attunedIn(v, id), `Attuning ${abilityName(id)}`);
-  }
-
-  for (const id of wanted) {
-    const rule = referenceAbilityRule(id);
-    const runes = requireView().runesEquipped;
-    if (!rule || runes.some((r) => r.actionId === 'use-ability' && r.targetAbilityId === id)) continue;
-    await openBuildTab('abilities', TUTORIAL_ANCHORS.menuAbilities, signal);
-    report(beat, 'working', `Giving ${abilityName(id)} a Rune, so it fires on its own in a fight.`);
-    await point(TUTORIAL_ANCHORS.abilityTiming(id), signal);
-    await pressPointed(signal);
-    await sendRunes([...runes, rule], signal);
-  }
-
-  // Quiet settle: drop Rune rules for abilities no longer attuned.
-  await sendRunes(wiredRunes(requireView().runesEquipped, abilities), signal);
-  store.set(tutorialHighlightAtom, null);
-}
-
-async function learnAbility(
-  step: Extract<TutorialStep, { type: 'learnAbility' }>,
-  beat: TutorialBeat,
-  signal: AbortSignal,
-): Promise<void> {
-  if (!requireView().knownAbilities.includes(step.abilityId)) {
-    if (!ABILITY_RECIPE_DATABASE.has(step.recipeId)) throw new TutorialStop(`Unknown recipe ${step.recipeId}.`, 'error');
-    await makeEntry('technique', `technique:${step.recipeId}`, () => hudBus.requestCraftAbilityRecipe(step.recipeId), beat, signal);
-    const learned = await waitAlive((v) => v.knownAbilities.includes(step.abilityId), signal, ACTION_TIMEOUT_MS);
-    if (!learned) throw new TutorialStop('That ability was not learned. Press Next to try again.', 'error');
-  }
-  await applyAbilities(abilityLoadoutFor(step, requireView()), beat, signal);
-}
-
-async function configureRunes(
-  step: Extract<TutorialStep, { type: 'configureRunes' }>,
-  beat: TutorialBeat,
-  signal: AbortSignal,
-): Promise<void> {
-  report(beat, 'working');
-  // The guide takes over the loadout (locked decision): its plan, plus wiring
-  // for whatever abilities are attuned.
-  await buildRunesOnBoard(wiredRunes(step.rules, requireView().attunedAbilities), beat, signal);
 }
 
 /**
@@ -643,12 +427,6 @@ async function performStep(
     case 'equip':
       for (const id of step.definitionIds) await equip(id, beat, signal);
       return;
-    case 'configureRunes':
-      return configureRunes(step, beat, signal);
-    case 'learnAbility':
-      return learnAbility(step, beat, signal);
-    case 'setAbilities':
-      return applyAbilities(abilityLoadoutFor(step, requireView()), beat, signal);
     case 'attemptBoss':
       return attemptBoss(step, beat, signal);
   }
@@ -657,7 +435,6 @@ async function performStep(
 function clearPointers(): void {
   store.set(tutorialHighlightAtom, null);
   store.set(tutorialFocusAtom, null);
-  store.set(tutorialRuneDraftAtom, null);
 }
 
 /**

@@ -156,10 +156,8 @@ export function verifyDeclaredApplied(ready) {
     }
   }
 
-  const norm = (x) => JSON.stringify({ techniques: [...(x?.techniques ?? [])].sort(), guards: [...(x?.guards ?? [])].sort() });
-  if (d.abilities && norm(d.abilities) !== norm(a.attunedAbilities)) {
-    bad.push(`${at}: applied abilities ${norm(a.attunedAbilities)} != declared ${norm(d.abilities)}`);
-  }
+  // Declared abilities are no longer applied to the character (class-first D3:
+  // nothing learns or attunes them), so there is no applied side to compare.
 
   // Equipment is exact. Upgrades are checked on the four upgradable slots only --
   // a core and a relic legitimately sit at +0 while the kit sits at the declared level.

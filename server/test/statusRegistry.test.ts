@@ -114,7 +114,6 @@ function assert(condition: unknown, message: string): void {
       biomeXP: {}, biomeLevel: {}, unlockedRecipes: [], questProgress: {},
       playerTier: 1, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
       runesOwned: [], runesEquipped: [],
-      knownAbilities: [], attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: { inventory: [], equipment: { ...emptyEquipment() }, itemUpgrades: {} },
     usesSkills: {

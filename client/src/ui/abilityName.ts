@@ -15,8 +15,8 @@ import { playerTierAtom } from "../hud/atoms";
 /**
  * An ability's name for one character, through the ONE entry point
  * (`abilityDisplayName`, design §22.7). Every client surface that names an
- * ability reads this — the hotbar, the Abilities panel, the tooltips, the buff
- * bar, the cast callout and the Behavior panel.
+ * ability reads this — the tooltips, the buff bar, the cast callout and the
+ * Behavior panel.
  */
 export function abilityNameFor(
   ability: AbilityDef,

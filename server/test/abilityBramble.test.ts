@@ -24,7 +24,7 @@ import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { emitCombatEvent, makeCombatContext } from "../src/systems/combat/engine/combatPipeline";
 import { updateCombatState } from "../src/systems/combat/engine/combatState";
-import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
+import { fireAbilities, giveAbilities } from "./fixtures/fireAbilities";
 import {
   BRAMBLE_EFFECT_ID,
   runBramblePlating,
@@ -37,6 +37,7 @@ function assert(condition: unknown, message: string): void {
 }
 
 function makePlayerSlices(): PersistedPlayerSlices {
+  giveAbilities("bramble-player", ["bramble-guard"]);
   return {
     isPlayer: { id: "bramble-player", name: "Bramble" },
     hasPosition: {
@@ -64,8 +65,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: ["bramble-guard"],
-      attunedAbilities: { techniques: [], guards: ["bramble-guard"] },
     },
     holdsInventory: {
       inventory: [],
@@ -105,7 +104,7 @@ const monsters = [0, 1, 2].map((i) => {
 
 const platingBefore = player.mitigatesDamage.plating;
 
-fireWithReferenceWiring(world, Date.now());
+fireAbilities(world, Date.now());
 const effect = getStatusEffect(player.tracksCombat, BRAMBLE_EFFECT_ID);
 assert(!!effect, "Bramble Guard should apply its state when the n-aggro trigger fires");
 

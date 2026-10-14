@@ -473,7 +473,6 @@ function run(cell: Night5Cell, seed: number) {
       appliedPackage: {
         selectedSubVariant: view.selectedSubVariant,
         selectedRange: view.selectedRange,
-        attunedAbilities: structuredClone(view.attunedAbilities),
         runesEquipped: structuredClone(view.runesEquipped),
         equipment: { ...view.equipment },
         itemUpgrades: { ...view.itemUpgrades },

@@ -1,5 +1,4 @@
 import type { EssenceType } from '../items';
-import type { EquippedRule } from '../runeDatabase';
 import type { TutorialConceptId } from './concepts';
 
 /**
@@ -33,7 +32,6 @@ export type TutorialCondition =
   | { type: 'canCraft'; recipeId: string }
   | { type: 'hasItem'; definitionId: string }
   | { type: 'equipped'; definitionId: string }
-  | { type: 'abilityKnown'; abilityId: string }
   | { type: 'bossCleared'; biomeGroup: string; tier: number }
   | { type: 'allOf'; of: TutorialCondition[] }
   | { type: 'anyOf'; of: TutorialCondition[] }
@@ -50,10 +48,6 @@ export type TutorialStep =
   | { type: 'chooseClass' }
   | { type: 'craft'; recipeIds: string[] }
   | { type: 'equip'; definitionIds: string[] }
-  | { type: 'configureRunes'; rules: EquippedRule[] }
-  /** Craft the ability recipe, then make it the only ability of its slot kind. */
-  | { type: 'learnAbility'; recipeId: string; abilityId: string; slot: 'technique' | 'guard' }
-  | { type: 'setAbilities'; techniques: string[]; guards: string[] }
   /**
    * `until` turns one boss attempt into "keep fighting this boss until". Without
    * it the step ends on the first clear.
@@ -73,9 +67,8 @@ export type TutorialProgressRef =
  * A beat is DONE when every step is satisfied (`stepSatisfied`). Resume is
  * "first beat that is not done", so step satisfaction must stay true once the
  * script has moved past it: farm conditions are authored monotone (e.g.
- * `anyOf(hasItem X, canCraft X)`, never a bare `canCraft`), and equip, Rune and
- * ability-loadout steps count as satisfied when a LATER step of the script has
- * superseded them.
+ * `anyOf(hasItem X, canCraft X)`, never a bare `canCraft`), and equip steps
+ * count as satisfied when a LATER step of the script has superseded them.
  */
 export interface TutorialBeat {
   id: string;

@@ -3,7 +3,6 @@ import {
   composePlayerView,
   ABILITY_DATABASE,
   emptyEquipment,
-  emptyAttunedAbilities,
   ESSENCE_TYPES,
   FAST_BOSS_RETRY_TAINT,
   GAME_CONFIG,
@@ -17,7 +16,6 @@ import {
   sealsHeldAtTier, sealsRequiredForTier,
   TEST_ROOM_NODE_ID,
   runeIdsForArchetype,
-  normalizeAttunedAbilities,
   normalizeEquipment,
   sanitizeRuneLoadout,
   type FastBossRetryResult,
@@ -104,8 +102,6 @@ export function resetPlayerProgress(world: World, player: PlayerEntity): GameAct
   player.tracksProgression.clearedNodes = [];
   player.tracksProgression.visitedNodes = [];
   player.tracksProgression.runesEquipped = DEFAULT_RUNE_LOADOUT.map((rule) => ({ ...rule }));
-  player.tracksProgression.knownAbilities = [];
-  player.tracksProgression.attunedAbilities = emptyAttunedAbilities();
   player.holdsInventory.inventory = [];
   player.holdsInventory.equipment = emptyEquipment();
   player.holdsInventory.itemUpgrades = {};
@@ -339,19 +335,11 @@ export function applyTierEntryProfile(
     }
   }
 
-  const knownAbilities = [...new Set(profile.knownAbilities ?? [])];
-  if (knownAbilities.some((id) => !ABILITY_DATABASE.has(id))) return fail('Profile contains an unknown ability.');
-  const attunedAbilities = normalizeAttunedAbilities(profile.attunedAbilities);
-  if ([...attunedAbilities.techniques, ...attunedAbilities.guards].some((id) => !knownAbilities.includes(id))) {
-    return fail('Profile equips an ability that is not learned.');
-  }
-
   const runesOwned = runeIdsForArchetype(archetype);
   const runesEquipped = sanitizeRuneLoadout(
     Array.isArray(profile.runesEquipped) ? profile.runesEquipped : [],
     new Set(runesOwned),
     archetype,
-    new Set([...attunedAbilities.techniques, ...attunedAbilities.guards]),
   );
   if (runesEquipped.length !== (profile.runesEquipped ?? []).length) {
     return fail('Profile Rune loadout is invalid.');
@@ -390,8 +378,6 @@ export function applyTierEntryProfile(
   player.tracksProgression.unlockedRecipes = [];
   player.tracksProgression.runesOwned = runesOwned;
   player.tracksProgression.runesEquipped = runesEquipped;
-  player.tracksProgression.knownAbilities = knownAbilities;
-  player.tracksProgression.attunedAbilities = attunedAbilities;
   player.holdsInventory.inventory = [...new Set(profile.inventory)];
   player.holdsInventory.equipment = equipment;
   player.holdsInventory.itemUpgrades = itemUpgrades;

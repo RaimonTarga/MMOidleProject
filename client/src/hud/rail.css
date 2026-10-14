@@ -41,16 +41,6 @@
     font-variant-numeric: tabular-nums;
   }
 
-  .desktop-hud .combat-ability-slot__name {
-    display: -webkit-box;
-    overflow: hidden;
-    white-space: normal;
-    overflow-wrap: break-word;
-    line-height: 12px;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-  }
-
   .desktop-hud .right-system-nav {
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 82px), 1fr));
   }

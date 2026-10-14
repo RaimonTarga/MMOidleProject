@@ -38,8 +38,6 @@ function playerSlices(id: string, nodeId: string): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [],
       runesEquipped: [],
-      knownAbilities: [],
-      attunedAbilities: { techniques: [], guards: [] },
     },
     holdsInventory: {
       inventory: [],

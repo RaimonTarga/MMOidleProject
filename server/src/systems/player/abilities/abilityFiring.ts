@@ -1,10 +1,14 @@
 /**
- * Ability auto-fire — the per-tick driver for equipped abilities.
+ * Ability firing — fire one given ability now.
  *
- * Abilities have no built-in trigger: one auto-fires only while a `use-ability`
- * Rune rule naming it is active. Active rules arbitrate in Rune order. A few
- * abilities additionally decline to fire when they would do nothing (see
- * `autoFireGateOpen`) — those are execution gates, not triggers.
+ * Nothing fires an ability on its own: the player has no ability bar, no
+ * attunement and no Use Ability rune. The class runtimes call `fireTechnique` /
+ * `fireGuard` when their system decides (a Striker beat, a Squire response...).
+ * Every engine rule still applies here: per-ability cooldowns, the one offensive
+ * channel, one Guard activation per decision window, control, and the execution
+ * gates that stop an ability spending its cooldown where it would do nothing
+ * (see `fireGateOpen`). A caller firing several Techniques arbitrates with the
+ * returned `claimed` flag.
  *
  * Execution shapes:
  * - `armed`   — arms the next attack (`hasArmedAbility`); the rider lands in
@@ -14,8 +18,9 @@
  * - `reposition` — resolves immediately by moving the player.
  * - `instant` — an immediate self-facing effect.
  *
- * Runs in `World.tick` after rune-derived flags are stamped and after targets are
- * acquired, but before combat resolves, so an armed Technique is honored this tick.
+ * A caller in `World.tick` should fire after rune-derived flags are stamped and
+ * targets are acquired, but before casts advance and combat resolves, so an armed
+ * Technique is honored the same tick.
  */
 import {
   ABILITY_CONTROL_RESIST_EFFECT_ID,
@@ -42,7 +47,6 @@ import {
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
-import { getAbilityRuneTargets, getTimedAbilityRuneTargets } from "../../combat/ai/runeConfig";
 import {
   activePlayerRoots,
   isHardControlled,
@@ -66,7 +70,6 @@ import { usesSummonTechniques } from "../../classes/archetypes/summoner/profile"
 import { formationChargeHasGap } from "./formationCharge";
 import { actorFromPlayer } from "../../../world/worldLogActors";
 import { recordWorldLogEvent } from "../../../world/worldLog";
-import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import { advanceKata, techniquePowerPctFor } from "./abilityKata";
 
 /** Hard cap on Break Free's control resistance — never total immunity. */
@@ -87,196 +90,29 @@ interface FireContext {
   controlled: boolean;
 }
 
-interface TechniqueAttempt {
+/** What one `fireTechnique` call did. */
+export interface TechniqueAttempt {
+  /** The Technique fired: armed, began its cast, moved, or opened its window. */
   activated: boolean;
+  /**
+   * It holds (or found already held) the one offensive channel. A caller walking
+   * several Techniques stops offering non-instant ones once this is true.
+   */
   claimed: boolean;
+}
+
+export interface FireTechniqueOptions {
+  /** Act on exactly the player's current attack target: no nearest-in-reach fallback. */
+  currentTargetOnly?: boolean;
+  /**
+   * Charge at any range. Without it Charge keeps its gap gate: it fires only on
+   * a target meaningfully outside the player's own reach.
+   */
+  chargeAtAnyRange?: boolean;
 }
 
 const DECLINED_TECHNIQUE: TechniqueAttempt = { activated: false, claimed: false };
 const CLAIMED_TECHNIQUE: TechniqueAttempt = { activated: false, claimed: true };
-
-export interface ManualAbilityResult {
-  success: boolean;
-  reason?: string;
-  state?: "activated" | "queued" | "cancelled" | "rejected";
-}
-
-interface ManualAbilityAttempt extends ManualAbilityResult {
-  retryable: boolean;
-}
-
-export function updateAbilityFiring(world: World, now: number): void {
-  for (const player of world.livePlayers) {
-    updateQueuedAbilityUses(world, player, now);
-
-    // The Auto Combat toggle owns Rune ability activation. Fight Back is
-    // the deliberate exception: while it temporarily owns travel combat, the
-    // player behaves exactly as though Auto Combat were enabled. Manual hotbar
-    // requests do not enter this driver and remain available in either state.
-    if (!player.usesAutocombat.auto && !player.fightsWhileTraveling) continue;
-    const equipped = player.tracksProgression.attunedAbilities;
-    if (!equipped) continue;
-    // Only abilities whose Rune rule is active this tick, in Rune order.
-    const active = getAbilityRuneTargets(player);
-    const techniques = active.filter(id => equipped.techniques?.includes(id));
-    const guards = active.filter(id => equipped.guards?.includes(id));
-    if (techniques.length === 0 && guards.length === 0) continue;
-
-    const fctx = buildFireContext(player);
-
-    // Techniques share ONE offensive execution channel: at most one may be
-    // armed/casting at a time. Walk in Rune order — the player's declared
-    // priority — and stop at the first one that CLAIMS the channel, so
-    // arbitration is deterministic when several rune conditions go valid at once.
-    //
-    // An `instant` Technique (Imbue Lightning) is self-facing and claims nothing,
-    // so it neither blocks nor is blocked by an armed charge sitting on the channel.
-    let offensiveClaimed = false;
-    for (const abilityId of techniques) {
-      if (offensiveClaimed && ABILITY_DATABASE.get(abilityId)?.shape !== "instant") continue;
-      const attempt = maybeFireTechnique(world, player, abilityId, fctx, now);
-      offensiveClaimed = attempt.claimed || offensiveClaimed;
-    }
-
-    // Guards are independent, but only one ACTIVATION resolves per window.
-    for (const abilityId of guards) {
-      if (maybeFireGuard(world, player, abilityId, fctx)) break;
-    }
-  }
-}
-
-/**
- * Authoritative toggle boundary for a player pressing an attuned ability hotkey.
- * A legal request activates immediately. A temporarily illegal request is held
- * in the runtime queue and retried; pressing its hotkey again cancels it.
- */
-export function requestManualAbilityUse(
-  world: World,
-  player: PlayerEntity,
-  abilityId: string,
-  now = Date.now(),
-): ManualAbilityResult {
-  // Validate before treating the press as a cancel. Loadout edits normally prune
-  // stale queue entries immediately, but this keeps the untrusted request
-  // boundary correct even if a stale runtime component is ever observed.
-  const ability = ABILITY_DATABASE.get(abilityId);
-  if (!ability) {
-    removeQueuedAbility(world, player, abilityId);
-    return { success: false, reason: "Unknown ability.", state: "rejected" };
-  }
-  const attuned = ability.slot === "technique"
-    ? player.tracksProgression.attunedAbilities.techniques
-    : player.tracksProgression.attunedAbilities.guards;
-  if (!attuned.includes(abilityId)) {
-    removeQueuedAbility(world, player, abilityId);
-    return { success: false, reason: "Ability is not attuned.", state: "rejected" };
-  }
-
-  const queued = player.queuesAbilities?.abilityIds.includes(abilityId) ?? false;
-  if (queued) {
-    removeQueuedAbility(world, player, abilityId);
-    return { success: true, state: "cancelled" };
-  }
-
-  const attempt = attemptManualAbilityUse(world, player, abilityId, now);
-  if (attempt.success) return { success: true, state: "activated" };
-  if (!attempt.retryable) {
-    return { success: false, reason: attempt.reason, state: "rejected" };
-  }
-
-  const abilityIds = [...(player.queuesAbilities?.abilityIds ?? []), abilityId];
-  attachComponent(world, player, "queuesAbilities", { abilityIds });
-  return { success: true, state: "queued" };
-}
-
-/** One authoritative activation attempt, shared by direct presses and queue ticks. */
-function attemptManualAbilityUse(
-  world: World,
-  player: PlayerEntity,
-  abilityId: string,
-  now: number,
-): ManualAbilityAttempt {
-  const ability = ABILITY_DATABASE.get(abilityId);
-  if (!ability) return { success: false, reason: "Unknown ability.", retryable: false };
-  const attuned = ability.slot === "technique"
-    ? player.tracksProgression.attunedAbilities.techniques
-    : player.tracksProgression.attunedAbilities.guards;
-  if (!attuned.includes(abilityId)) {
-    return { success: false, reason: "Ability is not attuned.", retryable: false };
-  }
-
-  const fctx = buildFireContext(player);
-  if (fctx.hardControlled && !abilityActsWhileControlled(ability)) {
-    return { success: false, reason: "Cannot use that ability while controlled.", retryable: true };
-  }
-
-  // Enemy-facing manual actions use exactly the current combat target. The
-  // automatic driver retains its extended-range nearest-target fallback.
-  const requiresTarget = ability.slot === "technique"
-    && ability.shape !== "instant"
-    && ability.shape !== "self-cast";
-  if (requiresTarget && !abilityTarget(world, player, ability, true)) {
-    return { success: false, reason: "No valid current target.", retryable: true };
-  }
-
-  if (ability.slot === "technique") {
-    const attempt = maybeFireTechnique(
-      world,
-      player,
-      abilityId,
-      fctx,
-      now,
-      { manual: true, currentTargetOnly: true },
-    );
-    if (!attempt.activated) {
-      return {
-        success: false,
-        reason: attempt.claimed
-          ? "Another Technique is already active."
-          : "Ability is not ready.",
-        retryable: true,
-      };
-    }
-    return { success: true, retryable: false };
-  }
-
-  if (!maybeFireGuard(world, player, abilityId, fctx, true)) {
-    return {
-      success: false,
-      reason: "Ability is not ready or its requirements are not met.",
-      retryable: true,
-    };
-  }
-  return { success: true, retryable: false };
-}
-
-function updateQueuedAbilityUses(
-  world: World,
-  player: PlayerEntity,
-  now: number,
-): void {
-  for (const abilityId of [...(player.queuesAbilities?.abilityIds ?? [])]) {
-    const attempt = attemptManualAbilityUse(world, player, abilityId, now);
-    if (attempt.success || !attempt.retryable) {
-      removeQueuedAbility(world, player, abilityId);
-    }
-  }
-}
-
-function removeQueuedAbility(
-  world: World,
-  player: PlayerEntity,
-  abilityId: string,
-): void {
-  const current = player.queuesAbilities?.abilityIds;
-  if (!current?.includes(abilityId)) return;
-  const abilityIds = current.filter((id) => id !== abilityId);
-  if (abilityIds.length === 0) {
-    detachComponent(world, player, "queuesAbilities");
-  } else {
-    attachComponent(world, player, "queuesAbilities", { abilityIds });
-  }
-}
 
 function buildFireContext(player: PlayerEntity): FireContext {
   return {
@@ -289,23 +125,23 @@ function buildFireContext(player: PlayerEntity): FireContext {
 }
 
 /**
- * Execution gates for AUTOMATIC firing. These are not triggers — a Rune rule
- * decides WHEN — they only stop an ability spending its cooldown where it can
- * do nothing. They ask about the ability's OWN reach rather than the player's.
+ * Execution gates. These are not triggers — the caller decides WHEN — they only
+ * stop an ability spending its cooldown where it can do nothing. They ask about
+ * the ability's OWN reach rather than the player's.
  */
-function autoFireGateOpen(
+function fireGateOpen(
   world: World,
   player: PlayerEntity,
   ability: AbilityDef,
+  options: FireTechniqueOptions = {},
 ): boolean {
   if (ability.shape === "charge") {
-    const target = abilityTarget(world, player, ability);
+    const target = abilityTarget(world, player, ability, options.currentTargetOnly);
     if (!target) return false;
-    // The gap gate stands in for the condition an `Always` rule lacks: "charge
-    // the next enemy worth closing on". A rule with a real condition (Empowered
-    // Ready -> Charge) chose its moment, and Charge still lands its strike
-    // rider from contact, so it fires at any range.
-    if (getTimedAbilityRuneTargets(player).includes(ability.id)) return true;
+    // The gap gate stands in for a missing moment: "charge the next enemy worth
+    // closing on". A caller that chose its moment (an opener, say) skips it, and
+    // Charge still lands its strike rider from contact, so it fires at any range.
+    if (options.chargeAtAnyRange) return true;
     // A gap-closer needs a gap: something inside the ABILITY's reach that is
     // meaningfully outside the player's own.
     if (usesSummonTechniques(player)) {
@@ -316,18 +152,23 @@ function autoFireGateOpen(
   return true;
 }
 
-/** Returns true when the slot CLAIMED the shared offensive channel. */
-function maybeFireTechnique(
+/**
+ * Fire one Technique now, if it can fire: off cooldown, the player not hard
+ * controlled or channeling, the offensive channel free (an `instant` Technique
+ * claims nothing), and its execution gate open. A cast pays its cooldown on
+ * resolve, so an aborted wind-up costs nothing.
+ */
+export function fireTechnique(
   world: World,
   player: PlayerEntity,
   abilityId: string,
-  fctx: FireContext,
   now: number,
-  options: { manual?: boolean; currentTargetOnly?: boolean } = {},
+  options: FireTechniqueOptions = {},
 ): TechniqueAttempt {
   const ability = ABILITY_DATABASE.get(abilityId);
   if (!ability || ability.slot !== "technique") return DECLINED_TECHNIQUE;
   const cdKey = abilityCooldownKey(abilityId);
+  const fctx = buildFireContext(player);
 
   if (fctx.hardControlled) return DECLINED_TECHNIQUE;
   if (player.isChanneling) return DECLINED_TECHNIQUE;
@@ -341,7 +182,7 @@ function maybeFireTechnique(
   // while Sweep is still waiting for a hit to consume it.
   if (ability.shape === "instant") {
     if (getCooldown(player.tracksCombat, cdKey) > 0) return DECLINED_TECHNIQUE;
-    if (!options.manual && !autoFireGateOpen(world, player, ability)) return DECLINED_TECHNIQUE;
+    if (!fireGateOpen(world, player, ability, options)) return DECLINED_TECHNIQUE;
     applyInstantTechnique(world, player, ability);
     recordAbilityActivation(world, player, abilityId, 'technique');
     // The cooldown starts BEFORE the resolution fires, because `technique-refund`
@@ -374,7 +215,7 @@ function maybeFireTechnique(
     player.isChargingAbility
   ) return CLAIMED_TECHNIQUE;
   if (getCooldown(player.tracksCombat, cdKey) > 0) return DECLINED_TECHNIQUE;
-  if (!options.manual && !autoFireGateOpen(world, player, ability)) return DECLINED_TECHNIQUE;
+  if (!fireGateOpen(world, player, ability, options)) return DECLINED_TECHNIQUE;
 
   // A cast pays its cooldown on RESOLVE, not on begin (see abilityCasting.ts),
   // so nothing is charged here.
@@ -539,23 +380,27 @@ function armedTechniqueHasWork(
   return candidates.some((target) => afflictionTechniqueHasWork(world, player, ability, target));
 }
 
-/** Returns true when the Guard activated (and therefore claimed the window). */
-function maybeFireGuard(
+/**
+ * Fire one Guard now, if it can fire: off cooldown, no other Guard activated this
+ * decision window, not hard controlled (unless it acts while controlled), and
+ * its situational gate open. Returns true when it activated (and therefore
+ * claimed the window).
+ */
+export function fireGuard(
   world: World,
   player: PlayerEntity,
   abilityId: string,
-  fctx: FireContext,
-  manual = false,
 ): boolean {
   const ability = ABILITY_DATABASE.get(abilityId);
   if (!ability || ability.slot !== "guard") return false;
   const cdKey = abilityCooldownKey(abilityId);
+  const fctx = buildFireContext(player);
   if (getCooldown(player.tracksCombat, cdKey) > 0) return false;
   // One activation per decision window — ongoing buffs still overlap freely.
   if (getCooldown(player.tracksCombat, GUARD_WINDOW_KEY) > 0) return false;
   if (fctx.hardControlled && !abilityActsWhileControlled(ability)) return false;
   if (!guardEffectCanFire(world, player, ability, fctx)) return false;
-  if (!manual && !autoFireGateOpen(world, player, ability)) return false;
+  if (!fireGateOpen(world, player, ability)) return false;
 
   // Charm Guard-ability amplifiers. Only present while an amplifying charm is
   // equipped; they merge into passives via the equipment loop in stats.ts.
@@ -773,8 +618,8 @@ function applyGuardHeal(
  * the buff bar. `totalMs` drives the clock. guard.potency-pct scales magnitude;
  * guard.duration-pct extends it. Shared by Brace and Endure.
  *
- * Each authored DR ability owns a stable effect ID. Reordering attunements
- * cannot overwrite or relabel a running effect.
+ * Each authored DR ability owns a stable effect ID, so firing order cannot
+ * overwrite or relabel a running effect.
  */
 function applyGuardDrBuff(
   player: PlayerEntity,

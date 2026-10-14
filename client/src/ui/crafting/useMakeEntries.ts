@@ -2,12 +2,9 @@ import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import {
-  biomeLevelAtom,
-  bossesClearedAtom,
   combatArchetypeAtom,
   equipmentAtom,
   inventoryAtom,
-  knownAbilitiesAtom,
   playerNodeIdAtom,
   unlockedRecipesAtom,
 } from '../../hud/atoms';
@@ -20,7 +17,7 @@ import {
 } from './makeEntries';
 
 /**
- * Everything the player could make right now, from every recipe database.
+ * Everything the player could make right now.
  *
  * A hook because two surfaces need it: the craft list renders it, and the rail
  * counts how much of it is new — and the rail has to know that while the craft
@@ -42,9 +39,6 @@ function useMakeSources(): MakeSources {
   const unlockedRecipeIds = useAtomValue(unlockedRecipesAtom);
   const inventory = useAtomValue(inventoryAtom);
   const equipment = useAtomValue(equipmentAtom);
-  const knownAbilities = useAtomValue(knownAbilitiesAtom);
-  const biomeLevel = useAtomValue(biomeLevelAtom);
-  const bossesCleared = useAtomValue(bossesClearedAtom);
   const combatArchetype = useAtomValue(combatArchetypeAtom);
 
   const equippedSet = useMemo(
@@ -62,14 +56,10 @@ function useMakeSources(): MakeSources {
     unlockedRecipeIds,
     ownedGearIds,
     equippedGearIds: equippedSet,
-    knownAbilities,
-    biomeLevel,
-    bossesCleared,
     isTestRoom,
     combatArchetype,
   }), [
-    unlockedRecipeIds, ownedGearIds, equippedSet, knownAbilities,
-    biomeLevel, bossesCleared, isTestRoom, combatArchetype,
+    unlockedRecipeIds, ownedGearIds, equippedSet, isTestRoom, combatArchetype,
   ]);
 }
 

@@ -202,12 +202,6 @@ export interface RenderState {
   ledgeHopNextAt: Map<string, number>;
   knownUnlockedRecipes: Set<string>;
   knownUnlockedRecipesInitialized: boolean;
-  /**
-   * Technique gates already seen open. These have no server
-   * unlock list, so the client derives them from biome level — see
-   * `net/gatedUnlocks.ts`.
-   */
-  knownGatedUnlocks: Set<string>;
   gameplaySettingsSynced: boolean;
   throttles: {
     minimapAt: number;
@@ -287,7 +281,6 @@ export function createRenderState(): RenderState {
     ledgeHopNextAt: new Map(),
     knownUnlockedRecipes: new Set(),
     knownUnlockedRecipesInitialized: false,
-    knownGatedUnlocks: new Set(),
     gameplaySettingsSynced: false,
     throttles: {
       minimapAt: 0,

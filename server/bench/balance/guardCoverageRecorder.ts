@@ -1,21 +1,17 @@
 import assert from 'node:assert/strict';
-import { ABILITY_DATABASE, ABILITY_RECIPE_DATABASE, isAbilityRecipeUnlocked, resolveAbilityEffectWithPassives,
-  modifiedAbilityCooldownMs, referenceAbilityRule, getCooldown, getStatusEffect, guardEffectIdForAbility, composePlayerView } from '@mmo-idle/shared';
+import { ABILITY_DATABASE, resolveAbilityEffectWithPassives,
+  modifiedAbilityCooldownMs, getCooldown, getStatusEffect, guardEffectIdForAbility, composePlayerView } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../src/ecs/entity';
 import type { World } from '../../src/world/World';
 import { registerCombatListener, unregisterCombatListener, type CombatEventHandler } from '../../src/systems/combat/engine/combatPipeline';
 import { isHardControlled } from '../../src/systems/combat/status/playerHardControl';
 
-export function guardCoverageReadback(bot: PlayerEntity) {
+/** The declared Guards' resolved effects and cooldowns (nothing attunes them since class-first D3). */
+export function guardCoverageReadback(bot: PlayerEntity, guards: readonly string[]) {
   const p = bot.tracksProgression;
-  return p.attunedAbilities.guards.map(id => {
+  return guards.map(id => {
     const ability = ABILITY_DATABASE.get(id)!;
-    const recipe = [...ABILITY_RECIPE_DATABASE.values()].find(r => r.abilityId === id)!;
-    assert(recipe && isAbilityRecipeUnlocked(recipe, p), `Native learnability failed: ${id}`);
-    assert(p.knownAbilities.includes(id));
-    return { id, recipeId: recipe.id, recipeGroup: recipe.recipeGroup, requiredMastery: recipe.requiredBiomeLevel,
-      actualMastery: recipe.recipeGroup ? p.biomeLevel[recipe.recipeGroup] : null, cost: ability.attunementCost,
-      referenceWiring: referenceAbilityRule(id), effect: resolveAbilityEffectWithPassives(ability, p.playerTier, bot.usesSkills.passives),
+    return { id, effect: resolveAbilityEffectWithPassives(ability, p.playerTier, bot.usesSkills.passives),
       cooldownMs: modifiedAbilityCooldownMs(ability, p.playerTier, bot.usesSkills.passives) };
   });
 }
@@ -30,7 +26,7 @@ export class GuardCoverageRecorder {
   private preTick: ReturnType<GuardCoverageRecorder['state']> | null = null;
   private lastDamage: unknown = null;
   private handler: CombatEventHandler;
-  constructor(private world: World, private bot: PlayerEntity) {
+  constructor(private world: World, private bot: PlayerEntity, private declaredGuards: readonly string[]) {
     // Registered after production listeners, without mutating their context.
     this.handler = (ctx, w) => {
       if (w !== this.world || ctx.defender !== this.bot) return;
@@ -45,7 +41,7 @@ export class GuardCoverageRecorder {
     const b = this.bot, v = composePlayerView(b)!;
     const guards = Object.fromEntries(['brace', 'endure'].map(id => {
       const effect = getStatusEffect(b.tracksCombat, guardEffectIdForAbility(id)!);
-      return [id, { attuned: b.tracksProgression.attunedAbilities.guards.includes(id),
+      return [id, { attuned: this.declaredGuards.includes(id),
         remainingMs: effect?.remainingMs ?? 0, drPct: effect?.data.drPct ?? 0,
         cooldownMs: getCooldown(b.tracksCombat, `ability.cd.${id}`) }];
     }));

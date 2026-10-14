@@ -10,12 +10,13 @@ import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { World } from "../src/world/World";
 import { equipItem } from "../src/systems/player/economy/inventory";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
-import { fireWithReferenceWiring } from './fixtures/abilityWiring';
+import { fireAbilities, giveAbilities } from './fixtures/fireAbilities';
 import { setAggroTarget } from "../src/systems/combat/ai/targeting";
 import { BRAMBLE_EFFECT_ID } from "../src/systems/player/abilities/abilityBramble";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { describeAbility } from "../../client/src/ui/describe/abilityText";
 function makePlayerSlices(): PersistedPlayerSlices {
+  giveAbilities("bramble-player", ["bramble-guard"]);
   return {
     isPlayer: { id: "bramble-player", name: "Bramble" },
     hasPosition: {
@@ -42,8 +43,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runesEquipped: [],
-      knownAbilities: ["bramble-guard"],
-      attunedAbilities: { techniques: [], guards: ["bramble-guard"] },
     },
     holdsInventory: {
       inventory: [],
@@ -68,6 +67,7 @@ let serial = 0;
 function player() {
   const slices = makePlayerSlices();
   slices.isPlayer.id = `extra-${serial++}`;
+  giveAbilities(slices.isPlayer.id, ["bramble-guard"]);
   slices.tracksProgression.playerTier = 4;
   return world.attachPlayerEntity(slices, slices.isPlayer.id);
 }
@@ -97,7 +97,7 @@ for (let i = 0; i < 3; i++) {
   const m = world.createMonster(p.hasPosition.nodeId, 'plains-slime', { x: 430 + i * 10, y: 400 })!;
   setAggroTarget(world, m, { id: p.isPlayer.id, kind: 'player' }, Date.now());
 }
-fireWithReferenceWiring(world, Date.now());
+fireAbilities(world, Date.now());
 const expected = resolveAbilityEffectWithPassives(bramble, 4, p.usesSkills.passives);
 assert.equal(expected.kind, 'bramble');
 if (expected.kind !== 'bramble') throw new Error('bramble');
@@ -119,12 +119,10 @@ const recovered = resolveAbilityEffectWithPassives(secondWind, 4, recoveryPlayer
 const recoveryBase = abilityRankAt(secondWind, 4).effect;
 assert(recovered.kind === 'heal' && recoveryBase.kind === 'heal');
 assert(recovered.recoveryPct > recoveryBase.recoveryPct);
-recoveryPlayer.tracksProgression.knownAbilities = ['second-wind'];
-recoveryPlayer.tracksProgression.attunedAbilities = { techniques: [], guards: ['second-wind'] };
+giveAbilities(recoveryPlayer.isPlayer.id, ['second-wind']);
 recoveryPlayer.hasHealth.hp = 1;
 recoveryPlayer.usesAutocombat.auto = true;
-recoveryPlayer.tracksProgression.runesEquipped = [{ conditionId: 'always', actionId: 'use-ability', targetAbilityId: 'second-wind' }];
-fireWithReferenceWiring(world, Date.now());
+fireAbilities(world, Date.now());
 assert(recoveryPlayer.tracksCombat.statusEffects.some(e => e.data.recoveryPct === recovered.recoveryPct), 'equipped Recovery potency reaches live activation');
 assert.deepEqual(resolveAbilityEffectWithPassives(secondWind, 4, { 'guard.potency-pct': 1, 'guard.duration-pct': 1 }), recoveryBase);
 const cleanse = ABILITY_DATABASE.get('cleanse')!;
@@ -153,15 +151,13 @@ for (const id of ['brace', 'endure', 'second-wind', 'recuperate']) {
   p.holdsInventory.inventory.push(itemId);
   p.holdsInventory.itemUpgrades[itemId] = 3;
   assert(equipItem(world, p, itemId));
-  p.tracksProgression.knownAbilities = [id];
-  p.tracksProgression.attunedAbilities = { techniques: [], guards: [id] };
+  giveAbilities(p.isPlayer.id, [id]);
   p.hasHealth.hp = 1;
   p.usesAutocombat.auto = true;
-  p.tracksProgression.runesEquipped = [{ conditionId: 'always', actionId: 'use-ability', targetAbilityId: id }];
   const ability = ABILITY_DATABASE.get(id)!;
   const base = abilityRankAt(ability, 4).effect;
   const resolved = resolveAbilityEffectWithPassives(ability, 4, p.usesSkills.passives);
-  fireWithReferenceWiring(world, Date.now());
+  fireAbilities(world, Date.now());
   const live = getStatusEffect(p.tracksCombat, (defensive ? guardEffectIdForAbility(id) : recoveryEffectIdForAbility(id))!);
   assert(live, `${itemId} -> ${id} must fire`);
   if (resolved.kind === 'damage-reduction' && base.kind === 'damage-reduction') {
@@ -189,12 +185,11 @@ for (const tier of [2, 3, 4]) {
     p.holdsInventory.inventory.push(item.id);
     p.holdsInventory.itemUpgrades[item.id] = 5;
     assert(equipItem(world, p, item.id));
-    p.tracksProgression.knownAbilities = [id];
-    p.tracksProgression.attunedAbilities = { techniques: [], guards: [id] };
+    giveAbilities(p.isPlayer.id, [id]);
     p.usesAutocombat.auto = true;
     if (id === 'break-free') applyStun(p.tracksCombat, 4000, 'tester');
     else applyStatusEffect(p.tracksCombat, { id: 'antiheal', maxStacks: 1, remainingMs: 6000, refreshable: true, sourceId: 'tester', data: {} });
-    fireWithReferenceWiring(world, Date.now());
+    fireAbilities(world, Date.now());
     assert(!getStatusEffect(p.tracksCombat, id === 'break-free' ? STUN_EFFECT : 'antiheal'));
     const ability = ABILITY_DATABASE.get(id)!;
     const expected = abilityCooldownMs(ability, 4) * (1 - effects['cleanse.cooldown-reduction-pct']);
