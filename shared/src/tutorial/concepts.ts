@@ -6,8 +6,8 @@ import type { TutorialCondition, TutorialScript } from './types';
  * The first-hour checklist (docs/guided-tutorial-plan.md, "The first-hour
  * checklist"): every new idea the guide's lines put in front of a player, and the
  * thing on screen that explains it. A beat names the ideas its line introduces in
- * `teaches`; `tutorial.test.ts` holds every level of every class script to at most
- * two, and every idea to exactly one introduction.
+ * `teaches`; `tutorial.test.ts` holds every level of a script to at most two,
+ * and every idea to exactly one introduction.
  *
  * An idea is something the player has to hold in their head from then on (a
  * system, a screen, a rule), not an item: a second charm is not a new idea, the
@@ -59,6 +59,8 @@ export const TUTORIAL_CONCEPTS = {
     name: 'Boots are speed',
     shownBy: 'the walk between pulls getting shorter',
   },
+  // Standing orders stay (the rune engine is their surface). Crafted runes do not,
+  // so this idea is the board, not a recipe.
   runes: {
     name: 'Runes are standing orders; the higher rule of a lane wins',
     shownBy: 'the Runes board, built rule by rule',
@@ -67,43 +69,6 @@ export const TUTORIAL_CONCEPTS = {
   zones: {
     name: 'The guide travels between zones',
     shownBy: 'the arrival banner naming the zone',
-  },
-  technique: {
-    name: 'A Technique fires on its own every so often',
-    shownBy: 'the Abilities tab, Attune',
-    anchor: 'abilityAttune',
-  },
-  'ability-runes': {
-    name: 'An ability fires from a Rune',
-    shownBy: '"Use default timing" under the ability',
-    anchor: 'abilityTiming',
-  },
-  'weapon-page': {
-    name: 'A weapon has a page of cards',
-    shownBy: 'the weapon page, opened from the equipped weapon',
-    anchor: 'equipmentSlot',
-  },
-  shards: {
-    name: 'Every kill pays its territory\'s shard',
-    shownBy: 'the arrival banner and the map ("Pack territory · Gale Shards")',
-  },
-  // Design §26.1: the T1 lean row is Attack, Speed and Effect on every weapon, and
-  // the guide buys Effect (the weapon's own move made stronger). It never says a
-  // lean choice composes with the verb at T1: Attack and Speed are plain stats.
-  lean: {
-    name: 'Row 1, the lean: Attack, Speed or Effect while the weapon is worn, one active',
-    shownBy: 'the lean card\'s sentence on the weapon page, and its share in the Stats panel',
-    anchor: 'lineageCard',
-  },
-  'lean-rank': {
-    name: 'A lean has three ranks, and each makes its number bigger',
-    shownBy: 'the rank pips and Rank up on the lean card, and the number in its sentence',
-    anchor: 'lineageRankUp',
-  },
-  guard: {
-    name: 'A Guard rescues you mid-fight',
-    shownBy: 'the Abilities tab, Attune',
-    anchor: 'abilityAttune',
   },
   evasion: {
     name: 'Evasion: harder to hit',
@@ -116,25 +81,6 @@ export const TUTORIAL_CONCEPTS = {
   hazards: {
     name: 'Hazard ground hurts, and a Rune walks around it',
     shownBy: 'the hazard patches on the Swamp floor',
-  },
-  'loadout-swap': {
-    name: 'Abilities are swapped to fit the zone',
-    shownBy: 'the Abilities tab, Unattune then Attune',
-    anchor: 'abilityAttune',
-  },
-  verb: {
-    name: 'Row 2, the verb: the weapon\'s own move, a moment in the fight',
-    shownBy: 'the verb card\'s sentence on the weapon page, ringed',
-    anchor: 'lineageCard',
-  },
-  // Design §26.4: one named ring per active verb, under the HP bar (desktop: the
-  // Character panel; phone: the top strip's second row), in five states, plus the
-  // count of firings the player did not see.
-  'rhythm-ring': {
-    name: 'A ring under your health bar shows the verb coming',
-    shownBy: 'the verb\'s named ring under the health bar: it counts, brightens when coming, lights when ready,'
-      + ' goes dashed when it needs a poisoned or held target, and shows +N for firings you missed',
-    anchor: 'rhythmRing',
   },
   orbit: {
     name: 'Orbit: circle out of reach while attacking',
@@ -159,15 +105,6 @@ export const TUTORIAL_CONCEPTS = {
     shownBy: 'the altar button, ringed',
     anchor: 'altar',
   },
-  gate: {
-    name: 'A gate turns the weapon into its next form',
-    shownBy: 'the gate block at the bottom of the weapon page',
-    anchor: 'lineageForm',
-  },
-  capstone: {
-    name: 'Only the boss drops the gate\'s capstone',
-    shownBy: 'the capstone pips on the gate block',
-  },
 } as const satisfies Record<string, TutorialConcept>;
 
 export type TutorialConceptId = keyof typeof TUTORIAL_CONCEPTS;
@@ -175,7 +112,7 @@ export type TutorialConceptId = keyof typeof TUTORIAL_CONCEPTS;
 /** Most new ideas one level of the first hour may introduce. */
 export const TUTORIAL_CONCEPTS_PER_LEVEL = 2;
 
-/** The zone a chapter plays in; chapters with none (the seals, the gate) are their own level. */
+/** The zone a chapter plays in; a chapter with none (the farewell) is its own level. */
 const CHAPTER_ZONE: Readonly<Record<string, string>> = {
   'The Clearing': 'clearing',
   'The Plains': 'plains',
@@ -214,7 +151,7 @@ function gatesIn(condition: TutorialCondition): TutorialCondition[] {
  * that a farm finishing two levels at once lands two levels' lines together —
  * which the 1x sweep's own level-ups show (docs/guided-tutorial-plan.md).
  *
- * The seals and the gate are their own levels.
+ * A chapter that names no zone (the farewell) is its own level.
  */
 export function tutorialChecklist(script: TutorialScript): TutorialChecklistRow[] {
   const levels: Record<string, number> = {};

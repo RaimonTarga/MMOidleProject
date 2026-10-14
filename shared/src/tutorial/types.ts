@@ -144,8 +144,7 @@ export interface TutorialBeat {
   /**
    * Shown AFTER the beat's steps are done, while the guide points: the card the
    * beat bought, then (with `ring`) that card's ring on the rhythm readout. The
-   * client director only; the bot has nothing to read. Lines are generated from
-   * data in `classScript.ts`, like every other line.
+   * client director only; the bot has nothing to read. The seal route sets none.
    */
   lesson?: TutorialLesson;
 }
