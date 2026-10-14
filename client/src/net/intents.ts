@@ -84,14 +84,6 @@ export function sendMoveToNeighbor(socket: GameSocket, nodeId: string, pos: Vec2
   socket.emit('player:moveToNeighbor', nodeId, pos, ack);
 }
 
-export function sendUseAbility(
-  socket: GameSocket,
-  abilityId: string,
-  ack?: (result: CombatControlResult) => void,
-): void {
-  socket.emit('ability:use', abilityId, ack);
-}
-
 export function sendManualReload(
   socket: GameSocket,
   ack?: (result: CombatControlResult) => void,

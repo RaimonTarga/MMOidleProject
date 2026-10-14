@@ -12,8 +12,7 @@
 //     throw, so shipping a new mechanic before its wording is not a crash;
 //   - the tooltip reads the SERVER-RESOLVED value (a slow after resistance),
 //     not the authored one, and not a string parsed back out of `logDetail`;
-//   - abilities resolve their rank from player tier and report ready/cooling/
-//     casting honestly.
+//   - a buff tile an ability owns wears the ability's name.
 //
 // Nothing here asserts a balance number.
 
@@ -21,10 +20,8 @@ import {
   BUFF_IDS,
   GAME_CONFIG,
   STARTER_RUNE_IDS,
-  abilityDef,
   applyStatusEffect,
   emptyEquipment,
-  type AbilityDef,
   type PlayerBuff,
   type TargetStatusView,
 } from "@mmo-idle/shared";
@@ -41,8 +38,6 @@ import {
 } from "../../client/src/hud/statusHelp";
 import { bossEffectIconSource, statusIconSource, targetStatusIconSource } from "../../client/src/ui/conceptIcons";
 import {
-  abilityAccessibleLabel,
-  abilityTooltipContent,
   bossEffectTooltipContent,
   buffTooltipContent,
   targetStatusTooltipContent,
@@ -286,68 +281,8 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
   assert(boss.title === "Enraged", "an authored boss effect should use its authored title");
 }
 
-// ── Abilities: rank by tier, and honest runtime state ───────────────────────
+// ── A buff tile an ability owns ────────────────────────────────────────────
 {
-  const sweep: AbilityDef | undefined = abilityDef("sweep");
-  assert(sweep !== undefined, "test needs the sweep ability to exist");
-
-  const lowTier = { playerTier: sweep.tier, passives: {}, combatArchetype: "summoner" as const, attack: 100, maxHp: 500, attackRange: 60 };
-  const highTier = { ...lowTier, playerTier: sweep.tier + sweep.ranks.length - 1 };
-
-  const ready = abilityTooltipContent(sweep, lowTier, { state: "ready" });
-  assertLegible(ready, "ability ready");
-  assert(ready.title.startsWith(sweep.name), "an ability tooltip leads with its name");
-  assert(
-    ready.current?.some((r) => r.label === "Status" && r.value === "Ready"),
-    "a ready ability must say Ready",
-  );
-  assert((ready.rows ?? []).length > 0, "an ability must show what it does at this rank");
-  assert(
-    (ready.rows ?? []).every((r) => r.key !== "ability:rank"),
-    "the rank row is in the title already and must not be repeated as a row",
-  );
-  assert(
-    ready.classSpecific?.some((r) => r.label === "Conduit" && r.value.includes("normalized Sweep budget")),
-    "an ability tooltip must expose its Conduit adapter in a separate class-specific section",
-  );
-  const squire = abilityTooltipContent(sweep, { ...lowTier, combatArchetype: "cooldown" }, { state: "ready" });
-  assert((squire.classSpecific ?? []).length === 0, "Squire must not see another class's adapter");
-
-  const deep = abilityTooltipContent(sweep, highTier, { state: "ready" });
-  assert(
-    deep.title !== ready.title,
-    "a higher player tier must resolve a higher rank in the title",
-  );
-
-  const cooling = abilityTooltipContent(sweep, lowTier, {
-    state: "cooling",
-    cooldownRemainingMs: 3600,
-  });
-  assert(
-    cooling.current?.some((r) => r.label === "Cooldown remaining" && r.value === "3.6s"),
-    "a cooling ability must report how long is left",
-  );
-  assert(
-    !cooling.current?.some((r) => r.label === "Wind-up remaining"),
-    "a cooling ability must not claim a cast it is not doing",
-  );
-
-  const casting = abilityTooltipContent(sweep, lowTier, {
-    state: "casting",
-    castRemainingMs: 800,
-  });
-  assert(
-    casting.current?.some((r) => r.label === "Wind-up remaining" && r.value === "0.8s"),
-    "a casting ability must report its wind-up",
-  );
-
-  const label = abilityAccessibleLabel(sweep, lowTier, {
-    state: "cooling",
-    cooldownRemainingMs: 3600,
-  });
-  assert(!BAD.test(label), `accessible label must be legible: ${label}`);
-  assert(label.includes(sweep.name), "the accessible label must name the ability");
-
   // A buff tile an ability owns is named after the ability as it is called now.
   const guardTile = {
     id: "ability-guard", label: "Brace", stacks: 1, durationPct: 50, color: "#9ad0ff",
@@ -357,16 +292,6 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
   assert(owned.title === "Brace II", "the Guard's window wears the Guard's name");
   assert(owned.kicker?.includes("Guard"), `the status's own name moves to the kicker, got ${owned.kicker}`);
   assert(buffTooltipContent(guardTile).title === "Guard", "without an owner the tile keeps its authored title");
-
-  // Every authored ability must build a legible card at its own home tier.
-  for (const id of ["brace", "second-wind"]) {
-    const def = abilityDef(id);
-    if (!def) continue;
-    assertLegible(
-      abilityTooltipContent(def, { ...lowTier, playerTier: def.tier }, { state: "active" }),
-      `ability ${id}`,
-    );
-  }
 }
 
 // ── The value is the RESOLVED one, off a real world ─────────────────────────

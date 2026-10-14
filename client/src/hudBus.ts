@@ -49,10 +49,6 @@ export const hudBus = {
     intents.emit('setAbilityLoadout', { equipped });
   },
 
-  /** Attempt immediate use; the server revalidates attunement and combat state. */
-  requestUseAbility(abilityId: string): void {
-    intents.emit('useAbility', abilityId);
-  },
 
   /** Ask the authoritative Slinger reload lifecycle to discard the clip and reload. */
   requestManualReload(): void {

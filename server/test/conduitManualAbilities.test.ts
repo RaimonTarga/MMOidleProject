@@ -1,7 +1,7 @@
 /**
- * Manual hotbar presses for Conduit Techniques. The Conduit owner never holds a
- * direct attack target — its summons fight — so a manual press must resolve the
- * formation's current target, exactly as the Rune-driven path does.
+ * Firing a Conduit Technique on the current target (`currentTargetOnly`). The
+ * Conduit owner never holds a direct attack target — its summons fight — so the
+ * engine must resolve the formation's current target.
  */
 import {
   GAME_CONFIG,
@@ -13,7 +13,7 @@ import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { setAttackTarget } from '../src/systems/combat/ai/targeting';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
-import { requestManualAbilityUse } from '../src/systems/player/abilities/abilityFiring';
+import { fireTechnique } from '../src/systems/player/abilities/abilityFiring';
 import { World } from '../src/world/World';
 
 function assert(condition: unknown, message: string): void {
@@ -48,7 +48,7 @@ function slices(id: string, abilityId: string): PersistedPlayerSlices {
 
 initCombatSystems();
 
-// One per offensive execution shape a Conduit can press from the hotbar.
+// One per offensive execution shape a Conduit can fire.
 for (const abilityId of ['sweep', 'binding-strike', 'slam', 'charge']) {
   const world = new World();
   const id = `manual-${abilityId}`;
@@ -69,14 +69,11 @@ for (const abilityId of ['sweep', 'binding-strike', 'slam', 'charge']) {
   updateSummonerArchetype(world, 100, 1_100);
   assert(player.hasAttackTarget === undefined, `${abilityId}: Conduit owner must not hold a direct target`);
 
-  const result = requestManualAbilityUse(world, player, abilityId, 1_200);
-  assert(
-    result.success && result.state === 'activated',
-    `${abilityId}: manual press should activate, got ${JSON.stringify(result)}`,
-  );
+  const result = fireTechnique(world, player, abilityId, 1_200, { currentTargetOnly: true, chargeAtAnyRange: true });
+  assert(result.activated, `${abilityId}: it should activate, got ${JSON.stringify(result)}`);
   assert(
     !!(player.hasFormationTechnique || player.hasFormationCharge || player.isCastingAbility),
-    `${abilityId}: manual press should occupy the formation's offensive channel`,
+    `${abilityId}: it should occupy the formation's offensive channel`,
   );
 }
 

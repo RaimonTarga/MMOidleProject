@@ -5,7 +5,6 @@ import { hudBus } from '../hudBus';
 import { screenSpaceScale, screenToCameraSpace } from '../render/cameraZoom';
 import {
   captureModeAtom,
-  abilitySlotForKey,
   getBindings,
   MOVEMENT_ACTIONS,
   matchesHoldStillKey,
@@ -14,7 +13,6 @@ import {
 } from '../settings/keybinds';
 import {
   deathOverlayAtom,
-  attunedAbilitiesAtom,
   combatArchetypeAtom,
   debugPanelOpenAtom,
   dungeonAtom,
@@ -171,18 +169,6 @@ export function attachKeyboard(scene: GameScene): () => void {
       ) {
         event.preventDefault();
         hudBus.requestRecallSummons();
-        return;
-      }
-
-      const abilities = store.get(attunedAbilitiesAtom);
-      const ordered = [...abilities.techniques, ...abilities.guards];
-      const slot = abilitySlotForKey(event, bindings);
-      if (slot !== null) {
-        const abilityId = ordered[slot];
-        if (abilityId) {
-          event.preventDefault();
-          hudBus.requestUseAbility(abilityId);
-        }
         return;
       }
     }

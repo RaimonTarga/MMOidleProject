@@ -32,7 +32,7 @@ import { setAttackTarget } from '../src/systems/combat/ai/targeting';
 import { updateCombatState } from '../src/systems/combat/engine/combatState';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { evasionWindowBonus } from '../src/systems/defense/mitigation/evasion';
-import { requestManualAbilityUse } from '../src/systems/player/abilities/abilityFiring';
+import { fireGuard } from '../src/systems/player/abilities/abilityFiring';
 import { setEntityMotion, updateMovement } from '../src/systems/world/movement';
 import { World } from '../src/world/World';
 import { fireWithReferenceWiring } from './fixtures/abilityWiring';
@@ -149,14 +149,14 @@ initCombatSystems();
   fireWithReferenceWiring(world, 1_000);
   assert(getStatusEffect(player.tracksCombat, ABILITY_SIDESTEP_EFFECT_ID) === undefined,
     'Sidestep must not fire out of combat');
-  const pressed = requestManualAbilityUse(world, player, 'sidestep', 1_000);
-  assert(getStatusEffect(player.tracksCombat, ABILITY_SIDESTEP_EFFECT_ID) === undefined && pressed.state !== 'activated',
-    'a manual press with nothing in reach must not spend it either');
+  const fired = fireGuard(world, player, 'sidestep');
+  assert(getStatusEffect(player.tracksCombat, ABILITY_SIDESTEP_EFFECT_ID) === undefined && !fired,
+    'firing it directly with nothing in reach must not spend it either');
   assert((player.tracksCombat.cooldowns['ability.cd.sidestep'] ?? 0) <= 0, 'a declined Sidestep keeps its cooldown');
 
   // A monster far outside reach is still nothing to dodge.
   world.createMonster('node-5-5', 'plains-slime', { x: 2_000, y: 400 });
-  requestManualAbilityUse(world, player, 'sidestep', 1_100);
+  fireGuard(world, player, 'sidestep');
   assert(getStatusEffect(player.tracksCombat, ABILITY_SIDESTEP_EFFECT_ID) === undefined,
     'a monster out of reach does not open the window');
 }

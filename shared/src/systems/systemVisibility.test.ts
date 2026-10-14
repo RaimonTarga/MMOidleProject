@@ -82,13 +82,11 @@ assert(masteryOne.mastery, "global mastery 1 should reveal mastery");
 
 const tierWithoutAbility = resolveSystemVisibility({ ...FRESH, playerTier: 3 });
 assert(!tierWithoutAbility.abilities, "player tier alone should not reveal abilities");
-assert(!tierWithoutAbility.abilityDock, "player tier alone should not reveal the ability dock");
 const craftedAbility = resolveSystemVisibility({
   ...FRESH,
   knownAbilities: ["sweep"],
 });
 assert(craftedAbility.abilities, "crafting an ability should reveal abilities");
-assert(craftedAbility.abilityDock, "crafting an ability should reveal the ability dock");
 
 const tierOne = resolveSystemVisibility({ ...FRESH, playerTier: 1 });
 for (const system of [
@@ -104,7 +102,7 @@ for (const system of [
 ] as const) {
   assert(tierOne[system], `tier 1 should retain the existing '${system}' fallback`);
 }
-for (const system of ["crafting", "mastery", "abilities", "abilityDock"] as const) {
+for (const system of ["crafting", "mastery", "abilities"] as const) {
   assert(!tierOne[system], `tier 1 should not bypass the '${system}' milestone`);
 }
 

@@ -3,14 +3,12 @@ import Phaser from 'phaser';
 import type { GameScene } from '../scenes/GameScene';
 import { hudBus } from '../hudBus';
 import {
-  attunedAbilitiesAtom,
   combatArchetypeAtom,
   deathOverlayAtom,
   debugPanelOpenAtom,
   gamepadStatusAtom,
 } from '../hud/atoms';
 import {
-  abilitySlotForPad,
   captureModeAtom,
   getBindings,
   matchesPad,
@@ -63,15 +61,6 @@ export function attachGamepad(scene: GameScene): () => void {
         && matchesPad(index, 'class.recall', bindings)
       ) {
         hudBus.requestRecallSummons();
-        return;
-      }
-
-      const abilities = store.get(attunedAbilitiesAtom);
-      const ordered = [...abilities.techniques, ...abilities.guards];
-      const slot = abilitySlotForPad(index, bindings);
-      if (slot !== null) {
-        const abilityId = ordered[slot];
-        if (abilityId) hudBus.requestUseAbility(abilityId);
         return;
       }
     }

@@ -1,19 +1,5 @@
 import { atom, getDefaultStore, type PrimitiveAtom } from 'jotai';
 
-export const ABILITY_HOTKEY_ACTIONS = [
-  'ability.slot1',
-  'ability.slot2',
-  'ability.slot3',
-  'ability.slot4',
-  'ability.slot5',
-  'ability.slot6',
-  'ability.slot7',
-  'ability.slot8',
-  'ability.slot9',
-] as const;
-
-export type AbilityHotkeyAction = (typeof ABILITY_HOTKEY_ACTIONS)[number];
-
 export type ActionId =
   | 'move.up'
   | 'move.down'
@@ -31,7 +17,6 @@ export type ActionId =
   | 'toggle.settings'
   | 'class.reload'
   | 'class.recall'
-  | AbilityHotkeyAction
   | 'close.overlay';
 
 export interface BindingSet {
@@ -72,7 +57,6 @@ export const REBINDABLE_ACTIONS: readonly ActionId[] = [
   'toggle.settings',
   'class.reload',
   'class.recall',
-  ...ABILITY_HOTKEY_ACTIONS,
 ];
 
 export const TRIGGER_LEFT_INDEX = 6;
@@ -97,15 +81,6 @@ export const DEFAULT_BINDINGS: Bindings = {
   'class.reload': { key: 'KeyR', pad: null },
   // Same key as Slinger reload: each only fires for its own class.
   'class.recall': { key: 'KeyR', pad: null },
-  'ability.slot1': { key: 'Digit1', pad: null },
-  'ability.slot2': { key: 'Digit2', pad: null },
-  'ability.slot3': { key: 'Digit3', pad: null },
-  'ability.slot4': { key: 'Digit4', pad: null },
-  'ability.slot5': { key: 'Digit5', pad: null },
-  'ability.slot6': { key: 'Digit6', pad: null },
-  'ability.slot7': { key: 'Digit7', pad: null },
-  'ability.slot8': { key: 'Digit8', pad: null },
-  'ability.slot9': { key: 'Digit9', pad: null },
   'close.overlay': { key: 'Escape', pad: 1 },
 };
 
@@ -224,23 +199,6 @@ export function matchesPad(
   return pad !== null && buttonIndex === pad;
 }
 
-/** Resolve a configured keyboard event code to its zero-based combat-hotbar slot. */
-export function abilitySlotForKey(eventOrCode: KeyboardChordInput | string, bindings: Bindings): number | null {
-  const event = typeof eventOrCode === 'string' ? { code: eventOrCode } : eventOrCode;
-  const slot = ABILITY_HOTKEY_ACTIONS.findIndex(
-    (action) => matchesKeyboardBinding(event, bindings[action]),
-  );
-  return slot >= 0 ? slot : null;
-}
-
-/** Resolve a configured gamepad button to its zero-based combat-hotbar slot. */
-export function abilitySlotForPad(buttonIndex: number, bindings: Bindings): number | null {
-  const slot = ABILITY_HOTKEY_ACTIONS.findIndex(
-    (action) => bindings[action].pad !== null && bindings[action].pad === buttonIndex,
-  );
-  return slot >= 0 ? slot : null;
-}
-
 const PAD_LABELS: Record<number, string> = {
   0: 'A',
   1: 'B',
@@ -303,15 +261,6 @@ export const ACTION_LABELS: Record<ActionId, string> = {
   'toggle.settings': 'Open Settings',
   'class.reload': 'Slinger: Reload',
   'class.recall': 'Conduit: Recall Summons',
-  'ability.slot1': 'Use Ability 1',
-  'ability.slot2': 'Use Ability 2',
-  'ability.slot3': 'Use Ability 3',
-  'ability.slot4': 'Use Ability 4',
-  'ability.slot5': 'Use Ability 5',
-  'ability.slot6': 'Use Ability 6',
-  'ability.slot7': 'Use Ability 7',
-  'ability.slot8': 'Use Ability 8',
-  'ability.slot9': 'Use Ability 9',
   'close.overlay': 'Close Overlay',
 };
 

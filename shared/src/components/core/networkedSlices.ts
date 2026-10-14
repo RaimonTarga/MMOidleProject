@@ -267,11 +267,6 @@ export interface UsesAutocombat extends AutocombatConfig {
   autoTraverse: boolean;
 }
 
-/** Runtime, server-owned manual ability requests waiting for legal activation. */
-export interface QueuesAbilities {
-  abilityIds: string[];
-}
-
 /** What a server-directed player is about to do — telegraphed via HUD/bubbles. */
 export type AutoIntentKind = 'attack' | 'follow' | 'travel' | 'flee' | 'idle';
 

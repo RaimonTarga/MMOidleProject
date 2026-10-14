@@ -5,7 +5,6 @@ import {
   sendCraftRecipe,
   sendCraftAbilityRecipe,
   sendSetAbilityLoadout,
-  sendUseAbility,
   sendManualReload,
   sendRecallSummons,
   sendEquipItem,
@@ -99,11 +98,6 @@ export function attachHudEvents(scene: GameScene): () => void {
   intents.on("setAbilityLoadout", (payload) => {
     if (isDeathOverlayActive()) return;
     sendSetAbilityLoadout(scene.socket, payload);
-  });
-
-  intents.on("useAbility", (abilityId) => {
-    if (isDeathOverlayActive()) return;
-    sendUseAbility(scene.socket, abilityId, notifyCombatControlResult);
   });
 
   intents.on("manualReload", () => {

@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import { ABILITY_DATABASE, abilityHasTag, abilityModifierApplies, equipmentAbilityTags, itemMechanicEffectsAt, type ItemDefinition } from '@mmo-idle/shared';
 import { describeAbility } from '../../client/src/ui/describe/abilityText';
-import { abilityTooltipContent } from '../../client/src/hud/statusTooltips';
 
 const sweep = ABILITY_DATABASE.get('sweep')!;
 const gear: ItemDefinition = { id: 'test-gear', name: 'Test gear', slot: 'armor', tier: 1, statModifiers: {},
@@ -28,8 +27,5 @@ const description = describeAbility(sweep, context);
 assert.equal(description.equipmentModifiers.length, 1);
 assert.equal(description.equipmentModifiers[0].value, '25%');
 assert.equal(description.equipmentModifiers[0].source, 'Test equipment +3');
-const tooltip = abilityTooltipContent(sweep, context, { state: 'ready' });
-assert(tooltip.tags?.includes('aoe'));
-assert.equal(tooltip.equipment?.length, 1);
 
 console.log('abilityEquipmentFeedback: ok');

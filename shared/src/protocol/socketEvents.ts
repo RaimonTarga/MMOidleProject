@@ -239,8 +239,6 @@ export interface ClientToServerEvents {
    * Server validates learned / slot-type / slot-count / duplicates.
    */
   "ability:setLoadout": (payload: { equipped: AttunedAbilities }) => void;
-  /** Attempt to activate one currently attuned ability through normal authority. */
-  "ability:use": (abilityId: string, ack?: (result: CombatControlResult) => void) => void;
   /** Equip an item from inventory by its definition ID. */
   "inventory:equipItem": (definitionId: string) => void;
   /** Move the item in the given slot back to inventory. */

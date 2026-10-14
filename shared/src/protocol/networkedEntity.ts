@@ -22,7 +22,6 @@ import type {
   IsMoving,
   IsPlayer,
   MitigatesDamage,
-  QueuesAbilities,
   PerformsAttack,
   SummonsMinions,
   ConfiguresClass,
@@ -89,7 +88,6 @@ export const NETWORKED_PLAYER_KEYS = [
   "hasBarrier",
   "holdsWards",
   "usesAutocombat",
-  "queuesAbilities",
   "hasAutoIntent",
   "hasEmote",
   "tracksProgression",
@@ -163,7 +161,6 @@ export interface NetworkedEntity {
   hasBarrier?: HasBarrier;
   holdsWards?: HoldsWards;
   usesAutocombat?: UsesAutocombat;
-  queuesAbilities?: QueuesAbilities;
   hasAutoIntent?: HasAutoIntent;
   hasEmote?: HasEmote;
   tracksProgression?: TracksProgression;

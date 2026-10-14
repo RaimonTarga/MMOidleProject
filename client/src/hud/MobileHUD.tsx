@@ -231,7 +231,6 @@ function MobileHUDContent() {
         'mastery',
         'combatLog',
         'bestiary',
-        'abilityDock',
       ] as const,
     },
   ];

@@ -35,7 +35,6 @@ import {
   craftAbilityRecipe,
   setAbilityLoadout,
 } from "../systems/player/economy/abilityCrafting";
-import { requestManualAbilityUse } from "../systems/player/abilities/abilityFiring";
 import { requestManualReload } from "../systems/classes/archetypes/reload/reloadLifecycle";
 import { upgradeItem } from "../systems/player/economy/itemUpgrade";
 import {
@@ -459,16 +458,6 @@ export function registerPlayerHandlers(
     const result = setAbilityLoadout(world, p, equipped);
     world.gameplay?.decision(p, "abilities", null, telemetryBefore, result.success);
     socket.emit("build:loadoutResult", { system: "abilities", ...result });
-  });
-
-  socket.on("ability:use", (abilityId, ack) => {
-    const p = liveSelf();
-    if (!p) return ack?.({ success: false, reason: NOT_LIVE_REASON });
-    if (typeof abilityId !== "string") {
-      return ack?.({ success: false, reason: "Malformed ability id." });
-    }
-    const result = requestManualAbilityUse(world, p, abilityId);
-    ack?.(result);
   });
 
   socket.on("inventory:upgradeItem", (itemId: string) => {

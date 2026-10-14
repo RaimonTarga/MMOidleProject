@@ -11,7 +11,6 @@ export interface IntentMap {
   setRuneLoadout: EquippedRule[];
   craftAbilityRecipe: string;
   setAbilityLoadout: { equipped: AttunedAbilities };
-  useAbility: string;
   manualReload: undefined;
   recallSummons: undefined;
   activateDungeonAltar: undefined;

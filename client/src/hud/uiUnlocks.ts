@@ -38,7 +38,6 @@ const UI_UNLOCK_SYSTEMS: readonly UiUnlockSystem[] = [
   'crafting',
   'map',
   'loadout',
-  'abilityDock',
 ];
 const UI_UNLOCK_ACTIVATION_FALLBACK_MS = 3_600;
 /**

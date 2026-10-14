@@ -44,8 +44,6 @@ export interface SystemVisibility {
   map: boolean;
   /** Loadout reveals when there is something to arrange. */
   loadout: boolean;
-  /** Ability dock shares the crafted-ability gate. */
-  abilityDock: boolean;
 }
 
 function anyPositive(values: Record<string, number> | undefined): boolean {
@@ -104,7 +102,6 @@ export function resolveSystemVisibility(
       abilities ||
       (input.runesOwned?.length ?? 0) > 0 ||
       input.playerTier >= 1,
-    abilityDock: abilities,
     mastery: masteryIsVisible(input.globalMastery),
     abilities,
     materials,

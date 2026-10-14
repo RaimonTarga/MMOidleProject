@@ -1,6 +1,6 @@
-// Tooltip CONTENT for the combat HUD: player buffs, target-frame statuses, boss
-// effects and equipped abilities, all reduced to the one `TooltipCardContent`
-// shape `TooltipCard` renders.
+// Tooltip CONTENT for the combat HUD: player buffs, target-frame statuses and
+// boss effects, all reduced to the one `TooltipCardContent` shape `TooltipCard`
+// renders.
 //
 // Pure data-in/data-out on purpose. Nothing here touches the DOM or hover, so a
 // future mobile inspection surface (tap, long-press, a selected-status panel) can
@@ -13,16 +13,12 @@
 // here parses `logDetail`, and nothing here re-implements a combat formula.
 
 import {
-  abilityBlurbAt,
-  abilityDisplayName,
   MONSTER_DATABASE,
-  type AbilityDef,
   type PlayerBuff,
   type StatusValue,
   type TargetStatusView,
 } from '@mmo-idle/shared';
 import type { TooltipCardContent, TooltipRow } from './primitives/TooltipCard';
-import { abilityLines, describeAbility, type AbilityContext } from '../ui/describe';
 import {
   bossDebuffHelp,
   bossEffectHelp,
@@ -185,108 +181,4 @@ export function bossPhaseTooltipContent(
       ?? 'The boss has entered a new phase of the fight.',
     current: [],
   };
-}
-
-// -- Abilities ---------------------------------------------------------------
-
-/** What the client already knows about an equipped slot, right now. */
-export interface AbilityRuntime {
-  state: 'ready' | 'cooling' | 'active' | 'casting';
-  /** Cooldown left, when cooling. */
-  cooldownRemainingMs?: number;
-  /** Wind-up left, when casting. */
-  castRemainingMs?: number;
-  /** Equipped Rune timing, even while its condition is false. */
-  runeTiming?: string;
-}
-
-const ABILITY_STATE_LABEL: Record<AbilityRuntime['state'], string> = {
-  ready: 'Ready',
-  cooling: 'Cooling down',
-  active: 'Active',
-  casting: 'Casting',
-};
-
-const SLOT_LABEL: Record<AbilityDef['slot'], string> = {
-  technique: 'Technique',
-  guard: 'Guard',
-};
-
-/**
- * An ability's tooltip is `ui/describe` plus a state line — deliberately not a
- * second effect formatter. The loadout browser, the skill tree and this tile all
- * read the same authored rank through the same resolver, so a number can never
- * mean one thing in the build screen and another on the HUD.
- */
-export function abilityTooltipContent(
-  ability: AbilityDef,
-  context: AbilityContext,
-  runtime: AbilityRuntime,
-): TooltipCardContent {
-  const described = describeAbility(ability, context);
-
-  // `abilityLines` leads with a Rank row; the title already carries the numeral,
-  // so it is dropped rather than said twice.
-  const rows: TooltipRow[] = abilityLines(ability, context)
-    .filter((line) => line.key !== 'ability:rank'
-      && !line.key.startsWith('ability:class-specific:'))
-    .map((line) => ({
-      key: line.key,
-      label: line.label,
-      value: line.value,
-      detail: line.detail,
-      good: line.good,
-    }));
-
-  const current: TooltipRow[] = [
-    { key: 'state', label: 'Status', value: ABILITY_STATE_LABEL[runtime.state] },
-  ];
-  if (runtime.state === 'cooling' && runtime.cooldownRemainingMs !== undefined) {
-    current.push({
-      key: 'cooldown-remaining',
-      label: 'Cooldown remaining',
-      value: SECONDS(runtime.cooldownRemainingMs),
-    });
-  }
-  if (runtime.state === 'casting' && runtime.castRemainingMs !== undefined) {
-    current.push({
-      key: 'cast-remaining',
-      label: 'Wind-up remaining',
-      value: SECONDS(runtime.castRemainingMs),
-    });
-  }
-
-  return {
-    // The whole name (design §22.10: "the tooltip the whole name").
-    title: abilityDisplayName(ability, context.playerTier),
-    tags: described.tags.map(tag => tag.id),
-    equipment: described.equipmentModifiers.map(line => ({ key: line.key, label: `${line.source} · ${line.label}`, value: line.value })),
-    kicker: `${SLOT_LABEL[ability.slot]} · ${described.rankLabel}`,
-    body: abilityBlurbAt(ability, context.playerTier),
-    rows,
-    rowsTitle: 'At this rank',
-    classSpecific: described.classSpecific.map(line => ({
-      key: `class-specific:${line.key}`,
-      label: line.className,
-      value: line.text,
-    })),
-    current,
-    // Rune timing and shape are the two sentences a player needs to predict WHEN
-    // it goes off — an ability fires on its own only through a Rune rule.
-    footnote: `${runtime.runeTiming ? `${runtime.runeTiming} ` : ''}${described.shape}`,
-  };
-}
-
-/** Plain-text accessible name for an ability slot — used for `aria-label`. */
-export function abilityAccessibleLabel(
-  ability: AbilityDef,
-  context: AbilityContext,
-  runtime: AbilityRuntime,
-): string {
-  const name = abilityDisplayName(ability, context.playerTier);
-  const state =
-    runtime.state === 'cooling' && runtime.cooldownRemainingMs !== undefined
-      ? `cooling, ${SECONDS(runtime.cooldownRemainingMs)} remaining`
-      : ABILITY_STATE_LABEL[runtime.state].toLowerCase();
-  return `${SLOT_LABEL[ability.slot]}: ${name} — ${state}`;
 }

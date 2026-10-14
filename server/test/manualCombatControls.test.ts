@@ -1,7 +1,8 @@
 /**
- * Focused authority tests for live manual ability controls.
- * Manual requests must enter the existing ability/cast systems rather
- * than becoming a second execution path.
+ * Focused authority tests for live manual combat controls (the Slinger's manual
+ * reload), and for firing one ability on the current target through the kept
+ * engine API (`fireTechnique`), which must enter the existing ability/cast
+ * systems rather than becoming a second execution path.
  */
 import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
@@ -25,16 +26,13 @@ import {
   holdsPositionWhileCasting,
   updateAbilityCasts,
 } from "../src/systems/player/abilities/abilityCasting";
-import { requestManualAbilityUse } from "../src/systems/player/abilities/abilityFiring";
+import { fireTechnique } from "../src/systems/player/abilities/abilityFiring";
 import { fireAbilities, wireReferenceAbilities } from "./fixtures/abilityWiring";
 import { STUN_EFFECT } from "../src/systems/combat/status/stun";
 import { attachComponent } from "../src/ecs/markerHelpers";
 import { World } from "../src/world/World";
 import {
-  ABILITY_HOTKEY_ACTIONS,
   DEFAULT_BINDINGS,
-  abilitySlotForKey,
-  abilitySlotForPad,
   matchesKey,
 } from "../../client/src/settings/keybinds";
 import {
@@ -94,28 +92,12 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
 
 initCombatSystems();
 
-// The shared input binding table assigns numeric keys in visible hotbar order,
-// while remaining fully rebindable for keyboard and gamepad input.
+// Manual reload has a default key.
 {
-  assert(ABILITY_HOTKEY_ACTIONS.length === 9, "manual hotbar should expose nine configurable slots");
-  for (let slot = 0; slot < ABILITY_HOTKEY_ACTIONS.length; slot++) {
-    assert(
-      abilitySlotForKey(`Digit${slot + 1}`, DEFAULT_BINDINGS) === slot,
-      `Digit${slot + 1} should map to hotbar slot ${slot + 1}`,
-    );
-  }
-  assert(abilitySlotForKey("KeyX", DEFAULT_BINDINGS) === null, "unbound keys must not activate a hotbar slot");
-  assert(
-    abilitySlotForKey({ code: "Digit2", shiftKey: true }, DEFAULT_BINDINGS) === null,
-    "a shifted chord must not fire the matching numbered ability",
-  );
   assert(
     matchesKey({ code: "KeyR" }, "class.reload", DEFAULT_BINDINGS),
     "R should be the default manual reload binding",
   );
-  const rebound = structuredClone(DEFAULT_BINDINGS);
-  rebound["ability.slot3"].pad = 4;
-  assert(abilitySlotForPad(4, rebound) === 2, "gamepad rebinding should map through the same hotbar order");
 }
 
 // Manual reload is an authoritative Slinger-only request. A partial magazine
@@ -202,58 +184,25 @@ initCombatSystems();
   );
 }
 
-// A valid activation fires immediately. A press during cooldown queues exactly
-// one follow-up; pressing again cancels it, and a successful queued activation
-// consumes the request instead of re-queueing itself.
-{
-  const world = new World();
-  const player = world.attachPlayerEntity(makePlayerSlices("manual-instant"), "manual-instant");
-  assert(requestManualAbilityUse(world, player, "imbue-lightning", 1_000).success, "valid attuned manual ability should fire");
-  const cooldown = getCooldown(player.tracksCombat, abilityCooldownKey("imbue-lightning"));
-  assert(cooldown > 0, "manual activation should use the normal per-ability cooldown");
-  const queued = requestManualAbilityUse(world, player, "imbue-lightning", 1_001);
-  assert(queued.success && queued.state === "queued", "a cooldown-blocked press should queue");
-  assert(player.queuesAbilities?.abilityIds.includes("imbue-lightning"), "queued state should be authoritative runtime data");
-  assert(composePlayerView(player)?.queuedAbilityIds.includes("imbue-lightning"), "queued state should reach the player's network view");
-  assert(getCooldown(player.tracksCombat, abilityCooldownKey("imbue-lightning")) === cooldown, "queueing must not rewrite cooldown");
-  const cancelled = requestManualAbilityUse(world, player, "imbue-lightning", 1_002);
-  assert(cancelled.success && cancelled.state === "cancelled", "pressing a queued ability should cancel it");
-  assert(!player.queuesAbilities, "cancelled ability should leave no queued runtime state");
-
-  assert(requestManualAbilityUse(world, player, "imbue-lightning", 1_003).state === "queued", "ability should be queueable again");
-  updateCombatState(world, cooldown);
-  fireAbilities(world, 1_003 + cooldown);
-  assert(!player.queuesAbilities, "successful queued activation must consume the queue entry");
-  fireAbilities(world, 1_004 + cooldown);
-  assert(!player.queuesAbilities, "activation must not automatically re-queue the ability");
-
-  assert(!requestManualAbilityUse(world, player, "not-real", 1_002).success, "unknown ability must be rejected");
-  attachComponent(world, player, "queuesAbilities", { abilityIds: ["brace"] });
-  player.tracksProgression.attunedAbilities.guards = [];
-  assert(!requestManualAbilityUse(world, player, "brace", 1_003).success, "unattuned ability must be rejected even if stale queue state exists");
-  assert(!player.queuesAbilities, "rejecting a stale queued ability should remove its runtime state");
-}
-
-// Enemy-facing use requires the player's current combat target. Nearby fallback
-// targeting remains an automation behavior, not a manual targeting system.
+// `currentTargetOnly` acts on the player's current combat target and nothing
+// else: no nearest-in-reach fallback.
 {
   const world = new World();
   const player = world.attachPlayerEntity(makePlayerSlices("manual-target"), "manual-target");
   const target = world.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 });
   if (!target) throw new Error("target setup failed");
-  const waiting = requestManualAbilityUse(world, player, "binding-strike", 2_000);
-  assert(waiting.success && waiting.state === "queued", "targetless manual ability should wait rather than acquire a fallback");
+  const waiting = fireTechnique(world, player, "slam", 2_000, { currentTargetOnly: true });
+  assert(!waiting.activated && !player.isCastingAbility, "a current-target cast with no target should not acquire a fallback");
   setAttackTarget(world, player, target.isMonster.id);
-  fireAbilities(world, 2_001);
-  assert(player.hasArmedAbility?.abilityId === "binding-strike", "manual Technique should use the normal armed channel");
-  assert(!player.queuesAbilities, "queued target-dependent ability should clear after activation");
-  const blocked = requestManualAbilityUse(world, player, "slam", 2_002);
-  assert(blocked.success && blocked.state === "queued", "shared Technique arbitration should leave the later request queued");
-  assert(requestManualAbilityUse(world, player, "slam", 2_003).state === "cancelled", "queued arbitration wait should be cancellable");
+  const armed = fireTechnique(world, player, "binding-strike", 2_001, { currentTargetOnly: true });
+  assert(armed.activated && player.hasArmedAbility?.abilityId === "binding-strike", "a Technique should use the normal armed channel");
+  const blocked = fireTechnique(world, player, "slam", 2_002, { currentTargetOnly: true });
+  assert(!blocked.activated && blocked.claimed, "shared Technique arbitration should refuse a second Technique while one is armed");
 }
 
-// Manual casts retain their authored wind-up, current-target lock, lost-target
-// abort and hard-control interruption. Snipe also keeps its normal auto-position hold.
+// Casts fired on the current target retain their authored wind-up, current-target
+// lock, lost-target abort and hard-control interruption. Snipe also keeps its
+// normal auto-position hold.
 {
   const world = new World();
   const player = world.attachPlayerEntity(makePlayerSlices("manual-cast"), "manual-cast");
@@ -263,7 +212,7 @@ initCombatSystems();
   const ability = ABILITY_DATABASE.get("slam")!;
   const castMs = abilityCastMs(ability, player.tracksProgression.playerTier);
   const hpBefore = target.hasHealth.hp;
-  assert(requestManualAbilityUse(world, player, ability.id, 3_000).success, "manual cast should start");
+  assert(fireTechnique(world, player, ability.id, 3_000, { currentTargetOnly: true }).activated, "the cast should start");
   assert(player.isCastingAbility?.targetId === target.isMonster.id, "manual cast should lock the current target through the normal cast state");
   updateAbilityCasts(world, 3_000 + castMs - 1);
   assert(target.hasHealth.hp === hpBefore && !!player.isCastingAbility, "manual input must not bypass cast time");
@@ -275,7 +224,7 @@ initCombatSystems();
   const distant = world.createMonster("node-5-5", "plains-slime", { x: 650, y: 400 });
   if (!distant) throw new Error("snipe target setup failed");
   setAttackTarget(world, player, distant.isMonster.id);
-  assert(requestManualAbilityUse(world, player, "snipe", 4_000).success, "manual ranged cast should start on its current target");
+  assert(fireTechnique(world, player, "snipe", 4_000, { currentTargetOnly: true }).activated, "a ranged cast should start on its current target");
   assert(holdsPositionWhileCasting(player), "manual Snipe should retain the normal cast movement hold semantics");
   applyStatusEffect(player.tracksCombat, {
     id: STUN_EFFECT,
@@ -287,14 +236,8 @@ initCombatSystems();
   });
   updateAbilityCasts(world, 4_001);
   assert(!player.isCastingAbility, "hard control should interrupt a manually-started cast normally");
-  const controlled = requestManualAbilityUse(world, player, "snipe", 4_002);
-  assert(controlled.success && controlled.state === "queued", "hard control should queue a valid manual Technique until it is legal");
-  world.killPlayer(player.isPlayer.id, {
-    kind: "debt",
-    nodeId: player.hasPosition.nodeId,
-    damage: player.hasHealth.maxHp,
-  });
-  assert(!player.queuesAbilities, "death should clear queued manual ability intents");
+  const controlled = fireTechnique(world, player, "snipe", 4_002, { currentTargetOnly: true });
+  assert(!controlled.activated && !player.isCastingAbility, "hard control should refuse a Technique until it is legal");
 }
 
 console.log("manualCombatControls: ok");

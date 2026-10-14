@@ -52,7 +52,6 @@ import type {
   IsPlayer,
   IsRooted,
   MitigatesDamage,
-  QueuesAbilities,
   PerformsAttack,
   RecoversFromPattern,
   RunsBossPattern,
@@ -257,7 +256,6 @@ export interface ServerEntity {
   hasBarrier?: HasBarrier;
   holdsWards?: HoldsWards;
   usesAutocombat?: UsesAutocombat;
-  queuesAbilities?: QueuesAbilities;
   hasAutoIntent?: HasAutoIntent;
   hasEmote?: HasEmote;
   tracksProgression?: TracksProgression;
