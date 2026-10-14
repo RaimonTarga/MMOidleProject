@@ -3,7 +3,7 @@
 Kept by the conductor. Plan: [class-first-build-plan-2026-10-14.md](../class-first-build-plan-2026-10-14.md).
 Integration branch `rework/class-first` (conductor worktree `../mmo-rework`).
 
-**Updated:** 2026-10-14: F1, F2, F4 (+T0), F5, F8, K1–K3, D5, D1 merged; D2 ready for Grok.
+**Updated:** 2026-10-14: every Phase 0 delegate task is merged except D2 (running as a Claude subagent); D3, F6, F7 follow D2.
 **Baseline:** `rework/class-first` at `1a89670a` (D1, F5, F8 merged): full suite **339/339**, typecheck clean (verified in `../mmo-rw-verify`). Codex hit rate limits, so D5 and K1–K3 run as
 Claude subagents of the conductor (same briefs, same worktrees); ICONS-T1 stays with Codex.
 
@@ -11,13 +11,7 @@ Claude subagents of the conductor (same briefs, same worktrees); ICONS-T1 stays 
 
 | ID | Task | Agent | Worktree · branch | State |
 |---|---|---|---|---|
-| D2 | [Remove stances, rites, Runic Points, the core slot](D2-stances-rites-runic-points-cores.md) | Grok | `../mmo-rw-d2-stances-rites` · `rw/d2-stances-rites` | ready to start |
-| ICONS-T1 | [Icons for every T1 piece and trophy](ICONS-T1.md) | Codex (image generation) | `../mmo-rw-icons-t1` · `rw/icons-t1` | running |
-| D6 | [The tutorial keeps its engine and the seal route](D6-tutorial-engine.md) | Grok | `../mmo-rw-d6-tutorial-core` · `rw/d6-tutorial-core` | running |
-| I3 | [The server bench fights again](I3-bench-repair.md) | Grok | `../mmo-rw-i3-bench` · `rw/i3-bench` | running |
-| K4 | [Slinger kit data](K-kit-data.md) | Grok | `../mmo-rw-k4-slinger` · `rw/k4-slinger` | running |
-| K5 | [Spirit kit data](K-kit-data.md) | Grok | `../mmo-rw-k5-spirit` · `rw/k5-spirit` | running |
-| K6 | [Conduit kit data](K-kit-data.md) | Grok | `../mmo-rw-k6-conduit` · `rw/k6-conduit` | running |
+| D2 | [Remove stances, rites, Runic Points, the core slot](D2-stances-rites-runic-points-cores.md) | Claude subagent | `../mmo-rw-d2-stances-rites` · `rw/d2-stances-rites` | running |
 
 Every open task touches its own folder, so any number can run at once, one agent session per
 task. If you'd rather run them a few at a time, a good order is D5 and D6 first (they unblock
@@ -120,6 +114,12 @@ your report where the brief says, and tell me.
   (`applyMechanicProxy`, the reload's "readied without a reload" path, `applyPlayerAoeTo`, the
   contagion copy's `stackFraction`); `'evolve'` / `'reconstruct'` in `gameplayRecorder.ts`'s
   kinds; living docs still describe lineages, shards and node rows (docs pass at M0 exit).
+- **Icons to review (designer):** five of the eight REUSED old icons are flatter than the new
+  set: `squire-shield-bash` (a yellow bolt), `striker-hamstring` (a flat green arc),
+  `apprentice-detonate`, `apprentice-spread`, `squire-slam`. Regenerating them in the new style
+  is a small Codex task if wanted.
+- **Tutorial director:** keeps rune and ability step handlers no script uses; they go with D2
+  (crafted runes) and D3 (abilities).
 - **Squire moments:** Challenge also answers "an enemy attacking an ally" and Unbowed only
   untelegraphed blows; neither has its own moment yet (Squire track).
 
@@ -131,6 +131,10 @@ your report where the brief says, and tell me.
 | I2 | Plan, agent rules, this board | `011e95d2` |
 | F1 | Class kit types, registry, moments, budget, scaling | `d1a7aac9` |
 | D5 | Bot: class-agnostic harness, smoke-t1 route (subagent); server lane benches and setActive removed | `8c18ccbc`, `f8d6e40f` |
+| D6 | Tutorial: engine, opening, class-agnostic seal route, per-class seam (Grok); merged with D1's removals | `e9b9af41` |
+| I3 | Bench fights real T1 nodes; `bench:summon-cap` (Grok) | `d1ba3b3b` |
+| K4–K6 | Slinger, Spirit, Conduit kits through T4 (Grok); 11 undesigned trophy ranks given placeholders | `07e6d86f`, `68711dd9`, `29b72c28`, `78d2fbb4` |
+| ICONS-T1 | 60 Tier 1 icons, 52 generated (Codex image generation); full-res sources kept in the main checkout's `art/candidates/openai-icons/` | `d04a6a85` |
 | D1 | Item lineage trees, ability node rows, shards removed (subagent): 165 files, −53k lines; bot shims dropped | `9164b024`, `b1a4962a` |
 | F5 | Class gear: smart loot (`classes`), class lines on shared bases, relic items and the T4 gate gone | `98eec7e3` |
 | F8 | Bot: `classConfig` step, `pieceLearned` / `trophyHeld` conditions; shared `classConfigContextFromState` | `cd81e3bb` |
