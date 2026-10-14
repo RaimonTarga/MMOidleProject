@@ -240,7 +240,7 @@ export const BOSS5_TIER_REFERENCE: Record<number, Boss5TierReference> = {
     tier: 4, stance: 'defensive-stance', techniques: ['slam'], guards: REFERENCE_GUARDS,
     kit: {
       armor: 'mountain-vest-t4', recovery: 'mountain-charm-t4',
-      mobility: 'mountain-boots-t4', core: 'core-tempered', relic: 'relic-colossus-heart',
+      mobility: 'mountain-boots-t4', core: 'core-tempered',
     },
     note:
       'The T2 reference shape entire, on the qualified T4 ladder (weapons, the fixed kit, '

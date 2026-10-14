@@ -51,8 +51,7 @@ export const FAST_PASS_CELLS: Night5Cell[] = FAST_PASS_BOSSES.flatMap(s => SURVE
           ...(s.tier >= 3 ? [`${c.prefix}-range-${c.melee ? 'close' : 'mid'}`] : []),
           ...(s.tier === 4 ? [`${c.prefix}-balanced-t3-a`] : [])],
         gearItemIds: { weapon, armor: `${armor}-vest-t${s.tier}`, recovery: `mountain-charm-t${s.tier}`,
-          mobility: `mountain-boots-t${s.tier}`, core: 'core-tempered',
-          ...(s.tier === 4 ? { relic: 'relic-colossus-heart' } : {}) },
+          mobility: `mountain-boots-t${s.tier}`, core: 'core-tempered' },
       },
     };
   });

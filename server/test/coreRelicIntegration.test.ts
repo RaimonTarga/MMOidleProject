@@ -228,10 +228,10 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy'] as const) 
   assert(chill.filter(line => line.startsWith('Debuff effect')).length === 4, 'every eligible debuff is listed');
   assert(!chill.some(line => line.startsWith('Buff effect')), 'a debuff-only relic claims no buff');
 
-  // Haunted Prism rates both halves, so an eligible build shows both categories.
-  const prism = relicRatingsFromEffects(ITEM_DATABASE.get('relic-haunted-prism')?.mechanicEffects ?? {});
+  // A rating with both halves (the retired Haunted Prism's shape) shows both categories.
+  const prism = { ...ZERO_RELIC_RATINGS, buffEffect: 0.25, debuffEffect: 0.25 };
   const both = formatResolvedRelicProfile(resolveRelicPreview('dot', { 'dot.frenzy': 1, 'dot.freezing-cold': 1 }, prism, { playerTier: 4 }));
-  assert(both.some(line => line.startsWith('Buff effect')) && both.some(line => line.startsWith('Debuff effect')), 'Haunted Prism shows both categories');
+  assert(both.some(line => line.startsWith('Buff effect')) && both.some(line => line.startsWith('Debuff effect')), 'a two-half rating shows both categories');
 
   // A rated relic whose build registers nothing says so per category instead of going quiet.
   const inert = formatResolvedRelicProfile(resolveRelicPreview('cadence', { 'cadence.empowered-threshold': 5 }, prism));

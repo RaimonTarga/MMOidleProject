@@ -28,7 +28,7 @@ const t4=(branch:string):Night5Cell[]=>Object.keys(NODE_BIOMES).filter(id=>/^nod
  return {id,nodeId,tier:4,className:c.name,role,alternate:false,treatment:'baseline',targetTypes:[],technique:'sweep',
  build:{id,classRoot:`${c.prefix}-root`,contentTier:4,playerTier:4,gearTier:4,
  skillPath:[`${c.prefix}-root`,`${c.prefix}-balanced`,`${c.prefix}-range-${c.melee?'close':'mid'}`,`${c.prefix}-balanced-t3-${branch}`],
- gearItemIds:{weapon:t4Weapons[c.name],armor:`${role}-vest-t4`,recovery:`${role}-charm-t4`,mobility:'mountain-boots-t4',core:'core-tempered',relic:'relic-colossus-heart'}}};
+ gearItemIds:{weapon:t4Weapons[c.name],armor:`${role}-vest-t4`,recovery:`${role}-charm-t4`,mobility:'mountain-boots-t4',core:'core-tempered'}}};
 }));
 const sustain=DURABILITY20_CELLS.filter(c=>(c.tier===2&&['forest','swamp'].includes(c.role))||(c.tier===3&&['volcanic','tundra'].includes(c.role))).map(c=>copy(c,c.id.replace('dur20','night5-sustain')));
 export const NIGHT5_BLOCKS:Record<string,{cells:Night5Cell[];durationMs:number;pilotIds:string[]}>=Object.fromEntries([

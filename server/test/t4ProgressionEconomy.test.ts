@@ -318,30 +318,10 @@ for (const [id, snap] of Object.entries(TRENCH_MONSTER_SNAPSHOT)) {
 // (The soft-discarded Void Overlord warden was deleted with the encounter on 2026-09-27.)
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 12. Relics: exactly 8, unchanged placement/gates/mechanics, normalized economy
+// 12. Relics: no relic items (the relic slot holds the class's boss trophy, build plan §3.4)
 // ═══════════════════════════════════════════════════════════════════════════
 
-const relics = [...RECIPE_DATABASE.values()].filter((r) => r.slot === "relic");
-assert(relics.length === 8, `expected exactly 8 relics, got ${relics.length}`);
-
-const RELIC_SNAPSHOT: Record<string, { group: string; level: number; cost: Record<string, number> }> = {
-  "relic-hastebound-dial": { group: "volcanic", level: 11, cost: { red: 3300 } },
-  "relic-verdant-flywheel": { group: "jungle", level: 18, cost: { green: 3000 } },
-  "relic-glacial-bell": { group: "tundra", level: 12, cost: { blue: 3200 } },
-  "relic-haunted-prism": { group: "graveyard", level: 6, cost: { purple: 3500 } },
-  "relic-colossus-heart": { group: "mountain", level: 24, cost: { blue: 3300 } },
-  "relic-equilibrium-shard": { group: "mountain", level: 24, cost: { blue: 2500 } },
-  "relic-withering-lens": { group: "desert", level: 18, cost: { yellow: 3300 } },
-  "relic-virulent-hourglass": { group: "trench", level: 5, cost: { green: 3400 } },
-};
-assert(Object.keys(RELIC_SNAPSHOT).length === 8, "relic snapshot must cover all 8 relics");
-for (const [id, spec] of Object.entries(RELIC_SNAPSHOT)) {
-  const r = RECIPE_DATABASE.get(id);
-  assert(!!r, `${id}: relic must exist`);
-  assert(r!.recipeGroup === spec.group && r!.requiredBiomeLevel === spec.level, `${id}: gate must be unchanged (${spec.group} L${spec.level})`);
-  assert(JSON.stringify(r!.cost) === JSON.stringify(spec.cost), `${id}: normalized essence cost must be exact`);
-  assert(essenceTotal(r!.cost) >= 2500 && essenceTotal(r!.cost) <= 3500, `${id}: relic essence must be in 2500-3500`);
-}
+assert([...RECIPE_DATABASE.values()].every((r) => r.slot !== "relic"), "no recipe makes a relic item");
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 13. Final Core tier split and no-regression pins
@@ -412,7 +392,7 @@ const T4_CAP: Record<string, number> = {
 };
 const t4Cores = [...RECIPE_DATABASE.values()].filter((r) => r.slot === "core" && r.tier === 4);
 const t4Stances = [...STANCE_RECIPE_DATABASE.values()].filter((r) => r.tier === 4);
-for (const r of [...t4Gear, ...t4Cores, ...relics]) {
+for (const r of [...t4Gear, ...t4Cores]) {
   const cap = T4_CAP[r.recipeGroup];
   assert(cap !== undefined, `${r.id}: recipeGroup ${r.recipeGroup} must have a known T4 cap`);
   assert(r.requiredBiomeLevel <= cap, `${r.id}: requiredBiomeLevel ${r.requiredBiomeLevel} must not exceed T4 cap ${cap} for ${r.recipeGroup}`);
