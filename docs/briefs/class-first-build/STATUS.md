@@ -243,6 +243,17 @@ brief says, and tell me.
 |---|---|---|---|
 | Next class | The Conduit ([C-conduit](C-conduit.md): CD.1–CD.5 done, CD6–CD8 are delegate tasks), then Slinger, Spirit, Apprentice | Conductor | — |
 
+## Live smoke 2 (2026-10-16): all four tiers built, 390/390
+
+All six classes now have T1 to T4 runtimes, editors/HUD state, tutorial stretches and `<class>-t2/t3/t4`
+bot routes (merged; reports in `reports/`). A fresh private server (port 4301, `gamedb_rw4`) booted on the
+full tree with every invariant OK, and six `-t2` routes ran against it for ~60 minutes (25x rewards,
+one shared world): **no server errors**. None reached a T2 zone in that time: six bots in one world
+crowd each other, and T1 deaths are high (30 min: Striker 4, Conduit 6, Apprentice 16, Squire 17,
+Slinger 19, Spirit 21). Left alone: the Striker run (167 kills, 8 deaths, in the Mountain at 60 min).
+So the T2 to T4 routes are **statically tested only**; the designer's playtest is the first live walk.
+Next for the build: release prep (wipe migration, docs pass; no version unless asked).
+
 ## Live smoke run (2026-10-15 night, `a7fb962b`)
 
 A private server (port 4301, databases `gamedb_rework` / `logdb_rework` in the dev containers) and
