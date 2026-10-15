@@ -1,6 +1,7 @@
 import {
   CONDUIT_DISCIPLINE_TUNING,
   CONDUIT_KIT,
+  CONDUIT_SPECIALIZATION_TUNING,
   resolveSummonerProfile,
   summonerProfileWeightTotals,
   type RosterBody,
@@ -8,8 +9,9 @@ import {
   type SummonerSlotProfile,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../../ecs/entity';
-import { SOUL_BODY, soulOf, soulPower } from './souls';
+import { SOUL_BODY, soulPower, soulsOf } from './souls';
 import { disciplineOf } from './disciplines';
+import { specializationOf } from './t3Shared';
 
 /**
  * The Formation's roster (class-first §7.3), resolved from the class config: one body per roster
@@ -23,8 +25,11 @@ function rosterOf(owner: PlayerEntity): readonly RosterBody[] | undefined {
   const cooldownMult = 1 + (passives['conduit.cooldown-pct'] ?? 0);
   // Elite (§7.5): modest bulk and stats on every summon. Longshot (T2 weapon): ranged hit harder, melee softer.
   const elite = disciplineOf(owner) === 'conduit-elite';
-  const eliteHp = elite ? CONDUIT_DISCIPLINE_TUNING.eliteHpMult : 1;
-  const eliteDamage = elite ? CONDUIT_DISCIPLINE_TUNING.eliteDamageMult : 1;
+  // Colossus (T3, §7.6): +100% HP and +50% damage over the BASE summon, in place of Elite's own step.
+  const colossus = elite && specializationOf(owner) === 'conduit-colossus';
+  const eliteHp = colossus ? CONDUIT_SPECIALIZATION_TUNING.colossusHpMult : elite ? CONDUIT_DISCIPLINE_TUNING.eliteHpMult : 1;
+  const eliteDamage = colossus ? CONDUIT_SPECIALIZATION_TUNING.colossusDamageMult : elite ? CONDUIT_DISCIPLINE_TUNING.eliteDamageMult : 1;
+  const legion = specializationOf(owner) === 'conduit-legion';
   const longshot = passives['conduit.longshot-pct'] ?? 0;
   const system = owner.configuresClass?.config.system;
   if (system?.kind !== 'formation') return undefined;
@@ -32,6 +37,11 @@ function rosterOf(owner: PlayerEntity): readonly RosterBody[] | undefined {
   for (const id of system.roster) {
     const piece = CONDUIT_KIT.pieces.find((candidate) => candidate.id === id);
     if (!piece) continue;
+    // Legion (T3, §7.6): at visible copy counts, every copy of that summon is stronger.
+    const copies = legion ? system.roster.filter((other) => other === id).length : 0;
+    const step = CONDUIT_SPECIALIZATION_TUNING.legionSteps.filter((entry) => copies >= entry.copies).pop();
+    const legionHp = 1 + (step?.hpPct ?? 0);
+    const legionDamage = 1 + (step?.damagePct ?? 0);
     bodies.push({
       pieceId: piece.id,
       family: piece.family,
@@ -39,15 +49,14 @@ function rosterOf(owner: PlayerEntity): readonly RosterBody[] | undefined {
       mode: piece.mode,
       row: piece.row,
       body: piece.body,
-      hpMult: (piece.params.hpMult ?? 1) * hpMult * eliteHp,
-      damageMult: (piece.params.damageMult ?? 1) * damageMult * eliteDamage
+      hpMult: (piece.params.hpMult ?? 1) * hpMult * eliteHp * legionHp,
+      damageMult: (piece.params.damageMult ?? 1) * damageMult * eliteDamage * legionDamage
         * (piece.mode === 'ranged' ? 1 + longshot : piece.mode === 'melee' ? Math.max(0, 1 - longshot) : 1),
       cooldownMult: (piece.params.cooldownMult ?? 1) * cooldownMult,
     });
   }
   // The Soul in the relic slot is a free body (0 Command) wearing its own stand-in body.
-  const soul = soulOf(owner);
-  if (soul && bodies.length > 0) {
+  for (const soul of bodies.length > 0 ? soulsOf(owner) : []) {
     bodies.push({
       pieceId: soul.id,
       family: 'damage',
@@ -55,8 +64,8 @@ function rosterOf(owner: PlayerEntity): readonly RosterBody[] | undefined {
       mode: 'melee',
       row: 'middle',
       body: soul.body,
-      hpMult: SOUL_BODY.hpMult * hpMult * soulPower(owner),
-      damageMult: SOUL_BODY.damageMult * damageMult * soulPower(owner),
+      hpMult: SOUL_BODY.hpMult * hpMult * soulPower(owner, soul),
+      damageMult: SOUL_BODY.damageMult * damageMult * soulPower(owner, soul),
       cooldownMult,
     });
   }

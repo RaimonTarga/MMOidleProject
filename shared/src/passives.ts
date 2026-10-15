@@ -129,6 +129,13 @@ export const DEFENSE_KEYS = [
   'conduit.bloomlink-pct',  // Bloomlink: a support summon's heal also heals you for this share
   'conduit.sandveil-pct',  // Sandveil: ranged hits deal this much less to you and your summons
   'conduit.purge-ms',  // Purge: every this long, the most debuffed body loses one debuff
+  // Conduit T3 (T3-CONDUIT)
+  'conduit.icebound-pct',  // Icebound: summons hit this much harder against slowed, rooted or chilled enemies
+  'conduit.berserk-pct',  // Berserk: a summon hits up to this much harder the more wounded it is
+  'conduit.permafrost',  // Permafrost: tank summons cannot be slowed, rooted or frozen
+  'conduit.hibernate-ms',  // Hibernate: a summon under a quarter of its HP encases itself in ice this long
+  'conduit.fireproof-pct',  // Fireproof: damage over time on you and your summons is cut by this share
+  'conduit.emberglow-pct',  // Emberglow: your Recovery also heals the summons near you at this share
   'slinger.reload-walk-pct',  // Quickdraw: walk at this share of speed while reloading
   'slinger.elbow-room',  // Elbow Room: reload faster while three or more enemies are near
   'slinger.breathing-room',  // Breathing Room: Recovery rises with the distance to the nearest enemy

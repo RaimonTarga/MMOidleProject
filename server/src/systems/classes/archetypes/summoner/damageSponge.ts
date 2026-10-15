@@ -16,6 +16,7 @@ import type { World } from '../../../../world/World';
 import type { MinionEntity, PlayerEntity } from '../../../../ecs/entity';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import { isRangedHit, sentinelClaims } from './summonPiecesT2';
+import { sporeCut } from './t3Shared';
 
 /** The living tank summon closest to the owner. */
 function nearestTank(world: World, owner: PlayerEntity): MinionEntity | null {
@@ -66,6 +67,12 @@ export function registerSummonerDamageSponge(): void {
     if (ctx.metadata['secondarySplash']) return;
     const player = ctx.defender;
     if (!player.summonsMinions) return;
+
+    // Sporecaller (T3): an enemy under its spores deals less damage.
+    if (ctx.attackerType === 'monster') {
+      const cut = sporeCut(ctx.attacker);
+      if (cut > 0) ctx.damage = Math.round(ctx.damage * (1 - cut));
+    }
 
     // Sandveil (Desert vest): ranged hits deal less to you.
     const sandveil = player.usesSkills.passives['conduit.sandveil-pct'] ?? 0;

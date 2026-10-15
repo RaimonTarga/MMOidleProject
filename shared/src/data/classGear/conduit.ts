@@ -144,7 +144,7 @@ export const CONDUIT_GEAR: ClassGearDef = {
       cost: { green: 120 }, stats: { attack: 50, onHitDamage: 38 }, attacksPerSecond: 1.65, tier: 3,
       icon: 'items/weapons/venomthorn-rapier.png',
       description: "Each summon's first hit on a new target hits much harder.",
-      mechanicEffects: {},
+      mechanicEffects: { 'conduit.first-strike-pct': 1 },
     },
     // The Forest's faster-attacks job moves here.
     {
@@ -161,7 +161,7 @@ export const CONDUIT_GEAR: ClassGearDef = {
       cost: { yellow: 116 }, stats: { attack: 112 }, attacksPerSecond: 0.80, tier: 3,
       icon: 'items/weapons/solar-falchion.png',
       description: 'Ranged summons fire from much further back and hit harder at range. Melee summons hit softer.',
-      mechanicEffects: {},
+      mechanicEffects: { 'conduit.longshot-pct': 0.25 },
     },
     {
       id: 'conduit-icebound-t3', name: 'Icebound',
@@ -169,7 +169,7 @@ export const CONDUIT_GEAR: ClassGearDef = {
       cost: { blue: 124 }, stats: { attack: 162 }, attacksPerSecond: 0.50, tier: 3,
       icon: 'items/weapons/permafrost-maul.png',
       description: 'Summons hit harder against slowed, rooted or chilled enemies.',
-      mechanicEffects: {},
+      mechanicEffects: { 'conduit.icebound-pct': 0.5 },
     },
     {
       id: 'conduit-berserk-t3', name: 'Berserk',
@@ -177,7 +177,7 @@ export const CONDUIT_GEAR: ClassGearDef = {
       cost: { red: 140 }, stats: { attack: 70 }, attacksPerSecond: 1.65, tier: 3,
       icon: 'items/weapons/cinderlash.png',
       description: 'Wounded summons hit harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'conduit.berserk-pct': 0.5 },
     },
     // The Plains' more-summons job moves here.
     {
@@ -203,7 +203,7 @@ export const CONDUIT_GEAR: ClassGearDef = {
       cost: { green: 264 }, stats: { attack: 108, onHitDamage: 70 }, attacksPerSecond: 1.75, tier: 4,
       icon: 'items/weapons/deathfang-rapier.png',
       description: "Each summon's first hit on a new target hits much harder.",
-      mechanicEffects: {},
+      mechanicEffects: { 'conduit.first-strike-pct': 1 },
     },
     // The Forest's faster-attacks job, still here.
     {
@@ -220,7 +220,7 @@ export const CONDUIT_GEAR: ClassGearDef = {
       cost: { yellow: 255 }, stats: { attack: 212 }, attacksPerSecond: 0.80, tier: 4,
       icon: 'items/weapons/zenith-falchion.png',
       description: 'Ranged summons fire from much further back and hit harder at range. Melee summons hit softer.',
-      mechanicEffects: {},
+      mechanicEffects: { 'conduit.longshot-pct': 0.25 },
     },
     {
       id: 'conduit-icebound-t4', name: 'Icebound',
@@ -228,7 +228,7 @@ export const CONDUIT_GEAR: ClassGearDef = {
       cost: { blue: 273 }, stats: { attack: 378 }, attacksPerSecond: 0.50, tier: 4,
       icon: 'items/weapons/glacial-tyrant-maul.png',
       description: 'Summons hit harder against slowed, rooted or chilled enemies.',
-      mechanicEffects: {},
+      mechanicEffects: { 'conduit.icebound-pct': 0.5 },
     },
     {
       id: 'conduit-berserk-t4', name: 'Berserk',
@@ -236,7 +236,7 @@ export const CONDUIT_GEAR: ClassGearDef = {
       cost: { red: 308 }, stats: { attack: 119 }, attacksPerSecond: 1.80, tier: 4,
       icon: 'items/weapons/eruption-lash.png',
       description: 'Wounded summons hit harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'conduit.berserk-pct': 0.5 },
     },
     // The Plains' more-summons job, still here.
     {
@@ -316,25 +316,25 @@ export const CONDUIT_GEAR: ClassGearDef = {
     'mountain-charm-t3': { name: 'Cairnstone', text: 'After a big hit on you, your Recovery triples for a few seconds.', effects: { 'defense.recovery-hit-pct': 0.25, 'defense.recovery-hit-x': 3 } },
     'cave-vest-t3': { name: 'You Tank', text: 'You tank, with your own health and damage reduction, so the summons can all deal damage.', effects: { 'conduit.hp-pct': -0.3, 'conduit.damage-pct': 0.2 } },
     'cave-charm-t3': { name: 'Deep Reserve', text: 'The rebuild queue works on two summons at once.', effects: { 'conduit.rebuild-speed-pct': 1 } },
-    'jungle-vest-t3': { name: 'Sentinel', text: 'The first hit each enemy lands on you is taken by the nearest summon.', effects: {} },
-    'jungle-charm-t3': { name: 'Bloomlink', text: "A support summon's heal also heals you for half.", effects: {} },
-    'desert-vest-t3': { name: 'Sandveil', text: 'Ranged hits deal less to you and your summons.', effects: {} },
-    'desert-charm-t3': { name: 'Purge', text: 'Every few seconds, the most debuffed body, a summon or you, loses one debuff.', effects: {} },
-    'tundra-vest-t3': { name: 'Permafrost', text: 'Tank summons cannot be slowed, rooted or frozen, so they keep holding.', effects: {} },
-    'tundra-charm-t3': { name: 'Hibernate', text: 'A badly hurt summon encases itself in ice for a few seconds. It cannot act, takes no damage, and regenerates. Each summon must wait before it can do this again.', effects: {} },
-    'volcanic-vest-t3': { name: 'Fireproof', text: 'Damage over time on you and your summons is halved.', effects: {} },
-    'volcanic-charm-t3': { name: 'Emberglow', text: 'Your Recovery also heals the summons near you.', effects: {} },
+    'jungle-vest-t3': { name: 'Sentinel', text: 'The first hit each enemy lands on you is taken by the nearest summon.', effects: { 'conduit.sentinel': 1 } },
+    'jungle-charm-t3': { name: 'Bloomlink', text: "A support summon's heal also heals you for half.", effects: { 'conduit.bloomlink-pct': 0.5 } },
+    'desert-vest-t3': { name: 'Sandveil', text: 'Ranged hits deal less to you and your summons.', effects: { 'conduit.sandveil-pct': 0.3 } },
+    'desert-charm-t3': { name: 'Purge', text: 'Every few seconds, the most debuffed body, a summon or you, loses one debuff.', effects: { 'conduit.purge-ms': 5000 } },
+    'tundra-vest-t3': { name: 'Permafrost', text: 'Tank summons cannot be slowed, rooted or frozen, so they keep holding.', effects: { 'conduit.permafrost': 1 } },
+    'tundra-charm-t3': { name: 'Hibernate', text: 'A badly hurt summon encases itself in ice for a few seconds. It cannot act, takes no damage, and regenerates. Each summon must wait before it can do this again.', effects: { 'conduit.hibernate-ms': 3000 } },
+    'volcanic-vest-t3': { name: 'Fireproof', text: 'Damage over time on you and your summons is halved.', effects: { 'conduit.fireproof-pct': 0.5 } },
+    'volcanic-charm-t3': { name: 'Emberglow', text: 'Your Recovery also heals the summons near you.', effects: { 'conduit.emberglow-pct': 0.5 } },
     // ── T4 ──
     'mountain-vest-t4': { name: 'Big-Hit Intercept', text: 'A hit that would take a large share of your HP goes to the nearest tank.', effects: { 'conduit.intercept-pct': 0.3 } },
     'mountain-charm-t4': { name: 'Cairnstone', text: 'After a big hit on you, your Recovery triples for a few seconds.', effects: { 'defense.recovery-hit-pct': 0.25, 'defense.recovery-hit-x': 3 } },
-    'jungle-vest-t4': { name: 'Sentinel', text: 'The first hit each enemy lands on you is taken by the nearest summon.', effects: {} },
-    'jungle-charm-t4': { name: 'Bloomlink', text: "A support summon's heal also heals you for half.", effects: {} },
-    'desert-vest-t4': { name: 'Sandveil', text: 'Ranged hits deal less to you and your summons.', effects: {} },
-    'desert-charm-t4': { name: 'Purge', text: 'Every few seconds, the most debuffed body, a summon or you, loses one debuff.', effects: {} },
-    'tundra-vest-t4': { name: 'Permafrost', text: 'Tank summons cannot be slowed, rooted or frozen, so they keep holding.', effects: {} },
-    'tundra-charm-t4': { name: 'Hibernate', text: 'A badly hurt summon encases itself in ice for a few seconds. It cannot act, takes no damage, and regenerates. Each summon must wait before it can do this again.', effects: {} },
-    'volcanic-vest-t4': { name: 'Fireproof', text: 'Damage over time on you and your summons is halved.', effects: {} },
-    'volcanic-charm-t4': { name: 'Emberglow', text: 'Your Recovery also heals the summons near you.', effects: {} },
+    'jungle-vest-t4': { name: 'Sentinel', text: 'The first hit each enemy lands on you is taken by the nearest summon.', effects: { 'conduit.sentinel': 1 } },
+    'jungle-charm-t4': { name: 'Bloomlink', text: "A support summon's heal also heals you for half.", effects: { 'conduit.bloomlink-pct': 0.5 } },
+    'desert-vest-t4': { name: 'Sandveil', text: 'Ranged hits deal less to you and your summons.', effects: { 'conduit.sandveil-pct': 0.3 } },
+    'desert-charm-t4': { name: 'Purge', text: 'Every few seconds, the most debuffed body, a summon or you, loses one debuff.', effects: { 'conduit.purge-ms': 5000 } },
+    'tundra-vest-t4': { name: 'Permafrost', text: 'Tank summons cannot be slowed, rooted or frozen, so they keep holding.', effects: { 'conduit.permafrost': 1 } },
+    'tundra-charm-t4': { name: 'Hibernate', text: 'A badly hurt summon encases itself in ice for a few seconds. It cannot act, takes no damage, and regenerates. Each summon must wait before it can do this again.', effects: { 'conduit.hibernate-ms': 3000 } },
+    'volcanic-vest-t4': { name: 'Fireproof', text: 'Damage over time on you and your summons is halved.', effects: { 'conduit.fireproof-pct': 0.5 } },
+    'volcanic-charm-t4': { name: 'Emberglow', text: 'Your Recovery also heals the summons near you.', effects: { 'conduit.emberglow-pct': 0.5 } },
     'graveyard-vest-t4': { name: 'Grave Pact', text: 'When a hit would kill you, a summon dies in your place. It does not happen again for a long while.', effects: {} },
     'graveyard-charm-t4': { name: 'Requiem', text: 'When a summon dies, the others heal for part of its max HP.', effects: {} },
     'trench-vest-t4': { name: 'Pressure Seal', text: 'Every few seconds, each body, a summon or you, ignores the next debuff it would receive.', effects: {} },
@@ -344,20 +344,20 @@ export const CONDUIT_GEAR: ClassGearDef = {
   // Copied from the origin's last tier: Forest and Plains at T2, Swamp and Cave at T3.
   movedLines: {
     // Forest → Jungle
-    'jungle-vest-t3': { name: 'Bramble', text: 'Summons hit back a flat amount for every hit they take, so fast attackers hurt themselves.', effects: {} },
-    'jungle-vest-t4': { name: 'Bramble', text: 'Summons hit back a flat amount for every hit they take, so fast attackers hurt themselves.', effects: {} },
-    'jungle-charm-t3': { name: 'Sapbark', text: 'Summons regenerate HP after a few seconds without being hit.', effects: {} },
-    'jungle-charm-t4': { name: 'Sapbark', text: 'Summons regenerate HP after a few seconds without being hit.', effects: {} },
+    'jungle-vest-t3': { name: 'Bramble', text: 'Summons hit back a flat amount for every hit they take, so fast attackers hurt themselves.', effects: { 'conduit.thorns': 5 } },
+    'jungle-vest-t4': { name: 'Bramble', text: 'Summons hit back a flat amount for every hit they take, so fast attackers hurt themselves.', effects: { 'conduit.thorns': 5 } },
+    'jungle-charm-t3': { name: 'Sapbark', text: 'Summons regenerate HP after a few seconds without being hit.', effects: { 'conduit.sapbark-ms': 4000 } },
+    'jungle-charm-t4': { name: 'Sapbark', text: 'Summons regenerate HP after a few seconds without being hit.', effects: { 'conduit.sapbark-ms': 4000 } },
     // Plains → Volcanic
-    'volcanic-vest-t3': { name: 'Shared Plating', text: 'Plating for the summons, and some for you.', effects: {} },
-    'volcanic-vest-t4': { name: 'Shared Plating', text: 'Plating for the summons, and some for you.', effects: {} },
-    'volcanic-charm-t3': { name: 'Herd', text: 'Fallen summons rebuild faster out of combat.', effects: {} },
-    'volcanic-charm-t4': { name: 'Herd', text: 'Fallen summons rebuild faster out of combat.', effects: {} },
+    'volcanic-vest-t3': { name: 'Shared Plating', text: 'Plating for the summons, and some for you.', effects: { 'conduit.plating-share': 0.25 } },
+    'volcanic-vest-t4': { name: 'Shared Plating', text: 'Plating for the summons, and some for you.', effects: { 'conduit.plating-share': 0.25 } },
+    'volcanic-charm-t3': { name: 'Herd', text: 'Fallen summons rebuild faster out of combat.', effects: { 'conduit.herd-pct': 1 } },
+    'volcanic-charm-t4': { name: 'Herd', text: 'Fallen summons rebuild faster out of combat.', effects: { 'conduit.herd-pct': 1 } },
     // Swamp → Graveyard
-    'graveyard-vest-t4': { name: 'Poison Shift', text: 'Poison on you moves to a summon.', effects: {} },
-    'graveyard-charm-t4': { name: 'Bloodtithe', text: 'When a summon dies, you get back part of the HP you paid to build it.', effects: {} },
+    'graveyard-vest-t4': { name: 'Poison Shift', text: 'Poison on you moves to a summon.', effects: { 'conduit.poison-shift': 1 } },
+    'graveyard-charm-t4': { name: 'Bloodtithe', text: 'When a summon dies, you get back part of the HP you paid to build it.', effects: { 'conduit.bloodtithe-pct': 0.5 } },
     // Cave → Trench
-    'trench-vest-t4': { name: 'You Tank', text: 'You tank, with your own health and damage reduction, so the summons can all deal damage.', effects: {} },
-    'trench-charm-t4': { name: 'Deep Reserve', text: 'The rebuild queue works on two summons at once.', effects: {} },
+    'trench-vest-t4': { name: 'You Tank', text: 'You tank, with your own health and damage reduction, so the summons can all deal damage.', effects: { 'conduit.hp-pct': -0.3, 'conduit.damage-pct': 0.2 } },
+    'trench-charm-t4': { name: 'Deep Reserve', text: 'The rebuild queue works on two summons at once.', effects: { 'conduit.rebuild-speed-pct': 1 } },
   },
 };

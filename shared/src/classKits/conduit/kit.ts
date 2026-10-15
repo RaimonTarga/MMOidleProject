@@ -229,8 +229,10 @@ const PIECES: readonly ConduitPiece[] = [
   }),
 
   // ── T3 (§7.16) ──
+  // T3 `params` are PLACEHOLDERS (T3-CONDUIT): the bible gives the jobs, not the numbers.
   summon({
     id: 'conduit-warhorn',
+    params: { hornEveryMs: 6000, hornMs: 3000, hornRadius: 220, hornHaste: 0.35 },
     name: 'Warhorn',
     family: 'support',
     command: 2,
@@ -242,6 +244,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-burrower',
+    params: { burrowEveryMs: 5000, burrowReach: 320, burrowShare: 1 },
     name: 'Burrower',
     family: 'damage',
     command: 1,
@@ -252,6 +255,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-sporecaller',
+    params: { sporeRadius: 110, sporeMs: 4000, sporeCut: 0.25 },
     name: 'Sporecaller',
     family: 'support',
     command: 1,
@@ -262,6 +266,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-prowler',
+    params: { ambushEveryMs: 6000, ambushMult: 2, pounceDist: 90, pounceMult: 1.75 },
     name: 'Prowler',
     family: 'damage',
     command: 1,
@@ -272,6 +277,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-carapace-guard',
+    params: { blockShare: 0.6, tauntEveryMs: 6000, tauntMs: 3000, tauntRadius: 120 },
     name: 'Carapace Guard',
     family: 'tank',
     command: 1,
@@ -282,6 +288,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-frostcaller',
+    params: { frostRadius: 170, frostSlow: 0.3, frostAttackSlow: 0.3, frostMs: 2500, frostEveryMs: 1000 },
     name: 'Frostcaller',
     family: 'support',
     command: 1,
@@ -292,6 +299,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-cinderling',
+    params: { burnRadius: 80, burnEveryMs: 1000, burnMult: 0.5, burnRampPerSec: 0.02, burnRampMaxSec: 30 },
     name: 'Cinderling',
     family: 'damage',
     command: 1,

@@ -14,6 +14,7 @@ import type { World } from '../../../../world/World';
 import { applyHealToMinion } from '../../../defense/regen/healing';
 import { applyStun } from '../../../combat/status/stun';
 import { BARK_EFFECT_ID, pieceOfSlot, RANGED_ENEMY_REACH } from './summonPiecesT2';
+import { holdHibernated, shieldWall, t3RefundShare } from './summonPiecesT3';
 
 /** What the hit most likely cost the summon, from the numbers the monster hit with. */
 function estimatedDamage(monster: MonsterEntity, minion: MinionEntity): number {
@@ -22,6 +23,10 @@ function estimatedDamage(monster: MonsterEntity, minion: MinionEntity): number {
 }
 
 export function onMinionStruckT2(world: World, owner: PlayerEntity, monster: MonsterEntity, minion: MinionEntity): void {
+  // Hibernate (T3): a summon in its ice takes nothing from the hit.
+  if (holdHibernated(world, minion)) return;
+  // Shield Wall (T3): a tank's damage is split across your tanks (before the death check: the split can save it).
+  shieldWall(world, owner, minion, estimatedDamage(monster, minion));
   if (minion.hasHealth.hp <= 0) return;
   const piece = pieceOfSlot(minion.isMinion.slotId);
 
@@ -36,6 +41,8 @@ export function onMinionStruckT2(world: World, owner: PlayerEntity, monster: Mon
   let refundShare = getStatusEffect(minion.tracksCombat, BARK_EFFECT_ID)?.data['absorbPct'] ?? 0;
   const sandveil = owner.usesSkills.passives['conduit.sandveil-pct'] ?? 0;
   if (sandveil > 0 && (monster.performsAttack?.attackRange ?? 0) > RANGED_ENEMY_REACH) refundShare += sandveil;
+  // T3: Sporecaller's spores on the attacker, and the Carapace Guard's shield.
+  refundShare += t3RefundShare(world, owner, monster, minion);
   if (refundShare > 0) {
     applyHealToMinion(minion, owner.isPlayer.id, estimatedDamage(monster, minion) * Math.min(0.9, refundShare), world);
   }
