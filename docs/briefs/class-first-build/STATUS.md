@@ -26,6 +26,7 @@ Recorded in the bible (§4 Armor/charm row, §5) where they are design.
 |---|---|---|---|---|
 | CS5-UI | [The Order editor and beat strip](CS5-striker-ui.md) | Grok | `../mmo-rw-cs5-ui` · `rw/cs5-ui` | ready (worktree made 2026-10-15) |
 | CQ5-UI | [The Response rules editor, Resolve pips, callouts](CQ-squire-delegates.md) | Grok | `../mmo-rw-cq5-ui` · `rw/cq5-ui` | ready (worktree made 2026-10-15) |
+| G-GEAR-C | [Every class's moved lines on second bases](G-GEAR-C-moved-lines.md) | Grok | `../mmo-rw-gear-c` · `rw/gear-c` | ready (plumbing done: `movedLines`, `<base>-b`) |
 | ICONS-3 | Redraw the Striker crests and flat T1 icons | the designer, via Codex | `../mmo-rw-icons-3` · `rw/icons-3` | **not merged**; the designer handles art themselves. Keep old art, add icons only where needed |
 
 ## Paste-ready prompts
@@ -53,12 +54,21 @@ run pnpm install. When you're done, commit on your branch, write your report whe
 brief says, and tell me.
 ```
 
+**G-GEAR-C (Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-gear-c`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/gear-c. First read docs/briefs/class-first-build/AGENT-RULES.md, then do the
+task in docs/briefs/class-first-build/G-GEAR-C-moved-lines.md. Work only in this folder;
+never run pnpm install. When you're done, commit on your branch, write your report
+where the brief says, and tell me.
+```
+
 ## Queued (briefs written when their inputs land)
 
 | ID | Task | Agent | Waits for |
 |---|---|---|---|
 | Next class | The Conduit (the old slice plan's map), then Slinger, Spirit, Apprentice | Conductor | — |
-| G-GEAR-C | Second armor and charm bases for moved lines (T3–T4), every class | Conductor brief, Grok data | — (decided) |
 
 ## Known follow-ups (not yet a task)
 
