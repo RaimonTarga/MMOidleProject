@@ -345,6 +345,14 @@ export const SQUIRE_KEYS = [
   'squire.frostward-heal-pct',       // Hearth: while Frostward holds, heals this share of max HP per second
   'squire.heat-fill-x',              // Stoked: the Heat's extra damage on a hit fills Resolve this many times over (on top)
   'squire.backdraft-heal-pct',       // Cooling Breath: each Backdraft that lands heals this share of max HP
+  // T4 jobs (T4-SQUIRE)
+  'squire.slam-circle-pct',          // Bone Maul: the slam is this much bigger for every enemy in its circle
+  'squire.slam-debuff-pct',          // Pressure Hammer: the slam is this much bigger for each different debuff on you
+  'squire.risen-fill-x',             // Grave Plate: a risen enemy's hits fill Resolve this many times over
+  'squire.lay-to-rest-heal-pct',     // Rest Eternal: each Lay to Rest that lands heals this share of max HP
+  'squire.guards-free-debuffs',      // Abyssal Plate: with this many different debuffs on you, guards cost nothing
+  'squire.brine-recovery-x',         // Brine Will: each debuff you shake off adds this much to the Recovery factor, stacking
+  'squire.brine-recovery-ms',        // Brine Will: for this long (each shaken debuff renews it)
 ] as const;
 
 export const CADENCE_KEYS = [

@@ -256,7 +256,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { purple: 270 }, stats: { attack: 258 }, attacksPerSecond: 1.10, tier: 4,
       icon: 'items/weapons/plague-axe.png',
       description: 'The slam hits harder for every enemy in its circle.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-circle-pct': 0.1 },
     },
     // moved from the Swamp
     {
@@ -273,7 +273,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { green: 270 }, stats: { attack: 257 }, attacksPerSecond: 1.15, tier: 4,
       icon: 'items/weapons/abyssal-axe.png',
       description: 'The slam hits harder for each different debuff on you.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-debuff-pct': 0.1 },
     },
     // moved from the Cave
     {
@@ -338,10 +338,10 @@ export const SQUIRE_GEAR: ClassGearDef = {
     'tundra-charm-t4': { name: 'Hearth', text: 'While Frostward holds, you heal a little each second.', effects: { 'squire.frostward-heal-pct': 0.0125 } },
     'volcanic-vest-t4': { name: 'Stoked', text: "The Heat's extra damage on you fills extra Resolve.", effects: { 'squire.heat-fill-x': 2.5 } },
     'volcanic-charm-t4': { name: 'Cooling Breath', text: 'Each Backdraft that lands heals you a little.', effects: { 'squire.backdraft-heal-pct': 0.0125 } },
-    'graveyard-vest-t4': { name: 'Grave Plate', text: "Risen enemies' hits fill double Resolve.", effects: {} },
-    'graveyard-charm-t4': { name: 'Rest Eternal', text: 'Each Lay to Rest that lands heals you a little.', effects: {} },
-    'trench-vest-t4': { name: 'Abyssal Plate', text: 'While you carry three or more debuffs, guards cost nothing.', effects: {} },
-    'trench-charm-t4': { name: 'Brine Will', text: 'Each debuff you shake off raises Recovery for a few seconds, stacking.', effects: {} },
+    'graveyard-vest-t4': { name: 'Grave Plate', text: "Risen enemies' hits fill double Resolve.", effects: { 'squire.risen-fill-x': 2 } },
+    'graveyard-charm-t4': { name: 'Rest Eternal', text: 'Each Lay to Rest that lands heals you a little.', effects: { 'squire.lay-to-rest-heal-pct': 0.0125 } },
+    'trench-vest-t4': { name: 'Abyssal Plate', text: 'While you carry three or more debuffs, guards cost nothing.', effects: { 'squire.guards-free-debuffs': 3 } },
+    'trench-charm-t4': { name: 'Brine Will', text: 'Each debuff you shake off raises Recovery for a few seconds, stacking.', effects: { 'squire.brine-recovery-x': 0.25, 'squire.brine-recovery-ms': 4000 } },
   },
   // Retired-biome lines on the receiving biome's second base (`<id>-b`).
   // Copied from the origin's last tier: Forest and Plains at T2, Swamp and Cave at T3.

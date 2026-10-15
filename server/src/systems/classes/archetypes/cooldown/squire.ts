@@ -20,6 +20,13 @@
  * registry has the real `chill-threshold` and `fire-attack`; two reads stay local, in
  * `LOCAL_MOMENTS`: `drag-or-push` (the registry's event fires as the push happens, too late to
  * plant, so Anchor looks ahead at the wind-up) and ordinary kiters for `target-flees`.
+ *
+ * Tier 4 (T4-SQUIRE, §8.7, §8.16): Disarm, Lay to Rest and Lie in Wait; Guard III's stagger;
+ * Faultline's aftershocks, Charnel Ring and Undertow; the nine leaves (read from
+ * `usesSkills.unlockedSkills`), which answer "what happens when you can't answer?" through the
+ * wasted-answer ledger (an answer raised against a blow that never comes loses its cost, and the
+ * leaves act on that); and the Wasteland and Trench gear jobs. `risen` is another moment the
+ * registry does not record, so it is read here too.
  */
 import {
   ABILITY_UNYIELDING_EFFECT_ID,
@@ -27,6 +34,7 @@ import {
   getCounter,
   getString,
   getStatusEffect,
+  isHarmfulPlayerStatusEffect,
   isMonsterDotStatusEffectId,
   MONSTER_DATABASE,
   monsterKites,
@@ -47,6 +55,7 @@ import {
   type MomentId,
   type ConditionRef,
   type ResponsesConfig,
+  type SquireFamily,
   type SquirePiece,
   type SquireTrophy,
 } from '@mmo-idle/shared';
@@ -56,7 +65,7 @@ import { attachMarker, detachComponent } from '../../../../ecs/markerHelpers';
 import type { World } from '../../../../world/World';
 import { applyPlayerAoe, applyPlayerAoeTo, playerAoeTargets } from '../../../combat/damage/aoeDamage';
 import { applyKnockback, repositionPlayer } from '../../../combat/damage/knockback';
-import { bossPatternEscaping, runningBossPatternDef } from '../../../combat/ai/bossPatterns';
+import { bossPatternEscaping, runningBossPatternDef, staggerBoss } from '../../../combat/ai/bossPatterns';
 import { guardableThreatsFor } from '../../../combat/ai/guardableThreats';
 import { setAggroTarget } from '../../../combat/ai/targeting';
 import { telegraphsContainingPlayer } from '../../../combat/ai/telegraphEvasion';
@@ -126,6 +135,22 @@ const ALLY_LOW_HP = 0.3;
 const PULL_GAP_PX = 70;
 /** How long Unflinching holds off hard control after an ambush hit. PLACEHOLDER. */
 const UNFLINCHING_MS = 1500;
+const DISARM_UNTIL = 'squire.disarm.until.';   // on the disarmed monster, per Squire (world tick)
+const DISARM_CUT = 'squire.disarm.cut.';
+const LIE_TARGET = 'squire.lieInWait.target';
+const LIE_UNTIL = 'squire.lieInWait.until';
+const READ_AGAIN_PREFIX = 'squire.readAgain.';   // per family: the next answer of it costs less
+const BANKED_SLAM = 'squire.bankedSlamPct';      // No Wasted Effort: the next slam is this much bigger
+const LAST_WORD_AT = 'squire.lastWord.at';       // Last Word / Last Rampart: their free answers share a clock each
+const LAST_RAMPART_AT = 'squire.lastRampart.at';
+const SECOND_LINE_AT = 'squire.secondLine.at';
+const GOAD_AT = 'squire.goad.at';
+const BRINE_STACKS = 'squire.brine.stacks';
+const BRINE_UNTIL = 'squire.brine.until';
+/** Brine Will stacks at most this many times. PLACEHOLDER. */
+const BRINE_MAX_STACKS = 5;
+/** Per-enemy records (who last attacked the Squire, who has risen) are kept this long. */
+const RISEN_SEEN_PRUNE_MS = 60_000;
 
 // ── The player's rules ───────────────────────────────────────────────────────
 
@@ -259,6 +284,138 @@ function avengerCounter(world: World, player: PlayerEntity, r: Rules, now: numbe
   addResolve(world, player, -cost);
 }
 
+// ── Tier 4: the leaves, and the ledger of answers that hit nothing ───────────
+
+const LEAVES = new Map<string, Readonly<Record<string, number>>>(SQUIRE_KIT.leaves.map((leaf) => [leaf.id, leaf.params]));
+
+/** A leaf's numbers (§8.7) while the player has it unlocked, else undefined. */
+function leafParams(player: PlayerEntity, id: string): Readonly<Record<string, number>> | undefined {
+  return player.usesSkills.unlockedSkills.includes(id) ? LEAVES.get(id) : undefined;
+}
+
+/** How many different harmful statuses are on the player (the fight snapshot's count). */
+function harmfulCount(player: PlayerEntity): number {
+  const ids = new Set<string>();
+  for (const effect of player.tracksCombat.statusEffects) {
+    if (effect.stacks > 0 && isHarmfulPlayerStatusEffect(effect.id, effect.data)) ids.add(effect.id);
+  }
+  return ids.size;
+}
+
+/**
+ * What an answer costs now: nothing in Second Nature's window, nothing for a guard while
+ * Abyssal Plate's debuffs stand, and less for the family a wasted answer just taught (Read Again).
+ */
+function answerCost(player: PlayerEntity, piece: SquirePiece, base: number, now: number): number {
+  if (answersFree(player, now)) return 0;
+  if (piece.family === 'guard') {
+    const needed = player.usesSkills.passives['squire.guards-free-debuffs'] ?? 0;
+    if (needed > 0 && harmfulCount(player) >= needed) return 0;
+  }
+  const again = leafParams(player, 'squire-read-again');
+  const discount = again && getCounter(player.tracksCombat, READ_AGAIN_PREFIX + piece.family) > 0 ? again.nextCostCut : 0;
+  return base * (1 - discount);
+}
+
+interface PendingAnswer { family: SquireFamily; cost: number; expiresAt: number }
+/** Braces the Squire paid for that have not caught their blow yet, by piece. Runtime only. */
+const pendingAnswers = new WeakMap<PlayerEntity, Map<string, PendingAnswer>>();
+
+function expectLanding(player: PlayerEntity, piece: SquirePiece, cost: number, expiresAt: number): void {
+  let map = pendingAnswers.get(player);
+  if (!map) pendingAnswers.set(player, (map = new Map()));
+  map.set(piece.id, { family: piece.family, cost, expiresAt });
+}
+
+/** The brace caught its blow: the answer was not wasted. */
+function settleAnswer(player: PlayerEntity, ...pieceIds: string[]): void {
+  const map = pendingAnswers.get(player);
+  if (map) for (const id of pieceIds) map.delete(id);
+}
+
+/** An answer that hit nothing: its cost is lost (already paid) and the Resolve leaves act on it. */
+function answerWasted(world: World, player: PlayerEntity, family: SquireFamily, cost: number): void {
+  if (cost <= 0) return;
+  const cs = player.tracksCombat;
+  // Read Again: half the cost comes back, and the next answer of this family costs less.
+  const again = leafParams(player, 'squire-read-again');
+  if (again) {
+    addResolve(world, player, cost * again.refundShare);
+    setCounter(cs, READ_AGAIN_PREFIX + family, 1);
+  }
+  // No Wasted Effort: the lost Resolve goes into the next slam.
+  const banked = leafParams(player, 'squire-no-wasted-effort');
+  if (banked) setCounter(cs, BANKED_SLAM, getCounter(cs, BANKED_SLAM) + cost * banked.slamPctPerPip);
+}
+
+/** Braces that ran out without catching anything are wasted answers. */
+function expireAnswers(world: World, player: PlayerEntity, now: number): void {
+  const map = pendingAnswers.get(player);
+  if (!map || map.size === 0) return;
+  for (const [id, pending] of map) {
+    if (now < pending.expiresAt) continue;
+    map.delete(id);
+    answerWasted(world, player, pending.family, pending.cost);
+  }
+}
+
+/** When the brace a `braced` outcome raised runs out. */
+function braceExpiry(player: PlayerEntity, piece: SquirePiece, p: Record<string, number>, now: number): number {
+  const cs = player.tracksCombat;
+  switch (piece.id) {
+    case 'squire-parry': return now + Math.max(0, getStatusEffect(cs, SQUIRE_PARRY_EFFECT_ID)?.remainingMs ?? 0) + 100;
+    case 'squire-disarm': return now + p.maxWindowMs + 100;
+    case 'squire-lie-in-wait': return now + p.holdMs + 100;
+    default: return now + Math.max(0, getStatusEffect(cs, SQUIRE_GUARD_EFFECT_ID)?.remainingMs ?? 0) + 100;
+  }
+}
+
+/** Last time anything attacked the Squire, and each enemy's last attack on it (Siege Engine, Seize, Goad). */
+interface Quiet { last: number; by: Map<string, number> }
+const quiet = new WeakMap<PlayerEntity, Quiet>();
+
+function noteAttacked(player: PlayerEntity, monsterId: string, now: number): void {
+  let q = quiet.get(player);
+  if (!q) quiet.set(player, (q = { last: 0, by: new Map() }));
+  q.last = now;
+  q.by.set(monsterId, now);
+  if (q.by.size > 64) for (const [id, at] of q.by) if (now - at > RISEN_SEEN_PRUNE_MS) q.by.delete(id);
+}
+
+/** Mark an enemy's opening spent, without counting it as an attack on the Squire. */
+function noteQuietOnly(player: PlayerEntity, monsterId: string, now: number): void {
+  let q = quiet.get(player);
+  if (!q) quiet.set(player, (q = { last: 0, by: new Map() }));
+  q.by.set(monsterId, now);
+}
+
+/** How long nothing has attacked the Squire (one that never was has been quiet forever). */
+function quietFor(player: PlayerEntity, now: number): number {
+  return now - (quiet.get(player)?.last ?? 0);
+}
+
+/** How long this enemy has not attacked the Squire. */
+function enemyQuietFor(player: PlayerEntity, monsterId: string, now: number): number {
+  return now - (quiet.get(player)?.by.get(monsterId) ?? 0);
+}
+
+/** Brine Will: each debuff you shake off adds a stack of Recovery for a few seconds. */
+function shakenOff(player: PlayerEntity, count: number, now: number): void {
+  const passives = player.usesSkills.passives;
+  if (count <= 0 || (passives['squire.brine-recovery-x'] ?? 0) <= 0) return;
+  const cs = player.tracksCombat;
+  const live = now < getCounter(cs, BRINE_UNTIL) ? getCounter(cs, BRINE_STACKS) : 0;
+  setCounter(cs, BRINE_STACKS, Math.min(BRINE_MAX_STACKS, live + count));
+  setCounter(cs, BRINE_UNTIL, now + (passives['squire.brine-recovery-ms'] ?? 0));
+}
+
+function updateBrine(player: PlayerEntity, now: number): void {
+  const cs = player.tracksCombat;
+  const x = player.usesSkills.passives['squire.brine-recovery-x'] ?? 0;
+  if (x <= 0 || now >= getCounter(cs, BRINE_UNTIL)) return;
+  activateRecoveryBoost(cs, 1 + getCounter(cs, BRINE_STACKS) * x, 600);
+}
+
 // ── Resolve ──────────────────────────────────────────────────────────────────
 
 /** Fill (or, negative, spend) Resolve, capped at the bar; mirrors the HUD dial. */
@@ -345,6 +502,13 @@ const EXTRA_TRIGGERS: Readonly<Record<string, (rank: number) => readonly MomentI
   'squire-steel-will': (rank) => (rank >= 2 ? ['debuff-landed'] : []),
 };
 
+/** The leaf that lets an answer fire free on an empty bar, and the clock it keeps. */
+function emptyBarLeaf(pieceId: string): { leaf: string; clock: string } | undefined {
+  if (pieceId === 'squire-parry') return { leaf: 'squire-last-word', clock: LAST_WORD_AT };
+  if (pieceId === 'squire-unbowed') return { leaf: 'squire-last-rampart', clock: LAST_RAMPART_AT };
+  return undefined;
+}
+
 /** Rules that go first when they share a moment: Parry is the stronger form of Guard. PLACEHOLDER. */
 const RESPONSE_PRIORITY: Readonly<Record<string, number>> = { 'squire-parry': -1 };
 
@@ -384,7 +548,7 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
     return 'landed';
   },
   // A poison or bleed landed: shake it off (the one with the most time left).
-  'squire-steel-will': (world, player, _p, _now, rank) => {
+  'squire-steel-will': (world, player, _p, now, rank) => {
     const cs = player.tracksCombat;
     let longest: (typeof cs.statusEffects)[number] | undefined;
     for (const effect of cs.statusEffects) {
@@ -392,13 +556,16 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
       if (!longest || effect.remainingMs > longest.remainingMs) longest = effect;
     }
     // Steel Will II: corrosion and slows are shaken off as well.
-    let shaken = false;
+    let shaken = 0;
     if (rank >= 2) {
       for (const id of [PLATING_SHRED_EFFECT_ID, 'slow']) {
-        if (getStatusEffect(cs, id)) { removeStatusEffect(cs, id); shaken = true; }
+        if (getStatusEffect(cs, id)) { removeStatusEffect(cs, id); shaken++; }
       }
     }
-    if (!longest) return shaken ? 'landed' : 'wasted';
+    if (!longest) {
+      shakenOff(player, shaken, now);
+      return shaken > 0 ? 'landed' : 'wasted';
+    }
     // Purifying Breath: heal part of the damage it still had to deal.
     const healPct = player.usesSkills.passives['squire.cleanse-heal-pct'] ?? 0;
     if (healPct > 0) {
@@ -407,6 +574,7 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
       if (owed > 0) applyHealToPlayer(player, cs, owed * healPct, world);
     }
     removeStatusEffect(cs, longest.id);
+    shakenOff(player, shaken + 1, now);
     return 'landed';
   },
   // A telegraphed blow aimed at you: brace until it lands. The catch refunds (onDamageTaken).
@@ -435,7 +603,7 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
       refreshable: true,
       sourceId: player.isPlayer.id,
       // Guard II: after a catch the brace stays up for a second telegraphed blow (`secondCatchMs`).
-      data: { cut: p.cut, refund: p.refund, totalMs: windowMs, knockbackResistPct: planted ? 1 : 0, secondCatchMs: p.secondCatchMs ?? 0 },
+      data: { cut: p.cut, refund: p.refund, totalMs: windowMs, knockbackResistPct: planted ? 1 : 0, secondCatchMs: p.secondCatchMs ?? 0, staggerMs: p.staggerMs ?? 0 },
     });
     if (steadfast) {
       applyStatusEffect(player.tracksCombat, {
@@ -479,13 +647,14 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
     return stopped > 0 ? 'landed' : 'wasted';
   },
   // A stun, root or knockdown on you: break free of it.
-  'squire-unshaken': (world, player) => {
+  'squire-unshaken': (world, player, _p, now) => {
     const cs = player.tracksCombat;
     const held = [...PLAYER_HARD_CONTROL_EFFECTS, ...PLAYER_ROOT_EFFECTS].filter((id) => (getStatusEffect(cs, id)?.remainingMs ?? 0) !== 0);
     if (held.length === 0) return 'wasted';
     for (const id of held) removeStatusEffect(cs, id);
     // The stun owns the root and the attack lock; re-sync so you are free this tick.
     syncPlayerControlLockout(world, player);
+    shakenOff(player, held.length, now);
     return 'landed';
   },
   // The target raised a barrier: a blow that hits barriers double (the onHit listener sizes it).
@@ -637,6 +806,49 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
     });
     return 'landed';
   },
+
+  // ── Tier 4 (§8.16) ──
+  // The enemy you fight starts a big attack: mark it, and the blow lands at half (Disarm's listener).
+  // Not a stun, so it works on a boss pattern's step and on bosses that accept no control.
+  'squire-disarm': (world, player, p, now) => {
+    let marked = 0;
+    for (const monster of engagedWith(world, player)) {
+      let endsAt: number | undefined;
+      for (const threat of guardableThreatsFor(world, monster, now)) {
+        if (threat.targetId !== undefined && threat.targetId !== player.isPlayer.id) continue;
+        endsAt = Math.max(endsAt ?? 0, threat.completesAtMs);
+      }
+      if (endsAt === undefined) continue;
+      const windowMs = Math.min(p.maxWindowMs, Math.max(0, endsAt - now) + 500);
+      setCounter(monster.tracksCombat, DISARM_UNTIL + player.isPlayer.id, world.tickCounter + Math.ceil((windowMs / 1000) * TICKS_PER_SEC));
+      setCounter(monster.tracksCombat, DISARM_CUT + player.isPlayer.id, p.cut);
+      marked++;
+    }
+    return marked > 0 ? 'braced' : 'none';
+  },
+  // A fallen enemy rose near you: strike it down before it stands. It lands if one was fresh.
+  'squire-lay-to-rest': (world, player, p, now) => {
+    const struck = freshRisen(world, player, p.radius, p.freshMs, now);
+    if (struck.length === 0) return 'none';
+    for (const monster of struck) {
+      markRisenStruck(player, monster.isMonster.id);
+      counterStrike(world, player, monster, p.damagePct, now);
+      if (monster.hasHealth.hp > 0 && p.staggerMs > 0) applyStun(monster.tracksCombat, p.staggerMs, player.isPlayer.id);
+    }
+    // Rest Eternal: each Lay to Rest that lands heals a little.
+    const heal = player.hasHealth.maxHp * (player.usesSkills.passives['squire.lay-to-rest-heal-pct'] ?? 0);
+    if (heal > 0) applyHealToPlayer(player, player.tracksCombat, heal, world);
+    return 'landed';
+  },
+  // Your target dived out of reach: hold the armed slam; it lands double when that target comes back.
+  'squire-lie-in-wait': (world, player, p, now) => {
+    const target = attackTargetOf(world, player);
+    if (!target || !isEmpoweredAttack(player)) return 'none';
+    setString(player.tracksCombat, LIE_TARGET, target.isMonster.id);
+    setCounter(player.tracksCombat, LIE_UNTIL, now + p.holdMs);
+    return 'braced';
+  },
+
   // Every Squire, at low HP: the whole bar is spent to heal.
   'squire-last-breath': (world, player, p) => {
     const resolve = player.usesCooldown?.resolve ?? 0;
@@ -684,13 +896,23 @@ function runResponses(world: World, player: PlayerEntity, r: Rules, now: number)
       continue;
     }
     if (!conditionsHold(world, player, rule.conditions, now, classState(player))) continue;
-    const cost = answersFree(player, now) ? 0 : costOf(player, piece, p);
+    let cost = answerCost(player, piece, costOf(player, piece, p), now);
+    // Last Word and Last Rampart: with the bar below the answer's cost, Parry (Unbowed) still fires, free, every so often.
+    const freeLeaf = emptyBarLeaf(piece.id);
+    const emptyFree = freeLeaf !== undefined && cost > 0 && (player.usesCooldown?.resolve ?? 0) < cost
+      && !!leafParams(player, freeLeaf.leaf) && now >= getCounter(cs, freeLeaf.clock);
+    if (emptyFree) cost = 0;
     if ((player.usesCooldown?.resolve ?? 0) < cost) continue;
     const outcome = handler(world, player, p, now, rank);
     if (eventTick !== undefined) setCounter(cs, HANDLED_PREFIX + piece.id, eventTick + 1);
     if (outcome === 'none') continue;
+    if (emptyFree && freeLeaf) setCounter(cs, freeLeaf.clock, now + (leafParams(player, freeLeaf.leaf)?.everyMs ?? 0));
     if (p.lockoutMs !== undefined) setCounter(cs, LOCKOUT_PREFIX + piece.id, now + p.lockoutMs);
     addResolve(world, player, -cost);
+    if (cost > 0) setCounter(cs, READ_AGAIN_PREFIX + piece.family, 0);
+    if (outcome === 'wasted') answerWasted(world, player, piece.family, cost);
+    // A brace is wasted if its blow never comes.
+    if (outcome === 'braced' && piece.family !== 'emergency') expectLanding(player, piece, cost, braceExpiry(player, piece, p, now));
     if (outcome === 'landed') {
       answerFill(world, player, r, p.refund);
       avengerCounter(world, player, r, now);
@@ -747,12 +969,56 @@ function pushOrPullEndsAt(world: World, player: PlayerEntity, now: number): numb
  */
 const LOCAL_MOMENTS: Partial<Record<MomentId, (world: World, player: PlayerEntity, now: number, p: Record<string, number>) => boolean>> = {
   'drag-or-push': (world, player, now) => pushOrPullEndsAt(world, player, now) !== undefined,
+  // The registry does not record `risen` (T4); a fresh risen enemy near you, not yet struck, is it.
+  'risen': (world, player, now, p) => freshRisen(world, player, p.radius ?? RISEN_DEFAULT_RADIUS, p.freshMs ?? RISEN_DEFAULT_FRESH_MS, now).length > 0,
   // The registry's `target-flees` only knows a boss getting away.
   'target-flees': (world, player) => {
     const target = attackTargetOf(world, player);
     return !!target && fleesOrKites(target);
   },
 };
+
+// ── Tier 4: risen enemies, read locally (the registry has no `risen` yet) ──
+
+const RISEN_DEFAULT_RADIUS = 500;
+const RISEN_DEFAULT_FRESH_MS = 2000;
+interface RisenWatch { seen: Map<string, number>; struck: Set<string> }
+const risenWatch = new WeakMap<PlayerEntity, RisenWatch>();
+
+/** Note every raised enemy in the node the first time it is seen, and forget the long gone. */
+function updateRisenWatch(world: World, player: PlayerEntity, now: number): void {
+  let watch = risenWatch.get(player);
+  if (!watch) risenWatch.set(player, (watch = { seen: new Map(), struck: new Set() }));
+  const live = new Set<string>();
+  for (const monster of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
+    if (!monster.isRaised || monster.hasHealth.hp <= 0) continue;
+    live.add(monster.isMonster.id);
+    if (!watch.seen.has(monster.isMonster.id)) watch.seen.set(monster.isMonster.id, now);
+  }
+  for (const id of watch.seen.keys()) {
+    if (!live.has(id)) { watch.seen.delete(id); watch.struck.delete(id); }
+  }
+}
+
+/** Risen enemies near the Squire that stood up within `freshMs` and have not been struck down. */
+function freshRisen(world: World, player: PlayerEntity, radius: number, freshMs: number, now: number): MonsterEntity[] {
+  const watch = risenWatch.get(player);
+  if (!watch) return [];
+  const at = player.hasPosition.current;
+  const out: MonsterEntity[] = [];
+  for (const [id, seenAt] of watch.seen) {
+    if (now - seenAt > freshMs || watch.struck.has(id)) continue;
+    const monster = world.getMonsterEntity(id);
+    if (!monster || monster.hasHealth.hp <= 0) continue;
+    if (Math.hypot(monster.hasPosition.current.x - at.x, monster.hasPosition.current.y - at.y) > radius) continue;
+    out.push(monster);
+  }
+  return out;
+}
+
+function markRisenStruck(player: PlayerEntity, monsterId: string): void {
+  risenWatch.get(player)?.struck.add(monsterId);
+}
 
 /**
  * Plant the Squire's feet: a Guard that cuts nothing and holds against forced movement (the
@@ -840,7 +1106,6 @@ function onSquireSlam(ctx: CombatContext, world: World): void {
   // Forge Hammer: each stack of the fight's Heat on you makes the slam bigger.
   const heatPct = passives['squire.slam-heat-pct'] ?? 0;
   if (heatPct > 0) mult *= 1 + heatPct * (getStatusEffect(cs, VOLCANIC_HEAT_EFFECT_ID)?.stacks ?? 0);
-  ctx.damage = Math.max(1, Math.round(ctx.damage * mult));
   setCounter(cs, LAST_SLAM_AT, now);
 
   // Everything around you takes the same blow (Faultline: a line through the target instead).
@@ -848,6 +1113,11 @@ function onSquireSlam(ctx: CombatContext, world: World): void {
   // Bulwark: the circle grows with the enemies on you.
   if (discipline?.id === 'squire-bulwark') {
     radius *= 1 + Math.min(discipline.p['slamRadiusMax'] ?? 0, (discipline.p['slamRadiusPerEnemy'] ?? 0) * engagedWith(world, player).length);
+  }
+  // Charnel Ring (Wasteland trophy): the circle widens with every enemy in the fight.
+  if (r.trophy?.id === 'squire-relic-graveyard') {
+    const tp = trophyParams(r, r.trophy);
+    radius *= 1 + Math.min(tp.maxExtra, tp.radiusPerEnemy * engagedWith(world, player).length);
   }
   // Strangler Vine: every enemy in a wide ring, fleeing ones included, is pulled in before it lands.
   if (r.trophy?.id === 'squire-relic-jungle') {
@@ -863,10 +1133,57 @@ function onSquireSlam(ctx: CombatContext, world: World): void {
       if (dist > radius && dist <= hook) pullToPlayer(world, monster, player, radius * 0.6);
     }
   }
+  // Bone Maul: the slam is bigger for every enemy in its circle (once the ring and the hook have pulled them in).
+  const circlePct = passives['squire.slam-circle-pct'] ?? 0;
+  if (circlePct > 0) {
+    mult *= 1 + circlePct * (1 + playerAoeTargets(world, player, player.hasPosition.current, radius, ctx.defender.isMonster.id).length);
+  }
+  // Pressure Hammer: bigger for each different debuff on you.
+  const debuffPct = passives['squire.slam-debuff-pct'] ?? 0;
+  if (debuffPct > 0) mult *= 1 + debuffPct * harmfulCount(player);
+  // No Wasted Effort: the Resolve a wasted answer lost rides in the next slam.
+  const banked = getCounter(cs, BANKED_SLAM);
+  if (banked > 0) {
+    mult *= 1 + banked;
+    setCounter(cs, BANKED_SLAM, 0);
+  }
+  // Lie in Wait: the slam held while the target was out of reach lands on it again.
+  let lieRefund = 0;
+  const lie = PIECES.get('squire-lie-in-wait')!;
+  if (r.ctx.pieceRanks.has(lie.id) && getString(cs, LIE_TARGET) === ctx.defender.isMonster.id) {
+    const lp = pieceParams(r, lie);
+    if (now < getCounter(cs, LIE_UNTIL)) {
+      mult *= lp.slamMult;
+      lieRefund = lp.refund;
+      settleAnswer(player, lie.id);
+    }
+    setString(cs, LIE_TARGET, '');
+  }
+  ctx.damage = Math.max(1, Math.round(ctx.damage * mult));
+
   let struck: MonsterEntity[];
   if (r.trophy?.id === 'squire-relic-mountain') {
-    struck = lineTargets(world, player, ctx.defender, trophyParams(r, r.trophy));
+    const faultline = trophyParams(r, r.trophy);
+    struck = lineTargets(world, player, ctx.defender, faultline);
     applyPlayerAoeTo(world, player, struck, ctx.damage, 'player', {}, { feedsWeaponReservoir: true });
+    // Faultline IV: aftershocks follow along the line, one after another.
+    if ((faultline.aftershocks ?? 0) > 0) {
+      const from = player.hasPosition.current;
+      const to = ctx.defender.hasPosition.current;
+      const len = Math.max(1, Math.hypot(to.x - from.x, to.y - from.y));
+      const shocks = aftershocks.get(player) ?? [];
+      for (let i = 1; i <= faultline.aftershocks; i++) {
+        const along = (faultline.length * i) / faultline.aftershocks;
+        shocks.push({
+          nodeId: player.hasPosition.nodeId,
+          at: { x: from.x + ((to.x - from.x) / len) * along, y: from.y + ((to.y - from.y) / len) * along },
+          radius: faultline.aftershockRadius,
+          damage: ctx.damage * faultline.aftershockPct,
+          dueAt: now + i * faultline.aftershockStepMs,
+        });
+      }
+      aftershocks.set(player, shocks);
+    }
   } else {
     struck = applyPlayerAoe(world, player, player.hasPosition.current, radius, ctx.damage,
       ctx.defender.isMonster.id, 'player', {}, { feedsWeaponReservoir: true });
@@ -950,6 +1267,23 @@ function onSquireSlam(ctx: CombatContext, world: World): void {
     : specParams(player, 'squire-bastion') && r.trophy?.id !== 'squire-relic-tundra' ? Math.min(cd.resolve, r.ctx.budget)
     : cd.resolve;
   addResolve(world, player, -spent);
+  // Lie in Wait landed: its answer refunds, and as a counter it opens Second Nature's window.
+  if (lieRefund > 0) {
+    answerFill(world, player, r, lieRefund);
+    const secondNature = specParams(player, 'squire-second-nature');
+    if (secondNature) setCounter(cs, FREE_UNTIL, now + secondNature.freeMs);
+  }
+  // Focused Weight: a slam that hit only one enemy gives a share of the bar back.
+  const focused = leafParams(player, 'squire-focused-weight');
+  if (focused && new Set([ctx.defender, ...struck]).size === 1) addResolve(world, player, r.ctx.budget * focused.refundShare);
+  // Undertow (Trench trophy): the target is held where it stands, and can't dive, burrow or flee.
+  if (r.trophy?.id === 'squire-relic-trench') {
+    const tp = trophyParams(r, r.trophy);
+    const held = undertows.get(player) ?? new Map<string, Undertow>();
+    held.set(ctx.defender.isMonster.id, { until: now + tp.holdMs, staggerMs: tp.staggerMs });
+    undertows.set(player, held);
+    applyMonsterRoot(world, ctx.defender, tp.holdMs, player.isPlayer.id);
+  }
 }
 
 // ── Specialization state (T3): runtime only, never persisted ─────────────────
@@ -958,8 +1292,12 @@ interface FrostZone { nodeId: string; at: { x: number; y: number }; radius: numb
 interface Echo { nodeId: string; at: { x: number; y: number }; radius: number; damage: number; dueAt: number }
 interface Channel { endsAt: number; nextPulseAt: number; radius: number; damage: number }
 
+interface Undertow { until: number; staggerMs: number }
+
 const frostZones = new WeakMap<PlayerEntity, FrostZone[]>();
 const reverbs = new WeakMap<PlayerEntity, Echo[]>();
+const aftershocks = new WeakMap<PlayerEntity, Echo[]>();
+const undertows = new WeakMap<PlayerEntity, Map<string, Undertow>>();
 const channels = new WeakMap<PlayerEntity, Channel>();
 
 /** Glacier Mace: enemies standing on the frozen ground are slowed while it lasts. */
@@ -975,16 +1313,71 @@ function updateFrostZones(world: World, player: PlayerEntity, now: number): void
   }
 }
 
-/** Reverb: the echoes that have come due strike their circle again. */
+/** Reverb's echoes and Faultline's aftershocks: the ones that have come due strike their circle again. */
 function updateReverb(world: World, player: PlayerEntity, now: number): void {
-  const echoes = reverbs.get(player);
+  strikeDueEchoes(world, player, now, reverbs);
+  strikeDueEchoes(world, player, now, aftershocks);
+}
+
+function strikeDueEchoes(world: World, player: PlayerEntity, now: number, store: WeakMap<PlayerEntity, Echo[]>): void {
+  const echoes = store.get(player);
   if (!echoes || echoes.length === 0) return;
   const due = echoes.filter((echo) => now >= echo.dueAt);
   if (due.length === 0) return;
-  reverbs.set(player, echoes.filter((echo) => now < echo.dueAt));
+  store.set(player, echoes.filter((echo) => now < echo.dueAt));
   for (const echo of due) {
     if (echo.nodeId !== player.hasPosition.nodeId) continue;
     applyPlayerAoe(world, player, echo.at, echo.radius, echo.damage, undefined, 'player', {}, { feedsWeaponReservoir: true });
+  }
+}
+
+/** Undertow: a held target that dives, burrows or flees has it cut short. */
+function updateUndertow(world: World, player: PlayerEntity, now: number): void {
+  const held = undertows.get(player);
+  if (!held || held.size === 0) return;
+  for (const [id, hold] of held) {
+    const monster = world.getMonsterEntity(id);
+    if (!monster || monster.hasHealth.hp <= 0 || now >= hold.until) {
+      held.delete(id);
+      continue;
+    }
+    if (monster.isConcealed === undefined && !bossPatternEscaping(monster)) continue;
+    // A boss pattern's dive or flight ends in a stagger; anything else just comes back up.
+    if (monster.runsBossPattern) staggerBoss(world, monster, 'Undertow', hold.staggerMs, now);
+    else detachComponent(world, monster, 'isConcealed');
+  }
+}
+
+/** Second Line: on an empty bar, a pip per enemy on you comes back, every so often. */
+function updateSecondLine(world: World, player: PlayerEntity, now: number): void {
+  const leaf = leafParams(player, 'squire-second-line');
+  const cd = player.usesCooldown;
+  if (!leaf || !cd || cd.resolve >= 0.05 || now < getCounter(player.tracksCombat, SECOND_LINE_AT)) return;
+  const enemies = engagedWith(world, player).length;
+  if (enemies === 0) return;
+  setCounter(player.tracksCombat, SECOND_LINE_AT, now + leaf.everyMs);
+  addResolve(world, player, enemies);
+}
+
+/** Goad: after a quiet spell, a free Challenge pulls the nearest enemies onto you. */
+function updateGoad(world: World, player: PlayerEntity, r: Rules, now: number): void {
+  const leaf = leafParams(player, 'squire-goad');
+  const challenge = PIECES.get('squire-challenge')!;
+  if (!leaf || !r.ctx.pieceRanks.has(challenge.id) || quietFor(player, now) < leaf.quietMs) return;
+  if (now < getCounter(player.tracksCombat, GOAD_AT) || !attackTargetOf(world, player)) return;
+  const p = pieceParams(r, challenge);
+  const at = player.hasPosition.current;
+  const near = [...world.monsterEntitiesInNode(player.hasPosition.nodeId)]
+    .filter((monster) => monster.hasHealth.hp > 0 && !isConcealedEntity(monster) && Math.hypot(monster.hasPosition.current.x - at.x, monster.hasPosition.current.y - at.y) <= p.range)
+    .sort((a, b) => Math.hypot(a.hasPosition.current.x - at.x, a.hasPosition.current.y - at.y)
+      - Math.hypot(b.hasPosition.current.x - at.x, b.hasPosition.current.y - at.y))
+    .slice(0, p.maxPulled);
+  if (near.length === 0) return;
+  setCounter(player.tracksCombat, GOAD_AT, now + leaf.everyMs);
+  for (const monster of near) {
+    setAggroTarget(world, monster, { id: player.isPlayer.id, kind: 'player' }, now);
+    pullToPlayer(world, monster, player);
+    if (p.rootMs > 0) applyMonsterRoot(world, monster, p.rootMs, player.isPlayer.id);
   }
 }
 
@@ -1062,12 +1455,20 @@ function lineTargets(world: World, player: PlayerEntity, target: MonsterEntity, 
 
 /** Register the Squire's listeners: Resolve from hits, the Guard's catch, the slam. */
 export function initSquire(): void {
+  // Whatever attacks the Squire breaks the quiet (Siege Engine, Seize the Opening, Goad). Splash
+  // hits come through here; a full dodge is noted by the fill listener below.
+  registerCombatListener('onDamageTaken', (ctx) => {
+    if (ctx.attackerType !== 'monster' || ctx.defenderType !== 'player' || !ctx.defender.usesCooldown) return;
+    noteAttacked(ctx.defender, ctx.attacker.isMonster.id, attackNow(ctx));
+  });
+
   // A landed hit fills Resolve by its raw size (a full dodge doesn't).
   registerCombatListener('afterHit', (ctx, world) => {
     if (ctx.attackerType !== 'monster' || ctx.defenderType !== 'player') return;
     const player = ctx.defender;
     const r = player.usesCooldown ? squireRulesOf(world, player) : null;
     if (!r) return;
+    noteAttacked(player, ctx.attacker.isMonster.id, attackNow(ctx));
     // A full dodge fills nothing, unless Turn Aside says it fills as if it had landed.
     if (ctx.metadata['evadeFull'] === true && !((player.usesSkills.passives['squire.dodge-fills'] ?? 0) > 0)) return;
     const raw = Number(ctx.metadata['incomingGross'] ?? ctx.damage);
@@ -1076,6 +1477,8 @@ export function initSquire(): void {
     // Arrow Catcher fills extra from shooters.
     let pips = rawHitPips(player, raw) * (disciplineOf(r)?.p['hitFillMult'] ?? 1);
     if ((ctx.attacker.performsAttack?.attackRange ?? 0) > MELEE_MAX_REACH) pips *= player.usesSkills.passives['squire.ranged-fill-x'] || 1;
+    // Grave Plate: a risen enemy's hits fill more.
+    if (ctx.attacker.isRaised) pips *= player.usesSkills.passives['squire.risen-fill-x'] || 1;
     // Stoked: the Heat's extra damage on this hit fills extra Resolve.
     const stoked = player.usesSkills.passives['squire.heat-fill-x'] ?? 0;
     const heat = stoked > 0 ? getStatusEffect(player.tracksCombat, VOLCANIC_HEAT_EFFECT_ID) : undefined;
@@ -1135,6 +1538,7 @@ export function initSquire(): void {
     const r = squireRulesOf(world, player);
     if (!r) return;
     removeStatusEffect(cs, SQUIRE_PARRY_EFFECT_ID);
+    settleAnswer(player, 'squire-parry');
     const before = ctx.damage;
     ctx.damage = Math.round(ctx.damage * (1 - (parry.data['cut'] ?? 1)));
     ctx.metadata['squireGuarded'] = true;
@@ -1156,6 +1560,10 @@ export function initSquire(): void {
     const before = ctx.damage;
     ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - (brace.data['cut'] ?? 0))));
     ctx.metadata['squireGuarded'] = true;
+    settleAnswer(player, 'squire-guard', 'squire-anchor', 'squire-intercept');
+    // Guard III: a caught blow staggers its attacker.
+    const staggerMs = brace.data['staggerMs'] ?? 0;
+    if (staggerMs > 0) applyStun(ctx.attacker.tracksCombat, staggerMs, player.isPlayer.id);
     const planted = (brace.data['knockbackResistPct'] ?? 0) >= 1;
     const secondCatchMs = brace.data['secondCatchMs'] ?? 0;
     if (secondCatchMs > 0) {
@@ -1194,9 +1602,15 @@ export function initSquire(): void {
     const p = pieceParams(r, piece);
     if (ctx.damage / Math.max(1, player.hasHealth.maxHp) < p.hpShare) return;
     const now = attackNow(ctx);
-    const cost = answersFree(player, now) ? 0 : p.cost;
+    let cost = answerCost(player, piece, p.cost, now);
+    // Last Rampart: with the bar below Unbowed's cost, it still fires free, every so often.
+    const rampart = leafParams(player, 'squire-last-rampart');
+    const emptyFree = !!rampart && cost > 0 && (player.usesCooldown?.resolve ?? 0) < cost && now >= getCounter(player.tracksCombat, LAST_RAMPART_AT);
+    if (emptyFree) cost = 0;
     if (!ruleActive(world, player, r, piece.id, now) || (player.usesCooldown?.resolve ?? 0) < cost) return;
+    if (emptyFree && rampart) setCounter(player.tracksCombat, LAST_RAMPART_AT, now + rampart.everyMs);
     addResolve(world, player, -cost);
+    if (cost > 0) setCounter(player.tracksCombat, READ_AGAIN_PREFIX + piece.family, 0);
     const before = ctx.damage;
     ctx.damage = Math.max(1, Math.round(ctx.damage - player.mitigatesDamage.plating * (p.platingMult - 1)));
     ctx.metadata['squireGuarded'] = true;
@@ -1216,17 +1630,67 @@ export function initSquire(): void {
     if (!momentActive(world, player, 'fire-attack', undefined, now)) return;
     const cs = player.tracksCombat;
     const p = pieceParams(r, piece);
-    const cost = answersFree(player, now) ? 0 : p.cost;
+    const cost = answerCost(player, piece, p.cost, now);
     if (!ruleActive(world, player, r, piece.id, now) || (player.usesCooldown?.resolve ?? 0) < cost) return;
     if (now < getCounter(cs, BACKDRAFT_AT)) return;
     setCounter(cs, BACKDRAFT_AT, now + p.cooldownMs);
     addResolve(world, player, -cost);
+    if (cost > 0) setCounter(cs, READ_AGAIN_PREFIX + piece.family, 0);
     counterStrike(world, player, ctx.attacker, p.damagePct, now);
     // Cooling Breath: each Backdraft that lands heals a little.
     const heal = player.hasHealth.maxHp * (player.usesSkills.passives['squire.backdraft-heal-pct'] ?? 0);
     if (heal > 0) applyHealToPlayer(player, cs, heal, world);
     answerFill(world, player, r, p.refund);
     avengerCounter(world, player, r, now);
+  });
+
+  // Disarm (T4, a counter): the blow of an enemy it was raised against lands at half. Registered
+  // after the Guard, so a blow the Guard caught is not cut twice.
+  registerCombatListener('onDamageTaken', (ctx, world) => {
+    if (ctx.attackerType !== 'monster' || ctx.defenderType !== 'player' || ctx.metadata['squireGuarded']) return;
+    const player = ctx.defender;
+    const id = player.isPlayer.id;
+    const monsterCs = ctx.attacker.tracksCombat;
+    const until = getCounter(monsterCs, DISARM_UNTIL + id);
+    if (until <= 0) return;
+    const now = attackNow(ctx);
+    if (world.tickCounter > until) {
+      setCounter(monsterCs, DISARM_UNTIL + id, 0);
+      return;
+    }
+    const telegraphed = ctx.metadata['empoweredAttack'] === true || typeof ctx.metadata['abilityName'] === 'string';
+    if (!telegraphed) return;
+    const r = player.usesCooldown ? squireRulesOf(world, player) : null;
+    if (!r) return;
+    const before = ctx.damage;
+    ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - getCounter(monsterCs, DISARM_CUT + id))));
+    ctx.metadata['squireGuarded'] = true;
+    setCounter(monsterCs, DISARM_UNTIL + id, 0);
+    settleAnswer(player, 'squire-disarm');
+    const piece = PIECES.get('squire-disarm')!;
+    answerFill(world, player, r, pieceParams(r, piece).refund);
+    avengerCounter(world, player, r, now, before - ctx.damage);
+    const secondNature = specParams(player, 'squire-second-nature');
+    if (secondNature) setCounter(player.tracksCombat, FREE_UNTIL, now + secondNature.freeMs);
+  });
+
+  // Siege Engine (Juggernaut leaf): swings hit harder while nothing has hit you for a while. Seize
+  // the Opening (Avenger leaf): an enemy that has not attacked you for a while is open, and your
+  // next swing on it is followed by a counter. Neither fires for the slam or the Squire's own blows.
+  registerCombatListener('onHit', (ctx, world) => {
+    if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster' || ctx.metadata['empoweredAttack']) return;
+    const player = ctx.attacker;
+    if (!player.usesCooldown || !squireRulesOf(world, player)) return;
+    const now = attackNow(ctx);
+    const siege = leafParams(player, 'squire-siege-engine');
+    if (siege && quietFor(player, now) >= siege.quietMs) ctx.damage = Math.max(1, Math.round(ctx.damage * (1 + siege.swingPct)));
+    const seize = leafParams(player, 'squire-seize-the-opening');
+    const targetId = ctx.defender.isMonster.id;
+    if (seize && enemyQuietFor(player, targetId, now) >= seize.quietMs) {
+      // The opening is spent: the enemy counts as freshly quiet again.
+      noteQuietOnly(player, targetId, now);
+      counterStrike(world, player, ctx.defender, seize.counterPct, now);
+    }
   });
 
   // The Squire's own blows (a thrown shield, Splitting Blow) are sized as they land.
@@ -1362,6 +1826,12 @@ export function updateSquire(world: World, dt: number, now: number): boolean {
     updateFrostZones(world, player, now);
     updateReverb(world, player, now);
     updateConsecrate(world, player, now);
+    updateRisenWatch(world, player, now);
+    updateUndertow(world, player, now);
+    updateSecondLine(world, player, now);
+    updateGoad(world, player, r, now);
+    updateBrine(player, now);
+    expireAnswers(world, player, now);
     runResponses(world, player, r, now);
     armSlam(world, player, r, now);
     updateDestroyer(world, player);

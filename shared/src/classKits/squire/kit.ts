@@ -71,9 +71,10 @@ function leaf(
   entry: Omit<LeafDef, 'classId' | 'params' | 'tier'> & {
     disciplineId: SquireDisciplineId;
     column: SquireLeafColumn;
+    params?: KitParams;
   },
 ): LeafDef {
-  return { classId: 'cooldown', params: {}, tier: 4, ...entry };
+  return { classId: 'cooldown', tier: 4, ...entry, params: entry.params ?? {} };
 }
 
 const PIECES: readonly SquirePiece[] = [
@@ -124,7 +125,8 @@ const PIECES: readonly SquirePiece[] = [
     ranks: [
       // PLACEHOLDER (T3-SQUIRE): after a catch, the brace stays up this long for a second blow.
       { rank: 2, text: 'One brace also catches a second telegraphed blow that comes within a few seconds.', params: { secondCatchMs: 3000 } },
-      { rank: 3, text: 'A caught blow also staggers its attacker.' },
+      // PLACEHOLDER (T4-SQUIRE): a caught blow staggers its attacker this long (a boss that accepts no control stays unmoved).
+      { rank: 3, text: 'A caught blow also staggers its attacker.', params: { staggerMs: 1000 } },
     ],
   }),
   response({
@@ -239,6 +241,8 @@ const PIECES: readonly SquirePiece[] = [
     sidegradeOf: 'squire-shield-bash',
     answers: 'enemy-winds-up',
     text: "When the enemy you fight starts a big attack, you disarm it: the attack lands at half strength. It isn't a stun, so it works even on bosses that can't be controlled.",
+    // PLACEHOLDERS (T4-SQUIRE): the attack it was raised against deals `cut` less; the mark holds until it lands (at most `maxWindowMs`).
+    params: { cost: 1, refund: 2, cut: 0.5, maxWindowMs: 4000 },
   }),
   response({
     id: 'squire-lay-to-rest',
@@ -246,6 +250,8 @@ const PIECES: readonly SquirePiece[] = [
     family: 'hold',
     answers: 'risen',
     text: 'When a fallen enemy rises near you, you strike it down before it stands.',
+    // PLACEHOLDERS (T4-SQUIRE): every enemy that rose within `radius` px in the last `freshMs` takes `damagePct` of a swing and is staggered.
+    params: { cost: 1, refund: 2, radius: 500, damagePct: 1, staggerMs: 1000, freshMs: 2000 },
   }),
   response({
     id: 'squire-lie-in-wait',
@@ -253,6 +259,8 @@ const PIECES: readonly SquirePiece[] = [
     family: 'counter',
     answers: 'target-out-of-reach',
     text: 'When your target dives out of reach, you hold your slam, and it lands twice as hard when the target comes back.',
+    // PLACEHOLDERS (T4-SQUIRE): the held slam lands `slamMult` times over on that target, if it comes back within `holdMs`; one hold at a time (`lockoutMs`).
+    params: { cost: 1, refund: 2, slamMult: 2, holdMs: 8000, lockoutMs: 8000 },
   }),
   // ── The discipline pieces (§8.5) ──
   response({
@@ -382,7 +390,8 @@ const TROPHIES: readonly SquireTrophy[] = [
     ranks: [
       { rank: 2, bossTier: 2, text: 'The shockwave hits barriers twice as hard.', params: { barrierMult: 2 } },
       { rank: 3, bossTier: 3, text: 'The line runs longer.', params: { length: 420 } },
-      { rank: 4, bossTier: 4, text: 'Aftershocks follow along the line.' },
+      // PLACEHOLDERS (T4-SQUIRE): `aftershocks` more strikes along the line, each `aftershockStepMs` after the last, each `aftershockPct` of the slam.
+      { rank: 4, bossTier: 4, text: 'Aftershocks follow along the line.', params: { aftershocks: 3, aftershockPct: 0.3, aftershockRadius: 90, aftershockStepMs: 400 } },
     ],
   }),
   squireTrophy({
@@ -448,6 +457,8 @@ const TROPHIES: readonly SquireTrophy[] = [
     name: 'Charnel Ring',
     kind: 'slam',
     text: "Your slam's circle widens with every enemy in the fight.",
+    // PLACEHOLDERS (T4-SQUIRE): the circle grows `radiusPerEnemy` per enemy on you, at most `maxExtra` over its size.
+    params: { radiusPerEnemy: 0.1, maxExtra: 1.5 },
     ranks: [],
   }),
   squireTrophy({
@@ -456,6 +467,8 @@ const TROPHIES: readonly SquireTrophy[] = [
     name: 'Undertow',
     kind: 'slam',
     text: "For a few seconds after your slam, the target can't dive, burrow or flee.",
+    // PLACEHOLDERS (T4-SQUIRE): the hold lasts `holdMs`; a dive or flight it starts is cut short with a `staggerMs` stagger.
+    params: { holdMs: 3000, staggerMs: 800 },
     ranks: [],
   }),
 ];
@@ -585,6 +598,8 @@ const LEAVES: readonly LeafDef[] = [
     column: 'empty-bar',
     name: 'Last Word',
     text: 'When your Resolve bar is empty, Parry still fires every so often, at no cost.',
+    // PLACEHOLDERS (T4-SQUIRE): with an empty bar (less than Parry's cost), Parry fires free once per `everyMs`.
+    params: { everyMs: 10000 },
   }),
   leaf({
     id: 'squire-read-again',
@@ -592,6 +607,8 @@ const LEAVES: readonly LeafDef[] = [
     column: 'wasted-answer',
     name: 'Read Again',
     text: 'An answer that hits nothing gives back half its cost, and your next answer of the same kind costs less.',
+    // PLACEHOLDERS (T4-SQUIRE): a wasted answer gives back `refundShare` of its cost, and the next answer of its family costs `nextCostCut` less.
+    params: { refundShare: 0.5, nextCostCut: 0.5 },
   }),
   leaf({
     id: 'squire-seize-the-opening',
@@ -599,6 +616,8 @@ const LEAVES: readonly LeafDef[] = [
     column: 'quiet',
     name: 'Seize the Opening',
     text: "An enemy that hasn't attacked you for a few seconds is open: your next swing on it counts as a counter.",
+    // PLACEHOLDERS (T4-SQUIRE): an enemy quiet for `quietMs` is open; your next swing on it is followed by a counter of `counterPct` swings.
+    params: { quietMs: 4000, counterPct: 0.5 },
   }),
   // Bulwark
   leaf({
@@ -607,6 +626,8 @@ const LEAVES: readonly LeafDef[] = [
     column: 'empty-bar',
     name: 'Second Line',
     text: 'When your Resolve bar empties, it refills a pip for every enemy on you, every so often.',
+    // PLACEHOLDERS (T4-SQUIRE): on an empty bar, a pip per enemy on you comes back, once per `everyMs`.
+    params: { everyMs: 12000 },
   }),
   leaf({
     id: 'squire-no-wasted-effort',
@@ -614,6 +635,8 @@ const LEAVES: readonly LeafDef[] = [
     column: 'wasted-answer',
     name: 'No Wasted Effort',
     text: 'An answer that hits nothing puts its cost into your next slam instead of losing it.',
+    // PLACEHOLDERS (T4-SQUIRE): each pip of a wasted answer adds `slamPctPerPip` to the next slam.
+    params: { slamPctPerPip: 0.25 },
   }),
   leaf({
     id: 'squire-goad',
@@ -621,6 +644,8 @@ const LEAVES: readonly LeafDef[] = [
     column: 'quiet',
     name: 'Goad',
     text: 'When nothing has hit you for a few seconds, a free Challenge pulls the nearest enemies onto you.',
+    // PLACEHOLDERS (T4-SQUIRE): after `quietMs` of nothing hitting you, a free Challenge (its range, count and root) once per `everyMs`.
+    params: { quietMs: 4000, everyMs: 10000 },
   }),
   // Juggernaut
   leaf({
@@ -629,6 +654,8 @@ const LEAVES: readonly LeafDef[] = [
     column: 'empty-bar',
     name: 'Last Rampart',
     text: 'When your Resolve bar is empty, Unbowed still fires every so often, at no cost.',
+    // PLACEHOLDERS (T4-SQUIRE): with an empty bar (less than Unbowed's cost), Unbowed fires free once per `everyMs`.
+    params: { everyMs: 10000 },
   }),
   leaf({
     id: 'squire-focused-weight',
@@ -636,6 +663,8 @@ const LEAVES: readonly LeafDef[] = [
     column: 'wasted-answer',
     name: 'Focused Weight',
     text: 'A slam that hits only one enemy gives you back a quarter of your Resolve bar.',
+    // PLACEHOLDERS (T4-SQUIRE): a slam that hits one enemy refunds `refundShare` of the bar.
+    params: { refundShare: 0.25 },
   }),
   leaf({
     id: 'squire-siege-engine',
@@ -643,6 +672,8 @@ const LEAVES: readonly LeafDef[] = [
     column: 'quiet',
     name: 'Siege Engine',
     text: 'While nothing has hit you for a few seconds, your swings hit harder.',
+    // PLACEHOLDERS (T4-SQUIRE): after `quietMs` of nothing hitting you, your swings hit `swingPct` harder.
+    params: { quietMs: 4000, swingPct: 0.5 },
   }),
 ];
 
