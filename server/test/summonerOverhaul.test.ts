@@ -123,8 +123,8 @@ function attachSummoner(world: World, persisted: PersistedPlayerSlices) {
   world.getMinionEntity(summons.minionIds[0]!)!.hasHealth.hp = 0;
   world.getMinionEntity(summons.minionIds[1]!)!.hasHealth.hp = 0;
   updateSummonerArchetype(world, 0, 1_100);
-  assert(summons.activeReconstruction?.slotId === 'normal:0', 'first dead slot must own queue progress');
-  assert(summons.reconstructionQueue[0] === 'normal:1', 'second dead slot must wait in FIFO order');
+  assert(summons.activeReconstruction?.slotId === summons.slotIds[0], 'first dead slot must own queue progress');
+  assert(summons.reconstructionQueue[0] === summons.slotIds[1], 'second dead slot must wait in FIFO order');
 
   const expectedCost = 60; // 1000 max HP * 0.8 formation HP * 1/4 slot * 30% cost.
   player.hasHealth.hp = 250;
@@ -137,7 +137,7 @@ function attachSummoner(world: World, persisted: PersistedPlayerSlices) {
   updateSummonerArchetype(world, 0, 6_200);
   assert(!!summons.minionIds[0], 'reconstruction should resume when payment is safe');
   assert(player.hasHealth.hp === 500 - expectedCost, 'cost must derive from defensive HP, not huge attack');
-  assert(summons.activeReconstruction?.slotId === 'normal:1', 'next slot starts only after the head completes');
+  assert(summons.activeReconstruction?.slotId === summons.slotIds[1], 'next slot starts only after the head completes');
 
   const views = projectSummonSlots(summons, player.usesSkills.passives);
   assert(views[1]?.queuePosition === 0, 'HUD must identify the one active reconstruction');

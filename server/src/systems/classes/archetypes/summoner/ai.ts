@@ -13,6 +13,7 @@ import {
   ACTION_DATABASE,
   getFlag,
   distanceSq,
+  SUMMONER_RANGE_TUNING,
   type Vec2,
 } from '@mmo-idle/shared';
 
@@ -310,12 +311,15 @@ export function driveMinion(
     if (world.collision.canReach(minion, target, minion.performsAttack.attackRange)) {
       // Harriers keep moving away when crowded; guardian/escort formations hold.
       const targetDistance = distance(minion.hasPosition.current, target.hasPosition.current);
-      if (profile.formationPolicy === 'harrier'
-        && targetDistance < profile.preferredDistance * 0.65) {
+      // Harriers, and roster bodies that fight from range, keep their distance.
+      const slotRanged = profile.slots[minion.isMinion.slot]?.mode === 'ranged';
+      const preferred = slotRanged ? SUMMONER_RANGE_TUNING.far.preferredDistance : profile.preferredDistance;
+      if ((profile.formationPolicy === 'harrier' || slotRanged)
+        && targetDistance < preferred * 0.65) {
         const dx = minion.hasPosition.current.x - target.hasPosition.current.x;
         const dy = minion.hasPosition.current.y - target.hasPosition.current.y;
         const length = Math.sqrt(dx * dx + dy * dy) || 1;
-        const retreat = profile.preferredDistance - targetDistance;
+        const retreat = preferred - targetDistance;
         moveMinionOutsideTelegraphs(world, owner, minion, clampToLeash(owner, {
           x: minion.hasPosition.current.x + (dx / length) * retreat,
           y: minion.hasPosition.current.y + (dy / length) * retreat,

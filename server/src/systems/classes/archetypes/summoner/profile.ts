@@ -1,12 +1,41 @@
 import {
+  CONDUIT_KIT,
   resolveSummonerProfile,
   summonerProfileWeightTotals,
+  type RosterBody,
   type SummonerProfile,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../../ecs/entity';
 
+/**
+ * The Formation's roster (class-first §7.3), resolved from the class config: one body per roster
+ * entry, from its kit piece. Undefined when the Conduit has no Formation config (the old
+ * frame/range path then applies until it is deleted).
+ */
+function rosterOf(owner: PlayerEntity): readonly RosterBody[] | undefined {
+  const system = owner.configuresClass?.config.system;
+  if (system?.kind !== 'formation') return undefined;
+  // Transitional (CD.8 deletes it with the frames): a character still on a frame or range pick keeps the old path.
+  if (owner.usesSkills.selectedSubVariant || owner.usesSkills.selectedRange) return undefined;
+  const bodies: RosterBody[] = [];
+  for (const id of system.roster) {
+    const piece = CONDUIT_KIT.pieces.find((candidate) => candidate.id === id);
+    if (!piece) continue;
+    bodies.push({
+      pieceId: piece.id,
+      family: piece.family,
+      command: piece.command,
+      mode: piece.mode,
+      row: piece.row,
+      body: piece.body,
+    });
+  }
+  return bodies;
+}
+
 export function summonerProfileFor(owner: PlayerEntity): SummonerProfile {
   return resolveSummonerProfile({
+    roster: rosterOf(owner),
     selectedSubVariant: owner.usesSkills.selectedSubVariant,
     selectedRange: owner.usesSkills.selectedRange,
     unlockedSkills: owner.usesSkills.unlockedSkills,

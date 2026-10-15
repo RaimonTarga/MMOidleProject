@@ -177,6 +177,9 @@ export function syncMinionHitbox(world: World, minion: MinionEntity, sizeMult: n
  */
 export function resolveMinionType(owner: PlayerEntity, slot = 0): MinionMonsterType {
   const profile = summonerProfileFor(owner);
+  // A Formation slot wears its piece's body.
+  const slotBody = profile.slots[slot]?.body;
+  if (slotBody) return slotBody;
   switch (profile.specialization) {
     case 'harrier-brood':
       return 'conduit-summon-inquisitor';
@@ -224,7 +227,7 @@ export function spawnMinionForOwner(
   const profile = summonerProfileFor(owner);
   const slotProfile = profile.slots[slot] ?? profile.slots[0];
   const damagePct = passives['summoner.minion-damage-pct'] ?? 1.0;
-  const attackRange = profile.attackRange;
+  const attackRange = slotProfile.attackRange ?? profile.attackRange;
   const attackCooldown = Math.max(
     100,
     Math.round(owner.performsAttack.attackCooldown * profile.summonAttackCooldownMult),
@@ -233,7 +236,7 @@ export function spawnMinionForOwner(
   const monsterTypeId = resolveMinionType(owner, slot);
   // Range is legible from what the summons throw: Harrier snaps a short beam,
   // Procession lobs a fast red bolt, Vigil lands a melee thump.
-  const attackStyle = SUMMON_ATTACK_STYLE[profile.attackMode];
+  const attackStyle = SUMMON_ATTACK_STYLE[slotProfile.mode ?? profile.attackMode];
 
   const maxHp = computeMinionMaxHp(owner, slot);
   const attack = Math.max(1, Math.round(

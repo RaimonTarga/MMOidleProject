@@ -149,10 +149,11 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
         / (1 + summonerFrenzyApsPct(owner)),
       ),
     );
+    const desiredRange = slot.attackRange ?? profile.attackRange;
     if (minion.performsAttack.attackCooldown !== desiredCooldown
-      || minion.performsAttack.attackRange !== profile.attackRange) {
+      || minion.performsAttack.attackRange !== desiredRange) {
       minion.performsAttack.attackCooldown = desiredCooldown;
-      minion.performsAttack.attackRange = profile.attackRange;
+      minion.performsAttack.attackRange = desiredRange;
       markSliceDirty(world, minion, 'performsAttack');
     }
   }

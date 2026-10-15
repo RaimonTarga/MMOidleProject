@@ -1,4 +1,5 @@
 import type { PassiveMap } from '../passives';
+import type { MinionMonsterType } from '../components/archetypes/summoner/isMinion';
 import type { SubVariant } from '../data/skillTree';
 import { relicRatingsFromPassives, resolveSummonerRelicProfile, resolveRelicMagnitudeMultiplier, type RelicRatings } from './relics';
 import {
@@ -12,13 +13,27 @@ import {
   SUMMONER_RANGE_TUNING,
   SUMMONER_SPECIALIZATION_TUNING,
   summonerSpecializationFor,
+  type SummonerAttackMode,
   type SummonerFrame,
   type SummonerSlotRole,
   type SummonerSpecialization,
   type SummonerRange,
 } from '../data/summoner';
 
+/** One body of the Conduit's Formation (class-first §7.3): a roster entry resolved from its piece. */
+export interface RosterBody {
+  pieceId: string;
+  family: 'generic' | 'tank' | 'damage' | 'support';
+  /** What it costs to field; a slot's share of the formation's offense and HP follows it. */
+  command: number;
+  mode: SummonerAttackMode;
+  row: 'front' | 'middle' | 'back';
+  body: MinionMonsterType;
+}
+
 export interface SummonerProfileInput {
+  /** The Formation's roster. When present it replaces the frame, range, specialization and relic inputs. */
+  roster?: readonly RosterBody[];
   selectedSubVariant: SubVariant | null;
   selectedRange: string | null;
   unlockedSkills: readonly string[];
@@ -33,6 +48,14 @@ export interface SummonerSlotProfile {
   defenseWeight: number;
   procWeight: number;
   sizeMult: number;
+  /** Roster slots only: the piece, its role, row, attack mode and body. */
+  pieceId?: string;
+  family?: RosterBody['family'];
+  row?: RosterBody['row'];
+  mode?: SummonerAttackMode;
+  body?: MinionMonsterType;
+  /** Roster slots only: how far this body attacks from (its mode's range). */
+  attackRange?: number;
 }
 
 export interface SummonerProfile {
@@ -83,6 +106,37 @@ function equalSlots(count: number, sizeMult: number): SummonerSlotProfile[] {
     procWeight: weight,
     sizeMult,
   }));
+}
+
+/** Mode to attack range: reach and ranged use the ranges' values; melee fights close in, as the unpicked root did. */
+const MODE_RANGE = { melee: 'close', reach: 'mid', ranged: 'far' } as const;
+
+/**
+ * The roster's slots: one per body, `<pieceId>#<n>`, weights by Command spent so a complete
+ * formation delivering one attack each still totals 1.0 however it is composed.
+ */
+function rosterSlots(roster: readonly RosterBody[]): SummonerSlotProfile[] {
+  const total = roster.reduce((sum, body) => sum + Math.max(1, body.command), 0);
+  const seen = new Map<string, number>();
+  return roster.map((body) => {
+    const n = seen.get(body.pieceId) ?? 0;
+    seen.set(body.pieceId, n + 1);
+    const weight = Math.max(1, body.command) / total;
+    return {
+      slotId: `${body.pieceId}#${n}`,
+      role: 'normal' as const,
+      offenseWeight: weight,
+      defenseWeight: weight,
+      procWeight: weight,
+      sizeMult: body.command > 1 ? 1.2 : 1,
+      pieceId: body.pieceId,
+      family: body.family,
+      row: body.row,
+      mode: body.mode,
+      body: body.body,
+      attackRange: body.mode === 'melee' ? SUMMONER_BASELINE_ATTACK_RANGE : SUMMONER_RANGE_TUNING[MODE_RANGE[body.mode]].attackRange,
+    };
+  });
 }
 
 function resolveSlots(
@@ -149,14 +203,15 @@ export function resolveSummonerProfile(input: SummonerProfileInput): SummonerPro
   // Range scales the body it never swaps (see SummonerRangeTuning.sizeMult).
   // Clamped so the extremes stay readable: Kilnmaster at Harrier range would
   // otherwise compound to 0.389, and Idolwright at Vigil range to 3.28.
-  const baseSlots = resolveSlots(frame, specialization);
+  const fromRoster = input.roster && input.roster.length > 0 ? rosterSlots(input.roster) : null;
+  const baseSlots = fromRoster ?? resolveSlots(frame, specialization);
   const ratings = input.relicRatings ?? relicRatingsFromPassives(passives);
-  const fixedFormation = baseSlots.some(slot => slot.role !== 'normal');
-  const potencyMult = fixedFormation ? resolveRelicMagnitudeMultiplier(ratings.potency) : 1;
+  const fixedFormation = fromRoster !== null || baseSlots.some(slot => slot.role !== 'normal');
+  const potencyMult = fixedFormation && !fromRoster ? resolveRelicMagnitudeMultiplier(ratings.potency) : 1;
   const count = fixedFormation ? baseSlots.length : resolveSummonerRelicProfile(5000, baseSlots.length, ratings, SUMMONER_CORE_TUNING.hardEntityCap).summonCount.after;
   // Keep each ordinary body's original budget: a larger army must not dilute its members.
   const resolvedSlots = fixedFormation ? baseSlots : equalSlots(count, baseSlots[0].sizeMult).map(slot => ({ ...slot, offenseWeight: 1 / baseSlots.length, defenseWeight: 1 / baseSlots.length, procWeight: 1 / baseSlots.length }));
-  const slots = resolvedSlots.map((slot) => ({
+  const slots = fromRoster ?? resolvedSlots.map((slot) => ({
     ...slot,
     sizeMult: Math.min(
       SUMMON_SIZE_MULT_MAX,
