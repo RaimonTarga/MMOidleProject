@@ -2,6 +2,7 @@ import { SKILL_TREE } from "@mmo-idle/shared";
 import type { Route } from "../route/types";
 import { CONDUIT_T1_ID, conduitT1Route } from "./conduitT1";
 import { conduitT2Route } from "./conduitT2";
+import { conduitT3Route } from "./conduitT3";
 import { SLINGER_T1_ID, slingerT1Route } from "./slingerT1";
 import { slingerT2Route } from "./slingerT2";
 import { APPRENTICE_T1_ID, apprenticeT1Route } from "./apprenticeT1";
@@ -21,6 +22,7 @@ import { spiritT2Route } from "./spiritT2";
  * `smoke-t1` stays class-agnostic. Each class's own route (`striker-t1`, `squire-t1`,
  * `conduit-t1`, `slinger-t1`, `slinger-t2`, `spirit-t1`, `apprentice-t1`) registers here as data over the same executor.
  * `conduit-t2` continues the Conduit past the tier-2 promotion (T2-W2); it is not yet in the controlled batch list.
+ * `conduit-t3` continues it past the tier-3 promotion (T3-W2); same status.
  */
 
 /**
@@ -39,6 +41,7 @@ const SQUIRE_ROUTE = squireT1Route();
 const SQUIRE_T2_ROUTE = squireT2Route();
 const CONDUIT_ROUTE = conduitT1Route();
 const CONDUIT_T2_ROUTE = conduitT2Route();
+const CONDUIT_T3_ROUTE = conduitT3Route();
 const SLINGER_ROUTE = slingerT1Route();
 const SLINGER_T2_ROUTE = slingerT2Route();
 const SPIRIT_ROUTE = spiritT1Route();
@@ -53,6 +56,7 @@ export const ROUTES = new Map<string, Route>([
   [SQUIRE_T2_ROUTE.id, SQUIRE_T2_ROUTE],
   [CONDUIT_ROUTE.id, CONDUIT_ROUTE],
   [CONDUIT_T2_ROUTE.id, CONDUIT_T2_ROUTE],
+  [CONDUIT_T3_ROUTE.id, CONDUIT_T3_ROUTE],
   [SLINGER_ROUTE.id, SLINGER_ROUTE],
   [SLINGER_T2_ROUTE.id, SLINGER_T2_ROUTE],
   [SPIRIT_ROUTE.id, SPIRIT_ROUTE],

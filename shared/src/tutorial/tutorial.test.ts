@@ -285,6 +285,10 @@ const CONDUIT_TAIL = [
   ...['plains', 'forest', 'swamp', 'cave', 'mountain', 'jungle', 'desert']
     .flatMap((biome) => [`t2:${biome}`, `t2:${biome}-lesson`, `t2:${biome}-boss`]),
   't2:done',
+  // Tier 3: the specialization pick, then three beats per zone (T3-W2).
+  ...['mountain', 'cave', 'swamp', 'jungle', 'desert', 'tundra', 'volcanic']
+    .flatMap((biome) => [`t3:${biome}`, `t3:${biome}-lesson`, `t3:${biome}-boss`]),
+  't3:done',
 ];
 
 function assertConduitTail(script: TutorialScript): void {
@@ -352,6 +356,30 @@ function assertConduitTail(script: TutorialScript): void {
     assert(farmGate(specialistBeat, biome) === biomeLevelCap(1, biome), `${specialist} carries on to the tier cap`);
   }
   const mountain = tail.find((beat) => beat.id === 'conduit:mountain');
+  // Tier 3: the specialization pick, each T3 lesson, each Soul.
+  assert(say('t3:mountain').includes('specialization') && say('t3:mountain').includes('Passive Tree'), 'the first Tier 3 beat sends the player to pick a specialization');
+  for (const [id, name] of [
+    ['t3:mountain-lesson', 'Warhorn'], ['t3:cave-lesson', 'Burrower'], ['t3:swamp-lesson', 'Sporecaller'],
+    ['t3:jungle-lesson', 'Prowler'], ['t3:desert-lesson', 'Carapace Guard'], ['t3:tundra-lesson', 'Frostcaller'],
+    ['t3:volcanic-lesson', 'Cinderling'],
+  ] as const) assert(say(id).includes(name), `${id} names ${name}`);
+  for (const [id, soul] of [
+    ['t3:cave', 'Stoneplate'], ['t3:swamp', 'Dreadbore'], ['t3:jungle', 'Mire Behemoth'], ['t3:desert', 'Dread-Gorger'],
+    ['t3:tundra', 'Dune-Stalker'], ['t3:volcanic', 'Rime-Mammoth'], ['t3:done', 'Magma Salamander'],
+  ] as const) assert(say(id).includes(soul), `${id} announces the ${soul} Soul`);
+  for (const biome of ['mountain', 'cave', 'swamp', 'jungle', 'desert', 'tundra', 'volcanic']) {
+    const lesson = tail.find((beat) => beat.id === `t3:${biome}`);
+    const cap = tail.find((beat) => beat.id === `t3:${biome}-lesson`);
+    const boss = tail.find((beat) => beat.id === `t3:${biome}-boss`);
+    const gate = (beat: TutorialBeat | undefined) => {
+      const step = beat?.steps[0];
+      return step?.type === 'farm' && step.until.type === 'biomeLevelAtLeast' && step.at.kind === 'biome' && step.at.tier === 3 ? step.until.level : -1;
+    };
+    assert(gate(lesson) > 0 && gate(cap) === biomeLevelCap(3, biome), `t3:${biome} farms Tier 3 to the lesson, then to the cap`);
+    assert(gate(lesson) < gate(cap), `t3:${biome}: the lesson comes before the cap`);
+    const bossStep = boss?.steps[0];
+    assert(bossStep?.type === 'attemptBoss' && bossStep.tier === 3 && bossStep.biomeGroup === biome, `t3:${biome}-boss fights the Tier 3 boss`);
+  }
   if (!mountain) throw new Error('the Mountain farm is missing');
   assert(farmGate(mountain, 'mountain') === 2, 'the Mountain farm ends at the Ridge Marksman lesson');
 }
